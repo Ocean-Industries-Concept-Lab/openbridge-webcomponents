@@ -156,12 +156,14 @@ export class ObcGaugeTrend extends ObcChartLineBase {
     this.borderRadiusPositionExternalScales = BorderRadiusPosition.middleChild;
 
     // Y-axis configuration (managed internally, single axis only)
+    // Note: yAxes will be properly set in willUpdate once properties are initialized
+    // Using scaleMinValue/scaleMaxValue as defaults when chartMinValue/chartMaxValue are undefined
     this.yAxes = [
       {
         id: 'y',
         position: 'left',
-        min: this.chartMinValue,
-        max: this.chartMaxValue,
+        min: this.chartMinValue ?? this.scaleMinValue,
+        max: this.chartMaxValue ?? this.scaleMaxValue,
       },
     ];
   }
@@ -308,17 +310,17 @@ export class ObcGaugeTrend extends ObcChartLineBase {
 
   /**
    * Minimum value for the chart y-axis.
-   * Defaults to scaleMinValue to keep chart and scale aligned.
+   * When undefined, defaults to scaleMinValue to keep chart and scale aligned.
    */
   @property({type: Number})
-  chartMinValue = 0;
+  chartMinValue?: number = undefined;
 
   /**
    * Maximum value for the chart y-axis.
-   * Defaults to scaleMaxValue to keep chart and scale aligned.
+   * When undefined, defaults to scaleMaxValue to keep chart and scale aligned.
    */
   @property({type: Number})
-  chartMaxValue = 100;
+  chartMaxValue?: number = undefined;
 
   /**
    * Current value displayed on the vertical scale (drives bar fill).
@@ -440,15 +442,23 @@ export class ObcGaugeTrend extends ObcChartLineBase {
   override willUpdate(changed: Map<PropertyKey, unknown>) {
     super.willUpdate(changed);
 
-    // Update y-axis range when chart min/max changes
+    // Update y-axis range when chart or scale min/max changes
     // Note: yAxes is managed internally - users cannot set multiple axes
-    if (changed.has('chartMinValue') || changed.has('chartMaxValue')) {
+    // When chartMinValue/chartMaxValue are undefined, fall back to scaleMinValue/scaleMaxValue
+    if (
+      changed.has('chartMinValue') ||
+      changed.has('chartMaxValue') ||
+      changed.has('scaleMinValue') ||
+      changed.has('scaleMaxValue')
+    ) {
+      const chartMin = this.chartMinValue ?? this.scaleMinValue;
+      const chartMax = this.chartMaxValue ?? this.scaleMaxValue;
       this.yAxes = [
         {
           id: 'y',
           position: 'left',
-          min: this.chartMinValue,
-          max: this.chartMaxValue,
+          min: chartMin,
+          max: chartMax,
         },
       ];
     }

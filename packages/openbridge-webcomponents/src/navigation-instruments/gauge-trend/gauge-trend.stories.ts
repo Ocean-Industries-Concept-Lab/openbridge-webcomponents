@@ -776,6 +776,95 @@ export const GaugeTrendWithAdvice: Story = {
   `,
 };
 
+/**
+ * Demonstrates a non-standard scale range (25-75) that fits the SAMPLE_DATA values (28-68).
+ *
+ * This story shows:
+ * - Custom scale range that isn't 0-100 or -100..100
+ * - Chart y-axis automatically inherits from scaleMinValue/scaleMaxValue (no chartMinValue/chartMaxValue needed)
+ * - Advice overlays positioned within the custom range
+ * - Tint fill mode showing a specific value range
+ *
+ * The SAMPLE_DATA values naturally fit within this 25-75 range, demonstrating
+ * how gauge-trend can be configured for domain-specific measurements.
+ */
+export const GaugeTrendCustomScaleRange: Story = {
+  name: 'Custom scale range (25-75)',
+  play: async () => {
+    // Wait for rendering to complete before snapshot
+    await new Promise((resolve) => setTimeout(resolve, 300));
+  },
+  argTypes: {
+    scaleMinValue: {
+      control: {type: 'number'},
+      description:
+        'Scale minimum (chart y-axis inherits this when chartMinValue is undefined)',
+    },
+    scaleMaxValue: {
+      control: {type: 'number'},
+      description:
+        'Scale maximum (chart y-axis inherits this when chartMaxValue is undefined)',
+    },
+    scaleValue: {
+      control: {type: 'range', min: 25, max: 75, step: 1},
+    },
+    scaleSetpoint: {
+      control: {type: 'range', min: 25, max: 75, step: 1},
+    },
+    scaleFillMin: {
+      control: {type: 'range', min: 25, max: 75, step: 1},
+    },
+    scaleFillMax: {
+      control: {type: 'range', min: 25, max: 75, step: 1},
+    },
+  },
+  args: {
+    width: 384,
+    height: 384,
+    enhanced: true,
+    scaleMinValue: 25,
+    scaleMaxValue: 75,
+    scaleValue: 50,
+    scaleSetpoint: 55,
+    scaleHasBar: true,
+    hasScale: true,
+    scaleHasAdvice: true,
+    scaleFillMode: 'tint',
+    scaleFillMin: 40,
+    scaleFillMax: 60,
+    scaleReferenceSize: 384,
+    chartFill: true,
+  },
+  render: (_args) => html`
+    <obc-gauge-trend
+      .data=${SAMPLE_DATA}
+      .width=${_args.width}
+      .height=${_args.height}
+      .enhanced=${_args.enhanced}
+      .chartFill=${_args.chartFill}
+      .scaleMinValue=${_args.scaleMinValue}
+      .scaleMaxValue=${_args.scaleMaxValue}
+      .scaleValue=${_args.scaleValue}
+      .scaleSetpoint=${_args.scaleSetpoint}
+      .scaleHasBar=${_args.scaleHasBar}
+      .hasScale=${_args.hasScale}
+      .scaleHasAdvice=${_args.scaleHasAdvice}
+      .scaleFillMode=${_args.scaleFillMode}
+      .scaleFillMin=${_args.scaleFillMin}
+      .scaleFillMax=${_args.scaleFillMax}
+      .scaleAdvice=${[
+        {min: 60, max: 70, type: AdviceType.caution, hinted: true},
+        {min: 30, max: 40, type: AdviceType.advice, hinted: false},
+      ]}
+      .scalePrimaryInterval=${10}
+      .scaleSecondaryInterval=${5}
+      .scaleTertiaryInterval=${1}
+      .scaleReferenceSize=${_args.scaleReferenceSize}
+    >
+    </obc-gauge-trend>
+  `,
+};
+
 export const GaugeTrendLabelsOnly: Story = {
   name: 'Labels only (no bar, condensed scale)',
   play: async () => {
