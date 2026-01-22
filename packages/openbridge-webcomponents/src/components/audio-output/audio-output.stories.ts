@@ -1,27 +1,26 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcAudioVisual} from './audio-visual.js';
-import './audio-visual.js';
+import {ObcAudioOutput} from './audio-output.js';
+import './audio-output.js';
 
-const meta: Meta<typeof ObcAudioVisual> = {
-  title: 'UI Components/Visual feedback/Audio Visual',
+const meta: Meta<ObcAudioOutput> = {
+  title: 'UI Components/Media/Audio Output',
   tags: ['6.0'],
-  component: 'obc-audio-visual',
+  component: 'obc-audio-output',
   args: {},
   argTypes: {
     volume: {
-      control: {
-        type: 'range',
-        min: 0,
-        max: 8,
-        step: 1,
-      },
+      control: {type: 'range', min: 0, max: 8, step: 1},
       description: 'Volume level from 0 to 8',
     },
+    disabled: {
+      control: {type: 'boolean'},
+      description: 'Whether the component is disabled',
+    },
   },
-} satisfies Meta<ObcAudioVisual>;
+} satisfies Meta<ObcAudioOutput>;
 
 export default meta;
-type Story = StoryObj<ObcAudioVisual>;
+type Story = StoryObj<ObcAudioOutput>;
 
 export const FullVolume: Story = {
   args: {

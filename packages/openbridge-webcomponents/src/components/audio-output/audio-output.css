@@ -1,12 +1,12 @@
 .wrapper {
   display: flex;
   padding: 0px 8px;
-  gap: var(--ui-components-audio-visual-spacing);
+  gap: var(--ui-components-audio-output-spacing);
 }
 
 .item {
-  width: var(--ui-components-audio-visual-width);
-  height: var(--ui-components-audio-visual-height);
+  width: var(--ui-components-audio-output-width);
+  height: var(--ui-components-audio-output-height);
   border-radius: 16px;
   background: var(--indent-enabled-background-color);
   box-sizing: border-box;
