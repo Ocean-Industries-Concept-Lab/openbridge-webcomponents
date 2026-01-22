@@ -1,6 +1,6 @@
-import { property } from 'lit/decorators.js';
-import { ObcAbstractAutomationButton } from './abstract-automation-button.js';
-import { AutomationButtonReadoutStack } from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
+import {property} from 'lit/decorators.js';
+import {ObcAbstractAutomationButton} from './abstract-automation-button.js';
+import {AutomationButtonReadoutStack} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 
 export enum SquaredVariant {
   square = 'square',
@@ -8,22 +8,26 @@ export enum SquaredVariant {
 }
 
 export class ObcAbstractAutomationButtonSquared extends ObcAbstractAutomationButton<SquaredVariant> {
-  @property({ type: Boolean }) on: boolean = false;
+  @property({type: Boolean}) on: boolean = false;
   override variant: SquaredVariant = SquaredVariant.square;
 
   override get extraReadouts(): AutomationButtonReadoutStack[] {
     if (this.on) {
-      return [{
-        type: 'state-on',
-        value: 'On',
-        hasIcon: true
-      }];
+      return [
+        {
+          type: 'state-on',
+          value: 'On',
+          hasIcon: true,
+        },
+      ];
     } else if (!this.on) {
-      return [{
-        type: 'state-off',
-        value: 'Off',
-        hasIcon: true
-      }];
+      return [
+        {
+          type: 'state-off',
+          value: 'Off',
+          hasIcon: true,
+        },
+      ];
     }
     return [];
   }

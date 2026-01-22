@@ -1,12 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/web-vite';
-import { ObcSwitch, SwitchAlternativeIcon } from './switch.js';
-import { AutomationButtonReadoutPosition } from '../automation-button/automation-button.js';
-import { AutomationButtonReadoutStackSize } from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
+import type {Meta, StoryObj} from '@storybook/web-vite';
+import {ObcSwitch, SwitchAlternativeIcon} from './switch.js';
+import {AutomationButtonReadoutPosition} from '../automation-button/automation-button.js';
+import {AutomationButtonReadoutStackSize} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import './switch.js';
-import { crossDecorator } from '../../storybook-util.js';
+import {crossDecorator} from '../../storybook-util.js';
 import '../automation-badge/automation-badge.js';
-import { argTypesAbstractAutomationButtonPassiveRound } from '../automation-button/abstract-automation-button-storybook-helpers.js';
-
+import {argTypesAbstractAutomationButtonPassiveRound} from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 const meta: Meta<typeof ObcSwitch> = {
   title: 'Automation/Automation devices/Switch',
@@ -29,7 +28,7 @@ const meta: Meta<typeof ObcSwitch> = {
       options: Object.values(SwitchAlternativeIcon),
     },
     ...argTypesAbstractAutomationButtonPassiveRound,
-    value: { control: { type: 'range', min: 0, max: 100, step: 1 } },
+    value: {control: {type: 'range', min: 0, max: 100, step: 1}},
   },
 } as Meta<typeof ObcSwitch>;
 

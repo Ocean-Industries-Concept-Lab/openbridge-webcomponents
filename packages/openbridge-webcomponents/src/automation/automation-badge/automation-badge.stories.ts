@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
   ObcAutomationBadge,
   ObcAutomationBadgeMode,
   ObcAutomationBadgeType,
 } from './automation-badge.js';
 import './automation-badge.js';
-import { html } from 'lit';
+import {html} from 'lit';
 import '../../icons/icon-command-locked-f.js';
 
 const meta: Meta<typeof ObcAutomationBadge> = {
@@ -30,7 +30,6 @@ const meta: Meta<typeof ObcAutomationBadge> = {
       },
     },
   },
-
 } satisfies Meta<ObcAutomationBadge>;
 
 export default meta;
@@ -85,4 +84,4 @@ export const SlottedIcon: Story = {
       <obi-command-locked-f slot="icon-siluette"></obi-command-locked-f>
     </obc-automation-badge>`;
   },
-}
+};

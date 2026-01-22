@@ -1,12 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/web-vite';
-import { ObcDamper } from './damper.js';
-import { AutomationButtonReadoutPosition } from '../automation-button/automation-button.js';
-import { AutomationButtonReadoutStackSize } from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
+import type {Meta, StoryObj} from '@storybook/web-vite';
+import {ObcDamper} from './damper.js';
+import {AutomationButtonReadoutPosition} from '../automation-button/automation-button.js';
+import {AutomationButtonReadoutStackSize} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import './damper.js';
-import { crossDecorator } from '../../storybook-util.js';
+import {crossDecorator} from '../../storybook-util.js';
 import '../automation-badge/automation-badge.js';
-import { argTypesAbstractAutomationButtonPassiveSquare } from '../automation-button/abstract-automation-button-storybook-helpers.js';
-
+import {argTypesAbstractAutomationButtonPassiveSquare} from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 const meta: Meta<typeof ObcDamper> = {
   title: 'Automation/Automation devices/Damper',
@@ -25,7 +24,7 @@ const meta: Meta<typeof ObcDamper> = {
   },
   argTypes: {
     ...argTypesAbstractAutomationButtonPassiveSquare,
-    value: { control: { type: 'range', min: 0, max: 100, step: 1 } },
+    value: {control: {type: 'range', min: 0, max: 100, step: 1}},
   },
 } as Meta<typeof ObcDamper>;
 

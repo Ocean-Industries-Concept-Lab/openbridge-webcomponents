@@ -1,15 +1,15 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { ObcMotor } from './motor.js';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import {ObcMotor} from './motor.js';
 import './motor.js';
-import { crossDecorator } from '../../storybook-util.js';
+import {crossDecorator} from '../../storybook-util.js';
 import {
   AutomationButtonDirection,
   AutomationButtonLabelDirection,
   AutomationButtonReadoutPosition,
   AutomationButtonVariant,
 } from '../automation-button/automation-button.js';
-import { AutomationButtonReadoutStackSize } from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
-import { argTypesAbstractAutomationButtonMotorized } from '../automation-button/abstract-automation-button-storybook-helpers.js';
+import {AutomationButtonReadoutStackSize} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
+import {argTypesAbstractAutomationButtonMotorized} from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 const meta: Meta<typeof ObcMotor> = {
   title: 'Automation/Automation devices/Motor',
@@ -28,7 +28,7 @@ const meta: Meta<typeof ObcMotor> = {
   argTypes: {
     ...argTypesAbstractAutomationButtonMotorized,
     vertical: {
-      control: { type: 'boolean' },
+      control: {type: 'boolean'},
     },
   },
   globals: {

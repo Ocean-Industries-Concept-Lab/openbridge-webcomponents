@@ -32,7 +32,7 @@ export interface AutomationButtonReadoutStackValue {
   nDigits: number;
   unit: string;
   direction: 'up' | 'down' | 'left' | 'right';
-  icon: 'none' | 'arrow' | 'chevron'
+  icon: 'none' | 'arrow' | 'chevron';
 }
 
 export interface AutomationButtonReadoutStackStateOn {

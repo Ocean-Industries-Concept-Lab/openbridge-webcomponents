@@ -14,18 +14,19 @@
     position: relative;
   }
 
-  ::slotted([slot="icon-siluette"]), 
+  ::slotted([slot="icon-siluette"]),
   .icon.siluette {
     stroke-width: 2px;
     stroke: var(--border-silhouette-color);
   }
 
-  &:not(.flat) ::slotted([slot="icon-siluette"]), 
+  &:not(.flat) ::slotted([slot="icon-siluette"]),
   &:not(.flat) .icon.siluette {
     display: none;
   }
 
-  ::slotted(*), .icon {
+  ::slotted(*),
+  .icon {
     position: absolute;
     top: 0;
     left: 0;

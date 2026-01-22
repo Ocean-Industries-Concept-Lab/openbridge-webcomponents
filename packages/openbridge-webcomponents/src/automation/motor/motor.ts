@@ -1,17 +1,17 @@
-import { html } from 'lit';
-import { property } from 'lit/decorators.js';
+import {html} from 'lit';
+import {property} from 'lit/decorators.js';
 import '../automation-button/automation-button.js';
 
 import '../../icons/icon-motor-on-vertical.js';
 import '../../icons/icon-motor-off-vertical.js';
 import '../../icons/icon-motor-on-horizontal.js';
 import '../../icons/icon-motor-off-horizontal.js';
-import { customElement } from '../../decorator.js';
-import { ObcAbstractAutomationButtonMotorized } from '../automation-button/abstract-automation-button-motorized.js';
+import {customElement} from '../../decorator.js';
+import {ObcAbstractAutomationButtonMotorized} from '../automation-button/abstract-automation-button-motorized.js';
 
 @customElement('obc-motor')
 export class ObcMotor extends ObcAbstractAutomationButtonMotorized {
-  @property({ type: Boolean }) vertical: boolean = false;
+  @property({type: Boolean}) vertical: boolean = false;
 
   override get icon() {
     if (this.vertical) {

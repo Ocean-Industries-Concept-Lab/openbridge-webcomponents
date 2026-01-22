@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
   AutomationButtonReadoutStackSize,
   IdTagOrientation,
 } from './automation-button-readout-stack.js';
-import type { AutomationButtonReadoutStack as Readout } from './automation-button-readout-stack.js';
+import type {AutomationButtonReadoutStack as Readout} from './automation-button-readout-stack.js';
 import './automation-button-readout-stack.js';
-import { html } from 'lit';
+import {html} from 'lit';
 
 const meta: Meta = {
   title: 'Building Blocks/Automation button readout stack',
@@ -41,23 +41,23 @@ const meta: Meta = {
   argTypes: {
     size: {
       options: Object.values(AutomationButtonReadoutStackSize),
-      control: { type: 'select' },
-      table: { category: '01 General' },
+      control: {type: 'select'},
+      table: {category: '01 General'},
     },
     idTagOrientation: {
       options: Object.values(IdTagOrientation),
-      control: { type: 'inline-radio' },
-      table: { category: '01 General' },
+      control: {type: 'inline-radio'},
+      table: {category: '01 General'},
     },
-    hasIdTag: { control: { type: 'boolean' }, table: { category: '01 General' } },
+    hasIdTag: {control: {type: 'boolean'}, table: {category: '01 General'}},
     tagValue: {
-      control: { type: 'number' },
-      if: { arg: 'hasIdTag' },
-      table: { category: '01 General' },
+      control: {type: 'number'},
+      if: {arg: 'hasIdTag'},
+      table: {category: '01 General'},
     },
     readouts: {
-      control: { type: 'object' },
-      table: { category: '02 Readouts' },
+      control: {type: 'object'},
+      table: {category: '02 Readouts'},
     },
   },
   render: (args) => {
@@ -69,7 +69,7 @@ const meta: Meta = {
       readouts: Readout[];
     };
     const a = args as unknown as Controls;
-    const tag = a.hasIdTag ? { value: Number(a.tagValue ?? 0) } : null;
+    const tag = a.hasIdTag ? {value: Number(a.tagValue ?? 0)} : null;
 
     return html`
       <obc-automation-button-readout-stack
@@ -486,7 +486,7 @@ export const StateOffWithIcon: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [{ type: 'state-off', value: 'Off', hasIcon: true }],
+    readouts: [{type: 'state-off', value: 'Off', hasIcon: true}],
   },
 };
 
@@ -496,7 +496,7 @@ export const StateOffWithoutIcon: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [{ type: 'state-off', value: 'Off', hasIcon: false }],
+    readouts: [{type: 'state-off', value: 'Off', hasIcon: false}],
   },
 };
 
@@ -506,7 +506,7 @@ export const StateOffSizes: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [{ type: 'state-off', value: 'Off', hasIcon: true }],
+    readouts: [{type: 'state-off', value: 'Off', hasIcon: true}],
   },
 };
 
@@ -516,7 +516,7 @@ export const StateOffSmall: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [{ type: 'state-off', value: 'Off', hasIcon: true }],
+    readouts: [{type: 'state-off', value: 'Off', hasIcon: true}],
   },
 };
 
@@ -535,7 +535,7 @@ export const MixedValueAndStateOff: Story = {
         direction: 'right',
         icon: 'arrow',
       },
-      { type: 'state-off', value: 'Off', hasIcon: true },
+      {type: 'state-off', value: 'Off', hasIcon: true},
     ],
   },
 };
@@ -555,7 +555,7 @@ export const StateOffAtBottom: Story = {
         direction: 'right',
         icon: 'arrow',
       },
-      { type: 'state-off', value: 'Off', hasIcon: true },
+      {type: 'state-off', value: 'Off', hasIcon: true},
     ],
   },
 };
@@ -567,7 +567,7 @@ export const StateOnWithIcon: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [{ type: 'state-on', value: 'On', hasIcon: true }],
+    readouts: [{type: 'state-on', value: 'On', hasIcon: true}],
   },
 };
 
@@ -577,7 +577,7 @@ export const StateOnWithoutIcon: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [{ type: 'state-on', value: 'On', hasIcon: false }],
+    readouts: [{type: 'state-on', value: 'On', hasIcon: false}],
   },
 };
 
@@ -587,7 +587,7 @@ export const StateOnSizes: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [{ type: 'state-on', value: 'On', hasIcon: true }],
+    readouts: [{type: 'state-on', value: 'On', hasIcon: true}],
   },
 };
 
@@ -597,7 +597,7 @@ export const StateOnSmall: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [{ type: 'state-on', value: 'On', hasIcon: true }],
+    readouts: [{type: 'state-on', value: 'On', hasIcon: true}],
   },
 };
 
@@ -616,7 +616,7 @@ export const MixedValueAndStateOn: Story = {
         direction: 'right',
         icon: 'arrow',
       },
-      { type: 'state-on', value: 'On', hasIcon: true },
+      {type: 'state-on', value: 'On', hasIcon: true},
     ],
   },
 };
@@ -628,8 +628,8 @@ export const StateOnAndOff: Story = {
     hasIdTag: true,
     tagValue: 0,
     readouts: [
-      { type: 'state-on', value: 'On', hasIcon: true },
-      { type: 'state-off', value: 'Off', hasIcon: true },
+      {type: 'state-on', value: 'On', hasIcon: true},
+      {type: 'state-off', value: 'Off', hasIcon: true},
     ],
   },
 };
@@ -641,7 +641,7 @@ export const ButtonWithIcon: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [{ type: 'button', value: 25.5, hasIcon: true, unit: '°C' }],
+    readouts: [{type: 'button', value: 25.5, hasIcon: true, unit: '°C'}],
   },
 };
 
@@ -651,7 +651,7 @@ export const ButtonWithoutIcon: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [{ type: 'button', value: 25.5, hasIcon: false, unit: '°C' }],
+    readouts: [{type: 'button', value: 25.5, hasIcon: false, unit: '°C'}],
   },
 };
 
@@ -661,7 +661,7 @@ export const ButtonSizes: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [{ type: 'button', value: 25.5, hasIcon: true, unit: '°C' }],
+    readouts: [{type: 'button', value: 25.5, hasIcon: true, unit: '°C'}],
   },
 };
 
@@ -671,7 +671,7 @@ export const ButtonSmall: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [{ type: 'button', value: 25.5, hasIcon: true, unit: '°C' }],
+    readouts: [{type: 'button', value: 25.5, hasIcon: true, unit: '°C'}],
   },
 };
 
@@ -690,7 +690,7 @@ export const MixedValueAndButton: Story = {
         direction: 'right',
         icon: 'arrow',
       },
-      { type: 'button', value: 25.5, hasIcon: true, unit: '°C' },
+      {type: 'button', value: 25.5, hasIcon: true, unit: '°C'},
     ],
   },
 };
@@ -710,7 +710,7 @@ export const AllTypes: Story = {
         direction: 'right',
         icon: 'arrow',
       },
-      { type: 'button', value: 25.5, hasIcon: true, unit: '°C' },
+      {type: 'button', value: 25.5, hasIcon: true, unit: '°C'},
     ],
   },
 };
@@ -721,7 +721,7 @@ export const ButtonType: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [{ type: 'button', value: 25.5, hasIcon: true, unit: '°C' }],
+    readouts: [{type: 'button', value: 25.5, hasIcon: true, unit: '°C'}],
   },
 };
 

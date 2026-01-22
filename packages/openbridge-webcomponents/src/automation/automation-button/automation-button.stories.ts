@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
   AutomationButtonDirection,
   AutomationButtonVariant,
@@ -9,9 +9,9 @@ import {
   AutomationButtonReadoutStackSize,
   AutomationButtonReadoutStackTag,
 } from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
-import { AutomationButtonReadoutPosition } from './automation-button.js';
+import {AutomationButtonReadoutPosition} from './automation-button.js';
 import './automation-button.js';
-import { html } from 'lit';
+import {html} from 'lit';
 import '../../icons/icon-twoway-digital-open.js';
 import '../../icons/icon-twoway-digital-closed.js';
 import '../../icons/icon-switch-horizontal-on.js';
@@ -26,7 +26,7 @@ import '../../icons/icon-pump-on-horizontal.js';
 import '../../icons/icon-pump-off-horizontal.js';
 import '../valve-analog-three-way-icon/valve-analog-three-way-icon.js';
 import '../../icons/icon-command-locked-f.js';
-import { crossDecorator } from '../../storybook-util.js';
+import {crossDecorator} from '../../storybook-util.js';
 import {
   ObcAlertFrameStatus,
   ObcAlertFrameThickness,
@@ -40,25 +40,25 @@ const meta: Meta<typeof ObcAutomationButton> = {
   decorators: [crossDecorator],
   argTypes: {
     hasReadoutStack: {
-      control: { type: 'boolean' },
+      control: {type: 'boolean'},
     },
     hasIdTag: {
-      control: { type: 'boolean' },
+      control: {type: 'boolean'},
     },
     readoutPosition: {
       options: ['top', 'bottom', 'left', 'right'],
-      control: { type: 'radio' },
+      control: {type: 'radio'},
     },
     readoutSize: {
       options: ['small', 'regular', 'enhanced'],
-      control: { type: 'radio' },
+      control: {type: 'radio'},
     },
     alert: {
-      control: { type: 'boolean' },
+      control: {type: 'boolean'},
     },
     variant: {
       options: Object.values(AutomationButtonVariant),
-      control: { type: 'select' },
+      control: {type: 'select'},
     },
     direction: {
       options: [
@@ -70,7 +70,7 @@ const meta: Meta<typeof ObcAutomationButton> = {
         'backward-stopped',
         'standby',
       ],
-      control: { type: 'radio' },
+      control: {type: 'radio'},
     },
   },
   args: {
@@ -81,7 +81,7 @@ const meta: Meta<typeof ObcAutomationButton> = {
   },
   parameters: {
     // Overrides the default behavior and pauses the animation at the first frame at the component level for all stories.
-    chromatic: { pauseAnimationAtEnd: false },
+    chromatic: {pauseAnimationAtEnd: false},
   },
 } as Meta<typeof ObcAutomationButton>;
 
@@ -96,7 +96,7 @@ export const ValveOpen: Story = {
 
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [];
-    const tag: AutomationButtonReadoutStackTag | null = { value: 0 };
+    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html`<obc-automation-button
       state="open"
       .hideReadoutStack=${args.hideReadoutStack}
@@ -157,7 +157,7 @@ export const ValveAlert: Story = {
   },
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [];
-    const tag: AutomationButtonReadoutStackTag | null = { value: 0 };
+    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html` <obc-automation-button
       state="open"
       .hideReadoutStack=${args.hideReadoutStack}
@@ -185,7 +185,7 @@ export const ValveAlert: Story = {
 export const ValveBadges: Story = {
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [];
-    const tag: AutomationButtonReadoutStackTag | null = { value: 0 };
+    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html` <obc-automation-button
       state="open"
       .hideReadoutStack=${args.hideReadoutStack}
@@ -227,7 +227,7 @@ export const ValveProgress: Story = {
   },
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [];
-    const tag: AutomationButtonReadoutStackTag | null = { value: 0 };
+    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html` <obc-automation-button
       state="open"
       .hideReadoutStack=${args.hideReadoutStack}
@@ -249,7 +249,7 @@ export const ValveProgress: Story = {
 export const ValveClosed: Story = {
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [];
-    const tag: AutomationButtonReadoutStackTag | null = { value: 0 };
+    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html` <obc-automation-button
       state="closed"
       .hideReadoutStack=${args.hideReadoutStack}
@@ -307,9 +307,9 @@ export const ValveNoLabels: Story = {
 export const SwitchOn: Story = {
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [
-      { type: 'state-on', value: 'On', hasIcon: true },
+      {type: 'state-on', value: 'On', hasIcon: true},
     ];
-    const tag: AutomationButtonReadoutStackTag | null = { value: 0 };
+    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html` <obc-automation-button
       state="open"
       variant="square"
@@ -332,9 +332,9 @@ export const SwitchOn: Story = {
 export const SwitchOff: Story = {
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [
-      { type: 'state-off', value: 'Off', hasIcon: true },
+      {type: 'state-off', value: 'Off', hasIcon: true},
     ];
-    const tag: AutomationButtonReadoutStackTag | null = { value: 0 };
+    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html` <obc-automation-button
       state="closed"
       variant="square"
@@ -357,9 +357,9 @@ export const SwitchOff: Story = {
 export const DamperOn: Story = {
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [
-      { type: 'state-on', value: 'On', hasIcon: true },
+      {type: 'state-on', value: 'On', hasIcon: true},
     ];
-    const tag: AutomationButtonReadoutStackTag | null = { value: 0 };
+    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html` <obc-automation-button
       state="open"
       variant="square"
@@ -382,9 +382,9 @@ export const DamperOn: Story = {
 export const DamperOff: Story = {
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [
-      { type: 'state-off', value: 'Off', hasIcon: true },
+      {type: 'state-off', value: 'Off', hasIcon: true},
     ];
-    const tag: AutomationButtonReadoutStackTag | null = { value: 0 };
+    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html` <obc-automation-button
       state="closed"
       variant="square"
@@ -407,9 +407,9 @@ export const DamperOff: Story = {
 export const DamperBadges: Story = {
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [
-      { type: 'state-on', value: 'On', hasIcon: true },
+      {type: 'state-on', value: 'On', hasIcon: true},
     ];
-    const tag: AutomationButtonReadoutStackTag | null = { value: 0 };
+    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html` <obc-automation-button
       state="open"
       variant="square"
@@ -447,9 +447,9 @@ export const MotorOn: Story = {
   },
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [
-      { type: 'state-on', value: 'On', hasIcon: true },
+      {type: 'state-on', value: 'On', hasIcon: true},
     ];
-    const tag: AutomationButtonReadoutStackTag | null = { value: 0 };
+    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html` <obc-automation-button
       state="open"
       variant="double"
@@ -477,9 +477,9 @@ export const MotorOff: Story = {
   },
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [
-      { type: 'state-off', value: 'Off', hasIcon: true },
+      {type: 'state-off', value: 'Off', hasIcon: true},
     ];
-    const tag: AutomationButtonReadoutStackTag | null = { value: 0 };
+    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html` <obc-automation-button
       state="closed"
       variant="double"
@@ -504,8 +504,8 @@ export const MotorOff: Story = {
 export const ThreeWayValveOpenRight: Story = {
   argTypes: {
     value: {
-      control: { type: 'range', min: 0, max: 100, step: 1 },
-      table: { category: 'Story-specific' },
+      control: {type: 'range', min: 0, max: 100, step: 1},
+      table: {category: 'Story-specific'},
     },
   } as Partial<Record<string, unknown>>,
   args: {
@@ -535,7 +535,7 @@ export const ThreeWayValveOpenRight: Story = {
         icon: 'arrow',
       },
     ];
-    const tag: AutomationButtonReadoutStackTag | null = { value: 0 };
+    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html` <obc-automation-button
       state="open"
       .hideReadoutStack=${(args as unknown as ObcAutomationButton)
