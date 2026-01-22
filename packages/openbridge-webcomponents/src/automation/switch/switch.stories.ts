@@ -5,7 +5,7 @@ import {AutomationButtonReadoutStackSize} from '../../components/automation-butt
 import './switch.js';
 import {crossDecorator} from '../../storybook-util.js';
 import '../automation-badge/automation-badge.js';
-import {argTypesAbstractAutomationButtonPassiveRound} from '../automation-button/abstract-automation-button-storybook-helpers.js';
+import {argTypesAbstractAutomationButtonPassiveSquare} from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 const meta: Meta<typeof ObcSwitch> = {
   title: 'Automation/Automation devices/Switch',
@@ -27,7 +27,7 @@ const meta: Meta<typeof ObcSwitch> = {
       control: 'radio',
       options: Object.values(SwitchAlternativeIcon),
     },
-    ...argTypesAbstractAutomationButtonPassiveRound,
+    ...argTypesAbstractAutomationButtonPassiveSquare,
     value: {control: {type: 'range', min: 0, max: 100, step: 1}},
   },
 } as Meta<typeof ObcSwitch>;

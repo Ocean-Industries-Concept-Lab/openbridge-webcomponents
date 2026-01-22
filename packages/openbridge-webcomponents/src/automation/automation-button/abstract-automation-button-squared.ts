@@ -20,7 +20,7 @@ export class ObcAbstractAutomationButtonSquared extends ObcAbstractAutomationBut
           hasIcon: true,
         },
       ];
-    } else if (!this.on) {
+    } else {
       return [
         {
           type: 'state-off',
@@ -29,7 +29,6 @@ export class ObcAbstractAutomationButtonSquared extends ObcAbstractAutomationBut
         },
       ];
     }
-    return [];
   }
 
   override get _on(): boolean {
