@@ -179,10 +179,10 @@ export class ObcGaugeTrend extends ObcChartLineBase {
 
   override disconnectedCallback() {
     super.disconnectedCallback();
-    if (this._barVerticalElement) {
-      this._barVerticalElement.remove();
-      this._barVerticalElement = undefined;
-    }
+    // Note: We intentionally don't remove _barVerticalElement here.
+    // It's a light DOM child that naturally travels with the parent when
+    // the component is moved in the DOM. Removing it would cause the scale
+    // to be lost on reconnect since firstUpdated() only runs once.
   }
 
   private _createBarVerticalElement() {
@@ -217,16 +217,16 @@ export class ObcGaugeTrend extends ObcChartLineBase {
     // Use getEffectiveHeight() which returns computed height in fixedAspectRatioScaling mode
     // This ensures the bar-vertical gets the correct height that matches the chart's actual size
     const effectiveHeight = this.getEffectiveHeight();
-    const scaleFactor = this.getScaleFactor();
+    // const scaleFactor = this.getScaleFactor();
 
-    console.debug(`[gauge-trend] _updateBarVerticalProperties:`, {
-      fixedAspectRatioScaling: this.fixedAspectRatioScaling,
-      width: this.width,
-      height: this.height,
-      effectiveHeight,
-      scaleFactor,
-      scaleReferenceSize: this.scaleReferenceSize,
-    });
+    // console.debug(`[gauge-trend] _updateBarVerticalProperties:`, {
+    //   fixedAspectRatioScaling: this.fixedAspectRatioScaling,
+    //   width: this.width,
+    //   height: this.height,
+    //   effectiveHeight,
+    //   scaleFactor,
+    //   scaleReferenceSize: this.scaleReferenceSize,
+    // });
 
     barVertical.minValue = this.scaleMinValue;
     barVertical.maxValue = this.scaleMaxValue;

@@ -115,13 +115,13 @@ export class ObcBarVertical extends LitElement {
         scaleReferenceSize: this.scaleReferenceSize,
       });
 
-      console.debug(`[bar-vertical] ResizeController:`, {
-        fixedAspectRatio: this.fixedAspectRatio,
-        containerHeight: containerMainAxisSize,
-        scaleReferenceSize: this.scaleReferenceSize,
-        computedScale: this._scale,
-        height: this.height,
-      });
+      // console.debug(`[bar-vertical] ResizeController:`, {
+      //   fixedAspectRatio: this.fixedAspectRatio,
+      //   containerHeight: containerMainAxisSize,
+      //   scaleReferenceSize: this.scaleReferenceSize,
+      //   computedScale: this._scale,
+      //   height: this.height,
+      // });
 
       // Report scaled dimensions to parent chart
       this.reportDimensions();
@@ -279,15 +279,15 @@ export class ObcBarVertical extends LitElement {
     // pre-scaled to: basePadding * scaleReferenceSize / referenceHeight
     // This ensures the visual padding matches the chart's Canvas padding at any aspect ratio.
 
-    console.debug(`[bar-vertical] render:`, {
-      fixedAspectRatio: this.fixedAspectRatio,
-      height: this.height,
-      scaleReferenceSize: this.scaleReferenceSize,
-      effectiveLength,
-      scale: this._scale,
-      paddingTop: this.paddingTop,
-      paddingBottom: this.paddingBottom,
-    });
+    // console.debug(`[bar-vertical] render:`, {
+    //   fixedAspectRatio: this.fixedAspectRatio,
+    //   height: this.height,
+    //   scaleReferenceSize: this.scaleReferenceSize,
+    //   effectiveLength,
+    //   scale: this._scale,
+    //   paddingTop: this.paddingTop,
+    //   paddingBottom: this.paddingBottom,
+    // });
 
     const config: ExternalScaleConfig = {
       orientation: 'vertical',
@@ -450,21 +450,21 @@ export class ObcBarVertical extends LitElement {
         }
       : baseDimensions;
 
-    console.debug(`[bar-vertical] reportDimensions:`, {
-      fixedAspectRatio: this.fixedAspectRatio,
-      side: dimensions.side,
-      thickness: dimensions.thickness,
-      scale: this._scale,
-      height: this.height,
-      scaleReferenceSize: this.scaleReferenceSize,
-      effectiveLength,
-      hasBar: this.hasBar,
-      hasScale: this.hasScale,
-      hideLabels: this.hideLabels,
-      barThickness: this.barThickness,
-      tickThickness: this.tickThickness,
-      labelThickness: this.labelThickness,
-    });
+    // console.debug(`[bar-vertical] reportDimensions:`, {
+    //   fixedAspectRatio: this.fixedAspectRatio,
+    //   side: dimensions.side,
+    //   thickness: dimensions.thickness,
+    //   scale: this._scale,
+    //   height: this.height,
+    //   scaleReferenceSize: this.scaleReferenceSize,
+    //   effectiveLength,
+    //   hasBar: this.hasBar,
+    //   hasScale: this.hasScale,
+    //   hideLabels: this.hideLabels,
+    //   barThickness: this.barThickness,
+    //   tickThickness: this.tickThickness,
+    //   labelThickness: this.labelThickness,
+    // });
 
     this.dispatchEvent(
       new CustomEvent('scale-dimensions-changed', {
@@ -544,6 +544,8 @@ export class ObcBarVertical extends LitElement {
           scaleReferenceSize: this.scaleReferenceSize,
         });
         this.requestUpdate();
+        // Report updated dimensions to parent (matches pattern in ResizeController and _refreshBorderRadiusFromCssVar)
+        this.reportDimensions();
       }
     });
   }

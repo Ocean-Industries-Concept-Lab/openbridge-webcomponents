@@ -1223,13 +1223,13 @@ export class ObcChartLineBase extends LitElement {
       left: this.externalScaleDimensions.get('left') ?? defaultPadding,
     };
 
-    console.debug(`[chart-line-base] calculatePaddingFromScales:`, {
-      fixedAspectRatioScaling: this.fixedAspectRatioScaling,
-      scaleReferenceSize: this.scaleReferenceSize,
-      externalScaleDimensions: Object.fromEntries(this.externalScaleDimensions),
-      defaultPadding,
-      calculatedPadding: padding,
-    });
+    // console.debug(`[chart-line-base] calculatePaddingFromScales:`, {
+    //   fixedAspectRatioScaling: this.fixedAspectRatioScaling,
+    //   scaleReferenceSize: this.scaleReferenceSize,
+    //   externalScaleDimensions: Object.fromEntries(this.externalScaleDimensions),
+    //   defaultPadding,
+    //   calculatedPadding: padding,
+    // });
 
     return padding;
   }
@@ -1284,19 +1284,19 @@ export class ObcChartLineBase extends LitElement {
         }
       : {left: padding.left, right: padding.right};
 
-    console.debug(`[chart-line-base] updateScaleProperties:`, {
-      fixedAspectRatioScaling: this.fixedAspectRatioScaling,
-      referenceWidth: this.width,
-      referenceHeight: this.height,
-      scaleReferenceSize: this.scaleReferenceSize,
-      effectiveWidth,
-      effectiveHeight,
-      scaleFactor: this.getScaleFactor(),
-      basePadding: padding,
-      verticalViewBoxPadding,
-      horizontalViewBoxPadding,
-      hideLabels,
-    });
+    // console.debug(`[chart-line-base] updateScaleProperties:`, {
+    //   fixedAspectRatioScaling: this.fixedAspectRatioScaling,
+    //   referenceWidth: this.width,
+    //   referenceHeight: this.height,
+    //   scaleReferenceSize: this.scaleReferenceSize,
+    //   effectiveWidth,
+    //   effectiveHeight,
+    //   scaleFactor: this.getScaleFactor(),
+    //   basePadding: padding,
+    //   verticalViewBoxPadding,
+    //   horizontalViewBoxPadding,
+    //   hideLabels,
+    // });
 
     // Update each slotted scale
     const updates: Array<
@@ -1684,17 +1684,17 @@ export class ObcChartLineBase extends LitElement {
     const newWidth = parentWidth;
     const newHeight = Math.round(parentWidth / aspectRatio);
 
-    console.debug(`[chart-line-base] updateComputedDimensions:`, {
-      fixedAspectRatioScaling: this.fixedAspectRatioScaling,
-      referenceWidth: this.width,
-      referenceHeight: this.height,
-      scaleReferenceSize: this.scaleReferenceSize,
-      parentWidth,
-      aspectRatio,
-      newWidth,
-      newHeight,
-      scaleFactor: newWidth / this.width,
-    });
+    // console.debug(`[chart-line-base] updateComputedDimensions:`, {
+    //   fixedAspectRatioScaling: this.fixedAspectRatioScaling,
+    //   referenceWidth: this.width,
+    //   referenceHeight: this.height,
+    //   scaleReferenceSize: this.scaleReferenceSize,
+    //   parentWidth,
+    //   aspectRatio,
+    //   newWidth,
+    //   newHeight,
+    //   scaleFactor: newWidth / this.width,
+    // });
 
     // Only update if dimensions changed
     if (this.computedWidth !== newWidth || this.computedHeight !== newHeight) {
@@ -1994,18 +1994,18 @@ export class ObcChartLineBase extends LitElement {
       };
     }
 
-    console.debug(`[chart-line-base] getChartOptions:`, {
-      fixedAspectRatioScaling: this.fixedAspectRatioScaling,
-      referenceWidth: this.width,
-      referenceHeight: this.height,
-      effectiveWidth,
-      effectiveHeight,
-      scaleFactor,
-      scaleReferenceSize: this.scaleReferenceSize,
-      padding,
-      externalScaleDimensions: Object.fromEntries(this.externalScaleDimensions),
-      hasExternalScales: this.hasExternalScales(),
-    });
+    // console.debug(`[chart-line-base] getChartOptions:`, {
+    //   fixedAspectRatioScaling: this.fixedAspectRatioScaling,
+    //   referenceWidth: this.width,
+    //   referenceHeight: this.height,
+    //   effectiveWidth,
+    //   effectiveHeight,
+    //   scaleFactor,
+    //   scaleReferenceSize: this.scaleReferenceSize,
+    //   padding,
+    //   externalScaleDimensions: Object.fromEntries(this.externalScaleDimensions),
+    //   hasExternalScales: this.hasExternalScales(),
+    // });
 
     // Set CSS variables for wrapper and canvas sizing
     if (this.fixedAspectRatioScaling) {

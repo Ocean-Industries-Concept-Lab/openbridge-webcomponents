@@ -117,13 +117,13 @@ export class ObcBarHorizontal extends LitElement {
         scaleReferenceSize: this.scaleReferenceSize,
       });
 
-      console.debug(`[bar-horizontal] ResizeController:`, {
-        fixedAspectRatio: this.fixedAspectRatio,
-        containerWidth: containerMainAxisSize,
-        scaleReferenceSize: this.scaleReferenceSize,
-        computedScale: this._scale,
-        width: this.width,
-      });
+      // console.debug(`[bar-horizontal] ResizeController:`, {
+      //   fixedAspectRatio: this.fixedAspectRatio,
+      //   containerWidth: containerMainAxisSize,
+      //   scaleReferenceSize: this.scaleReferenceSize,
+      //   computedScale: this._scale,
+      //   width: this.width,
+      // });
 
       // Report scaled dimensions to parent chart
       this.reportDimensions();
@@ -281,15 +281,15 @@ export class ObcBarHorizontal extends LitElement {
     // pre-scaled to: basePadding * scaleReferenceSize / referenceWidth
     // This ensures the visual padding matches the chart's Canvas padding at any aspect ratio.
 
-    console.debug(`[bar-horizontal] render:`, {
-      fixedAspectRatio: this.fixedAspectRatio,
-      width: this.width,
-      scaleReferenceSize: this.scaleReferenceSize,
-      effectiveLength,
-      scale: this._scale,
-      paddingLeft: this.paddingLeft,
-      paddingRight: this.paddingRight,
-    });
+    // console.debug(`[bar-horizontal] render:`, {
+    //   fixedAspectRatio: this.fixedAspectRatio,
+    //   width: this.width,
+    //   scaleReferenceSize: this.scaleReferenceSize,
+    //   effectiveLength,
+    //   scale: this._scale,
+    //   paddingLeft: this.paddingLeft,
+    //   paddingRight: this.paddingRight,
+    // });
 
     const config: ExternalScaleConfig = {
       orientation: 'horizontal',
@@ -452,21 +452,21 @@ export class ObcBarHorizontal extends LitElement {
         }
       : baseDimensions;
 
-    console.debug(`[bar-horizontal] reportDimensions:`, {
-      fixedAspectRatio: this.fixedAspectRatio,
-      side: dimensions.side,
-      thickness: dimensions.thickness,
-      scale: this._scale,
-      width: this.width,
-      scaleReferenceSize: this.scaleReferenceSize,
-      effectiveLength,
-      hasBar: this.hasBar,
-      hasScale: this.hasScale,
-      hideLabels: this.hideLabels,
-      barThickness: this.barThickness,
-      tickThickness: this.tickThickness,
-      labelThickness: this.labelThickness,
-    });
+    // console.debug(`[bar-horizontal] reportDimensions:`, {
+    //   fixedAspectRatio: this.fixedAspectRatio,
+    //   side: dimensions.side,
+    //   thickness: dimensions.thickness,
+    //   scale: this._scale,
+    //   width: this.width,
+    //   scaleReferenceSize: this.scaleReferenceSize,
+    //   effectiveLength,
+    //   hasBar: this.hasBar,
+    //   hasScale: this.hasScale,
+    //   hideLabels: this.hideLabels,
+    //   barThickness: this.barThickness,
+    //   tickThickness: this.tickThickness,
+    //   labelThickness: this.labelThickness,
+    // });
 
     this.dispatchEvent(
       new CustomEvent('scale-dimensions-changed', {
@@ -546,6 +546,8 @@ export class ObcBarHorizontal extends LitElement {
           scaleReferenceSize: this.scaleReferenceSize,
         });
         this.requestUpdate();
+        // Report updated dimensions to parent (matches pattern in ResizeController and _refreshBorderRadiusFromCssVar)
+        this.reportDimensions();
       }
     });
   }
