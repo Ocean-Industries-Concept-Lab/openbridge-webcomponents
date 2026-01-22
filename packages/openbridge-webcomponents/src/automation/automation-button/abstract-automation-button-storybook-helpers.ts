@@ -1,4 +1,5 @@
 import { ObcAlertFrameStatus, ObcAlertFrameThickness, ObcAlertFrameType } from "../../components/alert-frame/alert-frame";
+import { MotorizedVariant } from "./abstract-automation-button-motorized";
 import { AutomationButtonDirection, AutomationButtonLabelDirection } from "./automation-button";
 
 export const argTypesAbstractAutomationButton = {
@@ -22,6 +23,35 @@ export const argTypesAbstractAutomationButton = {
         options: Object.values(ObcAlertFrameStatus),
         control: { type: 'radio' },
     },
+
+    badgeAuto: {
+        control: { type: 'boolean' },
+    },
+    badgeCommandLocked: {
+        control: { type: 'boolean' },
+    },
+    badgeDuty: {
+        control: { type: 'boolean' },
+    },
+    badgeAlertOff: {
+        control: { type: 'boolean' },
+    },
+};
+
+export const argTypesAbstractAutomationButtonPassiveRound = {
+    ...argTypesAbstractAutomationButton,
+    variant: {
+        options: ['regular', 'flat'],
+        control: { type: 'radio' },
+    },
+};
+
+export const argTypesAbstractAutomationButtonPassiveSquare = {
+    ...argTypesAbstractAutomationButton,
+    variant: {
+        options: ['square', 'flat'],
+        control: { type: 'radio' },
+    },
 };
 
 export const argTypesAbstractAutomationButtonMotorized = {
@@ -36,6 +66,10 @@ export const argTypesAbstractAutomationButtonMotorized = {
     direction: {
         options:
             Object.values(AutomationButtonDirection),
+        control: { type: 'radio' },
+    },
+    variant: {
+        options: Object.values(MotorizedVariant),
         control: { type: 'radio' },
     },
 };

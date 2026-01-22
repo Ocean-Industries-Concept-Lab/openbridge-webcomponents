@@ -6,13 +6,18 @@ import { customElement } from '../../decorator.js';
 import { ObcAbstractAutomationButton } from '../automation-button/abstract-automation-button.js';
 import { AutomationButtonReadoutStack } from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 
+export enum DigitalValveVariant {
+  regular = 'regular',
+  flat = 'flat',
+}
+
 /**
  * @ignition-base-height: 82px
  * @ignition-base-width: 66px
  * @ignition-center
  */
 @customElement('obc-digital-valve')
-export class ObcDigitalValve extends ObcAbstractAutomationButton {
+export class ObcDigitalValve extends ObcAbstractAutomationButton<DigitalValveVariant> {
   @property({ type: Boolean }) open: boolean = false;
   @property({ type: Boolean }) vertical: boolean = false;
 

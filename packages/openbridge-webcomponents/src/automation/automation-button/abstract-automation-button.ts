@@ -1,4 +1,4 @@
-import { LitElement, TemplateResult, html } from 'lit';
+import { LitElement, TemplateResult, html, nothing } from 'lit';
 import { property, queryAssignedElements } from 'lit/decorators.js';
 import '../automation-button/automation-button.js';
 import {
@@ -18,7 +18,7 @@ import {
   ObcAlertFrameType,
 } from '../../components/alert-frame/alert-frame.js';
 
-export class ObcAbstractAutomationButton extends LitElement {
+export class ObcAbstractAutomationButton<T> extends LitElement {
   @property({ type: Boolean }) hideReadoutStack: boolean = false;
   @property({ type: Boolean }) hasIdTag: boolean = false;
   @property({ type: String }) readoutPosition: AutomationButtonReadoutPosition =
@@ -34,10 +34,14 @@ export class ObcAbstractAutomationButton extends LitElement {
     ObcAlertFrameStatus.Alarm;
   @property({ type: Boolean }) progress: boolean = false;
   @property({ type: String }) tag: string = '';
-  @property({ type: String }) variant: AutomationButtonVariant =
-    AutomationButtonVariant.regular;
+  @property({ type: String }) variant: T =
+    AutomationButtonVariant.regular as T;
   @property({ type: String }) direction: AutomationButtonDirection =
     AutomationButtonDirection.forward;
+  @property({ type: Boolean }) badgeAuto: boolean = false;
+  @property({ type: Boolean }) badgeCommandLocked: boolean = false;
+  @property({ type: Boolean }) badgeDuty: boolean = false;
+  @property({ type: Boolean }) badgeAlertOff: boolean = false;
 
   get icon(): TemplateResult {
     throw new Error('Method "icon" must be implemented in subclass');
@@ -64,14 +68,18 @@ export class ObcAbstractAutomationButton extends LitElement {
     if (this.hideReadoutStack) {
       return false;
     }
+    const topLeft = this.badgeTopLeft.length > 0 || this.badgeAuto;
+    const topRight = this.badgeTopRight.length > 0 || this.badgeAlertOff;
+    const bottomLeft = this.badgeBottomLeft.length > 0 || this.badgeDuty;
+    const bottomRight = this.badgeBottomRight.length > 0 || this.badgeCommandLocked;
     if (this.readoutPosition === AutomationButtonReadoutPosition.top) {
-      return this.badgeTopRight.length > 0 || this.badgeTopLeft.length > 0;
+      return topRight || topLeft;
     } else if (this.readoutPosition === AutomationButtonReadoutPosition.bottom) {
-      return this.badgeBottomLeft.length > 0 || this.badgeBottomRight.length > 0;
+      return bottomLeft || bottomRight;
     } else if (this.readoutPosition === AutomationButtonReadoutPosition.left) {
-      return this.badgeTopLeft.length > 0 || this.badgeBottomLeft.length > 0;
+      return topLeft || bottomLeft;
     } else if (this.readoutPosition === AutomationButtonReadoutPosition.right) {
-      return this.badgeTopRight.length > 0 || this.badgeBottomRight.length > 0;
+      return topRight || bottomRight;
     }
     return false;
   }
@@ -106,10 +114,18 @@ export class ObcAbstractAutomationButton extends LitElement {
       .hasBadgeSpacer=${this.getBadgeSpacer()}
     >
       ${this.icon}
-        <slot name="badge-top-right" slot="badge-top-right" @slotchange=${this.handleBadgeSlotChange}></slot>
-        <slot name="badge-top-left" slot="badge-top-left" @slotchange=${this.handleBadgeSlotChange}></slot>
-        <slot name="badge-bottom-left" slot="badge-bottom-left" @slotchange=${this.handleBadgeSlotChange}></slot>
-        <slot name="badge-bottom-right" slot="badge-bottom-right" @slotchange=${this.handleBadgeSlotChange}></slot>
+        <slot name="badge-top-right" slot="badge-top-right" @slotchange=${this.handleBadgeSlotChange}>
+          ${this.badgeAlertOff ? html`<obc-automation-badge type="alert-off"></obc-automation-badge>` : nothing}
+        </slot>
+        <slot name="badge-top-left" slot="badge-top-left" @slotchange=${this.handleBadgeSlotChange}>
+          ${this.badgeAuto ? html`<obc-automation-badge type="auto"></obc-automation-badge>` : nothing}
+        </slot>
+        <slot name="badge-bottom-left" slot="badge-bottom-left" @slotchange=${this.handleBadgeSlotChange}>
+          ${this.badgeDuty ? html`<obc-automation-badge type="duty"></obc-automation-badge>` : nothing}
+        </slot>
+        <slot name="badge-bottom-right" slot="badge-bottom-right" @slotchange=${this.handleBadgeSlotChange}>
+          ${this.badgeCommandLocked ? html`<obc-automation-badge type="command-locked"></obc-automation-badge>` : nothing}
+        </slot>
     </obc-automation-button>`;
   }
 

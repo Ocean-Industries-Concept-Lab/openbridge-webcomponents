@@ -6,13 +6,13 @@ import { ObcAbstractAutomationButton } from '../automation-button/abstract-autom
 import { AutomationButtonLabelDirection } from '../automation-button/automation-button.js';
 import { AutomationButtonReadoutStack } from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 
-/**
- * @ignition-base-height: 82px
- * @ignition-base-width: 66px
- * @ignition-center
- */
+export enum AnalogValveVariant {
+  regular = 'regular',
+  flat = 'flat',
+}
+
 @customElement('obc-analog-valve')
-export class ObcAnalogValve extends ObcAbstractAutomationButton {
+export class ObcAnalogValve extends ObcAbstractAutomationButton<AnalogValveVariant> {
   @property({ type: Boolean }) open: boolean = false;
   @property({ type: Number }) value: number = 0;
   @property({ type: Boolean }) vertical: boolean = false;

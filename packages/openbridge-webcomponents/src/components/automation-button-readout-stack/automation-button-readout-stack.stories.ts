@@ -1,11 +1,11 @@
-import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import {
   AutomationButtonReadoutStackSize,
   IdTagOrientation,
 } from './automation-button-readout-stack.js';
-import type {AutomationButtonReadoutStack as Readout} from './automation-button-readout-stack.js';
+import type { AutomationButtonReadoutStack as Readout } from './automation-button-readout-stack.js';
 import './automation-button-readout-stack.js';
-import {html} from 'lit';
+import { html } from 'lit';
 
 const meta: Meta = {
   title: 'Building Blocks/Automation button readout stack',
@@ -20,7 +20,7 @@ const meta: Meta = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
       {
         type: 'value',
@@ -28,7 +28,7 @@ const meta: Meta = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
     ],
   },
@@ -41,23 +41,23 @@ const meta: Meta = {
   argTypes: {
     size: {
       options: Object.values(AutomationButtonReadoutStackSize),
-      control: {type: 'select'},
-      table: {category: '01 General'},
+      control: { type: 'select' },
+      table: { category: '01 General' },
     },
     idTagOrientation: {
       options: Object.values(IdTagOrientation),
-      control: {type: 'inline-radio'},
-      table: {category: '01 General'},
+      control: { type: 'inline-radio' },
+      table: { category: '01 General' },
     },
-    hasIdTag: {control: {type: 'boolean'}, table: {category: '01 General'}},
+    hasIdTag: { control: { type: 'boolean' }, table: { category: '01 General' } },
     tagValue: {
-      control: {type: 'number'},
-      if: {arg: 'hasIdTag'},
-      table: {category: '01 General'},
+      control: { type: 'number' },
+      if: { arg: 'hasIdTag' },
+      table: { category: '01 General' },
     },
     readouts: {
-      control: {type: 'object'},
-      table: {category: '02 Readouts'},
+      control: { type: 'object' },
+      table: { category: '02 Readouts' },
     },
   },
   render: (args) => {
@@ -69,7 +69,7 @@ const meta: Meta = {
       readouts: Readout[];
     };
     const a = args as unknown as Controls;
-    const tag = a.hasIdTag ? {value: Number(a.tagValue ?? 0)} : null;
+    const tag = a.hasIdTag ? { value: Number(a.tagValue ?? 0) } : null;
 
     return html`
       <obc-automation-button-readout-stack
@@ -100,7 +100,7 @@ export const Default: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
       {
         type: 'value',
@@ -108,7 +108,7 @@ export const Default: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
     ],
   },
@@ -128,7 +128,7 @@ export const Small: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
       {
         type: 'value',
@@ -136,7 +136,7 @@ export const Small: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
     ],
   },
@@ -155,7 +155,7 @@ export const Enhanced: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
       {
         type: 'value',
@@ -163,7 +163,7 @@ export const Enhanced: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
     ],
   },
@@ -183,7 +183,7 @@ export const TagAtTop: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
       {
         type: 'value',
@@ -191,7 +191,7 @@ export const TagAtTop: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
     ],
   },
@@ -210,7 +210,7 @@ export const TagAtBottom: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
       {
         type: 'value',
@@ -218,7 +218,7 @@ export const TagAtBottom: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
     ],
   },
@@ -238,7 +238,7 @@ export const OnlyTag: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
       {
         type: 'value',
@@ -246,7 +246,7 @@ export const OnlyTag: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
     ],
   },
@@ -265,7 +265,7 @@ export const OnlyValue1: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
       {
         type: 'value',
@@ -273,7 +273,7 @@ export const OnlyValue1: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
     ],
   },
@@ -292,7 +292,7 @@ export const OnlyValue2: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
       {
         type: 'value',
@@ -300,7 +300,7 @@ export const OnlyValue2: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
     ],
   },
@@ -319,7 +319,7 @@ export const TagAndValue1: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
       {
         type: 'value',
@@ -327,7 +327,7 @@ export const TagAndValue1: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
     ],
   },
@@ -346,7 +346,7 @@ export const ValuesOnly: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
       {
         type: 'value',
@@ -354,7 +354,7 @@ export const ValuesOnly: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
     ],
   },
@@ -374,7 +374,7 @@ export const DifferentDirections: Story = {
         nDigits: 2,
         unit: '%',
         direction: 'up',
-        hasIcon: true,
+        icon: 'arrow',
       },
       {
         type: 'value',
@@ -382,7 +382,7 @@ export const DifferentDirections: Story = {
         nDigits: 2,
         unit: '%',
         direction: 'down',
-        hasIcon: true,
+        icon: 'arrow',
       },
     ],
   },
@@ -401,7 +401,7 @@ export const AllDirections: Story = {
         nDigits: 2,
         unit: '%',
         direction: 'up',
-        hasIcon: true,
+        icon: 'arrow',
       },
       {
         type: 'value',
@@ -409,7 +409,7 @@ export const AllDirections: Story = {
         nDigits: 2,
         unit: '%',
         direction: 'down',
-        hasIcon: true,
+        icon: 'arrow',
       },
       {
         type: 'value',
@@ -417,7 +417,7 @@ export const AllDirections: Story = {
         nDigits: 2,
         unit: '%',
         direction: 'left',
-        hasIcon: true,
+        icon: 'arrow',
       },
       {
         type: 'value',
@@ -425,7 +425,7 @@ export const AllDirections: Story = {
         nDigits: 2,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
     ],
   },
@@ -445,7 +445,7 @@ export const CustomUnits: Story = {
         nDigits: 2,
         unit: '°C',
         direction: 'up',
-        hasIcon: true,
+        icon: 'arrow',
       },
       {
         type: 'value',
@@ -453,7 +453,7 @@ export const CustomUnits: Story = {
         nDigits: 2,
         unit: 'rpm',
         direction: 'down',
-        hasIcon: true,
+        icon: 'arrow',
       },
     ],
   },
@@ -486,7 +486,7 @@ export const StateOffWithIcon: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [{type: 'state-off', value: 'Off', hasIcon: true}],
+    readouts: [{ type: 'state-off', value: 'Off', hasIcon: true }],
   },
 };
 
@@ -496,7 +496,7 @@ export const StateOffWithoutIcon: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [{type: 'state-off', value: 'Off', hasIcon: false}],
+    readouts: [{ type: 'state-off', value: 'Off', hasIcon: false }],
   },
 };
 
@@ -506,7 +506,7 @@ export const StateOffSizes: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [{type: 'state-off', value: 'Off', hasIcon: true}],
+    readouts: [{ type: 'state-off', value: 'Off', hasIcon: true }],
   },
 };
 
@@ -516,7 +516,7 @@ export const StateOffSmall: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [{type: 'state-off', value: 'Off', hasIcon: true}],
+    readouts: [{ type: 'state-off', value: 'Off', hasIcon: true }],
   },
 };
 
@@ -533,9 +533,9 @@ export const MixedValueAndStateOff: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
-      {type: 'state-off', value: 'Off', hasIcon: true},
+      { type: 'state-off', value: 'Off', hasIcon: true },
     ],
   },
 };
@@ -553,9 +553,9 @@ export const StateOffAtBottom: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
-      {type: 'state-off', value: 'Off', hasIcon: true},
+      { type: 'state-off', value: 'Off', hasIcon: true },
     ],
   },
 };
@@ -567,7 +567,7 @@ export const StateOnWithIcon: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [{type: 'state-on', value: 'On', hasIcon: true}],
+    readouts: [{ type: 'state-on', value: 'On', hasIcon: true }],
   },
 };
 
@@ -577,7 +577,7 @@ export const StateOnWithoutIcon: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [{type: 'state-on', value: 'On', hasIcon: false}],
+    readouts: [{ type: 'state-on', value: 'On', hasIcon: false }],
   },
 };
 
@@ -587,7 +587,7 @@ export const StateOnSizes: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [{type: 'state-on', value: 'On', hasIcon: true}],
+    readouts: [{ type: 'state-on', value: 'On', hasIcon: true }],
   },
 };
 
@@ -597,7 +597,7 @@ export const StateOnSmall: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [{type: 'state-on', value: 'On', hasIcon: true}],
+    readouts: [{ type: 'state-on', value: 'On', hasIcon: true }],
   },
 };
 
@@ -614,9 +614,9 @@ export const MixedValueAndStateOn: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
-      {type: 'state-on', value: 'On', hasIcon: true},
+      { type: 'state-on', value: 'On', hasIcon: true },
     ],
   },
 };
@@ -628,8 +628,8 @@ export const StateOnAndOff: Story = {
     hasIdTag: true,
     tagValue: 0,
     readouts: [
-      {type: 'state-on', value: 'On', hasIcon: true},
-      {type: 'state-off', value: 'Off', hasIcon: true},
+      { type: 'state-on', value: 'On', hasIcon: true },
+      { type: 'state-off', value: 'Off', hasIcon: true },
     ],
   },
 };
@@ -641,7 +641,7 @@ export const ButtonWithIcon: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [{type: 'button', value: 25.5, hasIcon: true, unit: '°C'}],
+    readouts: [{ type: 'button', value: 25.5, hasIcon: true, unit: '°C' }],
   },
 };
 
@@ -651,7 +651,7 @@ export const ButtonWithoutIcon: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [{type: 'button', value: 25.5, hasIcon: false, unit: '°C'}],
+    readouts: [{ type: 'button', value: 25.5, hasIcon: false, unit: '°C' }],
   },
 };
 
@@ -661,7 +661,7 @@ export const ButtonSizes: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [{type: 'button', value: 25.5, hasIcon: true, unit: '°C'}],
+    readouts: [{ type: 'button', value: 25.5, hasIcon: true, unit: '°C' }],
   },
 };
 
@@ -671,7 +671,7 @@ export const ButtonSmall: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [{type: 'button', value: 25.5, hasIcon: true, unit: '°C'}],
+    readouts: [{ type: 'button', value: 25.5, hasIcon: true, unit: '°C' }],
   },
 };
 
@@ -688,9 +688,9 @@ export const MixedValueAndButton: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
-      {type: 'button', value: 25.5, hasIcon: true, unit: '°C'},
+      { type: 'button', value: 25.5, hasIcon: true, unit: '°C' },
     ],
   },
 };
@@ -708,9 +708,9 @@ export const AllTypes: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
-      {type: 'button', value: 25.5, hasIcon: true, unit: '°C'},
+      { type: 'button', value: 25.5, hasIcon: true, unit: '°C' },
     ],
   },
 };
@@ -721,7 +721,7 @@ export const ButtonType: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [{type: 'button', value: 25.5, hasIcon: true, unit: '°C'}],
+    readouts: [{ type: 'button', value: 25.5, hasIcon: true, unit: '°C' }],
   },
 };
 
@@ -739,7 +739,7 @@ export const WithIcons: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
       {
         type: 'value',
@@ -747,7 +747,7 @@ export const WithIcons: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
     ],
   },
@@ -793,7 +793,7 @@ export const MixedIcons: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
       {
         type: 'value',

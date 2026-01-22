@@ -4,7 +4,7 @@ import { AutomationButtonReadoutPosition } from '../automation-button/automation
 import { AutomationButtonReadoutStackSize } from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import './digital-valve.js';
 import { crossDecorator } from '../../storybook-util.js';
-import { argTypesAbstractAutomationButton } from '../automation-button/abstract-automation-button-storybook-helpers.js';
+import { argTypesAbstractAutomationButtonPassiveRound } from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 const meta: Meta<typeof ObcDigitalValve> = {
   title: 'Automation/Automation devices/Digital Valve',
@@ -22,7 +22,7 @@ const meta: Meta<typeof ObcDigitalValve> = {
     hasIdTag: true,
   },
   argTypes: {
-    ...argTypesAbstractAutomationButton,
+    ...argTypesAbstractAutomationButtonPassiveRound,
   },
 } as Meta<typeof ObcDigitalValve>;
 

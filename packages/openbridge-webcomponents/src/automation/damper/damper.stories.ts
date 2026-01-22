@@ -1,18 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/web-vite';
-import { ObcAnalogValve } from './analog-valve.js';
+import { ObcDamper } from './damper.js';
 import { AutomationButtonReadoutPosition } from '../automation-button/automation-button.js';
 import { AutomationButtonReadoutStackSize } from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
-import './analog-valve.js';
+import './damper.js';
 import { crossDecorator } from '../../storybook-util.js';
-import { html } from 'lit';
 import '../automation-badge/automation-badge.js';
-import { argTypesAbstractAutomationButtonPassiveRound } from '../automation-button/abstract-automation-button-storybook-helpers.js';
+import { argTypesAbstractAutomationButtonPassiveSquare } from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 
-const meta: Meta<typeof ObcAnalogValve> = {
-  title: 'Automation/Automation devices/Analog Valve',
+const meta: Meta<typeof ObcDamper> = {
+  title: 'Automation/Automation devices/Damper',
   tags: ['autodocs'],
-  component: 'obc-analog-valve',
+  component: 'obc-damper',
   decorators: [crossDecorator],
   args: {
     tag: '0012',
@@ -25,35 +24,22 @@ const meta: Meta<typeof ObcAnalogValve> = {
     hasIdTag: true,
   },
   argTypes: {
-    ...argTypesAbstractAutomationButtonPassiveRound,
+    ...argTypesAbstractAutomationButtonPassiveSquare,
     value: { control: { type: 'range', min: 0, max: 100, step: 1 } },
   },
-} as Meta<typeof ObcAnalogValve>;
+} as Meta<typeof ObcDamper>;
 
 export default meta;
-type Story = StoryObj<ObcAnalogValve>;
+type Story = StoryObj<ObcDamper>;
 
-export const Open: Story = {
+export const On: Story = {
   args: {
-    open: true,
-    value: 20,
+    on: true,
   },
 };
 
-export const Closed: Story = {
+export const Off: Story = {
   args: {
-    open: false,
-    value: 0,
-  },
-};
-
-export const WithBadges: Story = {
-  args: {
-    open: true,
-    value: 20,
-    badgeAlertOff: true,
-    badgeAuto: true,
-    badgeDuty: true,
-    badgeCommandLocked: true,
+    on: false,
   },
 };

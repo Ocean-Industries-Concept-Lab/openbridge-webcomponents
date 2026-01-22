@@ -1,18 +1,18 @@
 import type { Meta, StoryObj } from '@storybook/web-vite';
-import { ObcAnalogValve } from './analog-valve.js';
+import { ObcSwitch, SwitchAlternativeIcon } from './switch.js';
 import { AutomationButtonReadoutPosition } from '../automation-button/automation-button.js';
 import { AutomationButtonReadoutStackSize } from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
-import './analog-valve.js';
+import './switch.js';
 import { crossDecorator } from '../../storybook-util.js';
 import { html } from 'lit';
 import '../automation-badge/automation-badge.js';
 import { argTypesAbstractAutomationButtonPassiveRound } from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 
-const meta: Meta<typeof ObcAnalogValve> = {
-  title: 'Automation/Automation devices/Analog Valve',
+const meta: Meta<typeof ObcSwitch> = {
+  title: 'Automation/Automation devices/Switch',
   tags: ['autodocs'],
-  component: 'obc-analog-valve',
+  component: 'obc-switch',
   decorators: [crossDecorator],
   args: {
     tag: '0012',
@@ -25,35 +25,26 @@ const meta: Meta<typeof ObcAnalogValve> = {
     hasIdTag: true,
   },
   argTypes: {
+    alternativeIcon: {
+      control: 'radio',
+      options: Object.values(SwitchAlternativeIcon),
+    },
     ...argTypesAbstractAutomationButtonPassiveRound,
     value: { control: { type: 'range', min: 0, max: 100, step: 1 } },
   },
-} as Meta<typeof ObcAnalogValve>;
+} as Meta<typeof ObcSwitch>;
 
 export default meta;
-type Story = StoryObj<ObcAnalogValve>;
+type Story = StoryObj<ObcSwitch>;
 
-export const Open: Story = {
+export const On: Story = {
   args: {
-    open: true,
-    value: 20,
+    on: true,
   },
 };
 
-export const Closed: Story = {
+export const Off: Story = {
   args: {
-    open: false,
-    value: 0,
-  },
-};
-
-export const WithBadges: Story = {
-  args: {
-    open: true,
-    value: 20,
-    badgeAlertOff: true,
-    badgeAuto: true,
-    badgeDuty: true,
-    badgeCommandLocked: true,
+    on: false,
   },
 };
