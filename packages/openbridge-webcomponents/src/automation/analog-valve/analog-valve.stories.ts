@@ -4,7 +4,6 @@ import { AutomationButtonReadoutPosition } from '../automation-button/automation
 import { AutomationButtonReadoutStackSize } from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import './analog-valve.js';
 import { crossDecorator } from '../../storybook-util.js';
-import { html } from 'lit';
 import '../automation-badge/automation-badge.js';
 import { argTypesAbstractAutomationButtonPassiveRound } from '../automation-button/abstract-automation-button-storybook-helpers.js';
 

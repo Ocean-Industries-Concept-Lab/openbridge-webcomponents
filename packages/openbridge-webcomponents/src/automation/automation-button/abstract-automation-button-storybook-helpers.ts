@@ -1,6 +1,6 @@
 import { ObcAlertFrameStatus, ObcAlertFrameThickness, ObcAlertFrameType } from "../../components/alert-frame/alert-frame";
-import { MotorizedVariant } from "./abstract-automation-button-motorized";
-import { AutomationButtonDirection, AutomationButtonLabelDirection } from "./automation-button";
+import { MotorizedVariant } from "./abstract-automation-button-motorized.js";
+import { AutomationButtonDirection, AutomationButtonLabelDirection } from "./automation-button.js";
 
 export const argTypesAbstractAutomationButton = {
     readoutPosition: {

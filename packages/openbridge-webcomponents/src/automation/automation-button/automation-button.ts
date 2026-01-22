@@ -1,5 +1,5 @@
 import { HTMLTemplateResult, LitElement, html, nothing, unsafeCSS } from 'lit';
-import { property, queryAssignedElements } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import compentStyle from './automation-button.css?inline';
 import { classMap } from 'lit/directives/class-map.js';
 import '../../icons/icon-forward.js';

@@ -49,12 +49,12 @@ export class ObcAnalogValve extends ObcAbstractAutomationButton<AnalogValveVaria
         .vertical=${this.vertical}
         slot="icon"
       ></obc-valve-analog-two-way-icon>
-      <obi-valve-analog-two-way-icon
+      <obc-valve-analog-two-way-icon
         .value=${this.value}
         .closed=${!this.open}
         .vertical=${this.vertical}
         slot="icon-siluette"
-      ></obi-valve-analog-two-way-icon>
+      ></obc-valve-analog-two-way-icon>
       `;
   }
 }

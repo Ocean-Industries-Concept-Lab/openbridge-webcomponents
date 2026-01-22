@@ -17,8 +17,9 @@ import {
   ObcAlertFrameThickness,
   ObcAlertFrameType,
 } from '../../components/alert-frame/alert-frame.js';
+import '../automation-badge/automation-badge.js';
 
-export class ObcAbstractAutomationButton<T> extends LitElement {
+export class ObcAbstractAutomationButton<T extends AutomationButtonVariant> extends LitElement {
   @property({ type: Boolean }) hideReadoutStack: boolean = false;
   @property({ type: Boolean }) hasIdTag: boolean = false;
   @property({ type: String }) readoutPosition: AutomationButtonReadoutPosition =
@@ -34,7 +35,7 @@ export class ObcAbstractAutomationButton<T> extends LitElement {
     ObcAlertFrameStatus.Alarm;
   @property({ type: Boolean }) progress: boolean = false;
   @property({ type: String }) tag: string = '';
-  @property({ type: String }) variant: T =
+  @property({ type: String }) variant: AutomationButtonVariant =
     AutomationButtonVariant.regular as T;
   @property({ type: String }) direction: AutomationButtonDirection =
     AutomationButtonDirection.forward;
@@ -109,7 +110,7 @@ export class ObcAbstractAutomationButton<T> extends LitElement {
       .alertFrameThickness=${this.alertFrameThickness}
       .alertFrameStatus=${this.alertFrameStatus}
       ?progress=${this.progress}
-      .variant=${this.variant}
+      .variant=${this.variant as AutomationButtonVariant}
       .direction=${this.direction}
       .hasBadgeSpacer=${this.getBadgeSpacer()}
     >
