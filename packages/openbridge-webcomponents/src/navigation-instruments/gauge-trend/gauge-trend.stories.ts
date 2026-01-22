@@ -725,6 +725,57 @@ export const GaugeTrendWithoutBar: Story = {
   `,
 };
 
+export const GaugeTrendWithAdvice: Story = {
+  name: 'With advice overlays',
+  play: async () => {
+    // Wait for rendering to complete before snapshot
+    await new Promise((resolve) => setTimeout(resolve, 300));
+  },
+  args: {
+    width: 384,
+    height: 384,
+    enhanced: false,
+    scaleValue: 50,
+    scaleSetpoint: 50,
+    scaleHasBar: true,
+    hasScale: true,
+    scaleHasAdvice: true,
+    scaleFillMode: 'fill',
+    scaleFillMin: 0,
+    scaleFillMax: 50,
+    scaleReferenceSize: 384,
+    chartFill: true,
+  },
+  render: (_args) => html`
+    <obc-gauge-trend
+      .data=${SAMPLE_DATA}
+      .width=${_args.width}
+      .height=${_args.height}
+      .enhanced=${_args.enhanced}
+      .chartFill=${_args.chartFill}
+      .scaleMinValue=${0}
+      .scaleMaxValue=${100}
+      .scaleValue=${_args.scaleValue}
+      .scaleSetpoint=${_args.scaleSetpoint}
+      .scaleHasBar=${_args.scaleHasBar}
+      .hasScale=${_args.hasScale}
+      .scaleHasAdvice=${_args.scaleHasAdvice}
+      .scaleFillMode=${_args.scaleFillMode}
+      .scaleFillMin=${_args.scaleFillMin}
+      .scaleFillMax=${_args.scaleFillMax}
+      .scaleAdvice=${[
+        {min: 70, max: 90, type: AdviceType.caution, hinted: true},
+        {min: 10, max: 30, type: AdviceType.advice, hinted: false},
+      ]}
+      .scalePrimaryInterval=${20}
+      .scaleSecondaryInterval=${10}
+      .scaleTertiaryInterval=${2}
+      .scaleReferenceSize=${_args.scaleReferenceSize}
+    >
+    </obc-gauge-trend>
+  `,
+};
+
 export const GaugeTrendLabelsOnly: Story = {
   name: 'Labels only (no bar, condensed scale)',
   play: async () => {

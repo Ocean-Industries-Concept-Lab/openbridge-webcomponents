@@ -243,10 +243,10 @@ export class ObcGaugeTrend extends ObcChartLineBase {
     barVertical.fillMax = this.scaleFillMax;
     barVertical.value = this.scaleValue;
     barVertical.setpoint = this.scaleSetpoint;
-    barVertical.hasAdvice = this.scaleHasAdvice;
     // Advice position is always 'inner' for gauge-trend
     barVertical.advicePosition = AdvicePosition.inner;
-    barVertical.advice = this.scaleAdvice;
+    // obc-bar-vertical uses 'advices' (plural), not 'advice' or 'hasAdvice'
+    barVertical.advices = this.scaleHasAdvice ? this.scaleAdvice : [];
     barVertical.primaryTickbarsInterval = this.scalePrimaryInterval;
     barVertical.secondaryTickbarsInterval = this.scaleSecondaryInterval;
     barVertical.tertiaryTickbarsInterval = this.scaleTertiaryInterval;
