@@ -385,10 +385,24 @@ export class ObcBarVertical extends LitElement {
       this._updateScaleFromCurrentSize();
     }
 
-    // Report dimensions to parent chart
-    // In fixedAspectRatio mode, we report after resize events trigger _scale updates
-    // In regular mode, we report on every update to keep parent chart in sync
-    if (!this.fixedAspectRatio) {
+    // Report dimensions to parent chart when layout-affecting properties change.
+    // In fixedAspectRatio mode, resize events also trigger reportDimensions() via ResizeController.
+    // In regular mode, we report on every update to keep parent chart in sync.
+    // Layout-affecting properties change the computed thickness and must notify the parent
+    // even in fixedAspectRatio mode to keep chart padding accurate.
+    const layoutChanged =
+      changed.has('side') ||
+      changed.has('hideLabels') ||
+      changed.has('hasScale') ||
+      changed.has('hasBar') ||
+      changed.has('barThickness') ||
+      changed.has('tickThickness') ||
+      changed.has('labelThickness') ||
+      changed.has('scaleType') ||
+      changed.has('borderRadiusPosition') ||
+      changed.has('borderRadius');
+
+    if (!this.fixedAspectRatio || layoutChanged) {
       this.reportDimensions();
     }
   }

@@ -1137,6 +1137,7 @@ function generateBarContainer(
   // Determine which corners should be rounded based on borderRadiusPosition
   // innerFirstChild: corners on the inner/chart edge
   // middleChild: no corners
+  // middleRoundedChild: chart-only (ignored here, treated as middleChild)
   // outerLastChild: corners on the outer edge (away from chart)
   let shouldRoundTopLeft = true;
   let shouldRoundTopRight = true;
@@ -1144,8 +1145,12 @@ function generateBarContainer(
   let shouldRoundBottomRight = true;
 
   if (config.borderRadiusPosition) {
-    if (config.borderRadiusPosition === BorderRadiusPosition.middleChild) {
+    if (
+      config.borderRadiusPosition === BorderRadiusPosition.middleChild ||
+      config.borderRadiusPosition === BorderRadiusPosition.middleRoundedChild
+    ) {
       // No rounded corners for middle child
+      // (middleRoundedChild is chart-canvas-only; ignored for external scales)
       shouldRoundTopLeft = false;
       shouldRoundTopRight = false;
       shouldRoundBottomLeft = false;
@@ -1608,7 +1613,12 @@ function generateBarFill(
   let barRoundBottomRight = true;
 
   if (config.borderRadiusPosition) {
-    if (config.borderRadiusPosition === BorderRadiusPosition.middleChild) {
+    if (
+      config.borderRadiusPosition === BorderRadiusPosition.middleChild ||
+      config.borderRadiusPosition === BorderRadiusPosition.middleRoundedChild
+    ) {
+      // No rounded corners for middle child
+      // (middleRoundedChild is chart-canvas-only; ignored for external scales)
       barRoundTopLeft = false;
       barRoundTopRight = false;
       barRoundBottomLeft = false;
@@ -2221,7 +2231,7 @@ function singleSidedTickmark(
 
   const gap = tickGap();
   const start = isOutwardPositive(config) ? tickBase + gap : tickBase - gap;
-  const len = config.tickThickness;
+  const len = computeExternalScaleEffectiveTickThickness(config);
   const end = isOutwardPositive(config) ? start + len : start - len;
 
   if (isVertical(config)) {
@@ -2297,7 +2307,9 @@ function renderAdvice(
   } else {
     x1 = isOutwardPositive(config)
       ? config.barThickness + 10
-      : -config.barThickness - config.tickThickness + 14;
+      : -config.barThickness -
+        computeExternalScaleEffectiveTickThickness(config) +
+        14;
   }
 
   // Dashed boundary tickmarks across the bar band

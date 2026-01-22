@@ -289,9 +289,9 @@ export class ObcGaugeTrend extends ObcChartLineBase {
    * - `'regular'`: Standard tick lengths (default)
    * - `'condensed'`: Shorter tick lengths for compact display
    *
-   * This property is intentionally NOT exposed to Storybook controls.
-   * It can be set programmatically or in story definitions.
+   * Hidden from Storybook controls via argTypes configuration.
    */
+  @property({type: String})
   scaleType: ScaleType = ScaleType.regular;
 
   /**

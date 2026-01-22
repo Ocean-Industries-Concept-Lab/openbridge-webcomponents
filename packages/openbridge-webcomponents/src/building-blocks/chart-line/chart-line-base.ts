@@ -1119,26 +1119,23 @@ export class ObcChartLineBase extends LitElement {
     });
 
     // Ensure all scales have fixedAspectRatio matching our fixedAspectRatioScaling setting
-    // and set scaleReferenceSize based on orientation (height for vertical, width for horizontal)
-    // This ensures scale factors match the chart's scale factor
-    const setScaleProps = (
-      slot: HTMLSlotElement | undefined,
-      referenceSize: number
-    ) => {
+    // and use the same scaleReferenceSize for consistent proportional scaling.
+    // Each scale handles orientation-specific scaling internally based on its main axis.
+    const setScaleProps = (slot: HTMLSlotElement | undefined) => {
       if (!slot) return;
       const scales = slot.assignedElements() as ExternalScaleElement[];
       scales.forEach((scale) => {
         scale.fixedAspectRatio = this.fixedAspectRatioScaling;
-        scale.scaleReferenceSize = referenceSize;
+        scale.scaleReferenceSize = this.scaleReferenceSize;
       });
     };
 
-    // Vertical scales (left/right) use chart's reference height
-    setScaleProps(this.leftScaleSlot, this.height);
-    setScaleProps(this.rightScaleSlot, this.height);
-    // Horizontal scales (top/bottom) use chart's reference width
-    setScaleProps(this.topScaleSlot, this.width);
-    setScaleProps(this.bottomScaleSlot, this.width);
+    // All scales use the same scaleReferenceSize - this avoids churn from
+    // conflicting values between here and updateScaleProperties()
+    setScaleProps(this.leftScaleSlot);
+    setScaleProps(this.rightScaleSlot);
+    setScaleProps(this.topScaleSlot);
+    setScaleProps(this.bottomScaleSlot);
 
     // Wait for all scales to finish rendering
     await Promise.all(

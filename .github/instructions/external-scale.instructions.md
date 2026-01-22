@@ -34,7 +34,7 @@ These instructions apply to the external scale renderer and its thin wrapper com
 
 The external scale system follows a **renderer + wrapper** pattern:
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    external-scale.ts                            │
 │            (Pure SVG renderer - all logic lives here)           │
@@ -171,7 +171,7 @@ When adding new features or fixing bugs:
      // ... map all properties to config
    };
    const layout = computeExternalScaleLayout(
-     toExternalScaleLayoutConfig(config)
+     toExternalScaleLayoutConfig(config),
    );
    const parts = renderExternalScale(config);
    ```
