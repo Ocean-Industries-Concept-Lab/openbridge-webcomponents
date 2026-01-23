@@ -3,10 +3,7 @@ import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './advice-message-item.css?inline';
 import '../topbar-message-item/topbar-message-item.js';
-import {
-  ObcTopbarMessageItemType,
-  ObcTopbarMessageItemSize,
-} from '../topbar-message-item/topbar-message-item.js';
+import {ObcTopbarMessageItemType} from '../topbar-message-item/topbar-message-item.js';
 import '../../icons/icon-notification-advice-active.js';
 import '../../icons/icon-close-google.js';
 
@@ -175,21 +172,21 @@ export class ObcAdviceMessageItem extends LitElement {
 
   /**
    * Whether to show the title.
-   * If false, the title is hidden even if set.
+   * If true, the title is hidden even if set.
    */
-  @property({type: Boolean}) hasTitle = true;
+  @property({type: Boolean}) hideTitle = false;
 
   /**
    * Whether to show the description.
-   * If false, the description is hidden even if set.
+   * If true, the description is hidden even if set.
    */
-  @property({type: Boolean}) hasDescription = true;
+  @property({type: Boolean}) hideDescription = false;
 
   /**
    * Whether to show the primary timestamp.
-   * If false, the `time` slot is not rendered.
+   * If true, the `time` slot is not rendered.
    */
-  @property({type: Boolean}) hasTimestamp = true;
+  @property({type: Boolean}) hideTimestamp = false;
 
   /**
    * Whether to show the secondary timestamp.
@@ -204,25 +201,13 @@ export class ObcAdviceMessageItem extends LitElement {
   @property({type: Boolean}) hasSecondaryIcon = false;
 
   /**
-   * **DEPRECATED:** Use `size="tall"` instead.
-   * If true, renders the tall layout variant.
-   */
-  @property({type: Boolean}) large = false;
-
-  /**
-   * **DEPRECATED:** Use `type="inactive"` instead.
-   * If true, renders the empty/inactive state.
-   */
-  @property({type: Boolean}) empty = false;
-
-  /**
    * Text to display in the empty/inactive state.
    * Shown in the `empty` slot when `type="inactive"` or `empty` is true.
    */
   @property({type: String}) emptyText = 'No active advice';
 
   private get mappedType(): ObcTopbarMessageItemType {
-    if (this.empty || this.type === ObcAdviceMessageItemType.Inactive) {
+    if (this.type === ObcAdviceMessageItemType.Inactive) {
       return ObcTopbarMessageItemType.Inactive;
     }
 
@@ -236,15 +221,6 @@ export class ObcAdviceMessageItem extends LitElement {
       default:
         return ObcTopbarMessageItemType.Simple;
     }
-  }
-
-  private get mappedSize(): ObcTopbarMessageItemSize {
-    if (this.large) {
-      return ObcTopbarMessageItemSize.Tall;
-    }
-    return this.size === ObcAdviceMessageItemSize.Tall
-      ? ObcTopbarMessageItemSize.Tall
-      : ObcTopbarMessageItemSize.Regular;
   }
 
   /**
@@ -267,14 +243,12 @@ export class ObcAdviceMessageItem extends LitElement {
     return html`
       <obc-topbar-message-item
         .type=${this.mappedType}
-        .size=${this.mappedSize}
-        .hasTitle=${this.hasTitle}
-        .hasDescription=${this.hasDescription}
-        .hasTimestamp=${this.hasTimestamp}
+        .size=${this.size}
+        .hideTitle=${this.hideTitle}
+        .hideDescription=${this.hideDescription}
+        .hideTimestamp=${this.hideTimestamp}
         .hasTimestamp2=${this.hasTimestamp2}
         .hasSecondaryIcon=${this.hasSecondaryIcon}
-        .large=${this.large}
-        .empty=${this.empty}
         @message-click=${this.handleMessageClick}
         @action-click=${this.handleActionClick}
       >
@@ -285,13 +259,13 @@ export class ObcAdviceMessageItem extends LitElement {
         ${this.hasSecondaryIcon
           ? html`<slot name="secondary-icon" slot="secondary-icon"></slot>`
           : nothing}
-        ${this.title && this.hasTitle
+        ${this.title && !this.hideTitle
           ? html`<span slot="title">${this.title}</span>`
           : nothing}
-        ${this.description && this.hasDescription
+        ${this.description && !this.hideDescription
           ? html`<span slot="description">${this.description}</span>`
           : nothing}
-        ${this.time && this.hasTimestamp
+        ${this.time && !this.hideTimestamp
           ? html`<span slot="time">${this.time}</span>`
           : nothing}
         ${this.timeSecondary && this.hasTimestamp2

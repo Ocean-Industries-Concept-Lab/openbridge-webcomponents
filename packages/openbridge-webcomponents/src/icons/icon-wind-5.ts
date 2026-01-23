@@ -7,16 +7,12 @@ export class ObiWind5 extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path d="M11 24H13L13 7H15L12 0L9 7H11L11 24Z" fill="currentColor"/>
-<path d="M5 24L5 22H11V24H5Z" fill="currentColor"/>
-<path d="M8 21L8 19H11V21H8Z" fill="currentColor"/>
+<path d="M15 7H13V24H5V22H11V21H8V19H11V7H9L12 0L15 7Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M11 24H13L13 7H15L12 0L9 7H11L11 24Z" style="fill: var(--element-active-color)"/>
-<path d="M5 24L5 22H11V24H5Z" style="fill: var(--element-active-color)"/>
-<path d="M8 21L8 19H11V21H8Z" style="fill: var(--element-active-color)"/>
+<path d="M15 7H13V24H5V22H11V21H8V19H11V7H9L12 0L15 7Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

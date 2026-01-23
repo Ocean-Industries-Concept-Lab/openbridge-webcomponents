@@ -9,6 +9,7 @@ import {
   AutomationButtonVariant,
 } from '../automation-button/automation-button.js';
 import {AutomationButtonReadoutStackSize} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
+import {argTypesAbstractAutomationButtonMotorized} from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 const meta: Meta<typeof ObcFan> = {
   title: 'Automation/Automation devices/Fan',
@@ -21,18 +22,11 @@ const meta: Meta<typeof ObcFan> = {
     readoutSize: AutomationButtonReadoutStackSize.regular,
     alert: false,
     progress: false,
+    hideReadoutStack: false,
+    hasIdTag: true,
   },
   argTypes: {
-    readoutPosition: {
-      options: Object.values(AutomationButtonReadoutPosition),
-      control: {type: 'select'},
-    },
-    readoutSize: {
-      options: Object.values(AutomationButtonReadoutStackSize),
-      control: {type: 'select'},
-    },
-    alert: {control: {type: 'boolean'}},
-    progress: {control: {type: 'boolean'}},
+    ...argTypesAbstractAutomationButtonMotorized,
   },
   globals: {
     componentSize: 'obc-component-size-regular',

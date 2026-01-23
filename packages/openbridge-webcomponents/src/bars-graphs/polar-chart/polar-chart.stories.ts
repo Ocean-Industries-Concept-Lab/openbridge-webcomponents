@@ -51,6 +51,11 @@ const meta: Meta = {
     showDebugOverlay: {control: 'boolean'},
     data: {control: 'object'},
     colors: {control: 'object'},
+    enhanced: {
+      control: 'boolean',
+      description:
+        'Use enhanced color palette (blue) instead of default (gray)',
+    },
     legend: {control: 'boolean'},
   },
   args: {
@@ -58,14 +63,15 @@ const meta: Meta = {
     monochrome: false,
     discreteColorStops: false,
     showSectorLabels: false,
-    showOuterLabels: true,
+    showOuterLabels: true, // Component defaults to false, but stories show labels by default
     outerLabelUnit: '°',
-    showUnit: true,
+    showUnit: true, // Component defaults to false, but stories show unit by default
     outerLabelMaxLength: 0,
     outerLabelDecimalPlaces: 0,
     showDebugOverlay: false,
     data: SAMPLE_DATA,
     colors: [],
+    enhanced: true,
     legend: false,
   },
 };
@@ -76,11 +82,11 @@ type Story = StoryObj<ObcPolarChart>;
 
 export const Default: Story = {
   name: 'Default polar',
-  tags: ['!snapshot'],
   render: (args) => html`
     <obc-polar-chart
       .data=${args.data}
       .colors=${args.colors}
+      .enhanced=${args.enhanced}
       .monochrome=${args.monochrome}
       .discreteColorStops=${args.discreteColorStops}
       .showSectorLabels=${args.showSectorLabels}
@@ -154,6 +160,7 @@ export const WithLegend: Story = {
 export const CustomColors: Story = {
   args: {
     colors: ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6'],
+    enhanced: false,
   },
 };
 
@@ -165,6 +172,7 @@ export const Realtime: Story = {
   render: (args) => {
     const chart = document.createElement('obc-polar-chart');
     chart.data = JSON.parse(JSON.stringify(SAMPLE_DATA));
+    chart.enhanced = args.enhanced;
     chart.fixedHeight = args.fixedHeight;
 
     setInterval(() => {

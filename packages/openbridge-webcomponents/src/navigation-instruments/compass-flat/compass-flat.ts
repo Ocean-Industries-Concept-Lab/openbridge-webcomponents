@@ -27,9 +27,7 @@ export interface Label {
  */
 @customElement('obc-compass-flat')
 export class ObcCompassFlat extends LitElement {
-  @property({type: Boolean}) noPadding: boolean = true;
   @property({type: Boolean}) FOVIndicator: boolean = false;
-  @property({type: Number}) padding: number = 16;
   @property({type: Number}) heading = 0;
   @property({type: Number}) courseOverGround = 0;
   @property({type: Number}) tickInterval = 5;
@@ -37,8 +35,8 @@ export class ObcCompassFlat extends LitElement {
   @property({type: Number}) minFOV = 45;
   @property({type: Number}) maxFOV = 180;
 
-  @state() containerWidth = 0;
-  @state() maxContainerWidth = 0;
+  @state() private containerWidth = 0;
+  @state() private maxContainerWidth = 0;
 
   private resizeObserver: ResizeObserver = new ResizeObserver((entries) => {
     for (const entry of entries) {
@@ -214,11 +212,11 @@ export class ObcCompassFlat extends LitElement {
       x: l.x * translationScale,
     }));
 
-    const viewBox = this.noPadding ? '-192 -128 384 128' : '-200 -144 400 144';
+    const viewBox = '-192 -128 384 128';
 
     return svg`
       <div class="container" style="max-width:${this.maxContainerWidth}px">
-        <obc-watch-flat .noPadding=${this.noPadding} .FOVIndicator=${this.FOVIndicator ? this.renderFOVIndicator() : []} .labels=${scaledLabels} .rotation=${this.heading} .tickmarks=${tickmarks} .tickmarkSpacing=${translationScale}></obc-watch-flat>
+        <obc-watch-flat noPadding .FOVIndicator=${this.FOVIndicator ? this.renderFOVIndicator() : []} .labels=${scaledLabels} .rotation=${this.heading} .tickmarks=${tickmarks} .tickmarkSpacing=${translationScale}></obc-watch-flat>
         <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg"> 
         ${this.HDGSvg}${this.COGSvg(translation)}
       </div>

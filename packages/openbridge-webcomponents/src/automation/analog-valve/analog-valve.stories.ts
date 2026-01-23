@@ -1,9 +1,11 @@
-import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import type {Meta, StoryObj} from '@storybook/web-vite';
 import {ObcAnalogValve} from './analog-valve.js';
 import {AutomationButtonReadoutPosition} from '../automation-button/automation-button.js';
 import {AutomationButtonReadoutStackSize} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import './analog-valve.js';
 import {crossDecorator} from '../../storybook-util.js';
+import '../automation-badge/automation-badge.js';
+import {argTypesAbstractAutomationButtonPassiveRound} from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 const meta: Meta<typeof ObcAnalogValve> = {
   title: 'Automation/Automation devices/Analog Valve',
@@ -17,20 +19,12 @@ const meta: Meta<typeof ObcAnalogValve> = {
     alert: false,
     progress: false,
     vertical: false,
+    hideReadoutStack: false,
+    hasIdTag: true,
   },
   argTypes: {
-    readoutPosition: {
-      options: Object.values(AutomationButtonReadoutPosition),
-      control: {type: 'select'},
-    },
-    readoutSize: {
-      options: Object.values(AutomationButtonReadoutStackSize),
-      control: {type: 'select'},
-    },
+    ...argTypesAbstractAutomationButtonPassiveRound,
     value: {control: {type: 'range', min: 0, max: 100, step: 1}},
-    alert: {control: {type: 'boolean'}},
-    progress: {control: {type: 'boolean'}},
-    vertical: {control: {type: 'boolean'}},
   },
 } as Meta<typeof ObcAnalogValve>;
 
@@ -48,5 +42,16 @@ export const Closed: Story = {
   args: {
     open: false,
     value: 0,
+  },
+};
+
+export const WithBadges: Story = {
+  args: {
+    open: true,
+    value: 20,
+    badgeAlertOff: true,
+    badgeAuto: true,
+    badgeDuty: true,
+    badgeCommandLocked: true,
   },
 };

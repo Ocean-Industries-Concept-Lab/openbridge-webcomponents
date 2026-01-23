@@ -15,6 +15,7 @@ import {
 import type {Plugin, ChartOptions, ChartDataset} from 'chart.js';
 import {
   CHART_SECTOR_DEFAULT_COLORS,
+  CHART_SECTOR_ENHANCED_COLORS,
   CHART_DIMENSIONS,
   OUTER_LABEL_CONFIG,
   getCssVariableValue,
@@ -53,6 +54,7 @@ const PIE_WATCHED_PROP_NAMES = [
   'legend',
   'data',
   'colors',
+  'enhanced',
   'sunburst',
   'showOuterLabels',
   'showUnit',
@@ -142,7 +144,7 @@ const PIE_WATCHED_PROP_NAMES = [
  * @property {Array<{label: string, value: number, children?: Array<{label: string, value: number}>}>} data - Chart data segments with optional children subsegments for sunburst mode (set via JavaScript)
  * @property {string[]} colors - Custom segment colors (set via JavaScript) with fallback to theme palette
  * @property {boolean} showOuterLabels - Show outer labels, default: false
- * @property {boolean} showUnit - Whether to show unit in labels, default: true
+ * @property {boolean} showUnit - Whether to show unit in labels, default: false
  * @property {boolean} sunburst - Enable sunburst mode with interactive children subsegments, default: false
  * @property {string} outerLabelUnit - Unit string to append to outer labels, default: "%"
  * @property {number} outerLabelMaxLength - Maximum character length for labels before trim (0 = no limit), default: 0
@@ -164,10 +166,13 @@ export class ObcPieChart extends LitElement {
   colors: string[] = [];
 
   @property({type: Boolean})
+  enhanced = false;
+
+  @property({type: Boolean})
   showOuterLabels = false;
 
   @property({type: Boolean})
-  showUnit = true;
+  showUnit = false;
 
   @property({type: Boolean})
   sunburst = false;
@@ -219,7 +224,7 @@ export class ObcPieChart extends LitElement {
   private resizeObserver?: ResizeObserver;
 
   /** @internal - Track previous state to detect threshold crossing */
-  private wasAboveThreshold = true;
+  private wasAboveThreshold = false;
 
   private hasAnyChanged(
     changed: PropertyValues,
@@ -367,7 +372,7 @@ export class ObcPieChart extends LitElement {
     const chartColors = getChartColorsOrDefault(
       this,
       this.colors,
-      CHART_SECTOR_DEFAULT_COLORS
+      this.enhanced ? CHART_SECTOR_ENHANCED_COLORS : CHART_SECTOR_DEFAULT_COLORS
     );
     const segmentColors = values.map(
       (_, index) => chartColors[index % chartColors.length]

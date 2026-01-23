@@ -9,6 +9,7 @@ import {Chart, DoughnutController, ArcElement, Tooltip} from 'chart.js';
 import type {Plugin, ChartOptions, ChartDataset} from 'chart.js';
 import {
   CHART_SECTOR_DEFAULT_COLORS,
+  CHART_SECTOR_ENHANCED_COLORS,
   CHART_DIMENSIONS,
   OUTER_LABEL_CONFIG,
   CENTER_READOUT_CONFIG,
@@ -50,6 +51,7 @@ const DONUT_WATCHED_PROP_NAMES = [
   'legend',
   'data',
   'colors',
+  'enhanced',
   'half',
   'thickness',
   'max',
@@ -131,8 +133,8 @@ const DONUT_WATCHED_PROP_NAMES = [
  * @property {Array<{label: string, value: number}>} data - Chart data segments (set via JavaScript)
  * @property {string[]} colors - Custom segment colors (set via JavaScript) with fallback to theme palette
  * @property {boolean} half - Whether to display as half-circle (180°) or full circle (360°), default: false
- * @property {boolean} showOuterLabels - Show outer labels, default: true
- * @property {boolean} showUnit - Whether to show unit in labels, default: true
+ * @property {boolean} showOuterLabels - Show outer labels, default: false
+ * @property {boolean} showUnit - Whether to show unit in labels, default: false
  * @property {string} outerLabelUnit - Unit string to append to outer labels, default: "%"
  * @property {number} outerLabelMaxLength - Maximum character length for labels before trim (0 = no limit), default: 0
  * @property {number} outerLabelDecimalPlaces - Number of decimal places in labels, default: 0
@@ -152,14 +154,17 @@ export class ObcDonutChart extends LitElement {
   @property({attribute: false})
   colors: string[] = [];
 
+  @property({type: Boolean})
+  enhanced = false;
+
   @property({type: Boolean, reflect: true})
   half = false;
 
   @property({type: Boolean})
-  showOuterLabels = true;
+  showOuterLabels = false;
 
   @property({type: Boolean})
-  showUnit = true;
+  showUnit = false;
 
   @property({type: String})
   outerLabelUnit = '%';
@@ -217,7 +222,7 @@ export class ObcDonutChart extends LitElement {
   private resizeObserver?: ResizeObserver;
 
   /** @internal - Track previous state to detect threshold crossing */
-  private wasAboveThreshold = true;
+  private wasAboveThreshold = false;
 
   private hasAnyChanged(
     changed: PropertyValues,
@@ -325,7 +330,7 @@ export class ObcDonutChart extends LitElement {
     const chartColors = getChartColorsOrDefault(
       this,
       this.colors,
-      CHART_SECTOR_DEFAULT_COLORS
+      this.enhanced ? CHART_SECTOR_ENHANCED_COLORS : CHART_SECTOR_DEFAULT_COLORS
     );
     const segmentColors = values.map(
       (_, index) =>

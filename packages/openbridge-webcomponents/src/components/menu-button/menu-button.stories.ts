@@ -16,7 +16,6 @@ const renderWithIcon = (args: StoryObj<ObcMenuButton>['args']) => html`
       .menuType=${args?.menuType || ContextMenuType.Regular}
       .multiSelect=${args?.multiSelect}
       .selectPerGroup=${args?.selectPerGroup}
-      .persistSelection=${args?.persistSelection || false}
       .hasTitleBar=${args?.hasTitleBar || false}
       .menuTitle=${args?.menuTitle || ''}
       .itemsPerColumn=${args?.itemsPerColumn || 5}
@@ -38,7 +37,6 @@ const renderIconOnly = (args: StoryObj<ObcMenuButton>['args']) => html`
       .menuType=${args?.menuType || ContextMenuType.Regular}
       .multiSelect=${args?.multiSelect}
       .selectPerGroup=${args?.selectPerGroup}
-      .persistSelection=${args?.persistSelection || false}
       .hasTitleBar=${args?.hasTitleBar || false}
       .menuTitle=${args?.menuTitle || ''}
       .itemsPerColumn=${args?.itemsPerColumn || 5}
@@ -83,10 +81,6 @@ const meta: Meta<ObcMenuButton> = {
       control: 'boolean',
       description: 'Allows single selection per group (flyout only)',
     },
-    persistSelection: {
-      control: 'boolean',
-      description: 'Whether to show selected state for single-select items',
-    },
     hasTitleBar: {
       control: 'boolean',
       description: 'Whether to show a title bar with close button',
@@ -129,7 +123,6 @@ const meta: Meta<ObcMenuButton> = {
     fullWidth: false,
     hasIcon: false,
     menuType: ContextMenuType.Regular,
-    persistSelection: true,
     itemsPerColumn: 5,
     openTop: false,
     disabled: false,
@@ -192,7 +185,6 @@ export const ActionMenu: Story = {
   args: {
     label: 'File Actions',
     menuType: ContextMenuType.Regular,
-    persistSelection: false,
     options: [
       {value: 'new', label: 'New File'},
       {value: 'open', label: 'Open...'},
@@ -282,7 +274,6 @@ export const FlyoutMenuWithoutPersistentState: Story = {
     label: 'Actions Menu',
     menuType: ContextMenuType.Flyout,
     multiSelect: false,
-    persistSelection: false, // Action items don't need persistence
     options: [
       {
         value: 'file',
@@ -338,7 +329,6 @@ export const FlyoutMenuWithPersistentState: Story = {
     label: 'Settings',
     menuType: ContextMenuType.Flyout,
     selectPerGroup: true,
-    persistSelection: true,
     options: [
       {
         value: 'theme',

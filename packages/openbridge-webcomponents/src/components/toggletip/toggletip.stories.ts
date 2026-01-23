@@ -14,8 +14,6 @@ const meta: Meta<typeof ObcToggletip> = {
     variant: ToggletipVariant.normal,
     title: 'Title',
     description: 'Short text to tell what the note is about',
-    hasTitleContainer: true,
-    hasDescription: true,
     hasContent: true,
     hasActions: true,
     hasLeadingIcon: true,
@@ -85,11 +83,9 @@ const meta: Meta<typeof ObcToggletip> = {
         }
       </style>
       <obc-toggletip
-        variant="${args.variant}"
-        title="${args.title}"
-        description="${args.description}"
-        .hasTitleContainer=${args.hasTitleContainer}
-        .hasDescription=${args.hasDescription}
+        .variant=${args.variant}
+        .title=${args.title}
+        .description=${args.description}
         .hasContent=${args.hasContent}
         .hasActions=${args.hasActions}
         .hasLeadingIcon=${args.hasLeadingIcon}
@@ -130,12 +126,6 @@ const meta: Meta<typeof ObcToggletip> = {
     },
     description: {
       control: 'text',
-    },
-    hasTitleContainer: {
-      control: 'boolean',
-    },
-    hasDescription: {
-      control: 'boolean',
     },
     hasContent: {
       control: 'boolean',
@@ -227,7 +217,7 @@ export const Alarm: Story = {
 export const NoHeader: Story = {
   args: {
     variant: ToggletipVariant.normal,
-    hasTitleContainer: false,
+    title: '',
   },
 };
 

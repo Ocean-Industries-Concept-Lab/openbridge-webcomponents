@@ -16,8 +16,8 @@ const meta: Meta<typeof ObcNotificationMessageItem> = {
     actionLabel: 'Label',
     type: 'simple',
     size: 'regular',
-    hasTitle: true,
-    hasDescription: true,
+    hideTitle: false,
+    hideDescription: false,
     hasTimestamp: true,
     hasTimestamp2: false,
     hasSecondaryIcon: false,
@@ -224,7 +224,7 @@ export const OnlySecondaryTimestamp: Story = {
     title: 'Recent Activity',
     description: 'File uploaded successfully',
     timeSecondary: '2 minutes ago',
-    hasTimestamp: false,
+    hideTimestamp: true,
     hasTimestamp2: true,
     type: 'with-icon-button',
   },
@@ -234,8 +234,7 @@ export const NoTitle: Story = {
   args: {
     description: 'Notification with description only',
     time: '09:00:00',
-    hasTitle: false,
-    hasDescription: true,
+    hideTitle: true,
     type: 'with-button',
     actionLabel: 'OK',
   },
@@ -245,8 +244,7 @@ export const NoDescription: Story = {
   args: {
     title: 'Quick Alert',
     time: '10:15:00',
-    hasTitle: true,
-    hasDescription: false,
+    hideDescription: true,
     type: 'with-icon-button',
   },
 };
@@ -254,8 +252,8 @@ export const NoDescription: Story = {
 export const MinimalNotification: Story = {
   args: {
     title: 'Minimal',
-    hasDescription: false,
-    hasTimestamp: false,
+    hideDescription: true,
+    hideTimestamp: true,
     hasSecondaryIcon: false,
     type: 'simple',
   },
@@ -267,9 +265,9 @@ export const FullFeatured: Story = {
     description: 'This notification uses all available features',
     time: '15:45:30',
     timeSecondary: '5m ago',
-    hasTitle: true,
-    hasDescription: true,
-    hasTimestamp: true,
+    hideTitle: false,
+    hideDescription: false,
+    hideTimestamp: false,
     hasTimestamp2: true,
     hasSecondaryIcon: true,
     type: 'with-button',
@@ -282,9 +280,9 @@ export const FullFeatured: Story = {
       .description=${args.description}
       .time=${args.time}
       .timeSecondary=${args.timeSecondary}
-      .hasTitle=${args.hasTitle}
-      .hasDescription=${args.hasDescription}
-      .hasTimestamp=${args.hasTimestamp}
+      .hideTitle=${args.hideTitle}
+      .hideDescription=${args.hideDescription}
+      .hideTimestamp=${args.hideTimestamp}
       .hasTimestamp2=${args.hasTimestamp2}
       .hasSecondaryIcon=${args.hasSecondaryIcon}
       .type=${args.type}
@@ -315,9 +313,9 @@ export const InteractiveExample: Story = {
         .type=${args.type}
         .actionLabel=${args.actionLabel}
         .size=${args.size}
-        .hasTitle=${args.hasTitle}
-        .hasDescription=${args.hasDescription}
-        .hasTimestamp=${args.hasTimestamp}
+        .hideTitle=${args.hideTitle}
+        .hideDescription=${args.hideDescription}
+        .hideTimestamp=${args.hideTimestamp}
         .hasTimestamp2=${args.hasTimestamp2}
         .hasSecondaryIcon=${args.hasSecondaryIcon}
         .large=${args.large}

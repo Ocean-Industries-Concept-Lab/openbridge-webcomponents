@@ -13,7 +13,7 @@ import '../../icons/icon-com-mic-muted-google.js';
 import '../../icons/icon-com-microphone.js';
 import '../slider/slider.js';
 import {ObcSliderValueEvent} from '../slider/slider.js';
-import '../audio-visual/audio-visual.js';
+import '../audio-output/audio-output.js';
 import '../battery-icon/battery-icon.js';
 import '../../icons/icon-settings-iec.js';
 import '../icon-button/icon-button.js';
@@ -104,8 +104,8 @@ export class ObcSystemMenu extends LitElement {
   @property({attribute: false}) audioState: AudioState | undefined;
   @property({attribute: false}) microphoneState: MicrophoneState | undefined;
   @property({attribute: false}) batteryState: BatteryState | undefined;
-  @property({type: Boolean}) condensed: boolean = true;
-  @property({type: Boolean}) showSettingsButton: boolean = true;
+  @property({type: Boolean}) condensed: boolean = false;
+  @property({type: Boolean}) showSettingsButton: boolean = false;
   @property({type: String}) activeSubMenu: SystemSubMenu = SystemSubMenu.main;
   @property({type: Boolean}) externalControl: boolean = false;
 
@@ -326,9 +326,9 @@ export class ObcSystemMenu extends LitElement {
             : html`<obi-com-microphone slot="icon"></obi-com-microphone>`}
         </obc-icon-check-button>
         <div class="content-item-value">
-          <obc-audio-visual
+          <obc-audio-output
             .volume=${(this.microphoneState.currentLevel / 100) * 8}
-          ></obc-audio-visual>
+          ></obc-audio-output>
         </div>
         ${this.condensed && showMoreButton
           ? html` <obc-icon-button
@@ -525,9 +525,9 @@ export class ObcSystemMenu extends LitElement {
               ></obi-com-mic-muted-google>`
             : html`<obi-com-microphone slot="icon"></obi-com-microphone>`}
         </obc-icon-check-button>
-        <obc-audio-visual
+        <obc-audio-output
           .volume=${((this.microphoneState?.currentLevel ?? 0) / 100) * 8}
-        ></obc-audio-visual>
+        ></obc-audio-output>
       </div>
       ${this.microphoneState?.pushToTalk !== undefined
         ? html`<div class="row no-padding">

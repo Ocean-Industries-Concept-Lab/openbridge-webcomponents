@@ -183,12 +183,6 @@ export class ObcSplitButton extends LitElement {
    */
   @property({type: Array}) columnGroups: ColumnGroup[] = [];
 
-  /**
-   * Whether to persist the selected state visually in the menu.
-   * When true, the menu shows the checked/selected state after selection.
-   */
-  @property({type: Boolean}) persistSelection = true;
-
   @state() private isDropdownOpen = false;
 
   private handlePrimaryClick = (e: Event) => {
@@ -250,10 +244,7 @@ export class ObcSplitButton extends LitElement {
       selectedOptions: ContextMenuOption[];
     }>
   ) {
-    // Only update selection if persisting, or in multi-select
-    if (this.persistSelection || this.isMultiSelect) {
-      this.selectedValues = e.detail.selectedValues;
-    }
+    this.selectedValues = e.detail.selectedValues;
 
     this.dispatchEvent(new CustomEvent('change', {detail: e.detail}));
     this.handleMenuClose();
@@ -267,16 +258,6 @@ export class ObcSplitButton extends LitElement {
   override disconnectedCallback() {
     window.removeEventListener('pointerdown', this.closeOnOutside);
     super.disconnectedCallback();
-  }
-
-  private get effectiveSelectPerGroup(): boolean {
-    return (
-      !this.isMultiSelect && !!this.selectPerGroup && !!this.persistSelection
-    );
-  }
-
-  private get effectivePersistSelection(): boolean {
-    return this.isMultiSelect ? true : !!this.persistSelection;
   }
 
   override render() {
@@ -326,8 +307,7 @@ export class ObcSplitButton extends LitElement {
               .selectedValues=${this.selectedValues}
               .type=${this.menuType}
               .multiSelect=${this.isMultiSelect}
-              .selectPerGroup=${this.effectiveSelectPerGroup}
-              .persistSelection=${this.effectivePersistSelection}
+              .selectPerGroup=${true}
               .hasTitleBar=${this.hasTitleBar}
               .title=${this.menuTitle}
               .columnGroups=${this.columnGroups}

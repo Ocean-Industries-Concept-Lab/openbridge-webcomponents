@@ -84,9 +84,9 @@ export class ObcSlideButton extends LitElement {
   @property({type: Boolean}) disabled = false;
 
   /**
-   * Whether to show the leading icon slot. Set to false to hide the icon area at the start of the button.
+   * Whether to show the leading icon slot. Set to true to show the icon area at the start of the button.
    */
-  @property({type: Boolean}) hasLeadingIcon = true;
+  @property({type: Boolean}) hasLeadingIcon = false;
 
   /**
    * Whether the button should hug its content. When true, the button width shrinks to fit its content instead of stretching to fill the container.

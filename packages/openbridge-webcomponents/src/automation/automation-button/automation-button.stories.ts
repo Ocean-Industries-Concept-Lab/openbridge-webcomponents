@@ -74,7 +74,7 @@ const meta: Meta<typeof ObcAutomationButton> = {
     },
   },
   args: {
-    hasReadoutStack: true,
+    hideReadoutStack: false,
     hasIdTag: true,
     readoutPosition: AutomationButtonReadoutPosition.bottom,
     readoutSize: AutomationButtonReadoutStackSize.regular,
@@ -99,7 +99,7 @@ export const ValveOpen: Story = {
     const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html`<obc-automation-button
       state="open"
-      .hasReadoutStack=${args.hasReadoutStack}
+      .hideReadoutStack=${args.hideReadoutStack}
       .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
@@ -160,7 +160,7 @@ export const ValveAlert: Story = {
     const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html` <obc-automation-button
       state="open"
-      .hasReadoutStack=${args.hasReadoutStack}
+      .hideReadoutStack=${args.hideReadoutStack}
       .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
@@ -188,12 +188,13 @@ export const ValveBadges: Story = {
     const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html` <obc-automation-button
       state="open"
-      .hasReadoutStack=${args.hasReadoutStack}
+      .hideReadoutStack=${args.hideReadoutStack}
       .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       ?alert=${args.alert}
       ?progress=${args.progress}
+      hasBadgeSpacer
     >
       <obi-twoway-digital-open
         usecsscolor
@@ -202,15 +203,19 @@ export const ValveBadges: Story = {
       ></obi-twoway-digital-open>
       <obc-automation-badge slot="badge-top-right">
         <obi-alert-off-google></obi-alert-off-google>
+        <obi-alert-off-google slot="icon-siluette"></obi-alert-off-google>
       </obc-automation-badge>
       <obc-automation-badge slot="badge-top-left">
         <obi-auto></obi-auto>
+        <obi-auto slot="icon-siluette"></obi-auto>
       </obc-automation-badge>
       <obc-automation-badge slot="badge-bottom-left">
         <obi-duty></obi-duty>
+        <obi-duty slot="icon-siluette"></obi-duty>
       </obc-automation-badge>
       <obc-automation-badge slot="badge-bottom-right">
         <obi-command-locked-f></obi-command-locked-f>
+        <obi-command-locked-f slot="icon-siluette"></obi-command-locked-f>
       </obc-automation-badge>
     </obc-automation-button>`;
   },
@@ -225,7 +230,7 @@ export const ValveProgress: Story = {
     const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html` <obc-automation-button
       state="open"
-      .hasReadoutStack=${args.hasReadoutStack}
+      .hideReadoutStack=${args.hideReadoutStack}
       .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
@@ -247,7 +252,7 @@ export const ValveClosed: Story = {
     const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html` <obc-automation-button
       state="closed"
-      .hasReadoutStack=${args.hasReadoutStack}
+      .hideReadoutStack=${args.hideReadoutStack}
       .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
@@ -277,7 +282,7 @@ export const ValveNoLabels: Story = {
     const tag: AutomationButtonReadoutStackTag | null = null;
     return html` <obc-automation-button
       state="open"
-      .hasReadoutStack=${false}
+      .hideReadoutStack=${true}
       .hasIdTag=${false}
       .readouts=${readouts}
       .tag=${tag}
@@ -308,7 +313,7 @@ export const SwitchOn: Story = {
     return html` <obc-automation-button
       state="open"
       variant="square"
-      .hasReadoutStack=${args.hasReadoutStack}
+      .hideReadoutStack=${args.hideReadoutStack}
       .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
@@ -333,7 +338,7 @@ export const SwitchOff: Story = {
     return html` <obc-automation-button
       state="closed"
       variant="square"
-      .hasReadoutStack=${args.hasReadoutStack}
+      .hideReadoutStack=${args.hideReadoutStack}
       .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
@@ -358,7 +363,7 @@ export const DamperOn: Story = {
     return html` <obc-automation-button
       state="open"
       variant="square"
-      .hasReadoutStack=${args.hasReadoutStack}
+      .hideReadoutStack=${args.hideReadoutStack}
       .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
@@ -383,7 +388,7 @@ export const DamperOff: Story = {
     return html` <obc-automation-button
       state="closed"
       variant="square"
-      .hasReadoutStack=${args.hasReadoutStack}
+      .hideReadoutStack=${args.hideReadoutStack}
       .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
@@ -408,7 +413,7 @@ export const DamperBadges: Story = {
     return html` <obc-automation-button
       state="open"
       variant="square"
-      .hasReadoutStack=${args.hasReadoutStack}
+      .hideReadoutStack=${args.hideReadoutStack}
       .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
@@ -449,7 +454,7 @@ export const MotorOn: Story = {
       state="open"
       variant="double"
       direction="forward"
-      .hasReadoutStack=${args.hasReadoutStack}
+      .hideReadoutStack=${args.hideReadoutStack}
       .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
@@ -479,7 +484,7 @@ export const MotorOff: Story = {
       state="closed"
       variant="double"
       direction="forward-stopped"
-      .hasReadoutStack=${args.hasReadoutStack}
+      .hideReadoutStack=${args.hideReadoutStack}
       .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
@@ -519,7 +524,7 @@ export const ThreeWayValveOpenRight: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'up',
-        hasIcon: true,
+        icon: 'arrow',
       },
       {
         type: 'value',
@@ -527,14 +532,14 @@ export const ThreeWayValveOpenRight: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
     ];
     const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html` <obc-automation-button
       state="open"
-      .hasReadoutStack=${(args as unknown as ObcAutomationButton)
-        .hasReadoutStack}
+      .hideReadoutStack=${(args as unknown as ObcAutomationButton)
+        .hideReadoutStack}
       .hasIdTag=${(args as unknown as ObcAutomationButton).hasIdTag}
       .readouts=${readouts}
       .tag=${tag}

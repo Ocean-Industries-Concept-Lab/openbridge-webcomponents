@@ -70,13 +70,13 @@
 
   .visible-wrapper {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: center;
     width: fit-content;
     padding: 3px 7px;
     border-radius: 6px;
 
-    @mixin font-instrument-value-s;
+    @mixin font-instrument-value-regular-neutral;
 
     .value {
       color: var(--instrument-enhanced-secondary-color);
@@ -84,8 +84,8 @@
     }
 
     .unit {
-      @mixin font-instrument-unit-s;
-      margin-left: 4px;
+      @mixin font-instrument-unit;
+      margin-left: 2px;
       color: var(--on-normal-neutral-color);
     }
   }

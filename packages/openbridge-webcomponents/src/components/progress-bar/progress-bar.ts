@@ -29,7 +29,7 @@ export class ObcProgressBar extends LitElement {
     CircularProgressState.determinate;
   @property({type: Number}) value = 0;
   @property({type: Boolean}) showValue = false;
-  @property({type: Boolean}) showUnit = true;
+  @property({type: Boolean}) showUnit = false;
   @property({type: Boolean}) hasDescription = false;
   @property({type: String}) description = 'Description text';
   @property({type: Boolean}) showState = false;

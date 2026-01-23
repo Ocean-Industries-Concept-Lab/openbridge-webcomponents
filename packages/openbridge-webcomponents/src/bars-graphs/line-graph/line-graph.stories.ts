@@ -8,6 +8,14 @@ import {
   LineMode,
   TimeDisplay,
 } from '../../building-blocks/chart-line/chart-line-base.js';
+import '../../building-blocks/bar-vertical/bar-vertical.js';
+import '../../building-blocks/bar-horizontal/bar-horizontal.js';
+import {
+  FillMode,
+  AdvicePosition,
+} from '../../building-blocks/external-scale/external-scale.js';
+import {AdviceType} from '../../navigation-instruments/watch/advice.js';
+import {BorderRadiusPosition} from '../../navigation-instruments/types.js';
 
 const SAMPLE_DATA = [
   {label: 'Jan', value: 3.5},
@@ -75,18 +83,9 @@ const meta: Meta = {
   tags: ['autodocs', '6.0'],
   argTypes: {
     // Data sources
-    data: {
-      control: 'object',
-      description: 'Simple single-series data (array of {label,value})',
-    },
-    datasets: {
-      control: 'object',
-      description: 'Chart.js datasets for multi-series mode',
-    },
-    labels: {
-      control: 'object',
-      description: 'Optional explicit labels for category x-axis',
-    },
+    data: {control: 'object'},
+    datasets: {control: 'object'},
+    labels: {control: 'object'},
 
     // Axis and layout
     xAxisType: {
@@ -98,31 +97,13 @@ const meta: Meta = {
       options: [YAxisPosition.left, YAxisPosition.right],
     },
     showGrid: {control: 'boolean'},
-    showGridX: {
-      control: 'boolean',
-      description: 'Show vertical grid lines (x-axis). Default: true',
-    },
-    showGridY: {
-      control: 'boolean',
-      description: 'Show horizontal grid lines (y-axis). Default: true',
-    },
+    showGridX: {control: 'boolean'},
+    showGridY: {control: 'boolean'},
     showTickMarks: {control: 'boolean'},
-    xTicksLimit: {
-      control: {type: 'number'},
-      description: 'Max number of x-axis ticks/grid lines (optional)',
-    },
-    xStepSize: {
-      control: {type: 'number'},
-      description: 'Force x-axis tick interval (optional)',
-    },
-    yTicksLimit: {
-      control: {type: 'number'},
-      description: 'Max number of y-axis ticks/grid lines (optional)',
-    },
-    yStepSize: {
-      control: {type: 'number'},
-      description: 'Force y-axis tick interval (optional)',
-    },
+    xTicksLimit: {control: {type: 'number'}},
+    xStepSize: {control: {type: 'number'}},
+    yTicksLimit: {control: {type: 'number'}},
+    yStepSize: {control: {type: 'number'}},
 
     lineMode: {
       control: {type: 'radio'},
@@ -132,18 +113,13 @@ const meta: Meta = {
       control: {type: 'radio'},
       options: [TimeDisplay.minutes, TimeDisplay.date],
     },
-    showPoints: {
-      control: 'boolean',
-      description: 'Show point markers (default: false)',
-    },
+    showPoints: {control: 'boolean'},
     colors: {control: 'object'},
     legend: {control: 'boolean'},
+    enhanced: {control: 'boolean'},
     showDebugOverlay: {control: 'boolean'},
-    fixedHeight: {
-      control: {type: 'range', min: 48, max: 512},
-      description:
-        'Fixed height of the chart in pixels (mandatory, determines chart size)',
-    },
+    width: {control: {type: 'range', min: 192, max: 1024}},
+    height: {control: {type: 'range', min: 48, max: 512}},
   },
   args: {
     data: SAMPLE_DATA,
@@ -151,10 +127,10 @@ const meta: Meta = {
     labels: undefined,
     xAxisType: XAxisType.category,
     yAxisPosition: YAxisPosition.left,
-    showGrid: true,
-    showGridX: true,
-    showGridY: true,
-    showTickMarks: true,
+    showGrid: true, // Component defaults to false, but stories show grid by default
+    showGridX: true, // Component defaults to false, but stories show grid by default
+    showGridY: true, // Component defaults to false, but stories show grid by default
+    showTickMarks: true, // Component defaults to false, but stories show tick marks by default
     xTicksLimit: undefined,
     xStepSize: undefined,
     yTicksLimit: undefined,
@@ -164,8 +140,10 @@ const meta: Meta = {
     timeDisplay: TimeDisplay.minutes,
     colors: [],
     legend: false,
+    enhanced: true,
     showDebugOverlay: false,
-    fixedHeight: 320,
+    width: 480,
+    height: 320,
   },
 };
 
@@ -175,7 +153,6 @@ type Story = StoryObj;
 
 export const SingleSeries: Story = {
   name: 'Single-series line graph (category)',
-  tags: ['!snapshot'],
   render: (_args) => html`
     <obc-line-graph
       .data=${_args.data}
@@ -193,15 +170,208 @@ export const SingleSeries: Story = {
       .yStepSize=${_args.yStepSize}
       .showPoints=${_args.showPoints}
       .legend=${_args.legend}
+      .enhanced=${_args.enhanced}
       .showDebugOverlay=${_args.showDebugOverlay}
-      .fixedHeight=${_args.fixedHeight}
+      .width=${_args.width}
+      .height=${_args.height}
     ></obc-line-graph>
+  `,
+};
+
+export const SingleSeriesExternalScales: Story = {
+  name: 'Single-series line graph (with external scales)',
+  tags: ['!snapshot'],
+  argTypes: {
+    enhanced: {
+      control: 'boolean',
+      description: 'Use enhanced color palette for chart and scales',
+    },
+    // External scale controls (vertical/left)
+    vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
+    vScaleHideLabels: {
+      control: 'boolean',
+      description: 'Vertical scale: hide labels',
+    },
+    vScaleAdvices: {
+      control: 'boolean',
+      description: 'Vertical scale: show advice overlays',
+    },
+    vScaleFillMode: {
+      control: {type: 'radio'},
+      options: ['fill', 'tint'],
+      description: 'Vertical scale: fill mode',
+    },
+    vScaleAdvicePosition: {
+      control: {type: 'radio'},
+      options: ['inner', 'center', 'outer'],
+      description: 'Vertical scale: advice position',
+    },
+    vScaleValue: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      description: 'Vertical scale: current value',
+    },
+    vScaleSetpoint: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      description: 'Vertical scale: setpoint',
+    },
+    vScaleFillMin: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      description: 'Vertical scale: fill min',
+    },
+    vScaleFillMax: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      description: 'Vertical scale: fill max',
+    },
+    // External scale controls (horizontal/bottom)
+    hScaleHasBar: {
+      control: 'boolean',
+      description: 'Horizontal scale: show bar',
+    },
+    hScaleHideLabels: {
+      control: 'boolean',
+      description: 'Horizontal scale: hide labels',
+    },
+    hScaleAdvices: {
+      control: 'boolean',
+      description: 'Horizontal scale: show advice overlays',
+    },
+    hScaleFillMode: {
+      control: {type: 'radio'},
+      options: ['fill', 'tint'],
+      description: 'Horizontal scale: fill mode',
+    },
+    hScaleAdvicePosition: {
+      control: {type: 'radio'},
+      options: ['inner', 'center', 'outer'],
+      description: 'Horizontal scale: advice position',
+    },
+    hScaleValue: {
+      control: {type: 'range', min: 0, max: 11, step: 0.5},
+      description: 'Horizontal scale: current value',
+    },
+    hScaleSetpoint: {
+      control: {type: 'range', min: 0, max: 11, step: 0.5},
+      description: 'Horizontal scale: setpoint',
+    },
+    hScaleFillMin: {
+      control: {type: 'range', min: 0, max: 11, step: 0.5},
+      description: 'Horizontal scale: fill min',
+    },
+    hScaleFillMax: {
+      control: {type: 'range', min: 0, max: 11, step: 0.5},
+      description: 'Horizontal scale: fill max',
+    },
+  },
+  args: {
+    showPoints: true,
+    showTickMarks: false,
+    width: 480,
+    height: 320,
+    enhanced: true,
+    // Vertical scale defaults
+    vScaleHasBar: false,
+    vScaleHideLabels: false,
+    vScaleAdvices: true,
+    vScaleFillMode: 'fill',
+    vScaleAdvicePosition: 'inner',
+    vScaleValue: 5,
+    vScaleSetpoint: 5,
+    vScaleFillMin: 3,
+    vScaleFillMax: 5,
+    // Horizontal scale defaults
+    hScaleHasBar: false,
+    hScaleHideLabels: false,
+    hScaleAdvices: true,
+    hScaleFillMode: 'tint',
+    hScaleAdvicePosition: 'inner',
+    hScaleValue: 6,
+    hScaleSetpoint: 8.5,
+    hScaleFillMin: 2,
+    hScaleFillMax: 8,
+  },
+  render: (_args) => html`
+    <obc-line-graph
+      .data=${SAMPLE_DATA}
+      .showPoints=${_args.showPoints}
+      .showTickMarks=${_args.showTickMarks}
+      .showGrid=${true}
+      .showGridX=${true}
+      .showGridY=${true}
+      .width=${_args.width}
+      .height=${_args.height}
+      .enhanced=${_args.enhanced}
+      .borderRadiusPositionExternalScales=${BorderRadiusPosition.outerLastChild}
+    >
+      <obc-bar-vertical
+        slot="left-scale"
+        .minValue=${3.0}
+        .maxValue=${7.0}
+        .height=${_args.height}
+        .side=${'left'}
+        .hasScale=${true}
+        .hideLabels=${_args.vScaleHideLabels}
+        .hasBar=${_args.vScaleHasBar}
+        .fillMode=${_args.vScaleFillMode === 'fill'
+          ? FillMode.fill
+          : FillMode.tint}
+        .fillMin=${_args.vScaleFillMin}
+        .fillMax=${_args.vScaleFillMax}
+        .value=${_args.vScaleValue}
+        .setpoint=${_args.vScaleSetpoint}
+        .advicePosition=${_args.vScaleAdvicePosition === 'inner'
+          ? AdvicePosition.inner
+          : _args.vScaleAdvicePosition === 'center'
+            ? AdvicePosition.center
+            : AdvicePosition.outer}
+        .advices=${_args.vScaleAdvices
+          ? [
+              {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+              {min: 6, max: 7, type: AdviceType.advice, hinted: false},
+            ]
+          : []}
+        .primaryTickbarsInterval=${1}
+        .secondaryTickbarsInterval=${0.5}
+        .tertiaryTickbarsInterval=${0.125}
+        .enhanced=${_args.enhanced}
+      ></obc-bar-vertical>
+      <obc-bar-horizontal
+        slot="bottom-scale"
+        .minValue=${0}
+        .maxValue=${11}
+        .width=${_args.width}
+        .side=${'bottom'}
+        .hasScale=${true}
+        .hideLabels=${_args.hScaleHideLabels}
+        .hasBar=${_args.hScaleHasBar}
+        .fillMode=${_args.hScaleFillMode === 'fill'
+          ? FillMode.fill
+          : FillMode.tint}
+        .fillMin=${_args.hScaleFillMin}
+        .fillMax=${_args.hScaleFillMax}
+        .value=${_args.hScaleValue}
+        .setpoint=${_args.hScaleSetpoint}
+        .advicePosition=${_args.hScaleAdvicePosition === 'inner'
+          ? AdvicePosition.inner
+          : _args.hScaleAdvicePosition === 'center'
+            ? AdvicePosition.center
+            : AdvicePosition.outer}
+        .advices=${_args.hScaleAdvices
+          ? [
+              {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+              {min: 8, max: 10, type: AdviceType.advice, hinted: false},
+            ]
+          : []}
+        .primaryTickbarsInterval=${2}
+        .secondaryTickbarsInterval=${1}
+        .tertiaryTickbarsInterval=${0.25}
+        .enhanced=${_args.enhanced}
+      ></obc-bar-horizontal>
+    </obc-line-graph>
   `,
 };
 
 export const WithPoints: Story = {
   name: 'With points line graph',
-  tags: ['!snapshot'],
   args: {
     showPoints: true,
   },
@@ -233,14 +403,16 @@ export const MultiSeriesTime: Story = {
 export const MinHeight: Story = {
   name: 'Minimal height line graph (48px)',
   args: {
-    fixedHeight: 48,
+    width: 72,
+    height: 48,
   },
 };
 
 export const ThresholdHeight: Story = {
   name: 'Threshold height line graph (192px, where labels appear)',
   args: {
-    fixedHeight: 192,
+    width: 288,
+    height: 192,
   },
 };
 
@@ -248,7 +420,8 @@ export const NoLabelsNoTicks: Story = {
   name: 'No labels/ticks line graph (but yes 32px padding for optional points)',
   args: {
     showTickMarks: false,
-    fixedHeight: 192,
+    width: 288,
+    height: 192,
     showPoints: true,
   },
 };
@@ -309,8 +482,14 @@ export const MultiAxis: Story = {
         ]}
         .datasets=${multiAxisDatasets as never}
         .legend=${true}
+        .showGrid=${true}
+        .showGridX=${true}
+        .showGridY=${true}
+        .showTickMarks=${true}
         .showDebugOverlay=${_args.showDebugOverlay}
-        .fixedHeight=${_args.fixedHeight}
+        .width=${_args.width}
+        .height=${_args.height}
+        .enhanced=${_args.enhanced}
       ></obc-line-graph>
     `;
   },
@@ -320,6 +499,10 @@ export const CustomColors: Story = {
     datasets: SAMPLE_MULTI_DATASETS,
     colors: ['#e74c3c', '#3498db', '#2ecc71'],
     legend: true,
+    showGrid: true,
+    showGridX: true,
+    showGridY: true,
+    showTickMarks: true,
   },
 };
 
@@ -330,8 +513,13 @@ export const RealtimeSqueezing: Story = {
     const chart = document.createElement('obc-line-graph');
     chart.data = JSON.parse(JSON.stringify(SAMPLE_DATA));
     chart.showDebugOverlay = _args.showDebugOverlay;
-    chart.showGridY = _args.showGridY;
-    chart.fixedHeight = _args.fixedHeight;
+    chart.showGrid = true;
+    chart.showGridX = true;
+    chart.showGridY = true;
+    chart.showTickMarks = true;
+    chart.width = _args.width;
+    chart.height = _args.height;
+    chart.enhanced = _args.enhanced;
 
     setInterval(() => {
       const last = chart.data[chart.data.length - 1] || {value: 3};
@@ -357,10 +545,15 @@ export const RealtimeShifting: Story = {
   render: (_args) => {
     const chart = document.createElement('obc-line-graph');
     chart.showDebugOverlay = _args.showDebugOverlay;
-    chart.showGridY = false;
-    chart.fixedHeight = _args.fixedHeight;
+    chart.showGrid = true;
+    chart.showGridX = true;
+    chart.showGridY = true;
+    chart.showTickMarks = true;
+    chart.width = _args.width;
+    chart.height = _args.height;
     chart.xAxisType = XAxisType.time;
     chart.timeDisplay = TimeDisplay.minutes;
+    chart.enhanced = _args.enhanced;
 
     // Initialize with past time-based data (spread over the last N minutes)
     const minuteMs = 60 * 1000;
@@ -399,140 +592,5 @@ export const RealtimeShifting: Story = {
     mo.observe(document.body, {childList: true, subtree: true});
 
     return chart;
-  },
-};
-
-export const ExternalAxisOverlay: Story = {
-  name: 'External SVG axis overlay (scales-updated event)',
-  tags: ['!snapshot'],
-  args: {
-    showTickMarks: false, // Hide Chart.js labels/ticks
-    fixedHeight: 320,
-    yTicksLimit: 6, // Match external axis
-    yStepSize: 2, // Force 2-unit intervals
-  },
-  render: (_args) => {
-    const container = document.createElement('div');
-    container.style.display = 'flex';
-    container.style.flexDirection = 'column';
-    container.style.gap = '20px';
-
-    // Info panel at the top
-    const infoPanel = document.createElement('div');
-    infoPanel.style.padding = '16px';
-    infoPanel.style.background = '#1a1a1a';
-    infoPanel.style.border = '1px solid #333';
-    infoPanel.style.borderRadius = '4px';
-    infoPanel.style.fontFamily = 'monospace';
-    infoPanel.style.fontSize = '12px';
-    infoPanel.style.color = '#ccc';
-    infoPanel.innerHTML =
-      '<p style="margin: 0 0 8px 0; font-weight: bold;">📊 Scale Info (updates on resize/data change):</p>';
-
-    const scaleInfoList = document.createElement('ul');
-    scaleInfoList.style.margin = '0';
-    scaleInfoList.style.padding = '0 0 0 20px';
-    scaleInfoList.style.listStyle = 'none';
-    infoPanel.appendChild(scaleInfoList);
-
-    // Chart wrapper with SVG overlay
-    const wrapper = document.createElement('div');
-    wrapper.style.position = 'relative';
-    wrapper.style.width = '480px';
-
-    const chart = document.createElement('obc-line-graph');
-    chart.data = SAMPLE_DATA;
-    chart.showTickMarks = _args.showTickMarks;
-    chart.fixedHeight = _args.fixedHeight;
-    if (_args.yTicksLimit) chart.yTicksLimit = _args.yTicksLimit;
-    if (_args.yStepSize) chart.yStepSize = _args.yStepSize;
-
-    // Create SVG overlay for custom axes
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.style.position = 'absolute';
-    svg.style.top = '0';
-    svg.style.left = '0';
-    svg.style.width = '100%';
-    svg.style.height = '100%';
-    svg.style.pointerEvents = 'none';
-
-    // Listen for scale updates
-    chart.addEventListener('scales-updated', (e) => {
-      const detail = (e as CustomEvent).detail;
-      const {x, y, padding, canvas, config} = detail;
-
-      // Update info panel
-      scaleInfoList.innerHTML = `
-        <li>• <strong>X-axis:</strong> ${x.min.toFixed(1)} → ${x.max.toFixed(1)} (${x.type}) [${x.left}px → ${x.right}px]</li>
-        <li>• <strong>Y-axis:</strong> ${y.min.toFixed(1)} → ${y.max.toFixed(1)} [${y.top}px → ${y.bottom}px]</li>
-        <li>• <strong>Canvas:</strong> ${canvas.width}px × ${canvas.height}px</li>
-        <li>• <strong>Padding:</strong> T:${padding.top} R:${padding.right} B:${padding.bottom} L:${padding.left}</li>
-        <li>• <strong>Chart area:</strong> ${x.right - x.left}px × ${y.bottom - y.top}px</li>
-        <li>• <strong>Config:</strong> xTicks:${config.xTicksLimit ?? 'auto'} xStep:${config.xStepSize ?? 'auto'} yTicks:${config.yTicksLimit ?? 'auto'} yStep:${config.yStepSize ?? 'auto'}</li>
-      `;
-
-      // Clear previous axes
-      svg.innerHTML = '';
-
-      // Use values from ScaleInfo (no manual calculation needed!)
-      const chartLeft = x.left;
-      const chartRight = x.right;
-      const chartTop = y.top;
-      const chartBottom = y.bottom;
-      const chartWidth = chartRight - chartLeft;
-      const chartHeight = chartBottom - chartTop;
-
-      // Draw Y-axis labels (left side) - matching Chart.js scale exactly
-      const ySteps = 5;
-      for (let i = 0; i <= ySteps; i++) {
-        const value = y.min + (y.max - y.min) * (i / ySteps);
-        const yPos = chartBottom - (chartHeight * i) / ySteps;
-
-        const text = document.createElementNS(
-          'http://www.w3.org/2000/svg',
-          'text'
-        );
-        text.setAttribute('x', (chartLeft - 8).toString());
-        text.setAttribute('y', yPos.toString());
-        text.setAttribute('text-anchor', 'end');
-        text.setAttribute('dominant-baseline', 'middle');
-        text.setAttribute('fill', '#FF6B6B');
-        text.setAttribute('font-size', '12px');
-        text.setAttribute('font-weight', 'bold');
-        text.textContent = value.toFixed(1);
-        svg.appendChild(text);
-      }
-
-      // Draw X-axis labels (bottom)
-      if (x.type === 'category' && x.labels) {
-        const xSteps = Math.min(x.labels.length, 6);
-        const skipEvery = Math.ceil(x.labels.length / xSteps);
-
-        x.labels.forEach((label: string, i: number) => {
-          if (i % skipEvery !== 0) return;
-
-          const xPos = chartLeft + (chartWidth * i) / (x.labels!.length - 1);
-
-          const text = document.createElementNS(
-            'http://www.w3.org/2000/svg',
-            'text'
-          );
-          text.setAttribute('x', xPos.toString());
-          text.setAttribute('y', (chartBottom + 20).toString());
-          text.setAttribute('text-anchor', 'middle');
-          text.setAttribute('fill', '#4ECDC4');
-          text.setAttribute('font-size', '12px');
-          text.setAttribute('font-weight', 'bold');
-          text.textContent = label;
-          svg.appendChild(text);
-        });
-      }
-    });
-
-    wrapper.appendChild(chart);
-    wrapper.appendChild(svg);
-    container.appendChild(infoPanel);
-    container.appendChild(wrapper);
-    return container;
   },
 };

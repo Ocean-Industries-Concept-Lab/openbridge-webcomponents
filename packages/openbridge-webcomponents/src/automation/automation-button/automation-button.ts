@@ -71,12 +71,12 @@ export class ObcAutomationButton extends LitElement {
   @property({type: String}) state: AutomationButtonState =
     AutomationButtonState.open;
   @property({type: Boolean}) static: boolean = false;
-  @property({type: Boolean}) hasReadoutStack: boolean = true;
+  @property({type: Boolean}) hideReadoutStack: boolean = false;
   @property({type: Array, attribute: false})
   readouts: AutomationButtonReadoutStack[] = [];
   @property({attribute: false})
   tag: AutomationButtonReadoutStackTag | null = null;
-  @property({type: Boolean}) hasIdTag: boolean = true;
+  @property({type: Boolean}) hasIdTag: boolean = false;
   @property({type: String}) readoutPosition: AutomationButtonReadoutPosition =
     AutomationButtonReadoutPosition.bottom;
   @property({type: String}) readoutSize: AutomationButtonReadoutStackSize =
@@ -91,6 +91,8 @@ export class ObcAutomationButton extends LitElement {
   @property({type: Boolean}) progress: boolean = false;
   @property({type: String}) direction: AutomationButtonDirection =
     AutomationButtonDirection.forward;
+  /** Badge spacer should be set to true if there is a badge on the same side as the label */
+  @property({type: Boolean}) hasBadgeSpacer: boolean = false;
 
   override render() {
     const progressSpinner = this.getProgressSpinner();
@@ -99,7 +101,7 @@ export class ObcAutomationButton extends LitElement {
       ? (this.tag ?? {value: 0})
       : null;
     const hasLabelContent =
-      this.hasReadoutStack && (this.readouts.length > 0 || this.hasIdTag);
+      !this.hideReadoutStack && (this.readouts.length > 0 || this.hasIdTag);
 
     return html`
       <div class="outer-wrapper">
@@ -110,6 +112,7 @@ export class ObcAutomationButton extends LitElement {
             ['state-' + this.state]: true,
             'label-empty': !hasLabelContent,
             ['label-' + this.readoutPosition]: true,
+            'has-badge-spacer': this.hasBadgeSpacer,
             alert: this.alert,
             progress: this.progress,
             static: this.static,
@@ -141,15 +144,18 @@ export class ObcAutomationButton extends LitElement {
               <slot name="badge-bottom-right"></slot>
             </div>
           </div>
-          ${this.hasReadoutStack
-            ? html`<obc-automation-button-readout-stack
-                .readouts=${this.readouts}
-                .tag=${resolvedTag}
-                .hasIdTag=${this.hasIdTag}
-                .size=${this.readoutSize}
-                .idTagOrientation=${this.getIdTagOrientation()}
-              ></obc-automation-button-readout-stack>`
-            : nothing}
+          ${this.hideReadoutStack
+            ? nothing
+            : html`
+                <div class="badge-spacer"></div>
+                <obc-automation-button-readout-stack
+                  .readouts=${this.readouts}
+                  .tag=${resolvedTag}
+                  .hasIdTag=${this.hasIdTag}
+                  .size=${this.readoutSize}
+                  .idTagOrientation=${this.getIdTagOrientation()}
+                ></obc-automation-button-readout-stack>
+              `}
           ${this.alert
             ? html` <obc-alert-frame
                 class="alert-frame"
