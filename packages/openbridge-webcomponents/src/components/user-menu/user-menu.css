@@ -1,0 +1,164 @@
+* {
+  box-sizing: border-box;
+}
+
+.card {
+  @mixin card;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  border-radius: 12px;
+
+  h3.title,
+  .subtitle {
+    @mixin font-overline;
+    color: var(--element-neutral-color);
+  }
+
+  h3.title {
+    margin: 0;
+    padding-inline: var(--app-components-user-menu-padding-horizontal);
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border-divider-color);
+  }
+
+  .title-container,
+  .button-container {
+    display: flex;
+    align-items: center;
+    padding: calc(var(--app-components-user-menu-padding-vertical) * 2)
+      calc(var(--app-components-user-menu-padding-horizontal) * 2)
+      var(--app-components-user-menu-padding-vertical)
+      calc(var(--app-components-user-menu-padding-horizontal) * 2);
+  }
+
+  .button-container {
+    padding-top: 0;
+    gap: var(--ui-components-toggletip-label-spacing);
+  }
+
+  .login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding: var(--app-components-user-menu-padding-vertical)
+      calc(var(--app-components-user-menu-padding-horizontal) * 2) 0
+      calc(var(--app-components-user-menu-padding-horizontal) * 2);
+  }
+
+  &.size-small.type-sign-in .login-container,
+  &.size-small.type-user-sign-in .login-container {
+    padding-bottom: var(--app-components-user-menu-padding-vertical);
+  }
+
+  &.size-small.type-user-sign-in .user-profile.horizontal {
+    padding-block: calc(
+      var(--app-components-user-menu-padding-vertical) * 0.75
+    );
+  }
+
+  &.size-small.type-signed-in .user-container {
+    padding-top: var(--app-components-user-menu-padding-vertical);
+  }
+
+  .login-container obc-input::part(wrapper) {
+    padding: 0;
+  }
+
+  .actions-container {
+    padding: 0 calc(var(--app-components-user-menu-padding-horizontal) * 2)
+      var(--app-components-user-menu-padding-vertical)
+      calc(var(--app-components-user-menu-padding-horizontal) * 2);
+
+    .users {
+      display: flex;
+      justify-content: space-around;
+    }
+  }
+
+  .recent-container.recent > .title-container {
+    justify-content: center;
+  }
+
+  .recent-container.recent > .title-container .subtitle {
+    font-size: var(--font-size-075);
+    line-height: var(--line-height-075);
+    text-align: center;
+  }
+
+  .nav-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+    padding: var(--app-components-user-menu-padding-vertical)
+      calc(var(--app-components-user-menu-padding-horizontal) * 2);
+  }
+
+  .user-profile {
+    padding-bottom: var(--app-components-user-menu-padding-vertical);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--ui-components-toggletip-label-spacing);
+
+    &.horizontal {
+      padding: var(--app-components-user-menu-padding-vertical)
+        var(--app-components-user-menu-padding-horizontal)
+        var(--app-components-user-menu-padding-vertical)
+        calc(var(--app-components-user-menu-padding-horizontal) * 2);
+      flex-direction: row;
+
+      obc-user-button {
+        --ui-components-user-button-content-direction: row;
+      }
+      obc-user-button::part(content-container) {
+        flex-direction: row;
+        gap: var(--app-components-user-menu-label-spacing);
+      }
+    }
+
+    &.vertical {
+      padding-bottom: var(--app-components-user-menu-padding-vertical);
+    }
+
+    .user-avatar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex: 0 0 auto;
+      pointer-events: none;
+    }
+
+    obc-user-button::part(label) {
+      @mixin font-overline;
+      color: var(--element-neutral-color);
+    }
+  }
+
+  .user-primary {
+    padding: 0;
+
+    &.loading {
+      padding-block: var(--app-components-user-menu-padding-vertical);
+    }
+
+    obc-user-button::part(label) {
+      padding-top: calc(var(--app-components-user-menu-padding-vertical) / 2);
+    }
+  }
+
+  obc-button,
+  obc-navigation-item {
+    width: 100%;
+  }
+
+  obc-progress-bar {
+    padding: var(--app-components-user-menu-padding-horizontal)
+      var(--app-components-user-menu-padding-horizontal);
+  }
+}

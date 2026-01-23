@@ -83,18 +83,9 @@ const meta: Meta = {
   tags: ['autodocs', '6.0'],
   argTypes: {
     // Data sources
-    data: {
-      control: 'object',
-      description: 'Simple single-series data (array of {label,value})',
-    },
-    datasets: {
-      control: 'object',
-      description: 'Chart.js datasets for multi-series mode',
-    },
-    labels: {
-      control: 'object',
-      description: 'Optional explicit labels for category x-axis',
-    },
+    data: {control: 'object'},
+    datasets: {control: 'object'},
+    labels: {control: 'object'},
 
     // Axis and layout
     xAxisType: {
@@ -106,31 +97,13 @@ const meta: Meta = {
       options: [YAxisPosition.left, YAxisPosition.right],
     },
     showGrid: {control: 'boolean'},
-    showGridX: {
-      control: 'boolean',
-      description: 'Show vertical grid lines (x-axis). Default: true',
-    },
-    showGridY: {
-      control: 'boolean',
-      description: 'Show horizontal grid lines (y-axis). Default: true',
-    },
+    showGridX: {control: 'boolean'},
+    showGridY: {control: 'boolean'},
     showTickMarks: {control: 'boolean'},
-    xTicksLimit: {
-      control: {type: 'number'},
-      description: 'Max number of x-axis ticks/grid lines (optional)',
-    },
-    xStepSize: {
-      control: {type: 'number'},
-      description: 'Force x-axis tick interval (optional)',
-    },
-    yTicksLimit: {
-      control: {type: 'number'},
-      description: 'Max number of y-axis ticks/grid lines (optional)',
-    },
-    yStepSize: {
-      control: {type: 'number'},
-      description: 'Force y-axis tick interval (optional)',
-    },
+    xTicksLimit: {control: {type: 'number'}},
+    xStepSize: {control: {type: 'number'}},
+    yTicksLimit: {control: {type: 'number'}},
+    yStepSize: {control: {type: 'number'}},
 
     lineMode: {
       control: {type: 'radio'},
@@ -140,26 +113,13 @@ const meta: Meta = {
       control: {type: 'radio'},
       options: [TimeDisplay.minutes, TimeDisplay.date],
     },
-    showPoints: {
-      control: 'boolean',
-      description: 'Show point markers (default: false)',
-    },
+    showPoints: {control: 'boolean'},
     colors: {control: 'object'},
     legend: {control: 'boolean'},
-    enhanced: {
-      control: 'boolean',
-      description:
-        'Use enhanced color palette (blue) instead of default (gray)',
-    },
+    enhanced: {control: 'boolean'},
     showDebugOverlay: {control: 'boolean'},
-    width: {
-      control: {type: 'range', min: 192, max: 1024},
-      description: 'Width of the chart in pixels (default: 480)',
-    },
-    height: {
-      control: {type: 'range', min: 48, max: 512},
-      description: 'Height of the chart in pixels (default: 320)',
-    },
+    width: {control: {type: 'range', min: 192, max: 1024}},
+    height: {control: {type: 'range', min: 48, max: 512}},
   },
   args: {
     data: SAMPLE_DATA,
@@ -228,11 +188,11 @@ export const SingleSeriesExternalScales: Story = {
     },
     // External scale controls (vertical/left)
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
-    vScaleHasLabels: {
+    vScaleHideLabels: {
       control: 'boolean',
-      description: 'Vertical scale: show labels',
+      description: 'Vertical scale: hide labels',
     },
-    vScaleHasAdvice: {
+    vScaleAdvices: {
       control: 'boolean',
       description: 'Vertical scale: show advice overlays',
     },
@@ -267,11 +227,11 @@ export const SingleSeriesExternalScales: Story = {
       control: 'boolean',
       description: 'Horizontal scale: show bar',
     },
-    hScaleHasLabels: {
+    hScaleHideLabels: {
       control: 'boolean',
-      description: 'Horizontal scale: show labels',
+      description: 'Horizontal scale: hide labels',
     },
-    hScaleHasAdvice: {
+    hScaleAdvices: {
       control: 'boolean',
       description: 'Horizontal scale: show advice overlays',
     },
@@ -310,8 +270,8 @@ export const SingleSeriesExternalScales: Story = {
     enhanced: true,
     // Vertical scale defaults
     vScaleHasBar: false,
-    vScaleHasLabels: true,
-    vScaleHasAdvice: true,
+    vScaleHideLabels: false,
+    vScaleAdvices: true,
     vScaleFillMode: 'fill',
     vScaleAdvicePosition: 'inner',
     vScaleValue: 5,
@@ -320,8 +280,8 @@ export const SingleSeriesExternalScales: Story = {
     vScaleFillMax: 5,
     // Horizontal scale defaults
     hScaleHasBar: false,
-    hScaleHasLabels: true,
-    hScaleHasAdvice: true,
+    hScaleHideLabels: false,
+    hScaleAdvices: true,
     hScaleFillMode: 'tint',
     hScaleAdvicePosition: 'inner',
     hScaleValue: 6,
@@ -349,7 +309,7 @@ export const SingleSeriesExternalScales: Story = {
         .height=${_args.height}
         .side=${'left'}
         .hasScale=${true}
-        .hasLabels=${_args.vScaleHasLabels}
+        .hideLabels=${_args.vScaleHideLabels}
         .hasBar=${_args.vScaleHasBar}
         .fillMode=${_args.vScaleFillMode === 'fill'
           ? FillMode.fill
@@ -358,16 +318,17 @@ export const SingleSeriesExternalScales: Story = {
         .fillMax=${_args.vScaleFillMax}
         .value=${_args.vScaleValue}
         .setpoint=${_args.vScaleSetpoint}
-        .hasAdvice=${_args.vScaleHasAdvice}
         .advicePosition=${_args.vScaleAdvicePosition === 'inner'
           ? AdvicePosition.inner
           : _args.vScaleAdvicePosition === 'center'
             ? AdvicePosition.center
             : AdvicePosition.outer}
-        .advice=${[
-          {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-          {min: 6, max: 7, type: AdviceType.advice, hinted: false},
-        ]}
+        .advices=${_args.vScaleAdvices
+          ? [
+              {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+              {min: 6, max: 7, type: AdviceType.advice, hinted: false},
+            ]
+          : []}
         .primaryTickbarsInterval=${1}
         .secondaryTickbarsInterval=${0.5}
         .tertiaryTickbarsInterval=${0.125}
@@ -380,7 +341,7 @@ export const SingleSeriesExternalScales: Story = {
         .width=${_args.width}
         .side=${'bottom'}
         .hasScale=${true}
-        .hasLabels=${_args.hScaleHasLabels}
+        .hideLabels=${_args.hScaleHideLabels}
         .hasBar=${_args.hScaleHasBar}
         .fillMode=${_args.hScaleFillMode === 'fill'
           ? FillMode.fill
@@ -389,16 +350,17 @@ export const SingleSeriesExternalScales: Story = {
         .fillMax=${_args.hScaleFillMax}
         .value=${_args.hScaleValue}
         .setpoint=${_args.hScaleSetpoint}
-        .hasAdvice=${_args.hScaleHasAdvice}
         .advicePosition=${_args.hScaleAdvicePosition === 'inner'
           ? AdvicePosition.inner
           : _args.hScaleAdvicePosition === 'center'
             ? AdvicePosition.center
             : AdvicePosition.outer}
-        .advice=${[
-          {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-          {min: 8, max: 10, type: AdviceType.advice, hinted: false},
-        ]}
+        .advices=${_args.hScaleAdvices
+          ? [
+              {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+              {min: 8, max: 10, type: AdviceType.advice, hinted: false},
+            ]
+          : []}
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}
         .tertiaryTickbarsInterval=${0.25}

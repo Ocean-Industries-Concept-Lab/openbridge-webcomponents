@@ -83,6 +83,84 @@ const meta: Meta = {
   title: 'Building Blocks/Line-Area Chart Base',
   component: 'obc-area-graph',
   tags: ['autodocs', '6.0'],
+  parameters: {
+    docs: {
+      description: {
+        component: `# Line-Area Chart Base (abstract base class)
+
+Abstract base class for line and area chart components built on Chart.js.
+
+## Features
+- **Single or multi-series**: Use \`data\` for simple single-series or \`datasets\` for multi-series charts
+- **Time and category axes**: Supports \`category\` x-axis (labels) and \`time\` x-axis (ISO dates or timestamps)
+- **Line styles**: Choose \`smooth\` (curved), \`straight\`, or \`stepped\` line rendering
+- **Fill modes**: Area fills with \`semitransparent\`, \`solid\`, or \`threshold\` (red/blue above/below midpoint)
+- **Stacked charts**: Enable \`stacked\` for multi-series datasets to stack values on y-axis
+- **Flexible axes**: Single y-axis via \`yAxisPosition\` or multi-axis via \`yAxes\` for complex charts
+- **Theme-aware**: Automatically updates colors on theme changes using CSS variables
+- **Responsive sizing**: Fixed height with 1.5:1 aspect ratio (e.g., 320px height → 480px width)
+- **Grid & ticks**: Toggle grid lines (\`showGrid\`, \`showGridX\`, \`showGridY\`) and tick marks (\`showTickMarks\`)
+- **Legend support**: Optional HTML legend showing series labels with \`legend\` property
+- **External axis support**: via slots
+
+## Size Behavior
+- Above 192px: Shows labels, tick marks, and grid lines with standard padding
+- Below 192px: Hides labels/ticks and uses edge-to-edge rendering for compact display
+
+## Concrete implementations
+- \`<obc-line-graph>\`: Line chart (non-filled)
+- \`<obc-area-graph>\`: Area chart with fill modes (semitransparent, solid, threshold)
+
+## Examples
+
+### Basic single-series with category axis
+\`\`\`html
+<obc-line-graph></obc-line-graph>
+<script>
+  const chart = document.querySelector('obc-line-graph');
+  chart.data = [
+    {label: 'Jan', value: 10},
+    {label: 'Feb', value: 14},
+    {label: 'Mar', value: 12}
+  ];
+  chart.unit = 'kW';
+  chart.height = 256;
+</script>
+\`\`\`
+
+### Multi-series with time axis and legend
+\`\`\`html
+<obc-line-graph></obc-line-graph>
+<script>
+  const chart = document.querySelector('obc-line-graph');
+  chart.xAxisType = 'time';
+  chart.timeDisplay = 'date';
+  chart.legend = true;
+  chart.datasets = [
+    {label: 'Temperature', data: [{x: '2025-01-01', y: 20}, {x: '2025-01-02', y: 22}]},
+    {label: 'Humidity', data: [{x: '2025-01-01', y: 65}, {x: '2025-01-02', y: 68}]}
+  ];
+</script>
+\`\`\`
+
+### Stacked area chart with solid fill
+\`\`\`html
+<obc-area-graph></obc-area-graph>
+<script>
+  const chart = document.querySelector('obc-area-graph');
+  chart.datasets = [
+    {label: 'Series A', data: [2, 3, 4, 3, 5]},
+    {label: 'Series B', data: [1, 2, 3, 2, 4]},
+    {label: 'Series C', data: [3, 2, 1, 2, 3]}
+  ];
+  chart.fillMode = 'solid';
+  chart.stacked = true;
+  chart.legend = true;
+</script>
+\`\`\``,
+      },
+    },
+  },
   render: (_args) => html`
     <obc-area-graph
       .data=${_args.data}
@@ -511,7 +589,6 @@ export const ExternalScalesBottomRight: Story = {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
   },
-  tags: ['!snapshot'],
   argTypes: {
     enhanced: {
       control: 'boolean',
@@ -548,7 +625,6 @@ export const ExternalScalesBottomRight: Story = {
         .height=${320}
         .side=${'right'}
         .hasScale=${true}
-        .hasLabels=${true}
         .hasBar=${false}
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}
@@ -561,7 +637,6 @@ export const ExternalScalesBottomRight: Story = {
         .width=${480}
         .side=${'bottom'}
         .hasScale=${true}
-        .hasLabels=${true}
         .hasBar=${false}
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}
@@ -577,7 +652,6 @@ export const ExternalScalesAllSides: Story = {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
   },
-  tags: ['!snapshot'],
   argTypes: {
     enhanced: {
       control: 'boolean',
@@ -585,9 +659,9 @@ export const ExternalScalesAllSides: Story = {
     },
     // External scale controls (vertical/left)
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
-    vScaleHasLabels: {
+    vScaleHideLabels: {
       control: 'boolean',
-      description: 'Vertical scale: show labels',
+      description: 'Vertical scale: hide labels',
     },
     vScaleHasAdvice: {
       control: 'boolean',
@@ -624,9 +698,9 @@ export const ExternalScalesAllSides: Story = {
       control: 'boolean',
       description: 'Horizontal scale: show bar',
     },
-    hScaleHasLabels: {
+    hScaleHideLabels: {
       control: 'boolean',
-      description: 'Horizontal scale: show labels',
+      description: 'Horizontal scale: hide labels',
     },
     hScaleHasAdvice: {
       control: 'boolean',
@@ -667,7 +741,7 @@ export const ExternalScalesAllSides: Story = {
     enhanced: true,
     // Vertical scale defaults
     vScaleHasBar: true,
-    vScaleHasLabels: true,
+    vScaleHideLabels: false,
     vScaleHasAdvice: true,
     vScaleFillMode: 'fill',
     vScaleAdvicePosition: 'inner',
@@ -677,7 +751,7 @@ export const ExternalScalesAllSides: Story = {
     vScaleFillMax: 5,
     // Horizontal scale defaults
     hScaleHasBar: true,
-    hScaleHasLabels: true,
+    hScaleHideLabels: false,
     hScaleHasAdvice: true,
     hScaleFillMode: 'tint',
     hScaleAdvicePosition: 'inner',
@@ -706,7 +780,7 @@ export const ExternalScalesAllSides: Story = {
         .height=${_args.height}
         .side=${'left'}
         .hasScale=${true}
-        .hasLabels=${_args.vScaleHasLabels}
+        .hideLabels=${_args.vScaleHideLabels}
         .hasBar=${_args.vScaleHasBar}
         .fillMode=${_args.vScaleFillMode === 'fill'
           ? FillMode.fill
@@ -715,16 +789,17 @@ export const ExternalScalesAllSides: Story = {
         .fillMax=${7}
         .value=${_args.vScaleValue}
         .setpoint=${_args.vScaleSetpoint}
-        .hasAdvice=${_args.vScaleHasAdvice}
         .advicePosition=${_args.vScaleAdvicePosition === 'inner'
           ? AdvicePosition.inner
           : _args.vScaleAdvicePosition === 'center'
             ? AdvicePosition.center
             : AdvicePosition.outer}
-        .advice=${[
-          {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-          {min: 6, max: 7, type: AdviceType.advice, hinted: false},
-        ]}
+        .advices=${_args.vScaleHasAdvice
+          ? [
+              {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+              {min: 6, max: 7, type: AdviceType.advice, hinted: false},
+            ]
+          : []}
         .primaryTickbarsInterval=${1}
         .secondaryTickbarsInterval=${0.5}
         .tertiaryTickbarsInterval=${0.125}
@@ -737,7 +812,7 @@ export const ExternalScalesAllSides: Story = {
         .height=${_args.height}
         .side=${'right'}
         .hasScale=${true}
-        .hasLabels=${_args.vScaleHasLabels}
+        .hideLabels=${_args.vScaleHideLabels}
         .hasBar=${_args.vScaleHasBar}
         .fillMode=${_args.vScaleFillMode === 'fill'
           ? FillMode.fill
@@ -746,16 +821,17 @@ export const ExternalScalesAllSides: Story = {
         .fillMax=${_args.vScaleFillMax}
         .value=${_args.vScaleValue}
         .setpoint=${_args.vScaleSetpoint}
-        .hasAdvice=${_args.vScaleHasAdvice}
         .advicePosition=${_args.vScaleAdvicePosition === 'inner'
           ? AdvicePosition.inner
           : _args.vScaleAdvicePosition === 'center'
             ? AdvicePosition.center
             : AdvicePosition.outer}
-        .advice=${[
-          {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-          {min: 6, max: 7, type: AdviceType.advice, hinted: false},
-        ]}
+        .advices=${_args.vScaleHasAdvice
+          ? [
+              {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+              {min: 6, max: 7, type: AdviceType.advice, hinted: false},
+            ]
+          : []}
         .primaryTickbarsInterval=${1}
         .secondaryTickbarsInterval=${0.5}
         .tertiaryTickbarsInterval=${0.125}
@@ -768,7 +844,7 @@ export const ExternalScalesAllSides: Story = {
         .width=${_args.width}
         .side=${'bottom'}
         .hasScale=${true}
-        .hasLabels=${_args.hScaleHasLabels}
+        .hideLabels=${_args.hScaleHideLabels}
         .hasBar=${_args.hScaleHasBar}
         .fillMode=${_args.hScaleFillMode === 'fill'
           ? FillMode.fill
@@ -777,16 +853,17 @@ export const ExternalScalesAllSides: Story = {
         .fillMax=${_args.hScaleFillMax}
         .value=${_args.hScaleValue}
         .setpoint=${_args.hScaleSetpoint}
-        .hasAdvice=${_args.hScaleHasAdvice}
         .advicePosition=${_args.hScaleAdvicePosition === 'inner'
           ? AdvicePosition.inner
           : _args.hScaleAdvicePosition === 'center'
             ? AdvicePosition.center
             : AdvicePosition.outer}
-        .advice=${[
-          {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-          {min: 8, max: 10, type: AdviceType.advice, hinted: false},
-        ]}
+        .advices=${_args.hScaleHasAdvice
+          ? [
+              {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+              {min: 8, max: 10, type: AdviceType.advice, hinted: false},
+            ]
+          : []}
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}
         .tertiaryTickbarsInterval=${0.25}
@@ -799,7 +876,7 @@ export const ExternalScalesAllSides: Story = {
         .width=${_args.width}
         .side=${'top'}
         .hasScale=${true}
-        .hasLabels=${_args.hScaleHasLabels}
+        .hideLabels=${_args.hScaleHideLabels}
         .hasBar=${_args.hScaleHasBar}
         .fillMode=${_args.hScaleFillMode === 'fill'
           ? FillMode.fill
@@ -808,16 +885,17 @@ export const ExternalScalesAllSides: Story = {
         .fillMax=${11}
         .value=${_args.hScaleValue}
         .setpoint=${_args.hScaleSetpoint}
-        .hasAdvice=${_args.hScaleHasAdvice}
         .advicePosition=${_args.hScaleAdvicePosition === 'inner'
           ? AdvicePosition.inner
           : _args.hScaleAdvicePosition === 'center'
             ? AdvicePosition.center
             : AdvicePosition.outer}
-        .advice=${[
-          {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-          {min: 8, max: 10, type: AdviceType.advice, hinted: false},
-        ]}
+        .advices=${_args.hScaleHasAdvice
+          ? [
+              {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+              {min: 8, max: 10, type: AdviceType.advice, hinted: false},
+            ]
+          : []}
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}
         .tertiaryTickbarsInterval=${0.25}
@@ -833,7 +911,6 @@ export const ExternalScalesMinimal: Story = {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
   },
-  tags: ['!snapshot'],
   argTypes: {
     enhanced: {
       control: 'boolean',
@@ -848,6 +925,7 @@ export const ExternalScalesMinimal: Story = {
     fillMode: AreaFillMode.threshold,
     showPoints: true,
     enhanced: true,
+    hideLabels: false,
   },
   render: (_args) => html`
     <obc-area-graph
@@ -870,7 +948,7 @@ export const ExternalScalesMinimal: Story = {
         .height=${192}
         .side=${'right'}
         .hasScale=${true}
-        .hasLabels=${false}
+        .hideLabels=${_args.hideLabels}
         .hasBar=${false}
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}
@@ -883,7 +961,7 @@ export const ExternalScalesMinimal: Story = {
         .width=${192}
         .side=${'bottom'}
         .hasScale=${true}
-        .hasLabels=${false}
+        .hideLabels=${_args.hideLabels}
         .hasBar=${false}
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}

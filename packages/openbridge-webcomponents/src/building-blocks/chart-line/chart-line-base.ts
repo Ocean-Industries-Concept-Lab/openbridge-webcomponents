@@ -83,7 +83,7 @@ interface ExternalScaleElement extends HTMLElement {
   paddingStart?: number;
   paddingEnd?: number;
   primaryTickbarsInterval?: number;
-  hasLabels?: boolean;
+  labels?: boolean;
   fixedAspectRatio?: boolean;
   state?: InstrumentState;
   enhanced?: boolean;
@@ -271,8 +271,8 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
  * @ignore This is an abstract base class. Use concrete implementations like ObcLineGraph or ObcAreaGraph instead.
  */
 export class ObcChartLineBase extends LitElement {
+  /** Simple single-series data (array of {label, value}). */
   @property({attribute: false})
-  // Simple single-series data model
   data: {label: string; value: number}[] = [];
 
   /** Chart.js-style datasets for multi-series use. If provided, takes precedence over `data`. */
@@ -286,31 +286,36 @@ export class ObcChartLineBase extends LitElement {
   @property({attribute: false})
   labels?: (string | number)[] = undefined;
 
+  /** Custom color palette (CSS variable names or color strings). */
   @property({attribute: false})
   colors: string[] = [];
 
+  /** Show HTML legend below chart with series labels and colors. */
   @property({type: Boolean, reflect: true})
   legend = false;
 
+  /** Development mode: show visual debug overlay with dimension guides. */
   @property({type: Boolean, reflect: true})
   showDebugOverlay = false;
 
+  /** Width of the chart in pixels. Default: 480. */
   @property({type: Number, reflect: true})
   width = 480;
 
+  /** Height of the chart in pixels. Default: 320. */
   @property({type: Number, reflect: true})
   height = 320;
 
-  // --- Line-specific visual props ---
+  /** X-axis mode: 'category' for labeled data points, 'time' for time-based data. */
   @property({type: String})
   xAxisType: XAxisType = XAxisType.category;
 
+  /** Single y-axis position ('left' or 'right'). For multiple y-axes, use yAxes instead. */
   @property({type: String})
-  // Single-axis convenience: 'left' | 'right'
   yAxisPosition: YAxisPosition = YAxisPosition.left;
 
+  /** Multiple y-axis definitions for complex multi-axis charts. */
   @property({attribute: false})
-  // Full axis definitions to support multi-axis charts. Optional.
   yAxes?: Array<{
     id?: string;
     position?: 'left' | 'right';
@@ -319,17 +324,19 @@ export class ObcChartLineBase extends LitElement {
     grid?: boolean;
   }> = undefined;
 
+  /** Show grid lines. */
   @property({type: Boolean})
   showGrid = false;
 
+  /** Show vertical grid lines (x-axis). Default: false. */
   @property({type: Boolean})
-  // When false, hide vertical grid lines (x-axis). Default: false
   showGridX = false;
 
+  /** Show horizontal grid lines (y-axis). Default: false. */
   @property({type: Boolean})
-  // When false, hide horizontal grid lines (y-axis). Default: false
   showGridY = false;
 
+  /** Show axis tick marks and labels. */
   @property({type: Boolean})
   showTickMarks = false;
 
@@ -339,57 +346,56 @@ export class ObcChartLineBase extends LitElement {
   // Internal default point radius when points are shown.
   private readonly POINT_RADIUS = 3;
 
+  /** Show point markers on data points. Default: false. */
   @property({type: Boolean})
-  // Whether to show point markers. Default: hidden (false).
   showPoints = false;
 
+  /** Line drawing style: 'smooth' (curved), 'straight', or 'stepped'. */
   @property({type: String})
-  // Line drawing mode: 'smooth' uses tension, 'straight' uses tension=0, 'stepped' uses stepped lines
   lineMode: LineMode = LineMode.smooth;
 
+  /** Unit label displayed in tooltips (e.g., 'kW', 'kg', '%'). */
   @property({type: String})
   unit = '';
 
+  /** Time axis label format: 'date' (full date/time) or 'minutes' (relative). */
   @property({type: String})
-  // Controls how time x-axis labels are displayed when `xAxisType='time'`.
-  // 'date' shows the full date/time; 'minutes' shows minutes since first datapoint.
   timeDisplay: TimeDisplay = TimeDisplay.date;
 
+  /** Max number of x-axis ticks/grid lines. Useful for matching external axes. */
   @property({type: Number})
-  // Maximum number of ticks/grid lines on x-axis. Useful for matching external axes.
   xTicksLimit?: number = undefined;
 
+  /** Force x-axis tick interval. Useful for matching external axes. */
   @property({type: Number})
-  // Force specific interval between x-axis ticks. Useful for matching external axes.
   xStepSize?: number = undefined;
 
+  /** Max number of y-axis ticks/grid lines. Useful for matching external axes. */
   @property({type: Number})
-  // Maximum number of ticks/grid lines on y-axis. Useful for matching external axes.
   yTicksLimit?: number = undefined;
 
+  /** Force y-axis tick interval. Useful for matching external axes. */
   @property({type: Number})
-  // Force specific interval between y-axis ticks. Useful for matching external axes.
   yStepSize?: number = undefined;
 
-  // --- Instrument state and styling props ---
+  /** Instrument state affecting colors of external scales. */
   @property({type: String})
-  // Instrument state affecting colors of external scales
   state: InstrumentState = InstrumentState.inCommand;
 
+  /** Use enhanced color palette (blue) instead of default (gray). */
   @property({type: Boolean})
-  // Use enhanced instrument colors for both external scales and chart
   enhanced = false;
 
+  /** Frame style for chart and external scales. */
   @property({type: String})
-  // Frame style for chart and external scales
   frameStyle: FrameStyle = FrameStyle.regular;
 
+  /** Border radius position for the chart's own border. */
   @property({type: String, attribute: 'border-radius-position'})
-  // Border radius position for the chart's own border
   borderRadiusPosition?: BorderRadiusPosition = undefined;
 
+  /** Border radius position for external scales based on layout. */
   @property({type: String, attribute: 'border-radius-position-external-scales'})
-  // Border radius position for external scales based on layout
   borderRadiusPositionExternalScales?: BorderRadiusPosition = undefined;
 
   /** @internal */
@@ -1040,7 +1046,7 @@ export class ObcChartLineBase extends LitElement {
           paddingBottom: padding.bottom,
           paddingStart: padding.top,
           paddingEnd: padding.bottom,
-          hasLabels: !hideLabels,
+          labels: !hideLabels,
           state: this.state,
           enhanced: this.enhanced,
           frameStyle: this.frameStyle,
@@ -1067,7 +1073,7 @@ export class ObcChartLineBase extends LitElement {
           paddingBottom: padding.bottom,
           paddingStart: padding.top,
           paddingEnd: padding.bottom,
-          hasLabels: !hideLabels,
+          labels: !hideLabels,
           state: this.state,
           enhanced: this.enhanced,
           frameStyle: this.frameStyle,
@@ -1094,7 +1100,7 @@ export class ObcChartLineBase extends LitElement {
           paddingRight: padding.right,
           paddingStart: padding.left,
           paddingEnd: padding.right,
-          hasLabels: !hideLabels,
+          labels: !hideLabels,
           state: this.state,
           enhanced: this.enhanced,
           frameStyle: this.frameStyle,
@@ -1121,7 +1127,7 @@ export class ObcChartLineBase extends LitElement {
           paddingRight: padding.right,
           paddingStart: padding.left,
           paddingEnd: padding.right,
-          hasLabels: !hideLabels,
+          labels: !hideLabels,
           state: this.state,
           enhanced: this.enhanced,
           frameStyle: this.frameStyle,

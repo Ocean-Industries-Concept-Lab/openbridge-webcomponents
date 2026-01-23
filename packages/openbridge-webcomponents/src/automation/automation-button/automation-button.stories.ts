@@ -194,6 +194,7 @@ export const ValveBadges: Story = {
       .tag=${tag}
       ?alert=${args.alert}
       ?progress=${args.progress}
+      hasBadgeSpacer
     >
       <obi-twoway-digital-open
         usecsscolor
@@ -202,15 +203,19 @@ export const ValveBadges: Story = {
       ></obi-twoway-digital-open>
       <obc-automation-badge slot="badge-top-right">
         <obi-alert-off-google></obi-alert-off-google>
+        <obi-alert-off-google slot="icon-siluette"></obi-alert-off-google>
       </obc-automation-badge>
       <obc-automation-badge slot="badge-top-left">
         <obi-auto></obi-auto>
+        <obi-auto slot="icon-siluette"></obi-auto>
       </obc-automation-badge>
       <obc-automation-badge slot="badge-bottom-left">
         <obi-duty></obi-duty>
+        <obi-duty slot="icon-siluette"></obi-duty>
       </obc-automation-badge>
       <obc-automation-badge slot="badge-bottom-right">
         <obi-command-locked-f></obi-command-locked-f>
+        <obi-command-locked-f slot="icon-siluette"></obi-command-locked-f>
       </obc-automation-badge>
     </obc-automation-button>`;
   },
@@ -519,7 +524,7 @@ export const ThreeWayValveOpenRight: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'up',
-        hasIcon: true,
+        icon: 'arrow',
       },
       {
         type: 'value',
@@ -527,7 +532,7 @@ export const ThreeWayValveOpenRight: Story = {
         nDigits: 3,
         unit: '%',
         direction: 'right',
-        hasIcon: true,
+        icon: 'arrow',
       },
     ];
     const tag: AutomationButtonReadoutStackTag | null = {value: 0};

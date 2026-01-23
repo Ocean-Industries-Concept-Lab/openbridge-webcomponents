@@ -9,6 +9,7 @@ import {
   AutomationButtonVariant,
 } from '../automation-button/automation-button.js';
 import {AutomationButtonReadoutStackSize} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
+import {argTypesAbstractAutomationButtonMotorized} from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 const meta: Meta<typeof ObcMotor> = {
   title: 'Automation/Automation devices/Motor',
@@ -25,16 +26,10 @@ const meta: Meta<typeof ObcMotor> = {
     hasIdTag: true,
   },
   argTypes: {
-    readoutPosition: {
-      options: Object.values(AutomationButtonReadoutPosition),
-      control: {type: 'select'},
+    ...argTypesAbstractAutomationButtonMotorized,
+    vertical: {
+      control: {type: 'boolean'},
     },
-    readoutSize: {
-      options: Object.values(AutomationButtonReadoutStackSize),
-      control: {type: 'select'},
-    },
-    alert: {control: {type: 'boolean'}},
-    progress: {control: {type: 'boolean'}},
   },
   globals: {
     componentSize: 'obc-component-size-regular',

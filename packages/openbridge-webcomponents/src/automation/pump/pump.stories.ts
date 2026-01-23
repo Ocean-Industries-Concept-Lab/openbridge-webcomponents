@@ -9,6 +9,7 @@ import {
   AutomationButtonVariant,
 } from '../automation-button/automation-button.js';
 import {AutomationButtonReadoutStackSize} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
+import {argTypesAbstractAutomationButtonMotorized} from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 const meta: Meta<typeof ObcPump> = {
   title: 'Automation/Automation devices/Pump',
@@ -24,16 +25,7 @@ const meta: Meta<typeof ObcPump> = {
     hasIdTag: true,
   },
   argTypes: {
-    readoutPosition: {
-      options: Object.values(AutomationButtonReadoutPosition),
-      control: {type: 'select'},
-    },
-    readoutSize: {
-      options: Object.values(AutomationButtonReadoutStackSize),
-      control: {type: 'select'},
-    },
-    alert: {control: {type: 'boolean'}},
-    progress: {control: {type: 'boolean'}},
+    ...argTypesAbstractAutomationButtonMotorized,
   },
 } as Meta<typeof ObcPump>;
 
