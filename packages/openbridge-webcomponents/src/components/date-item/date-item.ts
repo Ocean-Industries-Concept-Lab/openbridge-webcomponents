@@ -22,53 +22,57 @@ export enum DateItemSize {
 /**
  * `<obc-date-item>` – A calendar date cell component for displaying a single day, with optional event indicators and details.
  *
- * Represents an interactive date item within a calendar or date-picker interface. It visually communicates the current date, selection state, and whether events are scheduled for that day. The component adapts its layout and content based on size, supporting both compact and detailed views.
+ * @summary Represents an interactive date item within a calendar or date-picker interface.
+ * It visually communicates the current date, selection state, and whether events are scheduled for that day.
+ * The component adapts its layout and content based on size, supporting both compact and detailed views.
  *
- * Appears as a button styled to reflect its state and can show event indicators. In large mode, event times and titles are displayed.
+ * **Synonyms:** date item, calendar cell, day cell, date picker item, schedule day
  *
  * ### Features
- * - **Today Highlight:**
- *   - When `isToday` is true, shows "Today" label (in large size) and uses amplified styling.
- * - **Checked State:**
- *   - When `checked` is true, uses selected styling (blue filled background).
+ * - **Today Highlight:** When `isToday` is true, shows "Today" label (in large size) and uses amplified styling.
+ * - **Checked State:** When `checked` is true, uses selected styling (blue filled background).
  * - **Size Options:**
- *   - `small` (default): Compact, shows only the date and a single event dot.
- *   - `large`: Expands to show event times and titles.
- * - **Event Indicators:**
- *   - Shows a colored dot in the top right corner to indicate events (small size only).
- *   - In large size, displays event times and titles in the content area below the date.
- * - **Disabled State:**
- *   - `disabled`: Visually and functionally disables the date item.
- * - **Accessibility:**
- *   - Uses `aria-label` to describe the date and event count for assistive technologies.
- * - **Date Range Enforcement:**
- *   - The `date` property is clamped between 1 and 31.
+ *   - `small` (default): Compact, shows only the date and event dot indicator.
+ *   - `large`: Expands to show event details; visible events are auto-aggregated based on available space.
+ * - **Event Indicators:** Shows a colored dot in small size; in large size, displays event details with auto-aggregation.
+ * - **Disabled State:** Visually and functionally disables the date item.
+ * - **Accessibility:** Uses `aria-label` to describe the date and event count for assistive technologies.
+ * - **Date Range Enforcement:** The `date` property is clamped between 1 and 31.
  *
  * ### Usage Guidelines
  * Use `obc-date-item` to represent individual days in a calendar, date picker, or scheduling interface.
  * - Set `isToday` to true for the current day to highlight it with amplified styling.
- * - Set `checked` to true to indicate a selected or active date (e.g., user's chosen date).
- * - Add events to the `events` array to show that there are scheduled events on that day.
- * - Use the `large` size when you want to display event details directly within the date cell (e.g., in an expanded calendar view).
+ * - Set `checked` to true to indicate a selected or active date.
+ * - Add events to the `events` array to show scheduled events on that day.
+ * - Use the `large` size when you want to display event details directly within the date cell.
  * - Use the `small` size for compact calendar grids or navigation bars.
- * - Consider limiting the number of events displayed; for many events, consider a summary or overflow indicator.
- * - For disabled dates (e.g., out-of-range or unavailable), set `disabled` to prevent interaction and visually indicate inactivity.
+ * - Use `eventCount` to limit the number of visible events; remaining events are auto-aggregated.
+ * - For disabled dates, set `disabled` to prevent interaction.
  *
- * ### Properties and Attributes
+ * ### Slots
+ * This component does not use slots. All content is provided via properties.
+ *
+ * ### Events
+ * | Event Name   | Detail                          | Description                              |
+ * |--------------|---------------------------------|------------------------------------------|
+ * | `date-click` | `{ date: number }`              | Fired when the date item is clicked.     |
+ *
+ * ### Properties
+ * - `size` (`small` | `large`): Controls layout. In `large` mode, event details are shown and the visible event list is auto-aggregated based on available space and `eventCount`. Default: `small`.
+ * - `date` (number): The numeric day of the month (1–31). Values outside this range are clamped.
  * - `isToday` (boolean): Shows "Today" label in large size and uses amplified styling. Default: `false`.
  * - `checked` (boolean): Uses selected styling (blue filled background). Default: `false`.
- * - `size` (`small` | `large`): Determines the layout and whether event details are shown. Default: `small`.
- * - `date` (number): The numeric day of the month (1–31). Values outside this range are clamped.
- * - `disabled` (boolean): Disables the button and applies a muted style.
- * - `events` (DateItemEvent[]): Array of events to display. Each event should have title, startTime, and endTime. Shows event dot in small size, full event details in large size.
+ * - `disabled` (boolean): Disables the button and applies a muted style. Default: `false`.
+ * - `events` (DateItemEvent[]): Array of events to display. In small size, shows an event dot. In large size, displays event details with auto-aggregation based on available space.
+ * - `eventCount` (number): Maximum number of events to display before aggregating. When 0, shows all events that fit; remaining events are shown as an aggregated count. Default: `0`.
  *
- * ### Best Practices and Constraints
- * - In `small` size, only a single event dot is shown in the top right corner; event details are not displayed.
- * - In `large` size, all events in the array are displayed with their times and titles.
- * - For accessibility, ensure that event titles are concise, as they may be truncated.
- * - Do not use for persistent or multi-day event summaries; this component is for single-day representation.
+ * ### Best Practices
+ * - In `small` size, only an event dot is shown; event details are not displayed.
+ * - In `large` size, events are auto-aggregated based on available space and `eventCount`.
+ * - Ensure event titles are concise as they may be truncated.
+ * - Do not use for multi-day event summaries; this component is for single-day representation.
  *
- * ### Example:
+ * ### Example
  * ```html
  * <obc-date-item
  *   checked
@@ -78,11 +82,12 @@ export enum DateItemSize {
  *     {title: "Meeting", startTime: "09:00", endTime: "10:00"},
  *     {title: "Deadline", startTime: "14:00", endTime: "15:30"}
  *   ]}
+ *   @date-click=${(e) => console.log('Date clicked:', e.detail.date)}
  * ></obc-date-item>
  * ```
- * In this example, the date item is selected, large, and displays two events with their times and titles.
  *
- * @slot - (No named slots) – All content is provided via properties; no slots are used.
+ * @fires {CustomEvent<{date: number}>} date-click - Fired when the date item is clicked.
+ * @slot - No slots. All content is provided via properties.
  */
 @customElement('obc-date-item')
 export class ObcDateItem extends LitElement {
@@ -388,7 +393,7 @@ export class ObcDateItem extends LitElement {
                       .hasTime=${event.hasTime ?? false}
                       .hasEndTime=${event.hasEndTime ?? false}
                       .aggregatedCount=${event.aggregatedCount ?? 0}
-                      .color=${event.color ?? ''}
+                      .colorCoded=${event.colorCoded ?? false}
                       .disabled=${this.disabled || !!event.disabled}
                     ></obc-event-item>
                   `

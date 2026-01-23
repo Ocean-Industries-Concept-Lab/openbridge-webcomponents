@@ -17,8 +17,8 @@ const meta: Meta<EventItemStoryArgs> = {
       control: 'select',
       options: Object.values(EventItemType),
     },
-    color: {
-      control: 'color',
+    colorCoded: {
+      control: 'boolean',
     },
   },
   args: {
@@ -75,7 +75,7 @@ export const Aggregated: Story = {
 export const ColorCoded: Story = {
   args: {
     eventItemType: EventItemType.SingleLine,
-    color: '#4caf50',
+    colorCoded: true,
   },
 };
 

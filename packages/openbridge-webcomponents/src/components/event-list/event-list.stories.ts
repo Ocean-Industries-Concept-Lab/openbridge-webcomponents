@@ -48,11 +48,6 @@ const meta: Meta<EventListStoryArgs> = {
     },
     // Hide private/internal properties from Storybook
     locale: {table: {disable: true}},
-    _normalizedDate: {table: {disable: true}},
-    _dayName: {table: {disable: true}},
-    _monthName: {table: {disable: true}},
-    _dateNumber: {table: {disable: true}},
-    _year: {table: {disable: true}},
   },
   args: {
     width: 320,

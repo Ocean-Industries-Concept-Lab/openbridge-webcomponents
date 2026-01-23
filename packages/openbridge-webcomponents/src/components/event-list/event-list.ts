@@ -9,12 +9,14 @@ import '../event-item/event-item.js';
 export type {DateItemEvent};
 
 /**
- * `<obc-event-list>` - A component that displays a list of events with a date header.
+ * `<obc-event-list>` – A component that displays a list of events with a date header.
  *
- * Shows a formatted date header (day, month, date, year) followed by a list of event items.
- * Reuses the `obc-event-item` component for each event.
+ * @summary Shows a formatted date header (day, month, date, year) followed by a list of event items.
+ * Reuses the `obc-event-item` component for each event entry.
  *
- * ### Example:
+ * **Synonyms:** event list, schedule, agenda, appointment list, calendar events
+ *
+ * ### Example
  * ```html
  * <obc-event-list
  *   .date=${new Date(2025, 0, 11)}
@@ -24,6 +26,21 @@ export type {DateItemEvent};
  *   ]}
  * ></obc-event-list>
  * ```
+ *
+ * ### Slots
+ * This component does not use slots. All content is provided via properties.
+ *
+ * ### Events
+ * This component does not emit custom events directly. Events from child `obc-event-item` components
+ * bubble up and can be listened to on this component (e.g., `event-click`).
+ *
+ * ### Properties
+ * - `date` (Date | number): The date to display in the header. Accepts Date object or timestamp.
+ * - `events` (DateItemEvent[]): Array of events to display in the list.
+ * - `hideHeader` (boolean): Whether to hide the date header. Default: `false`.
+ * - `locale` (string): Locale for date formatting (e.g., 'en-US', 'nb-NO'). Uses browser default if not specified.
+ *
+ * @slot - No slots. All content is provided via properties.
  */
 @customElement('obc-event-list')
 export class ObcEventList extends LitElement {
@@ -138,7 +155,7 @@ export class ObcEventList extends LitElement {
                   .hasTime=${event.hasTime ?? false}
                   .hasEndTime=${event.hasEndTime ?? false}
                   .aggregatedCount=${event.aggregatedCount ?? 0}
-                  .color=${event.color ?? ''}
+                  .colorCoded=${event.colorCoded ?? false}
                   .disabled=${event.disabled ?? false}
                 ></obc-event-item>
               `

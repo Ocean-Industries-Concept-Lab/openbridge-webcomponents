@@ -102,7 +102,7 @@ const meta: Meta<DateItemStoryArgs> = {
     widthDecorator as never,
     (story, context) => {
       const args = {...context.args};
-      if (args.eventCount > 0 && args.events?.length > args.eventCount) {
+      if (args.eventCount && args.eventCount > 0 && args.events && args.events.length > args.eventCount) {
         const events = args.events.slice(0, args.eventCount);
         return story({...context, args: {...args, events}});
       }
@@ -209,7 +209,7 @@ export const LargeWithColorCodedEvent: Story = {
         endTime: '10:00',
         hasTime: true,
         hasEndTime: true,
-        color: '#ff0000',
+        colorCoded: true,
       },
     ],
   },

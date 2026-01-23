@@ -21,14 +21,62 @@ export interface DateItemEvent {
   hasTime?: boolean;
   hasEndTime?: boolean;
   aggregatedCount?: number;
-  color?: string;
+  colorCoded?: boolean;
   disabled?: boolean;
 }
 
 /**
- * `<obc-event-item>` - An event item component used within `obc-date-item`.
- * Displays event details such as time, title, description, and optional arrow.
- * Supports different types like SingleLine, DoubleLine, and Aggregated.
+ * `<obc-event-item>` – A single event entry component for calendar and scheduling interfaces.
+ *
+ * @summary Displays event details such as time, title, description, and optional navigation arrow.
+ * Used within `obc-date-item` and `obc-event-list` to render individual events.
+ *
+ * **Synonyms:** event item, calendar entry, schedule item, appointment item, agenda entry
+ *
+ * ### Features / Variants
+ * - **SingleLine:** Compact display showing time and title on a single line.
+ * - **DoubleLine:** Extended display with title and description on separate lines.
+ * - **Aggregated:** Shows a count of additional events (e.g., "3 more events").
+ * - **Color Coded:** Optional blue background styling for visual categorization.
+ * - **Disabled State:** Visually muted and non-interactive.
+ * - **Arrow Indicator:** Optional flyout arrow for navigation or drill-down.
+ *
+ * ### Usage Guidelines
+ * - Use `SingleLine` for compact event lists where space is limited.
+ * - Use `DoubleLine` when event descriptions provide important context.
+ * - Use `Aggregated` to indicate overflow events that don't fit in the available space.
+ * - Set `colorCoded` to true for visually distinct events.
+ * - Set `hasArrow` to true when the event can be clicked to navigate to details.
+ *
+ * ### Slots
+ * This component does not use slots. All content is provided via properties.
+ *
+ * ### Events
+ * | Event Name    | Detail                                              | Description                          |
+ * |---------------|-----------------------------------------------------|--------------------------------------|
+ * | `event-click` | `{ title: string, startTime: string, endTime: string }` | Fired when the event item is clicked. |
+ *
+ * ### Best Practices
+ * - Keep titles concise as they may be truncated.
+ * - Use `hasTime` and `hasEndTime` to control time display.
+ * - For aggregated items, set `aggregatedCount` to indicate the number of hidden events.
+ *
+ * ### Example
+ * ```html
+ * <obc-event-item
+ *   title="Team Meeting"
+ *   startTime="09:00"
+ *   endTime="10:00"
+ *   .eventItemType=${'singleLine'}
+ *   hasTime
+ *   hasEndTime
+ *   hasArrow
+ *   @event-click=${(e) => console.log('Event clicked:', e.detail)}
+ * ></obc-event-item>
+ * ```
+ *
+ * @fires {CustomEvent<{title: string, startTime: string, endTime: string}>} event-click - Fired when the event item is clicked. Contains event title, start time, and end time.
+ * @slot - No slots. All content is provided via properties.
  */
 @customElement('obc-event-item')
 export class ObcEventItem extends LitElement {
@@ -41,7 +89,7 @@ export class ObcEventItem extends LitElement {
   @property({type: Boolean}) hasTime = false;
   @property({type: Boolean}) hasEndTime = false;
   @property({type: Number}) aggregatedCount = 0;
-  @property({type: String}) color = '';
+  @property({type: Boolean}) colorCoded = false;
   @property({type: Boolean}) disabled = false;
 
   @state() private _pressing = false;
@@ -79,7 +127,7 @@ export class ObcEventItem extends LitElement {
   override render() {
     const isAggregated = this.eventItemType === EventItemType.Aggregated;
     const isDoubleLine = this.eventItemType === EventItemType.DoubleLine;
-    const isColorCoded = !!this.color;
+    const isColorCoded = this.colorCoded;
 
     return html`
       <button
