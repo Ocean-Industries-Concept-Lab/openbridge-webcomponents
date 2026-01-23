@@ -102,7 +102,12 @@ const meta: Meta<DateItemStoryArgs> = {
     widthDecorator as never,
     (story, context) => {
       const args = {...context.args};
-      if (args.eventCount && args.eventCount > 0 && args.events && args.events.length > args.eventCount) {
+      if (
+        args.eventCount &&
+        args.eventCount > 0 &&
+        args.events &&
+        args.events.length > args.eventCount
+      ) {
         const events = args.events.slice(0, args.eventCount);
         return story({...context, args: {...args, events}});
       }

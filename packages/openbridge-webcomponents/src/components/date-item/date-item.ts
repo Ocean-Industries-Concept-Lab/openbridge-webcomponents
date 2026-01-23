@@ -53,9 +53,9 @@ export enum DateItemSize {
  * This component does not use slots. All content is provided via properties.
  *
  * ### Events
- * | Event Name   | Detail                          | Description                              |
- * |--------------|---------------------------------|------------------------------------------|
- * | `date-click` | `{ date: number }`              | Fired when the date item is clicked.     |
+ * | Event Name   | Detail                                                                              | Description                              |
+ * |--------------|-------------------------------------------------------------------------------------|----------------------------------------------------|
+ * | `date-click` | `{ date: number, events: DateItemEvent[], isToday: boolean, checked: boolean }`     | Fired when the date item is clicked.     |
  *
  * ### Properties
  * - `size` (`small` | `large`): Controls layout. In `large` mode, event details are shown and the visible event list is auto-aggregated based on available space and `eventCount`. Default: `small`.
@@ -86,7 +86,7 @@ export enum DateItemSize {
  * ></obc-date-item>
  * ```
  *
- * @fires {CustomEvent<{date: number}>} date-click - Fired when the date item is clicked.
+ * @fires {CustomEvent<{date: number, events: DateItemEvent[], isToday: boolean, checked: boolean}>} date-click - Fired when the date item is clicked.
  * @slot - No slots. All content is provided via properties.
  */
 @customElement('obc-date-item')
