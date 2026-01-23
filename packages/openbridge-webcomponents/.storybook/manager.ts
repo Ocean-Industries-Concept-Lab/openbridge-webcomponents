@@ -1,14 +1,26 @@
 import {addons} from 'storybook/manager-api';
-import obTheme from './openbridgeTheme.js';
-import {themes} from 'storybook/theming';
+import {openbridgeDark, openbridgeLight} from './openbridgeTheme.js';
 
+// Detect system color scheme preference
 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
 addons.setConfig({
-  theme: prefersDark ? obTheme : themes.light,
-  // theme: obTheme,
+  // Use OpenBridge themed variants for both light and dark mode
+  theme: prefersDark ? openbridgeDark : openbridgeLight,
+
+  // Put controls panel on the right side
+  panelPosition: 'right',
+  selectedPanel: 'addon-controls',
+  initialActive: 'canvas',
+
+  // Sidebar configuration
+  sidebar: {
+    showRoots: true,
+    collapsedRoots: ['other'],
+  },
+
+  // Tag badges for version indicators
   tagBadges: [
-    // Add an entry that matches 'frog' and displays a cool badge in the sidebar only
     {
       tags: '5.0',
       badge: {

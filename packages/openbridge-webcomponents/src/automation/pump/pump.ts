@@ -4,11 +4,11 @@ import '../../icons/icon-pump-off-horizontal.js';
 import '../../icons/icon-pump-on-horizontal.js';
 import '../../icons/icon-pump-off-vertical.js';
 import '../../icons/icon-pump-on-vertical.js';
-import {ObcAbstractAutomationButton} from '../automation-button/abstract-automation-button.js';
+import {ObcAbstractAutomationButtonMotorized} from '../automation-button/abstract-automation-button-motorized.js';
 import {customElement} from '../../decorator.js';
 
 @customElement('obc-pump')
-export class ObcPump extends ObcAbstractAutomationButton {
+export class ObcPump extends ObcAbstractAutomationButtonMotorized {
   @property({type: Boolean}) vertical: boolean = false;
 
   override get icon() {

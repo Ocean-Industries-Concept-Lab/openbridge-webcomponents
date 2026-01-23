@@ -949,9 +949,9 @@
   --app-components-system-menu-icon-size: 48px;
   --app-components-system-menu-spacing: 8px;
   --app-components-system-menu-padding-vertical: 8px;
-  --ui-components-audio-visual-height: 24px;
-  --ui-components-audio-visual-width: 12px;
-  --ui-components-audio-visual-spacing: 8px;
+  --ui-components-audio-output-height: 24px;
+  --ui-components-audio-output-width: 12px;
+  --ui-components-audio-output-spacing: 8px;
   --menu-navigation-components-date-item-visual-size: var(
     --global-size-spacing-visual-target-min
   );
@@ -3326,9 +3326,9 @@
   --app-components-system-menu-icon-size: 56px;
   --app-components-system-menu-spacing: 8px;
   --app-components-system-menu-padding-vertical: 8px;
-  --ui-components-audio-visual-height: 24px;
-  --ui-components-audio-visual-width: 12px;
-  --ui-components-audio-visual-spacing: 8px;
+  --ui-components-audio-output-height: 24px;
+  --ui-components-audio-output-width: 12px;
+  --ui-components-audio-output-spacing: 8px;
   --menu-navigation-components-date-item-visual-size: var(
     --global-size-spacing-visual-target-min
   );
@@ -5705,9 +5705,9 @@
   --app-components-system-menu-icon-size: 72px;
   --app-components-system-menu-spacing: 12px;
   --app-components-system-menu-padding-vertical: 12px;
-  --ui-components-audio-visual-height: 32px;
-  --ui-components-audio-visual-width: 16px;
-  --ui-components-audio-visual-spacing: 12px;
+  --ui-components-audio-output-height: 32px;
+  --ui-components-audio-output-width: 16px;
+  --ui-components-audio-output-spacing: 12px;
   --menu-navigation-components-date-item-visual-size: var(
     --global-size-spacing-visual-target-min
   );
@@ -8072,9 +8072,9 @@
   --app-components-system-menu-icon-size: 96px;
   --app-components-system-menu-spacing: 16px;
   --app-components-system-menu-padding-vertical: 16px;
-  --ui-components-audio-visual-height: 48px;
-  --ui-components-audio-visual-width: 24px;
-  --ui-components-audio-visual-spacing: 16px;
+  --ui-components-audio-output-height: 48px;
+  --ui-components-audio-output-width: 24px;
+  --ui-components-audio-output-spacing: 16px;
   --menu-navigation-components-date-item-visual-size: var(
     --global-size-spacing-visual-target-min
   );

@@ -22,7 +22,7 @@
 			"extensions": [
 				"Vue.volar",
 				"GitHub.copilot",
-				"runem.lit-plugin"
+				"jackolope.lit-analyzer-plugin"
 			]
 		}
 	}
