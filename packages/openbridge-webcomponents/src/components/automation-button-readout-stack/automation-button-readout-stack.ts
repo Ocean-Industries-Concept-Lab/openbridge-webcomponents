@@ -1,4 +1,4 @@
-import {HTMLTemplateResult, LitElement, html, unsafeCSS} from 'lit';
+import {HTMLTemplateResult, LitElement, html, nothing, unsafeCSS} from 'lit';
 import {customElement} from '../../decorator.js';
 import compentStyle from './automation-button-readout-stack.css?inline';
 import {property} from 'lit/decorators.js';
@@ -6,6 +6,10 @@ import '../../icons/icon-arrow-up-google.js';
 import '../../icons/icon-arrow-down-google.js';
 import '../../icons/icon-arrow-left-google.js';
 import '../../icons/icon-arrow-right-google.js';
+import '../../icons/icon-chevron-double-up-google.js';
+import '../../icons/icon-chevron-double-down-google.js';
+import '../../icons/icon-chevron-double-left-google.js';
+import '../../icons/icon-chevron-double-right-google.js';
 import '../../icons/icon-off.js';
 import '../../icons/icon-on.js';
 import '../../icons/icon-temperature-air.js';
@@ -28,7 +32,7 @@ export interface AutomationButtonReadoutStackValue {
   nDigits: number;
   unit: string;
   direction: 'up' | 'down' | 'left' | 'right';
-  hasIcon: boolean;
+  icon: 'none' | 'arrow' | 'chevron';
 }
 
 export interface AutomationButtonReadoutStackStateOn {
@@ -79,7 +83,7 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
 
   private renderValueContainer(
     type: string,
-    icon: HTMLTemplateResult,
+    icon: HTMLTemplateResult | typeof nothing,
     content: HTMLTemplateResult
   ): HTMLTemplateResult {
     return html`<div class="readout-item ${type}">
@@ -100,34 +104,52 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
       v.length < readout.nDigits ? '0'.repeat(readout.nDigits - v.length) : '';
     const paddedValue = zeroPadding + v;
 
-    let directionIcon: HTMLTemplateResult = html``;
-    if (readout.hasIcon) {
-      const directionIcons = {
-        up: () =>
-          html`<obi-arrow-up-google
-            class="icon"
-            useCssColor
-          ></obi-arrow-up-google>`,
-        down: () =>
-          html`<obi-arrow-down-google
-            class="icon"
-            useCssColor
-          ></obi-arrow-down-google>`,
-        left: () =>
-          html`<obi-arrow-left-google
-            class="icon"
-            useCssColor
-          ></obi-arrow-left-google>`,
-        right: () =>
-          html`<obi-arrow-right-google
-            class="icon"
-            useCssColor
-          ></obi-arrow-right-google>`,
-      };
-
-      directionIcon = directionIcons[readout.direction]?.() || html``;
+    let directionIcon: HTMLTemplateResult | typeof nothing = nothing;
+    if (readout.icon == 'arrow') {
+      if (readout.direction == 'up') {
+        directionIcon = html`<obi-arrow-up-google
+          class="icon"
+          useCssColor
+        ></obi-arrow-up-google>`;
+      } else if (readout.direction == 'down') {
+        directionIcon = html`<obi-arrow-down-google
+          class="icon"
+          useCssColor
+        ></obi-arrow-down-google>`;
+      } else if (readout.direction == 'left') {
+        directionIcon = html`<obi-arrow-left-google
+          class="icon"
+          useCssColor
+        ></obi-arrow-left-google>`;
+      } else if (readout.direction == 'right') {
+        directionIcon = html`<obi-arrow-right-google
+          class="icon"
+          useCssColor
+        ></obi-arrow-right-google>`;
+      }
+    } else if (readout.icon == 'chevron') {
+      if (readout.direction == 'up') {
+        directionIcon = html`<obi-chevron-double-up-google
+          class="icon"
+          useCssColor
+        ></obi-chevron-double-up-google>`;
+      } else if (readout.direction == 'down') {
+        directionIcon = html`<obi-chevron-double-down-google
+          class="icon"
+          useCssColor
+        ></obi-chevron-double-down-google>`;
+      } else if (readout.direction == 'left') {
+        directionIcon = html`<obi-chevron-double-left-google
+          class="icon"
+          useCssColor
+        ></obi-chevron-double-left-google>`;
+      } else if (readout.direction == 'right') {
+        directionIcon = html`<obi-chevron-double-right-google
+          class="icon"
+          useCssColor
+        ></obi-chevron-double-right-google>`;
+      }
     }
-
     const content = html`
       ${this.renderValueText(paddedValue)}
       <span class="unit">${readout.unit}</span>

@@ -35,8 +35,8 @@ export class ObcCompassFlat extends LitElement {
   @property({type: Number}) minFOV = 45;
   @property({type: Number}) maxFOV = 180;
 
-  @state() containerWidth = 0;
-  @state() maxContainerWidth = 0;
+  @state() private containerWidth = 0;
+  @state() private maxContainerWidth = 0;
 
   private resizeObserver: ResizeObserver = new ResizeObserver((entries) => {
     for (const entry of entries) {
