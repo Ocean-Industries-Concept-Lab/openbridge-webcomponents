@@ -2,10 +2,11 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
   ObcAutomationBadge,
   ObcAutomationBadgeMode,
+  ObcAutomationBadgeType,
 } from './automation-badge.js';
 import './automation-badge.js';
 import {html} from 'lit';
-import '../../icons/icon-command-locked.js';
+import '../../icons/icon-command-locked-f.js';
 
 const meta: Meta<typeof ObcAutomationBadge> = {
   title: 'Automation/Automation-configurations/Automation-badge',
@@ -13,28 +14,21 @@ const meta: Meta<typeof ObcAutomationBadge> = {
   component: 'obc-automation-badge',
   args: {
     mode: ObcAutomationBadgeMode.Flat,
-    deviceOn: false,
+    type: ObcAutomationBadgeType.CommandLocked,
   },
   argTypes: {
-    deviceOn: {
-      control: {
-        type: 'boolean',
-      },
-    },
     mode: {
       options: Object.values(ObcAutomationBadgeMode),
       control: {
         type: 'select',
       },
     },
-  },
-  render(args) {
-    return html`<obc-automation-badge
-      .deviceOn=${args.deviceOn}
-      .mode=${args.mode}
-    >
-      <obi-command-locked></obi-command-locked>
-    </obc-automation-badge>`;
+    type: {
+      options: Object.values(ObcAutomationBadgeType),
+      control: {
+        type: 'select',
+      },
+    },
   },
 } satisfies Meta<ObcAutomationBadge>;
 
@@ -59,22 +53,35 @@ export const Enhanced: Story = {
   },
 };
 
-export const FlatOn: Story = {
+export const Auto: Story = {
   args: {
-    deviceOn: true,
+    type: ObcAutomationBadgeType.Auto,
   },
 };
 
-export const RegularOn: Story = {
+export const CommandLocked: Story = {
   args: {
-    mode: ObcAutomationBadgeMode.Regular,
-    deviceOn: true,
+    type: ObcAutomationBadgeType.CommandLocked,
   },
 };
 
-export const EnhancedOn: Story = {
+export const Duty: Story = {
   args: {
-    mode: ObcAutomationBadgeMode.Enhanced,
-    deviceOn: true,
+    type: ObcAutomationBadgeType.Duty,
+  },
+};
+
+export const AlertOff: Story = {
+  args: {
+    type: ObcAutomationBadgeType.AlertOff,
+  },
+};
+
+export const SlottedIcon: Story = {
+  render(args) {
+    return html`<obc-automation-badge .mode=${args.mode}>
+      <obi-command-locked-f></obi-command-locked-f>
+      <obi-command-locked-f slot="icon-siluette"></obi-command-locked-f>
+    </obc-automation-badge>`;
   },
 };

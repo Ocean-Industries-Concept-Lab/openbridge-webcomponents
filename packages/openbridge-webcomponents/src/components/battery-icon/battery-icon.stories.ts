@@ -3,7 +3,7 @@ import {ObcBatteryIcon} from './battery-icon.js';
 import './battery-icon.js';
 
 const meta: Meta<typeof ObcBatteryIcon> = {
-  title: 'UI Components/Visual feedback/Battery Icon',
+  title: 'Icons/Battery Icon',
   tags: ['6.0'],
   component: 'obc-battery-icon',
   args: {

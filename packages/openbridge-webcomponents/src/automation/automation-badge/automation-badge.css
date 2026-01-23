@@ -1,44 +1,62 @@
-.wrapper {
-  padding: var(--automation-components-badge-padding);
-  width: min-content;
+* {
+  box-sizing: border-box;
 }
 
-.badge {
-  width: min-content;
-  border-radius: var(--automation-components-badge-border-radius);
-  margin: -1px;
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--automation-components-badge-new-size);
+  height: var(--automation-components-badge-new-size);
+  border-radius: var(--automation-components-badge-new-border-radius);
 
-  &.flat {
-    @mixin style style=flat noClick;
-    color: var(--element-inactive-color);
+  .badge {
+    position: relative;
+  }
 
-    &.on {
-      color: var(--on-normal-neutral-color);
-    }
+  ::slotted([slot="icon-siluette"]),
+  .icon.siluette {
+    stroke-width: 2px;
+    stroke: var(--border-silhouette-color);
+  }
+
+  &:not(.flat) ::slotted([slot="icon-siluette"]),
+  &:not(.flat) .icon.siluette {
+    display: none;
+  }
+
+  ::slotted(*),
+  .icon {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  &.flat .badge {
+    width: var(--automation-components-badge-new-icon-size-flat);
+    height: var(--automation-components-badge-new-icon-size-flat);
+    color: var(--element-neutral-color);
   }
 
   &.regular {
     @mixin style style=normal noClick;
     color: var(--element-inactive-color);
 
-    &.on {
-      color: var(--on-normal-neutral-color);
+    .badge {
+      width: var(--automation-components-badge-new-icon-size);
+      height: var(--automation-components-badge-new-icon-size);
     }
   }
 
   &.enhanced {
-    background: var(--element-inactive-color);
-    border: 1px solid var(--element-inactive-color);
+    @mixin style style=raised noClick;
     color: var(--element-active-inverted-color);
 
-    &.on {
-      background: var(--element-neutral-color);
-      border-color: var(--element-neutral-color);
+    .badge {
+      width: var(--automation-components-badge-new-icon-size);
+      height: var(--automation-components-badge-new-icon-size);
     }
   }
-}
-
-.icon {
-  width: var(--automation-components-badge-icon-size);
-  height: var(--automation-components-badge-icon-size);
 }
