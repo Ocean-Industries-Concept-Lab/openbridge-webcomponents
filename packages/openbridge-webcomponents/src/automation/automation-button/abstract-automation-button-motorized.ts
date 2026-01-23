@@ -9,11 +9,14 @@ export enum MotorizedVariant {
   flat = 'flat',
 }
 
-export class ObcAbstractAutomationButtonMotorized extends ObcAbstractAutomationButton<MotorizedVariant> {
+export class ObcAbstractAutomationButtonMotorized extends ObcAbstractAutomationButton {
   @property({type: Boolean}) on: boolean = false;
   @property({type: Number}) speedInPercent: number = 0;
   @property({type: String}) labelDirection: AutomationButtonLabelDirection =
     AutomationButtonLabelDirection.right;
+
+  // @ts-expect-error - can be any of the MotorizedVariant, not square
+  override variant: MotorizedVariant;
 
   override get extraReadouts(): AutomationButtonReadoutStack[] {
     if (

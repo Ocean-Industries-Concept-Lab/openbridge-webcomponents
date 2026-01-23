@@ -17,9 +17,12 @@ export enum DigitalValveVariant {
  * @ignition-center
  */
 @customElement('obc-digital-valve')
-export class ObcDigitalValve extends ObcAbstractAutomationButton<DigitalValveVariant> {
+export class ObcDigitalValve extends ObcAbstractAutomationButton {
   @property({type: Boolean}) open: boolean = false;
   @property({type: Boolean}) vertical: boolean = false;
+
+  // @ts-expect-error - can be any of the DigitalValveVariant, not square or double
+  override variant: DigitalValveVariant;
 
   override get _on(): boolean {
     return this.open;

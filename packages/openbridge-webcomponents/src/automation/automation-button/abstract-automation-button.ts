@@ -19,9 +19,7 @@ import {
 } from '../../components/alert-frame/alert-frame.js';
 import '../automation-badge/automation-badge.js';
 
-export class ObcAbstractAutomationButton<
-  T extends AutomationButtonVariant,
-> extends LitElement {
+export class ObcAbstractAutomationButton extends LitElement {
   @property({type: Boolean}) hideReadoutStack: boolean = false;
   @property({type: Boolean}) hasIdTag: boolean = false;
   @property({type: String}) readoutPosition: AutomationButtonReadoutPosition =
@@ -38,7 +36,7 @@ export class ObcAbstractAutomationButton<
   @property({type: Boolean}) progress: boolean = false;
   @property({type: String}) tag: string = '';
   @property({type: String}) variant: AutomationButtonVariant =
-    AutomationButtonVariant.regular as T;
+    AutomationButtonVariant.regular;
   @property({type: String}) direction: AutomationButtonDirection =
     AutomationButtonDirection.forward;
   @property({type: Boolean}) badgeAuto: boolean = false;

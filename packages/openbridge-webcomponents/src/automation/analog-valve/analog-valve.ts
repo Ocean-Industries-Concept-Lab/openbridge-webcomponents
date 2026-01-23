@@ -12,12 +12,15 @@ export enum AnalogValveVariant {
 }
 
 @customElement('obc-analog-valve')
-export class ObcAnalogValve extends ObcAbstractAutomationButton<AnalogValveVariant> {
+export class ObcAnalogValve extends ObcAbstractAutomationButton {
   @property({type: Boolean}) open: boolean = false;
   @property({type: Number}) value: number = 0;
   @property({type: Boolean}) vertical: boolean = false;
   @property({type: String}) labelDirection: AutomationButtonLabelDirection =
     AutomationButtonLabelDirection.right;
+
+  // @ts-expect-error - can be any of the AnalogValveVariant, not square or double
+  override variant: AnalogValveVariant;
 
   override get extraReadouts(): AutomationButtonReadoutStack[] {
     if (this.open) {

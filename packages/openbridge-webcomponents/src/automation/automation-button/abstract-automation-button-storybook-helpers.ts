@@ -2,7 +2,7 @@ import {
   ObcAlertFrameStatus,
   ObcAlertFrameThickness,
   ObcAlertFrameType,
-} from '../../components/alert-frame/alert-frame';
+} from '../../components/alert-frame/alert-frame.js';
 import {MotorizedVariant} from './abstract-automation-button-motorized.js';
 import {
   AutomationButtonDirection,
