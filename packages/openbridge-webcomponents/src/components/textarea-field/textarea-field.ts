@@ -418,7 +418,9 @@ export class ObcTextareaField extends LitElement {
 
   private get isEmpty(): boolean {
     return (
-      !this.hasContent && (this.attachments?.length ?? 0) === 0 && !this.recording
+      !this.hasContent &&
+      (this.attachments?.length ?? 0) === 0 &&
+      !this.recording
     );
   }
 
