@@ -14,8 +14,8 @@ export type ExpandEvent = CustomEvent<{expand: boolean}>;
 export class ObcPoiTargetButtonGroup extends LitElement {
   @property({type: Boolean}) expand = false;
   @property({type: String}) positionVertical = '0px';
-  @state() positionLeft = '0px';
-  @state() positionRight = '0px';
+  @state() private positionLeft = '0px';
+  @state() private positionRight = '0px';
 
   @queryAssignedElements({flatten: true})
   _children!: Array<HTMLElement>;

@@ -130,16 +130,16 @@ export class ObcSpeedArrows extends LitElement {
     return html`
       <div class="wrapper">
         ${this.readout
-          ? html` <obc-instrument-field
+          ? html`<obc-instrument-field
               class="readout"
-              value=${this.speedKnots}
+              .value=${this.speedKnots}
               unit="KN"
               tag="Speed"
-              size=${InstrumentFieldSize.enhanced}
-              fractionDigits=${this.fractionDigits}
-              maxDigits=${this.maxDigits}
+              .size=${InstrumentFieldSize.enhanced}
+              .fractionDigits=${this.fractionDigits}
+              .maxDigits=${this.maxDigits}
               .neutralColor=${this.activeColor === ActiveColor.Regular}
-            />`
+            ></obc-instrument-field>`
           : nothing}
         <div class="arrow-container">
           <svg

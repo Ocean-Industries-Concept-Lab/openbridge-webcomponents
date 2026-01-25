@@ -7,22 +7,12 @@ export class ObiWind10 extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path d="M11 24H13L13 7H15L12 0L9 7H11L11 24Z" fill="currentColor"/>
-<path d="M5 24L5 22H11V24H5Z" fill="currentColor"/>
-<path d="M5 21L5 19H11V21H5Z" fill="currentColor"/>
-<path d="M5 18L5 16H11V18H5Z" fill="currentColor"/>
-<path d="M5 15L5 13H11V15H5Z" fill="currentColor"/>
-<path d="M8 12L8 10H11V12H8Z" fill="currentColor"/>
+<path d="M11 24H13L13 7H15L12 0L9 7H11L11 13H5V15H11V16H5V18H11L11 19H5V21H11V22H5V24H11Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M11 24H13L13 7H15L12 0L9 7H11L11 24Z" style="fill: var(--element-active-color)"/>
-<path d="M5 24L5 22H11V24H5Z" style="fill: var(--element-active-color)"/>
-<path d="M5 21L5 19H11V21H5Z" style="fill: var(--element-active-color)"/>
-<path d="M5 18L5 16H11V18H5Z" style="fill: var(--element-active-color)"/>
-<path d="M5 15L5 13H11V15H5Z" style="fill: var(--element-active-color)"/>
-<path d="M8 12L8 10H11V12H8Z" style="fill: var(--element-active-color)"/>
+<path d="M11 24H13L13 7H15L12 0L9 7H11L11 13H5V15H11V16H5V18H11L11 19H5V21H11V22H5V24H11Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 
