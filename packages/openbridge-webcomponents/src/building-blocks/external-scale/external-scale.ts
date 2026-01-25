@@ -146,10 +146,18 @@ import {
  */
 
 /** Main axis orientation for the external scale renderer. */
-export type ExternalScaleOrientation = 'vertical' | 'horizontal';
+export enum ExternalScaleOrientation {
+  vertical = 'vertical',
+  horizontal = 'horizontal',
+}
 
 /** Which side of the chart area the scale is attached to. */
-export type ExternalScaleSide = 'left' | 'right' | 'top' | 'bottom';
+export enum ExternalScaleSide {
+  left = 'left',
+  right = 'right',
+  top = 'top',
+  bottom = 'bottom',
+}
 
 /** Tick density preset */
 export enum ScaleType {

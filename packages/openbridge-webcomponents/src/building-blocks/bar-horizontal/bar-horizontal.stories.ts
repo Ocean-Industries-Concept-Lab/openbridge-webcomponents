@@ -8,7 +8,7 @@ import {
   FrameStyle,
   FillMode,
   AdvicePosition,
-  HorizontalSide,
+  ExternalScaleSide,
   BorderRadiusPosition,
   InstrumentState,
 } from './bar-horizontal.js';
@@ -1111,7 +1111,7 @@ export const FixedAspectRatioChartIntegration: StoryObj = {
     bar.enhanced = true;
     bar.primaryTickbarsInterval = 10;
     bar.fixedAspectRatio = true;
-    bar.side = HorizontalSide.bottom;
+    bar.side = ExternalScaleSide.bottom;
     bar.style.cssText = `
       width: 100%;
       height: 100%;

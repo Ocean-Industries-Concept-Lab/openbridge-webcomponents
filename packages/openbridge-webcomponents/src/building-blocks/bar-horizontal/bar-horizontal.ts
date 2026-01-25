@@ -27,12 +27,9 @@ import {
   ScaleType,
   FillMode,
   AdvicePosition,
+  ExternalScaleOrientation,
+  ExternalScaleSide,
 } from '../external-scale/external-scale.js';
-
-export enum HorizontalSide {
-  top = 'top',
-  bottom = 'bottom',
-}
 
 // Re-export shared enums for convenience
 export {
@@ -42,6 +39,7 @@ export {
   FrameStyle,
   BorderRadiusPosition,
   InstrumentState,
+  ExternalScaleSide,
 };
 
 /**
@@ -74,7 +72,7 @@ export class ObcBarHorizontal extends LitElement {
   @property({type: Number}) paddingRight = CHART_DIMENSIONS.CANVAS_PADDING;
 
   /** Which side this scale lives on */
-  @property({type: String}) side: HorizontalSide = HorizontalSide.bottom;
+  @property({type: String}) side: ExternalScaleSide = ExternalScaleSide.bottom;
 
   /**
    * When true, freezes all internal calculations and scales the entire component
@@ -105,7 +103,7 @@ export class ObcBarHorizontal extends LitElement {
 
       // Calculate reference thickness from current configuration
       const layout = computeExternalScaleLayout({
-        orientation: 'horizontal',
+        orientation: ExternalScaleOrientation.horizontal,
         side: this.side,
         hasBar: this.hasBar,
         hasScale: this.hasScale,
@@ -117,7 +115,7 @@ export class ObcBarHorizontal extends LitElement {
       });
 
       const viewBox = computeExternalScaleViewBox(
-        {orientation: 'horizontal', length: this.width},
+        {orientation: ExternalScaleOrientation.horizontal, length: this.width},
         layout
       );
 
@@ -234,7 +232,7 @@ export class ObcBarHorizontal extends LitElement {
 
   override render() {
     const config: ExternalScaleConfig = {
-      orientation: 'horizontal',
+      orientation: ExternalScaleOrientation.horizontal,
       side: this.side,
       length: this.width,
       paddingStart: this.paddingLeft,
@@ -327,7 +325,7 @@ export class ObcBarHorizontal extends LitElement {
     });
 
     const dimensions = computeScaleDimensionsForReport({
-      orientation: 'horizontal',
+      orientation: ExternalScaleOrientation.horizontal,
       side: this.side,
       hasBar: this.hasBar,
       hasScale: this.hasScale,
@@ -404,7 +402,7 @@ export class ObcBarHorizontal extends LitElement {
         );
 
         const layout = computeExternalScaleLayout({
-          orientation: 'horizontal',
+          orientation: ExternalScaleOrientation.horizontal,
           side: this.side,
           hasBar: this.hasBar,
           hasScale: this.hasScale,
@@ -416,7 +414,10 @@ export class ObcBarHorizontal extends LitElement {
         });
 
         const viewBox = computeExternalScaleViewBox(
-          {orientation: 'horizontal', length: this.width},
+          {
+            orientation: ExternalScaleOrientation.horizontal,
+            length: this.width,
+          },
           layout
         );
 

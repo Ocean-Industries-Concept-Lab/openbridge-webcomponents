@@ -21,12 +21,9 @@ import {
   ScaleType,
   FillMode,
   AdvicePosition,
+  ExternalScaleOrientation,
+  ExternalScaleSide,
 } from '../../building-blocks/external-scale/external-scale.js';
-
-export enum VerticalSide {
-  left = 'left',
-  right = 'right',
-}
 
 // Re-export shared enums for convenience
 export {
@@ -36,6 +33,7 @@ export {
   FrameStyle,
   BorderRadiusPosition,
   InstrumentState,
+  ExternalScaleSide,
 };
 
 /**
@@ -135,7 +133,7 @@ export class ObcGaugeVertical extends LitElement {
   private readonly paddingBottom = CHART_DIMENSIONS.CANVAS_PADDING;
 
   /** Which side of the chart area this scale lives on (left or right) */
-  @property({type: String}) side: VerticalSide = VerticalSide.right;
+  @property({type: String}) side: ExternalScaleSide = ExternalScaleSide.right;
 
   /**
    * When true, freezes all internal calculations and scales the entire component
@@ -168,7 +166,7 @@ export class ObcGaugeVertical extends LitElement {
 
       // Calculate reference thickness from current configuration
       const layout = computeExternalScaleLayout({
-        orientation: 'vertical',
+        orientation: ExternalScaleOrientation.vertical,
         side: this.side,
         hasBar: this.hasBar,
         hasScale: this.hasScale,
@@ -180,7 +178,7 @@ export class ObcGaugeVertical extends LitElement {
       });
 
       const viewBox = computeExternalScaleViewBox(
-        {orientation: 'vertical', length: this.height},
+        {orientation: ExternalScaleOrientation.vertical, length: this.height},
         layout
       );
 
@@ -265,7 +263,7 @@ export class ObcGaugeVertical extends LitElement {
 
   override render() {
     const config: ExternalScaleConfig = {
-      orientation: 'vertical',
+      orientation: ExternalScaleOrientation.vertical,
       side: this.side,
       length: this.height,
       paddingStart: this.paddingTop,
@@ -358,7 +356,7 @@ export class ObcGaugeVertical extends LitElement {
     });
 
     const dimensions = computeScaleDimensionsForReport({
-      orientation: 'vertical',
+      orientation: ExternalScaleOrientation.vertical,
       side: this.side,
       hasBar: this.hasBar,
       hasScale: this.hasScale,
