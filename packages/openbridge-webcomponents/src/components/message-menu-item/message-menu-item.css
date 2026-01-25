@@ -20,6 +20,8 @@
   min-height: var(--app-components-notification-menu-item-touch-target);
   align-items: flex-start;
   padding: var(--app-components-message-menu-item-padding-vertical-4)
+    var(--app-components-message-menu-item-padding-horizontal)
+    var(--app-components-message-menu-item-padding-vertical-4)
     var(--app-components-message-menu-item-padding-horizontal);
   appearance: none;
   gap: var(--app-components-message-menu-item-label-spacing);
@@ -40,8 +42,10 @@
     min-width: 0;
     display: grid;
     column-gap: var(--app-components-message-menu-item-label-spacing);
-    grid-template-areas: 'title description date chevron';
-    grid-template-columns: minmax(0, min-content) minmax(0, 1fr) min-content min-content;
+    grid-template-areas: "title description date chevron";
+    grid-template-columns:
+      minmax(0, min-content) minmax(0, 1fr)
+      min-content min-content;
     text-align: left;
   }
 
@@ -94,6 +98,7 @@
     grid-area: chevron;
     width: var(--app-components-message-menu-item-icon-size-regular);
     height: var(--app-components-message-menu-item-icon-size-regular);
+    color: var(--on-flat-neutral-color);
   }
 
   .icon-container {
@@ -147,24 +152,61 @@
       grid-template-areas: "title date" "description description";
     }
   }
-
 }
 
 .trailing-icon {
-  width: var(--app-components-alert-components-general-notification-item-icon-size-large);
-  height: var(--app-components-alert-components-general-notification-item-icon-size-large);
+  width: var(
+    --app-components-alert-components-general-notification-item-icon-size-large
+  );
+  height: var(
+    --app-components-alert-components-general-notification-item-icon-size-large
+  );
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--on-flat-neutral-color);
 }
 
+/* Vertical stack direction */
+.wrapper.stack-vertical {
+  flex-direction: column;
+  align-items: stretch;
+  padding: var(--app-components-message-menu-item-padding-vertical-8)
+    var(--app-components-message-menu-item-padding-horizontal)
+    var(--app-components-message-menu-item-padding-vertical-8)
+    var(--app-components-message-menu-item-padding-horizontal);
+
+  .content-container {
+    width: 100%;
+  }
+
+  .action-button-container {
+    width: 100%;
+    height: auto;
+
+    obc-button {
+      flex: 1;
+    }
+  }
+}
+
+/* Vertical stack with enhanced icons */
+.wrapper.stack-vertical.enhanced-icon {
+  padding: var(--app-components-message-menu-item-padding-vertical-4)
+    var(--app-components-message-menu-item-padding-horizontal)
+    var(--app-components-message-menu-item-padding-vertical-8)
+    var(--app-components-message-menu-item-padding-horizontal);
+}
 
 :host:has(.action-button-container:hover) .wrapper {
   background-color: var(--flat-hover-background-color);
 }
 
-.enhanced-icon.wrapper {
+/* Enhanced icon horizontal (default) */
+.enhanced-icon.wrapper:not(.stack-vertical) {
   padding: var(--app-components-message-menu-item-padding-vertical-8)
+    var(--app-components-message-menu-item-padding-horizontal)
+    var(--app-components-message-menu-item-padding-vertical-8)
     var(--app-components-message-menu-item-padding-horizontal);
 
   .content-container {

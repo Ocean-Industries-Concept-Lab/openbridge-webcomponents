@@ -8,18 +8,20 @@ import './message-menu-item.js';
 import {html} from 'lit';
 import '../../icons/icon-placeholder.js';
 
-const meta: Meta<typeof ObcMessageMenuItem> = {
+const meta: Meta<ObcMessageMenuItem> = {
   title: 'UI Components/Message and alerts/Message Menu Item',
   tags: ['autodocs', '6.0'],
   component: 'obc-message-menu-item',
   argTypes: {
+    // Layout
     size: {
       control: {type: 'select'},
       options: [
         ObcMessageMenuItemSize.SingleLine,
         ObcMessageMenuItemSize.DoubleLine,
-        ObcMessageMenuItemSize.MultiLine,
       ],
+      description:
+        'The collapsed size of the item. When opened, it expands to multi-line.',
     },
     stackDirection: {
       control: {type: 'select'},
@@ -29,199 +31,313 @@ const meta: Meta<typeof ObcMessageMenuItem> = {
       ],
     },
     enhancedIcon: {control: 'boolean'},
-    open: {control: 'boolean'},
-    hasPrimaryAction: {control: 'boolean'},
-    hasSecondaryAction: {control: 'boolean'},
-    hasTrailingIcon: {control: 'boolean'},
+    open: {
+      control: 'boolean',
+      description:
+        'When true, the item expands to show full content (multi-line).',
+    },
+    // Text content
+    title: {control: 'text'},
+    description: {control: 'text'},
+    day: {control: 'text'},
+    time: {control: 'text'},
+    primaryActionLabel: {control: 'text'},
+    secondaryActionLabel: {control: 'text'},
+    // Icon slots
     hasPrimaryIcon: {control: 'boolean'},
     hasSecondaryIcon: {control: 'boolean'},
+    hasTrailingIcon: {
+      control: 'boolean',
+      description: 'Only applies to horizontal layout.',
+    },
     isShelved: {control: 'boolean'},
-    hasTimestamp: {control: 'boolean'},
-    hasDay: {control: 'boolean'},
   },
-
   args: {
     size: ObcMessageMenuItemSize.SingleLine,
     stackDirection: ObcMessageMenuItemStackDirection.Horizontal,
     enhancedIcon: false,
     open: false,
-    hasPrimaryAction: false,
-    hasSecondaryAction: false,
-    hasTrailingIcon: false,
+    title: 'Title',
+    description:
+      'A long notification message of more than one line of text and meaningful content. Sometimes it might be quite long and that is ok.',
+    day: '',
+    time: '',
+    primaryActionLabel: '',
+    secondaryActionLabel: '',
     hasPrimaryIcon: false,
     hasSecondaryIcon: false,
+    hasTrailingIcon: false,
     isShelved: false,
-    hasTimestamp: false,
-    hasDay: false,
   },
   render: (args) => {
     return html`
       <obc-message-menu-item
         .size=${args.size}
+        .stackDirection=${args.stackDirection}
         .enhancedIcon=${args.enhancedIcon}
         .open=${args.open}
-        .hasPrimaryAction=${args.hasPrimaryAction}
-        .hasSecondaryAction=${args.hasSecondaryAction}
-        .hasTrailingIcon=${args.hasTrailingIcon}
+        .title=${args.title}
+        .description=${args.description}
+        .day=${args.day}
+        .time=${args.time}
+        .primaryActionLabel=${args.primaryActionLabel}
+        .secondaryActionLabel=${args.secondaryActionLabel}
         .hasPrimaryIcon=${args.hasPrimaryIcon}
         .hasSecondaryIcon=${args.hasSecondaryIcon}
-        .hasTimestamp=${args.hasTimestamp}
+        .hasTrailingIcon=${args.hasTrailingIcon}
         .isShelved=${args.isShelved}
-        stackDirection=${args.stackDirection}
-        .hasDay=${args.hasDay}
-        style="width: 560px; display: block; --action-width: 84px;"
+        style="width: 560px; display: block;"
       >
         <obi-placeholder slot="primary-icon"></obi-placeholder>
         <obi-placeholder slot="secondary-icon"></obi-placeholder>
-        <span slot="title">Title</span>
-        <span slot="description"
-          >A long notification message of more than one line of text and
-          meaningful content. Sometimes it might be quite long and that is ok.
-        </span>
-        <span slot="primary-action-label">Action</span>
-        <span slot="secondary-action-label">Action 2</span>
         <obi-placeholder slot="trailing-icon"></obi-placeholder>
-        <span slot="day">Yesterday</span>
-        <span slot="time">12:00:00</span>
       </obc-message-menu-item>
     `;
   },
-} satisfies Meta<ObcMessageMenuItem>;
+};
 
 export default meta;
 type Story = StoryObj<ObcMessageMenuItem>;
 
-// Basic variations
-export const SingleLine: Story = {
+// =============================================================================
+// HORIZONTAL LAYOUT - Regular Icons
+// =============================================================================
+
+export const HorizontalSingleLine: Story = {
   args: {
     size: ObcMessageMenuItemSize.SingleLine,
     hasPrimaryIcon: true,
-    hasTimestamp: true,
+    day: 'Yesterday',
+    time: '09:12:34',
+    primaryActionLabel: 'Action',
   },
 };
 
-export const DoubleLine: Story = {
+export const HorizontalDoubleLine: Story = {
   args: {
     size: ObcMessageMenuItemSize.DoubleLine,
     hasPrimaryIcon: true,
-    hasTimestamp: true,
-    hasDay: true,
+    day: 'Yesterday',
+    time: '09:12:34',
+    primaryActionLabel: 'Action',
   },
 };
 
-export const MultiLine: Story = {
+export const HorizontalOpen: Story = {
   args: {
-    size: ObcMessageMenuItemSize.MultiLine,
+    size: ObcMessageMenuItemSize.DoubleLine,
+    open: true,
     hasPrimaryIcon: true,
-    hasTimestamp: true,
+    day: 'Yesterday',
+    time: '09:12:34',
+    primaryActionLabel: 'Action',
   },
 };
 
-// With actions
-export const WithPrimaryAction: Story = {
+// =============================================================================
+// HORIZONTAL LAYOUT - Enhanced Icons
+// =============================================================================
+
+export const HorizontalEnhancedSingleLine: Story = {
   args: {
     size: ObcMessageMenuItemSize.SingleLine,
+    enhancedIcon: true,
     hasPrimaryIcon: true,
-    hasTimestamp: true,
-    hasPrimaryAction: true,
+    day: 'Yesterday',
+    time: '09:12:34',
+    primaryActionLabel: 'Action',
   },
 };
 
-export const WithBothActions: Story = {
+export const HorizontalEnhancedDoubleLine: Story = {
+  args: {
+    size: ObcMessageMenuItemSize.DoubleLine,
+    enhancedIcon: true,
+    hasPrimaryIcon: true,
+    day: 'Yesterday',
+    time: '09:12:34',
+    primaryActionLabel: 'Action',
+  },
+};
+
+export const HorizontalEnhancedOpen: Story = {
+  args: {
+    size: ObcMessageMenuItemSize.DoubleLine,
+    enhancedIcon: true,
+    open: true,
+    hasPrimaryIcon: true,
+    day: 'Yesterday',
+    time: '09:12:34',
+    primaryActionLabel: 'Action',
+  },
+};
+
+// =============================================================================
+// VERTICAL LAYOUT - Regular Icons
+// =============================================================================
+
+export const VerticalSingleLine: Story = {
+  args: {
+    size: ObcMessageMenuItemSize.SingleLine,
+    stackDirection: ObcMessageMenuItemStackDirection.Vertical,
+    hasPrimaryIcon: true,
+    day: 'Yesterday',
+    time: '09:12:34',
+    primaryActionLabel: 'Action',
+  },
+};
+
+export const VerticalDoubleLine: Story = {
+  args: {
+    size: ObcMessageMenuItemSize.DoubleLine,
+    stackDirection: ObcMessageMenuItemStackDirection.Vertical,
+    hasPrimaryIcon: true,
+    day: 'Yesterday',
+    time: '09:12:34',
+    primaryActionLabel: 'Action',
+  },
+};
+
+export const VerticalOpen: Story = {
+  args: {
+    size: ObcMessageMenuItemSize.DoubleLine,
+    stackDirection: ObcMessageMenuItemStackDirection.Vertical,
+    open: true,
+    hasPrimaryIcon: true,
+    day: 'Yesterday',
+    time: '09:12:34',
+    primaryActionLabel: 'Action',
+  },
+};
+
+// =============================================================================
+// VERTICAL LAYOUT - Enhanced Icons
+// =============================================================================
+
+export const VerticalEnhancedSingleLine: Story = {
+  args: {
+    size: ObcMessageMenuItemSize.SingleLine,
+    stackDirection: ObcMessageMenuItemStackDirection.Vertical,
+    enhancedIcon: true,
+    hasPrimaryIcon: true,
+    day: 'Yesterday',
+    time: '09:12:34',
+    primaryActionLabel: 'Action',
+  },
+};
+
+export const VerticalEnhancedDoubleLine: Story = {
+  args: {
+    size: ObcMessageMenuItemSize.DoubleLine,
+    stackDirection: ObcMessageMenuItemStackDirection.Vertical,
+    enhancedIcon: true,
+    hasPrimaryIcon: true,
+    day: 'Yesterday',
+    time: '09:12:34',
+    primaryActionLabel: 'Action',
+  },
+};
+
+export const VerticalEnhancedOpen: Story = {
+  args: {
+    size: ObcMessageMenuItemSize.DoubleLine,
+    stackDirection: ObcMessageMenuItemStackDirection.Vertical,
+    enhancedIcon: true,
+    open: true,
+    hasPrimaryIcon: true,
+    day: 'Yesterday',
+    time: '09:12:34',
+    primaryActionLabel: 'Action',
+  },
+};
+
+// =============================================================================
+// ACTIONS & ICONS - Horizontal
+// =============================================================================
+
+export const HorizontalWithTwoActions: Story = {
   args: {
     size: ObcMessageMenuItemSize.DoubleLine,
     hasPrimaryIcon: true,
-    hasTimestamp: true,
-    hasPrimaryAction: true,
-    hasSecondaryAction: true,
+    day: 'Yesterday',
+    time: '09:12:34',
+    primaryActionLabel: 'Action',
+    secondaryActionLabel: 'Action 2',
   },
 };
 
-export const WithTrailingIcon: Story = {
+export const HorizontalWithTrailingIcon: Story = {
   args: {
-    size: ObcMessageMenuItemSize.SingleLine,
+    size: ObcMessageMenuItemSize.DoubleLine,
     hasPrimaryIcon: true,
-    hasTimestamp: true,
+    day: 'Yesterday',
+    time: '09:12:34',
     hasTrailingIcon: true,
   },
 };
 
-// Shelved notification
+export const HorizontalWithSecondaryIcon: Story = {
+  args: {
+    size: ObcMessageMenuItemSize.DoubleLine,
+    hasPrimaryIcon: true,
+    hasSecondaryIcon: true,
+    day: 'Yesterday',
+    time: '09:12:34',
+    primaryActionLabel: 'Action',
+  },
+};
+
+// =============================================================================
+// ACTIONS & ICONS - Vertical
+// =============================================================================
+
+export const VerticalWithTwoActions: Story = {
+  args: {
+    size: ObcMessageMenuItemSize.DoubleLine,
+    stackDirection: ObcMessageMenuItemStackDirection.Vertical,
+    hasPrimaryIcon: true,
+    day: 'Yesterday',
+    time: '09:12:34',
+    primaryActionLabel: 'Action',
+    secondaryActionLabel: 'Action 2',
+  },
+};
+
+export const VerticalWithSecondaryIcon: Story = {
+  args: {
+    size: ObcMessageMenuItemSize.DoubleLine,
+    stackDirection: ObcMessageMenuItemStackDirection.Vertical,
+    hasPrimaryIcon: true,
+    hasSecondaryIcon: true,
+    day: 'Yesterday',
+    time: '09:12:34',
+    primaryActionLabel: 'Action',
+  },
+};
+
+// =============================================================================
+// SHELVED STATE
+// =============================================================================
+
 export const Shelved: Story = {
   args: {
     size: ObcMessageMenuItemSize.DoubleLine,
     isShelved: true,
-    hasTimestamp: true,
-    hasDay: true,
-    hasPrimaryAction: true,
-  },
-};
-
-// Enhanced icon variations
-export const EnhancedIcon: Story = {
-  args: {
-    size: ObcMessageMenuItemSize.DoubleLine,
-    enhancedIcon: true,
     hasPrimaryIcon: true,
-    hasTimestamp: true,
+    day: 'Yesterday',
+    time: '09:12:34',
+    primaryActionLabel: 'Action',
   },
 };
 
-export const EnhancedIconWithActions: Story = {
-  args: {
-    size: ObcMessageMenuItemSize.DoubleLine,
-    enhancedIcon: true,
-    hasPrimaryIcon: true,
-    hasTimestamp: true,
-    hasPrimaryAction: true,
-    hasSecondaryAction: true,
-  },
-};
-
-// Multiple icons
-export const WithSecondaryIcon: Story = {
-  args: {
-    size: ObcMessageMenuItemSize.DoubleLine,
-    hasPrimaryIcon: true,
-    hasSecondaryIcon: true,
-    hasTimestamp: true,
-  },
-};
-
-// Stack direction variations
-export const VerticalStack: Story = {
+export const ShelvedVertical: Story = {
   args: {
     size: ObcMessageMenuItemSize.DoubleLine,
     stackDirection: ObcMessageMenuItemStackDirection.Vertical,
-    hasPrimaryIcon: true,
-    hasTimestamp: true,
-    hasPrimaryAction: true,
-    hasSecondaryAction: true,
-  },
-};
-
-export const VerticalStackWithTrailingIcon: Story = {
-  args: {
-    size: ObcMessageMenuItemSize.DoubleLine,
-    stackDirection: ObcMessageMenuItemStackDirection.Vertical,
-    hasPrimaryIcon: true,
-    hasTimestamp: true,
-    hasTrailingIcon: true,
-  },
-};
-
-// Full featured example
-export const FullFeatured: Story = {
-  args: {
-    size: ObcMessageMenuItemSize.DoubleLine,
-    enhancedIcon: true,
-    hasPrimaryIcon: true,
-    hasSecondaryIcon: true,
     isShelved: true,
-    hasTimestamp: true,
-    hasDay: true,
-    hasPrimaryAction: true,
-    hasSecondaryAction: true,
-    hasTrailingIcon: true,
+    hasPrimaryIcon: true,
+    day: 'Yesterday',
+    time: '09:12:34',
+    primaryActionLabel: 'Action',
   },
 };
