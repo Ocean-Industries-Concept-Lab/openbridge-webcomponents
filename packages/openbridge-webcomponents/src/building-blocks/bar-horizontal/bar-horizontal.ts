@@ -148,7 +148,7 @@ export class ObcBarHorizontal extends LitElement {
   /** Bar/fill thickness in pixels */
   @property({type: Number}) barThickness = 24;
   /** Tickmark band thickness in pixels. */
-  @property({type: Number}) tickThickness = 28;
+  @property({type: Number}) tickThickness = 24;
   /** Label band thickness in pixels. */
   @property({type: Number}) labelThickness = 60;
 
@@ -241,6 +241,12 @@ export class ObcBarHorizontal extends LitElement {
   @property({type: Number}) setpointAtZeroDeadband = 0.5;
   /** Instrument state (affects colors and some marker behavior) */
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
+  /**
+   * When true, the setpoint marker is in "focus" state (user is actively adjusting).
+   * Displays the outlined/hollow triangle variant at full size.
+   * @default false
+   */
+  @property({type: Boolean}) focused = false;
 
   // Advice
   /** Advice overlay positioning: center (in bar), inner (covers minor ticks), outer (no overlap) */
@@ -324,6 +330,7 @@ export class ObcBarHorizontal extends LitElement {
       autoAtSetpointDeadband: this.autoAtSetpointDeadband,
       setpointAtZeroDeadband: this.setpointAtZeroDeadband,
       state: this.state,
+      focused: this.focused,
       advicePosition: this.advicePosition,
       advices: this.advices as ExternalScaleAdvice[],
       fixedAspectRatio: this.fixedAspectRatio,
