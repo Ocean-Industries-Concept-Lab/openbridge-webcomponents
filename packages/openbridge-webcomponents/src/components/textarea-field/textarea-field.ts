@@ -149,7 +149,7 @@ export interface Attachment {
  *
  * ## Events
  *
- * - `value-changed` – Fired when the textarea loses focus (blur), with the current value.
+ * - `value-changed` – Fired when the textarea loses focus (blur) and the value has changed since the last emit.
  * - `send-click` – Fired when the send button is clicked (Message type only), with the current value.
  * - `add-click` – Fired when the add (+) button is clicked.
  * - `screenshot-click` – Fired when the screenshot button is clicked.
@@ -187,7 +187,7 @@ export interface Attachment {
  *
  * @slot leading-icon - Displays a contextual icon before the input when `hasLeadingIcon` is true.
  *
- * @fires value-changed {CustomEvent<{value: string}>} Fired when the textarea loses focus (blur).
+ * @fires value-changed {CustomEvent<{value: string}>} Fired on blur when value has changed.
  * @fires send-click {CustomEvent<{value: string}>} Fired when the send button is clicked (Message type only).
  * @fires add-click {CustomEvent<void>} Fired when the add (+) button is clicked.
  * @fires screenshot-click {CustomEvent<void>} Fired when the screenshot button is clicked.
@@ -311,6 +311,15 @@ export class ObcTextareaField extends LitElement {
   @query('.action-container obc-icon-button')
   private _firstActionButton?: HTMLElement;
 
+  protected override willUpdate(changedProperties: Map<string, unknown>) {
+    super.willUpdate(changedProperties);
+
+    // Sync _lastEmittedValue when value is set externally (not during editing)
+    if (changedProperties.has('value') && !this._focused) {
+      this._lastEmittedValue = this.value;
+    }
+  }
+
   protected override updated(changedProperties: Map<string, unknown>) {
     super.updated(changedProperties);
 
@@ -389,7 +398,7 @@ export class ObcTextareaField extends LitElement {
   }
 
   private get canSend(): boolean {
-    return this.hasContent || this.attachments.length > 0;
+    return this.hasContent || (this.attachments?.length ?? 0) > 0;
   }
 
   private get showTitle(): boolean {
@@ -408,7 +417,9 @@ export class ObcTextareaField extends LitElement {
   }
 
   private get isEmpty(): boolean {
-    return !this.hasContent && this.attachments.length === 0 && !this.recording;
+    return (
+      !this.hasContent && (this.attachments?.length ?? 0) === 0 && !this.recording
+    );
   }
 
   private emit(eventName: string, detail?: unknown) {

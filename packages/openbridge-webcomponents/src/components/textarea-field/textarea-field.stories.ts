@@ -225,7 +225,7 @@ export const WithToolbar: Story = {
 // RICH TYPE - STATES
 // =============================================================================
 
-export const Error: Story = {
+export const ErrorState: Story = {
   args: {
     type: TextareaFieldType.Rich,
     label: 'Description',
