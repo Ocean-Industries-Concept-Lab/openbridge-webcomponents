@@ -11,7 +11,6 @@ import '../../icons/icon-alerts-shelf.js';
 export enum ObcMessageMenuItemSize {
   SingleLine = 'single-line',
   DoubleLine = 'double-line',
-  MultiLine = 'multi-line',
 }
 
 /**
@@ -115,8 +114,8 @@ export class ObcMessageMenuItem extends LitElement {
   @property({type: Boolean}) isShelved = false;
 
   private get activeSize() {
-    if (this.size === ObcMessageMenuItemSize.MultiLine || this.open) {
-      return ObcMessageMenuItemSize.MultiLine;
+    if (this.open) {
+      return 'multi-line';
     }
     return this.size;
   }
@@ -142,9 +141,7 @@ export class ObcMessageMenuItem extends LitElement {
   }
 
   private handleMessageClick() {
-    if (this.size !== ObcMessageMenuItemSize.MultiLine) {
-      this.open = !this.open;
-    }
+    this.open = !this.open;
 
     this.dispatchEvent(
       new CustomEvent('message-click', {
@@ -220,13 +217,11 @@ export class ObcMessageMenuItem extends LitElement {
                   <span>${this.time}</span>
                 </div>`
               : nothing}
-            ${this.size === ObcMessageMenuItemSize.MultiLine
-              ? nothing
-              : html`<div class="chevron">
-                  ${this.open
-                    ? html`<obi-chevron-up-google></obi-chevron-up-google>`
-                    : html`<obi-chevron-down-google></obi-chevron-down-google>`}
-                </div>`}
+            <div class="chevron">
+              ${this.open
+                ? html`<obi-chevron-up-google></obi-chevron-up-google>`
+                : html`<obi-chevron-down-google></obi-chevron-down-google>`}
+            </div>
           </div>
         </div>
         ${this.hasPrimaryAction ||
