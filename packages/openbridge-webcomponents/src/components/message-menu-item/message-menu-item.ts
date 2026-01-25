@@ -14,11 +14,6 @@ export enum ObcMessageMenuItemSize {
   MultiLine = 'multi-line',
 }
 
-export enum ObcMessageMenuItemStackDirection {
-  Vertical = 'vertical',
-  Horizontal = 'horizontal',
-}
-
 /**
  * `<obc-message-menu-item>` – An expandable message or notification item for use in message lists, notification panels, or alert menus.
  *
@@ -32,8 +27,8 @@ export enum ObcMessageMenuItemStackDirection {
  *   - When clicked, both variants expand to show full multi-line content.
  *
  * - **Stack Direction:**
- *   - `horizontal` (default): Action buttons appear inline to the right of the content.
- *   - `vertical`: Action buttons appear below the content, spanning full width.
+ *   - `stackVertical=false` (default): Action buttons appear inline to the right of the content.
+ *   - `stackVertical=true`: Action buttons appear below the content, spanning full width.
  *
  * - **Icon Options:**
  *   - Primary and secondary icon slots for visual context or status indicators.
@@ -54,8 +49,8 @@ export enum ObcMessageMenuItemStackDirection {
  *
  * - Use `single-line` for high-density lists where space is limited.
  * - Use `double-line` when the description needs more visibility in the collapsed state.
- * - Use `horizontal` stack direction when actions should be quickly accessible inline.
- * - Use `vertical` stack direction when actions need more prominence or when space is narrow.
+ * - Keep `stackVertical=false` (default) when actions should be quickly accessible inline.
+ * - Use `stackVertical=true` when actions need more prominence or when space is narrow.
  * - Enable `enhancedIcon` to highlight important or priority messages.
  * - Use `isShelved` to indicate messages that have been temporarily set aside.
  *
@@ -101,8 +96,7 @@ export class ObcMessageMenuItem extends LitElement {
   // Layout properties
   @property({type: String}) size: ObcMessageMenuItemSize =
     ObcMessageMenuItemSize.SingleLine;
-  @property({type: String}) stackDirection: ObcMessageMenuItemStackDirection =
-    ObcMessageMenuItemStackDirection.Horizontal;
+  @property({type: Boolean}) stackVertical = false;
   @property({type: Boolean}) enhancedIcon = false;
   @property({type: Boolean}) open = false;
 
@@ -144,7 +138,7 @@ export class ObcMessageMenuItem extends LitElement {
   }
 
   private get isVertical() {
-    return this.stackDirection === ObcMessageMenuItemStackDirection.Vertical;
+    return this.stackVertical;
   }
 
   private handleMessageClick() {
@@ -194,7 +188,8 @@ export class ObcMessageMenuItem extends LitElement {
           ['size-' + this.size]: true,
           ['enhanced-icon']: this.enhancedIcon,
           ['has-date']: this.hasTimestamp,
-          ['stack-' + this.stackDirection]: true,
+          ['stack-vertical']: this.stackVertical,
+          ['stack-horizontal']: !this.stackVertical,
         })}
         @click=${this.handleMessageClick}
       >
@@ -237,7 +232,7 @@ export class ObcMessageMenuItem extends LitElement {
         ${this.hasPrimaryAction ||
         this.hasSecondaryAction ||
         (this.hasTrailingIcon && !this.isVertical)
-          ? html`<div class="action-button-container">
+          ? html`<div class="action-button-container" part="action-container">
               ${this.hasSecondaryAction
                 ? html`<obc-button
                     variant="normal"
@@ -257,7 +252,7 @@ export class ObcMessageMenuItem extends LitElement {
                   </obc-button>`
                 : nothing}
               ${this.hasTrailingIcon && !this.isVertical
-                ? html`<div class="trailing-icon">
+                ? html`<div class="trailing-icon" part="trailing-icon">
                     <slot name="trailing-icon"></slot>
                   </div>`
                 : nothing}

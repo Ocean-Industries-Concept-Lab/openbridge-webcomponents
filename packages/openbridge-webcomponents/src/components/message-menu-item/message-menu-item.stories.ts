@@ -2,7 +2,6 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
   ObcMessageMenuItem,
   ObcMessageMenuItemSize,
-  ObcMessageMenuItemStackDirection,
 } from './message-menu-item.js';
 import './message-menu-item.js';
 import {html} from 'lit';
@@ -23,13 +22,7 @@ const meta: Meta<ObcMessageMenuItem> = {
       description:
         'The collapsed size of the item. When opened, it expands to multi-line.',
     },
-    stackDirection: {
-      control: {type: 'select'},
-      options: [
-        ObcMessageMenuItemStackDirection.Horizontal,
-        ObcMessageMenuItemStackDirection.Vertical,
-      ],
-    },
+    stackVertical: {control: 'boolean'},
     enhancedIcon: {control: 'boolean'},
     open: {
       control: 'boolean',
@@ -54,7 +47,7 @@ const meta: Meta<ObcMessageMenuItem> = {
   },
   args: {
     size: ObcMessageMenuItemSize.SingleLine,
-    stackDirection: ObcMessageMenuItemStackDirection.Horizontal,
+    stackVertical: false,
     enhancedIcon: false,
     open: false,
     title: 'Title',
@@ -73,7 +66,7 @@ const meta: Meta<ObcMessageMenuItem> = {
     return html`
       <obc-message-menu-item
         .size=${args.size}
-        .stackDirection=${args.stackDirection}
+        .stackVertical=${args.stackVertical}
         .enhancedIcon=${args.enhancedIcon}
         .open=${args.open}
         .title=${args.title}
@@ -179,7 +172,7 @@ export const HorizontalEnhancedOpen: Story = {
 export const VerticalSingleLine: Story = {
   args: {
     size: ObcMessageMenuItemSize.SingleLine,
-    stackDirection: ObcMessageMenuItemStackDirection.Vertical,
+    stackVertical: true,
     hasPrimaryIcon: true,
     day: 'Yesterday',
     time: '09:12:34',
@@ -190,7 +183,7 @@ export const VerticalSingleLine: Story = {
 export const VerticalDoubleLine: Story = {
   args: {
     size: ObcMessageMenuItemSize.DoubleLine,
-    stackDirection: ObcMessageMenuItemStackDirection.Vertical,
+    stackVertical: true,
     hasPrimaryIcon: true,
     day: 'Yesterday',
     time: '09:12:34',
@@ -201,7 +194,7 @@ export const VerticalDoubleLine: Story = {
 export const VerticalOpen: Story = {
   args: {
     size: ObcMessageMenuItemSize.DoubleLine,
-    stackDirection: ObcMessageMenuItemStackDirection.Vertical,
+    stackVertical: true,
     open: true,
     hasPrimaryIcon: true,
     day: 'Yesterday',
@@ -217,7 +210,7 @@ export const VerticalOpen: Story = {
 export const VerticalEnhancedSingleLine: Story = {
   args: {
     size: ObcMessageMenuItemSize.SingleLine,
-    stackDirection: ObcMessageMenuItemStackDirection.Vertical,
+    stackVertical: true,
     enhancedIcon: true,
     hasPrimaryIcon: true,
     day: 'Yesterday',
@@ -229,7 +222,7 @@ export const VerticalEnhancedSingleLine: Story = {
 export const VerticalEnhancedDoubleLine: Story = {
   args: {
     size: ObcMessageMenuItemSize.DoubleLine,
-    stackDirection: ObcMessageMenuItemStackDirection.Vertical,
+    stackVertical: true,
     enhancedIcon: true,
     hasPrimaryIcon: true,
     day: 'Yesterday',
@@ -241,7 +234,7 @@ export const VerticalEnhancedDoubleLine: Story = {
 export const VerticalEnhancedOpen: Story = {
   args: {
     size: ObcMessageMenuItemSize.DoubleLine,
-    stackDirection: ObcMessageMenuItemStackDirection.Vertical,
+    stackVertical: true,
     enhancedIcon: true,
     open: true,
     hasPrimaryIcon: true,
@@ -294,7 +287,7 @@ export const HorizontalWithSecondaryIcon: Story = {
 export const VerticalWithTwoActions: Story = {
   args: {
     size: ObcMessageMenuItemSize.DoubleLine,
-    stackDirection: ObcMessageMenuItemStackDirection.Vertical,
+    stackVertical: true,
     hasPrimaryIcon: true,
     day: 'Yesterday',
     time: '09:12:34',
@@ -306,7 +299,7 @@ export const VerticalWithTwoActions: Story = {
 export const VerticalWithSecondaryIcon: Story = {
   args: {
     size: ObcMessageMenuItemSize.DoubleLine,
-    stackDirection: ObcMessageMenuItemStackDirection.Vertical,
+    stackVertical: true,
     hasPrimaryIcon: true,
     hasSecondaryIcon: true,
     day: 'Yesterday',
@@ -333,7 +326,7 @@ export const Shelved: Story = {
 export const ShelvedVertical: Story = {
   args: {
     size: ObcMessageMenuItemSize.DoubleLine,
-    stackDirection: ObcMessageMenuItemStackDirection.Vertical,
+    stackVertical: true,
     isShelved: true,
     hasPrimaryIcon: true,
     day: 'Yesterday',

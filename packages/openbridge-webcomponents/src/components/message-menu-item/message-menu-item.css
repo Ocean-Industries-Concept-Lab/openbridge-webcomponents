@@ -9,6 +9,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--app-components-message-menu-item-label-spacing);
+  min-width: var(--action-width, 0);
   height: var(--ui-components-button-touch-target-size);
 }
 
