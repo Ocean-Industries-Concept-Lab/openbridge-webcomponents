@@ -49,10 +49,9 @@ export enum ObcSequenceCardState {
  * - States: `active`, `flat`, `enhanced`.
  * - Layouts: vertical, horizontal, or both.
  * - Optional leading icon, timestamps, content, and actions.
+ * - Horizontal and vertical (default) layouts are supported.
  * - TODO(designer): Clarify semantic differences between `active`, `flat`, and
  *   `enhanced` states and when to use each.
- * - TODO(designer): Confirm intended combinations when both `isVertical` and
- *   `isHorizontal` are true.
  *
  * Usage Guidelines:
  * - Keep titles short; use `subtitle` for secondary text.
@@ -72,7 +71,7 @@ export enum ObcSequenceCardState {
  * - None. Consumers define actions in slots and handle events on slotted elements.
  *
  * Best Practices:
- * - Pair `left-side` progress with `isVertical` for rail-based timelines.
+ * - Pair `left-side` progress with vertical layout for rail-based timelines.
  * - Avoid mixing long text with dense action rows; use content slot instead.
  *
  * Example:
@@ -103,8 +102,7 @@ export class ObcSequenceCard extends LitElement {
   @property({type: String}) state: ObcSequenceCardState =
     ObcSequenceCardState.Active;
 
-  @property({type: Boolean}) isVertical = false;
-  @property({type: Boolean}) isHorizontal = false;
+  @property({type: Boolean}) horizontal = false;
 
   @property({type: Boolean}) hasLeadingIcon = false;
   @property({type: String}) cardTitle = 'Title';
@@ -209,21 +207,21 @@ export class ObcSequenceCard extends LitElement {
       [`title-${this.titleType}`]: true,
       [`progress-${this.progressType}`]: true,
       [`state-${this.state}`]: true,
-      'is-vertical': this.isVertical,
-      'is-horizontal': this.isHorizontal,
+      'is-vertical': !this.horizontal,
+      'is-horizontal': this.horizontal,
       'has-leading-icon': this.hasLeadingIcon,
       'has-time-stamp': this.hasTimeStamp,
       'has-content': this.hasContent,
       'has-actions': this.hasActions,
     };
 
-    const showLeftRail = this.isLeftSide && this.isVertical;
-    const showLeftRailHorizontal = this.isLeftSide && this.isHorizontal;
+    const showLeftRail = this.isLeftSide && !this.horizontal;
+    const showLeftRailHorizontal = this.isLeftSide && this.horizontal;
     const showDualLeftRail = showLeftRail && showLeftRailHorizontal;
     const showCenteredConnector =
       this.progressType === ObcSequenceCardProgressType.Centered &&
-      this.isVertical;
-    const showHorizontalConnector = this.isHorizontal && !this.isLeftSide;
+      !this.horizontal;
+    const showHorizontalConnector = this.horizontal && !this.isLeftSide;
 
     const verticalLeftRail = html`
       <div class="vertical-progress-container">
@@ -272,7 +270,7 @@ export class ObcSequenceCard extends LitElement {
         ${showLeftRail && !showDualLeftRail ? verticalLeftRail : nothing}
         ${showDualLeftRail ? horizontalLeftRail : nothing}
         <div class="card-container">
-          ${this.isHorizontal
+          ${this.horizontal
             ? html`
                 <div class="card-row">
                   ${showDualLeftRail ? verticalLeftRail : nothing}

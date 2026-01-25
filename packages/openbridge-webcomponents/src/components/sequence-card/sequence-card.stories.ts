@@ -21,8 +21,7 @@ type SequenceCardStoryArgs = {
   titleType: ObcSequenceCardTitleType;
   progressType: ObcSequenceCardProgressType;
   state: ObcSequenceCardState;
-  isVertical: boolean;
-  isHorizontal: boolean;
+  horizontal: boolean;
   hasLeadingIcon: boolean;
   cardTitle: string;
   subtitle: string;
@@ -105,15 +104,14 @@ const renderSequenceCard = (args: SequenceCardStoryArgs) => html`
         'sequence-card-story': true,
         'progress-left-side':
           args.progressType === ObcSequenceCardProgressType.LeftSide,
-        'is-vertical': args.isVertical,
-        'is-horizontal': args.isHorizontal,
+        'is-vertical': !args.horizontal,
+        'is-horizontal': args.horizontal,
       })}
       .size=${args.size}
       .titleType=${args.titleType}
       .progressType=${args.progressType}
       .state=${args.state}
-      .isVertical=${args.isVertical}
-      .isHorizontal=${args.isHorizontal}
+      .horizontal=${args.horizontal}
       .hasLeadingIcon=${args.hasLeadingIcon}
       .cardTitle=${args.cardTitle}
       .subtitle=${args.subtitle}
@@ -265,8 +263,7 @@ const meta: Meta<ObcSequenceCard> = {
     titleType: ObcSequenceCardTitleType.Single,
     progressType: ObcSequenceCardProgressType.Centered,
     state: ObcSequenceCardState.Active,
-    isVertical: true,
-    isHorizontal: false,
+    horizontal: false,
     hasLeadingIcon: true,
     cardTitle: 'Title',
     subtitle: 'Subtitle',
