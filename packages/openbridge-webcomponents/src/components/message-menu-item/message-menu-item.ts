@@ -141,6 +141,10 @@ export class ObcMessageMenuItem extends LitElement {
   }
 
   private handleKeyDown(e: KeyboardEvent) {
+    // Only handle key events on the wrapper itself, not on nested interactive elements
+    if (e.target !== e.currentTarget) {
+      return;
+    }
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       this.handleMessageClick();
