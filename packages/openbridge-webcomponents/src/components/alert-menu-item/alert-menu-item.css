@@ -1,16 +1,19 @@
 :host {
   --action-width: 82px;
+  --trailing-icon-size: var(
+    --app-components-alert-components-general-notification-item-icon-size-large,
+    32px
+  );
   display: block;
 }
 
-.day {
-  [name="day"] {
-    display: none;
-  }
+obc-message-menu-item::part(trailing-icon) {
+  width: var(--trailing-icon-size);
+  height: var(--trailing-icon-size);
+  flex-shrink: 0;
 }
 
-.time {
-  [name="time"] {
-    display: none;
-  }
+[slot="trailing-icon"] {
+  width: var(--trailing-icon-size);
+  height: var(--trailing-icon-size);
 }
