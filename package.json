@@ -4,7 +4,8 @@
   "scripts": {
     "build:lib": "npm run build --workspaces --if-present",
     "format:all": "npm run format --workspaces --if-present",
-    "build:docker-for-storybook-testing": "docker build -t openbridge-webcomponents-storybook ."
+    "build:docker-for-storybook-testing": "docker build -t openbridge-webcomponents-storybook .",
+    "prepare": "husky"
   },
   "workspaces": [
     "packages/*"
@@ -12,5 +13,18 @@
   "license": "Apache-2.0",
   "dependencies": {
     "tough-cookie": "^5.1.2"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7"
+  },
+  "lint-staged": {
+    "packages/openbridge-webcomponents/src/**/*.ts": [
+      "eslint --config packages/openbridge-webcomponents/eslint.config.mjs --max-warnings=4",
+      "prettier --write"
+    ],
+    "packages/openbridge-webcomponents/**/*.{cjs,html,js,json,md,css}": [
+      "prettier --write"
+    ]
   }
 }
