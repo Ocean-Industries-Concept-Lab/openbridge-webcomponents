@@ -121,7 +121,7 @@ export class ObcMessageMenuItem extends LitElement {
   }
 
   private get hasTimestamp() {
-    return this.time !== '';
+    return this.time !== '' || this.day !== '';
   }
 
   private get hasDay() {
