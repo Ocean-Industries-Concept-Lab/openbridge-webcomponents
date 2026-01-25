@@ -5,40 +5,31 @@ import '../../icons/icon-engine.js';
 import '../alert-icon/alert-icon.js';
 import {ObcAlertMenuItem, ObcAlertMenuItemStatus} from './alert-menu-item.js';
 
-interface AlertMenuItemArgs {
-  title: string;
-  description: string;
-  day: string;
-  time: string;
-  hasIcon: boolean;
-}
-
-const meta: Meta<ObcAlertMenuItem & AlertMenuItemArgs> = {
+const meta: Meta<ObcAlertMenuItem> = {
   title: 'Application Components/Alerts/Alert menu item',
   component: 'obc-alert-menu-item',
   tags: ['autodocs', '6.0'],
   args: {
-    hasDay: false,
-    hasTime: true,
     title: 'Engine Temperature High',
     description: 'Port main engine temperature exceeds normal operating range',
+    day: '',
     time: '14:30',
     status: ObcAlertMenuItemStatus.Unacknowledged,
+    hasIcon: false,
+    shelved: false,
   },
   render: (args) => html`
     <obc-alert-menu-item
-      ?hasDay=${args.hasDay}
-      ?hasTime=${args.hasTime}
+      .title=${args.title}
+      .description=${args.description}
+      .day=${args.day}
+      .time=${args.time}
       .shelved=${args.shelved}
       .hasIcon=${args.hasIcon}
       .status=${args.status}
     >
       <obc-alert-icon slot="alert-icon" type="alarm" active></obc-alert-icon>
       ${args.hasIcon ? html`<obi-engine slot="icon"></obi-engine>` : nothing}
-      <span slot="title">${args.title}</span>
-      <span slot="description">${args.description}</span>
-      <span slot="day">${args.day}</span>
-      <span slot="time">${args.time}</span>
     </obc-alert-menu-item>
   `,
   argTypes: {
@@ -50,11 +41,13 @@ const meta: Meta<ObcAlertMenuItem & AlertMenuItemArgs> = {
       control: 'select',
       options: Object.values(ObcAlertMenuItemStatus),
     },
+    hasIcon: {control: 'boolean'},
+    shelved: {control: 'boolean'},
   },
 };
 
 export default meta;
-type Story = StoryObj<ObcAlertMenuItem & AlertMenuItemArgs>;
+type Story = StoryObj<ObcAlertMenuItem>;
 
 export const Default: Story = {
   args: {},
