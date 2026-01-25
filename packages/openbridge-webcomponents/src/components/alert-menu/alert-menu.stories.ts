@@ -101,40 +101,38 @@ const meta: Meta<typeof ObcAlertMenu> = {
     >
       <!-- High Priority Alarms -->
       <obc-alert-menu-item
-        status=${ObcAlertMenuItemStatus.Unacknowledged}
-        hasTime
+        .status=${ObcAlertMenuItemStatus.Unacknowledged}
+        title="CPA/TCPA Alert"
+        description="Risk of collision with vessel MV NORDIC at CPA 0.2nm"
+        time="09:12:34"
         @ack-click=${handleAck}
         data-testid="engine-temperature-high-1"
       >
         <obc-alert-icon slot="alert-icon" type="alarm" active></obc-alert-icon>
-        <span slot="title">CPA/TCPA Alert</span>
-        <span slot="description"
-          >Risk of collision with vessel MV NORDIC at CPA 0.2nm</span
-        >
-        <span slot="time">09:12:34</span>
-      </obc-alert-menu-item>
-      <obc-alert-menu-item status=${ObcAlertMenuItemStatus.NoAckAlarm} hasTime>
-        <obc-alert-icon slot="alert-icon" type="alarm" active></obc-alert-icon>
-        <span slot="title">Off Track Deviation</span>
-        <span slot="description"
-          >Vessel has deviated from planned route by 0.5nm</span
-        >
-        <span slot="time">09:13:22</span>
       </obc-alert-menu-item>
       <obc-alert-menu-item
-        status=${ObcAlertMenuItemStatus.Unacknowledged}
-        hasTime
+        .status=${ObcAlertMenuItemStatus.NoAckAlarm}
+        title="Off Track Deviation"
+        description="Vessel has deviated from planned route by 0.5nm"
+        time="09:13:22"
+      >
+        <obc-alert-icon slot="alert-icon" type="alarm" active></obc-alert-icon>
+      </obc-alert-menu-item>
+      <obc-alert-menu-item
+        .status=${ObcAlertMenuItemStatus.Unacknowledged}
+        title="Main Engine Overload"
+        description="Port main engine load exceeds 95% of MCR"
+        time="09:14:05"
         data-testid="engine-temperature-high-2"
         @ack-click=${handleAck}
       >
         <obc-alert-icon slot="alert-icon" type="alarm" active></obc-alert-icon>
-        <span slot="title">Main Engine Overload</span>
-        <span slot="description">Port main engine load exceeds 95% of MCR</span>
-        <span slot="time">09:14:05</span>
       </obc-alert-menu-item>
       <obc-alert-menu-item
-        status=${ObcAlertMenuItemStatus.Acknowledged}
-        hasTime
+        .status=${ObcAlertMenuItemStatus.Acknowledged}
+        title="Main Engine Overload"
+        description="Starboard main engine load exceeds 95% of MCR"
+        time="09:15:05"
         data-testid="engine-temperature-high-acknowledged"
         @ack-click=${handleAck}
       >
@@ -142,97 +140,81 @@ const meta: Meta<typeof ObcAlertMenu> = {
           useCssColor
           slot="alert-icon"
         ></obi-alarm-acknowledged-iec>
-        <span slot="title">Main Engine Overload</span>
-        <span slot="description"
-          >Starboard main engine load exceeds 95% of MCR</span
-        >
-        <span slot="time">09:15:05</span>
       </obc-alert-menu-item>
 
       <!-- Warnings -->
       <obc-alert-menu-item
-        status=${ObcAlertMenuItemStatus.NoAckWarning}
-        hasTime
+        .status=${ObcAlertMenuItemStatus.NoAckWarning}
+        title="Depth Below Keel"
+        description="Under keel clearance below safety margin: 2.5m"
+        time="09:15:10"
       >
         <obc-alert-icon
           slot="alert-icon"
           type="warning"
           active
         ></obc-alert-icon>
-        <span slot="title">Depth Below Keel</span>
-        <span slot="description"
-          >Under keel clearance below safety margin: 2.5m</span
-        >
-        <span slot="time">09:15:10</span>
       </obc-alert-menu-item>
       <obc-alert-menu-item
-        status=${ObcAlertMenuItemStatus.NoAckWarning}
-        hasTime
+        .status=${ObcAlertMenuItemStatus.NoAckWarning}
+        title="Wind Speed High"
+        description="True wind speed 35kts exceeds operational limit"
+        time="09:16:00"
       >
         <obc-alert-icon
           slot="alert-icon"
           type="warning"
           active
         ></obc-alert-icon>
-        <span slot="title">Wind Speed High</span>
-        <span slot="description"
-          >True wind speed 35kts exceeds operational limit</span
-        >
-        <span slot="time">09:16:00</span>
       </obc-alert-menu-item>
       <obc-alert-menu-item
-        status=${ObcAlertMenuItemStatus.NoAckWarning}
-        hasTime
+        .status=${ObcAlertMenuItemStatus.NoAckWarning}
+        title="ECDIS Primary GPS Lost"
+        description="Position source switched to secondary GPS"
+        time="09:16:45"
       >
         <obc-alert-icon
           slot="alert-icon"
           type="warning"
           active
         ></obc-alert-icon>
-        <span slot="title">ECDIS Primary GPS Lost</span>
-        <span slot="description"
-          >Position source switched to secondary GPS</span
-        >
-        <span slot="time">09:16:45</span>
       </obc-alert-menu-item>
 
       <!-- Cautions -->
-      <obc-alert-menu-item status=${ObcAlertMenuItemStatus.Caution} hasTime>
+      <obc-alert-menu-item
+        .status=${ObcAlertMenuItemStatus.Caution}
+        title="Fuel Oil Temperature"
+        description="HFO temperature approaching lower limit: 115°C"
+        time="09:17:20"
+      >
         <obi-caution-color-iec
           useCssColor
           slot="alert-icon"
         ></obi-caution-color-iec>
-        <span slot="title">Fuel Oil Temperature</span>
-        <span slot="description"
-          >HFO temperature approaching lower limit: 115°C</span
-        >
-        <span slot="time">09:17:20</span>
       </obc-alert-menu-item>
 
       <!-- Shelved Alerts -->
       <obc-alert-menu-item
-        status=${ObcAlertMenuItemStatus.Unacknowledged}
-        hasTime
+        .status=${ObcAlertMenuItemStatus.Unacknowledged}
+        title="AIS Target Lost"
+        description="Lost tracking of vessel MMSI: 257123000"
+        time="09:18:00"
         shelved
         @ack-click=${handleAck}
         data-testid="ais-target-lost-1"
       >
         <obc-alert-icon slot="alert-icon" type="alarm" active></obc-alert-icon>
-        <span slot="title">AIS Target Lost</span>
-        <span slot="description">Lost tracking of vessel MMSI: 257123000</span>
-        <span slot="time">09:18:00</span>
       </obc-alert-menu-item>
       <obc-alert-menu-item
-        status=${ObcAlertMenuItemStatus.Unacknowledged}
-        hasTime
+        .status=${ObcAlertMenuItemStatus.Unacknowledged}
+        title="AIS Target Lost"
+        description="Lost tracking of vessel MMSI: 257123001"
+        time="09:18:01"
         shelved
         @ack-click=${handleAck}
         data-testid="ais-target-lost-2"
       >
         <obc-alert-icon slot="alert-icon" type="alarm" active></obc-alert-icon>
-        <span slot="title">AIS Target Lost</span>
-        <span slot="description">Lost tracking of vessel MMSI: 257123001</span>
-        <span slot="time">09:18:01</span>
       </obc-alert-menu-item>
     </obc-alert-menu>`;
   },
@@ -254,16 +236,16 @@ export const OneItem: Story = {
   render: () => {
     return html` <obc-alert-menu @ack-all-visible-click=${handleAckAllVisible}>
       <!-- Cautions -->
-      <obc-alert-menu-item status=${ObcAlertMenuItemStatus.Caution} hasTime>
+      <obc-alert-menu-item
+        .status=${ObcAlertMenuItemStatus.Caution}
+        title="Engine Temperature High"
+        description="Port main engine temperature exceeds normal operating range"
+        time="09:12:34"
+      >
         <obi-caution-color-iec
           useCssColor
           slot="alert-icon"
         ></obi-caution-color-iec>
-        <span slot="title">Engine Temperature High</span>
-        <span slot="description"
-          >Port main engine temperature exceeds normal operating range</span
-        >
-        <span slot="time">09:12:34</span>
       </obc-alert-menu-item>
     </obc-alert-menu>`;
   },
@@ -409,8 +391,7 @@ export const AddAlertTest: Story = {
       'obc-alert-menu-item'
     ) as ObcAlertMenuItem;
     newAlertElement.status = ObcAlertMenuItemStatus.Caution;
-    newAlertElement.hasTime = true;
-    newAlertElement.innerHTML = '<span slot="title">New Caution</span>';
+    newAlertElement.title = 'New Caution';
     // wait 1000 ms
     await new Promise((resolve) => setTimeout(resolve, 100));
     // Add the new alert to the alert menu
@@ -432,17 +413,14 @@ export const MakeEmptyTest: Story = {
     >
       <!-- Alerts -->
       <obc-alert-menu-item
-        status=${ObcAlertMenuItemStatus.Unacknowledged}
-        hasTime
+        .status=${ObcAlertMenuItemStatus.Unacknowledged}
+        title="Engine Temperature High"
+        description="Port main engine temperature exceeds normal operating range"
+        time="09:12:34"
         @ack-click=${handleAck}
         data-testid="engine-temperature-high-single"
       >
         <obc-alert-icon slot="alert-icon" type="alarm" active></obc-alert-icon>
-        <span slot="title">Engine Temperature High</span>
-        <span slot="description"
-          >Port main engine temperature exceeds normal operating range</span
-        >
-        <span slot="time">09:12:34</span>
       </obc-alert-menu-item>
     </obc-alert-menu>`;
   },
