@@ -11,7 +11,6 @@ import '../../icons/icon-alerts-shelf.js';
 export enum ObcMessageMenuItemSize {
   SingleLine = 'single-line',
   DoubleLine = 'double-line',
-  MultiLine = 'multi-line',
 }
 
 /**
@@ -115,14 +114,14 @@ export class ObcMessageMenuItem extends LitElement {
   @property({type: Boolean}) isShelved = false;
 
   private get activeSize() {
-    if (this.size === ObcMessageMenuItemSize.MultiLine || this.open) {
-      return ObcMessageMenuItemSize.MultiLine;
+    if (this.open) {
+      return 'multi-line';
     }
     return this.size;
   }
 
   private get hasTimestamp() {
-    return this.time !== '';
+    return this.time !== '' || this.day !== '';
   }
 
   private get hasDay() {
@@ -141,10 +140,15 @@ export class ObcMessageMenuItem extends LitElement {
     return this.stackVertical;
   }
 
-  private handleMessageClick() {
-    if (this.size !== ObcMessageMenuItemSize.MultiLine) {
-      this.open = !this.open;
+  private handleKeyDown(e: KeyboardEvent) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      this.handleMessageClick();
     }
+  }
+
+  private handleMessageClick() {
+    this.open = !this.open;
 
     this.dispatchEvent(
       new CustomEvent('message-click', {
@@ -181,7 +185,7 @@ export class ObcMessageMenuItem extends LitElement {
 
   override render() {
     return html`
-      <button
+      <div
         class=${classMap({
           wrapper: true,
           ['active-size-' + this.activeSize]: true,
@@ -191,7 +195,10 @@ export class ObcMessageMenuItem extends LitElement {
           ['stack-vertical']: this.stackVertical,
           ['stack-horizontal']: !this.stackVertical,
         })}
+        role="button"
+        tabindex="0"
         @click=${this.handleMessageClick}
+        @keydown=${this.handleKeyDown}
       >
         <div class="content-container">
           <div class="icon-container">
@@ -220,13 +227,11 @@ export class ObcMessageMenuItem extends LitElement {
                   <span>${this.time}</span>
                 </div>`
               : nothing}
-            ${this.size === ObcMessageMenuItemSize.MultiLine
-              ? nothing
-              : html`<div class="chevron">
-                  ${this.open
-                    ? html`<obi-chevron-up-google></obi-chevron-up-google>`
-                    : html`<obi-chevron-down-google></obi-chevron-down-google>`}
-                </div>`}
+            <div class="chevron">
+              ${this.open
+                ? html`<obi-chevron-up-google></obi-chevron-up-google>`
+                : html`<obi-chevron-down-google></obi-chevron-down-google>`}
+            </div>
           </div>
         </div>
         ${this.hasPrimaryAction ||
@@ -258,7 +263,7 @@ export class ObcMessageMenuItem extends LitElement {
                 : nothing}
             </div>`
           : nothing}
-      </button>
+      </div>
     `;
   }
 
