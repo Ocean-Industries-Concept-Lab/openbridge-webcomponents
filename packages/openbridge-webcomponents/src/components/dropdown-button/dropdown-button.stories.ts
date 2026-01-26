@@ -57,3 +57,9 @@ export const PreSelected: Story = {
     value: 'xc90',
   },
 };
+
+export const Disabled: Story = {
+  args: {
+    disabled: true,
+  },
+};
