@@ -9,6 +9,7 @@ import {
   FrameStyle,
   FillMode,
   AdvicePosition,
+  ExternalScaleSide,
   BorderRadiusPosition,
   InstrumentState,
 } from './bar-vertical.js';
@@ -117,7 +118,7 @@ const meta: Meta = {
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
     state: 'inCommand',
-    side: 'right',
+    side: ExternalScaleSide.right,
     advicePosition: AdvicePosition.inner,
     advices: [],
   },
@@ -166,7 +167,7 @@ export const DefaultRight: Story = {
     minValue: 0,
     maxValue: 100,
     height: 320,
-    side: 'right',
+    side: ExternalScaleSide.right,
     tertiaryTickbarsInterval: 2,
     hasBar: true,
     setpoint: 50,
@@ -277,7 +278,7 @@ export const DefaultLeft: Story = {
     minValue: 0,
     maxValue: 100,
     height: 320,
-    side: 'left',
+    side: ExternalScaleSide.left,
   },
 };
 
@@ -300,7 +301,7 @@ export const WithBarLeft: Story = {
     maxValue: 100,
     height: 320,
     hasBar: true,
-    side: 'left',
+    side: ExternalScaleSide.left,
   },
 };
 
@@ -371,7 +372,7 @@ export const WithBarFillLeft: Story = {
     value: 45,
     primaryTickbarsInterval: 20,
     secondaryTickbarsInterval: 10,
-    side: 'left',
+    side: ExternalScaleSide.left,
   },
 };
 
@@ -646,7 +647,7 @@ export const VerticalRightScaleBackground: Story = {
     minValue: 0,
     maxValue: 100,
     height: 320,
-    side: 'right',
+    side: ExternalScaleSide.right,
     hasBar: true,
     borderRadiusPosition: BorderRadiusPosition.innerFirstChild,
     scaleBackground: true,
@@ -1079,7 +1080,7 @@ export const ChartIntegrationRight: Story = {
         .minValue=${3.0}
         .maxValue=${7.0}
         .height=${_args.height}
-        .side=${'right'}
+        .side=${ExternalScaleSide.right}
         .hasScale=${true}
         .hideLabels=${_args.vScaleHideLabels}
         .hasBar=${_args.vScaleHasBar}
@@ -1190,7 +1191,7 @@ export const ChartIntegrationRightBackground: Story = {
         .minValue=${3.0}
         .maxValue=${7.0}
         .height=${_args.height}
-        .side=${'right'}
+        .side=${ExternalScaleSide.right}
         .hasScale=${true}
         .hideLabels=${_args.vScaleHideLabels}
         .hasBar=${_args.vScaleHasBar}
@@ -1313,7 +1314,7 @@ export const GaugeTrend: Story = {
         .minValue=${3.0}
         .maxValue=${7.0}
         .height=${_args.height}
-        .side=${'right'}
+        .side=${ExternalScaleSide.right}
         .hasScale=${true}
         .hideLabels=${_args.vScaleHideLabels}
         .hasBar=${_args.vScaleHasBar}

@@ -180,7 +180,7 @@ export class ObcAlertButton extends LitElement {
    */
   @property({type: Number}) silenceButtonMinBreakpointPx = 0;
 
-  @state() width = window.innerWidth;
+  @state() private width = window.innerWidth;
 
   private resizeListener = () => {
     this.width = window.innerWidth;

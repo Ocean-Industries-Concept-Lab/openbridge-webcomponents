@@ -1,0 +1,44 @@
+import type {Meta, StoryObj} from '@storybook/web-vite';
+import {ObcDamper} from './damper.js';
+import {AutomationButtonReadoutPosition} from '../automation-button/automation-button.js';
+import {AutomationButtonReadoutStackSize} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
+import './damper.js';
+import {crossDecorator} from '../../storybook-util.js';
+import '../automation-badge/automation-badge.js';
+import {argTypesAbstractAutomationButtonPassiveSquare} from '../automation-button/abstract-automation-button-storybook-helpers.js';
+
+const meta: Meta<typeof ObcDamper> = {
+  title: 'Automation/Automation devices/Damper',
+  tags: ['autodocs'],
+  component: 'obc-damper',
+  decorators: [crossDecorator],
+  args: {
+    tag: '0012',
+    readoutPosition: AutomationButtonReadoutPosition.bottom,
+    readoutSize: AutomationButtonReadoutStackSize.regular,
+    alert: false,
+    progress: false,
+    vertical: false,
+    hideReadoutStack: false,
+    hasIdTag: true,
+  },
+  argTypes: {
+    ...argTypesAbstractAutomationButtonPassiveSquare,
+    value: {control: {type: 'range', min: 0, max: 100, step: 1}},
+  },
+} as Meta<typeof ObcDamper>;
+
+export default meta;
+type Story = StoryObj<ObcDamper>;
+
+export const On: Story = {
+  args: {
+    on: true,
+  },
+};
+
+export const Off: Story = {
+  args: {
+    on: false,
+  },
+};

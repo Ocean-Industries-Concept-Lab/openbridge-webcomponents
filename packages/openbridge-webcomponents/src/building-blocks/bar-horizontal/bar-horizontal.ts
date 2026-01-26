@@ -28,12 +28,9 @@ import {
   FillMode,
   AdvicePosition,
   BarContainerStyle,
+  ExternalScaleOrientation,
+  ExternalScaleSide,
 } from '../external-scale/external-scale.js';
-
-export enum HorizontalSide {
-  top = 'top',
-  bottom = 'bottom',
-}
 
 // Re-export shared enums for convenience
 export {
@@ -44,6 +41,7 @@ export {
   BorderRadiusPosition,
   InstrumentState,
   BarContainerStyle,
+  ExternalScaleSide,
 };
 
 /**
@@ -76,7 +74,7 @@ export class ObcBarHorizontal extends LitElement {
   @property({type: Number}) paddingRight = CHART_DIMENSIONS.CANVAS_PADDING;
 
   /** Which side this scale lives on */
-  @property({type: String}) side: HorizontalSide = HorizontalSide.bottom;
+  @property({type: String}) side: ExternalScaleSide = ExternalScaleSide.bottom;
 
   /**
    * When true, freezes all internal calculations and scales the entire component
@@ -112,7 +110,7 @@ export class ObcBarHorizontal extends LitElement {
       const containerMainAxisSize = entry.contentRect.width;
 
       this._scale = computeFixedAspectRatioScale({
-        orientation: 'horizontal',
+        orientation: ExternalScaleOrientation.horizontal,
         containerMainAxisSize,
         scaleReferenceSize: this.scaleReferenceSize,
       });
@@ -292,7 +290,7 @@ export class ObcBarHorizontal extends LitElement {
     // });
 
     const config: ExternalScaleConfig = {
-      orientation: 'horizontal',
+      orientation: ExternalScaleOrientation.horizontal,
       side: this.side,
       length: effectiveLength,
       paddingStart: this.paddingLeft,
@@ -430,7 +428,7 @@ export class ObcBarHorizontal extends LitElement {
       : this.width;
 
     const baseDimensions = computeScaleDimensionsForReport({
-      orientation: 'horizontal',
+      orientation: ExternalScaleOrientation.horizontal,
       side: this.side,
       hasBar: this.hasBar,
       hasScale: this.hasScale,
@@ -541,7 +539,7 @@ export class ObcBarHorizontal extends LitElement {
       const containerWidth = this.clientWidth;
       if (containerWidth > 0) {
         this._scale = computeFixedAspectRatioScale({
-          orientation: 'horizontal',
+          orientation: ExternalScaleOrientation.horizontal,
           containerMainAxisSize: containerWidth,
           scaleReferenceSize: this.scaleReferenceSize,
         });
@@ -568,7 +566,7 @@ export class ObcBarHorizontal extends LitElement {
       const rect = this.getBoundingClientRect();
       if (rect.width > 0) {
         this._scale = computeFixedAspectRatioScale({
-          orientation: 'horizontal',
+          orientation: ExternalScaleOrientation.horizontal,
           containerMainAxisSize: rect.width,
           scaleReferenceSize: this.scaleReferenceSize,
         });

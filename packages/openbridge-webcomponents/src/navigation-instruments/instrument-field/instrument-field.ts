@@ -36,7 +36,7 @@ export class ObcInstrumentField extends LitElement {
   @property({type: Boolean}) autoHideSetpoint = false;
   @property({type: Number}) autoHideDeadband = 0;
 
-  @state() srcPickerContentVisible = false;
+  @state() private srcPickerContentVisible = false;
 
   dashedGenerator(): string {
     const n = this.showZeroPadding ? Math.max(this.maxDigits, 1) : 1;

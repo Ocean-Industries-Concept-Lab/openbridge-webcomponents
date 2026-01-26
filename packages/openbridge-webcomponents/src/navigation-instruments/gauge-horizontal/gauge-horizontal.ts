@@ -21,12 +21,9 @@ import {
   ScaleType,
   FillMode,
   AdvicePosition,
+  ExternalScaleOrientation,
+  ExternalScaleSide,
 } from '../../building-blocks/external-scale/external-scale.js';
-
-export enum HorizontalSide {
-  top = 'top',
-  bottom = 'bottom',
-}
 
 // Re-export shared enums for convenience
 export {
@@ -36,6 +33,7 @@ export {
   FrameStyle,
   BorderRadiusPosition,
   InstrumentState,
+  ExternalScaleSide,
 };
 
 /**
@@ -135,7 +133,7 @@ export class ObcGaugeHorizontal extends LitElement {
   private readonly paddingRight = CHART_DIMENSIONS.CANVAS_PADDING;
 
   /** Which side of the chart area this scale lives on (top or bottom) */
-  @property({type: String}) side: HorizontalSide = HorizontalSide.bottom;
+  @property({type: String}) side: ExternalScaleSide = ExternalScaleSide.bottom;
 
   /**
    * When true, freezes all internal calculations and scales the entire component
@@ -172,7 +170,7 @@ export class ObcGaugeHorizontal extends LitElement {
       const containerMainAxisSize = entry.contentRect.width;
 
       const scale = computeFixedAspectRatioScale({
-        orientation: 'horizontal',
+        orientation: ExternalScaleOrientation.horizontal,
         containerMainAxisSize,
         scaleReferenceSize: this.scaleReferenceSize,
       });
@@ -262,7 +260,7 @@ export class ObcGaugeHorizontal extends LitElement {
 
   override render() {
     const config: ExternalScaleConfig = {
-      orientation: 'horizontal',
+      orientation: ExternalScaleOrientation.horizontal,
       side: this.side,
       length: this.width,
       paddingStart: this.paddingLeft,
@@ -362,7 +360,7 @@ export class ObcGaugeHorizontal extends LitElement {
     });
 
     const baseDimensions = computeScaleDimensionsForReport({
-      orientation: 'horizontal',
+      orientation: ExternalScaleOrientation.horizontal,
       side: this.side,
       hasBar: this.hasBar,
       hasScale: this.hasScale,

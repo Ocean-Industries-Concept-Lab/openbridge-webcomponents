@@ -8,6 +8,7 @@ import {
   FrameStyle,
   FillMode,
   AdvicePosition,
+  ExternalScaleSide,
   BorderRadiusPosition,
   InstrumentState,
 } from './bar-horizontal.js';
@@ -116,7 +117,7 @@ const meta: Meta = {
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
     state: 'inCommand',
-    side: 'bottom',
+    side: ExternalScaleSide.bottom,
     advicePosition: AdvicePosition.inner,
     advices: [],
   },
@@ -165,7 +166,7 @@ export const DefaultBottom: Story = {
     minValue: 0,
     maxValue: 100,
     width: 480,
-    side: 'bottom',
+    side: ExternalScaleSide.bottom,
     tertiaryTickbarsInterval: 2,
     hasBar: true,
     setpoint: 50,
@@ -278,7 +279,7 @@ export const DefaultTop: Story = {
     minValue: 0,
     maxValue: 100,
     width: 480,
-    side: 'top',
+    side: ExternalScaleSide.top,
   },
 };
 
@@ -301,7 +302,7 @@ export const WithBarTop: Story = {
     maxValue: 100,
     width: 480,
     hasBar: true,
-    side: 'top',
+    side: ExternalScaleSide.top,
   },
 };
 
@@ -356,7 +357,7 @@ export const WithBarFillTop: Story = {
     value: 45,
     primaryTickbarsInterval: 20,
     secondaryTickbarsInterval: 10,
-    side: 'top',
+    side: ExternalScaleSide.top,
   },
 };
 
@@ -676,7 +677,7 @@ export const HorizontalBottomScaleBackground: Story = {
     minValue: 0,
     maxValue: 100,
     width: 480,
-    side: 'bottom',
+    side: ExternalScaleSide.bottom,
     hasBar: true,
     borderRadiusPosition: BorderRadiusPosition.innerFirstChild,
     scaleBackground: true,
@@ -775,7 +776,7 @@ export const ChartIntegrationBottom: Story = {
         .minValue=${3.0}
         .maxValue=${7.0}
         .width=${_args.width}
-        .side=${'bottom'}
+        .side=${ExternalScaleSide.bottom}
         .hasScale=${true}
         .hideLabels=${_args.hScaleHideLabels}
         .hasBar=${_args.hScaleHasBar}
@@ -891,7 +892,7 @@ export const ChartIntegrationBottomBackground: Story = {
         .minValue=${3.0}
         .maxValue=${7.0}
         .width=${_args.width}
-        .side=${'bottom'}
+        .side=${ExternalScaleSide.bottom}
         .hasScale=${true}
         .hideLabels=${_args.hScaleHideLabels}
         .hasBar=${_args.hScaleHasBar}

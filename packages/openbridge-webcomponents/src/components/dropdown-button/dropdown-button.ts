@@ -95,8 +95,8 @@ export class ObcDropdownButton extends LitElement {
    */
   @property({type: Boolean}) integration = false;
 
-  @state() selectedValue = '';
-  @state() selectedLabel = '';
+  @state() private selectedValue = '';
+  @state() private selectedLabel = '';
 
   override connectedCallback(): void {
     super.connectedCallback();

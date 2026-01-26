@@ -96,9 +96,9 @@ export function crossDecorator(
 
 export function widthDecorator(
   story: () => unknown,
-  context: {args: {width: number; height?: number}}
+  context: {args: {width?: number; height?: number}}
 ): HTMLTemplateResult {
-  const width = context.args.width;
+  const width = context.args.width ?? 300;
   const height = context.args.height ?? width;
   return html` <div
     class="wrapper"

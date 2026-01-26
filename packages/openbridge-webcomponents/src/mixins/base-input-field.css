@@ -64,6 +64,7 @@
   .label-text {
     @mixin font-label;
     color: var(--element-neutral-color);
+    user-select: none;
   }
 
   .label-icon {

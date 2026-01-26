@@ -28,12 +28,9 @@ import {
   FillMode,
   AdvicePosition,
   BarContainerStyle,
+  ExternalScaleOrientation,
+  ExternalScaleSide,
 } from '../external-scale/external-scale.js';
-
-export enum VerticalSide {
-  left = 'left',
-  right = 'right',
-}
 
 // Re-export shared enums for convenience
 export {
@@ -44,6 +41,7 @@ export {
   BorderRadiusPosition,
   InstrumentState,
   BarContainerStyle,
+  ExternalScaleSide,
 };
 
 /**
@@ -74,7 +72,7 @@ export class ObcBarVertical extends LitElement {
   @property({type: Number}) paddingBottom = CHART_DIMENSIONS.CANVAS_PADDING;
 
   /** Which side this scale lives on */
-  @property({type: String}) side: VerticalSide = VerticalSide.right;
+  @property({type: String}) side: ExternalScaleSide = ExternalScaleSide.right;
 
   /**
    * When true, freezes all internal calculations and scales the entire component
@@ -110,7 +108,7 @@ export class ObcBarVertical extends LitElement {
       const containerMainAxisSize = entry.contentRect.height;
 
       this._scale = computeFixedAspectRatioScale({
-        orientation: 'vertical',
+        orientation: ExternalScaleOrientation.vertical,
         containerMainAxisSize,
         scaleReferenceSize: this.scaleReferenceSize,
       });
@@ -290,7 +288,7 @@ export class ObcBarVertical extends LitElement {
     // });
 
     const config: ExternalScaleConfig = {
-      orientation: 'vertical',
+      orientation: ExternalScaleOrientation.vertical,
       side: this.side,
       length: effectiveLength,
       paddingStart: this.paddingTop,
@@ -428,7 +426,7 @@ export class ObcBarVertical extends LitElement {
       : this.height;
 
     const baseDimensions = computeScaleDimensionsForReport({
-      orientation: 'vertical',
+      orientation: ExternalScaleOrientation.vertical,
       side: this.side,
       hasBar: this.hasBar,
       hasScale: this.hasScale,
@@ -539,7 +537,7 @@ export class ObcBarVertical extends LitElement {
       const containerHeight = this.clientHeight;
       if (containerHeight > 0) {
         this._scale = computeFixedAspectRatioScale({
-          orientation: 'vertical',
+          orientation: ExternalScaleOrientation.vertical,
           containerMainAxisSize: containerHeight,
           scaleReferenceSize: this.scaleReferenceSize,
         });
@@ -566,7 +564,7 @@ export class ObcBarVertical extends LitElement {
       const rect = this.getBoundingClientRect();
       if (rect.height > 0) {
         this._scale = computeFixedAspectRatioScale({
-          orientation: 'vertical',
+          orientation: ExternalScaleOrientation.vertical,
           containerMainAxisSize: rect.height,
           scaleReferenceSize: this.scaleReferenceSize,
         });
