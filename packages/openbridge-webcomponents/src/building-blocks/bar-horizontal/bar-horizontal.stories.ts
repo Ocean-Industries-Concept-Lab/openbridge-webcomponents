@@ -8,7 +8,7 @@ import {
   FrameStyle,
   FillMode,
   AdvicePosition,
-  HorizontalSide,
+  ExternalScaleSide,
   BorderRadiusPosition,
   InstrumentState,
 } from './bar-horizontal.js';
@@ -117,7 +117,7 @@ const meta: Meta = {
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
     state: 'inCommand',
-    side: 'bottom',
+    side: ExternalScaleSide.bottom,
     advicePosition: AdvicePosition.inner,
     advices: [],
   },
@@ -166,7 +166,7 @@ export const DefaultBottom: Story = {
     minValue: 0,
     maxValue: 100,
     width: 480,
-    side: 'bottom',
+    side: ExternalScaleSide.bottom,
     tertiaryTickbarsInterval: 2,
     hasBar: true,
     setpoint: 50,
@@ -279,7 +279,7 @@ export const DefaultTop: Story = {
     minValue: 0,
     maxValue: 100,
     width: 480,
-    side: 'top',
+    side: ExternalScaleSide.top,
   },
 };
 
@@ -302,7 +302,7 @@ export const WithBarTop: Story = {
     maxValue: 100,
     width: 480,
     hasBar: true,
-    side: 'top',
+    side: ExternalScaleSide.top,
   },
 };
 
@@ -357,7 +357,7 @@ export const WithBarFillTop: Story = {
     value: 45,
     primaryTickbarsInterval: 20,
     secondaryTickbarsInterval: 10,
-    side: 'top',
+    side: ExternalScaleSide.top,
   },
 };
 
@@ -677,7 +677,7 @@ export const HorizontalBottomScaleBackground: Story = {
     minValue: 0,
     maxValue: 100,
     width: 480,
-    side: 'bottom',
+    side: ExternalScaleSide.bottom,
     hasBar: true,
     borderRadiusPosition: BorderRadiusPosition.innerFirstChild,
     scaleBackground: true,
@@ -776,7 +776,7 @@ export const ChartIntegrationBottom: Story = {
         .minValue=${3.0}
         .maxValue=${7.0}
         .width=${_args.width}
-        .side=${'bottom'}
+        .side=${ExternalScaleSide.bottom}
         .hasScale=${true}
         .hideLabels=${_args.hScaleHideLabels}
         .hasBar=${_args.hScaleHasBar}
@@ -892,7 +892,7 @@ export const ChartIntegrationBottomBackground: Story = {
         .minValue=${3.0}
         .maxValue=${7.0}
         .width=${_args.width}
-        .side=${'bottom'}
+        .side=${ExternalScaleSide.bottom}
         .hasScale=${true}
         .hideLabels=${_args.hScaleHideLabels}
         .hasBar=${_args.hScaleHasBar}
@@ -1040,89 +1040,5 @@ export const FixedAspectRatioComparison: StoryObj = {
     wrapper.appendChild(containerFixed);
 
     return wrapper;
-  },
-};
-
-/**
- * Demonstrates `fixedAspectRatio=true` with a bar attached to a chart's bottom edge.
- * As the container resizes, the bar scales proportionally while maintaining
- * its aspect ratio and label readability.
- */
-export const FixedAspectRatioChartIntegration: StoryObj = {
-  tags: ['!snapshot'],
-  render: () => {
-    const outerWrapper = document.createElement('div');
-    outerWrapper.style.cssText = `
-      border: 2px dashed var(--instrument-enhanced-secondary-color);
-      padding: 16px;
-      resize: both;
-      overflow: auto;
-      min-width: 300px;
-      min-height: 300px;
-      max-width: 800px;
-      max-height: 600px;
-      width: 600px;
-      height: 400px;
-    `;
-
-    const label = document.createElement('div');
-    label.textContent =
-      'Resize this container - bar scales proportionally (fixedAspectRatio=true)';
-    label.style.cssText = `
-      font-family: var(--font-family-main);
-      font-size: 14px;
-      color: var(--instrument-enhanced-secondary-color);
-      margin-bottom: 8px;
-    `;
-
-    const chartArea = document.createElement('div');
-    chartArea.style.cssText = `
-      width: 100%;
-      height: calc(100% - 30px);
-      background: var(--instrument-frame-primary-color);
-      border: 1px solid var(--instrument-frame-tertiary-color);
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-    `;
-
-    // Container for the bar that ResizeObserver will watch
-    const barContainer = document.createElement('div');
-    barContainer.style.cssText = `
-      width: 100%;
-      height: 200px;
-      display: flex;
-      resize: vertical;
-      overflow: auto;
-      min-height: 50px;
-      max-height: 400px;
-    `;
-
-    const bar = document.createElement('obc-bar-horizontal');
-    bar.minValue = 0;
-    bar.maxValue = 100;
-    bar.width = 320;
-    bar.hasBar = true;
-    bar.hasScale = true;
-    bar.value = 65;
-    bar.setpoint = 50;
-    // setpoint is now shown when defined
-    bar.fillMode = FillMode.fill;
-    bar.enhanced = true;
-    bar.primaryTickbarsInterval = 10;
-    bar.fixedAspectRatio = true;
-    bar.side = HorizontalSide.bottom;
-    bar.style.cssText = `
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-    `;
-
-    barContainer.appendChild(bar);
-    chartArea.appendChild(barContainer);
-    outerWrapper.appendChild(label);
-    outerWrapper.appendChild(chartArea);
-
-    return outerWrapper;
   },
 };

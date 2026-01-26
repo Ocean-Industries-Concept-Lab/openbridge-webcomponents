@@ -39,6 +39,10 @@
     width: var(--global-size-spacing-icon-icon-size-regular);
   }
 
+  &.disabled .icon {
+    color: var(--on-normal-disabled-color);
+  }
+
   & .label {
     padding-left: var(--ui-components-button-label-spacing);
     padding-right: var(--ui-components-button-label-spacing);

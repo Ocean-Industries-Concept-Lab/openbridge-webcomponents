@@ -140,6 +140,17 @@ export class ObcMessageMenuItem extends LitElement {
     return this.stackVertical;
   }
 
+  private handleKeyDown(e: KeyboardEvent) {
+    // Only handle key events on the wrapper itself, not on nested interactive elements
+    if (e.target !== e.currentTarget) {
+      return;
+    }
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      this.handleMessageClick();
+    }
+  }
+
   private handleMessageClick() {
     this.open = !this.open;
 
@@ -178,7 +189,7 @@ export class ObcMessageMenuItem extends LitElement {
 
   override render() {
     return html`
-      <button
+      <div
         class=${classMap({
           wrapper: true,
           ['active-size-' + this.activeSize]: true,
@@ -188,7 +199,10 @@ export class ObcMessageMenuItem extends LitElement {
           ['stack-vertical']: this.stackVertical,
           ['stack-horizontal']: !this.stackVertical,
         })}
+        role="button"
+        tabindex="0"
         @click=${this.handleMessageClick}
+        @keydown=${this.handleKeyDown}
       >
         <div class="content-container">
           <div class="icon-container">
@@ -253,7 +267,7 @@ export class ObcMessageMenuItem extends LitElement {
                 : nothing}
             </div>`
           : nothing}
-      </button>
+      </div>
     `;
   }
 

@@ -1,5 +1,10 @@
+.canvas-and-slots-container {
+  position: relative;
+}
+
 canvas {
   z-index: 1;
+  position: relative;
 }
 
 /* Scale slots - absolutely positioned at edges */

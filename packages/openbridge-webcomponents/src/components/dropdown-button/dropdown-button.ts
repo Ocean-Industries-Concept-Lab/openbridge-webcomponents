@@ -84,6 +84,7 @@ export class ObcDropdownButton extends LitElement {
    * The value of the currently selected option. If not set, defaults to the first option in the list.
    */
   @property({type: String}) value: string | undefined;
+  @property({type: Boolean}) disabled: boolean = false;
 
   /**
    * If true, the select expands to fill the width of its container. Default is false.
@@ -128,6 +129,7 @@ export class ObcDropdownButton extends LitElement {
           wrapper: true,
           'full-width': this.fullWidth,
           integration: this.integration,
+          disabled: this.disabled,
         })}
       >
         <div class="visible-wrapper">
@@ -136,7 +138,7 @@ export class ObcDropdownButton extends LitElement {
             <obi-drop-down-google></obi-drop-down-google>
           </div>
         </div>
-        <select @change=${this.changeHandler}>
+        <select @change=${this.changeHandler} ?disabled=${this.disabled}>
           ${this.options.map((item) => {
             const indent = item.level ? (item.level - 1) * 2 : 0;
             const indentText = [];

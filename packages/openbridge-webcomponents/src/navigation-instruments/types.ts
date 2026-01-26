@@ -29,5 +29,6 @@ export enum FrameStyle {
 export enum BorderRadiusPosition {
   innerFirstChild = 'innerFirstChild',
   middleChild = 'middleChild',
+  middleRoundedChild = 'middleRoundedChild',
   outerLastChild = 'outerLastChild',
 }
