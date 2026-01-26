@@ -1,7 +1,24 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcPoiCard, PointerDirection} from './poi-card.js';
+import {PointerDirection, ObcPoiCardHeaderVariant} from './poi-card.js';
 import './poi-card.js';
 import {html} from 'lit';
+import '../../icons/icon-vessel-type-passenger-outlined.js';
+
+interface PoiCardArgs {
+  pointerDirection: PointerDirection;
+  fixedSize: boolean;
+  noHeader: boolean;
+  headerVariant: ObcPoiCardHeaderVariant;
+  index: string;
+  title: string;
+  description: string;
+  source: string;
+  timestamp: string;
+  hasLeadingIcon: boolean;
+  hasCloseButton: boolean;
+  interactive: boolean;
+  hasAlert: boolean;
+}
 
 function renderPlaceholder(text: string = 'Content placeholder') {
   return html`
@@ -42,7 +59,7 @@ function renderFixedPlaceholder(text: string = 'Content') {
   `;
 }
 
-const meta: Meta<typeof ObcPoiCard> = {
+const meta: Meta<PoiCardArgs> = {
   title: 'AR/POI Card',
   tags: ['autodocs'],
   component: 'obc-poi-card',
@@ -50,17 +67,25 @@ const meta: Meta<typeof ObcPoiCard> = {
     pointerDirection: PointerDirection.None,
     fixedSize: false,
     noHeader: false,
+    headerVariant: ObcPoiCardHeaderVariant.Condensed,
     index: '1',
     title: 'Title',
+    description: '',
     source: 'SRC',
-    nonInteractive: false,
-    hasFocus: false,
+    timestamp: '',
+    hasLeadingIcon: false,
+    hasCloseButton: false,
+    interactive: false,
     hasAlert: false,
   },
   argTypes: {
     pointerDirection: {
       control: 'select',
       options: Object.values(PointerDirection),
+    },
+    headerVariant: {
+      control: 'select',
+      options: Object.values(ObcPoiCardHeaderVariant),
     },
   },
   render: (args) => {
@@ -73,11 +98,15 @@ const meta: Meta<typeof ObcPoiCard> = {
           .pointerDirection=${args.pointerDirection}
           .fixedSize=${args.fixedSize}
           .noHeader=${args.noHeader}
+          .headerVariant=${args.headerVariant}
           .index=${args.index}
           .title=${args.title}
+          .description=${args.description}
           .source=${args.source}
-          .nonInteractive=${args.nonInteractive}
-          .hasFocus=${args.hasFocus}
+          .timestamp=${args.timestamp}
+          .hasLeadingIcon=${args.hasLeadingIcon}
+          .hasCloseButton=${args.hasCloseButton}
+          .interactive=${args.interactive}
           .hasAlert=${args.hasAlert}
         >
           ${content}
@@ -85,11 +114,12 @@ const meta: Meta<typeof ObcPoiCard> = {
       </div>
     `;
   },
-} satisfies Meta<ObcPoiCard>;
+};
 
 export default meta;
-type Story = StoryObj<ObcPoiCard>;
+type Story = StoryObj<PoiCardArgs>;
 
+// Basic Variants
 export const Default: Story = {
   args: {
     pointerDirection: PointerDirection.None,
@@ -106,42 +136,6 @@ export const NoHeader: Story = {
   },
 };
 
-export const WithTopPointer: Story = {
-  args: {
-    pointerDirection: PointerDirection.Top,
-    index: '1',
-    title: 'Top Pointer',
-    source: 'SRC',
-  },
-};
-
-export const WithBottomPointer: Story = {
-  args: {
-    pointerDirection: PointerDirection.Bottom,
-    index: '2',
-    title: 'Bottom Pointer',
-    source: 'AIS',
-  },
-};
-
-export const WithLeftPointer: Story = {
-  args: {
-    pointerDirection: PointerDirection.Left,
-    index: '3',
-    title: 'Left Pointer',
-    source: 'SRC',
-  },
-};
-
-export const WithRightPointer: Story = {
-  args: {
-    pointerDirection: PointerDirection.Right,
-    index: '4',
-    title: 'Right Pointer',
-    source: 'AIS',
-  },
-};
-
 export const FixedSize: Story = {
   args: {
     fixedSize: true,
@@ -151,22 +145,90 @@ export const FixedSize: Story = {
   },
 };
 
-export const FixedSizeWithPointer: Story = {
+// Pointer Direction
+export const WithTopPointer: Story = {
   args: {
-    fixedSize: true,
-    pointerDirection: PointerDirection.Bottom,
+    pointerDirection: PointerDirection.Top,
     index: '1',
-    title: 'Fixed + Pointer',
+    title: 'Top Pointer',
     source: 'SRC',
   },
 };
 
-export const WithFocus: Story = {
+// Header Variants
+export const HeaderTagVariant: Story = {
+  args: {
+    headerVariant: ObcPoiCardHeaderVariant.Tag,
+    index: '1',
+  },
+};
+
+export const HeaderCondensedVariant: Story = {
+  args: {
+    headerVariant: ObcPoiCardHeaderVariant.Condensed,
+    index: '1',
+    title: 'Condensed Header',
+    source: 'SRC',
+  },
+};
+
+export const HeaderRegularVariant: Story = {
+  render: (args) => html`
+    <div style="padding: 40px;">
+      <obc-poi-card
+        .pointerDirection=${args.pointerDirection}
+        .fixedSize=${args.fixedSize}
+        .noHeader=${args.noHeader}
+        .headerVariant=${ObcPoiCardHeaderVariant.Regular}
+        .index=${'1'}
+        .title=${'Regular Header'}
+        .source=${'AIS'}
+        .hasLeadingIcon=${true}
+        .interactive=${args.interactive}
+        .hasAlert=${args.hasAlert}
+      >
+        <obi-vessel-type-passenger-outlined
+          slot="leading-icon"
+        ></obi-vessel-type-passenger-outlined>
+        ${renderPlaceholder('Regular header with icon')}
+      </obc-poi-card>
+    </div>
+  `,
+};
+
+export const HeaderDetailedVariant: Story = {
+  render: (args) => html`
+    <div style="padding: 40px;">
+      <obc-poi-card
+        .pointerDirection=${args.pointerDirection}
+        .fixedSize=${args.fixedSize}
+        .noHeader=${args.noHeader}
+        .headerVariant=${ObcPoiCardHeaderVariant.Detailed}
+        .index=${'1'}
+        .title=${'MV Explorer'}
+        .description=${'Passenger vessel'}
+        .source=${'AIS'}
+        .timestamp=${'2 min ago'}
+        .hasCloseButton=${true}
+        .interactive=${args.interactive}
+        .hasAlert=${args.hasAlert}
+      >
+        <obi-vessel-type-passenger-outlined
+          slot="poi-icon"
+        ></obi-vessel-type-passenger-outlined>
+        ${renderPlaceholder('Detailed header')}
+      </obc-poi-card>
+    </div>
+  `,
+};
+
+// Interactive States
+export const Interactive: Story = {
   args: {
     index: '1',
-    title: 'Focused',
+    title: 'Interactive',
     source: 'SRC',
-    hasFocus: true,
+    interactive: true,
   },
 };
 
@@ -175,176 +237,31 @@ export const WithAlert: Story = {
     index: '1',
     title: 'Alert',
     source: 'SRC',
+    interactive: true,
     hasAlert: true,
   },
 };
 
-export const WithFocusAndAlert: Story = {
-  args: {
-    index: '1',
-    title: 'Focus + Alert',
-    source: 'SRC',
-    hasFocus: true,
-    hasAlert: true,
-  },
-};
-
-export const NonInteractive: Story = {
-  args: {
-    index: '1',
-    title: 'Non-Interactive',
-    source: 'SRC',
-    nonInteractive: true,
-  },
-};
-
-export const AllPointerDirections: Story = {
+// Full Featured
+export const FullFeatured: Story = {
   render: () => html`
-    <div
-      style="display: flex; flex-wrap: wrap; gap: 40px; padding: 40px; align-items: center;"
-    >
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 12px;">None</div>
-        <obc-poi-card
-          .pointerDirection=${PointerDirection.None}
-          index="1"
-          title="None"
-          source="SRC"
-        >
-          ${renderPlaceholder('No pointer')}
-        </obc-poi-card>
-      </div>
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 12px;">Top</div>
-        <obc-poi-card
-          .pointerDirection=${PointerDirection.Top}
-          index="2"
-          title="Top"
-          source="SRC"
-        >
-          ${renderPlaceholder('Top pointer')}
-        </obc-poi-card>
-      </div>
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 12px;">Bottom</div>
-        <obc-poi-card
-          .pointerDirection=${PointerDirection.Bottom}
-          index="3"
-          title="Bottom"
-          source="SRC"
-        >
-          ${renderPlaceholder('Bottom pointer')}
-        </obc-poi-card>
-      </div>
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 12px;">Left</div>
-        <obc-poi-card
-          .pointerDirection=${PointerDirection.Left}
-          index="4"
-          title="Left"
-          source="SRC"
-        >
-          ${renderPlaceholder('Left pointer')}
-        </obc-poi-card>
-      </div>
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 12px;">Right</div>
-        <obc-poi-card
-          .pointerDirection=${PointerDirection.Right}
-          index="5"
-          title="Right"
-          source="SRC"
-        >
-          ${renderPlaceholder('Right pointer')}
-        </obc-poi-card>
-      </div>
-    </div>
-  `,
-};
-
-export const InteractionStates: Story = {
-  render: () => html`
-    <div
-      style="display: flex; flex-wrap: wrap; gap: 40px; padding: 40px; align-items: start;"
-    >
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 12px;">Normal</div>
-        <obc-poi-card index="1" title="Normal" source="SRC">
-          ${renderPlaceholder('Normal state')}
-        </obc-poi-card>
-      </div>
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 12px;">Focus</div>
-        <obc-poi-card index="2" title="Focus" source="SRC" hasFocus>
-          ${renderPlaceholder('Focus state')}
-        </obc-poi-card>
-      </div>
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 12px;">Alert</div>
-        <obc-poi-card index="3" title="Alert" source="SRC" hasAlert>
-          ${renderPlaceholder('Alert state')}
-        </obc-poi-card>
-      </div>
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 12px;">Focus + Alert</div>
-        <obc-poi-card index="4" title="Both" source="SRC" hasFocus hasAlert>
-          ${renderPlaceholder('Both states')}
-        </obc-poi-card>
-      </div>
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 12px;">Non-Interactive</div>
-        <obc-poi-card index="5" title="Disabled" source="SRC" nonInteractive>
-          ${renderPlaceholder('Non-interactive')}
-        </obc-poi-card>
-      </div>
-    </div>
-  `,
-};
-
-export const SizeComparison: Story = {
-  render: () => html`
-    <div
-      style="display: flex; flex-wrap: wrap; gap: 40px; padding: 40px; align-items: start;"
-    >
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 12px;">Hug Content</div>
-        <obc-poi-card index="1" title="Hug" source="SRC">
-          ${renderPlaceholder('Hugs content')}
-        </obc-poi-card>
-      </div>
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 12px;">Fixed 256x256</div>
-        <obc-poi-card index="2" title="Fixed" source="SRC" fixedSize>
-          ${renderFixedPlaceholder('Fixed 256x256')}
-        </obc-poi-card>
-      </div>
-    </div>
-  `,
-};
-
-export const HeaderVariants: Story = {
-  render: () => html`
-    <div
-      style="display: flex; flex-wrap: wrap; gap: 40px; padding: 40px; align-items: start;"
-    >
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 12px;">With Header</div>
-        <obc-poi-card index="1" title="With Header" source="AIS">
-          ${renderPlaceholder('Has header')}
-        </obc-poi-card>
-      </div>
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 12px;">No Header</div>
-        <obc-poi-card noHeader>
-          ${renderPlaceholder('No header')}
-        </obc-poi-card>
-      </div>
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 12px;">No Source</div>
-        <obc-poi-card index="3" title="No Source" source="">
-          ${renderPlaceholder('No source badge')}
-        </obc-poi-card>
-      </div>
+    <div style="padding: 40px;">
+      <obc-poi-card
+        .pointerDirection=${PointerDirection.Bottom}
+        .headerVariant=${ObcPoiCardHeaderVariant.Detailed}
+        index="1"
+        title="MV Explorer"
+        description="Passenger vessel"
+        source="AIS"
+        timestamp="2 min ago"
+        hasCloseButton
+        interactive
+      >
+        <obi-vessel-type-passenger-outlined
+          slot="poi-icon"
+        ></obi-vessel-type-passenger-outlined>
+        ${renderPlaceholder('Full featured card')}
+      </obc-poi-card>
     </div>
   `,
 };

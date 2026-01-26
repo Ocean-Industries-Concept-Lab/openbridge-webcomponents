@@ -6,6 +6,7 @@
   display: flex;
   position: relative;
   width: 100%;
+  user-select: none;
 }
 
 .tag-container {

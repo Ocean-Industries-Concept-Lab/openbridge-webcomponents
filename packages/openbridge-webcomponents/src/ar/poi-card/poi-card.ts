@@ -6,6 +6,17 @@ import {customElement} from '../../decorator.js';
 import '../poi-card-header/poi-card-header.js';
 import {ObcPoiCardHeaderVariant} from '../poi-card-header/poi-card-header.js';
 
+export {ObcPoiCardHeaderVariant};
+
+/**
+ * Event detail for card-click event.
+ */
+export interface PoiCardClickDetail {
+  index: string;
+}
+
+export type PoiCardClickEvent = CustomEvent<PoiCardClickDetail>;
+
 /**
  * Enum for POI Card pointer direction.
  */
@@ -50,6 +61,9 @@ export enum PointerDirection {
  * ```
  *
  * @slot - Default slot for card content.
+ * @slot leading-icon - Icon before the title (regular header variant only).
+ * @slot poi-icon - Vessel icon for the POI target button (detailed header variant only).
+ * @fires card-click {PoiCardClickEvent} Fired when the card is clicked (only if interactive).
  */
 @customElement('obc-poi-card')
 export class ObcPoiCard extends LitElement {
@@ -63,23 +77,48 @@ export class ObcPoiCard extends LitElement {
   /** Hide the poi-card-header. */
   @property({type: Boolean}) noHeader = false;
 
+  /** Header variant: tag, condensed, regular, or detailed. */
+  @property({type: String}) headerVariant: ObcPoiCardHeaderVariant =
+    ObcPoiCardHeaderVariant.Condensed;
+
   /** Index/ID shown in the header badge. */
   @property({type: String}) index = '1';
 
   /** Title text shown in the header. */
   @property({type: String}) override title = '';
 
+  /** Description text (detailed header variant only). */
+  @property({type: String}) description = '';
+
   /** Source badge text shown in the header (e.g., "SRC", "AIS"). */
   @property({type: String}) source = '';
 
-  /** Disable interaction states (hover, focus). */
-  @property({type: Boolean}) nonInteractive = false;
+  /** Timestamp text (detailed header variant only). */
+  @property({type: String}) timestamp = '';
 
-  /** Show focus border. */
-  @property({type: Boolean}) hasFocus = false;
+  /** Show leading icon slot (regular header variant). */
+  @property({type: Boolean}) hasLeadingIcon = false;
+
+  /** Show close button (detailed header variant). */
+  @property({type: Boolean}) hasCloseButton = false;
+
+  /** Enable interaction states (click, focus, alert borders). */
+  @property({type: Boolean}) interactive = false;
 
   /** Show alert/caution border. */
   @property({type: Boolean}) hasAlert = false;
+
+  private handleCardClick() {
+    if (!this.interactive) return;
+
+    this.dispatchEvent(
+      new CustomEvent<PoiCardClickDetail>('card-click', {
+        detail: {index: this.index},
+        bubbles: true,
+        composed: true,
+      })
+    );
+  }
 
   private renderPointerSvg(direction: 'top' | 'bottom' | 'left' | 'right') {
     // SVG paths for each direction
@@ -147,30 +186,29 @@ export class ObcPoiCard extends LitElement {
     if (this.noHeader) return nothing;
     return html`
       <obc-poi-card-header
-        variant=${ObcPoiCardHeaderVariant.Condensed}
+        variant=${this.headerVariant}
         index=${this.index}
         title=${this.title}
+        description=${this.description}
         source=${this.source}
-      ></obc-poi-card-header>
+        timestamp=${this.timestamp}
+        ?hasLeadingIcon=${this.hasLeadingIcon}
+        ?hasCloseButton=${this.hasCloseButton}
+      >
+        <slot name="leading-icon" slot="leading-icon"></slot>
+        <slot name="poi-icon" slot="poi-icon"></slot>
+      </obc-poi-card-header>
     `;
   }
 
-  private renderInteractionLayer() {
-    if (this.nonInteractive) return nothing;
-    if (!this.hasFocus && !this.hasAlert) return nothing;
-
-    const hasInnerRing = this.hasAlert;
+  private renderAlertLayer() {
+    if (!this.interactive || !this.hasAlert) return nothing;
 
     return html`
-      <div class="interaction-layer">
+      <div class="alert-layer">
         <div class="ring-outer"></div>
-        <div
-          class="ring-middle ${this.hasFocus ? 'focus' : ''} ${this.hasAlert &&
-          !this.hasFocus
-            ? 'alert'
-            : ''}"
-        ></div>
-        ${hasInnerRing ? html`<div class="ring-inner"></div>` : nothing}
+        <div class="ring-middle alert"></div>
+        <div class="ring-inner"></div>
       </div>
     `;
   }
@@ -182,18 +220,22 @@ export class ObcPoiCard extends LitElement {
           wrapper: true,
           'hug-content': !this.fixedSize,
           'fixed-size': this.fixedSize,
-          interactive: !this.nonInteractive,
+          interactive: this.interactive,
         })}
       >
         ${this.renderTopPointer()}
         <div class="center">
           ${this.renderLeftPointer()}
-          <div class="content-box">
+          <div
+            class="content-box"
+            tabindex=${this.interactive ? '0' : nothing}
+            @click=${this.handleCardClick}
+          >
             ${this.renderHeader()}
             <div class="content">
               <slot></slot>
             </div>
-            ${this.renderInteractionLayer()}
+            ${this.renderAlertLayer()}
           </div>
           ${this.renderRightPointer()}
         </div>

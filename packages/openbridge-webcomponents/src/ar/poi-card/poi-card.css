@@ -41,6 +41,10 @@
   position: relative;
 }
 
+.wrapper.interactive .content-box {
+  cursor: pointer;
+}
+
 .wrapper.fixed-size .content-box {
   flex: 1 0 0;
   min-height: 0;
@@ -94,15 +98,38 @@ obc-poi-card-header::part(wrapper) {
   display: block;
 }
 
-/* Interaction layer - focus/alert rings */
-.interaction-layer {
+/* Focus ring - shown on keyboard focus */
+.wrapper.interactive .content-box:focus-visible {
+  outline: none;
+}
+
+.wrapper.interactive .content-box:focus-visible::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1px solid var(--overlay-border-outline-color);
+  border-radius: 7px;
+  pointer-events: none;
+}
+
+.wrapper.interactive .content-box:focus-visible::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--border-focus-color);
+  border-radius: 6px;
+  pointer-events: none;
+}
+
+/* Alert layer - for alert states */
+.alert-layer {
   position: absolute;
   inset: 0;
   pointer-events: none;
   border-radius: 6px;
 }
 
-/* Outer ring - always overlay-border-outline-color */
+/* Outer ring - overlay-border-outline-color */
 .ring-outer {
   position: absolute;
   inset: -1px;
@@ -110,22 +137,15 @@ obc-poi-card-header::part(wrapper) {
   border-radius: 7px;
 }
 
-/* Middle ring - focus or alert color */
-.ring-middle {
+/* Middle ring - alert color */
+.ring-middle.alert {
   position: absolute;
   inset: 0;
+  border: 1px solid var(--alert-caution-color);
   border-radius: 6px;
 }
 
-.ring-middle.focus {
-  border: 1px solid var(--border-focus-color);
-}
-
-.ring-middle.alert {
-  border: 1px solid var(--alert-caution-color);
-}
-
-/* Inner ring - only for alert states */
+/* Inner ring - alert outline color */
 .ring-inner {
   position: absolute;
   inset: 1px;
