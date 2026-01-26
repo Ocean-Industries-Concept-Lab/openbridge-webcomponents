@@ -11,10 +11,6 @@ export enum AnalogValveVariant {
   flat = 'flat',
 }
 
-/**
- *
- * @property {AnalogValveVariant} variant - The variant of the analog valve.
- */
 @customElement('obc-analog-valve')
 export class ObcAnalogValve extends ObcAbstractAutomationButton {
   @property({type: Boolean}) open: boolean = false;
