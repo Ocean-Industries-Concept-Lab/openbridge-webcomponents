@@ -35,8 +35,6 @@ export class ObcAbstractAutomationButton extends LitElement {
     ObcAlertFrameStatus.Alarm;
   @property({type: Boolean}) progress: boolean = false;
   @property({type: String}) tag: string = '';
-  @property({type: String}) variant: AutomationButtonVariant =
-    AutomationButtonVariant.regular;
   @property({type: String}) direction: AutomationButtonDirection =
     AutomationButtonDirection.forward;
   @property({type: Boolean}) badgeAuto: boolean = false;
@@ -50,6 +48,11 @@ export class ObcAbstractAutomationButton extends LitElement {
 
   get _on(): boolean {
     throw new Error('Method "_on" must be implemented in subclass');
+  }
+
+  get _variant(): AutomationButtonVariant {
+    // @ts-expect-error - property should be defined in subclass
+    return this.variant as AutomationButtonVariant;
   }
 
   get extraReadouts(): AutomationButtonReadoutStack[] {
@@ -113,7 +116,7 @@ export class ObcAbstractAutomationButton extends LitElement {
       .alertFrameThickness=${this.alertFrameThickness}
       .alertFrameStatus=${this.alertFrameStatus}
       ?progress=${this.progress}
-      .variant=${this.variant as AutomationButtonVariant}
+      .variant=${this._variant}
       .direction=${this.direction}
       .hasBadgeSpacer=${this.getBadgeSpacer()}
     >
