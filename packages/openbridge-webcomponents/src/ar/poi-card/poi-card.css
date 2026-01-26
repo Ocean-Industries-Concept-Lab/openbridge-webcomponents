@@ -1,0 +1,134 @@
+:host {
+  display: inline-flex;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  filter: drop-shadow(0px 2px 6px rgba(0, 0, 0, 0.5));
+}
+
+.wrapper.fixed-size {
+  width: 256px;
+  height: 256px;
+}
+
+.center {
+  display: flex;
+  align-items: stretch;
+}
+
+.wrapper.fixed-size .center {
+  flex: 1 0 0;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+}
+
+/* Content box - the main card */
+.content-box {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background-color: var(--overlay-container-background-color);
+  border: 1px solid var(--overlay-border-outline-color);
+  border-radius: 6px;
+  position: relative;
+}
+
+.wrapper.fixed-size .content-box {
+  flex: 1 0 0;
+  min-height: 0;
+  min-width: 0;
+}
+
+/* Header border radius to match card corners */
+obc-poi-card-header::part(wrapper) {
+  border-radius: 5px 5px 0 0;
+}
+
+/* Content area */
+.content {
+  display: flex;
+  flex-direction: column;
+  overflow: clip;
+  border-radius: 0 0 5px 5px;
+}
+
+.wrapper.fixed-size .content {
+  flex: 1 0 0;
+  min-height: 0;
+  min-width: 0;
+}
+
+/* Pointer containers */
+.pointer-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pointer-container.top,
+.pointer-container.bottom {
+  width: 100%;
+}
+
+.pointer-container.top svg,
+.pointer-container.bottom svg {
+  display: block;
+}
+
+.pointer-container.left,
+.pointer-container.right {
+  align-self: center;
+}
+
+.pointer-container.left svg,
+.pointer-container.right svg {
+  display: block;
+}
+
+/* Interaction layer - focus/alert rings */
+.interaction-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 6px;
+}
+
+/* Outer ring - always overlay-border-outline-color */
+.ring-outer {
+  position: absolute;
+  inset: -1px;
+  border: 1px solid var(--overlay-border-outline-color);
+  border-radius: 7px;
+}
+
+/* Middle ring - focus or alert color */
+.ring-middle {
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+}
+
+.ring-middle.focus {
+  border: 1px solid var(--border-focus-color);
+}
+
+.ring-middle.alert {
+  border: 1px solid var(--alert-caution-color);
+}
+
+/* Inner ring - only for alert states */
+.ring-inner {
+  position: absolute;
+  inset: 1px;
+  border: 1px solid var(--alert-caution-outline-color);
+  border-radius: 5px;
+}

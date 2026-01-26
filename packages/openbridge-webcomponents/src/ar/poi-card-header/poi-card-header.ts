@@ -192,6 +192,7 @@ export class ObcPoiCardHeader extends LitElement {
   override render() {
     return html`
       <div
+        part="wrapper"
         class=${classMap({
           wrapper: true,
           [`variant-${this.variant}`]: true,
