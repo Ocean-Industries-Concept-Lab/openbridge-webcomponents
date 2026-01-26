@@ -9,8 +9,7 @@ export enum SquaredVariant {
 
 export class ObcAbstractAutomationButtonSquared extends ObcAbstractAutomationButton {
   @property({type: Boolean}) on: boolean = false;
-  // @ts-expect-error - can be any of the MotorizedVariant, not square
-  override variant: SquaredVariant = SquaredVariant.square;
+  @property({type: String}) variant: SquaredVariant = SquaredVariant.square;
 
   override get extraReadouts(): AutomationButtonReadoutStack[] {
     if (this.on) {
