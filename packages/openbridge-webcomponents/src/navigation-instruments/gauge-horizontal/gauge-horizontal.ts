@@ -12,7 +12,7 @@ import type {
 } from '../../building-blocks/external-scale/external-scale.js';
 import {
   computeExternalScaleViewBox,
-  computeMeetScale,
+  computeFixedAspectRatioScale,
   computeExternalScaleLayout,
   renderExternalScale,
   toExternalScaleLayoutConfig,
@@ -145,6 +145,14 @@ export class ObcGaugeHorizontal extends LitElement {
    */
   fixedAspectRatio = false;
 
+  /**
+   * Reference size for proportional scaling when fixedAspectRatio is true.
+   * At this width, the scale renders at native 1:1 (matches Figma design).
+   * Above this width, the scale grows proportionally; below, it shrinks.
+   * @default 384
+   */
+  scaleReferenceSize = 384;
+
   @state()
   private _scale = 1;
 
@@ -157,39 +165,20 @@ export class ObcGaugeHorizontal extends LitElement {
       const entry = entries[0];
       if (!entry) return;
 
-      const effectiveBarThickness = computeExternalScaleEffectiveBarThickness({
-        hasBar: this.hasBar,
-        barThickness: this.barThickness,
-        borderRadius: this.borderRadius,
-        scaleType: this.scaleType,
-      });
+      // Use the centralized function that computes scale based on reference size
+      // For horizontal scales, compare container width to reference size
+      const containerMainAxisSize = entry.contentRect.width;
 
-      // Calculate reference thickness from current configuration
-      const layout = computeExternalScaleLayout({
+      const scale = computeFixedAspectRatioScale({
         orientation: ExternalScaleOrientation.horizontal,
-        side: this.side,
-        hasBar: this.hasBar,
-        hasScale: this.hasScale,
-        labels: !this.hideLabels,
-        barThickness: effectiveBarThickness,
-        tickThickness: this.tickThickness,
-        labelThickness: this.labelThickness,
-        length: this.width,
+        containerMainAxisSize,
+        scaleReferenceSize: this.scaleReferenceSize,
       });
-
-      const viewBox = computeExternalScaleViewBox(
-        {orientation: ExternalScaleOrientation.horizontal, length: this.width},
-        layout
-      );
-
-      const scale = computeMeetScale(
-        viewBox.width,
-        viewBox.height,
-        entry.contentRect.width,
-        entry.contentRect.height
-      );
       // Guard against zero-sized containers, but allow fractional scales < 1
       this._scale = scale > 0 ? scale : 1;
+
+      // Report scaled dimensions to parent chart
+      this.reportDimensions();
     },
   });
 
@@ -261,6 +250,14 @@ export class ObcGaugeHorizontal extends LitElement {
     hinted: boolean;
   }> = [];
 
+  /**
+   * When true, displays a dot indicator at the current value position.
+   * The dot is rendered in the scale band, touching its inner edge (towards the chart).
+   * This provides an alternative to bar fill for highlighting the current value.
+   * @default false
+   */
+  @property({type: Boolean}) highlightCurrentValue = false;
+
   override render() {
     const config: ExternalScaleConfig = {
       orientation: ExternalScaleOrientation.horizontal,
@@ -299,6 +296,10 @@ export class ObcGaugeHorizontal extends LitElement {
       advicePosition: this.advicePosition,
       advices: this.advices as ExternalScaleAdvice[],
       fixedAspectRatio: this.fixedAspectRatio,
+      // Gauges are always in instrument mode - they use fixed borderRadius (8px)
+      // and don't respond to .obc-component-size-* CSS classes for border radius
+      instrumentMode: true,
+      highlightCurrentValue: this.highlightCurrentValue,
     };
 
     const layout = computeExternalScaleLayout(
@@ -326,7 +327,7 @@ export class ObcGaugeHorizontal extends LitElement {
       >
         ${parts.barContainer} ${parts.barFill} ${parts.scaleBackground}
         ${parts.tickmarks} ${parts.labels} ${parts.adviceOverlays}
-        ${parts.setpoint}
+        ${parts.currentValueDot} ${parts.setpoint}
       </svg>
     `;
   }
@@ -334,8 +335,9 @@ export class ObcGaugeHorizontal extends LitElement {
   override updated(changed: PropertyValues) {
     super.updated(changed);
 
-    // Report dimensions to parent chart (if in integration mode)
-    // Only emit when layout-affecting properties change to avoid spamming events
+    // Report dimensions to parent chart
+    // In fixedAspectRatio mode, we report after resize events trigger _scale updates
+    // In regular mode, only emit when layout-affecting properties change
     if (
       !this.fixedAspectRatio &&
       (changed.has('side') || changed.has('hideLabels'))
@@ -346,6 +348,8 @@ export class ObcGaugeHorizontal extends LitElement {
 
   /**
    * Report scale dimensions to parent chart component.
+   * Always reports unscaled/reference dimensions so the parent chart can apply
+   * consistent proportional scaling in fixedAspectRatioScaling mode.
    */
   private reportDimensions() {
     const effectiveBarThickness = computeExternalScaleEffectiveBarThickness({
@@ -355,7 +359,7 @@ export class ObcGaugeHorizontal extends LitElement {
       scaleType: this.scaleType,
     });
 
-    const dimensions = computeScaleDimensionsForReport({
+    const baseDimensions = computeScaleDimensionsForReport({
       orientation: ExternalScaleOrientation.horizontal,
       side: this.side,
       hasBar: this.hasBar,
@@ -365,7 +369,13 @@ export class ObcGaugeHorizontal extends LitElement {
       tickThickness: this.tickThickness,
       labelThickness: this.labelThickness,
       length: this.width,
+      scaleType: this.scaleType,
     });
+
+    // Always report unscaled/reference dimensions.
+    // The parent chart component handles proportional scaling consistently
+    // for both external scales and chart padding in fixedAspectRatioScaling mode.
+    const dimensions = baseDimensions;
 
     this.dispatchEvent(
       new CustomEvent('scale-dimensions-changed', {

@@ -970,3 +970,131 @@ export const ExternalScalesMinimal: Story = {
     </obc-area-graph>
   `,
 };
+
+export const FixedAspectRatioScaling: StoryObj = {
+  name: 'Fixed aspect ratio scaling (responsive)',
+  tags: ['!snapshot'],
+  decorators: [],
+  args: {
+    width: 400,
+    height: 300,
+  },
+  render: (args) => {
+    const sampleData = [
+      {label: 'Jan', value: 3.5},
+      {label: 'Feb', value: 4.2},
+      {label: 'Mar', value: 5},
+      {label: 'Apr', value: 4},
+      {label: 'May', value: 7},
+      {label: 'Jun', value: 3},
+    ];
+
+    return html`
+      <style>
+        .comparison-wrapper {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 32px;
+          padding: 16px;
+          min-height: 700px;
+        }
+        .comparison-instructions {
+          grid-column: 1 / -1;
+          font-family: var(--font-family-main);
+          font-size: 13px;
+          color: var(--instrument-frame-secondary-color);
+          padding: 12px;
+          background: var(--container-background-color);
+          border-radius: 4px;
+          margin-bottom: 8px;
+        }
+        .comparison-container {
+          padding: 16px;
+          resize: both;
+          overflow: auto;
+          min-width: 200px;
+          min-height: 200px;
+          display: flex;
+          flex-direction: column;
+        }
+        .container-normal {
+          border: 2px dashed var(--instrument-frame-tertiary-color);
+        }
+        .container-fixed {
+          border: 2px dashed var(--instrument-enhanced-primary-color);
+        }
+        .comparison-label {
+          font-family: var(--font-family-main);
+          font-size: 14px;
+          margin-bottom: 8px;
+          flex-shrink: 0;
+        }
+        .label-normal {
+          color: var(--instrument-frame-tertiary-color);
+        }
+        .label-fixed {
+          color: var(--instrument-enhanced-primary-color);
+        }
+      </style>
+      <div class="comparison-wrapper">
+        <div class="comparison-instructions">
+          <strong>Instructions:</strong> Use width/height controls to change
+          aspect ratio. Drag the corner of each container to resize.
+          <ul style="margin: 8px 0 0 0; padding-left: 20px;">
+            <li>
+              <strong>Left (fixedAspectRatioScaling=false):</strong> Chart stays
+              at fixed ${args.width}×${args.height}px regardless of container
+              size.
+            </li>
+            <li>
+              <strong>Right (fixedAspectRatioScaling=true):</strong> Chart fills
+              container width, height computed from ${args.width}:${args.height}
+              aspect ratio.
+            </li>
+          </ul>
+        </div>
+
+        <!-- Left: fixedAspectRatioScaling=false -->
+        <div class="comparison-container container-normal">
+          <div class="comparison-label label-normal">
+            fixedAspectRatioScaling=false (default, fixed pixel size)
+          </div>
+          <obc-area-graph
+            .data=${sampleData}
+            .width=${args.width}
+            .height=${args.height}
+            .showGrid=${true}
+            .showGridX=${true}
+            .showGridY=${true}
+            .fill=${true}
+            .fillMode=${'semitransparent'}
+            .showPoints=${true}
+            .enhanced=${false}
+            .fixedAspectRatioScaling=${false}
+          ></obc-area-graph>
+        </div>
+
+        <!-- Right: fixedAspectRatioScaling=true -->
+        <div class="comparison-container container-fixed">
+          <div class="comparison-label label-fixed">
+            fixedAspectRatioScaling=true (responsive, fills width)
+          </div>
+          <obc-area-graph
+            style="width: 100%;"
+            .data=${sampleData}
+            .width=${args.width}
+            .height=${args.height}
+            .showGrid=${true}
+            .showGridX=${true}
+            .showGridY=${true}
+            .fill=${true}
+            .fillMode=${'semitransparent'}
+            .showPoints=${true}
+            .enhanced=${true}
+            .fixedAspectRatioScaling=${true}
+          ></obc-area-graph>
+        </div>
+      </div>
+    `;
+  },
+};

@@ -178,6 +178,17 @@ export enum AdvicePosition {
   outer = 'outer',
 }
 
+/**
+ * Bar container background style.
+ * Controls the background color of the bar container independently of scaleBackground.
+ */
+export enum BarContainerStyle {
+  /** Use lighter primary color (--instrument-frame-primary-color) */
+  primary = 'primary',
+  /** Use darker secondary color (--instrument-frame-secondary-color) */
+  secondary = 'secondary',
+}
+
 /** CSS variable used by component-size wrappers to define frame corner rounding. */
 export const EXTERNAL_SCALE_BORDER_RADIUS_CSS_VAR =
   '--instrument-components-watchface-frame-regular-border-radius';
@@ -326,6 +337,37 @@ export function computeExternalScaleEffectiveBarThickness(
   return Math.max(bt, r * 2);
 }
 
+/**
+ * Compute the effective tick band thickness based on scale type.
+ *
+ * In condensed mode, ticks are shorter (max 12px for primary/main + 4px gap = 16px),
+ * so the tick band doesn't need to be as thick as in regular mode (24px + 4px = 28px).
+ *
+ * This function ensures that:
+ * - In regular mode: tickThickness is used as-is (minimum 28px for full-length ticks)
+ * - In condensed mode: tickThickness is capped at 16px (12px tick + 4px gap)
+ *
+ * This allows wrappers to use a single default tickThickness (28px) while the layout
+ * automatically adjusts for condensed mode.
+ *
+ * @param config - Configuration with tickThickness and scaleType
+ * @returns Effective tick band thickness in pixels
+ */
+export function computeExternalScaleEffectiveTickThickness(
+  config: Pick<ExternalScaleConfig, 'tickThickness' | 'scaleType'>
+): number {
+  const tt = Number.isFinite(config.tickThickness) ? config.tickThickness : 0;
+
+  // In condensed mode, the longest tick is 12px, plus 4px gap = 16px max needed
+  // Cap the tick thickness to avoid wasted space between ticks and labels
+  if (config.scaleType === ScaleType.condensed) {
+    const condensedMaxThickness = 16; // 12px tick + 4px gap
+    return Math.min(tt, condensedMaxThickness);
+  }
+
+  return tt;
+}
+
 export interface ExternalScaleAdvice {
   /** Range start value (in scale units). */
   min: number;
@@ -378,6 +420,14 @@ export interface ExternalScaleConfig {
 
   /** Bar band thickness in pixels (the container / fill area). */
   barThickness: number;
+  /**
+   * Bar container background style.
+   * When undefined, defaults based on scaleBackground:
+   * - scaleBackground=true: secondary (gray)
+   * - scaleBackground=false: primary (lighter)
+   * Set explicitly to override this default behavior.
+   */
+  barContainerStyle?: BarContainerStyle;
   /** Tickmark band thickness in pixels (space reserved for tick lines). */
   tickThickness: number;
   /** Label band thickness in pixels (space reserved for numbers). */
@@ -470,6 +520,43 @@ export interface ExternalScaleConfig {
    * @default false
    */
   fixedAspectRatio?: boolean;
+
+  /**
+   * Reference size for proportional scaling when fixedAspectRatio is true.
+   * At this size, the scale renders at native 1:1 (matches Figma design).
+   * Above this size, the scale grows proportionally; below, it shrinks.
+   * Applied to the main axis dimension (height for vertical, width for horizontal).
+   * @default 384
+   */
+  scaleReferenceSize?: number;
+
+  /**
+   * When true, the component is used inside an instrument (e.g., gauge-trend).
+   * In this mode, only label font size responds to .obc-component-size-* CSS classes.
+   * Border radius uses the explicit `borderRadius` property value (or defaults to 8px regular / 4px condensed),
+   * rather than reading from CSS variables.
+   *
+   * Wrappers should:
+   * - Skip CSS variable observers when instrumentMode=true
+   * - Use explicit borderRadius value or scaleType-based defaults
+   *
+   * @default false
+   */
+  instrumentMode?: boolean;
+
+  /**
+   * When true, displays a dot indicator at the current value position.
+   * The dot is rendered in the scale band, touching its inner edge (towards the chart).
+   * This provides an alternative to bar fill for highlighting the current value.
+   *
+   * The dot is:
+   * - 12x12px filled circle with 2px stroke (16px total visual size)
+   * - Fill: --instrument-regular-secondary-color (or enhanced variant when enhanced=true)
+   * - Stroke: --instrument-frame-primary-color
+   *
+   * @default false
+   */
+  highlightCurrentValue?: boolean;
 }
 
 export interface ExternalScaleLayout {
@@ -494,6 +581,7 @@ export type ExternalScaleLayoutConfig = Pick<
   | 'tickThickness'
   | 'labelThickness'
   | 'length'
+  | 'scaleType'
 >;
 
 export interface ExternalScaleViewBox {
@@ -514,9 +602,10 @@ export function toExternalScaleLayoutConfig(
     hasScale: config.hasScale,
     labels: config.labels,
     barThickness: computeExternalScaleEffectiveBarThickness(config),
-    tickThickness: config.tickThickness,
+    tickThickness: computeExternalScaleEffectiveTickThickness(config),
     labelThickness: config.labelThickness,
     length: config.length,
+    scaleType: config.scaleType,
   };
 }
 
@@ -562,16 +651,86 @@ export function computeMeetScale(
 }
 
 /**
+ * Configuration for computing fixed aspect ratio scale factor.
+ */
+export interface FixedAspectRatioScaleConfig {
+  /** Main axis orientation: 'vertical' or 'horizontal' */
+  orientation: ExternalScaleOrientation;
+  /** Actual main axis size of the container (height for vertical, width for horizontal) */
+  containerMainAxisSize: number;
+  /** Reference size at which the scale renders at 1:1 (default: 384) */
+  scaleReferenceSize: number;
+}
+
+/**
+ * Compute the scale factor for fixed aspect ratio mode.
+ *
+ * In fixed aspect ratio mode, the scale component determines its zoom level based on
+ * comparing the container's main axis size against a reference size (typically 384px).
+ * - If container is larger than reference: scale > 1 (zoom in)
+ * - If container is smaller than reference: scale < 1 (zoom out)
+ * - If container equals reference: scale = 1 (native size)
+ *
+ * This scale factor is applied to SVG rendering while keeping text labels at constant size
+ * by using the CSS variable `--scale` to counter-scale font sizes.
+ *
+ * Works for all orientations and sides:
+ * - Vertical scales (left/right): compare container height vs reference
+ * - Horizontal scales (top/bottom): compare container width vs reference
+ *
+ * @param config Configuration with orientation, container size, and reference size
+ * @returns Scale factor (> 0), defaults to 1 if container size is invalid
+ */
+export function computeFixedAspectRatioScale(
+  config: FixedAspectRatioScaleConfig
+): number {
+  const {containerMainAxisSize, scaleReferenceSize} = config;
+
+  // Guard against zero or negative sizes
+  if (containerMainAxisSize <= 0 || scaleReferenceSize <= 0) {
+    return 1;
+  }
+
+  // Scale = container size / reference size
+  // e.g., container=480px, reference=384px => scale=1.25 (zoom in)
+  // e.g., container=288px, reference=384px => scale=0.75 (zoom out)
+  return containerMainAxisSize / scaleReferenceSize;
+}
+
+/**
+ * Compute scaled dimensions for reporting when in fixed aspect ratio mode.
+ *
+ * When fixedAspectRatio is true, the reported thickness should be scaled
+ * proportionally to match the visual output.
+ *
+ * @param baseThickness The unscaled thickness from layout computation
+ * @param scale The current scale factor from computeFixedAspectRatioScale
+ * @returns Scaled thickness value
+ */
+export function computeScaledThickness(
+  baseThickness: number,
+  scale: number
+): number {
+  return baseThickness * scale;
+}
+
+/**
  * Compute a minimal viewBox layout for an external scale.
  *
  * The chart edge is always at perpendicular coordinate 0, and the scale expands
  * outward from that edge based on which bands are enabled (bar/ticks/labels).
+ *
+ * When scaleType is 'condensed', tick thickness is automatically reduced to match
+ * the shorter tick lengths (16px max instead of 28px for regular).
  */
 export function computeExternalScaleLayout(
   config: ExternalScaleLayoutConfig
 ): ExternalScaleLayout {
   const barSpace = config.hasBar ? config.barThickness : 0;
-  const scaleSpace = config.hasScale ? config.tickThickness : 0;
+  // Use effective tick thickness based on scaleType
+  const effectiveTickThickness =
+    computeExternalScaleEffectiveTickThickness(config);
+  const scaleSpace = config.hasScale ? effectiveTickThickness : 0;
   const labelSpace = config.labels ? config.labelThickness : 0;
   const thickness = barSpace + scaleSpace + labelSpace;
 
@@ -914,9 +1073,12 @@ function generateLabels(config: ExternalScaleConfig): SVGTemplateResult[] {
     'calc(var(--global-typography-ui-label-font-size) / var(--scale, 1))';
 
   const base = tickBasePerp(config);
+  // Use effective tick thickness to position labels closer to ticks in condensed mode
+  const effectiveTickThickness =
+    computeExternalScaleEffectiveTickThickness(config);
   const labelPos = isOutwardPositive(config)
-    ? base + (config.hasScale ? config.tickThickness : 0) + labelGap()
-    : base - (config.hasScale ? config.tickThickness : 0) - labelGap();
+    ? base + (config.hasScale ? effectiveTickThickness : 0) + labelGap()
+    : base - (config.hasScale ? effectiveTickThickness : 0) - labelGap();
 
   const includesZero = rangeIncludesZero(config.minValue, config.maxValue);
 
@@ -961,9 +1123,20 @@ function generateBarContainer(
   const borderRadiusFallback = config.scaleType === 'condensed' ? 4 : 8;
   const borderRadiusValue = config.borderRadius ?? borderRadiusFallback;
   const strokeWidth = 1;
-  const fillColor = config.scaleBackground
-    ? 'var(--instrument-frame-secondary-color)'
-    : 'var(--instrument-frame-primary-color)';
+  // Determine bar container fill color:
+  // 1. If barContainerStyle is explicitly set, use it
+  // 2. Otherwise, fall back to scaleBackground-based default
+  let fillColor: string;
+  if (config.barContainerStyle !== undefined) {
+    fillColor =
+      config.barContainerStyle === BarContainerStyle.secondary
+        ? 'var(--instrument-frame-secondary-color)'
+        : 'var(--instrument-frame-primary-color)';
+  } else {
+    fillColor = config.scaleBackground
+      ? 'var(--instrument-frame-secondary-color)'
+      : 'var(--instrument-frame-primary-color)';
+  }
   const strokeColor = 'var(--instrument-frame-tertiary-color)';
 
   const dLen = drawingLength(config);
@@ -972,6 +1145,7 @@ function generateBarContainer(
   // Determine which corners should be rounded based on borderRadiusPosition
   // innerFirstChild: corners on the inner/chart edge
   // middleChild: no corners
+  // middleRoundedChild: chart-only (ignored here, treated as middleChild)
   // outerLastChild: corners on the outer edge (away from chart)
   let shouldRoundTopLeft = true;
   let shouldRoundTopRight = true;
@@ -979,8 +1153,12 @@ function generateBarContainer(
   let shouldRoundBottomRight = true;
 
   if (config.borderRadiusPosition) {
-    if (config.borderRadiusPosition === BorderRadiusPosition.middleChild) {
+    if (
+      config.borderRadiusPosition === BorderRadiusPosition.middleChild ||
+      config.borderRadiusPosition === BorderRadiusPosition.middleRoundedChild
+    ) {
       // No rounded corners for middle child
+      // (middleRoundedChild is chart-canvas-only; ignored for external scales)
       shouldRoundTopLeft = false;
       shouldRoundTopRight = false;
       shouldRoundBottomLeft = false;
@@ -1443,7 +1621,12 @@ function generateBarFill(
   let barRoundBottomRight = true;
 
   if (config.borderRadiusPosition) {
-    if (config.borderRadiusPosition === BorderRadiusPosition.middleChild) {
+    if (
+      config.borderRadiusPosition === BorderRadiusPosition.middleChild ||
+      config.borderRadiusPosition === BorderRadiusPosition.middleRoundedChild
+    ) {
+      // No rounded corners for middle child
+      // (middleRoundedChild is chart-canvas-only; ignored for external scales)
       barRoundTopLeft = false;
       barRoundTopRight = false;
       barRoundBottomLeft = false;
@@ -1961,6 +2144,95 @@ function setpointMarker(
   `;
 }
 
+/**
+ * Generate a dot indicator at the current value position.
+ *
+ * The dot is:
+ * - 12x12px filled circle with 2px stroke (16px total visual size)
+ * - Positioned in the scale band, touching its inner edge (towards the chart)
+ * - Fill uses secondary color (enhanced or regular based on config.enhanced)
+ * - Stroke uses --instrument-frame-primary-color
+ *
+ * @param config - Scale configuration
+ * @returns SVG template for the current value dot, or nothing if disabled/no value
+ */
+function generateCurrentValueDot(
+  config: ExternalScaleConfig
+): SVGTemplateResult | typeof nothing {
+  // The dot is positioned in the scale band. When hasScale=false, the layout
+  // thickness excludes the scale band, so the dot would render outside the
+  // viewBox and be clipped. Skip rendering in that case.
+  if (
+    !config.highlightCurrentValue ||
+    config.value === undefined ||
+    !config.hasScale
+  ) {
+    return nothing;
+  }
+
+  // Dot dimensions
+  const dotDiameter = 12; // Inner fill diameter
+  const strokeWidth = 2;
+  // Total visual size: stroke is centered on path, so adds strokeWidth/2 to each side
+  // Visual radius = fillRadius + strokeWidth/2 = 6 + 1 = 7
+  const visualRadius = dotDiameter / 2 + strokeWidth / 2;
+  const dotRadius = dotDiameter / 2;
+
+  // Position on main axis (value to coordinate)
+  const pos = valueToMainAxis(config, config.value);
+
+  // Position on perpendicular axis:
+  // The dot should be in the scale band, touching its inner edge (towards the chart/bar)
+  //
+  // The scale background (when shown) spans from barEdge to barEdge+backgroundThickness
+  // where backgroundThickness = mainTickLength + gap (e.g., 12+4=16 for condensed)
+  //
+  // For the dot to touch the INNER edge (toward chart) and stay INSIDE the scale band:
+  // - Inner edge of scale background = barEdge (or 0 if no bar)
+  // - Dot's inner edge should be at the inner edge of the scale band
+  // - So dot center = innerEdge + visualRadius
+  const base = tickBasePerp(config);
+
+  // Dot center should be positioned so the dot's inner edge touches the scale band's inner edge
+  const perpCenter = isOutwardPositive(config)
+    ? base + visualRadius
+    : base - visualRadius;
+
+  // Colors
+  const c = colors(config);
+  // Use secondary color for fill (same as markerFillColor from colors function)
+  const fillColor = c.markerFillColor;
+  const strokeColor = 'var(--instrument-frame-primary-color)';
+
+  // Render the dot
+  if (isVertical(config)) {
+    return svg`
+      <circle
+        cx=${perpCenter}
+        cy=${pos}
+        r=${dotRadius}
+        fill=${fillColor}
+        stroke=${strokeColor}
+        stroke-width=${strokeWidth}
+        vector-effect="non-scaling-stroke"
+      />
+    `;
+  }
+
+  // Horizontal orientation
+  return svg`
+    <circle
+      cx=${pos}
+      cy=${perpCenter}
+      r=${dotRadius}
+      fill=${fillColor}
+      stroke=${strokeColor}
+      stroke-width=${strokeWidth}
+      vector-effect="non-scaling-stroke"
+    />
+  `;
+}
+
 function singleSidedTickmark(
   config: ExternalScaleConfig,
   value: number,
@@ -1974,7 +2246,7 @@ function singleSidedTickmark(
 
   const gap = tickGap();
   const start = isOutwardPositive(config) ? tickBase + gap : tickBase - gap;
-  const len = config.tickThickness;
+  const len = computeExternalScaleEffectiveTickThickness(config);
   const end = isOutwardPositive(config) ? start + len : start - len;
 
   if (isVertical(config)) {
@@ -2050,7 +2322,9 @@ function renderAdvice(
   } else {
     x1 = isOutwardPositive(config)
       ? config.barThickness + 10
-      : -config.barThickness - config.tickThickness + 14;
+      : -config.barThickness -
+        computeExternalScaleEffectiveTickThickness(config) +
+        14;
   }
 
   // Dashed boundary tickmarks across the bar band
@@ -2238,6 +2512,7 @@ export function renderExternalScale(config: ExternalScaleConfig): {
   tickmarks: SVGTemplateResult[];
   labels: SVGTemplateResult[];
   adviceOverlays: SVGTemplateResult[];
+  currentValueDot: SVGTemplateResult | typeof nothing;
   setpoint: SVGTemplateResult | typeof nothing;
 } {
   const effectiveBarThickness =
@@ -2254,6 +2529,7 @@ export function renderExternalScale(config: ExternalScaleConfig): {
     tickmarks: SVGTemplateResult[];
     labels: SVGTemplateResult[];
     adviceOverlays: SVGTemplateResult[];
+    currentValueDot: SVGTemplateResult | typeof nothing;
     setpoint: SVGTemplateResult | typeof nothing;
   } = {
     barContainer: generateBarContainer(effectiveConfig),
@@ -2262,6 +2538,7 @@ export function renderExternalScale(config: ExternalScaleConfig): {
     tickmarks: generateTickmarks(effectiveConfig),
     labels: generateLabels(effectiveConfig),
     adviceOverlays: generateAdviceOverlays(effectiveConfig),
+    currentValueDot: generateCurrentValueDot(effectiveConfig),
     setpoint: setpointMarker(effectiveConfig),
   };
 
