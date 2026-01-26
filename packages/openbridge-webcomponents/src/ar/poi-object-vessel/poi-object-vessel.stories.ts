@@ -1,13 +1,13 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
-import './poi-object-vessel';
+import './poi-object-vessel.js';
 import {
   ObcPoiObjectVesselType,
   ObcPoiObjectVesselStyle,
   ObcPoiObjectVesselState,
-} from './poi-object-vessel';
-import '../../icons/icon-vessel-type-psv-outlined';
-import '../../icons/icon-vessel-type-psv-filled';
+} from './poi-object-vessel.js';
+import '../../icons/icon-vessel-type-psv-outlined.js';
+import '../../icons/icon-vessel-type-psv-filled.js';
 
 const meta: Meta = {
   title: 'AR/POI Object Vessel',
@@ -303,7 +303,9 @@ export const AllTypes: Story = {
       <div style=${rowStyle}>
         <div style=${itemStyle}>
           <obc-poi-object-vessel type="indicator">
-            <obi-vessel-type-psv-filled useCssColor></obi-vessel-type-psv-filled>
+            <obi-vessel-type-psv-filled
+              useCssColor
+            ></obi-vessel-type-psv-filled>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Indicator</div>
         </div>
@@ -345,7 +347,9 @@ export const AllTypes: Story = {
       <div style=${rowStyle}>
         <div style=${itemStyle}>
           <obc-poi-object-vessel type="indicator" vesselStyle="categorical">
-            <obi-vessel-type-psv-filled useCssColor></obi-vessel-type-psv-filled>
+            <obi-vessel-type-psv-filled
+              useCssColor
+            ></obi-vessel-type-psv-filled>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Indicator</div>
         </div>
@@ -444,13 +448,19 @@ export const AllStates: Story = {
           <div style=${labelStyle}>Checked</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel vesselStyle="categorical" state="static-unchecked">
+          <obc-poi-object-vessel
+            vesselStyle="categorical"
+            state="static-unchecked"
+          >
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Static Unchecked</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel vesselStyle="categorical" state="static-checked">
+          <obc-poi-object-vessel
+            vesselStyle="categorical"
+            state="static-checked"
+          >
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Static Checked</div>
@@ -497,13 +507,17 @@ export const AllStyles: Story = {
       <div style=${rowStyle}>
         <div style=${itemStyle}>
           <obc-poi-object-vessel type="indicator" vesselStyle="regular">
-            <obi-vessel-type-psv-filled useCssColor></obi-vessel-type-psv-filled>
+            <obi-vessel-type-psv-filled
+              useCssColor
+            ></obi-vessel-type-psv-filled>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Regular</div>
         </div>
         <div style=${itemStyle}>
           <obc-poi-object-vessel type="indicator" vesselStyle="categorical">
-            <obi-vessel-type-psv-filled useCssColor></obi-vessel-type-psv-filled>
+            <obi-vessel-type-psv-filled
+              useCssColor
+            ></obi-vessel-type-psv-filled>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Categorical</div>
         </div>
@@ -519,37 +533,49 @@ export const IndicatorAllStates: Story = {
       <div style=${rowStyle}>
         <div style=${itemStyle}>
           <obc-poi-object-vessel type="indicator" state="unchecked">
-            <obi-vessel-type-psv-filled useCssColor></obi-vessel-type-psv-filled>
+            <obi-vessel-type-psv-filled
+              useCssColor
+            ></obi-vessel-type-psv-filled>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Unchecked</div>
         </div>
         <div style=${itemStyle}>
           <obc-poi-object-vessel type="indicator" state="checked">
-            <obi-vessel-type-psv-filled useCssColor></obi-vessel-type-psv-filled>
+            <obi-vessel-type-psv-filled
+              useCssColor
+            ></obi-vessel-type-psv-filled>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Checked</div>
         </div>
         <div style=${itemStyle}>
           <obc-poi-object-vessel type="indicator" state="static-unchecked">
-            <obi-vessel-type-psv-filled useCssColor></obi-vessel-type-psv-filled>
+            <obi-vessel-type-psv-filled
+              useCssColor
+            ></obi-vessel-type-psv-filled>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Static Unchecked</div>
         </div>
         <div style=${itemStyle}>
           <obc-poi-object-vessel type="indicator" state="static-checked">
-            <obi-vessel-type-psv-filled useCssColor></obi-vessel-type-psv-filled>
+            <obi-vessel-type-psv-filled
+              useCssColor
+            ></obi-vessel-type-psv-filled>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Static Checked</div>
         </div>
         <div style=${itemStyle}>
           <obc-poi-object-vessel type="indicator" state="activated">
-            <obi-vessel-type-psv-filled useCssColor></obi-vessel-type-psv-filled>
+            <obi-vessel-type-psv-filled
+              useCssColor
+            ></obi-vessel-type-psv-filled>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Activated</div>
         </div>
         <div style=${itemStyle}>
           <obc-poi-object-vessel type="indicator" state="overlapped">
-            <obi-vessel-type-psv-filled useCssColor></obi-vessel-type-psv-filled>
+            <obi-vessel-type-psv-filled
+              useCssColor
+            ></obi-vessel-type-psv-filled>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Overlapped</div>
         </div>
@@ -576,13 +602,19 @@ export const CategoricalAllStates: Story = {
           <div style=${labelStyle}>Checked</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel vesselStyle="categorical" state="static-unchecked">
+          <obc-poi-object-vessel
+            vesselStyle="categorical"
+            state="static-unchecked"
+          >
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Static Unchecked</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel vesselStyle="categorical" state="static-checked">
+          <obc-poi-object-vessel
+            vesselStyle="categorical"
+            state="static-checked"
+          >
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Static Checked</div>

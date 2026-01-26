@@ -162,12 +162,10 @@ export class ObcPoiObjectVessel extends LitElement {
         ${this.isActivated
           ? html`<div class="activated-frame"></div>`
           : nothing}
-
         ${!isIndicator || this.isOverlapped
           ? html`<div class="background-frame"></div>`
           : nothing}
 
-        
         <div class="icon-container">
           ${isSpeedRot
             ? html`
