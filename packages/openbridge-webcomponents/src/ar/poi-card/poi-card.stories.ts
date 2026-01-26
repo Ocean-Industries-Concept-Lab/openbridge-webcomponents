@@ -10,7 +10,7 @@ interface PoiCardArgs {
   noHeader: boolean;
   headerVariant: ObcPoiCardHeaderVariant;
   index: string;
-  title: string;
+  cardTitle: string;
   description: string;
   source: string;
   timestamp: string;
@@ -69,7 +69,7 @@ const meta: Meta<PoiCardArgs> = {
     noHeader: false,
     headerVariant: ObcPoiCardHeaderVariant.Condensed,
     index: '1',
-    title: 'Title',
+    cardTitle: 'Title',
     description: '',
     source: 'SRC',
     timestamp: '',
@@ -100,7 +100,7 @@ const meta: Meta<PoiCardArgs> = {
           .noHeader=${args.noHeader}
           .headerVariant=${args.headerVariant}
           .index=${args.index}
-          .title=${args.title}
+          .cardTitle=${args.cardTitle}
           .description=${args.description}
           .source=${args.source}
           .timestamp=${args.timestamp}
@@ -125,7 +125,7 @@ export const Default: Story = {
     pointerDirection: PointerDirection.None,
     noHeader: false,
     index: '1',
-    title: 'Title',
+    cardTitle: 'Title',
     source: 'SRC',
   },
 };
@@ -140,7 +140,7 @@ export const FixedSize: Story = {
   args: {
     fixedSize: true,
     index: '1',
-    title: 'Fixed Size',
+    cardTitle: 'Fixed Size',
     source: 'SRC',
   },
 };
@@ -150,7 +150,7 @@ export const WithTopPointer: Story = {
   args: {
     pointerDirection: PointerDirection.Top,
     index: '1',
-    title: 'Top Pointer',
+    cardTitle: 'Top Pointer',
     source: 'SRC',
   },
 };
@@ -167,7 +167,7 @@ export const HeaderCondensedVariant: Story = {
   args: {
     headerVariant: ObcPoiCardHeaderVariant.Condensed,
     index: '1',
-    title: 'Condensed Header',
+    cardTitle: 'Condensed Header',
     source: 'SRC',
   },
 };
@@ -181,7 +181,7 @@ export const HeaderRegularVariant: Story = {
         .noHeader=${args.noHeader}
         .headerVariant=${ObcPoiCardHeaderVariant.Regular}
         .index=${'1'}
-        .title=${'Regular Header'}
+        .cardTitle=${'Regular Header'}
         .source=${'AIS'}
         .hasLeadingIcon=${true}
         .interactive=${args.interactive}
@@ -205,7 +205,7 @@ export const HeaderDetailedVariant: Story = {
         .noHeader=${args.noHeader}
         .headerVariant=${ObcPoiCardHeaderVariant.Detailed}
         .index=${'1'}
-        .title=${'MV Explorer'}
+        .cardTitle=${'MV Explorer'}
         .description=${'Passenger vessel'}
         .source=${'AIS'}
         .timestamp=${'2 min ago'}
@@ -226,7 +226,7 @@ export const HeaderDetailedVariant: Story = {
 export const Interactive: Story = {
   args: {
     index: '1',
-    title: 'Interactive',
+    cardTitle: 'Interactive',
     source: 'SRC',
     interactive: true,
   },
@@ -235,7 +235,7 @@ export const Interactive: Story = {
 export const WithAlert: Story = {
   args: {
     index: '1',
-    title: 'Alert',
+    cardTitle: 'Alert',
     source: 'SRC',
     interactive: true,
     hasAlert: true,
@@ -250,7 +250,7 @@ export const FullFeatured: Story = {
         .pointerDirection=${PointerDirection.Bottom}
         .headerVariant=${ObcPoiCardHeaderVariant.Detailed}
         index="1"
-        title="MV Explorer"
+        cardTitle="MV Explorer"
         description="Passenger vessel"
         source="AIS"
         timestamp="2 min ago"

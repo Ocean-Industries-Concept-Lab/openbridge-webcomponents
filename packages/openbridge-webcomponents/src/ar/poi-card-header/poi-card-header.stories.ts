@@ -1,18 +1,29 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcPoiCardHeader, ObcPoiCardHeaderVariant} from './poi-card-header.js';
+import {ObcPoiCardHeaderVariant} from './poi-card-header.js';
 import './poi-card-header.js';
 import {html} from 'lit';
 import '../../icons/icon-vessel-type-passenger-outlined.js';
 import '../../icons/icon-placeholder.js';
 
-const meta: Meta<typeof ObcPoiCardHeader> = {
+interface PoiCardHeaderArgs {
+  variant: ObcPoiCardHeaderVariant;
+  index: string;
+  cardTitle: string;
+  description: string;
+  source: string;
+  timestamp: string;
+  hasLeadingIcon: boolean;
+  hasCloseButton: boolean;
+}
+
+const meta: Meta<PoiCardHeaderArgs> = {
   title: 'AR/POI Card Header',
   tags: ['autodocs'],
   component: 'obc-poi-card-header',
   args: {
     variant: ObcPoiCardHeaderVariant.Regular,
     index: '1',
-    title: 'Title',
+    cardTitle: 'Title',
     description: 'Description',
     source: 'SRC',
     timestamp: '2 min ago',
@@ -36,7 +47,7 @@ const meta: Meta<typeof ObcPoiCardHeader> = {
         <obc-poi-card-header
           .variant=${args.variant}
           .index=${args.index}
-          .title=${args.title}
+          .cardTitle=${args.cardTitle}
           .description=${args.description}
           .source=${args.source}
           .timestamp=${args.timestamp}
@@ -52,10 +63,10 @@ const meta: Meta<typeof ObcPoiCardHeader> = {
       </div>
     `;
   },
-} satisfies Meta<ObcPoiCardHeader>;
+};
 
 export default meta;
-type Story = StoryObj<ObcPoiCardHeader>;
+type Story = StoryObj<PoiCardHeaderArgs>;
 
 export const Tag: Story = {
   args: {
@@ -68,7 +79,7 @@ export const Condensed: Story = {
   args: {
     variant: ObcPoiCardHeaderVariant.Condensed,
     index: '1',
-    title: 'Title',
+    cardTitle: 'Title',
     source: 'SRC',
   },
 };
@@ -77,7 +88,7 @@ export const CondensedNoSource: Story = {
   args: {
     variant: ObcPoiCardHeaderVariant.Condensed,
     index: '1',
-    title: 'Title',
+    cardTitle: 'Title',
     source: '',
   },
 };
@@ -86,7 +97,7 @@ export const Regular: Story = {
   args: {
     variant: ObcPoiCardHeaderVariant.Regular,
     index: '1',
-    title: 'Title',
+    cardTitle: 'Title',
     source: 'SRC',
     hasLeadingIcon: true,
   },
@@ -96,7 +107,7 @@ export const RegularNoIcon: Story = {
   args: {
     variant: ObcPoiCardHeaderVariant.Regular,
     index: '1',
-    title: 'Title',
+    cardTitle: 'Title',
     source: 'SRC',
     hasLeadingIcon: false,
   },
@@ -106,7 +117,7 @@ export const Detailed: Story = {
   args: {
     variant: ObcPoiCardHeaderVariant.Detailed,
     index: '1',
-    title: 'Title',
+    cardTitle: 'Title',
     description: 'Description',
     source: 'SRC',
     timestamp: '2 min ago',
@@ -118,7 +129,7 @@ export const DetailedNoCloseButton: Story = {
   args: {
     variant: ObcPoiCardHeaderVariant.Detailed,
     index: '1',
-    title: 'MV Explorer',
+    cardTitle: 'MV Explorer',
     description: 'Passenger vessel',
     source: 'AIS',
     timestamp: '5 min ago',
@@ -130,7 +141,7 @@ export const DetailedNoSource: Story = {
   args: {
     variant: ObcPoiCardHeaderVariant.Detailed,
     index: '2',
-    title: 'Unknown Vessel',
+    cardTitle: 'Unknown Vessel',
     description: 'Cargo ship',
     source: '',
     timestamp: '1 min ago',

@@ -1,6 +1,6 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
-import compentStyle from './poi-card-header.css?inline';
+import componentStyle from './poi-card-header.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 import '../../components/icon-button/icon-button.js';
@@ -75,7 +75,7 @@ export class ObcPoiCardHeader extends LitElement {
   @property({type: String}) index = '1';
 
   /** Title text. */
-  @property({type: String}) override title = '';
+  @property({type: String}) cardTitle = '';
 
   /** Description text (detailed variant only). */
   @property({type: String}) description = '';
@@ -132,7 +132,7 @@ export class ObcPoiCardHeader extends LitElement {
     return html`
       <div class="id-container">${this.renderIndexBadge()}</div>
       <div class="header-container">
-        <span class="title condensed-title">${this.title}</span>
+        <span class="title condensed-title">${this.cardTitle}</span>
       </div>
       ${this.renderSourceBadge()}
     `;
@@ -147,7 +147,7 @@ export class ObcPoiCardHeader extends LitElement {
               <slot class="leading-icon" name="leading-icon"></slot>
             </div>`
           : nothing}
-        <span class="title">${this.title}</span>
+        <span class="title">${this.cardTitle}</span>
       </div>
       ${this.renderSourceBadge()}
     `;
@@ -167,7 +167,7 @@ export class ObcPoiCardHeader extends LitElement {
           </obc-poi-object-vessel>
         </div>
         <div class="text-container">
-          <span class="title detailed-title">${this.title}</span>
+          <span class="title detailed-title">${this.cardTitle}</span>
           <span class="description">${this.description}</span>
         </div>
         <div class="meta-container">
@@ -209,7 +209,7 @@ export class ObcPoiCardHeader extends LitElement {
     `;
   }
 
-  static override styles = unsafeCSS(compentStyle);
+  static override styles = unsafeCSS(componentStyle);
 }
 
 declare global {

@@ -102,6 +102,10 @@
   padding-right: 8px;
 }
 
+.wrapper.variant-regular .header-container {
+  height: 32px;
+}
+
 .icon-container {
   display: flex;
   align-items: center;
@@ -117,7 +121,8 @@
 
 /* Title - Overline style for condensed/regular */
 .title {
-  @mixin font-overline-new color: var(--element-active-color);
+  @mixin font-overline-new;
+  color: var(--element-active-color);
   text-align: center;
   flex-shrink: 0;
 }

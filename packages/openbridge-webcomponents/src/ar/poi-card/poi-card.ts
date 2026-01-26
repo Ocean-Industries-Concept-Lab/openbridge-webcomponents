@@ -1,6 +1,6 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
-import compentStyle from './poi-card.css?inline';
+import componentStyle from './poi-card.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 import '../poi-card-header/poi-card-header.js';
@@ -85,7 +85,7 @@ export class ObcPoiCard extends LitElement {
   @property({type: String}) index = '1';
 
   /** Title text shown in the header. */
-  @property({type: String}) override title = '';
+  @property({type: String}) cardTitle = '';
 
   /** Description text (detailed header variant only). */
   @property({type: String}) description = '';
@@ -118,6 +118,14 @@ export class ObcPoiCard extends LitElement {
         composed: true,
       })
     );
+  }
+
+  private handleKeyDown(e: KeyboardEvent) {
+    if (!this.interactive) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      this.handleCardClick();
+    }
   }
 
   private renderPointerSvg(direction: 'top' | 'bottom' | 'left' | 'right') {
@@ -188,7 +196,7 @@ export class ObcPoiCard extends LitElement {
       <obc-poi-card-header
         variant=${this.headerVariant}
         index=${this.index}
-        title=${this.title}
+        cardTitle=${this.cardTitle}
         description=${this.description}
         source=${this.source}
         timestamp=${this.timestamp}
@@ -230,6 +238,7 @@ export class ObcPoiCard extends LitElement {
             class="content-box"
             tabindex=${this.interactive ? '0' : nothing}
             @click=${this.handleCardClick}
+            @keydown=${this.handleKeyDown}
           >
             ${this.renderHeader()}
             <div class="content">
@@ -244,7 +253,7 @@ export class ObcPoiCard extends LitElement {
     `;
   }
 
-  static override styles = unsafeCSS(compentStyle);
+  static override styles = unsafeCSS(componentStyle);
 }
 
 declare global {
