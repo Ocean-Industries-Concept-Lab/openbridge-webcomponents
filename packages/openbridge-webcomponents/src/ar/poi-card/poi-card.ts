@@ -241,7 +241,9 @@ export class ObcPoiCard extends LitElement {
           ${this.renderLeftPointer()}
           <div
             class="content-box"
+            role=${this.interactive ? 'button' : nothing}
             tabindex=${this.interactive ? '0' : nothing}
+            aria-disabled=${this.interactive ? 'false' : nothing}
             @click=${this.handleCardClick}
             @keydown=${this.handleKeyDown}
           >
