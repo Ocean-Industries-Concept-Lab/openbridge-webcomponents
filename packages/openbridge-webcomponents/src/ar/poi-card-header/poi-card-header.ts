@@ -22,28 +22,31 @@ export enum ObcPoiCardHeaderVariant {
 }
 
 /**
- * `<obc-poi-card-header>` – A versatile POI (Point of Interest) card header component.
+ * `<obc-poi-card-header>` - A versatile header component for POI (Point of Interest) cards.
  *
- * Displays header information for POI cards with 4 layout variants: tag, condensed, regular, and detailed.
- * Used for vessel, waypoint, or other POI information display.
+ * Provides four distinct layout variants for displaying POI metadata such as index badges,
+ * titles, descriptions, source labels, and timestamps. Commonly used at the top of POI cards
+ * to identify targets like vessels, waypoints, or other tracked objects.
  *
  * ## Features
  *
- * - **Tag variant:** Minimal numbered badge/pill.
- * - **Condensed variant:** Compact single-line with index, title, and optional source badge.
- * - **Regular variant:** Single-line with index, leading icon, title, and source badge.
- * - **Detailed variant:** Full header with POI target button, title, description, source, timestamp, and close button.
+ * - **Tag variant:** Minimal numbered badge/pill, ideal for compact list views.
+ * - **Condensed variant:** Single-line with index, title, and optional source badge.
+ * - **Regular variant:** Single-line with index, leading icon slot, title, and source badge.
+ * - **Detailed variant:** Full header with POI icon button, title, description, source, timestamp, and close button.
  *
  * ## Slots
  *
  * | Slot Name     | Variant   | Purpose                                    |
  * |---------------|-----------|-------------------------------------------|
  * | leading-icon  | regular   | Icon displayed before the title            |
- * | poi-icon      | detailed  | Vessel icon inside the POI target button   |
+ * | poi-icon      | detailed  | Icon inside the POI target button          |
  *
  * ## Events
  *
- * - `close-click` – Fired when the close button is clicked (detailed variant).
+ * | Event Name    | Detail | Description                                       |
+ * |---------------|--------|---------------------------------------------------|
+ * | `close-click` | void   | Fired when the close button is clicked (detailed) |
  *
  * ## Example
  *
@@ -51,7 +54,7 @@ export enum ObcPoiCardHeaderVariant {
  * <obc-poi-card-header
  *   variant="detailed"
  *   index="1"
- *   title="MV Explorer"
+ *   cardTitle="MV Explorer"
  *   description="Passenger vessel"
  *   source="AIS"
  *   timestamp="2 min ago"
@@ -61,35 +64,32 @@ export enum ObcPoiCardHeaderVariant {
  * </obc-poi-card-header>
  * ```
  *
- * @slot leading-icon - Icon before the title (regular variant only).
- * @slot poi-icon - Vessel icon for the POI target button (detailed variant only).
- * @fires close-click {CustomEvent<void>} Fired when the close button is clicked.
+ * @slot leading-icon - Icon before the title (regular variant only)
+ * @slot poi-icon - Icon for the POI target button (detailed variant only)
+ * @fires close-click - Fired when the close button is clicked
  */
 @customElement('obc-poi-card-header')
 export class ObcPoiCardHeader extends LitElement {
-  /** Layout variant: tag, condensed, regular, or detailed. */
   @property({type: String}) variant: ObcPoiCardHeaderVariant =
     ObcPoiCardHeaderVariant.Regular;
 
-  /** Index/ID shown in the badge or POI button. */
   @property({type: String}) index = '1';
 
-  /** Title text. */
   @property({type: String}) cardTitle = '';
 
-  /** Description text (detailed variant only). */
+  /** Shown only in detailed variant. */
   @property({type: String}) description = '';
 
-  /** Source badge text (e.g., "SRC", "AIS"). Shown when not empty. */
+  /** Source badge text (e.g., "AIS", "RADAR"). Hidden when empty. */
   @property({type: String}) source = '';
 
-  /** Timestamp text (detailed variant only). */
+  /** Shown only in detailed variant. */
   @property({type: String}) timestamp = '';
 
-  /** Show leading icon slot (regular variant). */
+  /** Enables the leading-icon slot (regular variant only). */
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  /** Show close button (detailed variant). */
+  /** Enables the close button (detailed variant only). */
   @property({type: Boolean}) hasCloseButton = false;
 
   private get hasSource() {

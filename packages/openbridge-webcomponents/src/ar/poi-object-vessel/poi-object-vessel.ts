@@ -52,24 +52,30 @@ export enum ObcPoiObjectVesselState {
 }
 
 /**
- * `<obc-poi-object-vessel>` – A vessel icon component for POI display.
+ * `<obc-poi-object-vessel>` - A vessel icon button for POI (Point of Interest) display.
  *
- * Displays a vessel icon with configurable type, style, and state variants.
- * Designed for use in card headers and other inline contexts.
+ * Renders a vessel type icon with configurable size, style, and selection state.
+ * Commonly used in POI card headers, map overlays, and target lists to represent
+ * tracked vessels with visual differentiation based on category and selection.
  *
  * ## Features
  *
- * - **Types:** Indicator, Regular, Large, Speed+ROT, N-up, N-up Large
- * - **Styles:** Regular (white) and Categorical (blue) backgrounds
- * - **States:** Various selection and display states
+ * - **Type variants:** Control size and layout (indicator, regular, large, speed-rot, n-up, n-up-large).
+ * - **Style variants:** Regular (white/translucent) or Categorical (blue-tinted) backgrounds.
+ * - **State variants:** Selection, activation, and overlap states for interactive contexts.
  *
  * ## Slots
  *
- * | Slot Name | Purpose |
- * |-----------|---------|
- * | (default) | Vessel icon |
- * | turn-indicator | Turn rate indicator (Speed+ROT type only) |
- * | speed-indicator | Speed indicator (Speed+ROT type only) |
+ * | Slot Name        | Purpose                                           |
+ * |------------------|---------------------------------------------------|
+ * | (default)        | Vessel icon (use outlined icons for most types)   |
+ * | turn-indicator   | Turn rate indicator (speed-rot type only)         |
+ * | speed-indicator  | Speed indicator (speed-rot type only)             |
+ *
+ * ## Usage Notes
+ *
+ * - **Indicator type:** Use filled icon variants with `useCssColor` attribute for proper stroke outline rendering.
+ * - **Other types:** Use outlined icon variants.
  *
  * ## Example
  *
@@ -79,27 +85,24 @@ export enum ObcPoiObjectVesselState {
  *   <obi-vessel-type-passenger-outlined></obi-vessel-type-passenger-outlined>
  * </obc-poi-object-vessel>
  *
- * <!-- Indicator type requires filled icon with useCssColor for white outline -->
+ * <!-- Indicator type requires filled icon with useCssColor -->
  * <obc-poi-object-vessel type="indicator" state="unchecked">
  *   <obi-vessel-type-passenger-filled useCssColor></obi-vessel-type-passenger-filled>
  * </obc-poi-object-vessel>
  * ```
  *
  * @slot - Vessel icon to display
- * @slot turn-indicator - Turn rate indicator (Speed+ROT type only)
- * @slot speed-indicator - Speed indicator (Speed+ROT type only)
+ * @slot turn-indicator - Turn rate indicator (speed-rot type only)
+ * @slot speed-indicator - Speed indicator (speed-rot type only)
  */
 @customElement('obc-poi-object-vessel')
 export class ObcPoiObjectVessel extends LitElement {
-  /** Size/type variant: indicator, regular, large, speed-rot, n-up, n-up-large. */
   @property({type: String}) type: ObcPoiObjectVesselType =
     ObcPoiObjectVesselType.Regular;
 
-  /** Visual style variant: regular or categorical. */
   @property({type: String}) vesselStyle: ObcPoiObjectVesselStyle =
     ObcPoiObjectVesselStyle.Regular;
 
-  /** State variant controlling selection and display mode. */
   @property({type: String}) state: ObcPoiObjectVesselState =
     ObcPoiObjectVesselState.Unchecked;
 

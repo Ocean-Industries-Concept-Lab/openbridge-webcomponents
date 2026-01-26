@@ -29,23 +29,32 @@ export enum PointerDirection {
 }
 
 /**
- * `<obc-poi-card>` – A card component for displaying Point of Interest content.
+ * `<obc-poi-card>` - A card container for displaying Point of Interest content.
  *
- * Displays a card with optional header and directional arrow pointer. The card content
- * is provided via a slot, allowing custom content to be inserted.
+ * Wraps arbitrary content in a styled card with an optional header and directional
+ * arrow pointer. Use this component to present detailed information about a selected
+ * or highlighted POI such as a vessel, waypoint, or other tracked object.
  *
  * ## Features
  *
- * - **Directional pointer:** Optional arrow pointer in any direction (top, bottom, left, right).
- * - **Optional header:** Uses `obc-poi-card-header` in condensed variant.
- * - **Content sizing:** Can hug content or use fixed 256x256px size.
- * - **Interactive states:** Supports focus and alert border states.
+ * - **Directional pointer:** Arrow pointer in any direction (top, bottom, left, right) to anchor the card visually.
+ * - **Configurable header:** Integrates `obc-poi-card-header` with all its variants (tag, condensed, regular, detailed).
+ * - **Content sizing:** Hugs content by default, or uses fixed 256x256px size.
+ * - **Interactive mode:** Enables click events, keyboard focus, and alert border states.
  *
  * ## Slots
  *
- * | Slot Name | Purpose |
- * |-----------|---------|
- * | (default) | Main card content |
+ * | Slot Name     | Purpose                                              |
+ * |---------------|------------------------------------------------------|
+ * | (default)     | Main card content                                    |
+ * | leading-icon  | Icon before the title (regular header variant)       |
+ * | poi-icon      | Icon for the POI target button (detailed header)     |
+ *
+ * ## Events
+ *
+ * | Event Name   | Detail              | Description                              |
+ * |--------------|---------------------|------------------------------------------|
+ * | `card-click` | `{ index: string }` | Fired when the card is clicked (interactive mode only) |
  *
  * ## Example
  *
@@ -53,59 +62,55 @@ export enum PointerDirection {
  * <obc-poi-card
  *   pointerDirection="bottom"
  *   index="1"
- *   title="Vessel"
+ *   cardTitle="Vessel Name"
  *   source="AIS"
+ *   interactive
  * >
- *   <div>Card content here</div>
+ *   <div>Custom card content here</div>
  * </obc-poi-card>
  * ```
  *
- * @slot - Default slot for card content.
- * @slot leading-icon - Icon before the title (regular header variant only).
- * @slot poi-icon - Vessel icon for the POI target button (detailed header variant only).
- * @fires card-click {PoiCardClickEvent} Fired when the card is clicked (only if interactive).
+ * @slot - Default slot for card content
+ * @slot leading-icon - Icon before the title (regular header variant only)
+ * @slot poi-icon - Icon for the POI target button (detailed header variant only)
+ * @fires card-click - Fired when the card is clicked (interactive mode only)
  */
 @customElement('obc-poi-card')
 export class ObcPoiCard extends LitElement {
-  /** Direction of the arrow pointer. */
   @property({type: String}) pointerDirection: PointerDirection =
     PointerDirection.None;
 
-  /** When true, card uses fixed 256x256px size; when false, sizes to content. */
+  /** When true, uses fixed 256x256px size; otherwise sizes to content. */
   @property({type: Boolean}) fixedSize = false;
 
-  /** Hide the poi-card-header. */
   @property({type: Boolean}) noHeader = false;
 
-  /** Header variant: tag, condensed, regular, or detailed. */
   @property({type: String}) headerVariant: ObcPoiCardHeaderVariant =
     ObcPoiCardHeaderVariant.Condensed;
 
-  /** Index/ID shown in the header badge. */
   @property({type: String}) index = '1';
 
-  /** Title text shown in the header. */
   @property({type: String}) cardTitle = '';
 
-  /** Description text (detailed header variant only). */
+  /** Passed to header (detailed variant only). */
   @property({type: String}) description = '';
 
-  /** Source badge text shown in the header (e.g., "SRC", "AIS"). */
+  /** Source badge text (e.g., "AIS", "RADAR"). Hidden when empty. */
   @property({type: String}) source = '';
 
-  /** Timestamp text (detailed header variant only). */
+  /** Passed to header (detailed variant only). */
   @property({type: String}) timestamp = '';
 
-  /** Show leading icon slot (regular header variant). */
+  /** Enables the leading-icon slot (regular header variant only). */
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  /** Show close button (detailed header variant). */
+  /** Enables the close button (detailed header variant only). */
   @property({type: Boolean}) hasCloseButton = false;
 
-  /** Enable interaction states (click, focus, alert borders). */
+  /** Enables click events, keyboard focus, and alert border support. */
   @property({type: Boolean}) interactive = false;
 
-  /** Show alert/caution border. */
+  /** Shows alert/caution border rings. Requires `interactive` to be true. */
   @property({type: Boolean}) hasAlert = false;
 
   private handleCardClick() {
