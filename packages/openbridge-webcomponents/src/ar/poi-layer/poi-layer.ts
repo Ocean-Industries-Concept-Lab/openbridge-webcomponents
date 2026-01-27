@@ -306,8 +306,7 @@ export class ObcPoiLayer extends LitElement {
         group.setAttribute('data-visible', 'true');
         remainingClusters.splice(matchIndex, 1);
       } else {
-        const front = this.getFrontTarget(children);
-        const exitTarget = this.getShortestTarget(children);
+        const front = this.getTallestTarget(children);
         children.forEach((child) => {
           if (front && child === front) {
             child.setAttribute('data-front', 'true');
@@ -317,7 +316,7 @@ export class ObcPoiLayer extends LitElement {
           }
         });
         children.forEach((child) => {
-          if (exitTarget && child === exitTarget) {
+          if (!front || child !== front) {
             child.setAttribute('data-exiting', 'true');
             this.startExitLock(child);
           } else {
@@ -328,7 +327,11 @@ export class ObcPoiLayer extends LitElement {
         });
         children.forEach((child) => this.appendChild(child));
         requestAnimationFrame(() => {
-          if (exitTarget) exitTarget.removeAttribute('data-exiting');
+          children.forEach((child) => {
+            if (!front || child !== front) {
+              child.removeAttribute('data-exiting');
+            }
+          });
         });
         this.scheduleGroupRemoval(group);
       }
@@ -545,6 +548,23 @@ export class ObcPoiLayer extends LitElement {
       }
     });
     return shortest;
+  }
+
+  private getTallestTarget(
+    targets: HTMLElement[],
+    rects?: Map<HTMLElement, DOMRect>
+  ) {
+    if (targets.length === 0) return null;
+    let tallest = targets[0];
+    let maxHeight = this.getTargetHeight(tallest, rects);
+    targets.forEach((target) => {
+      const height = this.getTargetHeight(target, rects);
+      if (height > maxHeight) {
+        maxHeight = height;
+        tallest = target;
+      }
+    });
+    return tallest;
   }
 
   override render() {
