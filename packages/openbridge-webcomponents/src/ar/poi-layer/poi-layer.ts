@@ -323,17 +323,27 @@ export class ObcPoiLayer extends LitElement {
             child.removeAttribute('data-exiting');
             child.removeAttribute('data-exit-lock');
           }
+          child.removeAttribute('data-grouped');
           this.resetTarget(child);
         });
         children.forEach((child) => this.appendChild(child));
-        requestAnimationFrame(() => {
+        const exitDelay = 140;
+        children.forEach((child) => {
+          if (!front || child !== front) {
+            child.getBoundingClientRect();
+          }
+        });
+        window.setTimeout(() => {
           children.forEach((child) => {
             if (!front || child !== front) {
               child.removeAttribute('data-exiting');
             }
           });
+        }, exitDelay);
+        requestAnimationFrame(() => {
+          group.removeAttribute('data-visible');
+          this.scheduleGroupRemoval(group);
         });
-        this.scheduleGroupRemoval(group);
       }
     });
 
@@ -466,12 +476,11 @@ export class ObcPoiLayer extends LitElement {
   }
 
   private scheduleGroupRemoval(group: HTMLElement) {
-    group.removeAttribute('data-visible');
-    group.setAttribute('data-exiting', 'true');
     const existing = this.groupRemovalTimers.get(group);
     if (existing) {
       window.clearTimeout(existing);
     }
+    group.setAttribute('data-exiting', 'true');
     const timeoutId = window.setTimeout(() => {
       group.remove();
       this.groupRemovalTimers.delete(group);
