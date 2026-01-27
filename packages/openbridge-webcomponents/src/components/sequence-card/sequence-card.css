@@ -9,10 +9,6 @@
     gap: var(--ui-components-card-padding);
   }
 
-  &.is-horizontal.is-vertical.progress-left-side {
-    flex-direction: column;
-  }
-
   .card-container {
     width: 100%;
   }
@@ -30,10 +26,6 @@
       flex-direction: column;
       align-items: flex-start;
       gap: var(--ui-components-card-padding);
-    }
-
-    .is-horizontal.is-vertical.progress-left-side & {
-      flex-direction: row;
     }
   }
 
@@ -128,7 +120,6 @@
     align-items: center;
     gap: var(--ui-components-card-padding);
     padding: 0;
-    padding-right: var(--ui-components-card-padding);
     width: 100%;
     border-bottom-left-radius: 12px;
     border-bottom-right-radius: 12px;
@@ -168,6 +159,7 @@
   .time-stamp {
     display: flex;
     gap: var(--ui-components-card-padding);
+    padding-right: var(--ui-components-card-padding);
     flex: 1 1 auto;
     justify-content: flex-end;
     align-items: flex-end;
@@ -302,18 +294,6 @@
   &.size-small.progress-left-side:not(.is-vertical) {
     ::part(connector input) {
       max-width: 16px;
-    }
-  }
-
-  &.progress-left-side.is-horizontal.is-vertical {
-    ::part(connector input) {
-      max-width: 15px;
-    }
-  }
-
-  &.progress-left-side.is-horizontal.is-vertical.size-small {
-    ::part(connector input) {
-      max-width: 5px;
     }
   }
 

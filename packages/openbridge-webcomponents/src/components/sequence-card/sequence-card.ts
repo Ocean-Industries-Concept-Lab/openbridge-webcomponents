@@ -217,7 +217,6 @@ export class ObcSequenceCard extends LitElement {
 
     const showLeftRail = this.isLeftSide && !this.horizontal;
     const showLeftRailHorizontal = this.isLeftSide && this.horizontal;
-    const showDualLeftRail = showLeftRail && showLeftRailHorizontal;
     const showCenteredConnector =
       this.progressType === ObcSequenceCardProgressType.Centered &&
       !this.horizontal;
@@ -267,16 +266,12 @@ export class ObcSequenceCard extends LitElement {
 
     return html`
       <div class=${classMap(classes)}>
-        ${showLeftRail && !showDualLeftRail ? verticalLeftRail : nothing}
-        ${showDualLeftRail ? horizontalLeftRail : nothing}
+        ${showLeftRail ? verticalLeftRail : nothing}
         <div class="card-container">
           ${this.horizontal
             ? html`
                 <div class="card-row">
-                  ${showDualLeftRail ? verticalLeftRail : nothing}
-                  ${showLeftRailHorizontal && !showDualLeftRail
-                    ? horizontalLeftRail
-                    : nothing}
+                  ${showLeftRailHorizontal ? horizontalLeftRail : nothing}
                   <div class="card">
                     <div class="title-container">
                       ${showLeftRail || showLeftRailHorizontal
