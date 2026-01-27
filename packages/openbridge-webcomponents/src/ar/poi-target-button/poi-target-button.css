@@ -96,6 +96,8 @@
   & .icon {
     height: 24px;
     width: 24px;
+    opacity: var(--obc-poi-target-icon-opacity, 1);
+    transition: opacity 0.2s ease-out;
   }
 
   & .selection-frame {

@@ -21,6 +21,8 @@ export class ObcPoiTargetButtonGroup extends LitElement {
   _children!: Array<HTMLElement>;
 
   private boundUpdatePosition: () => void;
+  private expandedObserver?: MutationObserver;
+  private expandedRaf = 0;
 
   constructor() {
     super();
@@ -43,6 +45,11 @@ export class ObcPoiTargetButtonGroup extends LitElement {
   override disconnectedCallback() {
     this.removeEventListener('slotchange', this.boundUpdatePosition);
     window.removeEventListener('resize', this.boundUpdatePosition);
+    this.expandedObserver?.disconnect();
+    if (this.expandedRaf) {
+      cancelAnimationFrame(this.expandedRaf);
+      this.expandedRaf = 0;
+    }
     super.disconnectedCallback();
   }
 
@@ -131,7 +138,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     }
 
     this._children.forEach((child) => {
-      child.style.position = expand ? 'inherit' : 'absolute';
+      child.style.position = expand ? 'static' : 'absolute';
       if (this.expand) {
         child.style.width = '48px';
         child.style.minWidth = '48px';
@@ -164,6 +171,8 @@ export class ObcPoiTargetButtonGroup extends LitElement {
           child.offset = newOffset;
         });
       });
+      this.startExpandedObserver();
+      this.scheduleExpandedOffsets();
     } else {
       requestAnimationFrame(() => {
         this.expandOffset.forEach((_, child) => {
@@ -171,7 +180,71 @@ export class ObcPoiTargetButtonGroup extends LitElement {
         });
         this.expandOffset.clear();
       });
+      this.stopExpandedObserver();
     }
+  }
+
+  private startExpandedObserver() {
+    if (this.expandedObserver) return;
+    this.expandedObserver = new MutationObserver(() =>
+      this.scheduleExpandedOffsets()
+    );
+    this._children.forEach((child) => {
+      this.expandedObserver?.observe(child, {
+        attributes: true,
+        attributeFilter: ['style'],
+      });
+    });
+  }
+
+  private stopExpandedObserver() {
+    this.expandedObserver?.disconnect();
+    this.expandedObserver = undefined;
+    if (this.expandedRaf) {
+      cancelAnimationFrame(this.expandedRaf);
+      this.expandedRaf = 0;
+    }
+  }
+
+  private scheduleExpandedOffsets() {
+    if (!this.expand || this.expandedRaf) return;
+    this.expandedRaf = requestAnimationFrame(() => {
+      this.expandedRaf = 0;
+      this.updateExpandedOffsets();
+    });
+  }
+
+  private updateExpandedOffsets() {
+    if (!this.expand) return;
+    const layer = this.closest('obc-poi-layer');
+    const layerRect = layer?.getBoundingClientRect() ?? this.getBoundingClientRect();
+    this._children.forEach((child) => {
+      if (!(child instanceof ObcPoiTarget)) return;
+      const leftStr = child.style.left;
+      if (!leftStr) return;
+      const left = Number.parseFloat(leftStr);
+      if (Number.isNaN(left)) return;
+      const desiredX = layerRect.left + left;
+      const buttonRect = this.getTargetButtonRect(child);
+      const centerX = buttonRect.left + buttonRect.width / 2;
+      child.offset = Math.round(desiredX - centerX);
+    });
+  }
+
+  private getTargetButtonRect(target: ObcPoiTarget): DOMRect {
+    const targetShadow = target.shadowRoot;
+    const button = targetShadow?.querySelector('obc-poi-target-button') as
+      | HTMLElement
+      | undefined;
+    const buttonShadow = button?.shadowRoot;
+    const wrapper = buttonShadow?.querySelector(
+      '.wrapper, .wrapper-overlap'
+    ) as HTMLElement | null;
+    return (
+      wrapper?.getBoundingClientRect() ??
+      button?.getBoundingClientRect() ??
+      target.getBoundingClientRect()
+    );
   }
 
   static override styles = unsafeCSS(compentStyle);

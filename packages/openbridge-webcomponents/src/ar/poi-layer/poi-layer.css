@@ -1,0 +1,88 @@
+:host {
+  --obc-poi-layer-height: 0px;
+  --obc-poi-layer-auto-group-offset-y: -48px;
+  display: block;
+  position: relative;
+  width: 100%;
+  min-height: var(--obc-poi-layer-min-height, 40px);
+  height: var(--obc-poi-layer-height, auto);
+  pointer-events: auto;
+}
+
+:host([debug]) {
+  background: var(
+    --obc-poi-layer-debug-background,
+    rgba(0, 0, 0, 0.04)
+  );
+}
+
+.wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.debug-label {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  font-size: 10px;
+  line-height: 1;
+  color: var(--obc-poi-layer-debug-color, rgba(0, 0, 0, 0.6));
+  pointer-events: none;
+}
+
+::slotted(obc-poi-target),
+::slotted(obc-poi-target-button-group) {
+  position: absolute;
+  bottom: 0;
+  height: 100%;
+  transform-origin: 50% 50%;
+  --obc-poi-layer-target-scale: 1;
+  --obc-poi-layer-target-shift: calc(
+    (1 - var(--obc-poi-layer-target-scale)) * 100%
+  );
+  transform: translateY(calc(100% - var(--obc-poi-layer-target-shift)))
+    scale(var(--obc-poi-layer-target-scale));
+  transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+  pointer-events: auto;
+}
+
+::slotted(obc-poi-target[data-grouped]) {
+  opacity: 0;
+}
+
+::slotted(obc-poi-target:not([data-grouped])) {
+  opacity: 1;
+}
+
+::slotted(obc-poi-target[data-pregrouped]) {
+  opacity: 0.4;
+  --obc-poi-layer-target-scale: 0.7;
+  --obc-poi-target-icon-opacity: 0;
+}
+
+::slotted(obc-poi-target[data-front]) {
+  opacity: 1;
+  --obc-poi-layer-target-scale: 1;
+  --obc-poi-target-icon-opacity: 1;
+}
+
+::slotted(obc-poi-target-button-group[data-auto-group]) {
+  opacity: 1;
+}
+
+::slotted(obc-poi-target-button-group) {
+  bottom: 0;
+  height: 100%;
+  transform: translateY(50%);
+}
+
+::slotted(obc-poi-target-button-group[data-auto-group]) {
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+::slotted(obc-poi-target-button-group[data-auto-group][data-visible]) {
+  opacity: 1;
+}
