@@ -58,6 +58,16 @@
 
 ::slotted(obc-poi-target[data-pregrouped]) {
   opacity: 0.4;
+}
+
+::slotted(obc-poi-target[data-behind]) {
+  opacity: 0.4;
+  --obc-poi-layer-target-scale: 0.7;
+  --obc-poi-target-icon-opacity: 0;
+}
+
+::slotted(obc-poi-target[data-exiting]) {
+  opacity: 0;
   --obc-poi-layer-target-scale: 0.7;
   --obc-poi-target-icon-opacity: 0;
 }
@@ -81,6 +91,7 @@
 ::slotted(obc-poi-target-button-group[data-auto-group]) {
   transform: translateY(100%);
   opacity: 0;
+  z-index: 2;
 }
 
 ::slotted(obc-poi-target-button-group[data-auto-group][data-visible]) {

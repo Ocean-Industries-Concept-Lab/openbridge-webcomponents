@@ -105,7 +105,6 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     this.setExpandedChildren(this.expand);
   }
 
-  wasFrontElement: ObcPoiTarget | null = null;
   expandOffset: Map<ObcPoiTarget, number> = new Map();
 
   /**
@@ -125,11 +124,6 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     const oldPosition = new Map<ObcPoiTarget, number>();
     if (expand || firstRun) {
       this._children.forEach((child) => {
-        if (child instanceof ObcPoiTarget && !child.overlap) {
-          this.wasFrontElement = child as ObcPoiTarget;
-        }
-      });
-      this._children.forEach((child) => {
         if (child instanceof ObcPoiTarget) {
           const boundingBox = child.getBoundingClientRect();
           oldPosition.set(child, boundingBox.left);
@@ -137,6 +131,22 @@ export class ObcPoiTargetButtonGroup extends LitElement {
       });
     }
 
+    const frontChild = expand ? null : this.getFrontChild();
+    if (!expand && frontChild) {
+      // Ensure front renders on top without z-index.
+      this.appendChild(frontChild);
+    }
+    if (expand) {
+      const ordered = this._children
+        .filter((child): child is ObcPoiTarget => child instanceof ObcPoiTarget)
+        .map((child) => ({
+          child,
+          left: oldPosition.get(child) ?? child.getBoundingClientRect().left,
+        }))
+        .sort((a, b) => a.left - b.left)
+        .map((item) => item.child);
+      ordered.forEach((child) => this.appendChild(child));
+    }
     this._children.forEach((child) => {
       child.style.position = expand ? 'static' : 'absolute';
       if (this.expand) {
@@ -149,16 +159,13 @@ export class ObcPoiTargetButtonGroup extends LitElement {
         child.style.height = 'unset';
       }
       if (child instanceof ObcPoiTarget) {
-        (child as ObcPoiTarget).overlap = !expand;
+        (child as ObcPoiTarget).overlap =
+          expand ? false : (child as ObcPoiTarget) !== frontChild;
         if (expand) {
           (child as ObcPoiTarget).style.transform = 'translate(50%, 100%)';
         } else {
           (child as ObcPoiTarget).style.transform = '';
         }
-      }
-
-      if (!expand && child === this.wasFrontElement) {
-        (child as ObcPoiTarget).overlap = false;
       }
     });
 
@@ -182,6 +189,38 @@ export class ObcPoiTargetButtonGroup extends LitElement {
       });
       this.stopExpandedObserver();
     }
+  }
+
+  private getFrontChild(): ObcPoiTarget | null {
+    const frontByAttr = this._children.find(
+      (child) => child instanceof ObcPoiTarget && child.hasAttribute('data-front')
+    );
+    if (frontByAttr && frontByAttr instanceof ObcPoiTarget) return frontByAttr;
+
+    let front: ObcPoiTarget | null = null;
+    let maxHeight = Number.NEGATIVE_INFINITY;
+    this._children.forEach((child) => {
+      if (!(child instanceof ObcPoiTarget)) return;
+      const heightAttr = child.getAttribute('height');
+      const heightValue = Number.parseFloat(heightAttr ?? '');
+      if (Number.isNaN(heightValue)) return;
+      if (heightValue > maxHeight) {
+        maxHeight = heightValue;
+        front = child;
+      }
+    });
+    if (front && Number.isFinite(maxHeight)) {
+      const candidates = this._children.filter((child) => {
+        if (!(child instanceof ObcPoiTarget)) return false;
+        const heightAttr = child.getAttribute('height');
+        const heightValue = Number.parseFloat(heightAttr ?? '');
+        return !Number.isNaN(heightValue) && heightValue === maxHeight;
+      }) as ObcPoiTarget[];
+      if (candidates.length > 1) {
+        return candidates[Math.floor(Math.random() * candidates.length)] ?? front;
+      }
+    }
+    return front;
   }
 
   private startExpandedObserver() {

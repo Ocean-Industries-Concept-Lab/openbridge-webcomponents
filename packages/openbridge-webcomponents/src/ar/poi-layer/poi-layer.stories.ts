@@ -255,8 +255,8 @@ export const Overlap: Story = {
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}
         >
-          <obc-poi-target style="left: 260px;" height="110"></obc-poi-target>
-          <obc-poi-target style="left: 280px;" height="110"></obc-poi-target>
+          <obc-poi-target style="left: 260px;" height="80"></obc-poi-target>
+          <obc-poi-target style="left: 280px;" height="140"></obc-poi-target>
         </obc-poi-layer>
       </div>
     `;
@@ -314,11 +314,241 @@ export const OverlapWithGroup: Story = {
             class="group"
             positionVertical="calc(50%)"
           >
-            <obc-poi-target id="b3" overlap></obc-poi-target>
-            <obc-poi-target id="b1" .relativeDirection=${65}>
+            <obc-poi-target id="b3" overlap height="80"></obc-poi-target>
+            <obc-poi-target id="b1" height="140" .relativeDirection=${65}>
             </obc-poi-target>
-            <obc-poi-target id="b2" overlap></obc-poi-target>
+            <obc-poi-target id="b2" overlap height="60"></obc-poi-target>
           </obc-poi-target-button-group>
+        </obc-poi-layer>
+      </div>
+    `;
+  },
+};
+
+export const EnterGroupFromTwo: Story = {
+  args: {
+    label: 'Enter Group (2)',
+    layerIndex: 0,
+    debug: true,
+  },
+  render(args) {
+    const hostRef = createRef<HTMLDivElement>();
+    const startAnimation = (root: HTMLElement | null) => {
+      if (!root || root.dataset.animating === 'true') return;
+      root.dataset.animating = 'true';
+
+      const a = root.querySelector('obc-poi-target.a') as HTMLElement | null;
+      const b = root.querySelector('obc-poi-target.b') as HTMLElement | null;
+      if (!a || !b) return;
+
+      const start = performance.now();
+      const duration = 3000;
+      let rafId = 0;
+
+      const tick = (now: number) => {
+        const t = ((now - start) % duration) / duration;
+        let eased = 0;
+        if (t < 0.5) {
+          const phase = t / 0.5;
+          eased = phase * phase * (3 - 2 * phase);
+        } else if (t < 0.75) {
+          eased = 1;
+        } else {
+          const phase = (t - 0.75) / 0.25;
+          const out = phase * phase * (3 - 2 * phase);
+          eased = 1 - out;
+        }
+        const x1 = 180 + (300 - 180) * eased;
+        const x2 = 460 - (460 - 320) * eased;
+
+        a.style.left = `${Math.round(x1)}px`;
+        b.style.left = `${Math.round(x2)}px`;
+
+        rafId = requestAnimationFrame(tick);
+      };
+
+      rafId = requestAnimationFrame(tick);
+
+      const observer = new MutationObserver(() => {
+        if (!root.isConnected) {
+          cancelAnimationFrame(rafId);
+          observer.disconnect();
+        }
+      });
+      observer.observe(root, {childList: true, subtree: true});
+    };
+
+    setTimeout(() => startAnimation(hostRef.value ?? null), 0);
+    return html`
+      <style>
+        .enter-two {
+          width: 640px;
+        }
+
+        .enter-two obc-poi-layer {
+          --obc-poi-layer-min-height: 48px;
+          --obc-poi-layer-overlap-enter: 10px;
+          --obc-poi-layer-overlap-exit: 18px;
+          --obc-poi-layer-overlap-pre: 16px;
+          width: 100%;
+        }
+      </style>
+      <div class="enter-two" ${ref(hostRef)}>
+        <obc-poi-layer
+          .label=${args.label}
+          .layerIndex=${args.layerIndex}
+          ?debug=${args.debug}
+        >
+          <obc-poi-target class="a" height="140"></obc-poi-target>
+          <obc-poi-target class="b" height="80"></obc-poi-target>
+        </obc-poi-layer>
+      </div>
+    `;
+  },
+};
+
+export const ExitGroup: Story = {
+  args: {
+    label: 'Exit Group (2)',
+    layerIndex: 0,
+    debug: true,
+  },
+  render(args) {
+    const hostRef = createRef<HTMLDivElement>();
+    const startAnimation = (root: HTMLElement | null) => {
+      if (!root || root.dataset.animating === 'true') return;
+      root.dataset.animating = 'true';
+
+      const a = root.querySelector('obc-poi-target.a') as HTMLElement | null;
+      const b = root.querySelector('obc-poi-target.b') as HTMLElement | null;
+      if (!a || !b) return;
+
+      const start = performance.now();
+      const duration = 2400;
+      let rafId = 0;
+
+      const tick = (now: number) => {
+        const t = ((now - start) % duration) / duration;
+        const phase = t < 0.4 ? 0 : (t - 0.4) / 0.6;
+        const eased = phase * phase * (3 - 2 * phase);
+        const x1 = 300 - (300 - 180) * eased;
+        const x2 = 320 + (460 - 320) * eased;
+
+        a.style.left = `${Math.round(x1)}px`;
+        b.style.left = `${Math.round(x2)}px`;
+
+        rafId = requestAnimationFrame(tick);
+      };
+
+      rafId = requestAnimationFrame(tick);
+
+      const observer = new MutationObserver(() => {
+        if (!root.isConnected) {
+          cancelAnimationFrame(rafId);
+          observer.disconnect();
+        }
+      });
+      observer.observe(root, {childList: true, subtree: true});
+    };
+
+    setTimeout(() => startAnimation(hostRef.value ?? null), 0);
+    return html`
+      <style>
+        .exit-two {
+          width: 640px;
+        }
+
+        .exit-two obc-poi-layer {
+          --obc-poi-layer-min-height: 48px;
+          --obc-poi-layer-overlap-enter: 10px;
+          --obc-poi-layer-overlap-exit: 18px;
+          --obc-poi-layer-overlap-pre: 16px;
+          width: 100%;
+        }
+      </style>
+      <div class="exit-two" ${ref(hostRef)}>
+        <obc-poi-layer
+          .label=${args.label}
+          .layerIndex=${args.layerIndex}
+          ?debug=${args.debug}
+        >
+          <obc-poi-target class="a" height="120"></obc-poi-target>
+          <obc-poi-target class="b" height="90"></obc-poi-target>
+        </obc-poi-layer>
+      </div>
+    `;
+  },
+};
+
+export const JoinGroup: Story = {
+  args: {
+    label: 'Join Group (3)',
+    layerIndex: 0,
+    debug: true,
+  },
+  render(args) {
+    const hostRef = createRef<HTMLDivElement>();
+    const startAnimation = (root: HTMLElement | null) => {
+      if (!root || root.dataset.animating === 'true') return;
+      root.dataset.animating = 'true';
+
+      const a = root.querySelector('obc-poi-target.a') as HTMLElement | null;
+      const b = root.querySelector('obc-poi-target.b') as HTMLElement | null;
+      const c = root.querySelector('obc-poi-target.c') as HTMLElement | null;
+      if (!a || !b || !c) return;
+
+      const start = performance.now();
+      const duration = 2400;
+      let rafId = 0;
+
+      const tick = (now: number) => {
+        const t = ((now - start) % duration) / duration;
+        const phase = t < 0.5 ? t / 0.5 : 1;
+        const eased = phase * phase * (3 - 2 * phase);
+        const x3 = 520 - (520 - 340) * eased;
+
+        a.style.left = '280px';
+        b.style.left = '320px';
+        c.style.left = `${Math.round(x3)}px`;
+
+        rafId = requestAnimationFrame(tick);
+      };
+
+      rafId = requestAnimationFrame(tick);
+
+      const observer = new MutationObserver(() => {
+        if (!root.isConnected) {
+          cancelAnimationFrame(rafId);
+          observer.disconnect();
+        }
+      });
+      observer.observe(root, {childList: true, subtree: true});
+    };
+
+    setTimeout(() => startAnimation(hostRef.value ?? null), 0);
+    return html`
+      <style>
+        .join-three {
+          width: 640px;
+        }
+
+        .join-three obc-poi-layer {
+          --obc-poi-layer-min-height: 48px;
+          --obc-poi-layer-overlap-enter: 10px;
+          --obc-poi-layer-overlap-exit: 18px;
+          --obc-poi-layer-overlap-pre: 16px;
+          width: 100%;
+        }
+      </style>
+      <div class="join-three" ${ref(hostRef)}>
+        <obc-poi-layer
+          .label=${args.label}
+          .layerIndex=${args.layerIndex}
+          ?debug=${args.debug}
+        >
+          <obc-poi-target class="a" height="140"></obc-poi-target>
+          <obc-poi-target class="b" height="100"></obc-poi-target>
+          <obc-poi-target class="c" height="80"></obc-poi-target>
         </obc-poi-layer>
       </div>
     `;

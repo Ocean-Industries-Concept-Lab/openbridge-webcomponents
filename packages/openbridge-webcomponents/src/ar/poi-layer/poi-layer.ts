@@ -18,6 +18,7 @@ export class ObcPoiLayer extends LitElement {
   private targetObservers = new Map<HTMLElement, MutationObserver>();
   private groupingRaf = 0;
   private groupRemovalTimers = new WeakMap<HTMLElement, number>();
+  private exitLockTimers = new Map<HTMLElement, number>();
 
   override firstUpdated() {
     this.setupResizeObserver();
@@ -39,6 +40,8 @@ export class ObcPoiLayer extends LitElement {
       cancelAnimationFrame(this.groupingRaf);
       this.groupingRaf = 0;
     }
+    this.exitLockTimers.forEach((timerId) => window.clearTimeout(timerId));
+    this.exitLockTimers.clear();
   }
 
   private setupResizeObserver() {
@@ -136,11 +139,17 @@ export class ObcPoiLayer extends LitElement {
     const preRaw = getComputedStyle(this).getPropertyValue(
       '--obc-poi-layer-overlap-pre'
     );
+    const behindRaw = getComputedStyle(this).getPropertyValue(
+      '--obc-poi-layer-overlap-behind'
+    );
     const enterThreshold = Number.parseFloat(enterRaw) || 20;
     const exitThreshold =
       Number.parseFloat(exitRaw) || Math.max(enterThreshold + 12, 32);
     const preThreshold =
       Number.parseFloat(preRaw) || Math.max(enterThreshold + 24, 24);
+    const behindThreshold =
+      Number.parseFloat(behindRaw) ||
+      Math.max(preThreshold, enterThreshold + 32);
 
     const currentGroupByTarget = new Map<HTMLElement, HTMLElement>();
     targets.forEach((target) => {
@@ -156,7 +165,11 @@ export class ObcPoiLayer extends LitElement {
     });
 
     const adjacency = new Map<HTMLElement, Set<HTMLElement>>();
+    const preAdjacency = new Map<HTMLElement, Set<HTMLElement>>();
+    const behindAdjacency = new Map<HTMLElement, Set<HTMLElement>>();
     targets.forEach((target) => adjacency.set(target, new Set()));
+    targets.forEach((target) => preAdjacency.set(target, new Set()));
+    targets.forEach((target) => behindAdjacency.set(target, new Set()));
     const preGrouped = new Set<HTMLElement>();
 
     for (let i = 0; i < targets.length; i += 1) {
@@ -176,6 +189,12 @@ export class ObcPoiLayer extends LitElement {
         if (gap <= preThreshold && overlapHeight > 0) {
           preGrouped.add(a);
           preGrouped.add(b);
+          preAdjacency.get(a)!.add(b);
+          preAdjacency.get(b)!.add(a);
+        }
+        if (gap <= behindThreshold && overlapHeight > 0) {
+          behindAdjacency.get(a)!.add(b);
+          behindAdjacency.get(b)!.add(a);
         }
         if (gap <= threshold && overlapHeight > 0) {
           adjacency.get(a)!.add(b);
@@ -201,7 +220,47 @@ export class ObcPoiLayer extends LitElement {
           }
         });
       }
-      if (cluster.length >= 2) clusters.push(cluster);
+    if (cluster.length >= 2) clusters.push(cluster);
+    });
+
+    const preVisited = new Set<HTMLElement>();
+    const preClusters: HTMLElement[][] = [];
+    targets.forEach((target) => {
+      if (preVisited.has(target)) return;
+      const stack = [target];
+      const cluster: HTMLElement[] = [];
+      preVisited.add(target);
+      while (stack.length > 0) {
+        const node = stack.pop()!;
+        cluster.push(node);
+        preAdjacency.get(node)!.forEach((neighbor) => {
+          if (!preVisited.has(neighbor)) {
+            preVisited.add(neighbor);
+            stack.push(neighbor);
+          }
+        });
+      }
+    if (cluster.length >= 2) preClusters.push(cluster);
+    });
+
+    const behindVisited = new Set<HTMLElement>();
+    const behindClusters: HTMLElement[][] = [];
+    targets.forEach((target) => {
+      if (behindVisited.has(target)) return;
+      const stack = [target];
+      const cluster: HTMLElement[] = [];
+      behindVisited.add(target);
+      while (stack.length > 0) {
+        const node = stack.pop()!;
+        cluster.push(node);
+        behindAdjacency.get(node)!.forEach((neighbor) => {
+          if (!behindVisited.has(neighbor)) {
+            behindVisited.add(neighbor);
+            stack.push(neighbor);
+          }
+        });
+      }
+      if (cluster.length >= 2) behindClusters.push(cluster);
     });
 
     const existingGroups = Array.from(
@@ -212,6 +271,12 @@ export class ObcPoiLayer extends LitElement {
     clusters.forEach((cluster) => {
       const front = this.getFrontTarget(cluster);
       if (front) frontTargets.add(front);
+    });
+
+    const behindTargets = new Set<HTMLElement>();
+    behindClusters.forEach((cluster) => {
+      const behind = this.getShortestTarget(cluster, rects);
+      if (behind) behindTargets.add(behind);
     });
 
     const expandedAutoGroup = existingGroups.find(
@@ -242,6 +307,7 @@ export class ObcPoiLayer extends LitElement {
         remainingClusters.splice(matchIndex, 1);
       } else {
         const front = this.getFrontTarget(children);
+        const exitTarget = this.getShortestTarget(children);
         children.forEach((child) => {
           if (front && child === front) {
             child.setAttribute('data-front', 'true');
@@ -250,8 +316,20 @@ export class ObcPoiLayer extends LitElement {
             child.removeAttribute('data-front');
           }
         });
-        children.forEach((child) => this.resetTarget(child));
+        children.forEach((child) => {
+          if (exitTarget && child === exitTarget) {
+            child.setAttribute('data-exiting', 'true');
+            this.startExitLock(child);
+          } else {
+            child.removeAttribute('data-exiting');
+            child.removeAttribute('data-exit-lock');
+          }
+          this.resetTarget(child);
+        });
         children.forEach((child) => this.appendChild(child));
+        requestAnimationFrame(() => {
+          if (exitTarget) exitTarget.removeAttribute('data-exiting');
+        });
         this.scheduleGroupRemoval(group);
       }
     });
@@ -284,6 +362,7 @@ export class ObcPoiLayer extends LitElement {
 
     targets.forEach((target) => {
       if (!groupedTargets.has(target)) {
+        const exitLocked = target.hasAttribute('data-exit-lock');
         target.removeAttribute('data-grouped');
         if (target.hasAttribute('data-front-exit')) {
           target.setAttribute('data-front', 'true');
@@ -291,14 +370,25 @@ export class ObcPoiLayer extends LitElement {
         } else if (frontTargets.has(target)) {
           target.setAttribute('data-front', 'true');
           target.removeAttribute('data-pregrouped');
-        } else if (preGrouped.has(target)) {
+        } else if (preGrouped.has(target) && !exitLocked) {
           target.removeAttribute('data-front');
           target.setAttribute('data-pregrouped', 'true');
         } else {
           target.removeAttribute('data-front');
           target.removeAttribute('data-pregrouped');
         }
+        if (!exitLocked && behindTargets.has(target) && !frontTargets.has(target)) {
+          target.setAttribute('data-behind', 'true');
+        } else {
+          target.removeAttribute('data-behind');
+        }
+        if (exitLocked) {
+          target.removeAttribute('data-pregrouped');
+          target.removeAttribute('data-behind');
+        }
         this.resetTarget(target);
+      } else {
+        target.removeAttribute('data-behind');
       }
     });
 
@@ -386,6 +476,17 @@ export class ObcPoiLayer extends LitElement {
     this.groupRemovalTimers.set(group, timeoutId);
   }
 
+  private startExitLock(target: HTMLElement) {
+    target.setAttribute('data-exit-lock', 'true');
+    const existing = this.exitLockTimers.get(target);
+    if (existing) window.clearTimeout(existing);
+    const timeoutId = window.setTimeout(() => {
+      target.removeAttribute('data-exit-lock');
+      this.exitLockTimers.delete(target);
+    }, 500);
+    this.exitLockTimers.set(target, timeoutId);
+  }
+
   private getFrontTarget(targets: HTMLElement[]) {
     if (targets.length === 0) return null;
     let front = targets[0];
@@ -416,6 +517,34 @@ export class ObcPoiLayer extends LitElement {
       button?.getBoundingClientRect() ??
       target.getBoundingClientRect()
     );
+  }
+
+  private getTargetHeight(
+    target: HTMLElement,
+    rects?: Map<HTMLElement, DOMRect>
+  ): number {
+    const heightAttr = target.getAttribute('height');
+    const heightValue = Number.parseFloat(heightAttr ?? '');
+    if (!Number.isNaN(heightValue)) return heightValue;
+    const rect = rects?.get(target) ?? target.getBoundingClientRect();
+    return rect.height;
+  }
+
+  private getShortestTarget(
+    targets: HTMLElement[],
+    rects?: Map<HTMLElement, DOMRect>
+  ) {
+    if (targets.length === 0) return null;
+    let shortest = targets[0];
+    let minHeight = this.getTargetHeight(shortest, rects);
+    targets.forEach((target) => {
+      const height = this.getTargetHeight(target, rects);
+      if (height < minHeight) {
+        minHeight = height;
+        shortest = target;
+      }
+    });
+    return shortest;
   }
 
   override render() {
