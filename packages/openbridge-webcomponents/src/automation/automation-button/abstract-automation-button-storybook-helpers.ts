@@ -7,6 +7,7 @@ import {MotorizedVariant} from './abstract-automation-button-motorized.js';
 import {
   AutomationButtonDirection,
   AutomationButtonLabelDirection,
+  AutomationButtonPositioning,
 } from './automation-button.js';
 
 export const argTypesAbstractAutomationButton = {
@@ -30,7 +31,10 @@ export const argTypesAbstractAutomationButton = {
     options: Object.values(ObcAlertFrameStatus),
     control: {type: 'radio'},
   },
-
+  positioning: {
+    options: Object.values(AutomationButtonPositioning),
+    control: {type: 'select'},
+  },
   badgeAuto: {
     control: {type: 'boolean'},
   },
