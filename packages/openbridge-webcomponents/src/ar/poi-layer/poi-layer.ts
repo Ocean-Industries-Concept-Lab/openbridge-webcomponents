@@ -306,7 +306,7 @@ export class ObcPoiLayer extends LitElement {
         group.setAttribute('data-visible', 'true');
         remainingClusters.splice(matchIndex, 1);
       } else {
-        const front = this.getTallestTarget(children);
+        const front = this.getFrontTarget(children);
         children.forEach((child) => {
           if (front && child === front) {
             child.setAttribute('data-front', 'true');
@@ -501,19 +501,9 @@ export class ObcPoiLayer extends LitElement {
   }
 
   private getFrontTarget(targets: HTMLElement[]) {
-    if (targets.length === 0) return null;
-    let front = targets[0];
-    let maxZ = Number.NEGATIVE_INFINITY;
-    targets.forEach((target) => {
-      const zRaw = getComputedStyle(target).zIndex;
-      const z = Number.parseInt(zRaw, 10);
-      const zValue = Number.isNaN(z) ? 0 : z;
-      if (zValue > maxZ) {
-        maxZ = zValue;
-        front = target;
-      }
-    });
-    return front;
+    return (
+      targets.find((target) => target.hasAttribute('data-front')) ?? null
+    );
   }
 
   private getTargetRect(target: HTMLElement): DOMRect {
@@ -560,22 +550,6 @@ export class ObcPoiLayer extends LitElement {
     return shortest;
   }
 
-  private getTallestTarget(
-    targets: HTMLElement[],
-    rects?: Map<HTMLElement, DOMRect>
-  ) {
-    if (targets.length === 0) return null;
-    let tallest = targets[0];
-    let maxHeight = this.getTargetHeight(tallest, rects);
-    targets.forEach((target) => {
-      const height = this.getTargetHeight(target, rects);
-      if (height > maxHeight) {
-        maxHeight = height;
-        tallest = target;
-      }
-    });
-    return tallest;
-  }
 
   override render() {
     return html`

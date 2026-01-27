@@ -196,10 +196,9 @@ export const OverlapWithGroup: Story = {
           top: 50%;
         }
 
-        .grouped #b1 {
-          left: calc(50% - 15px);
-          z-index: 1;
-        }
+      .grouped #b1 {
+        left: calc(50% - 15px);
+      }
 
         .grouped #b2 {
           left: calc(50% + 15px);

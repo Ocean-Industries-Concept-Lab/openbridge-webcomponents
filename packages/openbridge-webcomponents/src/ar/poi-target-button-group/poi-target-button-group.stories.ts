@@ -27,7 +27,7 @@ const meta: Meta<ObcPoiTargetButtonGroup> = {
       }
       #b1 {
         left: calc(50% - 15px);
-        z-index: 1;
+    
       }
       #b2 {
         left: calc(50% + 15px);

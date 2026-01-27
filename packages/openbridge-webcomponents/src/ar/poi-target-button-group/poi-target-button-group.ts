@@ -34,6 +34,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     super.firstUpdated(_changedProperties);
     this.updatePosition();
     this.setExpandedChildren(this.expand, true);
+    this.syncFrontChild();
   }
 
   override connectedCallback() {
@@ -189,6 +190,8 @@ export class ObcPoiTargetButtonGroup extends LitElement {
       });
       this.stopExpandedObserver();
     }
+
+    this.syncFrontChild();
   }
 
   private getFrontChild(): ObcPoiTarget | null {
@@ -201,8 +204,10 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     let maxHeight = Number.NEGATIVE_INFINITY;
     this._children.forEach((child) => {
       if (!(child instanceof ObcPoiTarget)) return;
-      const heightAttr = child.getAttribute('height');
-      const heightValue = Number.parseFloat(heightAttr ?? '');
+      const heightValue =
+        typeof child.height === 'number'
+          ? child.height
+          : Number.parseFloat(child.getAttribute('height') ?? '');
       if (Number.isNaN(heightValue)) return;
       if (heightValue > maxHeight) {
         maxHeight = heightValue;
@@ -212,15 +217,37 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     if (front && Number.isFinite(maxHeight)) {
       const candidates = this._children.filter((child) => {
         if (!(child instanceof ObcPoiTarget)) return false;
-        const heightAttr = child.getAttribute('height');
-        const heightValue = Number.parseFloat(heightAttr ?? '');
+        const heightValue =
+          typeof child.height === 'number'
+            ? child.height
+            : Number.parseFloat(child.getAttribute('height') ?? '');
         return !Number.isNaN(heightValue) && heightValue === maxHeight;
       }) as ObcPoiTarget[];
       if (candidates.length > 1) {
         return candidates[Math.floor(Math.random() * candidates.length)] ?? front;
       }
     }
+    if (!front) {
+      const targets = this._children.filter(
+        (child): child is ObcPoiTarget => child instanceof ObcPoiTarget
+      );
+      if (targets.length > 0) {
+        return targets[Math.floor(Math.random() * targets.length)] ?? null;
+      }
+    }
     return front;
+  }
+
+  private syncFrontChild() {
+    const front = this.getFrontChild();
+    this._children.forEach((child) => {
+      if (!(child instanceof ObcPoiTarget)) return;
+      if (front && child === front) {
+        child.setAttribute('data-front', 'true');
+      } else {
+        child.removeAttribute('data-front');
+      }
+    });
   }
 
   private startExpandedObserver() {
