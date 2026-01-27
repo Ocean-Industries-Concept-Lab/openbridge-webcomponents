@@ -4,7 +4,7 @@
   display: block;
   position: relative;
   width: 100%;
-  min-height: var(--obc-poi-layer-min-height, 40px);
+  min-height: var(--obc-poi-layer-min-height, 48px);
   height: var(--obc-poi-layer-height, auto);
   pointer-events: auto;
 }

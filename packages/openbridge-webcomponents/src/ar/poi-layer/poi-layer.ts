@@ -259,6 +259,7 @@ export class ObcPoiLayer extends LitElement {
     remainingClusters.forEach((cluster) => {
       const group = document.createElement('obc-poi-target-button-group');
       group.setAttribute('data-auto-group', 'true');
+      group.setAttribute('data-visible', 'true');
       group.setAttribute(
         'positionVertical',
         `${this.getClusterBottomY(cluster, rects, layerRect)}px`
@@ -269,7 +270,6 @@ export class ObcPoiLayer extends LitElement {
       });
       this.appendChild(group);
       requestAnimationFrame(() => {
-        group.setAttribute('data-visible', 'true');
         cluster.forEach((target) => target.setAttribute('data-grouped', 'true'));
       });
       keptGroups.push(group);

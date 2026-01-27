@@ -210,6 +210,10 @@ export const AnimatedLayout: Story = {
         .anim {
           width: 640px;
         }
+
+        .anim obc-poi-layer {
+          --obc-poi-layer-overlap-pre: 16px;
+        }
       </style>
       <div class="anim" ${ref(hostRef)}>
         <obc-poi-layer
