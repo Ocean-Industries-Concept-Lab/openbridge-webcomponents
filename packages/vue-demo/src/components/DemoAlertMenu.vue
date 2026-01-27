@@ -60,18 +60,12 @@ function onAckAllVisibleClick(event: ObcAckAllVisibleClickEvent) {
       has-time
       :status="a.alertStatus"
       @ack-click="() => (a.alertStatus = ObcAlertMenuItemStatus.Acknowledged)"
+      :title="a.title"
+      :description="a.description"
+      :time="a.time.toLocaleTimeString('en-UK')"
     >
       <template #alert-icon>
         <AlertIcon :alert-status="a.alertStatus" :alert-type="a.alertType" />
-      </template>
-      <template #title>
-        {{ a.title }}
-      </template>
-      <template #description>
-        {{ a.description }}
-      </template>
-      <template #time>
-        {{ a.time.toLocaleTimeString('en-UK') }}
       </template>
     </AlertMenuItem>
   </AlertMenu>

@@ -83,6 +83,7 @@ import {customElement} from '../../decorator.js';
  *
  * @slot leading-icon - Contains the radio button input.
  * @slot label - Displays the label text for the radio option.
+ * @event change - Emitted when the radio button is changed.
  */
 @customElement('obc-elevated-card-radio')
 export class ObcElevatedCardRadio extends LitElement {
@@ -171,6 +172,7 @@ export class ObcElevatedCardRadio extends LitElement {
           .name=${this.name}
           inputId=${this.instanceId}
           .value=${this.value}
+          @change=${this._handleRadioChange}
           ?checked=${this.checked}
           ?disabled=${this.disabled}
           ?required=${this.required}
@@ -188,6 +190,10 @@ export class ObcElevatedCardRadio extends LitElement {
 
   private _handleCardClick() {
     this.renderRoot.querySelector('input')?.click();
+  }
+
+  private _handleRadioChange() {
+    this.dispatchEvent(new CustomEvent('change'));
   }
 }
 

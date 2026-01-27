@@ -11,11 +11,6 @@ export enum DigitalValveVariant {
   flat = 'flat',
 }
 
-/**
- * @ignition-base-height: 82px
- * @ignition-base-width: 66px
- * @ignition-center
- */
 @customElement('obc-digital-valve')
 export class ObcDigitalValve extends ObcAbstractAutomationButton {
   @property({type: Boolean}) open: boolean = false;
