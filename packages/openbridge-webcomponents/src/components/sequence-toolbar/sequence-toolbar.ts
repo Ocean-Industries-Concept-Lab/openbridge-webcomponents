@@ -220,6 +220,7 @@ export class ObcSequenceToolbar extends LitElement {
     return html`
       <obc-sequence-step
         class="add-button"
+        aria-label="Add step"
         .type=${SequenceType.large}
         .styleType=${SequenceStyle.point}
         .value=${SequenceValue.notStarted}
@@ -247,6 +248,7 @@ export class ObcSequenceToolbar extends LitElement {
         <slot name="start" @slotchange=${this.handleSlotChange}>
           <obc-sequence-step
             class="edge-button edge-button--outline"
+            variant="toolbar-prev"
             .type=${SequenceType.large}
             .styleType=${SequenceStyle.regular}
             .value=${SequenceValue.notStarted}
@@ -330,6 +332,7 @@ export class ObcSequenceToolbar extends LitElement {
         <slot name="start" @slotchange=${this.handleSlotChange}>
           <obc-sequence-step
             class="condensed-icon"
+            variant="toolbar-condensed-icon"
             .type=${SequenceType.large}
             .styleType=${SequenceStyle.point}
             .value=${SequenceValue.notStarted}
@@ -369,6 +372,7 @@ export class ObcSequenceToolbar extends LitElement {
         <slot name="end" @slotchange=${this.handleSlotChange}>
           <obc-sequence-step
             class="condensed-icon"
+            variant="toolbar-condensed-icon"
             .type=${SequenceType.large}
             .styleType=${SequenceStyle.point}
             .value=${SequenceValue.notStarted}

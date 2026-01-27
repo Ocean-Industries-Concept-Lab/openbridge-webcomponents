@@ -534,8 +534,12 @@ button {
   pointer-events: none;
 }
 
-:host([variant="toolbar-prev"]) .wrapper.type-large .visible-wrapper,
-:host([variant="toolbar-prev"]) .wrapper.type-large:hover .visible-wrapper {
+:host([variant="toolbar-prev"]) .wrapper.type-large .visible-wrapper {
   background-color: var(--normal-enabled-background-color, transparent);
   border-color: var(--normal-enabled-border-color, currentColor);
+}
+
+:host([variant="toolbar-prev"]) .wrapper.type-large:hover .visible-wrapper {
+  background-color: var(--normal-hover-background-color, transparent);
+  border-color: var(--normal-hover-border-color, currentColor);
 }

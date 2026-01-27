@@ -166,6 +166,12 @@ export class ObcSequenceStep extends LitElement {
     return `Sequence step ${readable}`;
   }
 
+  private get resolvedAriaLabel(): string {
+    // If the consumer provides an explicit accessible name on the host,
+    // prefer it over the generic state-based label.
+    return this.getAttribute('aria-label') ?? this.stepAriaLabel;
+  }
+
   private renderSmallIndicator(): TemplateResult {
     const showCheck =
       this.styleType === SequenceStyle.regular &&
@@ -231,13 +237,14 @@ export class ObcSequenceStep extends LitElement {
   static override styles = unsafeCSS(style);
 
   override render(): TemplateResult {
+    const ariaLabel = this.resolvedAriaLabel;
     if (this.styleType === SequenceStyle.connector) {
       return html`
         <div
           class=${classMap(this.getWrapperClasses())}
           part="wrapper"
           role="listitem"
-          aria-label=${this.stepAriaLabel}
+          aria-label=${ariaLabel}
           aria-current=${ifDefined(this.stepAriaCurrent ?? undefined)}
         >
           <div class="body" part="body">
@@ -302,7 +309,7 @@ export class ObcSequenceStep extends LitElement {
           class=${wrapperClasses}
           part="wrapper"
           role="listitem"
-          aria-label=${this.stepAriaLabel}
+          aria-label=${ariaLabel}
           aria-current=${ifDefined(ariaCurrent)}
         >
           ${contents}
@@ -315,7 +322,7 @@ export class ObcSequenceStep extends LitElement {
         class=${wrapperClasses}
         part="wrapper"
         role="listitem"
-        aria-label=${this.stepAriaLabel}
+        aria-label=${ariaLabel}
         aria-current=${ifDefined(ariaCurrent)}
       >
         ${contents}
