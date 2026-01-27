@@ -108,7 +108,22 @@ export class ObcSequenceToolbar extends LitElement {
     this.applyStepStyles();
   }
 
+  /**
+   * Normalizes slotted `obc-sequence-step` elements after each update.
+   *
+   * Why this exists:
+   * - The toolbar needs to add default styling variants and click handlers
+   *   based on the current `type` (condensed/sequential) and slots.
+   * - Slotted content can change over time, so we must re-apply this wiring
+   *   on every update.
+   *
+   * What it does:
+   * 1) Removes any toolbar-managed variant/handlers from a previous render.
+   * 2) Applies the correct defaults for the current toolbar `type`.
+   * 3) Never overwrites a user-provided `variant`.
+   */
   private applyStepStyles(): void {
+    // Collect both light-DOM slotted steps and any steps rendered internally.
     const allSteps = new Set<HTMLElement>([
       ...this.querySelectorAll<HTMLElement>('obc-sequence-step'),
       ...Array.from(
@@ -117,6 +132,8 @@ export class ObcSequenceToolbar extends LitElement {
       ),
     ]);
 
+    // First, clean up any variant/handlers that were previously applied by
+    // the toolbar so we do not accumulate stale attributes or listeners.
     allSteps.forEach((step) => {
       if (step.hasAttribute('data-toolbar-variant')) {
         step.removeAttribute('variant');
@@ -136,6 +153,7 @@ export class ObcSequenceToolbar extends LitElement {
     });
 
     if (this.type === SequenceToolbarType.condensed) {
+      // In condensed mode, icon-only controls get a special default variant.
       this.querySelectorAll('obc-sequence-step.condensed-icon').forEach(
         (step) => {
           if (!step.getAttribute('variant')) {
@@ -145,6 +163,7 @@ export class ObcSequenceToolbar extends LitElement {
         }
       );
 
+      // The default start/end controls act like prev/next buttons.
       this.querySelectorAll('obc-sequence-step[slot="start"]').forEach(
         (step) => {
           step.addEventListener('click', this.onPrevClick);
@@ -158,6 +177,7 @@ export class ObcSequenceToolbar extends LitElement {
       });
     }
 
+    // Add controls can be provided via slot or rendered internally.
     const addSteps = new Set<HTMLElement>([
       ...this.querySelectorAll<HTMLElement>(
         'obc-sequence-step[slot="add"], obc-sequence-step.add-button'
@@ -170,10 +190,12 @@ export class ObcSequenceToolbar extends LitElement {
     ]);
 
     addSteps.forEach((step) => {
+      // Apply a default add variant only if the user did not set one.
       if (!step.getAttribute('variant')) {
         step.setAttribute('variant', 'toolbar-add');
         step.setAttribute('data-toolbar-variant', 'toolbar-add');
       }
+      // Internal add buttons get the click handler wired automatically.
       if (step.classList.contains('add-button')) {
         step.addEventListener('click', this.onAddClick);
         step.setAttribute('data-toolbar-click', 'add');
@@ -181,6 +203,8 @@ export class ObcSequenceToolbar extends LitElement {
     });
 
     if (this.type === SequenceToolbarType.sequential) {
+      // In sequential mode, the start control gets "previous" styling by
+      // default, unless the user explicitly provided a variant.
       this.querySelectorAll('obc-sequence-step[slot="start"]').forEach(
         (step) => {
           if (!step.getAttribute('variant')) {

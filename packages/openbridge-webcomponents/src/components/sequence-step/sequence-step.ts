@@ -32,6 +32,16 @@ export enum SequenceValue {
   completed = 'completed',
 }
 
+/**
+ * Visual variants used by sequence toolbar layouts.
+ * These map to `:host([variant="..."])` selectors in the component CSS.
+ */
+export enum SequenceVariant {
+  toolbarAdd = 'toolbar-add',
+  toolbarCondensedIcon = 'toolbar-condensed-icon',
+  toolbarPrev = 'toolbar-prev',
+}
+
 @customElement('obc-sequence-step')
 /**
  * `<obc-sequence-step>` renders the visual node of a sequence diagram.
@@ -44,7 +54,7 @@ export class ObcSequenceStep extends LitElement {
   @property({type: String}) type: SequenceType = SequenceType.medium;
   @property({type: String}) styleType: SequenceStyle = SequenceStyle.regular;
   @property({type: String}) value: SequenceValue = SequenceValue.regular;
-  @property({type: String, reflect: true}) variant?: string;
+  @property({type: String, reflect: true}) variant?: SequenceVariant;
   /** Displays the built-in state icon for medium/large regular steps. */
   @property({type: Boolean}) hasIcon = false;
   @property({type: Boolean}) hideStepInputConnector = false;
