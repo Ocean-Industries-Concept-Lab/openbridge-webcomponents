@@ -13,7 +13,7 @@ function onExpand(event: CustomEvent<{expand: boolean}>) {
     event.detail.expand;
 }
 
-const meta: Meta<typeof ObcPoiTargetButtonGroup> = {
+const meta: Meta<ObcPoiTargetButtonGroup> = {
   title: 'AR/POI Target Button Group',
   tags: ['6.0'],
   component: 'obc-poi-target-button-group',

@@ -4,11 +4,19 @@ import {customElement} from '../../decorator.js';
 import compentStyle from './poi-layer.css?inline';
 import '../poi-target-button-group/poi-target-button-group.js';
 
+export enum PoiLayerSelectionMode {
+  None = 'none',
+  Single = 'single',
+  Multi = 'multi',
+}
+
 @customElement('obc-poi-layer')
 export class ObcPoiLayer extends LitElement {
   @property({type: String}) label = '';
   @property({type: Boolean, reflect: true}) debug = false;
   @property({type: Number}) layerIndex = 0;
+  @property({type: String, attribute: 'selection-mode'})
+  selectionMode: PoiLayerSelectionMode = PoiLayerSelectionMode.None;
 
   @query('.wrapper') private wrapper?: HTMLElement;
 
@@ -19,6 +27,12 @@ export class ObcPoiLayer extends LitElement {
   private groupingRaf = 0;
   private groupRemovalTimers = new WeakMap<HTMLElement, number>();
   private exitLockTimers = new Map<HTMLElement, number>();
+  private handleLayerClick = (event: Event) => this.onLayerClick(event);
+
+  private static selectionState = new WeakMap<
+    object,
+    Map<HTMLElement, {originLayer: ObcPoiLayer; originIndex: number}>
+  >();
 
   override firstUpdated() {
     this.setupResizeObserver();
@@ -31,8 +45,14 @@ export class ObcPoiLayer extends LitElement {
     });
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.addEventListener('click', this.handleLayerClick);
+  }
+
   override disconnectedCallback() {
     super.disconnectedCallback();
+    this.removeEventListener('click', this.handleLayerClick);
     this.resizeObserver?.disconnect();
     this.targetObservers.forEach((observer) => observer.disconnect());
     this.targetObservers.clear();
@@ -486,6 +506,140 @@ export class ObcPoiLayer extends LitElement {
       this.groupRemovalTimers.delete(group);
     }, 450);
     this.groupRemovalTimers.set(group, timeoutId);
+  }
+
+  private onLayerClick(event: Event) {
+    if (this.selectionMode === 'none') return;
+    const target = this.getPoiTargetFromEvent(event);
+    if (!target) return;
+
+    const container = this.getSelectionContainer();
+    const selectionMap = this.getSelectionMap(container);
+    this.cleanupSelection(selectionMap);
+
+    const originLayer = target.closest('obc-poi-layer') as ObcPoiLayer | null;
+    if (!originLayer) return;
+
+    const topLayer = this.getTopLayer(container);
+    if (!topLayer) return;
+
+    const existing = selectionMap.get(target);
+    if (existing) {
+      existing.originLayer.appendChild(target);
+      selectionMap.delete(target);
+      return;
+    }
+
+    if (this.selectionMode === 'single') {
+      this.clearOtherTopSelections(container, selectionMap, target);
+      selectionMap.forEach((record, other) => {
+        record.originLayer.appendChild(other);
+        selectionMap.delete(other);
+      });
+    }
+
+    selectionMap.set(target, {
+      originLayer,
+      originIndex: originLayer.layerIndex,
+    });
+    if (topLayer !== originLayer) {
+      topLayer.appendChild(target);
+    }
+  }
+
+  private getPoiTargetFromEvent(event: Event): HTMLElement | null {
+    const path = event.composedPath?.() ?? [];
+    for (const item of path) {
+      if (
+        item instanceof HTMLElement &&
+        item.tagName.toLowerCase() === 'obc-poi-target'
+      ) {
+        return item;
+      }
+    }
+    const direct =
+      event.target instanceof HTMLElement ? event.target : null;
+    return direct?.closest('obc-poi-target') as HTMLElement | null;
+  }
+
+  private getSelectionContainer(): object {
+    return this.parentElement ?? this.getRootNode();
+  }
+
+  private getSelectionMap(container: object) {
+    const existing = ObcPoiLayer.selectionState.get(container);
+    if (existing) return existing;
+    const map = new Map<
+      HTMLElement,
+      {originLayer: ObcPoiLayer; originIndex: number}
+    >();
+    ObcPoiLayer.selectionState.set(container, map);
+    return map;
+  }
+
+  private cleanupSelection(
+    selectionMap: Map<HTMLElement, {originLayer: ObcPoiLayer; originIndex: number}>
+  ) {
+    selectionMap.forEach((_, target) => {
+      if (!target.isConnected) selectionMap.delete(target);
+    });
+  }
+
+  private getTopLayer(container: object): ObcPoiLayer | null {
+    const root =
+      container instanceof HTMLElement ||
+      container instanceof Document ||
+      container instanceof DocumentFragment
+        ? container
+        : null;
+    if (!root) return null;
+    const layers = Array.from(
+      root.querySelectorAll('obc-poi-layer')
+    ) as ObcPoiLayer[];
+    if (layers.length === 0) return null;
+    return layers.reduce((top, layer) =>
+      layer.layerIndex < top.layerIndex ? layer : top
+    );
+  }
+
+  private getSecondTopLayer(container: object): ObcPoiLayer | null {
+    const root =
+      container instanceof HTMLElement ||
+      container instanceof Document ||
+      container instanceof DocumentFragment
+        ? container
+        : null;
+    if (!root) return null;
+    const layers = Array.from(
+      root.querySelectorAll('obc-poi-layer')
+    ) as ObcPoiLayer[];
+    if (layers.length < 2) return null;
+    const sorted = layers.sort((a, b) => a.layerIndex - b.layerIndex);
+    return sorted[1] ?? null;
+  }
+
+  private clearOtherTopSelections(
+    container: object,
+    selectionMap: Map<HTMLElement, {originLayer: ObcPoiLayer; originIndex: number}>,
+    target: HTMLElement
+  ) {
+    const topLayer = this.getTopLayer(container);
+    if (!topLayer) return;
+    const secondTop = this.getSecondTopLayer(container);
+    if (!secondTop) return;
+    const topTargets = Array.from(
+      topLayer.querySelectorAll('obc-poi-target')
+    ) as HTMLElement[];
+    topTargets.forEach((other) => {
+      if (other === target) return;
+      const record = selectionMap.get(other);
+      if (record) {
+        record.originLayer.appendChild(other);
+        selectionMap.delete(other);
+      } else {
+        secondTop.appendChild(other);
+      }
+    });
   }
 
   private startExitLock(target: HTMLElement) {
