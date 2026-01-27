@@ -63,8 +63,11 @@
 }
 
 .wrapper {
-  position: absolute;
   padding: var(--automation-components-button-new-state-container-padding);
+
+  &.positioning-point {
+    position: absolute;
+  }
 
   .badge-spacer {
     width: 0;
