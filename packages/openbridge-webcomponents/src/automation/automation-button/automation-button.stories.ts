@@ -83,6 +83,7 @@ const meta: Meta<typeof ObcAutomationButton> = {
     hasIdTag: true,
     readoutPosition: AutomationButtonReadoutPosition.bottom,
     readoutSize: AutomationButtonReadoutStackSize.regular,
+    positioning: AutomationButtonPositioning.point,
   },
   parameters: {
     // Overrides the default behavior and pauses the animation at the first frame at the component level for all stories.
