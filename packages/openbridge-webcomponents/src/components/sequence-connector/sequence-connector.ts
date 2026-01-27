@@ -24,11 +24,31 @@ export enum SequenceConnectorDirection {
 }
 
 /**
- * `<obc-sequence-connector>` renders the connecting line.
+ * `<obc-sequence-connector>` — renders the connecting line.
  *
- * - Use `type` to match the adjacent step size.
- * - Use `state="loading"` with `loading-bar-percent` to show progress.
- * - Use `direction` to switch between horizontal and vertical connectors.
+ * Overview:
+ * A lightweight connector used to visually link items in horizontal or
+ * vertical layouts.
+ *
+ * Features / Variants:
+ * - `type`: `small | medium | large` (matches the adjacent step size).
+ * - `state`: `not-started | loading | completed | steps-between`.
+ * - `direction`: `horizontal | vertical`.
+ * - `loading-bar-percent`: number `0–100` (used when `state="loading"`).
+ *
+ * Usage Guidelines:
+ * - Use the same `type` as the adjacent step for consistent thickness.
+ * - Use `state="steps-between"` for dotted/segmented connectors.
+ *
+ * Slots / Content:
+ * - None.
+ *
+ * Events:
+ * - None.
+ *
+ * Best Practices:
+ * - Keep `loading-bar-percent` within `0–100` for predictable rendering.
+ * - Prefer explicit `direction` rather than relying on defaults in complex layouts.
  *
  * Example:
  * ```html
@@ -39,6 +59,8 @@ export enum SequenceConnectorDirection {
  *   loading-bar-percent="66"
  * ></obc-sequence-connector>
  * ```
+ *
+ * Keywords: sequence, connector, progress, timeline, stepper, loading, horizontal, vertical.
  */
 @customElement('obc-sequence-connector')
 export class ObcSequenceConnector extends LitElement {
@@ -67,7 +89,10 @@ export class ObcSequenceConnector extends LitElement {
   }
 
   private get clampedLoadingBarPercent(): number {
-    return Math.min(100, Math.max(0, this.loadingBarPercent));
+    const percent = Number.isFinite(this.loadingBarPercent)
+      ? this.loadingBarPercent
+      : 66;
+    return Math.min(100, Math.max(0, percent));
   }
 
   override render() {

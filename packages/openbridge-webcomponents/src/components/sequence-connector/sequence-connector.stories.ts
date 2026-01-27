@@ -46,22 +46,10 @@ const cardStyle = `
 const meta = {
   title: 'Automation/Sequence Connector',
   component: 'obc-sequence-connector',
+  tags: ['autodocs'],
   parameters: {
     layout: 'centered',
     docs: {
-      description: {
-        component: [
-          'Example:',
-          '```html',
-          '<obc-sequence-connector',
-          '  type="medium"',
-          '  state="loading"',
-          '  direction="horizontal"',
-          '  loading-bar-percent="66"',
-          '></obc-sequence-connector>',
-          '```',
-        ].join('\n'),
-      },
       source: {
         transform: (
           code: string,
