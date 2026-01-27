@@ -3,6 +3,7 @@ import {property, queryAssignedElements} from 'lit/decorators.js';
 import '../automation-button/automation-button.js';
 import {
   AutomationButtonDirection,
+  AutomationButtonPositioning,
   AutomationButtonReadoutPosition,
   AutomationButtonState,
   AutomationButtonVariant,
@@ -26,6 +27,8 @@ export class ObcAbstractAutomationButton extends LitElement {
     AutomationButtonReadoutPosition.bottom;
   @property({type: String}) readoutSize: AutomationButtonReadoutStackSize =
     AutomationButtonReadoutStackSize.regular;
+  @property({type: String}) positioning: AutomationButtonPositioning =
+    AutomationButtonPositioning.point;
   @property({type: Boolean}) alert: boolean = false;
   @property({type: String}) alertFrameType: ObcAlertFrameType =
     ObcAlertFrameType.SmallSideFlip;
@@ -119,6 +122,7 @@ export class ObcAbstractAutomationButton extends LitElement {
       .variant=${this._variant}
       .direction=${this.direction}
       .hasBadgeSpacer=${this.getBadgeSpacer()}
+      .positioning=${this.positioning}
     >
       ${this.icon}
       <slot

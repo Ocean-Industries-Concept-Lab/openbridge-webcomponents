@@ -1,6 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
   AutomationButtonDirection,
+  AutomationButtonPositioning,
   AutomationButtonVariant,
   ObcAutomationButton,
 } from './automation-button.js';
@@ -56,6 +57,10 @@ const meta: Meta<typeof ObcAutomationButton> = {
     alert: {
       control: {type: 'boolean'},
     },
+    positioning: {
+      options: Object.values(AutomationButtonPositioning),
+      control: {type: 'select'},
+    },
     variant: {
       options: Object.values(AutomationButtonVariant),
       control: {type: 'select'},
@@ -104,6 +109,7 @@ export const ValveOpen: Story = {
       .readouts=${readouts}
       .tag=${tag}
       .variant=${args.variant}
+      .positioning=${args.positioning}
       ?alert=${args.alert}
       ?progress=${args.progress}
     >
@@ -167,6 +173,7 @@ export const ValveAlert: Story = {
       .alertFrameStatus=${args.alertFrameStatus}
       .alertFrameThickness=${args.alertFrameThickness}
       .alertFrameType=${args.alertFrameType}
+      .positioning=${args.positioning}
       ?alert=${args.alert}
       ?progress=${args.progress}
     >
@@ -195,6 +202,7 @@ export const ValveBadges: Story = {
       ?alert=${args.alert}
       ?progress=${args.progress}
       hasBadgeSpacer
+      .positioning=${args.positioning}
     >
       <obi-twoway-digital-open
         usecsscolor
@@ -236,6 +244,7 @@ export const ValveProgress: Story = {
       .tag=${tag}
       ?alert=${args.alert}
       ?progress=${args.progress}
+      .positioning=${args.positioning}
     >
       <obi-twoway-digital-open
         usecsscolor
@@ -259,6 +268,7 @@ export const ValveClosed: Story = {
       .static=${args.static}
       ?alert=${args.alert}
       ?progress=${args.progress}
+      .positioning=${args.positioning}
     >
       <obi-twoway-digital-closed
         usecsscolor
@@ -289,6 +299,7 @@ export const ValveNoLabels: Story = {
       .variant=${args.variant}
       ?alert=${args.alert}
       ?progress=${args.progress}
+      .positioning=${args.positioning}
     >
       <obi-twoway-digital-open
         usecsscolor
@@ -319,6 +330,7 @@ export const SwitchOn: Story = {
       .tag=${tag}
       ?alert=${args.alert}
       ?progress=${args.progress}
+      .positioning=${args.positioning}
     >
       <obi-switch-horizontal-on
         usecsscolor
@@ -344,6 +356,7 @@ export const SwitchOff: Story = {
       .tag=${tag}
       ?alert=${args.alert}
       ?progress=${args.progress}
+      .positioning=${args.positioning}
     >
       <obi-switch-horizontal-off
         usecsscolor
@@ -369,6 +382,7 @@ export const DamperOn: Story = {
       .tag=${tag}
       ?alert=${args.alert}
       ?progress=${args.progress}
+      .positioning=${args.positioning}
     >
       <obi-damper-horizontal-on
         usecsscolor
@@ -394,6 +408,7 @@ export const DamperOff: Story = {
       .tag=${tag}
       ?alert=${args.alert}
       ?progress=${args.progress}
+      .positioning=${args.positioning}
     >
       <obi-damper-horizontal-off
         usecsscolor
@@ -419,6 +434,7 @@ export const DamperBadges: Story = {
       .tag=${tag}
       ?alert=${args.alert}
       ?progress=${args.progress}
+      .positioning=${args.positioning}
     >
       <obi-damper-horizontal-on
         usecsscolor
@@ -461,6 +477,7 @@ export const MotorOn: Story = {
       direction=${args.direction}
       ?alert=${args.alert}
       ?progress=${args.progress}
+      .positioning=${args.positioning}
     >
       <obi-pump-on-horizontal
         usecsscolor
@@ -491,6 +508,7 @@ export const MotorOff: Story = {
       .direction=${args.direction}
       ?alert=${args.alert}
       ?progress=${args.progress}
+      .positioning=${args.positioning}
     >
       <obi-pump-off-horizontal
         usecsscolor
