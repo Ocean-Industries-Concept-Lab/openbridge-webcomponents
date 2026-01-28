@@ -221,10 +221,19 @@ export class ObcPoiLayerStack extends LitElement {
     const reduceMotion =
       typeof window !== 'undefined' &&
       window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    const firstRect = target.getBoundingClientRect();
+    const wasInGroup =
+      currentParent.tagName.toLowerCase() === 'obc-poi-target-button-group';
+    const firstRect = this.getTargetVisualRect(target);
     nextLayer.appendChild(target);
+    if (wasInGroup) {
+      target.style.removeProperty('position');
+      target.style.removeProperty('width');
+      target.style.removeProperty('min-width');
+      target.style.removeProperty('height');
+      target.style.removeProperty('transform');
+    }
     if (reduceMotion) return;
-    const lastRect = target.getBoundingClientRect();
+    const lastRect = this.getTargetVisualRect(target);
     const dx = firstRect.left - lastRect.left;
     const dy = firstRect.top - lastRect.top;
     if (!Number.isFinite(dx) || !Number.isFinite(dy)) return;
@@ -252,6 +261,25 @@ export class ObcPoiLayerStack extends LitElement {
     animation.addEventListener('finish', () => {
       target.style.willChange = '';
     });
+  }
+
+  private getTargetVisualRect(target: HTMLElement): DOMRect {
+    if (target.tagName.toLowerCase() !== 'obc-poi-target') {
+      return target.getBoundingClientRect();
+    }
+    const targetShadow = target.shadowRoot;
+    const button = targetShadow?.querySelector('obc-poi-target-button') as
+      | HTMLElement
+      | undefined;
+    const buttonShadow = button?.shadowRoot;
+    const wrapper = buttonShadow?.querySelector(
+      '.wrapper, .wrapper-overlap'
+    ) as HTMLElement | null;
+    return (
+      wrapper?.getBoundingClientRect() ??
+      button?.getBoundingClientRect() ??
+      target.getBoundingClientRect()
+    );
   }
 
   private schedulePlacement() {
