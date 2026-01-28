@@ -71,6 +71,53 @@ export const Grouped: Story = {
   },
 };
 
+export const GroupedWithNumbers: Story = {
+  args: {
+    expand: false,
+  },
+  render: (args) => html`
+    <style>
+      obc-poi-target {
+        position: absolute;
+        top: 50%;
+      }
+      #b1 {
+        left: calc(50% - 15px);
+      }
+      #b2 {
+        left: calc(50% + 15px);
+      }
+      #b3 {
+        left: calc(50% - 30px);
+      }
+
+      #outside {
+        left: calc(50% - 120px);
+      }
+
+      .group {
+        top: 0;
+        left: 0;
+      }
+    </style>
+    <obc-poi-target-button-group
+      class="group"
+      .expand=${args.expand}
+      positionVertical="calc(50%)"
+      @expand=${onExpand}
+    >
+      <obc-poi-target id="b3" overlap selectedId="3"></obc-poi-target>
+      <obc-poi-target id="b1" .relativeDirection=${65} selectedId="1">
+      </obc-poi-target
+      ><obc-poi-target id="b2" overlap selectedId="2"></obc-poi-target>
+    </obc-poi-target-button-group>
+
+    <obc-poi-target id="outside" .overlap=${args.expand} selectedId="4">
+      <obi-ais-target-activated-iec></obi-ais-target-activated-iec>
+    </obc-poi-target>
+  `,
+};
+
 export const Expanded: Story = {
   args: {
     expand: true,

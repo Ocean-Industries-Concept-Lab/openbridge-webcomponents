@@ -501,7 +501,7 @@ export class ObcPoiLayer extends LitElement {
       group.setAttribute('data-visible', 'true');
       group.setAttribute(
         'positionVertical',
-        `${this.getClusterBottomY(cluster, rects, layerRect)}px`
+        `${this.getGroupPositionVertical(cluster, rects, layerRect, group)}px`
       );
       cluster.forEach((target) => {
         target.removeAttribute('data-grouped');
@@ -574,15 +574,18 @@ export class ObcPoiLayer extends LitElement {
             child.tagName.toLowerCase() === 'obc-poi-target'
         );
         if (children.length > 0) {
+          const layerBounds = layerRect ?? this.getBoundingClientRect();
           const rectMap =
             rects ??
             new Map(
-              children.map((child) => [child, this.getTargetRect(child)])
+              children.map((child) => [
+                child,
+                this.getTargetRectForGrouping(child, layerBounds),
+              ])
             );
-          const layerBounds = layerRect ?? this.getBoundingClientRect();
           group.setAttribute(
             'positionVertical',
-            `${this.getClusterBottomY(children, rectMap, layerBounds)}px`
+            `${this.getGroupPositionVertical(children, rectMap, layerBounds, group)}px`
           );
         }
       }
@@ -607,6 +610,30 @@ export class ObcPoiLayer extends LitElement {
     );
     const offset = Number.parseFloat(offsetRaw) || 0;
     return Math.round(maxBottom - layerRect.top + offset);
+  }
+
+  private getGroupPositionVertical(
+    targets: HTMLElement[],
+    rects: Map<HTMLElement, DOMRect>,
+    layerRect: DOMRect,
+    group?: HTMLElement
+  ) {
+    let maxBottom = Number.NEGATIVE_INFINITY;
+    targets.forEach((target) => {
+      const rect = rects.get(target) ?? target.getBoundingClientRect();
+      maxBottom = Math.max(maxBottom, rect.bottom);
+    });
+    const baseBottom = maxBottom - layerRect.top;
+    const isAutoGroup = group?.hasAttribute('data-auto-group') ?? false;
+    const transformFactor = isAutoGroup ? 1 : 0.5;
+    const offsetRaw = getComputedStyle(this).getPropertyValue(
+      '--obc-poi-layer-auto-group-offset-y'
+    );
+    let offset = Number.parseFloat(offsetRaw) || 0;
+    if (isAutoGroup && this.closest('obc-poi-layer-stack')) {
+      offset = 0;
+    }
+    return Math.round(baseBottom - layerRect.height * transformFactor + offset);
   }
 
   private resetTarget(target: HTMLElement) {

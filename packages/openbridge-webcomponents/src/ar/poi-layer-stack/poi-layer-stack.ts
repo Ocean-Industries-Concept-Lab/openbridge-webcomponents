@@ -232,7 +232,10 @@ export class ObcPoiLayerStack extends LitElement {
       target.style.removeProperty('height');
       target.style.removeProperty('transform');
     }
-    if (reduceMotion) return;
+    if (reduceMotion) {
+      this.requestLayerGrouping(nextLayer);
+      return;
+    }
     const lastRect = this.getTargetVisualRect(target);
     const dx = firstRect.left - lastRect.left;
     const dy = firstRect.top - lastRect.top;
@@ -260,6 +263,7 @@ export class ObcPoiLayerStack extends LitElement {
         );
     animation.addEventListener('finish', () => {
       target.style.willChange = '';
+      this.requestLayerGrouping(nextLayer);
     });
   }
 
@@ -280,6 +284,21 @@ export class ObcPoiLayerStack extends LitElement {
       button?.getBoundingClientRect() ??
       target.getBoundingClientRect()
     );
+  }
+
+  private requestLayerGrouping(layer: HTMLElement) {
+    const targets = Array.from(
+      layer.querySelectorAll('obc-poi-target')
+    ) as HTMLElement[];
+    targets.forEach((target) => {
+      const marker = target.style.getPropertyValue(
+        '--obc-poi-layer-stack-reflow'
+      );
+      target.style.setProperty(
+        '--obc-poi-layer-stack-reflow',
+        marker === '1' ? '0' : '1'
+      );
+    });
   }
 
   private schedulePlacement() {

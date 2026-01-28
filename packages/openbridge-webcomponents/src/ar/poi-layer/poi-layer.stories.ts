@@ -285,6 +285,82 @@ export const OverlapWithGroup: Story = {
   },
 };
 
+export const OverlapWithGroupNumbers: Story = {
+  args: {
+    label: 'Overlap Group (Numbers)',
+    layerIndex: 0,
+    debug: true,
+  },
+  render(args) {
+    return html`
+      <style>
+        .grouped {
+          width: 640px;
+        }
+
+        .grouped obc-poi-layer {
+          --obc-poi-layer-min-height: 48px;
+          width: 100%;
+        }
+
+        .grouped obc-poi-target {
+          position: absolute;
+          top: 50%;
+        }
+
+      .grouped #b1 {
+        left: calc(50% - 15px);
+      }
+
+        .grouped #b2 {
+          left: calc(50% + 15px);
+        }
+
+        .grouped #b3 {
+          left: calc(50% - 30px);
+        }
+
+        .grouped .group {
+          top: 0;
+          left: 0;
+        }
+      </style>
+      <div class="grouped">
+        <obc-poi-layer
+          .label=${args.label}
+          .layerIndex=${args.layerIndex}
+          ?debug=${args.debug}
+        >
+          <obc-poi-target-button-group
+            class="group"
+            positionVertical="calc(50%)"
+          >
+            <obc-poi-target
+              id="b3"
+              overlap
+              height="80"
+              selectedId="3"
+            ></obc-poi-target>
+            <obc-poi-target
+              id="b1"
+              height="140"
+              .relativeDirection=${65}
+              selectedId="1"
+            >
+            </obc-poi-target>
+            <obc-poi-target
+              id="b2"
+              overlap
+              height="60"
+              selectedId="2"
+            ></obc-poi-target>
+          </obc-poi-target-button-group>
+        </obc-poi-layer>
+      </div>
+    `;
+  },
+};
+
 export const EnterGroupFromTwo: Story = {
   args: {
     label: 'Enter Group (2)',
