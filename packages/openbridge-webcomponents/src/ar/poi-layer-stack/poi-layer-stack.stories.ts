@@ -20,7 +20,7 @@ const meta: Meta<PoiLayerStackArgs> = {
     label: 'Layer A',
     debug: true,
     layerIndex: 0,
-    selectionMode: PoiLayerSelectionMode.None,
+    selectionMode: PoiLayerSelectionMode.Single,
   },
   argTypes: {
     selectionMode: {
@@ -33,113 +33,105 @@ const meta: Meta<PoiLayerStackArgs> = {
 export default meta;
 type Story = StoryObj<PoiLayerStackArgs>;
 
-export const TwoLayers: Story = {
-  render(args) {
-    return html`
-      <style>
-        obc-poi-layer-stack.stack {
-          display: grid;
-          gap: 8px;
-          width: 640px;
-        }
+const renderTwoLayers = (args: PoiLayerStackArgs) => html`
+  <style>
+    obc-poi-layer-stack.stack {
+      display: grid;
+      gap: 8px;
+      width: 640px;
+    }
 
-        obc-poi-layer {
-          --obc-poi-layer-min-height: 48px;
-          width: 100%;
-        }
-      </style>
-      <obc-poi-layer-stack class="stack" selection-mode=${args.selectionMode}>
-        <obc-poi-layer
-          .label=${args.label}
-          .layerIndex=${args.layerIndex}
-          ?debug=${args.debug}
-        >
-          <obc-poi-target style="left: 120px;" height="110">
-          </obc-poi-target>
-          <obc-poi-target style="left: 320px;" height="70">
-          </obc-poi-target>
-        </obc-poi-layer>
-        <obc-poi-layer
-          label="Layer B"
-          .layerIndex=${args.layerIndex + 1}
-          debug
-        >
-          <obc-poi-target style="left: 220px;" height="90">
-          </obc-poi-target>
-        </obc-poi-layer>
-      </obc-poi-layer-stack>
-    `;
+    obc-poi-layer {
+      --obc-poi-layer-min-height: 48px;
+      width: 100%;
+    }
+  </style>
+  <obc-poi-layer-stack class="stack" selection-mode=${args.selectionMode}>
+    <obc-poi-layer
+      .label=${args.label}
+      .layerIndex=${args.layerIndex}
+      ?debug=${args.debug}
+    >
+      <obc-poi-target style="left: 120px;" height="110">
+      </obc-poi-target>
+      <obc-poi-target style="left: 320px;" height="70">
+      </obc-poi-target>
+    </obc-poi-layer>
+    <obc-poi-layer
+      label="Layer B"
+      .layerIndex=${args.layerIndex + 1}
+      debug
+    >
+      <obc-poi-target style="left: 220px;" height="90">
+      </obc-poi-target>
+    </obc-poi-layer>
+  </obc-poi-layer-stack>
+`;
+
+const renderThreeLayers = (args: PoiLayerStackArgs) => html`
+  <style>
+    obc-poi-layer-stack.stack {
+      display: grid;
+      gap: 8px;
+      width: 640px;
+    }
+
+    obc-poi-layer {
+      --obc-poi-layer-min-height: 48px;
+      width: 100%;
+    }
+  </style>
+  <obc-poi-layer-stack class="stack" selection-mode=${args.selectionMode}>
+    <obc-poi-layer
+      .label=${args.label}
+      .layerIndex=${args.layerIndex}
+      ?debug=${args.debug}
+    >
+      <obc-poi-target style="left: 80px;" height="120">
+      </obc-poi-target>
+      <obc-poi-target style="left: 260px;" height="80">
+      </obc-poi-target>
+    </obc-poi-layer>
+    <obc-poi-layer
+      label="Layer B"
+      .layerIndex=${args.layerIndex + 1}
+      debug
+    >
+      <obc-poi-target style="left: 180px;" height="100">
+      </obc-poi-target>
+      <obc-poi-target style="left: 420px;" height="140">
+      </obc-poi-target>
+    </obc-poi-layer>
+    <obc-poi-layer
+      label="Layer C"
+      .layerIndex=${args.layerIndex + 2}
+      debug
+    >
+      <obc-poi-target style="left: 140px;" height="90">
+      </obc-poi-target>
+      <obc-poi-target style="left: 520px;" height="110">
+      </obc-poi-target>
+    </obc-poi-layer>
+  </obc-poi-layer-stack>
+`;
+
+export const SelectionSingle: Story = {
+  args: {
+    selectionMode: PoiLayerSelectionMode.Single,
   },
-};
-
-export const ThreeLayers: Story = {
-  render(args) {
-    return html`
-      <style>
-        obc-poi-layer-stack.stack {
-          display: grid;
-          gap: 8px;
-          width: 640px;
-        }
-
-        obc-poi-layer {
-          --obc-poi-layer-min-height: 48px;
-          width: 100%;
-        }
-      </style>
-      <obc-poi-layer-stack class="stack" selection-mode=${args.selectionMode}>
-        <obc-poi-layer
-          .label=${args.label}
-          .layerIndex=${args.layerIndex}
-          ?debug=${args.debug}
-        >
-          <obc-poi-target style="left: 80px;" height="120">
-          </obc-poi-target>
-          <obc-poi-target style="left: 260px;" height="80">
-          </obc-poi-target>
-        </obc-poi-layer>
-        <obc-poi-layer
-          label="Layer B"
-          .layerIndex=${args.layerIndex + 1}
-          debug
-        >
-          <obc-poi-target style="left: 180px;" height="100">
-          </obc-poi-target>
-          <obc-poi-target style="left: 420px;" height="140">
-          </obc-poi-target>
-        </obc-poi-layer>
-        <obc-poi-layer
-          label="Layer C"
-          .layerIndex=${args.layerIndex + 2}
-          debug
-        >
-          <obc-poi-target style="left: 140px;" height="90">
-          </obc-poi-target>
-          <obc-poi-target style="left: 520px;" height="110">
-          </obc-poi-target>
-        </obc-poi-layer>
-      </obc-poi-layer-stack>
-    `;
-  },
+  render: renderTwoLayers,
 };
 
 export const SelectionNone: Story = {
   args: {
     selectionMode: PoiLayerSelectionMode.None,
   },
-  render: TwoLayers.render,
-};
-
-export const SelectionSingle: Story = {
-  args: {
-    selectionMode: PoiLayerSelectionMode.Single,
-  },
-  render: TwoLayers.render,
+  render: renderTwoLayers,
 };
 
 export const SelectionMulti: Story = {
   args: {
     selectionMode: PoiLayerSelectionMode.Multi,
   },
-  render: ThreeLayers.render,
+  render: renderThreeLayers,
 };

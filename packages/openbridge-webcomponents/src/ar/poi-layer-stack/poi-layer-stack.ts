@@ -77,23 +77,23 @@ export class ObcPoiLayerStack extends LitElement {
     if (!topLayer) return;
 
     const existing = this.selectionMap.get(target);
-    if (existing) {
-      this.clearTargetGroupingAttributes(target);
-      existing.originLayer.appendChild(target);
-      this.selectionMap.delete(target);
-      this.clearTargetSelectedId(target);
-      return;
-    }
+      if (existing) {
+        this.clearTargetGroupingAttributes(target);
+        this.moveTargetToLayer(target, existing.originLayer);
+        this.selectionMap.delete(target);
+        this.clearTargetSelectedId(target);
+        return;
+      }
 
     if (this.selectionMode === PoiLayerSelectionMode.Single) {
       this.clearOtherTopSelections(target);
-      this.selectionMap.forEach((record, other) => {
-        this.clearTargetGroupingAttributes(other);
-        record.originLayer.appendChild(other);
-        this.selectionMap.delete(other);
-        this.clearTargetSelectedId(other);
-      });
-    }
+        this.selectionMap.forEach((record, other) => {
+          this.clearTargetGroupingAttributes(other);
+          this.moveTargetToLayer(other, record.originLayer);
+          this.selectionMap.delete(other);
+          this.clearTargetSelectedId(other);
+        });
+      }
 
     this.selectionMap.set(target, {
       originLayer,
@@ -102,7 +102,7 @@ export class ObcPoiLayerStack extends LitElement {
     this.setTargetSelectedId(target);
     this.clearTargetGroupingAttributes(target);
     if (topLayer !== originLayer) {
-      topLayer.appendChild(target);
+      this.moveTargetToLayer(target, topLayer);
     }
   }
 
@@ -158,12 +158,12 @@ export class ObcPoiLayerStack extends LitElement {
       const record = this.selectionMap.get(other);
       if (record) {
         this.clearTargetGroupingAttributes(other);
-        record.originLayer.appendChild(other);
+        this.moveTargetToLayer(other, record.originLayer);
         this.selectionMap.delete(other);
         this.clearTargetSelectedId(other);
       } else {
         this.clearTargetGroupingAttributes(other);
-        secondTop.appendChild(other);
+        this.moveTargetToLayer(other, secondTop);
       }
     });
   }
@@ -215,6 +215,45 @@ export class ObcPoiLayerStack extends LitElement {
     this.mutationObserver.observe(this, {childList: true, subtree: true});
   }
 
+  private moveTargetToLayer(target: HTMLElement, nextLayer: HTMLElement) {
+    const currentParent = target.parentElement;
+    if (!currentParent || currentParent === nextLayer) return;
+    const reduceMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    const firstRect = target.getBoundingClientRect();
+    nextLayer.appendChild(target);
+    if (reduceMotion) return;
+    const lastRect = target.getBoundingClientRect();
+    const dx = firstRect.left - lastRect.left;
+    const dy = firstRect.top - lastRect.top;
+    if (!Number.isFinite(dx) || !Number.isFinite(dy)) return;
+    if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
+    const supportsTranslate = 'translate' in document.createElement('div').style;
+    const baseTransform = getComputedStyle(target).transform;
+    target.style.willChange = 'transform';
+    const animation = supportsTranslate
+      ? target.animate(
+          [{translate: `${dx}px ${dy}px`}, {translate: '0px 0px'}],
+          {duration: 240, easing: 'cubic-bezier(0.2, 0, 0, 1)'}
+        )
+      : target.animate(
+          [
+            {
+              transform:
+                baseTransform === 'none'
+                  ? `translate(${dx}px, ${dy}px)`
+                  : `translate(${dx}px, ${dy}px) ${baseTransform}`,
+            },
+            {transform: baseTransform === 'none' ? 'none' : baseTransform},
+          ],
+          {duration: 240, easing: 'cubic-bezier(0.2, 0, 0, 1)'}
+        );
+    animation.addEventListener('finish', () => {
+      target.style.willChange = '';
+    });
+  }
+
   private schedulePlacement() {
     if (this.placementRaf) return;
     this.placementRaf = requestAnimationFrame(() => {
@@ -240,19 +279,19 @@ export class ObcPoiLayerStack extends LitElement {
       this.seenTargets.add(target);
       if (this.selectionMap.has(target)) {
         if (target.closest('obc-poi-layer') !== top) {
-          top.appendChild(target);
+          this.moveTargetToLayer(target, top);
         }
         return;
       }
       const type = (target as HTMLElement & {type?: string}).type ?? '';
       if (selectedType && middle && type === selectedType) {
         if (target.closest('obc-poi-layer') !== middle) {
-          middle.appendChild(target);
+          this.moveTargetToLayer(target, middle);
         }
         return;
       }
       if (target.closest('obc-poi-layer') !== bottom) {
-        bottom.appendChild(target);
+        this.moveTargetToLayer(target, bottom);
       }
     });
   }
