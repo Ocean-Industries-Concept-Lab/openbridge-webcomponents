@@ -19,9 +19,11 @@ export class ObcPoiLayer extends LitElement {
   private groupingRaf = 0;
   private groupRemovalTimers = new WeakMap<HTMLElement, number>();
   private exitLockTimers = new Map<HTMLElement, number>();
+  private layerMutationObserver?: MutationObserver;
 
   override firstUpdated() {
     this.setupResizeObserver();
+    this.setupLayerMutationObserver();
     this.updateTargetObservers();
     this.scheduleGrouping();
     const slot = this.shadowRoot?.querySelector('slot');
@@ -34,6 +36,7 @@ export class ObcPoiLayer extends LitElement {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.resizeObserver?.disconnect();
+    this.layerMutationObserver?.disconnect();
     this.targetObservers.forEach((observer) => observer.disconnect());
     this.targetObservers.clear();
     if (this.groupingRaf) {
@@ -96,6 +99,30 @@ export class ObcPoiLayer extends LitElement {
       });
       this.targetObservers.set(target, observer);
     });
+  }
+
+  private setupLayerMutationObserver() {
+    this.layerMutationObserver?.disconnect();
+    this.layerMutationObserver = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type !== 'childList') continue;
+        const nodes = [...mutation.addedNodes, ...mutation.removedNodes];
+        for (const node of nodes) {
+          if (!(node instanceof HTMLElement)) continue;
+          if (
+            node.tagName.toLowerCase() === 'obc-poi-target' ||
+            node.tagName.toLowerCase() === 'obc-poi-target-button-group' ||
+            node.querySelector?.('obc-poi-target') ||
+            node.querySelector?.('obc-poi-target-button-group')
+          ) {
+            this.updateTargetObservers();
+            this.scheduleGrouping();
+            return;
+          }
+        }
+      }
+    });
+    this.layerMutationObserver.observe(this, {childList: true, subtree: true});
   }
 
   private scheduleGrouping() {
@@ -161,7 +188,7 @@ export class ObcPoiLayer extends LitElement {
 
     const rects = new Map<HTMLElement, DOMRect>();
     targets.forEach((target) => {
-      rects.set(target, this.getTargetRect(target));
+      rects.set(target, this.getTargetRectForGrouping(target, layerRect));
     });
 
     const adjacency = new Map<HTMLElement, Set<HTMLElement>>();
@@ -287,14 +314,19 @@ export class ObcPoiLayer extends LitElement {
         (child): child is HTMLElement =>
           child.tagName.toLowerCase() === 'obc-poi-target'
       );
-      if (expandedChildren.length >= 2) {
-        this.isGrouping = false;
-        return;
-      }
       const expandedAny = expandedAutoGroup as unknown as {
         expand?: boolean;
         setExpandedChildren?: (expand: boolean) => void;
       };
+      const stillClustered = clusters.some(
+        (cluster) =>
+          cluster.length === expandedChildren.length &&
+          cluster.every((target) => expandedChildren.includes(target))
+      );
+      if (expandedChildren.length >= 2 && stillClustered) {
+        this.isGrouping = false;
+        return;
+      }
       expandedAny.setExpandedChildren?.(false);
       expandedAny.expand = false;
     }
@@ -532,6 +564,21 @@ export class ObcPoiLayer extends LitElement {
       button?.getBoundingClientRect() ??
       target.getBoundingClientRect()
     );
+  }
+
+  private getTargetRectForGrouping(
+    target: HTMLElement,
+    layerRect: DOMRect
+  ): DOMRect {
+    const rect = this.getTargetRect(target);
+    const leftRaw = target.style.left;
+    const leftValue = Number.parseFloat(leftRaw);
+    if (Number.isNaN(leftValue)) return rect;
+    const width = rect.width || 0;
+    const height = rect.height || 0;
+    const left = layerRect.left + leftValue - width / 2;
+    const top = layerRect.bottom - height;
+    return new DOMRect(left, top, width, height);
   }
 
   private getTargetHeight(
