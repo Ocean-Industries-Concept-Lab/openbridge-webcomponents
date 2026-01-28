@@ -78,6 +78,7 @@ export class ObcPoiLayerStack extends LitElement {
 
     const existing = this.selectionMap.get(target);
     if (existing) {
+      this.resetTargetGroupingStateIfGrouped(target);
       existing.originLayer.appendChild(target);
       this.selectionMap.delete(target);
       this.clearTargetSelectedId(target);
@@ -87,6 +88,7 @@ export class ObcPoiLayerStack extends LitElement {
     if (this.selectionMode === PoiLayerSelectionMode.Single) {
       this.clearOtherTopSelections(target);
       this.selectionMap.forEach((record, other) => {
+        this.resetTargetGroupingStateIfGrouped(other);
         record.originLayer.appendChild(other);
         this.selectionMap.delete(other);
         this.clearTargetSelectedId(other);
@@ -98,6 +100,7 @@ export class ObcPoiLayerStack extends LitElement {
       originIndex: originLayer.layerIndex,
     });
     this.setTargetSelectedId(target);
+    this.resetTargetGroupingStateIfGrouped(target);
     if (topLayer !== originLayer) {
       topLayer.appendChild(target);
     }
@@ -154,10 +157,12 @@ export class ObcPoiLayerStack extends LitElement {
       if (other === target) return;
       const record = this.selectionMap.get(other);
       if (record) {
+        this.resetTargetGroupingStateIfGrouped(other);
         record.originLayer.appendChild(other);
         this.selectionMap.delete(other);
         this.clearTargetSelectedId(other);
       } else {
+        this.resetTargetGroupingStateIfGrouped(other);
         secondTop.appendChild(other);
       }
     });
@@ -179,6 +184,46 @@ export class ObcPoiLayerStack extends LitElement {
   private clearTargetSelectedId(target: HTMLElement) {
     const anyTarget = target as HTMLElement & {selectedId?: string | null};
     anyTarget.selectedId = null;
+  }
+
+  private resetTargetGroupingStateIfGrouped(target: HTMLElement) {
+    const parentTag = target.parentElement?.tagName.toLowerCase();
+    const hasGroupAttrs =
+      target.hasAttribute('data-grouped') ||
+      target.hasAttribute('data-pregrouped') ||
+      target.hasAttribute('data-behind') ||
+      target.hasAttribute('data-front') ||
+      target.hasAttribute('data-front-exit') ||
+      target.hasAttribute('data-exiting') ||
+      target.hasAttribute('data-exit-lock');
+    const hasInlinePosition =
+      target.style.position ||
+      target.style.transform ||
+      target.style.width ||
+      target.style.minWidth ||
+      target.style.height;
+    if (parentTag !== 'obc-poi-target-button-group' && !hasGroupAttrs && !hasInlinePosition) {
+      return;
+    }
+    target.removeAttribute('data-grouped');
+    target.removeAttribute('data-pregrouped');
+    target.removeAttribute('data-behind');
+    target.removeAttribute('data-front');
+    target.removeAttribute('data-front-exit');
+    target.removeAttribute('data-exiting');
+    target.removeAttribute('data-exit-lock');
+    const anyTarget = target as HTMLElement & {overlap?: boolean; offset?: number};
+    if (typeof anyTarget.overlap === 'boolean') {
+      anyTarget.overlap = false;
+    }
+    if (typeof anyTarget.offset === 'number') {
+      anyTarget.offset = 0;
+    }
+    target.style.removeProperty('position');
+    target.style.removeProperty('width');
+    target.style.removeProperty('min-width');
+    target.style.removeProperty('height');
+    target.style.removeProperty('transform');
   }
 
   private setupMutationObserver() {

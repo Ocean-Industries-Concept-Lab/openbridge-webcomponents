@@ -283,8 +283,20 @@ export class ObcPoiLayer extends LitElement {
       (group) => (group as unknown as {expand?: boolean}).expand === true
     );
     if (expandedAutoGroup) {
-      this.isGrouping = false;
-      return;
+      const expandedChildren = Array.from(expandedAutoGroup.children).filter(
+        (child): child is HTMLElement =>
+          child.tagName.toLowerCase() === 'obc-poi-target'
+      );
+      if (expandedChildren.length >= 2) {
+        this.isGrouping = false;
+        return;
+      }
+      const expandedAny = expandedAutoGroup as unknown as {
+        expand?: boolean;
+        setExpandedChildren?: (expand: boolean) => void;
+      };
+      expandedAny.setExpandedChildren?.(false);
+      expandedAny.expand = false;
     }
 
     const remainingClusters = [...clusters];
