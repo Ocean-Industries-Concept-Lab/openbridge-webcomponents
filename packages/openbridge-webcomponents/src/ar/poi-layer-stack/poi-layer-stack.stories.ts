@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
-import {ObcPoiLayerStack} from './poi-layer-stack.js';
+import {ObcPoiLayerStack, PoiLayerSelectionMode} from './poi-layer-stack.js';
 import './poi-layer-stack.js';
 import '../poi-layer/poi-layer.js';
 import '../poi-target/poi-target.js';
@@ -9,6 +9,7 @@ type PoiLayerStackArgs = {
   label: string;
   debug: boolean;
   layerIndex: number;
+  selectionMode: PoiLayerSelectionMode;
 };
 
 const meta: Meta<PoiLayerStackArgs> = {
@@ -19,6 +20,13 @@ const meta: Meta<PoiLayerStackArgs> = {
     label: 'Layer A',
     debug: true,
     layerIndex: 0,
+    selectionMode: PoiLayerSelectionMode.None,
+  },
+  argTypes: {
+    selectionMode: {
+      control: {type: 'select'},
+      options: Object.values(PoiLayerSelectionMode),
+    },
   },
 } satisfies Meta<PoiLayerStackArgs>;
 
@@ -40,7 +48,7 @@ export const TwoLayers: Story = {
           width: 100%;
         }
       </style>
-      <obc-poi-layer-stack class="stack" selection-mode="single">
+      <obc-poi-layer-stack class="stack" selection-mode=${args.selectionMode}>
         <obc-poi-layer
           .label=${args.label}
           .layerIndex=${args.layerIndex}
@@ -79,7 +87,7 @@ export const ThreeLayers: Story = {
           width: 100%;
         }
       </style>
-      <obc-poi-layer-stack class="stack" selection-mode="multi">
+      <obc-poi-layer-stack class="stack" selection-mode=${args.selectionMode}>
         <obc-poi-layer
           .label=${args.label}
           .layerIndex=${args.layerIndex}
@@ -113,4 +121,25 @@ export const ThreeLayers: Story = {
       </obc-poi-layer-stack>
     `;
   },
+};
+
+export const SelectionNone: Story = {
+  args: {
+    selectionMode: PoiLayerSelectionMode.None,
+  },
+  render: TwoLayers.render,
+};
+
+export const SelectionSingle: Story = {
+  args: {
+    selectionMode: PoiLayerSelectionMode.Single,
+  },
+  render: TwoLayers.render,
+};
+
+export const SelectionMulti: Story = {
+  args: {
+    selectionMode: PoiLayerSelectionMode.Multi,
+  },
+  render: ThreeLayers.render,
 };
