@@ -23,7 +23,8 @@ export class ObcPoiTargetButton extends LitElement {
   @property({type: Boolean}) selected = false;
   @property({type: String}) selectedId: string | null = null;
   @property({type: String}) alertType = ObcArAlertType.None;
-  @property({type: Boolean}) overlap = false;
+  @property({type: String, reflect: true, attribute: 'data-visual-state'})
+  visualState: 'normal' | 'overlap' = 'normal';
   @property({type: String}) type = ObcPoiTargetButtonType.Button;
   @property({type: Boolean}) inExpandedGroup = false;
   @property({type: Array, attribute: false}) values: ObcPoiTargetButtonValue[] =
@@ -42,7 +43,6 @@ export class ObcPoiTargetButton extends LitElement {
       <button
         class=${classMap({
           wrapper: true,
-          overlap: this.overlap,
           selected: this.selected,
           [`alert-${this.alertType}`]: true,
           [`type-${this.type}`]: true,
@@ -82,7 +82,6 @@ export class ObcPoiTargetButton extends LitElement {
         class=${classMap({
           wrapper: true,
           'has-values': true,
-          overlap: this.overlap,
           selected: this.selected,
           'has-id-label': this.selectedId !== null,
           [`alert-${this.alertType}`]: true,

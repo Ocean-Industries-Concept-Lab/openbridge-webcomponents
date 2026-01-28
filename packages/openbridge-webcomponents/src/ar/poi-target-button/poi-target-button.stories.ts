@@ -21,7 +21,7 @@ const meta: Meta<typeof ObcPoiTargetButton> = {
     relativeDirection: 0,
     alertType: ObcArAlertType.None,
     selectedId: null,
-    overlap: false,
+    visualState: 'normal',
     values: [],
   },
   argTypes: {
@@ -38,8 +38,9 @@ const meta: Meta<typeof ObcPoiTargetButton> = {
     selectedId: {
       control: {type: 'text'},
     },
-    overlap: {
-      control: {type: 'boolean'},
+    visualState: {
+      control: {type: 'select'},
+      options: ['normal', 'overlap'],
     },
     type: {
       control: {type: 'select'},
@@ -54,7 +55,7 @@ const meta: Meta<typeof ObcPoiTargetButton> = {
         .relativeDirection=${args.relativeDirection}
         .alertType=${args.alertType}
         .selectedId=${args.selectedId}
-        .overlap=${args.overlap}
+        .visualState=${args.visualState}
         .type=${args.type}
         .hasRelation=${args.hasRelation}
       >
@@ -131,27 +132,27 @@ export const Alarm: Story = {
 
 export const Overlap: Story = {
   args: {
-    overlap: true,
+    visualState: 'overlap',
   },
 };
 
 export const OverlapEnhanced: Story = {
   args: {
-    overlap: true,
+    visualState: 'overlap',
     type: ObcPoiTargetButtonType.Enhanced,
   },
 };
 
 export const OverlapWithCaution: Story = {
   args: {
-    overlap: true,
+    visualState: 'overlap',
     alertType: ObcArAlertType.Caution,
   },
 };
 
 export const OverlapWithCautionEnhanced: Story = {
   args: {
-    overlap: true,
+    visualState: 'overlap',
     alertType: ObcArAlertType.Caution,
     type: ObcPoiTargetButtonType.Enhanced,
   },
@@ -159,14 +160,14 @@ export const OverlapWithCautionEnhanced: Story = {
 
 export const OverlapWithWarning: Story = {
   args: {
-    overlap: true,
+    visualState: 'overlap',
     alertType: ObcArAlertType.Warning,
   },
 };
 
 export const OverlapWithAlarm: Story = {
   args: {
-    overlap: true,
+    visualState: 'overlap',
     alertType: ObcArAlertType.Alarm,
   },
 };
@@ -197,7 +198,7 @@ export const WithValuesAndRelation: Story = {
         .relativeDirection=${args.relativeDirection}
         .alertType=${args.alertType}
         .selectedId=${args.selectedId}
-        .overlap=${args.overlap}
+        .visualState=${args.visualState}
         .type=${args.type}
         .hasRelation=${args.hasRelation}
       >
@@ -228,7 +229,7 @@ export const WithValuesOverlap: Story = {
       {value: '10', label: 'Lab', unit: 'Unit'},
       {value: '20', label: 'Lab 2', unit: 'Unit 2'},
     ],
-    overlap: true,
+    visualState: 'overlap',
   },
 };
 

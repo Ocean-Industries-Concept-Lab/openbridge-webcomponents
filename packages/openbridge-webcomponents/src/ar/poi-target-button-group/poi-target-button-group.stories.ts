@@ -9,8 +9,8 @@ import '../poi-target/poi-target.js';
 import {ObcPoiTarget} from '../poi-target/poi-target.js';
 
 function onExpand(event: CustomEvent<{expand: boolean}>) {
-  (document.querySelector('#outside') as ObcPoiTarget).overlap =
-    event.detail.expand;
+  (document.querySelector('#outside') as ObcPoiTarget).visualState =
+    event.detail.expand ? 'overlap' : 'normal';
 }
 
 const meta: Meta<ObcPoiTargetButtonGroup> = {
@@ -51,12 +51,15 @@ const meta: Meta<ObcPoiTargetButtonGroup> = {
       positionVertical="calc(50%)"
       @expand=${onExpand}
     >
-      <obc-poi-target id="b3" overlap></obc-poi-target>
+      <obc-poi-target id="b3" data-visual-state="overlap"></obc-poi-target>
       <obc-poi-target id="b1" .relativeDirection=${65}> </obc-poi-target
-      ><obc-poi-target id="b2" overlap></obc-poi-target>
+      ><obc-poi-target id="b2" data-visual-state="overlap"></obc-poi-target>
     </obc-poi-target-button-group>
 
-    <obc-poi-target id="outside" .overlap=${args.expand}>
+    <obc-poi-target
+      id="outside"
+      data-visual-state=${args.expand ? 'overlap' : 'normal'}
+    >
       <obi-ais-target-activated-iec></obi-ais-target-activated-iec>
     </obc-poi-target>
   `,
@@ -106,13 +109,25 @@ export const GroupedWithNumbers: Story = {
       positionVertical="calc(50%)"
       @expand=${onExpand}
     >
-      <obc-poi-target id="b3" overlap selectedId="3"></obc-poi-target>
+      <obc-poi-target
+        id="b3"
+        data-visual-state="overlap"
+        selectedId="3"
+      ></obc-poi-target>
       <obc-poi-target id="b1" .relativeDirection=${65} selectedId="1">
       </obc-poi-target
-      ><obc-poi-target id="b2" overlap selectedId="2"></obc-poi-target>
+      ><obc-poi-target
+        id="b2"
+        data-visual-state="overlap"
+        selectedId="2"
+      ></obc-poi-target>
     </obc-poi-target-button-group>
 
-    <obc-poi-target id="outside" .overlap=${args.expand} selectedId="4">
+    <obc-poi-target
+      id="outside"
+      data-visual-state=${args.expand ? 'overlap' : 'normal'}
+      selectedId="4"
+    >
       <obi-ais-target-activated-iec></obi-ais-target-activated-iec>
     </obc-poi-target>
   `,

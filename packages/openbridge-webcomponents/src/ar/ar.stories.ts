@@ -71,7 +71,7 @@ const meta: Meta = {
           ? html`
               <obc-poi-target
                 .relativeDirection=${20}
-                .overlap=${!args.selected}
+                data-visual-state=${!args.selected ? 'overlap' : 'normal'}
                 .height=${115}
                 id="sailboat2"
               ></obc-poi-target>
@@ -87,7 +87,7 @@ const meta: Meta = {
               <obc-poi-target-button-group positionvertical="298px">
                 <obc-poi-target
                   .relativeDirection=${200}
-                  .overlap=${!args.selected}
+                  data-visual-state=${!args.selected ? 'overlap' : 'normal'}
                   .height=${115}
                   id="sailboat2"
                 ></obc-poi-target>

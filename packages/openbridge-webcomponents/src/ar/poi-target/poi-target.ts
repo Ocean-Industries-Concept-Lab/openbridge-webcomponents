@@ -51,7 +51,8 @@ export class ObcPoiTarget extends LitElement {
   @property({type: Boolean}) selected = false;
   @property({type: String}) selectedId: string | null = null;
   @property({type: String}) alertType = ObcArAlertType.None;
-  @property({type: Boolean}) overlap = false;
+  @property({type: String, reflect: true, attribute: 'data-visual-state'})
+  visualState: 'normal' | 'overlap' = 'normal';
   @property({type: String}) type = ObcPoiTargetButtonType.Button;
   @property({type: String}) value: TargetValue = TargetValue.enabled;
   @property({type: String}) pointerType: Pointer = Pointer.Line;
@@ -107,7 +108,7 @@ export class ObcPoiTarget extends LitElement {
           .selected=${this.selected}
           .selectedId=${this.selectedId}
           .alertType=${this.alertType}
-          .overlap=${this.overlap}
+          data-visual-state=${this.visualState}
           .type=${this.type}
           .values=${this.values}
         >

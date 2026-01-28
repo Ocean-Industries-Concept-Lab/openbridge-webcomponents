@@ -274,10 +274,18 @@ export const OverlapWithGroup: Story = {
             class="group"
             positionVertical="calc(50%)"
           >
-            <obc-poi-target id="b3" overlap height="80"></obc-poi-target>
+            <obc-poi-target
+              id="b3"
+              data-visual-state="overlap"
+              height="80"
+            ></obc-poi-target>
             <obc-poi-target id="b1" height="140" .relativeDirection=${65}>
             </obc-poi-target>
-            <obc-poi-target id="b2" overlap height="60"></obc-poi-target>
+            <obc-poi-target
+              id="b2"
+              data-visual-state="overlap"
+              height="60"
+            ></obc-poi-target>
           </obc-poi-target-button-group>
         </obc-poi-layer>
       </div>
@@ -337,7 +345,7 @@ export const OverlapWithGroupNumbers: Story = {
           >
             <obc-poi-target
               id="b3"
-              overlap
+              data-visual-state="overlap"
               height="80"
               selectedId="3"
             ></obc-poi-target>
@@ -350,7 +358,7 @@ export const OverlapWithGroupNumbers: Story = {
             </obc-poi-target>
             <obc-poi-target
               id="b2"
-              overlap
+              data-visual-state="overlap"
               height="60"
               selectedId="2"
             ></obc-poi-target>

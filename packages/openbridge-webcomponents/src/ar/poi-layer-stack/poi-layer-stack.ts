@@ -276,9 +276,7 @@ export class ObcPoiLayerStack extends LitElement {
       | HTMLElement
       | undefined;
     const buttonShadow = button?.shadowRoot;
-    const wrapper = buttonShadow?.querySelector(
-      '.wrapper, .wrapper-overlap'
-    ) as HTMLElement | null;
+    const wrapper = buttonShadow?.querySelector('.wrapper') as HTMLElement | null;
     return (
       wrapper?.getBoundingClientRect() ??
       button?.getBoundingClientRect() ??

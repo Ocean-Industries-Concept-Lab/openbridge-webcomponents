@@ -198,9 +198,7 @@ export class ObcPoiLayer extends LitElement {
       | undefined;
     const buttonShadow = button?.shadowRoot;
     return (
-      (buttonShadow?.querySelector('.wrapper, .wrapper-overlap') as
-        | HTMLElement
-        | null) ?? null
+      (buttonShadow?.querySelector('.wrapper') as HTMLElement | null) ?? null
     );
   }
 
@@ -547,9 +545,14 @@ export class ObcPoiLayer extends LitElement {
           target.removeAttribute('data-behind');
         }
         const isOverlapState = target.hasAttribute('data-behind');
-        const anyTarget = target as HTMLElement & {overlap?: boolean};
-        if (typeof anyTarget.overlap === 'boolean') {
-          anyTarget.overlap = isOverlapState;
+        const anyTarget = target as HTMLElement & {visualState?: string};
+        if (typeof anyTarget.visualState === 'string') {
+          anyTarget.visualState = isOverlapState ? 'overlap' : 'normal';
+        } else {
+          target.setAttribute(
+            'data-visual-state',
+            isOverlapState ? 'overlap' : 'normal'
+          );
         }
         this.applyStandaloneVisualState(target, isOverlapState);
         this.resetTarget(target);
@@ -732,9 +735,7 @@ export class ObcPoiLayer extends LitElement {
       | HTMLElement
       | undefined;
     const buttonShadow = button?.shadowRoot;
-    const wrapper = buttonShadow?.querySelector(
-      '.wrapper, .wrapper-overlap'
-    ) as HTMLElement | null;
+    const wrapper = buttonShadow?.querySelector('.wrapper') as HTMLElement | null;
     return (
       wrapper?.getBoundingClientRect() ??
       button?.getBoundingClientRect() ??

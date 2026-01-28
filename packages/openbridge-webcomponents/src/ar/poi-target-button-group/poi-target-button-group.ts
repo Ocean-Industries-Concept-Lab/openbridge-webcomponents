@@ -160,8 +160,8 @@ export class ObcPoiTargetButtonGroup extends LitElement {
         child.style.height = 'unset';
       }
       if (child instanceof ObcPoiTarget) {
-        (child as ObcPoiTarget).overlap =
-          expand ? false : (child as ObcPoiTarget) !== frontChild;
+        (child as ObcPoiTarget).visualState =
+          !expand && (child as ObcPoiTarget) !== frontChild ? 'overlap' : 'normal';
         if (expand) {
           (child as ObcPoiTarget).style.transform = 'translate(50%, 100%)';
         } else {
@@ -242,6 +242,8 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     const front = this.getFrontChild();
     this._children.forEach((child) => {
       if (!(child instanceof ObcPoiTarget)) return;
+      child.visualState =
+        !this.expand && (!front || child !== front) ? 'overlap' : 'normal';
       if (front && child === front) {
         child.setAttribute('data-front', 'true');
       } else {
@@ -303,9 +305,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
       | HTMLElement
       | undefined;
     const buttonShadow = button?.shadowRoot;
-    const wrapper = buttonShadow?.querySelector(
-      '.wrapper, .wrapper-overlap'
-    ) as HTMLElement | null;
+    const wrapper = buttonShadow?.querySelector('.wrapper') as HTMLElement | null;
     return (
       wrapper?.getBoundingClientRect() ??
       button?.getBoundingClientRect() ??
