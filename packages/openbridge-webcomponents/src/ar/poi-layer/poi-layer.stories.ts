@@ -51,6 +51,57 @@ export const Primary: Story = {
   },
 };
 
+export const WithValuesTargets: Story = {
+  args: {
+    label: 'With Values',
+    layerIndex: 0,
+    debug: true,
+  },
+  render(args) {
+    const valuesA = [
+      {value: '10', label: 'Lab', unit: 'Unit'},
+      {value: '20', label: 'Lab 2', unit: 'Unit 2'},
+    ];
+    const valuesB = [
+      {value: '30', label: 'Lab', unit: 'Unit'},
+      {value: '40', label: 'Lab 2', unit: 'Unit 2'},
+    ];
+    const valuesC = [
+      {value: '50', label: 'Lab', unit: 'Unit'},
+      {value: '60', label: 'Lab 2', unit: 'Unit 2'},
+    ];
+    return html`
+      <style>
+        obc-poi-layer {
+          --obc-poi-layer-min-height: 48px;
+          width: 640px;
+        }
+      </style>
+      <obc-poi-layer
+        .label=${args.label}
+        .layerIndex=${args.layerIndex}
+        ?debug=${args.debug}
+      >
+        <obc-poi-target
+          style="left: 120px;"
+          height="140"
+          .values=${valuesA}
+        ></obc-poi-target>
+        <obc-poi-target
+          style="left: 320px;"
+          height="120"
+          .values=${valuesB}
+        ></obc-poi-target>
+        <obc-poi-target
+          style="left: 520px;"
+          height="160"
+          .values=${valuesC}
+        ></obc-poi-target>
+      </obc-poi-layer>
+    `;
+  },
+};
+
 export const AnimatedLayout: Story = {
   args: {
     label: 'Animated Layer',

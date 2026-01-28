@@ -13,35 +13,47 @@ export class ObcPoiLayer extends LitElement {
   @query('.wrapper') private wrapper?: HTMLElement;
 
   private resizeObserver?: ResizeObserver;
+  private targetResizeObserver?: ResizeObserver;
   private lastHeight = 0;
   private isGrouping = false;
   private targetObservers = new Map<HTMLElement, MutationObserver>();
+  private targetSizeElements = new Map<HTMLElement, HTMLElement>();
   private groupingRaf = 0;
+  private heightRaf = 0;
   private groupRemovalTimers = new WeakMap<HTMLElement, number>();
   private exitLockTimers = new Map<HTMLElement, number>();
   private layerMutationObserver?: MutationObserver;
 
   override firstUpdated() {
     this.setupResizeObserver();
+    this.setupTargetResizeObserver();
     this.setupLayerMutationObserver();
     this.updateTargetObservers();
     this.scheduleGrouping();
+    this.scheduleLayerHeightUpdate();
     const slot = this.shadowRoot?.querySelector('slot');
     slot?.addEventListener('slotchange', () => {
       this.updateTargetObservers();
       this.scheduleGrouping();
+      this.scheduleLayerHeightUpdate();
     });
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.resizeObserver?.disconnect();
+    this.targetResizeObserver?.disconnect();
     this.layerMutationObserver?.disconnect();
     this.targetObservers.forEach((observer) => observer.disconnect());
     this.targetObservers.clear();
+    this.targetSizeElements.clear();
     if (this.groupingRaf) {
       cancelAnimationFrame(this.groupingRaf);
       this.groupingRaf = 0;
+    }
+    if (this.heightRaf) {
+      cancelAnimationFrame(this.heightRaf);
+      this.heightRaf = 0;
     }
     this.exitLockTimers.forEach((timerId) => window.clearTimeout(timerId));
     this.exitLockTimers.clear();
@@ -58,6 +70,56 @@ export class ObcPoiLayer extends LitElement {
       this.resizeObserver.observe(this.wrapper);
       this.updateLayerHeight(this.wrapper.getBoundingClientRect().height);
     }
+  }
+
+  private setupTargetResizeObserver() {
+    if (typeof ResizeObserver === 'undefined') return;
+    if (this.targetResizeObserver) return;
+    this.targetResizeObserver = new ResizeObserver(() =>
+      this.scheduleLayerHeightUpdate()
+    );
+  }
+
+  private scheduleLayerHeightUpdate() {
+    if (this.heightRaf) return;
+    this.heightRaf = requestAnimationFrame(() => {
+      this.heightRaf = 0;
+      this.syncLayerHeight();
+    });
+  }
+
+  private syncLayerHeight() {
+    if (!this.isConnected) return;
+    const targets = Array.from(
+      this.querySelectorAll('obc-poi-target')
+    ) as HTMLElement[];
+    if (targets.length === 0) {
+      this.style.removeProperty('--obc-poi-layer-height');
+      const wrapperHeight = this.wrapper?.getBoundingClientRect().height ?? 0;
+      this.updateLayerHeight(wrapperHeight);
+      return;
+    }
+    const rects = new Map<HTMLElement, DOMRect>();
+    targets.forEach((target) => rects.set(target, this.getTargetRect(target)));
+    let maxHeight = 0;
+    rects.forEach((rect) => {
+      const height = rect?.height ?? 0;
+      if (Number.isFinite(height)) {
+        maxHeight = Math.max(maxHeight, height);
+      }
+    });
+    const minHeight = this.getLayerMinHeight();
+    const nextHeight = Math.max(maxHeight, minHeight);
+    if (nextHeight <= 0) return;
+    const roundedHeight = Math.round(nextHeight);
+    this.style.setProperty('--obc-poi-layer-height', `${roundedHeight}px`);
+    this.updateLayerHeight(roundedHeight);
+  }
+
+  private getLayerMinHeight(): number {
+    const minHeightRaw = getComputedStyle(this).minHeight;
+    const minHeight = Number.parseFloat(minHeightRaw);
+    return Number.isFinite(minHeight) ? minHeight : 0;
   }
 
   private updateLayerHeight(nextHeight: number) {
@@ -92,13 +154,54 @@ export class ObcPoiLayer extends LitElement {
 
     targets.forEach((target) => {
       if (this.targetObservers.has(target)) return;
-      const observer = new MutationObserver(() => this.scheduleGrouping());
+      const observer = new MutationObserver(() => {
+        this.scheduleGrouping();
+        this.scheduleLayerHeightUpdate();
+      });
       observer.observe(target, {
         attributes: true,
         attributeFilter: ['style', 'height'],
       });
       this.targetObservers.set(target, observer);
     });
+    this.updateTargetSizeObservers(targets, targetSet);
+  }
+
+  private updateTargetSizeObservers(
+    targets: HTMLElement[],
+    targetSet: Set<HTMLElement>
+  ) {
+    if (!this.targetResizeObserver) return;
+    this.targetSizeElements.forEach((element, target) => {
+      if (!targetSet.has(target) || !element.isConnected) {
+        this.targetResizeObserver?.unobserve(element);
+        this.targetSizeElements.delete(target);
+      }
+    });
+    targets.forEach((target) => {
+      const sizeElement = this.getTargetSizeElement(target);
+      if (!sizeElement) return;
+      const existing = this.targetSizeElements.get(target);
+      if (existing === sizeElement) return;
+      if (existing) {
+        this.targetResizeObserver?.unobserve(existing);
+      }
+      this.targetResizeObserver?.observe(sizeElement);
+      this.targetSizeElements.set(target, sizeElement);
+    });
+  }
+
+  private getTargetSizeElement(target: HTMLElement): HTMLElement | null {
+    const targetShadow = target.shadowRoot;
+    const button = targetShadow?.querySelector('obc-poi-target-button') as
+      | HTMLElement
+      | undefined;
+    const buttonShadow = button?.shadowRoot;
+    return (
+      (buttonShadow?.querySelector('.wrapper, .wrapper-overlap') as
+        | HTMLElement
+        | null) ?? null
+    );
   }
 
   private setupLayerMutationObserver() {
@@ -117,6 +220,7 @@ export class ObcPoiLayer extends LitElement {
           ) {
             this.updateTargetObservers();
             this.scheduleGrouping();
+            this.scheduleLayerHeightUpdate();
             return;
           }
         }
@@ -455,6 +559,7 @@ export class ObcPoiLayer extends LitElement {
       targets.forEach((target) => target.removeAttribute('data-front-exit'));
     });
 
+    this.scheduleLayerHeightUpdate();
     this.isGrouping = false;
   };
 
@@ -588,7 +693,7 @@ export class ObcPoiLayer extends LitElement {
     const heightAttr = target.getAttribute('height');
     const heightValue = Number.parseFloat(heightAttr ?? '');
     if (!Number.isNaN(heightValue)) return heightValue;
-    const rect = rects?.get(target) ?? target.getBoundingClientRect();
+    const rect = rects?.get(target) ?? this.getTargetRect(target);
     return rect.height;
   }
 
