@@ -5,14 +5,15 @@
 :host {
   height: 0;
   width: 0;
-}
-
-.wrapper,
-.wrapper-overlap {
-  transform: translate(-50%, -100%);
+  --obc-poi-overlap: 0;
+  --obc-poi-overlap-elements-opacity: 1;
+  --obc-poi-label-opacity: 1;
+  --obc-poi-label-visibility: visible;
+  --obc-poi-overlap-pointer-events: auto;
 }
 
 .wrapper {
+  transform: translate(-50%, -100%);
   @mixin style style=flat visibleWrapperClass=.state-layer;
   padding: 0;
   position: relative;
@@ -45,8 +46,8 @@
     }
 
     .visible-wrapper {
-      width: 52px;
-      height: 52px;
+      width: var(--poi-size, 52px);
+      height: var(--poi-size, 52px);
     }
 
     &.alert-none .state-layer {
@@ -74,8 +75,8 @@
   }
 
   & .visible-wrapper {
-    height: 38px;
-    width: 38px;
+    height: var(--poi-size, 38px);
+    width: var(--poi-size, 38px);
     border-radius: 100%;
     display: flex;
     align-items: center;
@@ -83,6 +84,49 @@
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
     background-color: rgba(255, 255, 255, 0.8);
     border: 1px solid var(--element-active-inverted-color);
+    transition: width 0.3s ease-out, height 0.3s ease-out, background-color 0.3s ease-out, border-color 0.3s ease-out;
+  }
+
+  /* Overlap state styles - applied via .overlap class */
+  &.overlap {
+    width: 48px;
+    height: 48px;
+    --poi-size: 28px;
+    --obc-poi-target-icon-opacity: 0;
+    --obc-poi-overlap-elements-opacity: 0;
+    --obc-poi-label-opacity: 0;
+    --obc-poi-label-visibility: hidden;
+    --obc-poi-overlap-pointer-events: none;
+
+    .visible-wrapper {
+      background-color: rgba(255, 255, 255, 0.5);
+      border-color: rgba(0, 0, 0, 0.3);
+    }
+
+    &.type-enhanced {
+      width: 64px;
+      height: 64px;
+      --poi-size: 36px;
+    }
+
+    .id-label {
+      height: 0;
+      min-height: 0;
+      padding: 0;
+      margin: 0;
+      border-width: 0;
+      overflow: hidden;
+    }
+  }
+
+  /* Transition for elements that fade */
+  & .alert-ring,
+  & .state-layer,
+  & .id-label,
+  & .selection-frame {
+    opacity: var(--obc-poi-overlap-elements-opacity, 1);
+    pointer-events: var(--obc-poi-overlap-pointer-events, auto);
+    transition: opacity 0.2s ease-out;
   }
 
   & .state-layer {
@@ -177,6 +221,8 @@
   .id-label {
     @mixin font-label-active;
     display: flex;
+    opacity: var(--obc-poi-label-opacity, 1);
+    visibility: var(--obc-poi-label-visibility, visible);
     align-items: center;
     justify-content: center;
     height: 16px;
@@ -187,54 +233,25 @@
     color: var(--element-active-color);
     border-radius: 100px;
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
+    transition: opacity 0.2s ease-out;
   }
 }
 
-.wrapper-overlap {
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  & .vissible-wrapper {
-    width: 28px;
-    height: 28px;
-    border-radius: 100%;
-    background-color: rgba(255, 255, 255, 0.5);
-    border: 1px solid rgba(0, 0, 0, 0.3);
-    box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
+/* Overlap alert color styles */
+.wrapper.overlap {
+  &.alert-caution .visible-wrapper {
+    background-color: var(--alert-caution-color);
+    border-color: var(--alert-caution-outline-color);
   }
 
-  &.type-enhanced {
-    width: 64px;
-    height: 64px;
-
-    & .vissible-wrapper {
-      width: 36px;
-      height: 36px;
-    }
+  &.alert-warning .visible-wrapper {
+    background-color: var(--alert-warning-color);
+    border-color: var(--alert-warning-outline-color);
   }
 
-  &.alert-caution {
-    .vissible-wrapper {
-      background-color: var(--alert-caution-color);
-      border-color: var(--alert-caution-outline-color);
-    }
-  }
-
-  &.alert-warning {
-    .vissible-wrapper {
-      background-color: var(--alert-warning-color);
-      border-color: var(--alert-warning-outline-color);
-    }
-  }
-
-  &.alert-alarm {
-    .vissible-wrapper {
-      background-color: var(--alert-alarm-color);
-      border-color: var(--alert-alarm-outline-color);
-    }
+  &.alert-alarm .visible-wrapper {
+    background-color: var(--alert-alarm-color);
+    border-color: var(--alert-alarm-outline-color);
   }
 }
 
@@ -319,6 +336,42 @@
       width: var(--maneuvering-components-poi-button-icon-size);
       height: var(--maneuvering-components-poi-button-icon-size);
       color: var(--element-neutral-color);
+    }
+  }
+}
+
+/* Overlap state for has-values variant - show only the small circle */
+.wrapper.has-values.overlap {
+  border: none;
+  background: transparent;
+  width: 48px;
+  height: 48px;
+
+  .data-wrapper,
+  .relation-wrapper,
+  .button-wrapper .selection-frame {
+    display: none;
+  }
+
+  .button-wrapper {
+    position: static;
+    width: auto;
+    min-height: auto;
+  }
+
+  .visible-wrapper {
+    width: var(--poi-size, 28px);
+    height: var(--poi-size, 28px);
+    box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
+  }
+
+  &.type-enhanced {
+    width: 64px;
+    height: 64px;
+
+    .visible-wrapper {
+      width: var(--poi-size, 36px);
+      height: var(--poi-size, 36px);
     }
   }
 }

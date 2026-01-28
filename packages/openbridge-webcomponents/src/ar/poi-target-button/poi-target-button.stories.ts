@@ -221,3 +221,87 @@ export const WithValuesAlarm: Story = {
     alertType: ObcArAlertType.Alarm,
   },
 };
+
+export const WithValuesOverlap: Story = {
+  args: {
+    values: [
+      {value: '10', label: 'Lab', unit: 'Unit'},
+      {value: '20', label: 'Lab 2', unit: 'Unit 2'},
+    ],
+    overlap: true,
+  },
+};
+
+/**
+ * This story demonstrates the CSS variable animation capability.
+ * Click the button to toggle size via --poi-size variable.
+ */
+export const AnimatedSizeToggle: Story = {
+  args: {},
+  render: () => {
+    return html`
+      <div style="padding: 50px;">
+        <obc-poi-target-button id="animated-btn">
+          <obi-placeholder></obi-placeholder>
+        </obc-poi-target-button>
+        <br /><br />
+        <button
+          @click=${() => {
+            const btn = document.querySelector('#animated-btn') as HTMLElement;
+            const currentSize =
+              getComputedStyle(btn).getPropertyValue('--poi-size');
+            if (currentSize && currentSize.trim() === '28px') {
+              btn.style.removeProperty('--poi-size');
+              btn.style.removeProperty('--obc-poi-target-icon-opacity');
+            } else {
+              btn.style.setProperty('--poi-size', '28px');
+              btn.style.setProperty('--obc-poi-target-icon-opacity', '0');
+            }
+          }}
+        >
+          Toggle Size (28px ↔ 38px)
+        </button>
+      </div>
+    `;
+  },
+};
+
+/**
+ * This story demonstrates enhanced type animation.
+ */
+export const AnimatedSizeToggleEnhanced: Story = {
+  args: {
+    type: ObcPoiTargetButtonType.Enhanced,
+  },
+  render: () => {
+    return html`
+      <div style="padding: 50px;">
+        <obc-poi-target-button
+          id="animated-btn-enhanced"
+          .type=${ObcPoiTargetButtonType.Enhanced}
+        >
+          <obi-placeholder></obi-placeholder>
+        </obc-poi-target-button>
+        <br /><br />
+        <button
+          @click=${() => {
+            const btn = document.querySelector(
+              '#animated-btn-enhanced'
+            ) as HTMLElement;
+            const currentSize =
+              getComputedStyle(btn).getPropertyValue('--poi-size');
+            if (currentSize && currentSize.trim() === '36px') {
+              btn.style.removeProperty('--poi-size');
+              btn.style.removeProperty('--obc-poi-target-icon-opacity');
+            } else {
+              btn.style.setProperty('--poi-size', '36px');
+              btn.style.setProperty('--obc-poi-target-icon-opacity', '0');
+            }
+          }}
+        >
+          Toggle Size (36px ↔ 52px)
+        </button>
+      </div>
+    `;
+  },
+};

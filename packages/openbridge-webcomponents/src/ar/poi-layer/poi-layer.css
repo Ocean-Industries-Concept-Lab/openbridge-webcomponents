@@ -1,6 +1,6 @@
 :host {
   --obc-poi-layer-height: 0px;
-  --obc-poi-layer-auto-group-offset-y: -48px;
+  --obc-poi-layer-auto-group-offset-y: 0px;
   display: block;
   position: relative;
   width: 100%;
@@ -56,25 +56,23 @@
   opacity: 1;
 }
 
-::slotted(obc-poi-target[data-pregrouped]) {
-  opacity: 0.4;
-}
+/* Removed: data-pregrouped pre-animation no longer needed with unified DOM transitions */
 
 ::slotted(obc-poi-target[data-behind]) {
   opacity: 0.4;
-  --obc-poi-layer-target-scale: 0.7;
+  --poi-size: 28px;
   --obc-poi-target-icon-opacity: 0;
 }
 
 ::slotted(obc-poi-target[data-exiting]) {
   opacity: 0.4;
-  --obc-poi-layer-target-scale: 0.7;
+  --poi-size: 28px;
   --obc-poi-target-icon-opacity: 0;
 }
 
 ::slotted(obc-poi-target[data-front]) {
   opacity: 1;
-  --obc-poi-layer-target-scale: 1;
+  --poi-size: 38px;
   --obc-poi-target-icon-opacity: 1;
 }
 

@@ -30,20 +30,22 @@ export class ObcPoiLine extends LitElement {
     const translateX = -3 + (this.offset < 0 ? this.offset : 0);
 
     return html`
-      <div
-        class="container"
-        style="height: ${totalHeight}px; width: ${style.width}px; transform: translateX(${translateX}px);"
-      >
-        ${graphicLine({style, lineHeight, totalHeight, offset: this.offset})}
-        ${renderPointerDot({
-          lineStyle: this.poiStyle,
-          centerX: centerX + (this.offset > 0 ? this.offset : 0),
-          centerY: lineHeight + centerYOffset,
-          width: style.width + (this.offset > 0 ? this.offset : 0),
-          vbHeight: totalHeight,
-          lineColor: style.lineColor,
-          outlineColor: style.outlineColor,
-        })}
+      <div class="offset-wrapper">
+        <div
+          class="container"
+          style="height: ${totalHeight}px; width: ${style.width}px; transform: translateX(${translateX}px);"
+        >
+          ${graphicLine({style, lineHeight, totalHeight, offset: this.offset})}
+          ${renderPointerDot({
+            lineStyle: this.poiStyle,
+            centerX: centerX + (this.offset > 0 ? this.offset : 0),
+            centerY: lineHeight + centerYOffset,
+            width: style.width + (this.offset > 0 ? this.offset : 0),
+            vbHeight: totalHeight,
+            lineColor: style.lineColor,
+            outlineColor: style.outlineColor,
+          })}
+        </div>
       </div>
     `;
   }

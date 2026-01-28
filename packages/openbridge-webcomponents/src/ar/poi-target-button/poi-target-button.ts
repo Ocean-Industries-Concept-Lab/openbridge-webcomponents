@@ -39,122 +39,95 @@ export class ObcPoiTargetButton extends LitElement {
 
   renderButton() {
     return html`
-      ${this.overlap
-        ? html`<div
-            class=${classMap({
-              'wrapper-overlap': true,
-              [`alert-${this.alertType}`]: true,
-              [`type-${this.type}`]: true,
-            })}
-          >
-            <div class="vissible-wrapper"></div>
-          </div>`
-        : html`
-            <button
-              class=${classMap({
-                wrapper: true,
-                selected: this.selected,
-                [`alert-${this.alertType}`]: true,
-                [`type-${this.type}`]: true,
-                expanded: this.inExpandedGroup,
-              })}
+      <button
+        class=${classMap({
+          wrapper: true,
+          overlap: this.overlap,
+          selected: this.selected,
+          [`alert-${this.alertType}`]: true,
+          [`type-${this.type}`]: true,
+          expanded: this.inExpandedGroup,
+        })}
+      >
+        ${this.selectedId
+          ? html`<div class="id-label">
+              ${this.selectedId}
+              <slot
+                name="id-label"
+                part="id-label"
+                class="id-label-content"
+              ></slot>
+            </div>`
+          : nothing}
+        <div class="button-wrapper">
+          ${selectionFrame(this.selected, this.alertType, this.type)}
+          <div class="visible-wrapper">
+            <div
+              class="icon"
+              style="transform: rotate(${this.relativeDirection}deg);"
             >
-              ${this.selectedId
-                ? html`<div class="id-label">
-                    ${this.selectedId}
-                    <slot
-                      name="id-label"
-                      part="id-label"
-                      class="id-label-content"
-                    ></slot>
-                  </div>`
-                : nothing}
-              <div class="button-wrapper">
-                ${selectionFrame(this.selected, this.alertType, this.type)}
-                <div class="visible-wrapper">
-                  <div
-                    class="icon"
-                    style="transform: rotate(${this.relativeDirection}deg);"
-                  >
-                    <slot></slot>
-                  </div>
-                  <div class="alert-ring"></div>
-                  <div class="state-layer"></div>
-                </div>
-              </div>
-            </button>
-          `}
+              <slot></slot>
+            </div>
+            <div class="alert-ring"></div>
+            <div class="state-layer"></div>
+          </div>
+        </div>
+      </button>
     `;
   }
 
   renderWithValues() {
     return html`
-      ${this.overlap
-        ? html`<div
-            class=${classMap({
-              'has-values': true,
-              'wrapper-overlap': true,
-              [`alert-${this.alertType}`]: true,
-              [`type-${this.type}`]: true,
-            })}
-          >
-            <div class="vissible-wrapper"></div>
-          </div>`
-        : html`
-            <button
-              class=${classMap({
-                wrapper: true,
-                'has-values': true,
-                selected: this.selected,
-                'has-id-label': this.selectedId !== null,
-                [`alert-${this.alertType}`]: true,
-                [`type-${this.type}`]: true,
-                expanded: this.inExpandedGroup,
-              })}
+      <button
+        class=${classMap({
+          wrapper: true,
+          'has-values': true,
+          overlap: this.overlap,
+          selected: this.selected,
+          'has-id-label': this.selectedId !== null,
+          [`alert-${this.alertType}`]: true,
+          [`type-${this.type}`]: true,
+          expanded: this.inExpandedGroup,
+        })}
+      >
+        ${this.selectedId
+          ? html`<div class="id-label">
+              ${this.selectedId}
+              <slot
+                name="id-label"
+                part="id-label"
+                class="id-label-content"
+              ></slot>
+            </div>`
+          : nothing}
+        <div class="data-wrapper">
+          ${this.values.map(
+            (value) =>
+              html`<div class="data">
+                <div class="value">${value.value}</div>
+                <div class="label">${value.label}</div>
+                <div class="unit">${value.unit}</div>
+              </div>`
+          )}
+        </div>
+        <div class="button-wrapper">
+          <div class="visible-wrapper">
+            <div
+              class="icon"
+              style="transform: rotate(${this.relativeDirection}deg);"
             >
-              ${this.selectedId
-                ? html`<div class="id-label">
-                    ${this.selectedId}
-                    <slot
-                      name="id-label"
-                      part="id-label"
-                      class="id-label-content"
-                    ></slot>
-                  </div>`
-                : nothing}
-              <div class="data-wrapper">
-                ${this.values.map(
-                  (value) =>
-                    html`<div class="data">
-                      <div class="value">${value.value}</div>
-                      <div class="label">${value.label}</div>
-                      <div class="unit">${value.unit}</div>
-                    </div>`
-                )}
-              </div>
-              <div class="button-wrapper">
-                <div class="visible-wrapper">
-                  <div
-                    class="icon"
-                    style="transform: rotate(${this.relativeDirection}deg);"
-                  >
-                    <slot></slot>
-                  </div>
-                </div>
-              </div>
-              ${this.hasRelation
-                ? html`<div class="relation-wrapper" part="relation-wrapper">
-                    <slot
-                      name="relation"
-                      class="relation"
-                      part="relation"
-                    ></slot>
-                  </div>`
-                : nothing}
-              <div class="alert-ring"></div>
-              <div class="state-layer"></div>
-            </button>
-          `}
+              <slot></slot>
+            </div>
+          </div>
+        </div>
+        ${this.hasRelation
+          ? html`<div class="relation-wrapper" part="relation-wrapper">
+              <slot name="relation" class="relation" part="relation"></slot>
+            </div>`
+          : nothing}
+        <div class="alert-ring"></div>
+        <div class="state-layer"></div>
+      </button>
     `;
   }
 

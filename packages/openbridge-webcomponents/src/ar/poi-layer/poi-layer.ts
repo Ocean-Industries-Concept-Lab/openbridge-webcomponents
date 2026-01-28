@@ -273,14 +273,13 @@ export class ObcPoiLayer extends LitElement {
     const behindRaw = getComputedStyle(this).getPropertyValue(
       '--obc-poi-layer-overlap-behind'
     );
-    const enterThreshold = Number.parseFloat(enterRaw) || 20;
+    const enterThreshold = Number.parseFloat(enterRaw) || 0;
     const exitThreshold =
-      Number.parseFloat(exitRaw) || Math.max(enterThreshold + 12, 32);
+      Number.parseFloat(exitRaw) || Math.max(enterThreshold + 8, 8);
     const preThreshold =
-      Number.parseFloat(preRaw) || Math.max(enterThreshold + 24, 24);
+      Number.parseFloat(preRaw) || enterThreshold;
     const behindThreshold =
-      Number.parseFloat(behindRaw) ||
-      Math.max(preThreshold, enterThreshold + 32);
+      Number.parseFloat(behindRaw) || enterThreshold;
 
     const currentGroupByTarget = new Map<HTMLElement, HTMLElement>();
     targets.forEach((target) => {
@@ -547,9 +546,16 @@ export class ObcPoiLayer extends LitElement {
           target.removeAttribute('data-pregrouped');
           target.removeAttribute('data-behind');
         }
+        const isOverlapState = target.hasAttribute('data-behind');
+        const anyTarget = target as HTMLElement & {overlap?: boolean};
+        if (typeof anyTarget.overlap === 'boolean') {
+          anyTarget.overlap = isOverlapState;
+        }
+        this.applyStandaloneVisualState(target, isOverlapState);
         this.resetTarget(target);
       } else {
         target.removeAttribute('data-behind');
+        this.clearStandaloneVisualState(target);
       }
     });
 
@@ -562,6 +568,47 @@ export class ObcPoiLayer extends LitElement {
     this.scheduleLayerHeightUpdate();
     this.isGrouping = false;
   };
+
+  private getTargetType(target: HTMLElement): string {
+    const typedTarget = target as HTMLElement & {type?: string};
+    return typedTarget.type ?? target.getAttribute('type') ?? 'button';
+  }
+
+  private applyStandaloneVisualState(target: HTMLElement, overlap: boolean) {
+    const type = this.getTargetType(target);
+    const isEnhanced = type === 'enhanced';
+    const size = overlap ? (isEnhanced ? 36 : 28) : isEnhanced ? 52 : 38;
+    target.style.setProperty('--poi-size', `${size}px`);
+    target.style.setProperty('--obc-poi-target-icon-opacity', overlap ? '0' : '1');
+    target.style.setProperty('--obc-poi-overlap', overlap ? '1' : '0');
+    target.style.setProperty(
+      '--obc-poi-overlap-elements-opacity',
+      overlap ? '0' : '1'
+    );
+    target.style.setProperty(
+      '--obc-poi-label-opacity',
+      overlap ? '0' : '1'
+    );
+    target.style.setProperty(
+      '--obc-poi-label-visibility',
+      overlap ? 'hidden' : 'visible'
+    );
+    target.style.setProperty(
+      '--obc-poi-overlap-pointer-events',
+      overlap ? 'none' : 'auto'
+    );
+  }
+
+  private clearStandaloneVisualState(target: HTMLElement) {
+    target.style.removeProperty('--poi-size');
+    target.style.removeProperty('--obc-poi-target-icon-opacity');
+    target.style.removeProperty('--obc-poi-overlap');
+    target.style.removeProperty('--obc-poi-overlap-elements-opacity');
+    target.style.removeProperty('--obc-poi-label-opacity');
+    target.style.removeProperty('--obc-poi-label-visibility');
+    target.style.removeProperty('--obc-poi-overlap-pointer-events');
+  }
+
 
   private refreshGroupPositions(layerRect?: DOMRect, rects?: Map<HTMLElement, DOMRect>) {
     const groups = Array.from(
@@ -637,10 +684,7 @@ export class ObcPoiLayer extends LitElement {
   }
 
   private resetTarget(target: HTMLElement) {
-    const anyTarget = target as HTMLElement & {overlap?: boolean; offset?: number};
-    if (typeof anyTarget.overlap === 'boolean') {
-      anyTarget.overlap = false;
-    }
+    const anyTarget = target as HTMLElement & {offset?: number};
     if (typeof anyTarget.offset === 'number') {
       anyTarget.offset = 0;
     }
