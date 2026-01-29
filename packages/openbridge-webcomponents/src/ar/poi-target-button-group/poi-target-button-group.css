@@ -74,7 +74,7 @@
 :host-context(obc-poi-layer) ::slotted(obc-poi-target[data-behind]),
 :host-context(obc-poi-layer) ::slotted(obc-poi-target[data-exiting]) {
   opacity: 0.4;
-  --poi-size: 28px;
+  --poi-size: 32px;
   --obc-poi-target-icon-opacity: 0;
 }
 

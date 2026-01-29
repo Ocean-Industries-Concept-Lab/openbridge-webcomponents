@@ -594,7 +594,7 @@ export class ObcPoiLayer extends LitElement {
   private applyStandaloneVisualState(target: HTMLElement, overlap: boolean) {
     const type = this.getTargetType(target);
     const isEnhanced = type === 'enhanced';
-    const size = overlap ? (isEnhanced ? 36 : 28) : isEnhanced ? 52 : 38;
+    const size = overlap ? (isEnhanced ? 36 : 32) : isEnhanced ? 52 : 38;
     target.style.setProperty('--poi-size', `${size}px`);
     target.style.setProperty('--obc-poi-target-icon-opacity', overlap ? '0' : '1');
     target.style.setProperty('--obc-poi-overlap', overlap ? '1' : '0');

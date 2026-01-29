@@ -251,16 +251,16 @@ export const AnimatedSizeToggle: Story = {
             const btn = document.querySelector('#animated-btn') as HTMLElement;
             const currentSize =
               getComputedStyle(btn).getPropertyValue('--poi-size');
-            if (currentSize && currentSize.trim() === '28px') {
+            if (currentSize && currentSize.trim() === '32px') {
               btn.style.removeProperty('--poi-size');
               btn.style.removeProperty('--obc-poi-target-icon-opacity');
             } else {
-              btn.style.setProperty('--poi-size', '28px');
+              btn.style.setProperty('--poi-size', '32px');
               btn.style.setProperty('--obc-poi-target-icon-opacity', '0');
             }
           }}
         >
-          Toggle Size (28px ↔ 38px)
+          Toggle Size (32px ↔ 38px)
         </button>
       </div>
     `;

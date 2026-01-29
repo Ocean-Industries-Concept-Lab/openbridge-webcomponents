@@ -91,16 +91,23 @@
   :host([data-visual-state='overlap']) & {
     width: 48px;
     height: 48px;
-    --poi-size: 28px;
+    --poi-size: 32px;
     --obc-poi-target-icon-opacity: 0;
     --obc-poi-overlap-elements-opacity: 0;
     --obc-poi-label-opacity: 0;
     --obc-poi-label-visibility: hidden;
     --obc-poi-overlap-pointer-events: none;
 
+    .button-wrapper {
+      /* Align to bottom so circle bottom stays at same position when shrinking */
+      align-items: flex-end;
+    }
+
     .visible-wrapper {
       background-color: rgba(255, 255, 255, 0.5);
       border-color: rgba(0, 0, 0, 0.3);
+      /* Match bottom position of centered normal circle: (48-38)/2 = 5px */
+      margin-bottom: 5px;
     }
 
     &.type-enhanced {
@@ -357,12 +364,16 @@
     position: static;
     width: auto;
     min-height: auto;
+    /* Align to bottom so circle bottom stays at same position when shrinking */
+    align-items: flex-end;
   }
 
   .visible-wrapper {
-    width: var(--poi-size, 28px);
-    height: var(--poi-size, 28px);
+    width: var(--poi-size, 32px);
+    height: var(--poi-size, 32px);
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
+    /* Match bottom position of centered normal circle: (48-38)/2 = 5px */
+    margin-bottom: 5px;
   }
 
   &.type-enhanced {

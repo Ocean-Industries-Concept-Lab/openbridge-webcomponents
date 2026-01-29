@@ -519,3 +519,183 @@ export const JoinGroup: Story = {
     `;
   },
 };
+
+export const JoinExpandedGroup: Story = {
+  args: {
+    label: 'Join Expanded Group',
+    layerIndex: 0,
+    debug: true,
+  },
+  render(args) {
+    const hostRef = createRef<HTMLDivElement>();
+    const startAnimation = (root: HTMLElement | null) => {
+      if (!root || root.dataset.animating === 'true') return;
+      root.dataset.animating = 'true';
+
+      const a = root.querySelector('obc-poi-target.a') as HTMLElement | null;
+      const b = root.querySelector('obc-poi-target.b') as HTMLElement | null;
+      const c = root.querySelector('obc-poi-target.c') as HTMLElement | null;
+      if (!a || !b || !c) return;
+
+      // Start with a and b grouped, c far away
+      a.style.left = '300px';
+      b.style.left = '320px';
+      c.style.left = '520px';
+
+      const duration = 6000;
+      let rafId = 0;
+      let startTime: number | null = null;
+
+      const tick = (now: number) => {
+        if (startTime === null) startTime = now;
+        const elapsed = now - startTime;
+        const t = (elapsed % duration) / duration;
+
+        // Wait 3 seconds (50% of duration), then animate c towards the group
+        if (t < 0.5) {
+          // c stays at 520px - user should click to expand during this time
+          c.style.left = '520px';
+        } else {
+          // Animate c from 520px to 340px
+          const phase = (t - 0.5) / 0.5;
+          const eased = phase * phase * (3 - 2 * phase);
+          const x3 = 520 - (520 - 340) * eased;
+          c.style.left = `${Math.round(x3)}px`;
+        }
+
+        rafId = requestAnimationFrame(tick);
+      };
+
+      rafId = requestAnimationFrame(tick);
+
+      const observer = new MutationObserver(() => {
+        if (!root.isConnected) {
+          cancelAnimationFrame(rafId);
+          observer.disconnect();
+        }
+      });
+      observer.observe(root, {childList: true, subtree: true});
+    };
+
+    setTimeout(() => startAnimation(hostRef.value ?? null), 0);
+    return html`
+      <style>
+        .join-expanded {
+          width: 640px;
+        }
+
+        .join-expanded obc-poi-layer {
+          --obc-poi-layer-min-height: 48px;
+          --obc-poi-layer-overlap-enter: 10px;
+          --obc-poi-layer-overlap-exit: 18px;
+          --obc-poi-layer-overlap-pre: 16px;
+          width: 100%;
+        }
+      </style>
+      <p style="font-size: 12px; color: #666; margin-bottom: 8px;">
+        Click to expand the group, then watch as target C joins while expanded.
+      </p>
+      <div class="join-expanded" ${ref(hostRef)}>
+        <obc-poi-layer
+          .label=${args.label}
+          .layerIndex=${args.layerIndex}
+          ?debug=${args.debug}
+        >
+          <obc-poi-target class="a" height="140"></obc-poi-target>
+          <obc-poi-target class="b" height="100"></obc-poi-target>
+          <obc-poi-target class="c" height="80"></obc-poi-target>
+        </obc-poi-layer>
+      </div>
+    `;
+  },
+};
+
+export const LeaveExpandedGroup: Story = {
+  args: {
+    label: 'Leave Expanded Group',
+    layerIndex: 0,
+    debug: true,
+  },
+  render(args) {
+    const hostRef = createRef<HTMLDivElement>();
+    const startAnimation = (root: HTMLElement | null) => {
+      if (!root || root.dataset.animating === 'true') return;
+      root.dataset.animating = 'true';
+
+      const a = root.querySelector('obc-poi-target.a') as HTMLElement | null;
+      const b = root.querySelector('obc-poi-target.b') as HTMLElement | null;
+      const c = root.querySelector('obc-poi-target.c') as HTMLElement | null;
+      if (!a || !b || !c) return;
+
+      // Start with all three grouped
+      a.style.left = '300px';
+      b.style.left = '320px';
+      c.style.left = '340px';
+
+      const duration = 6000;
+      let rafId = 0;
+      let startTime: number | null = null;
+
+      const tick = (now: number) => {
+        if (startTime === null) startTime = now;
+        const elapsed = now - startTime;
+        const t = (elapsed % duration) / duration;
+
+        // Wait 3 seconds (50% of duration), then animate c away from the group
+        if (t < 0.5) {
+          // c stays at 340px - user should click to expand during this time
+          c.style.left = '340px';
+        } else {
+          // Animate c from 340px to 520px
+          const phase = (t - 0.5) / 0.5;
+          const eased = phase * phase * (3 - 2 * phase);
+          const x3 = 340 + (520 - 340) * eased;
+          c.style.left = `${Math.round(x3)}px`;
+        }
+
+        rafId = requestAnimationFrame(tick);
+      };
+
+      rafId = requestAnimationFrame(tick);
+
+      const observer = new MutationObserver(() => {
+        if (!root.isConnected) {
+          cancelAnimationFrame(rafId);
+          observer.disconnect();
+        }
+      });
+      observer.observe(root, {childList: true, subtree: true});
+    };
+
+    setTimeout(() => startAnimation(hostRef.value ?? null), 0);
+    return html`
+      <style>
+        .leave-expanded {
+          width: 640px;
+        }
+
+        .leave-expanded obc-poi-layer {
+          --obc-poi-layer-min-height: 48px;
+          --obc-poi-layer-overlap-enter: 10px;
+          --obc-poi-layer-overlap-exit: 18px;
+          --obc-poi-layer-overlap-pre: 16px;
+          width: 100%;
+        }
+      </style>
+      <p style="font-size: 12px; color: #666; margin-bottom: 8px;">
+        Click to expand the group, then watch as target C leaves while expanded.
+      </p>
+      <div class="leave-expanded" ${ref(hostRef)}>
+        <obc-poi-layer
+          .label=${args.label}
+          .layerIndex=${args.layerIndex}
+          ?debug=${args.debug}
+        >
+          <obc-poi-target class="a" height="140"></obc-poi-target>
+          <obc-poi-target class="b" height="100"></obc-poi-target>
+          <obc-poi-target class="c" height="80"></obc-poi-target>
+        </obc-poi-layer>
+      </div>
+    `;
+  },
+};
