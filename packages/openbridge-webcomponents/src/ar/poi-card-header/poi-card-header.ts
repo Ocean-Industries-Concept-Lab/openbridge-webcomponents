@@ -160,7 +160,7 @@ export class ObcPoiCardHeader extends LitElement {
         <div class="poi-container">
           <obc-poi-object-vessel
             type="regular"
-            vesselStyle="regular"
+            objectStyle="regular"
             state="static-unchecked"
           >
             <slot name="poi-icon"></slot>

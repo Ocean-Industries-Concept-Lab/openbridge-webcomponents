@@ -1,18 +1,17 @@
-import {LitElement, html, unsafeCSS, nothing} from 'lit';
+import {html, css, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
-import {classMap} from 'lit/directives/class-map.js';
-import componentStyle from './poi-object-vessel.css?inline';
 import {customElement} from '../../decorator.js';
+import {ObcAbstractPoiObject} from '../poi-object/abstract-poi-object.js';
+import {
+  ObcPoiObjectType,
+  ObcPoiObjectStyle,
+  ObcPoiObjectState,
+} from '../poi-object/poi-object.js';
+import componentStyle from './poi-object-vessel.css?inline';
 
 /**
  * Type variants for POI Object Vessel.
- * - `indicator`: Icon only with drop shadow, no background circle.
- *   **Important:** Use filled icon variants with `useCssColor` for proper rendering.
- * - `regular`: Standard size (48px touch, 36px round background, 24px icon)
- * - `large`: Larger size (64px touch, 52px round background, 36px icon)
- * - `speedRot`: Large with turn indicator and speed indicator (64px touch, 52px round)
- * - `nUp`: Square background (48px touch, 32px square background, 24px icon)
- * - `nUpLarge`: Large square background (64px touch, 48px square background, 36px icon)
+ * Extends the base types with vessel-specific `speedRot` type.
  */
 export enum ObcPoiObjectVesselType {
   Indicator = 'indicator',
@@ -23,33 +22,9 @@ export enum ObcPoiObjectVesselType {
   NUpLarge = 'n-up-large',
 }
 
-/**
- * Style variants for POI Object Vessel.
- * - `regular`: Default white/translucent background
- * - `categorical`: Blue tinted background for categorized vessels
- */
-export enum ObcPoiObjectVesselStyle {
-  Regular = 'regular',
-  Categorical = 'categorical',
-}
-
-/**
- * State variants for POI Object Vessel.
- * - `unchecked`: Default state
- * - `checked`
- * - `staticUnchecked`: Flat/normal style background
- * - `staticChecked`: Flat style with selection frame
- * - `activated`: Has white outer ring around background
- * - `overlapped`: Smaller circle, icon hidden (for overlapping markers)
- */
-export enum ObcPoiObjectVesselState {
-  Unchecked = 'unchecked',
-  Checked = 'checked',
-  StaticUnchecked = 'static-unchecked',
-  StaticChecked = 'static-checked',
-  Activated = 'activated',
-  Overlapped = 'overlapped',
-}
+// Re-export for convenience
+export {ObcPoiObjectStyle as ObcPoiObjectVesselStyle};
+export {ObcPoiObjectState as ObcPoiObjectVesselState};
 
 /**
  * `<obc-poi-object-vessel>` - An interactive vessel icon button for POI (Point of Interest) display.
@@ -84,7 +59,7 @@ export enum ObcPoiObjectVesselState {
  *
  * ```html
  * <!-- Regular type with outlined icon -->
- * <obc-poi-object-vessel type="regular" vesselStyle="regular" state="checked"
+ * <obc-poi-object-vessel type="regular" objectStyle="regular" state="checked"
  *   @click=${handleVesselClick}>
  *   <obi-vessel-type-passenger-outlined></obi-vessel-type-passenger-outlined>
  * </obc-poi-object-vessel>
@@ -101,122 +76,66 @@ export enum ObcPoiObjectVesselState {
  * @slot speed-indicator - Speed indicator (speed-rot type only)
  */
 @customElement('obc-poi-object-vessel')
-export class ObcPoiObjectVessel extends LitElement {
+export class ObcPoiObjectVessel extends ObcAbstractPoiObject {
   @property({type: String}) type: ObcPoiObjectVesselType =
     ObcPoiObjectVesselType.Regular;
 
-  @property({type: String}) vesselStyle: ObcPoiObjectVesselStyle =
-    ObcPoiObjectVesselStyle.Regular;
-
-  @property({type: String}) state: ObcPoiObjectVesselState =
-    ObcPoiObjectVesselState.Unchecked;
-
-  /** Enables button behavior with hover/active states and keyboard support. */
-  @property({type: Boolean}) interactive = false;
-
-  private get isChecked() {
-    return (
-      this.state === ObcPoiObjectVesselState.Checked ||
-      this.state === ObcPoiObjectVesselState.StaticChecked
-    );
+  private get isSpeedRot() {
+    return this.type === ObcPoiObjectVesselType.SpeedRot;
   }
 
-  private get isStatic() {
-    return (
-      this.state === ObcPoiObjectVesselState.StaticUnchecked ||
-      this.state === ObcPoiObjectVesselState.StaticChecked
-    );
-  }
-
-  private get isActivated() {
-    return this.state === ObcPoiObjectVesselState.Activated;
-  }
-
-  private get isOverlapped() {
-    return this.state === ObcPoiObjectVesselState.Overlapped;
-  }
-
-  /** Interactive is disabled when overlapped */
-  private get isInteractive() {
-    return this.interactive && !this.isOverlapped;
-  }
-
-  private get isSquare() {
-    return (
-      this.type === ObcPoiObjectVesselType.NUp ||
-      this.type === ObcPoiObjectVesselType.NUpLarge
-    );
-  }
-
-  private get isLargeSize() {
-    return (
-      this.type === ObcPoiObjectVesselType.Large ||
-      this.type === ObcPoiObjectVesselType.SpeedRot ||
-      this.type === ObcPoiObjectVesselType.NUpLarge
-    );
-  }
-
-  private handleKeyDown(e: KeyboardEvent) {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      this.click();
+  // Map vessel-specific type to base type
+  override get baseType(): ObcPoiObjectType {
+    switch (this.type) {
+      case ObcPoiObjectVesselType.Indicator:
+        return ObcPoiObjectType.Indicator;
+      case ObcPoiObjectVesselType.Regular:
+        return ObcPoiObjectType.Regular;
+      case ObcPoiObjectVesselType.Large:
+      case ObcPoiObjectVesselType.SpeedRot:
+        return ObcPoiObjectType.Large;
+      case ObcPoiObjectVesselType.NUp:
+        return ObcPoiObjectType.NUp;
+      case ObcPoiObjectVesselType.NUpLarge:
+        return ObcPoiObjectType.NUpLarge;
+      default:
+        throw new Error(`Invalid vessel type: ${this.type}`);
     }
   }
 
-  override render() {
-    const isIndicator = this.type === ObcPoiObjectVesselType.Indicator;
-    const isSpeedRot = this.type === ObcPoiObjectVesselType.SpeedRot;
-
-    const classes = {
-      wrapper: true,
-      [`type-${this.type}`]: true,
-      [`style-${this.vesselStyle}`]: true,
-      [`state-${this.state}`]: true,
-      'is-static': this.isStatic,
-      'is-checked': this.isChecked,
-      'is-activated': this.isActivated,
-      'is-overlapped': this.isOverlapped,
-      'is-square': this.isSquare,
-      'is-large': this.isLargeSize,
-      interactive: this.isInteractive,
+  override get extraClasses(): Record<string, boolean> {
+    return {
+      'type-speed-rot': this.isSpeedRot,
     };
-
-    return html`
-      <div
-        class=${classMap(classes)}
-        role=${this.isInteractive ? 'button' : nothing}
-        tabindex=${this.isInteractive ? '0' : nothing}
-        @keydown=${this.handleKeyDown}
-      >
-        ${this.isActivated
-          ? html`<div class="activated-frame"></div>`
-          : nothing}
-        ${!isIndicator || this.isOverlapped || this.isInteractive
-          ? html`<div class="background-frame"></div>`
-          : nothing}
-
-        <div class="icon-container">
-          ${isSpeedRot
-            ? html`
-                <div class="speed-rot-wrapper">
-                  <div class="turn-indicator">
-                    <slot name="turn-indicator"></slot>
-                  </div>
-                  <div class="vessel-icon">
-                    <slot></slot>
-                  </div>
-                  <div class="speed-indicator">
-                    <slot name="speed-indicator"></slot>
-                  </div>
-                </div>
-              `
-            : html`<slot></slot>`}
-        </div>
-      </div>
-    `;
   }
 
-  static override styles = unsafeCSS(componentStyle);
+  override get icon() {
+    if (this.isSpeedRot) {
+      return html`
+        <div class="speed-rot-wrapper">
+          <div class="turn-indicator">
+            <slot name="turn-indicator"></slot>
+          </div>
+          <div class="vessel-icon">
+            <slot></slot>
+          </div>
+          <div class="speed-indicator">
+            <slot name="speed-indicator"></slot>
+          </div>
+        </div>
+      `;
+    }
+    return html`<slot></slot>`;
+  }
+
+  static override styles = [
+    css`
+      :host {
+        display: contents;
+      }
+    `,
+    unsafeCSS(componentStyle),
+  ];
 }
 
 declare global {
