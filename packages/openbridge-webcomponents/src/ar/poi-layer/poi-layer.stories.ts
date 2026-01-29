@@ -241,28 +241,6 @@ export const OverlapWithGroup: Story = {
           --obc-poi-layer-min-height: 48px;
           width: 100%;
         }
-
-        .grouped obc-poi-target {
-          position: absolute;
-          top: 50%;
-        }
-
-      .grouped #b1 {
-        left: calc(50% - 15px);
-      }
-
-        .grouped #b2 {
-          left: calc(50% + 15px);
-        }
-
-        .grouped #b3 {
-          left: calc(50% - 30px);
-        }
-
-        .grouped .group {
-          top: 0;
-          left: 0;
-        }
       </style>
       <div class="grouped">
         <obc-poi-layer
@@ -270,23 +248,9 @@ export const OverlapWithGroup: Story = {
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}
         >
-          <obc-poi-target-button-group
-            class="group"
-            positionVertical="calc(100%)"
-          >
-            <obc-poi-target
-              id="b3"
-              data-visual-state="overlap"
-              height="80"
-            ></obc-poi-target>
-            <obc-poi-target id="b1" height="140" .relativeDirection=${65}>
-            </obc-poi-target>
-            <obc-poi-target
-              id="b2"
-              data-visual-state="overlap"
-              height="60"
-            ></obc-poi-target>
-          </obc-poi-target-button-group>
+          <obc-poi-target style="left: 300px;" height="80"></obc-poi-target>
+          <obc-poi-target style="left: 320px;" height="140" .relativeDirection=${65}></obc-poi-target>
+          <obc-poi-target style="left: 340px;" height="60"></obc-poi-target>
         </obc-poi-layer>
       </div>
     `;
@@ -310,28 +274,6 @@ export const OverlapWithGroupNumbers: Story = {
           --obc-poi-layer-min-height: 48px;
           width: 100%;
         }
-
-        .grouped obc-poi-target {
-          position: absolute;
-          top: 50%;
-        }
-
-      .grouped #b1 {
-        left: calc(50% - 15px);
-      }
-
-        .grouped #b2 {
-          left: calc(50% + 15px);
-        }
-
-        .grouped #b3 {
-          left: calc(50% - 30px);
-        }
-
-        .grouped .group {
-          top: 0;
-          left: 0;
-        }
       </style>
       <div class="grouped">
         <obc-poi-layer
@@ -339,30 +281,9 @@ export const OverlapWithGroupNumbers: Story = {
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}
         >
-          <obc-poi-target-button-group
-            class="group"
-            positionVertical="calc(50%)"
-          >
-            <obc-poi-target
-              id="b3"
-              data-visual-state="overlap"
-              height="80"
-              selectedId="3"
-            ></obc-poi-target>
-            <obc-poi-target
-              id="b1"
-              height="140"
-              .relativeDirection=${65}
-              selectedId="1"
-            >
-            </obc-poi-target>
-            <obc-poi-target
-              id="b2"
-              data-visual-state="overlap"
-              height="60"
-              selectedId="2"
-            ></obc-poi-target>
-          </obc-poi-target-button-group>
+          <obc-poi-target style="left: 300px;" height="80" selectedId="3"></obc-poi-target>
+          <obc-poi-target style="left: 320px;" height="140" .relativeDirection=${65} selectedId="1"></obc-poi-target>
+          <obc-poi-target style="left: 340px;" height="60" selectedId="2"></obc-poi-target>
         </obc-poi-layer>
       </div>
     `;
