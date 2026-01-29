@@ -17,6 +17,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
   @property({type: Boolean}) useTopOffset?: boolean;
   @state() private positionLeft = '0px';
   @state() private positionRight = '0px';
+  @state() private wrapperVisible = false;
 
   @queryAssignedElements({flatten: true})
   _children!: Array<HTMLElement>;
@@ -39,6 +40,10 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     this.updatePosition();
     this.setExpandedChildren(this.expand, true);
     this.syncFrontChild();
+    // Show wrapper after initial setup (if not expanded)
+    if (!this.expand) {
+      this.wrapperVisible = true;
+    }
   }
 
   override connectedCallback() {
@@ -83,7 +88,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
           ? html`<div @click=${this.onBackdropClick} class="backdrop"></div>`
           : null}
         <slot></slot>
-        ${!this.expand
+        ${!this.expand && this.wrapperVisible
           ? html`<button
               @click=${this.onClick}
               class=${classMap({
@@ -245,6 +250,11 @@ export class ObcPoiTargetButtonGroup extends LitElement {
       this.calculateTopOffsetTargets();
     }
 
+    // When collapsing, hide wrapper until animation completes
+    if (!expand) {
+      this.wrapperVisible = false;
+    }
+
     // Reorder children by height (tallest last = on top)
     if (!expand && frontChild) {
       this.appendChild(frontChild);
@@ -334,6 +344,11 @@ export class ObcPoiTargetButtonGroup extends LitElement {
         this.topOffsetAnimationId = null;
         // Final state
         this.applyTopOffsetState(this.topOffsetProgress, frontChild);
+        // When collapse animation completes, update position and show wrapper
+        if (targetProgress === 0) {
+          this.updatePosition();
+          this.wrapperVisible = true;
+        }
       } else {
         this.topOffsetProgress += diff * 0.1;
         this.applyTopOffsetState(this.topOffsetProgress, frontChild);
