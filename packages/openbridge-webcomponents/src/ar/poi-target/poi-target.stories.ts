@@ -65,3 +65,77 @@ export const Enhanced: Story = {
     value: TargetValue.checked,
   },
 };
+
+export const AnimatedOffsetBottom: Story = {
+  args: {
+    height: 192,
+    value: TargetValue.checked,
+    pointerType: Pointer.Line,
+  },
+  render: (args) => {
+    let offset = 0;
+    let direction = 1;
+
+    const animate = () => {
+      const target = document.querySelector('#animated-poi-target') as ObcPoiTarget;
+      if (!target) return;
+
+      offset += direction * 0.3;
+      if (offset > 50) direction = -1;
+      if (offset < -50) direction = 1;
+
+      target.offset = offset;
+      requestAnimationFrame(animate);
+    };
+
+    setTimeout(() => requestAnimationFrame(animate), 100);
+
+    return html`
+      <obc-poi-target
+        id="animated-poi-target"
+        style="top: calc(50% - ${args.height}px);"
+        .height=${args.height}
+        .value=${args.value}
+        .pointerType=${args.pointerType}
+      ></obc-poi-target>
+    `;
+  },
+};
+
+export const AnimatedOffsetTop: Story = {
+  args: {
+    height: 192,
+    value: TargetValue.checked,
+    pointerType: Pointer.Line,
+  },
+  render: (args) => {
+    let buttonOffset = 0;
+    let direction = 1;
+
+    const animate = () => {
+      const target = document.querySelector('#animated-poi-target-top') as ObcPoiTarget;
+      if (!target) return;
+
+      buttonOffset += direction * 0.3;
+      if (buttonOffset > 50) direction = -1;
+      if (buttonOffset < -50) direction = 1;
+
+      target.style.transform = `translateX(${buttonOffset}px)`;
+      target.offset = -buttonOffset;
+
+      requestAnimationFrame(animate);
+    };
+
+    setTimeout(() => requestAnimationFrame(animate), 100);
+
+    return html`
+      <obc-poi-target
+        id="animated-poi-target-top"
+        style="top: calc(50% - ${args.height}px);"
+        .height=${args.height}
+        .value=${args.value}
+        .pointerType=${args.pointerType}
+      ></obc-poi-target>
+    `;
+  },
+};
