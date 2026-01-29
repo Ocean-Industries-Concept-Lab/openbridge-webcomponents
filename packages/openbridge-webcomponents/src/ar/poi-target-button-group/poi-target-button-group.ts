@@ -525,6 +525,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
       this.expandedRaf = 0;
     }
     this.lastAppliedOffsets.clear();
+    this.lastTargetOrder = [];
   }
 
   private scheduleExpandedOffsets() {
@@ -535,13 +536,69 @@ export class ObcPoiTargetButtonGroup extends LitElement {
 
   // Track last applied values to avoid jitter from tiny changes
   private lastAppliedOffsets: Map<ObcPoiTarget, {buttonOffset: number; lineOffset: number}> = new Map();
+  // Track the last known order of targets to detect when they cross
+  private lastTargetOrder: ObcPoiTarget[] = [];
 
   private updateExpandedOffsets() {
     if (!this.expand) return;
     const inLayer = this.closest('obc-poi-layer') !== null;
 
-    this._children.forEach((child) => {
-      if (!(child instanceof ObcPoiTarget)) return;
+    const targets = this._children.filter(
+      (child): child is ObcPoiTarget => child instanceof ObcPoiTarget
+    );
+
+    // Sort targets by their current x position (style.left)
+    const sortedByCurrentPosition = [...targets]
+      .map((child) => {
+        const leftStr = child.style.left;
+        const currentLeft = Number.parseFloat(leftStr) || 0;
+        return {child, currentLeft};
+      })
+      .sort((a, b) => a.currentLeft - b.currentLeft)
+      .map((item) => item.child);
+
+    // Check if order has changed since last frame
+    const orderChanged =
+      this.lastTargetOrder.length !== sortedByCurrentPosition.length ||
+      sortedByCurrentPosition.some(
+        (child, index) => this.lastTargetOrder[index] !== child
+      );
+
+    if (orderChanged && this.lastTargetOrder.length > 0) {
+      // Order changed - reassign expanded slot positions based on new order
+      // Calculate the slot offsets (same spacing logic as calculateTopOffsetTargets)
+      const spacing = 50;
+      const totalWidth = (sortedByCurrentPosition.length - 1) * spacing;
+
+      // Get center point from current positions
+      const positions = sortedByCurrentPosition.map((child) => {
+        const leftStr = child.style.left;
+        return Number.parseFloat(leftStr) || 0;
+      });
+      const leftMost = Math.min(...positions);
+      const rightMost = Math.max(...positions);
+      const groupCenter = (leftMost + rightMost) / 2;
+      const startX = groupCenter - totalWidth / 2;
+
+      // Reassign expandedOffset for each target based on new order
+      sortedByCurrentPosition.forEach((child, index) => {
+        const config = this.topOffsetTargets.get(child);
+        if (!config) return;
+
+        const currentLeft = Number.parseFloat(child.style.left) || 0;
+        const targetX = startX + index * spacing;
+        const newExpandedOffset = targetX - currentLeft;
+
+        // Update the config with new expanded offset and original left
+        config.expandedOffset = newExpandedOffset;
+        config.originalLeft = currentLeft;
+      });
+    }
+
+    // Update last known order
+    this.lastTargetOrder = sortedByCurrentPosition;
+
+    targets.forEach((child) => {
       const config = this.topOffsetTargets.get(child);
       if (!config) return;
 
