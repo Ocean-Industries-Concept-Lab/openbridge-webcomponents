@@ -44,6 +44,10 @@
   pointer-events: auto;
 }
 
+::slotted(obc-poi-target) {
+  pointer-events: auto;
+}
+
 ::slotted(obc-poi-target[data-grouped]) {
   opacity: 1;
   transition: opacity 0.4s ease-out;

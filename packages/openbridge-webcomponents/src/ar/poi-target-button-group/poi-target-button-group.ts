@@ -14,6 +14,7 @@ export type ExpandEvent = CustomEvent<{expand: boolean}>;
 export class ObcPoiTargetButtonGroup extends LitElement {
   @property({type: Boolean}) expand = false;
   @property({type: String}) positionVertical = '0px';
+  @property({type: Boolean}) useTopOffset = false;
   @state() private positionLeft = '0px';
   @state() private positionRight = '0px';
 
@@ -23,6 +24,9 @@ export class ObcPoiTargetButtonGroup extends LitElement {
   private boundUpdatePosition: () => void;
   private expandedObserver?: MutationObserver;
   private expandedRaf = 0;
+  private topOffsetAnimationId: number | null = null;
+  private topOffsetProgress = 0;
+  private topOffsetTargets: Map<ObcPoiTarget, {originalX: number; expandedOffset: number}> = new Map();
 
   constructor() {
     super();
@@ -51,6 +55,14 @@ export class ObcPoiTargetButtonGroup extends LitElement {
       cancelAnimationFrame(this.expandedRaf);
       this.expandedRaf = 0;
     }
+    if (this.topOffsetAnimationId) {
+      cancelAnimationFrame(this.topOffsetAnimationId);
+      this.topOffsetAnimationId = null;
+    }
+    if (this.topOffsetDelayTimeout) {
+      clearTimeout(this.topOffsetDelayTimeout);
+      this.topOffsetDelayTimeout = null;
+    }
     super.disconnectedCallback();
   }
 
@@ -61,6 +73,28 @@ export class ObcPoiTargetButtonGroup extends LitElement {
   }
 
   override render() {
+    // Top offset mode: always keep children in their original positions
+    if (this.useTopOffset) {
+      return html`
+        ${this.expand
+          ? html`<div @click=${this.onBackdropClick} class="backdrop"></div>`
+          : null}
+        <slot></slot>
+        ${!this.expand
+          ? html`<button
+              @click=${this.onClick}
+              class=${classMap({
+                wrapper: true,
+              })}
+              style="left: ${this.positionLeft}; top: ${this
+                .positionVertical}; right: ${this.positionRight};"
+            >
+              <div class="visible-wrapper"></div>
+            </button>`
+          : null}
+      `;
+    }
+
     return html`
       ${this.expand
         ? html`<div @click=${this.onBackdropClick} class="backdrop"></div>`
@@ -121,6 +155,12 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     this.dispatchEvent(
       new CustomEvent('expand', {detail: {expand: this.expand}})
     );
+
+    if (this.useTopOffset) {
+      this.setExpandedChildrenTopOffset(expand, firstRun);
+      return;
+    }
+
     // Store the old position of the children
     const oldPosition = new Map<ObcPoiTarget, number>();
     if (expand || firstRun) {
@@ -192,6 +232,152 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     }
 
     this.syncFrontChild();
+  }
+
+  private setExpandedChildrenTopOffset(expand: boolean, firstRun = false) {
+    const frontChild = this.getFrontChild();
+
+    // On first run or when starting to expand, calculate target offsets
+    if (firstRun || (expand && this.topOffsetTargets.size === 0)) {
+      this.calculateTopOffsetTargets();
+    }
+
+    // Reorder children by height (tallest last = on top)
+    if (!expand && frontChild) {
+      this.appendChild(frontChild);
+    }
+
+    // Animate to target state
+    this.animateTopOffset(expand ? 1 : 0);
+  }
+
+  private calculateTopOffsetTargets() {
+    this.topOffsetTargets.clear();
+
+    const targets = this._children.filter(
+      (child): child is ObcPoiTarget => child instanceof ObcPoiTarget
+    );
+
+    if (targets.length === 0) return;
+
+    // Get current positions and sort by x position
+    const positions = targets.map((child) => {
+      const rect = this.getTargetButtonRect(child);
+      return {child, centerX: rect.left + rect.width / 2};
+    });
+    positions.sort((a, b) => a.centerX - b.centerX);
+
+    // Calculate center point of the group
+    const leftMost = positions[0].centerX;
+    const rightMost = positions[positions.length - 1].centerX;
+    const groupCenter = (leftMost + rightMost) / 2;
+
+    // Calculate expanded offsets - spread apart by 50px each from their current position
+    const spacing = 50;
+    const totalWidth = (positions.length - 1) * spacing;
+    const startX = groupCenter - totalWidth / 2;
+
+    positions.forEach((pos, index) => {
+      const targetX = startX + index * spacing;
+      const expandedOffset = targetX - pos.centerX;
+      this.topOffsetTargets.set(pos.child, {
+        originalX: pos.centerX,
+        expandedOffset,
+      });
+    });
+  }
+
+  private topOffsetTargetExpanded = false;
+
+  private topOffsetDelayTimeout: ReturnType<typeof setTimeout> | null = null;
+
+  private animateTopOffset(targetProgress: number) {
+    if (this.topOffsetAnimationId) {
+      cancelAnimationFrame(this.topOffsetAnimationId);
+    }
+    if (this.topOffsetDelayTimeout) {
+      clearTimeout(this.topOffsetDelayTimeout);
+      this.topOffsetDelayTimeout = null;
+    }
+
+    const frontChild = this.getFrontChild();
+    // Set target state immediately so visual state transitions start right away
+    this.topOffsetTargetExpanded = targetProgress === 1;
+
+    // When collapsing, apply visual state first, then delay movement
+    const isCollapsing = targetProgress === 0 && this.topOffsetProgress > 0;
+    if (isCollapsing) {
+      // Apply scale down immediately (visual state change)
+      this.topOffsetTargets.forEach((_, child) => {
+        if (child !== frontChild) {
+          child.visualState = 'overlap';
+        }
+      });
+      // Delay movement animation to let scale transition start
+      this.topOffsetDelayTimeout = setTimeout(() => {
+        this.topOffsetDelayTimeout = null;
+        this.runTopOffsetAnimation(targetProgress, frontChild);
+      }, 150);
+    } else {
+      this.runTopOffsetAnimation(targetProgress, frontChild);
+    }
+  }
+
+  private runTopOffsetAnimation(targetProgress: number, frontChild: ObcPoiTarget | null) {
+    const step = () => {
+      const diff = targetProgress - this.topOffsetProgress;
+      if (Math.abs(diff) < 0.01) {
+        this.topOffsetProgress = targetProgress;
+        this.topOffsetAnimationId = null;
+        // Final state
+        this.applyTopOffsetState(this.topOffsetProgress, frontChild);
+      } else {
+        this.topOffsetProgress += diff * 0.1;
+        this.applyTopOffsetState(this.topOffsetProgress, frontChild);
+        this.topOffsetAnimationId = requestAnimationFrame(step);
+      }
+    };
+
+    step();
+  }
+
+  private applyTopOffsetState(progress: number, frontChild: ObcPoiTarget | null) {
+    // Easing function
+    const eased =
+      progress < 0.5
+        ? 2 * progress * progress
+        : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+    // Visual state uses target immediately, touch area uses progress threshold
+    const visualExpanded = this.topOffsetTargetExpanded;
+    const touchAreaExpanded = progress > 0.5;
+
+    this.topOffsetTargets.forEach((config, child) => {
+      const buttonOffset = config.expandedOffset * eased;
+
+      // Move button horizontally via transform
+      child.style.transform = `translateX(${buttonOffset}px)`;
+      // Apply inverse offset to keep bottom dot stationary
+      child.offset = -buttonOffset;
+
+      // Visual state changes immediately with target direction
+      if (child !== frontChild) {
+        child.visualState = visualExpanded ? 'normal' : 'overlap';
+      } else {
+        child.visualState = 'normal';
+      }
+
+      // Touch area changes at midpoint
+      if (touchAreaExpanded) {
+        child.style.width = '48px';
+        child.style.minWidth = '48px';
+        child.style.height = '48px';
+      } else {
+        child.style.width = 'unset';
+        child.style.minWidth = 'unset';
+        child.style.height = 'unset';
+      }
+    });
   }
 
   private getFrontChild(): ObcPoiTarget | null {
