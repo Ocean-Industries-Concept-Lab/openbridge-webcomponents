@@ -260,7 +260,7 @@ export const AnimatedSizeToggle: Story = {
             }
           }}
         >
-          Toggle Size (32px ↔ 38px)
+          Toggle Size (32px ↔ 36px)
         </button>
       </div>
     `;

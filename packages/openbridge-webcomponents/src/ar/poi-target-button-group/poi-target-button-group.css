@@ -20,7 +20,7 @@
   height: 48px;
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   cursor: pointer;
   pointer-events: auto;
@@ -34,8 +34,9 @@
 .visible-wrapper {
   border-color: rgba(255, 255, 255, 0.3) !important;
   width: 100%;
-  height: 38px;
+  height: 40px;
   border-radius: 18px;
+  margin-top: 5px;
 }
 
 .backdrop {
@@ -80,7 +81,7 @@
 
 :host-context(obc-poi-layer) ::slotted(obc-poi-target[data-front]) {
   opacity: 1;
-  --poi-size: 38px;
+  --poi-size: 36px;
   --obc-poi-target-icon-opacity: 1;
 }
 

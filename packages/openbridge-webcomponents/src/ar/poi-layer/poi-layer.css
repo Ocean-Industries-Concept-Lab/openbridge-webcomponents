@@ -72,7 +72,7 @@
 
 ::slotted(obc-poi-target[data-front]) {
   opacity: 1;
-  --poi-size: 38px;
+  --poi-size: 36px;
   --obc-poi-target-icon-opacity: 1;
 }
 
