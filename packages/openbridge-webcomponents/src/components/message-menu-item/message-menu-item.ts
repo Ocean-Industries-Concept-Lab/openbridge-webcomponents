@@ -141,13 +141,9 @@ export class ObcMessageMenuItem extends LitElement {
   @property({type: Boolean}) hasTrailingIcon = false;
   @property({type: Boolean}) isShelved = false;
 
-  // Slot visibility properties for text content
-  /** When true, renders the `title` slot instead of the `title` prop. Use for rich HTML content. */
-  @property({type: Boolean}) hasTitleSlot = false;
-  /** When true, renders the `description` slot instead of the `description` prop. Use for rich HTML content. */
-  @property({type: Boolean}) hasDescriptionSlot = false;
-  /** When true, renders the `action-label` slot instead of the `primaryActionLabel` prop. Use for rich HTML content. */
-  @property({type: Boolean}) hasActionLabelSlot = false;
+  `@property`({type: Boolean}) hasTitleSlot = false;
+  `@property`({type: Boolean}) hasDescriptionSlot = false;
+  `@property`({type: Boolean}) hasActionLabelSlot = false;
 
   private get activeSize() {
     if (this.open) {
