@@ -23,6 +23,7 @@ export class ObcPoiLayer extends LitElement {
   private groupRemovalTimers = new WeakMap<HTMLElement, number>();
   private exitLockTimers = new Map<HTMLElement, number>();
   private layerMutationObserver?: MutationObserver;
+  private autoGroupCollapseTimeout = 0;
 
   override firstUpdated() {
     this.setupResizeObserver();
@@ -57,6 +58,10 @@ export class ObcPoiLayer extends LitElement {
     }
     this.exitLockTimers.forEach((timerId) => window.clearTimeout(timerId));
     this.exitLockTimers.clear();
+    if (this.autoGroupCollapseTimeout) {
+      window.clearTimeout(this.autoGroupCollapseTimeout);
+      this.autoGroupCollapseTimeout = 0;
+    }
   }
 
   private setupResizeObserver() {
@@ -430,6 +435,14 @@ export class ObcPoiLayer extends LitElement {
       }
       expandedAny.setExpandedChildren?.(false);
       expandedAny.expand = false;
+      if (!this.autoGroupCollapseTimeout) {
+        this.autoGroupCollapseTimeout = window.setTimeout(() => {
+          this.autoGroupCollapseTimeout = 0;
+          this.scheduleGrouping();
+        }, 300);
+      }
+      this.isGrouping = false;
+      return;
     }
 
     const remainingClusters = [...clusters];
@@ -495,6 +508,7 @@ export class ObcPoiLayer extends LitElement {
     remainingClusters.forEach((cluster) => {
       const group = document.createElement('obc-poi-target-button-group');
       group.setAttribute('data-auto-group', 'true');
+      group.setAttribute('data-position-mode', 'bottom');
       group.setAttribute('data-visible', 'true');
       group.setAttribute(
         'positionVertical',
@@ -618,26 +632,32 @@ export class ObcPoiLayer extends LitElement {
       this.querySelectorAll('obc-poi-target-button-group')
     ) as HTMLElement[];
     groups.forEach((group) => {
-      if (group.hasAttribute('data-auto-group')) {
-        const children = Array.from(group.children).filter(
-          (child): child is HTMLElement =>
-            child.tagName.toLowerCase() === 'obc-poi-target'
-        );
-        if (children.length > 0) {
-          const layerBounds = layerRect ?? this.getBoundingClientRect();
-          const rectMap =
-            rects ??
-            new Map(
-              children.map((child) => [
-                child,
-                this.getTargetRectForGrouping(child, layerBounds),
-              ])
-            );
-          group.setAttribute(
-            'positionVertical',
-            `${this.getGroupPositionVertical(children, rectMap, layerBounds, group)}px`
+      const children = Array.from(group.children).filter(
+        (child): child is HTMLElement =>
+          child.tagName.toLowerCase() === 'obc-poi-target'
+      );
+      const hasPositionAttr =
+        group.hasAttribute('positionvertical') ||
+        group.hasAttribute('positionVertical');
+      if (!group.hasAttribute('data-auto-group') && !group.hasAttribute('data-position-mode')) {
+        group.setAttribute('data-position-mode', 'bottom');
+      }
+      const shouldSetPosition =
+        group.hasAttribute('data-auto-group') || !hasPositionAttr;
+      if (children.length > 0 && shouldSetPosition) {
+        const layerBounds = layerRect ?? this.getBoundingClientRect();
+        const rectMap =
+          rects ??
+          new Map(
+            children.map((child) => [
+              child,
+              this.getTargetRectForGrouping(child, layerBounds),
+            ])
           );
-        }
+        group.setAttribute(
+          'positionVertical',
+          `${this.getGroupPositionVertical(children, rectMap, layerBounds, group)}px`
+        );
       }
       const updatePosition = (group as unknown as {updatePosition?: () => void})
         .updatePosition;
@@ -675,7 +695,10 @@ export class ObcPoiLayer extends LitElement {
     });
     const baseBottom = maxBottom - layerRect.top;
     const isAutoGroup = group?.hasAttribute('data-auto-group') ?? false;
-    const transformFactor = isAutoGroup ? 1 : 0.5;
+    const useTopOffset =
+      (group as unknown as {useTopOffset?: boolean} | undefined)?.useTopOffset !==
+      false;
+    const transformFactor = useTopOffset ? 0 : isAutoGroup ? 1 : 0.5;
     const offsetRaw = getComputedStyle(this).getPropertyValue(
       '--obc-poi-layer-auto-group-offset-y'
     );
@@ -691,6 +714,7 @@ export class ObcPoiLayer extends LitElement {
     if (typeof anyTarget.offset === 'number') {
       anyTarget.offset = 0;
     }
+    target.style.removeProperty('--obc-poi-target-offset-x');
     target.style.removeProperty('position');
     target.style.removeProperty('width');
     target.style.removeProperty('min-width');

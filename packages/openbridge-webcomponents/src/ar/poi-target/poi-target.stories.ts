@@ -3,7 +3,7 @@ import {ObcPoiTarget, Pointer, TargetValue} from './poi-target.js';
 import './poi-target.js';
 import {crossDecorator} from '../../storybook-util.js';
 import {html} from 'lit';
-const meta: Meta<typeof ObcPoiTarget> = {
+const meta: Meta<ObcPoiTarget> = {
   title: 'AR/POI Target',
   tags: ['autodocs'],
   component: 'obc-poi-target',
@@ -13,6 +13,10 @@ const meta: Meta<typeof ObcPoiTarget> = {
     pointerType: Pointer.Line,
     relativeDirection: 0,
     offset: 0,
+    values: [
+      {value: '10', label: 'Lab', unit: 'Unit'},
+      {value: '20', label: 'Lab 2', unit: 'Unit 2'},
+    ],
   },
   decorators: [crossDecorator],
   argTypes: {
@@ -36,6 +40,11 @@ const meta: Meta<typeof ObcPoiTarget> = {
     offset: {
       control: {type: 'range', min: -100, max: 100, step: 1},
     },
+    values: {
+      control: 'object',
+      description:
+        'Array of value objects with value, label, and unit (also accepts JSON via values attribute)',
+    },
   },
   render: (args) => {
     return html`
@@ -46,6 +55,7 @@ const meta: Meta<typeof ObcPoiTarget> = {
         .pointerType=${args.pointerType}
         .relativeDirection=${args.relativeDirection}
         .offset=${args.offset}
+        .values=${args.values}
       ></obc-poi-target>
     `;
   },
@@ -63,6 +73,26 @@ export const Normal: Story = {
 export const Enhanced: Story = {
   args: {
     value: TargetValue.checked,
+  },
+};
+
+export const WithValues: Story = {
+  render: (args) => {
+    const values = [
+      {value: '10', label: 'Lab', unit: 'Unit'},
+      {value: '20', label: 'Lab 2', unit: 'Unit 2'},
+    ];
+    return html`
+      <obc-poi-target
+        style="top: calc( 50% - ${args.height}px );"
+        .height=${args.height}
+        .value=${args.value}
+        .pointerType=${args.pointerType}
+        .relativeDirection=${args.relativeDirection}
+        .offset=${args.offset}
+        .values=${values}
+      ></obc-poi-target>
+    `;
   },
 };
 

@@ -40,6 +40,11 @@ export enum Pointer {
   None = 'null',
 }
 
+export enum PoiTargetVisualState {
+  Normal = 'normal',
+  Overlap = 'overlap',
+}
+
 /**
  *
  * @prop {number} height - y-coordinate of pointer (centre) if pointerType 'line' is selected.
@@ -52,13 +57,34 @@ export class ObcPoiTarget extends LitElement {
   @property({type: String}) selectedId: string | null = null;
   @property({type: String}) alertType = ObcArAlertType.None;
   @property({type: String, reflect: true, attribute: 'data-visual-state'})
-  visualState: 'normal' | 'overlap' = 'normal';
+  visualState: PoiTargetVisualState = PoiTargetVisualState.Normal;
   @property({type: String}) type = ObcPoiTargetButtonType.Button;
   @property({type: String}) value: TargetValue = TargetValue.enabled;
   @property({type: String}) pointerType: Pointer = Pointer.Line;
   @property({type: Number}) relativeDirection = 0;
   @property({type: Number}) offset = 0;
-  @property({type: Array, attribute: false})
+  @property({
+    type: Array,
+    converter: {
+      fromAttribute(value) {
+        if (!value) return [];
+        try {
+          const parsed = JSON.parse(value);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch {
+          return [];
+        }
+      },
+      toAttribute(value) {
+        if (!value || !Array.isArray(value) || value.length === 0) return null;
+        try {
+          return JSON.stringify(value);
+        } catch {
+          return null;
+        }
+      },
+    },
+  })
   values: ObcPoiTargetButtonValue[] = [];
   override render() {
     let pointer = null;

@@ -10,7 +10,7 @@ import {html} from 'lit';
 import {ObcArAlertType} from '../types.js';
 import {crossDecorator} from '../../storybook-util.js';
 import '../../icons/icon-collision-avoidance-overtaking.js';
-const meta: Meta<typeof ObcPoiTargetButton> = {
+const meta: Meta<ObcPoiTargetButton> = {
   title: 'AR/POI Target Button',
   tags: ['autodocs'],
   component: 'obc-poi-target-button',

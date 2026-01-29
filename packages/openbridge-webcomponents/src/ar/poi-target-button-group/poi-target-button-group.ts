@@ -2,7 +2,7 @@ import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
 import {property, queryAssignedElements, state} from 'lit/decorators.js';
 import compentStyle from './poi-target-button-group.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
-import {ObcPoiTarget} from '../poi-target/poi-target.js';
+import {ObcPoiTarget, PoiTargetVisualState} from '../poi-target/poi-target.js';
 import {customElement} from '../../decorator.js';
 
 export type ExpandEvent = CustomEvent<{expand: boolean}>;
@@ -14,7 +14,7 @@ export type ExpandEvent = CustomEvent<{expand: boolean}>;
 export class ObcPoiTargetButtonGroup extends LitElement {
   @property({type: Boolean}) expand = false;
   @property({type: String}) positionVertical = '0px';
-  @property({type: Boolean}) useTopOffset = false;
+  @property({type: Boolean}) useTopOffset?: boolean;
   @state() private positionLeft = '0px';
   @state() private positionRight = '0px';
 
@@ -43,6 +43,9 @@ export class ObcPoiTargetButtonGroup extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
+    if (this.useTopOffset === undefined && !this.hasAttribute('use-top-offset')) {
+      this.useTopOffset = true;
+    }
     this.addEventListener('slotchange', this.boundUpdatePosition);
     window.addEventListener('resize', this.boundUpdatePosition);
   }
@@ -201,7 +204,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
       }
       if (child instanceof ObcPoiTarget) {
         (child as ObcPoiTarget).visualState =
-          !expand && (child as ObcPoiTarget) !== frontChild ? 'overlap' : 'normal';
+          !expand && (child as ObcPoiTarget) !== frontChild ? PoiTargetVisualState.Overlap : PoiTargetVisualState.Normal;
         if (expand) {
           (child as ObcPoiTarget).style.transform = 'translate(50%, 100%)';
         } else {
@@ -310,7 +313,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
       // Apply scale down immediately (visual state change)
       this.topOffsetTargets.forEach((_, child) => {
         if (child !== frontChild) {
-          child.visualState = 'overlap';
+          child.visualState = PoiTargetVisualState.Overlap;
         }
       });
       // Delay movement animation to let scale transition start
@@ -342,6 +345,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
   }
 
   private applyTopOffsetState(progress: number, frontChild: ObcPoiTarget | null) {
+    const inLayer = this.closest('obc-poi-layer') !== null;
     // Easing function
     const eased =
       progress < 0.5
@@ -355,16 +359,21 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     this.topOffsetTargets.forEach((config, child) => {
       const buttonOffset = config.expandedOffset * eased;
 
-      // Move button horizontally via transform
-      child.style.transform = `translateX(${buttonOffset}px)`;
+      // Move button horizontally; preserve layer vertical transforms when in a layer.
+      if (inLayer) {
+        child.style.setProperty('--obc-poi-target-offset-x', `${buttonOffset}px`);
+        child.style.removeProperty('transform');
+      } else {
+        child.style.transform = `translateX(${buttonOffset}px)`;
+      }
       // Apply inverse offset to keep bottom dot stationary
       child.offset = -buttonOffset;
 
       // Visual state changes immediately with target direction
       if (child !== frontChild) {
-        child.visualState = visualExpanded ? 'normal' : 'overlap';
+        child.visualState = visualExpanded ? PoiTargetVisualState.Normal : PoiTargetVisualState.Overlap;
       } else {
-        child.visualState = 'normal';
+        child.visualState = PoiTargetVisualState.Normal;
       }
 
       // Touch area changes at midpoint
@@ -429,7 +438,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     this._children.forEach((child) => {
       if (!(child instanceof ObcPoiTarget)) return;
       child.visualState =
-        !this.expand && (!front || child !== front) ? 'overlap' : 'normal';
+        !this.expand && (!front || child !== front) ? PoiTargetVisualState.Overlap : PoiTargetVisualState.Normal;
       if (front && child === front) {
         child.setAttribute('data-front', 'true');
       } else {

@@ -6,11 +6,11 @@ import {html} from 'lit';
 import '../poi-target-button/poi-target-button.js';
 import '../../icons/icon-ais-target-activated-iec.js';
 import '../poi-target/poi-target.js';
-import {ObcPoiTarget} from '../poi-target/poi-target.js';
+import {ObcPoiTarget, PoiTargetVisualState} from '../poi-target/poi-target.js';
 
 function onExpand(event: CustomEvent<{expand: boolean}>) {
   (document.querySelector('#outside') as ObcPoiTarget).visualState =
-    event.detail.expand ? 'overlap' : 'normal';
+    event.detail.expand ? PoiTargetVisualState.Overlap : PoiTargetVisualState.Normal;
 }
 
 const meta: Meta<ObcPoiTargetButtonGroup> = {
@@ -97,89 +97,6 @@ export const Expanded: Story = {
   },
 };
 
-export const AnimatedTopOffset: Story = {
-  args: {},
-  render: () => {
-    const targets = [
-      {id: 'anim-target-1', originalX: -20, expandedX: -50},
-      {id: 'anim-target-2', originalX: 0, expandedX: 0},
-      {id: 'anim-target-3', originalX: 20, expandedX: 50},
-    ];
-
-    let progress = 0;
-    let expanding = true;
-    let pauseFrames = 0;
-
-    const animate = () => {
-      if (pauseFrames > 0) {
-        pauseFrames--;
-        requestAnimationFrame(animate);
-        return;
-      }
-
-      progress += expanding ? 0.005 : -0.005;
-
-      if (progress >= 1) {
-        progress = 1;
-        expanding = false;
-        pauseFrames = 60;
-      }
-      if (progress <= 0) {
-        progress = 0;
-        expanding = true;
-        pauseFrames = 60;
-      }
-
-      const eased = progress < 0.5
-        ? 2 * progress * progress
-        : 1 - Math.pow(-2 * progress + 2, 2) / 2;
-
-      targets.forEach((t, index) => {
-        const target = document.querySelector(`#${t.id}`) as ObcPoiTarget;
-        if (!target) return;
-
-        const currentX = t.originalX + (t.expandedX - t.originalX) * eased;
-        const buttonOffset = currentX - t.originalX;
-
-        target.style.transform = `translateX(${buttonOffset}px)`;
-        target.offset = -buttonOffset;
-
-        if (index !== 1) {
-          target.visualState = progress > 0.5 ? 'normal' : 'overlap';
-        }
-      });
-
-      requestAnimationFrame(animate);
-    };
-
-    setTimeout(() => requestAnimationFrame(animate), 100);
-
-    return html`
-      <style>
-        .anim-container {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-        }
-        #anim-target-1, #anim-target-2, #anim-target-3 {
-          position: absolute;
-          top: 50%;
-        }
-        #anim-target-1 { left: calc(50% - 20px); }
-        #anim-target-2 { left: 50%; }
-        #anim-target-3 { left: calc(50% + 20px); }
-      </style>
-      <div class="anim-container">
-        <obc-poi-target id="anim-target-3" .height=${160} data-visual-state="overlap"></obc-poi-target>
-        <obc-poi-target id="anim-target-1" .height=${180} data-visual-state="overlap"></obc-poi-target>
-        <obc-poi-target id="anim-target-2" .height=${200}></obc-poi-target>
-      </div>
-    `;
-  },
-};
-
 export const GroupWithTopOffsetTransition: Story = {
   args: {},
   render: () => {
@@ -193,7 +110,6 @@ export const GroupWithTopOffsetTransition: Story = {
         <obc-poi-target-button-group
           style="position: absolute; top: 0; left: 0;"
           positionVertical="calc(50%)"
-          .useTopOffset=${true}
         >
           <obc-poi-target id="top-grp-target-3" style="position: absolute; top: 50%;" .height=${160} data-visual-state="overlap"></obc-poi-target>
           <obc-poi-target id="top-grp-target-1" style="position: absolute; top: 50%;" .height=${180} data-visual-state="overlap"></obc-poi-target>

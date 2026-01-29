@@ -48,6 +48,46 @@
   pointer-events: auto;
 }
 
+/* Ensure targets inside groups inherit layer-style positioning when grouped in a layer. */
+:host-context(obc-poi-layer) ::slotted(obc-poi-target) {
+  position: absolute;
+  transform-origin: 50% 50%;
+  --obc-poi-layer-target-scale: 1;
+  --obc-poi-layer-target-shift: calc(
+    (1 - var(--obc-poi-layer-target-scale)) * 100%
+  );
+  transform: translateX(var(--obc-poi-target-offset-x, 0px))
+    scale(var(--obc-poi-layer-target-scale));
+  transition: opacity 0.4s ease-out;
+}
+
+:host-context(obc-poi-layer):host([data-position-mode='bottom'])
+  ::slotted(obc-poi-target) {
+  top: auto;
+  bottom: 0;
+  height: 100%;
+  transform: translateX(var(--obc-poi-target-offset-x, 0px))
+    translateY(calc(100% - var(--obc-poi-layer-target-shift)))
+    scale(var(--obc-poi-layer-target-scale));
+}
+
+:host-context(obc-poi-layer) ::slotted(obc-poi-target[data-behind]),
+:host-context(obc-poi-layer) ::slotted(obc-poi-target[data-exiting]) {
+  opacity: 0.4;
+  --poi-size: 28px;
+  --obc-poi-target-icon-opacity: 0;
+}
+
+:host-context(obc-poi-layer) ::slotted(obc-poi-target[data-front]) {
+  opacity: 1;
+  --poi-size: 38px;
+  --obc-poi-target-icon-opacity: 1;
+}
+
+:host-context(obc-poi-layer):host([data-position-mode='bottom']) .wrapper {
+  transform: translateY(-100%);
+}
+
 ::slotted(obc-poi-target[data-grouped]) {
   opacity: 1;
   transition: opacity 0.4s ease-out;

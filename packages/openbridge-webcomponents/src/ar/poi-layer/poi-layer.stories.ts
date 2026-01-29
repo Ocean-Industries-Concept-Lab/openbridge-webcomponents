@@ -272,7 +272,7 @@ export const OverlapWithGroup: Story = {
         >
           <obc-poi-target-button-group
             class="group"
-            positionVertical="calc(50%)"
+            positionVertical="calc(100%)"
           >
             <obc-poi-target
               id="b3"

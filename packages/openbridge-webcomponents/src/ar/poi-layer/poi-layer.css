@@ -83,14 +83,13 @@
 ::slotted(obc-poi-target-button-group) {
   bottom: 0;
   height: 100%;
-  transform: translateY(50%);
+  transform: none;
 }
 
 ::slotted(obc-poi-target-button-group[data-auto-group]) {
-  transform: translateY(100%);
   opacity: 0;
   z-index: 2;
-  transition: transform 0.7s ease-out, opacity 0.7s ease-out;
+  transition: opacity 0.7s ease-out;
 }
 
 ::slotted(obc-poi-target-button-group[data-auto-group][data-visible]) {
