@@ -55,11 +55,17 @@ export enum ObcMessageMenuItemSize {
  *
  * ## Slots
  *
- * | Slot Name        | Renders When...              | Purpose                                           |
- * |------------------|------------------------------|---------------------------------------------------|
- * | `primary-icon`   | `hasPrimaryIcon` is true     | Main icon representing message type or status.    |
- * | `secondary-icon` | `hasSecondaryIcon` is true   | Additional icon for secondary status or context.  |
- * | `trailing-icon`  | `hasTrailingIcon` is true (horizontal only) | Icon button after action buttons. |
+ * Text content for `title`, `description`, and `action-label` supports both props (for plain text) and slots (for rich HTML like `CO<sub>2</sub>`).
+ * To use a slot, set the corresponding `has*Slot` prop to `true`.
+ *
+ * | Slot Name        | Enabled By               | Purpose                                           |
+ * |------------------|--------------------------|---------------------------------------------------|
+ * | `title`          | `hasTitleSlot=true`      | Message title. Use slot for rich HTML.            |
+ * | `description`    | `hasDescriptionSlot=true`| Message description. Use slot for rich HTML.      |
+ * | `action-label`   | `hasActionLabelSlot=true`| Primary action button label. Use slot for rich HTML. |
+ * | `primary-icon`   | `hasPrimaryIcon=true`    | Main icon representing message type or status.    |
+ * | `secondary-icon` | `hasSecondaryIcon=true`  | Additional icon for secondary status or context.  |
+ * | `trailing-icon`  | `hasTrailingIcon=true` (horizontal only) | Icon button after action buttons. |
  *
  * ## Events
  *
@@ -69,6 +75,7 @@ export enum ObcMessageMenuItemSize {
  *
  * ## Example
  *
+ * Using props (simple text):
  * ```html
  * <obc-message-menu-item
  *   size="double-line"
@@ -83,6 +90,27 @@ export enum ObcMessageMenuItemSize {
  * </obc-message-menu-item>
  * ```
  *
+ * Using slots (rich HTML):
+ * ```html
+ * <obc-message-menu-item
+ *   size="double-line"
+ *   day="Yesterday"
+ *   time="14:32"
+ *   hasPrimaryIcon
+ *   hasTitleSlot
+ *   hasDescriptionSlot
+ *   hasActionLabelSlot
+ * >
+ *   <span slot="title">High CO<sub>2</sub> level</span>
+ *   <span slot="description">CO<sub>2</sub> concentration exceeds safe limits.</span>
+ *   <span slot="action-label">Acknowledge</span>
+ *   <obi-placeholder slot="primary-icon"></obi-placeholder>
+ * </obc-message-menu-item>
+ * ```
+ *
+ * @slot title - Message title (shown when `hasTitleSlot` is true).
+ * @slot description - Message description (shown when `hasDescriptionSlot` is true).
+ * @slot action-label - Primary action button label (shown when `hasActionLabelSlot` is true).
  * @slot primary-icon - Main icon representing the message type or status (shown when `hasPrimaryIcon` is true).
  * @slot secondary-icon - Additional icon for secondary status/context (shown when `hasSecondaryIcon` is true).
  * @slot trailing-icon - Icon after action buttons, horizontal layout only (shown when `hasTrailingIcon` is true).
@@ -113,6 +141,14 @@ export class ObcMessageMenuItem extends LitElement {
   @property({type: Boolean}) hasTrailingIcon = false;
   @property({type: Boolean}) isShelved = false;
 
+  // Slot visibility properties for text content
+  /** When true, renders the `title` slot instead of the `title` prop. Use for rich HTML content. */
+  @property({type: Boolean}) hasTitleSlot = false;
+  /** When true, renders the `description` slot instead of the `description` prop. Use for rich HTML content. */
+  @property({type: Boolean}) hasDescriptionSlot = false;
+  /** When true, renders the `action-label` slot instead of the `primaryActionLabel` prop. Use for rich HTML content. */
+  @property({type: Boolean}) hasActionLabelSlot = false;
+
   private get activeSize() {
     if (this.open) {
       return 'multi-line';
@@ -129,7 +165,7 @@ export class ObcMessageMenuItem extends LitElement {
   }
 
   private get hasPrimaryAction() {
-    return this.primaryActionLabel !== '';
+    return this.primaryActionLabel !== '' || this.hasActionLabelSlot;
   }
 
   private get hasSecondaryAction() {
@@ -223,8 +259,16 @@ export class ObcMessageMenuItem extends LitElement {
               : nothing}
           </div>
           <div class="text-container">
-            <div class="title-container">${this.title}</div>
-            <div class="description-container">${this.description}</div>
+            <div class="title-container">
+              ${this.hasTitleSlot
+                ? html`<slot name="title"></slot>`
+                : this.title}
+            </div>
+            <div class="description-container">
+              ${this.hasDescriptionSlot
+                ? html`<slot name="description"></slot>`
+                : this.description}
+            </div>
             ${this.hasTimestamp
               ? html`<div class="date-container">
                   ${this.hasDay ? html`<span>${this.day}</span>` : nothing}
@@ -257,7 +301,9 @@ export class ObcMessageMenuItem extends LitElement {
                     .fullWidth=${this.isVertical}
                     @click=${this.handlePrimaryActionClick}
                   >
-                    ${this.primaryActionLabel}
+                    ${this.hasActionLabelSlot
+                      ? html`<slot name="action-label"></slot>`
+                      : this.primaryActionLabel}
                   </obc-button>`
                 : nothing}
               ${this.hasTrailingIcon && !this.isVertical
