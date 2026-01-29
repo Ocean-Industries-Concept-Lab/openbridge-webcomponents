@@ -36,6 +36,10 @@
   height: 100%;
 }
 
+.wrapper.interactive {
+  cursor: pointer;
+}
+
 .background-frame,
 .activated-frame {
   position: absolute;
@@ -229,33 +233,44 @@
   height: 12px;
 }
 
-.state-layer {
-  position: absolute;
-  background: transparent;
-  transition: background-color 0.15s ease;
-  pointer-events: none;
-  border-radius: var(--maneuvering-components-poi-button-border-radius-round);
+/* Interactive hover/active states on background-frame */
+.wrapper.interactive .background-frame {
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
 }
 
-.is-square .state-layer {
-  border-radius: var(--maneuvering-components-poi-button-border-radius-square);
+/* Regular type (non-indicator) - uses flat styles */
+:host(:hover) .wrapper.interactive:not(.type-indicator) .background-frame {
+  background-color: var(--flat-hover-background-color);
 }
 
-.type-regular .state-layer,
-.type-large .state-layer,
-.type-speed-rot .state-layer {
-  inset: 6px;
+:host(:active) .wrapper.interactive:not(.type-indicator) .background-frame {
+  background-color: var(--flat-pressed-background-color);
 }
 
-.type-n-up .state-layer,
-.type-n-up-large .state-layer {
-  inset: 8px;
+/* Indicator type interactive - transparent by default, shows overlay flat styles on hover */
+.wrapper.interactive.type-indicator .background-frame {
+  background-color: transparent;
+  border-color: transparent;
 }
 
-:host(:hover) .state-layer {
-  background-color: var(--state-hover-color);
+:host(:hover) .wrapper.interactive.type-indicator .background-frame {
+  background-color: var(--overlay-flat-hover-background-color);
+  border-color: var(--overlay-flat-hover-border-color);
 }
 
-:host(:active) .state-layer {
-  background-color: var(--state-pressed-color);
+:host(:active) .wrapper.interactive.type-indicator .background-frame {
+  background-color: var(--overlay-flat-active-background-color);
+  border-color: var(--overlay-flat-active-border-color);
+}
+
+/* Focus styles */
+.wrapper:focus {
+  outline: none;
+}
+
+.wrapper:focus-visible .background-frame {
+  outline: 2px solid var(--element-active-color);
+  outline-offset: 2px;
 }

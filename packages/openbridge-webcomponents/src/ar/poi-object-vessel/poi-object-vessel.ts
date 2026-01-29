@@ -52,17 +52,19 @@ export enum ObcPoiObjectVesselState {
 }
 
 /**
- * `<obc-poi-object-vessel>` - A vessel icon button for POI (Point of Interest) display.
+ * `<obc-poi-object-vessel>` - An interactive vessel icon button for POI (Point of Interest) display.
  *
- * Renders a vessel type icon with configurable size, style, and selection state.
+ * Renders a vessel type icon as a clickable button with configurable size, style, and selection state.
  * Commonly used in POI card headers, map overlays, and target lists to represent
  * tracked vessels with visual differentiation based on category and selection.
  *
  * ## Features
  *
+ * - **Interactive button:** Full keyboard and mouse support with hover/active states.
  * - **Type variants:** Control size and layout (indicator, regular, large, speed-rot, n-up, n-up-large).
  * - **Style variants:** Regular (white/translucent) or Categorical (blue-tinted) backgrounds.
  * - **State variants:** Selection, activation, and overlap states for interactive contexts.
+ * - **State container:** Indicator type uses overlay-style hover (darker), other types use regular-style hover (lighter).
  *
  * ## Slots
  *
@@ -75,18 +77,21 @@ export enum ObcPoiObjectVesselState {
  * ## Usage Notes
  *
  * - **Indicator type:** Use filled icon variants with `useCssColor` attribute for proper stroke outline rendering.
- * - **Other types:** Use outlined icon variants.
+ *   Uses overlay-style state container (darker hover/active backgrounds).
+ * - **Other types:** Use outlined icon variants. Uses regular-style state container (lighter hover/active backgrounds).
  *
  * ## Example
  *
  * ```html
  * <!-- Regular type with outlined icon -->
- * <obc-poi-object-vessel type="regular" vesselStyle="regular" state="checked">
+ * <obc-poi-object-vessel type="regular" vesselStyle="regular" state="checked"
+ *   @click=${handleVesselClick}>
  *   <obi-vessel-type-passenger-outlined></obi-vessel-type-passenger-outlined>
  * </obc-poi-object-vessel>
  *
  * <!-- Indicator type requires filled icon with useCssColor -->
- * <obc-poi-object-vessel type="indicator" state="unchecked">
+ * <obc-poi-object-vessel type="indicator" state="unchecked"
+ *   @click=${handleVesselClick}>
  *   <obi-vessel-type-passenger-filled useCssColor></obi-vessel-type-passenger-filled>
  * </obc-poi-object-vessel>
  * ```
@@ -105,6 +110,9 @@ export class ObcPoiObjectVessel extends LitElement {
 
   @property({type: String}) state: ObcPoiObjectVesselState =
     ObcPoiObjectVesselState.Unchecked;
+
+  /** Enables button behavior with hover/active states and keyboard support. */
+  @property({type: Boolean}) interactive = false;
 
   private get isChecked() {
     return (
@@ -128,6 +136,11 @@ export class ObcPoiObjectVessel extends LitElement {
     return this.state === ObcPoiObjectVesselState.Overlapped;
   }
 
+  /** Interactive is disabled when overlapped */
+  private get isInteractive() {
+    return this.interactive && !this.isOverlapped;
+  }
+
   private get isSquare() {
     return (
       this.type === ObcPoiObjectVesselType.NUp ||
@@ -141,6 +154,13 @@ export class ObcPoiObjectVessel extends LitElement {
       this.type === ObcPoiObjectVesselType.SpeedRot ||
       this.type === ObcPoiObjectVesselType.NUpLarge
     );
+  }
+
+  private handleKeyDown(e: KeyboardEvent) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      this.click();
+    }
   }
 
   override render() {
@@ -158,14 +178,20 @@ export class ObcPoiObjectVessel extends LitElement {
       'is-overlapped': this.isOverlapped,
       'is-square': this.isSquare,
       'is-large': this.isLargeSize,
+      interactive: this.isInteractive,
     };
 
     return html`
-      <div class=${classMap(classes)}>
+      <div
+        class=${classMap(classes)}
+        role=${this.isInteractive ? 'button' : nothing}
+        tabindex=${this.isInteractive ? '0' : nothing}
+        @keydown=${this.handleKeyDown}
+      >
         ${this.isActivated
           ? html`<div class="activated-frame"></div>`
           : nothing}
-        ${!isIndicator || this.isOverlapped
+        ${!isIndicator || this.isOverlapped || this.isInteractive
           ? html`<div class="background-frame"></div>`
           : nothing}
 
@@ -186,8 +212,6 @@ export class ObcPoiObjectVessel extends LitElement {
               `
             : html`<slot></slot>`}
         </div>
-
-        ${!isIndicator ? html`<div class="state-layer"></div>` : nothing}
       </div>
     `;
   }

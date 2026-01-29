@@ -29,11 +29,16 @@ const meta: Meta = {
       options: Object.values(ObcPoiObjectVesselState),
       description: 'State variant',
     },
+    interactive: {
+      control: 'boolean',
+      description: 'Enables button behavior with hover/active states',
+    },
   },
   args: {
     type: ObcPoiObjectVesselType.Regular,
     vesselStyle: ObcPoiObjectVesselStyle.Regular,
     state: ObcPoiObjectVesselState.Unchecked,
+    interactive: false,
   },
 };
 
@@ -89,6 +94,7 @@ export const Default: Story = {
       type=${args.type}
       vesselStyle=${args.vesselStyle}
       state=${args.state}
+      ?interactive=${args.interactive}
     >
       ${args.type === ObcPoiObjectVesselType.Indicator
         ? html`<obi-vessel-type-psv-filled
@@ -98,6 +104,46 @@ export const Default: Story = {
           ? speedRotSlots
           : html`<obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>`}
     </obc-poi-object-vessel>
+  `,
+};
+
+// === INTERACTIVE STORY ===
+
+export const Interactive: Story = {
+  args: {
+    interactive: true,
+  },
+  render: (args) => html`
+    <div style="display: flex; gap: 24px; align-items: center;">
+      <div style="text-align: center;">
+        <obc-poi-object-vessel
+          type="regular"
+          vesselStyle=${args.vesselStyle}
+          state=${args.state}
+          ?interactive=${args.interactive}
+          @click=${() => console.log('Regular clicked')}
+        >
+          <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
+        </obc-poi-object-vessel>
+        <div style="font-size: 10px; margin-top: 4px; font-family: sans-serif;">
+          Regular (flat hover)
+        </div>
+      </div>
+      <div style="text-align: center;">
+        <obc-poi-object-vessel
+          type="indicator"
+          vesselStyle=${args.vesselStyle}
+          state=${args.state}
+          ?interactive=${args.interactive}
+          @click=${() => console.log('Indicator clicked')}
+        >
+          <obi-vessel-type-psv-filled useCssColor></obi-vessel-type-psv-filled>
+        </obc-poi-object-vessel>
+        <div style="font-size: 10px; margin-top: 4px; font-family: sans-serif;">
+          Indicator (overlay hover)
+        </div>
+      </div>
+    </div>
   `,
 };
 
