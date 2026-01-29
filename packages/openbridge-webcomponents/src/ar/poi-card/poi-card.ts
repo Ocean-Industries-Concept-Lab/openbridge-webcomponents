@@ -109,7 +109,17 @@ export class ObcPoiCard extends LitElement {
 
   private handleKeyDown(e: KeyboardEvent) {
     if (!this.interactive) return;
-    if (e.key === 'Enter' || e.key === ' ') {
+    if (e.key === ' ') {
+      e.preventDefault();
+    } else if (e.key === 'Enter' && !e.repeat) {
+      e.preventDefault();
+      this.handleCardClick();
+    }
+  }
+
+  private handleKeyUp(e: KeyboardEvent) {
+    if (!this.interactive) return;
+    if (e.key === ' ') {
       e.preventDefault();
       this.handleCardClick();
     }
@@ -226,6 +236,7 @@ export class ObcPoiCard extends LitElement {
             aria-disabled=${this.interactive ? 'false' : nothing}
             @click=${this.handleCardClick}
             @keydown=${this.handleKeyDown}
+            @keyup=${this.handleKeyUp}
           >
             ${this.renderHeader()}
             <div class="content">

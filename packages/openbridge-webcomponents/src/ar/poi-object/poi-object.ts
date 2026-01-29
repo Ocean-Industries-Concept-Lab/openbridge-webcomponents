@@ -49,25 +49,70 @@ export enum ObcPoiObjectState {
 }
 
 /**
- * `<obc-poi-object>` – Base component for POI (Point of Interest) icon buttons.
+ * `<obc-poi-object>` – Base icon button component for interactive markers.
  *
- * Provides the shared structure, styling, and behavior for interactive POI markers
- * used in map overlays and target lists. Extend via `ObcAbstractPoiObject` to create
- * domain-specific variants (vessel, person, waypoint, etc.).
+ * Renders an icon within a styled frame with configurable size, visual style, and
+ * selection state. Used as the foundation for domain-specific marker components.
  *
- * ## Features
+ * ## Features/Variants
  *
- * - **Type variants:** `indicator` (icon only), `regular`, `large`, `n-up`, `n-up-large`.
- * - **Style variants:** `regular` (white/translucent) or `categorical` (blue-tinted).
- * - **State variants:** `unchecked`, `checked`, `static-unchecked`, `static-checked`, `activated`, `overlapped`.
- * - **Interactive mode:** Enables keyboard/mouse support with hover/active states.
+ * ### Type (`type`)
+ * Controls size and shape. Defaults to `regular`.
+ * - `indicator`: Icon only with drop shadow, no background frame.
+ * - `regular`: Standard size (48px touch target, 36px background, 24px icon).
+ * - `large`: Larger size (64px touch target, 52px background, 36px icon).
+ * - `n-up`: Square background (48px touch target, 32px background, 24px icon).
+ * - `n-up-large`: Large square background (64px touch target, 48px background, 36px icon).
  *
- * ## Usage
+ * ### Style (`objectStyle`)
+ * Controls background color scheme. Defaults to `regular`.
+ * - `regular`: White/translucent background.
+ * - `categorical`: Blue-tinted background for categorized items.
  *
- * Typically consumed indirectly via concrete POI object components like
- * `<obc-poi-object-vessel>`. Direct usage is for building new POI object types.
+ * ### State (`state`)
+ * Controls selection and display mode. Defaults to `unchecked`.
+ * - `unchecked`: Default unselected state.
+ * - `checked`: Selected state with visual indicator.
+ * - `static-unchecked`: Flat background style, not selected.
+ * - `static-checked`: Flat background style, selected.
+ * - `activated`: White outer ring around background.
+ * - `overlapped`: Smaller circle with hidden icon (for clustered markers).
  *
- * @slot - Icon to display inside the POI button
+ * ### Interactive (`interactive`)
+ * When `true`, enables keyboard navigation (Enter/Space activation), focus states,
+ * and hover/active visual feedback. Defaults to `false`.
+ *
+ * ### Extra Classes (`extraClasses`)
+ * Internal property for subclasses to inject additional CSS classes. Not reflected
+ * as an attribute. TODO(designer): Clarify if this should be exposed or remain internal.
+ *
+ * ## Usage Guidelines
+ *
+ * Typically consumed indirectly via concrete subclass components that extend
+ * `ObcAbstractPoiObject`. Direct usage is for building new marker types.
+ *
+ * ## Slots/Content
+ *
+ * @slot - Icon element to display inside the button frame.
+ *
+ * ## Events
+ *
+ * This component does not emit custom events. Click handling is delegated to the
+ * native `click` event when `interactive` is enabled.
+ *
+ * ## Best Practices
+ *
+ * - Use `indicator` type for decorative markers that don't need a background.
+ * - Set `interactive` to `true` only when the marker should be clickable/focusable.
+ * - Use `overlapped` state for markers in dense clusters to reduce visual noise.
+ *
+ * ## Example
+ *
+ * ```html
+ * <obc-poi-object type="regular" objectStyle="regular" state="checked" interactive>
+ *   <my-custom-icon></my-custom-icon>
+ * </obc-poi-object>
+ * ```
  */
 @customElement('obc-poi-object')
 export class ObcPoiObject extends LitElement {
@@ -81,7 +126,6 @@ export class ObcPoiObject extends LitElement {
 
   @property({type: Boolean}) interactive = false;
 
-  /** Used by subclasses for type-specific styling. */
   @property({attribute: false}) extraClasses: Record<string, boolean> = {};
 
   private get isChecked() {
@@ -129,7 +173,18 @@ export class ObcPoiObject extends LitElement {
   }
 
   private handleKeyDown(e: KeyboardEvent) {
-    if (e.key === 'Enter' || e.key === ' ') {
+    if (!this.isInteractive) return;
+    if (e.key === ' ') {
+      e.preventDefault();
+    } else if (e.key === 'Enter' && !e.repeat) {
+      e.preventDefault();
+      this.click();
+    }
+  }
+
+  private handleKeyUp(e: KeyboardEvent) {
+    if (!this.isInteractive) return;
+    if (e.key === ' ') {
       e.preventDefault();
       this.click();
     }
@@ -158,6 +213,7 @@ export class ObcPoiObject extends LitElement {
         role=${this.isInteractive ? 'button' : nothing}
         tabindex=${this.isInteractive ? '0' : nothing}
         @keydown=${this.handleKeyDown}
+        @keyup=${this.handleKeyUp}
       >
         ${this.isActivated
           ? html`<div class="activated-frame"></div>`
