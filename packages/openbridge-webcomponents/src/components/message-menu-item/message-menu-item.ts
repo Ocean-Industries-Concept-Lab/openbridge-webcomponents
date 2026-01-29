@@ -141,9 +141,9 @@ export class ObcMessageMenuItem extends LitElement {
   @property({type: Boolean}) hasTrailingIcon = false;
   @property({type: Boolean}) isShelved = false;
 
-  `@property`({type: Boolean}) hasTitleSlot = false;
-  `@property`({type: Boolean}) hasDescriptionSlot = false;
-  `@property`({type: Boolean}) hasActionLabelSlot = false;
+  @property({type: Boolean}) hasTitleSlot = false;
+  @property({type: Boolean}) hasDescriptionSlot = false;
+  @property({type: Boolean}) hasActionLabelSlot = false;
 
   private get activeSize() {
     if (this.open) {
