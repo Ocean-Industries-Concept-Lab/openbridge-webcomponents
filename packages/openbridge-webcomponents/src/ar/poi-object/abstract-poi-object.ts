@@ -10,13 +10,13 @@ import {
 export {ObcPoiObjectType, ObcPoiObjectStyle, ObcPoiObjectState};
 
 /**
- * Abstract base class for POI object components.
+ * Base class for POI object components.
  *
  * Wraps `<obc-poi-object>` and provides a common interface for all POI object
- * variants. Subclasses implement the abstract `icon` and `baseType` getters to
+ * variants. Subclasses override the `icon` and `baseType` getters to
  * define their specific icon template and type mapping.
  */
-export abstract class ObcAbstractPoiObject extends LitElement {
+export class ObcAbstractPoiObject extends LitElement {
   @property({type: String}) objectStyle: ObcPoiObjectStyle =
     ObcPoiObjectStyle.Regular;
 
@@ -25,11 +25,15 @@ export abstract class ObcAbstractPoiObject extends LitElement {
 
   @property({type: Boolean}) interactive = false;
 
-  /** Icon template to render inside the POI object. */
-  abstract get icon(): TemplateResult;
+  /** Icon template to render inside the POI object. Override in subclasses. */
+  get icon(): TemplateResult {
+    return html`<slot></slot>`;
+  }
 
-  /** Maps subclass-specific type enum to base `ObcPoiObjectType`. */
-  abstract get baseType(): ObcPoiObjectType;
+  /** Maps subclass-specific type enum to base `ObcPoiObjectType`. Override in subclasses. */
+  get baseType(): ObcPoiObjectType {
+    return ObcPoiObjectType.Regular;
+  }
 
   /** Extra CSS classes for type-specific styling. Override in subclasses. */
   get extraClasses(): Record<string, boolean> {
