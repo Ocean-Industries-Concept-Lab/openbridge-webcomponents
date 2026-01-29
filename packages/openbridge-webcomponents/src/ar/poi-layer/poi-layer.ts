@@ -38,10 +38,37 @@ export class ObcPoiLayer extends LitElement {
       this.scheduleGrouping();
       this.scheduleLayerHeightUpdate();
     });
+    // Listen for expand events from groups to apply focus effect
+    this.addEventListener('expand', this.handleGroupExpand as EventListener);
   }
+
+  private handleGroupExpand = (event: CustomEvent<{expand: boolean}>) => {
+    const group = event.target as HTMLElement;
+    if (!group?.tagName?.toLowerCase().includes('group')) return;
+
+    const targets = Array.from(
+      this.querySelectorAll('obc-poi-target')
+    ) as HTMLElement[];
+    const groupedTargets = new Set<HTMLElement>(
+      Array.from(group.querySelectorAll('obc-poi-target')) as HTMLElement[]
+    );
+
+    if (event.detail.expand) {
+      // Group expanded: apply overlap state to all targets NOT in the group
+      targets.forEach((target) => {
+        if (!groupedTargets.has(target)) {
+          this.applyStandaloneVisualState(target, true);
+        }
+      });
+    } else {
+      // Group collapsed: trigger re-evaluation
+      this.scheduleGrouping();
+    }
+  };
 
   override disconnectedCallback() {
     super.disconnectedCallback();
+    this.removeEventListener('expand', this.handleGroupExpand as EventListener);
     this.resizeObserver?.disconnect();
     this.targetResizeObserver?.disconnect();
     this.layerMutationObserver?.disconnect();
@@ -412,35 +439,12 @@ export class ObcPoiLayer extends LitElement {
       if (behind) behindTargets.add(behind);
     });
 
+    // If any auto-group is expanded, skip grouping updates entirely
+    // Group stays frozen until user manually collapses it
     const expandedAutoGroup = existingGroups.find(
       (group) => (group as unknown as {expand?: boolean}).expand === true
     );
     if (expandedAutoGroup) {
-      const expandedChildren = Array.from(expandedAutoGroup.children).filter(
-        (child): child is HTMLElement =>
-          child.tagName.toLowerCase() === 'obc-poi-target'
-      );
-      const expandedAny = expandedAutoGroup as unknown as {
-        expand?: boolean;
-        setExpandedChildren?: (expand: boolean) => void;
-      };
-      const stillClustered = clusters.some(
-        (cluster) =>
-          cluster.length === expandedChildren.length &&
-          cluster.every((target) => expandedChildren.includes(target))
-      );
-      if (expandedChildren.length >= 2 && stillClustered) {
-        this.isGrouping = false;
-        return;
-      }
-      expandedAny.setExpandedChildren?.(false);
-      expandedAny.expand = false;
-      if (!this.autoGroupCollapseTimeout) {
-        this.autoGroupCollapseTimeout = window.setTimeout(() => {
-          this.autoGroupCollapseTimeout = 0;
-          this.scheduleGrouping();
-        }, 300);
-      }
       this.isGrouping = false;
       return;
     }

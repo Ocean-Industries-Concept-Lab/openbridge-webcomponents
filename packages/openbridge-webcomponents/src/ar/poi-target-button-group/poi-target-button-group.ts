@@ -27,7 +27,9 @@ export class ObcPoiTargetButtonGroup extends LitElement {
   private expandedRaf = 0;
   private topOffsetAnimationId: number | null = null;
   private topOffsetProgress = 0;
-  private topOffsetTargets: Map<ObcPoiTarget, {originalX: number; expandedOffset: number}> = new Map();
+  private topOffsetTargets: Map<ObcPoiTarget, {originalX: number; expandedOffset: number; originalLeft: number}> = new Map();
+  // Captured deltas at the start of collapse animation
+  private collapseDeltas: Map<ObcPoiTarget, number> = new Map();
 
   constructor() {
     super();
@@ -58,11 +60,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
   override disconnectedCallback() {
     this.removeEventListener('slotchange', this.boundUpdatePosition);
     window.removeEventListener('resize', this.boundUpdatePosition);
-    this.expandedObserver?.disconnect();
-    if (this.expandedRaf) {
-      cancelAnimationFrame(this.expandedRaf);
-      this.expandedRaf = 0;
-    }
+    this.stopExpandedObserver();
     if (this.topOffsetAnimationId) {
       cancelAnimationFrame(this.topOffsetAnimationId);
       this.topOffsetAnimationId = null;
@@ -161,7 +159,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
 
   setExpandedChildren(expand: boolean, firstRun = false) {
     this.dispatchEvent(
-      new CustomEvent('expand', {detail: {expand: this.expand}})
+      new CustomEvent('expand', {detail: {expand: this.expand}, bubbles: true, composed: true})
     );
 
     if (this.useTopOffset) {
@@ -293,9 +291,13 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     positions.forEach((pos, index) => {
       const targetX = startX + index * spacing;
       const expandedOffset = targetX - pos.centerX;
+      // Store original style.left so we can track movement
+      const leftStr = pos.child.style.left;
+      const originalLeft = Number.parseFloat(leftStr) || 0;
       this.topOffsetTargets.set(pos.child, {
         originalX: pos.centerX,
         expandedOffset,
+        originalLeft,
       });
     });
   }
@@ -320,6 +322,14 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     // When collapsing, apply visual state first, then delay movement
     const isCollapsing = targetProgress === 0 && this.topOffsetProgress > 0;
     if (isCollapsing) {
+      // Capture current deltas at the start of collapse
+      this.collapseDeltas.clear();
+      this.topOffsetTargets.forEach((config, child) => {
+        const leftStr = child.style.left;
+        const currentLeft = Number.parseFloat(leftStr) || 0;
+        const delta = currentLeft - config.originalLeft;
+        this.collapseDeltas.set(child, delta);
+      });
       // Apply scale down immediately (visual state change)
       this.topOffsetTargets.forEach((_, child) => {
         if (child !== frontChild) {
@@ -332,6 +342,10 @@ export class ObcPoiTargetButtonGroup extends LitElement {
         this.runTopOffsetAnimation(targetProgress, frontChild);
       }, 150);
     } else {
+      // When expanding, clear collapse deltas
+      if (targetProgress === 1) {
+        this.collapseDeltas.clear();
+      }
       this.runTopOffsetAnimation(targetProgress, frontChild);
     }
   }
@@ -348,6 +362,13 @@ export class ObcPoiTargetButtonGroup extends LitElement {
         if (targetProgress === 0) {
           this.updatePosition();
           this.wrapperVisible = true;
+          this.stopExpandedObserver();
+          this.collapseDeltas.clear();
+        }
+        // When expand animation completes, start observing for position changes
+        if (targetProgress === 1) {
+          this.startExpandedObserver();
+          this.scheduleExpandedOffsets();
         }
       } else {
         this.topOffsetProgress += diff * 0.1;
@@ -372,7 +393,21 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     const touchAreaExpanded = progress > 0.5;
 
     this.topOffsetTargets.forEach((config, child) => {
-      const buttonOffset = config.expandedOffset * eased;
+      // Use captured collapse delta if collapsing, otherwise calculate current delta
+      const isCollapsing = this.collapseDeltas.size > 0;
+      let delta: number;
+      if (isCollapsing) {
+        delta = this.collapseDeltas.get(child) ?? 0;
+      } else {
+        const leftStr = child.style.left;
+        const currentLeft = Number.parseFloat(leftStr) || 0;
+        delta = currentLeft - config.originalLeft;
+      }
+
+      // Button offset:
+      // - Expanding: spread to expandedOffset, counter-translate by current delta to stay locked
+      // - Collapsing: animate from (expandedOffset - delta) back to 0
+      const buttonOffset = (config.expandedOffset - delta) * eased;
 
       // Move button horizontally; preserve layer vertical transforms when in a layer.
       if (inLayer) {
@@ -381,8 +416,10 @@ export class ObcPoiTargetButtonGroup extends LitElement {
       } else {
         child.style.transform = `translateX(${buttonOffset}px)`;
       }
-      // Apply inverse offset to keep bottom dot stationary
-      child.offset = -buttonOffset;
+
+      // Line offset: points from button position back to target's real position
+      // offset = -buttonOffset makes line point back to where target actually is
+      child.offset = Math.round(-buttonOffset);
 
       // Visual state changes immediately with target direction
       if (child !== frontChild) {
@@ -462,50 +499,76 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     });
   }
 
+  private expandedLoopRunning = false;
+
   private startExpandedObserver() {
-    if (this.expandedObserver) return;
-    this.expandedObserver = new MutationObserver(() =>
-      this.scheduleExpandedOffsets()
-    );
-    this._children.forEach((child) => {
-      this.expandedObserver?.observe(child, {
-        attributes: true,
-        attributeFilter: ['style'],
-      });
-    });
+    if (this.expandedLoopRunning) return;
+    this.expandedLoopRunning = true;
+    this.runExpandedLoop();
+  }
+
+  private runExpandedLoop() {
+    if (!this.expandedLoopRunning || !this.expand) {
+      this.expandedLoopRunning = false;
+      return;
+    }
+    this.updateExpandedOffsets();
+    requestAnimationFrame(() => this.runExpandedLoop());
   }
 
   private stopExpandedObserver() {
+    this.expandedLoopRunning = false;
     this.expandedObserver?.disconnect();
     this.expandedObserver = undefined;
     if (this.expandedRaf) {
       cancelAnimationFrame(this.expandedRaf);
       this.expandedRaf = 0;
     }
+    this.lastAppliedOffsets.clear();
   }
 
   private scheduleExpandedOffsets() {
-    if (!this.expand || this.expandedRaf) return;
-    this.expandedRaf = requestAnimationFrame(() => {
-      this.expandedRaf = 0;
-      this.updateExpandedOffsets();
-    });
+    // Just run once immediately when called
+    if (!this.expand) return;
+    this.updateExpandedOffsets();
   }
+
+  // Track last applied values to avoid jitter from tiny changes
+  private lastAppliedOffsets: Map<ObcPoiTarget, {buttonOffset: number; lineOffset: number}> = new Map();
 
   private updateExpandedOffsets() {
     if (!this.expand) return;
-    const layer = this.closest('obc-poi-layer');
-    const layerRect = layer?.getBoundingClientRect() ?? this.getBoundingClientRect();
+    const inLayer = this.closest('obc-poi-layer') !== null;
+
     this._children.forEach((child) => {
       if (!(child instanceof ObcPoiTarget)) return;
+      const config = this.topOffsetTargets.get(child);
+      if (!config) return;
+
       const leftStr = child.style.left;
-      if (!leftStr) return;
-      const left = Number.parseFloat(leftStr);
-      if (Number.isNaN(left)) return;
-      const desiredX = layerRect.left + left;
-      const buttonRect = this.getTargetButtonRect(child);
-      const centerX = buttonRect.left + buttonRect.width / 2;
-      child.offset = Math.round(desiredX - centerX);
+      const currentLeft = Number.parseFloat(leftStr) || 0;
+      const delta = currentLeft - config.originalLeft;
+
+      // Counter-translate to keep button locked in expanded spread position
+      const buttonOffset = Math.round(config.expandedOffset - delta);
+      const lineOffset = -buttonOffset;
+
+      // Only update if values actually changed
+      const last = this.lastAppliedOffsets.get(child);
+      if (last && last.buttonOffset === buttonOffset && last.lineOffset === lineOffset) {
+        return;
+      }
+
+      this.lastAppliedOffsets.set(child, {buttonOffset, lineOffset});
+
+      if (inLayer) {
+        child.style.setProperty('--obc-poi-target-offset-x', `${buttonOffset}px`);
+      } else {
+        child.style.transform = `translateX(${buttonOffset}px)`;
+      }
+
+      // Line offset: points from button position back to target's real position
+      child.offset = lineOffset;
     });
   }
 
