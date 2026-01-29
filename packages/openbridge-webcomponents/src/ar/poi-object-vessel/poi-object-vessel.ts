@@ -10,8 +10,13 @@ import {
 import componentStyle from './poi-object-vessel.css?inline';
 
 /**
- * Type variants for POI Object Vessel.
- * Extends the base types with vessel-specific `speedRot` type.
+ * Type variants for vessel POI objects.
+ * - `indicator`: Icon only with drop shadow, no background frame.
+ * - `regular`: Standard size (48px touch target, 36px background, 24px icon).
+ * - `large`: Larger size (64px touch target, 52px background, 36px icon).
+ * - `speed-rot`: Composite layout with turn indicator, vessel icon, and speed indicator.
+ * - `n-up`: Square background (48px touch target, 32px background, 24px icon).
+ * - `n-up-large`: Large square background (64px touch target, 48px background, 36px icon).
  */
 export enum ObcPoiObjectVesselType {
   Indicator = 'indicator',
@@ -22,52 +27,32 @@ export enum ObcPoiObjectVesselType {
   NUpLarge = 'n-up-large',
 }
 
-// Re-export for convenience
 export {ObcPoiObjectStyle as ObcPoiObjectVesselStyle};
 export {ObcPoiObjectState as ObcPoiObjectVesselState};
 
 /**
- * `<obc-poi-object-vessel>` - An interactive vessel icon button for POI (Point of Interest) display.
+ * `<obc-poi-object-vessel>` – Vessel icon button for POI display.
  *
- * Renders a vessel type icon as a clickable button with configurable size, style, and selection state.
- * Commonly used in POI card headers, map overlays, and target lists to represent
- * tracked vessels with visual differentiation based on category and selection.
+ * Renders a vessel icon as a clickable button with configurable size, style, and
+ * selection state. Used in POI card headers, map overlays, and target lists.
  *
  * ## Features
  *
- * - **Interactive button:** Full keyboard and mouse support with hover/active states.
- * - **Type variants:** Control size and layout (indicator, regular, large, speed-rot, n-up, n-up-large).
- * - **Style variants:** Regular (white/translucent) or Categorical (blue-tinted) backgrounds.
- * - **State variants:** Selection, activation, and overlap states for interactive contexts.
- * - **State container:** Indicator type uses overlay-style hover (darker), other types use regular-style hover (lighter).
+ * - **Type variants:** `indicator`, `regular`, `large`, `speed-rot`, `n-up`, `n-up-large`.
+ * - **Style variants:** `regular` (white/translucent) or `categorical` (blue-tinted).
+ * - **State variants:** Selection, activation, and overlap states.
+ * - **Speed-rot type:** Composite layout with turn indicator, vessel icon, and speed indicator slots.
  *
- * ## Slots
+ * ## Usage
  *
- * | Slot Name        | Purpose                                           |
- * |------------------|---------------------------------------------------|
- * | (default)        | Vessel icon (use outlined icons for most types)   |
- * | turn-indicator   | Turn rate indicator (speed-rot type only)         |
- * | speed-indicator  | Speed indicator (speed-rot type only)             |
- *
- * ## Usage Notes
- *
- * - **Indicator type:** Use filled icon variants with `useCssColor` attribute for proper stroke outline rendering.
- *   Uses overlay-style state container (darker hover/active backgrounds).
- * - **Other types:** Use outlined icon variants. Uses regular-style state container (lighter hover/active backgrounds).
+ * - **Indicator type:** Use filled icon variants with `useCssColor` attribute.
+ * - **Other types:** Use outlined icon variants.
  *
  * ## Example
  *
  * ```html
- * <!-- Regular type with outlined icon -->
- * <obc-poi-object-vessel type="regular" objectStyle="regular" state="checked"
- *   @click=${handleVesselClick}>
+ * <obc-poi-object-vessel type="regular" objectStyle="regular" state="checked">
  *   <obi-vessel-type-passenger-outlined></obi-vessel-type-passenger-outlined>
- * </obc-poi-object-vessel>
- *
- * <!-- Indicator type requires filled icon with useCssColor -->
- * <obc-poi-object-vessel type="indicator" state="unchecked"
- *   @click=${handleVesselClick}>
- *   <obi-vessel-type-passenger-filled useCssColor></obi-vessel-type-passenger-filled>
  * </obc-poi-object-vessel>
  * ```
  *
@@ -84,7 +69,6 @@ export class ObcPoiObjectVessel extends ObcAbstractPoiObject {
     return this.type === ObcPoiObjectVesselType.SpeedRot;
   }
 
-  // Map vessel-specific type to base type
   override get baseType(): ObcPoiObjectType {
     switch (this.type) {
       case ObcPoiObjectVesselType.Indicator:

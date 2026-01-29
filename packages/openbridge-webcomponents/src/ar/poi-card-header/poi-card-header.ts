@@ -8,11 +8,11 @@ import '../../icons/icon-close-google.js';
 import '../poi-object-vessel/poi-object-vessel.js';
 
 /**
- * Enum for POI Card Header variants.
- * - `tag`: Minimal numbered badge/pill at top of content.
- * - `condensed`: Compact single-line with index badge, title, optional source.
- * - `regular`: Single-line with index badge, leading icon slot, title, source.
- * - `detailed`: Full header with POI icon, title, description, source, timestamp, close button.
+ * Layout variants for POI Card Header.
+ * - `tag`: Minimal numbered badge/pill for compact list views.
+ * - `condensed`: Single-line with index badge, title, and optional source.
+ * - `regular`: Single-line with index badge, leading icon slot, title, and source.
+ * - `detailed`: Full header with POI icon, title, description, source, timestamp, and close button.
  */
 export enum ObcPoiCardHeaderVariant {
   Tag = 'tag',
@@ -22,51 +22,30 @@ export enum ObcPoiCardHeaderVariant {
 }
 
 /**
- * `<obc-poi-card-header>` - A versatile header component for POI (Point of Interest) cards.
+ * `<obc-poi-card-header>` – Header component for POI cards.
  *
- * Provides four distinct layout variants for displaying POI metadata such as index badges,
- * titles, descriptions, source labels, and timestamps. Commonly used at the top of POI cards
- * to identify targets like vessels, waypoints, or other tracked objects.
+ * Displays POI metadata with four layout variants: tag, condensed, regular, and detailed.
+ * Used at the top of POI cards to identify targets.
  *
  * ## Features
  *
- * - **Tag variant:** Minimal numbered badge/pill, ideal for compact list views.
- * - **Condensed variant:** Single-line with index, title, and optional source badge.
- * - **Regular variant:** Single-line with index, leading icon slot, title, and source badge.
- * - **Detailed variant:** Full header with POI icon button, title, description, source, timestamp, and close button.
- *
- * ## Slots
- *
- * | Slot Name     | Variant   | Purpose                                    |
- * |---------------|-----------|-------------------------------------------|
- * | leading-icon  | regular   | Icon displayed before the title            |
- * | poi-icon      | detailed  | Icon inside the POI target button          |
- *
- * ## Events
- *
- * | Event Name    | Detail | Description                                       |
- * |---------------|--------|---------------------------------------------------|
- * | `close-click` | void   | Fired when the close button is clicked (detailed) |
+ * - **Tag:** Minimal numbered badge for compact list views.
+ * - **Condensed:** Single-line with index, title, and optional source badge.
+ * - **Regular:** Single-line with index, leading icon slot, title, and source badge.
+ * - **Detailed:** Full header with POI icon, title, description, source, timestamp, close button.
  *
  * ## Example
  *
  * ```html
- * <obc-poi-card-header
- *   variant="detailed"
- *   index="1"
- *   cardTitle="MV Explorer"
- *   description="Passenger vessel"
- *   source="AIS"
- *   timestamp="2 min ago"
- *   hasCloseButton
- * >
+ * <obc-poi-card-header variant="detailed" index="1" cardTitle="MV Explorer"
+ *   description="Passenger vessel" source="AIS" timestamp="2 min ago" hasCloseButton>
  *   <obi-vessel-type-passenger-outlined slot="poi-icon"></obi-vessel-type-passenger-outlined>
  * </obc-poi-card-header>
  * ```
  *
  * @slot leading-icon - Icon before the title (regular variant only)
  * @slot poi-icon - Icon for the POI target button (detailed variant only)
- * @fires close-click - Fired when the close button is clicked
+ * @fires close-click - When the close button is clicked
  */
 @customElement('obc-poi-card-header')
 export class ObcPoiCardHeader extends LitElement {

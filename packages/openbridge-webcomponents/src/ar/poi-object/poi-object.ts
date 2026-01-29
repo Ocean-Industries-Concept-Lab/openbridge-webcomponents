@@ -5,12 +5,12 @@ import componentStyle from './poi-object.css?inline';
 import {customElement} from '../../decorator.js';
 
 /**
- * Common type variants shared across all POI objects.
- * - `indicator`: Icon only with drop shadow, no background circle.
- * - `regular`: Standard size (48px touch, 36px round background, 24px icon)
- * - `large`: Larger size (64px touch, 52px round background, 36px icon)
- * - `nUp`: Square background (48px touch, 32px square background, 24px icon)
- * - `nUpLarge`: Large square background (64px touch, 48px square background, 36px icon)
+ * Type variants for POI objects controlling size and shape.
+ * - `indicator`: Icon only with drop shadow, no background frame.
+ * - `regular`: Standard size (48px touch target, 36px background, 24px icon).
+ * - `large`: Larger size (64px touch target, 52px background, 36px icon).
+ * - `n-up`: Square background (48px touch target, 32px background, 24px icon).
+ * - `n-up-large`: Large square background (64px touch target, 48px background, 36px icon).
  */
 export enum ObcPoiObjectType {
   Indicator = 'indicator',
@@ -21,9 +21,9 @@ export enum ObcPoiObjectType {
 }
 
 /**
- * Common style variants shared across most POI objects.
- * - `regular`: Default white/translucent background
- * - `categorical`: Blue tinted background for categorized items
+ * Style variants for POI objects.
+ * - `regular`: White/translucent background.
+ * - `categorical`: Blue-tinted background for categorized items.
  */
 export enum ObcPoiObjectStyle {
   Regular = 'regular',
@@ -31,13 +31,13 @@ export enum ObcPoiObjectStyle {
 }
 
 /**
- * State variants for POI objects.
- * - `unchecked`: Default state
- * - `checked`
- * - `staticUnchecked`: Flat/normal style background
- * - `staticChecked`: Flat style with selection frame
- * - `activated`: Has white outer ring around background
- * - `overlapped`: Smaller circle, icon hidden (for overlapping markers)
+ * State variants for POI objects controlling selection and display modes.
+ * - `unchecked`: Default state.
+ * - `checked`: Selected state with visual indicator.
+ * - `static-unchecked`: Flat background style, not selected.
+ * - `static-checked`: Flat background style, selected.
+ * - `activated`: White outer ring around background.
+ * - `overlapped`: Smaller circle with hidden icon (for overlapping markers).
  */
 export enum ObcPoiObjectState {
   Unchecked = 'unchecked',
@@ -49,26 +49,25 @@ export enum ObcPoiObjectState {
 }
 
 /**
- * `<obc-poi-object>` - Base component for POI (Point of Interest) object buttons.
+ * `<obc-poi-object>` – Base component for POI (Point of Interest) icon buttons.
  *
- * This is the foundational component used by all POI object variants (vessel, people,
- * location, etc.). It provides the shared structure, styling, and behavior for
- * interactive POI markers.
+ * Provides the shared structure, styling, and behavior for interactive POI markers
+ * used in map overlays and target lists. Extend via `ObcAbstractPoiObject` to create
+ * domain-specific variants (vessel, person, waypoint, etc.).
  *
  * ## Features
  *
- * - **Interactive button:** Full keyboard and mouse support with hover/active states.
- * - **Type variants:** Control size and layout (indicator, regular, large, n-up, n-up-large).
- * - **Style variants:** Regular (white/translucent) or Categorical (blue-tinted) backgrounds.
- * - **State variants:** Selection, activation, and overlap states for interactive contexts.
+ * - **Type variants:** `indicator` (icon only), `regular`, `large`, `n-up`, `n-up-large`.
+ * - **Style variants:** `regular` (white/translucent) or `categorical` (blue-tinted).
+ * - **State variants:** `unchecked`, `checked`, `static-unchecked`, `static-checked`, `activated`, `overlapped`.
+ * - **Interactive mode:** Enables keyboard/mouse support with hover/active states.
  *
- * ## Slots
+ * ## Usage
  *
- * | Slot Name | Purpose |
- * |-----------|---------|
- * | (default) | Icon content |
+ * Typically consumed indirectly via concrete POI object components like
+ * `<obc-poi-object-vessel>`. Direct usage is for building new POI object types.
  *
- * @slot - Icon to display
+ * @slot - Icon to display inside the POI button
  */
 @customElement('obc-poi-object')
 export class ObcPoiObject extends LitElement {
@@ -80,10 +79,9 @@ export class ObcPoiObject extends LitElement {
   @property({type: String}) state: ObcPoiObjectState =
     ObcPoiObjectState.Unchecked;
 
-  /** Enables button behavior with hover/active states and keyboard support. */
   @property({type: Boolean}) interactive = false;
 
-  /** Extra CSS classes to add to the wrapper - used by subclasses for type-specific styling */
+  /** Used by subclasses for type-specific styling. */
   @property({attribute: false}) extraClasses: Record<string, boolean> = {};
 
   private get isChecked() {

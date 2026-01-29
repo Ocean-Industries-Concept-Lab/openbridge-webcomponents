@@ -8,9 +8,6 @@ import {ObcPoiCardHeaderVariant} from '../poi-card-header/poi-card-header.js';
 
 export {ObcPoiCardHeaderVariant};
 
-/**
- * Event detail for card-click event.
- */
 export interface PoiCardClickDetail {
   index: string;
 }
@@ -18,7 +15,12 @@ export interface PoiCardClickDetail {
 export type PoiCardClickEvent = CustomEvent<PoiCardClickDetail>;
 
 /**
- * Enum for POI Card pointer direction.
+ * Direction of the arrow pointer anchoring the card.
+ * - `none`: No pointer shown.
+ * - `top`: Arrow points up from the card.
+ * - `bottom`: Arrow points down from the card.
+ * - `left`: Arrow points left from the card.
+ * - `right`: Arrow points right from the card.
  */
 export enum PointerDirection {
   None = 'none',
@@ -29,51 +31,31 @@ export enum PointerDirection {
 }
 
 /**
- * `<obc-poi-card>` - A card container for displaying Point of Interest content.
+ * `<obc-poi-card>` – Card container for POI content with optional header and pointer.
  *
- * Wraps arbitrary content in a styled card with an optional header and directional
- * arrow pointer. Use this component to present detailed information about a selected
- * or highlighted POI such as a vessel, waypoint, or other tracked object.
+ * Wraps content in a styled card with an optional directional arrow pointer for
+ * visual anchoring. Integrates `obc-poi-card-header` for displaying POI metadata.
  *
  * ## Features
  *
- * - **Directional pointer:** Arrow pointer in any direction (top, bottom, left, right) to anchor the card visually.
- * - **Configurable header:** Integrates `obc-poi-card-header` with all its variants (tag, condensed, regular, detailed).
- * - **Content sizing:** Hugs content by default, or uses fixed 256x256px size.
- * - **Interactive mode:** Enables click events, keyboard focus, and alert border states.
- *
- * ## Slots
- *
- * | Slot Name     | Purpose                                              |
- * |---------------|------------------------------------------------------|
- * | (default)     | Main card content                                    |
- * | leading-icon  | Icon before the title (regular header variant)       |
- * | poi-icon      | Icon for the POI target button (detailed header)     |
- *
- * ## Events
- *
- * | Event Name   | Detail              | Description                              |
- * |--------------|---------------------|------------------------------------------|
- * | `card-click` | `{ index: string }` | Fired when the card is clicked (interactive mode only) |
+ * - **Pointer direction:** Arrow in any direction (top, bottom, left, right) or none.
+ * - **Header variants:** tag, condensed, regular, detailed (via `headerVariant`).
+ * - **Sizing:** Hugs content by default; set `fixedSize` for 256×256px.
+ * - **Interactive mode:** Enables click events, keyboard focus, and alert borders.
  *
  * ## Example
  *
  * ```html
- * <obc-poi-card
- *   pointerDirection="bottom"
- *   index="1"
- *   cardTitle="Vessel Name"
- *   source="AIS"
- *   interactive
- * >
- *   <div>Custom card content here</div>
+ * <obc-poi-card pointerDirection="bottom" index="1" cardTitle="Vessel Name"
+ *   source="AIS" interactive>
+ *   <div>Custom card content</div>
  * </obc-poi-card>
  * ```
  *
- * @slot - Default slot for card content
- * @slot leading-icon - Icon before the title (regular header variant only)
- * @slot poi-icon - Icon for the POI target button (detailed header variant only)
- * @fires card-click - Fired when the card is clicked (interactive mode only)
+ * @slot - Card content
+ * @slot leading-icon - Icon before the title (regular header variant)
+ * @slot poi-icon - Icon for the POI button (detailed header variant)
+ * @fires card-click - When the card is clicked (interactive mode only)
  */
 @customElement('obc-poi-card')
 export class ObcPoiCard extends LitElement {
@@ -134,8 +116,6 @@ export class ObcPoiCard extends LitElement {
   }
 
   private renderPointerSvg(direction: 'top' | 'bottom' | 'left' | 'right') {
-    // SVG paths for each direction
-    // Top pointer points up (away from card), bottom points down, left points left, right points right
     const paths = {
       top: 'M6 0L12 6H0L6 0Z',
       bottom: 'M6 6L0 0H12L6 6Z',
