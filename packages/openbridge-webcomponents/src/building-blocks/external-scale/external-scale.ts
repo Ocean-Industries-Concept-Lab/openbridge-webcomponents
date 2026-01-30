@@ -815,30 +815,24 @@ function calculateAtSetpoint(config: ExternalScaleConfig): boolean {
  * to the design-only visual state enum.
  *
  * Priority order:
- * 1. disabled (loading, off states)
- * 2. focus (active state OR focused property)
- * 3. equalZero (at setpoint AND setpoint is at zero)
- * 4. equal (at setpoint)
- * 5. notEqual (default)
+ * 1. focus (active state OR focused property)
+ * 2. equalZero (at setpoint AND setpoint is at zero)
+ * 3. equal (at setpoint)
+ * 4. notEqual (default)
+ *
+ * NOTE: Disabled states (loading, off) are handled via SetpointColorMode.disabled
+ * in deriveSetpointColorMode(), not via a separate visual state.
  *
  * State mapping:
  * - InstrumentState.inCommand → notEqual/equal/equalZero (based on deadband)
  * - InstrumentState.active → focus (NOTE: 'active' may be renamed to 'focus' in future)
- * - InstrumentState.loading → disabled
- * - InstrumentState.off → disabled
+ * - InstrumentState.loading → uses colorMode.disabled
+ * - InstrumentState.off → uses colorMode.disabled
  */
 function deriveSetpointVisualState(
   config: ExternalScaleConfig
 ): SetpointVisualState {
-  // Priority 1: Disabled states (loading, off)
-  if (
-    config.state === InstrumentState.loading ||
-    config.state === InstrumentState.off
-  ) {
-    return SetpointVisualState.disabled;
-  }
-
-  // Priority 2: Focus state
+  // Priority 1: Focus state
   // - When `focused` property is true (user is actively adjusting)
   // - When InstrumentState is 'active' (NOTE: 'active' may be renamed to 'focus' in future refactoring)
   if (config.focused || config.state === InstrumentState.active) {
@@ -868,8 +862,10 @@ function deriveSetpointVisualState(
 /**
  * Derive the SetpointColorMode from ExternalScaleConfig.
  *
- * When config.colorMode is provided, it takes precedence.
- * Otherwise, maps config.enhanced to enhanced/regular color palette.
+ * Priority:
+ * 1. Explicit colorMode takes precedence
+ * 2. Disabled states (loading, off) use disabled color mode
+ * 3. Otherwise, maps config.enhanced to enhanced/regular color palette
  */
 function deriveSetpointColorMode(
   config: ExternalScaleConfig
@@ -878,6 +874,15 @@ function deriveSetpointColorMode(
   if (config.colorMode !== undefined) {
     return config.colorMode;
   }
+
+  // Disabled states (loading, off) use disabled color mode
+  if (
+    config.state === InstrumentState.loading ||
+    config.state === InstrumentState.off
+  ) {
+    return SetpointColorMode.disabled;
+  }
+
   // Fall back to enhanced boolean mapping
   return config.enhanced
     ? SetpointColorMode.enhanced

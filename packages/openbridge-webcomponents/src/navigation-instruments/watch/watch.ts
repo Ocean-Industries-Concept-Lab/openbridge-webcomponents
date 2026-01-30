@@ -406,21 +406,16 @@ export class ObcWatch extends LitElement {
    * This maps the instrument's API (state, atAngleSetpoint, touching, etc.)
    * to the design-only visual state enum.
    *
+   * NOTE: Disabled states (loading, off) are handled via SetpointColorMode.disabled
+   * in deriveSetpointColorMode(), not via a separate visual state.
+   *
    * TODO: Add support for:
    * - `touching` property to map to `focus` state
    * - `angleSetpointAtZero` detection for `equalZero` state
    * - Future: `minMax` state for min/max setpoint range
    */
   private deriveSetpointVisualState(): SetpointVisualState {
-    // Priority 1: Disabled states (loading, off)
-    if (
-      this.state === InstrumentState.loading ||
-      this.state === InstrumentState.off
-    ) {
-      return SetpointVisualState.disabled;
-    }
-
-    // TODO: Priority 2: Focus state (when touching/adjusting)
+    // TODO: Priority 1: Focus state (when touching/adjusting)
     // Currently watch.ts doesn't have a `touching` property.
     // When added, map: if (this.touching) return SetpointVisualState.focus;
 
@@ -441,9 +436,19 @@ export class ObcWatch extends LitElement {
   /**
    * Derive the SetpointColorMode from instrument state.
    *
-   * Maps InstrumentState to enhanced/regular color palette.
+   * Priority:
+   * 1. Disabled states (loading, off) use disabled color mode
+   * 2. Otherwise, maps InstrumentState to enhanced/regular color palette
    */
   private deriveSetpointColorMode(): SetpointColorMode {
+    // Disabled states use disabled color mode
+    if (
+      this.state === InstrumentState.loading ||
+      this.state === InstrumentState.off
+    ) {
+      return SetpointColorMode.disabled;
+    }
+
     // TODO: Current implementation uses outlined shape for `active` state.
     //       The new interface uses `focus` for outlined shape.
     //       For now, keeping color mode mapping, but shape logic needs review.
