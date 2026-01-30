@@ -55,6 +55,9 @@ export class ObcPoiLayer extends LitElement {
     });
     // Listen for expand events from groups to apply focus effect
     this.addEventListener('expand', this.handleGroupExpand as EventListener);
+    this.addEventListener('collapse-finished', () => {
+      this.scheduleGrouping();
+    });
   }
 
   private handleGroupExpand = (event: CustomEvent<{expand: boolean}>) => {
@@ -638,7 +641,9 @@ export class ObcPoiLayer extends LitElement {
     // If any auto-group is expanded, skip grouping updates entirely
     // Group stays frozen until user manually collapses it
     const expandedAutoGroup = existingGroups.find(
-      (group) => (group as unknown as {expand?: boolean}).expand === true
+      (group) =>
+        (group as unknown as {expand?: boolean}).expand === true ||
+        (group as unknown as {collapsing?: boolean}).collapsing === true
     );
     if (expandedAutoGroup) {
       this.isGrouping = false;

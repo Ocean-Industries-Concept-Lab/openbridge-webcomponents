@@ -13,6 +13,7 @@ export type ExpandEvent = CustomEvent<{expand: boolean}>;
 @customElement('obc-poi-target-button-group')
 export class ObcPoiTargetButtonGroup extends LitElement {
   @property({type: Boolean}) expand = false;
+  @property({type: Boolean, reflect: true}) collapsing = false;
   @property({type: String}) positionVertical = '0px';
   @property({type: Boolean}) useTopOffset?: boolean;
   @state() private positionLeft = '0px';
@@ -343,6 +344,12 @@ export class ObcPoiTargetButtonGroup extends LitElement {
       this.topOffsetDelayTimeout = null;
     }
 
+    if (targetProgress === 0 && this.topOffsetProgress > 0) {
+      this.collapsing = true;
+    } else {
+      this.collapsing = false;
+    }
+
     const frontChild = this.getFrontChild();
     // Set target state immediately so visual state transitions start right away
     this.topOffsetTargetExpanded = targetProgress === 1;
@@ -390,6 +397,13 @@ export class ObcPoiTargetButtonGroup extends LitElement {
         this.applyTopOffsetState(this.topOffsetProgress, frontChild);
         // When collapse animation completes, update position and show wrapper
         if (targetProgress === 0) {
+          this.collapsing = false;
+          this.dispatchEvent(
+            new CustomEvent('collapse-finished', {
+              bubbles: true,
+              composed: true,
+            })
+          );
           this.updatePosition();
           this.wrapperVisible = true;
           this.stopExpandedObserver();
