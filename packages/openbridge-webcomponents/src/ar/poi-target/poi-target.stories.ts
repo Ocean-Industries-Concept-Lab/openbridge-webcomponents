@@ -13,6 +13,7 @@ const meta: Meta<typeof ObcPoiTarget> = {
     pointerType: Pointer.Line,
     relativeDirection: 0,
     offset: 0,
+    values: [],
   },
   decorators: [crossDecorator],
   argTypes: {
@@ -36,6 +37,9 @@ const meta: Meta<typeof ObcPoiTarget> = {
     offset: {
       control: {type: 'range', min: -100, max: 100, step: 1},
     },
+    values: {
+      control: {type: 'object'},
+    },
   },
   render: (args) => {
     return html`
@@ -46,6 +50,7 @@ const meta: Meta<typeof ObcPoiTarget> = {
         .pointerType=${args.pointerType}
         .relativeDirection=${args.relativeDirection}
         .offset=${args.offset}
+        .values=${args.values}
       ></obc-poi-target>
     `;
   },
@@ -63,5 +68,15 @@ export const Normal: Story = {
 export const Enhanced: Story = {
   args: {
     value: TargetValue.checked,
+  },
+};
+
+export const WithValues: Story = {
+  args: {
+    value: TargetValue.enabled,
+    values: [
+      {value: '12.5', label: 'CPA', unit: 'NM'},
+      {value: '08:32', label: 'TCPA', unit: ''},
+    ],
   },
 };
