@@ -34,6 +34,8 @@ export class ObcPoiLayer extends LitElement {
   private crossingModeRaf = 0;
   // Track previous positions for detecting movement and crossings
   private previousPositions = new Map<HTMLElement, number>();
+  // Smooth out tiny per-frame offset changes to avoid flicker
+  private lastOffsets = new Map<HTMLElement, number>();
   // Track which side each moving POI's button is on relative to static POIs
   // Key: "movingId:staticId", Value: 'left' | 'right' | null
   private crossingSides = new Map<string, 'left' | 'right' | null>();
@@ -310,8 +312,11 @@ export class ObcPoiLayer extends LitElement {
     if (targets.length < 2) {
       // Clear any offsets
       targets.forEach((target) => {
-        target.style.removeProperty('--obc-poi-target-button-offset-x');
+        (target as unknown as {buttonOffsetX?: number}).buttonOffsetX = 0;
+        (target as unknown as {offset?: number}).offset = 0;
+        this.lastOffsets.set(target, 0);
       });
+      this.lastOffsets.clear();
       return;
     }
 
@@ -341,7 +346,9 @@ export class ObcPoiLayer extends LitElement {
 
       // Only moving targets get offsets
       if (!isMoving) {
-        target.style.removeProperty('--obc-poi-target-button-offset-x');
+        (target as unknown as {buttonOffsetX?: number}).buttonOffsetX = 0;
+        (target as unknown as {offset?: number}).offset = 0;
+        this.lastOffsets.set(target, 0);
         return;
       }
 
@@ -415,23 +422,26 @@ export class ObcPoiLayer extends LitElement {
 
       // Apply the button offset and line bend
       const roundedOffset = Math.round(totalOffset);
-      if (roundedOffset !== 0) {
-        // Offset the button horizontally
-        target.style.setProperty(
-          '--obc-poi-target-button-offset-x',
-          `${roundedOffset}px`
-        );
-        // For the line:
-        // 1. Use --poi-offset to shift the entire line to follow the button
-        // 2. Use offset attribute to bend the line so the dot stays at target position
-        // The offset bends the bottom of the line by -roundedOffset to counteract the shift
-        target.style.setProperty('--poi-offset', `${roundedOffset}px`);
-        target.setAttribute('offset', String(-roundedOffset));
+      const prevOffset = this.lastOffsets.get(target) ?? 0;
+      const deadZone = 1;
+      const nextOffset =
+        Math.abs(roundedOffset - prevOffset) < deadZone
+          ? prevOffset
+          : roundedOffset;
+      if (nextOffset !== 0) {
+        // Apply both button shift and line bend in the same render for sync
+        (target as unknown as {buttonOffsetX?: number}).buttonOffsetX =
+          nextOffset;
+        (target as unknown as {offset?: number}).offset = -nextOffset;
       } else {
-        target.style.removeProperty('--obc-poi-target-button-offset-x');
-        target.style.removeProperty('--poi-offset');
-        target.setAttribute('offset', '0');
+        (target as unknown as {buttonOffsetX?: number}).buttonOffsetX = 0;
+        (target as unknown as {offset?: number}).offset = 0;
       }
+      this.lastOffsets.set(target, nextOffset);
+    });
+    // Remove offsets for targets no longer present
+    this.lastOffsets.forEach((_, target) => {
+      if (!currentPositions.has(target)) this.lastOffsets.delete(target);
     });
 
     // Update previous positions for next frame

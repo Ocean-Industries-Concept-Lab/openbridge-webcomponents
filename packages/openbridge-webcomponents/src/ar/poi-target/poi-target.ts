@@ -63,6 +63,7 @@ export class ObcPoiTarget extends LitElement {
   @property({type: String}) pointerType: Pointer = Pointer.Line;
   @property({type: Number}) relativeDirection = 0;
   @property({type: Number}) offset = 0;
+  @property({type: Number}) buttonOffsetX = 0;
   @property({
     type: Array,
     converter: {
@@ -128,6 +129,9 @@ export class ObcPoiTarget extends LitElement {
           ['type-' + this.pointerType]: true,
           selected: this.selected,
         })}
+        style=${this.buttonOffsetX !== 0
+          ? `--obc-poi-target-button-offset-x: ${this.buttonOffsetX}px; --poi-offset: ${this.buttonOffsetX}px;`
+          : ''}
       >
         <obc-poi-target-button
           .relativeDirection=${this.relativeDirection}

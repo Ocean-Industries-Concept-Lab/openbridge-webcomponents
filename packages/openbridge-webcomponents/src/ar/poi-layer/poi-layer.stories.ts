@@ -557,7 +557,7 @@ export const JoinExpandedGroup: Story = {
       b.style.left = '320px';
       c.style.left = '520px';
 
-      const duration = 6000;
+      const duration = 12000;
       let rafId = 0;
       let startTime: number | null = null;
 
