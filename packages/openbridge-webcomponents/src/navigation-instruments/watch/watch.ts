@@ -9,15 +9,6 @@ import {
 import {property} from 'lit/decorators.js';
 import {circle} from '../../svghelpers/index.js';
 import {roundedArch} from '../../svghelpers/roundedArch.js';
-import {
-  SetpointVisualState,
-  SetpointColorMode,
-  // TODO: Use these when replacing legacy implementation
-  drawSetpointMarker,
-  generateSetpointId,
-  getSetpointZeroOffset,
-  SETPOINT_HEIGHT,
-} from '../../svghelpers/setpoint.js';
 import {InstrumentState} from '../types.js';
 import compentStyle from './watch.css?inline';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
@@ -27,9 +18,6 @@ import {renderLabels} from './label.js';
 import {VesselImage, VesselImageSize, vesselImages} from './vessel.js';
 import {renderCurrent, renderWind} from './environment.js';
 import {customElement} from '../../decorator.js';
-
-// Re-export unused setpoint imports to silence TS6133 until we use them
-export {drawSetpointMarker, getSetpointZeroOffset, SETPOINT_HEIGHT};
 export {VesselImage, VesselImageSize};
 
 export enum WatchCircleType {
@@ -396,110 +384,7 @@ export class ObcWatch extends LitElement {
     `;
   }
 
-  // ============================================================================
-  // Setpoint Rendering (uses unified setpoint interface from svghelpers/setpoint.ts)
-  // ============================================================================
-
-  /**
-   * Derive the SetpointVisualState from component properties.
-   *
-   * This maps the instrument's API (state, atAngleSetpoint, touching, etc.)
-   * to the design-only visual state enum.
-   *
-   * NOTE: Disabled states (loading, off) are handled via SetpointColorMode.disabled
-   * in deriveSetpointColorMode(), not via a separate visual state.
-   *
-   * TODO: Add support for:
-   * - `touching` property to map to `focus` state
-   * - `angleSetpointAtZero` detection for `equalZero` state
-   * - Future: `minMax` state for min/max setpoint range
-   */
-  private deriveSetpointVisualState(): SetpointVisualState {
-    // TODO: Priority 1: Focus state (when touching/adjusting)
-    // Currently watch.ts doesn't have a `touching` property.
-    // When added, map: if (this.touching) return SetpointVisualState.focus;
-
-    // Priority 3: At setpoint states
-    if (this.atAngleSetpoint) {
-      // TODO: Detect equalZero state when setpoint is at angle 0 (or near zero)
-      // For now, always return `equal`. Future: check if angleSetpoint is ~0
-      // if (Math.abs(this.angleSetpoint ?? 0) < SOME_DEADBAND) {
-      //   return SetpointVisualState.equalZero;
-      // }
-      return SetpointVisualState.equal;
-    }
-
-    // Default: not at setpoint
-    return SetpointVisualState.notEqual;
-  }
-
-  /**
-   * Derive the SetpointColorMode from instrument state.
-   *
-   * Priority:
-   * 1. Disabled states (loading, off) use disabled color mode
-   * 2. Otherwise, maps InstrumentState to enhanced/regular color palette
-   */
-  private deriveSetpointColorMode(): SetpointColorMode {
-    // Disabled states use disabled color mode
-    if (
-      this.state === InstrumentState.loading ||
-      this.state === InstrumentState.off
-    ) {
-      return SetpointColorMode.disabled;
-    }
-
-    // TODO: Current implementation uses outlined shape for `active` state.
-    //       The new interface uses `focus` for outlined shape.
-    //       For now, keeping color mode mapping, but shape logic needs review.
-    if (this.state === InstrumentState.inCommand) {
-      return SetpointColorMode.enhanced;
-    }
-    return SetpointColorMode.regular;
-  }
-
   private renderSetpoint(): SVGTemplateResult | typeof nothing {
-    if (this.angleSetpoint === undefined) {
-      return nothing;
-    }
-
-    // Derive visual state and color mode from component properties
-    // TODO: These will be used when replacing legacy implementation with drawSetpointMarker()
-    const _visualState = this.deriveSetpointVisualState();
-    const _colorMode = this.deriveSetpointColorMode();
-    void _visualState; // Suppress TS6133 until we use this
-    void _colorMode; // Suppress TS6133 until we use this
-
-    // Generate unique ID to avoid conflicts with multiple instruments on page
-    const setpointId = generateSetpointId('watch-setpoint');
-
-    // TODO: Current watch.ts uses different shape (outlined) for `active` state.
-    //       The new setpoint interface uses outlined shape only for `focus` state.
-    //       For backward compatibility, we need to override the shape here.
-    //       Future: remove this override and use the interface's shape logic.
-    const _useOutlinedShape = this.state === InstrumentState.active;
-    void _useOutlinedShape; // Suppress TS6133 until we use this
-
-    // TODO: Apply scale factor from getSetpointScale() for equal/equalZero states.
-    //       Current watch.ts does NOT scale the setpoint marker.
-    //       Future: add scale transform to match external-scale.ts behavior.
-
-    // TODO: Apply zero offset from getSetpointZeroOffset() for equalZero state.
-    //       This shifts the marker 4px outward when at zero position.
-
-    // For backward compatibility, use the OLD implementation for now.
-    // This preserves exact visual behavior while establishing the interface.
-    // Future: replace with drawSetpointMarker() call.
-
-    // --- BEGIN LEGACY IMPLEMENTATION (to be replaced) ---
-    // TODO: Replace this entire block with:
-    // return svg`
-    //   <g transform="rotate(${this.angleSetpoint + 90}) translate(-168 0) rotate(180)">
-    //     ${drawSetpointMarker({visualState, colorMode, id: setpointId})}
-    //   </g>
-    // `;
-
-    // Legacy color calculation (preserves existing behavior)
     let setPointColor = 'var(--instrument-enhanced-primary-color)';
     if (this.atAngleSetpoint) {
       setPointColor = 'var(--instrument-enhanced-secondary-color)';
@@ -515,42 +400,38 @@ export class ObcWatch extends LitElement {
       setPointColor = 'var(--instrument-frame-tertiary-color)';
     }
 
-    // Legacy shape selection (preserves existing behavior)
-    let path;
-    if (
-      this.state === InstrumentState.inCommand ||
-      this.state === InstrumentState.off ||
-      this.state === InstrumentState.loading
-    ) {
-      path =
-        'M23.5119 8C24.6981 6.35191 23.5696 4 21.5926 4L2.39959 4C0.422598 4 -0.705911 6.35191 0.480283 8L11.9961 24L23.5119 8Z';
+    if (this.angleSetpoint === undefined) {
+      return nothing;
     } else {
-      // active state uses outlined shape
-      path =
-        'M18.5836 8L5.4086 8L11.9961 17.1526L18.5836 8ZM23.5119 8C24.6981 6.35191 23.5696 4 21.5926 4L2.39959 4C0.422598 4 -0.705911 6.35191 0.480283 8L11.9961 24L23.5119 8Z';
-    }
-
-    // Use unique IDs to avoid conflicts
-    const markerId = `${setpointId}-marker`;
-    const maskId = `${setpointId}-mask`;
-
-    return svg`
-      <defs>
-        <g id="${markerId}">
-          <path fill-rule="evenodd" clip-rule="evenodd" transform="translate(-24 12) rotate(-90)" d=${path} vector-effect="non-scaling-stroke"/>
+      let path;
+      if (
+        this.state === InstrumentState.inCommand ||
+        this.state === InstrumentState.off ||
+        this.state === InstrumentState.loading
+      ) {
+        path =
+          'M23.5119 8C24.6981 6.35191 23.5696 4 21.5926 4L2.39959 4C0.422598 4 -0.705911 6.35191 0.480283 8L11.9961 24L23.5119 8Z';
+      } else {
+        path =
+          'M18.5836 8L5.4086 8L11.9961 17.1526L18.5836 8ZM23.5119 8C24.6981 6.35191 23.5696 4 21.5926 4L2.39959 4C0.422598 4 -0.705911 6.35191 0.480283 8L11.9961 24L23.5119 8Z';
+      }
+      return svg`
+        <defs>
+          <g id="setpoint">
+            <path fill-rule="evenodd" clip-rule="evenodd" transform="translate(-24 12) rotate(-90)" d=${path} vector-effect="non-scaling-stroke"/>
+          </g>
+          <mask id="setpointMask">
+            <rect x="-20" y="-20" width="50" height="50" fill="white" />
+            <use href="#setpoint" fill="black" />
+          </mask>
+        </defs>
+        <g transform="rotate(${this.angleSetpoint + 90}) translate(-168 0) ">
+          <use href="#setpoint" fill=${setPointColor} stroke-width="0" />
+          
+          <use href="#setpoint" vector-effect="non-scaling-stroke" fill="none" stroke="var(--border-silhouette-color)" stroke-width="2" stroke-linejoin="round" mask="url(#setpointMask)" />
         </g>
-        <mask id="${maskId}">
-          <rect x="-20" y="-20" width="50" height="50" fill="white" />
-          <use href="#${markerId}" fill="black" />
-        </mask>
-      </defs>
-      <g transform="rotate(${this.angleSetpoint + 90}) translate(-168 0) ">
-        <use href="#${markerId}" fill=${setPointColor} stroke-width="0" />
-        
-        <use href="#${markerId}" vector-effect="non-scaling-stroke" fill="none" stroke="var(--border-silhouette-color)" stroke-width="2" stroke-linejoin="round" mask="url(#${maskId})" />
-      </g>
-    `;
-    // --- END LEGACY IMPLEMENTATION ---
+      `;
+    }
   }
 
   private renderNorthArrow(): SVGTemplateResult | typeof nothing {
