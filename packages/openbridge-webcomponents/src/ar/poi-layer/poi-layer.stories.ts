@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import {createRef, ref} from 'lit/directives/ref.js';
-import {ObcPoiLayer} from './poi-layer.js';
+import {ObcPoiLayer, OverlapMode} from './poi-layer.js';
 import './poi-layer.js';
 import '../poi-target/poi-target.js';
 import '../poi-target-button-group/poi-target-button-group.js';
@@ -10,6 +10,7 @@ type PoiLayerArgs = {
   label: string;
   debug: boolean;
   layerIndex: number;
+  overlapMode?: OverlapMode;
 };
 
 const meta: Meta<PoiLayerArgs> = {
@@ -40,12 +41,9 @@ export const Primary: Story = {
         .layerIndex=${args.layerIndex}
         ?debug=${args.debug}
       >
-        <obc-poi-target style="left: 120px;" height="200">
-        </obc-poi-target>
-        <obc-poi-target style="left: 320px;" height="70">
-        </obc-poi-target>
-        <obc-poi-target style="left: 520px;" height="140">
-        </obc-poi-target>
+        <obc-poi-target style="left: 120px;" height="200"> </obc-poi-target>
+        <obc-poi-target style="left: 320px;" height="70"> </obc-poi-target>
+        <obc-poi-target style="left: 520px;" height="140"> </obc-poi-target>
       </obc-poi-layer>
     `;
   },
@@ -249,7 +247,11 @@ export const OverlapWithGroup: Story = {
           ?debug=${args.debug}
         >
           <obc-poi-target style="left: 300px;" height="80"></obc-poi-target>
-          <obc-poi-target style="left: 320px;" height="140" .relativeDirection=${65}></obc-poi-target>
+          <obc-poi-target
+            style="left: 320px;"
+            height="140"
+            .relativeDirection=${65}
+          ></obc-poi-target>
           <obc-poi-target style="left: 340px;" height="60"></obc-poi-target>
         </obc-poi-layer>
       </div>
@@ -281,9 +283,22 @@ export const OverlapWithGroupNumbers: Story = {
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}
         >
-          <obc-poi-target style="left: 300px;" height="80" selectedId="3"></obc-poi-target>
-          <obc-poi-target style="left: 320px;" height="140" .relativeDirection=${65} selectedId="1"></obc-poi-target>
-          <obc-poi-target style="left: 340px;" height="60" selectedId="2"></obc-poi-target>
+          <obc-poi-target
+            style="left: 300px;"
+            height="80"
+            selectedId="3"
+          ></obc-poi-target>
+          <obc-poi-target
+            style="left: 320px;"
+            height="140"
+            .relativeDirection=${65}
+            selectedId="1"
+          ></obc-poi-target>
+          <obc-poi-target
+            style="left: 340px;"
+            height="60"
+            selectedId="2"
+          ></obc-poi-target>
         </obc-poi-layer>
       </div>
     `;
@@ -694,6 +709,96 @@ export const LeaveExpandedGroup: Story = {
           <obc-poi-target class="a" height="140"></obc-poi-target>
           <obc-poi-target class="b" height="100"></obc-poi-target>
           <obc-poi-target class="c" height="80"></obc-poi-target>
+        </obc-poi-layer>
+      </div>
+    `;
+  },
+};
+
+export const CrossingMode: Story = {
+  args: {
+    label: 'Crossing Mode',
+    layerIndex: 0,
+    debug: true,
+  },
+  render(args) {
+    const hostRef = createRef<HTMLDivElement>();
+    const startAnimation = (root: HTMLElement | null) => {
+      if (!root || root.dataset.animating === 'true') return;
+      root.dataset.animating = 'true';
+
+      const staticPoi = root.querySelector(
+        'obc-poi-target.static'
+      ) as HTMLElement | null;
+      const movingPoi = root.querySelector(
+        'obc-poi-target.moving'
+      ) as HTMLElement | null;
+      if (!staticPoi || !movingPoi) return;
+
+      // Static POI stays at 320px
+      staticPoi.style.left = '320px';
+
+      const start = performance.now();
+      const duration = 6000;
+      let rafId = 0;
+
+      const tick = (now: number) => {
+        const t = ((now - start) % duration) / duration;
+
+        // Moving POI oscillates from left to right, crossing the static POI
+        // Goes from 180px to 460px and back
+        let phase: number;
+        if (t < 0.5) {
+          // Move right: 180 -> 460
+          phase = t / 0.5;
+        } else {
+          // Move left: 460 -> 180
+          phase = 1 - (t - 0.5) / 0.5;
+        }
+        const eased = phase * phase * (3 - 2 * phase);
+        const x = 180 + (460 - 180) * eased;
+
+        movingPoi.style.left = `${Math.round(x)}px`;
+
+        rafId = requestAnimationFrame(tick);
+      };
+
+      rafId = requestAnimationFrame(tick);
+
+      const observer = new MutationObserver(() => {
+        if (!root.isConnected) {
+          cancelAnimationFrame(rafId);
+          observer.disconnect();
+        }
+      });
+      observer.observe(root, {childList: true, subtree: true});
+    };
+
+    setTimeout(() => startAnimation(hostRef.value ?? null), 0);
+    return html`
+      <style>
+        .crossing-mode {
+          width: 640px;
+        }
+
+        .crossing-mode obc-poi-layer {
+          --obc-poi-layer-min-height: 48px;
+          width: 100%;
+        }
+      </style>
+      <p style="font-size: 12px; color: #666; margin-bottom: 8px;">
+        Crossing mode: Moving POI crosses the static POI. Button should avoid
+        overlap and jump to other side when target crosses.
+      </p>
+      <div class="crossing-mode" ${ref(hostRef)}>
+        <obc-poi-layer
+          .label=${args.label}
+          .layerIndex=${args.layerIndex}
+          ?debug=${args.debug}
+          .overlapMode=${OverlapMode.Crossing}
+        >
+          <obc-poi-target class="static" height="120"></obc-poi-target>
+          <obc-poi-target class="moving" height="100"></obc-poi-target>
         </obc-poi-layer>
       </div>
     `;

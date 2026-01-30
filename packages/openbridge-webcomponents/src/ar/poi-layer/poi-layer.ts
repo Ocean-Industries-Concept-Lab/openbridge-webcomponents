@@ -4,11 +4,17 @@ import {customElement} from '../../decorator.js';
 import compentStyle from './poi-layer.css?inline';
 import '../poi-target-button-group/poi-target-button-group.js';
 
+export enum OverlapMode {
+  Grouping = 'grouping',
+  Crossing = 'crossing',
+}
+
 @customElement('obc-poi-layer')
 export class ObcPoiLayer extends LitElement {
   @property({type: String}) label = '';
   @property({type: Boolean, reflect: true}) debug = false;
   @property({type: Number}) layerIndex = 0;
+  @property({type: String}) overlapMode: OverlapMode = OverlapMode.Grouping;
 
   @query('.wrapper') private wrapper?: HTMLElement;
 
@@ -24,6 +30,13 @@ export class ObcPoiLayer extends LitElement {
   private exitLockTimers = new Map<HTMLElement, number>();
   private layerMutationObserver?: MutationObserver;
   private autoGroupCollapseTimeout = 0;
+  // Crossing mode state
+  private crossingModeRaf = 0;
+  // Track previous positions for detecting movement and crossings
+  private previousPositions = new Map<HTMLElement, number>();
+  // Track which side each moving POI's button is on relative to static POIs
+  // Key: "movingId:staticId", Value: 'left' | 'right' | null
+  private crossingSides = new Map<string, 'left' | 'right' | null>();
 
   override firstUpdated() {
     this.setupResizeObserver();
@@ -79,6 +92,12 @@ export class ObcPoiLayer extends LitElement {
       cancelAnimationFrame(this.groupingRaf);
       this.groupingRaf = 0;
     }
+    if (this.crossingModeRaf) {
+      cancelAnimationFrame(this.crossingModeRaf);
+      this.crossingModeRaf = 0;
+    }
+    this.previousPositions.clear();
+    this.crossingSides.clear();
     if (this.heightRaf) {
       cancelAnimationFrame(this.heightRaf);
       this.heightRaf = 0;
@@ -260,11 +279,178 @@ export class ObcPoiLayer extends LitElement {
   }
 
   private scheduleGrouping() {
+    if (this.overlapMode === OverlapMode.Crossing) {
+      this.scheduleCrossingMode();
+      return;
+    }
     if (this.groupingRaf) return;
     this.groupingRaf = requestAnimationFrame(() => {
       this.groupingRaf = 0;
       this.updateGrouping();
     });
+  }
+
+  private scheduleCrossingMode() {
+    if (this.crossingModeRaf) return;
+    this.crossingModeRaf = requestAnimationFrame(() => {
+      this.crossingModeRaf = 0;
+      this.updateCrossingMode();
+      // Keep running the loop
+      if (this.overlapMode === OverlapMode.Crossing && this.isConnected) {
+        this.scheduleCrossingMode();
+      }
+    });
+  }
+
+  private updateCrossingMode() {
+    const targets = Array.from(
+      this.querySelectorAll('obc-poi-target')
+    ) as HTMLElement[];
+
+    if (targets.length < 2) {
+      // Clear any offsets
+      targets.forEach((target) => {
+        target.style.removeProperty('--obc-poi-target-button-offset-x');
+      });
+      return;
+    }
+
+    // Get current positions and detect which targets are moving
+    const currentPositions = new Map<HTMLElement, number>();
+    const movingTargets = new Set<HTMLElement>();
+
+    targets.forEach((target) => {
+      const leftStr = target.style.left;
+      const left = Number.parseFloat(leftStr) || 0;
+      currentPositions.set(target, left);
+
+      const prevPos = this.previousPositions.get(target);
+      if (prevPos !== undefined && Math.abs(left - prevPos) > 0.5) {
+        movingTargets.add(target);
+      }
+    });
+
+    // Button width for collision detection
+    const buttonWidth = 48;
+    const minGap = buttonWidth + 4; // Buttons need this much space
+
+    // For each target, calculate the button offset
+    targets.forEach((target) => {
+      const myPos = currentPositions.get(target)!;
+      const isMoving = movingTargets.has(target);
+
+      // Only moving targets get offsets
+      if (!isMoving) {
+        target.style.removeProperty('--obc-poi-target-button-offset-x');
+        return;
+      }
+
+      let totalOffset = 0;
+
+      // Check against all other targets
+      targets.forEach((other) => {
+        if (other === target) return;
+
+        const otherPos = currentPositions.get(other)!;
+        const otherIsMoving = movingTargets.has(other);
+
+        // If both are moving, use the one with smaller position as reference
+        // If only one is moving (us), we offset around the static one
+        if (otherIsMoving && myPos >= otherPos) return;
+
+        const gap = Math.abs(myPos - otherPos);
+
+        // Only care about overlapping buttons
+        if (gap >= minGap) {
+          // Clear crossing side when not overlapping
+          const pairKey = this.getPairKey(target, other);
+          this.crossingSides.delete(pairKey);
+          return;
+        }
+
+        // Determine which side this target's button should be on
+        const pairKey = this.getPairKey(target, other);
+        let side = this.crossingSides.get(pairKey);
+
+        // Detect crossing: if our position definitively moved past the other
+        const prevMyPos = this.previousPositions.get(target);
+        const prevOtherPos = this.previousPositions.get(other);
+
+        if (prevMyPos !== undefined && prevOtherPos !== undefined) {
+          const wasOnLeft = prevMyPos < prevOtherPos;
+          const wasOnRight = prevMyPos > prevOtherPos;
+          const nowOnLeft = myPos < otherPos;
+          const nowOnRight = myPos > otherPos;
+
+          // Only trigger crossing when we definitively pass (not just reach equal)
+          if (wasOnLeft && nowOnRight) {
+            side = 'right';
+            this.crossingSides.set(pairKey, side);
+          } else if (wasOnRight && nowOnLeft) {
+            side = 'left';
+            this.crossingSides.set(pairKey, side);
+          }
+        }
+
+        // If no side set yet, determine from approach direction or current position
+        if (!side) {
+          // Use previous position to determine approach direction
+          if (prevMyPos !== undefined && prevOtherPos !== undefined) {
+            side = prevMyPos <= prevOtherPos ? 'left' : 'right';
+          } else {
+            side = myPos <= otherPos ? 'left' : 'right';
+          }
+          this.crossingSides.set(pairKey, side);
+        }
+
+        // Calculate offset to avoid overlap
+        // The offset pushes our button away from the center point
+        const overlap = minGap - gap;
+        if (side === 'left') {
+          totalOffset -= overlap;
+        } else {
+          totalOffset += overlap;
+        }
+      });
+
+      // Apply the button offset and line bend
+      const roundedOffset = Math.round(totalOffset);
+      if (roundedOffset !== 0) {
+        // Offset the button horizontally
+        target.style.setProperty(
+          '--obc-poi-target-button-offset-x',
+          `${roundedOffset}px`
+        );
+        // For the line:
+        // 1. Use --poi-offset to shift the entire line to follow the button
+        // 2. Use offset attribute to bend the line so the dot stays at target position
+        // The offset bends the bottom of the line by -roundedOffset to counteract the shift
+        target.style.setProperty('--poi-offset', `${roundedOffset}px`);
+        target.setAttribute('offset', String(-roundedOffset));
+      } else {
+        target.style.removeProperty('--obc-poi-target-button-offset-x');
+        target.style.removeProperty('--poi-offset');
+        target.setAttribute('offset', '0');
+      }
+    });
+
+    // Update previous positions for next frame
+    this.previousPositions = currentPositions;
+  }
+
+  private getPairKey(a: HTMLElement, b: HTMLElement): string {
+    // Create a consistent key for a pair of elements
+    const aId =
+      a.getAttribute('class') ||
+      Array.from(a.parentElement?.children || [])
+        .indexOf(a)
+        .toString();
+    const bId =
+      b.getAttribute('class') ||
+      Array.from(b.parentElement?.children || [])
+        .indexOf(b)
+        .toString();
+    return aId < bId ? `${aId}:${bId}` : `${bId}:${aId}`;
   }
 
   private updateGrouping = () => {
@@ -306,10 +492,8 @@ export class ObcPoiLayer extends LitElement {
     const enterThreshold = Number.parseFloat(enterRaw) || 0;
     const exitThreshold =
       Number.parseFloat(exitRaw) || Math.max(enterThreshold + 8, 8);
-    const preThreshold =
-      Number.parseFloat(preRaw) || enterThreshold;
-    const behindThreshold =
-      Number.parseFloat(behindRaw) || enterThreshold;
+    const preThreshold = Number.parseFloat(preRaw) || enterThreshold;
+    const behindThreshold = Number.parseFloat(behindRaw) || enterThreshold;
 
     const currentGroupByTarget = new Map<HTMLElement, HTMLElement>();
     targets.forEach((target) => {
@@ -344,8 +528,10 @@ export class ObcPoiLayer extends LitElement {
         const threshold = sameGroup ? exitThreshold : enterThreshold;
         const overlapHeight =
           Math.min(ra.bottom, rb.bottom) - Math.max(ra.top, rb.top);
-        const gap =
-          Math.max(0, Math.max(ra.left, rb.left) - Math.min(ra.right, rb.right));
+        const gap = Math.max(
+          0,
+          Math.max(ra.left, rb.left) - Math.min(ra.right, rb.right)
+        );
         if (gap <= preThreshold && overlapHeight > 0) {
           preGrouped.add(a);
           preGrouped.add(b);
@@ -380,7 +566,7 @@ export class ObcPoiLayer extends LitElement {
           }
         });
       }
-    if (cluster.length >= 2) clusters.push(cluster);
+      if (cluster.length >= 2) clusters.push(cluster);
     });
 
     const preVisited = new Set<HTMLElement>();
@@ -400,7 +586,7 @@ export class ObcPoiLayer extends LitElement {
           }
         });
       }
-    if (cluster.length >= 2) preClusters.push(cluster);
+      if (cluster.length >= 2) preClusters.push(cluster);
     });
 
     const behindVisited = new Set<HTMLElement>();
@@ -524,7 +710,9 @@ export class ObcPoiLayer extends LitElement {
       });
       this.appendChild(group);
       requestAnimationFrame(() => {
-        cluster.forEach((target) => target.setAttribute('data-grouped', 'true'));
+        cluster.forEach((target) =>
+          target.setAttribute('data-grouped', 'true')
+        );
       });
       keptGroups.push(group);
     });
@@ -553,7 +741,11 @@ export class ObcPoiLayer extends LitElement {
           target.removeAttribute('data-front');
           target.removeAttribute('data-pregrouped');
         }
-        if (!exitLocked && behindTargets.has(target) && !frontTargets.has(target)) {
+        if (
+          !exitLocked &&
+          behindTargets.has(target) &&
+          !frontTargets.has(target)
+        ) {
           target.setAttribute('data-behind', 'true');
         } else {
           target.removeAttribute('data-behind');
@@ -600,16 +792,16 @@ export class ObcPoiLayer extends LitElement {
     const isEnhanced = type === 'enhanced';
     const size = overlap ? (isEnhanced ? 36 : 32) : isEnhanced ? 52 : 36;
     target.style.setProperty('--poi-size', `${size}px`);
-    target.style.setProperty('--obc-poi-target-icon-opacity', overlap ? '0' : '1');
+    target.style.setProperty(
+      '--obc-poi-target-icon-opacity',
+      overlap ? '0' : '1'
+    );
     target.style.setProperty('--obc-poi-overlap', overlap ? '1' : '0');
     target.style.setProperty(
       '--obc-poi-overlap-elements-opacity',
       overlap ? '0' : '1'
     );
-    target.style.setProperty(
-      '--obc-poi-label-opacity',
-      overlap ? '0' : '1'
-    );
+    target.style.setProperty('--obc-poi-label-opacity', overlap ? '0' : '1');
     target.style.setProperty(
       '--obc-poi-label-visibility',
       overlap ? 'hidden' : 'visible'
@@ -630,8 +822,10 @@ export class ObcPoiLayer extends LitElement {
     target.style.removeProperty('--obc-poi-overlap-pointer-events');
   }
 
-
-  private refreshGroupPositions(layerRect?: DOMRect, rects?: Map<HTMLElement, DOMRect>) {
+  private refreshGroupPositions(
+    layerRect?: DOMRect,
+    rects?: Map<HTMLElement, DOMRect>
+  ) {
     const groups = Array.from(
       this.querySelectorAll('obc-poi-target-button-group')
     ) as HTMLElement[];
@@ -643,7 +837,10 @@ export class ObcPoiLayer extends LitElement {
       const hasPositionAttr =
         group.hasAttribute('positionvertical') ||
         group.hasAttribute('positionVertical');
-      if (!group.hasAttribute('data-auto-group') && !group.hasAttribute('data-position-mode')) {
+      if (
+        !group.hasAttribute('data-auto-group') &&
+        !group.hasAttribute('data-position-mode')
+      ) {
         group.setAttribute('data-position-mode', 'bottom');
       }
       const shouldSetPosition =
@@ -700,8 +897,8 @@ export class ObcPoiLayer extends LitElement {
     const baseBottom = maxBottom - layerRect.top;
     const isAutoGroup = group?.hasAttribute('data-auto-group') ?? false;
     const useTopOffset =
-      (group as unknown as {useTopOffset?: boolean} | undefined)?.useTopOffset !==
-      false;
+      (group as unknown as {useTopOffset?: boolean} | undefined)
+        ?.useTopOffset !== false;
     const transformFactor = useTopOffset ? 0 : isAutoGroup ? 1 : 0.5;
     const offsetRaw = getComputedStyle(this).getPropertyValue(
       '--obc-poi-layer-auto-group-offset-y'
@@ -739,7 +936,6 @@ export class ObcPoiLayer extends LitElement {
     this.groupRemovalTimers.set(group, timeoutId);
   }
 
-
   private startExitLock(target: HTMLElement) {
     target.setAttribute('data-exit-lock', 'true');
     const existing = this.exitLockTimers.get(target);
@@ -752,9 +948,7 @@ export class ObcPoiLayer extends LitElement {
   }
 
   private getFrontTarget(targets: HTMLElement[]) {
-    return (
-      targets.find((target) => target.hasAttribute('data-front')) ?? null
-    );
+    return targets.find((target) => target.hasAttribute('data-front')) ?? null;
   }
 
   private getTargetRect(target: HTMLElement): DOMRect {
@@ -763,7 +957,9 @@ export class ObcPoiLayer extends LitElement {
       | HTMLElement
       | undefined;
     const buttonShadow = button?.shadowRoot;
-    const wrapper = buttonShadow?.querySelector('.wrapper') as HTMLElement | null;
+    const wrapper = buttonShadow?.querySelector(
+      '.wrapper'
+    ) as HTMLElement | null;
     return (
       wrapper?.getBoundingClientRect() ??
       button?.getBoundingClientRect() ??
@@ -814,7 +1010,6 @@ export class ObcPoiLayer extends LitElement {
     return shortest;
   }
 
-
   override render() {
     return html`
       <div class="wrapper">
@@ -833,6 +1028,6 @@ export class ObcPoiLayer extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-poi-layer': ObcPoiLayer
+    'obc-poi-layer': ObcPoiLayer;
   }
 }

@@ -17,6 +17,11 @@
   width: 0;
 }
 
+obc-poi-target-button {
+  transform: translateX(var(--obc-poi-target-button-offset-x, 0px));
+  transition: transform 0.15s ease-out;
+}
+
 .wrapper.selected {
   top: calc(var(--obc-poi-target-selected-vertical-offset) * -1);
 }
