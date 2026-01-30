@@ -31,6 +31,7 @@ import {
   ExternalScaleOrientation,
   ExternalScaleSide,
 } from '../external-scale/external-scale.js';
+import {SetpointColorMode} from '../../svghelpers/setpoint.js';
 
 // Re-export shared enums for convenience
 export {
@@ -42,6 +43,7 @@ export {
   InstrumentState,
   BarContainerStyle,
   ExternalScaleSide,
+  SetpointColorMode,
 };
 
 /**
@@ -216,6 +218,15 @@ export class ObcBarHorizontal extends LitElement {
   // Values
   /** Enhanced visual mode: when true, uses enhanced instrument colors for bar fill and setpoint */
   @property({type: Boolean}) enhanced = false;
+  /**
+   * Explicit color mode override for setpoint marker.
+   * When provided, this takes precedence over the `enhanced` boolean.
+   *
+   * - `SetpointColorMode.enhanced`: Use enhanced colors (brighter)
+   * - `SetpointColorMode.regular`: Use regular colors
+   * - `SetpointColorMode.disabled`: Use tertiary/disabled colors
+   */
+  @property({type: String}) colorMode?: SetpointColorMode;
   /** Fill visualization mode: fill or tint */
   @property({type: String}) fillMode: FillMode = FillMode.fill;
   /** Minimum fill value for tint mode (defaults to 0) */
@@ -320,6 +331,7 @@ export class ObcBarHorizontal extends LitElement {
       frameStyle: this.frameStyle,
       borderRadiusPosition: this.borderRadiusPosition,
       enhanced: this.enhanced,
+      colorMode: this.colorMode,
       fillMode: this.fillMode,
       fillMin: this.fillMin,
       fillMax: this.fillMax,

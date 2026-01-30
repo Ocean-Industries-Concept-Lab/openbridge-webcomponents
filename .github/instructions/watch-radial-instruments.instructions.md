@@ -103,21 +103,22 @@ All composite instruments use **CSS absolute positioning** to stack multiple SVG
 
 ```css
 .container {
-  position: relative;      /* Establishes positioning context */
+  position: relative; /* Establishes positioning context */
   width: 100%;
   height: 100%;
 }
 
 .container > * {
-  position: absolute;      /* All children stack at same position */
+  position: absolute; /* All children stack at same position */
   top: 0;
   left: 0;
-  width: 100%;             /* Fill entire container */
+  width: 100%; /* Fill entire container */
   height: 100%;
 }
 ```
 
 **Layer order** (bottom to top):
+
 1. `<obc-watch>` - Base circular frame, rings, tickmarks, setpoint, advices, bars
 2. `<svg>` overlay - Domain-specific elements (arrows, needles, ROT dots)
 
@@ -148,8 +149,8 @@ All composite instruments use **CSS absolute positioning** to stack multiple SVG
 ### ViewBox Calculation in `watch.ts`
 
 ```typescript
-const width = (176 + this.getPadding()) * 2;  // e.g., (176 + 72) * 2 = 496
-const height = width * (1 - this.clipTop/100 - this.clipBottom/100);
+const width = (176 + this.getPadding()) * 2; // e.g., (176 + 72) * 2 = 496
+const height = width * (1 - this.clipTop / 100 - this.clipBottom / 100);
 const top = -width / 2 + (width * this.clipTop) / 100;
 const viewBox = `-${width / 2} ${top} ${width} ${height}`;
 // Full circle: "-248 -248 496 496"
@@ -162,7 +163,7 @@ Consumer instruments MUST calculate the **same viewBox** for their overlay SVG:
 
 ```typescript
 // In compass.ts, heading.ts, etc.
-const padding = this.getPadding();  // Same calculation as watch!
+const padding = this.getPadding(); // Same calculation as watch!
 const width = (176 + padding) * 2;
 const viewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
 ```
@@ -218,11 +219,11 @@ With rotation:
 Defined in `watch.ts`:
 
 ```typescript
-export const OUTER_RING_RADIUS = 368 / 2;  // 184 - Outermost circle
-const RING2_RADIUS = 320 / 2;              // 160 - Second ring
-const RING3_RADIUS = 224 / 2;              // 112 - Third ring (double type)
-const RING3B_RADIUS = 272 / 2;             // 136 - Thin double variant
-const RING4_RADIUS = 176 / 2;              // 88  - Innermost (triple type)
+export const OUTER_RING_RADIUS = 368 / 2; // 184 - Outermost circle
+const RING2_RADIUS = 320 / 2; // 160 - Second ring
+const RING3_RADIUS = 224 / 2; // 112 - Third ring (double type)
+const RING3B_RADIUS = 272 / 2; // 136 - Thin double variant
+const RING4_RADIUS = 176 / 2; // 88  - Innermost (triple type)
 ```
 
 Use these constants when positioning elements at specific ring radii.
@@ -251,7 +252,7 @@ private getScale({width, height}: {width: number; height: number}): number {
 
 ```css
 .label {
-  font-size: calc(12px / var(--scale));  /* Always ~12px visual size */
+  font-size: calc(12px / var(--scale)); /* Always ~12px visual size */
 }
 ```
 
@@ -285,7 +286,7 @@ Full viewBox:     "-224 -224 448 448"
 Clipped viewBox:  "-224 -44.8 448 268.8"
 
      Full circle              Clipped (rudder)
-   ┌─────────────┐          
+   ┌─────────────┐
    │      ○      │  ←clip    ┌─────────────┐
    │     / \     │           │     ◠◡◠     │
    │    ○   ○    │    →      │  semicircle │
@@ -332,11 +333,11 @@ Location: `tickmark.ts` → `tickmark()` function
 
 ```typescript
 if (size === TickmarkType.primary) {
-  innerRadius = 328 / 2;  // Where tickmark starts
-  outerRadius = 368 / 2;  // Where tickmark ends (long)
+  innerRadius = 328 / 2; // Where tickmark starts
+  outerRadius = 368 / 2; // Where tickmark ends (long)
 } else if (size === TickmarkType.secondary) {
   innerRadius = 328 / 2;
-  outerRadius = 344 / 2;  // Shorter
+  outerRadius = 344 / 2; // Shorter
 }
 ```
 
@@ -346,10 +347,10 @@ Location: `watch.ts` → `watchCircle()` method + `WatchCircleType` enum
 
 ```typescript
 // Available types:
-WatchCircleType.single      // One ring
-WatchCircleType.double      // Two rings
-WatchCircleType.doubleThin  // Two rings, thinner gap
-WatchCircleType.triple      // Three rings (compass)
+WatchCircleType.single; // One ring
+WatchCircleType.double; // Two rings
+WatchCircleType.doubleThin; // Two rings, thinner gap
+WatchCircleType.triple; // Three rings (compass)
 ```
 
 ### 5. Advice/Caution Zones
@@ -409,19 +410,19 @@ Common instrument CSS variables used in `watch.ts` and helpers:
 
 ## Component Quick Reference
 
-| Component | Uses | Key Features |
-|-----------|------|--------------|
-| `obc-watch` | Helper modules | Core renderer - ALL circular rendering logic |
-| `instrument-radial` | `obc-watch` | Generic building block with configurable `getAngle()` |
-| `compass` | `obc-watch` + overlay | Full compass: HDG/COG arrows, ROT, vessel, wind/current |
-| `heading` | `obc-watch` + overlay | Simplified compass: HDG/COG arrows only |
-| `rudder` | `obc-watch` + overlay | Half-circle: 40% top clipped, needle variant |
-| `speed-gauge` | `obc-watch` + overlay | Speed arc: custom angle mapping, full needle |
-| `wind` | `obc-watch` + overlay | Wind rose with histogram |
-| `roll` | `obc-watch` | Roll indicator with vessel |
-| `gauge-radial` | `instrument-radial` | Thin wrapper adding `enhanced` prop |
-| `rot-sector` | `instrument-radial` | Rate of turn sector gauge |
-| `azimuth-thruster` | `obc-watch` + overlay | Thruster with angle setpoint and thrust bar |
+| Component           | Uses                  | Key Features                                            |
+| ------------------- | --------------------- | ------------------------------------------------------- |
+| `obc-watch`         | Helper modules        | Core renderer - ALL circular rendering logic            |
+| `instrument-radial` | `obc-watch`           | Generic building block with configurable `getAngle()`   |
+| `compass`           | `obc-watch` + overlay | Full compass: HDG/COG arrows, ROT, vessel, wind/current |
+| `heading`           | `obc-watch` + overlay | Simplified compass: HDG/COG arrows only                 |
+| `rudder`            | `obc-watch` + overlay | Half-circle: 40% top clipped, needle variant            |
+| `speed-gauge`       | `obc-watch` + overlay | Speed arc: custom angle mapping, full needle            |
+| `wind`              | `obc-watch` + overlay | Wind rose with histogram                                |
+| `roll`              | `obc-watch`           | Roll indicator with vessel                              |
+| `gauge-radial`      | `instrument-radial`   | Thin wrapper adding `enhanced` prop                     |
+| `rot-sector`        | `instrument-radial`   | Rate of turn sector gauge                               |
+| `azimuth-thruster`  | `obc-watch` + overlay | Thruster with angle setpoint and thrust bar             |
 
 ---
 

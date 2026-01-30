@@ -41,18 +41,18 @@
  *
  * ```ts
  * // Radial instrument (watch.ts)
- * const state = deriveSetpointVisualState({...});
+ * const config = {visualState, colorMode, id: 'watch-setpoint'};
  * svg`
  *   <g transform="rotate(${angle}) translate(0, -${radius})">
- *     <g transform="rotate(180)">${drawSetpointMarker(state)}</g>
+ *     <g transform="rotate(180)">${drawSetpointMarker(config)}</g>
  *   </g>
  * `;
  *
  * // Linear instrument (external-scale.ts)
- * const state = deriveSetpointVisualState({...});
+ * const config = {visualState, colorMode, id: 'scale-setpoint'};
  * svg`
  *   <g transform="translate(${x}, ${y}) rotate(${rotation})">
- *     ${drawSetpointMarker(state)}
+ *     ${drawSetpointMarker(config)}
  *   </g>
  * `;
  * ```
@@ -89,7 +89,7 @@ export enum SetpointVisualState {
    * Input = Output = 0 (both value and setpoint are at zero)
    * - Reduced size (80%)
    * - Primary color
-   * - Additional 4px outward offset from the scale
+   * - Additional 8px outward offset from the scale
    */
   equalZero = 'equalZero',
 
@@ -189,11 +189,14 @@ export interface DrawSetpointMarkerConfig {
   colorMode: SetpointColorMode;
 
   /**
-   * Optional unique ID prefix for SVG defs (mask, etc.)
-   * If not provided, a random ID will be generated.
-   * Required when multiple setpoints exist in the same SVG.
+   * Unique ID prefix for SVG defs (mask, etc.)
+   * Required for deterministic output and to avoid conflicts when multiple
+   * setpoint markers exist in the same SVG.
+   *
+   * Callers should generate stable IDs (e.g., based on component instance)
+   * rather than random IDs to ensure SSR compatibility and snapshot stability.
    */
-  id?: string;
+  id: string;
 }
 
 // ============================================================================
@@ -363,8 +366,13 @@ export const getSetpointZeroOffset = getSetpointOutwardOffset;
 /**
  * Generate a unique ID for SVG defs (masks, etc.)
  *
- * Uses random string to avoid conflicts when multiple instruments
- * are rendered on the same page.
+ * @deprecated This function produces non-deterministic output which breaks
+ * SSR hydration and snapshot tests. Callers should generate their own stable
+ * IDs based on component instance or context.
+ *
+ * This function is kept for backward compatibility but will be removed in
+ * a future version. Move ID generation to web component wrappers where
+ * non-determinism is acceptable (runtime-only code).
  */
 export function generateSetpointId(prefix: string = 'setpoint'): string {
   return `${prefix}-${Math.random().toString(36).slice(2, 9)}`;
@@ -438,10 +446,9 @@ export function drawSetpointMarker(
   const path = getSetpointPath(visualState);
   const scale = getSetpointScale(visualState);
 
-  // Generate unique IDs for SVG defs
-  const baseId = id ?? generateSetpointId();
-  const markerId = `${baseId}-marker`;
-  const maskId = `${baseId}-mask`;
+  // Use caller-provided ID for deterministic output (required for SSR/snapshots)
+  const markerId = `${id}-marker`;
+  const maskId = `${id}-mask`;
 
   // The path is designed with tip at (12, 24) in a 24×24 box.
   // We translate so the tip is at origin (0, 0).
