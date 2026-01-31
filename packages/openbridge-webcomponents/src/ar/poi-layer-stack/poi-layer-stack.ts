@@ -23,7 +23,7 @@ export class ObcPoiLayerStack extends LitElement {
   private handleSlotChange = () => this.schedulePlacement();
   private selectionMap = new Map<
     HTMLElement,
-    {originLayer: ObcPoiLayer; originIndex: number}
+    {originLayer: ObcPoiLayer; originIndex: number; originHeight: number}
   >();
   private selectionCounter = 0;
   private selectionIds = new WeakMap<HTMLElement, string>();
@@ -80,7 +80,8 @@ export class ObcPoiLayerStack extends LitElement {
     const existing = this.selectionMap.get(target);
     if (existing) {
       this.clearTargetGroupingAttributes(target);
-      this.moveTargetToLayer(target, existing.originLayer);
+      this.restoreTargetHeight(target, existing.originHeight);
+      this.moveTargetToLayer(target, existing.originLayer, true);
       this.selectionMap.delete(target);
       this.clearTargetSelectedId(target);
       return;
@@ -90,15 +91,18 @@ export class ObcPoiLayerStack extends LitElement {
       this.clearOtherTopSelections(target);
       this.selectionMap.forEach((record, other) => {
         this.clearTargetGroupingAttributes(other);
-        this.moveTargetToLayer(other, record.originLayer);
+        this.restoreTargetHeight(other, record.originHeight);
+        this.moveTargetToLayer(other, record.originLayer, true);
         this.selectionMap.delete(other);
         this.clearTargetSelectedId(other);
       });
     }
 
+    const originHeight = this.getTargetHeight(target);
     this.selectionMap.set(target, {
       originLayer,
       originIndex: originLayer.layerIndex,
+      originHeight,
     });
     this.setTargetSelectedId(target);
     this.clearTargetGroupingAttributes(target);
@@ -216,7 +220,11 @@ export class ObcPoiLayerStack extends LitElement {
     this.mutationObserver.observe(this, {childList: true, subtree: true});
   }
 
-  private moveTargetToLayer(target: HTMLElement, nextLayer: HTMLElement) {
+  private moveTargetToLayer(
+    target: HTMLElement,
+    nextLayer: HTMLElement,
+    skipHeightAdjust = false
+  ) {
     const currentParent = target.parentElement;
     if (!currentParent || currentParent === nextLayer) return;
     const reduceMotion =
@@ -239,12 +247,20 @@ export class ObcPoiLayerStack extends LitElement {
       target.style.removeProperty('transform');
     }
     if (reduceMotion) {
+      if (!skipHeightAdjust) {
+        this.adjustTargetHeightForLayerMove(target, firstRect);
+      }
       this.requestLayerGrouping(nextLayer);
       return;
     }
     const lastRect = this.getTargetVisualRect(target);
     const dx = firstRect.left - lastRect.left;
     const dy = firstRect.top - lastRect.top;
+
+    // Adjust height to keep line bottom anchored
+    if (!skipHeightAdjust) {
+      this.adjustTargetHeightByOffset(target, dy);
+    }
     if (!Number.isFinite(dx) || !Number.isFinite(dy)) return;
     if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
     const supportsTranslate =
@@ -359,6 +375,35 @@ export class ObcPoiLayerStack extends LitElement {
 
   private getAllTargets() {
     return Array.from(this.querySelectorAll('obc-poi-target')) as HTMLElement[];
+  }
+
+  private getTargetHeight(target: HTMLElement): number {
+    const anyTarget = target as HTMLElement & {height?: number};
+    return anyTarget.height ?? 0;
+  }
+
+  private setTargetHeight(target: HTMLElement, height: number) {
+    const anyTarget = target as HTMLElement & {height?: number};
+    anyTarget.height = height;
+  }
+
+  private adjustTargetHeightByOffset(target: HTMLElement, offset: number) {
+    if (!Number.isFinite(offset) || Math.abs(offset) < 0.5) return;
+    const currentHeight = this.getTargetHeight(target);
+    this.setTargetHeight(target, currentHeight + offset);
+  }
+
+  private adjustTargetHeightForLayerMove(
+    target: HTMLElement,
+    firstRect: DOMRect
+  ) {
+    const lastRect = this.getTargetVisualRect(target);
+    const dy = firstRect.top - lastRect.top;
+    this.adjustTargetHeightByOffset(target, dy);
+  }
+
+  private restoreTargetHeight(target: HTMLElement, originHeight: number) {
+    this.setTargetHeight(target, originHeight);
   }
 
   static override styles = unsafeCSS(compentStyle);
