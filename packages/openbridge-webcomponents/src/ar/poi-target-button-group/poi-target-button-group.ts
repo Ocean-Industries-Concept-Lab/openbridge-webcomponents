@@ -1,9 +1,13 @@
 import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
 import {property, queryAssignedElements, state} from 'lit/decorators.js';
-import compentStyle from './poi-target-button-group.css?inline';
+import componentStyle from './poi-target-button-group.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {ObcPoiTarget, PoiTargetVisualState} from '../poi-target/poi-target.js';
 import {customElement} from '../../decorator.js';
+
+// CSS variable names for POI sizing (defined in src/palettes/variables.css)
+const POI_TOUCH_TARGET_VAR = '--maneuvering-components-poi-button-touch-target';
+const POI_GROUP_SPACING_VAR = '--obc-poi-group-expanded-spacing';
 
 export type ExpandEvent = CustomEvent<{expand: boolean}>;
 
@@ -214,9 +218,10 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     this._children.forEach((child) => {
       child.style.position = expand ? 'static' : 'absolute';
       if (this.expand) {
-        child.style.width = '48px';
-        child.style.minWidth = '48px';
-        child.style.height = '48px';
+        const touchTarget = `${this.getTouchTargetSize()}px`;
+        child.style.width = touchTarget;
+        child.style.minWidth = touchTarget;
+        child.style.height = touchTarget;
       } else {
         child.style.width = 'unset';
         child.style.minWidth = 'unset';
@@ -312,8 +317,8 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     const groupCenter = (leftMost + rightMost) / 2;
     this.lockedExpandedCenter = groupCenter;
 
-    // Calculate expanded offsets - spread apart by 50px each from their current position
-    const spacing = 50;
+    // Calculate expanded offsets - spread apart from their current position
+    const spacing = this.getExpandedSpacing();
     const totalWidth = (positions.length - 1) * spacing;
     const startX = groupCenter - totalWidth / 2;
 
@@ -489,9 +494,10 @@ export class ObcPoiTargetButtonGroup extends LitElement {
 
       // Touch area changes at midpoint
       if (touchAreaExpanded) {
-        child.style.width = '48px';
-        child.style.minWidth = '48px';
-        child.style.height = '48px';
+        const touchTarget = `${this.getTouchTargetSize()}px`;
+        child.style.width = touchTarget;
+        child.style.minWidth = touchTarget;
+        child.style.height = touchTarget;
       } else {
         child.style.width = 'unset';
         child.style.minWidth = 'unset';
@@ -633,7 +639,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     if (orderChanged && this.lastTargetOrder.length > 0) {
       // Order changed - reassign expanded slot positions based on new order
       // Calculate the slot offsets (same spacing logic as calculateTopOffsetTargets)
-      const spacing = 50;
+      const spacing = this.getExpandedSpacing();
       const totalWidth = (sortedByCurrentPosition.length - 1) * spacing;
 
       // Lock group center to initial expanded position
@@ -747,7 +753,27 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     );
   }
 
-  static override styles = unsafeCSS(compentStyle);
+  /**
+   * Get a CSS variable value as a number (strips 'px' suffix).
+   * Falls back to the provided default if the variable is not set or invalid.
+   */
+  private getCssVarAsNumber(varName: string, fallback: number): number {
+    const raw = getComputedStyle(this).getPropertyValue(varName).trim();
+    const parsed = Number.parseFloat(raw);
+    return Number.isFinite(parsed) ? parsed : fallback;
+  }
+
+  /** Get the touch target size from CSS variables (default 48px) */
+  private getTouchTargetSize(): number {
+    return this.getCssVarAsNumber(POI_TOUCH_TARGET_VAR, 48);
+  }
+
+  /** Get the expanded spacing from CSS variables (default 50px) */
+  private getExpandedSpacing(): number {
+    return this.getCssVarAsNumber(POI_GROUP_SPACING_VAR, 50);
+  }
+
+  static override styles = unsafeCSS(componentStyle);
 }
 
 declare global {

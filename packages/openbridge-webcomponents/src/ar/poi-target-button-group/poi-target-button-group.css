@@ -2,6 +2,8 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+  /* Spacing between expanded POI targets in a group */
+  --obc-poi-group-expanded-spacing: 50px;
 }
 
 * {

@@ -1,8 +1,19 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property, query} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
-import compentStyle from './poi-layer.css?inline';
+import componentStyle from './poi-layer.css?inline';
 import '../poi-target-button-group/poi-target-button-group.js';
+
+// CSS variable names for POI sizing (defined in src/palettes/variables.css)
+const POI_TOUCH_TARGET_VAR = '--maneuvering-components-poi-button-touch-target';
+const POI_VISUAL_TARGET_VAR =
+  '--maneuvering-components-poi-button-visual-target-round';
+const POI_VISUAL_TARGET_OVERLAP_VAR =
+  '--maneuvering-components-poi-button-visual-target-round-overlap';
+const POI_LARGE_VISUAL_TARGET_VAR =
+  '--maneuvering-components-poi-button-large-visual-target-round';
+const POI_LARGE_VISUAL_TARGET_OVERLAP_VAR =
+  '--maneuvering-components-poi-button-large-visual-target-round-overlap';
 
 export enum OverlapMode {
   Grouping = 'grouping',
@@ -39,6 +50,9 @@ export class ObcPoiLayer extends LitElement {
   // Track which side each moving POI's button is on relative to static POIs
   // Key: "movingId:staticId", Value: 'left' | 'right' | null
   private crossingSides = new Map<string, 'left' | 'right' | null>();
+  // Stable unique IDs for elements (used for pair tracking in crossing mode)
+  private elementIds = new WeakMap<HTMLElement, string>();
+  private elementIdCounter = 0;
 
   override firstUpdated() {
     this.setupResizeObserver();
@@ -339,7 +353,7 @@ export class ObcPoiLayer extends LitElement {
     });
 
     // Button width for collision detection
-    const buttonWidth = 48;
+    const buttonWidth = this.getTouchTargetSize();
     const minGap = buttonWidth + 4; // Buttons need this much space
 
     // For each target, calculate the button offset
@@ -451,22 +465,28 @@ export class ObcPoiLayer extends LitElement {
     this.previousPositions = currentPositions;
   }
 
+  /**
+   * Get a stable unique ID for an element.
+   * Uses WeakMap to assign persistent IDs that survive DOM reordering and class changes.
+   */
+  private getElementId(element: HTMLElement): string {
+    let id = this.elementIds.get(element);
+    if (!id) {
+      this.elementIdCounter += 1;
+      id = `poi-${this.elementIdCounter}`;
+      this.elementIds.set(element, id);
+    }
+    return id;
+  }
+
   private getPairKey(a: HTMLElement, b: HTMLElement): string {
-    // Create a consistent key for a pair of elements
-    const aId =
-      a.getAttribute('class') ||
-      Array.from(a.parentElement?.children || [])
-        .indexOf(a)
-        .toString();
-    const bId =
-      b.getAttribute('class') ||
-      Array.from(b.parentElement?.children || [])
-        .indexOf(b)
-        .toString();
+    // Create a consistent key for a pair of elements using stable IDs
+    const aId = this.getElementId(a);
+    const bId = this.getElementId(b);
     return aId < bId ? `${aId}:${bId}` : `${bId}:${aId}`;
   }
 
-  private updateGrouping = () => {
+  private updateGrouping() {
     if (this.isGrouping) return;
     this.isGrouping = true;
 
@@ -795,7 +815,7 @@ export class ObcPoiLayer extends LitElement {
 
     this.scheduleLayerHeightUpdate();
     this.isGrouping = false;
-  };
+  }
 
   private getTargetType(target: HTMLElement): string {
     const typedTarget = target as HTMLElement & {type?: string};
@@ -805,7 +825,7 @@ export class ObcPoiLayer extends LitElement {
   private applyStandaloneVisualState(target: HTMLElement, overlap: boolean) {
     const type = this.getTargetType(target);
     const isEnhanced = type === 'enhanced';
-    const size = overlap ? (isEnhanced ? 36 : 32) : isEnhanced ? 52 : 36;
+    const size = this.getVisualTargetSize(isEnhanced, overlap);
     target.style.setProperty('--poi-size', `${size}px`);
     target.style.setProperty(
       '--obc-poi-target-icon-opacity',
@@ -1038,7 +1058,34 @@ export class ObcPoiLayer extends LitElement {
     `;
   }
 
-  static override styles = unsafeCSS(compentStyle);
+  /**
+   * Get a CSS variable value as a number (strips 'px' suffix).
+   * Falls back to the provided default if the variable is not set or invalid.
+   */
+  private getCssVarAsNumber(varName: string, fallback: number): number {
+    const raw = getComputedStyle(this).getPropertyValue(varName).trim();
+    const parsed = Number.parseFloat(raw);
+    return Number.isFinite(parsed) ? parsed : fallback;
+  }
+
+  /** Get the touch target size from CSS variables (default 48px) */
+  private getTouchTargetSize(): number {
+    return this.getCssVarAsNumber(POI_TOUCH_TARGET_VAR, 48);
+  }
+
+  /** Get the visual target size for a given type and overlap state */
+  private getVisualTargetSize(isEnhanced: boolean, isOverlap: boolean): number {
+    if (isEnhanced) {
+      return isOverlap
+        ? this.getCssVarAsNumber(POI_LARGE_VISUAL_TARGET_OVERLAP_VAR, 36)
+        : this.getCssVarAsNumber(POI_LARGE_VISUAL_TARGET_VAR, 52);
+    }
+    return isOverlap
+      ? this.getCssVarAsNumber(POI_VISUAL_TARGET_OVERLAP_VAR, 32)
+      : this.getCssVarAsNumber(POI_VISUAL_TARGET_VAR, 36);
+  }
+
+  static override styles = unsafeCSS(componentStyle);
 }
 
 declare global {

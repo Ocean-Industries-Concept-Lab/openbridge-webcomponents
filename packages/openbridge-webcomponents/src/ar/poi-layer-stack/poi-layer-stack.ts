@@ -1,7 +1,7 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
-import compentStyle from './poi-layer-stack.css?inline';
+import componentStyle from './poi-layer-stack.css?inline';
 import {ObcPoiLayer} from '../poi-layer/poi-layer.js';
 import {ObcPoiTargetButtonGroup} from '../poi-target-button-group/poi-target-button-group.js';
 
@@ -464,7 +464,7 @@ export class ObcPoiLayerStack extends LitElement {
     this.adjustTargetHeightByOffset(target, offset, true);
   }
 
-  static override styles = unsafeCSS(compentStyle);
+  static override styles = unsafeCSS(componentStyle);
 }
 
 declare global {
