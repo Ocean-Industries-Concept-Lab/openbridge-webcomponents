@@ -15,6 +15,28 @@ const POI_LARGE_VISUAL_TARGET_VAR =
 const POI_LARGE_VISUAL_TARGET_OVERLAP_VAR =
   '--maneuvering-components-poi-button-large-visual-target-round-overlap';
 
+/**
+ * Interface for POI target element properties used by the layer.
+ * These properties are defined on obc-poi-target but not exported as a type.
+ */
+interface PoiTargetElement extends HTMLElement {
+  buttonOffsetX?: number;
+  offset?: number;
+  type?: string;
+  visualState?: string;
+  height?: number;
+}
+
+/**
+ * Interface for POI button group element properties used by the layer.
+ */
+interface PoiButtonGroupElement extends HTMLElement {
+  expand?: boolean;
+  collapsing?: boolean;
+  useTopOffset?: boolean;
+  updatePosition?: () => void;
+}
+
 export enum OverlapMode {
   Grouping = 'grouping',
   Crossing = 'crossing',
@@ -324,13 +346,13 @@ export class ObcPoiLayer extends LitElement {
   private updateCrossingMode() {
     const targets = Array.from(
       this.querySelectorAll('obc-poi-target')
-    ) as HTMLElement[];
+    ) as PoiTargetElement[];
 
     if (targets.length < 2) {
       // Clear any offsets
       targets.forEach((target) => {
-        (target as unknown as {buttonOffsetX?: number}).buttonOffsetX = 0;
-        (target as unknown as {offset?: number}).offset = 0;
+        target.buttonOffsetX = 0;
+        target.offset = 0;
         this.lastOffsets.set(target, 0);
       });
       this.lastOffsets.clear();
@@ -363,8 +385,8 @@ export class ObcPoiLayer extends LitElement {
 
       // Only moving targets get offsets
       if (!isMoving) {
-        (target as unknown as {buttonOffsetX?: number}).buttonOffsetX = 0;
-        (target as unknown as {offset?: number}).offset = 0;
+        target.buttonOffsetX = 0;
+        target.offset = 0;
         this.lastOffsets.set(target, 0);
         return;
       }
@@ -447,12 +469,11 @@ export class ObcPoiLayer extends LitElement {
           : roundedOffset;
       if (nextOffset !== 0) {
         // Apply both button shift and line bend in the same render for sync
-        (target as unknown as {buttonOffsetX?: number}).buttonOffsetX =
-          nextOffset;
-        (target as unknown as {offset?: number}).offset = -nextOffset;
+        target.buttonOffsetX = nextOffset;
+        target.offset = -nextOffset;
       } else {
-        (target as unknown as {buttonOffsetX?: number}).buttonOffsetX = 0;
-        (target as unknown as {offset?: number}).offset = 0;
+        target.buttonOffsetX = 0;
+        target.offset = 0;
       }
       this.lastOffsets.set(target, nextOffset);
     });
@@ -490,13 +511,13 @@ export class ObcPoiLayer extends LitElement {
     if (this.isGrouping) return;
     this.isGrouping = true;
 
-    const manualGroups = Array.from(
-      this.querySelectorAll('obc-poi-target-button-group')
+    const manualGroups = (
+      Array.from(
+        this.querySelectorAll('obc-poi-target-button-group')
+      ) as PoiButtonGroupElement[]
     ).filter((group) => !group.hasAttribute('data-auto-group'));
     if (manualGroups.length > 0) {
-      const anyExpanded = manualGroups.some(
-        (group) => (group as unknown as {expand?: boolean}).expand === true
-      );
+      const anyExpanded = manualGroups.some((group) => group.expand === true);
       if (anyExpanded) {
         this.isGrouping = false;
         return;
@@ -507,7 +528,7 @@ export class ObcPoiLayer extends LitElement {
 
     const targets = Array.from(
       this.querySelectorAll('obc-poi-target')
-    ) as HTMLElement[];
+    ) as PoiTargetElement[];
 
     const layerRect = this.getBoundingClientRect();
     const enterRaw = getComputedStyle(this).getPropertyValue(
@@ -644,7 +665,7 @@ export class ObcPoiLayer extends LitElement {
 
     const existingGroups = Array.from(
       this.querySelectorAll('obc-poi-target-button-group[data-auto-group]')
-    ) as HTMLElement[];
+    ) as PoiButtonGroupElement[];
 
     const frontTargets = new Set<HTMLElement>();
     clusters.forEach((cluster) => {
@@ -661,9 +682,7 @@ export class ObcPoiLayer extends LitElement {
     // If any auto-group is expanded, skip grouping updates entirely
     // Group stays frozen until user manually collapses it
     const expandedAutoGroup = existingGroups.find(
-      (group) =>
-        (group as unknown as {expand?: boolean}).expand === true ||
-        (group as unknown as {collapsing?: boolean}).collapsing === true
+      (group) => group.expand === true || group.collapsing === true
     );
     if (expandedAutoGroup) {
       this.isGrouping = false;
@@ -790,9 +809,8 @@ export class ObcPoiLayer extends LitElement {
           target.removeAttribute('data-behind');
         }
         const isOverlapState = target.hasAttribute('data-behind');
-        const anyTarget = target as HTMLElement & {visualState?: string};
-        if (typeof anyTarget.visualState === 'string') {
-          anyTarget.visualState = isOverlapState ? 'overlap' : 'normal';
+        if (typeof target.visualState === 'string') {
+          target.visualState = isOverlapState ? 'overlap' : 'normal';
         } else {
           target.setAttribute(
             'data-visual-state',
@@ -863,7 +881,7 @@ export class ObcPoiLayer extends LitElement {
   ) {
     const groups = Array.from(
       this.querySelectorAll('obc-poi-target-button-group')
-    ) as HTMLElement[];
+    ) as PoiButtonGroupElement[];
     groups.forEach((group) => {
       const children = Array.from(group.children).filter(
         (child): child is HTMLElement =>
@@ -895,9 +913,7 @@ export class ObcPoiLayer extends LitElement {
           `${this.getGroupPositionVertical(children, rectMap, layerBounds, group)}px`
         );
       }
-      const updatePosition = (group as unknown as {updatePosition?: () => void})
-        .updatePosition;
-      updatePosition?.call(group);
+      group.updatePosition?.();
     });
   }
 
@@ -922,7 +938,7 @@ export class ObcPoiLayer extends LitElement {
     targets: HTMLElement[],
     rects: Map<HTMLElement, DOMRect>,
     layerRect: DOMRect,
-    group?: HTMLElement
+    group?: PoiButtonGroupElement
   ) {
     let maxBottom = Number.NEGATIVE_INFINITY;
     targets.forEach((target) => {
@@ -931,9 +947,7 @@ export class ObcPoiLayer extends LitElement {
     });
     const baseBottom = maxBottom - layerRect.top;
     const isAutoGroup = group?.hasAttribute('data-auto-group') ?? false;
-    const useTopOffset =
-      (group as unknown as {useTopOffset?: boolean} | undefined)
-        ?.useTopOffset !== false;
+    const useTopOffset = group?.useTopOffset !== false;
     const transformFactor = useTopOffset ? 0 : isAutoGroup ? 1 : 0.5;
     const offsetRaw = getComputedStyle(this).getPropertyValue(
       '--obc-poi-layer-auto-group-offset-y'
@@ -945,10 +959,9 @@ export class ObcPoiLayer extends LitElement {
     return Math.round(baseBottom - layerRect.height * transformFactor + offset);
   }
 
-  private resetTarget(target: HTMLElement) {
-    const anyTarget = target as HTMLElement & {offset?: number};
-    if (typeof anyTarget.offset === 'number') {
-      anyTarget.offset = 0;
+  private resetTarget(target: PoiTargetElement) {
+    if (typeof target.offset === 'number') {
+      target.offset = 0;
     }
     target.style.removeProperty('--obc-poi-target-offset-x');
     target.style.removeProperty('position');

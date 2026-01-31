@@ -228,14 +228,14 @@ export class ObcPoiTargetButtonGroup extends LitElement {
         child.style.height = 'unset';
       }
       if (child instanceof ObcPoiTarget) {
-        (child as ObcPoiTarget).visualState =
-          !expand && (child as ObcPoiTarget) !== frontChild
+        child.visualState =
+          !expand && child !== frontChild
             ? PoiTargetVisualState.Overlap
             : PoiTargetVisualState.Normal;
         if (expand) {
-          (child as ObcPoiTarget).style.transform = 'translate(50%, 100%)';
+          child.style.transform = 'translate(50%, 100%)';
         } else {
-          (child as ObcPoiTarget).style.transform = '';
+          child.style.transform = '';
         }
       }
     });
@@ -506,51 +506,45 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     });
   }
 
+  /**
+   * Get the child that should be displayed in front (not collapsed).
+   * Priority: 1) data-front attribute, 2) tallest height, 3) first in DOM order
+   * Uses deterministic tie-breaking (DOM order) to avoid visual flicker.
+   */
   private getFrontChild(): ObcPoiTarget | null {
-    const frontByAttr = this._children.find(
-      (child) =>
-        child instanceof ObcPoiTarget && child.hasAttribute('data-front')
+    const targets = this._children.filter(
+      (child): child is ObcPoiTarget => child instanceof ObcPoiTarget
     );
-    if (frontByAttr && frontByAttr instanceof ObcPoiTarget) return frontByAttr;
 
+    if (targets.length === 0) return null;
+
+    // Priority 1: Explicit data-front attribute
+    const frontByAttr = targets.find((child) =>
+      child.hasAttribute('data-front')
+    );
+    if (frontByAttr) return frontByAttr;
+
+    // Priority 2: Tallest height (first in DOM order for tie-breaking)
     let front: ObcPoiTarget | null = null;
     let maxHeight = Number.NEGATIVE_INFINITY;
-    this._children.forEach((child) => {
-      if (!(child instanceof ObcPoiTarget)) return;
+
+    for (const child of targets) {
       const heightValue =
         typeof child.height === 'number'
           ? child.height
           : Number.parseFloat(child.getAttribute('height') ?? '');
-      if (Number.isNaN(heightValue)) return;
+
+      if (Number.isNaN(heightValue)) continue;
+
+      // Use > (not >=) so first element wins ties (DOM order)
       if (heightValue > maxHeight) {
         maxHeight = heightValue;
         front = child;
       }
-    });
-    if (front && Number.isFinite(maxHeight)) {
-      const candidates = this._children.filter((child) => {
-        if (!(child instanceof ObcPoiTarget)) return false;
-        const heightValue =
-          typeof child.height === 'number'
-            ? child.height
-            : Number.parseFloat(child.getAttribute('height') ?? '');
-        return !Number.isNaN(heightValue) && heightValue === maxHeight;
-      }) as ObcPoiTarget[];
-      if (candidates.length > 1) {
-        return (
-          candidates[Math.floor(Math.random() * candidates.length)] ?? front
-        );
-      }
     }
-    if (!front) {
-      const targets = this._children.filter(
-        (child): child is ObcPoiTarget => child instanceof ObcPoiTarget
-      );
-      if (targets.length > 0) {
-        return targets[Math.floor(Math.random() * targets.length)] ?? null;
-      }
-    }
-    return front;
+
+    // Priority 3: First target in DOM order if no heights defined
+    return front ?? targets[0] ?? null;
   }
 
   private syncFrontChild() {

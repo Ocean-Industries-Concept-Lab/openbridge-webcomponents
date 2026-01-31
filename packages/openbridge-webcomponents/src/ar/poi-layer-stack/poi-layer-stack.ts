@@ -146,7 +146,8 @@ export class ObcPoiLayerStack extends LitElement {
       this.querySelectorAll('obc-poi-layer')
     ) as ObcPoiLayer[];
     if (layers.length < 2) return null;
-    const sorted = layers.sort((a, b) => a.layerIndex - b.layerIndex);
+    // Use toSorted() or spread to avoid mutating the array
+    const sorted = [...layers].sort((a, b) => a.layerIndex - b.layerIndex);
     return sorted[1] ?? null;
   }
 
