@@ -10,10 +10,7 @@
 }
 
 :host([debug]) {
-  background: var(
-    --obc-poi-layer-debug-background,
-    rgba(0, 0, 0, 0.04)
-  );
+  background: var(--obc-poi-layer-debug-background, rgba(0, 0, 0, 0.04));
 }
 
 .wrapper {
@@ -44,7 +41,9 @@
   );
   transform: translateY(calc(100% - var(--obc-poi-layer-target-shift)))
     scale(var(--obc-poi-layer-target-scale));
-  transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+  transition:
+    transform 0.4s ease-out,
+    opacity 0.4s ease-out;
   pointer-events: auto;
 }
 
@@ -84,6 +83,7 @@
   bottom: 0;
   height: 100%;
   transform: none;
+  pointer-events: none;
 }
 
 ::slotted(obc-poi-target-button-group[data-auto-group]) {

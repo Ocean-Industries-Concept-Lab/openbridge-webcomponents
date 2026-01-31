@@ -3,6 +3,7 @@ import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import compentStyle from './poi-layer-stack.css?inline';
 import {ObcPoiLayer} from '../poi-layer/poi-layer.js';
+import {ObcPoiTargetButtonGroup} from '../poi-target-button-group/poi-target-button-group.js';
 
 export enum PoiLayerSelectionMode {
   None = 'none',
@@ -77,23 +78,23 @@ export class ObcPoiLayerStack extends LitElement {
     if (!topLayer) return;
 
     const existing = this.selectionMap.get(target);
-      if (existing) {
-        this.clearTargetGroupingAttributes(target);
-        this.moveTargetToLayer(target, existing.originLayer);
-        this.selectionMap.delete(target);
-        this.clearTargetSelectedId(target);
-        return;
-      }
+    if (existing) {
+      this.clearTargetGroupingAttributes(target);
+      this.moveTargetToLayer(target, existing.originLayer);
+      this.selectionMap.delete(target);
+      this.clearTargetSelectedId(target);
+      return;
+    }
 
     if (this.selectionMode === PoiLayerSelectionMode.Single) {
       this.clearOtherTopSelections(target);
-        this.selectionMap.forEach((record, other) => {
-          this.clearTargetGroupingAttributes(other);
-          this.moveTargetToLayer(other, record.originLayer);
-          this.selectionMap.delete(other);
-          this.clearTargetSelectedId(other);
-        });
-      }
+      this.selectionMap.forEach((record, other) => {
+        this.clearTargetGroupingAttributes(other);
+        this.moveTargetToLayer(other, record.originLayer);
+        this.selectionMap.delete(other);
+        this.clearTargetSelectedId(other);
+      });
+    }
 
     this.selectionMap.set(target, {
       originLayer,
@@ -226,6 +227,11 @@ export class ObcPoiLayerStack extends LitElement {
     const firstRect = this.getTargetVisualRect(target);
     nextLayer.appendChild(target);
     if (wasInGroup) {
+      const group = currentParent as ObcPoiTargetButtonGroup;
+      const groupLayer = group.closest('obc-poi-layer');
+      if (groupLayer && groupLayer !== nextLayer) {
+        group.expand = false;
+      }
       target.style.removeProperty('position');
       target.style.removeProperty('width');
       target.style.removeProperty('min-width');
@@ -241,7 +247,8 @@ export class ObcPoiLayerStack extends LitElement {
     const dy = firstRect.top - lastRect.top;
     if (!Number.isFinite(dx) || !Number.isFinite(dy)) return;
     if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
-    const supportsTranslate = 'translate' in document.createElement('div').style;
+    const supportsTranslate =
+      'translate' in document.createElement('div').style;
     const baseTransform = getComputedStyle(target).transform;
     target.style.willChange = 'transform';
     const animation = supportsTranslate
@@ -276,7 +283,9 @@ export class ObcPoiLayerStack extends LitElement {
       | HTMLElement
       | undefined;
     const buttonShadow = button?.shadowRoot;
-    const wrapper = buttonShadow?.querySelector('.wrapper') as HTMLElement | null;
+    const wrapper = buttonShadow?.querySelector(
+      '.wrapper'
+    ) as HTMLElement | null;
     return (
       wrapper?.getBoundingClientRect() ??
       button?.getBoundingClientRect() ??
@@ -349,9 +358,7 @@ export class ObcPoiLayerStack extends LitElement {
   }
 
   private getAllTargets() {
-    return Array.from(
-      this.querySelectorAll('obc-poi-target')
-    ) as HTMLElement[];
+    return Array.from(this.querySelectorAll('obc-poi-target')) as HTMLElement[];
   }
 
   static override styles = unsafeCSS(compentStyle);
@@ -359,6 +366,6 @@ export class ObcPoiLayerStack extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-poi-layer-stack': ObcPoiLayerStack
+    'obc-poi-layer-stack': ObcPoiLayerStack;
   }
 }
