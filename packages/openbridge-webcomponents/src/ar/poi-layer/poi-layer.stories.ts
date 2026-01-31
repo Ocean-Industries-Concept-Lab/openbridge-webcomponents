@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import {createRef, ref} from 'lit/directives/ref.js';
-import {ObcPoiLayer, OverlapMode} from './poi-layer.js';
+import {OverlapMode} from './poi-layer.js';
 import './poi-layer.js';
 import '../poi-target/poi-target.js';
 import '../poi-target-button-group/poi-target-button-group.js';

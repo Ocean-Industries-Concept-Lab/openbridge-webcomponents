@@ -6,6 +6,10 @@ import {ObcPoiLayer} from '../poi-layer/poi-layer.js';
 import {ObcPoiTargetButtonGroup} from '../poi-target-button-group/poi-target-button-group.js';
 import {ObcPoiTarget} from '../poi-target/poi-target.js';
 
+const SUPPORTS_TRANSLATE =
+  typeof document !== 'undefined' &&
+  'translate' in document.createElement('div').style;
+
 export enum PoiLayerSelectionMode {
   None = 'none',
   Single = 'single',
@@ -269,11 +273,9 @@ export class ObcPoiLayerStack extends LitElement {
     }
     if (!Number.isFinite(dx) || !Number.isFinite(dy)) return;
     if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
-    const supportsTranslate =
-      'translate' in document.createElement('div').style;
     const baseTransform = getComputedStyle(target).transform;
     target.style.willChange = 'transform';
-    const animation = supportsTranslate
+    const animation = SUPPORTS_TRANSLATE
       ? target.animate(
           [{translate: `${dx}px ${dy}px`}, {translate: '0px 0px'}],
           {duration: 240, easing: 'cubic-bezier(0.2, 0, 0, 1)'}

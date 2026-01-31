@@ -5,6 +5,11 @@ import componentStyle from './poi-layer.css?inline';
 import '../poi-target-button-group/poi-target-button-group.js';
 import {ObcPoiTarget, PoiTargetVisualState} from '../poi-target/poi-target.js';
 
+// Animation timings
+const EXIT_DELAY_MS = 140;
+const GROUP_REMOVAL_DELAY_MS = 450;
+const EXIT_LOCK_DURATION_MS = 500;
+
 // CSS variable names for POI sizing (defined in src/palettes/variables.css)
 const POI_TOUCH_TARGET_VAR = '--maneuvering-components-poi-button-touch-target';
 const POI_VISUAL_TARGET_VAR =
@@ -682,7 +687,6 @@ export class ObcPoiLayer extends LitElement {
           this.resetTarget(child as ObcPoiTarget);
         });
         children.forEach((child) => this.appendChild(child));
-        const exitDelay = 140;
         children.forEach((child) => {
           if (!front || child !== front) {
             child.getBoundingClientRect();
@@ -694,7 +698,7 @@ export class ObcPoiLayer extends LitElement {
               child.removeAttribute('data-exiting');
             }
           });
-        }, exitDelay);
+        }, EXIT_DELAY_MS);
         requestAnimationFrame(() => {
           group.removeAttribute('data-visible');
           this.scheduleGroupRemoval(group);
@@ -819,14 +823,8 @@ export class ObcPoiLayer extends LitElement {
     return clusters;
   }
 
-  private getTargetType(target: HTMLElement): string {
-    const typedTarget = target as HTMLElement & {type?: string};
-    return typedTarget.type ?? target.getAttribute('type') ?? 'button';
-  }
-
-  private applyStandaloneVisualState(target: HTMLElement, overlap: boolean) {
-    const type = this.getTargetType(target);
-    const isEnhanced = type === 'enhanced';
+  private applyStandaloneVisualState(target: ObcPoiTarget, overlap: boolean) {
+    const isEnhanced = target.type === 'enhanced';
     const size = this.getVisualTargetSize(isEnhanced, overlap);
     target.style.setProperty('--poi-size', `${size}px`);
     target.style.setProperty(
@@ -947,7 +945,7 @@ export class ObcPoiLayer extends LitElement {
     const timeoutId = window.setTimeout(() => {
       group.remove();
       this.groupRemovalTimers.delete(group);
-    }, 450);
+    }, GROUP_REMOVAL_DELAY_MS);
     this.groupRemovalTimers.set(group, timeoutId);
   }
 
@@ -958,7 +956,7 @@ export class ObcPoiLayer extends LitElement {
     const timeoutId = window.setTimeout(() => {
       target.removeAttribute('data-exit-lock');
       this.exitLockTimers.delete(target);
-    }, 500);
+    }, EXIT_LOCK_DURATION_MS);
     this.exitLockTimers.set(target, timeoutId);
   }
 
