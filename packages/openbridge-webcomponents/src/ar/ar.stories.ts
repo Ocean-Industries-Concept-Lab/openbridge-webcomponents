@@ -2,6 +2,9 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit/static-html.js';
 import './poi-target/poi-target.js';
 import './poi-target-button-group/poi-target-button-group.js';
+import './poi-layer-stack/poi-layer-stack.js';
+import './poi-layer/poi-layer.js';
+import {PoiLayerSelectionMode} from './poi-layer-stack/poi-layer-stack.js';
 
 const meta: Meta = {
   title: 'AR/Example',
@@ -10,7 +13,7 @@ const meta: Meta = {
   parameters: {
     layout: 'fullscreen',
   },
-  render: (args) => {
+  render: () => {
     return html`
       <style>
         * {
@@ -21,27 +24,46 @@ const meta: Meta = {
 
         .container {
           height: 100vh;
+          position: relative;
           --obc-poi-target-selected-vertical-offset: 80px;
         }
 
         img {
           display: block;
           width: 1333px;
+          height: 100%;
           object-fit: cover;
           line-height: 0;
         }
 
-        obc-poi-target {
+        obc-poi-layer-stack {
           position: absolute;
-          top: 298px;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 40%;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+          pointer-events: none;
+        }
+
+        obc-poi-layer-stack > * {
+          pointer-events: auto;
+        }
+
+        obc-poi-layer {
+          position: relative;
+          width: 100%;
+          --obc-poi-layer-min-height: 48px;
         }
 
         #sailboat {
-          left: 826px;
+          left: 846px;
         }
 
         #sailboat2 {
-          left: 806px;
+          left: 826px;
         }
 
         #ferry {
@@ -51,59 +73,36 @@ const meta: Meta = {
         #fast-small-boat {
           left: 224px;
         }
-
-        .poi {
-          position: absolute;
-          background-color: red;
-          width: 2px;
-          height: 2px;
-          transform: translate(-50%, -50%);
-        }
       </style>
       <div class="container">
         <img src="/AR-test-image.png" />
-        <obc-poi-target
-          .height=${122}
-          .relativeDirection=${270}
-          id="fast-small-boat"
-        ></obc-poi-target>
-        ${args.selected
-          ? html`
-              <obc-poi-target
-                .relativeDirection=${20}
-                data-visual-state=${!args.selected ? 'overlap' : 'normal'}
-                .height=${115}
-                id="sailboat2"
-              ></obc-poi-target>
-              <obc-poi-target
-                .height=${118}
-                .relativeDirection=${20}
-                selected
-                selectedId="1"
-                id="sailboat"
-              ></obc-poi-target>
-            `
-          : html`
-              <obc-poi-target-button-group positionvertical="298px">
-                <obc-poi-target
-                  .relativeDirection=${200}
-                  data-visual-state=${!args.selected ? 'overlap' : 'normal'}
-                  .height=${115}
-                  id="sailboat2"
-                ></obc-poi-target>
-                <obc-poi-target
-                  .height=${118}
-                  .relativeDirection=${20}
-                  id="sailboat"
-                ></obc-poi-target>
-              </obc-poi-target-button-group>
-            `}
-
-        <obc-poi-target
-          .height=${108}
-          .relativeDirection=${200}
-          id="ferry"
-        ></obc-poi-target>
+        <obc-poi-layer-stack selection-mode=${PoiLayerSelectionMode.Multi}>
+          <obc-poi-layer label="Selected" .layerIndex=${0} debug>
+          </obc-poi-layer>
+          <obc-poi-layer label="Active" .layerIndex=${1} debug> </obc-poi-layer>
+          <obc-poi-layer label="Background" .layerIndex=${2} debug>
+            <obc-poi-target
+              .height=${122}
+              .relativeDirection=${270}
+              id="fast-small-boat"
+            ></obc-poi-target>
+            <obc-poi-target
+              .relativeDirection=${20}
+              .height=${115}
+              id="sailboat2"
+            ></obc-poi-target>
+            <obc-poi-target
+              .height=${118}
+              .relativeDirection=${20}
+              id="sailboat"
+            ></obc-poi-target>
+            <obc-poi-target
+              .height=${108}
+              .relativeDirection=${200}
+              id="ferry"
+            ></obc-poi-target>
+          </obc-poi-layer>
+        </obc-poi-layer-stack>
       </div>
     `;
   },
@@ -113,10 +112,3 @@ export default meta;
 type Story = StoryObj;
 
 export const Main: Story = {};
-
-export const Selected: Story = {
-  tags: ['skip-snapshot'],
-  args: {
-    selected: true,
-  },
-};

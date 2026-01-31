@@ -37,6 +37,7 @@
   height: 40px;
   border-radius: 18px;
   margin-top: 5px;
+  padding: 4px 4px 6px 4px;
 }
 
 .backdrop {
@@ -62,7 +63,7 @@
   transition: opacity 0.4s ease-out;
 }
 
-:host-context(obc-poi-layer):host([data-position-mode='bottom'])
+:host-context(obc-poi-layer):host([data-position-mode="bottom"])
   ::slotted(obc-poi-target) {
   top: auto;
   bottom: 0;
@@ -85,7 +86,7 @@
   --obc-poi-target-icon-opacity: 1;
 }
 
-:host-context(obc-poi-layer):host([data-position-mode='bottom']) .wrapper {
+:host-context(obc-poi-layer):host([data-position-mode="bottom"]) .wrapper {
   transform: translateY(-100%);
 }
 
