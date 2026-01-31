@@ -129,6 +129,7 @@ export class ObcPoiTarget extends LitElement {
           ['type-' + this.pointerType]: true,
           selected: this.selected,
         })}
+        ?data-no-transition=${this.buttonOffsetX !== 0 || this.offset !== 0}
         style=${this.buttonOffsetX !== 0
           ? `--obc-poi-target-button-offset-x: ${this.buttonOffsetX}px; --poi-offset: ${this.buttonOffsetX}px;`
           : ''}

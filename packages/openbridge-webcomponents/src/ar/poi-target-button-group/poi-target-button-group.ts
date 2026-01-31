@@ -298,7 +298,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     // Get current positions and sort by x position
     const positions = targets.map((child) => {
       const rect = this.getTargetButtonRect(child);
-      const currentLeft = this.getCurrentLeft(child);
+      const currentLeft = this.getCurrentLeft(child, true);
       // Use currentLeft (offset parent space) for centerX to ensure consistency
       // with delta calculations which use currentLeft.
       return {
@@ -480,7 +480,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
 
       // Line offset: points from button position back to target's real position
       // offset = -buttonOffset makes line point back to where target actually is
-      child.offset = Math.round(-buttonOffset);
+      child.offset = -buttonOffset;
 
       // Visual state changes immediately with target direction
       if (child !== frontChild) {
@@ -616,7 +616,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     // Sort targets by their current x position (style.left)
     const sortedByCurrentPosition = [...targets]
       .map((child) => {
-        const currentLeft = this.getCurrentLeft(child);
+        const currentLeft = this.getCurrentLeft(child, true);
         return {child, currentLeft};
       })
       .sort((a, b) => a.currentLeft - b.currentLeft)
@@ -672,7 +672,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
       const config = this.topOffsetTargets.get(child);
       if (!config) return;
 
-      const currentLeft = this.getCurrentLeft(child);
+      const currentLeft = this.getCurrentLeft(child, true);
       const delta = currentLeft - config.originalLeft;
 
       // Interpolate current towards expanded (target)
@@ -688,7 +688,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
       }
 
       // Counter-translate to keep button locked in expanded spread position
-      const buttonOffset = Math.round(config.currentExpandedOffset - delta);
+      const buttonOffset = config.currentExpandedOffset - delta;
       const lineOffset = -buttonOffset;
 
       // Only update if values actually changed
@@ -717,7 +717,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     });
   }
 
-  private getCurrentLeft(element: HTMLElement): number {
+  private getCurrentLeft(element: HTMLElement, computed = false): number {
     // Optimization: fast path for explicit pixel values in inline style (common in animations)
     const inline = element.style.left;
     if (inline && inline.endsWith('px')) {
@@ -725,9 +725,11 @@ export class ObcPoiTargetButtonGroup extends LitElement {
       if (!Number.isNaN(parsed)) return parsed;
     }
 
+    if (!computed) return 0;
+
     // Slow path: computed style for CSS classes, calc(), percentages, etc.
-    const computed = window.getComputedStyle(element).left;
-    return Number.parseFloat(computed) || 0;
+    const computedStyle = window.getComputedStyle(element).left;
+    return Number.parseFloat(computedStyle) || 0;
   }
 
   private getTargetButtonRect(target: ObcPoiTarget): DOMRect {

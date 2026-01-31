@@ -22,6 +22,10 @@ obc-poi-target-button {
   transition: transform 0.15s ease-out;
 }
 
+.wrapper[data-no-transition] obc-poi-target-button {
+  transition: none;
+}
+
 .wrapper.selected {
   top: calc(var(--obc-poi-target-selected-vertical-offset) * -1);
 }
