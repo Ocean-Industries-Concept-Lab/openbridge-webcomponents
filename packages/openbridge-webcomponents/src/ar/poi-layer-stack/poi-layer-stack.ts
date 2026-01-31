@@ -387,10 +387,66 @@ export class ObcPoiLayerStack extends LitElement {
     anyTarget.height = height;
   }
 
-  private adjustTargetHeightByOffset(target: HTMLElement, offset: number) {
+  private adjustTargetHeightByOffset(
+    target: HTMLElement,
+    offset: number,
+    animate = true
+  ) {
     if (!Number.isFinite(offset) || Math.abs(offset) < 0.5) return;
     const currentHeight = this.getTargetHeight(target);
-    this.setTargetHeight(target, currentHeight + offset);
+    const targetHeight = currentHeight + offset;
+
+    if (!animate) {
+      this.setTargetHeight(target, targetHeight);
+      return;
+    }
+
+    // Animate height change to match position animation (240ms)
+    const duration = 240;
+    const startTime = performance.now();
+    const startHeight = currentHeight;
+
+    const animateHeight = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // Use same easing as position animation: cubic-bezier(0.2, 0, 0, 1)
+      const eased = this.cubicBezier(0.2, 0, 0, 1, progress);
+      const newHeight = startHeight + (targetHeight - startHeight) * eased;
+      this.setTargetHeight(target, newHeight);
+
+      if (progress < 1) {
+        requestAnimationFrame(animateHeight);
+      }
+    };
+
+    requestAnimationFrame(animateHeight);
+  }
+
+  private cubicBezier(
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    t: number
+  ): number {
+    // Approximate cubic-bezier for animation easing
+    const cx = 3 * x1;
+    const bx = 3 * (x2 - x1) - cx;
+    const ax = 1 - cx - bx;
+    const cy = 3 * y1;
+    const by = 3 * (y2 - y1) - cy;
+    const ay = 1 - cy - by;
+
+    // Solve for t given x using Newton-Raphson
+    let tGuess = t;
+    for (let i = 0; i < 4; i++) {
+      const xGuess = ((ax * tGuess + bx) * tGuess + cx) * tGuess;
+      const dxGuess = (3 * ax * tGuess + 2 * bx) * tGuess + cx;
+      if (Math.abs(dxGuess) < 1e-6) break;
+      tGuess -= (xGuess - t) / dxGuess;
+    }
+
+    return ((ay * tGuess + by) * tGuess + cy) * tGuess;
   }
 
   private adjustTargetHeightForLayerMove(
@@ -399,11 +455,13 @@ export class ObcPoiLayerStack extends LitElement {
   ) {
     const lastRect = this.getTargetVisualRect(target);
     const dy = firstRect.top - lastRect.top;
-    this.adjustTargetHeightByOffset(target, dy);
+    this.adjustTargetHeightByOffset(target, dy, false);
   }
 
   private restoreTargetHeight(target: HTMLElement, originHeight: number) {
-    this.setTargetHeight(target, originHeight);
+    const currentHeight = this.getTargetHeight(target);
+    const offset = originHeight - currentHeight;
+    this.adjustTargetHeightByOffset(target, offset, true);
   }
 
   static override styles = unsafeCSS(compentStyle);
