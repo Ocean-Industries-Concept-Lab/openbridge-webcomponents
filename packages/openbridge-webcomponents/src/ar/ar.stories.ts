@@ -42,9 +42,9 @@ const meta: Meta = {
           left: 0;
           right: 0;
           height: 40%;
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-end;
+          display: grid;
+          grid-template-rows: 1fr;
+          align-items: end;
           pointer-events: none;
         }
 
@@ -53,7 +53,8 @@ const meta: Meta = {
         }
 
         obc-poi-layer {
-          position: relative;
+          grid-row: 1;
+          grid-column: 1;
           width: 100%;
           --obc-poi-layer-min-height: 48px;
         }
