@@ -603,65 +603,10 @@ export class ObcPoiLayer extends LitElement {
       }
     }
 
-    const visited = new Set<HTMLElement>();
-    const clusters: HTMLElement[][] = [];
-    targets.forEach((target) => {
-      if (visited.has(target)) return;
-      const stack = [target];
-      const cluster: HTMLElement[] = [];
-      visited.add(target);
-      while (stack.length > 0) {
-        const node = stack.pop()!;
-        cluster.push(node);
-        adjacency.get(node)!.forEach((neighbor) => {
-          if (!visited.has(neighbor)) {
-            visited.add(neighbor);
-            stack.push(neighbor);
-          }
-        });
-      }
-      if (cluster.length >= 2) clusters.push(cluster);
-    });
-
-    const preVisited = new Set<HTMLElement>();
-    const preClusters: HTMLElement[][] = [];
-    targets.forEach((target) => {
-      if (preVisited.has(target)) return;
-      const stack = [target];
-      const cluster: HTMLElement[] = [];
-      preVisited.add(target);
-      while (stack.length > 0) {
-        const node = stack.pop()!;
-        cluster.push(node);
-        preAdjacency.get(node)!.forEach((neighbor) => {
-          if (!preVisited.has(neighbor)) {
-            preVisited.add(neighbor);
-            stack.push(neighbor);
-          }
-        });
-      }
-      if (cluster.length >= 2) preClusters.push(cluster);
-    });
-
-    const behindVisited = new Set<HTMLElement>();
-    const behindClusters: HTMLElement[][] = [];
-    targets.forEach((target) => {
-      if (behindVisited.has(target)) return;
-      const stack = [target];
-      const cluster: HTMLElement[] = [];
-      behindVisited.add(target);
-      while (stack.length > 0) {
-        const node = stack.pop()!;
-        cluster.push(node);
-        behindAdjacency.get(node)!.forEach((neighbor) => {
-          if (!behindVisited.has(neighbor)) {
-            behindVisited.add(neighbor);
-            stack.push(neighbor);
-          }
-        });
-      }
-      if (cluster.length >= 2) behindClusters.push(cluster);
-    });
+    // Use helper to build clusters from adjacency maps
+    const clusters = this.buildClusters(targets, adjacency);
+    // Note: preClusters not needed - preGrouped Set is used for pre-group tracking
+    const behindClusters = this.buildClusters(targets, behindAdjacency);
 
     const existingGroups = Array.from(
       this.querySelectorAll('obc-poi-target-button-group[data-auto-group]')
@@ -835,6 +780,41 @@ export class ObcPoiLayer extends LitElement {
     this.isGrouping = false;
   }
 
+  /**
+   * Build clusters of connected elements using depth-first search on an adjacency map.
+   * Returns only clusters with 2+ elements.
+   */
+  private buildClusters(
+    targets: HTMLElement[],
+    adjacency: Map<HTMLElement, Set<HTMLElement>>
+  ): HTMLElement[][] {
+    const visited = new Set<HTMLElement>();
+    const clusters: HTMLElement[][] = [];
+
+    targets.forEach((target) => {
+      if (visited.has(target)) return;
+
+      const stack = [target];
+      const cluster: HTMLElement[] = [];
+      visited.add(target);
+
+      while (stack.length > 0) {
+        const node = stack.pop()!;
+        cluster.push(node);
+        adjacency.get(node)!.forEach((neighbor) => {
+          if (!visited.has(neighbor)) {
+            visited.add(neighbor);
+            stack.push(neighbor);
+          }
+        });
+      }
+
+      if (cluster.length >= 2) clusters.push(cluster);
+    });
+
+    return clusters;
+  }
+
   private getTargetType(target: HTMLElement): string {
     const typedTarget = target as HTMLElement & {type?: string};
     return typedTarget.type ?? target.getAttribute('type') ?? 'button';
@@ -915,23 +895,6 @@ export class ObcPoiLayer extends LitElement {
       }
       group.updatePosition?.();
     });
-  }
-
-  private getClusterBottomY(
-    targets: HTMLElement[],
-    rects: Map<HTMLElement, DOMRect>,
-    layerRect: DOMRect
-  ) {
-    let maxBottom = Number.NEGATIVE_INFINITY;
-    targets.forEach((target) => {
-      const rect = rects.get(target) ?? target.getBoundingClientRect();
-      maxBottom = Math.max(maxBottom, rect.bottom);
-    });
-    const offsetRaw = getComputedStyle(this).getPropertyValue(
-      '--obc-poi-layer-auto-group-offset-y'
-    );
-    const offset = Number.parseFloat(offsetRaw) || 0;
-    return Math.round(maxBottom - layerRect.top + offset);
   }
 
   private getGroupPositionVertical(
