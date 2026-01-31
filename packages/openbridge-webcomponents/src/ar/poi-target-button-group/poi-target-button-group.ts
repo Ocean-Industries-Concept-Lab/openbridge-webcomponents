@@ -19,7 +19,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
   @property({type: Boolean}) expand = false;
   @property({type: Boolean, reflect: true}) collapsing = false;
   @property({type: String}) positionVertical = '0px';
-  @property({type: Boolean}) useTopOffset?: boolean;
+  @property({type: Boolean}) useTopOffset = false;
   @state() private positionLeft = '0px';
   @state() private positionRight = '0px';
   @state() private wrapperVisible = false;
@@ -64,10 +64,8 @@ export class ObcPoiTargetButtonGroup extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
-    if (
-      this.useTopOffset === undefined &&
-      !this.hasAttribute('use-top-offset')
-    ) {
+    // Default to true if not explicitly set via attribute
+    if (!this.hasAttribute('use-top-offset')) {
       this.useTopOffset = true;
     }
     this.addEventListener('slotchange', this.boundUpdatePosition);
@@ -89,7 +87,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     super.disconnectedCallback();
   }
 
-  onBackdropClick(event: Event) {
+  onBackdropClick(event: Event): void {
     event.stopPropagation();
     this.expand = false;
     this.setExpandedChildren(this.expand);
@@ -139,7 +137,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
   }
 
   // Get bounding box of the slotted elements
-  updatePosition() {
+  updatePosition(): void {
     let left = Number.MAX_VALUE;
     let right = -Number.MAX_VALUE;
 
@@ -157,13 +155,14 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     }
   }
 
-  onClick() {
+  onClick(): void {
+    // Only handle expanding - collapsing is handled by backdrop click
     if (this.expand) return;
-    this.expand = !this.expand;
+    this.expand = true;
     this.setExpandedChildren(this.expand);
   }
 
-  expandOffset: Map<ObcPoiTarget, number> = new Map();
+  private expandOffset: Map<ObcPoiTarget, number> = new Map();
 
   /**
    * Get the offset of the child when the group is expanded.
@@ -174,7 +173,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     return this.expandOffset.get(child) ?? null;
   }
 
-  setExpandedChildren(expand: boolean, firstRun = false) {
+  setExpandedChildren(expand: boolean, firstRun = false): void {
     this.dispatchEvent(
       new CustomEvent('expand', {
         detail: {expand: this.expand},

@@ -33,13 +33,18 @@ interface PoiTargetElement extends HTMLElement {
 interface PoiButtonGroupElement extends HTMLElement {
   expand?: boolean;
   collapsing?: boolean;
-  useTopOffset?: boolean;
+  useTopOffset: boolean;
   updatePosition?: () => void;
 }
 
 export enum OverlapMode {
   Grouping = 'grouping',
   Crossing = 'crossing',
+}
+
+export enum CrossingSide {
+  Left = 'left',
+  Right = 'right',
 }
 
 @customElement('obc-poi-layer')
@@ -65,18 +70,22 @@ export class ObcPoiLayer extends LitElement {
   private autoGroupCollapseTimeout = 0;
   // Crossing mode state
   private crossingModeRaf = 0;
+  // Cached targets for crossing mode (updated by mutation observer)
+  private cachedCrossingTargets: PoiTargetElement[] = [];
+  private crossingTargetsDirty = false;
   // Track previous positions for detecting movement and crossings
   private previousPositions = new Map<HTMLElement, number>();
   // Smooth out tiny per-frame offset changes to avoid flicker
   private lastOffsets = new Map<HTMLElement, number>();
   // Track which side each moving POI's button is on relative to static POIs
-  // Key: "movingId:staticId", Value: 'left' | 'right' | null
-  private crossingSides = new Map<string, 'left' | 'right' | null>();
+  // Key: "movingId:staticId", Value: CrossingSide | null
+  private crossingSides = new Map<string, CrossingSide | null>();
   // Stable unique IDs for elements (used for pair tracking in crossing mode)
   private elementIds = new WeakMap<HTMLElement, string>();
   private elementIdCounter = 0;
 
   override firstUpdated() {
+    this.crossingTargetsDirty = true;
     this.setupResizeObserver();
     this.setupTargetResizeObserver();
     this.setupLayerMutationObserver();
@@ -311,6 +320,8 @@ export class ObcPoiLayer extends LitElement {
             this.updateTargetObservers();
             this.scheduleGrouping();
             this.scheduleLayerHeightUpdate();
+            // Mark crossing targets cache as dirty
+            this.crossingTargetsDirty = true;
             return;
           }
         }
@@ -344,9 +355,14 @@ export class ObcPoiLayer extends LitElement {
   }
 
   private updateCrossingMode() {
-    const targets = Array.from(
-      this.querySelectorAll('obc-poi-target')
-    ) as PoiTargetElement[];
+    // Use cached targets to avoid querySelectorAll on every frame
+    if (this.crossingTargetsDirty) {
+      this.cachedCrossingTargets = Array.from(
+        this.querySelectorAll('obc-poi-target')
+      ) as PoiTargetElement[];
+      this.crossingTargetsDirty = false;
+    }
+    const targets = this.cachedCrossingTargets;
 
     if (targets.length < 2) {
       // Clear any offsets
@@ -430,10 +446,10 @@ export class ObcPoiLayer extends LitElement {
 
           // Only trigger crossing when we definitively pass (not just reach equal)
           if (wasOnLeft && nowOnRight) {
-            side = 'right';
+            side = CrossingSide.Right;
             this.crossingSides.set(pairKey, side);
           } else if (wasOnRight && nowOnLeft) {
-            side = 'left';
+            side = CrossingSide.Left;
             this.crossingSides.set(pairKey, side);
           }
         }
@@ -442,9 +458,12 @@ export class ObcPoiLayer extends LitElement {
         if (!side) {
           // Use previous position to determine approach direction
           if (prevMyPos !== undefined && prevOtherPos !== undefined) {
-            side = prevMyPos <= prevOtherPos ? 'left' : 'right';
+            side =
+              prevMyPos <= prevOtherPos
+                ? CrossingSide.Left
+                : CrossingSide.Right;
           } else {
-            side = myPos <= otherPos ? 'left' : 'right';
+            side = myPos <= otherPos ? CrossingSide.Left : CrossingSide.Right;
           }
           this.crossingSides.set(pairKey, side);
         }
@@ -452,7 +471,7 @@ export class ObcPoiLayer extends LitElement {
         // Calculate offset to avoid overlap
         // The offset pushes our button away from the center point
         const overlap = minGap - gap;
-        if (side === 'left') {
+        if (side === CrossingSide.Left) {
           totalOffset -= overlap;
         } else {
           totalOffset += overlap;
@@ -754,14 +773,8 @@ export class ObcPoiLayer extends LitElement {
           target.removeAttribute('data-behind');
         }
         const isOverlapState = target.hasAttribute('data-behind');
-        if (typeof target.visualState === 'string') {
-          target.visualState = isOverlapState ? 'overlap' : 'normal';
-        } else {
-          target.setAttribute(
-            'data-visual-state',
-            isOverlapState ? 'overlap' : 'normal'
-          );
-        }
+        // Set visual state via property (obc-poi-target defines this property)
+        target.visualState = isOverlapState ? 'overlap' : 'normal';
         this.applyStandaloneVisualState(target, isOverlapState);
         this.resetTarget(target);
       } else {

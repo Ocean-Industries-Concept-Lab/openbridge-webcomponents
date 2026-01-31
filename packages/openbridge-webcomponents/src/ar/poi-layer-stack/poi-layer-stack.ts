@@ -145,9 +145,15 @@ export class ObcPoiLayerStack extends LitElement {
       this.querySelectorAll('obc-poi-layer')
     ) as ObcPoiLayer[];
     if (layers.length === 0) return null;
-    return layers.reduce((top, layer) =>
-      layer.layerIndex < top.layerIndex ? layer : top
-    );
+
+    // Find layer with minimum layerIndex (top layer)
+    let topLayer = layers[0];
+    for (const layer of layers) {
+      if (layer.layerIndex < topLayer.layerIndex) {
+        topLayer = layer;
+      }
+    }
+    return topLayer;
   }
 
   private getSecondTopLayer(): ObcPoiLayer | null {
@@ -430,6 +436,18 @@ export class ObcPoiLayerStack extends LitElement {
     requestAnimationFrame(animateHeight);
   }
 
+  /**
+   * Evaluates a cubic Bezier easing function at time t.
+   * Uses Newton-Raphson to solve for the y-value given x (time).
+   * Matches CSS cubic-bezier() for synchronizing JS animations with CSS.
+   *
+   * @param x1 - First control point x (0-1)
+   * @param y1 - First control point y
+   * @param x2 - Second control point x (0-1)
+   * @param y2 - Second control point y
+   * @param t - Time progress (0-1)
+   * @returns Eased value
+   */
   private cubicBezier(
     x1: number,
     y1: number,
@@ -437,24 +455,25 @@ export class ObcPoiLayerStack extends LitElement {
     y2: number,
     t: number
   ): number {
-    // Approximate cubic-bezier for animation easing
+    // For linear time input (t), solve for parameter value that gives x=t
     const cx = 3 * x1;
     const bx = 3 * (x2 - x1) - cx;
     const ax = 1 - cx - bx;
+
+    // Newton-Raphson iteration to find parameter for x=t (4 iterations sufficient)
+    let tParam = t;
+    for (let i = 0; i < 4; i++) {
+      const x = ((ax * tParam + bx) * tParam + cx) * tParam;
+      const dx = (3 * ax * tParam + 2 * bx) * tParam + cx;
+      if (Math.abs(dx) < 1e-6) break;
+      tParam -= (x - t) / dx;
+    }
+
+    // Evaluate y at the found parameter value
     const cy = 3 * y1;
     const by = 3 * (y2 - y1) - cy;
     const ay = 1 - cy - by;
-
-    // Solve for t given x using Newton-Raphson
-    let tGuess = t;
-    for (let i = 0; i < 4; i++) {
-      const xGuess = ((ax * tGuess + bx) * tGuess + cx) * tGuess;
-      const dxGuess = (3 * ax * tGuess + 2 * bx) * tGuess + cx;
-      if (Math.abs(dxGuess) < 1e-6) break;
-      tGuess -= (xGuess - t) / dxGuess;
-    }
-
-    return ((ay * tGuess + by) * tGuess + cy) * tGuess;
+    return ((ay * tParam + by) * tParam + cy) * tParam;
   }
 
   private adjustTargetHeightForLayerMove(
