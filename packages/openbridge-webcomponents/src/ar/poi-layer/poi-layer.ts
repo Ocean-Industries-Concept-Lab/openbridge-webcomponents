@@ -3,6 +3,7 @@ import {property, query} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './poi-layer.css?inline';
 import '../poi-target-button-group/poi-target-button-group.js';
+import {ObcPoiTarget, PoiTargetVisualState} from '../poi-target/poi-target.js';
 
 // CSS variable names for POI sizing (defined in src/palettes/variables.css)
 const POI_TOUCH_TARGET_VAR = '--maneuvering-components-poi-button-touch-target';
@@ -14,18 +15,6 @@ const POI_LARGE_VISUAL_TARGET_VAR =
   '--maneuvering-components-poi-button-large-visual-target-round';
 const POI_LARGE_VISUAL_TARGET_OVERLAP_VAR =
   '--maneuvering-components-poi-button-large-visual-target-round-overlap';
-
-/**
- * Interface for POI target element properties used by the layer.
- * These properties are defined on obc-poi-target but not exported as a type.
- */
-interface PoiTargetElement extends HTMLElement {
-  buttonOffsetX?: number;
-  offset?: number;
-  type?: string;
-  visualState?: string;
-  height?: number;
-}
 
 /**
  * Interface for POI button group element properties used by the layer.
@@ -71,7 +60,7 @@ export class ObcPoiLayer extends LitElement {
   // Crossing mode state
   private crossingModeRaf = 0;
   // Cached targets for crossing mode (updated by mutation observer)
-  private cachedCrossingTargets: PoiTargetElement[] = [];
+  private cachedCrossingTargets: ObcPoiTarget[] = [];
   private crossingTargetsDirty = false;
   // Track previous positions for detecting movement and crossings
   private previousPositions = new Map<HTMLElement, number>();
@@ -111,9 +100,9 @@ export class ObcPoiLayer extends LitElement {
 
     const targets = Array.from(
       this.querySelectorAll('obc-poi-target')
-    ) as HTMLElement[];
+    ) as ObcPoiTarget[];
     const groupedTargets = new Set<HTMLElement>(
-      Array.from(group.querySelectorAll('obc-poi-target')) as HTMLElement[]
+      Array.from(group.querySelectorAll('obc-poi-target')) as ObcPoiTarget[]
     );
 
     if (event.detail.expand) {
@@ -359,7 +348,7 @@ export class ObcPoiLayer extends LitElement {
     if (this.crossingTargetsDirty) {
       this.cachedCrossingTargets = Array.from(
         this.querySelectorAll('obc-poi-target')
-      ) as PoiTargetElement[];
+      ) as ObcPoiTarget[];
       this.crossingTargetsDirty = false;
     }
     const targets = this.cachedCrossingTargets;
@@ -547,7 +536,7 @@ export class ObcPoiLayer extends LitElement {
 
     const targets = Array.from(
       this.querySelectorAll('obc-poi-target')
-    ) as PoiTargetElement[];
+    ) as ObcPoiTarget[];
 
     const layerRect = this.getBoundingClientRect();
     const enterRaw = getComputedStyle(this).getPropertyValue(
@@ -690,7 +679,7 @@ export class ObcPoiLayer extends LitElement {
             child.removeAttribute('data-exit-lock');
           }
           child.removeAttribute('data-grouped');
-          this.resetTarget(child);
+          this.resetTarget(child as ObcPoiTarget);
         });
         children.forEach((child) => this.appendChild(child));
         const exitDelay = 140;
@@ -774,7 +763,9 @@ export class ObcPoiLayer extends LitElement {
         }
         const isOverlapState = target.hasAttribute('data-behind');
         // Set visual state via property (obc-poi-target defines this property)
-        target.visualState = isOverlapState ? 'overlap' : 'normal';
+        target.visualState = isOverlapState
+          ? PoiTargetVisualState.Overlap
+          : PoiTargetVisualState.Normal;
         this.applyStandaloneVisualState(target, isOverlapState);
         this.resetTarget(target);
       } else {
@@ -935,7 +926,7 @@ export class ObcPoiLayer extends LitElement {
     return Math.round(baseBottom - layerRect.height * transformFactor + offset);
   }
 
-  private resetTarget(target: PoiTargetElement) {
+  private resetTarget(target: ObcPoiTarget) {
     if (typeof target.offset === 'number') {
       target.offset = 0;
     }

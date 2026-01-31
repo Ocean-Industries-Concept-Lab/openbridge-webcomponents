@@ -4,15 +4,7 @@ import {customElement} from '../../decorator.js';
 import componentStyle from './poi-layer-stack.css?inline';
 import {ObcPoiLayer} from '../poi-layer/poi-layer.js';
 import {ObcPoiTargetButtonGroup} from '../poi-target-button-group/poi-target-button-group.js';
-
-/**
- * Interface for POI target element properties used by the layer stack.
- */
-interface PoiTargetElement extends HTMLElement {
-  selectedId?: string | null;
-  type?: string;
-  height?: number;
-}
+import {ObcPoiTarget} from '../poi-target/poi-target.js';
 
 export enum PoiLayerSelectionMode {
   None = 'none',
@@ -76,7 +68,7 @@ export class ObcPoiLayerStack extends LitElement {
 
   private onStackClick(event: Event) {
     if (this.selectionMode === PoiLayerSelectionMode.None) return;
-    const target = this.getPoiTargetFromEvent(event);
+    const target = this.getPoiTargetFromEvent(event) as ObcPoiTarget | null;
     if (!target) return;
 
     this.cleanupSelection();
@@ -100,10 +92,10 @@ export class ObcPoiLayerStack extends LitElement {
       this.clearOtherTopSelections(target);
       this.selectionMap.forEach((record, other) => {
         this.clearTargetGroupingAttributes(other);
-        this.restoreTargetHeight(other, record.originHeight);
+        this.restoreTargetHeight(other as ObcPoiTarget, record.originHeight);
         this.moveTargetToLayer(other, record.originLayer, true);
         this.selectionMap.delete(other);
-        this.clearTargetSelectedId(other);
+        this.clearTargetSelectedId(other as ObcPoiTarget);
       });
     }
 
@@ -181,7 +173,7 @@ export class ObcPoiLayerStack extends LitElement {
         this.clearTargetGroupingAttributes(other);
         this.moveTargetToLayer(other, record.originLayer);
         this.selectionMap.delete(other);
-        this.clearTargetSelectedId(other);
+        this.clearTargetSelectedId(other as ObcPoiTarget);
       } else {
         this.clearTargetGroupingAttributes(other);
         this.moveTargetToLayer(other, secondTop);
@@ -189,7 +181,7 @@ export class ObcPoiLayerStack extends LitElement {
     });
   }
 
-  private setTargetSelectedId(target: PoiTargetElement) {
+  private setTargetSelectedId(target: ObcPoiTarget) {
     const existing = this.selectionIds.get(target);
     if (existing) {
       target.selectedId = existing;
@@ -201,7 +193,7 @@ export class ObcPoiLayerStack extends LitElement {
     target.selectedId = nextId;
   }
 
-  private clearTargetSelectedId(target: PoiTargetElement) {
+  private clearTargetSelectedId(target: ObcPoiTarget) {
     target.selectedId = null;
   }
 
@@ -262,7 +254,7 @@ export class ObcPoiLayerStack extends LitElement {
     }
     if (reduceMotion) {
       if (!skipHeightAdjust) {
-        this.adjustTargetHeightForLayerMove(target, firstRect);
+        this.adjustTargetHeightForLayerMove(target as ObcPoiTarget, firstRect);
       }
       this.requestLayerGrouping(nextLayer);
       return;
@@ -273,7 +265,7 @@ export class ObcPoiLayerStack extends LitElement {
 
     // Adjust height to keep line bottom anchored
     if (!skipHeightAdjust) {
-      this.adjustTargetHeightByOffset(target, dy);
+      this.adjustTargetHeightByOffset(target as ObcPoiTarget, dy);
     }
     if (!Number.isFinite(dx) || !Number.isFinite(dy)) return;
     if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
@@ -387,22 +379,22 @@ export class ObcPoiLayerStack extends LitElement {
     return layers.sort((a, b) => a.layerIndex - b.layerIndex);
   }
 
-  private getAllTargets(): PoiTargetElement[] {
+  private getAllTargets(): ObcPoiTarget[] {
     return Array.from(
       this.querySelectorAll('obc-poi-target')
-    ) as PoiTargetElement[];
+    ) as ObcPoiTarget[];
   }
 
-  private getTargetHeight(target: PoiTargetElement): number {
+  private getTargetHeight(target: ObcPoiTarget): number {
     return target.height ?? 0;
   }
 
-  private setTargetHeight(target: PoiTargetElement, height: number) {
+  private setTargetHeight(target: ObcPoiTarget, height: number) {
     target.height = height;
   }
 
   private adjustTargetHeightByOffset(
-    target: PoiTargetElement,
+    target: ObcPoiTarget,
     offset: number,
     animate = true
   ) {
@@ -477,7 +469,7 @@ export class ObcPoiLayerStack extends LitElement {
   }
 
   private adjustTargetHeightForLayerMove(
-    target: PoiTargetElement,
+    target: ObcPoiTarget,
     firstRect: DOMRect
   ) {
     const lastRect = this.getTargetVisualRect(target);
@@ -485,7 +477,7 @@ export class ObcPoiLayerStack extends LitElement {
     this.adjustTargetHeightByOffset(target, dy, false);
   }
 
-  private restoreTargetHeight(target: PoiTargetElement, originHeight: number) {
+  private restoreTargetHeight(target: ObcPoiTarget, originHeight: number) {
     const currentHeight = this.getTargetHeight(target);
     const offset = originHeight - currentHeight;
     this.adjustTargetHeightByOffset(target, offset, true);

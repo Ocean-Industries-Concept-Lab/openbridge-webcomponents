@@ -55,8 +55,6 @@
   opacity: 1;
 }
 
-/* Removed: data-pregrouped pre-animation no longer needed with unified DOM transitions */
-
 ::slotted(obc-poi-target[data-behind]) {
   opacity: 0.4;
   --poi-size: 32px;
