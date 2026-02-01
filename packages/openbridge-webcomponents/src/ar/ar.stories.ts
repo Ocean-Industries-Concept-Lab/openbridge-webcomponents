@@ -38,13 +38,13 @@ const meta: Meta = {
 
         obc-poi-layer-stack {
           position: absolute;
-          top: 0;
+          bottom: 58vh;
           left: 0;
           right: 0;
-          height: 40%;
-          display: grid;
-          grid-template-rows: 1fr;
-          align-items: end;
+          max-height: 40vh;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
           pointer-events: none;
         }
 
@@ -72,7 +72,7 @@ const meta: Meta = {
         }
 
         #fast-small-boat {
-          left: 224px;
+          left: 167px;
         }
       </style>
       <div class="container">

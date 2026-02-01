@@ -364,7 +364,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
       // Capture current deltas at the start of collapse
       this.collapseDeltas.clear();
       this.topOffsetTargets.forEach((config, child) => {
-        const currentLeft = this.getCurrentLeft(child);
+        const currentLeft = this.getCurrentLeft(child, true);
         const delta = currentLeft - config.originalLeft;
         this.collapseDeltas.set(child, delta);
       });
@@ -458,7 +458,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
       if (isCollapsing) {
         delta = this.collapseDeltas.get(child) ?? 0;
       } else {
-        const currentLeft = this.getCurrentLeft(child);
+        const currentLeft = this.getCurrentLeft(child, true);
         delta = currentLeft - config.originalLeft;
       }
 

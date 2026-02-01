@@ -337,6 +337,7 @@ export class ObcPoiLayerStack extends LitElement {
     this.placementRaf = requestAnimationFrame(() => {
       this.placementRaf = 0;
       this.placeNewTargets();
+      this.updateLayerOrders();
     });
   }
 
@@ -379,6 +380,13 @@ export class ObcPoiLayerStack extends LitElement {
       this.querySelectorAll('obc-poi-layer')
     ) as ObcPoiLayer[];
     return layers.sort((a, b) => a.layerIndex - b.layerIndex);
+  }
+
+  private updateLayerOrders() {
+    const layers = this.getSortedLayers();
+    layers.forEach((layer) => {
+      layer.style.order = String(-layer.layerIndex);
+    });
   }
 
   private getAllTargets(): ObcPoiTarget[] {
