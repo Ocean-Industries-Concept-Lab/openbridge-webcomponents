@@ -32,7 +32,6 @@ export class ObcPoiLayerStack extends LitElement {
   >();
   private selectionCounter = 0;
   private selectionIds = new WeakMap<HTMLElement, string>();
-  private seenTargets = new WeakSet<HTMLElement>();
   private placementRaf = 0;
   private mutationObserver?: MutationObserver;
 
@@ -46,6 +45,12 @@ export class ObcPoiLayerStack extends LitElement {
     slot?.addEventListener('slotchange', this.handleSlotChange);
     this.setupMutationObserver();
     this.schedulePlacement();
+  }
+
+  override updated(changed: Map<string, unknown>) {
+    if (changed.has('selectedType')) {
+      this.schedulePlacement();
+    }
   }
 
   override disconnectedCallback() {
@@ -339,13 +344,13 @@ export class ObcPoiLayerStack extends LitElement {
     const bottom = layers[0] ?? null;
     if (!top || !bottom) return;
     const selectedType =
-      this.selectedType && this.selectedType.trim().length > 0
+      layers.length >= 3 &&
+      this.selectedType &&
+      this.selectedType.trim().length > 0
         ? this.selectedType.trim()
         : null;
     const targets = this.getAllTargets();
     targets.forEach((target) => {
-      if (this.seenTargets.has(target)) return;
-      this.seenTargets.add(target);
       if (this.selectionMap.has(target)) {
         if (target.closest('obc-poi-layer') !== top) {
           this.moveTargetToLayer(target, top);
@@ -373,6 +378,7 @@ export class ObcPoiLayerStack extends LitElement {
     const layers = Array.from(
       this.querySelectorAll('obc-poi-layer')
     ) as ObcPoiLayer[];
+    if (layers.length <= 1) return;
     layers.forEach((layer, index) => {
       layer.layerIndex = index;
       layer.style.order = String(-index);

@@ -56,6 +56,8 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     this.updatePosition();
     this.setExpandedChildren(this.expand, true);
     this.syncFrontChild();
+    const slot = this.shadowRoot?.querySelector('slot');
+    slot?.addEventListener('slotchange', this.boundUpdatePosition);
     // Show wrapper after initial setup (if not expanded)
     if (!this.expand) {
       this.wrapperVisible = true;
@@ -68,12 +70,12 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     if (!this.hasAttribute('use-top-offset')) {
       this.useTopOffset = true;
     }
-    this.addEventListener('slotchange', this.boundUpdatePosition);
     window.addEventListener('resize', this.boundUpdatePosition);
   }
 
   override disconnectedCallback() {
-    this.removeEventListener('slotchange', this.boundUpdatePosition);
+    const slot = this.shadowRoot?.querySelector('slot');
+    slot?.removeEventListener('slotchange', this.boundUpdatePosition);
     window.removeEventListener('resize', this.boundUpdatePosition);
     this.stopExpandedObserver();
     if (this.topOffsetAnimationId) {

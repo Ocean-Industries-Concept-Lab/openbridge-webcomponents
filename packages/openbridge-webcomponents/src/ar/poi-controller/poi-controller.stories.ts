@@ -5,6 +5,8 @@ import {PoiFitMode} from './poi-controller.js';
 
 type PoiControllerArgs = {
   fit: PoiFitMode;
+  useCustomStack: boolean;
+  classFilter: string[];
 };
 
 const meta: Meta<PoiControllerArgs> = {
@@ -13,6 +15,8 @@ const meta: Meta<PoiControllerArgs> = {
   component: 'obc-poi-controller',
   args: {
     fit: PoiFitMode.Contain,
+    useCustomStack: false,
+    classFilter: [],
   },
   render: (args) => {
     const frames = [
@@ -58,8 +62,22 @@ const meta: Meta<PoiControllerArgs> = {
         }
       </style>
       <div class="stage">
-        <obc-poi-controller .frames=${frames} .fit=${args.fit}>
+        <obc-poi-controller
+          .frames=${frames}
+          .fit=${args.fit}
+          .classFilter=${args.classFilter}
+        >
           <img slot="media" src="/AR-test-image.png" />
+          ${args.useCustomStack
+            ? html`
+                <obc-poi-layer-stack slot="stack">
+                  <obc-poi-layer data-controller-layer="background">
+                  </obc-poi-layer>
+                  <obc-poi-layer></obc-poi-layer>
+                  <obc-poi-layer></obc-poi-layer>
+                </obc-poi-layer-stack>
+              `
+            : null}
         </obc-poi-controller>
       </div>
     `;

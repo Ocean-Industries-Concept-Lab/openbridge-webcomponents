@@ -10,6 +10,7 @@ import {ObcArAlertType} from '../types.js';
 import {
   ObcPoiTargetButtonType,
   ObcPoiTargetButtonValue,
+  PoiTargetButtonVisualState,
 } from '../poi-target-button/poi-target-button.js';
 import {customElement} from '../../decorator.js';
 
@@ -40,10 +41,7 @@ export enum Pointer {
   None = 'null',
 }
 
-export enum PoiTargetVisualState {
-  Normal = 'normal',
-  Overlap = 'overlap',
-}
+export {PoiTargetButtonVisualState as PoiTargetVisualState};
 
 /**
  *
@@ -62,7 +60,7 @@ export class ObcPoiTarget extends LitElement {
   @property({type: String}) selectedId: string | null = null;
   @property({type: String}) alertType = ObcArAlertType.None;
   @property({type: String, reflect: true, attribute: 'data-visual-state'})
-  visualState: PoiTargetVisualState = PoiTargetVisualState.Normal;
+  visualState: PoiTargetButtonVisualState = PoiTargetButtonVisualState.Normal;
   @property({type: String}) type = ObcPoiTargetButtonType.Button;
   @property({type: String}) value: TargetValue = TargetValue.enabled;
   @property({type: String}) pointerType: Pointer = Pointer.Line;
@@ -82,10 +80,16 @@ export class ObcPoiTarget extends LitElement {
       this.syncingPosition = true;
       this.height = this.y;
       this.syncingPosition = false;
+      if (!this.closest('obc-poi-layer')) {
+        this.style.top = `${this.y}px`;
+      }
     } else if (changedProperties.has('height') && this.height !== this.y) {
       this.syncingPosition = true;
       this.y = this.height;
       this.syncingPosition = false;
+      if (!this.closest('obc-poi-layer')) {
+        this.style.top = `${this.y}px`;
+      }
     }
   }
   @property({

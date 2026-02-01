@@ -1,10 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit/static-html.js';
-import './poi-target/poi-target.js';
-import './poi-target-button-group/poi-target-button-group.js';
-import './poi-layer-stack/poi-layer-stack.js';
-import './poi-layer/poi-layer.js';
-import {PoiLayerSelectionMode} from './poi-layer-stack/poi-layer-stack.js';
+import './poi-controller/poi-controller.js';
 
 const meta: Meta = {
   title: 'AR/Example',
@@ -40,10 +36,6 @@ const meta: Meta = {
 
         obc-poi-layer-stack {
           position: absolute;
-          bottom: 36vh;
-          left: 0;
-          right: 0;
-          max-height: 40vh;
           display: flex;
           flex-direction: column;
           justify-content: flex-end;
@@ -63,38 +55,16 @@ const meta: Meta = {
         }
       </style>
       <div class="container">
-        <img src="/AR-test-image.png" />
-        <obc-poi-layer-stack selection-mode=${PoiLayerSelectionMode.Multi}>
-          <obc-poi-layer label="Background" .layerIndex=${2} debug>
-            <obc-poi-target
-              .x=${167}
-              .y=${122}
-              .relativeDirection=${270}
-              id="fast-small-boat"
-            ></obc-poi-target>
-            <obc-poi-target
-              .x=${826}
-              .y=${115}
-              .relativeDirection=${20}
-              id="sailboat2"
-            ></obc-poi-target>
-            <obc-poi-target
-              .x=${846}
-              .y=${118}
-              .relativeDirection=${20}
-              id="sailboat"
-            ></obc-poi-target>
-            <obc-poi-target
-              .x=${637}
-              .y=${108}
-              .relativeDirection=${200}
-              id="ferry"
-            ></obc-poi-target>
-          </obc-poi-layer>
-          <obc-poi-layer label="Active" .layerIndex=${1} debug> </obc-poi-layer>
-          <obc-poi-layer label="Selected" .layerIndex=${0} debug>
-          </obc-poi-layer>
-        </obc-poi-layer-stack>
+        <obc-poi-controller
+          .detections=${[
+            {x: 600, y: 285, width: 40, height: 40, id: 'fast-small-boat'},
+            {x: 1830, y: 270, width: 40, height: 40, id: 'sailboat2'},
+            {x: 2300, y: 300, width: 40, height: 40, id: 'sailboat'},
+            {x: 2360, y: 300, width: 40, height: 40, id: 'ferry'},
+          ]}
+        >
+          <img slot="media" src="/AR-test-image.png" />
+        </obc-poi-controller>
       </div>
     `;
   },

@@ -24,49 +24,54 @@ const meta: Meta<ObcPoiTargetButtonGroup> = {
   args: {},
   render: (args) => html`
     <style>
-      #b1 {
-        left: calc(50% - 15px);
+      obc-poi-target {
+        position: absolute;
       }
-      #b2 {
-        left: calc(50% + 15px);
-      }
-      #b3 {
-        left: calc(50% - 30px);
-      }
-      #outside {
-        left: calc(50% - 120px);
+      .stage {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 640px;
+        height: 480px;
+        transform: translate(-50%, -50%);
       }
     </style>
     <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0;">
-      <obc-poi-target-button-group
-        style="position: absolute; top: 0; left: 0;"
-        .expand=${args.expand}
-        positionVertical="calc(50%)"
-        @expand=${onExpand}
-      >
+      <div class="stage">
+        <obc-poi-target-button-group
+          style="position: absolute; top: 0; left: 0;"
+          .expand=${args.expand}
+          positionVertical="calc(50%)"
+          @expand=${onExpand}
+        >
+          <obc-poi-target
+            id="b3"
+            .x=${300}
+            .y=${240}
+            data-visual-state="overlap"
+          ></obc-poi-target>
+          <obc-poi-target
+            id="b1"
+            .x=${320}
+            .y=${240}
+            .relativeDirection=${65}
+          ></obc-poi-target>
+          <obc-poi-target
+            id="b2"
+            .x=${340}
+            .y=${240}
+            data-visual-state="overlap"
+          ></obc-poi-target>
+        </obc-poi-target-button-group>
         <obc-poi-target
-          id="b3"
-          style="position: absolute; top: 50%;"
-          data-visual-state="overlap"
-        ></obc-poi-target>
-        <obc-poi-target
-          id="b1"
-          style="position: absolute; top: 50%;"
-          .relativeDirection=${65}
-        ></obc-poi-target>
-        <obc-poi-target
-          id="b2"
-          style="position: absolute; top: 50%;"
-          data-visual-state="overlap"
-        ></obc-poi-target>
-      </obc-poi-target-button-group>
-      <obc-poi-target
-        id="outside"
-        style="position: absolute; top: 50%;"
-        data-visual-state=${args.expand ? 'overlap' : 'normal'}
-      >
-        <obi-ais-target-activated-iec></obi-ais-target-activated-iec>
-      </obc-poi-target>
+          id="outside"
+          .x=${200}
+          .y=${240}
+          data-visual-state=${args.expand ? 'overlap' : 'normal'}
+        >
+          <obi-ais-target-activated-iec></obi-ais-target-activated-iec>
+        </obc-poi-target>
+      </div>
     </div>
   `,
 } satisfies Meta<ObcPoiTargetButtonGroup>;
@@ -86,53 +91,58 @@ export const GroupedWithNumbers: Story = {
   },
   render: (args) => html`
     <style>
-      #b1 {
-        left: calc(50% - 15px);
+      obc-poi-target {
+        position: absolute;
       }
-      #b2 {
-        left: calc(50% + 15px);
-      }
-      #b3 {
-        left: calc(50% - 30px);
-      }
-      #outside {
-        left: calc(50% - 120px);
+      .stage {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 640px;
+        height: 480px;
+        transform: translate(-50%, -50%);
       }
     </style>
     <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0;">
-      <obc-poi-target-button-group
-        style="position: absolute; top: 0; left: 0;"
-        .expand=${args.expand}
-        positionVertical="calc(50%)"
-        @expand=${onExpand}
-      >
+      <div class="stage">
+        <obc-poi-target-button-group
+          style="position: absolute; top: 0; left: 0;"
+          .expand=${args.expand}
+          positionVertical="calc(50%)"
+          @expand=${onExpand}
+        >
+          <obc-poi-target
+            id="b3"
+            .x=${300}
+            .y=${240}
+            data-visual-state="overlap"
+            selectedId="3"
+          ></obc-poi-target>
+          <obc-poi-target
+            id="b1"
+            .x=${320}
+            .y=${240}
+            .relativeDirection=${65}
+            selectedId="1"
+          ></obc-poi-target>
+          <obc-poi-target
+            id="b2"
+            .x=${340}
+            .y=${240}
+            data-visual-state="overlap"
+            selectedId="2"
+          ></obc-poi-target>
+        </obc-poi-target-button-group>
         <obc-poi-target
-          id="b3"
-          style="position: absolute; top: 50%;"
-          data-visual-state="overlap"
-          selectedId="3"
-        ></obc-poi-target>
-        <obc-poi-target
-          id="b1"
-          style="position: absolute; top: 50%;"
-          .relativeDirection=${65}
-          selectedId="1"
-        ></obc-poi-target>
-        <obc-poi-target
-          id="b2"
-          style="position: absolute; top: 50%;"
-          data-visual-state="overlap"
-          selectedId="2"
-        ></obc-poi-target>
-      </obc-poi-target-button-group>
-      <obc-poi-target
-        id="outside"
-        style="position: absolute; top: 50%;"
-        data-visual-state=${args.expand ? 'overlap' : 'normal'}
-        selectedId="4"
-      >
-        <obi-ais-target-activated-iec></obi-ais-target-activated-iec>
-      </obc-poi-target>
+          id="outside"
+          .x=${200}
+          .y=${240}
+          data-visual-state=${args.expand ? 'overlap' : 'normal'}
+          selectedId="4"
+        >
+          <obi-ais-target-activated-iec></obi-ais-target-activated-iec>
+        </obc-poi-target>
+      </div>
     </div>
   `,
 };
@@ -245,47 +255,47 @@ export const InternalGroupSwapping: Story = {
 
     return html`
       <style>
-        #swap-a {
-          left: 300px;
+        obc-poi-target {
+          position: absolute;
         }
-        #swap-b {
-          left: 320px;
-        }
-        #swap-c {
-          left: 340px;
+        .stage {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 640px;
+          height: 480px;
+          transform: translate(-50%, -50%);
         }
       </style>
-      <div
-        ${ref(hostRef)}
-        style="position: absolute; top: 0; left: 0; right: 0; bottom: 0;"
-      >
-        <obc-poi-target-button-group
-          style="position: absolute; top: 0; left: 0;"
-          .expand=${args.expand}
-          positionVertical="calc(50%)"
-          @expand=${(event: CustomEvent<{expand: boolean}>) => {
-            if (event.detail.expand) {
-              startAnimation(hostRef.value ?? null);
-            } else {
-              stopAnimation();
-            }
-          }}
-        >
-          <obc-poi-target
-            id="swap-a"
-            style="position: absolute; top: 50%;"
-            data-visual-state="overlap"
-          ></obc-poi-target>
-          <obc-poi-target
-            id="swap-b"
-            style="position: absolute; top: 50%;"
-          ></obc-poi-target>
-          <obc-poi-target
-            id="swap-c"
-            style="position: absolute; top: 50%;"
-            data-visual-state="overlap"
-          ></obc-poi-target>
-        </obc-poi-target-button-group>
+      <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0;">
+        <div class="stage" ${ref(hostRef)}>
+          <obc-poi-target-button-group
+            style="position: absolute; top: 0; left: 0;"
+            .expand=${args.expand}
+            positionVertical="calc(50%)"
+            @expand=${(event: CustomEvent<{expand: boolean}>) => {
+              if (event.detail.expand) {
+                startAnimation(hostRef.value ?? null);
+              } else {
+                stopAnimation();
+              }
+            }}
+          >
+            <obc-poi-target
+              id="swap-a"
+              .x=${300}
+              .y=${240}
+              data-visual-state="overlap"
+            ></obc-poi-target>
+            <obc-poi-target id="swap-b" .x=${320} .y=${240}></obc-poi-target>
+            <obc-poi-target
+              id="swap-c"
+              .x=${340}
+              .y=${240}
+              data-visual-state="overlap"
+            ></obc-poi-target>
+          </obc-poi-target-button-group>
+        </div>
       </div>
     `;
   },
@@ -296,39 +306,46 @@ export const GroupWithTopOffsetTransition: Story = {
   render: () => {
     return html`
       <style>
-        #top-grp-target-1 {
-          left: calc(50% - 15px);
+        obc-poi-target {
+          position: absolute;
         }
-        #top-grp-target-2 {
+        .stage {
+          position: absolute;
           left: 50%;
-        }
-        #top-grp-target-3 {
-          left: calc(50% + 15px);
+          top: 50%;
+          width: 640px;
+          height: 480px;
+          transform: translate(-50%, -50%);
         }
       </style>
       <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0;">
-        <obc-poi-target-button-group
-          style="position: absolute; top: 0; left: 0;"
-          positionVertical="calc(50%)"
-        >
-          <obc-poi-target
-            id="top-grp-target-3"
-            style="position: absolute; top: 50%;"
-            .height=${160}
-            data-visual-state="overlap"
-          ></obc-poi-target>
-          <obc-poi-target
-            id="top-grp-target-1"
-            style="position: absolute; top: 50%;"
-            .height=${180}
-            data-visual-state="overlap"
-          ></obc-poi-target>
-          <obc-poi-target
-            id="top-grp-target-2"
-            style="position: absolute; top: 50%;"
-            .height=${200}
-          ></obc-poi-target>
-        </obc-poi-target-button-group>
+        <div class="stage">
+          <obc-poi-target-button-group
+            style="position: absolute; top: 0; left: 0;"
+            positionVertical="calc(50%)"
+          >
+            <obc-poi-target
+              id="top-grp-target-3"
+              .x=${340}
+              .y=${240}
+              .height=${160}
+              data-visual-state="overlap"
+            ></obc-poi-target>
+            <obc-poi-target
+              id="top-grp-target-1"
+              .x=${300}
+              .y=${240}
+              .height=${180}
+              data-visual-state="overlap"
+            ></obc-poi-target>
+            <obc-poi-target
+              id="top-grp-target-2"
+              .x=${320}
+              .y=${240}
+              .height=${200}
+            ></obc-poi-target>
+          </obc-poi-target-button-group>
+        </div>
       </div>
     `;
   },

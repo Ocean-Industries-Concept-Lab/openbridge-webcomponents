@@ -15,6 +15,9 @@ export class ObcPoiController extends LitElement {
   @property({type: Array}) detections: PoiDetection[] | null = null;
   @property({type: Number}) frameIndex: number | null = null;
   @property({type: Number}) confidenceMin: number | null = null;
+  @property({type: Array}) classFilter: string[] | null = null;
+  @property({attribute: false})
+  keyFn: PoiKeyFn | null = null;
   @property({type: String}) boxOrigin: PoiBoxOrigin = PoiBoxOrigin.TopLeft;
   @property({type: String}) poiAnchor: PoiAnchor = PoiAnchor.BottomCenter;
 
@@ -25,28 +28,49 @@ export class ObcPoiController extends LitElement {
 
   @queryAssignedElements({slot: 'media', flatten: true})
   private mediaElements!: HTMLElement[];
+  @queryAssignedElements({slot: 'stack', flatten: true})
+  private stackElements!: HTMLElement[];
 
   private resizeObserver?: ResizeObserver;
   private handleMediaSlotChange = () => this.setupMediaObservers();
+  private handleStackSlotChange = () => this.requestUpdate();
+  private controllerTargets = new Map<
+    string,
+    HTMLElement & {x: number; y: number; type: string}
+  >();
+  private currentMedia: HTMLVideoElement | HTMLImageElement | null = null;
+  private mediaHandlers = {
+    loadedmetadata: () => {
+      if (this.currentMedia) this.updateMediaMetrics(this.currentMedia);
+    },
+    timeupdate: () => this.requestUpdate(),
+    seeked: () => this.requestUpdate(),
+    load: () => {
+      if (this.currentMedia) this.updateMediaMetrics(this.currentMedia);
+    },
+  };
 
   override firstUpdated() {
     this.setupMediaObservers();
     const slot = this.shadowRoot?.querySelector('slot[name="media"]');
     slot?.addEventListener('slotchange', this.handleMediaSlotChange);
+    const stackSlot = this.shadowRoot?.querySelector('slot[name="stack"]');
+    stackSlot?.addEventListener('slotchange', this.handleStackSlotChange);
   }
 
   override updated(changed: PropertyValues) {
-    if (changed.has('frames') || changed.has('detections')) {
-      this.requestUpdate();
-    }
+    this.syncTargetsToCustomStack();
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.resizeObserver?.disconnect();
     this.resizeObserver = undefined;
+    this.detachMediaListeners();
     const slot = this.shadowRoot?.querySelector('slot[name="media"]');
     slot?.removeEventListener('slotchange', this.handleMediaSlotChange);
+    const stackSlot = this.shadowRoot?.querySelector('slot[name="stack"]');
+    stackSlot?.removeEventListener('slotchange', this.handleStackSlotChange);
   }
 
   private setupMediaObservers() {
@@ -56,21 +80,23 @@ export class ObcPoiController extends LitElement {
     const media = this.getMediaElement();
     if (!media) return;
 
+    if (this.currentMedia && this.currentMedia !== media) {
+      this.detachMediaListeners();
+    }
+    this.currentMedia = media;
+
     this.updateMediaMetrics(media);
 
     if (media instanceof HTMLVideoElement) {
-      media.addEventListener('loadedmetadata', () => {
-        this.updateMediaMetrics(media);
-      });
-      media.addEventListener('timeupdate', () => {
-        this.requestUpdate();
-      });
-      media.addEventListener('seeked', () => {
-        this.requestUpdate();
-      });
+      media.addEventListener(
+        'loadedmetadata',
+        this.mediaHandlers.loadedmetadata
+      );
+      media.addEventListener('timeupdate', this.mediaHandlers.timeupdate);
+      media.addEventListener('seeked', this.mediaHandlers.seeked);
     } else if (media instanceof HTMLImageElement) {
       if (!media.complete) {
-        media.addEventListener('load', () => this.updateMediaMetrics(media));
+        media.addEventListener('load', this.mediaHandlers.load);
       }
     }
 
@@ -80,11 +106,38 @@ export class ObcPoiController extends LitElement {
     this.resizeObserver.observe(media);
   }
 
+  private detachMediaListeners() {
+    if (!this.currentMedia) return;
+    if (this.currentMedia instanceof HTMLVideoElement) {
+      this.currentMedia.removeEventListener(
+        'loadedmetadata',
+        this.mediaHandlers.loadedmetadata
+      );
+      this.currentMedia.removeEventListener(
+        'timeupdate',
+        this.mediaHandlers.timeupdate
+      );
+      this.currentMedia.removeEventListener(
+        'seeked',
+        this.mediaHandlers.seeked
+      );
+    } else if (this.currentMedia instanceof HTMLImageElement) {
+      this.currentMedia.removeEventListener('load', this.mediaHandlers.load);
+    }
+    this.currentMedia = null;
+  }
+
   private getMediaElement(): HTMLVideoElement | HTMLImageElement | null {
     const el = this.mediaElements?.[0];
     if (el instanceof HTMLVideoElement || el instanceof HTMLImageElement) {
       return el;
     }
+    return null;
+  }
+
+  private getStackElement(): HTMLElement | null {
+    const el = this.stackElements?.[0];
+    if (el instanceof HTMLElement) return el;
     return null;
   }
 
@@ -114,13 +167,20 @@ export class ObcPoiController extends LitElement {
   }
 
   private filterDetections(detections: PoiDetection[]) {
-    if (this.confidenceMin === null || this.confidenceMin === undefined) {
-      return detections;
+    let filtered = detections;
+    if (this.confidenceMin !== null && this.confidenceMin !== undefined) {
+      filtered = filtered.filter(
+        (det) =>
+          det.confidence === undefined || det.confidence >= this.confidenceMin!
+      );
     }
-    return detections.filter(
-      (det) =>
-        det.confidence === undefined || det.confidence >= this.confidenceMin!
-    );
+    if (Array.isArray(this.classFilter) && this.classFilter.length > 0) {
+      filtered = filtered.filter(
+        (det) =>
+          det.class !== undefined && this.classFilter!.includes(det.class)
+      );
+    }
+    return filtered;
   }
 
   private pickFrame(): PoiFrame | null {
@@ -165,7 +225,7 @@ export class ObcPoiController extends LitElement {
     }
 
     const scale =
-      this.fit === 'cover'
+      this.fit === PoiFitMode.Cover
         ? Math.max(
             this.renderWidth / this.mediaWidth,
             this.renderHeight / this.mediaHeight
@@ -180,8 +240,10 @@ export class ObcPoiController extends LitElement {
     const offsetX = (this.renderWidth - contentWidth) / 2;
     const offsetY = (this.renderHeight - contentHeight) / 2;
 
-    const baseX = det.x;
-    const baseY = det.y;
+    const baseX =
+      this.boxOrigin === PoiBoxOrigin.Center ? det.x - det.width / 2 : det.x;
+    const baseY =
+      this.boxOrigin === PoiBoxOrigin.Center ? det.y - det.height / 2 : det.y;
     const anchorX = baseX + det.width / 2;
     const anchorY =
       this.poiAnchor === 'center' ? baseY + det.height / 2 : baseY + det.height;
@@ -192,31 +254,97 @@ export class ObcPoiController extends LitElement {
     };
   }
 
+  private syncTargetsToCustomStack() {
+    const stack = this.getStackElement();
+    if (!stack) {
+      if (this.controllerTargets.size > 0) {
+        this.controllerTargets.forEach((target) => target.remove());
+        this.controllerTargets.clear();
+      }
+      return;
+    }
+
+    const layer =
+      stack.querySelector(
+        'obc-poi-layer[data-controller-layer="background"]'
+      ) ?? stack.querySelector('obc-poi-layer');
+    if (!layer) return;
+
+    const active = this.getActiveDetections();
+    const activeKeys = new Set<string>();
+
+    active.forEach((det, index) => {
+      const mapped = this.mapDetection(det);
+      if (!mapped) return;
+      const key =
+        det.id ?? (this.keyFn ? this.keyFn(det, index) : `index:${index}`);
+      activeKeys.add(key);
+
+      let target = this.controllerTargets.get(key);
+      if (!target) {
+        target = document.createElement('obc-poi-target') as HTMLElement & {
+          x: number;
+          y: number;
+          type: string;
+        };
+        target.dataset.controller = '1';
+        target.dataset.detectionIndex = String(index);
+        target.type = ObcPoiTargetButtonType.Button;
+        this.controllerTargets.set(key, target);
+        layer.appendChild(target);
+      }
+
+      target.dataset.detectionIndex = String(index);
+      target.x = mapped.x;
+      target.y = mapped.y;
+    });
+
+    Array.from(this.controllerTargets.entries()).forEach(([key, target]) => {
+      if (!activeKeys.has(key)) {
+        target.remove();
+        this.controllerTargets.delete(key);
+      }
+    });
+  }
+
   override render() {
+    const customStack = this.getStackElement();
     return html`
       <div class="wrapper">
         <div class="media">
           <slot name="media"></slot>
         </div>
         <div class="overlay">
-          <obc-poi-layer-stack selection-mode=${PoiLayerSelectionMode.Multi}>
-            <obc-poi-layer label="Background" .layerIndex=${2}>
-              ${this.getActiveDetections().map((det, index) => {
-                const mapped = this.mapDetection(det);
-                if (!mapped) return null;
-                return html`
-                  <obc-poi-target
-                    .x=${mapped.x}
-                    .y=${mapped.y}
-                    .type=${ObcPoiTargetButtonType.Button}
-                    data-detection-index=${index}
-                  ></obc-poi-target>
-                `;
-              })}
-            </obc-poi-layer>
-            <obc-poi-layer label="Active" .layerIndex=${1}></obc-poi-layer>
-            <obc-poi-layer label="Selected" .layerIndex=${0}></obc-poi-layer>
-          </obc-poi-layer-stack>
+          ${customStack
+            ? html`<slot name="stack"></slot>`
+            : html`
+                <obc-poi-layer-stack
+                  selection-mode=${PoiLayerSelectionMode.Multi}
+                >
+                  <obc-poi-layer label="Background" .layerIndex=${2}>
+                    ${this.getActiveDetections().map((det, index) => {
+                      const mapped = this.mapDetection(det);
+                      if (!mapped) return null;
+                      return html`
+                        <obc-poi-target
+                          .x=${mapped.x}
+                          .y=${mapped.y}
+                          .type=${ObcPoiTargetButtonType.Button}
+                          data-detection-index=${index}
+                        ></obc-poi-target>
+                      `;
+                    })}
+                  </obc-poi-layer>
+                  <obc-poi-layer
+                    label="Active"
+                    .layerIndex=${1}
+                  ></obc-poi-layer>
+                  <obc-poi-layer
+                    label="Selected"
+                    .layerIndex=${0}
+                  ></obc-poi-layer>
+                </obc-poi-layer-stack>
+              `}
         </div>
       </div>
     `;
@@ -236,10 +364,13 @@ export type PoiDetection = {
   y: number;
   width: number;
   height: number;
+  id?: string;
   confidence?: number;
   class?: string;
   class_id?: number;
 };
+
+export type PoiKeyFn = (det: PoiDetection, index: number) => string;
 
 export type PoiFrame = {
   frame?: number;
@@ -254,6 +385,7 @@ export enum PoiFitMode {
 
 export enum PoiBoxOrigin {
   TopLeft = 'top-left',
+  Center = 'center',
 }
 
 export enum PoiAnchor {

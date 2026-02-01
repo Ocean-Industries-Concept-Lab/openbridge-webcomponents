@@ -4,6 +4,7 @@ import {customElement} from '../../decorator.js';
 import componentStyle from './poi-layer.css?inline';
 import '../poi-target-button-group/poi-target-button-group.js';
 import {ObcPoiTarget, PoiTargetVisualState} from '../poi-target/poi-target.js';
+import {ObcPoiTargetButtonType} from '../poi-target-button/poi-target-button.js';
 
 // Animation timings
 const EXIT_DELAY_MS = 140;
@@ -530,17 +531,24 @@ export class ObcPoiLayer extends LitElement {
       ) as PoiButtonGroupElement[]
     ).filter((group) => !group.hasAttribute('data-auto-group'));
     if (manualGroups.length > 0) {
-      const anyExpanded = manualGroups.some((group) => group.expand === true);
+      const anyExpanded = manualGroups.some(
+        (group) => group.expand === true || group.collapsing === true
+      );
       if (anyExpanded) {
         this.isGrouping = false;
         return;
       }
-      this.isGrouping = false;
-      return;
     }
 
-    const targets = Array.from(
-      this.querySelectorAll('obc-poi-target')
+    const manualGroupedTargets = new Set<HTMLElement>();
+    manualGroups.forEach((group) => {
+      Array.from(group.querySelectorAll('obc-poi-target')).forEach((target) => {
+        if (target instanceof HTMLElement) manualGroupedTargets.add(target);
+      });
+    });
+
+    const targets = Array.from(this.querySelectorAll('obc-poi-target')).filter(
+      (target) => !manualGroupedTargets.has(target)
     ) as ObcPoiTarget[];
 
     const layerRect = this.getBoundingClientRect();
@@ -824,7 +832,7 @@ export class ObcPoiLayer extends LitElement {
   }
 
   private applyStandaloneVisualState(target: ObcPoiTarget, overlap: boolean) {
-    const isEnhanced = target.type === 'enhanced';
+    const isEnhanced = target.type === ObcPoiTargetButtonType.Enhanced;
     const size = this.getVisualTargetSize(isEnhanced, overlap);
     target.style.setProperty('--poi-size', `${size}px`);
     target.style.setProperty(
