@@ -178,7 +178,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
 
   private ensureFrontChildOnTop() {
     const frontChild = this.getFrontChild();
-    if (frontChild) {
+    if (frontChild && this.lastElementChild !== frontChild) {
       this.appendChild(frontChild);
     }
   }
