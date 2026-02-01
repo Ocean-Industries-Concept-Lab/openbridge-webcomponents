@@ -32,6 +32,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
   private expandedRaf = 0;
   private topOffsetAnimationId: number | null = null;
   private topOffsetProgress = 0;
+  private slotChangeRaf = 0;
   private topOffsetTargets: Map<
     ObcPoiTarget,
     {
@@ -57,7 +58,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     this.setExpandedChildren(this.expand, true);
     this.syncFrontChild();
     const slot = this.shadowRoot?.querySelector('slot');
-    slot?.addEventListener('slotchange', this.boundUpdatePosition);
+    slot?.addEventListener('slotchange', this.onSlotChange);
     // Show wrapper after initial setup (if not expanded)
     if (!this.expand) {
       this.wrapperVisible = true;
@@ -75,9 +76,13 @@ export class ObcPoiTargetButtonGroup extends LitElement {
 
   override disconnectedCallback() {
     const slot = this.shadowRoot?.querySelector('slot');
-    slot?.removeEventListener('slotchange', this.boundUpdatePosition);
+    slot?.removeEventListener('slotchange', this.onSlotChange);
     window.removeEventListener('resize', this.boundUpdatePosition);
     this.stopExpandedObserver();
+    if (this.slotChangeRaf) {
+      cancelAnimationFrame(this.slotChangeRaf);
+      this.slotChangeRaf = 0;
+    }
     if (this.topOffsetAnimationId) {
       cancelAnimationFrame(this.topOffsetAnimationId);
       this.topOffsetAnimationId = null;
@@ -154,6 +159,27 @@ export class ObcPoiTargetButtonGroup extends LitElement {
       // Update position properties based on bounding box
       this.positionLeft = `${left - rootDim.left - 24}px`;
       this.positionRight = `${rootDim.right - right - 24}px`;
+    }
+  }
+
+  private onSlotChange = () => {
+    if (this.slotChangeRaf) {
+      cancelAnimationFrame(this.slotChangeRaf);
+    }
+    this.slotChangeRaf = requestAnimationFrame(() => {
+      this.slotChangeRaf = 0;
+      this.updatePosition();
+      if (!this.expand) {
+        this.ensureFrontChildOnTop();
+        this.syncFrontChild();
+      }
+    });
+  };
+
+  private ensureFrontChildOnTop() {
+    const frontChild = this.getFrontChild();
+    if (frontChild) {
+      this.appendChild(frontChild);
     }
   }
 
