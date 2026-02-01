@@ -4,7 +4,7 @@ import {customElement} from '../../decorator.js';
 import componentStyle from './poi-layer-stack.css?inline';
 import {ObcPoiLayer} from '../poi-layer/poi-layer.js';
 import {ObcPoiTargetButtonGroup} from '../poi-target-button-group/poi-target-button-group.js';
-import {ObcPoiTarget} from '../poi-target/poi-target.js';
+import {ObcPoiTarget, PoiTargetVisualState} from '../poi-target/poi-target.js';
 
 const SUPPORTS_TRANSLATE =
   typeof document !== 'undefined' &&
@@ -89,11 +89,13 @@ export class ObcPoiLayerStack extends LitElement {
 
     const existing = this.selectionMap.get(target);
     if (existing) {
+      this.setSelectedTargetInteractivity(target, false);
       this.clearTargetGroupingAttributes(target);
       this.restoreTargetHeight(target, existing.originHeight);
       this.moveTargetToLayer(target, existing.originLayer, true);
       this.selectionMap.delete(target);
       this.clearTargetSelectedId(target);
+      this.schedulePlacement();
       return;
     }
 
@@ -116,9 +118,11 @@ export class ObcPoiLayerStack extends LitElement {
     });
     this.setTargetSelectedId(target);
     this.clearTargetGroupingAttributes(target);
+    this.setSelectedTargetInteractivity(target, true);
     if (topLayer !== originLayer) {
       this.moveTargetToLayer(target, topLayer);
     }
+    this.schedulePlacement();
   }
 
   private getPoiTargetFromEvent(event: Event): HTMLElement | null {
@@ -204,6 +208,21 @@ export class ObcPoiLayerStack extends LitElement {
     target.removeAttribute('data-front-exit');
     target.removeAttribute('data-exiting');
     target.removeAttribute('data-exit-lock');
+  }
+
+  private setSelectedTargetInteractivity(
+    target: ObcPoiTarget,
+    selected: boolean
+  ) {
+    if (selected) {
+      target.visualState = PoiTargetVisualState.Normal;
+      target.style.setProperty('--obc-poi-overlap-pointer-events', 'auto');
+      target.removeAttribute('data-behind');
+      target.setAttribute('data-front', 'true');
+    } else {
+      target.style.removeProperty('--obc-poi-overlap-pointer-events');
+      target.removeAttribute('data-front');
+    }
   }
 
   private setupMutationObserver() {
