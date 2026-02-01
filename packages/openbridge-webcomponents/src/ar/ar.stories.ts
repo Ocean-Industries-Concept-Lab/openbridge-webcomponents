@@ -30,15 +30,17 @@ const meta: Meta = {
 
         img {
           display: block;
-          width: 1333px;
+          width: 100%;
           height: 100%;
           object-fit: cover;
           line-height: 0;
+          position: relative;
+          z-index: 0;
         }
 
         obc-poi-layer-stack {
           position: absolute;
-          bottom: 58vh;
+          bottom: 36vh;
           left: 0;
           right: 0;
           max-height: 40vh;
@@ -46,6 +48,7 @@ const meta: Meta = {
           flex-direction: column;
           justify-content: flex-end;
           pointer-events: none;
+          z-index: 1;
         }
 
         obc-poi-layer-stack > * {
@@ -58,50 +61,38 @@ const meta: Meta = {
           width: 100%;
           --obc-poi-layer-min-height: 48px;
         }
-
-        #sailboat {
-          left: 846px;
-        }
-
-        #sailboat2 {
-          left: 826px;
-        }
-
-        #ferry {
-          left: 637px;
-        }
-
-        #fast-small-boat {
-          left: 167px;
-        }
       </style>
       <div class="container">
         <img src="/AR-test-image.png" />
         <obc-poi-layer-stack selection-mode=${PoiLayerSelectionMode.Multi}>
-          <obc-poi-layer label="Selected" .layerIndex=${0} debug>
-          </obc-poi-layer>
-          <obc-poi-layer label="Active" .layerIndex=${1} debug> </obc-poi-layer>
           <obc-poi-layer label="Background" .layerIndex=${2} debug>
             <obc-poi-target
-              .height=${122}
+              .x=${167}
+              .y=${122}
               .relativeDirection=${270}
               id="fast-small-boat"
             ></obc-poi-target>
             <obc-poi-target
+              .x=${826}
+              .y=${115}
               .relativeDirection=${20}
-              .height=${115}
               id="sailboat2"
             ></obc-poi-target>
             <obc-poi-target
-              .height=${118}
+              .x=${846}
+              .y=${118}
               .relativeDirection=${20}
               id="sailboat"
             ></obc-poi-target>
             <obc-poi-target
-              .height=${108}
+              .x=${637}
+              .y=${108}
               .relativeDirection=${200}
               id="ferry"
             ></obc-poi-target>
+          </obc-poi-layer>
+          <obc-poi-layer label="Active" .layerIndex=${1} debug> </obc-poi-layer>
+          <obc-poi-layer label="Selected" .layerIndex=${0} debug>
           </obc-poi-layer>
         </obc-poi-layer-stack>
       </div>

@@ -41,9 +41,9 @@ export const Primary: Story = {
         .layerIndex=${args.layerIndex}
         ?debug=${args.debug}
       >
-        <obc-poi-target style="left: 120px;" height="200"> </obc-poi-target>
-        <obc-poi-target style="left: 320px;" height="70"> </obc-poi-target>
-        <obc-poi-target style="left: 520px;" height="140"> </obc-poi-target>
+        <obc-poi-target .x=${120} .y=${200}> </obc-poi-target>
+        <obc-poi-target .x=${320} .y=${70}> </obc-poi-target>
+        <obc-poi-target .x=${520} .y=${140}> </obc-poi-target>
       </obc-poi-layer>
     `;
   },
@@ -80,21 +80,9 @@ export const WithValuesTargets: Story = {
         .layerIndex=${args.layerIndex}
         ?debug=${args.debug}
       >
-        <obc-poi-target
-          style="left: 120px;"
-          height="140"
-          .values=${valuesA}
-        ></obc-poi-target>
-        <obc-poi-target
-          style="left: 320px;"
-          height="120"
-          .values=${valuesB}
-        ></obc-poi-target>
-        <obc-poi-target
-          style="left: 520px;"
-          height="160"
-          .values=${valuesC}
-        ></obc-poi-target>
+        <obc-poi-target .x=${120} .y=${140} .values=${valuesA}></obc-poi-target>
+        <obc-poi-target .x=${320} .y=${120} .values=${valuesB}></obc-poi-target>
+        <obc-poi-target .x=${520} .y=${160} .values=${valuesC}></obc-poi-target>
       </obc-poi-layer>
     `;
   },
@@ -114,16 +102,16 @@ export const AnimatedLayout: Story = {
 
       const first = root.querySelector(
         'obc-poi-target.first'
-      ) as HTMLElement & {height: number};
+      ) as HTMLElement & {x: number; y: number};
       const second = root.querySelector(
         'obc-poi-target.second'
-      ) as HTMLElement & {height: number};
+      ) as HTMLElement & {x: number; y: number};
       const third = root.querySelector(
         'obc-poi-target.third'
-      ) as HTMLElement & {height: number};
+      ) as HTMLElement & {x: number; y: number};
       const fourth = root.querySelector(
         'obc-poi-target.fourth'
-      ) as HTMLElement & {height: number};
+      ) as HTMLElement & {x: number; y: number};
 
       if (!first || !second || !third || !fourth) return;
 
@@ -136,18 +124,18 @@ export const AnimatedLayout: Story = {
         const x1 = 120 + (260 - 120) * phase;
         const x2 = 520 - (520 - 260) * phase;
 
-        first.height = 110;
-        second.height = 70;
-        third.height = 90;
-        fourth.height = 100;
-        first.setAttribute('height', '110');
-        second.setAttribute('height', '70');
-        third.setAttribute('height', '90');
-        fourth.setAttribute('height', '100');
-        first.style.left = `${Math.round(x1)}px`;
-        second.style.left = `${Math.round(x2)}px`;
-        third.style.left = `${Math.round(520 + 100 * Math.sin(t * 0.6 + 1))}px`;
-        fourth.style.left = `${Math.round(240 + 120 * Math.sin(t * 0.9 + 2))}px`;
+        first.y = 110;
+        second.y = 70;
+        third.y = 90;
+        fourth.y = 100;
+        first.setAttribute('y', '110');
+        second.setAttribute('y', '70');
+        third.setAttribute('y', '90');
+        fourth.setAttribute('y', '100');
+        first.x = Math.round(x1);
+        second.x = Math.round(x2);
+        third.x = Math.round(520 + 100 * Math.sin(t * 0.6 + 1));
+        fourth.x = Math.round(240 + 120 * Math.sin(t * 0.9 + 2));
 
         rafId = requestAnimationFrame(tick);
       };
@@ -180,10 +168,10 @@ export const AnimatedLayout: Story = {
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}
         >
-          <obc-poi-target class="first" height="110"> </obc-poi-target>
-          <obc-poi-target class="second" height="70"> </obc-poi-target>
-          <obc-poi-target class="third" height="90"> </obc-poi-target>
-          <obc-poi-target class="fourth" height="100"> </obc-poi-target>
+          <obc-poi-target class="first" .y=${110}> </obc-poi-target>
+          <obc-poi-target class="second" .y=${70}> </obc-poi-target>
+          <obc-poi-target class="third" .y=${90}> </obc-poi-target>
+          <obc-poi-target class="fourth" .y=${100}> </obc-poi-target>
         </obc-poi-layer>
       </div>
     `;
@@ -214,8 +202,8 @@ export const Overlap: Story = {
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}
         >
-          <obc-poi-target style="left: 260px;" height="80"></obc-poi-target>
-          <obc-poi-target style="left: 280px;" height="140"></obc-poi-target>
+          <obc-poi-target .x=${260} .y=${80}></obc-poi-target>
+          <obc-poi-target .x=${280} .y=${140}></obc-poi-target>
         </obc-poi-layer>
       </div>
     `;
@@ -246,13 +234,13 @@ export const OverlapWithGroup: Story = {
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}
         >
-          <obc-poi-target style="left: 300px;" height="80"></obc-poi-target>
+          <obc-poi-target .x=${300} .y=${80}></obc-poi-target>
           <obc-poi-target
-            style="left: 320px;"
-            height="140"
+            .x=${320}
+            .y=${140}
             .relativeDirection=${65}
           ></obc-poi-target>
-          <obc-poi-target style="left: 340px;" height="60"></obc-poi-target>
+          <obc-poi-target .x=${340} .y=${60}></obc-poi-target>
         </obc-poi-layer>
       </div>
     `;
@@ -283,22 +271,14 @@ export const OverlapWithGroupNumbers: Story = {
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}
         >
+          <obc-poi-target .x=${300} .y=${80} selectedId="3"></obc-poi-target>
           <obc-poi-target
-            style="left: 300px;"
-            height="80"
-            selectedId="3"
-          ></obc-poi-target>
-          <obc-poi-target
-            style="left: 320px;"
-            height="140"
+            .x=${320}
+            .y=${140}
             .relativeDirection=${65}
             selectedId="1"
           ></obc-poi-target>
-          <obc-poi-target
-            style="left: 340px;"
-            height="60"
-            selectedId="2"
-          ></obc-poi-target>
+          <obc-poi-target .x=${340} .y=${60} selectedId="2"></obc-poi-target>
         </obc-poi-layer>
       </div>
     `;
@@ -317,8 +297,12 @@ export const EnterGroupFromTwo: Story = {
       if (!root || root.dataset.animating === 'true') return;
       root.dataset.animating = 'true';
 
-      const a = root.querySelector('obc-poi-target.a') as HTMLElement | null;
-      const b = root.querySelector('obc-poi-target.b') as HTMLElement | null;
+      const a = root.querySelector('obc-poi-target.a') as
+        | (HTMLElement & {x: number; y: number})
+        | null;
+      const b = root.querySelector('obc-poi-target.b') as
+        | (HTMLElement & {x: number; y: number})
+        | null;
       if (!a || !b) return;
 
       const start = performance.now();
@@ -341,8 +325,8 @@ export const EnterGroupFromTwo: Story = {
         const x1 = 180 + (300 - 180) * eased;
         const x2 = 460 - (460 - 320) * eased;
 
-        a.style.left = `${Math.round(x1)}px`;
-        b.style.left = `${Math.round(x2)}px`;
+        a.x = Math.round(x1);
+        b.x = Math.round(x2);
 
         rafId = requestAnimationFrame(tick);
       };
@@ -379,8 +363,8 @@ export const EnterGroupFromTwo: Story = {
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}
         >
-          <obc-poi-target class="a" height="140"></obc-poi-target>
-          <obc-poi-target class="b" height="80"></obc-poi-target>
+          <obc-poi-target class="a" .y=${140}></obc-poi-target>
+          <obc-poi-target class="b" .y=${80}></obc-poi-target>
         </obc-poi-layer>
       </div>
     `;
@@ -399,8 +383,12 @@ export const ExitGroup: Story = {
       if (!root || root.dataset.animating === 'true') return;
       root.dataset.animating = 'true';
 
-      const a = root.querySelector('obc-poi-target.a') as HTMLElement | null;
-      const b = root.querySelector('obc-poi-target.b') as HTMLElement | null;
+      const a = root.querySelector('obc-poi-target.a') as
+        | (HTMLElement & {x: number; y: number})
+        | null;
+      const b = root.querySelector('obc-poi-target.b') as
+        | (HTMLElement & {x: number; y: number})
+        | null;
       if (!a || !b) return;
 
       const start = performance.now();
@@ -414,8 +402,8 @@ export const ExitGroup: Story = {
         const x1 = 300 - (300 - 180) * eased;
         const x2 = 320 + (460 - 320) * eased;
 
-        a.style.left = `${Math.round(x1)}px`;
-        b.style.left = `${Math.round(x2)}px`;
+        a.x = Math.round(x1);
+        b.x = Math.round(x2);
 
         rafId = requestAnimationFrame(tick);
       };
@@ -452,8 +440,8 @@ export const ExitGroup: Story = {
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}
         >
-          <obc-poi-target class="a" height="120"></obc-poi-target>
-          <obc-poi-target class="b" height="90"></obc-poi-target>
+          <obc-poi-target class="a" .y=${120}></obc-poi-target>
+          <obc-poi-target class="b" .y=${90}></obc-poi-target>
         </obc-poi-layer>
       </div>
     `;
@@ -472,9 +460,15 @@ export const JoinGroup: Story = {
       if (!root || root.dataset.animating === 'true') return;
       root.dataset.animating = 'true';
 
-      const a = root.querySelector('obc-poi-target.a') as HTMLElement | null;
-      const b = root.querySelector('obc-poi-target.b') as HTMLElement | null;
-      const c = root.querySelector('obc-poi-target.c') as HTMLElement | null;
+      const a = root.querySelector('obc-poi-target.a') as
+        | (HTMLElement & {x: number; y: number})
+        | null;
+      const b = root.querySelector('obc-poi-target.b') as
+        | (HTMLElement & {x: number; y: number})
+        | null;
+      const c = root.querySelector('obc-poi-target.c') as
+        | (HTMLElement & {x: number; y: number})
+        | null;
       if (!a || !b || !c) return;
 
       const start = performance.now();
@@ -487,9 +481,9 @@ export const JoinGroup: Story = {
         const eased = phase * phase * (3 - 2 * phase);
         const x3 = 520 - (520 - 340) * eased;
 
-        a.style.left = '280px';
-        b.style.left = '320px';
-        c.style.left = `${Math.round(x3)}px`;
+        a.x = 280;
+        b.x = 320;
+        c.x = Math.round(x3);
 
         rafId = requestAnimationFrame(tick);
       };
@@ -526,9 +520,9 @@ export const JoinGroup: Story = {
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}
         >
-          <obc-poi-target class="a" height="140"></obc-poi-target>
-          <obc-poi-target class="b" height="100"></obc-poi-target>
-          <obc-poi-target class="c" height="80"></obc-poi-target>
+          <obc-poi-target class="a" .y=${140}></obc-poi-target>
+          <obc-poi-target class="b" .y=${100}></obc-poi-target>
+          <obc-poi-target class="c" .y=${80}></obc-poi-target>
         </obc-poi-layer>
       </div>
     `;
@@ -547,15 +541,21 @@ export const JoinExpandedGroup: Story = {
       if (!root || root.dataset.animating === 'true') return;
       root.dataset.animating = 'true';
 
-      const a = root.querySelector('obc-poi-target.a') as HTMLElement | null;
-      const b = root.querySelector('obc-poi-target.b') as HTMLElement | null;
-      const c = root.querySelector('obc-poi-target.c') as HTMLElement | null;
+      const a = root.querySelector('obc-poi-target.a') as
+        | (HTMLElement & {x: number; y: number})
+        | null;
+      const b = root.querySelector('obc-poi-target.b') as
+        | (HTMLElement & {x: number; y: number})
+        | null;
+      const c = root.querySelector('obc-poi-target.c') as
+        | (HTMLElement & {x: number; y: number})
+        | null;
       if (!a || !b || !c) return;
 
       // Start with a and b grouped, c far away
-      a.style.left = '300px';
-      b.style.left = '320px';
-      c.style.left = '520px';
+      a.x = 300;
+      b.x = 320;
+      c.x = 520;
 
       const duration = 12000;
       let rafId = 0;
@@ -569,13 +569,13 @@ export const JoinExpandedGroup: Story = {
         // Wait 3 seconds (50% of duration), then animate c towards the group
         if (t < 0.5) {
           // c stays at 520px - user should click to expand during this time
-          c.style.left = '520px';
+          c.x = 520;
         } else {
           // Animate c from 520px to 340px
           const phase = (t - 0.5) / 0.5;
           const eased = phase * phase * (3 - 2 * phase);
           const x3 = 520 - (520 - 340) * eased;
-          c.style.left = `${Math.round(x3)}px`;
+          c.x = Math.round(x3);
         }
 
         rafId = requestAnimationFrame(tick);
@@ -616,9 +616,9 @@ export const JoinExpandedGroup: Story = {
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}
         >
-          <obc-poi-target class="a" height="140"></obc-poi-target>
-          <obc-poi-target class="b" height="100"></obc-poi-target>
-          <obc-poi-target class="c" height="80"></obc-poi-target>
+          <obc-poi-target class="a" .y=${140}></obc-poi-target>
+          <obc-poi-target class="b" .y=${100}></obc-poi-target>
+          <obc-poi-target class="c" .y=${80}></obc-poi-target>
         </obc-poi-layer>
       </div>
     `;
@@ -637,15 +637,21 @@ export const LeaveExpandedGroup: Story = {
       if (!root || root.dataset.animating === 'true') return;
       root.dataset.animating = 'true';
 
-      const a = root.querySelector('obc-poi-target.a') as HTMLElement | null;
-      const b = root.querySelector('obc-poi-target.b') as HTMLElement | null;
-      const c = root.querySelector('obc-poi-target.c') as HTMLElement | null;
+      const a = root.querySelector('obc-poi-target.a') as
+        | (HTMLElement & {x: number; y: number})
+        | null;
+      const b = root.querySelector('obc-poi-target.b') as
+        | (HTMLElement & {x: number; y: number})
+        | null;
+      const c = root.querySelector('obc-poi-target.c') as
+        | (HTMLElement & {x: number; y: number})
+        | null;
       if (!a || !b || !c) return;
 
       // Start with all three grouped
-      a.style.left = '300px';
-      b.style.left = '320px';
-      c.style.left = '340px';
+      a.x = 300;
+      b.x = 320;
+      c.x = 340;
 
       const duration = 8000;
       let rafId = 0;
@@ -659,13 +665,13 @@ export const LeaveExpandedGroup: Story = {
         // Wait 3 seconds (50% of duration), then animate c away from the group
         if (t < 0.5) {
           // c stays at 340px - user should click to expand during this time
-          c.style.left = '340px';
+          c.x = 340;
         } else {
           // Animate c from 340px to 520px
           const phase = (t - 0.5) / 0.5;
           const eased = phase * phase * (3 - 2 * phase);
           const x3 = 340 + (520 - 340) * eased;
-          c.style.left = `${Math.round(x3)}px`;
+          c.x = Math.round(x3);
         }
 
         rafId = requestAnimationFrame(tick);
@@ -706,9 +712,9 @@ export const LeaveExpandedGroup: Story = {
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}
         >
-          <obc-poi-target class="a" height="140"></obc-poi-target>
-          <obc-poi-target class="b" height="100"></obc-poi-target>
-          <obc-poi-target class="c" height="80"></obc-poi-target>
+          <obc-poi-target class="a" .y=${140}></obc-poi-target>
+          <obc-poi-target class="b" .y=${100}></obc-poi-target>
+          <obc-poi-target class="c" .y=${80}></obc-poi-target>
         </obc-poi-layer>
       </div>
     `;
@@ -727,16 +733,16 @@ export const CrossingMode: Story = {
       if (!root || root.dataset.animating === 'true') return;
       root.dataset.animating = 'true';
 
-      const staticPoi = root.querySelector(
-        'obc-poi-target.static'
-      ) as HTMLElement | null;
-      const movingPoi = root.querySelector(
-        'obc-poi-target.moving'
-      ) as HTMLElement | null;
+      const staticPoi = root.querySelector('obc-poi-target.static') as
+        | (HTMLElement & {x: number; y: number})
+        | null;
+      const movingPoi = root.querySelector('obc-poi-target.moving') as
+        | (HTMLElement & {x: number; y: number})
+        | null;
       if (!staticPoi || !movingPoi) return;
 
       // Static POI stays at 320px
-      staticPoi.style.left = '320px';
+      staticPoi.x = 320;
 
       const start = performance.now();
       const duration = 6000;
@@ -758,7 +764,7 @@ export const CrossingMode: Story = {
         const eased = phase * phase * (3 - 2 * phase);
         const x = 180 + (460 - 180) * eased;
 
-        movingPoi.style.left = `${Math.round(x)}px`;
+        movingPoi.x = Math.round(x);
 
         rafId = requestAnimationFrame(tick);
       };
@@ -797,8 +803,8 @@ export const CrossingMode: Story = {
           ?debug=${args.debug}
           .overlapMode=${OverlapMode.Crossing}
         >
-          <obc-poi-target class="static" height="120"></obc-poi-target>
-          <obc-poi-target class="moving" height="100"></obc-poi-target>
+          <obc-poi-target class="static" .y=${120}></obc-poi-target>
+          <obc-poi-target class="moving" .y=${100}></obc-poi-target>
         </obc-poi-layer>
       </div>
     `;

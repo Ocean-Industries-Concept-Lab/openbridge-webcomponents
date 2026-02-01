@@ -36,7 +36,6 @@ type Story = StoryObj<PoiLayerStackArgs>;
 const renderTwoLayers = (args: PoiLayerStackArgs) => html`
   <style>
     obc-poi-layer-stack.stack {
-      display: grid;
       gap: 8px;
       width: 640px;
     }
@@ -52,11 +51,11 @@ const renderTwoLayers = (args: PoiLayerStackArgs) => html`
       .layerIndex=${args.layerIndex}
       ?debug=${args.debug}
     >
-      <obc-poi-target style="left: 120px;" height="110"> </obc-poi-target>
-      <obc-poi-target style="left: 320px;" height="70"> </obc-poi-target>
+      <obc-poi-target .x=${120} .y=${110}> </obc-poi-target>
+      <obc-poi-target .x=${320} .y=${70}> </obc-poi-target>
     </obc-poi-layer>
     <obc-poi-layer label="Layer B" .layerIndex=${args.layerIndex + 1} debug>
-      <obc-poi-target style="left: 220px;" height="90"> </obc-poi-target>
+      <obc-poi-target .x=${220} .y=${90}> </obc-poi-target>
     </obc-poi-layer>
   </obc-poi-layer-stack>
 `;
@@ -64,7 +63,6 @@ const renderTwoLayers = (args: PoiLayerStackArgs) => html`
 const renderThreeLayers = (args: PoiLayerStackArgs) => html`
   <style>
     obc-poi-layer-stack.stack {
-      display: grid;
       gap: 8px;
       width: 640px;
     }
@@ -80,16 +78,16 @@ const renderThreeLayers = (args: PoiLayerStackArgs) => html`
       .layerIndex=${args.layerIndex}
       ?debug=${args.debug}
     >
-      <obc-poi-target style="left: 80px;" height="120"> </obc-poi-target>
-      <obc-poi-target style="left: 260px;" height="80"> </obc-poi-target>
+      <obc-poi-target .x=${80} .y=${120}> </obc-poi-target>
+      <obc-poi-target .x=${260} .y=${80}> </obc-poi-target>
     </obc-poi-layer>
     <obc-poi-layer label="Layer B" .layerIndex=${args.layerIndex + 1} debug>
-      <obc-poi-target style="left: 180px;" height="100"> </obc-poi-target>
-      <obc-poi-target style="left: 420px;" height="140"> </obc-poi-target>
+      <obc-poi-target .x=${180} .y=${100}> </obc-poi-target>
+      <obc-poi-target .x=${420} .y=${140}> </obc-poi-target>
     </obc-poi-layer>
     <obc-poi-layer label="Layer C" .layerIndex=${args.layerIndex + 2} debug>
-      <obc-poi-target style="left: 140px;" height="90"> </obc-poi-target>
-      <obc-poi-target style="left: 520px;" height="110"> </obc-poi-target>
+      <obc-poi-target .x=${140} .y=${90}> </obc-poi-target>
+      <obc-poi-target .x=${520} .y=${110}> </obc-poi-target>
     </obc-poi-layer>
   </obc-poi-layer-stack>
 `;

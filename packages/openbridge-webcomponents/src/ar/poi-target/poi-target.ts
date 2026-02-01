@@ -47,11 +47,16 @@ export enum PoiTargetVisualState {
 
 /**
  *
- * @prop {number} height - y-coordinate of pointer (centre) if pointerType 'line' is selected.
+ * @prop {number} x - x-coordinate of target in pixels.
+ * @prop {number} y - y-coordinate of target in pixels.
+ * @prop {number} height - internal y-coordinate used by the pointer line (synced with y).
  */
 
 @customElement('obc-poi-target')
 export class ObcPoiTarget extends LitElement {
+  @property({type: Number}) x = 0;
+  @property({type: Number}) y = 192;
+  /** @deprecated Use y instead. */
   @property({type: Number}) height: number = 192;
   @property({type: Boolean}) selected = false;
   @property({type: String}) selectedId: string | null = null;
@@ -64,6 +69,25 @@ export class ObcPoiTarget extends LitElement {
   @property({type: Number}) relativeDirection = 0;
   @property({type: Number}) offset = 0;
   @property({type: Number}) buttonOffsetX = 0;
+  private syncingPosition = false;
+
+  override updated(changedProperties: Map<string, unknown>) {
+    if (this.syncingPosition) return;
+
+    if (changedProperties.has('x')) {
+      this.style.left = `${this.x}px`;
+    }
+
+    if (changedProperties.has('y') && this.y !== this.height) {
+      this.syncingPosition = true;
+      this.height = this.y;
+      this.syncingPosition = false;
+    } else if (changedProperties.has('height') && this.height !== this.y) {
+      this.syncingPosition = true;
+      this.y = this.height;
+      this.syncingPosition = false;
+    }
+  }
   @property({
     type: Array,
     converter: {

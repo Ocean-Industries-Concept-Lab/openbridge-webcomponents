@@ -141,15 +141,7 @@ export class ObcPoiLayerStack extends LitElement {
       this.querySelectorAll('obc-poi-layer')
     ) as ObcPoiLayer[];
     if (layers.length === 0) return null;
-
-    // Find layer with minimum layerIndex (top layer)
-    let topLayer = layers[0];
-    for (const layer of layers) {
-      if (layer.layerIndex < topLayer.layerIndex) {
-        topLayer = layer;
-      }
-    }
-    return topLayer;
+    return layers[layers.length - 1] ?? null;
   }
 
   private getSecondTopLayer(): ObcPoiLayer | null {
@@ -157,9 +149,7 @@ export class ObcPoiLayerStack extends LitElement {
       this.querySelectorAll('obc-poi-layer')
     ) as ObcPoiLayer[];
     if (layers.length < 2) return null;
-    // Use toSorted() or spread to avoid mutating the array
-    const sorted = [...layers].sort((a, b) => a.layerIndex - b.layerIndex);
-    return sorted[1] ?? null;
+    return layers[layers.length - 2] ?? null;
   }
 
   private clearOtherTopSelections(target: HTMLElement) {
@@ -336,17 +326,17 @@ export class ObcPoiLayerStack extends LitElement {
     if (this.placementRaf) return;
     this.placementRaf = requestAnimationFrame(() => {
       this.placementRaf = 0;
-      this.placeNewTargets();
       this.updateLayerOrders();
+      this.placeNewTargets();
     });
   }
 
   private placeNewTargets() {
-    const layers = this.getSortedLayers();
+    const layers = this.getLayersInDomOrder();
     if (layers.length < 2) return;
-    const top = layers[0] ?? null;
-    const middle = layers.length >= 3 ? layers[1] : null;
-    const bottom = layers[layers.length - 1] ?? null;
+    const top = layers[layers.length - 1] ?? null;
+    const middle = layers.length >= 3 ? layers[layers.length - 2] : null;
+    const bottom = layers[0] ?? null;
     if (!top || !bottom) return;
     const selectedType =
       this.selectedType && this.selectedType.trim().length > 0
@@ -375,17 +365,17 @@ export class ObcPoiLayerStack extends LitElement {
     });
   }
 
-  private getSortedLayers() {
-    const layers = Array.from(
-      this.querySelectorAll('obc-poi-layer')
-    ) as ObcPoiLayer[];
-    return layers.sort((a, b) => a.layerIndex - b.layerIndex);
+  private getLayersInDomOrder() {
+    return Array.from(this.querySelectorAll('obc-poi-layer')) as ObcPoiLayer[];
   }
 
   private updateLayerOrders() {
-    const layers = this.getSortedLayers();
-    layers.forEach((layer) => {
-      layer.style.order = String(-layer.layerIndex);
+    const layers = Array.from(
+      this.querySelectorAll('obc-poi-layer')
+    ) as ObcPoiLayer[];
+    layers.forEach((layer, index) => {
+      layer.layerIndex = index;
+      layer.style.order = String(-index);
     });
   }
 

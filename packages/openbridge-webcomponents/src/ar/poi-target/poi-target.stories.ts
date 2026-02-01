@@ -8,7 +8,8 @@ const meta: Meta<ObcPoiTarget> = {
   tags: ['autodocs'],
   component: 'obc-poi-target',
   args: {
-    height: 192,
+    x: 444,
+    y: 192,
     value: TargetValue.checked,
     pointerType: Pointer.Line,
     relativeDirection: 0,
@@ -20,7 +21,8 @@ const meta: Meta<ObcPoiTarget> = {
   },
   decorators: [crossDecorator],
   argTypes: {
-    height: {control: {type: 'range', min: 32, max: 243, step: 1}},
+    x: {control: {type: 'range', min: 0, max: 640, step: 1}},
+    y: {control: {type: 'range', min: 32, max: 243, step: 1}},
     value: {
       options: [TargetValue.enabled, TargetValue.checked],
       control: {type: 'select'},
@@ -48,15 +50,30 @@ const meta: Meta<ObcPoiTarget> = {
   },
   render: (args) => {
     return html`
-      <obc-poi-target
-        style="top: calc( 50% - ${args.height}px );"
-        .height=${args.height}
-        .value=${args.value}
-        .pointerType=${args.pointerType}
-        .relativeDirection=${args.relativeDirection}
-        .offset=${args.offset}
-        .values=${args.values}
-      ></obc-poi-target>
+      <style>
+        .frame {
+          position: relative;
+          width: 888px;
+          height: 480px;
+          transform: translate(-50%, -50%);
+        }
+
+        .frame obc-poi-target {
+          position: absolute;
+        }
+      </style>
+      <div class="frame">
+        <obc-poi-target
+          style="left: ${args.x}px; top: calc(50% - ${args.y}px);"
+          .x=${args.x}
+          .y=${args.y}
+          .value=${args.value}
+          .pointerType=${args.pointerType}
+          .relativeDirection=${args.relativeDirection}
+          .offset=${args.offset}
+          .values=${args.values}
+        ></obc-poi-target>
+      </div>
     `;
   },
 } satisfies Meta<ObcPoiTarget>;
@@ -83,22 +100,38 @@ export const WithValues: Story = {
       {value: '20', label: 'Lab 2', unit: 'Unit 2'},
     ];
     return html`
-      <obc-poi-target
-        style="top: calc( 50% - ${args.height}px );"
-        .height=${args.height}
-        .value=${args.value}
-        .pointerType=${args.pointerType}
-        .relativeDirection=${args.relativeDirection}
-        .offset=${args.offset}
-        .values=${values}
-      ></obc-poi-target>
+      <style>
+        .frame {
+          position: relative;
+          width: 888px;
+          height: 480px;
+          transform: translate(-50%, -50%);
+        }
+
+        .frame obc-poi-target {
+          position: absolute;
+        }
+      </style>
+      <div class="frame">
+        <obc-poi-target
+          style="left: ${args.x}px; top: calc(50% - ${args.y}px);"
+          .x=${args.x}
+          .y=${args.y}
+          .value=${args.value}
+          .pointerType=${args.pointerType}
+          .relativeDirection=${args.relativeDirection}
+          .offset=${args.offset}
+          .values=${values}
+        ></obc-poi-target>
+      </div>
     `;
   },
 };
 
 export const AnimatedOffsetBottom: Story = {
   args: {
-    height: 192,
+    x: 444,
+    y: 192,
     value: TargetValue.checked,
     pointerType: Pointer.Line,
   },
@@ -107,7 +140,9 @@ export const AnimatedOffsetBottom: Story = {
     let direction = 1;
 
     const animate = () => {
-      const target = document.querySelector('#animated-poi-target') as ObcPoiTarget;
+      const target = document.querySelector(
+        '#animated-poi-target'
+      ) as ObcPoiTarget;
       if (!target) return;
 
       offset += direction * 0.3;
@@ -121,20 +156,36 @@ export const AnimatedOffsetBottom: Story = {
     setTimeout(() => requestAnimationFrame(animate), 100);
 
     return html`
-      <obc-poi-target
-        id="animated-poi-target"
-        style="top: calc(50% - ${args.height}px);"
-        .height=${args.height}
-        .value=${args.value}
-        .pointerType=${args.pointerType}
-      ></obc-poi-target>
+      <style>
+        .frame {
+          position: relative;
+          width: 888px;
+          height: 480px;
+          transform: translate(-50%, -50%);
+        }
+
+        .frame obc-poi-target {
+          position: absolute;
+        }
+      </style>
+      <div class="frame">
+        <obc-poi-target
+          id="animated-poi-target"
+          style="left: ${args.x}px; top: calc(50% - ${args.y}px);"
+          .x=${args.x}
+          .y=${args.y}
+          .value=${args.value}
+          .pointerType=${args.pointerType}
+        ></obc-poi-target>
+      </div>
     `;
   },
 };
 
 export const AnimatedOffsetTop: Story = {
   args: {
-    height: 192,
+    x: 444,
+    y: 192,
     value: TargetValue.checked,
     pointerType: Pointer.Line,
   },
@@ -143,7 +194,9 @@ export const AnimatedOffsetTop: Story = {
     let direction = 1;
 
     const animate = () => {
-      const target = document.querySelector('#animated-poi-target-top') as ObcPoiTarget;
+      const target = document.querySelector(
+        '#animated-poi-target-top'
+      ) as ObcPoiTarget;
       if (!target) return;
 
       buttonOffset += direction * 0.3;
@@ -159,13 +212,28 @@ export const AnimatedOffsetTop: Story = {
     setTimeout(() => requestAnimationFrame(animate), 100);
 
     return html`
-      <obc-poi-target
-        id="animated-poi-target-top"
-        style="top: calc(50% - ${args.height}px);"
-        .height=${args.height}
-        .value=${args.value}
-        .pointerType=${args.pointerType}
-      ></obc-poi-target>
+      <style>
+        .frame {
+          position: relative;
+          width: 888px;
+          height: 480px;
+          transform: translate(-50%, -50%);
+        }
+
+        .frame obc-poi-target {
+          position: absolute;
+        }
+      </style>
+      <div class="frame">
+        <obc-poi-target
+          id="animated-poi-target-top"
+          style="left: ${args.x}px; top: calc(50% - ${args.y}px);"
+          .x=${args.x}
+          .y=${args.y}
+          .value=${args.value}
+          .pointerType=${args.pointerType}
+        ></obc-poi-target>
+      </div>
     `;
   },
 };

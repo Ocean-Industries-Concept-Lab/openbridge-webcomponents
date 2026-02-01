@@ -1,0 +1,47 @@
+:host {
+  display: block;
+  position: relative;
+}
+
+.wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.media {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.media ::slotted(img),
+.media ::slotted(video) {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: inherit;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.overlay obc-poi-layer-stack {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 20%;
+  transform: translateY(-50%);
+  height: var(--obc-poi-controller-stack-height, 40%);
+  max-height: 100%;
+  pointer-events: none;
+}
+
+.overlay obc-poi-layer-stack > * {
+  pointer-events: auto;
+}

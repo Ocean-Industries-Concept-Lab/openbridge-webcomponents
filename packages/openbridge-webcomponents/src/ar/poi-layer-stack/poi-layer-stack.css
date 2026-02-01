@@ -2,13 +2,15 @@
   display: block;
   position: relative;
   width: 100%;
-  height: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-end;
 }
 
 .wrapper {
   position: relative;
   width: 100%;
-  display: flex;
-  flex-direction: column-reverse;
-  align-items: stretch;
+  display: contents;
 }
