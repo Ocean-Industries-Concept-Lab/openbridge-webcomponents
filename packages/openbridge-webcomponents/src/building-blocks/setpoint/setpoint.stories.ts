@@ -40,7 +40,13 @@ import {
  *
  * - **Regular**: Uses `--instrument-regular-*-color` palette
  * - **Enhanced**: Uses `--instrument-enhanced-*-color` palette (typically for inCommand state)
- * - **Disabled**: Uses `--instrument-frame-tertiary-color` (tertiary/disabled color)
+ *
+ * ## Disabled State
+ *
+ * Disabled is a separate boolean flag (not a color mode):
+ * - Auto-derived from `InstrumentState.loading` or `InstrumentState.off`
+ * - Uses `--instrument-frame-tertiary-color` (tertiary/disabled color)
+ * - Can be manually overridden via `setpointDisabled` property
  *
  * ## Architecture
  *
@@ -70,10 +76,16 @@ The setpoint marker is a triangular indicator used to show the target/input valu
 
 ## Color Modes
 
-Each state can be rendered in three color palettes:
+Each state can be rendered in two color palettes:
 - **Regular**: For non-priority states
 - **Enhanced**: For in-command/priority states (brighter colors)
-- **Disabled**: For disabled state (tertiary/gray color)
+
+## Disabled State
+
+Disabled is a separate boolean flag (not a color mode):
+- Auto-derived from \`InstrumentState.loading\` or \`InstrumentState.off\`
+- Uses tertiary/gray color regardless of color mode
+- Can be manually overridden
 
 Source: \`packages/openbridge-webcomponents/src/svghelpers/setpoint.ts\``,
       },
@@ -302,12 +314,12 @@ export const Focus: Story = {
  * Grid layout (4×3):
  * - **Row 1**: Regular color mode
  * - **Row 2**: Enhanced color mode
- * - **Row 3**: Disabled color mode
+ * - **Row 3**: Disabled state (via `InstrumentState.off`)
  * - **Columns**: notEqual, equal, equalZero, focus
  *
- * NOTE: The "Disabled" row shows the `disabled` COLOR MODE applied to all visual states.
- * SetpointColorMode.disabled affects color only (tertiary color).
- * Parent instruments control when to use disabled color mode based on their state.
+ * NOTE: The "Disabled" row shows the disabled state applied to all visual states.
+ * Disabled is a separate boolean flag, auto-derived from instrument state (loading/off).
+ * When disabled, the setpoint uses tertiary color regardless of the underlying color mode.
  */
 export const SetpointComparison: Story = {
   name: 'Visual State Comparison',
@@ -416,7 +428,7 @@ export const SetpointComparison: Story = {
         })}
       </div>
 
-      <!-- Disabled color mode row -->
+      <!-- Disabled state row (via InstrumentState.off) -->
       <div
         style="display: grid; grid-template-columns: 80px repeat(4, 1fr); gap: 16px; align-items: flex-start;"
       >
@@ -425,31 +437,27 @@ export const SetpointComparison: Story = {
         </div>
         ${renderSetpointDemo({
           label: 'value ≠ setpoint',
-          colorMode: SetpointColorMode.disabled,
           setpoint: 40,
           value: 20,
-          state: InstrumentState.inCommand,
+          state: InstrumentState.off,
         })}
         ${renderSetpointDemo({
           label: 'value = setpoint',
-          colorMode: SetpointColorMode.disabled,
           setpoint: 40,
           value: 40,
-          state: InstrumentState.inCommand,
+          state: InstrumentState.off,
         })}
         ${renderSetpointDemo({
           label: 'both = 0',
-          colorMode: SetpointColorMode.disabled,
           setpoint: 0,
           value: 0,
-          state: InstrumentState.inCommand,
+          state: InstrumentState.off,
         })}
         ${renderSetpointDemo({
           label: 'focused=true',
-          colorMode: SetpointColorMode.disabled,
           setpoint: 30,
           value: 10,
-          state: InstrumentState.inCommand,
+          state: InstrumentState.off,
           focused: true,
         })}
       </div>
@@ -472,7 +480,7 @@ export const SetpointComparison: Story = {
  * 4. **t=3 (Confirm)**: newSetpoint confirmed, bar animates to 80, original setpoint moves to 80
  *
  * The `newSetpoint` property enables showing both current and proposed setpoint positions
- * simultaneously, with the original dimmed (0.5 opacity) while adjusting.
+ * simultaneously, with the original dimmed (0.75 opacity) while adjusting.
  *
  * Tertiary tickmarks are shown during adjustment (tertiaryTickbarsInterval=2).
  */
@@ -482,8 +490,8 @@ export const SetpointAdjustmentFlow: StoryObj = {
   render: () => html`
     <div style="display: flex; flex-direction: column; gap: 24px;">
       <div style="font-size: 14px; color: #888;">
-        Click "Play" to watch the setpoint adjustment animation, or interact
-        manually with the controls below.
+        Click "Play" in the Interactions panel to watch the setpoint adjustment
+        animation, or use the buttons below for manual control.
       </div>
       <obc-gauge-horizontal
         id="setpoint-demo"
@@ -526,65 +534,6 @@ export const SetpointAdjustmentFlow: StoryObj = {
         State: t=0 (at setpoint) | value=40, setpoint=40, newSetpoint=undefined
       </div>
     </div>
-
-    <script>
-      (function () {
-        // Wait for elements to be ready
-        setTimeout(() => {
-          const gauge = document.getElementById('setpoint-demo');
-          const status = document.getElementById('status');
-          const btnReset = document.getElementById('btn-reset');
-          const btnInitiate = document.getElementById('btn-initiate');
-          const btnMove = document.getElementById('btn-move');
-          const btnConfirm = document.getElementById('btn-confirm');
-
-          if (!gauge || !status) return;
-
-          const updateStatus = (state, value, setpoint, newSetpoint) => {
-            status.textContent =
-              'State: ' +
-              state +
-              ' | value=' +
-              value +
-              ', setpoint=' +
-              setpoint +
-              ', newSetpoint=' +
-              (newSetpoint ?? 'undefined');
-          };
-
-          // t=0: At setpoint (initial state)
-          btnReset?.addEventListener('click', () => {
-            gauge.value = 40;
-            gauge.fillMax = 40;
-            gauge.setpoint = 40;
-            gauge.newSetpoint = undefined;
-            updateStatus('t=0 (at setpoint)', 40, 40, undefined);
-          });
-
-          // t=1: Initiate adjustment (newSetpoint appears)
-          btnInitiate?.addEventListener('click', () => {
-            gauge.newSetpoint = 40;
-            updateStatus('t=1 (initiate)', 40, 40, 40);
-          });
-
-          // t=2: Move newSetpoint to 80
-          btnMove?.addEventListener('click', () => {
-            gauge.newSetpoint = 80;
-            updateStatus('t=2 (move)', 40, 40, 80);
-          });
-
-          // t=3: Confirm - move setpoint to 80, animate bar
-          btnConfirm?.addEventListener('click', () => {
-            gauge.newSetpoint = undefined;
-            gauge.setpoint = 80;
-            // Animate bar to new value
-            gauge.fillMax = 80;
-            gauge.value = 80;
-            updateStatus('t=3 (confirm)', 80, 80, undefined);
-          });
-        }, 100);
-      })();
-    </script>
   `,
   play: async ({canvasElement}) => {
     const canvas = within(canvasElement);
@@ -592,25 +541,75 @@ export const SetpointAdjustmentFlow: StoryObj = {
     // Wait for component to render
     await new Promise((r) => setTimeout(r, 500));
 
+    // Get DOM elements
+    const gauge = canvasElement.querySelector(
+      '#setpoint-demo'
+    ) as HTMLElement & {
+      value: number;
+      fillMax: number;
+      setpoint: number;
+      newSetpoint: number | undefined;
+    };
+    const status = canvasElement.querySelector('#status') as HTMLElement;
+
+    if (!gauge || !status) return;
+
+    // Helper to update status display
+    const updateStatus = (
+      state: string,
+      value: number,
+      setpoint: number,
+      newSetpoint: number | undefined
+    ) => {
+      status.textContent = `State: ${state} | value=${value}, setpoint=${setpoint}, newSetpoint=${newSetpoint ?? 'undefined'}`;
+    };
+
     // Get buttons
     const btnReset = canvas.getByRole('button', {name: /Reset/});
     const btnInitiate = canvas.getByRole('button', {name: /Initiate/});
     const btnMove = canvas.getByRole('button', {name: /Move/});
     const btnConfirm = canvas.getByRole('button', {name: /Confirm/});
 
-    // Step 1: Ensure we're at initial state
+    // Wire up button handlers (for manual interaction after play completes)
+    btnReset.onclick = () => {
+      gauge.value = 40;
+      gauge.fillMax = 40;
+      gauge.setpoint = 40;
+      gauge.newSetpoint = undefined;
+      updateStatus('t=0 (at setpoint)', 40, 40, undefined);
+    };
+
+    btnInitiate.onclick = () => {
+      gauge.newSetpoint = 40;
+      updateStatus('t=1 (initiate)', 40, 40, 40);
+    };
+
+    btnMove.onclick = () => {
+      gauge.newSetpoint = 80;
+      updateStatus('t=2 (move)', 40, 40, 80);
+    };
+
+    btnConfirm.onclick = () => {
+      gauge.newSetpoint = undefined;
+      gauge.setpoint = 80;
+      gauge.fillMax = 80;
+      gauge.value = 80;
+      updateStatus('t=3 (confirm)', 80, 80, undefined);
+    };
+
+    // Step 1: Ensure we're at initial state (t=0)
     await userEvent.click(btnReset);
     await new Promise((r) => setTimeout(r, 1000));
 
-    // Step 2: Initiate adjustment
+    // Step 2: Initiate adjustment (t=1)
     await userEvent.click(btnInitiate);
     await new Promise((r) => setTimeout(r, 1500));
 
-    // Step 3: Move newSetpoint to 80
+    // Step 3: Move newSetpoint to 80 (t=2)
     await userEvent.click(btnMove);
     await new Promise((r) => setTimeout(r, 2000));
 
-    // Step 4: Confirm the new setpoint
+    // Step 4: Confirm the new setpoint (t=3)
     await userEvent.click(btnConfirm);
     await new Promise((r) => setTimeout(r, 1000));
   },

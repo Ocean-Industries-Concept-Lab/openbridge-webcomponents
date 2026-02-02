@@ -493,11 +493,22 @@ export interface ExternalScaleConfig {
    *
    * - `SetpointColorMode.enhanced`: Use enhanced colors (brighter)
    * - `SetpointColorMode.regular`: Use regular colors
-   * - `SetpointColorMode.disabled`: Use tertiary/disabled colors
+   *
+   * Note: Disabled state is controlled separately via `setpointDisabled` or
+   * auto-derived from `state` (loading/off states).
    *
    * @default undefined (falls back to enhanced boolean)
    */
   colorMode?: SetpointColorMode;
+
+  /**
+   * Explicit disabled state override for setpoint marker.
+   * When true, the setpoint uses tertiary/disabled colors.
+   * When undefined, disabled state is auto-derived from `state` (loading/off = disabled).
+   *
+   * @default undefined (auto-derived from state)
+   */
+  setpointDisabled?: boolean;
   /**
    * Fill visualization mode.
    * - FillMode.fill: bar fill from fillMin to fillMax
@@ -828,14 +839,14 @@ function calculateAtSetpoint(config: ExternalScaleConfig): boolean {
  * 3. equal (at setpoint)
  * 4. notEqual (default)
  *
- * NOTE: Disabled states (loading, off) are handled via SetpointColorMode.disabled
- * in deriveSetpointColorMode(), not via a separate visual state.
+ * NOTE: Disabled states (loading, off) are handled via deriveSetpointDisabled(),
+ * which returns a boolean flag, not via a separate visual state.
  *
  * State mapping:
  * - InstrumentState.inCommand → notEqual/equal/equalZero (based on deadband)
  * - InstrumentState.active → focus (NOTE: 'active' may be renamed to 'focus' in future)
- * - InstrumentState.loading → uses colorMode.disabled
- * - InstrumentState.off → uses colorMode.disabled
+ * - InstrumentState.loading → disabled=true (via deriveSetpointDisabled)
+ * - InstrumentState.off → disabled=true (via deriveSetpointDisabled)
  */
 function deriveSetpointVisualState(
   config: ExternalScaleConfig
@@ -872,8 +883,9 @@ function deriveSetpointVisualState(
  *
  * Priority:
  * 1. Explicit colorMode takes precedence
- * 2. Disabled states (loading, off) use disabled color mode
- * 3. Otherwise, maps config.enhanced to enhanced/regular color palette
+ * 2. Otherwise, maps config.enhanced to enhanced/regular color palette
+ *
+ * Note: Disabled state is now handled separately via deriveSetpointDisabled().
  */
 function deriveSetpointColorMode(
   config: ExternalScaleConfig
@@ -883,18 +895,35 @@ function deriveSetpointColorMode(
     return config.colorMode;
   }
 
+  // Fall back to enhanced boolean mapping
+  return config.enhanced
+    ? SetpointColorMode.enhanced
+    : SetpointColorMode.regular;
+}
+
+/**
+ * Derive the disabled state for setpoint rendering.
+ *
+ * Priority:
+ * 1. Explicit setpointDisabled takes precedence
+ * 2. Instrument states (loading, off) are treated as disabled
+ * 3. Otherwise, not disabled
+ */
+function deriveSetpointDisabled(config: ExternalScaleConfig): boolean {
+  // Explicit setpointDisabled takes precedence
+  if (config.setpointDisabled !== undefined) {
+    return config.setpointDisabled;
+  }
+
   // Disabled states (loading, off) use disabled color mode
   if (
     config.state === InstrumentState.loading ||
     config.state === InstrumentState.off
   ) {
-    return SetpointColorMode.disabled;
+    return true;
   }
 
-  // Fall back to enhanced boolean mapping
-  return config.enhanced
-    ? SetpointColorMode.enhanced
-    : SetpointColorMode.regular;
+  return false;
 }
 
 function colors(config: ExternalScaleConfig): {
@@ -2207,6 +2236,7 @@ function getSetpointRotation(config: ExternalScaleConfig): number {
  * @param setpointValue - The value to position the marker at
  * @param visualState - The visual state for the marker
  * @param colorMode - The color mode for the marker
+ * @param disabled - Whether the setpoint is in disabled state
  * @param idSuffix - Suffix for the unique ID
  * @param opacity - Optional opacity (default 1)
  */
@@ -2215,6 +2245,7 @@ function renderSingleSetpoint(
   setpointValue: number,
   visualState: SetpointVisualState,
   colorMode: SetpointColorMode,
+  disabled: boolean,
   idSuffix: string,
   opacity: number = 1
 ): SVGTemplateResult {
@@ -2255,7 +2286,7 @@ function renderSingleSetpoint(
   // Note: drawSetpointMarker() handles scaling internally based on visualState
   return svg`
     <g transform="translate(${x}, ${y}) rotate(${rotation})" opacity="${opacity}">
-      ${drawSetpointMarker({visualState, colorMode, id: baseId})}
+      ${drawSetpointMarker({visualState, colorMode, disabled, id: baseId})}
     </g>
   `;
 }
@@ -2264,7 +2295,7 @@ function renderSingleSetpoint(
  * Render the setpoint marker(s) using the unified interface from setpoint.ts.
  *
  * When `newSetpoint` is defined, renders two markers:
- * 1. Original setpoint at 0.5 opacity (dimmed)
+ * 1. Original setpoint at 0.75 opacity (dimmed)
  * 2. New setpoint in 'focus' visual state at full opacity (on top)
  *
  * The marker is positioned on the scale based on the setpoint value,
@@ -2285,6 +2316,7 @@ function setpointMarker(
   if (hasOriginalSetpoint) {
     const visualState = deriveSetpointVisualState(config);
     const colorMode = deriveSetpointColorMode(config);
+    const disabled = deriveSetpointDisabled(config);
     const opacity = hasNewSetpoint ? 0.75 : 1;
 
     markers.push(
@@ -2293,6 +2325,7 @@ function setpointMarker(
         config.setpoint!,
         visualState,
         colorMode,
+        disabled,
         'original',
         opacity
       )
@@ -2305,6 +2338,8 @@ function setpointMarker(
     const visualState = SetpointVisualState.focus;
     // Use the same color mode derivation but could be enhanced when focused
     const colorMode = deriveSetpointColorMode(config);
+    // newSetpoint is never disabled (it's the active adjustment target)
+    const disabled = false;
 
     markers.push(
       renderSingleSetpoint(
@@ -2312,6 +2347,7 @@ function setpointMarker(
         config.newSetpoint!,
         visualState,
         colorMode,
+        disabled,
         'new',
         1
       )

@@ -9,8 +9,9 @@
  * The setpoint system is split into two layers:
  *
  * 1. **Design layer** (this file): Pure visual states and drawing functions.
- *    - `SetpointVisualState`: What the marker looks like
- *    - `SetpointColorMode`: Which color palette to use
+ *    - `SetpointVisualState`: What the marker looks like (notEqual/equal/equalZero/focus)
+ *    - `SetpointColorMode`: Which color palette to use (enhanced/regular)
+ *    - `disabled`: Boolean flag for disabled state (separate from color mode)
  *    - `drawSetpointMarker()`: Returns SVG at origin, caller applies transforms
  *
  * 2. **API layer** (in parent instruments): Maps instrument state to visual state.
@@ -22,14 +23,14 @@
  * The `drawSetpointMarker()` function renders the marker with:
  * - **Tip at origin (0, 0)**
  * - **Triangle pointing "down" (positive Y direction)**
- * - **Size: 24px wide × 24px tall** (tip to base)
+ * - **Size: 26px wide × 21px tall** (tip to base)
  *
  * Callers must apply transforms to:
  * - Position the marker at the correct location
  * - Rotate for radial instruments or flip for different sides
  *
  * ```
- *        ┌─────────────┐   ← base (y = -24)
+ *        ┌─────────────┐   ← base (y = -21)
  *        │             │
  *        └──────┬──────┘
  *               │
@@ -41,7 +42,7 @@
  *
  * ```ts
  * // Radial instrument (watch.ts)
- * const config = {visualState, colorMode, id: 'watch-setpoint'};
+ * const config = {visualState, colorMode, disabled, id: 'watch-setpoint'};
  * svg`
  *   <g transform="rotate(${angle}) translate(0, -${radius})">
  *     <g transform="rotate(180)">${drawSetpointMarker(config)}</g>
@@ -49,7 +50,7 @@
  * `;
  *
  * // Linear instrument (external-scale.ts)
- * const config = {visualState, colorMode, id: 'scale-setpoint'};
+ * const config = {visualState, colorMode, disabled, id: 'scale-setpoint'};
  * svg`
  *   <g transform="translate(${x}, ${y}) rotate(${rotation})">
  *     ${drawSetpointMarker(config)}
@@ -112,6 +113,10 @@ export enum SetpointVisualState {
  *
  * This is separate from InstrumentState to allow independent control.
  * Parent instruments map their state to this.
+ *
+ * Note: Disabled state is handled via a separate `disabled` boolean flag,
+ * not as part of this enum. This allows combining any color mode with
+ * the disabled state.
  */
 export enum SetpointColorMode {
   /** Use enhanced colors (typically for inCommand state) */
@@ -119,9 +124,6 @@ export enum SetpointColorMode {
 
   /** Use regular colors (typically for active state) */
   regular = 'regular',
-
-  /** Use disabled colors (tertiary color palette) */
-  disabled = 'disabled',
 }
 
 // ============================================================================
@@ -188,6 +190,14 @@ export interface DrawSetpointMarkerConfig {
   colorMode: SetpointColorMode;
 
   /**
+   * Whether the setpoint is in disabled state.
+   * When true, overrides fill color to tertiary (disabled) color regardless of colorMode.
+   * Typically auto-derived from InstrumentState.loading or InstrumentState.off.
+   * @default false
+   */
+  disabled?: boolean;
+
+  /**
    * Unique ID prefix for SVG defs (mask, etc.)
    * Required for deterministic output and to avoid conflicts when multiple
    * setpoint markers exist in the same SVG.
@@ -203,23 +213,25 @@ export interface DrawSetpointMarkerConfig {
 // ============================================================================
 
 /**
- * Get the fill color for a setpoint marker based on visual state and color mode.
+ * Get the fill color for a setpoint marker based on visual state, color mode, and disabled state.
  *
  * Per design spec:
- * - `disabled` color mode: tertiary color
+ * - `disabled: true`: tertiary color (overrides all other logic)
  * - `focus` state: tertiary (regular) or base-blue-100 (enhanced)
  * - All other states: primary color (no color change for equal/equalZero)
  *
  * @param visualState - The visual state of the setpoint
  * @param colorMode - The color palette to use
+ * @param disabled - Whether the setpoint is in disabled state
  * @returns CSS variable string for the fill color
  */
 export function getSetpointFillColor(
   visualState: SetpointVisualState,
-  colorMode: SetpointColorMode
+  colorMode: SetpointColorMode,
+  disabled: boolean = false
 ): string {
-  // Disabled color mode uses tertiary color
-  if (colorMode === SetpointColorMode.disabled) {
+  // Disabled state uses tertiary color (overrides everything)
+  if (disabled) {
     return 'var(--instrument-frame-tertiary-color)';
   }
 
@@ -239,22 +251,6 @@ export function getSetpointFillColor(
   } else {
     return 'var(--instrument-regular-primary-color)';
   }
-
-  // --- LEGACY: Secondary color for equal states (commented out for potential future use) ---
-  // const isAtSetpoint =
-  //   visualState === SetpointVisualState.equal ||
-  //   visualState === SetpointVisualState.equalZero;
-  //
-  // if (colorMode === SetpointColorMode.enhanced) {
-  //   return isAtSetpoint
-  //     ? 'var(--instrument-enhanced-secondary-color)'
-  //     : 'var(--instrument-enhanced-primary-color)';
-  // } else {
-  //   return isAtSetpoint
-  //     ? 'var(--instrument-regular-secondary-color)'
-  //     : 'var(--instrument-regular-primary-color)';
-  // }
-  // --- END LEGACY ---
 }
 
 /**
@@ -419,9 +415,9 @@ export function generateSetpointId(prefix: string = 'setpoint'): string {
 export function drawSetpointMarker(
   config: DrawSetpointMarkerConfig
 ): SVGTemplateResult {
-  const {visualState, colorMode, id} = config;
+  const {visualState, colorMode, disabled = false, id} = config;
 
-  const fillColor = getSetpointFillColor(visualState, colorMode);
+  const fillColor = getSetpointFillColor(visualState, colorMode, disabled);
   const strokeColor = getSetpointStrokeColor(visualState, colorMode);
   const path = getSetpointPath(visualState);
   const scale = getSetpointScale(visualState);

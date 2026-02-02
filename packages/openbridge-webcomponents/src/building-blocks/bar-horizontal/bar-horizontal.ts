@@ -224,7 +224,8 @@ export class ObcBarHorizontal extends LitElement {
    *
    * - `SetpointColorMode.enhanced`: Use enhanced colors (brighter)
    * - `SetpointColorMode.regular`: Use regular colors
-   * - `SetpointColorMode.disabled`: Use tertiary/disabled colors
+   *
+   * Note: Disabled state is auto-derived from `state` (loading/off).
    */
   @property({type: String}) colorMode?: SetpointColorMode;
   /** Fill visualization mode: fill or tint */
