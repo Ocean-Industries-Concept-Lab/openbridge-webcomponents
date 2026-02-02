@@ -101,10 +101,11 @@ export class ObcPoiTarget extends LitElement {
   @property({type: Number}) relativeDirection = 0;
   @property({type: Number}) offset = 0;
   @property({type: Number}) buttonOffsetX = 0;
+  @property({type: Boolean, attribute: 'show-id'}) showId = false;
   private syncingPosition = false;
 
   private getSelectedId(): string | null {
-    if (!this.selected) return null;
+    if (!this.selected && !this.showId) return null;
     return this.selectedId ?? null;
   }
 

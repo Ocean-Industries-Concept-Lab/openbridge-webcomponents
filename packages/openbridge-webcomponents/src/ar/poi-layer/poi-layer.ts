@@ -35,11 +35,6 @@ export enum OverlapMode {
   Crossing = 'crossing',
 }
 
-export enum CrossingSide {
-  Left = 'left',
-  Right = 'right',
-}
-
 export enum PoiLayerRole {
   Default = 'default',
   Selected = 'selected',
@@ -110,9 +105,6 @@ export class ObcPoiLayer extends LitElement {
   private crossingTargetsDirty = false;
   private previousPositions = new Map<HTMLElement, number>();
   private lastOffsets = new Map<HTMLElement, number>();
-  private crossingSides = new Map<string, CrossingSide | null>();
-  private elementIds = new WeakMap<HTMLElement, string>();
-  private elementIdCounter = 0;
   private static readonly GROUP_LAYER_HOOK_ATTR = 'data-in-poi-layer';
 
   override firstUpdated() {
@@ -175,7 +167,6 @@ export class ObcPoiLayer extends LitElement {
       this.crossingModeRaf = 0;
     }
     this.previousPositions.clear();
-    this.crossingSides.clear();
     if (this.heightRaf) {
       cancelAnimationFrame(this.heightRaf);
       this.heightRaf = 0;
@@ -401,12 +392,14 @@ export class ObcPoiLayer extends LitElement {
       });
       this.lastOffsets.clear();
       this.previousPositions.clear();
-      this.crossingSides.clear();
       return false;
     }
 
     const currentPositions = new Map<HTMLElement, number>();
     const movingTargets = new Set<HTMLElement>();
+
+    const buttonWidth = this.getTouchTargetSize();
+    const minGap = buttonWidth + 4;
 
     targets.forEach((target) => {
       const leftStr = target.style.left;
@@ -421,97 +414,86 @@ export class ObcPoiLayer extends LitElement {
 
     const positionsChanged = movingTargets.size > 0;
 
-    const buttonWidth = this.getTouchTargetSize();
-    const minGap = buttonWidth + 4;
+    const orderedTargets = targets
+      .map((target) => {
+        const left = currentPositions.get(target) ?? 0;
+        return {
+          target,
+          center: left + buttonWidth / 2,
+          isMoving: movingTargets.has(target),
+        };
+      })
+      .sort((a, b) => a.center - b.center);
 
     let hasActiveOverlaps = false;
-    targets.forEach((target) => {
-      const myPos = currentPositions.get(target)!;
-      const isMoving = movingTargets.has(target);
+    for (let i = 1; i < orderedTargets.length; i += 1) {
+      const gap = orderedTargets[i].center - orderedTargets[i - 1].center;
+      if (gap < minGap) {
+        hasActiveOverlaps = true;
+        break;
+      }
+    }
 
-      if (!isMoving) {
+    if (!hasActiveOverlaps) {
+      targets.forEach((target) => {
         target.buttonOffsetX = 0;
         target.offset = 0;
         this.lastOffsets.set(target, 0);
+      });
+      this.lastOffsets.forEach((_, target) => {
+        if (!currentPositions.has(target)) this.lastOffsets.delete(target);
+      });
+      this.previousPositions = currentPositions;
+      return positionsChanged;
+    }
+
+    const desiredCenters = orderedTargets.map((item) => item.center);
+
+    for (let i = 0; i < orderedTargets.length; i += 1) {
+      const item = orderedTargets[i];
+      if (!item.isMoving) continue;
+      const prevDesired = i > 0 ? desiredCenters[i - 1] : null;
+      if (prevDesired !== null) {
+        desiredCenters[i] = Math.max(desiredCenters[i], prevDesired + minGap);
+      }
+    }
+
+    for (let i = orderedTargets.length - 1; i >= 0; i -= 1) {
+      const item = orderedTargets[i];
+      if (!item.isMoving) continue;
+      const nextDesired =
+        i < orderedTargets.length - 1 ? desiredCenters[i + 1] : null;
+      if (nextDesired !== null) {
+        desiredCenters[i] = Math.min(desiredCenters[i], nextDesired - minGap);
+      }
+    }
+
+    orderedTargets.forEach((item, index) => {
+      if (!item.isMoving) {
+        item.target.buttonOffsetX = 0;
+        item.target.offset = 0;
+        this.lastOffsets.set(item.target, 0);
         return;
       }
 
-      let totalOffset = 0;
-
-      targets.forEach((other) => {
-        if (other === target) return;
-
-        const otherPos = currentPositions.get(other)!;
-        const otherIsMoving = movingTargets.has(other);
-
-        if (otherIsMoving && myPos >= otherPos) return;
-
-        const gap = Math.abs(myPos - otherPos);
-
-        if (gap >= minGap) {
-          const pairKey = this.getPairKey(target, other);
-          this.crossingSides.delete(pairKey);
-          return;
-        }
-
-        hasActiveOverlaps = true;
-
-        const pairKey = this.getPairKey(target, other);
-        let side = this.crossingSides.get(pairKey);
-
-        const prevMyPos = this.previousPositions.get(target);
-        const prevOtherPos = this.previousPositions.get(other);
-
-        if (prevMyPos !== undefined && prevOtherPos !== undefined) {
-          const wasOnLeft = prevMyPos < prevOtherPos;
-          const wasOnRight = prevMyPos > prevOtherPos;
-          const nowOnLeft = myPos < otherPos;
-          const nowOnRight = myPos > otherPos;
-
-          if (wasOnLeft && nowOnRight) {
-            side = CrossingSide.Right;
-            this.crossingSides.set(pairKey, side);
-          } else if (wasOnRight && nowOnLeft) {
-            side = CrossingSide.Left;
-            this.crossingSides.set(pairKey, side);
-          }
-        }
-
-        if (!side) {
-          if (prevMyPos !== undefined && prevOtherPos !== undefined) {
-            side =
-              prevMyPos <= prevOtherPos
-                ? CrossingSide.Left
-                : CrossingSide.Right;
-          } else {
-            side = myPos <= otherPos ? CrossingSide.Left : CrossingSide.Right;
-          }
-          this.crossingSides.set(pairKey, side);
-        }
-
-        const overlap = minGap - gap;
-        if (side === CrossingSide.Left) {
-          totalOffset -= overlap;
-        } else {
-          totalOffset += overlap;
-        }
-      });
-
-      const roundedOffset = Math.round(totalOffset);
-      const prevOffset = this.lastOffsets.get(target) ?? 0;
+      const desiredCenter = desiredCenters[index];
+      const offset = desiredCenter - item.center;
+      const roundedOffset = Math.round(offset);
+      const prevOffset = this.lastOffsets.get(item.target) ?? 0;
       const deadZone = 1;
       const nextOffset =
         Math.abs(roundedOffset - prevOffset) < deadZone
           ? prevOffset
           : roundedOffset;
+
       if (nextOffset !== 0) {
-        target.buttonOffsetX = nextOffset;
-        target.offset = -nextOffset;
+        item.target.buttonOffsetX = nextOffset;
+        item.target.offset = -nextOffset;
       } else {
-        target.buttonOffsetX = 0;
-        target.offset = 0;
+        item.target.buttonOffsetX = 0;
+        item.target.offset = 0;
       }
-      this.lastOffsets.set(target, nextOffset);
+      this.lastOffsets.set(item.target, nextOffset);
     });
     this.lastOffsets.forEach((_, target) => {
       if (!currentPositions.has(target)) this.lastOffsets.delete(target);
@@ -519,26 +501,6 @@ export class ObcPoiLayer extends LitElement {
 
     this.previousPositions = currentPositions;
     return positionsChanged || hasActiveOverlaps;
-  }
-
-  /**
-   * Get a stable unique ID for an element.
-   * Uses WeakMap to assign persistent IDs that survive DOM reordering and class changes.
-   */
-  private getElementId(element: HTMLElement): string {
-    let id = this.elementIds.get(element);
-    if (!id) {
-      this.elementIdCounter += 1;
-      id = `poi-${this.elementIdCounter}`;
-      this.elementIds.set(element, id);
-    }
-    return id;
-  }
-
-  private getPairKey(a: HTMLElement, b: HTMLElement): string {
-    const aId = this.getElementId(a);
-    const bId = this.getElementId(b);
-    return aId < bId ? `${aId}:${bId}` : `${bId}:${aId}`;
   }
 
   private toggleGroupLayerHook(group: HTMLElement, hasTargets: boolean) {

@@ -433,6 +433,7 @@ export class ObcPoiLayerStack extends LitElement {
       if (currentLayer !== selectedLayer) {
         this.setSelectedTargetInteractivity(target as ObcPoiTarget, false);
         this.clearTargetSelectedId(target as ObcPoiTarget);
+        (target as ObcPoiTarget).showId = false;
         this.selectionMap.delete(target);
       }
     });
@@ -441,6 +442,14 @@ export class ObcPoiLayerStack extends LitElement {
       selectedLayer.querySelectorAll('obc-poi-target')
     ) as ObcPoiTarget[];
     targets.forEach((target) => {
+      this.setTargetSelectedId(target);
+      target.showId = true;
+
+      if (this.selectionMode === PoiLayerSelectionMode.None) {
+        this.setSelectedTargetInteractivity(target, false);
+        return;
+      }
+
       if (this.selectionMap.has(target)) return;
       if (
         this.selectionMode === PoiLayerSelectionMode.Single &&
@@ -463,7 +472,6 @@ export class ObcPoiLayerStack extends LitElement {
         originIndex: originLayer.layerIndex,
         originHeight,
       });
-      this.setTargetSelectedId(target);
       this.setSelectedTargetInteractivity(target, true);
     });
   }

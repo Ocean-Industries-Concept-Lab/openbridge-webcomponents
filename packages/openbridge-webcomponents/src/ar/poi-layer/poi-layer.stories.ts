@@ -776,8 +776,8 @@ export const CrossingMode: Story = {
         }
       </style>
       <p style="font-size: 12px; color: #666; margin-bottom: 8px;">
-        Crossing mode: Moving POI crosses the static POI. Button should avoid
-        overlap and jump to other side when target crosses.
+        Crossing mode: Moving POI crosses the static POI. Internal swapping
+        keeps targets ordered without grouping or overlap.
       </p>
       <div class="crossing-mode" ${ref(hostRef)}>
         <obc-poi-layer
@@ -787,7 +787,7 @@ export const CrossingMode: Story = {
           .overlapMode=${OverlapMode.Crossing}
         >
           <obc-poi-target class="static" .y=${120}></obc-poi-target>
-          <obc-poi-target class="moving" .y=${100}></obc-poi-target>
+          <obc-poi-target class="moving" .y=${120}></obc-poi-target>
         </obc-poi-layer>
       </div>
     `;
