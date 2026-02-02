@@ -1,4 +1,4 @@
-import {LitElement, html, nothing, unsafeCSS} from 'lit';
+import {HTMLTemplateResult, LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import componentStyle from './brilliance-menu.css?inline';
 import '../button/button.js';
@@ -152,6 +152,11 @@ export class ObcBrillianceMenu extends LitElement {
    */
   @property({type: Boolean}) hidePalette = false;
 
+  @property({type: Boolean}) noNightPalette = false;
+  @property({type: Boolean}) noDuskPalette = false;
+  @property({type: Boolean}) noDayPalette = false;
+  @property({type: Boolean}) noBrightPalette = false;
+
   /**
    * The variant of the menu. Possible values: `'normal'`, `'compact'`.
    * Defaults to `'normal'`.
@@ -188,6 +193,20 @@ export class ObcBrillianceMenu extends LitElement {
    * If true, displays the screen control link.
    */
   @property({type: Boolean}) showScreenControlLink = false;
+
+  override willUpdate(_changed: Map<string, unknown>) {
+    if (!this.hidePalette) {
+      const available = this.availablePalettes;
+      if (available.length > 0 && !available.includes(this.palette)) {
+        this.palette = available[0];
+        this.dispatchEvent(
+          new CustomEvent('palette-changed', {
+            detail: {value: this.palette},
+          })
+        );
+      }
+    }
+  }
 
   /**
    * Handles palette selection changes and emits `palette-changed`.
@@ -263,19 +282,32 @@ export class ObcBrillianceMenu extends LitElement {
     );
   }
 
+  get availablePalettes(): ObcPalette[] {
+    const palettes: ObcPalette[] = [];
+    if (!this.noNightPalette) palettes.push(ObcPalette.night);
+    if (!this.noDuskPalette) palettes.push(ObcPalette.dusk);
+    if (!this.noDayPalette) palettes.push(ObcPalette.day);
+    if (!this.noBrightPalette) palettes.push(ObcPalette.bright);
+    return palettes;
+  }
+
   get canIncreasePalette() {
-    return this.palette !== ObcPalette.bright;
+    const palettes = this.availablePalettes;
+    const idx = palettes.indexOf(this.palette);
+    return idx >= 0 && idx < palettes.length - 1;
   }
 
   get canDecreasePalette() {
-    return this.palette !== ObcPalette.night;
+    const palettes = this.availablePalettes;
+    const idx = palettes.indexOf(this.palette);
+    return idx > 0;
   }
 
   nextPalette() {
     if (this.canIncreasePalette) {
-      this.palette = Object.keys(ObcPalette)[
-        Object.keys(ObcPalette).indexOf(this.palette) + 1
-      ] as ObcPalette;
+      const palettes = this.availablePalettes;
+      const idx = palettes.indexOf(this.palette);
+      this.palette = palettes[idx + 1];
       this.dispatchEvent(
         new CustomEvent('palette-changed', {
           detail: {value: this.palette},
@@ -286,9 +318,9 @@ export class ObcBrillianceMenu extends LitElement {
 
   previousPalette() {
     if (this.canDecreasePalette) {
-      this.palette = Object.keys(ObcPalette)[
-        Object.keys(ObcPalette).indexOf(this.palette) - 1
-      ] as ObcPalette;
+      const palettes = this.availablePalettes;
+      const idx = palettes.indexOf(this.palette);
+      this.palette = palettes[idx - 1];
       this.dispatchEvent(
         new CustomEvent('palette-changed', {
           detail: {value: this.palette},
@@ -427,14 +459,19 @@ export class ObcBrillianceMenu extends LitElement {
       </div>`;
   }
 
+  get effectivePalette() {
+    const palettes = this.availablePalettes;
+    return palettes.includes(this.palette) ? this.palette : palettes[0];
+  }
+
   get paletteIcon() {
-    if (this.palette === ObcPalette.night) {
+    if (this.effectivePalette === ObcPalette.night) {
       return html`<obi-palette-night class="icon"></obi-palette-night>`;
-    } else if (this.palette === ObcPalette.dusk) {
+    } else if (this.effectivePalette === ObcPalette.dusk) {
       return html`<obi-palette-dusk class="icon"></obi-palette-dusk>`;
-    } else if (this.palette === ObcPalette.day) {
+    } else if (this.effectivePalette === ObcPalette.day) {
       return html`<obi-palette-day class="icon"></obi-palette-day>`;
-    } else if (this.palette === ObcPalette.bright) {
+    } else if (this.effectivePalette === ObcPalette.bright) {
       return html`<obi-palette-day-bright
         class="icon"
       ></obi-palette-day-bright>`;
@@ -443,22 +480,57 @@ export class ObcBrillianceMenu extends LitElement {
     }
   }
 
+  private paletteOptions(): HTMLTemplateResult[] {
+    const out = [];
+    if (!this.noNightPalette)
+      out.push(
+        html`<obc-toggle-button-option
+          value="night"
+          type="icon"
+        ></obc-toggle-button-option>`
+      );
+    if (!this.noDuskPalette)
+      out.push(
+        html`<obc-toggle-button-option
+          value="dusk"
+          type="icon"
+        ></obc-toggle-button-option>`
+      );
+    if (!this.noDayPalette)
+      out.push(
+        html`<obc-toggle-button-option
+          value="day"
+          type="icon"
+        ></obc-toggle-button-option>`
+      );
+    if (!this.noBrightPalette)
+      out.push(
+        html`<obc-toggle-button-option
+          value="bright"
+          type="icon"
+        ></obc-toggle-button-option>`
+      );
+    return out;
+  }
+
   renderPalette() {
-    const paletteNames = {
+    const palettes = this.availablePalettes;
+    if (palettes.length === 0) return nothing;
+
+    const paletteNames: Record<ObcPalette, string> = {
       [ObcPalette.night]: msg('Night'),
       [ObcPalette.dusk]: msg('Dusk'),
       [ObcPalette.day]: msg('Day'),
       [ObcPalette.bright]: msg('Bright'),
     };
-    const currentPaletteName = paletteNames[this.palette];
+    const currentPaletteName = paletteNames[this.effectivePalette];
     const valueLength = currentPaletteName.length;
-    const index = Object.keys(paletteNames).indexOf(this.palette);
-    const nextIndex = Math.min(index + 1, 3);
+    const index = palettes.indexOf(this.effectivePalette);
+    const nextIndex = Math.min(index + 1, palettes.length - 1);
     const previousIndex = Math.max(index - 1, 0);
-    const nextPalette =
-      paletteNames[Object.keys(paletteNames)[nextIndex] as ObcPalette];
-    const previousPalette =
-      paletteNames[Object.keys(paletteNames)[previousIndex] as ObcPalette];
+    const nextPalette = paletteNames[palettes[nextIndex]];
+    const previousPalette = paletteNames[palettes[previousIndex]];
+
     return html`
       ${this.variant === ObcBrillianceMenuVariant.tabbed
         ? nothing
@@ -474,23 +546,12 @@ export class ObcBrillianceMenu extends LitElement {
       >
         ${this.variant === ObcBrillianceMenuVariant.compact
           ? html` <obc-toggle-button-group
-              value=${this.palette}
+              value=${this.effectivePalette}
               @value=${this.onPaletteChanged}
               variant=${ObcToggleButtonOptionVariant.regular}
               type=${ObcToggleButtonOptionType.icon}
             >
-              <obc-toggle-button-option value="night" type="icon">
-                <obi-palette-night slot="icon"></obi-palette-night>
-              </obc-toggle-button-option>
-              <obc-toggle-button-option value="dusk" type="icon">
-                <obi-palette-dusk slot="icon"></obi-palette-dusk>
-              </obc-toggle-button-option>
-              <obc-toggle-button-option value="day" type="icon">
-                <obi-palette-day slot="icon"></obi-palette-day>
-              </obc-toggle-button-option>
-              <obc-toggle-button-option value="bright" type="icon">
-                <obi-palette-day-bright slot="icon"></obi-palette-day-bright>
-              </obc-toggle-button-option>
+              ${this.paletteOptions()}
             </obc-toggle-button-group>`
           : html`
               <div class="value-container">
@@ -501,7 +562,7 @@ export class ObcBrillianceMenu extends LitElement {
                   </div>
                 </div>
                 <obc-progress-indicator-dots
-                  .totalSteps=${4}
+                  .totalSteps=${palettes.length}
                   .currentStep=${index + 1}
                 ></obc-progress-indicator-dots>
               </div>
