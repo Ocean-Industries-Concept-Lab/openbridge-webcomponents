@@ -233,12 +233,16 @@ export const WithValuesOverlap: Story = {
   },
 };
 
-/**
- * This story demonstrates the CSS variable animation capability.
- * Click the button to toggle size via --poi-size variable.
- */
 export const AnimatedSizeToggle: Story = {
   args: {},
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'This story demonstrates the CSS variable animation capability. Click the button to toggle size via the --poi-size variable.',
+      },
+    },
+  },
   render: () => {
     return html`
       <div style="padding: 50px;">
@@ -267,12 +271,16 @@ export const AnimatedSizeToggle: Story = {
   },
 };
 
-/**
- * This story demonstrates enhanced type animation.
- */
 export const AnimatedSizeToggleEnhanced: Story = {
   args: {
     type: ObcPoiTargetButtonType.Enhanced,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'This story demonstrates enhanced type animation.',
+      },
+    },
   },
   render: () => {
     return html`

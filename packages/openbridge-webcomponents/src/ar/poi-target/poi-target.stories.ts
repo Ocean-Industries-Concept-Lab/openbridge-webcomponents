@@ -143,17 +143,25 @@ export const AnimatedOffsetBottom: Story = {
       const target = document.querySelector(
         '#animated-poi-target'
       ) as ObcPoiTarget;
-      if (!target) return;
+      if (!target || !target.isConnected) return;
 
       offset += direction * 0.3;
       if (offset > 50) direction = -1;
       if (offset < -50) direction = 1;
 
       target.offset = offset;
-      requestAnimationFrame(animate);
+      if (target.isConnected) {
+        requestAnimationFrame(animate);
+      }
     };
 
-    setTimeout(() => requestAnimationFrame(animate), 100);
+    setTimeout(() => {
+      const target = document.querySelector(
+        '#animated-poi-target'
+      ) as ObcPoiTarget | null;
+      if (!target || !target.isConnected) return;
+      requestAnimationFrame(animate);
+    }, 100);
 
     return html`
       <style>
@@ -197,7 +205,7 @@ export const AnimatedOffsetTop: Story = {
       const target = document.querySelector(
         '#animated-poi-target-top'
       ) as ObcPoiTarget;
-      if (!target) return;
+      if (!target || !target.isConnected) return;
 
       buttonOffset += direction * 0.3;
       if (buttonOffset > 50) direction = -1;
@@ -206,10 +214,18 @@ export const AnimatedOffsetTop: Story = {
       target.style.transform = `translateX(${buttonOffset}px)`;
       target.offset = -buttonOffset;
 
-      requestAnimationFrame(animate);
+      if (target.isConnected) {
+        requestAnimationFrame(animate);
+      }
     };
 
-    setTimeout(() => requestAnimationFrame(animate), 100);
+    setTimeout(() => {
+      const target = document.querySelector(
+        '#animated-poi-target-top'
+      ) as ObcPoiTarget | null;
+      if (!target || !target.isConnected) return;
+      requestAnimationFrame(animate);
+    }, 100);
 
     return html`
       <style>

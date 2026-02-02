@@ -258,7 +258,9 @@ export class ObcPoiController extends LitElement {
     const stack = this.getStackElement();
     if (!stack) {
       if (this.controllerTargets.size > 0) {
-        this.controllerTargets.forEach((target) => target.remove());
+        this.controllerTargets.forEach((target) => {
+          target.remove();
+        });
         this.controllerTargets.clear();
       }
       return;

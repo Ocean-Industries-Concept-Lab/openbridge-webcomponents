@@ -16,6 +16,26 @@ export enum PoiLayerSelectionMode {
   Multi = 'multi',
 }
 
+/**
+ * `<obc-poi-layer-stack>` coordinates multiple POI layers and manages
+ * selection behavior across stacked layers.
+ *
+ * Use `selection-mode` to control whether targets can be selected across the
+ * stack (`none`, `single`, or `multi`).
+ *
+ * ### Slots
+ * - Default slot for `obc-poi-layer` elements that participate in the stack.
+ *
+ * ### Example
+ * ```html
+ * <obc-poi-layer-stack selection-mode="single">
+ *   <obc-poi-layer label="Radar" layerIndex="1"></obc-poi-layer>
+ *   <obc-poi-layer label="AIS" layerIndex="2"></obc-poi-layer>
+ * </obc-poi-layer-stack>
+ * ```
+ *
+ * @slot - Layers participating in the stack.
+ */
 @customElement('obc-poi-layer-stack')
 export class ObcPoiLayerStack extends LitElement {
   @property({type: String, attribute: 'selection-mode'})
@@ -65,6 +85,8 @@ export class ObcPoiLayerStack extends LitElement {
       this.placementRaf = 0;
     }
     this.selectionMap.clear();
+    this.selectionCounter = 0;
+    this.selectionIds = new WeakMap<HTMLElement, string>();
   }
 
   override render() {
@@ -281,7 +303,6 @@ export class ObcPoiLayerStack extends LitElement {
     const dx = firstRect.left - lastRect.left;
     const dy = firstRect.top - lastRect.top;
 
-    // Adjust height to keep line bottom anchored
     if (!skipHeightAdjust) {
       this.adjustTargetHeightByOffset(target as ObcPoiTarget, dy);
     }
@@ -432,7 +453,6 @@ export class ObcPoiLayerStack extends LitElement {
       return;
     }
 
-    // Animate height change to match position animation (240ms)
     const duration = 240;
     const startTime = performance.now();
     const startHeight = currentHeight;
@@ -440,7 +460,6 @@ export class ObcPoiLayerStack extends LitElement {
     const animateHeight = (now: number) => {
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      // Use same easing as position animation: cubic-bezier(0.2, 0, 0, 1)
       const eased = this.cubicBezier(0.2, 0, 0, 1, progress);
       const newHeight = startHeight + (targetHeight - startHeight) * eased;
       this.setTargetHeight(target, newHeight);
@@ -472,12 +491,10 @@ export class ObcPoiLayerStack extends LitElement {
     y2: number,
     t: number
   ): number {
-    // For linear time input (t), solve for parameter value that gives x=t
     const cx = 3 * x1;
     const bx = 3 * (x2 - x1) - cx;
     const ax = 1 - cx - bx;
 
-    // Newton-Raphson iteration to find parameter for x=t (4 iterations sufficient)
     let tParam = t;
     for (let i = 0; i < 4; i++) {
       const x = ((ax * tParam + bx) * tParam + cx) * tParam;
@@ -486,7 +503,6 @@ export class ObcPoiLayerStack extends LitElement {
       tParam -= (x - t) / dx;
     }
 
-    // Evaluate y at the found parameter value
     const cy = 3 * y1;
     const by = 3 * (y2 - y1) - cy;
     const ay = 1 - cy - by;

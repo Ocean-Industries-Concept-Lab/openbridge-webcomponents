@@ -6,12 +6,10 @@ import '../poi-target-button-group/poi-target-button-group.js';
 import {ObcPoiTarget, PoiTargetVisualState} from '../poi-target/poi-target.js';
 import {ObcPoiTargetButtonType} from '../poi-target-button/poi-target-button.js';
 
-// Animation timings
 const EXIT_DELAY_MS = 140;
 const GROUP_REMOVAL_DELAY_MS = 450;
 const EXIT_LOCK_DURATION_MS = 500;
 
-// CSS variable names for POI sizing (defined in src/palettes/variables.css)
 const POI_TOUCH_TARGET_VAR = '--maneuvering-components-poi-button-touch-target';
 const POI_VISUAL_TARGET_VAR =
   '--maneuvering-components-poi-button-visual-target-round';
@@ -42,6 +40,40 @@ export enum CrossingSide {
   Right = 'right',
 }
 
+/**
+ * `<obc-poi-layer>` arranges POI targets in a layer and manages grouping,
+ * overlap, and layout updates for slotted targets.
+ *
+ * Use this component inside `obc-poi-layer-stack` to coordinate multiple layers
+ * and keep selection or overlap behaviors consistent across a stack.
+ *
+ * ### Features
+ * - Observes slotted targets and groups to compute layout.
+ * - Emits a resize event when the layer height changes.
+ * - Optional debug labeling for layer identification.
+ *
+ * ### Usage Guidelines
+ * - Set `label` to identify the layer in debug UI and events.
+ * - Toggle `debug` to render the on-layer label.
+ * - Set `layerIndex` to control ordering within a stack.
+ *
+ * ### Slots
+ * - Default slot for `obc-poi-target` and `obc-poi-target-button-group`.
+ *
+ * ### Events
+ * - `layer-resize` when the computed layer height changes.
+ *
+ * ### Example
+ * ```html
+ * <obc-poi-layer label="Radar" layerIndex="1">
+ *   <obc-poi-target x="120" y="200"></obc-poi-target>
+ *   <obc-poi-target x="240" y="220"></obc-poi-target>
+ * </obc-poi-layer>
+ * ```
+ *
+ * @slot - Default slot for `obc-poi-target` and `obc-poi-target-button-group`.
+ * @fires {CustomEvent} layer-resize - Fired when the layer height changes.
+ */
 @customElement('obc-poi-layer')
 export class ObcPoiLayer extends LitElement {
   @property({type: String}) label = '';
@@ -63,21 +95,15 @@ export class ObcPoiLayer extends LitElement {
   private exitLockTimers = new Map<HTMLElement, number>();
   private layerMutationObserver?: MutationObserver;
   private autoGroupCollapseTimeout = 0;
-  // Crossing mode state
   private crossingModeRaf = 0;
-  // Cached targets for crossing mode (updated by mutation observer)
   private cachedCrossingTargets: ObcPoiTarget[] = [];
   private crossingTargetsDirty = false;
-  // Track previous positions for detecting movement and crossings
   private previousPositions = new Map<HTMLElement, number>();
-  // Smooth out tiny per-frame offset changes to avoid flicker
   private lastOffsets = new Map<HTMLElement, number>();
-  // Track which side each moving POI's button is on relative to static POIs
-  // Key: "movingId:staticId", Value: CrossingSide | null
   private crossingSides = new Map<string, CrossingSide | null>();
-  // Stable unique IDs for elements (used for pair tracking in crossing mode)
   private elementIds = new WeakMap<HTMLElement, string>();
   private elementIdCounter = 0;
+  private static readonly GROUP_LAYER_HOOK_ATTR = 'data-in-poi-layer';
 
   override firstUpdated() {
     this.crossingTargetsDirty = true;
@@ -93,7 +119,6 @@ export class ObcPoiLayer extends LitElement {
       this.scheduleGrouping();
       this.scheduleLayerHeightUpdate();
     });
-    // Listen for expand events from groups to apply focus effect
     this.addEventListener('expand', this.handleGroupExpand as EventListener);
     this.addEventListener('collapse-finished', () => {
       this.scheduleGrouping();
@@ -112,14 +137,12 @@ export class ObcPoiLayer extends LitElement {
     );
 
     if (event.detail.expand) {
-      // Group expanded: apply overlap state to all targets NOT in the group
       targets.forEach((target) => {
         if (!groupedTargets.has(target)) {
           this.applyStandaloneVisualState(target, true);
         }
       });
     } else {
-      // Group collapsed: trigger re-evaluation
       this.scheduleGrouping();
     }
   };
@@ -315,7 +338,6 @@ export class ObcPoiLayer extends LitElement {
             this.updateTargetObservers();
             this.scheduleGrouping();
             this.scheduleLayerHeightUpdate();
-            // Mark crossing targets cache as dirty
             this.crossingTargetsDirty = true;
             return;
           }
@@ -341,16 +363,18 @@ export class ObcPoiLayer extends LitElement {
     if (this.crossingModeRaf) return;
     this.crossingModeRaf = requestAnimationFrame(() => {
       this.crossingModeRaf = 0;
-      this.updateCrossingMode();
-      // Keep running the loop
-      if (this.overlapMode === OverlapMode.Crossing && this.isConnected) {
+      const shouldContinue = this.updateCrossingMode();
+      if (
+        this.overlapMode === OverlapMode.Crossing &&
+        this.isConnected &&
+        shouldContinue
+      ) {
         this.scheduleCrossingMode();
       }
     });
   }
 
-  private updateCrossingMode() {
-    // Use cached targets to avoid querySelectorAll on every frame
+  private updateCrossingMode(): boolean {
     if (this.crossingTargetsDirty) {
       this.cachedCrossingTargets = Array.from(
         this.querySelectorAll('obc-poi-target')
@@ -360,17 +384,17 @@ export class ObcPoiLayer extends LitElement {
     const targets = this.cachedCrossingTargets;
 
     if (targets.length < 2) {
-      // Clear any offsets
       targets.forEach((target) => {
         target.buttonOffsetX = 0;
         target.offset = 0;
         this.lastOffsets.set(target, 0);
       });
       this.lastOffsets.clear();
-      return;
+      this.previousPositions.clear();
+      this.crossingSides.clear();
+      return false;
     }
 
-    // Get current positions and detect which targets are moving
     const currentPositions = new Map<HTMLElement, number>();
     const movingTargets = new Set<HTMLElement>();
 
@@ -385,16 +409,16 @@ export class ObcPoiLayer extends LitElement {
       }
     });
 
-    // Button width for collision detection
-    const buttonWidth = this.getTouchTargetSize();
-    const minGap = buttonWidth + 4; // Buttons need this much space
+    const positionsChanged = movingTargets.size > 0;
 
-    // For each target, calculate the button offset
+    const buttonWidth = this.getTouchTargetSize();
+    const minGap = buttonWidth + 4;
+
+    let hasActiveOverlaps = false;
     targets.forEach((target) => {
       const myPos = currentPositions.get(target)!;
       const isMoving = movingTargets.has(target);
 
-      // Only moving targets get offsets
       if (!isMoving) {
         target.buttonOffsetX = 0;
         target.offset = 0;
@@ -404,32 +428,27 @@ export class ObcPoiLayer extends LitElement {
 
       let totalOffset = 0;
 
-      // Check against all other targets
       targets.forEach((other) => {
         if (other === target) return;
 
         const otherPos = currentPositions.get(other)!;
         const otherIsMoving = movingTargets.has(other);
 
-        // If both are moving, use the one with smaller position as reference
-        // If only one is moving (us), we offset around the static one
         if (otherIsMoving && myPos >= otherPos) return;
 
         const gap = Math.abs(myPos - otherPos);
 
-        // Only care about overlapping buttons
         if (gap >= minGap) {
-          // Clear crossing side when not overlapping
           const pairKey = this.getPairKey(target, other);
           this.crossingSides.delete(pairKey);
           return;
         }
 
-        // Determine which side this target's button should be on
+        hasActiveOverlaps = true;
+
         const pairKey = this.getPairKey(target, other);
         let side = this.crossingSides.get(pairKey);
 
-        // Detect crossing: if our position definitively moved past the other
         const prevMyPos = this.previousPositions.get(target);
         const prevOtherPos = this.previousPositions.get(other);
 
@@ -439,7 +458,6 @@ export class ObcPoiLayer extends LitElement {
           const nowOnLeft = myPos < otherPos;
           const nowOnRight = myPos > otherPos;
 
-          // Only trigger crossing when we definitively pass (not just reach equal)
           if (wasOnLeft && nowOnRight) {
             side = CrossingSide.Right;
             this.crossingSides.set(pairKey, side);
@@ -449,9 +467,7 @@ export class ObcPoiLayer extends LitElement {
           }
         }
 
-        // If no side set yet, determine from approach direction or current position
         if (!side) {
-          // Use previous position to determine approach direction
           if (prevMyPos !== undefined && prevOtherPos !== undefined) {
             side =
               prevMyPos <= prevOtherPos
@@ -463,8 +479,6 @@ export class ObcPoiLayer extends LitElement {
           this.crossingSides.set(pairKey, side);
         }
 
-        // Calculate offset to avoid overlap
-        // The offset pushes our button away from the center point
         const overlap = minGap - gap;
         if (side === CrossingSide.Left) {
           totalOffset -= overlap;
@@ -473,7 +487,6 @@ export class ObcPoiLayer extends LitElement {
         }
       });
 
-      // Apply the button offset and line bend
       const roundedOffset = Math.round(totalOffset);
       const prevOffset = this.lastOffsets.get(target) ?? 0;
       const deadZone = 1;
@@ -482,7 +495,6 @@ export class ObcPoiLayer extends LitElement {
           ? prevOffset
           : roundedOffset;
       if (nextOffset !== 0) {
-        // Apply both button shift and line bend in the same render for sync
         target.buttonOffsetX = nextOffset;
         target.offset = -nextOffset;
       } else {
@@ -491,13 +503,12 @@ export class ObcPoiLayer extends LitElement {
       }
       this.lastOffsets.set(target, nextOffset);
     });
-    // Remove offsets for targets no longer present
     this.lastOffsets.forEach((_, target) => {
       if (!currentPositions.has(target)) this.lastOffsets.delete(target);
     });
 
-    // Update previous positions for next frame
     this.previousPositions = currentPositions;
+    return positionsChanged || hasActiveOverlaps;
   }
 
   /**
@@ -515,10 +526,17 @@ export class ObcPoiLayer extends LitElement {
   }
 
   private getPairKey(a: HTMLElement, b: HTMLElement): string {
-    // Create a consistent key for a pair of elements using stable IDs
     const aId = this.getElementId(a);
     const bId = this.getElementId(b);
     return aId < bId ? `${aId}:${bId}` : `${bId}:${aId}`;
+  }
+
+  private toggleGroupLayerHook(group: HTMLElement, hasTargets: boolean) {
+    if (hasTargets) {
+      group.setAttribute(ObcPoiLayer.GROUP_LAYER_HOOK_ATTR, '');
+    } else {
+      group.removeAttribute(ObcPoiLayer.GROUP_LAYER_HOOK_ATTR);
+    }
   }
 
   private updateGrouping() {
@@ -530,6 +548,14 @@ export class ObcPoiLayer extends LitElement {
         this.querySelectorAll('obc-poi-target-button-group')
       ) as PoiButtonGroupElement[]
     ).filter((group) => !group.hasAttribute('data-auto-group'));
+    const manualGroupedTargets = new Set<HTMLElement>();
+    manualGroups.forEach((group) => {
+      const groupTargets = Array.from(
+        group.querySelectorAll('obc-poi-target')
+      ) as ObcPoiTarget[];
+      this.toggleGroupLayerHook(group, groupTargets.length > 0);
+      groupTargets.forEach((target) => manualGroupedTargets.add(target));
+    });
     if (manualGroups.length > 0) {
       const anyExpanded = manualGroups.some(
         (group) => group.expand === true || group.collapsing === true
@@ -539,13 +565,6 @@ export class ObcPoiLayer extends LitElement {
         return;
       }
     }
-
-    const manualGroupedTargets = new Set<HTMLElement>();
-    manualGroups.forEach((group) => {
-      Array.from(group.querySelectorAll('obc-poi-target')).forEach((target) => {
-        if (target instanceof HTMLElement) manualGroupedTargets.add(target);
-      });
-    });
 
     const targets = Array.from(this.querySelectorAll('obc-poi-target')).filter(
       (target) => !manualGroupedTargets.has(target)
@@ -624,9 +643,7 @@ export class ObcPoiLayer extends LitElement {
       }
     }
 
-    // Use helper to build clusters from adjacency maps
     const clusters = this.buildClusters(targets, adjacency);
-    // Note: preClusters not needed - preGrouped Set is used for pre-group tracking
     const behindClusters = this.buildClusters(targets, behindAdjacency);
 
     const existingGroups = Array.from(
@@ -645,8 +662,6 @@ export class ObcPoiLayer extends LitElement {
       if (behind) behindTargets.add(behind);
     });
 
-    // If any auto-group is expanded, skip grouping updates entirely
-    // Group stays frozen until user manually collapses it
     const expandedAutoGroup = existingGroups.find(
       (group) => group.expand === true || group.collapsing === true
     );
@@ -774,7 +789,6 @@ export class ObcPoiLayer extends LitElement {
           target.removeAttribute('data-behind');
         }
         const isOverlapState = target.hasAttribute('data-behind');
-        // Set visual state via property (obc-poi-target defines this property)
         target.visualState = isOverlapState
           ? PoiTargetVisualState.Overlap
           : PoiTargetVisualState.Normal;
@@ -877,6 +891,7 @@ export class ObcPoiLayer extends LitElement {
         (child): child is HTMLElement =>
           child.tagName.toLowerCase() === 'obc-poi-target'
       );
+      this.toggleGroupLayerHook(group, children.length > 0);
       const hasPositionAttr =
         group.hasAttribute('positionvertical') ||
         group.hasAttribute('positionVertical');

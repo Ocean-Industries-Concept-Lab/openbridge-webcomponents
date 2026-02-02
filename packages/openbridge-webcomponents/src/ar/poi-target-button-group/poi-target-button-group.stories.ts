@@ -9,71 +9,83 @@ import '../../icons/icon-ais-target-activated-iec.js';
 import '../poi-target/poi-target.js';
 import {ObcPoiTarget, PoiTargetVisualState} from '../poi-target/poi-target.js';
 
-function onExpand(event: CustomEvent<{expand: boolean}>) {
-  (document.querySelector('#outside') as ObcPoiTarget).visualState = event
-    .detail.expand
-    ? PoiTargetVisualState.Overlap
-    : PoiTargetVisualState.Normal;
-}
-
 const meta: Meta<ObcPoiTargetButtonGroup> = {
   title: 'AR/POI Target Button Group',
   tags: ['6.0'],
   component: 'obc-poi-target-button-group',
   decorators: [crossDecorator],
   args: {},
-  render: (args) => html`
-    <style>
-      obc-poi-target {
-        position: absolute;
+  render: (args) => {
+    const wrapperRef = createRef<HTMLDivElement>();
+    const onExpand = (event: CustomEvent<{expand: boolean}>) => {
+      const wrapper = wrapperRef.value;
+      const outside = wrapper?.querySelector(
+        '[data-role="outside"]'
+      ) as ObcPoiTarget | null;
+      if (!outside) {
+        return;
       }
-      .stage {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        width: 640px;
-        height: 480px;
-        transform: translate(-50%, -50%);
-      }
-    </style>
-    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0;">
-      <div class="stage">
-        <obc-poi-target-button-group
-          style="position: absolute; top: 0; left: 0;"
-          .expand=${args.expand}
-          positionVertical="calc(50%)"
-          @expand=${onExpand}
-        >
+      outside.visualState = event.detail.expand
+        ? PoiTargetVisualState.Overlap
+        : PoiTargetVisualState.Normal;
+    };
+
+    return html`
+      <style>
+        obc-poi-target {
+          position: absolute;
+        }
+        .stage {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 640px;
+          height: 480px;
+          transform: translate(-50%, -50%);
+        }
+      </style>
+      <div
+        ${ref(wrapperRef)}
+        style="position: absolute; top: 0; left: 0; right: 0; bottom: 0;"
+      >
+        <div class="stage">
+          <obc-poi-target-button-group
+            style="position: absolute; top: 0; left: 0;"
+            .expand=${args.expand}
+            positionVertical="calc(50%)"
+            @expand=${onExpand}
+          >
+            <obc-poi-target
+              data-role="b3"
+              .x=${300}
+              .y=${240}
+              data-visual-state="overlap"
+            ></obc-poi-target>
+            <obc-poi-target
+              data-role="b1"
+              .x=${320}
+              .y=${240}
+              .relativeDirection=${65}
+            ></obc-poi-target>
+            <obc-poi-target
+              data-role="b2"
+              .x=${340}
+              .y=${240}
+              data-visual-state="overlap"
+            ></obc-poi-target>
+          </obc-poi-target-button-group>
           <obc-poi-target
-            id="b3"
-            .x=${300}
+            data-role="outside"
+            .x=${200}
             .y=${240}
-            data-visual-state="overlap"
-          ></obc-poi-target>
-          <obc-poi-target
-            id="b1"
-            .x=${320}
-            .y=${240}
-            .relativeDirection=${65}
-          ></obc-poi-target>
-          <obc-poi-target
-            id="b2"
-            .x=${340}
-            .y=${240}
-            data-visual-state="overlap"
-          ></obc-poi-target>
-        </obc-poi-target-button-group>
-        <obc-poi-target
-          id="outside"
-          .x=${200}
-          .y=${240}
-          data-visual-state=${args.expand ? 'overlap' : 'normal'}
-        >
-          <obi-ais-target-activated-iec></obi-ais-target-activated-iec>
-        </obc-poi-target>
+            data-visual-state=${args.expand ? 'overlap' : 'normal'}
+          >
+            <obi-ais-target-activated-iec></obi-ais-target-activated-iec>
+          </obc-poi-target>
+        </div>
       </div>
-    </div>
-  `,
+    `;
+  },
 } satisfies Meta<ObcPoiTargetButtonGroup>;
 
 export default meta;
@@ -89,62 +101,81 @@ export const GroupedWithNumbers: Story = {
   args: {
     expand: false,
   },
-  render: (args) => html`
-    <style>
-      obc-poi-target {
-        position: absolute;
+  render: (args) => {
+    const wrapperRef = createRef<HTMLDivElement>();
+    const onExpand = (event: CustomEvent<{expand: boolean}>) => {
+      const wrapper = wrapperRef.value;
+      const outside = wrapper?.querySelector(
+        '[data-role="outside"]'
+      ) as ObcPoiTarget | null;
+      if (!outside) {
+        return;
       }
-      .stage {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        width: 640px;
-        height: 480px;
-        transform: translate(-50%, -50%);
-      }
-    </style>
-    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0;">
-      <div class="stage">
-        <obc-poi-target-button-group
-          style="position: absolute; top: 0; left: 0;"
-          .expand=${args.expand}
-          positionVertical="calc(50%)"
-          @expand=${onExpand}
-        >
+      outside.visualState = event.detail.expand
+        ? PoiTargetVisualState.Overlap
+        : PoiTargetVisualState.Normal;
+    };
+
+    return html`
+      <style>
+        obc-poi-target {
+          position: absolute;
+        }
+        .stage {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 640px;
+          height: 480px;
+          transform: translate(-50%, -50%);
+        }
+      </style>
+      <div
+        ${ref(wrapperRef)}
+        style="position: absolute; top: 0; left: 0; right: 0; bottom: 0;"
+      >
+        <div class="stage">
+          <obc-poi-target-button-group
+            style="position: absolute; top: 0; left: 0;"
+            .expand=${args.expand}
+            positionVertical="calc(50%)"
+            @expand=${onExpand}
+          >
+            <obc-poi-target
+              data-role="b3"
+              .x=${300}
+              .y=${240}
+              data-visual-state="overlap"
+              selectedId="3"
+            ></obc-poi-target>
+            <obc-poi-target
+              data-role="b1"
+              .x=${320}
+              .y=${240}
+              .relativeDirection=${65}
+              selectedId="1"
+            ></obc-poi-target>
+            <obc-poi-target
+              data-role="b2"
+              .x=${340}
+              .y=${240}
+              data-visual-state="overlap"
+              selectedId="2"
+            ></obc-poi-target>
+          </obc-poi-target-button-group>
           <obc-poi-target
-            id="b3"
-            .x=${300}
+            data-role="outside"
+            .x=${200}
             .y=${240}
-            data-visual-state="overlap"
-            selectedId="3"
-          ></obc-poi-target>
-          <obc-poi-target
-            id="b1"
-            .x=${320}
-            .y=${240}
-            .relativeDirection=${65}
-            selectedId="1"
-          ></obc-poi-target>
-          <obc-poi-target
-            id="b2"
-            .x=${340}
-            .y=${240}
-            data-visual-state="overlap"
-            selectedId="2"
-          ></obc-poi-target>
-        </obc-poi-target-button-group>
-        <obc-poi-target
-          id="outside"
-          .x=${200}
-          .y=${240}
-          data-visual-state=${args.expand ? 'overlap' : 'normal'}
-          selectedId="4"
-        >
-          <obi-ais-target-activated-iec></obi-ais-target-activated-iec>
-        </obc-poi-target>
+            data-visual-state=${args.expand ? 'overlap' : 'normal'}
+            selectedId="4"
+          >
+            <obi-ais-target-activated-iec></obi-ais-target-activated-iec>
+          </obc-poi-target>
+        </div>
       </div>
-    </div>
-  `,
+    `;
+  },
 };
 
 export const Expanded: Story = {

@@ -88,7 +88,7 @@ export class ObcPoiTargetButton extends LitElement {
           wrapper: true,
           'has-values': true,
           selected: this.selected,
-          'has-id-label': this.selectedId !== null,
+          'has-id-label': Boolean(this.selectedId),
           [`alert-${this.alertType}`]: true,
           [`type-${this.type}`]: true,
           expanded: this.inExpandedGroup,
@@ -115,6 +115,7 @@ export class ObcPoiTargetButton extends LitElement {
           )}
         </div>
         <div class="button-wrapper">
+          ${selectionFrame(this.selected, this.alertType, this.type)}
           <div class="visible-wrapper">
             <div
               class="icon"

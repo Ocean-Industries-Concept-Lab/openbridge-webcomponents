@@ -78,7 +78,7 @@
 }
 
 /* Ensure targets inside groups inherit layer-style positioning when grouped in a layer. */
-:host-context(obc-poi-layer) ::slotted(obc-poi-target) {
+:host([data-in-poi-layer]) ::slotted(obc-poi-target) {
   position: absolute;
   transform-origin: 50% 50%;
   --obc-poi-layer-target-scale: 1;
@@ -90,7 +90,7 @@
   transition: opacity 0.4s ease-out;
 }
 
-:host-context(obc-poi-layer):host([data-position-mode="bottom"])
+:host([data-in-poi-layer][data-position-mode="bottom"])
   ::slotted(obc-poi-target) {
   top: auto;
   bottom: 0;
@@ -100,20 +100,20 @@
     scale(var(--obc-poi-layer-target-scale));
 }
 
-:host-context(obc-poi-layer) ::slotted(obc-poi-target[data-behind]),
-:host-context(obc-poi-layer) ::slotted(obc-poi-target[data-exiting]) {
+:host([data-in-poi-layer]) ::slotted(obc-poi-target[data-behind]),
+:host([data-in-poi-layer]) ::slotted(obc-poi-target[data-exiting]) {
   opacity: 0.4;
   --poi-size: 32px;
   --obc-poi-target-icon-opacity: 0;
 }
 
-:host-context(obc-poi-layer) ::slotted(obc-poi-target[data-front]) {
+:host([data-in-poi-layer]) ::slotted(obc-poi-target[data-front]) {
   opacity: 1;
   --poi-size: 36px;
   --obc-poi-target-icon-opacity: 1;
 }
 
-:host-context(obc-poi-layer):host([data-position-mode="bottom"]) .wrapper {
+:host([data-in-poi-layer][data-position-mode="bottom"]) .wrapper {
   transform: translateY(-100%);
 }
 

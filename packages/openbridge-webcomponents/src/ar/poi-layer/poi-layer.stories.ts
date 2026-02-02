@@ -120,7 +120,7 @@ export const AnimatedLayout: Story = {
 
       const tick = (now: number) => {
         const t = (now - start) / 1000;
-        const phase = (1 - Math.cos((t * Math.PI) / 6)) / 2; // slow in/out
+        const phase = (1 - Math.cos((t * Math.PI) / 6)) / 2;
         const x1 = 120 + (260 - 120) * phase;
         const x2 = 520 - (520 - 260) * phase;
 

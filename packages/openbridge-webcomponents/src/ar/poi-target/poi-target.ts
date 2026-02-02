@@ -44,10 +44,44 @@ export enum Pointer {
 export {PoiTargetButtonVisualState as PoiTargetVisualState};
 
 /**
+ * `<obc-poi-target>` renders a point-of-interest marker with a selectable target
+ * button and optional pointer line.
  *
- * @prop {number} x - x-coordinate of target in pixels.
- * @prop {number} y - y-coordinate of target in pixels.
- * @prop {number} height - internal y-coordinate used by the pointer line (synced with y).
+ * Use this component inside `obc-poi-layer` or `obc-poi-target-button-group` to
+ * position targets in AR layers and present status or selection state for a
+ * detection or tracked object.
+ *
+ * ### Features
+ * - Positions via `x`/`y` coordinates and an optional pointer line.
+ * - Visual emphasis controlled by `visualState` (see `PoiTargetVisualState`).
+ * - Multi-value button rendering via the `values` array.
+ * - Horizontal nudging via `buttonOffsetX` for overlap or crossing layouts.
+ * - Supports alert, selection, and pointer variants.
+ *
+ * ### Usage Guidelines
+ * - Set `x`/`y` in pixels to place the target relative to its container.
+ * - Use `visualState` to align with layer or group overlap logic.
+ * - Provide `values` to display secondary statuses on the button.
+ * - Adjust `buttonOffsetX` only when resolving collisions in a layer.
+ *
+ * ### Slots
+ * - None.
+ *
+ * ### Events
+ * - None. This component does not emit custom events.
+ *
+ * ### Best Practices
+ * - Use within `obc-poi-layer` for automatic grouping and overlap behaviors.
+ * - Keep pointer lines short to reduce visual clutter.
+ * - Prefer `PoiTargetVisualState` values over manual styling.
+ *
+ * ### Example
+ * ```html
+ * <obc-poi-target x="120" y="200"></obc-poi-target>
+ * ```
+ *
+ * @slot none
+ * @fires none - This component does not emit custom events.
  */
 
 @customElement('obc-poi-target')
