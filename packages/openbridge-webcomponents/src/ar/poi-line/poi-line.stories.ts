@@ -56,10 +56,6 @@ export const Enhanced: Story = {
   },
 };
 
-/**
- * Demonstrates animated offset via CSS variable --poi-offset.
- * Click button to toggle offset animation.
- */
 export const AnimatedOffset: Story = {
   args: {
     poiStyle: POIStyle.Normal,
@@ -80,6 +76,9 @@ export const AnimatedOffset: Story = {
             const line = document.querySelector(
               '#animated-line'
             ) as HTMLElement;
+            if (!line) {
+              return;
+            }
             const currentOffset =
               getComputedStyle(line).getPropertyValue('--poi-offset');
             if (currentOffset && currentOffset.trim() !== '0px') {

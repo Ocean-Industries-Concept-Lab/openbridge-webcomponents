@@ -8,6 +8,56 @@ import '../poi-target/poi-target.js';
 import {ObcPoiTargetButtonType} from '../poi-target-button/poi-target-button.js';
 import {PoiLayerSelectionMode} from '../poi-layer-stack/poi-layer-stack.js';
 
+/**
+ * `<obc-poi-controller>` maps detections onto media and renders POI overlays.
+ *
+ * ObcPoiController coordinates media sizing with detection data, projects
+ * points into screen space, and renders or updates POI targets in a layer
+ * stack. Use it as the top-level controller for AR target overlays.
+ *
+ * ### Features
+ * - Maps detections to screen coordinates with `fit`, `boxOrigin`, and
+ *   `poiAnchor`.
+ * - Supports frame-based detection playback via `frames` and `frameIndex`.
+ * - Filters detections with `confidenceMin` and `classFilter`.
+ * - Generates stable target keys via `keyFn` when needed.
+ *
+ * ### Usage Guidelines
+ * - Provide a media element in the required `media` slot.
+ * - Provide `detections` or `frames` to render targets.
+ * - Use `fit="contain|cover"` to match media and overlay sizing.
+ * - Use `boxOrigin` and `poiAnchor` to align detections to POI targets.
+ *
+ * ### Slots
+ * - `media` (required) - The video or image element used as the source frame.
+ * - `stack` (optional) - A custom `obc-poi-layer-stack` to render into.
+ *
+ * ### Events
+ * - None. This component does not emit custom events.
+ *
+ * ### Best Practices
+ * - Keep detection lists small for smooth updates.
+ * - Prefer stable IDs or a `keyFn` when detections reorder frequently.
+ * - Supply a custom `stack` when you need bespoke layer ordering.
+ *
+ * ### Keywords
+ * - AR, POI, detections, media overlay, layer stack, targets
+ *
+ * ### Example
+ * ```html
+ * <obc-poi-controller fit="contain">
+ *   <video slot="media" src="media.mp4"></video>
+ *   <obc-poi-layer-stack slot="stack" selection-mode="multi">
+ *     <obc-poi-layer label="Background" layerIndex="2"></obc-poi-layer>
+ *     <obc-poi-layer label="Active" layerIndex="1"></obc-poi-layer>
+ *     <obc-poi-layer label="Selected" layerIndex="0"></obc-poi-layer>
+ *   </obc-poi-layer-stack>
+ * </obc-poi-controller>
+ * ```
+ *
+ * @slot media - Required media element (video or image).
+ * @slot stack - Optional custom layer stack.
+ */
 @customElement('obc-poi-controller')
 export class ObcPoiController extends LitElement {
   @property({type: String}) fit: PoiFitMode = PoiFitMode.Contain;
@@ -67,6 +117,7 @@ export class ObcPoiController extends LitElement {
     this.resizeObserver?.disconnect();
     this.resizeObserver = undefined;
     this.detachMediaListeners();
+    this.controllerTargets.clear();
     const slot = this.shadowRoot?.querySelector('slot[name="media"]');
     slot?.removeEventListener('slotchange', this.handleMediaSlotChange);
     const stackSlot = this.shadowRoot?.querySelector('slot[name="stack"]');

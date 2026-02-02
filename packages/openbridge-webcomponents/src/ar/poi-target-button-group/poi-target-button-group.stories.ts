@@ -229,6 +229,10 @@ export const InternalGroupSwapping: Story = {
 
       const duration = 8000;
       const tick = (now: number) => {
+        if (!root.isConnected) {
+          stopAnimation();
+          return;
+        }
         if (startTime === null) startTime = now;
         const elapsed = now - startTime;
         const t = (elapsed % duration) / duration;
@@ -271,7 +275,8 @@ export const InternalGroupSwapping: Story = {
           stopAnimation();
         }
       });
-      observer.observe(root, {childList: true, subtree: true});
+      const observerTarget = root.parentElement ?? document.body;
+      observer.observe(observerTarget, {childList: true, subtree: true});
     };
 
     setTimeout(() => {

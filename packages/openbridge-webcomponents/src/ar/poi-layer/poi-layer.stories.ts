@@ -548,7 +548,6 @@ export const JoinExpandedGroup: Story = {
         | null;
       if (!a || !b || !c) return;
 
-      // Start with a and b grouped, c far away
       a.x = 300;
       b.x = 320;
       c.x = 520;
@@ -562,12 +561,9 @@ export const JoinExpandedGroup: Story = {
         const elapsed = now - startTime;
         const t = (elapsed % duration) / duration;
 
-        // Wait 3 seconds (50% of duration), then animate c towards the group
         if (t < 0.5) {
-          // c stays at 520px - user should click to expand during this time
           c.x = 520;
         } else {
-          // Animate c from 520px to 340px
           const phase = (t - 0.5) / 0.5;
           const eased = phase * phase * (3 - 2 * phase);
           const x3 = 520 - (520 - 340) * eased;
@@ -644,7 +640,6 @@ export const LeaveExpandedGroup: Story = {
         | null;
       if (!a || !b || !c) return;
 
-      // Start with all three grouped
       a.x = 300;
       b.x = 320;
       c.x = 340;
@@ -658,12 +653,9 @@ export const LeaveExpandedGroup: Story = {
         const elapsed = now - startTime;
         const t = (elapsed % duration) / duration;
 
-        // Wait 3 seconds (50% of duration), then animate c away from the group
         if (t < 0.5) {
-          // c stays at 340px - user should click to expand during this time
           c.x = 340;
         } else {
-          // Animate c from 340px to 520px
           const phase = (t - 0.5) / 0.5;
           const eased = phase * phase * (3 - 2 * phase);
           const x3 = 340 + (520 - 340) * eased;
@@ -737,7 +729,6 @@ export const CrossingMode: Story = {
         | null;
       if (!staticPoi || !movingPoi) return;
 
-      // Static POI stays at 320px
       staticPoi.x = 320;
 
       const start = performance.now();
@@ -747,14 +738,10 @@ export const CrossingMode: Story = {
       const tick = (now: number) => {
         const t = ((now - start) % duration) / duration;
 
-        // Moving POI oscillates from left to right, crossing the static POI
-        // Goes from 180px to 460px and back
         let phase: number;
         if (t < 0.5) {
-          // Move right: 180 -> 460
           phase = t / 0.5;
         } else {
-          // Move left: 460 -> 180
           phase = 1 - (t - 0.5) / 0.5;
         }
         const eased = phase * phase * (3 - 2 * phase);
