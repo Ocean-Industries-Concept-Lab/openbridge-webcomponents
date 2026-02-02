@@ -77,7 +77,9 @@ export const AnimatedOffset: Story = {
         <br /><br />
         <button
           @click=${() => {
-            const line = document.querySelector('#animated-line') as HTMLElement;
+            const line = document.querySelector(
+              '#animated-line'
+            ) as HTMLElement;
             const currentOffset =
               getComputedStyle(line).getPropertyValue('--poi-offset');
             if (currentOffset && currentOffset.trim() !== '0px') {

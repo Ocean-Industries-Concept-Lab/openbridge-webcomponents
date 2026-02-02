@@ -84,11 +84,15 @@
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
     background-color: rgba(255, 255, 255, 0.8);
     border: 1px solid var(--element-active-inverted-color);
-    transition: width 0.3s ease-out, height 0.3s ease-out, background-color 0.3s ease-out, border-color 0.3s ease-out;
+    transition:
+      width 0.3s ease-out,
+      height 0.3s ease-out,
+      background-color 0.3s ease-out,
+      border-color 0.3s ease-out;
   }
 
   /* Overlap state styles - applied via visual state */
-  :host([data-visual-state='overlap']) & {
+  :host([data-visual-state="overlap"]) & {
     width: 48px;
     height: 48px;
     --poi-size: 32px;
@@ -245,7 +249,7 @@
 }
 
 /* Overlap alert color styles */
-:host([data-visual-state='overlap']) .wrapper {
+:host([data-visual-state="overlap"]) .wrapper {
   &.alert-caution .visible-wrapper {
     background-color: var(--alert-caution-color);
     border-color: var(--alert-caution-outline-color);
@@ -348,7 +352,7 @@
 }
 
 /* Overlap state for has-values variant - show only the small circle */
-:host([data-visual-state='overlap']) .wrapper.has-values {
+:host([data-visual-state="overlap"]) .wrapper.has-values {
   border: none;
   background: transparent;
   width: 48px;
