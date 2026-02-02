@@ -79,9 +79,7 @@ const meta: Meta<ObcPoiTargetButtonGroup> = {
             .x=${200}
             .y=${240}
             data-visual-state=${args.expand ? 'overlap' : 'normal'}
-          >
-            <obi-ais-target-activated-iec></obi-ais-target-activated-iec>
-          </obc-poi-target>
+          ></obc-poi-target>
         </div>
       </div>
     `;
@@ -169,9 +167,7 @@ export const GroupedWithNumbers: Story = {
             .y=${240}
             data-visual-state=${args.expand ? 'overlap' : 'normal'}
             selectedId="4"
-          >
-            <obi-ais-target-activated-iec></obi-ais-target-activated-iec>
-          </obc-poi-target>
+          ></obc-poi-target>
         </div>
       </div>
     `;

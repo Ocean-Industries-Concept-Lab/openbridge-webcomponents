@@ -58,7 +58,7 @@ export class ObcPoiController extends LitElement {
     stackSlot?.addEventListener('slotchange', this.handleStackSlotChange);
   }
 
-  override updated(changed: PropertyValues) {
+  override updated(_changed: PropertyValues) {
     this.syncTargetsToCustomStack();
   }
 
