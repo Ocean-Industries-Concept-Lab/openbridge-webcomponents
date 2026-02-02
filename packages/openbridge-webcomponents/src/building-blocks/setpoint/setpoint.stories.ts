@@ -1,8 +1,11 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
+import {userEvent, within} from 'storybook/test';
 
 // Import the bar-vertical component for displaying setpoints in context
 import '../bar-vertical/bar-vertical.js';
+// Import gauge-horizontal for the adjustment flow demo
+import '../../navigation-instruments/gauge-horizontal/gauge-horizontal.js';
 
 // Import setpoint types for documentation
 import {
@@ -452,4 +455,163 @@ export const SetpointComparison: Story = {
       </div>
     </div>
   `,
+};
+
+// =============================================================================
+// Interactive Flow Story
+// =============================================================================
+
+/**
+ * **Setpoint Adjustment Flow** - Interactive demo showing setpoint adjustment UX
+ *
+ * This story demonstrates the complete setpoint adjustment workflow:
+ *
+ * 1. **t=0 (At setpoint)**: Bar is filled to 40, setpoint is at 40 (equal state - 80% size)
+ * 2. **t=1 (Initiate adjustment)**: User starts adjusting, newSetpoint appears at same position
+ * 3. **t=2 (Move new setpoint)**: newSetpoint moves to 80, original setpoint stays dimmed at 40
+ * 4. **t=3 (Confirm)**: newSetpoint confirmed, bar animates to 80, original setpoint moves to 80
+ *
+ * The `newSetpoint` property enables showing both current and proposed setpoint positions
+ * simultaneously, with the original dimmed (0.5 opacity) while adjusting.
+ *
+ * Tertiary tickmarks are shown during adjustment (tertiaryTickbarsInterval=2).
+ */
+export const SetpointAdjustmentFlow: StoryObj = {
+  tags: ['!snapshot'],
+  name: 'Setpoint Adjustment Flow (interactive)',
+  render: () => html`
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+      <div style="font-size: 14px; color: #888;">
+        Click "Play" to watch the setpoint adjustment animation, or interact
+        manually with the controls below.
+      </div>
+      <obc-gauge-horizontal
+        id="setpoint-demo"
+        minValue="0"
+        maxValue="100"
+        side="top"
+        primaryTickbarsInterval="20"
+        secondaryTickbarsInterval="10"
+        tertiaryTickbarsInterval="2"
+        enhanced
+        fillMode="${FillMode.fill}"
+        fillMin="0"
+        fillMax="40"
+        value="40"
+        setpoint="40"
+        state="inCommand"
+      ></obc-gauge-horizontal>
+
+      <div
+        style="display: flex; gap: 16px; flex-wrap: wrap; align-items: center;"
+      >
+        <button id="btn-reset" style="padding: 8px 16px; cursor: pointer;">
+          Reset (t=0)
+        </button>
+        <button id="btn-initiate" style="padding: 8px 16px; cursor: pointer;">
+          Initiate (t=1)
+        </button>
+        <button id="btn-move" style="padding: 8px 16px; cursor: pointer;">
+          Move (t=2)
+        </button>
+        <button id="btn-confirm" style="padding: 8px 16px; cursor: pointer;">
+          Confirm (t=3)
+        </button>
+      </div>
+
+      <div
+        id="status"
+        style="font-size: 12px; color: #666; font-family: monospace;"
+      >
+        State: t=0 (at setpoint) | value=40, setpoint=40, newSetpoint=undefined
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        // Wait for elements to be ready
+        setTimeout(() => {
+          const gauge = document.getElementById('setpoint-demo');
+          const status = document.getElementById('status');
+          const btnReset = document.getElementById('btn-reset');
+          const btnInitiate = document.getElementById('btn-initiate');
+          const btnMove = document.getElementById('btn-move');
+          const btnConfirm = document.getElementById('btn-confirm');
+
+          if (!gauge || !status) return;
+
+          const updateStatus = (state, value, setpoint, newSetpoint) => {
+            status.textContent =
+              'State: ' +
+              state +
+              ' | value=' +
+              value +
+              ', setpoint=' +
+              setpoint +
+              ', newSetpoint=' +
+              (newSetpoint ?? 'undefined');
+          };
+
+          // t=0: At setpoint (initial state)
+          btnReset?.addEventListener('click', () => {
+            gauge.value = 40;
+            gauge.fillMax = 40;
+            gauge.setpoint = 40;
+            gauge.newSetpoint = undefined;
+            updateStatus('t=0 (at setpoint)', 40, 40, undefined);
+          });
+
+          // t=1: Initiate adjustment (newSetpoint appears)
+          btnInitiate?.addEventListener('click', () => {
+            gauge.newSetpoint = 40;
+            updateStatus('t=1 (initiate)', 40, 40, 40);
+          });
+
+          // t=2: Move newSetpoint to 80
+          btnMove?.addEventListener('click', () => {
+            gauge.newSetpoint = 80;
+            updateStatus('t=2 (move)', 40, 40, 80);
+          });
+
+          // t=3: Confirm - move setpoint to 80, animate bar
+          btnConfirm?.addEventListener('click', () => {
+            gauge.newSetpoint = undefined;
+            gauge.setpoint = 80;
+            // Animate bar to new value
+            gauge.fillMax = 80;
+            gauge.value = 80;
+            updateStatus('t=3 (confirm)', 80, 80, undefined);
+          });
+        }, 100);
+      })();
+    </script>
+  `,
+  play: async ({canvasElement}) => {
+    const canvas = within(canvasElement);
+
+    // Wait for component to render
+    await new Promise((r) => setTimeout(r, 500));
+
+    // Get buttons
+    const btnReset = canvas.getByRole('button', {name: /Reset/});
+    const btnInitiate = canvas.getByRole('button', {name: /Initiate/});
+    const btnMove = canvas.getByRole('button', {name: /Move/});
+    const btnConfirm = canvas.getByRole('button', {name: /Confirm/});
+
+    // Step 1: Ensure we're at initial state
+    await userEvent.click(btnReset);
+    await new Promise((r) => setTimeout(r, 1000));
+
+    // Step 2: Initiate adjustment
+    await userEvent.click(btnInitiate);
+    await new Promise((r) => setTimeout(r, 1500));
+
+    // Step 3: Move newSetpoint to 80
+    await userEvent.click(btnMove);
+    await new Promise((r) => setTimeout(r, 2000));
+
+    // Step 4: Confirm the new setpoint
+    await userEvent.click(btnConfirm);
+    await new Promise((r) => setTimeout(r, 1000));
+  },
 };

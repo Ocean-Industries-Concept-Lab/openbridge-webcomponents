@@ -230,6 +230,14 @@ export class ObcGaugeVertical extends LitElement {
 
   /** Setpoint/target value to display as indicator. When undefined, setpoint is off. */
   @property({type: Number}) setpoint?: number = undefined;
+  /**
+   * New setpoint value being adjusted (focus/adjustment mode).
+   * When defined, displays a second setpoint marker in 'focus' visual state,
+   * while the original `setpoint` marker is dimmed (0.5 opacity).
+   * This enables the "adjustment preview" UX where users can see both the current
+   * and proposed setpoint positions simultaneously.
+   */
+  @property({type: Number}) newSetpoint?: number = undefined;
   /** Whether value is at setpoint (manual override when disableAutoAtSetpoint=true) */
   @property({type: Boolean}) atSetpoint = false;
   /** Disable automatic atSetpoint calculation based on value and deadband */
@@ -294,6 +302,7 @@ export class ObcGaugeVertical extends LitElement {
       fillMax: this.fillMax,
       value: this.value,
       setpoint: this.setpoint,
+      newSetpoint: this.newSetpoint,
       atSetpoint: this.atSetpoint,
       disableAutoAtSetpoint: this.disableAutoAtSetpoint,
       autoAtSetpointDeadband: this.autoAtSetpointDeadband,

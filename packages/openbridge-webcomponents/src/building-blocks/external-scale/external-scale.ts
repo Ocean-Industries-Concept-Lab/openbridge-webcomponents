@@ -515,6 +515,14 @@ export interface ExternalScaleConfig {
    * When a number, the setpoint marker is shown at that value.
    */
   setpoint?: number;
+  /**
+   * New setpoint value being adjusted (focus mode).
+   * When defined, renders a second setpoint marker in 'focus' visual state.
+   * The original `setpoint` marker is dimmed (0.5 opacity) while `newSetpoint` is active.
+   * This enables the "adjustment preview" UX where users can see both the current
+   * and proposed setpoint positions simultaneously.
+   */
+  newSetpoint?: number;
   /** Manual override used when disableAutoAtSetpoint=true. */
   atSetpoint: boolean;
   /** When false, at-setpoint is derived from value/setpoint and deadband. */
@@ -2193,38 +2201,40 @@ function getSetpointRotation(config: ExternalScaleConfig): number {
 }
 
 /**
- * Render the setpoint marker using the unified interface from setpoint.ts.
+ * Helper to render a single setpoint marker at a given value.
  *
- * The marker is positioned on the scale based on the setpoint value,
- * with transforms applied for orientation/side.
+ * @param config - Scale configuration
+ * @param setpointValue - The value to position the marker at
+ * @param visualState - The visual state for the marker
+ * @param colorMode - The color mode for the marker
+ * @param idSuffix - Suffix for the unique ID
+ * @param opacity - Optional opacity (default 1)
  */
-function setpointMarker(
-  config: ExternalScaleConfig
-): SVGTemplateResult | typeof nothing {
-  if (config.setpoint === undefined) return nothing;
-
-  // Derive visual state and color mode from config
-  const visualState = deriveSetpointVisualState(config);
-  const colorMode = deriveSetpointColorMode(config);
-
+function renderSingleSetpoint(
+  config: ExternalScaleConfig,
+  setpointValue: number,
+  visualState: SetpointVisualState,
+  colorMode: SetpointColorMode,
+  idSuffix: string,
+  opacity: number = 1
+): SVGTemplateResult {
   // Generate unique ID to avoid conflicts with multiple instruments on page
-  const baseId = generateSetpointId('external-scale-setpoint');
+  const baseId = generateSetpointId(`external-scale-setpoint-${idSuffix}`);
 
   // Get outward offset based on visual state (drawSetpointMarker handles scaling internally)
   const stateOffset = getSetpointOutwardOffset(visualState);
 
   // Check if setpoint snaps to zero
   const setpointAtZero =
-    Math.abs(config.setpoint) < config.setpointAtZeroDeadband;
+    Math.abs(setpointValue) < config.setpointAtZeroDeadband;
 
   // Main axis position (where the marker sits along the scale)
   const mainAxisPos = setpointAtZero
     ? 0
-    : valueToMainAxis(config, config.setpoint);
+    : valueToMainAxis(config, setpointValue);
 
   // Perpendicular axis position (distance from chart edge)
   const base = tickBasePerp(config);
-  // const outwardOffset = tickGap() + 4; // Base offset from tick area, old implementation
   const outwardOffset = tickGap(); // Base offset from tick area
 
   // Add state-based offset (shifts marker further outward for notEqual/focus/equalZero states)
@@ -2244,10 +2254,71 @@ function setpointMarker(
 
   // Note: drawSetpointMarker() handles scaling internally based on visualState
   return svg`
-    <g transform="translate(${x}, ${y}) rotate(${rotation})">
+    <g transform="translate(${x}, ${y}) rotate(${rotation})" opacity="${opacity}">
       ${drawSetpointMarker({visualState, colorMode, id: baseId})}
     </g>
   `;
+}
+
+/**
+ * Render the setpoint marker(s) using the unified interface from setpoint.ts.
+ *
+ * When `newSetpoint` is defined, renders two markers:
+ * 1. Original setpoint at 0.5 opacity (dimmed)
+ * 2. New setpoint in 'focus' visual state at full opacity (on top)
+ *
+ * The marker is positioned on the scale based on the setpoint value,
+ * with transforms applied for orientation/side.
+ */
+function setpointMarker(
+  config: ExternalScaleConfig
+): SVGTemplateResult | typeof nothing {
+  const hasOriginalSetpoint = config.setpoint !== undefined;
+  const hasNewSetpoint = config.newSetpoint !== undefined;
+
+  // If neither setpoint is defined, render nothing
+  if (!hasOriginalSetpoint && !hasNewSetpoint) return nothing;
+
+  const markers: SVGTemplateResult[] = [];
+
+  // Render original setpoint (dimmed when newSetpoint is active)
+  if (hasOriginalSetpoint) {
+    const visualState = deriveSetpointVisualState(config);
+    const colorMode = deriveSetpointColorMode(config);
+    const opacity = hasNewSetpoint ? 0.75 : 1;
+
+    markers.push(
+      renderSingleSetpoint(
+        config,
+        config.setpoint!,
+        visualState,
+        colorMode,
+        'original',
+        opacity
+      )
+    );
+  }
+
+  // Render newSetpoint in focus state (always on top)
+  if (hasNewSetpoint) {
+    // newSetpoint always renders in focus visual state
+    const visualState = SetpointVisualState.focus;
+    // Use the same color mode derivation but could be enhanced when focused
+    const colorMode = deriveSetpointColorMode(config);
+
+    markers.push(
+      renderSingleSetpoint(
+        config,
+        config.newSetpoint!,
+        visualState,
+        colorMode,
+        'new',
+        1
+      )
+    );
+  }
+
+  return svg`${markers}`;
 }
 
 /**
