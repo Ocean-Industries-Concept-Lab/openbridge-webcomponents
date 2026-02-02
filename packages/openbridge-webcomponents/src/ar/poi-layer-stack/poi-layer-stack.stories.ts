@@ -46,16 +46,12 @@ const renderTwoLayers = (args: PoiLayerStackArgs) => html`
     }
   </style>
   <obc-poi-layer-stack class="stack" selection-mode=${args.selectionMode}>
-    <obc-poi-layer
-      .label=${args.label}
-      .layerIndex=${args.layerIndex}
-      ?debug=${args.debug}
-    >
+    <obc-poi-layer label="Layer A" role="selected" .layerIndex=${1} debug>
+      <obc-poi-target .x=${220} .y=${90}> </obc-poi-target>
+    </obc-poi-layer>
+    <obc-poi-layer label="Layer B" role="default" .layerIndex=${2} debug>
       <obc-poi-target .x=${120} .y=${110}> </obc-poi-target>
       <obc-poi-target .x=${320} .y=${70}> </obc-poi-target>
-    </obc-poi-layer>
-    <obc-poi-layer label="Layer B" .layerIndex=${args.layerIndex + 1} debug>
-      <obc-poi-target .x=${220} .y=${90}> </obc-poi-target>
     </obc-poi-layer>
   </obc-poi-layer-stack>
 `;

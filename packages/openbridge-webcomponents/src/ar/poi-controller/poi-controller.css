@@ -31,7 +31,7 @@
   z-index: 1;
 }
 
-.overlay obc-poi-layer-stack {
+.overlay ::slotted(obc-poi-layer-stack) {
   position: absolute;
   left: 0;
   right: 0;
@@ -40,8 +40,4 @@
   height: var(--obc-poi-controller-stack-height, 40%);
   max-height: 100%;
   pointer-events: none;
-}
-
-.overlay obc-poi-layer-stack > * {
-  pointer-events: auto;
 }

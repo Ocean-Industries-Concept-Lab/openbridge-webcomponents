@@ -2,10 +2,10 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import './poi-controller.js';
 import {PoiFitMode} from './poi-controller.js';
+import {PoiLayerSelectionMode} from '../poi-layer-stack/poi-layer-stack.js';
 
 type PoiControllerArgs = {
   fit: PoiFitMode;
-  useCustomStack: boolean;
   classFilter: string[];
 };
 
@@ -15,7 +15,6 @@ const meta: Meta<PoiControllerArgs> = {
   component: 'obc-poi-controller',
   args: {
     fit: PoiFitMode.Contain,
-    useCustomStack: false,
     classFilter: [],
   },
   render: (args) => {
@@ -68,18 +67,13 @@ const meta: Meta<PoiControllerArgs> = {
           .classFilter=${args.classFilter}
         >
           <img slot="media" src="/AR-test-image.png" />
-          ${args.useCustomStack
-            ? html`
-                <obc-poi-layer-stack slot="stack">
-                  <obc-poi-layer role="selected"></obc-poi-layer>
-                  <obc-poi-layer
-                    data-controller-layer="background"
-                    role="default"
-                  >
-                  </obc-poi-layer>
-                </obc-poi-layer-stack>
-              `
-            : null}
+          <obc-poi-layer-stack
+            slot="stack"
+            selection-mode=${PoiLayerSelectionMode.Single}
+          >
+            <obc-poi-layer role="selected" .layerIndex=${0}></obc-poi-layer>
+            <obc-poi-layer role="default" .layerIndex=${1}></obc-poi-layer>
+          </obc-poi-layer-stack>
         </obc-poi-controller>
       </div>
     `;

@@ -116,13 +116,7 @@ export class ObcPoiLayerStack extends LitElement {
 
     if (this.selectionMode === PoiLayerSelectionMode.Single) {
       this.clearOtherTopSelections(target);
-      this.selectionMap.forEach((record, other) => {
-        this.clearTargetGroupingAttributes(other);
-        this.restoreTargetHeight(other as ObcPoiTarget, record.originHeight);
-        this.moveTargetToLayer(other, record.originLayer, true);
-        this.selectionMap.delete(other);
-        this.clearTargetSelectedId(other as ObcPoiTarget);
-      });
+      this.clearSelectionMapExcept(target);
     }
 
     const originHeight = this.getTargetHeight(target);
@@ -187,25 +181,22 @@ export class ObcPoiLayerStack extends LitElement {
   }
 
   private clearOtherTopSelections(target: HTMLElement) {
-    const topLayer = this.getTopLayer();
-    if (!topLayer) return;
-    const secondTop = this.getSecondTopLayer();
-    if (!secondTop) return;
+    const activeLayer = this.getSelectedLayer() ?? this.getTopLayer();
+    if (!activeLayer) return;
+    const fallbackLayer =
+      this.getDefaultLayer() ??
+      (activeLayer === this.getTopLayer() ? this.getSecondTopLayer() : null);
     const topTargets = Array.from(
-      topLayer.querySelectorAll('obc-poi-target')
+      activeLayer.querySelectorAll('obc-poi-target')
     ) as HTMLElement[];
     topTargets.forEach((other) => {
       if (other === target) return;
       const record = this.selectionMap.get(other);
-      if (record) {
-        this.clearTargetGroupingAttributes(other);
-        this.moveTargetToLayer(other, record.originLayer);
-        this.selectionMap.delete(other);
-        this.clearTargetSelectedId(other as ObcPoiTarget);
-      } else {
-        this.clearTargetGroupingAttributes(other);
-        this.moveTargetToLayer(other, secondTop);
-      }
+      this.resetSelectionForTarget(
+        other as ObcPoiTarget,
+        record,
+        fallbackLayer
+      );
     });
   }
 
@@ -248,6 +239,39 @@ export class ObcPoiLayerStack extends LitElement {
       target.style.removeProperty('--obc-poi-overlap-pointer-events');
       target.removeAttribute('data-front');
     }
+  }
+
+  private resetSelectionForTarget(
+    target: ObcPoiTarget,
+    record?: {
+      originLayer: ObcPoiLayer;
+      originIndex: number;
+      originHeight: number;
+    },
+    fallbackLayer?: ObcPoiLayer | null
+  ) {
+    this.setSelectedTargetInteractivity(target, false);
+    this.clearTargetGroupingAttributes(target);
+    this.clearTargetSelectedId(target);
+    if (record) {
+      this.restoreTargetHeight(target, record.originHeight);
+      if (record.originLayer !== target.closest('obc-poi-layer')) {
+        this.moveTargetToLayer(target, record.originLayer, true);
+      }
+      this.selectionMap.delete(target);
+      return;
+    }
+    if (fallbackLayer && fallbackLayer !== target.closest('obc-poi-layer')) {
+      this.moveTargetToLayer(target, fallbackLayer, true);
+    }
+  }
+
+  private clearSelectionMapExcept(target: ObcPoiTarget) {
+    const entries = Array.from(this.selectionMap.entries());
+    entries.forEach(([other, record]) => {
+      if (other === target) return;
+      this.resetSelectionForTarget(other as ObcPoiTarget, record);
+    });
   }
 
   private setupMutationObserver() {
@@ -418,6 +442,12 @@ export class ObcPoiLayerStack extends LitElement {
     ) as ObcPoiTarget[];
     targets.forEach((target) => {
       if (this.selectionMap.has(target)) return;
+      if (
+        this.selectionMode === PoiLayerSelectionMode.Single &&
+        this.selectionMap.size > 0
+      ) {
+        return;
+      }
       const currentLayer = target.closest(
         'obc-poi-layer'
       ) as ObcPoiLayer | null;

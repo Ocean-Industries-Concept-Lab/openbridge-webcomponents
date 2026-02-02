@@ -24,13 +24,14 @@ import {PoiLayerSelectionMode} from '../poi-layer-stack/poi-layer-stack.js';
  *
  * ### Usage Guidelines
  * - Provide a media element in the required `media` slot.
+ * - Provide an `obc-poi-layer-stack` in the required `stack` slot.
  * - Provide `detections` or `frames` to render targets.
  * - Use `fit="contain|cover"` to match media and overlay sizing.
  * - Use `boxOrigin` and `poiAnchor` to align detections to POI targets.
  *
  * ### Slots
  * - `media` (required) - The video or image element used as the source frame.
- * - `stack` (optional) - A custom `obc-poi-layer-stack` to render into.
+ * - `stack` (required) - An `obc-poi-layer-stack` to render into.
  *
  * ### Events
  * - None. This component does not emit custom events.
@@ -38,7 +39,7 @@ import {PoiLayerSelectionMode} from '../poi-layer-stack/poi-layer-stack.js';
  * ### Best Practices
  * - Keep detection lists small for smooth updates.
  * - Prefer stable IDs or a `keyFn` when detections reorder frequently.
- * - Supply a custom `stack` when you need bespoke layer ordering.
+ * - Configure your layer stack with appropriate roles and layer indices.
  *
  * ### Keywords
  * - AR, POI, detections, media overlay, layer stack, targets
@@ -58,7 +59,7 @@ import {PoiLayerSelectionMode} from '../poi-layer-stack/poi-layer-stack.js';
  * ```
  *
  * @slot media - Required media element (video or image).
- * @slot stack - Optional custom layer stack.
+ * @slot stack - Required layer stack.
  */
 @customElement('obc-poi-controller')
 export class ObcPoiController extends LitElement {
@@ -367,48 +368,13 @@ export class ObcPoiController extends LitElement {
   }
 
   override render() {
-    const customStack = this.getStackElement();
     return html`
       <div class="wrapper">
         <div class="media">
           <slot name="media"></slot>
         </div>
         <div class="overlay">
-          ${customStack
-            ? html`<slot name="stack"></slot>`
-            : html`
-                <obc-poi-layer-stack
-                  selection-mode=${PoiLayerSelectionMode.Multi}
-                >
-                  <obc-poi-layer
-                    label="Selected"
-                    role="selected"
-                    .layerIndex=${0}
-                  ></obc-poi-layer>
-                  <obc-poi-layer
-                    label="Active"
-                    .layerIndex=${1}
-                  ></obc-poi-layer>
-                  <obc-poi-layer
-                    label="Background"
-                    role="default"
-                    .layerIndex=${2}
-                  >
-                    ${this.getActiveDetections().map((det, index) => {
-                      const mapped = this.mapDetection(det);
-                      if (!mapped) return null;
-                      return html`
-                        <obc-poi-target
-                          .x=${mapped.x}
-                          .y=${mapped.y}
-                          .type=${ObcPoiTargetButtonType.Button}
-                          data-detection-index=${index}
-                        ></obc-poi-target>
-                      `;
-                    })}
-                  </obc-poi-layer>
-                </obc-poi-layer-stack>
-              `}
+          <slot name="stack"></slot>
         </div>
       </div>
     `;
