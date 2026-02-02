@@ -22,14 +22,14 @@
  * The `drawSetpointMarker()` function renders the marker with:
  * - **Tip at origin (0, 0)**
  * - **Triangle pointing "down" (positive Y direction)**
- * - **Size: 24px wide × 24px tall** (tip to base)
+ * - **Size: 26px wide × 21px tall** (tip to base)
  *
  * Callers must apply transforms to:
  * - Position the marker at the correct location
  * - Rotate for radial instruments or flip for different sides
  *
  * ```
- *        ┌─────────────┐   ← base (y = -24)
+ *        ┌─────────────┐   ← base (y = -21)
  *        │             │
  *        └──────┬──────┘
  *               │
