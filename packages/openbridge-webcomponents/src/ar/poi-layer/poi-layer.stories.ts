@@ -128,10 +128,6 @@ export const AnimatedLayout: Story = {
         second.y = 70;
         third.y = 90;
         fourth.y = 100;
-        first.setAttribute('y', '110');
-        second.setAttribute('y', '70');
-        third.setAttribute('y', '90');
-        fourth.setAttribute('y', '100');
         first.x = Math.round(x1);
         second.x = Math.round(x2);
         third.x = Math.round(520 + 100 * Math.sin(t * 0.6 + 1));

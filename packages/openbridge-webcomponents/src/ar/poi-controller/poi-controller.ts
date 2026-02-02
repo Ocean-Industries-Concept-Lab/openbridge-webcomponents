@@ -1,7 +1,7 @@
 import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
 import {property, queryAssignedElements, state} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
-import compentStyle from './poi-controller.css?inline';
+import componentStyle from './poi-controller.css?inline';
 import '../poi-layer-stack/poi-layer-stack.js';
 import '../poi-layer/poi-layer.js';
 import '../poi-target/poi-target.js';
@@ -352,7 +352,7 @@ export class ObcPoiController extends LitElement {
     `;
   }
 
-  static override styles = unsafeCSS(compentStyle);
+  static override styles = unsafeCSS(componentStyle);
 }
 
 declare global {
