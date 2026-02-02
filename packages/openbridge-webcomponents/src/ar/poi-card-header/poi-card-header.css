@@ -1,7 +1,3 @@
-.source-badge {
-  box-sizing: border-box;
-}
-
 .wrapper {
   display: flex;
   position: relative;
@@ -136,6 +132,7 @@
 
 /* Source badge */
 .source-badge {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;

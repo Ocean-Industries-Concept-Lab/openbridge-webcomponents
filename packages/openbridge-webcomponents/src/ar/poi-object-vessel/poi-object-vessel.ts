@@ -83,7 +83,7 @@ export class ObcPoiObjectVessel extends ObcAbstractPoiObject {
       case ObcPoiObjectVesselType.NUpLarge:
         return ObcPoiObjectType.NUpLarge;
       default:
-        throw new Error(`Invalid vessel type: ${this.type}`);
+        return ObcPoiObjectType.Regular;
     }
   }
 

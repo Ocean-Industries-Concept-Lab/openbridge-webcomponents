@@ -174,6 +174,7 @@ export class ObcPoiObject extends LitElement {
 
   private handleKeyDown(e: KeyboardEvent) {
     if (!this.isInteractive) return;
+    if (e.target !== e.currentTarget) return;
     if (e.key === ' ') {
       e.preventDefault();
     } else if (e.key === 'Enter' && !e.repeat) {
@@ -184,6 +185,7 @@ export class ObcPoiObject extends LitElement {
 
   private handleKeyUp(e: KeyboardEvent) {
     if (!this.isInteractive) return;
+    if (e.target !== e.currentTarget) return;
     if (e.key === ' ') {
       e.preventDefault();
       this.click();
