@@ -64,6 +64,18 @@ export enum AutomationButtonLabelDirection {
   right = 'right',
 }
 
+/**
+ * The positioning of the automation button.
+ * - `point`: The button is wrapped in a 0x0 px div, where the center of the symbol is the center of the div.
+ * - `symbol`: The button is wrapped in a div containing the symbol but not the readout stack
+ * - `button`: The button not wrapped, in is positioned based on the full size of the button.
+ */
+export enum AutomationButtonPositioning {
+  point = 'point',
+  symbol = 'symbol',
+  button = 'button',
+}
+
 @customElement('obc-automation-button')
 export class ObcAutomationButton extends LitElement {
   @property({type: String}) variant: AutomationButtonVariant =
@@ -91,6 +103,8 @@ export class ObcAutomationButton extends LitElement {
   @property({type: Boolean}) progress: boolean = false;
   @property({type: String}) direction: AutomationButtonDirection =
     AutomationButtonDirection.forward;
+  @property({type: String}) positioning: AutomationButtonPositioning =
+    AutomationButtonPositioning.point;
   /** Badge spacer should be set to true if there is a badge on the same side as the label */
   @property({type: Boolean}) hasBadgeSpacer: boolean = false;
 
@@ -103,74 +117,89 @@ export class ObcAutomationButton extends LitElement {
     const hasLabelContent =
       !this.hideReadoutStack && (this.readouts.length > 0 || this.hasIdTag);
 
-    return html`
-      <div class="outer-wrapper">
-        <button
-          class=${classMap({
-            wrapper: true,
-            ['variant-' + this.variant]: true,
-            ['state-' + this.state]: true,
-            'label-empty': !hasLabelContent,
-            ['label-' + this.readoutPosition]: true,
-            'has-badge-spacer': this.hasBadgeSpacer,
-            alert: this.alert,
-            progress: this.progress,
-            static: this.static,
-          })}
-        >
-          <div class="icon-touch-target">
-            <div class="icon-holder">
-              ${direction}
-              <div class="icon-primary">
-                <slot name="icon"></slot>
-              </div>
-              ${this.variant === AutomationButtonVariant.flat
-                ? html` <div class="icon-siluette">
-                    <slot name="icon-siluette"></slot>
-                  </div>`
-                : nothing}
-              ${progressSpinner}
+    return this.wrapContent(html`
+      <button
+        class=${classMap({
+          wrapper: true,
+          ['positioning-' + this.positioning]: true,
+          ['variant-' + this.variant]: true,
+          ['state-' + this.state]: true,
+          'label-empty': !hasLabelContent,
+          ['label-' + this.readoutPosition]: true,
+          'has-badge-spacer': this.hasBadgeSpacer,
+          alert: this.alert,
+          progress: this.progress,
+          static: this.static,
+        })}
+      >
+        <div class="icon-touch-target">
+          <div class="icon-holder">
+            ${direction}
+            <div class="icon-primary">
+              <slot name="icon"></slot>
             </div>
-            <div class="badge-top-right">
-              <slot name="badge-top-right"></slot>
-            </div>
-            <div class="badge-top-left">
-              <slot name="badge-top-left"></slot>
-            </div>
-            <div class="badge-bottom-left">
-              <slot name="badge-bottom-left"></slot>
-            </div>
-            <div class="badge-bottom-right">
-              <slot name="badge-bottom-right"></slot>
-            </div>
+            ${this.variant === AutomationButtonVariant.flat
+              ? html` <div class="icon-siluette">
+                  <slot name="icon-siluette"></slot>
+                </div>`
+              : nothing}
+            ${progressSpinner}
           </div>
-          ${this.hideReadoutStack
-            ? nothing
-            : html`
-                <div class="badge-spacer"></div>
-                <obc-automation-button-readout-stack
-                  .readouts=${this.readouts}
-                  .tag=${resolvedTag}
-                  .hasIdTag=${this.hasIdTag}
-                  .size=${this.readoutSize}
-                  .idTagOrientation=${this.getIdTagOrientation()}
-                ></obc-automation-button-readout-stack>
-              `}
-          ${this.alert
-            ? html` <obc-alert-frame
-                class="alert-frame"
-                .type=${this.alertFrameType}
-                .thickness=${this.alertFrameThickness}
-                .status=${this.alertFrameStatus}
-              >
-                <span slot="icon"><slot name="alert-icon"></slot></span>
-                <span slot="label"><slot name="alert-label"></slot></span>
-                <span slot="timer"><slot name="alert-timer"></slot></span>
-              </obc-alert-frame>`
-            : nothing}
-        </button>
-      </div>
-    `;
+          <div class="badge-top-right">
+            <slot name="badge-top-right"></slot>
+          </div>
+          <div class="badge-top-left">
+            <slot name="badge-top-left"></slot>
+          </div>
+          <div class="badge-bottom-left">
+            <slot name="badge-bottom-left"></slot>
+          </div>
+          <div class="badge-bottom-right">
+            <slot name="badge-bottom-right"></slot>
+          </div>
+        </div>
+        ${this.hideReadoutStack
+          ? nothing
+          : html`
+              <div class="badge-spacer"></div>
+              <obc-automation-button-readout-stack
+                .readouts=${this.readouts}
+                .tag=${resolvedTag}
+                .hasIdTag=${this.hasIdTag}
+                .size=${this.readoutSize}
+                .idTagOrientation=${this.getIdTagOrientation()}
+              ></obc-automation-button-readout-stack>
+            `}
+        ${this.alert
+          ? html` <obc-alert-frame
+              class="alert-frame"
+              .type=${this.alertFrameType}
+              .thickness=${this.alertFrameThickness}
+              .status=${this.alertFrameStatus}
+            >
+              <span slot="icon"><slot name="alert-icon"></slot></span>
+              <span slot="label"><slot name="alert-label"></slot></span>
+              <span slot="timer"><slot name="alert-timer"></slot></span>
+            </obc-alert-frame>`
+          : nothing}
+      </button>
+    `);
+  }
+
+  private wrapContent(content: HTMLTemplateResult): HTMLTemplateResult {
+    if (this.positioning === AutomationButtonPositioning.point) {
+      return html`<div class="point-wrapper">${content}</div>`;
+    } else if (this.positioning === AutomationButtonPositioning.symbol) {
+      return html`<div
+        class=${classMap({
+          'symbol-wrapper': true,
+          ['label-' + this.readoutPosition]: true,
+        })}
+      >
+        ${content}
+      </div> `;
+    }
+    return content;
   }
 
   static override styles = unsafeCSS(compentStyle);

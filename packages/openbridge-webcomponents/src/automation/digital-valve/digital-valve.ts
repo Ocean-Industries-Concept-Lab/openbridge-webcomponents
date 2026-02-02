@@ -21,8 +21,8 @@ export class ObcDigitalValve extends ObcAbstractAutomationButton {
   @property({type: Boolean}) open: boolean = false;
   @property({type: Boolean}) vertical: boolean = false;
 
-  // @ts-expect-error - can be any of the DigitalValveVariant, not square or double
-  override variant: DigitalValveVariant;
+  @property({type: String}) variant: DigitalValveVariant =
+    DigitalValveVariant.regular;
 
   override get _on(): boolean {
     return this.open;

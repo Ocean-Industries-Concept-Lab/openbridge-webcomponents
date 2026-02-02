@@ -14,10 +14,7 @@ const meta: Meta<ObcPoiTarget> = {
     pointerType: Pointer.Line,
     relativeDirection: 0,
     offset: 0,
-    values: [
-      {value: '10', label: 'Lab', unit: 'Unit'},
-      {value: '20', label: 'Lab 2', unit: 'Unit 2'},
-    ],
+    values: [],
   },
   decorators: [crossDecorator],
   argTypes: {
