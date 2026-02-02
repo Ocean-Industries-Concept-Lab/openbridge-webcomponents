@@ -100,6 +100,7 @@ export class ObcPoiTarget extends LitElement {
   @property({type: String}) pointerType: Pointer = Pointer.Line;
   @property({type: Number}) relativeDirection = 0;
   @property({type: Number}) offset = 0;
+  @property({type: Number, attribute: 'top-offset'}) topOffset = 0;
   @property({type: Number}) buttonOffsetX = 0;
   @property({type: Boolean, attribute: 'show-id'}) showId = false;
   private syncingPosition = false;
@@ -152,6 +153,7 @@ export class ObcPoiTarget extends LitElement {
   override render() {
     let pointer = null;
     let verticalOffset = 0;
+    const lineOffset = this.offset - this.topOffset;
 
     if (this.selected) {
       // get the offset from the css variable
@@ -168,7 +170,7 @@ export class ObcPoiTarget extends LitElement {
             class="line"
             height=${this.y + verticalOffset}
             poiStyle=${valueToPointerStyle(this.value)}
-            .offset=${this.offset}
+            .offset=${lineOffset}
           ></obc-poi-line>
         `;
         break;
@@ -192,10 +194,19 @@ export class ObcPoiTarget extends LitElement {
           ['type-' + this.pointerType]: true,
           selected: this.selected,
         })}
-        ?data-no-transition=${this.buttonOffsetX !== 0 || this.offset !== 0}
-        style=${this.buttonOffsetX !== 0
-          ? `--obc-poi-target-button-offset-x: ${this.buttonOffsetX}px; --poi-offset: ${this.buttonOffsetX}px;`
-          : ''}
+        ?data-no-transition=${this.buttonOffsetX !== 0 ||
+        this.offset !== 0 ||
+        this.topOffset !== 0}
+        style=${[
+          this.buttonOffsetX !== 0
+            ? `--obc-poi-target-button-offset-x: ${this.buttonOffsetX}px; --poi-offset: ${this.buttonOffsetX}px;`
+            : '',
+          this.topOffset !== 0
+            ? `--obc-poi-target-top-offset-x: ${this.topOffset}px;`
+            : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
       >
         <obc-poi-target-button
           .relativeDirection=${this.relativeDirection}

@@ -14,6 +14,7 @@ const meta: Meta<ObcPoiTarget> = {
     pointerType: Pointer.Line,
     relativeDirection: 0,
     offset: 0,
+    topOffset: 0,
     values: [],
   },
   decorators: [crossDecorator],
@@ -37,6 +38,9 @@ const meta: Meta<ObcPoiTarget> = {
       control: {type: 'range', min: 0, max: 360},
     },
     offset: {
+      control: {type: 'range', min: -100, max: 100, step: 1},
+    },
+    topOffset: {
       control: {type: 'range', min: -100, max: 100, step: 1},
     },
     values: {
@@ -68,6 +72,7 @@ const meta: Meta<ObcPoiTarget> = {
           .pointerType=${args.pointerType}
           .relativeDirection=${args.relativeDirection}
           .offset=${args.offset}
+          .topOffset=${args.topOffset}
           .values=${args.values}
         ></obc-poi-target>
       </div>
@@ -118,6 +123,7 @@ export const WithValues: Story = {
           .pointerType=${args.pointerType}
           .relativeDirection=${args.relativeDirection}
           .offset=${args.offset}
+          .topOffset=${args.topOffset}
           .values=${values}
         ></obc-poi-target>
       </div>
@@ -208,8 +214,7 @@ export const AnimatedOffsetTop: Story = {
       if (buttonOffset > 50) direction = -1;
       if (buttonOffset < -50) direction = 1;
 
-      target.style.transform = `translateX(${buttonOffset}px)`;
-      target.offset = -buttonOffset;
+      target.topOffset = buttonOffset;
 
       if (target.isConnected) {
         requestAnimationFrame(animate);

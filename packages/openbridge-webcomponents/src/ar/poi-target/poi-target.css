@@ -15,6 +15,7 @@
   flex-direction: column;
   align-items: center;
   width: 0;
+  transform: translateX(var(--obc-poi-target-top-offset-x, 0px));
 }
 
 .line {
