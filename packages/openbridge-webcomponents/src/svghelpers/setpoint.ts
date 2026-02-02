@@ -286,8 +286,7 @@ export function getSetpointFillColor(
  * Get the stroke color for setpoint marker outline.
  *
  * - Focus state: secondary (regular) or neutral-enhanced (enhanced) - visible border
- * - Equal/EqualZero states: frame-primary color (subtle silhouette)
- * - NotEqual state: silhouette color
+ * - All other states: silhouette color (subtle outline)
  *
  * @param visualState - The visual state of the setpoint
  * @param colorMode - The color palette to use
