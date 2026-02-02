@@ -87,7 +87,7 @@
   );
   transform: translateX(var(--obc-poi-target-offset-x, 0px))
     scale(var(--obc-poi-layer-target-scale));
-  transition: opacity 0.4s ease-out;
+  transition: opacity 0.1s ease-out;
 }
 
 :host([data-in-poi-layer][data-position-mode="bottom"])
@@ -119,5 +119,5 @@
 
 ::slotted(obc-poi-target[data-grouped]) {
   opacity: 1;
-  transition: opacity 0.4s ease-out;
+  transition: opacity 0.1s ease-out;
 }
