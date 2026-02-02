@@ -232,7 +232,7 @@ export const Equal: Story = {
  * **equalZero** - Input = Output = 0
  *
  * When both value and setpoint are at zero, the marker shrinks to 80%
- * AND shifts 4px outward from the scale to avoid overlapping with
+ * AND shifts 8px outward from the scale to avoid overlapping with
  * the zero position indicator.
  *
  * Configuration:
