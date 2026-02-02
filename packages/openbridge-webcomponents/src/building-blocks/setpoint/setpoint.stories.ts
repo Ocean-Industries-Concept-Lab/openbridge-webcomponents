@@ -33,7 +33,7 @@ import {
  * |-------|-------------|------|-------|
  * | `notEqual` | Input ≠ Output (value not at setpoint) | 100% | Filled |
  * | `equal` | Input = Output (value at setpoint) | 80% | Filled |
- * | `equalZero` | Input = Output = 0 | 80% + 4px offset | Filled |
+ * | `equalZero` | Input = Output = 0 | 80% + 8px offset | Filled |
  * | `focus` | User is actively adjusting | 100% | Filled + Border |
  *
  * ## Color Modes
@@ -71,7 +71,7 @@ The setpoint marker is a triangular indicator used to show the target/input valu
 
 - **notEqual**: Value has not reached setpoint - full size, filled triangle
 - **equal**: Value equals setpoint (within deadband) - 80% size, filled triangle  
-- **equalZero**: Both value and setpoint are at zero - 80% size + 4px outward offset
+- **equalZero**: Both value and setpoint are at zero - 80% size + 8px outward offset
 - **focus**: User is actively adjusting - full size, filled with tertiary color and 2px border
 
 ## Color Modes
