@@ -40,6 +40,12 @@ export enum CrossingSide {
   Right = 'right',
 }
 
+export enum PoiLayerRole {
+  Default = 'default',
+  Selected = 'selected',
+  Filtered = 'filtered',
+}
+
 /**
  * `<obc-poi-layer>` arranges POI targets in a layer and manages grouping,
  * overlap, and layout updates for slotted targets.
@@ -56,6 +62,8 @@ export enum CrossingSide {
  * - Set `label` to identify the layer in debug UI and events.
  * - Toggle `debug` to render the on-layer label.
  * - Set `layerIndex` to control ordering within a stack.
+ * - Use `role` to assign stack placement behavior (default/selected/filtered).
+ * - Use `typeFilter` with `role="filtered"` to route specific target types.
  *
  * ### Slots
  * - Default slot for `obc-poi-target` and `obc-poi-target-button-group`.
@@ -80,6 +88,8 @@ export class ObcPoiLayer extends LitElement {
   @property({type: Boolean, reflect: true}) debug = false;
   @property({type: Number}) layerIndex = 0;
   @property({type: String}) overlapMode: OverlapMode = OverlapMode.Grouping;
+  @property({type: String}) override role: PoiLayerRole = PoiLayerRole.Default;
+  @property({type: String, attribute: 'type-filter'}) typeFilter = '';
 
   @query('.wrapper') private wrapper?: HTMLElement;
 

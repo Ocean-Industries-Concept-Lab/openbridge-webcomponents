@@ -71,10 +71,12 @@ const meta: Meta<PoiControllerArgs> = {
           ${args.useCustomStack
             ? html`
                 <obc-poi-layer-stack slot="stack">
-                  <obc-poi-layer data-controller-layer="background">
+                  <obc-poi-layer role="selected"></obc-poi-layer>
+                  <obc-poi-layer
+                    data-controller-layer="background"
+                    role="default"
+                  >
                   </obc-poi-layer>
-                  <obc-poi-layer></obc-poi-layer>
-                  <obc-poi-layer></obc-poi-layer>
                 </obc-poi-layer-stack>
               `
             : null}

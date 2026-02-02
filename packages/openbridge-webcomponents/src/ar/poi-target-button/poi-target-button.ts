@@ -28,7 +28,7 @@ export class ObcPoiTargetButton extends LitElement {
   @property({type: Boolean}) selected = false;
   @property({type: String}) selectedId: string | null = null;
   @property({type: String}) alertType = ObcArAlertType.None;
-  @property({type: String, reflect: true, attribute: 'data-visual-state'})
+  @property({type: String, reflect: true, attribute: 'visualstate'})
   visualState: PoiTargetButtonVisualState = PoiTargetButtonVisualState.Normal;
   @property({type: String}) type = ObcPoiTargetButtonType.Button;
   @property({type: Boolean}) inExpandedGroup = false;

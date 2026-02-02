@@ -93,7 +93,7 @@ export class ObcPoiTarget extends LitElement {
   @property({type: Boolean}) selected = false;
   @property({type: String}) selectedId: string | null = null;
   @property({type: String}) alertType = ObcArAlertType.None;
-  @property({type: String, reflect: true, attribute: 'data-visual-state'})
+  @property({type: String, reflect: true, attribute: 'visualstate'})
   visualState: PoiTargetButtonVisualState = PoiTargetButtonVisualState.Normal;
   @property({type: String}) type = ObcPoiTargetButtonType.Button;
   @property({type: String}) value: TargetValue = TargetValue.enabled;
@@ -102,6 +102,10 @@ export class ObcPoiTarget extends LitElement {
   @property({type: Number}) offset = 0;
   @property({type: Number}) buttonOffsetX = 0;
   private syncingPosition = false;
+
+  private getSelectedId(): string | null {
+    return this.selectedId ?? (this.id ? this.id : null);
+  }
 
   override updated(changedProperties: Map<string, unknown>) {
     if (this.syncingPosition) return;
@@ -199,9 +203,9 @@ export class ObcPoiTarget extends LitElement {
         <obc-poi-target-button
           .relativeDirection=${this.relativeDirection}
           .selected=${this.selected}
-          .selectedId=${this.selectedId}
+          .selectedId=${this.getSelectedId()}
           .alertType=${this.alertType}
-          data-visual-state=${this.visualState}
+          visualState=${this.visualState}
           .type=${this.type}
           .values=${this.values}
         >

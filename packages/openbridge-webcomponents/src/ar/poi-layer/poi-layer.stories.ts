@@ -267,14 +267,14 @@ export const OverlapWithGroupNumbers: Story = {
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}
         >
-          <obc-poi-target .x=${300} .y=${80} selectedId="3"></obc-poi-target>
+          <obc-poi-target .x=${300} .y=${80} id="3"></obc-poi-target>
           <obc-poi-target
             .x=${320}
             .y=${140}
             .relativeDirection=${65}
-            selectedId="1"
+            id="1"
           ></obc-poi-target>
-          <obc-poi-target .x=${340} .y=${60} selectedId="2"></obc-poi-target>
+          <obc-poi-target .x=${340} .y=${60} id="2"></obc-poi-target>
         </obc-poi-layer>
       </div>
     `;

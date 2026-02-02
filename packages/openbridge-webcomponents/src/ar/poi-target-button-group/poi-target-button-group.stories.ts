@@ -19,9 +19,7 @@ const meta: Meta<ObcPoiTargetButtonGroup> = {
     const wrapperRef = createRef<HTMLDivElement>();
     const onExpand = (event: CustomEvent<{expand: boolean}>) => {
       const wrapper = wrapperRef.value;
-      const outside = wrapper?.querySelector(
-        '[data-role="outside"]'
-      ) as ObcPoiTarget | null;
+      const outside = wrapper?.querySelector('#outside') as ObcPoiTarget | null;
       if (!outside) {
         return;
       }
@@ -56,29 +54,29 @@ const meta: Meta<ObcPoiTargetButtonGroup> = {
             @expand=${onExpand}
           >
             <obc-poi-target
-              data-role="b3"
+              id="b3"
               .x=${300}
               .y=${240}
-              data-visual-state="overlap"
+              visualState="overlap"
             ></obc-poi-target>
             <obc-poi-target
-              data-role="b1"
+              id="b1"
               .x=${320}
               .y=${240}
               .relativeDirection=${65}
             ></obc-poi-target>
             <obc-poi-target
-              data-role="b2"
+              id="b2"
               .x=${340}
               .y=${240}
-              data-visual-state="overlap"
+              visualState="overlap"
             ></obc-poi-target>
           </obc-poi-target-button-group>
           <obc-poi-target
-            data-role="outside"
+            id="outside"
             .x=${200}
             .y=${240}
-            data-visual-state=${args.expand ? 'overlap' : 'normal'}
+            visualState=${args.expand ? 'overlap' : 'normal'}
           ></obc-poi-target>
         </div>
       </div>
@@ -103,9 +101,7 @@ export const GroupedWithNumbers: Story = {
     const wrapperRef = createRef<HTMLDivElement>();
     const onExpand = (event: CustomEvent<{expand: boolean}>) => {
       const wrapper = wrapperRef.value;
-      const outside = wrapper?.querySelector(
-        '[data-role="outside"]'
-      ) as ObcPoiTarget | null;
+      const outside = wrapper?.querySelector('#outside') as ObcPoiTarget | null;
       if (!outside) {
         return;
       }
@@ -140,33 +136,29 @@ export const GroupedWithNumbers: Story = {
             @expand=${onExpand}
           >
             <obc-poi-target
-              data-role="b3"
+              id="b3"
               .x=${300}
               .y=${240}
-              data-visual-state="overlap"
-              selectedId="3"
+              visualState="overlap"
             ></obc-poi-target>
             <obc-poi-target
-              data-role="b1"
+              id="b1"
               .x=${320}
               .y=${240}
               .relativeDirection=${65}
-              selectedId="1"
             ></obc-poi-target>
             <obc-poi-target
-              data-role="b2"
+              id="b2"
               .x=${340}
               .y=${240}
-              data-visual-state="overlap"
-              selectedId="2"
+              visualState="overlap"
             ></obc-poi-target>
           </obc-poi-target-button-group>
           <obc-poi-target
-            data-role="outside"
+            id="outside"
             .x=${200}
             .y=${240}
-            data-visual-state=${args.expand ? 'overlap' : 'normal'}
-            selectedId="4"
+            visualState=${args.expand ? 'overlap' : 'normal'}
           ></obc-poi-target>
         </div>
       </div>
@@ -317,14 +309,14 @@ export const InternalGroupSwapping: Story = {
               id="swap-a"
               .x=${300}
               .y=${240}
-              data-visual-state="overlap"
+              visualState="overlap"
             ></obc-poi-target>
             <obc-poi-target id="swap-b" .x=${320} .y=${240}></obc-poi-target>
             <obc-poi-target
               id="swap-c"
               .x=${340}
               .y=${240}
-              data-visual-state="overlap"
+              visualState="overlap"
             ></obc-poi-target>
           </obc-poi-target-button-group>
         </div>
@@ -361,14 +353,14 @@ export const GroupWithTopOffsetTransition: Story = {
               .x=${340}
               .y=${240}
               .height=${160}
-              data-visual-state="overlap"
+              visualState="overlap"
             ></obc-poi-target>
             <obc-poi-target
               id="top-grp-target-1"
               .x=${300}
               .y=${240}
               .height=${180}
-              data-visual-state="overlap"
+              visualState="overlap"
             ></obc-poi-target>
             <obc-poi-target
               id="top-grp-target-2"

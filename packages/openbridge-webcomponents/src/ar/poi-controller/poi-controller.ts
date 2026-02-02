@@ -48,9 +48,11 @@ import {PoiLayerSelectionMode} from '../poi-layer-stack/poi-layer-stack.js';
  * <obc-poi-controller fit="contain">
  *   <video slot="media" src="media.mp4"></video>
  *   <obc-poi-layer-stack slot="stack" selection-mode="multi">
- *     <obc-poi-layer label="Background" layerIndex="2"></obc-poi-layer>
+ *     <obc-poi-layer label="Selected" role="selected" layerIndex="0">
+ *     </obc-poi-layer>
  *     <obc-poi-layer label="Active" layerIndex="1"></obc-poi-layer>
- *     <obc-poi-layer label="Selected" layerIndex="0"></obc-poi-layer>
+ *     <obc-poi-layer label="Background" role="default" layerIndex="2">
+ *     </obc-poi-layer>
  *   </obc-poi-layer-stack>
  * </obc-poi-controller>
  * ```
@@ -317,10 +319,14 @@ export class ObcPoiController extends LitElement {
       return;
     }
 
-    const layer =
-      stack.querySelector(
-        'obc-poi-layer[data-controller-layer="background"]'
-      ) ?? stack.querySelector('obc-poi-layer');
+    const explicitLayer = stack.querySelector(
+      'obc-poi-layer[data-controller-layer="background"]'
+    );
+    const roleDefault = stack.querySelector('obc-poi-layer[role="default"]');
+    const layers = Array.from(
+      stack.querySelectorAll('obc-poi-layer')
+    ) as HTMLElement[];
+    const layer = explicitLayer ?? roleDefault ?? layers[layers.length - 1];
     if (!layer) return;
 
     const active = this.getActiveDetections();
@@ -374,7 +380,20 @@ export class ObcPoiController extends LitElement {
                 <obc-poi-layer-stack
                   selection-mode=${PoiLayerSelectionMode.Multi}
                 >
-                  <obc-poi-layer label="Background" .layerIndex=${2}>
+                  <obc-poi-layer
+                    label="Selected"
+                    role="selected"
+                    .layerIndex=${0}
+                  ></obc-poi-layer>
+                  <obc-poi-layer
+                    label="Active"
+                    .layerIndex=${1}
+                  ></obc-poi-layer>
+                  <obc-poi-layer
+                    label="Background"
+                    role="default"
+                    .layerIndex=${2}
+                  >
                     ${this.getActiveDetections().map((det, index) => {
                       const mapped = this.mapDetection(det);
                       if (!mapped) return null;
@@ -388,14 +407,6 @@ export class ObcPoiController extends LitElement {
                       `;
                     })}
                   </obc-poi-layer>
-                  <obc-poi-layer
-                    label="Active"
-                    .layerIndex=${1}
-                  ></obc-poi-layer>
-                  <obc-poi-layer
-                    label="Selected"
-                    .layerIndex=${0}
-                  ></obc-poi-layer>
                 </obc-poi-layer-stack>
               `}
         </div>

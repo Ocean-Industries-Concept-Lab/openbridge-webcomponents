@@ -2,7 +2,7 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './poi-layer-stack.css?inline';
-import {ObcPoiLayer} from '../poi-layer/poi-layer.js';
+import {ObcPoiLayer, PoiLayerRole} from '../poi-layer/poi-layer.js';
 import {ObcPoiTargetButtonGroup} from '../poi-target-button-group/poi-target-button-group.js';
 import {ObcPoiTarget, PoiTargetVisualState} from '../poi-target/poi-target.js';
 
@@ -41,9 +41,6 @@ export class ObcPoiLayerStack extends LitElement {
   @property({type: String, attribute: 'selection-mode'})
   selectionMode: PoiLayerSelectionMode = PoiLayerSelectionMode.None;
 
-  @property({type: String, attribute: 'selected-type'})
-  selectedType: string | null = null;
-
   private handleStackClick = (event: Event) => this.onStackClick(event);
   private handleSlotChange = () => this.schedulePlacement();
   private selectionMap = new Map<
@@ -67,11 +64,7 @@ export class ObcPoiLayerStack extends LitElement {
     this.schedulePlacement();
   }
 
-  override updated(changed: Map<string, unknown>) {
-    if (changed.has('selectedType')) {
-      this.schedulePlacement();
-    }
-  }
+  override updated(_changed: Map<string, unknown>) {}
 
   override disconnectedCallback() {
     super.disconnectedCallback();
@@ -106,8 +99,8 @@ export class ObcPoiLayerStack extends LitElement {
     const originLayer = target.closest('obc-poi-layer') as ObcPoiLayer | null;
     if (!originLayer) return;
 
-    const topLayer = this.getTopLayer();
-    if (!topLayer) return;
+    const selectedLayer = this.getSelectedLayer() ?? this.getTopLayer();
+    if (!selectedLayer) return;
 
     const existing = this.selectionMap.get(target);
     if (existing) {
@@ -141,8 +134,8 @@ export class ObcPoiLayerStack extends LitElement {
     this.setTargetSelectedId(target);
     this.clearTargetGroupingAttributes(target);
     this.setSelectedTargetInteractivity(target, true);
-    if (topLayer !== originLayer) {
-      this.moveTargetToLayer(target, topLayer);
+    if (selectedLayer !== originLayer) {
+      this.moveTargetToLayer(target, selectedLayer);
     }
     this.schedulePlacement();
   }
@@ -173,6 +166,16 @@ export class ObcPoiLayerStack extends LitElement {
     ) as ObcPoiLayer[];
     if (layers.length === 0) return null;
     return layers[layers.length - 1] ?? null;
+  }
+
+  private getSelectedLayer(): ObcPoiLayer | null {
+    const selectedLayers = this.getLayersByRole(PoiLayerRole.Selected);
+    return selectedLayers[0] ?? null;
+  }
+
+  private getDefaultLayer(): ObcPoiLayer | null {
+    const defaultLayers = this.getLayersByRole(PoiLayerRole.Default);
+    return defaultLayers[defaultLayers.length - 1] ?? null;
   }
 
   private getSecondTopLayer(): ObcPoiLayer | null {
@@ -372,46 +375,9 @@ export class ObcPoiLayerStack extends LitElement {
     this.placementRaf = requestAnimationFrame(() => {
       this.placementRaf = 0;
       this.updateLayerOrders();
-      this.placeNewTargets();
+      this.syncSelectedLayerTargets();
+      this.placeFilteredTargets();
     });
-  }
-
-  private placeNewTargets() {
-    const layers = this.getLayersInDomOrder();
-    if (layers.length < 2) return;
-    const top = layers[layers.length - 1] ?? null;
-    const middle = layers.length >= 3 ? layers[layers.length - 2] : null;
-    const bottom = layers[0] ?? null;
-    if (!top || !bottom) return;
-    const selectedType =
-      layers.length >= 3 &&
-      this.selectedType &&
-      this.selectedType.trim().length > 0
-        ? this.selectedType.trim()
-        : null;
-    const targets = this.getAllTargets();
-    targets.forEach((target) => {
-      if (this.selectionMap.has(target)) {
-        if (target.closest('obc-poi-layer') !== top) {
-          this.moveTargetToLayer(target, top);
-        }
-        return;
-      }
-      const type = target.type ?? '';
-      if (selectedType && middle && type === selectedType) {
-        if (target.closest('obc-poi-layer') !== middle) {
-          this.moveTargetToLayer(target, middle);
-        }
-        return;
-      }
-      if (target.closest('obc-poi-layer') !== bottom) {
-        this.moveTargetToLayer(target, bottom);
-      }
-    });
-  }
-
-  private getLayersInDomOrder() {
-    return Array.from(this.querySelectorAll('obc-poi-layer')) as ObcPoiLayer[];
   }
 
   private updateLayerOrders() {
@@ -420,8 +386,84 @@ export class ObcPoiLayerStack extends LitElement {
     ) as ObcPoiLayer[];
     if (layers.length <= 1) return;
     layers.forEach((layer, index) => {
-      layer.layerIndex = index;
-      layer.style.order = String(-index);
+      layer.style.order = String(index);
+    });
+  }
+
+  private getLayersByRole(role: PoiLayerRole): ObcPoiLayer[] {
+    return Array.from(this.querySelectorAll('obc-poi-layer')).filter(
+      (layer) => (layer as ObcPoiLayer).role === role
+    ) as ObcPoiLayer[];
+  }
+
+  private syncSelectedLayerTargets() {
+    const selectedLayer = this.getSelectedLayer();
+    if (!selectedLayer) return;
+
+    this.selectionMap.forEach((_record, target) => {
+      if (!target.isConnected) {
+        this.selectionMap.delete(target);
+        return;
+      }
+      const currentLayer = target.closest('obc-poi-layer');
+      if (currentLayer !== selectedLayer) {
+        this.setSelectedTargetInteractivity(target as ObcPoiTarget, false);
+        this.clearTargetSelectedId(target as ObcPoiTarget);
+        this.selectionMap.delete(target);
+      }
+    });
+
+    const targets = Array.from(
+      selectedLayer.querySelectorAll('obc-poi-target')
+    ) as ObcPoiTarget[];
+    targets.forEach((target) => {
+      if (this.selectionMap.has(target)) return;
+      const currentLayer = target.closest(
+        'obc-poi-layer'
+      ) as ObcPoiLayer | null;
+      const fallbackOrigin = this.getDefaultLayer();
+      const originLayer =
+        fallbackOrigin && fallbackOrigin !== selectedLayer
+          ? fallbackOrigin
+          : currentLayer;
+      if (!originLayer) return;
+      const originHeight = this.getTargetHeight(target);
+      this.selectionMap.set(target, {
+        originLayer,
+        originIndex: originLayer.layerIndex,
+        originHeight,
+      });
+      this.setTargetSelectedId(target);
+      this.setSelectedTargetInteractivity(target, true);
+    });
+  }
+
+  private parseTypeFilter(typeFilter: string): string[] {
+    return typeFilter
+      .split(/\s+/)
+      .map((value) => value.trim())
+      .filter(Boolean);
+  }
+
+  private placeFilteredTargets() {
+    const filteredLayers = this.getLayersByRole(PoiLayerRole.Filtered);
+    if (filteredLayers.length === 0) return;
+
+    const targets = this.getAllTargets();
+    const assigned = new Set<ObcPoiTarget>();
+
+    filteredLayers.forEach((layer) => {
+      const filters = this.parseTypeFilter(layer.typeFilter);
+      if (filters.length === 0) return;
+      targets.forEach((target) => {
+        if (this.selectionMap.has(target) || assigned.has(target)) return;
+        const type = target.type ?? '';
+        if (!filters.includes(type)) return;
+        if (target.closest('obc-poi-layer') !== layer) {
+          this.moveTargetToLayer(target, layer);
+        }
+        assigned.add(target);
+      });
     });
   }
 

@@ -92,7 +92,7 @@
   }
 
   /* Overlap state styles - applied via visual state */
-  :host([data-visual-state="overlap"]) & {
+  :host([visualstate="overlap"]) & {
     width: 48px;
     height: 48px;
     --poi-size: 32px;
@@ -249,7 +249,7 @@
 }
 
 /* Overlap alert color styles */
-:host([data-visual-state="overlap"]) .wrapper {
+:host([visualstate="overlap"]) .wrapper {
   &.alert-caution .visible-wrapper {
     background-color: var(--alert-caution-color);
     border-color: var(--alert-caution-outline-color);
@@ -352,7 +352,7 @@
 }
 
 /* Overlap state for has-values variant - show only the small circle */
-:host([data-visual-state="overlap"]) .wrapper.has-values {
+:host([visualstate="overlap"]) .wrapper.has-values {
   border: none;
   background: transparent;
   width: 48px;

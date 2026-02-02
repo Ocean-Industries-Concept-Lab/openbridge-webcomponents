@@ -74,8 +74,25 @@ const renderThreeLayers = (args: PoiLayerStackArgs) => html`
   </style>
   <obc-poi-layer-stack class="stack" selection-mode=${args.selectionMode}>
     <obc-poi-layer
-      .label=${args.label}
-      .layerIndex=${args.layerIndex}
+      label="Layer A"
+      .layerIndex=${args.layerIndex + 1}
+      role="selected"
+      debug
+    >
+      <obc-poi-target .x=${520} .y=${110}> </obc-poi-target>
+    </obc-poi-layer>
+    <obc-poi-layer
+      label="Layer B"
+      .layerIndex=${args.layerIndex + 2}
+      role="filtered"
+      type-filter="enhanced"
+      debug
+    >
+    </obc-poi-layer>
+    <obc-poi-layer
+      label="Layer C"
+      .layerIndex=${args.layerIndex + 3}
+      role="default"
       ?debug=${args.debug}
     >
       <obc-poi-target .x=${80} .y=${120}> </obc-poi-target>
@@ -83,11 +100,6 @@ const renderThreeLayers = (args: PoiLayerStackArgs) => html`
       <obc-poi-target .x=${180} .y=${100}> </obc-poi-target>
       <obc-poi-target .x=${420} .y=${140}> </obc-poi-target>
       <obc-poi-target .x=${140} .y=${90}> </obc-poi-target>
-      <obc-poi-target .x=${520} .y=${110}> </obc-poi-target>
-    </obc-poi-layer>
-    <obc-poi-layer label="Layer B" .layerIndex=${args.layerIndex + 1} debug>
-    </obc-poi-layer>
-    <obc-poi-layer label="Layer C" .layerIndex=${args.layerIndex + 2} debug>
     </obc-poi-layer>
   </obc-poi-layer-stack>
 `;
