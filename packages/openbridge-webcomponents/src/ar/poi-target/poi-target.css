@@ -19,7 +19,7 @@
 
 obc-poi-target-button {
   transform: translateX(var(--obc-poi-target-button-offset-x, 0px));
-  transition: transform 0.15s ease-out;
+  transition: transform 0.1s ease-out;
 }
 
 .wrapper[data-no-transition] obc-poi-target-button {
