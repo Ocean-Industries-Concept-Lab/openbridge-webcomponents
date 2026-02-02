@@ -109,6 +109,7 @@ export class ObcPoiCard extends LitElement {
 
   private handleKeyDown(e: KeyboardEvent) {
     if (!this.interactive) return;
+    if (e.target !== e.currentTarget) return;
     if (e.key === ' ') {
       e.preventDefault();
     } else if (e.key === 'Enter' && !e.repeat) {
@@ -119,6 +120,7 @@ export class ObcPoiCard extends LitElement {
 
   private handleKeyUp(e: KeyboardEvent) {
     if (!this.interactive) return;
+    if (e.target !== e.currentTarget) return;
     if (e.key === ' ') {
       e.preventDefault();
       this.handleCardClick();
