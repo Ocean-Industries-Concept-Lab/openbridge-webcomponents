@@ -14,9 +14,8 @@ export class ObcAbstractAutomationButtonMotorized extends ObcAbstractAutomationB
   @property({type: Number}) speedInPercent: number = 0;
   @property({type: String}) labelDirection: AutomationButtonLabelDirection =
     AutomationButtonLabelDirection.right;
-
-  // @ts-expect-error - can be any of the MotorizedVariant, not square
-  override variant: MotorizedVariant;
+  @property({type: String}) variant: MotorizedVariant =
+    MotorizedVariant.regular;
 
   override get extraReadouts(): AutomationButtonReadoutStack[] {
     if (

@@ -18,9 +18,8 @@ export class ObcAnalogValve extends ObcAbstractAutomationButton {
   @property({type: Boolean}) vertical: boolean = false;
   @property({type: String}) labelDirection: AutomationButtonLabelDirection =
     AutomationButtonLabelDirection.right;
-
-  // @ts-expect-error - can be any of the AnalogValveVariant, not square or double
-  override variant: AnalogValveVariant;
+  @property({type: String}) variant: AnalogValveVariant =
+    AnalogValveVariant.regular;
 
   override get extraReadouts(): AutomationButtonReadoutStack[] {
     if (this.open) {
