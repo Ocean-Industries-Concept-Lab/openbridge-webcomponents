@@ -504,11 +504,11 @@ export class ObcPoiLayerStack extends LitElement {
   }
 
   private getTargetHeight(target: ObcPoiTarget): number {
-    return target.height ?? 0;
+    return target.y ?? 0;
   }
 
   private setTargetHeight(target: ObcPoiTarget, height: number) {
-    target.height = height;
+    target.y = height;
   }
 
   private adjustTargetHeightByOffset(

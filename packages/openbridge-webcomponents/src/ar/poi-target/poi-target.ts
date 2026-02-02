@@ -104,7 +104,8 @@ export class ObcPoiTarget extends LitElement {
   private syncingPosition = false;
 
   private getSelectedId(): string | null {
-    return this.selectedId ?? (this.id ? this.id : null);
+    if (!this.selected) return null;
+    return this.selectedId ?? null;
   }
 
   override updated(changedProperties: Map<string, unknown>) {
@@ -118,16 +119,10 @@ export class ObcPoiTarget extends LitElement {
       this.syncingPosition = true;
       this.height = this.y;
       this.syncingPosition = false;
-      if (!this.closest('obc-poi-layer')) {
-        this.style.top = `${this.y}px`;
-      }
     } else if (changedProperties.has('height') && this.height !== this.y) {
       this.syncingPosition = true;
       this.y = this.height;
       this.syncingPosition = false;
-      if (!this.closest('obc-poi-layer')) {
-        this.style.top = `${this.y}px`;
-      }
     }
   }
   @property({
@@ -169,7 +164,8 @@ export class ObcPoiTarget extends LitElement {
       case Pointer.Line:
         pointer = html`
           <obc-poi-line
-            height=${this.height + verticalOffset}
+            class="line"
+            height=${this.y + verticalOffset}
             poiStyle=${valueToPointerStyle(this.value)}
             .offset=${this.offset}
           ></obc-poi-line>

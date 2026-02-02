@@ -17,6 +17,13 @@
   width: 0;
 }
 
+.line {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translateX(-50%);
+}
+
 obc-poi-target-button {
   transform: translateX(var(--obc-poi-target-button-offset-x, 0px));
   transition: transform 0.1s ease-out;

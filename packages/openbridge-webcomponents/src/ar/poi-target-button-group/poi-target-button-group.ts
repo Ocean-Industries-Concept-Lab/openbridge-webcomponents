@@ -22,6 +22,8 @@ export class ObcPoiTargetButtonGroup extends LitElement {
   @property({type: Boolean, reflect: true}) collapsing = false;
   @property({type: String}) positionVertical = '0px';
   @property({type: Boolean}) useTopOffset = false;
+  @property({type: Boolean, attribute: 'internal-swapping'})
+  internalSwapping = false;
   @state() private positionLeft = '0px';
   @state() private positionRight = '0px';
   @state() private wrapperVisible = false;
@@ -221,15 +223,19 @@ export class ObcPoiTargetButtonGroup extends LitElement {
       this.appendChild(frontChild);
     }
     if (expand) {
-      const ordered = this._children
-        .filter((child): child is ObcPoiTarget => child instanceof ObcPoiTarget)
-        .map((child) => ({
-          child,
-          left: oldPosition.get(child) ?? child.getBoundingClientRect().left,
-        }))
-        .sort((a, b) => a.left - b.left)
-        .map((item) => item.child);
-      ordered.forEach((child) => this.appendChild(child));
+      if (this.internalSwapping) {
+        const ordered = this._children
+          .filter(
+            (child): child is ObcPoiTarget => child instanceof ObcPoiTarget
+          )
+          .map((child) => ({
+            child,
+            left: oldPosition.get(child) ?? child.getBoundingClientRect().left,
+          }))
+          .sort((a, b) => a.left - b.left)
+          .map((item) => item.child);
+        ordered.forEach((child) => this.appendChild(child));
+      }
     }
     this._children.forEach((child) => {
       child.style.position = expand ? 'static' : 'absolute';
@@ -513,18 +519,18 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     if (frontByAttr) return frontByAttr;
 
     let front: ObcPoiTarget | null = null;
-    let maxHeight = Number.NEGATIVE_INFINITY;
+    let maxY = Number.NEGATIVE_INFINITY;
 
     for (const child of targets) {
-      const heightValue =
-        typeof child.height === 'number'
-          ? child.height
-          : Number.parseFloat(child.getAttribute('height') ?? '');
+      const yValue =
+        typeof child.y === 'number'
+          ? child.y
+          : Number.parseFloat(child.getAttribute('y') ?? '');
 
-      if (Number.isNaN(heightValue)) continue;
+      if (Number.isNaN(yValue)) continue;
 
-      if (heightValue > maxHeight) {
-        maxHeight = heightValue;
+      if (yValue > maxY) {
+        maxY = yValue;
         front = child;
       }
     }
@@ -604,20 +610,30 @@ export class ObcPoiTargetButtonGroup extends LitElement {
       .sort((a, b) => a.currentLeft - b.currentLeft)
       .map((item) => item.child);
 
+    const orderedTargets = this.internalSwapping
+      ? sortedByCurrentPosition
+      : this.lastTargetOrder.length > 0
+        ? this.lastTargetOrder
+        : sortedByCurrentPosition;
+
     const orderChanged =
-      this.lastTargetOrder.length !== sortedByCurrentPosition.length ||
-      sortedByCurrentPosition.some(
+      this.lastTargetOrder.length !== orderedTargets.length ||
+      orderedTargets.some(
         (child, index) => this.lastTargetOrder[index] !== child
       );
 
-    if (orderChanged && this.lastTargetOrder.length > 0) {
+    if (
+      this.internalSwapping &&
+      orderChanged &&
+      this.lastTargetOrder.length > 0
+    ) {
       const spacing = this.getExpandedSpacing();
-      const totalWidth = (sortedByCurrentPosition.length - 1) * spacing;
+      const totalWidth = (orderedTargets.length - 1) * spacing;
 
       const groupCenter =
         this.lockedExpandedCenter ??
         (() => {
-          const positions = sortedByCurrentPosition.map((child) => {
+          const positions = orderedTargets.map((child) => {
             const leftStr = child.style.left;
             return Number.parseFloat(leftStr) || 0;
           });
@@ -630,7 +646,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
       }
       const startX = groupCenter - totalWidth / 2;
 
-      sortedByCurrentPosition.forEach((child, index) => {
+      orderedTargets.forEach((child, index) => {
         const config = this.topOffsetTargets.get(child);
         if (!config) return;
 
@@ -641,7 +657,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
       });
     }
 
-    this.lastTargetOrder = sortedByCurrentPosition;
+    this.lastTargetOrder = orderedTargets;
 
     targets.forEach((child) => {
       const config = this.topOffsetTargets.get(child);

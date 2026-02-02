@@ -289,7 +289,7 @@ export class ObcPoiLayer extends LitElement {
       });
       observer.observe(target, {
         attributes: true,
-        attributeFilter: ['style', 'height'],
+        attributeFilter: ['style', 'y'],
       });
       this.targetObservers.set(target, observer);
     });
@@ -1032,9 +1032,12 @@ export class ObcPoiLayer extends LitElement {
     target: HTMLElement,
     rects?: Map<HTMLElement, DOMRect>
   ): number {
-    const heightAttr = target.getAttribute('height');
-    const heightValue = Number.parseFloat(heightAttr ?? '');
-    if (!Number.isNaN(heightValue)) return heightValue;
+    const yAttr = target.getAttribute('y');
+    const yValue = Number.parseFloat(yAttr ?? '');
+    if (!Number.isNaN(yValue)) return yValue;
+    if (target instanceof ObcPoiTarget && Number.isFinite(target.y)) {
+      return target.y;
+    }
     const rect = rects?.get(target) ?? this.getTargetRect(target);
     return rect.height;
   }
