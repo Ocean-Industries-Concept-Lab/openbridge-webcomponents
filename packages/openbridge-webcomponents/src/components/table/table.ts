@@ -195,16 +195,47 @@ function cssPart(value: ObcTableCellData, subpart: string): string | undefined {
 /**
  * `<obc-table>` renders tabular data with configurable columns and cell types.
  *
- * Key features in this component:
- * - **Selectable rows:** set `selectable=true` to add a selection column with a header “select all”
- *   checkbox. Use `selectedRowIds` (controlled) or `defaultSelectedRowIds` (uncontrolled), and listen
- *   for `selection-change` to react to user selection.
- * - **Checkbox cell type:** use `{ type: 'checkbox' }` in a cell to render an inline checkbox and
- *   handle `cell-checkbox-change` for row/cell updates.
- * - **Tag cell type:** use `{ type: 'tag' }` with `tag` or `tags` to render one or multiple tags in a
- *   cell. When `tags` is provided, the table can show a compact "+N" overflow indicator.
- * - **Horizontal bar cell type:** use `{ type: 'horizontal-bar' }` to render `obc-bar-horizontal`.
- *   Defaults are optimized for tables: `enhanced=true`, `hideLabels=true`, and `hasScale=false`.
+ * Overview
+ * Use this component to display structured datasets with optional selection, sorting, and rich cell
+ * rendering. It accepts `data` and `columns` and renders rows based on column configuration.
+ *
+ * Features/Variants
+ * - Selectable rows with header “select all” checkbox via `selectable=true`.
+ * - Cell rendering variants: `checkbox`, `tag`, `horizontal-bar`, and `button` cell types.
+ * - Visual variants: `rowDivider`, `striped`, `narrowHeader`, and `noHeader`.
+ * - Sorting support for sortable columns via column definitions.
+ *
+ * Usage Guidelines
+ * - Controlled selection: pass `selectedRowIds` and update it on `selection-change`.
+ * - Uncontrolled selection: pass `defaultSelectedRowIds` and listen to `selection-change`.
+ * - Use `selectAllAriaLabel` to customize the header checkbox accessibility label.
+ * - Use `selectAllLabel` to provide a visible label in the selection header.
+ *
+ * Slots/Content
+ * - This component does not expose public slots. Provide content via `data` and `columns`.
+ *
+ * Events
+ * - `row-click` fires when a row is clicked.
+ * - `cell-button-click` fires when a button cell is clicked.
+ * - `cell-checkbox-change` fires when a checkbox cell changes.
+ * - `cell-tag-click` fires when a tag inside a cell is clicked.
+ * - `selection-change` fires when row selection changes (source: `row` or `header`).
+ *
+ * Best Practices
+ * - Keep column `key` values stable across renders to avoid selection or sorting resets.
+ * - Prefer `selectedRowIds` for deterministic state in apps with external stores.
+ * - For dense tables, combine `narrowHeader` and `rowDivider` for visual clarity.
+ *
+ * Example (keywords: table, data grid, grid, tabular, datatable)
+ * ```ts
+ * html`<obc-table
+ *   .data=${rows}
+ *   .columns=${columns}
+ *   selectable
+ *   striped
+ *   @selection-change=${onSelectionChange}
+ * ></obc-table>`;
+ * ```
  *
  * @fires row-click {ObcTableRowClickEvent} - Fired when a row is clicked.
  * @fires cell-button-click {ObcTableCellClickEvent} - Fired when a cell button is clicked.
@@ -974,7 +1005,7 @@ export class ObcTable extends LitElement {
           .label=${checkboxLabel}
           .status=${value.status ?? CheckboxStatus.unchecked}
           .disabled=${value.disabled ?? false}
-          aria-describedby=${value.ariaDescribedBy ?? ''}
+          aria-describedby=${ifDefined(value.ariaDescribedBy)}
           aria-label=${ifDefined(ariaLabel)}
           part=${ifDefined(cssPart(value, 'checkbox'))}
           @click=${(event: MouseEvent) => {
