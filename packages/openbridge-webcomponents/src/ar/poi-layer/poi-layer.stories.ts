@@ -717,10 +717,18 @@ export const CrossingMode: Story = {
   },
   render(args) {
     const hostRef = createRef<HTMLDivElement>();
-    const startAnimation = (root: HTMLElement | null) => {
-      if (!root || root.dataset.animating === 'true') return;
-      root.dataset.animating = 'true';
+    let rafId = 0;
+    let observer: MutationObserver | null = null;
+    let startTime: number | null = null;
+    const leftX = 240;
+    const rightX = 400;
+    const staticX = 320;
 
+    const smoothstep = (t: number) => t * t * (3 - 2 * t);
+
+    const resetPositions = () => {
+      const root = hostRef.value;
+      if (!root) return;
       const staticPoi = root.querySelector('obc-poi-target.static') as
         | (HTMLElement & {x: number; y: number})
         | null;
@@ -728,39 +736,78 @@ export const CrossingMode: Story = {
         | (HTMLElement & {x: number; y: number})
         | null;
       if (!staticPoi || !movingPoi) return;
+      staticPoi.x = staticX;
+      movingPoi.x = leftX;
+    };
 
-      staticPoi.x = 320;
+    const stopAnimation = () => {
+      const root = hostRef.value;
+      if (!root) return;
+      if (observer) {
+        observer.disconnect();
+        observer = null;
+      }
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+      root.dataset.animating = 'false';
+      resetPositions();
+    };
 
-      const start = performance.now();
-      const duration = 6000;
-      let rafId = 0;
+    const startAnimation = (root: HTMLElement | null) => {
+      if (!root || root.dataset.animating === 'true') return;
+      root.dataset.animating = 'true';
+      resetPositions();
+      startTime = null;
+      if (observer) {
+        observer.disconnect();
+        observer = null;
+      }
+
+      const duration = 8000;
 
       const tick = (now: number) => {
-        const t = ((now - start) % duration) / duration;
-
-        let phase: number;
-        if (t < 0.5) {
-          phase = t / 0.5;
-        } else {
-          phase = 1 - (t - 0.5) / 0.5;
+        if (!root.isConnected) {
+          stopAnimation();
+          return;
         }
-        const eased = phase * phase * (3 - 2 * phase);
-        const x = 180 + (460 - 180) * eased;
+        if (startTime === null) startTime = now;
+        const elapsed = now - startTime;
+        const t = (elapsed % duration) / duration;
 
-        movingPoi.x = Math.round(x);
+        const movingPoi = root.querySelector('obc-poi-target.moving') as
+          | (HTMLElement & {x: number; y: number})
+          | null;
+        const staticPoi = root.querySelector('obc-poi-target.static') as
+          | (HTMLElement & {x: number; y: number})
+          | null;
+        if (!movingPoi || !staticPoi) return;
+
+        staticPoi.x = staticX;
+        let x = leftX;
+        if (t < 0.35) {
+          x = leftX;
+        } else if (t < 0.75) {
+          const phase = smoothstep((t - 0.35) / 0.4);
+          x = leftX + (rightX - leftX) * phase;
+        } else {
+          const phase = smoothstep((t - 0.75) / 0.25);
+          x = rightX + (leftX - rightX) * phase;
+        }
+        movingPoi.x = x;
 
         rafId = requestAnimationFrame(tick);
       };
 
       rafId = requestAnimationFrame(tick);
-
-      const observer = new MutationObserver(() => {
+      observer = new MutationObserver(() => {
         if (!root.isConnected) {
-          cancelAnimationFrame(rafId);
-          observer.disconnect();
+          stopAnimation();
         }
       });
-      observer.observe(root, {childList: true, subtree: true});
+      const observerTarget = root.parentElement ?? document.body;
+      observer.observe(observerTarget, {childList: true, subtree: true});
     };
 
     setTimeout(() => startAnimation(hostRef.value ?? null), 0);
@@ -772,6 +819,7 @@ export const CrossingMode: Story = {
 
         .crossing-mode obc-poi-layer {
           --obc-poi-layer-min-height: 48px;
+          --obc-poi-layer-crossing-min-gap: 40px;
           width: 100%;
         }
       </style>
@@ -787,7 +835,11 @@ export const CrossingMode: Story = {
           .overlapMode=${OverlapMode.Crossing}
         >
           <obc-poi-target class="static" .y=${120}></obc-poi-target>
-          <obc-poi-target class="moving" .y=${120}></obc-poi-target>
+          <obc-poi-target
+            class="moving"
+            .y=${120}
+            .allowButtonTransition=${true}
+          ></obc-poi-target>
         </obc-poi-layer>
       </div>
     `;

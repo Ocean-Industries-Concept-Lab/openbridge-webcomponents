@@ -108,6 +108,8 @@ export class ObcPoiTarget extends LitElement {
   @property({type: Number}) offset = 0;
   @property({type: Number, attribute: 'top-offset'}) topOffset = 0;
   @property({type: Number}) buttonOffsetX = 0;
+  @property({type: Boolean, attribute: 'allow-button-transition'})
+  allowButtonTransition = false;
   @property({type: Boolean, attribute: 'show-id'}) showId = false;
   @property({type: Boolean, attribute: 'fixed-target'}) fixedTarget = false;
 
@@ -218,9 +220,8 @@ export class ObcPoiTarget extends LitElement {
           ['type-' + this.pointerType]: true,
           selected: this.selected,
         })}
-        ?data-no-transition=${this.buttonOffsetX !== 0 ||
-        this.offset !== 0 ||
-        this.topOffset !== 0}
+        ?data-no-transition=${!this.allowButtonTransition &&
+        (this.buttonOffsetX !== 0 || this.offset !== 0 || this.topOffset !== 0)}
         style=${[
           `--obc-poi-target-line-height: ${lineLength}px; --obc-poi-target-line-bottom: ${lineBottom}px;`,
           this.buttonOffsetX !== 0

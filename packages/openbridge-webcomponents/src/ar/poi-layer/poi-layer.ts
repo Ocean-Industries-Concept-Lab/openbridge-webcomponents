@@ -19,6 +19,7 @@ const POI_LARGE_VISUAL_TARGET_VAR =
   '--maneuvering-components-poi-button-large-visual-target-round';
 const POI_LARGE_VISUAL_TARGET_OVERLAP_VAR =
   '--maneuvering-components-poi-button-large-visual-target-round-overlap';
+const POI_CROSSING_MIN_GAP_VAR = '--obc-poi-layer-crossing-min-gap';
 
 /**
  * Interface for POI button group element properties used by the layer.
@@ -103,6 +104,9 @@ export class ObcPoiLayer extends LitElement {
   private crossingModeRaf = 0;
   private cachedCrossingTargets: ObcPoiTarget[] = [];
   private crossingTargetsDirty = false;
+  private crossingOrder: ObcPoiTarget[] = [];
+  private crossingNeighbor = new Map<ObcPoiTarget, ObcPoiTarget>();
+  private crossingDirection = new Map<ObcPoiTarget, number>();
   private previousPositions = new Map<HTMLElement, number>();
   private lastOffsets = new Map<HTMLElement, number>();
   private static readonly GROUP_LAYER_HOOK_ATTR = 'data-in-poi-layer';
@@ -392,14 +396,19 @@ export class ObcPoiLayer extends LitElement {
       });
       this.lastOffsets.clear();
       this.previousPositions.clear();
+      this.crossingOrder = [];
       return false;
     }
 
     const currentPositions = new Map<HTMLElement, number>();
     const movingTargets = new Set<HTMLElement>();
+    const deltas = new Map<ObcPoiTarget, number>();
 
     const buttonWidth = this.getTouchTargetSize();
-    const minGap = buttonWidth + 4;
+    const minGap = this.getCssVarAsNumber(
+      POI_CROSSING_MIN_GAP_VAR,
+      buttonWidth + 4
+    );
 
     targets.forEach((target) => {
       const leftStr = target.style.left;
@@ -409,10 +418,14 @@ export class ObcPoiLayer extends LitElement {
       const prevPos = this.previousPositions.get(target);
       if (prevPos !== undefined && Math.abs(left - prevPos) > 0.5) {
         movingTargets.add(target);
+        deltas.set(target, left - prevPos);
       }
     });
 
-    const positionsChanged = movingTargets.size > 0;
+    const orderIndex = new Map<ObcPoiTarget, number>();
+    this.crossingOrder.forEach((target, index) => {
+      orderIndex.set(target, index);
+    });
 
     const orderedTargets = targets
       .map((target) => {
@@ -423,16 +436,57 @@ export class ObcPoiLayer extends LitElement {
           isMoving: movingTargets.has(target),
         };
       })
-      .sort((a, b) => a.center - b.center);
+      .sort((a, b) => {
+        const delta = a.center - b.center;
+        if (Math.abs(delta) > 0.5) return delta;
+        return (
+          (orderIndex.get(a.target) ?? 0) - (orderIndex.get(b.target) ?? 0)
+        );
+      });
+
+    const targetOffsets = new Map<ObcPoiTarget, number>();
+    orderedTargets.forEach((item) => targetOffsets.set(item.target, 0));
 
     let hasActiveOverlaps = false;
-    for (let i = 1; i < orderedTargets.length; i += 1) {
-      const gap = orderedTargets[i].center - orderedTargets[i - 1].center;
-      if (gap < minGap) {
-        hasActiveOverlaps = true;
-        break;
+    const smoothstep = (t: number) => t * t * (3 - 2 * t);
+
+    let primaryMoving: ObcPoiTarget | null = null;
+    let primaryDelta = 0;
+    deltas.forEach((delta, target) => {
+      if (!primaryMoving || Math.abs(delta) > Math.abs(primaryDelta)) {
+        primaryMoving = target;
+        primaryDelta = delta;
+      }
+    });
+    const travelDir = primaryDelta >= 0 ? 1 : -1;
+
+    if (primaryMoving) {
+      const movingItem = orderedTargets.find(
+        (item) => item.target === primaryMoving
+      );
+      if (movingItem) {
+        let nearest: {center: number; target: ObcPoiTarget} | null = null;
+        for (const other of orderedTargets) {
+          if (other.target === movingItem.target) continue;
+          const dist = Math.abs(other.center - movingItem.center);
+          if (!nearest || dist < Math.abs(nearest.center - movingItem.center)) {
+            nearest = {center: other.center, target: other.target};
+          }
+        }
+        if (nearest) {
+          const gap = Math.abs(nearest.center - movingItem.center);
+          if (gap < minGap) {
+            hasActiveOverlaps = true;
+            const ratio = Math.min(1, Math.max(0, 1 - gap / minGap));
+            const eased = smoothstep(ratio);
+            const push = (minGap - gap) * eased;
+            targetOffsets.set(movingItem.target, push * travelDir);
+          }
+        }
       }
     }
+
+    const positionsChanged = movingTargets.size > 0;
 
     if (!hasActiveOverlaps) {
       targets.forEach((target) => {
@@ -444,47 +498,20 @@ export class ObcPoiLayer extends LitElement {
         if (!currentPositions.has(target)) this.lastOffsets.delete(target);
       });
       this.previousPositions = currentPositions;
+      this.crossingOrder = orderedTargets.map((item) => item.target);
       return positionsChanged;
     }
 
-    const desiredCenters = orderedTargets.map((item) => item.center);
-
-    for (let i = 0; i < orderedTargets.length; i += 1) {
-      const item = orderedTargets[i];
-      if (!item.isMoving) continue;
-      const prevDesired = i > 0 ? desiredCenters[i - 1] : null;
-      if (prevDesired !== null) {
-        desiredCenters[i] = Math.max(desiredCenters[i], prevDesired + minGap);
-      }
-    }
-
-    for (let i = orderedTargets.length - 1; i >= 0; i -= 1) {
-      const item = orderedTargets[i];
-      if (!item.isMoving) continue;
-      const nextDesired =
-        i < orderedTargets.length - 1 ? desiredCenters[i + 1] : null;
-      if (nextDesired !== null) {
-        desiredCenters[i] = Math.min(desiredCenters[i], nextDesired - minGap);
-      }
-    }
-
-    orderedTargets.forEach((item, index) => {
-      if (!item.isMoving) {
-        item.target.buttonOffsetX = 0;
-        item.target.offset = 0;
-        this.lastOffsets.set(item.target, 0);
-        return;
-      }
-
-      const desiredCenter = desiredCenters[index];
-      const offset = desiredCenter - item.center;
-      const roundedOffset = Math.round(offset);
+    orderedTargets.forEach((item) => {
+      const targetOffset =
+        primaryMoving && item.target === primaryMoving
+          ? (targetOffsets.get(item.target) ?? 0)
+          : 0;
       const prevOffset = this.lastOffsets.get(item.target) ?? 0;
-      const deadZone = 1;
+      const diff = targetOffset - prevOffset;
+      const deadZone = 0.5;
       const nextOffset =
-        Math.abs(roundedOffset - prevOffset) < deadZone
-          ? prevOffset
-          : roundedOffset;
+        Math.abs(diff) < deadZone ? targetOffset : prevOffset + diff * 0.2;
 
       if (nextOffset !== 0) {
         item.target.buttonOffsetX = nextOffset;
@@ -495,11 +522,13 @@ export class ObcPoiLayer extends LitElement {
       }
       this.lastOffsets.set(item.target, nextOffset);
     });
+
     this.lastOffsets.forEach((_, target) => {
       if (!currentPositions.has(target)) this.lastOffsets.delete(target);
     });
 
     this.previousPositions = currentPositions;
+    this.crossingOrder = orderedTargets.map((item) => item.target);
     return positionsChanged || hasActiveOverlaps;
   }
 
