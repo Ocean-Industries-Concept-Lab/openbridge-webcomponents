@@ -31,7 +31,7 @@
 }
 
 ::slotted(obc-poi-target),
-::slotted(obc-poi-target-button-group) {
+::slotted(obc-poi-group) {
   position: absolute;
   bottom: 0;
   height: 100%;
@@ -75,27 +75,27 @@
   --obc-poi-target-icon-opacity: 1;
 }
 
-::slotted(obc-poi-target-button-group[data-auto-group]) {
+::slotted(obc-poi-group[data-auto-group]) {
   opacity: 1;
 }
 
-::slotted(obc-poi-target-button-group) {
+::slotted(obc-poi-group) {
   bottom: 0;
   height: 100%;
   transform: none;
   pointer-events: none;
 }
 
-::slotted(obc-poi-target-button-group[data-auto-group]) {
+::slotted(obc-poi-group[data-auto-group]) {
   opacity: 0;
   z-index: 2;
   transition: opacity 0.7s ease-out;
 }
 
-::slotted(obc-poi-target-button-group[data-auto-group][data-visible]) {
+::slotted(obc-poi-group[data-auto-group][data-visible]) {
   opacity: 1;
 }
 
-::slotted(obc-poi-target-button-group[data-exiting]) {
+::slotted(obc-poi-group[data-exiting]) {
   pointer-events: none;
 }

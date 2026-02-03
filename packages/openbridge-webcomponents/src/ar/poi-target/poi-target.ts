@@ -9,7 +9,7 @@ import '../../icons/icon-ais-target-activated-iec.js';
 import {ObcArAlertType} from '../types.js';
 import {
   ObcPoiTargetButtonType,
-  ObcPoiTargetButtonValue,
+  ObcPoiTargetButtonDatum,
   PoiTargetButtonVisualState,
 } from '../poi-target-button/poi-target-button.js';
 import {customElement} from '../../decorator.js';
@@ -47,7 +47,7 @@ export {PoiTargetButtonVisualState as PoiTargetVisualState};
  * `<obc-poi-target>` renders a point-of-interest marker with a selectable target
  * button and optional pointer line.
  *
- * Use this component inside `obc-poi-layer` or `obc-poi-target-button-group` to
+ * Use this component inside `obc-poi-layer` or `obc-poi-group` to
  * position targets in AR layers and present status or selection state for a
  * detection or tracked object.
  *
@@ -99,7 +99,8 @@ export class ObcPoiTarget extends LitElement {
   @property({type: String}) selectedId: string | null = null;
   @property({type: String}) alertType = ObcArAlertType.None;
   @property({type: String, reflect: true, attribute: 'visualstate'})
-  visualState: PoiTargetButtonVisualState = PoiTargetButtonVisualState.Normal;
+  visualState: PoiTargetButtonVisualState =
+    PoiTargetButtonVisualState.Unchecked;
   @property({type: String}) type = ObcPoiTargetButtonType.Button;
   @property({type: String}) value: TargetValue = TargetValue.enabled;
   @property({type: String}) pointerType: Pointer = Pointer.Line;
@@ -170,7 +171,7 @@ export class ObcPoiTarget extends LitElement {
       },
     },
   })
-  values: ObcPoiTargetButtonValue[] = [];
+  values: ObcPoiTargetButtonDatum[] = [];
   override render() {
     let pointer = null;
     let verticalOffset = 0;

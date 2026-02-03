@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcPoiTargetButtonGroup} from './poi-target-button-group.js';
-import './poi-target-button-group.js';
+import {ObcPoiGroup} from './poi-group.js';
+import './poi-group.js';
 import {crossDecorator} from '../../storybook-util.js';
 import {html} from 'lit';
 import {createRef, ref} from 'lit/directives/ref.js';
@@ -9,10 +9,10 @@ import '../../icons/icon-ais-target-activated-iec.js';
 import '../poi-target/poi-target.js';
 import {ObcPoiTarget, PoiTargetVisualState} from '../poi-target/poi-target.js';
 
-const meta: Meta<ObcPoiTargetButtonGroup> = {
+const meta: Meta<ObcPoiGroup> = {
   title: 'AR/POI Target Button Group',
   tags: ['6.0'],
-  component: 'obc-poi-target-button-group',
+  component: 'obc-poi-group',
   decorators: [crossDecorator],
   args: {},
   render: (args) => {
@@ -24,8 +24,8 @@ const meta: Meta<ObcPoiTargetButtonGroup> = {
         return;
       }
       outside.visualState = event.detail.expand
-        ? PoiTargetVisualState.Overlap
-        : PoiTargetVisualState.Normal;
+        ? PoiTargetVisualState.Overlapped
+        : PoiTargetVisualState.Unchecked;
     };
 
     return html`
@@ -47,7 +47,7 @@ const meta: Meta<ObcPoiTargetButtonGroup> = {
         style="position: absolute; top: 0; left: 0; right: 0; bottom: 0;"
       >
         <div class="stage">
-          <obc-poi-target-button-group
+          <obc-poi-group
             style="position: absolute; top: 0; left: 0;"
             .expand=${args.expand}
             positionVertical="calc(50%)"
@@ -75,7 +75,7 @@ const meta: Meta<ObcPoiTargetButtonGroup> = {
               .height=${240}
               .y=${240}
             ></obc-poi-target>
-          </obc-poi-target-button-group>
+          </obc-poi-group>
           <obc-poi-target
             id="outside"
             selectedId="4"
@@ -87,10 +87,10 @@ const meta: Meta<ObcPoiTargetButtonGroup> = {
       </div>
     `;
   },
-} satisfies Meta<ObcPoiTargetButtonGroup>;
+} satisfies Meta<ObcPoiGroup>;
 
 export default meta;
-type Story = StoryObj<ObcPoiTargetButtonGroup>;
+type Story = StoryObj<ObcPoiGroup>;
 
 export const Grouped: Story = {
   args: {
@@ -111,8 +111,8 @@ export const GroupedWithNumbers: Story = {
         return;
       }
       outside.visualState = event.detail.expand
-        ? PoiTargetVisualState.Overlap
-        : PoiTargetVisualState.Normal;
+        ? PoiTargetVisualState.Overlapped
+        : PoiTargetVisualState.Unchecked;
     };
 
     return html`
@@ -134,7 +134,7 @@ export const GroupedWithNumbers: Story = {
         style="position: absolute; top: 0; left: 0; right: 0; bottom: 0;"
       >
         <div class="stage">
-          <obc-poi-target-button-group
+          <obc-poi-group
             style="position: absolute; top: 0; left: 0;"
             .expand=${args.expand}
             positionVertical="calc(50%)"
@@ -162,7 +162,7 @@ export const GroupedWithNumbers: Story = {
               .height=${240}
               .y=${240}
             ></obc-poi-target>
-          </obc-poi-target-button-group>
+          </obc-poi-group>
           <obc-poi-target
             id="outside"
             selectedId="4"
@@ -182,7 +182,7 @@ export const Expanded: Story = {
   },
   render: (args) => {
     const wrapperRef = createRef<HTMLDivElement>();
-    const groupRef = createRef<ObcPoiTargetButtonGroup>();
+    const groupRef = createRef<ObcPoiGroup>();
 
     const onExpand = (event: CustomEvent<{expand: boolean}>) => {
       const wrapper = wrapperRef.value;
@@ -191,8 +191,8 @@ export const Expanded: Story = {
         return;
       }
       outside.visualState = event.detail.expand
-        ? PoiTargetVisualState.Overlap
-        : PoiTargetVisualState.Normal;
+        ? PoiTargetVisualState.Overlapped
+        : PoiTargetVisualState.Unchecked;
     };
 
     if (args.expand) {
@@ -222,7 +222,7 @@ export const Expanded: Story = {
         style="position: absolute; top: 0; left: 0; right: 0; bottom: 0;"
       >
         <div class="stage">
-          <obc-poi-target-button-group
+          <obc-poi-group
             ${ref(groupRef)}
             style="position: absolute; top: 0; left: 0;"
             .expand=${false}
@@ -254,7 +254,7 @@ export const Expanded: Story = {
               .y=${0}
               .fixedTarget=${false}
             ></obc-poi-target>
-          </obc-poi-target-button-group>
+          </obc-poi-group>
           <obc-poi-target
             id="outside"
             selectedId="4"
@@ -391,7 +391,7 @@ export const InternalGroupSwapping: Story = {
       </style>
       <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0;">
         <div class="stage" ${ref(hostRef)}>
-          <obc-poi-target-button-group
+          <obc-poi-group
             style="position: absolute; top: 0; left: 0;"
             .expand=${args.expand}
             .internalSwapping=${args.internalSwapping}
@@ -425,7 +425,7 @@ export const InternalGroupSwapping: Story = {
               .height=${240}
               .y=${240}
             ></obc-poi-target>
-          </obc-poi-target-button-group>
+          </obc-poi-group>
         </div>
       </div>
     `;

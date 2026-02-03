@@ -6,7 +6,6 @@ import '../poi-layer-stack/poi-layer-stack.js';
 import '../poi-layer/poi-layer.js';
 import '../poi-target/poi-target.js';
 import {ObcPoiTargetButtonType} from '../poi-target-button/poi-target-button.js';
-import {PoiLayerSelectionMode} from '../poi-layer-stack/poi-layer-stack.js';
 
 /**
  * `<obc-poi-controller>` maps detections onto media and renders POI overlays.
@@ -340,16 +339,6 @@ export class ObcPoiController extends LitElement {
       x: offsetX + det.x * scale,
       y: offsetY + det.y * scale,
     };
-  }
-
-  private getLayerLineLength(layer: HTMLElement): number {
-    const raw = getComputedStyle(layer).getPropertyValue(
-      '--obc-poi-layer-line-length'
-    );
-    const parsed = Number.parseFloat(raw);
-    return Number.isFinite(parsed)
-      ? parsed
-      : ObcPoiController.DEFAULT_LINE_LENGTH;
   }
 
   private syncTargetsToCustomStack() {

@@ -3,7 +3,7 @@ import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './poi-layer-stack.css?inline';
 import {ObcPoiLayer, PoiLayerRole} from '../poi-layer/poi-layer.js';
-import {ObcPoiTargetButtonGroup} from '../poi-target-button-group/poi-target-button-group.js';
+import {ObcPoiGroup} from '../poi-group/poi-group.js';
 import {ObcPoiTarget, PoiTargetVisualState} from '../poi-target/poi-target.js';
 
 const SUPPORTS_TRANSLATE =
@@ -231,7 +231,7 @@ export class ObcPoiLayerStack extends LitElement {
     selected: boolean
   ) {
     if (selected) {
-      target.visualState = PoiTargetVisualState.Normal;
+      target.visualState = PoiTargetVisualState.Unchecked;
       target.style.setProperty('--obc-poi-overlap-pointer-events', 'auto');
       target.removeAttribute('data-behind');
       target.setAttribute('data-front', 'true');
@@ -303,12 +303,11 @@ export class ObcPoiLayerStack extends LitElement {
     const reduceMotion =
       typeof window !== 'undefined' &&
       window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    const wasInGroup =
-      currentParent.tagName.toLowerCase() === 'obc-poi-target-button-group';
+    const wasInGroup = currentParent.tagName.toLowerCase() === 'obc-poi-group';
     const firstRect = this.getTargetVisualRect(target);
     nextLayer.appendChild(target);
     if (wasInGroup) {
-      const group = currentParent as ObcPoiTargetButtonGroup;
+      const group = currentParent as ObcPoiGroup;
       const groupLayer = group.closest('obc-poi-layer');
       if (groupLayer && groupLayer !== nextLayer) {
         group.expand = false;

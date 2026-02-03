@@ -3,6 +3,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
   ObcPoiTargetButton,
   ObcPoiTargetButtonType,
+  PoiTargetButtonVisualState,
 } from './poi-target-button.js';
 import './poi-target-button.js';
 import '../../icons/icon-placeholder.js';
@@ -21,7 +22,7 @@ const meta: Meta<ObcPoiTargetButton> = {
     relativeDirection: 0,
     alertType: ObcArAlertType.None,
     selectedId: null,
-    visualState: 'normal',
+    visualState: PoiTargetButtonVisualState.Unchecked,
     values: [],
   },
   argTypes: {
@@ -40,7 +41,7 @@ const meta: Meta<ObcPoiTargetButton> = {
     },
     visualState: {
       control: {type: 'select'},
-      options: ['normal', 'overlap'],
+      options: Object.values(PoiTargetButtonVisualState),
     },
     type: {
       control: {type: 'select'},
@@ -130,44 +131,44 @@ export const Alarm: Story = {
   },
 };
 
-export const Overlap: Story = {
+export const Overlapped: Story = {
   args: {
-    visualState: 'overlap',
+    visualState: PoiTargetButtonVisualState.Overlapped,
   },
 };
 
-export const OverlapEnhanced: Story = {
+export const OverlappedEnhanced: Story = {
   args: {
-    visualState: 'overlap',
+    visualState: PoiTargetButtonVisualState.Overlapped,
     type: ObcPoiTargetButtonType.Enhanced,
   },
 };
 
-export const OverlapWithCaution: Story = {
+export const OverlappedWithCaution: Story = {
   args: {
-    visualState: 'overlap',
+    visualState: PoiTargetButtonVisualState.Overlapped,
     alertType: ObcArAlertType.Caution,
   },
 };
 
-export const OverlapWithCautionEnhanced: Story = {
+export const OverlappedWithCautionEnhanced: Story = {
   args: {
-    visualState: 'overlap',
+    visualState: PoiTargetButtonVisualState.Overlapped,
     alertType: ObcArAlertType.Caution,
     type: ObcPoiTargetButtonType.Enhanced,
   },
 };
 
-export const OverlapWithWarning: Story = {
+export const OverlappedWithWarning: Story = {
   args: {
-    visualState: 'overlap',
+    visualState: PoiTargetButtonVisualState.Overlapped,
     alertType: ObcArAlertType.Warning,
   },
 };
 
-export const OverlapWithAlarm: Story = {
+export const OverlappedWithAlarm: Story = {
   args: {
-    visualState: 'overlap',
+    visualState: PoiTargetButtonVisualState.Overlapped,
     alertType: ObcArAlertType.Alarm,
   },
 };
@@ -223,13 +224,13 @@ export const WithValuesAlarm: Story = {
   },
 };
 
-export const WithValuesOverlap: Story = {
+export const WithValuesOverlapped: Story = {
   args: {
     values: [
       {value: '10', label: 'Lab', unit: 'Unit'},
       {value: '20', label: 'Lab 2', unit: 'Unit 2'},
     ],
-    visualState: 'overlap',
+    visualState: PoiTargetButtonVisualState.Overlapped,
   },
 };
 

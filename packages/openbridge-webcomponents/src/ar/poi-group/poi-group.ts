@@ -1,6 +1,6 @@
 import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
 import {property, queryAssignedElements, state} from 'lit/decorators.js';
-import componentStyle from './poi-target-button-group.css?inline';
+import componentStyle from './poi-group.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {ObcPoiTarget, PoiTargetVisualState} from '../poi-target/poi-target.js';
 import {customElement} from '../../decorator.js';
@@ -16,8 +16,8 @@ export type ExpandEvent = CustomEvent<{expand: boolean}>;
  * Groups POI targets and manages expand/collapse layout behavior.
  * @fires {ExpandEvent} expand - Fired when the button is clicked.
  */
-@customElement('obc-poi-target-button-group')
-export class ObcPoiTargetButtonGroup extends LitElement {
+@customElement('obc-poi-group')
+export class ObcPoiGroup extends LitElement {
   @property({type: Boolean}) expand = false;
   @property({type: Boolean, reflect: true}) collapsing = false;
   @property({type: String}) positionVertical = '0px';
@@ -252,8 +252,8 @@ export class ObcPoiTargetButtonGroup extends LitElement {
       if (child instanceof ObcPoiTarget) {
         child.visualState =
           !expand && child !== frontChild
-            ? PoiTargetVisualState.Overlap
-            : PoiTargetVisualState.Normal;
+            ? PoiTargetVisualState.Overlapped
+            : PoiTargetVisualState.Unchecked;
         if (expand) {
           child.style.transform = 'translate(50%, 100%)';
         } else {
@@ -380,7 +380,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
       });
       this.topOffsetTargets.forEach((_, child) => {
         if (child !== frontChild) {
-          child.visualState = PoiTargetVisualState.Overlap;
+          child.visualState = PoiTargetVisualState.Overlapped;
         }
       });
       if (TOP_OFFSET_ANIMATION_DELAY_MS > 0) {
@@ -479,10 +479,10 @@ export class ObcPoiTargetButtonGroup extends LitElement {
 
       if (child !== frontChild) {
         child.visualState = visualExpanded
-          ? PoiTargetVisualState.Normal
-          : PoiTargetVisualState.Overlap;
+          ? PoiTargetVisualState.Unchecked
+          : PoiTargetVisualState.Overlapped;
       } else {
-        child.visualState = PoiTargetVisualState.Normal;
+        child.visualState = PoiTargetVisualState.Unchecked;
       }
 
       if (touchAreaExpanded) {
@@ -561,8 +561,8 @@ export class ObcPoiTargetButtonGroup extends LitElement {
       if (!(child instanceof ObcPoiTarget)) return;
       child.visualState =
         !this.expand && (!front || child !== front)
-          ? PoiTargetVisualState.Overlap
-          : PoiTargetVisualState.Normal;
+          ? PoiTargetVisualState.Overlapped
+          : PoiTargetVisualState.Unchecked;
       if (front && child === front) {
         child.setAttribute('data-front', 'true');
       } else {
@@ -755,6 +755,6 @@ export class ObcPoiTargetButtonGroup extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-poi-target-button-group': ObcPoiTargetButtonGroup;
+    'obc-poi-group': ObcPoiGroup;
   }
 }

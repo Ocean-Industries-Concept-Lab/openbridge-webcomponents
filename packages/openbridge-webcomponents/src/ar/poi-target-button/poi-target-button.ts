@@ -12,11 +12,13 @@ export enum ObcPoiTargetButtonType {
 }
 
 export enum PoiTargetButtonVisualState {
-  Normal = 'normal',
-  Overlap = 'overlap',
+  Unchecked = 'unchecked',
+  Checked = 'checked',
+  Activated = 'activated',
+  Overlapped = 'overlapped',
 }
 
-export interface ObcPoiTargetButtonValue {
+export interface ObcPoiTargetButtonDatum {
   value: string;
   label: string;
   unit: string;
@@ -29,10 +31,11 @@ export class ObcPoiTargetButton extends LitElement {
   @property({type: String}) selectedId: string | null = null;
   @property({type: String}) alertType = ObcArAlertType.None;
   @property({type: String, reflect: true, attribute: 'visualstate'})
-  visualState: PoiTargetButtonVisualState = PoiTargetButtonVisualState.Normal;
+  visualState: PoiTargetButtonVisualState =
+    PoiTargetButtonVisualState.Unchecked;
   @property({type: String}) type = ObcPoiTargetButtonType.Button;
   @property({type: Boolean}) inExpandedGroup = false;
-  @property({type: Array, attribute: false}) values: ObcPoiTargetButtonValue[] =
+  @property({type: Array, attribute: false}) values: ObcPoiTargetButtonDatum[] =
     [];
   @property({type: Boolean}) hasRelation = false;
 

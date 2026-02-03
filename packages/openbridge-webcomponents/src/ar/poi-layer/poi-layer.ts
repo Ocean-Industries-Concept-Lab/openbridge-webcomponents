@@ -2,7 +2,7 @@ import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property, query} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './poi-layer.css?inline';
-import '../poi-target-button-group/poi-target-button-group.js';
+import '../poi-group/poi-group.js';
 import {ObcPoiTarget, PoiTargetVisualState} from '../poi-target/poi-target.js';
 import {ObcPoiTargetButtonType} from '../poi-target-button/poi-target-button.js';
 
@@ -61,7 +61,7 @@ export enum PoiLayerRole {
  * - Use `typeFilter` with `role="filtered"` to route specific target types.
  *
  * ### Slots
- * - Default slot for `obc-poi-target` and `obc-poi-target-button-group`.
+ * - Default slot for `obc-poi-target` and `obc-poi-group`.
  *
  * ### Events
  * - `layer-resize` when the computed layer height changes.
@@ -74,7 +74,7 @@ export enum PoiLayerRole {
  * </obc-poi-layer>
  * ```
  *
- * @slot - Default slot for `obc-poi-target` and `obc-poi-target-button-group`.
+ * @slot - Default slot for `obc-poi-target` and `obc-poi-group`.
  * @fires {CustomEvent} layer-resize - Fired when the layer height changes.
  */
 @customElement('obc-poi-layer')
@@ -332,9 +332,9 @@ export class ObcPoiLayer extends LitElement {
           if (!(node instanceof HTMLElement)) continue;
           if (
             node.tagName.toLowerCase() === 'obc-poi-target' ||
-            node.tagName.toLowerCase() === 'obc-poi-target-button-group' ||
+            node.tagName.toLowerCase() === 'obc-poi-group' ||
             node.querySelector?.('obc-poi-target') ||
-            node.querySelector?.('obc-poi-target-button-group')
+            node.querySelector?.('obc-poi-group')
           ) {
             this.updateTargetObservers();
             this.scheduleGrouping();
@@ -517,7 +517,7 @@ export class ObcPoiLayer extends LitElement {
 
     const manualGroups = (
       Array.from(
-        this.querySelectorAll('obc-poi-target-button-group')
+        this.querySelectorAll('obc-poi-group')
       ) as PoiButtonGroupElement[]
     ).filter((group) => !group.hasAttribute('data-auto-group'));
     const manualGroupedTargets = new Set<HTMLElement>();
@@ -564,7 +564,7 @@ export class ObcPoiLayer extends LitElement {
     const currentGroupByTarget = new Map<HTMLElement, HTMLElement>();
     targets.forEach((target) => {
       const parent = target.parentElement;
-      if (parent?.tagName.toLowerCase() === 'obc-poi-target-button-group') {
+      if (parent?.tagName.toLowerCase() === 'obc-poi-group') {
         currentGroupByTarget.set(target, parent as HTMLElement);
       }
     });
@@ -619,7 +619,7 @@ export class ObcPoiLayer extends LitElement {
     const behindClusters = this.buildClusters(targets, behindAdjacency);
 
     const existingGroups = Array.from(
-      this.querySelectorAll('obc-poi-target-button-group[data-auto-group]')
+      this.querySelectorAll('obc-poi-group[data-auto-group]')
     ) as PoiButtonGroupElement[];
 
     const frontTargets = new Set<HTMLElement>();
@@ -702,7 +702,7 @@ export class ObcPoiLayer extends LitElement {
     });
 
     remainingClusters.forEach((cluster) => {
-      const group = document.createElement('obc-poi-target-button-group');
+      const group = document.createElement('obc-poi-group');
       group.setAttribute('data-auto-group', 'true');
       group.setAttribute('data-position-mode', 'bottom');
       group.setAttribute('data-visible', 'true');
@@ -762,8 +762,8 @@ export class ObcPoiLayer extends LitElement {
         }
         const isOverlapState = target.hasAttribute('data-behind');
         target.visualState = isOverlapState
-          ? PoiTargetVisualState.Overlap
-          : PoiTargetVisualState.Normal;
+          ? PoiTargetVisualState.Overlapped
+          : PoiTargetVisualState.Unchecked;
         this.applyStandaloneVisualState(target, isOverlapState);
         this.resetTarget(target);
       } else {
@@ -856,7 +856,7 @@ export class ObcPoiLayer extends LitElement {
     rects?: Map<HTMLElement, DOMRect>
   ) {
     const groups = Array.from(
-      this.querySelectorAll('obc-poi-target-button-group')
+      this.querySelectorAll('obc-poi-group')
     ) as PoiButtonGroupElement[];
     groups.forEach((group) => {
       const children = Array.from(group.children).filter(

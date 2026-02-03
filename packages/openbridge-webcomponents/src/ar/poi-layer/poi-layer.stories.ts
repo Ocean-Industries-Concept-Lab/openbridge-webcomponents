@@ -4,7 +4,7 @@ import {createRef, ref} from 'lit/directives/ref.js';
 import {OverlapMode} from './poi-layer.js';
 import './poi-layer.js';
 import '../poi-target/poi-target.js';
-import '../poi-target-button-group/poi-target-button-group.js';
+import '../poi-group/poi-group.js';
 
 type PoiLayerArgs = {
   label: string;
