@@ -41,7 +41,7 @@ export const Primary: Story = {
         .layerIndex=${args.layerIndex}
         ?debug=${args.debug}
       >
-        <obc-poi-target .x=${120} .height=${200}> </obc-poi-target>
+        <obc-poi-target .x=${120} .y=${120} .height=${200}> </obc-poi-target>
         <obc-poi-target .x=${320} .height=${70}> </obc-poi-target>
         <obc-poi-target .x=${520} .height=${140}> </obc-poi-target>
       </obc-poi-layer>

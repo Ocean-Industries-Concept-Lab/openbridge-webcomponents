@@ -45,7 +45,7 @@ export class ObcPoiLayerStack extends LitElement {
   private handleSlotChange = () => this.schedulePlacement();
   private selectionMap = new Map<
     HTMLElement,
-    {originLayer: ObcPoiLayer; originIndex: number; originHeight: number}
+    {originLayer: ObcPoiLayer; originIndex: number; originLineLength: number}
   >();
   private selectionCounter = 0;
   private selectionIds = new WeakMap<HTMLElement, string>();
@@ -106,7 +106,7 @@ export class ObcPoiLayerStack extends LitElement {
     if (existing) {
       this.setSelectedTargetInteractivity(target, false);
       this.clearTargetGroupingAttributes(target);
-      this.restoreTargetHeight(target, existing.originHeight);
+      this.restoreTargetLineLength(target, existing.originLineLength);
       this.moveTargetToLayer(target, existing.originLayer, true);
       this.selectionMap.delete(target);
       this.clearTargetSelectedId(target);
@@ -119,11 +119,11 @@ export class ObcPoiLayerStack extends LitElement {
       this.clearSelectionMapExcept(target);
     }
 
-    const originHeight = this.getTargetHeight(target);
+    const originLineLength = this.getTargetLineLength(target);
     this.selectionMap.set(target, {
       originLayer,
       originIndex: originLayer.layerIndex,
-      originHeight,
+      originLineLength,
     });
     this.setTargetSelectedId(target);
     this.clearTargetGroupingAttributes(target);
@@ -246,7 +246,7 @@ export class ObcPoiLayerStack extends LitElement {
     record?: {
       originLayer: ObcPoiLayer;
       originIndex: number;
-      originHeight: number;
+      originLineLength: number;
     },
     fallbackLayer?: ObcPoiLayer | null
   ) {
@@ -254,7 +254,7 @@ export class ObcPoiLayerStack extends LitElement {
     this.clearTargetGroupingAttributes(target);
     this.clearTargetSelectedId(target);
     if (record) {
-      this.restoreTargetHeight(target, record.originHeight);
+      this.restoreTargetLineLength(target, record.originLineLength);
       if (record.originLayer !== target.closest('obc-poi-layer')) {
         this.moveTargetToLayer(target, record.originLayer, true);
       }
@@ -296,7 +296,7 @@ export class ObcPoiLayerStack extends LitElement {
   private moveTargetToLayer(
     target: HTMLElement,
     nextLayer: HTMLElement,
-    skipHeightAdjust = false
+    skipLineLengthAdjust = false
   ) {
     const currentParent = target.parentElement;
     if (!currentParent || currentParent === nextLayer) return;
@@ -320,8 +320,11 @@ export class ObcPoiLayerStack extends LitElement {
       target.style.removeProperty('transform');
     }
     if (reduceMotion) {
-      if (!skipHeightAdjust) {
-        this.adjustTargetHeightForLayerMove(target as ObcPoiTarget, firstRect);
+      if (!skipLineLengthAdjust) {
+        this.adjustTargetLineLengthForLayerMove(
+          target as ObcPoiTarget,
+          firstRect
+        );
       }
       this.requestLayerGrouping(nextLayer);
       return;
@@ -330,8 +333,8 @@ export class ObcPoiLayerStack extends LitElement {
     const dx = firstRect.left - lastRect.left;
     const dy = firstRect.top - lastRect.top;
 
-    if (!skipHeightAdjust) {
-      this.adjustTargetHeightByOffset(target as ObcPoiTarget, dy);
+    if (!skipLineLengthAdjust) {
+      this.adjustTargetLineLengthByOffset(target as ObcPoiTarget, dy);
     }
     if (!Number.isFinite(dx) || !Number.isFinite(dy)) return;
     if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
@@ -466,11 +469,11 @@ export class ObcPoiLayerStack extends LitElement {
           ? fallbackOrigin
           : currentLayer;
       if (!originLayer) return;
-      const originHeight = this.getTargetHeight(target);
+      const originLineLength = this.getTargetLineLength(target);
       this.selectionMap.set(target, {
         originLayer,
         originIndex: originLayer.layerIndex,
-        originHeight,
+        originLineLength,
       });
       this.setSelectedTargetInteractivity(target, true);
     });
@@ -511,54 +514,46 @@ export class ObcPoiLayerStack extends LitElement {
     ) as ObcPoiTarget[];
   }
 
-  private getTargetHeight(target: ObcPoiTarget): number {
-    if (Number.isFinite(target.height)) {
-      return target.height;
-    }
-    if (Number.isFinite(target.y ?? NaN)) {
-      return target.y ?? 0;
-    }
-    return 0;
+  private getTargetLineLength(target: ObcPoiTarget): number {
+    return Number.isFinite(target.y) ? target.y : 0;
   }
 
-  private setTargetHeight(target: ObcPoiTarget, height: number) {
-    target.height = height;
-    if (!Number.isFinite(target.y ?? NaN)) {
-      target.y = height;
-    }
+  private setTargetLineLength(target: ObcPoiTarget, lineLength: number) {
+    target.y = lineLength;
   }
 
-  private adjustTargetHeightByOffset(
+  private adjustTargetLineLengthByOffset(
     target: ObcPoiTarget,
     offset: number,
     animate = true
   ) {
     if (!Number.isFinite(offset) || Math.abs(offset) < 0.5) return;
-    const currentHeight = this.getTargetHeight(target);
-    const targetHeight = currentHeight + offset;
+    const currentLineLength = this.getTargetLineLength(target);
+    const targetLineLength = currentLineLength - offset;
 
     if (!animate) {
-      this.setTargetHeight(target, targetHeight);
+      this.setTargetLineLength(target, targetLineLength);
       return;
     }
 
     const duration = 240;
     const startTime = performance.now();
-    const startHeight = currentHeight;
+    const startLineLength = currentLineLength;
 
-    const animateHeight = (now: number) => {
+    const animateLineLength = (now: number) => {
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const eased = this.cubicBezier(0.2, 0, 0, 1, progress);
-      const newHeight = startHeight + (targetHeight - startHeight) * eased;
-      this.setTargetHeight(target, newHeight);
+      const newLineLength =
+        startLineLength + (targetLineLength - startLineLength) * eased;
+      this.setTargetLineLength(target, newLineLength);
 
       if (progress < 1) {
-        requestAnimationFrame(animateHeight);
+        requestAnimationFrame(animateLineLength);
       }
     };
 
-    requestAnimationFrame(animateHeight);
+    requestAnimationFrame(animateLineLength);
   }
 
   /**
@@ -598,19 +593,22 @@ export class ObcPoiLayerStack extends LitElement {
     return ((ay * tParam + by) * tParam + cy) * tParam;
   }
 
-  private adjustTargetHeightForLayerMove(
+  private adjustTargetLineLengthForLayerMove(
     target: ObcPoiTarget,
     firstRect: DOMRect
   ) {
     const lastRect = this.getTargetVisualRect(target);
     const dy = firstRect.top - lastRect.top;
-    this.adjustTargetHeightByOffset(target, dy, false);
+    this.adjustTargetLineLengthByOffset(target, dy, false);
   }
 
-  private restoreTargetHeight(target: ObcPoiTarget, originHeight: number) {
-    const currentHeight = this.getTargetHeight(target);
-    const offset = originHeight - currentHeight;
-    this.adjustTargetHeightByOffset(target, offset, true);
+  private restoreTargetLineLength(
+    target: ObcPoiTarget,
+    originLineLength: number
+  ) {
+    const currentLineLength = this.getTargetLineLength(target);
+    const offset = currentLineLength - originLineLength;
+    this.adjustTargetLineLengthByOffset(target, offset, true);
   }
 
   static override styles = unsafeCSS(componentStyle);
