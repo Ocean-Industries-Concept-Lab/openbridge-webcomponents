@@ -819,7 +819,7 @@ export const CrossingMode: Story = {
 
         .crossing-mode obc-poi-layer {
           --obc-poi-layer-min-height: 48px;
-          --obc-poi-layer-crossing-min-gap: 40px;
+          --obc-poi-layer-crossing-min-gap: 64px;
           width: 100%;
         }
       </style>

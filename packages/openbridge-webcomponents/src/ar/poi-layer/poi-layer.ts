@@ -107,6 +107,7 @@ export class ObcPoiLayer extends LitElement {
   private crossingOrder: ObcPoiTarget[] = [];
   private crossingNeighbor = new Map<ObcPoiTarget, ObcPoiTarget>();
   private crossingDirection = new Map<ObcPoiTarget, number>();
+  private crossingLastEffectiveX = new Map<ObcPoiTarget, number>();
   private previousPositions = new Map<HTMLElement, number>();
   private lastOffsets = new Map<HTMLElement, number>();
   private static readonly GROUP_LAYER_HOOK_ATTR = 'data-in-poi-layer';
@@ -480,7 +481,7 @@ export class ObcPoiLayer extends LitElement {
             const ratio = Math.min(1, Math.max(0, 1 - gap / minGap));
             const eased = smoothstep(ratio);
             const push = (minGap - gap) * eased;
-            targetOffsets.set(movingItem.target, push * travelDir);
+            targetOffsets.set(movingItem.target, -push * travelDir);
           }
         }
       }
@@ -499,6 +500,7 @@ export class ObcPoiLayer extends LitElement {
       });
       this.previousPositions = currentPositions;
       this.crossingOrder = orderedTargets.map((item) => item.target);
+      this.crossingLastEffectiveX.clear();
       return positionsChanged;
     }
 
@@ -510,8 +512,24 @@ export class ObcPoiLayer extends LitElement {
       const prevOffset = this.lastOffsets.get(item.target) ?? 0;
       const diff = targetOffset - prevOffset;
       const deadZone = 0.5;
-      const nextOffset =
+      let nextOffset =
         Math.abs(diff) < deadZone ? targetOffset : prevOffset + diff * 0.2;
+
+      if (primaryMoving && item.target === primaryMoving) {
+        const baseCenter =
+          (currentPositions.get(item.target) ?? 0) + buttonWidth / 2;
+        const prevEffective =
+          this.crossingLastEffectiveX.get(item.target) ?? baseCenter;
+        const nextEffective = baseCenter + nextOffset;
+        if (travelDir > 0 && nextEffective < prevEffective) {
+          nextOffset = prevEffective - baseCenter;
+        } else if (travelDir < 0 && nextEffective > prevEffective) {
+          nextOffset = prevEffective - baseCenter;
+        }
+        this.crossingLastEffectiveX.set(item.target, baseCenter + nextOffset);
+      } else {
+        this.crossingLastEffectiveX.delete(item.target);
+      }
 
       if (nextOffset !== 0) {
         item.target.buttonOffsetX = nextOffset;
