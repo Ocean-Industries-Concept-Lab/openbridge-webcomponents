@@ -1,6 +1,7 @@
 :host {
   --obc-poi-layer-height: 0px;
   --obc-poi-layer-auto-group-offset-y: 0px;
+  --obc-poi-layer-line-length: 120px;
   display: block;
   position: relative;
   width: 100%;

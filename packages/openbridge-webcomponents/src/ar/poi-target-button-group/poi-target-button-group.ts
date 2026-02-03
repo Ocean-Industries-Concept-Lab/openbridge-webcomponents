@@ -471,19 +471,11 @@ export class ObcPoiTargetButtonGroup extends LitElement {
         delta = currentLeft - config.originalLeft;
       }
 
-      const buttonOffset = (config.currentExpandedOffset - delta) * eased;
+      const topOffset = (config.currentExpandedOffset - delta) * eased;
 
-      if (inLayer) {
-        child.style.setProperty(
-          '--obc-poi-target-offset-x',
-          `${buttonOffset}px`
-        );
-        child.style.removeProperty('transform');
-      } else {
-        child.style.transform = `translateX(${buttonOffset}px)`;
-      }
-
-      child.offset = -buttonOffset;
+      // Use topOffset to move the target, keeping the line anchored via line offset math.
+      child.topOffset = topOffset;
+      child.buttonOffsetX = 0;
 
       if (child !== frontChild) {
         child.visualState = visualExpanded
@@ -530,11 +522,27 @@ export class ObcPoiTargetButtonGroup extends LitElement {
         Number.isFinite(child.y) && child.y > 0
           ? child.y
           : Number.parseFloat(child.getAttribute('y') ?? '');
-      const resolvedHeight = !Number.isNaN(heightValue)
-        ? heightValue
-        : !Number.isNaN(yValue)
-          ? yValue
-          : Number.NaN;
+      let resolvedHeight = Number.NaN;
+
+      if (child.fixedTarget) {
+        if (!Number.isNaN(heightValue) && !Number.isNaN(yValue)) {
+          resolvedHeight = heightValue - yValue;
+        }
+      } else if (!Number.isNaN(heightValue)) {
+        resolvedHeight = heightValue;
+      }
+
+      if (Number.isNaN(resolvedHeight)) {
+        const inlineTop = child.style.top;
+        if (inlineTop && inlineTop.endsWith('px')) {
+          const parsed = Number.parseFloat(inlineTop);
+          if (!Number.isNaN(parsed)) resolvedHeight = parsed;
+        } else {
+          const computedTop = window.getComputedStyle(child).top;
+          const parsed = Number.parseFloat(computedTop);
+          if (!Number.isNaN(parsed)) resolvedHeight = parsed;
+        }
+      }
 
       if (Number.isNaN(resolvedHeight)) continue;
 
@@ -597,10 +605,8 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     this.updateExpandedOffsets();
   }
 
-  private lastAppliedOffsets: Map<
-    ObcPoiTarget,
-    {buttonOffset: number; lineOffset: number}
-  > = new Map();
+  private lastAppliedOffsets: Map<ObcPoiTarget, {topOffset: number}> =
+    new Map();
   private lastTargetOrder: ObcPoiTarget[] = [];
 
   private updateExpandedOffsets(snap: boolean = false) {
@@ -686,30 +692,18 @@ export class ObcPoiTargetButtonGroup extends LitElement {
         }
       }
 
-      const buttonOffset = config.currentExpandedOffset - delta;
-      const lineOffset = -buttonOffset;
+      const topOffset = config.currentExpandedOffset - delta;
 
       const last = this.lastAppliedOffsets.get(child);
-      if (
-        last &&
-        last.buttonOffset === buttonOffset &&
-        last.lineOffset === lineOffset
-      ) {
+      if (last && last.topOffset === topOffset) {
         return;
       }
 
-      this.lastAppliedOffsets.set(child, {buttonOffset, lineOffset});
+      this.lastAppliedOffsets.set(child, {topOffset});
 
-      if (inLayer) {
-        child.style.setProperty(
-          '--obc-poi-target-offset-x',
-          `${buttonOffset}px`
-        );
-      } else {
-        child.style.transform = `translateX(${buttonOffset}px)`;
-      }
-
-      child.offset = lineOffset;
+      // Use topOffset to move the target, keeping the line anchored via line offset math.
+      child.topOffset = topOffset;
+      child.buttonOffsetX = 0;
     });
   }
 

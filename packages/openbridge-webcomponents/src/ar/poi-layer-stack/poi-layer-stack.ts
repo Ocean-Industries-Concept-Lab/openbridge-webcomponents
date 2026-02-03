@@ -522,15 +522,11 @@ export class ObcPoiLayerStack extends LitElement {
     target.y = lineLength;
   }
 
-  private adjustTargetLineLengthByOffset(
+  private animateTargetLineLength(
     target: ObcPoiTarget,
-    offset: number,
-    animate = true
+    targetLineLength: number,
+    animate: boolean
   ) {
-    if (!Number.isFinite(offset) || Math.abs(offset) < 0.5) return;
-    const currentLineLength = this.getTargetLineLength(target);
-    const targetLineLength = currentLineLength - offset;
-
     if (!animate) {
       this.setTargetLineLength(target, targetLineLength);
       return;
@@ -538,7 +534,7 @@ export class ObcPoiLayerStack extends LitElement {
 
     const duration = 240;
     const startTime = performance.now();
-    const startLineLength = currentLineLength;
+    const startLineLength = this.getTargetLineLength(target);
 
     const animateLineLength = (now: number) => {
       const elapsed = now - startTime;
@@ -554,6 +550,19 @@ export class ObcPoiLayerStack extends LitElement {
     };
 
     requestAnimationFrame(animateLineLength);
+  }
+
+  private adjustTargetLineLengthByOffset(
+    target: ObcPoiTarget,
+    offset: number,
+    animate = true
+  ) {
+    if (!Number.isFinite(offset) || Math.abs(offset) < 0.5) return;
+    const currentLineLength = this.getTargetLineLength(target);
+    const targetLineLength = target.fixedTarget
+      ? currentLineLength - offset
+      : currentLineLength + offset;
+    this.animateTargetLineLength(target, targetLineLength, animate);
   }
 
   /**
@@ -606,9 +615,7 @@ export class ObcPoiLayerStack extends LitElement {
     target: ObcPoiTarget,
     originLineLength: number
   ) {
-    const currentLineLength = this.getTargetLineLength(target);
-    const offset = currentLineLength - originLineLength;
-    this.adjustTargetLineLengthByOffset(target, offset, true);
+    this.animateTargetLineLength(target, originLineLength, true);
   }
 
   static override styles = unsafeCSS(componentStyle);

@@ -47,11 +47,14 @@ const renderTwoLayers = (args: PoiLayerStackArgs) => html`
   </style>
   <obc-poi-layer-stack class="stack" selection-mode=${args.selectionMode}>
     <obc-poi-layer label="Layer A" role="selected" .layerIndex=${1} debug>
-      <obc-poi-target .x=${220} .y=${90} fixed-button> </obc-poi-target>
+      <obc-poi-target .x=${220} .y=${90} .fixedTarget=${false}>
+      </obc-poi-target>
     </obc-poi-layer>
     <obc-poi-layer label="Layer B" role="default" .layerIndex=${2} debug>
-      <obc-poi-target .x=${120} .y=${110} fixed-button> </obc-poi-target>
-      <obc-poi-target .x=${320} .y=${70} fixed-button> </obc-poi-target>
+      <obc-poi-target .x=${120} .y=${110} .fixedTarget=${false}>
+      </obc-poi-target>
+      <obc-poi-target .x=${320} .y=${70} .fixedTarget=${false}>
+      </obc-poi-target>
     </obc-poi-layer>
   </obc-poi-layer-stack>
 `;
@@ -75,7 +78,8 @@ const renderThreeLayers = (args: PoiLayerStackArgs) => html`
       role="selected"
       debug
     >
-      <obc-poi-target .x=${520} .y=${110} fixed-button> </obc-poi-target>
+      <obc-poi-target .x=${520} .y=${110} .fixedTarget=${false}>
+      </obc-poi-target>
     </obc-poi-layer>
     <obc-poi-layer
       label="Layer B"
@@ -91,11 +95,11 @@ const renderThreeLayers = (args: PoiLayerStackArgs) => html`
       role="default"
       ?debug=${args.debug}
     >
-      <obc-poi-target .x=${80} .y=${120} fixed-button> </obc-poi-target>
-      <obc-poi-target .x=${260} .y=${80} fixed-button> </obc-poi-target>
-      <obc-poi-target .x=${180} .y=${100} fixed-button> </obc-poi-target>
-      <obc-poi-target .x=${420} .y=${140} fixed-button> </obc-poi-target>
-      <obc-poi-target .x=${140} .y=${90} fixed-button> </obc-poi-target>
+      <obc-poi-target .x=${80} .y=${120}> </obc-poi-target>
+      <obc-poi-target .x=${260} .y=${80}> </obc-poi-target>
+      <obc-poi-target .x=${180} .y=${100}> </obc-poi-target>
+      <obc-poi-target .x=${420} .y=${140}> </obc-poi-target>
+      <obc-poi-target .x=${140} .y=${90}> </obc-poi-target>
     </obc-poi-layer>
   </obc-poi-layer-stack>
 `;

@@ -60,10 +60,12 @@ export {PoiTargetButtonVisualState as PoiTargetVisualState};
  *
  * ### Usage Guidelines
  * - Set `x` in pixels to place the target relative to its container.
- * - Use `height` to set the target position (where the line bottom should be).
+ * - Use `height` to set the target/button position:
+ *   - When `fixed-target=true`: height is where the line bottom should be (target position)
+ *   - When `fixed-target=false`: height is where the button should be (button position)
  * - Use `y` for the pointer line length (distance from button to target).
- * - Set `fixed-button` to `true` for layer mode (button position fixed, line extends).
- * - Set `fixed-button` to `false` for standalone mode (target position fixed, button moves).
+ * - Set `fixed-target` to `false` for layer mode (button position fixed, line extends) - default.
+ * - Set `fixed-target` to `true` for standalone/CV mode (target position fixed, button moves).
  * - Use `visualState` to align with layer or group overlap logic.
  * - Provide `values` to display secondary statuses on the button.
  * - Adjust `buttonOffsetX` only when resolving collisions in a layer.
@@ -106,7 +108,7 @@ export class ObcPoiTarget extends LitElement {
   @property({type: Number, attribute: 'top-offset'}) topOffset = 0;
   @property({type: Number}) buttonOffsetX = 0;
   @property({type: Boolean, attribute: 'show-id'}) showId = false;
-  @property({type: Boolean, attribute: 'fixed-button'}) fixedButton = false;
+  @property({type: Boolean, attribute: 'fixed-target'}) fixedTarget = false;
 
   private getSelectedId(): string | null {
     if (!this.selected && !this.showId) return null;
@@ -120,22 +122,27 @@ export class ObcPoiTarget extends LitElement {
     if (
       changedProperties.has('height') ||
       changedProperties.has('y') ||
-      changedProperties.has('fixedButton')
+      changedProperties.has('fixedTarget')
     ) {
       this.updatePosition();
     }
   }
 
   private updatePosition() {
-    if (this.fixedButton) {
-      // Fixed button mode: button position determined by CSS (e.g., in layers)
-      // Don't set style.top - let CSS handle positioning
-      this.style.removeProperty('top');
-    } else {
-      // Target position mode: button position = height - y
+    if (this.fixedTarget) {
+      // Fixed target mode: target position (height) is fixed, button position = height - y
       if (typeof this.height === 'number' && Number.isFinite(this.height)) {
         const lineLength = Number.isFinite(this.y) ? this.y : 0;
         this.style.top = `${this.height - lineLength}px`;
+      } else {
+        this.style.removeProperty('top');
+      }
+    } else {
+      // Fixed button mode: button position is fixed
+      // If height is set, use it as the button position
+      // Otherwise, let CSS handle positioning (e.g., in layers with bottom: 0)
+      if (typeof this.height === 'number' && Number.isFinite(this.height)) {
+        this.style.top = `${this.height}px`;
       } else {
         this.style.removeProperty('top');
       }

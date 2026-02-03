@@ -89,9 +89,16 @@ export class ObcPoiController extends LitElement {
   private handleStackSlotChange = () => this.requestUpdate();
   private controllerTargets = new Map<
     string,
-    HTMLElement & {x: number; y: number; type: string}
+    HTMLElement & {
+      x: number;
+      y: number;
+      height: number | null;
+      fixedTarget?: boolean;
+      type: string;
+    }
   >();
   private currentMedia: HTMLVideoElement | HTMLImageElement | null = null;
+  private static readonly DEFAULT_LINE_LENGTH = 120;
   private mediaHandlers = {
     loadedmetadata: () => {
       if (this.currentMedia) this.updateMediaMetrics(this.currentMedia);
@@ -294,18 +301,20 @@ export class ObcPoiController extends LitElement {
     const offsetX = (this.renderWidth - contentWidth) / 2;
     const offsetY = (this.renderHeight - contentHeight) / 2;
 
-    const baseX =
-      this.boxOrigin === PoiBoxOrigin.Center ? det.x - det.width / 2 : det.x;
-    const baseY =
-      this.boxOrigin === PoiBoxOrigin.Center ? det.y - det.height / 2 : det.y;
-    const anchorX = baseX + det.width / 2;
-    const anchorY =
-      this.poiAnchor === 'center' ? baseY + det.height / 2 : baseY + det.height;
-
     return {
-      x: offsetX + anchorX * scale,
-      y: offsetY + anchorY * scale,
+      x: offsetX + det.x * scale,
+      y: offsetY + det.y * scale,
     };
+  }
+
+  private getLayerLineLength(layer: HTMLElement): number {
+    const raw = getComputedStyle(layer).getPropertyValue(
+      '--obc-poi-layer-line-length'
+    );
+    const parsed = Number.parseFloat(raw);
+    return Number.isFinite(parsed)
+      ? parsed
+      : ObcPoiController.DEFAULT_LINE_LENGTH;
   }
 
   private syncTargetsToCustomStack() {
@@ -344,20 +353,21 @@ export class ObcPoiController extends LitElement {
       if (!target) {
         target = document.createElement('obc-poi-target') as HTMLElement & {
           x: number;
-          y: number | null;
-          height: number;
+          y: number;
+          height: number | null;
+          fixedTarget?: boolean;
           type: string;
         };
         target.dataset.controller = '1';
         target.dataset.detectionIndex = String(index);
         target.type = ObcPoiTargetButtonType.Button;
+        target.fixedTarget = false;
         this.controllerTargets.set(key, target);
         layer.appendChild(target);
       }
 
       target.dataset.detectionIndex = String(index);
       target.x = mapped.x;
-      target.height = mapped.y;
       target.y = mapped.y;
     });
 

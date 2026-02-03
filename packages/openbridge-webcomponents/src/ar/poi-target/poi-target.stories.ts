@@ -17,6 +17,7 @@ const meta: Meta<ObcPoiTarget> = {
     relativeDirection: 0,
     offset: 0,
     values: [],
+    fixedTarget: false,
   },
   decorators: [crossDecorator],
   argTypes: {
@@ -24,6 +25,7 @@ const meta: Meta<ObcPoiTarget> = {
     y: {control: {type: 'range', min: 32, max: 400, step: 1}},
     height: {control: {type: 'range', min: 0, max: 480, step: 1}},
     topOffset: {control: {type: 'range', min: -200, max: 200, step: 1}},
+    fixedTarget: {control: {type: 'boolean'}},
     value: {
       options: [TargetValue.enabled, TargetValue.checked],
       control: {type: 'select'},
@@ -74,6 +76,7 @@ const meta: Meta<ObcPoiTarget> = {
           .relativeDirection=${args.relativeDirection}
           .offset=${args.offset}
           .values=${args.values}
+          .fixedTarget=${args.fixedTarget}
         ></obc-poi-target>
       </div>
     `;
@@ -125,6 +128,7 @@ export const WithValues: Story = {
           .relativeDirection=${args.relativeDirection}
           .offset=${args.offset}
           .values=${values}
+          .fixedTarget=${args.fixedTarget}
         ></obc-poi-target>
       </div>
     `;
@@ -203,7 +207,7 @@ export const AnimatedOffsetTop: Story = {
     pointerType: Pointer.Line,
   },
   render: (args) => {
-    let buttonOffset = 0;
+    let topOffset = 0;
     let direction = 1;
 
     const animate = () => {
@@ -212,12 +216,11 @@ export const AnimatedOffsetTop: Story = {
       ) as ObcPoiTarget;
       if (!target || !target.isConnected) return;
 
-      buttonOffset += direction * 0.3;
-      if (buttonOffset > 50) direction = -1;
-      if (buttonOffset < -50) direction = 1;
+      topOffset += direction * 0.3;
+      if (topOffset > 50) direction = -1;
+      if (topOffset < -50) direction = 1;
 
-      target.style.transform = `translateX(${buttonOffset}px)`;
-      target.offset = -buttonOffset;
+      target.topOffset = topOffset;
 
       if (target.isConnected) {
         requestAnimationFrame(animate);
@@ -320,11 +323,11 @@ export const AnimatedHeight: Story = {
         }
 
         .button-reference {
-          top: ${args.height - args.y}px;
+          top: ${(args.height ?? 300) - args.y}px;
         }
 
         .bottom-reference {
-          top: ${args.height}px;
+          top: ${args.height ?? 300}px;
         }
       </style>
       <div class="frame">
@@ -572,7 +575,7 @@ export const CompareModes: Story = {
       </style>
       <div class="frame">
         <div class="mode-container fixed-mode">
-          <div class="label title">fixed-button=true (Layer Mode)</div>
+          <div class="label title">fixed-target=false (Layer Mode)</div>
           <div class="label variables">
             <div id="fixed-y-value" class="var-value">y = ${args.y}px</div>
             <div id="fixed-height-value" class="var-value">height = null</div>
@@ -583,13 +586,13 @@ export const CompareModes: Story = {
             id="compare-fixed"
             .x=${args.x}
             .y=${args.y}
-            fixed-button
+            .fixedTarget=${false}
             .value=${args.value}
             .pointerType=${args.pointerType}
           ></obc-poi-target>
         </div>
         <div class="mode-container">
-          <div class="label title">fixed-button=false (CV Mode)</div>
+          <div class="label title">fixed-target=true (CV Mode)</div>
           <div class="label variables">
             <div id="normal-y-value" class="var-value">y = ${args.y}px</div>
             <div id="normal-height-value" class="var-value">
@@ -602,7 +605,8 @@ export const CompareModes: Story = {
             id="compare-normal"
             .x=${args.x}
             .y=${args.y}
-            .height=${args.height}
+            .height=${args.height ?? 300}
+            .fixedTarget=${true}
             .value=${args.value}
             .pointerType=${args.pointerType}
           ></obc-poi-target>
@@ -693,13 +697,13 @@ export const AnimatedLineLengthButtonFixed: Story = {
       <div class="frame">
         <div class="reference-line button-reference"></div>
         <div class="label button-label">
-          POI Button Fixed (fixed-button=true)
+          POI Button Fixed (fixed-target=false)
         </div>
         <obc-poi-target
           id="animated-line-length-button-fixed"
           .x=${args.x}
           .y=${args.y}
-          fixed-button
+          .fixedTarget=${false}
           .value=${args.value}
           .pointerType=${args.pointerType}
         ></obc-poi-target>

@@ -994,17 +994,20 @@ export class ObcPoiLayer extends LitElement {
     target: HTMLElement,
     rects?: Map<HTMLElement, DOMRect>
   ): number {
-    const heightAttr = target.getAttribute('height');
-    const heightValue = Number.parseFloat(heightAttr ?? '');
-    if (!Number.isNaN(heightValue)) return heightValue;
-    if (target instanceof ObcPoiTarget && Number.isFinite(target.height)) {
-      return target.height;
-    }
     const yAttr = target.getAttribute('y');
     const yValue = Number.parseFloat(yAttr ?? '');
     if (!Number.isNaN(yValue)) return yValue;
     if (target instanceof ObcPoiTarget && Number.isFinite(target.y ?? NaN)) {
       return target.y ?? 0;
+    }
+    const heightAttr = target.getAttribute('height');
+    const heightValue = Number.parseFloat(heightAttr ?? '');
+    if (!Number.isNaN(heightValue)) return heightValue;
+    if (target instanceof ObcPoiTarget) {
+      const height = target.height;
+      if (typeof height === 'number' && Number.isFinite(height)) {
+        return height;
+      }
     }
     const rect = rects?.get(target) ?? this.getTargetRect(target);
     return rect.height;

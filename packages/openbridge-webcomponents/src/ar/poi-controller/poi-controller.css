@@ -35,9 +35,9 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: 20%;
+  top: var(--obc-poi-controller-stack-top, 15%);
   transform: translateY(-50%);
-  height: var(--obc-poi-controller-stack-height, 40%);
+  height: var(--obc-poi-controller-stack-height, 50%);
   max-height: 100%;
   pointer-events: none;
 }
