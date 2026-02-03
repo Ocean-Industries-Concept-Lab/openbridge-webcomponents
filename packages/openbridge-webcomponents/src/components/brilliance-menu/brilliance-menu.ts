@@ -484,31 +484,27 @@ export class ObcBrillianceMenu extends LitElement {
     const out = [];
     if (!this.noNightPalette)
       out.push(
-        html`<obc-toggle-button-option
-          value="night"
-          type="icon"
-        ></obc-toggle-button-option>`
+        html`<obc-toggle-button-option value="night" type="icon">
+          <obi-palette-night slot="icon"></obi-palette-night>
+        </obc-toggle-button-option>`
       );
     if (!this.noDuskPalette)
       out.push(
-        html`<obc-toggle-button-option
-          value="dusk"
-          type="icon"
-        ></obc-toggle-button-option>`
+        html`<obc-toggle-button-option value="dusk" type="icon">
+          <obi-palette-dusk slot="icon"></obi-palette-dusk>
+        </obc-toggle-button-option>`
       );
     if (!this.noDayPalette)
       out.push(
-        html`<obc-toggle-button-option
-          value="day"
-          type="icon"
-        ></obc-toggle-button-option>`
+        html`<obc-toggle-button-option value="day" type="icon">
+          <obi-palette-day slot="icon"></obi-palette-day>
+        </obc-toggle-button-option>`
       );
     if (!this.noBrightPalette)
       out.push(
-        html`<obc-toggle-button-option
-          value="bright"
-          type="icon"
-        ></obc-toggle-button-option>`
+        html`<obc-toggle-button-option value="bright" type="icon">
+          <obi-palette-day-bright slot="icon"></obi-palette-day-bright>
+        </obc-toggle-button-option>`
       );
     return out;
   }
