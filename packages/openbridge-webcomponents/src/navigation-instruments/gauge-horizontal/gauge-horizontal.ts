@@ -73,7 +73,7 @@ export {
  * - `width`: 384px
  * - `paddingLeft`/`paddingRight`: 32px (`CHART_DIMENSIONS.CANVAS_PADDING`)
  * - `barThickness`: 48px
- * - `tickThickness`: 28px
+ * - `tickThickness`: 24px
  * - `labelThickness`: 60px
  * - `borderRadius`: 8px (matches obc-component-size-medium)
  * - `scaleType`: regular
@@ -185,7 +185,7 @@ export class ObcGaugeHorizontal extends LitElement {
   /** Hide numerical value labels at primary tickmarks */
   @property({type: Boolean}) hideLabels = false;
   private readonly barThickness = 48;
-  private readonly tickThickness = 28;
+  private readonly tickThickness = 24;
   private readonly labelThickness = 60;
 
   /** Array of values for main tickbars. When undefined, no main tickbars shown. When empty array [], defaults to [minValue, 0, maxValue]. */
@@ -230,6 +230,14 @@ export class ObcGaugeHorizontal extends LitElement {
 
   /** Setpoint/target value to display as indicator. When undefined, setpoint is off. */
   @property({type: Number}) setpoint?: number = undefined;
+  /**
+   * New setpoint value being adjusted (focus/adjustment mode).
+   * When defined, displays a second setpoint marker in 'focus' visual state,
+   * while the original `setpoint` marker is dimmed (0.5 opacity).
+   * This enables the "adjustment preview" UX where users can see both the current
+   * and proposed setpoint positions simultaneously.
+   */
+  @property({type: Number}) newSetpoint?: number = undefined;
   /** Whether value is at setpoint (manual override when disableAutoAtSetpoint=true) */
   @property({type: Boolean}) atSetpoint = false;
   /** Disable automatic atSetpoint calculation based on value and deadband */
@@ -240,6 +248,12 @@ export class ObcGaugeHorizontal extends LitElement {
   @property({type: Number}) setpointAtZeroDeadband = 0.5;
   /** Instrument state: inCommand, active, loading, or off */
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
+  /**
+   * When true, the setpoint marker is in "focus" state (user is actively adjusting).
+   * Displays the outlined/hollow triangle variant at full size.
+   * @default false
+   */
+  @property({type: Boolean}) focused = false;
 
   private readonly advicePosition: AdvicePosition = AdvicePosition.inner;
   /** Advice/alert overlays with min, max, type, and hinted state. When undefined or empty, no advice shown. */
@@ -288,11 +302,13 @@ export class ObcGaugeHorizontal extends LitElement {
       fillMax: this.fillMax,
       value: this.value,
       setpoint: this.setpoint,
+      newSetpoint: this.newSetpoint,
       atSetpoint: this.atSetpoint,
       disableAutoAtSetpoint: this.disableAutoAtSetpoint,
       autoAtSetpointDeadband: this.autoAtSetpointDeadband,
       setpointAtZeroDeadband: this.setpointAtZeroDeadband,
       state: this.state,
+      focused: this.focused,
       advicePosition: this.advicePosition,
       advices: this.advices as ExternalScaleAdvice[],
       fixedAspectRatio: this.fixedAspectRatio,

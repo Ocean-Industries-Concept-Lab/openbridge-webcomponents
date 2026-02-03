@@ -18,6 +18,7 @@ const meta: Meta<typeof ObcIntegrationBar> = {
     timeZoneOffsetHours: 1,
     showDimmingButton: true,
     showUserButton: true,
+    fleetButtonSelected: false,
   },
   argTypes: {
     showDate: {
@@ -29,6 +30,7 @@ const meta: Meta<typeof ObcIntegrationBar> = {
       .showClock=${args.showClock}
       .showDimmingButton=${args.showDimmingButton}
       .showUserButton=${args.showUserButton}
+      .fleetButtonSelected=${args.fleetButtonSelected}
     >
       <obc-dropdown-button
         slot="vessel-selector"
@@ -58,4 +60,10 @@ type Story = StoryObj<ObcIntegrationBar>;
 
 export const Primary: Story = {
   args: {},
+};
+
+export const FleetButtonSelected: Story = {
+  args: {
+    fleetButtonSelected: true,
+  },
 };

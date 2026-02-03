@@ -1,0 +1,133 @@
+.sequence-connector {
+  .line {
+    position: relative;
+
+    .direction-horizontal & {
+      width: 24px;
+    }
+
+    .direction-vertical & {
+      height: 24px;
+    }
+
+    .state-not-started & {
+      background-color: var(--element-disabled-color);
+
+      .direction-horizontal & {
+        .type-small &,
+        .type-medium & {
+          height: 1.5px;
+        }
+
+        .type-large & {
+          height: 2px;
+        }
+      }
+
+      .direction-vertical & {
+        .type-small &,
+        .type-medium & {
+          width: 1.5px;
+        }
+
+        .type-large & {
+          width: 2px;
+        }
+      }
+    }
+
+    .state-loading & {
+      background-color: var(--base-blue-200);
+    }
+
+    .state-completed & {
+      background-color: var(--element-neutral-enhanced-color);
+    }
+
+    :is(.state-loading, .state-completed) & {
+      .direction-horizontal & {
+        .type-small & {
+          height: 2px;
+        }
+
+        .type-medium & {
+          height: 3px;
+        }
+
+        .type-large & {
+          height: 4px;
+        }
+      }
+
+      .direction-vertical & {
+        .type-small & {
+          width: 2px;
+        }
+
+        .type-medium & {
+          width: 3px;
+        }
+
+        .type-large & {
+          width: 4px;
+        }
+      }
+    }
+
+    .state-steps-between & {
+      background-image: radial-gradient(
+        circle,
+        var(--element-disabled-color) 0,
+        var(--element-disabled-color) 1px,
+        transparent 1.5px
+      );
+
+      .type-large & {
+        background-image: radial-gradient(
+          circle,
+          var(--element-disabled-color) 0,
+          var(--element-disabled-color) 1.5px,
+          transparent 2px
+        );
+      }
+
+      .direction-horizontal & {
+        height: 2px;
+        background-size: 4px 2px;
+        background-position: -2px center;
+
+        .type-large & {
+          height: 3px;
+          background-size: 6px 3px;
+          background-position: -3px center;
+        }
+      }
+
+      .direction-vertical & {
+        width: 2px;
+        background-size: 2px 4px;
+        background-position: center -2px;
+
+        .type-large & {
+          width: 3px;
+          background-size: 3px 6px;
+          background-position: center -3px;
+        }
+      }
+    }
+  }
+
+  .loading-bar {
+    position: absolute;
+    inset: 0;
+    background: var(--element-neutral-enhanced-color);
+
+    .direction-horizontal & {
+      width: var(--loading-bar-percent, 66%);
+    }
+
+    .direction-vertical & {
+      height: var(--loading-bar-percent, 66%);
+    }
+  }
+}

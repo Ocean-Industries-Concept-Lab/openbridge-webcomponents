@@ -18,6 +18,13 @@ import {
   valueToX,
   valueToY,
 } from '../../svghelpers/stroke-aware.js';
+import {
+  SetpointVisualState,
+  SetpointColorMode,
+  drawSetpointMarker,
+  generateSetpointId,
+  getSetpointOutwardOffset,
+} from '../../svghelpers/setpoint.js';
 
 /**
  * External Scale renderer (pure SVG building block).
@@ -96,7 +103,7 @@ import {
  *   labels: true,
  *   scaleBackground: false,
  *   barThickness: 24,
- *   tickThickness: 28,
+ *   tickThickness: 24,
  *   labelThickness: 60,
  *   mainTickbars: [],
  *   primaryTickbarsInterval: 20,
@@ -340,14 +347,14 @@ export function computeExternalScaleEffectiveBarThickness(
 /**
  * Compute the effective tick band thickness based on scale type.
  *
- * In condensed mode, ticks are shorter (max 12px for primary/main + 4px gap = 16px),
- * so the tick band doesn't need to be as thick as in regular mode (24px + 4px = 28px).
+ * In condensed mode, ticks are shorter (max 10px for primary/main + 4px gap = 14px),
+ * so the tick band doesn't need to be as thick as in regular mode (20px + 4px = 24px).
  *
  * This function ensures that:
- * - In regular mode: tickThickness is used as-is (minimum 28px for full-length ticks)
- * - In condensed mode: tickThickness is capped at 16px (12px tick + 4px gap)
+ * - In regular mode: tickThickness is used as-is (minimum 24px for full-length ticks)
+ * - In condensed mode: tickThickness is capped at 14px (10px tick + 4px gap)
  *
- * This allows wrappers to use a single default tickThickness (28px) while the layout
+ * This allows wrappers to use a single default tickThickness (24px) while the layout
  * automatically adjusts for condensed mode.
  *
  * @param config - Configuration with tickThickness and scaleType
@@ -358,10 +365,10 @@ export function computeExternalScaleEffectiveTickThickness(
 ): number {
   const tt = Number.isFinite(config.tickThickness) ? config.tickThickness : 0;
 
-  // In condensed mode, the longest tick is 12px, plus 4px gap = 16px max needed
+  // In condensed mode, the longest tick is 10px, plus 4px gap = 14px max needed
   // Cap the tick thickness to avoid wasted space between ticks and labels
   if (config.scaleType === ScaleType.condensed) {
-    const condensedMaxThickness = 16; // 12px tick + 4px gap
+    const condensedMaxThickness = 14; // 10px tick + 4px gap
     return Math.min(tt, condensedMaxThickness);
   }
 
@@ -481,6 +488,28 @@ export interface ExternalScaleConfig {
   // Visual state
   enhanced: boolean;
   /**
+   * Explicit color mode override for setpoint marker.
+   * When provided, this takes precedence over the `enhanced` boolean.
+   *
+   * - `SetpointColorMode.enhanced`: Use enhanced colors (brighter)
+   * - `SetpointColorMode.regular`: Use regular colors
+   *
+   * Note: Disabled state is controlled separately via `setpointDisabled` or
+   * auto-derived from `state` (loading/off states).
+   *
+   * @default undefined (falls back to enhanced boolean)
+   */
+  colorMode?: SetpointColorMode;
+
+  /**
+   * Explicit disabled state override for setpoint marker.
+   * When true, the setpoint uses tertiary/disabled colors.
+   * When undefined, disabled state is auto-derived from `state` (loading/off = disabled).
+   *
+   * @default undefined (auto-derived from state)
+   */
+  setpointDisabled?: boolean;
+  /**
    * Fill visualization mode.
    * - FillMode.fill: bar fill from fillMin to fillMax
    * - FillMode.tint: bar fill from fillMin to fillMax with marker at value position
@@ -497,6 +526,14 @@ export interface ExternalScaleConfig {
    * When a number, the setpoint marker is shown at that value.
    */
   setpoint?: number;
+  /**
+   * New setpoint value being adjusted (focus mode).
+   * When defined, renders a second setpoint marker in 'focus' visual state.
+   * The original `setpoint` marker is dimmed (0.5 opacity) while `newSetpoint` is active.
+   * This enables the "adjustment preview" UX where users can see both the current
+   * and proposed setpoint positions simultaneously.
+   */
+  newSetpoint?: number;
   /** Manual override used when disableAutoAtSetpoint=true. */
   atSetpoint: boolean;
   /** When false, at-setpoint is derived from value/setpoint and deadband. */
@@ -557,6 +594,18 @@ export interface ExternalScaleConfig {
    * @default false
    */
   highlightCurrentValue?: boolean;
+
+  /**
+   * When true, the setpoint marker is in "focus" state (user is actively adjusting).
+   * This displays the outlined/hollow triangle variant at full size.
+   *
+   * NOTE: In future refactoring, consider whether this should be unified with
+   * InstrumentState (e.g., a new 'focus' or 'adjusting' state) rather than a
+   * separate boolean property.
+   *
+   * @default false
+   */
+  focused?: boolean;
 }
 
 export interface ExternalScaleLayout {
@@ -721,7 +770,7 @@ export function computeScaledThickness(
  * outward from that edge based on which bands are enabled (bar/ticks/labels).
  *
  * When scaleType is 'condensed', tick thickness is automatically reduced to match
- * the shorter tick lengths (16px max instead of 28px for regular).
+ * the shorter tick lengths (14px max instead of 24px for regular).
  */
 export function computeExternalScaleLayout(
   config: ExternalScaleLayoutConfig
@@ -772,6 +821,109 @@ function calculateAtSetpoint(config: ExternalScaleConfig): boolean {
     return Math.abs(config.value - config.setpoint) <= deadband;
   }
   return config.atSetpoint;
+}
+
+// ============================================================================
+// Setpoint Visual State Derivation
+// ============================================================================
+
+/**
+ * Derive the SetpointVisualState from ExternalScaleConfig.
+ *
+ * This maps the instrument's API (state, atSetpoint, value, setpoint, etc.)
+ * to the design-only visual state enum.
+ *
+ * Priority order:
+ * 1. focus (active state OR focused property)
+ * 2. equalZero (at setpoint AND setpoint is at zero)
+ * 3. equal (at setpoint)
+ * 4. notEqual (default)
+ *
+ * NOTE: Disabled states (loading, off) are handled via deriveSetpointDisabled(),
+ * which returns a boolean flag, not via a separate visual state.
+ *
+ * State mapping:
+ * - InstrumentState.inCommand → notEqual/equal/equalZero (based on deadband)
+ * - InstrumentState.active → focus (NOTE: 'active' may be renamed to 'focus' in future)
+ * - InstrumentState.loading → disabled=true (via deriveSetpointDisabled)
+ * - InstrumentState.off → disabled=true (via deriveSetpointDisabled)
+ */
+function deriveSetpointVisualState(
+  config: ExternalScaleConfig
+): SetpointVisualState {
+  // Priority 1: Focus state
+  // - When `focused` property is true (user is actively adjusting)
+  // - When InstrumentState is 'active' (NOTE: 'active' may be renamed to 'focus' in future refactoring)
+  if (config.focused || config.state === InstrumentState.active) {
+    return SetpointVisualState.focus;
+  }
+
+  // For inCommand state, check deadband-based states
+  // Check if at setpoint
+  const isAt = calculateAtSetpoint(config);
+
+  if (isAt) {
+    // Check if setpoint is at zero (using setpointAtZeroDeadband)
+    const setpointAtZero =
+      config.setpoint !== undefined &&
+      Math.abs(config.setpoint) < config.setpointAtZeroDeadband;
+
+    if (setpointAtZero) {
+      return SetpointVisualState.equalZero;
+    }
+    return SetpointVisualState.equal;
+  }
+
+  // Default: not at setpoint
+  return SetpointVisualState.notEqual;
+}
+
+/**
+ * Derive the SetpointColorMode from ExternalScaleConfig.
+ *
+ * Priority:
+ * 1. Explicit colorMode takes precedence
+ * 2. Otherwise, maps config.enhanced to enhanced/regular color palette
+ *
+ * Note: Disabled state is now handled separately via deriveSetpointDisabled().
+ */
+function deriveSetpointColorMode(
+  config: ExternalScaleConfig
+): SetpointColorMode {
+  // Explicit colorMode takes precedence
+  if (config.colorMode !== undefined) {
+    return config.colorMode;
+  }
+
+  // Fall back to enhanced boolean mapping
+  return config.enhanced
+    ? SetpointColorMode.enhanced
+    : SetpointColorMode.regular;
+}
+
+/**
+ * Derive the disabled state for setpoint rendering.
+ *
+ * Priority:
+ * 1. Explicit setpointDisabled takes precedence
+ * 2. Instrument states (loading, off) are treated as disabled
+ * 3. Otherwise, not disabled
+ */
+function deriveSetpointDisabled(config: ExternalScaleConfig): boolean {
+  // Explicit setpointDisabled takes precedence
+  if (config.setpointDisabled !== undefined) {
+    return config.setpointDisabled;
+  }
+
+  // Disabled states (loading, off) use disabled color mode
+  if (
+    config.state === InstrumentState.loading ||
+    config.state === InstrumentState.off
+  ) {
+    return true;
+  }
+
+  return false;
 }
 
 function colors(config: ExternalScaleConfig): {
@@ -864,10 +1016,10 @@ function valueToMainAxis(config: ExternalScaleConfig, value: number): number {
 function getTickThicknesses(scaleType: ScaleType) {
   const isCondensed = scaleType === 'condensed';
   return {
-    primary: isCondensed ? 12 : 24,
+    primary: isCondensed ? 10 : 20,
     secondary: isCondensed ? 4 : 8,
     tertiary: isCondensed ? 2 : 4,
-    main: isCondensed ? 12 : 24,
+    main: isCondensed ? 10 : 20,
   };
 }
 
@@ -2048,100 +2200,161 @@ function generateScaleBackground(
     <line x1=${x + halfStroke} x2=${x + w - halfStroke} y1=${innerY} y2=${innerY} stroke=${fillColor} stroke-width=${strokeWidth + 0.5} vector-effect="non-scaling-stroke"/>`;
 }
 
+// ============================================================================
+// Setpoint Marker (uses unified setpoint interface from svghelpers/setpoint.ts)
+// ============================================================================
+
+/**
+ * Calculate the rotation angle needed for the setpoint marker based on
+ * orientation and side.
+ *
+ * The `drawSetpointMarker()` renders the marker with tip at origin pointing
+ * down (positive Y direction). We need to rotate it so the tip points toward
+ * the bar/chart area.
+ *
+ * Transform table:
+ * | Orientation | Side   | Marker Points | Rotation |
+ * |-------------|--------|---------------|----------|
+ * | vertical    | right  | ← (left)      |  90°     |
+ * | vertical    | left   | → (right)     | -90°     |
+ * | horizontal  | bottom | ↑ (up)        | 180°     |
+ * | horizontal  | top    | ↓ (down)      |   0°     |
+ */
+function getSetpointRotation(config: ExternalScaleConfig): number {
+  if (isVertical(config)) {
+    // Vertical: right side points left (90°), left side points right (-90°)
+    return config.side === 'right' ? 90 : -90;
+  }
+  // Horizontal: bottom points up (180°), top points down (0°)
+  return config.side === 'bottom' ? 180 : 0;
+}
+
+/**
+ * Helper to render a single setpoint marker at a given value.
+ *
+ * @param config - Scale configuration
+ * @param setpointValue - The value to position the marker at
+ * @param visualState - The visual state for the marker
+ * @param colorMode - The color mode for the marker
+ * @param disabled - Whether the setpoint is in disabled state
+ * @param idSuffix - Suffix for the unique ID
+ * @param opacity - Optional opacity (default 1)
+ */
+function renderSingleSetpoint(
+  config: ExternalScaleConfig,
+  setpointValue: number,
+  visualState: SetpointVisualState,
+  colorMode: SetpointColorMode,
+  disabled: boolean,
+  idSuffix: string,
+  opacity: number = 1
+): SVGTemplateResult {
+  // Generate unique ID to avoid conflicts with multiple instruments on page
+  const baseId = generateSetpointId(`external-scale-setpoint-${idSuffix}`);
+
+  // Get outward offset based on visual state (drawSetpointMarker handles scaling internally)
+  const stateOffset = getSetpointOutwardOffset(visualState);
+
+  // Check if setpoint snaps to zero
+  const setpointAtZero =
+    Math.abs(setpointValue) < config.setpointAtZeroDeadband;
+
+  // Main axis position (where the marker sits along the scale)
+  const mainAxisPos = setpointAtZero
+    ? 0
+    : valueToMainAxis(config, setpointValue);
+
+  // Perpendicular axis position (distance from chart edge)
+  const base = tickBasePerp(config);
+  const outwardOffset = tickGap(); // Base offset from tick area
+
+  // Add state-based offset (shifts marker further outward for notEqual/focus/equalZero states)
+  const totalOutwardOffset = outwardOffset + stateOffset;
+
+  const perpAxisPos = isOutwardPositive(config)
+    ? base + totalOutwardOffset
+    : base - totalOutwardOffset;
+
+  // Get rotation angle for this orientation/side
+  const rotation = getSetpointRotation(config);
+
+  // Build the transform string
+  // Position first, then rotate around the tip (which is at origin after drawSetpointMarker)
+  const x = isVertical(config) ? perpAxisPos : mainAxisPos;
+  const y = isVertical(config) ? mainAxisPos : perpAxisPos;
+
+  // Note: drawSetpointMarker() handles scaling internally based on visualState
+  return svg`
+    <g transform="translate(${x}, ${y}) rotate(${rotation})" opacity="${opacity}">
+      ${drawSetpointMarker({visualState, colorMode, disabled, id: baseId})}
+    </g>
+  `;
+}
+
+/**
+ * Render the setpoint marker(s) using the unified interface from setpoint.ts.
+ *
+ * When `newSetpoint` is defined, renders two markers:
+ * 1. Original setpoint at 0.75 opacity (dimmed)
+ * 2. New setpoint in 'focus' visual state at full opacity (on top)
+ *
+ * The marker is positioned on the scale based on the setpoint value,
+ * with transforms applied for orientation/side.
+ */
 function setpointMarker(
   config: ExternalScaleConfig
 ): SVGTemplateResult | typeof nothing {
-  if (config.setpoint === undefined) return nothing;
+  const hasOriginalSetpoint = config.setpoint !== undefined;
+  const hasNewSetpoint = config.newSetpoint !== undefined;
 
-  const setpointMarkerSize = 24;
-  const setpointMarkerHalf = setpointMarkerSize / 2;
+  // If neither setpoint is defined, render nothing
+  if (!hasOriginalSetpoint && !hasNewSetpoint) return nothing;
 
-  const setpointAtZero =
-    Math.abs(config.setpoint) < config.setpointAtZeroDeadband;
-  const pos = setpointAtZero ? 0 : valueToMainAxis(config, config.setpoint);
+  const markers: SVGTemplateResult[] = [];
 
-  const c = colors(config);
-  const strokeColor = 'var(--border-silhouette-color)';
-  const filled =
-    config.state === InstrumentState.inCommand ||
-    config.state === InstrumentState.off;
+  // Render original setpoint (dimmed when newSetpoint is active)
+  if (hasOriginalSetpoint) {
+    const visualState = deriveSetpointVisualState(config);
+    const colorMode = deriveSetpointColorMode(config);
+    const disabled = deriveSetpointDisabled(config);
+    const opacity = hasNewSetpoint ? 0.75 : 1;
 
-  const isAt = calculateAtSetpoint(config);
-  // Smaller size (80%) when: at setpoint, at zero, or off state (legacy behavior).
-  const scale =
-    isAt || setpointAtZero || config.state === InstrumentState.off ? 0.8 : 1.0;
+    markers.push(
+      renderSingleSetpoint(
+        config,
+        config.setpoint!,
+        visualState,
+        colorMode,
+        disabled,
+        'original',
+        opacity
+      )
+    );
+  }
 
-  const filledPath =
-    'M23.5119 8C24.6981 6.35191 23.5696 4 21.5926 4L2.39959 4C0.422598 4 -0.705911 6.35191 0.480283 8L11.9961 24L23.5119 8Z';
-  const hollowPath =
-    'M18.5836 8L5.4086 8L11.9961 17.1526L18.5836 8ZM23.5119 8C24.6981 6.35191 23.5696 4 21.5926 4L2.39959 4C0.422598 4 -0.705911 6.35191 0.480283 8L11.9961 24L23.5119 8Z';
+  // Render newSetpoint in focus state (always on top)
+  if (hasNewSetpoint) {
+    // newSetpoint always renders in focus visual state
+    const visualState = SetpointVisualState.focus;
+    // Use the same color mode derivation but could be enhanced when focused
+    const colorMode = deriveSetpointColorMode(config);
+    // newSetpoint is never disabled (it's the active adjustment target)
+    const disabled = false;
 
-  const path = filled ? filledPath : hollowPath;
+    markers.push(
+      renderSingleSetpoint(
+        config,
+        config.newSetpoint!,
+        visualState,
+        colorMode,
+        disabled,
+        'new',
+        1
+      )
+    );
+  }
 
-  const base = tickBasePerp(config);
-
-  // Place marker at outer edge of tertiary tickmarks (gap + 4) relative to tick base.
-  const outwardOffset = tickGap() + 4;
-  const perp = isOutwardPositive(config)
-    ? base + outwardOffset
-    : base - outwardOffset;
-
-  const rotation = isVertical(config) ? 90 : 0;
-
-  // For horizontal, triangle should point toward the bar:
-  // - bottom scale: marker is below the bar, so it should point up
-  // - top scale: marker is above the bar, so it should point down
-  const flip =
-    (isVertical(config) && config.side === 'left') ||
-    (!isVertical(config) && config.side === 'bottom');
-
-  // Note: the horizontal marker path's local bbox is ~24px tall (y: 0..24).
-  // Since we apply `scale(${scale})` first, we must translate by (setpointMarkerSize * scale)
-  // before `scale(1,-1)` to keep the marker anchored (no position shift).
-  const flipScale = flip
-    ? isVertical(config)
-      ? 'scale(-1, 1)'
-      : `translate(0 ${setpointMarkerSize * scale}) scale(1, -1)`
-    : '';
-
-  // For horizontal + top (not flipped), the path's origin is its top edge.
-  // Shift it up so the marker tip (at y=setpointMarkerSize) stays anchored at `perp`.
-  const tipShift =
-    !isVertical(config) && !flip
-      ? `translate(0 ${-setpointMarkerSize * scale})`
-      : '';
-
-  const setpointId = `externalScaleSetpoint-${Math.random().toString(36).slice(2)}`;
-  const maskId = `externalScaleSetpointMask-${Math.random().toString(36).slice(2)}`;
-
-  const markerDef = isVertical(config)
-    ? svg`<path fill-rule="evenodd" clip-rule="evenodd" transform="translate(24 -12) rotate(${rotation})" d=${path} vector-effect="non-scaling-stroke"/>`
-    : svg`<g transform="translate(${-setpointMarkerHalf} 0)"><path fill-rule="evenodd" clip-rule="evenodd" d=${path} vector-effect="non-scaling-stroke"/></g>`;
-
-  // Split transforms: position/flip (no animation) vs scale (animated)
-  const positionTransform = isVertical(config)
-    ? `translate(${perp} ${pos}) ${flipScale}`
-    : `translate(${pos} ${perp}) ${tipShift} ${flipScale}`;
-
-  const scaleTransform = `scale(${scale})`;
-
-  return svg`
-    <defs>
-      <g id=${setpointId}>
-        ${markerDef}
-      </g>
-      <mask id=${maskId}>
-        <rect x="-20" y="-20" width="50" height="50" fill="white" />
-        <use href="#${setpointId}" fill="black" />
-      </mask>
-    </defs>
-    <g transform=${positionTransform}>
-      <g transform=${scaleTransform} style="transition: transform 200ms ease-in-out;">
-        <use href="#${setpointId}" fill=${c.setpointColor} stroke="none"/>
-        <use href="#${setpointId}" mask="url(#${maskId})" fill="none" stroke=${strokeColor} stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
-      </g>
-    </g>
-  `;
+  return svg`${markers}`;
 }
 
 /**
@@ -2185,7 +2398,7 @@ function generateCurrentValueDot(
   // The dot should be in the scale band, touching its inner edge (towards the chart/bar)
   //
   // The scale background (when shown) spans from barEdge to barEdge+backgroundThickness
-  // where backgroundThickness = mainTickLength + gap (e.g., 12+4=16 for condensed)
+  // where backgroundThickness = mainTickLength + gap (e.g., 10+4=14 for condensed)
   //
   // For the dot to touch the INNER edge (toward chart) and stay INSIDE the scale band:
   // - Inner edge of scale background = barEdge (or 0 if no bar)
