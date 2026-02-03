@@ -11,6 +11,7 @@ import {
 import '../sequence-step/sequence-step.js';
 import '../../icons/icon-chevron-left-google.js';
 import '../../icons/icon-chevron-right-google.js';
+import '../../icons/icon-up-iec.js';
 
 export enum SequenceToolbarType {
   unordered = 'unordered',
@@ -55,7 +56,7 @@ export class ObcSequenceToolbar extends LitElement {
   @property({type: String, reflect: true}) type: SequenceToolbarType =
     SequenceToolbarType.unordered;
   /** Ignored when `type` is `sequential`. */
-  @property({type: Boolean, attribute: 'has-add'}) hasAdd = false;
+  @property({type: Boolean}) hasAdd = false;
 
   static override styles = unsafeCSS(style);
 
@@ -96,12 +97,6 @@ export class ObcSequenceToolbar extends LitElement {
 
   private get showAddButton(): boolean {
     return this.hasAdd && this.type !== SequenceToolbarType.sequential;
-  }
-
-  override willUpdate(): void {
-    if (this.type === SequenceToolbarType.sequential && this.hasAdd) {
-      this.hasAdd = false;
-    }
   }
 
   override updated(): void {
@@ -227,17 +222,9 @@ export class ObcSequenceToolbar extends LitElement {
         .hideStepInputConnector=${true}
         .hideStepOutputConnector=${true}
         .hasIcon=${false}
+        @click=${this.onAddClick}
       >
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <path d="M11 5H13V11H19V13H13V19H11V13H5V11H11V5Z" />
-        </svg>
+        <obi-up-iec></obi-up-iec>
       </obc-sequence-step>
     `;
   }
@@ -245,40 +232,36 @@ export class ObcSequenceToolbar extends LitElement {
   private renderSequentialLayout(): TemplateResult {
     return html`
       <div class="sequence-step-item">
-        <slot name="start" @slotchange=${this.handleSlotChange}>
-          <obc-sequence-step
-            class="edge-button edge-button--outline"
-            variant="toolbar-prev"
-            .type=${SequenceType.large}
-            .styleType=${SequenceStyle.regular}
-            .value=${SequenceValue.notStarted}
-            .hideStepInputConnector=${true}
-            .hideStepOutputConnector=${true}
-            .hasIcon=${false}
-            @click=${this.onPrevClick}
-          >
-            Previous
-          </obc-sequence-step>
-        </slot>
+        <obc-sequence-step
+          class="edge-button edge-button--outline"
+          variant="toolbar-prev"
+          .type=${SequenceType.large}
+          .styleType=${SequenceStyle.regular}
+          .value=${SequenceValue.notStarted}
+          .hideStepInputConnector=${true}
+          .hideStepOutputConnector=${true}
+          .hasIcon=${false}
+          @click=${this.onPrevClick}
+        >
+          <slot name="start">Previous</slot>
+        </obc-sequence-step>
       </div>
       <div class="step-container" role="list">
         <slot @slotchange=${this.handleSlotChange}></slot>
       </div>
       <div class="sequence-step-item">
-        <slot name="end" @slotchange=${this.handleSlotChange}>
-          <obc-sequence-step
-            class="edge-button"
-            .type=${SequenceType.large}
-            .styleType=${SequenceStyle.point}
-            .value=${SequenceValue.notStarted}
-            .hideStepInputConnector=${true}
-            .hideStepOutputConnector=${true}
-            .hasIcon=${false}
-            @click=${this.onNextClick}
-          >
-            Next
-          </obc-sequence-step>
-        </slot>
+        <obc-sequence-step
+          class="edge-button"
+          .type=${SequenceType.large}
+          .styleType=${SequenceStyle.point}
+          .value=${SequenceValue.notStarted}
+          .hideStepInputConnector=${true}
+          .hideStepOutputConnector=${true}
+          .hasIcon=${false}
+          @click=${this.onNextClick}
+        >
+          <slot name="end">Next</slot>
+        </obc-sequence-step>
       </div>
     `;
   }
@@ -286,42 +269,34 @@ export class ObcSequenceToolbar extends LitElement {
   private renderUnorderedLayout(): TemplateResult {
     return html`
       <div class="sequence-step-item">
-        <slot name="start" @slotchange=${this.handleSlotChange}>
-          <obc-sequence-step
-            class="edge-button edge-button--outline"
-            .type=${SequenceType.large}
-            .styleType=${SequenceStyle.regular}
-            .value=${SequenceValue.notStarted}
-            .hideStepInputConnector=${true}
-            .hideStepOutputConnector=${true}
-            .hasIcon=${false}
-          >
-            Intro
-          </obc-sequence-step>
-        </slot>
+        <obc-sequence-step
+          class="edge-button edge-button--outline"
+          .type=${SequenceType.large}
+          .styleType=${SequenceStyle.regular}
+          .value=${SequenceValue.notStarted}
+          .hideStepInputConnector=${true}
+          .hideStepOutputConnector=${true}
+          .hasIcon=${false}
+        >
+          <slot name="start">Intro</slot>
+        </obc-sequence-step>
       </div>
       <div class="step-container" role="list">
         <slot @slotchange=${this.handleSlotChange}></slot>
-        ${this.showAddButton
-          ? html`<slot name="add" @slotchange=${this.handleSlotChange}
-              >${this.renderAddButton()}</slot
-            >`
-          : nothing}
+        ${this.showAddButton ? this.renderAddButton() : nothing}
       </div>
       <div class="sequence-step-item">
-        <slot name="end" @slotchange=${this.handleSlotChange}>
-          <obc-sequence-step
-            class="edge-button edge-button--outline"
-            .type=${SequenceType.large}
-            .styleType=${SequenceStyle.point}
-            .value=${SequenceValue.notStarted}
-            .hideStepInputConnector=${true}
-            .hideStepOutputConnector=${true}
-            .hasIcon=${false}
-          >
-            Summary
-          </obc-sequence-step>
-        </slot>
+        <obc-sequence-step
+          class="edge-button edge-button--outline"
+          .type=${SequenceType.large}
+          .styleType=${SequenceStyle.point}
+          .value=${SequenceValue.notStarted}
+          .hideStepInputConnector=${true}
+          .hideStepOutputConnector=${true}
+          .hasIcon=${false}
+        >
+          <slot name="end">Summary</slot>
+        </obc-sequence-step>
       </div>
     `;
   }
@@ -329,22 +304,20 @@ export class ObcSequenceToolbar extends LitElement {
   private renderCondensedLayout(): TemplateResult {
     return html`
       <div class="condensed-control condensed-start">
-        <slot name="start" @slotchange=${this.handleSlotChange}>
-          <obc-sequence-step
-            class="condensed-icon"
-            variant="toolbar-condensed-icon"
-            .type=${SequenceType.large}
-            .styleType=${SequenceStyle.point}
-            .value=${SequenceValue.notStarted}
-            .hideStepInputConnector=${true}
-            .hideStepOutputConnector=${true}
-            .hasIcon=${false}
-            aria-label="Previous"
-            @click=${this.onPrevClick}
-          >
-            <obi-chevron-left-google></obi-chevron-left-google>
-          </obc-sequence-step>
-        </slot>
+        <obc-sequence-step
+          class="condensed-icon"
+          variant="toolbar-condensed-icon"
+          .type=${SequenceType.large}
+          .styleType=${SequenceStyle.point}
+          .value=${SequenceValue.notStarted}
+          .hideStepInputConnector=${true}
+          .hideStepOutputConnector=${true}
+          .hasIcon=${false}
+          aria-label="Previous"
+          @click=${this.onPrevClick}
+        >
+          <obi-chevron-left-google></obi-chevron-left-google>
+        </obc-sequence-step>
       </div>
       <obc-sequence-step
         class="condensed-label"
@@ -369,22 +342,20 @@ export class ObcSequenceToolbar extends LitElement {
           >`
         : nothing}
       <div class="condensed-control condensed-end">
-        <slot name="end" @slotchange=${this.handleSlotChange}>
-          <obc-sequence-step
-            class="condensed-icon"
-            variant="toolbar-condensed-icon"
-            .type=${SequenceType.large}
-            .styleType=${SequenceStyle.point}
-            .value=${SequenceValue.notStarted}
-            .hideStepInputConnector=${true}
-            .hideStepOutputConnector=${true}
-            .hasIcon=${false}
-            aria-label="Next"
-            @click=${this.onNextClick}
-          >
-            <obi-chevron-right-google></obi-chevron-right-google>
-          </obc-sequence-step>
-        </slot>
+        <obc-sequence-step
+          class="condensed-icon"
+          variant="toolbar-condensed-icon"
+          .type=${SequenceType.large}
+          .styleType=${SequenceStyle.point}
+          .value=${SequenceValue.notStarted}
+          .hideStepInputConnector=${true}
+          .hideStepOutputConnector=${true}
+          .hasIcon=${false}
+          aria-label="Next"
+          @click=${this.onNextClick}
+        >
+          <obi-chevron-right-google></obi-chevron-right-google>
+        </obc-sequence-step>
       </div>
     `;
   }
