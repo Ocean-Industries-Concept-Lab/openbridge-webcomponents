@@ -18,6 +18,17 @@
  *    - Deadband logic, touching detection, value comparison
  *    - Each instrument implements its own mapping
  *
+ * ## Instrument Types
+ *
+ * ### Linear Instruments (external-scale, bar-vertical, bar-horizontal, gauge-trend)
+ * - Use `external-scale.ts` derivation functions (deriveSetpointVisualState, etc.)
+ * - Position marker using translate() and rotate() for side (left/right/top/bottom)
+ *
+ * ### Radial Instruments (watch, compass, heading, rudder, azimuth-thruster)
+ * - Use `deriveRadialSetpointConfig()` from this file
+ * - Position marker using rotate() for angle and translate() for radius
+ * - Marker tip points inward toward center
+ *
  * ## Coordinate System
  *
  * The `drawSetpointMarker()` function renders the marker with:
@@ -42,18 +53,23 @@
  *
  * ```ts
  * // Radial instrument (watch.ts)
- * const config = {visualState, colorMode, disabled, id: 'watch-setpoint'};
+ * const {visualState, colorMode, disabled} = deriveRadialSetpointConfig({
+ *   state: this.state,
+ *   atSetpoint: this.atAngleSetpoint,
+ * });
  * svg`
- *   <g transform="rotate(${angle}) translate(0, -${radius})">
- *     <g transform="rotate(180)">${drawSetpointMarker(config)}</g>
+ *   <g transform="rotate(${angle + 90}) translate(${-RADIAL_SETPOINT_RADIUS}, 0) rotate(270)">
+ *     ${drawSetpointMarker({visualState, colorMode, disabled, id: 'watch-setpoint'})}
  *   </g>
  * `;
  *
  * // Linear instrument (external-scale.ts)
- * const config = {visualState, colorMode, disabled, id: 'scale-setpoint'};
+ * const visualState = deriveSetpointVisualState(config);
+ * const colorMode = deriveSetpointColorMode(config);
+ * const disabled = deriveSetpointDisabled(config);
  * svg`
  *   <g transform="translate(${x}, ${y}) rotate(${rotation})">
- *     ${drawSetpointMarker(config)}
+ *     ${drawSetpointMarker({visualState, colorMode, disabled, id: 'scale-setpoint'})}
  *   </g>
  * `;
  * ```
@@ -502,3 +518,168 @@ export function drawSetpointMarker(
 // ============================================================================
 
 export type {SVGTemplateResult};
+
+// ============================================================================
+// Radial Instrument State Derivation
+// ============================================================================
+
+/**
+ * Import InstrumentState for radial derivation functions.
+ * This creates a dependency on the types module, but keeps all setpoint
+ * logic centralized in this file.
+ */
+import {InstrumentState} from '../navigation-instruments/types.js';
+
+// Re-export for convenience (callers may need it for their state properties)
+export {InstrumentState};
+
+/**
+ * Configuration for deriving setpoint visual parameters for radial instruments.
+ *
+ * Radial instruments (watch, compass, etc.) use a simpler API than linear instruments:
+ * - No deadband/value comparison (caller provides pre-computed `atSetpoint`)
+ * - No fill modes or value tracking
+ * - Angle-based positioning instead of linear coordinates
+ */
+export interface RadialSetpointConfig {
+  /** Current instrument state (inCommand, active, loading, off) */
+  state: InstrumentState;
+
+  /**
+   * Whether the current value equals the setpoint (within deadband).
+   * Caller is responsible for deadband calculation.
+   */
+  atSetpoint: boolean;
+
+  /**
+   * Whether the setpoint is at the zero position.
+   * When true AND atSetpoint is true, triggers equalZero visual state (80% size).
+   * For radial instruments, this means angleSetpoint ≈ 0.
+   * @default false
+   */
+  atZero?: boolean;
+
+  /**
+   * Whether the user is actively adjusting the setpoint (e.g., dragging).
+   * When true, overrides state-based visual state to show focus state.
+   * @default false
+   */
+  focused?: boolean;
+}
+
+/**
+ * Result of deriving setpoint visual parameters for radial instruments.
+ */
+export interface RadialSetpointDerivedConfig {
+  /** Visual state for rendering (notEqual, equal, focus) */
+  visualState: SetpointVisualState;
+
+  /** Color mode for rendering (enhanced, regular) */
+  colorMode: SetpointColorMode;
+
+  /** Whether setpoint should render in disabled state */
+  disabled: boolean;
+}
+
+/**
+ * Derive the visual parameters for a radial setpoint marker.
+ *
+ * This maps radial instrument state (from watch.ts, compass.ts, etc.)
+ * to the unified setpoint visual parameters.
+ *
+ * ## State Mapping
+ *
+ * | InstrumentState | atSetpoint | atZero | focused | → visualState | → colorMode | → disabled |
+ * |-----------------|------------|--------|---------|---------------|-------------|------------|
+ * | inCommand       | false      | *      | false   | notEqual      | enhanced    | false      |
+ * | inCommand       | true       | false  | false   | equal         | enhanced    | false      |
+ * | inCommand       | true       | true   | false   | equalZero     | enhanced    | false      |
+ * | inCommand       | *          | *      | true    | focus         | enhanced    | false      |
+ * | active          | *          | *      | *       | focus         | regular     | false      |
+ * | loading         | *          | *      | *       | notEqual      | regular     | true       |
+ * | off             | *          | *      | *       | notEqual      | regular     | true       |
+ *
+ * Note: `InstrumentState.active` always maps to `focus` visual state because in
+ * the original watch.ts implementation, `active` state used the outlined triangle,
+ * which corresponds to the "user is interacting" appearance.
+ *
+ * @param config - Radial instrument state configuration
+ * @returns Derived visual parameters for drawSetpointMarker()
+ */
+export function deriveRadialSetpointConfig(
+  config: RadialSetpointConfig
+): RadialSetpointDerivedConfig {
+  const {state, atSetpoint, atZero = false, focused = false} = config;
+
+  // Disabled states (loading, off) override all other logic
+  if (state === InstrumentState.loading || state === InstrumentState.off) {
+    return {
+      visualState: SetpointVisualState.notEqual, // Full size, filled
+      colorMode: SetpointColorMode.regular,
+      disabled: true, // Tertiary color
+    };
+  }
+
+  // Active state always maps to focus (matches old "outlined" behavior)
+  // This represents the "user is interacting" state
+  if (state === InstrumentState.active) {
+    return {
+      visualState: SetpointVisualState.focus,
+      colorMode: SetpointColorMode.regular,
+      disabled: false,
+    };
+  }
+
+  // For inCommand state:
+  // - focused property triggers focus visual state
+  // - atSetpoint + atZero triggers equalZero visual state (80% size)
+  // - atSetpoint triggers equal visual state (80% size)
+  // - otherwise notEqual (full size)
+
+  // Priority 1: Focus state (user actively adjusting via touch/drag)
+  if (focused) {
+    return {
+      visualState: SetpointVisualState.focus,
+      colorMode: SetpointColorMode.enhanced,
+      disabled: false,
+    };
+  }
+
+  // Priority 2: At setpoint AND at zero (equalZero state - 80% size)
+  if (atSetpoint && atZero) {
+    return {
+      visualState: SetpointVisualState.equalZero,
+      colorMode: SetpointColorMode.enhanced,
+      disabled: false,
+    };
+  }
+
+  // Priority 3: At setpoint (equal state - 80% size)
+  if (atSetpoint) {
+    return {
+      visualState: SetpointVisualState.equal,
+      colorMode: SetpointColorMode.enhanced,
+      disabled: false,
+    };
+  }
+
+  // Default: Not at setpoint (notEqual state - full size)
+  return {
+    visualState: SetpointVisualState.notEqual,
+    colorMode: SetpointColorMode.enhanced,
+    disabled: false,
+  };
+}
+
+// ============================================================================
+// Radial Setpoint Positioning Constants
+// ============================================================================
+
+/**
+ * Default radius for radial setpoint marker positioning.
+ * This is the distance from the center of the watch to the setpoint tip.
+ *
+ * Based on watch.ts existing behavior: `translate(-168 0)`
+ * The marker is positioned at 168px from center on the outer ring.
+ */
+export const RADIAL_SETPOINT_RADIUS = 168;

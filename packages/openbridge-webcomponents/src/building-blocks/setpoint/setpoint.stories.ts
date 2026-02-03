@@ -6,6 +6,9 @@ import {userEvent, within} from 'storybook/test';
 import '../bar-vertical/bar-vertical.js';
 // Import gauge-horizontal for the adjustment flow demo
 import '../../navigation-instruments/gauge-horizontal/gauge-horizontal.js';
+// Import watch for radial setpoint demos
+import '../../navigation-instruments/watch/watch.js';
+import {WatchCircleType} from '../../navigation-instruments/watch/watch.js';
 
 // Import setpoint types for documentation
 import {
@@ -460,6 +463,311 @@ export const SetpointComparison: Story = {
           state: InstrumentState.off,
           focused: true,
         })}
+      </div>
+    </div>
+  `,
+};
+
+// =============================================================================
+// Radial Setpoint Comparison Story
+// =============================================================================
+
+// Helper to render a watch with specific setpoint state
+function renderRadialSetpointDemo(config: {
+  label: string;
+  angleSetpoint: number;
+  atAngleSetpoint?: boolean;
+  atAngleSetpointZero?: boolean;
+  state: InstrumentState;
+  focused?: boolean;
+  /** Fill arc end angle (start is always 0 for this demo) */
+  fillEndAngle?: number;
+  /** Optional color mode override */
+  colorMode?: SetpointColorMode;
+}) {
+  const {
+    label,
+    angleSetpoint,
+    atAngleSetpoint = false,
+    atAngleSetpointZero = false,
+    state,
+    focused = false,
+    fillEndAngle,
+    colorMode,
+  } = config;
+
+  // Determine bar fill color based on state
+  const fillColor =
+    state === InstrumentState.inCommand
+      ? 'var(--instrument-enhanced-tertiary-color)'
+      : 'var(--instrument-regular-tertiary-color)';
+
+  // Create barAreas if fillEndAngle is provided
+  const barAreas =
+    fillEndAngle !== undefined
+      ? [
+          {
+            startAngle: 0,
+            endAngle: fillEndAngle,
+            fillColor,
+          },
+        ]
+      : [];
+
+  // Create areas (cut area) to match WithBarAreas style
+  const areas =
+    fillEndAngle !== undefined
+      ? [
+          {
+            startAngle: -90,
+            endAngle: 90,
+            roundInsideCut: true,
+            roundOutsideCut: true,
+          },
+        ]
+      : [];
+
+  return html`
+    <div style="text-align: center;">
+      <div style="margin-bottom: 8px; font-size: 12px; color: #888;">
+        ${label}
+      </div>
+      <div style="width: 160px; height: 160px;">
+        <obc-watch
+          .state=${state}
+          .angleSetpoint=${angleSetpoint}
+          .atAngleSetpoint=${atAngleSetpoint}
+          .atAngleSetpointZero=${atAngleSetpointZero}
+          .focused=${focused}
+          .colorMode=${colorMode}
+          .watchCircleType=${WatchCircleType.double}
+          .areas=${areas}
+          .barAreas=${barAreas}
+        ></obc-watch>
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * **Visual State Comparison (Radial)**
+ *
+ * Side-by-side comparison of all setpoint visual states for radial instruments (watch).
+ *
+ * Grid layout (4×4):
+ * - **Row 1**: Regular color mode (via colorMode override)
+ * - **Row 2**: inCommand state (enhanced colors)
+ * - **Row 3**: active state (regular colors, maps to focus visual state)
+ * - **Row 4**: Disabled state (via `InstrumentState.off`)
+ * - **Columns**: notEqual, equal, equalZero, focus
+ *
+ * Each watch shows:
+ * - A half-circle arc area (like WithBarAreas story)
+ * - A filled bar area from 0° to 45° (consistent across all demos)
+ * - A setpoint marker at appropriate angle to demonstrate the visual state
+ *
+ * Visual state mapping:
+ * - **notEqual**: bar at 45°, setpoint at 60° (different positions)
+ * - **equal**: bar at 45°, setpoint at 45° (same position, atSetpoint=true)
+ * - **equalZero**: bar at 0°, setpoint at 0° (both at zero)
+ * - **focus**: bar at 45°, setpoint at 30° (focused=true)
+ */
+export const SetpointComparisonRadial: Story = {
+  name: 'Visual State Comparison (Radial)',
+  render: () => html`
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+      <!-- Header row -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(4, 1fr); gap: 16px; align-items: center;"
+      >
+        <div></div>
+        <div
+          style="text-align: center; font-weight: bold; font-size: 12px; color: #ccc;"
+        >
+          notEqual
+        </div>
+        <div
+          style="text-align: center; font-weight: bold; font-size: 12px; color: #ccc;"
+        >
+          equal
+        </div>
+        <div
+          style="text-align: center; font-weight: bold; font-size: 12px; color: #ccc;"
+        >
+          equalZero
+        </div>
+        <div
+          style="text-align: center; font-weight: bold; font-size: 12px; color: #ccc;"
+        >
+          focus
+        </div>
+      </div>
+
+      <!-- Regular row (via colorMode override) -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(4, 1fr); gap: 16px; align-items: flex-start;"
+      >
+        <div style="font-size: 12px; color: #888; padding-top: 60px;">
+          Regular
+        </div>
+        ${renderRadialSetpointDemo({
+          label: 'bar at 45°, setpoint at 60°',
+          angleSetpoint: 60,
+          atAngleSetpoint: false,
+          fillEndAngle: 45,
+          state: InstrumentState.inCommand,
+          colorMode: SetpointColorMode.regular,
+        })}
+        ${renderRadialSetpointDemo({
+          label: 'bar at 45°, setpoint at 45°',
+          angleSetpoint: 45,
+          atAngleSetpoint: true,
+          fillEndAngle: 45,
+          state: InstrumentState.inCommand,
+          colorMode: SetpointColorMode.regular,
+        })}
+        ${renderRadialSetpointDemo({
+          label: 'bar at 0°, setpoint at 0°',
+          angleSetpoint: 0,
+          atAngleSetpoint: true,
+          atAngleSetpointZero: true,
+          fillEndAngle: 0,
+          state: InstrumentState.inCommand,
+          colorMode: SetpointColorMode.regular,
+        })}
+        ${renderRadialSetpointDemo({
+          label: 'bar at 45°, setpoint at 30°',
+          angleSetpoint: 30,
+          atAngleSetpoint: false,
+          fillEndAngle: 45,
+          state: InstrumentState.inCommand,
+          colorMode: SetpointColorMode.regular,
+          focused: true,
+        })}
+      </div>
+
+      <!-- inCommand row (enhanced colors) -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(4, 1fr); gap: 16px; align-items: flex-start;"
+      >
+        <div style="font-size: 12px; color: #888; padding-top: 60px;">
+          inCommand
+        </div>
+        ${renderRadialSetpointDemo({
+          label: 'bar at 45°, setpoint at 60°',
+          angleSetpoint: 60,
+          atAngleSetpoint: false,
+          fillEndAngle: 45,
+          state: InstrumentState.inCommand,
+        })}
+        ${renderRadialSetpointDemo({
+          label: 'bar at 45°, setpoint at 45°',
+          angleSetpoint: 45,
+          atAngleSetpoint: true,
+          fillEndAngle: 45,
+          state: InstrumentState.inCommand,
+        })}
+        ${renderRadialSetpointDemo({
+          label: 'bar at 0°, setpoint at 0°',
+          angleSetpoint: 0,
+          atAngleSetpoint: true,
+          atAngleSetpointZero: true,
+          fillEndAngle: 0,
+          state: InstrumentState.inCommand,
+        })}
+        ${renderRadialSetpointDemo({
+          label: 'bar at 45°, setpoint at 30°',
+          angleSetpoint: 30,
+          atAngleSetpoint: false,
+          fillEndAngle: 45,
+          state: InstrumentState.inCommand,
+          focused: true,
+        })}
+      </div>
+
+      <!-- active row (regular colors, always focus visual state) -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(4, 1fr); gap: 16px; align-items: flex-start;"
+      >
+        <div style="font-size: 12px; color: #888; padding-top: 60px;">
+          active
+        </div>
+        ${renderRadialSetpointDemo({
+          label: 'bar at 45°, setpoint at 60°',
+          angleSetpoint: 60,
+          atAngleSetpoint: false,
+          fillEndAngle: 45,
+          state: InstrumentState.active,
+        })}
+        ${renderRadialSetpointDemo({
+          label: 'bar at 45°, setpoint at 45°',
+          angleSetpoint: 45,
+          atAngleSetpoint: true,
+          fillEndAngle: 45,
+          state: InstrumentState.active,
+        })}
+        ${renderRadialSetpointDemo({
+          label: 'bar at 0°, setpoint at 0°',
+          angleSetpoint: 0,
+          atAngleSetpoint: true,
+          atAngleSetpointZero: true,
+          fillEndAngle: 0,
+          state: InstrumentState.active,
+        })}
+        ${renderRadialSetpointDemo({
+          label: 'bar at 45°, setpoint at 30°',
+          angleSetpoint: 30,
+          atAngleSetpoint: false,
+          fillEndAngle: 45,
+          state: InstrumentState.active,
+          focused: true,
+        })}
+      </div>
+
+      <!-- Disabled state row (via InstrumentState.off) -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(4, 1fr); gap: 16px; align-items: flex-start;"
+      >
+        <div style="font-size: 12px; color: #888; padding-top: 60px;">
+          off (disabled)
+        </div>
+        ${renderRadialSetpointDemo({
+          label: 'bar at 45°, setpoint at 60°',
+          angleSetpoint: 60,
+          atAngleSetpoint: false,
+          fillEndAngle: 45,
+          state: InstrumentState.off,
+        })}
+        ${renderRadialSetpointDemo({
+          label: 'bar at 45°, setpoint at 45°',
+          angleSetpoint: 45,
+          atAngleSetpoint: true,
+          fillEndAngle: 45,
+          state: InstrumentState.off,
+        })}
+        ${renderRadialSetpointDemo({
+          label: 'bar at 0°, setpoint at 0°',
+          angleSetpoint: 0,
+          atAngleSetpoint: true,
+          atAngleSetpointZero: true,
+          fillEndAngle: 0,
+          state: InstrumentState.off,
+        })}
+        ${renderRadialSetpointDemo({
+          label: 'bar at 45°, setpoint at 30°',
+          angleSetpoint: 30,
+          atAngleSetpoint: false,
+          fillEndAngle: 45,
+          state: InstrumentState.off,
+          focused: true,
+        })}
+      </div>
+
+      <!-- Note about active state -->
+      <div style="font-size: 11px; color: #666; font-style: italic;">
+        Note: "active" state always maps to "focus" visual state regardless of
+        atSetpoint/focused values. This preserves the original watch.ts behavior
+        where active state used the outlined triangle appearance.
       </div>
     </div>
   `,
