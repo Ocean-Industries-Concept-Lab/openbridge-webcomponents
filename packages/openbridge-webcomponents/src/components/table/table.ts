@@ -614,10 +614,13 @@ export class ObcTable extends LitElement {
                       >`
                     : nothing;
 
+                  const columnIndex = this.columns.findIndex(
+                    (column) => column.key === col.key
+                  );
                   const sorted =
                     'sortable' in col &&
                     col.sortable &&
-                    this._sortByColumnIdx === colIdx;
+                    this._sortByColumnIdx === columnIndex;
                   const sortDirection = sorted ? this._sortDirection : 'none';
                   const headerType =
                     col.headerType ??
