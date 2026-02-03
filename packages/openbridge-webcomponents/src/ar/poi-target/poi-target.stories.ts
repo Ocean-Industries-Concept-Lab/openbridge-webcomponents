@@ -9,7 +9,8 @@ const meta: Meta<ObcPoiTarget> = {
   component: 'obc-poi-target',
   args: {
     x: 444,
-    y: 192,
+    height: 192,
+    y: 240,
     value: TargetValue.checked,
     pointerType: Pointer.Line,
     relativeDirection: 0,
@@ -19,8 +20,15 @@ const meta: Meta<ObcPoiTarget> = {
   },
   decorators: [crossDecorator],
   argTypes: {
-    x: {control: {type: 'range', min: 0, max: 640, step: 1}},
-    y: {control: {type: 'range', min: 32, max: 243, step: 1}},
+    x: {control: {type: 'range', min: 0, max: 1000, step: 1}},
+    height: {
+      control: {type: 'range', min: 0, max: 1000, step: 1},
+      description: 'Pointer line length in pixels.',
+    },
+    y: {
+      control: {type: 'range', min: 0, max: 1000, step: 1},
+      description: 'Bottom coordinate of the pointer line within the target.',
+    },
     value: {
       options: [TargetValue.enabled, TargetValue.checked],
       control: {type: 'select'},
@@ -65,8 +73,9 @@ const meta: Meta<ObcPoiTarget> = {
       </style>
       <div class="frame">
         <obc-poi-target
-          style="left: ${args.x}px; top: calc(50% - ${args.y}px);"
+          style="left: ${args.x}px;"
           .x=${args.x}
+          .height=${args.height}
           .y=${args.y}
           .value=${args.value}
           .pointerType=${args.pointerType}
@@ -116,8 +125,9 @@ export const WithValues: Story = {
       </style>
       <div class="frame">
         <obc-poi-target
-          style="left: ${args.x}px; top: calc(50% - ${args.y}px);"
+          style="left: ${args.x}px;"
           .x=${args.x}
+          .height=${args.height}
           .y=${args.y}
           .value=${args.value}
           .pointerType=${args.pointerType}
@@ -134,7 +144,8 @@ export const WithValues: Story = {
 export const AnimatedOffsetBottom: Story = {
   args: {
     x: 444,
-    y: 192,
+    height: 192,
+    y: 240,
     value: TargetValue.checked,
     pointerType: Pointer.Line,
   },
@@ -182,8 +193,9 @@ export const AnimatedOffsetBottom: Story = {
       <div class="frame">
         <obc-poi-target
           id="animated-poi-target"
-          style="left: ${args.x}px; top: calc(50% - ${args.y}px);"
+          style="left: ${args.x}px;"
           .x=${args.x}
+          .height=${args.height}
           .y=${args.y}
           .value=${args.value}
           .pointerType=${args.pointerType}
@@ -196,7 +208,8 @@ export const AnimatedOffsetBottom: Story = {
 export const AnimatedOffsetTop: Story = {
   args: {
     x: 444,
-    y: 192,
+    height: 192,
+    y: 240,
     value: TargetValue.checked,
     pointerType: Pointer.Line,
   },
@@ -245,8 +258,9 @@ export const AnimatedOffsetTop: Story = {
       <div class="frame">
         <obc-poi-target
           id="animated-poi-target-top"
-          style="left: ${args.x}px; top: calc(50% - ${args.y}px);"
+          style="left: ${args.x}px;"
           .x=${args.x}
+          .height=${args.height}
           .y=${args.y}
           .value=${args.value}
           .pointerType=${args.pointerType}

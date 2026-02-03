@@ -52,14 +52,16 @@ export {PoiTargetButtonVisualState as PoiTargetVisualState};
  * detection or tracked object.
  *
  * ### Features
- * - Positions via `x`/`y` coordinates and an optional pointer line.
+ * - Positions via `x` and a configurable pointer line.
  * - Visual emphasis controlled by `visualState` (see `PoiTargetVisualState`).
  * - Multi-value button rendering via the `values` array.
  * - Horizontal nudging via `buttonOffsetX` for overlap or crossing layouts.
  * - Supports alert, selection, and pointer variants.
  *
  * ### Usage Guidelines
- * - Set `x`/`y` in pixels to place the target relative to its container.
+ * - Set `x` in pixels to place the target relative to its container.
+ * - Use `height` for the pointer line length.
+ * - Use `y` to place the bottom of the pointer line within the target.
  * - Use `visualState` to align with layer or group overlap logic.
  * - Provide `values` to display secondary statuses on the button.
  * - Adjust `buttonOffsetX` only when resolving collisions in a layer.
@@ -77,7 +79,7 @@ export {PoiTargetButtonVisualState as PoiTargetVisualState};
  *
  * ### Example
  * ```html
- * <obc-poi-target x="120" y="200"></obc-poi-target>
+ * <obc-poi-target x="120" height="200" y="200"></obc-poi-target>
  * ```
  *
  * @slot none
@@ -87,9 +89,8 @@ export {PoiTargetButtonVisualState as PoiTargetVisualState};
 @customElement('obc-poi-target')
 export class ObcPoiTarget extends LitElement {
   @property({type: Number}) x = 0;
-  @property({type: Number}) y = 192;
-  /** @deprecated Use y instead. */
-  @property({type: Number}) height: number = 192;
+  @property({type: Number}) height = 192;
+  @property({type: Number}) y: number | null = null;
   @property({type: Boolean}) selected = false;
   @property({type: String}) selectedId: string | null = null;
   @property({type: String}) alertType = ObcArAlertType.None;
@@ -103,7 +104,6 @@ export class ObcPoiTarget extends LitElement {
   @property({type: Number, attribute: 'top-offset'}) topOffset = 0;
   @property({type: Number}) buttonOffsetX = 0;
   @property({type: Boolean, attribute: 'show-id'}) showId = false;
-  private syncingPosition = false;
 
   private getSelectedId(): string | null {
     if (!this.selected && !this.showId) return null;
@@ -111,20 +111,22 @@ export class ObcPoiTarget extends LitElement {
   }
 
   override updated(changedProperties: Map<string, unknown>) {
-    if (this.syncingPosition) return;
-
     if (changedProperties.has('x')) {
       this.style.left = `${this.x}px`;
     }
-
-    if (changedProperties.has('y') && this.y !== this.height) {
-      this.syncingPosition = true;
-      this.height = this.y;
-      this.syncingPosition = false;
-    } else if (changedProperties.has('height') && this.height !== this.y) {
-      this.syncingPosition = true;
-      this.y = this.height;
-      this.syncingPosition = false;
+    if (changedProperties.has('y')) {
+      if (typeof this.y === 'number' && Number.isFinite(this.y)) {
+        const lineHeight = Number.isFinite(this.height) ? this.height : 0;
+        this.style.top = `${this.y - lineHeight}px`;
+      } else {
+        this.style.removeProperty('top');
+      }
+    }
+    if (changedProperties.has('height')) {
+      if (typeof this.y === 'number' && Number.isFinite(this.y)) {
+        const lineHeight = Number.isFinite(this.height) ? this.height : 0;
+        this.style.top = `${this.y - lineHeight}px`;
+      }
     }
   }
   @property({
@@ -154,6 +156,8 @@ export class ObcPoiTarget extends LitElement {
     let pointer = null;
     let verticalOffset = 0;
     const lineOffset = this.offset - this.topOffset;
+    const lineHeight = Number.isFinite(this.height) ? this.height : 0;
+    const lineBottom = lineHeight;
 
     if (this.selected) {
       // get the offset from the css variable
@@ -168,7 +172,7 @@ export class ObcPoiTarget extends LitElement {
         pointer = html`
           <obc-poi-line
             class="line"
-            height=${this.y + verticalOffset}
+            height=${lineHeight + verticalOffset}
             poiStyle=${valueToPointerStyle(this.value)}
             .offset=${lineOffset}
           ></obc-poi-line>
@@ -198,6 +202,7 @@ export class ObcPoiTarget extends LitElement {
         this.offset !== 0 ||
         this.topOffset !== 0}
         style=${[
+          `--obc-poi-target-line-height: ${lineHeight}px; --obc-poi-target-line-bottom: ${lineBottom}px;`,
           this.buttonOffsetX !== 0
             ? `--obc-poi-target-button-offset-x: ${this.buttonOffsetX}px; --poi-offset: ${this.buttonOffsetX}px;`
             : '',

@@ -58,14 +58,14 @@ const meta: Meta<ObcPoiTargetButtonGroup> = {
               selectedId="3"
               style="top: 240px;"
               .x=${300}
-              .y=${500}
+              .height=${500}
             ></obc-poi-target>
             <obc-poi-target
               id="target-1"
               selectedId="1"
               style="top: 240px;"
               .x=${320}
-              .y=${300}
+              .height=${300}
               .relativeDirection=${65}
             ></obc-poi-target>
             <obc-poi-target
@@ -73,7 +73,7 @@ const meta: Meta<ObcPoiTargetButtonGroup> = {
               selectedId="2"
               style="top: 240px;"
               .x=${340}
-              .y=${240}
+              .height=${240}
             ></obc-poi-target>
           </obc-poi-target-button-group>
           <obc-poi-target
@@ -81,7 +81,7 @@ const meta: Meta<ObcPoiTargetButtonGroup> = {
             selectedId="4"
             style="top: 240px;"
             .x=${200}
-            .y=${240}
+            .height=${240}
           ></obc-poi-target>
         </div>
       </div>
@@ -145,14 +145,14 @@ export const GroupedWithNumbers: Story = {
               selectedId="3"
               style="top: 240px;"
               .x=${300}
-              .y=${240}
+              .height=${240}
             ></obc-poi-target>
             <obc-poi-target
               id="target-1"
               selectedId="1"
               style="top: 240px;"
               .x=${320}
-              .y=${240}
+              .height=${240}
               .relativeDirection=${65}
             ></obc-poi-target>
             <obc-poi-target
@@ -160,7 +160,7 @@ export const GroupedWithNumbers: Story = {
               selectedId="2"
               style="top: 240px;"
               .x=${340}
-              .y=${240}
+              .height=${240}
             ></obc-poi-target>
           </obc-poi-target-button-group>
           <obc-poi-target
@@ -168,7 +168,7 @@ export const GroupedWithNumbers: Story = {
             selectedId="4"
             style="top: 240px;"
             .x=${200}
-            .y=${240}
+            .height=${240}
           ></obc-poi-target>
         </div>
       </div>
@@ -322,21 +322,21 @@ export const InternalGroupSwapping: Story = {
               selectedId="1"
               style="top: 240px;"
               .x=${300}
-              .y=${240}
+              .height=${240}
             ></obc-poi-target>
             <obc-poi-target
               id="swap-b"
               selectedId="2"
               style="top: 240px;"
               .x=${320}
-              .y=${240}
+              .height=${240}
             ></obc-poi-target>
             <obc-poi-target
               id="swap-c"
               selectedId="3"
               style="top: 240px;"
               .x=${340}
-              .y=${240}
+              .height=${240}
             ></obc-poi-target>
           </obc-poi-target-button-group>
         </div>

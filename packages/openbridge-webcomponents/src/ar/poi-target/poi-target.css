@@ -15,7 +15,13 @@
   flex-direction: column;
   align-items: center;
   width: 0;
-  transform: translateX(var(--obc-poi-target-top-offset-x, 0px));
+  transform: translateX(var(--obc-poi-target-top-offset-x, 0px))
+    translateY(
+      calc(
+        var(--obc-poi-target-line-bottom, 0px) -
+          var(--obc-poi-target-line-height, 0px)
+      )
+    );
 }
 
 .line {

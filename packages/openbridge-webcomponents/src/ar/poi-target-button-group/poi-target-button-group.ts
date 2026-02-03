@@ -523,14 +523,23 @@ export class ObcPoiTargetButtonGroup extends LitElement {
 
     for (const child of targets) {
       const yValue =
-        typeof child.y === 'number'
+        typeof child.y === 'number' && Number.isFinite(child.y)
           ? child.y
           : Number.parseFloat(child.getAttribute('y') ?? '');
+      const heightValue =
+        Number.isFinite(child.height) && child.height > 0
+          ? child.height
+          : Number.parseFloat(child.getAttribute('height') ?? '');
+      const resolvedY = !Number.isNaN(yValue)
+        ? yValue
+        : !Number.isNaN(heightValue)
+          ? heightValue
+          : Number.NaN;
 
-      if (Number.isNaN(yValue)) continue;
+      if (Number.isNaN(resolvedY)) continue;
 
-      if (yValue > maxY) {
-        maxY = yValue;
+      if (resolvedY > maxY) {
+        maxY = resolvedY;
         front = child;
       }
     }

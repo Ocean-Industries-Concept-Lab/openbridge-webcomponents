@@ -344,7 +344,8 @@ export class ObcPoiController extends LitElement {
       if (!target) {
         target = document.createElement('obc-poi-target') as HTMLElement & {
           x: number;
-          y: number;
+          y: number | null;
+          height: number;
           type: string;
         };
         target.dataset.controller = '1';
@@ -356,6 +357,7 @@ export class ObcPoiController extends LitElement {
 
       target.dataset.detectionIndex = String(index);
       target.x = mapped.x;
+      target.height = mapped.y;
       target.y = mapped.y;
     });
 
