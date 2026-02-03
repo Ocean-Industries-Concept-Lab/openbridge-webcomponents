@@ -23,6 +23,9 @@ const meta: Meta<PoiLayerStackArgs> = {
     selectionMode: PoiLayerSelectionMode.Single,
   },
   argTypes: {
+    layerIndex: {
+      control: {type: 'number', min: 0},
+    },
     selectionMode: {
       control: {type: 'select'},
       options: Object.values(PoiLayerSelectionMode),
@@ -59,50 +62,53 @@ const renderTwoLayers = (args: PoiLayerStackArgs) => html`
   </obc-poi-layer-stack>
 `;
 
-const renderThreeLayers = (args: PoiLayerStackArgs) => html`
-  <style>
-    obc-poi-layer-stack.stack {
-      gap: 8px;
-      width: 640px;
-    }
+const renderThreeLayers = (args: PoiLayerStackArgs) => {
+  const baseIndex = Math.max(0, args.layerIndex);
+  return html`
+    <style>
+      obc-poi-layer-stack.stack {
+        gap: 8px;
+        width: 640px;
+      }
 
-    obc-poi-layer {
-      --obc-poi-layer-min-height: 48px;
-      width: 100%;
-    }
-  </style>
-  <obc-poi-layer-stack class="stack" selection-mode=${args.selectionMode}>
-    <obc-poi-layer
-      label="Layer A"
-      .layerIndex=${args.layerIndex + 1}
-      role="selected"
-      debug
-    >
-      <obc-poi-target .x=${520} .y=${110} .fixedTarget=${false}>
-      </obc-poi-target>
-    </obc-poi-layer>
-    <obc-poi-layer
-      label="Layer B"
-      .layerIndex=${args.layerIndex + 2}
-      role="filtered"
-      type-filter="enhanced"
-      debug
-    >
-    </obc-poi-layer>
-    <obc-poi-layer
-      label="Layer C"
-      .layerIndex=${args.layerIndex + 3}
-      role="default"
-      ?debug=${args.debug}
-    >
-      <obc-poi-target .x=${80} .y=${120}> </obc-poi-target>
-      <obc-poi-target .x=${260} .y=${80}> </obc-poi-target>
-      <obc-poi-target .x=${180} .y=${100}> </obc-poi-target>
-      <obc-poi-target .x=${420} .y=${140}> </obc-poi-target>
-      <obc-poi-target .x=${140} .y=${90}> </obc-poi-target>
-    </obc-poi-layer>
-  </obc-poi-layer-stack>
-`;
+      obc-poi-layer {
+        --obc-poi-layer-min-height: 48px;
+        width: 100%;
+      }
+    </style>
+    <obc-poi-layer-stack class="stack" selection-mode=${args.selectionMode}>
+      <obc-poi-layer
+        label="Layer A"
+        .layerIndex=${baseIndex + 1}
+        role="selected"
+        debug
+      >
+        <obc-poi-target .x=${520} .y=${110} .fixedTarget=${false}>
+        </obc-poi-target>
+      </obc-poi-layer>
+      <obc-poi-layer
+        label="Layer B"
+        .layerIndex=${baseIndex + 2}
+        role="filtered"
+        type-filter="enhanced"
+        debug
+      >
+      </obc-poi-layer>
+      <obc-poi-layer
+        label="Layer C"
+        .layerIndex=${baseIndex + 3}
+        role="default"
+        ?debug=${args.debug}
+      >
+        <obc-poi-target .x=${80} .y=${120}> </obc-poi-target>
+        <obc-poi-target .x=${260} .y=${80}> </obc-poi-target>
+        <obc-poi-target .x=${180} .y=${100}> </obc-poi-target>
+        <obc-poi-target .x=${420} .y=${140}> </obc-poi-target>
+        <obc-poi-target .x=${140} .y=${90}> </obc-poi-target>
+      </obc-poi-layer>
+    </obc-poi-layer-stack>
+  `;
+};
 
 export const SelectionSingle: Story = {
   args: {

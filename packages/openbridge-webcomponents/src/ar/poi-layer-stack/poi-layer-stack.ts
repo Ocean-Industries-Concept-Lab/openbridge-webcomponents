@@ -452,6 +452,11 @@ export class ObcPoiLayerStack extends LitElement {
     ) as ObcPoiLayer[];
     if (layers.length <= 1) return;
     layers.forEach((layer, index) => {
+      const rawIndex = Number.isFinite(layer.layerIndex) ? layer.layerIndex : 0;
+      const clampedIndex = Math.max(0, rawIndex);
+      if (clampedIndex !== layer.layerIndex) {
+        layer.layerIndex = clampedIndex;
+      }
       layer.style.order = String(index);
     });
   }

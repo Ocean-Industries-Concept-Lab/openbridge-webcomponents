@@ -61,6 +61,41 @@ import {PoiLayerSelectionMode} from '../poi-layer-stack/poi-layer-stack.js';
  * @slot media - Required media element (video or image).
  * @slot stack - Required layer stack.
  */
+
+export type PoiDetection = {
+  x: number;
+  y: number;
+  box_width?: number;
+  box_height?: number;
+  id?: string;
+  confidence?: number;
+  class?: string;
+  class_id?: number;
+};
+
+export type PoiKeyFn = (det: PoiDetection, index: number) => string;
+
+export type PoiFrame = {
+  frame?: number;
+  timestamp?: number;
+  detections: PoiDetection[];
+};
+
+export enum PoiFitMode {
+  Contain = 'contain',
+  Cover = 'cover',
+}
+
+export enum PoiBoxOrigin {
+  TopLeft = 'top-left',
+  Center = 'center',
+}
+
+export enum PoiAnchor {
+  BottomCenter = 'bottom-center',
+  Center = 'center',
+}
+
 @customElement('obc-poi-controller')
 export class ObcPoiController extends LitElement {
   @property({type: String}) fit: PoiFitMode = PoiFitMode.Contain;
@@ -399,38 +434,4 @@ declare global {
   interface HTMLElementTagNameMap {
     'obc-poi-controller': ObcPoiController;
   }
-}
-
-export type PoiDetection = {
-  x: number;
-  y: number;
-  box_width?: number;
-  box_height?: number;
-  id?: string;
-  confidence?: number;
-  class?: string;
-  class_id?: number;
-};
-
-export type PoiKeyFn = (det: PoiDetection, index: number) => string;
-
-export type PoiFrame = {
-  frame?: number;
-  timestamp?: number;
-  detections: PoiDetection[];
-};
-
-export enum PoiFitMode {
-  Contain = 'contain',
-  Cover = 'cover',
-}
-
-export enum PoiBoxOrigin {
-  TopLeft = 'top-left',
-  Center = 'center',
-}
-
-export enum PoiAnchor {
-  BottomCenter = 'bottom-center',
-  Center = 'center',
 }
