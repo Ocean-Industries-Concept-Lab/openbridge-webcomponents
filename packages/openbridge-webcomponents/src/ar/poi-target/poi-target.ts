@@ -7,7 +7,10 @@ import '../poi-target-button/poi-target-button.js';
 import {POIStyle} from '../poi-graphic-line/poi-config.js';
 import '../../icons/icon-ais-target-activated-iec.js';
 import {ObcArAlertType} from '../types.js';
-import {ObcPoiTargetButtonType} from '../poi-target-button/poi-target-button.js';
+import {
+  ObcPoiTargetButtonType,
+  ObcPoiTargetButtonValue,
+} from '../poi-target-button/poi-target-button.js';
 import {customElement} from '../../decorator.js';
 
 export enum TargetValue {
@@ -54,6 +57,29 @@ export class ObcPoiTarget extends LitElement {
   @property({type: String}) pointerType: Pointer = Pointer.Line;
   @property({type: Number}) relativeDirection = 0;
   @property({type: Number}) offset = 0;
+  @property({
+    type: Array,
+    converter: {
+      fromAttribute(value) {
+        if (!value) return [];
+        try {
+          const parsed = JSON.parse(value);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch {
+          return [];
+        }
+      },
+      toAttribute(value) {
+        if (!value || !Array.isArray(value) || value.length === 0) return null;
+        try {
+          return JSON.stringify(value);
+        } catch {
+          return null;
+        }
+      },
+    },
+  })
+  values: ObcPoiTargetButtonValue[] = [];
   override render() {
     let pointer = null;
     let verticalOffset = 0;
@@ -104,6 +130,7 @@ export class ObcPoiTarget extends LitElement {
           .alertType=${this.alertType}
           .overlap=${this.overlap}
           .type=${this.type}
+          .values=${this.values}
         >
           <obi-ais-target-activated-iec></obi-ais-target-activated-iec>
         </obc-poi-target-button>
