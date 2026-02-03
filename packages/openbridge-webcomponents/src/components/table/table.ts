@@ -602,7 +602,7 @@ export class ObcTable extends LitElement {
           ? nothing
           : html`
               <div class="grid-header" role="row">
-                ${effectiveColumns.map((col, colIdx) => {
+                ${effectiveColumns.map((col) => {
                   const isSelectionColumn =
                     this.selectable && col.key === '__selection__';
                   const isNotLast =
