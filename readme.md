@@ -73,7 +73,7 @@ Login into github package repo:
 npm login --registry https://npm.pkg.github.com/ --scope=ocean-industries-concept-lab
 ```
 
-Use our github username as username and past in the generated token as password.
+Use your github username as username and past in the generated token as password.
 
 You can now install the package:
 
