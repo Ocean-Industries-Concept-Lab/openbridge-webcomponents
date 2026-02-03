@@ -404,8 +404,8 @@ declare global {
 export type PoiDetection = {
   x: number;
   y: number;
-  width: number;
-  height: number;
+  box_width?: number;
+  box_height?: number;
   id?: string;
   confidence?: number;
   class?: string;

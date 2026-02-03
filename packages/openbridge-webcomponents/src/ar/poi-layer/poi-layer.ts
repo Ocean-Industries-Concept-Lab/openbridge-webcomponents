@@ -923,12 +923,50 @@ export class ObcPoiLayer extends LitElement {
     if (typeof target.offset === 'number') {
       target.offset = 0;
     }
+    this.animateTopOffsetToZero(target);
+    if (typeof target.buttonOffsetX === 'number') {
+      target.buttonOffsetX = 0;
+    }
     target.style.removeProperty('--obc-poi-target-offset-x');
     target.style.removeProperty('position');
     target.style.removeProperty('width');
     target.style.removeProperty('min-width');
     target.style.removeProperty('height');
     target.style.removeProperty('transform');
+  }
+
+  private topOffsetResetRaf = new Map<ObcPoiTarget, number>();
+
+  private animateTopOffsetToZero(target: ObcPoiTarget) {
+    const start = target.topOffset;
+    if (!Number.isFinite(start) || Math.abs(start) < 0.5) {
+      target.topOffset = 0;
+      return;
+    }
+
+    const existing = this.topOffsetResetRaf.get(target);
+    if (existing) {
+      cancelAnimationFrame(existing);
+    }
+
+    const duration = 100;
+    const startTime = performance.now();
+    const step = (now: number) => {
+      if (!target.isConnected) {
+        this.topOffsetResetRaf.delete(target);
+        return;
+      }
+      const t = Math.min((now - startTime) / duration, 1);
+      const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      target.topOffset = start + (0 - start) * eased;
+      if (t < 1) {
+        this.topOffsetResetRaf.set(target, requestAnimationFrame(step));
+      } else {
+        this.topOffsetResetRaf.delete(target);
+      }
+    };
+
+    this.topOffsetResetRaf.set(target, requestAnimationFrame(step));
   }
 
   private scheduleGroupRemoval(group: HTMLElement) {
