@@ -10,8 +10,8 @@ import '../poi-target/poi-target.js';
 import {ObcPoiTarget, PoiTargetVisualState} from '../poi-target/poi-target.js';
 
 type PoiGroupStoryArgs = {
-  expand?: boolean;
-  internalSwapping?: boolean;
+  expand: boolean;
+  internalSwapping: boolean;
 };
 
 const meta: Meta<PoiGroupStoryArgs> = {
@@ -23,7 +23,7 @@ const meta: Meta<PoiGroupStoryArgs> = {
     expand: false,
     internalSwapping: false,
   },
-  render: (args) => {
+  render: (args: PoiGroupStoryArgs) => {
     const wrapperRef = createRef<HTMLDivElement>();
     const onExpand = (event: CustomEvent<{expand: boolean}>) => {
       const wrapper = wrapperRef.value;

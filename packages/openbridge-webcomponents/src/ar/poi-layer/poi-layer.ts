@@ -768,7 +768,8 @@ export class ObcPoiLayer extends LitElement {
       group.setAttribute('data-auto-group', 'true');
       group.setAttribute('data-position-mode', 'bottom');
       group.setAttribute('data-visible', 'true');
-      (group as PoiButtonGroupElement).internalSwapping = this.internalSwapping;
+      (group as PoiButtonGroupElement).internalSwapping =
+        !!this.internalSwapping;
       group.setAttribute(
         'positionVertical',
         `${this.getGroupPositionVertical(cluster, rects, layerRect, group)}px`
@@ -1040,7 +1041,7 @@ export class ObcPoiLayer extends LitElement {
         group.hasAttribute('data-auto-group') || !hasPositionAttr;
       if (group.hasAttribute('data-auto-group')) {
         (group as PoiButtonGroupElement).internalSwapping =
-          this.internalSwapping;
+          !!this.internalSwapping;
       }
       if (children.length > 0 && shouldSetPosition) {
         const layerBounds = layerRect ?? this.getBoundingClientRect();
