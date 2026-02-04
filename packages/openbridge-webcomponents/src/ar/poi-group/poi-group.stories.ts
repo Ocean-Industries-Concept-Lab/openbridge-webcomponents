@@ -9,12 +9,20 @@ import '../../icons/icon-ais-target-activated-iec.js';
 import '../poi-target/poi-target.js';
 import {ObcPoiTarget, PoiTargetVisualState} from '../poi-target/poi-target.js';
 
-const meta: Meta<ObcPoiGroup> = {
+type PoiGroupStoryArgs = {
+  expand?: boolean;
+  internalSwapping?: boolean;
+};
+
+const meta: Meta<PoiGroupStoryArgs> = {
   title: 'AR/POI Target Button Group',
   tags: ['6.0'],
   component: 'obc-poi-group',
   decorators: [crossDecorator],
-  args: {},
+  args: {
+    expand: false,
+    internalSwapping: false,
+  },
   render: (args) => {
     const wrapperRef = createRef<HTMLDivElement>();
     const onExpand = (event: CustomEvent<{expand: boolean}>) => {
@@ -90,7 +98,7 @@ const meta: Meta<ObcPoiGroup> = {
 } satisfies Meta<ObcPoiGroup>;
 
 export default meta;
-type Story = StoryObj<ObcPoiGroup>;
+type Story = StoryObj<PoiGroupStoryArgs>;
 
 export const Grouped: Story = {
   args: {
@@ -279,7 +287,6 @@ export const InternalGroupSwapping: Story = {
     let rafId = 0;
     let observer: MutationObserver | null = null;
     let startTime: number | null = null;
-
     const resetPositions = () => {
       const root = hostRef.value;
       if (!root) return;
@@ -370,8 +377,10 @@ export const InternalGroupSwapping: Story = {
     };
 
     setTimeout(() => {
-      if (args.expand) {
+      if (args.expand && args.internalSwapping) {
         startAnimation(hostRef.value ?? null);
+      } else {
+        stopAnimation();
       }
     }, 0);
 
@@ -397,7 +406,7 @@ export const InternalGroupSwapping: Story = {
             .internalSwapping=${args.internalSwapping}
             positionVertical="calc(50%)"
             @expand=${(event: CustomEvent<{expand: boolean}>) => {
-              if (event.detail.expand) {
+              if (event.detail.expand && args.internalSwapping) {
                 startAnimation(hostRef.value ?? null);
               } else {
                 stopAnimation();

@@ -30,6 +30,7 @@ interface PoiButtonGroupElement extends HTMLElement {
   useTopOffset: boolean;
   updatePosition?: () => void;
   refreshExpandedLayout?: (preserveCenter?: boolean) => void;
+  internalSwapping?: boolean;
 }
 
 export enum OverlapMode {
@@ -89,6 +90,8 @@ export class ObcPoiLayer extends LitElement {
   @property({type: String, attribute: 'type-filter'}) typeFilter = '';
   @property({type: Boolean, attribute: 'join-while-expanded'})
   joinWhileExpanded = false;
+  @property({type: Boolean, attribute: 'internal-swapping'})
+  internalSwapping = false;
 
   @query('.wrapper') private wrapper?: HTMLElement;
 
@@ -765,6 +768,7 @@ export class ObcPoiLayer extends LitElement {
       group.setAttribute('data-auto-group', 'true');
       group.setAttribute('data-position-mode', 'bottom');
       group.setAttribute('data-visible', 'true');
+      (group as PoiButtonGroupElement).internalSwapping = this.internalSwapping;
       group.setAttribute(
         'positionVertical',
         `${this.getGroupPositionVertical(cluster, rects, layerRect, group)}px`
@@ -1034,6 +1038,10 @@ export class ObcPoiLayer extends LitElement {
       }
       const shouldSetPosition =
         group.hasAttribute('data-auto-group') || !hasPositionAttr;
+      if (group.hasAttribute('data-auto-group')) {
+        (group as PoiButtonGroupElement).internalSwapping =
+          this.internalSwapping;
+      }
       if (children.length > 0 && shouldSetPosition) {
         const layerBounds = layerRect ?? this.getBoundingClientRect();
         const rectMap =
