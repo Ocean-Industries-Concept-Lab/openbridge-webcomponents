@@ -12,5 +12,22 @@
   "license": "Apache-2.0",
   "dependencies": {
     "tough-cookie": "^5.1.2"
+  },
+
+  "devDependencies": {
+    "typescript": "5.8.3"
+  },
+
+  "peerDependencies": {
+    "typescript": ">=5.8.3 <6.0.0",
+    "@angular/core": ">=20.0.0",
+    "@angular/common": ">=20.0.0"
+  },
+
+  "overrides": {
+    "typescript": "5.8.3",
+    "@angular/compiler": "20.0.1",
+    "@angular/compiler-cli": "20.0.1",
+    "ng-packagr": "20.0.1"
   }
 }
