@@ -4,6 +4,7 @@ import {createRef, ref} from 'lit/directives/ref.js';
 import {OverlapMode} from './poi-layer.js';
 import './poi-layer.js';
 import '../poi-target/poi-target.js';
+import {ObcPoiTarget, PoiTargetVisualState} from '../poi-target/poi-target.js';
 import '../poi-group/poi-group.js';
 
 type PoiLayerArgs = {
@@ -11,6 +12,7 @@ type PoiLayerArgs = {
   debug: boolean;
   layerIndex: number;
   overlapMode?: OverlapMode;
+  expand?: boolean;
 };
 
 const meta: Meta<PoiLayerArgs> = {
@@ -516,9 +518,8 @@ export const JoinGroup: Story = {
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}
         >
-          <obc-poi-target class="a" .y=${140}></obc-poi-target>
-          <obc-poi-target class="b" .y=${100}></obc-poi-target>
-          <obc-poi-target class="c" .y=${80}></obc-poi-target>
+          <obc-poi-target class="a" .x=${300} .y=${140}></obc-poi-target>
+          <obc-poi-target class="b" .x=${320} .y=${100}></obc-poi-target>
         </obc-poi-layer>
       </div>
     `;
@@ -530,10 +531,12 @@ export const JoinExpandedGroup: Story = {
     label: 'Join Expanded Group',
     layerIndex: 0,
     debug: true,
+    expand: true,
   },
   render(args) {
     const hostRef = createRef<HTMLDivElement>();
-    const startAnimation = (root: HTMLElement | null) => {
+    const layerRef = createRef<HTMLElement>();
+    const spawnLateTarget = (root: HTMLElement | null) => {
       if (!root || root.dataset.animating === 'true') return;
       root.dataset.animating = 'true';
 
@@ -543,48 +546,75 @@ export const JoinExpandedGroup: Story = {
       const b = root.querySelector('obc-poi-target.b') as
         | (HTMLElement & {x: number; y: number})
         | null;
-      const c = root.querySelector('obc-poi-target.c') as
-        | (HTMLElement & {x: number; y: number})
-        | null;
-      if (!a || !b || !c) return;
+      if (!a || !b) return;
 
       a.x = 300;
       b.x = 320;
+
+      const c = document.createElement('obc-poi-target') as ObcPoiTarget;
+      c.classList.add('c');
       c.x = 520;
+      c.y = 80;
 
-      const duration = 12000;
-      let rafId = 0;
-      let startTime: number | null = null;
-
-      const tick = (now: number) => {
-        if (startTime === null) startTime = now;
-        const elapsed = now - startTime;
-        const t = (elapsed % duration) / duration;
-
-        if (t < 0.5) {
-          c.x = 520;
-        } else {
-          const phase = (t - 0.5) / 0.5;
-          const eased = phase * phase * (3 - 2 * phase);
-          const x3 = 520 - (520 - 340) * eased;
-          c.x = Math.round(x3);
-        }
-
-        rafId = requestAnimationFrame(tick);
-      };
-
-      rafId = requestAnimationFrame(tick);
+      const parent = a.parentElement;
+      if (!parent) return;
+      setTimeout(() => {
+        parent.appendChild(c);
+        c.visualState = PoiTargetVisualState.Overlapped;
+        const duration = 12000;
+        const delayMs = 1000;
+        let startTime: number | null = null;
+        const tick = (now: number) => {
+          if (!c.isConnected) return;
+          if (startTime === null) startTime = now + delayMs;
+          const elapsed = now - startTime;
+          if (elapsed < 0) {
+            c.x = 520;
+            requestAnimationFrame(tick);
+            return;
+          }
+          const t = (elapsed % duration) / duration;
+          if (t < 0.5) {
+            const phase = t / 0.5;
+            const eased = phase * phase * (3 - 2 * phase);
+            const x3 = 520 - (520 - 340) * eased;
+            c.x = Math.round(x3);
+          } else {
+            c.x = 340;
+          }
+          requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      }, 250);
 
       const observer = new MutationObserver(() => {
         if (!root.isConnected) {
-          cancelAnimationFrame(rafId);
           observer.disconnect();
         }
       });
       observer.observe(root, {childList: true, subtree: true});
     };
 
-    setTimeout(() => startAnimation(hostRef.value ?? null), 0);
+    setTimeout(() => spawnLateTarget(hostRef.value ?? null), 0);
+    setTimeout(() => {
+      const layer = layerRef.value;
+      if (!layer) return;
+      const applyInitialExpand = () => {
+        const group = layer.querySelector('obc-poi-group[data-auto-group]') as {
+          expand: boolean;
+        } | null;
+        if (!group) return false;
+        group.expand = !!args.expand;
+        return true;
+      };
+      if (applyInitialExpand()) return;
+      const observer = new MutationObserver(() => {
+        if (applyInitialExpand()) {
+          observer.disconnect();
+        }
+      });
+      observer.observe(layer, {childList: true, subtree: true});
+    }, 0);
     return html`
       <style>
         .join-expanded {
@@ -593,24 +623,22 @@ export const JoinExpandedGroup: Story = {
 
         .join-expanded obc-poi-layer {
           --obc-poi-layer-min-height: 48px;
-          --obc-poi-layer-overlap-enter: 10px;
+          --obc-poi-layer-overlap-enter: 0px;
+          --obc-poi-layer-overlap-pre: 0px;
+          --obc-poi-layer-overlap-behind: 0px;
           --obc-poi-layer-overlap-exit: 18px;
-          --obc-poi-layer-overlap-pre: 16px;
           width: 100%;
         }
       </style>
-      <p style="font-size: 12px; color: #666; margin-bottom: 8px;">
-        Click to expand the group, then watch as target C joins while expanded.
-      </p>
       <div class="join-expanded" ${ref(hostRef)}>
         <obc-poi-layer
+          ${ref(layerRef)}
           .label=${args.label}
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}
         >
           <obc-poi-target class="a" .y=${140}></obc-poi-target>
           <obc-poi-target class="b" .y=${100}></obc-poi-target>
-          <obc-poi-target class="c" .y=${80}></obc-poi-target>
         </obc-poi-layer>
       </div>
     `;
@@ -622,9 +650,11 @@ export const LeaveExpandedGroup: Story = {
     label: 'Leave Expanded Group',
     layerIndex: 0,
     debug: true,
+    expand: true,
   },
   render(args) {
     const hostRef = createRef<HTMLDivElement>();
+    const layerRef = createRef<HTMLElement>();
     const startAnimation = (root: HTMLElement | null) => {
       if (!root || root.dataset.animating === 'true') return;
       root.dataset.animating = 'true';
@@ -642,7 +672,7 @@ export const LeaveExpandedGroup: Story = {
 
       a.x = 300;
       b.x = 320;
-      c.x = 340;
+      c.x = 360;
 
       const duration = 8000;
       let rafId = 0;
@@ -654,11 +684,11 @@ export const LeaveExpandedGroup: Story = {
         const t = (elapsed % duration) / duration;
 
         if (t < 0.5) {
-          c.x = 340;
+          c.x = 360;
         } else {
           const phase = (t - 0.5) / 0.5;
           const eased = phase * phase * (3 - 2 * phase);
-          const x3 = 340 + (520 - 340) * eased;
+          const x3 = 360 + (520 - 340) * eased;
           c.x = Math.round(x3);
         }
 
@@ -677,6 +707,25 @@ export const LeaveExpandedGroup: Story = {
     };
 
     setTimeout(() => startAnimation(hostRef.value ?? null), 0);
+    setTimeout(() => {
+      const layer = layerRef.value;
+      if (!layer) return;
+      const applyInitialExpand = () => {
+        const group = layer.querySelector('obc-poi-group') as {
+          expand: boolean;
+        } | null;
+        if (!group) return false;
+        group.expand = !!args.expand;
+        return true;
+      };
+      if (applyInitialExpand()) return;
+      const observer = new MutationObserver(() => {
+        if (applyInitialExpand()) {
+          observer.disconnect();
+        }
+      });
+      observer.observe(layer, {childList: true, subtree: true});
+    }, 0);
     return html`
       <style>
         .leave-expanded {
@@ -692,10 +741,12 @@ export const LeaveExpandedGroup: Story = {
         }
       </style>
       <p style="font-size: 12px; color: #666; margin-bottom: 8px;">
-        Click to expand the group, then watch as target C leaves while expanded.
+        Group starts ${args.expand ? 'expanded' : 'collapsed'}; watch as target
+        C leaves while expanded.
       </p>
       <div class="leave-expanded" ${ref(hostRef)}>
         <obc-poi-layer
+          ${ref(layerRef)}
           .label=${args.label}
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}

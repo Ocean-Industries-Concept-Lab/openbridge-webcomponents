@@ -242,7 +242,7 @@ export const Expanded: Story = {
               selectedId="1"
               .x=${320}
               .height=${240}
-              .y=${60}
+              .y=${100}
               .fixedTarget=${false}
               .relativeDirection=${65}
             ></obc-poi-target>
@@ -251,7 +251,7 @@ export const Expanded: Story = {
               selectedId="2"
               .x=${340}
               .height=${240}
-              .y=${0}
+              .y=${100}
               .fixedTarget=${false}
             ></obc-poi-target>
           </obc-poi-group>
@@ -260,7 +260,7 @@ export const Expanded: Story = {
             selectedId="4"
             .x=${200}
             .height=${240}
-            .y=${0}
+            .y=${100}
             .fixedTarget=${false}
           ></obc-poi-target>
         </div>

@@ -59,7 +59,6 @@ export class ObcPoiGroup extends LitElement {
   override firstUpdated(_changedProperties: PropertyValues) {
     super.firstUpdated(_changedProperties);
     this.updatePosition();
-    this.setExpandedChildren(this.expand, true);
     this.syncFrontChild();
     const slot = this.shadowRoot?.querySelector('slot');
     slot?.addEventListener('slotchange', this.onSlotChange);
@@ -96,10 +95,16 @@ export class ObcPoiGroup extends LitElement {
     super.disconnectedCallback();
   }
 
+  override updated(changedProperties: PropertyValues) {
+    super.updated(changedProperties);
+    if (changedProperties.has('expand')) {
+      this.setExpandedChildren(this.expand);
+    }
+  }
+
   onBackdropClick(event: Event): void {
     event.stopPropagation();
     this.expand = false;
-    this.setExpandedChildren(this.expand);
   }
 
   override render() {
@@ -185,7 +190,6 @@ export class ObcPoiGroup extends LitElement {
   onClick(): void {
     if (this.expand) return;
     this.expand = true;
-    this.setExpandedChildren(this.expand);
   }
 
   private expandOffset: Map<ObcPoiTarget, number> = new Map();
@@ -194,7 +198,7 @@ export class ObcPoiGroup extends LitElement {
     return this.expandOffset.get(child) ?? null;
   }
 
-  setExpandedChildren(expand: boolean, firstRun = false): void {
+  setExpandedChildren(expand: boolean): void {
     this.dispatchEvent(
       new CustomEvent('expand', {
         detail: {expand: this.expand},
@@ -209,7 +213,7 @@ export class ObcPoiGroup extends LitElement {
     }
 
     const oldPosition = new Map<ObcPoiTarget, number>();
-    if (expand || firstRun) {
+    if (expand) {
       this._children.forEach((child) => {
         if (child instanceof ObcPoiTarget) {
           const boundingBox = child.getBoundingClientRect();
@@ -294,7 +298,9 @@ export class ObcPoiGroup extends LitElement {
     }
 
     if (!expand) {
-      this.wrapperVisible = false;
+      if (this.topOffsetProgress > 0) {
+        this.wrapperVisible = false;
+      }
       this.lockedExpandedCenter = null;
     }
 

@@ -120,7 +120,12 @@ export class ObcPoiTarget extends LitElement {
 
   override updated(changedProperties: Map<string, unknown>) {
     if (changedProperties.has('x')) {
-      this.style.left = `${this.x}px`;
+      const parentTag = this.parentElement?.tagName.toLowerCase();
+      const lockX =
+        this.hasAttribute('data-x-locked') && parentTag === 'obc-poi-group';
+      if (!lockX) {
+        this.style.left = `${this.x}px`;
+      }
     }
     if (
       changedProperties.has('height') ||
