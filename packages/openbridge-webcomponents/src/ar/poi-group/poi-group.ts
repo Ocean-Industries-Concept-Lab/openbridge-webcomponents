@@ -198,11 +198,6 @@ export class ObcPoiGroup extends LitElement {
     return this.expandOffset.get(child) ?? null;
   }
 
-  refreshExpandedLayout(): void {
-    if (!this.expand) return;
-    this.setExpandedChildren(true);
-  }
-
   setExpandedChildren(expand: boolean): void {
     this.dispatchEvent(
       new CustomEvent('expand', {

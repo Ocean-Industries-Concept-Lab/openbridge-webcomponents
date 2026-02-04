@@ -861,8 +861,11 @@ export class ObcPoiLayer extends LitElement {
     );
     if (candidates.length === 0) return;
 
+    const useButtonRects = group.expand === true || group.collapsing === true;
     const groupCenters = groupTargets
-      .map((target) => rects.get(target))
+      .map((target) =>
+        useButtonRects ? this.getTargetRect(target) : rects.get(target)
+      )
       .filter((rect): rect is DOMRect => !!rect)
       .map((rect) => rect.left + rect.width / 2);
     if (groupCenters.length === 0) return;
@@ -875,10 +878,14 @@ export class ObcPoiLayer extends LitElement {
     let bestGap = Number.POSITIVE_INFINITY;
 
     for (const candidate of candidates) {
-      const candidateRect = rects.get(candidate);
+      const candidateRect = useButtonRects
+        ? this.getTargetRect(candidate)
+        : rects.get(candidate);
       if (!candidateRect) continue;
       for (const member of groupTargets) {
-        const memberRect = rects.get(member);
+        const memberRect = useButtonRects
+          ? this.getTargetRect(member)
+          : rects.get(member);
         if (!memberRect) continue;
         const overlapHeight =
           Math.min(candidateRect.bottom, memberRect.bottom) -

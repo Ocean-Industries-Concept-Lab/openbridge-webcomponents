@@ -543,6 +543,7 @@ export const JoinExpandedGroup: Story = {
     layerIndex: 0,
     debug: true,
     expand: true,
+    joinWhileExpanded: true,
   },
   render(args) {
     const hostRef = createRef<HTMLDivElement>();
@@ -567,10 +568,10 @@ export const JoinExpandedGroup: Story = {
       c.x = 520;
       c.y = 80;
 
-      const parent = a.parentElement;
-      if (!parent) return;
       setTimeout(() => {
-        parent.appendChild(c);
+        const layer = layerRef.value;
+        if (!layer) return;
+        layer.appendChild(c);
         c.visualState = PoiTargetVisualState.Overlapped;
         const duration = 12000;
         const delayMs = 1000;
@@ -589,7 +590,7 @@ export const JoinExpandedGroup: Story = {
             const phase = t / 0.5;
             const eased = phase * phase * (3 - 2 * phase);
             const x3 = 520 - (520 - 340) * eased;
-            c.x = Math.round(x3);
+            c.x = x3;
           } else {
             c.x = 340;
           }
@@ -634,9 +635,9 @@ export const JoinExpandedGroup: Story = {
 
         .join-expanded obc-poi-layer {
           --obc-poi-layer-min-height: 48px;
-          --obc-poi-layer-overlap-enter: 0px;
-          --obc-poi-layer-overlap-pre: 0px;
-          --obc-poi-layer-overlap-behind: 0px;
+          --obc-poi-layer-overlap-enter: 10px;
+          --obc-poi-layer-overlap-pre: 16px;
+          --obc-poi-layer-overlap-behind: 10px;
           --obc-poi-layer-overlap-exit: 18px;
           width: 100%;
         }
@@ -752,10 +753,6 @@ export const LeaveExpandedGroup: Story = {
           width: 100%;
         }
       </style>
-      <p style="font-size: 12px; color: #666; margin-bottom: 8px;">
-        Group starts ${args.expand ? 'expanded' : 'collapsed'}; watch as target
-        C leaves while expanded.
-      </p>
       <div class="leave-expanded" ${ref(hostRef)}>
         <obc-poi-layer
           ${ref(layerRef)}
@@ -887,10 +884,6 @@ export const CrossingMode: Story = {
           width: 100%;
         }
       </style>
-      <p style="font-size: 12px; color: #666; margin-bottom: 8px;">
-        Crossing mode: Moving POI crosses the static POI. Internal swapping
-        keeps targets ordered without grouping or overlap.
-      </p>
       <div class="crossing-mode" ${ref(hostRef)}>
         <obc-poi-layer
           .label=${args.label}
