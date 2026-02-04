@@ -12,6 +12,8 @@ import {ObcPoiTarget, PoiTargetVisualState} from '../poi-target/poi-target.js';
 type PoiGroupStoryArgs = {
   expand: boolean;
   internalSwapping: boolean;
+  positionVertical: string;
+  useTopOffset: boolean;
 };
 
 const meta: Meta<PoiGroupStoryArgs> = {
@@ -22,6 +24,18 @@ const meta: Meta<PoiGroupStoryArgs> = {
   args: {
     expand: false,
     internalSwapping: false,
+    positionVertical: '0px',
+    useTopOffset: true,
+  },
+  parameters: {
+    controls: {
+      include: [
+        'expand',
+        'internalSwapping',
+        'positionVertical',
+        'useTopOffset',
+      ],
+    },
   },
   render: (args: PoiGroupStoryArgs) => {
     const wrapperRef = createRef<HTMLDivElement>();
@@ -58,7 +72,8 @@ const meta: Meta<PoiGroupStoryArgs> = {
           <obc-poi-group
             style="position: absolute; top: 0; left: 0;"
             .expand=${args.expand}
-            positionVertical="calc(50%)"
+            positionVertical=${args.positionVertical}
+            ?use-top-offset=${args.useTopOffset}
             @expand=${onExpand}
           >
             <obc-poi-target
@@ -145,7 +160,8 @@ export const GroupedWithNumbers: Story = {
           <obc-poi-group
             style="position: absolute; top: 0; left: 0;"
             .expand=${args.expand}
-            positionVertical="calc(50%)"
+            positionVertical=${args.positionVertical}
+            ?use-top-offset=${args.useTopOffset}
             @expand=${onExpand}
           >
             <obc-poi-target
@@ -234,7 +250,8 @@ export const Expanded: Story = {
             ${ref(groupRef)}
             style="position: absolute; top: 0; left: 0;"
             .expand=${false}
-            positionVertical="calc(50%)"
+            positionVertical=${args.positionVertical}
+            ?use-top-offset=${args.useTopOffset}
             @expand=${onExpand}
           >
             <obc-poi-target
@@ -404,7 +421,8 @@ export const InternalGroupSwapping: Story = {
             style="position: absolute; top: 0; left: 0;"
             .expand=${args.expand}
             .internalSwapping=${args.internalSwapping}
-            positionVertical="calc(50%)"
+            positionVertical=${args.positionVertical}
+            ?use-top-offset=${args.useTopOffset}
             @expand=${(event: CustomEvent<{expand: boolean}>) => {
               if (event.detail.expand && args.internalSwapping) {
                 startAnimation(hostRef.value ?? null);

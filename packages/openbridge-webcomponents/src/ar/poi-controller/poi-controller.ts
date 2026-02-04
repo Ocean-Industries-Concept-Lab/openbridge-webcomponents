@@ -132,7 +132,6 @@ export class ObcPoiController extends LitElement {
     }
   >();
   private currentMedia: HTMLVideoElement | HTMLImageElement | null = null;
-  private static readonly DEFAULT_LINE_LENGTH = 120;
   private mediaHandlers = {
     loadedmetadata: () => {
       if (this.currentMedia) this.updateMediaMetrics(this.currentMedia);

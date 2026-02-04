@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import {createRef, ref} from 'lit/directives/ref.js';
-import {OverlapMode} from './poi-layer.js';
+import {OverlapMode, PoiLayerRole} from './poi-layer.js';
 import './poi-layer.js';
 import '../poi-target/poi-target.js';
 import {ObcPoiTarget, PoiTargetVisualState} from '../poi-target/poi-target.js';
@@ -11,7 +11,9 @@ type PoiLayerArgs = {
   label: string;
   debug: boolean;
   layerIndex: number;
-  overlapMode?: OverlapMode;
+  overlapMode: OverlapMode;
+  role: PoiLayerRole;
+  typeFilter: string;
   expand?: boolean;
   joinWhileExpanded?: boolean;
   internalSwapping?: boolean;
@@ -21,12 +23,40 @@ const meta: Meta<PoiLayerArgs> = {
   title: 'AR/POI Layer',
   tags: ['6.0'],
   component: 'obc-poi-layer',
+  decorators: [
+    (story) => html`
+      <style>
+        .poi-layer-story-frame {
+          min-height: 150px;
+          display: block;
+        }
+      </style>
+      <div class="poi-layer-story-frame">${story()}</div>
+    `,
+  ],
   args: {
     label: 'Selected Targets',
     debug: true,
     layerIndex: 0,
+    overlapMode: OverlapMode.Grouping,
+    role: PoiLayerRole.Default,
+    typeFilter: '',
     joinWhileExpanded: false,
     internalSwapping: false,
+  },
+  parameters: {
+    controls: {
+      include: [
+        'label',
+        'debug',
+        'layerIndex',
+        'overlapMode',
+        'role',
+        'typeFilter',
+        'joinWhileExpanded',
+        'internalSwapping',
+      ],
+    },
   },
 } satisfies Meta<PoiLayerArgs>;
 
@@ -107,6 +137,9 @@ export const AnimatedLayout: Story = {
         <obc-poi-layer
           .label=${args.label}
           .layerIndex=${args.layerIndex}
+          .overlapMode=${args.overlapMode}
+          .role=${args.role}
+          .typeFilter=${args.typeFilter}
           ?debug=${args.debug}
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
@@ -133,6 +166,9 @@ export const Primary: Story = {
       <obc-poi-layer
         .label=${args.label}
         .layerIndex=${args.layerIndex}
+        .overlapMode=${args.overlapMode}
+        .role=${args.role}
+        .typeFilter=${args.typeFilter}
         ?debug=${args.debug}
         ?join-while-expanded=${args.joinWhileExpanded}
         .internalSwapping=${!!args.internalSwapping}
@@ -174,6 +210,9 @@ export const WithValuesTargets: Story = {
       <obc-poi-layer
         .label=${args.label}
         .layerIndex=${args.layerIndex}
+        .overlapMode=${args.overlapMode}
+        .role=${args.role}
+        .typeFilter=${args.typeFilter}
         ?debug=${args.debug}
         ?join-while-expanded=${args.joinWhileExpanded}
         .internalSwapping=${!!args.internalSwapping}
@@ -208,6 +247,9 @@ export const Overlap: Story = {
         <obc-poi-layer
           .label=${args.label}
           .layerIndex=${args.layerIndex}
+          .overlapMode=${args.overlapMode}
+          .role=${args.role}
+          .typeFilter=${args.typeFilter}
           ?debug=${args.debug}
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
@@ -242,6 +284,9 @@ export const OverlapWithGroup: Story = {
         <obc-poi-layer
           .label=${args.label}
           .layerIndex=${args.layerIndex}
+          .overlapMode=${args.overlapMode}
+          .role=${args.role}
+          .typeFilter=${args.typeFilter}
           ?debug=${args.debug}
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
@@ -281,6 +326,9 @@ export const OverlapWithGroupNumbers: Story = {
         <obc-poi-layer
           .label=${args.label}
           .layerIndex=${args.layerIndex}
+          .overlapMode=${args.overlapMode}
+          .role=${args.role}
+          .typeFilter=${args.typeFilter}
           ?debug=${args.debug}
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
@@ -375,6 +423,9 @@ export const EnterGroupFromTwo: Story = {
         <obc-poi-layer
           .label=${args.label}
           .layerIndex=${args.layerIndex}
+          .overlapMode=${args.overlapMode}
+          .role=${args.role}
+          .typeFilter=${args.typeFilter}
           ?debug=${args.debug}
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
@@ -454,6 +505,9 @@ export const ExitGroup: Story = {
         <obc-poi-layer
           .label=${args.label}
           .layerIndex=${args.layerIndex}
+          .overlapMode=${args.overlapMode}
+          .role=${args.role}
+          .typeFilter=${args.typeFilter}
           ?debug=${args.debug}
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
@@ -536,6 +590,9 @@ export const JoinGroup: Story = {
         <obc-poi-layer
           .label=${args.label}
           .layerIndex=${args.layerIndex}
+          .overlapMode=${args.overlapMode}
+          .role=${args.role}
+          .typeFilter=${args.typeFilter}
           ?debug=${args.debug}
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
@@ -665,6 +722,9 @@ export const JoinExpandedGroup: Story = {
           ${ref(layerRef)}
           .label=${args.label}
           .layerIndex=${args.layerIndex}
+          .overlapMode=${args.overlapMode}
+          .role=${args.role}
+          .typeFilter=${args.typeFilter}
           ?debug=${args.debug}
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
@@ -777,6 +837,9 @@ export const LeaveExpandedGroup: Story = {
           ${ref(layerRef)}
           .label=${args.label}
           .layerIndex=${args.layerIndex}
+          .overlapMode=${args.overlapMode}
+          .role=${args.role}
+          .typeFilter=${args.typeFilter}
           ?debug=${args.debug}
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
@@ -908,6 +971,8 @@ export const CrossingMode: Story = {
         <obc-poi-layer
           .label=${args.label}
           .layerIndex=${args.layerIndex}
+          .role=${args.role}
+          .typeFilter=${args.typeFilter}
           ?debug=${args.debug}
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}

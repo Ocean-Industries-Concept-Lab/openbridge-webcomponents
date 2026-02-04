@@ -51,6 +51,22 @@ const meta: Meta<ObcPoiTarget> = {
         'Array of value objects with value, label, and unit (also accepts JSON via values attribute)',
     },
   },
+  parameters: {
+    controls: {
+      include: [
+        'x',
+        'y',
+        'height',
+        'topOffset',
+        'fixedTarget',
+        'value',
+        'pointerType',
+        'relativeDirection',
+        'offset',
+        'values',
+      ],
+    },
+  },
   render: (args) => {
     return html`
       <style>

@@ -17,6 +17,11 @@ const meta: Meta<PoiControllerArgs> = {
     fit: PoiFitMode.Contain,
     classFilter: [],
   },
+  parameters: {
+    controls: {
+      include: ['fit', 'classFilter'],
+    },
+  },
   render: (args) => {
     const frames = [
       {

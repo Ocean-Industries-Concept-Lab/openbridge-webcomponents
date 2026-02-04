@@ -16,6 +16,17 @@ const meta: Meta<PoiLayerStackArgs> = {
   title: 'AR/POI Layer Stack',
   tags: ['6.0'],
   component: 'obc-poi-layer-stack',
+  decorators: [
+    (story) => html`
+      <style>
+        .poi-layer-stack-story-frame {
+          min-height: 220px;
+          display: block;
+        }
+      </style>
+      <div class="poi-layer-stack-story-frame">${story()}</div>
+    `,
+  ],
   args: {
     label: 'Layer A',
     debug: true,

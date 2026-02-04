@@ -111,8 +111,6 @@ export class ObcPoiLayer extends LitElement {
   private cachedCrossingTargets: ObcPoiTarget[] = [];
   private crossingTargetsDirty = false;
   private crossingOrder: ObcPoiTarget[] = [];
-  private crossingNeighbor = new Map<ObcPoiTarget, ObcPoiTarget>();
-  private crossingDirection = new Map<ObcPoiTarget, number>();
   private crossingLastEffectiveX = new Map<ObcPoiTarget, number>();
   private previousPositions = new Map<HTMLElement, number>();
   private lastOffsets = new Map<HTMLElement, number>();
@@ -696,8 +694,7 @@ export class ObcPoiLayer extends LitElement {
           expandedAutoGroup,
           targets,
           rects,
-          enterThreshold,
-          layerRect
+          enterThreshold
         );
       }
       this.isGrouping = false;
@@ -851,8 +848,7 @@ export class ObcPoiLayer extends LitElement {
     group: PoiButtonGroupElement,
     targets: ObcPoiTarget[],
     rects: Map<HTMLElement, DOMRect>,
-    enterThreshold: number,
-    layerRect: DOMRect
+    enterThreshold: number
   ) {
     const groupTargets = Array.from(
       group.querySelectorAll('obc-poi-target')

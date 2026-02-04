@@ -475,7 +475,6 @@ export class ObcPoiGroup extends LitElement {
     progress: number,
     frontChild: ObcPoiTarget | null
   ) {
-    const inLayer = this.closest('obc-poi-layer') !== null;
     const eased =
       progress < 0.5
         ? 2 * progress * progress
@@ -634,7 +633,6 @@ export class ObcPoiGroup extends LitElement {
 
   private updateExpandedOffsets(snap: boolean = false) {
     if (!this.expand) return;
-    const inLayer = this.closest('obc-poi-layer') !== null;
 
     const targets = this._children.filter(
       (child): child is ObcPoiTarget => child instanceof ObcPoiTarget
