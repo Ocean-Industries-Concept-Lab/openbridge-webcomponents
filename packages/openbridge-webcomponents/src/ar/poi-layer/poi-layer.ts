@@ -406,7 +406,7 @@ export class ObcPoiLayer extends LitElement {
     }
 
     const currentPositions = new Map<HTMLElement, number>();
-    const movingTargets = new Set<HTMLElement>();
+    const movingTargetsSet = new Set<HTMLElement>();
     const deltas = new Map<ObcPoiTarget, number>();
 
     const buttonWidth = this.getTouchTargetSize();
@@ -422,7 +422,7 @@ export class ObcPoiLayer extends LitElement {
 
       const prevPos = this.previousPositions.get(target);
       if (prevPos !== undefined && Math.abs(left - prevPos) > 0.5) {
-        movingTargets.add(target);
+        movingTargetsSet.add(target);
         deltas.set(target, left - prevPos);
       }
     });
@@ -438,7 +438,7 @@ export class ObcPoiLayer extends LitElement {
         return {
           target,
           center: left + buttonWidth / 2,
-          isMoving: movingTargets.has(target),
+          isMoving: movingTargetsSet.has(target),
         };
       })
       .sort((a, b) => {
@@ -491,7 +491,7 @@ export class ObcPoiLayer extends LitElement {
       }
     }
 
-    const positionsChanged = movingTargets.size > 0;
+    const positionsChanged = movingTargetsSet.size > 0;
 
     if (!hasActiveOverlaps) {
       targets.forEach((target) => {
@@ -1187,7 +1187,7 @@ export class ObcPoiLayer extends LitElement {
     if (Number.isNaN(leftValue)) return rect;
     const width = rect.width || 0;
     const height = rect.height || 0;
-    const left = layerRect.left + leftValue - width / 2;
+    const left = layerRect.left + leftValue;
     const top = layerRect.bottom - height;
     return new DOMRect(left, top, width, height);
   }

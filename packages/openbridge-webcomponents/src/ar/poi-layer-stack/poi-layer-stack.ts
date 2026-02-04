@@ -204,16 +204,19 @@ export class ObcPoiLayerStack extends LitElement {
     const existing = this.selectionIds.get(target);
     if (existing) {
       target.selectedId = existing;
+      this.logSelectionState('set-selected-id-existing', target);
       return;
     }
     this.selectionCounter += 1;
     const nextId = String(this.selectionCounter);
     this.selectionIds.set(target, nextId);
     target.selectedId = nextId;
+    this.logSelectionState('set-selected-id-new', target);
   }
 
   private clearTargetSelectedId(target: ObcPoiTarget) {
     target.selectedId = null;
+    this.logSelectionState('clear-selected-id', target);
   }
 
   private clearTargetGroupingAttributes(target: HTMLElement) {
@@ -313,7 +316,7 @@ export class ObcPoiLayerStack extends LitElement {
         group.expand = false;
       }
       if (target instanceof ObcPoiTarget) {
-        this.animateTopOffsetToZero(target);
+        target.topOffset = 0;
         target.buttonOffsetX = 0;
         target.offset = 0;
       }
@@ -490,6 +493,7 @@ export class ObcPoiLayerStack extends LitElement {
     targets.forEach((target) => {
       this.setTargetSelectedId(target);
       target.showId = true;
+      this.logSelectionState('show-id-true', target);
 
       if (this.selectionMode === PoiLayerSelectionMode.None) {
         this.setSelectedTargetInteractivity(target, false);
@@ -560,6 +564,33 @@ export class ObcPoiLayerStack extends LitElement {
   private getTargetLineLength(target: ObcPoiTarget): number {
     return Number.isFinite(target.y) ? target.y : 0;
   }
+
+  private logSelectionState(phase: string, target: ObcPoiTarget) {
+    const rect = this.getTargetVisualRect(target);
+    const computed = getComputedStyle(target);
+    const stack = new Error().stack;
+    // eslint-disable-next-line no-console
+    console.log('[poi-selection-trace]', {
+      phase,
+      selectedId: target.selectedId ?? null,
+      showId: target.showId,
+      topOffset: Number.isFinite(target.topOffset) ? target.topOffset : 0,
+      offset: Number.isFinite(target.offset) ? target.offset : 0,
+      buttonOffsetX: Number.isFinite(target.buttonOffsetX)
+        ? target.buttonOffsetX
+        : 0,
+      computedTransform: computed.transform,
+      rect: {
+        left: Math.round(rect.left),
+        top: Math.round(rect.top),
+        width: Math.round(rect.width),
+        height: Math.round(rect.height),
+      },
+      stack,
+    });
+  }
+
+  // debug helper removed
 
   private setTargetLineLength(target: ObcPoiTarget, lineLength: number) {
     target.y = lineLength;

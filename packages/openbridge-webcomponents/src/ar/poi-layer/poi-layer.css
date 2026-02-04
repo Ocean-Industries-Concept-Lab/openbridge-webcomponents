@@ -40,8 +40,7 @@
   --obc-poi-layer-target-shift: calc(
     (1 - var(--obc-poi-layer-target-scale)) * 100%
   );
-  transform: translateX(-50%)
-    translateY(calc(100% - var(--obc-poi-layer-target-shift)))
+  transform: translateY(calc(100% - var(--obc-poi-layer-target-shift)))
     scale(var(--obc-poi-layer-target-scale));
   transition:
     transform 0.4s ease-out,

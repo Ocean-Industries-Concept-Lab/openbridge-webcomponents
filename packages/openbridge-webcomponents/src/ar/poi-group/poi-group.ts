@@ -484,6 +484,12 @@ export class ObcPoiGroup extends LitElement {
     const touchAreaExpanded = progress > 0.5;
 
     this.topOffsetTargets.forEach((config, child) => {
+      if (child.parentElement !== this) {
+        this.topOffsetTargets.delete(child);
+        this.collapseDeltas.delete(child);
+        this.lastAppliedOffsets.delete(child);
+        return;
+      }
       const isCollapsing = this.collapseDeltas.size > 0;
       let delta: number;
       if (isCollapsing) {
@@ -498,6 +504,8 @@ export class ObcPoiGroup extends LitElement {
       // Use topOffset to move the target, keeping the line anchored via line offset math.
       child.topOffset = topOffset;
       child.buttonOffsetX = 0;
+
+      // debug logging removed
 
       if (child !== frontChild) {
         child.visualState = visualExpanded
@@ -696,6 +704,11 @@ export class ObcPoiGroup extends LitElement {
     this.lastTargetOrder = orderedTargets;
 
     targets.forEach((child) => {
+      if (child.parentElement !== this) {
+        this.topOffsetTargets.delete(child);
+        this.lastAppliedOffsets.delete(child);
+        return;
+      }
       const config = this.topOffsetTargets.get(child);
       if (!config) return;
 
@@ -725,8 +738,12 @@ export class ObcPoiGroup extends LitElement {
       // Use topOffset to move the target, keeping the line anchored via line offset math.
       child.topOffset = topOffset;
       child.buttonOffsetX = 0;
+
+      // debug logging removed
     });
   }
+
+  // debug helpers removed
 
   private getCurrentLeft(element: HTMLElement, computed = false): number {
     const inline = element.style.left;
