@@ -14,16 +14,15 @@ type SequenceModalStoryArgs = {
   timeValue: string;
   timeLabel: string;
   hasActions: boolean;
-  onCloseClick?: () => void;
-  onAction1Click?: () => void;
-  onAction2Click?: () => void;
+  'action-1-click'?: (event?: PointerEvent) => void;
+  'action-2-click'?: (event?: PointerEvent) => void;
+  'close-click'?: (event?: CustomEvent) => void;
 };
 
 const renderSequenceModal = (args: SequenceModalStoryArgs) => {
-  const onCloseClick = args.onCloseClick ?? (() => undefined);
-  const onAction1Click = args.onAction1Click ?? (() => undefined);
-  const onAction2Click = args.onAction2Click ?? (() => undefined);
-
+  const onCloseClick = args['close-click'] ?? (() => undefined);
+  const onAction1Click = args['action-1-click'] ?? (() => undefined);
+  const onAction2Click = args['action-2-click'] ?? (() => undefined);
   return html`
     <div style="display: flex; justify-content: center;">
       <style>
@@ -102,7 +101,7 @@ const renderSequenceModal = (args: SequenceModalStoryArgs) => {
                 slot="actions"
                 variant="normal"
                 .showLeadingIcon=${true}
-                @click=${onAction1Click}
+                @click=${(event: PointerEvent) => onAction1Click(event)}
               >
                 <span slot="leading-icon">
                   <obi-placeholder></obi-placeholder>
@@ -113,7 +112,7 @@ const renderSequenceModal = (args: SequenceModalStoryArgs) => {
                 slot="actions"
                 variant="raised"
                 .showLeadingIcon=${true}
-                @click=${onAction2Click}
+                @click=${(event: PointerEvent) => onAction2Click(event)}
               >
                 <span slot="leading-icon">
                   <obi-placeholder></obi-placeholder>
@@ -159,9 +158,9 @@ const meta: Meta<SequenceModalStoryArgs> = {
     stepLabel: {control: {type: 'text'}},
     timeValue: {control: {type: 'text'}},
     timeLabel: {control: {type: 'text'}},
-    onCloseClick: {action: 'close-click'},
-    onAction1Click: {action: 'action-1-click'},
-    onAction2Click: {action: 'action-2-click'},
+    'close-click': {action: 'close-click'},
+    'action-1-click': {action: 'action-1-click'},
+    'action-2-click': {action: 'action-2-click'},
   },
   args: {
     type: ObcSequenceModalType.Regular,
