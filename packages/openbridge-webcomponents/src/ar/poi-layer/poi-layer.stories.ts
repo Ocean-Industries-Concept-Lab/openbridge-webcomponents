@@ -13,6 +13,7 @@ type PoiLayerArgs = {
   layerIndex: number;
   overlapMode?: OverlapMode;
   expand?: boolean;
+  joinWhileExpanded?: boolean;
 };
 
 const meta: Meta<PoiLayerArgs> = {
@@ -23,72 +24,12 @@ const meta: Meta<PoiLayerArgs> = {
     label: 'Selected Targets',
     debug: true,
     layerIndex: 0,
+    joinWhileExpanded: false,
   },
 } satisfies Meta<PoiLayerArgs>;
 
 export default meta;
 type Story = StoryObj<PoiLayerArgs>;
-
-export const Primary: Story = {
-  render(args) {
-    return html`
-      <style>
-        obc-poi-layer {
-          --obc-poi-layer-min-height: 48px;
-          width: 640px;
-        }
-      </style>
-      <obc-poi-layer
-        .label=${args.label}
-        .layerIndex=${args.layerIndex}
-        ?debug=${args.debug}
-      >
-        <obc-poi-target .x=${120} .y=${120}> </obc-poi-target>
-        <obc-poi-target .x=${320} .y=${70}> </obc-poi-target>
-        <obc-poi-target .x=${520} .y=${140}> </obc-poi-target>
-      </obc-poi-layer>
-    `;
-  },
-};
-
-export const WithValuesTargets: Story = {
-  args: {
-    label: 'With Values',
-    layerIndex: 0,
-    debug: true,
-  },
-  render(args) {
-    const valuesA = [
-      {value: '10', label: 'Lab', unit: 'Unit'},
-      {value: '20', label: 'Lab 2', unit: 'Unit 2'},
-    ];
-    const valuesB = [
-      {value: '30', label: 'Lab', unit: 'Unit'},
-      {value: '40', label: 'Lab 2', unit: 'Unit 2'},
-    ];
-    const valuesC = [
-      {value: '50', label: 'Lab', unit: 'Unit'},
-      {value: '60', label: 'Lab 2', unit: 'Unit 2'},
-    ];
-    return html`
-      <style>
-        obc-poi-layer {
-          --obc-poi-layer-min-height: 48px;
-          width: 640px;
-        }
-      </style>
-      <obc-poi-layer
-        .label=${args.label}
-        .layerIndex=${args.layerIndex}
-        ?debug=${args.debug}
-      >
-        <obc-poi-target .x=${120} .y=${140} .values=${valuesA}></obc-poi-target>
-        <obc-poi-target .x=${320} .y=${120} .values=${valuesB}></obc-poi-target>
-        <obc-poi-target .x=${520} .y=${160} .values=${valuesC}></obc-poi-target>
-      </obc-poi-layer>
-    `;
-  },
-};
 
 export const AnimatedLayout: Story = {
   args: {
@@ -165,6 +106,7 @@ export const AnimatedLayout: Story = {
           .label=${args.label}
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}
+          ?join-while-expanded=${args.joinWhileExpanded}
         >
           <obc-poi-target class="first" .y=${110}> </obc-poi-target>
           <obc-poi-target class="second" .y=${70}> </obc-poi-target>
@@ -172,6 +114,69 @@ export const AnimatedLayout: Story = {
           <obc-poi-target class="fourth" .y=${100}> </obc-poi-target>
         </obc-poi-layer>
       </div>
+    `;
+  },
+};
+
+export const Primary: Story = {
+  render(args) {
+    return html`
+      <style>
+        obc-poi-layer {
+          --obc-poi-layer-min-height: 48px;
+          width: 640px;
+        }
+      </style>
+      <obc-poi-layer
+        .label=${args.label}
+        .layerIndex=${args.layerIndex}
+        ?debug=${args.debug}
+        ?join-while-expanded=${args.joinWhileExpanded}
+      >
+        <obc-poi-target .x=${120} .y=${120}> </obc-poi-target>
+        <obc-poi-target .x=${320} .y=${70}> </obc-poi-target>
+        <obc-poi-target .x=${520} .y=${140}> </obc-poi-target>
+      </obc-poi-layer>
+    `;
+  },
+};
+
+export const WithValuesTargets: Story = {
+  args: {
+    label: 'With Values',
+    layerIndex: 0,
+    debug: true,
+  },
+  render(args) {
+    const valuesA = [
+      {value: '10', label: 'Lab', unit: 'Unit'},
+      {value: '20', label: 'Lab 2', unit: 'Unit 2'},
+    ];
+    const valuesB = [
+      {value: '30', label: 'Lab', unit: 'Unit'},
+      {value: '40', label: 'Lab 2', unit: 'Unit 2'},
+    ];
+    const valuesC = [
+      {value: '50', label: 'Lab', unit: 'Unit'},
+      {value: '60', label: 'Lab 2', unit: 'Unit 2'},
+    ];
+    return html`
+      <style>
+        obc-poi-layer {
+          --obc-poi-layer-min-height: 48px;
+          width: 640px;
+        }
+      </style>
+      <obc-poi-layer
+        .label=${args.label}
+        .layerIndex=${args.layerIndex}
+        ?debug=${args.debug}
+        ?join-while-expanded=${args.joinWhileExpanded}
+      >
+        <obc-poi-target .x=${120} .y=${140} .values=${valuesA}></obc-poi-target>
+        <obc-poi-target .x=${320} .y=${120} .values=${valuesB}></obc-poi-target>
+        <obc-poi-target .x=${520} .y=${160} .values=${valuesC}></obc-poi-target>
+      </obc-poi-layer>
     `;
   },
 };
@@ -199,6 +204,7 @@ export const Overlap: Story = {
           .label=${args.label}
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}
+          ?join-while-expanded=${args.joinWhileExpanded}
         >
           <obc-poi-target .x=${260} .y=${80}></obc-poi-target>
           <obc-poi-target .x=${280} .y=${140}></obc-poi-target>
@@ -231,6 +237,7 @@ export const OverlapWithGroup: Story = {
           .label=${args.label}
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}
+          ?join-while-expanded=${args.joinWhileExpanded}
         >
           <obc-poi-target .x=${300} .y=${80}></obc-poi-target>
           <obc-poi-target
@@ -268,6 +275,7 @@ export const OverlapWithGroupNumbers: Story = {
           .label=${args.label}
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}
+          ?join-while-expanded=${args.joinWhileExpanded}
         >
           <obc-poi-target .x=${300} .y=${80} id="3"></obc-poi-target>
           <obc-poi-target
@@ -360,6 +368,7 @@ export const EnterGroupFromTwo: Story = {
           .label=${args.label}
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}
+          ?join-while-expanded=${args.joinWhileExpanded}
         >
           <obc-poi-target class="a" .y=${140}></obc-poi-target>
           <obc-poi-target class="b" .y=${80}></obc-poi-target>
@@ -437,6 +446,7 @@ export const ExitGroup: Story = {
           .label=${args.label}
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}
+          ?join-while-expanded=${args.joinWhileExpanded}
         >
           <obc-poi-target class="a" .y=${120}></obc-poi-target>
           <obc-poi-target class="b" .y=${90}></obc-poi-target>
@@ -517,6 +527,7 @@ export const JoinGroup: Story = {
           .label=${args.label}
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}
+          ?join-while-expanded=${args.joinWhileExpanded}
         >
           <obc-poi-target class="a" .x=${300} .y=${140}></obc-poi-target>
           <obc-poi-target class="b" .x=${320} .y=${100}></obc-poi-target>
@@ -636,6 +647,7 @@ export const JoinExpandedGroup: Story = {
           .label=${args.label}
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}
+          ?join-while-expanded=${args.joinWhileExpanded}
         >
           <obc-poi-target class="a" .y=${140}></obc-poi-target>
           <obc-poi-target class="b" .y=${100}></obc-poi-target>
@@ -750,6 +762,7 @@ export const LeaveExpandedGroup: Story = {
           .label=${args.label}
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}
+          ?join-while-expanded=${args.joinWhileExpanded}
         >
           <obc-poi-target class="a" .y=${140}></obc-poi-target>
           <obc-poi-target class="b" .y=${100}></obc-poi-target>
@@ -883,6 +896,7 @@ export const CrossingMode: Story = {
           .label=${args.label}
           .layerIndex=${args.layerIndex}
           ?debug=${args.debug}
+          ?join-while-expanded=${args.joinWhileExpanded}
           .overlapMode=${OverlapMode.Crossing}
         >
           <obc-poi-target class="static" .y=${120}></obc-poi-target>

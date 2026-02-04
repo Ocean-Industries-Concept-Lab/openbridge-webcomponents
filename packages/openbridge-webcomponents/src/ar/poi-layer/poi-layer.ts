@@ -29,6 +29,7 @@ interface PoiButtonGroupElement extends HTMLElement {
   collapsing?: boolean;
   useTopOffset: boolean;
   updatePosition?: () => void;
+  refreshExpandedLayout?: (preserveCenter?: boolean) => void;
 }
 
 export enum OverlapMode {
@@ -86,6 +87,8 @@ export class ObcPoiLayer extends LitElement {
   @property({type: String}) overlapMode: OverlapMode = OverlapMode.Grouping;
   @property({type: String}) override role: PoiLayerRole = PoiLayerRole.Default;
   @property({type: String, attribute: 'type-filter'}) typeFilter = '';
+  @property({type: Boolean, attribute: 'join-while-expanded'})
+  joinWhileExpanded = false;
 
   @query('.wrapper') private wrapper?: HTMLElement;
 
@@ -685,13 +688,15 @@ export class ObcPoiLayer extends LitElement {
       (group) => group.expand === true || group.collapsing === true
     );
     if (expandedAutoGroup) {
-      this.tryJoinExpandedGroup(
-        expandedAutoGroup,
-        targets,
-        rects,
-        enterThreshold,
-        layerRect
-      );
+      if (this.joinWhileExpanded) {
+        this.tryJoinExpandedGroup(
+          expandedAutoGroup,
+          targets,
+          rects,
+          enterThreshold,
+          layerRect
+        );
+      }
       this.isGrouping = false;
       return;
     }
@@ -788,7 +793,6 @@ export class ObcPoiLayer extends LitElement {
       if (!groupedTargets.has(target)) {
         const exitLocked = target.hasAttribute('data-exit-lock');
         target.removeAttribute('data-grouped');
-        target.removeAttribute('data-x-locked');
         if (target.hasAttribute('data-front-exit')) {
           target.setAttribute('data-front', 'true');
           target.removeAttribute('data-pregrouped');
@@ -907,17 +911,6 @@ export class ObcPoiLayer extends LitElement {
       group.appendChild(bestCandidate);
     }
 
-    const leftStyle = bestCandidate.style.left;
-    const inlineLeft =
-      leftStyle && leftStyle.endsWith('px')
-        ? Number.parseFloat(leftStyle)
-        : Number.NaN;
-    if (Number.isFinite(inlineLeft)) {
-      bestCandidate.x = inlineLeft;
-      bestCandidate.style.left = `${inlineLeft}px`;
-    }
-    bestCandidate.setAttribute('data-x-locked', 'true');
-
     bestCandidate.setAttribute('data-grouped', 'true');
     bestCandidate.removeAttribute('data-behind');
     bestCandidate.removeAttribute('data-pregrouped');
@@ -935,20 +928,7 @@ export class ObcPoiLayer extends LitElement {
       bestCandidate.style.height = touchTarget;
     }
 
-    const beforeCenter = candidateCenter;
-    requestAnimationFrame(() => {
-      const afterRect = this.getTargetRectForGrouping(bestCandidate, layerRect);
-      const afterCenter = afterRect.left + afterRect.width / 2;
-      const delta = beforeCenter - afterCenter;
-      if (Number.isFinite(delta)) {
-        bestCandidate.buttonOffsetX = delta;
-        bestCandidate.offset = -delta;
-      } else {
-        bestCandidate.buttonOffsetX = 0;
-        bestCandidate.offset = 0;
-      }
-      bestCandidate.topOffset = 0;
-    });
+    group.refreshExpandedLayout?.(true);
   }
 
   /**

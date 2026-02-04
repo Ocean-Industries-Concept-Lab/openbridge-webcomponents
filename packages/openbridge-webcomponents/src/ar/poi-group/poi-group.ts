@@ -198,6 +198,11 @@ export class ObcPoiGroup extends LitElement {
     return this.expandOffset.get(child) ?? null;
   }
 
+  refreshExpandedLayout(): void {
+    if (!this.expand) return;
+    this.setExpandedChildren(true);
+  }
+
   setExpandedChildren(expand: boolean): void {
     this.dispatchEvent(
       new CustomEvent('expand', {
@@ -311,7 +316,7 @@ export class ObcPoiGroup extends LitElement {
     this.animateTopOffset(expand ? 1 : 0);
   }
 
-  private calculateTopOffsetTargets() {
+  private calculateTopOffsetTargets(preserveCenter = false) {
     this.topOffsetTargets.clear();
 
     const targets = this._children.filter(
@@ -334,8 +339,14 @@ export class ObcPoiGroup extends LitElement {
 
     const leftMost = positions[0].centerX;
     const rightMost = positions[positions.length - 1].centerX;
-    const groupCenter = (leftMost + rightMost) / 2;
-    this.lockedExpandedCenter = groupCenter;
+    const computedCenter = (leftMost + rightMost) / 2;
+    const groupCenter =
+      preserveCenter && this.lockedExpandedCenter !== null
+        ? this.lockedExpandedCenter
+        : computedCenter;
+    if (!preserveCenter) {
+      this.lockedExpandedCenter = groupCenter;
+    }
 
     const spacing = this.getExpandedSpacing();
     const totalWidth = (positions.length - 1) * spacing;
@@ -357,6 +368,17 @@ export class ObcPoiGroup extends LitElement {
   private topOffsetTargetExpanded = false;
 
   private topOffsetDelayTimeout: ReturnType<typeof setTimeout> | null = null;
+
+  refreshExpandedLayout(preserveCenter = false): void {
+    if (!this.expand) return;
+    if (this.useTopOffset) {
+      this.calculateTopOffsetTargets(preserveCenter);
+      this.applyTopOffsetState(this.topOffsetProgress, this.getFrontChild());
+      this.scheduleExpandedOffsets();
+      return;
+    }
+    this.setExpandedChildren(true);
+  }
 
   private animateTopOffset(targetProgress: number) {
     if (this.topOffsetAnimationId) {
