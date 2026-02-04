@@ -793,6 +793,7 @@ export class ObcPoiLayer extends LitElement {
       if (!groupedTargets.has(target)) {
         const exitLocked = target.hasAttribute('data-exit-lock');
         target.removeAttribute('data-grouped');
+        target.removeAttribute('data-joined-expanded');
         if (target.hasAttribute('data-front-exit')) {
           target.setAttribute('data-front', 'true');
           target.removeAttribute('data-pregrouped');
@@ -904,6 +905,8 @@ export class ObcPoiLayer extends LitElement {
     }
 
     if (!bestCandidate) return;
+
+    bestCandidate.setAttribute('data-joined-expanded', 'true');
 
     const candidateRect = rects.get(bestCandidate);
     const candidateCenter =

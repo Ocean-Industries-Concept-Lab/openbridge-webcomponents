@@ -578,6 +578,13 @@ export const JoinExpandedGroup: Story = {
         let startTime: number | null = null;
         const tick = (now: number) => {
           if (!c.isConnected) return;
+          if (c.hasAttribute('data-joined-expanded')) {
+            if (startTime === null) startTime = now;
+            const t = (now - startTime) / 1000;
+            c.x = 340 + 20 * Math.sin(t * 0.8);
+            requestAnimationFrame(tick);
+            return;
+          }
           if (startTime === null) startTime = now + delayMs;
           const elapsed = now - startTime;
           if (elapsed < 0) {
