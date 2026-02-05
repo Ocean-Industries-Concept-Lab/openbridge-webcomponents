@@ -10,11 +10,13 @@
   --obc-poi-label-opacity: 1;
   --obc-poi-label-visibility: visible;
   --obc-poi-overlap-pointer-events: auto;
+  --obc-poi-transition-duration: 0.3s;
+  --obc-poi-opacity-transition-duration: 0.2s;
 }
 
 .wrapper {
   transform: translate(-50%, -100%);
-  @mixin style style=flat visibleWrapperClass=.state-layer;
+  --obc-poi-color-transition-duration: 0s;
   padding: 0;
   position: relative;
   width: fit-content;
@@ -29,6 +31,11 @@
   justify-content: center;
 
   user-select: none;
+
+  & .poi-object {
+    --overlay-container-background-color: #fff;
+    --normal-enabled-background-color: #fff;
+  }
 
   & .button-wrapper {
     position: relative;
@@ -45,26 +52,6 @@
       height: 64px;
     }
 
-    .visible-wrapper {
-      width: var(--poi-size, 52px);
-      height: var(--poi-size, 52px);
-    }
-
-    &.alert-none .state-layer {
-      width: 52px;
-      height: 52px;
-    }
-
-    .state-layer {
-      width: 57px;
-      height: 57px;
-    }
-
-    .icon {
-      width: 32px;
-      height: 32px;
-    }
-
     .alert-ring {
       width: 57px;
       height: 57px;
@@ -74,50 +61,16 @@
     }
   }
 
-  & .visible-wrapper {
-    height: var(--poi-size, 36px);
-    width: var(--poi-size, 36px);
-    border-radius: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
-    background-color: rgba(255, 255, 255, 0.8);
-    border: 1px solid var(--element-active-inverted-color);
-    transition:
-      width 0.3s ease-out,
-      height 0.3s ease-out,
-      background-color 0.3s ease-out,
-      border-color 0.3s ease-out;
-  }
-
   /* Overlap state styles - applied via visual state */
   :host([value="overlapped"]) & {
-    width: 48px;
-    height: 48px;
-    --poi-size: 32px;
-    --obc-poi-target-icon-opacity: 0;
     --obc-poi-overlap-elements-opacity: 0;
     --obc-poi-label-opacity: 0;
     --obc-poi-label-visibility: hidden;
     --obc-poi-overlap-pointer-events: none;
 
-    .button-wrapper {
-      /* Align to bottom so circle bottom stays at same position when shrinking */
-      align-items: flex-end;
-    }
-
-    .visible-wrapper {
-      background-color: rgba(255, 255, 255, 0.5);
-      border-color: rgba(0, 0, 0, 0.3);
-      /* Match bottom position of centered normal circle: (48-36)/2 = 6px */
-      margin-bottom: 6px;
-    }
-
-    &.type-enhanced {
-      width: 64px;
-      height: 64px;
-      --poi-size: 36px;
+    .poi-object {
+      --overlay-container-background-color: rgba(255, 255, 255, 0.5);
+      --overlay-border-outline-color: rgba(0, 0, 0, 0.3);
     }
 
     .id-label {
@@ -132,27 +85,23 @@
 
   /* Transition for elements that fade */
   & .alert-ring,
-  & .state-layer,
   & .id-label,
   & .selection-frame {
     opacity: var(--obc-poi-overlap-elements-opacity, 1);
     pointer-events: var(--obc-poi-overlap-pointer-events, auto);
-    transition: opacity 0.2s ease-out;
-  }
-
-  & .state-layer {
-    position: absolute;
-    margin: auto;
-    border-radius: 100%;
-    width: 41px;
-    height: 41px;
+    transition: opacity var(--obc-poi-opacity-transition-duration) ease-out;
   }
 
   & .icon {
-    height: 24px;
-    width: 24px;
-    opacity: var(--obc-poi-target-icon-opacity, 1);
-    transition: opacity 0.2s ease-out;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &:not(.has-data) .poi-object {
+    --obc-poi-object-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
   }
 
   & .selection-frame {
@@ -166,11 +115,6 @@
   }
 
   &.alert-none {
-    .state-layer {
-      width: 36px;
-      height: 36px;
-    }
-
     .alert-ring {
       display: none;
     }
@@ -244,26 +188,65 @@
     color: var(--element-active-color);
     border-radius: 100px;
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
-    transition: opacity 0.2s ease-out;
+    transition: opacity var(--obc-poi-opacity-transition-duration) ease-out;
   }
+}
+
+.wrapper:not(.has-data) {
+  @mixin style style=flat
+    visibleWrapperClass=.poi-object: : part(background-frame);
+
+  .poi-object {
+    --flat-enabled-background-color: #fff;
+    --flat-activated-background-color: #fff;
+    --flat-hover-background-color: #fff;
+    --flat-pressed-background-color: #fff;
+  }
+}
+
+.wrapper.has-data {
+  @mixin style style=flat;
+  transition: none;
+}
+
+.wrapper.has-data:hover,
+.wrapper.has-data:active,
+.wrapper.has-data:focus-visible {
+  transition: none;
+}
+
+.wrapper:not(.has-data) .poi-object::part(background-frame) {
+  transition:
+    width var(--obc-poi-size-transition-duration, 0.3s) ease-out,
+    height var(--obc-poi-size-transition-duration, 0.3s) ease-out,
+    bottom var(--obc-poi-size-transition-duration, 0.3s) ease-out;
+}
+
+:host([layout="inline"]) .wrapper {
+  transform: translate(-50%, -100%);
 }
 
 /* Overlap alert color styles */
 :host([value="overlapped"]) .wrapper {
-  &.alert-caution .visible-wrapper {
-    background-color: var(--alert-caution-color);
-    border-color: var(--alert-caution-outline-color);
+  &.alert-caution .poi-object {
+    --overlay-container-background-color: var(--alert-caution-color);
+    --overlay-border-outline-color: var(--alert-caution-outline-color);
   }
 
-  &.alert-warning .visible-wrapper {
-    background-color: var(--alert-warning-color);
-    border-color: var(--alert-warning-outline-color);
+  &.alert-warning .poi-object {
+    --overlay-container-background-color: var(--alert-warning-color);
+    --overlay-border-outline-color: var(--alert-warning-outline-color);
   }
 
-  &.alert-alarm .visible-wrapper {
-    background-color: var(--alert-alarm-color);
-    border-color: var(--alert-alarm-outline-color);
+  &.alert-alarm .poi-object {
+    --overlay-container-background-color: var(--alert-alarm-color);
+    --overlay-border-outline-color: var(--alert-alarm-outline-color);
   }
+}
+
+::slotted(:not([slot])) {
+  width: 100%;
+  height: 100%;
 }
 
 ::slotted([slot="id-label"]) {
@@ -276,14 +259,6 @@
   border-radius: 6px;
   border: 1px solid var(--overlay-border-outline-color);
   background: var(--overlay-container-background-color);
-  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.5);
-
-  .state-layer {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 5px;
-  }
 
   .alert-ring {
     position: absolute;
@@ -327,12 +302,9 @@
     }
   }
 
-  .visible-wrapper {
-    box-shadow: none;
-    width: var(--maneuvering-components-poi-button-visual-target-round);
-    height: var(--maneuvering-components-poi-button-visual-target-round);
+  .poi-object {
+    --obc-poi-object-shadow: none;
     flex-shrink: 0;
-    @mixin style style=normal noClick;
   }
 
   .relation-wrapper {
@@ -351,7 +323,7 @@
   }
 }
 
-/* Overlap state for has-data variant - show only the small circle */
+/* Overlap state for has-data variant - keep layout, hide values */
 :host([value="overlapped"]) .wrapper.has-data {
   border: none;
   background: transparent;
@@ -372,22 +344,13 @@
     align-items: flex-end;
   }
 
-  .visible-wrapper {
-    width: var(--poi-size, 32px);
-    height: var(--poi-size, 32px);
-    box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
-    /* Match bottom position of centered normal circle: (48-40)/2 = 4px */
-    margin-bottom: 4px;
+  .poi-object {
+    --obc-poi-object-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
   }
 
   &.type-enhanced {
     width: 64px;
     height: 64px;
-
-    .visible-wrapper {
-      width: var(--poi-size, 36px);
-      height: var(--poi-size, 36px);
-    }
   }
 }
 

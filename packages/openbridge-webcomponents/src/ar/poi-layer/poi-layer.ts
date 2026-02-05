@@ -4,7 +4,7 @@ import {customElement} from '../../decorator.js';
 import componentStyle from './poi-layer.css?inline';
 import '../poi-group/poi-group.js';
 import {ObcPoiData, PoiDataValue} from '../poi-data/poi-data.js';
-import {ObcPoiButtonDataType} from '../poi-button-data/poi-button-data.js';
+import {ObcPoiButtonType} from '../building-blocks/poi-button/poi-button.js';
 
 const EXIT_DELAY_MS_VAR = '--obc-poi-layer-exit-delay-ms';
 const GROUP_REMOVAL_DELAY_MS_VAR = '--obc-poi-layer-group-removal-delay-ms';
@@ -1065,7 +1065,7 @@ export class ObcPoiLayer extends LitElement {
   }
 
   private applyStandaloneVisualState(target: ObcPoiData, overlap: boolean) {
-    const isEnhanced = target.type === ObcPoiButtonDataType.Enhanced;
+    const isEnhanced = target.type === ObcPoiButtonType.Enhanced;
     const size = this.getVisualTargetSize(isEnhanced, overlap);
     target.style.setProperty('--poi-size', `${size}px`);
     target.style.setProperty(

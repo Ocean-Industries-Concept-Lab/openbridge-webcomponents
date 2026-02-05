@@ -219,9 +219,9 @@ export const WithValuesTargets: Story = {
         ?join-while-expanded=${args.joinWhileExpanded}
         .internalSwapping=${!!args.internalSwapping}
       >
-        <obc-poi-data .x=${120} .y=${140} .values=${valuesA}></obc-poi-data>
-        <obc-poi-data .x=${320} .y=${120} .values=${valuesB}></obc-poi-data>
-        <obc-poi-data .x=${520} .y=${160} .values=${valuesC}></obc-poi-data>
+        <obc-poi-data .x=${120} .y=${140} .data=${valuesA}></obc-poi-data>
+        <obc-poi-data .x=${320} .y=${120} .data=${valuesB}></obc-poi-data>
+        <obc-poi-data .x=${520} .y=${160} .data=${valuesC}></obc-poi-data>
       </obc-poi-layer>
     `;
   },

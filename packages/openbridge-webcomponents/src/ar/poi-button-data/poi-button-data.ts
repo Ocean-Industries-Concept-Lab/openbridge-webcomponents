@@ -1,159 +1,36 @@
-import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {property} from 'lit/decorators.js';
-import compentStyle from './poi-button-data.css?inline';
-import {classMap} from 'lit/directives/class-map.js';
-import {ObcArAlertType} from '../types.js';
-import {selectionFrame} from './selection-frame.js';
+import '../building-blocks/poi-button/poi-button.js';
+import '../../icons/icon-vessel-generic-default-filled.js';
+import {ObcPoiButtonBase} from '../building-blocks/poi-button/poi-button.js';
 import {customElement} from '../../decorator.js';
 
-export enum ObcPoiButtonDataType {
-  Button = 'button',
-  Enhanced = 'enhanced',
-}
-
-export enum PoiButtonDataVisualState {
-  Unchecked = 'unchecked',
-  Checked = 'checked',
-  Activated = 'activated',
-  Overlapped = 'overlapped',
-}
-
-export interface ObcPoiButtonDataItem {
-  value: string;
-  label: string;
-  unit: string;
-}
-
-export interface ObcPoiButtonDataHeader {
-  content?: string;
-  size?: string;
-  state?: string;
-  type?: string;
-  hasIndicator?: boolean;
-}
-
 @customElement('obc-poi-button-data')
-export class ObcPoiButtonData extends LitElement {
-  @property({type: Number}) relativeDirection = 0;
-  @property({type: Boolean}) selected = false;
-  @property({type: Object}) header: ObcPoiButtonDataHeader | null = null;
-  @property({type: String}) alertType = ObcArAlertType.None;
-  @property({type: String, reflect: true})
-  value: PoiButtonDataVisualState = PoiButtonDataVisualState.Unchecked;
-  @property({type: String}) type = ObcPoiButtonDataType.Button;
-  @property({type: Boolean}) inExpandedGroup = false;
-  @property({type: Array, attribute: false}) data: ObcPoiButtonDataItem[] = [];
-  @property({type: Boolean}) hasRelation = false;
-
-  get hasData(): boolean {
-    return this.data.length > 0;
+export class ObcPoiButtonData extends ObcPoiButtonBase {
+  override connectedCallback() {
+    super.connectedCallback();
+    this.ensureDefaultIcon();
   }
 
-  get hasHeader(): boolean {
-    return this.header !== null;
-  }
-
-  override render() {
-    if (this.hasData) {
-      return this.renderWithData();
+  private ensureDefaultIcon() {
+    if (this.querySelector('obi-vessel-generic-default-filled:not([slot])')) {
+      return;
     }
-    return this.renderButton();
-  }
 
-  renderButton() {
-    return html`
-      <button
-        class=${classMap({
-          wrapper: true,
-          selected: this.selected,
-          [`alert-${this.alertType}`]: true,
-          [`type-${this.type}`]: true,
-          expanded: this.inExpandedGroup,
-        })}
-      >
-        ${this.hasHeader
-          ? html`<div class="id-label">
-              ${this.header?.content ?? ''}
-              <slot
-                name="id-label"
-                part="id-label"
-                class="id-label-content"
-              ></slot>
-            </div>`
-          : nothing}
-        <div class="button-wrapper">
-          ${selectionFrame(this.selected, this.alertType, this.type)}
-          <div class="visible-wrapper">
-            <div
-              class="icon"
-              style="transform: rotate(${this.relativeDirection}deg);"
-            >
-              <slot></slot>
-            </div>
-            <div class="alert-ring"></div>
-            <div class="state-layer"></div>
-          </div>
-        </div>
-      </button>
-    `;
-  }
+    const hasDefaultContent = Array.from(this.childNodes).some((node) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        return node.textContent?.trim();
+      }
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        return !(node as Element).hasAttribute('slot');
+      }
+      return false;
+    });
 
-  renderWithData() {
-    return html`
-      <button
-        class=${classMap({
-          wrapper: true,
-          'has-data': true,
-          selected: this.selected,
-          'has-header': this.hasHeader,
-          [`alert-${this.alertType}`]: true,
-          [`type-${this.type}`]: true,
-          expanded: this.inExpandedGroup,
-        })}
-      >
-        ${this.hasHeader
-          ? html`<div class="id-label">
-              ${this.header?.content ?? ''}
-              <slot
-                name="id-label"
-                part="id-label"
-                class="id-label-content"
-              ></slot>
-            </div>`
-          : nothing}
-        <div class="data-wrapper">
-          ${this.data.map(
-            (item) =>
-              html`<div class="data">
-                <div class="value">${item.value}</div>
-                <div class="label">${item.label}</div>
-                <div class="unit">${item.unit}</div>
-              </div>`
-          )}
-        </div>
-        <div class="button-wrapper">
-          ${selectionFrame(this.selected, this.alertType, this.type)}
-          <div class="visible-wrapper">
-            <div
-              class="icon"
-              style="transform: rotate(${this.relativeDirection}deg);"
-            >
-              <slot></slot>
-            </div>
-          </div>
-        </div>
-        ${this.hasRelation
-          ? html`<div class="relation-wrapper" part="relation-wrapper">
-              <slot name="relation" class="relation" part="relation"></slot>
-            </div>`
-          : nothing}
-        <div class="alert-ring"></div>
-        <div class="state-layer"></div>
-      </button>
-    `;
+    if (!hasDefaultContent) {
+      this.appendChild(
+        document.createElement('obi-vessel-generic-default-filled')
+      );
+    }
   }
-
-  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

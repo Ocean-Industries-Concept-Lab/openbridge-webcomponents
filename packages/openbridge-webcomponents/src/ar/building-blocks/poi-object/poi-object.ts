@@ -2,7 +2,7 @@ import {LitElement, html, unsafeCSS, nothing} from 'lit';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import componentStyle from './poi-object.css?inline';
-import {customElement} from '../../decorator.js';
+import {customElement} from '../../../decorator.js';
 
 /**
  * Type variants for POI objects controlling size and shape.
@@ -114,9 +114,9 @@ export enum ObcPoiObjectState {
  * </obc-poi-object>
  * ```
  */
-@customElement('obc-poi-object')
-export class ObcPoiObject extends LitElement {
-  @property({type: String}) type: ObcPoiObjectType = ObcPoiObjectType.Regular;
+export abstract class ObcPoiObjectBase extends LitElement {
+  @property({type: String, reflect: true})
+  type: ObcPoiObjectType = ObcPoiObjectType.Regular;
 
   @property({type: String}) objectStyle: ObcPoiObjectStyle =
     ObcPoiObjectStyle.Regular;
@@ -218,13 +218,13 @@ export class ObcPoiObject extends LitElement {
         @keyup=${this.handleKeyUp}
       >
         ${this.isActivated
-          ? html`<div class="activated-frame"></div>`
+          ? html`<div class="activated-frame" part="activated-frame"></div>`
           : nothing}
         ${!this.isIndicator || this.isOverlapped || this.isInteractive
-          ? html`<div class="background-frame"></div>`
+          ? html`<div class="background-frame" part="background-frame"></div>`
           : nothing}
 
-        <div class="icon-container">
+        <div class="icon-container" part="icon-container">
           <slot></slot>
         </div>
       </div>
@@ -233,6 +233,9 @@ export class ObcPoiObject extends LitElement {
 
   static override styles = unsafeCSS(componentStyle);
 }
+
+@customElement('obc-poi-object')
+export class ObcPoiObject extends ObcPoiObjectBase {}
 
 declare global {
   interface HTMLElementTagNameMap {

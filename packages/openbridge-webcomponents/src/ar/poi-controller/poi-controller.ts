@@ -5,7 +5,7 @@ import componentStyle from './poi-controller.css?inline';
 import '../poi-layer-stack/poi-layer-stack.js';
 import '../poi-layer/poi-layer.js';
 import '../poi-data/poi-data.js';
-import {ObcPoiButtonDataType} from '../poi-button-data/poi-button-data.js';
+import {ObcPoiButtonType} from '../building-blocks/poi-button/poi-button.js';
 
 /**
  * `<obc-poi-controller>` maps detections onto media and renders POI overlays.
@@ -383,7 +383,7 @@ export class ObcPoiController extends LitElement {
         };
         target.dataset.controller = '1';
         target.dataset.detectionIndex = String(index);
-        target.type = ObcPoiButtonDataType.Button;
+        target.type = ObcPoiButtonType.Button;
         target.fixedTarget = false;
         this.controllerTargets.set(key, target);
         layer.appendChild(target);

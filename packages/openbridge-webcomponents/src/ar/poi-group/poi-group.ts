@@ -3,7 +3,7 @@ import {property, queryAssignedElements, state} from 'lit/decorators.js';
 import componentStyle from './poi-group.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {ObcPoiData, PoiDataValue} from '../poi-data/poi-data.js';
-import {ObcPoiButtonDataType} from '../poi-button-data/poi-button-data.js';
+import {ObcPoiButtonType} from '../building-blocks/poi-button/poi-button.js';
 import {customElement} from '../../decorator.js';
 import {
   AnimationManager,
@@ -164,15 +164,18 @@ export class ObcPoiGroup extends LitElement {
     let right = -Number.MAX_VALUE;
 
     this._children.forEach((element) => {
-      const boundingBox = element.getBoundingClientRect();
+      const boundingBox =
+        element instanceof ObcPoiData
+          ? this.getTargetButtonRect(element)
+          : element.getBoundingClientRect();
       left = Math.min(left, boundingBox.left);
       right = Math.max(right, boundingBox.right);
     });
 
     if (left !== Number.MAX_VALUE && right !== -Number.MAX_VALUE) {
       const rootDim = this.getBoundingClientRect();
-      this.positionLeft = `${left - rootDim.left - 24}px`;
-      this.positionRight = `${rootDim.right - right - 24}px`;
+      this.positionLeft = `${left - rootDim.left}px`;
+      this.positionRight = `${rootDim.right - right}px`;
     }
   }
 
@@ -819,7 +822,7 @@ export class ObcPoiGroup extends LitElement {
   }
 
   private applyVisualState(target: ObcPoiData, overlap: boolean) {
-    const isEnhanced = target.type === ObcPoiButtonDataType.Enhanced;
+    const isEnhanced = target.type === ObcPoiButtonType.Enhanced;
     const size = this.getVisualTargetSize(isEnhanced, overlap);
     target.style.setProperty('--poi-size', `${size}px`);
     target.style.setProperty(

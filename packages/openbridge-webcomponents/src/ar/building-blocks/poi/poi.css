@@ -1,0 +1,63 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: inline-block;
+}
+
+.wrapper {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.wrapper.type-outside-left,
+.wrapper.type-outside-right {
+  flex-direction: row;
+  align-items: center;
+}
+
+.wrapper.type-outside-left .line-wrapper,
+.wrapper.type-outside-left .pointer-wrapper,
+.wrapper.type-outside-right .line-wrapper,
+.wrapper.type-outside-right .pointer-wrapper {
+  display: none;
+}
+
+.poi-button.overlapped {
+  opacity: 0.6;
+}
+
+.poi-button {
+  z-index: 1;
+}
+
+.line {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translateX(-50%);
+  z-index: 0;
+}
+
+.outside-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  top: calc(var(--obc-poi-outside-touch-target, 48px) / -2);
+  transform: translateY(-50%);
+}
+
+.wrapper.type-outside-right .outside-arrow {
+  left: calc(var(--obc-poi-outside-touch-target, 48px) / 2);
+}
+
+.wrapper.type-outside-left .outside-arrow {
+  right: calc(var(--obc-poi-outside-touch-target, 48px) / 2);
+}

@@ -10,6 +10,12 @@
   height: var(--maneuvering-components-poi-button-touch-target);
 }
 
+:host([type="large"]),
+:host([type="n-up-large"]) {
+  width: var(--maneuvering-components-poi-button-large-touch-target);
+  height: var(--maneuvering-components-poi-button-large-touch-target);
+}
+
 .is-large {
   width: var(--maneuvering-components-poi-button-large-touch-target);
   height: var(--maneuvering-components-poi-button-large-touch-target);
@@ -32,16 +38,43 @@
   justify-content: center;
   width: 100%;
   height: 100%;
+  --obc-poi-touch-target: var(--maneuvering-components-poi-button-touch-target);
+  --obc-poi-frame-size: var(
+    --maneuvering-components-poi-button-visual-target-round
+  );
+  --obc-poi-bottom-offset: calc(
+    (var(--obc-poi-touch-target) - var(--obc-poi-frame-size)) / 2
+  );
+  --obc-poi-icon-size: var(--maneuvering-components-poi-button-icon-size);
+  --obc-poi-icon-size-overlap: var(
+    --maneuvering-components-poi-button-icon-size-overlap
+  );
+  --obc-poi-size-transition-duration: var(--obc-poi-transition-duration, 0.3s);
+  --obc-poi-color-transition-duration: var(--obc-poi-transition-duration, 0.3s);
 }
 
 .wrapper.interactive {
   cursor: pointer;
 }
 
+.is-large {
+  --obc-poi-touch-target: var(
+    --maneuvering-components-poi-button-large-touch-target
+  );
+}
+
 .background-frame,
 .activated-frame {
   position: absolute;
   border-radius: var(--maneuvering-components-poi-button-border-radius-round);
+  bottom: var(--obc-poi-bottom-offset);
+  box-shadow: var(--obc-poi-object-shadow, none);
+  transition:
+    width var(--obc-poi-size-transition-duration, 0.3s) ease-out,
+    height var(--obc-poi-size-transition-duration, 0.3s) ease-out,
+    background-color var(--obc-poi-color-transition-duration, 0.3s) ease-out,
+    border-color var(--obc-poi-color-transition-duration, 0.3s) ease-out,
+    bottom var(--obc-poi-size-transition-duration, 0.3s) ease-out;
 }
 
 .background-frame {
@@ -62,37 +95,93 @@
 .type-indicator .background-frame,
 .type-regular .activated-frame,
 .type-indicator .activated-frame {
-  width: 36px;
-  height: 36px;
+  width: var(--maneuvering-components-poi-button-visual-target-round);
+  height: var(--maneuvering-components-poi-button-visual-target-round);
 }
 
 /* Large type */
+.type-large {
+  --obc-poi-frame-size: var(
+    --maneuvering-components-poi-button-large-visual-target-round
+  );
+  --obc-poi-icon-size: var(--maneuvering-components-poi-button-large-icon-size);
+  --obc-poi-icon-size-overlap: var(
+    --maneuvering-components-poi-button-large-icon-size-overlap
+  );
+}
+
 .type-large .background-frame,
 .type-large .activated-frame {
-  width: 52px;
-  height: 52px;
+  width: var(--maneuvering-components-poi-button-large-visual-target-round);
+  height: var(--maneuvering-components-poi-button-large-visual-target-round);
 }
 
 /* N-up type */
+.type-n-up {
+  --obc-poi-frame-size: var(
+    --maneuvering-components-poi-button-visual-target-square
+  );
+}
+
 .type-n-up .background-frame,
 .type-n-up .activated-frame {
-  width: 32px;
-  height: 32px;
+  width: var(--maneuvering-components-poi-button-visual-target-square);
+  height: var(--maneuvering-components-poi-button-visual-target-square);
 }
 
 /* N-up large type */
+.type-n-up-large {
+  --obc-poi-frame-size: var(
+    --maneuvering-components-poi-button-large-visual-target-square
+  );
+  --obc-poi-icon-size: var(--maneuvering-components-poi-button-large-icon-size);
+  --obc-poi-icon-size-overlap: var(
+    --maneuvering-components-poi-button-large-icon-size-overlap
+  );
+}
+
 .type-n-up-large .background-frame,
 .type-n-up-large .activated-frame {
-  width: 48px;
-  height: 48px;
+  width: var(--maneuvering-components-poi-button-large-visual-target-square);
+  height: var(--maneuvering-components-poi-button-large-visual-target-square);
 }
 
 /* Overlapped state - smaller background */
+.is-overlapped {
+  --obc-poi-bottom-offset: var(
+    --maneuvering-components-poi-button-overlap-offset-margin-round
+  );
+  --obc-poi-icon-scale: calc(
+    var(--obc-poi-icon-size-overlap) / var(--obc-poi-icon-size)
+  );
+}
+
 .is-overlapped .background-frame {
-  width: 32px;
-  height: 32px;
-  bottom: var(--maneuvering-components-poi-button-overlap-offset-margin-round);
-  top: auto;
+  width: var(--maneuvering-components-poi-button-visual-target-round-overlap);
+  height: var(--maneuvering-components-poi-button-visual-target-round-overlap);
+}
+
+.is-large.is-overlapped .background-frame {
+  width: var(
+    --maneuvering-components-poi-button-large-visual-target-round-overlap
+  );
+  height: var(
+    --maneuvering-components-poi-button-large-visual-target-round-overlap
+  );
+}
+
+.is-square.is-overlapped .background-frame {
+  width: var(--maneuvering-components-poi-button-visual-target-square-overlap);
+  height: var(--maneuvering-components-poi-button-visual-target-square-overlap);
+}
+
+.is-square.is-large.is-overlapped .background-frame {
+  width: var(
+    --maneuvering-components-poi-button-large-visual-target-square-overlap
+  );
+  height: var(
+    --maneuvering-components-poi-button-large-visual-target-square-overlap
+  );
 }
 
 .is-indicator.is-overlapped .background-frame {
@@ -135,20 +224,25 @@
   align-items: center;
   justify-content: center;
   z-index: 1;
+  transform: scale(var(--obc-poi-icon-scale, 1));
+  transform-origin: center;
+  transition:
+    opacity var(--obc-poi-opacity-transition-duration, 0.2s) ease-out,
+    transform var(--obc-poi-transition-duration, 0.3s) ease-out;
 }
 
 /* Standard icon sizes */
 .type-regular .icon-container,
 .type-indicator .icon-container,
 .type-n-up .icon-container {
-  width: 24px;
-  height: 24px;
+  width: var(--obc-poi-icon-size);
+  height: var(--obc-poi-icon-size);
 }
 
 .type-large .icon-container,
 .type-n-up-large .icon-container {
-  width: 36px;
-  height: 36px;
+  width: var(--obc-poi-icon-size);
+  height: var(--obc-poi-icon-size);
 }
 
 /* Slotted icon sizing */
@@ -196,8 +290,8 @@
 /* Interactive hover/active states on background-frame */
 .wrapper.interactive .background-frame {
   transition:
-    background-color 0.15s ease,
-    border-color 0.15s ease;
+    background-color var(--obc-poi-color-transition-duration, 0.15s) ease,
+    border-color var(--obc-poi-color-transition-duration, 0.15s) ease;
 }
 
 /* Regular type (non-indicator) - uses flat styles */
