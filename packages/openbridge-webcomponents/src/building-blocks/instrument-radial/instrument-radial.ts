@@ -9,6 +9,7 @@ import {
 import {WatchCircleType} from '../../navigation-instruments/watch/watch.js';
 import {Tickmark} from '../../navigation-instruments/watch/tickmark.js';
 import {TickmarkType} from '../../navigation-instruments/watch/tickmark.js';
+import {SetpointColorMode} from '../../svghelpers/setpoint.js';
 
 export enum ObcGaugeRadialType {
   filled = 'filled',
@@ -27,6 +28,9 @@ export class ObcInstrumentRadial extends LitElement {
   @property({type: Number}) value = 0;
   @property({type: Number}) setpoint: number | undefined;
   @property({type: Boolean}) atSetpoint: boolean = false;
+  @property({type: Boolean}) atSetpointZero: boolean = false;
+  @property({type: Boolean}) setpointFocused: boolean = false;
+  @property({type: String}) setpointColorMode: SetpointColorMode | undefined;
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
   @property({type: Number}) autoAtSetpointDeadband: number = 2;
@@ -95,6 +99,9 @@ export class ObcInstrumentRadial extends LitElement {
         <obc-watch
           .angleSetpoint=${setpointAngle}
           .atAngleSetpoint=${this.atSetpointCalc()}
+          .atAngleSetpointZero=${this.atSetpointZero}
+          .focused=${this.setpointFocused}
+          .colorMode=${this.setpointColorMode}
           .padding=${48}
           .tickmarks=${this.tickmarks}
           .advices=${this._advices}

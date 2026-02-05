@@ -6,6 +6,7 @@ import {arrow, ArrowStyle} from './arrow.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {WatchCircleType} from '../watch/watch.js';
+import {SetpointColorMode} from '../../svghelpers/setpoint.js';
 import {customElement} from '../../decorator.js';
 
 export enum CompassDirection {
@@ -20,6 +21,11 @@ export class ObcHeading extends LitElement {
   @property({type: Number}) courseOverGround = 0;
   @property({type: Number}) headingSetPoint: number | null = null;
   @property({type: Boolean}) atHeadingSetpoint: boolean = false;
+  @property({type: Boolean}) atHeadingSetpointZero: boolean = false;
+  @property({type: Boolean}) headingSetpointFocused: boolean = false;
+  @property({type: String}) headingSetpointColorMode:
+    | SetpointColorMode
+    | undefined;
   @property({type: Boolean}) disableAutoAtHeadingSetpoint: boolean = false;
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
   @property({type: Boolean}) touching: boolean = false;
@@ -92,6 +98,9 @@ export class ObcHeading extends LitElement {
           .crosshairEnabled=${true}
           .angleSetpoint=${this.headingSetPoint ?? undefined}
           .atAngleSetpoint=${this.atHeadingSetpointCalc()}
+          .atAngleSetpointZero=${this.atHeadingSetpointZero}
+          .focused=${this.headingSetpointFocused}
+          .colorMode=${this.headingSetpointColorMode}
           .rotation=${this.getRotation()}
         >
         </obc-watch>

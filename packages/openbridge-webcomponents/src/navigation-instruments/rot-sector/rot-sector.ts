@@ -2,6 +2,7 @@ import {LitElement, html} from 'lit';
 import {customElement} from '../../decorator.js';
 import {property} from 'lit/decorators.js';
 import {AdviceType} from '../watch/advice.js';
+import {SetpointColorMode} from '../../svghelpers/setpoint.js';
 import '../../building-blocks/instrument-radial/instrument-radial.js';
 
 export enum ObcGaugeRadialType {
@@ -22,6 +23,9 @@ export class ObcRotSector extends LitElement {
   @property({type: Number}) value = 0;
   @property({type: Number}) setpoint: number | undefined;
   @property({type: Boolean}) atSetpoint: boolean = false;
+  @property({type: Boolean}) atSetpointZero: boolean = false;
+  @property({type: Boolean}) setpointFocused: boolean = false;
+  @property({type: String}) setpointColorMode: SetpointColorMode | undefined;
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
   @property({type: Number}) autoAtSetpointDeadband: number = 2;
@@ -63,6 +67,9 @@ export class ObcRotSector extends LitElement {
       <obc-instrument-radial
         .value=${this.value}
         .setpoint=${this.setpoint}
+        .atSetpointZero=${this.atSetpointZero}
+        .setpointFocused=${this.setpointFocused}
+        .setpointColorMode=${this.setpointColorMode}
         .touching=${this.touching}
         .disableAutoAtSetpoint=${this.disableAutoAtSetpoint}
         .autoAtSetpointDeadband=${this.autoAtSetpointDeadband}

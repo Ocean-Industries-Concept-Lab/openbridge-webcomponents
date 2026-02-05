@@ -16,6 +16,51 @@ const meta: Meta<typeof ObcWatch> = {
   title: 'Building blocks/Watch',
   tags: ['autodocs'],
   component: 'obc-watch',
+  parameters: {
+    docs: {
+      description: {
+        component: `# \`<obc-watch>\` - Core SVG renderer for circular/radial watch-based instruments
+
+This component renders all circular instrument elements including rings, tickmarks, bar areas, needles, advices, setpoints, vessel images, and environmental indicators (wind/current). It serves as the foundation for compass, heading, rudder, speed-gauge, and other radial navigation instruments.
+
+## Setpoint Behavior
+
+The setpoint marker visual state is derived from the combination of \`atAngleSetpoint\`, \`atAngleSetpointZero\`, and \`focused\` properties:
+
+- **notEqual**: Value differs from setpoint (triangular marker, offset outward)
+- **equal**: Value matches setpoint (line marker, sits on ring)
+- **equalZero**: Value matches setpoint at zero angle (double-line marker, offset outward)
+- **focus**: User is actively adjusting (e.g., dragging) - shows focus visual state
+
+The \`RADIAL_SETPOINT_INWARD_ADJUST\` constant (4px) fine-tunes radial setpoint positioning to match Figma designs, applied on top of visual state offsets from setpoint.ts.
+
+The \`colorMode\` property allows overriding the derived color mode (enhanced for inCommand, regular for other states).
+
+## Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| \`state\` | \`InstrumentState\` | Instrument state (inCommand, active, loading, off) |
+| \`angleSetpoint\` | \`number \\| undefined\` | Setpoint angle in degrees (0° = 12 o'clock) |
+| \`atAngleSetpoint\` | \`boolean\` | Whether value matches setpoint (within deadband) |
+| \`atAngleSetpointZero\` | \`boolean\` | Whether setpoint is at zero angle |
+| \`focused\` | \`boolean\` | Whether user is actively adjusting the setpoint |
+| \`colorMode\` | \`SetpointColorMode \\| undefined\` | Optional override for setpoint color mode |
+
+## Usage
+
+This component is typically not used directly. Instead, use the higher-level wrapper components:
+- \`obc-compass\` - Full compass with HDG/COG arrows, ROT, vessel, wind/current
+- \`obc-heading\` - Simplified compass with HDG/COG arrows only
+- \`obc-rudder\` - Half-circle rudder indicator
+- \`obc-speed-gauge\` - Speed arc with needle
+- \`obc-azimuth-thruster\` - Thruster with angle setpoint and thrust bar
+- \`obc-instrument-radial\` - Generic building block for radial gauges
+
+Source of truth: \`packages/openbridge-webcomponents/src/navigation-instruments/watch/watch.ts\``,
+      },
+    },
+  },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 800, step: 10}},
     state: {control: {type: 'select'}, options: Object.values(InstrumentState)},

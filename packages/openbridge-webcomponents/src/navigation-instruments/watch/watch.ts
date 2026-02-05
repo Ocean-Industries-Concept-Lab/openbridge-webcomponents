@@ -65,19 +65,40 @@ const RING3_RADIUS = 224 / 2;
 const RING3B_RADIUS = 272 / 2;
 const RING4_RADIUS = 176 / 2;
 
-/**
- * Radial-specific adjustment for setpoint positioning (in pixels).
- * Positive values move the setpoint toward the circle center.
- * Negative values move the setpoint outward (away from center).
- *
- * This is applied on top of the visual state offsets from setpoint.ts
- * (SETPOINT_NOT_EQUAL_OFFSET, SETPOINT_ZERO_OFFSET) to fine-tune
- * radial positioning independently from linear instruments.
- *
- * Adjust this value to match the Figma design.
- */
 const RADIAL_SETPOINT_INWARD_ADJUST = 4;
 
+/**
+ * `<obc-watch>` - Core SVG renderer for circular/radial watch-based instruments.
+ *
+ * This component renders all circular instrument elements including rings, tickmarks,
+ * bar areas, needles, advices, setpoints, vessel images, and environmental indicators
+ * (wind/current). It serves as the foundation for compass, heading, rudder, speed-gauge,
+ * and other radial navigation instruments.
+ *
+ * ## Setpoint Behavior
+ *
+ * The setpoint marker visual state is derived from the combination of `atAngleSetpoint`,
+ * `atAngleSetpointZero`, and `focused` properties:
+ *
+ * - **notEqual**: Value differs from setpoint (triangular marker, offset outward)
+ * - **equal**: Value matches setpoint (line marker, sits on ring)
+ * - **equalZero**: Value matches setpoint at zero angle (double-line marker, offset outward)
+ * - **focus**: User is actively adjusting (e.g., dragging) - shows focus visual state
+ *
+ * The `RADIAL_SETPOINT_INWARD_ADJUST` constant (4px) fine-tunes radial setpoint positioning
+ * to match Figma designs, applied on top of visual state offsets from setpoint.ts.
+ *
+ * The `colorMode` property allows overriding the derived color mode (enhanced for inCommand,
+ * regular for other states). TODO(designer): Confirm if colorMode override is needed for
+ * specific use cases beyond story demonstrations.
+ *
+ * @property {InstrumentState} state - Instrument state (inCommand, active, loading, off)
+ * @property {number|undefined} angleSetpoint - Setpoint angle in degrees (0° = 12 o'clock)
+ * @property {boolean} atAngleSetpoint - Whether value matches setpoint (within deadband)
+ * @property {boolean} atAngleSetpointZero - Whether setpoint is at zero angle
+ * @property {boolean} focused - Whether user is actively adjusting the setpoint
+ * @property {SetpointColorMode|undefined} colorMode - Optional override for setpoint color mode
+ */
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {
   private _setpointId = `watch-setpoint-${Math.random().toString(36).slice(2, 9)}`;
@@ -88,21 +109,8 @@ export class ObcWatch extends LitElement {
   @property({type: Boolean}) northArrow: boolean = false;
   @property({type: Number}) angleSetpoint: number | undefined;
   @property({type: Boolean}) atAngleSetpoint: boolean = false;
-  /**
-   * Whether the setpoint is at zero (angle = 0).
-   * When true AND atAngleSetpoint is true, triggers equalZero visual state.
-   */
   @property({type: Boolean}) atAngleSetpointZero: boolean = false;
-  /**
-   * Whether the user is actively adjusting the setpoint (e.g., dragging).
-   * When true, the setpoint displays in "focus" visual state.
-   */
   @property({type: Boolean}) focused: boolean = false;
-  /**
-   * Optional override for setpoint color mode.
-   * When set, overrides the color mode derived from instrument state.
-   * Useful for showing regular colors in inCommand state (e.g., for stories).
-   */
   @property({type: String}) colorMode: SetpointColorMode | undefined;
   @property({type: Number}) padding: number | undefined;
   @property({type: Array, attribute: false}) areas: WatchArea[] = [];
@@ -422,21 +430,11 @@ export class ObcWatch extends LitElement {
     `;
   }
 
-  /**
-   * Render the setpoint marker using the unified setpoint rendering from setpoint.ts.
-   *
-   * The marker is positioned on the outer ring at the setpoint angle.
-   * Transform sequence:
-   * 1. Rotate to the setpoint angle (+ 90° because 0° is at 12 o'clock in watch coordinates)
-   * 2. Translate outward to the ring radius
-   * 3. Rotate 180° so the marker tip points inward toward the center
-   */
   private renderSetpoint(): SVGTemplateResult | typeof nothing {
     if (this.angleSetpoint === undefined) {
       return nothing;
     }
 
-    // Derive visual parameters from instrument state
     const derived = deriveRadialSetpointConfig({
       state: this.state,
       atSetpoint: this.atAngleSetpoint,
@@ -444,20 +442,13 @@ export class ObcWatch extends LitElement {
       focused: this.focused,
     });
 
-    // Allow colorMode override (useful for stories showing regular colors in inCommand state)
     const colorMode = this.colorMode ?? derived.colorMode;
     const {visualState, disabled} = derived;
 
-    // Get the outward offset based on visual state:
-    // - notEqual/focus: 4px outward (away from center)
-    // - equalZero: 8px outward (away from center)
-    // - equal: 0px (marker sits closer to the ring)
-    // Then apply radial-specific adjustment (positive = toward center)
     const outwardOffset = getSetpointOutwardOffset(visualState);
     const radius =
       RADIAL_SETPOINT_RADIUS + outwardOffset - RADIAL_SETPOINT_INWARD_ADJUST;
 
-    // Generate the marker SVG using the unified drawing function
     const marker = drawSetpointMarker({
       visualState,
       colorMode,
@@ -465,14 +456,6 @@ export class ObcWatch extends LitElement {
       id: this._setpointId,
     });
 
-    // Position the marker on the outer ring:
-    // - rotate(angle + 90) converts watch coordinates (0° = 12 o'clock) to SVG coordinates (0° = 3 o'clock)
-    // - translate(-radius, 0) moves to the ring edge + offset
-    // - rotate(270) orients the marker to point inward toward center
-    //
-    // The marker starts pointing DOWN (+Y). After all transforms:
-    // - At 12 o'clock (angle=0): orientation = 90° + 270° + (0+90°) mod 360 = 90° (DOWN toward center) ✓
-    // - At 3 o'clock (angle=90): orientation = 90° + 270° + (90+90°) mod 360 = 180° (LEFT toward center) ✓
     return svg`
       <g transform="rotate(${this.angleSetpoint + 90}) translate(${-radius}, 0) rotate(270)">
         ${marker}

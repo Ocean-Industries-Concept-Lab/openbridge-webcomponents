@@ -4,6 +4,7 @@ import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {WatchCircleType} from '../watch/watch.js';
 import {AdviceType, AngleAdviceRaw, AdviceState} from '../watch/advice.js';
 import {InstrumentFieldSize} from '../instrument-field/instrument-field.js';
+import {SetpointColorMode} from '../../svghelpers/setpoint.js';
 import {customElement} from '../../decorator.js';
 
 export enum ObcSpeedGaugeNeedleType {
@@ -23,6 +24,9 @@ export class ObcSpeedGauge extends LitElement {
   @property({type: Number}) speed = 0;
   @property({type: Number}) setpoint: number | undefined;
   @property({type: Boolean}) atSetpoint: boolean = false;
+  @property({type: Boolean}) atSetpointZero: boolean = false;
+  @property({type: Boolean}) setpointFocused: boolean = false;
+  @property({type: String}) setpointColorMode: SetpointColorMode | undefined;
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
   @property({type: Number}) autoAtSetpointDeadband: number = 2;
@@ -75,6 +79,9 @@ export class ObcSpeedGauge extends LitElement {
         <obc-watch
           .angleSetpoint=${setpointAngle}
           .atAngleSetpoint=${this.atSetpointCalc()}
+          .atAngleSetpointZero=${this.atSetpointZero}
+          .focused=${this.setpointFocused}
+          .colorMode=${this.setpointColorMode}
           .padding=${48}
           .tickmarks=${this.tickmarks}
           .advices=${this._advices}
