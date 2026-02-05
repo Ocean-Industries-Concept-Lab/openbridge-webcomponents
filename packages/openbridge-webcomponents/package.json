@@ -58,7 +58,7 @@
     "@lit-labs/gen-wrapper-svelte": "file:lit-labs-gen-wrapper-svelte-0.0.1.tgz",
     "@lit-labs/gen-wrapper-vue": "file:lit-labs-gen-wrapper-vue-0.4.1.tgz",
     "@open-wc/lit-helpers": "^0.7.0",
-    "@playwright/test": "^1.57.0",
+    "@playwright/test": "^1.58.0",
     "@storybook/addon-docs": "^10.1.9",
     "@storybook/addon-links": "^10.1.9",
     "@storybook/addon-themes": "^10.1.9",

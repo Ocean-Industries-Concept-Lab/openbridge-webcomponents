@@ -1,0 +1,237 @@
+.wrapper {
+  display: flex;
+  position: relative;
+  width: 100%;
+  user-select: none;
+}
+
+.tag-container {
+  display: flex;
+  flex: 1 0 0;
+  justify-content: center;
+  min-height: var(--maneuvering-components-poi-id-tag-container-height);
+}
+
+/* Condensed variant */
+.wrapper.variant-condensed {
+  background-color: var(--overlay-container-global-color);
+  border-bottom: 1px solid var(--border-outline-color);
+  height: var(--global-size-spacing-selection-size-min, 24px);
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Regular variant */
+.wrapper.variant-regular {
+  background-color: var(--overlay-container-global-color);
+  border-bottom: 1px solid var(--border-outline-color);
+  align-items: flex-start;
+  gap: 8px;
+
+  .leading-icon {
+    color: var(--element-neutral-color);
+  }
+}
+
+/* Detailed variant */
+.wrapper.variant-detailed {
+  background-color: var(--container-global-color);
+  border-bottom: 1px solid var(--indent-enabled-border-color);
+  align-items: center;
+}
+
+/* Index badge - common styles */
+.id-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  z-index: 1;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+}
+
+.wrapper.variant-detailed .id-container {
+  top: 4px;
+  bottom: auto;
+  height: var(--global-size-spacing-visual-target-min, 32px);
+  align-items: flex-start;
+}
+
+.index-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--normal-enabled-background-color);
+  border: 1px solid var(--normal-enabled-border-color);
+  border-radius: 50%;
+  width: var(--maneuvering-components-poi-id-tag-min-size);
+  height: var(--maneuvering-components-poi-id-tag-min-size);
+}
+
+.index-badge.tag-style {
+  box-sizing: border-box;
+  background-color: var(--overlay-container-global-color);
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  min-width: var(--maneuvering-components-poi-id-tag-min-size);
+}
+
+.index-text {
+  @mixin font-label-active;
+  color: var(--element-active-color);
+  text-align: center;
+}
+
+/* Header container */
+.header-container {
+  display: flex;
+  flex: 1 0 0;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.wrapper.variant-condensed .header-container {
+  padding-right: 8px;
+}
+
+.wrapper.variant-regular .header-container {
+  height: 32px;
+}
+
+.icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 0;
+  flex-shrink: 0;
+}
+
+.icon-container ::slotted(*) {
+  width: var(--global-size-spacing-icon-icon-size-regular, 24px);
+  height: var(--global-size-spacing-icon-icon-size-regular, 24px);
+}
+
+/* Title - Overline style for condensed/regular */
+.title {
+  @mixin font-overline-new;
+  color: var(--element-active-color);
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* Title - Body-active style for detailed */
+.title.detailed-title {
+  @mixin font-body-active;
+  letter-spacing: 0;
+  text-align: left;
+}
+
+/* Source badge */
+.source-badge {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--indent-enabled-background-color);
+  border: 1px solid var(--indent-enabled-border-color);
+  border-radius: 2px;
+  min-width: 40px;
+  padding: 0 8px;
+  flex-shrink: 0;
+}
+
+.wrapper.variant-regular .source-badge,
+.wrapper.variant-condensed .source-badge {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.wrapper.variant-regular .source-badge {
+  right: 8px;
+}
+
+.wrapper.variant-condensed .source-badge {
+  right: 4px;
+}
+
+.source-text {
+  @mixin font-label-active;
+  text-align: center;
+}
+
+/* Regular/condensed: source text is active color */
+.wrapper.variant-regular .source-text,
+.wrapper.variant-condensed .source-text {
+  color: var(--element-active-color);
+}
+
+/* Detailed: source text is neutral color */
+.wrapper.variant-detailed .source-text {
+  color: var(--element-neutral-color);
+}
+
+/* Detailed variant specific */
+.detailed-content {
+  display: flex;
+  flex: 1 0 0;
+  align-items: center;
+  min-height: 0;
+  min-width: 0;
+  padding: 0 8px;
+}
+
+.poi-container {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.text-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 0;
+  align-items: flex-start;
+  min-height: 0;
+  min-width: 0;
+  padding-right: 16px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.description {
+  @mixin font-label;
+  color: var(--element-neutral-color);
+  padding-right: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.meta-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+  width: 40px;
+}
+
+.meta-container .source-badge {
+  margin: 4px 0;
+}
+
+.timestamp {
+  @mixin font-label;
+  color: var(--element-neutral-color);
+  text-align: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.close-button {
+  flex-shrink: 0;
+}

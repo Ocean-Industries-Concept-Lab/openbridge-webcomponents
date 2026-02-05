@@ -9,9 +9,10 @@ This repository contains the Openbridge Web Components library, a collection of 
 
 ## Available Instruction Files
 
-| File                               | Scope                                                                                                   | Description                                               |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| `building-blocks.instructions.md`  | `building-blocks/**`, `svghelpers/**`                                                                   | SVG-based building block components and shared utilities  |
-| `circular-charts.instructions.md`  | `bars-graphs/**`, `charthelpers/**`                                                                     | Circular chart components (donut, pie, polar, radial-bar) |
-| `external-scale.instructions.md`   | `external-scale/**`, `bar-vertical/**`, `bar-horizontal/**`, `gauge-vertical/**`, `gauge-horizontal/**` | External scale renderer and bar/gauge wrappers            |
-| `line-area-charts.instructions.md` | `chart-line/**`, `line-graph/**`, `area-graph/**`, `gauge-trend/**`                                     | Line/area charts and composite gauge-trend component      |
+| File                                       | Scope                                                                                                                                                                          | Description                                               |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------- |
+| `building-blocks.instructions.md`          | `building-blocks/**`, `svghelpers/**`                                                                                                                                          | SVG-based building block components and shared utilities  |
+| `circular-charts.instructions.md`          | `bars-graphs/**`, `charthelpers/**`                                                                                                                                            | Circular chart components (donut, pie, polar, radial-bar) |
+| `external-scale.instructions.md`           | `external-scale/**`, `bar-vertical/**`, `bar-horizontal/**`, `gauge-vertical/**`, `gauge-horizontal/**`                                                                        | External scale renderer and bar/gauge wrappers            |
+| `line-area-charts.instructions.md`         | `chart-line/**`, `line-graph/**`, `area-graph/**`, `gauge-trend/**`                                                                                                            | Line/area charts and composite gauge-trend component      |
+| `watch-radial-instruments.instructions.md` | `watch/**`, `compass/**`, `heading/**`, `rudder/**`, `wind/**`, `roll/**`, `speed-gauge/**`, `gauge-radial/**`, `rot-sector/**`, `azimuth-thruster/**`, `instrument-radial/**` | Circular watch-based instruments and radial gauges        |
