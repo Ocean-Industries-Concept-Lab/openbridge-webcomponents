@@ -291,15 +291,10 @@ button {
       }
     }
 
-    .value-loading & {
-      .style-point & {
-        border: none;
-
-        .type-large & {
-          width: 48px;
-          height: 48px;
-        }
-      }
+    .value-loading.style-point & {
+      border: none;
+      width: 48px;
+      height: 48px;
     }
   }
 

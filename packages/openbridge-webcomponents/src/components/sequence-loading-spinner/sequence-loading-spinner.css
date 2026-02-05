@@ -148,7 +148,6 @@
               var(--element-disabled-color)
             )
             289deg,
-          var(--element-disabled-color) 360deg,
           var(--element-disabled-color) 360deg
         );
       }
