@@ -199,8 +199,16 @@
   .poi-object {
     --flat-enabled-background-color: #fff;
     --flat-activated-background-color: #fff;
-    --flat-hover-background-color: #fff;
-    --flat-pressed-background-color: #fff;
+    --flat-hover-background-color: color-mix(
+      in srgb,
+      #fff 88%,
+      var(--overlay-flat-hover-background-color)
+    );
+    --flat-pressed-background-color: color-mix(
+      in srgb,
+      #fff 82%,
+      var(--overlay-flat-active-background-color)
+    );
   }
 }
 
