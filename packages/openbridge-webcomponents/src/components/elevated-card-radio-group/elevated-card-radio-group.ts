@@ -124,6 +124,8 @@ export class ObcElevatedCardRadioGroup extends LitElement {
     this.dispatchEvent(
       new CustomEvent('change', {
         detail: {value},
+        bubbles: true,
+        composed: true,
       }) satisfies ObcElevatedCardRadioGroupChangeEvent
     );
   }

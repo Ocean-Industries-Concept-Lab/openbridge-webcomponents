@@ -187,7 +187,12 @@ export class ObcRadio extends LitElement {
 
   onChange(event: Event) {
     event.stopPropagation();
-    this.dispatchEvent(new CustomEvent('change'));
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 
   override render() {
