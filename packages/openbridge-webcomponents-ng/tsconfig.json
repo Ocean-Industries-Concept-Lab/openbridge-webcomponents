@@ -3,14 +3,14 @@
     "target": "ES2022",
     "module": "ES2022",
     "moduleResolution": "Bundler",
-
     "strict": true,
     "skipLibCheck": true,
-
     "declaration": false,
     "sourceMap": true,
-
-    "lib": ["ES2022", "DOM"],
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
     "types": []
   }
 }

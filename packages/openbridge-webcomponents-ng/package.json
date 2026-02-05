@@ -2,24 +2,13 @@
   "name": "@ocean-industries-concept-lab/openbridge-webcomponents-ng",
   "type": "module",
   "version": "0.0.16",
-  "scripts": {
-    "build": "ng-packagr -p ng-package.json -c tsconfig.lib.json"
-  },
   "dependencies": {
+    "@ocean-industries-concept-lab/openbridge-webcomponents": "^0.0.16",
     "tslib": "^2.8.1"
   },
-  "devDependencies": {
-    "@angular/core": "^20.0.1",
-    "@angular/common": "^20.0.1",
-    "@angular/compiler": "^20.0.1",
-    "@angular/compiler-cli": "^20.0.1",
-    "ng-packagr": "^20.0.1",
-    "@ocean-industries-concept-lab/openbridge-webcomponents": "^0.0.16"
-  },
   "peerDependencies": {
-    "@angular/common": "^20.0.1",
-    "@angular/core": "^20.0.1",
-    "@ocean-industries-concept-lab/openbridge-webcomponents": "^0.0.16"
+    "@angular/common": "^20.0.0",
+    "@angular/core": "^20.0.0"
   },
   "files": [
     "src/ar/chart-object-vessel-button/chart-object-vessel-button.ts",
@@ -1950,5 +1939,15 @@
     "src/navigation-instruments/wind/wind.ts",
     "src/pages/alert-detail-page/alert-detail-page.ts",
     "src/pages/alert-list-page-small/alert-list-page-small.ts"
-  ]
+  ],
+  "scripts": {
+    "build": "ng-packagr -p ng-package.json -c tsconfig.lib.json"
+  },
+  "devDependencies": {
+    "@angular/core": "^20.0.1",
+    "@angular/common": "^20.0.1",
+    "@angular/compiler": "^20.0.1",
+    "@angular/compiler-cli": "^20.0.1",
+    "ng-packagr": "^20.0.1"
+  }
 }
