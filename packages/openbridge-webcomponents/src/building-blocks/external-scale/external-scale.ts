@@ -857,7 +857,8 @@ function deriveSetpointVisualState(
 ): SetpointVisualState {
   // Priority 1: Focus state
   // - When `focused` property is true (user is actively adjusting)
-  if (config.focused) {
+  // - BUT only when newSetpoint is not defined (otherwise original should be dimmed)
+  if (config.focused && config.newSetpoint === undefined) {
     return SetpointVisualState.focus;
   }
 
