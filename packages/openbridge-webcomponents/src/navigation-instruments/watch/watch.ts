@@ -80,6 +80,8 @@ const RADIAL_SETPOINT_INWARD_ADJUST = 4;
 
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {
+  private _setpointId = `watch-setpoint-${Math.random().toString(36).slice(2, 9)}`;
+
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
   @property({type: String}) watchCircleType: WatchCircleType =
     WatchCircleType.single;
@@ -460,7 +462,7 @@ export class ObcWatch extends LitElement {
       visualState,
       colorMode,
       disabled,
-      id: 'watch-setpoint', // Stable ID for this watch instance
+      id: this._setpointId,
     });
 
     // Position the marker on the outer ring:
