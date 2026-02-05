@@ -4,6 +4,9 @@
   pointer-events: none;
   /* Spacing between expanded POI targets in a group */
   --obc-poi-group-expanded-spacing: 50px;
+  /* Animation timing constants (in milliseconds) */
+  --obc-poi-group-top-offset-animation-ms: 100;
+  --obc-poi-group-top-offset-animation-delay-ms: 0;
 }
 
 * {

@@ -387,16 +387,21 @@ export class ObcPoiLayerStack extends LitElement {
     const duration = 100;
     const startTime = performance.now();
     const step = (now: number) => {
-      if (!target.isConnected) {
-        this.topOffsetResetRaf.delete(target);
-        return;
-      }
-      const t = Math.min((now - startTime) / duration, 1);
-      const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-      target.topOffset = start + (0 - start) * eased;
-      if (t < 1) {
-        this.topOffsetResetRaf.set(target, requestAnimationFrame(step));
-      } else {
+      try {
+        if (!target.isConnected) {
+          this.topOffsetResetRaf.delete(target);
+          return;
+        }
+        const t = Math.min((now - startTime) / duration, 1);
+        const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        target.topOffset = start + (0 - start) * eased;
+        if (t < 1) {
+          this.topOffsetResetRaf.set(target, requestAnimationFrame(step));
+        } else {
+          this.topOffsetResetRaf.delete(target);
+        }
+      } catch (error) {
+        console.error('[poi-layer-stack] Error in top offset reset:', error);
         this.topOffsetResetRaf.delete(target);
       }
     };
@@ -565,32 +570,10 @@ export class ObcPoiLayerStack extends LitElement {
     return Number.isFinite(target.y) ? target.y : 0;
   }
 
-  private logSelectionState(phase: string, target: ObcPoiTarget) {
-    const rect = this.getTargetVisualRect(target);
-    const computed = getComputedStyle(target);
-    const stack = new Error().stack;
-    // eslint-disable-next-line no-console
-    console.log('[poi-selection-trace]', {
-      phase,
-      selectedId: target.selectedId ?? null,
-      showId: target.showId,
-      topOffset: Number.isFinite(target.topOffset) ? target.topOffset : 0,
-      offset: Number.isFinite(target.offset) ? target.offset : 0,
-      buttonOffsetX: Number.isFinite(target.buttonOffsetX)
-        ? target.buttonOffsetX
-        : 0,
-      computedTransform: computed.transform,
-      rect: {
-        left: Math.round(rect.left),
-        top: Math.round(rect.top),
-        width: Math.round(rect.width),
-        height: Math.round(rect.height),
-      },
-      stack,
-    });
+  private logSelectionState(_phase: string, _target: ObcPoiTarget) {
+    // Debug logging removed for production
+    // Enable in development by uncommenting the code below and setting a debug flag
   }
-
-  // debug helper removed
 
   private setTargetLineLength(target: ObcPoiTarget, lineLength: number) {
     target.y = lineLength;
@@ -611,15 +594,22 @@ export class ObcPoiLayerStack extends LitElement {
     const startLineLength = this.getTargetLineLength(target);
 
     const animateLineLength = (now: number) => {
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = this.cubicBezier(0.2, 0, 0, 1, progress);
-      const newLineLength =
-        startLineLength + (targetLineLength - startLineLength) * eased;
-      this.setTargetLineLength(target, newLineLength);
+      try {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = this.cubicBezier(0.2, 0, 0, 1, progress);
+        const newLineLength =
+          startLineLength + (targetLineLength - startLineLength) * eased;
+        this.setTargetLineLength(target, newLineLength);
 
-      if (progress < 1) {
-        requestAnimationFrame(animateLineLength);
+        if (progress < 1) {
+          requestAnimationFrame(animateLineLength);
+        }
+      } catch (error) {
+        console.error(
+          '[poi-layer-stack] Error in line length animation:',
+          error
+        );
       }
     };
 

@@ -5,10 +5,15 @@ import componentStyle from './poi-layer.css?inline';
 import '../poi-group/poi-group.js';
 import {ObcPoiTarget, PoiTargetVisualState} from '../poi-target/poi-target.js';
 import {ObcPoiTargetButtonType} from '../poi-target-button/poi-target-button.js';
+import {
+  buildClusters,
+  buildAdjacencyMaps,
+  type GroupingThresholds,
+} from './grouping-utils.js';
 
-const EXIT_DELAY_MS = 140;
-const GROUP_REMOVAL_DELAY_MS = 450;
-const EXIT_LOCK_DURATION_MS = 500;
+const EXIT_DELAY_MS_VAR = '--obc-poi-layer-exit-delay-ms';
+const GROUP_REMOVAL_DELAY_MS_VAR = '--obc-poi-layer-group-removal-delay-ms';
+const EXIT_LOCK_DURATION_MS_VAR = '--obc-poi-layer-exit-lock-duration-ms';
 
 const POI_TOUCH_TARGET_VAR = '--maneuvering-components-poi-button-touch-target';
 const POI_VISUAL_TARGET_VAR =
@@ -372,14 +377,19 @@ export class ObcPoiLayer extends LitElement {
   private scheduleCrossingMode() {
     if (this.crossingModeRaf) return;
     this.crossingModeRaf = requestAnimationFrame(() => {
-      this.crossingModeRaf = 0;
-      const shouldContinue = this.updateCrossingMode();
-      if (
-        this.overlapMode === OverlapMode.Crossing &&
-        this.isConnected &&
-        shouldContinue
-      ) {
-        this.scheduleCrossingMode();
+      try {
+        this.crossingModeRaf = 0;
+        const shouldContinue = this.updateCrossingMode();
+        if (
+          this.overlapMode === OverlapMode.Crossing &&
+          this.isConnected &&
+          shouldContinue
+        ) {
+          this.scheduleCrossingMode();
+        }
+      } catch (error) {
+        console.error('[poi-layer] Error in crossing mode:', error);
+        this.crossingModeRaf = 0;
       }
     });
   }
@@ -625,49 +635,22 @@ export class ObcPoiLayer extends LitElement {
       rects.set(target, this.getTargetRectForGrouping(target, layerRect));
     });
 
-    const adjacency = new Map<HTMLElement, Set<HTMLElement>>();
-    const preAdjacency = new Map<HTMLElement, Set<HTMLElement>>();
-    const behindAdjacency = new Map<HTMLElement, Set<HTMLElement>>();
-    targets.forEach((target) => adjacency.set(target, new Set()));
-    targets.forEach((target) => preAdjacency.set(target, new Set()));
-    targets.forEach((target) => behindAdjacency.set(target, new Set()));
-    const preGrouped = new Set<HTMLElement>();
+    const thresholds: GroupingThresholds = {
+      enterThreshold,
+      exitThreshold,
+      preThreshold,
+      behindThreshold,
+    };
 
-    for (let i = 0; i < targets.length; i += 1) {
-      const a = targets[i];
-      const ra = rects.get(a)!;
-      for (let j = i + 1; j < targets.length; j += 1) {
-        const b = targets[j];
-        const rb = rects.get(b)!;
-        const sameGroup =
-          currentGroupByTarget.get(a) &&
-          currentGroupByTarget.get(a) === currentGroupByTarget.get(b);
-        const threshold = sameGroup ? exitThreshold : enterThreshold;
-        const overlapHeight =
-          Math.min(ra.bottom, rb.bottom) - Math.max(ra.top, rb.top);
-        const gap = Math.max(
-          0,
-          Math.max(ra.left, rb.left) - Math.min(ra.right, rb.right)
-        );
-        if (gap <= preThreshold && overlapHeight > 0) {
-          preGrouped.add(a);
-          preGrouped.add(b);
-          preAdjacency.get(a)!.add(b);
-          preAdjacency.get(b)!.add(a);
-        }
-        if (gap <= behindThreshold && overlapHeight > 0) {
-          behindAdjacency.get(a)!.add(b);
-          behindAdjacency.get(b)!.add(a);
-        }
-        if (gap <= threshold && overlapHeight > 0) {
-          adjacency.get(a)!.add(b);
-          adjacency.get(b)!.add(a);
-        }
-      }
-    }
+    const {adjacency, behindAdjacency, preGrouped} = buildAdjacencyMaps(
+      targets,
+      rects,
+      thresholds,
+      currentGroupByTarget
+    );
 
-    const clusters = this.buildClusters(targets, adjacency);
-    const behindClusters = this.buildClusters(targets, behindAdjacency);
+    const clusters = buildClusters(targets, adjacency);
+    const behindClusters = buildClusters(targets, behindAdjacency);
 
     const existingGroups = Array.from(
       this.querySelectorAll('obc-poi-group[data-auto-group]')
@@ -746,13 +729,14 @@ export class ObcPoiLayer extends LitElement {
             child.getBoundingClientRect();
           }
         });
+        const exitDelay = this.getCssVarAsNumber(EXIT_DELAY_MS_VAR, 140);
         window.setTimeout(() => {
           children.forEach((child) => {
             if (!front || child !== front) {
               child.removeAttribute('data-exiting');
             }
           });
-        }, EXIT_DELAY_MS);
+        }, exitDelay);
         requestAnimationFrame(() => {
           group.removeAttribute('data-visible');
           this.scheduleGroupRemoval(group);
@@ -942,41 +926,6 @@ export class ObcPoiLayer extends LitElement {
     group.refreshExpandedLayout?.(true);
   }
 
-  /**
-   * Build clusters of connected elements using depth-first search on an adjacency map.
-   * Returns only clusters with 2+ elements.
-   */
-  private buildClusters(
-    targets: HTMLElement[],
-    adjacency: Map<HTMLElement, Set<HTMLElement>>
-  ): HTMLElement[][] {
-    const visited = new Set<HTMLElement>();
-    const clusters: HTMLElement[][] = [];
-
-    targets.forEach((target) => {
-      if (visited.has(target)) return;
-
-      const stack = [target];
-      const cluster: HTMLElement[] = [];
-      visited.add(target);
-
-      while (stack.length > 0) {
-        const node = stack.pop()!;
-        cluster.push(node);
-        adjacency.get(node)!.forEach((neighbor) => {
-          if (!visited.has(neighbor)) {
-            visited.add(neighbor);
-            stack.push(neighbor);
-          }
-        });
-      }
-
-      if (cluster.length >= 2) clusters.push(cluster);
-    });
-
-    return clusters;
-  }
-
   private applyStandaloneVisualState(target: ObcPoiTarget, overlap: boolean) {
     const isEnhanced = target.type === ObcPoiTargetButtonType.Enhanced;
     const size = this.getVisualTargetSize(isEnhanced, overlap);
@@ -1116,16 +1065,21 @@ export class ObcPoiLayer extends LitElement {
     const duration = 100;
     const startTime = performance.now();
     const step = (now: number) => {
-      if (!target.isConnected) {
-        this.topOffsetResetRaf.delete(target);
-        return;
-      }
-      const t = Math.min((now - startTime) / duration, 1);
-      const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-      target.topOffset = start + (0 - start) * eased;
-      if (t < 1) {
-        this.topOffsetResetRaf.set(target, requestAnimationFrame(step));
-      } else {
+      try {
+        if (!target.isConnected) {
+          this.topOffsetResetRaf.delete(target);
+          return;
+        }
+        const t = Math.min((now - startTime) / duration, 1);
+        const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        target.topOffset = start + (0 - start) * eased;
+        if (t < 1) {
+          this.topOffsetResetRaf.set(target, requestAnimationFrame(step));
+        } else {
+          this.topOffsetResetRaf.delete(target);
+        }
+      } catch (error) {
+        console.error('[poi-layer] Error in top offset reset:', error);
         this.topOffsetResetRaf.delete(target);
       }
     };
@@ -1139,10 +1093,14 @@ export class ObcPoiLayer extends LitElement {
       window.clearTimeout(existing);
     }
     group.setAttribute('data-exiting', 'true');
+    const removalDelay = this.getCssVarAsNumber(
+      GROUP_REMOVAL_DELAY_MS_VAR,
+      450
+    );
     const timeoutId = window.setTimeout(() => {
       group.remove();
       this.groupRemovalTimers.delete(group);
-    }, GROUP_REMOVAL_DELAY_MS);
+    }, removalDelay);
     this.groupRemovalTimers.set(group, timeoutId);
   }
 
@@ -1150,10 +1108,11 @@ export class ObcPoiLayer extends LitElement {
     target.setAttribute('data-exit-lock', 'true');
     const existing = this.exitLockTimers.get(target);
     if (existing) window.clearTimeout(existing);
+    const lockDuration = this.getCssVarAsNumber(EXIT_LOCK_DURATION_MS_VAR, 500);
     const timeoutId = window.setTimeout(() => {
       target.removeAttribute('data-exit-lock');
       this.exitLockTimers.delete(target);
-    }, EXIT_LOCK_DURATION_MS);
+    }, lockDuration);
     this.exitLockTimers.set(target, timeoutId);
   }
 

@@ -4,11 +4,17 @@ import componentStyle from './poi-group.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {ObcPoiTarget, PoiTargetVisualState} from '../poi-target/poi-target.js';
 import {customElement} from '../../decorator.js';
+import {
+  AnimationManager,
+  easeInOutQuad,
+  smoothStep,
+} from './animation-utils.js';
 
 const POI_TOUCH_TARGET_VAR = '--maneuvering-components-poi-button-touch-target';
 const POI_GROUP_SPACING_VAR = '--obc-poi-group-expanded-spacing';
-const TOP_OFFSET_ANIMATION_MS = 100;
-const TOP_OFFSET_ANIMATION_DELAY_MS = 0;
+const TOP_OFFSET_ANIMATION_MS_VAR = '--obc-poi-group-top-offset-animation-ms';
+const TOP_OFFSET_ANIMATION_DELAY_MS_VAR =
+  '--obc-poi-group-top-offset-animation-delay-ms';
 
 export type ExpandEvent = CustomEvent<{expand: boolean}>;
 
@@ -34,10 +40,8 @@ export class ObcPoiGroup extends LitElement {
   private boundUpdatePosition: () => void;
   private expandedObserver?: MutationObserver;
   private expandedRaf = 0;
-  private topOffsetAnimationId: number | null = null;
+  private topOffsetAnimationManager = new AnimationManager();
   private topOffsetProgress = 0;
-  private topOffsetAnimationStart = 0;
-  private topOffsetAnimationFrom = 0;
   private slotChangeRaf = 0;
   private topOffsetTargets: Map<
     ObcPoiTarget,
@@ -84,10 +88,7 @@ export class ObcPoiGroup extends LitElement {
       cancelAnimationFrame(this.slotChangeRaf);
       this.slotChangeRaf = 0;
     }
-    if (this.topOffsetAnimationId) {
-      cancelAnimationFrame(this.topOffsetAnimationId);
-      this.topOffsetAnimationId = null;
-    }
+    this.topOffsetAnimationManager.cancel();
     if (this.topOffsetDelayTimeout) {
       clearTimeout(this.topOffsetDelayTimeout);
       this.topOffsetDelayTimeout = null;
@@ -376,9 +377,7 @@ export class ObcPoiGroup extends LitElement {
   }
 
   private animateTopOffset(targetProgress: number) {
-    if (this.topOffsetAnimationId) {
-      cancelAnimationFrame(this.topOffsetAnimationId);
-    }
+    this.topOffsetAnimationManager.cancel();
     if (this.topOffsetDelayTimeout) {
       clearTimeout(this.topOffsetDelayTimeout);
       this.topOffsetDelayTimeout = null;
@@ -406,11 +405,15 @@ export class ObcPoiGroup extends LitElement {
           child.visualState = PoiTargetVisualState.Overlapped;
         }
       });
-      if (TOP_OFFSET_ANIMATION_DELAY_MS > 0) {
+      const delayMs = this.getCssVarAsNumber(
+        TOP_OFFSET_ANIMATION_DELAY_MS_VAR,
+        0
+      );
+      if (delayMs > 0) {
         this.topOffsetDelayTimeout = setTimeout(() => {
           this.topOffsetDelayTimeout = null;
           this.runTopOffsetAnimation(targetProgress, frontChild);
-        }, TOP_OFFSET_ANIMATION_DELAY_MS);
+        }, delayMs);
       } else {
         this.runTopOffsetAnimation(targetProgress, frontChild);
       }
@@ -426,59 +429,55 @@ export class ObcPoiGroup extends LitElement {
     targetProgress: number,
     frontChild: ObcPoiTarget | null
   ) {
-    this.topOffsetAnimationStart = performance.now();
-    this.topOffsetAnimationFrom = this.topOffsetProgress;
+    const duration = this.getCssVarAsNumber(TOP_OFFSET_ANIMATION_MS_VAR, 100);
 
-    const step = (now: number) => {
-      const elapsed = now - this.topOffsetAnimationStart;
-      const duration = TOP_OFFSET_ANIMATION_MS;
-      const t = duration <= 0 ? 1 : Math.min(elapsed / duration, 1);
-      this.topOffsetProgress =
-        this.topOffsetAnimationFrom +
-        (targetProgress - this.topOffsetAnimationFrom) * t;
+    this.topOffsetAnimationManager.start(
+      targetProgress,
+      this.topOffsetProgress,
+      {
+        duration,
+        onUpdate: (progress) => {
+          this.topOffsetProgress = progress;
 
-      if (targetProgress === 1) {
-        this.updateExpandedOffsets(true);
-      }
+          if (targetProgress === 1) {
+            this.updateExpandedOffsets(true);
+          }
 
-      this.applyTopOffsetState(this.topOffsetProgress, frontChild);
-
-      if (t >= 1) {
-        this.topOffsetAnimationId = null;
-        if (targetProgress === 0) {
+          this.applyTopOffsetState(progress, frontChild);
+        },
+        onComplete: () => {
+          if (targetProgress === 0) {
+            this.collapsing = false;
+            this.dispatchEvent(
+              new CustomEvent('collapse-finished', {
+                bubbles: true,
+                composed: true,
+              })
+            );
+            this.updatePosition();
+            this.wrapperVisible = true;
+            this.stopExpandedObserver();
+            this.collapseDeltas.clear();
+            this.lastTargetOrder = [];
+            this.lastAppliedOffsets.clear();
+          }
+          if (targetProgress === 1) {
+            this.startExpandedObserver();
+            this.scheduleExpandedOffsets();
+          }
+        },
+        onError: (error) => {
+          console.error('[poi-group] Error in top offset animation:', error);
           this.collapsing = false;
-          this.dispatchEvent(
-            new CustomEvent('collapse-finished', {
-              bubbles: true,
-              composed: true,
-            })
-          );
-          this.updatePosition();
-          this.wrapperVisible = true;
-          this.stopExpandedObserver();
-          this.collapseDeltas.clear();
-          this.lastTargetOrder = [];
-          this.lastAppliedOffsets.clear();
-        }
-        if (targetProgress === 1) {
-          this.startExpandedObserver();
-          this.scheduleExpandedOffsets();
-        }
-      } else {
-        this.topOffsetAnimationId = requestAnimationFrame(step);
+        },
       }
-    };
-
-    this.topOffsetAnimationId = requestAnimationFrame(step);
+    );
   }
   private applyTopOffsetState(
     progress: number,
     frontChild: ObcPoiTarget | null
   ) {
-    const eased =
-      progress < 0.5
-        ? 2 * progress * progress
-        : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+    const eased = easeInOutQuad(progress);
 
     const visualExpanded = this.topOffsetTargetExpanded;
     const touchAreaExpanded = progress > 0.5;
@@ -504,8 +503,6 @@ export class ObcPoiGroup extends LitElement {
       // Use topOffset to move the target, keeping the line anchored via line offset math.
       child.topOffset = topOffset;
       child.buttonOffsetX = 0;
-
-      // debug logging removed
 
       if (child !== frontChild) {
         child.visualState = visualExpanded
@@ -614,8 +611,13 @@ export class ObcPoiGroup extends LitElement {
       this.expandedLoopRunning = false;
       return;
     }
-    this.updateExpandedOffsets();
-    requestAnimationFrame(() => this.runExpandedLoop());
+    try {
+      this.updateExpandedOffsets();
+      requestAnimationFrame(() => this.runExpandedLoop());
+    } catch (error) {
+      console.error('[poi-group] Error in expanded loop:', error);
+      this.expandedLoopRunning = false;
+    }
   }
 
   private stopExpandedObserver() {
@@ -718,12 +720,12 @@ export class ObcPoiGroup extends LitElement {
       if (snap) {
         config.currentExpandedOffset = config.expandedOffset;
       } else {
-        const diff = config.expandedOffset - config.currentExpandedOffset;
-        if (Math.abs(diff) < 0.5) {
-          config.currentExpandedOffset = config.expandedOffset;
-        } else {
-          config.currentExpandedOffset += diff * 0.1;
-        }
+        config.currentExpandedOffset = smoothStep(
+          config.currentExpandedOffset,
+          config.expandedOffset,
+          config.currentExpandedOffset,
+          0.1
+        );
       }
 
       const topOffset = config.currentExpandedOffset - delta;
@@ -738,12 +740,8 @@ export class ObcPoiGroup extends LitElement {
       // Use topOffset to move the target, keeping the line anchored via line offset math.
       child.topOffset = topOffset;
       child.buttonOffsetX = 0;
-
-      // debug logging removed
     });
   }
-
-  // debug helpers removed
 
   private getCurrentLeft(element: HTMLElement, computed = false): number {
     const inline = element.style.left;
