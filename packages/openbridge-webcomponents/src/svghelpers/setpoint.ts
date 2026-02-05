@@ -595,13 +595,16 @@ export interface RadialSetpointDerivedConfig {
  * | inCommand       | true       | false  | false   | equal         | enhanced    | false      |
  * | inCommand       | true       | true   | false   | equalZero     | enhanced    | false      |
  * | inCommand       | *          | *      | true    | focus         | enhanced    | false      |
- * | active          | *          | *      | *       | focus         | regular     | false      |
+ * | active          | false      | *      | false   | notEqual      | regular     | false      |
+ * | active          | true       | false  | false   | equal         | regular     | false      |
+ * | active          | true       | true   | false   | equalZero     | regular     | false      |
+ * | active          | *          | *      | true    | focus         | regular     | false      |
  * | loading         | *          | *      | *       | notEqual      | regular     | true       |
  * | off             | *          | *      | *       | notEqual      | regular     | true       |
  *
- * Note: `InstrumentState.active` always maps to `focus` visual state because in
- * the original watch.ts implementation, `active` state used the outlined triangle,
- * which corresponds to the "user is interacting" appearance.
+ * Note: `focus` visual state is only triggered by the `focused` property
+ * (user actively adjusting via touch/drag), not by InstrumentState.
+ * The `focused` property will be exposed as a future instrument API state.
  *
  * @param config - Radial instrument state configuration
  * @returns Derived visual parameters for drawSetpointMarker()
@@ -620,17 +623,15 @@ export function deriveRadialSetpointConfig(
     };
   }
 
-  // Active state always maps to focus (matches old "outlined" behavior)
-  // This represents the "user is interacting" state
-  if (state === InstrumentState.active) {
-    return {
-      visualState: SetpointVisualState.focus,
-      colorMode: SetpointColorMode.regular,
-      disabled: false,
-    };
-  }
+  // Determine color mode based on instrument state:
+  // - inCommand → enhanced colors
+  // - active → regular colors
+  const colorMode =
+    state === InstrumentState.inCommand
+      ? SetpointColorMode.enhanced
+      : SetpointColorMode.regular;
 
-  // For inCommand state:
+  // For inCommand and active states:
   // - focused property triggers focus visual state
   // - atSetpoint + atZero triggers equalZero visual state (80% size)
   // - atSetpoint triggers equal visual state (80% size)
@@ -640,7 +641,7 @@ export function deriveRadialSetpointConfig(
   if (focused) {
     return {
       visualState: SetpointVisualState.focus,
-      colorMode: SetpointColorMode.enhanced,
+      colorMode,
       disabled: false,
     };
   }
@@ -649,7 +650,7 @@ export function deriveRadialSetpointConfig(
   if (atSetpoint && atZero) {
     return {
       visualState: SetpointVisualState.equalZero,
-      colorMode: SetpointColorMode.enhanced,
+      colorMode,
       disabled: false,
     };
   }
@@ -658,7 +659,7 @@ export function deriveRadialSetpointConfig(
   if (atSetpoint) {
     return {
       visualState: SetpointVisualState.equal,
-      colorMode: SetpointColorMode.enhanced,
+      colorMode,
       disabled: false,
     };
   }
@@ -666,7 +667,7 @@ export function deriveRadialSetpointConfig(
   // Default: Not at setpoint (notEqual state - full size)
   return {
     visualState: SetpointVisualState.notEqual,
-    colorMode: SetpointColorMode.enhanced,
+    colorMode,
     disabled: false,
   };
 }

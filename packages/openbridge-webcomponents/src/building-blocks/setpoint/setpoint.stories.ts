@@ -555,9 +555,9 @@ function renderRadialSetpointDemo(config: {
  * Side-by-side comparison of all setpoint visual states for radial instruments (watch).
  *
  * Grid layout (4×4):
- * - **Row 1**: Regular color mode (via colorMode override)
+ * - **Row 1**: Regular/active color mode (via colorMode override, or InstrumentState.active)
  * - **Row 2**: inCommand state (enhanced colors)
- * - **Row 3**: active state (regular colors, maps to focus visual state)
+ * - **Row 3**: focus state (future API - uses focused=true)
  * - **Row 4**: Disabled state (via `InstrumentState.off`)
  * - **Columns**: notEqual, equal, equalZero, focus
  *
@@ -603,12 +603,12 @@ export const SetpointComparisonRadial: Story = {
         </div>
       </div>
 
-      <!-- Regular row (via colorMode override) -->
+      <!-- Regular/active row (via colorMode override) -->
       <div
         style="display: grid; grid-template-columns: 80px repeat(4, 1fr); gap: 16px; align-items: flex-start;"
       >
         <div style="font-size: 12px; color: #888; padding-top: 60px;">
-          Regular
+          Regular/active
         </div>
         ${renderRadialSetpointDemo({
           label: 'bar at 45°, setpoint at 60°',
@@ -685,26 +685,28 @@ export const SetpointComparisonRadial: Story = {
         })}
       </div>
 
-      <!-- active row (regular colors, always focus visual state) -->
+      <!-- focus row (future API state - uses focused=true with inCommand) -->
       <div
         style="display: grid; grid-template-columns: 80px repeat(4, 1fr); gap: 16px; align-items: flex-start;"
       >
         <div style="font-size: 12px; color: #888; padding-top: 60px;">
-          active
+          focus (future)
         </div>
         ${renderRadialSetpointDemo({
           label: 'bar at 45°, setpoint at 60°',
           angleSetpoint: 60,
           atAngleSetpoint: false,
           fillEndAngle: 45,
-          state: InstrumentState.active,
+          state: InstrumentState.inCommand,
+          focused: true,
         })}
         ${renderRadialSetpointDemo({
           label: 'bar at 45°, setpoint at 45°',
           angleSetpoint: 45,
           atAngleSetpoint: true,
           fillEndAngle: 45,
-          state: InstrumentState.active,
+          state: InstrumentState.inCommand,
+          focused: true,
         })}
         ${renderRadialSetpointDemo({
           label: 'bar at 0°, setpoint at 0°',
@@ -712,14 +714,15 @@ export const SetpointComparisonRadial: Story = {
           atAngleSetpoint: true,
           atAngleSetpointZero: true,
           fillEndAngle: 0,
-          state: InstrumentState.active,
+          state: InstrumentState.inCommand,
+          focused: true,
         })}
         ${renderRadialSetpointDemo({
           label: 'bar at 45°, setpoint at 30°',
           angleSetpoint: 30,
           atAngleSetpoint: false,
           fillEndAngle: 45,
-          state: InstrumentState.active,
+          state: InstrumentState.inCommand,
           focused: true,
         })}
       </div>
@@ -763,11 +766,11 @@ export const SetpointComparisonRadial: Story = {
         })}
       </div>
 
-      <!-- Note about active state -->
+      <!-- Note about focus state -->
       <div style="font-size: 11px; color: #666; font-style: italic;">
-        Note: "active" state always maps to "focus" visual state regardless of
-        atSetpoint/focused values. This preserves the original watch.ts behavior
-        where active state used the outlined triangle appearance.
+        Note: "focus" visual state is triggered by the "focused" property (user
+        actively adjusting via touch/drag). This will be exposed as a future
+        instrument API state separate from "active".
       </div>
     </div>
   `,
