@@ -496,9 +496,14 @@ function renderRadialSetpointDemo(config: {
     colorMode,
   } = config;
 
-  // Determine bar fill color based on state
+  // Determine bar fill color based on colorMode (if provided) or state
+  const effectiveColorMode =
+    colorMode ??
+    (state === InstrumentState.inCommand
+      ? SetpointColorMode.enhanced
+      : SetpointColorMode.regular);
   const fillColor =
-    state === InstrumentState.inCommand
+    effectiveColorMode === SetpointColorMode.enhanced
       ? 'var(--instrument-enhanced-tertiary-color)'
       : 'var(--instrument-regular-tertiary-color)';
 
