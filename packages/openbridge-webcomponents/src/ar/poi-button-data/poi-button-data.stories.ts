@@ -1,28 +1,28 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 
 import {
-  ObcPoiTargetButton,
-  ObcPoiTargetButtonType,
-  PoiTargetButtonVisualState,
-} from './poi-target-button.js';
-import './poi-target-button.js';
+  ObcPoiButtonData,
+  ObcPoiButtonDataType,
+  PoiButtonDataVisualState,
+} from './poi-button-data.js';
+import './poi-button-data.js';
 import '../../icons/icon-placeholder.js';
 import {html} from 'lit';
 import {ObcArAlertType} from '../types.js';
 import {crossDecorator} from '../../storybook-util.js';
 import '../../icons/icon-collision-avoidance-overtaking.js';
-const meta: Meta<ObcPoiTargetButton> = {
-  title: 'AR/POI Target Button',
+const meta: Meta<ObcPoiButtonData> = {
+  title: 'AR/POI Button Data',
   tags: ['autodocs'],
-  component: 'obc-poi-target-button',
+  component: 'obc-poi-button-data',
   decorators: [crossDecorator],
   args: {
     selected: false,
-    type: ObcPoiTargetButtonType.Button,
+    type: ObcPoiButtonDataType.Button,
     relativeDirection: 0,
     alertType: ObcArAlertType.None,
     header: null,
-    value: PoiTargetButtonVisualState.Unchecked,
+    value: PoiButtonDataVisualState.Unchecked,
     data: [],
   },
   argTypes: {
@@ -41,16 +41,16 @@ const meta: Meta<ObcPoiTargetButton> = {
     },
     value: {
       control: {type: 'select'},
-      options: Object.values(PoiTargetButtonVisualState),
+      options: Object.values(PoiButtonDataVisualState),
     },
     type: {
       control: {type: 'select'},
-      options: Object.values(ObcPoiTargetButtonType),
+      options: Object.values(ObcPoiButtonDataType),
     },
   },
   render: (args) => {
     return html`
-      <obc-poi-target-button
+      <obc-poi-button-data
         .data=${args.data}
         .selected=${args.selected}
         .relativeDirection=${args.relativeDirection}
@@ -65,13 +65,13 @@ const meta: Meta<ObcPoiTargetButton> = {
           slot="relation"
           part="relation"
         ></obi-collision-avoidance-overtaking>
-      </obc-poi-target-button>
+      </obc-poi-button-data>
     `;
   },
-} satisfies Meta<ObcPoiTargetButton>;
+} satisfies Meta<ObcPoiButtonData>;
 
 export default meta;
-type Story = StoryObj<ObcPoiTargetButton>;
+type Story = StoryObj<ObcPoiButtonData>;
 
 export const Button: Story = {
   args: {},
@@ -79,7 +79,7 @@ export const Button: Story = {
 
 export const Enhanced: Story = {
   args: {
-    type: ObcPoiTargetButtonType.Enhanced,
+    type: ObcPoiButtonDataType.Enhanced,
   },
 };
 
@@ -94,7 +94,7 @@ export const SelectedEnhanced: Story = {
   args: {
     selected: true,
     header: {content: '1'},
-    type: ObcPoiTargetButtonType.Enhanced,
+    type: ObcPoiButtonDataType.Enhanced,
   },
 };
 
@@ -111,7 +111,7 @@ export const CautionEnhanced: Story = {
     selected: true,
     header: {content: '1'},
     alertType: ObcArAlertType.Caution,
-    type: ObcPoiTargetButtonType.Enhanced,
+    type: ObcPoiButtonDataType.Enhanced,
   },
 };
 
@@ -133,42 +133,42 @@ export const Alarm: Story = {
 
 export const Overlapped: Story = {
   args: {
-    value: PoiTargetButtonVisualState.Overlapped,
+    value: PoiButtonDataVisualState.Overlapped,
   },
 };
 
 export const OverlappedEnhanced: Story = {
   args: {
-    value: PoiTargetButtonVisualState.Overlapped,
-    type: ObcPoiTargetButtonType.Enhanced,
+    value: PoiButtonDataVisualState.Overlapped,
+    type: ObcPoiButtonDataType.Enhanced,
   },
 };
 
 export const OverlappedWithCaution: Story = {
   args: {
-    value: PoiTargetButtonVisualState.Overlapped,
+    value: PoiButtonDataVisualState.Overlapped,
     alertType: ObcArAlertType.Caution,
   },
 };
 
 export const OverlappedWithCautionEnhanced: Story = {
   args: {
-    value: PoiTargetButtonVisualState.Overlapped,
+    value: PoiButtonDataVisualState.Overlapped,
     alertType: ObcArAlertType.Caution,
-    type: ObcPoiTargetButtonType.Enhanced,
+    type: ObcPoiButtonDataType.Enhanced,
   },
 };
 
 export const OverlappedWithWarning: Story = {
   args: {
-    value: PoiTargetButtonVisualState.Overlapped,
+    value: PoiButtonDataVisualState.Overlapped,
     alertType: ObcArAlertType.Warning,
   },
 };
 
 export const OverlappedWithAlarm: Story = {
   args: {
-    value: PoiTargetButtonVisualState.Overlapped,
+    value: PoiButtonDataVisualState.Overlapped,
     alertType: ObcArAlertType.Alarm,
   },
 };
@@ -193,7 +193,7 @@ export const WithValuesAndRelation: Story = {
   },
   render: (args) => {
     return html`
-      <obc-poi-target-button
+      <obc-poi-button-data
         .data=${args.data}
         .selected=${args.selected}
         .relativeDirection=${args.relativeDirection}
@@ -209,7 +209,7 @@ export const WithValuesAndRelation: Story = {
           part="relation"
         ></obi-collision-avoidance-overtaking>
         <obi-placeholder slot="id-label"> </obi-placeholder>
-      </obc-poi-target-button>
+      </obc-poi-button-data>
     `;
   },
 };
@@ -230,7 +230,7 @@ export const WithValuesOverlapped: Story = {
       {value: '10', label: 'Lab', unit: 'Unit'},
       {value: '20', label: 'Lab 2', unit: 'Unit 2'},
     ],
-    value: PoiTargetButtonVisualState.Overlapped,
+    value: PoiButtonDataVisualState.Overlapped,
   },
 };
 
@@ -247,9 +247,9 @@ export const AnimatedSizeToggle: Story = {
   render: () => {
     return html`
       <div style="padding: 50px;">
-        <obc-poi-target-button id="animated-btn">
+        <obc-poi-button-data id="animated-btn">
           <obi-placeholder></obi-placeholder>
-        </obc-poi-target-button>
+        </obc-poi-button-data>
         <br /><br />
         <button
           @click=${() => {
@@ -274,7 +274,7 @@ export const AnimatedSizeToggle: Story = {
 
 export const AnimatedSizeToggleEnhanced: Story = {
   args: {
-    type: ObcPoiTargetButtonType.Enhanced,
+    type: ObcPoiButtonDataType.Enhanced,
   },
   parameters: {
     docs: {
@@ -286,12 +286,12 @@ export const AnimatedSizeToggleEnhanced: Story = {
   render: () => {
     return html`
       <div style="padding: 50px;">
-        <obc-poi-target-button
+        <obc-poi-button-data
           id="animated-btn-enhanced"
-          .type=${ObcPoiTargetButtonType.Enhanced}
+          .type=${ObcPoiButtonDataType.Enhanced}
         >
           <obi-placeholder></obi-placeholder>
-        </obc-poi-target-button>
+        </obc-poi-button-data>
         <br /><br />
         <button
           @click=${() => {

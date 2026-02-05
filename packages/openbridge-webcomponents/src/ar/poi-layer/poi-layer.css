@@ -33,7 +33,7 @@
   pointer-events: none;
 }
 
-::slotted(obc-poi-target),
+::slotted(obc-poi-data),
 ::slotted(obc-poi-group) {
   position: absolute;
   bottom: 0;
@@ -52,27 +52,27 @@
   pointer-events: auto;
 }
 
-::slotted(obc-poi-target[data-grouped]) {
+::slotted(obc-poi-data[data-grouped]) {
   opacity: 0;
 }
 
-::slotted(obc-poi-target:not([data-grouped])) {
+::slotted(obc-poi-data:not([data-grouped])) {
   opacity: 1;
 }
 
-::slotted(obc-poi-target[data-behind]) {
+::slotted(obc-poi-data[data-behind]) {
   opacity: 0.4;
   --poi-size: 32px;
   --obc-poi-target-icon-opacity: 0;
 }
 
-::slotted(obc-poi-target[data-exiting]) {
+::slotted(obc-poi-data[data-exiting]) {
   opacity: 0.4;
   --poi-size: 32px;
   --obc-poi-target-icon-opacity: 0;
 }
 
-::slotted(obc-poi-target[data-front]) {
+::slotted(obc-poi-data[data-front]) {
   opacity: 1;
   --poi-size: 36px;
   --obc-poi-target-icon-opacity: 1;

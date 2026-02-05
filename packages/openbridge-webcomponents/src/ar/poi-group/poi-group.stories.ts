@@ -4,10 +4,10 @@ import './poi-group.js';
 import {crossDecorator} from '../../storybook-util.js';
 import {html} from 'lit';
 import {createRef, ref} from 'lit/directives/ref.js';
-import '../poi-target-button/poi-target-button.js';
+import '../poi-button-data/poi-button-data.js';
 import '../../icons/icon-ais-target-activated-iec.js';
-import '../poi-target/poi-target.js';
-import {ObcPoiTarget, PoiTargetValue} from '../poi-target/poi-target.js';
+import '../poi-data/poi-data.js';
+import {ObcPoiData, PoiDataValue} from '../poi-data/poi-data.js';
 
 type PoiGroupStoryArgs = {
   expand: boolean;
@@ -15,7 +15,7 @@ type PoiGroupStoryArgs = {
 };
 
 const meta: Meta<PoiGroupStoryArgs> = {
-  title: 'AR/POI Target Button Group',
+  title: 'AR/POI Group',
   tags: ['6.0'],
   component: 'obc-poi-group',
   decorators: [crossDecorator],
@@ -27,18 +27,18 @@ const meta: Meta<PoiGroupStoryArgs> = {
     const wrapperRef = createRef<HTMLDivElement>();
     const onExpand = (event: CustomEvent<{expand: boolean}>) => {
       const wrapper = wrapperRef.value;
-      const outside = wrapper?.querySelector('#outside') as ObcPoiTarget | null;
+      const outside = wrapper?.querySelector('#outside') as ObcPoiData | null;
       if (!outside) {
         return;
       }
       outside.value = event.detail.expand
-        ? PoiTargetValue.Overlapped
-        : PoiTargetValue.Unchecked;
+        ? PoiDataValue.Overlapped
+        : PoiDataValue.Unchecked;
     };
 
     return html`
       <style>
-        obc-poi-target {
+        obc-poi-data {
           position: absolute;
         }
         .stage {
@@ -61,36 +61,36 @@ const meta: Meta<PoiGroupStoryArgs> = {
             positionVertical="calc(50%)"
             @expand=${onExpand}
           >
-            <obc-poi-target
+            <obc-poi-data
               id="target-3"
               .header=${{content: '3'}}
               .x=${300}
               .height=${240}
               .y=${240}
-            ></obc-poi-target>
-            <obc-poi-target
+            ></obc-poi-data>
+            <obc-poi-data
               id="target-1"
               .header=${{content: '1'}}
               .x=${320}
               .height=${240}
               .y=${240}
               .relativeDirection=${65}
-            ></obc-poi-target>
-            <obc-poi-target
+            ></obc-poi-data>
+            <obc-poi-data
               id="target-2"
               .header=${{content: '2'}}
               .x=${340}
               .height=${240}
               .y=${240}
-            ></obc-poi-target>
+            ></obc-poi-data>
           </obc-poi-group>
-          <obc-poi-target
+          <obc-poi-data
             id="outside"
             .header=${{content: '4'}}
             .x=${200}
             .height=${240}
             .y=${240}
-          ></obc-poi-target>
+          ></obc-poi-data>
         </div>
       </div>
     `;
@@ -114,18 +114,18 @@ export const GroupedWithNumbers: Story = {
     const wrapperRef = createRef<HTMLDivElement>();
     const onExpand = (event: CustomEvent<{expand: boolean}>) => {
       const wrapper = wrapperRef.value;
-      const outside = wrapper?.querySelector('#outside') as ObcPoiTarget | null;
+      const outside = wrapper?.querySelector('#outside') as ObcPoiData | null;
       if (!outside) {
         return;
       }
       outside.value = event.detail.expand
-        ? PoiTargetValue.Overlapped
-        : PoiTargetValue.Unchecked;
+        ? PoiDataValue.Overlapped
+        : PoiDataValue.Unchecked;
     };
 
     return html`
       <style>
-        obc-poi-target {
+        obc-poi-data {
           position: absolute;
         }
         .stage {
@@ -148,36 +148,36 @@ export const GroupedWithNumbers: Story = {
             positionVertical="calc(50%)"
             @expand=${onExpand}
           >
-            <obc-poi-target
+            <obc-poi-data
               id="target-3"
               .header=${{content: '3'}}
               .x=${300}
               .height=${240}
               .y=${240}
-            ></obc-poi-target>
-            <obc-poi-target
+            ></obc-poi-data>
+            <obc-poi-data
               id="target-1"
               .header=${{content: '1'}}
               .x=${320}
               .height=${240}
               .y=${240}
               .relativeDirection=${65}
-            ></obc-poi-target>
-            <obc-poi-target
+            ></obc-poi-data>
+            <obc-poi-data
               id="target-2"
               .header=${{content: '2'}}
               .x=${340}
               .height=${240}
               .y=${240}
-            ></obc-poi-target>
+            ></obc-poi-data>
           </obc-poi-group>
-          <obc-poi-target
+          <obc-poi-data
             id="outside"
             .header=${{content: '4'}}
             .x=${200}
             .height=${240}
             .y=${240}
-          ></obc-poi-target>
+          ></obc-poi-data>
         </div>
       </div>
     `;
@@ -194,13 +194,13 @@ export const Expanded: Story = {
 
     const onExpand = (event: CustomEvent<{expand: boolean}>) => {
       const wrapper = wrapperRef.value;
-      const outside = wrapper?.querySelector('#outside') as ObcPoiTarget | null;
+      const outside = wrapper?.querySelector('#outside') as ObcPoiData | null;
       if (!outside) {
         return;
       }
       outside.value = event.detail.expand
-        ? PoiTargetValue.Overlapped
-        : PoiTargetValue.Unchecked;
+        ? PoiDataValue.Overlapped
+        : PoiDataValue.Unchecked;
     };
 
     if (args.expand) {
@@ -213,7 +213,7 @@ export const Expanded: Story = {
 
     return html`
       <style>
-        obc-poi-target {
+        obc-poi-data {
           position: absolute;
         }
         .stage {
@@ -237,15 +237,15 @@ export const Expanded: Story = {
             positionVertical="calc(50%)"
             @expand=${onExpand}
           >
-            <obc-poi-target
+            <obc-poi-data
               id="target-3"
               .header=${{content: '3'}}
               .x=${300}
               .height=${240}
               .y=${260}
               .fixedTarget=${false}
-            ></obc-poi-target>
-            <obc-poi-target
+            ></obc-poi-data>
+            <obc-poi-data
               id="target-1"
               .header=${{content: '1'}}
               .x=${320}
@@ -253,24 +253,24 @@ export const Expanded: Story = {
               .y=${100}
               .fixedTarget=${false}
               .relativeDirection=${65}
-            ></obc-poi-target>
-            <obc-poi-target
+            ></obc-poi-data>
+            <obc-poi-data
               id="target-2"
               .header=${{content: '2'}}
               .x=${340}
               .height=${240}
               .y=${100}
               .fixedTarget=${false}
-            ></obc-poi-target>
+            ></obc-poi-data>
           </obc-poi-group>
-          <obc-poi-target
+          <obc-poi-data
             id="outside"
             .header=${{content: '4'}}
             .x=${200}
             .height=${240}
             .y=${100}
             .fixedTarget=${false}
-          ></obc-poi-target>
+          ></obc-poi-data>
         </div>
       </div>
     `;
@@ -386,7 +386,7 @@ export const InternalGroupSwapping: Story = {
 
     return html`
       <style>
-        obc-poi-target {
+        obc-poi-data {
           position: absolute;
         }
         .stage {
@@ -413,27 +413,27 @@ export const InternalGroupSwapping: Story = {
               }
             }}
           >
-            <obc-poi-target
+            <obc-poi-data
               id="swap-a"
               .header=${{content: '1'}}
               .x=${300}
               .height=${240}
               .y=${240}
-            ></obc-poi-target>
-            <obc-poi-target
+            ></obc-poi-data>
+            <obc-poi-data
               id="swap-b"
               .header=${{content: '2'}}
               .x=${320}
               .height=${240}
               .y=${240}
-            ></obc-poi-target>
-            <obc-poi-target
+            ></obc-poi-data>
+            <obc-poi-data
               id="swap-c"
               .header=${{content: '3'}}
               .x=${340}
               .height=${240}
               .y=${240}
-            ></obc-poi-target>
+            ></obc-poi-data>
           </obc-poi-group>
         </div>
       </div>

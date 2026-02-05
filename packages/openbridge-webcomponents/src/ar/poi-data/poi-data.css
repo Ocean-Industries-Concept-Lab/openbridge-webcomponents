@@ -31,12 +31,12 @@
   transform: translateX(-50%);
 }
 
-obc-poi-target-button {
+obc-poi-button-data {
   transform: translateX(var(--obc-poi-target-button-offset-x, 0px));
   transition: transform 0.1s ease-out;
 }
 
-.wrapper[data-no-transition] obc-poi-target-button {
+.wrapper[data-no-transition] obc-poi-button-data {
   transition: none;
 }
 

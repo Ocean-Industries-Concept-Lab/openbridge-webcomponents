@@ -1,18 +1,18 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
-import compentStyle from './poi-target.css?inline';
+import compentStyle from './poi-data.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import '../poi-line/poi-line.js';
-import '../poi-target-button/poi-target-button.js';
+import '../poi-button-data/poi-button-data.js';
 import {POIStyle} from '../poi-graphic-line/poi-config.js';
 import '../../icons/icon-ais-target-activated-iec.js';
 import {ObcArAlertType} from '../types.js';
 import {
-  ObcPoiTargetButtonType,
-  ObcPoiTargetButtonData,
-  ObcPoiTargetButtonHeader,
-  PoiTargetButtonVisualState,
-} from '../poi-target-button/poi-target-button.js';
+  ObcPoiButtonDataType,
+  ObcPoiButtonDataItem,
+  ObcPoiButtonDataHeader,
+  PoiButtonDataVisualState,
+} from '../poi-button-data/poi-button-data.js';
 import {customElement} from '../../decorator.js';
 
 export enum TargetState {
@@ -46,10 +46,10 @@ export enum Pointer {
   None = 'null',
 }
 
-export {PoiTargetButtonVisualState as PoiTargetValue};
+export {PoiButtonDataVisualState as PoiDataValue};
 
 /**
- * `<obc-poi-target>` renders a point-of-interest marker with a selectable target
+ * `<obc-poi-data>` renders a point-of-interest marker with a selectable target
  * button and optional pointer line.
  *
  * Use this component inside `obc-poi-layer` or `obc-poi-group` to
@@ -58,7 +58,7 @@ export {PoiTargetButtonVisualState as PoiTargetValue};
  *
  * ### Features
  * - Positions via `x` and a configurable pointer line.
- * - Visual emphasis controlled by `value` (see `PoiTargetValue`).
+ * - Visual emphasis controlled by `value` (see `PoiDataValue`).
  * - Alarm state controlled by `state` (enabled, caution, warning, alarm).
  * - Multi-value button rendering via the `data` array.
  * - Horizontal nudging via `buttonOffsetX` for overlap or crossing layouts.
@@ -86,28 +86,28 @@ export {PoiTargetButtonVisualState as PoiTargetValue};
  * ### Best Practices
  * - Use within `obc-poi-layer` for automatic grouping and overlap behaviors.
  * - Keep pointer lines short to reduce visual clutter.
- * - Prefer `PoiTargetValue` enum values over manual styling.
+ * - Prefer `PoiDataValue` enum values over manual styling.
  *
  * ### Example
  * ```html
- * <obc-poi-target x="120" height="200" y="192"></obc-poi-target>
+ * <obc-poi-data x="120" height="200" y="192"></obc-poi-data>
  * ```
  *
  * @slot none
  * @fires none - This component does not emit custom events.
  */
 
-@customElement('obc-poi-target')
-export class ObcPoiTarget extends LitElement {
+@customElement('obc-poi-data')
+export class ObcPoiData extends LitElement {
   @property({type: Number}) x = 0;
   @property({type: Number}) height: number | null = null;
   @property({type: Number}) y = 192;
   @property({type: Boolean}) selected = false;
-  @property({type: Object}) header: ObcPoiTargetButtonHeader | null = null;
+  @property({type: Object}) header: ObcPoiButtonDataHeader | null = null;
   @property({type: String}) alertType = ObcArAlertType.None;
   @property({type: String, reflect: true})
-  value: PoiTargetButtonVisualState = PoiTargetButtonVisualState.Unchecked;
-  @property({type: String}) type = ObcPoiTargetButtonType.Button;
+  value: PoiButtonDataVisualState = PoiButtonDataVisualState.Unchecked;
+  @property({type: String}) type = ObcPoiButtonDataType.Button;
   @property({type: String}) state: TargetState = TargetState.Enabled;
   @property({type: String}) pointerType: Pointer = Pointer.Line;
   @property({type: Number}) relativeDirection = 0;
@@ -173,7 +173,7 @@ export class ObcPoiTarget extends LitElement {
       },
     },
   })
-  data: ObcPoiTargetButtonData[] = [];
+  data: ObcPoiButtonDataItem[] = [];
 
   override render() {
     let pointer = null;
@@ -235,7 +235,7 @@ export class ObcPoiTarget extends LitElement {
           .filter(Boolean)
           .join(' ')}
       >
-        <obc-poi-target-button
+        <obc-poi-button-data
           .relativeDirection=${this.relativeDirection}
           .selected=${this.selected}
           .header=${this.header}
@@ -245,7 +245,7 @@ export class ObcPoiTarget extends LitElement {
           .data=${this.data}
         >
           <obi-ais-target-activated-iec></obi-ais-target-activated-iec>
-        </obc-poi-target-button>
+        </obc-poi-button-data>
         ${this.pointerType === Pointer.Line ? pointer : null}
       </div>
     `;
@@ -256,6 +256,6 @@ export class ObcPoiTarget extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-poi-target': ObcPoiTarget;
+    'obc-poi-data': ObcPoiData;
   }
 }

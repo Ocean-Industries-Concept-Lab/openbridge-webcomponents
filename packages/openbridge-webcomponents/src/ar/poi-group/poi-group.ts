@@ -2,8 +2,8 @@ import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
 import {property, queryAssignedElements, state} from 'lit/decorators.js';
 import componentStyle from './poi-group.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
-import {ObcPoiTarget, PoiTargetValue} from '../poi-target/poi-target.js';
-import {ObcPoiTargetButtonType} from '../poi-target-button/poi-target-button.js';
+import {ObcPoiData, PoiDataValue} from '../poi-data/poi-data.js';
+import {ObcPoiButtonDataType} from '../poi-button-data/poi-button-data.js';
 import {customElement} from '../../decorator.js';
 import {
   AnimationManager,
@@ -53,7 +53,7 @@ export class ObcPoiGroup extends LitElement {
   private topOffsetProgress = 0;
   private slotChangeRaf = 0;
   private topOffsetTargets: Map<
-    ObcPoiTarget,
+    ObcPoiData,
     {
       originalX: number;
       expandedOffset: number;
@@ -62,7 +62,7 @@ export class ObcPoiGroup extends LitElement {
     }
   > = new Map();
   private lockedExpandedCenter: number | null = null;
-  private collapseDeltas: Map<ObcPoiTarget, number> = new Map();
+  private collapseDeltas: Map<ObcPoiData, number> = new Map();
 
   constructor() {
     super();
@@ -202,9 +202,9 @@ export class ObcPoiGroup extends LitElement {
     this.expand = true;
   }
 
-  private expandOffset: Map<ObcPoiTarget, number> = new Map();
+  private expandOffset: Map<ObcPoiData, number> = new Map();
 
-  getExpandedChildOffset(child: ObcPoiTarget): number | null {
+  getExpandedChildOffset(child: ObcPoiData): number | null {
     return this.expandOffset.get(child) ?? null;
   }
 
@@ -222,10 +222,10 @@ export class ObcPoiGroup extends LitElement {
       return;
     }
 
-    const oldPosition = new Map<ObcPoiTarget, number>();
+    const oldPosition = new Map<ObcPoiData, number>();
     if (expand) {
       this._children.forEach((child) => {
-        if (child instanceof ObcPoiTarget) {
+        if (child instanceof ObcPoiData) {
           const boundingBox = child.getBoundingClientRect();
           oldPosition.set(child, boundingBox.left);
         }
@@ -239,9 +239,7 @@ export class ObcPoiGroup extends LitElement {
     if (expand) {
       if (this.internalSwapping) {
         const ordered = this._children
-          .filter(
-            (child): child is ObcPoiTarget => child instanceof ObcPoiTarget
-          )
+          .filter((child): child is ObcPoiData => child instanceof ObcPoiData)
           .map((child) => ({
             child,
             left: oldPosition.get(child) ?? child.getBoundingClientRect().left,
@@ -263,11 +261,11 @@ export class ObcPoiGroup extends LitElement {
         child.style.minWidth = 'unset';
         child.style.height = 'unset';
       }
-      if (child instanceof ObcPoiTarget) {
+      if (child instanceof ObcPoiData) {
         const isOverlap = !expand && child !== frontChild;
         child.value = isOverlap
-          ? PoiTargetValue.Overlapped
-          : PoiTargetValue.Unchecked;
+          ? PoiDataValue.Overlapped
+          : PoiDataValue.Unchecked;
         if (isOverlap) {
           this.applyVisualState(child, true);
         } else {
@@ -330,7 +328,7 @@ export class ObcPoiGroup extends LitElement {
     this.topOffsetTargets.clear();
 
     const targets = this._children.filter(
-      (child): child is ObcPoiTarget => child instanceof ObcPoiTarget
+      (child): child is ObcPoiData => child instanceof ObcPoiData
     );
 
     if (targets.length === 0) return;
@@ -416,7 +414,7 @@ export class ObcPoiGroup extends LitElement {
       });
       this.topOffsetTargets.forEach((_, child) => {
         if (child !== frontChild) {
-          child.value = PoiTargetValue.Overlapped;
+          child.value = PoiDataValue.Overlapped;
           this.applyVisualState(child, true);
         }
       });
@@ -442,7 +440,7 @@ export class ObcPoiGroup extends LitElement {
 
   private runTopOffsetAnimation(
     targetProgress: number,
-    frontChild: ObcPoiTarget | null
+    frontChild: ObcPoiData | null
   ) {
     const duration = this.getCssVarAsNumber(TOP_OFFSET_ANIMATION_MS_VAR, 100);
 
@@ -488,10 +486,7 @@ export class ObcPoiGroup extends LitElement {
       }
     );
   }
-  private applyTopOffsetState(
-    progress: number,
-    frontChild: ObcPoiTarget | null
-  ) {
+  private applyTopOffsetState(progress: number, frontChild: ObcPoiData | null) {
     const eased = easeInOutQuad(progress);
 
     const visualExpanded = this.topOffsetTargetExpanded;
@@ -522,15 +517,15 @@ export class ObcPoiGroup extends LitElement {
       if (child !== frontChild) {
         const isOverlap = !visualExpanded;
         child.value = isOverlap
-          ? PoiTargetValue.Overlapped
-          : PoiTargetValue.Unchecked;
+          ? PoiDataValue.Overlapped
+          : PoiDataValue.Unchecked;
         if (isOverlap) {
           this.applyVisualState(child, true);
         } else {
           this.clearVisualState(child);
         }
       } else {
-        child.value = PoiTargetValue.Unchecked;
+        child.value = PoiDataValue.Unchecked;
         this.clearVisualState(child);
       }
 
@@ -547,9 +542,9 @@ export class ObcPoiGroup extends LitElement {
     });
   }
 
-  private getFrontChild(): ObcPoiTarget | null {
+  private getFrontChild(): ObcPoiData | null {
     const targets = this._children.filter(
-      (child): child is ObcPoiTarget => child instanceof ObcPoiTarget
+      (child): child is ObcPoiData => child instanceof ObcPoiData
     );
 
     if (targets.length === 0) return null;
@@ -559,7 +554,7 @@ export class ObcPoiGroup extends LitElement {
     );
     if (frontByAttr) return frontByAttr;
 
-    let front: ObcPoiTarget | null = null;
+    let front: ObcPoiData | null = null;
     let maxHeight = Number.NEGATIVE_INFINITY;
 
     for (const child of targets) {
@@ -607,11 +602,11 @@ export class ObcPoiGroup extends LitElement {
   private syncFrontChild() {
     const front = this.getFrontChild();
     this._children.forEach((child) => {
-      if (!(child instanceof ObcPoiTarget)) return;
+      if (!(child instanceof ObcPoiData)) return;
       const isOverlap = !this.expand && (!front || child !== front);
       child.value = isOverlap
-        ? PoiTargetValue.Overlapped
-        : PoiTargetValue.Unchecked;
+        ? PoiDataValue.Overlapped
+        : PoiDataValue.Unchecked;
       if (isOverlap) {
         this.applyVisualState(child, true);
       } else {
@@ -664,15 +659,14 @@ export class ObcPoiGroup extends LitElement {
     this.updateExpandedOffsets();
   }
 
-  private lastAppliedOffsets: Map<ObcPoiTarget, {topOffset: number}> =
-    new Map();
-  private lastTargetOrder: ObcPoiTarget[] = [];
+  private lastAppliedOffsets: Map<ObcPoiData, {topOffset: number}> = new Map();
+  private lastTargetOrder: ObcPoiData[] = [];
 
   private updateExpandedOffsets(snap: boolean = false) {
     if (!this.expand) return;
 
     const targets = this._children.filter(
-      (child): child is ObcPoiTarget => child instanceof ObcPoiTarget
+      (child): child is ObcPoiData => child instanceof ObcPoiData
     );
 
     const sortedByCurrentPosition = [...targets]
@@ -783,9 +777,9 @@ export class ObcPoiGroup extends LitElement {
     return Number.parseFloat(computedStyle) || 0;
   }
 
-  private getTargetButtonRect(target: ObcPoiTarget): DOMRect {
+  private getTargetButtonRect(target: ObcPoiData): DOMRect {
     const targetShadow = target.shadowRoot;
-    const button = targetShadow?.querySelector('obc-poi-target-button') as
+    const button = targetShadow?.querySelector('obc-poi-button-data') as
       | HTMLElement
       | undefined;
     const buttonShadow = button?.shadowRoot;
@@ -824,8 +818,8 @@ export class ObcPoiGroup extends LitElement {
       : this.getCssVarAsNumber(POI_VISUAL_TARGET_VAR, 36);
   }
 
-  private applyVisualState(target: ObcPoiTarget, overlap: boolean) {
-    const isEnhanced = target.type === ObcPoiTargetButtonType.Enhanced;
+  private applyVisualState(target: ObcPoiData, overlap: boolean) {
+    const isEnhanced = target.type === ObcPoiButtonDataType.Enhanced;
     const size = this.getVisualTargetSize(isEnhanced, overlap);
     target.style.setProperty('--poi-size', `${size}px`);
     target.style.setProperty(
@@ -848,7 +842,7 @@ export class ObcPoiGroup extends LitElement {
     );
   }
 
-  private clearVisualState(target: ObcPoiTarget) {
+  private clearVisualState(target: ObcPoiData) {
     target.style.removeProperty('--poi-size');
     target.style.removeProperty('--obc-poi-target-icon-opacity');
     target.style.removeProperty('--obc-poi-overlap');

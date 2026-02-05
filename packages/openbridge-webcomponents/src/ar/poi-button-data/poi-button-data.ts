@@ -1,30 +1,30 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
-import compentStyle from './poi-target-button.css?inline';
+import compentStyle from './poi-button-data.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {ObcArAlertType} from '../types.js';
 import {selectionFrame} from './selection-frame.js';
 import {customElement} from '../../decorator.js';
 
-export enum ObcPoiTargetButtonType {
+export enum ObcPoiButtonDataType {
   Button = 'button',
   Enhanced = 'enhanced',
 }
 
-export enum PoiTargetButtonVisualState {
+export enum PoiButtonDataVisualState {
   Unchecked = 'unchecked',
   Checked = 'checked',
   Activated = 'activated',
   Overlapped = 'overlapped',
 }
 
-export interface ObcPoiTargetButtonData {
+export interface ObcPoiButtonDataItem {
   value: string;
   label: string;
   unit: string;
 }
 
-export interface ObcPoiTargetButtonHeader {
+export interface ObcPoiButtonDataHeader {
   content?: string;
   size?: string;
   state?: string;
@@ -32,18 +32,17 @@ export interface ObcPoiTargetButtonHeader {
   hasIndicator?: boolean;
 }
 
-@customElement('obc-poi-target-button')
-export class ObcPoiTargetButton extends LitElement {
+@customElement('obc-poi-button-data')
+export class ObcPoiButtonData extends LitElement {
   @property({type: Number}) relativeDirection = 0;
   @property({type: Boolean}) selected = false;
-  @property({type: Object}) header: ObcPoiTargetButtonHeader | null = null;
+  @property({type: Object}) header: ObcPoiButtonDataHeader | null = null;
   @property({type: String}) alertType = ObcArAlertType.None;
   @property({type: String, reflect: true})
-  value: PoiTargetButtonVisualState = PoiTargetButtonVisualState.Unchecked;
-  @property({type: String}) type = ObcPoiTargetButtonType.Button;
+  value: PoiButtonDataVisualState = PoiButtonDataVisualState.Unchecked;
+  @property({type: String}) type = ObcPoiButtonDataType.Button;
   @property({type: Boolean}) inExpandedGroup = false;
-  @property({type: Array, attribute: false}) data: ObcPoiTargetButtonData[] =
-    [];
+  @property({type: Array, attribute: false}) data: ObcPoiButtonDataItem[] = [];
   @property({type: Boolean}) hasRelation = false;
 
   get hasData(): boolean {
@@ -159,6 +158,6 @@ export class ObcPoiTargetButton extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-poi-target-button': ObcPoiTargetButton;
+    'obc-poi-button-data': ObcPoiButtonData;
   }
 }

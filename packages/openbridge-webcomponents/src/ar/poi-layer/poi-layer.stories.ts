@@ -3,8 +3,8 @@ import {html} from 'lit';
 import {createRef, ref} from 'lit/directives/ref.js';
 import {OverlapMode, PoiLayerRole} from './poi-layer.js';
 import './poi-layer.js';
-import '../poi-target/poi-target.js';
-import {ObcPoiTarget, PoiTargetValue} from '../poi-target/poi-target.js';
+import '../poi-data/poi-data.js';
+import {ObcPoiData, PoiDataValue} from '../poi-data/poi-data.js';
 import '../poi-group/poi-group.js';
 
 type PoiLayerArgs = {
@@ -75,17 +75,19 @@ export const AnimatedLayout: Story = {
       if (!root || root.dataset.animating === 'true') return;
       root.dataset.animating = 'true';
 
-      const first = root.querySelector(
-        'obc-poi-target.first'
-      ) as HTMLElement & {x: number; y: number};
+      const first = root.querySelector('obc-poi-data.first') as HTMLElement & {
+        x: number;
+        y: number;
+      };
       const second = root.querySelector(
-        'obc-poi-target.second'
+        'obc-poi-data.second'
       ) as HTMLElement & {x: number; y: number};
-      const third = root.querySelector(
-        'obc-poi-target.third'
-      ) as HTMLElement & {x: number; y: number};
+      const third = root.querySelector('obc-poi-data.third') as HTMLElement & {
+        x: number;
+        y: number;
+      };
       const fourth = root.querySelector(
-        'obc-poi-target.fourth'
+        'obc-poi-data.fourth'
       ) as HTMLElement & {x: number; y: number};
 
       if (!first || !second || !third || !fourth) return;
@@ -144,10 +146,10 @@ export const AnimatedLayout: Story = {
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
         >
-          <obc-poi-target class="first" .y=${110}> </obc-poi-target>
-          <obc-poi-target class="second" .y=${70}> </obc-poi-target>
-          <obc-poi-target class="third" .y=${90}> </obc-poi-target>
-          <obc-poi-target class="fourth" .y=${100}> </obc-poi-target>
+          <obc-poi-data class="first" .y=${110}> </obc-poi-data>
+          <obc-poi-data class="second" .y=${70}> </obc-poi-data>
+          <obc-poi-data class="third" .y=${90}> </obc-poi-data>
+          <obc-poi-data class="fourth" .y=${100}> </obc-poi-data>
         </obc-poi-layer>
       </div>
     `;
@@ -173,9 +175,9 @@ export const Primary: Story = {
         ?join-while-expanded=${args.joinWhileExpanded}
         .internalSwapping=${!!args.internalSwapping}
       >
-        <obc-poi-target .x=${120} .y=${120}> </obc-poi-target>
-        <obc-poi-target .x=${320} .y=${70}> </obc-poi-target>
-        <obc-poi-target .x=${520} .y=${140}> </obc-poi-target>
+        <obc-poi-data .x=${120} .y=${120}> </obc-poi-data>
+        <obc-poi-data .x=${320} .y=${70}> </obc-poi-data>
+        <obc-poi-data .x=${520} .y=${140}> </obc-poi-data>
       </obc-poi-layer>
     `;
   },
@@ -217,9 +219,9 @@ export const WithValuesTargets: Story = {
         ?join-while-expanded=${args.joinWhileExpanded}
         .internalSwapping=${!!args.internalSwapping}
       >
-        <obc-poi-target .x=${120} .y=${140} .values=${valuesA}></obc-poi-target>
-        <obc-poi-target .x=${320} .y=${120} .values=${valuesB}></obc-poi-target>
-        <obc-poi-target .x=${520} .y=${160} .values=${valuesC}></obc-poi-target>
+        <obc-poi-data .x=${120} .y=${140} .values=${valuesA}></obc-poi-data>
+        <obc-poi-data .x=${320} .y=${120} .values=${valuesB}></obc-poi-data>
+        <obc-poi-data .x=${520} .y=${160} .values=${valuesC}></obc-poi-data>
       </obc-poi-layer>
     `;
   },
@@ -254,8 +256,8 @@ export const Overlap: Story = {
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
         >
-          <obc-poi-target .x=${260} .y=${80}></obc-poi-target>
-          <obc-poi-target .x=${280} .y=${140}></obc-poi-target>
+          <obc-poi-data .x=${260} .y=${80}></obc-poi-data>
+          <obc-poi-data .x=${280} .y=${140}></obc-poi-data>
         </obc-poi-layer>
       </div>
     `;
@@ -291,13 +293,13 @@ export const OverlapWithGroup: Story = {
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
         >
-          <obc-poi-target .x=${300} .y=${80}></obc-poi-target>
-          <obc-poi-target
+          <obc-poi-data .x=${300} .y=${80}></obc-poi-data>
+          <obc-poi-data
             .x=${320}
             .y=${140}
             .relativeDirection=${65}
-          ></obc-poi-target>
-          <obc-poi-target .x=${340} .y=${60}></obc-poi-target>
+          ></obc-poi-data>
+          <obc-poi-data .x=${340} .y=${60}></obc-poi-data>
         </obc-poi-layer>
       </div>
     `;
@@ -333,14 +335,14 @@ export const OverlapWithGroupNumbers: Story = {
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
         >
-          <obc-poi-target .x=${300} .y=${80} id="3"></obc-poi-target>
-          <obc-poi-target
+          <obc-poi-data .x=${300} .y=${80} id="3"></obc-poi-data>
+          <obc-poi-data
             .x=${320}
             .y=${140}
             .relativeDirection=${65}
             id="1"
-          ></obc-poi-target>
-          <obc-poi-target .x=${340} .y=${60} id="2"></obc-poi-target>
+          ></obc-poi-data>
+          <obc-poi-data .x=${340} .y=${60} id="2"></obc-poi-data>
         </obc-poi-layer>
       </div>
     `;
@@ -359,10 +361,10 @@ export const EnterGroupFromTwo: Story = {
       if (!root || root.dataset.animating === 'true') return;
       root.dataset.animating = 'true';
 
-      const a = root.querySelector('obc-poi-target.a') as
+      const a = root.querySelector('obc-poi-data.a') as
         | (HTMLElement & {x: number; y: number})
         | null;
-      const b = root.querySelector('obc-poi-target.b') as
+      const b = root.querySelector('obc-poi-data.b') as
         | (HTMLElement & {x: number; y: number})
         | null;
       if (!a || !b) return;
@@ -430,8 +432,8 @@ export const EnterGroupFromTwo: Story = {
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
         >
-          <obc-poi-target class="a" .y=${140}></obc-poi-target>
-          <obc-poi-target class="b" .y=${80}></obc-poi-target>
+          <obc-poi-data class="a" .y=${140}></obc-poi-data>
+          <obc-poi-data class="b" .y=${80}></obc-poi-data>
         </obc-poi-layer>
       </div>
     `;
@@ -450,10 +452,10 @@ export const ExitGroup: Story = {
       if (!root || root.dataset.animating === 'true') return;
       root.dataset.animating = 'true';
 
-      const a = root.querySelector('obc-poi-target.a') as
+      const a = root.querySelector('obc-poi-data.a') as
         | (HTMLElement & {x: number; y: number})
         | null;
-      const b = root.querySelector('obc-poi-target.b') as
+      const b = root.querySelector('obc-poi-data.b') as
         | (HTMLElement & {x: number; y: number})
         | null;
       if (!a || !b) return;
@@ -512,8 +514,8 @@ export const ExitGroup: Story = {
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
         >
-          <obc-poi-target class="a" .y=${120}></obc-poi-target>
-          <obc-poi-target class="b" .y=${90}></obc-poi-target>
+          <obc-poi-data class="a" .y=${120}></obc-poi-data>
+          <obc-poi-data class="b" .y=${90}></obc-poi-data>
         </obc-poi-layer>
       </div>
     `;
@@ -532,13 +534,13 @@ export const JoinGroup: Story = {
       if (!root || root.dataset.animating === 'true') return;
       root.dataset.animating = 'true';
 
-      const a = root.querySelector('obc-poi-target.a') as
+      const a = root.querySelector('obc-poi-data.a') as
         | (HTMLElement & {x: number; y: number})
         | null;
-      const b = root.querySelector('obc-poi-target.b') as
+      const b = root.querySelector('obc-poi-data.b') as
         | (HTMLElement & {x: number; y: number})
         | null;
-      const c = root.querySelector('obc-poi-target.c') as
+      const c = root.querySelector('obc-poi-data.c') as
         | (HTMLElement & {x: number; y: number})
         | null;
       if (!a || !b || !c) return;
@@ -597,8 +599,8 @@ export const JoinGroup: Story = {
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
         >
-          <obc-poi-target class="a" .x=${300} .y=${140}></obc-poi-target>
-          <obc-poi-target class="b" .x=${320} .y=${100}></obc-poi-target>
+          <obc-poi-data class="a" .x=${300} .y=${140}></obc-poi-data>
+          <obc-poi-data class="b" .x=${320} .y=${100}></obc-poi-data>
         </obc-poi-layer>
       </div>
     `;
@@ -620,10 +622,10 @@ export const JoinExpandedGroup: Story = {
       if (!root || root.dataset.animating === 'true') return;
       root.dataset.animating = 'true';
 
-      const a = root.querySelector('obc-poi-target.a') as
+      const a = root.querySelector('obc-poi-data.a') as
         | (HTMLElement & {x: number; y: number})
         | null;
-      const b = root.querySelector('obc-poi-target.b') as
+      const b = root.querySelector('obc-poi-data.b') as
         | (HTMLElement & {x: number; y: number})
         | null;
       if (!a || !b) return;
@@ -631,7 +633,7 @@ export const JoinExpandedGroup: Story = {
       a.x = 300;
       b.x = 320;
 
-      const c = document.createElement('obc-poi-target') as ObcPoiTarget;
+      const c = document.createElement('obc-poi-data') as ObcPoiData;
       c.classList.add('c');
       c.x = 520;
       c.y = 80;
@@ -640,7 +642,7 @@ export const JoinExpandedGroup: Story = {
         const layer = layerRef.value;
         if (!layer) return;
         layer.appendChild(c);
-        c.value = PoiTargetValue.Overlapped;
+        c.value = PoiDataValue.Overlapped;
         const duration = 12000;
         const delayMs = 1000;
         let startTime: number | null = null;
@@ -729,8 +731,8 @@ export const JoinExpandedGroup: Story = {
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
         >
-          <obc-poi-target class="a" .y=${140}></obc-poi-target>
-          <obc-poi-target class="b" .y=${100}></obc-poi-target>
+          <obc-poi-data class="a" .y=${140}></obc-poi-data>
+          <obc-poi-data class="b" .y=${100}></obc-poi-data>
         </obc-poi-layer>
       </div>
     `;
@@ -751,13 +753,13 @@ export const LeaveExpandedGroup: Story = {
       if (!root || root.dataset.animating === 'true') return;
       root.dataset.animating = 'true';
 
-      const a = root.querySelector('obc-poi-target.a') as
+      const a = root.querySelector('obc-poi-data.a') as
         | (HTMLElement & {x: number; y: number})
         | null;
-      const b = root.querySelector('obc-poi-target.b') as
+      const b = root.querySelector('obc-poi-data.b') as
         | (HTMLElement & {x: number; y: number})
         | null;
-      const c = root.querySelector('obc-poi-target.c') as
+      const c = root.querySelector('obc-poi-data.c') as
         | (HTMLElement & {x: number; y: number})
         | null;
       if (!a || !b || !c) return;
@@ -844,9 +846,9 @@ export const LeaveExpandedGroup: Story = {
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
         >
-          <obc-poi-target class="a" .y=${140}></obc-poi-target>
-          <obc-poi-target class="b" .y=${100}></obc-poi-target>
-          <obc-poi-target class="c" .y=${80}></obc-poi-target>
+          <obc-poi-data class="a" .y=${140}></obc-poi-data>
+          <obc-poi-data class="b" .y=${100}></obc-poi-data>
+          <obc-poi-data class="c" .y=${80}></obc-poi-data>
         </obc-poi-layer>
       </div>
     `;
@@ -873,10 +875,10 @@ export const CrossingMode: Story = {
     const resetPositions = () => {
       const root = hostRef.value;
       if (!root) return;
-      const staticPoi = root.querySelector('obc-poi-target.static') as
+      const staticPoi = root.querySelector('obc-poi-data.static') as
         | (HTMLElement & {x: number; y: number})
         | null;
-      const movingPoi = root.querySelector('obc-poi-target.moving') as
+      const movingPoi = root.querySelector('obc-poi-data.moving') as
         | (HTMLElement & {x: number; y: number})
         | null;
       if (!staticPoi || !movingPoi) return;
@@ -920,10 +922,10 @@ export const CrossingMode: Story = {
         const elapsed = now - startTime;
         const t = (elapsed % duration) / duration;
 
-        const movingPoi = root.querySelector('obc-poi-target.moving') as
+        const movingPoi = root.querySelector('obc-poi-data.moving') as
           | (HTMLElement & {x: number; y: number})
           | null;
-        const staticPoi = root.querySelector('obc-poi-target.static') as
+        const staticPoi = root.querySelector('obc-poi-data.static') as
           | (HTMLElement & {x: number; y: number})
           | null;
         if (!movingPoi || !staticPoi) return;
@@ -978,12 +980,12 @@ export const CrossingMode: Story = {
           .internalSwapping=${!!args.internalSwapping}
           .overlapMode=${OverlapMode.Crossing}
         >
-          <obc-poi-target class="static" .y=${120}></obc-poi-target>
-          <obc-poi-target
+          <obc-poi-data class="static" .y=${120}></obc-poi-data>
+          <obc-poi-data
             class="moving"
             .y=${120}
             .allowButtonTransition=${true}
-          ></obc-poi-target>
+          ></obc-poi-data>
         </obc-poi-layer>
       </div>
     `;

@@ -76,12 +76,12 @@
   pointer-events: auto;
 }
 
-::slotted(obc-poi-target) {
+::slotted(obc-poi-data) {
   pointer-events: auto;
 }
 
 /* Ensure targets inside groups inherit layer-style positioning when grouped in a layer. */
-:host([data-in-poi-layer]) ::slotted(obc-poi-target) {
+:host([data-in-poi-layer]) ::slotted(obc-poi-data) {
   position: absolute;
   transform-origin: 50% 50%;
   --obc-poi-layer-target-scale: 1;
@@ -94,7 +94,7 @@
 }
 
 :host([data-in-poi-layer][data-position-mode="bottom"])
-  ::slotted(obc-poi-target) {
+  ::slotted(obc-poi-data) {
   top: auto;
   bottom: 0;
   height: 100%;
@@ -103,14 +103,14 @@
     scale(var(--obc-poi-layer-target-scale));
 }
 
-:host([data-in-poi-layer]) ::slotted(obc-poi-target[data-behind]),
-:host([data-in-poi-layer]) ::slotted(obc-poi-target[data-exiting]) {
+:host([data-in-poi-layer]) ::slotted(obc-poi-data[data-behind]),
+:host([data-in-poi-layer]) ::slotted(obc-poi-data[data-exiting]) {
   opacity: 0.4;
   --poi-size: 32px;
   --obc-poi-target-icon-opacity: 0;
 }
 
-:host([data-in-poi-layer]) ::slotted(obc-poi-target[data-front]) {
+:host([data-in-poi-layer]) ::slotted(obc-poi-data[data-front]) {
   opacity: 1;
   --poi-size: 36px;
   --obc-poi-target-icon-opacity: 1;
@@ -120,7 +120,7 @@
   transform: translateY(-100%);
 }
 
-::slotted(obc-poi-target[data-grouped]) {
+::slotted(obc-poi-data[data-grouped]) {
   opacity: 1;
   transition: opacity 0.1s ease-out;
 }

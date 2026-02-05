@@ -3,7 +3,7 @@ import {html} from 'lit';
 import {PoiLayerSelectionMode} from './poi-layer-stack.js';
 import './poi-layer-stack.js';
 import '../poi-layer/poi-layer.js';
-import '../poi-target/poi-target.js';
+import '../poi-data/poi-data.js';
 
 type PoiLayerStackArgs = {
   label: string;
@@ -61,14 +61,11 @@ const renderTwoLayers = (args: PoiLayerStackArgs) => html`
   </style>
   <obc-poi-layer-stack class="stack" selection-mode=${args.selectionMode}>
     <obc-poi-layer label="Layer A" role="selected" .layerIndex=${1} debug>
-      <obc-poi-target .x=${220} .y=${90} .fixedTarget=${false}>
-      </obc-poi-target>
+      <obc-poi-data .x=${220} .y=${90} .fixedTarget=${false}> </obc-poi-data>
     </obc-poi-layer>
     <obc-poi-layer label="Layer B" role="default" .layerIndex=${2} debug>
-      <obc-poi-target .x=${120} .y=${110} .fixedTarget=${false}>
-      </obc-poi-target>
-      <obc-poi-target .x=${320} .y=${70} .fixedTarget=${false}>
-      </obc-poi-target>
+      <obc-poi-data .x=${120} .y=${110} .fixedTarget=${false}> </obc-poi-data>
+      <obc-poi-data .x=${320} .y=${70} .fixedTarget=${false}> </obc-poi-data>
     </obc-poi-layer>
   </obc-poi-layer-stack>
 `;
@@ -94,8 +91,7 @@ const renderThreeLayers = (args: PoiLayerStackArgs) => {
         role="selected"
         debug
       >
-        <obc-poi-target .x=${520} .y=${110} .fixedTarget=${false}>
-        </obc-poi-target>
+        <obc-poi-data .x=${520} .y=${110} .fixedTarget=${false}> </obc-poi-data>
       </obc-poi-layer>
       <obc-poi-layer
         label="Layer B"
@@ -111,11 +107,11 @@ const renderThreeLayers = (args: PoiLayerStackArgs) => {
         role="default"
         ?debug=${args.debug}
       >
-        <obc-poi-target .x=${80} .y=${120}> </obc-poi-target>
-        <obc-poi-target .x=${260} .y=${80}> </obc-poi-target>
-        <obc-poi-target .x=${180} .y=${100}> </obc-poi-target>
-        <obc-poi-target .x=${420} .y=${140}> </obc-poi-target>
-        <obc-poi-target .x=${140} .y=${90}> </obc-poi-target>
+        <obc-poi-data .x=${80} .y=${120}> </obc-poi-data>
+        <obc-poi-data .x=${260} .y=${80}> </obc-poi-data>
+        <obc-poi-data .x=${180} .y=${100}> </obc-poi-data>
+        <obc-poi-data .x=${420} .y=${140}> </obc-poi-data>
+        <obc-poi-data .x=${140} .y=${90}> </obc-poi-data>
       </obc-poi-layer>
     </obc-poi-layer-stack>
   `;

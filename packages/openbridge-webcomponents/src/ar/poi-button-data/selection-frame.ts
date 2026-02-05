@@ -1,17 +1,17 @@
 import {html, HTMLTemplateResult, nothing} from 'lit';
 import {ObcArAlertType} from '../types.js';
-import {ObcPoiTargetButtonType} from './poi-target-button.js';
+import {ObcPoiButtonDataType} from './poi-button-data.js';
 export function selectionFrame(
   selected: boolean,
   alertType: ObcArAlertType,
-  type: ObcPoiTargetButtonType
+  type: ObcPoiButtonDataType
 ): HTMLTemplateResult | typeof nothing {
   if (!selected) {
     return nothing;
   }
   if (
     alertType === ObcArAlertType.None &&
-    type === ObcPoiTargetButtonType.Button
+    type === ObcPoiButtonDataType.Button
   ) {
     return html`
       <svg
@@ -69,7 +69,7 @@ export function selectionFrame(
         </defs>
       </svg>
     `;
-  } else if (type === ObcPoiTargetButtonType.Button) {
+  } else if (type === ObcPoiButtonDataType.Button) {
     return html`<svg
       width="50"
       height="50"
@@ -125,7 +125,7 @@ export function selectionFrame(
       </defs>
     </svg>`;
   } else if (
-    type === ObcPoiTargetButtonType.Enhanced &&
+    type === ObcPoiButtonDataType.Enhanced &&
     alertType === ObcArAlertType.None
   ) {
     return html`
@@ -184,7 +184,7 @@ export function selectionFrame(
         </defs>
       </svg>
     `;
-  } else if (type === ObcPoiTargetButtonType.Enhanced) {
+  } else if (type === ObcPoiButtonDataType.Enhanced) {
     return html`
       <svg
         width="66"

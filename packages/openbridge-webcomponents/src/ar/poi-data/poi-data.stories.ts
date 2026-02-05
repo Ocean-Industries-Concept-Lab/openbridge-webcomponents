@@ -1,18 +1,18 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcPoiTarget, Pointer, PoiTargetValue} from './poi-target.js';
-import './poi-target.js';
+import {ObcPoiData, Pointer, PoiDataValue} from './poi-data.js';
+import './poi-data.js';
 import {crossDecorator} from '../../storybook-util.js';
 import {html} from 'lit';
-const meta: Meta<ObcPoiTarget> = {
-  title: 'AR/POI Target',
+const meta: Meta<ObcPoiData> = {
+  title: 'AR/POI Data',
   tags: ['autodocs'],
-  component: 'obc-poi-target',
+  component: 'obc-poi-data',
   args: {
     x: 444,
     y: 192,
     height: 192,
     topOffset: 0,
-    value: PoiTargetValue.Unchecked,
+    value: PoiDataValue.Unchecked,
     pointerType: Pointer.Line,
     relativeDirection: 0,
     offset: 0,
@@ -27,7 +27,7 @@ const meta: Meta<ObcPoiTarget> = {
     topOffset: {control: {type: 'range', min: -200, max: 200, step: 1}},
     fixedTarget: {control: {type: 'boolean'}},
     value: {
-      options: Object.values(PoiTargetValue),
+      options: Object.values(PoiDataValue),
       control: {type: 'select'},
     },
     pointerType: {
@@ -77,12 +77,12 @@ const meta: Meta<ObcPoiTarget> = {
           transform: translate(-50%, -50%);
         }
 
-        .frame obc-poi-target {
+        .frame obc-poi-data {
           position: absolute;
         }
       </style>
       <div class="frame">
-        <obc-poi-target
+        <obc-poi-data
           .x=${args.x}
           .y=${args.y}
           .height=${args.height}
@@ -93,24 +93,24 @@ const meta: Meta<ObcPoiTarget> = {
           .offset=${args.offset}
           .data=${args.data}
           .fixedTarget=${args.fixedTarget}
-        ></obc-poi-target>
+        ></obc-poi-data>
       </div>
     `;
   },
-} satisfies Meta<ObcPoiTarget>;
+} satisfies Meta<ObcPoiData>;
 
 export default meta;
-type Story = StoryObj<ObcPoiTarget>;
+type Story = StoryObj<ObcPoiData>;
 
 export const Normal: Story = {
   args: {
-    value: PoiTargetValue.Unchecked,
+    value: PoiDataValue.Unchecked,
   },
 };
 
 export const Enhanced: Story = {
   args: {
-    value: PoiTargetValue.Checked,
+    value: PoiDataValue.Checked,
   },
 };
 
@@ -129,12 +129,12 @@ export const WithValues: Story = {
           transform: translate(-50%, -50%);
         }
 
-        .frame obc-poi-target {
+        .frame obc-poi-data {
           position: absolute;
         }
       </style>
       <div class="frame">
-        <obc-poi-target
+        <obc-poi-data
           .x=${args.x}
           .y=${args.y}
           .height=${args.height}
@@ -145,7 +145,7 @@ export const WithValues: Story = {
           .offset=${args.offset}
           .data=${values}
           .fixedTarget=${args.fixedTarget}
-        ></obc-poi-target>
+        ></obc-poi-data>
       </div>
     `;
   },
@@ -156,7 +156,7 @@ export const AnimatedOffsetBottom: Story = {
     x: 444,
     y: 192,
     height: 192,
-    value: PoiTargetValue.Checked,
+    value: PoiDataValue.Checked,
     pointerType: Pointer.Line,
   },
   render: (args) => {
@@ -164,9 +164,7 @@ export const AnimatedOffsetBottom: Story = {
     let direction = 1;
 
     const animate = () => {
-      const target = document.querySelector(
-        '#animated-poi-target'
-      ) as ObcPoiTarget;
+      const target = document.querySelector('#animated-poi-data') as ObcPoiData;
       if (!target || !target.isConnected) return;
 
       offset += direction * 0.3;
@@ -181,8 +179,8 @@ export const AnimatedOffsetBottom: Story = {
 
     setTimeout(() => {
       const target = document.querySelector(
-        '#animated-poi-target'
-      ) as ObcPoiTarget | null;
+        '#animated-poi-data'
+      ) as ObcPoiData | null;
       if (!target || !target.isConnected) return;
       requestAnimationFrame(animate);
     }, 100);
@@ -196,19 +194,19 @@ export const AnimatedOffsetBottom: Story = {
           transform: translate(-50%, -50%);
         }
 
-        .frame obc-poi-target {
+        .frame obc-poi-data {
           position: absolute;
         }
       </style>
       <div class="frame">
-        <obc-poi-target
-          id="animated-poi-target"
+        <obc-poi-data
+          id="animated-poi-data"
           .x=${args.x}
           .y=${args.y}
           .height=${args.height}
           .value=${args.value}
           .pointerType=${args.pointerType}
-        ></obc-poi-target>
+        ></obc-poi-data>
       </div>
     `;
   },
@@ -219,7 +217,7 @@ export const AnimatedOffsetTop: Story = {
     x: 444,
     y: 192,
     height: 192,
-    value: PoiTargetValue.Checked,
+    value: PoiDataValue.Checked,
     pointerType: Pointer.Line,
   },
   render: (args) => {
@@ -228,8 +226,8 @@ export const AnimatedOffsetTop: Story = {
 
     const animate = () => {
       const target = document.querySelector(
-        '#animated-poi-target-top'
-      ) as ObcPoiTarget;
+        '#animated-poi-data-top'
+      ) as ObcPoiData;
       if (!target || !target.isConnected) return;
 
       topOffset += direction * 0.3;
@@ -245,8 +243,8 @@ export const AnimatedOffsetTop: Story = {
 
     setTimeout(() => {
       const target = document.querySelector(
-        '#animated-poi-target-top'
-      ) as ObcPoiTarget | null;
+        '#animated-poi-data-top'
+      ) as ObcPoiData | null;
       if (!target || !target.isConnected) return;
       requestAnimationFrame(animate);
     }, 100);
@@ -260,19 +258,19 @@ export const AnimatedOffsetTop: Story = {
           transform: translate(-50%, -50%);
         }
 
-        .frame obc-poi-target {
+        .frame obc-poi-data {
           position: absolute;
         }
       </style>
       <div class="frame">
-        <obc-poi-target
-          id="animated-poi-target-top"
+        <obc-poi-data
+          id="animated-poi-data-top"
           .x=${args.x}
           .y=${args.y}
           .height=${args.height}
           .value=${args.value}
           .pointerType=${args.pointerType}
-        ></obc-poi-target>
+        ></obc-poi-data>
       </div>
     `;
   },
@@ -283,7 +281,7 @@ export const AnimatedHeight: Story = {
     x: 444,
     y: 150,
     height: 300,
-    value: PoiTargetValue.Checked,
+    value: PoiDataValue.Checked,
     pointerType: Pointer.Line,
   },
   render: (args) => {
@@ -293,7 +291,7 @@ export const AnimatedHeight: Story = {
     const animate = () => {
       const target = document.querySelector(
         '#animated-height-target'
-      ) as ObcPoiTarget;
+      ) as ObcPoiData;
       if (!target || !target.isConnected) return;
 
       height += direction * 1;
@@ -310,7 +308,7 @@ export const AnimatedHeight: Story = {
     setTimeout(() => {
       const target = document.querySelector(
         '#animated-height-target'
-      ) as ObcPoiTarget | null;
+      ) as ObcPoiData | null;
       if (!target || !target.isConnected) return;
       requestAnimationFrame(animate);
     }, 100);
@@ -325,7 +323,7 @@ export const AnimatedHeight: Story = {
           background: rgba(0, 0, 0, 0.02);
         }
 
-        .frame obc-poi-target {
+        .frame obc-poi-data {
           position: absolute;
         }
 
@@ -349,14 +347,14 @@ export const AnimatedHeight: Story = {
       <div class="frame">
         <div class="reference-line button-reference"></div>
         <div class="reference-line bottom-reference"></div>
-        <obc-poi-target
+        <obc-poi-data
           id="animated-height-target"
           .x=${args.x}
           .y=${args.y}
           .height=${args.height}
           .value=${args.value}
           .pointerType=${args.pointerType}
-        ></obc-poi-target>
+        ></obc-poi-data>
       </div>
     `;
   },
@@ -367,7 +365,7 @@ export const AnimatedLineLength: Story = {
     x: 444,
     y: 150,
     height: 250,
-    value: PoiTargetValue.Checked,
+    value: PoiDataValue.Checked,
     pointerType: Pointer.Line,
   },
   render: (args) => {
@@ -377,7 +375,7 @@ export const AnimatedLineLength: Story = {
     const animate = () => {
       const target = document.querySelector(
         '#animated-line-length'
-      ) as ObcPoiTarget;
+      ) as ObcPoiData;
       if (!target || !target.isConnected) return;
 
       lineLength += direction * 1;
@@ -395,7 +393,7 @@ export const AnimatedLineLength: Story = {
     setTimeout(() => {
       const target = document.querySelector(
         '#animated-line-length'
-      ) as ObcPoiTarget | null;
+      ) as ObcPoiData | null;
       if (!target || !target.isConnected) return;
       requestAnimationFrame(animate);
     }, 100);
@@ -410,7 +408,7 @@ export const AnimatedLineLength: Story = {
           background: rgba(0, 0, 0, 0.02);
         }
 
-        .frame obc-poi-target {
+        .frame obc-poi-data {
           position: absolute;
         }
 
@@ -442,14 +440,14 @@ export const AnimatedLineLength: Story = {
       <div class="frame">
         <div class="reference-line target-reference"></div>
         <div class="label target-label">Target Position (height) Fixed</div>
-        <obc-poi-target
+        <obc-poi-data
           id="animated-line-length"
           .x=${args.x}
           .y=${args.y}
           .height=${args.height}
           .value=${args.value}
           .pointerType=${args.pointerType}
-        ></obc-poi-target>
+        ></obc-poi-data>
       </div>
     `;
   },
@@ -460,7 +458,7 @@ export const CompareModes: Story = {
     x: 300,
     y: 150,
     height: 300,
-    value: PoiTargetValue.Checked,
+    value: PoiDataValue.Checked,
     pointerType: Pointer.Line,
   },
   render: (args) => {
@@ -470,10 +468,10 @@ export const CompareModes: Story = {
     const animate = () => {
       const fixedTarget = document.querySelector(
         '#compare-fixed'
-      ) as ObcPoiTarget;
+      ) as ObcPoiData;
       const normalTarget = document.querySelector(
         '#compare-normal'
-      ) as ObcPoiTarget;
+      ) as ObcPoiData;
       const fixedYLabel = document.querySelector('#fixed-y-value');
       const fixedHeightLabel = document.querySelector('#fixed-height-value');
       const normalYLabel = document.querySelector('#normal-y-value');
@@ -525,11 +523,11 @@ export const CompareModes: Story = {
           height: 100%;
         }
 
-        .mode-container obc-poi-target {
+        .mode-container obc-poi-data {
           position: absolute;
         }
 
-        .mode-container.fixed-mode obc-poi-target {
+        .mode-container.fixed-mode obc-poi-data {
           top: 100px;
         }
 
@@ -598,14 +596,14 @@ export const CompareModes: Story = {
           </div>
           <div class="reference-line button-reference"></div>
           <div class="label button-label">Button Fixed</div>
-          <obc-poi-target
+          <obc-poi-data
             id="compare-fixed"
             .x=${args.x}
             .y=${args.y}
             .fixedTarget=${false}
             .value=${args.value}
             .pointerType=${args.pointerType}
-          ></obc-poi-target>
+          ></obc-poi-data>
         </div>
         <div class="mode-container">
           <div class="label title">fixed-target=true (CV Mode)</div>
@@ -617,7 +615,7 @@ export const CompareModes: Story = {
           </div>
           <div class="reference-line target-reference"></div>
           <div class="label target-label">Target Fixed</div>
-          <obc-poi-target
+          <obc-poi-data
             id="compare-normal"
             .x=${args.x}
             .y=${args.y}
@@ -625,7 +623,7 @@ export const CompareModes: Story = {
             .fixedTarget=${true}
             .value=${args.value}
             .pointerType=${args.pointerType}
-          ></obc-poi-target>
+          ></obc-poi-data>
         </div>
       </div>
     `;
@@ -636,7 +634,7 @@ export const AnimatedLineLengthButtonFixed: Story = {
   args: {
     x: 444,
     y: 150,
-    value: PoiTargetValue.Checked,
+    value: PoiDataValue.Checked,
     pointerType: Pointer.Line,
   },
   render: (args) => {
@@ -647,7 +645,7 @@ export const AnimatedLineLengthButtonFixed: Story = {
     const animate = () => {
       const target = document.querySelector(
         '#animated-line-length-button-fixed'
-      ) as ObcPoiTarget;
+      ) as ObcPoiData;
       if (!target || !target.isConnected) return;
 
       lineLength += direction * 1;
@@ -665,7 +663,7 @@ export const AnimatedLineLengthButtonFixed: Story = {
     setTimeout(() => {
       const target = document.querySelector(
         '#animated-line-length-button-fixed'
-      ) as ObcPoiTarget | null;
+      ) as ObcPoiData | null;
       if (!target || !target.isConnected) return;
       requestAnimationFrame(animate);
     }, 100);
@@ -680,7 +678,7 @@ export const AnimatedLineLengthButtonFixed: Story = {
           background: rgba(0, 0, 0, 0.02);
         }
 
-        .frame obc-poi-target {
+        .frame obc-poi-data {
           position: absolute;
           top: ${buttonFixedTop}px;
         }
@@ -715,14 +713,14 @@ export const AnimatedLineLengthButtonFixed: Story = {
         <div class="label button-label">
           POI Button Fixed (fixed-target=false)
         </div>
-        <obc-poi-target
+        <obc-poi-data
           id="animated-line-length-button-fixed"
           .x=${args.x}
           .y=${args.y}
           .fixedTarget=${false}
           .value=${args.value}
           .pointerType=${args.pointerType}
-        ></obc-poi-target>
+        ></obc-poi-data>
       </div>
     `;
   },

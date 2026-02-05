@@ -4,7 +4,7 @@ import {customElement} from '../../decorator.js';
 import componentStyle from './poi-layer-stack.css?inline';
 import {ObcPoiLayer, PoiLayerRole} from '../poi-layer/poi-layer.js';
 import {ObcPoiGroup} from '../poi-group/poi-group.js';
-import {ObcPoiTarget, PoiTargetValue} from '../poi-target/poi-target.js';
+import {ObcPoiData, PoiDataValue} from '../poi-data/poi-data.js';
 
 const SUPPORTS_TRANSLATE =
   typeof document !== 'undefined' &&
@@ -92,7 +92,7 @@ export class ObcPoiLayerStack extends LitElement {
 
   private onStackClick(event: Event) {
     if (this.selectionMode === PoiLayerSelectionMode.None) return;
-    const target = this.getPoiTargetFromEvent(event) as ObcPoiTarget | null;
+    const target = this.getPoiTargetFromEvent(event) as ObcPoiData | null;
     if (!target) return;
 
     this.cleanupSelection();
@@ -139,13 +139,13 @@ export class ObcPoiLayerStack extends LitElement {
     for (const item of path) {
       if (
         item instanceof HTMLElement &&
-        item.tagName.toLowerCase() === 'obc-poi-target'
+        item.tagName.toLowerCase() === 'obc-poi-data'
       ) {
         return item;
       }
     }
     const direct = event.target instanceof HTMLElement ? event.target : null;
-    return direct?.closest('obc-poi-target') as HTMLElement | null;
+    return direct?.closest('obc-poi-data') as HTMLElement | null;
   }
 
   private cleanupSelection() {
@@ -187,20 +187,16 @@ export class ObcPoiLayerStack extends LitElement {
       this.getDefaultLayer() ??
       (activeLayer === this.getTopLayer() ? this.getSecondTopLayer() : null);
     const topTargets = Array.from(
-      activeLayer.querySelectorAll('obc-poi-target')
+      activeLayer.querySelectorAll('obc-poi-data')
     ) as HTMLElement[];
     topTargets.forEach((other) => {
       if (other === target) return;
       const record = this.selectionMap.get(other);
-      this.resetSelectionForTarget(
-        other as ObcPoiTarget,
-        record,
-        fallbackLayer
-      );
+      this.resetSelectionForTarget(other as ObcPoiData, record, fallbackLayer);
     });
   }
 
-  private setTargetSelectedId(target: ObcPoiTarget) {
+  private setTargetSelectedId(target: ObcPoiData) {
     const existing = this.selectionIds.get(target);
     if (existing) {
       target.header = {content: existing};
@@ -214,7 +210,7 @@ export class ObcPoiLayerStack extends LitElement {
     this.logSelectionState('set-selected-id-new', target);
   }
 
-  private clearTargetSelectedId(target: ObcPoiTarget) {
+  private clearTargetSelectedId(target: ObcPoiData) {
     target.header = null;
     this.logSelectionState('clear-selected-id', target);
   }
@@ -230,11 +226,11 @@ export class ObcPoiLayerStack extends LitElement {
   }
 
   private setSelectedTargetInteractivity(
-    target: ObcPoiTarget,
+    target: ObcPoiData,
     selected: boolean
   ) {
     if (selected) {
-      target.value = PoiTargetValue.Unchecked;
+      target.value = PoiDataValue.Unchecked;
       target.style.setProperty('--obc-poi-overlap-pointer-events', 'auto');
       target.removeAttribute('data-behind');
       target.setAttribute('data-front', 'true');
@@ -245,7 +241,7 @@ export class ObcPoiLayerStack extends LitElement {
   }
 
   private resetSelectionForTarget(
-    target: ObcPoiTarget,
+    target: ObcPoiData,
     record?: {
       originLayer: ObcPoiLayer;
       originIndex: number;
@@ -269,11 +265,11 @@ export class ObcPoiLayerStack extends LitElement {
     }
   }
 
-  private clearSelectionMapExcept(target: ObcPoiTarget) {
+  private clearSelectionMapExcept(target: ObcPoiData) {
     const entries = Array.from(this.selectionMap.entries());
     entries.forEach(([other, record]) => {
       if (other === target) return;
-      this.resetSelectionForTarget(other as ObcPoiTarget, record);
+      this.resetSelectionForTarget(other as ObcPoiData, record);
     });
   }
 
@@ -284,8 +280,8 @@ export class ObcPoiLayerStack extends LitElement {
         for (const node of Array.from(mutation.addedNodes)) {
           if (!(node instanceof HTMLElement)) continue;
           if (
-            node.tagName.toLowerCase() === 'obc-poi-target' ||
-            node.querySelector?.('obc-poi-target')
+            node.tagName.toLowerCase() === 'obc-poi-data' ||
+            node.querySelector?.('obc-poi-data')
           ) {
             this.schedulePlacement();
             return;
@@ -315,7 +311,7 @@ export class ObcPoiLayerStack extends LitElement {
       if (groupLayer && groupLayer !== nextLayer) {
         group.expand = false;
       }
-      if (target instanceof ObcPoiTarget) {
+      if (target instanceof ObcPoiData) {
         target.topOffset = 0;
         target.buttonOffsetX = 0;
         target.offset = 0;
@@ -329,7 +325,7 @@ export class ObcPoiLayerStack extends LitElement {
     if (reduceMotion) {
       if (!skipLineLengthAdjust) {
         this.adjustTargetLineLengthForLayerMove(
-          target as ObcPoiTarget,
+          target as ObcPoiData,
           firstRect
         );
       }
@@ -341,7 +337,7 @@ export class ObcPoiLayerStack extends LitElement {
     const dy = firstRect.top - lastRect.top;
 
     if (!skipLineLengthAdjust) {
-      this.adjustTargetLineLengthByOffset(target as ObcPoiTarget, dy);
+      this.adjustTargetLineLengthByOffset(target as ObcPoiData, dy);
     }
     if (!Number.isFinite(dx) || !Number.isFinite(dy)) return;
     if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
@@ -370,9 +366,9 @@ export class ObcPoiLayerStack extends LitElement {
     });
   }
 
-  private topOffsetResetRaf = new Map<ObcPoiTarget, number>();
+  private topOffsetResetRaf = new Map<ObcPoiData, number>();
 
-  private animateTopOffsetToZero(target: ObcPoiTarget) {
+  private animateTopOffsetToZero(target: ObcPoiData) {
     const start = target.topOffset;
     if (!Number.isFinite(start) || Math.abs(start) < 0.5) {
       target.topOffset = 0;
@@ -410,11 +406,11 @@ export class ObcPoiLayerStack extends LitElement {
   }
 
   private getTargetVisualRect(target: HTMLElement): DOMRect {
-    if (target.tagName.toLowerCase() !== 'obc-poi-target') {
+    if (target.tagName.toLowerCase() !== 'obc-poi-data') {
       return target.getBoundingClientRect();
     }
     const targetShadow = target.shadowRoot;
-    const button = targetShadow?.querySelector('obc-poi-target-button') as
+    const button = targetShadow?.querySelector('obc-poi-button-data') as
       | HTMLElement
       | undefined;
     const buttonShadow = button?.shadowRoot;
@@ -430,7 +426,7 @@ export class ObcPoiLayerStack extends LitElement {
 
   private requestLayerGrouping(layer: HTMLElement) {
     const targets = Array.from(
-      layer.querySelectorAll('obc-poi-target')
+      layer.querySelectorAll('obc-poi-data')
     ) as HTMLElement[];
     targets.forEach((target) => {
       const marker = target.style.getPropertyValue(
@@ -485,15 +481,15 @@ export class ObcPoiLayerStack extends LitElement {
       }
       const currentLayer = target.closest('obc-poi-layer');
       if (currentLayer !== selectedLayer) {
-        this.setSelectedTargetInteractivity(target as ObcPoiTarget, false);
-        this.clearTargetSelectedId(target as ObcPoiTarget);
+        this.setSelectedTargetInteractivity(target as ObcPoiData, false);
+        this.clearTargetSelectedId(target as ObcPoiData);
         this.selectionMap.delete(target);
       }
     });
 
     const targets = Array.from(
-      selectedLayer.querySelectorAll('obc-poi-target')
-    ) as ObcPoiTarget[];
+      selectedLayer.querySelectorAll('obc-poi-data')
+    ) as ObcPoiData[];
     targets.forEach((target) => {
       this.setTargetSelectedId(target);
       this.logSelectionState('show-id-true', target);
@@ -541,7 +537,7 @@ export class ObcPoiLayerStack extends LitElement {
     if (filteredLayers.length === 0) return;
 
     const targets = this.getAllTargets();
-    const assigned = new Set<ObcPoiTarget>();
+    const assigned = new Set<ObcPoiData>();
 
     filteredLayers.forEach((layer) => {
       const filters = this.parseTypeFilter(layer.typeFilter);
@@ -558,27 +554,25 @@ export class ObcPoiLayerStack extends LitElement {
     });
   }
 
-  private getAllTargets(): ObcPoiTarget[] {
-    return Array.from(
-      this.querySelectorAll('obc-poi-target')
-    ) as ObcPoiTarget[];
+  private getAllTargets(): ObcPoiData[] {
+    return Array.from(this.querySelectorAll('obc-poi-data')) as ObcPoiData[];
   }
 
-  private getTargetLineLength(target: ObcPoiTarget): number {
+  private getTargetLineLength(target: ObcPoiData): number {
     return Number.isFinite(target.y) ? target.y : 0;
   }
 
-  private logSelectionState(_phase: string, _target: ObcPoiTarget) {
+  private logSelectionState(_phase: string, _target: ObcPoiData) {
     // Debug logging removed for production
     // Enable in development by uncommenting the code below and setting a debug flag
   }
 
-  private setTargetLineLength(target: ObcPoiTarget, lineLength: number) {
+  private setTargetLineLength(target: ObcPoiData, lineLength: number) {
     target.y = lineLength;
   }
 
   private animateTargetLineLength(
-    target: ObcPoiTarget,
+    target: ObcPoiData,
     targetLineLength: number,
     animate: boolean
   ) {
@@ -615,7 +609,7 @@ export class ObcPoiLayerStack extends LitElement {
   }
 
   private adjustTargetLineLengthByOffset(
-    target: ObcPoiTarget,
+    target: ObcPoiData,
     offset: number,
     animate = true
   ) {
@@ -665,7 +659,7 @@ export class ObcPoiLayerStack extends LitElement {
   }
 
   private adjustTargetLineLengthForLayerMove(
-    target: ObcPoiTarget,
+    target: ObcPoiData,
     firstRect: DOMRect
   ) {
     const lastRect = this.getTargetVisualRect(target);
@@ -674,7 +668,7 @@ export class ObcPoiLayerStack extends LitElement {
   }
 
   private restoreTargetLineLength(
-    target: ObcPoiTarget,
+    target: ObcPoiData,
     originLineLength: number
   ) {
     this.animateTargetLineLength(target, originLineLength, true);
