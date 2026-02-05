@@ -9,27 +9,32 @@ import '../../icons/icon-ais-target-activated-iec.js';
 import {ObcArAlertType} from '../types.js';
 import {
   ObcPoiTargetButtonType,
-  ObcPoiTargetButtonDatum,
+  ObcPoiTargetButtonData,
+  ObcPoiTargetButtonHeader,
   PoiTargetButtonVisualState,
 } from '../poi-target-button/poi-target-button.js';
 import {customElement} from '../../decorator.js';
 
-export enum TargetValue {
-  enabled = 'enabled',
-  checked = 'checked',
+export enum TargetState {
+  Enabled = 'enabled',
+  Caution = 'caution',
+  Warning = 'warning',
+  Alarm = 'alarm',
 }
 
-function valueToPointerStyle(value: TargetValue): POIStyle {
+function stateToPointerStyle(state: TargetState): POIStyle {
   let style = null;
-  switch (value) {
-    case TargetValue.enabled:
+  switch (state) {
+    case TargetState.Enabled:
       style = POIStyle.Normal;
       break;
-    case TargetValue.checked:
+    case TargetState.Caution:
+    case TargetState.Warning:
+    case TargetState.Alarm:
       style = POIStyle.Enhanced;
       break;
     default:
-      throw new Error(`Value has no style: ${style}`);
+      throw new Error(`State has no style: ${style}`);
   }
   return style;
 }
@@ -41,7 +46,7 @@ export enum Pointer {
   None = 'null',
 }
 
-export {PoiTargetButtonVisualState as PoiTargetVisualState};
+export {PoiTargetButtonVisualState as PoiTargetValue};
 
 /**
  * `<obc-poi-target>` renders a point-of-interest marker with a selectable target
@@ -53,8 +58,9 @@ export {PoiTargetButtonVisualState as PoiTargetVisualState};
  *
  * ### Features
  * - Positions via `x` and a configurable pointer line.
- * - Visual emphasis controlled by `visualState` (see `PoiTargetVisualState`).
- * - Multi-value button rendering via the `values` array.
+ * - Visual emphasis controlled by `value` (see `PoiTargetValue`).
+ * - Alarm state controlled by `state` (enabled, caution, warning, alarm).
+ * - Multi-value button rendering via the `data` array.
  * - Horizontal nudging via `buttonOffsetX` for overlap or crossing layouts.
  * - Supports alert, selection, and pointer variants.
  *
@@ -66,8 +72,9 @@ export {PoiTargetButtonVisualState as PoiTargetVisualState};
  * - Use `y` for the pointer line length (distance from button to target).
  * - Set `fixed-target` to `false` for layer mode (button position fixed, line extends) - default.
  * - Set `fixed-target` to `true` for standalone/CV mode (target position fixed, button moves).
- * - Use `visualState` to align with layer or group overlap logic.
- * - Provide `values` to display secondary statuses on the button.
+ * - Use `value` to align with layer or group overlap logic (unchecked, overlapped, etc.).
+ * - Use `state` to set alarm level (enabled, caution, warning, alarm).
+ * - Provide `data` to display secondary statuses on the button.
  * - Adjust `buttonOffsetX` only when resolving collisions in a layer.
  *
  * ### Slots
@@ -79,7 +86,7 @@ export {PoiTargetButtonVisualState as PoiTargetVisualState};
  * ### Best Practices
  * - Use within `obc-poi-layer` for automatic grouping and overlap behaviors.
  * - Keep pointer lines short to reduce visual clutter.
- * - Prefer `PoiTargetVisualState` values over manual styling.
+ * - Prefer `PoiTargetValue` enum values over manual styling.
  *
  * ### Example
  * ```html
@@ -96,13 +103,12 @@ export class ObcPoiTarget extends LitElement {
   @property({type: Number}) height: number | null = null;
   @property({type: Number}) y = 192;
   @property({type: Boolean}) selected = false;
-  @property({type: String}) selectedId: string | null = null;
+  @property({type: Object}) header: ObcPoiTargetButtonHeader | null = null;
   @property({type: String}) alertType = ObcArAlertType.None;
-  @property({type: String, reflect: true, attribute: 'visualstate'})
-  visualState: PoiTargetButtonVisualState =
-    PoiTargetButtonVisualState.Unchecked;
+  @property({type: String, reflect: true})
+  value: PoiTargetButtonVisualState = PoiTargetButtonVisualState.Unchecked;
   @property({type: String}) type = ObcPoiTargetButtonType.Button;
-  @property({type: String}) value: TargetValue = TargetValue.enabled;
+  @property({type: String}) state: TargetState = TargetState.Enabled;
   @property({type: String}) pointerType: Pointer = Pointer.Line;
   @property({type: Number}) relativeDirection = 0;
   @property({type: Number}) offset = 0;
@@ -110,13 +116,7 @@ export class ObcPoiTarget extends LitElement {
   @property({type: Number}) buttonOffsetX = 0;
   @property({type: Boolean, attribute: 'allow-button-transition'})
   allowButtonTransition = false;
-  @property({type: Boolean, attribute: 'show-id'}) showId = false;
   @property({type: Boolean, attribute: 'fixed-target'}) fixedTarget = false;
-
-  private getSelectedId(): string | null {
-    if (!this.selected && !this.showId) return null;
-    return this.selectedId ?? null;
-  }
 
   override updated(changedProperties: Map<string, unknown>) {
     if (changedProperties.has('x')) {
@@ -173,7 +173,8 @@ export class ObcPoiTarget extends LitElement {
       },
     },
   })
-  values: ObcPoiTargetButtonDatum[] = [];
+  data: ObcPoiTargetButtonData[] = [];
+
   override render() {
     let pointer = null;
     let verticalOffset = 0;
@@ -195,7 +196,7 @@ export class ObcPoiTarget extends LitElement {
           <obc-poi-line
             class="line"
             height=${lineLength + verticalOffset}
-            poiStyle=${valueToPointerStyle(this.value)}
+            poiStyle=${stateToPointerStyle(this.state)}
             .offset=${lineOffset}
           ></obc-poi-line>
         `;
@@ -237,11 +238,11 @@ export class ObcPoiTarget extends LitElement {
         <obc-poi-target-button
           .relativeDirection=${this.relativeDirection}
           .selected=${this.selected}
-          .selectedId=${this.getSelectedId()}
+          .header=${this.header}
           .alertType=${this.alertType}
-          visualState=${this.visualState}
+          .value=${this.value}
           .type=${this.type}
-          .values=${this.values}
+          .data=${this.data}
         >
           <obi-ais-target-activated-iec></obi-ais-target-activated-iec>
         </obc-poi-target-button>

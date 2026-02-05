@@ -4,7 +4,7 @@ import {createRef, ref} from 'lit/directives/ref.js';
 import {OverlapMode, PoiLayerRole} from './poi-layer.js';
 import './poi-layer.js';
 import '../poi-target/poi-target.js';
-import {ObcPoiTarget, PoiTargetVisualState} from '../poi-target/poi-target.js';
+import {ObcPoiTarget, PoiTargetValue} from '../poi-target/poi-target.js';
 import '../poi-group/poi-group.js';
 
 type PoiLayerArgs = {
@@ -640,7 +640,7 @@ export const JoinExpandedGroup: Story = {
         const layer = layerRef.value;
         if (!layer) return;
         layer.appendChild(c);
-        c.visualState = PoiTargetVisualState.Overlapped;
+        c.value = PoiTargetValue.Overlapped;
         const duration = 12000;
         const delayMs = 1000;
         let startTime: number | null = null;

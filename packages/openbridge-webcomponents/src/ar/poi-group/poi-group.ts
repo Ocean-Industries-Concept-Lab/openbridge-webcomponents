@@ -2,7 +2,8 @@ import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
 import {property, queryAssignedElements, state} from 'lit/decorators.js';
 import componentStyle from './poi-group.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
-import {ObcPoiTarget, PoiTargetVisualState} from '../poi-target/poi-target.js';
+import {ObcPoiTarget, PoiTargetValue} from '../poi-target/poi-target.js';
+import {ObcPoiTargetButtonType} from '../poi-target-button/poi-target-button.js';
 import {customElement} from '../../decorator.js';
 import {
   AnimationManager,
@@ -15,6 +16,14 @@ const POI_GROUP_SPACING_VAR = '--obc-poi-group-expanded-spacing';
 const TOP_OFFSET_ANIMATION_MS_VAR = '--obc-poi-group-top-offset-animation-ms';
 const TOP_OFFSET_ANIMATION_DELAY_MS_VAR =
   '--obc-poi-group-top-offset-animation-delay-ms';
+const POI_VISUAL_TARGET_VAR =
+  '--maneuvering-components-poi-button-visual-target';
+const POI_VISUAL_TARGET_OVERLAP_VAR =
+  '--maneuvering-components-poi-button-visual-target-overlap';
+const POI_LARGE_VISUAL_TARGET_VAR =
+  '--maneuvering-components-poi-button-large-visual-target';
+const POI_LARGE_VISUAL_TARGET_OVERLAP_VAR =
+  '--maneuvering-components-poi-button-large-visual-target-round-overlap';
 
 export type ExpandEvent = CustomEvent<{expand: boolean}>;
 
@@ -255,10 +264,15 @@ export class ObcPoiGroup extends LitElement {
         child.style.height = 'unset';
       }
       if (child instanceof ObcPoiTarget) {
-        child.visualState =
-          !expand && child !== frontChild
-            ? PoiTargetVisualState.Overlapped
-            : PoiTargetVisualState.Unchecked;
+        const isOverlap = !expand && child !== frontChild;
+        child.value = isOverlap
+          ? PoiTargetValue.Overlapped
+          : PoiTargetValue.Unchecked;
+        if (isOverlap) {
+          this.applyVisualState(child, true);
+        } else {
+          this.clearVisualState(child);
+        }
         if (expand) {
           child.style.transform = 'translate(50%, 100%)';
         } else {
@@ -402,7 +416,8 @@ export class ObcPoiGroup extends LitElement {
       });
       this.topOffsetTargets.forEach((_, child) => {
         if (child !== frontChild) {
-          child.visualState = PoiTargetVisualState.Overlapped;
+          child.value = PoiTargetValue.Overlapped;
+          this.applyVisualState(child, true);
         }
       });
       const delayMs = this.getCssVarAsNumber(
@@ -505,11 +520,18 @@ export class ObcPoiGroup extends LitElement {
       child.buttonOffsetX = 0;
 
       if (child !== frontChild) {
-        child.visualState = visualExpanded
-          ? PoiTargetVisualState.Unchecked
-          : PoiTargetVisualState.Overlapped;
+        const isOverlap = !visualExpanded;
+        child.value = isOverlap
+          ? PoiTargetValue.Overlapped
+          : PoiTargetValue.Unchecked;
+        if (isOverlap) {
+          this.applyVisualState(child, true);
+        } else {
+          this.clearVisualState(child);
+        }
       } else {
-        child.visualState = PoiTargetVisualState.Unchecked;
+        child.value = PoiTargetValue.Unchecked;
+        this.clearVisualState(child);
       }
 
       if (touchAreaExpanded) {
@@ -586,10 +608,15 @@ export class ObcPoiGroup extends LitElement {
     const front = this.getFrontChild();
     this._children.forEach((child) => {
       if (!(child instanceof ObcPoiTarget)) return;
-      child.visualState =
-        !this.expand && (!front || child !== front)
-          ? PoiTargetVisualState.Overlapped
-          : PoiTargetVisualState.Unchecked;
+      const isOverlap = !this.expand && (!front || child !== front);
+      child.value = isOverlap
+        ? PoiTargetValue.Overlapped
+        : PoiTargetValue.Unchecked;
+      if (isOverlap) {
+        this.applyVisualState(child, true);
+      } else {
+        this.clearVisualState(child);
+      }
       if (front && child === front) {
         child.setAttribute('data-front', 'true');
       } else {
@@ -784,6 +811,51 @@ export class ObcPoiGroup extends LitElement {
 
   private getExpandedSpacing(): number {
     return this.getCssVarAsNumber(POI_GROUP_SPACING_VAR, 50);
+  }
+
+  private getVisualTargetSize(isEnhanced: boolean, isOverlap: boolean): number {
+    if (isEnhanced) {
+      return isOverlap
+        ? this.getCssVarAsNumber(POI_LARGE_VISUAL_TARGET_OVERLAP_VAR, 36)
+        : this.getCssVarAsNumber(POI_LARGE_VISUAL_TARGET_VAR, 52);
+    }
+    return isOverlap
+      ? this.getCssVarAsNumber(POI_VISUAL_TARGET_OVERLAP_VAR, 32)
+      : this.getCssVarAsNumber(POI_VISUAL_TARGET_VAR, 36);
+  }
+
+  private applyVisualState(target: ObcPoiTarget, overlap: boolean) {
+    const isEnhanced = target.type === ObcPoiTargetButtonType.Enhanced;
+    const size = this.getVisualTargetSize(isEnhanced, overlap);
+    target.style.setProperty('--poi-size', `${size}px`);
+    target.style.setProperty(
+      '--obc-poi-target-icon-opacity',
+      overlap ? '0' : '1'
+    );
+    target.style.setProperty('--obc-poi-overlap', overlap ? '1' : '0');
+    target.style.setProperty(
+      '--obc-poi-overlap-elements-opacity',
+      overlap ? '0' : '1'
+    );
+    target.style.setProperty('--obc-poi-label-opacity', overlap ? '0' : '1');
+    target.style.setProperty(
+      '--obc-poi-label-visibility',
+      overlap ? 'hidden' : 'visible'
+    );
+    target.style.setProperty(
+      '--obc-poi-overlap-pointer-events',
+      overlap ? 'none' : 'auto'
+    );
+  }
+
+  private clearVisualState(target: ObcPoiTarget) {
+    target.style.removeProperty('--poi-size');
+    target.style.removeProperty('--obc-poi-target-icon-opacity');
+    target.style.removeProperty('--obc-poi-overlap');
+    target.style.removeProperty('--obc-poi-overlap-elements-opacity');
+    target.style.removeProperty('--obc-poi-label-opacity');
+    target.style.removeProperty('--obc-poi-label-visibility');
+    target.style.removeProperty('--obc-poi-overlap-pointer-events');
   }
 
   static override styles = unsafeCSS(componentStyle);

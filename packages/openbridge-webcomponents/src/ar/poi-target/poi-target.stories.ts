@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcPoiTarget, Pointer, TargetValue} from './poi-target.js';
+import {ObcPoiTarget, Pointer, PoiTargetValue} from './poi-target.js';
 import './poi-target.js';
 import {crossDecorator} from '../../storybook-util.js';
 import {html} from 'lit';
@@ -12,11 +12,11 @@ const meta: Meta<ObcPoiTarget> = {
     y: 192,
     height: 192,
     topOffset: 0,
-    value: TargetValue.checked,
+    value: PoiTargetValue.Unchecked,
     pointerType: Pointer.Line,
     relativeDirection: 0,
     offset: 0,
-    values: [],
+    data: [],
     fixedTarget: false,
   },
   decorators: [crossDecorator],
@@ -27,7 +27,7 @@ const meta: Meta<ObcPoiTarget> = {
     topOffset: {control: {type: 'range', min: -200, max: 200, step: 1}},
     fixedTarget: {control: {type: 'boolean'}},
     value: {
-      options: [TargetValue.enabled, TargetValue.checked],
+      options: Object.values(PoiTargetValue),
       control: {type: 'select'},
     },
     pointerType: {
@@ -45,7 +45,7 @@ const meta: Meta<ObcPoiTarget> = {
     offset: {
       control: {type: 'range', min: -100, max: 100, step: 1},
     },
-    values: {
+    data: {
       control: 'object',
       description:
         'Array of value objects with value, label, and unit (also accepts JSON via values attribute)',
@@ -63,7 +63,7 @@ const meta: Meta<ObcPoiTarget> = {
         'pointerType',
         'relativeDirection',
         'offset',
-        'values',
+        'data',
       ],
     },
   },
@@ -91,7 +91,7 @@ const meta: Meta<ObcPoiTarget> = {
           .pointerType=${args.pointerType}
           .relativeDirection=${args.relativeDirection}
           .offset=${args.offset}
-          .values=${args.values}
+          .data=${args.data}
           .fixedTarget=${args.fixedTarget}
         ></obc-poi-target>
       </div>
@@ -104,13 +104,13 @@ type Story = StoryObj<ObcPoiTarget>;
 
 export const Normal: Story = {
   args: {
-    value: TargetValue.enabled,
+    value: PoiTargetValue.Unchecked,
   },
 };
 
 export const Enhanced: Story = {
   args: {
-    value: TargetValue.checked,
+    value: PoiTargetValue.Checked,
   },
 };
 
@@ -143,7 +143,7 @@ export const WithValues: Story = {
           .pointerType=${args.pointerType}
           .relativeDirection=${args.relativeDirection}
           .offset=${args.offset}
-          .values=${values}
+          .data=${values}
           .fixedTarget=${args.fixedTarget}
         ></obc-poi-target>
       </div>
@@ -156,7 +156,7 @@ export const AnimatedOffsetBottom: Story = {
     x: 444,
     y: 192,
     height: 192,
-    value: TargetValue.checked,
+    value: PoiTargetValue.Checked,
     pointerType: Pointer.Line,
   },
   render: (args) => {
@@ -219,7 +219,7 @@ export const AnimatedOffsetTop: Story = {
     x: 444,
     y: 192,
     height: 192,
-    value: TargetValue.checked,
+    value: PoiTargetValue.Checked,
     pointerType: Pointer.Line,
   },
   render: (args) => {
@@ -283,7 +283,7 @@ export const AnimatedHeight: Story = {
     x: 444,
     y: 150,
     height: 300,
-    value: TargetValue.checked,
+    value: PoiTargetValue.Checked,
     pointerType: Pointer.Line,
   },
   render: (args) => {
@@ -367,7 +367,7 @@ export const AnimatedLineLength: Story = {
     x: 444,
     y: 150,
     height: 250,
-    value: TargetValue.checked,
+    value: PoiTargetValue.Checked,
     pointerType: Pointer.Line,
   },
   render: (args) => {
@@ -460,7 +460,7 @@ export const CompareModes: Story = {
     x: 300,
     y: 150,
     height: 300,
-    value: TargetValue.checked,
+    value: PoiTargetValue.Checked,
     pointerType: Pointer.Line,
   },
   render: (args) => {
@@ -636,7 +636,7 @@ export const AnimatedLineLengthButtonFixed: Story = {
   args: {
     x: 444,
     y: 150,
-    value: TargetValue.checked,
+    value: PoiTargetValue.Checked,
     pointerType: Pointer.Line,
   },
   render: (args) => {

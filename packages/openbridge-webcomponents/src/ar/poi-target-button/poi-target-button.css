@@ -92,7 +92,7 @@
   }
 
   /* Overlap state styles - applied via visual state */
-  :host([visualstate="overlapped"]) & {
+  :host([value="overlapped"]) & {
     width: 48px;
     height: 48px;
     --poi-size: 32px;
@@ -249,7 +249,7 @@
 }
 
 /* Overlap alert color styles */
-:host([visualstate="overlapped"]) .wrapper {
+:host([value="overlapped"]) .wrapper {
   &.alert-caution .visible-wrapper {
     background-color: var(--alert-caution-color);
     border-color: var(--alert-caution-outline-color);
@@ -271,7 +271,7 @@
   height: 12px;
 }
 
-.wrapper.has-values {
+.wrapper.has-data {
   position: relative;
   border-radius: 6px;
   border: 1px solid var(--overlay-border-outline-color);
@@ -351,8 +351,8 @@
   }
 }
 
-/* Overlap state for has-values variant - show only the small circle */
-:host([visualstate="overlapped"]) .wrapper.has-values {
+/* Overlap state for has-data variant - show only the small circle */
+:host([value="overlapped"]) .wrapper.has-data {
   border: none;
   background: transparent;
   width: 48px;
@@ -398,7 +398,7 @@
   padding: var(--maneuvering-components-poi-button-data-padding-vertical) 0;
   gap: calc(var(--maneuvering-components-poi-button-data-gap) * 2);
 
-  .has-id-label & {
+  .has-header & {
     padding-top: calc(
       var(--maneuvering-components-poi-id-tag-container-height) +
         var(--maneuvering-components-poi-button-data-padding-vertical)

@@ -4,7 +4,7 @@ import {customElement} from '../../decorator.js';
 import componentStyle from './poi-layer-stack.css?inline';
 import {ObcPoiLayer, PoiLayerRole} from '../poi-layer/poi-layer.js';
 import {ObcPoiGroup} from '../poi-group/poi-group.js';
-import {ObcPoiTarget, PoiTargetVisualState} from '../poi-target/poi-target.js';
+import {ObcPoiTarget, PoiTargetValue} from '../poi-target/poi-target.js';
 
 const SUPPORTS_TRANSLATE =
   typeof document !== 'undefined' &&
@@ -203,19 +203,19 @@ export class ObcPoiLayerStack extends LitElement {
   private setTargetSelectedId(target: ObcPoiTarget) {
     const existing = this.selectionIds.get(target);
     if (existing) {
-      target.selectedId = existing;
+      target.header = {content: existing};
       this.logSelectionState('set-selected-id-existing', target);
       return;
     }
     this.selectionCounter += 1;
     const nextId = String(this.selectionCounter);
     this.selectionIds.set(target, nextId);
-    target.selectedId = nextId;
+    target.header = {content: nextId};
     this.logSelectionState('set-selected-id-new', target);
   }
 
   private clearTargetSelectedId(target: ObcPoiTarget) {
-    target.selectedId = null;
+    target.header = null;
     this.logSelectionState('clear-selected-id', target);
   }
 
@@ -234,7 +234,7 @@ export class ObcPoiLayerStack extends LitElement {
     selected: boolean
   ) {
     if (selected) {
-      target.visualState = PoiTargetVisualState.Unchecked;
+      target.value = PoiTargetValue.Unchecked;
       target.style.setProperty('--obc-poi-overlap-pointer-events', 'auto');
       target.removeAttribute('data-behind');
       target.setAttribute('data-front', 'true');
@@ -487,7 +487,6 @@ export class ObcPoiLayerStack extends LitElement {
       if (currentLayer !== selectedLayer) {
         this.setSelectedTargetInteractivity(target as ObcPoiTarget, false);
         this.clearTargetSelectedId(target as ObcPoiTarget);
-        (target as ObcPoiTarget).showId = false;
         this.selectionMap.delete(target);
       }
     });
@@ -497,7 +496,6 @@ export class ObcPoiLayerStack extends LitElement {
     ) as ObcPoiTarget[];
     targets.forEach((target) => {
       this.setTargetSelectedId(target);
-      target.showId = true;
       this.logSelectionState('show-id-true', target);
 
       if (this.selectionMode === PoiLayerSelectionMode.None) {

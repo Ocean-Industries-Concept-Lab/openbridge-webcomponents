@@ -18,30 +18,45 @@ export enum PoiTargetButtonVisualState {
   Overlapped = 'overlapped',
 }
 
-export interface ObcPoiTargetButtonDatum {
+export interface ObcPoiTargetButtonData {
   value: string;
   label: string;
   unit: string;
+}
+
+export interface ObcPoiTargetButtonHeader {
+  content?: string;
+  size?: string;
+  state?: string;
+  type?: string;
+  hasIndicator?: boolean;
 }
 
 @customElement('obc-poi-target-button')
 export class ObcPoiTargetButton extends LitElement {
   @property({type: Number}) relativeDirection = 0;
   @property({type: Boolean}) selected = false;
-  @property({type: String}) selectedId: string | null = null;
+  @property({type: Object}) header: ObcPoiTargetButtonHeader | null = null;
   @property({type: String}) alertType = ObcArAlertType.None;
-  @property({type: String, reflect: true, attribute: 'visualstate'})
-  visualState: PoiTargetButtonVisualState =
-    PoiTargetButtonVisualState.Unchecked;
+  @property({type: String, reflect: true})
+  value: PoiTargetButtonVisualState = PoiTargetButtonVisualState.Unchecked;
   @property({type: String}) type = ObcPoiTargetButtonType.Button;
   @property({type: Boolean}) inExpandedGroup = false;
-  @property({type: Array, attribute: false}) values: ObcPoiTargetButtonDatum[] =
+  @property({type: Array, attribute: false}) data: ObcPoiTargetButtonData[] =
     [];
   @property({type: Boolean}) hasRelation = false;
 
+  get hasData(): boolean {
+    return this.data.length > 0;
+  }
+
+  get hasHeader(): boolean {
+    return this.header !== null;
+  }
+
   override render() {
-    if (this.values.length > 0) {
-      return this.renderWithValues();
+    if (this.hasData) {
+      return this.renderWithData();
     }
     return this.renderButton();
   }
@@ -57,9 +72,9 @@ export class ObcPoiTargetButton extends LitElement {
           expanded: this.inExpandedGroup,
         })}
       >
-        ${this.selectedId
+        ${this.hasHeader
           ? html`<div class="id-label">
-              ${this.selectedId}
+              ${this.header?.content ?? ''}
               <slot
                 name="id-label"
                 part="id-label"
@@ -84,22 +99,22 @@ export class ObcPoiTargetButton extends LitElement {
     `;
   }
 
-  renderWithValues() {
+  renderWithData() {
     return html`
       <button
         class=${classMap({
           wrapper: true,
-          'has-values': true,
+          'has-data': true,
           selected: this.selected,
-          'has-id-label': Boolean(this.selectedId),
+          'has-header': this.hasHeader,
           [`alert-${this.alertType}`]: true,
           [`type-${this.type}`]: true,
           expanded: this.inExpandedGroup,
         })}
       >
-        ${this.selectedId
+        ${this.hasHeader
           ? html`<div class="id-label">
-              ${this.selectedId}
+              ${this.header?.content ?? ''}
               <slot
                 name="id-label"
                 part="id-label"
@@ -108,12 +123,12 @@ export class ObcPoiTargetButton extends LitElement {
             </div>`
           : nothing}
         <div class="data-wrapper">
-          ${this.values.map(
-            (value) =>
+          ${this.data.map(
+            (item) =>
               html`<div class="data">
-                <div class="value">${value.value}</div>
-                <div class="label">${value.label}</div>
-                <div class="unit">${value.unit}</div>
+                <div class="value">${item.value}</div>
+                <div class="label">${item.label}</div>
+                <div class="unit">${item.unit}</div>
               </div>`
           )}
         </div>

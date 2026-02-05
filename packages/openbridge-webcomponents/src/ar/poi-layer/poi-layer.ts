@@ -3,13 +3,8 @@ import {property, query} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './poi-layer.css?inline';
 import '../poi-group/poi-group.js';
-import {ObcPoiTarget, PoiTargetVisualState} from '../poi-target/poi-target.js';
+import {ObcPoiTarget, PoiTargetValue} from '../poi-target/poi-target.js';
 import {ObcPoiTargetButtonType} from '../poi-target-button/poi-target-button.js';
-import {
-  buildClusters,
-  buildAdjacencyMaps,
-  type GroupingThresholds,
-} from './grouping-utils.js';
 
 const EXIT_DELAY_MS_VAR = '--obc-poi-layer-exit-delay-ms';
 const GROUP_REMOVAL_DELAY_MS_VAR = '--obc-poi-layer-group-removal-delay-ms';
@@ -25,6 +20,144 @@ const POI_LARGE_VISUAL_TARGET_VAR =
 const POI_LARGE_VISUAL_TARGET_OVERLAP_VAR =
   '--maneuvering-components-poi-button-large-visual-target-round-overlap';
 const POI_CROSSING_MIN_GAP_VAR = '--obc-poi-layer-crossing-min-gap';
+
+/**
+ * Grouping utilities for POI layer overlap detection and clustering
+ */
+
+/**
+ * Interface for grouping thresholds
+ */
+interface GroupingThresholds {
+  enterThreshold: number;
+  exitThreshold: number;
+  preThreshold: number;
+  behindThreshold: number;
+}
+
+/**
+ * Build clusters of connected elements using depth-first search
+ * @param targets - Array of targets to cluster
+ * @param adjacency - Adjacency map showing which targets are connected
+ * @returns Array of clusters (arrays of connected targets)
+ */
+function buildClusters<T>(targets: T[], adjacency: Map<T, Set<T>>): T[][] {
+  const visited = new Set<T>();
+  const clusters: T[][] = [];
+
+  targets.forEach((target) => {
+    if (visited.has(target)) return;
+
+    const stack = [target];
+    const cluster: T[] = [];
+    visited.add(target);
+
+    while (stack.length > 0) {
+      const node = stack.pop()!;
+      cluster.push(node);
+      adjacency.get(node)!.forEach((neighbor) => {
+        if (!visited.has(neighbor)) {
+          visited.add(neighbor);
+          stack.push(neighbor);
+        }
+      });
+    }
+
+    if (cluster.length >= 2) {
+      clusters.push(cluster);
+    }
+  });
+
+  return clusters;
+}
+
+/**
+ * Check if two rectangles overlap vertically and are within horizontal threshold
+ */
+function checkOverlap(
+  rectA: DOMRect,
+  rectB: DOMRect,
+  threshold: number
+): {overlaps: boolean; gap: number; overlapHeight: number} {
+  const overlapHeight =
+    Math.min(rectA.bottom, rectB.bottom) - Math.max(rectA.top, rectB.top);
+  const gap = Math.max(
+    0,
+    Math.max(rectA.left, rectB.left) - Math.min(rectA.right, rectB.right)
+  );
+
+  return {
+    overlaps: gap <= threshold && overlapHeight > 0,
+    gap,
+    overlapHeight,
+  };
+}
+
+/**
+ * Build adjacency maps for overlap detection at different thresholds
+ */
+function buildAdjacencyMaps<T extends HTMLElement>(
+  targets: T[],
+  rects: Map<T, DOMRect>,
+  thresholds: GroupingThresholds,
+  currentGroupByTarget: Map<T, HTMLElement>
+): {
+  adjacency: Map<T, Set<T>>;
+  preAdjacency: Map<T, Set<T>>;
+  behindAdjacency: Map<T, Set<T>>;
+  preGrouped: Set<T>;
+} {
+  const adjacency = new Map<T, Set<T>>();
+  const preAdjacency = new Map<T, Set<T>>();
+  const behindAdjacency = new Map<T, Set<T>>();
+  const preGrouped = new Set<T>();
+
+  targets.forEach((target) => {
+    adjacency.set(target, new Set());
+    preAdjacency.set(target, new Set());
+    behindAdjacency.set(target, new Set());
+  });
+
+  for (let i = 0; i < targets.length; i += 1) {
+    const a = targets[i];
+    const ra = rects.get(a)!;
+
+    for (let j = i + 1; j < targets.length; j += 1) {
+      const b = targets[j];
+      const rb = rects.get(b)!;
+
+      const sameGroup =
+        currentGroupByTarget.get(a) &&
+        currentGroupByTarget.get(a) === currentGroupByTarget.get(b);
+      const threshold = sameGroup
+        ? thresholds.exitThreshold
+        : thresholds.enterThreshold;
+
+      const overlap = checkOverlap(ra, rb, threshold);
+      const preOverlap = checkOverlap(ra, rb, thresholds.preThreshold);
+      const behindOverlap = checkOverlap(ra, rb, thresholds.behindThreshold);
+
+      if (preOverlap.overlaps) {
+        preGrouped.add(a);
+        preGrouped.add(b);
+        preAdjacency.get(a)!.add(b);
+        preAdjacency.get(b)!.add(a);
+      }
+
+      if (behindOverlap.overlaps) {
+        behindAdjacency.get(a)!.add(b);
+        behindAdjacency.get(b)!.add(a);
+      }
+
+      if (overlap.overlaps) {
+        adjacency.get(a)!.add(b);
+        adjacency.get(b)!.add(a);
+      }
+    }
+  }
+
+  return {adjacency, preAdjacency, behindAdjacency, preGrouped};
+}
 
 /**
  * Interface for POI button group element properties used by the layer.
@@ -155,6 +288,7 @@ export class ObcPoiLayer extends LitElement {
     if (event.detail.expand) {
       targets.forEach((target) => {
         if (!groupedTargets.has(target)) {
+          target.value = PoiTargetValue.Overlapped;
           this.applyStandaloneVisualState(target, true);
         }
       });
@@ -807,10 +941,14 @@ export class ObcPoiLayer extends LitElement {
           target.removeAttribute('data-behind');
         }
         const isOverlapState = target.hasAttribute('data-behind');
-        target.visualState = isOverlapState
-          ? PoiTargetVisualState.Overlapped
-          : PoiTargetVisualState.Unchecked;
-        this.applyStandaloneVisualState(target, isOverlapState);
+        target.value = isOverlapState
+          ? PoiTargetValue.Overlapped
+          : PoiTargetValue.Unchecked;
+        if (isOverlapState) {
+          this.applyStandaloneVisualState(target, true);
+        } else {
+          this.clearStandaloneVisualState(target);
+        }
         this.resetTarget(target);
       } else {
         target.removeAttribute('data-behind');
@@ -909,7 +1047,7 @@ export class ObcPoiLayer extends LitElement {
     bestCandidate.setAttribute('data-grouped', 'true');
     bestCandidate.removeAttribute('data-behind');
     bestCandidate.removeAttribute('data-pregrouped');
-    bestCandidate.visualState = PoiTargetVisualState.Unchecked;
+    bestCandidate.value = PoiTargetValue.Unchecked;
     this.clearStandaloneVisualState(bestCandidate);
 
     const touchRaw = getComputedStyle(group).getPropertyValue(

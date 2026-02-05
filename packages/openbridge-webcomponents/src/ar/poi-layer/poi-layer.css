@@ -2,7 +2,6 @@
   --obc-poi-layer-height: 0px;
   --obc-poi-layer-auto-group-offset-y: 0px;
   --obc-poi-layer-line-length: 120px;
-  /* Animation and timing constants (in milliseconds) */
   --obc-poi-layer-exit-delay-ms: 140;
   --obc-poi-layer-group-removal-delay-ms: 450;
   --obc-poi-layer-exit-lock-duration-ms: 500;

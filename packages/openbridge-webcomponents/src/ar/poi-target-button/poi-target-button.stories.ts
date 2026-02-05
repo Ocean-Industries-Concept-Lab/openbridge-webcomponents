@@ -21,9 +21,9 @@ const meta: Meta<ObcPoiTargetButton> = {
     type: ObcPoiTargetButtonType.Button,
     relativeDirection: 0,
     alertType: ObcArAlertType.None,
-    selectedId: null,
-    visualState: PoiTargetButtonVisualState.Unchecked,
-    values: [],
+    header: null,
+    value: PoiTargetButtonVisualState.Unchecked,
+    data: [],
   },
   argTypes: {
     relativeDirection: {
@@ -36,10 +36,10 @@ const meta: Meta<ObcPoiTargetButton> = {
       control: {type: 'select'},
       options: Object.values(ObcArAlertType),
     },
-    selectedId: {
-      control: {type: 'text'},
+    header: {
+      control: {type: 'object'},
     },
-    visualState: {
+    value: {
       control: {type: 'select'},
       options: Object.values(PoiTargetButtonVisualState),
     },
@@ -51,12 +51,12 @@ const meta: Meta<ObcPoiTargetButton> = {
   render: (args) => {
     return html`
       <obc-poi-target-button
-        .values=${args.values}
+        .data=${args.data}
         .selected=${args.selected}
         .relativeDirection=${args.relativeDirection}
         .alertType=${args.alertType}
-        .selectedId=${args.selectedId}
-        .visualState=${args.visualState}
+        .header=${args.header}
+        .value=${args.value}
         .type=${args.type}
         .hasRelation=${args.hasRelation}
       >
@@ -86,14 +86,14 @@ export const Enhanced: Story = {
 export const Selected: Story = {
   args: {
     selected: true,
-    selectedId: '1',
+    header: {content: '1'},
   },
 };
 
 export const SelectedEnhanced: Story = {
   args: {
     selected: true,
-    selectedId: '1',
+    header: {content: '1'},
     type: ObcPoiTargetButtonType.Enhanced,
   },
 };
@@ -101,7 +101,7 @@ export const SelectedEnhanced: Story = {
 export const Caution: Story = {
   args: {
     selected: true,
-    selectedId: '1',
+    header: {content: '1'},
     alertType: ObcArAlertType.Caution,
   },
 };
@@ -109,7 +109,7 @@ export const Caution: Story = {
 export const CautionEnhanced: Story = {
   args: {
     selected: true,
-    selectedId: '1',
+    header: {content: '1'},
     alertType: ObcArAlertType.Caution,
     type: ObcPoiTargetButtonType.Enhanced,
   },
@@ -118,7 +118,7 @@ export const CautionEnhanced: Story = {
 export const Warning: Story = {
   args: {
     selected: true,
-    selectedId: '1',
+    header: {content: '1'},
     alertType: ObcArAlertType.Warning,
   },
 };
@@ -126,34 +126,34 @@ export const Warning: Story = {
 export const Alarm: Story = {
   args: {
     selected: true,
-    selectedId: '1',
+    header: {content: '1'},
     alertType: ObcArAlertType.Alarm,
   },
 };
 
 export const Overlapped: Story = {
   args: {
-    visualState: PoiTargetButtonVisualState.Overlapped,
+    value: PoiTargetButtonVisualState.Overlapped,
   },
 };
 
 export const OverlappedEnhanced: Story = {
   args: {
-    visualState: PoiTargetButtonVisualState.Overlapped,
+    value: PoiTargetButtonVisualState.Overlapped,
     type: ObcPoiTargetButtonType.Enhanced,
   },
 };
 
 export const OverlappedWithCaution: Story = {
   args: {
-    visualState: PoiTargetButtonVisualState.Overlapped,
+    value: PoiTargetButtonVisualState.Overlapped,
     alertType: ObcArAlertType.Caution,
   },
 };
 
 export const OverlappedWithCautionEnhanced: Story = {
   args: {
-    visualState: PoiTargetButtonVisualState.Overlapped,
+    value: PoiTargetButtonVisualState.Overlapped,
     alertType: ObcArAlertType.Caution,
     type: ObcPoiTargetButtonType.Enhanced,
   },
@@ -161,21 +161,21 @@ export const OverlappedWithCautionEnhanced: Story = {
 
 export const OverlappedWithWarning: Story = {
   args: {
-    visualState: PoiTargetButtonVisualState.Overlapped,
+    value: PoiTargetButtonVisualState.Overlapped,
     alertType: ObcArAlertType.Warning,
   },
 };
 
 export const OverlappedWithAlarm: Story = {
   args: {
-    visualState: PoiTargetButtonVisualState.Overlapped,
+    value: PoiTargetButtonVisualState.Overlapped,
     alertType: ObcArAlertType.Alarm,
   },
 };
 
 export const WithValues: Story = {
   args: {
-    values: [
+    data: [
       {value: '10', label: 'Lab', unit: 'Unit'},
       {value: '20', label: 'Lab 2', unit: 'Unit 2'},
     ],
@@ -184,22 +184,22 @@ export const WithValues: Story = {
 
 export const WithValuesAndRelation: Story = {
   args: {
-    values: [
+    data: [
       {value: '10', label: 'Lab', unit: 'Unit'},
       {value: '20', label: 'Lab 2', unit: 'Unit 2'},
     ],
     hasRelation: true,
-    selectedId: '1',
+    header: {content: '1'},
   },
   render: (args) => {
     return html`
       <obc-poi-target-button
-        .values=${args.values}
+        .data=${args.data}
         .selected=${args.selected}
         .relativeDirection=${args.relativeDirection}
         .alertType=${args.alertType}
-        .selectedId=${args.selectedId}
-        .visualState=${args.visualState}
+        .header=${args.header}
+        .value=${args.value}
         .type=${args.type}
         .hasRelation=${args.hasRelation}
       >
@@ -216,7 +216,7 @@ export const WithValuesAndRelation: Story = {
 
 export const WithValuesAlarm: Story = {
   args: {
-    values: [
+    data: [
       {value: '10', label: 'Lab', unit: 'Unit'},
       {value: '20', label: 'Lab 2', unit: 'Unit 2'},
     ],
@@ -226,11 +226,11 @@ export const WithValuesAlarm: Story = {
 
 export const WithValuesOverlapped: Story = {
   args: {
-    values: [
+    data: [
       {value: '10', label: 'Lab', unit: 'Unit'},
       {value: '20', label: 'Lab 2', unit: 'Unit 2'},
     ],
-    visualState: PoiTargetButtonVisualState.Overlapped,
+    value: PoiTargetButtonVisualState.Overlapped,
   },
 };
 
