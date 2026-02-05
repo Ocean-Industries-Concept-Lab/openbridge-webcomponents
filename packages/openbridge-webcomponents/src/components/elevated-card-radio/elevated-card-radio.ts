@@ -8,6 +8,7 @@ import {
   ObcElevatedCardTag,
 } from '../elevated-card/elevated-card.js';
 import {customElement} from '../../decorator.js';
+import {ObcRadio} from '../radio/radio.js';
 
 /**
  * `<obc-elevated-card-radio>` – A single radio button presented within an elevated card container for visually distinct selection in a group.
@@ -83,6 +84,7 @@ import {customElement} from '../../decorator.js';
  *
  * @slot leading-icon - Contains the radio button input.
  * @slot label - Displays the label text for the radio option.
+ * @fires change - Fired when the radio is changed.
  */
 @customElement('obc-elevated-card-radio')
 export class ObcElevatedCardRadio extends LitElement {
@@ -174,6 +176,7 @@ export class ObcElevatedCardRadio extends LitElement {
           ?checked=${this.checked}
           ?disabled=${this.disabled}
           ?required=${this.required}
+          @change=${this._handleRadioChange}
           slot="leading-icon"
         ></obc-radio>
         <label
@@ -188,6 +191,14 @@ export class ObcElevatedCardRadio extends LitElement {
 
   private _handleCardClick() {
     this.renderRoot.querySelector('input')?.click();
+  }
+
+  private _handleRadioChange(event: Event) {
+    const radio = event.target as ObcRadio;
+    this.checked = radio.checked;
+    this.dispatchEvent(
+      new CustomEvent('change', {detail: {value: radio.value}})
+    );
   }
 }
 
