@@ -1187,7 +1187,7 @@ export class ObcPoiLayer extends LitElement {
     if (Number.isNaN(leftValue)) return rect;
     const width = rect.width || 0;
     const height = rect.height || 0;
-    const left = layerRect.left + leftValue;
+    const left = layerRect.left + leftValue - width / 2;
     const top = layerRect.bottom - height;
     return new DOMRect(left, top, width, height);
   }
