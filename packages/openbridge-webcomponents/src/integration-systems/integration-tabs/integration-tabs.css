@@ -29,4 +29,9 @@
   .label {
     padding: 0 8px;
   }
+
+  &.selected {
+    @mixin style style=integration-selected visibleWrapperClass=.visible-wrapper;
+    color: var(--integration-on-selected-active-color);
+  }
 }

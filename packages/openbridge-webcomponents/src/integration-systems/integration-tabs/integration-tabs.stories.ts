@@ -13,7 +13,10 @@ const meta: Meta<typeof ObcIntegrationTabs> = {
       value: 'integration-container-global-color',
     },
   },
-  render: () => html`<obc-integration-tabs>Vessel name</obc-integration-tabs>`,
+  render: (args) =>
+    html`<obc-integration-tabs .selected=${args.selected}
+      >Vessel name</obc-integration-tabs
+    >`,
 } satisfies Meta<ObcIntegrationTabs>;
 
 export default meta;
@@ -21,4 +24,10 @@ type Story = StoryObj<ObcIntegrationTabs>;
 
 export const Primary: Story = {
   args: {},
+};
+
+export const Selected: Story = {
+  args: {
+    selected: true,
+  },
 };
