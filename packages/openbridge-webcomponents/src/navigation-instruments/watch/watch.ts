@@ -300,8 +300,8 @@ export class ObcWatch extends LitElement {
       }
     }
     const scale = Math.min(clientWidth / width, clientHeight / height);
-    if (scale === Infinity || scale <= 0) {
-      throw new Error('Scale is not valid');
+    if (scale === Infinity || scale < 0) {
+      throw new Error('Watch scale is not valid');
     }
     return scale;
   }
