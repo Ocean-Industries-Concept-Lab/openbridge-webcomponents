@@ -5,6 +5,11 @@ import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement} from '../../decorator.js';
 import style from './sequence-step.css?inline';
 import '../../icons/icon-check-google.js';
+import {
+  SequenceLoadingSpinnerProgressionType,
+  SequenceLoadingSpinnerType,
+} from '../sequence-loading-spinner/sequence-loading-spinner.js';
+import '../sequence-loading-spinner/sequence-loading-spinner.js';
 
 export enum SequenceOrientation {
   vertical = 'vertical',
@@ -103,11 +108,13 @@ export class ObcSequenceStep extends LitElement {
 
     if (this.value === SequenceValue.loading) {
       return html`
-        <span
-          class="state-icon state-icon--spinner sequence-step-spinner"
+        <obc-sequence-loading-spinner
+          class="state-icon state-icon--spinner"
           part="state-icon"
           aria-hidden="true"
-        ></span>
+          .type=${this.loadingSpinnerType}
+          .progression=${SequenceLoadingSpinnerProgressionType.determinate}
+        ></obc-sequence-loading-spinner>
       `;
     }
 
@@ -162,14 +169,54 @@ export class ObcSequenceStep extends LitElement {
 
     return html`
       <div class="node" part="node" aria-hidden="true">
-        ${showCheck
-          ? html`<obi-check-google
-              class="small-check"
-              part="state-icon"
-              aria-hidden="true"
-            ></obi-check-google>`
-          : nothing}
+        ${this.value === SequenceValue.loading
+          ? this.renderLoadingSpinner()
+          : showCheck
+            ? html`<obi-check-google
+                class="small-check"
+                part="state-icon"
+                aria-hidden="true"
+              ></obi-check-google>`
+            : nothing}
       </div>
+    `;
+  }
+
+  private get loadingSpinnerType(): SequenceLoadingSpinnerType {
+    const isPoint = this.styleType === SequenceStyle.point;
+    if (this.type === SequenceType.small) {
+      return isPoint
+        ? SequenceLoadingSpinnerType.indicatorPoint
+        : SequenceLoadingSpinnerType.indicator;
+    }
+    if (this.type === SequenceType.medium) {
+      return isPoint
+        ? SequenceLoadingSpinnerType.tagPoint
+        : SequenceLoadingSpinnerType.tag;
+    }
+    return isPoint
+      ? SequenceLoadingSpinnerType.buttonPoint
+      : SequenceLoadingSpinnerType.button;
+  }
+
+  private renderLoadingSpinner(): TemplateResult {
+    return html`
+      <obc-sequence-loading-spinner
+        aria-hidden="true"
+        .type=${this.loadingSpinnerType}
+        .progression=${SequenceLoadingSpinnerProgressionType.determinate}
+      ></obc-sequence-loading-spinner>
+    `;
+  }
+
+  private renderPointLoadingSpinner(): TemplateResult {
+    return html`
+      <span class="loading-spinner" aria-hidden="true">
+        <obc-sequence-loading-spinner
+          .type=${this.loadingSpinnerType}
+          .progression=${SequenceLoadingSpinnerProgressionType.determinate}
+        ></obc-sequence-loading-spinner>
+      </span>
     `;
   }
 
@@ -194,6 +241,10 @@ export class ObcSequenceStep extends LitElement {
       return this.renderSmallIndicator();
     }
     if (this.isMediumPoint || this.isLargePoint) {
+      const loadingSpinner =
+        this.value === SequenceValue.loading
+          ? this.renderPointLoadingSpinner()
+          : nothing;
       return html`
         <div
           class="node ${this.type === 'medium' && this.styleType === 'point'
@@ -201,6 +252,7 @@ export class ObcSequenceStep extends LitElement {
             : ''}"
           part="node"
         >
+          ${loadingSpinner}
           <div class="content" part="label">
             <slot></slot>
           </div>

@@ -1,7 +1,6 @@
 :host {
   display: inline-flex;
   line-height: 0;
-  vertical-align: middle;
 }
 
 .sequence-loading-spinner {
@@ -56,6 +55,10 @@
     overflow: hidden;
     animation: loading-spin var(--spinner-rotation-duration, 1000ms) linear
       infinite;
+    --spinner-radius: calc(
+      (var(--spinner-size) - var(--spinner-stroke-width)) / 2
+    );
+    --spinner-cap-size: var(--spinner-stroke-width);
 
     .cap {
       position: absolute;
@@ -65,6 +68,7 @@
       height: var(--spinner-cap-size);
       border-radius: 50%;
       pointer-events: none;
+      z-index: 2;
     }
 
     &::before,
@@ -82,6 +86,7 @@
     }
 
     &::after {
+      z-index: 1;
       -webkit-mask: radial-gradient(
         farthest-side,
         transparent calc(100% - var(--spinner-stroke-width)),
@@ -123,12 +128,39 @@
         background: conic-gradient(
           from 90deg,
           var(--element-disabled-color) 0deg,
-          var(--element-disabled-color) 12deg,
-          var(--base-blue-500) 270deg,
-          var(--element-neutral-enhanced-color) 305deg,
-          var(--element-disabled-color) 335deg,
+          var(--element-disabled-color) 135deg,
+          var(--base-blue-500) 136deg,
+          color-mix(
+              in srgb,
+              var(--base-blue-500) 96%,
+              var(--element-disabled-color)
+            )
+            165deg,
+          color-mix(
+              in srgb,
+              var(--base-blue-500) 45%,
+              var(--element-disabled-color)
+            )
+            220deg,
+          color-mix(
+              in srgb,
+              var(--base-blue-500) 20%,
+              var(--element-disabled-color)
+            )
+            289deg,
+          var(--element-disabled-color) 360deg,
           var(--element-disabled-color) 360deg
         );
+      }
+      --spinner-scanning-start-deg: 226deg;
+      .cap-start {
+        background: var(--base-blue-500);
+        transform: translate(-50%, -50%)
+          rotate(var(--spinner-scanning-start-deg))
+          translateY(calc(-1 * var(--spinner-radius)));
+      }
+      .cap-end {
+        opacity: 0;
       }
     }
   }
