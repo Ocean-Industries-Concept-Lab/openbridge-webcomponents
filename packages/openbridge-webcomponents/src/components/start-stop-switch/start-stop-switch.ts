@@ -11,14 +11,21 @@ import {customElement} from '../../decorator.js';
  * - `running`: Green appearance indicating motor/process is running
  * - `loading`: Light blue appearance indicating a pending/loading state
  */
-export type StartStopSwitchVariant = 'normal' | 'running' | 'loading';
-
+// export type StartStopSwitchVariant = 'normal' | 'running' | 'loading';
+export enum StartStopSwitchVariant {
+  normal = 'normal',
+  running = 'running',
+  loading = 'loading',
+}
 /**
  * The possible sizes for the start-stop switch.
  * - `regular`: Standard size with 32px track height
  * - `large`: Larger size with 48px track height
  */
-export type StartStopSwitchSize = 'regular' | 'large';
+export enum StartStopSwitchSize {
+  regular = 'regular',
+  large = 'large',
+}
 
 export type ObcStartStopSwitchChangeEvent = CustomEvent<{
   checked: boolean;
@@ -122,7 +129,7 @@ export class ObcStartStopSwitch extends LitElement {
    * Defaults to `'normal'`.
    */
   @property({type: String, reflect: true}) variant: StartStopSwitchVariant =
-    'normal';
+    StartStopSwitchVariant.normal;
 
   /**
    * The size of the switch.
@@ -137,7 +144,7 @@ export class ObcStartStopSwitch extends LitElement {
    * Defaults to `'regular'`.
    */
   @property({type: String, reflect: true}) size: StartStopSwitchSize =
-    'regular';
+    StartStopSwitchSize.regular;
 
   /**
    * Whether the switch is disabled.
