@@ -1,10 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
-import {withActions} from 'storybook/actions/decorator';
 import './sequence-toolbar.js';
 import '../sequence-step/sequence-step.js';
-import '../../icons/icon-chevron-left-google.js';
-import '../../icons/icon-chevron-right-google.js';
 import {SequenceToolbarType} from './sequence-toolbar.js';
 import {
   SequenceStyle,
@@ -22,46 +19,30 @@ const meta: Meta<SequenceToolbarArgs> = {
   component: 'obc-sequence-toolbar',
   parameters: {
     layout: 'centered',
-    controls: {
-      exclude: ['hasAdd'],
-    },
     docs: {
       description: {
         component: `Sequence toolbar arranges sequence step items with optional start/end controls and a condensed mode.
 
 ### Slots
-- \`start\` / \`end\`: provide custom Previous/Next (or Intro/Summary).
+- \`start\` / \`end\`: content for the built-in Previous/Next (or Intro/Summary).
 - Default slot: sequence steps in the center.
 - \`condensed-current\` / \`condensed-total\`: labels for condensed mode.
-- \`add\`: optional add control.
 
 ### Events
 - \`prev-click\`, \`next-click\`, \`add-click\` are fired by the default controls
-  (sequential/condensed).
-- For unordered, start/end are slotted; wire your own events (see demo).
+  (all types for prev/next, add when \`hasAdd\`).
 
 ### Example
 ~~~html
 <obc-sequence-toolbar type="sequential">
-  <obc-sequence-step slot="start">Previous</obc-sequence-step>
   <obc-sequence-step value="completed">1</obc-sequence-step>
   <obc-sequence-step value="completed">2</obc-sequence-step>
   <obc-sequence-step value="active">3</obc-sequence-step>
   <obc-sequence-step value="not-started">4</obc-sequence-step>
-  <obc-sequence-step slot="end" value="completed">Next</obc-sequence-step>
 </obc-sequence-toolbar>
 ~~~
-
-### Styling
-The toolbar may set \`variant\` on slotted \`obc-sequence-step\` elements:
-- \`toolbar-prev\` for \`start\` when \`type="sequential"\`.
-- \`toolbar-condensed-icon\` for \`start/end\` when \`type="condensed"\`.
-- Only the Previous control is modified for sequential; the Next control keeps default styles.
-Provide your own \`variant\` to opt out.`,
+`,
       },
-    },
-    actions: {
-      handles: ['intro-click', 'summary-click', 'start-click', 'finish-click'],
     },
   },
   argTypes: {
@@ -69,9 +50,6 @@ Provide your own \`variant\` to opt out.`,
       table: {disable: true},
     },
     end: {
-      table: {disable: true},
-    },
-    add: {
       table: {disable: true},
     },
     'condensed-current': {
@@ -93,40 +71,17 @@ Provide your own \`variant\` to opt out.`,
     type: SequenceToolbarType.unordered,
     hasAdd: false,
   },
-  decorators: [withActions],
 };
 
 export default meta;
 
 type Story = StoryObj<SequenceToolbarArgs>;
 
-const dispatchStoryEvent =
-  (name: string) =>
-  (event: Event): void => {
-    const source = event.currentTarget as HTMLElement;
-    const target = source.closest('obc-sequence-toolbar') ?? source;
-    target.dispatchEvent(
-      new CustomEvent(name, {bubbles: true, composed: true})
-    );
-  };
-
 const renderToolbar = (args: SequenceToolbarArgs) => {
   const startLabel =
     args.type === SequenceToolbarType.unordered ? 'Intro' : 'Previous';
   const endLabel =
     args.type === SequenceToolbarType.unordered ? 'Summary' : 'Next';
-  const startClick =
-    args.type === SequenceToolbarType.unordered
-      ? dispatchStoryEvent('intro-click')
-      : args.type === SequenceToolbarType.sequential
-        ? dispatchStoryEvent('prev-click')
-        : undefined;
-  const endClick =
-    args.type === SequenceToolbarType.unordered
-      ? dispatchStoryEvent('summary-click')
-      : args.type === SequenceToolbarType.sequential
-        ? dispatchStoryEvent('next-click')
-        : undefined;
 
   const stepItems =
     args.type === SequenceToolbarType.sequential
@@ -149,49 +104,11 @@ const renderToolbar = (args: SequenceToolbarArgs) => {
   const slotContent =
     args.type === SequenceToolbarType.condensed
       ? html`
-          <obc-sequence-step
-            slot="start"
-            class="condensed-icon"
-            .type=${SequenceType.large}
-            .styleType=${SequenceStyle.point}
-            .value=${SequenceValue.notStarted}
-            .hideStepInputConnector=${true}
-            .hideStepOutputConnector=${true}
-            .hasIcon=${false}
-            aria-label="Previous"
-          >
-            <obi-chevron-left-google></obi-chevron-left-google>
-          </obc-sequence-step>
           <span slot="condensed-current">1</span>
           <span slot="condensed-total">3</span>
-          <obc-sequence-step
-            slot="end"
-            class="condensed-icon"
-            .type=${SequenceType.large}
-            .styleType=${SequenceStyle.point}
-            .value=${SequenceValue.notStarted}
-            .hideStepInputConnector=${true}
-            .hideStepOutputConnector=${true}
-            .hasIcon=${false}
-            aria-label="Next"
-          >
-            <obi-chevron-right-google></obi-chevron-right-google>
-          </obc-sequence-step>
         `
       : html`
-          <obc-sequence-step
-            slot="start"
-            class="edge-button edge-button--outline"
-            .type=${SequenceType.large}
-            .styleType=${SequenceStyle.regular}
-            .value=${SequenceValue.notStarted}
-            .hideStepInputConnector=${true}
-            .hideStepOutputConnector=${true}
-            .hasIcon=${false}
-            @click=${startClick}
-          >
-            ${startLabel}
-          </obc-sequence-step>
+          <span slot="start">${startLabel}</span>
           ${stepItems.map(
             (step, index) => html`
               <obc-sequence-step
@@ -212,21 +129,7 @@ const renderToolbar = (args: SequenceToolbarArgs) => {
               </obc-sequence-step>
             `
           )}
-          <obc-sequence-step
-            slot="end"
-            class="edge-button"
-            .type=${SequenceType.large}
-            .styleType=${SequenceStyle.regular}
-            .value=${args.type === SequenceToolbarType.unordered
-              ? SequenceValue.notStarted
-              : SequenceValue.completed}
-            .hideStepInputConnector=${true}
-            .hideStepOutputConnector=${true}
-            .hasIcon=${false}
-            @click=${endClick}
-          >
-            ${endLabel}
-          </obc-sequence-step>
+          <span slot="end">${endLabel}</span>
         `;
 
   return html`
