@@ -15,6 +15,7 @@ import {
   getSetpointOutwardOffset,
   RADIAL_SETPOINT_RADIUS,
   SetpointColorMode,
+  SetpointVisualState,
 } from '../../svghelpers/setpoint.js';
 import {InstrumentState} from '../types.js';
 import compentStyle from './watch.css?inline';
@@ -78,39 +79,48 @@ const RADIAL_SETPOINT_INWARD_ADJUST = 4;
  * ## Setpoint Behavior
  *
  * The setpoint marker visual state is derived from the combination of `atAngleSetpoint`,
- * `atAngleSetpointZero`, and `focused` properties:
+ * `angleSetpoint`, and `angleSetpointAtZeroDeadband` properties:
  *
  * - **notEqual**: Value differs from setpoint (triangular marker, offset outward)
  * - **equal**: Value matches setpoint (line marker, sits on ring)
  * - **equalZero**: Value matches setpoint at zero angle (double-line marker, offset outward)
- * - **focus**: User is actively adjusting (e.g., dragging) - shows focus visual state
+ * - **focus**: User is actively adjusting via `newAngleSetpoint` - shows focus visual state
+ *
+ * ## newAngleSetpoint Pattern
+ *
+ * When `newAngleSetpoint` is defined, TWO setpoint markers are rendered:
+ * 1. Original marker at `angleSetpoint` - dimmed (0.75 opacity)
+ * 2. New marker at `newAngleSetpoint` - focus visual state, full opacity
+ *
+ * This enables the "adjustment preview" UX where users can see both the current
+ * and proposed setpoint positions simultaneously.
  *
  * The `RADIAL_SETPOINT_INWARD_ADJUST` constant (4px) fine-tunes radial setpoint positioning
  * to match Figma designs, applied on top of visual state offsets from setpoint.ts.
  *
  * The `colorMode` property allows overriding the derived color mode (enhanced for inCommand,
- * regular for other states). TODO(designer): Confirm if colorMode override is needed for
- * specific use cases beyond story demonstrations.
+ * regular for other states).
  *
  * @property {InstrumentState} state - Instrument state (inCommand, active, loading, off)
  * @property {number|undefined} angleSetpoint - Setpoint angle in degrees (0° = 12 o'clock)
+ * @property {number|undefined} newAngleSetpoint - New setpoint being adjusted (focus mode)
  * @property {boolean} atAngleSetpoint - Whether value matches setpoint (within deadband)
- * @property {boolean} atAngleSetpointZero - Whether setpoint is at zero angle
- * @property {boolean} focused - Whether user is actively adjusting the setpoint
+ * @property {number} angleSetpointAtZeroDeadband - Deadband for zero detection (default 0.5°)
  * @property {SetpointColorMode|undefined} colorMode - Optional override for setpoint color mode
  */
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {
   private _setpointId = `watch-setpoint-${Math.random().toString(36).slice(2, 9)}`;
+  private _newSetpointId = `watch-new-setpoint-${Math.random().toString(36).slice(2, 9)}`;
 
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
   @property({type: String}) watchCircleType: WatchCircleType =
     WatchCircleType.single;
   @property({type: Boolean}) northArrow: boolean = false;
   @property({type: Number}) angleSetpoint: number | undefined;
+  @property({type: Number}) newAngleSetpoint: number | undefined;
   @property({type: Boolean}) atAngleSetpoint: boolean = false;
-  @property({type: Boolean}) atAngleSetpointZero: boolean = false;
-  @property({type: Boolean}) focused: boolean = false;
+  @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
   @property({type: String}) colorMode: SetpointColorMode | undefined;
   @property({type: Number}) padding: number | undefined;
   @property({type: Array, attribute: false}) areas: WatchArea[] = [];
@@ -438,29 +448,59 @@ export class ObcWatch extends LitElement {
     const derived = deriveRadialSetpointConfig({
       state: this.state,
       atSetpoint: this.atAngleSetpoint,
-      atZero: this.atAngleSetpointZero,
-      focused: this.focused,
+      angleSetpoint: this.angleSetpoint,
+      setpointAtZeroDeadband: this.angleSetpointAtZeroDeadband,
+      newAngleSetpoint: this.newAngleSetpoint,
     });
 
     const colorMode = this.colorMode ?? derived.colorMode;
-    const {visualState, disabled} = derived;
+    const {visualState, disabled, hasNewSetpoint} = derived;
 
     const outwardOffset = getSetpointOutwardOffset(visualState);
     const radius =
       RADIAL_SETPOINT_RADIUS + outwardOffset - RADIAL_SETPOINT_INWARD_ADJUST;
 
-    const marker = drawSetpointMarker({
+    // Render original setpoint marker (dimmed when newAngleSetpoint is active)
+    const opacity = hasNewSetpoint ? 0.75 : 1;
+    const originalMarker = drawSetpointMarker({
       visualState,
       colorMode,
       disabled,
       id: this._setpointId,
     });
 
-    return svg`
-      <g transform="rotate(${this.angleSetpoint + 90}) translate(${-radius}, 0) rotate(270)">
-        ${marker}
+    const originalSetpoint = svg`
+      <g transform="rotate(${this.angleSetpoint + 90}) translate(${-radius}, 0) rotate(270)" opacity="${opacity}">
+        ${originalMarker}
       </g>
     `;
+
+    // Render newAngleSetpoint in focus state (always on top)
+    if (hasNewSetpoint) {
+      const focusOutwardOffset = getSetpointOutwardOffset(
+        SetpointVisualState.focus
+      );
+      const focusRadius =
+        RADIAL_SETPOINT_RADIUS +
+        focusOutwardOffset -
+        RADIAL_SETPOINT_INWARD_ADJUST;
+
+      const newMarker = drawSetpointMarker({
+        visualState: SetpointVisualState.focus,
+        colorMode,
+        disabled: false, // newSetpoint is never disabled
+        id: this._newSetpointId,
+      });
+
+      return svg`
+        ${originalSetpoint}
+        <g transform="rotate(${this.newAngleSetpoint! + 90}) translate(${-focusRadius}, 0) rotate(270)">
+          ${newMarker}
+        </g>
+      `;
+    }
+
+    return originalSetpoint;
   }
 
   private renderNorthArrow(): SVGTemplateResult | typeof nothing {

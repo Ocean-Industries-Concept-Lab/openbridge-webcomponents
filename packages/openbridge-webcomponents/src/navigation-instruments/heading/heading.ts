@@ -20,9 +20,9 @@ export class ObcHeading extends LitElement {
   @property({type: Number}) heading = 0;
   @property({type: Number}) courseOverGround = 0;
   @property({type: Number}) headingSetPoint: number | null = null;
+  @property({type: Number}) newHeadingSetpoint: number | undefined;
   @property({type: Boolean}) atHeadingSetpoint: boolean = false;
-  @property({type: Boolean}) atHeadingSetpointZero: boolean = false;
-  @property({type: Boolean}) headingSetpointFocused: boolean = false;
+  @property({type: Number}) headingSetpointAtZeroDeadband: number = 0.5;
   @property({type: String}) headingSetpointColorMode:
     | SetpointColorMode
     | undefined;
@@ -97,9 +97,9 @@ export class ObcHeading extends LitElement {
           .labelFrameEnabled=${true}
           .crosshairEnabled=${true}
           .angleSetpoint=${this.headingSetPoint ?? undefined}
+          .newAngleSetpoint=${this.newHeadingSetpoint}
           .atAngleSetpoint=${this.atHeadingSetpointCalc()}
-          .atAngleSetpointZero=${this.atHeadingSetpointZero}
-          .focused=${this.headingSetpointFocused}
+          .angleSetpointAtZeroDeadband=${this.headingSetpointAtZeroDeadband}
           .colorMode=${this.headingSetpointColorMode}
           .rotation=${this.getRotation()}
         >

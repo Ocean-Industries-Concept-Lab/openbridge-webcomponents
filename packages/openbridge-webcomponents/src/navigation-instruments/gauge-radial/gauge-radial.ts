@@ -22,9 +22,9 @@ export interface GaugeRadialAdvice {
 export class ObcGaugeRadial extends LitElement {
   @property({type: Number}) value = 0;
   @property({type: Number}) setpoint: number | undefined;
+  @property({type: Number}) newSetpoint: number | undefined;
   @property({type: Boolean}) atSetpoint: boolean = false;
-  @property({type: Boolean}) atSetpointZero: boolean = false;
-  @property({type: Boolean}) setpointFocused: boolean = false;
+  @property({type: Number}) setpointAtZeroDeadband: number = 0.5;
   @property({type: String}) setpointColorMode: SetpointColorMode | undefined;
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
@@ -64,8 +64,8 @@ export class ObcGaugeRadial extends LitElement {
       <obc-instrument-radial
         .value=${this.value}
         .setpoint=${this.setpoint}
-        .atSetpointZero=${this.atSetpointZero}
-        .setpointFocused=${this.setpointFocused}
+        .newSetpoint=${this.newSetpoint}
+        .setpointAtZeroDeadband=${this.setpointAtZeroDeadband}
         .setpointColorMode=${this.setpointColorMode}
         .touching=${this.touching}
         .disableAutoAtSetpoint=${this.disableAutoAtSetpoint}

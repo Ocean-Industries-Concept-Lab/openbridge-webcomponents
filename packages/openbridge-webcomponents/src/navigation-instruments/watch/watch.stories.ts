@@ -691,3 +691,165 @@ export const TickmarksTestInsideRotation: Story = {
     `;
   },
 };
+
+/**
+ * Side-by-side comparison of setpoint visual states for radial instruments.
+ *
+ * This story demonstrates the same state grid as bar-vertical/horizontal and
+ * gauge-vertical/horizontal components, but for radial (watch-based) instruments.
+ *
+ * | State | Description |
+ * |-------|-------------|
+ * | **inCommand** | Enhanced colors, value matches setpoint |
+ * | **active** | Enhanced colors, value differs from setpoint |
+ * | **loading** | Disabled/tertiary colors |
+ * | **off** | Disabled/tertiary colors |
+ * | **adjusting** | Dual markers: original dimmed, new in focus state |
+ */
+export const StateComparison: Story = {
+  name: 'State comparison (inCommand/active/loading/off/adjusting)',
+
+  render: () => html`
+    <div style="display: flex; gap: 24px; align-items: flex-start;">
+      <div style="text-align: center;">
+        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
+          inCommand
+        </div>
+        <div style="width: 160px; height: 160px;">
+          <obc-watch
+            .state=${InstrumentState.inCommand}
+            .angleSetpoint=${45}
+            .atAngleSetpoint=${true}
+            .watchCircleType=${WatchCircleType.double}
+            .areas=${[
+              {
+                startAngle: -90,
+                endAngle: 90,
+                roundInsideCut: true,
+                roundOutsideCut: true,
+              },
+            ]}
+            .barAreas=${[
+              {
+                startAngle: 0,
+                endAngle: 45,
+                fillColor: 'var(--instrument-enhanced-tertiary-color)',
+              },
+            ]}
+          ></obc-watch>
+        </div>
+      </div>
+      <div style="text-align: center;">
+        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
+          active
+        </div>
+        <div style="width: 160px; height: 160px;">
+          <obc-watch
+            .state=${InstrumentState.active}
+            .angleSetpoint=${60}
+            .atAngleSetpoint=${false}
+            .watchCircleType=${WatchCircleType.double}
+            .areas=${[
+              {
+                startAngle: -90,
+                endAngle: 90,
+                roundInsideCut: true,
+                roundOutsideCut: true,
+              },
+            ]}
+            .barAreas=${[
+              {
+                startAngle: 0,
+                endAngle: 30,
+                fillColor: 'var(--instrument-regular-tertiary-color)',
+              },
+            ]}
+          ></obc-watch>
+        </div>
+      </div>
+      <div style="text-align: center;">
+        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
+          loading
+        </div>
+        <div style="width: 160px; height: 160px;">
+          <obc-watch
+            .state=${InstrumentState.loading}
+            .angleSetpoint=${45}
+            .atAngleSetpoint=${false}
+            .watchCircleType=${WatchCircleType.double}
+            .areas=${[
+              {
+                startAngle: -90,
+                endAngle: 90,
+                roundInsideCut: true,
+                roundOutsideCut: true,
+              },
+            ]}
+            .barAreas=${[
+              {
+                startAngle: 0,
+                endAngle: 20,
+                fillColor: 'var(--instrument-frame-tertiary-color)',
+              },
+            ]}
+          ></obc-watch>
+        </div>
+      </div>
+      <div style="text-align: center;">
+        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">off</div>
+        <div style="width: 160px; height: 160px;">
+          <obc-watch
+            .state=${InstrumentState.off}
+            .angleSetpoint=${45}
+            .atAngleSetpoint=${false}
+            .watchCircleType=${WatchCircleType.double}
+            .areas=${[
+              {
+                startAngle: -90,
+                endAngle: 90,
+                roundInsideCut: true,
+                roundOutsideCut: true,
+              },
+            ]}
+            .barAreas=${[
+              {
+                startAngle: 0,
+                endAngle: 60,
+                fillColor: 'var(--instrument-frame-tertiary-color)',
+              },
+            ]}
+          ></obc-watch>
+        </div>
+      </div>
+      <div style="text-align: center;">
+        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
+          adjusting (dual markers)
+        </div>
+        <div style="width: 160px; height: 160px;">
+          <obc-watch
+            .state=${InstrumentState.inCommand}
+            .angleSetpoint=${30}
+            .newAngleSetpoint=${60}
+            .atAngleSetpoint=${true}
+            .watchCircleType=${WatchCircleType.double}
+            .areas=${[
+              {
+                startAngle: -90,
+                endAngle: 90,
+                roundInsideCut: true,
+                roundOutsideCut: true,
+              },
+            ]}
+            .barAreas=${[
+              {
+                startAngle: 0,
+                endAngle: 30,
+                fillColor: 'var(--instrument-enhanced-tertiary-color)',
+              },
+            ]}
+          ></obc-watch>
+        </div>
+      </div>
+    </div>
+  `,
+};

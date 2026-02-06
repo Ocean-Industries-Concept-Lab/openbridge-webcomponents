@@ -627,7 +627,7 @@ export const SetpointStateComparison: Story = {
       </div>
       <div style="text-align: center;">
         <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
-          focus (future)
+          adjusting/focused/touching
         </div>
         <obc-bar-horizontal
           minValue="-100"
@@ -636,9 +636,9 @@ export const SetpointStateComparison: Story = {
           hasBar
           enhanced
           value="30"
-          setpoint="70"
+          setpoint="30"
+          .newSetpoint=${70}
           state="inCommand"
-          ?focused=${true}
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
         ></obc-bar-horizontal>

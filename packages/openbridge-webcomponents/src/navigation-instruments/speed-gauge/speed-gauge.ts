@@ -23,9 +23,9 @@ export interface SpeedAdvice {
 export class ObcSpeedGauge extends LitElement {
   @property({type: Number}) speed = 0;
   @property({type: Number}) setpoint: number | undefined;
+  @property({type: Number}) newSetpoint: number | undefined;
   @property({type: Boolean}) atSetpoint: boolean = false;
-  @property({type: Boolean}) atSetpointZero: boolean = false;
-  @property({type: Boolean}) setpointFocused: boolean = false;
+  @property({type: Number}) setpointAtZeroDeadband: number = 0.5;
   @property({type: String}) setpointColorMode: SetpointColorMode | undefined;
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
@@ -78,9 +78,11 @@ export class ObcSpeedGauge extends LitElement {
       <div class="container">
         <obc-watch
           .angleSetpoint=${setpointAngle}
+          .newAngleSetpoint=${this.newSetpoint !== undefined
+            ? this.getAngle(this.newSetpoint)
+            : undefined}
           .atAngleSetpoint=${this.atSetpointCalc()}
-          .atAngleSetpointZero=${this.atSetpointZero}
-          .focused=${this.setpointFocused}
+          .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
           .colorMode=${this.setpointColorMode}
           .padding=${48}
           .tickmarks=${this.tickmarks}

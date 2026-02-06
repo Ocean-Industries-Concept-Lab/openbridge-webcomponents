@@ -29,10 +29,10 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
     AzimuthThrusterLabeledSize.medium;
   @property({type: Number}) angle = 0;
   @property({type: Number}) angleSetpoint: number | undefined;
+  @property({type: Number}) newAngleSetpoint: number | undefined;
   @property({type: Boolean})
   atAngleSetpoint: boolean = false;
-  @property({type: Boolean}) atAngleSetpointZero: boolean = false;
-  @property({type: Boolean}) angleSetpointFocused: boolean = false;
+  @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
   @property({type: String}) angleSetpointColorMode:
     | SetpointColorMode
     | undefined;
@@ -112,8 +112,8 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
           .autoAtAngleSetpointDeadband=${this.autoAtAngleSetpointDeadband}
           .atThrustSetpoint=${this.atThrustSetpoint}
           .atAngleSetpoint=${this.atAngleSetpoint}
-          .atAngleSetpointZero=${this.atAngleSetpointZero}
-          .angleSetpointFocused=${this.angleSetpointFocused}
+          .newAngleSetpoint=${this.newAngleSetpoint}
+          .angleSetpointAtZeroDeadband=${this.angleSetpointAtZeroDeadband}
           .angleSetpointColorMode=${this.angleSetpointColorMode}
           .thrustSetpointAtZeroDeadband=${this.thrustSetpointAtZeroDeadband}
           .state=${state}

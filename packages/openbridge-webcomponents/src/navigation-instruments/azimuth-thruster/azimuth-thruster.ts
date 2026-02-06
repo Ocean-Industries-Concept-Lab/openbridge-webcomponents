@@ -25,10 +25,10 @@ function mapAngle0to360(angle: number): number {
 export class ObcAzimuthThruster extends LitElement {
   @property({type: Number}) angle = 0;
   @property({type: Number}) angleSetpoint: number | undefined;
+  @property({type: Number}) newAngleSetpoint: number | undefined;
   @property({type: Boolean})
   atAngleSetpoint: boolean = false;
-  @property({type: Boolean}) atAngleSetpointZero: boolean = false;
-  @property({type: Boolean}) angleSetpointFocused: boolean = false;
+  @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
   @property({type: String}) angleSetpointColorMode:
     | SetpointColorMode
     | undefined;
@@ -184,9 +184,9 @@ export class ObcAzimuthThruster extends LitElement {
           .tickmarks=${tickmarks}
           .state=${this.state}
           .angleSetpoint=${this.angleSetpoint}
+          .newAngleSetpoint=${this.newAngleSetpoint}
           .atAngleSetpoint=${this.atAngleSetpointCalc}
-          .atAngleSetpointZero=${this.atAngleSetpointZero}
-          .focused=${this.angleSetpointFocused}
+          .angleSetpointAtZeroDeadband=${this.angleSetpointAtZeroDeadband}
           .colorMode=${this.angleSetpointColorMode}
           .tickmarksInside=${this.tickmarksInside}
           padding=${ifDefined(this.noPadding ? 16 : undefined)}
