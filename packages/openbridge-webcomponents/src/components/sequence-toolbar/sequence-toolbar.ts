@@ -22,16 +22,56 @@ export enum SequenceToolbarType {
 /**
  * `<obc-sequence-toolbar>` – Layout wrapper for sequence navigation steps.
  *
+ * ### Overview
+ * A compact container for sequence navigation (stepper, wizard bar, progress
+ * step bar) that arranges `obc-sequence-step` items with built-in start/end
+ * controls and an optional add button.
+ *
+ * ### Features / Variants
+ * - **Unordered:** Start/end controls with a free-form center list.
+ * - **Sequential:** Start/end controls with sequential step items.
+ * - **Condensed:** Icon controls with current/total labels.
+ * - **Optional Add:** `hasAdd` shows an add button (not shown in sequential).
+ *
+ * ### Usage Guidelines
+ * - Use for step navigation, progress through a flow, or quick step access.
+ * - Provide your steps in the default slot (`obc-sequence-step` items).
+ * - Override start/end text via the `start`/`end` slots when needed.
+ *
+ * ### Slots / Content
+ * - Default slot: step items rendered in the toolbar center.
+ * - `start`/`end` slots: **text/content only** for the built-in controls.
+ * - `condensed-current`/`condensed-total`: labels for condensed mode.
+ *
+ * ### Events
+ * - `prev-click`: Fired when the built-in Previous control is clicked.
+ * - `next-click`: Fired when the built-in Next control is clicked.
+ * - `add-click`: Fired when the built-in Add control is clicked.
+ *
+ * ### Best Practices & Constraints
+ * - The start/end controls are built-in; you can only change their content.
+ * - Condensed mode does not accept start/end slots (only current/total).
+ * - `hasAdd` is ignored when `type="sequential"`.
+ * - Keep step labels short for compact layouts.
+ * - Use `condensed` when space is limited.
+ * - Do not try to replace the start/end controls with custom components.
+ * - Do not rely on `hasAdd` in sequential mode.
+ *
+ * ### Example
+ * ```html
+ * <obc-sequence-toolbar type="sequential">
+ *   <obc-sequence-step value="completed">1</obc-sequence-step>
+ *   <obc-sequence-step value="completed">2</obc-sequence-step>
+ *   <obc-sequence-step value="active">3</obc-sequence-step>
+ *   <obc-sequence-step value="not-started">4</obc-sequence-step>
+ * </obc-sequence-toolbar>
+ * ```
+ *
  * @slot - Step items rendered in the toolbar center.
- * @slot start - Content for the built-in start control (Intro/Previous label).
- * @slot end - Content for the built-in end control (Summary/Next label).
+ * @slot start - Content for the built-in start control label.
+ * @slot end - Content for the built-in end control label.
  * @slot condensed-current - Current step label for condensed mode.
  * @slot condensed-total - Total steps label for condensed mode.
- *
- * ## Events
- * - `prev-click`: Fired when the default Previous control is clicked.
- * - `next-click`: Fired when the default Next control is clicked.
- * - `add-click`: Fired when the default Add control is clicked.
  *
  * @fires prev-click
  * @fires next-click
@@ -41,7 +81,6 @@ export enum SequenceToolbarType {
 export class ObcSequenceToolbar extends LitElement {
   @property({type: String, reflect: true}) type: SequenceToolbarType =
     SequenceToolbarType.unordered;
-  /** Ignored when `type` is `sequential`. */
   @property({type: Boolean}) hasAdd = false;
 
   static override styles = unsafeCSS(style);
