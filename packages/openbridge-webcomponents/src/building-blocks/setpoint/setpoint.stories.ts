@@ -11,10 +11,7 @@ import '../../navigation-instruments/watch/watch.js';
 import {WatchCircleType} from '../../navigation-instruments/watch/watch.js';
 
 // Import setpoint types for documentation
-import {
-  SetpointVisualState,
-  SetpointColorMode,
-} from '../../svghelpers/setpoint.js';
+import {SetpointColorMode} from '../../svghelpers/setpoint.js';
 
 // Import types needed for bar-vertical configuration
 import {InstrumentState} from '../../navigation-instruments/types.js';
@@ -95,17 +92,66 @@ Source: \`packages/openbridge-webcomponents/src/svghelpers/setpoint.ts\``,
     },
   },
   argTypes: {
-    visualState: {
-      description: 'The visual state of the setpoint marker',
-      control: {type: 'select'},
-      options: Object.values(SetpointVisualState),
+    value: {
+      description: 'Current value (bar fill position)',
+      control: {type: 'range', min: -50, max: 50, step: 1},
     },
-    colorMode: {
-      description: 'The color palette to use',
+    setpoint: {
+      description: 'Setpoint position (target value)',
+      control: {type: 'range', min: -50, max: 50, step: 1},
+    },
+    newSetpoint: {
+      description: 'New setpoint during adjustment (undefined = no adjustment)',
+      control: {type: 'range', min: -50, max: 50, step: 1},
+    },
+    enhanced: {
+      description: 'Use enhanced color palette (brighter, for inCommand)',
+      control: {type: 'boolean'},
+    },
+    state: {
+      description: 'Instrument state',
       control: {type: 'select'},
-      options: Object.values(SetpointColorMode),
+      options: Object.values(InstrumentState),
+    },
+    autoAtSetpointDeadband: {
+      description: 'Deadband for auto at-setpoint detection',
+      control: {type: 'range', min: 0, max: 10, step: 0.5},
+    },
+    setpointAtZeroDeadband: {
+      description: 'Deadband for setpoint-at-zero detection',
+      control: {type: 'range', min: 0, max: 5, step: 0.1},
     },
   },
+  args: {
+    value: 20,
+    setpoint: 40,
+    newSetpoint: undefined,
+    enhanced: true,
+    state: InstrumentState.inCommand,
+    autoAtSetpointDeadband: 1,
+    setpointAtZeroDeadband: 0.5,
+  },
+  render: (args) => html`
+    <obc-bar-vertical
+      minValue="-50"
+      maxValue="50"
+      height="280"
+      side="${ExternalScaleSide.right}"
+      primaryTickbarsInterval="25"
+      secondaryTickbarsInterval="5"
+      hasBar
+      scaleBackground
+      borderRadiusPosition="${BorderRadiusPosition.innerFirstChild}"
+      .enhanced=${args.enhanced}
+      fillMode="${FillMode.fill}"
+      .value=${args.value}
+      .setpoint=${args.setpoint}
+      .newSetpoint=${args.newSetpoint}
+      .state=${args.state}
+      .autoAtSetpointDeadband=${args.autoAtSetpointDeadband}
+      .setpointAtZeroDeadband=${args.setpointAtZeroDeadband}
+    ></obc-bar-vertical>
+  `,
 } satisfies Meta;
 
 export default meta;
@@ -173,31 +219,17 @@ function renderSetpointDemo(config: {
  * The setpoint marker is at full size (100%) when the current value
  * has not yet reached the setpoint.
  *
- * Configuration:
- * - `value: 20` (different from setpoint)
- * - `setpoint: 40`
- * - `state: inCommand`
+ * Use the controls to adjust value, setpoint, enhanced mode, etc.
  */
 export const NotEqual: Story = {
   name: 'notEqual (Input ≠ Output)',
-  render: () => html`
-    <div style="display: flex; gap: 60px; align-items: flex-start;">
-      ${renderSetpointDemo({
-        label: 'Regular',
-        enhanced: false,
-        setpoint: 40,
-        value: 20,
-        state: InstrumentState.inCommand,
-      })}
-      ${renderSetpointDemo({
-        label: 'Enhanced',
-        enhanced: true,
-        setpoint: 40,
-        value: 20,
-        state: InstrumentState.inCommand,
-      })}
-    </div>
-  `,
+  args: {
+    value: 20,
+    setpoint: 40,
+    newSetpoint: undefined,
+    enhanced: true,
+    state: InstrumentState.inCommand,
+  },
 };
 
 /**
@@ -206,32 +238,17 @@ export const NotEqual: Story = {
  * The setpoint marker shrinks to 80% size when the current value
  * equals the setpoint (within the deadband tolerance).
  *
- * Configuration:
- * - `value: 40` (same as setpoint)
- * - `setpoint: 40`
- * - `state: inCommand`
- * - `autoAtSetpointDeadband: 1`
+ * Use the controls to adjust value, setpoint, enhanced mode, etc.
  */
 export const Equal: Story = {
   name: 'equal (Input = Output)',
-  render: () => html`
-    <div style="display: flex; gap: 60px; align-items: flex-start;">
-      ${renderSetpointDemo({
-        label: 'Regular',
-        enhanced: false,
-        setpoint: 40,
-        value: 40,
-        state: InstrumentState.inCommand,
-      })}
-      ${renderSetpointDemo({
-        label: 'Enhanced',
-        enhanced: true,
-        setpoint: 40,
-        value: 40,
-        state: InstrumentState.inCommand,
-      })}
-    </div>
-  `,
+  args: {
+    value: 40,
+    setpoint: 40,
+    newSetpoint: undefined,
+    enhanced: true,
+    state: InstrumentState.inCommand,
+  },
 };
 
 /**
@@ -241,32 +258,17 @@ export const Equal: Story = {
  * AND shifts 8px outward from the scale to avoid overlapping with
  * the zero position indicator.
  *
- * Configuration:
- * - `value: 0`
- * - `setpoint: 0`
- * - `state: inCommand`
- * - `setpointAtZeroDeadband: 0.5`
+ * Use the controls to adjust value, setpoint, enhanced mode, etc.
  */
 export const EqualZero: Story = {
   name: 'equalZero (Input = Output = 0)',
-  render: () => html`
-    <div style="display: flex; gap: 60px; align-items: flex-start;">
-      ${renderSetpointDemo({
-        label: 'Regular',
-        enhanced: false,
-        setpoint: 0,
-        value: 0,
-        state: InstrumentState.inCommand,
-      })}
-      ${renderSetpointDemo({
-        label: 'Enhanced',
-        enhanced: true,
-        setpoint: 0,
-        value: 0,
-        state: InstrumentState.inCommand,
-      })}
-    </div>
-  `,
+  args: {
+    value: 0,
+    setpoint: 0,
+    newSetpoint: undefined,
+    enhanced: true,
+    state: InstrumentState.inCommand,
+  },
 };
 
 /**
@@ -277,33 +279,17 @@ export const EqualZero: Story = {
  * - Original setpoint is dimmed (0.75 opacity)
  * - New setpoint shows in focus state (filled with border)
  *
- * Configuration:
- * - `setpoint: 20` (original, shown dimmed)
- * - `newSetpoint: 50` (proposed, shown in focus state)
- * - `value: 10`
+ * Use the controls to adjust value, setpoint, newSetpoint, etc.
  */
 export const Focus: Story = {
   name: 'focus (User adjusting)',
-  render: () => html`
-    <div style="display: flex; gap: 60px; align-items: flex-start;">
-      ${renderSetpointDemo({
-        label: 'Regular',
-        enhanced: false,
-        setpoint: 20,
-        newSetpoint: 50,
-        value: 10,
-        state: InstrumentState.inCommand,
-      })}
-      ${renderSetpointDemo({
-        label: 'Enhanced',
-        enhanced: true,
-        setpoint: 20,
-        newSetpoint: 50,
-        value: 10,
-        state: InstrumentState.inCommand,
-      })}
-    </div>
-  `,
+  args: {
+    value: 10,
+    setpoint: 20,
+    newSetpoint: 50,
+    enhanced: true,
+    state: InstrumentState.inCommand,
+  },
 };
 
 // =============================================================================
