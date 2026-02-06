@@ -24,3 +24,6 @@ packages/openbridge-webcomponents-svelte
 .claude/
 **/.claude/
 **/settings.local.json
+.idea/
+**/.idea/
+
