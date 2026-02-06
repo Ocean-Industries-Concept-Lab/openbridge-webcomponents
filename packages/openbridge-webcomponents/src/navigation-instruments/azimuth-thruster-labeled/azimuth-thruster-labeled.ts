@@ -12,6 +12,7 @@ import {ifDefined} from 'lit/directives/if-defined.js';
 import {AngleAdvice} from '../watch/advice.js';
 import {LinearAdvice} from '../thruster/advice.js';
 import {PropellerType} from '../thruster/propeller.js';
+import {SetpointColorMode} from '../../svghelpers/setpoint.js';
 import {customElement} from '../../decorator.js';
 
 export enum AzimuthThrusterLabeledSize {
@@ -28,8 +29,13 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
     AzimuthThrusterLabeledSize.medium;
   @property({type: Number}) angle = 0;
   @property({type: Number}) angleSetpoint: number | undefined;
+  @property({type: Number}) newAngleSetpoint: number | undefined;
   @property({type: Boolean})
   atAngleSetpoint: boolean = false;
+  @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
+  @property({type: String}) angleSetpointColorMode:
+    | SetpointColorMode
+    | undefined;
   @property({type: Boolean}) disableAutoAtAngleSetpoint: boolean = false;
   @property({type: Number}) autoAtAngleSetpointDeadband: number = 2;
   @property({type: Boolean}) touching: boolean = false;
@@ -106,6 +112,9 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
           .autoAtAngleSetpointDeadband=${this.autoAtAngleSetpointDeadband}
           .atThrustSetpoint=${this.atThrustSetpoint}
           .atAngleSetpoint=${this.atAngleSetpoint}
+          .newAngleSetpoint=${this.newAngleSetpoint}
+          .angleSetpointAtZeroDeadband=${this.angleSetpointAtZeroDeadband}
+          .angleSetpointColorMode=${this.angleSetpointColorMode}
           .thrustSetpointAtZeroDeadband=${this.thrustSetpointAtZeroDeadband}
           .state=${state}
           .touching=${this.touching}

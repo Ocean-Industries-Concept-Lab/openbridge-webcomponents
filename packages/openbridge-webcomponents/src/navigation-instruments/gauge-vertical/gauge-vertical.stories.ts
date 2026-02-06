@@ -398,7 +398,7 @@ export const WithSetpointAwayFromValue: Story = {
 };
 
 export const StateComparison: Story = {
-  name: 'State comparison (inCommand/active/loading/off)',
+  name: 'State comparison (inCommand/active/loading/off/focus)',
 
   render: () => html`
     <div style="display: flex; gap: 40px; align-items: center;">
@@ -456,6 +456,22 @@ export const StateComparison: Story = {
           value="60"
           setpoint="-30"
           state="off"
+          primaryTickbarsInterval="50"
+          secondaryTickbarsInterval="10"
+        ></obc-gauge-vertical>
+      </div>
+      <div style="text-align: center;">
+        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
+          adjusting/focused/touching
+        </div>
+        <obc-gauge-vertical
+          minValue="-100"
+          maxValue="100"
+          enhanced
+          value="30"
+          setpoint="30"
+          .newSetpoint=${70}
+          state="inCommand"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
         ></obc-gauge-vertical>

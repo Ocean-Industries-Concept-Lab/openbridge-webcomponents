@@ -1,6 +1,7 @@
 import {html, LitElement, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {InstrumentState} from '../types.js';
+import {SetpointColorMode} from '../../svghelpers/setpoint.js';
 import {thruster} from '../thruster/thruster.js';
 import '../watch/watch.js';
 import componentStyle from './azimuth-thruster.css?inline';
@@ -24,8 +25,13 @@ function mapAngle0to360(angle: number): number {
 export class ObcAzimuthThruster extends LitElement {
   @property({type: Number}) angle = 0;
   @property({type: Number}) angleSetpoint: number | undefined;
+  @property({type: Number}) newAngleSetpoint: number | undefined;
   @property({type: Boolean})
   atAngleSetpoint: boolean = false;
+  @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
+  @property({type: String}) angleSetpointColorMode:
+    | SetpointColorMode
+    | undefined;
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Boolean}) disableAutoAtAngleSetpoint: boolean = false;
   @property({type: Number}) autoAtAngleSetpointDeadband: number = 2;
@@ -178,7 +184,10 @@ export class ObcAzimuthThruster extends LitElement {
           .tickmarks=${tickmarks}
           .state=${this.state}
           .angleSetpoint=${this.angleSetpoint}
+          .newAngleSetpoint=${this.newAngleSetpoint}
           .atAngleSetpoint=${this.atAngleSetpointCalc}
+          .angleSetpointAtZeroDeadband=${this.angleSetpointAtZeroDeadband}
+          .colorMode=${this.angleSetpointColorMode}
           .tickmarksInside=${this.tickmarksInside}
           padding=${ifDefined(this.noPadding ? 16 : undefined)}
           .advices=${this.angleAdviceRaw}
