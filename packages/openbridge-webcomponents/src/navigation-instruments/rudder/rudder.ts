@@ -4,7 +4,7 @@ import '../watch/watch.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {WatchCircleType} from '../watch/watch.js';
 import {InstrumentState} from '../types.js';
-import {SetpointColorMode} from '../../svghelpers/setpoint.js';
+import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {customElement} from '../../decorator.js';
 
@@ -14,36 +14,16 @@ export enum ObcRudderVariant {
 }
 
 @customElement('obc-rudder')
-export class ObcRudder extends LitElement {
+export class ObcRudder extends SetpointMixin(LitElement) {
   @property({type: Number}) angle = 0;
-  @property({type: Number}) setpoint: number | undefined;
-  @property({type: Number}) newSetpoint: number | undefined;
+  // Setpoint: properties provided by SetpointMixin:
+  //   setpoint, newSetpoint, atSetpoint, touching, disableAutoAtSetpoint,
+  //   autoAtSetpointDeadband, setpointAtZeroDeadband, setpointColorMode
   @property({type: String}) variant: ObcRudderVariant = ObcRudderVariant.Bar;
-  @property({type: Boolean}) atSetpoint: boolean = false;
-  @property({type: Number}) setpointAtZeroDeadband: number = 0.5;
-  @property({type: String}) setpointColorMode: SetpointColorMode | undefined;
-  @property({type: Boolean}) touching: boolean = false;
-  @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
-  @property({type: Number}) autoAtSetpointDeadband: number = 2;
   @property({type: Number}) maxAngle = 90;
   @property({type: Boolean}) labels: boolean = false;
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
   @property({type: Array, attribute: false}) advices: AngleAdvice[] = [];
-
-  atSetpointCalc(): boolean {
-    if (this.setpoint === undefined) {
-      return false;
-    }
-
-    if (this.touching) {
-      return false;
-    }
-
-    if (!this.disableAutoAtSetpoint) {
-      return Math.abs(this.angle - this.setpoint) < this.autoAtSetpointDeadband;
-    }
-    return this.atSetpoint;
-  }
 
   getAngle(value: number) {
     return 180 - value;
@@ -192,7 +172,7 @@ export class ObcRudder extends LitElement {
           .newAngleSetpoint=${this.newSetpoint !== undefined
             ? 180 - this.newSetpoint
             : undefined}
-          .atAngleSetpoint=${this.atSetpointCalc()}
+          .atAngleSetpoint=${this.computeAtSetpoint(this.angle)}
           .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
           .colorMode=${this.setpointColorMode}
           .padding=${48}

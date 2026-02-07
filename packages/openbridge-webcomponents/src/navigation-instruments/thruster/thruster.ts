@@ -6,6 +6,7 @@ import {AdviceState} from '../watch/advice.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {singleSidedTickmark} from './tickmark.js';
 import {PropellerType, bottomPropeller, topPropeller} from './propeller.js';
+import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {customElement} from '../../decorator.js';
 
 /**
@@ -15,14 +16,13 @@ import {customElement} from '../../decorator.js';
  * @prop {boolean} touching - Highlight the thruster when the lever is being touched
  */
 @customElement('obc-thruster')
-export class ObcThruster extends LitElement {
+export class ObcThruster extends SetpointMixin(LitElement, {
+  defaultDeadband: 1,
+}) {
   @property({type: Number}) thrust: number = 0;
-  @property({type: Number}) setpoint: number | undefined;
-  @property({type: Boolean}) touching: boolean = false;
-  @property({type: Boolean}) atSetpoint: boolean = false;
-  @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
-  @property({type: Number}) autoAtSetpointDeadband: number = 1;
-  @property({type: Number}) setpointAtZeroDeadband: number = 0.5;
+  // Setpoint: properties provided by SetpointMixin:
+  //   setpoint, newSetpoint, atSetpoint, touching, disableAutoAtSetpoint,
+  //   autoAtSetpointDeadband (default 1), setpointAtZeroDeadband, setpointColorMode
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
   @property({type: Boolean}) tunnel: boolean = false;
   @property({type: Boolean}) singleSided: boolean = false;

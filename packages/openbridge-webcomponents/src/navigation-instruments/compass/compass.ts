@@ -6,7 +6,8 @@ import {arrow, ArrowStyle} from './arrow.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {VesselImage, VesselImageSize, WatchCircleType} from '../watch/watch.js';
-import {SetpointColorMode} from '../../svghelpers/setpoint.js';
+import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
+import type {SetpointColorMode} from '../../svghelpers/setpoint.js';
 import {rot} from './rot.js';
 import {RateOfTurnController} from '../rate-of-turn/rate-of-turn.controller.js';
 import {customElement} from '../../decorator.js';
@@ -38,19 +39,30 @@ export enum CompassDirection {
  * @ignition-base-width: 512px
  */
 @customElement('obc-compass')
-export class ObcCompass extends LitElement {
+export class ObcCompass extends SetpointMixin(LitElement, {
+  angularWraparound: true,
+}) {
   @property({type: Number}) heading = 0;
   @property({type: Number}) courseOverGround = 0;
-  @property({type: Number}) headingSetPoint: number | null = null;
+
+  // -- Deprecated prefixed aliases (synced to mixin properties in willUpdate) --
+  /** @deprecated Use `setpoint` instead. Renamed from `headingSetPoint`. */
+  @property({type: Number}) headingSetpoint: number | null = null;
+  /** @deprecated Use `newSetpoint` instead. */
   @property({type: Number}) newHeadingSetpoint: number | undefined;
+  /** @deprecated Use `atSetpoint` instead. */
   @property({type: Boolean}) atHeadingSetpoint: boolean = false;
+  /** @deprecated Use `setpointAtZeroDeadband` instead. */
   @property({type: Number}) headingSetpointAtZeroDeadband: number = 0.5;
+  /** @deprecated Use `setpointColorMode` instead. */
   @property({type: String}) headingSetpointColorMode:
     | SetpointColorMode
     | undefined;
+  /** @deprecated Use `disableAutoAtSetpoint` instead. */
   @property({type: Boolean}) disableAutoAtHeadingSetpoint: boolean = false;
+  /** @deprecated Use `autoAtSetpointDeadband` instead. */
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
-  @property({type: Boolean}) touching: boolean = false;
+  // `touching` is provided by SetpointMixin — no alias needed
   @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
   @property({type: Number}) windSpeed: number | null = null;
   @property({type: Number}) windFromDirection: number | null = null;
@@ -68,6 +80,46 @@ export class ObcCompass extends LitElement {
       this.rateOfTurnController
     ) {
       this.rateOfTurnController.rotationsPerMinute = this.rotationsPerMinute;
+    }
+  }
+
+  override willUpdate(changed: PropertyValues): void {
+    super.willUpdate(changed);
+    // Sync deprecated prefixed aliases → mixin properties
+    // Only sync if the alias was set and the mixin property was NOT also set,
+    // to avoid the alias's default value overwriting a directly-set mixin prop.
+    if (changed.has('headingSetpoint') && !changed.has('setpoint')) {
+      this.setpoint = this.headingSetpoint ?? undefined;
+    }
+    if (changed.has('newHeadingSetpoint') && !changed.has('newSetpoint')) {
+      this.newSetpoint = this.newHeadingSetpoint;
+    }
+    if (changed.has('atHeadingSetpoint') && !changed.has('atSetpoint')) {
+      this.atSetpoint = this.atHeadingSetpoint;
+    }
+    if (
+      changed.has('headingSetpointAtZeroDeadband') &&
+      !changed.has('setpointAtZeroDeadband')
+    ) {
+      this.setpointAtZeroDeadband = this.headingSetpointAtZeroDeadband;
+    }
+    if (
+      changed.has('headingSetpointColorMode') &&
+      !changed.has('setpointColorMode')
+    ) {
+      this.setpointColorMode = this.headingSetpointColorMode;
+    }
+    if (
+      changed.has('disableAutoAtHeadingSetpoint') &&
+      !changed.has('disableAutoAtSetpoint')
+    ) {
+      this.disableAutoAtSetpoint = this.disableAutoAtHeadingSetpoint;
+    }
+    if (
+      changed.has('autoAtHeadingSetpointDeadband') &&
+      !changed.has('autoAtSetpointDeadband')
+    ) {
+      this.autoAtSetpointDeadband = this.autoAtHeadingSetpointDeadband;
     }
   }
 
@@ -146,11 +198,11 @@ export class ObcCompass extends LitElement {
           .watchCircleType=${WatchCircleType.triple}
           .labelFrameEnabled=${true}
           .crosshairEnabled=${true}
-          .angleSetpoint=${this.headingSetPoint ?? undefined}
-          .newAngleSetpoint=${this.newHeadingSetpoint}
-          .atAngleSetpoint=${this.atHeadingSetpointCalc()}
-          .angleSetpointAtZeroDeadband=${this.headingSetpointAtZeroDeadband}
-          .colorMode=${this.headingSetpointColorMode}
+          .angleSetpoint=${this.setpoint}
+          .newAngleSetpoint=${this.newSetpoint}
+          .atAngleSetpoint=${this.computeAtSetpoint(this.heading)}
+          .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
+          .colorMode=${this.setpointColorMode}
           .vessels=${[
             {
               size: VesselImageSize.medium,
@@ -175,23 +227,6 @@ export class ObcCompass extends LitElement {
         </svg>
       </div>
     `;
-  }
-
-  atHeadingSetpointCalc(): boolean {
-    if (this.headingSetPoint === null) {
-      return false;
-    }
-
-    if (this.touching) {
-      return false;
-    }
-
-    if (!this.disableAutoAtHeadingSetpoint) {
-      const diff = Math.abs(this.heading - this.headingSetPoint);
-      const angularDistance = diff > 180 ? 360 - diff : diff;
-      return angularDistance < this.autoAtHeadingSetpointDeadband;
-    }
-    return this.atHeadingSetpoint;
   }
 
   static override styles = css`

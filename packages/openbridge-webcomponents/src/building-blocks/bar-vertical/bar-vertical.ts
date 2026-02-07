@@ -31,7 +31,10 @@ import {
   ExternalScaleOrientation,
   ExternalScaleSide,
 } from '../external-scale/external-scale.js';
-import {SetpointColorMode} from '../../svghelpers/setpoint.js';
+import {
+  SetpointMixin,
+  SetpointColorMode,
+} from '../../svghelpers/setpoint-mixin.js';
 
 // Re-export shared enums for convenience
 export {
@@ -58,7 +61,9 @@ export {
  * For renderer documentation see: **Building Blocks/External Scale**.
  */
 @customElement('obc-bar-vertical')
-export class ObcBarVertical extends LitElement {
+export class ObcBarVertical extends SetpointMixin(LitElement, {
+  defaultDeadband: 1,
+}) {
   /** Minimum scale value (manual mode) */
   @property({type: Number}) minValue = 0;
   /** Maximum scale value (manual mode) */
@@ -217,13 +222,8 @@ export class ObcBarVertical extends LitElement {
   /** Enhanced visual mode: when true, uses enhanced instrument colors for bar fill and setpoint */
   @property({type: Boolean}) enhanced = false;
   /**
-   * Explicit color mode override for setpoint marker.
-   * When provided, this takes precedence over the `enhanced` boolean.
-   *
-   * - `SetpointColorMode.enhanced`: Use enhanced colors (brighter)
-   * - `SetpointColorMode.regular`: Use regular colors
-   *
-   * Note: Disabled state is auto-derived from `state` (loading/off).
+   * @deprecated Use `setpointColorMode` (from SetpointMixin) instead.
+   * Kept for backward compatibility. Synced to `setpointColorMode` in `willUpdate()`.
    */
   @property({type: String}) colorMode?: SetpointColorMode;
   /** Fill visualization mode: fill or tint */
@@ -235,34 +235,16 @@ export class ObcBarVertical extends LitElement {
   /** Current value (bar fill level) */
   @property({type: Number}) value?: number = undefined;
 
-  // Setpoint
-  /**
-   * Setpoint/input value to display as indicator.
-   * When undefined, no setpoint shown.
-   */
-  @property({type: Number}) setpoint?: number = undefined;
-  /**
-   * New setpoint value being adjusted (focus/adjustment mode).
-   * When defined, displays a second setpoint marker in 'focus' visual state,
-   * while the original `setpoint` marker is dimmed (0.5 opacity).
-   * This enables the "adjustment preview" UX where users can see both the current
-   * and proposed setpoint positions simultaneously.
-   */
-  @property({type: Number}) newSetpoint?: number = undefined;
-  /** Whether value is at setpoint (manual override when disableAutoAtSetpoint=true) */
-  @property({type: Boolean}) atSetpoint = false;
-  /** Disable automatic atSetpoint calculation based on value and deadband */
-  @property({type: Boolean}) disableAutoAtSetpoint = false;
-  /** Deadband for automatic atSetpoint detection (when disableAutoAtSetpoint=false) */
-  @property({type: Number}) autoAtSetpointDeadband = 1;
-  /** Deadband around zero for setpoint positioning */
-  @property({type: Number}) setpointAtZeroDeadband = 0.5;
+  // Setpoint: properties provided by SetpointMixin:
+  //   setpoint, newSetpoint, atSetpoint, touching, disableAutoAtSetpoint,
+  //   autoAtSetpointDeadband (default 1), setpointAtZeroDeadband, setpointColorMode
+
   /** Instrument state (affects colors and some marker behavior) */
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
+
   /**
-   * When true, the setpoint marker is in "focus" state (user is actively adjusting).
-   * Displays the outlined/hollow triangle variant at full size.
-   * @default false
+   * @deprecated Use `touching` (from SetpointMixin) instead.
+   * Kept for backward compatibility. Synced to `touching` in `willUpdate()`.
    */
   @property({type: Boolean}) focused = false;
 
@@ -338,7 +320,7 @@ export class ObcBarVertical extends LitElement {
       frameStyle: this.frameStyle,
       borderRadiusPosition: this.borderRadiusPosition,
       enhanced: this.enhanced,
-      colorMode: this.colorMode,
+      colorMode: this.setpointColorMode,
       fillMode: this.fillMode,
       fillMin: this.fillMin,
       fillMax: this.fillMax,
@@ -350,7 +332,7 @@ export class ObcBarVertical extends LitElement {
       autoAtSetpointDeadband: this.autoAtSetpointDeadband,
       setpointAtZeroDeadband: this.setpointAtZeroDeadband,
       state: this.state,
-      focused: this.focused,
+      touching: this.touching,
       advicePosition: this.advicePosition,
       advices: this.advices as ExternalScaleAdvice[],
       fixedAspectRatio: this.fixedAspectRatio,
@@ -386,6 +368,19 @@ export class ObcBarVertical extends LitElement {
         ${parts.currentValueDot} ${parts.setpoint}
       </svg>
     `;
+  }
+
+  override willUpdate(changed: PropertyValues): void {
+    super.willUpdate(changed);
+
+    // Sync deprecated aliases to mixin properties
+    // Only sync if the alias was set and the mixin property was NOT also set.
+    if (changed.has('focused') && !changed.has('touching')) {
+      this.touching = this.focused;
+    }
+    if (changed.has('colorMode') && !changed.has('setpointColorMode')) {
+      this.setpointColorMode = this.colorMode;
+    }
   }
 
   override updated(changed: PropertyValues) {

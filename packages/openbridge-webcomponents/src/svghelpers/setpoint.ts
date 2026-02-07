@@ -707,3 +707,113 @@ export function deriveRadialSetpointConfig(
  * The marker is positioned at 168px from center on the outer ring.
  */
 export const RADIAL_SETPOINT_RADIUS = 168;
+
+// ============================================================================
+// Unified At-Setpoint Computation (API Layer)
+// ============================================================================
+
+/**
+ * Configuration for the unified at-setpoint calculation.
+ *
+ * This replaces the 6+ divergent `atSetpointCalc()` implementations
+ * scattered across instruments (instrument-radial, compass, heading,
+ * rudder, speed-gauge, azimuth-thruster, external-scale, thruster).
+ */
+export interface ComputeAtSetpointConfig {
+  /** Current instrument value (e.g. speed, angle, thrust) */
+  value: number | undefined;
+
+  /** Target setpoint value */
+  setpoint: number | undefined;
+
+  /**
+   * User is physically interacting with the control (e.g. touching a lever).
+   * When true, at-setpoint always returns false — prevents flickering
+   * during real-time value changes.
+   */
+  touching: boolean;
+
+  /**
+   * When true, skips auto-calculation and uses the manual `atSetpointManual` boolean.
+   * When false (default), auto-detects at-setpoint via deadband comparison.
+   */
+  disableAuto: boolean;
+
+  /** Tolerance for auto at-setpoint detection */
+  deadband: number;
+
+  /**
+   * Manual at-setpoint override.
+   * Only used when `disableAuto` is true.
+   */
+  atSetpointManual: boolean;
+
+  /**
+   * Enable 360° angular wraparound for compass-like instruments.
+   * When true, distance is calculated as the shortest arc: `min(|a-b|, 360-|a-b|)`.
+   * Use this for heading/compass setpoints where 359° and 1° are 2° apart.
+   * @default false
+   */
+  angularWraparound?: boolean;
+}
+
+/**
+ * Unified at-setpoint calculation.
+ *
+ * Replaces the divergent implementations across:
+ * - `instrument-radial.ts` `atSetpointCalc()` — no wraparound, `<` comparison
+ * - `compass.ts` / `heading.ts` `atHeadingSetpointCalc()` — 360° wraparound, `<`
+ * - `azimuth-thruster.ts` `atAngleSetpointCalc` — no wraparound (bug), `<`
+ * - `external-scale.ts` `calculateAtSetpoint()` — `<=`, no touching guard
+ * - `instrument-linear.ts` / `thruster.ts` `atSetpoint()` — `<`, standalone fn
+ *
+ * Standardized behavior:
+ * - Uses `<=` (inclusive) for deadband comparison
+ * - Always checks `touching` before calculating
+ * - Validates deadband with `Number.isFinite()`
+ * - Supports optional 360° angular wraparound
+ *
+ * @param config - At-setpoint calculation parameters
+ * @returns Whether the current value is at the setpoint
+ *
+ * @example
+ * ```ts
+ * // Simple linear instrument
+ * computeAtSetpoint({
+ *   value: 42, setpoint: 40, touching: false,
+ *   disableAuto: false, deadband: 2, atSetpointManual: false,
+ * }); // → true (|42-40| = 2 <= 2)
+ *
+ * // Compass with wraparound
+ * computeAtSetpoint({
+ *   value: 359, setpoint: 1, touching: false,
+ *   disableAuto: false, deadband: 3, atSetpointManual: false,
+ *   angularWraparound: true,
+ * }); // → true (angular distance = 2 <= 3)
+ * ```
+ */
+export function computeAtSetpoint(config: ComputeAtSetpointConfig): boolean {
+  const {
+    value,
+    setpoint,
+    touching,
+    disableAuto,
+    deadband,
+    atSetpointManual,
+    angularWraparound = false,
+  } = config;
+
+  if (value === undefined || setpoint === undefined) return false;
+  if (touching) return false;
+
+  if (!disableAuto) {
+    let distance = Math.abs(value - setpoint);
+    if (angularWraparound && distance > 180) {
+      distance = 360 - distance;
+    }
+    const safeDeadband = Number.isFinite(deadband) ? deadband : 0;
+    return distance <= safeDeadband;
+  }
+
+  return atSetpointManual;
+}

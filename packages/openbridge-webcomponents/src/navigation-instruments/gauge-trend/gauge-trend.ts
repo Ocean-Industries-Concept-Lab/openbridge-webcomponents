@@ -15,6 +15,7 @@ import {
   ScaleType,
 } from '../../building-blocks/bar-vertical/bar-vertical.js';
 import type {AdviceType} from '../watch/advice.js';
+import type {SetpointColorMode} from '../../svghelpers/setpoint.js';
 import '../../building-blocks/bar-vertical/bar-vertical.js';
 
 // Re-export FillMode and ScaleType for user convenience
@@ -232,6 +233,13 @@ export class ObcGaugeTrend extends ObcChartLineBase {
         : (this.fillMax ?? this.value);
     barVertical.value = this.value;
     barVertical.setpoint = this.setpoint;
+    barVertical.newSetpoint = this.newSetpoint;
+    barVertical.touching = this.touching;
+    barVertical.atSetpoint = this.atSetpoint;
+    barVertical.disableAutoAtSetpoint = this.disableAutoAtSetpoint;
+    barVertical.autoAtSetpointDeadband = this.autoAtSetpointDeadband;
+    barVertical.setpointAtZeroDeadband = this.setpointAtZeroDeadband;
+    barVertical.setpointColorMode = this.setpointColorMode;
     // Advice position is always 'inner' for gauge-trend
     barVertical.advicePosition = AdvicePosition.inner;
     // obc-bar-vertical uses 'advices' (plural), not 'advice' or 'hasAdvice'
@@ -400,6 +408,53 @@ export class ObcGaugeTrend extends ObcChartLineBase {
   @property({type: Number})
   primaryInterval?: number = undefined;
 
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SETPOINT PROPERTIES
+  // These are forwarded to the internal obc-bar-vertical element.
+  // The bar-vertical (via SetpointMixin) handles all atSetpoint computation.
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * A pending/new setpoint value, shown as a secondary marker.
+   * Forwarded to the internal bar-vertical scale.
+   */
+  @property({type: Number}) newSetpoint?: number;
+
+  /**
+   * Whether the user is actively interacting (touching/dragging) the setpoint.
+   * Forwarded to the internal bar-vertical scale.
+   */
+  @property({type: Boolean}) touching = false;
+
+  /**
+   * Whether the current value is at the setpoint (within deadband).
+   * In auto mode (default), this is computed by the bar-vertical internally.
+   * Set `disableAutoAtSetpoint=true` to control this manually.
+   */
+  @property({type: Boolean}) atSetpoint = false;
+
+  /**
+   * Disable automatic atSetpoint computation. When true, the `atSetpoint`
+   * property must be set externally.
+   */
+  @property({type: Boolean}) disableAutoAtSetpoint = false;
+
+  /**
+   * Deadband for auto atSetpoint computation.
+   * The value is considered "at setpoint" when |value - setpoint| <= deadband.
+   */
+  @property({type: Number}) autoAtSetpointDeadband = 1;
+
+  /**
+   * Deadband used when the setpoint is exactly zero.
+   */
+  @property({type: Number}) setpointAtZeroDeadband?: number;
+
+  /**
+   * Color mode for the setpoint marker.
+   */
+  @property({type: String}) setpointColorMode?: SetpointColorMode;
+
   /**
    * Secondary tick interval for the vertical scale (medium ticks).
    */
@@ -497,6 +552,13 @@ export class ObcGaugeTrend extends ObcChartLineBase {
       changed.has('maxValue') ||
       changed.has('value') ||
       changed.has('setpoint') ||
+      changed.has('newSetpoint') ||
+      changed.has('touching') ||
+      changed.has('atSetpoint') ||
+      changed.has('disableAutoAtSetpoint') ||
+      changed.has('autoAtSetpointDeadband') ||
+      changed.has('setpointAtZeroDeadband') ||
+      changed.has('setpointColorMode') ||
       changed.has('hasBar') ||
       changed.has('hasScale') ||
       changed.has('hasAdvice') ||

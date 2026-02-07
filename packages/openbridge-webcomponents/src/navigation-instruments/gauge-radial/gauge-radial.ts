@@ -2,7 +2,7 @@ import {LitElement, html} from 'lit';
 import {customElement} from '../../decorator.js';
 import {property} from 'lit/decorators.js';
 import {AdviceType} from '../watch/advice.js';
-import {SetpointColorMode} from '../../svghelpers/setpoint.js';
+import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/instrument-radial/instrument-radial.js';
 
 export enum ObcGaugeRadialType {
@@ -19,16 +19,11 @@ export interface GaugeRadialAdvice {
 }
 
 @customElement('obc-gauge-radial')
-export class ObcGaugeRadial extends LitElement {
+export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   @property({type: Number}) value = 0;
-  @property({type: Number}) setpoint: number | undefined;
-  @property({type: Number}) newSetpoint: number | undefined;
-  @property({type: Boolean}) atSetpoint: boolean = false;
-  @property({type: Number}) setpointAtZeroDeadband: number = 0.5;
-  @property({type: String}) setpointColorMode: SetpointColorMode | undefined;
-  @property({type: Boolean}) touching: boolean = false;
-  @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
-  @property({type: Number}) autoAtSetpointDeadband: number = 2;
+  // Setpoint: properties provided by SetpointMixin:
+  //   setpoint, newSetpoint, atSetpoint, touching, disableAutoAtSetpoint,
+  //   autoAtSetpointDeadband, setpointAtZeroDeadband, setpointColorMode
   @property({type: Number}) maxValue = 100;
   @property({type: Number}) minValue = 0;
   @property({type: Boolean}) labels: boolean = false;

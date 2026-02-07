@@ -4,7 +4,7 @@ import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {WatchCircleType} from '../watch/watch.js';
 import {AdviceType, AngleAdviceRaw, AdviceState} from '../watch/advice.js';
 import {InstrumentFieldSize} from '../instrument-field/instrument-field.js';
-import {SetpointColorMode} from '../../svghelpers/setpoint.js';
+import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {customElement} from '../../decorator.js';
 
 export enum ObcSpeedGaugeNeedleType {
@@ -20,16 +20,11 @@ export interface SpeedAdvice {
 }
 
 @customElement('obc-speed-gauge')
-export class ObcSpeedGauge extends LitElement {
+export class ObcSpeedGauge extends SetpointMixin(LitElement) {
   @property({type: Number}) speed = 0;
-  @property({type: Number}) setpoint: number | undefined;
-  @property({type: Number}) newSetpoint: number | undefined;
-  @property({type: Boolean}) atSetpoint: boolean = false;
-  @property({type: Number}) setpointAtZeroDeadband: number = 0.5;
-  @property({type: String}) setpointColorMode: SetpointColorMode | undefined;
-  @property({type: Boolean}) touching: boolean = false;
-  @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
-  @property({type: Number}) autoAtSetpointDeadband: number = 2;
+  // Setpoint: properties provided by SetpointMixin:
+  //   setpoint, newSetpoint, atSetpoint, touching, disableAutoAtSetpoint,
+  //   autoAtSetpointDeadband, setpointAtZeroDeadband, setpointColorMode
   @property({type: Number}) maxSpeed = 100;
   @property({type: Number}) minSpeed = 0;
   @property({type: Boolean}) labels: boolean = false;
@@ -39,21 +34,6 @@ export class ObcSpeedGauge extends LitElement {
     ObcSpeedGaugeNeedleType.full;
   @property({type: Array, attribute: false}) speedAdvices: SpeedAdvice[] = [];
   @property({type: Boolean}) showReadout: boolean = false;
-
-  atSetpointCalc(): boolean {
-    if (this.setpoint === undefined) {
-      return false;
-    }
-
-    if (this.touching) {
-      return false;
-    }
-
-    if (!this.disableAutoAtSetpoint) {
-      return Math.abs(this.speed - this.setpoint) < this.autoAtSetpointDeadband;
-    }
-    return this.atSetpoint;
-  }
 
   getAngle(v: number): number {
     return (v / this.maxSpeed) * (180 + 45) - 90;
@@ -81,7 +61,7 @@ export class ObcSpeedGauge extends LitElement {
           .newAngleSetpoint=${this.newSetpoint !== undefined
             ? this.getAngle(this.newSetpoint)
             : undefined}
-          .atAngleSetpoint=${this.atSetpointCalc()}
+          .atAngleSetpoint=${this.computeAtSetpoint(this.speed)}
           .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
           .colorMode=${this.setpointColorMode}
           .padding=${48}
