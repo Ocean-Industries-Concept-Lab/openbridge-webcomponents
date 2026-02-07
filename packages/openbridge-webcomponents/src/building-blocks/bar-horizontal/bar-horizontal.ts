@@ -31,10 +31,8 @@ import {
   ExternalScaleOrientation,
   ExternalScaleSide,
 } from '../external-scale/external-scale.js';
-import {
-  SetpointMixin,
-  SetpointColorMode,
-} from '../../svghelpers/setpoint-mixin.js';
+import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
+import {SetpointColorMode} from '../../svghelpers/setpoint.js';
 
 // Re-export shared enums for convenience
 export {

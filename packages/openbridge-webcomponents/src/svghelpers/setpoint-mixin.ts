@@ -104,10 +104,8 @@
 
 import {LitElement, PropertyValues} from 'lit';
 import {property} from 'lit/decorators.js';
-import {computeAtSetpoint, SetpointColorMode} from './setpoint.js';
-
-// Re-export for consumer convenience
-export {SetpointColorMode};
+import {computeAtSetpoint} from './setpoint.js';
+import type {SetpointColorMode} from './setpoint.js';
 
 // ============================================================================
 // Types
