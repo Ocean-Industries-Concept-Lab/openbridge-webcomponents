@@ -18,6 +18,65 @@ export interface GaugeRadialAdvice {
   hinted: boolean;
 }
 
+/**
+ * `<obc-rot-sector>` — Rate-of-turn sector gauge for rotational velocity.
+ *
+ * `ObcRotSector` is a thin wrapper around `<obc-instrument-radial>` that
+ * displays a bipolar ±60° sector gauge showing rate of turn. The bottom
+ * 50% of the circle is clipped, producing a compact sector arc. It inherits
+ * a full setpoint property bundle from {@link SetpointMixin}, including
+ * auto at-setpoint detection, dual-marker adjustment preview, and deadband
+ * tuning.
+ *
+ * ## Features
+ *
+ * - **Bipolar sector**: Value range is symmetric around zero (−maxValue to
+ *   +maxValue), mapped to a ±60° arc.
+ * - **Port/starboard coloring**: When `portStarboard` is true, positive
+ *   values render in starboard (green) and negative in port (red).
+ * - **Bar display**: Always renders as a `bar` type — no needle or filled
+ *   variants.
+ * - **Setpoint via mixin**: `setpoint`, `newSetpoint`, `touching`,
+ *   `autoAtSetpointDeadband`, `setpointColorMode`, and all other setpoint
+ *   properties are provided by `SetpointMixin` and forwarded to the inner
+ *   `<obc-instrument-radial>`.
+ * - **Advice zones**: Pass an array of {@link GaugeRadialAdvice} objects to
+ *   render caution/alert arcs on the gauge.
+ *
+ * ## Usage Guidelines
+ *
+ * - Set `maxValue` to define the symmetric ± range.
+ * - Use `enhanced` to switch between regular and in-command color palettes.
+ * - Enable `portStarboard` to show directional coloring.
+ * - Provide `primaryTickmarkInterval` and `secondaryTickmarkInterval` to
+ *   control tickmark density.
+ * - Enable `labels` to show numeric labels at primary tickmarks.
+ *
+ * ## Best Practices
+ *
+ * - Prefer `SetpointMixin` properties (`setpoint`, `touching`, etc.) over
+ *   any legacy aliases — the mixin is the single source of truth.
+ * - The sector is always bottom-clipped at 50%; do not change `clipBottom`
+ *   externally.
+ *
+ * ## Example
+ *
+ * ```html
+ * <obc-rot-sector
+ *   value="15"
+ *   maxValue="60"
+ *   enhanced
+ *   portStarboard
+ *   labels
+ *   primaryTickmarkInterval="20"
+ *   secondaryTickmarkInterval="10"
+ *   setpoint="30"
+ * ></obc-rot-sector>
+ * ```
+ *
+ * @element obc-rot-sector
+ * @typedef {import('./rot-sector.js').GaugeRadialAdvice} GaugeRadialAdvice
+ */
 @customElement('obc-rot-sector')
 export class ObcRotSector extends SetpointMixin(LitElement) {
   @property({type: Number}) value = 0;

@@ -49,7 +49,6 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: Number}) autoAtThrustSetpointDeadband: number = 1;
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
 
-  // Internal setpoint computation bundles
   private _angleSp = new SetpointBundle({angularWraparound: true});
   private _thrustSp = new SetpointBundle({
     defaultDeadband: 1,

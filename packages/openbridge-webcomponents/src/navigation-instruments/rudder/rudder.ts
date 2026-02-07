@@ -13,6 +13,62 @@ export enum ObcRudderVariant {
   Needle = 'needle',
 }
 
+/**
+ * `<obc-rudder>` — Half-circle rudder angle indicator.
+ *
+ * `ObcRudder` renders a semicircular gauge (40% top-clipped) that displays
+ * the current rudder angle with a configurable bar or needle variant. The
+ * gauge maps rudder angles to the lower arc of an `<obc-watch>` and overlays
+ * a domain-specific needle when the `needle` variant is selected. It inherits
+ * a full setpoint property bundle from {@link SetpointMixin}, including
+ * auto at-setpoint detection, dual-marker adjustment preview, and deadband
+ * tuning.
+ *
+ * ## Features
+ *
+ * - **Two display variants**: `bar` (filled arc from zero, default) and
+ *   `needle` (rotating pointer with silhouette stroke) via the `variant`
+ *   property.
+ * - **Symmetric range**: The gauge spans ±`maxAngle` around the 180° center
+ *   (zero position at bottom).
+ * - **State-aware colors**: Bar and needle colors adapt to the current
+ *   `InstrumentState` (inCommand, active, loading, off).
+ * - **Setpoint via mixin**: `setpoint`, `newSetpoint`, `touching`,
+ *   `autoAtSetpointDeadband`, `setpointColorMode`, and all other setpoint
+ *   properties are provided by `SetpointMixin` and forwarded to `<obc-watch>`.
+ * - **Advice zones**: Pass an array of `AngleAdvice` objects to render
+ *   caution/alert arcs; triggered state is derived from whether the setpoint
+ *   falls inside the advice range.
+ *
+ * ## Usage Guidelines
+ *
+ * - Set `maxAngle` to define the symmetric ± range (default: 90°).
+ * - Use `state` to control the instrument color palette.
+ * - Enable `labels` to show numeric angle labels at tickmarks.
+ * - Choose `variant` to switch between bar and needle display.
+ *
+ * ## Best Practices
+ *
+ * - Prefer `SetpointMixin` properties (`setpoint`, `touching`, etc.) over
+ *   any legacy aliases — the mixin is the single source of truth.
+ * - The top 40% is always clipped; overlay SVGs use the matching clipped
+ *   viewBox (`-224 -44.8 448 268.8`) for layer alignment.
+ *
+ * ## Example
+ *
+ * ```html
+ * <obc-rudder
+ *   angle="12"
+ *   maxAngle="45"
+ *   variant="needle"
+ *   state="in-command"
+ *   labels
+ *   setpoint="15"
+ * ></obc-rudder>
+ * ```
+ *
+ * @element obc-rudder
+ */
 @customElement('obc-rudder')
 export class ObcRudder extends SetpointMixin(LitElement) {
   @property({type: Number}) angle = 0;

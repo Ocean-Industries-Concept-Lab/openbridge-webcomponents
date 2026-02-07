@@ -107,6 +107,14 @@ export {FillMode, ScaleType};
  * @property {boolean} enhanced - Use enhanced color palette for chart and scales
  * @property {InstrumentState} state - Instrument state (automatically applied to scale)
  * @property {boolean} chartFill - Enable chart area fill (default: false for line-only)
+ * @property {number|undefined} setpoint - Target value shown as a marker on the scale
+ * @property {number|undefined} newSetpoint - Pending setpoint shown as a secondary marker during adjustment; when defined, the original marker dims and the new one renders in focus state
+ * @property {boolean} touching - Whether the user is actively interacting with the setpoint control; suppresses at-setpoint detection while true (default: false)
+ * @property {boolean} atSetpoint - Whether the current value equals the setpoint within the deadband; auto-computed by default, or set manually when `disableAutoAtSetpoint` is true (default: false)
+ * @property {boolean} disableAutoAtSetpoint - Disables internal at-setpoint computation so `atSetpoint` must be controlled externally (default: false)
+ * @property {number} autoAtSetpointDeadband - Tolerance for auto at-setpoint detection; value is "at setpoint" when |value − setpoint| ≤ deadband (default: 1)
+ * @property {number|undefined} setpointAtZeroDeadband - Tolerance for zero-snap visual state; triggers the `equalZero` marker style when setpoint is near zero
+ * @property {SetpointColorMode|undefined} setpointColorMode - Explicit color palette for the setpoint marker; when undefined, derived from instrument state
  */
 @customElement('obc-gauge-trend')
 export class ObcGaugeTrend extends ObcChartLineBase {
@@ -115,12 +123,6 @@ export class ObcGaugeTrend extends ObcChartLineBase {
 
   constructor() {
     super();
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // LOCKED BASE CLASS PROPERTIES
-    // These properties are intentionally locked to specific values for gauge-trend.
-    // They are set here in the constructor and should not be modified.
-    // ═══════════════════════════════════════════════════════════════════════════
 
     // Chart display options - locked for gauge-trend
     this.legend = false;
@@ -407,12 +409,6 @@ export class ObcGaugeTrend extends ObcChartLineBase {
    */
   @property({type: Number})
   primaryInterval?: number = undefined;
-
-  // ═══════════════════════════════════════════════════════════════════════════
-  // SETPOINT PROPERTIES
-  // These are forwarded to the internal obc-bar-vertical element.
-  // The bar-vertical (via SetpointMixin) handles all atSetpoint computation.
-  // ═══════════════════════════════════════════════════════════════════════════
 
   /**
    * A pending/new setpoint value, shown as a secondary marker.

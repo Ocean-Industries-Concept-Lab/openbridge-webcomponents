@@ -19,6 +19,65 @@ export interface SpeedAdvice {
   hinted: boolean;
 }
 
+/**
+ * `<obc-speed-gauge>` — Radial speed gauge with needle and optional readout.
+ *
+ * `ObcSpeedGauge` renders a 225° arc gauge (−90° to +135°) that displays
+ * the current speed with a configurable full-length or bar needle. It layers
+ * an `<obc-watch>` base with a needle SVG overlay and an optional numeric
+ * readout field. It inherits a full setpoint property bundle from
+ * {@link SetpointMixin}, including auto at-setpoint detection, dual-marker
+ * adjustment preview, and deadband tuning.
+ *
+ * ## Features
+ *
+ * - **Two needle types**: `full` (pointer with center dot) and `bar`
+ *   (short indicator bar) via `needleType`.
+ * - **Bipolar range support**: When `minSpeed < 0`, negative tickmarks are
+ *   rendered with `main` tick style.
+ * - **Optional readout**: Enable `showReadout` to display an
+ *   `<obc-instrument-field>` with the current speed, unit (KN), and tag (STW).
+ * - **Setpoint via mixin**: `setpoint`, `newSetpoint`, `touching`,
+ *   `autoAtSetpointDeadband`, `setpointColorMode`, and all other setpoint
+ *   properties are provided by `SetpointMixin`; the setpoint angle and
+ *   at-setpoint state are computed and forwarded to `<obc-watch>`.
+ * - **Speed advice zones**: Pass an array of {@link SpeedAdvice} objects to
+ *   render caution/alert arcs; triggered state is derived from whether the
+ *   current speed falls inside the advice range.
+ *
+ * ## Usage Guidelines
+ *
+ * - Set `maxSpeed` (and optionally `minSpeed`) to define the gauge range.
+ * - Use `enhanced` to switch between regular and in-command color palettes.
+ * - Provide `tickmarkInterval` to control tickmark spacing.
+ * - Enable `labels` to show numeric labels at primary tickmarks.
+ * - Enable `showReadout` to display the numeric value below the gauge.
+ *
+ * ## Best Practices
+ *
+ * - Prefer `SetpointMixin` properties (`setpoint`, `touching`, etc.) over
+ *   any legacy aliases — the mixin is the single source of truth.
+ * - The needle overlay SVG uses viewBox `−224 −224 448 448` to align with
+ *   the `<obc-watch>` layer.
+ *
+ * ## Example
+ *
+ * ```html
+ * <obc-speed-gauge
+ *   speed="12.5"
+ *   maxSpeed="25"
+ *   needleType="full"
+ *   enhanced
+ *   labels
+ *   showReadout
+ *   tickmarkInterval="5"
+ *   setpoint="15"
+ * ></obc-speed-gauge>
+ * ```
+ *
+ * @element obc-speed-gauge
+ * @typedef {import('./speed-gauge.js').SpeedAdvice} SpeedAdvice
+ */
 @customElement('obc-speed-gauge')
 export class ObcSpeedGauge extends SetpointMixin(LitElement) {
   @property({type: Number}) speed = 0;
