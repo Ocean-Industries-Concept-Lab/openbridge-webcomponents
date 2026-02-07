@@ -20,9 +20,6 @@ export class ObcThruster extends SetpointMixin(LitElement, {
   defaultDeadband: 1,
 }) {
   @property({type: Number}) thrust: number = 0;
-  // Setpoint: properties provided by SetpointMixin:
-  //   setpoint, newSetpoint, atSetpoint, touching, disableAutoAtSetpoint,
-  //   autoAtSetpointDeadband (default 1), setpointAtZeroDeadband, setpointColorMode
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
   @property({type: Boolean}) tunnel: boolean = false;
   @property({type: Boolean}) singleSided: boolean = false;

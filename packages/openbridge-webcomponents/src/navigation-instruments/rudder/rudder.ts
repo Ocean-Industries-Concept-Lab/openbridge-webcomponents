@@ -16,9 +16,6 @@ export enum ObcRudderVariant {
 @customElement('obc-rudder')
 export class ObcRudder extends SetpointMixin(LitElement) {
   @property({type: Number}) angle = 0;
-  // Setpoint: properties provided by SetpointMixin:
-  //   setpoint, newSetpoint, atSetpoint, touching, disableAutoAtSetpoint,
-  //   autoAtSetpointDeadband, setpointAtZeroDeadband, setpointColorMode
   @property({type: String}) variant: ObcRudderVariant = ObcRudderVariant.Bar;
   @property({type: Number}) maxAngle = 90;
   @property({type: Boolean}) labels: boolean = false;

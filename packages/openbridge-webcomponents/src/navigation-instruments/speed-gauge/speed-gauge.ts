@@ -22,9 +22,6 @@ export interface SpeedAdvice {
 @customElement('obc-speed-gauge')
 export class ObcSpeedGauge extends SetpointMixin(LitElement) {
   @property({type: Number}) speed = 0;
-  // Setpoint: properties provided by SetpointMixin:
-  //   setpoint, newSetpoint, atSetpoint, touching, disableAutoAtSetpoint,
-  //   autoAtSetpointDeadband, setpointAtZeroDeadband, setpointColorMode
   @property({type: Number}) maxSpeed = 100;
   @property({type: Number}) minSpeed = 0;
   @property({type: Boolean}) labels: boolean = false;

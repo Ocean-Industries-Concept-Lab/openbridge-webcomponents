@@ -21,9 +21,6 @@ export interface GaugeRadialAdvice {
 @customElement('obc-rot-sector')
 export class ObcRotSector extends SetpointMixin(LitElement) {
   @property({type: Number}) value = 0;
-  // Setpoint: properties provided by SetpointMixin:
-  //   setpoint, newSetpoint, atSetpoint, touching, disableAutoAtSetpoint,
-  //   autoAtSetpointDeadband, setpointAtZeroDeadband, setpointColorMode
   @property({type: Number}) maxValue = 100;
   @property({type: Boolean}) labels: boolean = false;
   @property({type: Number}) primaryTickmarkInterval = 50;

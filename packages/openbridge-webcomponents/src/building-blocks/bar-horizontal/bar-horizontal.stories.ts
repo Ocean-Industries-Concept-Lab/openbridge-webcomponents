@@ -627,7 +627,7 @@ export const SetpointStateComparison: Story = {
       </div>
       <div style="text-align: center;">
         <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
-          adjusting/focused/touching
+          adjusting/touching
         </div>
         <obc-bar-horizontal
           minValue="-100"

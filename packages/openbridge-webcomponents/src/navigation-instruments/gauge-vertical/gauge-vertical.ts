@@ -231,10 +231,6 @@ export class ObcGaugeVertical extends SetpointMixin(LitElement, {
   /** Current value (bar fill level) */
   @property({type: Number}) value?: number = undefined;
 
-  // Setpoint: properties provided by SetpointMixin:
-  //   setpoint, newSetpoint, atSetpoint, touching, disableAutoAtSetpoint,
-  //   autoAtSetpointDeadband (default 1), setpointAtZeroDeadband, setpointColorMode
-
   /** Instrument state: inCommand, active, loading, or off */
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
 

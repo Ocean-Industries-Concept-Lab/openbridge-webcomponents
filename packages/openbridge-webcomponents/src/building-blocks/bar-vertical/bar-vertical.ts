@@ -219,11 +219,6 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
   // Values
   /** Enhanced visual mode: when true, uses enhanced instrument colors for bar fill and setpoint */
   @property({type: Boolean}) enhanced = false;
-  /**
-   * @deprecated Use `setpointColorMode` (from SetpointMixin) instead.
-   * Kept for backward compatibility. Synced to `setpointColorMode` in `willUpdate()`.
-   */
-  @property({type: String}) colorMode?: SetpointColorMode;
   /** Fill visualization mode: fill or tint */
   @property({type: String}) fillMode: FillMode = FillMode.fill;
   /** Minimum fill value for tint mode (defaults to 0) */
@@ -233,18 +228,8 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
   /** Current value (bar fill level) */
   @property({type: Number}) value?: number = undefined;
 
-  // Setpoint: properties provided by SetpointMixin:
-  //   setpoint, newSetpoint, atSetpoint, touching, disableAutoAtSetpoint,
-  //   autoAtSetpointDeadband (default 1), setpointAtZeroDeadband, setpointColorMode
-
   /** Instrument state (affects colors and some marker behavior) */
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
-
-  /**
-   * @deprecated Use `touching` (from SetpointMixin) instead.
-   * Kept for backward compatibility. Synced to `touching` in `willUpdate()`.
-   */
-  @property({type: Boolean}) focused = false;
 
   // Advice
   /** Advice overlay positioning: center (in bar), inner (covers minor ticks), outer (no overlap) */
@@ -366,19 +351,6 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
         ${parts.currentValueDot} ${parts.setpoint}
       </svg>
     `;
-  }
-
-  override willUpdate(changed: PropertyValues): void {
-    super.willUpdate(changed);
-
-    // Sync deprecated aliases to mixin properties
-    // Only sync if the alias was set and the mixin property was NOT also set.
-    if (changed.has('focused') && !changed.has('touching')) {
-      this.touching = this.focused;
-    }
-    if (changed.has('colorMode') && !changed.has('setpointColorMode')) {
-      this.setpointColorMode = this.colorMode;
-    }
   }
 
   override updated(changed: PropertyValues) {

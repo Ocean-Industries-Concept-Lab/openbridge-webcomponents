@@ -21,9 +21,6 @@ export interface GaugeRadialAdvice {
 @customElement('obc-gauge-radial')
 export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   @property({type: Number}) value = 0;
-  // Setpoint: properties provided by SetpointMixin:
-  //   setpoint, newSetpoint, atSetpoint, touching, disableAutoAtSetpoint,
-  //   autoAtSetpointDeadband, setpointAtZeroDeadband, setpointColorMode
   @property({type: Number}) maxValue = 100;
   @property({type: Number}) minValue = 0;
   @property({type: Boolean}) labels: boolean = false;

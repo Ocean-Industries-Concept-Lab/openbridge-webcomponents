@@ -161,22 +161,22 @@ type Story = StoryObj;
 function renderSetpointDemo(config: {
   label: string;
   enhanced?: boolean;
-  colorMode?: SetpointColorMode;
+  setpointColorMode?: SetpointColorMode;
   setpoint: number;
   newSetpoint?: number;
   value: number;
   state: InstrumentState;
-  focused?: boolean;
+  touching?: boolean;
 }) {
   const {
     label,
     enhanced = false,
-    colorMode,
+    setpointColorMode,
     setpoint,
     newSetpoint,
     value,
     state,
-    focused = false,
+    touching = false,
   } = config;
 
   return html`
@@ -195,13 +195,13 @@ function renderSetpointDemo(config: {
         scaleBackground
         borderRadiusPosition="${BorderRadiusPosition.innerFirstChild}"
         .enhanced=${enhanced}
-        .colorMode=${colorMode}
+        .setpointColorMode=${setpointColorMode}
         fillMode="${FillMode.fill}"
         .value=${value}
         .setpoint=${setpoint}
         .newSetpoint=${newSetpoint}
         .state=${state}
-        .focused=${focused}
+        .touching=${touching}
         autoAtSetpointDeadband="1"
         setpointAtZeroDeadband="0.5"
       ></obc-bar-vertical>
@@ -303,7 +303,7 @@ export const Focus: Story = {
  *
  * - **Row 1**: active state (SetpointColorMode: regular)
  * - **Row 2**: inCommand state (SetpointColorMode: enhanced)
- * - **Row 3**: adjusting/focused/touching - dual-marker mode via `newSetpoint`
+ * - **Row 3**: adjusting/touching - dual-marker mode via `newSetpoint`
  * - **Row 4**: loading/off (disabled) - uses tertiary/gray color
  *
  * The `newSetpoint` property enables showing both current and proposed setpoint
@@ -345,21 +345,21 @@ export const SetpointComparison: Story = {
         </div>
         ${renderSetpointDemo({
           label: 'value ≠ setpoint',
-          colorMode: SetpointColorMode.regular,
+          setpointColorMode: SetpointColorMode.regular,
           setpoint: 40,
           value: 20,
           state: InstrumentState.inCommand,
         })}
         ${renderSetpointDemo({
           label: 'value = setpoint',
-          colorMode: SetpointColorMode.regular,
+          setpointColorMode: SetpointColorMode.regular,
           setpoint: 40,
           value: 40,
           state: InstrumentState.inCommand,
         })}
         ${renderSetpointDemo({
           label: 'both = 0',
-          colorMode: SetpointColorMode.regular,
+          setpointColorMode: SetpointColorMode.regular,
           setpoint: 0,
           value: 0,
           state: InstrumentState.inCommand,
@@ -375,37 +375,37 @@ export const SetpointComparison: Story = {
         </div>
         ${renderSetpointDemo({
           label: 'value ≠ setpoint',
-          colorMode: SetpointColorMode.enhanced,
+          setpointColorMode: SetpointColorMode.enhanced,
           setpoint: 40,
           value: 20,
           state: InstrumentState.inCommand,
         })}
         ${renderSetpointDemo({
           label: 'value = setpoint',
-          colorMode: SetpointColorMode.enhanced,
+          setpointColorMode: SetpointColorMode.enhanced,
           setpoint: 40,
           value: 40,
           state: InstrumentState.inCommand,
         })}
         ${renderSetpointDemo({
           label: 'both = 0',
-          colorMode: SetpointColorMode.enhanced,
+          setpointColorMode: SetpointColorMode.enhanced,
           setpoint: 0,
           value: 0,
           state: InstrumentState.inCommand,
         })}
       </div>
 
-      <!-- adjusting/focused/touching row -->
+      <!-- adjusting/touching row -->
       <div
         style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
       >
         <div style="font-size: 12px; color: #888; padding-top: 80px;">
-          adjusting/focused/touching
+          adjusting/touching
         </div>
         ${renderSetpointDemo({
           label: 'setpoint at 20, new at 40',
-          colorMode: SetpointColorMode.enhanced,
+          setpointColorMode: SetpointColorMode.enhanced,
           setpoint: 20,
           newSetpoint: 40,
           value: 20,
@@ -413,7 +413,7 @@ export const SetpointComparison: Story = {
         })}
         ${renderSetpointDemo({
           label: 'setpoint at 40, new at 30',
-          colorMode: SetpointColorMode.enhanced,
+          setpointColorMode: SetpointColorMode.enhanced,
           setpoint: 40,
           newSetpoint: 30,
           value: 40,
@@ -421,7 +421,7 @@ export const SetpointComparison: Story = {
         })}
         ${renderSetpointDemo({
           label: 'setpoint at 0, new at 20',
-          colorMode: SetpointColorMode.enhanced,
+          setpointColorMode: SetpointColorMode.enhanced,
           setpoint: 0,
           newSetpoint: 20,
           value: 0,
@@ -458,8 +458,8 @@ export const SetpointComparison: Story = {
 
       <!-- Note about adjusting state -->
       <div style="font-size: 11px; color: #666; font-style: italic;">
-        Note: "adjusting/focused/touching" row shows dual-marker mode triggered
-        by setting newSetpoint. The original setpoint is dimmed (0.75 opacity)
+        Note: "adjusting/touching" row shows dual-marker mode triggered by
+        setting newSetpoint. The original setpoint is dimmed (0.75 opacity)
         while the new setpoint shows in focus state. "equalZero" is auto-derived
         when setpoint is within setpointAtZeroDeadband (default 0.5).
       </div>
@@ -656,7 +656,7 @@ export const SetpointComparisonRadial: Story = {
         style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
       >
         <div style="font-size: 12px; color: #888; padding-top: 60px;">
-          adjusting/focused/touching
+          adjusting/touching
         </div>
         ${renderRadialSetpointDemo({
           label: 'bar at 45°, setpoint at 60°, new at 80°',
@@ -716,11 +716,10 @@ export const SetpointComparisonRadial: Story = {
 
       <!-- Note about adjusting state -->
       <div style="font-size: 11px; color: #666; font-style: italic;">
-        Note: "adjusting/focused/touching" row shows dual-marker mode triggered
-        by setting newAngleSetpoint. The original setpoint is dimmed (0.75
-        opacity) while the new setpoint shows in focus state. "equalZero" is
-        auto-derived when angleSetpoint is within angleSetpointAtZeroDeadband
-        (default 0.5°).
+        Note: "adjusting/touching" row shows dual-marker mode triggered by
+        setting newAngleSetpoint. The original setpoint is dimmed (0.75 opacity)
+        while the new setpoint shows in focus state. "equalZero" is auto-derived
+        when angleSetpoint is within angleSetpointAtZeroDeadband (default 0.5°).
       </div>
     </div>
   `,
