@@ -34,7 +34,7 @@ export class ObcPoiLine extends LitElement {
     }
 
     const totalHeight = lineHeight + style.width + style.dotStart;
-    const translateX = -3 + (this.offset < 0 ? this.offset : 0);
+    const translateX = -style.width / 2 + (this.offset < 0 ? this.offset : 0);
 
     return html`
       <div

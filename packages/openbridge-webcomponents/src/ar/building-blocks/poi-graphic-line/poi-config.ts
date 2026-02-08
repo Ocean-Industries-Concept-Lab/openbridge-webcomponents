@@ -38,7 +38,7 @@ export type POIStyleVariant =
   | POIStyle.Route;
 
 const REGULAR_STYLE: POILineParams = {
-  lineColor: 'var(--element-active-inverted-color)',
+  lineColor: 'var(--overlay-element-active-color)',
   outlineColor: 'var(--element-disabled-color)',
   width: 6,
   lineWidth: 1,
@@ -60,21 +60,51 @@ const ACTIVE_STYLE_BASE = {
 } satisfies Omit<POILineParams, 'lineColor' | 'outlineColor'>;
 
 const DASHED_DEFAULTS = {
-  dashArray: '1.5 4',
-  dashOffset: 2,
+  dashArray: '1 3',
+  dashOffset: 0,
   strokeLinecap: 'butt',
 } satisfies Pick<POILineParams, 'dashArray' | 'dashOffset' | 'strokeLinecap'>;
 
 const ROUTE_STYLE: POILineParams = {
-  lineColor: 'var(--base-blue-050)',
-  outlineColor: 'var(--base-blue-500)',
+  lineColor: 'var(--instrument-enhanced-secondary-color)',
+  outlineColor: 'var(--overlay-element-active-color)',
   width: 8,
-  lineWidth: 2,
+  lineWidth: 1.5,
   outlineWidth: 2,
   shadowAlpha: 0.2,
   dotStart: 0,
   lineEnd: 3,
   filterDimensions: {x: 0, y: 0, width: 4},
+};
+
+const NEUTRAL_DASHED_STYLE: POILineParams = {
+  ...REGULAR_STYLE,
+  ...DASHED_DEFAULTS,
+};
+
+const ACTIVE_NEUTRAL_DASHED_STYLE: POILineParams = {
+  ...NEUTRAL_DASHED_STYLE,
+  shadowAlpha: ACTIVE_STYLE_BASE.shadowAlpha,
+};
+
+const SELECTED_DASHED_STYLE: POILineParams = {
+  ...REGULAR_STYLE,
+  lineColor: 'var(--overlay-element-active-color)',
+  outlineColor: 'var(--element-active-color)',
+  width: 8,
+  lineWidth: 1,
+  outlineWidth: 2,
+  shadowAlpha: ACTIVE_STYLE_BASE.shadowAlpha,
+  ...DASHED_DEFAULTS,
+};
+
+const ROUTE_DASHED_STYLE: POILineParams = {
+  ...ROUTE_STYLE,
+  lineWidth: 1,
+  outlineWidth: 2,
+  lineColor: 'var(--instrument-enhanced-secondary-color)',
+  outlineColor: 'var(--overlay-element-active-color)',
+  ...DASHED_DEFAULTS,
 };
 
 const STYLE_CONFIG: Record<
@@ -83,69 +113,43 @@ const STYLE_CONFIG: Record<
 > = {
   [POIStyle.Regular]: {
     [POILineType.Regular]: REGULAR_STYLE,
-    [POILineType.Dashed]: {
-      ...REGULAR_STYLE,
-      ...DASHED_DEFAULTS,
-    },
+    [POILineType.Dashed]: NEUTRAL_DASHED_STYLE,
   },
   [POIStyle.Selected]: {
     [POILineType.Regular]: {
       lineColor: 'var(--overlay-element-active-color)',
-      outlineColor: 'var(--instrument-enhanced-secondary-color)',
+      outlineColor: 'var(--element-active-color)',
       ...ACTIVE_STYLE_BASE,
     },
-    [POILineType.Dashed]: {
-      lineColor: 'var(--overlay-element-active-color)',
-      outlineColor: 'var(--instrument-enhanced-secondary-color)',
-      ...ACTIVE_STYLE_BASE,
-      ...DASHED_DEFAULTS,
-    },
+    [POILineType.Dashed]: SELECTED_DASHED_STYLE,
   },
   [POIStyle.Alarm]: {
     [POILineType.Regular]: {
-      lineColor: 'var(--on-alarm-color)',
-      outlineColor: 'var(--alert-alarm-color)',
+      lineColor: 'var(--alert-alarm-color)',
+      outlineColor: 'var(--on-alarm-color)',
       ...ACTIVE_STYLE_BASE,
     },
-    [POILineType.Dashed]: {
-      lineColor: 'var(--on-alarm-color)',
-      outlineColor: 'var(--alert-alarm-color)',
-      ...ACTIVE_STYLE_BASE,
-      ...DASHED_DEFAULTS,
-    },
+    [POILineType.Dashed]: ACTIVE_NEUTRAL_DASHED_STYLE,
   },
   [POIStyle.Caution]: {
     [POILineType.Regular]: {
-      lineColor: 'var(--element-active-color)',
-      outlineColor: 'var(--alert-caution-color)',
+      lineColor: 'var(--alert-caution-color)',
+      outlineColor: 'var(--alert-caution-outline-color)',
       ...ACTIVE_STYLE_BASE,
     },
-    [POILineType.Dashed]: {
-      lineColor: 'var(--element-active-color)',
-      outlineColor: 'var(--alert-caution-color)',
-      ...ACTIVE_STYLE_BASE,
-      ...DASHED_DEFAULTS,
-    },
+    [POILineType.Dashed]: ACTIVE_NEUTRAL_DASHED_STYLE,
   },
   [POIStyle.Warning]: {
     [POILineType.Regular]: {
-      lineColor: 'var(--on-warning-color)',
-      outlineColor: 'var(--alert-warning-color)',
+      lineColor: 'var(--alert-warning-color)',
+      outlineColor: 'var(--on-warning-color)',
       ...ACTIVE_STYLE_BASE,
     },
-    [POILineType.Dashed]: {
-      lineColor: 'var(--on-warning-color)',
-      outlineColor: 'var(--alert-warning-color)',
-      ...ACTIVE_STYLE_BASE,
-      ...DASHED_DEFAULTS,
-    },
+    [POILineType.Dashed]: ACTIVE_NEUTRAL_DASHED_STYLE,
   },
   [POIStyle.Route]: {
     [POILineType.Regular]: ROUTE_STYLE,
-    [POILineType.Dashed]: {
-      ...ROUTE_STYLE,
-      ...DASHED_DEFAULTS,
-    },
+    [POILineType.Dashed]: ROUTE_DASHED_STYLE,
   },
 };
 

@@ -53,26 +53,9 @@ export class ObcPoiPointer extends LitElement {
     return this.state === ObcPoiPointerState.Selected;
   }
 
-  private renderPointRegularGuideFrame() {
-    if (!(this.isPoint && this.state === ObcPoiPointerState.Regular)) {
-      return nothing;
-    }
-
-    return html`
-      <div class="point-guide-frame" aria-hidden="true">
-        <span class="corner tl"></span>
-        <span class="corner tr"></span>
-        <span class="corner bl"></span>
-        <span class="corner br"></span>
-      </div>
-    `;
-  }
-
   private renderSquareSelectionFrame() {
     const show =
-      (this.isPoint &&
-        (this.isSelected || this.state === ObcPoiPointerState.Active)) ||
-      (this.isButton && this.isSelected);
+      (this.isPoint && this.isSelected) || (this.isButton && this.isSelected);
     if (!show) {
       return nothing;
     }
@@ -162,7 +145,6 @@ export class ObcPoiPointer extends LitElement {
           camera: this.isCamera,
         })}
       >
-        ${this.renderPointRegularGuideFrame()}
         ${this.renderSquareSelectionFrame()}
         ${this.renderCameraSelectionFrame()} ${this.renderPoint()}
         ${this.renderButton()} ${this.renderCamera()}

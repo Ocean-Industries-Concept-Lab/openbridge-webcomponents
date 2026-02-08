@@ -59,6 +59,11 @@ export function graphicLine({
   const lineEnd = lineStart + lineHeight;
   const breakStartPoint = lineStart + 10;
   const breakEndPoint = breakStartPoint + 30;
+  const isDashed = Boolean(style.dashArray);
+  const foregroundDashArray = style.dashArray;
+  const foregroundDashOffset = style.dashArray
+    ? `${style.dashOffset ?? 0}`
+    : undefined;
 
   let path: string;
   if (offset === 0) {
@@ -66,6 +71,7 @@ export function graphicLine({
   } else {
     path = `M${xStart} ${lineStart}V ${breakStartPoint} L ${xEnd} ${breakEndPoint}V ${lineEnd}`;
   }
+  const topCapPath = `M${xStart} ${lineStart}V ${lineStart + 0.001}`;
 
   return html`
     <svg
@@ -90,27 +96,43 @@ export function graphicLine({
             d=${path}
             stroke="${style.outlineColor}"
             stroke-width="${style.outlineWidth}"
-            stroke-linecap="${style.strokeLinecap ?? 'round'}"
-            stroke-dasharray=${ifDefined(style.dashArray)}
-            stroke-dashoffset=${ifDefined(
-              style.dashArray ? `${style.dashOffset ?? 0}` : undefined
-            )}
+            stroke-linecap="butt"
+            stroke-linejoin="round"
           />
         </g>
+        <path
+          d=${path}
+          stroke="${style.outlineColor}"
+          stroke-width="${style.outlineWidth}"
+          stroke-linecap="${isDashed
+            ? 'round'
+            : (style.strokeLinecap ?? 'round')}"
+        />
         <path
           d=${path}
           stroke="${style.lineColor}"
           stroke-width="${style.lineWidth}"
           stroke-linecap="${style.strokeLinecap ?? 'round'}"
-          stroke-dasharray=${ifDefined(style.dashArray)}
-          stroke-dashoffset=${ifDefined(
-            style.dashArray ? `${style.dashOffset ?? 0}` : undefined
-          )}
+          stroke-dasharray=${ifDefined(foregroundDashArray)}
+          stroke-dashoffset=${ifDefined(foregroundDashOffset)}
         />
+        ${isDashed
+          ? html`<path
+              d=${topCapPath}
+              stroke="${style.lineColor}"
+              stroke-width="${style.lineWidth}"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />`
+          : null}
       </g>
       <defs>
         <filter
           id="poi_graphic_line_filter"
+          x="-3"
+          y="-3"
+          width="${width + 6}"
+          height="${totalHeight + 6}"
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
@@ -121,8 +143,8 @@ export function graphicLine({
             values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
             result="hardAlpha"
           />
-          <feOffset dy="1" />
-          <feGaussianBlur stdDeviation="1.5" />
+          <feOffset dy="0" />
+          <feGaussianBlur stdDeviation="0.85" />
           <feComposite in2="hardAlpha" operator="out" />
           <feColorMatrix
             type="matrix"

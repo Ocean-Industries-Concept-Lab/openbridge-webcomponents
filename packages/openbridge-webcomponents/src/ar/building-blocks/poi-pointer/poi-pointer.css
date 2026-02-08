@@ -30,6 +30,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
+}
+
+:host([type="point"][state="regular"]) .wrapper {
+  width: 32px;
+  height: 32px;
+  padding: 2px;
+  gap: 8px;
 }
 
 .square-frame,
@@ -59,15 +67,12 @@
   box-sizing: border-box;
 }
 
-.point {
-  border-radius: 100px;
-  box-shadow: 0px 1px 2px 0px #000;
-}
-
 .point.regular {
+  border-radius: 100px;
   width: 4px;
   height: 4px;
   background: var(--obc-poi-pointer-neutral);
+  box-shadow: 0px 1px 2px 0px #000;
 }
 
 .point.active {
@@ -80,7 +85,10 @@
 .point.uncertain {
   width: 8px;
   height: 8px;
+  flex-shrink: 0;
+  border-radius: 100px;
   border: 1.5px dashed var(--obc-poi-pointer-neutral);
+  filter: drop-shadow(0px 1px 2px #000);
 }
 
 .button {
@@ -98,7 +106,7 @@
 
 .button.uncertain {
   border: 1px dashed var(--obc-poi-pointer-neutral);
-  box-shadow: 0px 1px 2px 0px #000;
+  filter: drop-shadow(0px 1px 2px #000);
 }
 
 .camera {
@@ -118,7 +126,20 @@
 }
 
 .camera.uncertain {
+  position: relative;
+  border: none;
+  box-shadow: none;
+  filter: none;
+}
+
+.camera.uncertain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
   border: 1px dashed var(--obc-poi-pointer-neutral);
+  border-radius: 2px;
+  pointer-events: none;
+  filter: drop-shadow(0px 1px 3px #000);
 }
 
 .camera-frame {
@@ -134,53 +155,6 @@
   border-width: 2px;
   border-radius: 2px;
   filter: drop-shadow(0px 1px 2px #000);
-}
-
-.point-guide-frame {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  filter: drop-shadow(0px 1px 2px #000);
-}
-
-.point-guide-frame .corner {
-  position: absolute;
-  width: 3px;
-  height: 3px;
-  border-color: var(--obc-poi-pointer-neutral);
-  border-style: solid;
-  border-width: 1px;
-}
-
-.point-guide-frame .corner.tl {
-  top: 0;
-  left: 0;
-  border-right: none;
-  border-bottom: none;
-}
-
-.point-guide-frame .corner.tr {
-  top: 0;
-  right: 0;
-  border-left: none;
-  border-bottom: none;
-}
-
-.point-guide-frame .corner.bl {
-  bottom: 0;
-  left: 0;
-  border-right: none;
-  border-top: none;
-}
-
-.point-guide-frame .corner.br {
-  bottom: 0;
-  right: 0;
-  border-left: none;
-  border-top: none;
 }
 
 .camera-frame .corner.tl {
