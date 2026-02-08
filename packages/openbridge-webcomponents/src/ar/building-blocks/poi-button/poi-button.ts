@@ -155,6 +155,7 @@ export class ObcPoiButton extends LitElement {
   protected renderButton() {
     return html`
       <button
+        type="button"
         class=${classMap({
           wrapper: true,
           selected: this.selected,
@@ -185,6 +186,7 @@ export class ObcPoiButton extends LitElement {
   protected renderWithData() {
     return html`
       <button
+        type="button"
         class=${classMap({
           wrapper: true,
           'has-data': true,
