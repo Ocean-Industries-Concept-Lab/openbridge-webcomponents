@@ -1,7 +1,13 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement} from '../../../decorator.js';
-import {POILineParams, POIStyle, POI_LINE_CONFIG} from './poi-config.js';
+import {
+  getPOILineConfig,
+  POILineParams,
+  POILineType,
+  POIStyle,
+} from './poi-config.js';
 import componentStyle from './poi-graphic-line.css?inline';
 
 @customElement('obc-poi-graphic-line')
@@ -10,9 +16,10 @@ export class ObcPoiGraphicLine extends LitElement {
   @property({type: Number}) width: number = 4;
   @property({type: Number}) lineStart: number = 1;
   @property({type: String}) lineStyle: POIStyle = POIStyle.Enhanced;
+  @property({type: String}) lineType: POILineType = POILineType.Regular;
   @property({type: Number}) offset: number = 0;
   override render() {
-    const style = POI_LINE_CONFIG[this.lineStyle];
+    const style = getPOILineConfig(this.lineStyle, this.lineType);
 
     return html`
       ${graphicLine({
@@ -83,14 +90,22 @@ export function graphicLine({
             d=${path}
             stroke="${style.outlineColor}"
             stroke-width="${style.outlineWidth}"
-            stroke-linecap="round"
+            stroke-linecap="${style.strokeLinecap ?? 'round'}"
+            stroke-dasharray=${ifDefined(style.dashArray)}
+            stroke-dashoffset=${ifDefined(
+              style.dashArray ? `${style.dashOffset ?? 0}` : undefined
+            )}
           />
         </g>
         <path
           d=${path}
           stroke="${style.lineColor}"
           stroke-width="${style.lineWidth}"
-          stroke-linecap="round"
+          stroke-linecap="${style.strokeLinecap ?? 'round'}"
+          stroke-dasharray=${ifDefined(style.dashArray)}
+          stroke-dashoffset=${ifDefined(
+            style.dashArray ? `${style.dashOffset ?? 0}` : undefined
+          )}
         />
       </g>
       <defs>
@@ -111,7 +126,7 @@ export function graphicLine({
           <feComposite in2="hardAlpha" operator="out" />
           <feColorMatrix
             type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0"
+            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ${style.shadowAlpha} 0"
           />
           <feBlend
             mode="normal"

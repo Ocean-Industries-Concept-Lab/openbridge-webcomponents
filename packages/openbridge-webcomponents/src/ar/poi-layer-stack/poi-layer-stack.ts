@@ -410,9 +410,16 @@ export class ObcPoiLayerStack extends LitElement {
       return target.getBoundingClientRect();
     }
     const targetShadow = target.shadowRoot;
-    const button = targetShadow?.querySelector('obc-poi-button-data') as
+    const poi = targetShadow?.querySelector('obc-poi') as
       | HTMLElement
       | undefined;
+    const poiButton = poi?.shadowRoot?.querySelector('obc-poi-button') as
+      | HTMLElement
+      | undefined;
+    const dataButton = targetShadow?.querySelector('obc-poi-button-data') as
+      | HTMLElement
+      | undefined;
+    const button = poiButton ?? dataButton;
     const buttonShadow = button?.shadowRoot;
     const wrapper = buttonShadow?.querySelector(
       '.wrapper'
@@ -420,6 +427,7 @@ export class ObcPoiLayerStack extends LitElement {
     return (
       wrapper?.getBoundingClientRect() ??
       button?.getBoundingClientRect() ??
+      poi?.getBoundingClientRect() ??
       target.getBoundingClientRect()
     );
   }

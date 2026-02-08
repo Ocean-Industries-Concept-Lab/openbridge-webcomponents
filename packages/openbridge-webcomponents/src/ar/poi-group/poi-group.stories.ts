@@ -65,14 +65,14 @@ const meta: Meta<PoiGroupStoryArgs> = {
               id="target-3"
               .header=${{content: '3'}}
               .x=${300}
-              .height=${240}
+              .anchorY=${240}
               .y=${240}
             ></obc-poi-data>
             <obc-poi-data
               id="target-1"
               .header=${{content: '1'}}
               .x=${320}
-              .height=${240}
+              .anchorY=${240}
               .y=${240}
               .relativeDirection=${65}
             ></obc-poi-data>
@@ -80,7 +80,7 @@ const meta: Meta<PoiGroupStoryArgs> = {
               id="target-2"
               .header=${{content: '2'}}
               .x=${340}
-              .height=${240}
+              .anchorY=${240}
               .y=${240}
             ></obc-poi-data>
           </obc-poi-group>
@@ -88,7 +88,7 @@ const meta: Meta<PoiGroupStoryArgs> = {
             id="outside"
             .header=${{content: '4'}}
             .x=${200}
-            .height=${240}
+            .anchorY=${240}
             .y=${240}
           ></obc-poi-data>
         </div>
@@ -152,14 +152,14 @@ export const GroupedWithNumbers: Story = {
               id="target-3"
               .header=${{content: '3'}}
               .x=${300}
-              .height=${240}
+              .anchorY=${240}
               .y=${240}
             ></obc-poi-data>
             <obc-poi-data
               id="target-1"
               .header=${{content: '1'}}
               .x=${320}
-              .height=${240}
+              .anchorY=${240}
               .y=${240}
               .relativeDirection=${65}
             ></obc-poi-data>
@@ -167,7 +167,7 @@ export const GroupedWithNumbers: Story = {
               id="target-2"
               .header=${{content: '2'}}
               .x=${340}
-              .height=${240}
+              .anchorY=${240}
               .y=${240}
             ></obc-poi-data>
           </obc-poi-group>
@@ -175,7 +175,7 @@ export const GroupedWithNumbers: Story = {
             id="outside"
             .header=${{content: '4'}}
             .x=${200}
-            .height=${240}
+            .anchorY=${240}
             .y=${240}
           ></obc-poi-data>
         </div>
@@ -241,7 +241,7 @@ export const Expanded: Story = {
               id="target-3"
               .header=${{content: '3'}}
               .x=${300}
-              .height=${240}
+              .anchorY=${240}
               .y=${260}
               .fixedTarget=${false}
             ></obc-poi-data>
@@ -249,7 +249,7 @@ export const Expanded: Story = {
               id="target-1"
               .header=${{content: '1'}}
               .x=${320}
-              .height=${240}
+              .anchorY=${240}
               .y=${100}
               .fixedTarget=${false}
               .relativeDirection=${65}
@@ -258,7 +258,7 @@ export const Expanded: Story = {
               id="target-2"
               .header=${{content: '2'}}
               .x=${340}
-              .height=${240}
+              .anchorY=${240}
               .y=${100}
               .fixedTarget=${false}
             ></obc-poi-data>
@@ -267,7 +267,7 @@ export const Expanded: Story = {
             id="outside"
             .header=${{content: '4'}}
             .x=${200}
-            .height=${240}
+            .anchorY=${240}
             .y=${100}
             .fixedTarget=${false}
           ></obc-poi-data>
@@ -417,21 +417,21 @@ export const InternalGroupSwapping: Story = {
               id="swap-a"
               .header=${{content: '1'}}
               .x=${300}
-              .height=${240}
+              .anchorY=${240}
               .y=${240}
             ></obc-poi-data>
             <obc-poi-data
               id="swap-b"
               .header=${{content: '2'}}
               .x=${320}
-              .height=${240}
+              .anchorY=${240}
               .y=${240}
             ></obc-poi-data>
             <obc-poi-data
               id="swap-c"
               .header=${{content: '3'}}
               .x=${340}
-              .height=${240}
+              .anchorY=${240}
               .y=${240}
             ></obc-poi-data>
           </obc-poi-group>

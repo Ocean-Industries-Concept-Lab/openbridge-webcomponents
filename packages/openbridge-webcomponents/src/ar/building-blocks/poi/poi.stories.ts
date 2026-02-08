@@ -2,8 +2,9 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import {crossDecorator} from '../../../storybook-util.js';
 import './poi.js';
-import {ObcPoi, ObcPoiType, ObcPoiValue} from './poi.js';
+import {ObcPoi, ObcPoiState, ObcPoiType, ObcPoiValue} from './poi.js';
 import '../../../icons/icon-placeholder.js';
+import '../../../icons/icon-collision-avoidance-overtaking.js';
 
 const meta: Meta<ObcPoi> = {
   title: 'AR/Building blocks/POI',
@@ -12,11 +13,21 @@ const meta: Meta<ObcPoi> = {
   decorators: [crossDecorator],
   args: {
     type: ObcPoiType.Line,
-    value: ObcPoiValue.Enabled,
+    value: ObcPoiValue.Unchecked,
+    state: ObcPoiState.Enabled,
+    x: 444,
+    y: 96,
+    buttonY: 80,
+    fixedTarget: false,
+    outsideAngle: 315,
+    hasPointer: false,
+    animatePosition: false,
     relativeDirection: 0,
-    lineHeight: 96,
-    offset: 0,
-    hasPointer: true,
+    buttonOffsetX: 0,
+    targetOffsetX: 0,
+    header: {content: '1'},
+    selected: false,
+    hasRelation: false,
   },
   argTypes: {
     type: {
@@ -27,23 +38,88 @@ const meta: Meta<ObcPoi> = {
       control: {type: 'select'},
       options: Object.values(ObcPoiValue),
     },
-    relativeDirection: {control: {type: 'range', min: 0, max: 360}},
-    lineHeight: {control: {type: 'range', min: 32, max: 200, step: 1}},
-    offset: {control: {type: 'range', min: -100, max: 100, step: 1}},
+    state: {
+      control: {type: 'select'},
+      options: Object.values(ObcPoiState),
+    },
+    x: {control: {type: 'range', min: 0, max: 888, step: 1}},
+    y: {control: {type: 'range', min: 0, max: 280, step: 1}},
+    buttonY: {control: {type: 'range', min: 0, max: 480, step: 1}},
+    fixedTarget: {control: {type: 'boolean'}},
+    outsideAngle: {
+      control: {type: 'range', min: 0, max: 360, step: 1},
+      if: {arg: 'type', eq: ObcPoiType.Outside},
+    },
     hasPointer: {control: {type: 'boolean'}},
+    animatePosition: {control: {type: 'boolean'}},
+    relativeDirection: {control: {type: 'range', min: 0, max: 360}},
+    buttonOffsetX: {control: {type: 'range', min: -150, max: 150, step: 1}},
+    targetOffsetX: {control: {type: 'range', min: -150, max: 150, step: 1}},
+    header: {control: {type: 'object'}},
+    selected: {control: {type: 'boolean'}},
+    hasRelation: {control: {type: 'boolean'}},
+  },
+  parameters: {
+    controls: {
+      include: [
+        'type',
+        'value',
+        'state',
+        'x',
+        'y',
+        'buttonY',
+        'fixedTarget',
+        'outsideAngle',
+        'hasPointer',
+        'animatePosition',
+        'relativeDirection',
+        'buttonOffsetX',
+        'targetOffsetX',
+        'header',
+        'selected',
+        'hasRelation',
+      ],
+    },
   },
   render: (args) => {
     return html`
-      <obc-poi
-        .type=${args.type}
-        .value=${args.value}
-        .relativeDirection=${args.relativeDirection}
-        .lineHeight=${args.lineHeight}
-        .offset=${args.offset}
-        .hasPointer=${args.hasPointer}
-      >
-        <obi-placeholder></obi-placeholder>
-      </obc-poi>
+      <style>
+        .wrapper {
+          height: 420px !important;
+        }
+
+        .frame {
+          position: relative;
+          width: 888px;
+          height: 160px;
+          transform: translate(-50%, -50%);
+        }
+      </style>
+      <div class="frame">
+        <obc-poi
+          .type=${args.type}
+          .value=${args.value}
+          .state=${args.state}
+          .x=${args.x}
+          .y=${args.y}
+          .buttonY=${args.buttonY}
+          .fixedTarget=${args.fixedTarget}
+          .outsideAngle=${args.outsideAngle}
+          .hasPointer=${args.hasPointer}
+          .animatePosition=${args.animatePosition}
+          .relativeDirection=${args.relativeDirection}
+          .buttonOffsetX=${args.buttonOffsetX}
+          .targetOffsetX=${args.targetOffsetX}
+          .header=${args.header}
+          .selected=${args.selected}
+          .hasRelation=${args.hasRelation}
+        >
+          <obi-placeholder></obi-placeholder>
+          <obi-collision-avoidance-overtaking
+            slot="relation"
+          ></obi-collision-avoidance-overtaking>
+        </obc-poi>
+      </div>
     `;
   },
 } satisfies Meta<ObcPoi>;
@@ -54,44 +130,30 @@ type Story = StoryObj<ObcPoi>;
 export const Line: Story = {
   args: {
     type: ObcPoiType.Line,
-    value: ObcPoiValue.Enabled,
+    value: ObcPoiValue.Unchecked,
   },
 };
 
-export const OffsetLeft: Story = {
+export const Offset: Story = {
   args: {
-    type: ObcPoiType.OffsetLeft,
-    value: ObcPoiValue.Enabled,
-  },
-};
-
-export const OffsetRight: Story = {
-  args: {
-    type: ObcPoiType.OffsetRight,
-    value: ObcPoiValue.Enabled,
+    type: ObcPoiType.Offset,
+    value: ObcPoiValue.Unchecked,
+    targetOffsetX: 32,
   },
 };
 
 export const Point: Story = {
   args: {
     type: ObcPoiType.Point,
-    value: ObcPoiValue.Enabled,
+    value: ObcPoiValue.Unchecked,
   },
 };
 
-export const OutsideLeft: Story = {
+export const Outside: Story = {
   args: {
-    type: ObcPoiType.OutsideLeft,
-    value: ObcPoiValue.Enabled,
-    hasPointer: false,
-  },
-};
-
-export const OutsideRight: Story = {
-  args: {
-    type: ObcPoiType.OutsideRight,
-    value: ObcPoiValue.Enabled,
-    hasPointer: false,
+    type: ObcPoiType.Outside,
+    value: ObcPoiValue.Unchecked,
+    outsideAngle: 315,
   },
 };
 
@@ -113,5 +175,13 @@ export const Overlapped: Story = {
   args: {
     type: ObcPoiType.Line,
     value: ObcPoiValue.Overlapped,
+  },
+};
+
+export const Alarm: Story = {
+  args: {
+    type: ObcPoiType.Line,
+    state: ObcPoiState.Alarm,
+    value: ObcPoiValue.Checked,
   },
 };

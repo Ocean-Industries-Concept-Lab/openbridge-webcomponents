@@ -1,5 +1,5 @@
 :host {
-  --obc-poi-layer-height: 0px;
+  --obc-poi-layer-height: auto;
   --obc-poi-layer-auto-group-offset-y: 0px;
   --obc-poi-layer-line-length: 120px;
   --obc-poi-layer-exit-delay-ms: 140;
@@ -8,7 +8,7 @@
   display: block;
   position: relative;
   width: 100%;
-  min-height: var(--obc-poi-layer-min-height, 48px);
+  min-height: var(--obc-poi-layer-min-height, 0px);
   height: var(--obc-poi-layer-height, auto);
   pointer-events: auto;
 }

@@ -4,6 +4,10 @@
 
 :host {
   display: inline-block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translateX(var(--obc-poi-x, 0px)) translateY(var(--obc-poi-y, 0px));
 }
 
 .wrapper {
@@ -12,27 +16,26 @@
   flex-direction: column;
   align-items: center;
   gap: 0;
+  transform: translateX(var(--obc-poi-target-top-offset-x, 0px));
+  transition: transform 0.15s ease-out;
 }
 
-.wrapper.type-outside-left,
-.wrapper.type-outside-right {
-  flex-direction: row;
-  align-items: center;
-}
-
-.wrapper.type-outside-left .line-wrapper,
-.wrapper.type-outside-left .pointer-wrapper,
-.wrapper.type-outside-right .line-wrapper,
-.wrapper.type-outside-right .pointer-wrapper {
-  display: none;
-}
-
-.poi-button.overlapped {
-  opacity: 0.6;
+.wrapper.no-motion {
+  transition: none;
 }
 
 .poi-button {
   z-index: 1;
+  transform: translateY(0);
+  transition: transform 0.15s ease-out;
+}
+
+.wrapper.value-overlapped:not(.has-data) .poi-button {
+  opacity: 0.6;
+}
+
+.wrapper.no-motion .poi-button {
+  transition: none;
 }
 
 .line {
@@ -43,6 +46,10 @@
   z-index: 0;
 }
 
+.wrapper.type-outside .line {
+  display: none;
+}
+
 .outside-arrow {
   display: flex;
   align-items: center;
@@ -50,14 +57,15 @@
   width: 16px;
   height: 16px;
   position: absolute;
-  top: calc(var(--obc-poi-outside-touch-target, 48px) / -2);
-  transform: translateY(-50%);
+  left: 50%;
+  top: 50%;
+  transform: translateX(calc(-50% + var(--obc-poi-outside-arrow-x, 0px)))
+    translateY(calc(-50% + var(--obc-poi-outside-arrow-y, 0px)))
+    rotate(var(--obc-poi-outside-arrow-angle, 0deg));
+  z-index: 2;
+  transition: transform 0.15s ease-out;
 }
 
-.wrapper.type-outside-right .outside-arrow {
-  left: calc(var(--obc-poi-outside-touch-target, 48px) / 2);
-}
-
-.wrapper.type-outside-left .outside-arrow {
-  right: calc(var(--obc-poi-outside-touch-target, 48px) / 2);
+.wrapper.no-motion .outside-arrow {
+  transition: none;
 }

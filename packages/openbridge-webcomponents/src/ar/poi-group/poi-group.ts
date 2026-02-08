@@ -561,10 +561,16 @@ export class ObcPoiGroup extends LitElement {
     let maxHeight = Number.NEGATIVE_INFINITY;
 
     for (const child of targets) {
-      const heightValue =
-        typeof child.height === 'number' && Number.isFinite(child.height)
-          ? child.height
-          : Number.parseFloat(child.getAttribute('height') ?? '');
+      const anchorYValue =
+        typeof child.anchorY === 'number' && Number.isFinite(child.anchorY)
+          ? child.anchorY
+          : Number.parseFloat(child.getAttribute('anchor-y') ?? '');
+      const legacyHeightValue = Number.parseFloat(
+        child.getAttribute('height') ?? ''
+      );
+      const heightValue = !Number.isNaN(anchorYValue)
+        ? anchorYValue
+        : legacyHeightValue;
       const yValue =
         Number.isFinite(child.y) && child.y > 0
           ? child.y
@@ -782,16 +788,28 @@ export class ObcPoiGroup extends LitElement {
 
   private getTargetButtonRect(target: ObcPoiData): DOMRect {
     const targetShadow = target.shadowRoot;
-    const button = targetShadow?.querySelector('obc-poi-button-data') as
+    const poi = targetShadow?.querySelector('obc-poi') as
       | HTMLElement
       | undefined;
+    const poiButton = poi?.shadowRoot?.querySelector('obc-poi-button') as
+      | HTMLElement
+      | undefined;
+    const dataButton = targetShadow?.querySelector('obc-poi-button-data') as
+      | HTMLElement
+      | undefined;
+    const button = poiButton ?? dataButton;
     const buttonShadow = button?.shadowRoot;
+    const buttonWrapper = buttonShadow?.querySelector(
+      '.button-wrapper'
+    ) as HTMLElement | null;
     const wrapper = buttonShadow?.querySelector(
       '.wrapper'
     ) as HTMLElement | null;
     return (
+      buttonWrapper?.getBoundingClientRect() ??
       wrapper?.getBoundingClientRect() ??
       button?.getBoundingClientRect() ??
+      poi?.getBoundingClientRect() ??
       target.getBoundingClientRect()
     );
   }

@@ -18,50 +18,126 @@ import {customElement} from '../../../decorator.js';
 
 export enum ObcPoiType {
   Line = 'line',
-  OffsetLeft = 'offset-left',
-  OffsetRight = 'offset-right',
+  Offset = 'offset',
   Point = 'point',
-  OutsideLeft = 'outside-left',
-  OutsideRight = 'outside-right',
+  Outside = 'outside',
 }
 
 export enum ObcPoiValue {
-  Enabled = 'enabled',
+  Unchecked = 'unchecked',
   Checked = 'checked',
   Activated = 'activated',
   Overlapped = 'overlapped',
 }
 
-const DEFAULT_OFFSET_PX = 24;
-const DEFAULT_LINE_HEIGHT_PX = 96;
+export enum ObcPoiState {
+  Enabled = 'enabled',
+  Caution = 'caution',
+  Warning = 'warning',
+  Alarm = 'alarm',
+}
 
-export abstract class ObcPoiBase extends LitElement {
+const DEFAULT_LINE_LENGTH_PX = 96;
+
+@customElement('obc-poi')
+export class ObcPoi extends LitElement {
   @property({type: String}) type: ObcPoiType = ObcPoiType.Line;
-  @property({type: String}) value: ObcPoiValue = ObcPoiValue.Enabled;
+  @property({type: String}) value: ObcPoiValue = ObcPoiValue.Unchecked;
+  @property({type: String}) state: ObcPoiState = ObcPoiState.Enabled;
+  @property({type: Number}) x = 0;
+  @property({type: Number}) y = DEFAULT_LINE_LENGTH_PX;
+  @property({type: Number, attribute: 'button-y'}) buttonY: number | null =
+    null;
+  @property({type: Boolean, attribute: 'fixed-target'}) fixedTarget = false;
+  @property({type: Number, attribute: 'outside-angle'}) outsideAngle = 315;
+  @property({type: Boolean}) hasPointer = false;
+  @property({type: Boolean, attribute: 'animate-position'})
+  animatePosition = false;
   @property({type: Number}) relativeDirection = 0;
   @property({type: Object}) header: ObcPoiButtonHeader | null = null;
-  @property({type: String}) alertType = ObcArAlertType.None;
   @property({type: String}) buttonType = ObcPoiButtonType.Button;
   @property({type: Boolean}) selected = false;
   @property({type: Array, attribute: false}) data: ObcPoiButtonDataItem[] = [];
   @property({type: Boolean}) hasRelation = false;
-  @property({type: Boolean, attribute: false}) hasPointer = true;
-  @property({type: String}) lineStyle: POIStyle = POIStyle.Normal;
-  @property({type: Number}) lineHeight = DEFAULT_LINE_HEIGHT_PX;
-  @property({type: Number}) offset = 0;
+  @property({type: Number, attribute: 'button-offset-x'}) buttonOffsetX = 0;
+  @property({type: Number, attribute: 'target-offset-x'}) targetOffsetX = 0;
 
-  private get buttonValue(): PoiButtonVisualState {
+  override updated(changedProperties: Map<string, unknown>) {
+    if (changedProperties.has('x')) {
+      this.style.removeProperty('left');
+      this.style.setProperty('--obc-poi-x', `${this.x}px`);
+    }
+    if (
+      changedProperties.has('buttonY') ||
+      changedProperties.has('y') ||
+      changedProperties.has('fixedTarget')
+    ) {
+      this.updatePosition();
+    }
+  }
+
+  private updatePosition() {
+    this.style.removeProperty('top');
+    if (this.fixedTarget) {
+      if (typeof this.buttonY === 'number' && Number.isFinite(this.buttonY)) {
+        const lineLength = Number.isFinite(this.y) ? this.y : 0;
+        this.style.setProperty('--obc-poi-y', `${this.buttonY - lineLength}px`);
+      } else {
+        this.style.removeProperty('--obc-poi-y');
+      }
+    } else if (
+      typeof this.buttonY === 'number' &&
+      Number.isFinite(this.buttonY)
+    ) {
+      this.style.setProperty('--obc-poi-y', `${this.buttonY}px`);
+    } else {
+      this.style.removeProperty('--obc-poi-y');
+    }
+  }
+
+  protected get buttonVisualState(): PoiButtonVisualState {
     switch (this.value) {
+      case ObcPoiValue.Unchecked:
+        return PoiButtonVisualState.Unchecked;
       case ObcPoiValue.Checked:
         return PoiButtonVisualState.Checked;
       case ObcPoiValue.Activated:
         return PoiButtonVisualState.Activated;
       case ObcPoiValue.Overlapped:
         return PoiButtonVisualState.Overlapped;
-      case ObcPoiValue.Enabled:
       default:
         return PoiButtonVisualState.Unchecked;
     }
+  }
+
+  protected get buttonAlertType(): ObcArAlertType {
+    switch (this.state) {
+      case ObcPoiState.Caution:
+        return ObcArAlertType.Caution;
+      case ObcPoiState.Warning:
+        return ObcArAlertType.Warning;
+      case ObcPoiState.Alarm:
+        return ObcArAlertType.Alarm;
+      case ObcPoiState.Enabled:
+      default:
+        return ObcArAlertType.None;
+    }
+  }
+
+  private get lineStyle(): POIStyle {
+    if (this.state === ObcPoiState.Alarm) {
+      return POIStyle.Alarm;
+    }
+    if (this.state === ObcPoiState.Warning) {
+      return POIStyle.Warning;
+    }
+    if (this.state === ObcPoiState.Caution) {
+      return POIStyle.Caution;
+    }
+    if (this.selected) {
+      return POIStyle.Selected;
+    }
+    return POIStyle.Regular;
   }
 
   private get pointerSelected(): boolean {
@@ -71,24 +147,20 @@ export abstract class ObcPoiBase extends LitElement {
   }
 
   private get lineOffset(): number {
-    if (this.type === ObcPoiType.OffsetLeft) {
-      return this.offset || -DEFAULT_OFFSET_PX;
+    if (this.type === ObcPoiType.Point || this.type === ObcPoiType.Outside) {
+      return 0;
     }
-    if (this.type === ObcPoiType.OffsetRight) {
-      return this.offset || DEFAULT_OFFSET_PX;
-    }
-    return this.offset;
+
+    return this.targetOffsetX - this.buttonOffsetX;
   }
 
   private renderLine() {
-    if (
-      this.type === ObcPoiType.OutsideLeft ||
-      this.type === ObcPoiType.OutsideRight
-    ) {
+    if (this.type === ObcPoiType.Outside) {
       return nothing;
     }
 
-    const height = this.type === ObcPoiType.Point ? 0 : this.lineHeight;
+    const height =
+      this.type === ObcPoiType.Point ? 0 : Number.isFinite(this.y) ? this.y : 0;
 
     return html`
       <obc-poi-line
@@ -97,75 +169,82 @@ export abstract class ObcPoiBase extends LitElement {
         .height=${height}
         .offset=${this.lineOffset}
         .hasPointer=${this.hasPointer}
-        .selected=${this.pointerSelected}
-        .faded=${this.value !== ObcPoiValue.Activated}
+        .animatePosition=${this.animatePosition}
       ></obc-poi-line>
     `;
   }
 
-  private renderOutsideArrow(
-    type: ObcPoiType.OutsideLeft | ObcPoiType.OutsideRight
-  ) {
-    const pointerType =
-      type === ObcPoiType.OutsideLeft ? Pointer.ArrowLeft : Pointer.ArrowRight;
+  private renderOutsideArrow() {
+    if (this.type !== ObcPoiType.Outside || !this.hasPointer) {
+      return nothing;
+    }
+
+    const touchTarget = this.buttonType === ObcPoiButtonType.Enhanced ? 64 : 48;
+    const radius = touchTarget / Math.SQRT2;
+    const baseCenterYOffset = -touchTarget / 2;
+    const angle = (this.outsideAngle * Math.PI) / 180;
+    const xOffset = Math.cos(angle) * radius;
+    const yOffset = baseCenterYOffset + Math.sin(angle) * radius;
     const value = this.pointerSelected ? 'checked' : 'unchecked';
-    return html`<div class="outside-arrow">
-      ${pointerArrow(pointerType, value)}
+    return html`<div
+      class="outside-arrow"
+      style="--obc-poi-outside-arrow-x: ${xOffset}px; --obc-poi-outside-arrow-y: ${yOffset}px; --obc-poi-outside-arrow-angle: ${this
+        .outsideAngle}deg;"
+    >
+      ${pointerArrow(Pointer.ArrowRight, value)}
     </div>`;
   }
 
-  override render() {
-    const outsideTouchTarget =
-      this.buttonType === ObcPoiButtonType.Enhanced
-        ? 'var(--maneuvering-components-poi-button-large-touch-target)'
-        : 'var(--maneuvering-components-poi-button-touch-target)';
+  protected renderPoiButton() {
+    return html`
+      <obc-poi-button
+        layout="inline"
+        class=${classMap({
+          'poi-button': true,
+          overlapped: this.value === ObcPoiValue.Overlapped,
+        })}
+        .relativeDirection=${this.relativeDirection}
+        .selected=${this.selected}
+        .header=${this.header}
+        .alertType=${this.buttonAlertType}
+        .value=${this.buttonVisualState}
+        .type=${this.buttonType}
+        .data=${this.data}
+        .hasRelation=${this.hasRelation}
+      >
+        <slot></slot>
+        <slot name="id-label" slot="id-label"></slot>
+        <slot name="relation" slot="relation"></slot>
+      </obc-poi-button>
+    `;
+  }
 
+  override render() {
     const classes = {
       wrapper: true,
       [`type-${this.type}`]: true,
+      [`button-${this.buttonType}`]: true,
       [`value-${this.value}`]: true,
+      [`state-${this.state}`]: true,
+      'has-data': this.data.length > 0,
+      'no-motion': !this.animatePosition,
     };
 
+    const wrapperStyle =
+      this.buttonOffsetX !== 0
+        ? `--obc-poi-target-top-offset-x: ${this.buttonOffsetX}px;`
+        : '';
+
     return html`
-      <div
-        class=${classMap(classes)}
-        style="--obc-poi-outside-touch-target: ${outsideTouchTarget};"
-      >
-        ${this.type === ObcPoiType.OutsideLeft
-          ? this.renderOutsideArrow(ObcPoiType.OutsideLeft)
-          : nothing}
-        <obc-poi-button
-          layout="inline"
-          class=${classMap({
-            'poi-button': true,
-            overlapped: this.value === ObcPoiValue.Overlapped,
-          })}
-          .relativeDirection=${this.relativeDirection}
-          .selected=${this.selected}
-          .header=${this.header}
-          .alertType=${this.alertType}
-          .value=${this.buttonValue}
-          .type=${this.buttonType}
-          .data=${this.data}
-          .hasRelation=${this.hasRelation}
-        >
-          <slot></slot>
-          <slot name="id-label" slot="id-label"></slot>
-          <slot name="relation" slot="relation"></slot>
-        </obc-poi-button>
-        ${this.renderLine()}
-        ${this.type === ObcPoiType.OutsideRight
-          ? this.renderOutsideArrow(ObcPoiType.OutsideRight)
-          : nothing}
+      <div class=${classMap(classes)} style=${wrapperStyle}>
+        ${this.renderPoiButton()} ${this.renderLine()}
+        ${this.renderOutsideArrow()}
       </div>
     `;
   }
 
   static override styles = unsafeCSS(componentStyle);
 }
-
-@customElement('obc-poi')
-export class ObcPoi extends ObcPoiBase {}
 
 declare global {
   interface HTMLElementTagNameMap {

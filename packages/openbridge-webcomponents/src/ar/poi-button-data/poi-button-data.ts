@@ -1,10 +1,10 @@
 import '../building-blocks/poi-button/poi-button.js';
 import '../../icons/icon-vessel-generic-default-filled.js';
-import {ObcPoiButtonBase} from '../building-blocks/poi-button/poi-button.js';
+import {ObcPoiButton} from '../building-blocks/poi-button/poi-button.js';
 import {customElement} from '../../decorator.js';
 
 @customElement('obc-poi-button-data')
-export class ObcPoiButtonData extends ObcPoiButtonBase {
+export class ObcPoiButtonData extends ObcPoiButton {
   override connectedCallback() {
     super.connectedCallback();
     this.ensureDefaultIcon();

@@ -88,8 +88,8 @@ export enum ObcPoiObjectState {
  *
  * ## Usage Guidelines
  *
- * Typically consumed indirectly via concrete subclass components that extend
- * `ObcAbstractPoiObject`. Direct usage is for building new marker types.
+ * Can be consumed directly as a default POI object, or extended by domain-
+ * specific POI object components.
  *
  * ## Slots/Content
  *
@@ -114,7 +114,8 @@ export enum ObcPoiObjectState {
  * </obc-poi-object>
  * ```
  */
-export abstract class ObcPoiObjectBase extends LitElement {
+@customElement('obc-poi-object')
+export class ObcPoiObject extends LitElement {
   @property({type: String, reflect: true})
   type: ObcPoiObjectType = ObcPoiObjectType.Regular;
 
@@ -233,9 +234,6 @@ export abstract class ObcPoiObjectBase extends LitElement {
 
   static override styles = unsafeCSS(componentStyle);
 }
-
-@customElement('obc-poi-object')
-export class ObcPoiObject extends ObcPoiObjectBase {}
 
 declare global {
   interface HTMLElementTagNameMap {

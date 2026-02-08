@@ -1,9 +1,14 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import compentStyle from './poi-line.css?inline';
 import '../poi-graphic-line/poi-graphic-line.js';
 import {renderPointerDot} from './pointerDot.js';
-import {POI_LINE_CONFIG, POIStyle} from '../poi-graphic-line/poi-config.js';
+import {
+  getPOILineConfig,
+  POILineType,
+  POIStyle,
+  resolvePOIStyle,
+} from '../poi-graphic-line/poi-config.js';
 import {graphicLine} from '../poi-graphic-line/poi-graphic-line.js';
 import {customElement} from '../../../decorator.js';
 
@@ -11,13 +16,18 @@ import {customElement} from '../../../decorator.js';
 export class ObcPoiLine extends LitElement {
   @property({type: Number}) height: number = 96;
   @property({type: String}) poiStyle: POIStyle = POIStyle.Normal;
+  @property({type: String}) lineType: POILineType = POILineType.Regular;
   @property({type: Number}) offset: number = 0;
+  @property({type: Boolean}) hasPointer = false;
+  @property({type: Boolean, attribute: 'animate-position'})
+  animatePosition = false;
   override render() {
-    const style = POI_LINE_CONFIG[this.poiStyle];
+    const style = getPOILineConfig(this.poiStyle, this.lineType);
+    const resolvedStyle = resolvePOIStyle(this.poiStyle);
     let lineHeight = this.height - 2;
     let centerX = 2;
     let centerYOffset = 1;
-    if (this.poiStyle === POIStyle.Normal) {
+    if (resolvedStyle === POIStyle.Regular) {
       lineHeight = this.height - 2;
       centerYOffset = 2;
       centerX = 2;
@@ -27,21 +37,28 @@ export class ObcPoiLine extends LitElement {
     const translateX = -3 + (this.offset < 0 ? this.offset : 0);
 
     return html`
-      <div class="offset-wrapper">
+      <div
+        class="offset-wrapper"
+        style="--obc-poi-line-transition-duration: ${this.animatePosition
+          ? '0.15s'
+          : '0s'};"
+      >
         <div
           class="container"
           style="height: ${totalHeight}px; width: ${style.width}px; transform: translateX(${translateX}px);"
         >
           ${graphicLine({style, lineHeight, totalHeight, offset: this.offset})}
-          ${renderPointerDot({
-            lineStyle: this.poiStyle,
-            centerX: centerX + (this.offset > 0 ? this.offset : 0),
-            centerY: lineHeight + centerYOffset,
-            width: style.width + (this.offset > 0 ? this.offset : 0),
-            vbHeight: totalHeight,
-            lineColor: style.lineColor,
-            outlineColor: style.outlineColor,
-          })}
+          ${this.hasPointer
+            ? renderPointerDot({
+                lineStyle: this.poiStyle,
+                centerX: centerX + (this.offset > 0 ? this.offset : 0),
+                centerY: lineHeight + centerYOffset,
+                width: style.width + (this.offset > 0 ? this.offset : 0),
+                vbHeight: totalHeight,
+                lineColor: style.lineColor,
+                outlineColor: style.outlineColor,
+              })
+            : nothing}
         </div>
       </div>
     `;

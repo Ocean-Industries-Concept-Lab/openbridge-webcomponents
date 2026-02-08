@@ -5,7 +5,10 @@ import componentStyle from './poi-controller.css?inline';
 import '../poi-layer-stack/poi-layer-stack.js';
 import '../poi-layer/poi-layer.js';
 import '../poi-data/poi-data.js';
-import {ObcPoiButtonType} from '../building-blocks/poi-button/poi-button.js';
+import {
+  ObcPoiButtonType,
+  resolvePoiButtonTypeFromBoxSize,
+} from '../building-blocks/poi-button/poi-button.js';
 
 /**
  * `<obc-poi-controller>` maps detections onto media and renders POI overlays.
@@ -17,6 +20,7 @@ import {ObcPoiButtonType} from '../building-blocks/poi-button/poi-button.js';
  * ### Features
  * - Maps detections to screen coordinates with `fit`, `boxOrigin`, and
  *   `poiAnchor`.
+ * - Uses rendered `box_width`/`box_height` to choose POI target size variant.
  * - Supports frame-based detection playback via `frames` and `frameIndex`.
  * - Filters detections with `confidenceMin` and `classFilter`.
  * - Generates stable target keys via `keyFn` when needed.
@@ -126,7 +130,7 @@ export class ObcPoiController extends LitElement {
     HTMLElement & {
       x: number;
       y: number;
-      height: number | null;
+      anchorY: number | null;
       fixedTarget?: boolean;
       type: string;
     }
@@ -304,7 +308,9 @@ export class ObcPoiController extends LitElement {
     return frames[0] ?? null;
   }
 
-  private mapDetection(det: PoiDetection): {x: number; y: number} | null {
+  private mapDetection(
+    det: PoiDetection
+  ): {x: number; y: number; scale: number} | null {
     if (
       !Number.isFinite(this.mediaWidth) ||
       !Number.isFinite(this.mediaHeight) ||
@@ -337,6 +343,7 @@ export class ObcPoiController extends LitElement {
     return {
       x: offsetX + det.x * scale,
       y: offsetY + det.y * scale,
+      scale,
     };
   }
 
@@ -377,7 +384,7 @@ export class ObcPoiController extends LitElement {
         target = document.createElement('obc-poi-data') as HTMLElement & {
           x: number;
           y: number;
-          height: number | null;
+          anchorY: number | null;
           fixedTarget?: boolean;
           type: string;
         };
@@ -392,6 +399,15 @@ export class ObcPoiController extends LitElement {
       target.dataset.detectionIndex = String(index);
       target.x = mapped.x;
       target.y = mapped.y;
+      const boxWidth =
+        typeof det.box_width === 'number' && Number.isFinite(det.box_width)
+          ? det.box_width * mapped.scale
+          : null;
+      const boxHeight =
+        typeof det.box_height === 'number' && Number.isFinite(det.box_height)
+          ? det.box_height * mapped.scale
+          : null;
+      target.type = resolvePoiButtonTypeFromBoxSize(boxWidth, boxHeight);
     });
 
     Array.from(this.controllerTargets.entries()).forEach(([key, target]) => {

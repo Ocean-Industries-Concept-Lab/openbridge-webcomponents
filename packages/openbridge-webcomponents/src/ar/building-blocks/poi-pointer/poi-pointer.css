@@ -1,0 +1,212 @@
+:host {
+  display: inline-block;
+  position: relative;
+  --obc-poi-pointer-active: var(--overlay-element-active-color, #fff);
+  --obc-poi-pointer-neutral: var(
+    --overlay-element-neutral-color,
+    rgba(255, 255, 255, 0.59)
+  );
+}
+
+:host([type="point"]) {
+  width: 32px;
+  height: 32px;
+}
+
+:host([type="button"]) {
+  width: 48px;
+  height: 48px;
+}
+
+:host([type="camera"]) {
+  width: 52px;
+  height: 44px;
+}
+
+.wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.square-frame,
+.camera-frame {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.square-frame {
+  width: 48px;
+  height: 48px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.square-frame .selection-frame {
+  width: 100%;
+  height: 100%;
+}
+
+.point,
+.button,
+.camera {
+  z-index: 1;
+  box-sizing: border-box;
+}
+
+.point {
+  border-radius: 100px;
+  box-shadow: 0px 1px 2px 0px #000;
+}
+
+.point.regular {
+  width: 4px;
+  height: 4px;
+  background: var(--obc-poi-pointer-neutral);
+}
+
+.point.active {
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--obc-poi-pointer-active);
+  border-radius: 11px;
+}
+
+.point.uncertain {
+  width: 8px;
+  height: 8px;
+  border: 1.5px dashed var(--obc-poi-pointer-neutral);
+}
+
+.button {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+}
+
+.button.regular,
+.button.active,
+.button.selected {
+  border: 1px solid var(--obc-poi-pointer-active);
+  box-shadow: 0px 1px 3px 0px #000;
+}
+
+.button.uncertain {
+  border: 1px dashed var(--obc-poi-pointer-neutral);
+  box-shadow: 0px 1px 2px 0px #000;
+}
+
+.camera {
+  width: 52px;
+  height: 44px;
+  border-radius: 2px;
+  box-shadow: 0px 1px 3px 0px #000;
+}
+
+.camera.regular {
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.camera.active,
+.camera.selected {
+  border: 1px solid var(--obc-poi-pointer-active);
+}
+
+.camera.uncertain {
+  border: 1px dashed var(--obc-poi-pointer-neutral);
+}
+
+.camera-frame {
+  inset: -6px;
+}
+
+.camera-frame .corner {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-color: var(--obc-poi-pointer-active);
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 2px;
+  filter: drop-shadow(0px 1px 2px #000);
+}
+
+.point-guide-frame {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0px 1px 2px #000);
+}
+
+.point-guide-frame .corner {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-color: var(--obc-poi-pointer-neutral);
+  border-style: solid;
+  border-width: 1px;
+}
+
+.point-guide-frame .corner.tl {
+  top: 0;
+  left: 0;
+  border-right: none;
+  border-bottom: none;
+}
+
+.point-guide-frame .corner.tr {
+  top: 0;
+  right: 0;
+  border-left: none;
+  border-bottom: none;
+}
+
+.point-guide-frame .corner.bl {
+  bottom: 0;
+  left: 0;
+  border-right: none;
+  border-top: none;
+}
+
+.point-guide-frame .corner.br {
+  bottom: 0;
+  right: 0;
+  border-left: none;
+  border-top: none;
+}
+
+.camera-frame .corner.tl {
+  top: 0;
+  left: 0;
+  border-right: none;
+  border-bottom: none;
+}
+
+.camera-frame .corner.tr {
+  top: 0;
+  right: 0;
+  border-left: none;
+  border-bottom: none;
+}
+
+.camera-frame .corner.bl {
+  bottom: 0;
+  left: 0;
+  border-right: none;
+  border-top: none;
+}
+
+.camera-frame .corner.br {
+  bottom: 0;
+  right: 0;
+  border-left: none;
+  border-top: none;
+}

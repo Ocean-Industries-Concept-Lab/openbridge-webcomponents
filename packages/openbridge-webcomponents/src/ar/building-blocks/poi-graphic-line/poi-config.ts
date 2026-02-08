@@ -1,6 +1,17 @@
 export enum POIStyle {
   Normal = 'normal',
   Enhanced = 'enhanced',
+  Regular = 'regular',
+  Selected = 'selected',
+  Alarm = 'alarm',
+  Caution = 'caution',
+  Warning = 'warning',
+  Route = 'route',
+}
+
+export enum POILineType {
+  Regular = 'regular',
+  Dashed = 'dashed',
 }
 
 export interface POILineParams {
@@ -13,30 +24,236 @@ export interface POILineParams {
   dotStart: number;
   lineEnd: number;
   filterDimensions: {x: number; y: number; width: number};
+  dashArray?: string;
+  dashOffset?: number;
+  strokeLinecap?: 'round' | 'butt' | 'square';
+}
+
+export type POIStyleVariant =
+  | POIStyle.Regular
+  | POIStyle.Selected
+  | POIStyle.Alarm
+  | POIStyle.Caution
+  | POIStyle.Warning
+  | POIStyle.Route;
+
+const REGULAR_STYLE: POILineParams = {
+  lineColor: 'var(--element-active-inverted-color)',
+  outlineColor: 'var(--element-disabled-color)',
+  width: 6,
+  lineWidth: 1,
+  outlineWidth: 1,
+  shadowAlpha: 0.8,
+  dotStart: 2,
+  lineEnd: 3,
+  filterDimensions: {x: 0.5, y: 0.5, width: 3},
+};
+
+const ACTIVE_STYLE_BASE = {
+  width: 8,
+  lineWidth: 1.5,
+  outlineWidth: 2,
+  shadowAlpha: 0.2,
+  dotStart: 0,
+  lineEnd: 3,
+  filterDimensions: {x: 0, y: 0, width: 4},
+} satisfies Omit<POILineParams, 'lineColor' | 'outlineColor'>;
+
+const DASHED_DEFAULTS = {
+  dashArray: '1.5 4',
+  dashOffset: 2,
+  strokeLinecap: 'butt',
+} satisfies Pick<POILineParams, 'dashArray' | 'dashOffset' | 'strokeLinecap'>;
+
+const ROUTE_STYLE: POILineParams = {
+  lineColor: 'var(--base-blue-050)',
+  outlineColor: 'var(--base-blue-500)',
+  width: 8,
+  lineWidth: 2,
+  outlineWidth: 2,
+  shadowAlpha: 0.2,
+  dotStart: 0,
+  lineEnd: 3,
+  filterDimensions: {x: 0, y: 0, width: 4},
+};
+
+const STYLE_CONFIG: Record<
+  POIStyleVariant,
+  Record<POILineType, POILineParams>
+> = {
+  [POIStyle.Regular]: {
+    [POILineType.Regular]: REGULAR_STYLE,
+    [POILineType.Dashed]: {
+      ...REGULAR_STYLE,
+      ...DASHED_DEFAULTS,
+    },
+  },
+  [POIStyle.Selected]: {
+    [POILineType.Regular]: {
+      lineColor: 'var(--overlay-element-active-color)',
+      outlineColor: 'var(--instrument-enhanced-secondary-color)',
+      ...ACTIVE_STYLE_BASE,
+    },
+    [POILineType.Dashed]: {
+      lineColor: 'var(--overlay-element-active-color)',
+      outlineColor: 'var(--instrument-enhanced-secondary-color)',
+      ...ACTIVE_STYLE_BASE,
+      ...DASHED_DEFAULTS,
+    },
+  },
+  [POIStyle.Alarm]: {
+    [POILineType.Regular]: {
+      lineColor: 'var(--on-alarm-color)',
+      outlineColor: 'var(--alert-alarm-color)',
+      ...ACTIVE_STYLE_BASE,
+    },
+    [POILineType.Dashed]: {
+      lineColor: 'var(--on-alarm-color)',
+      outlineColor: 'var(--alert-alarm-color)',
+      ...ACTIVE_STYLE_BASE,
+      ...DASHED_DEFAULTS,
+    },
+  },
+  [POIStyle.Caution]: {
+    [POILineType.Regular]: {
+      lineColor: 'var(--element-active-color)',
+      outlineColor: 'var(--alert-caution-color)',
+      ...ACTIVE_STYLE_BASE,
+    },
+    [POILineType.Dashed]: {
+      lineColor: 'var(--element-active-color)',
+      outlineColor: 'var(--alert-caution-color)',
+      ...ACTIVE_STYLE_BASE,
+      ...DASHED_DEFAULTS,
+    },
+  },
+  [POIStyle.Warning]: {
+    [POILineType.Regular]: {
+      lineColor: 'var(--on-warning-color)',
+      outlineColor: 'var(--alert-warning-color)',
+      ...ACTIVE_STYLE_BASE,
+    },
+    [POILineType.Dashed]: {
+      lineColor: 'var(--on-warning-color)',
+      outlineColor: 'var(--alert-warning-color)',
+      ...ACTIVE_STYLE_BASE,
+      ...DASHED_DEFAULTS,
+    },
+  },
+  [POIStyle.Route]: {
+    [POILineType.Regular]: ROUTE_STYLE,
+    [POILineType.Dashed]: {
+      ...ROUTE_STYLE,
+      ...DASHED_DEFAULTS,
+    },
+  },
+};
+
+export function resolvePOIStyle(style: POIStyle | string): POIStyleVariant {
+  switch (style) {
+    case POIStyle.Enhanced:
+    case POIStyle.Selected:
+      return POIStyle.Selected;
+    case POIStyle.Alarm:
+      return POIStyle.Alarm;
+    case POIStyle.Caution:
+      return POIStyle.Caution;
+    case POIStyle.Warning:
+      return POIStyle.Warning;
+    case POIStyle.Route:
+      return POIStyle.Route;
+    case POIStyle.Normal:
+    case POIStyle.Regular:
+    default:
+      return POIStyle.Regular;
+  }
 }
 
 export const POI_LINE_CONFIG: Record<POIStyle, POILineParams> = {
-  [POIStyle.Normal]: {
-    lineColor: 'var(--element-active-inverted-color)',
-    outlineColor: 'var(--element-disabled-color)',
-    width: 6,
-    lineWidth: 1,
-    outlineWidth: 1,
-    shadowAlpha: 0.8,
-    dotStart: 2,
-    lineEnd: 3,
-    filterDimensions: {x: 0.5, y: 0.5, width: 3},
-  },
-
-  [POIStyle.Enhanced]: {
-    lineColor: 'var(--instrument-enhanced-secondary-color)',
-    outlineColor: 'var(--element-active-inverted-color)',
-    width: 8,
-    lineWidth: 1,
-    outlineWidth: 2,
-    shadowAlpha: 0.2,
-    dotStart: 0,
-    lineEnd: 3,
-    filterDimensions: {x: 0, y: 0, width: 4},
-  },
+  [POIStyle.Normal]: STYLE_CONFIG[POIStyle.Regular][POILineType.Regular],
+  [POIStyle.Enhanced]: STYLE_CONFIG[POIStyle.Selected][POILineType.Regular],
+  [POIStyle.Regular]: STYLE_CONFIG[POIStyle.Regular][POILineType.Regular],
+  [POIStyle.Selected]: STYLE_CONFIG[POIStyle.Selected][POILineType.Regular],
+  [POIStyle.Alarm]: STYLE_CONFIG[POIStyle.Alarm][POILineType.Regular],
+  [POIStyle.Caution]: STYLE_CONFIG[POIStyle.Caution][POILineType.Regular],
+  [POIStyle.Warning]: STYLE_CONFIG[POIStyle.Warning][POILineType.Regular],
+  [POIStyle.Route]: STYLE_CONFIG[POIStyle.Route][POILineType.Regular],
 };
+
+export function getPOILineConfig(
+  style: POIStyle | string,
+  lineType: POILineType | string = POILineType.Regular
+): POILineParams {
+  const resolvedStyle = resolvePOIStyle(style);
+  const resolvedType =
+    lineType === POILineType.Dashed ? POILineType.Dashed : POILineType.Regular;
+  return STYLE_CONFIG[resolvedStyle][resolvedType];
+}
+
+export const POI_STYLE_OPTIONS: POIStyle[] = [
+  POIStyle.Regular,
+  POIStyle.Selected,
+  POIStyle.Alarm,
+  POIStyle.Caution,
+  POIStyle.Warning,
+  POIStyle.Route,
+];
+
+export const POI_LINE_TYPE_OPTIONS: POILineType[] = [
+  POILineType.Regular,
+  POILineType.Dashed,
+];
+
+export const POI_VISUAL_VARIANTS: Array<{
+  style: POIStyle;
+  type: POILineType;
+}> = [
+  {
+    style: POIStyle.Regular,
+    type: POILineType.Regular,
+  },
+  {
+    style: POIStyle.Selected,
+    type: POILineType.Regular,
+  },
+  {
+    style: POIStyle.Alarm,
+    type: POILineType.Regular,
+  },
+  {
+    style: POIStyle.Warning,
+    type: POILineType.Regular,
+  },
+  {
+    style: POIStyle.Caution,
+    type: POILineType.Regular,
+  },
+  {
+    style: POIStyle.Route,
+    type: POILineType.Regular,
+  },
+  {
+    style: POIStyle.Regular,
+    type: POILineType.Dashed,
+  },
+  {
+    style: POIStyle.Selected,
+    type: POILineType.Dashed,
+  },
+  {
+    style: POIStyle.Alarm,
+    type: POILineType.Dashed,
+  },
+  {
+    style: POIStyle.Warning,
+    type: POILineType.Dashed,
+  },
+  {
+    style: POIStyle.Caution,
+    type: POILineType.Dashed,
+  },
+  {
+    style: POIStyle.Route,
+    type: POILineType.Dashed,
+  },
+];

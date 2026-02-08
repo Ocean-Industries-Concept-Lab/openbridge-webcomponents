@@ -333,32 +333,23 @@
 
 /* Overlap state for has-data variant - keep layout, hide values */
 :host([value="overlapped"]) .wrapper.has-data {
-  border: none;
-  background: transparent;
-  width: 48px;
-  height: 48px;
+  --obc-poi-overlapped-data-bg: var(--overlay-container-background-color);
+  --obc-poi-overlapped-data-border: var(--overlay-border-outline-color);
+  opacity: 0.6;
+  padding-top: var(--maneuvering-components-poi-button-overlap-offset-padding);
+  box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
 
   .data-wrapper,
   .relation-wrapper,
+  .button-wrapper .poi-object,
   .button-wrapper .selection-frame {
-    display: none;
-  }
-
-  .button-wrapper {
-    position: static;
-    width: auto;
-    min-height: auto;
-    /* Align to bottom so circle bottom stays at same position when shrinking */
-    align-items: flex-end;
+    opacity: 0;
+    pointer-events: none;
   }
 
   .poi-object {
-    --obc-poi-object-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
-  }
-
-  &.type-enhanced {
-    width: 64px;
-    height: 64px;
+    --overlay-container-background-color: var(--obc-poi-overlapped-data-bg);
+    --overlay-border-outline-color: var(--obc-poi-overlapped-data-border);
   }
 }
 

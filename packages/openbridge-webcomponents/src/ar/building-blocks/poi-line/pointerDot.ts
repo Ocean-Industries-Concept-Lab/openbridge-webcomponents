@@ -1,5 +1,5 @@
 import {html, svg} from 'lit';
-import {POIStyle} from '../poi-graphic-line/poi-config.js';
+import {POIStyle, resolvePOIStyle} from '../poi-graphic-line/poi-config.js';
 
 function createCircle({
   x,
@@ -47,8 +47,9 @@ export function renderPointerDot({
 
   let outerCircle = null;
   let filterY = centerY;
+  const resolvedLineStyle = resolvePOIStyle(lineStyle);
 
-  if (lineStyle !== POIStyle.Normal) {
+  if (resolvedLineStyle !== POIStyle.Regular) {
     outerCircle = createCircle({
       x: centerX - 0.5,
       y: centerY - 0.5,

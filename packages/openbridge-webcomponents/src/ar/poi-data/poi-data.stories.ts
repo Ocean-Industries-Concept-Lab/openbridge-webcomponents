@@ -10,12 +10,13 @@ const meta: Meta<ObcPoiData> = {
   args: {
     x: 444,
     y: 192,
-    height: 192,
+    anchorY: 192,
     topOffset: 0,
     value: PoiDataValue.Unchecked,
     pointerType: Pointer.Line,
     relativeDirection: 0,
     offset: 0,
+    animatePosition: false,
     data: [],
     fixedTarget: false,
   },
@@ -23,7 +24,7 @@ const meta: Meta<ObcPoiData> = {
   argTypes: {
     x: {control: {type: 'range', min: 0, max: 640, step: 1}},
     y: {control: {type: 'range', min: 32, max: 400, step: 1}},
-    height: {control: {type: 'range', min: 0, max: 480, step: 1}},
+    anchorY: {control: {type: 'range', min: 0, max: 480, step: 1}},
     topOffset: {control: {type: 'range', min: -200, max: 200, step: 1}},
     fixedTarget: {control: {type: 'boolean'}},
     value: {
@@ -45,6 +46,7 @@ const meta: Meta<ObcPoiData> = {
     offset: {
       control: {type: 'range', min: -100, max: 100, step: 1},
     },
+    animatePosition: {control: {type: 'boolean'}},
     data: {
       control: 'object',
       description:
@@ -56,13 +58,14 @@ const meta: Meta<ObcPoiData> = {
       include: [
         'x',
         'y',
-        'height',
+        'anchorY',
         'topOffset',
         'fixedTarget',
         'value',
         'pointerType',
         'relativeDirection',
         'offset',
+        'animatePosition',
         'data',
       ],
     },
@@ -85,12 +88,13 @@ const meta: Meta<ObcPoiData> = {
         <obc-poi-data
           .x=${args.x}
           .y=${args.y}
-          .height=${args.height}
+          .anchorY=${args.anchorY}
           .topOffset=${args.topOffset}
           .value=${args.value}
           .pointerType=${args.pointerType}
           .relativeDirection=${args.relativeDirection}
           .offset=${args.offset}
+          .animatePosition=${args.animatePosition}
           .data=${args.data}
           .fixedTarget=${args.fixedTarget}
         ></obc-poi-data>
@@ -137,12 +141,13 @@ export const WithValues: Story = {
         <obc-poi-data
           .x=${args.x}
           .y=${args.y}
-          .height=${args.height}
+          .anchorY=${args.anchorY}
           .topOffset=${args.topOffset}
           .value=${args.value}
           .pointerType=${args.pointerType}
           .relativeDirection=${args.relativeDirection}
           .offset=${args.offset}
+          .animatePosition=${args.animatePosition}
           .data=${values}
           .fixedTarget=${args.fixedTarget}
         ></obc-poi-data>
@@ -155,7 +160,7 @@ export const AnimatedOffsetBottom: Story = {
   args: {
     x: 444,
     y: 192,
-    height: 192,
+    anchorY: 192,
     value: PoiDataValue.Checked,
     pointerType: Pointer.Line,
   },
@@ -203,7 +208,7 @@ export const AnimatedOffsetBottom: Story = {
           id="animated-poi-data"
           .x=${args.x}
           .y=${args.y}
-          .height=${args.height}
+          .anchorY=${args.anchorY}
           .value=${args.value}
           .pointerType=${args.pointerType}
         ></obc-poi-data>
@@ -216,7 +221,7 @@ export const AnimatedOffsetTop: Story = {
   args: {
     x: 444,
     y: 192,
-    height: 192,
+    anchorY: 192,
     value: PoiDataValue.Checked,
     pointerType: Pointer.Line,
   },
@@ -267,7 +272,7 @@ export const AnimatedOffsetTop: Story = {
           id="animated-poi-data-top"
           .x=${args.x}
           .y=${args.y}
-          .height=${args.height}
+          .anchorY=${args.anchorY}
           .value=${args.value}
           .pointerType=${args.pointerType}
         ></obc-poi-data>
@@ -280,12 +285,12 @@ export const AnimatedHeight: Story = {
   args: {
     x: 444,
     y: 150,
-    height: 300,
+    anchorY: 300,
     value: PoiDataValue.Checked,
     pointerType: Pointer.Line,
   },
   render: (args) => {
-    let height = 300;
+    let anchorY = 300;
     let direction = 1;
 
     const animate = () => {
@@ -294,11 +299,11 @@ export const AnimatedHeight: Story = {
       ) as ObcPoiData;
       if (!target || !target.isConnected) return;
 
-      height += direction * 1;
-      if (height > 400) direction = -1;
-      if (height < 200) direction = 1;
+      anchorY += direction * 1;
+      if (anchorY > 400) direction = -1;
+      if (anchorY < 200) direction = 1;
 
-      target.height = height;
+      target.anchorY = anchorY;
 
       if (target.isConnected) {
         requestAnimationFrame(animate);
@@ -337,11 +342,11 @@ export const AnimatedHeight: Story = {
         }
 
         .button-reference {
-          top: ${(args.height ?? 300) - args.y}px;
+          top: ${(args.anchorY ?? 300) - args.y}px;
         }
 
         .bottom-reference {
-          top: ${args.height ?? 300}px;
+          top: ${args.anchorY ?? 300}px;
         }
       </style>
       <div class="frame">
@@ -351,7 +356,7 @@ export const AnimatedHeight: Story = {
           id="animated-height-target"
           .x=${args.x}
           .y=${args.y}
-          .height=${args.height}
+          .anchorY=${args.anchorY}
           .value=${args.value}
           .pointerType=${args.pointerType}
         ></obc-poi-data>
@@ -364,7 +369,7 @@ export const AnimatedLineLength: Story = {
   args: {
     x: 444,
     y: 150,
-    height: 250,
+    anchorY: 250,
     value: PoiDataValue.Checked,
     pointerType: Pointer.Line,
   },
@@ -382,7 +387,7 @@ export const AnimatedLineLength: Story = {
       if (lineLength > 300) direction = -1;
       if (lineLength < 50) direction = 1;
 
-      // Keep target position (height) fixed, adjust line length (y)
+      // Keep target position (anchorY) fixed, adjust line length (y)
       target.y = lineLength;
 
       if (target.isConnected) {
@@ -422,7 +427,7 @@ export const AnimatedLineLength: Story = {
         }
 
         .target-reference {
-          top: ${args.height ?? 250}px;
+          top: ${args.anchorY ?? 250}px;
         }
 
         .label {
@@ -434,17 +439,17 @@ export const AnimatedLineLength: Story = {
         }
 
         .target-label {
-          top: ${(args.height ?? 250) + 5}px;
+          top: ${(args.anchorY ?? 250) + 5}px;
         }
       </style>
       <div class="frame">
         <div class="reference-line target-reference"></div>
-        <div class="label target-label">Target Position (height) Fixed</div>
+        <div class="label target-label">Target Position (anchorY) Fixed</div>
         <obc-poi-data
           id="animated-line-length"
           .x=${args.x}
           .y=${args.y}
-          .height=${args.height}
+          .anchorY=${args.anchorY}
           .value=${args.value}
           .pointerType=${args.pointerType}
         ></obc-poi-data>
@@ -457,7 +462,7 @@ export const CompareModes: Story = {
   args: {
     x: 300,
     y: 150,
-    height: 300,
+    anchorY: 300,
     value: PoiDataValue.Checked,
     pointerType: Pointer.Line,
   },
@@ -473,9 +478,11 @@ export const CompareModes: Story = {
         '#compare-normal'
       ) as ObcPoiData;
       const fixedYLabel = document.querySelector('#fixed-y-value');
-      const fixedHeightLabel = document.querySelector('#fixed-height-value');
+      const fixedAnchorYLabel = document.querySelector('#fixed-anchor-y-value');
       const normalYLabel = document.querySelector('#normal-y-value');
-      const normalHeightLabel = document.querySelector('#normal-height-value');
+      const normalAnchorYLabel = document.querySelector(
+        '#normal-anchor-y-value'
+      );
 
       if (!fixedTarget?.isConnected || !normalTarget?.isConnected) return;
 
@@ -489,12 +496,12 @@ export const CompareModes: Story = {
       // Update labels
       if (fixedYLabel)
         fixedYLabel.textContent = `y = ${Math.round(lineLength)}px`;
-      if (fixedHeightLabel)
-        fixedHeightLabel.textContent = `height = ${fixedTarget.height ?? 'null'}`;
+      if (fixedAnchorYLabel)
+        fixedAnchorYLabel.textContent = `anchorY = ${fixedTarget.anchorY ?? 'null'}`;
       if (normalYLabel)
         normalYLabel.textContent = `y = ${Math.round(lineLength)}px`;
-      if (normalHeightLabel)
-        normalHeightLabel.textContent = `height = ${normalTarget.height ?? 'null'}px`;
+      if (normalAnchorYLabel)
+        normalAnchorYLabel.textContent = `anchorY = ${normalTarget.anchorY ?? 'null'}px`;
 
       if (fixedTarget.isConnected) {
         requestAnimationFrame(animate);
@@ -545,7 +552,7 @@ export const CompareModes: Story = {
         }
 
         .target-reference {
-          top: ${args.height ?? 300}px;
+          top: ${args.anchorY ?? 300}px;
           background: rgba(255, 0, 0, 0.3);
         }
 
@@ -568,7 +575,7 @@ export const CompareModes: Story = {
         }
 
         .target-label {
-          top: ${(args.height ?? 300) + 5}px;
+          top: ${(args.anchorY ?? 300) + 5}px;
           color: rgba(255, 0, 0, 0.8);
         }
 
@@ -592,7 +599,9 @@ export const CompareModes: Story = {
           <div class="label title">fixed-target=false (Layer Mode)</div>
           <div class="label variables">
             <div id="fixed-y-value" class="var-value">y = ${args.y}px</div>
-            <div id="fixed-height-value" class="var-value">height = null</div>
+            <div id="fixed-anchor-y-value" class="var-value">
+              anchorY = null
+            </div>
           </div>
           <div class="reference-line button-reference"></div>
           <div class="label button-label">Button Fixed</div>
@@ -609,8 +618,8 @@ export const CompareModes: Story = {
           <div class="label title">fixed-target=true (CV Mode)</div>
           <div class="label variables">
             <div id="normal-y-value" class="var-value">y = ${args.y}px</div>
-            <div id="normal-height-value" class="var-value">
-              height = ${args.height ?? 300}px
+            <div id="normal-anchor-y-value" class="var-value">
+              anchorY = ${args.anchorY ?? 300}px
             </div>
           </div>
           <div class="reference-line target-reference"></div>
@@ -619,7 +628,7 @@ export const CompareModes: Story = {
             id="compare-normal"
             .x=${args.x}
             .y=${args.y}
-            .height=${args.height ?? 300}
+            .anchorY=${args.anchorY ?? 300}
             .fixedTarget=${true}
             .value=${args.value}
             .pointerType=${args.pointerType}

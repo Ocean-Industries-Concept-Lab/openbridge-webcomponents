@@ -28,6 +28,35 @@ export enum PoiButtonVisualState {
   Overlapped = 'overlapped',
 }
 
+const BUTTON_TOUCH_TARGET_PX = 48;
+const ENHANCED_TOUCH_TARGET_PX = 64;
+const DEFAULT_ENHANCED_BOX_AREA_THRESHOLD_PX =
+  (BUTTON_TOUCH_TARGET_PX * BUTTON_TOUCH_TARGET_PX +
+    ENHANCED_TOUCH_TARGET_PX * ENHANCED_TOUCH_TARGET_PX) /
+  2;
+
+export function resolvePoiButtonTypeFromBoxSize(
+  boxWidthPx: number | null | undefined,
+  boxHeightPx: number | null | undefined,
+  enhancedAreaThresholdPx: number = DEFAULT_ENHANCED_BOX_AREA_THRESHOLD_PX
+): ObcPoiButtonType {
+  const width = Number(boxWidthPx);
+  const height = Number(boxHeightPx);
+  if (
+    !Number.isFinite(width) ||
+    !Number.isFinite(height) ||
+    width <= 0 ||
+    height <= 0
+  ) {
+    return ObcPoiButtonType.Button;
+  }
+
+  const area = width * height;
+  return area >= enhancedAreaThresholdPx
+    ? ObcPoiButtonType.Enhanced
+    : ObcPoiButtonType.Button;
+}
+
 export interface ObcPoiButtonDataItem {
   value: string;
   label: string;
@@ -42,7 +71,8 @@ export interface ObcPoiButtonHeader {
   hasIndicator?: boolean;
 }
 
-export abstract class ObcPoiButtonBase extends LitElement {
+@customElement('obc-poi-button')
+export class ObcPoiButton extends LitElement {
   @property({type: Number}) relativeDirection = 0;
   @property({type: Boolean}) selected = false;
   @property({type: String, reflect: true}) layout: ObcPoiButtonLayout =
@@ -61,16 +91,17 @@ export abstract class ObcPoiButtonBase extends LitElement {
   }
 
   get hasHeader(): boolean {
-    return this.header !== null;
+    const content = this.header?.content;
+    return typeof content === 'string' && content.trim().length > 0;
   }
 
-  private get poiObjectType(): ObcPoiObjectType {
+  protected get poiObjectType(): ObcPoiObjectType {
     return this.type === ObcPoiButtonType.Enhanced
       ? ObcPoiObjectType.Large
       : ObcPoiObjectType.Regular;
   }
 
-  private get poiObjectState(): ObcPoiObjectState {
+  protected get poiObjectState(): ObcPoiObjectState {
     if (this.value === PoiButtonVisualState.Overlapped) {
       return ObcPoiObjectState.Overlapped;
     }
@@ -102,7 +133,26 @@ export abstract class ObcPoiButtonBase extends LitElement {
     return this.renderButton();
   }
 
-  renderButton() {
+  protected renderPoiObject() {
+    return html`
+      <obc-poi-object
+        class="poi-object"
+        .type=${this.poiObjectType}
+        .objectStyle=${ObcPoiObjectStyle.Regular}
+        .state=${this.poiObjectState}
+        .interactive=${false}
+      >
+        <span
+          class="icon"
+          style="transform: rotate(${this.relativeDirection}deg);"
+        >
+          <slot></slot>
+        </span>
+      </obc-poi-object>
+    `;
+  }
+
+  protected renderButton() {
     return html`
       <button
         class=${classMap({
@@ -125,27 +175,14 @@ export abstract class ObcPoiButtonBase extends LitElement {
           : nothing}
         <div class="button-wrapper">
           ${selectionFrame(this.selected, this.alertType, this.type)}
-          <obc-poi-object
-            class="poi-object"
-            .type=${this.poiObjectType}
-            .objectStyle=${ObcPoiObjectStyle.Regular}
-            .state=${this.poiObjectState}
-            .interactive=${false}
-          >
-            <span
-              class="icon"
-              style="transform: rotate(${this.relativeDirection}deg);"
-            >
-              <slot></slot>
-            </span>
-          </obc-poi-object>
+          ${this.renderPoiObject()}
           <div class="alert-ring"></div>
         </div>
       </button>
     `;
   }
 
-  renderWithData() {
+  protected renderWithData() {
     return html`
       <button
         class=${classMap({
@@ -180,20 +217,7 @@ export abstract class ObcPoiButtonBase extends LitElement {
         </div>
         <div class="button-wrapper">
           ${selectionFrame(this.selected, this.alertType, this.type)}
-          <obc-poi-object
-            class="poi-object"
-            .type=${this.poiObjectType}
-            .objectStyle=${ObcPoiObjectStyle.Regular}
-            .state=${this.poiObjectState}
-            .interactive=${false}
-          >
-            <span
-              class="icon"
-              style="transform: rotate(${this.relativeDirection}deg);"
-            >
-              <slot></slot>
-            </span>
-          </obc-poi-object>
+          ${this.renderPoiObject()}
         </div>
         ${this.hasRelation
           ? html`<div class="relation-wrapper" part="relation-wrapper">
@@ -207,9 +231,6 @@ export abstract class ObcPoiButtonBase extends LitElement {
 
   static override styles = unsafeCSS(compentStyle);
 }
-
-@customElement('obc-poi-button')
-export class ObcPoiButton extends ObcPoiButtonBase {}
 
 declare global {
   interface HTMLElementTagNameMap {

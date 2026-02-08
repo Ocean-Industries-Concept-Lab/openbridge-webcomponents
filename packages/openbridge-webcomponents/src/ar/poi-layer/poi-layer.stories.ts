@@ -984,7 +984,7 @@ export const CrossingMode: Story = {
           <obc-poi-data
             class="moving"
             .y=${120}
-            .allowButtonTransition=${true}
+            .animatePosition=${true}
           ></obc-poi-data>
         </obc-poi-layer>
       </div>

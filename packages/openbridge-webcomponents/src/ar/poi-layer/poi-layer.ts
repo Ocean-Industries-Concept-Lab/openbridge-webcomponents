@@ -210,8 +210,8 @@ export enum PoiLayerRole {
  * ### Example
  * ```html
  * <obc-poi-layer label="Radar" layerIndex="1">
- *   <obc-poi-data x="120" height="200"></obc-poi-data>
- *   <obc-poi-data x="240" height="220"></obc-poi-data>
+ *   <obc-poi-data x="120" anchor-y="200"></obc-poi-data>
+ *   <obc-poi-data x="240" anchor-y="220"></obc-poi-data>
  * </obc-poi-layer>
  * ```
  *
@@ -268,11 +268,24 @@ export class ObcPoiLayer extends LitElement {
       this.scheduleGrouping();
       this.scheduleLayerHeightUpdate();
     });
+    requestAnimationFrame(() => {
+      this.updateTargetObservers();
+      this.scheduleLayerHeightUpdate();
+    });
+    this.addEventListener(
+      'obc-poi-data-layout-change',
+      this.handlePoiDataLayoutChange as EventListener
+    );
     this.addEventListener('expand', this.handleGroupExpand as EventListener);
     this.addEventListener('collapse-finished', () => {
       this.scheduleGrouping();
     });
   }
+
+  private handlePoiDataLayoutChange = () => {
+    this.scheduleGrouping();
+    this.scheduleLayerHeightUpdate();
+  };
 
   private handleGroupExpand = (event: CustomEvent<{expand: boolean}>) => {
     const group = event.target as HTMLElement;
@@ -299,6 +312,10 @@ export class ObcPoiLayer extends LitElement {
 
   override disconnectedCallback() {
     super.disconnectedCallback();
+    this.removeEventListener(
+      'obc-poi-data-layout-change',
+      this.handlePoiDataLayoutChange as EventListener
+    );
     this.removeEventListener('expand', this.handleGroupExpand as EventListener);
     this.resizeObserver?.disconnect();
     this.targetResizeObserver?.disconnect();
@@ -362,9 +379,8 @@ export class ObcPoiLayer extends LitElement {
       this.querySelectorAll('obc-poi-data')
     ) as HTMLElement[];
     if (targets.length === 0) {
-      this.style.removeProperty('--obc-poi-layer-height');
-      const wrapperHeight = this.wrapper?.getBoundingClientRect().height ?? 0;
-      this.updateLayerHeight(wrapperHeight);
+      this.style.setProperty('--obc-poi-layer-height', '0px');
+      this.updateLayerHeight(0);
       return;
     }
     const rects = new Map<HTMLElement, DOMRect>();
@@ -378,7 +394,11 @@ export class ObcPoiLayer extends LitElement {
     });
     const minHeight = this.getLayerMinHeight();
     const nextHeight = Math.max(maxHeight, minHeight);
-    if (nextHeight <= 0) return;
+    if (nextHeight <= 0) {
+      this.style.setProperty('--obc-poi-layer-height', '0px');
+      this.updateLayerHeight(0);
+      return;
+    }
     const roundedHeight = Math.round(nextHeight);
     this.style.setProperty('--obc-poi-layer-height', `${roundedHeight}px`);
     this.updateLayerHeight(roundedHeight);
@@ -428,7 +448,7 @@ export class ObcPoiLayer extends LitElement {
       });
       observer.observe(target, {
         attributes: true,
-        attributeFilter: ['style', 'y', 'height'],
+        attributeFilter: ['style', 'y', 'anchor-y', 'height'],
       });
       this.targetObservers.set(target, observer);
     });
@@ -461,12 +481,26 @@ export class ObcPoiLayer extends LitElement {
 
   private getTargetSizeElement(target: HTMLElement): HTMLElement | null {
     const targetShadow = target.shadowRoot;
-    const button = targetShadow?.querySelector('obc-poi-button-data') as
+    const poi = targetShadow?.querySelector('obc-poi') as
       | HTMLElement
       | undefined;
+    const poiButton = poi?.shadowRoot?.querySelector('obc-poi-button') as
+      | HTMLElement
+      | undefined;
+    const dataButton = targetShadow?.querySelector('obc-poi-button-data') as
+      | HTMLElement
+      | undefined;
+    const button = poiButton ?? dataButton;
     const buttonShadow = button?.shadowRoot;
+    const buttonWrapper = buttonShadow?.querySelector(
+      '.button-wrapper'
+    ) as HTMLElement | null;
     return (
-      (buttonShadow?.querySelector('.wrapper') as HTMLElement | null) ?? null
+      (buttonShadow?.querySelector('.wrapper') as HTMLElement | null) ??
+      buttonWrapper ??
+      button ??
+      poi ??
+      target
     );
   }
 
@@ -1260,18 +1294,32 @@ export class ObcPoiLayer extends LitElement {
 
   private getTargetRect(target: HTMLElement): DOMRect {
     const targetShadow = target.shadowRoot;
-    const button = targetShadow?.querySelector('obc-poi-button-data') as
+    const poi = targetShadow?.querySelector('obc-poi') as
       | HTMLElement
       | undefined;
+    const poiButton = poi?.shadowRoot?.querySelector('obc-poi-button') as
+      | HTMLElement
+      | undefined;
+    const dataButton = targetShadow?.querySelector('obc-poi-button-data') as
+      | HTMLElement
+      | undefined;
+    const button = poiButton ?? dataButton;
     const buttonShadow = button?.shadowRoot;
+    const buttonWrapper = buttonShadow?.querySelector(
+      '.button-wrapper'
+    ) as HTMLElement | null;
     const wrapper = buttonShadow?.querySelector(
       '.wrapper'
     ) as HTMLElement | null;
-    return (
-      wrapper?.getBoundingClientRect() ??
-      button?.getBoundingClientRect() ??
-      target.getBoundingClientRect()
-    );
+    const candidates = [wrapper, buttonWrapper, button, poi]
+      .filter((element): element is HTMLElement => !!element)
+      .map((element) => element.getBoundingClientRect());
+    if (candidates.length > 0) {
+      return candidates.reduce((best, rect) =>
+        rect.height > best.height ? rect : best
+      );
+    }
+    return target.getBoundingClientRect();
   }
 
   private getTargetRectForGrouping(
@@ -1293,21 +1341,24 @@ export class ObcPoiLayer extends LitElement {
     target: HTMLElement,
     rects?: Map<HTMLElement, DOMRect>
   ): number {
-    const yAttr = target.getAttribute('y');
-    const yValue = Number.parseFloat(yAttr ?? '');
-    if (!Number.isNaN(yValue)) return yValue;
     if (target instanceof ObcPoiData && Number.isFinite(target.y ?? NaN)) {
       return target.y ?? 0;
     }
-    const heightAttr = target.getAttribute('height');
-    const heightValue = Number.parseFloat(heightAttr ?? '');
-    if (!Number.isNaN(heightValue)) return heightValue;
+    const yAttr = target.getAttribute('y');
+    const yValue = Number.parseFloat(yAttr ?? '');
+    if (!Number.isNaN(yValue)) return yValue;
     if (target instanceof ObcPoiData) {
-      const height = target.height;
-      if (typeof height === 'number' && Number.isFinite(height)) {
-        return height;
+      const anchorY = target.anchorY;
+      if (typeof anchorY === 'number' && Number.isFinite(anchorY)) {
+        return anchorY;
       }
     }
+    const anchorYAttr = target.getAttribute('anchor-y');
+    const anchorYValue = Number.parseFloat(anchorYAttr ?? '');
+    if (!Number.isNaN(anchorYValue)) return anchorYValue;
+    const legacyHeightAttr = target.getAttribute('height');
+    const legacyHeightValue = Number.parseFloat(legacyHeightAttr ?? '');
+    if (!Number.isNaN(legacyHeightValue)) return legacyHeightValue;
     const rect = rects?.get(target) ?? this.getTargetRect(target);
     return rect.height;
   }

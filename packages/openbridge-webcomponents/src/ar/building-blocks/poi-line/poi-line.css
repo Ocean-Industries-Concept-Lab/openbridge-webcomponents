@@ -1,6 +1,6 @@
 .offset-wrapper {
   transform: translateX(var(--poi-offset, 0px));
-  transition: transform 0.15s ease-out;
+  transition: transform var(--obc-poi-line-transition-duration, 0.15s) ease-out;
 }
 
 .container {
