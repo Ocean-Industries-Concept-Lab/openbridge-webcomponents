@@ -1,6 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import {userEvent, within} from 'storybook/test';
+import {gsap} from 'gsap';
 
 // Import the bar-vertical component for displaying setpoints in context
 import '../bar-vertical/bar-vertical.js';
@@ -814,15 +815,16 @@ export const SetpointAdjustmentFlow: StoryObj = {
 
     if (!gauge || !status) return;
 
-    // Helper to update status display
-    const updateStatus = (
-      state: string,
-      value: number,
-      setpoint: number,
-      newSetpoint: number | undefined
-    ) => {
-      status.textContent = `State: ${state} | value=${value}, setpoint=${setpoint}, newSetpoint=${newSetpoint ?? 'undefined'}`;
+    // Animation proxy – GSAP interpolates numeric fields, we push them to the component in onUpdate
+    const anim = {value: 40, setpoint: 40, newSetpoint: 40};
+
+    const updateStatus = (state: string) => {
+      const ns = gauge.newSetpoint;
+      status.textContent = `State: ${state} | value=${Math.round(anim.value)}, setpoint=${Math.round(anim.setpoint)}, newSetpoint=${ns !== undefined ? Math.round(anim.newSetpoint) : 'undefined'}`;
     };
+
+    /** Kill every running tween that targets the proxy */
+    const killAll = () => gsap.killTweensOf(anim);
 
     // Get buttons
     const btnReset = canvas.getByRole('button', {name: /Reset/});
@@ -830,48 +832,104 @@ export const SetpointAdjustmentFlow: StoryObj = {
     const btnMove = canvas.getByRole('button', {name: /Move/});
     const btnConfirm = canvas.getByRole('button', {name: /Confirm/});
 
-    // Wire up button handlers (for manual interaction after play completes)
+    // ── Button handlers (work both via auto-play and manual clicks) ──
+
     btnReset.onclick = () => {
+      killAll();
+      anim.value = 40;
+      anim.setpoint = 40;
+      anim.newSetpoint = 40;
       gauge.value = 40;
       gauge.fillMax = 40;
       gauge.setpoint = 40;
       gauge.newSetpoint = undefined;
-      updateStatus('t=0 (at setpoint)', 40, 40, undefined);
+      updateStatus('t=0 (at setpoint)');
     };
 
     btnInitiate.onclick = () => {
-      gauge.newSetpoint = 40;
-      updateStatus('t=1 (initiate)', 40, 40, 40);
+      killAll();
+      anim.newSetpoint = anim.setpoint;
+      gauge.newSetpoint = anim.setpoint;
+      updateStatus('t=1 (initiate)');
     };
 
     btnMove.onclick = () => {
-      gauge.newSetpoint = 80;
-      updateStatus('t=2 (move)', 40, 40, 80);
+      killAll();
+      // Start from wherever newSetpoint currently is (or fall back to setpoint)
+      if (gauge.newSetpoint === undefined) {
+        gauge.newSetpoint = anim.setpoint;
+      }
+      anim.newSetpoint = gauge.newSetpoint;
+
+      gsap.to(anim, {
+        newSetpoint: 80,
+        duration: 1.5,
+        ease: 'power2.inOut',
+        onUpdate: () => {
+          gauge.newSetpoint = anim.newSetpoint;
+          updateStatus('t=2 (move)');
+        },
+      });
     };
 
     btnConfirm.onclick = () => {
+      killAll();
+      const target = Math.round(gauge.newSetpoint ?? 80);
       gauge.newSetpoint = undefined;
-      gauge.setpoint = 80;
-      gauge.fillMax = 80;
-      gauge.value = 80;
-      updateStatus('t=3 (confirm)', 80, 80, undefined);
+
+      // Sync proxy with component's current state
+      anim.setpoint = gauge.setpoint;
+      anim.value = gauge.value;
+
+      const tl = gsap.timeline({
+        onUpdate: () => {
+          gauge.setpoint = anim.setpoint;
+          gauge.value = anim.value;
+          gauge.fillMax = anim.value;
+          updateStatus('t=3 (confirm)');
+        },
+      });
+
+      // Setpoint moves faster
+      tl.to(
+        anim,
+        {
+          setpoint: target,
+          duration: 0.8,
+          ease: 'power2.inOut',
+        },
+        0
+      );
+
+      // Value / bar fill follows more slowly
+      tl.to(
+        anim,
+        {
+          value: target,
+          duration: 1.5,
+          ease: 'power1.out',
+        },
+        0
+      );
     };
 
-    // Step 1: Ensure we're at initial state (t=0)
+    // ── Auto-play sequence ──
+
+    // t=0 – reset
     await userEvent.click(btnReset);
     await new Promise((r) => setTimeout(r, 1000));
 
-    // Step 2: Initiate adjustment (t=1)
+    // t=1 – initiate
     await userEvent.click(btnInitiate);
-    await new Promise((r) => setTimeout(r, 1500));
+    await new Promise((r) => setTimeout(r, 1200));
 
-    // Step 3: Move newSetpoint to 80 (t=2)
+    // t=2 – move newSetpoint (1.5 s animation + 1 s pause)
     await userEvent.click(btnMove);
-    await new Promise((r) => setTimeout(r, 2000));
+    await new Promise((r) => setTimeout(r, 3000));
 
-    // Step 4: Confirm the new setpoint (t=3)
+    // t=3 – confirm (1.5 s animation + 1 s pause)
     await userEvent.click(btnConfirm);
-    await new Promise((r) => setTimeout(r, 1000));
+    await new Promise((r) => setTimeout(r, 3000));
   },
 };
 
@@ -1000,15 +1058,20 @@ export const SetpointRadialAdjustmentFlow: StoryObj = {
       },
     ];
 
-    // Helper to update status display
-    const updateStatus = (
-      state: string,
-      barEndAngle: number,
-      angleSetpoint: number,
-      newAngleSetpoint: number | undefined
-    ) => {
-      status.textContent = `State: ${state} | barEndAngle=${barEndAngle}°, angleSetpoint=${angleSetpoint}°, newAngleSetpoint=${newAngleSetpoint !== undefined ? newAngleSetpoint + '°' : 'undefined'}`;
+    // Animation proxy – GSAP interpolates numeric fields, we push them to the component in onUpdate
+    const anim = {
+      barEndAngle: 30,
+      angleSetpoint: 30,
+      newAngleSetpoint: 30,
     };
+
+    const updateStatus = (state: string) => {
+      const ns = watch.newAngleSetpoint;
+      status.textContent = `State: ${state} | barEndAngle=${Math.round(anim.barEndAngle)}°, angleSetpoint=${Math.round(anim.angleSetpoint)}°, newAngleSetpoint=${ns !== undefined ? Math.round(anim.newAngleSetpoint) + '°' : 'undefined'}`;
+    };
+
+    /** Kill every running tween that targets the proxy */
+    const killAll = () => gsap.killTweensOf(anim);
 
     // Get buttons
     const btnReset = canvas.getByRole('button', {name: /Reset/});
@@ -1016,47 +1079,105 @@ export const SetpointRadialAdjustmentFlow: StoryObj = {
     const btnMove = canvas.getByRole('button', {name: /Move/});
     const btnConfirm = canvas.getByRole('button', {name: /Confirm/});
 
-    // Wire up button handlers (for manual interaction after play completes)
+    // ── Button handlers (work both via auto-play and manual clicks) ──
+
     btnReset.onclick = () => {
+      killAll();
+      anim.barEndAngle = 30;
+      anim.angleSetpoint = 30;
+      anim.newAngleSetpoint = 30;
       watch.barAreas = createBarAreas(30);
       watch.angleSetpoint = 30;
       watch.atAngleSetpoint = true;
       watch.newAngleSetpoint = undefined;
-      updateStatus('t=0 (at setpoint)', 30, 30, undefined);
+      updateStatus('t=0 (at setpoint)');
     };
 
     btnInitiate.onclick = () => {
-      watch.newAngleSetpoint = 30;
-      updateStatus('t=1 (initiate)', 30, 30, 30);
+      killAll();
+      anim.newAngleSetpoint = anim.angleSetpoint;
+      watch.newAngleSetpoint = anim.angleSetpoint;
+      watch.atAngleSetpoint = false;
+      updateStatus('t=1 (initiate)');
     };
 
     btnMove.onclick = () => {
-      watch.newAngleSetpoint = 60;
-      updateStatus('t=2 (move)', 30, 30, 60);
+      killAll();
+      if (watch.newAngleSetpoint === undefined) {
+        watch.newAngleSetpoint = anim.angleSetpoint;
+      }
+      anim.newAngleSetpoint = watch.newAngleSetpoint;
+
+      gsap.to(anim, {
+        newAngleSetpoint: 60,
+        duration: 1.5,
+        ease: 'power2.inOut',
+        onUpdate: () => {
+          watch.newAngleSetpoint = anim.newAngleSetpoint;
+          updateStatus('t=2 (move)');
+        },
+      });
     };
 
     btnConfirm.onclick = () => {
+      killAll();
+      const target = Math.round(watch.newAngleSetpoint ?? 60);
       watch.newAngleSetpoint = undefined;
-      watch.angleSetpoint = 60;
-      watch.barAreas = createBarAreas(60);
-      watch.atAngleSetpoint = true;
-      updateStatus('t=3 (confirm)', 60, 60, undefined);
+
+      // Sync proxy with component's current state
+      anim.angleSetpoint = watch.angleSetpoint;
+      anim.barEndAngle = watch.barAreas?.[0]?.endAngle ?? 30;
+
+      const tl = gsap.timeline({
+        onUpdate: () => {
+          watch.angleSetpoint = anim.angleSetpoint;
+          watch.barAreas = createBarAreas(anim.barEndAngle);
+          updateStatus('t=3 (confirm)');
+        },
+        onComplete: () => {
+          watch.atAngleSetpoint = true;
+        },
+      });
+
+      // Setpoint moves faster
+      tl.to(
+        anim,
+        {
+          angleSetpoint: target,
+          duration: 0.8,
+          ease: 'power2.inOut',
+        },
+        0
+      );
+
+      // Bar fill follows more slowly
+      tl.to(
+        anim,
+        {
+          barEndAngle: target,
+          duration: 1.5,
+          ease: 'power1.out',
+        },
+        0
+      );
     };
 
-    // Step 1: Ensure we're at initial state (t=0)
+    // ── Auto-play sequence ──
+
+    // t=0 – reset
     await userEvent.click(btnReset);
     await new Promise((r) => setTimeout(r, 1000));
 
-    // Step 2: Initiate adjustment (t=1)
+    // t=1 – initiate
     await userEvent.click(btnInitiate);
-    await new Promise((r) => setTimeout(r, 1500));
+    await new Promise((r) => setTimeout(r, 1200));
 
-    // Step 3: Move newAngleSetpoint to 60° (t=2)
+    // t=2 – move newAngleSetpoint (1.5 s animation + 1 s pause)
     await userEvent.click(btnMove);
-    await new Promise((r) => setTimeout(r, 2000));
+    await new Promise((r) => setTimeout(r, 3000));
 
-    // Step 4: Confirm the new setpoint (t=3)
+    // t=3 – confirm (1.5 s animation + 1 s pause)
     await userEvent.click(btnConfirm);
-    await new Promise((r) => setTimeout(r, 1000));
+    await new Promise((r) => setTimeout(r, 3000));
   },
 };
