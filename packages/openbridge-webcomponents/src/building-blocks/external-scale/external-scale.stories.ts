@@ -450,6 +450,11 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
       description: 'Current value used for fill and/or marker rendering.',
       control: {type: 'number'},
     },
+    newSetpoint: {
+      description:
+        'New setpoint value being adjusted. When defined, the original setpoint is dimmed and this new marker is shown in focus state.',
+      control: {type: 'number'},
+    },
     atSetpoint: {
       description: 'Manual override used when disableAutoAtSetpoint=true.',
       control: {type: 'boolean'},
@@ -519,6 +524,7 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
     fillMax: 40,
     value: 40,
     setpoint: 40,
+    newSetpoint: undefined,
     atSetpoint: false,
     disableAutoAtSetpoint: false,
     autoAtSetpointDeadband: 1,

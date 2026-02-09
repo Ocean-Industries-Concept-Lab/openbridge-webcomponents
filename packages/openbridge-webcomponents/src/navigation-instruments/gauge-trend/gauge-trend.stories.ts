@@ -129,6 +129,10 @@ const meta: Meta = {
     setpoint: {
       control: {type: 'range', min: 0, max: 100, step: 1},
     },
+    newSetpoint: {
+      control: {type: 'range', min: 0, max: 100, step: 1},
+      description: 'Pending setpoint during adjustment (shows dual markers)',
+    },
     hasBar: {
       control: 'boolean',
     },
@@ -180,6 +184,7 @@ const meta: Meta = {
       .maxValue=${args.maxValue}
       .value=${args.value}
       .setpoint=${args.setpoint}
+      .newSetpoint=${args.newSetpoint}
       .hasBar=${args.hasBar}
       .hasScale=${args.hasScale}
       .hasAdvice=${args.hasAdvice}
@@ -221,6 +226,7 @@ export const GaugeTrend: Story = {
       .maxValue=${_args.maxValue ?? 100}
       .value=${_args.value}
       .setpoint=${_args.setpoint}
+      .newSetpoint=${_args.newSetpoint}
       .hasBar=${_args.hasBar}
       .hasScale=${_args.hasScale}
       .hasAdvice=${_args.hasAdvice}
@@ -259,6 +265,7 @@ export const GaugeTrendScaleReferenceSize: Story = {
       .maxValue=${_args.maxValue ?? 100}
       .value=${_args.value}
       .setpoint=${_args.setpoint}
+      .newSetpoint=${_args.newSetpoint}
       .hasBar=${_args.hasBar}
       .hasScale=${_args.hasScale}
       .hasAdvice=${_args.hasAdvice}
@@ -519,6 +526,7 @@ export const GaugeTrendWithoutBar: Story = {
       .maxValue=${_args.maxValue ?? 100}
       .value=${_args.value}
       .setpoint=${_args.setpoint}
+      .newSetpoint=${_args.newSetpoint}
       .hasBar=${_args.hasBar}
       .hasScale=${_args.hasScale}
       .hasAdvice=${_args.hasAdvice}
@@ -562,6 +570,7 @@ export const GaugeTrendWithAdvice: Story = {
       .maxValue=${_args.maxValue ?? 100}
       .value=${_args.value}
       .setpoint=${_args.setpoint}
+      .newSetpoint=${_args.newSetpoint}
       .hasBar=${_args.hasBar}
       .hasScale=${_args.hasScale}
       .hasAdvice=${_args.hasAdvice}
@@ -651,6 +660,7 @@ export const GaugeTrendCustomScaleRange: Story = {
       .maxValue=${_args.maxValue}
       .value=${_args.value}
       .setpoint=${_args.setpoint}
+      .newSetpoint=${_args.newSetpoint}
       .hasBar=${_args.hasBar}
       .hasScale=${_args.hasScale}
       .hasAdvice=${_args.hasAdvice}

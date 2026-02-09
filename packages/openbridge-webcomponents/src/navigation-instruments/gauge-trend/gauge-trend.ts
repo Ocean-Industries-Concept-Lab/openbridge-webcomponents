@@ -15,7 +15,7 @@ import {
   ScaleType,
 } from '../../building-blocks/bar-vertical/bar-vertical.js';
 import type {AdviceType} from '../watch/advice.js';
-import type {SetpointColorMode} from '../../svghelpers/setpoint.js';
+import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/bar-vertical/bar-vertical.js';
 
 // Re-export FillMode and ScaleType for user convenience
@@ -107,17 +107,15 @@ export {FillMode, ScaleType};
  * @property {boolean} enhanced - Use enhanced color palette for chart and scales
  * @property {InstrumentState} state - Instrument state (automatically applied to scale)
  * @property {boolean} chartFill - Enable chart area fill (default: false for line-only)
- * @property {number|undefined} setpoint - Target value shown as a marker on the scale
- * @property {number|undefined} newSetpoint - Pending setpoint shown as a secondary marker during adjustment; when defined, the original marker dims and the new one renders in focus state
- * @property {boolean} touching - Whether the user is actively interacting with the setpoint control; suppresses at-setpoint detection while true (default: false)
- * @property {boolean} atSetpoint - Whether the current value equals the setpoint within the deadband; auto-computed by default, or set manually when `disableAutoAtSetpoint` is true (default: false)
- * @property {boolean} disableAutoAtSetpoint - Disables internal at-setpoint computation so `atSetpoint` must be controlled externally (default: false)
- * @property {number} autoAtSetpointDeadband - Tolerance for auto at-setpoint detection; value is "at setpoint" when |value − setpoint| ≤ deadband (default: 1)
- * @property {number|undefined} setpointAtZeroDeadband - Tolerance for zero-snap visual state; triggers the `equalZero` marker style when setpoint is near zero
- * @property {SetpointColorMode|undefined} setpointColorMode - Explicit color palette for the setpoint marker; when undefined, derived from instrument state
+ *
+ * Setpoint properties are inherited from {@link SetpointMixin}.
+ * These are forwarded to the internal `obc-bar-vertical` scale:
+ * `setpoint`, `newSetpoint`, `touching`, `atSetpoint`, `disableAutoAtSetpoint`,
+ * `autoAtSetpointDeadband`, `setpointAtZeroDeadband`, `setpointColorMode`.
+ * See {@link SetpointMixinInterface} for full documentation.
  */
 @customElement('obc-gauge-trend')
-export class ObcGaugeTrend extends ObcChartLineBase {
+export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
   private _barVerticalElement?: HTMLElement;
   private _isFirstUpdate = false;
 
@@ -335,13 +333,6 @@ export class ObcGaugeTrend extends ObcChartLineBase {
   value?: number = undefined;
 
   /**
-   * Setpoint/target value displayed on the vertical scale.
-   * Shows as a marker indicator on the scale.
-   */
-  @property({type: Number})
-  setpoint?: number = undefined;
-
-  /**
    * Show bar on the vertical scale.
    *
    * When `true`, displays a filled bar indicating the current value.
@@ -410,46 +401,10 @@ export class ObcGaugeTrend extends ObcChartLineBase {
   @property({type: Number})
   primaryInterval?: number = undefined;
 
-  /**
-   * A pending/new setpoint value, shown as a secondary marker.
-   * Forwarded to the internal bar-vertical scale.
-   */
-  @property({type: Number}) newSetpoint?: number;
-
-  /**
-   * Whether the user is actively interacting (touching/dragging) the setpoint.
-   * Forwarded to the internal bar-vertical scale.
-   */
-  @property({type: Boolean}) touching = false;
-
-  /**
-   * Whether the current value is at the setpoint (within deadband).
-   * In auto mode (default), this is computed by the bar-vertical internally.
-   * Set `disableAutoAtSetpoint=true` to control this manually.
-   */
-  @property({type: Boolean}) atSetpoint = false;
-
-  /**
-   * Disable automatic atSetpoint computation. When true, the `atSetpoint`
-   * property must be set externally.
-   */
-  @property({type: Boolean}) disableAutoAtSetpoint = false;
-
-  /**
-   * Deadband for auto atSetpoint computation.
-   * The value is considered "at setpoint" when |value - setpoint| <= deadband.
-   */
-  @property({type: Number}) autoAtSetpointDeadband = 1;
-
-  /**
-   * Deadband used when the setpoint is exactly zero.
-   */
-  @property({type: Number}) setpointAtZeroDeadband: number = 0.5;
-
-  /**
-   * Color mode for the setpoint marker.
-   */
-  @property({type: String}) setpointColorMode?: SetpointColorMode;
+  // Setpoint properties (setpoint, newSetpoint, touching, atSetpoint,
+  // disableAutoAtSetpoint, autoAtSetpointDeadband, setpointAtZeroDeadband,
+  // setpointColorMode, computeAtSetpoint()) are provided by SetpointMixin.
+  // See setpoint-mixin.ts for full docs.
 
   /**
    * Secondary tick interval for the vertical scale (medium ticks).
