@@ -77,7 +77,6 @@ export class ObcCompass extends LitElement {
 
   override willUpdate(changed: PropertyValues): void {
     super.willUpdate(changed);
-    // Sync public heading-prefixed props → bundle
     this._headingSp.sync({
       setpoint: this.headingSetpoint ?? undefined,
       newSetpoint: this.newHeadingSetpoint,
