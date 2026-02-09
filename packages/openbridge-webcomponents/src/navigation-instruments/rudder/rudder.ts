@@ -4,6 +4,7 @@ import '../watch/watch.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {WatchCircleType} from '../watch/watch.js';
 import {InstrumentState} from '../types.js';
+import {SetpointColorMode} from '../../svghelpers/setpoint.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {customElement} from '../../decorator.js';
 
@@ -16,8 +17,11 @@ export enum ObcRudderVariant {
 export class ObcRudder extends LitElement {
   @property({type: Number}) angle = 0;
   @property({type: Number}) setpoint: number | undefined;
+  @property({type: Number}) newSetpoint: number | undefined;
   @property({type: String}) variant: ObcRudderVariant = ObcRudderVariant.Bar;
   @property({type: Boolean}) atSetpoint: boolean = false;
+  @property({type: Number}) setpointAtZeroDeadband: number = 0.5;
+  @property({type: String}) setpointColorMode: SetpointColorMode | undefined;
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
   @property({type: Number}) autoAtSetpointDeadband: number = 2;
@@ -185,7 +189,12 @@ export class ObcRudder extends LitElement {
             },
           ]}
           .angleSetpoint=${setpointAngle}
+          .newAngleSetpoint=${this.newSetpoint !== undefined
+            ? 180 - this.newSetpoint
+            : undefined}
           .atAngleSetpoint=${this.atSetpointCalc()}
+          .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
+          .colorMode=${this.setpointColorMode}
           .padding=${48}
           .tickmarks=${tickmarks}
           .watchCircleType=${WatchCircleType.double}

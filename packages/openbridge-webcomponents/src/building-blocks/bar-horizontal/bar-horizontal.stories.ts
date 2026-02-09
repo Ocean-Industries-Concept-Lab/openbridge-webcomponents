@@ -553,7 +553,7 @@ export const WithSetpointAwayFromValue: Story = {
 };
 
 export const SetpointStateComparison: Story = {
-  name: 'State comparison (inCommand/active/loading/off)',
+  name: 'State comparison (inCommand/active/loading/off/focus)',
 
   render: () => html`
     <div
@@ -621,6 +621,24 @@ export const SetpointStateComparison: Story = {
           value="60"
           setpoint="-30"
           state="off"
+          primaryTickbarsInterval="50"
+          secondaryTickbarsInterval="10"
+        ></obc-bar-horizontal>
+      </div>
+      <div style="text-align: center;">
+        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
+          adjusting/focused/touching
+        </div>
+        <obc-bar-horizontal
+          minValue="-100"
+          maxValue="100"
+          width="480"
+          hasBar
+          enhanced
+          value="30"
+          setpoint="30"
+          .newSetpoint=${70}
+          state="inCommand"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
         ></obc-bar-horizontal>

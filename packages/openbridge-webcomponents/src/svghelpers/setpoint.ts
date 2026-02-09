@@ -18,6 +18,17 @@
  *    - Deadband logic, touching detection, value comparison
  *    - Each instrument implements its own mapping
  *
+ * ## Instrument Types
+ *
+ * ### Linear Instruments (external-scale, bar-vertical, bar-horizontal, gauge-trend)
+ * - Use `external-scale.ts` derivation functions (deriveSetpointVisualState, etc.)
+ * - Position marker using translate() and rotate() for side (left/right/top/bottom)
+ *
+ * ### Radial Instruments (watch, compass, heading, rudder, azimuth-thruster)
+ * - Use `deriveRadialSetpointConfig()` from this file
+ * - Position marker using rotate() for angle and translate() for radius
+ * - Marker tip points inward toward center
+ *
  * ## Coordinate System
  *
  * The `drawSetpointMarker()` function renders the marker with:
@@ -42,18 +53,23 @@
  *
  * ```ts
  * // Radial instrument (watch.ts)
- * const config = {visualState, colorMode, disabled, id: 'watch-setpoint'};
+ * const {visualState, colorMode, disabled} = deriveRadialSetpointConfig({
+ *   state: this.state,
+ *   atSetpoint: this.atAngleSetpoint,
+ * });
  * svg`
- *   <g transform="rotate(${angle}) translate(0, -${radius})">
- *     <g transform="rotate(180)">${drawSetpointMarker(config)}</g>
+ *   <g transform="rotate(${angle + 90}) translate(${-RADIAL_SETPOINT_RADIUS}, 0) rotate(270)">
+ *     ${drawSetpointMarker({visualState, colorMode, disabled, id: 'watch-setpoint'})}
  *   </g>
  * `;
  *
  * // Linear instrument (external-scale.ts)
- * const config = {visualState, colorMode, disabled, id: 'scale-setpoint'};
+ * const visualState = deriveSetpointVisualState(config);
+ * const colorMode = deriveSetpointColorMode(config);
+ * const disabled = deriveSetpointDisabled(config);
  * svg`
  *   <g transform="translate(${x}, ${y}) rotate(${rotation})">
- *     ${drawSetpointMarker(config)}
+ *     ${drawSetpointMarker({visualState, colorMode, disabled, id: 'scale-setpoint'})}
  *   </g>
  * `;
  * ```
@@ -502,3 +518,192 @@ export function drawSetpointMarker(
 // ============================================================================
 
 export type {SVGTemplateResult};
+
+// ============================================================================
+// Radial Instrument State Derivation
+// ============================================================================
+
+/**
+ * Import InstrumentState for radial derivation functions.
+ * This creates a dependency on the types module, but keeps all setpoint
+ * logic centralized in this file.
+ */
+import {InstrumentState} from '../navigation-instruments/types.js';
+
+// Re-export for convenience (callers may need it for their state properties)
+export {InstrumentState};
+
+/**
+ * Configuration for deriving setpoint visual parameters for radial instruments.
+ *
+ * Radial instruments (watch, compass, etc.) use a simpler API than linear instruments:
+ * - No deadband/value comparison (caller provides pre-computed `atSetpoint`)
+ * - No fill modes or value tracking
+ * - Angle-based positioning instead of linear coordinates
+ *
+ * ## newAngleSetpoint Pattern
+ *
+ * When `newAngleSetpoint` is defined, the component renders TWO setpoint markers:
+ * 1. Original `angleSetpoint` marker - dimmed (0.75 opacity), uses derived visual state
+ * 2. New `newAngleSetpoint` marker - focus visual state, full opacity
+ *
+ * This enables the "adjustment preview" UX where users can see both the current
+ * and proposed setpoint positions simultaneously.
+ */
+export interface RadialSetpointConfig {
+  /** Current instrument state (inCommand, active, loading, off) */
+  state: InstrumentState;
+
+  /**
+   * Whether the current value equals the setpoint (within deadband).
+   * Caller is responsible for deadband calculation.
+   */
+  atSetpoint: boolean;
+
+  /**
+   * The current setpoint angle in degrees.
+   * Used to auto-derive atZero when within setpointAtZeroDeadband.
+   */
+  angleSetpoint?: number;
+
+  /**
+   * Deadband around zero for setpoint positioning (in degrees).
+   * When |angleSetpoint| < setpointAtZeroDeadband, the setpoint is considered "at zero"
+   * and triggers the equalZero visual state (80% size + outward offset).
+   * @default 0.5
+   */
+  setpointAtZeroDeadband?: number;
+
+  /**
+   * New setpoint angle being adjusted (focus/adjustment mode).
+   * When defined, indicates user is actively adjusting and triggers focus visual state.
+   * The original setpoint marker will be dimmed while this is active.
+   */
+  newAngleSetpoint?: number;
+}
+
+/**
+ * Result of deriving setpoint visual parameters for radial instruments.
+ */
+export interface RadialSetpointDerivedConfig {
+  /** Visual state for rendering (notEqual, equal, equalZero, focus) */
+  visualState: SetpointVisualState;
+
+  /** Color mode for rendering (enhanced, regular) */
+  colorMode: SetpointColorMode;
+
+  /** Whether setpoint should render in disabled state */
+  disabled: boolean;
+
+  /** Whether a newAngleSetpoint is being adjusted */
+  hasNewSetpoint: boolean;
+}
+
+/**
+ * Derive the visual parameters for a radial setpoint marker.
+ *
+ * This maps radial instrument state (from watch.ts, compass.ts, etc.)
+ * to the unified setpoint visual parameters.
+ *
+ * ## State Mapping
+ *
+ * | InstrumentState | atSetpoint | atZero | newAngleSetpoint | → visualState | → colorMode | → disabled |
+ * |-----------------|------------|--------|------------------|---------------|-------------|------------|
+ * | inCommand       | false      | *      | undefined        | notEqual      | enhanced    | false      |
+ * | inCommand       | true       | false  | undefined        | equal         | enhanced    | false      |
+ * | inCommand       | true       | true   | undefined        | equalZero     | enhanced    | false      |
+ * | inCommand       | *          | *      | defined          | (original dimmed) | enhanced | false     |
+ * | active          | false      | *      | undefined        | notEqual      | regular     | false      |
+ * | active          | true       | false  | undefined        | equal         | regular     | false      |
+ * | active          | true       | true   | undefined        | equalZero     | regular     | false      |
+ * | loading         | *          | *      | *                | notEqual      | regular     | true       |
+ * | off             | *          | *      | *                | notEqual      | regular     | true       |
+ *
+ * Note: When `newAngleSetpoint` is defined, the original setpoint marker is dimmed
+ * and a second marker is rendered in focus state at the new position.
+ *
+ * @param config - Radial instrument state configuration
+ * @returns Derived visual parameters for drawSetpointMarker()
+ */
+export function deriveRadialSetpointConfig(
+  config: RadialSetpointConfig
+): RadialSetpointDerivedConfig {
+  const {
+    state,
+    atSetpoint,
+    angleSetpoint,
+    setpointAtZeroDeadband = 0.5,
+    newAngleSetpoint,
+  } = config;
+
+  const hasNewSetpoint = newAngleSetpoint !== undefined;
+
+  // Disabled states (loading, off) override all other logic
+  if (state === InstrumentState.loading || state === InstrumentState.off) {
+    return {
+      visualState: SetpointVisualState.notEqual, // Full size, filled
+      colorMode: SetpointColorMode.regular,
+      disabled: true, // Tertiary color
+      hasNewSetpoint,
+    };
+  }
+
+  // Determine color mode based on instrument state:
+  // - inCommand → enhanced colors
+  // - active → regular colors
+  const colorMode =
+    state === InstrumentState.inCommand
+      ? SetpointColorMode.enhanced
+      : SetpointColorMode.regular;
+
+  // Auto-derive atZero from angleSetpoint and deadband
+  const atZero =
+    angleSetpoint !== undefined &&
+    Math.abs(angleSetpoint) < setpointAtZeroDeadband;
+
+  // For inCommand and active states:
+  // - atSetpoint + atZero triggers equalZero visual state (80% size)
+  // - atSetpoint triggers equal visual state (80% size)
+  // - otherwise notEqual (full size)
+
+  // Priority 1: At setpoint AND at zero (equalZero state - 80% size)
+  if (atSetpoint && atZero) {
+    return {
+      visualState: SetpointVisualState.equalZero,
+      colorMode,
+      disabled: false,
+      hasNewSetpoint,
+    };
+  }
+
+  // Priority 2: At setpoint (equal state - 80% size)
+  if (atSetpoint) {
+    return {
+      visualState: SetpointVisualState.equal,
+      colorMode,
+      disabled: false,
+      hasNewSetpoint,
+    };
+  }
+
+  // Default: Not at setpoint (notEqual state - full size)
+  return {
+    visualState: SetpointVisualState.notEqual,
+    colorMode,
+    disabled: false,
+    hasNewSetpoint,
+  };
+}
+
+// ============================================================================
+// Radial Setpoint Positioning Constants
+// ============================================================================
+
+/**
+ * Default radius for radial setpoint marker positioning.
+ * This is the distance from the center of the watch to the setpoint tip.
+ *
+ * Based on watch.ts existing behavior: `translate(-168 0)`
+ * The marker is positioned at 168px from center on the outer ring.
+ */
+export const RADIAL_SETPOINT_RADIUS = 168;
