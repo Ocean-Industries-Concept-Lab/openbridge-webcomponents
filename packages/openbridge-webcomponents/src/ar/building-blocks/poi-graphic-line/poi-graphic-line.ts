@@ -60,10 +60,12 @@ export function graphicLine({
   const breakStartPoint = lineStart + 10;
   const breakEndPoint = breakStartPoint + 30;
   const isDashed = Boolean(style.dashArray);
-  const foregroundDashArray = style.dashArray;
-  const foregroundDashOffset = style.dashArray
-    ? `${style.dashOffset ?? 0}`
-    : undefined;
+  const dashArray = style.dashArray;
+  const dashOffset = style.dashArray ? `${style.dashOffset ?? 0}` : undefined;
+  const dashedOutlineAndShadow =
+    isDashed && style.dashOutlineAndShadow === true;
+  const outlineDashArray = dashedOutlineAndShadow ? dashArray : undefined;
+  const outlineDashOffset = dashedOutlineAndShadow ? dashOffset : undefined;
 
   let path: string;
   if (offset === 0) {
@@ -96,25 +98,33 @@ export function graphicLine({
             d=${path}
             stroke="${style.outlineColor}"
             stroke-width="${style.outlineWidth}"
-            stroke-linecap="butt"
+            stroke-linecap="${dashedOutlineAndShadow
+              ? (style.strokeLinecap ?? 'butt')
+              : 'butt'}"
             stroke-linejoin="round"
+            stroke-dasharray=${ifDefined(outlineDashArray)}
+            stroke-dashoffset=${ifDefined(outlineDashOffset)}
           />
         </g>
         <path
           d=${path}
           stroke="${style.outlineColor}"
           stroke-width="${style.outlineWidth}"
-          stroke-linecap="${isDashed
-            ? 'round'
-            : (style.strokeLinecap ?? 'round')}"
+          stroke-linecap="${dashedOutlineAndShadow
+            ? (style.strokeLinecap ?? 'butt')
+            : isDashed
+              ? 'round'
+              : (style.strokeLinecap ?? 'round')}"
+          stroke-dasharray=${ifDefined(outlineDashArray)}
+          stroke-dashoffset=${ifDefined(outlineDashOffset)}
         />
         <path
           d=${path}
           stroke="${style.lineColor}"
           stroke-width="${style.lineWidth}"
           stroke-linecap="${style.strokeLinecap ?? 'round'}"
-          stroke-dasharray=${ifDefined(foregroundDashArray)}
-          stroke-dashoffset=${ifDefined(foregroundDashOffset)}
+          stroke-dasharray=${ifDefined(dashArray)}
+          stroke-dashoffset=${ifDefined(dashOffset)}
         />
         ${isDashed
           ? html`<path

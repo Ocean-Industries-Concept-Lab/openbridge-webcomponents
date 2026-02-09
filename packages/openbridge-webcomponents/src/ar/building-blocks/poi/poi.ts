@@ -14,6 +14,11 @@ import {POIStyle} from '../poi-graphic-line/poi-config.js';
 import {pointerArrow} from '../../poi-data/arrow.js';
 import {Pointer} from '../../poi-data/poi-data.js';
 import '../poi-line/poi-line.js';
+import '../poi-pointer/poi-pointer.js';
+import {
+  ObcPoiPointerState,
+  ObcPoiPointerType,
+} from '../poi-pointer/poi-pointer.js';
 import {customElement} from '../../../decorator.js';
 
 export enum ObcPoiType {
@@ -56,6 +61,10 @@ export class ObcPoi extends LitElement {
   @property({type: Number}) relativeDirection = 0;
   @property({type: Object}) header: ObcPoiButtonHeader | null = null;
   @property({type: String}) buttonType = ObcPoiButtonType.Button;
+  @property({type: String, attribute: 'pointer-type'})
+  pointerType: ObcPoiPointerType | null = null;
+  @property({type: String, attribute: 'pointer-state'})
+  pointerState: ObcPoiPointerState | null = null;
   @property({type: Boolean}) selected = false;
   @property({type: Array, attribute: false}) data: ObcPoiButtonDataItem[] = [];
   @property({type: Boolean}) hasRelation = false;
@@ -154,6 +163,34 @@ export class ObcPoi extends LitElement {
     return this.targetOffsetX - this.buttonOffsetX;
   }
 
+  private get hasInlinePointer(): boolean {
+    if (!this.hasPointer) return false;
+    return (
+      this.type === ObcPoiType.Line ||
+      this.type === ObcPoiType.Offset ||
+      this.type === ObcPoiType.Point
+    );
+  }
+
+  private get resolvedPointerType(): ObcPoiPointerType {
+    return this.pointerType ?? ObcPoiPointerType.Point;
+  }
+
+  private get resolvedPointerState(): ObcPoiPointerState {
+    if (this.pointerState) {
+      return this.pointerState;
+    }
+
+    if (
+      this.value === ObcPoiValue.Checked ||
+      this.value === ObcPoiValue.Activated
+    ) {
+      return ObcPoiPointerState.Selected;
+    }
+
+    return ObcPoiPointerState.Regular;
+  }
+
   private renderLine() {
     if (this.type === ObcPoiType.Outside) {
       return nothing;
@@ -168,9 +205,28 @@ export class ObcPoi extends LitElement {
         .poiStyle=${this.lineStyle}
         .height=${height}
         .offset=${this.lineOffset}
-        .hasPointer=${this.hasPointer}
+        .hasPointer=${false}
         .animatePosition=${this.animatePosition}
       ></obc-poi-line>
+    `;
+  }
+
+  private renderInlinePointer() {
+    if (!this.hasInlinePointer) {
+      return nothing;
+    }
+
+    const lineLength =
+      this.type === ObcPoiType.Point ? 0 : Number.isFinite(this.y) ? this.y : 0;
+
+    return html`
+      <obc-poi-pointer
+        class="pointer"
+        style="--obc-poi-pointer-x: ${this
+          .lineOffset}px; --obc-poi-pointer-y: ${lineLength}px;"
+        .type=${this.resolvedPointerType}
+        .state=${this.resolvedPointerState}
+      ></obc-poi-pointer>
     `;
   }
 
@@ -238,7 +294,7 @@ export class ObcPoi extends LitElement {
     return html`
       <div class=${classMap(classes)} style=${wrapperStyle}>
         ${this.renderPoiButton()} ${this.renderLine()}
-        ${this.renderOutsideArrow()}
+        ${this.renderInlinePointer()} ${this.renderOutsideArrow()}
       </div>
     `;
   }

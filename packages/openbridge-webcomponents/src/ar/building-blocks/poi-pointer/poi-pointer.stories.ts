@@ -6,6 +6,8 @@ import {ObcPoiPointerState, ObcPoiPointerType} from './poi-pointer.js';
 type PoiPointerArgs = {
   type: ObcPoiPointerType;
   state: ObcPoiPointerState;
+  boxWidth: number | null;
+  boxHeight: number | null;
 };
 
 const meta: Meta<PoiPointerArgs> = {
@@ -28,6 +30,8 @@ const meta: Meta<PoiPointerArgs> = {
   args: {
     type: ObcPoiPointerType.Point,
     state: ObcPoiPointerState.Regular,
+    boxWidth: null,
+    boxHeight: null,
   },
   argTypes: {
     type: {
@@ -38,6 +42,16 @@ const meta: Meta<PoiPointerArgs> = {
       control: {type: 'select'},
       options: Object.values(ObcPoiPointerState),
     },
+    boxWidth: {
+      control: {type: 'number', min: 0, step: 1},
+      description:
+        'Extra width (px) added on the X-axis when state is active or selected.',
+    },
+    boxHeight: {
+      control: {type: 'number', min: 0, step: 1},
+      description:
+        'Extra height (px) added on the Y-axis when state is active or selected.',
+    },
   },
 } satisfies Meta<PoiPointerArgs>;
 
@@ -46,12 +60,17 @@ type Story = StoryObj<PoiPointerArgs>;
 
 export const Primary: Story = {
   render: (args) => html`
-    <obc-poi-pointer .type=${args.type} .state=${args.state}></obc-poi-pointer>
+    <obc-poi-pointer
+      .type=${args.type}
+      .state=${args.state}
+      .boxWidth=${args.boxWidth}
+      .boxHeight=${args.boxHeight}
+    ></obc-poi-pointer>
   `,
 };
 
 export const VariantMatrix: Story = {
-  render: () => {
+  render: (args) => {
     const states = [
       ObcPoiPointerState.Regular,
       ObcPoiPointerState.Uncertain,
@@ -66,23 +85,84 @@ export const VariantMatrix: Story = {
 
     return html`
       <style>
+        .matrix-wrap {
+          display: inline-block;
+        }
+
         .matrix {
           display: grid;
-          grid-template-columns: repeat(3, 96px);
-          row-gap: 20px;
-          column-gap: 16px;
+          grid-template-columns: repeat(3, 132px);
+          row-gap: 14px;
+          column-gap: 14px;
+        }
+
+        .cell {
+          width: 132px;
+          height: 110px;
+          position: relative;
+        }
+
+        .cell::before,
+        .cell::after {
+          content: '';
+          position: absolute;
+          background: rgba(0, 0, 0, 0.2);
+          pointer-events: none;
+        }
+
+        .cell::before {
+          width: 1px;
+          top: 0;
+          bottom: 0;
+          left: calc(50% - 0.5px);
+        }
+
+        .cell::after {
+          height: 1px;
+          left: 0;
+          right: 0;
+          top: calc(50% - 0.5px);
+        }
+
+        .stage {
+          position: absolute;
+          inset: 0;
+          display: flex;
           align-items: center;
-          justify-items: center;
+          justify-content: center;
+          font-size: 0;
+          line-height: 0;
+        }
+
+        .stage > obc-poi-pointer {
+          display: block;
         }
       </style>
-      <div class="matrix">
-        ${states.map((state) =>
-          types.map(
-            (type) => html`
-              <obc-poi-pointer .type=${type} .state=${state}></obc-poi-pointer>
-            `
-          )
-        )}
+      <div class="matrix-wrap">
+        <div class="matrix">
+          ${states.map((state) =>
+            types.map(
+              (type) => html`
+                <div class="cell">
+                  <div class="stage">
+                    <obc-poi-pointer
+                      .type=${type}
+                      .state=${state}
+                      .boxWidth=${state === ObcPoiPointerState.Active ||
+                      state === ObcPoiPointerState.Selected
+                        ? args.boxWidth
+                        : null}
+                      .boxHeight=${state === ObcPoiPointerState.Active ||
+                      state === ObcPoiPointerState.Selected
+                        ? args.boxHeight
+                        : null}
+                    ></obc-poi-pointer>
+                  </div>
+                </div>
+              `
+            )
+          )}
+        </div>
       </div>
     `;
   },

@@ -48,8 +48,8 @@
 }
 
 .square-frame {
-  width: 48px;
-  height: 48px;
+  width: calc(48px + var(--obc-poi-pointer-box-width-extra, 0px));
+  height: calc(48px + var(--obc-poi-pointer-box-height-extra, 0px));
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -60,14 +60,14 @@
   height: 100%;
 }
 
-.point,
-.button,
-.camera {
+.wrapper > .point,
+.wrapper > .button,
+.wrapper > .camera {
   z-index: 1;
   box-sizing: border-box;
 }
 
-.point.regular {
+.wrapper > .point.regular {
   border-radius: 100px;
   width: 4px;
   height: 4px;
@@ -75,14 +75,14 @@
   box-shadow: 0px 1px 2px 0px #000;
 }
 
-.point.active {
-  width: 8px;
-  height: 8px;
+.wrapper > .point.active {
+  width: calc(8px + var(--obc-poi-pointer-box-width-extra, 0px));
+  height: calc(8px + var(--obc-poi-pointer-box-height-extra, 0px));
   border: 1px solid var(--obc-poi-pointer-active);
   border-radius: 11px;
 }
 
-.point.uncertain {
+.wrapper > .point.uncertain {
   width: 8px;
   height: 8px;
   flex-shrink: 0;
@@ -91,48 +91,60 @@
   filter: drop-shadow(0px 1px 2px #000);
 }
 
-.button {
+.wrapper > .button {
   width: 32px;
   height: 32px;
   border-radius: 6px;
 }
 
-.button.regular,
-.button.active,
-.button.selected {
+.wrapper > .button.active,
+.wrapper > .button.selected {
+  width: calc(32px + var(--obc-poi-pointer-box-width-extra, 0px));
+  height: calc(32px + var(--obc-poi-pointer-box-height-extra, 0px));
+}
+
+.wrapper > .button.regular,
+.wrapper > .button.active,
+.wrapper > .button.selected {
   border: 1px solid var(--obc-poi-pointer-active);
   box-shadow: 0px 1px 3px 0px #000;
 }
 
-.button.uncertain {
+.wrapper > .button.uncertain {
   border: 1px dashed var(--obc-poi-pointer-neutral);
   filter: drop-shadow(0px 1px 2px #000);
 }
 
-.camera {
+.wrapper > .camera {
   width: 52px;
   height: 44px;
   border-radius: 2px;
   box-shadow: 0px 1px 3px 0px #000;
 }
 
-.camera.regular {
+.wrapper > .camera.active,
+.wrapper > .camera.selected {
+  width: calc(52px + var(--obc-poi-pointer-box-width-extra, 0px));
+  height: calc(44px + var(--obc-poi-pointer-box-height-extra, 0px));
+}
+
+.wrapper > .camera.regular {
   border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
-.camera.active,
-.camera.selected {
+.wrapper > .camera.active,
+.wrapper > .camera.selected {
   border: 1px solid var(--obc-poi-pointer-active);
 }
 
-.camera.uncertain {
+.wrapper > .camera.uncertain {
   position: relative;
   border: none;
   box-shadow: none;
   filter: none;
 }
 
-.camera.uncertain::after {
+.wrapper > .camera.uncertain::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -143,7 +155,11 @@
 }
 
 .camera-frame {
-  inset: -6px;
+  width: calc(64px + var(--obc-poi-pointer-box-width-extra, 0px));
+  height: calc(56px + var(--obc-poi-pointer-box-height-extra, 0px));
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .camera-frame .corner {

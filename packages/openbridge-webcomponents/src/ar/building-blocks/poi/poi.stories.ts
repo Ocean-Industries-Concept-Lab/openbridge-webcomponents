@@ -3,6 +3,10 @@ import {html} from 'lit';
 import {crossDecorator} from '../../../storybook-util.js';
 import './poi.js';
 import {ObcPoi, ObcPoiState, ObcPoiType, ObcPoiValue} from './poi.js';
+import {
+  ObcPoiPointerState,
+  ObcPoiPointerType,
+} from '../poi-pointer/poi-pointer.js';
 import '../../../icons/icon-placeholder.js';
 import '../../../icons/icon-collision-avoidance-overtaking.js';
 
@@ -21,11 +25,13 @@ const meta: Meta<ObcPoi> = {
     fixedTarget: false,
     outsideAngle: 315,
     hasPointer: false,
+    pointerType: undefined,
+    pointerState: undefined,
     animatePosition: false,
     relativeDirection: 0,
     buttonOffsetX: 0,
     targetOffsetX: 0,
-    header: {content: '1'},
+    header: null,
     selected: false,
     hasRelation: false,
   },
@@ -51,6 +57,14 @@ const meta: Meta<ObcPoi> = {
       if: {arg: 'type', eq: ObcPoiType.Outside},
     },
     hasPointer: {control: {type: 'boolean'}},
+    pointerType: {
+      control: {type: 'select'},
+      options: [undefined, ...Object.values(ObcPoiPointerType)],
+    },
+    pointerState: {
+      control: {type: 'select'},
+      options: [undefined, ...Object.values(ObcPoiPointerState)],
+    },
     animatePosition: {control: {type: 'boolean'}},
     relativeDirection: {control: {type: 'range', min: 0, max: 360}},
     buttonOffsetX: {control: {type: 'range', min: -150, max: 150, step: 1}},
@@ -71,6 +85,8 @@ const meta: Meta<ObcPoi> = {
         'fixedTarget',
         'outsideAngle',
         'hasPointer',
+        'pointerType',
+        'pointerState',
         'animatePosition',
         'relativeDirection',
         'buttonOffsetX',
@@ -106,6 +122,8 @@ const meta: Meta<ObcPoi> = {
           .fixedTarget=${args.fixedTarget}
           .outsideAngle=${args.outsideAngle}
           .hasPointer=${args.hasPointer}
+          .pointerType=${args.pointerType}
+          .pointerState=${args.pointerState}
           .animatePosition=${args.animatePosition}
           .relativeDirection=${args.relativeDirection}
           .buttonOffsetX=${args.buttonOffsetX}
@@ -183,5 +201,13 @@ export const Alarm: Story = {
     type: ObcPoiType.Line,
     state: ObcPoiState.Alarm,
     value: ObcPoiValue.Checked,
+  },
+};
+
+export const WithHeader: Story = {
+  args: {
+    type: ObcPoiType.Line,
+    value: ObcPoiValue.Unchecked,
+    header: {content: '1'},
   },
 };

@@ -31,6 +31,7 @@
   justify-content: center;
 
   user-select: none;
+  pointer-events: var(--obc-poi-overlap-pointer-events, auto);
 
   & .poi-object {
     --overlay-container-background-color: #fff;
@@ -232,16 +233,22 @@
 
 /* Explicit interaction fallback for POI frame. Keeps behavior even if mixin output changes. */
 @media (hover: hover) {
-  .wrapper:not(.has-data):hover .poi-object::part(background-frame) {
+  :host(:not([value="overlapped"]))
+    .wrapper:not(.has-data):hover
+    .poi-object::part(background-frame) {
     background-color: var(--flat-hover-background-color);
   }
 }
 
-.wrapper:not(.has-data):active .poi-object::part(background-frame) {
+:host(:not([value="overlapped"]))
+  .wrapper:not(.has-data):active
+  .poi-object::part(background-frame) {
   background-color: var(--flat-pressed-background-color);
 }
 
-.wrapper:not(.has-data):focus-visible .poi-object::part(background-frame) {
+:host(:not([value="overlapped"]))
+  .wrapper:not(.has-data):focus-visible
+  .poi-object::part(background-frame) {
   outline-color: var(--border-focus-color);
   outline-width: var(--global-size-spacing-border-weight-focusframe);
   outline-style: solid;

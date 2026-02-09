@@ -27,6 +27,7 @@ export interface POILineParams {
   dashArray?: string;
   dashOffset?: number;
   strokeLinecap?: 'round' | 'butt' | 'square';
+  dashOutlineAndShadow?: boolean;
 }
 
 export type POIStyleVariant =
@@ -82,9 +83,9 @@ const NEUTRAL_DASHED_STYLE: POILineParams = {
   ...DASHED_DEFAULTS,
 };
 
-const ACTIVE_NEUTRAL_DASHED_STYLE: POILineParams = {
+const REGULAR_DASHED_STYLE: POILineParams = {
   ...NEUTRAL_DASHED_STYLE,
-  shadowAlpha: ACTIVE_STYLE_BASE.shadowAlpha,
+  dashOutlineAndShadow: true,
 };
 
 const SELECTED_DASHED_STYLE: POILineParams = {
@@ -102,9 +103,11 @@ const ROUTE_DASHED_STYLE: POILineParams = {
   ...ROUTE_STYLE,
   lineWidth: 1,
   outlineWidth: 2,
-  lineColor: 'var(--instrument-enhanced-secondary-color)',
-  outlineColor: 'var(--overlay-element-active-color)',
-  ...DASHED_DEFAULTS,
+  lineColor: 'var(--base-blue-500)',
+  outlineColor: 'var(--base-blue-050)',
+  dashArray: '4 3',
+  dashOffset: 0,
+  strokeLinecap: 'butt',
 };
 
 const STYLE_CONFIG: Record<
@@ -113,7 +116,7 @@ const STYLE_CONFIG: Record<
 > = {
   [POIStyle.Regular]: {
     [POILineType.Regular]: REGULAR_STYLE,
-    [POILineType.Dashed]: NEUTRAL_DASHED_STYLE,
+    [POILineType.Dashed]: REGULAR_DASHED_STYLE,
   },
   [POIStyle.Selected]: {
     [POILineType.Regular]: {
@@ -129,7 +132,7 @@ const STYLE_CONFIG: Record<
       outlineColor: 'var(--on-alarm-color)',
       ...ACTIVE_STYLE_BASE,
     },
-    [POILineType.Dashed]: ACTIVE_NEUTRAL_DASHED_STYLE,
+    [POILineType.Dashed]: REGULAR_DASHED_STYLE,
   },
   [POIStyle.Caution]: {
     [POILineType.Regular]: {
@@ -137,7 +140,7 @@ const STYLE_CONFIG: Record<
       outlineColor: 'var(--alert-caution-outline-color)',
       ...ACTIVE_STYLE_BASE,
     },
-    [POILineType.Dashed]: ACTIVE_NEUTRAL_DASHED_STYLE,
+    [POILineType.Dashed]: REGULAR_DASHED_STYLE,
   },
   [POIStyle.Warning]: {
     [POILineType.Regular]: {
@@ -145,7 +148,7 @@ const STYLE_CONFIG: Record<
       outlineColor: 'var(--on-warning-color)',
       ...ACTIVE_STYLE_BASE,
     },
-    [POILineType.Dashed]: ACTIVE_NEUTRAL_DASHED_STYLE,
+    [POILineType.Dashed]: REGULAR_DASHED_STYLE,
   },
   [POIStyle.Route]: {
     [POILineType.Regular]: ROUTE_STYLE,

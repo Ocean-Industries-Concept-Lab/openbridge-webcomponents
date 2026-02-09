@@ -37,6 +37,12 @@ export class ObcPoiPointer extends LitElement {
   @property({type: String, reflect: true})
   state: ObcPoiPointerState = ObcPoiPointerState.Regular;
 
+  @property({type: Number, attribute: 'box-width'})
+  boxWidth: number | null = null;
+
+  @property({type: Number, attribute: 'box-height'})
+  boxHeight: number | null = null;
+
   private get isPoint(): boolean {
     return this.type === ObcPoiPointerType.Point;
   }
@@ -51,6 +57,60 @@ export class ObcPoiPointer extends LitElement {
 
   private get isSelected(): boolean {
     return this.state === ObcPoiPointerState.Selected;
+  }
+
+  private get isActive(): boolean {
+    return this.state === ObcPoiPointerState.Active;
+  }
+
+  private get shouldUseBoxDimensions(): boolean {
+    return this.isSelected || this.isActive;
+  }
+
+  private get resolvedBoxWidth(): number | null {
+    if (!this.shouldUseBoxDimensions || this.boxWidth === null) {
+      return null;
+    }
+
+    const width = Number(this.boxWidth);
+    if (!Number.isFinite(width) || width < 0) {
+      return null;
+    }
+
+    return width;
+  }
+
+  private get resolvedBoxHeight(): number | null {
+    if (!this.shouldUseBoxDimensions || this.boxHeight === null) {
+      return null;
+    }
+
+    const height = Number(this.boxHeight);
+    if (!Number.isFinite(height) || height < 0) {
+      return null;
+    }
+
+    return height;
+  }
+
+  private get wrapperStyle(): string | null {
+    const width = this.resolvedBoxWidth;
+    const height = this.resolvedBoxHeight;
+    const styles: string[] = [];
+
+    if (width !== null) {
+      styles.push(`--obc-poi-pointer-box-width-extra: ${width}px;`);
+    }
+
+    if (height !== null) {
+      styles.push(`--obc-poi-pointer-box-height-extra: ${height}px;`);
+    }
+
+    if (styles.length === 0) {
+      return null;
+    }
+
+    return styles.join(' ');
   }
 
   private renderSquareSelectionFrame() {
@@ -144,6 +204,7 @@ export class ObcPoiPointer extends LitElement {
           button: this.isButton,
           camera: this.isCamera,
         })}
+        style=${this.wrapperStyle ?? nothing}
       >
         ${this.renderSquareSelectionFrame()}
         ${this.renderCameraSelectionFrame()} ${this.renderPoint()}
