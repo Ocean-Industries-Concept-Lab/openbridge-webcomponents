@@ -6,6 +6,7 @@ import {arrow, ArrowStyle} from './arrow.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {VesselImage, VesselImageSize, WatchCircleType} from '../watch/watch.js';
+import {SetpointColorMode} from '../../svghelpers/setpoint.js';
 import {rot} from './rot.js';
 import {RateOfTurnController} from '../rate-of-turn/rate-of-turn.controller.js';
 import {customElement} from '../../decorator.js';
@@ -41,7 +42,12 @@ export class ObcCompass extends LitElement {
   @property({type: Number}) heading = 0;
   @property({type: Number}) courseOverGround = 0;
   @property({type: Number}) headingSetPoint: number | null = null;
+  @property({type: Number}) newHeadingSetpoint: number | undefined;
   @property({type: Boolean}) atHeadingSetpoint: boolean = false;
+  @property({type: Number}) headingSetpointAtZeroDeadband: number = 0.5;
+  @property({type: String}) headingSetpointColorMode:
+    | SetpointColorMode
+    | undefined;
   @property({type: Boolean}) disableAutoAtHeadingSetpoint: boolean = false;
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
   @property({type: Boolean}) touching: boolean = false;
@@ -141,7 +147,10 @@ export class ObcCompass extends LitElement {
           .labelFrameEnabled=${true}
           .crosshairEnabled=${true}
           .angleSetpoint=${this.headingSetPoint ?? undefined}
+          .newAngleSetpoint=${this.newHeadingSetpoint}
           .atAngleSetpoint=${this.atHeadingSetpointCalc()}
+          .angleSetpointAtZeroDeadband=${this.headingSetpointAtZeroDeadband}
+          .colorMode=${this.headingSetpointColorMode}
           .vessels=${[
             {
               size: VesselImageSize.medium,

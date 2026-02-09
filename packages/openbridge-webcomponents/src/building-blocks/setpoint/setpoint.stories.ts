@@ -6,12 +6,12 @@ import {userEvent, within} from 'storybook/test';
 import '../bar-vertical/bar-vertical.js';
 // Import gauge-horizontal for the adjustment flow demo
 import '../../navigation-instruments/gauge-horizontal/gauge-horizontal.js';
+// Import watch for radial setpoint demos
+import '../../navigation-instruments/watch/watch.js';
+import {WatchCircleType} from '../../navigation-instruments/watch/watch.js';
 
 // Import setpoint types for documentation
-import {
-  SetpointVisualState,
-  SetpointColorMode,
-} from '../../svghelpers/setpoint.js';
+import {SetpointColorMode} from '../../svghelpers/setpoint.js';
 
 // Import types needed for bar-vertical configuration
 import {InstrumentState} from '../../navigation-instruments/types.js';
@@ -92,17 +92,66 @@ Source: \`packages/openbridge-webcomponents/src/svghelpers/setpoint.ts\``,
     },
   },
   argTypes: {
-    visualState: {
-      description: 'The visual state of the setpoint marker',
-      control: {type: 'select'},
-      options: Object.values(SetpointVisualState),
+    value: {
+      description: 'Current value (bar fill position)',
+      control: {type: 'range', min: -50, max: 50, step: 1},
     },
-    colorMode: {
-      description: 'The color palette to use',
+    setpoint: {
+      description: 'Setpoint position (target value)',
+      control: {type: 'range', min: -50, max: 50, step: 1},
+    },
+    newSetpoint: {
+      description: 'New setpoint during adjustment (undefined = no adjustment)',
+      control: {type: 'range', min: -50, max: 50, step: 1},
+    },
+    enhanced: {
+      description: 'Use enhanced color palette (brighter, for inCommand)',
+      control: {type: 'boolean'},
+    },
+    state: {
+      description: 'Instrument state',
       control: {type: 'select'},
-      options: Object.values(SetpointColorMode),
+      options: Object.values(InstrumentState),
+    },
+    autoAtSetpointDeadband: {
+      description: 'Deadband for auto at-setpoint detection',
+      control: {type: 'range', min: 0, max: 10, step: 0.5},
+    },
+    setpointAtZeroDeadband: {
+      description: 'Deadband for setpoint-at-zero detection',
+      control: {type: 'range', min: 0, max: 5, step: 0.1},
     },
   },
+  args: {
+    value: 20,
+    setpoint: 40,
+    newSetpoint: undefined,
+    enhanced: true,
+    state: InstrumentState.inCommand,
+    autoAtSetpointDeadband: 1,
+    setpointAtZeroDeadband: 0.5,
+  },
+  render: (args) => html`
+    <obc-bar-vertical
+      minValue="-50"
+      maxValue="50"
+      height="280"
+      side="${ExternalScaleSide.right}"
+      primaryTickbarsInterval="25"
+      secondaryTickbarsInterval="5"
+      hasBar
+      scaleBackground
+      borderRadiusPosition="${BorderRadiusPosition.innerFirstChild}"
+      .enhanced=${args.enhanced}
+      fillMode="${FillMode.fill}"
+      .value=${args.value}
+      .setpoint=${args.setpoint}
+      .newSetpoint=${args.newSetpoint}
+      .state=${args.state}
+      .autoAtSetpointDeadband=${args.autoAtSetpointDeadband}
+      .setpointAtZeroDeadband=${args.setpointAtZeroDeadband}
+    ></obc-bar-vertical>
+  `,
 } satisfies Meta;
 
 export default meta;
@@ -114,6 +163,7 @@ function renderSetpointDemo(config: {
   enhanced?: boolean;
   colorMode?: SetpointColorMode;
   setpoint: number;
+  newSetpoint?: number;
   value: number;
   state: InstrumentState;
   focused?: boolean;
@@ -123,6 +173,7 @@ function renderSetpointDemo(config: {
     enhanced = false,
     colorMode,
     setpoint,
+    newSetpoint,
     value,
     state,
     focused = false,
@@ -148,6 +199,7 @@ function renderSetpointDemo(config: {
         fillMode="${FillMode.fill}"
         .value=${value}
         .setpoint=${setpoint}
+        .newSetpoint=${newSetpoint}
         .state=${state}
         .focused=${focused}
         autoAtSetpointDeadband="1"
@@ -167,31 +219,17 @@ function renderSetpointDemo(config: {
  * The setpoint marker is at full size (100%) when the current value
  * has not yet reached the setpoint.
  *
- * Configuration:
- * - `value: 20` (different from setpoint)
- * - `setpoint: 40`
- * - `state: inCommand`
+ * Use the controls to adjust value, setpoint, enhanced mode, etc.
  */
 export const NotEqual: Story = {
   name: 'notEqual (Input ≠ Output)',
-  render: () => html`
-    <div style="display: flex; gap: 60px; align-items: flex-start;">
-      ${renderSetpointDemo({
-        label: 'Regular',
-        enhanced: false,
-        setpoint: 40,
-        value: 20,
-        state: InstrumentState.inCommand,
-      })}
-      ${renderSetpointDemo({
-        label: 'Enhanced',
-        enhanced: true,
-        setpoint: 40,
-        value: 20,
-        state: InstrumentState.inCommand,
-      })}
-    </div>
-  `,
+  args: {
+    value: 20,
+    setpoint: 40,
+    newSetpoint: undefined,
+    enhanced: true,
+    state: InstrumentState.inCommand,
+  },
 };
 
 /**
@@ -200,32 +238,17 @@ export const NotEqual: Story = {
  * The setpoint marker shrinks to 80% size when the current value
  * equals the setpoint (within the deadband tolerance).
  *
- * Configuration:
- * - `value: 40` (same as setpoint)
- * - `setpoint: 40`
- * - `state: inCommand`
- * - `autoAtSetpointDeadband: 1`
+ * Use the controls to adjust value, setpoint, enhanced mode, etc.
  */
 export const Equal: Story = {
   name: 'equal (Input = Output)',
-  render: () => html`
-    <div style="display: flex; gap: 60px; align-items: flex-start;">
-      ${renderSetpointDemo({
-        label: 'Regular',
-        enhanced: false,
-        setpoint: 40,
-        value: 40,
-        state: InstrumentState.inCommand,
-      })}
-      ${renderSetpointDemo({
-        label: 'Enhanced',
-        enhanced: true,
-        setpoint: 40,
-        value: 40,
-        state: InstrumentState.inCommand,
-      })}
-    </div>
-  `,
+  args: {
+    value: 40,
+    setpoint: 40,
+    newSetpoint: undefined,
+    enhanced: true,
+    state: InstrumentState.inCommand,
+  },
 };
 
 /**
@@ -235,71 +258,38 @@ export const Equal: Story = {
  * AND shifts 8px outward from the scale to avoid overlapping with
  * the zero position indicator.
  *
- * Configuration:
- * - `value: 0`
- * - `setpoint: 0`
- * - `state: inCommand`
- * - `setpointAtZeroDeadband: 0.5`
+ * Use the controls to adjust value, setpoint, enhanced mode, etc.
  */
 export const EqualZero: Story = {
   name: 'equalZero (Input = Output = 0)',
-  render: () => html`
-    <div style="display: flex; gap: 60px; align-items: flex-start;">
-      ${renderSetpointDemo({
-        label: 'Regular',
-        enhanced: false,
-        setpoint: 0,
-        value: 0,
-        state: InstrumentState.inCommand,
-      })}
-      ${renderSetpointDemo({
-        label: 'Enhanced',
-        enhanced: true,
-        setpoint: 0,
-        value: 0,
-        state: InstrumentState.inCommand,
-      })}
-    </div>
-  `,
+  args: {
+    value: 0,
+    setpoint: 0,
+    newSetpoint: undefined,
+    enhanced: true,
+    state: InstrumentState.inCommand,
+  },
 };
 
 /**
- * **focus** - User is actively adjusting
+ * **focus** - User is actively adjusting (dual-marker mode)
  *
  * When the user is actively adjusting the setpoint (e.g., dragging),
- * the marker displays as a filled triangle with a 2px border at full size.
+ * setting `newSetpoint` triggers dual-marker mode:
+ * - Original setpoint is dimmed (0.75 opacity)
+ * - New setpoint shows in focus state (filled with border)
  *
- * Colors:
- * - **Regular**: Fill `--instrument-regular-tertiary-color`, border `--instrument-regular-secondary-color`
- * - **Enhanced**: Fill `--base-blue-100`, border `--element-neutral-enhanced-color`
- *
- * Configuration:
- * - `focused: true`
- * - `setpoint: 30`
- * - `value: 10`
+ * Use the controls to adjust value, setpoint, newSetpoint, etc.
  */
 export const Focus: Story = {
   name: 'focus (User adjusting)',
-  render: () => html`
-    <div style="display: flex; gap: 60px; align-items: flex-start;">
-      ${renderSetpointDemo({
-        label: 'Regular',
-        enhanced: false,
-        setpoint: 30,
-        value: 10,
-        state: InstrumentState.inCommand,
-        focused: true,
-      })}
-      ${renderSetpointDemo({
-        label: 'Enhanced',
-        enhanced: true,
-        setpoint: 30,
-        value: 10,
-        state: InstrumentState.inCommand,
-        focused: true,
-      })}
-    </div>
-  `,
+  args: {
+    value: 10,
+    setpoint: 20,
+    newSetpoint: 50,
+    enhanced: true,
+    state: InstrumentState.inCommand,
+  },
 };
 
 // =============================================================================
@@ -309,17 +299,16 @@ export const Focus: Story = {
 /**
  * **Visual State Comparison**
  *
- * Side-by-side comparison of all setpoint visual states across color modes.
+ * Side-by-side comparison of all setpoint visual states for linear instruments (bar-vertical).
  *
- * Grid layout (4×3):
- * - **Row 1**: Regular color mode
- * - **Row 2**: Enhanced color mode
- * - **Row 3**: Disabled state (via `InstrumentState.off`)
- * - **Columns**: notEqual, equal, equalZero, focus
+ * - **Row 1**: active state (SetpointColorMode: regular)
+ * - **Row 2**: inCommand state (SetpointColorMode: enhanced)
+ * - **Row 3**: adjusting/focused/touching - dual-marker mode via `newSetpoint`
+ * - **Row 4**: loading/off (disabled) - uses tertiary/gray color
  *
- * NOTE: The "Disabled" row shows the disabled state applied to all visual states.
- * Disabled is a separate boolean flag, auto-derived from instrument state (loading/off).
- * When disabled, the setpoint uses tertiary color regardless of the underlying color mode.
+ * The `newSetpoint` property enables showing both current and proposed setpoint
+ * positions simultaneously, with the original dimmed (0.75 opacity) while the
+ * new setpoint shows in focus state.
  */
 export const SetpointComparison: Story = {
   name: 'Visual State Comparison',
@@ -327,7 +316,7 @@ export const SetpointComparison: Story = {
     <div style="display: flex; flex-direction: column; gap: 24px;">
       <!-- Header row -->
       <div
-        style="display: grid; grid-template-columns: 80px repeat(4, 1fr); gap: 16px; align-items: center;"
+        style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: center;"
       >
         <div></div>
         <div
@@ -345,19 +334,14 @@ export const SetpointComparison: Story = {
         >
           equalZero
         </div>
-        <div
-          style="text-align: center; font-weight: bold; font-size: 12px; color: #ccc;"
-        >
-          focus
-        </div>
       </div>
 
-      <!-- Regular row -->
+      <!-- active row -->
       <div
-        style="display: grid; grid-template-columns: 80px repeat(4, 1fr); gap: 16px; align-items: flex-start;"
+        style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
       >
         <div style="font-size: 12px; color: #888; padding-top: 80px;">
-          Regular
+          active (SetpointColorMode: regular)
         </div>
         ${renderSetpointDemo({
           label: 'value ≠ setpoint',
@@ -380,22 +364,14 @@ export const SetpointComparison: Story = {
           value: 0,
           state: InstrumentState.inCommand,
         })}
-        ${renderSetpointDemo({
-          label: 'focused=true',
-          colorMode: SetpointColorMode.regular,
-          setpoint: 30,
-          value: 10,
-          state: InstrumentState.inCommand,
-          focused: true,
-        })}
       </div>
 
-      <!-- Enhanced row -->
+      <!-- inCommand row -->
       <div
-        style="display: grid; grid-template-columns: 80px repeat(4, 1fr); gap: 16px; align-items: flex-start;"
+        style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
       >
         <div style="font-size: 12px; color: #888; padding-top: 80px;">
-          Enhanced
+          inCommand (SetpointColorMode: enhanced)
         </div>
         ${renderSetpointDemo({
           label: 'value ≠ setpoint',
@@ -418,22 +394,47 @@ export const SetpointComparison: Story = {
           value: 0,
           state: InstrumentState.inCommand,
         })}
+      </div>
+
+      <!-- adjusting/focused/touching row -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
+      >
+        <div style="font-size: 12px; color: #888; padding-top: 80px;">
+          adjusting/focused/touching
+        </div>
         ${renderSetpointDemo({
-          label: 'focused=true',
+          label: 'setpoint at 20, new at 40',
           colorMode: SetpointColorMode.enhanced,
-          setpoint: 30,
-          value: 10,
+          setpoint: 20,
+          newSetpoint: 40,
+          value: 20,
           state: InstrumentState.inCommand,
-          focused: true,
+        })}
+        ${renderSetpointDemo({
+          label: 'setpoint at 40, new at 30',
+          colorMode: SetpointColorMode.enhanced,
+          setpoint: 40,
+          newSetpoint: 30,
+          value: 40,
+          state: InstrumentState.inCommand,
+        })}
+        ${renderSetpointDemo({
+          label: 'setpoint at 0, new at 20',
+          colorMode: SetpointColorMode.enhanced,
+          setpoint: 0,
+          newSetpoint: 20,
+          value: 0,
+          state: InstrumentState.inCommand,
         })}
       </div>
 
       <!-- Disabled state row (via InstrumentState.off) -->
       <div
-        style="display: grid; grid-template-columns: 80px repeat(4, 1fr); gap: 16px; align-items: flex-start;"
+        style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
       >
         <div style="font-size: 12px; color: #888; padding-top: 80px;">
-          Disabled
+          loading/off (disabled)
         </div>
         ${renderSetpointDemo({
           label: 'value ≠ setpoint',
@@ -453,13 +454,273 @@ export const SetpointComparison: Story = {
           value: 0,
           state: InstrumentState.off,
         })}
-        ${renderSetpointDemo({
-          label: 'focused=true',
-          setpoint: 30,
-          value: 10,
-          state: InstrumentState.off,
-          focused: true,
+      </div>
+
+      <!-- Note about adjusting state -->
+      <div style="font-size: 11px; color: #666; font-style: italic;">
+        Note: "adjusting/focused/touching" row shows dual-marker mode triggered
+        by setting newSetpoint. The original setpoint is dimmed (0.75 opacity)
+        while the new setpoint shows in focus state. "equalZero" is auto-derived
+        when setpoint is within setpointAtZeroDeadband (default 0.5).
+      </div>
+    </div>
+  `,
+};
+
+// =============================================================================
+// Radial Setpoint Comparison Story
+// =============================================================================
+
+// Helper to render a watch with specific setpoint state
+function renderRadialSetpointDemo(config: {
+  label: string;
+  angleSetpoint: number;
+  newAngleSetpoint?: number;
+  atAngleSetpoint?: boolean;
+  state: InstrumentState;
+  /** Fill arc end angle (start is always 0 for this demo) */
+  fillEndAngle?: number;
+  /** Optional color mode override */
+  colorMode?: SetpointColorMode;
+}) {
+  const {
+    label,
+    angleSetpoint,
+    newAngleSetpoint,
+    atAngleSetpoint = false,
+    state,
+    fillEndAngle,
+    colorMode,
+  } = config;
+
+  // Determine bar fill color based on colorMode (if provided) or state
+  const effectiveColorMode =
+    colorMode ??
+    (state === InstrumentState.inCommand
+      ? SetpointColorMode.enhanced
+      : SetpointColorMode.regular);
+  const fillColor =
+    effectiveColorMode === SetpointColorMode.enhanced
+      ? 'var(--instrument-enhanced-tertiary-color)'
+      : 'var(--instrument-regular-tertiary-color)';
+
+  // Create barAreas if fillEndAngle is provided
+  const barAreas =
+    fillEndAngle !== undefined
+      ? [
+          {
+            startAngle: 0,
+            endAngle: fillEndAngle,
+            fillColor,
+          },
+        ]
+      : [];
+
+  // Create areas (cut area) to match WithBarAreas style
+  const areas =
+    fillEndAngle !== undefined
+      ? [
+          {
+            startAngle: -90,
+            endAngle: 90,
+            roundInsideCut: true,
+            roundOutsideCut: true,
+          },
+        ]
+      : [];
+
+  return html`
+    <div style="text-align: center;">
+      <div style="margin-bottom: 8px; font-size: 12px; color: #888;">
+        ${label}
+      </div>
+      <div style="width: 100%; height: 160px;">
+        <obc-watch
+          .state=${state}
+          .angleSetpoint=${angleSetpoint}
+          .newAngleSetpoint=${newAngleSetpoint}
+          .atAngleSetpoint=${atAngleSetpoint}
+          .colorMode=${colorMode}
+          .watchCircleType=${WatchCircleType.double}
+          .areas=${areas}
+          .barAreas=${barAreas}
+        ></obc-watch>
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * Side-by-side comparison of all setpoint visual states for radial instruments (watch).
+ *
+ * Visual state mapping:
+ * - **notEqual**: bar at 45°, setpoint at 60° (different positions)
+ * - **equal**: bar at 45°, setpoint at 45° (same position, atSetpoint=true)
+ * - **equalZero**: bar at 0°, setpoint at 0° (both at zero, auto-derived)
+ *
+ * The `newAngleSetpoint` property enables showing both current and proposed
+ * setpoint positions simultaneously, with the original dimmed (0.75 opacity)
+ * while the new setpoint shows in focus state.
+ */
+export const SetpointComparisonRadial: Story = {
+  name: 'Visual State Comparison (Radial)',
+  render: () => html`
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+      <!-- Header row -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: center;"
+      >
+        <div></div>
+        <div
+          style="text-align: center; font-weight: bold; font-size: 12px; color: #ccc;"
+        >
+          notEqual
+        </div>
+        <div
+          style="text-align: center; font-weight: bold; font-size: 12px; color: #ccc;"
+        >
+          equal
+        </div>
+        <div
+          style="text-align: center; font-weight: bold; font-size: 12px; color: #ccc;"
+        >
+          equalZero
+        </div>
+      </div>
+
+      <!-- active row (via colorMode override) -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
+      >
+        <div style="font-size: 12px; color: #888; padding-top: 60px;">
+          active (SetpointColorMode: regular)
+        </div>
+        ${renderRadialSetpointDemo({
+          label: 'bar at 45°, setpoint at 60°',
+          angleSetpoint: 60,
+          atAngleSetpoint: false,
+          fillEndAngle: 45,
+          state: InstrumentState.inCommand,
+          colorMode: SetpointColorMode.regular,
         })}
+        ${renderRadialSetpointDemo({
+          label: 'bar at 45°, setpoint at 45°',
+          angleSetpoint: 45,
+          atAngleSetpoint: true,
+          fillEndAngle: 45,
+          state: InstrumentState.inCommand,
+          colorMode: SetpointColorMode.regular,
+        })}
+        ${renderRadialSetpointDemo({
+          label: 'bar at 0°, setpoint at 0°',
+          angleSetpoint: 0,
+          atAngleSetpoint: true,
+          fillEndAngle: 0,
+          state: InstrumentState.inCommand,
+          colorMode: SetpointColorMode.regular,
+        })}
+      </div>
+
+      <!-- inCommand row (enhanced colors) -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
+      >
+        <div style="font-size: 12px; color: #888; padding-top: 60px;">
+          inCommand (SetpointColorMode: enhanced)
+        </div>
+        ${renderRadialSetpointDemo({
+          label: 'bar at 45°, setpoint at 60°',
+          angleSetpoint: 60,
+          atAngleSetpoint: false,
+          fillEndAngle: 45,
+          state: InstrumentState.inCommand,
+        })}
+        ${renderRadialSetpointDemo({
+          label: 'bar at 45°, setpoint at 45°',
+          angleSetpoint: 45,
+          atAngleSetpoint: true,
+          fillEndAngle: 45,
+          state: InstrumentState.inCommand,
+        })}
+        ${renderRadialSetpointDemo({
+          label: 'bar at 0°, setpoint at 0°',
+          angleSetpoint: 0,
+          atAngleSetpoint: true,
+          fillEndAngle: 0,
+          state: InstrumentState.inCommand,
+        })}
+      </div>
+
+      <!-- adjusting row (shows dual markers when newAngleSetpoint is defined) -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
+      >
+        <div style="font-size: 12px; color: #888; padding-top: 60px;">
+          adjusting/focused/touching
+        </div>
+        ${renderRadialSetpointDemo({
+          label: 'bar at 45°, setpoint at 60°, new at 80°',
+          angleSetpoint: 60,
+          atAngleSetpoint: false,
+          fillEndAngle: 45,
+          state: InstrumentState.inCommand,
+          newAngleSetpoint: 80,
+        })}
+        ${renderRadialSetpointDemo({
+          label: 'bar at 45°, setpoint at 45°, new at 60°',
+          angleSetpoint: 45,
+          atAngleSetpoint: true,
+          fillEndAngle: 45,
+          state: InstrumentState.inCommand,
+          newAngleSetpoint: 60,
+        })}
+        ${renderRadialSetpointDemo({
+          label: 'bar at 0°, setpoint at 0°, new at 30°',
+          angleSetpoint: 0,
+          atAngleSetpoint: true,
+          fillEndAngle: 0,
+          state: InstrumentState.inCommand,
+          newAngleSetpoint: 30,
+        })}
+      </div>
+
+      <!-- Disabled state row (via InstrumentState.off) -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
+      >
+        <div style="font-size: 12px; color: #888; padding-top: 60px;">
+          loading/off (disabled)
+        </div>
+        ${renderRadialSetpointDemo({
+          label: 'bar at 45°, setpoint at 60°',
+          angleSetpoint: 60,
+          atAngleSetpoint: false,
+          fillEndAngle: 45,
+          state: InstrumentState.off,
+        })}
+        ${renderRadialSetpointDemo({
+          label: 'bar at 45°, setpoint at 45°',
+          angleSetpoint: 45,
+          atAngleSetpoint: true,
+          fillEndAngle: 45,
+          state: InstrumentState.off,
+        })}
+        ${renderRadialSetpointDemo({
+          label: 'bar at 0°, setpoint at 0°',
+          angleSetpoint: 0,
+          atAngleSetpoint: true,
+          fillEndAngle: 0,
+          state: InstrumentState.off,
+        })}
+      </div>
+
+      <!-- Note about adjusting state -->
+      <div style="font-size: 11px; color: #666; font-style: italic;">
+        Note: "adjusting/focused/touching" row shows dual-marker mode triggered
+        by setting newAngleSetpoint. The original setpoint is dimmed (0.75
+        opacity) while the new setpoint shows in focus state. "equalZero" is
+        auto-derived when angleSetpoint is within angleSetpointAtZeroDeadband
+        (default 0.5°).
       </div>
     </div>
   `,
@@ -606,6 +867,192 @@ export const SetpointAdjustmentFlow: StoryObj = {
     await new Promise((r) => setTimeout(r, 1500));
 
     // Step 3: Move newSetpoint to 80 (t=2)
+    await userEvent.click(btnMove);
+    await new Promise((r) => setTimeout(r, 2000));
+
+    // Step 4: Confirm the new setpoint (t=3)
+    await userEvent.click(btnConfirm);
+    await new Promise((r) => setTimeout(r, 1000));
+  },
+};
+
+/**
+ * **Setpoint Radial Adjustment Flow** - Interactive demo showing radial setpoint adjustment UX
+ *
+ * This story demonstrates the complete setpoint adjustment workflow for radial instruments:
+ *
+ * 1. **t=0 (At setpoint)**: Fill at 30°, setpoint at 30° (equal state - 80% size)
+ * 2. **t=1 (Initiate adjustment)**: User starts adjusting, newAngleSetpoint appears at same position
+ * 3. **t=2 (Move new setpoint)**: newAngleSetpoint moves to 60°, original setpoint stays dimmed at 30°
+ * 4. **t=3 (Confirm)**: newAngleSetpoint confirmed, fill animates to 60°, original setpoint moves to 60°
+ *
+ * The `newAngleSetpoint` property enables showing both current and proposed setpoint positions
+ * simultaneously, with the original dimmed (0.75 opacity) while adjusting.
+ *
+ * Zero state is auto-derived when `angleSetpoint` is within `angleSetpointAtZeroDeadband` (default 0.5°).
+ */
+export const SetpointRadialAdjustmentFlow: StoryObj = {
+  tags: ['!snapshot'],
+  name: 'Setpoint Radial Adjustment Flow (interactive)',
+  render: () => {
+    // Initial barAreas and areas for 30° fill
+    const initialBarAreas = [
+      {
+        startAngle: 0,
+        endAngle: 30,
+        fillColor: 'var(--instrument-enhanced-tertiary-color)',
+      },
+    ];
+    const areas = [
+      {
+        startAngle: -90,
+        endAngle: 90,
+        roundInsideCut: true,
+        roundOutsideCut: true,
+      },
+    ];
+
+    return html`
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        <div style="font-size: 14px; color: #888;">
+          Click "Play" in the Interactions panel to watch the radial setpoint
+          adjustment animation, or use the buttons below for manual control.
+        </div>
+        <div style="width: 200px; height: 200px;">
+          <obc-watch
+            id="radial-setpoint-demo"
+            .barAreas=${initialBarAreas}
+            .areas=${areas}
+            .watchCircleType=${WatchCircleType.double}
+            .angleSetpoint=${30}
+            .atAngleSetpoint=${true}
+            .state=${InstrumentState.inCommand}
+          ></obc-watch>
+        </div>
+
+        <div
+          style="display: flex; gap: 16px; flex-wrap: wrap; align-items: center;"
+        >
+          <button
+            id="btn-radial-reset"
+            style="padding: 8px 16px; cursor: pointer;"
+          >
+            Reset (t=0)
+          </button>
+          <button
+            id="btn-radial-initiate"
+            style="padding: 8px 16px; cursor: pointer;"
+          >
+            Initiate (t=1)
+          </button>
+          <button
+            id="btn-radial-move"
+            style="padding: 8px 16px; cursor: pointer;"
+          >
+            Move (t=2)
+          </button>
+          <button
+            id="btn-radial-confirm"
+            style="padding: 8px 16px; cursor: pointer;"
+          >
+            Confirm (t=3)
+          </button>
+        </div>
+
+        <div
+          id="radial-status"
+          style="font-size: 12px; color: #666; font-family: monospace;"
+        >
+          State: t=0 (at setpoint) | barEndAngle=30°, angleSetpoint=30°,
+          newAngleSetpoint=undefined
+        </div>
+      </div>
+    `;
+  },
+  play: async ({canvasElement}) => {
+    const canvas = within(canvasElement);
+
+    // Wait for component to render
+    await new Promise((r) => setTimeout(r, 500));
+
+    // Get DOM elements
+    const watch = canvasElement.querySelector(
+      '#radial-setpoint-demo'
+    ) as HTMLElement & {
+      barAreas: Array<{
+        startAngle: number;
+        endAngle: number;
+        fillColor: string;
+      }>;
+      angleSetpoint: number;
+      newAngleSetpoint: number | undefined;
+      atAngleSetpoint: boolean;
+    };
+    const status = canvasElement.querySelector('#radial-status') as HTMLElement;
+
+    if (!watch || !status) return;
+
+    // Helper to create barAreas with a specific end angle
+    const createBarAreas = (endAngle: number) => [
+      {
+        startAngle: 0,
+        endAngle,
+        fillColor: 'var(--instrument-enhanced-tertiary-color)',
+      },
+    ];
+
+    // Helper to update status display
+    const updateStatus = (
+      state: string,
+      barEndAngle: number,
+      angleSetpoint: number,
+      newAngleSetpoint: number | undefined
+    ) => {
+      status.textContent = `State: ${state} | barEndAngle=${barEndAngle}°, angleSetpoint=${angleSetpoint}°, newAngleSetpoint=${newAngleSetpoint !== undefined ? newAngleSetpoint + '°' : 'undefined'}`;
+    };
+
+    // Get buttons
+    const btnReset = canvas.getByRole('button', {name: /Reset/});
+    const btnInitiate = canvas.getByRole('button', {name: /Initiate/});
+    const btnMove = canvas.getByRole('button', {name: /Move/});
+    const btnConfirm = canvas.getByRole('button', {name: /Confirm/});
+
+    // Wire up button handlers (for manual interaction after play completes)
+    btnReset.onclick = () => {
+      watch.barAreas = createBarAreas(30);
+      watch.angleSetpoint = 30;
+      watch.atAngleSetpoint = true;
+      watch.newAngleSetpoint = undefined;
+      updateStatus('t=0 (at setpoint)', 30, 30, undefined);
+    };
+
+    btnInitiate.onclick = () => {
+      watch.newAngleSetpoint = 30;
+      updateStatus('t=1 (initiate)', 30, 30, 30);
+    };
+
+    btnMove.onclick = () => {
+      watch.newAngleSetpoint = 60;
+      updateStatus('t=2 (move)', 30, 30, 60);
+    };
+
+    btnConfirm.onclick = () => {
+      watch.newAngleSetpoint = undefined;
+      watch.angleSetpoint = 60;
+      watch.barAreas = createBarAreas(60);
+      watch.atAngleSetpoint = true;
+      updateStatus('t=3 (confirm)', 60, 60, undefined);
+    };
+
+    // Step 1: Ensure we're at initial state (t=0)
+    await userEvent.click(btnReset);
+    await new Promise((r) => setTimeout(r, 1000));
+
+    // Step 2: Initiate adjustment (t=1)
+    await userEvent.click(btnInitiate);
+    await new Promise((r) => setTimeout(r, 1500));
+
+    // Step 3: Move newAngleSetpoint to 60° (t=2)
     await userEvent.click(btnMove);
     await new Promise((r) => setTimeout(r, 2000));
 

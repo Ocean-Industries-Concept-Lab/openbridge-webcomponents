@@ -834,7 +834,7 @@ function calculateAtSetpoint(config: ExternalScaleConfig): boolean {
  * to the design-only visual state enum.
  *
  * Priority order:
- * 1. focus (active state OR focused property)
+ * 1. focus (focused property is true - user actively adjusting)
  * 2. equalZero (at setpoint AND setpoint is at zero)
  * 3. equal (at setpoint)
  * 4. notEqual (default)
@@ -844,21 +844,25 @@ function calculateAtSetpoint(config: ExternalScaleConfig): boolean {
  *
  * State mapping:
  * - InstrumentState.inCommand → notEqual/equal/equalZero (based on deadband)
- * - InstrumentState.active → focus (NOTE: 'active' may be renamed to 'focus' in future)
+ * - InstrumentState.active → notEqual/equal/equalZero (based on deadband) with regular colors
  * - InstrumentState.loading → disabled=true (via deriveSetpointDisabled)
  * - InstrumentState.off → disabled=true (via deriveSetpointDisabled)
+ *
+ * Note: `focus` visual state is only triggered by the `focused` property
+ * (user actively adjusting via touch/drag), not by InstrumentState.
+ * The `focused` property will be exposed as a future instrument API state.
  */
 function deriveSetpointVisualState(
   config: ExternalScaleConfig
 ): SetpointVisualState {
   // Priority 1: Focus state
   // - When `focused` property is true (user is actively adjusting)
-  // - When InstrumentState is 'active' (NOTE: 'active' may be renamed to 'focus' in future refactoring)
-  if (config.focused || config.state === InstrumentState.active) {
+  // - BUT only when newSetpoint is not defined (otherwise original should be dimmed)
+  if (config.focused && config.newSetpoint === undefined) {
     return SetpointVisualState.focus;
   }
 
-  // For inCommand state, check deadband-based states
+  // For inCommand and active states, check deadband-based states
   // Check if at setpoint
   const isAt = calculateAtSetpoint(config);
 
@@ -883,9 +887,10 @@ function deriveSetpointVisualState(
  *
  * Priority:
  * 1. Explicit colorMode takes precedence
- * 2. Otherwise, maps config.enhanced to enhanced/regular color palette
+ * 2. InstrumentState.active always uses regular colors
+ * 3. Otherwise, maps config.enhanced to enhanced/regular color palette
  *
- * Note: Disabled state is now handled separately via deriveSetpointDisabled().
+ * Note: Disabled state is handled separately via deriveSetpointDisabled().
  */
 function deriveSetpointColorMode(
   config: ExternalScaleConfig
@@ -893,6 +898,11 @@ function deriveSetpointColorMode(
   // Explicit colorMode takes precedence
   if (config.colorMode !== undefined) {
     return config.colorMode;
+  }
+
+  // Active state always uses regular colors
+  if (config.state === InstrumentState.active) {
+    return SetpointColorMode.regular;
   }
 
   // Fall back to enhanced boolean mapping
