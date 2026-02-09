@@ -6,7 +6,7 @@ import {arrow, ArrowStyle} from './arrow.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {WatchCircleType} from '../watch/watch.js';
-import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
+import {SetpointBundle} from '../../svghelpers/setpoint-bundle.js';
 import type {SetpointColorMode} from '../../svghelpers/setpoint.js';
 import {customElement} from '../../decorator.js';
 
@@ -17,73 +17,40 @@ export enum CompassDirection {
 }
 
 @customElement('obc-heading')
-export class ObcHeading extends SetpointMixin(LitElement, {
-  angularWraparound: true,
-}) {
+export class ObcHeading extends LitElement {
   @property({type: Number}) heading = 0;
   @property({type: Number}) courseOverGround = 0;
 
-  // -- Deprecated prefixed aliases (synced to mixin properties in willUpdate) --
-  /** @deprecated Use `setpoint` instead. Renamed from `headingSetPoint`. */
   @property({type: Number}) headingSetpoint: number | null = null;
-  /** @deprecated Use `newSetpoint` instead. */
   @property({type: Number}) newHeadingSetpoint: number | undefined;
-  /** @deprecated Use `atSetpoint` instead. */
   @property({type: Boolean}) atHeadingSetpoint: boolean = false;
-  /** @deprecated Use `setpointAtZeroDeadband` instead. */
   @property({type: Number}) headingSetpointAtZeroDeadband: number = 0.5;
-  /** @deprecated Use `setpointColorMode` instead. */
   @property({type: String}) headingSetpointColorMode:
     | SetpointColorMode
     | undefined;
-  /** @deprecated Use `disableAutoAtSetpoint` instead. */
   @property({type: Boolean}) disableAutoAtHeadingSetpoint: boolean = false;
-  /** @deprecated Use `autoAtSetpointDeadband` instead. */
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
-  // `touching` is provided by SetpointMixin — no alias needed
+  @property({type: Boolean}) touching: boolean = false;
   @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
   @property({type: String}) direction: CompassDirection =
     CompassDirection.NorthUp;
   @property({type: Boolean}) enhanced: boolean = false;
 
+  private _headingSp = new SetpointBundle({angularWraparound: true});
+
   override willUpdate(changed: PropertyValues): void {
     super.willUpdate(changed);
-    // Sync deprecated prefixed aliases → mixin properties
-    // Only sync if the alias was set and the mixin property was NOT also set,
-    // to avoid the alias's default value overwriting a directly-set mixin prop.
-    if (changed.has('headingSetpoint') && !changed.has('setpoint')) {
-      this.setpoint = this.headingSetpoint ?? undefined;
-    }
-    if (changed.has('newHeadingSetpoint') && !changed.has('newSetpoint')) {
-      this.newSetpoint = this.newHeadingSetpoint;
-    }
-    if (changed.has('atHeadingSetpoint') && !changed.has('atSetpoint')) {
-      this.atSetpoint = this.atHeadingSetpoint;
-    }
-    if (
-      changed.has('headingSetpointAtZeroDeadband') &&
-      !changed.has('setpointAtZeroDeadband')
-    ) {
-      this.setpointAtZeroDeadband = this.headingSetpointAtZeroDeadband;
-    }
-    if (
-      changed.has('headingSetpointColorMode') &&
-      !changed.has('setpointColorMode')
-    ) {
-      this.setpointColorMode = this.headingSetpointColorMode;
-    }
-    if (
-      changed.has('disableAutoAtHeadingSetpoint') &&
-      !changed.has('disableAutoAtSetpoint')
-    ) {
-      this.disableAutoAtSetpoint = this.disableAutoAtHeadingSetpoint;
-    }
-    if (
-      changed.has('autoAtHeadingSetpointDeadband') &&
-      !changed.has('autoAtSetpointDeadband')
-    ) {
-      this.autoAtSetpointDeadband = this.autoAtHeadingSetpointDeadband;
-    }
+    // Sync public heading-prefixed props → bundle
+    this._headingSp.sync({
+      setpoint: this.headingSetpoint ?? undefined,
+      newSetpoint: this.newHeadingSetpoint,
+      atSetpoint: this.atHeadingSetpoint,
+      touching: this.touching,
+      disableAutoAtSetpoint: this.disableAutoAtHeadingSetpoint,
+      autoAtSetpointDeadband: this.autoAtHeadingSetpointDeadband,
+      setpointAtZeroDeadband: this.headingSetpointAtZeroDeadband,
+      setpointColorMode: this.headingSetpointColorMode,
+    });
   }
 
   // @ts-expect-error TS6133: The controller ensures that the render
@@ -148,11 +115,11 @@ export class ObcHeading extends SetpointMixin(LitElement, {
           .watchCircleType=${WatchCircleType.single}
           .labelFrameEnabled=${true}
           .crosshairEnabled=${true}
-          .angleSetpoint=${this.setpoint}
-          .newAngleSetpoint=${this.newSetpoint}
-          .atAngleSetpoint=${this.computeAtSetpoint(this.heading)}
-          .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
-          .colorMode=${this.setpointColorMode}
+          .angleSetpoint=${this.headingSetpoint ?? undefined}
+          .newAngleSetpoint=${this.newHeadingSetpoint}
+          .atAngleSetpoint=${this._headingSp.computeAtSetpoint(this.heading)}
+          .angleSetpointAtZeroDeadband=${this.headingSetpointAtZeroDeadband}
+          .colorMode=${this.headingSetpointColorMode}
           .rotation=${this.getRotation()}
         >
         </obc-watch>
