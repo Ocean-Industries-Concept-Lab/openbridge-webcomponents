@@ -17,7 +17,7 @@ export default svg`<svg width="160" height="160" viewBox="0 0 160 160" fill="non
 <path d="M99.9994 80C99.9994 80 100.294 48 88 48C75.7057 48 76.0006 80 76.0006 80" vector-effect="non-scaling-stroke" stroke="var(--instrument-tick-mark-secondary-color)"/>
 <path d="M132 126C132 124.895 131.105 124 130 124H10V128H130C131.105 128 132 127.105 132 126Z" fill="var(--instrument-tick-mark-secondary-color)"/>
 <path d="M132 122C132 120.895 131.105 120 130 120H10V126C10 127.105 10.8954 128 12 128H130C131.105 128 132 127.105 132 126V122Z" fill="var(--instrument-tick-mark-secondary-color)"/>
-<mask id="path-17-inside-1_25406_62344" fill="var(--instrument-frame-primary-color)">
+<mask id="path-17-inside-1_25406_62344" fill="white">
 <path d="M88 48C84.3219 48 81.7715 50.8644 80.002 54.8789V55H96.002V54.8887C94.2323 50.8692 91.681 48 88 48Z"/>
 </mask>
 <path d="M88 48C84.3219 48 81.7715 50.8644 80.002 54.8789V55H96.002V54.8887C94.2323 50.8692 91.681 48 88 48Z" fill="var(--instrument-frame-primary-color)"/>
