@@ -1,6 +1,7 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {styleMap} from 'lit/directives/style-map.js';
 import componentStyle from './poi.css?inline';
 import '../poi-button/poi-button.js';
 import {
@@ -288,11 +289,11 @@ export class ObcPoi extends LitElement {
 
     const wrapperStyle =
       this.buttonOffsetX !== 0
-        ? `--obc-poi-target-top-offset-x: ${this.buttonOffsetX}px;`
-        : '';
+        ? {'--obc-poi-target-top-offset-x': `${this.buttonOffsetX}px`}
+        : {};
 
     return html`
-      <div class=${classMap(classes)} style=${wrapperStyle}>
+      <div class=${classMap(classes)} style=${styleMap(wrapperStyle)}>
         ${this.renderPoiButton()} ${this.renderLine()}
         ${this.renderInlinePointer()} ${this.renderOutsideArrow()}
       </div>

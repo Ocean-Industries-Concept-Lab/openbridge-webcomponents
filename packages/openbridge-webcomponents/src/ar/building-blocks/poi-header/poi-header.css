@@ -52,6 +52,18 @@
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
+.wrapper.type-id.single-char-content:not(.has-indicator) {
+  width: var(--maneuvering-components-poi-id-tag-min-size, 16px);
+  min-width: var(--maneuvering-components-poi-id-tag-min-size, 16px);
+  height: var(--maneuvering-components-poi-id-tag-min-size, 16px);
+  padding: 0;
+}
+
+.wrapper.type-data.single-char-content .id-pill {
+  width: var(--maneuvering-components-poi-id-tag-min-size, 16px);
+  padding: 0;
+}
+
 .id-only-text {
   @mixin font-label-active;
   text-align: center;

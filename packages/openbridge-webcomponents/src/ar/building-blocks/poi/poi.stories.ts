@@ -7,6 +7,11 @@ import {
   ObcPoiPointerState,
   ObcPoiPointerType,
 } from '../poi-pointer/poi-pointer.js';
+import {
+  ObcPoiHeaderSize,
+  ObcPoiHeaderState,
+  ObcPoiHeaderType,
+} from '../poi-header/poi-header.js';
 import '../../../icons/icon-placeholder.js';
 import '../../../icons/icon-collision-avoidance-overtaking.js';
 
@@ -133,6 +138,9 @@ const meta: Meta<ObcPoi> = {
           .hasRelation=${args.hasRelation}
         >
           <obi-placeholder></obi-placeholder>
+          ${args.header?.hasIndicator
+            ? html`<obi-placeholder slot="id-label"></obi-placeholder>`
+            : html``}
           <obi-collision-avoidance-overtaking
             slot="relation"
           ></obi-collision-avoidance-overtaking>
@@ -208,6 +216,12 @@ export const WithHeader: Story = {
   args: {
     type: ObcPoiType.Line,
     value: ObcPoiValue.Unchecked,
-    header: {content: '1'},
+    header: {
+      content: '1',
+      type: ObcPoiHeaderType.Id,
+      state: ObcPoiHeaderState.Selected,
+      size: ObcPoiHeaderSize.Regular,
+      hasIndicator: true,
+    },
   },
 };

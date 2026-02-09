@@ -26,6 +26,8 @@ export enum ObcPoiHeaderType {
  *
  * The component supports ID-only and Data variants, with Enabled/Selected and
  * alert states from the design system.
+ *
+ * @slot indicator - Optional custom indicator icon. Falls back to built-in bars.
  */
 @customElement('obc-poi-header')
 export class ObcPoiHeader extends LitElement {
@@ -52,15 +54,20 @@ export class ObcPoiHeader extends LitElement {
     return this.state === ObcPoiHeaderState.Enabled;
   }
 
+  private get hasSingleCharacterContent(): boolean {
+    return this.content.trim().length === 1;
+  }
+
   private renderIndicator() {
     const withFrame = this.isDataType && this.isEnabled;
-    const indicator = html`
+    const defaultIndicator = html`
       <span class="indicator" aria-hidden="true" data-node-id="10534:68353">
         <span class="bar left" data-node-id="10534:68366"></span>
         <span class="bar middle" data-node-id="10534:68365"></span>
         <span class="bar right" data-node-id="10534:68367"></span>
       </span>
     `;
+    const indicator = html`<slot name="indicator">${defaultIndicator}</slot>`;
 
     if (!withFrame) {
       return indicator;
@@ -92,6 +99,7 @@ export class ObcPoiHeader extends LitElement {
           [`size-${this.size}`]: true,
           [`state-${this.state}`]: true,
           [`type-${this.type}`]: true,
+          'single-char-content': this.hasSingleCharacterContent,
           'has-indicator': this.hasIndicator,
         })}
         data-node-id="10389:51689"

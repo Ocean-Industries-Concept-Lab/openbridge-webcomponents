@@ -1,6 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
   ObcPoiButton,
+  ObcPoiButtonHeader,
   ObcPoiButtonType,
   PoiButtonVisualState,
 } from './poi-button.js';
@@ -10,6 +11,7 @@ import '../../../icons/icon-collision-avoidance-overtaking.js';
 import {html, TemplateResult} from 'lit';
 import {ObcArAlertType} from '../../types.js';
 import {crossDecorator} from '../../../storybook-util.js';
+import {ObcPoiHeaderState, ObcPoiHeaderType} from '../poi-header/poi-header.js';
 
 const overlapToggleLoops = new Map<string, number>();
 
@@ -121,7 +123,7 @@ type MatrixButtonConfig = {
   value?: PoiButtonVisualState;
   selected?: boolean;
   alertType?: ObcArAlertType;
-  header?: {content: string} | null;
+  header?: ObcPoiButtonHeader | null;
   data?: Array<{value: string; label: string; unit: string}>;
   hasRelation?: boolean;
   idLabel?: boolean;
@@ -313,7 +315,12 @@ export const AllData: Story = {
               {value: '20', label: 'Lab 2', unit: 'Unit 2'},
             ],
             hasRelation: true,
-            header: {content: '1'},
+            header: {
+              content: '1',
+              type: ObcPoiHeaderType.Id,
+              state: ObcPoiHeaderState.Selected,
+              hasIndicator: true,
+            },
             idLabel: true,
           })}
           ${renderMatrixButton({

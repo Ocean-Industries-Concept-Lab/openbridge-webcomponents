@@ -3,13 +3,23 @@ import {property} from 'lit/decorators.js';
 import compentStyle from './poi-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {ObcArAlertType} from '../../types.js';
-import {selectionFrame} from './selection-frame.js';
 import {customElement} from '../../../decorator.js';
 import {
   ObcPoiObjectState,
   ObcPoiObjectStyle,
   ObcPoiObjectType,
 } from '../poi-object/poi-object.js';
+import {
+  ObcPoiSelectionFrameState,
+  ObcPoiSelectionFrameType,
+} from '../poi-selection-frame/poi-selection-frame.js';
+import {
+  ObcPoiHeaderSize,
+  ObcPoiHeaderState,
+  ObcPoiHeaderType,
+} from '../poi-header/poi-header.js';
+import '../poi-selection-frame/poi-selection-frame.js';
+import '../poi-header/poi-header.js';
 
 export enum ObcPoiButtonType {
   Button = 'button',
@@ -65,9 +75,10 @@ export interface ObcPoiButtonDataItem {
 
 export interface ObcPoiButtonHeader {
   content?: string;
-  size?: string;
-  state?: string;
-  type?: string;
+  label?: string;
+  size?: ObcPoiHeaderSize;
+  state?: ObcPoiHeaderState;
+  type?: ObcPoiHeaderType;
   hasIndicator?: boolean;
 }
 
@@ -93,6 +104,53 @@ export class ObcPoiButton extends LitElement {
   get hasHeader(): boolean {
     const content = this.header?.content;
     return typeof content === 'string' && content.trim().length > 0;
+  }
+
+  protected get resolvedHeaderState(): ObcPoiHeaderState {
+    if (this.header?.state) {
+      return this.header.state;
+    }
+
+    if (this.alertType === ObcArAlertType.Alarm) {
+      return ObcPoiHeaderState.Alarm;
+    }
+    if (this.alertType === ObcArAlertType.Warning) {
+      return ObcPoiHeaderState.Warning;
+    }
+    if (this.alertType === ObcArAlertType.Caution) {
+      return ObcPoiHeaderState.Caution;
+    }
+
+    return ObcPoiHeaderState.Selected;
+  }
+
+  protected get resolvedHeaderType(): ObcPoiHeaderType {
+    return this.header?.type ?? ObcPoiHeaderType.Id;
+  }
+
+  protected get resolvedHeaderSize(): ObcPoiHeaderSize {
+    return this.header?.size ?? ObcPoiHeaderSize.Regular;
+  }
+
+  protected renderHeader() {
+    if (!this.hasHeader) {
+      return nothing;
+    }
+
+    return html`
+      <div class="id-label">
+        <obc-poi-header
+          .content=${this.header?.content ?? ''}
+          .label=${this.header?.label ?? 'Data'}
+          .size=${this.resolvedHeaderSize}
+          .state=${this.resolvedHeaderState}
+          .type=${this.resolvedHeaderType}
+          .hasIndicator=${this.header?.hasIndicator ?? false}
+        >
+          <slot name="id-label" slot="indicator" part="id-label"></slot>
+        </obc-poi-header>
+      </div>
+    `;
   }
 
   protected get poiObjectType(): ObcPoiObjectType {
@@ -164,19 +222,9 @@ export class ObcPoiButton extends LitElement {
           expanded: this.inExpandedGroup,
         })}
       >
-        ${this.hasHeader
-          ? html`<div class="id-label">
-              ${this.header?.content ?? ''}
-              <slot
-                name="id-label"
-                part="id-label"
-                class="id-label-content"
-              ></slot>
-            </div>`
-          : nothing}
+        ${this.renderHeader()}
         <div class="button-wrapper">
-          ${selectionFrame(this.selected, this.alertType, this.type)}
-          ${this.renderPoiObject()}
+          ${this.renderSelectionFrame()} ${this.renderPoiObject()}
           <div class="alert-ring"></div>
         </div>
       </button>
@@ -197,16 +245,7 @@ export class ObcPoiButton extends LitElement {
           expanded: this.inExpandedGroup,
         })}
       >
-        ${this.hasHeader
-          ? html`<div class="id-label">
-              ${this.header?.content ?? ''}
-              <slot
-                name="id-label"
-                part="id-label"
-                class="id-label-content"
-              ></slot>
-            </div>`
-          : nothing}
+        ${this.renderHeader()}
         <div class="data-wrapper">
           ${this.data.map(
             (item) =>
@@ -218,8 +257,7 @@ export class ObcPoiButton extends LitElement {
           )}
         </div>
         <div class="button-wrapper">
-          ${selectionFrame(this.selected, this.alertType, this.type)}
-          ${this.renderPoiObject()}
+          ${this.renderSelectionFrame()} ${this.renderPoiObject()}
         </div>
         ${this.hasRelation
           ? html`<div class="relation-wrapper" part="relation-wrapper">
@@ -228,6 +266,32 @@ export class ObcPoiButton extends LitElement {
           : nothing}
         <div class="alert-ring"></div>
       </button>
+    `;
+  }
+
+  protected get selectionFrameType(): ObcPoiSelectionFrameType {
+    return this.type === ObcPoiButtonType.Enhanced
+      ? ObcPoiSelectionFrameType.Enhanced
+      : ObcPoiSelectionFrameType.Button;
+  }
+
+  protected get selectionFrameState(): ObcPoiSelectionFrameState {
+    return this.alertType === ObcArAlertType.None
+      ? ObcPoiSelectionFrameState.Regular
+      : ObcPoiSelectionFrameState.Alert;
+  }
+
+  protected renderSelectionFrame() {
+    if (!this.selected) {
+      return nothing;
+    }
+
+    return html`
+      <obc-poi-selection-frame
+        class="selection-frame"
+        .type=${this.selectionFrameType}
+        .state=${this.selectionFrameState}
+      ></obc-poi-selection-frame>
     `;
   }
 

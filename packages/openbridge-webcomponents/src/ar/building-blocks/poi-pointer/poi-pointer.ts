@@ -3,9 +3,11 @@ import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import componentStyle from './poi-pointer.css?inline';
 import {customElement} from '../../../decorator.js';
-import {selectionFrame} from '../poi-button/selection-frame.js';
-import {ObcArAlertType} from '../../types.js';
-import {ObcPoiButtonType} from '../poi-button/poi-button.js';
+import {
+  ObcPoiSelectionFrameState,
+  ObcPoiSelectionFrameType,
+} from '../poi-selection-frame/poi-selection-frame.js';
+import '../poi-selection-frame/poi-selection-frame.js';
 
 export enum ObcPoiPointerType {
   Point = 'point',
@@ -122,7 +124,11 @@ export class ObcPoiPointer extends LitElement {
 
     return html`
       <div class="square-frame" aria-hidden="true">
-        ${selectionFrame(true, ObcArAlertType.None, ObcPoiButtonType.Button)}
+        <obc-poi-selection-frame
+          class="selection-frame"
+          .type=${ObcPoiSelectionFrameType.Button}
+          .state=${ObcPoiSelectionFrameState.Regular}
+        ></obc-poi-selection-frame>
       </div>
     `;
   }
