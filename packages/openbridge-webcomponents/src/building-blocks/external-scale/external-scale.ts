@@ -2281,8 +2281,11 @@ function renderSingleSetpoint(
     Math.abs(setpointValue) < config.setpointAtZeroDeadband;
 
   // Main axis position (where the marker sits along the scale)
+  // Always use valueToMainAxis — even for zero-snap, since coordinate 0
+  // only equals value 0 for symmetric bipolar scales (e.g. -100..+100).
+  // For non-symmetric scales (e.g. 0..100), value 0 maps to a non-zero coordinate.
   const mainAxisPos = setpointAtZero
-    ? 0
+    ? valueToMainAxis(config, 0)
     : valueToMainAxis(config, setpointValue);
 
   // Perpendicular axis position (distance from chart edge)

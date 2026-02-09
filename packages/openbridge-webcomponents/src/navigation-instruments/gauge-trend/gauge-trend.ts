@@ -444,7 +444,7 @@ export class ObcGaugeTrend extends ObcChartLineBase {
   /**
    * Deadband used when the setpoint is exactly zero.
    */
-  @property({type: Number}) setpointAtZeroDeadband?: number;
+  @property({type: Number}) setpointAtZeroDeadband: number = 0.5;
 
   /**
    * Color mode for the setpoint marker.
