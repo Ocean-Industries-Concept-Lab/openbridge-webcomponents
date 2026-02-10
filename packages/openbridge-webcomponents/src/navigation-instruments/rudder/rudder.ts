@@ -212,6 +212,7 @@ export class ObcRudder extends SetpointMixin(LitElement) {
     return html`
       <div class="container">
         <obc-watch
+          .touching=${this.touching}
           .clipTop=${40}
           .areas=${[
             {

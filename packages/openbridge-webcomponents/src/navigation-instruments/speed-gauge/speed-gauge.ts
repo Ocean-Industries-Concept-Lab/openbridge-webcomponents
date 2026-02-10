@@ -113,6 +113,7 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
     return html`
       <div class="container">
         <obc-watch
+          .touching=${this.touching}
           .angleSetpoint=${setpointAngle}
           .newAngleSetpoint=${this.newSetpoint !== undefined
             ? this.getAngle(this.newSetpoint)

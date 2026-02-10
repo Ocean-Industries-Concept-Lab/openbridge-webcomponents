@@ -580,6 +580,18 @@ export interface RadialSetpointConfig {
    * The original setpoint marker will be dimmed while this is active.
    */
   newAngleSetpoint?: number;
+
+  /**
+   * Whether the user is physically interacting with the control (e.g. touching a lever).
+   * When true (and `newAngleSetpoint` is undefined), the single setpoint marker
+   * renders in focus visual state.
+   *
+   * This mirrors the linear path behavior in `deriveSetpointVisualState()` in
+   * external-scale.ts, ensuring consistent focus rendering across both radial
+   * and linear instruments.
+   * @default false
+   */
+  touching?: boolean;
 }
 
 /**
@@ -609,15 +621,17 @@ export interface RadialSetpointDerivedConfig {
  *
  * | InstrumentState | atSetpoint | atZero | newAngleSetpoint | → visualState | → colorMode | → disabled |
  * |-----------------|------------|--------|------------------|---------------|-------------|------------|
- * | inCommand       | false      | *      | undefined        | notEqual      | enhanced    | false      |
- * | inCommand       | true       | false  | undefined        | equal         | enhanced    | false      |
- * | inCommand       | true       | true   | undefined        | equalZero     | enhanced    | false      |
- * | inCommand       | *          | *      | defined          | (original dimmed) | enhanced | false     |
- * | active          | false      | *      | undefined        | notEqual      | regular     | false      |
- * | active          | true       | false  | undefined        | equal         | regular     | false      |
- * | active          | true       | true   | undefined        | equalZero     | regular     | false      |
- * | loading         | *          | *      | *                | notEqual      | regular     | true       |
- * | off             | *          | *      | *                | notEqual      | regular     | true       |
+ * | inCommand       | false      | *      | undefined        | false    | notEqual      | enhanced    | false      |
+ * | inCommand       | false      | *      | undefined        | true     | focus         | enhanced    | false      |
+ * | inCommand       | true       | false  | undefined        | false    | equal         | enhanced    | false      |
+ * | inCommand       | true       | true   | undefined        | false    | equalZero     | enhanced    | false      |
+ * | inCommand       | *          | *      | defined          | *        | (original dimmed) | enhanced | false     |
+ * | active          | false      | *      | undefined        | false    | notEqual      | regular     | false      |
+ * | active          | false      | *      | undefined        | true     | focus         | regular     | false      |
+ * | active          | true       | false  | undefined        | false    | equal         | regular     | false      |
+ * | active          | true       | true   | undefined        | false    | equalZero     | regular     | false      |
+ * | loading         | *          | *      | *                | *        | notEqual      | regular     | true       |
+ * | off             | *          | *      | *                | *        | notEqual      | regular     | true       |
  *
  * Note: When `newAngleSetpoint` is defined, the original setpoint marker is dimmed
  * and a second marker is rendered in focus state at the new position.
@@ -634,6 +648,7 @@ export function deriveRadialSetpointConfig(
     angleSetpoint,
     setpointAtZeroDeadband = 0.5,
     newAngleSetpoint,
+    touching = false,
   } = config;
 
   const hasNewSetpoint = newAngleSetpoint !== undefined;
@@ -656,6 +671,18 @@ export function deriveRadialSetpointConfig(
       ? SetpointColorMode.enhanced
       : SetpointColorMode.regular;
 
+  // Priority 1: Focus state
+  // When touching=true and no newAngleSetpoint is defined, the single marker
+  // shows in focus visual state (matching linear path behavior)
+  if (touching && !hasNewSetpoint) {
+    return {
+      visualState: SetpointVisualState.focus,
+      colorMode,
+      disabled: false,
+      hasNewSetpoint,
+    };
+  }
+
   // Auto-derive atZero from angleSetpoint and deadband
   const atZero =
     angleSetpoint !== undefined &&
@@ -666,7 +693,7 @@ export function deriveRadialSetpointConfig(
   // - atSetpoint triggers equal visual state (80% size)
   // - otherwise notEqual (full size)
 
-  // Priority 1: At setpoint AND at zero (equalZero state - 80% size)
+  // Priority 2: At setpoint AND at zero (equalZero state - 80% size)
   if (atSetpoint && atZero) {
     return {
       visualState: SetpointVisualState.equalZero,
@@ -676,7 +703,7 @@ export function deriveRadialSetpointConfig(
     };
   }
 
-  // Priority 2: At setpoint (equal state - 80% size)
+  // Priority 3: At setpoint (equal state - 80% size)
   if (atSetpoint) {
     return {
       visualState: SetpointVisualState.equal,

@@ -194,6 +194,7 @@ export class ObcAzimuthThruster extends LitElement {
     return html`
       <div class="container">
         <obc-watch
+          .touching=${this.touching}
           .tickmarks=${tickmarks}
           .state=${this.state}
           .angleSetpoint=${this.angleSetpoint}

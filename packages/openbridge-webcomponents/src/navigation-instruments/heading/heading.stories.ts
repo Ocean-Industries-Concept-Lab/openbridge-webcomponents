@@ -22,6 +22,7 @@ const meta: Meta<typeof ObcHeading> = {
     ],
     headingSetpoint: 311,
     direction: CompassDirection.NorthUp,
+    touching: false,
   },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
@@ -32,6 +33,7 @@ const meta: Meta<typeof ObcHeading> = {
       control: {type: 'select'},
       options: Object.values(CompassDirection),
     },
+    touching: {control: 'boolean'},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcHeading>;

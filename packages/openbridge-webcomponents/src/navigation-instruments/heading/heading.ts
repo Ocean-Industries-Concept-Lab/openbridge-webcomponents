@@ -108,6 +108,7 @@ export class ObcHeading extends LitElement {
     return html`
       <div class="container">
         <obc-watch
+          .touching=${this.touching}
           .padding=${padding}
           .advices=${this.angleAdviceRaw}
           .tickmarks=${tickmarks}
