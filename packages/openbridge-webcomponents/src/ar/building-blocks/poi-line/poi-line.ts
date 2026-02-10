@@ -40,7 +40,7 @@ export class ObcPoiLine extends LitElement {
       <div
         class="offset-wrapper"
         style="--obc-poi-line-transition-duration: ${this.animatePosition
-          ? '0.15s'
+          ? '0.1s'
           : '0s'};"
       >
         <div

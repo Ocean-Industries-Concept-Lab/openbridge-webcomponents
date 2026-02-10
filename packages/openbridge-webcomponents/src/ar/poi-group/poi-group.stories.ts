@@ -63,14 +63,12 @@ const meta: Meta<PoiGroupStoryArgs> = {
           >
             <obc-poi-data
               id="target-3"
-              .header=${{content: '3'}}
               .x=${300}
               .anchorY=${240}
               .y=${240}
             ></obc-poi-data>
             <obc-poi-data
               id="target-1"
-              .header=${{content: '1'}}
               .x=${320}
               .anchorY=${240}
               .y=${240}
@@ -78,7 +76,6 @@ const meta: Meta<PoiGroupStoryArgs> = {
             ></obc-poi-data>
             <obc-poi-data
               id="target-2"
-              .header=${{content: '2'}}
               .x=${340}
               .anchorY=${240}
               .y=${240}
@@ -86,7 +83,6 @@ const meta: Meta<PoiGroupStoryArgs> = {
           </obc-poi-group>
           <obc-poi-data
             id="outside"
-            .header=${{content: '4'}}
             .x=${200}
             .anchorY=${240}
             .y=${240}
@@ -239,7 +235,6 @@ export const Expanded: Story = {
           >
             <obc-poi-data
               id="target-3"
-              .header=${{content: '3'}}
               .x=${300}
               .anchorY=${240}
               .y=${260}
@@ -247,7 +242,6 @@ export const Expanded: Story = {
             ></obc-poi-data>
             <obc-poi-data
               id="target-1"
-              .header=${{content: '1'}}
               .x=${320}
               .anchorY=${240}
               .y=${100}
@@ -256,7 +250,6 @@ export const Expanded: Story = {
             ></obc-poi-data>
             <obc-poi-data
               id="target-2"
-              .header=${{content: '2'}}
               .x=${340}
               .anchorY=${240}
               .y=${100}
@@ -265,7 +258,6 @@ export const Expanded: Story = {
           </obc-poi-group>
           <obc-poi-data
             id="outside"
-            .header=${{content: '4'}}
             .x=${200}
             .anchorY=${240}
             .y=${100}
@@ -415,21 +407,18 @@ export const InternalGroupSwapping: Story = {
           >
             <obc-poi-data
               id="swap-a"
-              .header=${{content: '1'}}
               .x=${300}
               .anchorY=${240}
               .y=${240}
             ></obc-poi-data>
             <obc-poi-data
               id="swap-b"
-              .header=${{content: '2'}}
               .x=${320}
               .anchorY=${240}
               .y=${240}
             ></obc-poi-data>
             <obc-poi-data
               id="swap-c"
-              .header=${{content: '3'}}
               .x=${340}
               .anchorY=${240}
               .y=${240}

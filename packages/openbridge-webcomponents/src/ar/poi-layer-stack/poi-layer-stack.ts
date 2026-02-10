@@ -9,7 +9,7 @@ import {ObcPoiData, PoiDataValue} from '../poi-data/poi-data.js';
 const SUPPORTS_TRANSLATE =
   typeof document !== 'undefined' &&
   'translate' in document.createElement('div').style;
-const JUMP_DURATION_MS = 240;
+const JUMP_DURATION_MS = 100;
 const JUMP_BEZIER = [0.2, 0, 0, 1] as const;
 
 export enum PoiLayerSelectionMode {

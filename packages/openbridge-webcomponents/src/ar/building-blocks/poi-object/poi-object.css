@@ -49,8 +49,8 @@
   --obc-poi-icon-size-overlap: var(
     --maneuvering-components-poi-button-icon-size-overlap
   );
-  --obc-poi-size-transition-duration: var(--obc-poi-transition-duration, 0.3s);
-  --obc-poi-color-transition-duration: var(--obc-poi-transition-duration, 0.3s);
+  --obc-poi-size-transition-duration: var(--obc-poi-transition-duration, 0.1s);
+  --obc-poi-color-transition-duration: var(--obc-poi-transition-duration, 0.1s);
 }
 
 .wrapper.interactive {
@@ -70,11 +70,11 @@
   bottom: var(--obc-poi-bottom-offset);
   box-shadow: var(--obc-poi-object-shadow, none);
   transition:
-    width var(--obc-poi-size-transition-duration, 0.3s) ease-out,
-    height var(--obc-poi-size-transition-duration, 0.3s) ease-out,
-    background-color var(--obc-poi-color-transition-duration, 0.3s) ease-out,
-    border-color var(--obc-poi-color-transition-duration, 0.3s) ease-out,
-    bottom var(--obc-poi-size-transition-duration, 0.3s) ease-out;
+    width var(--obc-poi-size-transition-duration, 0.1s) ease-out,
+    height var(--obc-poi-size-transition-duration, 0.1s) ease-out,
+    background-color var(--obc-poi-color-transition-duration, 0.1s) ease-out,
+    border-color var(--obc-poi-color-transition-duration, 0.1s) ease-out,
+    bottom var(--obc-poi-size-transition-duration, 0.1s) ease-out;
 }
 
 .background-frame {
@@ -227,8 +227,8 @@
   transform: scale(var(--obc-poi-icon-scale, 1));
   transform-origin: center;
   transition:
-    opacity var(--obc-poi-opacity-transition-duration, 0.2s) ease-out,
-    transform var(--obc-poi-transition-duration, 0.3s) ease-out;
+    opacity var(--obc-poi-opacity-transition-duration, 0.1s) ease-out,
+    transform var(--obc-poi-transition-duration, 0.1s) ease-out;
 }
 
 /* Standard icon sizes */
@@ -290,8 +290,8 @@
 /* Interactive hover/active states on background-frame */
 .wrapper.interactive .background-frame {
   transition:
-    background-color var(--obc-poi-color-transition-duration, 0.15s) ease,
-    border-color var(--obc-poi-color-transition-duration, 0.15s) ease;
+    background-color var(--obc-poi-color-transition-duration, 0.1s) ease,
+    border-color var(--obc-poi-color-transition-duration, 0.1s) ease;
 }
 
 /* Regular type (non-indicator) - uses flat styles */

@@ -10,13 +10,13 @@
   --obc-poi-label-opacity: 1;
   --obc-poi-label-visibility: visible;
   --obc-poi-overlap-pointer-events: auto;
-  --obc-poi-transition-duration: 0.3s;
-  --obc-poi-opacity-transition-duration: 0.2s;
+  --obc-poi-transition-duration: 0.1s;
+  --obc-poi-opacity-transition-duration: 0.1s;
 }
 
 .wrapper {
   transform: translate(-50%, -100%);
-  --obc-poi-color-transition-duration: 0s;
+  --obc-poi-color-transition-duration: 0.1s;
   padding: 0;
   position: relative;
   width: fit-content;
@@ -200,9 +200,9 @@
 
 .wrapper:not(.has-data) .poi-object::part(background-frame) {
   transition:
-    width var(--obc-poi-size-transition-duration, 0.3s) ease-out,
-    height var(--obc-poi-size-transition-duration, 0.3s) ease-out,
-    bottom var(--obc-poi-size-transition-duration, 0.3s) ease-out;
+    width var(--obc-poi-size-transition-duration, 0.1s) ease-out,
+    height var(--obc-poi-size-transition-duration, 0.1s) ease-out,
+    bottom var(--obc-poi-size-transition-duration, 0.1s) ease-out;
 }
 
 /* Explicit interaction fallback for POI frame. Keeps behavior even if mixin output changes. */

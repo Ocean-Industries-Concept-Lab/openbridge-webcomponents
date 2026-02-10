@@ -1,7 +1,6 @@
 import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
 import {property, queryAssignedElements, state} from 'lit/decorators.js';
 import componentStyle from './poi-group.css?inline';
-import {classMap} from 'lit/directives/class-map.js';
 import {ObcPoiData, PoiDataValue} from '../poi-data/poi-data.js';
 import {ObcPoiButtonType} from '../building-blocks/poi-button/poi-button.js';
 import {customElement} from '../../decorator.js';
@@ -36,7 +35,6 @@ export class ObcPoiGroup extends LitElement {
   @property({type: Boolean}) expand = false;
   @property({type: Boolean, reflect: true}) collapsing = false;
   @property({type: String}) positionVertical = '0px';
-  @property({type: Boolean}) useTopOffset = false;
   @property({type: Boolean, attribute: 'internal-swapping'})
   internalSwapping = false;
   @state() private positionLeft = '0px';
@@ -47,8 +45,6 @@ export class ObcPoiGroup extends LitElement {
   _children!: Array<HTMLElement>;
 
   private boundUpdatePosition: () => void;
-  private expandedObserver?: MutationObserver;
-  private expandedRaf = 0;
   private topOffsetAnimationManager = new AnimationManager();
   private topOffsetProgress = 0;
   private slotChangeRaf = 0;
@@ -63,6 +59,7 @@ export class ObcPoiGroup extends LitElement {
   > = new Map();
   private lockedExpandedCenter: number | null = null;
   private collapseDeltas: Map<ObcPoiData, number> = new Map();
+  private topOffsetAnimationTarget: 0 | 1 | null = null;
 
   constructor() {
     super();
@@ -82,9 +79,6 @@ export class ObcPoiGroup extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
-    if (!this.hasAttribute('use-top-offset')) {
-      this.useTopOffset = true;
-    }
     window.addEventListener('resize', this.boundUpdatePosition);
   }
 
@@ -108,7 +102,23 @@ export class ObcPoiGroup extends LitElement {
   override updated(changedProperties: PropertyValues) {
     super.updated(changedProperties);
     if (changedProperties.has('expand')) {
+      if (this.collapsing && this.expand) {
+        this.expand = false;
+        return;
+      }
       this.setExpandedChildren(this.expand);
+    }
+  }
+
+  override willUpdate(changedProperties: PropertyValues) {
+    super.willUpdate(changedProperties);
+    // Prevent a one-frame wrapper flash when collapse starts.
+    if (
+      changedProperties.has('expand') &&
+      !this.expand &&
+      this.topOffsetProgress > 0
+    ) {
+      this.wrapperVisible = false;
     }
   }
 
@@ -118,44 +128,21 @@ export class ObcPoiGroup extends LitElement {
   }
 
   override render() {
-    if (this.useTopOffset) {
-      return html`
-        ${this.expand
-          ? html`<div @click=${this.onBackdropClick} class="backdrop"></div>`
-          : null}
-        <slot></slot>
-        ${!this.expand && this.wrapperVisible
-          ? html`<button
-              @click=${this.onClick}
-              class=${classMap({
-                wrapper: true,
-              })}
-              style="left: ${this.positionLeft}; top: ${this
-                .positionVertical}; right: ${this.positionRight};"
-            >
-              <div class="visible-wrapper"></div>
-            </button>`
-          : null}
-      `;
-    }
-
     return html`
       ${this.expand
         ? html`<div @click=${this.onBackdropClick} class="backdrop"></div>`
-        : html`<slot></slot>`}
-      <button
-        @click=${this.onClick}
-        class=${classMap({
-          wrapper: true,
-          expand: this.expand,
-        })}
-        style="left: ${this.positionLeft}; top: ${this
-          .positionVertical}; right: ${this.positionRight};"
-      >
-        ${this.expand
-          ? html`<slot></slot>`
-          : html`<div class="visible-wrapper"></div>`}
-      </button>
+        : null}
+      <slot></slot>
+      ${!this.expand && this.wrapperVisible
+        ? html`<button
+            @click=${this.onClick}
+            class="wrapper"
+            style="left: ${this.positionLeft}; top: ${this
+              .positionVertical}; right: ${this.positionRight};"
+          >
+            <div class="visible-wrapper"></div>
+          </button>`
+        : null}
     `;
   }
 
@@ -205,12 +192,6 @@ export class ObcPoiGroup extends LitElement {
     this.expand = true;
   }
 
-  private expandOffset: Map<ObcPoiData, number> = new Map();
-
-  getExpandedChildOffset(child: ObcPoiData): number | null {
-    return this.expandOffset.get(child) ?? null;
-  }
-
   setExpandedChildren(expand: boolean): void {
     this.dispatchEvent(
       new CustomEvent('expand', {
@@ -219,94 +200,6 @@ export class ObcPoiGroup extends LitElement {
         composed: true,
       })
     );
-
-    if (this.useTopOffset) {
-      this.setExpandedChildrenTopOffset(expand);
-      return;
-    }
-
-    const oldPosition = new Map<ObcPoiData, number>();
-    if (expand) {
-      this._children.forEach((child) => {
-        if (child instanceof ObcPoiData) {
-          const boundingBox = child.getBoundingClientRect();
-          oldPosition.set(child, boundingBox.left);
-        }
-      });
-    }
-
-    const frontChild = expand ? null : this.getFrontChild();
-    if (!expand && frontChild) {
-      this.appendChild(frontChild);
-    }
-    if (expand) {
-      if (this.internalSwapping) {
-        const ordered = this._children
-          .filter((child): child is ObcPoiData => child instanceof ObcPoiData)
-          .map((child) => ({
-            child,
-            left: oldPosition.get(child) ?? child.getBoundingClientRect().left,
-          }))
-          .sort((a, b) => a.left - b.left)
-          .map((item) => item.child);
-        ordered.forEach((child) => this.appendChild(child));
-      }
-    }
-    this._children.forEach((child) => {
-      child.style.position = expand ? 'static' : 'absolute';
-      if (this.expand) {
-        const touchTarget = `${this.getTouchTargetSize()}px`;
-        child.style.width = touchTarget;
-        child.style.minWidth = touchTarget;
-        child.style.height = touchTarget;
-      } else {
-        child.style.width = 'unset';
-        child.style.minWidth = 'unset';
-        child.style.height = 'unset';
-      }
-      if (child instanceof ObcPoiData) {
-        const isOverlap = !expand && child !== frontChild;
-        child.value = isOverlap
-          ? PoiDataValue.Overlapped
-          : PoiDataValue.Unchecked;
-        if (isOverlap) {
-          this.applyVisualState(child, true);
-        } else {
-          this.clearVisualState(child);
-        }
-        if (expand) {
-          child.style.transform = 'translate(50%, 100%)';
-        } else {
-          child.style.transform = '';
-        }
-      }
-    });
-
-    if (expand) {
-      requestAnimationFrame(() => {
-        oldPosition.forEach((offset, child) => {
-          const boundingBox = child.getBoundingClientRect();
-          const newOffset = offset - boundingBox.left;
-          this.expandOffset.set(child, newOffset);
-          child.offset = newOffset;
-        });
-      });
-      this.startExpandedObserver();
-      this.scheduleExpandedOffsets();
-    } else {
-      requestAnimationFrame(() => {
-        this.expandOffset.forEach((_, child) => {
-          child.offset = 0;
-        });
-        this.expandOffset.clear();
-      });
-      this.stopExpandedObserver();
-    }
-
-    this.syncFrontChild();
-  }
-
-  private setExpandedChildrenTopOffset(expand: boolean) {
     const frontChild = this.getFrontChild();
 
     if (expand) {
@@ -338,7 +231,7 @@ export class ObcPoiGroup extends LitElement {
 
     const positions = targets.map((child) => {
       const rect = this.getTargetButtonRect(child);
-      const currentLeft = this.getCurrentLeft(child, true);
+      const currentLeft = this.getCurrentLeft(child);
       return {
         child,
         currentLeft,
@@ -376,22 +269,34 @@ export class ObcPoiGroup extends LitElement {
     });
   }
 
-  private topOffsetTargetExpanded = false;
-
   private topOffsetDelayTimeout: ReturnType<typeof setTimeout> | null = null;
 
   refreshExpandedLayout(preserveCenter = false): void {
     if (!this.expand) return;
-    if (this.useTopOffset) {
-      this.calculateTopOffsetTargets(preserveCenter);
-      this.applyTopOffsetState(this.topOffsetProgress, this.getFrontChild());
-      this.scheduleExpandedOffsets();
-      return;
-    }
-    this.setExpandedChildren(true);
+    this.calculateTopOffsetTargets(preserveCenter);
+    this.applyTopOffsetState(this.topOffsetProgress, this.getFrontChild());
+    this.scheduleExpandedOffsets();
   }
 
   private animateTopOffset(targetProgress: number) {
+    const normalizedTarget = targetProgress === 1 ? 1 : 0;
+    const hasPendingOrRunningAnimation =
+      this.topOffsetAnimationManager.isRunning() ||
+      this.topOffsetDelayTimeout !== null;
+    if (
+      hasPendingOrRunningAnimation &&
+      this.topOffsetAnimationTarget === normalizedTarget
+    ) {
+      return;
+    }
+    if (
+      !hasPendingOrRunningAnimation &&
+      Math.abs(this.topOffsetProgress - normalizedTarget) < 0.001
+    ) {
+      return;
+    }
+
+    this.topOffsetAnimationTarget = normalizedTarget;
     this.topOffsetAnimationManager.cancel();
     if (this.topOffsetDelayTimeout) {
       clearTimeout(this.topOffsetDelayTimeout);
@@ -405,21 +310,13 @@ export class ObcPoiGroup extends LitElement {
     }
 
     const frontChild = this.getFrontChild();
-    this.topOffsetTargetExpanded = targetProgress === 1;
-
     const isCollapsing = targetProgress === 0 && this.topOffsetProgress > 0;
     if (isCollapsing) {
       this.collapseDeltas.clear();
       this.topOffsetTargets.forEach((config, child) => {
-        const currentLeft = this.getCurrentLeft(child, true);
+        const currentLeft = this.getCurrentLeft(child);
         const delta = currentLeft - config.originalLeft;
         this.collapseDeltas.set(child, delta);
-      });
-      this.topOffsetTargets.forEach((_, child) => {
-        if (child !== frontChild) {
-          child.value = PoiDataValue.Overlapped;
-          this.applyVisualState(child, true);
-        }
       });
       const delayMs = this.getCssVarAsNumber(
         TOP_OFFSET_ANIMATION_DELAY_MS_VAR,
@@ -462,6 +359,7 @@ export class ObcPoiGroup extends LitElement {
           this.applyTopOffsetState(progress, frontChild);
         },
         onComplete: () => {
+          this.topOffsetAnimationTarget = null;
           if (targetProgress === 0) {
             this.collapsing = false;
             this.dispatchEvent(
@@ -484,6 +382,7 @@ export class ObcPoiGroup extends LitElement {
         },
         onError: (error) => {
           console.error('[poi-group] Error in top offset animation:', error);
+          this.topOffsetAnimationTarget = null;
           this.collapsing = false;
         },
       }
@@ -492,7 +391,7 @@ export class ObcPoiGroup extends LitElement {
   private applyTopOffsetState(progress: number, frontChild: ObcPoiData | null) {
     const eased = easeInOutQuad(progress);
 
-    const visualExpanded = this.topOffsetTargetExpanded;
+    const visualExpanded = this.collapsing ? false : progress > 0.5;
     const touchAreaExpanded = progress > 0.5;
 
     this.topOffsetTargets.forEach((config, child) => {
@@ -507,7 +406,7 @@ export class ObcPoiGroup extends LitElement {
       if (isCollapsing) {
         delta = this.collapseDeltas.get(child) ?? 0;
       } else {
-        const currentLeft = this.getCurrentLeft(child, true);
+        const currentLeft = this.getCurrentLeft(child);
         delta = currentLeft - config.originalLeft;
       }
 
@@ -653,12 +552,6 @@ export class ObcPoiGroup extends LitElement {
 
   private stopExpandedObserver() {
     this.expandedLoopRunning = false;
-    this.expandedObserver?.disconnect();
-    this.expandedObserver = undefined;
-    if (this.expandedRaf) {
-      cancelAnimationFrame(this.expandedRaf);
-      this.expandedRaf = 0;
-    }
     this.lastAppliedOffsets.clear();
     this.lastTargetOrder = [];
   }
@@ -680,7 +573,7 @@ export class ObcPoiGroup extends LitElement {
 
     const sortedByCurrentPosition = [...targets]
       .map((child) => {
-        const currentLeft = this.getCurrentLeft(child, true);
+        const currentLeft = this.getCurrentLeft(child);
         return {child, currentLeft};
       })
       .sort((a, b) => a.currentLeft - b.currentLeft)
@@ -710,8 +603,7 @@ export class ObcPoiGroup extends LitElement {
         this.lockedExpandedCenter ??
         (() => {
           const positions = orderedTargets.map((child) => {
-            const leftStr = child.style.left;
-            return Number.parseFloat(leftStr) || 0;
+            return this.getCurrentLeft(child);
           });
           const leftMost = Math.min(...positions);
           const rightMost = Math.max(...positions);
@@ -744,7 +636,7 @@ export class ObcPoiGroup extends LitElement {
       const config = this.topOffsetTargets.get(child);
       if (!config) return;
 
-      const currentLeft = this.getCurrentLeft(child, true);
+      const currentLeft = this.getCurrentLeft(child);
       const delta = currentLeft - config.originalLeft;
 
       if (snap) {
@@ -773,17 +665,30 @@ export class ObcPoiGroup extends LitElement {
     });
   }
 
-  private getCurrentLeft(element: HTMLElement, computed = false): number {
+  private getCurrentLeft(element: HTMLElement): number {
     const inline = element.style.left;
     if (inline && inline.endsWith('px')) {
       const parsed = Number.parseFloat(inline);
-      if (!Number.isNaN(parsed)) return parsed;
+      if (!Number.isNaN(parsed)) {
+        const transformOffset = Number.parseFloat(
+          getComputedStyle(element).getPropertyValue(
+            '--obc-poi-target-offset-x'
+          )
+        );
+        return (
+          parsed + (Number.isFinite(transformOffset) ? transformOffset : 0)
+        );
+      }
     }
 
-    if (!computed) return 0;
-
     const computedStyle = window.getComputedStyle(element).left;
-    return Number.parseFloat(computedStyle) || 0;
+    const computedLeft = Number.parseFloat(computedStyle) || 0;
+    const transformOffset = Number.parseFloat(
+      getComputedStyle(element).getPropertyValue('--obc-poi-target-offset-x')
+    );
+    return (
+      computedLeft + (Number.isFinite(transformOffset) ? transformOffset : 0)
+    );
   }
 
   private getTargetButtonRect(target: ObcPoiData): DOMRect {

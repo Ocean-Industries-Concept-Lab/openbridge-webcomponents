@@ -5,6 +5,12 @@ import componentStyle from './poi-layer.css?inline';
 import '../poi-group/poi-group.js';
 import {ObcPoiData, PoiDataValue} from '../poi-data/poi-data.js';
 import {ObcPoiButtonType} from '../building-blocks/poi-button/poi-button.js';
+import {
+  buildAdjacencyMaps,
+  buildClusters,
+  type GroupingThresholds,
+} from './poi-layer-grouping-utils.js';
+import {updateCrossingModeState} from './poi-layer-crossing-utils.js';
 
 const EXIT_DELAY_MS_VAR = '--obc-poi-layer-exit-delay-ms';
 const GROUP_REMOVAL_DELAY_MS_VAR = '--obc-poi-layer-group-removal-delay-ms';
@@ -22,150 +28,11 @@ const POI_LARGE_VISUAL_TARGET_OVERLAP_VAR =
 const POI_CROSSING_MIN_GAP_VAR = '--obc-poi-layer-crossing-min-gap';
 
 /**
- * Grouping utilities for POI layer overlap detection and clustering
- */
-
-/**
- * Interface for grouping thresholds
- */
-interface GroupingThresholds {
-  enterThreshold: number;
-  exitThreshold: number;
-  preThreshold: number;
-  behindThreshold: number;
-}
-
-/**
- * Build clusters of connected elements using depth-first search
- * @param targets - Array of targets to cluster
- * @param adjacency - Adjacency map showing which targets are connected
- * @returns Array of clusters (arrays of connected targets)
- */
-function buildClusters<T>(targets: T[], adjacency: Map<T, Set<T>>): T[][] {
-  const visited = new Set<T>();
-  const clusters: T[][] = [];
-
-  targets.forEach((target) => {
-    if (visited.has(target)) return;
-
-    const stack = [target];
-    const cluster: T[] = [];
-    visited.add(target);
-
-    while (stack.length > 0) {
-      const node = stack.pop()!;
-      cluster.push(node);
-      adjacency.get(node)!.forEach((neighbor) => {
-        if (!visited.has(neighbor)) {
-          visited.add(neighbor);
-          stack.push(neighbor);
-        }
-      });
-    }
-
-    if (cluster.length >= 2) {
-      clusters.push(cluster);
-    }
-  });
-
-  return clusters;
-}
-
-/**
- * Check if two rectangles overlap vertically and are within horizontal threshold
- */
-function checkOverlap(
-  rectA: DOMRect,
-  rectB: DOMRect,
-  threshold: number
-): {overlaps: boolean; gap: number; overlapHeight: number} {
-  const overlapHeight =
-    Math.min(rectA.bottom, rectB.bottom) - Math.max(rectA.top, rectB.top);
-  const gap = Math.max(
-    0,
-    Math.max(rectA.left, rectB.left) - Math.min(rectA.right, rectB.right)
-  );
-
-  return {
-    overlaps: gap <= threshold && overlapHeight > 0,
-    gap,
-    overlapHeight,
-  };
-}
-
-/**
- * Build adjacency maps for overlap detection at different thresholds
- */
-function buildAdjacencyMaps<T extends HTMLElement>(
-  targets: T[],
-  rects: Map<T, DOMRect>,
-  thresholds: GroupingThresholds,
-  currentGroupByTarget: Map<T, HTMLElement>
-): {
-  adjacency: Map<T, Set<T>>;
-  preAdjacency: Map<T, Set<T>>;
-  behindAdjacency: Map<T, Set<T>>;
-  preGrouped: Set<T>;
-} {
-  const adjacency = new Map<T, Set<T>>();
-  const preAdjacency = new Map<T, Set<T>>();
-  const behindAdjacency = new Map<T, Set<T>>();
-  const preGrouped = new Set<T>();
-
-  targets.forEach((target) => {
-    adjacency.set(target, new Set());
-    preAdjacency.set(target, new Set());
-    behindAdjacency.set(target, new Set());
-  });
-
-  for (let i = 0; i < targets.length; i += 1) {
-    const a = targets[i];
-    const ra = rects.get(a)!;
-
-    for (let j = i + 1; j < targets.length; j += 1) {
-      const b = targets[j];
-      const rb = rects.get(b)!;
-
-      const sameGroup =
-        currentGroupByTarget.get(a) &&
-        currentGroupByTarget.get(a) === currentGroupByTarget.get(b);
-      const threshold = sameGroup
-        ? thresholds.exitThreshold
-        : thresholds.enterThreshold;
-
-      const overlap = checkOverlap(ra, rb, threshold);
-      const preOverlap = checkOverlap(ra, rb, thresholds.preThreshold);
-      const behindOverlap = checkOverlap(ra, rb, thresholds.behindThreshold);
-
-      if (preOverlap.overlaps) {
-        preGrouped.add(a);
-        preGrouped.add(b);
-        preAdjacency.get(a)!.add(b);
-        preAdjacency.get(b)!.add(a);
-      }
-
-      if (behindOverlap.overlaps) {
-        behindAdjacency.get(a)!.add(b);
-        behindAdjacency.get(b)!.add(a);
-      }
-
-      if (overlap.overlaps) {
-        adjacency.get(a)!.add(b);
-        adjacency.get(b)!.add(a);
-      }
-    }
-  }
-
-  return {adjacency, preAdjacency, behindAdjacency, preGrouped};
-}
-
-/**
  * Interface for POI button group element properties used by the layer.
  */
 interface PoiButtonGroupElement extends HTMLElement {
   expand?: boolean;
   collapsing?: boolean;
-  useTopOffset: boolean;
   updatePosition?: () => void;
   refreshExpandedLayout?: (preserveCenter?: boolean) => void;
   internalSwapping?: boolean;
@@ -181,43 +48,6 @@ export enum PoiLayerRole {
   Selected = 'selected',
   Filtered = 'filtered',
 }
-
-/**
- * `<obc-poi-layer>` arranges POI targets in a layer and manages grouping,
- * overlap, and layout updates for slotted targets.
- *
- * Use this component inside `obc-poi-layer-stack` to coordinate multiple layers
- * and keep selection or overlap behaviors consistent across a stack.
- *
- * ### Features
- * - Observes slotted targets and groups to compute layout.
- * - Emits a resize event when the layer height changes.
- * - Optional debug labeling for layer identification.
- *
- * ### Usage Guidelines
- * - Set `label` to identify the layer in debug UI and events.
- * - Toggle `debug` to render the on-layer label.
- * - Set `layerIndex` to control ordering within a stack.
- * - Use `role` to assign stack placement behavior (default/selected/filtered).
- * - Use `typeFilter` with `role="filtered"` to route specific target types.
- *
- * ### Slots
- * - Default slot for `obc-poi-data` and `obc-poi-group`.
- *
- * ### Events
- * - `layer-resize` when the computed layer height changes.
- *
- * ### Example
- * ```html
- * <obc-poi-layer label="Radar" layerIndex="1">
- *   <obc-poi-data x="120" anchor-y="200"></obc-poi-data>
- *   <obc-poi-data x="240" anchor-y="220"></obc-poi-data>
- * </obc-poi-layer>
- * ```
- *
- * @slot - Default slot for `obc-poi-data` and `obc-poi-group`.
- * @fires {CustomEvent} layer-resize - Fired when the layer height changes.
- */
 @customElement('obc-poi-layer')
 export class ObcPoiLayer extends LitElement {
   @property({type: String}) label = '';
@@ -237,8 +67,8 @@ export class ObcPoiLayer extends LitElement {
   private targetResizeObserver?: ResizeObserver;
   private lastHeight = 0;
   private isGrouping = false;
-  private targetObservers = new Map<HTMLElement, MutationObserver>();
-  private targetSizeElements = new Map<HTMLElement, HTMLElement>();
+  private targetObservers = new Map<ObcPoiData, MutationObserver>();
+  private targetSizeElements = new Map<ObcPoiData, HTMLElement>();
   private groupingRaf = 0;
   private heightRaf = 0;
   private groupRemovalTimers = new WeakMap<HTMLElement, number>();
@@ -250,9 +80,31 @@ export class ObcPoiLayer extends LitElement {
   private crossingTargetsDirty = false;
   private crossingOrder: ObcPoiData[] = [];
   private crossingLastEffectiveX = new Map<ObcPoiData, number>();
-  private previousPositions = new Map<HTMLElement, number>();
-  private lastOffsets = new Map<HTMLElement, number>();
+  private previousPositions = new Map<ObcPoiData, number>();
+  private lastOffsets = new Map<ObcPoiData, number>();
   private static readonly GROUP_LAYER_HOOK_ATTR = 'data-in-poi-layer';
+  private handleSlotChange = () => {
+    this.updateTargetObservers();
+    this.scheduleGrouping();
+    this.scheduleLayerHeightUpdate();
+  };
+  private handleCollapseFinished = () => {
+    this.scheduleGrouping();
+  };
+
+  override connectedCallback() {
+    super.connectedCallback();
+    if (!this.hasUpdated) return;
+    this.setupResizeObserver();
+    this.setupTargetResizeObserver();
+    this.setupLayerMutationObserver();
+    this.updateTargetObservers();
+    this.scheduleGrouping();
+    this.scheduleLayerHeightUpdate();
+    this.addLayerEventListeners();
+    const slot = this.shadowRoot?.querySelector('slot');
+    slot?.addEventListener('slotchange', this.handleSlotChange);
+  }
 
   override firstUpdated() {
     this.crossingTargetsDirty = true;
@@ -263,23 +115,12 @@ export class ObcPoiLayer extends LitElement {
     this.scheduleGrouping();
     this.scheduleLayerHeightUpdate();
     const slot = this.shadowRoot?.querySelector('slot');
-    slot?.addEventListener('slotchange', () => {
-      this.updateTargetObservers();
-      this.scheduleGrouping();
-      this.scheduleLayerHeightUpdate();
-    });
+    slot?.addEventListener('slotchange', this.handleSlotChange);
     requestAnimationFrame(() => {
       this.updateTargetObservers();
       this.scheduleLayerHeightUpdate();
     });
-    this.addEventListener(
-      'obc-poi-data-layout-change',
-      this.handlePoiDataLayoutChange as EventListener
-    );
-    this.addEventListener('expand', this.handleGroupExpand as EventListener);
-    this.addEventListener('collapse-finished', () => {
-      this.scheduleGrouping();
-    });
+    this.addLayerEventListeners();
   }
 
   private handlePoiDataLayoutChange = () => {
@@ -291,12 +132,8 @@ export class ObcPoiLayer extends LitElement {
     const group = event.target as HTMLElement;
     if (!group?.tagName?.toLowerCase().includes('group')) return;
 
-    const targets = Array.from(
-      this.querySelectorAll('obc-poi-data')
-    ) as ObcPoiData[];
-    const groupedTargets = new Set<HTMLElement>(
-      Array.from(group.querySelectorAll('obc-poi-data')) as ObcPoiData[]
-    );
+    const targets = this.getAllTargets();
+    const groupedTargets = new Set<ObcPoiData>(this.getGroupTargets(group));
 
     if (event.detail.expand) {
       targets.forEach((target) => {
@@ -305,18 +142,14 @@ export class ObcPoiLayer extends LitElement {
           this.applyStandaloneVisualState(target, true);
         }
       });
-    } else {
-      this.scheduleGrouping();
     }
   };
 
   override disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeEventListener(
-      'obc-poi-data-layout-change',
-      this.handlePoiDataLayoutChange as EventListener
-    );
-    this.removeEventListener('expand', this.handleGroupExpand as EventListener);
+    this.removeLayerEventListeners();
+    const slot = this.shadowRoot?.querySelector('slot');
+    slot?.removeEventListener('slotchange', this.handleSlotChange);
     this.resizeObserver?.disconnect();
     this.targetResizeObserver?.disconnect();
     this.layerMutationObserver?.disconnect();
@@ -342,6 +175,30 @@ export class ObcPoiLayer extends LitElement {
       window.clearTimeout(this.autoGroupCollapseTimeout);
       this.autoGroupCollapseTimeout = 0;
     }
+  }
+
+  private addLayerEventListeners() {
+    this.addEventListener(
+      'obc-poi-data-layout-change',
+      this.handlePoiDataLayoutChange as EventListener
+    );
+    this.addEventListener('expand', this.handleGroupExpand as EventListener);
+    this.addEventListener(
+      'collapse-finished',
+      this.handleCollapseFinished as EventListener
+    );
+  }
+
+  private removeLayerEventListeners() {
+    this.removeEventListener(
+      'obc-poi-data-layout-change',
+      this.handlePoiDataLayoutChange as EventListener
+    );
+    this.removeEventListener('expand', this.handleGroupExpand as EventListener);
+    this.removeEventListener(
+      'collapse-finished',
+      this.handleCollapseFinished as EventListener
+    );
   }
 
   private setupResizeObserver() {
@@ -375,15 +232,13 @@ export class ObcPoiLayer extends LitElement {
 
   private syncLayerHeight() {
     if (!this.isConnected) return;
-    const targets = Array.from(
-      this.querySelectorAll('obc-poi-data')
-    ) as HTMLElement[];
+    const targets = this.getAllTargets();
     if (targets.length === 0) {
       this.style.setProperty('--obc-poi-layer-height', '0px');
       this.updateLayerHeight(0);
       return;
     }
-    const rects = new Map<HTMLElement, DOMRect>();
+    const rects = new Map<ObcPoiData, DOMRect>();
     targets.forEach((target) => rects.set(target, this.getTargetRect(target)));
     let maxHeight = 0;
     rects.forEach((rect) => {
@@ -428,9 +283,7 @@ export class ObcPoiLayer extends LitElement {
   }
 
   private updateTargetObservers() {
-    const targets = Array.from(
-      this.querySelectorAll('obc-poi-data')
-    ) as HTMLElement[];
+    const targets = this.getAllTargets();
     const targetSet = new Set(targets);
 
     this.targetObservers.forEach((observer, target) => {
@@ -456,8 +309,8 @@ export class ObcPoiLayer extends LitElement {
   }
 
   private updateTargetSizeObservers(
-    targets: HTMLElement[],
-    targetSet: Set<HTMLElement>
+    targets: ObcPoiData[],
+    targetSet: Set<ObcPoiData>
   ) {
     if (!this.targetResizeObserver) return;
     this.targetSizeElements.forEach((element, target) => {
@@ -479,19 +332,8 @@ export class ObcPoiLayer extends LitElement {
     });
   }
 
-  private getTargetSizeElement(target: HTMLElement): HTMLElement | null {
-    const targetShadow = target.shadowRoot;
-    const poi = targetShadow?.querySelector('obc-poi') as
-      | HTMLElement
-      | undefined;
-    const poiButton = poi?.shadowRoot?.querySelector('obc-poi-button') as
-      | HTMLElement
-      | undefined;
-    const dataButton = targetShadow?.querySelector('obc-poi-button-data') as
-      | HTMLElement
-      | undefined;
-    const button = poiButton ?? dataButton;
-    const buttonShadow = button?.shadowRoot;
+  private getTargetSizeElement(target: ObcPoiData): HTMLElement | null {
+    const {poi, button, buttonShadow} = this.getTargetVisualNodes(target);
     const buttonWrapper = buttonShadow?.querySelector(
       '.button-wrapper'
     ) as HTMLElement | null;
@@ -504,6 +346,45 @@ export class ObcPoiLayer extends LitElement {
     );
   }
 
+  private getTargetVisualNodes(target: HTMLElement): {
+    poi: HTMLElement | null;
+    button: HTMLElement | null;
+    buttonShadow: ShadowRoot | null;
+  } {
+    const targetShadow = target.shadowRoot;
+    const poi = targetShadow?.querySelector('obc-poi') as HTMLElement | null;
+    const poiButton = poi?.shadowRoot?.querySelector(
+      'obc-poi-button'
+    ) as HTMLElement | null;
+    const dataButton = targetShadow?.querySelector(
+      'obc-poi-button-data'
+    ) as HTMLElement | null;
+    const button = poiButton ?? dataButton;
+    const buttonShadow = button?.shadowRoot ?? null;
+    return {poi, button, buttonShadow};
+  }
+
+  private isPoiTargetTag(tag: string): boolean {
+    return tag === 'obc-poi-data' || tag.startsWith('obc-poi-data-');
+  }
+
+  private isPoiTargetElement(node: Element): node is ObcPoiData {
+    return (
+      node instanceof ObcPoiData ||
+      this.isPoiTargetTag(node.tagName.toLowerCase())
+    );
+  }
+
+  private isPoiLayerRelevantNode(node: HTMLElement): boolean {
+    const tag = node.tagName.toLowerCase();
+    if (this.isPoiTargetTag(tag) || tag === 'obc-poi-group') return true;
+    const descendants = Array.from(node.querySelectorAll('*'));
+    return descendants.some((child) => {
+      const childTag = child.tagName.toLowerCase();
+      return this.isPoiTargetElement(child) || childTag === 'obc-poi-group';
+    });
+  }
+
   private setupLayerMutationObserver() {
     this.layerMutationObserver?.disconnect();
     this.layerMutationObserver = new MutationObserver((mutations) => {
@@ -512,12 +393,7 @@ export class ObcPoiLayer extends LitElement {
         const nodes = [...mutation.addedNodes, ...mutation.removedNodes];
         for (const node of nodes) {
           if (!(node instanceof HTMLElement)) continue;
-          if (
-            node.tagName.toLowerCase() === 'obc-poi-data' ||
-            node.tagName.toLowerCase() === 'obc-poi-group' ||
-            node.querySelector?.('obc-poi-data') ||
-            node.querySelector?.('obc-poi-group')
-          ) {
+          if (this.isPoiLayerRelevantNode(node)) {
             this.updateTargetObservers();
             this.scheduleGrouping();
             this.scheduleLayerHeightUpdate();
@@ -564,172 +440,27 @@ export class ObcPoiLayer extends LitElement {
 
   private updateCrossingMode(): boolean {
     if (this.crossingTargetsDirty) {
-      this.cachedCrossingTargets = Array.from(
-        this.querySelectorAll('obc-poi-data')
-      ) as ObcPoiData[];
+      this.cachedCrossingTargets = this.getAllTargets();
       this.crossingTargetsDirty = false;
     }
     const targets = this.cachedCrossingTargets;
-
-    if (targets.length < 2) {
-      targets.forEach((target) => {
-        target.buttonOffsetX = 0;
-        target.offset = 0;
-        this.lastOffsets.set(target, 0);
-      });
-      this.lastOffsets.clear();
-      this.previousPositions.clear();
-      this.crossingOrder = [];
-      return false;
-    }
-
-    const currentPositions = new Map<HTMLElement, number>();
-    const movingTargetsSet = new Set<HTMLElement>();
-    const deltas = new Map<ObcPoiData, number>();
-
     const buttonWidth = this.getTouchTargetSize();
     const minGap = this.getCssVarAsNumber(
       POI_CROSSING_MIN_GAP_VAR,
       buttonWidth + 4
     );
-
-    targets.forEach((target) => {
-      const leftStr = target.style.left;
-      const left = Number.parseFloat(leftStr) || 0;
-      currentPositions.set(target, left);
-
-      const prevPos = this.previousPositions.get(target);
-      if (prevPos !== undefined && Math.abs(left - prevPos) > 0.5) {
-        movingTargetsSet.add(target);
-        deltas.set(target, left - prevPos);
-      }
+    const next = updateCrossingModeState({
+      targets,
+      buttonWidth,
+      minGap,
+      previousPositions: this.previousPositions,
+      lastOffsets: this.lastOffsets,
+      crossingOrder: this.crossingOrder,
+      crossingLastEffectiveX: this.crossingLastEffectiveX,
     });
-
-    const orderIndex = new Map<ObcPoiData, number>();
-    this.crossingOrder.forEach((target, index) => {
-      orderIndex.set(target, index);
-    });
-
-    const orderedTargets = targets
-      .map((target) => {
-        const left = currentPositions.get(target) ?? 0;
-        return {
-          target,
-          center: left + buttonWidth / 2,
-          isMoving: movingTargetsSet.has(target),
-        };
-      })
-      .sort((a, b) => {
-        const delta = a.center - b.center;
-        if (Math.abs(delta) > 0.5) return delta;
-        return (
-          (orderIndex.get(a.target) ?? 0) - (orderIndex.get(b.target) ?? 0)
-        );
-      });
-
-    const targetOffsets = new Map<ObcPoiData, number>();
-    orderedTargets.forEach((item) => targetOffsets.set(item.target, 0));
-
-    let hasActiveOverlaps = false;
-    const smoothstep = (t: number) => t * t * (3 - 2 * t);
-
-    let primaryMoving: ObcPoiData | null = null;
-    let primaryDelta = 0;
-    deltas.forEach((delta, target) => {
-      if (!primaryMoving || Math.abs(delta) > Math.abs(primaryDelta)) {
-        primaryMoving = target;
-        primaryDelta = delta;
-      }
-    });
-    const travelDir = primaryDelta >= 0 ? 1 : -1;
-
-    if (primaryMoving) {
-      const movingItem = orderedTargets.find(
-        (item) => item.target === primaryMoving
-      );
-      if (movingItem) {
-        let nearest: {center: number; target: ObcPoiData} | null = null;
-        for (const other of orderedTargets) {
-          if (other.target === movingItem.target) continue;
-          const dist = Math.abs(other.center - movingItem.center);
-          if (!nearest || dist < Math.abs(nearest.center - movingItem.center)) {
-            nearest = {center: other.center, target: other.target};
-          }
-        }
-        if (nearest) {
-          const gap = Math.abs(nearest.center - movingItem.center);
-          if (gap < minGap) {
-            hasActiveOverlaps = true;
-            const ratio = Math.min(1, Math.max(0, 1 - gap / minGap));
-            const eased = smoothstep(ratio);
-            const push = (minGap - gap) * eased;
-            targetOffsets.set(movingItem.target, -push * travelDir);
-          }
-        }
-      }
-    }
-
-    const positionsChanged = movingTargetsSet.size > 0;
-
-    if (!hasActiveOverlaps) {
-      targets.forEach((target) => {
-        target.buttonOffsetX = 0;
-        target.offset = 0;
-        this.lastOffsets.set(target, 0);
-      });
-      this.lastOffsets.forEach((_, target) => {
-        if (!currentPositions.has(target)) this.lastOffsets.delete(target);
-      });
-      this.previousPositions = currentPositions;
-      this.crossingOrder = orderedTargets.map((item) => item.target);
-      this.crossingLastEffectiveX.clear();
-      return positionsChanged;
-    }
-
-    orderedTargets.forEach((item) => {
-      const targetOffset =
-        primaryMoving && item.target === primaryMoving
-          ? (targetOffsets.get(item.target) ?? 0)
-          : 0;
-      const prevOffset = this.lastOffsets.get(item.target) ?? 0;
-      const diff = targetOffset - prevOffset;
-      const deadZone = 0.5;
-      let nextOffset =
-        Math.abs(diff) < deadZone ? targetOffset : prevOffset + diff * 0.2;
-
-      if (primaryMoving && item.target === primaryMoving) {
-        const baseCenter =
-          (currentPositions.get(item.target) ?? 0) + buttonWidth / 2;
-        const prevEffective =
-          this.crossingLastEffectiveX.get(item.target) ?? baseCenter;
-        const nextEffective = baseCenter + nextOffset;
-        if (travelDir > 0 && nextEffective < prevEffective) {
-          nextOffset = prevEffective - baseCenter;
-        } else if (travelDir < 0 && nextEffective > prevEffective) {
-          nextOffset = prevEffective - baseCenter;
-        }
-        this.crossingLastEffectiveX.set(item.target, baseCenter + nextOffset);
-      } else {
-        this.crossingLastEffectiveX.delete(item.target);
-      }
-
-      if (nextOffset !== 0) {
-        item.target.buttonOffsetX = nextOffset;
-        item.target.offset = -nextOffset;
-      } else {
-        item.target.buttonOffsetX = 0;
-        item.target.offset = 0;
-      }
-      this.lastOffsets.set(item.target, nextOffset);
-    });
-
-    this.lastOffsets.forEach((_, target) => {
-      if (!currentPositions.has(target)) this.lastOffsets.delete(target);
-    });
-
-    this.previousPositions = currentPositions;
-    this.crossingOrder = orderedTargets.map((item) => item.target);
-    return positionsChanged || hasActiveOverlaps;
+    this.previousPositions = next.previousPositions;
+    this.crossingOrder = next.crossingOrder;
+    return next.shouldContinue;
   }
 
   private toggleGroupLayerHook(group: HTMLElement, hasTargets: boolean) {
@@ -743,261 +474,258 @@ export class ObcPoiLayer extends LitElement {
   private updateGrouping() {
     if (this.isGrouping) return;
     this.isGrouping = true;
+    try {
+      const manualGroups = (
+        Array.from(
+          this.querySelectorAll('obc-poi-group')
+        ) as PoiButtonGroupElement[]
+      ).filter((group) => !group.hasAttribute('data-auto-group'));
+      const manualGroupedTargets = new Set<HTMLElement>();
+      manualGroups.forEach((group) => {
+        const groupTargets = this.getGroupTargets(group);
+        this.toggleGroupLayerHook(group, groupTargets.length > 0);
+        groupTargets.forEach((target) => manualGroupedTargets.add(target));
+      });
+      if (manualGroups.length > 0) {
+        const anyExpanded = manualGroups.some(
+          (group) => group.expand === true || group.collapsing === true
+        );
+        if (anyExpanded) {
+          return;
+        }
+      }
 
-    const manualGroups = (
-      Array.from(
-        this.querySelectorAll('obc-poi-group')
-      ) as PoiButtonGroupElement[]
-    ).filter((group) => !group.hasAttribute('data-auto-group'));
-    const manualGroupedTargets = new Set<HTMLElement>();
-    manualGroups.forEach((group) => {
-      const groupTargets = Array.from(
-        group.querySelectorAll('obc-poi-data')
-      ) as ObcPoiData[];
-      this.toggleGroupLayerHook(group, groupTargets.length > 0);
-      groupTargets.forEach((target) => manualGroupedTargets.add(target));
-    });
-    if (manualGroups.length > 0) {
-      const anyExpanded = manualGroups.some(
+      const targets = this.getAllTargets().filter(
+        (target) => !manualGroupedTargets.has(target)
+      );
+
+      const layerRect = this.getBoundingClientRect();
+      const enterRaw = getComputedStyle(this).getPropertyValue(
+        '--obc-poi-layer-overlap-enter'
+      );
+      const exitRaw = getComputedStyle(this).getPropertyValue(
+        '--obc-poi-layer-overlap-exit'
+      );
+      const preRaw = getComputedStyle(this).getPropertyValue(
+        '--obc-poi-layer-overlap-pre'
+      );
+      const behindRaw = getComputedStyle(this).getPropertyValue(
+        '--obc-poi-layer-overlap-behind'
+      );
+      const enterThreshold = Number.parseFloat(enterRaw) || 0;
+      const exitThreshold =
+        Number.parseFloat(exitRaw) || Math.max(enterThreshold + 8, 8);
+      const preThreshold = Number.parseFloat(preRaw) || enterThreshold;
+      const behindThreshold = Number.parseFloat(behindRaw) || enterThreshold;
+
+      const currentGroupByTarget = new Map<HTMLElement, HTMLElement>();
+      targets.forEach((target) => {
+        const parent = target.parentElement;
+        if (parent?.tagName.toLowerCase() === 'obc-poi-group') {
+          currentGroupByTarget.set(target, parent as HTMLElement);
+        }
+      });
+
+      const rects = new Map<HTMLElement, DOMRect>();
+      targets.forEach((target) => {
+        rects.set(target, this.getTargetRectForGrouping(target, layerRect));
+      });
+
+      const thresholds: GroupingThresholds = {
+        enterThreshold,
+        exitThreshold,
+        preThreshold,
+        behindThreshold,
+      };
+
+      const {adjacency, behindAdjacency, preGrouped} = buildAdjacencyMaps(
+        targets,
+        rects,
+        thresholds,
+        currentGroupByTarget
+      );
+
+      const clusters = buildClusters(targets, adjacency);
+      const behindClusters = buildClusters(targets, behindAdjacency);
+
+      const existingGroups = Array.from(
+        this.querySelectorAll('obc-poi-group[data-auto-group]')
+      ) as PoiButtonGroupElement[];
+
+      const frontTargets = new Set<HTMLElement>();
+      clusters.forEach((cluster) => {
+        const front = this.getFrontTarget(cluster);
+        if (front) frontTargets.add(front);
+      });
+
+      const behindTargets = new Set<HTMLElement>();
+      behindClusters.forEach((cluster) => {
+        const behind = this.getShortestTarget(cluster, rects);
+        if (behind) behindTargets.add(behind);
+      });
+
+      const expandedAutoGroup = existingGroups.find(
         (group) => group.expand === true || group.collapsing === true
       );
-      if (anyExpanded) {
-        this.isGrouping = false;
+      if (expandedAutoGroup) {
+        if (this.joinWhileExpanded) {
+          this.tryJoinExpandedGroup(
+            expandedAutoGroup,
+            targets,
+            rects,
+            enterThreshold
+          );
+        }
         return;
       }
-    }
 
-    const targets = Array.from(this.querySelectorAll('obc-poi-data')).filter(
-      (target) => !manualGroupedTargets.has(target)
-    ) as ObcPoiData[];
+      const remainingClusters = [...clusters];
+      const keptGroups: HTMLElement[] = [];
 
-    const layerRect = this.getBoundingClientRect();
-    const enterRaw = getComputedStyle(this).getPropertyValue(
-      '--obc-poi-layer-overlap-enter'
-    );
-    const exitRaw = getComputedStyle(this).getPropertyValue(
-      '--obc-poi-layer-overlap-exit'
-    );
-    const preRaw = getComputedStyle(this).getPropertyValue(
-      '--obc-poi-layer-overlap-pre'
-    );
-    const behindRaw = getComputedStyle(this).getPropertyValue(
-      '--obc-poi-layer-overlap-behind'
-    );
-    const enterThreshold = Number.parseFloat(enterRaw) || 0;
-    const exitThreshold =
-      Number.parseFloat(exitRaw) || Math.max(enterThreshold + 8, 8);
-    const preThreshold = Number.parseFloat(preRaw) || enterThreshold;
-    const behindThreshold = Number.parseFloat(behindRaw) || enterThreshold;
-
-    const currentGroupByTarget = new Map<HTMLElement, HTMLElement>();
-    targets.forEach((target) => {
-      const parent = target.parentElement;
-      if (parent?.tagName.toLowerCase() === 'obc-poi-group') {
-        currentGroupByTarget.set(target, parent as HTMLElement);
-      }
-    });
-
-    const rects = new Map<HTMLElement, DOMRect>();
-    targets.forEach((target) => {
-      rects.set(target, this.getTargetRectForGrouping(target, layerRect));
-    });
-
-    const thresholds: GroupingThresholds = {
-      enterThreshold,
-      exitThreshold,
-      preThreshold,
-      behindThreshold,
-    };
-
-    const {adjacency, behindAdjacency, preGrouped} = buildAdjacencyMaps(
-      targets,
-      rects,
-      thresholds,
-      currentGroupByTarget
-    );
-
-    const clusters = buildClusters(targets, adjacency);
-    const behindClusters = buildClusters(targets, behindAdjacency);
-
-    const existingGroups = Array.from(
-      this.querySelectorAll('obc-poi-group[data-auto-group]')
-    ) as PoiButtonGroupElement[];
-
-    const frontTargets = new Set<HTMLElement>();
-    clusters.forEach((cluster) => {
-      const front = this.getFrontTarget(cluster);
-      if (front) frontTargets.add(front);
-    });
-
-    const behindTargets = new Set<HTMLElement>();
-    behindClusters.forEach((cluster) => {
-      const behind = this.getShortestTarget(cluster, rects);
-      if (behind) behindTargets.add(behind);
-    });
-
-    const expandedAutoGroup = existingGroups.find(
-      (group) => group.expand === true || group.collapsing === true
-    );
-    if (expandedAutoGroup) {
-      if (this.joinWhileExpanded) {
-        this.tryJoinExpandedGroup(
-          expandedAutoGroup,
-          targets,
-          rects,
-          enterThreshold
+      existingGroups.forEach((group) => {
+        const children = Array.from(group.children).filter(
+          (child): child is ObcPoiData => this.isPoiTargetElement(child)
         );
-      }
-      this.isGrouping = false;
-      return;
-    }
-
-    const remainingClusters = [...clusters];
-    const keptGroups: HTMLElement[] = [];
-
-    existingGroups.forEach((group) => {
-      const children = Array.from(group.children).filter(
-        (child): child is HTMLElement =>
-          child.tagName.toLowerCase() === 'obc-poi-data'
-      );
-      const matchIndex = remainingClusters.findIndex(
-        (cluster) =>
-          cluster.length === children.length &&
-          cluster.every((target) => children.includes(target))
-      );
-      if (matchIndex >= 0) {
-        keptGroups.push(group);
-        group.removeAttribute('data-exiting');
-        group.setAttribute('data-visible', 'true');
-        remainingClusters.splice(matchIndex, 1);
-      } else {
-        const front = this.getFrontTarget(children);
-        children.forEach((child) => {
-          if (front && child === front) {
-            child.setAttribute('data-front', 'true');
-            child.setAttribute('data-front-exit', 'true');
-          } else {
-            child.removeAttribute('data-front');
-          }
-        });
-        children.forEach((child) => {
-          if (!front || child !== front) {
-            child.setAttribute('data-exiting', 'true');
-            this.startExitLock(child);
-          } else {
-            child.removeAttribute('data-exiting');
-            child.removeAttribute('data-exit-lock');
-          }
-          child.removeAttribute('data-grouped');
-          this.resetTarget(child as ObcPoiData);
-        });
-        children.forEach((child) => this.appendChild(child));
-        children.forEach((child) => {
-          if (!front || child !== front) {
-            child.getBoundingClientRect();
-          }
-        });
-        const exitDelay = this.getCssVarAsNumber(EXIT_DELAY_MS_VAR, 140);
-        window.setTimeout(() => {
+        const matchIndex = remainingClusters.findIndex(
+          (cluster) =>
+            cluster.length === children.length &&
+            cluster.every((target) => children.includes(target))
+        );
+        if (matchIndex >= 0) {
+          keptGroups.push(group);
+          group.removeAttribute('data-exiting');
+          group.setAttribute('data-visible', 'true');
+          remainingClusters.splice(matchIndex, 1);
+        } else {
+          const front = this.getFrontTarget(children);
           children.forEach((child) => {
-            if (!front || child !== front) {
-              child.removeAttribute('data-exiting');
+            if (front && child === front) {
+              child.setAttribute('data-front', 'true');
+              child.setAttribute('data-front-exit', 'true');
+            } else {
+              child.removeAttribute('data-front');
             }
           });
-        }, exitDelay);
-        requestAnimationFrame(() => {
-          group.removeAttribute('data-visible');
-          this.scheduleGroupRemoval(group);
-        });
-      }
-    });
-
-    remainingClusters.forEach((cluster) => {
-      const group = document.createElement('obc-poi-group');
-      group.setAttribute('data-auto-group', 'true');
-      group.setAttribute('data-position-mode', 'bottom');
-      group.setAttribute('data-visible', 'true');
-      (group as PoiButtonGroupElement).internalSwapping =
-        !!this.internalSwapping;
-      group.setAttribute(
-        'positionVertical',
-        `${this.getGroupPositionVertical(cluster, rects, layerRect, group)}px`
-      );
-      cluster.forEach((target) => {
-        target.removeAttribute('data-grouped');
-        group.appendChild(target);
+          children.forEach((child) => {
+            if (!front || child !== front) {
+              child.setAttribute('data-exiting', 'true');
+              this.startExitLock(child);
+            } else {
+              child.removeAttribute('data-exiting');
+              child.removeAttribute('data-exit-lock');
+            }
+            child.removeAttribute('data-grouped');
+            this.resetTarget(child);
+          });
+          children.forEach((child) => this.appendChild(child));
+          children.forEach((child) => {
+            if (!front || child !== front) {
+              child.getBoundingClientRect();
+            }
+          });
+          const exitDelay = this.getCssVarAsNumber(EXIT_DELAY_MS_VAR, 140);
+          window.setTimeout(() => {
+            children.forEach((child) => {
+              if (!front || child !== front) {
+                child.removeAttribute('data-exiting');
+              }
+            });
+          }, exitDelay);
+          requestAnimationFrame(() => {
+            group.removeAttribute('data-visible');
+            this.scheduleGroupRemoval(group);
+          });
+        }
       });
-      this.appendChild(group);
-      requestAnimationFrame(() => {
-        cluster.forEach((target) =>
-          target.setAttribute('data-grouped', 'true')
+
+      remainingClusters.forEach((cluster) => {
+        const group = document.createElement('obc-poi-group');
+        group.setAttribute('data-auto-group', 'true');
+        group.setAttribute('data-position-mode', 'bottom');
+        group.setAttribute('data-visible', 'true');
+        (group as PoiButtonGroupElement).internalSwapping =
+          !!this.internalSwapping;
+        group.setAttribute(
+          'positionVertical',
+          `${this.getGroupPositionVertical(cluster, rects, layerRect, group)}px`
         );
+        cluster.forEach((target) => {
+          target.removeAttribute('data-grouped');
+          group.appendChild(target);
+        });
+        this.appendChild(group);
+        requestAnimationFrame(() => {
+          cluster.forEach((target) =>
+            target.setAttribute('data-grouped', 'true')
+          );
+        });
+        keptGroups.push(group);
       });
-      keptGroups.push(group);
-    });
 
-    const groupedTargets = new Set<HTMLElement>();
-    keptGroups.forEach((group) => {
-      Array.from(group.children).forEach((child) => {
-        if (child instanceof HTMLElement) groupedTargets.add(child);
+      const groupedTargets = new Set<HTMLElement>();
+      keptGroups.forEach((group) => {
+        Array.from(group.children).forEach((child) => {
+          if (child instanceof HTMLElement) groupedTargets.add(child);
+        });
       });
-    });
 
-    targets.forEach((target) => {
-      if (!groupedTargets.has(target)) {
-        const exitLocked = target.hasAttribute('data-exit-lock');
-        target.removeAttribute('data-grouped');
-        target.removeAttribute('data-joined-expanded');
-        if (target.hasAttribute('data-front-exit')) {
-          target.setAttribute('data-front', 'true');
-          target.removeAttribute('data-pregrouped');
-        } else if (frontTargets.has(target)) {
-          target.setAttribute('data-front', 'true');
-          target.removeAttribute('data-pregrouped');
-        } else if (preGrouped.has(target) && !exitLocked) {
-          target.removeAttribute('data-front');
-          target.setAttribute('data-pregrouped', 'true');
-        } else {
-          target.removeAttribute('data-front');
-          target.removeAttribute('data-pregrouped');
-        }
-        if (
-          !exitLocked &&
-          behindTargets.has(target) &&
-          !frontTargets.has(target)
-        ) {
-          target.setAttribute('data-behind', 'true');
+      targets.forEach((target) => {
+        if (!groupedTargets.has(target)) {
+          const exitLocked = target.hasAttribute('data-exit-lock');
+          target.removeAttribute('data-grouped');
+          target.removeAttribute('data-joined-expanded');
+          if (target.hasAttribute('data-front-exit')) {
+            target.setAttribute('data-front', 'true');
+            target.removeAttribute('data-pregrouped');
+          } else if (frontTargets.has(target)) {
+            target.setAttribute('data-front', 'true');
+            target.removeAttribute('data-pregrouped');
+          } else if (preGrouped.has(target) && !exitLocked) {
+            target.removeAttribute('data-front');
+            target.setAttribute('data-pregrouped', 'true');
+          } else {
+            target.removeAttribute('data-front');
+            target.removeAttribute('data-pregrouped');
+          }
+          if (
+            !exitLocked &&
+            behindTargets.has(target) &&
+            !frontTargets.has(target)
+          ) {
+            target.setAttribute('data-behind', 'true');
+          } else {
+            target.removeAttribute('data-behind');
+          }
+          if (exitLocked) {
+            target.removeAttribute('data-pregrouped');
+            target.removeAttribute('data-behind');
+          }
+          const isOverlapState = target.hasAttribute('data-behind');
+          target.value = isOverlapState
+            ? PoiDataValue.Overlapped
+            : PoiDataValue.Unchecked;
+          if (isOverlapState) {
+            this.applyStandaloneVisualState(target, true);
+          } else {
+            this.clearStandaloneVisualState(target);
+          }
+          this.resetTarget(target);
         } else {
           target.removeAttribute('data-behind');
-        }
-        if (exitLocked) {
-          target.removeAttribute('data-pregrouped');
-          target.removeAttribute('data-behind');
-        }
-        const isOverlapState = target.hasAttribute('data-behind');
-        target.value = isOverlapState
-          ? PoiDataValue.Overlapped
-          : PoiDataValue.Unchecked;
-        if (isOverlapState) {
-          this.applyStandaloneVisualState(target, true);
-        } else {
           this.clearStandaloneVisualState(target);
         }
-        this.resetTarget(target);
-      } else {
-        target.removeAttribute('data-behind');
-        this.clearStandaloneVisualState(target);
-      }
-    });
+      });
 
-    this.refreshGroupPositions(layerRect, rects);
+      this.refreshGroupPositions(layerRect, rects);
 
-    requestAnimationFrame(() => {
-      targets.forEach((target) => target.removeAttribute('data-front-exit'));
-    });
+      requestAnimationFrame(() => {
+        targets.forEach((target) => target.removeAttribute('data-front-exit'));
+      });
 
-    this.scheduleLayerHeightUpdate();
-    this.isGrouping = false;
+      this.scheduleLayerHeightUpdate();
+    } finally {
+      this.isGrouping = false;
+    }
   }
 
   private tryJoinExpandedGroup(
@@ -1006,9 +734,7 @@ export class ObcPoiLayer extends LitElement {
     rects: Map<HTMLElement, DOMRect>,
     enterThreshold: number
   ) {
-    const groupTargets = Array.from(
-      group.querySelectorAll('obc-poi-data')
-    ) as ObcPoiData[];
+    const groupTargets = this.getGroupTargets(group);
     if (groupTargets.length === 0) return;
 
     const groupTargetSet = new Set(groupTargets);
@@ -1141,8 +867,7 @@ export class ObcPoiLayer extends LitElement {
     ) as PoiButtonGroupElement[];
     groups.forEach((group) => {
       const children = Array.from(group.children).filter(
-        (child): child is HTMLElement =>
-          child.tagName.toLowerCase() === 'obc-poi-data'
+        (child): child is ObcPoiData => this.isPoiTargetElement(child)
       );
       this.toggleGroupLayerHook(group, children.length > 0);
       const hasPositionAttr =
@@ -1192,8 +917,6 @@ export class ObcPoiLayer extends LitElement {
     });
     const baseBottom = maxBottom - layerRect.top;
     const isAutoGroup = group?.hasAttribute('data-auto-group') ?? false;
-    const useTopOffset = group?.useTopOffset !== false;
-    const transformFactor = useTopOffset ? 0 : isAutoGroup ? 1 : 0.5;
     const offsetRaw = getComputedStyle(this).getPropertyValue(
       '--obc-poi-layer-auto-group-offset-y'
     );
@@ -1201,7 +924,7 @@ export class ObcPoiLayer extends LitElement {
     if (isAutoGroup && this.closest('obc-poi-layer-stack')) {
       offset = 0;
     }
-    return Math.round(baseBottom - layerRect.height * transformFactor + offset);
+    return Math.round(baseBottom + offset);
   }
 
   private resetTarget(target: ObcPoiData) {
@@ -1293,18 +1016,7 @@ export class ObcPoiLayer extends LitElement {
   }
 
   private getTargetRect(target: HTMLElement): DOMRect {
-    const targetShadow = target.shadowRoot;
-    const poi = targetShadow?.querySelector('obc-poi') as
-      | HTMLElement
-      | undefined;
-    const poiButton = poi?.shadowRoot?.querySelector('obc-poi-button') as
-      | HTMLElement
-      | undefined;
-    const dataButton = targetShadow?.querySelector('obc-poi-button-data') as
-      | HTMLElement
-      | undefined;
-    const button = poiButton ?? dataButton;
-    const buttonShadow = button?.shadowRoot;
+    const {poi, button, buttonShadow} = this.getTargetVisualNodes(target);
     const buttonWrapper = buttonShadow?.querySelector(
       '.button-wrapper'
     ) as HTMLElement | null;
@@ -1378,6 +1090,18 @@ export class ObcPoiLayer extends LitElement {
       }
     });
     return shortest;
+  }
+
+  private getAllTargets(): ObcPoiData[] {
+    return Array.from(this.querySelectorAll('*')).filter(
+      (node): node is ObcPoiData => this.isPoiTargetElement(node)
+    );
+  }
+
+  private getGroupTargets(group: ParentNode): ObcPoiData[] {
+    return Array.from(group.querySelectorAll('*')).filter(
+      (node): node is ObcPoiData => this.isPoiTargetElement(node)
+    );
   }
 
   override render() {

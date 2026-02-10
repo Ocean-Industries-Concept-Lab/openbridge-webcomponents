@@ -47,8 +47,8 @@
     translateY(calc(100% - var(--obc-poi-layer-target-shift)))
     scale(var(--obc-poi-layer-target-scale));
   transition:
-    transform 0.4s ease-out,
-    opacity 0.4s ease-out;
+    transform 0.1s ease-out,
+    opacity 0.1s ease-out;
   pointer-events: auto;
 }
 
@@ -92,7 +92,7 @@
 ::slotted(obc-poi-group[data-auto-group]) {
   opacity: 0;
   z-index: 2;
-  transition: opacity 0.7s ease-out;
+  transition: opacity 0.1s ease-out;
 }
 
 ::slotted(obc-poi-group[data-auto-group][data-visible]) {
