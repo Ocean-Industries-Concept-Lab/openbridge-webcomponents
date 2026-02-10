@@ -46,6 +46,7 @@ const meta: Meta<PoiLayerStackArgs> = {
 
 export default meta;
 type Story = StoryObj<PoiLayerStackArgs>;
+type AnimatedPoiData = HTMLElement & {x: number; y: number};
 
 const renderTwoLayers = (args: PoiLayerStackArgs) => html`
   <style>
@@ -136,4 +137,103 @@ export const SelectionMulti: Story = {
     selectionMode: PoiLayerSelectionMode.Multi,
   },
   render: renderThreeLayers,
+};
+
+export const SelectionMultiAnimated: Story = {
+  args: {
+    selectionMode: PoiLayerSelectionMode.Multi,
+  },
+  render: (args) => {
+    const baseIndex = Math.max(0, args.layerIndex);
+    return html`
+      <style>
+        obc-poi-layer-stack.stack-animated {
+          gap: 8px;
+          width: 640px;
+        }
+
+        obc-poi-layer {
+          --obc-poi-layer-min-height: 48px;
+          width: 100%;
+        }
+      </style>
+      <obc-poi-layer-stack
+        class="stack-animated"
+        selection-mode=${args.selectionMode}
+      >
+        <obc-poi-layer
+          label="Layer A"
+          .layerIndex=${baseIndex + 1}
+          role="selected"
+          debug
+        >
+          <obc-poi-data
+            class="anim-poi p0"
+            .x=${520}
+            .y=${110}
+            .fixedTarget=${false}
+          ></obc-poi-data>
+        </obc-poi-layer>
+        <obc-poi-layer
+          label="Layer B"
+          .layerIndex=${baseIndex + 2}
+          role="filtered"
+          type-filter="enhanced"
+          debug
+        >
+        </obc-poi-layer>
+        <obc-poi-layer
+          label="Layer C"
+          .layerIndex=${baseIndex + 3}
+          role="default"
+          ?debug=${args.debug}
+        >
+          <obc-poi-data class="anim-poi p1" .x=${80} .y=${120}></obc-poi-data>
+          <obc-poi-data class="anim-poi p2" .x=${260} .y=${80}></obc-poi-data>
+          <obc-poi-data class="anim-poi p3" .x=${180} .y=${100}></obc-poi-data>
+          <obc-poi-data class="anim-poi p4" .x=${420} .y=${140}></obc-poi-data>
+          <obc-poi-data class="anim-poi p5" .x=${140} .y=${90}></obc-poi-data>
+        </obc-poi-layer>
+      </obc-poi-layer-stack>
+    `;
+  },
+  play: async ({canvasElement}) => {
+    const root = canvasElement.querySelector(
+      '.stack-animated'
+    ) as HTMLElement | null;
+    if (!root || root.dataset.animating === 'true') return;
+    root.dataset.animating = 'true';
+
+    const targets = Array.from(
+      root.querySelectorAll('obc-poi-data.anim-poi')
+    ) as AnimatedPoiData[];
+    if (targets.length === 0) return;
+
+    const base = targets.map((target) => ({
+      x: Number.isFinite(target.x) ? target.x : 0,
+      y: Number.isFinite(target.y) ? target.y : 96,
+    }));
+    const ampX = [22, 28, 24, 26, 20, 22];
+    const ampY = [8, 10, 9, 8, 7, 8];
+    const freq = [0.72, 0.51, 0.66, 0.61, 0.56, 0.69];
+    const phase = [0.15, 0.9, 1.8, 2.45, 3.15, 3.85];
+
+    let rafId = 0;
+    const tick = (now: number) => {
+      if (!root.isConnected) {
+        cancelAnimationFrame(rafId);
+        return;
+      }
+      const t = now / 1000;
+      targets.forEach((target, i) => {
+        const waveX = t * freq[i] + phase[i];
+        const waveY = t * (freq[i] + 0.18) + phase[i] * 0.72;
+        target.x = base[i].x + ampX[i] * Math.sin(waveX);
+        target.y = base[i].y + ampY[i] * Math.cos(waveY);
+      });
+      rafId = requestAnimationFrame(tick);
+    };
+
+    rafId = requestAnimationFrame(tick);
+  },
 };

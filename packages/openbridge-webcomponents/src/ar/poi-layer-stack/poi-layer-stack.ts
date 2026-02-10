@@ -112,10 +112,10 @@ export class ObcPoiLayerStack extends LitElement {
       if (existing.originLayer !== currentLayer) {
         this.clearTargetSelectedId(target);
         this.moveTargetToLayer(target, existing.originLayer, () => {
-          target.y = existing.originLineLength;
+          this.animateTargetLineCompensation(target, 0, false);
         });
       } else {
-        this.animateTargetLineLength(target, existing.originLineLength, true);
+        this.animateTargetLineCompensation(target, 0, true);
         this.clearTargetSelectedId(target);
       }
       this.selectionMap.delete(target);
@@ -271,10 +271,10 @@ export class ObcPoiLayerStack extends LitElement {
       if (record.originLayer !== currentLayer) {
         this.clearTargetSelectedId(target);
         this.moveTargetToLayer(target, record.originLayer, () => {
-          target.y = record.originLineLength;
+          this.animateTargetLineCompensation(target, 0, false);
         });
       } else {
-        this.animateTargetLineLength(target, record.originLineLength, true);
+        this.animateTargetLineCompensation(target, 0, true);
         this.clearTargetSelectedId(target);
       }
       this.selectionMap.delete(target);
@@ -585,30 +585,35 @@ export class ObcPoiLayerStack extends LitElement {
     });
   }
 
-  private animateTargetLineLength(
+  private getTargetLineCompensation(target: ObcPoiData): number {
+    const compensation = target.lineCompensationY;
+    return Number.isFinite(compensation) ? compensation : 0;
+  }
+
+  private animateTargetLineCompensation(
     target: ObcPoiData,
-    targetLineLength: number,
+    targetCompensation: number,
     animate: boolean,
     startTimeOverride?: number
   ) {
     if (!animate) {
-      target.y = targetLineLength;
+      target.lineCompensationY = targetCompensation;
       return;
     }
 
     const duration = JUMP_DURATION_MS;
     const [x1, y1, x2, y2] = JUMP_BEZIER;
     const startTime = startTimeOverride ?? performance.now();
-    const startLineLength = Number.isFinite(target.y) ? target.y : 0;
+    const startCompensation = this.getTargetLineCompensation(target);
 
     const animateLineLength = (now: number) => {
       try {
         const elapsed = now - startTime;
         const progress = Math.min(elapsed / duration, 1);
         const eased = this.cubicBezier(x1, y1, x2, y2, progress);
-        const newLineLength =
-          startLineLength + (targetLineLength - startLineLength) * eased;
-        target.y = newLineLength;
+        const nextCompensation =
+          startCompensation + (targetCompensation - startCompensation) * eased;
+        target.lineCompensationY = nextCompensation;
 
         if (progress < 1) {
           requestAnimationFrame(animateLineLength);
@@ -631,13 +636,13 @@ export class ObcPoiLayerStack extends LitElement {
     startTimeOverride?: number
   ) {
     if (!Number.isFinite(offset) || Math.abs(offset) < 0.5) return;
-    const currentLineLength = Number.isFinite(target.y) ? target.y : 0;
-    const targetLineLength = target.fixedTarget
-      ? currentLineLength - offset
-      : currentLineLength + offset;
-    this.animateTargetLineLength(
+    const currentCompensation = this.getTargetLineCompensation(target);
+    const targetCompensation = target.fixedTarget
+      ? currentCompensation - offset
+      : currentCompensation + offset;
+    this.animateTargetLineCompensation(
       target,
-      targetLineLength,
+      targetCompensation,
       animate,
       startTimeOverride
     );

@@ -103,6 +103,8 @@ export class ObcPoiData extends LitElement {
   @property({type: Number}) offset = 0;
   @property({type: Number, attribute: 'top-offset'}) topOffset = 0;
   @property({type: Number}) buttonOffsetX = 0;
+  @property({type: Number, attribute: 'line-compensation-y'})
+  lineCompensationY = 0;
   @property({type: Boolean, attribute: 'animate-position'})
   animatePosition = false;
   @property({type: Boolean, attribute: 'fixed-target'}) fixedTarget = false;
@@ -142,6 +144,7 @@ export class ObcPoiData extends LitElement {
       changedProperties.has('x') ||
       changedProperties.has('anchorY') ||
       changedProperties.has('y') ||
+      changedProperties.has('lineCompensationY') ||
       changedProperties.has('fixedTarget')
     ) {
       this.dispatchEvent(
@@ -251,10 +254,15 @@ export class ObcPoiData extends LitElement {
   override render() {
     const selectedVerticalOffset = this.selectedVerticalOffset;
     const lineLength = Number.isFinite(this.y) ? this.y : 0;
+    const lineCompensation = Number.isFinite(this.lineCompensationY)
+      ? this.lineCompensationY
+      : 0;
     const layerVerticalOffset = this.layerVerticalOffset;
     const totalVerticalOffset = selectedVerticalOffset + layerVerticalOffset;
     const effectiveLineLength =
-      this.pointerType === Pointer.Line ? lineLength + totalVerticalOffset : 0;
+      this.pointerType === Pointer.Line
+        ? lineLength + lineCompensation + totalVerticalOffset
+        : 0;
     const effectiveLocalAnchorY = -totalVerticalOffset;
     const effectiveButtonOffset = this.buttonOffsetX + this.topOffset;
     const effectiveTargetOffset = this.buttonOffsetX + this.offset;
