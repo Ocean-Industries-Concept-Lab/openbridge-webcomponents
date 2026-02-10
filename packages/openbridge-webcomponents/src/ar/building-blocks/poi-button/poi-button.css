@@ -73,15 +73,6 @@
       --overlay-container-background-color: rgba(255, 255, 255, 0.5);
       --overlay-border-outline-color: rgba(0, 0, 0, 0.3);
     }
-
-    .id-label {
-      height: 0;
-      min-height: 0;
-      padding: 0;
-      margin: 0;
-      border-width: 0;
-      overflow: hidden;
-    }
   }
 
   /* Transition for elements that fade */
@@ -171,6 +162,14 @@
 .wrapper:not(.has-data) {
   @mixin style style=flat
     visibleWrapperClass=.poi-object: : part(background-frame);
+
+  .id-label {
+    position: absolute;
+    left: 50%;
+    bottom: 100%;
+    transform: translateX(-50%);
+    z-index: 1;
+  }
 
   .poi-object {
     --flat-enabled-background-color: #fff;

@@ -107,15 +107,6 @@ export class ObcPoiData extends LitElement {
   animatePosition = false;
   @property({type: Boolean, attribute: 'fixed-target'}) fixedTarget = false;
 
-  private get hasHeader(): boolean {
-    const content = this.header?.content;
-    return typeof content === 'string' && content.trim().length > 0;
-  }
-
-  private get hasData(): boolean {
-    return this.data.length > 0;
-  }
-
   get height(): number | null {
     return this.anchorY;
   }
@@ -215,6 +206,14 @@ export class ObcPoiData extends LitElement {
     return Number.isFinite(parsed) ? parsed : 0;
   }
 
+  private get layerVerticalOffset(): number {
+    const offset = getComputedStyle(this).getPropertyValue(
+      '--obc-poi-target-layer-vertical-offset'
+    );
+    const parsed = Number.parseFloat(offset);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
   private get mappedPoiState(): ObcPoiState {
     switch (this.state) {
       case TargetState.Caution:
@@ -249,32 +248,14 @@ export class ObcPoiData extends LitElement {
     }
   }
 
-  private get overlapAnchorCompensation(): number {
-    const computed = getComputedStyle(this);
-    const raw =
-      computed
-        .getPropertyValue('--obc-poi-data-overlap-anchor-compensation')
-        .trim() ||
-      computed.getPropertyValue('--maneuvering-components-poi-id-tag-min-size');
-    const parsed = Number.parseFloat(raw);
-    return Number.isFinite(parsed) ? parsed : 16;
-  }
-
   override render() {
     const selectedVerticalOffset = this.selectedVerticalOffset;
     const lineLength = Number.isFinite(this.y) ? this.y : 0;
-    const isOverlapped = this.value === PoiButtonVisualState.Overlapped;
-    const overlapAnchorCompensation =
-      isOverlapped && !this.hasData && this.hasHeader
-        ? this.overlapAnchorCompensation
-        : 0;
+    const layerVerticalOffset = this.layerVerticalOffset;
+    const totalVerticalOffset = selectedVerticalOffset + layerVerticalOffset;
     const effectiveLineLength =
-      this.pointerType === Pointer.Line
-        ? lineLength + selectedVerticalOffset
-        : 0;
-    const effectiveLocalAnchorY = this.selected
-      ? -selectedVerticalOffset - overlapAnchorCompensation
-      : -overlapAnchorCompensation;
+      this.pointerType === Pointer.Line ? lineLength + totalVerticalOffset : 0;
+    const effectiveLocalAnchorY = -totalVerticalOffset;
     const effectiveButtonOffset = this.buttonOffsetX + this.topOffset;
     const effectiveTargetOffset = this.buttonOffsetX + this.offset;
 

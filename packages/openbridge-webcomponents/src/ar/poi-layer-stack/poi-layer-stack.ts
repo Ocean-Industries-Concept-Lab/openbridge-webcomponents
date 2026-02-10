@@ -303,7 +303,7 @@ export class ObcPoiLayerStack extends LitElement {
       typeof window !== 'undefined' &&
       window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     const wasInGroup = currentParent.tagName.toLowerCase() === 'obc-poi-group';
-    const firstRect = this.getTargetVisualRect(target);
+    const firstAnchor = this.getTargetVisualAnchor(target);
     nextLayer.appendChild(target);
     if (wasInGroup) {
       const group = currentParent as ObcPoiGroup;
@@ -326,15 +326,15 @@ export class ObcPoiLayerStack extends LitElement {
       if (!skipLineLengthAdjust) {
         this.adjustTargetLineLengthForLayerMove(
           target as ObcPoiData,
-          firstRect
+          firstAnchor
         );
       }
       this.requestLayerGrouping(nextLayer);
       return;
     }
-    const lastRect = this.getTargetVisualRect(target);
-    const dx = firstRect.left - lastRect.left;
-    const dy = firstRect.top - lastRect.top;
+    const lastAnchor = this.getTargetVisualAnchor(target);
+    const dx = firstAnchor.x - lastAnchor.x;
+    const dy = firstAnchor.y - lastAnchor.y;
 
     if (!skipLineLengthAdjust) {
       this.adjustTargetLineLengthByOffset(target as ObcPoiData, dy);
@@ -366,48 +366,13 @@ export class ObcPoiLayerStack extends LitElement {
     });
   }
 
-  private topOffsetResetRaf = new Map<ObcPoiData, number>();
-
-  private animateTopOffsetToZero(target: ObcPoiData) {
-    const start = target.topOffset;
-    if (!Number.isFinite(start) || Math.abs(start) < 0.5) {
-      target.topOffset = 0;
-      return;
-    }
-
-    const existing = this.topOffsetResetRaf.get(target);
-    if (existing) {
-      cancelAnimationFrame(existing);
-    }
-
-    const duration = 100;
-    const startTime = performance.now();
-    const step = (now: number) => {
-      try {
-        if (!target.isConnected) {
-          this.topOffsetResetRaf.delete(target);
-          return;
-        }
-        const t = Math.min((now - startTime) / duration, 1);
-        const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-        target.topOffset = start + (0 - start) * eased;
-        if (t < 1) {
-          this.topOffsetResetRaf.set(target, requestAnimationFrame(step));
-        } else {
-          this.topOffsetResetRaf.delete(target);
-        }
-      } catch (error) {
-        console.error('[poi-layer-stack] Error in top offset reset:', error);
-        this.topOffsetResetRaf.delete(target);
-      }
-    };
-
-    this.topOffsetResetRaf.set(target, requestAnimationFrame(step));
+  private getRectBottomCenter(rect: DOMRect): {x: number; y: number} {
+    return {x: rect.left + rect.width / 2, y: rect.bottom};
   }
 
-  private getTargetVisualRect(target: HTMLElement): DOMRect {
+  private getTargetVisualAnchor(target: HTMLElement): {x: number; y: number} {
     if (target.tagName.toLowerCase() !== 'obc-poi-data') {
-      return target.getBoundingClientRect();
+      return this.getRectBottomCenter(target.getBoundingClientRect());
     }
     const targetShadow = target.shadowRoot;
     const poi = targetShadow?.querySelector('obc-poi') as
@@ -421,15 +386,21 @@ export class ObcPoiLayerStack extends LitElement {
       | undefined;
     const button = poiButton ?? dataButton;
     const buttonShadow = button?.shadowRoot;
+    const buttonWrapper = buttonShadow?.querySelector(
+      '.button-wrapper'
+    ) as HTMLElement | null;
     const wrapper = buttonShadow?.querySelector(
       '.wrapper'
     ) as HTMLElement | null;
-    return (
-      wrapper?.getBoundingClientRect() ??
+    const rect =
+      // Anchor math must ignore header mount/unmount, so prefer the fixed
+      // button wrapper over the overall wrapper that grows/shrinks with labels.
+      buttonWrapper?.getBoundingClientRect() ??
       button?.getBoundingClientRect() ??
+      wrapper?.getBoundingClientRect() ??
       poi?.getBoundingClientRect() ??
-      target.getBoundingClientRect()
-    );
+      target.getBoundingClientRect();
+    return this.getRectBottomCenter(rect);
   }
 
   private requestLayerGrouping(layer: HTMLElement) {
@@ -668,10 +639,10 @@ export class ObcPoiLayerStack extends LitElement {
 
   private adjustTargetLineLengthForLayerMove(
     target: ObcPoiData,
-    firstRect: DOMRect
+    firstAnchor: {x: number; y: number}
   ) {
-    const lastRect = this.getTargetVisualRect(target);
-    const dy = firstRect.top - lastRect.top;
+    const lastAnchor = this.getTargetVisualAnchor(target);
+    const dy = firstAnchor.y - lastAnchor.y;
     this.adjustTargetLineLengthByOffset(target, dy, false);
   }
 
