@@ -7,13 +7,16 @@ import {
   convertThrustAdvices,
   thrusterColors,
   thrusterTopSingleSided,
-  setpointSvg,
+  renderThrusterSetpoint,
 } from '../thruster/thruster.js';
 import {LinearAdvice} from '../thruster/advice.js';
 import {customElement} from '../../decorator.js';
 
 @customElement('obc-main-engine')
 export class ObcMainEngine extends LitElement {
+  private _thrustSetpointId = `me-thrust-sp-${Math.random().toString(36).slice(2, 9)}`;
+  private _speedSetpointId = `me-speed-sp-${Math.random().toString(36).slice(2, 9)}`;
+
   @property({type: Number}) thrust: number = 0;
   @property({type: Number}) thrustSetpoint: number | undefined;
   @property({type: Boolean}) thrustTouching: boolean = false;
@@ -32,10 +35,6 @@ export class ObcMainEngine extends LitElement {
   @property({type: Array}) thrustAdvices: LinearAdvice[] = [];
 
   override render() {
-    const thrustSetpointAtZero =
-      Math.abs(this.thrustSetpoint || 0) < this.thrustSetpointAtZeroDeadband;
-    const speedSetpointAtZero =
-      Math.abs(this.speedSetpoint || 0) < this.speedSetpointAtZeroDeadband;
     const thrustAtSetpoint = atSetpoint(this.thrust, this.thrustSetpoint, {
       atSetpoint: this.atThrustSetpoint,
       autoAtSetpoint: !this.disableAutoAtThrustSetpoint,
@@ -99,20 +98,17 @@ export class ObcMainEngine extends LitElement {
      )}</g>`;
     const thrustSetpoint =
       this.thrustSetpoint !== undefined
-        ? svg`<g transform="translate(44, 0)">${setpointSvg(
+        ? svg`<g transform="translate(44, 0)">${renderThrusterSetpoint(
             174,
             this.thrustSetpoint,
-            thrustSetpointAtZero,
             {
-              fill: cThrust.setPointColor,
-              stroke: 'var(--border-silhouette-color)',
-            },
-            {
-              filled:
-                this.state === InstrumentState.inCommand ||
-                this.state === InstrumentState.off,
+              state: this.state,
+              atSetpoint: thrustAtSetpoint,
+              touching: this.thrustTouching,
+              setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
               singleSided: true,
               narrow: false,
+              id: this._thrustSetpointId,
             }
           )}</g>`
         : nothing;
@@ -128,20 +124,17 @@ export class ObcMainEngine extends LitElement {
 `;
     const speedSetpoint =
       this.speedSetpoint !== undefined
-        ? svg`<g transform="scale(-1 1) translate(44, 176)">${setpointSvg(
+        ? svg`<g transform="scale(-1 1) translate(44, 176)">${renderThrusterSetpoint(
             350,
             this.speedSetpoint,
-            speedSetpointAtZero,
             {
-              fill: cSpeed.setPointColor,
-              stroke: 'var(--border-silhouette-color)',
-            },
-            {
-              filled:
-                this.state === InstrumentState.inCommand ||
-                this.state === InstrumentState.off,
+              state: this.state,
+              atSetpoint: speedAtSetpoint,
+              touching: this.speedTouching,
+              setpointAtZeroDeadband: this.speedSetpointAtZeroDeadband,
               singleSided: true,
               narrow: false,
+              id: this._speedSetpointId,
             }
           )}</g>`
         : nothing;

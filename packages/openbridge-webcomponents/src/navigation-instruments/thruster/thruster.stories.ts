@@ -15,6 +15,8 @@ const meta: Meta<typeof ObcThruster> = {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
     thrust: {control: {type: 'range', min: -100, max: 100, step: 1}},
     setpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
+    newSetpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
+    touching: {control: 'boolean'},
     state: {
       options: Object.values(InstrumentState),
     },

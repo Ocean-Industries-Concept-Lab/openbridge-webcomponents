@@ -19,8 +19,10 @@ const meta: Meta<typeof ObcMainEngine> = {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
     thrust: {control: {type: 'range', min: -100, max: 100, step: 1}},
     thrustSetpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
+    thrustTouching: {control: 'boolean'},
     speed: {control: {type: 'range', min: 0, max: 100, step: 1}},
     speedSetpoint: {control: {type: 'range', min: 0, max: 100, step: 1}},
+    speedTouching: {control: 'boolean'},
     state: {
       options: Object.values(InstrumentState),
     },

@@ -25,6 +25,8 @@ function mapAngle0to360(angle: number): number {
 
 @customElement('obc-azimuth-thruster')
 export class ObcAzimuthThruster extends LitElement {
+  private _thrustSetpointId = `azimuth-thrust-sp-${Math.random().toString(36).slice(2, 9)}`;
+
   @property({type: Number}) angle = 0;
   @property({type: Number}) angleSetpoint: number | undefined;
   @property({type: Number}) newAngleSetpoint: number | undefined;
@@ -223,6 +225,7 @@ export class ObcAzimuthThruster extends LitElement {
               topPropeller: this.topPropeller,
               bottomPropeller: this.bottomPropeller,
               narrow: true,
+              setpointId: this._thrustSetpointId,
             })}
           </g>
         </svg>
