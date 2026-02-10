@@ -451,55 +451,31 @@ export class ObcPoiGroup extends LitElement {
 
     if (targets.length === 0) return null;
 
+    let front: ObcPoiData | null = null;
+    let maxHeight = Number.NEGATIVE_INFINITY;
     const frontByAttr = targets.find((child) =>
       child.hasAttribute('data-front')
     );
-    if (frontByAttr) return frontByAttr;
-
-    let front: ObcPoiData | null = null;
-    let maxHeight = Number.NEGATIVE_INFINITY;
+    const epsilon = 0.001;
 
     for (const child of targets) {
-      const anchorYValue =
-        typeof child.anchorY === 'number' && Number.isFinite(child.anchorY)
-          ? child.anchorY
-          : Number.parseFloat(child.getAttribute('anchor-y') ?? '');
-      const legacyHeightValue = Number.parseFloat(
-        child.getAttribute('height') ?? ''
-      );
-      const heightValue = !Number.isNaN(anchorYValue)
-        ? anchorYValue
-        : legacyHeightValue;
       const yValue =
-        Number.isFinite(child.y) && child.y > 0
+        typeof child.y === 'number' && Number.isFinite(child.y)
           ? child.y
           : Number.parseFloat(child.getAttribute('y') ?? '');
-      let resolvedHeight = Number.NaN;
+      if (Number.isNaN(yValue)) continue;
 
-      if (child.fixedTarget) {
-        if (!Number.isNaN(heightValue) && !Number.isNaN(yValue)) {
-          resolvedHeight = heightValue - yValue;
-        }
-      } else if (!Number.isNaN(heightValue)) {
-        resolvedHeight = heightValue;
+      if (yValue > maxHeight + epsilon) {
+        maxHeight = yValue;
+        front = child;
+        continue;
       }
 
-      if (Number.isNaN(resolvedHeight)) {
-        const inlineTop = child.style.top;
-        if (inlineTop && inlineTop.endsWith('px')) {
-          const parsed = Number.parseFloat(inlineTop);
-          if (!Number.isNaN(parsed)) resolvedHeight = parsed;
-        } else {
-          const computedTop = window.getComputedStyle(child).top;
-          const parsed = Number.parseFloat(computedTop);
-          if (!Number.isNaN(parsed)) resolvedHeight = parsed;
-        }
-      }
-
-      if (Number.isNaN(resolvedHeight)) continue;
-
-      if (resolvedHeight > maxHeight) {
-        maxHeight = resolvedHeight;
+      if (
+        Math.abs(yValue - maxHeight) <= epsilon &&
+        frontByAttr &&
+        child === frontByAttr
+      ) {
         front = child;
       }
     }

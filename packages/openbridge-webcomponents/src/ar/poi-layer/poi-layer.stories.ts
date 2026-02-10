@@ -96,7 +96,7 @@ export const AnimatedLayout: Story = {
       let rafId = 0;
 
       const tick = (now: number) => {
-        const t = (now - start) / 1000;
+        const t = ((now - start) / 1000) * 0.7;
         const phase = (1 - Math.cos((t * Math.PI) / 6)) / 2;
         const x1 = 120 + (260 - 120) * phase;
         const x2 = 520 - (520 - 260) * phase;

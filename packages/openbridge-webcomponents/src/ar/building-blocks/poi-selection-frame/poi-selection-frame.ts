@@ -268,6 +268,9 @@ function enhancedAlertFrame(): HTMLTemplateResult {
  */
 @customElement('obc-poi-selection-frame')
 export class ObcPoiSelectionFrame extends LitElement {
+  private static readonly MIN_CUSTOM_SIZE_PX = 48;
+  private static readonly CORNER_SHADOW_BLEED_PX = 4;
+
   @property({type: String, reflect: true})
   type: ObcPoiSelectionFrameType = ObcPoiSelectionFrameType.Indicator;
 
@@ -299,22 +302,41 @@ export class ObcPoiSelectionFrame extends LitElement {
       : ObcPoiSelectionFrameVariant.ButtonRegular;
   }
 
-  private renderFrame(): HTMLTemplateResult | typeof nothing {
-    if (this.state === ObcPoiSelectionFrameState.None) {
-      return nothing;
+  private get resolvedVariantSourceSizePx(): number {
+    switch (this.resolvedVariant) {
+      case ObcPoiSelectionFrameVariant.ButtonAlert:
+        return 50;
+      case ObcPoiSelectionFrameVariant.EnhancedRegular:
+        return 64;
+      case ObcPoiSelectionFrameVariant.EnhancedAlert:
+        return 66;
+      case ObcPoiSelectionFrameVariant.ButtonRegular:
+      default:
+        return 48;
     }
+  }
 
-    if (this.customMode) {
-      return html`
-        <span class="custom-frame" part="custom-frame">
-          <span class="custom-corner tl"></span>
-          <span class="custom-corner tr"></span>
-          <span class="custom-corner bl"></span>
-          <span class="custom-corner br"></span>
-        </span>
-      `;
+  private get resolvedVariantCornerVisualPx(): number {
+    switch (this.resolvedVariant) {
+      case ObcPoiSelectionFrameVariant.ButtonAlert:
+        return 11;
+      case ObcPoiSelectionFrameVariant.EnhancedRegular:
+      case ObcPoiSelectionFrameVariant.EnhancedAlert:
+        return 14;
+      case ObcPoiSelectionFrameVariant.ButtonRegular:
+      default:
+        return 12;
     }
+  }
 
+  private get resolvedVariantCornerCropPx(): number {
+    return (
+      this.resolvedVariantCornerVisualPx +
+      ObcPoiSelectionFrame.CORNER_SHADOW_BLEED_PX
+    );
+  }
+
+  private renderVariantFrame(): HTMLTemplateResult {
     switch (this.resolvedVariant) {
       case ObcPoiSelectionFrameVariant.ButtonAlert:
         return buttonAlertFrame();
@@ -326,6 +348,41 @@ export class ObcPoiSelectionFrame extends LitElement {
       default:
         return buttonRegularFrame();
     }
+  }
+
+  private renderCustomFrame(): HTMLTemplateResult {
+    const sourceSizePx = this.resolvedVariantSourceSizePx;
+    const cornerCropPx = this.resolvedVariantCornerCropPx;
+    const cornerOffsetPx = sourceSizePx - cornerCropPx;
+
+    return html`
+      <span
+        class="custom-frame"
+        part="custom-frame"
+        style=${`
+          --obc-poi-selection-frame-source-size: ${sourceSizePx}px;
+          --obc-poi-selection-frame-corner-crop: ${cornerCropPx}px;
+          --obc-poi-selection-frame-corner-offset: ${cornerOffsetPx}px;
+        `}
+      >
+        <span class="custom-corner tl">${this.renderVariantFrame()}</span>
+        <span class="custom-corner tr">${this.renderVariantFrame()}</span>
+        <span class="custom-corner bl">${this.renderVariantFrame()}</span>
+        <span class="custom-corner br">${this.renderVariantFrame()}</span>
+      </span>
+    `;
+  }
+
+  private renderFrame(): HTMLTemplateResult | typeof nothing {
+    if (this.state === ObcPoiSelectionFrameState.None) {
+      return nothing;
+    }
+
+    if (this.customMode) {
+      return this.renderCustomFrame();
+    }
+
+    return this.renderVariantFrame();
   }
 
   private get defaultWidthPx(): number {
@@ -353,25 +410,33 @@ export class ObcPoiSelectionFrame extends LitElement {
 
   private get resolvedCustomWidthPx(): number {
     const width = Number(this.boxWidth);
-    return Number.isFinite(width) && width > 0 ? width : this.defaultWidthPx;
+    const resolvedWidth =
+      Number.isFinite(width) && width > 0 ? width : this.defaultWidthPx;
+
+    return Math.max(ObcPoiSelectionFrame.MIN_CUSTOM_SIZE_PX, resolvedWidth);
   }
 
   private get resolvedCustomHeightPx(): number {
     const height = Number(this.boxHeight);
-    return Number.isFinite(height) && height > 0
-      ? height
-      : this.defaultHeightPx;
+    const resolvedHeight =
+      Number.isFinite(height) && height > 0 ? height : this.defaultHeightPx;
+
+    return Math.max(ObcPoiSelectionFrame.MIN_CUSTOM_SIZE_PX, resolvedHeight);
   }
 
   protected override updated(_changedProperties: PropertyValues): void {
     if (this.customMode && this.state !== ObcPoiSelectionFrameState.None) {
       this.style.width = `${this.resolvedCustomWidthPx}px`;
       this.style.height = `${this.resolvedCustomHeightPx}px`;
+      this.style.minWidth = `${ObcPoiSelectionFrame.MIN_CUSTOM_SIZE_PX}px`;
+      this.style.minHeight = `${ObcPoiSelectionFrame.MIN_CUSTOM_SIZE_PX}px`;
       return;
     }
 
     this.style.removeProperty('width');
     this.style.removeProperty('height');
+    this.style.removeProperty('min-width');
+    this.style.removeProperty('min-height');
   }
 
   override render() {

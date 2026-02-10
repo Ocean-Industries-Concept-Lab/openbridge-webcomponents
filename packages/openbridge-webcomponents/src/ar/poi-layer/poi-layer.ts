@@ -518,7 +518,7 @@ export class ObcPoiLayer extends LitElement {
       const preThreshold = Number.parseFloat(preRaw) || enterThreshold;
       const behindThreshold = Number.parseFloat(behindRaw) || enterThreshold;
 
-      const currentGroupByTarget = new Map<HTMLElement, HTMLElement>();
+      const currentGroupByTarget = new Map<ObcPoiData, HTMLElement>();
       targets.forEach((target) => {
         const parent = target.parentElement;
         if (parent?.tagName.toLowerCase() === 'obc-poi-group') {
@@ -526,7 +526,7 @@ export class ObcPoiLayer extends LitElement {
         }
       });
 
-      const rects = new Map<HTMLElement, DOMRect>();
+      const rects = new Map<ObcPoiData, DOMRect>();
       targets.forEach((target) => {
         rects.set(target, this.getTargetRectForGrouping(target, layerRect));
       });
@@ -552,13 +552,13 @@ export class ObcPoiLayer extends LitElement {
         this.querySelectorAll('obc-poi-group[data-auto-group]')
       ) as PoiButtonGroupElement[];
 
-      const frontTargets = new Set<HTMLElement>();
+      const frontTargets = new Set<ObcPoiData>();
       clusters.forEach((cluster) => {
-        const front = this.getFrontTarget(cluster);
+        const front = this.getFrontTarget(cluster, rects);
         if (front) frontTargets.add(front);
       });
 
-      const behindTargets = new Set<HTMLElement>();
+      const behindTargets = new Set<ObcPoiData>();
       behindClusters.forEach((cluster) => {
         const behind = this.getShortestTarget(cluster, rects);
         if (behind) behindTargets.add(behind);
@@ -597,7 +597,7 @@ export class ObcPoiLayer extends LitElement {
           group.setAttribute('data-visible', 'true');
           remainingClusters.splice(matchIndex, 1);
         } else {
-          const front = this.getFrontTarget(children);
+          const front = this.getFrontTarget(children, rects);
           children.forEach((child) => {
             if (front && child === front) {
               child.setAttribute('data-front', 'true');
@@ -662,10 +662,10 @@ export class ObcPoiLayer extends LitElement {
         keptGroups.push(group);
       });
 
-      const groupedTargets = new Set<HTMLElement>();
+      const groupedTargets = new Set<ObcPoiData>();
       keptGroups.forEach((group) => {
         Array.from(group.children).forEach((child) => {
-          if (child instanceof HTMLElement) groupedTargets.add(child);
+          if (this.isPoiTargetElement(child)) groupedTargets.add(child);
         });
       });
 
@@ -731,7 +731,7 @@ export class ObcPoiLayer extends LitElement {
   private tryJoinExpandedGroup(
     group: PoiButtonGroupElement,
     targets: ObcPoiData[],
-    rects: Map<HTMLElement, DOMRect>,
+    rects: Map<ObcPoiData, DOMRect>,
     enterThreshold: number
   ) {
     const groupTargets = this.getGroupTargets(group);
@@ -860,7 +860,7 @@ export class ObcPoiLayer extends LitElement {
 
   private refreshGroupPositions(
     layerRect?: DOMRect,
-    rects?: Map<HTMLElement, DOMRect>
+    rects?: Map<ObcPoiData, DOMRect>
   ) {
     const groups = Array.from(
       this.querySelectorAll('obc-poi-group')
@@ -905,8 +905,8 @@ export class ObcPoiLayer extends LitElement {
   }
 
   private getGroupPositionVertical(
-    targets: HTMLElement[],
-    rects: Map<HTMLElement, DOMRect>,
+    targets: ObcPoiData[],
+    rects: Map<ObcPoiData, DOMRect>,
     layerRect: DOMRect,
     group?: PoiButtonGroupElement
   ) {
@@ -1011,8 +1011,21 @@ export class ObcPoiLayer extends LitElement {
     this.exitLockTimers.set(target, timeoutId);
   }
 
-  private getFrontTarget(targets: HTMLElement[]) {
-    return targets.find((target) => target.hasAttribute('data-front')) ?? null;
+  private getFrontTarget(
+    targets: ObcPoiData[],
+    rects?: Map<ObcPoiData, DOMRect>
+  ) {
+    if (targets.length === 0) return null;
+    let front = targets[0];
+    let maxHeight = this.getTargetHeight(front, rects);
+    targets.forEach((target) => {
+      const height = this.getTargetHeight(target, rects);
+      if (height > maxHeight) {
+        maxHeight = height;
+        front = target;
+      }
+    });
+    return front;
   }
 
   private getTargetRect(target: HTMLElement): DOMRect {
@@ -1050,8 +1063,8 @@ export class ObcPoiLayer extends LitElement {
   }
 
   private getTargetHeight(
-    target: HTMLElement,
-    rects?: Map<HTMLElement, DOMRect>
+    target: ObcPoiData,
+    rects?: Map<ObcPoiData, DOMRect>
   ): number {
     if (target instanceof ObcPoiData && Number.isFinite(target.y ?? NaN)) {
       return target.y ?? 0;
@@ -1076,8 +1089,8 @@ export class ObcPoiLayer extends LitElement {
   }
 
   private getShortestTarget(
-    targets: HTMLElement[],
-    rects?: Map<HTMLElement, DOMRect>
+    targets: ObcPoiData[],
+    rects?: Map<ObcPoiData, DOMRect>
   ) {
     if (targets.length === 0) return null;
     let shortest = targets[0];

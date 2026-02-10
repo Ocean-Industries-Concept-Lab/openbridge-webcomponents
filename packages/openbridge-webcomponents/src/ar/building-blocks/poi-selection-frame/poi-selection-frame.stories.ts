@@ -15,8 +15,8 @@ const meta: Meta<ObcPoiSelectionFrame> = {
     type: ObcPoiSelectionFrameType.Indicator,
     state: ObcPoiSelectionFrameState.Regular,
     customMode: false,
-    boxWidth: null,
-    boxHeight: null,
+    boxWidth: 48,
+    boxHeight: 48,
   },
   argTypes: {
     type: {
@@ -31,11 +31,11 @@ const meta: Meta<ObcPoiSelectionFrame> = {
       control: {type: 'boolean'},
     },
     boxWidth: {
-      control: {type: 'number', min: 1, step: 1},
+      control: {type: 'number', min: 48, step: 1},
       description: 'Custom frame width in pixels when customMode is enabled.',
     },
     boxHeight: {
-      control: {type: 'number', min: 1, step: 1},
+      control: {type: 'number', min: 48, step: 1},
       description: 'Custom frame height in pixels when customMode is enabled.',
     },
   },
