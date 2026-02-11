@@ -72,10 +72,7 @@
 }
 
 .wrapper.type-id.state-enabled .id-only-text {
-  color: var(
-    --Color-Overlay-Element-Active-color,
-    var(--overlay-element-active-color, #fff)
-  );
+  color: var(--overlay-element-active-color, #fff);
   text-align: center;
   font-feature-settings: "ss04" on;
   font-family: var(--font-family-Main, "Noto Sans");
@@ -84,14 +81,14 @@
   font-weight: var(--Global-Typography-UI-Label-active-Font-weight, 670);
   line-height: var(--Global-Typography-UI-Label-active-Line-height, 16px);
   text-shadow:
-    1px 0 0 var(--Color-Overlay-Element-Active-inverted-color, #1a1a1a),
-    -1px 0 0 var(--Color-Overlay-Element-Active-inverted-color, #1a1a1a),
-    0 1px 0 var(--Color-Overlay-Element-Active-inverted-color, #1a1a1a),
-    0 -1px 0 var(--Color-Overlay-Element-Active-inverted-color, #1a1a1a),
-    1px 1px 0 var(--Color-Overlay-Element-Active-inverted-color, #1a1a1a),
-    -1px 1px 0 var(--Color-Overlay-Element-Active-inverted-color, #1a1a1a),
-    1px -1px 0 var(--Color-Overlay-Element-Active-inverted-color, #1a1a1a),
-    -1px -1px 0 var(--Color-Overlay-Element-Active-inverted-color, #1a1a1a),
+    1px 0 0 var(--overlay-element-active-inverted-color, #1a1a1a),
+    -1px 0 0 var(--overlay-element-active-inverted-color, #1a1a1a),
+    0 1px 0 var(--overlay-element-active-inverted-color, #1a1a1a),
+    0 -1px 0 var(--overlay-element-active-inverted-color, #1a1a1a),
+    1px 1px 0 var(--overlay-element-active-inverted-color, #1a1a1a),
+    -1px 1px 0 var(--overlay-element-active-inverted-color, #1a1a1a),
+    1px -1px 0 var(--overlay-element-active-inverted-color, #1a1a1a),
+    -1px -1px 0 var(--overlay-element-active-inverted-color, #1a1a1a),
     0 1px 2px #000;
 }
 
@@ -148,10 +145,7 @@
 
 .wrapper.type-data.state-enabled .id-text,
 .wrapper.type-data.state-enabled .label-text {
-  color: var(
-    --Color-Overlay-Element-Active-color,
-    var(--overlay-element-active-color, #fff)
-  );
+  color: var(--overlay-element-active-color, #fff);
   text-align: center;
   font-feature-settings: "ss04" on;
   font-family: var(--font-family-Main, "Noto Sans");
@@ -160,14 +154,14 @@
   font-weight: var(--Global-Typography-UI-Label-active-Font-weight, 670);
   line-height: var(--Global-Typography-UI-Label-active-Line-height, 16px);
   text-shadow:
-    1px 0 0 var(--Color-Overlay-Element-Active-inverted-color, #1a1a1a),
-    -1px 0 0 var(--Color-Overlay-Element-Active-inverted-color, #1a1a1a),
-    0 1px 0 var(--Color-Overlay-Element-Active-inverted-color, #1a1a1a),
-    0 -1px 0 var(--Color-Overlay-Element-Active-inverted-color, #1a1a1a),
-    1px 1px 0 var(--Color-Overlay-Element-Active-inverted-color, #1a1a1a),
-    -1px 1px 0 var(--Color-Overlay-Element-Active-inverted-color, #1a1a1a),
-    1px -1px 0 var(--Color-Overlay-Element-Active-inverted-color, #1a1a1a),
-    -1px -1px 0 var(--Color-Overlay-Element-Active-inverted-color, #1a1a1a),
+    1px 0 0 var(--overlay-element-active-inverted-color, #1a1a1a),
+    -1px 0 0 var(--overlay-element-active-inverted-color, #1a1a1a),
+    0 1px 0 var(--overlay-element-active-inverted-color, #1a1a1a),
+    0 -1px 0 var(--overlay-element-active-inverted-color, #1a1a1a),
+    1px 1px 0 var(--overlay-element-active-inverted-color, #1a1a1a),
+    -1px 1px 0 var(--overlay-element-active-inverted-color, #1a1a1a),
+    1px -1px 0 var(--overlay-element-active-inverted-color, #1a1a1a),
+    -1px -1px 0 var(--overlay-element-active-inverted-color, #1a1a1a),
     0 1px 2px #000;
 }
 
@@ -213,10 +207,7 @@
 .indicator .bar {
   box-sizing: border-box;
   position: absolute;
-  background: var(
-    --Color-Element-Neutral-color,
-    var(--element-neutral-color, #535353)
-  );
+  background: var(--element-neutral-color, #535353);
   border-radius: 7px;
 }
 
@@ -243,9 +234,9 @@
 
 .wrapper.state-enabled .indicator .bar {
   border-radius: 7px;
-  background: var(--Color-Overlay-Element-Active-color, #fff);
+  background: var(--overlay-element-active-color, #fff);
   box-shadow:
-    0 0 0 1px var(--Color-Overlay-Element-Active-inverted-color, #1a1a1a),
+    0 0 0 1px var(--overlay-element-active-inverted-color, #1a1a1a),
     0 1px 2px 0 #000;
 }
 
@@ -253,9 +244,9 @@
   .indicator
   .bar {
   border-radius: 7px;
-  background: var(--Color-Alert-On-warning-color, #1a1a1a);
+  background: var(--on-warning-color, #1a1a1a);
 }
 
 .wrapper.type-id.state-alarm .indicator .bar {
-  background: var(--Color-Overlay-Element-Active-color, #fff);
+  background: var(--overlay-element-active-color, #fff);
 }
