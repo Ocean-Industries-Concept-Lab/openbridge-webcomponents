@@ -11,12 +11,45 @@ export enum ObcRulerPointerType {
 }
 
 /**
- * `<obc-ruler-pointer>` renders the AR ruler dot pointer.
+ * `<obc-ruler-pointer>` renders a compact AR ruler pointer (dot/circle marker) used to indicate ruler targets.
  *
- * Variants:
- * - `default`: 4px active dot.
- * - `regular`: 10px outer active circle with 6px inner dot.
- * - `selected`: 10px outer active circle.
+ * ## Description
+ *
+ * Use `<obc-ruler-pointer>` when a lightweight ruler marker is needed in AR overlays.
+ * The component exposes a single `type` attribute to switch between default, regular,
+ * and selected visual states without additional child content.
+ *
+ * ## Usage Examples
+ *
+ * ```html
+ * <obc-ruler-pointer type="default"></obc-ruler-pointer>
+ * <obc-ruler-pointer type="regular"></obc-ruler-pointer>
+ * <obc-ruler-pointer type="selected"></obc-ruler-pointer>
+ * ```
+ *
+ * ## Public API/Attributes
+ *
+ * - `type` (attribute): Visual variant for `<obc-ruler-pointer>`.
+ *   - `default`: 4px active dot.
+ *   - `regular`: 10px outer active circle with a 6px inner dot.
+ *   - `selected`: 10px outer active circle (selected emphasis state).
+ *
+ * ## Slots
+ *
+ * None.
+ *
+ * ## Events
+ *
+ * None.
+ *
+ * ## Keywords/Synonyms
+ *
+ * ruler, pointer, AR dot, target marker, measurement marker, indicator dot.
+ *
+ * ## Related Components/Contrast
+ *
+ * - `obc-poi-pointer`: richer POI pointer component with additional visual states and box handling.
+ * - `obc-poi-line` / `obc-poi-graphic-line`: line/connector components, whereas `<obc-ruler-pointer>` is only the endpoint marker.
  */
 @customElement('obc-ruler-pointer')
 export class ObcRulerPointer extends LitElement {

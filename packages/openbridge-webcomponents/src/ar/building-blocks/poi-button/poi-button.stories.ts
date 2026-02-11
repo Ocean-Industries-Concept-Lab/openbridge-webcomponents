@@ -115,6 +115,7 @@ const meta: Meta<ObcPoiButton> = {
     alertType: ObcArAlertType.None,
     header: null,
     value: PoiButtonVisualState.Unchecked,
+    hasRelation: false,
     data: [],
   },
   argTypes: {

@@ -46,6 +46,54 @@ const DEFAULT_LINE_LENGTH_PX = 96;
 const POINTER_BOX_BASE_SIZE_PX = 32;
 const POINT_POINTER_OFFSET_PX = 12;
 
+/**
+ * `<obc-poi>` - Composite POI marker that renders the main AR target button and connector visuals.
+ *
+ * Combines `obc-poi-button`, `obc-poi-line`, and optional pointer visuals to display
+ * interactive point-of-interest markers in line, offset, point, or outside modes.
+ *
+ * ## Features
+ *
+ * - Select marker geometry with `type` (`line`, `offset`, `point`, `outside`).
+ * - Control visual/interaction state with `value`, `state`, and `selected`.
+ * - Enable pointer affordances with `hasPointer`, `pointerType`, and `pointerState`.
+ * - Position marker content using `x`, `y`, `buttonY`, `buttonOffsetX`, and `targetOffsetX`.
+ * - Provide button content and metadata through `header`, `data`, and named slots.
+ *
+ * ## Usage Guidelines
+ *
+ * - Use `type="line"` or `type="offset"` when the button should connect to a target.
+ * - Use `type="point"` for direct target placement with minimal connector geometry.
+ * - Use `type="outside"` with `hasPointer` to render directional outside-arrow guidance.
+ * - Keep `value` and `state` aligned with domain state so visual semantics stay consistent.
+ *
+ * ## Best Practices
+ *
+ * - Pass finite numeric values for layout properties to avoid fallback positioning behavior.
+ * - Enable `animatePosition` only for intentional motion transitions.
+ * - Use the `id-label` and `relation` slots for structured metadata instead of mixing all
+ *   text in the default slot.
+ *
+ * ## Slots/Content
+ *
+ * @slot - Default POI button content (typically the primary icon/content).
+ * @slot id-label - Optional ID label content rendered in the POI button label region.
+ * @slot relation - Optional relation content rendered in the POI button relation region.
+ *
+ * ## Events
+ *
+ * This component does not emit custom events.
+ *
+ * ## Example
+ *
+ * ```html
+ * <obc-poi type="line" value="unchecked" state="enabled">
+ *   <obc-icon-pin></obc-icon-pin>
+ *   <span slot="id-label">A-12</span>
+ *   <span slot="relation">Port</span>
+ * </obc-poi>
+ * ```
+ */
 @customElement('obc-poi')
 export class ObcPoi extends LitElement {
   @property({type: String}) type: ObcPoiType = ObcPoiType.Line;
@@ -121,8 +169,9 @@ export class ObcPoi extends LitElement {
       case ObcPoiValue.Unchecked:
         return PoiButtonVisualState.Unchecked;
       case ObcPoiValue.Checked:
-      case ObcPoiValue.Activated:
         return PoiButtonVisualState.Checked;
+      case ObcPoiValue.Activated:
+        return PoiButtonVisualState.Activated;
       case ObcPoiValue.Overlapped:
         return PoiButtonVisualState.Overlapped;
       default:

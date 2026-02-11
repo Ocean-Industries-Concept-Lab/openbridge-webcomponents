@@ -319,8 +319,65 @@ function enhancedAlertFrame(): HTMLTemplateResult {
 }
 
 /**
- * `<obc-poi-selection-frame>` renders the corner selection frame around POI
- * targets. Variants mirror the Figma Target Selection Frame component.
+ * `<obc-poi-selection-frame>` renders a non-interactive selection frame around POI targets.
+ *
+ * ## Overview
+ *
+ * Use this component to draw the cornered frame (focus ring/highlight frame/bounding
+ * box) around POI targets in AR layouts. It supports standard and enhanced sizes,
+ * alert styling, and custom sizing mode for variable target bounds.
+ *
+ * ## Features/Variants
+ *
+ * Visual variants are resolved from `type` + `state`:
+ * - `type="indicator"`: 48x48 frame footprint that resolves to regular button-style corners.
+ * - `type="button"`: Button-sized frame (regular or alert).
+ * - `type="enhanced"`: Larger frame variant (regular or alert).
+ * - `state="regular"`: Standard selection frame appearance.
+ * - `state="alert"`: Alert-colored frame appearance.
+ * - `state="none"`: Hides the frame entirely.
+ * - `state="flat"`: Available enum value; currently follows regular frame visuals.
+ *
+ * Configuration flags and enum props:
+ * - `type` (`ObcPoiSelectionFrameType`, default: `indicator`): Selects base frame size/variant family.
+ * - `state` (`ObcPoiSelectionFrameState`, default: `regular`): Selects visual state (`regular`, `alert`, `none`, `flat`).
+ * - `customMode` (`boolean`, default: `false`): Enables custom-size frame rendering logic.
+ * - `boxWidth` (`number | null`, default: `null`): Width offset in px for custom mode; `null` behaves like `0`, base size remains 32px before variant scaling.
+ * - `boxHeight` (`number | null`, default: `null`): Height offset in px for custom mode; `null` behaves like `0`, base size remains 32px before variant scaling.
+ *
+ * ## Usage Guidelines
+ *
+ * - Use `<obc-poi-selection-frame>` for non-interactive target emphasis around POI buttons.
+ * - Prefer this component over `obc-poi-object` when you need an outer frame instead of changing the POI body state.
+ * - Prefer this component over `obc-poi-pointer` when highlighting a target area, not a pointer endpoint.
+ * - Enable `customMode` only when the frame must match dynamic bounding sizes.
+ *
+ * ## Slots/Content
+ *
+ * None.
+ *
+ * ## Events
+ *
+ * None (no custom events emitted).
+ *
+ * ## Best Practices
+ *
+ * - Keep `state` synchronized with alert semantics so frame color matches alert context.
+ * - Use `state="none"` instead of conditional DOM removal when stable layout anchoring is needed.
+ * - Provide non-negative `boxWidth`/`boxHeight` values in px for predictable custom sizing.
+ *
+ * ## Example
+ *
+ * ```html
+ * <obc-poi-selection-frame
+ *   type="button"
+ *   state="regular"
+ * ></obc-poi-selection-frame>
+ * ```
+ *
+ * ## Keywords/Synonyms
+ *
+ * selection frame, focus ring, highlight frame, bounding box, POI frame, AR target frame.
  */
 @customElement('obc-poi-selection-frame')
 export class ObcPoiSelectionFrame extends LitElement {
