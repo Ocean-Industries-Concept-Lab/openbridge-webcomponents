@@ -1,9 +1,13 @@
-import {Pointer} from './poi-target.js';
 import {html} from 'lit';
 
-export function pointerArrow(pointerType: Pointer, value: string) {
+export enum PoiArrowDirection {
+  Left = 'arrow-left',
+  Right = 'arrow-right',
+}
+
+export function pointerArrow(pointerType: PoiArrowDirection, value: string) {
   const path =
-    pointerType === Pointer.ArrowLeft
+    pointerType === PoiArrowDirection.Left
       ? 'M10.627 4.58645L10.9802 4.93961L10.6274 5.29317L7.92644 8L10.6274 10.7068L10.9802 11.0604L10.627 11.4136L9.68699 12.3536L9.33344 12.7071L8.97988 12.3536L4.97988 8.35355L4.62633 8L4.97988 7.64645L8.97988 3.64645L9.33344 3.29289L9.68699 3.64645L10.627 4.58645Z'
       : 'M5.37301 4.58645L5.01984 4.93961L5.37262 5.29317L8.07356 8L5.37262 10.7068L5.01984 11.0604L5.37301 11.4136L6.31301 12.3536L6.66656 12.7071L7.02012 12.3536L11.0201 8.35355L11.3737 8L11.0201 7.64645L7.02012 3.64645L6.66656 3.29289L6.31301 3.64645L5.37301 4.58645Z';
 
