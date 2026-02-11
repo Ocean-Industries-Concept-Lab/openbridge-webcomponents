@@ -1,5 +1,6 @@
 import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
 import {property, queryAssignedElements, state} from 'lit/decorators.js';
+import {classMap} from 'lit/directives/class-map.js';
 import componentStyle from './poi-group.css?inline';
 import {ObcPoiData, PoiDataValue} from '../poi-data/poi-data.js';
 import {ObcPoiButtonType} from '../building-blocks/poi-button/poi-button.js';
@@ -40,6 +41,8 @@ export class ObcPoiGroup extends LitElement {
   @state() private positionLeft = '0px';
   @state() private positionRight = '0px';
   @state() private wrapperVisible = false;
+  @state() private wrapperHeight = '48px';
+  @state() private wrapperHasValues = false;
 
   @queryAssignedElements({flatten: true})
   _children!: Array<HTMLElement>;
@@ -136,9 +139,13 @@ export class ObcPoiGroup extends LitElement {
       ${!this.expand && this.wrapperVisible
         ? html`<button
             @click=${this.onClick}
-            class="wrapper"
+            class=${classMap({
+              wrapper: true,
+              'with-values': this.wrapperHasValues,
+            })}
             style="left: ${this.positionLeft}; top: ${this
-              .positionVertical}; right: ${this.positionRight};"
+              .positionVertical}; right: ${this.positionRight}; height: ${this
+              .wrapperHeight};"
           >
             <div class="visible-wrapper"></div>
           </button>`
@@ -149,6 +156,8 @@ export class ObcPoiGroup extends LitElement {
   updatePosition(): void {
     let left = Number.MAX_VALUE;
     let right = -Number.MAX_VALUE;
+    let maxHeight = 0;
+    let hasValueTargets = false;
 
     this._children.forEach((element) => {
       const boundingBox =
@@ -157,12 +166,24 @@ export class ObcPoiGroup extends LitElement {
           : element.getBoundingClientRect();
       left = Math.min(left, boundingBox.left);
       right = Math.max(right, boundingBox.right);
+      maxHeight = Math.max(maxHeight, boundingBox.height || 0);
+      if (element instanceof ObcPoiData && element.data.length > 0) {
+        hasValueTargets = true;
+      }
     });
 
     if (left !== Number.MAX_VALUE && right !== -Number.MAX_VALUE) {
       const rootDim = this.getBoundingClientRect();
       this.positionLeft = `${left - rootDim.left}px`;
       this.positionRight = `${rootDim.right - right}px`;
+      const normalizedHeight = Number.isFinite(maxHeight)
+        ? Math.max(48, Math.round(maxHeight))
+        : 48;
+      this.wrapperHeight = `${normalizedHeight}px`;
+      this.wrapperHasValues = hasValueTargets;
+    } else {
+      this.wrapperHeight = '48px';
+      this.wrapperHasValues = false;
     }
   }
 
@@ -395,6 +416,9 @@ export class ObcPoiGroup extends LitElement {
   }
   private applyTopOffsetState(progress: number, frontChild: ObcPoiData | null) {
     const eased = easeInOutQuad(progress);
+    const frontHeight = frontChild
+      ? this.getTargetButtonRect(frontChild).height
+      : null;
 
     const visualExpanded = this.collapsing ? false : progress > 0.5;
     const touchAreaExpanded = progress > 0.5;
@@ -430,9 +454,15 @@ export class ObcPoiGroup extends LitElement {
         } else {
           this.clearVisualState(child);
         }
+        this.setOverlappedDataHeight(
+          child,
+          nextValue === PoiDataValue.Overlapped,
+          frontHeight
+        );
       } else {
         child.value = this.resolveTargetValue(child, false);
         this.clearVisualState(child);
+        this.setOverlappedDataHeight(child, false, frontHeight);
       }
 
       if (touchAreaExpanded) {
@@ -489,6 +519,7 @@ export class ObcPoiGroup extends LitElement {
 
   private syncFrontChild() {
     const front = this.getFrontChild();
+    const frontHeight = front ? this.getTargetButtonRect(front).height : null;
     this._children.forEach((child) => {
       if (!(child instanceof ObcPoiData)) return;
       const isOverlap = !this.expand && (!front || child !== front);
@@ -504,6 +535,11 @@ export class ObcPoiGroup extends LitElement {
       } else {
         child.removeAttribute('data-front');
       }
+      this.setOverlappedDataHeight(
+        child,
+        nextValue === PoiDataValue.Overlapped,
+        frontHeight
+      );
     });
   }
 
@@ -689,7 +725,9 @@ export class ObcPoiGroup extends LitElement {
     const wrapper = buttonShadow?.querySelector(
       '.wrapper'
     ) as HTMLElement | null;
+    const hasDataWrapper = wrapper?.classList.contains('has-data') ?? false;
     return (
+      (hasDataWrapper ? wrapper?.getBoundingClientRect() : null) ??
       buttonWrapper?.getBoundingClientRect() ??
       wrapper?.getBoundingClientRect() ??
       button?.getBoundingClientRect() ??
@@ -709,7 +747,8 @@ export class ObcPoiGroup extends LitElement {
   }
 
   private getExpandedSpacing(): number {
-    return this.getCssVarAsNumber(POI_GROUP_SPACING_VAR, 50);
+    const baseSpacing = this.getCssVarAsNumber(POI_GROUP_SPACING_VAR, 50);
+    return this.wrapperHasValues ? baseSpacing + 2 : baseSpacing;
   }
 
   private getVisualTargetSize(isEnhanced: boolean, isOverlap: boolean): number {
@@ -755,6 +794,31 @@ export class ObcPoiGroup extends LitElement {
     target.style.removeProperty('--obc-poi-label-opacity');
     target.style.removeProperty('--obc-poi-label-visibility');
     target.style.removeProperty('--obc-poi-overlap-pointer-events');
+  }
+
+  private setOverlappedDataHeight(
+    target: ObcPoiData,
+    overlap: boolean,
+    frontHeight: number | null
+  ) {
+    if (
+      !overlap ||
+      target.data.length === 0 ||
+      frontHeight === null ||
+      !Number.isFinite(frontHeight)
+    ) {
+      target.style.removeProperty('--obc-poi-group-overlap-height');
+      target.style.removeProperty('--obc-poi-group-overlap-shift');
+      return;
+    }
+
+    const adjustedHeight = Math.max(0, (frontHeight ?? 0) * 0.95);
+    const shift = Math.max(0, (frontHeight ?? 0) - adjustedHeight);
+    target.style.setProperty(
+      '--obc-poi-group-overlap-height',
+      `${adjustedHeight}px`
+    );
+    target.style.setProperty('--obc-poi-group-overlap-shift', `${shift}px`);
   }
 
   private resolveTargetValue(

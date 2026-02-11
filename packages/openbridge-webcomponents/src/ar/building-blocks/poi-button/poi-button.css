@@ -198,6 +198,14 @@
   transition: none;
 }
 
+:host([value="overlapped"]) .wrapper.has-data,
+:host(:not([value="overlapped"])) .wrapper.has-data {
+  transition:
+    opacity var(--obc-poi-opacity-transition-duration) ease-out,
+    box-shadow var(--obc-poi-transition-duration) ease-out,
+    padding-top var(--obc-poi-transition-duration) ease-out;
+}
+
 .wrapper:not(.has-data) .poi-object::part(background-frame) {
   transition:
     width var(--obc-poi-size-transition-duration, 0.1s) ease-out,
@@ -345,6 +353,29 @@
     --overlay-container-background-color: var(--obc-poi-overlapped-data-bg);
     --overlay-border-outline-color: var(--obc-poi-overlapped-data-border);
   }
+}
+
+:host([value="overlapped"]:not([layout="inline"])) .wrapper.has-data {
+  width: 48px;
+  min-width: 48px;
+  max-width: 48px;
+  height: 96px;
+}
+
+:host([layout="inline"][value="overlapped"]) .wrapper.has-data {
+  padding-top: 0;
+  height: var(--obc-poi-group-overlap-height, auto);
+  transform: translate(
+    -50%,
+    calc(-100% - var(--obc-poi-group-overlap-shift, 0px))
+  );
+}
+
+.wrapper.has-data .data-wrapper,
+.wrapper.has-data .relation-wrapper,
+.wrapper.has-data .button-wrapper .poi-object,
+.wrapper.has-data .button-wrapper .selection-frame {
+  transition: opacity var(--obc-poi-opacity-transition-duration) ease-out;
 }
 
 .data-wrapper {

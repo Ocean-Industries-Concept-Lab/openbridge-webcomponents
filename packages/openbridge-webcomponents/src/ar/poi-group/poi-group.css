@@ -28,6 +28,7 @@
   justify-content: center;
   cursor: pointer;
   pointer-events: auto;
+  z-index: 3;
   padding: var(--Maneuvering-components-poi-group-padding-unchecked-top, 6px)
     var(--Maneuvering-components-poi-group-padding-unchecked-horizontal, 4px)
     var(--Maneuvering-components-poi-group-padding-unchecked-bottom, 2px)
@@ -57,6 +58,10 @@
   @mixin style style=flat visibleWrapperClass=.visible-wrapper;
 }
 
+.wrapper.with-values {
+  padding: 0;
+}
+
 .visible-wrapper {
   position: absolute;
   left: 4px;
@@ -68,6 +73,14 @@
     1000px
   );
   overflow: clip;
+}
+
+.wrapper.with-values .visible-wrapper {
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 6px;
 }
 
 .backdrop {

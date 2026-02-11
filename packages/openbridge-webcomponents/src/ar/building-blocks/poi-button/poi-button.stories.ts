@@ -39,6 +39,70 @@ function startOverlappedLoop(id: string, pauseMs = 1000) {
   toggle();
 }
 
+function startOverlappedDataButtonLoop(id: string, pauseMs = 1000) {
+  if (overlapToggleLoops.has(id)) return;
+  let isOverlapped = false;
+  const toggle = () => {
+    const btn = document.getElementById(id) as ObcPoiButton | null;
+    if (!btn) {
+      const timeout = overlapToggleLoops.get(id);
+      if (timeout !== undefined) {
+        window.clearTimeout(timeout);
+        overlapToggleLoops.delete(id);
+      }
+      return;
+    }
+
+    const wrapper = btn.shadowRoot?.querySelector(
+      '.wrapper.has-data.alert-none.type-button'
+    ) as HTMLElement | null;
+
+    const nextValue = isOverlapped
+      ? PoiButtonVisualState.Unchecked
+      : PoiButtonVisualState.Overlapped;
+    isOverlapped = !isOverlapped;
+
+    if (!wrapper) {
+      btn.value = nextValue;
+      const timeout = window.setTimeout(toggle, pauseMs);
+      overlapToggleLoops.set(id, timeout);
+      return;
+    }
+
+    const fromStyle = getComputedStyle(wrapper);
+    const fromFrame = {
+      width: fromStyle.width,
+      height: fromStyle.height,
+      opacity: fromStyle.opacity,
+      paddingTop: fromStyle.paddingTop,
+      boxShadow: fromStyle.boxShadow,
+    };
+
+    btn.value = nextValue;
+
+    requestAnimationFrame(() => {
+      const toStyle = getComputedStyle(wrapper);
+      const toFrame = {
+        width: toStyle.width,
+        height: toStyle.height,
+        opacity: toStyle.opacity,
+        paddingTop: toStyle.paddingTop,
+        boxShadow: toStyle.boxShadow,
+      };
+
+      wrapper.animate([fromFrame, toFrame], {
+        duration: 120,
+        easing: 'ease-out',
+      });
+    });
+
+    const timeout = window.setTimeout(toggle, pauseMs);
+    overlapToggleLoops.set(id, timeout);
+  };
+
+  toggle();
+}
+
 const meta: Meta<ObcPoiButton> = {
   title: 'AR/Building blocks/POI Button',
   tags: ['autodocs'],
@@ -387,6 +451,47 @@ export const OverlappedAnimated: Story = {
               </obc-poi-button>
             </div>
             <div style=${labelStyle}>Enhanced</div>
+          </div>
+        </div>
+      </div>
+    `);
+  },
+};
+
+export const OverlappedAnimatedWithData: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Loops between normal and overlapped visual states for data variants.',
+      },
+    },
+  },
+  render: () => {
+    requestAnimationFrame(() =>
+      startOverlappedDataButtonLoop('animated-btn-data', 1000)
+    );
+
+    const values = [
+      {value: '10', label: 'Lab', unit: 'Unit'},
+      {value: '20', label: 'Lab 2', unit: 'Unit 2'},
+    ];
+
+    return renderOverview(html`
+      <div style=${sectionStyle}>
+        <h3 style=${headerStyle}>Animated Overlap (Data)</h3>
+        <div style=${gridStyle}>
+          <div style=${itemStyle}>
+            <div style=${stageTallStyle}>
+              <obc-poi-button
+                id="animated-btn-data"
+                style="position: absolute; left: 50%; bottom: 0; --obc-poi-transition-duration: 100ms; --obc-poi-opacity-transition-duration: 100ms;"
+                .data=${values}
+              >
+                <obi-placeholder></obi-placeholder>
+              </obc-poi-button>
+            </div>
+            <div style=${labelStyle}>Values</div>
           </div>
         </div>
       </div>

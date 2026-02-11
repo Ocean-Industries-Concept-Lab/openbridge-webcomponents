@@ -962,6 +962,8 @@ export class ObcPoiLayer extends LitElement {
     target.style.removeProperty('min-width');
     target.style.removeProperty('height');
     target.style.removeProperty('transform');
+    target.style.removeProperty('--obc-poi-group-overlap-height');
+    target.style.removeProperty('--obc-poi-group-overlap-shift');
   }
 
   private topOffsetResetRaf = new Map<ObcPoiData, number>();

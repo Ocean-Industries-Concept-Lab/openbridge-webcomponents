@@ -156,6 +156,117 @@ export const AnimatedLayout: Story = {
   },
 };
 
+export const AnimatedLayoutWithValues: Story = {
+  args: {
+    label: 'Animated Layer (Values)',
+    layerIndex: 0,
+    debug: true,
+  },
+  render(args) {
+    const hostRef = createRef<HTMLDivElement>();
+    const valuesA = [
+      {value: '10', label: 'Lab', unit: 'Unit'},
+      {value: '20', label: 'Lab 2', unit: 'Unit 2'},
+    ];
+    const valuesB = [
+      {value: '30', label: 'Lab', unit: 'Unit'},
+      {value: '40', label: 'Lab 2', unit: 'Unit 2'},
+    ];
+    const valuesC = [
+      {value: '50', label: 'Lab', unit: 'Unit'},
+      {value: '60', label: 'Lab 2', unit: 'Unit 2'},
+    ];
+    const valuesD = [
+      {value: '70', label: 'Lab', unit: 'Unit'},
+      {value: '80', label: 'Lab 2', unit: 'Unit 2'},
+    ];
+    const startAnimation = (root: HTMLElement | null) => {
+      if (!root || root.dataset.animating === 'true') return;
+      root.dataset.animating = 'true';
+
+      const first = root.querySelector(
+        'obc-poi-data.first'
+      ) as ObcPoiData | null;
+      const second = root.querySelector(
+        'obc-poi-data.second'
+      ) as ObcPoiData | null;
+      const third = root.querySelector(
+        'obc-poi-data.third'
+      ) as ObcPoiData | null;
+      const fourth = root.querySelector(
+        'obc-poi-data.fourth'
+      ) as ObcPoiData | null;
+
+      if (!first || !second || !third || !fourth) return;
+
+      const start = performance.now();
+      let rafId = 0;
+
+      const tick = (now: number) => {
+        const t = ((now - start) / 1000) * 0.7;
+        const phase = (1 - Math.cos((t * Math.PI) / 6)) / 2;
+        const x1 = 120 + (260 - 120) * phase;
+        const x2 = 520 - (520 - 260) * phase;
+
+        first.y = 110;
+        second.y = 70;
+        third.y = 90;
+        fourth.y = 100;
+        first.x = x1;
+        second.x = x2;
+        third.x = 520 + 100 * Math.sin(t * 0.6 + 1);
+        fourth.x = 240 + 120 * Math.sin(t * 0.9 + 2);
+
+        rafId = requestAnimationFrame(tick);
+      };
+
+      rafId = requestAnimationFrame(tick);
+
+      const observer = new MutationObserver(() => {
+        if (!root.isConnected) {
+          cancelAnimationFrame(rafId);
+          observer.disconnect();
+        }
+      });
+      observer.observe(root, {childList: true, subtree: true});
+    };
+
+    setTimeout(() => startAnimation(hostRef.value ?? null), 0);
+    return html`
+      <style>
+        .anim-values {
+          width: 640px;
+        }
+
+        .anim-values obc-poi-layer {
+          --obc-poi-layer-overlap-pre: 16px;
+        }
+      </style>
+      <div class="anim-values" ${ref(hostRef)}>
+        <obc-poi-layer
+          .label=${args.label}
+          .layerIndex=${args.layerIndex}
+          .overlapMode=${args.overlapMode}
+          .role=${args.role}
+          .typeFilter=${args.typeFilter}
+          ?debug=${args.debug}
+          ?join-while-expanded=${args.joinWhileExpanded}
+          .internalSwapping=${!!args.internalSwapping}
+        >
+          <obc-poi-data class="first" .y=${110} .data=${valuesA}></obc-poi-data>
+          <obc-poi-data class="second" .y=${70} .data=${valuesB}></obc-poi-data>
+          <obc-poi-data class="third" .y=${90} .data=${valuesC}></obc-poi-data>
+          <obc-poi-data
+            class="fourth"
+            .y=${100}
+            .data=${valuesD}
+          ></obc-poi-data>
+        </obc-poi-layer>
+      </div>
+    `;
+  },
+};
+
 export const Primary: Story = {
   render(args) {
     return html`
