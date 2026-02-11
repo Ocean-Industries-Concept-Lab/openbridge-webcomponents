@@ -112,14 +112,9 @@ const meta: Meta<ObcPoi> = {
   render: (args) => {
     return html`
       <style>
-        .wrapper {
-          height: 420px !important;
-        }
-
         .frame {
           position: relative;
           width: 888px;
-          height: 160px;
           transform: translate(-50%, -50%);
         }
       </style>

@@ -103,21 +103,6 @@ export class ObcPoiData extends LitElement {
     null;
   @property({type: Number, attribute: 'line-compensation-y'})
   lineCompensationY = 0;
-  private _internalButtonOffsetX = 0;
-
-  getInternalButtonOffsetX(): number {
-    return this._internalButtonOffsetX;
-  }
-
-  setInternalButtonOffsetX(value: number) {
-    const nextValue = Number.isFinite(value) ? value : 0;
-    if (nextValue === this._internalButtonOffsetX) {
-      return;
-    }
-    const oldValue = this._internalButtonOffsetX;
-    this._internalButtonOffsetX = nextValue;
-    this.requestUpdate('internalButtonOffsetX', oldValue);
-  }
 
   override updated(changedProperties: Map<string, unknown>) {
     if (changedProperties.has('x')) {
@@ -188,7 +173,7 @@ export class ObcPoiData extends LitElement {
   })
   data: ObcPoiButtonDataItem[] = [];
 
-  private get selectedVerticalOffset(): number {
+  #getSelectedVerticalOffset(): number {
     if (!this.selected) {
       return 0;
     }
@@ -199,7 +184,7 @@ export class ObcPoiData extends LitElement {
     return Number.isFinite(parsed) ? parsed : 0;
   }
 
-  private get layerVerticalOffset(): number {
+  #getLayerVerticalOffset(): number {
     const offset = getComputedStyle(this).getPropertyValue(
       '--obc-poi-target-layer-vertical-offset'
     );
@@ -207,13 +192,13 @@ export class ObcPoiData extends LitElement {
     return Number.isFinite(parsed) ? parsed : 0;
   }
 
-  private get resolvedPoiType(): ObcPoiType {
+  #getResolvedPoiType(): ObcPoiType {
     return Object.values(ObcPoiType).includes(this.type as ObcPoiType)
       ? (this.type as ObcPoiType)
       : ObcPoiType.Line;
   }
 
-  private get resolvedButtonType(): ObcPoiButtonType {
+  #getResolvedButtonType(): ObcPoiButtonType {
     if (
       Object.values(ObcPoiButtonType).includes(
         this.buttonType as ObcPoiButtonType
@@ -225,14 +210,14 @@ export class ObcPoiData extends LitElement {
     return ObcPoiButtonType.Button;
   }
 
-  private get resolvedPointerType(): ObcPoiPointerType | null {
+  #getResolvedPointerType(): ObcPoiPointerType | null {
     const value = this.pointerType;
     return Object.values(ObcPoiPointerType).includes(value as ObcPoiPointerType)
       ? (value as ObcPoiPointerType)
       : null;
   }
 
-  private get resolvedPointerState(): ObcPoiPointerState | null {
+  #getResolvedPointerState(): ObcPoiPointerState | null {
     const value = this.pointerState;
     return Object.values(ObcPoiPointerState).includes(
       value as ObcPoiPointerState
@@ -242,26 +227,29 @@ export class ObcPoiData extends LitElement {
   }
 
   override render() {
-    const selectedVerticalOffset = this.selectedVerticalOffset;
+    const selectedVerticalOffset = this.#getSelectedVerticalOffset();
     const lineLength = Number.isFinite(this.y) ? this.y : 0;
     const lineCompensation = Number.isFinite(this.lineCompensationY)
       ? this.lineCompensationY
       : 0;
-    const layerVerticalOffset = this.layerVerticalOffset;
+    const layerVerticalOffset = this.#getLayerVerticalOffset();
     const totalVerticalOffset = selectedVerticalOffset + layerVerticalOffset;
+    const resolvedPoiType = this.#getResolvedPoiType();
     const effectiveLineLength =
-      this.resolvedPoiType === ObcPoiType.Line ||
-      this.resolvedPoiType === ObcPoiType.Offset
+      resolvedPoiType === ObcPoiType.Line ||
+      resolvedPoiType === ObcPoiType.Offset
         ? lineLength + lineCompensation + totalVerticalOffset
         : lineLength;
     const effectiveLocalButtonY = -totalVerticalOffset;
-    const effectiveButtonOffset =
-      this.buttonOffsetX + this._internalButtonOffsetX;
+    const effectiveButtonOffset = this.buttonOffsetX;
     const effectiveTargetOffset = this.targetOffsetX;
+    const resolvedButtonType = this.#getResolvedButtonType();
+    const resolvedPointerType = this.#getResolvedPointerType();
+    const resolvedPointerState = this.#getResolvedPointerState();
 
     return html`
       <obc-poi
-        .type=${this.resolvedPoiType}
+        .type=${resolvedPoiType}
         .value=${this.value}
         .state=${this.state}
         .x=${0}
@@ -273,9 +261,9 @@ export class ObcPoiData extends LitElement {
         .animatePosition=${this.animatePosition}
         .relativeDirection=${this.relativeDirection}
         .header=${this.header}
-        .buttonType=${this.resolvedButtonType}
-        .pointerType=${this.resolvedPointerType}
-        .pointerState=${this.resolvedPointerState}
+        .buttonType=${resolvedButtonType}
+        .pointerType=${resolvedPointerType}
+        .pointerState=${resolvedPointerState}
         .selected=${this.selected}
         .data=${this.data}
         .hasRelation=${this.hasRelation}

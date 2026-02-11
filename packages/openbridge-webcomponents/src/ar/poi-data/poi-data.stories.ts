@@ -3,11 +3,26 @@ import {ObcPoiData, PoiDataValue} from './poi-data.js';
 import './poi-data.js';
 import {crossDecorator} from '../../storybook-util.js';
 import {html} from 'lit';
-import {ObcPoiType} from '../building-blocks/poi/poi.js';
+import {ObcPoiState, ObcPoiType} from '../building-blocks/poi/poi.js';
 import {
   ObcPoiPointerState,
   ObcPoiPointerType,
 } from '../building-blocks/poi-pointer/poi-pointer.js';
+import {
+  ObcPoiHeaderSize,
+  ObcPoiHeaderState,
+  ObcPoiHeaderType,
+} from '../building-blocks/poi-header/poi-header.js';
+
+const compactDocsHeightDecorator = (story: () => unknown) => html`
+  <style>
+    .wrapper {
+      height: 560px !important;
+      min-height: 560px !important;
+    }
+  </style>
+  ${story()}
+`;
 const meta: Meta<ObcPoiData> = {
   title: 'AR/POI Data',
   tags: ['autodocs'],
@@ -19,7 +34,6 @@ const meta: Meta<ObcPoiData> = {
     buttonY: 192,
     value: PoiDataValue.Unchecked,
     hasPointer: true,
-    buttonType: 'button',
     pointerType: undefined,
     pointerState: undefined,
     relativeDirection: 0,
@@ -29,7 +43,7 @@ const meta: Meta<ObcPoiData> = {
     data: [],
     fixedTarget: false,
   },
-  decorators: [crossDecorator],
+  decorators: [crossDecorator, compactDocsHeightDecorator],
   argTypes: {
     type: {
       options: Object.values(ObcPoiType),
@@ -99,7 +113,55 @@ const meta: Meta<ObcPoiData> = {
         .frame {
           position: relative;
           width: 888px;
-          height: 480px;
+          height: 2000px;
+          transform: translate(-50%, -50%);
+        }
+
+        .frame obc-poi-data {
+          position: absolute;
+        }
+      </style>
+      <obc-poi-data
+        .type=${args.type}
+        .x=${args.x}
+        .y=${args.y}
+        .buttonY=${args.buttonY}
+        .hasPointer=${args.hasPointer}
+        .value=${args.value}
+        .buttonType=${args.buttonType}
+        .pointerType=${args.pointerType}
+        .pointerState=${args.pointerState}
+        .relativeDirection=${args.relativeDirection}
+        .buttonOffsetX=${args.buttonOffsetX}
+        .targetOffsetX=${args.targetOffsetX}
+        .animatePosition=${args.animatePosition}
+        .data=${args.data}
+        .fixedTarget=${args.fixedTarget}
+      ></obc-poi-data>
+    `;
+  },
+} satisfies Meta<ObcPoiData>;
+
+export default meta;
+type Story = StoryObj<ObcPoiData>;
+
+export const Preview: Story = {
+  args: {
+    type: ObcPoiType.Line,
+    x: 444,
+  },
+  parameters: {
+    controls: {
+      exclude: ['type'],
+    },
+  },
+  render: (args) => {
+    return html`
+      <style>
+        .frame {
+          position: relative;
+          width: 640px;
+          height: 420px;
           transform: translate(-50%, -50%);
         }
 
@@ -109,7 +171,7 @@ const meta: Meta<ObcPoiData> = {
       </style>
       <div class="frame">
         <obc-poi-data
-          .type=${args.type}
+          .type=${ObcPoiType.Line}
           .x=${args.x}
           .y=${args.y}
           .buttonY=${args.buttonY}
@@ -128,55 +190,215 @@ const meta: Meta<ObcPoiData> = {
       </div>
     `;
   },
-} satisfies Meta<ObcPoiData>;
+};
 
-export default meta;
-type Story = StoryObj<ObcPoiData>;
+export const POIVariants: Story = {
+  render: () => {
+    const demoX = 90;
+    const demoY = 72;
+    const demoButtonY = 84;
+    return html`
+      <style>
+        .variants-stage {
+          position: relative;
+          width: 720px;
+          height: 320px;
+          transform: translate(-50%, -50%);
+        }
 
-export const Normal: Story = {
-  args: {
-    value: PoiDataValue.Unchecked,
+        .variants-showcase {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          display: grid;
+          grid-template-columns: repeat(2, 180px);
+          grid-auto-rows: 140px;
+          gap: 8px 12px;
+        }
+
+        .variants-item {
+          position: relative;
+          height: 100%;
+        }
+
+        .variants-item-label {
+          position: absolute;
+          top: 2px;
+          left: 0;
+          font-size: 11px;
+          font-family: monospace;
+          color: rgba(54, 68, 86, 0.88);
+        }
+
+        .variants-item obc-poi-data {
+          position: absolute;
+        }
+      </style>
+      <div class="variants-stage">
+        <div class="variants-showcase">
+          <div class="variants-item">
+            <div class="variants-item-label">Line</div>
+            <obc-poi-data
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+            ></obc-poi-data>
+          </div>
+          <div class="variants-item">
+            <div class="variants-item-label">Offset</div>
+            <obc-poi-data
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .type=${ObcPoiType.Offset}
+              .targetOffsetX=${32}
+            ></obc-poi-data>
+          </div>
+          <div class="variants-item">
+            <div class="variants-item-label">Point</div>
+            <obc-poi-data
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .type=${ObcPoiType.Point}
+            ></obc-poi-data>
+          </div>
+          <div class="variants-item">
+            <div class="variants-item-label">Outside</div>
+            <obc-poi-data
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .type=${ObcPoiType.Outside}
+              .outsideAngle=${315}
+              .hasPointer=${true}
+            ></obc-poi-data>
+          </div>
+        </div>
+      </div>
+    `;
   },
 };
 
-export const Enhanced: Story = {
-  args: {
-    value: PoiDataValue.Checked,
-  },
-};
-
-export const WithValues: Story = {
-  render: (args) => {
+export const POIValuesAndContent: Story = {
+  render: () => {
+    const demoX = 108;
+    const demoY = 72;
+    const demoButtonY = 72;
     const values = [
       {value: '10', label: 'Lab', unit: 'Unit'},
       {value: '20', label: 'Lab 2', unit: 'Unit 2'},
     ];
+
     return html`
       <style>
-        .frame {
+        .values-stage {
           position: relative;
-          width: 888px;
-          height: 480px;
+          width: 760px;
+          height: 420px;
           transform: translate(-50%, -50%);
         }
 
-        .frame obc-poi-data {
+        .values-showcase {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          display: grid;
+          grid-template-columns: repeat(3, 210px);
+          grid-auto-rows: 168px;
+          gap: 26px 14px;
+        }
+
+        .values-item {
+          position: relative;
+          height: 100%;
+        }
+
+        .values-item-label {
+          position: absolute;
+          top: 2px;
+          left: 0;
+          font-size: 11px;
+          font-family: monospace;
+          color: rgba(54, 68, 86, 0.88);
+        }
+
+        .values-item obc-poi-data {
           position: absolute;
         }
       </style>
-      <div class="frame">
-        <obc-poi-data
-          .x=${args.x}
-          .y=${args.y}
-          .buttonY=${args.buttonY}
-          .value=${args.value}
-          .pointerType=${args.pointerType}
-          .relativeDirection=${args.relativeDirection}
-          .targetOffsetX=${args.targetOffsetX}
-          .animatePosition=${args.animatePosition}
-          .data=${values}
-          .fixedTarget=${args.fixedTarget}
-        ></obc-poi-data>
+      <div class="values-stage">
+        <div class="values-showcase">
+          <div class="values-item">
+            <div class="values-item-label">Checked</div>
+            <obc-poi-data
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .type=${ObcPoiType.Point}
+              .value=${PoiDataValue.Checked}
+            ></obc-poi-data>
+          </div>
+          <div class="values-item">
+            <div class="values-item-label">Activated</div>
+            <obc-poi-data
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .type=${ObcPoiType.Point}
+              .value=${PoiDataValue.Activated}
+            ></obc-poi-data>
+          </div>
+          <div class="values-item">
+            <div class="values-item-label">Overlapped</div>
+            <obc-poi-data
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .type=${ObcPoiType.Point}
+              .value=${PoiDataValue.Overlapped}
+            ></obc-poi-data>
+          </div>
+          <div class="values-item">
+            <div class="values-item-label">Alarm</div>
+            <obc-poi-data
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .type=${ObcPoiType.Point}
+              .value=${PoiDataValue.Checked}
+              .state=${ObcPoiState.Alarm}
+            ></obc-poi-data>
+          </div>
+          <div class="values-item">
+            <div class="values-item-label">With Header</div>
+            <obc-poi-data
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .type=${ObcPoiType.Point}
+              .header=${{
+                content: '1',
+                type: ObcPoiHeaderType.Id,
+                state: ObcPoiHeaderState.Selected,
+                size: ObcPoiHeaderSize.Regular,
+                hasIndicator: true,
+              }}
+            ></obc-poi-data>
+          </div>
+          <div class="values-item">
+            <div class="values-item-label">With Values</div>
+            <obc-poi-data
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .type=${ObcPoiType.Point}
+              .data=${values}
+            ></obc-poi-data>
+          </div>
+        </div>
       </div>
     `;
   },

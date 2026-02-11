@@ -351,7 +351,6 @@ export class ObcPoiLayerStack extends LitElement {
       if (groupLayer && groupLayer !== nextLayer) {
         group.expand = false;
       }
-      target.setInternalButtonOffsetX(0);
       target.buttonOffsetX = 0;
       target.targetOffsetX = 0;
       target.style.removeProperty('position');

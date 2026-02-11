@@ -44,6 +44,7 @@ export enum ObcPoiState {
 
 const DEFAULT_LINE_LENGTH_PX = 96;
 const POINTER_BOX_BASE_SIZE_PX = 32;
+const POINT_POINTER_OFFSET_PX = 12;
 
 @customElement('obc-poi')
 export class ObcPoi extends LitElement {
@@ -235,6 +236,13 @@ export class ObcPoi extends LitElement {
       return nothing;
     }
 
+    if (
+      this.type === ObcPoiType.Point &&
+      (this.isCheckedLike || this.state === ObcPoiState.Alarm)
+    ) {
+      return nothing;
+    }
+
     const height =
       this.type === ObcPoiType.Point ? 0 : Number.isFinite(this.y) ? this.y : 0;
 
@@ -256,7 +264,11 @@ export class ObcPoi extends LitElement {
     }
 
     const lineLength =
-      this.type === ObcPoiType.Point ? 0 : Number.isFinite(this.y) ? this.y : 0;
+      this.type === ObcPoiType.Point
+        ? POINT_POINTER_OFFSET_PX
+        : Number.isFinite(this.y)
+          ? this.y
+          : 0;
 
     return html`
       <obc-poi-pointer

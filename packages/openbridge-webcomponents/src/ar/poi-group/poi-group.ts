@@ -440,7 +440,7 @@ export class ObcPoiGroup extends LitElement {
       }
 
       const buttonOffsetX = (config.currentExpandedOffset - delta) * eased;
-      child.setInternalButtonOffsetX(buttonOffsetX);
+      child.buttonOffsetX = buttonOffsetX;
 
       if (child !== frontChild) {
         const isOverlap = !visualExpanded;
@@ -671,7 +671,7 @@ export class ObcPoiGroup extends LitElement {
       }
 
       this.lastAppliedOffsets.set(child, {buttonOffsetX});
-      child.setInternalButtonOffsetX(buttonOffsetX);
+      child.buttonOffsetX = buttonOffsetX;
     });
   }
 
