@@ -130,9 +130,9 @@ export class ObcPoiController extends LitElement {
     HTMLElement & {
       x: number;
       y: number;
-      anchorY: number | null;
+      buttonY: number | null;
       fixedTarget?: boolean;
-      type: string;
+      buttonType: string;
     }
   >();
   private currentMedia: HTMLVideoElement | HTMLImageElement | null = null;
@@ -384,13 +384,13 @@ export class ObcPoiController extends LitElement {
         target = document.createElement('obc-poi-data') as HTMLElement & {
           x: number;
           y: number;
-          anchorY: number | null;
+          buttonY: number | null;
           fixedTarget?: boolean;
-          type: string;
+          buttonType: string;
         };
         target.dataset.controller = '1';
         target.dataset.detectionIndex = String(index);
-        target.type = ObcPoiButtonType.Button;
+        target.buttonType = ObcPoiButtonType.Button;
         target.fixedTarget = false;
         this.controllerTargets.set(key, target);
         layer.appendChild(target);
@@ -407,7 +407,7 @@ export class ObcPoiController extends LitElement {
         typeof det.box_height === 'number' && Number.isFinite(det.box_height)
           ? det.box_height * mapped.scale
           : null;
-      target.type = resolvePoiButtonTypeFromBoxSize(boxWidth, boxHeight);
+      target.buttonType = resolvePoiButtonTypeFromBoxSize(boxWidth, boxHeight);
     });
 
     Array.from(this.controllerTargets.entries()).forEach(([key, target]) => {

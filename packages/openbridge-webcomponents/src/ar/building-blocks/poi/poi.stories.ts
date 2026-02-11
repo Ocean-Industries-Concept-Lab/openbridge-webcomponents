@@ -39,6 +39,7 @@ const meta: Meta<ObcPoi> = {
     header: null,
     selected: false,
     hasRelation: false,
+    data: [],
   },
   argTypes: {
     type: {
@@ -77,6 +78,11 @@ const meta: Meta<ObcPoi> = {
     header: {control: {type: 'object'}},
     selected: {control: {type: 'boolean'}},
     hasRelation: {control: {type: 'boolean'}},
+    data: {
+      control: 'object',
+      description:
+        'Array of value objects with value, label, and unit (also accepts JSON via values attribute)',
+    },
   },
   parameters: {
     controls: {
@@ -99,6 +105,7 @@ const meta: Meta<ObcPoi> = {
         'header',
         'selected',
         'hasRelation',
+        'data',
       ],
     },
   },
@@ -136,6 +143,7 @@ const meta: Meta<ObcPoi> = {
           .header=${args.header}
           .selected=${args.selected}
           .hasRelation=${args.hasRelation}
+          .data=${args.data}
         >
           <obi-placeholder></obi-placeholder>
           ${args.header?.hasIndicator
@@ -180,6 +188,7 @@ export const Outside: Story = {
     type: ObcPoiType.Outside,
     value: ObcPoiValue.Unchecked,
     outsideAngle: 315,
+    hasPointer: true,
   },
 };
 
@@ -223,5 +232,16 @@ export const WithHeader: Story = {
       size: ObcPoiHeaderSize.Regular,
       hasIndicator: true,
     },
+  },
+};
+
+export const WithValues: Story = {
+  args: {
+    type: ObcPoiType.Line,
+    value: ObcPoiValue.Unchecked,
+    data: [
+      {value: '10', label: 'Lab', unit: 'Unit'},
+      {value: '20', label: 'Lab 2', unit: 'Unit 2'},
+    ],
   },
 };

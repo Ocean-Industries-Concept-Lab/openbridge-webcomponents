@@ -12,8 +12,7 @@ import {
 } from '../poi-button/poi-button.js';
 import {ObcArAlertType} from '../../types.js';
 import {POIStyle} from '../poi-graphic-line/poi-config.js';
-import {pointerArrow} from '../../poi-data/arrow.js';
-import {Pointer} from '../../poi-data/poi-data.js';
+import {PoiArrowDirection, pointerArrow} from '../../poi-data/arrow.js';
 import '../poi-line/poi-line.js';
 import '../poi-pointer/poi-pointer.js';
 import {
@@ -289,7 +288,7 @@ export class ObcPoi extends LitElement {
       style="--obc-poi-outside-arrow-x: ${xOffset}px; --obc-poi-outside-arrow-y: ${yOffset}px; --obc-poi-outside-arrow-angle: ${this
         .outsideAngle}deg;"
     >
-      ${pointerArrow(Pointer.ArrowRight, value)}
+      ${pointerArrow(PoiArrowDirection.Right, value)}
     </div>`;
   }
 

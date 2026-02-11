@@ -64,27 +64,27 @@ const meta: Meta<PoiGroupStoryArgs> = {
             <obc-poi-data
               id="target-3"
               .x=${300}
-              .anchorY=${240}
+              .buttonY=${240}
               .y=${240}
             ></obc-poi-data>
             <obc-poi-data
               id="target-1"
               .x=${320}
-              .anchorY=${240}
+              .buttonY=${240}
               .y=${240}
               .relativeDirection=${65}
             ></obc-poi-data>
             <obc-poi-data
               id="target-2"
               .x=${340}
-              .anchorY=${240}
+              .buttonY=${240}
               .y=${240}
             ></obc-poi-data>
           </obc-poi-group>
           <obc-poi-data
             id="outside"
             .x=${200}
-            .anchorY=${240}
+            .buttonY=${240}
             .y=${240}
           ></obc-poi-data>
         </div>
@@ -148,14 +148,14 @@ export const GroupedWithNumbers: Story = {
               id="target-3"
               .header=${{content: '3'}}
               .x=${300}
-              .anchorY=${240}
+              .buttonY=${240}
               .y=${240}
             ></obc-poi-data>
             <obc-poi-data
               id="target-1"
               .header=${{content: '1'}}
               .x=${320}
-              .anchorY=${240}
+              .buttonY=${240}
               .y=${240}
               .relativeDirection=${65}
             ></obc-poi-data>
@@ -163,7 +163,7 @@ export const GroupedWithNumbers: Story = {
               id="target-2"
               .header=${{content: '2'}}
               .x=${340}
-              .anchorY=${240}
+              .buttonY=${240}
               .y=${240}
             ></obc-poi-data>
           </obc-poi-group>
@@ -171,7 +171,7 @@ export const GroupedWithNumbers: Story = {
             id="outside"
             .header=${{content: '4'}}
             .x=${200}
-            .anchorY=${240}
+            .buttonY=${240}
             .y=${240}
           ></obc-poi-data>
         </div>
@@ -241,14 +241,14 @@ export const GroupedWithValues: Story = {
             <obc-poi-data
               id="target-3"
               .x=${300}
-              .anchorY=${240}
+              .buttonY=${240}
               .y=${240}
               .data=${valuesA}
             ></obc-poi-data>
             <obc-poi-data
               id="target-1"
               .x=${320}
-              .anchorY=${240}
+              .buttonY=${240}
               .y=${240}
               .relativeDirection=${65}
               .data=${valuesB}
@@ -256,7 +256,7 @@ export const GroupedWithValues: Story = {
             <obc-poi-data
               id="target-2"
               .x=${340}
-              .anchorY=${240}
+              .buttonY=${240}
               .y=${240}
               .data=${valuesC}
             ></obc-poi-data>
@@ -264,7 +264,7 @@ export const GroupedWithValues: Story = {
           <obc-poi-data
             id="outside"
             .x=${200}
-            .anchorY=${240}
+            .buttonY=${240}
             .y=${240}
             .data=${valuesOutside}
           ></obc-poi-data>
@@ -330,14 +330,14 @@ export const Expanded: Story = {
             <obc-poi-data
               id="target-3"
               .x=${300}
-              .anchorY=${240}
+              .buttonY=${240}
               .y=${260}
               .fixedTarget=${false}
             ></obc-poi-data>
             <obc-poi-data
               id="target-1"
               .x=${320}
-              .anchorY=${240}
+              .buttonY=${240}
               .y=${100}
               .fixedTarget=${false}
               .relativeDirection=${65}
@@ -345,7 +345,7 @@ export const Expanded: Story = {
             <obc-poi-data
               id="target-2"
               .x=${340}
-              .anchorY=${240}
+              .buttonY=${240}
               .y=${100}
               .fixedTarget=${false}
             ></obc-poi-data>
@@ -353,7 +353,7 @@ export const Expanded: Story = {
           <obc-poi-data
             id="outside"
             .x=${200}
-            .anchorY=${240}
+            .buttonY=${240}
             .y=${100}
             .fixedTarget=${false}
           ></obc-poi-data>
@@ -502,19 +502,19 @@ export const InternalGroupSwapping: Story = {
             <obc-poi-data
               id="swap-a"
               .x=${300}
-              .anchorY=${240}
+              .buttonY=${240}
               .y=${240}
             ></obc-poi-data>
             <obc-poi-data
               id="swap-b"
               .x=${320}
-              .anchorY=${240}
+              .buttonY=${240}
               .y=${240}
             ></obc-poi-data>
             <obc-poi-data
               id="swap-c"
               .x=${340}
-              .anchorY=${240}
+              .buttonY=${240}
               .y=${240}
             ></obc-poi-data>
           </obc-poi-group>

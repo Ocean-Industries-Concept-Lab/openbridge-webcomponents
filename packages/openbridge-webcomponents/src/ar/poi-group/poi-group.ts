@@ -439,11 +439,8 @@ export class ObcPoiGroup extends LitElement {
         delta = currentLeft - config.originalLeft;
       }
 
-      const topOffset = (config.currentExpandedOffset - delta) * eased;
-
-      // Use topOffset to move the target, keeping the line anchored via line offset math.
-      child.topOffset = topOffset;
-      child.buttonOffsetX = 0;
+      const buttonOffsetX = (config.currentExpandedOffset - delta) * eased;
+      child.setInternalButtonOffsetX(buttonOffsetX);
 
       if (child !== frontChild) {
         const isOverlap = !visualExpanded;
@@ -576,7 +573,8 @@ export class ObcPoiGroup extends LitElement {
     this.updateExpandedOffsets();
   }
 
-  private lastAppliedOffsets: Map<ObcPoiData, {topOffset: number}> = new Map();
+  private lastAppliedOffsets: Map<ObcPoiData, {buttonOffsetX: number}> =
+    new Map();
   private lastTargetOrder: ObcPoiData[] = [];
 
   private updateExpandedOffsets(snap: boolean = false) {
@@ -665,18 +663,15 @@ export class ObcPoiGroup extends LitElement {
         );
       }
 
-      const topOffset = config.currentExpandedOffset - delta;
+      const buttonOffsetX = config.currentExpandedOffset - delta;
 
       const last = this.lastAppliedOffsets.get(child);
-      if (last && last.topOffset === topOffset) {
+      if (last && last.buttonOffsetX === buttonOffsetX) {
         return;
       }
 
-      this.lastAppliedOffsets.set(child, {topOffset});
-
-      // Use topOffset to move the target, keeping the line anchored via line offset math.
-      child.topOffset = topOffset;
-      child.buttonOffsetX = 0;
+      this.lastAppliedOffsets.set(child, {buttonOffsetX});
+      child.setInternalButtonOffsetX(buttonOffsetX);
     });
   }
 
@@ -763,7 +758,7 @@ export class ObcPoiGroup extends LitElement {
   }
 
   private applyVisualState(target: ObcPoiData, overlap: boolean) {
-    const isEnhanced = target.type === ObcPoiButtonType.Enhanced;
+    const isEnhanced = target.buttonType === ObcPoiButtonType.Enhanced;
     const size = this.getVisualTargetSize(isEnhanced, overlap);
     target.style.setProperty('--poi-size', `${size}px`);
     target.style.setProperty(

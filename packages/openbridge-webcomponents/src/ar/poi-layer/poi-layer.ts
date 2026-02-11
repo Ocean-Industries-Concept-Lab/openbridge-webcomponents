@@ -308,7 +308,7 @@ export class ObcPoiLayer extends LitElement {
       });
       observer.observe(target, {
         attributes: true,
-        attributeFilter: ['style', 'y', 'anchor-y', 'height'],
+        attributeFilter: ['style', 'y', 'button-y'],
       });
       this.targetObservers.set(target, observer);
     });
@@ -832,7 +832,7 @@ export class ObcPoiLayer extends LitElement {
   }
 
   private applyStandaloneVisualState(target: ObcPoiData, overlap: boolean) {
-    const isEnhanced = target.type === ObcPoiButtonType.Enhanced;
+    const isEnhanced = target.buttonType === ObcPoiButtonType.Enhanced;
     const size = this.getVisualTargetSize(isEnhanced, overlap);
     target.style.setProperty('--poi-size', `${size}px`);
     target.style.setProperty(
@@ -949,10 +949,10 @@ export class ObcPoiLayer extends LitElement {
   }
 
   private resetTarget(target: ObcPoiData) {
-    if (typeof target.offset === 'number') {
-      target.offset = 0;
+    if (typeof target.targetOffsetX === 'number') {
+      target.targetOffsetX = 0;
     }
-    this.animateTopOffsetToZero(target);
+    this.animateButtonOffsetXToZero(target);
     if (typeof target.buttonOffsetX === 'number') {
       target.buttonOffsetX = 0;
     }
@@ -966,16 +966,16 @@ export class ObcPoiLayer extends LitElement {
     target.style.removeProperty('--obc-poi-group-overlap-shift');
   }
 
-  private topOffsetResetRaf = new Map<ObcPoiData, number>();
+  private buttonOffsetXResetRaf = new Map<ObcPoiData, number>();
 
-  private animateTopOffsetToZero(target: ObcPoiData) {
-    const start = target.topOffset;
+  private animateButtonOffsetXToZero(target: ObcPoiData) {
+    const start = target.getInternalButtonOffsetX();
     if (!Number.isFinite(start) || Math.abs(start) < 0.5) {
-      target.topOffset = 0;
+      target.setInternalButtonOffsetX(0);
       return;
     }
 
-    const existing = this.topOffsetResetRaf.get(target);
+    const existing = this.buttonOffsetXResetRaf.get(target);
     if (existing) {
       cancelAnimationFrame(existing);
     }
@@ -985,24 +985,24 @@ export class ObcPoiLayer extends LitElement {
     const step = (now: number) => {
       try {
         if (!target.isConnected) {
-          this.topOffsetResetRaf.delete(target);
+          this.buttonOffsetXResetRaf.delete(target);
           return;
         }
         const t = Math.min((now - startTime) / duration, 1);
         const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-        target.topOffset = start + (0 - start) * eased;
+        target.setInternalButtonOffsetX(start + (0 - start) * eased);
         if (t < 1) {
-          this.topOffsetResetRaf.set(target, requestAnimationFrame(step));
+          this.buttonOffsetXResetRaf.set(target, requestAnimationFrame(step));
         } else {
-          this.topOffsetResetRaf.delete(target);
+          this.buttonOffsetXResetRaf.delete(target);
         }
       } catch (error) {
-        console.error('[poi-layer] Error in top offset reset:', error);
-        this.topOffsetResetRaf.delete(target);
+        console.error('[poi-layer] Error in button offset reset:', error);
+        this.buttonOffsetXResetRaf.delete(target);
       }
     };
 
-    this.topOffsetResetRaf.set(target, requestAnimationFrame(step));
+    this.buttonOffsetXResetRaf.set(target, requestAnimationFrame(step));
   }
 
   private scheduleGroupRemoval(group: HTMLElement) {
@@ -1096,17 +1096,14 @@ export class ObcPoiLayer extends LitElement {
     const yValue = Number.parseFloat(yAttr ?? '');
     if (!Number.isNaN(yValue)) return yValue;
     if (target instanceof ObcPoiData) {
-      const anchorY = target.anchorY;
-      if (typeof anchorY === 'number' && Number.isFinite(anchorY)) {
-        return anchorY;
+      const buttonY = target.buttonY;
+      if (typeof buttonY === 'number' && Number.isFinite(buttonY)) {
+        return buttonY;
       }
     }
-    const anchorYAttr = target.getAttribute('anchor-y');
-    const anchorYValue = Number.parseFloat(anchorYAttr ?? '');
-    if (!Number.isNaN(anchorYValue)) return anchorYValue;
-    const legacyHeightAttr = target.getAttribute('height');
-    const legacyHeightValue = Number.parseFloat(legacyHeightAttr ?? '');
-    if (!Number.isNaN(legacyHeightValue)) return legacyHeightValue;
+    const buttonYAttr = target.getAttribute('button-y');
+    const buttonYValue = Number.parseFloat(buttonYAttr ?? '');
+    if (!Number.isNaN(buttonYValue)) return buttonYValue;
     const rect = rects?.get(target) ?? this.getTargetRect(target);
     return rect.height;
   }

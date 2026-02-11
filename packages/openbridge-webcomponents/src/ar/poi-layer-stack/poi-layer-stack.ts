@@ -351,9 +351,9 @@ export class ObcPoiLayerStack extends LitElement {
       if (groupLayer && groupLayer !== nextLayer) {
         group.expand = false;
       }
-      target.topOffset = 0;
+      target.setInternalButtonOffsetX(0);
       target.buttonOffsetX = 0;
-      target.offset = 0;
+      target.targetOffsetX = 0;
       target.style.removeProperty('position');
       target.style.removeProperty('width');
       target.style.removeProperty('min-width');
@@ -617,7 +617,7 @@ export class ObcPoiLayerStack extends LitElement {
       if (filters.length === 0) return;
       targets.forEach((target) => {
         if (this.selectionMap.has(target) || assigned.has(target)) return;
-        const type = target.type ?? '';
+        const type = target.buttonType;
         if (!filters.includes(type)) return;
         if (this.getTargetLayer(target) !== layer) {
           this.moveTargetToLayer(target, layer);

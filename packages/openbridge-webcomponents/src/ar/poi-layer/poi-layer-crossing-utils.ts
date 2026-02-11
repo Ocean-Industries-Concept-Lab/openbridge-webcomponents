@@ -28,7 +28,7 @@ function updateCrossingModeState({
   if (targets.length < 2) {
     targets.forEach((target) => {
       target.buttonOffsetX = 0;
-      target.offset = 0;
+      target.targetOffsetX = 0;
       lastOffsets.set(target, 0);
     });
     lastOffsets.clear();
@@ -118,7 +118,7 @@ function updateCrossingModeState({
   if (!hasActiveOverlaps) {
     targets.forEach((target) => {
       target.buttonOffsetX = 0;
-      target.offset = 0;
+      target.targetOffsetX = 0;
       lastOffsets.set(target, 0);
     });
     lastOffsets.forEach((_, target) => {
@@ -161,10 +161,10 @@ function updateCrossingModeState({
 
     if (nextOffset !== 0) {
       item.target.buttonOffsetX = nextOffset;
-      item.target.offset = -nextOffset;
+      item.target.targetOffsetX = 0;
     } else {
       item.target.buttonOffsetX = 0;
-      item.target.offset = 0;
+      item.target.targetOffsetX = 0;
     }
     lastOffsets.set(item.target, nextOffset);
   });
