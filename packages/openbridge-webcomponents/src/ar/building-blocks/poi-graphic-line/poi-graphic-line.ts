@@ -2,6 +2,7 @@ import {LitElement, html, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement} from '../../../decorator.js';
+import {shrinkDimensionForStroke} from '../../../svghelpers/stroke-aware.js';
 import {
   getPOILineConfig,
   POILineParams,
@@ -22,15 +23,16 @@ import componentStyle from './poi-graphic-line.css?inline';
  *
  * ## Features/Variants
  *
- * - `lineHeight`: Controls the rendered connector length.
- * - `width`: Sets the base line width used by the SVG container.
- * - `lineStart`: Sets the Y-axis start position for line geometry.
- * - `lineStyle`: Selects style theme (for example `regular`, `enhanced`, `alarm`).
- * - `lineType`: Chooses path treatment (`regular` or `dashed`).
+ * - `lineHeight`: Controls the rendered connector length. Default: `96`.
+ * - `lineStart`: Sets the Y-axis start position for line geometry. Default: `1`.
+ * - `lineStyle`: Selects style theme (for example `regular`, `enhanced`, `alarm`). Default: `enhanced`.
+ * - `lineType`: Chooses path treatment (`regular` or `dashed`). Default: `regular`.
  * - `offset`: Applies horizontal offset to create angled connector segments.
  *
  * ## Usage Guidelines
  *
+ * - Use this for a visual-only connector; use `<obc-poi-line>` when you need
+ *   integrated pointer/label behavior.
  * - Use `lineType="regular"` for continuous POI lines and `lineType="dashed"` for
  *   non-primary or guidance-style links.
  * - Keep `lineHeight` and `lineStart` consistent with surrounding marker layout so
@@ -62,8 +64,9 @@ import componentStyle from './poi-graphic-line.css?inline';
  */
 @customElement('obc-poi-graphic-line')
 export class ObcPoiGraphicLine extends LitElement {
+  private static _idCounter = 0;
+  private readonly _idPrefix = `poi-graphic-line-${ObcPoiGraphicLine._idCounter++}`;
   @property({type: Number}) lineHeight: number = 96;
-  @property({type: Number}) width: number = 4;
   @property({type: Number}) lineStart: number = 1;
   @property({type: String}) lineStyle: POIStyle = POIStyle.Enhanced;
   @property({type: String}) lineType: POILineType = POILineType.Regular;
@@ -78,6 +81,7 @@ export class ObcPoiGraphicLine extends LitElement {
         lineStart: this.lineStart,
         totalHeight: this.lineHeight + this.lineStart,
         offset: this.offset,
+        idPrefix: this._idPrefix,
       })}
     `;
   }
@@ -91,24 +95,32 @@ export function graphicLine({
   lineStart = 1,
   totalHeight,
   offset,
+  idPrefix,
 }: {
   style: POILineParams;
   lineHeight: number;
   lineStart?: number;
   totalHeight: number;
   offset: number;
+  idPrefix: string;
 }) {
+  const strokeWidth = style.outlineWidth;
+  const halfStroke = strokeWidth / 2;
+  const safeWidth = shrinkDimensionForStroke(style.width, strokeWidth);
+  const xCenter = halfStroke + safeWidth / 2;
+
   let xStart, xEnd;
   if (offset >= 0) {
-    xStart = style.width / 2;
+    xStart = xCenter;
     xEnd = xStart + offset;
   } else {
-    xStart = style.width / 2 - offset;
-    xEnd = style.width / 2;
+    xStart = xCenter - offset;
+    xEnd = xCenter;
   }
 
   const width = style.width + Math.abs(offset);
-  const lineEnd = lineStart + lineHeight;
+  const yStart = Math.max(lineStart, halfStroke);
+  const lineEnd = Math.min(lineStart + lineHeight, totalHeight - halfStroke);
   const breakStartPoint = lineStart + 10;
   const breakEndPoint = breakStartPoint + 30;
   const isDashed = Boolean(style.dashArray);
@@ -118,14 +130,22 @@ export function graphicLine({
     isDashed && style.dashOutlineAndShadow === true;
   const outlineDashArray = dashedOutlineAndShadow ? dashArray : undefined;
   const outlineDashOffset = dashedOutlineAndShadow ? dashOffset : undefined;
+  const prefixedId = (suffix: string) => `${idPrefix}-${suffix}`;
+  const maskId = prefixedId('mask');
+  const filterId = prefixedId('filter');
+  const gradientId = prefixedId('linear-gradient');
+  const bgFixId = prefixedId('bg-fix');
+  const hardAlphaId = prefixedId('hard-alpha');
+  const dropShadowId = prefixedId('drop-shadow');
+  const shapeId = prefixedId('shape');
 
   let path: string;
   if (offset === 0) {
-    path = `M${xStart} ${lineStart}V ${lineEnd}`;
+    path = `M${xStart} ${yStart}V ${lineEnd}`;
   } else {
-    path = `M${xStart} ${lineStart}V ${breakStartPoint} L ${xEnd} ${breakEndPoint}V ${lineEnd}`;
+    path = `M${xStart} ${yStart}V ${breakStartPoint} L ${xEnd} ${breakEndPoint}V ${lineEnd}`;
   }
-  const topCapPath = `M${xStart} ${lineStart}V ${lineStart + 0.001}`;
+  const topCapPath = `M${xStart} ${yStart}V ${yStart + 0.001}`;
 
   return svg`
     <svg
@@ -135,17 +155,17 @@ export function graphicLine({
       fill="none"
       vector-effect="non-scaling-stroke"
     >
-      <mask id="poi_graphic_line_mask" maskUnits="userSpaceOnUse">
+      <mask id="${maskId}" maskUnits="userSpaceOnUse">
         <rect
           x="0"
           y="0"
           width=${width}
           height=${totalHeight}
-          fill="url(#poi_graphic_line_linear_gradient)"
+          fill="url(#${gradientId})"
         />
       </mask>
-      <g mask="url(#poi_graphic_line_mask)">
-        <g filter="url(#poi_graphic_line_filter)">
+      <g mask="url(#${maskId})">
+        <g filter="url(#${filterId})">
           <path
             d=${path}
             stroke="${style.outlineColor}"
@@ -194,7 +214,7 @@ export function graphicLine({
       </g>
       <defs>
         <filter
-          id="poi_graphic_line_filter"
+          id="${filterId}"
           x="-3"
           y="-3"
           width="${width + 6}"
@@ -202,34 +222,34 @@ export function graphicLine({
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood flood-opacity="0" result="${bgFixId}" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
             values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-            result="hardAlpha"
+            result="${hardAlphaId}"
           />
           <feOffset dy="0" />
           <feGaussianBlur stdDeviation="0.85" />
-          <feComposite in2="hardAlpha" operator="out" />
+          <feComposite in2="${hardAlphaId}" operator="out" />
           <feColorMatrix
             type="matrix"
             values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ${style.shadowAlpha} 0"
           />
           <feBlend
             mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_11965_68245"
+            in2="${bgFixId}"
+            result="${dropShadowId}"
           />
           <feBlend
             mode="normal"
             in="SourceGraphic"
-            in2="effect1_dropShadow_11965_68245"
-            result="shape"
+            in2="${dropShadowId}"
+            result="${shapeId}"
           />
         </filter>
         <linearGradient
-          id="poi_graphic_line_linear_gradient"
+          id="${gradientId}"
           gradientTransform="rotate(90)"
         >
           <stop stop-color="white" />

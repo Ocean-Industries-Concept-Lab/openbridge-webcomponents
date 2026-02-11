@@ -75,19 +75,20 @@ export enum ObcPoiHeaderType {
  *
  * @keywords chip, pill, badge, POI, header, target, AR, identifier
  *
- * @property {string} content - Short identifier text displayed in the chip.
+ * **Configuration**
+ * - `content` (string) -- Short identifier text displayed in the chip.
  *   Defaults to `"1"`. Single-character values receive tighter sizing.
- * @property {string} label - Secondary label shown in the Data variant.
+ * - `label` (string) -- Secondary label shown in the Data variant.
  *   Defaults to `"Data"`. Ignored when `type` is `"id"`.
- * @property {ObcPoiHeaderSize} size - Visual size preset. Currently only
+ * - `size` (ObcPoiHeaderSize) -- Visual size preset. Currently only
  *   `"regular"` (default). Reflected as an attribute for CSS hooks.
- * @property {ObcPoiHeaderState} state - Interactive/alert state. One of
+ * - `state` (ObcPoiHeaderState) -- Interactive/alert state. One of
  *   `"enabled"` (default), `"selected"`, `"caution"`, `"warning"`, `"alarm"`.
  *   Drives colour theming via CSS class and is reflected as an attribute.
- * @property {ObcPoiHeaderType} type - Layout variant. `"id"` (default) renders
+ * - `type` (ObcPoiHeaderType) -- Layout variant. `"id"` (default) renders
  *   ID-only; `"data"` renders the two-pill ID + label layout. Reflected as an
  *   attribute.
- * @property {boolean} hasIndicator - When `true`, appends the indicator region
+ * - `hasIndicator` (boolean) -- When `true`, appends the indicator region
  *   (slot or fallback bars). Defaults to `false`. Set via the `has-indicator`
  *   HTML attribute.
  *
@@ -119,7 +120,7 @@ export class ObcPoiHeader extends LitElement {
   }
 
   private get hasSingleCharacterContent(): boolean {
-    return this.content.trim().length === 1;
+    return this.content?.trim().length === 1;
   }
 
   private renderIndicator() {
