@@ -1,0 +1,145 @@
+:host {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* Spacing between expanded POI targets in a group */
+  --obc-poi-group-expanded-spacing: 50px;
+  /* Animation timing constants (in milliseconds) */
+  --obc-poi-group-top-offset-animation-ms: 100;
+  --obc-poi-group-top-offset-animation-delay-ms: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.wrapper {
+  position: absolute;
+  appearance: none;
+  border: none;
+  background: none;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  height: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 3;
+  padding: var(--Maneuvering-components-poi-group-padding-unchecked-top, 6px)
+    var(--Maneuvering-components-poi-group-padding-unchecked-horizontal, 4px)
+    var(--Maneuvering-components-poi-group-padding-unchecked-bottom, 2px)
+    var(--Maneuvering-components-poi-group-padding-unchecked-horizontal, 4px);
+  transform: translateY(-100%);
+
+  /* Override mixin colors for visible-wrapper */
+  --flat-enabled-border-color: transparent;
+  --flat-enabled-background-color: transparent;
+  --flat-hover-border-color: var(
+    --Color-Overlay-Styles-Flat-Hover-border-color,
+    rgba(255, 255, 255, 0.12)
+  );
+  --flat-hover-background-color: var(
+    --Color-Overlay-Styles-Flat-Enabled-background-color,
+    rgba(0, 0, 0, 0.32)
+  );
+  --flat-pressed-border-color: var(
+    --Color-Overlay-Styles-Flat-Active-border-color,
+    rgba(255, 255, 255, 0.12)
+  );
+  --flat-pressed-background-color: var(
+    --Color-Overlay-Styles-Flat-Active-background-color,
+    rgba(0, 0, 0, 0.48)
+  );
+
+  @mixin style style=flat visibleWrapperClass=.visible-wrapper;
+}
+
+.wrapper.with-values {
+  padding: 0;
+}
+
+.visible-wrapper {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  top: 6px;
+  bottom: 2px;
+  border-radius: var(
+    --Maneuvering-components-poi-button-border-radius-round,
+    1000px
+  );
+  overflow: clip;
+}
+
+.wrapper.with-values .visible-wrapper {
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 6px;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: auto;
+}
+
+:host([data-exiting]) .wrapper,
+:host([data-exiting]) .backdrop {
+  pointer-events: none;
+  opacity: 0;
+}
+
+::slotted(obc-poi-data) {
+  pointer-events: auto;
+}
+
+/* Ensure targets inside groups inherit layer-style positioning when grouped in a layer. */
+:host([data-in-poi-layer]) ::slotted(obc-poi-data) {
+  position: absolute;
+  transform-origin: 50% 50%;
+  --obc-poi-layer-target-scale: 1;
+  --obc-poi-layer-target-shift: calc(
+    (1 - var(--obc-poi-layer-target-scale)) * 100%
+  );
+  transform: translateX(var(--obc-poi-target-offset-x, 0px))
+    scale(var(--obc-poi-layer-target-scale));
+  transition: opacity 0.1s ease-out;
+}
+
+:host([data-in-poi-layer][data-position-mode="bottom"])
+  ::slotted(obc-poi-data) {
+  top: auto;
+  bottom: 0;
+  height: 100%;
+  transform: translateX(var(--obc-poi-target-offset-x, 0px))
+    translateY(calc(100% - var(--obc-poi-layer-target-shift)))
+    scale(var(--obc-poi-layer-target-scale));
+}
+
+:host([data-in-poi-layer]) ::slotted(obc-poi-data[data-behind]),
+:host([data-in-poi-layer]) ::slotted(obc-poi-data[data-exiting]) {
+  opacity: 0.4;
+  --poi-size: 32px;
+  --obc-poi-target-icon-opacity: 0;
+}
+
+:host([data-in-poi-layer]) ::slotted(obc-poi-data[data-front]) {
+  opacity: 1;
+  --poi-size: 36px;
+  --obc-poi-target-icon-opacity: 1;
+}
+
+:host([data-in-poi-layer][data-position-mode="bottom"]) .wrapper {
+  transform: translateY(-100%);
+}
+
+::slotted(obc-poi-data[data-grouped]) {
+  opacity: 1;
+  transition: opacity 0.1s ease-out;
+}
