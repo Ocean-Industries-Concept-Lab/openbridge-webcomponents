@@ -4,7 +4,7 @@ import './poi-graphic-line.js';
 import {POIStyle} from './poi-config.js';
 
 const meta: Meta<typeof ObcPoiGraphicLine> = {
-  title: 'AR/Building blocks/POI Graphic Line',
+  title: 'AR/Legacy/POI Graphic Line',
   tags: ['autodocs'],
   component: 'obc-poi-graphic-line',
   argTypes: {

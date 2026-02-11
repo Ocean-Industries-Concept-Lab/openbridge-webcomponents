@@ -5,7 +5,7 @@ import {POIStyle} from '../poi-graphic-line/poi-config.js';
 import {crossDecorator} from '../../storybook-util.js';
 import {html} from 'lit';
 const meta: Meta<typeof ObcPoiLine> = {
-  title: 'AR/Building blocks/POI Line',
+  title: 'AR/Legacy/POI Line',
   tags: ['autodocs'],
   decorators: [crossDecorator],
   component: 'obc-poi-line',
