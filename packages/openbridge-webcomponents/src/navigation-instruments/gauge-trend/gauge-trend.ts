@@ -15,6 +15,7 @@ import {
   ScaleType,
 } from '../../building-blocks/bar-vertical/bar-vertical.js';
 import type {AdviceType} from '../watch/advice.js';
+import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/bar-vertical/bar-vertical.js';
 
 // Re-export FillMode and ScaleType for user convenience
@@ -106,20 +107,20 @@ export {FillMode, ScaleType};
  * @property {boolean} enhanced - Use enhanced color palette for chart and scales
  * @property {InstrumentState} state - Instrument state (automatically applied to scale)
  * @property {boolean} chartFill - Enable chart area fill (default: false for line-only)
+ *
+ * Setpoint properties are inherited from {@link SetpointMixin}.
+ * These are forwarded to the internal `obc-bar-vertical` scale:
+ * `setpoint`, `newSetpoint`, `touching`, `atSetpoint`, `disableAutoAtSetpoint`,
+ * `autoAtSetpointDeadband`, `setpointAtZeroDeadband`, `setpointColorMode`.
+ * See {@link SetpointMixinInterface} for full documentation.
  */
 @customElement('obc-gauge-trend')
-export class ObcGaugeTrend extends ObcChartLineBase {
+export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
   private _barVerticalElement?: HTMLElement;
   private _isFirstUpdate = false;
 
   constructor() {
     super();
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // LOCKED BASE CLASS PROPERTIES
-    // These properties are intentionally locked to specific values for gauge-trend.
-    // They are set here in the constructor and should not be modified.
-    // ═══════════════════════════════════════════════════════════════════════════
 
     // Chart display options - locked for gauge-trend
     this.legend = false;
@@ -232,6 +233,13 @@ export class ObcGaugeTrend extends ObcChartLineBase {
         : (this.fillMax ?? this.value);
     barVertical.value = this.value;
     barVertical.setpoint = this.setpoint;
+    barVertical.newSetpoint = this.newSetpoint;
+    barVertical.touching = this.touching;
+    barVertical.atSetpoint = this.atSetpoint;
+    barVertical.disableAutoAtSetpoint = this.disableAutoAtSetpoint;
+    barVertical.autoAtSetpointDeadband = this.autoAtSetpointDeadband;
+    barVertical.setpointAtZeroDeadband = this.setpointAtZeroDeadband;
+    barVertical.setpointColorMode = this.setpointColorMode;
     // Advice position is always 'inner' for gauge-trend
     barVertical.advicePosition = AdvicePosition.inner;
     // obc-bar-vertical uses 'advices' (plural), not 'advice' or 'hasAdvice'
@@ -325,13 +333,6 @@ export class ObcGaugeTrend extends ObcChartLineBase {
   value?: number = undefined;
 
   /**
-   * Setpoint/target value displayed on the vertical scale.
-   * Shows as a marker indicator on the scale.
-   */
-  @property({type: Number})
-  setpoint?: number = undefined;
-
-  /**
    * Show bar on the vertical scale.
    *
    * When `true`, displays a filled bar indicating the current value.
@@ -399,6 +400,11 @@ export class ObcGaugeTrend extends ObcChartLineBase {
    */
   @property({type: Number})
   primaryInterval?: number = undefined;
+
+  // Setpoint properties (setpoint, newSetpoint, touching, atSetpoint,
+  // disableAutoAtSetpoint, autoAtSetpointDeadband, setpointAtZeroDeadband,
+  // setpointColorMode, computeAtSetpoint()) are provided by SetpointMixin.
+  // See setpoint-mixin.ts for full docs.
 
   /**
    * Secondary tick interval for the vertical scale (medium ticks).
@@ -497,6 +503,13 @@ export class ObcGaugeTrend extends ObcChartLineBase {
       changed.has('maxValue') ||
       changed.has('value') ||
       changed.has('setpoint') ||
+      changed.has('newSetpoint') ||
+      changed.has('touching') ||
+      changed.has('atSetpoint') ||
+      changed.has('disableAutoAtSetpoint') ||
+      changed.has('autoAtSetpointDeadband') ||
+      changed.has('setpointAtZeroDeadband') ||
+      changed.has('setpointColorMode') ||
       changed.has('hasBar') ||
       changed.has('hasScale') ||
       changed.has('hasAdvice') ||

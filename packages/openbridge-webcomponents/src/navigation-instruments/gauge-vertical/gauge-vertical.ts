@@ -24,6 +24,7 @@ import {
   ExternalScaleOrientation,
   ExternalScaleSide,
 } from '../../building-blocks/external-scale/external-scale.js';
+import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 
 // Re-export shared enums for convenience
 export {
@@ -122,7 +123,9 @@ export {
  * @fires scale-dimensions-changed {CustomEvent} Fired when layout-affecting properties change, providing dimension info for parent chart integration.
  */
 @customElement('obc-gauge-vertical')
-export class ObcGaugeVertical extends LitElement {
+export class ObcGaugeVertical extends SetpointMixin(LitElement, {
+  defaultDeadband: 1,
+}) {
   /** Minimum scale value */
   @property({type: Number}) minValue = 0;
   /** Maximum scale value */
@@ -228,30 +231,12 @@ export class ObcGaugeVertical extends LitElement {
   /** Current value (bar fill level) */
   @property({type: Number}) value?: number = undefined;
 
-  /** Setpoint/target value to display as indicator. When undefined, setpoint is off. */
-  @property({type: Number}) setpoint?: number = undefined;
-  /**
-   * New setpoint value being adjusted (focus/adjustment mode).
-   * When defined, displays a second setpoint marker in 'focus' visual state,
-   * while the original `setpoint` marker is dimmed (0.5 opacity).
-   * This enables the "adjustment preview" UX where users can see both the current
-   * and proposed setpoint positions simultaneously.
-   */
-  @property({type: Number}) newSetpoint?: number = undefined;
-  /** Whether value is at setpoint (manual override when disableAutoAtSetpoint=true) */
-  @property({type: Boolean}) atSetpoint = false;
-  /** Disable automatic atSetpoint calculation based on value and deadband */
-  @property({type: Boolean}) disableAutoAtSetpoint = false;
-  /** Deadband for automatic atSetpoint detection (when disableAutoAtSetpoint=false) */
-  @property({type: Number}) autoAtSetpointDeadband = 1;
-  /** Deadband around zero for setpoint positioning */
-  @property({type: Number}) setpointAtZeroDeadband = 0.5;
   /** Instrument state: inCommand, active, loading, or off */
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
+
   /**
-   * When true, the setpoint marker is in "focus" state (user is actively adjusting).
-   * Displays the outlined/hollow triangle variant at full size.
-   * @default false
+   * @deprecated Use `touching` (from SetpointMixin) instead.
+   * Kept for backward compatibility. Synced to `touching` in `willUpdate()`.
    */
   @property({type: Boolean}) focused = false;
 
@@ -308,7 +293,8 @@ export class ObcGaugeVertical extends LitElement {
       autoAtSetpointDeadband: this.autoAtSetpointDeadband,
       setpointAtZeroDeadband: this.setpointAtZeroDeadband,
       state: this.state,
-      focused: this.focused,
+      touching: this.touching,
+      colorMode: this.setpointColorMode,
       advicePosition: this.advicePosition,
       advices: this.advices as ExternalScaleAdvice[],
       fixedAspectRatio: this.fixedAspectRatio,
@@ -346,6 +332,16 @@ export class ObcGaugeVertical extends LitElement {
         ${parts.currentValueDot} ${parts.setpoint}
       </svg>
     `;
+  }
+
+  override willUpdate(changed: PropertyValues): void {
+    super.willUpdate(changed);
+
+    // Sync deprecated alias to mixin property
+    // Only sync if the alias was set and the mixin property was NOT also set.
+    if (changed.has('focused') && !changed.has('touching')) {
+      this.touching = this.focused;
+    }
   }
 
   override updated(changed: PropertyValues) {

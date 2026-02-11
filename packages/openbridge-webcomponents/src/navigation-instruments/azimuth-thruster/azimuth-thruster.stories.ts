@@ -26,12 +26,14 @@ const meta: Meta<typeof ObcAzimuthThruster> = {
     },
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
     detailedTickmarks: {control: {type: 'boolean'}},
+    touching: {control: 'boolean'},
   },
   args: {
     width: 512,
     autoAtThrustSetpointDeadband: 1,
     autoAtAngleSetpointDeadband: 2,
     thrustSetpointAtZeroDeadband: 0.1,
+    touching: false,
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcAzimuthThruster>;

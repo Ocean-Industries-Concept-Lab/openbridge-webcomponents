@@ -122,6 +122,8 @@ export class ObcWatch extends LitElement {
   @property({type: Boolean}) atAngleSetpoint: boolean = false;
   @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
   @property({type: String}) colorMode: SetpointColorMode | undefined;
+  /** User is physically interacting — renders setpoint marker in focus state */
+  @property({type: Boolean}) touching: boolean = false;
   @property({type: Number}) padding: number | undefined;
   @property({type: Array, attribute: false}) areas: WatchArea[] = [];
   @property({type: Array, attribute: false}) barAreas: WatchBarArea[] = [];
@@ -451,6 +453,7 @@ export class ObcWatch extends LitElement {
       angleSetpoint: this.angleSetpoint,
       setpointAtZeroDeadband: this.angleSetpointAtZeroDeadband,
       newAngleSetpoint: this.newAngleSetpoint,
+      touching: this.touching,
     });
 
     const colorMode = this.colorMode ?? derived.colorMode;

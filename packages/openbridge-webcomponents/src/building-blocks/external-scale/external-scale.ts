@@ -24,6 +24,7 @@ import {
   drawSetpointMarker,
   generateSetpointId,
   getSetpointOutwardOffset,
+  computeAtSetpoint,
 } from '../../svghelpers/setpoint.js';
 
 /**
@@ -596,14 +597,22 @@ export interface ExternalScaleConfig {
   highlightCurrentValue?: boolean;
 
   /**
-   * When true, the setpoint marker is in "focus" state (user is actively adjusting).
-   * This displays the outlined/hollow triangle variant at full size.
+   * User is physically interacting with the control (e.g. lever/slider touch).
    *
-   * NOTE: In future refactoring, consider whether this should be unified with
-   * InstrumentState (e.g., a new 'focus' or 'adjusting' state) rather than a
-   * separate boolean property.
+   * When true:
+   * - `calculateAtSetpoint()` returns false (suppressed)
+   * - Single setpoint marker renders in focus visual state
+   *
+   * Unified name for what was previously `focused` in linear instruments
+   * and `touching` in radial instruments.
    *
    * @default false
+   */
+  touching?: boolean;
+
+  /**
+   * @deprecated Use `touching` instead. Will be removed in a future version.
+   * When set, behaves identically to `touching`.
    */
   focused?: boolean;
 }
@@ -813,14 +822,15 @@ function rangeIncludesZero(minValue: number, maxValue: number): boolean {
 }
 
 function calculateAtSetpoint(config: ExternalScaleConfig): boolean {
-  if (config.value === undefined || config.setpoint === undefined) return false;
-  if (!config.disableAutoAtSetpoint) {
-    const deadband = Number.isFinite(config.autoAtSetpointDeadband)
-      ? config.autoAtSetpointDeadband
-      : 0;
-    return Math.abs(config.value - config.setpoint) <= deadband;
-  }
-  return config.atSetpoint;
+  const isTouching = config.touching ?? config.focused ?? false;
+  return computeAtSetpoint({
+    value: config.value,
+    setpoint: config.setpoint,
+    touching: isTouching,
+    disableAuto: config.disableAutoAtSetpoint,
+    deadband: config.autoAtSetpointDeadband,
+    atSetpointManual: config.atSetpoint,
+  });
 }
 
 // ============================================================================
@@ -856,9 +866,10 @@ function deriveSetpointVisualState(
   config: ExternalScaleConfig
 ): SetpointVisualState {
   // Priority 1: Focus state
-  // - When `focused` property is true (user is actively adjusting)
+  // - When `touching` property is true (user is actively adjusting)
   // - BUT only when newSetpoint is not defined (otherwise original should be dimmed)
-  if (config.focused && config.newSetpoint === undefined) {
+  const isTouching = config.touching ?? config.focused ?? false;
+  if (isTouching && config.newSetpoint === undefined) {
     return SetpointVisualState.focus;
   }
 
@@ -2270,8 +2281,11 @@ function renderSingleSetpoint(
     Math.abs(setpointValue) < config.setpointAtZeroDeadband;
 
   // Main axis position (where the marker sits along the scale)
+  // Always use valueToMainAxis — even for zero-snap, since coordinate 0
+  // only equals value 0 for symmetric bipolar scales (e.g. -100..+100).
+  // For non-symmetric scales (e.g. 0..100), value 0 maps to a non-zero coordinate.
   const mainAxisPos = setpointAtZero
-    ? 0
+    ? valueToMainAxis(config, 0)
     : valueToMainAxis(config, setpointValue);
 
   // Perpendicular axis position (distance from chart edge)

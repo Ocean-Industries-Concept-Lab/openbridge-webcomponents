@@ -1,7 +1,9 @@
 import {html, LitElement, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
+import type {PropertyValues} from 'lit';
 import {InstrumentState} from '../types.js';
-import {SetpointColorMode} from '../../svghelpers/setpoint.js';
+import {SetpointBundle} from '../../svghelpers/setpoint-bundle.js';
+import type {SetpointColorMode} from '../../svghelpers/setpoint.js';
 import {thruster} from '../thruster/thruster.js';
 import '../watch/watch.js';
 import componentStyle from './azimuth-thruster.css?inline';
@@ -23,6 +25,8 @@ function mapAngle0to360(angle: number): number {
 
 @customElement('obc-azimuth-thruster')
 export class ObcAzimuthThruster extends LitElement {
+  private _thrustSetpointId = `azimuth-thrust-sp-${Math.random().toString(36).slice(2, 9)}`;
+
   @property({type: Number}) angle = 0;
   @property({type: Number}) angleSetpoint: number | undefined;
   @property({type: Number}) newAngleSetpoint: number | undefined;
@@ -46,6 +50,35 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: Boolean}) disableAutoAtThrustSetpoint: boolean = false;
   @property({type: Number}) autoAtThrustSetpointDeadband: number = 1;
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
+
+  private _angleSp = new SetpointBundle({angularWraparound: true});
+  private _thrustSp = new SetpointBundle({
+    defaultDeadband: 1,
+    defaultZeroDeadband: 0.1,
+  });
+
+  override willUpdate(changed: PropertyValues): void {
+    super.willUpdate(changed);
+    // Sync public prefixed props → bundles
+    this._angleSp.sync({
+      setpoint: this.angleSetpoint,
+      newSetpoint: this.newAngleSetpoint,
+      atSetpoint: this.atAngleSetpoint,
+      touching: this.touching,
+      disableAutoAtSetpoint: this.disableAutoAtAngleSetpoint,
+      autoAtSetpointDeadband: this.autoAtAngleSetpointDeadband,
+      setpointAtZeroDeadband: this.angleSetpointAtZeroDeadband,
+      setpointColorMode: this.angleSetpointColorMode,
+    });
+    this._thrustSp.sync({
+      setpoint: this.thrustSetpoint,
+      touching: this.touching,
+      atSetpoint: this.atThrustSetpoint,
+      disableAutoAtSetpoint: this.disableAutoAtThrustSetpoint,
+      autoAtSetpointDeadband: this.autoAtThrustSetpointDeadband,
+      setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
+    });
+  }
   @property({type: Number}) loading: number = 0;
   @property({type: Boolean}) noPadding: boolean = false;
   @property({type: Array, attribute: false}) angleAdvices: AngleAdvice[] = [];
@@ -54,24 +87,6 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: String}) topPropeller: PropellerType = PropellerType.none;
   @property({type: String}) bottomPropeller: PropellerType = PropellerType.none;
   @property({type: Boolean}) starboardPortIndicator: boolean = false;
-
-  get atAngleSetpointCalc() {
-    if (this.angleSetpoint === undefined) {
-      return false;
-    }
-
-    if (this.touching) {
-      return false;
-    }
-
-    if (!this.disableAutoAtAngleSetpoint) {
-      return (
-        Math.abs(this.angle - this.angleSetpoint) <
-        this.autoAtAngleSetpointDeadband
-      );
-    }
-    return this.atAngleSetpoint;
-  }
 
   private get angleAdviceRaw(): AngleAdviceRaw[] {
     return this.angleAdvices.map((advice) => {
@@ -181,11 +196,12 @@ export class ObcAzimuthThruster extends LitElement {
     return html`
       <div class="container">
         <obc-watch
+          .touching=${this.touching}
           .tickmarks=${tickmarks}
           .state=${this.state}
           .angleSetpoint=${this.angleSetpoint}
           .newAngleSetpoint=${this.newAngleSetpoint}
-          .atAngleSetpoint=${this.atAngleSetpointCalc}
+          .atAngleSetpoint=${this._angleSp.computeAtSetpoint(this.angle)}
           .angleSetpointAtZeroDeadband=${this.angleSetpointAtZeroDeadband}
           .colorMode=${this.angleSetpointColorMode}
           .tickmarksInside=${this.tickmarksInside}
@@ -209,6 +225,7 @@ export class ObcAzimuthThruster extends LitElement {
               topPropeller: this.topPropeller,
               bottomPropeller: this.bottomPropeller,
               narrow: true,
+              setpointId: this._thrustSetpointId,
             })}
           </g>
         </svg>
