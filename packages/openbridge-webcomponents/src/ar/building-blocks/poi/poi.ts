@@ -44,6 +44,7 @@ export enum ObcPoiState {
 }
 
 const DEFAULT_LINE_LENGTH_PX = 96;
+const POINTER_BOX_BASE_SIZE_PX = 32;
 
 @customElement('obc-poi')
 export class ObcPoi extends LitElement {
@@ -71,6 +72,10 @@ export class ObcPoi extends LitElement {
   @property({type: Boolean}) hasRelation = false;
   @property({type: Number, attribute: 'button-offset-x'}) buttonOffsetX = 0;
   @property({type: Number, attribute: 'target-offset-x'}) targetOffsetX = 0;
+  @property({type: Number, attribute: 'box-width'}) boxWidth: number | null =
+    null;
+  @property({type: Number, attribute: 'box-height'}) boxHeight: number | null =
+    null;
 
   override updated(changedProperties: Map<string, unknown>) {
     if (changedProperties.has('x')) {
@@ -105,14 +110,19 @@ export class ObcPoi extends LitElement {
     }
   }
 
+  private get isCheckedLike(): boolean {
+    return (
+      this.value === ObcPoiValue.Checked || this.value === ObcPoiValue.Activated
+    );
+  }
+
   protected get buttonVisualState(): PoiButtonVisualState {
     switch (this.value) {
       case ObcPoiValue.Unchecked:
         return PoiButtonVisualState.Unchecked;
       case ObcPoiValue.Checked:
-        return PoiButtonVisualState.Checked;
       case ObcPoiValue.Activated:
-        return PoiButtonVisualState.Activated;
+        return PoiButtonVisualState.Checked;
       case ObcPoiValue.Overlapped:
         return PoiButtonVisualState.Overlapped;
       default:
@@ -151,9 +161,7 @@ export class ObcPoi extends LitElement {
   }
 
   private get pointerSelected(): boolean {
-    return (
-      this.value === ObcPoiValue.Checked || this.value === ObcPoiValue.Activated
-    );
+    return this.isCheckedLike;
   }
 
   private get lineOffset(): number {
@@ -165,6 +173,10 @@ export class ObcPoi extends LitElement {
   }
 
   private get hasInlinePointer(): boolean {
+    if (this.isCheckedLike && this.type !== ObcPoiType.Outside) {
+      return true;
+    }
+
     if (!this.hasPointer) return false;
     return (
       this.type === ObcPoiType.Line ||
@@ -174,22 +186,49 @@ export class ObcPoi extends LitElement {
   }
 
   private get resolvedPointerType(): ObcPoiPointerType {
+    if (this.isCheckedLike || this.state === ObcPoiState.Enabled) {
+      return ObcPoiPointerType.Point;
+    }
+
     return this.pointerType ?? ObcPoiPointerType.Point;
   }
 
   private get resolvedPointerState(): ObcPoiPointerState {
+    if (this.isCheckedLike && this.type !== ObcPoiType.Outside) {
+      return ObcPoiPointerState.Selected;
+    }
+
     if (this.pointerState) {
       return this.pointerState;
     }
 
-    if (
-      this.value === ObcPoiValue.Checked ||
-      this.value === ObcPoiValue.Activated
-    ) {
-      return ObcPoiPointerState.Selected;
+    return ObcPoiPointerState.Regular;
+  }
+
+  private get pointerBoxWidthExtra(): number | null {
+    if (this.boxWidth === null) {
+      return null;
     }
 
-    return ObcPoiPointerState.Regular;
+    const width = Number(this.boxWidth);
+    if (!Number.isFinite(width)) {
+      return null;
+    }
+
+    return Math.max(0, width - POINTER_BOX_BASE_SIZE_PX);
+  }
+
+  private get pointerBoxHeightExtra(): number | null {
+    if (this.boxHeight === null) {
+      return null;
+    }
+
+    const height = Number(this.boxHeight);
+    if (!Number.isFinite(height)) {
+      return null;
+    }
+
+    return Math.max(0, height - POINTER_BOX_BASE_SIZE_PX);
   }
 
   private renderLine() {
@@ -227,6 +266,8 @@ export class ObcPoi extends LitElement {
           .lineOffset}px; --obc-poi-pointer-y: ${lineLength}px;"
         .type=${this.resolvedPointerType}
         .state=${this.resolvedPointerState}
+        .boxWidth=${this.pointerBoxWidthExtra}
+        .boxHeight=${this.pointerBoxHeightExtra}
       ></obc-poi-pointer>
     `;
   }

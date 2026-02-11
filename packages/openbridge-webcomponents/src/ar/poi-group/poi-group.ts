@@ -189,6 +189,11 @@ export class ObcPoiGroup extends LitElement {
 
   onClick(): void {
     if (this.expand) return;
+    if (this.hasAttribute('data-exiting')) return;
+    const hasTargets = this._children.some(
+      (child) => child instanceof ObcPoiData
+    );
+    if (!hasTargets) return;
     this.expand = true;
   }
 
@@ -418,16 +423,15 @@ export class ObcPoiGroup extends LitElement {
 
       if (child !== frontChild) {
         const isOverlap = !visualExpanded;
-        child.value = isOverlap
-          ? PoiDataValue.Overlapped
-          : PoiDataValue.Unchecked;
-        if (isOverlap) {
+        const nextValue = this.resolveTargetValue(child, isOverlap);
+        child.value = nextValue;
+        if (nextValue === PoiDataValue.Overlapped) {
           this.applyVisualState(child, true);
         } else {
           this.clearVisualState(child);
         }
       } else {
-        child.value = PoiDataValue.Unchecked;
+        child.value = this.resolveTargetValue(child, false);
         this.clearVisualState(child);
       }
 
@@ -488,10 +492,9 @@ export class ObcPoiGroup extends LitElement {
     this._children.forEach((child) => {
       if (!(child instanceof ObcPoiData)) return;
       const isOverlap = !this.expand && (!front || child !== front);
-      child.value = isOverlap
-        ? PoiDataValue.Overlapped
-        : PoiDataValue.Unchecked;
-      if (isOverlap) {
+      const nextValue = this.resolveTargetValue(child, isOverlap);
+      child.value = nextValue;
+      if (nextValue === PoiDataValue.Overlapped) {
         this.applyVisualState(child, true);
       } else {
         this.clearVisualState(child);
@@ -752,6 +755,16 @@ export class ObcPoiGroup extends LitElement {
     target.style.removeProperty('--obc-poi-label-opacity');
     target.style.removeProperty('--obc-poi-label-visibility');
     target.style.removeProperty('--obc-poi-overlap-pointer-events');
+  }
+
+  private resolveTargetValue(
+    _target: ObcPoiData,
+    overlap: boolean
+  ): PoiDataValue {
+    if (overlap) {
+      return PoiDataValue.Overlapped;
+    }
+    return PoiDataValue.Unchecked;
   }
 
   static override styles = unsafeCSS(componentStyle);

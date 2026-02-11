@@ -15,8 +15,8 @@ const meta: Meta<ObcPoiSelectionFrame> = {
     type: ObcPoiSelectionFrameType.Indicator,
     state: ObcPoiSelectionFrameState.Regular,
     customMode: false,
-    boxWidth: 48,
-    boxHeight: 48,
+    boxWidth: 28,
+    boxHeight: 28,
   },
   argTypes: {
     type: {
@@ -31,12 +31,14 @@ const meta: Meta<ObcPoiSelectionFrame> = {
       control: {type: 'boolean'},
     },
     boxWidth: {
-      control: {type: 'number', min: 48, step: 1},
-      description: 'Custom frame width in pixels when customMode is enabled.',
+      control: {type: 'number', min: 28, step: 1},
+      description:
+        'Custom frame width in pixels when customMode is enabled (28px is default).',
     },
     boxHeight: {
-      control: {type: 'number', min: 48, step: 1},
-      description: 'Custom frame height in pixels when customMode is enabled.',
+      control: {type: 'number', min: 28, step: 1},
+      description:
+        'Custom frame height in pixels when customMode is enabled (28px is default).',
     },
   },
   render: (args) => html`
@@ -47,8 +49,8 @@ const meta: Meta<ObcPoiSelectionFrame> = {
         .type=${args.type}
         .state=${args.state}
         .customMode=${args.customMode}
-        .boxWidth=${args.boxWidth}
-        .boxHeight=${args.boxHeight}
+        .boxWidth=${Math.max(0, Number(args.boxWidth) - 28)}
+        .boxHeight=${Math.max(0, Number(args.boxHeight) - 28)}
       ></obc-poi-selection-frame>
     </div>
   `,

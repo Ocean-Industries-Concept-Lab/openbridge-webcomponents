@@ -282,7 +282,7 @@ export class ObcPoiButton extends LitElement {
   }
 
   protected renderSelectionFrame() {
-    if (!this.selected) {
+    if (!this.selected || this.layout === ObcPoiButtonLayout.Inline) {
       return nothing;
     }
 

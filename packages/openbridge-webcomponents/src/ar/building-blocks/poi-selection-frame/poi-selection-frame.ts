@@ -39,21 +39,19 @@ function buttonRegularFrame(): HTMLTemplateResult {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g filter="url(#filter0_d_11288_43269)">
+      <g filter="url(#filter0_d_30578_819)">
         <path
-          fill-rule="evenodd"
-          clip-rule="evenodd"
-          d="M12 5C12 4.44772 11.5523 4 11 4H8C5.79086 4 4 5.79086 4 8V11C4 11.5523 4.44772 12 5 12C5.55228 12 6 11.5523 6 11V8C6 6.89543 6.89543 6 8 6H11C11.5523 6 12 5.55228 12 5ZM37 6C36.4477 6 36 5.55228 36 5C36 4.44772 36.4477 4 37 4H40C42.2091 4 44 5.79086 44 8V11C44 11.5523 43.5523 12 43 12C42.4477 12 42 11.5523 42 11V8C42 6.89543 41.1046 6 40 6H37ZM36 43C36 42.4477 36.4477 42 37 42H40C41.1046 42 42 41.1046 42 40V37C42 36.4477 42.4477 36 43 36C43.5523 36 44 36.4477 44 37V40C44 42.2091 42.2091 44 40 44H37C36.4477 44 36 43.5523 36 43ZM5 36C5.55228 36 6 36.4477 6 37V40C6 41.1046 6.89543 42 8 42H11C11.5523 42 12 42.4477 12 43C12 43.5523 11.5523 44 11 44H8C5.79086 44 4 42.2091 4 40V37C4 36.4477 4.44772 36 5 36Z"
+          d="M10 32V34.7998C10 35.9199 9.99979 36.4804 10.2178 36.9082C10.4095 37.2845 10.7155 37.5905 11.0918 37.7822C11.4126 37.9457 11.808 37.9868 12.458 37.9971L13.2002 38H16V39.5H13.2002C12.6651 39.5 12.1733 39.5011 11.7646 39.4678C11.3384 39.4329 10.8717 39.3529 10.4111 39.1182C9.75262 38.7826 9.21738 38.2474 8.88184 37.5889C8.64714 37.1283 8.56705 36.6616 8.53223 36.2354C8.49886 35.8267 8.5 35.3349 8.5 34.7998V32H10ZM39.5 34.7998C39.5 35.3349 39.5011 35.8267 39.4678 36.2354C39.4329 36.6616 39.3529 37.1283 39.1182 37.5889C38.7826 38.2474 38.2474 38.7826 37.5889 39.1182C37.1283 39.3529 36.6616 39.4329 36.2354 39.4678C35.8267 39.5011 35.3349 39.5 34.7998 39.5H32V38H34.7998C35.7798 38 36.3311 37.9995 36.7402 37.8535L36.9082 37.7822C37.2374 37.6145 37.5129 37.3592 37.7051 37.0459L37.7822 36.9082C38.0002 36.4804 38 35.9199 38 34.7998V32H39.5V34.7998ZM34.7998 8.5C35.3349 8.5 35.8267 8.49886 36.2354 8.53223C36.6616 8.56705 37.1283 8.64714 37.5889 8.88184C38.2474 9.21738 38.7826 9.75262 39.1182 10.4111C39.3529 10.8717 39.4329 11.3384 39.4678 11.7646C39.5011 12.1733 39.5 12.6651 39.5 13.2002V16H38V13.2002C38 12.2202 37.9995 11.6689 37.8535 11.2598L37.7822 11.0918C37.6145 10.7626 37.3591 10.4871 37.0459 10.2949L36.9082 10.2178C36.4804 9.99979 35.9199 10 34.7998 10H32V8.5H34.7998ZM16 10H13.2002L12.458 10.0029C11.808 10.0132 11.4126 10.0543 11.0918 10.2178C10.7155 10.4095 10.4095 10.7155 10.2178 11.0918C9.99979 11.5196 10 12.0801 10 13.2002V16H8.5V13.2002C8.5 12.6651 8.49886 12.1733 8.53223 11.7646C8.56705 11.3384 8.64714 10.8717 8.88184 10.4111C9.21738 9.75262 9.75262 9.21738 10.4111 8.88184C10.8717 8.64714 11.3384 8.56705 11.7646 8.53223C12.1733 8.49886 12.6651 8.5 13.2002 8.5H16V10Z"
           fill="white"
         />
       </g>
       <defs>
         <filter
-          id="filter0_d_11288_43269"
-          x="-3"
-          y="-2"
-          width="54"
-          height="54"
+          id="filter0_d_30578_819"
+          x="-2"
+          y="-1"
+          width="52"
+          height="52"
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
@@ -65,7 +63,7 @@ function buttonRegularFrame(): HTMLTemplateResult {
             result="hardAlpha"
           />
           <feOffset dy="1" />
-          <feGaussianBlur stdDeviation="1.5" />
+          <feGaussianBlur stdDeviation="1" />
           <feComposite in2="hardAlpha" operator="out" />
           <feColorMatrix
             type="matrix"
@@ -74,12 +72,12 @@ function buttonRegularFrame(): HTMLTemplateResult {
           <feBlend
             mode="normal"
             in2="BackgroundImageFix"
-            result="effect1_dropShadow_11288_43269"
+            result="effect1_dropShadow_30578_819"
           />
           <feBlend
             mode="normal"
             in="SourceGraphic"
-            in2="effect1_dropShadow_11288_43269"
+            in2="effect1_dropShadow_30578_819"
             result="shape"
           />
         </filter>
@@ -268,8 +266,9 @@ function enhancedAlertFrame(): HTMLTemplateResult {
  */
 @customElement('obc-poi-selection-frame')
 export class ObcPoiSelectionFrame extends LitElement {
-  private static readonly MIN_CUSTOM_SIZE_PX = 48;
-  private static readonly CORNER_SHADOW_BLEED_PX = 4;
+  private static readonly MIN_CUSTOM_SIZE_PX = 32;
+  private static readonly MIN_TOUCH_TARGET_SIZE_PX = 48;
+  private static readonly CORNER_SHADOW_BLEED_PX = 6;
 
   @property({type: String, reflect: true})
   type: ObcPoiSelectionFrameType = ObcPoiSelectionFrameType.Indicator;
@@ -352,17 +351,39 @@ export class ObcPoiSelectionFrame extends LitElement {
 
   private renderCustomFrame(): HTMLTemplateResult {
     const sourceSizePx = this.resolvedVariantSourceSizePx;
+    const customWidthPx = this.resolvedCustomVisualWidthPx;
+    const customHeightPx = this.resolvedCustomVisualHeightPx;
     const cornerCropPx = this.resolvedVariantCornerCropPx;
     const cornerOffsetPx = sourceSizePx - cornerCropPx;
+    const shadowBleedPx = ObcPoiSelectionFrame.CORNER_SHADOW_BLEED_PX;
+
+    if (customWidthPx <= sourceSizePx && customHeightPx <= sourceSizePx) {
+      return html`
+        <span
+          class="custom-frame custom-frame--native"
+          part="custom-frame"
+          style=${`
+            width: ${customWidthPx}px;
+            height: ${customHeightPx}px;
+            --obc-poi-selection-frame-source-size: ${sourceSizePx}px;
+          `}
+        >
+          ${this.renderVariantFrame()}
+        </span>
+      `;
+    }
 
     return html`
       <span
         class="custom-frame"
         part="custom-frame"
         style=${`
+          width: ${customWidthPx}px;
+          height: ${customHeightPx}px;
           --obc-poi-selection-frame-source-size: ${sourceSizePx}px;
           --obc-poi-selection-frame-corner-crop: ${cornerCropPx}px;
           --obc-poi-selection-frame-corner-offset: ${cornerOffsetPx}px;
+          --obc-poi-selection-frame-shadow-bleed: ${shadowBleedPx}px;
         `}
       >
         <span class="custom-corner tl">${this.renderVariantFrame()}</span>
@@ -385,51 +406,49 @@ export class ObcPoiSelectionFrame extends LitElement {
     return this.renderVariantFrame();
   }
 
-  private get defaultWidthPx(): number {
-    if (
-      this.type === ObcPoiSelectionFrameType.Enhanced &&
-      this.state === ObcPoiSelectionFrameState.Alert
-    ) {
-      return 66;
-    }
-
-    if (this.type === ObcPoiSelectionFrameType.Enhanced) {
-      return 64;
-    }
-
-    if (this.state === ObcPoiSelectionFrameState.Alert) {
-      return 50;
-    }
-
-    return 48;
-  }
-
-  private get defaultHeightPx(): number {
-    return this.defaultWidthPx;
-  }
-
-  private get resolvedCustomWidthPx(): number {
+  private get resolvedCustomBoxWidthPx(): number {
     const width = Number(this.boxWidth);
-    const resolvedWidth =
-      Number.isFinite(width) && width > 0 ? width : this.defaultWidthPx;
+    const offsetWidth = Number.isFinite(width) && width >= 0 ? width : 0;
 
-    return Math.max(ObcPoiSelectionFrame.MIN_CUSTOM_SIZE_PX, resolvedWidth);
+    return ObcPoiSelectionFrame.MIN_CUSTOM_SIZE_PX + offsetWidth;
   }
 
-  private get resolvedCustomHeightPx(): number {
+  private get resolvedCustomBoxHeightPx(): number {
     const height = Number(this.boxHeight);
-    const resolvedHeight =
-      Number.isFinite(height) && height > 0 ? height : this.defaultHeightPx;
+    const offsetHeight = Number.isFinite(height) && height >= 0 ? height : 0;
 
-    return Math.max(ObcPoiSelectionFrame.MIN_CUSTOM_SIZE_PX, resolvedHeight);
+    return ObcPoiSelectionFrame.MIN_CUSTOM_SIZE_PX + offsetHeight;
+  }
+
+  private get resolvedCustomVisualWidthPx(): number {
+    return (
+      this.resolvedVariantSourceSizePx +
+      (this.resolvedCustomBoxWidthPx - ObcPoiSelectionFrame.MIN_CUSTOM_SIZE_PX)
+    );
+  }
+
+  private get resolvedCustomVisualHeightPx(): number {
+    return (
+      this.resolvedVariantSourceSizePx +
+      (this.resolvedCustomBoxHeightPx - ObcPoiSelectionFrame.MIN_CUSTOM_SIZE_PX)
+    );
   }
 
   protected override updated(_changedProperties: PropertyValues): void {
     if (this.customMode && this.state !== ObcPoiSelectionFrameState.None) {
-      this.style.width = `${this.resolvedCustomWidthPx}px`;
-      this.style.height = `${this.resolvedCustomHeightPx}px`;
-      this.style.minWidth = `${ObcPoiSelectionFrame.MIN_CUSTOM_SIZE_PX}px`;
-      this.style.minHeight = `${ObcPoiSelectionFrame.MIN_CUSTOM_SIZE_PX}px`;
+      const touchTargetWidthPx = Math.max(
+        this.resolvedCustomVisualWidthPx,
+        ObcPoiSelectionFrame.MIN_TOUCH_TARGET_SIZE_PX
+      );
+      const touchTargetHeightPx = Math.max(
+        this.resolvedCustomVisualHeightPx,
+        ObcPoiSelectionFrame.MIN_TOUCH_TARGET_SIZE_PX
+      );
+
+      this.style.width = `${touchTargetWidthPx}px`;
+      this.style.height = `${touchTargetHeightPx}px`;
+      this.style.minWidth = `${ObcPoiSelectionFrame.MIN_TOUCH_TARGET_SIZE_PX}px`;
+      this.style.minHeight = `${ObcPoiSelectionFrame.MIN_TOUCH_TARGET_SIZE_PX}px`;
       return;
     }
 

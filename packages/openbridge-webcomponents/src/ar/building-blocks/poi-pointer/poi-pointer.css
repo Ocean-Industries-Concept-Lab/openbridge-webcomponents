@@ -55,6 +55,11 @@
   transform: translate(-50%, -50%);
 }
 
+:host([type="button"][state="selected"]) .square-frame {
+  width: calc(65px + var(--obc-poi-pointer-box-width-extra, 0px));
+  height: calc(65px + var(--obc-poi-pointer-box-height-extra, 0px));
+}
+
 .square-frame .selection-frame {
   width: 100%;
   height: 100%;

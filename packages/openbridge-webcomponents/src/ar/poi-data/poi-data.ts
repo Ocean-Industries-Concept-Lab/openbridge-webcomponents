@@ -88,6 +88,10 @@ export class ObcPoiData extends LitElement {
   @property({type: Number, attribute: 'anchor-y'}) anchorY: number | null =
     null;
   @property({type: Number}) y = 192;
+  @property({type: Number, attribute: 'box-width'}) boxWidth: number | null =
+    null;
+  @property({type: Number, attribute: 'box-height'}) boxHeight: number | null =
+    null;
   @property({type: Boolean}) selected = false;
   @property({type: Object}) header: ObcPoiButtonHeader | null = null;
   /**
@@ -286,6 +290,8 @@ export class ObcPoiData extends LitElement {
         .hasRelation=${false}
         .buttonOffsetX=${effectiveButtonOffset}
         .targetOffsetX=${effectiveTargetOffset}
+        .boxWidth=${this.boxWidth}
+        .boxHeight=${this.boxHeight}
       >
         <obi-vessel-generic-default-filled></obi-vessel-generic-default-filled>
       </obc-poi>

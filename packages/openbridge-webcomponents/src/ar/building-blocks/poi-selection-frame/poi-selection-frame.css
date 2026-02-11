@@ -2,6 +2,7 @@
   display: inline-flex;
   width: 48px;
   height: 48px;
+  flex-shrink: 0;
   line-height: 0;
   pointer-events: none;
 }
@@ -34,6 +35,12 @@
   height: 100%;
 }
 
+:host([custom-mode]) .frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .frame > svg {
   display: block;
   width: 100%;
@@ -43,8 +50,18 @@
 .custom-frame {
   position: relative;
   display: block;
-  width: 100%;
-  height: 100%;
+  width: var(--obc-poi-selection-frame-visual-width, auto);
+  height: var(--obc-poi-selection-frame-visual-height, auto);
+  overflow: visible;
+}
+
+.custom-frame--native > svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--obc-poi-selection-frame-source-size);
+  height: var(--obc-poi-selection-frame-source-size);
+  transform: translate(-50%, -50%);
 }
 
 .custom-corner {

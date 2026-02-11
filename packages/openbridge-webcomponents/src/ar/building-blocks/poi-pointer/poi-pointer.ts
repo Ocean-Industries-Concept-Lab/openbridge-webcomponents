@@ -122,12 +122,17 @@ export class ObcPoiPointer extends LitElement {
       return nothing;
     }
 
+    const useCustomMode = this.isPoint;
+
     return html`
       <div class="square-frame" aria-hidden="true">
         <obc-poi-selection-frame
           class="selection-frame"
           .type=${ObcPoiSelectionFrameType.Button}
           .state=${ObcPoiSelectionFrameState.Regular}
+          .customMode=${useCustomMode}
+          .boxWidth=${useCustomMode ? this.resolvedBoxWidth : null}
+          .boxHeight=${useCustomMode ? this.resolvedBoxHeight : null}
         ></obc-poi-selection-frame>
       </div>
     `;

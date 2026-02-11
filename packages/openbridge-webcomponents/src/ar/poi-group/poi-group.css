@@ -76,6 +76,12 @@
   pointer-events: auto;
 }
 
+:host([data-exiting]) .wrapper,
+:host([data-exiting]) .backdrop {
+  pointer-events: none;
+  opacity: 0;
+}
+
 ::slotted(obc-poi-data) {
   pointer-events: auto;
 }

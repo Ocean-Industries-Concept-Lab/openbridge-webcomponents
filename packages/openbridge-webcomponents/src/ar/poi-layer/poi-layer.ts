@@ -131,15 +131,22 @@ export class ObcPoiLayer extends LitElement {
   private handleGroupExpand = (event: CustomEvent<{expand: boolean}>) => {
     const group = event.target as HTMLElement;
     if (!group?.tagName?.toLowerCase().includes('group')) return;
+    if (group.hasAttribute('data-exiting')) return;
 
     const targets = this.getAllTargets();
     const groupedTargets = new Set<ObcPoiData>(this.getGroupTargets(group));
+    if (groupedTargets.size === 0) return;
 
     if (event.detail.expand) {
       targets.forEach((target) => {
         if (!groupedTargets.has(target)) {
-          target.value = PoiDataValue.Overlapped;
-          this.applyStandaloneVisualState(target, true);
+          const nextValue = this.resolveTargetValue(target, true);
+          target.value = nextValue;
+          if (nextValue === PoiDataValue.Overlapped) {
+            this.applyStandaloneVisualState(target, true);
+          } else {
+            this.clearStandaloneVisualState(target);
+          }
         }
       });
     }
@@ -617,6 +624,8 @@ export class ObcPoiLayer extends LitElement {
             child.removeAttribute('data-grouped');
             this.resetTarget(child);
           });
+          group.removeAttribute('data-visible');
+          group.setAttribute('data-exiting', 'true');
           children.forEach((child) => this.appendChild(child));
           children.forEach((child) => {
             if (!front || child !== front) {
@@ -632,7 +641,6 @@ export class ObcPoiLayer extends LitElement {
             });
           }, exitDelay);
           requestAnimationFrame(() => {
-            group.removeAttribute('data-visible');
             this.scheduleGroupRemoval(group);
           });
         }
@@ -701,10 +709,9 @@ export class ObcPoiLayer extends LitElement {
             target.removeAttribute('data-behind');
           }
           const isOverlapState = target.hasAttribute('data-behind');
-          target.value = isOverlapState
-            ? PoiDataValue.Overlapped
-            : PoiDataValue.Unchecked;
-          if (isOverlapState) {
+          const nextValue = this.resolveTargetValue(target, isOverlapState);
+          target.value = nextValue;
+          if (nextValue === PoiDataValue.Overlapped) {
             this.applyStandaloneVisualState(target, true);
           } else {
             this.clearStandaloneVisualState(target);
@@ -807,7 +814,7 @@ export class ObcPoiLayer extends LitElement {
     bestCandidate.setAttribute('data-grouped', 'true');
     bestCandidate.removeAttribute('data-behind');
     bestCandidate.removeAttribute('data-pregrouped');
-    bestCandidate.value = PoiDataValue.Unchecked;
+    bestCandidate.value = this.resolveTargetValue(bestCandidate, false);
     this.clearStandaloneVisualState(bestCandidate);
 
     const touchRaw = getComputedStyle(group).getPropertyValue(
@@ -846,6 +853,20 @@ export class ObcPoiLayer extends LitElement {
       '--obc-poi-overlap-pointer-events',
       overlap ? 'none' : 'auto'
     );
+  }
+
+  private resolveTargetValue(
+    target: ObcPoiData,
+    overlap: boolean
+  ): PoiDataValue {
+    if (overlap) {
+      return PoiDataValue.Overlapped;
+    }
+
+    if (target.selected && !target.hasAttribute('data-grouped')) {
+      return PoiDataValue.Checked;
+    }
+    return PoiDataValue.Unchecked;
   }
 
   private clearStandaloneVisualState(target: HTMLElement) {
@@ -990,7 +1011,7 @@ export class ObcPoiLayer extends LitElement {
     group.setAttribute('data-exiting', 'true');
     const removalDelay = this.getCssVarAsNumber(
       GROUP_REMOVAL_DELAY_MS_VAR,
-      450
+      250
     );
     const timeoutId = window.setTimeout(() => {
       group.remove();

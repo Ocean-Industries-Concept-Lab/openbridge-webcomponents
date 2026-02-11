@@ -245,12 +245,20 @@ export class ObcPoiLayerStack extends LitElement {
     target: ObcPoiData,
     selected: boolean
   ) {
+    const isInAutoGroup =
+      target.hasAttribute('data-grouped') ||
+      target.closest('obc-poi-group') !== null;
+
+    target.selected = selected;
     if (selected) {
-      target.value = PoiDataValue.Unchecked;
       target.style.setProperty('--obc-poi-overlap-pointer-events', 'auto');
-      target.removeAttribute('data-behind');
-      target.setAttribute('data-front', 'true');
+      if (!isInAutoGroup) {
+        target.value = PoiDataValue.Checked;
+        target.removeAttribute('data-behind');
+        target.setAttribute('data-front', 'true');
+      }
     } else {
+      target.value = PoiDataValue.Unchecked;
       target.style.removeProperty('--obc-poi-overlap-pointer-events');
       target.removeAttribute('data-front');
     }
@@ -531,9 +539,9 @@ export class ObcPoiLayerStack extends LitElement {
         return;
       }
       this.setTargetSelectedId(target);
+      this.setSelectedTargetInteractivity(target, true);
 
       if (this.selectionMode === PoiLayerSelectionMode.None) {
-        this.setSelectedTargetInteractivity(target, false);
         return;
       }
 
@@ -556,8 +564,42 @@ export class ObcPoiLayerStack extends LitElement {
         originLayer,
         originLineLength,
       });
-      this.setSelectedTargetInteractivity(target, true);
+      this.syncInitialSelectedTargetLineCompensation(
+        target,
+        originLayer,
+        selectedLayer
+      );
     });
+  }
+
+  private syncInitialSelectedTargetLineCompensation(
+    target: ObcPoiData,
+    originLayer: ObcPoiLayer,
+    selectedLayer: ObcPoiLayer
+  ) {
+    if (originLayer === selectedLayer) {
+      return;
+    }
+
+    const originRect = originLayer.getBoundingClientRect();
+    const selectedRect = selectedLayer.getBoundingClientRect();
+    const layerBottomDelta = originRect.bottom - selectedRect.bottom;
+    if (
+      !Number.isFinite(layerBottomDelta) ||
+      Math.abs(layerBottomDelta) < 0.5
+    ) {
+      return;
+    }
+
+    const expectedCompensation = target.fixedTarget
+      ? -layerBottomDelta
+      : layerBottomDelta;
+    const currentCompensation = this.getTargetLineCompensation(target);
+    if (Math.abs(expectedCompensation - currentCompensation) < 0.5) {
+      return;
+    }
+
+    this.animateTargetLineCompensation(target, expectedCompensation, false);
   }
 
   private placeFilteredTargets() {
