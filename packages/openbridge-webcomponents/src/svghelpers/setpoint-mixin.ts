@@ -104,7 +104,7 @@
 
 import {LitElement, PropertyValues} from 'lit';
 import {property, state} from 'lit/decorators.js';
-import {computeAtSetpoint, SETPOINT_ANIMATION_DURATION_MS} from './setpoint.js';
+import {computeAtSetpoint, getSetpointAnimationDurationMs} from './setpoint.js';
 import type {SetpointColorMode} from './setpoint.js';
 
 // ============================================================================
@@ -370,9 +370,10 @@ export function SetpointMixin<T extends Constructor<LitElement>>(
         if (prev !== undefined && this.newSetpoint === undefined) {
           this._departingNewSetpoint = prev;
           clearTimeout(this._animationTimer);
+          const duration = getSetpointAnimationDurationMs(this);
           this._animationTimer = setTimeout(() => {
             this._departingNewSetpoint = undefined;
-          }, SETPOINT_ANIMATION_DURATION_MS);
+          }, duration);
         }
       }
     }

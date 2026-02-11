@@ -222,6 +222,21 @@ export const SETPOINT_ANIMATION_CSS_VAR = '--setpoint-animation-duration';
 export const SETPOINT_ANIMATION_DURATION_DEFAULT = '300ms';
 
 /**
+ * Read the effective setpoint animation duration from the element's computed CSS.
+ * Returns `SETPOINT_ANIMATION_DURATION_MS` if the CSS variable is missing or unparsable.
+ */
+export function getSetpointAnimationDurationMs(el: Element): number {
+  const raw = getComputedStyle(el)
+    .getPropertyValue(SETPOINT_ANIMATION_CSS_VAR)
+    .trim();
+  if (!raw) return SETPOINT_ANIMATION_DURATION_MS;
+  const parsed = parseFloat(raw);
+  if (Number.isNaN(parsed)) return SETPOINT_ANIMATION_DURATION_MS;
+  if (raw.endsWith('s') && !raw.endsWith('ms')) return parsed * 1000;
+  return parsed;
+}
+
+/**
  * Compute the shortest angular distance between two angles.
  * Returns a value in [0, 180].
  *

@@ -13,13 +13,13 @@ import {roundedArch} from '../../svghelpers/roundedArch.js';
 import {
   deriveRadialSetpointConfig,
   drawSetpointMarker,
+  getSetpointAnimationDurationMs,
   getSetpointOutwardOffset,
   RADIAL_SETPOINT_RADIUS,
   SetpointColorMode,
   SetpointVisualState,
   SETPOINT_ANIMATION_CSS_VAR,
   SETPOINT_ANIMATION_DURATION_DEFAULT,
-  SETPOINT_ANIMATION_DURATION_MS,
   shortestAngularDistance,
 } from '../../svghelpers/setpoint.js';
 import {InstrumentState} from '../types.js';
@@ -106,6 +106,18 @@ const RADIAL_SETPOINT_INWARD_ADJUST = 4;
  * The `colorMode` property allows overriding the derived color mode (enhanced for inCommand,
  * regular for other states).
  *
+ * ## Setpoint Animation (`animateSetpoint`)
+ *
+ * When `animateSetpoint` is true and a confirm occurs (`newAngleSetpoint` → `undefined`):
+ * - The original setpoint slides to the new position via CSS transition
+ * - The departing new-setpoint marker fades out
+ * - Animation is skipped when angular delta ≥ 180° (wraparound)
+ *
+ * Duration: `var(--setpoint-animation-duration, 300ms)`
+ *
+ * Internally, `_departingNewAngleSetpoint` captures the departing angle during confirm
+ * fade-out and `_animationTimer` auto-clears it after the animation duration.
+ *
  * @property {InstrumentState} state - Instrument state (inCommand, active, loading, off)
  * @property {number|undefined} angleSetpoint - Setpoint angle in degrees (0° = 12 o'clock)
  * @property {number|undefined} newAngleSetpoint - New setpoint being adjusted (focus mode)
@@ -127,23 +139,11 @@ export class ObcWatch extends LitElement {
   @property({type: Boolean}) atAngleSetpoint: boolean = false;
   @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
   @property({type: String}) colorMode: SetpointColorMode | undefined;
-  /** User is physically interacting — renders setpoint marker in focus state */
   @property({type: Boolean}) touching: boolean = false;
 
-  /**
-   * Enable CSS-animated confirm transition for setpoint markers.
-   * When true and a confirm occurs (newAngleSetpoint → undefined):
-   * - The original setpoint slides to the new position (CSS transition)
-   * - The departing new-setpoint marker fades out
-   * - Animation is skipped when angular delta ≥ 180° (wraparound)
-   *
-   * Duration: `var(--setpoint-animation-duration, 300ms)`
-   */
   @property({type: Boolean}) animateSetpoint: boolean = false;
 
-  /** Internal: departing new-setpoint angle for confirm fade-out animation */
   @state() private _departingNewAngleSetpoint: number | undefined;
-  /** Timer for clearing departing state */
   private _animationTimer?: ReturnType<typeof setTimeout>;
   @property({type: Number}) padding: number | undefined;
   @property({type: Array, attribute: false}) areas: WatchArea[] = [];
@@ -183,9 +183,10 @@ export class ObcWatch extends LitElement {
         if (shortestAngularDistance(prev, currentAngle) < 180) {
           this._departingNewAngleSetpoint = prev;
           clearTimeout(this._animationTimer);
+          const duration = getSetpointAnimationDurationMs(this);
           this._animationTimer = setTimeout(() => {
             this._departingNewAngleSetpoint = undefined;
-          }, SETPOINT_ANIMATION_DURATION_MS);
+          }, duration);
         }
       }
     }
