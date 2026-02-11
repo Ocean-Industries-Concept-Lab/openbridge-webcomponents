@@ -1,12 +1,12 @@
 import {html, css, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
-import {ObcAbstractPoiObject} from '../poi-object/abstract-poi-object.js';
+import {ObcAbstractPoiObject} from '../building-blocks/poi-object/abstract-poi-object.js';
 import {
   ObcPoiObjectType,
   ObcPoiObjectStyle,
   ObcPoiObjectState,
-} from '../poi-object/poi-object.js';
+} from '../building-blocks/poi-object/poi-object.js';
 import componentStyle from './poi-object-vessel.css?inline';
 
 /**

@@ -1,0 +1,19 @@
+.offset-wrapper {
+  transform: translateX(var(--poi-offset, 0px));
+  transition: transform var(--obc-poi-line-transition-duration, 0.1s) ease-out;
+}
+
+.container {
+  position: relative;
+}
+
+:host {
+  display: block;
+  width: 0;
+}
+
+.container > * {
+  position: absolute;
+  top: -1px;
+  left: 0;
+}

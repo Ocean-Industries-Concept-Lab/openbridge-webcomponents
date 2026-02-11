@@ -1,0 +1,60 @@
+:host {
+  display: inline-block;
+  position: relative;
+  --obc-ruler-pointer-active: var(--overlay-element-active-color, #fff);
+  --obc-ruler-pointer-neutral-inverted: var(
+    --overlay-element-neutral-inverted-color,
+    rgba(0, 0, 0, 0.66)
+  );
+}
+
+.wrapper {
+  position: relative;
+  width: 4px;
+  height: 4px;
+}
+
+.wrapper.regular,
+.wrapper.selected {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 10px;
+  height: 10px;
+}
+
+.dot {
+  box-sizing: border-box;
+  border-radius: 11px;
+  flex-shrink: 0;
+}
+
+.dot.default {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 4px;
+  background: var(--obc-ruler-pointer-active);
+  box-shadow: 0px 1px 3px 0px #000;
+}
+
+.dot.outer {
+  width: 10px;
+  height: 10px;
+  background: var(--obc-ruler-pointer-active);
+  box-shadow: 0px 1px 3px 0px #000;
+}
+
+.dot.inner {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+}
+
+.dot.inner.regular {
+  width: 6px;
+  height: 6px;
+  background: var(--obc-ruler-pointer-neutral-inverted);
+}
