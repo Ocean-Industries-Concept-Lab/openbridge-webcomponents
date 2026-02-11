@@ -257,6 +257,12 @@ export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
    */
   @property({type: Boolean}) highlightCurrentValue = false;
 
+  /**
+   * Opacity of the new-setpoint marker (0–1). Defaults to 1.
+   * Animate to 0 during confirm to fade the focus marker out.
+   */
+  @property({type: Number}) newSetpointOpacity = 1;
+
   override render() {
     const config: ExternalScaleConfig = {
       orientation: ExternalScaleOrientation.horizontal,
@@ -288,6 +294,7 @@ export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
       value: this.value,
       setpoint: this.setpoint,
       newSetpoint: this.newSetpoint,
+      newSetpointOpacity: this.newSetpointOpacity,
       atSetpoint: this.atSetpoint,
       disableAutoAtSetpoint: this.disableAutoAtSetpoint,
       autoAtSetpointDeadband: this.autoAtSetpointDeadband,

@@ -535,6 +535,12 @@ export interface ExternalScaleConfig {
    * and proposed setpoint positions simultaneously.
    */
   newSetpoint?: number;
+  /**
+   * Opacity of the new-setpoint marker (0–1). Defaults to 1.
+   * Animated to 0 during the confirm transition so the focus marker fades out
+   * while the original setpoint slides to the new position.
+   */
+  newSetpointOpacity?: number;
   /** Manual override used when disableAutoAtSetpoint=true. */
   atSetpoint: boolean;
   /** When false, at-setpoint is derived from value/setpoint and deadband. */
@@ -2260,6 +2266,7 @@ function getSetpointRotation(config: ExternalScaleConfig): number {
  * @param disabled - Whether the setpoint is in disabled state
  * @param idSuffix - Suffix for the unique ID
  * @param opacity - Optional opacity (default 1)
+ * @param cssClass - Optional CSS class for the wrapper <g> element
  */
 function renderSingleSetpoint(
   config: ExternalScaleConfig,
@@ -2268,7 +2275,8 @@ function renderSingleSetpoint(
   colorMode: SetpointColorMode,
   disabled: boolean,
   idSuffix: string,
-  opacity: number = 1
+  opacity: number = 1,
+  cssClass: string = ''
 ): SVGTemplateResult {
   // Generate unique ID to avoid conflicts with multiple instruments on page
   const baseId = generateSetpointId(`external-scale-setpoint-${idSuffix}`);
@@ -2309,7 +2317,7 @@ function renderSingleSetpoint(
 
   // Note: drawSetpointMarker() handles scaling internally based on visualState
   return svg`
-    <g transform="translate(${x}, ${y}) rotate(${rotation})" opacity="${opacity}">
+    <g transform="translate(${x}, ${y}) rotate(${rotation})" opacity="${opacity}" class="${cssClass}">
       ${drawSetpointMarker({visualState, colorMode, disabled, id: baseId})}
     </g>
   `;
@@ -2373,7 +2381,8 @@ function setpointMarker(
         colorMode,
         disabled,
         'new',
-        1
+        config.newSetpointOpacity ?? 1,
+        'new-setpoint-marker'
       )
     );
   }

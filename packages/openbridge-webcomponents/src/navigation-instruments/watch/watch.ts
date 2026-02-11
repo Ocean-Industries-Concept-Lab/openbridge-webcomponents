@@ -119,6 +119,11 @@ export class ObcWatch extends LitElement {
   @property({type: Boolean}) northArrow: boolean = false;
   @property({type: Number}) angleSetpoint: number | undefined;
   @property({type: Number}) newAngleSetpoint: number | undefined;
+  /**
+   * Opacity of the new-setpoint marker (0–1). Defaults to 1.
+   * Animate to 0 during confirm to fade the focus marker out.
+   */
+  @property({type: Number}) newAngleSetpointOpacity: number = 1;
   @property({type: Boolean}) atAngleSetpoint: boolean = false;
   @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
   @property({type: String}) colorMode: SetpointColorMode | undefined;
@@ -497,7 +502,7 @@ export class ObcWatch extends LitElement {
 
       return svg`
         ${originalSetpoint}
-        <g transform="rotate(${this.newAngleSetpoint! + 90}) translate(${-focusRadius}, 0) rotate(270)">
+        <g transform="rotate(${this.newAngleSetpoint! + 90}) translate(${-focusRadius}, 0) rotate(270)" class="new-setpoint-marker" opacity="${this.newAngleSetpointOpacity}">
           ${newMarker}
         </g>
       `;
