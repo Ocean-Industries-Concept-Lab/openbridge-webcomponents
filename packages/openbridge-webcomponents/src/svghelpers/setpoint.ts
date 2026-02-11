@@ -189,6 +189,52 @@ export const SETPOINT_NOT_EQUAL_OFFSET = 4;
 export const SETPOINT_ZERO_OFFSET = 8;
 
 // ============================================================================
+// Animation Constants
+// ============================================================================
+
+/**
+ * Default duration (ms) for the setpoint confirm animation.
+ *
+ * When `animateSetpoint=true` and a confirm transition occurs
+ * (newSetpoint → undefined, setpoint → newValue):
+ * - The original setpoint marker slides to the new position over this duration
+ * - The original setpoint marker regains full opacity (0.75 → 1.0)
+ * - The departing new-setpoint marker fades out (1 → 0 opacity)
+ *
+ * Consumers can override the duration via the CSS custom property
+ * `--setpoint-animation-duration`.
+ */
+export const SETPOINT_ANIMATION_DURATION_MS = 300;
+
+/**
+ * CSS custom property name for the setpoint animation duration.
+ * Set on any ancestor to override the default 300ms:
+ *
+ * ```css
+ * obc-gauge-horizontal {
+ *   --setpoint-animation-duration: 500ms;
+ * }
+ * ```
+ */
+export const SETPOINT_ANIMATION_CSS_VAR = '--setpoint-animation-duration';
+
+/** Default CSS value for the animation duration. */
+export const SETPOINT_ANIMATION_DURATION_DEFAULT = '300ms';
+
+/**
+ * Compute the shortest angular distance between two angles.
+ * Returns a value in [0, 180].
+ *
+ * Used to decide whether a radial setpoint animation should play
+ * (only when the angular delta is < 180°, to avoid the CSS transition
+ * taking the "long way around").
+ */
+export function shortestAngularDistance(from: number, to: number): number {
+  const rawDiff = Math.abs(((to - from) % 360) + 360) % 360;
+  return rawDiff > 180 ? 360 - rawDiff : rawDiff;
+}
+
+// ============================================================================
 // Configuration Interface
 // ============================================================================
 

@@ -39,11 +39,13 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Boolean}) disableAutoAtAngleSetpoint: boolean = false;
   @property({type: Number}) autoAtAngleSetpointDeadband: number = 2;
+  @property({type: Boolean}) animateSetpoint: boolean = false;
   @property({type: Boolean}) detailedTickmarks: boolean = false;
   @property({type: Number}) labelAngle: number = 45;
   @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: Number}) thrust = 0;
   @property({type: Number}) thrustSetpoint: number | undefined;
+  @property({type: Number}) newThrustSetpoint: number | undefined;
   @property({type: Boolean})
   atThrustSetpoint: boolean = false;
   @property({type: Number}) thrustSetpointAtZeroDeadband: number = 0.1;
@@ -51,10 +53,14 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: Number}) autoAtThrustSetpointDeadband: number = 1;
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
 
-  private _angleSp = new SetpointBundle({angularWraparound: true});
+  private _angleSp = new SetpointBundle({
+    angularWraparound: true,
+    onAnimationEnd: () => this.requestUpdate(),
+  });
   private _thrustSp = new SetpointBundle({
     defaultDeadband: 1,
     defaultZeroDeadband: 0.1,
+    onAnimationEnd: () => this.requestUpdate(),
   });
 
   override willUpdate(changed: PropertyValues): void {
@@ -69,14 +75,17 @@ export class ObcAzimuthThruster extends LitElement {
       autoAtSetpointDeadband: this.autoAtAngleSetpointDeadband,
       setpointAtZeroDeadband: this.angleSetpointAtZeroDeadband,
       setpointColorMode: this.angleSetpointColorMode,
+      animateSetpoint: this.animateSetpoint,
     });
     this._thrustSp.sync({
       setpoint: this.thrustSetpoint,
+      newSetpoint: this.newThrustSetpoint,
       touching: this.touching,
       atSetpoint: this.atThrustSetpoint,
       disableAutoAtSetpoint: this.disableAutoAtThrustSetpoint,
       autoAtSetpointDeadband: this.autoAtThrustSetpointDeadband,
       setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
+      animateSetpoint: this.animateSetpoint,
     });
   }
   @property({type: Number}) loading: number = 0;
@@ -204,6 +213,7 @@ export class ObcAzimuthThruster extends LitElement {
           .atAngleSetpoint=${this._angleSp.computeAtSetpoint(this.angle)}
           .angleSetpointAtZeroDeadband=${this.angleSetpointAtZeroDeadband}
           .colorMode=${this.angleSetpointColorMode}
+          .animateSetpoint=${this.animateSetpoint}
           .tickmarksInside=${this.tickmarksInside}
           padding=${ifDefined(this.noPadding ? 16 : undefined)}
           .advices=${this.angleAdviceRaw}
@@ -225,7 +235,10 @@ export class ObcAzimuthThruster extends LitElement {
               topPropeller: this.topPropeller,
               bottomPropeller: this.bottomPropeller,
               narrow: true,
+              newSetpoint: this.newThrustSetpoint,
               setpointId: this._thrustSetpointId,
+              animateSetpoint: this.animateSetpoint,
+              departingNewSetpoint: this._thrustSp.departingNewSetpoint,
             })}
           </g>
         </svg>
@@ -234,6 +247,12 @@ export class ObcAzimuthThruster extends LitElement {
   }
 
   static override styles = unsafeCSS(componentStyle);
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this._angleSp.dispose();
+    this._thrustSp.dispose();
+  }
 }
 
 declare global {

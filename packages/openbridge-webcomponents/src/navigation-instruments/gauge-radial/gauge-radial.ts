@@ -119,6 +119,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
         .touching=${this.touching}
         .disableAutoAtSetpoint=${this.disableAutoAtSetpoint}
         .autoAtSetpointDeadband=${this.autoAtSetpointDeadband}
+        .animateSetpoint=${this.animateSetpoint}
         .maxValue=${this.maxValue}
         .minValue=${this.minValue}
         .getAngle=${this.getAngle}

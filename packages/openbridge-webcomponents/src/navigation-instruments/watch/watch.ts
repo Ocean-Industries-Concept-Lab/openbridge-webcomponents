@@ -1,12 +1,13 @@
 import {
   LitElement,
+  PropertyValues,
   SVGTemplateResult,
   html,
   nothing,
   svg,
   unsafeCSS,
 } from 'lit';
-import {property} from 'lit/decorators.js';
+import {property, state} from 'lit/decorators.js';
 import {circle} from '../../svghelpers/index.js';
 import {roundedArch} from '../../svghelpers/roundedArch.js';
 import {
@@ -16,6 +17,10 @@ import {
   RADIAL_SETPOINT_RADIUS,
   SetpointColorMode,
   SetpointVisualState,
+  SETPOINT_ANIMATION_CSS_VAR,
+  SETPOINT_ANIMATION_DURATION_DEFAULT,
+  SETPOINT_ANIMATION_DURATION_MS,
+  shortestAngularDistance,
 } from '../../svghelpers/setpoint.js';
 import {InstrumentState} from '../types.js';
 import compentStyle from './watch.css?inline';
@@ -124,6 +129,22 @@ export class ObcWatch extends LitElement {
   @property({type: String}) colorMode: SetpointColorMode | undefined;
   /** User is physically interacting — renders setpoint marker in focus state */
   @property({type: Boolean}) touching: boolean = false;
+
+  /**
+   * Enable CSS-animated confirm transition for setpoint markers.
+   * When true and a confirm occurs (newAngleSetpoint → undefined):
+   * - The original setpoint slides to the new position (CSS transition)
+   * - The departing new-setpoint marker fades out
+   * - Animation is skipped when angular delta ≥ 180° (wraparound)
+   *
+   * Duration: `var(--setpoint-animation-duration, 300ms)`
+   */
+  @property({type: Boolean}) animateSetpoint: boolean = false;
+
+  /** Internal: departing new-setpoint angle for confirm fade-out animation */
+  @state() private _departingNewAngleSetpoint: number | undefined;
+  /** Timer for clearing departing state */
+  private _animationTimer?: ReturnType<typeof setTimeout>;
   @property({type: Number}) padding: number | undefined;
   @property({type: Array, attribute: false}) areas: WatchArea[] = [];
   @property({type: Array, attribute: false}) barAreas: WatchBarArea[] = [];
@@ -149,6 +170,31 @@ export class ObcWatch extends LitElement {
   // @ts-expect-error TS6133: The controller ensures that the render
   // function is called on resize of the element
   private _resizeController = new ResizeController(this, {});
+
+  override willUpdate(changed: PropertyValues): void {
+    super.willUpdate(changed);
+
+    // Detect confirm: newAngleSetpoint was defined, now undefined
+    if (changed.has('newAngleSetpoint') && this.animateSetpoint) {
+      const prev = changed.get('newAngleSetpoint') as number | undefined;
+      if (prev !== undefined && this.newAngleSetpoint === undefined) {
+        // Only animate if angular delta < 180° (avoid wrong-way CSS interpolation)
+        const currentAngle = this.angleSetpoint ?? 0;
+        if (shortestAngularDistance(prev, currentAngle) < 180) {
+          this._departingNewAngleSetpoint = prev;
+          clearTimeout(this._animationTimer);
+          this._animationTimer = setTimeout(() => {
+            this._departingNewAngleSetpoint = undefined;
+          }, SETPOINT_ANIMATION_DURATION_MS);
+        }
+      }
+    }
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    clearTimeout(this._animationTimer);
+  }
 
   private get innerRingRadius(): number {
     if (this.watchCircleType === WatchCircleType.single) {
@@ -472,14 +518,31 @@ export class ObcWatch extends LitElement {
       id: this._setpointId,
     });
 
-    const originalSetpoint = svg`
-      <g transform="rotate(${this.angleSetpoint + 90}) translate(${-radius}, 0) rotate(270)" opacity="${opacity}">
-        ${originalMarker}
-      </g>
-    `;
+    const animate = this.animateSetpoint;
+    const hasDeparting = this._departingNewAngleSetpoint !== undefined;
+
+    // Use CSS style transform when animating for smooth transition
+    const originalSetpoint = animate
+      ? svg`
+        <g style="transform: rotate(${this.angleSetpoint + 90}deg) translateX(${-radius}px) rotate(270deg); opacity: ${opacity}; transition: transform var(${SETPOINT_ANIMATION_CSS_VAR}, ${SETPOINT_ANIMATION_DURATION_DEFAULT}) ease-out, opacity var(${SETPOINT_ANIMATION_CSS_VAR}, ${SETPOINT_ANIMATION_DURATION_DEFAULT}) ease-out;">
+          ${originalMarker}
+        </g>
+      `
+      : svg`
+        <g transform="rotate(${this.angleSetpoint + 90}) translate(${-radius}, 0) rotate(270)" opacity="${opacity}">
+          ${originalMarker}
+        </g>
+      `;
 
     // Render newAngleSetpoint in focus state (always on top)
-    if (hasNewSetpoint) {
+    // OR render departing newAngleSetpoint during confirm fade-out
+    if (hasNewSetpoint || hasDeparting) {
+      const isActive = hasNewSetpoint;
+      const newAngle = isActive
+        ? this.newAngleSetpoint!
+        : this._departingNewAngleSetpoint!;
+      const targetOpacity = isActive ? 1 : 0;
+
       const focusOutwardOffset = getSetpointOutwardOffset(
         SetpointVisualState.focus
       );
@@ -495,9 +558,19 @@ export class ObcWatch extends LitElement {
         id: this._newSetpointId,
       });
 
+      if (animate) {
+        const duration = `var(${SETPOINT_ANIMATION_CSS_VAR}, ${SETPOINT_ANIMATION_DURATION_DEFAULT})`;
+        return svg`
+          ${originalSetpoint}
+          <g style="transform: rotate(${newAngle + 90}deg) translateX(${-focusRadius}px) rotate(270deg); opacity: ${targetOpacity}; transition: opacity ${duration} ease-out;">
+            ${newMarker}
+          </g>
+        `;
+      }
+
       return svg`
         ${originalSetpoint}
-        <g transform="rotate(${this.newAngleSetpoint! + 90}) translate(${-focusRadius}, 0) rotate(270)">
+        <g transform="rotate(${newAngle + 90}) translate(${-focusRadius}, 0) rotate(270)" opacity="${targetOpacity}">
           ${newMarker}
         </g>
       `;

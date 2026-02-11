@@ -229,6 +229,7 @@ export class ObcRudder extends SetpointMixin(LitElement) {
           .atAngleSetpoint=${this.computeAtSetpoint(this.angle)}
           .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
           .colorMode=${this.setpointColorMode}
+          .animateSetpoint=${this.animateSetpoint}
           .padding=${48}
           .tickmarks=${tickmarks}
           .watchCircleType=${WatchCircleType.double}

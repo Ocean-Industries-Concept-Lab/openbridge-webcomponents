@@ -12,6 +12,8 @@ import {
   getSetpointOutwardOffset,
   SetpointColorMode,
   SetpointVisualState,
+  SETPOINT_ANIMATION_CSS_VAR,
+  SETPOINT_ANIMATION_DURATION_DEFAULT,
 } from '../../svghelpers/setpoint.js';
 import {customElement} from '../../decorator.js';
 
@@ -261,6 +263,10 @@ export interface ThrusterSetpointConfig {
   newSetpoint?: number;
   /** Unique ID prefix for SVG defs (avoids collisions with multiple instances) */
   id: string;
+  /** Enable CSS-animated confirm transition for setpoint markers. */
+  animateSetpoint?: boolean;
+  /** Value of departing new-setpoint during confirm animation fade-out. */
+  departingNewSetpoint?: number;
 }
 
 /**
@@ -361,6 +367,8 @@ export function renderThrusterSetpoint(
   const setpointAtZero =
     Math.abs(setpointValue) < config.setpointAtZeroDeadband;
   const hasNewSetpoint = config.newSetpoint !== undefined;
+  const hasDepartingNewSetpoint = config.departingNewSetpoint !== undefined;
+  const animate = config.animateSetpoint === true;
 
   const {visualState, colorMode, disabled} = deriveThrusterSetpointVisualState({
     state: config.state,
@@ -390,30 +398,53 @@ export function renderThrusterSetpoint(
     id: `${config.id}-r`,
   });
 
-  const result: SVGTemplateResult[] = [
-    svg`<g transform="translate(${tipX}, ${y}) rotate(90)" opacity="${opacity}">${rightMarker}</g>`,
-  ];
+  const result: SVGTemplateResult[] = [];
 
-  // Left marker for double-sided: rotate(-90) makes tip point right (inward)
-  if (!config.singleSided) {
-    const leftMarker = drawSetpointMarker({
-      visualState,
-      colorMode,
-      disabled,
-      id: `${config.id}-l`,
-    });
+  if (animate) {
+    const duration = `var(${SETPOINT_ANIMATION_CSS_VAR}, ${SETPOINT_ANIMATION_DURATION_DEFAULT})`;
     result.push(
-      svg`<g transform="translate(${-tipX}, ${y}) rotate(-90)" opacity="${opacity}">${leftMarker}</g>`
+      svg`<g style="transform: translate(${tipX}px, ${y}px) rotate(90deg); opacity: ${opacity}; transition: transform ${duration} ease-out, opacity ${duration} ease-out;">${rightMarker}</g>`
     );
+    if (!config.singleSided) {
+      const leftMarker = drawSetpointMarker({
+        visualState,
+        colorMode,
+        disabled,
+        id: `${config.id}-l`,
+      });
+      result.push(
+        svg`<g style="transform: translate(${-tipX}px, ${y}px) rotate(-90deg); opacity: ${opacity}; transition: transform ${duration} ease-out, opacity ${duration} ease-out;">${leftMarker}</g>`
+      );
+    }
+  } else {
+    result.push(
+      svg`<g transform="translate(${tipX}, ${y}) rotate(90)" opacity="${opacity}">${rightMarker}</g>`
+    );
+    if (!config.singleSided) {
+      const leftMarker = drawSetpointMarker({
+        visualState,
+        colorMode,
+        disabled,
+        id: `${config.id}-l`,
+      });
+      result.push(
+        svg`<g transform="translate(${-tipX}, ${y}) rotate(-90)" opacity="${opacity}">${leftMarker}</g>`
+      );
+    }
   }
 
   // New setpoint marker in focus state (dual-marker adjustment preview)
-  if (hasNewSetpoint) {
-    const newValue = config.newSetpoint!;
+  // OR departing newSetpoint during confirm animation fade-out
+  if (hasNewSetpoint || hasDepartingNewSetpoint) {
+    const isActive = hasNewSetpoint;
+    const newValue = isActive
+      ? config.newSetpoint!
+      : config.departingNewSetpoint!;
     const newAtZero = Math.abs(newValue) < config.setpointAtZeroDeadband;
     const newY = thrusterSetpointY(height, newValue, newAtZero);
     const focusOffset = getSetpointOutwardOffset(SetpointVisualState.focus);
     const newTipX = baseX + focusOffset - THRUSTER_SETPOINT_INWARD_ADJUST;
+    const targetOpacity = isActive ? 1 : 0;
 
     const newRightMarker = drawSetpointMarker({
       visualState: SetpointVisualState.focus,
@@ -421,20 +452,38 @@ export function renderThrusterSetpoint(
       disabled: false,
       id: `${config.id}-nr`,
     });
-    result.push(
-      svg`<g transform="translate(${newTipX}, ${newY}) rotate(90)">${newRightMarker}</g>`
-    );
 
-    if (!config.singleSided) {
-      const newLeftMarker = drawSetpointMarker({
-        visualState: SetpointVisualState.focus,
-        colorMode,
-        disabled: false,
-        id: `${config.id}-nl`,
-      });
+    if (animate) {
+      const duration = `var(${SETPOINT_ANIMATION_CSS_VAR}, ${SETPOINT_ANIMATION_DURATION_DEFAULT})`;
       result.push(
-        svg`<g transform="translate(${-newTipX}, ${newY}) rotate(-90)">${newLeftMarker}</g>`
+        svg`<g style="transform: translate(${newTipX}px, ${newY}px) rotate(90deg); opacity: ${targetOpacity}; transition: opacity ${duration} ease-out;">${newRightMarker}</g>`
       );
+      if (!config.singleSided) {
+        const newLeftMarker = drawSetpointMarker({
+          visualState: SetpointVisualState.focus,
+          colorMode,
+          disabled: false,
+          id: `${config.id}-nl`,
+        });
+        result.push(
+          svg`<g style="transform: translate(${-newTipX}px, ${newY}px) rotate(-90deg); opacity: ${targetOpacity}; transition: opacity ${duration} ease-out;">${newLeftMarker}</g>`
+        );
+      }
+    } else {
+      result.push(
+        svg`<g transform="translate(${newTipX}, ${newY}) rotate(90)" opacity="${targetOpacity}">${newRightMarker}</g>`
+      );
+      if (!config.singleSided) {
+        const newLeftMarker = drawSetpointMarker({
+          visualState: SetpointVisualState.focus,
+          colorMode,
+          disabled: false,
+          id: `${config.id}-nl`,
+        });
+        result.push(
+          svg`<g transform="translate(${-newTipX}, ${newY}) rotate(-90)" opacity="${targetOpacity}">${newLeftMarker}</g>`
+        );
+      }
     }
   }
 
@@ -539,6 +588,10 @@ export function thruster(
     newSetpoint?: number;
     /** Unique ID prefix for setpoint SVG defs. Falls back to legacy hardcoded IDs. */
     setpointId?: string;
+    /** Enable CSS-animated confirm transition. */
+    animateSetpoint?: boolean;
+    /** Departing new-setpoint value during confirm animation fade-out. */
+    departingNewSetpoint?: number;
   }
 ) {
   if (options.tunnel) {
@@ -650,6 +703,8 @@ export function thruster(
           narrow: options.narrow,
           newSetpoint: options.newSetpoint,
           id: options.setpointId,
+          animateSetpoint: options.animateSetpoint,
+          departingNewSetpoint: options.departingNewSetpoint,
         })
       );
     } else {

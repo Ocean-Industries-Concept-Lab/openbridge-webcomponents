@@ -52,6 +52,7 @@ export class ObcCompass extends LitElement {
     | undefined;
   @property({type: Boolean}) disableAutoAtHeadingSetpoint: boolean = false;
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
+  @property({type: Boolean}) animateSetpoint: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
   @property({type: Number}) windSpeed: number | null = null;
@@ -73,7 +74,10 @@ export class ObcCompass extends LitElement {
     }
   }
 
-  private _headingSp = new SetpointBundle({angularWraparound: true});
+  private _headingSp = new SetpointBundle({
+    angularWraparound: true,
+    onAnimationEnd: () => this.requestUpdate(),
+  });
 
   override willUpdate(changed: PropertyValues): void {
     super.willUpdate(changed);
@@ -86,7 +90,13 @@ export class ObcCompass extends LitElement {
       autoAtSetpointDeadband: this.autoAtHeadingSetpointDeadband,
       setpointAtZeroDeadband: this.headingSetpointAtZeroDeadband,
       setpointColorMode: this.headingSetpointColorMode,
+      animateSetpoint: this.animateSetpoint,
     });
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this._headingSp.dispose();
   }
 
   @query('#rot')
@@ -170,6 +180,7 @@ export class ObcCompass extends LitElement {
           .atAngleSetpoint=${this._headingSp.computeAtSetpoint(this.heading)}
           .angleSetpointAtZeroDeadband=${this.headingSetpointAtZeroDeadband}
           .colorMode=${this.headingSetpointColorMode}
+          .animateSetpoint=${this.animateSetpoint}
           .vessels=${[
             {
               size: VesselImageSize.medium,

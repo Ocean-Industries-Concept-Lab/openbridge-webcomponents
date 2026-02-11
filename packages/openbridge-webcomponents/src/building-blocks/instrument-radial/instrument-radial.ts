@@ -87,6 +87,7 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
           .atAngleSetpoint=${this.computeAtSetpoint(this.value)}
           .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
           .colorMode=${this.setpointColorMode}
+          .animateSetpoint=${this.animateSetpoint}
           .padding=${48}
           .tickmarks=${this.tickmarks}
           .advices=${this._advices}
