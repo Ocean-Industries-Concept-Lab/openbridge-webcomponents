@@ -30,7 +30,65 @@ enum ObcPoiSelectionFrameVariant {
   EnhancedAlert = 'enhanced-alert',
 }
 
-function buttonRegularFrame(): HTMLTemplateResult {
+function buttonRegularFrameDefault(): HTMLTemplateResult {
+  return html`
+    <svg
+      width="48"
+      height="48"
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g filter="url(#filter0_d_11288_43269)">
+        <path
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+          d="M12 5C12 4.44772 11.5523 4 11 4H8C5.79086 4 4 5.79086 4 8V11C4 11.5523 4.44772 12 5 12C5.55228 12 6 11.5523 6 11V8C6 6.89543 6.89543 6 8 6H11C11.5523 6 12 5.55228 12 5ZM37 6C36.4477 6 36 5.55228 36 5C36 4.44772 36.4477 4 37 4H40C42.2091 4 44 5.79086 44 8V11C44 11.5523 43.5523 12 43 12C42.4477 12 42 11.5523 42 11V8C42 6.89543 41.1046 6 40 6H37ZM36 43C36 42.4477 36.4477 42 37 42H40C41.1046 42 42 41.1046 42 40V37C42 36.4477 42.4477 36 43 36C43.5523 36 44 36.4477 44 37V40C44 42.2091 42.2091 44 40 44H37C36.4477 44 36 43.5523 36 43ZM5 36C5.55228 36 6 36.4477 6 37V40C6 41.1046 6.89543 42 8 42H11C11.5523 42 12 42.4477 12 43C12 43.5523 11.5523 44 11 44H8C5.79086 44 4 42.2091 4 40V37C4 36.4477 4.44772 36 5 36Z"
+          fill="white"
+        />
+      </g>
+      <defs>
+        <filter
+          id="filter0_d_11288_43269"
+          x="-3"
+          y="-2"
+          width="54"
+          height="54"
+          filterUnits="userSpaceOnUse"
+          color-interpolation-filters="sRGB"
+        >
+          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feColorMatrix
+            in="SourceAlpha"
+            type="matrix"
+            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+            result="hardAlpha"
+          />
+          <feOffset dy="1" />
+          <feGaussianBlur stdDeviation="1.5" />
+          <feComposite in2="hardAlpha" operator="out" />
+          <feColorMatrix
+            type="matrix"
+            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0"
+          />
+          <feBlend
+            mode="normal"
+            in2="BackgroundImageFix"
+            result="effect1_dropShadow_11288_43269"
+          />
+          <feBlend
+            mode="normal"
+            in="SourceGraphic"
+            in2="effect1_dropShadow_11288_43269"
+            result="shape"
+          />
+        </filter>
+      </defs>
+    </svg>
+  `;
+}
+
+function buttonRegularFrameCompact(): HTMLTemplateResult {
   return html`
     <svg
       width="48"
@@ -335,7 +393,7 @@ export class ObcPoiSelectionFrame extends LitElement {
     );
   }
 
-  private renderVariantFrame(): HTMLTemplateResult {
+  private renderVariantFrame(useCompactRegular = false): HTMLTemplateResult {
     switch (this.resolvedVariant) {
       case ObcPoiSelectionFrameVariant.ButtonAlert:
         return buttonAlertFrame();
@@ -345,7 +403,9 @@ export class ObcPoiSelectionFrame extends LitElement {
         return enhancedAlertFrame();
       case ObcPoiSelectionFrameVariant.ButtonRegular:
       default:
-        return buttonRegularFrame();
+        return useCompactRegular
+          ? buttonRegularFrameCompact()
+          : buttonRegularFrameDefault();
     }
   }
 
@@ -368,7 +428,7 @@ export class ObcPoiSelectionFrame extends LitElement {
             --obc-poi-selection-frame-source-size: ${sourceSizePx}px;
           `}
         >
-          ${this.renderVariantFrame()}
+          ${this.renderVariantFrame(true)}
         </span>
       `;
     }
@@ -386,10 +446,10 @@ export class ObcPoiSelectionFrame extends LitElement {
           --obc-poi-selection-frame-shadow-bleed: ${shadowBleedPx}px;
         `}
       >
-        <span class="custom-corner tl">${this.renderVariantFrame()}</span>
-        <span class="custom-corner tr">${this.renderVariantFrame()}</span>
-        <span class="custom-corner bl">${this.renderVariantFrame()}</span>
-        <span class="custom-corner br">${this.renderVariantFrame()}</span>
+        <span class="custom-corner tl">${this.renderVariantFrame(true)}</span>
+        <span class="custom-corner tr">${this.renderVariantFrame(true)}</span>
+        <span class="custom-corner bl">${this.renderVariantFrame(true)}</span>
+        <span class="custom-corner br">${this.renderVariantFrame(true)}</span>
       </span>
     `;
   }
@@ -403,7 +463,7 @@ export class ObcPoiSelectionFrame extends LitElement {
       return this.renderCustomFrame();
     }
 
-    return this.renderVariantFrame();
+    return this.renderVariantFrame(false);
   }
 
   private get resolvedCustomBoxWidthPx(): number {

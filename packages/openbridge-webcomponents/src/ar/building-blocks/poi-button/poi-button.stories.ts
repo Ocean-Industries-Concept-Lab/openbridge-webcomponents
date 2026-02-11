@@ -232,7 +232,6 @@ export const AllTypes: Story = {
   render: () =>
     renderOverview(html`
       <div style=${sectionStyle}>
-        <h3 style=${headerStyle}>Types and Selection</h3>
         <div style=${gridStyle}>
           ${renderMatrixButton({label: 'Button'})}
           ${renderMatrixButton({
@@ -259,7 +258,6 @@ export const AllAlerts: Story = {
   render: () =>
     renderOverview(html`
       <div style=${sectionStyle}>
-        <h3 style=${headerStyle}>Alert States - Button</h3>
         <div style=${gridStyle}>
           ${renderMatrixButton({
             label: 'None',
@@ -288,7 +286,6 @@ export const AllAlerts: Story = {
       </div>
 
       <div style=${sectionStyle}>
-        <h3 style=${headerStyle}>Alert States - Enhanced</h3>
         <div style=${gridStyle}>
           ${renderMatrixButton({
             label: 'None',
@@ -326,7 +323,6 @@ export const AllOverlapped: Story = {
   render: () =>
     renderOverview(html`
       <div style=${sectionStyle}>
-        <h3 style=${headerStyle}>Overlapped Variants</h3>
         <div style=${gridStyle}>
           ${renderMatrixButton({
             label: 'Button',
@@ -361,7 +357,6 @@ export const AllData: Story = {
   render: () =>
     renderOverview(html`
       <div style=${sectionStyle}>
-        <h3 style=${headerStyle}>Data Variants</h3>
         <div style=${gridStyle}>
           ${renderMatrixButton({
             label: 'Values',
@@ -427,7 +422,6 @@ export const OverlappedAnimated: Story = {
 
     return renderOverview(html`
       <div style=${sectionStyle}>
-        <h3 style=${headerStyle}>Animated Overlap</h3>
         <div style=${gridStyle}>
           <div style=${itemStyle}>
             <div style=${stageStyle}>
@@ -479,7 +473,6 @@ export const OverlappedAnimatedWithData: Story = {
 
     return renderOverview(html`
       <div style=${sectionStyle}>
-        <h3 style=${headerStyle}>Animated Overlap (Data)</h3>
         <div style=${gridStyle}>
           <div style=${itemStyle}>
             <div style=${stageTallStyle}>
