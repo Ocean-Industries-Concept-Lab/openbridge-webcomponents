@@ -22,10 +22,74 @@ export enum ObcPoiHeaderType {
 }
 
 /**
- * `<obc-poi-header>` renders the compact POI header chip used by POI targets.
+ * `<obc-poi-header>` -- Compact header chip for Point-of-Interest (POI) targets on the AR overlay.
  *
- * The component supports ID-only and Data variants, with Enabled/Selected and
- * alert states from the design system.
+ * @remarks
+ * **Overview**
+ * Renders a small, labelled chip attached to a POI target. It conveys an
+ * identifier, an optional data label, and an optional indicator icon while
+ * reflecting the current interactive/alert state through colour and shape.
+ *
+ * **Features / Variants**
+ * - *ID-only* (`type="id"`) -- shows only the `content` text (e.g. "1").
+ * - *Data* (`type="data"`) -- shows a two-pill layout: an ID pill (`content`)
+ *   and a label pill (`label`, e.g. "Data").
+ * - States: `enabled` (default neutral), `selected` (active highlight),
+ *   `caution`, `warning`, `alarm` (progressive alert severity).
+ * - When `hasIndicator` is true an indicator region is appended. In `data` +
+ *   `enabled` mode the indicator is wrapped in a frame; otherwise it renders
+ *   inline.
+ *
+ * **Usage Guidelines**
+ * Use `<obc-poi-header>` exclusively inside POI target compositions on the AR
+ * map. For general-purpose status tags or toggleable labels, prefer the
+ * design-system chip, pill, or badge components instead.
+ *
+ * **Slots / Content**
+ * - `indicator` -- Replaces the default three-bar indicator with a custom icon.
+ *   When nothing is slotted the component falls back to built-in bar elements.
+ *   Use an OpenBridge icon tag (e.g. `<obi-01-alert-alarm-unack>`) for
+ *   domain-specific indicators.
+ *
+ * **Events**
+ * This component does not emit any custom events.
+ *
+ * **Best Practices**
+ * - Keep `content` short (1-3 characters) to preserve the compact chip layout.
+ * - Set `state` via the `ObcPoiHeaderState` enum rather than raw strings.
+ * - Only enable the indicator slot when the POI genuinely carries status
+ *   iconography; avoid empty indicators.
+ *
+ * **Example**
+ * ```html
+ * <obc-poi-header
+ *   type="data"
+ *   state="selected"
+ *   content="3"
+ *   label="SOG"
+ *   has-indicator
+ * >
+ *   <obi-01-alert-alarm-unack slot="indicator"></obi-01-alert-alarm-unack>
+ * </obc-poi-header>
+ * ```
+ *
+ * @keywords chip, pill, badge, POI, header, target, AR, identifier
+ *
+ * @property {string} content - Short identifier text displayed in the chip.
+ *   Defaults to `"1"`. Single-character values receive tighter sizing.
+ * @property {string} label - Secondary label shown in the Data variant.
+ *   Defaults to `"Data"`. Ignored when `type` is `"id"`.
+ * @property {ObcPoiHeaderSize} size - Visual size preset. Currently only
+ *   `"regular"` (default). Reflected as an attribute for CSS hooks.
+ * @property {ObcPoiHeaderState} state - Interactive/alert state. One of
+ *   `"enabled"` (default), `"selected"`, `"caution"`, `"warning"`, `"alarm"`.
+ *   Drives colour theming via CSS class and is reflected as an attribute.
+ * @property {ObcPoiHeaderType} type - Layout variant. `"id"` (default) renders
+ *   ID-only; `"data"` renders the two-pill ID + label layout. Reflected as an
+ *   attribute.
+ * @property {boolean} hasIndicator - When `true`, appends the indicator region
+ *   (slot or fallback bars). Defaults to `false`. Set via the `has-indicator`
+ *   HTML attribute.
  *
  * @slot indicator - Optional custom indicator icon. Falls back to built-in bars.
  */

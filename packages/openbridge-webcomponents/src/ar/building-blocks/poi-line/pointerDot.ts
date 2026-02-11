@@ -53,7 +53,7 @@ export function renderPointerDot({
         fill="${lineColor}"
       />`;
 
-  let outerCircle = nothing;
+  let outerCircle: ReturnType<typeof createCircle> | typeof nothing = nothing;
   let filterY = centerY;
   const resolvedLineStyle = resolvePOIStyle(lineStyle);
 
@@ -69,8 +69,8 @@ export function renderPointerDot({
     filterY = centerY - 1;
   } else {
     innerCircle = svg`<rect
-        x="${centerX}"
-        y="${centerY}"
+        x="${centerX + 1}"
+        y="${centerY + 1}"
         width="2"
         height="2"
         rx="1"

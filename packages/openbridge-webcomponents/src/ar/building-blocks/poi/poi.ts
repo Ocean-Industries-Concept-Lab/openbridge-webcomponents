@@ -49,10 +49,12 @@ const POINT_POINTER_OFFSET_PX = 12;
 /**
  * `<obc-poi>` - Composite POI marker that renders the main AR target button and connector visuals.
  *
+ * ## Overview
  * Combines `obc-poi-button`, `obc-poi-line`, and optional pointer visuals to display
- * interactive point-of-interest markers in line, offset, point, or outside modes.
+ * interactive marker/callout targets in line, offset, point, or outside modes.
+ * Keywords: marker, callout, pin, label, target, pointer.
  *
- * ## Features
+ * ## Features/Variants
  *
  * - Select marker geometry with `type` (`line`, `offset`, `point`, `outside`).
  * - Control visual/interaction state with `value`, `state`, and `selected`.
@@ -67,6 +69,16 @@ const POINT_POINTER_OFFSET_PX = 12;
  * - Use `type="outside"` with `hasPointer` to render directional outside-arrow guidance.
  * - Keep `value` and `state` aligned with domain state so visual semantics stay consistent.
  *
+ * ## Slots/Content
+ *
+ * - Default slot: Main icon/content rendered inside `obc-poi-button`.
+ * - `id-label`: Optional ID label content rendered in the POI button label region.
+ * - `relation`: Optional relation content rendered in the POI button relation region.
+ *
+ * ## Events
+ *
+ * This component does not emit custom events.
+ *
  * ## Best Practices
  *
  * - Pass finite numeric values for layout properties to avoid fallback positioning behavior.
@@ -74,25 +86,20 @@ const POINT_POINTER_OFFSET_PX = 12;
  * - Use the `id-label` and `relation` slots for structured metadata instead of mixing all
  *   text in the default slot.
  *
- * ## Slots/Content
- *
- * @slot - Default POI button content (typically the primary icon/content).
- * @slot id-label - Optional ID label content rendered in the POI button label region.
- * @slot relation - Optional relation content rendered in the POI button relation region.
- *
- * ## Events
- *
- * This component does not emit custom events.
- *
  * ## Example
  *
  * ```html
  * <obc-poi type="line" value="unchecked" state="enabled">
- *   <obc-icon-pin></obc-icon-pin>
+ *   <obi-placeholder></obi-placeholder>
  *   <span slot="id-label">A-12</span>
  *   <span slot="relation">Port</span>
  * </obc-poi>
  * ```
+ *
+ * @slot - Default POI button content.
+ * @slot id-label - Optional ID label content.
+ * @slot relation - Optional relation content.
+ * @fires - None.
  */
 @customElement('obc-poi')
 export class ObcPoi extends LitElement {

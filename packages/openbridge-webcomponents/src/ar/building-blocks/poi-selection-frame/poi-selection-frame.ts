@@ -326,6 +326,7 @@ function enhancedAlertFrame(): HTMLTemplateResult {
  * Use this component to draw the cornered frame (focus ring/highlight frame/bounding
  * box) around POI targets in AR layouts. It supports standard and enhanced sizes,
  * alert styling, and custom sizing mode for variable target bounds.
+ * Keywords: selection frame, focus ring, highlight frame, bounding box.
  *
  * ## Features/Variants
  *
@@ -375,9 +376,8 @@ function enhancedAlertFrame(): HTMLTemplateResult {
  * ></obc-poi-selection-frame>
  * ```
  *
- * ## Keywords/Synonyms
- *
- * selection frame, focus ring, highlight frame, bounding box, POI frame, AR target frame.
+ * @slot - None.
+ * @fires - None.
  */
 @customElement('obc-poi-selection-frame')
 export class ObcPoiSelectionFrame extends LitElement {

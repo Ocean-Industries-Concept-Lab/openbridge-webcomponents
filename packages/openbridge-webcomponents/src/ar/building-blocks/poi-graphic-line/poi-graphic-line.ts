@@ -18,6 +18,7 @@ import componentStyle from './poi-graphic-line.css?inline';
  * This component draws the POI line SVG used by AR point-of-interest (POI) markers,
  * including straight or offset paths with optional dashed styling. It can be used as
  * a marker line, connector line, guide line, or leader/tether line depending on context.
+ * Keywords: connector line, leader line, guide line, tether line, marker stem.
  *
  * ## Features/Variants
  *
@@ -55,6 +56,9 @@ import componentStyle from './poi-graphic-line.css?inline';
  * ```html
  * <obc-poi-graphic-line line-height="96" line-style="enhanced" line-type="regular" offset="0"></obc-poi-graphic-line>
  * ```
+ *
+ * @slot - None.
+ * @fires - None.
  */
 @customElement('obc-poi-graphic-line')
 export class ObcPoiGraphicLine extends LitElement {
