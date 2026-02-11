@@ -130,10 +130,10 @@ export function graphicLine({
           ? html`<path
               d=${topCapPath}
               stroke="${style.lineColor}"
-              stroke-width="${style.lineWidth}"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />`
+              strokeWidth="${style.lineWidth}"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            ></path>`
           : null}
       </g>
       <defs>

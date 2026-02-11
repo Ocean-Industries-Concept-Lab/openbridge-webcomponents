@@ -166,8 +166,6 @@ type Story = StoryObj<ObcPoiButton>;
 const canvasStyle =
   'transform: translate(-50%, -50%); width: min(1100px, 92vw); max-height: 88vh; overflow: auto; padding: 8px 12px 24px;';
 const sectionStyle = 'margin-bottom: 24px;';
-const headerStyle =
-  'margin: 0 0 12px 0; font-family: sans-serif; font-size: 14px; font-weight: 600;';
 const gridStyle =
   'display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px 16px; align-items: start;';
 const itemStyle =
