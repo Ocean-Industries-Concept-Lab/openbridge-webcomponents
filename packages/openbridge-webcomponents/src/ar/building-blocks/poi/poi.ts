@@ -99,7 +99,7 @@ const POINT_POINTER_OFFSET_PX = 12;
  * @slot - Default POI button content.
  * @slot id-label - Optional ID label content.
  * @slot relation - Optional relation content.
- * @fires - None.
+ * @fires
  */
 @customElement('obc-poi')
 export class ObcPoi extends LitElement {
