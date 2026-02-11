@@ -744,24 +744,6 @@ export const CompareModes: Story = {
           top: ${fixedButtonY}px;
         }
 
-        .reference-line {
-          position: absolute;
-          left: 0;
-          right: 0;
-          height: 1px;
-          pointer-events: none;
-        }
-
-        .button-reference {
-          top: ${fixedButtonY}px;
-          background: rgba(92, 122, 152, 0.28);
-        }
-
-        .target-reference {
-          top: ${normalAnchorY}px;
-          background: rgba(92, 122, 152, 0.2);
-        }
-
         .label {
           position: absolute;
           left: 10px;
@@ -774,16 +756,6 @@ export const CompareModes: Story = {
         .title {
           top: 10px;
           font-size: 14px;
-        }
-
-        .button-label {
-          top: ${fixedButtonY - 15}px;
-          color: rgba(78, 102, 126, 0.82);
-        }
-
-        .target-label {
-          top: ${normalAnchorY + 5}px;
-          color: rgba(78, 102, 126, 0.82);
         }
 
         .variables {
@@ -810,8 +782,6 @@ export const CompareModes: Story = {
               buttonY = ${fixedButtonY}px
             </div>
           </div>
-          <div class="reference-line button-reference"></div>
-          <div class="label button-label">Button Fixed</div>
           <obc-poi-data
             id="compare-fixed"
             .x=${args.x}
@@ -829,8 +799,6 @@ export const CompareModes: Story = {
               buttonY = ${(normalAnchorY ?? 300) - args.y}px
             </div>
           </div>
-          <div class="reference-line target-reference"></div>
-          <div class="label target-label">Target Fixed</div>
           <obc-poi-data
             id="compare-normal"
             .x=${args.x}
