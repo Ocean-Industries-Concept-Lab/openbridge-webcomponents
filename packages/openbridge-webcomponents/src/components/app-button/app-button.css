@@ -72,12 +72,22 @@
       @mixin style style=integration-normal noClick;
       color: var(--integration-on-normal-neutral-color);
     }
+
+    .label {
+      @mixin font-label;
+      color: var(--integration-on-normal-neutral-color);
+    }
   }
 
   &.integration.checked {
     .icon-wrapper {
       @mixin style style=integration-selected;
       color: var(--integration-on-selected-active-color);
+    }
+
+    .label {
+      @mixin font-label-active;
+      color: rgb(240, 240, 240);
     }
   }
 }
