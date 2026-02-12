@@ -183,8 +183,8 @@ export class ObcAlertMenuItem extends LitElement {
         @primary-action-click=${this.handleActionClick}
       >
         <slot name="alert-icon" slot="primary-icon"></slot>
-        <slot name="title" slot="title"></slot>
-        <slot name="description" slot="description"></slot>
+        <slot name="title" slot="title">${this.title}</slot>
+        <slot name="description" slot="description">${this.description}</slot>
         ${this.hasIcon
           ? html`<slot name="icon" slot="secondary-icon"></slot>`
           : nothing}
