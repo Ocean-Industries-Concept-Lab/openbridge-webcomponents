@@ -23,6 +23,19 @@ export enum ObcNavigationMenuVariant {
 }
 
 /**
+ * `ObcNavigationMenuFlyoutVariant` – Enumerates the available visual and behavioral variants for the flyout.
+ *
+ * - `Full`: Standard navigation flyout that takes the full height.
+ * - `Compact`: Space-saving menu with reduced padding and layout.
+ *
+ * Use these variants to adapt the flyout menu to different layouts or device sizes.
+ */
+export enum ObcNavigationMenuFlyoutVariant {
+  Full = 'full',
+  Compact = 'compact',
+}
+
+/**
  * `<obc-navigation-menu>` – A flexible, slot-based navigation menu component for organizing primary and secondary navigation items.
  *
  * This component provides a vertical navigation structure supporting groups, flyouts, and footer sections. It adapts to various layouts and device sizes via its `variant` and `smallScreen` properties. Items and groups are provided via slots, allowing for icons, labels, and nested navigation hierarchies.
@@ -119,6 +132,13 @@ export class ObcNavigationMenu extends LitElement {
    */
   @property({type: String}) variant: ObcNavigationMenuVariant =
     ObcNavigationMenuVariant.Full;
+
+  /**
+   * Visual variant of the flyout.
+   * One of `Full` (default) or `Compact`.
+   */
+  @property({type: String}) flyoutVariant: ObcNavigationMenuFlyoutVariant =
+    ObcNavigationMenuFlyoutVariant.Full;
 
   /**
    * When `true`, adapts the layout for small screens (e.g., moves logo into the footer area and adjusts item layout).
@@ -244,7 +264,10 @@ export class ObcNavigationMenu extends LitElement {
 
   protected override updated(_changedProperties: PropertyValues): void {
     super.updated(_changedProperties);
-    if (_changedProperties.has('variant')) {
+    if (
+      _changedProperties.has('variant') ||
+      _changedProperties.has('flyoutVariant')
+    ) {
       this.setupItems();
     }
   }
@@ -278,7 +301,9 @@ export class ObcNavigationMenu extends LitElement {
   }
 
   private setupItems() {
-    const hug = this.variant !== ObcNavigationMenuVariant.Full;
+    const hug =
+      this.variant !== ObcNavigationMenuVariant.Full ||
+      this.flyoutVariant === ObcNavigationMenuFlyoutVariant.Compact;
     this.setHugToGroups(this, hug);
 
     // Set variant to all groups (top-level)
