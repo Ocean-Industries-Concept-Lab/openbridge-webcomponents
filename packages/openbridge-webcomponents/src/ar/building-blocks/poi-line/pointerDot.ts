@@ -1,4 +1,4 @@
-import {html, nothing, svg} from 'lit';
+import {html, nothing, svg, type TemplateResult} from 'lit';
 import {POIStyle, resolvePOIStyle} from '../poi-graphic-line/poi-config.js';
 
 function createCircle({
@@ -15,7 +15,7 @@ function createCircle({
   height: number;
   rx: number;
   stroke: string;
-}) {
+}): TemplateResult<2> {
   return svg`<rect
     x="${x}"
     y="${y}"
@@ -53,7 +53,7 @@ export function renderPointerDot({
         fill="${lineColor}"
       />`;
 
-  let outerCircle: ReturnType<typeof createCircle> | typeof nothing = nothing;
+  let outerCircle: TemplateResult<2> | typeof nothing = nothing;
   let filterY = centerY;
   const resolvedLineStyle = resolvePOIStyle(lineStyle);
 
