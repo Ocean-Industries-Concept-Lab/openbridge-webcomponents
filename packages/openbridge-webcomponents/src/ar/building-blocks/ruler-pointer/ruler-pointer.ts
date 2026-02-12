@@ -53,7 +53,6 @@ export enum ObcRulerPointerType {
  * ```
  *
  * @slot - None.
- * @fires - None.
  */
 @customElement('obc-ruler-pointer')
 export class ObcRulerPointer extends LitElement {
