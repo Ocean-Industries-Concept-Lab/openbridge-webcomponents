@@ -30,13 +30,17 @@ export class ObcHeading extends LitElement {
     | undefined;
   @property({type: Boolean}) disableAutoAtHeadingSetpoint: boolean = false;
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
+  @property({type: Boolean}) animateSetpoint: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
   @property({type: String}) direction: CompassDirection =
     CompassDirection.NorthUp;
   @property({type: Boolean}) enhanced: boolean = false;
 
-  private _headingSp = new SetpointBundle({angularWraparound: true});
+  private _headingSp = new SetpointBundle({
+    angularWraparound: true,
+    onAnimationEnd: () => this.requestUpdate(),
+  });
 
   override willUpdate(changed: PropertyValues): void {
     super.willUpdate(changed);
@@ -49,7 +53,13 @@ export class ObcHeading extends LitElement {
       autoAtSetpointDeadband: this.autoAtHeadingSetpointDeadband,
       setpointAtZeroDeadband: this.headingSetpointAtZeroDeadband,
       setpointColorMode: this.headingSetpointColorMode,
+      animateSetpoint: this.animateSetpoint,
     });
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this._headingSp.dispose();
   }
 
   // @ts-expect-error TS6133: The controller ensures that the render
@@ -120,6 +130,7 @@ export class ObcHeading extends LitElement {
           .atAngleSetpoint=${this._headingSp.computeAtSetpoint(this.heading)}
           .angleSetpointAtZeroDeadband=${this.headingSetpointAtZeroDeadband}
           .colorMode=${this.headingSetpointColorMode}
+          .animateSetpoint=${this.animateSetpoint}
           .rotation=${this.getRotation()}
         >
         </obc-watch>

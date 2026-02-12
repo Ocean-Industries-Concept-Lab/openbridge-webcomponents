@@ -189,6 +189,112 @@ export const SETPOINT_NOT_EQUAL_OFFSET = 4;
 export const SETPOINT_ZERO_OFFSET = 8;
 
 // ============================================================================
+// Animation Constants
+// ============================================================================
+
+/**
+ * Default duration (ms) for the setpoint confirm animation.
+ *
+ * When `animateSetpoint=true` and a confirm transition occurs
+ * (newSetpoint → undefined, setpoint → newValue):
+ * - The original setpoint marker slides to the new position over this duration
+ * - The original setpoint marker regains full opacity (0.75 → 1.0)
+ * - The departing new-setpoint marker fades out (1 → 0 opacity)
+ *
+ * Consumers can override the duration via the CSS custom property
+ * `--setpoint-animation-duration`.
+ */
+export const SETPOINT_ANIMATION_DURATION_MS = 300;
+
+/**
+ * CSS custom property name for the setpoint animation duration.
+ * Set on any ancestor to override the default 300ms:
+ *
+ * ```css
+ * obc-gauge-horizontal {
+ *   --setpoint-animation-duration: 500ms;
+ * }
+ * ```
+ */
+export const SETPOINT_ANIMATION_CSS_VAR = '--setpoint-animation-duration';
+
+/** Default CSS value for the animation duration. */
+export const SETPOINT_ANIMATION_DURATION_DEFAULT = '300ms';
+
+/**
+ * Read the effective setpoint animation duration from the element's computed CSS.
+ * Returns `SETPOINT_ANIMATION_DURATION_MS` if the CSS variable is missing or unparsable.
+ */
+export function getSetpointAnimationDurationMs(el: Element): number {
+  const raw = getComputedStyle(el)
+    .getPropertyValue(SETPOINT_ANIMATION_CSS_VAR)
+    .trim();
+  if (!raw) return SETPOINT_ANIMATION_DURATION_MS;
+  const parsed = parseFloat(raw);
+  if (Number.isNaN(parsed)) return SETPOINT_ANIMATION_DURATION_MS;
+  if (raw.endsWith('s') && !raw.endsWith('ms')) return parsed * 1000;
+  return parsed;
+}
+
+/**
+ * Compute the shortest angular distance between two angles.
+ * Returns a value in [0, 180].
+ *
+ * Used for deadband comparisons (e.g. `computeAtSetpoint`) and any
+ * context where you need the magnitude of the shortest arc between
+ * two headings.
+ */
+export function shortestAngularDistance(from: number, to: number): number {
+  const rawDiff = Math.abs(((to - from) % 360) + 360) % 360;
+  return rawDiff > 180 ? 360 - rawDiff : rawDiff;
+}
+
+/**
+ * Compute a CSS-safe target angle that is within ±180° of a previous
+ * CSS angle, ensuring CSS `rotate()` transitions always take the
+ * shortest path.
+ *
+ * ## Problem
+ *
+ * CSS `transform: rotate()` interpolates linearly between numeric
+ * degree values. A transition from `rotate(350deg)` to `rotate(10deg)`
+ * would animate **−340°** (the long way) instead of the intended **+20°**.
+ *
+ * ## Solution
+ *
+ * Instead of clamping to 0–360°, we accumulate an unbounded angle that
+ * stays within ±180° of the last value CSS saw. CSS then always
+ * interpolates the short arc.
+ *
+ * ## Example
+ *
+ * ```ts
+ * cssSafeAngle(350, 10)  // → 370  (350 + 20, not 10)
+ * cssSafeAngle(10, 350)  // → -10  (10 − 20, not 350)
+ * cssSafeAngle(0, 181)   // → -179 (short path is −179°)
+ * ```
+ *
+ * The resulting value can grow beyond [0, 360) but CSS handles that
+ * correctly. If unbounded growth is a concern, callers can re-normalise
+ * when no transition is active.
+ *
+ * @param prevCssAngle - The last angle value written to the CSS transform
+ * @param targetAngle  - The desired angle in any range (will be normalised)
+ * @returns An angle such that `|result − prevCssAngle| ≤ 180`
+ */
+export function cssSafeAngle(
+  prevCssAngle: number,
+  targetAngle: number
+): number {
+  const normTarget = ((targetAngle % 360) + 360) % 360;
+  const normPrev = ((prevCssAngle % 360) + 360) % 360;
+  let delta = normTarget - normPrev;
+  if (delta > 180) delta -= 360;
+  if (delta < -180) delta += 360;
+  return prevCssAngle + delta;
+}
+
+// ============================================================================
 // Configuration Interface
 // ============================================================================
 

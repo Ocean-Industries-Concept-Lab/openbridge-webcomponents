@@ -292,6 +292,8 @@ export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
       disableAutoAtSetpoint: this.disableAutoAtSetpoint,
       autoAtSetpointDeadband: this.autoAtSetpointDeadband,
       setpointAtZeroDeadband: this.setpointAtZeroDeadband,
+      animateSetpoint: this.animateSetpoint,
+      departingNewSetpoint: this.departingNewSetpoint,
       state: this.state,
       touching: this.touching,
       colorMode: this.setpointColorMode,

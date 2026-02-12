@@ -103,8 +103,8 @@
  */
 
 import {LitElement, PropertyValues} from 'lit';
-import {property} from 'lit/decorators.js';
-import {computeAtSetpoint} from './setpoint.js';
+import {property, state} from 'lit/decorators.js';
+import {computeAtSetpoint, getSetpointAnimationDurationMs} from './setpoint.js';
 import type {SetpointColorMode} from './setpoint.js';
 
 // ============================================================================
@@ -169,6 +169,31 @@ export declare class SetpointMixinInterface {
 
   /** Explicit color palette override. When undefined, derived from instrument state. */
   setpointColorMode: SetpointColorMode | undefined;
+
+  /**
+   * Enable CSS-animated confirm transition.
+   *
+   * When true and a confirm occurs (newSetpoint → undefined, setpoint → new value):
+   * - The original setpoint marker slides from old to new position (300ms CSS transition)
+   * - The original setpoint marker regains full opacity (0.75 → 1.0)
+   * - The departing new-setpoint marker fades out (opacity 1 → 0, 300ms)
+   *
+   * Duration is overridable via CSS custom property `--setpoint-animation-duration`.
+   */
+  animateSetpoint: boolean;
+
+  /**
+   * Value of the departing new-setpoint during a confirm animation.
+   *
+   * Set automatically when `animateSetpoint=true` and `newSetpoint` transitions
+   * from defined → undefined. Cleared after the animation duration (300ms).
+   *
+   * Renderers use this to keep the new-setpoint marker in the DOM during
+   * its fade-out animation.
+   *
+   * @readonly — managed by the mixin, do not set externally
+   */
+  readonly departingNewSetpoint: number | undefined;
 
   /**
    * Compute whether the current value is at the setpoint.
@@ -276,6 +301,30 @@ export function SetpointMixin<T extends Constructor<LitElement>>(
     /** Explicit color palette override. */
     @property({type: String}) setpointColorMode: SetpointColorMode | undefined;
 
+    /**
+     * Enable CSS-animated confirm transition.
+     * @see SetpointMixinInterface.animateSetpoint
+     */
+    @property({type: Boolean}) animateSetpoint: boolean = false;
+
+    // ------------------------------------------------------------------
+    // Animation state (managed by the mixin, not settable externally)
+    // ------------------------------------------------------------------
+
+    /**
+     * Value of the departing new-setpoint during confirm animation fade-out.
+     * Renderers use this to keep the new-setpoint marker in the DOM.
+     */
+    @state() private _departingNewSetpoint: number | undefined;
+
+    /** Timer handle for clearing departingNewSetpoint after animation completes. */
+    private _animationTimer?: ReturnType<typeof setTimeout>;
+
+    /** Public getter for renderers/wrappers to access the departing value. */
+    get departingNewSetpoint(): number | undefined {
+      return this._departingNewSetpoint;
+    }
+
     // ------------------------------------------------------------------
     // Computation (replaces per-instrument atSetpointCalc methods)
     // ------------------------------------------------------------------
@@ -308,9 +357,30 @@ export function SetpointMixin<T extends Constructor<LitElement>>(
     /**
      * Override point for subclasses that need to run logic in `willUpdate`.
      * Always call `super.willUpdate(changed)` to preserve mixin behavior.
+     *
+     * Detects "confirm" transitions (newSetpoint defined → undefined) and
+     * stores the departing value for animation purposes.
      */
     override willUpdate(changed: PropertyValues): void {
       super.willUpdate(changed);
+
+      // Detect confirm: newSetpoint was defined, now undefined
+      if (changed.has('newSetpoint') && this.animateSetpoint) {
+        const prev = changed.get('newSetpoint') as number | undefined;
+        if (prev !== undefined && this.newSetpoint === undefined) {
+          this._departingNewSetpoint = prev;
+          clearTimeout(this._animationTimer);
+          const duration = getSetpointAnimationDurationMs(this);
+          this._animationTimer = setTimeout(() => {
+            this._departingNewSetpoint = undefined;
+          }, duration);
+        }
+      }
+    }
+
+    override disconnectedCallback(): void {
+      super.disconnectedCallback();
+      clearTimeout(this._animationTimer);
     }
   }
 

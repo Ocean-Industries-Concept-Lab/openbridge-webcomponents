@@ -121,6 +121,7 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
           .atAngleSetpoint=${this.computeAtSetpoint(this.speed)}
           .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
           .colorMode=${this.setpointColorMode}
+          .animateSetpoint=${this.animateSetpoint}
           .padding=${48}
           .tickmarks=${this.tickmarks}
           .advices=${this._advices}

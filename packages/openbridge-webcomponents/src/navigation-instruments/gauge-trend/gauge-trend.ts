@@ -239,6 +239,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
     barVertical.disableAutoAtSetpoint = this.disableAutoAtSetpoint;
     barVertical.autoAtSetpointDeadband = this.autoAtSetpointDeadband;
     barVertical.setpointAtZeroDeadband = this.setpointAtZeroDeadband;
+    barVertical.animateSetpoint = this.animateSetpoint;
     barVertical.setpointColorMode = this.setpointColorMode;
     // Advice position is always 'inner' for gauge-trend
     barVertical.advicePosition = AdvicePosition.inner;
