@@ -22,52 +22,56 @@ import {
 export {ObcPoiValue as PoiDataValue};
 
 /**
- * `<obc-poi-data>` renders a point-of-interest marker with a selectable target
- * button and optional pointer line.
+ * `<obc-poi-data>` renders a data-oriented AR POI marker that composes button, line, and pointer behavior.
  *
- * Use this component inside `obc-poi-layer` or `obc-poi-group` to
- * position targets in AR layers and present status or selection state for a
- * detection or tracked object.
+ * ## Overview
  *
- * ### Features
- * - Positions via `x` and a configurable pointer line.
- * - Visual emphasis controlled by `value` (see `PoiDataValue`).
- * - Alarm state controlled by `state` (enabled, caution, warning, alarm).
- * - Multi-value button rendering via the `data` array.
- * - Horizontal nudging via `buttonOffsetX` for overlap or crossing layouts.
- * - Supports alert, selection, and pointer variants.
+ * Use `<obc-poi-data>` in AR overlays to position a POI button and connector line
+ * with optional pointer, data rows, and relation cues. Keywords/synonyms: POI data,
+ * marker, callout, target, pin, annotation, overlay target.
  *
- * ### Usage Guidelines
- * - Set `x` in pixels to place the target relative to its container.
- * - Use `buttonY` to set the target/button position:
- *   - When `fixed-target=true`: `buttonY` is where the line bottom should be (target position)
- *   - When `fixed-target=false`: `buttonY` is where the button should be (button position)
- * - Use `y` for the pointer line length (distance from button to target).
- * - Set `fixed-target` to `false` for layer mode (button position fixed, line extends) - default.
- * - Set `fixed-target` to `true` for standalone/CV mode (target position fixed, button moves).
- * - Use `value` to align with layer or group overlap logic (unchecked, overlapped, etc.).
- * - Use `state` to set alarm level (enabled, caution, warning, alarm).
- * - Provide `data` to display secondary statuses on the button.
- * - Adjust `buttonOffsetX` only when resolving collisions in a layer.
+ * ## Features/Variants
  *
- * ### Slots
- * - None.
+ * - Positioning via `x`, `y`, and optional fixed target mode (`fixedTarget` + `buttonY`).
+ * - Visual variants via `type` (`line`, `offset`, `point`, `outside`) and `value` (`unchecked`, `checked`, `activated`, `overlapped`).
+ * - Alert/state styling via `state` (`enabled`, `caution`, `warning`, `alarm`).
+ * - Supports optional pointer and pointer variants (`hasPointer`, `pointerType`, `pointerState`).
+ * - Supports data/header/relation content through `data`, `header`, and `hasRelation`.
+ * - Supports horizontal/line compensation controls (`buttonOffsetX`, `targetOffsetX`, `lineCompensationY`).
  *
- * ### Events
- * - None. This component does not emit custom events.
+ * ## Usage Guidelines
  *
- * ### Best Practices
- * - Use within `obc-poi-layer` for automatic grouping and overlap behaviors.
- * - Keep pointer lines short to reduce visual clutter.
- * - Prefer `PoiDataValue` enum values over manual styling.
+ * - Set `x` in pixels to place the marker horizontally in its container.
+ * - Use `y` as connector length; combine with `buttonY` to control vertical anchoring.
+ * - With `fixed-target=true`, `buttonY` represents the target position and button top is derived from line length.
+ * - With `fixed-target=false`, `buttonY` represents the button position and line extends from there.
+ * - Use `value` and `state` from enums to keep visuals consistent with layer/group logic.
  *
- * ### Example
+ * ## Slots/Content
+ *
+ * - None. This wrapper does not define its own slots.
+ *
+ * ## Events
+ *
+ * - `obc-poi-data-layout-change`: dispatched (bubbling + composed) when layout-affecting
+ *   properties change (`x`, `buttonY`, `y`, `lineCompensationY`, `fixedTarget`).
+ * - Use this event to recalculate parent layout, overlap handling, or connector alignment
+ *   when marker geometry changes.
+ *
+ * ## Best Practices
+ *
+ * - Use within `obc-poi-layer`/`obc-poi-group` so stacking and overlap orchestration stay centralized.
+ * - Keep connector lengths practical to reduce visual clutter.
+ * - Prefer enum-backed values (`PoiDataValue`, `ObcPoiType`, `ObcPoiState`) over free-form strings.
+ *
+ * ## Example
+ *
  * ```html
  * <obc-poi-data x="120" button-y="200" y="192"></obc-poi-data>
  * ```
  *
- * @slot none
- * @fires none - This component does not emit custom events.
+ * @slot - None.
+ * @fires obc-poi-data-layout-change - Fired when layout-affecting properties change so parents can reflow/recompute geometry.
  */
 
 @customElement('obc-poi-data')
@@ -111,7 +115,10 @@ export class ObcPoiData extends LitElement {
     if (
       changedProperties.has('buttonY') ||
       changedProperties.has('y') ||
-      changedProperties.has('fixedTarget')
+      changedProperties.has('fixedTarget') ||
+      changedProperties.has('lineCompensationY') ||
+      changedProperties.has('selected') ||
+      changedProperties.has('type')
     ) {
       this.updatePosition();
     }
@@ -120,7 +127,9 @@ export class ObcPoiData extends LitElement {
       changedProperties.has('buttonY') ||
       changedProperties.has('y') ||
       changedProperties.has('lineCompensationY') ||
-      changedProperties.has('fixedTarget')
+      changedProperties.has('fixedTarget') ||
+      changedProperties.has('selected') ||
+      changedProperties.has('type')
     ) {
       this.dispatchEvent(
         new CustomEvent('obc-poi-data-layout-change', {
@@ -135,7 +144,20 @@ export class ObcPoiData extends LitElement {
     if (this.fixedTarget) {
       if (typeof this.buttonY === 'number' && Number.isFinite(this.buttonY)) {
         const lineLength = Number.isFinite(this.y) ? this.y : 0;
-        this.style.top = `${this.buttonY - lineLength}px`;
+        const lineCompensation = Number.isFinite(this.lineCompensationY)
+          ? this.lineCompensationY
+          : 0;
+        const selectedVerticalOffset = this.#getSelectedVerticalOffset();
+        const layerVerticalOffset = this.#getLayerVerticalOffset();
+        const totalVerticalOffset =
+          selectedVerticalOffset + layerVerticalOffset;
+        const resolvedPoiType = this.#getResolvedPoiType();
+        const effectiveLineLength =
+          resolvedPoiType === ObcPoiType.Line ||
+          resolvedPoiType === ObcPoiType.Offset
+            ? lineLength + lineCompensation + totalVerticalOffset
+            : lineLength;
+        this.style.top = `${this.buttonY - effectiveLineLength}px`;
       } else {
         this.style.removeProperty('top');
       }

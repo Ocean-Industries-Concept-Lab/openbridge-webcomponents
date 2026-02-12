@@ -616,7 +616,6 @@ export const AnimatedLineLength: Story = {
       if (lineLength > 300) direction = -1;
       if (lineLength < 50) direction = 1;
 
-      // Keep target position (buttonY) fixed, adjust line length (y)
       target.y = lineLength;
 
       if (target.isConnected) {

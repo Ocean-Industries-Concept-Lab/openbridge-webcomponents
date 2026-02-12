@@ -54,7 +54,7 @@ const POINT_POINTER_OFFSET_PX = 12;
  * interactive marker/callout targets in line, offset, point, or outside modes.
  * Keywords: marker, callout, pin, label, target, pointer.
  *
- * ## Variants
+ * ## Features/Variants
  *
  * Configuration defaults and behavior:
  * - `type` (default: `line`):
@@ -256,7 +256,14 @@ export class ObcPoi extends LitElement {
       return 0;
     }
 
-    return this.targetOffsetX - this.buttonOffsetX;
+    const targetOffsetX = Number.isFinite(this.targetOffsetX)
+      ? this.targetOffsetX
+      : 0;
+    const buttonOffsetX = Number.isFinite(this.buttonOffsetX)
+      ? this.buttonOffsetX
+      : 0;
+    const lineOffset = targetOffsetX - buttonOffsetX;
+    return Number.isFinite(lineOffset) ? lineOffset : 0;
   }
 
   private get hasInlinePointer(): boolean {

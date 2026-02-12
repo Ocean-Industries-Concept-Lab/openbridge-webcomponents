@@ -1,6 +1,6 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
-import compentStyle from './poi-line.css?inline';
+import componentStyle from './poi-line.css?inline';
 import '../poi-graphic-line/poi-graphic-line.js';
 import {renderPointerDot} from './pointerDot.js';
 import {
@@ -72,7 +72,7 @@ export class ObcPoiLine extends LitElement {
     `;
   }
 
-  static override styles = unsafeCSS(compentStyle);
+  static override styles = unsafeCSS(componentStyle);
 }
 
 declare global {

@@ -140,6 +140,9 @@ const meta: Meta<ObcPoiButton> = {
       control: {type: 'select'},
       options: Object.values(ObcPoiButtonType),
     },
+    hasRelation: {
+      control: {type: 'boolean'},
+    },
   },
   render: (args) => html`
     <obc-poi-button

@@ -11,45 +11,49 @@ export enum ObcRulerPointerType {
 }
 
 /**
- * `<obc-ruler-pointer>` renders a compact AR ruler pointer (dot/circle marker) used to indicate ruler targets.
+ * `<obc-ruler-pointer>` renders a compact AR ruler endpoint marker for ruler targets and measurement anchors.
  *
- * ## Description
+ * ## Overview
  *
- * Use `<obc-ruler-pointer>` when a lightweight ruler marker is needed in AR overlays.
- * The component exposes a single `type` attribute to switch between default, regular,
- * and selected visual states without additional child content.
+ * Use `<obc-ruler-pointer>` when a minimal endpoint indicator is needed in AR overlays.
+ * The component exposes one visual attribute (`type`) and does not render slotted content.
+ * Keywords/synonyms: ruler, pointer, AR dot, target marker, measurement marker, indicator dot.
  *
- * ## Usage Examples
+ * ## Features/Variants
  *
- * ```html
- * <obc-ruler-pointer type="default"></obc-ruler-pointer>
- * <obc-ruler-pointer type="regular"></obc-ruler-pointer>
- * <obc-ruler-pointer type="selected"></obc-ruler-pointer>
- * ```
+ * - `type="default"`: 4px active dot.
+ * - `type="regular"`: 10px outer active circle with a 6px inner dot.
+ * - `type="selected"`: 10px outer active circle for selected emphasis.
  *
- * ## Public API/Attributes
+ * ## Usage Guidelines
  *
- * - `type` (attribute): Visual variant for `<obc-ruler-pointer>`.
- *   - `default`: 4px active dot.
- *   - `regular`: 10px outer active circle with a 6px inner dot.
- *   - `selected`: 10px outer active circle (selected emphasis state).
+ * - Use `default` for subtle, always-visible ruler anchors.
+ * - Use `regular` for the baseline interactive endpoint style.
+ * - Use `selected` when the ruler endpoint is actively focused or selected.
+ * - Pair with ruler line/measurement components for complete ruler visuals.
  *
- * ## Slots
+ * ## Slots/Content
  *
- * None.
+ * - None.
  *
  * ## Events
  *
- * None.
+ * - None.
  *
- * ## Keywords/Synonyms
+ * ## Best Practices
  *
- * ruler, pointer, AR dot, target marker, measurement marker, indicator dot.
+ * - Prefer `regular` as the default interactive state for consistency.
+ * - Reserve `selected` for active focus only to keep state changes legible.
+ * - Keep pointer state controlled by parent ruler interaction logic.
  *
- * ## Related Components/Contrast
+ * ## Example
  *
- * - `obc-poi-pointer`: richer POI pointer component with additional visual states and box handling.
- * - `obc-poi-line` / `obc-poi-graphic-line`: line/connector components, whereas `<obc-ruler-pointer>` is only the endpoint marker.
+ * ```html
+ * <obc-ruler-pointer type="regular"></obc-ruler-pointer>
+ * ```
+ *
+ * @slot - None.
+ * @fires - None.
  */
 @customElement('obc-ruler-pointer')
 export class ObcRulerPointer extends LitElement {

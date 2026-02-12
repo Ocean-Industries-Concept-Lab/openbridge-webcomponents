@@ -75,10 +75,14 @@
   color: var(--overlay-element-active-color, #fff);
   text-align: center;
   font-feature-settings: "ss04" on;
+  /* stylelint-disable-next-line custom-property-pattern */
   font-family: var(--font-family-Main, "Noto Sans");
+  /* stylelint-disable-next-line custom-property-pattern */
   font-size: var(--Global-Typography-UI-Label-active-Font-size, 12px);
   font-style: normal;
+  /* stylelint-disable-next-line custom-property-pattern */
   font-weight: var(--Global-Typography-UI-Label-active-Font-weight, 670);
+  /* stylelint-disable-next-line custom-property-pattern */
   line-height: var(--Global-Typography-UI-Label-active-Line-height, 16px);
   text-shadow:
     1px 0 0 var(--overlay-element-active-inverted-color, #1a1a1a),
@@ -148,10 +152,14 @@
   color: var(--overlay-element-active-color, #fff);
   text-align: center;
   font-feature-settings: "ss04" on;
+  /* stylelint-disable-next-line custom-property-pattern */
   font-family: var(--font-family-Main, "Noto Sans");
+  /* stylelint-disable-next-line custom-property-pattern */
   font-size: var(--Global-Typography-UI-Label-active-Font-size, 12px);
   font-style: normal;
+  /* stylelint-disable-next-line custom-property-pattern */
   font-weight: var(--Global-Typography-UI-Label-active-Font-weight, 670);
+  /* stylelint-disable-next-line custom-property-pattern */
   line-height: var(--Global-Typography-UI-Label-active-Line-height, 16px);
   text-shadow:
     1px 0 0 var(--overlay-element-active-inverted-color, #1a1a1a),
