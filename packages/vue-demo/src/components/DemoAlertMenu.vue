@@ -59,6 +59,7 @@ function onAckAllVisibleClick(event: ObcAckAllVisibleClickEvent) {
       :key="a.tag"
       has-time
       :status="a.alertStatus"
+      :time="a.time.toLocaleTimeString('en-UK')"
       @ack-click="() => (a.alertStatus = ObcAlertMenuItemStatus.Acknowledged)"
     >
       <template #alert-icon>
@@ -69,9 +70,6 @@ function onAckAllVisibleClick(event: ObcAckAllVisibleClickEvent) {
       </template>
       <template #description>
         {{ a.description }}
-      </template>
-      <template #time>
-        {{ a.time.toLocaleTimeString('en-UK') }}
       </template>
     </AlertMenuItem>
   </AlertMenu>
