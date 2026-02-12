@@ -22,10 +22,58 @@ export enum ObcPoiHeaderType {
 }
 
 /**
- * `<obc-poi-header>` renders the compact POI header chip used by POI targets.
+ * `<obc-poi-header>` -- Compact header chip for Point-of-Interest (POI) targets on the AR overlay.
  *
- * The component supports ID-only and Data variants, with Enabled/Selected and
- * alert states from the design system.
+ * ## Overview
+ * Renders a compact POI chip that can show identifier text, optional label text,
+ * and optional indicator iconography for AR target context. Keywords and search
+ * synonyms: chip, pill, badge, POI, header, target, AR, identifier. Configuration:
+ * `content` (default `"1"`) sets the main identifier text, `label` (default
+ * `"Data"`) sets the secondary text in data mode, `size` uses `ObcPoiHeaderSize`
+ * (default `regular`), `state` uses `ObcPoiHeaderState` (default `enabled`),
+ * `type` uses `ObcPoiHeaderType` (default `id`), and `hasIndicator` (default
+ * `false`) controls rendering of indicator slot/fallback visuals.
+ *
+ * ## Features/Variants
+ * - `type="id"` renders ID-only content from `content`.
+ * - `type="data"` renders two pills: ID (`content`) and label (`label`).
+ * - `state` variants (`enabled`, `selected`, `caution`, `warning`, `alarm`)
+ *   drive visual theming.
+ * - When `hasIndicator` is true, an indicator region is appended; in `data` +
+ *   `enabled`, the indicator is wrapped in an indicator frame.
+ *
+ * ## Usage Guidelines
+ * - Use `<obc-poi-header>` in POI/AR marker compositions where compact stateful
+ *   identification is needed.
+ * - Use `type="id"` for minimal markers and `type="data"` when a label is required.
+ * - Drive `state` using `ObcPoiHeaderState` values to keep alert/selection
+ *   semantics consistent.
+ *
+ * ## Slots/Content
+ * - `indicator`: Optional custom indicator icon/content.
+ * - Fallback behavior: if no `indicator` slot content is provided, built-in
+ *   three-bar indicator markup is rendered.
+ *
+ * ## Events
+ * This component does not emit custom events.
+ *
+ * ## Best Practices
+ * - Keep `content` short (typically 1-3 characters) to preserve compact layout.
+ * - Use enum-backed values for `size`, `state`, and `type` rather than arbitrary strings.
+ * - Enable `hasIndicator` only when indicator semantics are meaningful.
+ *
+ * ## Example
+ * ```html
+ * <obc-poi-header
+ *   type="data"
+ *   state="selected"
+ *   content="3"
+ *   label="SOG"
+ *   has-indicator
+ * >
+ *   <obi-01-alert-alarm-unack slot="indicator"></obi-01-alert-alarm-unack>
+ * </obc-poi-header>
+ * ```
  *
  * @slot indicator - Optional custom indicator icon. Falls back to built-in bars.
  */
@@ -55,7 +103,7 @@ export class ObcPoiHeader extends LitElement {
   }
 
   private get hasSingleCharacterContent(): boolean {
-    return this.content.trim().length === 1;
+    return this.content?.trim().length === 1;
   }
 
   private renderIndicator() {

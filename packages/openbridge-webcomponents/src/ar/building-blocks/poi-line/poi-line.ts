@@ -14,6 +14,8 @@ import {customElement} from '../../../decorator.js';
 
 @customElement('obc-poi-line')
 export class ObcPoiLine extends LitElement {
+  private static _idCounter = 0;
+  private readonly _idPrefix = `poi-line-${ObcPoiLine._idCounter++}`;
   @property({type: Number}) height: number = 96;
   @property({type: String}) poiStyle: POIStyle = POIStyle.Normal;
   @property({type: String}) lineType: POILineType = POILineType.Regular;
@@ -47,7 +49,13 @@ export class ObcPoiLine extends LitElement {
           class="container"
           style="height: ${totalHeight}px; width: ${style.width}px; transform: translateX(${translateX}px);"
         >
-          ${graphicLine({style, lineHeight, totalHeight, offset: this.offset})}
+          ${graphicLine({
+            style,
+            lineHeight,
+            totalHeight,
+            offset: this.offset,
+            idPrefix: this._idPrefix,
+          })}
           ${this.hasPointer
             ? renderPointerDot({
                 lineStyle: this.poiStyle,

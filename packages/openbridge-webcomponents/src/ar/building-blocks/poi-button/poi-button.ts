@@ -82,6 +82,67 @@ export interface ObcPoiButtonHeader {
   hasIndicator?: boolean;
 }
 
+/**
+ * `<obc-poi-button>` - `ObcPoiButton` renders the interactive POI button body, optional header, data rows, and relation content.
+ *
+ * ## Features
+ *
+ * - Supports button and enhanced visual sizes via `type`.
+ * - Supports anchored and inline layouts via `layout`.
+ * - Maps POI value state (`unchecked`, `checked`, `activated`, `overlapped`) to object and frame visuals.
+ * - Can render optional header (`header`), metrics/data rows (`data`), and relation content (`hasRelation` + `relation` slot).
+ *
+ * Public properties/attributes:
+ * - `relativeDirection: number` - Icon rotation in degrees.
+ * - `selected: boolean` - Controls selection frame visibility (anchored layout).
+ * - `layout: ObcPoiButtonLayout` (attribute: `layout`) - Layout mode (`anchored` or `inline`).
+ * - `header: ObcPoiButtonHeader | null` - Optional ID/data header configuration.
+ * - `alertType: ObcArAlertType` - Alert styling (`none`, `caution`, `warning`, `alarm`).
+ * - `value: PoiButtonVisualState` (attribute: `value`) - Visual state (`unchecked`, `checked`, `activated`, `overlapped`).
+ * - `type: ObcPoiButtonType` - Size/variant (`button` or `enhanced`).
+ * - `inExpandedGroup: boolean` - Expanded-group styling hint.
+ * - `data: ObcPoiButtonDataItem[]` - Optional value/label/unit rows.
+ * - `hasRelation: boolean` - Enables relation area rendering when data mode is active.
+ *
+ * Public methods:
+ * - No imperative public methods; behavior is controlled through reactive properties.
+ *
+ * ## Usage Guidelines
+ *
+ * - Use `layout="anchored"` for standalone POI buttons with optional selection frame.
+ * - Use `layout="inline"` when composing inside higher-level marker wrappers (for example `obc-poi`).
+ * - Provide `data` for metric display variants; keep `hasRelation` aligned with relation slot usage.
+ *
+ * ## Slots
+ *
+ * - Default slot: Main icon/content rendered inside `obc-poi-object`.
+ * - `id-label`: Optional custom indicator content for the header indicator slot.
+ * - `relation`: Optional relation icon/content rendered when `hasRelation` is true in data mode.
+ *
+ * ## Events
+ *
+ * - `click`: Native composed click event from the internal button surface.
+ * - Custom events: None.
+ *
+ * ## Best Practices
+ *
+ * - Keep `value`, `selected`, and `alertType` synchronized with domain state to avoid mixed visual semantics.
+ * - Prefer enum values from `PoiButtonVisualState`, `ObcPoiButtonType`, and `ObcPoiButtonLayout` for consistency.
+ * - Use `header` only when label/ID context is needed; omit for icon-only markers.
+ *
+ * ## Example
+ *
+ * ```html
+ * <obc-poi-button
+ *   type="button"
+ *   layout="anchored"
+ *   value="unchecked"
+ *   .selected=${false}
+ * >
+ *   <obc-icon-pin></obc-icon-pin>
+ * </obc-poi-button>
+ * ```
+ */
 @customElement('obc-poi-button')
 export class ObcPoiButton extends LitElement {
   @property({type: Number}) relativeDirection = 0;
