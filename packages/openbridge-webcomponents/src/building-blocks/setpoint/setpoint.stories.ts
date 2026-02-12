@@ -1167,11 +1167,32 @@ export const SetpointRadialAdjustmentFlow: StoryObj = {
  *
  * The angle delta is kept under 180° so the radial animation takes the short path.
  */
-export const SetpointAzimuthThrusterFlow: StoryObj = {
+export const SetpointAzimuthThrusterFlow: StoryObj<{
+  thrustDuration: number;
+  angleDuration: number;
+}> = {
   tags: ['!snapshot'],
   name: 'Setpoint Azimuth Thruster Flow (interactive)',
-  render: () => html`
-    <div style="display: flex; flex-direction: column; gap: 24px;">
+  args: {
+    thrustDuration: 2,
+    angleDuration: 10,
+  },
+  argTypes: {
+    thrustDuration: {
+      name: 'Thrust anim duration (s)',
+      control: {type: 'range', min: 0.5, max: 20, step: 0.5},
+    },
+    angleDuration: {
+      name: 'Angle anim duration (s)',
+      control: {type: 'range', min: 0.5, max: 30, step: 0.5},
+    },
+  },
+  render: (args) => html`
+    <div
+      style="display: flex; flex-direction: column; gap: 24px;"
+      data-thrust-duration=${args.thrustDuration}
+      data-angle-duration=${args.angleDuration}
+    >
       <div style="font-size: 14px; color: #888;">
         Click "Play" in the Interactions panel to watch the dual-axis setpoint
         animation, or use the buttons below for manual control.
@@ -1329,6 +1350,13 @@ export const SetpointAzimuthThrusterFlow: StoryObj = {
       const targetAngle = Math.round(at.newAngleSetpoint ?? ANGLE_TO);
       const targetThrust = Math.round(anim.newThrust);
 
+      // Read slider-controlled durations from data-attributes
+      const wrapper = canvasElement.querySelector(
+        '[data-thrust-duration]'
+      ) as HTMLElement | null;
+      const thrustDur = parseFloat(wrapper?.dataset.thrustDuration ?? '2');
+      const angleDur = parseFloat(wrapper?.dataset.angleDuration ?? '10');
+
       // Component handles the setpoint slide + fade-out via CSS transition
       at.angleSetpoint = targetAngle;
       at.newAngleSetpoint = undefined;
@@ -1341,15 +1369,24 @@ export const SetpointAzimuthThrusterFlow: StoryObj = {
       anim.angle = at.angle;
       anim.thrust = at.thrust;
 
-      // Vessel responds — angle and thrust catch up
+      // Vessel responds — thrust catches up (faster)
+      gsap.to(anim, {
+        thrust: targetThrust,
+        duration: thrustDur,
+        ease: 'sine.inOut',
+        onUpdate: () => {
+          at.thrust = anim.thrust;
+          updateStatus('t=3 (confirm)');
+        },
+      });
+
+      // Vessel responds — angle catches up (slower)
       gsap.to(anim, {
         angle: targetAngle,
-        thrust: targetThrust,
-        duration: 1.5,
-        ease: 'power1.out',
+        duration: angleDur,
+        ease: 'sine.inOut',
         onUpdate: () => {
           at.angle = anim.angle;
-          at.thrust = anim.thrust;
           updateStatus('t=3 (confirm)');
         },
       });
@@ -1369,8 +1406,12 @@ export const SetpointAzimuthThrusterFlow: StoryObj = {
     await userEvent.click(btnMove);
     await new Promise((r) => setTimeout(r, 3000));
 
-    // t=3 – confirm (1.5 s animation + 1 s pause)
+    // t=3 – confirm (angle is the longest axis; wait for it + 1 s pause)
     await userEvent.click(btnConfirm);
-    await new Promise((r) => setTimeout(r, 3000));
+    const wrapperEl = canvasElement.querySelector(
+      '[data-angle-duration]'
+    ) as HTMLElement | null;
+    const longestDur = parseFloat(wrapperEl?.dataset.angleDuration ?? '10');
+    await new Promise((r) => setTimeout(r, longestDur * 1000 + 1000));
   },
 };
