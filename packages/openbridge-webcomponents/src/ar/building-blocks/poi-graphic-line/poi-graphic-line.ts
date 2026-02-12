@@ -121,8 +121,8 @@ export function graphicLine({
   const width = style.width + Math.abs(offset);
   const yStart = Math.max(lineStart, halfStroke);
   const lineEnd = Math.min(lineStart + lineHeight, totalHeight - halfStroke);
-  const breakStartPoint = lineStart + 10;
-  const breakEndPoint = breakStartPoint + 30;
+  const breakStartPoint = Math.min(lineStart + 10, lineEnd);
+  const breakEndPoint = Math.min(breakStartPoint + 30, lineEnd);
   const isDashed = Boolean(style.dashArray);
   const dashArray = style.dashArray;
   const dashOffset = style.dashArray ? `${style.dashOffset ?? 0}` : undefined;

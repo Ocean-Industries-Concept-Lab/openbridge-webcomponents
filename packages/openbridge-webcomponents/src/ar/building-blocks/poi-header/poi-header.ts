@@ -24,43 +24,45 @@ export enum ObcPoiHeaderType {
 /**
  * `<obc-poi-header>` -- Compact header chip for Point-of-Interest (POI) targets on the AR overlay.
  *
- * @remarks
- * **Overview**
- * Renders a small, labelled chip attached to a POI target. It conveys an
- * identifier, an optional data label, and an optional indicator icon while
- * reflecting the current interactive/alert state through colour and shape.
+ * ## Overview
+ * Renders a compact POI chip that can show identifier text, optional label text,
+ * and optional indicator iconography for AR target context. Keywords and search
+ * synonyms: chip, pill, badge, POI, header, target, AR, identifier. Configuration:
+ * `content` (default `"1"`) sets the main identifier text, `label` (default
+ * `"Data"`) sets the secondary text in data mode, `size` uses `ObcPoiHeaderSize`
+ * (default `regular`), `state` uses `ObcPoiHeaderState` (default `enabled`),
+ * `type` uses `ObcPoiHeaderType` (default `id`), and `hasIndicator` (default
+ * `false`) controls rendering of indicator slot/fallback visuals.
  *
- * **Features / Variants**
- * - *ID-only* (`type="id"`) -- shows only the `content` text (e.g. "1").
- * - *Data* (`type="data"`) -- shows a two-pill layout: an ID pill (`content`)
- *   and a label pill (`label`, e.g. "Data").
- * - States: `enabled` (default neutral), `selected` (active highlight),
- *   `caution`, `warning`, `alarm` (progressive alert severity).
- * - When `hasIndicator` is true an indicator region is appended. In `data` +
- *   `enabled` mode the indicator is wrapped in a frame; otherwise it renders
- *   inline.
+ * ## Features/Variants
+ * - `type="id"` renders ID-only content from `content`.
+ * - `type="data"` renders two pills: ID (`content`) and label (`label`).
+ * - `state` variants (`enabled`, `selected`, `caution`, `warning`, `alarm`)
+ *   drive visual theming.
+ * - When `hasIndicator` is true, an indicator region is appended; in `data` +
+ *   `enabled`, the indicator is wrapped in an indicator frame.
  *
- * **Usage Guidelines**
- * Use `<obc-poi-header>` exclusively inside POI target compositions on the AR
- * map. For general-purpose status tags or toggleable labels, prefer the
- * design-system chip, pill, or badge components instead.
+ * ## Usage Guidelines
+ * - Use `<obc-poi-header>` in POI/AR marker compositions where compact stateful
+ *   identification is needed.
+ * - Use `type="id"` for minimal markers and `type="data"` when a label is required.
+ * - Drive `state` using `ObcPoiHeaderState` values to keep alert/selection
+ *   semantics consistent.
  *
- * **Slots / Content**
- * - `indicator` -- Replaces the default three-bar indicator with a custom icon.
- *   When nothing is slotted the component falls back to built-in bar elements.
- *   Use an OpenBridge icon tag (e.g. `<obi-01-alert-alarm-unack>`) for
- *   domain-specific indicators.
+ * ## Slots/Content
+ * - `indicator`: Optional custom indicator icon/content.
+ * - Fallback behavior: if no `indicator` slot content is provided, built-in
+ *   three-bar indicator markup is rendered.
  *
- * **Events**
- * This component does not emit any custom events.
+ * ## Events
+ * This component does not emit custom events.
  *
- * **Best Practices**
- * - Keep `content` short (1-3 characters) to preserve the compact chip layout.
- * - Set `state` via the `ObcPoiHeaderState` enum rather than raw strings.
- * - Only enable the indicator slot when the POI genuinely carries status
- *   iconography; avoid empty indicators.
+ * ## Best Practices
+ * - Keep `content` short (typically 1-3 characters) to preserve compact layout.
+ * - Use enum-backed values for `size`, `state`, and `type` rather than arbitrary strings.
+ * - Enable `hasIndicator` only when indicator semantics are meaningful.
  *
- * **Example**
+ * ## Example
  * ```html
  * <obc-poi-header
  *   type="data"
@@ -73,26 +75,8 @@ export enum ObcPoiHeaderType {
  * </obc-poi-header>
  * ```
  *
- * @keywords chip, pill, badge, POI, header, target, AR, identifier
- *
- * **Configuration**
- * - `content` (string) -- Short identifier text displayed in the chip.
- *   Defaults to `"1"`. Single-character values receive tighter sizing.
- * - `label` (string) -- Secondary label shown in the Data variant.
- *   Defaults to `"Data"`. Ignored when `type` is `"id"`.
- * - `size` (ObcPoiHeaderSize) -- Visual size preset. Currently only
- *   `"regular"` (default). Reflected as an attribute for CSS hooks.
- * - `state` (ObcPoiHeaderState) -- Interactive/alert state. One of
- *   `"enabled"` (default), `"selected"`, `"caution"`, `"warning"`, `"alarm"`.
- *   Drives colour theming via CSS class and is reflected as an attribute.
- * - `type` (ObcPoiHeaderType) -- Layout variant. `"id"` (default) renders
- *   ID-only; `"data"` renders the two-pill ID + label layout. Reflected as an
- *   attribute.
- * - `hasIndicator` (boolean) -- When `true`, appends the indicator region
- *   (slot or fallback bars). Defaults to `false`. Set via the `has-indicator`
- *   HTML attribute.
- *
  * @slot indicator - Optional custom indicator icon. Falls back to built-in bars.
+ * @fires
  */
 @customElement('obc-poi-header')
 export class ObcPoiHeader extends LitElement {

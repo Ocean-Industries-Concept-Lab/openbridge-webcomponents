@@ -56,18 +56,49 @@ const POINT_POINTER_OFFSET_PX = 12;
  *
  * ## Features/Variants
  *
- * - Select marker geometry with `type` (`line`, `offset`, `point`, `outside`).
- * - Control visual/interaction state with `value`, `state`, and `selected`.
- * - Enable pointer affordances with `hasPointer`, `pointerType`, and `pointerState`.
- * - Position marker content using `x`, `y`, `buttonY`, `buttonOffsetX`, and `targetOffsetX`.
- * - Provide button content and metadata through `header`, `data`, and named slots.
+ * Configuration defaults and behavior:
+ * - `type` (default: `line`):
+ *   - `line`: renders a vertical connector line from button to target.
+ *   - `offset`: renders a bent connector using `targetOffsetX - buttonOffsetX`.
+ *   - `point`: suppresses long connector behavior (line can collapse/skip based on state).
+ *   - `outside`: suppresses connector line; outside arrow is rendered when `hasPointer` is true.
+ * - `value` (default: `unchecked`):
+ *   - `unchecked`: default visual state.
+ *   - `checked`: selected-like visual and pointer behavior.
+ *   - `activated`: activated button visual state with selected-like pointer behavior.
+ *   - `overlapped`: compact overlap visual state.
+ * - `state` (default: `enabled`):
+ *   - `enabled`: neutral alert ring and regular line style.
+ *   - `caution`/`warning`/`alarm`: applies alert-specific button/line styling.
+ *   - In `enabled`, pointer type resolution defaults to point.
+ * - `selected` (default: `false`): enables selected emphasis semantics (for example selected line style when not in alert state).
+ * - `hasPointer` (default: `false`):
+ *   - For `line`/`offset`/`point`, pointer visuals are shown when `hasPointer` is true.
+ *   - Checked-like values also force inline pointer visuals for non-`outside` types.
+ *   - For `outside`, `hasPointer` controls outside-arrow visibility.
+ * - `pointerType` (default: `null`, enum `point | button | camera`):
+ *   - Used when not in checked-like state and not `enabled`.
+ *   - Otherwise resolves to `point` for consistent selected/enabled behavior.
+ * - `pointerState` (default: `null`, enum `regular | selected | active | uncertain`):
+ *   - Checked-like non-`outside` values resolve to `selected`.
+ *   - Otherwise falls back to provided `pointerState` or `regular`.
+ *
+ * Motion and layout notes:
+ * - `animatePosition` (default: `false`): when true, enables short position transition timing for line/pointer movement.
+ * - `x` (default: `0`): host horizontal position; sets `--obc-poi-x` as `${x}px`.
+ * - `y` (default: `96`): connector length basis; non-finite values fall back to `0` in geometry calculations.
+ * - `buttonY` (default: `null`): if finite, sets `--obc-poi-y`; if `null`/non-finite, position variable is cleared.
+ * - `buttonOffsetX`/`targetOffsetX` (defaults: `0`/`0`): define connector bend delta via `targetOffsetX - buttonOffsetX`.
+ * - `boxWidth`/`boxHeight` (defaults: `null`/`null`): optional pointer frame size extras; invalid/non-finite values are ignored.
+ * - `outsideAngle` (default: `315`): controls outside-arrow direction in `outside` mode.
  *
  * ## Usage Guidelines
  *
- * - Use `type="line"` or `type="offset"` when the button should connect to a target.
- * - Use `type="point"` for direct target placement with minimal connector geometry.
- * - Use `type="outside"` with `hasPointer` to render directional outside-arrow guidance.
- * - Keep `value` and `state` aligned with domain state so visual semantics stay consistent.
+ * - Use `type="line"` or `type="offset"` when the button should connect to a remote target.
+ * - Use `type="point"` for near-target placements where connector emphasis should be minimal.
+ * - Use `type="outside"` with `hasPointer` for off-screen or directional guidance.
+ * - Keep `value`, `state`, and `selected` aligned with domain state so visual semantics stay consistent.
+ * - Provide finite numbers for layout props (`x`, `y`, `buttonY`, offsets) for predictable placement.
  *
  * ## Slots/Content
  *
@@ -81,8 +112,9 @@ const POINT_POINTER_OFFSET_PX = 12;
  *
  * ## Best Practices
  *
- * - Pass finite numeric values for layout properties to avoid fallback positioning behavior.
- * - Enable `animatePosition` only for intentional motion transitions.
+ * - Pass finite numeric values for layout properties to avoid fallback-to-zero behavior.
+ * - Enable `animatePosition` only for intentional motion transitions and moving targets.
+ * - Prefer enum values for `type`, `value`, `state`, `pointerType`, and `pointerState`.
  * - Use the `id-label` and `relation` slots for structured metadata instead of mixing all
  *   text in the default slot.
  *
