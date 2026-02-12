@@ -1165,7 +1165,8 @@ export const SetpointRadialAdjustmentFlow: StoryObj = {
  * - Thrust setpoint slides from 25% → 70% on the linear bar (CSS transition)
  * - Both departing new-setpoint markers fade out at the same time
  *
- * The angle delta is kept under 180° so the radial animation takes the short path.
+ * Angular transitions always take the shortest path via CSS-safe accumulated
+ * angles, so even large or wraparound deltas animate correctly.
  */
 export const SetpointAzimuthThrusterFlow: StoryObj<{
   thrustDuration: number;
@@ -1261,7 +1262,7 @@ export const SetpointAzimuthThrusterFlow: StoryObj<{
 
     // Target values for the adjustment
     const ANGLE_FROM = 30;
-    const ANGLE_TO = 120; // delta = 90° (< 180°, will animate)
+    const ANGLE_TO = 120; // delta = 90°
     const THRUST_FROM = 25;
     const THRUST_TO = 70;
 

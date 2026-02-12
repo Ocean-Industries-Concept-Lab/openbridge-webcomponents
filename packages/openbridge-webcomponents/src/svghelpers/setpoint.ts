@@ -240,13 +240,58 @@ export function getSetpointAnimationDurationMs(el: Element): number {
  * Compute the shortest angular distance between two angles.
  * Returns a value in [0, 180].
  *
- * Used to decide whether a radial setpoint animation should play
- * (only when the angular delta is < 180°, to avoid the CSS transition
- * taking the "long way around").
+ * Used for deadband comparisons (e.g. `computeAtSetpoint`) and any
+ * context where you need the magnitude of the shortest arc between
+ * two headings.
  */
 export function shortestAngularDistance(from: number, to: number): number {
   const rawDiff = Math.abs(((to - from) % 360) + 360) % 360;
   return rawDiff > 180 ? 360 - rawDiff : rawDiff;
+}
+
+/**
+ * Compute a CSS-safe target angle that is within ±180° of a previous
+ * CSS angle, ensuring CSS `rotate()` transitions always take the
+ * shortest path.
+ *
+ * ## Problem
+ *
+ * CSS `transform: rotate()` interpolates linearly between numeric
+ * degree values. A transition from `rotate(350deg)` to `rotate(10deg)`
+ * would animate **−340°** (the long way) instead of the intended **+20°**.
+ *
+ * ## Solution
+ *
+ * Instead of clamping to 0–360°, we accumulate an unbounded angle that
+ * stays within ±180° of the last value CSS saw. CSS then always
+ * interpolates the short arc.
+ *
+ * ## Example
+ *
+ * ```ts
+ * cssSafeAngle(350, 10)  // → 370  (350 + 20, not 10)
+ * cssSafeAngle(10, 350)  // → -10  (10 − 20, not 350)
+ * cssSafeAngle(0, 181)   // → -179 (short path is −179°)
+ * ```
+ *
+ * The resulting value can grow beyond [0, 360) but CSS handles that
+ * correctly. If unbounded growth is a concern, callers can re-normalise
+ * when no transition is active.
+ *
+ * @param prevCssAngle - The last angle value written to the CSS transform
+ * @param targetAngle  - The desired angle in any range (will be normalised)
+ * @returns An angle such that `|result − prevCssAngle| ≤ 180`
+ */
+export function cssSafeAngle(
+  prevCssAngle: number,
+  targetAngle: number
+): number {
+  const normTarget = ((targetAngle % 360) + 360) % 360;
+  const normPrev = ((prevCssAngle % 360) + 360) % 360;
+  let delta = normTarget - normPrev;
+  if (delta > 180) delta -= 360;
+  if (delta < -180) delta += 360;
+  return prevCssAngle + delta;
 }
 
 // ============================================================================

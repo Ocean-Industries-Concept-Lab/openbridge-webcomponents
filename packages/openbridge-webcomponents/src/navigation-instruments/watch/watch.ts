@@ -11,6 +11,7 @@ import {property, state} from 'lit/decorators.js';
 import {circle} from '../../svghelpers/index.js';
 import {roundedArch} from '../../svghelpers/roundedArch.js';
 import {
+  cssSafeAngle,
   deriveRadialSetpointConfig,
   drawSetpointMarker,
   getSetpointAnimationDurationMs,
@@ -20,7 +21,6 @@ import {
   SetpointVisualState,
   SETPOINT_ANIMATION_CSS_VAR,
   SETPOINT_ANIMATION_DURATION_DEFAULT,
-  shortestAngularDistance,
 } from '../../svghelpers/setpoint.js';
 import {InstrumentState} from '../types.js';
 import compentStyle from './watch.css?inline';
@@ -111,12 +111,15 @@ const RADIAL_SETPOINT_INWARD_ADJUST = 4;
  * When `animateSetpoint` is true and a confirm occurs (`newAngleSetpoint` → `undefined`):
  * - The original setpoint slides to the new position via CSS transition
  * - The departing new-setpoint marker fades out
- * - Animation is skipped when angular delta ≥ 180° (wraparound)
+ * - Angular transitions always take the shortest path via accumulated
+ *   CSS-safe angles (`cssSafeAngle()`), so even 350° → 10° animates +20°
  *
  * Duration: `var(--setpoint-animation-duration, 300ms)`
  *
  * Internally, `_departingNewAngleSetpoint` captures the departing angle during confirm
  * fade-out and `_animationTimer` auto-clears it after the animation duration.
+ * `_setpointCssAngle` tracks the accumulated CSS angle to avoid long-way-around
+ * transitions across the 0°/360° boundary.
  *
  * @property {InstrumentState} state - Instrument state (inCommand, active, loading, off)
  * @property {number|undefined} angleSetpoint - Setpoint angle in degrees (0° = 12 o'clock)
@@ -145,6 +148,16 @@ export class ObcWatch extends LitElement {
 
   @state() private _departingNewAngleSetpoint: number | undefined;
   private _animationTimer?: ReturnType<typeof setTimeout>;
+
+  /**
+   * Accumulated CSS-safe angle for the original setpoint marker.
+   * Ensures CSS rotate() transitions always take the shortest path,
+   * even across the 0°/360° boundary.
+   */
+  private _setpointCssAngle: number = 0;
+
+  /** Whether the setpoint CSS angle has been initialised (to skip transition on first render). */
+  private _setpointCssAngleInit = false;
   @property({type: Number}) padding: number | undefined;
   @property({type: Array, attribute: false}) areas: WatchArea[] = [];
   @property({type: Array, attribute: false}) barAreas: WatchBarArea[] = [];
@@ -178,16 +191,12 @@ export class ObcWatch extends LitElement {
     if (changed.has('newAngleSetpoint') && this.animateSetpoint) {
       const prev = changed.get('newAngleSetpoint') as number | undefined;
       if (prev !== undefined && this.newAngleSetpoint === undefined) {
-        // Only animate if angular delta < 180° (avoid wrong-way CSS interpolation)
-        const currentAngle = this.angleSetpoint ?? 0;
-        if (shortestAngularDistance(prev, currentAngle) < 180) {
-          this._departingNewAngleSetpoint = prev;
-          clearTimeout(this._animationTimer);
-          const duration = getSetpointAnimationDurationMs(this);
-          this._animationTimer = setTimeout(() => {
-            this._departingNewAngleSetpoint = undefined;
-          }, duration);
-        }
+        this._departingNewAngleSetpoint = prev;
+        clearTimeout(this._animationTimer);
+        const duration = getSetpointAnimationDurationMs(this);
+        this._animationTimer = setTimeout(() => {
+          this._departingNewAngleSetpoint = undefined;
+        }, duration);
       }
     }
   }
@@ -522,10 +531,20 @@ export class ObcWatch extends LitElement {
     const animate = this.animateSetpoint;
     const hasDeparting = this._departingNewAngleSetpoint !== undefined;
 
+    // Compute CSS-safe accumulated angle so transitions always take the short path
+    const rawAngle = this.angleSetpoint + 90;
+    if (!this._setpointCssAngleInit) {
+      // First render: set angle without transition
+      this._setpointCssAngle = rawAngle;
+      this._setpointCssAngleInit = true;
+    } else {
+      this._setpointCssAngle = cssSafeAngle(this._setpointCssAngle, rawAngle);
+    }
+
     // Use CSS style transform when animating for smooth transition
     const originalSetpoint = animate
       ? svg`
-        <g style="transform: rotate(${this.angleSetpoint + 90}deg) translateX(${-radius}px) rotate(270deg); opacity: ${opacity}; transition: transform var(${SETPOINT_ANIMATION_CSS_VAR}, ${SETPOINT_ANIMATION_DURATION_DEFAULT}) ease-out, opacity var(${SETPOINT_ANIMATION_CSS_VAR}, ${SETPOINT_ANIMATION_DURATION_DEFAULT}) ease-out;">
+        <g style="transform: rotate(${this._setpointCssAngle}deg) translateX(${-radius}px) rotate(270deg); opacity: ${opacity}; transition: transform var(${SETPOINT_ANIMATION_CSS_VAR}, ${SETPOINT_ANIMATION_DURATION_DEFAULT}) ease-out, opacity var(${SETPOINT_ANIMATION_CSS_VAR}, ${SETPOINT_ANIMATION_DURATION_DEFAULT}) ease-out;">
           ${originalMarker}
         </g>
       `
