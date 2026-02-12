@@ -54,7 +54,7 @@ const POINT_POINTER_OFFSET_PX = 12;
  * interactive marker/callout targets in line, offset, point, or outside modes.
  * Keywords: marker, callout, pin, label, target, pointer.
  *
- * ## Features/Variants
+ * ## Variants
  *
  * Configuration defaults and behavior:
  * - `type` (default: `line`):
