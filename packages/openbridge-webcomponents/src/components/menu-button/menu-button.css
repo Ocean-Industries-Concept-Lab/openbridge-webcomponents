@@ -6,6 +6,7 @@
   height: var(--ui-components-button-touch-target-size);
   min-width: var(--ui-components-button-touch-target-size);
   appearance: none;
+  text-align: start;
   border: none;
   display: flex;
   align-items: center;
@@ -115,6 +116,11 @@
   position-anchor: --context-menu-trigger;
   left: calc(anchor(right) + 8px);
   top: anchor(top);
+  margin: unset;
+  padding: 0;
+  border: none;
+  background: none;
+  overflow: visible;
 }
 
 .wrapper.disabled .label-container,

@@ -1,5 +1,5 @@
 import {LitElement, html, unsafeCSS, nothing} from 'lit';
-import {property, state} from 'lit/decorators.js';
+import {property, state, query} from 'lit/decorators.js';
 import compentStyle from './menu-button.css?inline';
 import {customElement} from '../../decorator.js';
 import {classMap} from 'lit/directives/class-map.js';
@@ -92,6 +92,7 @@ export type ObcMenuButtonItemClickEvent = CustomEvent<{
  * ## Events
  * - `change` – Fired when the menu selection changes (returns selected values and options).
  * - `item-click` – Fired when a menu item is clicked (returns value and option).
+ * - `open` – Fired when the menu is opened.
  * - `close` – Fired when the menu is closed.
  *
  * ## Best Practices & Constraints
@@ -122,6 +123,7 @@ export type ObcMenuButtonItemClickEvent = CustomEvent<{
  * @slot icon - Icon displayed at the start of the button when `hasIcon` is true.
  * @fires change {CustomEvent<{selectedValues: string[], selectedOptions: Array<ContextMenuOption>}>} Fired when the menu selection changes.
  * @fires item-click {CustomEvent<{value: string, option: ContextMenuOption}>} Fired when a menu item is clicked.
+ * @fires open {CustomEvent<void>} Fired when the menu is opened.
  * @fires close {CustomEvent<void>} Fired when the menu is closed.
  */
 @customElement('obc-menu-button')
@@ -225,6 +227,8 @@ export class ObcMenuButton extends LitElement {
 
   @state() private isOpen = false;
 
+  @query('.positioned-menu') private menu!: HTMLElement;
+
   private get effectiveMultiSelect(): boolean {
     if (this.multiSelect !== undefined) return this.multiSelect;
 
@@ -249,25 +253,23 @@ export class ObcMenuButton extends LitElement {
     return this.menuType;
   }
 
-  private handleOpen = (e: Event) => {
-    e.stopPropagation();
-
-    if (this.disabled) {
-      return;
+  private handlePopoverToggle = (e: ToggleEvent) => {
+    this.isOpen = e.newState === 'open';
+    if (e.newState === 'open') {
+      /**
+       * Fired when the menu is opened.
+       * @event open
+       * @type {CustomEvent<void>}
+       */
+      this.dispatchEvent(new CustomEvent('open'));
     }
-
-    this.isOpen = !this.isOpen;
-    if (this.isOpen) {
-      // Close on outside click
-      window.addEventListener('pointerdown', this.closeOnOutside);
-    }
-  };
-
-  private closeOnOutside = (e: Event) => {
-    // Only close if click is not inside this component or its menu
-    if (!this.contains(e.target as Node)) {
-      this.isOpen = false;
-      window.removeEventListener('pointerdown', this.closeOnOutside);
+    if (e.newState === 'closed') {
+      /**
+       * Fired when the menu is closed.
+       * @event close
+       * @type {CustomEvent<void>}
+       */
+      this.dispatchEvent(new CustomEvent('close'));
     }
   };
 
@@ -339,29 +341,8 @@ export class ObcMenuButton extends LitElement {
     }, 0);
   }
 
-  private handleKeydown = (e: KeyboardEvent) => {
-    if (this.disabled) return;
-
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      this.handleOpen(e);
-    }
-  };
-
   private handleMenuClose() {
-    this.isOpen = false;
-    window.removeEventListener('pointerdown', this.closeOnOutside);
-    /**
-     * Fired when the menu is closed.
-     * @event close
-     * @type {CustomEvent<void>}
-     */
-    this.dispatchEvent(new CustomEvent('close'));
-  }
-
-  override disconnectedCallback() {
-    window.removeEventListener('pointerdown', this.closeOnOutside);
-    super.disconnectedCallback();
+    this.menu.hidePopover();
   }
 
   private get isMultiSelect(): boolean {
@@ -384,7 +365,7 @@ export class ObcMenuButton extends LitElement {
     const selectedValues = this.effectiveMultiSelect ? this.selectedValues : [];
 
     return html`
-      <div
+      <button
         class=${classMap({
           wrapper: true,
           'full-width': this.fullWidth,
@@ -392,13 +373,12 @@ export class ObcMenuButton extends LitElement {
           'open-top': this.openTop,
           disabled: this.disabled,
         })}
-        role="button"
-        tabindex=${this.disabled ? -1 : 0}
+        ?disabled=${this.disabled}
+        popovertarget="menu-popover"
         aria-expanded=${this.isOpen}
         aria-haspopup="menu"
-        @keydown=${this.handleKeydown}
       >
-        <div class="visible-wrapper" @click=${this.handleOpen}>
+        <div class="visible-wrapper">
           <div class="content-container">
             ${this.hasIcon
               ? html`
@@ -414,26 +394,25 @@ export class ObcMenuButton extends LitElement {
           </div>
         </div>
 
-        ${this.isOpen
-          ? html`
-              <obc-context-menu-input
-                class="positioned-menu"
-                .type=${this.effectiveMenuType}
-                .options=${this.options}
-                .selectedValues=${selectedValues}
-                .multiSelect=${this.isMultiSelect}
-                .selectPerGroup=${this.effectiveSelectPerGroup}
-                .hasTitleBar=${this.hasTitleBar}
-                .title=${this.menuTitle}
-                .columnGroups=${this.columnGroups}
-                .itemsPerColumn=${this.itemsPerColumn}
-                @change=${this.handleMenuChange}
-                @item-click=${this.handleItemClick}
-                @close=${this.handleMenuClose}
-              /></obc-context-menu-input>
-            `
-          : nothing}
-      </div>
+        <obc-context-menu-input
+          popover="auto"
+          id="menu-popover"
+          class="positioned-menu"
+          .type=${this.effectiveMenuType}
+          .options=${this.options}
+          .selectedValues=${selectedValues}
+          .multiSelect=${this.isMultiSelect}
+          .selectPerGroup=${this.effectiveSelectPerGroup}
+          .hasTitleBar=${this.hasTitleBar}
+          .title=${this.menuTitle}
+          .columnGroups=${this.columnGroups}
+          .itemsPerColumn=${this.itemsPerColumn}
+          @change=${this.handleMenuChange}
+          @item-click=${this.handleItemClick}
+          @close=${this.handleMenuClose}
+          @toggle=${this.handlePopoverToggle}
+        /></obc-context-menu-input>
+      </button>
     `;
   }
 
