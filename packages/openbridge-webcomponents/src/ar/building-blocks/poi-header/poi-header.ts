@@ -76,7 +76,6 @@ export enum ObcPoiHeaderType {
  * ```
  *
  * @slot indicator - Optional custom indicator icon. Falls back to built-in bars.
- * @fires
  */
 @customElement('obc-poi-header')
 export class ObcPoiHeader extends LitElement {

@@ -375,9 +375,6 @@ function enhancedAlertFrame(): HTMLTemplateResult {
  *   state="regular"
  * ></obc-poi-selection-frame>
  * ```
- *
- * @slot
- * @fires
  */
 @customElement('obc-poi-selection-frame')
 export class ObcPoiSelectionFrame extends LitElement {

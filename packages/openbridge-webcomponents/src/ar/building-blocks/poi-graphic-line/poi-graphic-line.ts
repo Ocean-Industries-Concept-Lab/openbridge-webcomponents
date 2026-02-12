@@ -58,9 +58,6 @@ import componentStyle from './poi-graphic-line.css?inline';
  * ```html
  * <obc-poi-graphic-line line-height="96" line-style="enhanced" line-type="regular" offset="0"></obc-poi-graphic-line>
  * ```
- *
- * @slot
- * @fires
  */
 @customElement('obc-poi-graphic-line')
 export class ObcPoiGraphicLine extends LitElement {
