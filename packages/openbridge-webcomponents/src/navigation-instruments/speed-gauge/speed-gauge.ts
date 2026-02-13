@@ -4,6 +4,7 @@ import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {WatchCircleType} from '../watch/watch.js';
 import {AdviceType, AngleAdviceRaw, AdviceState} from '../watch/advice.js';
 import {InstrumentFieldSize} from '../instrument-field/instrument-field.js';
+import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {customElement} from '../../decorator.js';
 
 export enum ObcSpeedGaugeNeedleType {
@@ -18,14 +19,68 @@ export interface SpeedAdvice {
   hinted: boolean;
 }
 
+/**
+ * `<obc-speed-gauge>` — Radial speed gauge with needle and optional readout.
+ *
+ * `ObcSpeedGauge` renders a 225° arc gauge (−90° to +135°) that displays
+ * the current speed with a configurable full-length or bar needle. It layers
+ * an `<obc-watch>` base with a needle SVG overlay and an optional numeric
+ * readout field. It inherits a full setpoint property bundle from
+ * {@link SetpointMixin}, including auto at-setpoint detection, dual-marker
+ * adjustment preview, and deadband tuning.
+ *
+ * ## Features
+ *
+ * - **Two needle types**: `full` (pointer with center dot) and `bar`
+ *   (short indicator bar) via `needleType`.
+ * - **Bipolar range support**: When `minSpeed < 0`, negative tickmarks are
+ *   rendered with `main` tick style.
+ * - **Optional readout**: Enable `showReadout` to display an
+ *   `<obc-instrument-field>` with the current speed, unit (KN), and tag (STW).
+ * - **Setpoint via mixin**: `setpoint`, `newSetpoint`, `touching`,
+ *   `autoAtSetpointDeadband`, `setpointColorMode`, and all other setpoint
+ *   properties are provided by `SetpointMixin`; the setpoint angle and
+ *   at-setpoint state are computed and forwarded to `<obc-watch>`.
+ * - **Speed advice zones**: Pass an array of {@link SpeedAdvice} objects to
+ *   render caution/alert arcs; triggered state is derived from whether the
+ *   current speed falls inside the advice range.
+ *
+ * ## Usage Guidelines
+ *
+ * - Set `maxSpeed` (and optionally `minSpeed`) to define the gauge range.
+ * - Use `enhanced` to switch between regular and in-command color palettes.
+ * - Provide `tickmarkInterval` to control tickmark spacing.
+ * - Enable `labels` to show numeric labels at primary tickmarks.
+ * - Enable `showReadout` to display the numeric value below the gauge.
+ *
+ * ## Best Practices
+ *
+ * - Prefer `SetpointMixin` properties (`setpoint`, `touching`, etc.) over
+ *   any legacy aliases — the mixin is the single source of truth.
+ * - The needle overlay SVG uses viewBox `−224 −224 448 448` to align with
+ *   the `<obc-watch>` layer.
+ *
+ * ## Example
+ *
+ * ```html
+ * <obc-speed-gauge
+ *   speed="12.5"
+ *   maxSpeed="25"
+ *   needleType="full"
+ *   enhanced
+ *   labels
+ *   showReadout
+ *   tickmarkInterval="5"
+ *   setpoint="15"
+ * ></obc-speed-gauge>
+ * ```
+ *
+ * @element obc-speed-gauge
+ * @typedef {import('./speed-gauge.js').SpeedAdvice} SpeedAdvice
+ */
 @customElement('obc-speed-gauge')
-export class ObcSpeedGauge extends LitElement {
+export class ObcSpeedGauge extends SetpointMixin(LitElement) {
   @property({type: Number}) speed = 0;
-  @property({type: Number}) setpoint: number | undefined;
-  @property({type: Boolean}) atSetpoint: boolean = false;
-  @property({type: Boolean}) touching: boolean = false;
-  @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
-  @property({type: Number}) autoAtSetpointDeadband: number = 2;
   @property({type: Number}) maxSpeed = 100;
   @property({type: Number}) minSpeed = 0;
   @property({type: Boolean}) labels: boolean = false;
@@ -35,21 +90,6 @@ export class ObcSpeedGauge extends LitElement {
     ObcSpeedGaugeNeedleType.full;
   @property({type: Array, attribute: false}) speedAdvices: SpeedAdvice[] = [];
   @property({type: Boolean}) showReadout: boolean = false;
-
-  atSetpointCalc(): boolean {
-    if (this.setpoint === undefined) {
-      return false;
-    }
-
-    if (this.touching) {
-      return false;
-    }
-
-    if (!this.disableAutoAtSetpoint) {
-      return Math.abs(this.speed - this.setpoint) < this.autoAtSetpointDeadband;
-    }
-    return this.atSetpoint;
-  }
 
   getAngle(v: number): number {
     return (v / this.maxSpeed) * (180 + 45) - 90;
@@ -73,8 +113,15 @@ export class ObcSpeedGauge extends LitElement {
     return html`
       <div class="container">
         <obc-watch
+          .touching=${this.touching}
           .angleSetpoint=${setpointAngle}
-          .atAngleSetpoint=${this.atSetpointCalc()}
+          .newAngleSetpoint=${this.newSetpoint !== undefined
+            ? this.getAngle(this.newSetpoint)
+            : undefined}
+          .atAngleSetpoint=${this.computeAtSetpoint(this.speed)}
+          .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
+          .colorMode=${this.setpointColorMode}
+          .animateSetpoint=${this.animateSetpoint}
           .padding=${48}
           .tickmarks=${this.tickmarks}
           .advices=${this._advices}

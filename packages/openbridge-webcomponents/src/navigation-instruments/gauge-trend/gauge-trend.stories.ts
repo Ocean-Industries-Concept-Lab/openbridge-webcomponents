@@ -129,6 +129,10 @@ const meta: Meta = {
     setpoint: {
       control: {type: 'range', min: 0, max: 100, step: 1},
     },
+    newSetpoint: {
+      control: {type: 'range', min: 0, max: 100, step: 1},
+      description: 'Pending setpoint during adjustment (shows dual markers)',
+    },
     hasBar: {
       control: 'boolean',
     },
@@ -151,6 +155,9 @@ const meta: Meta = {
     chartFill: {
       control: 'boolean',
     },
+    touching: {
+      control: 'boolean',
+    },
   },
   args: {
     browserContainerWidth: 384,
@@ -168,6 +175,7 @@ const meta: Meta = {
     fillMin: 0,
     // Note: fillMax intentionally omitted - in 'fill' mode it auto-derives from value
     chartFill: true,
+    touching: false,
   },
   render: (args) => html`
     <obc-gauge-trend
@@ -180,6 +188,8 @@ const meta: Meta = {
       .maxValue=${args.maxValue}
       .value=${args.value}
       .setpoint=${args.setpoint}
+      .newSetpoint=${args.newSetpoint}
+      .touching=${args.touching}
       .hasBar=${args.hasBar}
       .hasScale=${args.hasScale}
       .hasAdvice=${args.hasAdvice}
@@ -221,6 +231,8 @@ export const GaugeTrend: Story = {
       .maxValue=${_args.maxValue ?? 100}
       .value=${_args.value}
       .setpoint=${_args.setpoint}
+      .newSetpoint=${_args.newSetpoint}
+      .touching=${_args.touching}
       .hasBar=${_args.hasBar}
       .hasScale=${_args.hasScale}
       .hasAdvice=${_args.hasAdvice}
@@ -259,6 +271,8 @@ export const GaugeTrendScaleReferenceSize: Story = {
       .maxValue=${_args.maxValue ?? 100}
       .value=${_args.value}
       .setpoint=${_args.setpoint}
+      .newSetpoint=${_args.newSetpoint}
+      .touching=${_args.touching}
       .hasBar=${_args.hasBar}
       .hasScale=${_args.hasScale}
       .hasAdvice=${_args.hasAdvice}
@@ -519,6 +533,8 @@ export const GaugeTrendWithoutBar: Story = {
       .maxValue=${_args.maxValue ?? 100}
       .value=${_args.value}
       .setpoint=${_args.setpoint}
+      .newSetpoint=${_args.newSetpoint}
+      .touching=${_args.touching}
       .hasBar=${_args.hasBar}
       .hasScale=${_args.hasScale}
       .hasAdvice=${_args.hasAdvice}
@@ -562,6 +578,8 @@ export const GaugeTrendWithAdvice: Story = {
       .maxValue=${_args.maxValue ?? 100}
       .value=${_args.value}
       .setpoint=${_args.setpoint}
+      .newSetpoint=${_args.newSetpoint}
+      .touching=${_args.touching}
       .hasBar=${_args.hasBar}
       .hasScale=${_args.hasScale}
       .hasAdvice=${_args.hasAdvice}
@@ -651,6 +669,8 @@ export const GaugeTrendCustomScaleRange: Story = {
       .maxValue=${_args.maxValue}
       .value=${_args.value}
       .setpoint=${_args.setpoint}
+      .newSetpoint=${_args.newSetpoint}
+      .touching=${_args.touching}
       .hasBar=${_args.hasBar}
       .hasScale=${_args.hasScale}
       .hasAdvice=${_args.hasAdvice}
@@ -870,6 +890,7 @@ export const FixedAspectRatioScalingComparison: StoryObj = {
             .maxValue=${args.maxValue ?? 100}
             .value=${args.value}
             .setpoint=${args.setpoint}
+            .touching=${args.touching}
             .hasBar=${true}
             .hasScale=${true}
             .primaryInterval=${10}

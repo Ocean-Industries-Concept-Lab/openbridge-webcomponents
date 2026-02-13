@@ -24,6 +24,7 @@ import {
   ExternalScaleOrientation,
   ExternalScaleSide,
 } from '../../building-blocks/external-scale/external-scale.js';
+import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 
 // Re-export shared enums for convenience
 export {
@@ -73,7 +74,7 @@ export {
  * - `width`: 384px
  * - `paddingLeft`/`paddingRight`: 32px (`CHART_DIMENSIONS.CANVAS_PADDING`)
  * - `barThickness`: 48px
- * - `tickThickness`: 28px
+ * - `tickThickness`: 24px
  * - `labelThickness`: 60px
  * - `borderRadius`: 8px (matches obc-component-size-medium)
  * - `scaleType`: regular
@@ -122,7 +123,9 @@ export {
  * @fires scale-dimensions-changed {CustomEvent} Fired when layout-affecting properties change, providing dimension info for parent chart integration.
  */
 @customElement('obc-gauge-horizontal')
-export class ObcGaugeHorizontal extends LitElement {
+export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
+  defaultDeadband: 1,
+}) {
   /** Minimum scale value */
   @property({type: Number}) minValue = 0;
   /** Maximum scale value */
@@ -185,7 +188,7 @@ export class ObcGaugeHorizontal extends LitElement {
   /** Hide numerical value labels at primary tickmarks */
   @property({type: Boolean}) hideLabels = false;
   private readonly barThickness = 48;
-  private readonly tickThickness = 28;
+  private readonly tickThickness = 24;
   private readonly labelThickness = 60;
 
   /** Array of values for main tickbars. When undefined, no main tickbars shown. When empty array [], defaults to [minValue, 0, maxValue]. */
@@ -228,18 +231,14 @@ export class ObcGaugeHorizontal extends LitElement {
   /** Current value (bar fill level) */
   @property({type: Number}) value?: number = undefined;
 
-  /** Setpoint/target value to display as indicator. When undefined, setpoint is off. */
-  @property({type: Number}) setpoint?: number = undefined;
-  /** Whether value is at setpoint (manual override when disableAutoAtSetpoint=true) */
-  @property({type: Boolean}) atSetpoint = false;
-  /** Disable automatic atSetpoint calculation based on value and deadband */
-  @property({type: Boolean}) disableAutoAtSetpoint = false;
-  /** Deadband for automatic atSetpoint detection (when disableAutoAtSetpoint=false) */
-  @property({type: Number}) autoAtSetpointDeadband = 1;
-  /** Deadband around zero for setpoint positioning */
-  @property({type: Number}) setpointAtZeroDeadband = 0.5;
   /** Instrument state: inCommand, active, loading, or off */
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
+
+  /**
+   * @deprecated Use `touching` (from SetpointMixin) instead.
+   * Kept for backward compatibility. Synced to `touching` in `willUpdate()`.
+   */
+  @property({type: Boolean}) focused = false;
 
   private readonly advicePosition: AdvicePosition = AdvicePosition.inner;
   /** Advice/alert overlays with min, max, type, and hinted state. When undefined or empty, no advice shown. */
@@ -288,11 +287,16 @@ export class ObcGaugeHorizontal extends LitElement {
       fillMax: this.fillMax,
       value: this.value,
       setpoint: this.setpoint,
+      newSetpoint: this.newSetpoint,
       atSetpoint: this.atSetpoint,
       disableAutoAtSetpoint: this.disableAutoAtSetpoint,
       autoAtSetpointDeadband: this.autoAtSetpointDeadband,
       setpointAtZeroDeadband: this.setpointAtZeroDeadband,
+      animateSetpoint: this.animateSetpoint,
+      departingNewSetpoint: this.departingNewSetpoint,
       state: this.state,
+      touching: this.touching,
+      colorMode: this.setpointColorMode,
       advicePosition: this.advicePosition,
       advices: this.advices as ExternalScaleAdvice[],
       fixedAspectRatio: this.fixedAspectRatio,
@@ -330,6 +334,16 @@ export class ObcGaugeHorizontal extends LitElement {
         ${parts.currentValueDot} ${parts.setpoint}
       </svg>
     `;
+  }
+
+  override willUpdate(changed: PropertyValues): void {
+    super.willUpdate(changed);
+
+    // Sync deprecated alias to mixin property
+    // Only sync if the alias was set and the mixin property was NOT also set.
+    if (changed.has('focused') && !changed.has('touching')) {
+      this.touching = this.focused;
+    }
   }
 
   override updated(changed: PropertyValues) {

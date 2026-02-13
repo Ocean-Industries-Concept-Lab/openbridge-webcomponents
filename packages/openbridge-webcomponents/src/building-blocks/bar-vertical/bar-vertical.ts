@@ -31,6 +31,8 @@ import {
   ExternalScaleOrientation,
   ExternalScaleSide,
 } from '../external-scale/external-scale.js';
+import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
+import {SetpointColorMode} from '../../svghelpers/setpoint.js';
 
 // Re-export shared enums for convenience
 export {
@@ -42,6 +44,7 @@ export {
   InstrumentState,
   BarContainerStyle,
   ExternalScaleSide,
+  SetpointColorMode,
 };
 
 /**
@@ -56,7 +59,9 @@ export {
  * For renderer documentation see: **Building Blocks/External Scale**.
  */
 @customElement('obc-bar-vertical')
-export class ObcBarVertical extends LitElement {
+export class ObcBarVertical extends SetpointMixin(LitElement, {
+  defaultDeadband: 1,
+}) {
   /** Minimum scale value (manual mode) */
   @property({type: Number}) minValue = 0;
   /** Maximum scale value (manual mode) */
@@ -146,7 +151,7 @@ export class ObcBarVertical extends LitElement {
   /** Bar/fill thickness in pixels */
   @property({type: Number}) barThickness = 24;
   /** Tickmark band thickness in pixels. */
-  @property({type: Number}) tickThickness = 28;
+  @property({type: Number}) tickThickness = 24;
   /** Label band thickness in pixels. */
   @property({type: Number}) labelThickness = 60;
 
@@ -223,20 +228,6 @@ export class ObcBarVertical extends LitElement {
   /** Current value (bar fill level) */
   @property({type: Number}) value?: number = undefined;
 
-  // Setpoint
-  /**
-   * Setpoint/input value to display as indicator.
-   * When undefined, no setpoint shown.
-   */
-  @property({type: Number}) setpoint?: number = undefined;
-  /** Whether value is at setpoint (manual override when disableAutoAtSetpoint=true) */
-  @property({type: Boolean}) atSetpoint = false;
-  /** Disable automatic atSetpoint calculation based on value and deadband */
-  @property({type: Boolean}) disableAutoAtSetpoint = false;
-  /** Deadband for automatic atSetpoint detection (when disableAutoAtSetpoint=false) */
-  @property({type: Number}) autoAtSetpointDeadband = 1;
-  /** Deadband around zero for setpoint positioning */
-  @property({type: Number}) setpointAtZeroDeadband = 0.5;
   /** Instrument state (affects colors and some marker behavior) */
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
 
@@ -312,16 +303,21 @@ export class ObcBarVertical extends LitElement {
       frameStyle: this.frameStyle,
       borderRadiusPosition: this.borderRadiusPosition,
       enhanced: this.enhanced,
+      colorMode: this.setpointColorMode,
       fillMode: this.fillMode,
       fillMin: this.fillMin,
       fillMax: this.fillMax,
       value: this.value,
       setpoint: this.setpoint,
+      newSetpoint: this.newSetpoint,
       atSetpoint: this.atSetpoint,
       disableAutoAtSetpoint: this.disableAutoAtSetpoint,
       autoAtSetpointDeadband: this.autoAtSetpointDeadband,
       setpointAtZeroDeadband: this.setpointAtZeroDeadband,
+      animateSetpoint: this.animateSetpoint,
+      departingNewSetpoint: this.departingNewSetpoint,
       state: this.state,
+      touching: this.touching,
       advicePosition: this.advicePosition,
       advices: this.advices as ExternalScaleAdvice[],
       fixedAspectRatio: this.fixedAspectRatio,

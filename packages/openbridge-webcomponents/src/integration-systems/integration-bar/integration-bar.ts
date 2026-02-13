@@ -29,6 +29,7 @@ export class ObcIntegrationBar extends LitElement {
   @property({type: Boolean}) dimmingButtonActivated = false;
   @property({type: Boolean}) showSystemButton = false;
   @property({type: Boolean}) systemButtonActivated = false;
+  @property({type: Boolean}) fleetButtonSelected = false;
 
   override render() {
     return html`
@@ -36,6 +37,7 @@ export class ObcIntegrationBar extends LitElement {
         <div class="left-side">
           <obc-integration-tabs
             class="fleet-btn"
+            .selected=${this.fleetButtonSelected}
             @click=${() =>
               this.dispatchEvent(new CustomEvent('fleet-button-click'))}
             >Fleet</obc-integration-tabs
