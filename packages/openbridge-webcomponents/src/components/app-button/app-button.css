@@ -87,7 +87,7 @@
 
     .label {
       @mixin font-label-active;
-      color: rgb(240, 240, 240);
+      color: var(--integration-element-active-color);
     }
   }
 }
