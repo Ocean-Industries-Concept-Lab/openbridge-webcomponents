@@ -6,6 +6,8 @@ import {arrow, ArrowStyle} from './arrow.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {VesselImage, VesselImageSize, WatchCircleType} from '../watch/watch.js';
+import {SetpointBundle} from '../../svghelpers/setpoint-bundle.js';
+import type {SetpointColorMode} from '../../svghelpers/setpoint.js';
 import {rot} from './rot.js';
 import {RateOfTurnController} from '../rate-of-turn/rate-of-turn.controller.js';
 import {customElement} from '../../decorator.js';
@@ -20,7 +22,7 @@ export enum CompassDirection {
  *
  * @property {number} heading - The current heading of the vessel in degrees.
  * @property {number} courseOverGround - The current course over ground in degrees.
- * @property {number | null} headingSetPoint - The set point for the heading in degrees.
+ * @property {number | null} headingSetpoint - The set point for the heading in degrees.
  * @property {boolean} atHeadingSetpoint - Indicates if the vessel is at the heading set point.
  * @property {boolean} disableAutoAtHeadingSetpoint - Disables automatic at heading set point calculation.
  * @property {number} autoAtHeadingSetpointDeadband - The deadband for the heading set point in degrees.
@@ -40,10 +42,17 @@ export enum CompassDirection {
 export class ObcCompass extends LitElement {
   @property({type: Number}) heading = 0;
   @property({type: Number}) courseOverGround = 0;
-  @property({type: Number}) headingSetPoint: number | null = null;
+
+  @property({type: Number}) headingSetpoint: number | null = null;
+  @property({type: Number}) newHeadingSetpoint: number | undefined;
   @property({type: Boolean}) atHeadingSetpoint: boolean = false;
+  @property({type: Number}) headingSetpointAtZeroDeadband: number = 0.5;
+  @property({type: String}) headingSetpointColorMode:
+    | SetpointColorMode
+    | undefined;
   @property({type: Boolean}) disableAutoAtHeadingSetpoint: boolean = false;
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
+  @property({type: Boolean}) animateSetpoint: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
   @property({type: Number}) windSpeed: number | null = null;
@@ -63,6 +72,31 @@ export class ObcCompass extends LitElement {
     ) {
       this.rateOfTurnController.rotationsPerMinute = this.rotationsPerMinute;
     }
+  }
+
+  private _headingSp = new SetpointBundle({
+    angularWraparound: true,
+    onAnimationEnd: () => this.requestUpdate(),
+  });
+
+  override willUpdate(changed: PropertyValues): void {
+    super.willUpdate(changed);
+    this._headingSp.sync({
+      setpoint: this.headingSetpoint ?? undefined,
+      newSetpoint: this.newHeadingSetpoint,
+      atSetpoint: this.atHeadingSetpoint,
+      touching: this.touching,
+      disableAutoAtSetpoint: this.disableAutoAtHeadingSetpoint,
+      autoAtSetpointDeadband: this.autoAtHeadingSetpointDeadband,
+      setpointAtZeroDeadband: this.headingSetpointAtZeroDeadband,
+      setpointColorMode: this.headingSetpointColorMode,
+      animateSetpoint: this.animateSetpoint,
+    });
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this._headingSp.dispose();
   }
 
   @query('#rot')
@@ -134,14 +168,19 @@ export class ObcCompass extends LitElement {
     return html`
       <div class="container">
         <obc-watch
+          .touching=${this.touching}
           .padding=${padding}
           .advices=${this.angleAdviceRaw}
           .tickmarks=${tickmarks}
           .watchCircleType=${WatchCircleType.triple}
           .labelFrameEnabled=${true}
           .crosshairEnabled=${true}
-          .angleSetpoint=${this.headingSetPoint ?? undefined}
-          .atAngleSetpoint=${this.atHeadingSetpointCalc()}
+          .angleSetpoint=${this.headingSetpoint ?? undefined}
+          .newAngleSetpoint=${this.newHeadingSetpoint}
+          .atAngleSetpoint=${this._headingSp.computeAtSetpoint(this.heading)}
+          .angleSetpointAtZeroDeadband=${this.headingSetpointAtZeroDeadband}
+          .colorMode=${this.headingSetpointColorMode}
+          .animateSetpoint=${this.animateSetpoint}
           .vessels=${[
             {
               size: VesselImageSize.medium,
@@ -166,23 +205,6 @@ export class ObcCompass extends LitElement {
         </svg>
       </div>
     `;
-  }
-
-  atHeadingSetpointCalc(): boolean {
-    if (this.headingSetPoint === null) {
-      return false;
-    }
-
-    if (this.touching) {
-      return false;
-    }
-
-    if (!this.disableAutoAtHeadingSetpoint) {
-      const diff = Math.abs(this.heading - this.headingSetPoint);
-      const angularDistance = diff > 180 ? 360 - diff : diff;
-      return angularDistance < this.autoAtHeadingSetpointDeadband;
-    }
-    return this.atHeadingSetpoint;
   }
 
   static override styles = css`

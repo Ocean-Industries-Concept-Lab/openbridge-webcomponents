@@ -7,6 +7,8 @@ import {
   ScaleType,
   FillMode,
   AdvicePosition,
+  ExternalScaleOrientation,
+  ExternalScaleSide,
 } from './external-scale.js';
 import {
   InstrumentState,
@@ -18,14 +20,11 @@ import {AdviceType} from '../../navigation-instruments/watch/advice.js';
 import '../bar-vertical/bar-vertical.js';
 import type {ObcBarVertical} from '../bar-vertical/bar-vertical.js';
 
-type VerticalSide = 'left' | 'right';
-type HorizontalSide = 'top' | 'bottom';
-
 type ExternalScaleStoryArgs = Omit<ExternalScaleConfig, 'side'> & {
   /** Used when orientation==='vertical'. */
-  sideVertical: VerticalSide;
+  sideVertical: ExternalScaleSide.left | ExternalScaleSide.right;
   /** Used when orientation==='horizontal'. */
-  sideHorizontal: HorizontalSide;
+  sideHorizontal: ExternalScaleSide.top | ExternalScaleSide.bottom;
 };
 
 const EXTERNAL_SCALE_STORY_TAG = 'obc-external-scale-story';
@@ -84,6 +83,7 @@ if (!customElements.get(EXTERNAL_SCALE_STORY_TAG)) {
           tickThickness: config.tickThickness,
           labelThickness: config.labelThickness,
           length: config.length,
+          scaleType: config.scaleType,
         });
 
         const parts = renderExternalScale(config);
@@ -102,7 +102,7 @@ if (!customElements.get(EXTERNAL_SCALE_STORY_TAG)) {
           >
             ${parts.barContainer} ${parts.barFill} ${parts.scaleBackground}
             ${parts.tickmarks} ${parts.labels} ${parts.adviceOverlays}
-            ${parts.setpoint}
+            ${parts.currentValueDot} ${parts.setpoint}
           </svg>`;
         }
 
@@ -119,7 +119,7 @@ if (!customElements.get(EXTERNAL_SCALE_STORY_TAG)) {
         >
           ${parts.barContainer} ${parts.barFill} ${parts.scaleBackground}
           ${parts.tickmarks} ${parts.labels} ${parts.adviceOverlays}
-          ${parts.setpoint}
+          ${parts.currentValueDot} ${parts.setpoint}
         </svg>`;
       }
 
@@ -262,7 +262,7 @@ const config = {
   labels: true,
   scaleBackground: false,
   barThickness: 24,
-  tickThickness: 28,
+  tickThickness: 24,
   labelThickness: 60,
   mainTickbars: [],
   primaryTickbarsInterval: 20,
@@ -450,6 +450,11 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
       description: 'Current value used for fill and/or marker rendering.',
       control: {type: 'number'},
     },
+    newSetpoint: {
+      description:
+        'New setpoint value being adjusted. When defined, the original setpoint is dimmed and this new marker is shown in focus state.',
+      control: {type: 'number'},
+    },
     atSetpoint: {
       description: 'Manual override used when disableAutoAtSetpoint=true.',
       control: {type: 'boolean'},
@@ -484,11 +489,16 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
       description: 'Array of advice ranges (min/max/type/hinted).',
       control: {type: 'object'},
     },
+    highlightCurrentValue: {
+      description:
+        'When true, displays a dot indicator at the current value position in the scale band.',
+      control: {type: 'boolean'},
+    },
   },
   args: {
-    orientation: 'vertical',
-    sideVertical: 'right',
-    sideHorizontal: 'bottom',
+    orientation: ExternalScaleOrientation.vertical,
+    sideVertical: ExternalScaleSide.right,
+    sideHorizontal: ExternalScaleSide.bottom,
     length: 320,
     paddingStart: 32,
     paddingEnd: 32,
@@ -500,7 +510,7 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
     scaleBackground: false,
     borderRadiusPosition: undefined,
     barThickness: 24,
-    tickThickness: 28,
+    tickThickness: 24,
     labelThickness: 60,
     mainTickbars: [],
     primaryTickbarsInterval: 20,
@@ -514,6 +524,7 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
     fillMax: 40,
     value: 40,
     setpoint: 40,
+    newSetpoint: undefined,
     atSetpoint: false,
     disableAutoAtSetpoint: false,
     autoAtSetpointDeadband: 1,
@@ -521,6 +532,7 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
     state: InstrumentState.inCommand,
     advicePosition: AdvicePosition.inner,
     advices: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
+    highlightCurrentValue: false,
   },
 } satisfies Meta<ExternalScaleStoryArgs>;
 
@@ -544,9 +556,9 @@ function renderScale(config: ExternalScaleConfig) {
 export const VerticalRightBasic: Story = {
   name: 'Vertical (right side, hasBar, advices, setpoint)',
   args: {
-    orientation: 'vertical',
-    sideVertical: 'right',
-    sideHorizontal: 'bottom',
+    orientation: ExternalScaleOrientation.vertical,
+    sideVertical: ExternalScaleSide.right,
+    sideHorizontal: ExternalScaleSide.bottom,
     length: 320,
     paddingStart: 32,
     paddingEnd: 32,
@@ -556,7 +568,7 @@ export const VerticalRightBasic: Story = {
     labels: true,
     hasBar: true,
     barThickness: 24,
-    tickThickness: 28,
+    tickThickness: 24,
     labelThickness: 60,
     mainTickbars: [],
     primaryTickbarsInterval: 20,
@@ -581,12 +593,53 @@ export const VerticalRightBasic: Story = {
   render: (args) => renderScale(toConfig(args)),
 };
 
+export const VerticalWithCurrentValueDot: Story = {
+  name: 'Vertical (with highlightCurrentValue dot)',
+  args: {
+    orientation: ExternalScaleOrientation.vertical,
+    sideVertical: ExternalScaleSide.right,
+    sideHorizontal: ExternalScaleSide.bottom,
+    length: 320,
+    paddingStart: 32,
+    paddingEnd: 32,
+    minValue: 0,
+    maxValue: 100,
+    hasScale: true,
+    labels: true,
+    hasBar: false,
+    barThickness: 24,
+    tickThickness: 24,
+    labelThickness: 60,
+    mainTickbars: [],
+    primaryTickbarsInterval: 20,
+    secondaryTickbarsInterval: 10,
+    tertiaryTickbarsInterval: 2,
+    scaleType: ScaleType.regular,
+    frameStyle: FrameStyle.regular,
+    enhanced: true,
+    fillMode: FillMode.fill,
+    fillMin: 0,
+    fillMax: 40,
+    value: 40,
+    setpoint: 50,
+    atSetpoint: false,
+    disableAutoAtSetpoint: false,
+    autoAtSetpointDeadband: 1,
+    setpointAtZeroDeadband: 0.5,
+    state: InstrumentState.inCommand,
+    advicePosition: AdvicePosition.inner,
+    advices: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
+    highlightCurrentValue: true,
+  },
+  render: (args) => renderScale(toConfig(args)),
+};
+
 export const VerticalLeftTint: Story = {
   name: 'Vertical (left side, hasBar, advices, setpoint, fillMode:tint)',
   args: {
-    orientation: 'vertical',
-    sideVertical: 'left',
-    sideHorizontal: 'bottom',
+    orientation: ExternalScaleOrientation.vertical,
+    sideVertical: ExternalScaleSide.left,
+    sideHorizontal: ExternalScaleSide.bottom,
     length: 370,
     paddingStart: 32,
     paddingEnd: 32,
@@ -596,7 +649,7 @@ export const VerticalLeftTint: Story = {
     labels: true,
     hasBar: true,
     barThickness: 24,
-    tickThickness: 28,
+    tickThickness: 24,
     labelThickness: 60,
     mainTickbars: [],
     primaryTickbarsInterval: 50,
@@ -627,9 +680,9 @@ export const VerticalLeftTint: Story = {
 export const HorizontalBottomBasic: Story = {
   name: 'Horizontal (bottom side, hasBar, advices, setpoint)',
   args: {
-    orientation: 'horizontal',
-    sideVertical: 'right',
-    sideHorizontal: 'bottom',
+    orientation: ExternalScaleOrientation.horizontal,
+    sideVertical: ExternalScaleSide.right,
+    sideHorizontal: ExternalScaleSide.bottom,
     length: 480,
     paddingStart: 32,
     paddingEnd: 32,
@@ -639,7 +692,7 @@ export const HorizontalBottomBasic: Story = {
     labels: true,
     hasBar: true,
     barThickness: 24,
-    tickThickness: 28,
+    tickThickness: 24,
     labelThickness: 60,
     mainTickbars: [],
     primaryTickbarsInterval: 20,
@@ -667,9 +720,9 @@ export const HorizontalBottomBasic: Story = {
 export const HorizontalTopTint: Story = {
   name: 'Horizontal (top side, hasBar, advices, setpoint, fillMode:tint)',
   args: {
-    orientation: 'horizontal',
-    sideVertical: 'right',
-    sideHorizontal: 'top',
+    orientation: ExternalScaleOrientation.horizontal,
+    sideVertical: ExternalScaleSide.right,
+    sideHorizontal: ExternalScaleSide.top,
     length: 480,
     paddingStart: 32,
     paddingEnd: 32,
@@ -679,7 +732,7 @@ export const HorizontalTopTint: Story = {
     labels: true,
     hasBar: true,
     barThickness: 24,
-    tickThickness: 28,
+    tickThickness: 24,
     labelThickness: 60,
     mainTickbars: [],
     primaryTickbarsInterval: 50,
@@ -710,9 +763,9 @@ export const HorizontalTopTint: Story = {
 export const VerticalRightScaleBackground: Story = {
   name: 'Vertical (right side, scaleBackground=true)',
   args: {
-    orientation: 'vertical',
-    sideVertical: 'right',
-    sideHorizontal: 'bottom',
+    orientation: ExternalScaleOrientation.vertical,
+    sideVertical: ExternalScaleSide.right,
+    sideHorizontal: ExternalScaleSide.bottom,
     length: 320,
     paddingStart: 32,
     paddingEnd: 32,
@@ -724,7 +777,7 @@ export const VerticalRightScaleBackground: Story = {
     scaleBackground: true,
     borderRadiusPosition: BorderRadiusPosition.innerFirstChild,
     barThickness: 24,
-    tickThickness: 28,
+    tickThickness: 24,
     labelThickness: 60,
     mainTickbars: [],
     primaryTickbarsInterval: 20,

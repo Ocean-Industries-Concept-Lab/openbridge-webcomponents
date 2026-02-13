@@ -4,15 +4,13 @@
 }
 
 .action-button-container {
-  position: absolute;
-  position-anchor: --action;
-  anchor-name: --action-button;
-  top: anchor(top);
-  right: anchor(right);
-  min-width: var(--action-width, 0);
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: var(--app-components-message-menu-item-label-spacing);
+  min-width: var(--action-width, 0);
+  height: var(--ui-components-button-touch-target-size);
 }
 
 .wrapper {
@@ -21,13 +19,15 @@
   display: flex;
   container-type: inline-size;
   min-height: var(--app-components-notification-menu-item-touch-target);
-  align-items: center;
+  align-items: flex-start;
   padding: var(--app-components-message-menu-item-padding-vertical-4)
+    var(--app-components-message-menu-item-padding-horizontal)
+    var(--app-components-message-menu-item-padding-vertical-4)
     var(--app-components-message-menu-item-padding-horizontal);
   appearance: none;
   gap: var(--app-components-message-menu-item-label-spacing);
-  border: none !important;
-  border-bottom: 1px solid var(--border-divider-color) !important;
+  border: none;
+  border-bottom: 1px solid var(--border-divider-color);
 
   .content-container {
     display: flex;
@@ -35,16 +35,18 @@
     min-width: 0;
     gap: var(--app-components-message-menu-item-label-spacing);
     padding: var(--app-components-message-menu-item-padding-vertical-12) 0px;
-
     align-items: center;
   }
 
   .text-container {
     flex-grow: 1;
+    min-width: 0;
     display: grid;
     column-gap: var(--app-components-message-menu-item-label-spacing);
     grid-template-areas: "title description date chevron";
-    grid-template-columns: minmax(0, min-content) 1fr min-content min-content;
+    grid-template-columns:
+      minmax(0, min-content) minmax(0, 1fr)
+      min-content min-content;
     text-align: left;
   }
 
@@ -64,6 +66,7 @@
   &.active-size-single-line,
   &.active-size-double-line {
     .description-container {
+      min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -96,6 +99,7 @@
     grid-area: chevron;
     width: var(--app-components-message-menu-item-icon-size-regular);
     height: var(--app-components-message-menu-item-icon-size-regular);
+    color: var(--on-flat-neutral-color);
   }
 
   .icon-container {
@@ -114,6 +118,7 @@
   .icon {
     width: var(--app-components-message-menu-item-icon-size-regular);
     height: var(--app-components-message-menu-item-icon-size-regular);
+    color: var(--on-flat-neutral-color);
   }
 
   &.enhanced-icon .icon {
@@ -148,24 +153,61 @@
       grid-template-areas: "title date" "description description";
     }
   }
+}
 
-  .action-container {
-    align-self: flex-start;
-    min-width: var(--action-width, 0);
-    anchor-name: --action;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: var(--ui-components-button-touch-target-size);
+.trailing-icon {
+  width: var(
+    --app-components-alert-components-general-notification-item-icon-size-large
+  );
+  height: var(
+    --app-components-alert-components-general-notification-item-icon-size-large
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--on-flat-neutral-color);
+}
+
+/* Vertical stack direction */
+.wrapper.stack-vertical {
+  flex-direction: column;
+  align-items: stretch;
+  padding: var(--app-components-message-menu-item-padding-vertical-8)
+    var(--app-components-message-menu-item-padding-horizontal)
+    var(--app-components-message-menu-item-padding-vertical-8)
+    var(--app-components-message-menu-item-padding-horizontal);
+
+  .content-container {
+    width: 100%;
   }
+
+  .action-button-container {
+    width: 100%;
+    height: auto;
+
+    obc-button {
+      flex: 1;
+    }
+  }
+}
+
+/* Vertical stack with enhanced icons */
+.wrapper.stack-vertical.enhanced-icon {
+  padding: var(--app-components-message-menu-item-padding-vertical-4)
+    var(--app-components-message-menu-item-padding-horizontal)
+    var(--app-components-message-menu-item-padding-vertical-8)
+    var(--app-components-message-menu-item-padding-horizontal);
 }
 
 :host:has(.action-button-container:hover) .wrapper {
   background-color: var(--flat-hover-background-color);
 }
 
-.enhanced-icon.wrapper {
+/* Enhanced icon horizontal (default) */
+.enhanced-icon.wrapper:not(.stack-vertical) {
   padding: var(--app-components-message-menu-item-padding-vertical-8)
+    var(--app-components-message-menu-item-padding-horizontal)
+    var(--app-components-message-menu-item-padding-vertical-8)
     var(--app-components-message-menu-item-padding-horizontal);
 
   .content-container {

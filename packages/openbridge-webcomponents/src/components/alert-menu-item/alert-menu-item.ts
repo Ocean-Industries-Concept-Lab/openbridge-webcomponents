@@ -46,20 +46,11 @@ export enum ObcAlertMenuItemStatus {
  * - Only show the "ACK" action for alerts that require acknowledgment.
  * - Use the `shelved` property to indicate alerts that are temporarily deferred.
  *
- * **TODO(designer):** Clarify recommended usage for each status variant and when to use "shelved" vs. other states.
- *
  * ### Slots
  * | Slot Name     | Renders When...                | Purpose                                              |
  * |---------------|-------------------------------|------------------------------------------------------|
  * | alert-icon    | Always                        | Main alert icon representing the alert type.         |
  * | icon          | If `hasIcon` is true          | Secondary icon (e.g., system/source of alert).       |
- * | title         | Always                        | Title or summary of the alert.                       |
- * | description   | Always                        | Detailed description of the alert.                   |
- * | day           | If `hasDay` is true           | Day label for the alert occurrence.                  |
- * | time          | If `hasTime` is true          | Time label for the alert occurrence.                 |
- * | action-label  | If `acknowledged===false`     | Label for the action button ("ACK").                 |
- * | action-icon   | For "no-ack-alarm"/"warning"  | Special icon for unacknowledged alarm/warning.       |
- * | tertiary-icon | If `shelved` is true          | Shelved indicator icon.                              |
  *
  * ### Events
  * - **ack-click** – Fired when the ACK action button is clicked.
@@ -74,24 +65,20 @@ export enum ObcAlertMenuItemStatus {
  *
  * **Example:**
  * ```
- * <obc-alert-menu-item active hasTime hasIcon>
+ * <obc-alert-menu-item
+ *   status="unacknowledged"
+ *   title="Engine Temperature High"
+ *   description="Port main engine temperature exceeds normal operating range"
+ *   time="14:30"
+ *   hasIcon
+ * >
  *   <obc-alert-icon slot="alert-icon" type="alarm" active></obc-alert-icon>
  *   <obi-engine slot="icon"></obi-engine>
- *   <span slot="title">Engine Temperature High</span>
- *   <span slot="description">Port main engine temperature exceeds normal operating range</span>
- *   <span slot="time">14:30</span>
  * </obc-alert-menu-item>
  * ```
  *
  * @slot alert-icon - The main alert icon representing the alert type.
  * @slot icon - Optional secondary icon (e.g., source/system).
- * @slot title - The alert's title or summary.
- * @slot description - Detailed alert description.
- * @slot day - Day label (if `hasDay` is true).
- * @slot time - Time label (if `hasTime` is true).
- * @slot action-label - Label for the action button (shown for unacknowledged status).
- * @slot action-icon - Special icon for no-ack alarm/warning status.
- * @slot tertiary-icon - Shelved indicator icon (if `shelved` is true).
  *
  * @fires ack-click {CustomEvent<void>} Fired when the ACK action button is clicked.
  * @fires item-click {CustomEvent<void>} Fired when the alert menu item is clicked.
@@ -111,16 +98,24 @@ export class ObcAlertMenuItem extends LitElement {
   @property({type: Boolean, reflect: true}) shelved = false;
 
   /**
-   * Whether to display the day label for the alert.
-   * When true, the `day` slot is rendered.
+   * The title of the alert.
    */
-  @property({type: Boolean}) hasDay = false;
+  @property({type: String}) override title = '';
 
   /**
-   * Whether to display the time label for the alert.
-   * When true, the `time` slot is rendered.
+   * The description of the alert.
    */
-  @property({type: Boolean}) hasTime = false;
+  @property({type: String}) description = '';
+
+  /**
+   * The day label for the alert (e.g., "Yesterday").
+   */
+  @property({type: String}) day = '';
+
+  /**
+   * The time label for the alert (e.g., "14:30").
+   */
+  @property({type: String}) time = '';
 
   /**
    * The current status of the alert item.
@@ -151,6 +146,15 @@ export class ObcAlertMenuItem extends LitElement {
    */
   @property({type: Boolean}) animateIntro = false;
 
+  private get primaryActionLabel() {
+    return this.status === ObcAlertMenuItemStatus.Unacknowledged ? 'ACK' : '';
+  }
+
+  private get hasTrailingIcon() {
+    // True when we need the action container but don't have an ACK button
+    return this.status !== ObcAlertMenuItemStatus.Unacknowledged;
+  }
+
   private handleMessageClick() {
     this.dispatchEvent(new CustomEvent('item-click'));
     this.open = !this.open;
@@ -163,53 +167,43 @@ export class ObcAlertMenuItem extends LitElement {
   override render() {
     return html`
       <obc-message-menu-item
-        .hasActionButton=${this.status ===
-        ObcAlertMenuItemStatus.Unacknowledged}
+        .title=${this.title}
+        .description=${this.description}
+        .day=${this.day}
+        .time=${this.time}
+        .primaryActionLabel=${this.primaryActionLabel}
         .size=${this.size}
         .open=${this.open}
         .hasSecondaryIcon=${this.hasIcon}
-        .hasTertiaryIcon=${this.shelved}
+        .isShelved=${this.shelved}
+        .hasTrailingIcon=${this.hasTrailingIcon}
         enhancedIcon
+        hasPrimaryIcon
         @message-click=${this.handleMessageClick}
-        @action-click=${this.handleActionClick}
-        .animateIntro=${this.animateIntro}
-        .hasDateOrTime=${this.hasDay || this.hasTime}
+        @primary-action-click=${this.handleActionClick}
       >
-        ${this.shelved
-          ? html`<obi-alerts-shelf slot="tertiary-icon"></obi-alerts-shelf>`
-          : nothing}
         <slot name="alert-icon" slot="primary-icon"></slot>
+        <slot name="title" slot="title">${this.title}</slot>
+        <slot name="description" slot="description">${this.description}</slot>
         ${this.hasIcon
           ? html`<slot name="icon" slot="secondary-icon"></slot>`
           : nothing}
-        <slot name="title" slot="title"></slot>
-        <slot name="description" slot="description"></slot>
-        ${this.hasDay ? html`<slot name="day" slot="day"></slot>` : nothing}
-        ${this.hasTime ? html`<slot name="time" slot="time"></slot>` : nothing}
         ${choose(this.status, [
-          [
-            ObcAlertMenuItemStatus.Unacknowledged,
-            () =>
-              html`<div
-                slot="action-label"
-                data-testid="ack-all-visible-button"
-              >
-                ACK
-              </div>`,
-          ],
           [
             ObcAlertMenuItemStatus.NoAckAlarm,
             () =>
-              html`<div slot="action-icon">
-                <obi-alarm-noack-iec useCssColor></obi-alarm-noack-iec>
-              </div>`,
+              html`<obi-alarm-noack-iec
+                slot="trailing-icon"
+                useCssColor
+              ></obi-alarm-noack-iec>`,
           ],
           [
             ObcAlertMenuItemStatus.NoAckWarning,
             () =>
-              html`<div slot="action-icon">
-                <obi-warning-noack-iec useCssColor></obi-warning-noack-iec>
-              </div>`,
+              html`<obi-warning-noack-iec
+                slot="trailing-icon"
+                useCssColor
+              ></obi-warning-noack-iec>`,
           ],
         ])}
       </obc-message-menu-item>

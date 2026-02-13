@@ -8,46 +8,76 @@
   }
 }
 
-.outer-wrapper {
+.point-wrapper {
   width: 0;
   height: 0;
 }
 
-.wrapper {
-  position: absolute;
-
+.positioning-point {
   &.label-bottom {
-    top: calc(var(--automation-components-button-touch-target-size) / -2 - 1px);
+    top: calc(var(--automation-components-button-touch-target-size) / -2);
     transform: translateX(-50%);
-    padding: 0 4px 4px 4px;
   }
 
   &.label-right {
-    left: calc(
-      var(--automation-components-button-touch-target-size) / -2 - 1px
-    );
+    left: calc(var(--automation-components-button-touch-target-size) / -2);
     transform: translateY(-50%);
-    padding-right: 4px;
   }
 
   &.label-top {
-    bottom: calc(
-      var(--automation-components-button-touch-target-size) / -2 - 1px
-    );
+    bottom: calc(var(--automation-components-button-touch-target-size) / -2);
     transform: translateX(-50%);
-    padding: 4px 4px 0 4px;
   }
 
   &.label-left {
-    right: calc(
-      var(--automation-components-button-touch-target-size) / -2 - 1px
-    );
+    right: calc(var(--automation-components-button-touch-target-size) / -2);
     transform: translateY(-50%);
-    padding-left: 4px;
+  }
+}
+
+.symbol-wrapper {
+  position: relative;
+  width: var(--automation-components-button-touch-target-size);
+  height: var(--automation-components-button-touch-target-size);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+
+  &.label-bottom {
+    align-items: flex-start;
   }
 
-  &.label-empty {
-    padding: 0;
+  &.label-top {
+    align-items: flex-end;
+  }
+
+  &.label-right {
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  &.label-left {
+    align-items: center;
+    justify-content: flex-end;
+  }
+}
+
+.wrapper {
+  padding: var(--automation-components-button-new-state-container-padding);
+
+  &.positioning-point {
+    position: absolute;
+  }
+
+  .badge-spacer {
+    width: 0;
+    height: 0;
+    transition: all 0.1s ease-in-out;
+  }
+
+  &.has-badge-spacer .badge-spacer {
+    width: var(--automation-components-button-new-spacer-size);
+    height: var(--automation-components-button-new-spacer-size);
   }
 
   display: flex;
@@ -62,6 +92,7 @@
   border-radius: 6px;
 
   @mixin style style=flat;
+  border-width: 0;
 
   &.label-top {
     flex-direction: column-reverse;
@@ -124,8 +155,8 @@
   border-radius: 100%;
   border-width: 1px;
   border-style: solid;
-  width: var(--automation-components-button-visual-target);
-  height: var(--automation-components-button-visual-target);
+  width: var(--automation-components-button-new-visual-target-round);
+  height: var(--automation-components-button-new-visual-target-round);
 
   .icon-primary {
     width: var(--automation-components-button-icon-size);
@@ -145,7 +176,9 @@
   }
 
   .variant-square & {
-    border-radius: var(--automation-components-button-border-radius-square);
+    border-radius: var(--automation-components-button-new-border-radius);
+    width: var(--automation-components-button-new-visual-target);
+    height: var(--automation-components-button-new-visual-target);
   }
 
   .variant-flat & {

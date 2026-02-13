@@ -106,6 +106,13 @@ export const LINE_GRAPH_GRID_CONFIG = {
 } as const;
 
 /**
+ * Chart area background color for instrument mode
+ * Used in gauge-trend and similar composite instruments
+ */
+export const CHART_AREA_BACKGROUND_COLOR_VAR =
+  '--instrument-frame-primary-color' as const;
+
+/**
  * Dimensions for rectangular charts (line, bar, etc.)
  */
 export const RECTANGULAR_CHART_DIMENSIONS = {

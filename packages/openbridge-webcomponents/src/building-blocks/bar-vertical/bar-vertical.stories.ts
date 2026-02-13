@@ -9,7 +9,7 @@ import {
   FrameStyle,
   FillMode,
   AdvicePosition,
-  VerticalSide,
+  ExternalScaleSide,
   BorderRadiusPosition,
   InstrumentState,
 } from './bar-vertical.js';
@@ -71,6 +71,7 @@ const meta: Meta = {
     fillMax: {control: {type: 'number'}},
     value: {control: {type: 'range', min: -100, max: 100, step: 1}},
     setpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
+    newSetpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
     atSetpoint: {control: {type: 'boolean'}},
     disableAutoAtSetpoint: {control: {type: 'boolean'}},
     autoAtSetpointDeadband: {
@@ -113,12 +114,13 @@ const meta: Meta = {
     fillMax: 40,
     value: undefined,
     setpoint: undefined,
+    newSetpoint: undefined,
     atSetpoint: false,
     disableAutoAtSetpoint: false,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
     state: 'inCommand',
-    side: 'right',
+    side: ExternalScaleSide.right,
     advicePosition: AdvicePosition.inner,
     advices: [],
   },
@@ -145,6 +147,7 @@ const meta: Meta = {
       .fillMax=${args.fillMax}
       .value=${args.value}
       .setpoint=${args.setpoint}
+      .newSetpoint=${args.newSetpoint}
       .atSetpoint=${args.atSetpoint}
       .disableAutoAtSetpoint=${args.disableAutoAtSetpoint}
       .autoAtSetpointDeadband=${args.autoAtSetpointDeadband}
@@ -167,7 +170,7 @@ export const DefaultRight: Story = {
     minValue: 0,
     maxValue: 100,
     height: 320,
-    side: 'right',
+    side: ExternalScaleSide.right,
     tertiaryTickbarsInterval: 2,
     hasBar: true,
     setpoint: 50,
@@ -278,7 +281,7 @@ export const DefaultLeft: Story = {
     minValue: 0,
     maxValue: 100,
     height: 320,
-    side: 'left',
+    side: ExternalScaleSide.left,
   },
 };
 
@@ -301,7 +304,7 @@ export const WithBarLeft: Story = {
     maxValue: 100,
     height: 320,
     hasBar: true,
-    side: 'left',
+    side: ExternalScaleSide.left,
   },
 };
 
@@ -372,7 +375,7 @@ export const WithBarFillLeft: Story = {
     value: 45,
     primaryTickbarsInterval: 20,
     secondaryTickbarsInterval: 10,
-    side: 'left',
+    side: ExternalScaleSide.left,
   },
 };
 
@@ -566,7 +569,7 @@ export const WithSetpointAwayFromValue: Story = {
 };
 
 export const StateComparison: Story = {
-  name: 'State comparison (inCommand/active/loading/off)',
+  name: 'State comparison (inCommand/active/loading/off/focus)',
 
   render: () => html`
     <div style="display: flex; gap: 40px; align-items: center;">
@@ -636,6 +639,24 @@ export const StateComparison: Story = {
           secondaryTickbarsInterval="10"
         ></obc-bar-vertical>
       </div>
+      <div style="text-align: center;">
+        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
+          adjusting/touching
+        </div>
+        <obc-bar-vertical
+          minValue="-100"
+          maxValue="100"
+          height="320"
+          hasBar
+          enhanced
+          value="30"
+          setpoint="30"
+          .newSetpoint=${70}
+          state="inCommand"
+          primaryTickbarsInterval="50"
+          secondaryTickbarsInterval="10"
+        ></obc-bar-vertical>
+      </div>
     </div>
   `,
 };
@@ -647,7 +668,7 @@ export const VerticalRightScaleBackground: Story = {
     minValue: 0,
     maxValue: 100,
     height: 320,
-    side: 'right',
+    side: ExternalScaleSide.right,
     hasBar: true,
     borderRadiusPosition: BorderRadiusPosition.innerFirstChild,
     scaleBackground: true,
@@ -974,6 +995,23 @@ export const ScaleTypeComparison: Story = {
           .hasBar=${true}
         ></obc-bar-vertical>
       </div>
+      <div style="text-align: center;">
+        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
+          Condensed (scaleBackground)
+        </div>
+        <obc-bar-vertical
+          .minValue=${0}
+          .maxValue=${100}
+          .height=${320}
+          .scaleType=${'condensed'}
+          .primaryTickbarsInterval=${20}
+          .secondaryTickbarsInterval=${10}
+          .tertiaryTickbarsInterval=${2}
+          .hasBar=${true}
+          .scaleBackground=${true}
+          .borderRadiusPosition=${BorderRadiusPosition.innerFirstChild}
+        ></obc-bar-vertical>
+      </div>
     </div>
   `,
 };
@@ -1063,7 +1101,7 @@ export const ChartIntegrationRight: Story = {
         .minValue=${3.0}
         .maxValue=${7.0}
         .height=${_args.height}
-        .side=${'right'}
+        .side=${ExternalScaleSide.right}
         .hasScale=${true}
         .hideLabels=${_args.vScaleHideLabels}
         .hasBar=${_args.vScaleHasBar}
@@ -1174,7 +1212,7 @@ export const ChartIntegrationRightBackground: Story = {
         .minValue=${3.0}
         .maxValue=${7.0}
         .height=${_args.height}
-        .side=${'right'}
+        .side=${ExternalScaleSide.right}
         .hasScale=${true}
         .hideLabels=${_args.vScaleHideLabels}
         .hasBar=${_args.vScaleHasBar}
@@ -1297,7 +1335,7 @@ export const GaugeTrend: Story = {
         .minValue=${3.0}
         .maxValue=${7.0}
         .height=${_args.height}
-        .side=${'right'}
+        .side=${ExternalScaleSide.right}
         .hasScale=${true}
         .hideLabels=${_args.vScaleHideLabels}
         .hasBar=${_args.vScaleHasBar}
@@ -1443,88 +1481,5 @@ export const FixedAspectRatioComparison: StoryObj = {
     wrapper.appendChild(containerFixed);
 
     return wrapper;
-  },
-};
-
-/**
- * Demonstrates `fixedAspectRatio=true` with a bar attached to a chart's edge.
- * As the container resizes, the bar scales proportionally while maintaining
- * its aspect ratio and label readability.
- */
-export const FixedAspectRatioChartIntegration: StoryObj = {
-  tags: ['!snapshot'],
-  render: () => {
-    const outerWrapper = document.createElement('div');
-    outerWrapper.style.cssText = `
-      border: 2px dashed var(--instrument-enhanced-secondary-color);
-      padding: 16px;
-      resize: both;
-      overflow: auto;
-      min-width: 300px;
-      min-height: 300px;
-      max-width: 800px;
-      max-height: 600px;
-      width: 600px;
-      height: 400px;
-    `;
-
-    const label = document.createElement('div');
-    label.textContent =
-      'Resize this container - bar scales proportionally (fixedAspectRatio=true)';
-    label.style.cssText = `
-      font-family: var(--font-family-main);
-      font-size: 14px;
-      color: var(--instrument-enhanced-secondary-color);
-      margin-bottom: 8px;
-    `;
-
-    const chartArea = document.createElement('div');
-    chartArea.style.cssText = `
-      position: relative;
-      width: 100%;
-      height: calc(100% - 30px);
-      background: var(--instrument-frame-primary-color);
-      border: 1px solid var(--instrument-frame-tertiary-color);
-      display: flex;
-      justify-content: flex-end;
-    `;
-
-    // Container for the bar that ResizeObserver will watch
-    const barContainer = document.createElement('div');
-    barContainer.style.cssText = `
-      height: 100%;
-      width: 200px;
-      display: flex;
-      resize: horizontal;
-      overflow: auto;
-      min-width: 50px;
-      max-width: 400px;
-    `;
-
-    const bar = document.createElement('obc-bar-vertical');
-    bar.minValue = 0;
-    bar.maxValue = 100;
-    bar.height = 320;
-    bar.hasBar = true;
-    bar.hasScale = true;
-    bar.value = 65;
-    bar.setpoint = 50;
-    bar.fillMode = FillMode.fill;
-    bar.enhanced = true;
-    bar.primaryTickbarsInterval = 10;
-    bar.fixedAspectRatio = true;
-    bar.side = VerticalSide.right;
-    bar.style.cssText = `
-      height: 100%;
-      width: 100%;
-      pointer-events: none;
-    `;
-
-    barContainer.appendChild(bar);
-    chartArea.appendChild(barContainer);
-    outerWrapper.appendChild(label);
-    outerWrapper.appendChild(chartArea);
-
-    return outerWrapper;
   },
 };

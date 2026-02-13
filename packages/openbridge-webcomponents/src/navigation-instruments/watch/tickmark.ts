@@ -58,8 +58,8 @@ export function tickmark(
   }
 ): SVGTemplateResult | SVGTemplateResult[] {
   // check if scale is not infinite
-  if (scale === Infinity || scale <= 0) {
-    throw new Error('Scale is not valid');
+  if (scale === Infinity || scale < 0) {
+    throw new Error('Tick scale is not valid');
   }
   let innerRadius: number;
   let outerRadius: number;

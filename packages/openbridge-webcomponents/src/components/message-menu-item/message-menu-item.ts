@@ -6,182 +6,246 @@ import '../button/button.js';
 import '../../icons/icon-chevron-down-google.js';
 import '../../icons/icon-chevron-up-google.js';
 import {customElement} from '../../decorator.js';
+import '../../icons/icon-alerts-shelf.js';
 
 export enum ObcMessageMenuItemSize {
   SingleLine = 'single-line',
   DoubleLine = 'double-line',
-  MultiLine = 'multi-line',
 }
 
 /**
- * `<obc-message-menu-item>` – A flexible, interactive message or notification item for use in message menus, notification lists, or alert panels.
+ * `<obc-message-menu-item>` – An expandable message or notification item for use in message lists, notification panels, or alert menus.
  *
- * Displays a concise message with optional icons, title, description, date/time, and action controls. Designed for use in lists or menus where users may need to scan, expand, or act on individual messages or alerts.
+ * Displays a concise message row with optional icons, title, description, timestamp, and action buttons. Clicking the item expands it to reveal the full content. Designed for scannable lists where users may need to quickly review and act on individual messages.
  *
- * Appears as a button-like row with configurable layout (single-line, double-line, or multi-line), supporting both brief and extended content. Can show primary, secondary, and tertiary icons, and optionally includes an action button for quick responses.
+ * ## Features
  *
- * ---
- *
- * ### Features
  * - **Size Variants:**
- *   - `single-line` (default): Compact, one-line layout for short messages.
- *   - `double-line`: Allows a second line for longer descriptions.
- *   - `multi-line`: Expands to fit extended content and reveals additional details when open.
- * - **Expandable:**
- *   - Can toggle between collapsed and expanded (multi-line) states via the chevron icon or programmatically (`open` property).
- * - **Icon Support:**
- *   - Primary, secondary, and tertiary icon slots for visual context or status.
- *   - Enhanced icon mode increases icon size for emphasis.
- * - **Content Structure:**
- *   - Title and description slots for clear message hierarchy.
- *   - Optional date and/or time display.
- * - **Action Controls:**
- *   - Optional action button (e.g., "Acknowledge", "Reply") with customizable label and icon.
- * - **Responsiveness:**
- *   - Adapts layout for smaller containers, hiding or collapsing elements as needed.
- * - **Animated Intro:**
- *   - Optional entry animation for smooth appearance.
+ *   - `single-line`: Compact layout with title and description on one line (default).
+ *   - `double-line`: Two-line layout with title on top and description below.
+ *   - When clicked, both variants expand to show full multi-line content.
  *
- * ---
+ * - **Stack Direction:**
+ *   - `stackVertical=false` (default): Action buttons appear inline to the right of the content.
+ *   - `stackVertical=true`: Action buttons appear below the content, spanning full width.
  *
- * ### Usage Guidelines
- * Use `obc-message-menu-item` to present individual notifications, alerts, or actionable messages within a list or menu. Ideal for scenarios where users need to quickly scan, expand for more details, or take immediate action on a message.
+ * - **Icon Options:**
+ *   - Primary and secondary icon slots for visual context or status indicators.
+ *   - Enhanced icon mode (`enhancedIcon`) increases icon size for emphasis.
+ *   - Trailing icon slot (horizontal layout only) for additional actions.
+ *   - Shelved state (`isShelved`) displays a shelf icon automatically.
  *
- * - Use `single-line` for short, high-density lists.
- * - Use `double-line` or `multi-line` when longer descriptions or additional details are needed.
- * - Enable the action button for messages that require user response (e.g., "Acknowledge", "Undo").
- * - Use icons to visually differentiate message types or statuses.
+ * - **Actions:**
+ *   - Supports up to two action buttons via `primaryActionLabel` and `secondaryActionLabel`.
+ *   - In vertical layout, action buttons expand to full width.
  *
- * **TODO(designer):** Clarify best practices for when to use each size variant and when to enable enhanced icon mode.
+ * - **Timestamp:**
+ *   - Optional day and time display via `day` and `time` properties.
  *
- * ---
+ * ## Usage Guidelines
  *
- * ### Slots
- * | Slot Name         | Renders When...                  | Purpose                                                      |
- * |-------------------|----------------------------------|--------------------------------------------------------------|
- * | `primary-icon`    | Always                           | Main icon representing the message type or status.           |
- * | `secondary-icon`  | If `hasSecondaryIcon` is true    | Additional icon for secondary status/context.                |
- * | `tertiary-icon`   | If `hasTertiaryIcon` is true     | Tertiary icon for extra context or status.                   |
- * | `title`           | Always                           | Title or heading of the message.                             |
- * | `description`     | Always                           | Main message text or description.                            |
- * | `day`             | If `hasDateOrTime` is true       | Day label (e.g., "Yesterday").                               |
- * | `time`            | If `hasDateOrTime` is true       | Time label (e.g., "12:00:00").                               |
- * | `action-label`    | If `hasActionButton` is true     | Label for the action button.                                 |
- * | `action-icon`     | Always                           | Icon for the action area (optional, for custom actions).     |
+ * Use `obc-message-menu-item` to present individual notifications, alerts, or messages within a scrollable list. Ideal for scenarios where users need to quickly scan items, expand for details, or take immediate action.
  *
- * ---
+ * - Use `single-line` for high-density lists where space is limited.
+ * - Use `double-line` when the description needs more visibility in the collapsed state.
+ * - Keep `stackVertical=false` (default) when actions should be quickly accessible inline.
+ * - Use `stackVertical=true` when actions need more prominence or when space is narrow.
+ * - Enable `enhancedIcon` to highlight important or priority messages.
+ * - Use `isShelved` to indicate messages that have been temporarily set aside.
  *
- * ### Events
- * - `message-click` – Fired when the message item is clicked (toggles open/closed state).
- * - `action-click` – Fired when the action button is clicked.
+ * ## Slots
  *
- * ---
+ * Text content for `title`, `description`, and `action-label` supports both props (for plain text) and slots (for rich HTML like `CO<sub>2</sub>`).
+ * To use a slot, set the corresponding `has*Slot` prop to `true`.
  *
- * ### Best Practices & Constraints
- * - Only use the action button for messages that require immediate user action; avoid cluttering the UI with unnecessary actions.
- * - For accessibility, ensure that title and description slots contain meaningful, concise text.
- * - Use enhanced icon mode sparingly to highlight particularly important messages.
- * - The component is intended for use in lists or menus; avoid using it as a standalone alert or persistent banner.
+ * | Slot Name        | Enabled By               | Purpose                                           |
+ * |------------------|--------------------------|---------------------------------------------------|
+ * | `title`          | `hasTitleSlot=true`      | Message title. Use slot for rich HTML.            |
+ * | `description`    | `hasDescriptionSlot=true`| Message description. Use slot for rich HTML.      |
+ * | `action-label`   | `hasActionLabelSlot=true`| Primary action button label. Use slot for rich HTML. |
+ * | `primary-icon`   | `hasPrimaryIcon=true`    | Main icon representing message type or status.    |
+ * | `secondary-icon` | `hasSecondaryIcon=true`  | Additional icon for secondary status or context.  |
+ * | `trailing-icon`  | `hasTrailingIcon=true` (horizontal only) | Icon button after action buttons. |
  *
- * ---
+ * ## Events
  *
- * ### Example
+ * - `message-click` – Fired when the message item is clicked. Detail includes `{ open: boolean }`.
+ * - `primary-action-click` – Fired when the primary action button is clicked.
+ * - `secondary-action-click` – Fired when the secondary action button is clicked.
+ *
+ * ## Example
+ *
+ * Using props (simple text):
  * ```html
- * <obc-message-menu-item size="double-line" hasActionButton hasDateOrTime hasSecondaryIcon>
+ * <obc-message-menu-item
+ *   size="double-line"
+ *   title="System Update"
+ *   description="A new update is available for installation."
+ *   day="Yesterday"
+ *   time="14:32"
+ *   primaryActionLabel="Install"
+ *   hasPrimaryIcon
+ * >
  *   <obi-placeholder slot="primary-icon"></obi-placeholder>
- *   <obi-placeholder slot="secondary-icon"></obi-placeholder>
- *   <span slot="title">System Update</span>
- *   <span slot="description">A new update is available for installation.</span>
- *   <span slot="action-label">Install</span>
- *   <span slot="day">Today</span>
- *   <span slot="time">14:32</span>
  * </obc-message-menu-item>
  * ```
  *
- * @slot primary-icon - Main icon representing the message type or status.
- * @slot secondary-icon - Additional icon for secondary status/context (shown if `hasSecondaryIcon` is true).
- * @slot tertiary-icon - Tertiary icon for extra context (shown if `hasTertiaryIcon` is true).
- * @slot title - Title or heading of the message.
- * @slot description - Main message text or description.
- * @slot day - Day label (shown if `hasDateOrTime` is true).
- * @slot time - Time label (shown if `hasDateOrTime` is true).
- * @slot action-label - Label for the action button (shown if `hasActionButton` is true).
- * @slot action-icon - Icon for the action area (optional).
- * @fires message-click {CustomEvent<void>} Fired when the message item is clicked (toggles open/closed state).
- * @fires action-click {CustomEvent<void>} Fired when the action button is clicked.
+ * Using slots (rich HTML):
+ * ```html
+ * <obc-message-menu-item
+ *   size="double-line"
+ *   day="Yesterday"
+ *   time="14:32"
+ *   hasPrimaryIcon
+ *   hasTitleSlot
+ *   hasDescriptionSlot
+ *   hasActionLabelSlot
+ * >
+ *   <span slot="title">High CO<sub>2</sub> level</span>
+ *   <span slot="description">CO<sub>2</sub> concentration exceeds safe limits.</span>
+ *   <span slot="action-label">Acknowledge</span>
+ *   <obi-placeholder slot="primary-icon"></obi-placeholder>
+ * </obc-message-menu-item>
+ * ```
+ *
+ * @slot title - Message title (shown when `hasTitleSlot` is true).
+ * @slot description - Message description (shown when `hasDescriptionSlot` is true).
+ * @slot action-label - Primary action button label (shown when `hasActionLabelSlot` is true).
+ * @slot primary-icon - Main icon representing the message type or status (shown when `hasPrimaryIcon` is true).
+ * @slot secondary-icon - Additional icon for secondary status/context (shown when `hasSecondaryIcon` is true).
+ * @slot trailing-icon - Icon after action buttons, horizontal layout only (shown when `hasTrailingIcon` is true).
+ * @fires message-click {CustomEvent<{open: boolean}>} Fired when the message item is clicked.
+ * @fires primary-action-click {CustomEvent<void>} Fired when the primary action button is clicked.
+ * @fires secondary-action-click {CustomEvent<void>} Fired when the secondary action button is clicked.
  */
 @customElement('obc-message-menu-item')
 export class ObcMessageMenuItem extends LitElement {
-  /**
-   * Controls the layout size of the message item.
-   * - `single-line`: Compact, one-line layout (default).
-   * - `double-line`: Two-line layout for longer descriptions.
-   * - `multi-line`: Expands to fit extended content and reveals additional details when open.
-   */
+  // Layout properties
   @property({type: String}) size: ObcMessageMenuItemSize =
     ObcMessageMenuItemSize.SingleLine;
+  @property({type: Boolean}) stackVertical = false;
+  @property({type: Boolean}) enhancedIcon = false;
+  @property({type: Boolean}) open = false;
 
-  /**
-   * If true, displays icons in an enhanced (larger) style for emphasis.
-   * Use to highlight important messages or statuses.
-   */
-  @property({type: Boolean}) enhancedIcon: boolean = false;
+  // Text content properties
+  @property({type: String}) override title = '';
+  @property({type: String}) description = '';
+  @property({type: String}) day = '';
+  @property({type: String}) time = '';
+  @property({type: String}) primaryActionLabel = '';
+  @property({type: String}) secondaryActionLabel = '';
 
-  /**
-   * If true, the item is expanded to show multi-line content and additional details.
-   * Toggled by clicking the item or programmatically.
-   */
-  @property({type: Boolean}) open: boolean = false;
+  // Visibility properties for icons (slots)
+  @property({type: Boolean}) hasPrimaryIcon = false;
+  @property({type: Boolean}) hasSecondaryIcon = false;
+  @property({type: Boolean}) hasTrailingIcon = false;
+  @property({type: Boolean}) isShelved = false;
 
-  /**
-   * If true, displays an action button (e.g., "Acknowledge", "Reply") below the message item.
-   * The button label is provided via the `action-label` slot.
-   */
-  @property({type: Boolean}) hasActionButton: boolean = false;
+  @property({type: Boolean}) hasActionLabelSlot = false;
 
-  /**
-   * If true, displays a secondary icon in the `secondary-icon` slot.
-   */
-  @property({type: Boolean}) hasSecondaryIcon: boolean = false;
+  private get activeSize() {
+    if (this.open) {
+      return 'multi-line';
+    }
+    return this.size;
+  }
 
-  /**
-   * If true, displays a tertiary icon in the `tertiary-icon` slot.
-   */
-  @property({type: Boolean}) hasTertiaryIcon: boolean = false;
+  private get hasTimestamp() {
+    return this.time !== '' || this.day !== '';
+  }
 
-  /**
-   * If true, displays date and/or time information in the `day` and `time` slots.
-   */
-  @property({type: Boolean}) hasDateOrTime: boolean = false;
+  private get hasDay() {
+    return this.day !== '';
+  }
 
-  /**
-   * If true, animates the component's entry with a slide-in effect.
-   */
-  @property({type: Boolean, reflect: true})
-  animateIntro: boolean = false;
+  private get hasPrimaryAction() {
+    return this.primaryActionLabel !== '' || this.hasActionLabelSlot;
+  }
+
+  private get hasSecondaryAction() {
+    return this.secondaryActionLabel !== '';
+  }
+
+  private get isVertical() {
+    return this.stackVertical;
+  }
+
+  private handleKeyDown(e: KeyboardEvent) {
+    // Only handle key events on the wrapper itself, not on nested interactive elements
+    if (e.target !== e.currentTarget) {
+      return;
+    }
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      this.handleMessageClick();
+    }
+  }
+
+  private handleMessageClick() {
+    this.open = !this.open;
+
+    this.dispatchEvent(
+      new CustomEvent('message-click', {
+        detail: {
+          open: this.open,
+        },
+        bubbles: true,
+        composed: true,
+      })
+    );
+  }
+
+  private handlePrimaryActionClick(e: Event) {
+    e.stopPropagation();
+
+    this.dispatchEvent(
+      new CustomEvent('primary-action-click', {
+        bubbles: true,
+        composed: true,
+      })
+    );
+  }
+
+  private handleSecondaryActionClick(e: Event) {
+    e.stopPropagation();
+
+    this.dispatchEvent(
+      new CustomEvent('secondary-action-click', {
+        bubbles: true,
+        composed: true,
+      })
+    );
+  }
 
   override render() {
     return html`
-      <button
+      <div
         class=${classMap({
           wrapper: true,
-          ['active-size-' + this.ActiveSize]: true,
+          ['active-size-' + this.activeSize]: true,
           ['size-' + this.size]: true,
           ['enhanced-icon']: this.enhancedIcon,
-          ['has-date']: this.hasDateOrTime,
+          ['has-date']: this.hasTimestamp,
+          ['stack-vertical']: this.stackVertical,
+          ['stack-horizontal']: !this.stackVertical,
         })}
-        @click=${this.onMessageClick}
+        role="button"
+        tabindex="0"
+        @click=${this.handleMessageClick}
+        @keydown=${this.handleKeyDown}
       >
         <div class="content-container">
           <div class="icon-container">
-            ${this.hasTertiaryIcon
-              ? html`<div class="icon tertiary">
-                  <slot name="tertiary-icon"></slot>
+            ${this.isShelved
+              ? html`<div class="icon">
+                  <obi-alerts-shelf></obi-alerts-shelf>
                 </div>`
               : nothing}
-            <div class="icon primary">
-              <slot name="primary-icon"></slot>
-            </div>
+            ${this.hasPrimaryIcon
+              ? html`<div class="icon primary">
+                  <slot name="primary-icon"></slot>
+                </div>`
+              : nothing}
             ${this.hasSecondaryIcon
               ? html`<div class="icon secondary">
                   <slot name="secondary-icon"></slot>
@@ -190,64 +254,57 @@ export class ObcMessageMenuItem extends LitElement {
           </div>
           <div class="text-container">
             <div class="title-container">
-              <slot name="title"></slot>
+              <slot name="title">${this.title}</slot>
             </div>
             <div class="description-container">
-              <slot name="description"></slot>
+              <slot name="description">${this.description}</slot>
             </div>
-            ${this.hasDateOrTime
+            ${this.hasTimestamp
               ? html`<div class="date-container">
-                  <slot name="day"></slot>
-                  <slot name="time"></slot>
+                  ${this.hasDay ? html`<span>${this.day}</span>` : nothing}
+                  <span>${this.time}</span>
                 </div>`
               : nothing}
-            ${this.size === ObcMessageMenuItemSize.MultiLine
-              ? nothing
-              : html`<div class="chevron">
-                  ${this.open
-                    ? html`<obi-chevron-up-google></obi-chevron-up-google>`
-                    : html`<obi-chevron-down-google></obi-chevron-down-google>`}
-                </div>`}
+            <div class="chevron">
+              ${this.open
+                ? html`<obi-chevron-up-google></obi-chevron-up-google>`
+                : html`<obi-chevron-down-google></obi-chevron-down-google>`}
+            </div>
           </div>
         </div>
-        <div class="action-container">
-          <div class="action icon">
-            <slot name="action-icon"></slot>
-          </div>
-        </div>
-      </button>
-      ${this.hasActionButton
-        ? html`<div class="action-button-container">
-            <obc-button variant="normal" @click=${this.onActionClick}>
-              <slot name="action-label"></slot>
-            </obc-button>
-          </div>`
-        : nothing}
+        ${this.hasPrimaryAction ||
+        this.hasSecondaryAction ||
+        (this.hasTrailingIcon && !this.isVertical)
+          ? html`<div class="action-button-container" part="action-container">
+              ${this.hasSecondaryAction
+                ? html`<obc-button
+                    variant="normal"
+                    .fullWidth=${this.isVertical}
+                    @click=${this.handleSecondaryActionClick}
+                  >
+                    ${this.secondaryActionLabel}
+                  </obc-button>`
+                : nothing}
+              ${this.hasPrimaryAction
+                ? html`<obc-button
+                    variant="normal"
+                    .fullWidth=${this.isVertical}
+                    @click=${this.handlePrimaryActionClick}
+                  >
+                    ${this.hasActionLabelSlot
+                      ? html`<slot name="action-label"></slot>`
+                      : this.primaryActionLabel}
+                  </obc-button>`
+                : nothing}
+              ${this.hasTrailingIcon && !this.isVertical
+                ? html`<div class="trailing-icon" part="trailing-icon">
+                    <slot name="trailing-icon"></slot>
+                  </div>`
+                : nothing}
+            </div>`
+          : nothing}
+      </div>
     `;
-  }
-
-  private onMessageClick() {
-    /**
-     * Fired when the message item is clicked (toggles open/closed state).
-     * @fires message-click
-     */
-    this.dispatchEvent(new CustomEvent('message-click'));
-    this.open = !this.open;
-  }
-
-  private onActionClick() {
-    /**
-     * Fired when the action button is clicked.
-     * @fires action-click
-     */
-    this.dispatchEvent(new CustomEvent('action-click'));
-  }
-
-  get ActiveSize() {
-    if (this.size === ObcMessageMenuItemSize.MultiLine || this.open) {
-      return ObcMessageMenuItemSize.MultiLine;
-    }
-    return this.size;
   }
 
   static override styles = unsafeCSS(compentStyle);

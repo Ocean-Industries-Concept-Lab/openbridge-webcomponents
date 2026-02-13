@@ -16,7 +16,7 @@ import type {
 } from '../external-scale/external-scale.js';
 import {
   computeExternalScaleViewBox,
-  computeMeetScale,
+  computeFixedAspectRatioScale,
   computeExternalScaleLayout,
   renderExternalScale,
   toExternalScaleLayoutConfig,
@@ -27,12 +27,12 @@ import {
   ScaleType,
   FillMode,
   AdvicePosition,
+  BarContainerStyle,
+  ExternalScaleOrientation,
+  ExternalScaleSide,
 } from '../external-scale/external-scale.js';
-
-export enum HorizontalSide {
-  top = 'top',
-  bottom = 'bottom',
-}
+import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
+import {SetpointColorMode} from '../../svghelpers/setpoint.js';
 
 // Re-export shared enums for convenience
 export {
@@ -42,6 +42,9 @@ export {
   FrameStyle,
   BorderRadiusPosition,
   InstrumentState,
+  BarContainerStyle,
+  ExternalScaleSide,
+  SetpointColorMode,
 };
 
 /**
@@ -58,7 +61,9 @@ export {
  * For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Deadband tuning and Zero snap behavior) see: **Building Blocks/Bar Vertical**.
  */
 @customElement('obc-bar-horizontal')
-export class ObcBarHorizontal extends LitElement {
+export class ObcBarHorizontal extends SetpointMixin(LitElement, {
+  defaultDeadband: 1,
+}) {
   /** Minimum scale value (manual mode) */
   @property({type: Number}) minValue: number = 0;
   /** Maximum scale value (manual mode) */
@@ -68,21 +73,32 @@ export class ObcBarHorizontal extends LitElement {
   @property({type: Number}) width: number = 320;
 
   /** Padding left of the drawing area */
-  @property({type: Number}) paddingLeft: number = CHART_DIMENSIONS.CANVAS_PADDING;
+  @property({type: Number}) paddingLeft: number =
+    CHART_DIMENSIONS.CANVAS_PADDING;
 
   /** Padding right of the drawing area */
-  @property({type: Number}) paddingRight: number = CHART_DIMENSIONS.CANVAS_PADDING;
+  @property({type: Number}) paddingRight: number =
+    CHART_DIMENSIONS.CANVAS_PADDING;
 
   /** Which side this scale lives on */
-  @property({type: String}) side: HorizontalSide = HorizontalSide.bottom;
+  @property({type: String}) side: ExternalScaleSide = ExternalScaleSide.bottom;
 
   /**
    * When true, freezes all internal calculations and scales the entire component
    * proportionally (like CSS transform:scale), except label font-size remains constant.
    * When false (default), dimensions react to component properties.
    */
-  @property({type: Boolean, attribute: 'fixed-aspect-ratio'})
+  @property({type: Boolean})
   fixedAspectRatio = false;
+
+  /**
+   * Reference size for proportional scaling when fixedAspectRatio is true.
+   * At this width, the scale renders at native 1:1 (matches Figma design).
+   * Above this width, the scale grows proportionally; below, it shrinks.
+   * @default 384
+   */
+  @property({type: Number})
+  scaleReferenceSize = 384;
 
   @state()
   private _scale = 1;
@@ -96,37 +112,26 @@ export class ObcBarHorizontal extends LitElement {
       const entry = entries[0];
       if (!entry) return;
 
-      const effectiveBarThickness = computeExternalScaleEffectiveBarThickness({
-        hasBar: this.hasBar,
-        barThickness: this.barThickness,
-        borderRadius: this._computedBorderRadius,
-        scaleType: this.scaleType,
+      // Use the centralized function that computes scale based on reference size
+      // For horizontal scales, compare container width to reference size
+      const containerMainAxisSize = entry.contentRect.width;
+
+      this._scale = computeFixedAspectRatioScale({
+        orientation: ExternalScaleOrientation.horizontal,
+        containerMainAxisSize,
+        scaleReferenceSize: this.scaleReferenceSize,
       });
 
-      // Calculate reference thickness from current configuration
-      const layout = computeExternalScaleLayout({
-        orientation: 'horizontal',
-        side: this.side,
-        hasBar: this.hasBar,
-        hasScale: this.hasScale,
-        labels: !this.hideLabels,
-        barThickness: effectiveBarThickness,
-        tickThickness: this.tickThickness,
-        labelThickness: this.labelThickness,
-        length: this.width,
-      });
+      // console.debug(`[bar-horizontal] ResizeController:`, {
+      //   fixedAspectRatio: this.fixedAspectRatio,
+      //   containerWidth: containerMainAxisSize,
+      //   scaleReferenceSize: this.scaleReferenceSize,
+      //   computedScale: this._scale,
+      //   width: this.width,
+      // });
 
-      const viewBox = computeExternalScaleViewBox(
-        {orientation: 'horizontal', length: this.width},
-        layout
-      );
-
-      this._scale = computeMeetScale(
-        viewBox.width,
-        viewBox.height,
-        entry.contentRect.width,
-        entry.contentRect.height
-      );
+      // Report scaled dimensions to parent chart
+      this.reportDimensions();
     },
   });
 
@@ -138,12 +143,19 @@ export class ObcBarHorizontal extends LitElement {
   /** Show bar */
   @property({type: Boolean}) hasBar = false;
   /** Show background behind the scale tickmarks. */
-  @property({type: Boolean, attribute: 'scale-background'})
+  @property({type: Boolean})
   scaleBackground = false;
+  /**
+   * Bar container background style.
+   * When undefined, defaults based on scaleBackground.
+   * Set explicitly to override: 'primary' (lighter) or 'secondary' (gray).
+   */
+  @property({type: String})
+  barContainerStyle?: BarContainerStyle = undefined;
   /** Bar/fill thickness in pixels */
   @property({type: Number}) barThickness = 24;
   /** Tickmark band thickness in pixels. */
-  @property({type: Number}) tickThickness = 28;
+  @property({type: Number}) tickThickness = 24;
   /** Label band thickness in pixels. */
   @property({type: Number}) labelThickness = 60;
 
@@ -173,8 +185,25 @@ export class ObcBarHorizontal extends LitElement {
   /** Frame style: regular (4px gap for all), flat (main tickmarks touch edge), framed, or instrument */
   @property({type: String}) frameStyle: FrameStyle = FrameStyle.regular;
   /** Border radius position based on component layout */
-  @property({type: String, attribute: 'border-radius-position'})
+  @property({type: String})
   borderRadiusPosition?: BorderRadiusPosition = undefined;
+
+  /**
+   * When true, the component is used inside an instrument (e.g., gauge-trend).
+   * In this mode, only label font size responds to .obc-component-size-* CSS classes.
+   * Border radius and bar thickness use explicit values or defaults, not CSS variables.
+   * @default false
+   */
+  @property({type: Boolean})
+  instrumentMode = false;
+
+  /**
+   * Explicit border radius value in pixels.
+   * When instrumentMode=true, this value is used directly (defaults to 8px for regular, 4px for condensed).
+   * When instrumentMode=false, this is ignored and border radius is read from CSS variable.
+   */
+  @property({type: Number})
+  borderRadius?: number = undefined;
 
   @state()
   private _computedBorderRadius?: number;
@@ -184,7 +213,10 @@ export class ObcBarHorizontal extends LitElement {
   // @ts-expect-error - Controller is used for side effects, not accessed directly
   private _borderRadiusResizeController = new ResizeController(this, {
     callback: () => {
-      this._refreshBorderRadiusFromCssVar();
+      // Skip CSS variable reading in instrument mode
+      if (!this.instrumentMode) {
+        this._refreshBorderRadiusFromCssVar();
+      }
     },
   });
 
@@ -200,20 +232,6 @@ export class ObcBarHorizontal extends LitElement {
   /** Current value (bar fill level) */
   @property({type: Number}) value?: number = undefined;
 
-  // Setpoint
-  /**
-   * Setpoint/input value to display as indicator.
-   * When undefined, no setpoint shown.
-   */
-  @property({type: Number}) setpoint?: number = undefined;
-  /** Whether value is at setpoint (manual override when disableAutoAtSetpoint=true) */
-  @property({type: Boolean}) atSetpoint = false;
-  /** Disable automatic atSetpoint calculation based on value and deadband */
-  @property({type: Boolean}) disableAutoAtSetpoint = false;
-  /** Deadband for automatic atSetpoint detection (when disableAutoAtSetpoint=false) */
-  @property({type: Number}) autoAtSetpointDeadband = 1;
-  /** Deadband around zero for setpoint positioning */
-  @property({type: Number}) setpointAtZeroDeadband = 0.5;
   /** Instrument state (affects colors and some marker behavior) */
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
 
@@ -232,11 +250,42 @@ export class ObcBarHorizontal extends LitElement {
     hinted: boolean;
   }> = [];
 
+  /**
+   * When true, displays a dot indicator at the current value position.
+   * The dot is rendered in the scale band, touching its inner edge (towards the chart).
+   * This provides an alternative to bar fill for highlighting the current value.
+   * @default false
+   */
+  @property({type: Boolean}) highlightCurrentValue = false;
+
   override render() {
+    // When fixedAspectRatio is true, use scaleReferenceSize for the viewBox length.
+    // This makes the SVG render at the "design reference size" and then scale
+    // proportionally to fit the actual container via preserveAspectRatio="xMidYMid meet".
+    // The _scale CSS variable counter-scales text labels to maintain constant visual size.
+    const effectiveLength = this.fixedAspectRatio
+      ? this.scaleReferenceSize
+      : this.width;
+
+    // The parent chart component (chart-line-base) calculates and passes the correct
+    // viewBox padding values when fixedAspectRatioScaling is enabled. The padding is
+    // pre-scaled to: basePadding * scaleReferenceSize / referenceWidth
+    // This ensures the visual padding matches the chart's Canvas padding at any aspect ratio.
+
+    // console.debug(`[bar-horizontal] render:`, {
+    //   fixedAspectRatio: this.fixedAspectRatio,
+    //   width: this.width,
+    //   scaleReferenceSize: this.scaleReferenceSize,
+    //   effectiveLength,
+    //   scale: this._scale,
+    //   paddingLeft: this.paddingLeft,
+    //   paddingRight: this.paddingRight,
+    // });
+
     const config: ExternalScaleConfig = {
-      orientation: 'horizontal',
+      orientation: ExternalScaleOrientation.horizontal,
       side: this.side,
-      length: this.width,
+      length: effectiveLength,
       paddingStart: this.paddingLeft,
       paddingEnd: this.paddingRight,
       minValue: this.minValue,
@@ -245,9 +294,11 @@ export class ObcBarHorizontal extends LitElement {
       labels: !this.hideLabels,
       hasBar: this.hasBar,
       scaleBackground: this.scaleBackground,
+      barContainerStyle: this.barContainerStyle,
       barThickness: this.barThickness,
       tickThickness: this.tickThickness,
       labelThickness: this.labelThickness,
+      borderRadius: this._getEffectiveBorderRadius(),
       mainTickbars: this.mainTickbars,
       primaryTickbarsInterval: this.primaryTickbarsInterval,
       secondaryTickbarsInterval: this.secondaryTickbarsInterval,
@@ -255,21 +306,27 @@ export class ObcBarHorizontal extends LitElement {
       scaleType: this.scaleType,
       frameStyle: this.frameStyle,
       borderRadiusPosition: this.borderRadiusPosition,
-      borderRadius: this._computedBorderRadius,
       enhanced: this.enhanced,
+      colorMode: this.setpointColorMode,
       fillMode: this.fillMode,
       fillMin: this.fillMin,
       fillMax: this.fillMax,
       value: this.value,
       setpoint: this.setpoint,
+      newSetpoint: this.newSetpoint,
       atSetpoint: this.atSetpoint,
       disableAutoAtSetpoint: this.disableAutoAtSetpoint,
       autoAtSetpointDeadband: this.autoAtSetpointDeadband,
       setpointAtZeroDeadband: this.setpointAtZeroDeadband,
+      animateSetpoint: this.animateSetpoint,
+      departingNewSetpoint: this.departingNewSetpoint,
       state: this.state,
+      touching: this.touching,
       advicePosition: this.advicePosition,
       advices: this.advices as ExternalScaleAdvice[],
       fixedAspectRatio: this.fixedAspectRatio,
+      instrumentMode: this.instrumentMode,
+      highlightCurrentValue: this.highlightCurrentValue,
     };
 
     const layout = computeExternalScaleLayout(
@@ -279,7 +336,7 @@ export class ObcBarHorizontal extends LitElement {
     const parts = renderExternalScale(config);
 
     const viewBox = computeExternalScaleViewBox(
-      {orientation: config.orientation, length: this.width},
+      {orientation: config.orientation, length: effectiveLength},
       layout
     );
     const preserveAspectRatio = this.fixedAspectRatio
@@ -297,7 +354,7 @@ export class ObcBarHorizontal extends LitElement {
       >
         ${parts.barContainer} ${parts.barFill} ${parts.scaleBackground}
         ${parts.tickmarks} ${parts.labels} ${parts.adviceOverlays}
-        ${parts.setpoint}
+        ${parts.currentValueDot} ${parts.setpoint}
       </svg>
     `;
   }
@@ -309,25 +366,67 @@ export class ObcBarHorizontal extends LitElement {
       this._refreshBorderRadiusFromCssVar();
     }
 
-    // Report dimensions to parent chart (if in integration mode)
-    if (!this.fixedAspectRatio) {
+    // Update host styles when fixedAspectRatio changes
+    if (changed.has('fixedAspectRatio')) {
+      if (this.fixedAspectRatio) {
+        this._applyFixedAspectRatioStyles();
+        // Force initial scale calculation based on current size
+        this._updateScaleFromCurrentSize();
+      } else {
+        this._removeFixedAspectRatioStyles();
+        this._scale = 1;
+      }
+    }
+
+    // Also recalculate scale when scaleReferenceSize changes
+    if (changed.has('scaleReferenceSize') && this.fixedAspectRatio) {
+      this._updateScaleFromCurrentSize();
+    }
+
+    // Report dimensions to parent chart when layout-affecting properties change.
+    // In fixedAspectRatio mode, resize events also trigger reportDimensions() via ResizeController.
+    // In regular mode, we report on every update to keep parent chart in sync.
+    // Layout-affecting properties change the computed thickness and must notify the parent
+    // even in fixedAspectRatio mode to keep chart padding accurate.
+    const layoutChanged =
+      changed.has('side') ||
+      changed.has('hideLabels') ||
+      changed.has('hasScale') ||
+      changed.has('hasBar') ||
+      changed.has('barThickness') ||
+      changed.has('tickThickness') ||
+      changed.has('labelThickness') ||
+      changed.has('scaleType') ||
+      changed.has('borderRadiusPosition') ||
+      changed.has('borderRadius');
+
+    if (!this.fixedAspectRatio || layoutChanged) {
       this.reportDimensions();
     }
   }
 
   /**
-   * Report scale dimensions to parent chart component
+   * Report scale dimensions to parent chart component.
+   * When fixedAspectRatio=true, reports the actual visual (scaled) thickness
+   * so the chart can correctly reserve space for the scale.
+   * When fixedAspectRatio=false, reports the base/unscaled thickness.
    */
   private reportDimensions() {
     const effectiveBarThickness = computeExternalScaleEffectiveBarThickness({
       hasBar: this.hasBar,
       barThickness: this.barThickness,
-      borderRadius: this._computedBorderRadius,
+      borderRadius: this._getEffectiveBorderRadius(),
       scaleType: this.scaleType,
     });
 
-    const dimensions = computeScaleDimensionsForReport({
-      orientation: 'horizontal',
+    // Use scaleReferenceSize for layout calculation when in fixedAspectRatio mode
+    // This ensures consistent layout dimensions based on the design reference size
+    const effectiveLength = this.fixedAspectRatio
+      ? this.scaleReferenceSize
+      : this.width;
+
+    const baseDimensions = computeScaleDimensionsForReport({
+      orientation: ExternalScaleOrientation.horizontal,
       side: this.side,
       hasBar: this.hasBar,
       hasScale: this.hasScale,
@@ -335,16 +434,34 @@ export class ObcBarHorizontal extends LitElement {
       barThickness: effectiveBarThickness,
       tickThickness: this.tickThickness,
       labelThickness: this.labelThickness,
-      length: this.width,
+      length: effectiveLength,
+      scaleType: this.scaleType,
     });
 
-    // console.debug(`[obc-bar-horizontal] Reporting dimensions:`, {
-    //   side: this.side,
+    // When fixedAspectRatio=true, the SVG scales proportionally via preserveAspectRatio="meet".
+    // The visual thickness = baseThickness × scale, where scale = containerSize / scaleReferenceSize.
+    // Report the actual visual thickness so the chart can reserve the correct space.
+    const dimensions = this.fixedAspectRatio
+      ? {
+          ...baseDimensions,
+          thickness: Math.round(baseDimensions.thickness * this._scale),
+        }
+      : baseDimensions;
+
+    // console.debug(`[bar-horizontal] reportDimensions:`, {
+    //   fixedAspectRatio: this.fixedAspectRatio,
+    //   side: dimensions.side,
     //   thickness: dimensions.thickness,
+    //   scale: this._scale,
     //   width: this.width,
+    //   scaleReferenceSize: this.scaleReferenceSize,
+    //   effectiveLength,
     //   hasBar: this.hasBar,
     //   hasScale: this.hasScale,
-    //   labels: this.labels,
+    //   hideLabels: this.hideLabels,
+    //   barThickness: this.barThickness,
+    //   tickThickness: this.tickThickness,
+    //   labelThickness: this.labelThickness,
     // });
 
     this.dispatchEvent(
@@ -362,8 +479,17 @@ export class ObcBarHorizontal extends LitElement {
 
   override connectedCallback(): void {
     super.connectedCallback();
-    this._refreshBorderRadiusFromCssVar();
-    this._startBorderRadiusObserver();
+    // Only read from CSS variable and observe changes when not in instrument mode
+    if (!this.instrumentMode) {
+      this._refreshBorderRadiusFromCssVar();
+      this._startBorderRadiusObserver();
+    }
+
+    // Ensure the element fills its container when in fixedAspectRatio mode
+    // Custom elements are display:inline by default, which doesn't work for percentage-based sizing
+    if (this.fixedAspectRatio) {
+      this._applyFixedAspectRatioStyles();
+    }
   }
 
   override disconnectedCallback(): void {
@@ -381,53 +507,92 @@ export class ObcBarHorizontal extends LitElement {
     );
   }
 
+  /**
+   * Apply CSS styles needed for fixedAspectRatio mode.
+   * Custom elements are display:inline by default, which doesn't work with percentage-based sizing.
+   * We need display:block and width:100% to fill the slot container.
+   */
+  private _applyFixedAspectRatioStyles(): void {
+    this.style.display = 'block';
+    this.style.width = '100%';
+    this.style.height = 'auto';
+  }
+
+  /**
+   * Remove fixed aspect ratio styles when switching back to pixel mode.
+   */
+  private _removeFixedAspectRatioStyles(): void {
+    this.style.display = '';
+    this.style.width = '';
+    this.style.height = '';
+  }
+
+  /**
+   * Calculate scale based on current element size.
+   * Called when fixedAspectRatio is enabled or scaleReferenceSize changes.
+   */
+  private _updateScaleFromCurrentSize(): void {
+    // Use requestAnimationFrame to ensure layout is complete
+    requestAnimationFrame(() => {
+      const containerWidth = this.clientWidth;
+      if (containerWidth > 0) {
+        this._scale = computeFixedAspectRatioScale({
+          orientation: ExternalScaleOrientation.horizontal,
+          containerMainAxisSize: containerWidth,
+          scaleReferenceSize: this.scaleReferenceSize,
+        });
+        this.requestUpdate();
+        // Report updated dimensions to parent (matches pattern in ResizeController and _refreshBorderRadiusFromCssVar)
+        this.reportDimensions();
+      }
+    });
+  }
+
   private _refreshBorderRadiusFromCssVar(): void {
+    // Skip CSS variable reading in instrument mode
+    if (this.instrumentMode) return;
+
     const next = readExternalScaleBorderRadiusPx(this, this.scaleType);
 
     if (this._computedBorderRadius !== next) {
       this._computedBorderRadius = next;
     }
 
-    // In fixed-aspect-ratio mode, font-size compensation depends on the
-    // viewBox-to-container meet scale. Border radius changes can affect the
-    // effective bar thickness (and therefore viewBox), so recompute here.
+    // In fixed-aspect-ratio mode, recompute scale when border radius changes
+    // (border radius affects effective bar thickness and therefore viewBox)
     if (this.fixedAspectRatio) {
       const rect = this.getBoundingClientRect();
-      if (rect.width > 0 && rect.height > 0) {
-        const effectiveBarThickness = computeExternalScaleEffectiveBarThickness(
-          {
-            hasBar: this.hasBar,
-            barThickness: this.barThickness,
-            borderRadius: next,
-            scaleType: this.scaleType,
-          }
-        );
-
-        const layout = computeExternalScaleLayout({
-          orientation: 'horizontal',
-          side: this.side,
-          hasBar: this.hasBar,
-          hasScale: this.hasScale,
-          labels: !this.hideLabels,
-          barThickness: effectiveBarThickness,
-          tickThickness: this.tickThickness,
-          labelThickness: this.labelThickness,
-          length: this.width,
+      if (rect.width > 0) {
+        this._scale = computeFixedAspectRatioScale({
+          orientation: ExternalScaleOrientation.horizontal,
+          containerMainAxisSize: rect.width,
+          scaleReferenceSize: this.scaleReferenceSize,
         });
-
-        const viewBox = computeExternalScaleViewBox(
-          {orientation: 'horizontal', length: this.width},
-          layout
-        );
-
-        this._scale = computeMeetScale(
-          viewBox.width,
-          viewBox.height,
-          rect.width,
-          rect.height
-        );
+        // Report updated dimensions
+        this.reportDimensions();
       }
     }
+  }
+
+  /**
+   * Get the effective border radius to use.
+   * In instrument mode: use explicit borderRadius prop or default based on scaleType.
+   * In normal mode: use CSS variable computed value.
+   */
+  private _getEffectiveBorderRadius(): number {
+    if (this.instrumentMode) {
+      // In instrument mode, use explicit value or default
+      if (this.borderRadius !== undefined) {
+        return this.borderRadius;
+      }
+      // Default: 8px for regular, 4px for condensed
+      return this.scaleType === ScaleType.condensed ? 4 : 8;
+    }
+    // Normal mode: use CSS variable computed value
+    return (
+      this._computedBorderRadius ??
+      (this.scaleType === ScaleType.condensed ? 4 : 8)
+    );
   }
 }
 

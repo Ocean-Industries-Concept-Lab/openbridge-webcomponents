@@ -1,67 +1,66 @@
-import {LitElement, html} from 'lit';
+import {html} from 'lit';
 import {property} from 'lit/decorators.js';
-import {
-  AutomationButtonReadoutPosition,
-  AutomationButtonState,
-} from '../automation-button/automation-button.js';
-import {
-  AutomationButtonReadoutStack,
-  AutomationButtonReadoutStackSize,
-  AutomationButtonReadoutStackTag,
-} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import '../valve-analoge-two-way-icon/valve-analog-two-way-icon.js';
 import {customElement} from '../../decorator.js';
+import {ObcAbstractAutomationButton} from '../automation-button/abstract-automation-button.js';
+import {AutomationButtonLabelDirection} from '../automation-button/automation-button.js';
+import {AutomationButtonReadoutStack} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 
-/**
- * @ignition-base-height: 82px
- * @ignition-base-width: 66px
- * @ignition-center
- */
+export enum AnalogValveVariant {
+  regular = 'regular',
+  flat = 'flat',
+}
+
 @customElement('obc-analog-valve')
-export class ObcAnalogValve extends LitElement {
-  @property({type: String}) readoutPosition: AutomationButtonReadoutPosition =
-    AutomationButtonReadoutPosition.bottom;
-  @property({type: String}) readoutSize: AutomationButtonReadoutStackSize =
-    AutomationButtonReadoutStackSize.regular;
-  @property({type: Boolean}) alert: boolean = false;
-  @property({type: Boolean}) progress: boolean = false;
+export class ObcAnalogValve extends ObcAbstractAutomationButton {
   @property({type: Boolean}) open: boolean = false;
   @property({type: Number}) value: number = 0;
-  @property({type: String}) tag: string = '';
   @property({type: Boolean}) vertical: boolean = false;
-  @property({type: Boolean}) hideReadoutStack: boolean = false;
-  @property({type: Boolean}) hasIdTag: boolean = false;
+  @property({type: String}) labelDirection: AutomationButtonLabelDirection =
+    AutomationButtonLabelDirection.right;
+  @property({type: String}) variant: AnalogValveVariant =
+    AnalogValveVariant.regular;
 
-  override render() {
-    const readouts: AutomationButtonReadoutStack[] = [];
-    const tagValue: AutomationButtonReadoutStackTag | null = this.tag
-      ? {value: this.parseTagToNumber(this.tag)}
-      : null;
-    return html`<obc-automation-button
-      .state=${this.open
-        ? AutomationButtonState.open
-        : AutomationButtonState.closed}
-      .readouts=${readouts}
-      .tag=${tagValue}
-      .readoutPosition=${this.readoutPosition}
-      .readoutSize=${this.readoutSize}
-      ?alert=${this.alert}
-      ?progress=${this.progress}
-      .hideReadoutStack=${this.hideReadoutStack}
-      .hasIdTag=${this.hasIdTag}
-    >
-      <obc-valve-analog-two-way-icon
+  override get extraReadouts(): AutomationButtonReadoutStack[] {
+    if (this.open) {
+      return [
+        {
+          type: 'value',
+          icon: 'arrow',
+          value: this.value,
+          nDigits: 3,
+          unit: '%',
+          direction: this.labelDirection,
+        },
+      ];
+    } else {
+      return [
+        {
+          type: 'state-off',
+          value: 'Off',
+          hasIcon: true,
+        },
+      ];
+    }
+  }
+
+  override get _on(): boolean {
+    return this.open;
+  }
+
+  override get icon() {
+    return html`<obc-valve-analog-two-way-icon
         .value=${this.value}
         .closed=${!this.open}
         .vertical=${this.vertical}
         slot="icon"
       ></obc-valve-analog-two-way-icon>
-    </obc-automation-button>`;
-  }
-
-  private parseTagToNumber(tag: string): number {
-    const num = parseInt(tag.replace(/#/g, ''), 10);
-    return isNaN(num) ? 0 : num;
+      <obc-valve-analog-two-way-icon
+        .value=${this.value}
+        .closed=${!this.open}
+        .vertical=${this.vertical}
+        slot="icon-siluette"
+      ></obc-valve-analog-two-way-icon> `;
   }
 }
 

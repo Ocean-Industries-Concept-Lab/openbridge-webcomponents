@@ -12,7 +12,7 @@ import type {
 } from '../../building-blocks/external-scale/external-scale.js';
 import {
   computeExternalScaleViewBox,
-  computeMeetScale,
+  computeFixedAspectRatioScale,
   computeExternalScaleLayout,
   renderExternalScale,
   toExternalScaleLayoutConfig,
@@ -21,12 +21,10 @@ import {
   ScaleType,
   FillMode,
   AdvicePosition,
+  ExternalScaleOrientation,
+  ExternalScaleSide,
 } from '../../building-blocks/external-scale/external-scale.js';
-
-export enum VerticalSide {
-  left = 'left',
-  right = 'right',
-}
+import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 
 // Re-export shared enums for convenience
 export {
@@ -36,6 +34,7 @@ export {
   FrameStyle,
   BorderRadiusPosition,
   InstrumentState,
+  ExternalScaleSide,
 };
 
 /**
@@ -75,7 +74,7 @@ export {
  * - `height`: 384px
  * - `paddingTop`/`paddingBottom`: 32px (`CHART_DIMENSIONS.CANVAS_PADDING`)
  * - `barThickness`: 48px
- * - `tickThickness`: 28px
+ * - `tickThickness`: 24px
  * - `labelThickness`: 60px
  * - `borderRadius`: 8px (matches obc-component-size-medium)
  * - `scaleType`: regular
@@ -124,7 +123,9 @@ export {
  * @fires scale-dimensions-changed {CustomEvent} Fired when layout-affecting properties change, providing dimension info for parent chart integration.
  */
 @customElement('obc-gauge-vertical')
-export class ObcGaugeVertical extends LitElement {
+export class ObcGaugeVertical extends SetpointMixin(LitElement, {
+  defaultDeadband: 1,
+}) {
   /** Minimum scale value */
   @property({type: Number}) minValue = 0;
   /** Maximum scale value */
@@ -135,7 +136,7 @@ export class ObcGaugeVertical extends LitElement {
   private readonly paddingBottom = CHART_DIMENSIONS.CANVAS_PADDING;
 
   /** Which side of the chart area this scale lives on (left or right) */
-  @property({type: String}) side: VerticalSide = VerticalSide.right;
+  @property({type: String}) side: ExternalScaleSide = ExternalScaleSide.right;
 
   /**
    * When true, freezes all internal calculations and scales the entire component
@@ -146,6 +147,14 @@ export class ObcGaugeVertical extends LitElement {
    * It can be set programmatically by parent components (e.g., GaugeTrend).
    */
   fixedAspectRatio = false;
+
+  /**
+   * Reference size for proportional scaling when fixedAspectRatio is true.
+   * At this height, the scale renders at native 1:1 (matches Figma design).
+   * Above this height, the scale grows proportionally; below, it shrinks.
+   * @default 384
+   */
+  scaleReferenceSize = 384;
 
   @state()
   private _scale = 1;
@@ -159,46 +168,27 @@ export class ObcGaugeVertical extends LitElement {
       const entry = entries[0];
       if (!entry) return;
 
-      const effectiveBarThickness = computeExternalScaleEffectiveBarThickness({
-        hasBar: this.hasBar,
-        barThickness: this.barThickness,
-        borderRadius: this.borderRadius,
-        scaleType: this.scaleType,
+      // Use the centralized function that computes scale based on reference size
+      // For vertical scales, compare container height to reference size
+      const containerMainAxisSize = entry.contentRect.height;
+
+      const scale = computeFixedAspectRatioScale({
+        orientation: ExternalScaleOrientation.vertical,
+        containerMainAxisSize,
+        scaleReferenceSize: this.scaleReferenceSize,
       });
-
-      // Calculate reference thickness from current configuration
-      const layout = computeExternalScaleLayout({
-        orientation: 'vertical',
-        side: this.side,
-        hasBar: this.hasBar,
-        hasScale: this.hasScale,
-        labels: !this.hideLabels,
-        barThickness: effectiveBarThickness,
-        tickThickness: this.tickThickness,
-        labelThickness: this.labelThickness,
-        length: this.height,
-      });
-
-      const viewBox = computeExternalScaleViewBox(
-        {orientation: 'vertical', length: this.height},
-        layout
-      );
-
-      const scale = computeMeetScale(
-        viewBox.width,
-        viewBox.height,
-        entry.contentRect.width,
-        entry.contentRect.height
-      );
       // Guard against zero-sized containers, but allow fractional scales < 1
       this._scale = scale > 0 ? scale : 1;
+
+      // Report scaled dimensions to parent chart
+      this.reportDimensions();
     },
   });
 
   /** Hide numerical value labels at primary tickmarks */
   @property({type: Boolean}) hideLabels = false;
   private readonly barThickness = 48;
-  private readonly tickThickness = 28;
+  private readonly tickThickness = 24;
   private readonly labelThickness = 60;
 
   /** Array of values for main tickbars. When undefined, no main tickbars shown. When empty array [], defaults to [minValue, 0, maxValue]. */
@@ -241,18 +231,14 @@ export class ObcGaugeVertical extends LitElement {
   /** Current value (bar fill level) */
   @property({type: Number}) value?: number = undefined;
 
-  /** Setpoint/target value to display as indicator. When undefined, setpoint is off. */
-  @property({type: Number}) setpoint?: number = undefined;
-  /** Whether value is at setpoint (manual override when disableAutoAtSetpoint=true) */
-  @property({type: Boolean}) atSetpoint = false;
-  /** Disable automatic atSetpoint calculation based on value and deadband */
-  @property({type: Boolean}) disableAutoAtSetpoint = false;
-  /** Deadband for automatic atSetpoint detection (when disableAutoAtSetpoint=false) */
-  @property({type: Number}) autoAtSetpointDeadband = 1;
-  /** Deadband around zero for setpoint positioning */
-  @property({type: Number}) setpointAtZeroDeadband = 0.5;
   /** Instrument state: inCommand, active, loading, or off */
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
+
+  /**
+   * @deprecated Use `touching` (from SetpointMixin) instead.
+   * Kept for backward compatibility. Synced to `touching` in `willUpdate()`.
+   */
+  @property({type: Boolean}) focused = false;
 
   private readonly advicePosition: AdvicePosition = AdvicePosition.inner;
   /** Advice/alert overlays with min, max, type, and hinted state. When undefined or empty, no advice shown. */
@@ -263,9 +249,17 @@ export class ObcGaugeVertical extends LitElement {
     hinted: boolean;
   }> = [];
 
+  /**
+   * When true, displays a dot indicator at the current value position.
+   * The dot is rendered in the scale band, touching its inner edge (towards the chart).
+   * This provides an alternative to bar fill for highlighting the current value.
+   * @default false
+   */
+  @property({type: Boolean}) highlightCurrentValue = false;
+
   override render() {
     const config: ExternalScaleConfig = {
-      orientation: 'vertical',
+      orientation: ExternalScaleOrientation.vertical,
       side: this.side,
       length: this.height,
       paddingStart: this.paddingTop,
@@ -293,14 +287,23 @@ export class ObcGaugeVertical extends LitElement {
       fillMax: this.fillMax,
       value: this.value,
       setpoint: this.setpoint,
+      newSetpoint: this.newSetpoint,
       atSetpoint: this.atSetpoint,
       disableAutoAtSetpoint: this.disableAutoAtSetpoint,
       autoAtSetpointDeadband: this.autoAtSetpointDeadband,
       setpointAtZeroDeadband: this.setpointAtZeroDeadband,
+      animateSetpoint: this.animateSetpoint,
+      departingNewSetpoint: this.departingNewSetpoint,
       state: this.state,
+      touching: this.touching,
+      colorMode: this.setpointColorMode,
       advicePosition: this.advicePosition,
       advices: this.advices as ExternalScaleAdvice[],
       fixedAspectRatio: this.fixedAspectRatio,
+      // Gauges are always in instrument mode - they use fixed borderRadius (8px)
+      // and don't respond to .obc-component-size-* CSS classes for border radius
+      instrumentMode: true,
+      highlightCurrentValue: this.highlightCurrentValue,
     };
 
     const layout = computeExternalScaleLayout(
@@ -328,16 +331,27 @@ export class ObcGaugeVertical extends LitElement {
       >
         ${parts.barContainer} ${parts.barFill} ${parts.scaleBackground}
         ${parts.tickmarks} ${parts.labels} ${parts.adviceOverlays}
-        ${parts.setpoint}
+        ${parts.currentValueDot} ${parts.setpoint}
       </svg>
     `;
+  }
+
+  override willUpdate(changed: PropertyValues): void {
+    super.willUpdate(changed);
+
+    // Sync deprecated alias to mixin property
+    // Only sync if the alias was set and the mixin property was NOT also set.
+    if (changed.has('focused') && !changed.has('touching')) {
+      this.touching = this.focused;
+    }
   }
 
   override updated(changed: PropertyValues) {
     super.updated(changed);
 
-    // Report dimensions to parent chart (if in integration mode)
-    // Only emit when layout-affecting properties change to avoid spamming events
+    // Report dimensions to parent chart
+    // In fixedAspectRatio mode, we report after resize events trigger _scale updates
+    // In regular mode, only emit when layout-affecting properties change
     if (
       !this.fixedAspectRatio &&
       (changed.has('side') || changed.has('hideLabels'))
@@ -348,6 +362,8 @@ export class ObcGaugeVertical extends LitElement {
 
   /**
    * Report scale dimensions to parent chart component.
+   * Always reports unscaled/reference dimensions so the parent chart can apply
+   * consistent proportional scaling in fixedAspectRatioScaling mode.
    */
   private reportDimensions() {
     const effectiveBarThickness = computeExternalScaleEffectiveBarThickness({
@@ -357,8 +373,8 @@ export class ObcGaugeVertical extends LitElement {
       scaleType: this.scaleType,
     });
 
-    const dimensions = computeScaleDimensionsForReport({
-      orientation: 'vertical',
+    const baseDimensions = computeScaleDimensionsForReport({
+      orientation: ExternalScaleOrientation.vertical,
       side: this.side,
       hasBar: this.hasBar,
       hasScale: this.hasScale,
@@ -367,7 +383,13 @@ export class ObcGaugeVertical extends LitElement {
       tickThickness: this.tickThickness,
       labelThickness: this.labelThickness,
       length: this.height,
+      scaleType: this.scaleType,
     });
+
+    // Always report unscaled/reference dimensions.
+    // The parent chart component handles proportional scaling consistently
+    // for both external scales and chart padding in fixedAspectRatioScaling mode.
+    const dimensions = baseDimensions;
 
     // console.debug(`[obc-gauge-vertical] Reporting dimensions:`, {
     //   side: this.side,
@@ -376,6 +398,8 @@ export class ObcGaugeVertical extends LitElement {
     //   hasBar: this.hasBar,
     //   hasScale: this.hasScale,
     //   labels: this.labels,
+    //   fixedAspectRatio: this.fixedAspectRatio,
+    //   scale: this._scale,
     // });
 
     this.dispatchEvent(

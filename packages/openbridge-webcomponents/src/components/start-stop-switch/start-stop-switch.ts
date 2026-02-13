@@ -11,12 +11,12 @@ import {customElement} from '../../decorator.js';
  * - `running`: Green appearance indicating motor/process is running
  * - `loading`: Light blue appearance indicating a pending/loading state
  */
-// export type StartStopSwitchVariant = 'normal' | 'running' | 'loading';
 export enum StartStopSwitchVariant {
   normal = 'normal',
   running = 'running',
   loading = 'loading',
 }
+
 /**
  * The possible sizes for the start-stop switch.
  * - `regular`: Standard size with 32px track height

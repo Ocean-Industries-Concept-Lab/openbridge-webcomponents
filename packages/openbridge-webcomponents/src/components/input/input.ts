@@ -1,8 +1,10 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {property} from 'lit/decorators.js';
+import {property, state} from 'lit/decorators.js';
 import compentStyle from './input.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
+import '../../icons/icon-visibility-off-google.js';
+import '../../icons/icon-visibility-on-google.js';
 
 /**
  * Enumeration of all valid HTML input types for use with `<obc-input>`.
@@ -65,6 +67,7 @@ export enum ObcInputTextAlign {
  * ## Features
  * - **Input types:** Supports all standard HTML input types (text, password, email, number, search, etc.) via the `type` property.
  * - **Leading/trailing icons:** Optional slots for icons before or after the input (e.g., search icon, clear button).
+ * - **Password toggle:** Optional show/hide toggle for password fields.
  * - **Helper text:** Slot for additional guidance or validation feedback below the field.
  * - **Error state:** Visual error indication when `error` is true.
  * - **Disabled/required states:** Standard form control behaviors.
@@ -105,6 +108,7 @@ export enum ObcInputTextAlign {
  * - `noHorisontalPadding`: Removes horizontal padding for edge-to-edge layouts.
  * - `hasLeadingIcon`: If true, displays the leading icon slot.
  * - `hasTrailingIcon`: If true, displays the trailing icon slot.
+ * - `passwordToggle`: If true and `type="password"`, shows a trailing icon to toggle visibility.
  *
  * ## Events
  * - `input` – Fired when the value of the input changes (standard input event).
@@ -208,18 +212,37 @@ export class ObcInput extends LitElement {
    */
   @property({type: Boolean}) hasTrailingIcon: boolean = false;
 
+  /**
+   * If true and `type="password"`, shows a trailing icon to toggle visibility.
+   */
+  @property({type: Boolean}) passwordToggle = false;
+
+  @state() private passwordVisible = false;
+
   onInput(e: Event) {
     this.value = (e.target as HTMLInputElement).value;
   }
 
+  private togglePasswordVisibility() {
+    if (this.disabled) return;
+    this.passwordVisible = !this.passwordVisible;
+  }
+
   override render() {
+    const isPasswordToggle =
+      this.passwordToggle && this.type === HTMLInputTypeAttribute.Password;
+    const resolvedType =
+      isPasswordToggle && this.passwordVisible
+        ? HTMLInputTypeAttribute.Text
+        : this.type;
+    const showTrailingIcon = this.hasTrailingIcon || isPasswordToggle;
     return html`
       <label
         class=${classMap({
           wrapper: true,
           squared: this.squared,
           'has-leading-icon': this.hasLeadingIcon,
-          'has-trailing-icon': this.hasTrailingIcon,
+          'has-trailing-icon': showTrailingIcon,
           [`align-` + this.textAlign]: true,
           [`font-` + this.font]: true,
           disabled: this.disabled,
@@ -230,7 +253,7 @@ export class ObcInput extends LitElement {
       >
         <div class="input-wrapper" part="input-wrapper">
           <input
-            .type=${this.type}
+            .type=${resolvedType}
             class="input"
             .value=${this.value}
             .placeholder=${this.placeholder}
@@ -244,10 +267,24 @@ export class ObcInput extends LitElement {
                 <slot name="leading-icon"></slot>
               </div>`
             : nothing}
-          ${this.hasTrailingIcon
-            ? html`<div class="icon trailing" part="icon trailing">
-                <slot name="trailing-icon"></slot>
-              </div>`
+          ${showTrailingIcon
+            ? isPasswordToggle
+              ? html`<button
+                  class="icon trailing password-toggle"
+                  part="icon trailing"
+                  type="button"
+                  aria-label=${this.passwordVisible
+                    ? 'Hide password'
+                    : 'Show password'}
+                  @click=${this.togglePasswordVisibility}
+                >
+                  ${this.passwordVisible
+                    ? html`<obi-visibility-on-google></obi-visibility-on-google>`
+                    : html`<obi-visibility-off-google></obi-visibility-off-google>`}
+                </button>`
+              : html`<div class="icon trailing" part="icon trailing">
+                  <slot name="trailing-icon"></slot>
+                </div>`
             : nothing}
         </div>
         <div class="helper-text" part="helper-text">
