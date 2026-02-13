@@ -1069,11 +1069,11 @@ export class ObcTable extends LitElement {
           </obc-tag>`;
         })}
         ${overflowCount > 0
-          ? html`<obc-tag
-              .label=${overflowLabel}
-              color=${TagColor.gray}
-              part=${ifDefined(cssPart(value, 'tag'))}
-            ></obc-tag>`
+          ? html`<span
+              class="tag-overflow"
+              part=${ifDefined(cssPart(value, 'tag-overflow'))}
+              >${overflowLabel}</span
+            >`
           : nothing}
       </div>`;
     } else if (value.type === ObcTableCellType.HorizontalBar) {

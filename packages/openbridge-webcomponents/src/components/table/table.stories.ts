@@ -129,8 +129,134 @@ const meta: Meta<typeof ObcTable> = {
 export default meta;
 type Story = StoryObj<ObcTable>;
 
+const playgroundColumns = [
+  {
+    label: 'Label',
+    key: 'label',
+    sortable: true,
+    sortDirection: 'none' as const,
+    compareFunction: (a: ObcTableCellData, b: ObcTableCellData) =>
+      (a.text ?? '').localeCompare(b.text ?? ''),
+  },
+];
+
+const playgroundData: ObcTableRow[] = [
+  {
+    id: '0',
+    label: {type: ObcTableCellType.Regular, text: 'Table item'},
+  },
+  {
+    id: '1',
+    label: {type: ObcTableCellType.Regular, text: 'Table item'},
+  },
+  {
+    id: '2',
+    label: {type: ObcTableCellType.Regular, text: 'Table item'},
+  },
+  {
+    id: '3',
+    label: {type: ObcTableCellType.Regular, text: 'Table item'},
+  },
+  {
+    id: '4',
+    label: {type: ObcTableCellType.Regular, text: 'Table item'},
+  },
+  {
+    id: '5',
+    label: {type: ObcTableCellType.Regular, text: 'Table item'},
+  },
+  {
+    id: '6',
+    label: {type: ObcTableCellType.Regular, text: 'Table item'},
+  },
+];
+
+const renderTable = (args: ObcTable) => {
+  return html`<obc-table
+    .data=${args.data}
+    .columns=${args.columns}
+    .rowDivider=${args.rowDivider}
+    .narrowHeader=${args.narrowHeader}
+    .noHeader=${args.noHeader}
+    .striped=${args.striped}
+    .selectable=${args.selectable}
+    .defaultSelectedRowIds=${args.defaultSelectedRowIds}
+    .selectedRowIds=${args.selectedRowIds}
+    .selectAllAriaLabel=${args.selectAllAriaLabel}
+    .selectAllLabel=${args.selectAllLabel}
+  ></obc-table>`;
+};
+
 export const Primary: Story = {
   args: {},
+};
+
+export const Playground: Story = {
+  args: {
+    width: 320,
+    height: 460,
+    selectable: true,
+    rowDivider: true,
+    striped: false,
+    narrowHeader: false,
+    noHeader: false,
+    selectAllLabel: 'Label',
+    selectAllAriaLabel: 'Select all table items',
+    defaultSelectedRowIds: ['1', '4'],
+    columns: playgroundColumns,
+    data: playgroundData,
+  },
+  argTypes: {
+    columns: {
+      table: {disable: true},
+    },
+    data: {
+      table: {disable: true},
+    },
+    selectedRowIds: {
+      table: {disable: true},
+    },
+    width: {
+      control: {type: 'range', min: 200, max: 900, step: 10},
+    },
+    height: {
+      control: {type: 'range', min: 240, max: 900, step: 10},
+    },
+    selectable: {
+      control: {type: 'boolean'},
+    },
+    rowDivider: {
+      control: {type: 'boolean'},
+    },
+    striped: {
+      control: {type: 'boolean'},
+    },
+    narrowHeader: {
+      control: {type: 'boolean'},
+    },
+    noHeader: {
+      control: {type: 'boolean'},
+    },
+    defaultSelectedRowIds: {
+      control: {type: 'object'},
+    },
+    selectAllLabel: {
+      control: {type: 'text'},
+    },
+    selectAllAriaLabel: {
+      control: {type: 'text'},
+    },
+  },
+  parameters: {
+    controls: {expanded: true},
+    docs: {
+      description: {
+        story:
+          'Interactive playground for table selection, row styling, and header options.',
+      },
+    },
+  },
+  render: renderTable,
 };
 
 export const CheckboxCells: Story = {

@@ -94,13 +94,17 @@
     }
 
     @mixin style style=flat;
-    border: none;
+    border: 1px solid transparent;
     --flat-active-background-color: transparent;
     @mixin outline-inward;
     border-radius: var(--global-border-radius-border-radius-base);
 
     &.selected {
       @mixin style style=amplified;
+    }
+
+    &.selected + &.selected {
+      border-top-color: transparent;
     }
 
     &.animating {
@@ -236,7 +240,14 @@
       }
 
       &.tags {
-        gap: var(--menu-navigation-components-table-item-badge-spacing, 6px);
+        gap: var(--menu-navigation-components-table-item-badge-spacing, 8px);
+
+        .tag-overflow {
+          @mixin font-label;
+          color: var(--on-flat-neutral-color);
+          white-space: nowrap;
+          margin-left: 8px;
+        }
 
         &.wrap {
           flex-wrap: wrap;
