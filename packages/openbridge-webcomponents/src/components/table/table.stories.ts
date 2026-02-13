@@ -171,8 +171,11 @@ const playgroundData: ObcTableRow[] = [
   },
 ];
 
-const renderTable = (args: ObcTable) => {
+const renderTable = (args: ObcTable & {height?: number}) => {
+  const tableStyle =
+    typeof args.height === 'number' ? `height: ${args.height}px;` : '';
   return html`<obc-table
+    style=${tableStyle}
     .data=${args.data}
     .columns=${args.columns}
     .rowDivider=${args.rowDivider}
