@@ -9,7 +9,10 @@ import {
   type AngleAdvice
 } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js'
 import { computed } from 'vue'
-import { InstrumentState, Priority } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types.js'
+import {
+  InstrumentState,
+  Priority
+} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types.js'
 import { PropellerType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/thruster/propeller.js'
 
 const sim = useSim()
@@ -47,16 +50,38 @@ const angleAdvice = computed<AngleAdvice[]>(() => {
 <template>
   <div class="wrapper">
     <div class="instruments">
-      <ObcInstrumentField tag="Angle" unit="deg" :value="angle" :setpoint="angleSet" has-setpoint
-        :size="InstrumentFieldSize.enhanced" :auto-hide-setpoint="true" :auto-hide-deadband="1" />
-      <ObcInstrumentField tag="Thrust" unit="%" :value="thrust" :setpoint="thrustSet" has-setpoint
-        :size="InstrumentFieldSize.enhanced" :auto-hide-setpoint="true" :auto-hide-deadband="1" />
+      <ObcInstrumentField
+        tag="Angle"
+        unit="deg"
+        :value="angle"
+        :setpoint="angleSet"
+        has-setpoint
+        :size="InstrumentFieldSize.enhanced"
+        :auto-hide-setpoint="true"
+        :auto-hide-deadband="1"
+      />
+      <ObcInstrumentField
+        tag="Thrust"
+        unit="%"
+        :value="thrust"
+        :setpoint="thrustSet"
+        has-setpoint
+        :size="InstrumentFieldSize.enhanced"
+        :auto-hide-setpoint="true"
+        :auto-hide-deadband="1"
+      />
     </div>
-    <ObcAzimuthThruster :angle="angle" :angle-setpoint="angleSet" :thrust="thrust" :thrust-setpoint="thrustSet"
-      :angle-advices="angleAdvice" :state="InstrumentState.active"
+    <ObcAzimuthThruster
+      :angle="angle"
+      :angle-setpoint="angleSet"
+      :thrust="thrust"
+      :thrust-setpoint="thrustSet"
+      :angle-advices="angleAdvice"
+      :state="InstrumentState.active"
       :priority="demoConfig.hasCommand ? Priority.enhanced : Priority.regular"
       :top-propeller="details ? PropellerType.single : undefined"
-      :bottom-propeller="details ? PropellerType.single : undefined" />
+      :bottom-propeller="details ? PropellerType.single : undefined"
+    />
   </div>
 </template>
 

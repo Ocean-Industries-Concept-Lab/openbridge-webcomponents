@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { InstrumentState, Priority } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types'
+import {
+  InstrumentState,
+  Priority
+} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types'
 import ObcAzimuthThruster from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster.vue'
 import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
 import { InstrumentFieldSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
@@ -67,46 +70,114 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
 
 <template>
   <div class="propulsion-container">
-    <svg width="72" height="16" viewBox="0 0 72 16" fill="none" xmlns="http://www.w3.org/2000/svg"
-      class="port-starboard-indicator">
+    <svg
+      width="72"
+      height="16"
+      viewBox="0 0 72 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      class="port-starboard-indicator"
+    >
       <path
         d="M19.6106 14C18.5963 14 18.2264 12.6643 19.0961 12.1425L36.0002 2L52.9044 12.1425C53.7741 12.6643 53.4042 14 52.3899 14H19.6106Z"
-        fill="var(--element-inactive-color)" />
+        fill="var(--element-inactive-color)"
+      />
       <circle cx="4.00024" cy="10" r="4" fill="var(--base-red-300)" />
       <circle cx="68.0002" cy="10" r="4" fill="var(--base-mint-300)" />
     </svg>
 
-    <ObcAzimuthThruster class="fore-thruster" :state="InstrumentState.off" :angle="180" :angle-setpoint="0" :thrust="0"
-      :thrust-setpoint="0" :top-propeller="PropellerType.cap" :bottom-propeller="PropellerType.single" />
-    <ObcAzimuthThruster class="aft-thruster" :state="InstrumentState.active"
-      :priority="configStore.hasCommand ? Priority.enhanced : Priority.regular" :angle="angle"
-      :angle-setpoint="angleSetpoint" :thrust="sim.propulsion.propeller.value"
-      :thrust-setpoint="sim.propulsion.propellerSet.value" :top-propeller="PropellerType.cap"
-      :bottom-propeller="PropellerType.single" :thrust-advices="thrusterAdvice" :angle-advices="rudderAdive" />
+    <ObcAzimuthThruster
+      class="fore-thruster"
+      :state="InstrumentState.off"
+      :angle="180"
+      :angle-setpoint="0"
+      :thrust="0"
+      :thrust-setpoint="0"
+      :top-propeller="PropellerType.cap"
+      :bottom-propeller="PropellerType.single"
+    />
+    <ObcAzimuthThruster
+      class="aft-thruster"
+      :state="InstrumentState.active"
+      :priority="configStore.hasCommand ? Priority.enhanced : Priority.regular"
+      :angle="angle"
+      :angle-setpoint="angleSetpoint"
+      :thrust="sim.propulsion.propeller.value"
+      :thrust-setpoint="sim.propulsion.propellerSet.value"
+      :top-propeller="PropellerType.cap"
+      :bottom-propeller="PropellerType.single"
+      :thrust-advices="thrusterAdvice"
+      :angle-advices="rudderAdive"
+    />
     <div class="readout-grid">
       <div class="fore-index readout-container single">
         <div class="index off font-ui-label-active">1</div>
         <div class="title font-ui-label">Fore</div>
-        <ObcInstrumentField :value="0" :max-digits="3" off :size="InstrumentFieldSize.enhanced" neutral-color>
+        <ObcInstrumentField
+          :value="0"
+          :max-digits="3"
+          off
+          :size="InstrumentFieldSize.enhanced"
+          neutral-color
+        >
           <div slot="off-value">0</div>
         </ObcInstrumentField>
-        <ObcInstrumentField class="field-unit" unit="DEG" tag="Angle" off label-only horizontal
-          :size="InstrumentFieldSize.enhanced" />
+        <ObcInstrumentField
+          class="field-unit"
+          unit="DEG"
+          tag="Angle"
+          off
+          label-only
+          horizontal
+          :size="InstrumentFieldSize.enhanced"
+        />
         <ObcInstrumentField off :size="InstrumentFieldSize.enhanced" />
-        <ObcInstrumentField class="field-unit" unit="%" tag="Power" off label-only horizontal
-          :size="InstrumentFieldSize.enhanced" />
+        <ObcInstrumentField
+          class="field-unit"
+          unit="%"
+          tag="Power"
+          off
+          label-only
+          horizontal
+          :size="InstrumentFieldSize.enhanced"
+        />
       </div>
       <div class="aft-index readout-container single">
         <div class="index font-ui-label-active">2</div>
         <div class="title font-ui-label">Aft</div>
-        <ObcInstrumentField :value="angle" :setpoint="angleSetpoint" has-setpoint auto-hide-setpoint
-          :auto-hide-deadband="1" :max-digits="3" :size="InstrumentFieldSize.enhanced" />
-        <ObcInstrumentField class="field-unit" unit="DEG" tag="Angle" label-only horizontal
-          :size="InstrumentFieldSize.enhanced" />
-        <ObcInstrumentField :value="sim.propulsion.propeller.value" :setpoint="sim.propulsion.propellerSet.value"
-          has-setpoint auto-hide-setpoint :auto-hide-deadband="1" :size="InstrumentFieldSize.enhanced" />
-        <ObcInstrumentField class="field-unit" unit="%" tag="Power" label-only horizontal
-          :size="InstrumentFieldSize.enhanced" />
+        <ObcInstrumentField
+          :value="angle"
+          :setpoint="angleSetpoint"
+          has-setpoint
+          auto-hide-setpoint
+          :auto-hide-deadband="1"
+          :max-digits="3"
+          :size="InstrumentFieldSize.enhanced"
+        />
+        <ObcInstrumentField
+          class="field-unit"
+          unit="DEG"
+          tag="Angle"
+          label-only
+          horizontal
+          :size="InstrumentFieldSize.enhanced"
+        />
+        <ObcInstrumentField
+          :value="sim.propulsion.propeller.value"
+          :setpoint="sim.propulsion.propellerSet.value"
+          has-setpoint
+          auto-hide-setpoint
+          :auto-hide-deadband="1"
+          :size="InstrumentFieldSize.enhanced"
+        />
+        <ObcInstrumentField
+          class="field-unit"
+          unit="%"
+          tag="Power"
+          label-only
+          horizontal
+          :size="InstrumentFieldSize.enhanced"
+        />
       </div>
     </div>
   </div>
