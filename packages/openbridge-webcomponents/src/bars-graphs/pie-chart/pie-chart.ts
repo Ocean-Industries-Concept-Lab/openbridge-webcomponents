@@ -41,6 +41,7 @@ const PIE_DIMENSIONS = {
 } as const;
 
 const PIE_RECREATE_PROP_NAMES = [
+  'priority',
   'sunburst',
   'showOuterLabels',
   'showUnit',
