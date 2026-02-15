@@ -12,6 +12,7 @@ import {
 } from './external-scale.js';
 import {
   InstrumentState,
+  Priority,
   FrameStyle,
   BorderRadiusPosition,
 } from '../../navigation-instruments/types.js';
@@ -270,7 +271,7 @@ const config = {
   tertiaryTickbarsInterval: 2,
   scaleType: ScaleType.regular,
   frameStyle: FrameStyle.regular,
-  enhanced: true,
+  priority: Priority.enhanced,
   fillMode: FillMode.fill,
   fillMin: 0,
   fillMax: 40,
@@ -280,7 +281,7 @@ const config = {
   disableAutoAtSetpoint: false,
   autoAtSetpointDeadband: 1,
   setpointAtZeroDeadband: 0.5,
-  state: 'inCommand',
+  state: 'active',
   advicePosition: AdvicePosition.inner,
   advices: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
 };
@@ -427,9 +428,9 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
       control: {type: 'select'},
       options: Object.values(FrameStyle),
     },
-    enhanced: {
+    priority: {
       description:
-        'Enhanced visual mode: when true, uses enhanced instrument colors for bar fill and setpoint.',
+        'Priority visual mode: when true, uses enhanced instrument colors for bar fill and setpoint.',
       control: {type: 'boolean'},
     },
     fillMode: {
@@ -518,7 +519,7 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
     tertiaryTickbarsInterval: 2,
     scaleType: ScaleType.regular,
     frameStyle: FrameStyle.regular,
-    enhanced: false,
+    priority: Priority.regular,
     fillMode: FillMode.fill,
     fillMin: 0,
     fillMax: 40,
@@ -529,7 +530,7 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
     disableAutoAtSetpoint: false,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
     advicePosition: AdvicePosition.inner,
     advices: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
     highlightCurrentValue: false,
@@ -576,7 +577,7 @@ export const VerticalRightBasic: Story = {
     tertiaryTickbarsInterval: 2,
     scaleType: ScaleType.regular,
     frameStyle: FrameStyle.regular,
-    enhanced: true,
+    priority: Priority.enhanced,
     fillMode: FillMode.fill,
     fillMin: 0,
     fillMax: 40,
@@ -586,7 +587,7 @@ export const VerticalRightBasic: Story = {
     disableAutoAtSetpoint: false,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
     advicePosition: AdvicePosition.inner,
     advices: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
   },
@@ -616,7 +617,7 @@ export const VerticalWithCurrentValueDot: Story = {
     tertiaryTickbarsInterval: 2,
     scaleType: ScaleType.regular,
     frameStyle: FrameStyle.regular,
-    enhanced: true,
+    priority: Priority.enhanced,
     fillMode: FillMode.fill,
     fillMin: 0,
     fillMax: 40,
@@ -626,7 +627,7 @@ export const VerticalWithCurrentValueDot: Story = {
     disableAutoAtSetpoint: false,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
     advicePosition: AdvicePosition.inner,
     advices: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
     highlightCurrentValue: true,
@@ -657,7 +658,7 @@ export const VerticalLeftTint: Story = {
     tertiaryTickbarsInterval: 2,
     scaleType: ScaleType.regular,
     frameStyle: FrameStyle.regular,
-    enhanced: true,
+    priority: Priority.enhanced,
     fillMode: FillMode.tint,
     fillMin: -50,
     fillMax: 50,
@@ -667,7 +668,7 @@ export const VerticalLeftTint: Story = {
     disableAutoAtSetpoint: false,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
     advicePosition: AdvicePosition.center,
     advices: [
       {min: 40, max: 60, type: AdviceType.caution, hinted: true},
@@ -700,7 +701,7 @@ export const HorizontalBottomBasic: Story = {
     tertiaryTickbarsInterval: 2,
     scaleType: ScaleType.regular,
     frameStyle: FrameStyle.regular,
-    enhanced: false,
+    priority: Priority.regular,
     fillMode: FillMode.fill,
     fillMin: 0,
     fillMax: 40,
@@ -710,7 +711,7 @@ export const HorizontalBottomBasic: Story = {
     disableAutoAtSetpoint: false,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
     advicePosition: AdvicePosition.inner,
     advices: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
   },
@@ -740,7 +741,7 @@ export const HorizontalTopTint: Story = {
     tertiaryTickbarsInterval: 2,
     scaleType: ScaleType.regular,
     frameStyle: FrameStyle.regular,
-    enhanced: true,
+    priority: Priority.enhanced,
     fillMode: FillMode.tint,
     fillMin: -50,
     fillMax: 50,
@@ -750,7 +751,7 @@ export const HorizontalTopTint: Story = {
     disableAutoAtSetpoint: false,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
     advicePosition: AdvicePosition.center,
     advices: [
       {min: -75, max: -60, type: AdviceType.advice, hinted: true},
@@ -785,7 +786,7 @@ export const VerticalRightScaleBackground: Story = {
     tertiaryTickbarsInterval: 2,
     scaleType: ScaleType.regular,
     frameStyle: FrameStyle.regular,
-    enhanced: true,
+    priority: Priority.enhanced,
     fillMode: FillMode.fill,
     fillMin: 0,
     fillMax: 40,
@@ -795,7 +796,7 @@ export const VerticalRightScaleBackground: Story = {
     disableAutoAtSetpoint: false,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
     advicePosition: AdvicePosition.inner,
     advices: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
   },
@@ -880,7 +881,7 @@ export const FixedAspectRatioComparison: StoryObj = {
     barNormal.value = 60;
     barNormal.setpoint = 80;
     barNormal.fillMode = FillMode.fill;
-    barNormal.enhanced = false;
+    barNormal.priority = Priority.regular;
     barNormal.primaryTickbarsInterval = 20;
     barNormal.fixedAspectRatio = false;
     barNormal.style.cssText = 'flex: 1; width: 100%;';
@@ -912,7 +913,7 @@ export const FixedAspectRatioComparison: StoryObj = {
     barFixed.value = 60;
     barFixed.setpoint = 80;
     barFixed.fillMode = FillMode.fill;
-    barFixed.enhanced = true;
+    barFixed.priority = Priority.enhanced;
     barFixed.primaryTickbarsInterval = 20;
     barFixed.fixedAspectRatio = true;
     barFixed.style.cssText = 'flex: 1; width: 100%;';

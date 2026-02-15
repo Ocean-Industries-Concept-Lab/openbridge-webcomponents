@@ -5,6 +5,7 @@ import chartCommonStyle from '../../charthelpers/chart-common.css?inline';
 import chartDebugStyle from '../../charthelpers/chart-debug.css?inline';
 import chartLegendStyle from '../../charthelpers/chart-legend.css?inline';
 import {customElement} from '../../decorator.js';
+import {Priority} from '../../navigation-instruments/types.js';
 import {
   Chart,
   PolarAreaController,
@@ -61,7 +62,7 @@ const POLAR_WATCHED_PROP_NAMES = [
   'legend',
   'data',
   'colors',
-  'enhanced',
+  'priority',
   'monochrome',
   'discreteColorStops',
   'showSectorLabels',
@@ -175,8 +176,8 @@ export class ObcPolarChart extends LitElement {
   /** @internal */
   private centerFirstSector = false; // When false, first sector is centered at 12 o'clock position
 
-  @property({type: Boolean})
-  enhanced = false;
+  @property({type: String})
+  priority: Priority = Priority.regular;
 
   @property({type: Boolean}) monochrome = false;
   @property({type: Boolean})
@@ -305,7 +306,9 @@ export class ObcPolarChart extends LitElement {
     const chartColors = getChartColorsOrDefault(
       this,
       this.colors,
-      this.enhanced ? CHART_SECTOR_ENHANCED_COLORS : CHART_SECTOR_DEFAULT_COLORS
+      this.priority === Priority.enhanced
+        ? CHART_SECTOR_ENHANCED_COLORS
+        : CHART_SECTOR_DEFAULT_COLORS
     );
 
     // When using discrete color stops, sectors will be drawn by the plugin
@@ -489,7 +492,7 @@ export class ObcPolarChart extends LitElement {
         const chartColors = getChartColorsOrDefault(
           this,
           this.colors,
-          this.enhanced
+          this.priority === Priority.enhanced
             ? CHART_SECTOR_ENHANCED_COLORS
             : CHART_SECTOR_DEFAULT_COLORS
         );

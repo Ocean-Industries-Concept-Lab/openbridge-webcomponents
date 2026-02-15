@@ -4,7 +4,12 @@ import type {PropertyValues} from 'lit';
 import {customElement} from '../../decorator.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {CHART_DIMENSIONS} from '../../charthelpers/constants.js';
-import {InstrumentState, FrameStyle, BorderRadiusPosition} from '../types.js';
+import {
+  InstrumentState,
+  FrameStyle,
+  BorderRadiusPosition,
+  Priority,
+} from '../types.js';
 import type {AdviceType} from '../watch/advice.js';
 import type {
   ExternalScaleAdvice,
@@ -220,8 +225,8 @@ export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
     return true;
   }
 
-  /** Enhanced visual mode: when true, uses enhanced instrument colors for bar fill and setpoint */
-  @property({type: Boolean}) enhanced = false;
+  /** Color priority: enhanced uses blue instrument colors for bar fill and setpoint */
+  @property({type: String}) priority: Priority = Priority.regular;
   /** Fill visualization mode: 'fill' shows bar from fillMin to fillMax; 'tint' adds a marker at the value position */
   @property({type: String}) fillMode: FillMode = FillMode.fill;
   /** Minimum fill value (defaults to 0) */
@@ -231,8 +236,8 @@ export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
   /** Current value (bar fill level) */
   @property({type: Number}) value?: number = undefined;
 
-  /** Instrument state: inCommand, active, loading, or off */
-  @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
+  /** Instrument state: active, loading, or off */
+  @property({type: String}) state: InstrumentState = InstrumentState.active;
 
   /**
    * @deprecated Use `touching` (from SetpointMixin) instead.
@@ -281,7 +286,7 @@ export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
       frameStyle: this.frameStyle,
       borderRadiusPosition: this.borderRadiusPosition,
       borderRadius: this.borderRadius,
-      enhanced: this.enhanced,
+      priority: this.priority,
       fillMode: this.fillMode,
       fillMin: this.fillMin,
       fillMax: this.fillMax,

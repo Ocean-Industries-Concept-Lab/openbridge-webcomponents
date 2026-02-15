@@ -11,6 +11,7 @@ import type {SetpointColorMode} from '../../svghelpers/setpoint.js';
 import {rot} from './rot.js';
 import {RateOfTurnController} from '../rate-of-turn/rate-of-turn.controller.js';
 import {customElement} from '../../decorator.js';
+import {Priority} from '../types.js';
 
 export enum CompassDirection {
   NorthUp = 'northUp',
@@ -63,6 +64,7 @@ export class ObcCompass extends LitElement {
   @property({type: Number}) rotationsPerMinute: number = 1;
   @property({type: String}) direction: CompassDirection =
     CompassDirection.NorthUp;
+  @property({type: String}) priority: Priority = Priority.regular;
 
   protected override updated(_changedProperties: PropertyValues): void {
     super.updated(_changedProperties);
@@ -180,6 +182,7 @@ export class ObcCompass extends LitElement {
           .atAngleSetpoint=${this._headingSp.computeAtSetpoint(this.heading)}
           .angleSetpointAtZeroDeadband=${this.headingSetpointAtZeroDeadband}
           .colorMode=${this.headingSetpointColorMode}
+          .priority=${this.priority}
           .animateSetpoint=${this.animateSetpoint}
           .vessels=${[
             {
@@ -196,7 +199,11 @@ export class ObcCompass extends LitElement {
         >
         </obc-watch>
         <svg viewBox="${viewBox}">
-          ${arrow(ArrowStyle.HDG, this.heading + (this.getRotation() ?? 0))}
+          ${arrow(
+            ArrowStyle.HDG,
+            this.heading + (this.getRotation() ?? 0),
+            this.priority === Priority.enhanced
+          )}
           ${arrow(
             ArrowStyle.COG,
             this.courseOverGround + (this.getRotation() ?? 0)

@@ -6,6 +6,7 @@ import {
   AdviceType,
 } from '../../navigation-instruments/watch/advice.js';
 import {html} from 'lit';
+import {Priority} from '../../navigation-instruments/types.js';
 
 const meta: Meta = {
   title: 'Building Blocks/Instrument Linear',
@@ -86,10 +87,9 @@ const meta: Meta = {
         max: 100,
       },
     },
-    enhanced: {
-      control: {
-        type: 'boolean',
-      },
+    priority: {
+      control: 'select',
+      options: Object.values(Priority),
     },
     advice: {
       control: {
@@ -108,7 +108,7 @@ const meta: Meta = {
     mainTickmark: true,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
-    enhanced: false,
+    priority: Priority.regular,
     advice: [],
   },
   render: (args) => {
@@ -134,7 +134,7 @@ const meta: Meta = {
         {
           hideContainer: false,
           off: false,
-          enhanced: args.enhanced,
+          priority: args.priority,
         },
         {
           mainTickbar: args.mainTickmark,

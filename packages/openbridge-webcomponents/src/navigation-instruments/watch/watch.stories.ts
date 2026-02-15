@@ -8,7 +8,7 @@ import {
 import './watch.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceState, AdviceType} from './advice.js';
-import {InstrumentState} from '../types.js';
+import {InstrumentState, Priority} from '../types.js';
 import {TickmarkType} from './tickmark.js';
 import {html, svg} from 'lit';
 
@@ -34,13 +34,13 @@ The setpoint marker visual state is derived from the combination of \`atAngleSet
 
 The \`RADIAL_SETPOINT_INWARD_ADJUST\` constant (4px) fine-tunes radial setpoint positioning to match Figma designs, applied on top of visual state offsets from setpoint.ts.
 
-The \`colorMode\` property allows overriding the derived color mode (enhanced for inCommand, regular for other states).
+The \`colorMode\` property allows overriding the derived color mode (enhanced for enhanced priority, regular for other states).
 
 ## Properties
 
 | Property | Type | Description |
 |----------|------|-------------|
-| \`state\` | \`InstrumentState\` | Instrument state (inCommand, active, loading, off) |
+| \`state\` | \`InstrumentState\` | Instrument state (active, loading, off) |
 | \`angleSetpoint\` | \`number \\| undefined\` | Setpoint angle in degrees (0° = 12 o'clock) |
 | \`atAngleSetpoint\` | \`boolean\` | Whether value matches setpoint (within deadband) |
 | \`atAngleSetpointZero\` | \`boolean\` | Whether setpoint is at zero angle |
@@ -95,7 +95,8 @@ type Story = StoryObj<ObcWatch>;
 export const InCommand: Story = {
   args: {
     angleSetpoint: 90,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
   },
   argTypes: {
     angleSetpoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
@@ -105,7 +106,8 @@ export const InCommand: Story = {
 export const WithVesselImage: Story = {
   args: {
     angleSetpoint: 90,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     vessels: [
       {
         size: VesselImageSize.large,
@@ -121,7 +123,8 @@ export const WithVesselImage: Story = {
 
 export const WithBarAreas: Story = {
   args: {
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     areas: [
       {
         startAngle: -90,
@@ -153,7 +156,8 @@ export const WithBarAreas: Story = {
 
 export const WithStarboardPortIndicator: Story = {
   args: {
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     starboardPortIndicator: true,
   },
 };
@@ -306,7 +310,8 @@ export const Tripple: Story = {
     windSymbolRadius: 160,
     currentSymbolRadius: 160,
     angleSetpoint: 90,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     watchCircleType: WatchCircleType.triple,
   },
 
@@ -700,24 +705,25 @@ export const TickmarksTestInsideRotation: Story = {
  *
  * | State | Description |
  * |-------|-------------|
- * | **inCommand** | Enhanced colors, value matches setpoint |
+ * | **enhanced** | Enhanced colors, value matches setpoint |
  * | **active** | Enhanced colors, value differs from setpoint |
  * | **loading** | Disabled/tertiary colors |
  * | **off** | Disabled/tertiary colors |
  * | **adjusting** | Dual markers: original dimmed, new in focus state |
  */
 export const StateComparison: Story = {
-  name: 'State comparison (inCommand/active/loading/off/adjusting)',
+  name: 'State comparison (enhanced/active/loading/off/adjusting)',
 
   render: () => html`
     <div style="display: flex; gap: 24px; align-items: flex-start;">
       <div style="text-align: center;">
         <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
-          inCommand
+          enhanced
         </div>
         <div style="width: 160px; height: 160px;">
           <obc-watch
-            .state=${InstrumentState.inCommand}
+            .state=${InstrumentState.active}
+            .priority=${Priority.enhanced}
             .angleSetpoint=${45}
             .atAngleSetpoint=${true}
             .watchCircleType=${WatchCircleType.double}
@@ -827,7 +833,8 @@ export const StateComparison: Story = {
         </div>
         <div style="width: 160px; height: 160px;">
           <obc-watch
-            .state=${InstrumentState.inCommand}
+            .state=${InstrumentState.active}
+            .priority=${Priority.enhanced}
             .angleSetpoint=${30}
             .newAngleSetpoint=${60}
             .atAngleSetpoint=${true}

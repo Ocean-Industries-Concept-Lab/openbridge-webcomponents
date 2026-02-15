@@ -5,6 +5,7 @@ import {WatchCircleType} from '../watch/watch.js';
 import {AdviceType, AngleAdviceRaw, AdviceState} from '../watch/advice.js';
 import {InstrumentFieldSize} from '../instrument-field/instrument-field.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
+import {Priority} from '../types.js';
 import {customElement} from '../../decorator.js';
 
 export enum ObcSpeedGaugeNeedleType {
@@ -85,7 +86,7 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
   @property({type: Number}) minSpeed = 0;
   @property({type: Boolean}) labels: boolean = false;
   @property({type: Number}) tickmarkInterval = 20;
-  @property({type: Boolean}) enhanced: boolean = false;
+  @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) needleType: ObcSpeedGaugeNeedleType =
     ObcSpeedGaugeNeedleType.full;
   @property({type: Array, attribute: false}) speedAdvices: SpeedAdvice[] = [];
@@ -102,9 +103,10 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
   maxAngle = 180 - 45;
 
   override render() {
-    const barColor = this.enhanced
-      ? 'var(--instrument-enhanced-tertiary-color)'
-      : 'var(--instrument-regular-tertiary-color)';
+    const barColor =
+      this.priority === Priority.enhanced
+        ? 'var(--instrument-enhanced-tertiary-color)'
+        : 'var(--instrument-regular-tertiary-color)';
     const setpointAngle =
       this.setpoint !== undefined ? this.getAngle(this.setpoint) : undefined;
 
@@ -148,7 +150,7 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
               <obc-instrument-field
                 class="speed-gauge-value"
                 .size=${InstrumentFieldSize.enhanced}
-                .neutralColor=${!this.enhanced}
+                .neutralColor=${this.priority !== Priority.enhanced}
                 .value=${this.speed}
                 horizontal
                 unit="KN"
@@ -163,9 +165,10 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
   }
 
   get needle() {
-    const needleColor = this.enhanced
-      ? 'var(--instrument-enhanced-secondary-color)'
-      : 'var(--instrument-regular-secondary-color)';
+    const needleColor =
+      this.priority === Priority.enhanced
+        ? 'var(--instrument-enhanced-secondary-color)'
+        : 'var(--instrument-regular-secondary-color)';
     if (this.needleType === ObcSpeedGaugeNeedleType.full) {
       return svg`<g transform="rotate(${this.getAngle(this.speed)}) translate(-256, -256)">
       <circle cx="256" cy="256" r="14" fill=${needleColor}/>

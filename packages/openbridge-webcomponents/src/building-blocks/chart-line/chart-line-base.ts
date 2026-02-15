@@ -21,6 +21,7 @@ import {
   InstrumentState,
   FrameStyle,
   BorderRadiusPosition,
+  Priority,
 } from '../../navigation-instruments/types.js';
 import {
   CHART_SECTOR_DEFAULT_COLORS,
@@ -88,7 +89,7 @@ interface ExternalScaleElement extends HTMLElement {
   fixedAspectRatio?: boolean;
   scaleReferenceSize?: number;
   state?: InstrumentState;
-  enhanced?: boolean;
+  priority?: Priority;
   frameStyle?: FrameStyle;
   borderRadiusPosition?: BorderRadiusPosition;
 }
@@ -134,7 +135,7 @@ const LINE_GRAPH_WATCHED_PROP_NAMES = [
   'xStepSize',
   'yTicksLimit',
   'yStepSize',
-  'enhanced', // Triggers color palette change
+  'priority', // Triggers color palette change
   'borderRadiusPosition', // Triggers border styling update
   'borderRadiusPositionExternalScales', // Triggers external scale border styling update
   // legend only affects HTML; do not use it to drive chart updates
@@ -402,11 +403,11 @@ export class ObcChartLineBase extends LitElement {
 
   /** Instrument state affecting colors of external scales. */
   @property({type: String})
-  state: InstrumentState = InstrumentState.inCommand;
+  state: InstrumentState = InstrumentState.active;
 
-  /** Use enhanced color palette (blue) instead of default (gray). */
-  @property({type: Boolean})
-  enhanced = false;
+  /** Color priority: enhanced uses blue palette instead of default gray. */
+  @property({type: String})
+  priority: Priority = Priority.regular;
 
   /** Frame style for chart and external scales. */
   @property({type: String})
@@ -1325,7 +1326,7 @@ export class ObcChartLineBase extends LitElement {
           // Use chart's scaleReferenceSize property for proportional scaling
           scaleReferenceSize: this.scaleReferenceSize,
           state: this.state,
-          enhanced: this.enhanced,
+          priority: this.priority,
           frameStyle: this.frameStyle,
           borderRadiusPosition: this.borderRadiusPositionExternalScales,
         };
@@ -1355,7 +1356,7 @@ export class ObcChartLineBase extends LitElement {
           // Use chart's scaleReferenceSize property for proportional scaling
           scaleReferenceSize: this.scaleReferenceSize,
           state: this.state,
-          enhanced: this.enhanced,
+          priority: this.priority,
           frameStyle: this.frameStyle,
           borderRadiusPosition: this.borderRadiusPositionExternalScales,
         };
@@ -1385,7 +1386,7 @@ export class ObcChartLineBase extends LitElement {
           // Use chart's scaleReferenceSize property for proportional scaling
           scaleReferenceSize: this.scaleReferenceSize,
           state: this.state,
-          enhanced: this.enhanced,
+          priority: this.priority,
           frameStyle: this.frameStyle,
           borderRadiusPosition: this.borderRadiusPositionExternalScales,
         };
@@ -1415,7 +1416,7 @@ export class ObcChartLineBase extends LitElement {
           // Use chart's scaleReferenceSize property for proportional scaling
           scaleReferenceSize: this.scaleReferenceSize,
           state: this.state,
-          enhanced: this.enhanced,
+          priority: this.priority,
           frameStyle: this.frameStyle,
           borderRadiusPosition: this.borderRadiusPositionExternalScales,
         };
@@ -1894,9 +1895,10 @@ export class ObcChartLineBase extends LitElement {
    * Prepare normalized datasets for multi-series charts
    */
   protected prepareMultiSeriesDatasets() {
-    const defaultPalette = this.enhanced
-      ? CHART_SECTOR_ENHANCED_COLORS
-      : CHART_SECTOR_DEFAULT_COLORS;
+    const defaultPalette =
+      this.priority === Priority.enhanced
+        ? CHART_SECTOR_ENHANCED_COLORS
+        : CHART_SECTOR_DEFAULT_COLORS;
     const chartColors = getChartColorsOrDefault(
       this,
       this.colors,
@@ -1916,9 +1918,10 @@ export class ObcChartLineBase extends LitElement {
   protected prepareSingleSeriesDatasets() {
     const values = this.data.map((d) => d.value);
     const labels = this.data.map((d) => d.label);
-    const defaultPalette = this.enhanced
-      ? CHART_SECTOR_ENHANCED_COLORS
-      : CHART_SECTOR_DEFAULT_COLORS;
+    const defaultPalette =
+      this.priority === Priority.enhanced
+        ? CHART_SECTOR_ENHANCED_COLORS
+        : CHART_SECTOR_DEFAULT_COLORS;
     const chartColors = getChartColorsOrDefault(
       this,
       this.colors,

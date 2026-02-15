@@ -17,7 +17,7 @@ import '../../navigation-instruments/azimuth-thruster/azimuth-thruster.js';
 import {SetpointColorMode} from '../../svghelpers/setpoint.js';
 
 // Import types needed for bar-vertical configuration
-import {InstrumentState} from '../../navigation-instruments/types.js';
+import {InstrumentState, Priority} from '../../navigation-instruments/types.js';
 import {
   ExternalScaleSide,
   FillMode,
@@ -42,7 +42,7 @@ import {
  * ## Color Modes
  *
  * - **Regular**: Uses `--instrument-regular-*-color` palette
- * - **Enhanced**: Uses `--instrument-enhanced-*-color` palette (typically for inCommand state)
+ * - **Enhanced**: Uses `--instrument-enhanced-*-color` palette (typically for enhanced priority)
  *
  * ## Disabled State
  *
@@ -107,8 +107,8 @@ Source: \`packages/openbridge-webcomponents/src/svghelpers/setpoint.ts\``,
       description: 'New setpoint during adjustment (undefined = no adjustment)',
       control: {type: 'range', min: -50, max: 50, step: 1},
     },
-    enhanced: {
-      description: 'Use enhanced color palette (brighter, for inCommand)',
+    priority: {
+      description: 'Use priority-based color palette',
       control: {type: 'boolean'},
     },
     state: {
@@ -129,8 +129,8 @@ Source: \`packages/openbridge-webcomponents/src/svghelpers/setpoint.ts\``,
     value: 20,
     setpoint: 40,
     newSetpoint: undefined,
-    enhanced: true,
-    state: InstrumentState.inCommand,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
   },
@@ -145,7 +145,7 @@ Source: \`packages/openbridge-webcomponents/src/svghelpers/setpoint.ts\``,
       hasBar
       scaleBackground
       borderRadiusPosition="${BorderRadiusPosition.innerFirstChild}"
-      .enhanced=${args.enhanced}
+      .priority=${args.priority}
       fillMode="${FillMode.fill}"
       .value=${args.value}
       .setpoint=${args.setpoint}
@@ -163,7 +163,7 @@ type Story = StoryObj;
 // Helper to render a bar-vertical with specific setpoint state
 function renderSetpointDemo(config: {
   label: string;
-  enhanced?: boolean;
+  priority?: Priority;
   setpointColorMode?: SetpointColorMode;
   setpoint: number;
   newSetpoint?: number;
@@ -173,7 +173,7 @@ function renderSetpointDemo(config: {
 }) {
   const {
     label,
-    enhanced = false,
+    priority = Priority.regular,
     setpointColorMode,
     setpoint,
     newSetpoint,
@@ -197,7 +197,7 @@ function renderSetpointDemo(config: {
         hasBar
         scaleBackground
         borderRadiusPosition="${BorderRadiusPosition.innerFirstChild}"
-        .enhanced=${enhanced}
+        .priority=${priority}
         .setpointColorMode=${setpointColorMode}
         fillMode="${FillMode.fill}"
         .value=${value}
@@ -230,8 +230,8 @@ export const NotEqual: Story = {
     value: 20,
     setpoint: 40,
     newSetpoint: undefined,
-    enhanced: true,
-    state: InstrumentState.inCommand,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
   },
 };
 
@@ -249,8 +249,8 @@ export const Equal: Story = {
     value: 40,
     setpoint: 40,
     newSetpoint: undefined,
-    enhanced: true,
-    state: InstrumentState.inCommand,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
   },
 };
 
@@ -269,8 +269,8 @@ export const EqualZero: Story = {
     value: 0,
     setpoint: 0,
     newSetpoint: undefined,
-    enhanced: true,
-    state: InstrumentState.inCommand,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
   },
 };
 
@@ -290,8 +290,8 @@ export const Focus: Story = {
     value: 10,
     setpoint: 20,
     newSetpoint: 50,
-    enhanced: true,
-    state: InstrumentState.inCommand,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
   },
 };
 
@@ -305,7 +305,7 @@ export const Focus: Story = {
  * Side-by-side comparison of all setpoint visual states for linear instruments (bar-vertical).
  *
  * - **Row 1**: active state (SetpointColorMode: regular)
- * - **Row 2**: inCommand state (SetpointColorMode: enhanced)
+ * - **Row 2**: enhanced priority (SetpointColorMode: enhanced)
  * - **Row 3**: adjusting/touching - dual-marker mode via `newSetpoint`
  * - **Row 4**: loading/off (disabled) - uses tertiary/gray color
  *
@@ -351,51 +351,57 @@ export const SetpointComparison: Story = {
           setpointColorMode: SetpointColorMode.regular,
           setpoint: 40,
           value: 20,
-          state: InstrumentState.inCommand,
+          state: InstrumentState.active,
+          priority: Priority.enhanced,
         })}
         ${renderSetpointDemo({
           label: 'value = setpoint',
           setpointColorMode: SetpointColorMode.regular,
           setpoint: 40,
           value: 40,
-          state: InstrumentState.inCommand,
+          state: InstrumentState.active,
+          priority: Priority.enhanced,
         })}
         ${renderSetpointDemo({
           label: 'both = 0',
           setpointColorMode: SetpointColorMode.regular,
           setpoint: 0,
           value: 0,
-          state: InstrumentState.inCommand,
+          state: InstrumentState.active,
+          priority: Priority.enhanced,
         })}
       </div>
 
-      <!-- inCommand row -->
+      <!-- enhanced priority row -->
       <div
         style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
       >
         <div style="font-size: 12px; color: #888; padding-top: 80px;">
-          inCommand (SetpointColorMode: enhanced)
+          enhanced (SetpointColorMode: enhanced)
         </div>
         ${renderSetpointDemo({
           label: 'value ≠ setpoint',
           setpointColorMode: SetpointColorMode.enhanced,
           setpoint: 40,
           value: 20,
-          state: InstrumentState.inCommand,
+          state: InstrumentState.active,
+          priority: Priority.enhanced,
         })}
         ${renderSetpointDemo({
           label: 'value = setpoint',
           setpointColorMode: SetpointColorMode.enhanced,
           setpoint: 40,
           value: 40,
-          state: InstrumentState.inCommand,
+          state: InstrumentState.active,
+          priority: Priority.enhanced,
         })}
         ${renderSetpointDemo({
           label: 'both = 0',
           setpointColorMode: SetpointColorMode.enhanced,
           setpoint: 0,
           value: 0,
-          state: InstrumentState.inCommand,
+          state: InstrumentState.active,
+          priority: Priority.enhanced,
         })}
       </div>
 
@@ -412,7 +418,8 @@ export const SetpointComparison: Story = {
           setpoint: 20,
           newSetpoint: 40,
           value: 20,
-          state: InstrumentState.inCommand,
+          state: InstrumentState.active,
+          priority: Priority.enhanced,
         })}
         ${renderSetpointDemo({
           label: 'setpoint at 40, new at 30',
@@ -420,7 +427,8 @@ export const SetpointComparison: Story = {
           setpoint: 40,
           newSetpoint: 30,
           value: 40,
-          state: InstrumentState.inCommand,
+          state: InstrumentState.active,
+          priority: Priority.enhanced,
         })}
         ${renderSetpointDemo({
           label: 'setpoint at 0, new at 20',
@@ -428,7 +436,8 @@ export const SetpointComparison: Story = {
           setpoint: 0,
           newSetpoint: 20,
           value: 0,
-          state: InstrumentState.inCommand,
+          state: InstrumentState.active,
+          priority: Priority.enhanced,
         })}
       </div>
 
@@ -481,6 +490,7 @@ function renderRadialSetpointDemo(config: {
   newAngleSetpoint?: number;
   atAngleSetpoint?: boolean;
   state: InstrumentState;
+  priority?: Priority;
   /** Fill arc end angle (start is always 0 for this demo) */
   fillEndAngle?: number;
   /** Optional color mode override */
@@ -492,6 +502,7 @@ function renderRadialSetpointDemo(config: {
     newAngleSetpoint,
     atAngleSetpoint = false,
     state,
+    priority = Priority.regular,
     fillEndAngle,
     colorMode,
   } = config;
@@ -499,7 +510,7 @@ function renderRadialSetpointDemo(config: {
   // Determine bar fill color based on colorMode (if provided) or state
   const effectiveColorMode =
     colorMode ??
-    (state === InstrumentState.inCommand
+    (priority === Priority.enhanced
       ? SetpointColorMode.enhanced
       : SetpointColorMode.regular);
   const fillColor =
@@ -540,6 +551,7 @@ function renderRadialSetpointDemo(config: {
       <div style="width: 100%; height: 160px;">
         <obc-watch
           .state=${state}
+          .priority=${priority}
           .angleSetpoint=${angleSetpoint}
           .newAngleSetpoint=${newAngleSetpoint}
           .atAngleSetpoint=${atAngleSetpoint}
@@ -603,7 +615,8 @@ export const SetpointComparisonRadial: Story = {
           angleSetpoint: 60,
           atAngleSetpoint: false,
           fillEndAngle: 45,
-          state: InstrumentState.inCommand,
+          state: InstrumentState.active,
+          priority: Priority.enhanced,
           colorMode: SetpointColorMode.regular,
         })}
         ${renderRadialSetpointDemo({
@@ -611,7 +624,8 @@ export const SetpointComparisonRadial: Story = {
           angleSetpoint: 45,
           atAngleSetpoint: true,
           fillEndAngle: 45,
-          state: InstrumentState.inCommand,
+          state: InstrumentState.active,
+          priority: Priority.enhanced,
           colorMode: SetpointColorMode.regular,
         })}
         ${renderRadialSetpointDemo({
@@ -619,38 +633,42 @@ export const SetpointComparisonRadial: Story = {
           angleSetpoint: 0,
           atAngleSetpoint: true,
           fillEndAngle: 0,
-          state: InstrumentState.inCommand,
+          state: InstrumentState.active,
+          priority: Priority.enhanced,
           colorMode: SetpointColorMode.regular,
         })}
       </div>
 
-      <!-- inCommand row (enhanced colors) -->
+      <!-- enhanced priority row (enhanced colors) -->
       <div
         style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
       >
         <div style="font-size: 12px; color: #888; padding-top: 60px;">
-          inCommand (SetpointColorMode: enhanced)
+          enhanced (SetpointColorMode: enhanced)
         </div>
         ${renderRadialSetpointDemo({
           label: 'bar at 45°, setpoint at 60°',
           angleSetpoint: 60,
           atAngleSetpoint: false,
           fillEndAngle: 45,
-          state: InstrumentState.inCommand,
+          state: InstrumentState.active,
+          priority: Priority.enhanced,
         })}
         ${renderRadialSetpointDemo({
           label: 'bar at 45°, setpoint at 45°',
           angleSetpoint: 45,
           atAngleSetpoint: true,
           fillEndAngle: 45,
-          state: InstrumentState.inCommand,
+          state: InstrumentState.active,
+          priority: Priority.enhanced,
         })}
         ${renderRadialSetpointDemo({
           label: 'bar at 0°, setpoint at 0°',
           angleSetpoint: 0,
           atAngleSetpoint: true,
           fillEndAngle: 0,
-          state: InstrumentState.inCommand,
+          state: InstrumentState.active,
+          priority: Priority.enhanced,
         })}
       </div>
 
@@ -666,7 +684,8 @@ export const SetpointComparisonRadial: Story = {
           angleSetpoint: 60,
           atAngleSetpoint: false,
           fillEndAngle: 45,
-          state: InstrumentState.inCommand,
+          state: InstrumentState.active,
+          priority: Priority.enhanced,
           newAngleSetpoint: 80,
         })}
         ${renderRadialSetpointDemo({
@@ -674,7 +693,8 @@ export const SetpointComparisonRadial: Story = {
           angleSetpoint: 45,
           atAngleSetpoint: true,
           fillEndAngle: 45,
-          state: InstrumentState.inCommand,
+          state: InstrumentState.active,
+          priority: Priority.enhanced,
           newAngleSetpoint: 60,
         })}
         ${renderRadialSetpointDemo({
@@ -682,7 +702,8 @@ export const SetpointComparisonRadial: Story = {
           angleSetpoint: 0,
           atAngleSetpoint: true,
           fillEndAngle: 0,
-          state: InstrumentState.inCommand,
+          state: InstrumentState.active,
+          priority: Priority.enhanced,
           newAngleSetpoint: 30,
         })}
       </div>
@@ -764,13 +785,13 @@ export const SetpointAdjustmentFlow: StoryObj = {
         primaryTickbarsInterval="20"
         secondaryTickbarsInterval="10"
         tertiaryTickbarsInterval="2"
-        enhanced
+        priority="enhanced"
         fillMode="${FillMode.fill}"
         fillMin="0"
         fillMax="40"
         value="40"
         setpoint="40"
-        state="inCommand"
+        state="active"
         animateSetpoint
       ></obc-gauge-horizontal>
 
@@ -971,7 +992,8 @@ export const SetpointRadialAdjustmentFlow: StoryObj = {
             .angleSetpoint=${30}
             .atAngleSetpoint=${true}
             .animateSetpoint=${true}
-            .state=${InstrumentState.inCommand}
+            .state=${InstrumentState.active}
+            .priority=${Priority.enhanced}
           ></obc-watch>
         </div>
 
@@ -1205,7 +1227,8 @@ export const SetpointAzimuthThrusterFlow: StoryObj<{
           .angleSetpoint=${30}
           .thrustSetpoint=${25}
           .thrust=${25}
-          .state=${InstrumentState.inCommand}
+          .state=${InstrumentState.active}
+          .priority=${Priority.enhanced}
           .animateSetpoint=${true}
           .detailedTickmarks=${true}
           .tickmarksInside=${true}

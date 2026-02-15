@@ -13,6 +13,7 @@ import {
   BorderRadiusPosition,
   InstrumentState,
 } from './bar-vertical.js';
+import {Priority} from '../../navigation-instruments/types.js';
 
 const SAMPLE_DATA = [
   {label: 'Jan', value: 3.5},
@@ -65,7 +66,7 @@ const meta: Meta = {
       control: {type: 'select'},
       options: Object.values(BorderRadiusPosition),
     },
-    enhanced: {control: {type: 'boolean'}},
+    priority: {control: 'select', options: Object.values(Priority)},
     fillMode: {control: {type: 'radio'}, options: ['fill', 'tint']},
     fillMin: {control: {type: 'number'}},
     fillMax: {control: {type: 'number'}},
@@ -108,7 +109,7 @@ const meta: Meta = {
     scaleBackground: false,
     borderRadiusPosition: undefined,
     borderRadiusPositionExternalScales: undefined,
-    enhanced: false,
+    priority: Priority.regular,
     fillMode: FillMode.fill,
     fillMin: 0,
     fillMax: 40,
@@ -119,7 +120,7 @@ const meta: Meta = {
     disableAutoAtSetpoint: false,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
-    state: 'inCommand',
+    state: 'active',
     side: ExternalScaleSide.right,
     advicePosition: AdvicePosition.inner,
     advices: [],
@@ -141,7 +142,7 @@ const meta: Meta = {
       .hasBar=${args.hasBar}
       .scaleBackground=${args.scaleBackground}
       .borderRadiusPosition=${args.borderRadiusPosition}
-      .enhanced=${args.enhanced}
+      .priority=${args.priority}
       .fillMode=${args.fillMode}
       .fillMin=${args.fillMin}
       .fillMax=${args.fillMax}
@@ -341,7 +342,7 @@ export const SmallRange: Story = {
 //     setpoint: 0.3,
 //     setpointAtZeroDeadband: 0.5,
 //     hasBar: true,
-//     enhanced: true,
+//     priority: Priority.enhanced,
 //     primaryTickbarsInterval: 50,
 //     secondaryTickbarsInterval: 10,
 //     labels: true,
@@ -356,7 +357,7 @@ export const WithBarFillRight: Story = {
     maxValue: 100,
     height: 320,
     hasBar: true,
-    enhanced: true,
+    priority: Priority.enhanced,
     value: 65,
     primaryTickbarsInterval: 20,
     secondaryTickbarsInterval: 10,
@@ -371,7 +372,7 @@ export const WithBarFillLeft: Story = {
     maxValue: 100,
     height: 320,
     hasBar: true,
-    enhanced: false,
+    priority: Priority.regular,
     value: 45,
     primaryTickbarsInterval: 20,
     secondaryTickbarsInterval: 10,
@@ -393,7 +394,7 @@ export const FillModeComparison: Story = {
           maxValue="100"
           height="320"
           hasBar
-          enhanced
+          priority="enhanced"
           fillMode="${FillMode.fill}"
           fillMin="0"
           fillMax="65"
@@ -412,7 +413,7 @@ export const FillModeComparison: Story = {
           maxValue="100"
           height="320"
           hasBar
-          enhanced
+          priority="enhanced"
           fillMode="${FillMode.tint}"
           fillMin="40"
           fillMax="80"
@@ -431,7 +432,7 @@ export const FillModeComparison: Story = {
           maxValue="100"
           height="320"
           hasBar
-          enhanced
+          priority="enhanced"
           fillMode="${FillMode.tint}"
           value="65"
           setpoint="70"
@@ -451,7 +452,7 @@ export const TintModeWithAdvice: Story = {
     maxValue: 100,
     height: 370,
     hasBar: true,
-    enhanced: true,
+    priority: Priority.enhanced,
     fillMode: FillMode.tint,
     fillMin: -50,
     fillMax: 50,
@@ -544,7 +545,7 @@ export const WithSetpointAtValue: Story = {
     maxValue: 100,
     height: 320,
     hasBar: true,
-    enhanced: true,
+    priority: Priority.enhanced,
     value: 50, // Current value
     setpoint: 50, // Setpoint marker at same position
     primaryTickbarsInterval: 50,
@@ -560,7 +561,7 @@ export const WithSetpointAwayFromValue: Story = {
     maxValue: 100,
     height: 320,
     hasBar: true,
-    enhanced: true,
+    priority: Priority.enhanced,
     value: 30, // Current value
     setpoint: 70, // Setpoint marker at different position
     primaryTickbarsInterval: 50,
@@ -569,23 +570,23 @@ export const WithSetpointAwayFromValue: Story = {
 };
 
 export const StateComparison: Story = {
-  name: 'State comparison (inCommand/active/loading/off/focus)',
+  name: 'State comparison (enhanced/active/loading/off/focus)',
 
   render: () => html`
     <div style="display: flex; gap: 40px; align-items: center;">
       <div style="text-align: center;">
         <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
-          inCommand
+          enhanced
         </div>
         <obc-bar-vertical
           minValue="-100"
           maxValue="100"
           height="320"
           hasBar
-          enhanced
+          priority="enhanced"
           value="50"
           setpoint="50"
-          state="inCommand"
+          state="active"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
         ></obc-bar-vertical>
@@ -599,7 +600,7 @@ export const StateComparison: Story = {
           maxValue="100"
           height="320"
           hasBar
-          enhanced
+          priority="enhanced"
           value="30"
           setpoint="70"
           state="active"
@@ -616,7 +617,7 @@ export const StateComparison: Story = {
           maxValue="100"
           height="320"
           hasBar
-          enhanced
+          priority="enhanced"
           value="-20"
           setpoint="40"
           state="loading"
@@ -631,7 +632,7 @@ export const StateComparison: Story = {
           maxValue="100"
           height="320"
           hasBar
-          enhanced
+          priority="enhanced"
           value="60"
           setpoint="-30"
           state="off"
@@ -648,11 +649,11 @@ export const StateComparison: Story = {
           maxValue="100"
           height="320"
           hasBar
-          enhanced
+          priority="enhanced"
           value="30"
           setpoint="30"
           .newSetpoint=${70}
-          state="inCommand"
+          state="active"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
         ></obc-bar-vertical>
@@ -672,7 +673,7 @@ export const VerticalRightScaleBackground: Story = {
     hasBar: true,
     borderRadiusPosition: BorderRadiusPosition.innerFirstChild,
     scaleBackground: true,
-    enhanced: true,
+    priority: Priority.enhanced,
     value: 40,
     // setpoint: 50,
     primaryTickbarsInterval: 20,
@@ -714,12 +715,12 @@ Real-world values fluctuate. Without a deadband, the indicator would constantly 
     maxValue: 100,
     height: 320,
     hasBar: true,
-    enhanced: true,
+    priority: Priority.enhanced,
     value: 50, // Start at setpoint
     setpoint: 50,
     disableAutoAtSetpoint: false, // Auto mode
     autoAtSetpointDeadband: 1, // 1-unit tolerance
-    state: 'inCommand',
+    state: 'active',
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
   },
@@ -767,12 +768,12 @@ Sometimes you need to control the "at setpoint" visual state directly, independe
     maxValue: 100,
     height: 320,
     hasBar: true,
-    enhanced: true,
+    priority: Priority.enhanced,
     value: 30, // Value at 30
     setpoint: 70, // Setpoint at 70 (far apart)
     disableAutoAtSetpoint: true, // Manual mode
     atSetpoint: false, // Manually set to false (try toggling to true!)
-    state: 'inCommand',
+    state: 'active',
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
   },
@@ -826,12 +827,12 @@ The deadband determines how close the value must be to the setpoint before the s
     maxValue: 100,
     height: 320,
     hasBar: true,
-    enhanced: true,
+    priority: Priority.enhanced,
     value: 45, // 5 units away from setpoint
     setpoint: 50,
     disableAutoAtSetpoint: false,
     autoAtSetpointDeadband: 1, // Try changing to 10 (at setpoint) or 0.1 (away)
-    state: 'inCommand',
+    state: 'active',
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
   },
@@ -890,11 +891,11 @@ In maritime and industrial control systems, zero is often a special reference po
     maxValue: 100,
     height: 320,
     hasBar: true,
-    enhanced: true,
+    priority: Priority.enhanced,
     value: 0,
     setpoint: 0.3, // Close to zero (should snap)
     setpointAtZeroDeadband: 0.5, // Try changing to 0.1 (no snap) or 1.0 (wider snap)
-    state: 'inCommand',
+    state: 'active',
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
     fillMax: 0,
@@ -931,7 +932,7 @@ export const EnhancedModeComparison: Story = {
           maxValue="100"
           height="320"
           hasBar
-          enhanced
+          priority="enhanced"
           value="60"
           setpoint="50"
           primaryTickbarsInterval="50"
@@ -948,7 +949,7 @@ export const EnhancedModeComparison: Story = {
           maxValue="100"
           height="320"
           hasBar
-          enhanced
+          priority="enhanced"
           value="-45"
           setpoint="-30"
           primaryTickbarsInterval="50"
@@ -1254,9 +1255,10 @@ export const GaugeTrend: Story = {
       control: {type: 'range', min: 240, max: 960, step: 40},
       description: 'Chart height',
     },
-    enhanced: {
-      control: 'boolean',
-      description: 'Use enhanced color palette for chart and scales',
+    priority: {
+      control: 'select',
+      options: Object.values(Priority),
+      description: 'Use priority-based color palette for chart and scales',
     },
     // External scale controls (vertical/right)
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
@@ -1304,7 +1306,7 @@ export const GaugeTrend: Story = {
     showTickMarks: false,
     width: 480,
     height: 480,
-    enhanced: false,
+    priority: Priority.regular,
     // Vertical scale defaults
     vScaleHasBar: true,
     vScaleHideLabels: false,
@@ -1328,7 +1330,7 @@ export const GaugeTrend: Story = {
       .borderRadiusPositionExternalScales=${BorderRadiusPosition.middleChild}
       .showGrid=${false}
       .fillMode=${'semitransparent'}
-      .enhanced=${_args.enhanced}
+      .priority=${_args.priority}
     >
       <obc-bar-vertical
         slot="right-scale"
@@ -1358,7 +1360,7 @@ export const GaugeTrend: Story = {
         .tertiaryTickbarsInterval=${0.125}
         .scaleBackground=${true}
         .fixedAspectRatio=${true}
-        .enhanced=${_args.enhanced}
+        .priority=${_args.priority}
       ></obc-bar-vertical>
     </obc-area-graph>
   `,
@@ -1438,7 +1440,7 @@ export const FixedAspectRatioComparison: StoryObj = {
     barNormal.value = 60;
     barNormal.setpoint = 80;
     barNormal.fillMode = FillMode.fill;
-    barNormal.enhanced = false;
+    barNormal.priority = Priority.regular;
     barNormal.primaryTickbarsInterval = 20;
     barNormal.fixedAspectRatio = false;
     barNormal.style.cssText = 'flex: 1; width: 100%;';
@@ -1467,7 +1469,7 @@ export const FixedAspectRatioComparison: StoryObj = {
     barFixed.value = 60;
     barFixed.setpoint = 80;
     barFixed.fillMode = FillMode.fill;
-    barFixed.enhanced = true;
+    barFixed.priority = Priority.enhanced;
     barFixed.primaryTickbarsInterval = 20;
     barFixed.fixedAspectRatio = true;
     barFixed.style.cssText = 'flex: 1; width: 100%;';

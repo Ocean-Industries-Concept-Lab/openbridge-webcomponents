@@ -3,6 +3,7 @@ import {ObcRotSector} from './rot-sector.js';
 import './rot-sector.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
+import {Priority} from '../types.js';
 
 const meta: Meta<typeof ObcRotSector> = {
   title: 'Instruments/Rate of Turn Sector',
@@ -39,14 +40,14 @@ export const Regular: Story = {
 export const Enhanced: Story = {
   args: {
     value: -50,
-    enhanced: true,
+    priority: Priority.enhanced,
   },
 };
 
 export const EnhancedPortStarboard: Story = {
   args: {
     value: -50,
-    enhanced: true,
+    priority: Priority.enhanced,
     portStarboard: true,
   },
 };

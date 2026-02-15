@@ -7,9 +7,12 @@ export enum ArrowStyle {
 
 export function arrow(
   style: ArrowStyle,
-  angle: number
+  angle: number,
+  enhanced: boolean = false
 ): SVGTemplateResult | SVGTemplateResult[] {
-  const colorName = 'var(--instrument-enhanced-secondary-color)';
+  const colorName = enhanced
+    ? 'var(--instrument-enhanced-secondary-color)'
+    : 'var(--instrument-regular-secondary-color)';
 
   if (style === ArrowStyle.HDG) {
     return svg`

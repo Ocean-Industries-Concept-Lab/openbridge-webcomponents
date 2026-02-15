@@ -1,6 +1,6 @@
 import {LitElement, svg, html, css, nothing, SVGTemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
-import {InstrumentState} from '../types.js';
+import {InstrumentState, Priority} from '../types.js';
 import {LinearAdvice, LinearAdviceRaw, renderAdvice} from './advice.js';
 import {AdviceState} from '../watch/advice.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
@@ -30,7 +30,8 @@ export class ObcThruster extends SetpointMixin(LitElement, {
   private _setpointId = `thruster-sp-${Math.random().toString(36).slice(2, 9)}`;
 
   @property({type: Number}) thrust: number = 0;
-  @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
+  @property({type: String}) state: InstrumentState = InstrumentState.active;
+  @property({type: String}) priority: Priority = Priority.regular;
   @property({type: Boolean}) tunnel: boolean = false;
   @property({type: Boolean}) singleSided: boolean = false;
   @property({type: Boolean}) singleDirection: boolean = false;
@@ -41,7 +42,7 @@ export class ObcThruster extends SetpointMixin(LitElement, {
 
   override render() {
     return html`<div class="container">
-      ${thruster(this.thrust, this.setpoint, this.state, {
+      ${thruster(this.thrust, this.setpoint, this.state, this.priority, {
         atSetpoint: this.atSetpoint,
         tunnel: this.tunnel,
         setpointAtZeroDeadband: this.setpointAtZeroDeadband,
@@ -247,8 +248,10 @@ const THRUSTER_SETPOINT_INWARD_ADJUST = 4;
  * Configuration for rendering a thruster setpoint marker.
  */
 export interface ThrusterSetpointConfig {
-  /** Instrument state (determines color mode and disabled status) */
+  /** Instrument state (determines disabled status) */
   state: InstrumentState;
+  /** Color priority (determines enhanced vs regular color palette) */
+  priority: Priority;
   /** Whether value is at the setpoint (within deadband) */
   atSetpoint: boolean;
   /** User is physically interacting (renders focus visual state) */
@@ -293,6 +296,7 @@ function thrusterSetpointY(
  */
 function deriveThrusterSetpointVisualState(config: {
   state: InstrumentState;
+  priority: Priority;
   atSetpoint: boolean;
   touching: boolean;
   setpointAtZero: boolean;
@@ -306,7 +310,7 @@ function deriveThrusterSetpointVisualState(config: {
     config.state === InstrumentState.loading ||
     config.state === InstrumentState.off;
   const colorMode =
-    config.state === InstrumentState.inCommand
+    config.priority === Priority.enhanced
       ? SetpointColorMode.enhanced
       : SetpointColorMode.regular;
 
@@ -372,6 +376,7 @@ export function renderThrusterSetpoint(
 
   const {visualState, colorMode, disabled} = deriveThrusterSetpointVisualState({
     state: config.state,
+    priority: config.priority,
     atSetpoint: config.atSetpoint,
     touching: config.touching,
     setpointAtZero,
@@ -570,6 +575,7 @@ export function thruster(
   thrust: number,
   setpoint: number | undefined,
   state: InstrumentState,
+  priority: Priority,
   options: {
     atSetpoint: boolean;
     tunnel: boolean;
@@ -605,7 +611,7 @@ export function thruster(
 
   options.atSetpoint = atSetpoint(thrust, setpoint, options);
 
-  const tc = thrusterColors(options, state);
+  const tc = thrusterColors(options, state, priority);
 
   let centerLine = svg`
     <rect x="-44" y="-2" width="88" height="4" stroke-width="1" fill=${tc.zeroLineColor} stroke=${tc.zeroLineColor} vector-effect="non-scaling-stroke"/>
@@ -696,6 +702,7 @@ export function thruster(
       thrusterSvg.push(
         renderThrusterSetpoint(height, setpoint, {
           state,
+          priority,
           atSetpoint: options.atSetpoint,
           touching: options.touching,
           setpointAtZeroDeadband: options.setpointAtZeroDeadband,
@@ -720,8 +727,7 @@ export function thruster(
           },
           {
             filled:
-              state === InstrumentState.inCommand ||
-              state === InstrumentState.off,
+              priority === Priority.enhanced || state === InstrumentState.off,
             singleSided: options.singleSided,
             narrow: options.narrow,
           }
@@ -800,26 +806,26 @@ export function convertThrustAdvices(
 
 export function thrusterColors(
   options: {atSetpoint: boolean; touching: boolean},
-  state: InstrumentState
+  state: InstrumentState,
+  priority: Priority
 ) {
-  let boxColor = 'var(--instrument-enhanced-secondary-color)';
-  let setPointColor = 'var(--instrument-enhanced-primary-color)';
+  const isEnhanced = priority === Priority.enhanced;
+  let boxColor = isEnhanced
+    ? 'var(--instrument-enhanced-secondary-color)'
+    : 'var(--instrument-regular-secondary-color)';
+  let setPointColor = isEnhanced
+    ? 'var(--instrument-enhanced-primary-color)'
+    : 'var(--instrument-regular-primary-color)';
   let arrowColor = 'var(--instrument-regular-secondary-color)';
   let containerBackgroundColor = 'var(--instrument-frame-primary-color)';
-  let zeroLineColor = 'var(--instrument-enhanced-secondary-color)';
+  let zeroLineColor = isEnhanced
+    ? 'var(--instrument-enhanced-secondary-color)'
+    : 'var(--instrument-regular-secondary-color)';
   let hideTicks = false;
   if (options.atSetpoint) {
     setPointColor = boxColor;
   }
-  if (state === InstrumentState.active) {
-    boxColor = 'var(--instrument-regular-secondary-color)';
-    zeroLineColor = 'var(--instrument-regular-secondary-color)';
-    setPointColor = 'var(--instrument-regular-primary-color)';
-    arrowColor = 'var(--instrument-regular-secondary-color)';
-    if (options.atSetpoint) {
-      setPointColor = boxColor;
-    }
-  } else if (state === InstrumentState.loading) {
+  if (state === InstrumentState.loading) {
     boxColor = 'transparent';
     setPointColor = 'var(--instrument-frame-tertiary-color)';
     zeroLineColor = 'var(--instrument-frame-tertiary-color)';

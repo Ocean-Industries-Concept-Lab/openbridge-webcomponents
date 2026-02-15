@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcThruster} from './thruster.js';
 import './thruster.js';
-import {InstrumentState} from '../types.js';
+import {InstrumentState, Priority} from '../types.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
 import {PropellerType} from './propeller.js';
@@ -37,7 +37,8 @@ export const InCommand: Story = {
   args: {
     thrust: 50,
     setpoint: 30,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
   },
 };
 
@@ -45,7 +46,8 @@ export const SingleSided: Story = {
   args: {
     thrust: 50,
     setpoint: 30,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     singleSided: true,
   },
 };
@@ -54,7 +56,8 @@ export const PullingPod: Story = {
   args: {
     thrust: 50,
     setpoint: 30,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     singleSided: true,
     topPropeller: PropellerType.single,
     bottomPropeller: PropellerType.cap,
@@ -65,7 +68,8 @@ export const PushingPod: Story = {
   args: {
     thrust: 50,
     setpoint: 30,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     singleSided: true,
     topPropeller: PropellerType.cap,
     bottomPropeller: PropellerType.single,
@@ -76,7 +80,8 @@ export const SingleSidedWithAdvice: Story = {
   args: {
     thrust: 50,
     setpoint: 30,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     singleSided: true,
     advices: [
       {min: 20, max: 50, type: AdviceType.advice, hinted: true},
@@ -91,7 +96,8 @@ export const SingleDirection: Story = {
     singleDirection: true,
     thrust: 50,
     setpoint: 30,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
   },
 };
 
@@ -101,7 +107,8 @@ export const SingleDirectionSingleSidedWithAdvice: Story = {
     singleSided: true,
     thrust: 50,
     setpoint: 30,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     advices: [
       {min: 20, max: 50, type: AdviceType.advice, hinted: true},
       {min: 60, max: 100, type: AdviceType.caution, hinted: true},
@@ -114,7 +121,8 @@ export const NoSetpoint: Story = {
   args: {
     thrust: 50,
     setpoint: undefined,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
   },
 };
 
@@ -122,7 +130,8 @@ export const Tunnel: Story = {
   args: {
     thrust: 50,
     setpoint: 30,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     tunnel: true,
   },
 };
@@ -141,7 +150,8 @@ export const InCommandAtSetpoint: Story = {
   args: {
     thrust: 50,
     setpoint: 50,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
   },
 };
 
@@ -153,7 +163,8 @@ export const InCommandTouching: Story = {
   args: {
     thrust: 50,
     setpoint: 50,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     touching: true,
   },
 };
@@ -162,7 +173,8 @@ export const InCommandAtSetpointManual: Story = {
   args: {
     thrust: 50,
     setpoint: 50,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     atSetpoint: true,
     disableAutoAtSetpoint: true,
   },

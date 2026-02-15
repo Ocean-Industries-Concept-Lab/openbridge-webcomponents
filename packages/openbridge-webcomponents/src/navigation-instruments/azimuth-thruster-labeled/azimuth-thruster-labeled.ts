@@ -7,7 +7,7 @@ import '../badge-command/badge-command.js';
 import '../instrument-field/instrument-field.js';
 import '../azimuth-thruster/azimuth-thruster.js';
 import {InstrumentFieldSize} from '../instrument-field/instrument-field.js';
-import {InstrumentState} from '../types.js';
+import {InstrumentState, Priority} from '../types.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import {AngleAdvice} from '../watch/advice.js';
 import {LinearAdvice} from '../thruster/advice.js';
@@ -58,7 +58,8 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
       this.size === AzimuthThrusterLabeledSize.large
         ? InstrumentFieldSize.enhanced
         : InstrumentFieldSize.regular;
-    let state: InstrumentState = InstrumentState.inCommand;
+    let state: InstrumentState = InstrumentState.active;
+    let priority: Priority = Priority.enhanced;
     if (
       [
         CommandStatus.NoCommand,
@@ -67,6 +68,7 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
       ].includes(this.commandStatus)
     ) {
       state = InstrumentState.active;
+      priority = Priority.regular;
     }
 
     return html`
@@ -115,6 +117,7 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
           .angleSetpointColorMode=${this.angleSetpointColorMode}
           .thrustSetpointAtZeroDeadband=${this.thrustSetpointAtZeroDeadband}
           .state=${state}
+          .priority=${priority}
           .touching=${this.touching}
           .angleAdvices=${this.angleAdvices}
           .thrustAdvices=${this.thrustAdvices}

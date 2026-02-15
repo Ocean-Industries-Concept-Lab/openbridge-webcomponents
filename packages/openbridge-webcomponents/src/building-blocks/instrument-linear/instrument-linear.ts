@@ -1,5 +1,5 @@
 import {svg, SVGTemplateResult, nothing} from 'lit';
-import {InstrumentState} from '../../navigation-instruments/types.js';
+import {InstrumentState, Priority} from '../../navigation-instruments/types.js';
 
 import {LinearAdviceRaw} from '../../navigation-instruments/thruster/advice.js';
 import {renderAdvice} from './advice.js';
@@ -58,7 +58,7 @@ export function watchfaceLinear(
   options: {
     hideContainer: boolean;
     off: boolean;
-    enhanced: boolean;
+    priority: Priority;
   },
   tickmarks: {
     mainTickbar: boolean;
@@ -92,7 +92,9 @@ export function watchfaceLinear(
     track = nothing;
   }
 
-  const {boxFill, boxStroke, barFill, barStroke} = getColors(options.enhanced);
+  const {boxFill, boxStroke, barFill, barStroke} = getColors(
+    options.priority === Priority.enhanced
+  );
 
   const tickmarksSvg: SVGTemplateResult[] = [];
   const maskId = 'boxMask';
@@ -253,26 +255,26 @@ function getColors(enhanced: boolean): {
 
 export function thrusterColors(
   options: {atSetpoint: boolean; touching: boolean},
-  state: InstrumentState
+  state: InstrumentState,
+  priority: Priority = Priority.regular
 ) {
-  let boxColor = 'var(--instrument-enhanced-secondary-color)';
-  let setPointColor = 'var(--instrument-enhanced-primary-color)';
+  const isEnhanced = priority === Priority.enhanced;
+  let boxColor = isEnhanced
+    ? 'var(--instrument-enhanced-secondary-color)'
+    : 'var(--instrument-regular-secondary-color)';
+  let setPointColor = isEnhanced
+    ? 'var(--instrument-enhanced-primary-color)'
+    : 'var(--instrument-regular-primary-color)';
   let arrowColor = 'var(--instrument-regular-secondary-color)';
   let containerBackgroundColor = 'var(--instrument-frame-primary-color)';
-  let zeroLineColor = 'var(--instrument-enhanced-secondary-color)';
+  let zeroLineColor = isEnhanced
+    ? 'var(--instrument-enhanced-secondary-color)'
+    : 'var(--instrument-regular-secondary-color)';
   let hideTicks = false;
   if (options.atSetpoint) {
     setPointColor = boxColor;
   }
-  if (state === InstrumentState.active) {
-    boxColor = 'var(--instrument-regular-secondary-color)';
-    zeroLineColor = 'var(--instrument-regular-secondary-color)';
-    setPointColor = 'var(--instrument-regular-primary-color)';
-    arrowColor = 'var(--instrument-regular-secondary-color)';
-    if (options.atSetpoint) {
-      setPointColor = boxColor;
-    }
-  } else if (state === InstrumentState.loading) {
+  if (state === InstrumentState.loading) {
     boxColor = 'transparent';
     setPointColor = 'var(--instrument-frame-tertiary-color)';
     zeroLineColor = 'var(--instrument-frame-tertiary-color)';

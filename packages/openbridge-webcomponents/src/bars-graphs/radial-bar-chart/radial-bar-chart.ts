@@ -6,6 +6,7 @@ import chartCommonStyle from '../../charthelpers/chart-common.css?inline';
 import chartDebugStyle from '../../charthelpers/chart-debug.css?inline';
 import chartLegendStyle from '../../charthelpers/chart-legend.css?inline';
 import {customElement} from '../../decorator.js';
+import {Priority} from '../../navigation-instruments/types.js';
 import {Chart, DoughnutController, ArcElement, Tooltip} from 'chart.js';
 import type {ChartOptions} from 'chart.js';
 import {
@@ -50,7 +51,7 @@ const RADIAL_BAR_WATCHED_PROP_NAMES = [
   'legend',
   'data',
   'colors',
-  'enhanced',
+  'priority',
   'max',
   'circumference',
   'showDebugOverlay',
@@ -135,8 +136,8 @@ const RADIAL_BAR_WATCHED_PROP_NAMES = [
 export class ObcRadialBarChart extends LitElement {
   @property({attribute: false}) data: number[] = [];
   @property({attribute: false}) colors: string[] = [];
-  @property({type: Boolean})
-  enhanced = false;
+  @property({type: String})
+  priority: Priority = Priority.regular;
   @property({type: Number})
   max = 100;
   @property({type: Number})
@@ -327,7 +328,9 @@ export class ObcRadialBarChart extends LitElement {
     const chartColors = getChartColorsOrDefault(
       this,
       this.colors,
-      this.enhanced ? CHART_SECTOR_ENHANCED_COLORS : CHART_SECTOR_DEFAULT_COLORS
+      this.priority === Priority.enhanced
+        ? CHART_SECTOR_ENHANCED_COLORS
+        : CHART_SECTOR_DEFAULT_COLORS
     );
     const remainingColor = getCssVariableValue(
       this,
@@ -523,7 +526,7 @@ export class ObcRadialBarChart extends LitElement {
       const chartColors = getChartColorsOrDefault(
         this,
         this.colors,
-        this.enhanced
+        this.priority === Priority.enhanced
           ? CHART_SECTOR_ENHANCED_COLORS
           : CHART_SECTOR_DEFAULT_COLORS
       );
@@ -531,7 +534,7 @@ export class ObcRadialBarChart extends LitElement {
       const legendItems = this.data.map((value, i) => {
         const color =
           chartColors[i % chartColors.length] ??
-          (this.enhanced
+          (this.priority === Priority.enhanced
             ? CHART_SECTOR_ENHANCED_COLORS[0]
             : CHART_SECTOR_DEFAULT_COLORS[0]);
 

@@ -55,6 +55,7 @@
  * // Radial instrument (watch.ts)
  * const {visualState, colorMode, disabled} = deriveRadialSetpointConfig({
  *   state: this.state,
+ *   priority: this.priority,
  *   atSetpoint: this.atAngleSetpoint,
  * });
  * svg`
@@ -135,10 +136,10 @@ export enum SetpointVisualState {
  * the disabled state.
  */
 export enum SetpointColorMode {
-  /** Use enhanced colors (typically for inCommand state) */
+  /** Use enhanced colors (typically for Priority.enhanced instruments) */
   enhanced = 'enhanced',
 
-  /** Use regular colors (typically for active state) */
+  /** Use regular colors (typically for Priority.regular instruments) */
   regular = 'regular',
 }
 
@@ -308,7 +309,7 @@ export interface DrawSetpointMarkerConfig {
   /** Which visual state to render */
   visualState: SetpointVisualState;
 
-  /** Color palette to use (enhanced = inCommand colors, regular = active colors) */
+  /** Color palette to use (enhanced = Priority.enhanced colors, regular = Priority.regular colors) */
   colorMode: SetpointColorMode;
 
   /**
@@ -634,10 +635,10 @@ export type {SVGTemplateResult};
  * This creates a dependency on the types module, but keeps all setpoint
  * logic centralized in this file.
  */
-import {InstrumentState} from '../navigation-instruments/types.js';
+import {InstrumentState, Priority} from '../navigation-instruments/types.js';
 
 // Re-export for convenience (callers may need it for their state properties)
-export {InstrumentState};
+export {InstrumentState, Priority};
 
 /**
  * Configuration for deriving setpoint visual parameters for radial instruments.
@@ -657,8 +658,15 @@ export {InstrumentState};
  * and proposed setpoint positions simultaneously.
  */
 export interface RadialSetpointConfig {
-  /** Current instrument state (inCommand, active, loading, off) */
+  /** Current instrument state (active, loading, off) — used for disabled detection */
   state: InstrumentState;
+
+  /**
+   * Color priority mode.
+   * - `Priority.enhanced`: Use enhanced (blue) color palette
+   * - `Priority.regular`: Use regular (gray) color palette
+   */
+  priority: Priority;
 
   /**
    * Whether the current value equals the setpoint (within deadband).
@@ -725,19 +733,19 @@ export interface RadialSetpointDerivedConfig {
  *
  * ## State Mapping
  *
- * | InstrumentState | atSetpoint | atZero | newAngleSetpoint | → visualState | → colorMode | → disabled |
- * |-----------------|------------|--------|------------------|---------------|-------------|------------|
- * | inCommand       | false      | *      | undefined        | false    | notEqual      | enhanced    | false      |
- * | inCommand       | false      | *      | undefined        | true     | focus         | enhanced    | false      |
- * | inCommand       | true       | false  | undefined        | false    | equal         | enhanced    | false      |
- * | inCommand       | true       | true   | undefined        | false    | equalZero     | enhanced    | false      |
- * | inCommand       | *          | *      | defined          | *        | (original dimmed) | enhanced | false     |
- * | active          | false      | *      | undefined        | false    | notEqual      | regular     | false      |
- * | active          | false      | *      | undefined        | true     | focus         | regular     | false      |
- * | active          | true       | false  | undefined        | false    | equal         | regular     | false      |
- * | active          | true       | true   | undefined        | false    | equalZero     | regular     | false      |
- * | loading         | *          | *      | *                | *        | notEqual      | regular     | true       |
- * | off             | *          | *      | *                | *        | notEqual      | regular     | true       |
+ * | Priority  | InstrumentState | atSetpoint | atZero | touching | → visualState       | → colorMode | → disabled |
+ * |-----------|-----------------|------------|--------|----------|---------------------|-------------|------------|
+ * | enhanced  | active          | false      | *      | false    | notEqual            | enhanced    | false      |
+ * | enhanced  | active          | false      | *      | true     | focus               | enhanced    | false      |
+ * | enhanced  | active          | true       | false  | false    | equal               | enhanced    | false      |
+ * | enhanced  | active          | true       | true   | false    | equalZero           | enhanced    | false      |
+ * | enhanced  | active          | *          | *      | *        | (original dimmed)   | enhanced    | false      |
+ * | regular   | active          | false      | *      | false    | notEqual            | regular     | false      |
+ * | regular   | active          | false      | *      | true     | focus               | regular     | false      |
+ * | regular   | active          | true       | false  | false    | equal               | regular     | false      |
+ * | regular   | active          | true       | true   | false    | equalZero           | regular     | false      |
+ * | *         | loading         | *          | *      | *        | notEqual            | regular     | true       |
+ * | *         | off             | *          | *      | *        | notEqual            | regular     | true       |
  *
  * Note: When `newAngleSetpoint` is defined, the original setpoint marker is dimmed
  * and a second marker is rendered in focus state at the new position.
@@ -750,6 +758,7 @@ export function deriveRadialSetpointConfig(
 ): RadialSetpointDerivedConfig {
   const {
     state,
+    priority,
     atSetpoint,
     angleSetpoint,
     setpointAtZeroDeadband = 0.5,
@@ -769,11 +778,11 @@ export function deriveRadialSetpointConfig(
     };
   }
 
-  // Determine color mode based on instrument state:
-  // - inCommand → enhanced colors
-  // - active → regular colors
+  // Determine color mode based on priority:
+  // - Priority.enhanced → enhanced colors (blue palette)
+  // - Priority.regular → regular colors (gray palette)
   const colorMode =
-    state === InstrumentState.inCommand
+    priority === Priority.enhanced
       ? SetpointColorMode.enhanced
       : SetpointColorMode.regular;
 
@@ -794,7 +803,7 @@ export function deriveRadialSetpointConfig(
     angleSetpoint !== undefined &&
     Math.abs(angleSetpoint) < setpointAtZeroDeadband;
 
-  // For inCommand and active states:
+  // For non-disabled states:
   // - atSetpoint + atZero triggers equalZero visual state (80% size)
   // - atSetpoint triggers equal visual state (80% size)
   // - otherwise notEqual (full size)

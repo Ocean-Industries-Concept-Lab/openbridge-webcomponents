@@ -3,6 +3,7 @@ import {CompassDirection, ObcHeading} from './heading.js';
 import './heading.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
+import {Priority} from '../types.js';
 
 const meta: Meta<typeof ObcHeading> = {
   title: 'Instruments/Heading',
@@ -49,7 +50,7 @@ export const Primary: Story = {
 
 export const Enhanced: Story = {
   args: {
-    enhanced: true,
+    priority: Priority.enhanced,
     headingSetpoint: 311,
   },
 };

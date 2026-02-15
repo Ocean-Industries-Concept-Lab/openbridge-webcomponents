@@ -260,7 +260,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
     // Derive tickbar visibility from whether intervals are defined
     barVertical.hasPrimaryTickbars = this.primaryInterval !== undefined;
     barVertical.hasTertiaryTickbars = this.tertiaryInterval !== undefined;
-    barVertical.enhanced = this.enhanced;
+    barVertical.priority = this.priority;
     // Scale state inherits from parent 'state' property automatically
     barVertical.state = this.state;
 
@@ -523,7 +523,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
       changed.has('tertiaryInterval') ||
       changed.has('scaleType') ||
       changed.has('state') || // Scale state inherits from parent 'state'
-      changed.has('enhanced') ||
+      changed.has('priority') ||
       changed.has('height') ||
       changed.has('width') ||
       changed.has('scaleReferenceSize') ||

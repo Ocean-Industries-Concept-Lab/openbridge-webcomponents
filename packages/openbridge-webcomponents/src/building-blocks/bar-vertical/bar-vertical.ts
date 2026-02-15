@@ -8,6 +8,7 @@ import {
   InstrumentState,
   FrameStyle,
   BorderRadiusPosition,
+  Priority,
 } from '../../navigation-instruments/types.js';
 import type {AdviceType} from '../../navigation-instruments/watch/advice.js';
 import type {
@@ -42,6 +43,7 @@ export {
   FrameStyle,
   BorderRadiusPosition,
   InstrumentState,
+  Priority,
   BarContainerStyle,
   ExternalScaleSide,
   SetpointColorMode,
@@ -217,8 +219,8 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
   });
 
   // Values
-  /** Enhanced visual mode: when true, uses enhanced instrument colors for bar fill and setpoint */
-  @property({type: Boolean}) enhanced = false;
+  /** Color priority: enhanced uses blue instrument colors for bar fill and setpoint */
+  @property({type: String}) priority: Priority = Priority.regular;
   /** Fill visualization mode: fill or tint */
   @property({type: String}) fillMode: FillMode = FillMode.fill;
   /** Minimum fill value for tint mode (defaults to 0) */
@@ -229,7 +231,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
   @property({type: Number}) value?: number = undefined;
 
   /** Instrument state (affects colors and some marker behavior) */
-  @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
+  @property({type: String}) state: InstrumentState = InstrumentState.active;
 
   // Advice
   /** Advice overlay positioning: center (in bar), inner (covers minor ticks), outer (no overlap) */
@@ -302,7 +304,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
       scaleType: this.scaleType,
       frameStyle: this.frameStyle,
       borderRadiusPosition: this.borderRadiusPosition,
-      enhanced: this.enhanced,
+      priority: this.priority,
       colorMode: this.setpointColorMode,
       fillMode: this.fillMode,
       fillMin: this.fillMin,

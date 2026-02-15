@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcMainEngine} from './main-engine.js';
 import './main-engine.js';
 import {widthDecorator} from '../../storybook-util.js';
-import {InstrumentState} from '../types.js';
+import {InstrumentState, Priority} from '../types.js';
 
 const meta: Meta<typeof ObcMainEngine> = {
   title: 'Instruments/Main Engine',
@@ -35,7 +35,8 @@ type Story = StoryObj<ObcMainEngine>;
 
 export const InCommand: Story = {
   args: {
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
   },
 };
 

@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcAzimuthThruster} from './azimuth-thruster.js';
 import './azimuth-thruster.js';
-import {InstrumentState, Size} from '../types.js';
+import {InstrumentState, Priority, Size} from '../types.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
 import {PropellerType} from '../thruster/propeller.js';
@@ -48,7 +48,8 @@ export const InCommand: Story = {
     thrustSetpoint: 70,
     angle: 30,
     angleSetpoint: 40,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     angleAdvices: [
       {minAngle: 20, maxAngle: 50, type: AdviceType.advice, hinted: true},
       {minAngle: 60, maxAngle: 100, type: AdviceType.caution, hinted: true},
@@ -88,7 +89,8 @@ export const InCommandAtSetpoint: Story = {
     thrustSetpoint: 60,
     angle: 30,
     angleSetpoint: 30,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
   },
 };
 
@@ -99,7 +101,8 @@ export const Pod: Story = {
     thrustSetpoint: 60,
     angle: 30,
     angleSetpoint: 30,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     topPropeller: PropellerType.single,
     bottomPropeller: PropellerType.cap,
   },
@@ -116,7 +119,8 @@ export const InCommandAtSetpointDisableAutoSetpoint: Story = {
     angleSetpoint: 35,
     atAngleSetpoint: true,
     disableAutoAtAngleSetpoint: true,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
   },
 };
 
@@ -127,7 +131,8 @@ export const SingleDirection: Story = {
     thrustSetpoint: 60,
     angle: 30,
     angleSetpoint: 30,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     singleDirection: true,
   },
 };
@@ -139,7 +144,8 @@ export const SingleDirectionWithPropeller: Story = {
     thrustSetpoint: 60,
     angle: 30,
     angleSetpoint: 30,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     singleDirection: true,
     bottomPropeller: PropellerType.single,
   },

@@ -1,6 +1,7 @@
 import {SVGTemplateResult, nothing, svg} from 'lit';
 import {
   InstrumentState,
+  Priority,
   FrameStyle,
   BorderRadiusPosition,
 } from '../../navigation-instruments/types.js';
@@ -114,7 +115,7 @@ import {
  *   tertiaryTickbarsInterval: 2,
  *   scaleType: ScaleType.regular,
  *   frameStyle: FrameStyle.regular,
- *   enhanced: true,
+ *   priority: Priority.enhanced,
  *   fillMode: FillMode.fill,
  *   fillMin: 0,
  *   fillMax: 40,
@@ -124,7 +125,7 @@ import {
  *   disableAutoAtSetpoint: false,
  *   autoAtSetpointDeadband: 1,
  *   setpointAtZeroDeadband: 0.5,
- *   state: InstrumentState.inCommand,
+ *   state: InstrumentState.active,
  *   advicePosition: AdvicePosition.inner,
  *   advices: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
  * };
@@ -489,10 +490,15 @@ export interface ExternalScaleConfig {
   borderRadius?: number;
 
   // Visual state
-  enhanced: boolean;
+  /**
+   * Color priority mode.
+   * - `Priority.enhanced`: Use enhanced (blue) color palette
+   * - `Priority.regular`: Use regular (gray) color palette
+   */
+  priority: Priority;
   /**
    * Explicit color mode override for setpoint marker.
-   * When provided, this takes precedence over the `enhanced` boolean.
+   * When provided, this takes precedence over the `priority` enum.
    *
    * - `SetpointColorMode.enhanced`: Use enhanced colors (brighter)
    * - `SetpointColorMode.regular`: Use regular colors
@@ -500,7 +506,7 @@ export interface ExternalScaleConfig {
    * Note: Disabled state is controlled separately via `setpointDisabled` or
    * auto-derived from `state` (loading/off states).
    *
-   * @default undefined (falls back to enhanced boolean)
+   * @default undefined (falls back to priority)
    */
   colorMode?: SetpointColorMode;
 
@@ -591,7 +597,7 @@ export interface ExternalScaleConfig {
    *
    * The dot is:
    * - 12x12px filled circle with 2px stroke (16px total visual size)
-   * - Fill: --instrument-regular-secondary-color (or enhanced variant when enhanced=true)
+   * - Fill: --instrument-regular-secondary-color (or enhanced variant when priority=enhanced)
    * - Stroke: --instrument-frame-primary-color
    *
    * @default false
@@ -605,18 +611,9 @@ export interface ExternalScaleConfig {
    * - `calculateAtSetpoint()` returns false (suppressed)
    * - Single setpoint marker renders in focus visual state
    *
-   * Unified name for what was previously `focused` in linear instruments
-   * and `touching` in radial instruments.
-   *
    * @default false
    */
   touching?: boolean;
-
-  /**
-   * @deprecated Use `touching` instead. Will be removed in a future version.
-   * When set, behaves identically to `touching`.
-   */
-  focused?: boolean;
 
   // Animation
   /**
@@ -844,7 +841,7 @@ function rangeIncludesZero(minValue: number, maxValue: number): boolean {
 }
 
 function calculateAtSetpoint(config: ExternalScaleConfig): boolean {
-  const isTouching = config.touching ?? config.focused ?? false;
+  const isTouching = config.touching ?? false;
   return computeAtSetpoint({
     value: config.value,
     setpoint: config.setpoint,
@@ -866,7 +863,7 @@ function calculateAtSetpoint(config: ExternalScaleConfig): boolean {
  * to the design-only visual state enum.
  *
  * Priority order:
- * 1. focus (focused property is true - user actively adjusting)
+ * 1. focus (touching property is true - user actively adjusting)
  * 2. equalZero (at setpoint AND setpoint is at zero)
  * 3. equal (at setpoint)
  * 4. notEqual (default)
@@ -875,14 +872,12 @@ function calculateAtSetpoint(config: ExternalScaleConfig): boolean {
  * which returns a boolean flag, not via a separate visual state.
  *
  * State mapping:
- * - InstrumentState.inCommand → notEqual/equal/equalZero (based on deadband)
- * - InstrumentState.active → notEqual/equal/equalZero (based on deadband) with regular colors
+ * - InstrumentState.active → notEqual/equal/equalZero (based on deadband)
  * - InstrumentState.loading → disabled=true (via deriveSetpointDisabled)
  * - InstrumentState.off → disabled=true (via deriveSetpointDisabled)
  *
- * Note: `focus` visual state is only triggered by the `focused` property
+ * Note: `focus` visual state is only triggered by the `touching` property
  * (user actively adjusting via touch/drag), not by InstrumentState.
- * The `focused` property will be exposed as a future instrument API state.
  */
 function deriveSetpointVisualState(
   config: ExternalScaleConfig
@@ -890,12 +885,12 @@ function deriveSetpointVisualState(
   // Priority 1: Focus state
   // - When `touching` property is true (user is actively adjusting)
   // - BUT only when newSetpoint is not defined (otherwise original should be dimmed)
-  const isTouching = config.touching ?? config.focused ?? false;
+  const isTouching = config.touching ?? false;
   if (isTouching && config.newSetpoint === undefined) {
     return SetpointVisualState.focus;
   }
 
-  // For inCommand and active states, check deadband-based states
+  // For enhanced and active states, check deadband-based states
   // Check if at setpoint
   const isAt = calculateAtSetpoint(config);
 
@@ -920,8 +915,7 @@ function deriveSetpointVisualState(
  *
  * Priority:
  * 1. Explicit colorMode takes precedence
- * 2. InstrumentState.active always uses regular colors
- * 3. Otherwise, maps config.enhanced to enhanced/regular color palette
+ * 2. Otherwise, maps config.priority to enhanced/regular color palette
  *
  * Note: Disabled state is handled separately via deriveSetpointDisabled().
  */
@@ -933,13 +927,8 @@ function deriveSetpointColorMode(
     return config.colorMode;
   }
 
-  // Active state always uses regular colors
-  if (config.state === InstrumentState.active) {
-    return SetpointColorMode.regular;
-  }
-
-  // Fall back to enhanced boolean mapping
-  return config.enhanced
+  // Map priority to color mode
+  return config.priority === Priority.enhanced
     ? SetpointColorMode.enhanced
     : SetpointColorMode.regular;
 }
@@ -975,25 +964,26 @@ function colors(config: ExternalScaleConfig): {
   markerStrokeColor: string;
   setpointColor: string;
 } {
+  const isEnhanced = config.priority === Priority.enhanced;
   // Fill mode uses secondary color, tint mode uses tertiary color
   let barFillColor =
     config.fillMode === 'tint'
-      ? config.enhanced
+      ? isEnhanced
         ? 'var(--instrument-enhanced-tertiary-color)'
         : 'var(--instrument-regular-tertiary-color)'
-      : config.enhanced
+      : isEnhanced
         ? 'var(--instrument-enhanced-secondary-color)'
         : 'var(--instrument-regular-secondary-color)';
 
-  let markerFillColor = config.enhanced
+  let markerFillColor = isEnhanced
     ? 'var(--instrument-enhanced-secondary-color)'
     : 'var(--instrument-regular-secondary-color)';
 
-  let markerStrokeColor = config.enhanced
+  let markerStrokeColor = isEnhanced
     ? 'var(--instrument-enhanced-tertiary-color)'
     : 'var(--instrument-regular-tertiary-color)';
 
-  let setpointColor = config.enhanced
+  let setpointColor = isEnhanced
     ? 'var(--instrument-enhanced-primary-color)'
     : 'var(--instrument-regular-primary-color)';
 
@@ -2411,7 +2401,7 @@ function setpointMarker(
 
     // newSetpoint always renders in focus visual state
     const visualState = SetpointVisualState.focus;
-    // Use the same color mode derivation but could be enhanced when focused
+    // Use the same color mode derivation for new setpoint
     const colorMode = deriveSetpointColorMode(config);
     // newSetpoint is never disabled (it's the active adjustment target)
     const disabled = false;
@@ -2439,7 +2429,7 @@ function setpointMarker(
  * The dot is:
  * - 12x12px filled circle with 2px stroke (16px total visual size)
  * - Positioned in the scale band, touching its inner edge (towards the chart)
- * - Fill uses secondary color (enhanced or regular based on config.enhanced)
+ * - Fill uses secondary color (enhanced or regular based on config.priority)
  * - Stroke uses --instrument-frame-primary-color
  *
  * @param config - Scale configuration

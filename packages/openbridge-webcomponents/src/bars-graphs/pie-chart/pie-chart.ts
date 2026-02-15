@@ -5,6 +5,7 @@ import chartCommonStyle from '../../charthelpers/chart-common.css?inline';
 import chartDebugStyle from '../../charthelpers/chart-debug.css?inline';
 import chartLegendStyle from '../../charthelpers/chart-legend.css?inline';
 import {customElement} from '../../decorator.js';
+import {Priority} from '../../navigation-instruments/types.js';
 import {
   Chart,
   PieController,
@@ -54,7 +55,7 @@ const PIE_WATCHED_PROP_NAMES = [
   'legend',
   'data',
   'colors',
-  'enhanced',
+  'priority',
   'sunburst',
   'showOuterLabels',
   'showUnit',
@@ -165,8 +166,8 @@ export class ObcPieChart extends LitElement {
   @property({attribute: false})
   colors: string[] = [];
 
-  @property({type: Boolean})
-  enhanced = false;
+  @property({type: String})
+  priority: Priority = Priority.regular;
 
   @property({type: Boolean})
   showOuterLabels = false;
@@ -372,7 +373,9 @@ export class ObcPieChart extends LitElement {
     const chartColors = getChartColorsOrDefault(
       this,
       this.colors,
-      this.enhanced ? CHART_SECTOR_ENHANCED_COLORS : CHART_SECTOR_DEFAULT_COLORS
+      this.priority === Priority.enhanced
+        ? CHART_SECTOR_ENHANCED_COLORS
+        : CHART_SECTOR_DEFAULT_COLORS
     );
     const segmentColors = values.map(
       (_, index) => chartColors[index % chartColors.length]

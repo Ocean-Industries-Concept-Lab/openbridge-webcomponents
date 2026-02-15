@@ -9,6 +9,7 @@ import {
   BorderRadiusPosition,
   InstrumentState,
 } from './gauge-vertical.js';
+import {Priority} from '../types.js';
 
 const meta: Meta = {
   title: 'Instruments/Gauge Vertical',
@@ -29,7 +30,7 @@ const meta: Meta = {
       control: {type: 'select'},
       options: Object.values(BorderRadiusPosition),
     },
-    enhanced: {control: {type: 'boolean'}},
+    priority: {control: 'select', options: Object.values(Priority)},
     fillMode: {control: {type: 'radio'}, options: ['fill', 'tint']},
     fillMin: {control: {type: 'number'}},
     fillMax: {control: {type: 'number'}},
@@ -57,7 +58,7 @@ const meta: Meta = {
     tertiaryTickbarsInterval: undefined,
     hideLabels: false,
     borderRadiusPosition: BorderRadiusPosition.innerFirstChild,
-    enhanced: false,
+    priority: Priority.regular,
     fillMode: FillMode.fill,
     fillMin: 0,
     fillMax: 40,
@@ -68,7 +69,7 @@ const meta: Meta = {
     disableAutoAtSetpoint: false,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
-    state: 'inCommand',
+    state: 'active',
     side: 'right',
     advices: [],
   },
@@ -82,7 +83,7 @@ const meta: Meta = {
       .tertiaryTickbarsInterval=${args.tertiaryTickbarsInterval}
       .hideLabels=${args.hideLabels}
       .borderRadiusPosition=${args.borderRadiusPosition}
-      .enhanced=${args.enhanced}
+      .priority=${args.priority}
       .fillMode=${args.fillMode}
       .fillMin=${args.fillMin}
       .fillMax=${args.fillMax}
@@ -244,7 +245,7 @@ export const WithBarFillRight: Story = {
     minValue: 0,
     maxValue: 100,
 
-    enhanced: true,
+    priority: Priority.enhanced,
     value: 65,
     primaryTickbarsInterval: 20,
     secondaryTickbarsInterval: 10,
@@ -258,7 +259,7 @@ export const WithBarFillLeft: Story = {
     minValue: -100,
     maxValue: 100,
 
-    enhanced: false,
+    priority: Priority.regular,
     value: 45,
     primaryTickbarsInterval: 20,
     secondaryTickbarsInterval: 10,
@@ -278,7 +279,7 @@ export const FillModeComparison: Story = {
         <obc-gauge-vertical
           minValue="0"
           maxValue="100"
-          enhanced
+          priority="enhanced"
           fillMode="${FillMode.fill}"
           fillMin="0"
           fillMax="65"
@@ -295,7 +296,7 @@ export const FillModeComparison: Story = {
         <obc-gauge-vertical
           minValue="0"
           maxValue="100"
-          enhanced
+          priority="enhanced"
           fillMode="${FillMode.tint}"
           fillMin="40"
           fillMax="80"
@@ -312,7 +313,7 @@ export const FillModeComparison: Story = {
         <obc-gauge-vertical
           minValue="0"
           maxValue="100"
-          enhanced
+          priority="enhanced"
           fillMode="${FillMode.tint}"
           value="65"
           setpoint="70"
@@ -331,7 +332,7 @@ export const TintModeWithAdvice: Story = {
     minValue: -100,
     maxValue: 100,
 
-    enhanced: true,
+    priority: Priority.enhanced,
     fillMode: FillMode.tint,
     fillMin: -50,
     fillMax: 50,
@@ -375,7 +376,7 @@ export const WithSetpointAtValue: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    enhanced: true,
+    priority: Priority.enhanced,
     value: 50, // Current value
     setpoint: 50, // Setpoint marker at same position
     primaryTickbarsInterval: 50,
@@ -392,7 +393,7 @@ export const WithSetpointAwayFromValue: Story = {
     minValue: -100,
     maxValue: 100,
 
-    enhanced: true,
+    priority: Priority.enhanced,
     value: 30, // Current value
     setpoint: 70, // Setpoint marker at different position
     primaryTickbarsInterval: 50,
@@ -401,21 +402,21 @@ export const WithSetpointAwayFromValue: Story = {
 };
 
 export const StateComparison: Story = {
-  name: 'State comparison (inCommand/active/loading/off/focus)',
+  name: 'State comparison (enhanced/active/loading/off/focus)',
 
   render: () => html`
     <div style="display: flex; gap: 40px; align-items: center;">
       <div style="text-align: center;">
         <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
-          inCommand
+          enhanced
         </div>
         <obc-gauge-vertical
           minValue="-100"
           maxValue="100"
-          enhanced
+          priority="enhanced"
           value="50"
           setpoint="50"
-          state="inCommand"
+          state="active"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
         ></obc-gauge-vertical>
@@ -427,7 +428,7 @@ export const StateComparison: Story = {
         <obc-gauge-vertical
           minValue="-100"
           maxValue="100"
-          enhanced
+          priority="enhanced"
           value="30"
           setpoint="70"
           state="active"
@@ -442,7 +443,7 @@ export const StateComparison: Story = {
         <obc-gauge-vertical
           minValue="-100"
           maxValue="100"
-          enhanced
+          priority="enhanced"
           value="-20"
           setpoint="40"
           state="loading"
@@ -455,7 +456,7 @@ export const StateComparison: Story = {
         <obc-gauge-vertical
           minValue="-100"
           maxValue="100"
-          enhanced
+          priority="enhanced"
           value="60"
           setpoint="-30"
           state="off"
@@ -470,11 +471,11 @@ export const StateComparison: Story = {
         <obc-gauge-vertical
           minValue="-100"
           maxValue="100"
-          enhanced
+          priority="enhanced"
           value="30"
           setpoint="30"
           .newSetpoint=${70}
-          state="inCommand"
+          state="active"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
         ></obc-gauge-vertical>
@@ -513,12 +514,12 @@ Real-world values fluctuate. Without a deadband, the indicator would constantly 
   args: {
     minValue: -100,
     maxValue: 100,
-    enhanced: true,
+    priority: Priority.enhanced,
     value: 50, // Start at setpoint
     setpoint: 50,
     disableAutoAtSetpoint: false, // Auto mode
     autoAtSetpointDeadband: 1, // 1-unit tolerance
-    state: 'inCommand',
+    state: 'active',
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
     fillMin: 0,
@@ -567,12 +568,12 @@ Sometimes you need to control the "at setpoint" visual state directly, independe
     minValue: -100,
     maxValue: 100,
 
-    enhanced: true,
+    priority: Priority.enhanced,
     value: 30, // Value at 30
     setpoint: 70, // Setpoint at 70 (far apart)
     disableAutoAtSetpoint: true, // Manual mode
     atSetpoint: false, // Manually set to false (try toggling to true!)
-    state: 'inCommand',
+    state: 'active',
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
   },
@@ -625,12 +626,12 @@ The deadband determines how close the value must be to the setpoint before the s
     minValue: -100,
     maxValue: 100,
 
-    enhanced: true,
+    priority: Priority.enhanced,
     value: 45, // 5 units away from setpoint
     setpoint: 50,
     disableAutoAtSetpoint: false,
     autoAtSetpointDeadband: 1, // Try changing to 10 (at setpoint) or 0.1 (away)
-    state: 'inCommand',
+    state: 'active',
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
   },
@@ -687,11 +688,11 @@ In maritime and industrial control systems, zero is often a special reference po
   args: {
     minValue: -100,
     maxValue: 100,
-    enhanced: true,
+    priority: Priority.enhanced,
     value: 0,
     setpoint: 0.3, // Close to zero (should snap)
     setpointAtZeroDeadband: 0.5, // Try changing to 0.1 (no snap) or 1.0 (wider snap)
-    state: 'inCommand',
+    state: 'active',
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
     fillMax: 0,
@@ -725,7 +726,7 @@ export const EnhancedModeComparison: Story = {
         <obc-gauge-vertical
           minValue="-100"
           maxValue="100"
-          enhanced
+          priority="enhanced"
           value="60"
           setpoint="50"
           primaryTickbarsInterval="50"
@@ -740,7 +741,7 @@ export const EnhancedModeComparison: Story = {
         <obc-gauge-vertical
           minValue="-100"
           maxValue="100"
-          enhanced
+          priority="enhanced"
           value="-45"
           setpoint="-30"
           primaryTickbarsInterval="50"

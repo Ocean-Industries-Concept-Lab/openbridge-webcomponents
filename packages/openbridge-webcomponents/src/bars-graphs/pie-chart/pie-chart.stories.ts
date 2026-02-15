@@ -1,6 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import './pie-chart.js';
+import {Priority} from '../../navigation-instruments/types.js';
 
 const SUNBURST_DATA = [
   {
@@ -62,8 +63,9 @@ const meta: Meta = {
     sunburst: {control: 'boolean'},
     data: {control: 'object'},
     colors: {control: 'object'},
-    enhanced: {
-      control: 'boolean',
+    priority: {
+      control: 'select',
+      options: Object.values(Priority),
       description:
         'Use enhanced color palette (blue) instead of default (gray)',
     },
@@ -80,7 +82,7 @@ const meta: Meta = {
     sunburst: false,
     data: SUNBURST_DATA,
     colors: [],
-    enhanced: true,
+    priority: Priority.enhanced,
     legend: false,
   },
 };
@@ -95,7 +97,7 @@ export const Default: Story = {
     <obc-pie-chart
       .data=${args.data}
       .colors=${args.colors}
-      .enhanced=${args.enhanced}
+      .priority=${args.priority}
       .showOuterLabels=${args.showOuterLabels}
       .showUnit=${args.showUnit}
       .outerLabelUnit=${args.outerLabelUnit}
@@ -167,7 +169,7 @@ export const WithLegend: Story = {
 export const CustomColors: Story = {
   args: {
     colors: ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6'],
-    enhanced: false,
+    priority: Priority.regular,
   },
 };
 
@@ -176,7 +178,7 @@ export const Realtime: Story = {
   render: (args) => {
     const chart = document.createElement('obc-pie-chart');
     chart.data = JSON.parse(JSON.stringify(SUNBURST_DATA));
-    chart.enhanced = args.enhanced;
+    chart.priority = args.priority;
     chart.showOuterLabels = args.showOuterLabels;
     chart.showUnit = args.showUnit;
     chart.outerLabelUnit = args.outerLabelUnit;
