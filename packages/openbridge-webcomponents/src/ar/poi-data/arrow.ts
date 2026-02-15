@@ -1,8 +1,8 @@
 import {html} from 'lit';
 
 export enum PoiArrowDirection {
-  Left = 'left',
-  Right = 'right',
+  Left = 'arrow-left',
+  Right = 'arrow-right',
 }
 
 export function pointerArrow(pointerType: PoiArrowDirection, value: string) {
