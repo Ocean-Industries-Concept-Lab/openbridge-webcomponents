@@ -131,6 +131,7 @@ export class ObcHeading extends LitElement {
           .atAngleSetpoint=${this._headingSp.computeAtSetpoint(this.heading)}
           .angleSetpointAtZeroDeadband=${this.headingSetpointAtZeroDeadband}
           .colorMode=${this.headingSetpointColorMode}
+          .priority=${this.priority}
           .animateSetpoint=${this.animateSetpoint}
           .rotation=${this.getRotation()}
         >
@@ -139,12 +140,12 @@ export class ObcHeading extends LitElement {
           ${arrow(
             ArrowStyle.HDG,
             this.heading + (this.getRotation() ?? 0),
-            this.priority === Priority.enhanced
+            this.priority
           )}
           ${arrow(
             ArrowStyle.COG,
             this.courseOverGround + (this.getRotation() ?? 0),
-            false
+            Priority.regular
           )}
         </svg>
       </div>

@@ -94,6 +94,7 @@ export default meta;
 type Story = StoryObj<ObcWatch>;
 
 export const InCommand: Story = {
+  // TODO: review the name of this story, is this still inCommand?
   args: {
     angleSetpoint: 90,
     state: InstrumentState.active,
