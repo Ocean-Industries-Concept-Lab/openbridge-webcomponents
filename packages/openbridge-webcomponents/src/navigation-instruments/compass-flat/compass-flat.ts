@@ -1,4 +1,4 @@
-import {LitElement, svg, SVGTemplateResult, unsafeCSS} from 'lit';
+import {LitElement, html, svg, SVGTemplateResult, unsafeCSS} from 'lit';
 import componentStyle from './compass-flat.css?inline';
 import {property, state} from 'lit/decorators.js';
 import {Tickmark, TickmarkType} from '../watch-flat/tickmark-flat.js';
@@ -214,11 +214,19 @@ export class ObcCompassFlat extends LitElement {
 
     const viewBox = '-192 -128 384 128';
 
-    return svg`
+    return html`
       <div class="container" style="max-width:${this.maxContainerWidth}px">
-        <obc-watch-flat noPadding .FOVIndicator=${this.FOVIndicator ? this.renderFOVIndicator() : []} .labels=${scaledLabels} .rotation=${this.heading} .tickmarks=${tickmarks} .tickmarkSpacing=${translationScale}></obc-watch-flat>
-        <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg"> 
-        ${this.HDGSvg}${this.COGSvg(translation)}
+        <obc-watch-flat
+          noPadding
+          .FOVIndicator=${this.FOVIndicator ? this.renderFOVIndicator() : []}
+          .labels=${scaledLabels}
+          .rotation=${this.heading}
+          .tickmarks=${tickmarks}
+          .tickmarkSpacing=${translationScale}
+        ></obc-watch-flat>
+        <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg">
+          ${this.HDGSvg}${this.COGSvg(translation)}
+        </svg>
       </div>
     `;
   }
