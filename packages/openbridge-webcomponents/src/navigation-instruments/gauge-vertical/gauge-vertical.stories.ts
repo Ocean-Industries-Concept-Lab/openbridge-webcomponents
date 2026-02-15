@@ -402,18 +402,18 @@ export const WithSetpointAwayFromValue: Story = {
 };
 
 export const StateComparison: Story = {
-  name: 'State comparison (enhanced/active/loading/off/focus)',
+  name: 'State comparison',
 
   render: () => html`
     <div style="display: flex; gap: 40px; align-items: center;">
       <div style="text-align: center;">
         <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
-          enhanced
+          priority: regular
         </div>
         <obc-gauge-vertical
           minValue="-100"
           maxValue="100"
-          priority="enhanced"
+          priority="regular"
           value="50"
           setpoint="50"
           state="active"

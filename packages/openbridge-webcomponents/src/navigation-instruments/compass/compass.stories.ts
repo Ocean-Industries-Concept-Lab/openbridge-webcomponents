@@ -4,6 +4,7 @@ import './compass.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
 import {VesselImage} from '../watch/watch.js';
+import {Priority} from '../types.js';
 
 const meta: Meta<typeof ObcCompass> = {
   title: 'Instruments/Compass',
@@ -30,6 +31,7 @@ const meta: Meta<typeof ObcCompass> = {
     vesselImage: VesselImage.psvTop,
     direction: CompassDirection.NorthUp,
     touching: false,
+    priority: Priority.enhanced,
   },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},

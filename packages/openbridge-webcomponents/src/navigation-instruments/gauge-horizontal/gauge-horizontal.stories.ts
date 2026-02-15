@@ -404,7 +404,7 @@ export const WithSetpointAwayFromValue: Story = {
 };
 
 export const SetpointStateComparison: Story = {
-  name: 'State comparison (enhanced/active/loading/off/focus)',
+  name: 'State comparison',
 
   render: () => html`
     <div
@@ -412,12 +412,12 @@ export const SetpointStateComparison: Story = {
     >
       <div style="text-align: center;">
         <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
-          enhanced
+          priority: regular
         </div>
         <obc-gauge-horizontal
           minValue="-100"
           maxValue="100"
-          priority="enhanced"
+          priority="regular"
           value="50"
           setpoint="50"
           state="active"

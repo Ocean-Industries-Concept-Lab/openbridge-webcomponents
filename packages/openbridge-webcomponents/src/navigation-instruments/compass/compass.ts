@@ -206,7 +206,8 @@ export class ObcCompass extends LitElement {
           )}
           ${arrow(
             ArrowStyle.COG,
-            this.courseOverGround + (this.getRotation() ?? 0)
+            this.courseOverGround + (this.getRotation() ?? 0),
+            this.priority === Priority.enhanced
           )}
           <g id="rot">${rot}</g>
         </svg>

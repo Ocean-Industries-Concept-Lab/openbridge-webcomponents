@@ -344,31 +344,28 @@ export const SetpointComparison: Story = {
         style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
       >
         <div style="font-size: 12px; color: #888; padding-top: 80px;">
-          active (SetpointColorMode: regular)
+          regular
         </div>
         ${renderSetpointDemo({
           label: 'value ≠ setpoint',
-          setpointColorMode: SetpointColorMode.regular,
           setpoint: 40,
           value: 20,
           state: InstrumentState.active,
-          priority: Priority.enhanced,
+          priority: Priority.regular,
         })}
         ${renderSetpointDemo({
           label: 'value = setpoint',
-          setpointColorMode: SetpointColorMode.regular,
           setpoint: 40,
           value: 40,
           state: InstrumentState.active,
-          priority: Priority.enhanced,
+          priority: Priority.regular,
         })}
         ${renderSetpointDemo({
           label: 'both = 0',
-          setpointColorMode: SetpointColorMode.regular,
           setpoint: 0,
           value: 0,
           state: InstrumentState.active,
-          priority: Priority.enhanced,
+          priority: Priority.regular,
         })}
       </div>
 
@@ -377,11 +374,10 @@ export const SetpointComparison: Story = {
         style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
       >
         <div style="font-size: 12px; color: #888; padding-top: 80px;">
-          enhanced (SetpointColorMode: enhanced)
+          enhanced
         </div>
         ${renderSetpointDemo({
           label: 'value ≠ setpoint',
-          setpointColorMode: SetpointColorMode.enhanced,
           setpoint: 40,
           value: 20,
           state: InstrumentState.active,
@@ -389,7 +385,6 @@ export const SetpointComparison: Story = {
         })}
         ${renderSetpointDemo({
           label: 'value = setpoint',
-          setpointColorMode: SetpointColorMode.enhanced,
           setpoint: 40,
           value: 40,
           state: InstrumentState.active,
@@ -397,7 +392,6 @@ export const SetpointComparison: Story = {
         })}
         ${renderSetpointDemo({
           label: 'both = 0',
-          setpointColorMode: SetpointColorMode.enhanced,
           setpoint: 0,
           value: 0,
           state: InstrumentState.active,
@@ -608,7 +602,7 @@ export const SetpointComparisonRadial: Story = {
         style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
       >
         <div style="font-size: 12px; color: #888; padding-top: 60px;">
-          active (SetpointColorMode: regular)
+          regular
         </div>
         ${renderRadialSetpointDemo({
           label: 'bar at 45°, setpoint at 60°',
@@ -616,8 +610,7 @@ export const SetpointComparisonRadial: Story = {
           atAngleSetpoint: false,
           fillEndAngle: 45,
           state: InstrumentState.active,
-          priority: Priority.enhanced,
-          colorMode: SetpointColorMode.regular,
+          priority: Priority.regular,
         })}
         ${renderRadialSetpointDemo({
           label: 'bar at 45°, setpoint at 45°',
@@ -625,8 +618,7 @@ export const SetpointComparisonRadial: Story = {
           atAngleSetpoint: true,
           fillEndAngle: 45,
           state: InstrumentState.active,
-          priority: Priority.enhanced,
-          colorMode: SetpointColorMode.regular,
+          priority: Priority.regular,
         })}
         ${renderRadialSetpointDemo({
           label: 'bar at 0°, setpoint at 0°',
@@ -634,8 +626,7 @@ export const SetpointComparisonRadial: Story = {
           atAngleSetpoint: true,
           fillEndAngle: 0,
           state: InstrumentState.active,
-          priority: Priority.enhanced,
-          colorMode: SetpointColorMode.regular,
+          priority: Priority.regular,
         })}
       </div>
 
@@ -644,7 +635,7 @@ export const SetpointComparisonRadial: Story = {
         style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
       >
         <div style="font-size: 12px; color: #888; padding-top: 60px;">
-          enhanced (SetpointColorMode: enhanced)
+          enhanced
         </div>
         ${renderRadialSetpointDemo({
           label: 'bar at 45°, setpoint at 60°',

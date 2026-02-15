@@ -42,6 +42,7 @@ export default meta;
 type Story = StoryObj<ObcAzimuthThruster>;
 
 export const InCommand: Story = {
+  // TODO: review the name of this story, is this still inCommand?
   args: {
     size: Size.large,
     thrust: 60,
@@ -63,21 +64,27 @@ export const InCommand: Story = {
 };
 
 export const InCommandDetailedTickmarks: Story = {
+  // TODO: review the name of this story, is this still inCommand?
   args: {
     thrust: 60,
     thrustSetpoint: 60,
     angle: 30,
     angleSetpoint: 30,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     detailedTickmarks: true,
   },
 };
 
 export const InCommandDetailedTickmarksInside: Story = {
+  // TODO: review the name of this story, is this still inCommand?
   args: {
     thrust: 60,
     thrustSetpoint: 60,
     angle: 30,
     angleSetpoint: 30,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     detailedTickmarks: true,
     tickmarksInside: true,
   },
