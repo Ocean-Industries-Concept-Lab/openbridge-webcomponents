@@ -4,7 +4,7 @@ import compentStyle from './poi-target.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import '../poi-line/poi-line.js';
 import '../poi-target-button/poi-target-button.js';
-import {POIStyle} from '../poi-graphic-line/poi-config.js';
+import {POIStyle} from '../poi-graphic-line/poi-graphic-line.js';
 import '../../icons/icon-ais-target-activated-iec.js';
 import {ObcArAlertType} from '../types.js';
 import {
@@ -97,7 +97,7 @@ export class ObcPoiTarget extends LitElement {
         pointer = html`
           <obc-poi-line
             height=${this.height + verticalOffset}
-            poiStyle=${valueToPointerStyle(this.value)}
+            .poiStyle=${valueToPointerStyle(this.value)}
             .offset=${this.offset}
           ></obc-poi-line>
         `;

@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcPoiGraphicLine} from './poi-graphic-line.js';
 import './poi-graphic-line.js';
-import {POIStyle} from './poi-config.js';
+import {POIStyle} from './poi-graphic-line.js';
 
 const meta: Meta<typeof ObcPoiGraphicLine> = {
   title: 'AR/Legacy/POI Graphic Line',

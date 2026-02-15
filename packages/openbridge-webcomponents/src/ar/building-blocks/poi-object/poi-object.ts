@@ -1,5 +1,5 @@
 import {LitElement, html, unsafeCSS, nothing} from 'lit';
-import {property} from 'lit/decorators.js';
+import {property, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import componentStyle from './poi-object.css?inline';
 import {customElement} from '../../../decorator.js';
@@ -7,10 +7,10 @@ import {customElement} from '../../../decorator.js';
 /**
  * Type variants for POI objects controlling size and shape.
  * - `indicator`: Icon only with drop shadow, no background frame.
- * - `regular`: Standard size (48px touch target, 36px background, 24px icon).
- * - `large`: Larger size (64px touch target, 52px background, 36px icon).
- * - `n-up`: Square background (48px touch target, 32px background, 24px icon).
- * - `n-up-large`: Large square background (64px touch target, 48px background, 36px icon).
+ * - `regular`: Standard size (`--maneuvering-components-poi-button-touch-target` touch target, 36px background, 24px icon).
+ * - `large`: Larger size (`--maneuvering-components-poi-button-large-touch-target` touch target, 52px background, 36px icon).
+ * - `n-up`: Square background (`--maneuvering-components-poi-button-touch-target` touch target, 32px background, 24px icon).
+ * - `n-up-large`: Large square background (`--maneuvering-components-poi-button-large-touch-target` touch target, 48px background, 36px icon).
  */
 export enum ObcPoiObjectType {
   Indicator = 'indicator',
@@ -59,10 +59,10 @@ export enum ObcPoiObjectState {
  * ### Type (`type`)
  * Controls size and shape. Defaults to `regular`.
  * - `indicator`: Icon only with drop shadow, no background frame.
- * - `regular`: Standard size (48px touch target, 36px background, 24px icon).
- * - `large`: Larger size (64px touch target, 52px background, 36px icon).
- * - `n-up`: Square background (48px touch target, 32px background, 24px icon).
- * - `n-up-large`: Large square background (64px touch target, 48px background, 36px icon).
+ * - `regular`: Standard size (`--maneuvering-components-poi-button-touch-target` touch target, 36px background, 24px icon).
+ * - `large`: Larger size (`--maneuvering-components-poi-button-large-touch-target` touch target, 52px background, 36px icon).
+ * - `n-up`: Square background (`--maneuvering-components-poi-button-touch-target` touch target, 32px background, 24px icon).
+ * - `n-up-large`: Large square background (`--maneuvering-components-poi-button-large-touch-target` touch target, 48px background, 36px icon).
  *
  * ### Style (`objectStyle`)
  * Controls background color scheme. Defaults to `regular`.
@@ -129,6 +129,8 @@ export class ObcPoiObject extends LitElement {
 
   @property({attribute: false}) extraClasses: Record<string, boolean> = {};
 
+  @state() private hasPlaceholderIcon = false;
+
   private get isChecked() {
     return (
       this.state === ObcPoiObjectState.Checked ||
@@ -193,6 +195,17 @@ export class ObcPoiObject extends LitElement {
     }
   }
 
+  private handleSlotChange(e: Event) {
+    const slot = e.target as HTMLSlotElement;
+    const hasPlaceholderIcon = slot
+      .assignedElements({flatten: true})
+      .some((element) => element.tagName.toLowerCase() === 'obi-placeholder');
+
+    if (hasPlaceholderIcon !== this.hasPlaceholderIcon) {
+      this.hasPlaceholderIcon = hasPlaceholderIcon;
+    }
+  }
+
   override render() {
     const classes = {
       wrapper: true,
@@ -206,6 +219,7 @@ export class ObcPoiObject extends LitElement {
       'is-square': this.isSquare,
       'is-large': this.isLargeSize,
       'is-indicator': this.isIndicator,
+      'has-placeholder-icon': this.hasPlaceholderIcon,
       interactive: this.isInteractive,
       ...this.extraClasses,
     };
@@ -226,7 +240,17 @@ export class ObcPoiObject extends LitElement {
           : nothing}
 
         <div class="icon-container" part="icon-container">
-          <slot></slot>
+          ${this.isIndicator && this.hasPlaceholderIcon
+            ? html`<svg
+                class="indicator-placeholder-fill"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path d="M12 3L3 12L12 21L21 12L12 3Z"></path>
+              </svg>`
+            : nothing}
+          <slot @slotchange=${this.handleSlotChange}></slot>
         </div>
       </div>
     `;

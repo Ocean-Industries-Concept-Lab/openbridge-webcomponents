@@ -14,8 +14,8 @@
 }
 
 :host([type="button"]) {
-  width: 48px;
-  height: 48px;
+  width: var(--maneuvering-components-poi-button-touch-target, 48px);
+  height: var(--maneuvering-components-poi-button-touch-target, 48px);
 }
 
 :host([type="camera"]) {
@@ -47,8 +47,14 @@
 }
 
 .square-frame {
-  width: calc(48px + var(--obc-poi-pointer-box-width-extra, 0px));
-  height: calc(48px + var(--obc-poi-pointer-box-height-extra, 0px));
+  width: calc(
+    var(--maneuvering-components-poi-button-touch-target, 48px) +
+      var(--obc-poi-pointer-box-width-extra, 0px)
+  );
+  height: calc(
+    var(--maneuvering-components-poi-button-touch-target, 48px) +
+      var(--obc-poi-pointer-box-height-extra, 0px)
+  );
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);

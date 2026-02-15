@@ -11,7 +11,7 @@ import {
   PoiButtonVisualState,
 } from '../poi-button/poi-button.js';
 import {ObcArAlertType} from '../../types.js';
-import {POIStyle} from '../poi-graphic-line/poi-config.js';
+import {POIStyle} from '../poi-graphic-line/poi-graphic-line.js';
 import {PoiArrowDirection, pointerArrow} from '../../poi-target/arrow.js';
 import '../poi-line/poi-line.js';
 import '../poi-pointer/poi-pointer.js';

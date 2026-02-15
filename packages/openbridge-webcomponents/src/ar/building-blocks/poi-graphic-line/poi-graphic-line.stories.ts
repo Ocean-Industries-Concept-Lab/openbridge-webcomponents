@@ -8,7 +8,7 @@ import {
   POI_STYLE_OPTIONS,
   POIStyle,
   POI_VISUAL_VARIANTS,
-} from './poi-config.js';
+} from './poi-graphic-line.js';
 
 const meta: Meta<ObcPoiGraphicLine> = {
   title: 'AR/Building blocks/POI Graphic Line',
