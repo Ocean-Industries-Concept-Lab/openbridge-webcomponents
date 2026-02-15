@@ -58,6 +58,7 @@ const meta: Meta<typeof ObcCompass> = {
       options: Object.values(CompassDirection),
     },
     touching: {control: 'boolean'},
+    priority: {control: 'select', options: Object.values(Priority)},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcCompass>;

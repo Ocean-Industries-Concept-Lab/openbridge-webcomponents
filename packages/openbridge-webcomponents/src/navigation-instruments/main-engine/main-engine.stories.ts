@@ -26,6 +26,7 @@ const meta: Meta<typeof ObcMainEngine> = {
     state: {
       options: Object.values(InstrumentState),
     },
+    priority: {control: 'select', options: Object.values(Priority)},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcMainEngine>;

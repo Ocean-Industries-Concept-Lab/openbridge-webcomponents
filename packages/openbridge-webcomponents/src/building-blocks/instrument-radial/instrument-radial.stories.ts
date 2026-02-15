@@ -16,6 +16,9 @@ const meta: Meta<typeof ObcInstrumentRadial> = {
     needleColor: 'var(--instrument-regular-secondary-color)',
     barColor: 'var(--instrument-regular-tertiary-color)',
   },
+  argTypes: {
+    priority: {control: 'select', options: Object.values(Priority)},
+  },
 } satisfies Meta<ObcInstrumentRadial>;
 
 export default meta;

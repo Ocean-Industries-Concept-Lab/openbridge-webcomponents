@@ -13,6 +13,9 @@ const meta: Meta<typeof ObcGaugeRadial> = {
   args: {
     width: 400,
   },
+  argTypes: {
+    priority: {control: 'select', options: Object.values(Priority)},
+  },
 } satisfies Meta<ObcGaugeRadial>;
 
 export default meta;

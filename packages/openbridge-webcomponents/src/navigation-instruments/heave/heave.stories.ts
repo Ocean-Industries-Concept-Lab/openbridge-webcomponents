@@ -28,6 +28,7 @@ const meta: Meta<typeof ObcHeave> = {
       control: {type: 'select'},
       options: Object.values(VesselImage),
     },
+    priority: {control: 'select', options: Object.values(Priority)},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcHeave>;

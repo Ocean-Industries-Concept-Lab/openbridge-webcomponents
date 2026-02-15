@@ -22,6 +22,7 @@ const meta: Meta<typeof ObcRudder> = {
     setpoint: {control: {type: 'range', min: -90, max: 90, step: 1}},
     state: {control: {type: 'select'}, options: Object.values(InstrumentState)},
     touching: {control: 'boolean'},
+    priority: {control: 'select', options: Object.values(Priority)},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcRudder>;

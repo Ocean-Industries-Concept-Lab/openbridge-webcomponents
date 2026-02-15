@@ -430,8 +430,9 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
     },
     priority: {
       description:
-        'Priority visual mode: when true, uses enhanced instrument colors for bar fill and setpoint.',
-      control: {type: 'boolean'},
+        'Priority visual mode: when enhanced, uses enhanced instrument colors for bar fill and setpoint.',
+      control: 'select',
+      options: Object.values(Priority),
     },
     fillMode: {
       description:

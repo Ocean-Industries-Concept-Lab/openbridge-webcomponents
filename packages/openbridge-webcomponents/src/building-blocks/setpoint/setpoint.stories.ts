@@ -109,7 +109,8 @@ Source: \`packages/openbridge-webcomponents/src/svghelpers/setpoint.ts\``,
     },
     priority: {
       description: 'Use priority-based color palette',
-      control: {type: 'boolean'},
+      control: 'select',
+      options: Object.values(Priority),
     },
     state: {
       description: 'Instrument state',

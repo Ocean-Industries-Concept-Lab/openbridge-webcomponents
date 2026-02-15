@@ -26,6 +26,7 @@ const meta: Meta<typeof ObcThruster> = {
     bottomPropeller: {
       options: Object.values(PropellerType),
     },
+    priority: {control: 'select', options: Object.values(Priority)},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcThruster>;

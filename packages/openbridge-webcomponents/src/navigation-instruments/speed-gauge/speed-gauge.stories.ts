@@ -24,6 +24,7 @@ const meta: Meta<typeof ObcSpeedGauge> = {
     maxSpeed: {control: {type: 'range', min: 0, max: 100, step: 1}},
     setpoint: {control: {type: 'range', min: -20, max: 100, step: 1}},
     touching: {control: 'boolean'},
+    priority: {control: 'select', options: Object.values(Priority)},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcSpeedGauge>;
