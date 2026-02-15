@@ -15,7 +15,7 @@ import {ObcPoiHeaderState, ObcPoiHeaderType} from '../poi-header/poi-header.js';
 
 const overlapToggleLoops = new Map<string, number>();
 
-function startOverlappedLoop(id: string, pauseMs = 1000) {
+function startOverlappedLoop(id: string, pauseMs = 1000, initialDelayMs = 0) {
   if (overlapToggleLoops.has(id)) return;
   let isOverlapped = false;
   const toggle = () => {
@@ -36,12 +36,23 @@ function startOverlappedLoop(id: string, pauseMs = 1000) {
     overlapToggleLoops.set(id, timeout);
   };
 
+  if (initialDelayMs > 0) {
+    const timeout = window.setTimeout(toggle, initialDelayMs);
+    overlapToggleLoops.set(id, timeout);
+    return;
+  }
+
   toggle();
 }
 
-function startOverlappedDataButtonLoop(id: string, pauseMs = 1000) {
+function startOverlappedDataButtonLoop(
+  id: string,
+  pauseMs = 1000,
+  initialDelayMs = 0,
+  startsOverlapped = false
+) {
   if (overlapToggleLoops.has(id)) return;
-  let isOverlapped = false;
+  let isOverlapped = startsOverlapped;
   const toggle = () => {
     const btn = document.getElementById(id) as ObcPoiButton | null;
     if (!btn) {
@@ -99,6 +110,12 @@ function startOverlappedDataButtonLoop(id: string, pauseMs = 1000) {
     const timeout = window.setTimeout(toggle, pauseMs);
     overlapToggleLoops.set(id, timeout);
   };
+
+  if (initialDelayMs > 0) {
+    const timeout = window.setTimeout(toggle, initialDelayMs);
+    overlapToggleLoops.set(id, timeout);
+    return;
+  }
 
   toggle();
 }
@@ -462,7 +479,7 @@ export const OverlappedAnimatedWithData: Story = {
   },
   render: () => {
     requestAnimationFrame(() =>
-      startOverlappedDataButtonLoop('animated-btn-data', 1000)
+      startOverlappedDataButtonLoop('animated-btn-data', 1000, 100, true)
     );
 
     const values = [
@@ -478,6 +495,7 @@ export const OverlappedAnimatedWithData: Story = {
               <obc-poi-button
                 id="animated-btn-data"
                 style="position: absolute; left: 50%; bottom: 0; --obc-poi-transition-duration: 100ms; --obc-poi-opacity-transition-duration: 100ms;"
+                .value=${PoiButtonVisualState.Overlapped}
                 .data=${values}
               >
                 <obi-placeholder></obi-placeholder>
