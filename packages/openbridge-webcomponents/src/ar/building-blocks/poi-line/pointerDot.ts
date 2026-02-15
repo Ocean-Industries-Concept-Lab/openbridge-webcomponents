@@ -1,5 +1,8 @@
 import {html, nothing, svg, type TemplateResult} from 'lit';
-import {POIStyle, resolvePOIStyle} from '../poi-graphic-line/poi-config.js';
+import {
+  POIStyle,
+  resolvePOIStyle,
+} from '../poi-graphic-line/poi-graphic-line.js';
 
 function createCircle({
   x,
