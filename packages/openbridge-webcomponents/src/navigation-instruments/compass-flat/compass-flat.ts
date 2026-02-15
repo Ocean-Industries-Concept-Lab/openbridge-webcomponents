@@ -217,7 +217,6 @@ export class ObcCompassFlat extends LitElement {
     return html`
       <div class="container" style="max-width:${this.maxContainerWidth}px">
         <obc-watch-flat
-          noPadding
           .FOVIndicator=${this.FOVIndicator ? this.renderFOVIndicator() : []}
           .labels=${scaledLabels}
           .rotation=${this.heading}
