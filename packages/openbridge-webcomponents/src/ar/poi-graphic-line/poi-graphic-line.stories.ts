@@ -1,10 +1,10 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcPoiGraphicLine} from './poi-graphic-line.js';
 import './poi-graphic-line.js';
-import {POIStyle} from './poi-config.js';
+import {POIStyle} from './poi-graphic-line.js';
 
 const meta: Meta<typeof ObcPoiGraphicLine> = {
-  title: 'AR/Building blocks/POI Graphic Line',
+  title: 'AR/Legacy/POI Graphic Line',
   tags: ['autodocs'],
   component: 'obc-poi-graphic-line',
   argTypes: {

@@ -1,11 +1,11 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcPoiLine} from './poi-line.js';
 import './poi-line.js';
-import {POIStyle} from '../poi-graphic-line/poi-config.js';
+import {POIStyle} from '../poi-graphic-line/poi-graphic-line.js';
 import {crossDecorator} from '../../storybook-util.js';
 import {html} from 'lit';
 const meta: Meta<typeof ObcPoiLine> = {
-  title: 'AR/Building blocks/POI Line',
+  title: 'AR/Legacy/POI Line',
   tags: ['autodocs'],
   decorators: [crossDecorator],
   component: 'obc-poi-line',
