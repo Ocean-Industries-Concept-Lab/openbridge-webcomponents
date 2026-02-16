@@ -183,10 +183,7 @@ const setPosition = (
     return
   }
   if (frames[frames.length - 1] && t >= frames[frames.length - 1]!.t) {
-    applyTransformedPosition(
-      frames[frames.length - 1]!.x,
-      frames[frames.length - 1]!.h
-    )
+    applyTransformedPosition(frames[frames.length - 1]!.x, frames[frames.length - 1]!.h)
     return
   }
 
