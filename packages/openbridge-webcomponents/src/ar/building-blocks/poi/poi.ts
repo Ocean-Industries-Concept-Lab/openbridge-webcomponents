@@ -104,7 +104,6 @@ const POINT_POINTER_OFFSET_PX = 12;
  * - Default slot: Main icon/content rendered inside `obc-poi-button`.
  * - `header`: Optional custom header content rendered above the POI object.
  * - `id-label`: Optional ID label content rendered in the POI button label region.
- * - `relation`: Optional relation content rendered in the POI button relation region.
  *
  * ## Events
  *
@@ -115,8 +114,7 @@ const POINT_POINTER_OFFSET_PX = 12;
  * - Pass finite numeric values for layout properties to avoid fallback-to-zero behavior.
  * - Enable `animatePosition` only for intentional motion transitions and moving targets.
  * - Prefer enum values for `type`, `value`, `state`, `pointerType`, and `pointerState`.
- * - Use the `id-label` and `relation` slots for structured metadata instead of mixing all
- *   text in the default slot.
+ * - Use the `id-label` slot for structured metadata instead of mixing all text in the default slot.
  *
  * ## Example
  *
@@ -124,14 +122,12 @@ const POINT_POINTER_OFFSET_PX = 12;
  * <obc-poi type="line" value="unchecked" state="enabled">
  *   <obi-placeholder></obi-placeholder>
  *   <span slot="id-label">A-12</span>
- *   <span slot="relation">Port</span>
  * </obc-poi>
  * ```
  *
  * @slot - Default POI button content.
  * @slot header - Optional custom header content.
  * @slot id-label - Optional ID label content.
- * @slot relation - Optional relation content.
  */
 @customElement('obc-poi')
 export class ObcPoi extends LitElement {
@@ -156,7 +152,6 @@ export class ObcPoi extends LitElement {
   pointerState: ObcPoiPointerState | null = null;
   @property({type: Boolean}) selected = false;
   @property({type: Array, attribute: false}) data: ObcPoiButtonDataItem[] = [];
-  @property({type: Boolean}) hasRelation = false;
   @property({type: Number, attribute: 'button-offset-x'}) buttonOffsetX = 0;
   @property({type: Number, attribute: 'target-offset-x'}) targetOffsetX = 0;
   @property({type: Number, attribute: 'box-width'}) boxWidth: number | null =
@@ -414,14 +409,12 @@ export class ObcPoi extends LitElement {
         .value=${this.buttonVisualState}
         .type=${this.buttonType}
         .data=${this.data}
-        .hasRelation=${this.hasRelation}
       >
         <slot></slot>
         ${this.hasHeader
           ? html`<slot name="header" slot="header"></slot>`
           : nothing}
         <slot name="id-label" slot="id-label"></slot>
-        <slot name="relation" slot="relation"></slot>
       </obc-poi-button>
     `;
   }

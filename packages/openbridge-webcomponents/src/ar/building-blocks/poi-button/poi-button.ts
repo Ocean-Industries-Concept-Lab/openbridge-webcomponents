@@ -83,14 +83,14 @@ export interface ObcPoiButtonHeader {
 }
 
 /**
- * `<obc-poi-button>` - `ObcPoiButton` renders the interactive POI button body, optional header, data rows, and relation content.
+ * `<obc-poi-button>` - `ObcPoiButton` renders the interactive POI button body, optional header, and data rows.
  *
  * ## Features
  *
  * - Supports button and enhanced visual sizes via `type`.
  * - Supports anchored and inline layouts via `layout`.
  * - Maps POI value state (`unchecked`, `checked`, `activated`, `overlapped`) to object and frame visuals.
- * - Can render optional header (`header`), metrics/data rows (`data`), and relation content (`hasRelation` + `relation` slot).
+ * - Can render optional header (`header`) and metrics/data rows (`data`).
  *
  * Public properties/attributes:
  * - `relativeDirection: number` - Icon rotation in degrees.
@@ -102,7 +102,6 @@ export interface ObcPoiButtonHeader {
  * - `type: ObcPoiButtonType` - Size/variant (`button` or `enhanced`).
  * - `inExpandedGroup: boolean` - Expanded-group styling hint.
  * - `data: ObcPoiButtonDataItem[]` - Optional value/label/unit rows.
- * - `hasRelation: boolean` - Enables relation area rendering when data mode is active.
  *
  * Public methods:
  * - No imperative public methods; behavior is controlled through reactive properties.
@@ -111,14 +110,13 @@ export interface ObcPoiButtonHeader {
  *
  * - Use `layout="anchored"` for standalone POI buttons with optional selection frame.
  * - Use `layout="inline"` when composing inside higher-level marker wrappers (for example `obc-poi`).
- * - Provide `data` for metric display variants; keep `hasRelation` aligned with relation slot usage.
+ * - Provide `data` for metric display variants.
  *
  * ## Slots
  *
  * - Default slot: Main icon/content rendered inside `obc-poi-object`.
  * - `header`: Optional custom header content rendered above the POI object.
  * - `id-label`: Optional custom indicator content for the header indicator slot.
- * - `relation`: Optional relation icon/content rendered when `hasRelation` is true in data mode.
  *
  * ## Events
  *
@@ -158,7 +156,6 @@ export class ObcPoiButton extends LitElement {
   @property({type: String}) type = ObcPoiButtonType.Button;
   @property({type: Boolean}) inExpandedGroup = false;
   @property({type: Array, attribute: false}) data: ObcPoiButtonDataItem[] = [];
-  @property({type: Boolean}) hasRelation = false;
 
   get hasData(): boolean {
     return this.data.length > 0;
@@ -323,11 +320,6 @@ export class ObcPoiButton extends LitElement {
         <div class="button-wrapper">
           ${this.renderSelectionFrame()} ${this.renderPoiObject()}
         </div>
-        ${this.hasRelation
-          ? html`<div class="relation-wrapper" part="relation-wrapper">
-              <slot name="relation" class="relation" part="relation"></slot>
-            </div>`
-          : nothing}
         <div class="alert-ring"></div>
       </button>
     `;

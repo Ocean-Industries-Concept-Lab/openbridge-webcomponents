@@ -9,7 +9,6 @@ import {
 import {html} from 'lit';
 import {ObcArAlertType} from '../types.js';
 import {crossDecorator} from '../../storybook-util.js';
-import '../../icons/icon-collision-avoidance-overtaking.js';
 
 const meta: Meta<ObcPoiButtonData> = {
   title: 'AR/POI Button Data',
@@ -58,13 +57,7 @@ const meta: Meta<ObcPoiButtonData> = {
         .header=${args.header}
         .value=${args.value}
         .type=${args.type}
-        .hasRelation=${args.hasRelation}
-      >
-        <obi-collision-avoidance-overtaking
-          slot="relation"
-          part="relation"
-        ></obi-collision-avoidance-overtaking>
-      </obc-poi-button-data>
+      ></obc-poi-button-data>
     `;
   },
 } satisfies Meta<ObcPoiButtonData>;

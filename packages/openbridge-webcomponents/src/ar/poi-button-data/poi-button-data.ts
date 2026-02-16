@@ -18,20 +18,19 @@ import {customElement} from '../../decorator.js';
  * - Inherits all visual variants, states, and layout behavior from `obc-poi-button`.
  * - Adds default-content fallback logic in `connectedCallback`.
  * - Leaves provided default content untouched when present.
- * - Leaves slotted content untouched (`id-label`, `relation`).
+ * - Leaves slotted content untouched (`id-label`).
  * - TODO(designer): Confirm whether alternative default icons are needed by variant/theme.
  *
  * ## Usage Guidelines
  *
  * - Prefer `<obc-poi-button-data>` when consumer markup may omit a default icon/content node.
- * - Use the same public properties as `obc-poi-button` (`data`, `value`, `type`, `header`, `hasRelation`, etc.).
+ * - Use the same public properties as `obc-poi-button` (`data`, `value`, `type`, `header`, etc.).
  * - Provide explicit default content when a domain-specific icon should replace the fallback icon.
  *
  * ## Slots/Content
  *
  * - Default slot: Main icon/content for the POI object body (fallback icon is injected when empty).
  * - `id-label`: Optional custom indicator content forwarded to header indicator rendering.
- * - `relation`: Optional relation icon/content when relation content is enabled.
  *
  * ## Events
  *
@@ -42,7 +41,7 @@ import {customElement} from '../../decorator.js';
  * ## Best Practices
  *
  * - Use this component to enforce consistent fallback visuals for data markers.
- * - Keep `data` rows, `header`, and `hasRelation` synchronized with domain state to avoid mixed UI semantics.
+ * - Keep `data` rows and `header` synchronized with domain state to avoid mixed UI semantics.
  * - Prefer explicit content for specialized icons; rely on fallback only as a safe default.
  *
  * ## Example
@@ -57,7 +56,6 @@ import {customElement} from '../../decorator.js';
  *
  * @slot - Default icon/content slot for the POI object body.
  * @slot id-label - Custom indicator content for the header indicator slot.
- * @slot relation - Relation icon/content rendered when relation mode is enabled.
  * @fires click - Native click event inherited from `obc-poi-button`.
  */
 @customElement('obc-poi-button-data')

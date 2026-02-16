@@ -7,7 +7,6 @@ import {
 } from './poi-button.js';
 import './poi-button.js';
 import '../../../icons/icon-placeholder.js';
-import '../../../icons/icon-collision-avoidance-overtaking.js';
 import {html, TemplateResult} from 'lit';
 import {ObcArAlertType} from '../../types.js';
 import {crossDecorator} from '../../../storybook-util.js';
@@ -132,7 +131,6 @@ const meta: Meta<ObcPoiButton> = {
     alertType: ObcArAlertType.None,
     header: null,
     value: PoiButtonVisualState.Unchecked,
-    hasRelation: false,
     data: [],
   },
   argTypes: {
@@ -157,9 +155,6 @@ const meta: Meta<ObcPoiButton> = {
       control: {type: 'select'},
       options: Object.values(ObcPoiButtonType),
     },
-    hasRelation: {
-      control: {type: 'boolean'},
-    },
   },
   render: (args) => html`
     <obc-poi-button
@@ -170,13 +165,8 @@ const meta: Meta<ObcPoiButton> = {
       .header=${args.header}
       .value=${args.value}
       .type=${args.type}
-      .hasRelation=${args.hasRelation}
     >
       <obi-placeholder></obi-placeholder>
-      <obi-collision-avoidance-overtaking
-        slot="relation"
-        part="relation"
-      ></obi-collision-avoidance-overtaking>
     </obc-poi-button>
   `,
 } satisfies Meta<ObcPoiButton>;
@@ -208,7 +198,6 @@ type MatrixButtonConfig = {
   alertType?: ObcArAlertType;
   header?: ObcPoiButtonHeader | null;
   data?: Array<{value: string; label: string; unit: string}>;
-  hasRelation?: boolean;
   idLabel?: boolean;
   stageTall?: boolean;
   label: string;
@@ -225,15 +214,8 @@ const renderMatrixButton = (cfg: MatrixButtonConfig) => html`
         .alertType=${cfg.alertType ?? ObcArAlertType.None}
         .header=${cfg.header ?? null}
         .data=${cfg.data ?? []}
-        .hasRelation=${cfg.hasRelation ?? false}
       >
         <obi-placeholder></obi-placeholder>
-        ${cfg.hasRelation
-          ? html`<obi-collision-avoidance-overtaking
-              slot="relation"
-              part="relation"
-            ></obi-collision-avoidance-overtaking>`
-          : html``}
         ${cfg.idLabel
           ? html`<obi-placeholder slot="id-label"></obi-placeholder>`
           : html``}
@@ -386,13 +368,12 @@ export const AllData: Story = {
             ],
           })}
           ${renderMatrixButton({
-            label: 'Values + Relation',
+            label: 'Values + Header',
             stageTall: true,
             data: [
               {value: '10', label: 'Lab', unit: 'Unit'},
               {value: '20', label: 'Lab 2', unit: 'Unit 2'},
             ],
-            hasRelation: true,
             header: {
               content: '1',
               type: ObcPoiHeaderType.Id,

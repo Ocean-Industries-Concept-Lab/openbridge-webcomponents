@@ -9,7 +9,6 @@ import {
 } from '../poi-pointer/poi-pointer.js';
 import {ObcPoiButtonDataItem} from '../poi-button/poi-button.js';
 import '../../../icons/icon-placeholder.js';
-import '../../../icons/icon-collision-avoidance-overtaking.js';
 import '../poi-header/poi-header.js';
 
 type PoiStoryArgs = {
@@ -30,7 +29,6 @@ type PoiStoryArgs = {
   buttonOffsetX: number;
   targetOffsetX: number;
   selected: boolean;
-  hasRelation: boolean;
   data: ObcPoiButtonDataItem[];
 };
 
@@ -57,7 +55,6 @@ const meta: Meta<PoiStoryArgs> = {
     buttonOffsetX: 0,
     targetOffsetX: 0,
     selected: false,
-    hasRelation: false,
     data: [],
   },
   argTypes: {
@@ -96,7 +93,6 @@ const meta: Meta<PoiStoryArgs> = {
     buttonOffsetX: {control: {type: 'range', min: -150, max: 150, step: 1}},
     targetOffsetX: {control: {type: 'range', min: -150, max: 150, step: 1}},
     selected: {control: {type: 'boolean'}},
-    hasRelation: {control: {type: 'boolean'}},
     data: {
       control: 'object',
       description:
@@ -123,7 +119,6 @@ const meta: Meta<PoiStoryArgs> = {
         'buttonOffsetX',
         'targetOffsetX',
         'selected',
-        'hasRelation',
         'data',
       ],
     },
@@ -156,7 +151,6 @@ const meta: Meta<PoiStoryArgs> = {
           .buttonOffsetX=${args.buttonOffsetX}
           .targetOffsetX=${args.targetOffsetX}
           .selected=${args.selected}
-          .hasRelation=${args.hasRelation}
           .data=${args.data}
         >
           ${args.hasHeader
@@ -170,9 +164,6 @@ const meta: Meta<PoiStoryArgs> = {
               ></obc-poi-header>`
             : html``}
           <obi-placeholder></obi-placeholder>
-          <obi-collision-avoidance-overtaking
-            slot="relation"
-          ></obi-collision-avoidance-overtaking>
         </obc-poi>
       </div>
     `;

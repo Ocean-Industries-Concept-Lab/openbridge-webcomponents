@@ -411,9 +411,7 @@ export const POIValuesAndContent: Story = {
                 state="selected"
                 size="regular"
                 has-indicator
-              >
-                <obi-placeholder slot="indicator"></obi-placeholder>
-              </obc-poi-header>
+              ></obc-poi-header>
             </obc-poi-data>
           </div>
           <div class="values-item">

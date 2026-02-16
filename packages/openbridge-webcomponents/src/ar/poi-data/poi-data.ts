@@ -51,7 +51,6 @@ export {ObcPoiValue as PoiDataValue};
  *
  * ### Slots
  * - `header`: Optional custom header content rendered above the POI object.
- * - `relation`: Optional relation content rendered below the button data section.
  *
  * ### Events
  * - None. This component does not emit custom events.
@@ -67,7 +66,6 @@ export {ObcPoiValue as PoiDataValue};
  * ```
  *
  * @slot header - Optional custom header content.
- * @slot relation - Optional relation content.
  * @fires none - This component does not emit custom events.
  */
 
@@ -95,7 +93,6 @@ export class ObcPoiData extends LitElement {
   @property({type: String, attribute: 'pointer-state'})
   pointerState: ObcPoiPointerState | null = null;
   @property({type: Boolean}) selected = false;
-  @property({type: Boolean}) hasRelation = false;
   @property({type: Number, attribute: 'button-offset-x'}) buttonOffsetX = 0;
   @property({type: Number, attribute: 'target-offset-x'}) targetOffsetX = 0;
   @property({type: Number, attribute: 'box-width'}) boxWidth: number | null =
@@ -236,7 +233,6 @@ export class ObcPoiData extends LitElement {
         .pointerState=${this.pointerState}
         .selected=${this.selected}
         .data=${this.data}
-        .hasRelation=${this.hasRelation}
         .buttonOffsetX=${this.buttonOffsetX}
         .targetOffsetX=${this.targetOffsetX}
         .boxWidth=${this.boxWidth}
@@ -246,7 +242,6 @@ export class ObcPoiData extends LitElement {
           ? html`<slot name="header" slot="header"></slot>`
           : null}
         <obi-vessel-generic-default-filled></obi-vessel-generic-default-filled>
-        <slot name="relation" slot="relation"></slot>
       </obc-poi>
     `;
   }

@@ -206,6 +206,7 @@
 }
 
 .wrapper:not(.has-data) .poi-object::part(background-frame) {
+  border-color: var(--overlay-border-outline-color);
   transition:
     width var(--obc-poi-size-transition-duration, 0.1s) ease-out,
     height var(--obc-poi-size-transition-duration, 0.1s) ease-out,
@@ -315,21 +316,6 @@
     --obc-poi-object-shadow: none;
     flex-shrink: 0;
   }
-
-  .relation-wrapper {
-    display: flex;
-    padding: 0 6px 4px 6px;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    align-self: stretch;
-
-    .relation {
-      width: var(--maneuvering-components-poi-button-icon-size);
-      height: var(--maneuvering-components-poi-button-icon-size);
-      color: var(--element-neutral-color);
-    }
-  }
 }
 
 /* Overlap state for has-data variant - keep layout, hide values */
@@ -341,7 +327,6 @@
   box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
 
   .data-wrapper,
-  .relation-wrapper,
   .button-wrapper .poi-object,
   .button-wrapper .selection-frame {
     opacity: 0;
@@ -371,7 +356,6 @@
 }
 
 .wrapper.has-data .data-wrapper,
-.wrapper.has-data .relation-wrapper,
 .wrapper.has-data .button-wrapper .poi-object,
 .wrapper.has-data .button-wrapper .selection-frame {
   transition: opacity var(--obc-poi-opacity-transition-duration) ease-out;
