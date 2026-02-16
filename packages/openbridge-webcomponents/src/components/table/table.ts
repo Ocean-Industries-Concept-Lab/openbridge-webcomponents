@@ -694,14 +694,33 @@ export class ObcTable extends LitElement {
               const hasDivider =
                 this.rowDivider && this.data.length - 1 !== rowIndex;
               const isStriped = this.striped && rowIndex % 2 === 1;
+              const isRowSelected =
+                (row.selected ?? false) ||
+                (this.selectable && this._selectedRowIds.has(row.id));
+              const previousRow =
+                rowIndex > 0 ? this.sortedData[rowIndex - 1] : undefined;
+              const nextRow =
+                rowIndex < this.sortedData.length - 1
+                  ? this.sortedData[rowIndex + 1]
+                  : undefined;
+              const hasSelectedPreviousRow =
+                previousRow !== undefined &&
+                ((previousRow.selected ?? false) ||
+                  (this.selectable &&
+                    this._selectedRowIds.has(previousRow.id)));
+              const hasSelectedNextRow =
+                nextRow !== undefined &&
+                ((nextRow.selected ?? false) ||
+                  (this.selectable && this._selectedRowIds.has(nextRow.id)));
               return html`
                 <button
                   role="row"
                   class=${classMap({
                     'grid-row': true,
-                    selected:
-                      (row.selected ?? false) ||
-                      (this.selectable && this._selectedRowIds.has(row.id)),
+                    selected: isRowSelected,
+                    'selected-with-prev':
+                      isRowSelected && hasSelectedPreviousRow,
+                    'selected-with-next': isRowSelected && hasSelectedNextRow,
                     striped: isStriped,
                   })}
                   @click=${() => this._handleRowClick(row)}

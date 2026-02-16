@@ -439,6 +439,24 @@ export const SelectableTable: Story = {
         },
         action: {type: ObcTableCellType.Button, text: 'Details'},
       },
+      {
+        id: '2',
+        name: {type: ObcTableCellType.Regular, title: 'Nova', text: 'Lane'},
+        track: {
+          type: ObcTableCellType.Checkbox,
+          status: CheckboxStatus.checked,
+        },
+        action: {type: ObcTableCellType.Button, text: 'Open'},
+      },
+      {
+        id: '3',
+        name: {type: ObcTableCellType.Regular, title: 'Orion', text: 'Reed'},
+        track: {
+          type: ObcTableCellType.Checkbox,
+          status: CheckboxStatus.unchecked,
+        },
+        action: {type: ObcTableCellType.Button, text: 'Details'},
+      },
     ],
   },
 };
