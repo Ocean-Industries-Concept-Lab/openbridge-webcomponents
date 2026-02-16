@@ -151,10 +151,8 @@ export class ObcPoiData extends LitElement {
         const layerVerticalOffset = this.#getLayerVerticalOffset();
         const totalVerticalOffset =
           selectedVerticalOffset + layerVerticalOffset;
-        const resolvedPoiType = this.#getResolvedPoiType();
         const effectiveLineLength =
-          resolvedPoiType === ObcPoiType.Line ||
-          resolvedPoiType === ObcPoiType.Offset
+          this.type === ObcPoiType.Line || this.type === ObcPoiType.Offset
             ? lineLength + lineCompensation + totalVerticalOffset
             : lineLength;
         this.style.top = `${this.buttonY - effectiveLineLength}px`;
@@ -171,28 +169,7 @@ export class ObcPoiData extends LitElement {
     }
   }
 
-  @property({
-    type: Array,
-    converter: {
-      fromAttribute(value) {
-        if (!value) return [];
-        try {
-          const parsed = JSON.parse(value);
-          return Array.isArray(parsed) ? parsed : [];
-        } catch {
-          return [];
-        }
-      },
-      toAttribute(value) {
-        if (!value || !Array.isArray(value) || value.length === 0) return null;
-        try {
-          return JSON.stringify(value);
-        } catch {
-          return null;
-        }
-      },
-    },
-  })
+  @property({attribute: false})
   data: ObcPoiButtonDataItem[] = [];
 
   #getSelectedVerticalOffset(): number {
@@ -214,40 +191,6 @@ export class ObcPoiData extends LitElement {
     return Number.isFinite(parsed) ? parsed : 0;
   }
 
-  #getResolvedPoiType(): ObcPoiType {
-    return Object.values(ObcPoiType).includes(this.type as ObcPoiType)
-      ? (this.type as ObcPoiType)
-      : ObcPoiType.Line;
-  }
-
-  #getResolvedButtonType(): ObcPoiButtonType {
-    if (
-      Object.values(ObcPoiButtonType).includes(
-        this.buttonType as ObcPoiButtonType
-      )
-    ) {
-      return this.buttonType as ObcPoiButtonType;
-    }
-
-    return ObcPoiButtonType.Button;
-  }
-
-  #getResolvedPointerType(): ObcPoiPointerType | null {
-    const value = this.pointerType;
-    return Object.values(ObcPoiPointerType).includes(value as ObcPoiPointerType)
-      ? (value as ObcPoiPointerType)
-      : null;
-  }
-
-  #getResolvedPointerState(): ObcPoiPointerState | null {
-    const value = this.pointerState;
-    return Object.values(ObcPoiPointerState).includes(
-      value as ObcPoiPointerState
-    )
-      ? (value as ObcPoiPointerState)
-      : null;
-  }
-
   override render() {
     const selectedVerticalOffset = this.#getSelectedVerticalOffset();
     const lineLength = Number.isFinite(this.y) ? this.y : 0;
@@ -256,22 +199,15 @@ export class ObcPoiData extends LitElement {
       : 0;
     const layerVerticalOffset = this.#getLayerVerticalOffset();
     const totalVerticalOffset = selectedVerticalOffset + layerVerticalOffset;
-    const resolvedPoiType = this.#getResolvedPoiType();
     const effectiveLineLength =
-      resolvedPoiType === ObcPoiType.Line ||
-      resolvedPoiType === ObcPoiType.Offset
+      this.type === ObcPoiType.Line || this.type === ObcPoiType.Offset
         ? lineLength + lineCompensation + totalVerticalOffset
         : lineLength;
     const effectiveLocalButtonY = -totalVerticalOffset;
-    const effectiveButtonOffset = this.buttonOffsetX;
-    const effectiveTargetOffset = this.targetOffsetX;
-    const resolvedButtonType = this.#getResolvedButtonType();
-    const resolvedPointerType = this.#getResolvedPointerType();
-    const resolvedPointerState = this.#getResolvedPointerState();
 
     return html`
       <obc-poi
-        .type=${resolvedPoiType}
+        .type=${this.type}
         .value=${this.value}
         .state=${this.state}
         .x=${0}
@@ -283,14 +219,14 @@ export class ObcPoiData extends LitElement {
         .animatePosition=${this.animatePosition}
         .relativeDirection=${this.relativeDirection}
         .header=${this.header}
-        .buttonType=${resolvedButtonType}
-        .pointerType=${resolvedPointerType}
-        .pointerState=${resolvedPointerState}
+        .buttonType=${this.buttonType}
+        .pointerType=${this.pointerType}
+        .pointerState=${this.pointerState}
         .selected=${this.selected}
         .data=${this.data}
         .hasRelation=${this.hasRelation}
-        .buttonOffsetX=${effectiveButtonOffset}
-        .targetOffsetX=${effectiveTargetOffset}
+        .buttonOffsetX=${this.buttonOffsetX}
+        .targetOffsetX=${this.targetOffsetX}
         .boxWidth=${this.boxWidth}
         .boxHeight=${this.boxHeight}
       >
