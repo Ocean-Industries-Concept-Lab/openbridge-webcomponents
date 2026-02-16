@@ -43,7 +43,7 @@ jobs:
               uses: actions/upload-artifact@v4
               with:
                   name: openbridge-webcomponents
-                  path: ./packages
+                  path: .
 
             - name: Publish angular wrapper to GitHub Packages
               working-directory: ./packages/openbridge-webcomponents-ng
