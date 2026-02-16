@@ -65,6 +65,7 @@ jobs:
         run: |
           rm -rf node_modules/@oicl || true
           rm -rf node_modules/@ocean-industries-concept-lab || true
+          npm install
           npm run build
           cd dist
           npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
