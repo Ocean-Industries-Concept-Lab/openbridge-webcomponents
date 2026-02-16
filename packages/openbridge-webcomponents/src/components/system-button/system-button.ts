@@ -35,6 +35,12 @@ export enum SystemButtonVariant {
   actions = 'actions',
 }
 
+export enum ActivePanel {
+  microphone = 'microphone',
+  volume = 'volume',
+  systemIcons = 'system-icons',
+}
+
 /**
  * Describes the enabled state and current value for each system indicator displayed by `<obc-system-button>`.
  *
@@ -195,11 +201,7 @@ export class ObcSystemButton extends LitElement {
    * Indicates which panel (if any) is currently active.
    * One of: `'microphone'`, `'volume'`, `'system-icons'`, or `null`.
    */
-  @property({type: String}) activePanel:
-    | 'microphone'
-    | 'volume'
-    | 'system-icons'
-    | null = null;
+  @property({type: String}) activePanel: ActivePanel | null = null;
 
   private _handleExpandedTypeClick() {
     this.menuOpen = !this.menuOpen;
@@ -242,7 +244,7 @@ export class ObcSystemButton extends LitElement {
   }
 
   private _handleMicrophoneActionClick = () => {
-    this.activePanel = 'microphone';
+    this.activePanel = ActivePanel.microphone;
     this.menuOpen = true;
     /**
      * Fired when the microphone action segment is activated.
@@ -254,7 +256,7 @@ export class ObcSystemButton extends LitElement {
   };
 
   private _handleVolumeActionClick = () => {
-    this.activePanel = 'volume';
+    this.activePanel = ActivePanel.volume;
     this.menuOpen = true;
     /**
      * Fired when the volume action segment is activated.
@@ -266,7 +268,7 @@ export class ObcSystemButton extends LitElement {
   };
 
   private _handleSystemIconsActionClick = () => {
-    this.activePanel = 'system-icons';
+    this.activePanel = ActivePanel.systemIcons;
     this.menuOpen = true;
     /**
      * Fired when the system icons action segment is activated.
