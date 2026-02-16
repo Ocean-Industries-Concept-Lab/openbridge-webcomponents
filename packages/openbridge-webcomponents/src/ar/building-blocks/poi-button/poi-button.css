@@ -159,8 +159,8 @@
 }
 
 .wrapper:not(.has-data) {
-  @mixin style style=flat
-    visibleWrapperClass=.poi-object: : part(background-frame);
+  /* prettier-ignore */
+  @mixin style style=flat visibleWrapperClass=.poi-object::part(background-frame);
 
   .id-label {
     position: absolute;
