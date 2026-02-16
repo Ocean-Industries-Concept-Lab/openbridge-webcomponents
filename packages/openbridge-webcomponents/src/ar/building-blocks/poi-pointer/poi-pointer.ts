@@ -45,62 +45,41 @@ export class ObcPoiPointer extends LitElement {
   @property({type: Number, attribute: 'box-height'})
   boxHeight: number | null = null;
 
-  private get isPoint(): boolean {
-    return this.type === ObcPoiPointerType.Point;
-  }
-
-  private get isButton(): boolean {
-    return this.type === ObcPoiPointerType.Button;
-  }
-
-  private get isCamera(): boolean {
-    return this.type === ObcPoiPointerType.Camera;
-  }
-
-  private get isSelected(): boolean {
-    return this.state === ObcPoiPointerState.Selected;
-  }
-
-  private get isActive(): boolean {
-    return this.state === ObcPoiPointerState.Active;
-  }
-
   private get shouldUseBoxDimensions(): boolean {
-    if (this.isPoint) {
-      return this.isSelected || this.isActive;
+    if (this.type === ObcPoiPointerType.Point) {
+      return (
+        this.state === ObcPoiPointerState.Selected ||
+        this.state === ObcPoiPointerState.Active
+      );
     }
 
-    if (this.isCamera) {
-      return this.isActive;
+    if (this.type === ObcPoiPointerType.Camera) {
+      return this.state === ObcPoiPointerState.Active;
     }
 
     return false;
   }
 
   private get resolvedBoxWidth(): number | null {
-    if (!this.shouldUseBoxDimensions || this.boxWidth === null) {
+    if (
+      !this.shouldUseBoxDimensions ||
+      this.boxWidth === null ||
+      this.boxWidth < 0
+    ) {
       return null;
     }
-
-    const width = Number(this.boxWidth);
-    if (!Number.isFinite(width) || width < 0) {
-      return null;
-    }
-
-    return width;
+    return this.boxWidth;
   }
 
   private get resolvedBoxHeight(): number | null {
-    if (!this.shouldUseBoxDimensions || this.boxHeight === null) {
+    if (
+      !this.shouldUseBoxDimensions ||
+      this.boxHeight === null ||
+      this.boxHeight < 0
+    ) {
       return null;
     }
-
-    const height = Number(this.boxHeight);
-    if (!Number.isFinite(height) || height < 0) {
-      return null;
-    }
-
-    return height;
+    return this.boxHeight;
   }
 
   private get wrapperStyle(): string | null {
@@ -124,13 +103,17 @@ export class ObcPoiPointer extends LitElement {
   }
 
   private renderSquareSelectionFrame() {
-    const show =
-      (this.isPoint && this.isSelected) || (this.isButton && this.isSelected);
-    if (!show) {
+    if (this.state !== ObcPoiPointerState.Selected) {
+      return nothing;
+    }
+    if (
+      this.type !== ObcPoiPointerType.Point &&
+      this.type !== ObcPoiPointerType.Button
+    ) {
       return nothing;
     }
 
-    const useCustomMode = this.isPoint;
+    const useCustomMode = this.type === ObcPoiPointerType.Point;
 
     return html`
       <div class="square-frame" aria-hidden="true">
@@ -147,7 +130,12 @@ export class ObcPoiPointer extends LitElement {
   }
 
   private renderCameraSelectionFrame() {
-    if (!(this.isCamera && this.isSelected)) {
+    if (
+      !(
+        this.type === ObcPoiPointerType.Camera &&
+        this.state === ObcPoiPointerState.Selected
+      )
+    ) {
       return nothing;
     }
 
@@ -166,7 +154,10 @@ export class ObcPoiPointer extends LitElement {
   }
 
   private renderPoint() {
-    if (!this.isPoint || this.isSelected) {
+    if (
+      this.type !== ObcPoiPointerType.Point ||
+      this.state === ObcPoiPointerState.Selected
+    ) {
       return nothing;
     }
 
@@ -183,7 +174,7 @@ export class ObcPoiPointer extends LitElement {
   }
 
   private renderButton() {
-    if (!this.isButton) {
+    if (this.type !== ObcPoiPointerType.Button) {
       return nothing;
     }
 
@@ -201,7 +192,7 @@ export class ObcPoiPointer extends LitElement {
   }
 
   private renderCamera() {
-    if (!this.isCamera) {
+    if (this.type !== ObcPoiPointerType.Camera) {
       return nothing;
     }
 
@@ -223,9 +214,9 @@ export class ObcPoiPointer extends LitElement {
       <div
         class=${classMap({
           wrapper: true,
-          point: this.isPoint,
-          button: this.isButton,
-          camera: this.isCamera,
+          point: this.type === ObcPoiPointerType.Point,
+          button: this.type === ObcPoiPointerType.Button,
+          camera: this.type === ObcPoiPointerType.Camera,
         })}
         style=${this.wrapperStyle ?? nothing}
       >
