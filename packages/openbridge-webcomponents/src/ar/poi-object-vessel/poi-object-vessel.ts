@@ -87,12 +87,6 @@ export class ObcPoiObjectVessel extends ObcAbstractPoiObject {
     }
   }
 
-  override get extraClasses(): Record<string, boolean> {
-    return {
-      'type-speed-rot': this.isSpeedRot,
-    };
-  }
-
   override get icon() {
     if (this.isSpeedRot) {
       return html`

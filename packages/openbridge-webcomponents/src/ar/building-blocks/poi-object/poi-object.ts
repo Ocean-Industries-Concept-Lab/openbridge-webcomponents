@@ -82,10 +82,6 @@ export enum ObcPoiObjectState {
  * When `true`, enables keyboard navigation (Enter/Space activation), focus states,
  * and hover/active visual feedback. Defaults to `false`.
  *
- * ### Extra Classes (`extraClasses`)
- * Internal property for subclasses to inject additional CSS classes. Not reflected
- * as an attribute. TODO(designer): Clarify if this should be exposed or remain internal.
- *
  * ## Usage Guidelines
  *
  * Can be consumed directly as a default POI object, or extended by domain-
@@ -126,8 +122,6 @@ export class ObcPoiObject extends LitElement {
     ObcPoiObjectState.Unchecked;
 
   @property({type: Boolean}) interactive = false;
-
-  @property({attribute: false}) extraClasses: Record<string, boolean> = {};
 
   @state() private hasPlaceholderIcon = false;
 
@@ -221,7 +215,6 @@ export class ObcPoiObject extends LitElement {
       'is-indicator': this.isIndicator,
       'has-placeholder-icon': this.hasPlaceholderIcon,
       interactive: this.isInteractive,
-      ...this.extraClasses,
     };
 
     return html`
