@@ -162,15 +162,31 @@ const setPosition = (
 ) => {
   if (f === null) throw new Error('f is null')
 
+  const applyTransformedPosition = (x: number, h: number) => {
+    const height = arVideo.value?.getBoundingClientRect().height ?? 1
+    const labelHeight = height / 2 - 100
+
+    const xTransformed = (576 / 768) * (x - 50) + 50
+    const hPoint = ((h + 270) / 768) * height
+    const hTransformed = hPoint - labelHeight
+
+    if (fast) {
+      xFast.value = { x: xTransformed, y: hTransformed }
+    } else {
+      xLarge.value = { x: xTransformed, y: hTransformed }
+    }
+  }
+
   // Handle edge cases: before first or after last keyframe
   if (frames[0] && t <= frames[0].t) {
-    f.$el.y = frames[0].h
-    f.$el.style.left = `${frames[0].x}%`
+    applyTransformedPosition(frames[0].x, frames[0].h)
     return
   }
   if (frames[frames.length - 1] && t >= frames[frames.length - 1]!.t) {
-    f.$el.y = frames[frames.length - 1]!.h
-    f.$el.style.left = `${frames[frames.length - 1]!.x}%`
+    applyTransformedPosition(
+      frames[frames.length - 1]!.x,
+      frames[frames.length - 1]!.h
+    )
     return
   }
 
@@ -186,18 +202,7 @@ const setPosition = (
   const alpha = (t - kf0.t) / (kf1.t - kf0.t)
   const x = kf0.x + (kf1.x - kf0.x) * alpha
   const h = kf0.h + (kf1.h - kf0.h) * alpha
-
-  const height = arVideo.value?.getBoundingClientRect().height ?? 1
-  const labelHeight = height / 2 - 100
-
-  const xTransformed = (576 / 768) * (x - 50) + 50
-  const hPoint = ((h + 270) / 768) * height
-  const hTransformed = hPoint - labelHeight
-  if (fast) {
-    xFast.value = { x: xTransformed, y: hTransformed }
-  } else {
-    xLarge.value = { x: xTransformed, y: hTransformed }
-  }
+  applyTransformedPosition(x, h)
 }
 
 function handleKeydown(e: KeyboardEvent) {

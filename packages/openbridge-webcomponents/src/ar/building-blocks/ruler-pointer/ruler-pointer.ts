@@ -60,9 +60,14 @@ export class ObcRulerPointer extends LitElement {
   type: ObcRulerPointerType = ObcRulerPointerType.Default;
 
   override render() {
-    const isDefault = this.type === ObcRulerPointerType.Default;
-    const isRegular = this.type === ObcRulerPointerType.Regular;
-    const isSelected = this.type === ObcRulerPointerType.Selected;
+    const type =
+      this.type === ObcRulerPointerType.Regular ||
+      this.type === ObcRulerPointerType.Selected
+        ? this.type
+        : ObcRulerPointerType.Default;
+    const isDefault = type === ObcRulerPointerType.Default;
+    const isRegular = type === ObcRulerPointerType.Regular;
+    const isSelected = type === ObcRulerPointerType.Selected;
 
     return html`
       <div
