@@ -573,90 +573,127 @@ export const StateComparison: Story = {
   name: 'State comparison',
 
   render: () => html`
-    <div style="display: flex; gap: 40px; align-items: center;">
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
-          priority: regular
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+      <!-- Header row -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(2, 1fr); gap: 16px; align-items: center;"
+      >
+        <div></div>
+        <div
+          style="text-align: center; font-weight: bold; font-size: 12px; color: #ccc;"
+        >
+          regular
         </div>
-        <obc-bar-vertical
-          minValue="-100"
-          maxValue="100"
-          height="320"
-          hasBar
-          priority="regular"
-          value="50"
-          setpoint="50"
-          state="active"
-          primaryTickbarsInterval="50"
-          secondaryTickbarsInterval="10"
-        ></obc-bar-vertical>
-      </div>
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
-          active
+        <div
+          style="text-align: center; font-weight: bold; font-size: 12px; color: #ccc;"
+        >
+          enhanced
         </div>
-        <obc-bar-vertical
-          minValue="-100"
-          maxValue="100"
-          height="320"
-          hasBar
-          priority="enhanced"
-          value="30"
-          setpoint="70"
-          state="active"
-          primaryTickbarsInterval="50"
-          secondaryTickbarsInterval="10"
-        ></obc-bar-vertical>
       </div>
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
-          loading
+
+      <!-- active row -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(2, 1fr); gap: 16px; align-items: center;"
+      >
+        <div style="font-size: 12px; color: #888;">active</div>
+        <div style="text-align: center;">
+          <obc-bar-vertical
+            minValue="-100"
+            maxValue="100"
+            height="320"
+            hasBar
+            priority="regular"
+            value="30"
+            setpoint="50"
+            state="active"
+            primaryTickbarsInterval="50"
+            secondaryTickbarsInterval="10"
+          ></obc-bar-vertical>
         </div>
-        <obc-bar-vertical
-          minValue="-100"
-          maxValue="100"
-          height="320"
-          hasBar
-          priority="enhanced"
-          value="-20"
-          setpoint="40"
-          state="loading"
-          primaryTickbarsInterval="50"
-          secondaryTickbarsInterval="10"
-        ></obc-bar-vertical>
-      </div>
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">off</div>
-        <obc-bar-vertical
-          minValue="-100"
-          maxValue="100"
-          height="320"
-          hasBar
-          priority="enhanced"
-          value="60"
-          setpoint="-30"
-          state="off"
-          primaryTickbarsInterval="50"
-          secondaryTickbarsInterval="10"
-        ></obc-bar-vertical>
-      </div>
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
-          adjusting/touching
+        <div style="text-align: center;">
+          <obc-bar-vertical
+            minValue="-100"
+            maxValue="100"
+            height="320"
+            hasBar
+            priority="enhanced"
+            value="30"
+            setpoint="50"
+            state="active"
+            primaryTickbarsInterval="50"
+            secondaryTickbarsInterval="10"
+          ></obc-bar-vertical>
         </div>
-        <obc-bar-vertical
-          minValue="-100"
-          maxValue="100"
-          height="320"
-          hasBar
-          priority="enhanced"
-          value="30"
-          setpoint="30"
-          .newSetpoint=${70}
-          state="active"
-          primaryTickbarsInterval="50"
-          secondaryTickbarsInterval="10"
-        ></obc-bar-vertical>
+      </div>
+
+      <!-- loading row -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(2, 1fr); gap: 16px; align-items: center;"
+      >
+        <div style="font-size: 12px; color: #888;">loading</div>
+        <div style="text-align: center;">
+          <obc-bar-vertical
+            minValue="-100"
+            maxValue="100"
+            height="320"
+            hasBar
+            priority="regular"
+            value="30"
+            setpoint="50"
+            state="loading"
+            primaryTickbarsInterval="50"
+            secondaryTickbarsInterval="10"
+          ></obc-bar-vertical>
+        </div>
+        <div style="text-align: center;">
+          <obc-bar-vertical
+            minValue="-100"
+            maxValue="100"
+            height="320"
+            hasBar
+            priority="enhanced"
+            value="30"
+            setpoint="50"
+            state="loading"
+            primaryTickbarsInterval="50"
+            secondaryTickbarsInterval="10"
+          ></obc-bar-vertical>
+        </div>
+      </div>
+
+      <!-- off row -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(2, 1fr); gap: 16px; align-items: center;"
+      >
+        <div style="font-size: 12px; color: #888;">off</div>
+        <div style="text-align: center;">
+          <obc-bar-vertical
+            minValue="-100"
+            maxValue="100"
+            height="320"
+            hasBar
+            priority="regular"
+            value="30"
+            setpoint="50"
+            state="off"
+            primaryTickbarsInterval="50"
+            secondaryTickbarsInterval="10"
+          ></obc-bar-vertical>
+        </div>
+        <div style="text-align: center;">
+          <obc-bar-vertical
+            minValue="-100"
+            maxValue="100"
+            height="320"
+            hasBar
+            priority="enhanced"
+            value="30"
+            setpoint="50"
+            state="off"
+            primaryTickbarsInterval="50"
+            secondaryTickbarsInterval="10"
+          ></obc-bar-vertical>
+        </div>
       </div>
     </div>
   `,

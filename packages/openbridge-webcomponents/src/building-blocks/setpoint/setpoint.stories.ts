@@ -305,14 +305,11 @@ export const Focus: Story = {
  *
  * Side-by-side comparison of all setpoint visual states for linear instruments (bar-vertical).
  *
- * - **Row 1**: active state (SetpointColorMode: regular)
- * - **Row 2**: enhanced priority (SetpointColorMode: enhanced)
- * - **Row 3**: adjusting/touching - dual-marker mode via `newSetpoint`
- * - **Row 4**: loading/off (disabled) - uses tertiary/gray color
- *
- * The `newSetpoint` property enables showing both current and proposed setpoint
- * positions simultaneously, with the original dimmed (0.75 opacity) while the
- * new setpoint shows in focus state.
+ * - **Row 1**: regular — Priority.regular color palette
+ * - **Row 2**: enhanced — Priority.enhanced color palette
+ * - **Row 3**: focus — touching=true (no newSetpoint), marker in focus visual state
+ * - **Row 4**: newSetpoint — dual-marker mode via `newSetpoint` (original dimmed, new in focus)
+ * - **Row 5**: disabled — InstrumentState.off, tertiary/gray colors
  */
 export const SetpointComparison: Story = {
   name: 'Visual State Comparison',
@@ -340,7 +337,7 @@ export const SetpointComparison: Story = {
         </div>
       </div>
 
-      <!-- active row -->
+      <!-- regular row -->
       <div
         style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
       >
@@ -370,7 +367,7 @@ export const SetpointComparison: Story = {
         })}
       </div>
 
-      <!-- enhanced priority row -->
+      <!-- enhanced row -->
       <div
         style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
       >
@@ -400,12 +397,45 @@ export const SetpointComparison: Story = {
         })}
       </div>
 
-      <!-- adjusting/touching row -->
+      <!-- focus row (touching=true, no newSetpoint) -->
       <div
         style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
       >
         <div style="font-size: 12px; color: #888; padding-top: 80px;">
-          adjusting/touching
+          focus
+        </div>
+        ${renderSetpointDemo({
+          label: 'touching, value ≠ setpoint',
+          setpoint: 40,
+          value: 20,
+          state: InstrumentState.active,
+          priority: Priority.enhanced,
+          touching: true,
+        })}
+        ${renderSetpointDemo({
+          label: 'touching, value = setpoint',
+          setpoint: 40,
+          value: 40,
+          state: InstrumentState.active,
+          priority: Priority.enhanced,
+          touching: true,
+        })}
+        ${renderSetpointDemo({
+          label: 'touching, both = 0',
+          setpoint: 0,
+          value: 0,
+          state: InstrumentState.active,
+          priority: Priority.enhanced,
+          touching: true,
+        })}
+      </div>
+
+      <!-- newSetpoint row (dual-marker mode) -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
+      >
+        <div style="font-size: 12px; color: #888; padding-top: 80px;">
+          newSetpoint
         </div>
         ${renderSetpointDemo({
           label: 'setpoint at 20, new at 40',
@@ -436,12 +466,12 @@ export const SetpointComparison: Story = {
         })}
       </div>
 
-      <!-- Disabled state row (via InstrumentState.off) -->
+      <!-- disabled row -->
       <div
         style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
       >
         <div style="font-size: 12px; color: #888; padding-top: 80px;">
-          loading/off (disabled)
+          disabled
         </div>
         ${renderSetpointDemo({
           label: 'value ≠ setpoint',
@@ -463,12 +493,14 @@ export const SetpointComparison: Story = {
         })}
       </div>
 
-      <!-- Note about adjusting state -->
+      <!-- Note -->
       <div style="font-size: 11px; color: #666; font-style: italic;">
-        Note: "adjusting/touching" row shows dual-marker mode triggered by
-        setting newSetpoint. The original setpoint is dimmed (0.75 opacity)
-        while the new setpoint shows in focus state. "equalZero" is auto-derived
-        when setpoint is within setpointAtZeroDeadband (default 0.5).
+        Note: "focus" row shows the marker in focus state triggered by
+        touching=true (no newSetpoint). "newSetpoint" row shows dual-marker mode
+        triggered by setting newSetpoint — the original setpoint is dimmed (0.75
+        opacity) while the new setpoint shows in focus state. "equalZero" is
+        auto-derived when setpoint is within setpointAtZeroDeadband (default
+        0.5).
       </div>
     </div>
   `,
@@ -484,6 +516,7 @@ function renderRadialSetpointDemo(config: {
   angleSetpoint: number;
   newAngleSetpoint?: number;
   atAngleSetpoint?: boolean;
+  touching?: boolean;
   state: InstrumentState;
   priority?: Priority;
   /** Fill arc end angle (start is always 0 for this demo) */
@@ -496,6 +529,7 @@ function renderRadialSetpointDemo(config: {
     angleSetpoint,
     newAngleSetpoint,
     atAngleSetpoint = false,
+    touching = false,
     state,
     priority = Priority.regular,
     fillEndAngle,
@@ -550,6 +584,7 @@ function renderRadialSetpointDemo(config: {
           .angleSetpoint=${angleSetpoint}
           .newAngleSetpoint=${newAngleSetpoint}
           .atAngleSetpoint=${atAngleSetpoint}
+          .touching=${touching}
           .colorMode=${colorMode}
           .watchCircleType=${WatchCircleType.double}
           .areas=${areas}
@@ -568,9 +603,12 @@ function renderRadialSetpointDemo(config: {
  * - **equal**: bar at 45°, setpoint at 45° (same position, atSetpoint=true)
  * - **equalZero**: bar at 0°, setpoint at 0° (both at zero, auto-derived)
  *
- * The `newAngleSetpoint` property enables showing both current and proposed
- * setpoint positions simultaneously, with the original dimmed (0.75 opacity)
- * while the new setpoint shows in focus state.
+ * Row mapping:
+ * - **regular**: Priority.regular color palette
+ * - **enhanced**: Priority.enhanced color palette
+ * - **focus**: touching=true (no newAngleSetpoint) — marker in focus visual state
+ * - **newSetpoint**: dual-marker mode via newAngleSetpoint (original dimmed, new in focus)
+ * - **disabled**: InstrumentState.off — tertiary/gray colors
  */
 export const SetpointComparisonRadial: Story = {
   name: 'Visual State Comparison (Radial)',
@@ -598,7 +636,7 @@ export const SetpointComparisonRadial: Story = {
         </div>
       </div>
 
-      <!-- active row (via colorMode override) -->
+      <!-- regular row -->
       <div
         style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
       >
@@ -631,7 +669,7 @@ export const SetpointComparisonRadial: Story = {
         })}
       </div>
 
-      <!-- enhanced priority row (enhanced colors) -->
+      <!-- enhanced row -->
       <div
         style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
       >
@@ -664,12 +702,48 @@ export const SetpointComparisonRadial: Story = {
         })}
       </div>
 
-      <!-- adjusting row (shows dual markers when newAngleSetpoint is defined) -->
+      <!-- focus row (touching=true, no newAngleSetpoint) -->
       <div
         style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
       >
         <div style="font-size: 12px; color: #888; padding-top: 60px;">
-          adjusting/touching
+          focus
+        </div>
+        ${renderRadialSetpointDemo({
+          label: 'touching, bar at 45°, setpoint at 60°',
+          angleSetpoint: 60,
+          atAngleSetpoint: false,
+          touching: true,
+          fillEndAngle: 45,
+          state: InstrumentState.active,
+          priority: Priority.enhanced,
+        })}
+        ${renderRadialSetpointDemo({
+          label: 'touching, bar at 45°, setpoint at 45°',
+          angleSetpoint: 45,
+          atAngleSetpoint: true,
+          touching: true,
+          fillEndAngle: 45,
+          state: InstrumentState.active,
+          priority: Priority.enhanced,
+        })}
+        ${renderRadialSetpointDemo({
+          label: 'touching, bar at 0°, setpoint at 0°',
+          angleSetpoint: 0,
+          atAngleSetpoint: true,
+          touching: true,
+          fillEndAngle: 0,
+          state: InstrumentState.active,
+          priority: Priority.enhanced,
+        })}
+      </div>
+
+      <!-- newSetpoint row (dual markers) -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
+      >
+        <div style="font-size: 12px; color: #888; padding-top: 60px;">
+          newSetpoint
         </div>
         ${renderRadialSetpointDemo({
           label: 'bar at 45°, setpoint at 60°, new at 80°',
@@ -700,12 +774,12 @@ export const SetpointComparisonRadial: Story = {
         })}
       </div>
 
-      <!-- Disabled state row (via InstrumentState.off) -->
+      <!-- disabled row -->
       <div
         style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
       >
         <div style="font-size: 12px; color: #888; padding-top: 60px;">
-          loading/off (disabled)
+          disabled
         </div>
         ${renderRadialSetpointDemo({
           label: 'bar at 45°, setpoint at 60°',
@@ -730,12 +804,14 @@ export const SetpointComparisonRadial: Story = {
         })}
       </div>
 
-      <!-- Note about adjusting state -->
+      <!-- Note -->
       <div style="font-size: 11px; color: #666; font-style: italic;">
-        Note: "adjusting/touching" row shows dual-marker mode triggered by
-        setting newAngleSetpoint. The original setpoint is dimmed (0.75 opacity)
-        while the new setpoint shows in focus state. "equalZero" is auto-derived
-        when angleSetpoint is within angleSetpointAtZeroDeadband (default 0.5°).
+        Note: "focus" row shows the marker in focus state triggered by
+        touching=true (no newAngleSetpoint). "newSetpoint" row shows dual-marker
+        mode triggered by setting newAngleSetpoint — the original setpoint is
+        dimmed (0.75 opacity) while the new setpoint shows in focus state.
+        "equalZero" is auto-derived when angleSetpoint is within
+        angleSetpointAtZeroDeadband (default 0.5°).
       </div>
     </div>
   `,
