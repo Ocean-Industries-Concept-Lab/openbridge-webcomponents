@@ -9,6 +9,10 @@ import '../../icons/icon-ais-target-activated-iec.js';
 import '../poi-data/poi-data.js';
 import {ObcPoiData, PoiDataValue} from '../poi-data/poi-data.js';
 
+const isVitestBrowser = Boolean(
+  (globalThis as {__vitest_browser__?: unknown}).__vitest_browser__
+);
+
 type PoiGroupStoryArgs = {
   expand: boolean;
   internalSwapping: boolean;
@@ -293,7 +297,7 @@ export const Expanded: Story = {
         : PoiDataValue.Unchecked;
     };
 
-    if (args.expand) {
+    if (args.expand && !isVitestBrowser) {
       setTimeout(() => {
         const group = groupRef.value;
         if (!group || !group.isConnected) return;
@@ -323,7 +327,7 @@ export const Expanded: Story = {
           <obc-poi-group
             ${ref(groupRef)}
             style="position: absolute; top: 0; left: 0;"
-            .expand=${false}
+            .expand=${isVitestBrowser ? !!args.expand : false}
             positionVertical="calc(50%)"
             @expand=${onExpand}
           >

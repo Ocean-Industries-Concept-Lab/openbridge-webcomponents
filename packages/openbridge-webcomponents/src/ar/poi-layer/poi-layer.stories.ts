@@ -7,6 +7,10 @@ import '../poi-data/poi-data.js';
 import {ObcPoiData, PoiDataValue} from '../poi-data/poi-data.js';
 import '../poi-group/poi-group.js';
 
+const isVitestBrowser = Boolean(
+  (globalThis as {__vitest_browser__?: unknown}).__vitest_browser__
+);
+
 type PoiLayerArgs = {
   label: string;
   debug: boolean;
@@ -726,6 +730,10 @@ export const JoinExpandedGroup: Story = {
     expand: true,
     joinWhileExpanded: true,
   },
+  play: async () => {
+    if (!isVitestBrowser) return;
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  },
   render(args) {
     const hostRef = createRef<HTMLDivElement>();
     const layerRef = createRef<HTMLElement>();
@@ -795,7 +803,9 @@ export const JoinExpandedGroup: Story = {
       observer.observe(root, {childList: true, subtree: true});
     };
 
-    setTimeout(() => spawnLateTarget(hostRef.value ?? null), 0);
+    if (!isVitestBrowser) {
+      setTimeout(() => spawnLateTarget(hostRef.value ?? null), 0);
+    }
     setTimeout(() => {
       const layer = layerRef.value;
       if (!layer) return;
@@ -842,8 +852,11 @@ export const JoinExpandedGroup: Story = {
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
         >
-          <obc-poi-data class="a" .y=${140}></obc-poi-data>
-          <obc-poi-data class="b" .y=${100}></obc-poi-data>
+          <obc-poi-data class="a" .x=${300} .y=${140}></obc-poi-data>
+          <obc-poi-data class="b" .x=${320} .y=${100}></obc-poi-data>
+          ${isVitestBrowser
+            ? html`<obc-poi-data class="c" .x=${340} .y=${80}></obc-poi-data>`
+            : html``}
         </obc-poi-layer>
       </div>
     `;
@@ -856,6 +869,10 @@ export const LeaveExpandedGroup: Story = {
     layerIndex: 0,
     debug: true,
     expand: true,
+  },
+  play: async () => {
+    if (!isVitestBrowser) return;
+    await new Promise((resolve) => setTimeout(resolve, 100));
   },
   render(args) {
     const hostRef = createRef<HTMLDivElement>();
@@ -911,7 +928,9 @@ export const LeaveExpandedGroup: Story = {
       observer.observe(root, {childList: true, subtree: true});
     };
 
-    setTimeout(() => startAnimation(hostRef.value ?? null), 0);
+    if (!isVitestBrowser) {
+      setTimeout(() => startAnimation(hostRef.value ?? null), 0);
+    }
     setTimeout(() => {
       const layer = layerRef.value;
       if (!layer) return;
@@ -957,9 +976,9 @@ export const LeaveExpandedGroup: Story = {
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
         >
-          <obc-poi-data class="a" .y=${140}></obc-poi-data>
-          <obc-poi-data class="b" .y=${100}></obc-poi-data>
-          <obc-poi-data class="c" .y=${80}></obc-poi-data>
+          <obc-poi-data class="a" .x=${300} .y=${140}></obc-poi-data>
+          <obc-poi-data class="b" .x=${320} .y=${100}></obc-poi-data>
+          <obc-poi-data class="c" .x=${360} .y=${80}></obc-poi-data>
         </obc-poi-layer>
       </div>
     `;

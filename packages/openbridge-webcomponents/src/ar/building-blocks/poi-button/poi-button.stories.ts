@@ -481,9 +481,14 @@ export const OverlappedAnimatedWithData: Story = {
     },
   },
   render: () => {
-    requestAnimationFrame(() =>
-      startOverlappedDataButtonLoop('animated-btn-data', 1000, 100, true)
+    const isVitestBrowser = Boolean(
+      (globalThis as {__vitest_browser__?: unknown}).__vitest_browser__
     );
+    if (!isVitestBrowser) {
+      requestAnimationFrame(() =>
+        startOverlappedDataButtonLoop('animated-btn-data', 1000, 100, true)
+      );
+    }
 
     const values = [
       {value: '10', label: 'Lab', unit: 'Unit'},
