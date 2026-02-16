@@ -12,7 +12,6 @@ import {ifDefined} from 'lit/directives/if-defined.js';
 import {AngleAdvice} from '../watch/advice.js';
 import {LinearAdvice} from '../thruster/advice.js';
 import {PropellerType} from '../thruster/propeller.js';
-import type {SetpointColorMode} from '../../svghelpers/setpoint.js';
 import {customElement} from '../../decorator.js';
 
 export enum AzimuthThrusterLabeledSize {
@@ -33,9 +32,7 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
   @property({type: Boolean})
   atAngleSetpoint: boolean = false;
   @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
-  @property({type: String}) angleSetpointColorMode:
-    | SetpointColorMode
-    | undefined;
+  @property({type: Boolean}) angleSetpointOverride: boolean = false;
   @property({type: Boolean}) disableAutoAtAngleSetpoint: boolean = false;
   @property({type: Number}) autoAtAngleSetpointDeadband: number = 2;
   @property({type: Boolean}) touching: boolean = false;
@@ -47,6 +44,7 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
   @property({type: Boolean}) disableAutoAtThrustSetpoint: boolean = false;
   @property({type: Number}) autoAtThrustSetpointDeadband: number = 1;
   @property({type: Number}) thrustSetpointAtZeroDeadband: number = 0.1;
+  @property({type: Boolean}) thrustSetpointOverride: boolean = false;
   @property({type: Array, attribute: false}) angleAdvices: AngleAdvice[] = [];
   @property({type: Array, attribute: false}) thrustAdvices: LinearAdvice[] = [];
   @property({type: Boolean}) singleDirection: boolean = false;
@@ -114,8 +112,9 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
           .atAngleSetpoint=${this.atAngleSetpoint}
           .newAngleSetpoint=${this.newAngleSetpoint}
           .angleSetpointAtZeroDeadband=${this.angleSetpointAtZeroDeadband}
-          .angleSetpointColorMode=${this.angleSetpointColorMode}
+          .angleSetpointOverride=${this.angleSetpointOverride}
           .thrustSetpointAtZeroDeadband=${this.thrustSetpointAtZeroDeadband}
+          .thrustSetpointOverride=${this.thrustSetpointOverride}
           .state=${state}
           .priority=${priority}
           .touching=${this.touching}

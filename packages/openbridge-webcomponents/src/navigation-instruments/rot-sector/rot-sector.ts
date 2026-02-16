@@ -38,7 +38,7 @@ export interface GaugeRadialAdvice {
  * - **Bar display**: Always renders as a `bar` type — no needle or filled
  *   variants.
  * - **Setpoint via mixin**: `setpoint`, `newSetpoint`, `touching`,
- *   `autoAtSetpointDeadband`, `setpointColorMode`, and all other setpoint
+ *   `autoAtSetpointDeadband`, `setpointOverride`, and all other setpoint
  *   properties are provided by `SetpointMixin` and forwarded to the inner
  *   `<obc-instrument-radial>`.
  * - **Advice zones**: Pass an array of {@link GaugeRadialAdvice} objects to
@@ -121,7 +121,7 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
         .setpoint=${this.setpoint}
         .newSetpoint=${this.newSetpoint}
         .setpointAtZeroDeadband=${this.setpointAtZeroDeadband}
-        .setpointColorMode=${this.setpointColorMode}
+        .setpointOverride=${this.setpointOverride}
         .touching=${this.touching}
         .disableAutoAtSetpoint=${this.disableAutoAtSetpoint}
         .autoAtSetpointDeadband=${this.autoAtSetpointDeadband}

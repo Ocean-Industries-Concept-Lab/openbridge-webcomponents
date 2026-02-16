@@ -271,6 +271,8 @@ export interface ThrusterSetpointConfig {
   animateSetpoint?: boolean;
   /** Value of departing new-setpoint during confirm animation fade-out. */
   departingNewSetpoint?: number;
+  /** Override to derive color from priority regardless of instrument state. */
+  setpointOverride?: boolean;
 }
 
 /**
@@ -302,24 +304,26 @@ function deriveThrusterSetpointVisualState(config: {
   touching: boolean;
   setpointAtZero: boolean;
   hasNewSetpoint: boolean;
+  setpointOverride?: boolean;
 }): {
   visualState: SetpointVisualState;
   colorMode: SetpointColorMode;
   disabled: boolean;
 } {
-  const disabled =
+  const isDisabledState =
     config.state === InstrumentState.loading ||
     config.state === InstrumentState.off;
+  const disabled = isDisabledState && !config.setpointOverride;
   const colorMode =
     config.priority === Priority.enhanced
       ? SetpointColorMode.enhanced
       : SetpointColorMode.regular;
 
-  if (disabled) {
+  if (isDisabledState) {
     return {
       visualState: SetpointVisualState.notEqual,
       colorMode,
-      disabled: true,
+      disabled,
     };
   }
 
@@ -382,6 +386,7 @@ export function renderThrusterSetpoint(
     touching: config.touching,
     setpointAtZero,
     hasNewSetpoint,
+    setpointOverride: config.setpointOverride,
   });
 
   // Y position (matches legacy formula)
@@ -599,6 +604,8 @@ export function thruster(
     animateSetpoint?: boolean;
     /** Departing new-setpoint value during confirm animation fade-out. */
     departingNewSetpoint?: number;
+    /** Override to derive color from priority regardless of instrument state. */
+    setpointOverride?: boolean;
   }
 ) {
   if (options.tunnel) {
@@ -713,6 +720,7 @@ export function thruster(
           id: options.setpointId,
           animateSetpoint: options.animateSetpoint,
           departingNewSetpoint: options.departingNewSetpoint,
+          setpointOverride: options.setpointOverride,
         })
       );
     } else {

@@ -36,7 +36,7 @@ export interface GaugeRadialAdvice {
  * - **Bipolar range support**: When `minValue < 0` the gauge switches to a
  *   ±135° layout centered at 12 o'clock; otherwise it uses a 270° sweep.
  * - **Setpoint via mixin**: `setpoint`, `newSetpoint`, `touching`,
- *   `autoAtSetpointDeadband`, `setpointColorMode`, and all other setpoint
+ *   `autoAtSetpointDeadband`, `setpointOverride`, and all other setpoint
  *   properties are provided by `SetpointMixin` and forwarded to the inner
  *   `<obc-instrument-radial>`.
  * - **Advice zones**: Pass an array of {@link GaugeRadialAdvice} objects to
@@ -116,7 +116,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
         .setpoint=${this.setpoint}
         .newSetpoint=${this.newSetpoint}
         .setpointAtZeroDeadband=${this.setpointAtZeroDeadband}
-        .setpointColorMode=${this.setpointColorMode}
+        .setpointOverride=${this.setpointOverride}
         .touching=${this.touching}
         .disableAutoAtSetpoint=${this.disableAutoAtSetpoint}
         .autoAtSetpointDeadband=${this.autoAtSetpointDeadband}

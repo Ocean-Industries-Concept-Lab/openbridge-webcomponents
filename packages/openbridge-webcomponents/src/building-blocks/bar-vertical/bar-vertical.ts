@@ -33,7 +33,6 @@ import {
   ExternalScaleSide,
 } from '../external-scale/external-scale.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
-import {SetpointColorMode} from '../../svghelpers/setpoint.js';
 
 // Re-export shared enums for convenience
 export {
@@ -46,7 +45,6 @@ export {
   Priority,
   BarContainerStyle,
   ExternalScaleSide,
-  SetpointColorMode,
 };
 
 /**
@@ -309,7 +307,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
       frameStyle: this.frameStyle,
       borderRadiusPosition: this.borderRadiusPosition,
       priority: this.priority,
-      colorMode: this.setpointColorMode,
+      setpointOverride: this.setpointOverride,
       fillMode: this.fillMode,
       fillMin: this.fillMin,
       fillMax: this.fillMax,

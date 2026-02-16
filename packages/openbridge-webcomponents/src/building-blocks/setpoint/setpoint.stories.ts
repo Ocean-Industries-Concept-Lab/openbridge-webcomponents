@@ -13,8 +13,8 @@ import {WatchCircleType} from '../../navigation-instruments/watch/watch.js';
 // Import azimuth-thruster for multi-setpoint demo
 import '../../navigation-instruments/azimuth-thruster/azimuth-thruster.js';
 
-// Import setpoint types for documentation
-import {SetpointColorMode} from '../../svghelpers/setpoint.js';
+// Setpoint types are internal to the design layer; stories use the public
+// boolean `setpointOverride` API on instruments and building blocks.
 
 // Import types needed for bar-vertical configuration
 import {InstrumentState, Priority} from '../../navigation-instruments/types.js';
@@ -165,7 +165,7 @@ type Story = StoryObj;
 function renderSetpointDemo(config: {
   label: string;
   priority?: Priority;
-  setpointColorMode?: SetpointColorMode;
+  setpointOverride?: boolean;
   setpoint: number;
   newSetpoint?: number;
   value: number;
@@ -175,7 +175,7 @@ function renderSetpointDemo(config: {
   const {
     label,
     priority = Priority.regular,
-    setpointColorMode,
+    setpointOverride = false,
     setpoint,
     newSetpoint,
     value,
@@ -199,7 +199,7 @@ function renderSetpointDemo(config: {
         scaleBackground
         borderRadiusPosition="${BorderRadiusPosition.innerFirstChild}"
         .priority=${priority}
-        .setpointColorMode=${setpointColorMode}
+        .setpointOverride=${setpointOverride}
         fillMode="${FillMode.fill}"
         .value=${value}
         .setpoint=${setpoint}
@@ -439,7 +439,7 @@ export const SetpointComparison: Story = {
         </div>
         ${renderSetpointDemo({
           label: 'setpoint at 20, new at 40',
-          setpointColorMode: SetpointColorMode.enhanced,
+          setpointOverride: true,
           setpoint: 20,
           newSetpoint: 40,
           value: 20,
@@ -448,7 +448,7 @@ export const SetpointComparison: Story = {
         })}
         ${renderSetpointDemo({
           label: 'setpoint at 40, new at 30',
-          setpointColorMode: SetpointColorMode.enhanced,
+          setpointOverride: true,
           setpoint: 40,
           newSetpoint: 30,
           value: 40,
@@ -457,7 +457,7 @@ export const SetpointComparison: Story = {
         })}
         ${renderSetpointDemo({
           label: 'setpoint at 0, new at 20',
-          setpointColorMode: SetpointColorMode.enhanced,
+          setpointOverride: true,
           setpoint: 0,
           newSetpoint: 20,
           value: 0,
@@ -521,8 +521,8 @@ function renderRadialSetpointDemo(config: {
   priority?: Priority;
   /** Fill arc end angle (start is always 0 for this demo) */
   fillEndAngle?: number;
-  /** Optional color mode override */
-  colorMode?: SetpointColorMode;
+  /** When true, derive setpoint color from priority even in loading/off states */
+  setpointOverride?: boolean;
 }) {
   const {
     label,
@@ -533,17 +533,12 @@ function renderRadialSetpointDemo(config: {
     state,
     priority = Priority.regular,
     fillEndAngle,
-    colorMode,
+    setpointOverride = false,
   } = config;
 
-  // Determine bar fill color based on colorMode (if provided) or state
-  const effectiveColorMode =
-    colorMode ??
-    (priority === Priority.enhanced
-      ? SetpointColorMode.enhanced
-      : SetpointColorMode.regular);
+  // Determine bar fill color based on priority
   const fillColor =
-    effectiveColorMode === SetpointColorMode.enhanced
+    priority === Priority.enhanced
       ? 'var(--instrument-enhanced-tertiary-color)'
       : 'var(--instrument-regular-tertiary-color)';
 
@@ -585,7 +580,7 @@ function renderRadialSetpointDemo(config: {
           .newAngleSetpoint=${newAngleSetpoint}
           .atAngleSetpoint=${atAngleSetpoint}
           .touching=${touching}
-          .colorMode=${colorMode}
+          .setpointOverride=${setpointOverride}
           .watchCircleType=${WatchCircleType.double}
           .areas=${areas}
           .barAreas=${barAreas}

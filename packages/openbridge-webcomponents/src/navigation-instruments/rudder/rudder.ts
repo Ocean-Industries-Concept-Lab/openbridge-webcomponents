@@ -34,7 +34,7 @@ export enum ObcRudderVariant {
  * - **State-aware colors**: Bar and needle colors adapt to the current
  *   `InstrumentState` (active, loading, off) and `Priority` (enhanced, regular).
  * - **Setpoint via mixin**: `setpoint`, `newSetpoint`, `touching`,
- *   `autoAtSetpointDeadband`, `setpointColorMode`, and all other setpoint
+ *   `autoAtSetpointDeadband`, `setpointOverride`, and all other setpoint
  *   properties are provided by `SetpointMixin` and forwarded to `<obc-watch>`.
  * - **Advice zones**: Pass an array of `AngleAdvice` objects to render
  *   caution/alert arcs; triggered state is derived from whether the setpoint
@@ -226,7 +226,7 @@ export class ObcRudder extends SetpointMixin(LitElement) {
             : undefined}
           .atAngleSetpoint=${this.computeAtSetpoint(this.angle)}
           .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
-          .colorMode=${this.setpointColorMode}
+          .setpointOverride=${this.setpointOverride}
           .animateSetpoint=${this.animateSetpoint}
           .padding=${48}
           .tickmarks=${tickmarks}

@@ -111,7 +111,7 @@ export {FillMode, ScaleType};
  * Setpoint properties are inherited from {@link SetpointMixin}.
  * These are forwarded to the internal `obc-bar-vertical` scale:
  * `setpoint`, `newSetpoint`, `touching`, `atSetpoint`, `disableAutoAtSetpoint`,
- * `autoAtSetpointDeadband`, `setpointAtZeroDeadband`, `setpointColorMode`.
+ * `autoAtSetpointDeadband`, `setpointAtZeroDeadband`, `setpointOverride`.
  * See {@link SetpointMixinInterface} for full documentation.
  */
 @customElement('obc-gauge-trend')
@@ -240,7 +240,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
     barVertical.autoAtSetpointDeadband = this.autoAtSetpointDeadband;
     barVertical.setpointAtZeroDeadband = this.setpointAtZeroDeadband;
     barVertical.animateSetpoint = this.animateSetpoint;
-    barVertical.setpointColorMode = this.setpointColorMode;
+    barVertical.setpointOverride = this.setpointOverride;
     // Advice position is always 'inner' for gauge-trend
     barVertical.advicePosition = AdvicePosition.inner;
     // obc-bar-vertical uses 'advices' (plural), not 'advice' or 'hasAdvice'
@@ -404,7 +404,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
 
   // Setpoint properties (setpoint, newSetpoint, touching, atSetpoint,
   // disableAutoAtSetpoint, autoAtSetpointDeadband, setpointAtZeroDeadband,
-  // setpointColorMode, computeAtSetpoint()) are provided by SetpointMixin.
+  // setpointOverride, computeAtSetpoint()) are provided by SetpointMixin.
   // See setpoint-mixin.ts for full docs.
 
   /**
@@ -510,7 +510,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
       changed.has('disableAutoAtSetpoint') ||
       changed.has('autoAtSetpointDeadband') ||
       changed.has('setpointAtZeroDeadband') ||
-      changed.has('setpointColorMode') ||
+      changed.has('setpointOverride') ||
       changed.has('hasBar') ||
       changed.has('hasScale') ||
       changed.has('hasAdvice') ||

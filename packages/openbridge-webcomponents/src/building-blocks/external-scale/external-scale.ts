@@ -497,18 +497,16 @@ export interface ExternalScaleConfig {
    */
   priority: Priority;
   /**
-   * Explicit color mode override for setpoint marker.
-   * When provided, this takes precedence over the `priority` enum.
+   * When true, the setpoint color is derived from `priority` regardless of
+   * instrument state (loading/off). This prevents the setpoint from being
+   * rendered in disabled (tertiary) color when the instrument is loading or off.
    *
-   * - `SetpointColorMode.enhanced`: Use enhanced colors (brighter)
-   * - `SetpointColorMode.regular`: Use regular colors
+   * - `false` / `undefined`: default behavior — loading/off → disabled color
+   * - `true`: color derived from `priority`, never disabled
    *
-   * Note: Disabled state is controlled separately via `setpointDisabled` or
-   * auto-derived from `state` (loading/off states).
-   *
-   * @default undefined (falls back to priority)
+   * @default false
    */
-  colorMode?: SetpointColorMode;
+  setpointOverride?: boolean;
 
   /**
    * Explicit disabled state override for setpoint marker.
@@ -913,20 +911,13 @@ function deriveSetpointVisualState(
 /**
  * Derive the SetpointColorMode from ExternalScaleConfig.
  *
- * Priority:
- * 1. Explicit colorMode takes precedence
- * 2. Otherwise, maps config.priority to enhanced/regular color palette
+ * Maps `config.priority` to enhanced/regular color palette.
  *
  * Note: Disabled state is handled separately via deriveSetpointDisabled().
  */
 function deriveSetpointColorMode(
   config: ExternalScaleConfig
 ): SetpointColorMode {
-  // Explicit colorMode takes precedence
-  if (config.colorMode !== undefined) {
-    return config.colorMode;
-  }
-
   // Map priority to color mode
   return config.priority === Priority.enhanced
     ? SetpointColorMode.enhanced
@@ -938,13 +929,19 @@ function deriveSetpointColorMode(
  *
  * Priority:
  * 1. Explicit setpointDisabled takes precedence
- * 2. Instrument states (loading, off) are treated as disabled
- * 3. Otherwise, not disabled
+ * 2. When setpointOverride is true, never auto-disable
+ * 3. Instrument states (loading, off) are treated as disabled
+ * 4. Otherwise, not disabled
  */
 function deriveSetpointDisabled(config: ExternalScaleConfig): boolean {
   // Explicit setpointDisabled takes precedence
   if (config.setpointDisabled !== undefined) {
     return config.setpointDisabled;
+  }
+
+  // When override is active, don't auto-disable for loading/off
+  if (config.setpointOverride) {
+    return false;
   }
 
   // Disabled states (loading, off) use disabled color mode

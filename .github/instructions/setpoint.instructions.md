@@ -35,7 +35,8 @@ The setpoint system is split into three layers:
 │                                                                             │
 │  Pure visual states + drawing functions + animation constants               │
 │  • SetpointVisualState: notEqual | equal | equalZero | focus               │
-│  • SetpointColorMode: enhanced | regular                                    │
+│  • SetpointColorMode: enhanced | regular  (internal rendering enum)        │
+│  • setpointOverride: boolean  (public API — skips disabled derivation)      │
 │  • drawSetpointMarker(): SVG at origin, caller applies transforms          │
 │  • computeAtSetpoint(): Unified deadband comparison                        │
 │  • deriveRadialSetpointConfig(): State → visual config for radial          │
@@ -106,7 +107,7 @@ class MyGauge extends SetpointMixin(LitElement, {angularWraparound: true}) {
     const isAtSetpoint = this.computeAtSetpoint(this.value);
     // Properties available: setpoint, newSetpoint, touching, atSetpoint,
     //   disableAutoAtSetpoint, autoAtSetpointDeadband, setpointAtZeroDeadband,
-    //   setpointColorMode, animateSetpoint, departingNewSetpoint
+    //   setpointOverride, animateSetpoint, departingNewSetpoint
   }
 }
 ```

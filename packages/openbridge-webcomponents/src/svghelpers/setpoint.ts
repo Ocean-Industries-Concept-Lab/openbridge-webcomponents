@@ -10,8 +10,9 @@
  *
  * 1. **Design layer** (this file): Pure visual states and drawing functions.
  *    - `SetpointVisualState`: What the marker looks like (notEqual/equal/equalZero/focus)
- *    - `SetpointColorMode`: Which color palette to use (enhanced/regular)
+ *    - `SetpointColorMode`: Internal color palette (enhanced/regular), derived from Priority
  *    - `disabled`: Boolean flag for disabled state (separate from color mode)
+ *    - `setpointOverride`: Boolean to force color derivation from Priority even in loading/off states
  *    - `drawSetpointMarker()`: Returns SVG at origin, caller applies transforms
  *
  * 2. **API layer** (in parent instruments): Maps instrument state to visual state.
@@ -126,10 +127,12 @@ export enum SetpointVisualState {
 }
 
 /**
- * Color priority mode — determines which color palette to use.
+ * Color palette mode — determines which color palette to use for rendering.
  *
- * This is separate from InstrumentState to allow independent control.
- * Parent instruments map their state to this.
+ * This is an **internal** rendering enum. Parent instruments do not set this
+ * directly; instead they set `setpointOverride: boolean` on the public API.
+ * The derivation functions (`deriveRadialSetpointConfig`, `deriveSetpointColorMode`)
+ * map `Priority` → `SetpointColorMode` internally.
  *
  * Note: Disabled state is handled via a separate `disabled` boolean flag,
  * not as part of this enum. This allows combining any color mode with
@@ -706,6 +709,18 @@ export interface RadialSetpointConfig {
    * @default false
    */
   touching?: boolean;
+
+  /**
+   * When true, the setpoint color is derived from `priority` regardless of
+   * instrument state (loading/off). This prevents the setpoint from being
+   * rendered in disabled (tertiary) color when the instrument is loading or off.
+   *
+   * - `false` / `undefined`: default behavior — loading/off → disabled color
+   * - `true`: color derived from `priority`, never disabled
+   *
+   * @default false
+   */
+  setpointOverride?: boolean;
 }
 
 /**
@@ -747,6 +762,13 @@ export interface RadialSetpointDerivedConfig {
  * | *         | loading         | *          | *      | *        | notEqual            | regular     | true       |
  * | *         | off             | *          | *      | *        | notEqual            | regular     | true       |
  *
+ * When `setpointOverride` is true, loading/off states derive color from `priority` instead of disabling:
+ *
+ * | Priority  | InstrumentState | setpointOverride | → colorMode | → disabled |
+ * |-----------|-----------------|------------------|-------------|------------|
+ * | enhanced  | loading / off   | true             | enhanced    | false      |
+ * | regular   | loading / off   | true             | regular     | false      |
+ *
  * Note: When `newAngleSetpoint` is defined, the original setpoint marker is dimmed
  * and a second marker is rendered in focus state at the new position.
  *
@@ -764,19 +786,10 @@ export function deriveRadialSetpointConfig(
     setpointAtZeroDeadband = 0.5,
     newAngleSetpoint,
     touching = false,
+    setpointOverride = false,
   } = config;
 
   const hasNewSetpoint = newAngleSetpoint !== undefined;
-
-  // Disabled states (loading, off) override all other logic
-  if (state === InstrumentState.loading || state === InstrumentState.off) {
-    return {
-      visualState: SetpointVisualState.notEqual, // Full size, filled
-      colorMode: SetpointColorMode.regular,
-      disabled: true, // Tertiary color
-      hasNewSetpoint,
-    };
-  }
 
   // Determine color mode based on priority:
   // - Priority.enhanced → enhanced colors (blue palette)
@@ -785,6 +798,17 @@ export function deriveRadialSetpointConfig(
     priority === Priority.enhanced
       ? SetpointColorMode.enhanced
       : SetpointColorMode.regular;
+
+  // Disabled states (loading, off) override all other logic
+  // Unless setpointOverride is true, in which case color is derived from priority
+  if (state === InstrumentState.loading || state === InstrumentState.off) {
+    return {
+      visualState: SetpointVisualState.notEqual, // Full size, filled
+      colorMode,
+      disabled: !setpointOverride, // Tertiary color unless override is active
+      hasNewSetpoint,
+    };
+  }
 
   // Priority 1: Focus state
   // When touching=true and no newAngleSetpoint is defined, the single marker

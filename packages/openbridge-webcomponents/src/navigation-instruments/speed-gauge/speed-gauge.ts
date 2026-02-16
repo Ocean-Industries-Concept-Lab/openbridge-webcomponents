@@ -39,7 +39,7 @@ export interface SpeedAdvice {
  * - **Optional readout**: Enable `showReadout` to display an
  *   `<obc-instrument-field>` with the current speed, unit (KN), and tag (STW).
  * - **Setpoint via mixin**: `setpoint`, `newSetpoint`, `touching`,
- *   `autoAtSetpointDeadband`, `setpointColorMode`, and all other setpoint
+ *   `autoAtSetpointDeadband`, `setpointOverride`, and all other setpoint
  *   properties are provided by `SetpointMixin`; the setpoint angle and
  *   at-setpoint state are computed and forwarded to `<obc-watch>`.
  * - **Speed advice zones**: Pass an array of {@link SpeedAdvice} objects to
@@ -123,7 +123,7 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
             : undefined}
           .atAngleSetpoint=${this.computeAtSetpoint(this.speed)}
           .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
-          .colorMode=${this.setpointColorMode}
+          .setpointOverride=${this.setpointOverride}
           .animateSetpoint=${this.animateSetpoint}
           .padding=${48}
           .tickmarks=${this.tickmarks}

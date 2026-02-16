@@ -7,7 +7,6 @@ import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {VesselImage, VesselImageSize, WatchCircleType} from '../watch/watch.js';
 import {SetpointBundle} from '../../svghelpers/setpoint-bundle.js';
-import type {SetpointColorMode} from '../../svghelpers/setpoint.js';
 import {rot} from './rot.js';
 import {RateOfTurnController} from '../rate-of-turn/rate-of-turn.controller.js';
 import {customElement} from '../../decorator.js';
@@ -102,9 +101,7 @@ export class ObcCompass extends LitElement {
   @property({type: Number}) newHeadingSetpoint: number | undefined;
   @property({type: Boolean}) atHeadingSetpoint: boolean = false;
   @property({type: Number}) headingSetpointAtZeroDeadband: number = 0.5;
-  @property({type: String}) headingSetpointColorMode:
-    | SetpointColorMode
-    | undefined;
+  @property({type: Boolean}) headingSetpointOverride: boolean = false;
   @property({type: Boolean}) disableAutoAtHeadingSetpoint: boolean = false;
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
   @property({type: Boolean}) animateSetpoint: boolean = false;
@@ -145,7 +142,7 @@ export class ObcCompass extends LitElement {
       disableAutoAtSetpoint: this.disableAutoAtHeadingSetpoint,
       autoAtSetpointDeadband: this.autoAtHeadingSetpointDeadband,
       setpointAtZeroDeadband: this.headingSetpointAtZeroDeadband,
-      setpointColorMode: this.headingSetpointColorMode,
+      setpointOverride: this.headingSetpointOverride,
       animateSetpoint: this.animateSetpoint,
     });
   }
@@ -235,7 +232,7 @@ export class ObcCompass extends LitElement {
           .newAngleSetpoint=${this.newHeadingSetpoint}
           .atAngleSetpoint=${this._headingSp.computeAtSetpoint(this.heading)}
           .angleSetpointAtZeroDeadband=${this.headingSetpointAtZeroDeadband}
-          .colorMode=${this.headingSetpointColorMode}
+          .setpointOverride=${this.headingSetpointOverride}
           .priority=${this.priority}
           .animateSetpoint=${this.animateSetpoint}
           .vessels=${[

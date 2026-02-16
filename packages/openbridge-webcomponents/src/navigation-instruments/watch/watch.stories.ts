@@ -34,7 +34,7 @@ The setpoint marker visual state is derived from the combination of \`atAngleSet
 
 The \`RADIAL_SETPOINT_INWARD_ADJUST\` constant (4px) fine-tunes radial setpoint positioning to match Figma designs, applied on top of visual state offsets from setpoint.ts.
 
-The \`colorMode\` property allows overriding the derived color mode (enhanced for enhanced priority, regular for other states).
+The \`setpointOverride\` property allows overriding the derived disabled state so the setpoint marker derives its color from \`priority\` even in loading/off instrument states.
 
 ## Properties
 
@@ -45,7 +45,7 @@ The \`colorMode\` property allows overriding the derived color mode (enhanced fo
 | \`atAngleSetpoint\` | \`boolean\` | Whether value matches setpoint (within deadband) |
 | \`atAngleSetpointZero\` | \`boolean\` | Whether setpoint is at zero angle |
 | \`focused\` | \`boolean\` | Whether user is actively adjusting the setpoint |
-| \`colorMode\` | \`SetpointColorMode \\| undefined\` | Optional override for setpoint color mode |
+| \`setpointOverride\` | \`boolean\` | When true, derive setpoint color from priority even in loading/off states |
 
 ## Usage
 

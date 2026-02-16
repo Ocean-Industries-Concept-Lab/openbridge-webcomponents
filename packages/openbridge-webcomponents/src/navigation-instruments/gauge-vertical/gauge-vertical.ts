@@ -301,7 +301,7 @@ export class ObcGaugeVertical extends SetpointMixin(LitElement, {
       departingNewSetpoint: this.departingNewSetpoint,
       state: this.state,
       touching: this.touching,
-      colorMode: this.setpointColorMode,
+      setpointOverride: this.setpointOverride,
       advicePosition: this.advicePosition,
       advices: this.advices as ExternalScaleAdvice[],
       fixedAspectRatio: this.fixedAspectRatio,

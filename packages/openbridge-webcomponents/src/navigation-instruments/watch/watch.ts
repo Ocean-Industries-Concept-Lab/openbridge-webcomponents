@@ -17,7 +17,6 @@ import {
   getSetpointAnimationDurationMs,
   getSetpointOutwardOffset,
   RADIAL_SETPOINT_RADIUS,
-  SetpointColorMode,
   SetpointVisualState,
   SETPOINT_ANIMATION_CSS_VAR,
   SETPOINT_ANIMATION_DURATION_DEFAULT,
@@ -127,7 +126,7 @@ const RADIAL_SETPOINT_INWARD_ADJUST = 4;
  * @property {number|undefined} newAngleSetpoint - New setpoint being adjusted (focus mode)
  * @property {boolean} atAngleSetpoint - Whether value matches setpoint (within deadband)
  * @property {number} angleSetpointAtZeroDeadband - Deadband for zero detection (default 0.5°)
- * @property {SetpointColorMode|undefined} colorMode - Optional override for setpoint color mode
+ * @property {boolean} setpointOverride - Override to derive setpoint color from priority regardless of state
  */
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {
@@ -143,7 +142,7 @@ export class ObcWatch extends LitElement {
   @property({type: Number}) newAngleSetpoint: number | undefined;
   @property({type: Boolean}) atAngleSetpoint: boolean = false;
   @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
-  @property({type: String}) colorMode: SetpointColorMode | undefined;
+  @property({type: Boolean}) setpointOverride: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
 
   @property({type: Boolean}) animateSetpoint: boolean = false;
@@ -513,10 +512,10 @@ export class ObcWatch extends LitElement {
       setpointAtZeroDeadband: this.angleSetpointAtZeroDeadband,
       newAngleSetpoint: this.newAngleSetpoint,
       touching: this.touching,
+      setpointOverride: this.setpointOverride,
     });
 
-    const colorMode = this.colorMode ?? derived.colorMode;
-    const {visualState, disabled, hasNewSetpoint} = derived;
+    const {visualState, colorMode, disabled, hasNewSetpoint} = derived;
 
     const outwardOffset = getSetpointOutwardOffset(visualState);
     const radius =
