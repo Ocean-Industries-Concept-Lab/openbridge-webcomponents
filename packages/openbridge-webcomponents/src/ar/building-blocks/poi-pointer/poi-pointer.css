@@ -45,9 +45,6 @@
   position: absolute;
   pointer-events: none;
   z-index: 0;
-}
-
-.square-frame {
   width: calc(
     var(--maneuvering-components-poi-button-touch-target, 48px) +
       var(--obc-poi-pointer-box-width-extra, 0px)
