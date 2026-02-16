@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - fix/fix-angular-wrapper
 
 jobs:
   release:
@@ -64,6 +65,8 @@ jobs:
         run: |
           rm -rf node_modules/@oicl || true
           rm -rf node_modules/@ocean-industries-concept-lab || true
+          npm run build
+          cd dist
           npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
 
       - name: Publish svelte wrapper to GitHub Packages
