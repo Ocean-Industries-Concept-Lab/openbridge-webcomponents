@@ -10,6 +10,10 @@ import {
   type AngleAdvice,
   AdviceType
 } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js'
+import {
+  InstrumentState,
+  Priority
+} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types'
 
 const sim = useSim()
 const { weather } = useWeather()
@@ -152,6 +156,8 @@ onUnmounted(() => {
       :wind-speed="weather.windSpeedBeaufort"
       :wind-from-direction="weather.windDirection"
       :heading-advices="headingAdvice"
+      :state="InstrumentState.active"
+      :priority="Priority.enhanced"
     />
     <div class="readout right">
       <div class="title font-ui-label">Wind</div>
