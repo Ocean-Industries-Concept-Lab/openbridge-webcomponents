@@ -13,13 +13,7 @@ import {
   ObcPoiSelectionFrameState,
   ObcPoiSelectionFrameType,
 } from '../poi-selection-frame/poi-selection-frame.js';
-import {
-  ObcPoiHeaderSize,
-  ObcPoiHeaderState,
-  ObcPoiHeaderType,
-} from '../poi-header/poi-header.js';
 import '../poi-selection-frame/poi-selection-frame.js';
-import '../poi-header/poi-header.js';
 
 export enum ObcPoiButtonType {
   Button = 'button',
@@ -73,15 +67,6 @@ export interface ObcPoiButtonDataItem {
   unit: string;
 }
 
-export interface ObcPoiButtonHeader {
-  content?: string;
-  label?: string;
-  size?: ObcPoiHeaderSize;
-  state?: ObcPoiHeaderState;
-  type?: ObcPoiHeaderType;
-  hasIndicator?: boolean;
-}
-
 /**
  * `<obc-poi-button>` - `ObcPoiButton` renders the interactive POI button body, optional header, and data rows.
  *
@@ -90,18 +75,18 @@ export interface ObcPoiButtonHeader {
  * - Supports button and enhanced visual sizes via `type`.
  * - Supports anchored and inline layouts via `layout`.
  * - Maps POI value state (`unchecked`, `checked`, `activated`, `overlapped`) to object and frame visuals.
- * - Can render optional header (`header`) and metrics/data rows (`data`).
+ * - Can render optional header (via slot), metrics/data rows (`data`), and relation content (`hasRelation` + `relation` slot).
  *
  * Public properties/attributes:
  * - `relativeDirection: number` - Icon rotation in degrees.
  * - `selected: boolean` - Controls selection frame visibility (anchored layout).
  * - `layout: ObcPoiButtonLayout` (attribute: `layout`) - Layout mode (`anchored` or `inline`).
- * - `header: ObcPoiButtonHeader | null` - Optional ID/data header configuration.
  * - `alertType: ObcArAlertType` - Alert styling (`none`, `caution`, `warning`, `alarm`).
  * - `value: PoiButtonVisualState` (attribute: `value`) - Visual state (`unchecked`, `checked`, `activated`, `overlapped`).
  * - `type: ObcPoiButtonType` - Size/variant (`button` or `enhanced`).
  * - `inExpandedGroup: boolean` - Expanded-group styling hint.
  * - `data: ObcPoiButtonDataItem[]` - Optional value/label/unit rows.
+ * - `hasRelation: boolean` - Enables relation area rendering when data mode is active.
  *
  * Public methods:
  * - No imperative public methods; behavior is controlled through reactive properties.
@@ -110,13 +95,14 @@ export interface ObcPoiButtonHeader {
  *
  * - Use `layout="anchored"` for standalone POI buttons with optional selection frame.
  * - Use `layout="inline"` when composing inside higher-level marker wrappers (for example `obc-poi`).
- * - Provide `data` for metric display variants.
+ * - Provide `data` for metric display variants; keep `hasRelation` aligned with relation slot usage.
  *
  * ## Slots
  *
  * - Default slot: Main icon/content rendered inside `obc-poi-object`.
  * - `header`: Optional custom header content rendered above the POI object.
  * - `id-label`: Optional custom indicator content for the header indicator slot.
+ * - `relation`: Optional relation icon/content rendered when `hasRelation` is true in data mode.
  *
  * ## Events
  *
@@ -127,7 +113,7 @@ export interface ObcPoiButtonHeader {
  *
  * - Keep `value`, `selected`, and `alertType` synchronized with domain state to avoid mixed visual semantics.
  * - Prefer enum values from `PoiButtonVisualState`, `ObcPoiButtonType`, and `ObcPoiButtonLayout` for consistency.
- * - Use `header` only when label/ID context is needed; omit for icon-only markers.
+ * - Use the `header` slot when label/ID context is needed; omit for icon-only markers.
  *
  * ## Example
  *
@@ -149,36 +135,20 @@ export class ObcPoiButton extends LitElement {
   @property({type: String, reflect: true}) layout: ObcPoiButtonLayout =
     ObcPoiButtonLayout.Anchored;
   @property({type: Boolean, attribute: 'has-header'}) hasHeader = false;
-  @property({type: Object}) header: ObcPoiButtonHeader | null = null;
   @property({type: String}) alertType = ObcArAlertType.None;
   @property({type: String, reflect: true})
   value: PoiButtonVisualState = PoiButtonVisualState.Unchecked;
   @property({type: String}) type = ObcPoiButtonType.Button;
   @property({type: Boolean}) inExpandedGroup = false;
   @property({type: Array, attribute: false}) data: ObcPoiButtonDataItem[] = [];
+  @property({type: Boolean}) hasRelation = false;
 
   get hasData(): boolean {
     return this.data.length > 0;
   }
 
   private get hasHeaderContent(): boolean {
-    return (
-      this.querySelector('[slot="header"]') !== null ||
-      Boolean(this.header?.content?.trim())
-    );
-  }
-
-  private get fallbackHeaderState(): ObcPoiHeaderState {
-    switch (this.alertType) {
-      case ObcArAlertType.Alarm:
-        return ObcPoiHeaderState.Alarm;
-      case ObcArAlertType.Warning:
-        return ObcPoiHeaderState.Warning;
-      case ObcArAlertType.Caution:
-        return ObcPoiHeaderState.Caution;
-      default:
-        return ObcPoiHeaderState.Selected;
-    }
+    return this.querySelector('[slot="header"]') !== null;
   }
 
   protected renderHeader() {
@@ -190,26 +160,9 @@ export class ObcPoiButton extends LitElement {
       return nothing;
     }
 
-    if (this.querySelector('[slot="header"]')) {
-      return html`
-        <div class="id-label">
-          <slot name="header"></slot>
-        </div>
-      `;
-    }
-
     return html`
       <div class="id-label">
-        <obc-poi-header
-          .content=${this.header?.content?.trim() ?? ''}
-          .label=${this.header?.label ?? 'Data'}
-          .size=${this.header?.size ?? ObcPoiHeaderSize.Regular}
-          .state=${this.header?.state ?? this.fallbackHeaderState}
-          .type=${this.header?.type ?? ObcPoiHeaderType.Id}
-          .hasIndicator=${this.header?.hasIndicator ?? false}
-        >
-          <slot name="id-label" slot="indicator" part="id-label"></slot>
-        </obc-poi-header>
+        <slot name="header"></slot>
       </div>
     `;
   }
@@ -320,6 +273,11 @@ export class ObcPoiButton extends LitElement {
         <div class="button-wrapper">
           ${this.renderSelectionFrame()} ${this.renderPoiObject()}
         </div>
+        ${this.hasRelation
+          ? html`<div class="relation-wrapper" part="relation-wrapper">
+              <slot name="relation" class="relation" part="relation"></slot>
+            </div>`
+          : nothing}
         <div class="alert-ring"></div>
       </button>
     `;

@@ -1,12 +1,13 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
   ObcPoiButton,
-  ObcPoiButtonHeader,
   ObcPoiButtonType,
   PoiButtonVisualState,
 } from './poi-button.js';
 import './poi-button.js';
 import '../../../icons/icon-placeholder.js';
+import '../../../icons/icon-collision-avoidance-overtaking.js';
+import '../poi-header/poi-header.js';
 import {html, TemplateResult} from 'lit';
 import {ObcArAlertType} from '../../types.js';
 import {crossDecorator} from '../../../storybook-util.js';
@@ -196,9 +197,15 @@ type MatrixButtonConfig = {
   value?: PoiButtonVisualState;
   selected?: boolean;
   alertType?: ObcArAlertType;
-  header?: ObcPoiButtonHeader | null;
+  header?: {
+    content: string;
+    type?: ObcPoiHeaderType;
+    state?: ObcPoiHeaderState;
+    hasIndicator?: boolean;
+  } | null;
   data?: Array<{value: string; label: string; unit: string}>;
   idLabel?: boolean;
+  hasRelation?: boolean;
   stageTall?: boolean;
   label: string;
 };
@@ -212,12 +219,29 @@ const renderMatrixButton = (cfg: MatrixButtonConfig) => html`
         .value=${cfg.value ?? PoiButtonVisualState.Unchecked}
         .selected=${cfg.selected ?? false}
         .alertType=${cfg.alertType ?? ObcArAlertType.None}
-        .header=${cfg.header ?? null}
+        .hasHeader=${cfg.header != null}
+        .hasRelation=${cfg.hasRelation ?? false}
         .data=${cfg.data ?? []}
       >
         <obi-placeholder></obi-placeholder>
-        ${cfg.idLabel
-          ? html`<obi-placeholder slot="id-label"></obi-placeholder>`
+        ${cfg.hasRelation
+          ? html`<obi-collision-avoidance-overtaking
+              slot="relation"
+              part="relation"
+            ></obi-collision-avoidance-overtaking>`
+          : html``}
+        ${cfg.header
+          ? html`<obc-poi-header
+              slot="header"
+              .content=${cfg.header.content}
+              .type=${cfg.header.type ?? ObcPoiHeaderType.Id}
+              .state=${cfg.header.state ?? ObcPoiHeaderState.Selected}
+              .hasIndicator=${cfg.header.hasIndicator ?? false}
+            >
+              ${cfg.idLabel
+                ? html`<obi-placeholder slot="indicator"></obi-placeholder>`
+                : html``}
+            </obc-poi-header>`
           : html``}
       </obc-poi-button>
     </div>
@@ -399,6 +423,22 @@ export const AllData: Story = {
               {value: '20', label: 'Lab 2', unit: 'Unit 2'},
             ],
             value: PoiButtonVisualState.Overlapped,
+          })}
+          ${renderMatrixButton({
+            label: 'Values + Relation',
+            stageTall: true,
+            data: [
+              {value: '10', label: 'Lab', unit: 'Unit'},
+              {value: '20', label: 'Lab 2', unit: 'Unit 2'},
+            ],
+            hasRelation: true,
+            header: {
+              content: '1',
+              type: ObcPoiHeaderType.Id,
+              state: ObcPoiHeaderState.Selected,
+              hasIndicator: true,
+            },
+            idLabel: true,
           })}
         </div>
       </div>
