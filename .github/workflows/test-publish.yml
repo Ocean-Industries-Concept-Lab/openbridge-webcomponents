@@ -1,0 +1,56 @@
+name: Publish to NPM
+
+on:
+    push:
+        branches:
+            - main
+            - fix/fix-angular-wrapper
+
+jobs:
+    release:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "22"
+                  registry-url: "https://npm.pkg.github.com/"
+                  scope: Ocean-Industries-Concept-Lab
+
+            - name: Install dependencies
+              run: npm install
+
+            - name: Append timestamp to version
+              working-directory: ./packages/openbridge-webcomponents
+              run: |
+                  TIMESTAMP=$(date +"%Y%m%d%H%M%S")
+                  jq --arg TIMESTAMP "$TIMESTAMP" '.version = "0.0." + $TIMESTAMP' package.json > package.tmp.json && mv package.tmp.json package.json
+
+            - name: Publish to GitHub Packages
+              working-directory: ./packages/openbridge-webcomponents
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  npm run build
+
+            - name: Upload artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: openbridge-webcomponents
+                  path: ./packages
+
+            - name: Publish angular wrapper to GitHub Packages
+              working-directory: ./packages/openbridge-webcomponents-ng
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  npm install
+                  npm run build
+                  cd dist
+                  npm pack
