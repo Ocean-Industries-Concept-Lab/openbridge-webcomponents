@@ -22,6 +22,7 @@ import {customElement} from '../../decorator.js';
  *
  * @prop {number} thrust - The thrust of the thruster in percent (-100 - +100)
  * @prop {boolean} touching - Highlight the thruster when the lever is being touched
+ * @prop {Priority} priority - Color priority: `Priority.enhanced` uses the blue/enhanced color palette, `Priority.regular` (default) uses the standard palette.
  */
 @customElement('obc-thruster')
 export class ObcThruster extends SetpointMixin(LitElement, {

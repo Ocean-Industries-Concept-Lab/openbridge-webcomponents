@@ -49,7 +49,8 @@ export interface SpeedAdvice {
  * ## Usage Guidelines
  *
  * - Set `maxSpeed` (and optionally `minSpeed`) to define the gauge range.
- * - Use `enhanced` to switch between regular and in-command color palettes.
+ * - Use `priority` to switch between regular and enhanced color palettes
+ *   (default: `Priority.regular`).
  * - Provide `tickmarkInterval` to control tickmark spacing.
  * - Enable `labels` to show numeric labels at primary tickmarks.
  * - Enable `showReadout` to display the numeric value below the gauge.

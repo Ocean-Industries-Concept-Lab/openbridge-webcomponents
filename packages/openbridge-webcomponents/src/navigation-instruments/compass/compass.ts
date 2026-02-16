@@ -20,6 +20,59 @@ export enum CompassDirection {
 }
 
 /**
+ * `<obc-compass>` – Full-featured compass with HDG/COG arrows, rate-of-turn indicator, and environmental overlays.
+ *
+ * Renders a circular compass instrument that displays heading (HDG) and
+ * course-over-ground (COG) as rotating arrows over a triple-ring watch face.
+ * It supports wind and current indicators, a vessel silhouette, heading
+ * setpoint with auto at-setpoint detection, advice zones, and a rate-of-turn
+ * (ROT) dot indicator. The compass can be oriented north-up, heading-up, or
+ * course-up.
+ *
+ * ## Features
+ *
+ * - **Direction modes**: `northUp` (default), `headingUp`, or `courseUp`
+ *   via the `direction` property.
+ * - **HDG / COG arrows**: Two styled arrows overlay the watch face,
+ *   rotating independently.
+ * - **Heading setpoint**: Optional setpoint marker with auto at-setpoint
+ *   detection via `headingSetpoint`, `atHeadingSetpoint`, and deadband
+ *   tuning properties.
+ * - **Advice zones**: Pass `headingAdvices` to render caution/alert arcs;
+ *   triggered state is derived from whether the current heading falls
+ *   inside the advice range.
+ * - **Rate of turn**: Animated ROT dot driven by `rotationsPerMinute`.
+ * - **Environmental overlays**: Wind speed/direction and current
+ *   speed/direction indicators on the watch face.
+ * - **Vessel image**: Configurable vessel silhouette centered on the
+ *   compass, rotating with heading.
+ * - **Color priority**: Set `priority` to `Priority.enhanced` to use the
+ *   blue/enhanced color palette instead of the default gray/regular palette
+ *   (default: `Priority.regular`).
+ *
+ * ## Usage Guidelines
+ *
+ * - Set `heading` and `courseOverGround` to the current sensor values
+ *   in degrees.
+ * - Use `direction` to control the compass orientation mode.
+ * - Use `headingSetpoint` to show a target heading marker.
+ * - Pass `headingAdvices` as an array of `AngleAdvice` objects for
+ *   caution/alert zones.
+ * - Set `windSpeed` / `windFromDirection` and `currentSpeed` /
+ *   `currentFromDirection` to display environmental indicators.
+ *
+ * ## Example
+ *
+ * ```html
+ * <obc-compass
+ *   heading="45"
+ *   courseOverGround="50"
+ *   direction="northUp"
+ *   headingSetpoint="90"
+ *   priority="regular"
+ *   vesselImage="genericTop"
+ * ></obc-compass>
+ * ```
  *
  * @property {number} heading - The current heading of the vessel in degrees.
  * @property {number} courseOverGround - The current course over ground in degrees.
@@ -35,6 +88,7 @@ export enum CompassDirection {
  * @property {number | null} currentFromDirection - The direction the current is coming from in degrees.
  * @property {VesselImage} vesselImage - The image of the vessel.
  * @property {number} rotationsPerMinute - The number of rotations per minute for the rate of turn controller.
+ * @property {Priority} priority - Color priority: `Priority.enhanced` uses the blue/enhanced color palette, `Priority.regular` (default) uses the standard palette.
  *
  * @ignition-base-height: 512px
  * @ignition-base-width: 512px

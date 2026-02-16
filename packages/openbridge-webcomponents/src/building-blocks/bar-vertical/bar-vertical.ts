@@ -59,6 +59,10 @@ export {
  * - `renderExternalScale(config)`
  *
  * For renderer documentation see: **Building Blocks/External Scale**.
+ *
+ * Set `priority` to `Priority.enhanced` to use the blue/enhanced color palette
+ * for bar fill and setpoint instead of the default gray/regular palette
+ * (default: `Priority.regular`).
  */
 @customElement('obc-bar-vertical')
 export class ObcBarVertical extends SetpointMixin(LitElement, {

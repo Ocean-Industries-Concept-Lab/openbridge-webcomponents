@@ -79,6 +79,8 @@ const RADIAL_BAR_WATCHED_PROP_NAMES = [
  *   - Custom ring colors (with automatic fallback to theme palette).
  *   - Adjustable minimum ring thickness (`minRingThickness`).
  *   - Adjustable arc span (`circumference`).
+ * - **Color Priority:** Set `priority` to `Priority.enhanced` to use the blue/enhanced
+ *   color palette instead of the default gray/regular palette (default: `Priority.regular`).
  * - **Capacity Visualization:**
  *   - Each ring shows a filled and remaining segment based on the `max` value.
  * - **Responsive Behavior:**

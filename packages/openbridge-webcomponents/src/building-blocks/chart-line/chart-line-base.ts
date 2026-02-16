@@ -166,6 +166,8 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
  * - **Grid & ticks**: Toggle grid lines (`showGrid`, `showGridX`, `showGridY`) and tick marks (`showTickMarks`)
  * - **Legend support**: Optional HTML legend showing series labels with `legend` property
  * - **External axis support**: via slots
+ * - **Color priority**: Set `priority` to `Priority.enhanced` to use the blue/enhanced
+ *   color palette instead of the default gray/regular palette (default: `Priority.regular`)
  *
  * ## Size Behavior
  * - Above 192px: Shows labels, tick marks, and grid lines with standard padding

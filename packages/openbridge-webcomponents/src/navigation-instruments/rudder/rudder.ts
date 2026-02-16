@@ -43,6 +43,8 @@ export enum ObcRudderVariant {
  * ## Usage Guidelines
  *
  * - Set `maxAngle` to define the symmetric ± range (default: 90°).
+ * - Use `priority` to switch between regular and enhanced color palettes
+ *   (default: `Priority.regular`).
  * - Use `state` to control the instrument color palette.
  * - Enable `labels` to show numeric angle labels at tickmarks.
  * - Choose `variant` to switch between bar and needle display.

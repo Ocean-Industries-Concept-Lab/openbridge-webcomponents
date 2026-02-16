@@ -65,7 +65,7 @@ export {
  * - **Value Display:**
  *   - `value` property drives the bar fill.
  *   - `fillMode` controls visualization: `fill` shows bar from `fillMin` to `fillMax`; `tint` adds a marker at the `value` position.
- *   - `enhanced` mode uses enhanced instrument colors.
+ *   - Set `priority` to `Priority.enhanced` to use the blue/enhanced color palette for bar fill and setpoint (default: `Priority.regular`).
  * - **Setpoint Marker:**
  *   - Optional `setpoint` value displays a marker.
  *   - Automatic at-setpoint detection with configurable deadband.

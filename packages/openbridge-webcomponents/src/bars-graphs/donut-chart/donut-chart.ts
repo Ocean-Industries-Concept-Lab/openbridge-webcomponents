@@ -91,6 +91,8 @@ const DONUT_WATCHED_PROP_NAMES = [
  * - **Customization:**
  *   - Custom segment colors (with automatic fallback to theme palette).
  *   - Adjustable ring thickness (default 24px).
+ * - **Color Priority:** Set `priority` to `Priority.enhanced` to use the blue/enhanced
+ *   color palette instead of the default gray/regular palette (default: `Priority.regular`).
  * - **Responsive Behavior:**
  *   - Automatically hides labels and center readout when height < 192px.
  *   - Maintains aspect ratio and adjusts padding for optimal label positioning.
