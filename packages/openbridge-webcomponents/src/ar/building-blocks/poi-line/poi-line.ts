@@ -7,7 +7,6 @@ import {
   getPOILineConfig,
   POILineType,
   POIStyle,
-  resolvePOIStyle,
 } from '../poi-graphic-line/poi-graphic-line.js';
 import {customElement} from '../../../decorator.js';
 
@@ -24,15 +23,11 @@ export class ObcPoiLine extends LitElement {
   animatePosition = false;
   override render() {
     const style = getPOILineConfig(this.poiStyle, this.lineType);
-    const resolvedStyle = resolvePOIStyle(this.poiStyle);
-    let lineHeight = this.height - 2;
-    let centerX = 2;
-    let centerYOffset = 1;
-    if (resolvedStyle === POIStyle.Regular) {
-      lineHeight = this.height - 2;
-      centerYOffset = 2;
-      centerX = 2;
-    }
+    const lineHeight = this.height - 2;
+    const centerX = 2;
+    const isRegularStyle =
+      this.poiStyle === POIStyle.Regular || this.poiStyle === POIStyle.Normal;
+    const centerYOffset = isRegularStyle ? 2 : 1;
 
     const totalHeight = lineHeight + style.width + style.dotStart;
     const translateX = -style.width / 2 + (this.offset < 0 ? this.offset : 0);

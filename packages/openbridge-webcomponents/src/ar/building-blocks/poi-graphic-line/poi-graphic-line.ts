@@ -177,17 +177,6 @@ export function resolvePOIStyle(style: POIStyle | string): POIStyleVariant {
   }
 }
 
-export const POI_LINE_CONFIG: Record<POIStyle, POILineParams> = {
-  [POIStyle.Normal]: STYLE_CONFIG[POIStyle.Regular][POILineType.Regular],
-  [POIStyle.Enhanced]: STYLE_CONFIG[POIStyle.Selected][POILineType.Regular],
-  [POIStyle.Regular]: STYLE_CONFIG[POIStyle.Regular][POILineType.Regular],
-  [POIStyle.Selected]: STYLE_CONFIG[POIStyle.Selected][POILineType.Regular],
-  [POIStyle.Alarm]: STYLE_CONFIG[POIStyle.Alarm][POILineType.Regular],
-  [POIStyle.Caution]: STYLE_CONFIG[POIStyle.Caution][POILineType.Regular],
-  [POIStyle.Warning]: STYLE_CONFIG[POIStyle.Warning][POILineType.Regular],
-  [POIStyle.Route]: STYLE_CONFIG[POIStyle.Route][POILineType.Regular],
-};
-
 export function getPOILineConfig(
   style: POIStyle | string,
   lineType: POILineType | string = POILineType.Regular
