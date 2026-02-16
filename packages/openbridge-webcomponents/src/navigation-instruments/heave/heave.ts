@@ -97,8 +97,7 @@ export class ObcHeave extends LitElement {
               {container: 'var(--instrument-frame-primary-color)'},
               {hideContainer: false, off: false, priority: this.priority},
               {
-                // TODO: at other places it is called mainTickmarks: [] and it is an array
-                mainTickmark: true,
+                mainTickmarks: [0],
                 primaryTickmarkInterval: this.instrumentRange <= 5 ? 1 : 5,
                 secondaryTickmarkInterval: this.instrumentRange <= 5 ? 0.5 : 1,
               },

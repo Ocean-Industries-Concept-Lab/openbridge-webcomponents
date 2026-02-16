@@ -104,8 +104,6 @@ export class ObcDepthActual extends LitElement {
               {container: 'var(--instrument-frame-primary-color)'},
               {hideContainer: false, off: false, priority: this.priority},
               {
-                // TODO: at other places it is called mainTickmarks: [] and it is an array
-                mainTickmark: false,
                 primaryTickmarkInterval: this.primaryTickmarkInterval,
                 secondaryTickmarkInterval: this.secondaryTickmarkInterval,
               },

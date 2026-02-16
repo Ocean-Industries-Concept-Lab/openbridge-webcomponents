@@ -68,10 +68,9 @@ const meta: Meta = {
         max: 512,
       },
     },
-    mainTickmark: {
-      // TODO: at other places it is called mainTickmarks: [] and it is an array
+    mainTickmarks: {
       control: {
-        type: 'boolean',
+        type: 'object',
       },
     },
     primaryTickmarkInterval: {
@@ -106,8 +105,7 @@ const meta: Meta = {
     width: 72,
     scaleWidth: 24,
     height: 370,
-    // TODO: at other places it is called mainTickmarks: [] and it is an array
-    mainTickmark: true,
+    mainTickmarks: [0],
     primaryTickmarkInterval: 50,
     secondaryTickmarkInterval: 10,
     priority: Priority.regular,
@@ -139,8 +137,7 @@ const meta: Meta = {
           priority: args.priority,
         },
         {
-          // TODO: at other places it is called mainTickmarks: [] and it is an array
-          mainTickmark: args.mainTickmark,
+          mainTickmarks: args.mainTickmarks,
           primaryTickmarkInterval: args.primaryTickmarkInterval,
           secondaryTickmarkInterval: args.secondaryTickmarkInterval,
         },
@@ -178,8 +175,7 @@ export const Range: Story = {
     min: -20,
     max: 20,
     value: 0,
-    // TODO: at other places it is called mainTickmarks: [] and it is an array
-    mainTickmark: 10,
+    mainTickmarks: [0],
     secondaryTickmarkInterval: 10,
   },
 };

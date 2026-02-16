@@ -61,8 +61,8 @@ export function watchfaceLinear(
     priority: Priority;
   },
   tickmarks: {
-    // TODO: at other places it is called mainTickmarks: [] and it is an array
-    mainTickmark: boolean;
+    /** Array of values where full-width main tickmarks are drawn. */
+    mainTickmarks?: number[];
     primaryTickmarkInterval?: number;
     secondaryTickmarkInterval?: number;
   },
@@ -108,45 +108,46 @@ export function watchfaceLinear(
   </defs>`;
   const maskAttr = options.hideContainer ? undefined : `url(#${maskId})`;
 
-  const tickmarksY0 = valueToY(0, minValue, maxValue, height);
-  const skipYValues: number[] = [];
-  // TODO: at other places it is called mainTickmarks: [] and it is an array
-  if (tickmarks.mainTickmark) {
-    const y = tickmarksY0;
-    tickmarksSvg.push(
-      svg`<line x1=${-width / 2} x2=${width / 2} y1=${y} y2=${y} stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
-    );
-    skipYValues.push(y);
+  const skipValues: number[] = [];
+  if (tickmarks.mainTickmarks) {
+    for (const value of tickmarks.mainTickmarks) {
+      if (value < minValue || value > maxValue) continue;
+      const y = valueToY(value, minValue, maxValue, height);
+      tickmarksSvg.push(
+        svg`<line x1=${-width / 2} x2=${width / 2} y1=${y} y2=${y} stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
+      );
+      skipValues.push(value);
+    }
   }
 
   const tickmarksX = width / 2 - scaleWidth + 4;
 
   if (tickmarks.primaryTickmarkInterval !== undefined) {
-    const {svgs, yValues} = generateTickmarks({
+    const {svgs, values} = generateTickmarks({
       height,
       interval: tickmarks.primaryTickmarkInterval,
       minValue,
       maxValue,
       tickmarksX,
       tickmarksWidth: width / 2 - tickmarksX,
-      skipYValues,
+      skipValues,
     });
     tickmarksSvg.push(...svgs);
-    skipYValues.push(...yValues);
+    skipValues.push(...values);
   }
 
   if (tickmarks.secondaryTickmarkInterval !== undefined) {
-    const {svgs, yValues} = generateTickmarks({
+    const {svgs, values} = generateTickmarks({
       height,
       interval: tickmarks.secondaryTickmarkInterval,
       minValue,
       maxValue,
       tickmarksX,
       tickmarksWidth: 8,
-      skipYValues,
+      skipValues,
     });
     tickmarksSvg.push(...svgs);
-    skipYValues.push(...yValues);
+    skipValues.push(...values);
   }
   const boxX = -width / 2;
   const boxWidth = width - scaleWidth;
@@ -197,7 +198,7 @@ function generateTickmarks({
   tickmarksWidth,
   minValue,
   maxValue,
-  skipYValues,
+  skipValues,
 }: {
   height: number;
   interval: number;
@@ -205,31 +206,31 @@ function generateTickmarks({
   tickmarksWidth: number;
   minValue: number;
   maxValue: number;
-  skipYValues: number[];
-}): {svgs: SVGTemplateResult[]; yValues: number[]} {
+  skipValues: number[];
+}): {svgs: SVGTemplateResult[]; values: number[]} {
   const tickmarksSvg: SVGTemplateResult[] = [];
-  const yValues: number[] = [];
-  for (let yValue = 0; yValue < maxValue; yValue += interval) {
-    if (skipYValues.includes(yValue)) {
+  const values: number[] = [];
+  for (let v = 0; v < maxValue; v += interval) {
+    if (skipValues.includes(v)) {
       continue;
     }
-    const y = valueToY(yValue, minValue, maxValue, height);
-    yValues.push(yValue);
+    const y = valueToY(v, minValue, maxValue, height);
+    values.push(v);
     tickmarksSvg.push(
       svg`<line x1=${tickmarksX} x2=${tickmarksX + tickmarksWidth} y1=${y} y2=${y} stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
     );
   }
-  for (let yValue = -interval; yValue > minValue; yValue -= interval) {
-    if (skipYValues.includes(yValue)) {
+  for (let v = -interval; v > minValue; v -= interval) {
+    if (skipValues.includes(v)) {
       continue;
     }
-    const y = valueToY(yValue, minValue, maxValue, height);
-    yValues.push(yValue);
+    const y = valueToY(v, minValue, maxValue, height);
+    values.push(v);
     tickmarksSvg.push(
       svg`<line x1=${tickmarksX} x2=${tickmarksX + tickmarksWidth} y1=${y} y2=${y} stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
     );
   }
-  return {svgs: tickmarksSvg, yValues};
+  return {svgs: tickmarksSvg, values};
 }
 
 function getColors(enhanced: boolean): {
