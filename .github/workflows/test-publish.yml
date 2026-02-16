@@ -39,18 +39,13 @@ jobs:
               run: |
                   npm run build
 
-            - name: Upload artifact
-              uses: actions/upload-artifact@v4
-              with:
-                  name: openbridge-webcomponents
-                  path: .
-
             - name: Publish angular wrapper to GitHub Packages
-              working-directory: ./packages/openbridge-webcomponents-ng
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
+                  rm package-lock.json
                   npm install
+                  cd packages/openbridge-webcomponents-ng
                   npm run build
                   cd dist
                   npm pack
