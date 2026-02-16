@@ -61,9 +61,10 @@ export function watchfaceLinear(
     priority: Priority;
   },
   tickmarks: {
-    mainTickbar: boolean;
-    primaryTickbarsInterval?: number;
-    secondaryTickbarsInterval?: number;
+    // TODO: at other places it is called mainTickmarks: [] and it is an array
+    mainTickmark: boolean;
+    primaryTickmarkInterval?: number;
+    secondaryTickmarkInterval?: number;
   },
   advice: LinearAdviceRaw[]
 ) {
@@ -109,7 +110,8 @@ export function watchfaceLinear(
 
   const tickmarksY0 = valueToY(0, minValue, maxValue, height);
   const skipYValues: number[] = [];
-  if (tickmarks.mainTickbar) {
+  // TODO: at other places it is called mainTickmarks: [] and it is an array
+  if (tickmarks.mainTickmark) {
     const y = tickmarksY0;
     tickmarksSvg.push(
       svg`<line x1=${-width / 2} x2=${width / 2} y1=${y} y2=${y} stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
@@ -119,10 +121,10 @@ export function watchfaceLinear(
 
   const tickmarksX = width / 2 - scaleWidth + 4;
 
-  if (tickmarks.primaryTickbarsInterval !== undefined) {
+  if (tickmarks.primaryTickmarkInterval !== undefined) {
     const {svgs, yValues} = generateTickmarks({
       height,
-      interval: tickmarks.primaryTickbarsInterval,
+      interval: tickmarks.primaryTickmarkInterval,
       minValue,
       maxValue,
       tickmarksX,
@@ -133,10 +135,10 @@ export function watchfaceLinear(
     skipYValues.push(...yValues);
   }
 
-  if (tickmarks.secondaryTickbarsInterval !== undefined) {
+  if (tickmarks.secondaryTickmarkInterval !== undefined) {
     const {svgs, yValues} = generateTickmarks({
       height,
-      interval: tickmarks.secondaryTickbarsInterval,
+      interval: tickmarks.secondaryTickmarkInterval,
       minValue,
       maxValue,
       tickmarksX,

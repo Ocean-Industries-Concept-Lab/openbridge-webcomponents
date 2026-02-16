@@ -84,7 +84,7 @@ interface ExternalScaleElement extends HTMLElement {
   paddingRight?: number;
   paddingStart?: number;
   paddingEnd?: number;
-  primaryTickbarsInterval?: number;
+  primaryTickmarkInterval?: number;
   labels?: boolean;
   fixedAspectRatio?: boolean;
   scaleReferenceSize?: number;
@@ -1334,7 +1334,7 @@ export class ObcChartLineBase extends LitElement {
         };
         // Only override interval if explicitly set
         if (this.yStepSize !== undefined) {
-          props.primaryTickbarsInterval = this.yStepSize;
+          props.primaryTickmarkInterval = this.yStepSize;
         }
         updates.push([this.leftScaleSlot, scale, props]);
       });
@@ -1364,7 +1364,7 @@ export class ObcChartLineBase extends LitElement {
         };
         // Only override interval if explicitly set
         if (this.yStepSize !== undefined) {
-          props.primaryTickbarsInterval = this.yStepSize;
+          props.primaryTickmarkInterval = this.yStepSize;
         }
         updates.push([this.rightScaleSlot, scale, props]);
       });
@@ -1394,7 +1394,7 @@ export class ObcChartLineBase extends LitElement {
         };
         // Only override interval if explicitly set
         if (this.xStepSize !== undefined) {
-          props.primaryTickbarsInterval = this.xStepSize;
+          props.primaryTickmarkInterval = this.xStepSize;
         }
         updates.push([this.topScaleSlot, scale, props]);
       });
@@ -1424,7 +1424,7 @@ export class ObcChartLineBase extends LitElement {
         };
         // Only override interval if explicitly set
         if (this.xStepSize !== undefined) {
-          props.primaryTickbarsInterval = this.xStepSize;
+          props.primaryTickmarkInterval = this.xStepSize;
         }
         updates.push([this.bottomScaleSlot, scale, props]);
       });

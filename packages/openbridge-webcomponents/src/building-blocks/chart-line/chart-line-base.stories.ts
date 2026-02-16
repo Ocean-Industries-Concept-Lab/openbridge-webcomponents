@@ -631,8 +631,8 @@ export const ExternalScalesBottomRight: Story = {
         .side=${'right'}
         .hasScale=${true}
         .hasBar=${false}
-        .primaryTickbarsInterval=${2}
-        .secondaryTickbarsInterval=${1}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
         .priority=${_args.priority}
       ></obc-bar-vertical>
       <obc-bar-horizontal
@@ -643,8 +643,8 @@ export const ExternalScalesBottomRight: Story = {
         .side=${'bottom'}
         .hasScale=${true}
         .hasBar=${false}
-        .primaryTickbarsInterval=${2}
-        .secondaryTickbarsInterval=${1}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
         .priority=${_args.priority}
       ></obc-bar-horizontal>
     </obc-area-graph>
@@ -806,9 +806,9 @@ export const ExternalScalesAllSides: Story = {
               {min: 6, max: 7, type: AdviceType.advice, hinted: false},
             ]
           : []}
-        .primaryTickbarsInterval=${1}
-        .secondaryTickbarsInterval=${0.5}
-        .tertiaryTickbarsInterval=${0.125}
+        .primaryTickmarkInterval=${1}
+        .secondaryTickmarkInterval=${0.5}
+        .tertiaryTickmarkInterval=${0.125}
         .priority=${_args.priority}
       ></obc-bar-vertical>
       <obc-bar-vertical
@@ -838,9 +838,9 @@ export const ExternalScalesAllSides: Story = {
               {min: 6, max: 7, type: AdviceType.advice, hinted: false},
             ]
           : []}
-        .primaryTickbarsInterval=${1}
-        .secondaryTickbarsInterval=${0.5}
-        .tertiaryTickbarsInterval=${0.125}
+        .primaryTickmarkInterval=${1}
+        .secondaryTickmarkInterval=${0.5}
+        .tertiaryTickmarkInterval=${0.125}
         .priority=${_args.priority}
       ></obc-bar-vertical>
       <obc-bar-horizontal
@@ -870,9 +870,9 @@ export const ExternalScalesAllSides: Story = {
               {min: 8, max: 10, type: AdviceType.advice, hinted: false},
             ]
           : []}
-        .primaryTickbarsInterval=${2}
-        .secondaryTickbarsInterval=${1}
-        .tertiaryTickbarsInterval=${0.25}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
+        .tertiaryTickmarkInterval=${0.25}
         .priority=${_args.priority}
       ></obc-bar-horizontal>
       <obc-bar-horizontal
@@ -902,9 +902,9 @@ export const ExternalScalesAllSides: Story = {
               {min: 8, max: 10, type: AdviceType.advice, hinted: false},
             ]
           : []}
-        .primaryTickbarsInterval=${2}
-        .secondaryTickbarsInterval=${1}
-        .tertiaryTickbarsInterval=${0.25}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
+        .tertiaryTickmarkInterval=${0.25}
         .priority=${_args.priority}
       ></obc-bar-horizontal>
     </obc-area-graph>
@@ -957,8 +957,8 @@ export const ExternalScalesMinimal: Story = {
         .hasScale=${true}
         .hideLabels=${_args.hideLabels}
         .hasBar=${false}
-        .primaryTickbarsInterval=${2}
-        .secondaryTickbarsInterval=${1}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
         .priority=${_args.priority}
       ></obc-bar-vertical>
       <obc-bar-horizontal
@@ -970,8 +970,8 @@ export const ExternalScalesMinimal: Story = {
         .hasScale=${true}
         .hideLabels=${_args.hideLabels}
         .hasBar=${false}
-        .primaryTickbarsInterval=${2}
-        .secondaryTickbarsInterval=${1}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
         .priority=${_args.priority}
       ></obc-bar-horizontal>
     </obc-area-graph>

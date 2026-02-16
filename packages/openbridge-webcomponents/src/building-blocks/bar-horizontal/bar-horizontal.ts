@@ -165,25 +165,25 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
 
   // Tick configuration
   /**
-   * Array of values for main tickbars. When undefined, no main tickbars shown.
+   * Array of values for main tickmarks. When undefined, no main tickmarks shown.
    * When empty array [], defaults to [minValue, 0, maxValue].
    */
-  @property({attribute: false}) mainTickbars?: number[] = [];
+  @property({attribute: false}) mainTickmarks?: number[] = [];
   /**
    * Interval for primary (longest) tickmarks with labels (minimum 1).
-   * When undefined, no primary tickbars are shown.
+   * When undefined, no primary tickmarks are shown.
    */
-  @property({type: Number}) primaryTickbarsInterval?: number = undefined;
+  @property({type: Number}) primaryTickmarkInterval?: number = undefined;
   /**
    * Interval for secondary (medium) tickmarks (minimum 1).
-   * When undefined, no secondary tickbars are shown.
+   * When undefined, no secondary tickmarks are shown.
    */
-  @property({type: Number}) secondaryTickbarsInterval?: number = undefined;
+  @property({type: Number}) secondaryTickmarkInterval?: number = undefined;
   /**
    * Interval for tertiary (shortest) tickmarks (minimum 1).
-   * When undefined, no tertiary tickbars are shown.
+   * When undefined, no tertiary tickmarks are shown.
    */
-  @property({type: Number}) tertiaryTickbarsInterval?: number = undefined;
+  @property({type: Number}) tertiaryTickmarkInterval?: number = undefined;
   /** Scale display mode: regular or condensed (shorter ticks) */
   @property({type: String}) scaleType: ScaleType = ScaleType.regular;
   /** Frame style: regular (4px gap for all), flat (main tickmarks touch edge), framed, or instrument */
@@ -303,10 +303,10 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
       tickThickness: this.tickThickness,
       labelThickness: this.labelThickness,
       borderRadius: this._getEffectiveBorderRadius(),
-      mainTickbars: this.mainTickbars,
-      primaryTickbarsInterval: this.primaryTickbarsInterval,
-      secondaryTickbarsInterval: this.secondaryTickbarsInterval,
-      tertiaryTickbarsInterval: this.tertiaryTickbarsInterval,
+      mainTickmarks: this.mainTickmarks,
+      primaryTickmarkInterval: this.primaryTickmarkInterval,
+      secondaryTickmarkInterval: this.secondaryTickmarkInterval,
+      tertiaryTickmarkInterval: this.tertiaryTickmarkInterval,
       scaleType: this.scaleType,
       frameStyle: this.frameStyle,
       borderRadiusPosition: this.borderRadiusPosition,

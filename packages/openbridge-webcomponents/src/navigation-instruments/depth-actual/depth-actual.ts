@@ -19,8 +19,8 @@ export class ObcDepthActual extends LitElement {
   @property({type: Number}) vesselScale = 1;
 
   @property({type: Number}) instrumentRange = 10;
-  @property({type: Number}) primaryTickbarsInterval = 50;
-  @property({type: Number}) secondaryTickbarsInterval = 10;
+  @property({type: Number}) primaryTickmarkInterval = 50;
+  @property({type: Number}) secondaryTickmarkInterval = 10;
   @property({type: String}) vesselImage: VesselImage = VesselImage.psvFore;
   @property({type: String}) priority: Priority = Priority.regular;
 
@@ -104,9 +104,10 @@ export class ObcDepthActual extends LitElement {
               {container: 'var(--instrument-frame-primary-color)'},
               {hideContainer: false, off: false, priority: this.priority},
               {
-                mainTickbar: false,
-                primaryTickbarsInterval: this.primaryTickbarsInterval,
-                secondaryTickbarsInterval: this.secondaryTickbarsInterval,
+                // TODO: at other places it is called mainTickmarks: [] and it is an array
+                mainTickmark: false,
+                primaryTickmarkInterval: this.primaryTickmarkInterval,
+                secondaryTickmarkInterval: this.secondaryTickmarkInterval,
               },
               this._getAdvice()
             )}

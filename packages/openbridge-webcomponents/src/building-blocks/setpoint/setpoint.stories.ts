@@ -141,8 +141,8 @@ Source: \`packages/openbridge-webcomponents/src/svghelpers/setpoint.ts\``,
       maxValue="50"
       height="280"
       side="${ExternalScaleSide.right}"
-      primaryTickbarsInterval="25"
-      secondaryTickbarsInterval="5"
+      primaryTickmarkInterval="25"
+      secondaryTickmarkInterval="5"
       hasBar
       scaleBackground
       borderRadiusPosition="${BorderRadiusPosition.innerFirstChild}"
@@ -193,8 +193,8 @@ function renderSetpointDemo(config: {
         maxValue="50"
         height="200"
         side="${ExternalScaleSide.right}"
-        primaryTickbarsInterval="25"
-        secondaryTickbarsInterval="5"
+        primaryTickmarkInterval="25"
+        secondaryTickmarkInterval="5"
         hasBar
         scaleBackground
         borderRadiusPosition="${BorderRadiusPosition.innerFirstChild}"
@@ -834,7 +834,7 @@ export const SetpointComparisonRadial: Story = {
  * The `newSetpoint` property enables showing both current and proposed setpoint positions
  * simultaneously, with the original dimmed (0.75 opacity) while adjusting.
  *
- * Tertiary tickmarks are shown during adjustment (tertiaryTickbarsInterval=2).
+ * Tertiary tickmarks are shown during adjustment (tertiaryTickmarkInterval=2).
  */
 export const SetpointAdjustmentFlow: StoryObj = {
   tags: ['!snapshot'],
@@ -850,9 +850,9 @@ export const SetpointAdjustmentFlow: StoryObj = {
         minValue="0"
         maxValue="100"
         side="top"
-        primaryTickbarsInterval="20"
-        secondaryTickbarsInterval="10"
-        tertiaryTickbarsInterval="2"
+        primaryTickmarkInterval="20"
+        secondaryTickmarkInterval="10"
+        tertiaryTickmarkInterval="2"
         priority="enhanced"
         fillMode="${FillMode.fill}"
         fillMin="0"

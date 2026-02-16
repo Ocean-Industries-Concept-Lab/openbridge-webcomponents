@@ -265,10 +265,10 @@ const config = {
   barThickness: 24,
   tickThickness: 24,
   labelThickness: 60,
-  mainTickbars: [],
-  primaryTickbarsInterval: 20,
-  secondaryTickbarsInterval: 10,
-  tertiaryTickbarsInterval: 2,
+  mainTickmarks: [],
+  primaryTickmarkInterval: 20,
+  secondaryTickmarkInterval: 10,
+  tertiaryTickmarkInterval: 2,
   scaleType: ScaleType.regular,
   frameStyle: FrameStyle.regular,
   priority: Priority.enhanced,
@@ -368,7 +368,7 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
       control: {type: 'boolean'},
     },
     labels: {
-      description: 'Show labels at primary tickbar intervals.',
+      description: 'Show labels at primary tickmark intervals.',
       control: {type: 'boolean'},
     },
     scaleBackground: {
@@ -395,25 +395,25 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
         'Label band thickness in pixels (space reserved for numbers).',
       control: {type: 'range', min: 0, max: 120},
     },
-    mainTickbars: {
+    mainTickmarks: {
       description:
-        'Array of values for main tickbars. Defaults to [minValue, 0, maxValue] if empty.',
+        'Array of values for main tickmarks. Defaults to [minValue, 0, maxValue] if empty.',
       control: {type: 'object'},
       table: {type: {summary: 'number[] | undefined'}},
     },
-    primaryTickbarsInterval: {
+    primaryTickmarkInterval: {
       description:
-        'Interval for primary tickbars. When undefined, no primary tickbars are shown. When a positive number, primary tickbars are shown at that interval.',
+        'Interval for primary tickmarks. When undefined, no primary tickmarks are shown. When a positive number, primary tickmarks are shown at that interval.',
       control: {type: 'number', min: 0},
     },
-    secondaryTickbarsInterval: {
+    secondaryTickmarkInterval: {
       description:
-        'Interval for secondary tickbars. When undefined, no secondary tickbars are shown. When a positive number, secondary tickbars are shown at that interval.',
+        'Interval for secondary tickmarks. When undefined, no secondary tickmarks are shown. When a positive number, secondary tickmarks are shown at that interval.',
       control: {type: 'number', min: 0},
     },
-    tertiaryTickbarsInterval: {
+    tertiaryTickmarkInterval: {
       description:
-        'Interval for tertiary tickbars. When undefined, no tertiary tickbars are shown. When a positive number, tertiary tickbars are shown at that interval.',
+        'Interval for tertiary tickmarks. When undefined, no tertiary tickmarks are shown. When a positive number, tertiary tickmarks are shown at that interval.',
       control: {type: 'number', min: 0},
     },
     scaleType: {
@@ -514,10 +514,10 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
     barThickness: 24,
     tickThickness: 24,
     labelThickness: 60,
-    mainTickbars: [],
-    primaryTickbarsInterval: 20,
-    secondaryTickbarsInterval: 10,
-    tertiaryTickbarsInterval: 2,
+    mainTickmarks: [],
+    primaryTickmarkInterval: 20,
+    secondaryTickmarkInterval: 10,
+    tertiaryTickmarkInterval: 2,
     scaleType: ScaleType.regular,
     frameStyle: FrameStyle.regular,
     priority: Priority.regular,
@@ -572,10 +572,10 @@ export const VerticalRightBasic: Story = {
     barThickness: 24,
     tickThickness: 24,
     labelThickness: 60,
-    mainTickbars: [],
-    primaryTickbarsInterval: 20,
-    secondaryTickbarsInterval: 10,
-    tertiaryTickbarsInterval: 2,
+    mainTickmarks: [],
+    primaryTickmarkInterval: 20,
+    secondaryTickmarkInterval: 10,
+    tertiaryTickmarkInterval: 2,
     scaleType: ScaleType.regular,
     frameStyle: FrameStyle.regular,
     priority: Priority.enhanced,
@@ -612,10 +612,10 @@ export const VerticalWithCurrentValueDot: Story = {
     barThickness: 24,
     tickThickness: 24,
     labelThickness: 60,
-    mainTickbars: [],
-    primaryTickbarsInterval: 20,
-    secondaryTickbarsInterval: 10,
-    tertiaryTickbarsInterval: 2,
+    mainTickmarks: [],
+    primaryTickmarkInterval: 20,
+    secondaryTickmarkInterval: 10,
+    tertiaryTickmarkInterval: 2,
     scaleType: ScaleType.regular,
     frameStyle: FrameStyle.regular,
     priority: Priority.enhanced,
@@ -653,10 +653,10 @@ export const VerticalLeftTint: Story = {
     barThickness: 24,
     tickThickness: 24,
     labelThickness: 60,
-    mainTickbars: [],
-    primaryTickbarsInterval: 50,
-    secondaryTickbarsInterval: 10,
-    tertiaryTickbarsInterval: 2,
+    mainTickmarks: [],
+    primaryTickmarkInterval: 50,
+    secondaryTickmarkInterval: 10,
+    tertiaryTickmarkInterval: 2,
     scaleType: ScaleType.regular,
     frameStyle: FrameStyle.regular,
     priority: Priority.enhanced,
@@ -696,10 +696,10 @@ export const HorizontalBottomBasic: Story = {
     barThickness: 24,
     tickThickness: 24,
     labelThickness: 60,
-    mainTickbars: [],
-    primaryTickbarsInterval: 20,
-    secondaryTickbarsInterval: 10,
-    tertiaryTickbarsInterval: 2,
+    mainTickmarks: [],
+    primaryTickmarkInterval: 20,
+    secondaryTickmarkInterval: 10,
+    tertiaryTickmarkInterval: 2,
     scaleType: ScaleType.regular,
     frameStyle: FrameStyle.regular,
     priority: Priority.regular,
@@ -736,10 +736,10 @@ export const HorizontalTopTint: Story = {
     barThickness: 24,
     tickThickness: 24,
     labelThickness: 60,
-    mainTickbars: [],
-    primaryTickbarsInterval: 50,
-    secondaryTickbarsInterval: 10,
-    tertiaryTickbarsInterval: 2,
+    mainTickmarks: [],
+    primaryTickmarkInterval: 50,
+    secondaryTickmarkInterval: 10,
+    tertiaryTickmarkInterval: 2,
     scaleType: ScaleType.regular,
     frameStyle: FrameStyle.regular,
     priority: Priority.enhanced,
@@ -781,10 +781,10 @@ export const VerticalRightScaleBackground: Story = {
     barThickness: 24,
     tickThickness: 24,
     labelThickness: 60,
-    mainTickbars: [],
-    primaryTickbarsInterval: 20,
-    secondaryTickbarsInterval: 10,
-    tertiaryTickbarsInterval: 2,
+    mainTickmarks: [],
+    primaryTickmarkInterval: 20,
+    secondaryTickmarkInterval: 10,
+    tertiaryTickmarkInterval: 2,
     scaleType: ScaleType.regular,
     frameStyle: FrameStyle.regular,
     priority: Priority.enhanced,
@@ -883,7 +883,7 @@ export const FixedAspectRatioComparison: StoryObj = {
     barNormal.setpoint = 80;
     barNormal.fillMode = FillMode.fill;
     barNormal.priority = Priority.regular;
-    barNormal.primaryTickbarsInterval = 20;
+    barNormal.primaryTickmarkInterval = 20;
     barNormal.fixedAspectRatio = false;
     barNormal.style.cssText = 'flex: 1; width: 100%;';
 
@@ -915,7 +915,7 @@ export const FixedAspectRatioComparison: StoryObj = {
     barFixed.setpoint = 80;
     barFixed.fillMode = FillMode.fill;
     barFixed.priority = Priority.enhanced;
-    barFixed.primaryTickbarsInterval = 20;
+    barFixed.primaryTickmarkInterval = 20;
     barFixed.fixedAspectRatio = true;
     barFixed.style.cssText = 'flex: 1; width: 100%;';
 

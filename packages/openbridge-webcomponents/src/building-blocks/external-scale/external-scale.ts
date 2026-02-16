@@ -109,10 +109,10 @@ import {
  *   barThickness: 24,
  *   tickThickness: 24,
  *   labelThickness: 60,
- *   mainTickbars: [],
- *   primaryTickbarsInterval: 20,
- *   secondaryTickbarsInterval: 10,
- *   tertiaryTickbarsInterval: 2,
+ *   mainTickmarks: [],
+ *   primaryTickmarkInterval: 20,
+ *   secondaryTickmarkInterval: 10,
+ *   tertiaryTickmarkInterval: 2,
  *   scaleType: ScaleType.regular,
  *   frameStyle: FrameStyle.regular,
  *   priority: Priority.enhanced,
@@ -422,7 +422,7 @@ export interface ExternalScaleConfig {
   // Layout bands (thickness, in px)
   /** Show scale tickmarks. */
   hasScale: boolean;
-  /** Show labels at primary tickbar intervals. */
+  /** Show labels at primary tickmark intervals. */
   labels?: boolean;
   /** Show bar. */
   hasBar: boolean;
@@ -445,23 +445,23 @@ export interface ExternalScaleConfig {
   labelThickness: number;
 
   // Tick configuration
-  /** Array of values for main tickbars. Defaults to [minValue, 0, maxValue] if empty. */
-  mainTickbars?: number[];
+  /** Array of values for main tickmarks. Defaults to [minValue, 0, maxValue] if empty. */
+  mainTickmarks?: number[];
   /**
-   * Interval for primary tickbars. When undefined, no primary tickbars are shown.
-   * When a positive number, primary tickbars are shown at that interval.
+   * Interval for primary tickmarks. When undefined, no primary tickmarks are shown.
+   * When a positive number, primary tickmarks are shown at that interval.
    */
-  primaryTickbarsInterval?: number;
+  primaryTickmarkInterval?: number;
   /**
-   * Interval for secondary tickbars. When undefined, no secondary tickbars are shown.
-   * When a positive number, secondary tickbars are shown at that interval.
+   * Interval for secondary tickmarks. When undefined, no secondary tickmarks are shown.
+   * When a positive number, secondary tickmarks are shown at that interval.
    */
-  secondaryTickbarsInterval?: number;
+  secondaryTickmarkInterval?: number;
   /**
-   * Interval for tertiary tickbars. When undefined, no tertiary tickbars are shown.
-   * When a positive number, tertiary tickbars are shown at that interval.
+   * Interval for tertiary tickmarks. When undefined, no tertiary tickmarks are shown.
+   * When a positive number, tertiary tickmarks are shown at that interval.
    */
-  tertiaryTickbarsInterval?: number;
+  tertiaryTickmarkInterval?: number;
   /**
    * Tick density preset.
    * - ScaleType.regular: longer ticks
@@ -1164,24 +1164,24 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
     skipValues.push(0);
   }
 
-  // Main tickbars - show when mainTickbars is defined (array presence means enabled)
+  // Main tickmarks - show when mainTickmarks is defined (array presence means enabled)
   // Use defensive guard to handle null/undefined/empty the same way as advices
-  if (config.mainTickbars) {
+  if (config.mainTickmarks) {
     const start = config.frameStyle === 'flat' ? base : tickmarksStart;
     const mainLen = config.frameStyle === 'flat' ? main + 4 : main;
     const dirLen = isOutwardPositive(config) ? mainLen : -mainLen;
 
     // Use provided array or default to [minValue, 0, maxValue]
     const mainTickValues =
-      config.mainTickbars.length > 0
-        ? config.mainTickbars
+      config.mainTickmarks.length > 0
+        ? config.mainTickmarks
         : [config.minValue, 0, config.maxValue];
 
     for (const value of mainTickValues) {
       // Skip if outside range
       if (value < config.minValue || value > config.maxValue) continue;
 
-      // Skip min/max tickbars when scaleBackground is enabled (they align with the background edges)
+      // Skip min/max tickmarks when scaleBackground is enabled (they align with the background edges)
       if (
         config.scaleBackground &&
         (value === config.minValue || value === config.maxValue)
@@ -1199,12 +1199,12 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
 
   // Primary - show when interval is defined and > 0
   if (
-    config.primaryTickbarsInterval !== undefined &&
-    config.primaryTickbarsInterval > 0
+    config.primaryTickmarkInterval !== undefined &&
+    config.primaryTickmarkInterval > 0
   ) {
     const {svgs: s, values} = generateTickmarksAtInterval(
       config,
-      config.primaryTickbarsInterval,
+      config.primaryTickmarkInterval,
       tickmarksStart,
       isOutwardPositive(config) ? primary : -primary,
       skipValues
@@ -1215,12 +1215,12 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
 
   // Secondary - show when interval is defined and > 0
   if (
-    config.secondaryTickbarsInterval !== undefined &&
-    config.secondaryTickbarsInterval > 0
+    config.secondaryTickmarkInterval !== undefined &&
+    config.secondaryTickmarkInterval > 0
   ) {
     const {svgs: s} = generateTickmarksAtInterval(
       config,
-      config.secondaryTickbarsInterval,
+      config.secondaryTickmarkInterval,
       tickmarksStart,
       isOutwardPositive(config) ? secondary : -secondary,
       skipValues
@@ -1230,12 +1230,12 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
 
   // Tertiary - show when interval is defined and > 0
   if (
-    config.tertiaryTickbarsInterval !== undefined &&
-    config.tertiaryTickbarsInterval > 0
+    config.tertiaryTickmarkInterval !== undefined &&
+    config.tertiaryTickmarkInterval > 0
   ) {
     const {svgs: s} = generateTickmarksAtInterval(
       config,
-      config.tertiaryTickbarsInterval,
+      config.tertiaryTickmarkInterval,
       tickmarksStart,
       isOutwardPositive(config) ? tertiary : -tertiary,
       skipValues
@@ -1247,9 +1247,9 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
 }
 
 function generateLabels(config: ExternalScaleConfig): SVGTemplateResult[] {
-  if (!config.labels || config.primaryTickbarsInterval === undefined) return [];
+  if (!config.labels || config.primaryTickmarkInterval === undefined) return [];
 
-  const interval = config.primaryTickbarsInterval;
+  const interval = config.primaryTickmarkInterval;
   if (interval <= 0 || !Number.isFinite(interval)) return [];
 
   const fontFamily = 'var(--font-family-main)';

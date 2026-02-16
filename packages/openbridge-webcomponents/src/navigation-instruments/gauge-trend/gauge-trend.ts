@@ -245,9 +245,9 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
     barVertical.advicePosition = AdvicePosition.inner;
     // obc-bar-vertical uses 'advices' (plural), not 'advice' or 'hasAdvice'
     barVertical.advices = this.hasAdvice ? this.advice : [];
-    barVertical.primaryTickbarsInterval = this.primaryInterval;
-    barVertical.secondaryTickbarsInterval = this.secondaryInterval;
-    barVertical.tertiaryTickbarsInterval = this.tertiaryInterval;
+    barVertical.primaryTickmarkInterval = this.primaryInterval;
+    barVertical.secondaryTickmarkInterval = this.secondaryInterval;
+    barVertical.tertiaryTickmarkInterval = this.tertiaryInterval;
     barVertical.scaleBackground = this.hasScale;
     // When hasScale=false, use gray (secondary) background for the bar container
     barVertical.barContainerStyle = this.hasScale
@@ -257,9 +257,9 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
     barVertical.fixedAspectRatio = this.fixedAspectRatioScaling;
     // Pass scaleReferenceSize from parent (inherited from ObcChartLineBase)
     barVertical.scaleReferenceSize = this.scaleReferenceSize;
-    // Derive tickbar visibility from whether intervals are defined
-    barVertical.hasPrimaryTickbars = this.primaryInterval !== undefined;
-    barVertical.hasTertiaryTickbars = this.tertiaryInterval !== undefined;
+    // Derive tickmark visibility from whether intervals are defined
+    barVertical.hasPrimaryTickmarks = this.primaryInterval !== undefined;
+    barVertical.hasTertiaryTickmarks = this.tertiaryInterval !== undefined;
     barVertical.priority = this.priority;
     // Scale state inherits from parent 'state' property automatically
     barVertical.state = this.state;
