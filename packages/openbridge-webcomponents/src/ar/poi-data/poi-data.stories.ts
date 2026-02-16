@@ -8,11 +8,7 @@ import {
   ObcPoiPointerState,
   ObcPoiPointerType,
 } from '../building-blocks/poi-pointer/poi-pointer.js';
-import {
-  ObcPoiHeaderSize,
-  ObcPoiHeaderState,
-  ObcPoiHeaderType,
-} from '../building-blocks/poi-header/poi-header.js';
+import '../building-blocks/poi-header/poi-header.js';
 
 const compactDocsHeightDecorator = (story: () => unknown) => html`
   <style>
@@ -34,6 +30,7 @@ const meta: Meta<ObcPoiData> = {
     buttonY: 192,
     value: PoiDataValue.Unchecked,
     hasPointer: true,
+    hasHeader: false,
     pointerType: undefined,
     pointerState: undefined,
     relativeDirection: 0,
@@ -54,6 +51,7 @@ const meta: Meta<ObcPoiData> = {
     buttonY: {control: {type: 'range', min: 0, max: 480, step: 1}},
     fixedTarget: {control: {type: 'boolean'}},
     hasPointer: {control: {type: 'boolean'}},
+    hasHeader: {control: {type: 'boolean'}},
     value: {
       options: Object.values(PoiDataValue),
       control: {type: 'select'},
@@ -95,6 +93,7 @@ const meta: Meta<ObcPoiData> = {
         'buttonY',
         'fixedTarget',
         'hasPointer',
+        'hasHeader',
         'value',
         'buttonType',
         'pointerType',
@@ -127,6 +126,7 @@ const meta: Meta<ObcPoiData> = {
         .y=${args.y}
         .buttonY=${args.buttonY}
         .hasPointer=${args.hasPointer}
+        .hasHeader=${args.hasHeader}
         .value=${args.value}
         .buttonType=${args.buttonType}
         .pointerType=${args.pointerType}
@@ -137,7 +137,18 @@ const meta: Meta<ObcPoiData> = {
         .animatePosition=${args.animatePosition}
         .data=${args.data}
         .fixedTarget=${args.fixedTarget}
-      ></obc-poi-data>
+      >
+        ${args.hasHeader
+          ? html`<obc-poi-header
+              slot="header"
+              content="1"
+              type="id"
+              state="selected"
+              size="regular"
+              has-indicator
+            ></obc-poi-header>`
+          : html``}
+      </obc-poi-data>
     `;
   },
 } satisfies Meta<ObcPoiData>;
@@ -176,6 +187,7 @@ export const Preview: Story = {
           .y=${args.y}
           .buttonY=${args.buttonY}
           .hasPointer=${args.hasPointer}
+          .hasHeader=${args.hasHeader}
           .value=${args.value}
           .buttonType=${args.buttonType}
           .pointerType=${args.pointerType}
@@ -186,7 +198,18 @@ export const Preview: Story = {
           .animatePosition=${args.animatePosition}
           .data=${args.data}
           .fixedTarget=${args.fixedTarget}
-        ></obc-poi-data>
+        >
+          ${args.hasHeader
+            ? html`<obc-poi-header
+                slot="header"
+                content="1"
+                type="id"
+                state="selected"
+                size="regular"
+                has-indicator
+              ></obc-poi-header>`
+            : html``}
+        </obc-poi-data>
       </div>
     `;
   },
@@ -379,14 +402,19 @@ export const POIValuesAndContent: Story = {
               .y=${demoY}
               .buttonY=${demoButtonY}
               .type=${ObcPoiType.Point}
-              .header=${{
-                content: '1',
-                type: ObcPoiHeaderType.Id,
-                state: ObcPoiHeaderState.Selected,
-                size: ObcPoiHeaderSize.Regular,
-                hasIndicator: true,
-              }}
-            ></obc-poi-data>
+              .hasHeader=${true}
+            >
+              <obc-poi-header
+                slot="header"
+                content="1"
+                type="id"
+                state="selected"
+                size="regular"
+                has-indicator
+              >
+                <obi-placeholder slot="indicator"></obi-placeholder>
+              </obc-poi-header>
+            </obc-poi-data>
           </div>
           <div class="values-item">
             <div class="values-item-label">With Values</div>

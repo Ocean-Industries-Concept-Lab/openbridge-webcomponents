@@ -6,7 +6,6 @@ import componentStyle from './poi.css?inline';
 import '../poi-button/poi-button.js';
 import {
   ObcPoiButtonType,
-  ObcPoiButtonHeader,
   ObcPoiButtonDataItem,
   PoiButtonVisualState,
 } from '../poi-button/poi-button.js';
@@ -103,6 +102,7 @@ const POINT_POINTER_OFFSET_PX = 12;
  * ## Slots/Content
  *
  * - Default slot: Main icon/content rendered inside `obc-poi-button`.
+ * - `header`: Optional custom header content rendered above the POI object.
  * - `id-label`: Optional ID label content rendered in the POI button label region.
  * - `relation`: Optional relation content rendered in the POI button relation region.
  *
@@ -129,6 +129,7 @@ const POINT_POINTER_OFFSET_PX = 12;
  * ```
  *
  * @slot - Default POI button content.
+ * @slot header - Optional custom header content.
  * @slot id-label - Optional ID label content.
  * @slot relation - Optional relation content.
  */
@@ -144,10 +145,10 @@ export class ObcPoi extends LitElement {
   @property({type: Boolean, attribute: 'fixed-target'}) fixedTarget = false;
   @property({type: Number, attribute: 'outside-angle'}) outsideAngle = 315;
   @property({type: Boolean}) hasPointer = false;
+  @property({type: Boolean, attribute: 'has-header'}) hasHeader = false;
   @property({type: Boolean, attribute: 'animate-position'})
   animatePosition = false;
   @property({type: Number}) relativeDirection = 0;
-  @property({type: Object}) header: ObcPoiButtonHeader | null = null;
   @property({type: String}) buttonType = ObcPoiButtonType.Button;
   @property({type: String, attribute: 'pointer-type'})
   pointerType: ObcPoiPointerType | null = null;
@@ -408,7 +409,7 @@ export class ObcPoi extends LitElement {
         })}
         .relativeDirection=${this.relativeDirection}
         .selected=${this.selected}
-        .header=${this.header}
+        .hasHeader=${this.hasHeader}
         .alertType=${this.buttonAlertType}
         .value=${this.buttonVisualState}
         .type=${this.buttonType}
@@ -416,6 +417,9 @@ export class ObcPoi extends LitElement {
         .hasRelation=${this.hasRelation}
       >
         <slot></slot>
+        ${this.hasHeader
+          ? html`<slot name="header" slot="header"></slot>`
+          : nothing}
         <slot name="id-label" slot="id-label"></slot>
         <slot name="relation" slot="relation"></slot>
       </obc-poi-button>

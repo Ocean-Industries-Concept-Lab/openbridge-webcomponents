@@ -116,6 +116,7 @@ export interface ObcPoiButtonHeader {
  * ## Slots
  *
  * - Default slot: Main icon/content rendered inside `obc-poi-object`.
+ * - `header`: Optional custom header content rendered above the POI object.
  * - `id-label`: Optional custom indicator content for the header indicator slot.
  * - `relation`: Optional relation icon/content rendered when `hasRelation` is true in data mode.
  *
@@ -149,6 +150,7 @@ export class ObcPoiButton extends LitElement {
   @property({type: Boolean}) selected = false;
   @property({type: String, reflect: true}) layout: ObcPoiButtonLayout =
     ObcPoiButtonLayout.Anchored;
+  @property({type: Boolean, attribute: 'has-header'}) hasHeader = false;
   @property({type: Object}) header: ObcPoiButtonHeader | null = null;
   @property({type: String}) alertType = ObcArAlertType.None;
   @property({type: String, reflect: true})
@@ -162,35 +164,24 @@ export class ObcPoiButton extends LitElement {
     return this.data.length > 0;
   }
 
-  get hasHeader(): boolean {
-    const content = this.header?.content;
-    return typeof content === 'string' && content.trim().length > 0;
+  private get hasHeaderContent(): boolean {
+    return (
+      this.querySelector('[slot="header"]') !== null ||
+      Boolean(this.header?.content?.trim())
+    );
   }
 
-  protected get resolvedHeaderState(): ObcPoiHeaderState {
-    if (this.header?.state) {
-      return this.header.state;
+  private get fallbackHeaderState(): ObcPoiHeaderState {
+    switch (this.alertType) {
+      case ObcArAlertType.Alarm:
+        return ObcPoiHeaderState.Alarm;
+      case ObcArAlertType.Warning:
+        return ObcPoiHeaderState.Warning;
+      case ObcArAlertType.Caution:
+        return ObcPoiHeaderState.Caution;
+      default:
+        return ObcPoiHeaderState.Selected;
     }
-
-    if (this.alertType === ObcArAlertType.Alarm) {
-      return ObcPoiHeaderState.Alarm;
-    }
-    if (this.alertType === ObcArAlertType.Warning) {
-      return ObcPoiHeaderState.Warning;
-    }
-    if (this.alertType === ObcArAlertType.Caution) {
-      return ObcPoiHeaderState.Caution;
-    }
-
-    return ObcPoiHeaderState.Selected;
-  }
-
-  protected get resolvedHeaderType(): ObcPoiHeaderType {
-    return this.header?.type ?? ObcPoiHeaderType.Id;
-  }
-
-  protected get resolvedHeaderSize(): ObcPoiHeaderSize {
-    return this.header?.size ?? ObcPoiHeaderSize.Regular;
   }
 
   protected renderHeader() {
@@ -198,14 +189,26 @@ export class ObcPoiButton extends LitElement {
       return nothing;
     }
 
+    if (!this.hasHeaderContent) {
+      return nothing;
+    }
+
+    if (this.querySelector('[slot="header"]')) {
+      return html`
+        <div class="id-label">
+          <slot name="header"></slot>
+        </div>
+      `;
+    }
+
     return html`
       <div class="id-label">
         <obc-poi-header
-          .content=${this.header?.content ?? ''}
+          .content=${this.header?.content?.trim() ?? ''}
           .label=${this.header?.label ?? 'Data'}
-          .size=${this.resolvedHeaderSize}
-          .state=${this.resolvedHeaderState}
-          .type=${this.resolvedHeaderType}
+          .size=${this.header?.size ?? ObcPoiHeaderSize.Regular}
+          .state=${this.header?.state ?? this.fallbackHeaderState}
+          .type=${this.header?.type ?? ObcPoiHeaderType.Id}
           .hasIndicator=${this.header?.hasIndicator ?? false}
         >
           <slot name="id-label" slot="indicator" part="id-label"></slot>
@@ -300,7 +303,7 @@ export class ObcPoiButton extends LitElement {
           wrapper: true,
           'has-data': true,
           selected: this.selected,
-          'has-header': this.hasHeader,
+          'has-header': this.hasHeader && this.hasHeaderContent,
           [`alert-${this.alertType}`]: true,
           [`type-${this.type}`]: true,
           expanded: this.inExpandedGroup,
