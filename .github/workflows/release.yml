@@ -39,6 +39,16 @@ jobs:
         run: |
           npm publish  --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
 
+      - name: Publish angular wrapper to GitHub Packages
+        working-directory: ./packages/openbridge-webcomponents-ng
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm install
+          npm run build
+          cd dist
+          npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
+
       - name: Publish react wrapper to GitHub Packages
         working-directory: ./packages/openbridge-webcomponents-react
         env:
@@ -57,17 +67,6 @@ jobs:
           npm run build
           rm -rf node_modules/@oicl || true
           rm -rf node_modules/@ocean-industries-concept-lab || true
-          npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
-      - name: Publish angular wrapper to GitHub Packages
-        working-directory: ./packages/openbridge-webcomponents-ng
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          rm -rf node_modules/@oicl || true
-          rm -rf node_modules/@ocean-industries-concept-lab || true
-          npm install
-          npm run build
-          cd dist
           npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
 
       - name: Publish svelte wrapper to GitHub Packages
