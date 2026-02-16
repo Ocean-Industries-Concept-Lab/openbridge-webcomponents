@@ -7,7 +7,7 @@ import {
   POI_STYLE_OPTIONS,
   POIStyle,
   POI_VISUAL_VARIANTS,
-} from '../poi-graphic-line/poi-config.js';
+} from '../poi-graphic-line/poi-graphic-line.js';
 import {crossDecorator} from '../../../storybook-util.js';
 import {html} from 'lit';
 const meta: Meta<ObcPoiLine> = {

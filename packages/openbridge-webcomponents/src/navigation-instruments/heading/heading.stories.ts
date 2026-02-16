@@ -20,18 +20,20 @@ const meta: Meta<typeof ObcHeading> = {
         hinted: false,
       },
     ],
-    headingSetPoint: 311,
+    headingSetpoint: 311,
     direction: CompassDirection.NorthUp,
+    touching: false,
   },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
     heading: {control: {type: 'range', min: 0, max: 360, step: 1}},
     courseOverGround: {control: {type: 'range', min: 0, max: 360, step: 1}},
-    headingSetPoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
+    headingSetpoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
     direction: {
       control: {type: 'select'},
       options: Object.values(CompassDirection),
     },
+    touching: {control: 'boolean'},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcHeading>;
@@ -41,13 +43,13 @@ type Story = StoryObj<ObcHeading>;
 
 export const Primary: Story = {
   args: {
-    headingSetPoint: undefined,
+    headingSetpoint: undefined,
   },
 };
 
 export const Enhanced: Story = {
   args: {
     enhanced: true,
-    headingSetPoint: 311,
+    headingSetpoint: 311,
   },
 };

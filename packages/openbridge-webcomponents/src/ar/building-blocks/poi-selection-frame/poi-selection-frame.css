@@ -1,7 +1,7 @@
 :host {
   display: inline-flex;
-  width: 48px;
-  height: 48px;
+  width: var(--maneuvering-components-poi-button-touch-target, 48px);
+  height: var(--maneuvering-components-poi-button-touch-target, 48px);
   flex-shrink: 0;
   line-height: 0;
   pointer-events: none;
@@ -14,8 +14,8 @@
 }
 
 :host([type="enhanced"]) {
-  width: 64px;
-  height: 64px;
+  width: var(--maneuvering-components-poi-button-large-touch-target, 64px);
+  height: var(--maneuvering-components-poi-button-large-touch-target, 64px);
 }
 
 :host([type="button"][state="alert"]) {

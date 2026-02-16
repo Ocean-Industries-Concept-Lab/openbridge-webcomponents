@@ -26,7 +26,6 @@
   flex-direction: column;
   appearance: none;
   border: none;
-  display: flex;
   align-items: center;
   justify-content: center;
 
@@ -40,8 +39,8 @@
 
   & .button-wrapper {
     position: relative;
-    width: 48px;
-    min-height: 48px;
+    width: var(--maneuvering-components-poi-button-touch-target, 48px);
+    min-height: var(--maneuvering-components-poi-button-touch-target, 48px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -49,8 +48,8 @@
 
   &.type-enhanced {
     .button-wrapper {
-      width: 64px;
-      height: 64px;
+      width: var(--maneuvering-components-poi-button-large-touch-target, 64px);
+      height: var(--maneuvering-components-poi-button-large-touch-target, 64px);
     }
 
     .alert-ring {
@@ -356,9 +355,9 @@
 }
 
 :host([value="overlapped"]:not([layout="inline"])) .wrapper.has-data {
-  width: 48px;
-  min-width: 48px;
-  max-width: 48px;
+  width: var(--maneuvering-components-poi-button-touch-target, 48px);
+  min-width: var(--maneuvering-components-poi-button-touch-target, 48px);
+  max-width: var(--maneuvering-components-poi-button-touch-target, 48px);
   height: 96px;
 }
 

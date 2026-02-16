@@ -66,7 +66,15 @@ export class ObcPoiPointer extends LitElement {
   }
 
   private get shouldUseBoxDimensions(): boolean {
-    return this.isSelected || this.isActive;
+    if (this.isPoint) {
+      return this.isSelected || this.isActive;
+    }
+
+    if (this.isCamera) {
+      return this.isActive;
+    }
+
+    return false;
   }
 
   private get resolvedBoxWidth(): number | null {
@@ -144,11 +152,15 @@ export class ObcPoiPointer extends LitElement {
     }
 
     return html`
-      <div class="camera-frame" aria-hidden="true">
-        <span class="corner tl"></span>
-        <span class="corner tr"></span>
-        <span class="corner bl"></span>
-        <span class="corner br"></span>
+      <div class="square-frame camera-selection-frame" aria-hidden="true">
+        <obc-poi-selection-frame
+          class="selection-frame"
+          .type=${ObcPoiSelectionFrameType.Button}
+          .state=${ObcPoiSelectionFrameState.Regular}
+          .customMode=${true}
+          .boxWidth=${32}
+          .boxHeight=${24}
+        ></obc-poi-selection-frame>
       </div>
     `;
   }

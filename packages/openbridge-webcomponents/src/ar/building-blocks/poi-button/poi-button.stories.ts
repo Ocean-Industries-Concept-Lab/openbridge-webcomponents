@@ -15,7 +15,7 @@ import {ObcPoiHeaderState, ObcPoiHeaderType} from '../poi-header/poi-header.js';
 
 const overlapToggleLoops = new Map<string, number>();
 
-function startOverlappedLoop(id: string, pauseMs = 1000) {
+function startOverlappedLoop(id: string, pauseMs = 1000, initialDelayMs = 0) {
   if (overlapToggleLoops.has(id)) return;
   let isOverlapped = false;
   const toggle = () => {
@@ -36,12 +36,23 @@ function startOverlappedLoop(id: string, pauseMs = 1000) {
     overlapToggleLoops.set(id, timeout);
   };
 
+  if (initialDelayMs > 0) {
+    const timeout = window.setTimeout(toggle, initialDelayMs);
+    overlapToggleLoops.set(id, timeout);
+    return;
+  }
+
   toggle();
 }
 
-function startOverlappedDataButtonLoop(id: string, pauseMs = 1000) {
+function startOverlappedDataButtonLoop(
+  id: string,
+  pauseMs = 1000,
+  initialDelayMs = 0,
+  startsOverlapped = false
+) {
   if (overlapToggleLoops.has(id)) return;
-  let isOverlapped = false;
+  let isOverlapped = startsOverlapped;
   const toggle = () => {
     const btn = document.getElementById(id) as ObcPoiButton | null;
     if (!btn) {
@@ -100,6 +111,12 @@ function startOverlappedDataButtonLoop(id: string, pauseMs = 1000) {
     overlapToggleLoops.set(id, timeout);
   };
 
+  if (initialDelayMs > 0) {
+    const timeout = window.setTimeout(toggle, initialDelayMs);
+    overlapToggleLoops.set(id, timeout);
+    return;
+  }
+
   toggle();
 }
 
@@ -115,6 +132,7 @@ const meta: Meta<ObcPoiButton> = {
     alertType: ObcArAlertType.None,
     header: null,
     value: PoiButtonVisualState.Unchecked,
+    hasRelation: false,
     data: [],
   },
   argTypes: {
@@ -138,6 +156,9 @@ const meta: Meta<ObcPoiButton> = {
     type: {
       control: {type: 'select'},
       options: Object.values(ObcPoiButtonType),
+    },
+    hasRelation: {
+      control: {type: 'boolean'},
     },
   },
   render: (args) => html`
@@ -166,8 +187,6 @@ type Story = StoryObj<ObcPoiButton>;
 const canvasStyle =
   'transform: translate(-50%, -50%); width: min(1100px, 92vw); max-height: 88vh; overflow: auto; padding: 8px 12px 24px;';
 const sectionStyle = 'margin-bottom: 24px;';
-const headerStyle =
-  'margin: 0 0 12px 0; font-family: sans-serif; font-size: 14px; font-weight: 600;';
 const gridStyle =
   'display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px 16px; align-items: start;';
 const itemStyle =
@@ -232,7 +251,6 @@ export const AllTypes: Story = {
   render: () =>
     renderOverview(html`
       <div style=${sectionStyle}>
-        <h3 style=${headerStyle}>Types and Selection</h3>
         <div style=${gridStyle}>
           ${renderMatrixButton({label: 'Button'})}
           ${renderMatrixButton({
@@ -259,7 +277,6 @@ export const AllAlerts: Story = {
   render: () =>
     renderOverview(html`
       <div style=${sectionStyle}>
-        <h3 style=${headerStyle}>Alert States - Button</h3>
         <div style=${gridStyle}>
           ${renderMatrixButton({
             label: 'None',
@@ -288,7 +305,6 @@ export const AllAlerts: Story = {
       </div>
 
       <div style=${sectionStyle}>
-        <h3 style=${headerStyle}>Alert States - Enhanced</h3>
         <div style=${gridStyle}>
           ${renderMatrixButton({
             label: 'None',
@@ -326,7 +342,6 @@ export const AllOverlapped: Story = {
   render: () =>
     renderOverview(html`
       <div style=${sectionStyle}>
-        <h3 style=${headerStyle}>Overlapped Variants</h3>
         <div style=${gridStyle}>
           ${renderMatrixButton({
             label: 'Button',
@@ -361,7 +376,6 @@ export const AllData: Story = {
   render: () =>
     renderOverview(html`
       <div style=${sectionStyle}>
-        <h3 style=${headerStyle}>Data Variants</h3>
         <div style=${gridStyle}>
           ${renderMatrixButton({
             label: 'Values',
@@ -427,7 +441,6 @@ export const OverlappedAnimated: Story = {
 
     return renderOverview(html`
       <div style=${sectionStyle}>
-        <h3 style=${headerStyle}>Animated Overlap</h3>
         <div style=${gridStyle}>
           <div style=${itemStyle}>
             <div style=${stageStyle}>
@@ -469,7 +482,7 @@ export const OverlappedAnimatedWithData: Story = {
   },
   render: () => {
     requestAnimationFrame(() =>
-      startOverlappedDataButtonLoop('animated-btn-data', 1000)
+      startOverlappedDataButtonLoop('animated-btn-data', 1000, 100, true)
     );
 
     const values = [
@@ -479,13 +492,13 @@ export const OverlappedAnimatedWithData: Story = {
 
     return renderOverview(html`
       <div style=${sectionStyle}>
-        <h3 style=${headerStyle}>Animated Overlap (Data)</h3>
         <div style=${gridStyle}>
           <div style=${itemStyle}>
             <div style=${stageTallStyle}>
               <obc-poi-button
                 id="animated-btn-data"
                 style="position: absolute; left: 50%; bottom: 0; --obc-poi-transition-duration: 100ms; --obc-poi-opacity-transition-duration: 100ms;"
+                .value=${PoiButtonVisualState.Overlapped}
                 .data=${values}
               >
                 <obi-placeholder></obi-placeholder>
