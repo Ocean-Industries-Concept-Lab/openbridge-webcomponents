@@ -14,18 +14,49 @@ export enum ObcModalWindowSize {
   Large = 'large',
 }
 
+/**
+ * Event fired when close action is clicked.
+ */
+export type ObcModalWindowCloseClickEvent = CustomEvent<void>;
+
+/**
+ * Event fired when cancel action is clicked.
+ */
+export type ObcModalWindowCancelClickEvent = CustomEvent<void>;
+
+/**
+ * Event fired when done action is clicked.
+ */
+export type ObcModalWindowDoneClickEvent = CustomEvent<void>;
+
+/**
+ * @fires close-click {ObcModalWindowCloseClickEvent} Fired when the close button is clicked.
+ * @fires cancel-click {ObcModalWindowCancelClickEvent} Fired when the cancel button is clicked.
+ * @fires done-click {ObcModalWindowDoneClickEvent} Fired when the done button is clicked.
+ */
 @customElement('obc-modal-window')
 export class ObcModalWindow extends LitElement {
   @property({type: String}) size = ObcModalWindowSize.Large;
   @property({type: Boolean}) hasOptionalAction = false;
+  @property({type: Boolean}) hasCancelAction = true;
+  @property({type: Boolean}) hasCloseAction = true;
   @property({type: Boolean}) hasLeadingIcon = false;
 
+  /**
+   * Handles close-button-click and emits `close-click`.
+   */
   private onCloseClick = () =>
     this.dispatchEvent(new CustomEvent('close-click'));
 
+  /**
+   * Handles cancel-button-click and emits `cancel-click`.
+   */
   private onCancelClick = () =>
     this.dispatchEvent(new CustomEvent('cancel-click'));
 
+  /**
+   * Handles done-button-click and emits `done-click`.
+   */
   private onDoneClick = () => this.dispatchEvent(new CustomEvent('done-click'));
 
   private onOptionClick = () =>
@@ -54,9 +85,11 @@ export class ObcModalWindow extends LitElement {
               <slot name="title">Title</slot>
             </div>
           </div>
-          <obc-icon-button variant="flat" @click=${this.onCloseClick}>
-            <obi-close-google></obi-close-google>
-          </obc-icon-button>
+          ${this.hasCloseAction
+            ? html`<obc-icon-button variant="flat" @click=${this.onCloseClick}>
+                <obi-close-google></obi-close-google>
+              </obc-icon-button>`
+            : nothing}
           <div class="divider"></div>
         </div>
 
@@ -81,12 +114,14 @@ export class ObcModalWindow extends LitElement {
               'primary-action-vertical': isSmall,
             })}
           >
-            <obc-button
-              @click=${this.onCancelClick}
-              .fullWidth=${isSmall || isMedium}
-            >
-              <slot name="cancel-label">Cancel</slot>
-            </obc-button>
+            ${this.hasCancelAction
+              ? html`<obc-button
+                  @click=${this.onCancelClick}
+                  .fullWidth=${isSmall || isMedium}
+                >
+                  <slot name="cancel-label">Cancel</slot>
+                </obc-button>`
+              : nothing}
             <obc-button
               variant="raised"
               @click=${this.onDoneClick}

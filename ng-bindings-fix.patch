@@ -1,0 +1,154 @@
+diff --git a/.gitignore b/.gitignore
+index 8ce9df29..9219cfc4 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -27,3 +27,5 @@ packages/openbridge-webcomponents-svelte
+ packages/openbridge-webcomponents/__vis__/darwin/
+ .idea/
+ **/.idea/
++
++/tgz
+diff --git a/package.json b/package.json
+index 9417ad1f..d94189b2 100644
+--- a/package.json
++++ b/package.json
+@@ -5,7 +5,18 @@
+     "build:lib": "npm run build --workspaces --if-present",
+     "format:all": "npm run format --workspaces --if-present",
+     "build:docker-for-storybook-testing": "docker build -t openbridge-webcomponents-storybook .",
+-    "prepare": "husky"
++    "prepare": "husky",
++    "---- ANGULAR / BUILD ----": "",
++    "build:ng": "npm run build:prepare && npm run build:package-base && npm run build:package-ng",
++    "build:prepare": "npm run analyze --workspace=packages/openbridge-webcomponents && npm run translations:extract --workspace=packages/openbridge-webcomponents",
++    "build:package-base": "npm run build:ts --workspace=packages/openbridge-webcomponents && npm run build:package-ng",
++    "build:package-ng": "npm run build --workspace=packages/openbridge-webcomponents-ng",
++    "---- ANGULAR / PACK ----": "",
++    "pack:ng": "mkdirp ./tgz && npm run pack:package-base && npm run pack:package-ng",
++    "pack:package-base": "npm pack --workspace=packages/openbridge-webcomponents --pack-destination=./tgz",
++    "pack:package-ng": "npm i --workspace=packages/openbridge-webcomponents && cd packages/openbridge-webcomponents-ng/dist && npm pack --pack-destination=../../../tgz",
++    "---- STORYBOOK ----": "",
++    "serve:storybook": "npm run storybook:server --workspace=packages/openbridge-webcomponents"
+   },
+   "workspaces": [
+     "packages/*"
+diff --git a/packages/openbridge-webcomponents/fix-generated.cjs b/packages/openbridge-webcomponents/fix-generated.cjs
+index 68d46544..a040e2ed 100644
+--- a/packages/openbridge-webcomponents/fix-generated.cjs
++++ b/packages/openbridge-webcomponents/fix-generated.cjs
+@@ -1,4 +1,28 @@
+ const fs = require('fs');
++const path = require('path');
++const glob = require('glob');
++
++function fixBackslashesInAngularFiles() {
++  const ngSrcPath = path.join(__dirname, '../openbridge-webcomponents-ng/src');
++  const files = glob.sync('**/*.ts', {cwd: ngSrcPath, absolute: true});
++
++  files.forEach((file) => {
++    let content = fs.readFileSync(file, 'utf8');
++
++    // Replace all backslashes with forward slashes in import paths
++    content = content.replace(
++      /from\s+['"]([^'"]+)['"]/g,
++      (match, importPath) => {
++        const fixedPath = importPath.replace(/\\/g, '/');
++        // Preserve the original quote style
++        const quote = match.includes('"') ? '"' : "'";
++        return `from ${quote}${fixedPath}${quote}`;
++      }
++    );
++
++    fs.writeFileSync(file, content, 'utf8');
++  });
++}
+ 
+ function addRepositoryToPackageJsonVue() {
+   const packageJson = require('../openbridge-webcomponents-vue/package.json');
+@@ -56,6 +80,50 @@ function fixFilePathInPackageJsonReact() {
+   );
+ }
+ 
+-addRepositoryToPackageJsonVue();
+-addRepositoryToPackageJsonReact();
+-fixFilePathInPackageJsonReact();
++function addRepositoryToPackageJsonAngular() {
++  const packageJson =
++    require.cache[
++      require.resolve('../openbridge-webcomponents-ng/package.json')
++    ];
++  if (packageJson) {
++    delete require.cache[
++      require.resolve('../openbridge-webcomponents-ng/package.json')
++    ];
++  }
++  const pkg = require('../openbridge-webcomponents-ng/package.json');
++
++  pkg.repository = {
++    type: 'git',
++    url: 'git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip.git',
++    directory: 'packages/openbridge-webcomponents-ng',
++  };
++  pkg.license = 'Apache-2.0';
++  pkg.files = ['dist', 'src'];
++
++  // Preserve build script with npm install
++  if (pkg.scripts && pkg.scripts.build) {
++    if (!pkg.scripts.build.includes('npm install')) {
++      pkg.scripts.build = 'npm install && ' + pkg.scripts.build;
++    }
++  }
++
++  fs.writeFileSync(
++    '../openbridge-webcomponents-ng/package.json',
++    JSON.stringify(pkg, null, 2) + '\n'
++  );
++}
++
++// Check if running for specific framework or all frameworks
++const args = process.argv.slice(2);
++const frameworkArg = args.find((arg) => arg.startsWith('--framework='));
++const framework = frameworkArg ? frameworkArg.split('=')[1] : 'all';
++
++if (['all', 'angular'].includes(framework)) {
++  fixBackslashesInAngularFiles();
++  addRepositoryToPackageJsonAngular();
++} else if (['all', 'vue'].includes(framework)) {
++  addRepositoryToPackageJsonVue();
++} else if (['all', 'react'].includes(framework)) {
++  addRepositoryToPackageJsonReact();
++  fixFilePathInPackageJsonReact();
++}
+diff --git a/packages/openbridge-webcomponents/package.json b/packages/openbridge-webcomponents/package.json
+index 759e8425..ed075742 100644
+--- a/packages/openbridge-webcomponents/package.json
++++ b/packages/openbridge-webcomponents/package.json
+@@ -9,12 +9,13 @@
+   },
+   "license": "Apache-2.0",
+   "scripts": {
+-    "build": "yarn run build:translations && yarn run typecheck && yarn run build:bundle && yarn run build:ts && yarn run analyze && yarn run build:wrappers",
++    "build": "npm run build:translations && npm run typecheck && npm run build:bundle && npm run build:ts && npm run analyze && npm run build:wrappers",
+     "build:ts": "vite build",
+     "build:ts:watch": "vite build --watch",
+     "build:bundle": "tsx ./script/generate-bundle-entry.ts && vite build --mode bundle",
+     "build:translations": "lit localize build",
+     "build:wrappers": "lit labs gen --framework=vue --framework=react --framework=angular --framework=svelte --out=.. && node fix-generated.cjs",
++    "build:bindings-ng": "lit labs gen --framework=angular --out=.. && node fix-generated.cjs --framework=angular",
+     "typecheck": "tsc --noEmit",
+     "preview": "vite preview",
+     "storybook": "storybook dev -p 6006 --no-open",
+@@ -26,12 +27,11 @@
+     "test-storybook:watch": "vitest --project=storybook --watch",
+     "update-snapshots": "rm -rf __vis__/linux/__baselines__ && mv __vis__/linux/__results__/ __vis__/linux/__baselines__/",
+     "translations:extract": "lit localize extract",
+-    "prepack": "yarn build",
+     "format": "prettier \"**/*.{cjs,html,js,json,md,ts,css}\"  --write",
+     "format:check": "prettier \"**/*.{cjs,html,js,json,md,ts,css}\"  --check",
+     "fix-imports": "node fix-imports.mjs",
+     "fix-imports:check": "node fix-imports.mjs --dry-run",
+-    "lint": "yarn run lint:lit-analyzer && yarn run lint:eslint",
++    "lint": "npm run lint:lit-analyzer && npm run lint:eslint",
+     "lint-npm": "npm run lint:lit-analyzer && npm run lint:eslint",
+     "lint:eslint": "eslint 'src/**/*.ts'",
+     "lint:lit-analyzer": "lit-analyzer --strict --maxWarnings 0",

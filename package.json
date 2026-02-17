@@ -5,7 +5,20 @@
     "build:lib": "npm run build --workspaces --if-present",
     "format:all": "npm run format --workspaces --if-present",
     "build:docker-for-storybook-testing": "docker build -t openbridge-webcomponents-storybook .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "----ANGULAR - PREPARE, BUILD, GENERATE & BUILD GENERATED----": "",
+    "build:ng": "npm run build:prepare && npm run build:package-base && npm run generate:package-ng && npm run build:package-ng",
+    "build:prepare": "npm run analyze --workspace=packages/openbridge-webcomponents && npm run translations:extract --workspace=packages/openbridge-webcomponents",
+    "build:package-base": "npm run build:ts --workspace=packages/openbridge-webcomponents",
+    "generate:package-ng": "npm run generate:wrapper-ng --workspace=packages/openbridge-webcomponents",
+    "build:package-ng": "npm run build --workspace=packages/openbridge-webcomponents-ng",
+    "----ANGULAR - PACK----": "",
+    "pack:ng": "mkdirp ./tgz && npm run pack:package-base && npm run pack:package-ng",
+    "pack:package-base": "npm pack --workspace=packages/openbridge-webcomponents --pack-destination=./tgz",
+    "pack:package-ng": "npm i --workspace=packages/openbridge-webcomponents && cd packages/openbridge-webcomponents-ng/dist && npm pack --pack-destination=../../../tgz",
+    "----STORYBOOK----": "",
+    "build:storybook": "npm run build-storybook --workspace=packages/openbridge-webcomponents",
+    "serve:storybook": "npm run storybook:server --workspace=packages/openbridge-webcomponents"
   },
   "workspaces": [
     "packages/*"
