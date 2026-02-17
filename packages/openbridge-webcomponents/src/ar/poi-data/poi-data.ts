@@ -37,7 +37,7 @@ export {ObcPoiValue as PoiDataValue};
  * - Marker visuals:
  *   - `type`, `value`, `state`, `selected`, `hasPointer`.
  *   - `pointerType`, `pointerState`, `outsideAngle`.
- *   - `buttonType`, `relativeDirection`, `data`.
+ *   - `buttonType`, `relativeDirection`, `data`, `overlapOpaque` (`false` = translucent overlap, `true` = opaque overlap).
  * - Rendering behavior:
  *   - Injects a default `obi-vessel-generic-default-filled` icon.
  *   - Forwards optional `header` slot content when `hasHeader` is true.
@@ -77,6 +77,8 @@ export class ObcPoiData extends LitElement {
   @property({type: Boolean}) selected = false;
   @property({type: String, attribute: 'button-type'})
   buttonType = ObcPoiButtonType.Button;
+  @property({type: Boolean, attribute: 'overlap-opaque'})
+  overlapOpaque = false;
   @property({attribute: false})
   data: ObcPoiButtonDataItem[] = [];
   @property({type: Boolean, attribute: 'has-header'}) hasHeader = false;
@@ -227,6 +229,7 @@ export class ObcPoiData extends LitElement {
         .animatePosition=${this.animatePosition}
         .relativeDirection=${this.relativeDirection}
         .buttonType=${this.buttonType}
+        .overlapOpaque=${this.overlapOpaque}
         .pointerType=${this.pointerType}
         .pointerState=${this.pointerState}
         .selected=${this.selected}

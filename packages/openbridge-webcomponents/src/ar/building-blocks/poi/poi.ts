@@ -66,6 +66,7 @@ const POINT_POINTER_OFFSET_PX = 12;
  *   - `checked`: selected-like visual and pointer behavior.
  *   - `activated`: activated button visual state with selected-like pointer behavior.
  *   - `overlapped`: compact overlap visual state.
+ * - `overlapOpaque` (default: `false`): controls overlapped opacity mode (`false` = translucent, `true` = opaque).
  * - `state` (default: `enabled`):
  *   - `enabled`: neutral alert ring and regular line style.
  *   - `caution`/`warning`/`alarm`: applies alert-specific button/line styling.
@@ -132,6 +133,8 @@ export class ObcPoi extends LitElement {
   @property({type: String}) state: ObcPoiState = ObcPoiState.Enabled;
   @property({type: Boolean}) selected = false;
   @property({type: String}) buttonType = ObcPoiButtonType.Button;
+  @property({type: Boolean, attribute: 'overlap-opaque'})
+  overlapOpaque = false;
   @property({type: Array, attribute: false}) data: ObcPoiButtonDataItem[] = [];
   @property({type: Boolean, attribute: 'has-header'}) hasHeader = false;
   @property({type: Boolean}) hasPointer = false;
@@ -403,6 +406,7 @@ export class ObcPoi extends LitElement {
         .hasHeader=${this.hasHeader}
         .state=${this.buttonState}
         .value=${this.buttonVisualState}
+        .overlapOpaque=${this.overlapOpaque}
         .type=${this.buttonType}
         .data=${this.data}
       >

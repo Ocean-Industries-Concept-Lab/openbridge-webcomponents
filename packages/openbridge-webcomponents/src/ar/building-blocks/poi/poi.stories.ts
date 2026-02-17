@@ -25,6 +25,7 @@ type PoiStoryArgs = {
   pointerType: ObcPoiPointerType | undefined;
   pointerState: ObcPoiPointerState | undefined;
   animatePosition: boolean;
+  overlapOpaque: boolean;
   relativeDirection: number;
   buttonOffsetX: number;
   targetOffsetX: number;
@@ -51,6 +52,7 @@ const meta: Meta<PoiStoryArgs> = {
     pointerType: undefined,
     pointerState: undefined,
     animatePosition: false,
+    overlapOpaque: false,
     relativeDirection: 0,
     buttonOffsetX: 0,
     targetOffsetX: 0,
@@ -89,6 +91,7 @@ const meta: Meta<PoiStoryArgs> = {
       options: [undefined, ...Object.values(ObcPoiPointerState)],
     },
     animatePosition: {control: {type: 'boolean'}},
+    overlapOpaque: {control: {type: 'boolean'}},
     relativeDirection: {control: {type: 'range', min: 0, max: 360}},
     buttonOffsetX: {control: {type: 'range', min: -150, max: 150, step: 1}},
     targetOffsetX: {control: {type: 'range', min: -150, max: 150, step: 1}},
@@ -115,6 +118,7 @@ const meta: Meta<PoiStoryArgs> = {
         'pointerType',
         'pointerState',
         'animatePosition',
+        'overlapOpaque',
         'relativeDirection',
         'buttonOffsetX',
         'targetOffsetX',
@@ -147,6 +151,7 @@ const meta: Meta<PoiStoryArgs> = {
           .pointerType=${args.pointerType}
           .pointerState=${args.pointerState}
           .animatePosition=${args.animatePosition}
+          .overlapOpaque=${args.overlapOpaque}
           .relativeDirection=${args.relativeDirection}
           .buttonOffsetX=${args.buttonOffsetX}
           .targetOffsetX=${args.targetOffsetX}

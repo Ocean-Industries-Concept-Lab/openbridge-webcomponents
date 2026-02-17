@@ -42,6 +42,7 @@ const meta: Meta<ObcPoiData> = {
     boxWidth: null,
     boxHeight: null,
     animatePosition: false,
+    overlapOpaque: false,
     data: [],
     fixedTarget: false,
   },
@@ -94,6 +95,7 @@ const meta: Meta<ObcPoiData> = {
     boxWidth: {control: {type: 'number', min: 0, step: 1}},
     boxHeight: {control: {type: 'number', min: 0, step: 1}},
     animatePosition: {control: {type: 'boolean'}},
+    overlapOpaque: {control: {type: 'boolean'}},
     data: {
       control: 'object',
       description:
@@ -123,6 +125,7 @@ const meta: Meta<ObcPoiData> = {
         'boxWidth',
         'boxHeight',
         'animatePosition',
+        'overlapOpaque',
         'data',
       ],
     },
@@ -161,6 +164,7 @@ const meta: Meta<ObcPoiData> = {
         .boxWidth=${args.boxWidth}
         .boxHeight=${args.boxHeight}
         .animatePosition=${args.animatePosition}
+        .overlapOpaque=${args.overlapOpaque}
         .data=${args.data}
         .fixedTarget=${args.fixedTarget}
       >
@@ -222,6 +226,7 @@ export const Preview: Story = {
           .boxWidth=${args.boxWidth}
           .boxHeight=${args.boxHeight}
           .animatePosition=${args.animatePosition}
+          .overlapOpaque=${args.overlapOpaque}
           .data=${args.data}
           .fixedTarget=${args.fixedTarget}
         >

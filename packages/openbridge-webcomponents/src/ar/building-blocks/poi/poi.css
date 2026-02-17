@@ -30,10 +30,6 @@
   transition: transform 0.1s ease-out;
 }
 
-.wrapper.value-overlapped:not(.has-data) .poi-button {
-  opacity: 0.6;
-}
-
 .wrapper.no-motion .poi-button {
   transition: none;
 }

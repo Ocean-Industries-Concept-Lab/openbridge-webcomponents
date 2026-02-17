@@ -84,6 +84,7 @@ export interface ObcPoiButtonDataItem {
  * - `type` (default `button`): `button` or `enhanced` size.
  * - `layout` (default `anchored`): `anchored` or `inline`.
  * - `value` (default `unchecked`): `unchecked`, `checked`, `activated`, `overlapped`.
+ * - `overlapOpaque` (default `false`): controls overlapped opacity mode (`false` = translucent, `true` = opaque).
  * - `state` (default `enabled`): `enabled`, `caution`, `warning`, `alarm`.
  * - `selected` (default `false`): shows selection frame in anchored layout.
  * - `relativeDirection` (default `0`): rotates default-slot icon content in degrees.
@@ -132,6 +133,8 @@ export class ObcPoiButton extends LitElement {
   state: ObcPoiButtonState = ObcPoiButtonState.Enabled;
   @property({type: String, reflect: true})
   value: PoiButtonVisualState = PoiButtonVisualState.Unchecked;
+  @property({type: Boolean, reflect: true, attribute: 'overlap-opaque'})
+  overlapOpaque = false;
   @property({type: String}) type = ObcPoiButtonType.Button;
   @property({type: Boolean}) inExpandedGroup = false;
   @property({type: Array, attribute: false}) data: ObcPoiButtonDataItem[] = [];

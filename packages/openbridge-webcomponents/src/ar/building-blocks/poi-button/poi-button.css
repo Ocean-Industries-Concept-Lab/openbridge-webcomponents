@@ -12,6 +12,17 @@
   --obc-poi-overlap-pointer-events: auto;
   --obc-poi-transition-duration: 0.1s;
   --obc-poi-opacity-transition-duration: 0.1s;
+  --obc-poi-overlap-object-bg: rgba(255, 255, 255, 0.5);
+  --obc-poi-overlap-object-border: rgba(0, 0, 0, 0.3);
+  --obc-poi-overlap-wrapper-opacity: 0.6;
+  --obc-poi-overlap-data-opacity: 0.6;
+}
+
+:host([overlap-opaque]) {
+  --obc-poi-overlap-object-bg: #fff;
+  --obc-poi-overlap-object-border: var(--overlay-border-outline-color);
+  --obc-poi-overlap-wrapper-opacity: 1;
+  --obc-poi-overlap-data-opacity: 1;
 }
 
 .wrapper {
@@ -69,8 +80,8 @@
     --obc-poi-overlap-pointer-events: none;
 
     .poi-object {
-      --overlay-container-background-color: rgba(255, 255, 255, 0.5);
-      --overlay-border-outline-color: rgba(0, 0, 0, 0.3);
+      --overlay-container-background-color: var(--obc-poi-overlap-object-bg);
+      --overlay-border-outline-color: var(--obc-poi-overlap-object-border);
     }
   }
 
@@ -350,7 +361,7 @@
 :host([value="overlapped"]) .wrapper.has-data {
   --obc-poi-overlapped-data-bg: var(--overlay-container-background-color);
   --obc-poi-overlapped-data-border: var(--overlay-border-outline-color);
-  opacity: 0.6;
+  opacity: var(--obc-poi-overlap-data-opacity, 0.6);
   padding-top: var(--maneuvering-components-poi-button-overlap-offset-padding);
   box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
 
@@ -365,6 +376,10 @@
     --overlay-container-background-color: var(--obc-poi-overlapped-data-bg);
     --overlay-border-outline-color: var(--obc-poi-overlapped-data-border);
   }
+}
+
+:host([value="overlapped"]) .wrapper:not(.has-data) {
+  opacity: var(--obc-poi-overlap-wrapper-opacity, 0.6);
 }
 
 :host([value="overlapped"]) .wrapper.has-data.alert-caution {

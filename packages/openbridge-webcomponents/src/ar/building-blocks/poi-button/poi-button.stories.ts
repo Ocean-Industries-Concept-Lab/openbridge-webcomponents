@@ -131,6 +131,7 @@ const meta: Meta<ObcPoiButton> = {
     selected: false,
     hasHeader: false,
     type: ObcPoiButtonType.Button,
+    overlapOpaque: false,
     relativeDirection: 0,
     state: ObcPoiButtonState.Enabled,
     value: PoiButtonVisualState.Unchecked,
@@ -166,6 +167,9 @@ const meta: Meta<ObcPoiButton> = {
       control: {type: 'select'},
       options: Object.values(ObcPoiButtonType),
     },
+    overlapOpaque: {
+      control: {type: 'boolean'},
+    },
     resolvedHeaderState: {
       control: false,
       table: {disable: true},
@@ -200,6 +204,7 @@ const meta: Meta<ObcPoiButton> = {
       .data=${args.data}
       .selected=${args.selected}
       .hasHeader=${args.hasHeader}
+      .overlapOpaque=${args.overlapOpaque}
       .relativeDirection=${args.relativeDirection}
       .state=${args.state}
       .value=${args.value}
