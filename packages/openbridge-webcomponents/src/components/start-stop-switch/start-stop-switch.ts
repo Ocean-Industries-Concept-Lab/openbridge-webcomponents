@@ -307,6 +307,27 @@ export class ObcStartStopSwitch extends LitElement {
     if (this.buttonRef) this.resizeObserver.observe(this.buttonRef);
   }
 
+  override updated(changedProperties: Map<string, unknown>) {
+    super.updated(changedProperties);
+    // CSS Anchor Positioning (`right: anchor(center)`) on .button-track-checked
+    // may not repaint when the thumb moves via a CSS transition (checked property change).
+    // Force the browser to recalculate anchor positions after the transition completes.
+    if (changedProperties.has('checked') && !this.dragging) {
+      const trackChecked = this.renderRoot.querySelector(
+        '.button-track-checked'
+      ) as HTMLElement | null;
+      if (trackChecked) {
+        // Nudge repaint after the thumb transition (0.1s) settles.
+        setTimeout(() => {
+          trackChecked.style.display = 'none';
+          // Force a synchronous layout recalculation
+          void trackChecked.offsetHeight;
+          trackChecked.style.display = '';
+        }, 120);
+      }
+    }
+  }
+
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.resizeObserver?.disconnect();
