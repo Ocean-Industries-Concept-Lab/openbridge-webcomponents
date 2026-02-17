@@ -1,17 +1,21 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
   ObcPoiButton,
-  ObcPoiButtonHeader,
+  ObcPoiButtonState,
   ObcPoiButtonType,
   PoiButtonVisualState,
 } from './poi-button.js';
 import './poi-button.js';
 import '../../../icons/icon-placeholder.js';
 import '../../../icons/icon-collision-avoidance-overtaking.js';
+import '../poi-header/poi-header.js';
 import {html, TemplateResult} from 'lit';
-import {ObcArAlertType} from '../../types.js';
 import {crossDecorator} from '../../../storybook-util.js';
-import {ObcPoiHeaderState, ObcPoiHeaderType} from '../poi-header/poi-header.js';
+import {
+  ObcPoiHeaderSize,
+  ObcPoiHeaderState,
+  ObcPoiHeaderType,
+} from '../poi-header/poi-header.js';
 
 const overlapToggleLoops = new Map<string, number>();
 
@@ -127,12 +131,12 @@ const meta: Meta<ObcPoiButton> = {
   decorators: [crossDecorator],
   args: {
     selected: false,
+    hasHeader: false,
     type: ObcPoiButtonType.Button,
+    overlapOpaque: false,
     relativeDirection: 0,
-    alertType: ObcArAlertType.None,
-    header: null,
+    state: ObcPoiButtonState.Enabled,
     value: PoiButtonVisualState.Unchecked,
-    hasRelation: false,
     data: [],
   },
   argTypes: {
@@ -142,12 +146,20 @@ const meta: Meta<ObcPoiButton> = {
     selected: {
       control: {type: 'boolean'},
     },
-    alertType: {
+    hasData: {
+      control: false,
+      table: {disable: true},
+    },
+    hasHeader: {
+      control: {type: 'boolean'},
+    },
+    state: {
       control: {type: 'select'},
-      options: Object.values(ObcArAlertType),
+      options: Object.values(ObcPoiButtonState),
     },
     header: {
-      control: {type: 'object'},
+      control: false,
+      table: {disable: true},
     },
     value: {
       control: {type: 'select'},
@@ -157,23 +169,60 @@ const meta: Meta<ObcPoiButton> = {
       control: {type: 'select'},
       options: Object.values(ObcPoiButtonType),
     },
+    overlapOpaque: {
+      control: {type: 'boolean'},
+    },
+    resolvedHeaderState: {
+      control: false,
+      table: {disable: true},
+    },
+    resolvedHeaderType: {
+      control: false,
+      table: {disable: true},
+    },
+    resolvedHeaderSize: {
+      control: false,
+      table: {disable: true},
+    },
+    poiObjectType: {
+      control: false,
+      table: {disable: true},
+    },
+    poiObjectState: {
+      control: false,
+      table: {disable: true},
+    },
+    selectionFrameType: {
+      control: false,
+      table: {disable: true},
+    },
+    selectionFrameState: {
+      control: false,
+      table: {disable: true},
+    },
   },
   render: (args) => html`
     <obc-poi-button
       .data=${args.data}
       .selected=${args.selected}
+      .hasHeader=${args.hasHeader}
+      .overlapOpaque=${args.overlapOpaque}
       .relativeDirection=${args.relativeDirection}
-      .alertType=${args.alertType}
-      .header=${args.header}
+      .state=${args.state}
       .value=${args.value}
       .type=${args.type}
-      .hasRelation=${args.hasRelation}
     >
       <obi-placeholder></obi-placeholder>
-      <obi-collision-avoidance-overtaking
-        slot="relation"
-        part="relation"
-      ></obi-collision-avoidance-overtaking>
+      <obc-poi-header
+        slot="header"
+        .content=${'1'}
+        .type=${ObcPoiHeaderType.Id}
+        .state=${ObcPoiHeaderState.Selected}
+        .size=${ObcPoiHeaderSize.Regular}
+        .hasIndicator=${true}
+      >
+        <obi-placeholder slot="indicator"></obi-placeholder>
+      </obc-poi-header>
     </obc-poi-button>
   `,
 } satisfies Meta<ObcPoiButton>;
@@ -202,11 +251,10 @@ type MatrixButtonConfig = {
   type?: ObcPoiButtonType;
   value?: PoiButtonVisualState;
   selected?: boolean;
-  alertType?: ObcArAlertType;
-  header?: ObcPoiButtonHeader | null;
+  state?: ObcPoiButtonState;
+  hasHeader?: boolean;
   data?: Array<{value: string; label: string; unit: string}>;
   hasRelation?: boolean;
-  idLabel?: boolean;
   stageTall?: boolean;
   label: string;
 };
@@ -219,10 +267,10 @@ const renderMatrixButton = (cfg: MatrixButtonConfig) => html`
         .type=${cfg.type ?? ObcPoiButtonType.Button}
         .value=${cfg.value ?? PoiButtonVisualState.Unchecked}
         .selected=${cfg.selected ?? false}
-        .alertType=${cfg.alertType ?? ObcArAlertType.None}
-        .header=${cfg.header ?? null}
-        .data=${cfg.data ?? []}
+        .hasHeader=${cfg.hasHeader ?? false}
+        .state=${cfg.state ?? ObcPoiButtonState.Enabled}
         .hasRelation=${cfg.hasRelation ?? false}
+        .data=${cfg.data ?? []}
       >
         <obi-placeholder></obi-placeholder>
         ${cfg.hasRelation
@@ -231,8 +279,17 @@ const renderMatrixButton = (cfg: MatrixButtonConfig) => html`
               part="relation"
             ></obi-collision-avoidance-overtaking>`
           : html``}
-        ${cfg.idLabel
-          ? html`<obi-placeholder slot="id-label"></obi-placeholder>`
+        ${cfg.hasHeader
+          ? html`<obc-poi-header
+              slot="header"
+              .content=${'1'}
+              .type=${ObcPoiHeaderType.Id}
+              .state=${ObcPoiHeaderState.Selected}
+              .size=${ObcPoiHeaderSize.Regular}
+              .hasIndicator=${true}
+            >
+              <obi-placeholder slot="indicator"></obi-placeholder>
+            </obc-poi-header>`
           : html``}
       </obc-poi-button>
     </div>
@@ -242,6 +299,12 @@ const renderMatrixButton = (cfg: MatrixButtonConfig) => html`
 
 export const Default: Story = {
   args: {},
+};
+
+export const WithHeader: Story = {
+  args: {
+    hasHeader: true,
+  },
 };
 
 export const AllTypes: Story = {
@@ -257,13 +320,13 @@ export const AllTypes: Story = {
           ${renderMatrixButton({
             label: 'Selected',
             selected: true,
-            header: {content: '1'},
+            hasHeader: true,
           })}
           ${renderMatrixButton({
             label: 'Selected Enhanced',
             type: ObcPoiButtonType.Enhanced,
             selected: true,
-            header: {content: '1'},
+            hasHeader: true,
           })}
         </div>
       </div>
@@ -276,27 +339,27 @@ export const AllAlerts: Story = {
       <div style=${sectionStyle}>
         <div style=${gridStyle}>
           ${renderMatrixButton({
-            label: 'None',
+            label: 'Enabled',
             selected: true,
-            header: {content: '1'},
+            hasHeader: true,
           })}
           ${renderMatrixButton({
             label: 'Caution',
             selected: true,
-            header: {content: '1'},
-            alertType: ObcArAlertType.Caution,
+            hasHeader: true,
+            state: ObcPoiButtonState.Caution,
           })}
           ${renderMatrixButton({
             label: 'Warning',
             selected: true,
-            header: {content: '1'},
-            alertType: ObcArAlertType.Warning,
+            hasHeader: true,
+            state: ObcPoiButtonState.Warning,
           })}
           ${renderMatrixButton({
             label: 'Alarm',
             selected: true,
-            header: {content: '1'},
-            alertType: ObcArAlertType.Alarm,
+            hasHeader: true,
+            state: ObcPoiButtonState.Alarm,
           })}
         </div>
       </div>
@@ -304,31 +367,31 @@ export const AllAlerts: Story = {
       <div style=${sectionStyle}>
         <div style=${gridStyle}>
           ${renderMatrixButton({
-            label: 'None',
+            label: 'Enabled',
             type: ObcPoiButtonType.Enhanced,
             selected: true,
-            header: {content: '1'},
+            hasHeader: true,
           })}
           ${renderMatrixButton({
             label: 'Caution',
             type: ObcPoiButtonType.Enhanced,
             selected: true,
-            header: {content: '1'},
-            alertType: ObcArAlertType.Caution,
+            hasHeader: true,
+            state: ObcPoiButtonState.Caution,
           })}
           ${renderMatrixButton({
             label: 'Warning',
             type: ObcPoiButtonType.Enhanced,
             selected: true,
-            header: {content: '1'},
-            alertType: ObcArAlertType.Warning,
+            hasHeader: true,
+            state: ObcPoiButtonState.Warning,
           })}
           ${renderMatrixButton({
             label: 'Alarm',
             type: ObcPoiButtonType.Enhanced,
             selected: true,
-            header: {content: '1'},
-            alertType: ObcArAlertType.Alarm,
+            hasHeader: true,
+            state: ObcPoiButtonState.Alarm,
           })}
         </div>
       </div>
@@ -352,17 +415,17 @@ export const AllOverlapped: Story = {
           ${renderMatrixButton({
             label: 'Caution',
             value: PoiButtonVisualState.Overlapped,
-            alertType: ObcArAlertType.Caution,
+            state: ObcPoiButtonState.Caution,
           })}
           ${renderMatrixButton({
             label: 'Warning',
             value: PoiButtonVisualState.Overlapped,
-            alertType: ObcArAlertType.Warning,
+            state: ObcPoiButtonState.Warning,
           })}
           ${renderMatrixButton({
             label: 'Alarm',
             value: PoiButtonVisualState.Overlapped,
-            alertType: ObcArAlertType.Alarm,
+            state: ObcPoiButtonState.Alarm,
           })}
         </div>
       </div>
@@ -383,20 +446,13 @@ export const AllData: Story = {
             ],
           })}
           ${renderMatrixButton({
-            label: 'Values + Relation',
+            label: 'Values + Header',
             stageTall: true,
             data: [
               {value: '10', label: 'Lab', unit: 'Unit'},
               {value: '20', label: 'Lab 2', unit: 'Unit 2'},
             ],
-            hasRelation: true,
-            header: {
-              content: '1',
-              type: ObcPoiHeaderType.Id,
-              state: ObcPoiHeaderState.Selected,
-              hasIndicator: true,
-            },
-            idLabel: true,
+            hasHeader: true,
           })}
           ${renderMatrixButton({
             label: 'Values + Alarm',
@@ -405,7 +461,7 @@ export const AllData: Story = {
               {value: '10', label: 'Lab', unit: 'Unit'},
               {value: '20', label: 'Lab 2', unit: 'Unit 2'},
             ],
-            alertType: ObcArAlertType.Alarm,
+            state: ObcPoiButtonState.Alarm,
           })}
           ${renderMatrixButton({
             label: 'Values + Overlapped',
@@ -415,6 +471,16 @@ export const AllData: Story = {
               {value: '20', label: 'Lab 2', unit: 'Unit 2'},
             ],
             value: PoiButtonVisualState.Overlapped,
+          })}
+          ${renderMatrixButton({
+            label: 'Values + Relation',
+            stageTall: true,
+            data: [
+              {value: '10', label: 'Lab', unit: 'Unit'},
+              {value: '20', label: 'Lab 2', unit: 'Unit 2'},
+            ],
+            hasRelation: true,
+            hasHeader: true,
           })}
         </div>
       </div>

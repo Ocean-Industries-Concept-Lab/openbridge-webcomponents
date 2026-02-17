@@ -10,24 +10,24 @@
       @click="handleVideoClick"
     ></video>
 
-    <ObcPoiTarget
+    <ObcPoiData
       ref="large"
       class="ar-poi-target"
       :relative-direction="80"
-      :height="xLarge.y"
+      :y="xLarge.y"
       :style="{ left: xLarge.x + '%' }"
     >
-    </ObcPoiTarget>
+    </ObcPoiData>
 
-    <ObcPoiTarget
+    <ObcPoiData
       ref="fast"
       class="ar-poi-target"
       :relative-direction="90"
-      :height="xFast.y"
+      :y="xFast.y"
       :style="{ left: xFastCalc.x + '%' }"
-      :offset="xFastCalc.offset"
+      :button-offset-x="xFastCalc.offset"
     >
-    </ObcPoiTarget>
+    </ObcPoiData>
   </div>
 </template>
 
@@ -35,12 +35,12 @@
 import 'video.js/dist/video-js.css'
 
 import { onMounted, ref, onBeforeUnmount, computed } from 'vue'
-import ObcPoiTarget from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/ar/poi-target/ObcPoiTarget.vue'
+import ObcPoiData from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/ar/poi-data/ObcPoiData.vue'
 import Hls from 'hls.js'
 
 const arVideo = ref<HTMLVideoElement | null>(null)
-const fast = ref<InstanceType<typeof ObcPoiTarget> | null>(null)
-const large = ref<InstanceType<typeof ObcPoiTarget> | null>(null)
+const fast = ref<InstanceType<typeof ObcPoiData> | null>(null)
+const large = ref<InstanceType<typeof ObcPoiData> | null>(null)
 const xLarge = ref({ x: 31.5, y: 200 })
 const xFast = ref({ x: 51, y: 190 })
 
@@ -157,20 +157,33 @@ const keyframes = {
 const setPosition = (
   t: number,
   frames: { t: number; x: number; h: number }[],
-  f: InstanceType<typeof ObcPoiTarget> | null,
+  f: InstanceType<typeof ObcPoiData> | null,
   fast: boolean
 ) => {
   if (f === null) throw new Error('f is null')
 
+  const applyTransformedPosition = (x: number, h: number) => {
+    const height = arVideo.value?.getBoundingClientRect().height ?? 1
+    const labelHeight = height / 2 - 100
+
+    const xTransformed = (576 / 768) * (x - 50) + 50
+    const hPoint = ((h + 270) / 768) * height
+    const hTransformed = hPoint - labelHeight
+
+    if (fast) {
+      xFast.value = { x: xTransformed, y: hTransformed }
+    } else {
+      xLarge.value = { x: xTransformed, y: hTransformed }
+    }
+  }
+
   // Handle edge cases: before first or after last keyframe
   if (frames[0] && t <= frames[0].t) {
-    f.$el.height = frames[0].h
-    f.$el.style.left = `${frames[0].x}%`
+    applyTransformedPosition(frames[0].x, frames[0].h)
     return
   }
   if (frames[frames.length - 1] && t >= frames[frames.length - 1]!.t) {
-    f.$el.height = frames[frames.length - 1]!.h
-    f.$el.style.left = `${frames[frames.length - 1]!.x}%`
+    applyTransformedPosition(frames[frames.length - 1]!.x, frames[frames.length - 1]!.h)
     return
   }
 
@@ -186,18 +199,7 @@ const setPosition = (
   const alpha = (t - kf0.t) / (kf1.t - kf0.t)
   const x = kf0.x + (kf1.x - kf0.x) * alpha
   const h = kf0.h + (kf1.h - kf0.h) * alpha
-
-  const height = arVideo.value?.getBoundingClientRect().height ?? 1
-  const labelHeight = height / 2 - 100
-
-  const xTransformed = (576 / 768) * (x - 50) + 50
-  const hPoint = ((h + 270) / 768) * height
-  const hTransformed = hPoint - labelHeight
-  if (fast) {
-    xFast.value = { x: xTransformed, y: hTransformed }
-  } else {
-    xLarge.value = { x: xTransformed, y: hTransformed }
-  }
+  applyTransformedPosition(x, h)
 }
 
 function handleKeydown(e: KeyboardEvent) {

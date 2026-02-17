@@ -30,15 +30,50 @@ const meta: Meta<ObcPoiSelectionFrame> = {
     customMode: {
       control: {type: 'boolean'},
     },
+    'custom-mode': {control: false, table: {disable: true}},
     boxWidth: {
       control: {type: 'number', min: 28, step: 1},
       description:
         'Custom frame width in pixels when customMode is enabled (28px is default).',
     },
+    'box-width': {control: false, table: {disable: true}},
     boxHeight: {
       control: {type: 'number', min: 28, step: 1},
       description:
         'Custom frame height in pixels when customMode is enabled (28px is default).',
+    },
+    'box-height': {control: false, table: {disable: true}},
+    MIN_CUSTOM_SIZE_PX: {control: false, table: {disable: true}},
+    MIN_TOUCH_TARGET_SIZE_PX: {control: false, table: {disable: true}},
+    CORNER_SHADOW_BLEED_PX: {control: false, table: {disable: true}},
+    resolvedVariant: {control: false, table: {disable: true}},
+    resolvedVariantSourceSizePx: {control: false, table: {disable: true}},
+    resolvedVariantCornerVisualPx: {control: false, table: {disable: true}},
+    resolvedVariantCornerCropPx: {control: false, table: {disable: true}},
+    resolvedCustomBoxWidthPx: {control: false, table: {disable: true}},
+    resolvedCustomBoxHeightPx: {control: false, table: {disable: true}},
+    resolvedCustomVisualWidthPx: {control: false, table: {disable: true}},
+    resolvedCustomVisualHeightPx: {control: false, table: {disable: true}},
+  },
+  parameters: {
+    controls: {
+      include: ['type', 'state', 'customMode', 'boxWidth', 'boxHeight'],
+      exclude: [
+        'custom-mode',
+        'box-width',
+        'box-height',
+        'MIN_CUSTOM_SIZE_PX',
+        'MIN_TOUCH_TARGET_SIZE_PX',
+        'CORNER_SHADOW_BLEED_PX',
+        'resolvedVariant',
+        'resolvedVariantSourceSizePx',
+        'resolvedVariantCornerVisualPx',
+        'resolvedVariantCornerCropPx',
+        'resolvedCustomBoxWidthPx',
+        'resolvedCustomBoxHeightPx',
+        'resolvedCustomVisualWidthPx',
+        'resolvedCustomVisualHeightPx',
+      ],
     },
   },
   render: (args) => html`
@@ -64,10 +99,10 @@ export const Interactive: Story = {};
 export const VariantMatrix: Story = {
   render: () => {
     const states = [
-      ObcPoiSelectionFrameState.Regular,
       ObcPoiSelectionFrameState.Flat,
-      ObcPoiSelectionFrameState.None,
+      ObcPoiSelectionFrameState.Regular,
       ObcPoiSelectionFrameState.Alert,
+      ObcPoiSelectionFrameState.None,
     ];
     const types = [
       ObcPoiSelectionFrameType.Indicator,
@@ -79,7 +114,8 @@ export const VariantMatrix: Story = {
       <style>
         .matrix {
           display: grid;
-          grid-template-columns: repeat(3, minmax(84px, auto));
+          grid-template-columns: repeat(4, minmax(84px, auto));
+          grid-auto-flow: row;
           gap: 12px;
           padding: 16px;
           background: #f7f7f7;
@@ -95,9 +131,9 @@ export const VariantMatrix: Story = {
         }
       </style>
       <div class="matrix">
-        ${states.map((state) =>
-          types.map(
-            (type) => html`
+        ${types.map((type) =>
+          states.map(
+            (state) => html`
               <div class="cell">
                 <obc-poi-selection-frame
                   .type=${type}

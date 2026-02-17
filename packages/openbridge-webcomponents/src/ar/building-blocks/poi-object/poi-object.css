@@ -305,6 +305,10 @@
   stroke: var(--base-blue-100);
 }
 
+.is-indicator.style-categorical .icon-container {
+  --element-active-inverted-color: var(--base-blue-100);
+}
+
 /* Overlapped state hides icon */
 .is-overlapped .icon-container {
   opacity: 0;
