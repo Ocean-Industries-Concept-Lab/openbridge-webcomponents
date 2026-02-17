@@ -7,6 +7,8 @@ import {
 } from './poi-button.js';
 import './poi-button.js';
 import '../../../icons/icon-placeholder.js';
+import '../../../icons/icon-collision-avoidance-overtaking.js';
+import '../poi-header/poi-header.js';
 import {html, TemplateResult} from 'lit';
 import {crossDecorator} from '../../../storybook-util.js';
 import {
@@ -252,6 +254,7 @@ type MatrixButtonConfig = {
   state?: ObcPoiButtonState;
   hasHeader?: boolean;
   data?: Array<{value: string; label: string; unit: string}>;
+  hasRelation?: boolean;
   stageTall?: boolean;
   label: string;
 };
@@ -266,9 +269,16 @@ const renderMatrixButton = (cfg: MatrixButtonConfig) => html`
         .selected=${cfg.selected ?? false}
         .hasHeader=${cfg.hasHeader ?? false}
         .state=${cfg.state ?? ObcPoiButtonState.Enabled}
+        .hasRelation=${cfg.hasRelation ?? false}
         .data=${cfg.data ?? []}
       >
         <obi-placeholder></obi-placeholder>
+        ${cfg.hasRelation
+          ? html`<obi-collision-avoidance-overtaking
+              slot="relation"
+              part="relation"
+            ></obi-collision-avoidance-overtaking>`
+          : html``}
         ${cfg.hasHeader
           ? html`<obc-poi-header
               slot="header"
@@ -461,6 +471,16 @@ export const AllData: Story = {
               {value: '20', label: 'Lab 2', unit: 'Unit 2'},
             ],
             value: PoiButtonVisualState.Overlapped,
+          })}
+          ${renderMatrixButton({
+            label: 'Values + Relation',
+            stageTall: true,
+            data: [
+              {value: '10', label: 'Lab', unit: 'Unit'},
+              {value: '20', label: 'Lab 2', unit: 'Unit 2'},
+            ],
+            hasRelation: true,
+            hasHeader: true,
           })}
         </div>
       </div>

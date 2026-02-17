@@ -90,17 +90,20 @@ export interface ObcPoiButtonDataItem {
  * - `relativeDirection` (default `0`): rotates default-slot icon content in degrees.
  * - `data` (default `[]`): when non-empty, renders value/label/unit rows.
  * - `hasHeader` + `header` slot: renders a header area and syncs slotted `obc-poi-header` state.
+ * - `hasRelation` (default `false`): enables optional relation content in data mode.
  * - `inExpandedGroup` (default `false`): applies `expanded` CSS class.
  * - TODO(designer): Confirm intended UX semantics for `inExpandedGroup` beyond styling.
  *
  * ## Usage Guidelines
  * - Use `layout="anchored"` for standalone marker buttons.
  * - Use `layout="inline"` when this component is embedded in a larger marker composition.
- * - Provide `data` only when metric rows are needed.
+ * - Provide `data` for metric display variants.
+ * - Enable `hasRelation` only when relation slot content is provided.
  *
  * ## Slots/Content
  * - Default slot: Icon/content rendered inside `obc-poi-object`.
  * - `header`: Optional header content rendered above the marker body.
+ * - `relation`: Optional relation icon/content rendered when `hasRelation` is true in data mode.
  *
  * ## Events
  * This component does not emit custom events.
@@ -120,6 +123,7 @@ export interface ObcPoiButtonDataItem {
  *
  * @slot - Icon/content rendered inside `obc-poi-object`.
  * @slot header - Optional header content rendered above the marker body.
+ * @slot relation - Optional relation icon/content in data mode when `hasRelation` is true.
  */
 @customElement('obc-poi-button')
 export class ObcPoiButton extends LitElement {
@@ -138,6 +142,7 @@ export class ObcPoiButton extends LitElement {
   @property({type: String}) type = ObcPoiButtonType.Button;
   @property({type: Boolean}) inExpandedGroup = false;
   @property({type: Array, attribute: false}) data: ObcPoiButtonDataItem[] = [];
+  @property({type: Boolean}) hasRelation = false;
 
   get hasData(): boolean {
     return this.data.length > 0;
@@ -321,6 +326,11 @@ export class ObcPoiButton extends LitElement {
         <div class="button-wrapper">
           ${this.renderSelectionFrame()} ${this.renderPoiObject()}
         </div>
+        ${this.hasRelation
+          ? html`<div class="relation-wrapper" part="relation-wrapper">
+              <slot name="relation" class="relation" part="relation"></slot>
+            </div>`
+          : nothing}
         <div class="alert-ring"></div>
       </button>
     `;
