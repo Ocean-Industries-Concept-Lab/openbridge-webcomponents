@@ -89,10 +89,10 @@ export class ObcChartObjectVesselButton extends LitElement {
         <div
             class="icon-wrapper" 
           >
-            <span class="icon-silhouette">
+            <span class="icon-silhouette" part="icon-silhouette">
               <slot name="silhouette"></slot>
             </span>
-            <span class="icon-primary">
+            <span class="icon-primary" part="icon">
               <slot></slot>
             </span>
 

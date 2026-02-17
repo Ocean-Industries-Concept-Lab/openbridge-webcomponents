@@ -8,7 +8,7 @@
       "name": "Download alert icons",
       "request": "launch",
       "runtimeArgs": ["tsx", "script/download-alert-icons.ts"],
-      "runtimeExecutable": "yarn",
+      "runtimeExecutable": "npm",
       "skipFiles": ["<node_internals>/**"],
       "type": "node"
     }
