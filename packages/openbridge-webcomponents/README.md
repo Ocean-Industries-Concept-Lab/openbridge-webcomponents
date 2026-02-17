@@ -40,13 +40,13 @@ We have made an short introduction to the library. You can watch it [here](https
 
 [Storybook](https://storybook.js.org/) is a development environment for UI components. It allows you to browse a component library, view the different states of each component, and interactively develop and test components in isolation.
 
-To access the Storybook for this project, click [here](https://openbridge-storybook.web.app).
+To access the Storybook for this project, click [here](https://openbridge-jip-storybook.web.app).
 
 ## Demo
 
 The demo showcases the project's functionality using Vue.js. It provides a live demonstration of the project's features and allows you to interact with the application.
 
-To access the demo, click [here](https://openbridge-demo.web.app/).
+To access the demo, click [here](https://openbridge-jip-demo.web.app/).
 
 ## CSS file for palettes
 
@@ -84,12 +84,12 @@ npm install @ocean-industries-concept-lab/openbridge-webcomponents
    ```html
    <html lang="en" data-obc-theme="day"></html>
    ```
-3. Install the Noto Sans font by using the attached `NotoSans.tff` file. Add the following to your css:
+3. Install the Noto Sans font by using the attached `NotoSans.ttf` file. Add the following to your css:
 
    ```css
    @font-face {
      font-family: 'Noto Sans';
-     src: url('path/to/NotoSans.tff');
+     src: url('path/to/NotoSans.ttf');
    }
 
    * {

@@ -58,7 +58,7 @@ To select the pallet, set the `data-obc-theme` attribute on the `html` tag:
 
 ## Components
 
-The components for this project are implemented in the `package/openbridge-webcomponents` folder.
+The components for this project are implemented in the `packages/openbridge-webcomponents` folder.
 
 ## Installation
 
@@ -97,17 +97,17 @@ npm install @ocean-industries-concept-lab/openbridge-webcomponents-vue
    ```html
    <html lang="en" data-obc-theme="day"></html>
    ```
-3. Select the global component size by setting the class (it could be `regular`, `medium`, `large` or `xl`):
+3. Select the global component size by setting the class (`regular`, `medium`, `large`, or `xl`):
    ```html
    <body class="obc-component-size-regular"></body>
    ```
    When the upgrade to OpenBridge 6.0 the size of each component can be modified individually by setting the class on each component. It can also be used to set the size of all components in a container.
-4. Install the Noto Sans font by using the attached `NotoSans.tff` file. Add the following to your css:
+4. Install the Noto Sans font by using the attached `NotoSans.ttf` file. Add the following to your css:
 
    ```css
    @font-face {
      font-family: "Noto Sans";
-     src: url("path/to/NotoSans.tff");
+     src: url("path/to/NotoSans.ttf");
    }
 
    * {
@@ -154,8 +154,9 @@ To get started with the project, follow these steps:
    This will open the project in a containerized environment with all the necessary dependencies installed.
 7. Once the dev container is running, go to the `packages/openbridge-webcomponents` folder and run `npm run storybook` to start the Storybook development environment (typically at `http://localhost:6006/`).
 8. When creating new components or modifying stories:
-   - Run `npm run test-storybook` to run visual snapshot tests.
-   - If you've intentionally changed the component's appearance, press `u` when prompted to update the snapshots.
+   - Run `npm run test-storybook` to run visual snapshot tests (uses Vitest + Playwright).
+   - If tests fail because a component's appearance changed intentionally, press `u` in the Vitest terminal to update the snapshots.
+   - You can also run `npm run update-snapshots` to replace all baselines with the latest results.
 9. Check [CONTRIBUTING.md](CONTRIBUTING.md) for branch and commit naming conventions.
 10. Before you push your changes, run:
 
@@ -167,11 +168,11 @@ To get started with the project, follow these steps:
 ### Without VS Code devcontainer, not recommended ⚠️
 
 1. Clone the repository.
-2. Install Node.js (version 20) and npm.
+2. Install Node.js (version 20 or later) and Yarn.
 3. Run `npm install` in the root folder to install the dependencies.
 4. Run `npm run build:lib` to build all libraries.
-5. Optional: Go to the `package/openbridge-webcomponents` folder and run `npm run storybook` to start the Storybook development environment.
-6. Optional: Go to the `package/vue-demo` folder and run `npm run dev` to run the Vue.js demo application.
+5. Optional: Go to the `packages/openbridge-webcomponents` folder and run `npm run storybook` to start the Storybook development environment.
+6. Optional: Go to the `packages/vue-demo` folder and run `npm run dev` to run the Vue.js demo application.
 
 ## Packages:
 
@@ -189,12 +190,16 @@ Run `npm run format:all` to format the code using Prettier.
 
 ### Testing:
 
-We use snapshot testing of the components through storybook.
-To run the test:
+We use visual snapshot testing of the components through Storybook, powered by [Vitest](https://vitest.dev/) and [Playwright](https://playwright.dev/).
 
-1. Ensure that storybook is running. If it is not running, go to the `package/openbridge-webcomponents` folder and run `npm run storybook` to start storybook.
-2. Run `npm run test-storybook` in the `package/openbridge-webcomponents` folder to run the tests.
-   Press `u` to update the snapshot when the test run is completed.
+All commands below should be run from the `packages/openbridge-webcomponents` folder.
+
+- **Run tests:** `yarn test-storybook`
+- **Watch mode:** `yarn test-storybook:watch`
+- **Update snapshots interactively:** press `u` while tests are running to update failing snapshots.
+- **Replace all baselines:** `yarn update-snapshots` (replaces `__vis__/linux/__baselines__/` with the latest results).
+
+Snapshot baselines are stored in the `__vis__/` directory, organized by platform (`linux`, `darwin`).
 
 ## Contributing
 

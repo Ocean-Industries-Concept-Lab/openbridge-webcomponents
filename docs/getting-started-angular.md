@@ -117,7 +117,7 @@ Then set palette by modifying the `html` tag in `index.html`
 <html lang="en" data-obc-theme="day"></html>
 ```
 
-The `data-obc-theme` can be bright, day, dusk or night. Changeing it will set the palette.
+The `data-obc-theme` can be bright, day, dusk or night. Changing it will set the palette.
 
 ## Set component sizing
 
@@ -127,7 +127,7 @@ We need to set the component sizing. Again modify `index.html`. But this time ad
 <body class="obc-component-size-regular"></body>
 ```
 
-This could be regular, normal, large or xl. It sets the component size of all decendent components.
+This could be `regular`, `medium`, `large`, or `xl`. It sets the component size of all descendant components.
 
 ## Load font
 
@@ -194,7 +194,7 @@ Where title is a variable of the component.
 
 ## Add background
 
-Try changeing the palette to night:
+Try changing the palette to night:
 
 ```html
 <html lang="en" data-obc-theme="night"></html>
@@ -213,10 +213,10 @@ body {
 }
 ```
 
-Note how the color is set by the `css custom property` `--container-backdrop-color`. Using it the background will change when changeing the palette attribute (or the palette colors are updated by the designers).
+Note how the color is set by the `css custom property` `--container-backdrop-color`. Using it the background will change when changing the palette attribute (or the palette colors are updated by the designers).
 
 The entire page should now be dark. Go back to day palette
-Try changeing the palette to day:
+Try changing the palette to day:
 
 ```html
 <html lang="en" data-obc-theme="day"></html>
@@ -756,7 +756,7 @@ Try to use the navigation menu.
 You may notice two problems:
 
 - The active page in nav menu is not updating
-- When changeing page, the entire page is reloaded.
+- When changing page, the entire page is reloaded.
 
 ## Use Angular routerLink directive
 

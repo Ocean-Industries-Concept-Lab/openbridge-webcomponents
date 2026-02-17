@@ -1,6 +1,139 @@
-# OpenBridge styled plots
+# OpenBridge Charts and Graphs
 
-Plots are needed in many OpenBridge applications. We have not implemented any plots in the library as plots typically needs to be tailormade for each application. I have therefore made an example in the [vue demo app](https://openbridge-jip-demo.web.app/graph) of a graph using chart.js. See the [source code](../packages/vue-demo/src/views/GraphDemo.vue). I picked chart.js as it is a flexible and well maintained library. There are many wrapper libraries for chart.js, so for vue I use vue-chartjs. In this post I will use char.js directly.
+The OpenBridge Web Components library includes a set of ready-to-use chart components for common visualization needs. For highly customized plots, you can also use Chart.js directly with OpenBridge styling.
+
+## Built-in Chart Components
+
+All chart components are theme-aware, responsive, and follow the OpenBridge design system out of the box. They are available under the `<obc-*>` tag namespace.
+
+### Line and Area Charts
+
+Built on Chart.js, these components support single/multi-series data, time or category axes, and various styling options.
+
+#### `<obc-line-graph>` — Line chart (no fill)
+
+```html
+<obc-line-graph></obc-line-graph>
+<script>
+  const chart = document.querySelector('obc-line-graph');
+  chart.data = [
+    {label: 'Jan', value: 10},
+    {label: 'Feb', value: 14},
+    {label: 'Mar', value: 12}
+  ];
+  chart.unit = 'kW';
+  chart.height = 256;
+  chart.showGrid = true;
+  chart.showTickMarks = true;
+</script>
+```
+
+Key properties: `data`, `datasets` (multi-series), `xAxisType` (`'category'` | `'time'`), `lineMode` (`'smooth'` | `'straight'` | `'stepped'`), `showGrid`, `showTickMarks`, `showPoints`, `legend`, `height`, `unit`, `yAxisPosition`, `yAxes` (multi-axis), `enhanced`.
+
+#### `<obc-area-graph>` — Filled area chart
+
+Same API as line graph, plus fill-specific properties:
+
+```html
+<obc-area-graph></obc-area-graph>
+<script>
+  const chart = document.querySelector('obc-area-graph');
+  chart.data = [
+    {label: 'Jan', value: 10},
+    {label: 'Feb', value: 14},
+    {label: 'Mar', value: 12}
+  ];
+  chart.fillMode = 'semitransparent'; // 'semitransparent' | 'solid' | 'threshold'
+  chart.stacked = false; // stack multi-series vertically
+</script>
+```
+
+Fill modes:
+- `semitransparent` — 50% alpha fill (default)
+- `solid` — opaque fill
+- `threshold` — red/blue above/below midpoint (single-series only)
+
+### Circular Charts
+
+#### `<obc-donut-chart>` — Donut chart with center readout
+
+```html
+<obc-donut-chart></obc-donut-chart>
+<script>
+  const chart = document.querySelector('obc-donut-chart');
+  chart.data = [
+    {label: 'Used', value: 65},
+    {label: 'Reserved', value: 20}
+  ];
+  chart.max = 100; // shows remaining capacity
+  chart.half = false; // true for 180° layout
+  chart.showOuterLabels = true;
+  chart.legend = true;
+</script>
+```
+
+#### `<obc-pie-chart>` — Pie chart with optional sunburst mode
+
+```html
+<obc-pie-chart></obc-pie-chart>
+<script>
+  const chart = document.querySelector('obc-pie-chart');
+  chart.data = [
+    {label: 'A', value: 30},
+    {label: 'B', value: 50, children: [{label: 'B1', value: 20}, {label: 'B2', value: 30}]},
+    {label: 'C', value: 20}
+  ];
+  chart.sunburst = true; // enable expandable child segments
+  chart.legend = true;
+</script>
+```
+
+#### `<obc-polar-chart>` — Polar area chart
+
+```html
+<obc-polar-chart></obc-polar-chart>
+<script>
+  const chart = document.querySelector('obc-polar-chart');
+  chart.data = [
+    {label: 'N', value: 12},
+    {label: 'E', value: 8},
+    {label: 'S', value: 15},
+    {label: 'W', value: 6}
+  ];
+  chart.monochrome = false;
+  chart.showSectorLabels = true;
+</script>
+```
+
+#### `<obc-radial-bar-chart>` — Concentric rings chart
+
+```html
+<obc-radial-bar-chart></obc-radial-bar-chart>
+<script>
+  const chart = document.querySelector('obc-radial-bar-chart');
+  chart.data = [75, 50, 90]; // one value per ring
+  chart.max = 100;
+  chart.circumference = 270; // 360 or 270
+  chart.legend = true;
+</script>
+```
+
+### Common properties (all chart components)
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `enhanced` | `boolean` | `false` | Use enhanced (blue) color palette |
+| `colors` | `string[]` | `[]` | Custom colors (falls back to theme defaults) |
+| `legend` | `boolean` | `false` | Show a legend below the chart |
+| `fixedHeight` | `number` | `320` | Chart height in pixels |
+
+See the [Storybook](https://openbridge-jip-storybook.web.app/?path=/docs/bars-and-graphs-line-graph--docs) for interactive examples of all chart types.
+
+---
+
+## Custom Chart.js Plots
+
+For plots that need to be tailored for a specific application, you can use Chart.js directly with OpenBridge theming. Below is an example of a custom chart using Chart.js, demonstrated in the [vue demo app](https://openbridge-jip-demo.web.app/graph) ([source code](../packages/vue-demo/src/views/GraphDemo.vue)).
 
 First define a html node to use for the plot:
 
@@ -219,10 +352,9 @@ Or react-chartjs-2:
 ## Palette switch
 
 We need to ensure that the plot is redrawn on palette switch.
-The dection of palette switch can be done in many ways.
-In vue a pinia store than be used to store the palette state, then a watcher can be used to detect switch of the palette variable.
-For react the context api can be used to store the palette state and the useEffect hook for redrawing the chart.
-Note that since
+The detection of palette switch can be done in many ways.
+In Vue, a Pinia store can be used to store the palette state, then a watcher can be used to detect switch of the palette variable.
+For React, the context API can be used to store the palette state and the `useEffect` hook for redrawing the chart.
 
 To redraw the chart use the `update` function.
 
