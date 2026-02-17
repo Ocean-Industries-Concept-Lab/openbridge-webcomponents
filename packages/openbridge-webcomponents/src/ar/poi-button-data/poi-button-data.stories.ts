@@ -4,11 +4,12 @@ import './poi-button-data.js';
 import '../building-blocks/poi-header/poi-header.js';
 import '../../icons/icon-placeholder.js';
 import {
+  ObcPoiButtonLayout,
+  ObcPoiButtonState,
   ObcPoiButtonType,
   PoiButtonVisualState,
 } from '../building-blocks/poi-button/poi-button.js';
 import {html} from 'lit';
-import {ObcArAlertType} from '../types.js';
 import {crossDecorator} from '../../storybook-util.js';
 
 const meta: Meta<ObcPoiButtonData> = {
@@ -20,9 +21,11 @@ const meta: Meta<ObcPoiButtonData> = {
     selected: false,
     hasHeader: false,
     type: ObcPoiButtonType.Button,
+    layout: ObcPoiButtonLayout.Anchored,
     relativeDirection: 0,
-    alertType: ObcArAlertType.None,
+    state: ObcPoiButtonState.Enabled,
     value: PoiButtonVisualState.Unchecked,
+    inExpandedGroup: false,
     data: [],
   },
   argTypes: {
@@ -32,12 +35,20 @@ const meta: Meta<ObcPoiButtonData> = {
     selected: {
       control: {type: 'boolean'},
     },
+    hasData: {
+      control: false,
+      table: {disable: true},
+    },
     hasHeader: {
       control: {type: 'boolean'},
     },
-    alertType: {
+    state: {
       control: {type: 'select'},
-      options: Object.values(ObcArAlertType),
+      options: Object.values(ObcPoiButtonState),
+    },
+    header: {
+      control: false,
+      table: {disable: true},
     },
     value: {
       control: {type: 'select'},
@@ -47,6 +58,71 @@ const meta: Meta<ObcPoiButtonData> = {
       control: {type: 'select'},
       options: Object.values(ObcPoiButtonType),
     },
+    layout: {
+      control: {type: 'select'},
+      options: Object.values(ObcPoiButtonLayout),
+    },
+    inExpandedGroup: {
+      control: {type: 'boolean'},
+    },
+    resolvedHeaderState: {
+      control: false,
+      table: {disable: true},
+    },
+    resolvedHeaderType: {
+      control: false,
+      table: {disable: true},
+    },
+    resolvedHeaderSize: {
+      control: false,
+      table: {disable: true},
+    },
+    poiObjectType: {
+      control: false,
+      table: {disable: true},
+    },
+    poiObjectState: {
+      control: false,
+      table: {disable: true},
+    },
+    selectionFrameType: {
+      control: false,
+      table: {disable: true},
+    },
+    selectionFrameState: {
+      control: false,
+      table: {disable: true},
+    },
+  },
+  parameters: {
+    controls: {
+      include: [
+        'selected',
+        'hasHeader',
+        'type',
+        'layout',
+        'relativeDirection',
+        'state',
+        'value',
+        'inExpandedGroup',
+        'data',
+      ],
+    },
+    docs: {
+      controls: {
+        include: [
+          'selected',
+          'hasHeader',
+          'type',
+          'layout',
+          'relativeDirection',
+          'state',
+          'value',
+          'inExpandedGroup',
+          'data',
+        ],
+      },
+    },
   },
   render: (args) => {
     return html`
@@ -55,9 +131,11 @@ const meta: Meta<ObcPoiButtonData> = {
         .selected=${args.selected}
         .hasHeader=${args.hasHeader}
         .relativeDirection=${args.relativeDirection}
-        .alertType=${args.alertType}
+        .layout=${args.layout}
+        .state=${args.state}
         .value=${args.value}
         .type=${args.type}
+        .inExpandedGroup=${args.inExpandedGroup}
       >
         <obc-poi-header
           slot="header"

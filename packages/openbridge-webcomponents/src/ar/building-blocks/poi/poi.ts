@@ -7,9 +7,9 @@ import '../poi-button/poi-button.js';
 import {
   ObcPoiButtonType,
   ObcPoiButtonDataItem,
+  ObcPoiButtonState,
   PoiButtonVisualState,
 } from '../poi-button/poi-button.js';
-import {ObcArAlertType} from '../../types.js';
 import {POIStyle} from '../poi-graphic-line/poi-graphic-line.js';
 import {poiArrow} from './arrow.js';
 import '../poi-line/poi-line.js';
@@ -46,7 +46,7 @@ const POINTER_BOX_BASE_SIZE_PX = 32;
 const POINT_POINTER_OFFSET_PX = 12;
 
 /**
- * `<obc-poi>` - Composite POI marker that renders the main AR target button and connector visuals.
+ * `<obc-poi>` - Composite marker component that renders a target button with connector and pointer visuals.
  *
  * ## Overview
  * Combines `obc-poi-button`, `obc-poi-line`, and optional pointer visuals to display
@@ -130,30 +130,30 @@ export class ObcPoi extends LitElement {
   @property({type: String}) type: ObcPoiType = ObcPoiType.Line;
   @property({type: String}) value: ObcPoiValue = ObcPoiValue.Unchecked;
   @property({type: String}) state: ObcPoiState = ObcPoiState.Enabled;
+  @property({type: Boolean}) selected = false;
+  @property({type: String}) buttonType = ObcPoiButtonType.Button;
+  @property({type: Array, attribute: false}) data: ObcPoiButtonDataItem[] = [];
+  @property({type: Boolean, attribute: 'has-header'}) hasHeader = false;
+  @property({type: Boolean}) hasPointer = false;
+  @property({type: String, attribute: 'pointer-type'})
+  pointerType: ObcPoiPointerType | null = null;
+  @property({type: String, attribute: 'pointer-state'})
+  pointerState: ObcPoiPointerState | null = null;
+  @property({type: Number}) relativeDirection = 0;
   @property({type: Number}) x = 0;
   @property({type: Number}) y = DEFAULT_LINE_LENGTH_PX;
   @property({type: Number, attribute: 'button-y'}) buttonY: number | null =
     null;
   @property({type: Boolean, attribute: 'fixed-target'}) fixedTarget = false;
-  @property({type: Number, attribute: 'outside-angle'}) outsideAngle = 315;
-  @property({type: Boolean}) hasPointer = false;
-  @property({type: Boolean, attribute: 'has-header'}) hasHeader = false;
-  @property({type: Boolean, attribute: 'animate-position'})
-  animatePosition = false;
-  @property({type: Number}) relativeDirection = 0;
-  @property({type: String}) buttonType = ObcPoiButtonType.Button;
-  @property({type: String, attribute: 'pointer-type'})
-  pointerType: ObcPoiPointerType | null = null;
-  @property({type: String, attribute: 'pointer-state'})
-  pointerState: ObcPoiPointerState | null = null;
-  @property({type: Boolean}) selected = false;
-  @property({type: Array, attribute: false}) data: ObcPoiButtonDataItem[] = [];
   @property({type: Number, attribute: 'button-offset-x'}) buttonOffsetX = 0;
   @property({type: Number, attribute: 'target-offset-x'}) targetOffsetX = 0;
   @property({type: Number, attribute: 'box-width'}) boxWidth: number | null =
     null;
   @property({type: Number, attribute: 'box-height'}) boxHeight: number | null =
     null;
+  @property({type: Number, attribute: 'outside-angle'}) outsideAngle = 315;
+  @property({type: Boolean, attribute: 'animate-position'})
+  animatePosition = false;
 
   override updated(changedProperties: Map<string, unknown>) {
     if (changedProperties.has('x')) {
@@ -209,17 +209,17 @@ export class ObcPoi extends LitElement {
     }
   }
 
-  protected get buttonAlertType(): ObcArAlertType {
+  protected get buttonState(): ObcPoiButtonState {
     switch (this.state) {
       case ObcPoiState.Caution:
-        return ObcArAlertType.Caution;
+        return ObcPoiButtonState.Caution;
       case ObcPoiState.Warning:
-        return ObcArAlertType.Warning;
+        return ObcPoiButtonState.Warning;
       case ObcPoiState.Alarm:
-        return ObcArAlertType.Alarm;
+        return ObcPoiButtonState.Alarm;
       case ObcPoiState.Enabled:
       default:
-        return ObcArAlertType.None;
+        return ObcPoiButtonState.Enabled;
     }
   }
 
@@ -401,7 +401,7 @@ export class ObcPoi extends LitElement {
         .relativeDirection=${this.relativeDirection}
         .selected=${this.selected}
         .hasHeader=${this.hasHeader}
-        .alertType=${this.buttonAlertType}
+        .state=${this.buttonState}
         .value=${this.buttonVisualState}
         .type=${this.buttonType}
         .data=${this.data}

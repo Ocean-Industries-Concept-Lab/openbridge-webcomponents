@@ -2,7 +2,6 @@ import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import compentStyle from './poi-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
-import {ObcArAlertType} from '../../types.js';
 import {customElement} from '../../../decorator.js';
 import {
   ObcPoiObjectState,
@@ -23,6 +22,13 @@ export enum ObcPoiButtonType {
 export enum ObcPoiButtonLayout {
   Anchored = 'anchored',
   Inline = 'inline',
+}
+
+export enum ObcPoiButtonState {
+  Enabled = 'enabled',
+  Caution = 'caution',
+  Warning = 'warning',
+  Alarm = 'alarm',
 }
 
 export enum PoiButtonVisualState {
@@ -68,62 +74,51 @@ export interface ObcPoiButtonDataItem {
 }
 
 /**
- * `<obc-poi-button>` - `ObcPoiButton` renders the interactive POI button body, optional header, and data rows.
+ * `<obc-poi-button>` - Marker button component that renders an icon target with optional header and data rows.
  *
- * ## Features
+ * ## Overview
+ * Use this component when you need a button-style marker that can show stateful framing and optional metric rows.
+ * Keywords/synonyms: marker button, target button, icon target, POI button.
  *
- * - Supports button and enhanced visual sizes via `type`.
- * - Supports anchored and inline layouts via `layout`.
- * - Maps POI value state (`unchecked`, `checked`, `activated`, `overlapped`) to object and frame visuals.
- * - Can render optional slotted header and metrics/data rows (`data`).
- *
- * Public properties/attributes:
- * - `relativeDirection: number` - Icon rotation in degrees.
- * - `selected: boolean` - Controls selection frame visibility (anchored layout).
- * - `layout: ObcPoiButtonLayout` (attribute: `layout`) - Layout mode (`anchored` or `inline`).
- * - `alertType: ObcArAlertType` - Alert styling (`none`, `caution`, `warning`, `alarm`).
- * - `value: PoiButtonVisualState` (attribute: `value`) - Visual state (`unchecked`, `checked`, `activated`, `overlapped`).
- * - `type: ObcPoiButtonType` - Size/variant (`button` or `enhanced`).
- * - `inExpandedGroup: boolean` - Expanded-group styling hint.
- * - `data: ObcPoiButtonDataItem[]` - Optional value/label/unit rows.
- *
- * Public methods:
- * - No imperative public methods; behavior is controlled through reactive properties.
+ * ## Features/Variants
+ * - `type` (default `button`): `button` or `enhanced` size.
+ * - `layout` (default `anchored`): `anchored` or `inline`.
+ * - `value` (default `unchecked`): `unchecked`, `checked`, `activated`, `overlapped`.
+ * - `state` (default `enabled`): `enabled`, `caution`, `warning`, `alarm`.
+ * - `selected` (default `false`): shows selection frame in anchored layout.
+ * - `relativeDirection` (default `0`): rotates default-slot icon content in degrees.
+ * - `data` (default `[]`): when non-empty, renders value/label/unit rows.
+ * - `hasHeader` + `header` slot: renders a header area and syncs slotted `obc-poi-header` state.
+ * - `inExpandedGroup` (default `false`): applies `expanded` CSS class.
+ * - TODO(designer): Confirm intended UX semantics for `inExpandedGroup` beyond styling.
  *
  * ## Usage Guidelines
+ * - Use `layout="anchored"` for standalone marker buttons.
+ * - Use `layout="inline"` when this component is embedded in a larger marker composition.
+ * - Provide `data` only when metric rows are needed.
  *
- * - Use `layout="anchored"` for standalone POI buttons with optional selection frame.
- * - Use `layout="inline"` when composing inside higher-level marker wrappers (for example `obc-poi`).
- * - Provide `data` for metric display variants.
- *
- * ## Slots
- *
- * - Default slot: Main icon/content rendered inside `obc-poi-object`.
- * - `header`: Optional custom header content rendered above the POI object.
+ * ## Slots/Content
+ * - Default slot: Icon/content rendered inside `obc-poi-object`.
+ * - `header`: Optional header content rendered above the marker body.
  *
  * ## Events
- *
- * - `click`: Native composed click event from the internal button surface.
- * - Custom events: None.
+ * This component does not emit custom events.
+ * Native `click` is available from the internal `<button>`.
  *
  * ## Best Practices
- *
- * - Keep `value`, `selected`, and `alertType` synchronized with domain state to avoid mixed visual semantics.
- * - Prefer enum values from `PoiButtonVisualState`, `ObcPoiButtonType`, and `ObcPoiButtonLayout` for consistency.
- * - Use slot `header` when label/ID context is needed; omit for icon-only markers.
+ * - Keep `value`, `state`, and `selected` synchronized to avoid conflicting visual states.
+ * - Prefer enum values for `type`, `layout`, `state`, and `value`.
  *
  * ## Example
- *
  * ```html
- * <obc-poi-button
- *   type="button"
- *   layout="anchored"
- *   value="unchecked"
- *   .selected=${false}
- * >
- *   <obc-icon-pin></obc-icon-pin>
+ * <obc-poi-button type="button" layout="anchored" value="checked" selected>
+ *   <obi-placeholder></obi-placeholder>
+ *   <obc-poi-header slot="header" content="1"></obc-poi-header>
  * </obc-poi-button>
  * ```
+ *
+ * @slot - Icon/content rendered inside `obc-poi-object`.
+ * @slot header - Optional header content rendered above the marker body.
  */
 @customElement('obc-poi-button')
 export class ObcPoiButton extends LitElement {
@@ -131,8 +126,10 @@ export class ObcPoiButton extends LitElement {
   @property({type: Boolean}) selected = false;
   @property({type: String, reflect: true}) layout: ObcPoiButtonLayout =
     ObcPoiButtonLayout.Anchored;
-  @property({type: Boolean, attribute: 'has-header'}) hasHeader = false;
-  @property({type: String}) alertType = ObcArAlertType.None;
+  @property({type: Boolean, reflect: true, attribute: 'has-header'})
+  hasHeader = false;
+  @property({type: String, reflect: true})
+  state: ObcPoiButtonState = ObcPoiButtonState.Enabled;
   @property({type: String, reflect: true})
   value: PoiButtonVisualState = PoiButtonVisualState.Unchecked;
   @property({type: String}) type = ObcPoiButtonType.Button;
@@ -143,8 +140,64 @@ export class ObcPoiButton extends LitElement {
     return this.data.length > 0;
   }
 
+  private get alertClassSuffix(): string {
+    if (this.state === ObcPoiButtonState.Enabled) {
+      return 'none';
+    }
+    return this.state;
+  }
+
+  private get resolvedHeaderState(): string {
+    switch (this.state) {
+      case ObcPoiButtonState.Caution:
+        return 'caution';
+      case ObcPoiButtonState.Warning:
+        return 'warning';
+      case ObcPoiButtonState.Alarm:
+        return 'alarm';
+      case ObcPoiButtonState.Enabled:
+      default:
+        return 'selected';
+    }
+  }
+
   private get hasHeaderContent(): boolean {
     return this.querySelector('[slot="header"]') !== null;
+  }
+
+  private syncSlottedHeaderState() {
+    const headerSlot = this.renderRoot.querySelector(
+      'slot[name="header"]'
+    ) as HTMLSlotElement | null;
+    if (!headerSlot) {
+      return;
+    }
+
+    const state = this.resolvedHeaderState;
+    const assigned = headerSlot.assignedElements({flatten: true});
+    const headers = new Set<HTMLElement>();
+
+    for (const element of assigned) {
+      if (element.matches('obc-poi-header')) {
+        headers.add(element as HTMLElement);
+      }
+      for (const nested of element.querySelectorAll('obc-poi-header')) {
+        headers.add(nested as HTMLElement);
+      }
+    }
+
+    for (const header of headers) {
+      (header as {state?: string}).state = state;
+      header.setAttribute('state', state);
+    }
+  }
+
+  private handleHeaderSlotChange = () => {
+    this.syncSlottedHeaderState();
+  };
+
+  protected override updated(_changedProperties: Map<string, unknown>) {
+    this.syncSlottedHeaderState();
   }
 
   protected renderHeader() {
@@ -154,7 +207,7 @@ export class ObcPoiButton extends LitElement {
 
     return html`
       <div class="id-label">
-        <slot name="header"></slot>
+        <slot name="header" @slotchange=${this.handleHeaderSlotChange}></slot>
       </div>
     `;
   }
@@ -223,7 +276,7 @@ export class ObcPoiButton extends LitElement {
         class=${classMap({
           wrapper: true,
           selected: this.selected,
-          [`alert-${this.alertType}`]: true,
+          [`alert-${this.alertClassSuffix}`]: true,
           [`type-${this.type}`]: true,
           expanded: this.inExpandedGroup,
         })}
@@ -246,7 +299,7 @@ export class ObcPoiButton extends LitElement {
           'has-data': true,
           selected: this.selected,
           'has-header': this.hasHeader && this.hasHeaderContent,
-          [`alert-${this.alertType}`]: true,
+          [`alert-${this.alertClassSuffix}`]: true,
           [`type-${this.type}`]: true,
           expanded: this.inExpandedGroup,
         })}
@@ -277,7 +330,7 @@ export class ObcPoiButton extends LitElement {
   }
 
   protected get selectionFrameState(): ObcPoiSelectionFrameState {
-    return this.alertType === ObcArAlertType.None
+    return this.state === ObcPoiButtonState.Enabled
       ? ObcPoiSelectionFrameState.Regular
       : ObcPoiSelectionFrameState.Alert;
   }

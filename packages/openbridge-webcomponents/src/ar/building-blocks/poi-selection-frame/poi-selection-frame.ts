@@ -27,10 +27,44 @@ enum ObcPoiSelectionCornerPosition {
 }
 
 /**
- * `<obc-poi-selection-frame>` renders a non-interactive selection frame around POI targets.
+ * `<obc-poi-selection-frame>` - Corner-frame highlight component for selected marker targets.
  *
- * `type` + `state` control frame footprint, while corner geometry is fixed so the
- * corner shape remains visually consistent across all sizes.
+ * ## Overview
+ * Use this component to draw a non-interactive selection outline around a marker, button, or indicator.
+ * Keywords/synonyms: selection frame, focus frame, highlight frame, corner frame.
+ *
+ * ## Features/Variants
+ * - `type` (default `indicator`): `indicator`, `button`, or `enhanced`.
+ * - `state` (default `regular`): `regular`, `alert`, `none`, or `flat`.
+ * - `customMode` (default `false`): Enables explicit frame box sizing.
+ * - `boxWidth` / `boxHeight` (default `null`): Optional non-negative offsets added to the minimum custom size.
+ * - Touch target handling: In custom mode, host width/height are expanded to at least `48px`.
+ *
+ * ## Usage Guidelines
+ * - Use `state="none"` when no frame should be rendered.
+ * - Use `customMode` with `boxWidth`/`boxHeight` for non-standard target footprints.
+ * - Keep `type` aligned with the selected target visual (indicator vs. button/enhanced).
+ *
+ * ## Slots/Content
+ * This component has no slots.
+ *
+ * ## Events
+ * This component does not emit custom events.
+ *
+ * ## Best Practices
+ * - Prefer default sizing unless an external target box requires explicit override.
+ * - Pass only finite, non-negative custom dimensions for stable output.
+ *
+ * ## Example
+ * ```html
+ * <obc-poi-selection-frame
+ *   type="button"
+ *   state="regular"
+ *   custom-mode
+ *   box-width="20"
+ *   box-height="12"
+ * ></obc-poi-selection-frame>
+ * ```
  */
 @customElement('obc-poi-selection-frame')
 export class ObcPoiSelectionFrame extends LitElement {

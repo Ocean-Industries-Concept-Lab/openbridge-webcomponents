@@ -38,13 +38,48 @@ const CAMERA_WIDTH_PX = 52;
 const CAMERA_HEIGHT_PX = 44;
 
 /**
- * `<obc-poi-pointer>` renders a compact targeting pointer primitive.
+ * `<obc-poi-pointer>` - Target pointer component for point, button, and camera marker shapes.
  *
- * Variants mirror the Figma Target Pointer building block:
- * - `type`: `point`, `button`, `camera`
- * - `state`: `regular`, `selected`, `active`, `uncertain`
+ * ## Overview
+ * Use this component to render compact target indicators when only pointer visuals are needed.
+ * Keywords/synonyms: target pointer, reticle marker, focus marker, target indicator.
  *
- * This component is intentionally visual-only and does not emit events.
+ * ## Features/Variants
+ * - `type` (default `point`):
+ *   - `point`: Dot-only pointer.
+ *   - `button`: Circular button-sized pointer.
+ *   - `camera`: Rectangular camera-sized pointer.
+ * - `state` (default `regular`): `regular`, `selected`, `active`, `uncertain`.
+ * - Selection frame behavior:
+ *   - `point + selected`: Renders indicator selection frame.
+ *   - `button + selected`: Renders button selection frame.
+ *   - `camera + selected`: Renders custom camera selection frame.
+ * - `boxWidth` / `boxHeight` (default `null`): Optional non-negative frame size extras when frame dimensions are used.
+ *
+ * ## Usage Guidelines
+ * - Use `type="point"` for minimal targets.
+ * - Use `type="button"` or `type="camera"` when a larger selection footprint is needed.
+ * - Provide `boxWidth`/`boxHeight` only when size overrides are intentional.
+ *
+ * ## Slots/Content
+ * This component has no slots.
+ *
+ * ## Events
+ * This component does not emit custom events.
+ *
+ * ## Best Practices
+ * - Drive `type` and `state` from the same state source used by surrounding marker components.
+ * - Treat negative `boxWidth` and `boxHeight` as invalid input; they are ignored by design.
+ *
+ * ## Example
+ * ```html
+ * <obc-poi-pointer
+ *   type="button"
+ *   state="selected"
+ *   box-width="12"
+ *   box-height="8"
+ * ></obc-poi-pointer>
+ * ```
  */
 @customElement('obc-poi-pointer')
 export class ObcPoiPointer extends LitElement {

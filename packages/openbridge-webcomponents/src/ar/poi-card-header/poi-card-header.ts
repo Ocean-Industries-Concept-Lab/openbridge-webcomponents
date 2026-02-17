@@ -22,30 +22,57 @@ export enum ObcPoiCardHeaderVariant {
 }
 
 /**
- * `<obc-poi-card-header>` – Header component for POI cards.
+ * `<obc-poi-card-header>` - Header block for `obc-poi-card` with tag, condensed, regular, and detailed layouts.
  *
- * Displays POI metadata with four layout variants: tag, condensed, regular, and detailed.
- * Used at the top of POI cards to identify targets.
+ * ## Overview
+ * Use this component to render card identity metadata such as index, title, source, and optional detail rows.
+ * Keywords/synonyms: card header, title bar, metadata header, marker header.
  *
- * ## Features
+ * ## Features/Variants
+ * - `variant` (default `regular`):
+ *   - `tag`: index badge only.
+ *   - `condensed`: index + title + optional source.
+ *   - `regular`: condensed layout with optional `leading-icon` slot.
+ *   - `detailed`: POI icon, title, description, source, timestamp, and optional close button.
+ * - `index` (default `"1"`): badge text.
+ * - `cardTitle`, `description`, `source`, `timestamp`: textual metadata fields.
+ * - `hasLeadingIcon` (default `false`): enables icon region for regular variant.
+ * - `hasCloseButton` (default `false`): renders close action in detailed variant.
  *
- * - **Tag:** Minimal numbered badge for compact list views.
- * - **Condensed:** Single-line with index, title, and optional source badge.
- * - **Regular:** Single-line with index, leading icon slot, title, and source badge.
- * - **Detailed:** Full header with POI icon, title, description, source, timestamp, close button.
+ * ## Usage Guidelines
+ * - Choose the variant based on available space and metadata density.
+ * - Use `hasCloseButton` only when a parent can handle dismiss behavior.
+ * - Keep `source` and `timestamp` short to avoid header crowding.
+ *
+ * ## Slots/Content
+ * - `leading-icon`: Optional icon for the regular variant.
+ * - `poi-icon`: Optional icon for the detailed variant POI target.
+ *
+ * ## Events
+ * - `close-click`: Fired when the close button is pressed.
+ *
+ * ## Best Practices
+ * - Keep `index` stable and human-readable.
+ * - Use `tag` or `condensed` when the header is used in dense lists.
  *
  * ## Example
- *
  * ```html
- * <obc-poi-card-header variant="detailed" index="1" cardTitle="MV Explorer"
- *   description="Passenger vessel" source="AIS" timestamp="2 min ago" hasCloseButton>
- *   <obi-vessel-type-passenger-outlined slot="poi-icon"></obi-vessel-type-passenger-outlined>
+ * <obc-poi-card-header
+ *   variant="detailed"
+ *   index="1"
+ *   cardTitle="Target"
+ *   description="Tracked object"
+ *   source="AIS"
+ *   timestamp="2 min ago"
+ *   hasCloseButton
+ * >
+ *   <obi-placeholder slot="poi-icon"></obi-placeholder>
  * </obc-poi-card-header>
  * ```
  *
- * @slot leading-icon - Icon before the title (regular variant only)
- * @slot poi-icon - Icon for the POI target button (detailed variant only)
- * @fires close-click - When the close button is clicked
+ * @slot leading-icon - Optional icon for the regular variant.
+ * @slot poi-icon - Optional icon for the detailed variant POI target.
+ * @fires close-click {CustomEvent<void>} Fired when the close button is pressed.
  */
 @customElement('obc-poi-card-header')
 export class ObcPoiCardHeader extends LitElement {

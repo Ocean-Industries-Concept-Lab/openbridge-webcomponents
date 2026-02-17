@@ -25,9 +25,11 @@ const meta: Meta<ObcPoiData> = {
   component: 'obc-poi-data',
   args: {
     type: ObcPoiType.Line,
+    state: ObcPoiState.Enabled,
     x: 444,
     y: 192,
     buttonY: 192,
+    outsideAngle: 315,
     value: PoiDataValue.Unchecked,
     hasPointer: true,
     hasHeader: false,
@@ -36,6 +38,9 @@ const meta: Meta<ObcPoiData> = {
     relativeDirection: 0,
     buttonOffsetX: 0,
     targetOffsetX: 0,
+    selected: false,
+    boxWidth: null,
+    boxHeight: null,
     animatePosition: false,
     data: [],
     fixedTarget: false,
@@ -46,10 +51,18 @@ const meta: Meta<ObcPoiData> = {
       options: Object.values(ObcPoiType),
       control: {type: 'select'},
     },
+    state: {
+      options: Object.values(ObcPoiState),
+      control: {type: 'select'},
+    },
     x: {control: {type: 'range', min: 0, max: 640, step: 1}},
     y: {control: {type: 'range', min: 32, max: 400, step: 1}},
     buttonY: {control: {type: 'range', min: 0, max: 480, step: 1}},
     fixedTarget: {control: {type: 'boolean'}},
+    outsideAngle: {
+      control: {type: 'range', min: 0, max: 360, step: 1},
+      if: {arg: 'type', eq: ObcPoiType.Outside},
+    },
     hasPointer: {control: {type: 'boolean'}},
     hasHeader: {control: {type: 'boolean'}},
     value: {
@@ -77,6 +90,9 @@ const meta: Meta<ObcPoiData> = {
     targetOffsetX: {
       control: {type: 'range', min: -100, max: 100, step: 1},
     },
+    selected: {control: {type: 'boolean'}},
+    boxWidth: {control: {type: 'number', min: 0, step: 1}},
+    boxHeight: {control: {type: 'number', min: 0, step: 1}},
     animatePosition: {control: {type: 'boolean'}},
     data: {
       control: 'object',
@@ -88,10 +104,12 @@ const meta: Meta<ObcPoiData> = {
     controls: {
       include: [
         'type',
+        'state',
         'x',
         'y',
         'buttonY',
         'fixedTarget',
+        'outsideAngle',
         'hasPointer',
         'hasHeader',
         'value',
@@ -101,6 +119,9 @@ const meta: Meta<ObcPoiData> = {
         'relativeDirection',
         'buttonOffsetX',
         'targetOffsetX',
+        'selected',
+        'boxWidth',
+        'boxHeight',
         'animatePosition',
         'data',
       ],
@@ -122,9 +143,11 @@ const meta: Meta<ObcPoiData> = {
       </style>
       <obc-poi-data
         .type=${args.type}
+        .state=${args.state}
         .x=${args.x}
         .y=${args.y}
         .buttonY=${args.buttonY}
+        .outsideAngle=${args.outsideAngle}
         .hasPointer=${args.hasPointer}
         .hasHeader=${args.hasHeader}
         .value=${args.value}
@@ -134,6 +157,9 @@ const meta: Meta<ObcPoiData> = {
         .relativeDirection=${args.relativeDirection}
         .buttonOffsetX=${args.buttonOffsetX}
         .targetOffsetX=${args.targetOffsetX}
+        .selected=${args.selected}
+        .boxWidth=${args.boxWidth}
+        .boxHeight=${args.boxHeight}
         .animatePosition=${args.animatePosition}
         .data=${args.data}
         .fixedTarget=${args.fixedTarget}
@@ -161,11 +187,6 @@ export const Preview: Story = {
     type: ObcPoiType.Line,
     x: 444,
   },
-  parameters: {
-    controls: {
-      exclude: ['type'],
-    },
-  },
   render: (args) => {
     return html`
       <style>
@@ -182,10 +203,12 @@ export const Preview: Story = {
       </style>
       <div class="frame">
         <obc-poi-data
-          .type=${ObcPoiType.Line}
+          .type=${args.type}
+          .state=${args.state}
           .x=${args.x}
           .y=${args.y}
           .buttonY=${args.buttonY}
+          .outsideAngle=${args.outsideAngle}
           .hasPointer=${args.hasPointer}
           .hasHeader=${args.hasHeader}
           .value=${args.value}
@@ -195,6 +218,9 @@ export const Preview: Story = {
           .relativeDirection=${args.relativeDirection}
           .buttonOffsetX=${args.buttonOffsetX}
           .targetOffsetX=${args.targetOffsetX}
+          .selected=${args.selected}
+          .boxWidth=${args.boxWidth}
+          .boxHeight=${args.boxHeight}
           .animatePosition=${args.animatePosition}
           .data=${args.data}
           .fixedTarget=${args.fixedTarget}

@@ -31,31 +31,52 @@ export enum PointerDirection {
 }
 
 /**
- * `<obc-poi-card>` – Card container for POI content with optional header and pointer.
+ * `<obc-poi-card>` - Content card container with optional pointer arrow, header variants, and interactive click handling.
  *
- * Wraps content in a styled card with an optional directional arrow pointer for
- * visual anchoring. Integrates `obc-poi-card-header` for displaying POI metadata.
+ * ## Overview
+ * Use this component to wrap contextual marker details in a card with optional directional anchoring.
+ * Keywords/synonyms: detail card, marker card, anchored card, popover card.
  *
- * ## Features
+ * ## Features/Variants
+ * - `pointerDirection` (default `none`): `none`, `top`, `bottom`, `left`, `right`.
+ * - `fixedSize` (default `false`): toggles fixed `256x256` sizing instead of content-based sizing.
+ * - Header options:
+ *   - `noHeader` hides the header area.
+ *   - `headerVariant` controls header layout (`tag`, `condensed`, `regular`, `detailed`).
+ *   - `index`, `cardTitle`, `description`, `source`, `timestamp` are forwarded to `obc-poi-card-header`.
+ *   - `hasLeadingIcon` and `hasCloseButton` gate header affordances.
+ * - `interactive` (default `false`): enables keyboard activation and `card-click` dispatch.
+ * - `hasAlert` (default `false`): shows alert ring layer when `interactive` is enabled.
  *
- * - **Pointer direction:** Arrow in any direction (top, bottom, left, right) or none.
- * - **Header variants:** tag, condensed, regular, detailed (via `headerVariant`).
- * - **Sizing:** Hugs content by default; set `fixedSize` for 256×256px.
- * - **Interactive mode:** Enables click events, keyboard focus, and alert borders.
+ * ## Usage Guidelines
+ * - Use `pointerDirection` when the card should visually point to an anchor target.
+ * - Keep `interactive` off for read-only cards.
+ * - Use the header slots only when the selected `headerVariant` renders them.
+ *
+ * ## Slots/Content
+ * - Default slot: Main card body content.
+ * - `leading-icon`: Optional icon used by the regular header variant.
+ * - `poi-icon`: Optional icon used by the detailed header variant.
+ *
+ * ## Events
+ * - `card-click`: Fired when the card surface is activated in interactive mode.
+ *
+ * ## Best Practices
+ * - Keep `index` stable so event payloads remain predictable.
+ * - Pair `hasAlert` with meaningful alert state in surrounding UI logic.
  *
  * ## Example
- *
  * ```html
- * <obc-poi-card pointerDirection="bottom" index="1" cardTitle="Vessel Name"
- *   source="AIS" interactive>
+ * <obc-poi-card pointerDirection="bottom" index="1" cardTitle="Target" interactive>
+ *   <obi-placeholder slot="leading-icon"></obi-placeholder>
  *   <div>Custom card content</div>
  * </obc-poi-card>
  * ```
  *
- * @slot - Card content
- * @slot leading-icon - Icon before the title (regular header variant)
- * @slot poi-icon - Icon for the POI button (detailed header variant)
- * @fires card-click - When the card is clicked (interactive mode only)
+ * @slot - Main card body content.
+ * @slot leading-icon - Optional icon used by the regular header variant.
+ * @slot poi-icon - Optional icon used by the detailed header variant.
+ * @fires card-click {CustomEvent<PoiCardClickDetail>} Fired when the card is activated in interactive mode.
  */
 @customElement('obc-poi-card')
 export class ObcPoiCard extends LitElement {

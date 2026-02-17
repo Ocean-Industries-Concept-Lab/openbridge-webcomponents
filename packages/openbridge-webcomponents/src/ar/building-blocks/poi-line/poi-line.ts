@@ -10,6 +10,46 @@ import {
 } from '../poi-graphic-line/poi-graphic-line.js';
 import {customElement} from '../../../decorator.js';
 
+/**
+ * `<obc-poi-line>` - Connector line wrapper that combines a POI line graphic with an optional end dot.
+ *
+ * ## Overview
+ * Use this component to render a marker stem, leader line, or tether between a target and its label/button.
+ * It wraps `obc-poi-graphic-line` and can add a pointer dot at the line end.
+ *
+ * ## Features/Variants
+ * - `height` (default `96`): Controls the connector length.
+ * - `poiStyle` (default `normal`): Selects the visual style token used by `getPOILineConfig(...)`.
+ * - `lineType` (default `regular`): Selects regular or dashed line treatment.
+ * - `offset` (default `0`): Bends the line horizontally by shifting the line end.
+ * - `hasPointer` (default `false`): Renders an end dot/pointer.
+ * - `animatePosition` (default `false`): Uses a short transition duration for position updates.
+ *
+ * ## Usage Guidelines
+ * - Use `<obc-poi-line>` when you need both the connector and optional end-dot in one primitive.
+ * - Use `<obc-poi-graphic-line>` directly when you only need the raw line SVG.
+ * - Keep `height` and `offset` finite for predictable geometry.
+ *
+ * ## Slots/Content
+ * This component has no slots.
+ *
+ * ## Events
+ * This component does not emit custom events.
+ *
+ * ## Best Practices
+ * - Keep offsets minimal so the visual relationship between source and target stays clear.
+ * - Drive `poiStyle` and `lineType` from state tokens instead of hardcoded CSS overrides.
+ *
+ * ## Example
+ * ```html
+ * <obc-poi-line
+ *   height="96"
+ *   poi-style="regular"
+ *   line-type="regular"
+ *   .hasPointer=${true}
+ * ></obc-poi-line>
+ * ```
+ */
 @customElement('obc-poi-line')
 export class ObcPoiLine extends LitElement {
   @property({type: Number}) height: number = 96;

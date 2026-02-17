@@ -1,13 +1,13 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
   ObcPoiButton,
+  ObcPoiButtonState,
   ObcPoiButtonType,
   PoiButtonVisualState,
 } from './poi-button.js';
 import './poi-button.js';
 import '../../../icons/icon-placeholder.js';
 import {html, TemplateResult} from 'lit';
-import {ObcArAlertType} from '../../types.js';
 import {crossDecorator} from '../../../storybook-util.js';
 import {
   ObcPoiHeaderSize,
@@ -132,7 +132,7 @@ const meta: Meta<ObcPoiButton> = {
     hasHeader: false,
     type: ObcPoiButtonType.Button,
     relativeDirection: 0,
-    alertType: ObcArAlertType.None,
+    state: ObcPoiButtonState.Enabled,
     value: PoiButtonVisualState.Unchecked,
     data: [],
   },
@@ -143,12 +143,20 @@ const meta: Meta<ObcPoiButton> = {
     selected: {
       control: {type: 'boolean'},
     },
+    hasData: {
+      control: false,
+      table: {disable: true},
+    },
     hasHeader: {
       control: {type: 'boolean'},
     },
-    alertType: {
+    state: {
       control: {type: 'select'},
-      options: Object.values(ObcArAlertType),
+      options: Object.values(ObcPoiButtonState),
+    },
+    header: {
+      control: false,
+      table: {disable: true},
     },
     value: {
       control: {type: 'select'},
@@ -193,7 +201,7 @@ const meta: Meta<ObcPoiButton> = {
       .selected=${args.selected}
       .hasHeader=${args.hasHeader}
       .relativeDirection=${args.relativeDirection}
-      .alertType=${args.alertType}
+      .state=${args.state}
       .value=${args.value}
       .type=${args.type}
     >
@@ -236,7 +244,7 @@ type MatrixButtonConfig = {
   type?: ObcPoiButtonType;
   value?: PoiButtonVisualState;
   selected?: boolean;
-  alertType?: ObcArAlertType;
+  state?: ObcPoiButtonState;
   hasHeader?: boolean;
   data?: Array<{value: string; label: string; unit: string}>;
   stageTall?: boolean;
@@ -252,7 +260,7 @@ const renderMatrixButton = (cfg: MatrixButtonConfig) => html`
         .value=${cfg.value ?? PoiButtonVisualState.Unchecked}
         .selected=${cfg.selected ?? false}
         .hasHeader=${cfg.hasHeader ?? false}
-        .alertType=${cfg.alertType ?? ObcArAlertType.None}
+        .state=${cfg.state ?? ObcPoiButtonState.Enabled}
         .data=${cfg.data ?? []}
       >
         <obi-placeholder></obi-placeholder>
@@ -316,7 +324,7 @@ export const AllAlerts: Story = {
       <div style=${sectionStyle}>
         <div style=${gridStyle}>
           ${renderMatrixButton({
-            label: 'None',
+            label: 'Enabled',
             selected: true,
             hasHeader: true,
           })}
@@ -324,19 +332,19 @@ export const AllAlerts: Story = {
             label: 'Caution',
             selected: true,
             hasHeader: true,
-            alertType: ObcArAlertType.Caution,
+            state: ObcPoiButtonState.Caution,
           })}
           ${renderMatrixButton({
             label: 'Warning',
             selected: true,
             hasHeader: true,
-            alertType: ObcArAlertType.Warning,
+            state: ObcPoiButtonState.Warning,
           })}
           ${renderMatrixButton({
             label: 'Alarm',
             selected: true,
             hasHeader: true,
-            alertType: ObcArAlertType.Alarm,
+            state: ObcPoiButtonState.Alarm,
           })}
         </div>
       </div>
@@ -344,7 +352,7 @@ export const AllAlerts: Story = {
       <div style=${sectionStyle}>
         <div style=${gridStyle}>
           ${renderMatrixButton({
-            label: 'None',
+            label: 'Enabled',
             type: ObcPoiButtonType.Enhanced,
             selected: true,
             hasHeader: true,
@@ -354,21 +362,21 @@ export const AllAlerts: Story = {
             type: ObcPoiButtonType.Enhanced,
             selected: true,
             hasHeader: true,
-            alertType: ObcArAlertType.Caution,
+            state: ObcPoiButtonState.Caution,
           })}
           ${renderMatrixButton({
             label: 'Warning',
             type: ObcPoiButtonType.Enhanced,
             selected: true,
             hasHeader: true,
-            alertType: ObcArAlertType.Warning,
+            state: ObcPoiButtonState.Warning,
           })}
           ${renderMatrixButton({
             label: 'Alarm',
             type: ObcPoiButtonType.Enhanced,
             selected: true,
             hasHeader: true,
-            alertType: ObcArAlertType.Alarm,
+            state: ObcPoiButtonState.Alarm,
           })}
         </div>
       </div>
@@ -392,17 +400,17 @@ export const AllOverlapped: Story = {
           ${renderMatrixButton({
             label: 'Caution',
             value: PoiButtonVisualState.Overlapped,
-            alertType: ObcArAlertType.Caution,
+            state: ObcPoiButtonState.Caution,
           })}
           ${renderMatrixButton({
             label: 'Warning',
             value: PoiButtonVisualState.Overlapped,
-            alertType: ObcArAlertType.Warning,
+            state: ObcPoiButtonState.Warning,
           })}
           ${renderMatrixButton({
             label: 'Alarm',
             value: PoiButtonVisualState.Overlapped,
-            alertType: ObcArAlertType.Alarm,
+            state: ObcPoiButtonState.Alarm,
           })}
         </div>
       </div>
@@ -438,7 +446,7 @@ export const AllData: Story = {
               {value: '10', label: 'Lab', unit: 'Unit'},
               {value: '20', label: 'Lab 2', unit: 'Unit 2'},
             ],
-            alertType: ObcArAlertType.Alarm,
+            state: ObcPoiButtonState.Alarm,
           })}
           ${renderMatrixButton({
             label: 'Values + Overlapped',
