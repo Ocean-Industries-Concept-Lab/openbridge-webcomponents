@@ -168,6 +168,7 @@ export class ObcNavigationItem extends LitElement {
           ].includes(this.variant)
             ? html`
                 <span
+                  part="label"
                   class=${classMap({
                     label: true,
                     'label-flyout': showFlyout && !isCompact,
