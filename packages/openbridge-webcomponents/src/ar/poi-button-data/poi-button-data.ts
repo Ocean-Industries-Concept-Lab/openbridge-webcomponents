@@ -4,45 +4,39 @@ import {ObcPoiButton} from '../building-blocks/poi-button/poi-button.js';
 import {customElement} from '../../decorator.js';
 
 /**
- * `<obc-poi-button-data>` extends `ObcPoiButton` to provide a data-focused POI button with a default fallback icon.
+ * `<obc-poi-button-data>` - Convenience wrapper over `obc-poi-button` that auto-injects a default icon when default content is missing.
  *
  * ## Overview
- *
- * Use this component when a POI data button should behave like `obc-poi-button`
- * but automatically renders `obi-vessel-generic-default-filled` if no unslotted
- * default content is provided.
+ * Use this component when marker button consumers may omit default icon content.
+ * It preserves `obc-poi-button` behavior while ensuring a fallback icon is present.
  * TODO(designer): Confirm intended product contexts where this wrapper should be preferred over direct `obc-poi-button`.
  *
  * ## Features/Variants
- *
  * - Inherits all visual variants, states, and layout behavior from `obc-poi-button`.
  * - Adds default-content fallback logic in `connectedCallback`.
  * - Leaves provided default content untouched when present.
- * - Leaves slotted content untouched (`id-label`, `relation`).
+ * - Leaves named-slot content untouched (`header`).
  * - TODO(designer): Confirm whether alternative default icons are needed by variant/theme.
  *
  * ## Usage Guidelines
- *
  * - Prefer `<obc-poi-button-data>` when consumer markup may omit a default icon/content node.
- * - Use the same public properties as `obc-poi-button` (`data`, `value`, `type`, `header`, `hasRelation`, etc.).
+ * - Use the same public properties as `obc-poi-button` (`data`, `value`, `type`, `hasHeader`, etc.).
  * - Provide explicit default content when a domain-specific icon should replace the fallback icon.
  *
  * ## Slots/Content
  *
  * - Default slot: Main icon/content for the POI object body (fallback icon is injected when empty).
- * - `id-label`: Optional custom indicator content forwarded to header indicator rendering.
- * - `relation`: Optional relation icon/content when relation content is enabled.
+ * - `header`: Optional custom header content forwarded to `obc-poi-button`.
  *
  * ## Events
- *
- * - Inherits events from `obc-poi-button`.
- * - `click`: Native click event from the interactive button surface.
- * - TODO(designer): Confirm whether analytics/semantic custom events should be emitted by this wrapper.
+ * This component does not emit custom events.
+ * Native `click` behavior is inherited from `obc-poi-button`.
+ * TODO(designer): Confirm whether analytics/semantic custom events should be emitted by this wrapper.
  *
  * ## Best Practices
  *
  * - Use this component to enforce consistent fallback visuals for data markers.
- * - Keep `data` rows, `header`, and `hasRelation` synchronized with domain state to avoid mixed UI semantics.
+ * - Keep `data` rows and slotted `header` synchronized with domain state to avoid mixed UI semantics.
  * - Prefer explicit content for specialized icons; rely on fallback only as a safe default.
  *
  * ## Example
@@ -56,9 +50,7 @@ import {customElement} from '../../decorator.js';
  * ```
  *
  * @slot - Default icon/content slot for the POI object body.
- * @slot id-label - Custom indicator content for the header indicator slot.
- * @slot relation - Relation icon/content rendered when relation mode is enabled.
- * @fires click - Native click event inherited from `obc-poi-button`.
+ * @slot header - Optional custom header content.
  */
 @customElement('obc-poi-button-data')
 export class ObcPoiButtonData extends ObcPoiButton {

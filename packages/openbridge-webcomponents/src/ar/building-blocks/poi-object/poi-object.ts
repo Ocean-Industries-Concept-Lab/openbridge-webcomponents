@@ -49,70 +49,44 @@ export enum ObcPoiObjectState {
 }
 
 /**
- * `<obc-poi-object>` – Base icon button component for interactive markers.
+ * `<obc-poi-object>` - Base icon marker button used as the visual core of POI-style targets.
  *
- * Renders an icon within a styled frame with configurable size, visual style, and
- * selection state. Used as the foundation for domain-specific marker components.
+ * ## Overview
+ * This component renders slotted icon content inside a configurable frame that handles size, style, and state variants.
+ * Keywords/synonyms: marker button, icon target, target chip, point marker.
  *
  * ## Features/Variants
- *
- * ### Type (`type`)
- * Controls size and shape. Defaults to `regular`.
- * - `indicator`: Icon only with drop shadow, no background frame.
- * - `regular`: Standard size (`--maneuvering-components-poi-button-touch-target` touch target, 36px background, 24px icon).
- * - `large`: Larger size (`--maneuvering-components-poi-button-large-touch-target` touch target, 52px background, 36px icon).
- * - `n-up`: Square background (`--maneuvering-components-poi-button-touch-target` touch target, 32px background, 24px icon).
- * - `n-up-large`: Large square background (`--maneuvering-components-poi-button-large-touch-target` touch target, 48px background, 36px icon).
- *
- * ### Style (`objectStyle`)
- * Controls background color scheme. Defaults to `regular`.
- * - `regular`: White/translucent background.
- * - `categorical`: Blue-tinted background for categorized items.
- *
- * ### State (`state`)
- * Controls selection and display mode. Defaults to `unchecked`.
- * - `unchecked`: Default unselected state.
- * - `checked`: Selected state with visual indicator.
- * - `static-unchecked`: Flat background style, not selected.
- * - `static-checked`: Flat background style, selected.
- * - `activated`: White outer ring around background.
- * - `overlapped`: Smaller circle with hidden icon (for clustered markers).
- *
- * ### Interactive (`interactive`)
- * When `true`, enables keyboard navigation (Enter/Space activation), focus states,
- * and hover/active visual feedback. Defaults to `false`.
- *
- * ### Extra Classes (`extraClasses`)
- * Internal property for subclasses to inject additional CSS classes. Not reflected
- * as an attribute. TODO(designer): Clarify if this should be exposed or remain internal.
+ * - `type` (default `regular`): `indicator`, `regular`, `large`, `n-up`, `n-up-large`.
+ * - `objectStyle` (default `regular`): `regular` or `categorical`.
+ * - `state` (default `unchecked`): `unchecked`, `checked`, `static-unchecked`, `static-checked`, `activated`, `overlapped`.
+ * - `interactive` (default `false`): enables keyboard activation (`Enter`/`Space`) and focus/active semantics.
+ * - Placeholder icon handling: adds a CSS state when the default slot contains `obi-placeholder`.
  *
  * ## Usage Guidelines
- *
- * Can be consumed directly as a default POI object, or extended by domain-
- * specific POI object components.
+ * - Use `indicator` for icon-only visuals without a background frame.
+ * - Use `regular` or `large` for circular framed targets.
+ * - Use `n-up` or `n-up-large` for square framed targets.
+ * - Use `overlapped` when icon content should collapse to reduce visual density.
  *
  * ## Slots/Content
- *
- * @slot - Icon element to display inside the button frame.
+ * - Default slot: Icon/content displayed inside the marker frame.
  *
  * ## Events
- *
- * This component does not emit custom events. Click handling is delegated to the
- * native `click` event when `interactive` is enabled.
+ * This component does not emit custom events.
+ * Native `click` is available when `interactive` is enabled.
  *
  * ## Best Practices
- *
- * - Use `indicator` type for decorative markers that don't need a background.
- * - Set `interactive` to `true` only when the marker should be clickable/focusable.
- * - Use `overlapped` state for markers in dense clusters to reduce visual noise.
+ * - Keep `interactive` disabled for decorative markers.
+ * - Map `state` directly from application state to avoid mixed visual semantics.
  *
  * ## Example
- *
  * ```html
  * <obc-poi-object type="regular" objectStyle="regular" state="checked" interactive>
- *   <my-custom-icon></my-custom-icon>
+ *   <obi-placeholder></obi-placeholder>
  * </obc-poi-object>
  * ```
+ *
+ * @slot - Icon/content displayed inside the marker frame.
  */
 @customElement('obc-poi-object')
 export class ObcPoiObject extends LitElement {
@@ -126,8 +100,6 @@ export class ObcPoiObject extends LitElement {
     ObcPoiObjectState.Unchecked;
 
   @property({type: Boolean}) interactive = false;
-
-  @property({attribute: false}) extraClasses: Record<string, boolean> = {};
 
   @state() private hasPlaceholderIcon = false;
 
@@ -221,7 +193,6 @@ export class ObcPoiObject extends LitElement {
       'is-indicator': this.isIndicator,
       'has-placeholder-icon': this.hasPlaceholderIcon,
       interactive: this.isInteractive,
-      ...this.extraClasses,
     };
 
     return html`

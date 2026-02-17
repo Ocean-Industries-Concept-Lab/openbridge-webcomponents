@@ -31,34 +31,50 @@ export {ObcPoiObjectStyle as ObcPoiObjectVesselStyle};
 export {ObcPoiObjectState as ObcPoiObjectVesselState};
 
 /**
- * `<obc-poi-object-vessel>` – Vessel icon button for POI display.
+ * `<obc-poi-object-vessel>` - Specialized `obc-poi-object` wrapper for vessel-style icon markers.
  *
- * Renders a vessel icon as a clickable button with configurable size, style, and
- * selection state. Used in POI card headers, map overlays, and target lists.
+ * ## Overview
+ * Use this component when you need vessel marker visuals with the same base behavior as `obc-poi-object`.
+ * It maps vessel-specific types onto the base POI object type system.
  *
- * ## Features
+ * ## Features/Variants
+ * - `type` (default `regular`): `indicator`, `regular`, `large`, `speed-rot`, `n-up`, `n-up-large`.
+ * - Inherits `objectStyle`, `state`, and `interactive` behavior from `ObcAbstractPoiObject`.
+ * - `speed-rot` layout renders a three-part composition:
+ *   - `turn-indicator` slot
+ *   - default slot (main vessel icon)
+ *   - `speed-indicator` slot
+ * - Non-`speed-rot` layouts render only the default slot.
  *
- * - **Type variants:** `indicator`, `regular`, `large`, `speed-rot`, `n-up`, `n-up-large`.
- * - **Style variants:** `regular` (white/translucent) or `categorical` (blue-tinted).
- * - **State variants:** Selection, activation, and overlap states.
- * - **Speed-rot type:** Composite layout with turn indicator, vessel icon, and speed indicator slots.
+ * ## Usage Guidelines
+ * - Use `speed-rot` only when turn and speed indicators are available.
+ * - Use `indicator` for icon-only visuals without a background frame.
+ * - Keep slot content lightweight to preserve compact marker layout.
  *
- * ## Usage
+ * ## Slots/Content
+ * - Default slot: Main vessel icon/content.
+ * - `turn-indicator`: Optional turn indicator content used by `speed-rot`.
+ * - `speed-indicator`: Optional speed indicator content used by `speed-rot`.
  *
- * - **Indicator type:** Use filled icon variants with `useCssColor` attribute.
- * - **Other types:** Use outlined icon variants.
+ * ## Events
+ * This component does not emit custom events.
+ *
+ * ## Best Practices
+ * - Match icon style and type scale (`regular`, `large`, `n-up`) across related markers.
+ * - TODO(designer): Confirm icon style guidance for `indicator` vs non-`indicator` variants.
  *
  * ## Example
- *
  * ```html
- * <obc-poi-object-vessel type="regular" objectStyle="regular" state="checked">
- *   <obi-vessel-type-passenger-outlined></obi-vessel-type-passenger-outlined>
+ * <obc-poi-object-vessel type="speed-rot" objectStyle="regular" state="checked">
+ *   <obi-placeholder slot="turn-indicator"></obi-placeholder>
+ *   <obi-placeholder></obi-placeholder>
+ *   <obi-placeholder slot="speed-indicator"></obi-placeholder>
  * </obc-poi-object-vessel>
  * ```
  *
- * @slot - Vessel icon to display
- * @slot turn-indicator - Turn rate indicator (speed-rot type only)
- * @slot speed-indicator - Speed indicator (speed-rot type only)
+ * @slot - Main vessel icon/content.
+ * @slot turn-indicator - Optional turn indicator content used by `speed-rot`.
+ * @slot speed-indicator - Optional speed indicator content used by `speed-rot`.
  */
 @customElement('obc-poi-object-vessel')
 export class ObcPoiObjectVessel extends ObcAbstractPoiObject {
@@ -85,12 +101,6 @@ export class ObcPoiObjectVessel extends ObcAbstractPoiObject {
       default:
         return ObcPoiObjectType.Regular;
     }
-  }
-
-  override get extraClasses(): Record<string, boolean> {
-    return {
-      'type-speed-rot': this.isSpeedRot,
-    };
   }
 
   override get icon() {

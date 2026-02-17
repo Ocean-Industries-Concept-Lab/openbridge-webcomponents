@@ -11,48 +11,38 @@ export enum ObcRulerPointerType {
 }
 
 /**
- * `<obc-ruler-pointer>` renders a compact AR ruler endpoint marker for ruler targets and measurement anchors.
+ * `<obc-ruler-pointer>` - Endpoint marker component for ruler handles and measurement anchors.
  *
  * ## Overview
- *
- * Use `<obc-ruler-pointer>` when a minimal endpoint indicator is needed in AR overlays.
- * The component exposes one visual attribute (`type`) and does not render slotted content.
- * Keywords/synonyms: ruler, pointer, AR dot, target marker, measurement marker, indicator dot.
+ * Use this component when you need a compact pointer dot for a ruler endpoint.
+ * Keywords/synonyms: ruler marker, endpoint dot, anchor marker, measurement pointer.
  *
  * ## Features/Variants
- *
  * - `type="default"`: 4px active dot.
  * - `type="regular"`: 10px outer active circle with a 6px inner dot.
  * - `type="selected"`: 10px outer active circle for selected emphasis.
  *
  * ## Usage Guidelines
- *
  * - Use `default` for subtle, always-visible ruler anchors.
  * - Use `regular` for the baseline interactive endpoint style.
  * - Use `selected` when the ruler endpoint is actively focused or selected.
- * - Pair with ruler line/measurement components for complete ruler visuals.
+ * - Pair with ruler line and measurement label components for complete ruler visuals.
  *
  * ## Slots/Content
- *
- * - None.
+ * This component has no slots.
  *
  * ## Events
- *
- * - None.
+ * This component does not emit custom events.
  *
  * ## Best Practices
- *
  * - Prefer `regular` as the default interactive state for consistency.
  * - Reserve `selected` for active focus only to keep state changes legible.
- * - Keep pointer state controlled by parent ruler interaction logic.
+ * - Keep pointer state controlled by parent interaction logic.
  *
  * ## Example
- *
  * ```html
  * <obc-ruler-pointer type="regular"></obc-ruler-pointer>
  * ```
- *
- * @slot - None.
  */
 @customElement('obc-ruler-pointer')
 export class ObcRulerPointer extends LitElement {

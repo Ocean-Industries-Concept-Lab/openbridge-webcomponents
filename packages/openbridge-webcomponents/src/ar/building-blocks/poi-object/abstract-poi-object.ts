@@ -35,18 +35,12 @@ export class ObcAbstractPoiObject extends LitElement {
     return ObcPoiObjectType.Regular;
   }
 
-  /** Extra CSS classes for type-specific styling. Override in subclasses. */
-  get extraClasses(): Record<string, boolean> {
-    return {};
-  }
-
   override render() {
     return html`<obc-poi-object
       .type=${this.baseType}
       .objectStyle=${this.objectStyle}
       .state=${this.state}
       ?interactive=${this.interactive}
-      .extraClasses=${this.extraClasses}
     >
       ${this.icon}
     </obc-poi-object>`;

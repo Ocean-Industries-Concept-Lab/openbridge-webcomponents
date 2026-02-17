@@ -177,17 +177,6 @@ export function resolvePOIStyle(style: POIStyle | string): POIStyleVariant {
   }
 }
 
-export const POI_LINE_CONFIG: Record<POIStyle, POILineParams> = {
-  [POIStyle.Normal]: STYLE_CONFIG[POIStyle.Regular][POILineType.Regular],
-  [POIStyle.Enhanced]: STYLE_CONFIG[POIStyle.Selected][POILineType.Regular],
-  [POIStyle.Regular]: STYLE_CONFIG[POIStyle.Regular][POILineType.Regular],
-  [POIStyle.Selected]: STYLE_CONFIG[POIStyle.Selected][POILineType.Regular],
-  [POIStyle.Alarm]: STYLE_CONFIG[POIStyle.Alarm][POILineType.Regular],
-  [POIStyle.Caution]: STYLE_CONFIG[POIStyle.Caution][POILineType.Regular],
-  [POIStyle.Warning]: STYLE_CONFIG[POIStyle.Warning][POILineType.Regular],
-  [POIStyle.Route]: STYLE_CONFIG[POIStyle.Route][POILineType.Regular],
-};
-
 export function getPOILineConfig(
   style: POIStyle | string,
   lineType: POILineType | string = POILineType.Regular
@@ -267,17 +256,13 @@ export const POI_VISUAL_VARIANTS: Array<{
 ];
 
 /**
- * `<obc-poi-graphic-line>` - Renders a POI connector/leader line graphic for AR marker visuals.
+ * `<obc-poi-graphic-line>` - SVG connector line primitive for marker stems and leader lines.
  *
  * ## Overview
- *
- * This component draws the POI line SVG used by AR point-of-interest (POI) markers,
- * including straight or offset paths with optional dashed styling. It can be used as
- * a marker line, connector line, guide line, or leader/tether line depending on context.
+ * This component renders the line geometry only, including straight and offset paths with optional dashed styling.
  * Keywords: connector line, leader line, guide line, tether line, marker stem.
  *
  * ## Features/Variants
- *
  * - `lineHeight`: Controls the rendered connector length. Default: `96`.
  * - `lineStart`: Sets the Y-axis start position for line geometry. Default: `1`.
  * - `lineStyle`: Selects style theme (for example `regular`, `enhanced`, `alarm`). Default: `enhanced`.
@@ -295,15 +280,12 @@ export const POI_VISUAL_VARIANTS: Array<{
  * - Use `offset` to route around dense UI and avoid visual overlap.
  *
  * ## Slots/Content
- *
  * This component has no slots.
  *
  * ## Events
- *
  * This component emits no custom events.
  *
  * ## Best Practices
- *
  * - Prefer semantic `lineStyle` values derived from UI state instead of hardcoding colors.
  * - Keep offsets minimal to preserve visual traceability between marker and target.
  * - Reuse shared `POIStyle` and `POILineType` tokens for consistent rendering across POI components.
