@@ -9,11 +9,11 @@ See also the [OpenBridge WebComponents Vue](https://www.npmjs.com/package/@ocean
 ## Project Setup
 
 ```sh
-yarn install
+npm install
 ```
 
 ### Run the demo
 
 ```sh
-yarn dev
+npm run dev
 ```
