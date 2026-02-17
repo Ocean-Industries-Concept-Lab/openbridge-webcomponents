@@ -242,20 +242,56 @@
 
 /* Overlap alert color styles */
 :host([value="overlapped"]) .wrapper {
-  &.alert-caution .poi-object {
-    --overlay-container-background-color: var(--alert-caution-color);
+  &.alert-caution {
+    --overlay-container-background-color: var(--alert-caution-color, #ffdb42);
     --overlay-border-outline-color: var(--alert-caution-outline-color);
   }
 
-  &.alert-warning .poi-object {
-    --overlay-container-background-color: var(--alert-warning-color);
+  &.alert-caution .poi-object {
+    --overlay-container-background-color: var(--alert-caution-color, #ffdb42);
+    --overlay-border-outline-color: var(--alert-caution-outline-color);
+  }
+
+  &.alert-warning {
+    --overlay-container-background-color: var(--alert-warning-color, #fe9413);
     --overlay-border-outline-color: var(--alert-warning-outline-color);
   }
 
-  &.alert-alarm .poi-object {
-    --overlay-container-background-color: var(--alert-alarm-color);
+  &.alert-warning .poi-object {
+    --overlay-container-background-color: var(--alert-warning-color, #fe9413);
+    --overlay-border-outline-color: var(--alert-warning-outline-color);
+  }
+
+  &.alert-alarm {
+    --overlay-container-background-color: var(--alert-alarm-color, #e30019);
     --overlay-border-outline-color: var(--alert-alarm-outline-color);
   }
+
+  &.alert-alarm .poi-object {
+    --overlay-container-background-color: var(--alert-alarm-color, #e30019);
+    --overlay-border-outline-color: var(--alert-alarm-outline-color);
+  }
+}
+
+:host([value="overlapped"])
+  .wrapper.alert-caution
+  .poi-object::part(background-frame) {
+  background-color: var(--alert-caution-color, #ffdb42);
+  border-color: var(--alert-caution-outline-color);
+}
+
+:host([value="overlapped"])
+  .wrapper.alert-warning
+  .poi-object::part(background-frame) {
+  background-color: var(--alert-warning-color, #fe9413);
+  border-color: var(--alert-warning-outline-color);
+}
+
+:host([value="overlapped"])
+  .wrapper.alert-alarm
+  .poi-object::part(background-frame) {
+  background-color: var(--alert-alarm-color, #e30019);
+  border-color: var(--alert-alarm-outline-color);
 }
 
 ::slotted(:not([slot])) {
@@ -337,6 +373,21 @@
     --overlay-container-background-color: var(--obc-poi-overlapped-data-bg);
     --overlay-border-outline-color: var(--obc-poi-overlapped-data-border);
   }
+}
+
+:host([value="overlapped"]) .wrapper.has-data.alert-caution {
+  background: var(--alert-caution-color, #ffdb42);
+  border-color: var(--alert-caution-outline-color);
+}
+
+:host([value="overlapped"]) .wrapper.has-data.alert-warning {
+  background: var(--alert-warning-color, #fe9413);
+  border-color: var(--alert-warning-outline-color);
+}
+
+:host([value="overlapped"]) .wrapper.has-data.alert-alarm {
+  background: var(--alert-alarm-color, #e30019);
+  border-color: var(--alert-alarm-outline-color);
 }
 
 :host([value="overlapped"]:not([layout="inline"])) .wrapper.has-data {

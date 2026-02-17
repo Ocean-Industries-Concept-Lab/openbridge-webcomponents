@@ -79,7 +79,7 @@
   box-sizing: border-box;
   border: 0 solid white;
   border-width: 0;
-  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 90%));
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 100%));
 }
 
 .corner.tl {

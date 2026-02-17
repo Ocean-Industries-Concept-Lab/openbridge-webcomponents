@@ -146,8 +146,8 @@ export class ObcPoiPointer extends LitElement {
           .type=${ObcPoiSelectionFrameType.Button}
           .state=${ObcPoiSelectionFrameState.Regular}
           .customMode=${true}
-          .boxWidth=${32}
-          .boxHeight=${24}
+          .boxWidth=${25}
+          .boxHeight=${17}
         ></obc-poi-selection-frame>
       </div>
     `;

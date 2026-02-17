@@ -31,7 +31,7 @@ enum ObcPoiSelectionCornerPosition {
  */
 @customElement('obc-poi-selection-frame')
 export class ObcPoiSelectionFrame extends LitElement {
-  private static readonly MIN_CUSTOM_SIZE_PX = 32;
+  private static readonly MIN_CUSTOM_SIZE_PX = 28;
   private static readonly MIN_TOUCH_TARGET_SIZE_PX = 48;
   private static readonly CORNER_STROKE_PX = 1.5;
   private static readonly CORNER_RADIUS_PX = 3.5;
@@ -82,17 +82,11 @@ export class ObcPoiSelectionFrame extends LitElement {
   }
 
   private get resolvedCustomVisualWidthPx(): number {
-    return (
-      this.resolvedFrameSizePx +
-      (this.resolvedCustomBoxWidthPx - ObcPoiSelectionFrame.MIN_CUSTOM_SIZE_PX)
-    );
+    return this.resolvedCustomBoxWidthPx;
   }
 
   private get resolvedCustomVisualHeightPx(): number {
-    return (
-      this.resolvedFrameSizePx +
-      (this.resolvedCustomBoxHeightPx - ObcPoiSelectionFrame.MIN_CUSTOM_SIZE_PX)
-    );
+    return this.resolvedCustomBoxHeightPx;
   }
 
   private get resolvedCornerSizePx(): number {
