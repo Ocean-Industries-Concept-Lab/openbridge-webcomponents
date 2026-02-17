@@ -36,7 +36,7 @@ Do not edit the generated wrapper packages directly.
 Each component's `*.stories.ts` file should:
 - Use `tags: ['autodocs', '6.0']` for documented OpenBridge 6.0 components
 - Use `tags: ['alpha']` for components still in development
-- Use `tags: ['skip-snapshot']` to exclude a story from visual snapshot testing
+- Use `tags: ['!snapshot']` to exclude a story from visual snapshot testing
 - Export a `Default` story and additional stories for key states and variants
 
 ## Testing
