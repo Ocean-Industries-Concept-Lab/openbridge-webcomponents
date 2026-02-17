@@ -44,6 +44,7 @@ import {customElement} from '../../decorator.js';
  * - Use `group` and `groupSelected` to indicate grouped navigation and selection within groups.
  * - Provide an icon via the `icon` slot for visual context (e.g., `<obi-placeholder slot="icon"></obi-placeholder>).
  * - Use `href` to make the item a link; omit for button-like behavior.
+ * - Use `::part(label)` CSS pseudo-element to style the label.
  *
  * **TODO(designer):** Clarify if there are recommended icon choices or label length constraints for each variant.
  *
