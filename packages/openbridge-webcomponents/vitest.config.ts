@@ -21,7 +21,7 @@ export default defineConfig({
             configDir: path.join(dirname, '.storybook'),
             // This should match your package.json script to run Storybook
             // The --no-open flag will skip the automatic opening of a browser
-            storybookScript: 'npm storybook --no-open',
+            storybookScript: 'npm run storybook --no-open',
           }),
           storybookVis({
             comparisonMethod: 'pixel',

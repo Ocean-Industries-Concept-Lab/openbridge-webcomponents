@@ -15,5 +15,5 @@ npm install
 ### Run the demo
 
 ```sh
-npm dev
+npm run dev
 ```
