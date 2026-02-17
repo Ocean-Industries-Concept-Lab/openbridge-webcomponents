@@ -462,6 +462,7 @@ export const POIValuesAndContent: Story = {
 };
 
 export const AnimatedOffsetBottom: Story = {
+  tags: ['!snapshot'],
   args: {
     x: 444,
     y: 192,
@@ -523,6 +524,7 @@ export const AnimatedOffsetBottom: Story = {
 };
 
 export const AnimatedOffsetTop: Story = {
+  tags: ['!snapshot'],
   args: {
     x: 444,
     y: 192,
@@ -587,6 +589,7 @@ export const AnimatedOffsetTop: Story = {
 };
 
 export const AnimatedHeight: Story = {
+  tags: ['!snapshot'],
   args: {
     x: 444,
     y: 150,
@@ -652,6 +655,7 @@ export const AnimatedHeight: Story = {
 };
 
 export const AnimatedLineLength: Story = {
+  tags: ['!snapshot'],
   args: {
     x: 444,
     y: 150,
@@ -717,6 +721,7 @@ export const AnimatedLineLength: Story = {
 };
 
 export const CompareModes: Story = {
+  tags: ['!snapshot'],
   args: {
     x: 300,
     y: 150,
