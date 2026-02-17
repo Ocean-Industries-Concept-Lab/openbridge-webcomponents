@@ -13,13 +13,7 @@ import {
   ObcPoiSelectionFrameState,
   ObcPoiSelectionFrameType,
 } from '../poi-selection-frame/poi-selection-frame.js';
-import {
-  ObcPoiHeaderSize,
-  ObcPoiHeaderState,
-  ObcPoiHeaderType,
-} from '../poi-header/poi-header.js';
 import '../poi-selection-frame/poi-selection-frame.js';
-import '../poi-header/poi-header.js';
 
 export enum ObcPoiButtonType {
   Button = 'button',
@@ -73,15 +67,6 @@ export interface ObcPoiButtonDataItem {
   unit: string;
 }
 
-export interface ObcPoiButtonHeader {
-  content?: string;
-  label?: string;
-  size?: ObcPoiHeaderSize;
-  state?: ObcPoiHeaderState;
-  type?: ObcPoiHeaderType;
-  hasIndicator?: boolean;
-}
-
 /**
  * `<obc-poi-button>` - `ObcPoiButton` renders the interactive POI button body, optional header, and data rows.
  *
@@ -90,13 +75,12 @@ export interface ObcPoiButtonHeader {
  * - Supports button and enhanced visual sizes via `type`.
  * - Supports anchored and inline layouts via `layout`.
  * - Maps POI value state (`unchecked`, `checked`, `activated`, `overlapped`) to object and frame visuals.
- * - Can render optional header (`header`) and metrics/data rows (`data`).
+ * - Can render optional slotted header and metrics/data rows (`data`).
  *
  * Public properties/attributes:
  * - `relativeDirection: number` - Icon rotation in degrees.
  * - `selected: boolean` - Controls selection frame visibility (anchored layout).
  * - `layout: ObcPoiButtonLayout` (attribute: `layout`) - Layout mode (`anchored` or `inline`).
- * - `header: ObcPoiButtonHeader | null` - Optional ID/data header configuration.
  * - `alertType: ObcArAlertType` - Alert styling (`none`, `caution`, `warning`, `alarm`).
  * - `value: PoiButtonVisualState` (attribute: `value`) - Visual state (`unchecked`, `checked`, `activated`, `overlapped`).
  * - `type: ObcPoiButtonType` - Size/variant (`button` or `enhanced`).
@@ -116,7 +100,6 @@ export interface ObcPoiButtonHeader {
  *
  * - Default slot: Main icon/content rendered inside `obc-poi-object`.
  * - `header`: Optional custom header content rendered above the POI object.
- * - `id-label`: Optional custom indicator content for the header indicator slot.
  *
  * ## Events
  *
@@ -127,7 +110,7 @@ export interface ObcPoiButtonHeader {
  *
  * - Keep `value`, `selected`, and `alertType` synchronized with domain state to avoid mixed visual semantics.
  * - Prefer enum values from `PoiButtonVisualState`, `ObcPoiButtonType`, and `ObcPoiButtonLayout` for consistency.
- * - Use `header` only when label/ID context is needed; omit for icon-only markers.
+ * - Use slot `header` when label/ID context is needed; omit for icon-only markers.
  *
  * ## Example
  *
@@ -149,7 +132,6 @@ export class ObcPoiButton extends LitElement {
   @property({type: String, reflect: true}) layout: ObcPoiButtonLayout =
     ObcPoiButtonLayout.Anchored;
   @property({type: Boolean, attribute: 'has-header'}) hasHeader = false;
-  @property({type: Object}) header: ObcPoiButtonHeader | null = null;
   @property({type: String}) alertType = ObcArAlertType.None;
   @property({type: String, reflect: true})
   value: PoiButtonVisualState = PoiButtonVisualState.Unchecked;
@@ -162,54 +144,17 @@ export class ObcPoiButton extends LitElement {
   }
 
   private get hasHeaderContent(): boolean {
-    return (
-      this.querySelector('[slot="header"]') !== null ||
-      Boolean(this.header?.content?.trim())
-    );
-  }
-
-  private get fallbackHeaderState(): ObcPoiHeaderState {
-    switch (this.alertType) {
-      case ObcArAlertType.Alarm:
-        return ObcPoiHeaderState.Alarm;
-      case ObcArAlertType.Warning:
-        return ObcPoiHeaderState.Warning;
-      case ObcArAlertType.Caution:
-        return ObcPoiHeaderState.Caution;
-      default:
-        return ObcPoiHeaderState.Selected;
-    }
+    return this.querySelector('[slot="header"]') !== null;
   }
 
   protected renderHeader() {
-    if (!this.hasHeader) {
+    if (!this.hasHeader || !this.hasHeaderContent) {
       return nothing;
-    }
-
-    if (!this.hasHeaderContent) {
-      return nothing;
-    }
-
-    if (this.querySelector('[slot="header"]')) {
-      return html`
-        <div class="id-label">
-          <slot name="header"></slot>
-        </div>
-      `;
     }
 
     return html`
       <div class="id-label">
-        <obc-poi-header
-          .content=${this.header?.content?.trim() ?? ''}
-          .label=${this.header?.label ?? 'Data'}
-          .size=${this.header?.size ?? ObcPoiHeaderSize.Regular}
-          .state=${this.header?.state ?? this.fallbackHeaderState}
-          .type=${this.header?.type ?? ObcPoiHeaderType.Id}
-          .hasIndicator=${this.header?.hasIndicator ?? false}
-        >
-          <slot name="id-label" slot="indicator" part="id-label"></slot>
-        </obc-poi-header>
+        <slot name="header"></slot>
       </div>
     `;
   }

@@ -153,16 +153,16 @@ const meta: Meta<PoiStoryArgs> = {
           .selected=${args.selected}
           .data=${args.data}
         >
-          ${args.hasHeader
-            ? html`<obc-poi-header
-                slot="header"
-                content="1"
-                type="id"
-                state="selected"
-                size="regular"
-                has-indicator
-              ></obc-poi-header>`
-            : html``}
+          <obc-poi-header
+            slot="header"
+            content="1"
+            type="id"
+            state="selected"
+            size="regular"
+            has-indicator
+          >
+            <obi-placeholder slot="indicator"></obi-placeholder>
+          </obc-poi-header>
           <obi-placeholder></obi-placeholder>
         </obc-poi>
       </div>

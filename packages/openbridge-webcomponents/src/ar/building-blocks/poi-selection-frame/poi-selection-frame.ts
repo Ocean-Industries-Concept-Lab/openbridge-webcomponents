@@ -3,6 +3,9 @@ import {property} from 'lit/decorators.js';
 import {customElement} from '../../../decorator.js';
 import componentStyle from './poi-selection-frame.css?inline';
 
+export const OBC_POI_SELECTION_FRAME_MIN_CUSTOM_SIZE_PX = 28;
+const OBC_POI_SELECTION_FRAME_MIN_TOUCH_TARGET_SIZE_PX = 48;
+
 export enum ObcPoiSelectionFrameType {
   Indicator = 'indicator',
   Button = 'button',
@@ -31,11 +34,6 @@ enum ObcPoiSelectionCornerPosition {
  */
 @customElement('obc-poi-selection-frame')
 export class ObcPoiSelectionFrame extends LitElement {
-  private static readonly MIN_CUSTOM_SIZE_PX = 28;
-  private static readonly MIN_TOUCH_TARGET_SIZE_PX = 48;
-  private static readonly CORNER_STROKE_PX = 1.5;
-  private static readonly CORNER_RADIUS_PX = 3.5;
-
   @property({type: String, reflect: true})
   type: ObcPoiSelectionFrameType = ObcPoiSelectionFrameType.Indicator;
 
@@ -51,34 +49,18 @@ export class ObcPoiSelectionFrame extends LitElement {
   @property({type: Number, attribute: 'box-height'})
   boxHeight: number | null = null;
 
-  private get resolvedFrameSizePx(): number {
-    if (this.type === ObcPoiSelectionFrameType.Indicator) {
-      return this.state === ObcPoiSelectionFrameState.Alert ? 35 : 31;
-    }
-
-    if (this.type === ObcPoiSelectionFrameType.Enhanced) {
-      if (this.state === ObcPoiSelectionFrameState.Alert) return 59;
-      if (this.state === ObcPoiSelectionFrameState.Flat) return 43;
-      return 55;
-    }
-
-    if (this.state === ObcPoiSelectionFrameState.Alert) return 43;
-    if (this.state === ObcPoiSelectionFrameState.Flat) return 31;
-    return 39;
-  }
-
   private get resolvedCustomBoxWidthPx(): number {
     const width = Number(this.boxWidth);
     const offsetWidth = Number.isFinite(width) && width >= 0 ? width : 0;
 
-    return ObcPoiSelectionFrame.MIN_CUSTOM_SIZE_PX + offsetWidth;
+    return OBC_POI_SELECTION_FRAME_MIN_CUSTOM_SIZE_PX + offsetWidth;
   }
 
   private get resolvedCustomBoxHeightPx(): number {
     const height = Number(this.boxHeight);
     const offsetHeight = Number.isFinite(height) && height >= 0 ? height : 0;
 
-    return ObcPoiSelectionFrame.MIN_CUSTOM_SIZE_PX + offsetHeight;
+    return OBC_POI_SELECTION_FRAME_MIN_CUSTOM_SIZE_PX + offsetHeight;
   }
 
   private get resolvedCustomVisualWidthPx(): number {
@@ -87,13 +69,6 @@ export class ObcPoiSelectionFrame extends LitElement {
 
   private get resolvedCustomVisualHeightPx(): number {
     return this.resolvedCustomBoxHeightPx;
-  }
-
-  private get resolvedCornerSizePx(): number {
-    if (this.resolvedFrameSizePx <= 35) return 7;
-    if (this.resolvedFrameSizePx <= 43) return 8;
-    if (this.resolvedFrameSizePx <= 55) return 9;
-    return 10;
   }
 
   private renderCorner(position: ObcPoiSelectionCornerPosition) {
@@ -105,13 +80,9 @@ export class ObcPoiSelectionFrame extends LitElement {
       return nothing;
     }
 
-    const style = `
-      --obc-poi-selection-frame-corner-size: ${this.resolvedCornerSizePx}px;
-      --obc-poi-selection-frame-corner-stroke: ${ObcPoiSelectionFrame.CORNER_STROKE_PX}px;
-      --obc-poi-selection-frame-corner-radius: ${ObcPoiSelectionFrame.CORNER_RADIUS_PX}px;
-      ${this.customMode ? `width: ${this.resolvedCustomVisualWidthPx}px;` : ''}
-      ${this.customMode ? `height: ${this.resolvedCustomVisualHeightPx}px;` : ''}
-    `;
+    const style = this.customMode
+      ? `width: ${this.resolvedCustomVisualWidthPx}px; height: ${this.resolvedCustomVisualHeightPx}px;`
+      : '';
 
     const parts = this.customMode
       ? 'corner-frame custom-frame'
@@ -131,17 +102,17 @@ export class ObcPoiSelectionFrame extends LitElement {
     if (this.customMode && this.state !== ObcPoiSelectionFrameState.None) {
       const touchTargetWidthPx = Math.max(
         this.resolvedCustomVisualWidthPx,
-        ObcPoiSelectionFrame.MIN_TOUCH_TARGET_SIZE_PX
+        OBC_POI_SELECTION_FRAME_MIN_TOUCH_TARGET_SIZE_PX
       );
       const touchTargetHeightPx = Math.max(
         this.resolvedCustomVisualHeightPx,
-        ObcPoiSelectionFrame.MIN_TOUCH_TARGET_SIZE_PX
+        OBC_POI_SELECTION_FRAME_MIN_TOUCH_TARGET_SIZE_PX
       );
 
       this.style.width = `${touchTargetWidthPx}px`;
       this.style.height = `${touchTargetHeightPx}px`;
-      this.style.minWidth = `${ObcPoiSelectionFrame.MIN_TOUCH_TARGET_SIZE_PX}px`;
-      this.style.minHeight = `${ObcPoiSelectionFrame.MIN_TOUCH_TARGET_SIZE_PX}px`;
+      this.style.minWidth = `${OBC_POI_SELECTION_FRAME_MIN_TOUCH_TARGET_SIZE_PX}px`;
+      this.style.minHeight = `${OBC_POI_SELECTION_FRAME_MIN_TOUCH_TARGET_SIZE_PX}px`;
       return;
     }
 

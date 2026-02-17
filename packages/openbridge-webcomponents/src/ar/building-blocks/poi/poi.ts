@@ -11,7 +11,7 @@ import {
 } from '../poi-button/poi-button.js';
 import {ObcArAlertType} from '../../types.js';
 import {POIStyle} from '../poi-graphic-line/poi-graphic-line.js';
-import {PoiArrowDirection, pointerArrow} from './arrow.js';
+import {poiArrow} from './arrow.js';
 import '../poi-line/poi-line.js';
 import '../poi-pointer/poi-pointer.js';
 import {
@@ -103,7 +103,6 @@ const POINT_POINTER_OFFSET_PX = 12;
  *
  * - Default slot: Main icon/content rendered inside `obc-poi-button`.
  * - `header`: Optional custom header content rendered above the POI object.
- * - `id-label`: Optional ID label content rendered in the POI button label region.
  *
  * ## Events
  *
@@ -114,20 +113,17 @@ const POINT_POINTER_OFFSET_PX = 12;
  * - Pass finite numeric values for layout properties to avoid fallback-to-zero behavior.
  * - Enable `animatePosition` only for intentional motion transitions and moving targets.
  * - Prefer enum values for `type`, `value`, `state`, `pointerType`, and `pointerState`.
- * - Use the `id-label` slot for structured metadata instead of mixing all text in the default slot.
  *
  * ## Example
  *
  * ```html
  * <obc-poi type="line" value="unchecked" state="enabled">
  *   <obi-placeholder></obi-placeholder>
- *   <span slot="id-label">A-12</span>
  * </obc-poi>
  * ```
  *
  * @slot - Default POI button content.
  * @slot header - Optional custom header content.
- * @slot id-label - Optional ID label content.
  */
 @customElement('obc-poi')
 export class ObcPoi extends LitElement {
@@ -390,7 +386,7 @@ export class ObcPoi extends LitElement {
       style="--obc-poi-outside-arrow-x: ${xOffset}px; --obc-poi-outside-arrow-y: ${yOffset}px; --obc-poi-outside-arrow-angle: ${this
         .outsideAngle}deg;"
     >
-      ${pointerArrow(PoiArrowDirection.Right, value)}
+      ${poiArrow(value)}
     </div>`;
   }
 
@@ -411,10 +407,7 @@ export class ObcPoi extends LitElement {
         .data=${this.data}
       >
         <slot></slot>
-        ${this.hasHeader
-          ? html`<slot name="header" slot="header"></slot>`
-          : nothing}
-        <slot name="id-label" slot="id-label"></slot>
+        <slot name="header" slot="header"></slot>
       </obc-poi-button>
     `;
   }

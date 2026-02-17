@@ -7,6 +7,8 @@
     --overlay-element-neutral-color,
     rgb(255 255 255 / 0.59)
   );
+  --obc-poi-pointer-camera-selection-width: 64px;
+  --obc-poi-pointer-camera-selection-height: 56px;
 }
 
 :host([type="point"]) {
@@ -67,8 +69,14 @@
 
 .camera-selection-frame {
   display: flex;
-  width: 64px;
-  height: 56px;
+  width: calc(
+    var(--obc-poi-pointer-camera-selection-width) +
+      var(--obc-poi-pointer-box-width-extra, 0px)
+  );
+  height: calc(
+    var(--obc-poi-pointer-camera-selection-height) +
+      var(--obc-poi-pointer-box-height-extra, 0px)
+  );
   padding: 8px 0;
   justify-content: space-between;
   align-items: center;
@@ -106,15 +114,9 @@
 }
 
 .wrapper > .button {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-}
-
-.wrapper > .button.active,
-.wrapper > .button.selected {
   width: calc(32px + var(--obc-poi-pointer-box-width-extra, 0px));
   height: calc(32px + var(--obc-poi-pointer-box-height-extra, 0px));
+  border-radius: 6px;
 }
 
 .wrapper > .button.regular,
@@ -130,16 +132,10 @@
 }
 
 .wrapper > .camera {
-  width: 52px;
-  height: 44px;
-  border-radius: 2px;
-  box-shadow: 0 1px 3px 0 #000;
-}
-
-.wrapper > .camera.active,
-.wrapper > .camera.selected {
   width: calc(52px + var(--obc-poi-pointer-box-width-extra, 0px));
   height: calc(44px + var(--obc-poi-pointer-box-height-extra, 0px));
+  border-radius: 2px;
+  box-shadow: 0 1px 3px 0 #000;
 }
 
 .wrapper > .camera.regular {

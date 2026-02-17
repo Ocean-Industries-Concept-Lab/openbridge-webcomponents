@@ -97,12 +97,9 @@
 
   & .selection-frame {
     position: absolute;
-    top: 0;
-    left: 0;
-  }
-
-  &:not(.alert-none) .selection-frame {
-    left: -1px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 
   &.alert-none {
@@ -297,11 +294,6 @@
 ::slotted(:not([slot])) {
   width: 100%;
   height: 100%;
-}
-
-::slotted([slot="id-label"]) {
-  width: 12px;
-  height: 12px;
 }
 
 .wrapper.has-data {

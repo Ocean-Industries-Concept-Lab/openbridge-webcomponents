@@ -37,20 +37,36 @@ const meta: Meta<PoiPointerArgs> = {
     type: {
       control: {type: 'select'},
       options: Object.values(ObcPoiPointerType),
+      table: {type: {summary: 'ObcPoiPointerType'}},
     },
     state: {
       control: {type: 'select'},
       options: Object.values(ObcPoiPointerState),
+      table: {type: {summary: 'ObcPoiPointerState'}},
     },
     boxWidth: {
       control: {type: 'number', min: 0, step: 1},
+      table: {type: {summary: 'number'}},
       description:
-        'Extra width (px) added on the X-axis when state is active or selected.',
+        'Extra width (px) applied to all button/camera states, and point selected.',
     },
     boxHeight: {
       control: {type: 'number', min: 0, step: 1},
+      table: {type: {summary: 'number'}},
       description:
-        'Extra height (px) added on the Y-axis when state is active or selected.',
+        'Extra height (px) applied to all button/camera states, and point selected.',
+    },
+    'box-width': {control: false, table: {disable: true}},
+    'box-height': {control: false, table: {disable: true}},
+  },
+  parameters: {
+    controls: {
+      include: ['type', 'state', 'boxWidth', 'boxHeight'],
+    },
+    docs: {
+      controls: {
+        include: ['type', 'state', 'boxWidth', 'boxHeight'],
+      },
     },
   },
 } satisfies Meta<PoiPointerArgs>;

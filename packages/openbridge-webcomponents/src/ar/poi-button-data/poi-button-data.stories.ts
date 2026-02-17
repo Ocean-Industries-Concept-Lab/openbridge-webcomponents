@@ -1,7 +1,8 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-
 import {ObcPoiButtonData} from './poi-button-data.js';
 import './poi-button-data.js';
+import '../building-blocks/poi-header/poi-header.js';
+import '../../icons/icon-placeholder.js';
 import {
   ObcPoiButtonType,
   PoiButtonVisualState,
@@ -17,10 +18,10 @@ const meta: Meta<ObcPoiButtonData> = {
   decorators: [crossDecorator],
   args: {
     selected: false,
+    hasHeader: false,
     type: ObcPoiButtonType.Button,
     relativeDirection: 0,
     alertType: ObcArAlertType.None,
-    header: null,
     value: PoiButtonVisualState.Unchecked,
     data: [],
   },
@@ -31,12 +32,12 @@ const meta: Meta<ObcPoiButtonData> = {
     selected: {
       control: {type: 'boolean'},
     },
+    hasHeader: {
+      control: {type: 'boolean'},
+    },
     alertType: {
       control: {type: 'select'},
       options: Object.values(ObcArAlertType),
-    },
-    header: {
-      control: {type: 'object'},
     },
     value: {
       control: {type: 'select'},
@@ -52,12 +53,23 @@ const meta: Meta<ObcPoiButtonData> = {
       <obc-poi-button-data
         .data=${args.data}
         .selected=${args.selected}
+        .hasHeader=${args.hasHeader}
         .relativeDirection=${args.relativeDirection}
         .alertType=${args.alertType}
-        .header=${args.header}
         .value=${args.value}
         .type=${args.type}
-      ></obc-poi-button-data>
+      >
+        <obc-poi-header
+          slot="header"
+          content="1"
+          type="id"
+          state="selected"
+          size="regular"
+          has-indicator
+        >
+          <obi-placeholder slot="indicator"></obi-placeholder>
+        </obc-poi-header>
+      </obc-poi-button-data>
     `;
   },
 } satisfies Meta<ObcPoiButtonData>;
@@ -72,6 +84,12 @@ export const Button: Story = {
 export const Enhanced: Story = {
   args: {
     type: ObcPoiButtonType.Enhanced,
+  },
+};
+
+export const WithHeader: Story = {
+  args: {
+    hasHeader: true,
   },
 };
 
