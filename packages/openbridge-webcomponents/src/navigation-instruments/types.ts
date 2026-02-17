@@ -10,16 +10,6 @@ export enum InstrumentState {
   off = 'off',
 }
 
-/**
- * Color priority mode for instruments.
- *
- * Determines which color palette an instrument uses:
- * - `regular`: Default/neutral colors (gray palette)
- * - `enhanced`: Highlighted/active colors (blue palette)
- *
- * Replaces the former `enhanced: boolean` property and the
- * former `InstrumentState.inCommand` state → enhanced color mapping.
- */
 export enum Priority {
   regular = 'regular',
   enhanced = 'enhanced',

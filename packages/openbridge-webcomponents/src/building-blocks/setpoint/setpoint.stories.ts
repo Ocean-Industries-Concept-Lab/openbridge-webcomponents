@@ -12,10 +12,6 @@ import '../../navigation-instruments/watch/watch.js';
 import {WatchCircleType} from '../../navigation-instruments/watch/watch.js';
 // Import azimuth-thruster for multi-setpoint demo
 import '../../navigation-instruments/azimuth-thruster/azimuth-thruster.js';
-
-// Setpoint types are internal to the design layer; stories use the public
-// boolean `setpointOverride` API on instruments and building blocks.
-
 // Import types needed for bar-vertical configuration
 import {InstrumentState, Priority} from '../../navigation-instruments/types.js';
 import {

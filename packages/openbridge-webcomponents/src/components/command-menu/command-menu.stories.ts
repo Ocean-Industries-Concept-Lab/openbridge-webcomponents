@@ -1,5 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcCommandMenu, ObcCommandMenuChangeEvent} from './command-menu.js';
+import {ObcCommandMenu} from './command-menu.js';
+import type {ObcCommandMenuChangeEvent} from './command-menu.js';
 import './command-menu.js';
 import {LitElement, html} from 'lit';
 import {property} from 'lit/decorators.js';
@@ -7,15 +8,30 @@ import '../../icons/icon-command-no.js';
 import '../../icons/icon-joystick.js';
 
 /**
- * Reactive wrapper so that slot content (icon, status text) updates
- * when the user drags the switch — Storybook's static template
- * would otherwise only re-render on args changes from the controls panel.
+ * `<command-menu-story-wrapper>` – Reactive Storybook wrapper for `<obc-command-menu>`.
+ *
+ * Re-renders slotted icon and status content in response to the command-menu's
+ * toggle events, which Storybook's static template cannot do on its own.
+ *
+ * @property {boolean} inCommand - Whether the station is in command.
+ *   When `true` the wrapper slots a joystick icon and "Joystick" status;
+ *   when `false` it slots a no-command icon and "NO CMD" status.
+ *   Default: `false`.
+ * @property {boolean} hideLocation - Forwarded to `<obc-command-menu>` to
+ *   hide or show the command location slot. Default: `false`.
+ *
+ * @example
+ * ```html
+ * <command-menu-story-wrapper
+ *   .inCommand=${true}
+ *   .hideLocation=${false}
+ * ></command-menu-story-wrapper>
+ * ```
  */
 class CommandMenuStoryWrapper extends LitElement {
   @property({type: Boolean}) inCommand = false;
   @property({type: Boolean}) hideLocation = false;
 
-  // Opt out of shadow DOM so Storybook styles apply normally
   override createRenderRoot() {
     return this;
   }

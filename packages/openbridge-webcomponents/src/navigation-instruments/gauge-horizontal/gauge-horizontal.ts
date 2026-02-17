@@ -118,8 +118,8 @@ export {
  *   min-value="0"
  *   max-value="100"
  *   value="75"
- *   primary-tickmarks-interval="20"
- *   secondary-tickmarks-interval="10"
+ *   primary-tickmark-interval="20"
+ *   secondary-tickmark-interval="10"
  *   setpoint="80"
  *   side="bottom"
  * ></obc-gauge-horizontal>
