@@ -40,6 +40,8 @@
     pointer-events: none;
   }
 
+  @mixin scrollbar;
+
   .grid-body {
     grid-row: 3;
     overflow: auto;
