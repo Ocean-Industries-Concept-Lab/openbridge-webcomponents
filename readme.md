@@ -164,11 +164,12 @@ To get started with the project, follow these steps:
 - `npm run lint` to check for linting errors (and fix the reported errors).
 
 11. Optional: Go to the `packages/vue-demo` folder and run `npm run dev` to run the Vue.js demo application.
+12. Optional: If anything seems broken, try deleting all `node_modules` and `dist` folders from the repository, go to the root folder and re-run the **postCreateCommand** from .devcontainer/devcontainer.json: `npm install && npm run build:lib && cd packages/openbridge-webcomponents && npx playwright install --with-deps` (starting from a clean slate)
 
 ### Without VS Code devcontainer, not recommended ⚠️
 
 1. Clone the repository.
-2. Install Node.js (version 20 or later) and Yarn.
+2. Install Node.js (version 20 or later).
 3. Run `npm install` in the root folder to install the dependencies.
 4. Run `npm run build:lib` to build all libraries.
 5. Optional: Go to the `packages/openbridge-webcomponents` folder and run `npm run storybook` to start the Storybook development environment.
@@ -194,10 +195,10 @@ We use visual snapshot testing of the components through Storybook, powered by [
 
 All commands below should be run from the `packages/openbridge-webcomponents` folder.
 
-- **Run tests:** `yarn test-storybook`
-- **Watch mode:** `yarn test-storybook:watch`
+- **Run tests:** `npm run test-storybook`
+- **Watch mode:** `npm run test-storybook:watch`
 - **Update snapshots interactively:** press `u` while tests are running to update failing snapshots.
-- **Replace all baselines:** `yarn update-snapshots` (replaces `__vis__/linux/__baselines__/` with the latest results).
+- **Replace all baselines:** `npm run update-snapshots` (replaces `__vis__/linux/__baselines__/` with the latest results).
 
 Snapshot baselines are stored in the `__vis__/` directory, organized by platform (`linux`, `darwin`).
 
