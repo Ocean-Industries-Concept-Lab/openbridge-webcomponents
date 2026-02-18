@@ -45,6 +45,7 @@
   .grid-body {
     grid-row: 3;
     overflow: auto;
+    scrollbar-gutter: stable both-edges;
     display: grid;
     grid-column: 1/-1;
     grid-template-columns: subgrid;
