@@ -22,12 +22,46 @@ export enum ObcPoiHeaderType {
 }
 
 /**
- * `<obc-poi-header>` renders the compact POI header chip used by POI targets.
+ * `<obc-poi-header>` - Compact header chip for marker identifiers, labels, and optional indicator content.
  *
- * The component supports ID-only and Data variants, with Enabled/Selected and
- * alert states from the design system.
+ * ## Overview
+ * Use this component to display compact marker metadata above or near a marker button.
+ * Keywords/synonyms: chip, pill, badge, header chip, identifier badge.
  *
- * @slot indicator - Optional custom indicator icon. Falls back to built-in bars.
+ * ## Features/Variants
+ * - `type` (default `id`):
+ *   - `id`: shows identifier content only.
+ *   - `data`: shows identifier plus secondary label.
+ * - `state` (default `enabled`): `enabled`, `selected`, `caution`, `warning`, `alarm`.
+ * - `content` (default `"1"`): primary identifier text.
+ * - `label` (default `"Data"`): secondary text used by `type="data"`.
+ * - `hasIndicator` (default `false`): appends indicator area.
+ * - `indicator` slot fallback: renders built-in bar indicator markup when slot content is empty.
+ * - `size` (default `regular`): currently only `regular`.
+ *
+ * ## Usage Guidelines
+ * - Use `type="id"` for compact identifier-only labels.
+ * - Use `type="data"` when both an ID and short label are required.
+ * - Keep `content` and `label` brief to prevent overflow.
+ *
+ * ## Slots/Content
+ * - `indicator`: Optional indicator icon/content; built-in indicator is used as fallback.
+ *
+ * ## Events
+ * This component does not emit custom events.
+ *
+ * ## Best Practices
+ * - Keep indicator usage consistent across similar marker states.
+ * - Prefer enum values for `type`, `state`, and `size`.
+ *
+ * ## Example
+ * ```html
+ * <obc-poi-header type="data" state="selected" content="3" label="SOG" has-indicator>
+ *   <obi-placeholder slot="indicator"></obi-placeholder>
+ * </obc-poi-header>
+ * ```
+ *
+ * @slot indicator - Optional indicator icon/content.
  */
 @customElement('obc-poi-header')
 export class ObcPoiHeader extends LitElement {
@@ -55,7 +89,7 @@ export class ObcPoiHeader extends LitElement {
   }
 
   private get hasSingleCharacterContent(): boolean {
-    return this.content.trim().length === 1;
+    return this.content?.trim().length === 1;
   }
 
   private renderIndicator() {

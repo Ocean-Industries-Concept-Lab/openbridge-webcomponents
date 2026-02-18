@@ -6,13 +6,12 @@ import componentStyle from './poi.css?inline';
 import '../poi-button/poi-button.js';
 import {
   ObcPoiButtonType,
-  ObcPoiButtonHeader,
   ObcPoiButtonDataItem,
+  ObcPoiButtonState,
   PoiButtonVisualState,
 } from '../poi-button/poi-button.js';
-import {ObcArAlertType} from '../../types.js';
-import {POIStyle} from '../poi-graphic-line/poi-config.js';
-import {PoiArrowDirection, pointerArrow} from '../../poi-data/arrow.js';
+import {POIStyle} from '../poi-graphic-line/poi-graphic-line.js';
+import {poiArrow} from './arrow.js';
 import '../poi-line/poi-line.js';
 import '../poi-pointer/poi-pointer.js';
 import {
@@ -46,36 +45,118 @@ const DEFAULT_LINE_LENGTH_PX = 96;
 const POINTER_BOX_BASE_SIZE_PX = 32;
 const POINT_POINTER_OFFSET_PX = 12;
 
+/**
+ * `<obc-poi>` - Composite marker component that renders a target button with connector and pointer visuals.
+ *
+ * ## Overview
+ * Combines `obc-poi-button`, `obc-poi-line`, and optional pointer visuals to display
+ * interactive marker/callout targets in line, offset, point, or outside modes.
+ * Keywords: marker, callout, pin, label, target, pointer.
+ *
+ * ## Features/Variants
+ *
+ * Configuration defaults and behavior:
+ * - `type` (default: `line`):
+ *   - `line`: renders a vertical connector line from button to target.
+ *   - `offset`: renders a bent connector using `targetOffsetX - buttonOffsetX`.
+ *   - `point`: suppresses long connector behavior (line can collapse/skip based on state).
+ *   - `outside`: suppresses connector line; outside arrow is rendered when `hasPointer` is true.
+ * - `value` (default: `unchecked`):
+ *   - `unchecked`: default visual state.
+ *   - `checked`: selected-like visual and pointer behavior.
+ *   - `activated`: activated button visual state with selected-like pointer behavior.
+ *   - `overlapped`: compact overlap visual state.
+ * - `overlapOpaque` (default: `false`): controls overlapped opacity mode (`false` = translucent, `true` = opaque).
+ * - `state` (default: `enabled`):
+ *   - `enabled`: neutral alert ring and regular line style.
+ *   - `caution`/`warning`/`alarm`: applies alert-specific button/line styling.
+ *   - In `enabled`, pointer type resolution defaults to point.
+ * - `selected` (default: `false`): enables selected emphasis semantics (for example selected line style when not in alert state).
+ * - `hasPointer` (default: `false`):
+ *   - For `line`/`offset`/`point`, pointer visuals are shown when `hasPointer` is true.
+ *   - Checked-like values also force inline pointer visuals for non-`outside` types.
+ *   - For `outside`, `hasPointer` controls outside-arrow visibility.
+ * - `pointerType` (default: `null`, enum `point | button | camera`):
+ *   - Used when not in checked-like state and not `enabled`.
+ *   - Otherwise resolves to `point` for consistent selected/enabled behavior.
+ * - `pointerState` (default: `null`, enum `regular | selected | active | uncertain`):
+ *   - Checked-like non-`outside` values resolve to `selected`.
+ *   - Otherwise falls back to provided `pointerState` or `regular`.
+ *
+ * Motion and layout notes:
+ * - `animatePosition` (default: `false`): when true, enables short position transition timing for line/pointer movement.
+ * - `x` (default: `0`): host horizontal position; sets `--obc-poi-x` as `${x}px`.
+ * - `y` (default: `96`): connector length basis; non-finite values fall back to `0` in geometry calculations.
+ * - `buttonY` (default: `null`): if finite, sets `--obc-poi-y`; if `null`/non-finite, position variable is cleared.
+ * - `buttonOffsetX`/`targetOffsetX` (defaults: `0`/`0`): define connector bend delta via `targetOffsetX - buttonOffsetX`.
+ * - `boxWidth`/`boxHeight` (defaults: `null`/`null`): optional pointer frame size extras; invalid/non-finite values are ignored.
+ * - `outsideAngle` (default: `315`): controls outside-arrow direction in `outside` mode.
+ *
+ * ## Usage Guidelines
+ *
+ * - Use `type="line"` or `type="offset"` when the button should connect to a remote target.
+ * - Use `type="point"` for near-target placements where connector emphasis should be minimal.
+ * - Use `type="outside"` with `hasPointer` for off-screen or directional guidance.
+ * - Keep `value`, `state`, and `selected` aligned with domain state so visual semantics stay consistent.
+ * - Provide finite numbers for layout props (`x`, `y`, `buttonY`, offsets) for predictable placement.
+ *
+ * ## Slots/Content
+ *
+ * - Default slot: Main icon/content rendered inside `obc-poi-button`.
+ * - `header`: Optional custom header content rendered above the POI object.
+ *
+ * ## Events
+ *
+ * This component does not emit custom events.
+ *
+ * ## Best Practices
+ *
+ * - Pass finite numeric values for layout properties to avoid fallback-to-zero behavior.
+ * - Enable `animatePosition` only for intentional motion transitions and moving targets.
+ * - Prefer enum values for `type`, `value`, `state`, `pointerType`, and `pointerState`.
+ *
+ * ## Example
+ *
+ * ```html
+ * <obc-poi type="line" value="unchecked" state="enabled">
+ *   <obi-placeholder></obi-placeholder>
+ * </obc-poi>
+ * ```
+ *
+ * @slot - Default POI button content.
+ * @slot header - Optional custom header content.
+ */
 @customElement('obc-poi')
 export class ObcPoi extends LitElement {
   @property({type: String}) type: ObcPoiType = ObcPoiType.Line;
   @property({type: String}) value: ObcPoiValue = ObcPoiValue.Unchecked;
   @property({type: String}) state: ObcPoiState = ObcPoiState.Enabled;
+  @property({type: Boolean}) selected = false;
+  @property({type: String}) buttonType = ObcPoiButtonType.Button;
+  @property({type: Boolean, attribute: 'overlap-opaque'})
+  overlapOpaque = false;
+  @property({type: Array, attribute: false}) data: ObcPoiButtonDataItem[] = [];
+  @property({type: Boolean, attribute: 'has-header'}) hasHeader = false;
+  @property({type: Boolean}) hasPointer = false;
+  @property({type: String, attribute: 'pointer-type'})
+  pointerType: ObcPoiPointerType | null = null;
+  @property({type: String, attribute: 'pointer-state'})
+  pointerState: ObcPoiPointerState | null = null;
+  @property({type: Number}) relativeDirection = 0;
   @property({type: Number}) x = 0;
   @property({type: Number}) y = DEFAULT_LINE_LENGTH_PX;
   @property({type: Number, attribute: 'button-y'}) buttonY: number | null =
     null;
   @property({type: Boolean, attribute: 'fixed-target'}) fixedTarget = false;
-  @property({type: Number, attribute: 'outside-angle'}) outsideAngle = 315;
-  @property({type: Boolean}) hasPointer = false;
-  @property({type: Boolean, attribute: 'animate-position'})
-  animatePosition = false;
-  @property({type: Number}) relativeDirection = 0;
-  @property({type: Object}) header: ObcPoiButtonHeader | null = null;
-  @property({type: String}) buttonType = ObcPoiButtonType.Button;
-  @property({type: String, attribute: 'pointer-type'})
-  pointerType: ObcPoiPointerType | null = null;
-  @property({type: String, attribute: 'pointer-state'})
-  pointerState: ObcPoiPointerState | null = null;
-  @property({type: Boolean}) selected = false;
-  @property({type: Array, attribute: false}) data: ObcPoiButtonDataItem[] = [];
-  @property({type: Boolean}) hasRelation = false;
   @property({type: Number, attribute: 'button-offset-x'}) buttonOffsetX = 0;
   @property({type: Number, attribute: 'target-offset-x'}) targetOffsetX = 0;
   @property({type: Number, attribute: 'box-width'}) boxWidth: number | null =
     null;
   @property({type: Number, attribute: 'box-height'}) boxHeight: number | null =
     null;
+  @property({type: Number, attribute: 'outside-angle'}) outsideAngle = 315;
+  @property({type: Boolean, attribute: 'animate-position'})
+  animatePosition = false;
 
   override updated(changedProperties: Map<string, unknown>) {
     if (changedProperties.has('x')) {
@@ -121,8 +202,9 @@ export class ObcPoi extends LitElement {
       case ObcPoiValue.Unchecked:
         return PoiButtonVisualState.Unchecked;
       case ObcPoiValue.Checked:
-      case ObcPoiValue.Activated:
         return PoiButtonVisualState.Checked;
+      case ObcPoiValue.Activated:
+        return PoiButtonVisualState.Activated;
       case ObcPoiValue.Overlapped:
         return PoiButtonVisualState.Overlapped;
       default:
@@ -130,17 +212,17 @@ export class ObcPoi extends LitElement {
     }
   }
 
-  protected get buttonAlertType(): ObcArAlertType {
+  protected get buttonState(): ObcPoiButtonState {
     switch (this.state) {
       case ObcPoiState.Caution:
-        return ObcArAlertType.Caution;
+        return ObcPoiButtonState.Caution;
       case ObcPoiState.Warning:
-        return ObcArAlertType.Warning;
+        return ObcPoiButtonState.Warning;
       case ObcPoiState.Alarm:
-        return ObcArAlertType.Alarm;
+        return ObcPoiButtonState.Alarm;
       case ObcPoiState.Enabled:
       default:
-        return ObcArAlertType.None;
+        return ObcPoiButtonState.Enabled;
     }
   }
 
@@ -169,7 +251,14 @@ export class ObcPoi extends LitElement {
       return 0;
     }
 
-    return this.targetOffsetX - this.buttonOffsetX;
+    const targetOffsetX = Number.isFinite(this.targetOffsetX)
+      ? this.targetOffsetX
+      : 0;
+    const buttonOffsetX = Number.isFinite(this.buttonOffsetX)
+      ? this.buttonOffsetX
+      : 0;
+    const lineOffset = targetOffsetX - buttonOffsetX;
+    return Number.isFinite(lineOffset) ? lineOffset : 0;
   }
 
   private get hasInlinePointer(): boolean {
@@ -300,7 +389,7 @@ export class ObcPoi extends LitElement {
       style="--obc-poi-outside-arrow-x: ${xOffset}px; --obc-poi-outside-arrow-y: ${yOffset}px; --obc-poi-outside-arrow-angle: ${this
         .outsideAngle}deg;"
     >
-      ${pointerArrow(PoiArrowDirection.Right, value)}
+      ${poiArrow(value)}
     </div>`;
   }
 
@@ -314,16 +403,15 @@ export class ObcPoi extends LitElement {
         })}
         .relativeDirection=${this.relativeDirection}
         .selected=${this.selected}
-        .header=${this.header}
-        .alertType=${this.buttonAlertType}
+        .hasHeader=${this.hasHeader}
+        .state=${this.buttonState}
         .value=${this.buttonVisualState}
+        .overlapOpaque=${this.overlapOpaque}
         .type=${this.buttonType}
         .data=${this.data}
-        .hasRelation=${this.hasRelation}
       >
         <slot></slot>
-        <slot name="id-label" slot="id-label"></slot>
-        <slot name="relation" slot="relation"></slot>
+        <slot name="header" slot="header"></slot>
       </obc-poi-button>
     `;
   }

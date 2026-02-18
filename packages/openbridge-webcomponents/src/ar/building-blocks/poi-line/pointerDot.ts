@@ -1,5 +1,8 @@
-import {html, svg} from 'lit';
-import {POIStyle, resolvePOIStyle} from '../poi-graphic-line/poi-config.js';
+import {html, nothing, svg, type TemplateResult} from 'lit';
+import {
+  POIStyle,
+  resolvePOIStyle,
+} from '../poi-graphic-line/poi-graphic-line.js';
 
 function createCircle({
   x,
@@ -15,8 +18,16 @@ function createCircle({
   height: number;
   rx: number;
   stroke: string;
-}) {
-  return svg`<rect x="${x}" y="${y}" width="${width}" height="${height}" rx="${rx}" stroke="${stroke}">`;
+}): TemplateResult<2> {
+  return svg`<rect
+    x="${x}"
+    y="${y}"
+    width="${width}"
+    height="${height}"
+    rx="${rx}"
+    stroke="${stroke}"
+    fill="none"
+  />`;
 }
 
 export function renderPointerDot({
@@ -45,7 +56,7 @@ export function renderPointerDot({
         fill="${lineColor}"
       />`;
 
-  let outerCircle = null;
+  let outerCircle: TemplateResult<2> | typeof nothing = nothing;
   let filterY = centerY;
   const resolvedLineStyle = resolvePOIStyle(lineStyle);
 
@@ -61,8 +72,8 @@ export function renderPointerDot({
     filterY = centerY - 1;
   } else {
     innerCircle = svg`<rect
-        x="${centerX}"
-        y="${centerY}"
+        x="${centerX + 1}"
+        y="${centerY + 1}"
         width="2"
         height="2"
         rx="1"

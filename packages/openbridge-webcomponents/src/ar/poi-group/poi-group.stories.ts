@@ -7,7 +7,23 @@ import {createRef, ref} from 'lit/directives/ref.js';
 import '../poi-button-data/poi-button-data.js';
 import '../../icons/icon-ais-target-activated-iec.js';
 import '../poi-data/poi-data.js';
+import '../building-blocks/poi-header/poi-header.js';
 import {ObcPoiData, PoiDataValue} from '../poi-data/poi-data.js';
+
+const isVitestBrowser = Boolean(
+  (globalThis as {__vitest_browser__?: unknown}).__vitest_browser__
+);
+
+const compactPreviewHeightDecorator = (story: () => unknown) => html`
+  <style>
+    .wrapper {
+      height: 260px !important;
+      min-height: 260px !important;
+      overflow: hidden !important;
+    }
+  </style>
+  ${story()}
+`;
 
 type PoiGroupStoryArgs = {
   expand: boolean;
@@ -18,7 +34,7 @@ const meta: Meta<PoiGroupStoryArgs> = {
   title: 'AR/POI Group',
   tags: ['6.0'],
   component: 'obc-poi-group',
-  decorators: [crossDecorator],
+  decorators: [crossDecorator, compactPreviewHeightDecorator],
   args: {
     expand: false,
     internalSwapping: false,
@@ -58,34 +74,33 @@ const meta: Meta<PoiGroupStoryArgs> = {
           <obc-poi-group
             style="position: absolute; top: 0; left: 0;"
             .expand=${args.expand}
-            positionVertical="calc(50%)"
+            positionVertical="calc(50% - 40px)"
             @expand=${onExpand}
           >
             <obc-poi-data
               id="target-3"
               .x=${300}
-              .buttonY=${240}
-              .y=${240}
+              .buttonY=${200}
+              .y=${150}
             ></obc-poi-data>
             <obc-poi-data
               id="target-1"
               .x=${320}
-              .buttonY=${240}
-              .y=${240}
-              .relativeDirection=${65}
+              .buttonY=${200}
+              .y=${150}
             ></obc-poi-data>
             <obc-poi-data
               id="target-2"
               .x=${340}
-              .buttonY=${240}
-              .y=${240}
+              .buttonY=${200}
+              .y=${150}
             ></obc-poi-data>
           </obc-poi-group>
           <obc-poi-data
             id="outside"
             .x=${200}
-            .buttonY=${240}
-            .y=${240}
+            .buttonY=${200}
+            .y=${150}
           ></obc-poi-data>
         </div>
       </div>
@@ -141,39 +156,46 @@ export const GroupedWithNumbers: Story = {
           <obc-poi-group
             style="position: absolute; top: 0; left: 0;"
             .expand=${args.expand}
-            positionVertical="calc(50%)"
+            positionVertical="calc(50% - 40px)"
             @expand=${onExpand}
           >
             <obc-poi-data
               id="target-3"
-              .header=${{content: '3'}}
+              .hasHeader=${true}
               .x=${300}
-              .buttonY=${240}
-              .y=${240}
-            ></obc-poi-data>
+              .buttonY=${200}
+              .y=${150}
+            >
+              <obc-poi-header slot="header" content="3"></obc-poi-header>
+            </obc-poi-data>
             <obc-poi-data
               id="target-1"
-              .header=${{content: '1'}}
+              .hasHeader=${true}
               .x=${320}
-              .buttonY=${240}
-              .y=${240}
-              .relativeDirection=${65}
-            ></obc-poi-data>
+              .buttonY=${200}
+              .y=${150}
+            >
+              <obc-poi-header slot="header" content="1"></obc-poi-header>
+            </obc-poi-data>
             <obc-poi-data
               id="target-2"
-              .header=${{content: '2'}}
+              .hasHeader=${true}
               .x=${340}
-              .buttonY=${240}
-              .y=${240}
-            ></obc-poi-data>
+              .buttonY=${200}
+              .y=${150}
+            >
+              <obc-poi-header slot="header" content="2"></obc-poi-header>
+            </obc-poi-data>
           </obc-poi-group>
           <obc-poi-data
             id="outside"
-            .header=${{content: '4'}}
+            .hasHeader=${true}
             .x=${200}
-            .buttonY=${240}
-            .y=${240}
-          ></obc-poi-data>
+            .buttonY=${200}
+            .y=${200}
+          >
+            <obc-poi-header slot="header" content="4"></obc-poi-header>
+          </obc-poi-data>
         </div>
       </div>
     `;
@@ -186,6 +208,8 @@ export const GroupedWithValues: Story = {
   },
   render: (args) => {
     const wrapperRef = createRef<HTMLDivElement>();
+    const groupButtonY = 300;
+    const outsideButtonY = 300;
     const valuesA = [
       {value: '10', label: 'Lab', unit: 'Unit'},
       {value: '20', label: 'Lab 2', unit: 'Unit 2'},
@@ -215,6 +239,11 @@ export const GroupedWithValues: Story = {
 
     return html`
       <style>
+        .wrapper {
+          height: 360px !important;
+          min-height: 360px !important;
+          overflow: hidden !important;
+        }
         obc-poi-data {
           position: absolute;
         }
@@ -235,37 +264,36 @@ export const GroupedWithValues: Story = {
           <obc-poi-group
             style="position: absolute; top: 0; left: 0;"
             .expand=${args.expand}
-            positionVertical="calc(50%)"
+            .positionVertical=${`${groupButtonY}px`}
             @expand=${onExpand}
           >
             <obc-poi-data
               id="target-3"
               .x=${300}
-              .buttonY=${240}
-              .y=${240}
+              .buttonY=${groupButtonY}
+              .y=${150}
               .data=${valuesA}
             ></obc-poi-data>
             <obc-poi-data
               id="target-1"
               .x=${320}
-              .buttonY=${240}
-              .y=${240}
-              .relativeDirection=${65}
+              .buttonY=${groupButtonY}
+              .y=${150}
               .data=${valuesB}
             ></obc-poi-data>
             <obc-poi-data
               id="target-2"
               .x=${340}
-              .buttonY=${240}
-              .y=${240}
+              .buttonY=${groupButtonY}
+              .y=${150}
               .data=${valuesC}
             ></obc-poi-data>
           </obc-poi-group>
           <obc-poi-data
             id="outside"
             .x=${200}
-            .buttonY=${240}
-            .y=${240}
+            .buttonY=${outsideButtonY}
+            .y=${200}
             .data=${valuesOutside}
           ></obc-poi-data>
         </div>
@@ -277,6 +305,26 @@ export const GroupedWithValues: Story = {
 export const Expanded: Story = {
   args: {
     expand: true,
+  },
+  play: async ({canvasElement, args}) => {
+    if (!isVitestBrowser || !args.expand) return;
+    const targets = Array.from(canvasElement.querySelectorAll('obc-poi-data'));
+    await Promise.all(
+      targets.map(
+        (target) =>
+          ((target as {updateComplete?: Promise<unknown>}).updateComplete ??
+            Promise.resolve()) as Promise<unknown>
+      )
+    );
+    const group = canvasElement.querySelector(
+      'obc-poi-group'
+    ) as ObcPoiGroup | null;
+    if (!group) return;
+    await ((group as {updateComplete?: Promise<unknown>}).updateComplete ??
+      Promise.resolve());
+    await new Promise((resolve) => setTimeout(resolve, 60));
+    group.expand = true;
+    await new Promise((resolve) => setTimeout(resolve, 260));
   },
   render: (args) => {
     const wrapperRef = createRef<HTMLDivElement>();
@@ -293,7 +341,7 @@ export const Expanded: Story = {
         : PoiDataValue.Unchecked;
     };
 
-    if (args.expand) {
+    if (args.expand && !isVitestBrowser) {
       setTimeout(() => {
         const group = groupRef.value;
         if (!group || !group.isConnected) return;
@@ -324,37 +372,36 @@ export const Expanded: Story = {
             ${ref(groupRef)}
             style="position: absolute; top: 0; left: 0;"
             .expand=${false}
-            positionVertical="calc(50%)"
+            positionVertical="calc(50% - 40px)"
             @expand=${onExpand}
           >
             <obc-poi-data
               id="target-3"
               .x=${300}
-              .buttonY=${240}
-              .y=${260}
+              .buttonY=${200}
+              .y=${150}
               .fixedTarget=${false}
             ></obc-poi-data>
             <obc-poi-data
               id="target-1"
               .x=${320}
-              .buttonY=${240}
-              .y=${100}
+              .buttonY=${200}
+              .y=${150}
               .fixedTarget=${false}
-              .relativeDirection=${65}
             ></obc-poi-data>
             <obc-poi-data
               id="target-2"
               .x=${340}
-              .buttonY=${240}
-              .y=${100}
+              .buttonY=${200}
+              .y=${150}
               .fixedTarget=${false}
             ></obc-poi-data>
           </obc-poi-group>
           <obc-poi-data
             id="outside"
             .x=${200}
-            .buttonY=${240}
-            .y=${100}
+            .buttonY=${200}
+            .y=${150}
             .fixedTarget=${false}
           ></obc-poi-data>
         </div>
@@ -367,6 +414,18 @@ export const InternalGroupSwapping: Story = {
   args: {
     expand: true,
     internalSwapping: true,
+  },
+  play: async ({canvasElement, args}) => {
+    if (!isVitestBrowser || !args.expand) return;
+    const group = canvasElement.querySelector(
+      'obc-poi-group'
+    ) as ObcPoiGroup | null;
+    if (!group) return;
+    await ((group as {updateComplete?: Promise<unknown>}).updateComplete ??
+      Promise.resolve());
+    await new Promise((resolve) => setTimeout(resolve, 40));
+    group.expand = true;
+    await new Promise((resolve) => setTimeout(resolve, 260));
   },
   render: (args) => {
     const hostRef = createRef<HTMLDivElement>();
@@ -462,13 +521,15 @@ export const InternalGroupSwapping: Story = {
       observer.observe(observerTarget, {childList: true, subtree: true});
     };
 
-    setTimeout(() => {
-      if (args.expand && args.internalSwapping) {
-        startAnimation(hostRef.value ?? null);
-      } else {
-        stopAnimation();
-      }
-    }, 0);
+    if (!isVitestBrowser) {
+      setTimeout(() => {
+        if (args.expand && args.internalSwapping) {
+          startAnimation(hostRef.value ?? null);
+        } else {
+          stopAnimation();
+        }
+      }, 0);
+    }
 
     return html`
       <style>
@@ -488,10 +549,14 @@ export const InternalGroupSwapping: Story = {
         <div class="stage" ${ref(hostRef)}>
           <obc-poi-group
             style="position: absolute; top: 0; left: 0;"
-            .expand=${args.expand}
+            .expand=${isVitestBrowser ? false : args.expand}
             .internalSwapping=${args.internalSwapping}
-            positionVertical="calc(50%)"
+            positionVertical="calc(50% - 40px)"
             @expand=${(event: CustomEvent<{expand: boolean}>) => {
+              if (isVitestBrowser) {
+                stopAnimation();
+                return;
+              }
               if (event.detail.expand && args.internalSwapping) {
                 startAnimation(hostRef.value ?? null);
               } else {
@@ -502,20 +567,20 @@ export const InternalGroupSwapping: Story = {
             <obc-poi-data
               id="swap-a"
               .x=${300}
-              .buttonY=${240}
-              .y=${240}
+              .buttonY=${200}
+              .y=${150}
             ></obc-poi-data>
             <obc-poi-data
               id="swap-b"
               .x=${320}
-              .buttonY=${240}
-              .y=${240}
+              .buttonY=${200}
+              .y=${150}
             ></obc-poi-data>
             <obc-poi-data
               id="swap-c"
               .x=${340}
-              .buttonY=${240}
-              .y=${240}
+              .buttonY=${200}
+              .y=${150}
             ></obc-poi-data>
           </obc-poi-group>
         </div>

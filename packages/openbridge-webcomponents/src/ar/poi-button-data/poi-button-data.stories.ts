@@ -1,15 +1,16 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-
 import {ObcPoiButtonData} from './poi-button-data.js';
 import './poi-button-data.js';
+import '../building-blocks/poi-header/poi-header.js';
+import '../../icons/icon-placeholder.js';
 import {
+  ObcPoiButtonLayout,
+  ObcPoiButtonState,
   ObcPoiButtonType,
   PoiButtonVisualState,
 } from '../building-blocks/poi-button/poi-button.js';
 import {html} from 'lit';
-import {ObcArAlertType} from '../types.js';
 import {crossDecorator} from '../../storybook-util.js';
-import '../../icons/icon-collision-avoidance-overtaking.js';
 
 const meta: Meta<ObcPoiButtonData> = {
   title: 'AR/POI Button Data',
@@ -18,11 +19,13 @@ const meta: Meta<ObcPoiButtonData> = {
   decorators: [crossDecorator],
   args: {
     selected: false,
+    hasHeader: false,
     type: ObcPoiButtonType.Button,
+    layout: ObcPoiButtonLayout.Anchored,
     relativeDirection: 0,
-    alertType: ObcArAlertType.None,
-    header: null,
+    state: ObcPoiButtonState.Enabled,
     value: PoiButtonVisualState.Unchecked,
+    inExpandedGroup: false,
     data: [],
   },
   argTypes: {
@@ -32,12 +35,20 @@ const meta: Meta<ObcPoiButtonData> = {
     selected: {
       control: {type: 'boolean'},
     },
-    alertType: {
+    hasData: {
+      control: false,
+      table: {disable: true},
+    },
+    hasHeader: {
+      control: {type: 'boolean'},
+    },
+    state: {
       control: {type: 'select'},
-      options: Object.values(ObcArAlertType),
+      options: Object.values(ObcPoiButtonState),
     },
     header: {
-      control: {type: 'object'},
+      control: false,
+      table: {disable: true},
     },
     value: {
       control: {type: 'select'},
@@ -47,23 +58,95 @@ const meta: Meta<ObcPoiButtonData> = {
       control: {type: 'select'},
       options: Object.values(ObcPoiButtonType),
     },
+    layout: {
+      control: {type: 'select'},
+      options: Object.values(ObcPoiButtonLayout),
+    },
+    inExpandedGroup: {
+      control: {type: 'boolean'},
+    },
+    resolvedHeaderState: {
+      control: false,
+      table: {disable: true},
+    },
+    resolvedHeaderType: {
+      control: false,
+      table: {disable: true},
+    },
+    resolvedHeaderSize: {
+      control: false,
+      table: {disable: true},
+    },
+    poiObjectType: {
+      control: false,
+      table: {disable: true},
+    },
+    poiObjectState: {
+      control: false,
+      table: {disable: true},
+    },
+    selectionFrameType: {
+      control: false,
+      table: {disable: true},
+    },
+    selectionFrameState: {
+      control: false,
+      table: {disable: true},
+    },
+  },
+  parameters: {
+    controls: {
+      include: [
+        'selected',
+        'hasHeader',
+        'type',
+        'layout',
+        'relativeDirection',
+        'state',
+        'value',
+        'inExpandedGroup',
+        'data',
+      ],
+    },
+    docs: {
+      controls: {
+        include: [
+          'selected',
+          'hasHeader',
+          'type',
+          'layout',
+          'relativeDirection',
+          'state',
+          'value',
+          'inExpandedGroup',
+          'data',
+        ],
+      },
+    },
   },
   render: (args) => {
     return html`
       <obc-poi-button-data
         .data=${args.data}
         .selected=${args.selected}
+        .hasHeader=${args.hasHeader}
         .relativeDirection=${args.relativeDirection}
-        .alertType=${args.alertType}
-        .header=${args.header}
+        .layout=${args.layout}
+        .state=${args.state}
         .value=${args.value}
         .type=${args.type}
-        .hasRelation=${args.hasRelation}
+        .inExpandedGroup=${args.inExpandedGroup}
       >
-        <obi-collision-avoidance-overtaking
-          slot="relation"
-          part="relation"
-        ></obi-collision-avoidance-overtaking>
+        <obc-poi-header
+          slot="header"
+          content="1"
+          type="id"
+          state="selected"
+          size="regular"
+          has-indicator
+        >
+          <obi-placeholder slot="indicator"></obi-placeholder>
+        </obc-poi-header>
       </obc-poi-button-data>
     `;
   },
@@ -79,6 +162,12 @@ export const Button: Story = {
 export const Enhanced: Story = {
   args: {
     type: ObcPoiButtonType.Enhanced,
+  },
+};
+
+export const WithHeader: Story = {
+  args: {
+    hasHeader: true,
   },
 };
 

@@ -28,8 +28,52 @@ const POI_LARGE_VISUAL_TARGET_OVERLAP_VAR =
 export type ExpandEvent = CustomEvent<{expand: boolean}>;
 
 /**
- * Groups POI targets and manages expand/collapse layout behavior.
- * @fires {ExpandEvent} expand - Fired when the button is clicked.
+ * `<obc-poi-group>` - A POI cluster component that collapses overlapping targets into one trigger and expands them into a spread list.
+ *
+ * This component wraps multiple `obc-poi-data` elements and manages their collapsed/expanded presentation as a single interactive unit.
+ * Use it when nearby targets should be presented as one grouped control until the user expands the group.
+ *
+ * ### Features
+ * - Expand/collapse state: Controlled by `expand`; collapse animation state is exposed through `collapsing`.
+ * - Automatic wrapper sizing: Computes collapsed wrapper width/height from slotted target button bounds.
+ * - Front-target handling: Keeps one front target visually prioritized while collapsing other targets into overlap state.
+ * - Backdrop interaction: Shows a backdrop while expanded and collapses on backdrop click.
+ * - Dynamic ordering: `internalSwapping` enables reordering while expanded based on current horizontal positions.
+ * - Vertical placement: `positionVertical` sets the wrapper/group top offset used for collapsed positioning.
+ *
+ * ### Usage Guidelines
+ * - Slot only `obc-poi-data` items that should behave as one grouped target set.
+ * - Control expand/collapse via the `expand` property, or let the built-in wrapper button toggle expansion.
+ * - Use the `expand` event detail to synchronize nearby standalone targets (for example, set outside targets to overlapped while this group is open).
+ * - Treat `collapsing` as component-managed runtime state unless you have a specific orchestration need.
+ * - **TODO(designer):** Confirm whether external consumers should set `collapsing` directly, or if it should remain fully internal.
+ *
+ * ### Slots
+ * | Slot | Renders When... | Purpose |
+ * | --- | --- | --- |
+ * | default | Always | Contains grouped `obc-poi-data` targets managed by this component. |
+ *
+ * ### Events
+ * - `expand` - Fired when expand state changes. Detail: `{ expand: boolean }`.
+ * - `collapse-finished` - Fired when the collapse animation has fully completed.
+ *
+ * ### Best Practices
+ * - Keep grouped targets positioned consistently so wrapper bounds and front-target selection remain stable.
+ * - Prefer one `obc-poi-group` per overlap cluster rather than nesting groups.
+ * - Use `internalSwapping` only when live target crossing should reorder expanded items.
+ *
+ * ### Example
+ * ```html
+ * <obc-poi-group positionVertical="240px">
+ *   <obc-poi-data x="300" button-y="240" y="240"></obc-poi-data>
+ *   <obc-poi-data x="320" button-y="240" y="240"></obc-poi-data>
+ *   <obc-poi-data x="340" button-y="240" y="240"></obc-poi-data>
+ * </obc-poi-group>
+ * ```
+ *
+ * @slot - Default slot for grouped `obc-poi-data` targets.
+ * @fires expand {CustomEvent<{expand:boolean}>} Fired when the group expand state changes.
+ * @fires collapse-finished {CustomEvent<void>} Fired after collapse animation completes.
  */
 @customElement('obc-poi-group')
 export class ObcPoiGroup extends LitElement {
@@ -658,7 +702,6 @@ export class ObcPoiGroup extends LitElement {
         config.currentExpandedOffset = smoothStep(
           config.currentExpandedOffset,
           config.expandedOffset,
-          config.currentExpandedOffset,
           0.1
         );
       }
@@ -807,8 +850,8 @@ export class ObcPoiGroup extends LitElement {
       return;
     }
 
-    const adjustedHeight = Math.max(0, (frontHeight ?? 0) * 0.95);
-    const shift = Math.max(0, (frontHeight ?? 0) - adjustedHeight);
+    const adjustedHeight = Math.max(0, frontHeight * 0.95);
+    const shift = Math.max(0, frontHeight - adjustedHeight);
     target.style.setProperty(
       '--obc-poi-group-overlap-height',
       `${adjustedHeight}px`

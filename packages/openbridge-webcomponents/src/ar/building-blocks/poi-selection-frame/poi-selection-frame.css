@@ -1,31 +1,66 @@
 :host {
   display: inline-flex;
-  width: 48px;
-  height: 48px;
+  width: 31px;
+  height: 31px;
   flex-shrink: 0;
   line-height: 0;
   pointer-events: none;
+  --obc-poi-selection-frame-corner-size: 8px;
+  --obc-poi-selection-frame-corner-stroke: 1.5px;
+  --obc-poi-selection-frame-corner-radius: 3.5px;
 }
 
-:host([state="none"]) {
-  display: none;
-  width: 0;
-  height: 0;
+:host([type="indicator"][state="regular"]),
+:host([type="indicator"][state="flat"]) {
+  width: 31px;
+  height: 31px;
+}
+
+:host([type="button"]) {
+  width: 39px;
+  height: 39px;
 }
 
 :host([type="enhanced"]) {
-  width: 64px;
-  height: 64px;
+  width: 55px;
+  height: 55px;
+  --obc-poi-selection-frame-corner-size: 9px;
+}
+
+:host([type="indicator"][state="alert"]) {
+  width: 35px;
+  height: 35px;
+}
+
+:host([type="indicator"]),
+:host([type="button"][state="flat"]) {
+  --obc-poi-selection-frame-corner-size: 7px;
+}
+
+:host([type="button"][state="flat"]) {
+  width: 31px;
+  height: 31px;
 }
 
 :host([type="button"][state="alert"]) {
-  width: 50px;
-  height: 50px;
+  width: 43px;
+  height: 43px;
+}
+
+:host([type="enhanced"][state="flat"]) {
+  width: 43px;
+  height: 43px;
+  --obc-poi-selection-frame-corner-size: 8px;
 }
 
 :host([type="enhanced"][state="alert"]) {
-  width: 66px;
-  height: 66px;
+  width: 59px;
+  height: 59px;
+  --obc-poi-selection-frame-corner-size: 10px;
+}
+
+:host([state="none"]) .frame {
+  display: none;
 }
 
 .frame {
@@ -41,77 +76,57 @@
   justify-content: center;
 }
 
-.frame > svg {
+.corner-frame {
+  position: relative;
   display: block;
   width: 100%;
   height: 100%;
 }
 
-.custom-frame {
-  position: relative;
-  display: block;
-  width: var(--obc-poi-selection-frame-visual-width, auto);
-  height: var(--obc-poi-selection-frame-visual-height, auto);
-  overflow: visible;
-}
-
-.custom-frame--native > svg {
+.corner {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: var(--obc-poi-selection-frame-source-size);
-  height: var(--obc-poi-selection-frame-source-size);
-  transform: translate(-50%, -50%);
+  width: var(--obc-poi-selection-frame-corner-size, 8px);
+  height: var(--obc-poi-selection-frame-corner-size, 8px);
+  box-sizing: border-box;
+  border: 0 solid white;
+  border-width: 0;
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 100%));
 }
 
-.custom-corner {
-  position: absolute;
-  width: var(--obc-poi-selection-frame-corner-crop);
-  height: var(--obc-poi-selection-frame-corner-crop);
-  overflow: hidden;
-}
-
-.custom-corner > svg {
-  display: block;
-  width: var(--obc-poi-selection-frame-source-size);
-  height: var(--obc-poi-selection-frame-source-size);
-}
-
-.custom-corner.tl {
+.corner.tl {
   top: 0;
   left: 0;
+  border-top-width: var(--obc-poi-selection-frame-corner-stroke, 1.5px);
+  border-left-width: var(--obc-poi-selection-frame-corner-stroke, 1.5px);
+  border-top-left-radius: var(--obc-poi-selection-frame-corner-radius, 3.5px);
 }
 
-.custom-corner.tr {
+.corner.tr {
   top: 0;
   right: 0;
+  border-top-width: var(--obc-poi-selection-frame-corner-stroke, 1.5px);
+  border-right-width: var(--obc-poi-selection-frame-corner-stroke, 1.5px);
+  border-top-right-radius: var(--obc-poi-selection-frame-corner-radius, 3.5px);
 }
 
-.custom-corner.bl {
+.corner.bl {
   bottom: 0;
   left: 0;
-}
-
-.custom-corner.br {
-  right: 0;
-  bottom: 0;
-}
-
-.custom-corner.tr > svg {
-  transform: translateX(
-    calc(-1 * var(--obc-poi-selection-frame-corner-offset))
+  border-bottom-width: var(--obc-poi-selection-frame-corner-stroke, 1.5px);
+  border-left-width: var(--obc-poi-selection-frame-corner-stroke, 1.5px);
+  border-bottom-left-radius: var(
+    --obc-poi-selection-frame-corner-radius,
+    3.5px
   );
 }
 
-.custom-corner.bl > svg {
-  transform: translateY(
-    calc(-1 * var(--obc-poi-selection-frame-corner-offset))
-  );
-}
-
-.custom-corner.br > svg {
-  transform: translate(
-    calc(-1 * var(--obc-poi-selection-frame-corner-offset)),
-    calc(-1 * var(--obc-poi-selection-frame-corner-offset))
+.corner.br {
+  right: 0;
+  bottom: 0;
+  border-right-width: var(--obc-poi-selection-frame-corner-stroke, 1.5px);
+  border-bottom-width: var(--obc-poi-selection-frame-corner-stroke, 1.5px);
+  border-bottom-right-radius: var(
+    --obc-poi-selection-frame-corner-radius,
+    3.5px
   );
 }

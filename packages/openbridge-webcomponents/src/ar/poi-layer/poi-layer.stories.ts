@@ -1,19 +1,21 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import {createRef, ref} from 'lit/directives/ref.js';
-import {OverlapMode, PoiLayerRole} from './poi-layer.js';
+import {OverlapMode} from './poi-layer.js';
 import './poi-layer.js';
 import '../poi-data/poi-data.js';
 import {ObcPoiData, PoiDataValue} from '../poi-data/poi-data.js';
 import '../poi-group/poi-group.js';
 
+const isVitestBrowser = Boolean(
+  (globalThis as {__vitest_browser__?: unknown}).__vitest_browser__
+);
+
 type PoiLayerArgs = {
   label: string;
   debug: boolean;
-  layerIndex: number;
   overlapMode: OverlapMode;
-  role: PoiLayerRole;
-  typeFilter: string;
+  isSelected: boolean;
   expand?: boolean;
   joinWhileExpanded?: boolean;
   internalSwapping?: boolean;
@@ -27,7 +29,7 @@ const meta: Meta<PoiLayerArgs> = {
     (story) => html`
       <style>
         .poi-layer-story-frame {
-          min-height: 150px;
+          min-height: 200px;
           display: block;
         }
       </style>
@@ -37,22 +39,27 @@ const meta: Meta<PoiLayerArgs> = {
   args: {
     label: 'Selected Targets',
     debug: true,
-    layerIndex: 0,
     overlapMode: OverlapMode.Grouping,
-    role: PoiLayerRole.Default,
-    typeFilter: '',
+    isSelected: false,
     joinWhileExpanded: false,
     internalSwapping: false,
+  },
+  argTypes: {
+    overlapMode: {
+      control: {type: 'select'},
+      options: Object.values(OverlapMode),
+    },
+    isSelected: {
+      control: {type: 'boolean'},
+    },
   },
   parameters: {
     controls: {
       include: [
         'label',
         'debug',
-        'layerIndex',
         'overlapMode',
-        'role',
-        'typeFilter',
+        'isSelected',
         'joinWhileExpanded',
         'internalSwapping',
       ],
@@ -66,11 +73,14 @@ type Story = StoryObj<PoiLayerArgs>;
 export const AnimatedLayout: Story = {
   args: {
     label: 'Animated Layer',
-    layerIndex: 0,
     debug: true,
   },
   render(args) {
     const hostRef = createRef<HTMLDivElement>();
+    const initialFirstX = 120;
+    const initialSecondX = 520;
+    const initialThirdX = 604;
+    const initialFourthX = 349;
     const startAnimation = (root: HTMLElement | null) => {
       if (!root || root.dataset.animating === 'true') return;
       root.dataset.animating = 'true';
@@ -124,7 +134,9 @@ export const AnimatedLayout: Story = {
       observer.observe(root, {childList: true, subtree: true});
     };
 
-    setTimeout(() => startAnimation(hostRef.value ?? null), 0);
+    if (!isVitestBrowser) {
+      setTimeout(() => startAnimation(hostRef.value ?? null), 0);
+    }
     return html`
       <style>
         .anim {
@@ -138,18 +150,20 @@ export const AnimatedLayout: Story = {
       <div class="anim" ${ref(hostRef)}>
         <obc-poi-layer
           .label=${args.label}
-          .layerIndex=${args.layerIndex}
           .overlapMode=${args.overlapMode}
-          .role=${args.role}
-          .typeFilter=${args.typeFilter}
+          .isSelected=${args.isSelected}
           ?debug=${args.debug}
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
         >
-          <obc-poi-data class="first" .y=${110}> </obc-poi-data>
-          <obc-poi-data class="second" .y=${70}> </obc-poi-data>
-          <obc-poi-data class="third" .y=${90}> </obc-poi-data>
-          <obc-poi-data class="fourth" .y=${100}> </obc-poi-data>
+          <obc-poi-data class="first" .x=${initialFirstX} .y=${110}>
+          </obc-poi-data>
+          <obc-poi-data class="second" .x=${initialSecondX} .y=${70}>
+          </obc-poi-data>
+          <obc-poi-data class="third" .x=${initialThirdX} .y=${90}>
+          </obc-poi-data>
+          <obc-poi-data class="fourth" .x=${initialFourthX} .y=${100}>
+          </obc-poi-data>
         </obc-poi-layer>
       </div>
     `;
@@ -159,11 +173,14 @@ export const AnimatedLayout: Story = {
 export const AnimatedLayoutWithValues: Story = {
   args: {
     label: 'Animated Layer (Values)',
-    layerIndex: 0,
     debug: true,
   },
   render(args) {
     const hostRef = createRef<HTMLDivElement>();
+    const initialFirstX = 120;
+    const initialSecondX = 520;
+    const initialThirdX = 604;
+    const initialFourthX = 349;
     const valuesA = [
       {value: '10', label: 'Lab', unit: 'Unit'},
       {value: '20', label: 'Lab 2', unit: 'Unit 2'},
@@ -231,7 +248,9 @@ export const AnimatedLayoutWithValues: Story = {
       observer.observe(root, {childList: true, subtree: true});
     };
 
-    setTimeout(() => startAnimation(hostRef.value ?? null), 0);
+    if (!isVitestBrowser) {
+      setTimeout(() => startAnimation(hostRef.value ?? null), 0);
+    }
     return html`
       <style>
         .anim-values {
@@ -245,19 +264,33 @@ export const AnimatedLayoutWithValues: Story = {
       <div class="anim-values" ${ref(hostRef)}>
         <obc-poi-layer
           .label=${args.label}
-          .layerIndex=${args.layerIndex}
           .overlapMode=${args.overlapMode}
-          .role=${args.role}
-          .typeFilter=${args.typeFilter}
+          .isSelected=${args.isSelected}
           ?debug=${args.debug}
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
         >
-          <obc-poi-data class="first" .y=${110} .data=${valuesA}></obc-poi-data>
-          <obc-poi-data class="second" .y=${70} .data=${valuesB}></obc-poi-data>
-          <obc-poi-data class="third" .y=${90} .data=${valuesC}></obc-poi-data>
+          <obc-poi-data
+            class="first"
+            .x=${initialFirstX}
+            .y=${110}
+            .data=${valuesA}
+          ></obc-poi-data>
+          <obc-poi-data
+            class="second"
+            .x=${initialSecondX}
+            .y=${70}
+            .data=${valuesB}
+          ></obc-poi-data>
+          <obc-poi-data
+            class="third"
+            .x=${initialThirdX}
+            .y=${90}
+            .data=${valuesC}
+          ></obc-poi-data>
           <obc-poi-data
             class="fourth"
+            .x=${initialFourthX}
             .y=${100}
             .data=${valuesD}
           ></obc-poi-data>
@@ -278,10 +311,8 @@ export const Primary: Story = {
       </style>
       <obc-poi-layer
         .label=${args.label}
-        .layerIndex=${args.layerIndex}
         .overlapMode=${args.overlapMode}
-        .role=${args.role}
-        .typeFilter=${args.typeFilter}
+        .isSelected=${args.isSelected}
         ?debug=${args.debug}
         ?join-while-expanded=${args.joinWhileExpanded}
         .internalSwapping=${!!args.internalSwapping}
@@ -297,7 +328,6 @@ export const Primary: Story = {
 export const WithValuesTargets: Story = {
   args: {
     label: 'With Values',
-    layerIndex: 0,
     debug: true,
   },
   render(args) {
@@ -322,10 +352,8 @@ export const WithValuesTargets: Story = {
       </style>
       <obc-poi-layer
         .label=${args.label}
-        .layerIndex=${args.layerIndex}
         .overlapMode=${args.overlapMode}
-        .role=${args.role}
-        .typeFilter=${args.typeFilter}
+        .isSelected=${args.isSelected}
         ?debug=${args.debug}
         ?join-while-expanded=${args.joinWhileExpanded}
         .internalSwapping=${!!args.internalSwapping}
@@ -341,7 +369,6 @@ export const WithValuesTargets: Story = {
 export const Overlap: Story = {
   args: {
     label: 'Overlap',
-    layerIndex: 0,
     debug: true,
   },
   render(args) {
@@ -359,10 +386,8 @@ export const Overlap: Story = {
       <div class="half">
         <obc-poi-layer
           .label=${args.label}
-          .layerIndex=${args.layerIndex}
           .overlapMode=${args.overlapMode}
-          .role=${args.role}
-          .typeFilter=${args.typeFilter}
+          .isSelected=${args.isSelected}
           ?debug=${args.debug}
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
@@ -378,7 +403,6 @@ export const Overlap: Story = {
 export const OverlapWithGroup: Story = {
   args: {
     label: 'Overlap Group',
-    layerIndex: 0,
     debug: true,
   },
   render(args) {
@@ -396,10 +420,8 @@ export const OverlapWithGroup: Story = {
       <div class="grouped">
         <obc-poi-layer
           .label=${args.label}
-          .layerIndex=${args.layerIndex}
           .overlapMode=${args.overlapMode}
-          .role=${args.role}
-          .typeFilter=${args.typeFilter}
+          .isSelected=${args.isSelected}
           ?debug=${args.debug}
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
@@ -420,7 +442,6 @@ export const OverlapWithGroup: Story = {
 export const OverlapWithGroupNumbers: Story = {
   args: {
     label: 'Overlap Group (Numbers)',
-    layerIndex: 0,
     debug: true,
   },
   render(args) {
@@ -438,10 +459,8 @@ export const OverlapWithGroupNumbers: Story = {
       <div class="grouped">
         <obc-poi-layer
           .label=${args.label}
-          .layerIndex=${args.layerIndex}
           .overlapMode=${args.overlapMode}
-          .role=${args.role}
-          .typeFilter=${args.typeFilter}
+          .isSelected=${args.isSelected}
           ?debug=${args.debug}
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
@@ -463,11 +482,14 @@ export const OverlapWithGroupNumbers: Story = {
 export const EnterGroupFromTwo: Story = {
   args: {
     label: 'Enter Group (2)',
-    layerIndex: 0,
     debug: true,
   },
   render(args) {
     const hostRef = createRef<HTMLDivElement>();
+    const startFirstX = 180;
+    const startSecondX = 460;
+    const snapshotFirstX = 300;
+    const snapshotSecondX = 320;
     const startAnimation = (root: HTMLElement | null) => {
       if (!root || root.dataset.animating === 'true') return;
       root.dataset.animating = 'true';
@@ -517,7 +539,9 @@ export const EnterGroupFromTwo: Story = {
       observer.observe(root, {childList: true, subtree: true});
     };
 
-    setTimeout(() => startAnimation(hostRef.value ?? null), 0);
+    if (!isVitestBrowser) {
+      setTimeout(() => startAnimation(hostRef.value ?? null), 0);
+    }
     return html`
       <style>
         .enter-two {
@@ -535,16 +559,22 @@ export const EnterGroupFromTwo: Story = {
       <div class="enter-two" ${ref(hostRef)}>
         <obc-poi-layer
           .label=${args.label}
-          .layerIndex=${args.layerIndex}
           .overlapMode=${args.overlapMode}
-          .role=${args.role}
-          .typeFilter=${args.typeFilter}
+          .isSelected=${args.isSelected}
           ?debug=${args.debug}
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
         >
-          <obc-poi-data class="a" .y=${140}></obc-poi-data>
-          <obc-poi-data class="b" .y=${80}></obc-poi-data>
+          <obc-poi-data
+            class="a"
+            .x=${isVitestBrowser ? snapshotFirstX : startFirstX}
+            .y=${140}
+          ></obc-poi-data>
+          <obc-poi-data
+            class="b"
+            .x=${isVitestBrowser ? snapshotSecondX : startSecondX}
+            .y=${80}
+          ></obc-poi-data>
         </obc-poi-layer>
       </div>
     `;
@@ -554,7 +584,6 @@ export const EnterGroupFromTwo: Story = {
 export const ExitGroup: Story = {
   args: {
     label: 'Exit Group (2)',
-    layerIndex: 0,
     debug: true,
   },
   render(args) {
@@ -617,10 +646,8 @@ export const ExitGroup: Story = {
       <div class="exit-two" ${ref(hostRef)}>
         <obc-poi-layer
           .label=${args.label}
-          .layerIndex=${args.layerIndex}
           .overlapMode=${args.overlapMode}
-          .role=${args.role}
-          .typeFilter=${args.typeFilter}
+          .isSelected=${args.isSelected}
           ?debug=${args.debug}
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
@@ -636,7 +663,6 @@ export const ExitGroup: Story = {
 export const JoinGroup: Story = {
   args: {
     label: 'Join Group (3)',
-    layerIndex: 0,
     debug: true,
   },
   render(args) {
@@ -702,10 +728,8 @@ export const JoinGroup: Story = {
       <div class="join-three" ${ref(hostRef)}>
         <obc-poi-layer
           .label=${args.label}
-          .layerIndex=${args.layerIndex}
           .overlapMode=${args.overlapMode}
-          .role=${args.role}
-          .typeFilter=${args.typeFilter}
+          .isSelected=${args.isSelected}
           ?debug=${args.debug}
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
@@ -721,10 +745,13 @@ export const JoinGroup: Story = {
 export const JoinExpandedGroup: Story = {
   args: {
     label: 'Join Expanded Group',
-    layerIndex: 0,
     debug: true,
     expand: true,
     joinWhileExpanded: true,
+  },
+  play: async () => {
+    if (!isVitestBrowser) return;
+    await new Promise((resolve) => setTimeout(resolve, 100));
   },
   render(args) {
     const hostRef = createRef<HTMLDivElement>();
@@ -795,7 +822,9 @@ export const JoinExpandedGroup: Story = {
       observer.observe(root, {childList: true, subtree: true});
     };
 
-    setTimeout(() => spawnLateTarget(hostRef.value ?? null), 0);
+    if (!isVitestBrowser) {
+      setTimeout(() => spawnLateTarget(hostRef.value ?? null), 0);
+    }
     setTimeout(() => {
       const layer = layerRef.value;
       if (!layer) return;
@@ -834,16 +863,17 @@ export const JoinExpandedGroup: Story = {
         <obc-poi-layer
           ${ref(layerRef)}
           .label=${args.label}
-          .layerIndex=${args.layerIndex}
           .overlapMode=${args.overlapMode}
-          .role=${args.role}
-          .typeFilter=${args.typeFilter}
+          .isSelected=${args.isSelected}
           ?debug=${args.debug}
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
         >
-          <obc-poi-data class="a" .y=${140}></obc-poi-data>
-          <obc-poi-data class="b" .y=${100}></obc-poi-data>
+          <obc-poi-data class="a" .x=${300} .y=${140}></obc-poi-data>
+          <obc-poi-data class="b" .x=${320} .y=${100}></obc-poi-data>
+          ${isVitestBrowser
+            ? html`<obc-poi-data class="c" .x=${340} .y=${80}></obc-poi-data>`
+            : html``}
         </obc-poi-layer>
       </div>
     `;
@@ -853,9 +883,12 @@ export const JoinExpandedGroup: Story = {
 export const LeaveExpandedGroup: Story = {
   args: {
     label: 'Leave Expanded Group',
-    layerIndex: 0,
     debug: true,
     expand: true,
+  },
+  play: async () => {
+    if (!isVitestBrowser) return;
+    await new Promise((resolve) => setTimeout(resolve, 100));
   },
   render(args) {
     const hostRef = createRef<HTMLDivElement>();
@@ -911,7 +944,9 @@ export const LeaveExpandedGroup: Story = {
       observer.observe(root, {childList: true, subtree: true});
     };
 
-    setTimeout(() => startAnimation(hostRef.value ?? null), 0);
+    if (!isVitestBrowser) {
+      setTimeout(() => startAnimation(hostRef.value ?? null), 0);
+    }
     setTimeout(() => {
       const layer = layerRef.value;
       if (!layer) return;
@@ -949,17 +984,15 @@ export const LeaveExpandedGroup: Story = {
         <obc-poi-layer
           ${ref(layerRef)}
           .label=${args.label}
-          .layerIndex=${args.layerIndex}
           .overlapMode=${args.overlapMode}
-          .role=${args.role}
-          .typeFilter=${args.typeFilter}
+          .isSelected=${args.isSelected}
           ?debug=${args.debug}
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
         >
-          <obc-poi-data class="a" .y=${140}></obc-poi-data>
-          <obc-poi-data class="b" .y=${100}></obc-poi-data>
-          <obc-poi-data class="c" .y=${80}></obc-poi-data>
+          <obc-poi-data class="a" .x=${300} .y=${140}></obc-poi-data>
+          <obc-poi-data class="b" .x=${320} .y=${100}></obc-poi-data>
+          <obc-poi-data class="c" .x=${360} .y=${80}></obc-poi-data>
         </obc-poi-layer>
       </div>
     `;
@@ -969,7 +1002,6 @@ export const LeaveExpandedGroup: Story = {
 export const CrossingMode: Story = {
   args: {
     label: 'Crossing Mode',
-    layerIndex: 0,
     debug: true,
   },
   render(args) {
@@ -1083,13 +1115,11 @@ export const CrossingMode: Story = {
       <div class="crossing-mode" ${ref(hostRef)}>
         <obc-poi-layer
           .label=${args.label}
-          .layerIndex=${args.layerIndex}
-          .role=${args.role}
-          .typeFilter=${args.typeFilter}
           ?debug=${args.debug}
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
           .overlapMode=${OverlapMode.Crossing}
+          .isSelected=${args.isSelected}
         >
           <obc-poi-data class="static" .y=${120}></obc-poi-data>
           <obc-poi-data

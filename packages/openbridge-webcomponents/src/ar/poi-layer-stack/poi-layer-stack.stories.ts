@@ -8,7 +8,6 @@ import '../poi-data/poi-data.js';
 type PoiLayerStackArgs = {
   label: string;
   debug: boolean;
-  layerIndex: number;
   selectionMode: PoiLayerSelectionMode;
 };
 
@@ -30,13 +29,9 @@ const meta: Meta<PoiLayerStackArgs> = {
   args: {
     label: 'Layer A',
     debug: true,
-    layerIndex: 0,
     selectionMode: PoiLayerSelectionMode.Single,
   },
   argTypes: {
-    layerIndex: {
-      control: {type: 'number', min: 0},
-    },
     selectionMode: {
       control: {type: 'select'},
       options: Object.values(PoiLayerSelectionMode),
@@ -66,10 +61,10 @@ const renderTwoLayers = (args: PoiLayerStackArgs) => html`
     }
   </style>
   <obc-poi-layer-stack class="stack" selection-mode=${args.selectionMode}>
-    <obc-poi-layer label="Layer A" role="selected" .layerIndex=${1} debug>
+    <obc-poi-layer label="Layer A" is-selected debug>
       <obc-poi-data .x=${220} .y=${90} .fixedTarget=${false}> </obc-poi-data>
     </obc-poi-layer>
-    <obc-poi-layer label="Layer B" role="default" .layerIndex=${2} debug>
+    <obc-poi-layer label="Layer B" debug>
       <obc-poi-data .x=${120} .y=${110} .fixedTarget=${false}> </obc-poi-data>
       <obc-poi-data .x=${320} .y=${70} .fixedTarget=${false}> </obc-poi-data>
     </obc-poi-layer>
@@ -77,7 +72,6 @@ const renderTwoLayers = (args: PoiLayerStackArgs) => html`
 `;
 
 const renderThreeLayers = (args: PoiLayerStackArgs) => {
-  const baseIndex = Math.max(0, args.layerIndex);
   return html`
     <style>
       obc-poi-layer-stack.stack {
@@ -91,28 +85,11 @@ const renderThreeLayers = (args: PoiLayerStackArgs) => {
       }
     </style>
     <obc-poi-layer-stack class="stack" selection-mode=${args.selectionMode}>
-      <obc-poi-layer
-        label="Layer A"
-        .layerIndex=${baseIndex + 1}
-        role="selected"
-        debug
-      >
+      <obc-poi-layer label="Layer A" is-selected debug>
         <obc-poi-data .x=${520} .y=${110} .fixedTarget=${false}> </obc-poi-data>
       </obc-poi-layer>
-      <obc-poi-layer
-        label="Layer B"
-        .layerIndex=${baseIndex + 2}
-        role="filtered"
-        type-filter="enhanced"
-        debug
-      >
-      </obc-poi-layer>
-      <obc-poi-layer
-        label="Layer C"
-        .layerIndex=${baseIndex + 3}
-        role="default"
-        ?debug=${args.debug}
-      >
+      <obc-poi-layer label="Layer B" debug> </obc-poi-layer>
+      <obc-poi-layer label="Layer C" ?debug=${args.debug}>
         <obc-poi-data .x=${80} .y=${120}> </obc-poi-data>
         <obc-poi-data .x=${260} .y=${80}> </obc-poi-data>
         <obc-poi-data .x=${180} .y=${100}> </obc-poi-data>
@@ -149,7 +126,6 @@ export const SelectionMultiAnimated: Story = {
     selectionMode: PoiLayerSelectionMode.Multi,
   },
   render: (args) => {
-    const baseIndex = Math.max(0, args.layerIndex);
     return html`
       <style>
         obc-poi-layer-stack.stack-animated {
@@ -166,12 +142,7 @@ export const SelectionMultiAnimated: Story = {
         class="stack-animated"
         selection-mode=${args.selectionMode}
       >
-        <obc-poi-layer
-          label="Layer A"
-          .layerIndex=${baseIndex + 1}
-          role="selected"
-          debug
-        >
+        <obc-poi-layer label="Layer A" is-selected debug>
           <obc-poi-data
             class="anim-poi p0"
             .x=${520}
@@ -181,20 +152,8 @@ export const SelectionMultiAnimated: Story = {
             .fixedTarget=${false}
           ></obc-poi-data>
         </obc-poi-layer>
-        <obc-poi-layer
-          label="Layer B"
-          .layerIndex=${baseIndex + 2}
-          role="filtered"
-          type-filter="enhanced"
-          debug
-        >
-        </obc-poi-layer>
-        <obc-poi-layer
-          label="Layer C"
-          .layerIndex=${baseIndex + 3}
-          role="default"
-          ?debug=${args.debug}
-        >
+        <obc-poi-layer label="Layer B" debug> </obc-poi-layer>
+        <obc-poi-layer label="Layer C" ?debug=${args.debug}>
           <obc-poi-data
             class="anim-poi p1"
             .x=${80}

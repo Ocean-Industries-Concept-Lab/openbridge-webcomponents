@@ -27,9 +27,6 @@ const POI_LARGE_VISUAL_TARGET_OVERLAP_VAR =
   '--maneuvering-components-poi-button-large-visual-target-round-overlap';
 const POI_CROSSING_MIN_GAP_VAR = '--obc-poi-layer-crossing-min-gap';
 
-/**
- * Interface for POI button group element properties used by the layer.
- */
 interface PoiButtonGroupElement extends HTMLElement {
   expand?: boolean;
   collapsing?: boolean;
@@ -43,19 +40,62 @@ export enum OverlapMode {
   Crossing = 'crossing',
 }
 
-export enum PoiLayerRole {
-  Default = 'default',
-  Selected = 'selected',
-  Filtered = 'filtered',
-}
+/**
+ * `<obc-poi-layer>` - A POI layout container that resolves overlapping targets by grouping or crossing strategies.
+ *
+ * This component watches slotted POI targets, applies overlap state/visual rules, and coordinates automatic `obc-poi-group` creation when needed.
+ * Use it as the main layer container when you want centralized overlap behavior plus layer height updates for parent layout systems.
+ *
+ * ### Features
+ * - Overlap strategies: `overlapMode="grouping"` builds overlap clusters; `overlapMode="crossing"` continuously adjusts horizontal offsets to reduce crossings.
+ * - Auto-group lifecycle: Creates/removes auto groups and preserves front/behind/pre-group states during transitions.
+ * - Manual group support: Respects existing `obc-poi-group` elements and can optionally join nearby targets while a group is expanded (`joinWhileExpanded`).
+ * - Dynamic observation: Reacts to slot changes, target style/position mutations, and target size changes to recompute grouping and layer height.
+ * - Layer diagnostics: `debug` shows a label overlay using `label`.
+ * - Selection flag: `isSelected` reflects to attribute but has no direct runtime layout logic in this class.
+ * - Group ordering option: `internalSwapping` is forwarded to groups to allow expanded ordering updates based on movement.
+ *
+ * ### Usage Guidelines
+ * - Place `obc-poi-data` targets (and optional `obc-poi-group`) in the default slot.
+ * - Choose `overlapMode` based on behavior:
+ *   - `grouping`: best when overlaps should collapse into expandable clusters.
+ *   - `crossing`: best when targets stay independent but should separate horizontally.
+ * - Listen for `layer-resize` to keep parent containers in sync with computed layer height.
+ * - Enable `joinWhileExpanded` only when targets should be able to join an already expanded auto-group.
+ * - **TODO(designer):** Confirm intended user-visible behavior for `isSelected`, since it currently reflects an attribute but is not consumed by the layer logic here.
+ *
+ * ### Slots
+ * | Slot | Renders When... | Purpose |
+ * | --- | --- | --- |
+ * | default | Always | Hosts POI targets (`obc-poi-data*`) and optional manual `obc-poi-group` elements. |
+ *
+ * ### Events
+ * - `layer-resize` - Fired when computed layer height changes. Detail: `{ height: number, label: string }`.
+ *
+ * ### Best Practices
+ * - Keep POI targets as direct descendants when possible to reduce grouping ambiguity.
+ * - Use stable `x`/`y` updates for animated scenarios so grouping and crossing calculations remain predictable.
+ * - Avoid adding non-POI interactive wrappers inside the layer unless needed, as layer observers track POI-related descendants.
+ *
+ * ### Example
+ * ```html
+ * <obc-poi-layer label="Targets" overlapMode="grouping" debug>
+ *   <obc-poi-data x="180" y="110"></obc-poi-data>
+ *   <obc-poi-data x="205" y="90"></obc-poi-data>
+ *   <obc-poi-data x="230" y="100"></obc-poi-data>
+ * </obc-poi-layer>
+ * ```
+ *
+ * @slot - Default slot for POI targets and optional POI groups.
+ * @fires layer-resize {CustomEvent<{height:number,label:string}>} Fired when the layer height changes.
+ */
 @customElement('obc-poi-layer')
 export class ObcPoiLayer extends LitElement {
   @property({type: String}) label = '';
   @property({type: Boolean, reflect: true}) debug = false;
-  @property({type: Number}) layerIndex = 0;
   @property({type: String}) overlapMode: OverlapMode = OverlapMode.Grouping;
-  @property({type: String}) override role: PoiLayerRole = PoiLayerRole.Default;
-  @property({type: String, attribute: 'type-filter'}) typeFilter = '';
+  @property({type: Boolean, reflect: true, attribute: 'is-selected'})
+  isSelected = false;
   @property({type: Boolean, attribute: 'join-while-expanded'})
   joinWhileExpanded = false;
   @property({type: Boolean, attribute: 'internal-swapping'})
@@ -281,7 +321,6 @@ export class ObcPoiLayer extends LitElement {
         detail: {
           height: roundedHeight,
           label: this.label,
-          layerIndex: this.layerIndex,
         },
         bubbles: true,
         composed: true,
@@ -1138,31 +1177,23 @@ export class ObcPoiLayer extends LitElement {
     return html`
       <div class="wrapper">
         ${this.debug
-          ? html`<span class="debug-label"
-              >Layer ${this.layerIndex}: ${this.label || 'Layer'}</span
-            >`
+          ? html`<span class="debug-label">${this.label || 'Layer'}</span>`
           : nothing}
         <slot></slot>
       </div>
     `;
   }
 
-  /**
-   * Get a CSS variable value as a number (strips 'px' suffix).
-   * Falls back to the provided default if the variable is not set or invalid.
-   */
   private getCssVarAsNumber(varName: string, fallback: number): number {
     const raw = getComputedStyle(this).getPropertyValue(varName).trim();
     const parsed = Number.parseFloat(raw);
     return Number.isFinite(parsed) ? parsed : fallback;
   }
 
-  /** Get the touch target size from CSS variables (default 48px) */
   private getTouchTargetSize(): number {
     return this.getCssVarAsNumber(POI_TOUCH_TARGET_VAR, 48);
   }
 
-  /** Get the visual target size for a given type and overlap state */
   private getVisualTargetSize(isEnhanced: boolean, isOverlap: boolean): number {
     if (isEnhanced) {
       return isOverlap

@@ -6,19 +6,19 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: var(--maneuvering-components-poi-button-touch-target);
-  height: var(--maneuvering-components-poi-button-touch-target);
+  width: var(--maneuvering-components-poi-button-touch-target, 48px);
+  height: var(--maneuvering-components-poi-button-touch-target, 48px);
 }
 
 :host([type="large"]),
 :host([type="n-up-large"]) {
-  width: var(--maneuvering-components-poi-button-large-touch-target);
-  height: var(--maneuvering-components-poi-button-large-touch-target);
+  width: var(--maneuvering-components-poi-button-large-touch-target, 64px);
+  height: var(--maneuvering-components-poi-button-large-touch-target, 64px);
 }
 
 .is-large {
-  width: var(--maneuvering-components-poi-button-large-touch-target);
-  height: var(--maneuvering-components-poi-button-large-touch-target);
+  width: var(--maneuvering-components-poi-button-large-touch-target, 64px);
+  height: var(--maneuvering-components-poi-button-large-touch-target, 64px);
 }
 
 .is-indicator .icon-container {
@@ -38,7 +38,10 @@
   justify-content: center;
   width: 100%;
   height: 100%;
-  --obc-poi-touch-target: var(--maneuvering-components-poi-button-touch-target);
+  --obc-poi-touch-target: var(
+    --maneuvering-components-poi-button-touch-target,
+    48px
+  );
   --obc-poi-frame-size: var(
     --maneuvering-components-poi-button-visual-target-round
   );
@@ -59,7 +62,8 @@
 
 .is-large {
   --obc-poi-touch-target: var(
-    --maneuvering-components-poi-button-large-touch-target
+    --maneuvering-components-poi-button-large-touch-target,
+    64px
   );
 }
 
@@ -272,14 +276,37 @@
 
 /* Indicator type icon stroke outline */
 .is-indicator .icon-container ::slotted(*) {
-  stroke: var(--overlay-container-background-color);
+  stroke: rgb(255, 255, 255);
   stroke-width: 2px;
   stroke-linejoin: round;
   paint-order: stroke fill;
+  --element-active-inverted-color: rgb(255, 255, 255);
+}
+
+.is-indicator.has-placeholder-icon .indicator-placeholder-fill {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.is-indicator.has-placeholder-icon .indicator-placeholder-fill path {
+  fill: var(--element-active-inverted-color);
+}
+
+.is-indicator.has-placeholder-icon .icon-container ::slotted(obi-placeholder) {
+  position: relative;
+  z-index: 1;
 }
 
 .is-indicator.style-categorical .icon-container ::slotted(*) {
   stroke: var(--base-blue-100);
+}
+
+.is-indicator.style-categorical .icon-container {
+  --element-active-inverted-color: var(--base-blue-100);
 }
 
 /* Overlapped state hides icon */
