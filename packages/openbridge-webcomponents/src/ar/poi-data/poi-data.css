@@ -1,0 +1,10 @@
+:host {
+  display: inline-block;
+  position: absolute;
+}
+
+obc-poi {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
