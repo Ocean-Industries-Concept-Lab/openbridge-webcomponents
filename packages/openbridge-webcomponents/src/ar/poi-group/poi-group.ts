@@ -145,25 +145,17 @@ export class ObcPoiGroup extends LitElement {
 
   override updated(changedProperties: PropertyValues) {
     super.updated(changedProperties);
-    if (
-      changedProperties.has('expand') &&
-      changedProperties.get('expand') !== this.expand
-    ) {
+    if (changedProperties.has('expand')) {
+      if (this.collapsing && this.expand) {
+        this.expand = false;
+        return;
+      }
       this.setExpandedChildren(this.expand);
     }
   }
 
   override willUpdate(changedProperties: PropertyValues) {
     super.willUpdate(changedProperties);
-
-    // Reject expand requests while a collapse animation is running.
-    // Correcting the property here (before render) ensures updated()
-    // only sees the final value and setExpandedChildren fires cleanly.
-    if (changedProperties.has('expand') && this.collapsing && this.expand) {
-      this.expand = false;
-      return;
-    }
-
     // Prevent a one-frame wrapper flash when collapse starts.
     if (
       changedProperties.has('expand') &&
@@ -472,10 +464,11 @@ export class ObcPoiGroup extends LitElement {
     const visualExpanded = this.collapsing ? false : progress > 0.5;
     const touchAreaExpanded = progress > 0.5;
 
-    const orphaned: ObcPoiData[] = [];
     this.topOffsetTargets.forEach((config, child) => {
       if (child.parentElement !== this) {
-        orphaned.push(child);
+        this.topOffsetTargets.delete(child);
+        this.collapseDeltas.delete(child);
+        this.lastAppliedOffsets.delete(child);
         return;
       }
       const isCollapsing = this.collapseDeltas.size > 0;
@@ -521,11 +514,6 @@ export class ObcPoiGroup extends LitElement {
         child.style.height = 'unset';
       }
     });
-    for (const child of orphaned) {
-      this.topOffsetTargets.delete(child);
-      this.collapseDeltas.delete(child);
-      this.lastAppliedOffsets.delete(child);
-    }
   }
 
   private getFrontChild(): ObcPoiData | null {
@@ -594,7 +582,6 @@ export class ObcPoiGroup extends LitElement {
   }
 
   private expandedLoopRunning = false;
-  private expandedLoopRaf = 0;
 
   private startExpandedObserver() {
     if (this.expandedLoopRunning) return;
@@ -605,27 +592,19 @@ export class ObcPoiGroup extends LitElement {
   private runExpandedLoop() {
     if (!this.expandedLoopRunning || !this.expand) {
       this.expandedLoopRunning = false;
-      this.expandedLoopRaf = 0;
       return;
     }
     try {
       this.updateExpandedOffsets();
-      this.expandedLoopRaf = requestAnimationFrame(() =>
-        this.runExpandedLoop()
-      );
+      requestAnimationFrame(() => this.runExpandedLoop());
     } catch (error) {
       console.error('[poi-group] Error in expanded loop:', error);
       this.expandedLoopRunning = false;
-      this.expandedLoopRaf = 0;
     }
   }
 
   private stopExpandedObserver() {
     this.expandedLoopRunning = false;
-    if (this.expandedLoopRaf) {
-      cancelAnimationFrame(this.expandedLoopRaf);
-      this.expandedLoopRaf = 0;
-    }
     this.lastAppliedOffsets.clear();
     this.lastTargetOrder = [];
   }
