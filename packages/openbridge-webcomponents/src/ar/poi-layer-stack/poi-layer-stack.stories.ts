@@ -52,6 +52,22 @@ type AnimatedPoiData = HTMLElement & {
   boxHeight: number | null;
 };
 
+type AnimatedPoiSnapshotPose = {
+  x: number;
+  y: number;
+  boxWidth: number;
+  boxHeight: number;
+};
+
+const selectionMultiAnimatedSnapshotPose: AnimatedPoiSnapshotPose[] = [
+  {x: 542, y: 109, boxWidth: 44, boxHeight: 35},
+  {x: 107, y: 117, boxWidth: 48, boxHeight: 34},
+  {x: 264, y: 72, boxWidth: 35, boxHeight: 32},
+  {x: 170, y: 92, boxWidth: 33, boxHeight: 33},
+  {x: 403, y: 134, boxWidth: 32, boxHeight: 35},
+  {x: 119, y: 87, boxWidth: 36, boxHeight: 38},
+];
+
 const waitForStorySettle = async () => {
   if ('fonts' in document) {
     await (document as Document & {fonts?: FontFaceSet}).fonts?.ready;
@@ -142,6 +158,13 @@ export const SelectionMultiAnimated: Story = {
     selectionMode: PoiLayerSelectionMode.Multi,
   },
   render: (args) => {
+    const p0 = selectionMultiAnimatedSnapshotPose[0];
+    const p1 = selectionMultiAnimatedSnapshotPose[1];
+    const p2 = selectionMultiAnimatedSnapshotPose[2];
+    const p3 = selectionMultiAnimatedSnapshotPose[3];
+    const p4 = selectionMultiAnimatedSnapshotPose[4];
+    const p5 = selectionMultiAnimatedSnapshotPose[5];
+
     return html`
       <style>
         obc-poi-layer-stack.stack-animated {
@@ -161,10 +184,10 @@ export const SelectionMultiAnimated: Story = {
         <obc-poi-layer label="Layer A" is-selected debug>
           <obc-poi-data
             class="anim-poi p0"
-            .x=${520}
-            .y=${110}
-            .boxWidth=${32}
-            .boxHeight=${32}
+            .x=${isVitestBrowser ? p0.x : 520}
+            .y=${isVitestBrowser ? p0.y : 110}
+            .boxWidth=${isVitestBrowser ? p0.boxWidth : 32}
+            .boxHeight=${isVitestBrowser ? p0.boxHeight : 32}
             .fixedTarget=${false}
           ></obc-poi-data>
         </obc-poi-layer>
@@ -172,38 +195,38 @@ export const SelectionMultiAnimated: Story = {
         <obc-poi-layer label="Layer C" ?debug=${args.debug}>
           <obc-poi-data
             class="anim-poi p1"
-            .x=${80}
-            .y=${120}
-            .boxWidth=${32}
-            .boxHeight=${32}
+            .x=${isVitestBrowser ? p1.x : 80}
+            .y=${isVitestBrowser ? p1.y : 120}
+            .boxWidth=${isVitestBrowser ? p1.boxWidth : 32}
+            .boxHeight=${isVitestBrowser ? p1.boxHeight : 32}
           ></obc-poi-data>
           <obc-poi-data
             class="anim-poi p2"
-            .x=${260}
-            .y=${80}
-            .boxWidth=${32}
-            .boxHeight=${32}
+            .x=${isVitestBrowser ? p2.x : 260}
+            .y=${isVitestBrowser ? p2.y : 80}
+            .boxWidth=${isVitestBrowser ? p2.boxWidth : 32}
+            .boxHeight=${isVitestBrowser ? p2.boxHeight : 32}
           ></obc-poi-data>
           <obc-poi-data
             class="anim-poi p3"
-            .x=${180}
-            .y=${100}
-            .boxWidth=${32}
-            .boxHeight=${32}
+            .x=${isVitestBrowser ? p3.x : 180}
+            .y=${isVitestBrowser ? p3.y : 100}
+            .boxWidth=${isVitestBrowser ? p3.boxWidth : 32}
+            .boxHeight=${isVitestBrowser ? p3.boxHeight : 32}
           ></obc-poi-data>
           <obc-poi-data
             class="anim-poi p4"
-            .x=${420}
-            .y=${140}
-            .boxWidth=${32}
-            .boxHeight=${32}
+            .x=${isVitestBrowser ? p4.x : 420}
+            .y=${isVitestBrowser ? p4.y : 140}
+            .boxWidth=${isVitestBrowser ? p4.boxWidth : 32}
+            .boxHeight=${isVitestBrowser ? p4.boxHeight : 32}
           ></obc-poi-data>
           <obc-poi-data
             class="anim-poi p5"
-            .x=${140}
-            .y=${90}
-            .boxWidth=${32}
-            .boxHeight=${32}
+            .x=${isVitestBrowser ? p5.x : 140}
+            .y=${isVitestBrowser ? p5.y : 90}
+            .boxWidth=${isVitestBrowser ? p5.boxWidth : 32}
+            .boxHeight=${isVitestBrowser ? p5.boxHeight : 32}
           ></obc-poi-data>
         </obc-poi-layer>
       </obc-poi-layer-stack>
@@ -211,6 +234,7 @@ export const SelectionMultiAnimated: Story = {
   },
   play: async ({canvasElement}) => {
     await waitForStorySettle();
+    if (isVitestBrowser) return;
 
     const root = canvasElement.querySelector(
       '.stack-animated'
@@ -242,31 +266,6 @@ export const SelectionMultiAnimated: Story = {
     const ampH = [8, 10, 12, 9, 13, 10];
     const freq = [0.72, 0.51, 0.66, 0.61, 0.56, 0.69];
     const phase = [0.15, 0.9, 1.8, 2.45, 3.15, 3.85];
-
-    if (isVitestBrowser) {
-      const t = 1.75;
-      targets.forEach((target, i) => {
-        const waveX = t * freq[i] + phase[i];
-        const waveY = t * (freq[i] + 0.18) + phase[i] * 0.72;
-        const waveW = t * (freq[i] + 0.22) + phase[i] * 1.13;
-        const waveH = t * (freq[i] + 0.31) + phase[i] * 0.84;
-        target.x = base[i].x + ampX[i] * Math.sin(waveX);
-        target.y = base[i].y + ampY[i] * Math.cos(waveY);
-        target.boxWidth = Math.max(
-          32,
-          base[i].boxWidth + ampW[i] * (0.5 + 0.5 * Math.sin(waveW))
-        );
-        target.boxHeight = Math.max(
-          32,
-          base[i].boxHeight + ampH[i] * (0.5 + 0.5 * Math.cos(waveH))
-        );
-      });
-
-      await new Promise<void>((resolve) =>
-        requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
-      );
-      return;
-    }
 
     let rafId = 0;
     const tick = (now: number) => {

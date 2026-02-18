@@ -21,6 +21,23 @@ type AnimatedPoiData = HTMLElement & {
   relativeDirection: number;
 };
 
+type AnimatedPoiSnapshotPose = {
+  x: number;
+  y: number;
+  boxWidth: number;
+  boxHeight: number;
+  relativeDirection: number;
+};
+
+const selectionMultiAnimatedSnapshotPose: AnimatedPoiSnapshotPose[] = [
+  {x: 543, y: 110, boxWidth: 43, boxHeight: 37, relativeDirection: -1},
+  {x: 149, y: 122, boxWidth: 49, boxHeight: 36, relativeDirection: 174},
+  {x: 290, y: 78, boxWidth: 38, boxHeight: 33, relativeDirection: 162},
+  {x: 385, y: 100, boxWidth: 36, boxHeight: 32, relativeDirection: -4},
+  {x: 483, y: 135, boxWidth: 32, boxHeight: 33, relativeDirection: -170},
+  {x: 624, y: 100, boxWidth: 33, boxHeight: 35, relativeDirection: 26},
+];
+
 const waitForStorySettle = async (canvasElement: HTMLElement) => {
   const image = canvasElement.querySelector(
     '.stage img'
@@ -134,6 +151,13 @@ export const SelectionMultiAnimated: Story = {
     classFilter: [],
   },
   render: (args) => {
+    const p0 = selectionMultiAnimatedSnapshotPose[0];
+    const p1 = selectionMultiAnimatedSnapshotPose[1];
+    const p2 = selectionMultiAnimatedSnapshotPose[2];
+    const p3 = selectionMultiAnimatedSnapshotPose[3];
+    const p4 = selectionMultiAnimatedSnapshotPose[4];
+    const p5 = selectionMultiAnimatedSnapshotPose[5];
+
     return html`
       <style>
         .stage {
@@ -180,11 +204,13 @@ export const SelectionMultiAnimated: Story = {
             <obc-poi-layer label="Layer A" is-selected>
               <obc-poi-data
                 class="anim-poi p0"
-                .x=${520}
-                .y=${110}
-                .relativeDirection=${18}
-                .boxWidth=${32}
-                .boxHeight=${32}
+                .x=${isVitestBrowser ? p0.x : 520}
+                .y=${isVitestBrowser ? p0.y : 110}
+                .relativeDirection=${isVitestBrowser
+                  ? p0.relativeDirection
+                  : 18}
+                .boxWidth=${isVitestBrowser ? p0.boxWidth : 32}
+                .boxHeight=${isVitestBrowser ? p0.boxHeight : 32}
                 .fixedTarget=${false}
               ></obc-poi-data>
             </obc-poi-layer>
@@ -192,43 +218,53 @@ export const SelectionMultiAnimated: Story = {
             <obc-poi-layer label="Layer C" data-controller-layer="background">
               <obc-poi-data
                 class="anim-poi p1"
-                .x=${170}
-                .y=${120}
-                .relativeDirection=${-36}
-                .boxWidth=${32}
-                .boxHeight=${32}
+                .x=${isVitestBrowser ? p1.x : 170}
+                .y=${isVitestBrowser ? p1.y : 120}
+                .relativeDirection=${isVitestBrowser
+                  ? p1.relativeDirection
+                  : -36}
+                .boxWidth=${isVitestBrowser ? p1.boxWidth : 32}
+                .boxHeight=${isVitestBrowser ? p1.boxHeight : 32}
               ></obc-poi-data>
               <obc-poi-data
                 class="anim-poi p2"
-                .x=${280}
-                .y=${80}
-                .relativeDirection=${128}
-                .boxWidth=${32}
-                .boxHeight=${32}
+                .x=${isVitestBrowser ? p2.x : 280}
+                .y=${isVitestBrowser ? p2.y : 80}
+                .relativeDirection=${isVitestBrowser
+                  ? p2.relativeDirection
+                  : 128}
+                .boxWidth=${isVitestBrowser ? p2.boxWidth : 32}
+                .boxHeight=${isVitestBrowser ? p2.boxHeight : 32}
               ></obc-poi-data>
               <obc-poi-data
                 class="anim-poi p3"
-                .x=${390}
-                .y=${100}
-                .relativeDirection=${-156}
-                .boxWidth=${32}
-                .boxHeight=${32}
+                .x=${isVitestBrowser ? p3.x : 390}
+                .y=${isVitestBrowser ? p3.y : 100}
+                .relativeDirection=${isVitestBrowser
+                  ? p3.relativeDirection
+                  : -156}
+                .boxWidth=${isVitestBrowser ? p3.boxWidth : 32}
+                .boxHeight=${isVitestBrowser ? p3.boxHeight : 32}
               ></obc-poi-data>
               <obc-poi-data
                 class="anim-poi p4"
-                .x=${500}
-                .y=${140}
-                .relativeDirection=${42}
-                .boxWidth=${32}
-                .boxHeight=${32}
+                .x=${isVitestBrowser ? p4.x : 500}
+                .y=${isVitestBrowser ? p4.y : 140}
+                .relativeDirection=${isVitestBrowser
+                  ? p4.relativeDirection
+                  : 42}
+                .boxWidth=${isVitestBrowser ? p4.boxWidth : 32}
+                .boxHeight=${isVitestBrowser ? p4.boxHeight : 32}
               ></obc-poi-data>
               <obc-poi-data
                 class="anim-poi p5"
-                .x=${610}
-                .y=${90}
-                .relativeDirection=${172}
-                .boxWidth=${32}
-                .boxHeight=${32}
+                .x=${isVitestBrowser ? p5.x : 610}
+                .y=${isVitestBrowser ? p5.y : 90}
+                .relativeDirection=${isVitestBrowser
+                  ? p5.relativeDirection
+                  : 172}
+                .boxWidth=${isVitestBrowser ? p5.boxWidth : 32}
+                .boxHeight=${isVitestBrowser ? p5.boxHeight : 32}
               ></obc-poi-data>
             </obc-poi-layer>
           </obc-poi-layer-stack>
@@ -238,6 +274,7 @@ export const SelectionMultiAnimated: Story = {
   },
   play: async ({canvasElement}) => {
     await waitForStorySettle(canvasElement);
+    if (isVitestBrowser) return;
 
     const root = canvasElement.querySelector(
       '.controller-animated'
@@ -282,44 +319,6 @@ export const SelectionMultiAnimated: Story = {
       ((((deg + 180) % 360) + 360) % 360) - 180;
     const lerpAngleDeg = (from: number, to: number, alpha: number): number =>
       normalizeDeg(from + normalizeDeg(to - from) * alpha);
-
-    if (isVitestBrowser) {
-      const t = 1.75;
-      targets.forEach((target, i) => {
-        const wave = t * freq[i] + phase[i];
-        const waveW = t * (freq[i] + 0.22) + phase[i] * 1.13;
-        const waveH = t * (freq[i] + 0.31) + phase[i] * 0.84;
-        const dirX = driftDirX[i];
-        const dirY = driftDirY[i];
-        const perpX = -dirY;
-        const perpY = dirX;
-        const forward = driftRange[i] * Math.sin(wave);
-        const lateralWave = wave * 0.6 + phase[i] * 0.5;
-        const lateral = lateralRange[i] * Math.sin(lateralWave);
-        target.x = base[i].x + dirX * forward + perpX * lateral;
-        target.y = base[i].y + dirY * forward + perpY * lateral;
-        target.boxWidth = Math.max(
-          32,
-          base[i].boxWidth + ampW[i] * (0.5 + 0.5 * Math.sin(waveW))
-        );
-        target.boxHeight = Math.max(
-          32,
-          base[i].boxHeight + ampH[i] * (0.5 + 0.5 * Math.cos(waveH))
-        );
-        const dForward = driftRange[i] * Math.cos(wave) * freq[i];
-        const dLateral =
-          lateralRange[i] * Math.cos(lateralWave) * (freq[i] * 0.6);
-        const vx = dirX * dForward + perpX * dLateral;
-        const vy = dirY * dForward + perpY * dLateral;
-        target.relativeDirection =
-          (Math.atan2(vy, vx) * 180) / Math.PI + headingOffsetDeg;
-      });
-
-      await new Promise<void>((resolve) =>
-        requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
-      );
-      return;
-    }
 
     let rafId = 0;
     const tick = (now: number) => {
