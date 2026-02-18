@@ -33,7 +33,8 @@
     var(--maneuvering-components-poi-group-padding-unchecked-horizontal, 4px)
     var(--maneuvering-components-poi-group-padding-unchecked-bottom, 2px)
     var(--maneuvering-components-poi-group-padding-unchecked-horizontal, 4px);
-  transform: translateY(-100%);
+  transform: translate3d(var(--obc-poi-group-wrapper-x, 0px), -100%, 0);
+  will-change: transform;
 
   /* Override mixin colors for visible-wrapper */
   --flat-enabled-border-color: transparent;
@@ -136,7 +137,7 @@
 }
 
 :host([data-in-poi-layer][data-position-mode="bottom"]) .wrapper {
-  transform: translateY(-100%);
+  transform: translate3d(var(--obc-poi-group-wrapper-x, 0px), -100%, 0);
 }
 
 ::slotted(obc-poi-data[data-grouped]) {

@@ -3,7 +3,11 @@ import {property, query} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './poi-layer.css?inline';
 import '../poi-group/poi-group.js';
-import {ObcPoiData, PoiDataValue} from '../poi-data/poi-data.js';
+import {
+  ObcPoiData,
+  PoiDataValue,
+  PoiDataVisualRectPreference,
+} from '../poi-data/poi-data.js';
 import {ObcPoiButtonType} from '../building-blocks/poi-button/poi-button.js';
 import {
   buildAdjacencyMaps,
@@ -380,35 +384,7 @@ export class ObcPoiLayer extends LitElement {
   }
 
   private getTargetSizeElement(target: ObcPoiData): HTMLElement | null {
-    const {poi, button, buttonShadow} = this.getTargetVisualNodes(target);
-    const buttonWrapper = buttonShadow?.querySelector(
-      '.button-wrapper'
-    ) as HTMLElement | null;
-    return (
-      (buttonShadow?.querySelector('.wrapper') as HTMLElement | null) ??
-      buttonWrapper ??
-      button ??
-      poi ??
-      target
-    );
-  }
-
-  private getTargetVisualNodes(target: HTMLElement): {
-    poi: HTMLElement | null;
-    button: HTMLElement | null;
-    buttonShadow: ShadowRoot | null;
-  } {
-    const targetShadow = target.shadowRoot;
-    const poi = targetShadow?.querySelector('obc-poi') as HTMLElement | null;
-    const poiButton = poi?.shadowRoot?.querySelector(
-      'obc-poi-button'
-    ) as HTMLElement | null;
-    const dataButton = targetShadow?.querySelector(
-      'obc-poi-button-data'
-    ) as HTMLElement | null;
-    const button = poiButton ?? dataButton;
-    const buttonShadow = button?.shadowRoot ?? null;
-    return {poi, button, buttonShadow};
+    return target.getVisualElement(PoiDataVisualRectPreference.Size);
   }
 
   private isPoiTargetTag(tag: string): boolean {
@@ -1089,20 +1065,8 @@ export class ObcPoiLayer extends LitElement {
   }
 
   private getTargetRect(target: HTMLElement): DOMRect {
-    const {poi, button, buttonShadow} = this.getTargetVisualNodes(target);
-    const buttonWrapper = buttonShadow?.querySelector(
-      '.button-wrapper'
-    ) as HTMLElement | null;
-    const wrapper = buttonShadow?.querySelector(
-      '.wrapper'
-    ) as HTMLElement | null;
-    const candidates = [wrapper, buttonWrapper, button, poi]
-      .filter((element): element is HTMLElement => !!element)
-      .map((element) => element.getBoundingClientRect());
-    if (candidates.length > 0) {
-      return candidates.reduce((best, rect) =>
-        rect.height > best.height ? rect : best
-      );
+    if (target instanceof ObcPoiData) {
+      return target.getVisualRect(PoiDataVisualRectPreference.Largest);
     }
     return target.getBoundingClientRect();
   }

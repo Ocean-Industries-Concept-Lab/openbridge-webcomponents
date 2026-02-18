@@ -19,6 +19,17 @@ import {
 } from '../building-blocks/poi-pointer/poi-pointer.js';
 
 export {ObcPoiValue as PoiDataValue};
+export enum PoiDataVisualRectPreference {
+  Largest = 'largest',
+  Group = 'group',
+  Anchor = 'anchor',
+  Size = 'size',
+}
+
+type PoiDataVisualElementPreference =
+  | PoiDataVisualRectPreference.Group
+  | PoiDataVisualRectPreference.Anchor
+  | PoiDataVisualRectPreference.Size;
 
 const X_FILTER_CUTOFF_HZ = 16;
 const X_FILTER_DEADBAND_PX = 0.1;
@@ -125,6 +136,82 @@ export class ObcPoiData extends LitElement {
       window.clearTimeout(this.xMovingHintTimeout);
       this.xMovingHintTimeout = null;
     }
+  }
+
+  public getVisualRect(
+    preference: PoiDataVisualRectPreference = PoiDataVisualRectPreference.Largest
+  ): DOMRect {
+    const {poi, button, wrapper, buttonWrapper} = this.getVisualNodes();
+    const candidates = [wrapper, buttonWrapper, button, poi].filter(
+      (element): element is HTMLElement => !!element
+    );
+
+    if (preference === PoiDataVisualRectPreference.Group) {
+      const hasDataWrapper = wrapper?.classList.contains('has-data') ?? false;
+      return (
+        (hasDataWrapper ? wrapper?.getBoundingClientRect() : null) ??
+        buttonWrapper?.getBoundingClientRect() ??
+        wrapper?.getBoundingClientRect() ??
+        button?.getBoundingClientRect() ??
+        poi?.getBoundingClientRect() ??
+        this.getBoundingClientRect()
+      );
+    }
+
+    if (preference === PoiDataVisualRectPreference.Anchor) {
+      return (
+        buttonWrapper?.getBoundingClientRect() ??
+        button?.getBoundingClientRect() ??
+        wrapper?.getBoundingClientRect() ??
+        poi?.getBoundingClientRect() ??
+        this.getBoundingClientRect()
+      );
+    }
+
+    if (preference === PoiDataVisualRectPreference.Size) {
+      return (
+        wrapper?.getBoundingClientRect() ??
+        buttonWrapper?.getBoundingClientRect() ??
+        button?.getBoundingClientRect() ??
+        poi?.getBoundingClientRect() ??
+        this.getBoundingClientRect()
+      );
+    }
+
+    if (candidates.length === 0) {
+      return this.getBoundingClientRect();
+    }
+
+    const candidateRects = candidates.map((element) =>
+      element.getBoundingClientRect()
+    );
+    return candidateRects.reduce((best, rect) =>
+      rect.height > best.height ? rect : best
+    );
+  }
+
+  public getVisualElement(
+    preference: PoiDataVisualElementPreference = PoiDataVisualRectPreference.Size
+  ): HTMLElement {
+    const {poi, button, wrapper, buttonWrapper} = this.getVisualNodes();
+
+    if (preference === PoiDataVisualRectPreference.Group) {
+      const hasDataWrapper = wrapper?.classList.contains('has-data') ?? false;
+      return (
+        (hasDataWrapper ? wrapper : null) ??
+        buttonWrapper ??
+        wrapper ??
+        button ??
+        poi ??
+        this
+      );
+    }
+
+    if (preference === PoiDataVisualRectPreference.Anchor) {
+      return buttonWrapper ?? button ?? wrapper ?? poi ?? this;
+    }
+
+    return wrapper ?? buttonWrapper ?? button ?? poi ?? this;
   }
 
   private markXMoving() {
@@ -256,6 +343,31 @@ export class ObcPoiData extends LitElement {
     return Object.values(ObcPoiState).includes(this.state as ObcPoiState)
       ? (this.state as ObcPoiState)
       : ObcPoiState.Enabled;
+  }
+
+  private getVisualNodes(): {
+    poi: HTMLElement | null;
+    button: HTMLElement | null;
+    wrapper: HTMLElement | null;
+    buttonWrapper: HTMLElement | null;
+  } {
+    const targetShadow = this.shadowRoot;
+    const poi = targetShadow?.querySelector('obc-poi') as HTMLElement | null;
+    const poiButton = poi?.shadowRoot?.querySelector(
+      'obc-poi-button'
+    ) as HTMLElement | null;
+    const dataButton = targetShadow?.querySelector(
+      'obc-poi-button-data'
+    ) as HTMLElement | null;
+    const button = poiButton ?? dataButton;
+    const buttonShadow = button?.shadowRoot ?? null;
+    const buttonWrapper = buttonShadow?.querySelector(
+      '.button-wrapper'
+    ) as HTMLElement | null;
+    const wrapper = buttonShadow?.querySelector(
+      '.wrapper'
+    ) as HTMLElement | null;
+    return {poi, button, wrapper, buttonWrapper};
   }
 
   override render() {

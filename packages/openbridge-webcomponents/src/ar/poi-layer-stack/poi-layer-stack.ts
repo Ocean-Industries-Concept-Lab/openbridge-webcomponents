@@ -4,7 +4,11 @@ import {customElement} from '../../decorator.js';
 import componentStyle from './poi-layer-stack.css?inline';
 import {ObcPoiLayer} from '../poi-layer/poi-layer.js';
 import {ObcPoiGroup} from '../poi-group/poi-group.js';
-import {ObcPoiData, PoiDataValue} from '../poi-data/poi-data.js';
+import {
+  ObcPoiData,
+  PoiDataValue,
+  PoiDataVisualRectPreference,
+} from '../poi-data/poi-data.js';
 import '../building-blocks/poi-header/poi-header.js';
 
 const JUMP_DURATION_MS = 100;
@@ -429,49 +433,8 @@ export class ObcPoiLayerStack extends LitElement {
     return {x: rect.left + rect.width / 2, y: rect.bottom};
   }
 
-  private getPreferredVisualAnchorRect(options: {
-    buttonWrapper: HTMLElement | null;
-    button: HTMLElement | undefined;
-    wrapper: HTMLElement | null;
-    poi: HTMLElement | undefined;
-    target: ObcPoiData;
-  }): DOMRect {
-    const {buttonWrapper, button, wrapper, poi, target} = options;
-    return (
-      buttonWrapper?.getBoundingClientRect() ??
-      button?.getBoundingClientRect() ??
-      wrapper?.getBoundingClientRect() ??
-      poi?.getBoundingClientRect() ??
-      target.getBoundingClientRect()
-    );
-  }
-
   private getTargetVisualAnchor(target: ObcPoiData): {x: number; y: number} {
-    const targetShadow = target.shadowRoot;
-    const poi = targetShadow?.querySelector('obc-poi') as
-      | HTMLElement
-      | undefined;
-    const poiButton = poi?.shadowRoot?.querySelector('obc-poi-button') as
-      | HTMLElement
-      | undefined;
-    const dataButton = targetShadow?.querySelector('obc-poi-button-data') as
-      | HTMLElement
-      | undefined;
-    const button = poiButton ?? dataButton;
-    const buttonShadow = button?.shadowRoot;
-    const buttonWrapper = buttonShadow?.querySelector(
-      '.button-wrapper'
-    ) as HTMLElement | null;
-    const wrapper = buttonShadow?.querySelector(
-      '.wrapper'
-    ) as HTMLElement | null;
-    const rect = this.getPreferredVisualAnchorRect({
-      buttonWrapper,
-      button,
-      wrapper,
-      poi,
-      target,
-    });
+    const rect = target.getVisualRect(PoiDataVisualRectPreference.Anchor);
     return this.getRectBottomCenter(rect);
   }
 
