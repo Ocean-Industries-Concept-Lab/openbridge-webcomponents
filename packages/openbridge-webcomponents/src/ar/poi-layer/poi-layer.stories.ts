@@ -77,6 +77,10 @@ export const AnimatedLayout: Story = {
   },
   render(args) {
     const hostRef = createRef<HTMLDivElement>();
+    const initialFirstX = 120;
+    const initialSecondX = 520;
+    const initialThirdX = 604;
+    const initialFourthX = 349;
     const startAnimation = (root: HTMLElement | null) => {
       if (!root || root.dataset.animating === 'true') return;
       root.dataset.animating = 'true';
@@ -130,7 +134,9 @@ export const AnimatedLayout: Story = {
       observer.observe(root, {childList: true, subtree: true});
     };
 
-    setTimeout(() => startAnimation(hostRef.value ?? null), 0);
+    if (!isVitestBrowser) {
+      setTimeout(() => startAnimation(hostRef.value ?? null), 0);
+    }
     return html`
       <style>
         .anim {
@@ -150,10 +156,14 @@ export const AnimatedLayout: Story = {
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
         >
-          <obc-poi-data class="first" .y=${110}> </obc-poi-data>
-          <obc-poi-data class="second" .y=${70}> </obc-poi-data>
-          <obc-poi-data class="third" .y=${90}> </obc-poi-data>
-          <obc-poi-data class="fourth" .y=${100}> </obc-poi-data>
+          <obc-poi-data class="first" .x=${initialFirstX} .y=${110}>
+          </obc-poi-data>
+          <obc-poi-data class="second" .x=${initialSecondX} .y=${70}>
+          </obc-poi-data>
+          <obc-poi-data class="third" .x=${initialThirdX} .y=${90}>
+          </obc-poi-data>
+          <obc-poi-data class="fourth" .x=${initialFourthX} .y=${100}>
+          </obc-poi-data>
         </obc-poi-layer>
       </div>
     `;
@@ -167,6 +177,10 @@ export const AnimatedLayoutWithValues: Story = {
   },
   render(args) {
     const hostRef = createRef<HTMLDivElement>();
+    const initialFirstX = 120;
+    const initialSecondX = 520;
+    const initialThirdX = 604;
+    const initialFourthX = 349;
     const valuesA = [
       {value: '10', label: 'Lab', unit: 'Unit'},
       {value: '20', label: 'Lab 2', unit: 'Unit 2'},
@@ -234,7 +248,9 @@ export const AnimatedLayoutWithValues: Story = {
       observer.observe(root, {childList: true, subtree: true});
     };
 
-    setTimeout(() => startAnimation(hostRef.value ?? null), 0);
+    if (!isVitestBrowser) {
+      setTimeout(() => startAnimation(hostRef.value ?? null), 0);
+    }
     return html`
       <style>
         .anim-values {
@@ -254,11 +270,27 @@ export const AnimatedLayoutWithValues: Story = {
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
         >
-          <obc-poi-data class="first" .y=${110} .data=${valuesA}></obc-poi-data>
-          <obc-poi-data class="second" .y=${70} .data=${valuesB}></obc-poi-data>
-          <obc-poi-data class="third" .y=${90} .data=${valuesC}></obc-poi-data>
+          <obc-poi-data
+            class="first"
+            .x=${initialFirstX}
+            .y=${110}
+            .data=${valuesA}
+          ></obc-poi-data>
+          <obc-poi-data
+            class="second"
+            .x=${initialSecondX}
+            .y=${70}
+            .data=${valuesB}
+          ></obc-poi-data>
+          <obc-poi-data
+            class="third"
+            .x=${initialThirdX}
+            .y=${90}
+            .data=${valuesC}
+          ></obc-poi-data>
           <obc-poi-data
             class="fourth"
+            .x=${initialFourthX}
             .y=${100}
             .data=${valuesD}
           ></obc-poi-data>
@@ -454,6 +486,10 @@ export const EnterGroupFromTwo: Story = {
   },
   render(args) {
     const hostRef = createRef<HTMLDivElement>();
+    const startFirstX = 180;
+    const startSecondX = 460;
+    const snapshotFirstX = 300;
+    const snapshotSecondX = 320;
     const startAnimation = (root: HTMLElement | null) => {
       if (!root || root.dataset.animating === 'true') return;
       root.dataset.animating = 'true';
@@ -503,7 +539,9 @@ export const EnterGroupFromTwo: Story = {
       observer.observe(root, {childList: true, subtree: true});
     };
 
-    setTimeout(() => startAnimation(hostRef.value ?? null), 0);
+    if (!isVitestBrowser) {
+      setTimeout(() => startAnimation(hostRef.value ?? null), 0);
+    }
     return html`
       <style>
         .enter-two {
@@ -527,8 +565,16 @@ export const EnterGroupFromTwo: Story = {
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
         >
-          <obc-poi-data class="a" .y=${140}></obc-poi-data>
-          <obc-poi-data class="b" .y=${80}></obc-poi-data>
+          <obc-poi-data
+            class="a"
+            .x=${isVitestBrowser ? snapshotFirstX : startFirstX}
+            .y=${140}
+          ></obc-poi-data>
+          <obc-poi-data
+            class="b"
+            .x=${isVitestBrowser ? snapshotSecondX : startSecondX}
+            .y=${80}
+          ></obc-poi-data>
         </obc-poi-layer>
       </div>
     `;

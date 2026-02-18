@@ -509,13 +509,15 @@ export const InternalGroupSwapping: Story = {
       observer.observe(observerTarget, {childList: true, subtree: true});
     };
 
-    setTimeout(() => {
-      if (args.expand && args.internalSwapping) {
-        startAnimation(hostRef.value ?? null);
-      } else {
-        stopAnimation();
-      }
-    }, 0);
+    if (!isVitestBrowser) {
+      setTimeout(() => {
+        if (args.expand && args.internalSwapping) {
+          startAnimation(hostRef.value ?? null);
+        } else {
+          stopAnimation();
+        }
+      }, 0);
+    }
 
     return html`
       <style>
@@ -539,6 +541,10 @@ export const InternalGroupSwapping: Story = {
             .internalSwapping=${args.internalSwapping}
             positionVertical="calc(50% - 40px)"
             @expand=${(event: CustomEvent<{expand: boolean}>) => {
+              if (isVitestBrowser) {
+                stopAnimation();
+                return;
+              }
               if (event.detail.expand && args.internalSwapping) {
                 startAnimation(hostRef.value ?? null);
               } else {
