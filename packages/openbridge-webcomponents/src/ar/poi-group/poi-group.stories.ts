@@ -39,6 +39,19 @@ const meta: Meta<PoiGroupStoryArgs> = {
     expand: false,
     internalSwapping: false,
   },
+  parameters: {
+    controls: {
+      include: ['expand', 'internalSwapping'],
+    },
+  },
+  argTypes: {
+    expand: {
+      control: {type: 'boolean'},
+    },
+    internalSwapping: {
+      control: {type: 'boolean'},
+    },
+  },
   render: (args: PoiGroupStoryArgs) => {
     const wrapperRef = createRef<HTMLDivElement>();
     const onExpand = (event: CustomEvent<{expand: boolean}>) => {
@@ -432,16 +445,19 @@ export const InternalGroupSwapping: Story = {
     let rafId = 0;
     let observer: MutationObserver | null = null;
     let startTime: number | null = null;
+    const setX = (target: ObcPoiData, value: number) => {
+      target.style.setProperty('--obc-poi-data-x', `${value}px`);
+    };
     const resetPositions = () => {
       const root = hostRef.value;
       if (!root) return;
-      const a = root.querySelector('#swap-a') as HTMLElement | null;
-      const b = root.querySelector('#swap-b') as HTMLElement | null;
-      const c = root.querySelector('#swap-c') as HTMLElement | null;
+      const a = root.querySelector('#swap-a') as ObcPoiData | null;
+      const b = root.querySelector('#swap-b') as ObcPoiData | null;
+      const c = root.querySelector('#swap-c') as ObcPoiData | null;
       if (!a || !b || !c) return;
-      a.style.left = '300px';
-      b.style.left = '320px';
-      c.style.left = '340px';
+      setX(a, 300);
+      setX(b, 320);
+      setX(c, 340);
     };
 
     const stopAnimation = () => {
@@ -479,33 +495,33 @@ export const InternalGroupSwapping: Story = {
         const elapsed = now - startTime;
         const t = (elapsed % duration) / duration;
 
-        const a = root.querySelector('#swap-a') as HTMLElement | null;
-        const b = root.querySelector('#swap-b') as HTMLElement | null;
-        const c = root.querySelector('#swap-c') as HTMLElement | null;
+        const a = root.querySelector('#swap-a') as ObcPoiData | null;
+        const b = root.querySelector('#swap-b') as ObcPoiData | null;
+        const c = root.querySelector('#swap-c') as ObcPoiData | null;
         if (!a || !b || !c) return;
 
         if (t < 0.35) {
-          a.style.left = '300px';
-          b.style.left = '320px';
-          c.style.left = '340px';
+          setX(a, 300);
+          setX(b, 320);
+          setX(c, 340);
         } else if (t < 0.75) {
           const phase = (t - 0.35) / 0.4;
           const eased = phase * phase * (3 - 2 * phase);
           const x3 = 340 + (240 - 340) * eased;
           const x1 = 300 + (380 - 300) * eased;
           const x2 = 320 + (400 - 320) * eased;
-          c.style.left = `${Math.round(x3)}px`;
-          a.style.left = `${Math.round(x1)}px`;
-          b.style.left = `${Math.round(x2)}px`;
+          setX(c, x3);
+          setX(a, x1);
+          setX(b, x2);
         } else {
           const phase = (t - 0.75) / 0.25;
           const eased = phase * phase * (3 - 2 * phase);
           const x3 = 240 + (340 - 240) * eased;
           const x1 = 380 + (300 - 380) * eased;
           const x2 = 400 + (320 - 400) * eased;
-          c.style.left = `${Math.round(x3)}px`;
-          a.style.left = `${Math.round(x1)}px`;
-          b.style.left = `${Math.round(x2)}px`;
+          setX(c, x3);
+          setX(a, x1);
+          setX(b, x2);
         }
 
         rafId = requestAnimationFrame(tick);
