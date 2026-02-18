@@ -110,8 +110,13 @@
     }
 
     &.selected-with-next {
+      border-bottom-color: transparent;
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
+    }
+
+    &.selected-with-next .grid-row-divider {
+      display: none;
     }
 
     &.animating {
