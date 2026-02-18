@@ -187,7 +187,12 @@ export class ObcRadio extends LitElement {
 
   onChange(event: Event) {
     event.stopPropagation();
-    this.dispatchEvent(new CustomEvent('change'));
+    const target = event.target as HTMLInputElement;
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        detail: {value: target.value, checked: target.checked},
+      })
+    );
   }
 
   override render() {

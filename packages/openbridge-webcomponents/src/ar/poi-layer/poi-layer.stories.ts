@@ -11,16 +11,6 @@ const isVitestBrowser = Boolean(
   (globalThis as {__vitest_browser__?: unknown}).__vitest_browser__
 );
 
-const waitForStorySettle = async () => {
-  if ('fonts' in document) {
-    await (document as Document & {fonts?: FontFaceSet}).fonts?.ready;
-  }
-
-  await new Promise<void>((resolve) =>
-    requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
-  );
-};
-
 type PoiLayerArgs = {
   label: string;
   debug: boolean;
@@ -185,9 +175,6 @@ export const AnimatedLayoutWithValues: Story = {
     label: 'Animated Layer (Values)',
     debug: true,
   },
-  play: async () => {
-    await waitForStorySettle();
-  },
   render(args) {
     const hostRef = createRef<HTMLDivElement>();
     const initialFirstX = 120;
@@ -314,9 +301,6 @@ export const AnimatedLayoutWithValues: Story = {
 };
 
 export const Primary: Story = {
-  play: async () => {
-    await waitForStorySettle();
-  },
   render(args) {
     return html`
       <style>
@@ -345,9 +329,6 @@ export const WithValuesTargets: Story = {
   args: {
     label: 'With Values',
     debug: true,
-  },
-  play: async () => {
-    await waitForStorySettle();
   },
   render(args) {
     const valuesA = [
@@ -605,9 +586,6 @@ export const ExitGroup: Story = {
     label: 'Exit Group (2)',
     debug: true,
   },
-  play: async () => {
-    await waitForStorySettle();
-  },
   render(args) {
     const hostRef = createRef<HTMLDivElement>();
     const startAnimation = (root: HTMLElement | null) => {
@@ -650,9 +628,7 @@ export const ExitGroup: Story = {
       observer.observe(root, {childList: true, subtree: true});
     };
 
-    if (!isVitestBrowser) {
-      setTimeout(() => startAnimation(hostRef.value ?? null), 0);
-    }
+    setTimeout(() => startAnimation(hostRef.value ?? null), 0);
     return html`
       <style>
         .exit-two {
@@ -676,8 +652,8 @@ export const ExitGroup: Story = {
           ?join-while-expanded=${args.joinWhileExpanded}
           .internalSwapping=${!!args.internalSwapping}
         >
-          <obc-poi-data class="a" .x=${300} .y=${120}></obc-poi-data>
-          <obc-poi-data class="b" .x=${320} .y=${90}></obc-poi-data>
+          <obc-poi-data class="a" .y=${120}></obc-poi-data>
+          <obc-poi-data class="b" .y=${90}></obc-poi-data>
         </obc-poi-layer>
       </div>
     `;
@@ -1028,9 +1004,6 @@ export const CrossingMode: Story = {
     label: 'Crossing Mode',
     debug: true,
   },
-  play: async () => {
-    await waitForStorySettle();
-  },
   render(args) {
     const hostRef = createRef<HTMLDivElement>();
     let rafId = 0;
@@ -1126,9 +1099,7 @@ export const CrossingMode: Story = {
       observer.observe(observerTarget, {childList: true, subtree: true});
     };
 
-    if (!isVitestBrowser) {
-      setTimeout(() => startAnimation(hostRef.value ?? null), 0);
-    }
+    setTimeout(() => startAnimation(hostRef.value ?? null), 0);
     return html`
       <style>
         .crossing-mode {
@@ -1150,10 +1121,9 @@ export const CrossingMode: Story = {
           .overlapMode=${OverlapMode.Crossing}
           .isSelected=${args.isSelected}
         >
-          <obc-poi-data class="static" .x=${staticX} .y=${120}></obc-poi-data>
+          <obc-poi-data class="static" .y=${120}></obc-poi-data>
           <obc-poi-data
             class="moving"
-            .x=${leftX}
             .y=${120}
             .animatePosition=${true}
           ></obc-poi-data>

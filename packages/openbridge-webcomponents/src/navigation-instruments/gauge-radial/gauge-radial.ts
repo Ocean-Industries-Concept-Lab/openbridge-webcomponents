@@ -2,7 +2,7 @@ import {LitElement, html} from 'lit';
 import {customElement} from '../../decorator.js';
 import {property} from 'lit/decorators.js';
 import {AdviceType} from '../watch/advice.js';
-import {SetpointColorMode} from '../../svghelpers/setpoint.js';
+import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/instrument-radial/instrument-radial.js';
 
 export enum ObcGaugeRadialType {
@@ -18,17 +18,66 @@ export interface GaugeRadialAdvice {
   hinted: boolean;
 }
 
+/**
+ * `<obc-gauge-radial>` — Configurable radial gauge for generic numeric values.
+ *
+ * `ObcGaugeRadial` is a thin wrapper around `<obc-instrument-radial>` that adds
+ * domain-independent value-to-angle mapping with automatic range handling for
+ * both positive-only and bipolar (negative-to-positive) scales. It inherits a
+ * full setpoint property bundle from {@link SetpointMixin}, including
+ * auto at-setpoint detection, dual-marker adjustment preview, and deadband
+ * tuning — no manual wiring required.
+ *
+ * ## Features
+ *
+ * - **Three display types**: `filled` (solid arc), `bar` (thinner arc), and
+ *   `needle` (pointer indicator) via the `type` property.
+ * - **Bipolar range support**: When `minValue < 0` the gauge switches to a
+ *   ±135° layout centered at 12 o'clock; otherwise it uses a 270° sweep.
+ * - **Setpoint via mixin**: `setpoint`, `newSetpoint`, `touching`,
+ *   `autoAtSetpointDeadband`, `setpointColorMode`, and all other setpoint
+ *   properties are provided by `SetpointMixin` and forwarded to the inner
+ *   `<obc-instrument-radial>`.
+ * - **Advice zones**: Pass an array of {@link GaugeRadialAdvice} objects to
+ *   render caution/alert arcs on the gauge.
+ *
+ * ## Usage Guidelines
+ *
+ * - Set `minValue` / `maxValue` to define the scale range.
+ * - Use `enhanced` to switch between regular and in-command color palettes.
+ * - Provide `primaryTickmarkInterval` and `secondaryTickmarkInterval` to
+ *   control tickmark density.
+ * - Enable `labels` to show numeric labels at primary tickmarks.
+ *
+ * ## Best Practices
+ *
+ * - Prefer `SetpointMixin` properties (`setpoint`, `touching`, etc.) over
+ *   any legacy aliases — the mixin is the single source of truth.
+ * - Keep domain-specific logic (units, formatting) in the parent view; this
+ *   component is intentionally unit-agnostic.
+ *
+ * ## Example
+ *
+ * ```html
+ * <obc-gauge-radial
+ *   value="42"
+ *   minValue="0"
+ *   maxValue="100"
+ *   type="filled"
+ *   enhanced
+ *   labels
+ *   primaryTickmarkInterval="25"
+ *   secondaryTickmarkInterval="5"
+ *   setpoint="60"
+ * ></obc-gauge-radial>
+ * ```
+ *
+ * @element obc-gauge-radial
+ * @typedef {import('./gauge-radial.js').GaugeRadialAdvice} GaugeRadialAdvice
+ */
 @customElement('obc-gauge-radial')
-export class ObcGaugeRadial extends LitElement {
+export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   @property({type: Number}) value = 0;
-  @property({type: Number}) setpoint: number | undefined;
-  @property({type: Number}) newSetpoint: number | undefined;
-  @property({type: Boolean}) atSetpoint: boolean = false;
-  @property({type: Number}) setpointAtZeroDeadband: number = 0.5;
-  @property({type: String}) setpointColorMode: SetpointColorMode | undefined;
-  @property({type: Boolean}) touching: boolean = false;
-  @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
-  @property({type: Number}) autoAtSetpointDeadband: number = 2;
   @property({type: Number}) maxValue = 100;
   @property({type: Number}) minValue = 0;
   @property({type: Boolean}) labels: boolean = false;
@@ -70,6 +119,7 @@ export class ObcGaugeRadial extends LitElement {
         .touching=${this.touching}
         .disableAutoAtSetpoint=${this.disableAutoAtSetpoint}
         .autoAtSetpointDeadband=${this.autoAtSetpointDeadband}
+        .animateSetpoint=${this.animateSetpoint}
         .maxValue=${this.maxValue}
         .minValue=${this.minValue}
         .getAngle=${this.getAngle}

@@ -11,7 +11,6 @@ import {
   type GroupingThresholds,
 } from './poi-layer-grouping-utils.js';
 import {updateCrossingModeState} from './poi-layer-crossing-utils.js';
-import {getEffectivePoiX} from '../building-blocks/poi/poi-position.js';
 
 const EXIT_DELAY_MS_VAR = '--obc-poi-layer-exit-delay-ms';
 const GROUP_REMOVAL_DELAY_MS_VAR = '--obc-poi-layer-group-removal-delay-ms';
@@ -1112,8 +1111,9 @@ export class ObcPoiLayer extends LitElement {
     layerRect: DOMRect
   ): DOMRect {
     const rect = this.getTargetRect(target);
-    const leftValue = getEffectivePoiX(target);
-    if (!Number.isFinite(leftValue)) return rect;
+    const leftRaw = target.style.left;
+    const leftValue = Number.parseFloat(leftRaw);
+    if (Number.isNaN(leftValue)) return rect;
     const width = rect.width || 0;
     const height = rect.height || 0;
     const left = layerRect.left + leftValue - width / 2;

@@ -141,8 +141,6 @@ export class ObcMessageMenuItem extends LitElement {
   @property({type: Boolean}) hasTrailingIcon = false;
   @property({type: Boolean}) isShelved = false;
 
-  @property({type: Boolean}) hasTitleSlot = false;
-  @property({type: Boolean}) hasDescriptionSlot = false;
   @property({type: Boolean}) hasActionLabelSlot = false;
 
   private get activeSize() {
@@ -256,14 +254,10 @@ export class ObcMessageMenuItem extends LitElement {
           </div>
           <div class="text-container">
             <div class="title-container">
-              ${this.hasTitleSlot
-                ? html`<slot name="title"></slot>`
-                : this.title}
+              <slot name="title">${this.title}</slot>
             </div>
             <div class="description-container">
-              ${this.hasDescriptionSlot
-                ? html`<slot name="description"></slot>`
-                : this.description}
+              <slot name="description">${this.description}</slot>
             </div>
             ${this.hasTimestamp
               ? html`<div class="date-container">

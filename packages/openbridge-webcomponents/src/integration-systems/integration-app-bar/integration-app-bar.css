@@ -6,7 +6,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: var(--app-components-topbar-touch-target-size);
+  min-height: var(--app-components-topbar-touch-target-size);
   padding: 0 var(--app-components-topbar-margin-global);
   background: var(--integration-container-background-color);
   box-shadow: var(--shadow-flat);
@@ -15,5 +15,6 @@
   .center,
   .right-side {
     display: flex;
+    gap: var(--app-components-app-menu-app-button-spacing);
   }
 }

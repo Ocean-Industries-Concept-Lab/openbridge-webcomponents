@@ -14,6 +14,7 @@ const meta: Meta<typeof ObcSpeedGauge> = {
     width: 512,
     speed: 50,
     enhanced: true,
+    touching: false,
   },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
@@ -21,6 +22,7 @@ const meta: Meta<typeof ObcSpeedGauge> = {
     minSpeed: {control: {type: 'range', min: -20, max: 0, step: 1}},
     maxSpeed: {control: {type: 'range', min: 0, max: 100, step: 1}},
     setpoint: {control: {type: 'range', min: -20, max: 100, step: 1}},
+    touching: {control: 'boolean'},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcSpeedGauge>;

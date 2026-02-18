@@ -1,6 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import {userEvent, within} from 'storybook/test';
+import {gsap} from 'gsap';
 
 // Import the bar-vertical component for displaying setpoints in context
 import '../bar-vertical/bar-vertical.js';
@@ -9,6 +10,8 @@ import '../../navigation-instruments/gauge-horizontal/gauge-horizontal.js';
 // Import watch for radial setpoint demos
 import '../../navigation-instruments/watch/watch.js';
 import {WatchCircleType} from '../../navigation-instruments/watch/watch.js';
+// Import azimuth-thruster for multi-setpoint demo
+import '../../navigation-instruments/azimuth-thruster/azimuth-thruster.js';
 
 // Import setpoint types for documentation
 import {SetpointColorMode} from '../../svghelpers/setpoint.js';
@@ -161,22 +164,22 @@ type Story = StoryObj;
 function renderSetpointDemo(config: {
   label: string;
   enhanced?: boolean;
-  colorMode?: SetpointColorMode;
+  setpointColorMode?: SetpointColorMode;
   setpoint: number;
   newSetpoint?: number;
   value: number;
   state: InstrumentState;
-  focused?: boolean;
+  touching?: boolean;
 }) {
   const {
     label,
     enhanced = false,
-    colorMode,
+    setpointColorMode,
     setpoint,
     newSetpoint,
     value,
     state,
-    focused = false,
+    touching = false,
   } = config;
 
   return html`
@@ -195,13 +198,13 @@ function renderSetpointDemo(config: {
         scaleBackground
         borderRadiusPosition="${BorderRadiusPosition.innerFirstChild}"
         .enhanced=${enhanced}
-        .colorMode=${colorMode}
+        .setpointColorMode=${setpointColorMode}
         fillMode="${FillMode.fill}"
         .value=${value}
         .setpoint=${setpoint}
         .newSetpoint=${newSetpoint}
         .state=${state}
-        .focused=${focused}
+        .touching=${touching}
         autoAtSetpointDeadband="1"
         setpointAtZeroDeadband="0.5"
       ></obc-bar-vertical>
@@ -303,7 +306,7 @@ export const Focus: Story = {
  *
  * - **Row 1**: active state (SetpointColorMode: regular)
  * - **Row 2**: inCommand state (SetpointColorMode: enhanced)
- * - **Row 3**: adjusting/focused/touching - dual-marker mode via `newSetpoint`
+ * - **Row 3**: adjusting/touching - dual-marker mode via `newSetpoint`
  * - **Row 4**: loading/off (disabled) - uses tertiary/gray color
  *
  * The `newSetpoint` property enables showing both current and proposed setpoint
@@ -345,21 +348,21 @@ export const SetpointComparison: Story = {
         </div>
         ${renderSetpointDemo({
           label: 'value ≠ setpoint',
-          colorMode: SetpointColorMode.regular,
+          setpointColorMode: SetpointColorMode.regular,
           setpoint: 40,
           value: 20,
           state: InstrumentState.inCommand,
         })}
         ${renderSetpointDemo({
           label: 'value = setpoint',
-          colorMode: SetpointColorMode.regular,
+          setpointColorMode: SetpointColorMode.regular,
           setpoint: 40,
           value: 40,
           state: InstrumentState.inCommand,
         })}
         ${renderSetpointDemo({
           label: 'both = 0',
-          colorMode: SetpointColorMode.regular,
+          setpointColorMode: SetpointColorMode.regular,
           setpoint: 0,
           value: 0,
           state: InstrumentState.inCommand,
@@ -375,37 +378,37 @@ export const SetpointComparison: Story = {
         </div>
         ${renderSetpointDemo({
           label: 'value ≠ setpoint',
-          colorMode: SetpointColorMode.enhanced,
+          setpointColorMode: SetpointColorMode.enhanced,
           setpoint: 40,
           value: 20,
           state: InstrumentState.inCommand,
         })}
         ${renderSetpointDemo({
           label: 'value = setpoint',
-          colorMode: SetpointColorMode.enhanced,
+          setpointColorMode: SetpointColorMode.enhanced,
           setpoint: 40,
           value: 40,
           state: InstrumentState.inCommand,
         })}
         ${renderSetpointDemo({
           label: 'both = 0',
-          colorMode: SetpointColorMode.enhanced,
+          setpointColorMode: SetpointColorMode.enhanced,
           setpoint: 0,
           value: 0,
           state: InstrumentState.inCommand,
         })}
       </div>
 
-      <!-- adjusting/focused/touching row -->
+      <!-- adjusting/touching row -->
       <div
         style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
       >
         <div style="font-size: 12px; color: #888; padding-top: 80px;">
-          adjusting/focused/touching
+          adjusting/touching
         </div>
         ${renderSetpointDemo({
           label: 'setpoint at 20, new at 40',
-          colorMode: SetpointColorMode.enhanced,
+          setpointColorMode: SetpointColorMode.enhanced,
           setpoint: 20,
           newSetpoint: 40,
           value: 20,
@@ -413,7 +416,7 @@ export const SetpointComparison: Story = {
         })}
         ${renderSetpointDemo({
           label: 'setpoint at 40, new at 30',
-          colorMode: SetpointColorMode.enhanced,
+          setpointColorMode: SetpointColorMode.enhanced,
           setpoint: 40,
           newSetpoint: 30,
           value: 40,
@@ -421,7 +424,7 @@ export const SetpointComparison: Story = {
         })}
         ${renderSetpointDemo({
           label: 'setpoint at 0, new at 20',
-          colorMode: SetpointColorMode.enhanced,
+          setpointColorMode: SetpointColorMode.enhanced,
           setpoint: 0,
           newSetpoint: 20,
           value: 0,
@@ -458,8 +461,8 @@ export const SetpointComparison: Story = {
 
       <!-- Note about adjusting state -->
       <div style="font-size: 11px; color: #666; font-style: italic;">
-        Note: "adjusting/focused/touching" row shows dual-marker mode triggered
-        by setting newSetpoint. The original setpoint is dimmed (0.75 opacity)
+        Note: "adjusting/touching" row shows dual-marker mode triggered by
+        setting newSetpoint. The original setpoint is dimmed (0.75 opacity)
         while the new setpoint shows in focus state. "equalZero" is auto-derived
         when setpoint is within setpointAtZeroDeadband (default 0.5).
       </div>
@@ -656,7 +659,7 @@ export const SetpointComparisonRadial: Story = {
         style="display: grid; grid-template-columns: 80px repeat(3, 1fr); gap: 16px; align-items: flex-start;"
       >
         <div style="font-size: 12px; color: #888; padding-top: 60px;">
-          adjusting/focused/touching
+          adjusting/touching
         </div>
         ${renderRadialSetpointDemo({
           label: 'bar at 45°, setpoint at 60°, new at 80°',
@@ -716,11 +719,10 @@ export const SetpointComparisonRadial: Story = {
 
       <!-- Note about adjusting state -->
       <div style="font-size: 11px; color: #666; font-style: italic;">
-        Note: "adjusting/focused/touching" row shows dual-marker mode triggered
-        by setting newAngleSetpoint. The original setpoint is dimmed (0.75
-        opacity) while the new setpoint shows in focus state. "equalZero" is
-        auto-derived when angleSetpoint is within angleSetpointAtZeroDeadband
-        (default 0.5°).
+        Note: "adjusting/touching" row shows dual-marker mode triggered by
+        setting newAngleSetpoint. The original setpoint is dimmed (0.75 opacity)
+        while the new setpoint shows in focus state. "equalZero" is auto-derived
+        when angleSetpoint is within angleSetpointAtZeroDeadband (default 0.5°).
       </div>
     </div>
   `,
@@ -769,6 +771,7 @@ export const SetpointAdjustmentFlow: StoryObj = {
         value="40"
         setpoint="40"
         state="inCommand"
+        animateSetpoint
       ></obc-gauge-horizontal>
 
       <div
@@ -815,15 +818,16 @@ export const SetpointAdjustmentFlow: StoryObj = {
 
     if (!gauge || !status) return;
 
-    // Helper to update status display
-    const updateStatus = (
-      state: string,
-      value: number,
-      setpoint: number,
-      newSetpoint: number | undefined
-    ) => {
-      status.textContent = `State: ${state} | value=${value}, setpoint=${setpoint}, newSetpoint=${newSetpoint ?? 'undefined'}`;
+    // Animation proxy – GSAP interpolates numeric fields, we push them to the component in onUpdate
+    const anim = {value: 40, setpoint: 40, newSetpoint: 40};
+
+    const updateStatus = (state: string) => {
+      const ns = gauge.newSetpoint;
+      status.textContent = `State: ${state} | value=${Math.round(anim.value)}, setpoint=${Math.round(anim.setpoint)}, newSetpoint=${ns !== undefined ? Math.round(anim.newSetpoint) : 'undefined'}`;
     };
+
+    /** Kill every running tween that targets the proxy */
+    const killAll = () => gsap.killTweensOf(anim);
 
     // Get buttons
     const btnReset = canvas.getByRole('button', {name: /Reset/});
@@ -831,48 +835,88 @@ export const SetpointAdjustmentFlow: StoryObj = {
     const btnMove = canvas.getByRole('button', {name: /Move/});
     const btnConfirm = canvas.getByRole('button', {name: /Confirm/});
 
-    // Wire up button handlers (for manual interaction after play completes)
+    // ── Button handlers (work both via auto-play and manual clicks) ──
+
     btnReset.onclick = () => {
+      killAll();
+      anim.value = 40;
+      anim.setpoint = 40;
+      anim.newSetpoint = 40;
       gauge.value = 40;
       gauge.fillMax = 40;
       gauge.setpoint = 40;
       gauge.newSetpoint = undefined;
-      updateStatus('t=0 (at setpoint)', 40, 40, undefined);
+      updateStatus('t=0 (at setpoint)');
     };
 
     btnInitiate.onclick = () => {
-      gauge.newSetpoint = 40;
-      updateStatus('t=1 (initiate)', 40, 40, 40);
+      killAll();
+      anim.newSetpoint = anim.setpoint;
+      gauge.newSetpoint = anim.setpoint;
+      updateStatus('t=1 (initiate)');
     };
 
     btnMove.onclick = () => {
-      gauge.newSetpoint = 80;
-      updateStatus('t=2 (move)', 40, 40, 80);
+      killAll();
+      // Start from wherever newSetpoint currently is (or fall back to setpoint)
+      if (gauge.newSetpoint === undefined) {
+        gauge.newSetpoint = anim.setpoint;
+      }
+      anim.newSetpoint = gauge.newSetpoint;
+
+      gsap.to(anim, {
+        newSetpoint: 80,
+        duration: 1.5,
+        ease: 'power2.inOut',
+        onUpdate: () => {
+          gauge.newSetpoint = anim.newSetpoint;
+          updateStatus('t=2 (move)');
+        },
+      });
     };
 
     btnConfirm.onclick = () => {
+      killAll();
+      const target = Math.round(gauge.newSetpoint ?? 80);
+
+      // Component handles the setpoint slide + newSetpoint fade-out via CSS transition
+      gauge.setpoint = target;
       gauge.newSetpoint = undefined;
-      gauge.setpoint = 80;
-      gauge.fillMax = 80;
-      gauge.value = 80;
-      updateStatus('t=3 (confirm)', 80, 80, undefined);
+
+      // Sync proxy for value animation
+      anim.value = gauge.value;
+      anim.setpoint = target;
+
+      // Value / bar fill follows (simulates vessel response)
+      gsap.to(anim, {
+        value: target,
+        duration: 1.5,
+        ease: 'power1.out',
+        onUpdate: () => {
+          gauge.value = anim.value;
+          gauge.fillMax = anim.value;
+          updateStatus('t=3 (confirm)');
+        },
+      });
     };
 
-    // Step 1: Ensure we're at initial state (t=0)
+    // ── Auto-play sequence ──
+
+    // t=0 – reset
     await userEvent.click(btnReset);
     await new Promise((r) => setTimeout(r, 1000));
 
-    // Step 2: Initiate adjustment (t=1)
+    // t=1 – initiate
     await userEvent.click(btnInitiate);
-    await new Promise((r) => setTimeout(r, 1500));
+    await new Promise((r) => setTimeout(r, 1200));
 
-    // Step 3: Move newSetpoint to 80 (t=2)
+    // t=2 – move newSetpoint (1.5 s animation + 1 s pause)
     await userEvent.click(btnMove);
-    await new Promise((r) => setTimeout(r, 2000));
+    await new Promise((r) => setTimeout(r, 3000));
 
-    // Step 4: Confirm the new setpoint (t=3)
+    // t=3 – confirm (1.5 s animation + 1 s pause)
     await userEvent.click(btnConfirm);
-    await new Promise((r) => setTimeout(r, 1000));
+    await new Promise((r) => setTimeout(r, 3000));
   },
 };
 
@@ -926,6 +970,7 @@ export const SetpointRadialAdjustmentFlow: StoryObj = {
             .watchCircleType=${WatchCircleType.double}
             .angleSetpoint=${30}
             .atAngleSetpoint=${true}
+            .animateSetpoint=${true}
             .state=${InstrumentState.inCommand}
           ></obc-watch>
         </div>
@@ -1001,15 +1046,20 @@ export const SetpointRadialAdjustmentFlow: StoryObj = {
       },
     ];
 
-    // Helper to update status display
-    const updateStatus = (
-      state: string,
-      barEndAngle: number,
-      angleSetpoint: number,
-      newAngleSetpoint: number | undefined
-    ) => {
-      status.textContent = `State: ${state} | barEndAngle=${barEndAngle}°, angleSetpoint=${angleSetpoint}°, newAngleSetpoint=${newAngleSetpoint !== undefined ? newAngleSetpoint + '°' : 'undefined'}`;
+    // Animation proxy – GSAP interpolates numeric fields, we push them to the component in onUpdate
+    const anim = {
+      barEndAngle: 30,
+      angleSetpoint: 30,
+      newAngleSetpoint: 30,
     };
+
+    const updateStatus = (state: string) => {
+      const ns = watch.newAngleSetpoint;
+      status.textContent = `State: ${state} | barEndAngle=${Math.round(anim.barEndAngle)}°, angleSetpoint=${Math.round(anim.angleSetpoint)}°, newAngleSetpoint=${ns !== undefined ? Math.round(anim.newAngleSetpoint) + '°' : 'undefined'}`;
+    };
+
+    /** Kill every running tween that targets the proxy */
+    const killAll = () => gsap.killTweensOf(anim);
 
     // Get buttons
     const btnReset = canvas.getByRole('button', {name: /Reset/});
@@ -1017,47 +1067,352 @@ export const SetpointRadialAdjustmentFlow: StoryObj = {
     const btnMove = canvas.getByRole('button', {name: /Move/});
     const btnConfirm = canvas.getByRole('button', {name: /Confirm/});
 
-    // Wire up button handlers (for manual interaction after play completes)
+    // ── Button handlers (work both via auto-play and manual clicks) ──
+
     btnReset.onclick = () => {
+      killAll();
+      anim.barEndAngle = 30;
+      anim.angleSetpoint = 30;
+      anim.newAngleSetpoint = 30;
       watch.barAreas = createBarAreas(30);
       watch.angleSetpoint = 30;
       watch.atAngleSetpoint = true;
       watch.newAngleSetpoint = undefined;
-      updateStatus('t=0 (at setpoint)', 30, 30, undefined);
+      updateStatus('t=0 (at setpoint)');
     };
 
     btnInitiate.onclick = () => {
-      watch.newAngleSetpoint = 30;
-      updateStatus('t=1 (initiate)', 30, 30, 30);
+      killAll();
+      anim.newAngleSetpoint = anim.angleSetpoint;
+      watch.newAngleSetpoint = anim.angleSetpoint;
+      watch.atAngleSetpoint = false;
+      updateStatus('t=1 (initiate)');
     };
 
     btnMove.onclick = () => {
-      watch.newAngleSetpoint = 60;
-      updateStatus('t=2 (move)', 30, 30, 60);
+      killAll();
+      if (watch.newAngleSetpoint === undefined) {
+        watch.newAngleSetpoint = anim.angleSetpoint;
+      }
+      anim.newAngleSetpoint = watch.newAngleSetpoint;
+
+      gsap.to(anim, {
+        newAngleSetpoint: 60,
+        duration: 1.5,
+        ease: 'power2.inOut',
+        onUpdate: () => {
+          watch.newAngleSetpoint = anim.newAngleSetpoint;
+          updateStatus('t=2 (move)');
+        },
+      });
     };
 
     btnConfirm.onclick = () => {
+      killAll();
+      const target = Math.round(watch.newAngleSetpoint ?? 60);
+
+      // Component handles the setpoint slide + newAngleSetpoint fade-out via CSS transition
+      watch.angleSetpoint = target;
       watch.newAngleSetpoint = undefined;
-      watch.angleSetpoint = 60;
-      watch.barAreas = createBarAreas(60);
-      watch.atAngleSetpoint = true;
-      updateStatus('t=3 (confirm)', 60, 60, undefined);
+
+      // Sync proxy for bar animation
+      anim.angleSetpoint = target;
+      anim.barEndAngle = watch.barAreas?.[0]?.endAngle ?? 30;
+
+      // Bar fill follows (simulates vessel response)
+      gsap.to(anim, {
+        barEndAngle: target,
+        duration: 1.5,
+        ease: 'power1.out',
+        onUpdate: () => {
+          watch.barAreas = createBarAreas(anim.barEndAngle);
+          updateStatus('t=3 (confirm)');
+        },
+        onComplete: () => {
+          watch.atAngleSetpoint = true;
+        },
+      });
     };
 
-    // Step 1: Ensure we're at initial state (t=0)
+    // ── Auto-play sequence ──
+
+    // t=0 – reset
     await userEvent.click(btnReset);
     await new Promise((r) => setTimeout(r, 1000));
 
-    // Step 2: Initiate adjustment (t=1)
+    // t=1 – initiate
     await userEvent.click(btnInitiate);
-    await new Promise((r) => setTimeout(r, 1500));
+    await new Promise((r) => setTimeout(r, 1200));
 
-    // Step 3: Move newAngleSetpoint to 60° (t=2)
+    // t=2 – move newAngleSetpoint (1.5 s animation + 1 s pause)
     await userEvent.click(btnMove);
-    await new Promise((r) => setTimeout(r, 2000));
+    await new Promise((r) => setTimeout(r, 3000));
 
-    // Step 4: Confirm the new setpoint (t=3)
+    // t=3 – confirm (1.5 s animation + 1 s pause)
     await userEvent.click(btnConfirm);
+    await new Promise((r) => setTimeout(r, 3000));
+  },
+};
+
+/**
+ * **Setpoint Azimuth Thruster Adjustment Flow** - Interactive demo showing multi-setpoint animation
+ *
+ * This story demonstrates the setpoint animation on an azimuth-thruster, which has **two independent
+ * setpoint axes**: angle (radial, via `<obc-watch>`) and thrust (linear, via `thruster()`).
+ *
+ * Both axes animate simultaneously during confirm (t=3):
+ * - Angle setpoint slides from 30° → 120° on the radial ring (CSS transition)
+ * - Thrust setpoint slides from 25% → 70% on the linear bar (CSS transition)
+ * - Both departing new-setpoint markers fade out at the same time
+ *
+ * Angular transitions always take the shortest path via CSS-safe accumulated
+ * angles, so even large or wraparound deltas animate correctly.
+ */
+export const SetpointAzimuthThrusterFlow: StoryObj<{
+  thrustDuration: number;
+  angleDuration: number;
+}> = {
+  tags: ['!snapshot'],
+  name: 'Setpoint Azimuth Thruster Flow (interactive)',
+  args: {
+    thrustDuration: 2,
+    angleDuration: 10,
+  },
+  argTypes: {
+    thrustDuration: {
+      name: 'Thrust anim duration (s)',
+      control: {type: 'range', min: 0.5, max: 20, step: 0.5},
+    },
+    angleDuration: {
+      name: 'Angle anim duration (s)',
+      control: {type: 'range', min: 0.5, max: 30, step: 0.5},
+    },
+  },
+  render: (args) => html`
+    <div
+      style="display: flex; flex-direction: column; gap: 24px;"
+      data-thrust-duration=${args.thrustDuration}
+      data-angle-duration=${args.angleDuration}
+    >
+      <div style="font-size: 14px; color: #888;">
+        Click "Play" in the Interactions panel to watch the dual-axis setpoint
+        animation, or use the buttons below for manual control.
+      </div>
+      <div style="width: 280px; height: 280px;">
+        <obc-azimuth-thruster
+          id="azimuth-demo"
+          .angle=${30}
+          .angleSetpoint=${30}
+          .thrustSetpoint=${25}
+          .thrust=${25}
+          .state=${InstrumentState.inCommand}
+          .animateSetpoint=${true}
+          .detailedTickmarks=${true}
+          .tickmarksInside=${true}
+        ></obc-azimuth-thruster>
+      </div>
+
+      <div
+        style="display: flex; gap: 16px; flex-wrap: wrap; align-items: center;"
+      >
+        <button id="btn-at-reset" style="padding: 8px 16px; cursor: pointer;">
+          Reset (t=0)
+        </button>
+        <button
+          id="btn-at-initiate"
+          style="padding: 8px 16px; cursor: pointer;"
+        >
+          Initiate (t=1)
+        </button>
+        <button id="btn-at-move" style="padding: 8px 16px; cursor: pointer;">
+          Move (t=2)
+        </button>
+        <button id="btn-at-confirm" style="padding: 8px 16px; cursor: pointer;">
+          Confirm (t=3)
+        </button>
+      </div>
+
+      <div
+        id="at-status"
+        style="font-size: 12px; color: #666; font-family: monospace;"
+      >
+        State: t=0 (at setpoint) | angle=30°, angleSP=30°, thrust=25%,
+        thrustSP=25%
+      </div>
+    </div>
+  `,
+  play: async ({canvasElement}) => {
+    const canvas = within(canvasElement);
+
+    // Wait for component to render
+    await new Promise((r) => setTimeout(r, 500));
+
+    // Get DOM elements
+    const at = canvasElement.querySelector('#azimuth-demo') as HTMLElement & {
+      angle: number;
+      angleSetpoint: number | undefined;
+      newAngleSetpoint: number | undefined;
+      thrust: number;
+      thrustSetpoint: number | undefined;
+      touching: boolean;
+    };
+    const status = canvasElement.querySelector('#at-status') as HTMLElement;
+
+    if (!at || !status) return;
+
+    // Target values for the adjustment
+    const ANGLE_FROM = 30;
+    const ANGLE_TO = 120; // delta = 90°
+    const THRUST_FROM = 25;
+    const THRUST_TO = 70;
+
+    // Animation proxy
+    const anim = {
+      angle: ANGLE_FROM,
+      thrust: THRUST_FROM,
+      newAngle: ANGLE_FROM,
+      newThrust: THRUST_FROM,
+    };
+
+    const updateStatus = (state: string) => {
+      const nAngle = at.newAngleSetpoint;
+      status.textContent = `State: ${state} | angle=${Math.round(anim.angle)}°, angleSP=${Math.round(at.angleSetpoint ?? 0)}°, newAngleSP=${nAngle !== undefined ? Math.round(nAngle) + '°' : 'n/a'}, thrust=${Math.round(anim.thrust)}%, thrustSP=${Math.round(at.thrustSetpoint ?? 0)}%, newThrustSP=${Math.round(anim.newThrust)}%`;
+    };
+
+    /** Kill every running tween that targets the proxy */
+    const killAll = () => gsap.killTweensOf(anim);
+
+    // Get buttons
+    const btnReset = canvas.getByRole('button', {name: /Reset/});
+    const btnInitiate = canvas.getByRole('button', {name: /Initiate/});
+    const btnMove = canvas.getByRole('button', {name: /Move/});
+    const btnConfirm = canvas.getByRole('button', {name: /Confirm/});
+
+    // ── Button handlers ──
+
+    btnReset.onclick = () => {
+      killAll();
+      anim.angle = ANGLE_FROM;
+      anim.thrust = THRUST_FROM;
+      anim.newAngle = ANGLE_FROM;
+      anim.newThrust = THRUST_FROM;
+      at.angle = ANGLE_FROM;
+      at.angleSetpoint = ANGLE_FROM;
+      at.newAngleSetpoint = undefined;
+      at.thrust = THRUST_FROM;
+      at.thrustSetpoint = THRUST_FROM;
+      (at as unknown as {newThrustSetpoint?: number}).newThrustSetpoint =
+        undefined;
+      at.touching = false;
+      updateStatus('t=0 (at setpoint)');
+    };
+
+    btnInitiate.onclick = () => {
+      killAll();
+      // Start adjustment: show new setpoint at current position for both axes
+      anim.newAngle = at.angleSetpoint ?? ANGLE_FROM;
+      anim.newThrust = at.thrustSetpoint ?? THRUST_FROM;
+      at.newAngleSetpoint = anim.newAngle;
+      (at as unknown as {newThrustSetpoint?: number}).newThrustSetpoint =
+        anim.newThrust;
+      at.touching = true;
+      updateStatus('t=1 (initiate)');
+    };
+
+    btnMove.onclick = () => {
+      killAll();
+      // Ensure we're in adjustment mode
+      if (at.newAngleSetpoint === undefined) {
+        at.newAngleSetpoint = at.angleSetpoint ?? ANGLE_FROM;
+        anim.newAngle = at.newAngleSetpoint;
+        (at as unknown as {newThrustSetpoint?: number}).newThrustSetpoint =
+          at.thrustSetpoint ?? THRUST_FROM;
+        anim.newThrust = at.thrustSetpoint ?? THRUST_FROM;
+        at.touching = true;
+      }
+
+      // Animate both newSetpoints simultaneously
+      gsap.to(anim, {
+        newAngle: ANGLE_TO,
+        newThrust: THRUST_TO,
+        duration: 1.5,
+        ease: 'power2.inOut',
+        onUpdate: () => {
+          at.newAngleSetpoint = anim.newAngle;
+          (at as unknown as {newThrustSetpoint?: number}).newThrustSetpoint =
+            anim.newThrust;
+          updateStatus('t=2 (move)');
+        },
+      });
+    };
+
+    btnConfirm.onclick = () => {
+      killAll();
+      const targetAngle = Math.round(at.newAngleSetpoint ?? ANGLE_TO);
+      const targetThrust = Math.round(anim.newThrust);
+
+      // Read slider-controlled durations from data-attributes
+      const wrapper = canvasElement.querySelector(
+        '[data-thrust-duration]'
+      ) as HTMLElement | null;
+      const thrustDur = parseFloat(wrapper?.dataset.thrustDuration ?? '2');
+      const angleDur = parseFloat(wrapper?.dataset.angleDuration ?? '10');
+
+      // Component handles the setpoint slide + fade-out via CSS transition
+      at.angleSetpoint = targetAngle;
+      at.newAngleSetpoint = undefined;
+      at.thrustSetpoint = targetThrust;
+      (at as unknown as {newThrustSetpoint?: number}).newThrustSetpoint =
+        undefined;
+      at.touching = false;
+
+      // Sync proxy for vessel response animation
+      anim.angle = at.angle;
+      anim.thrust = at.thrust;
+
+      // Vessel responds — thrust catches up (faster)
+      gsap.to(anim, {
+        thrust: targetThrust,
+        duration: thrustDur,
+        ease: 'sine.inOut',
+        onUpdate: () => {
+          at.thrust = anim.thrust;
+          updateStatus('t=3 (confirm)');
+        },
+      });
+
+      // Vessel responds — angle catches up (slower)
+      gsap.to(anim, {
+        angle: targetAngle,
+        duration: angleDur,
+        ease: 'sine.inOut',
+        onUpdate: () => {
+          at.angle = anim.angle;
+          updateStatus('t=3 (confirm)');
+        },
+      });
+    };
+
+    // ── Auto-play sequence ──
+
+    // t=0 – reset
+    await userEvent.click(btnReset);
     await new Promise((r) => setTimeout(r, 1000));
+
+    // t=1 – initiate
+    await userEvent.click(btnInitiate);
+    await new Promise((r) => setTimeout(r, 1200));
+
+    // t=2 – move both axes (1.5 s animation + 1 s pause)
+    await userEvent.click(btnMove);
+    await new Promise((r) => setTimeout(r, 3000));
+
+    // t=3 – confirm (angle is the longest axis; wait for it + 1 s pause)
+    await userEvent.click(btnConfirm);
+    const wrapperEl = canvasElement.querySelector(
+      '[data-angle-duration]'
+    ) as HTMLElement | null;
+    const longestDur = parseFloat(wrapperEl?.dataset.angleDuration ?? '10');
+    await new Promise((r) => setTimeout(r, longestDur * 1000 + 1000));
   },
 };
