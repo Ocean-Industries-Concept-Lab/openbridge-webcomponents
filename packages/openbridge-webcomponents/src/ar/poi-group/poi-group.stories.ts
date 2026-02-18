@@ -297,6 +297,26 @@ export const Expanded: Story = {
   args: {
     expand: true,
   },
+  play: async ({canvasElement, args}) => {
+    if (!isVitestBrowser || !args.expand) return;
+    const targets = Array.from(canvasElement.querySelectorAll('obc-poi-data'));
+    await Promise.all(
+      targets.map(
+        (target) =>
+          ((target as {updateComplete?: Promise<unknown>}).updateComplete ??
+            Promise.resolve()) as Promise<unknown>
+      )
+    );
+    const group = canvasElement.querySelector(
+      'obc-poi-group'
+    ) as ObcPoiGroup | null;
+    if (!group) return;
+    await ((group as {updateComplete?: Promise<unknown>}).updateComplete ??
+      Promise.resolve());
+    await new Promise((resolve) => setTimeout(resolve, 60));
+    group.expand = true;
+    await new Promise((resolve) => setTimeout(resolve, 260));
+  },
   render: (args) => {
     const wrapperRef = createRef<HTMLDivElement>();
     const groupRef = createRef<ObcPoiGroup>();
@@ -342,7 +362,7 @@ export const Expanded: Story = {
           <obc-poi-group
             ${ref(groupRef)}
             style="position: absolute; top: 0; left: 0;"
-            .expand=${isVitestBrowser ? !!args.expand : false}
+            .expand=${false}
             positionVertical="calc(50% - 40px)"
             @expand=${onExpand}
           >
