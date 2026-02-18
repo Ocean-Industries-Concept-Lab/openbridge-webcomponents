@@ -5,10 +5,13 @@ import './poi-layer-stack.js';
 import '../poi-layer/poi-layer.js';
 import '../poi-data/poi-data.js';
 
+const isVitestBrowser = Boolean(
+  (globalThis as {__vitest_browser__?: unknown}).__vitest_browser__
+);
+
 type PoiLayerStackArgs = {
   label: string;
   debug: boolean;
-  layerIndex: number;
   selectionMode: PoiLayerSelectionMode;
 };
 
@@ -30,13 +33,9 @@ const meta: Meta<PoiLayerStackArgs> = {
   args: {
     label: 'Layer A',
     debug: true,
-    layerIndex: 0,
     selectionMode: PoiLayerSelectionMode.Single,
   },
   argTypes: {
-    layerIndex: {
-      control: {type: 'number', min: 0},
-    },
     selectionMode: {
       control: {type: 'select'},
       options: Object.values(PoiLayerSelectionMode),
@@ -53,6 +52,42 @@ type AnimatedPoiData = HTMLElement & {
   boxHeight: number | null;
 };
 
+type AnimatedPoiSnapshotPose = {
+  x: number;
+  y: number;
+  boxWidth: number;
+  boxHeight: number;
+};
+
+const selectionMultiAnimatedSnapshotPose: AnimatedPoiSnapshotPose[] = [
+  {x: 542, y: 109, boxWidth: 44, boxHeight: 35},
+  {x: 107, y: 117, boxWidth: 48, boxHeight: 34},
+  {x: 264, y: 72, boxWidth: 35, boxHeight: 32},
+  {x: 170, y: 92, boxWidth: 33, boxHeight: 33},
+  {x: 403, y: 134, boxWidth: 32, boxHeight: 35},
+  {x: 119, y: 87, boxWidth: 36, boxHeight: 38},
+];
+
+const waitForStorySettle = async (
+  options: {drainTransitions?: boolean} = {}
+) => {
+  if ('fonts' in document) {
+    await (document as Document & {fonts?: FontFaceSet}).fonts?.ready;
+  }
+  await new Promise<void>((resolve) =>
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+  );
+
+  if (options.drainTransitions && isVitestBrowser) {
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 220);
+    });
+    await new Promise<void>((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+    );
+  }
+};
+
 const renderTwoLayers = (args: PoiLayerStackArgs) => html`
   <style>
     obc-poi-layer-stack.stack {
@@ -66,10 +101,10 @@ const renderTwoLayers = (args: PoiLayerStackArgs) => html`
     }
   </style>
   <obc-poi-layer-stack class="stack" selection-mode=${args.selectionMode}>
-    <obc-poi-layer label="Layer A" role="selected" .layerIndex=${1} debug>
+    <obc-poi-layer label="Layer A" is-selected debug>
       <obc-poi-data .x=${220} .y=${90} .fixedTarget=${false}> </obc-poi-data>
     </obc-poi-layer>
-    <obc-poi-layer label="Layer B" role="default" .layerIndex=${2} debug>
+    <obc-poi-layer label="Layer B" debug>
       <obc-poi-data .x=${120} .y=${110} .fixedTarget=${false}> </obc-poi-data>
       <obc-poi-data .x=${320} .y=${70} .fixedTarget=${false}> </obc-poi-data>
     </obc-poi-layer>
@@ -77,7 +112,6 @@ const renderTwoLayers = (args: PoiLayerStackArgs) => html`
 `;
 
 const renderThreeLayers = (args: PoiLayerStackArgs) => {
-  const baseIndex = Math.max(0, args.layerIndex);
   return html`
     <style>
       obc-poi-layer-stack.stack {
@@ -91,28 +125,11 @@ const renderThreeLayers = (args: PoiLayerStackArgs) => {
       }
     </style>
     <obc-poi-layer-stack class="stack" selection-mode=${args.selectionMode}>
-      <obc-poi-layer
-        label="Layer A"
-        .layerIndex=${baseIndex + 1}
-        role="selected"
-        debug
-      >
+      <obc-poi-layer label="Layer A" is-selected debug>
         <obc-poi-data .x=${520} .y=${110} .fixedTarget=${false}> </obc-poi-data>
       </obc-poi-layer>
-      <obc-poi-layer
-        label="Layer B"
-        .layerIndex=${baseIndex + 2}
-        role="filtered"
-        type-filter="enhanced"
-        debug
-      >
-      </obc-poi-layer>
-      <obc-poi-layer
-        label="Layer C"
-        .layerIndex=${baseIndex + 3}
-        role="default"
-        ?debug=${args.debug}
-      >
+      <obc-poi-layer label="Layer B" debug> </obc-poi-layer>
+      <obc-poi-layer label="Layer C" ?debug=${args.debug}>
         <obc-poi-data .x=${80} .y=${120}> </obc-poi-data>
         <obc-poi-data .x=${260} .y=${80}> </obc-poi-data>
         <obc-poi-data .x=${180} .y=${100}> </obc-poi-data>
@@ -128,6 +145,9 @@ export const SelectionSingle: Story = {
     selectionMode: PoiLayerSelectionMode.Single,
   },
   render: renderTwoLayers,
+  play: async () => {
+    await waitForStorySettle({drainTransitions: true});
+  },
 };
 
 export const SelectionNone: Story = {
@@ -135,6 +155,9 @@ export const SelectionNone: Story = {
     selectionMode: PoiLayerSelectionMode.None,
   },
   render: renderTwoLayers,
+  play: async () => {
+    await waitForStorySettle({drainTransitions: true});
+  },
 };
 
 export const SelectionMulti: Story = {
@@ -142,6 +165,9 @@ export const SelectionMulti: Story = {
     selectionMode: PoiLayerSelectionMode.Multi,
   },
   render: renderThreeLayers,
+  play: async () => {
+    await waitForStorySettle({drainTransitions: true});
+  },
 };
 
 export const SelectionMultiAnimated: Story = {
@@ -149,7 +175,13 @@ export const SelectionMultiAnimated: Story = {
     selectionMode: PoiLayerSelectionMode.Multi,
   },
   render: (args) => {
-    const baseIndex = Math.max(0, args.layerIndex);
+    const p0 = selectionMultiAnimatedSnapshotPose[0];
+    const p1 = selectionMultiAnimatedSnapshotPose[1];
+    const p2 = selectionMultiAnimatedSnapshotPose[2];
+    const p3 = selectionMultiAnimatedSnapshotPose[3];
+    const p4 = selectionMultiAnimatedSnapshotPose[4];
+    const p5 = selectionMultiAnimatedSnapshotPose[5];
+
     return html`
       <style>
         obc-poi-layer-stack.stack-animated {
@@ -166,75 +198,61 @@ export const SelectionMultiAnimated: Story = {
         class="stack-animated"
         selection-mode=${args.selectionMode}
       >
-        <obc-poi-layer
-          label="Layer A"
-          .layerIndex=${baseIndex + 1}
-          role="selected"
-          debug
-        >
+        <obc-poi-layer label="Layer A" is-selected debug>
           <obc-poi-data
             class="anim-poi p0"
-            .x=${520}
-            .y=${110}
-            .boxWidth=${32}
-            .boxHeight=${32}
+            .x=${isVitestBrowser ? p0.x : 520}
+            .y=${isVitestBrowser ? p0.y : 110}
+            .boxWidth=${isVitestBrowser ? p0.boxWidth : 32}
+            .boxHeight=${isVitestBrowser ? p0.boxHeight : 32}
             .fixedTarget=${false}
           ></obc-poi-data>
         </obc-poi-layer>
-        <obc-poi-layer
-          label="Layer B"
-          .layerIndex=${baseIndex + 2}
-          role="filtered"
-          type-filter="enhanced"
-          debug
-        >
-        </obc-poi-layer>
-        <obc-poi-layer
-          label="Layer C"
-          .layerIndex=${baseIndex + 3}
-          role="default"
-          ?debug=${args.debug}
-        >
+        <obc-poi-layer label="Layer B" debug> </obc-poi-layer>
+        <obc-poi-layer label="Layer C" ?debug=${args.debug}>
           <obc-poi-data
             class="anim-poi p1"
-            .x=${80}
-            .y=${120}
-            .boxWidth=${32}
-            .boxHeight=${32}
+            .x=${isVitestBrowser ? p1.x : 80}
+            .y=${isVitestBrowser ? p1.y : 120}
+            .boxWidth=${isVitestBrowser ? p1.boxWidth : 32}
+            .boxHeight=${isVitestBrowser ? p1.boxHeight : 32}
           ></obc-poi-data>
           <obc-poi-data
             class="anim-poi p2"
-            .x=${260}
-            .y=${80}
-            .boxWidth=${32}
-            .boxHeight=${32}
+            .x=${isVitestBrowser ? p2.x : 260}
+            .y=${isVitestBrowser ? p2.y : 80}
+            .boxWidth=${isVitestBrowser ? p2.boxWidth : 32}
+            .boxHeight=${isVitestBrowser ? p2.boxHeight : 32}
           ></obc-poi-data>
           <obc-poi-data
             class="anim-poi p3"
-            .x=${180}
-            .y=${100}
-            .boxWidth=${32}
-            .boxHeight=${32}
+            .x=${isVitestBrowser ? p3.x : 180}
+            .y=${isVitestBrowser ? p3.y : 100}
+            .boxWidth=${isVitestBrowser ? p3.boxWidth : 32}
+            .boxHeight=${isVitestBrowser ? p3.boxHeight : 32}
           ></obc-poi-data>
           <obc-poi-data
             class="anim-poi p4"
-            .x=${420}
-            .y=${140}
-            .boxWidth=${32}
-            .boxHeight=${32}
+            .x=${isVitestBrowser ? p4.x : 420}
+            .y=${isVitestBrowser ? p4.y : 140}
+            .boxWidth=${isVitestBrowser ? p4.boxWidth : 32}
+            .boxHeight=${isVitestBrowser ? p4.boxHeight : 32}
           ></obc-poi-data>
           <obc-poi-data
             class="anim-poi p5"
-            .x=${140}
-            .y=${90}
-            .boxWidth=${32}
-            .boxHeight=${32}
+            .x=${isVitestBrowser ? p5.x : 140}
+            .y=${isVitestBrowser ? p5.y : 90}
+            .boxWidth=${isVitestBrowser ? p5.boxWidth : 32}
+            .boxHeight=${isVitestBrowser ? p5.boxHeight : 32}
           ></obc-poi-data>
         </obc-poi-layer>
       </obc-poi-layer-stack>
     `;
   },
   play: async ({canvasElement}) => {
+    await waitForStorySettle({drainTransitions: true});
+    if (isVitestBrowser) return;
+
     const root = canvasElement.querySelector(
       '.stack-animated'
     ) as HTMLElement | null;

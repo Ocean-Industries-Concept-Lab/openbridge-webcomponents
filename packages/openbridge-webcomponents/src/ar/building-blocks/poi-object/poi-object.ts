@@ -1,5 +1,5 @@
 import {LitElement, html, unsafeCSS, nothing} from 'lit';
-import {property} from 'lit/decorators.js';
+import {property, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import componentStyle from './poi-object.css?inline';
 import {customElement} from '../../../decorator.js';
@@ -7,10 +7,10 @@ import {customElement} from '../../../decorator.js';
 /**
  * Type variants for POI objects controlling size and shape.
  * - `indicator`: Icon only with drop shadow, no background frame.
- * - `regular`: Standard size (48px touch target, 36px background, 24px icon).
- * - `large`: Larger size (64px touch target, 52px background, 36px icon).
- * - `n-up`: Square background (48px touch target, 32px background, 24px icon).
- * - `n-up-large`: Large square background (64px touch target, 48px background, 36px icon).
+ * - `regular`: Standard size (`--maneuvering-components-poi-button-touch-target` touch target, 36px background, 24px icon).
+ * - `large`: Larger size (`--maneuvering-components-poi-button-large-touch-target` touch target, 52px background, 36px icon).
+ * - `n-up`: Square background (`--maneuvering-components-poi-button-touch-target` touch target, 32px background, 24px icon).
+ * - `n-up-large`: Large square background (`--maneuvering-components-poi-button-large-touch-target` touch target, 48px background, 36px icon).
  */
 export enum ObcPoiObjectType {
   Indicator = 'indicator',
@@ -49,70 +49,44 @@ export enum ObcPoiObjectState {
 }
 
 /**
- * `<obc-poi-object>` – Base icon button component for interactive markers.
+ * `<obc-poi-object>` - Base icon marker button used as the visual core of POI-style targets.
  *
- * Renders an icon within a styled frame with configurable size, visual style, and
- * selection state. Used as the foundation for domain-specific marker components.
+ * ## Overview
+ * This component renders slotted icon content inside a configurable frame that handles size, style, and state variants.
+ * Keywords/synonyms: marker button, icon target, target chip, point marker.
  *
  * ## Features/Variants
- *
- * ### Type (`type`)
- * Controls size and shape. Defaults to `regular`.
- * - `indicator`: Icon only with drop shadow, no background frame.
- * - `regular`: Standard size (48px touch target, 36px background, 24px icon).
- * - `large`: Larger size (64px touch target, 52px background, 36px icon).
- * - `n-up`: Square background (48px touch target, 32px background, 24px icon).
- * - `n-up-large`: Large square background (64px touch target, 48px background, 36px icon).
- *
- * ### Style (`objectStyle`)
- * Controls background color scheme. Defaults to `regular`.
- * - `regular`: White/translucent background.
- * - `categorical`: Blue-tinted background for categorized items.
- *
- * ### State (`state`)
- * Controls selection and display mode. Defaults to `unchecked`.
- * - `unchecked`: Default unselected state.
- * - `checked`: Selected state with visual indicator.
- * - `static-unchecked`: Flat background style, not selected.
- * - `static-checked`: Flat background style, selected.
- * - `activated`: White outer ring around background.
- * - `overlapped`: Smaller circle with hidden icon (for clustered markers).
- *
- * ### Interactive (`interactive`)
- * When `true`, enables keyboard navigation (Enter/Space activation), focus states,
- * and hover/active visual feedback. Defaults to `false`.
- *
- * ### Extra Classes (`extraClasses`)
- * Internal property for subclasses to inject additional CSS classes. Not reflected
- * as an attribute. TODO(designer): Clarify if this should be exposed or remain internal.
+ * - `type` (default `regular`): `indicator`, `regular`, `large`, `n-up`, `n-up-large`.
+ * - `objectStyle` (default `regular`): `regular` or `categorical`.
+ * - `state` (default `unchecked`): `unchecked`, `checked`, `static-unchecked`, `static-checked`, `activated`, `overlapped`.
+ * - `interactive` (default `false`): enables keyboard activation (`Enter`/`Space`) and focus/active semantics.
+ * - Placeholder icon handling: adds a CSS state when the default slot contains `obi-placeholder`.
  *
  * ## Usage Guidelines
- *
- * Can be consumed directly as a default POI object, or extended by domain-
- * specific POI object components.
+ * - Use `indicator` for icon-only visuals without a background frame.
+ * - Use `regular` or `large` for circular framed targets.
+ * - Use `n-up` or `n-up-large` for square framed targets.
+ * - Use `overlapped` when icon content should collapse to reduce visual density.
  *
  * ## Slots/Content
- *
- * @slot - Icon element to display inside the button frame.
+ * - Default slot: Icon/content displayed inside the marker frame.
  *
  * ## Events
- *
- * This component does not emit custom events. Click handling is delegated to the
- * native `click` event when `interactive` is enabled.
+ * This component does not emit custom events.
+ * Native `click` is available when `interactive` is enabled.
  *
  * ## Best Practices
- *
- * - Use `indicator` type for decorative markers that don't need a background.
- * - Set `interactive` to `true` only when the marker should be clickable/focusable.
- * - Use `overlapped` state for markers in dense clusters to reduce visual noise.
+ * - Keep `interactive` disabled for decorative markers.
+ * - Map `state` directly from application state to avoid mixed visual semantics.
  *
  * ## Example
- *
  * ```html
  * <obc-poi-object type="regular" objectStyle="regular" state="checked" interactive>
- *   <my-custom-icon></my-custom-icon>
+ *   <obi-placeholder></obi-placeholder>
  * </obc-poi-object>
  * ```
+ *
+ * @slot - Icon/content displayed inside the marker frame.
  */
 @customElement('obc-poi-object')
 export class ObcPoiObject extends LitElement {
@@ -127,7 +101,7 @@ export class ObcPoiObject extends LitElement {
 
   @property({type: Boolean}) interactive = false;
 
-  @property({attribute: false}) extraClasses: Record<string, boolean> = {};
+  @state() private hasPlaceholderIcon = false;
 
   private get isChecked() {
     return (
@@ -193,6 +167,17 @@ export class ObcPoiObject extends LitElement {
     }
   }
 
+  private handleSlotChange(e: Event) {
+    const slot = e.target as HTMLSlotElement;
+    const hasPlaceholderIcon = slot
+      .assignedElements({flatten: true})
+      .some((element) => element.tagName.toLowerCase() === 'obi-placeholder');
+
+    if (hasPlaceholderIcon !== this.hasPlaceholderIcon) {
+      this.hasPlaceholderIcon = hasPlaceholderIcon;
+    }
+  }
+
   override render() {
     const classes = {
       wrapper: true,
@@ -206,8 +191,8 @@ export class ObcPoiObject extends LitElement {
       'is-square': this.isSquare,
       'is-large': this.isLargeSize,
       'is-indicator': this.isIndicator,
+      'has-placeholder-icon': this.hasPlaceholderIcon,
       interactive: this.isInteractive,
-      ...this.extraClasses,
     };
 
     return html`
@@ -226,7 +211,17 @@ export class ObcPoiObject extends LitElement {
           : nothing}
 
         <div class="icon-container" part="icon-container">
-          <slot></slot>
+          ${this.isIndicator && this.hasPlaceholderIcon
+            ? html`<svg
+                class="indicator-placeholder-fill"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path d="M12 3L3 12L12 21L21 12L12 3Z"></path>
+              </svg>`
+            : nothing}
+          <slot @slotchange=${this.handleSlotChange}></slot>
         </div>
       </div>
     `;

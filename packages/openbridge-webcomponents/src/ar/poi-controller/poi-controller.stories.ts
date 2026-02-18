@@ -4,6 +4,10 @@ import './poi-controller.js';
 import {PoiFitMode} from './poi-controller.js';
 import {PoiLayerSelectionMode} from '../poi-layer-stack/poi-layer-stack.js';
 
+const isVitestBrowser = Boolean(
+  (globalThis as {__vitest_browser__?: unknown}).__vitest_browser__
+);
+
 type PoiControllerArgs = {
   fit: PoiFitMode;
   classFilter: string[];
@@ -15,6 +19,44 @@ type AnimatedPoiData = HTMLElement & {
   boxWidth: number | null;
   boxHeight: number | null;
   relativeDirection: number;
+};
+
+type AnimatedPoiSnapshotPose = {
+  x: number;
+  y: number;
+  boxWidth: number;
+  boxHeight: number;
+  relativeDirection: number;
+};
+
+const selectionMultiAnimatedSnapshotPose: AnimatedPoiSnapshotPose[] = [
+  {x: 543, y: 110, boxWidth: 43, boxHeight: 37, relativeDirection: -1},
+  {x: 149, y: 122, boxWidth: 49, boxHeight: 36, relativeDirection: 174},
+  {x: 290, y: 78, boxWidth: 38, boxHeight: 33, relativeDirection: 162},
+  {x: 385, y: 100, boxWidth: 36, boxHeight: 32, relativeDirection: -4},
+  {x: 483, y: 135, boxWidth: 32, boxHeight: 33, relativeDirection: -170},
+  {x: 624, y: 100, boxWidth: 33, boxHeight: 35, relativeDirection: 26},
+];
+
+const waitForStorySettle = async (canvasElement: HTMLElement) => {
+  const image = canvasElement.querySelector(
+    '.stage img'
+  ) as HTMLImageElement | null;
+  if (image && !image.complete) {
+    await new Promise<void>((resolve) => {
+      const done = () => resolve();
+      image.addEventListener('load', done, {once: true});
+      image.addEventListener('error', done, {once: true});
+    });
+  }
+
+  if ('fonts' in document) {
+    await (document as Document & {fonts?: FontFaceSet}).fonts?.ready;
+  }
+
+  await new Promise<void>((resolve) =>
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+  );
 };
 
 const meta: Meta<PoiControllerArgs> = {
@@ -79,13 +121,13 @@ const meta: Meta<PoiControllerArgs> = {
           .fit=${args.fit}
           .classFilter=${args.classFilter}
         >
-          <img slot="media" src="/AR-test-image.png" />
+          <img slot="media" src="/assets/AR-test-image.png" />
           <obc-poi-layer-stack
             slot="stack"
             selection-mode=${PoiLayerSelectionMode.Single}
           >
-            <obc-poi-layer role="selected" .layerIndex=${0}></obc-poi-layer>
-            <obc-poi-layer role="default" .layerIndex=${1}></obc-poi-layer>
+            <obc-poi-layer is-selected></obc-poi-layer>
+            <obc-poi-layer data-controller-layer="background"></obc-poi-layer>
           </obc-poi-layer-stack>
         </obc-poi-controller>
       </div>
@@ -98,6 +140,9 @@ type Story = StoryObj<PoiControllerArgs>;
 
 export const Primary: Story = {
   args: {},
+  play: async ({canvasElement}) => {
+    await waitForStorySettle(canvasElement);
+  },
 };
 
 export const SelectionMultiAnimated: Story = {
@@ -106,6 +151,13 @@ export const SelectionMultiAnimated: Story = {
     classFilter: [],
   },
   render: (args) => {
+    const p0 = selectionMultiAnimatedSnapshotPose[0];
+    const p1 = selectionMultiAnimatedSnapshotPose[1];
+    const p2 = selectionMultiAnimatedSnapshotPose[2];
+    const p3 = selectionMultiAnimatedSnapshotPose[3];
+    const p4 = selectionMultiAnimatedSnapshotPose[4];
+    const p5 = selectionMultiAnimatedSnapshotPose[5];
+
     return html`
       <style>
         .stage {
@@ -143,70 +195,76 @@ export const SelectionMultiAnimated: Story = {
           .fit=${args.fit}
           .classFilter=${args.classFilter}
         >
-          <img slot="media" src="/AR-test-image.png" />
+          <img slot="media" src="/assets/AR-test-image.png" />
           <obc-poi-layer-stack
             slot="stack"
             class="stack-animated"
             selection-mode=${PoiLayerSelectionMode.Multi}
           >
-            <obc-poi-layer label="Layer A" role="selected" .layerIndex=${1}>
+            <obc-poi-layer label="Layer A" is-selected>
               <obc-poi-data
                 class="anim-poi p0"
-                .x=${520}
-                .y=${110}
-                .relativeDirection=${18}
-                .boxWidth=${32}
-                .boxHeight=${32}
+                .x=${isVitestBrowser ? p0.x : 520}
+                .y=${isVitestBrowser ? p0.y : 110}
+                .relativeDirection=${isVitestBrowser
+                  ? p0.relativeDirection
+                  : 18}
+                .boxWidth=${isVitestBrowser ? p0.boxWidth : 32}
+                .boxHeight=${isVitestBrowser ? p0.boxHeight : 32}
                 .fixedTarget=${false}
               ></obc-poi-data>
             </obc-poi-layer>
-            <obc-poi-layer
-              label="Layer B"
-              role="filtered"
-              type-filter="enhanced"
-              .layerIndex=${2}
-            >
-            </obc-poi-layer>
-            <obc-poi-layer label="Layer C" role="default" .layerIndex=${3}>
+            <obc-poi-layer label="Layer B"></obc-poi-layer>
+            <obc-poi-layer label="Layer C" data-controller-layer="background">
               <obc-poi-data
                 class="anim-poi p1"
-                .x=${170}
-                .y=${120}
-                .relativeDirection=${-36}
-                .boxWidth=${32}
-                .boxHeight=${32}
+                .x=${isVitestBrowser ? p1.x : 170}
+                .y=${isVitestBrowser ? p1.y : 120}
+                .relativeDirection=${isVitestBrowser
+                  ? p1.relativeDirection
+                  : -36}
+                .boxWidth=${isVitestBrowser ? p1.boxWidth : 32}
+                .boxHeight=${isVitestBrowser ? p1.boxHeight : 32}
               ></obc-poi-data>
               <obc-poi-data
                 class="anim-poi p2"
-                .x=${280}
-                .y=${80}
-                .relativeDirection=${128}
-                .boxWidth=${32}
-                .boxHeight=${32}
+                .x=${isVitestBrowser ? p2.x : 280}
+                .y=${isVitestBrowser ? p2.y : 80}
+                .relativeDirection=${isVitestBrowser
+                  ? p2.relativeDirection
+                  : 128}
+                .boxWidth=${isVitestBrowser ? p2.boxWidth : 32}
+                .boxHeight=${isVitestBrowser ? p2.boxHeight : 32}
               ></obc-poi-data>
               <obc-poi-data
                 class="anim-poi p3"
-                .x=${390}
-                .y=${100}
-                .relativeDirection=${-156}
-                .boxWidth=${32}
-                .boxHeight=${32}
+                .x=${isVitestBrowser ? p3.x : 390}
+                .y=${isVitestBrowser ? p3.y : 100}
+                .relativeDirection=${isVitestBrowser
+                  ? p3.relativeDirection
+                  : -156}
+                .boxWidth=${isVitestBrowser ? p3.boxWidth : 32}
+                .boxHeight=${isVitestBrowser ? p3.boxHeight : 32}
               ></obc-poi-data>
               <obc-poi-data
                 class="anim-poi p4"
-                .x=${500}
-                .y=${140}
-                .relativeDirection=${42}
-                .boxWidth=${32}
-                .boxHeight=${32}
+                .x=${isVitestBrowser ? p4.x : 500}
+                .y=${isVitestBrowser ? p4.y : 140}
+                .relativeDirection=${isVitestBrowser
+                  ? p4.relativeDirection
+                  : 42}
+                .boxWidth=${isVitestBrowser ? p4.boxWidth : 32}
+                .boxHeight=${isVitestBrowser ? p4.boxHeight : 32}
               ></obc-poi-data>
               <obc-poi-data
                 class="anim-poi p5"
-                .x=${610}
-                .y=${90}
-                .relativeDirection=${172}
-                .boxWidth=${32}
-                .boxHeight=${32}
+                .x=${isVitestBrowser ? p5.x : 610}
+                .y=${isVitestBrowser ? p5.y : 90}
+                .relativeDirection=${isVitestBrowser
+                  ? p5.relativeDirection
+                  : 172}
+                .boxWidth=${isVitestBrowser ? p5.boxWidth : 32}
+                .boxHeight=${isVitestBrowser ? p5.boxHeight : 32}
               ></obc-poi-data>
             </obc-poi-layer>
           </obc-poi-layer-stack>
@@ -215,6 +273,9 @@ export const SelectionMultiAnimated: Story = {
     `;
   },
   play: async ({canvasElement}) => {
+    await waitForStorySettle(canvasElement);
+    if (isVitestBrowser) return;
+
     const root = canvasElement.querySelector(
       '.controller-animated'
     ) as HTMLElement | null;

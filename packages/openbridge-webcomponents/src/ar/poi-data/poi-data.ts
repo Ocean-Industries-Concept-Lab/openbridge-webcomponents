@@ -7,7 +7,6 @@ import '../../icons/icon-vessel-generic-default-filled.js';
 import {
   ObcPoiButtonType,
   ObcPoiButtonDataItem,
-  ObcPoiButtonHeader,
 } from '../building-blocks/poi-button/poi-button.js';
 import {
   ObcPoiState,
@@ -21,80 +20,88 @@ import {
 
 export {ObcPoiValue as PoiDataValue};
 
+const X_FILTER_CUTOFF_HZ = 16;
+const X_FILTER_DEADBAND_PX = 0.1;
+const X_MOVING_HINT_MS = 120;
+
 /**
- * `<obc-poi-data>` renders a point-of-interest marker with a selectable target
- * button and optional pointer line.
+ * `<obc-poi-data>` - Data-oriented marker wrapper around `obc-poi` with layout positioning and change notifications.
  *
- * Use this component inside `obc-poi-layer` or `obc-poi-group` to
- * position targets in AR layers and present status or selection state for a
- * detection or tracked object.
+ * ## Overview
+ * Use this component when a marker needs position control plus optional data rows and header content.
+ * It forwards configuration to `obc-poi` and emits a layout-change event when geometry-related inputs change.
  *
- * ### Features
- * - Positions via `x` and a configurable pointer line.
- * - Visual emphasis controlled by `value` (see `PoiDataValue`).
- * - Alarm state controlled by `state` (enabled, caution, warning, alarm).
- * - Multi-value button rendering via the `data` array.
- * - Horizontal nudging via `buttonOffsetX` for overlap or crossing layouts.
- * - Supports alert, selection, and pointer variants.
+ * ## Features/Variants
+ * - Position inputs:
+ *   - `x` (default `0`): host horizontal position in pixels.
+ *   - `buttonY` + `fixedTarget`: controls vertical positioning mode.
+ *   - `y` (default `192`): line length basis.
+ *   - `lineCompensationY` (default `0`): extra line compensation used in line/offset modes.
+ *   - `buttonOffsetX` / `targetOffsetX`: horizontal connector offsets.
+ * - Marker visuals:
+ *   - `type`, `value`, `state`, `selected`, `hasPointer`.
+ *   - `pointerType`, `pointerState`, `outsideAngle`.
+ *   - `buttonType`, `relativeDirection`, `data`, `overlapOpaque` (`false` = translucent overlap, `true` = opaque overlap).
+ * - Rendering behavior:
+ *   - Injects a default `obi-vessel-generic-default-filled` icon.
+ *   - Forwards optional `header` slot content when `hasHeader` is true.
+ * - Motion:
+ *   - `animatePosition` toggles animated position updates in child marker visuals.
  *
- * ### Usage Guidelines
- * - Set `x` in pixels to place the target relative to its container.
- * - Use `buttonY` to set the target/button position:
- *   - When `fixed-target=true`: `buttonY` is where the line bottom should be (target position)
- *   - When `fixed-target=false`: `buttonY` is where the button should be (button position)
- * - Use `y` for the pointer line length (distance from button to target).
- * - Set `fixed-target` to `false` for layer mode (button position fixed, line extends) - default.
- * - Set `fixed-target` to `true` for standalone/CV mode (target position fixed, button moves).
- * - Use `value` to align with layer or group overlap logic (unchecked, overlapped, etc.).
- * - Use `state` to set alarm level (enabled, caution, warning, alarm).
- * - Provide `data` to display secondary statuses on the button.
- * - Adjust `buttonOffsetX` only when resolving collisions in a layer.
+ * ## Usage Guidelines
+ * - Use `fixedTarget=false` when `buttonY` should represent button position.
+ * - Use `fixedTarget=true` when `buttonY` should represent target position and line length should offset upward.
+ * - Keep geometry values finite to avoid fallback behavior.
+ * - Component choice:
+ *   - Use `<obc-poi-data>` for data-oriented callouts with built-in connector/pointer behavior and per-item layout control.
+ *   - Use `<obc-poi>` for lower-level marker rendering when you do not need this data wrapper behavior.
+ *   - Use `<obc-poi-layer>` when multiple markers need coordinated overlap/stacking management.
+ *   - Use `<obc-poi-group>` when related markers should expand/collapse together as one grouped interaction.
  *
- * ### Slots
- * - None.
+ * ## Slots/Content
+ * - `header`: Optional custom header content forwarded into `obc-poi`.
  *
- * ### Events
- * - None. This component does not emit custom events.
+ * ## Events
+ * - `obc-poi-data-layout-change`: Fired when layout-driving properties change (`x`, `y`, `buttonY`, `buttonOffsetX`, `targetOffsetX`, `lineCompensationY`, `fixedTarget`, `selected`, `type`).
  *
- * ### Best Practices
- * - Use within `obc-poi-layer` for automatic grouping and overlap behaviors.
- * - Keep pointer lines short to reduce visual clutter.
- * - Prefer `PoiDataValue` enum values over manual styling.
+ * ## Best Practices
+ * - Treat `obc-poi-data-layout-change` as a signal to recompute overlap/grouping layout.
+ * - Keep `lineCompensationY` usage consistent within the same layout system.
+ * - TODO(designer): Confirm recommended defaults and usage envelope for `lineCompensationY`.
  *
- * ### Example
+ * ## Example
  * ```html
  * <obc-poi-data x="120" button-y="200" y="192"></obc-poi-data>
  * ```
  *
- * @slot none
- * @fires none - This component does not emit custom events.
+ * @slot header - Optional custom header content forwarded into `obc-poi`.
+ * @fires obc-poi-data-layout-change {CustomEvent<void>} Fired when layout-driving properties change (`x`, `y`, `buttonY`, `buttonOffsetX`, `targetOffsetX`, `lineCompensationY`, `fixedTarget`, `selected`, `type`).
  */
-
 @customElement('obc-poi-data')
 export class ObcPoiData extends LitElement {
   @property({type: String}) type: ObcPoiType = ObcPoiType.Line;
   @property({type: String, reflect: true}) value: ObcPoiValue =
     ObcPoiValue.Unchecked;
   @property({type: String}) state: ObcPoiState = ObcPoiState.Enabled;
+  @property({type: Boolean}) selected = false;
+  @property({type: String, attribute: 'button-type'})
+  buttonType = ObcPoiButtonType.Button;
+  @property({type: Boolean, attribute: 'overlap-opaque'})
+  overlapOpaque = false;
+  @property({attribute: false})
+  data: ObcPoiButtonDataItem[] = [];
+  @property({type: Boolean, attribute: 'has-header'}) hasHeader = false;
+  @property({type: Boolean}) hasPointer = false;
+  @property({type: String, attribute: 'pointer-type'})
+  pointerType: ObcPoiPointerType | null = null;
+  @property({type: String, attribute: 'pointer-state'})
+  pointerState: ObcPoiPointerState | null = null;
+  @property({type: Number}) relativeDirection = 0;
   @property({type: Number}) x = 0;
   @property({type: Number}) y = 192;
   @property({type: Number, attribute: 'button-y'}) buttonY: number | null =
     null;
   @property({type: Boolean, attribute: 'fixed-target'}) fixedTarget = false;
-  @property({type: Number, attribute: 'outside-angle'}) outsideAngle = 315;
-  @property({type: Boolean}) hasPointer = false;
-  @property({type: Boolean, attribute: 'animate-position'})
-  animatePosition = false;
-  @property({type: Number}) relativeDirection = 0;
-  @property({type: Object}) header: ObcPoiButtonHeader | null = null;
-  @property({type: String, attribute: 'button-type'})
-  buttonType = ObcPoiButtonType.Button;
-  @property({type: String, attribute: 'pointer-type'})
-  pointerType: ObcPoiPointerType | null = null;
-  @property({type: String, attribute: 'pointer-state'})
-  pointerState: ObcPoiPointerState | null = null;
-  @property({type: Boolean}) selected = false;
-  @property({type: Boolean}) hasRelation = false;
   @property({type: Number, attribute: 'button-offset-x'}) buttonOffsetX = 0;
   @property({type: Number, attribute: 'target-offset-x'}) targetOffsetX = 0;
   @property({type: Number, attribute: 'box-width'}) boxWidth: number | null =
@@ -103,15 +110,69 @@ export class ObcPoiData extends LitElement {
     null;
   @property({type: Number, attribute: 'line-compensation-y'})
   lineCompensationY = 0;
+  @property({type: Number, attribute: 'outside-angle'}) outsideAngle = 315;
+  @property({type: Boolean, attribute: 'animate-position'})
+  animatePosition = false;
+
+  private filteredX = 0;
+  private xFilterInitialized = false;
+  private lastXFilterTimestampMs = 0;
+  private xMovingHintTimeout: number | null = null;
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    if (this.xMovingHintTimeout !== null) {
+      window.clearTimeout(this.xMovingHintTimeout);
+      this.xMovingHintTimeout = null;
+    }
+  }
+
+  private markXMoving() {
+    this.setAttribute('data-x-moving', 'true');
+    if (this.xMovingHintTimeout !== null) {
+      window.clearTimeout(this.xMovingHintTimeout);
+    }
+    this.xMovingHintTimeout = window.setTimeout(() => {
+      this.removeAttribute('data-x-moving');
+      this.xMovingHintTimeout = null;
+    }, X_MOVING_HINT_MS);
+  }
 
   override updated(changedProperties: Map<string, unknown>) {
     if (changedProperties.has('x')) {
-      this.style.left = `${this.x}px`;
+      const targetX = Number.isFinite(this.x) ? this.x : 0;
+      const now = performance.now();
+      const dtSeconds =
+        this.lastXFilterTimestampMs > 0
+          ? Math.min(
+              0.25,
+              Math.max(1 / 120, (now - this.lastXFilterTimestampMs) / 1000)
+            )
+          : 1 / 60;
+      this.lastXFilterTimestampMs = now;
+      const alpha = 1 - Math.exp(-2 * Math.PI * X_FILTER_CUTOFF_HZ * dtSeconds);
+
+      if (!this.xFilterInitialized) {
+        this.xFilterInitialized = true;
+        this.filteredX = targetX;
+      } else {
+        const delta = targetX - this.filteredX;
+        this.filteredX =
+          Math.abs(delta) <= X_FILTER_DEADBAND_PX
+            ? targetX
+            : this.filteredX + delta * alpha;
+      }
+
+      this.style.setProperty('--obc-poi-data-x', `${this.filteredX}px`);
+      this.markXMoving();
     }
     if (
       changedProperties.has('buttonY') ||
       changedProperties.has('y') ||
-      changedProperties.has('fixedTarget')
+      changedProperties.has('fixedTarget') ||
+      changedProperties.has('lineCompensationY') ||
+      changedProperties.has('selected') ||
+      changedProperties.has('type')
     ) {
       this.updatePosition();
     }
@@ -119,8 +180,12 @@ export class ObcPoiData extends LitElement {
       changedProperties.has('x') ||
       changedProperties.has('buttonY') ||
       changedProperties.has('y') ||
+      changedProperties.has('buttonOffsetX') ||
+      changedProperties.has('targetOffsetX') ||
       changedProperties.has('lineCompensationY') ||
-      changedProperties.has('fixedTarget')
+      changedProperties.has('fixedTarget') ||
+      changedProperties.has('selected') ||
+      changedProperties.has('type')
     ) {
       this.dispatchEvent(
         new CustomEvent('obc-poi-data-layout-change', {
@@ -132,10 +197,23 @@ export class ObcPoiData extends LitElement {
   }
 
   private updatePosition() {
+    const resolvedPoiType = this.#getResolvedPoiType();
     if (this.fixedTarget) {
       if (typeof this.buttonY === 'number' && Number.isFinite(this.buttonY)) {
         const lineLength = Number.isFinite(this.y) ? this.y : 0;
-        this.style.top = `${this.buttonY - lineLength}px`;
+        const lineCompensation = Number.isFinite(this.lineCompensationY)
+          ? this.lineCompensationY
+          : 0;
+        const selectedVerticalOffset = this.#getSelectedVerticalOffset();
+        const layerVerticalOffset = this.#getLayerVerticalOffset();
+        const totalVerticalOffset =
+          selectedVerticalOffset + layerVerticalOffset;
+        const effectiveLineLength =
+          resolvedPoiType === ObcPoiType.Line ||
+          resolvedPoiType === ObcPoiType.Offset
+            ? lineLength + lineCompensation + totalVerticalOffset
+            : lineLength;
+        this.style.top = `${this.buttonY - effectiveLineLength}px`;
       } else {
         this.style.removeProperty('top');
       }
@@ -148,30 +226,6 @@ export class ObcPoiData extends LitElement {
       this.style.removeProperty('top');
     }
   }
-
-  @property({
-    type: Array,
-    converter: {
-      fromAttribute(value) {
-        if (!value) return [];
-        try {
-          const parsed = JSON.parse(value);
-          return Array.isArray(parsed) ? parsed : [];
-        } catch {
-          return [];
-        }
-      },
-      toAttribute(value) {
-        if (!value || !Array.isArray(value) || value.length === 0) return null;
-        try {
-          return JSON.stringify(value);
-        } catch {
-          return null;
-        }
-      },
-    },
-  })
-  data: ObcPoiButtonDataItem[] = [];
 
   #getSelectedVerticalOffset(): number {
     if (!this.selected) {
@@ -198,35 +252,15 @@ export class ObcPoiData extends LitElement {
       : ObcPoiType.Line;
   }
 
-  #getResolvedButtonType(): ObcPoiButtonType {
-    if (
-      Object.values(ObcPoiButtonType).includes(
-        this.buttonType as ObcPoiButtonType
-      )
-    ) {
-      return this.buttonType as ObcPoiButtonType;
-    }
-
-    return ObcPoiButtonType.Button;
-  }
-
-  #getResolvedPointerType(): ObcPoiPointerType | null {
-    const value = this.pointerType;
-    return Object.values(ObcPoiPointerType).includes(value as ObcPoiPointerType)
-      ? (value as ObcPoiPointerType)
-      : null;
-  }
-
-  #getResolvedPointerState(): ObcPoiPointerState | null {
-    const value = this.pointerState;
-    return Object.values(ObcPoiPointerState).includes(
-      value as ObcPoiPointerState
-    )
-      ? (value as ObcPoiPointerState)
-      : null;
+  #getResolvedPoiState(): ObcPoiState {
+    return Object.values(ObcPoiState).includes(this.state as ObcPoiState)
+      ? (this.state as ObcPoiState)
+      : ObcPoiState.Enabled;
   }
 
   override render() {
+    const resolvedPoiType = this.#getResolvedPoiType();
+    const resolvedPoiState = this.#getResolvedPoiState();
     const selectedVerticalOffset = this.#getSelectedVerticalOffset();
     const lineLength = Number.isFinite(this.y) ? this.y : 0;
     const lineCompensation = Number.isFinite(this.lineCompensationY)
@@ -234,44 +268,41 @@ export class ObcPoiData extends LitElement {
       : 0;
     const layerVerticalOffset = this.#getLayerVerticalOffset();
     const totalVerticalOffset = selectedVerticalOffset + layerVerticalOffset;
-    const resolvedPoiType = this.#getResolvedPoiType();
     const effectiveLineLength =
       resolvedPoiType === ObcPoiType.Line ||
       resolvedPoiType === ObcPoiType.Offset
         ? lineLength + lineCompensation + totalVerticalOffset
         : lineLength;
     const effectiveLocalButtonY = -totalVerticalOffset;
-    const effectiveButtonOffset = this.buttonOffsetX;
-    const effectiveTargetOffset = this.targetOffsetX;
-    const resolvedButtonType = this.#getResolvedButtonType();
-    const resolvedPointerType = this.#getResolvedPointerType();
-    const resolvedPointerState = this.#getResolvedPointerState();
 
     return html`
       <obc-poi
         .type=${resolvedPoiType}
         .value=${this.value}
-        .state=${this.state}
+        .state=${resolvedPoiState}
         .x=${0}
         .y=${effectiveLineLength}
         .buttonY=${effectiveLocalButtonY}
         .fixedTarget=${false}
         .outsideAngle=${this.outsideAngle}
         .hasPointer=${this.hasPointer}
+        .hasHeader=${this.hasHeader}
         .animatePosition=${this.animatePosition}
         .relativeDirection=${this.relativeDirection}
-        .header=${this.header}
-        .buttonType=${resolvedButtonType}
-        .pointerType=${resolvedPointerType}
-        .pointerState=${resolvedPointerState}
+        .buttonType=${this.buttonType}
+        .overlapOpaque=${this.overlapOpaque}
+        .pointerType=${this.pointerType}
+        .pointerState=${this.pointerState}
         .selected=${this.selected}
         .data=${this.data}
-        .hasRelation=${this.hasRelation}
-        .buttonOffsetX=${effectiveButtonOffset}
-        .targetOffsetX=${effectiveTargetOffset}
+        .buttonOffsetX=${this.buttonOffsetX}
+        .targetOffsetX=${this.targetOffsetX}
         .boxWidth=${this.boxWidth}
         .boxHeight=${this.boxHeight}
       >
+        ${this.hasHeader
+          ? html`<slot name="header" slot="header"></slot>`
+          : null}
         <obi-vessel-generic-default-filled></obi-vessel-generic-default-filled>
       </obc-poi>
     `;

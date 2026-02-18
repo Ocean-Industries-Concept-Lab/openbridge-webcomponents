@@ -29,30 +29,30 @@
   cursor: pointer;
   pointer-events: auto;
   z-index: 3;
-  padding: var(--Maneuvering-components-poi-group-padding-unchecked-top, 6px)
-    var(--Maneuvering-components-poi-group-padding-unchecked-horizontal, 4px)
-    var(--Maneuvering-components-poi-group-padding-unchecked-bottom, 2px)
-    var(--Maneuvering-components-poi-group-padding-unchecked-horizontal, 4px);
+  padding: var(--maneuvering-components-poi-group-padding-unchecked-top, 6px)
+    var(--maneuvering-components-poi-group-padding-unchecked-horizontal, 4px)
+    var(--maneuvering-components-poi-group-padding-unchecked-bottom, 2px)
+    var(--maneuvering-components-poi-group-padding-unchecked-horizontal, 4px);
   transform: translateY(-100%);
 
   /* Override mixin colors for visible-wrapper */
   --flat-enabled-border-color: transparent;
   --flat-enabled-background-color: transparent;
   --flat-hover-border-color: var(
-    --Color-Overlay-Styles-Flat-Hover-border-color,
-    rgba(255, 255, 255, 0.12)
+    --overlay-flat-hover-border-color,
+    rgb(255 255 255 / 12%)
   );
   --flat-hover-background-color: var(
-    --Color-Overlay-Styles-Flat-Enabled-background-color,
-    rgba(0, 0, 0, 0.32)
+    --overlay-flat-hover-background-color,
+    rgb(0 0 0 / 32%)
   );
   --flat-pressed-border-color: var(
-    --Color-Overlay-Styles-Flat-Active-border-color,
-    rgba(255, 255, 255, 0.12)
+    --overlay-flat-active-border-color,
+    rgb(255 255 255 / 12%)
   );
   --flat-pressed-background-color: var(
-    --Color-Overlay-Styles-Flat-Active-background-color,
-    rgba(0, 0, 0, 0.48)
+    --overlay-flat-active-background-color,
+    rgb(0 0 0 / 48%)
   );
 
   @mixin style style=flat visibleWrapperClass=.visible-wrapper;
@@ -69,7 +69,7 @@
   top: 6px;
   bottom: 2px;
   border-radius: var(
-    --Maneuvering-components-poi-button-border-radius-round,
+    --maneuvering-components-poi-button-border-radius-round,
     1000px
   );
   overflow: clip;
