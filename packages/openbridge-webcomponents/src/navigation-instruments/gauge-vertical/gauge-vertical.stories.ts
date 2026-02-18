@@ -35,6 +35,7 @@ const meta: Meta = {
     fillMax: {control: {type: 'number'}},
     value: {control: {type: 'range', min: -100, max: 100, step: 1}},
     setpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
+    newSetpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
     atSetpoint: {control: {type: 'boolean'}},
     disableAutoAtSetpoint: {control: {type: 'boolean'}},
     autoAtSetpointDeadband: {
@@ -62,6 +63,7 @@ const meta: Meta = {
     fillMax: 40,
     value: undefined,
     setpoint: undefined,
+    newSetpoint: undefined,
     atSetpoint: false,
     disableAutoAtSetpoint: false,
     autoAtSetpointDeadband: 1,
@@ -86,6 +88,7 @@ const meta: Meta = {
       .fillMax=${args.fillMax}
       .value=${args.value}
       .setpoint=${args.setpoint}
+      .newSetpoint=${args.newSetpoint}
       .atSetpoint=${args.atSetpoint}
       .disableAutoAtSetpoint=${args.disableAutoAtSetpoint}
       .autoAtSetpointDeadband=${args.autoAtSetpointDeadband}
@@ -462,7 +465,7 @@ export const StateComparison: Story = {
       </div>
       <div style="text-align: center;">
         <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
-          adjusting/focused/touching
+          adjusting/touching
         </div>
         <obc-gauge-vertical
           minValue="-100"

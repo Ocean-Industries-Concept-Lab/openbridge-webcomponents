@@ -24,6 +24,9 @@ import {
   drawSetpointMarker,
   generateSetpointId,
   getSetpointOutwardOffset,
+  computeAtSetpoint,
+  SETPOINT_ANIMATION_CSS_VAR,
+  SETPOINT_ANIMATION_DURATION_DEFAULT,
 } from '../../svghelpers/setpoint.js';
 
 /**
@@ -596,16 +599,44 @@ export interface ExternalScaleConfig {
   highlightCurrentValue?: boolean;
 
   /**
-   * When true, the setpoint marker is in "focus" state (user is actively adjusting).
-   * This displays the outlined/hollow triangle variant at full size.
+   * User is physically interacting with the control (e.g. lever/slider touch).
    *
-   * NOTE: In future refactoring, consider whether this should be unified with
-   * InstrumentState (e.g., a new 'focus' or 'adjusting' state) rather than a
-   * separate boolean property.
+   * When true:
+   * - `calculateAtSetpoint()` returns false (suppressed)
+   * - Single setpoint marker renders in focus visual state
+   *
+   * Unified name for what was previously `focused` in linear instruments
+   * and `touching` in radial instruments.
    *
    * @default false
    */
+  touching?: boolean;
+
+  /**
+   * @deprecated Use `touching` instead. Will be removed in a future version.
+   * When set, behaves identically to `touching`.
+   */
   focused?: boolean;
+
+  // Animation
+  /**
+   * Enable CSS-animated confirm transition for setpoint markers.
+   * When true, the original setpoint marker uses CSS `transition` for smooth movement
+   * and opacity changes. The departing new-setpoint marker fades out.
+   *
+   * Duration is configurable via CSS: `--setpoint-animation-duration: 300ms`.
+   * @default false
+   */
+  animateSetpoint?: boolean;
+
+  /**
+   * Value of the departing new-setpoint during confirm animation.
+   * When defined, renders the new-setpoint marker at this position with `opacity: 0`
+   * (CSS-transitioned from 1), keeping it in the DOM during its fade-out.
+   *
+   * Managed by SetpointMixin / SetpointBundle — cleared after animation completes.
+   */
+  departingNewSetpoint?: number;
 }
 
 export interface ExternalScaleLayout {
@@ -813,14 +844,15 @@ function rangeIncludesZero(minValue: number, maxValue: number): boolean {
 }
 
 function calculateAtSetpoint(config: ExternalScaleConfig): boolean {
-  if (config.value === undefined || config.setpoint === undefined) return false;
-  if (!config.disableAutoAtSetpoint) {
-    const deadband = Number.isFinite(config.autoAtSetpointDeadband)
-      ? config.autoAtSetpointDeadband
-      : 0;
-    return Math.abs(config.value - config.setpoint) <= deadband;
-  }
-  return config.atSetpoint;
+  const isTouching = config.touching ?? config.focused ?? false;
+  return computeAtSetpoint({
+    value: config.value,
+    setpoint: config.setpoint,
+    touching: isTouching,
+    disableAuto: config.disableAutoAtSetpoint,
+    deadband: config.autoAtSetpointDeadband,
+    atSetpointManual: config.atSetpoint,
+  });
 }
 
 // ============================================================================
@@ -856,9 +888,10 @@ function deriveSetpointVisualState(
   config: ExternalScaleConfig
 ): SetpointVisualState {
   // Priority 1: Focus state
-  // - When `focused` property is true (user is actively adjusting)
+  // - When `touching` property is true (user is actively adjusting)
   // - BUT only when newSetpoint is not defined (otherwise original should be dimmed)
-  if (config.focused && config.newSetpoint === undefined) {
+  const isTouching = config.touching ?? config.focused ?? false;
+  if (isTouching && config.newSetpoint === undefined) {
     return SetpointVisualState.focus;
   }
 
@@ -2249,6 +2282,7 @@ function getSetpointRotation(config: ExternalScaleConfig): number {
  * @param disabled - Whether the setpoint is in disabled state
  * @param idSuffix - Suffix for the unique ID
  * @param opacity - Optional opacity (default 1)
+ * @param animate - Whether to apply CSS transition for smooth movement
  */
 function renderSingleSetpoint(
   config: ExternalScaleConfig,
@@ -2257,7 +2291,8 @@ function renderSingleSetpoint(
   colorMode: SetpointColorMode,
   disabled: boolean,
   idSuffix: string,
-  opacity: number = 1
+  opacity: number = 1,
+  animate: boolean = false
 ): SVGTemplateResult {
   // Generate unique ID to avoid conflicts with multiple instruments on page
   const baseId = generateSetpointId(`external-scale-setpoint-${idSuffix}`);
@@ -2270,8 +2305,11 @@ function renderSingleSetpoint(
     Math.abs(setpointValue) < config.setpointAtZeroDeadband;
 
   // Main axis position (where the marker sits along the scale)
+  // Always use valueToMainAxis — even for zero-snap, since coordinate 0
+  // only equals value 0 for symmetric bipolar scales (e.g. -100..+100).
+  // For non-symmetric scales (e.g. 0..100), value 0 maps to a non-zero coordinate.
   const mainAxisPos = setpointAtZero
-    ? 0
+    ? valueToMainAxis(config, 0)
     : valueToMainAxis(config, setpointValue);
 
   // Perpendicular axis position (distance from chart edge)
@@ -2294,6 +2332,19 @@ function renderSingleSetpoint(
   const y = isVertical(config) ? mainAxisPos : perpAxisPos;
 
   // Note: drawSetpointMarker() handles scaling internally based on visualState
+  if (animate) {
+    // Use CSS style transform + transition for animated movement.
+    // CSS `transform` on SVG elements uses the local coordinate system
+    // (1px = 1 SVG user unit). `transform-origin: 0 0` is the default for
+    // SVG elements per spec, matching SVG attribute behavior.
+    const duration = `var(${SETPOINT_ANIMATION_CSS_VAR}, ${SETPOINT_ANIMATION_DURATION_DEFAULT})`;
+    return svg`
+      <g style="transform: translate(${x}px, ${y}px) rotate(${rotation}deg); opacity: ${opacity}; transition: transform ${duration} ease-out, opacity ${duration} ease-out;">
+        ${drawSetpointMarker({visualState, colorMode, disabled, id: baseId})}
+      </g>
+    `;
+  }
+
   return svg`
     <g transform="translate(${x}, ${y}) rotate(${rotation})" opacity="${opacity}">
       ${drawSetpointMarker({visualState, colorMode, disabled, id: baseId})}
@@ -2308,6 +2359,11 @@ function renderSingleSetpoint(
  * 1. Original setpoint at 0.75 opacity (dimmed)
  * 2. New setpoint in 'focus' visual state at full opacity (on top)
  *
+ * When `animateSetpoint` is true:
+ * - The original marker uses CSS `transition` for smooth position/opacity changes
+ * - During confirm (newSetpoint → undefined), the departing new-setpoint marker
+ *   fades out via CSS transition (opacity 1 → 0) over the animation duration
+ *
  * The marker is positioned on the scale based on the setpoint value,
  * with transforms applied for orientation/side.
  */
@@ -2316,9 +2372,12 @@ function setpointMarker(
 ): SVGTemplateResult | typeof nothing {
   const hasOriginalSetpoint = config.setpoint !== undefined;
   const hasNewSetpoint = config.newSetpoint !== undefined;
+  const hasDepartingNewSetpoint = config.departingNewSetpoint !== undefined;
+  const animate = config.animateSetpoint === true;
 
-  // If neither setpoint is defined, render nothing
-  if (!hasOriginalSetpoint && !hasNewSetpoint) return nothing;
+  // If neither setpoint is defined (and no departing animation), render nothing
+  if (!hasOriginalSetpoint && !hasNewSetpoint && !hasDepartingNewSetpoint)
+    return nothing;
 
   const markers: SVGTemplateResult[] = [];
 
@@ -2337,13 +2396,19 @@ function setpointMarker(
         colorMode,
         disabled,
         'original',
-        opacity
+        opacity,
+        animate
       )
     );
   }
 
   // Render newSetpoint in focus state (always on top)
-  if (hasNewSetpoint) {
+  // OR render departing newSetpoint during confirm animation (fading to 0 opacity)
+  if (hasNewSetpoint || hasDepartingNewSetpoint) {
+    const isActive = hasNewSetpoint;
+    const value = isActive ? config.newSetpoint! : config.departingNewSetpoint!;
+    const targetOpacity = isActive ? 1 : 0; // fade to 0 during confirm animation
+
     // newSetpoint always renders in focus visual state
     const visualState = SetpointVisualState.focus;
     // Use the same color mode derivation but could be enhanced when focused
@@ -2354,12 +2419,13 @@ function setpointMarker(
     markers.push(
       renderSingleSetpoint(
         config,
-        config.newSetpoint!,
+        value,
         visualState,
         colorMode,
         disabled,
         'new',
-        1
+        targetOpacity,
+        animate
       )
     );
   }

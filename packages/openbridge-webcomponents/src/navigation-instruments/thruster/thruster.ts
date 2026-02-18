@@ -6,6 +6,15 @@ import {AdviceState} from '../watch/advice.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {singleSidedTickmark} from './tickmark.js';
 import {PropellerType, bottomPropeller, topPropeller} from './propeller.js';
+import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
+import {
+  drawSetpointMarker,
+  getSetpointOutwardOffset,
+  SetpointColorMode,
+  SetpointVisualState,
+  SETPOINT_ANIMATION_CSS_VAR,
+  SETPOINT_ANIMATION_DURATION_DEFAULT,
+} from '../../svghelpers/setpoint.js';
 import {customElement} from '../../decorator.js';
 
 /**
@@ -15,14 +24,12 @@ import {customElement} from '../../decorator.js';
  * @prop {boolean} touching - Highlight the thruster when the lever is being touched
  */
 @customElement('obc-thruster')
-export class ObcThruster extends LitElement {
+export class ObcThruster extends SetpointMixin(LitElement, {
+  defaultDeadband: 1,
+}) {
+  private _setpointId = `thruster-sp-${Math.random().toString(36).slice(2, 9)}`;
+
   @property({type: Number}) thrust: number = 0;
-  @property({type: Number}) setpoint: number | undefined;
-  @property({type: Boolean}) touching: boolean = false;
-  @property({type: Boolean}) atSetpoint: boolean = false;
-  @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
-  @property({type: Number}) autoAtSetpointDeadband: number = 1;
-  @property({type: Number}) setpointAtZeroDeadband: number = 0.5;
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
   @property({type: Boolean}) tunnel: boolean = false;
   @property({type: Boolean}) singleSided: boolean = false;
@@ -48,6 +55,8 @@ export class ObcThruster extends LitElement {
         topPropeller: this.topPropeller,
         bottomPropeller: this.bottomPropeller,
         narrow: !this.tunnel,
+        newSetpoint: this.newSetpoint,
+        setpointId: this._setpointId,
       })}
     </div>`;
   }
@@ -223,6 +232,271 @@ function thrusterBottomSingleSided(
   return container;
 }
 
+// ============================================================================
+// Thruster Setpoint Configuration & Rendering (Unified)
+// ============================================================================
+
+/**
+ * Fine-tune inward adjustment (px) for thruster setpoint markers.
+ * Similar to `RADIAL_SETPOINT_INWARD_ADJUST` in watch.ts — nudges the marker
+ * tip closer to the bar edge so it visually aligns with design specs.
+ */
+const THRUSTER_SETPOINT_INWARD_ADJUST = 4;
+
+/**
+ * Configuration for rendering a thruster setpoint marker.
+ */
+export interface ThrusterSetpointConfig {
+  /** Instrument state (determines color mode and disabled status) */
+  state: InstrumentState;
+  /** Whether value is at the setpoint (within deadband) */
+  atSetpoint: boolean;
+  /** User is physically interacting (renders focus visual state) */
+  touching: boolean;
+  /** Deadband for zero detection */
+  setpointAtZeroDeadband: number;
+  /** Whether the thruster is single-sided (marker on right side only) */
+  singleSided: boolean;
+  /** Whether to use narrow layout */
+  narrow: boolean;
+  /** Pending setpoint during adjustment (shows dual markers) */
+  newSetpoint?: number;
+  /** Unique ID prefix for SVG defs (avoids collisions with multiple instances) */
+  id: string;
+  /** Enable CSS-animated confirm transition for setpoint markers. */
+  animateSetpoint?: boolean;
+  /** Value of departing new-setpoint during confirm animation fade-out. */
+  departingNewSetpoint?: number;
+}
+
+/**
+ * Compute the Y coordinate for a thruster setpoint marker.
+ *
+ * @param height - Thruster bar height
+ * @param value - Setpoint value (percent, -100 to +100)
+ * @param isAtZero - Whether the value is within zero-snap deadband
+ * @returns Y offset (negative = upward)
+ */
+function thrusterSetpointY(
+  height: number,
+  value: number,
+  isAtZero: boolean
+): number {
+  return -(isAtZero
+    ? 0
+    : Math.sign(value) * ((height * Math.abs(value)) / 100 + 2));
+}
+
+/**
+ * Derive visual state for a thruster setpoint, mirroring the radial and linear
+ * derivation functions in setpoint.ts and external-scale.ts.
+ */
+function deriveThrusterSetpointVisualState(config: {
+  state: InstrumentState;
+  atSetpoint: boolean;
+  touching: boolean;
+  setpointAtZero: boolean;
+  hasNewSetpoint: boolean;
+}): {
+  visualState: SetpointVisualState;
+  colorMode: SetpointColorMode;
+  disabled: boolean;
+} {
+  const disabled =
+    config.state === InstrumentState.loading ||
+    config.state === InstrumentState.off;
+  const colorMode =
+    config.state === InstrumentState.inCommand
+      ? SetpointColorMode.enhanced
+      : SetpointColorMode.regular;
+
+  if (disabled) {
+    return {
+      visualState: SetpointVisualState.notEqual,
+      colorMode,
+      disabled: true,
+    };
+  }
+
+  // Focus: touching without pending adjustment
+  if (config.touching && !config.hasNewSetpoint) {
+    return {visualState: SetpointVisualState.focus, colorMode, disabled: false};
+  }
+
+  // At zero
+  if (config.atSetpoint && config.setpointAtZero) {
+    return {
+      visualState: SetpointVisualState.equalZero,
+      colorMode,
+      disabled: false,
+    };
+  }
+
+  // At setpoint
+  if (config.atSetpoint) {
+    return {visualState: SetpointVisualState.equal, colorMode, disabled: false};
+  }
+
+  return {
+    visualState: SetpointVisualState.notEqual,
+    colorMode,
+    disabled: false,
+  };
+}
+
+/**
+ * Render thruster setpoint marker(s) using the unified `drawSetpointMarker()`
+ * system from `setpoint.ts`.
+ *
+ * Replaces the legacy `setpointSvg()` function with proper visual states
+ * (focus, equalZero, equal, notEqual), themed colors, and sized markers.
+ *
+ * For double-sided thrusters, renders matching markers on both sides of the bar.
+ * When `newSetpoint` is defined, renders dual markers (original dimmed + new in focus).
+ *
+ * @param height - Thruster bar height in SVG units
+ * @param setpointValue - Setpoint value (percent, -100 to +100)
+ * @param config - Setpoint rendering configuration
+ * @returns SVG template with positioned setpoint marker(s)
+ */
+export function renderThrusterSetpoint(
+  height: number,
+  setpointValue: number,
+  config: ThrusterSetpointConfig
+): SVGTemplateResult {
+  const setpointAtZero =
+    Math.abs(setpointValue) < config.setpointAtZeroDeadband;
+  const hasNewSetpoint = config.newSetpoint !== undefined;
+  const hasDepartingNewSetpoint = config.departingNewSetpoint !== undefined;
+  const animate = config.animateSetpoint === true;
+
+  const {visualState, colorMode, disabled} = deriveThrusterSetpointVisualState({
+    state: config.state,
+    atSetpoint: config.atSetpoint,
+    touching: config.touching,
+    setpointAtZero,
+    hasNewSetpoint,
+  });
+
+  // Y position (matches legacy formula)
+  const y = thrusterSetpointY(height, setpointValue, setpointAtZero);
+
+  // X position: legacy base offset + visual state outward offset
+  // Legacy base: 28 for double-sided, 16 for single-sided narrow, 20 for single-sided non-narrow
+  const baseX = 28 + (config.singleSided ? -12 : 0) + (config.narrow ? 0 : 4);
+  const outwardOffset = getSetpointOutwardOffset(visualState);
+  const tipX = baseX + outwardOffset - THRUSTER_SETPOINT_INWARD_ADJUST;
+
+  // Render original setpoint marker
+  const opacity = hasNewSetpoint ? 0.75 : 1;
+
+  // Right marker: rotate(90) makes tip point left (inward toward bar)
+  const rightMarker = drawSetpointMarker({
+    visualState,
+    colorMode,
+    disabled,
+    id: `${config.id}-r`,
+  });
+
+  const result: SVGTemplateResult[] = [];
+
+  if (animate) {
+    const duration = `var(${SETPOINT_ANIMATION_CSS_VAR}, ${SETPOINT_ANIMATION_DURATION_DEFAULT})`;
+    result.push(
+      svg`<g style="transform: translate(${tipX}px, ${y}px) rotate(90deg); opacity: ${opacity}; transition: transform ${duration} ease-out, opacity ${duration} ease-out;">${rightMarker}</g>`
+    );
+    if (!config.singleSided) {
+      const leftMarker = drawSetpointMarker({
+        visualState,
+        colorMode,
+        disabled,
+        id: `${config.id}-l`,
+      });
+      result.push(
+        svg`<g style="transform: translate(${-tipX}px, ${y}px) rotate(-90deg); opacity: ${opacity}; transition: transform ${duration} ease-out, opacity ${duration} ease-out;">${leftMarker}</g>`
+      );
+    }
+  } else {
+    result.push(
+      svg`<g transform="translate(${tipX}, ${y}) rotate(90)" opacity="${opacity}">${rightMarker}</g>`
+    );
+    if (!config.singleSided) {
+      const leftMarker = drawSetpointMarker({
+        visualState,
+        colorMode,
+        disabled,
+        id: `${config.id}-l`,
+      });
+      result.push(
+        svg`<g transform="translate(${-tipX}, ${y}) rotate(-90)" opacity="${opacity}">${leftMarker}</g>`
+      );
+    }
+  }
+
+  // New setpoint marker in focus state (dual-marker adjustment preview)
+  // OR departing newSetpoint during confirm animation fade-out
+  if (hasNewSetpoint || hasDepartingNewSetpoint) {
+    const isActive = hasNewSetpoint;
+    const newValue = isActive
+      ? config.newSetpoint!
+      : config.departingNewSetpoint!;
+    const newAtZero = Math.abs(newValue) < config.setpointAtZeroDeadband;
+    const newY = thrusterSetpointY(height, newValue, newAtZero);
+    const focusOffset = getSetpointOutwardOffset(SetpointVisualState.focus);
+    const newTipX = baseX + focusOffset - THRUSTER_SETPOINT_INWARD_ADJUST;
+    const targetOpacity = isActive ? 1 : 0;
+
+    const newRightMarker = drawSetpointMarker({
+      visualState: SetpointVisualState.focus,
+      colorMode,
+      disabled: false,
+      id: `${config.id}-nr`,
+    });
+
+    if (animate) {
+      const duration = `var(${SETPOINT_ANIMATION_CSS_VAR}, ${SETPOINT_ANIMATION_DURATION_DEFAULT})`;
+      result.push(
+        svg`<g style="transform: translate(${newTipX}px, ${newY}px) rotate(90deg); opacity: ${targetOpacity}; transition: opacity ${duration} ease-out;">${newRightMarker}</g>`
+      );
+      if (!config.singleSided) {
+        const newLeftMarker = drawSetpointMarker({
+          visualState: SetpointVisualState.focus,
+          colorMode,
+          disabled: false,
+          id: `${config.id}-nl`,
+        });
+        result.push(
+          svg`<g style="transform: translate(${-newTipX}px, ${newY}px) rotate(-90deg); opacity: ${targetOpacity}; transition: opacity ${duration} ease-out;">${newLeftMarker}</g>`
+        );
+      }
+    } else {
+      result.push(
+        svg`<g transform="translate(${newTipX}, ${newY}) rotate(90)" opacity="${targetOpacity}">${newRightMarker}</g>`
+      );
+      if (!config.singleSided) {
+        const newLeftMarker = drawSetpointMarker({
+          visualState: SetpointVisualState.focus,
+          colorMode,
+          disabled: false,
+          id: `${config.id}-nl`,
+        });
+        result.push(
+          svg`<g transform="translate(${-newTipX}, ${newY}) rotate(-90)" opacity="${targetOpacity}">${newLeftMarker}</g>`
+        );
+      }
+    }
+  }
+
+  return svg`${result}`;
+}
+
+/**
+ * @deprecated Use `renderThrusterSetpoint` instead, which supports
+ * focus visual state, equalZero sizing, and the unified marker system.
+ *
+ * Legacy setpoint marker rendering with hardcoded SVG IDs.
+ * Kept for backward compatibility only.
+ */
 export function setpointSvg(
   height: number,
   value: number,
@@ -310,6 +584,14 @@ export function thruster(
     topPropeller: PropellerType;
     bottomPropeller: PropellerType;
     narrow: boolean;
+    /** Pending setpoint during adjustment (shows dual markers) */
+    newSetpoint?: number;
+    /** Unique ID prefix for setpoint SVG defs. Falls back to legacy hardcoded IDs. */
+    setpointId?: string;
+    /** Enable CSS-animated confirm transition. */
+    animateSetpoint?: boolean;
+    /** Departing new-setpoint value during confirm animation fade-out. */
+    departingNewSetpoint?: number;
   }
 ) {
   if (options.tunnel) {
@@ -409,24 +691,43 @@ export function thruster(
     thrusterSvg.push(centerLine);
   }
   if (setpoint !== undefined) {
-    thrusterSvg.push(
-      setpointSvg(
-        height,
-        setpoint,
-        setpointAtZero,
-        {
-          fill: tc.setPointColor,
-          stroke: 'var(--border-silhouette-color)',
-        },
-        {
-          filled:
-            state === InstrumentState.inCommand ||
-            state === InstrumentState.off,
+    if (options.setpointId) {
+      // Unified setpoint rendering with proper visual states
+      thrusterSvg.push(
+        renderThrusterSetpoint(height, setpoint, {
+          state,
+          atSetpoint: options.atSetpoint,
+          touching: options.touching,
+          setpointAtZeroDeadband: options.setpointAtZeroDeadband,
           singleSided: options.singleSided,
           narrow: options.narrow,
-        }
-      )
-    );
+          newSetpoint: options.newSetpoint,
+          id: options.setpointId,
+          animateSetpoint: options.animateSetpoint,
+          departingNewSetpoint: options.departingNewSetpoint,
+        })
+      );
+    } else {
+      // Legacy fallback (deprecated — no focus/equalZero visual states)
+      thrusterSvg.push(
+        setpointSvg(
+          height,
+          setpoint,
+          setpointAtZero,
+          {
+            fill: tc.setPointColor,
+            stroke: 'var(--border-silhouette-color)',
+          },
+          {
+            filled:
+              state === InstrumentState.inCommand ||
+              state === InstrumentState.off,
+            singleSided: options.singleSided,
+            narrow: options.narrow,
+          }
+        )
+      );
+    }
   }
 
   if (options.tunnel) {

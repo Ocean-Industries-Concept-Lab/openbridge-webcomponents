@@ -31,6 +31,7 @@ import {
   ExternalScaleOrientation,
   ExternalScaleSide,
 } from '../external-scale/external-scale.js';
+import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {SetpointColorMode} from '../../svghelpers/setpoint.js';
 
 // Re-export shared enums for convenience
@@ -60,7 +61,9 @@ export {
  * For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Deadband tuning and Zero snap behavior) see: **Building Blocks/Bar Vertical**.
  */
 @customElement('obc-bar-horizontal')
-export class ObcBarHorizontal extends LitElement {
+export class ObcBarHorizontal extends SetpointMixin(LitElement, {
+  defaultDeadband: 1,
+}) {
   /** Minimum scale value (manual mode) */
   @property({type: Number}) minValue = 0;
   /** Maximum scale value (manual mode) */
@@ -218,16 +221,6 @@ export class ObcBarHorizontal extends LitElement {
   // Values
   /** Enhanced visual mode: when true, uses enhanced instrument colors for bar fill and setpoint */
   @property({type: Boolean}) enhanced = false;
-  /**
-   * Explicit color mode override for setpoint marker.
-   * When provided, this takes precedence over the `enhanced` boolean.
-   *
-   * - `SetpointColorMode.enhanced`: Use enhanced colors (brighter)
-   * - `SetpointColorMode.regular`: Use regular colors
-   *
-   * Note: Disabled state is auto-derived from `state` (loading/off).
-   */
-  @property({type: String}) colorMode?: SetpointColorMode;
   /** Fill visualization mode: fill or tint */
   @property({type: String}) fillMode: FillMode = FillMode.fill;
   /** Minimum fill value for tint mode (defaults to 0) */
@@ -237,36 +230,8 @@ export class ObcBarHorizontal extends LitElement {
   /** Current value (bar fill level) */
   @property({type: Number}) value?: number = undefined;
 
-  // Setpoint
-  /**
-   * Setpoint/input value to display as indicator.
-   * When undefined, no setpoint shown.
-   */
-  @property({type: Number}) setpoint?: number = undefined;
-  /**
-   * New setpoint value being adjusted (focus/adjustment mode).
-   * When defined, displays a second setpoint marker in 'focus' visual state,
-   * while the original `setpoint` marker is dimmed (0.5 opacity).
-   * This enables the "adjustment preview" UX where users can see both the current
-   * and proposed setpoint positions simultaneously.
-   */
-  @property({type: Number}) newSetpoint?: number = undefined;
-  /** Whether value is at setpoint (manual override when disableAutoAtSetpoint=true) */
-  @property({type: Boolean}) atSetpoint = false;
-  /** Disable automatic atSetpoint calculation based on value and deadband */
-  @property({type: Boolean}) disableAutoAtSetpoint = false;
-  /** Deadband for automatic atSetpoint detection (when disableAutoAtSetpoint=false) */
-  @property({type: Number}) autoAtSetpointDeadband = 1;
-  /** Deadband around zero for setpoint positioning */
-  @property({type: Number}) setpointAtZeroDeadband = 0.5;
   /** Instrument state (affects colors and some marker behavior) */
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
-  /**
-   * When true, the setpoint marker is in "focus" state (user is actively adjusting).
-   * Displays the outlined/hollow triangle variant at full size.
-   * @default false
-   */
-  @property({type: Boolean}) focused = false;
 
   // Advice
   /** Advice overlay positioning: center (in bar), inner (covers minor ticks), outer (no overlap) */
@@ -340,7 +305,7 @@ export class ObcBarHorizontal extends LitElement {
       frameStyle: this.frameStyle,
       borderRadiusPosition: this.borderRadiusPosition,
       enhanced: this.enhanced,
-      colorMode: this.colorMode,
+      colorMode: this.setpointColorMode,
       fillMode: this.fillMode,
       fillMin: this.fillMin,
       fillMax: this.fillMax,
@@ -351,8 +316,10 @@ export class ObcBarHorizontal extends LitElement {
       disableAutoAtSetpoint: this.disableAutoAtSetpoint,
       autoAtSetpointDeadband: this.autoAtSetpointDeadband,
       setpointAtZeroDeadband: this.setpointAtZeroDeadband,
+      animateSetpoint: this.animateSetpoint,
+      departingNewSetpoint: this.departingNewSetpoint,
       state: this.state,
-      focused: this.focused,
+      touching: this.touching,
       advicePosition: this.advicePosition,
       advices: this.advices as ExternalScaleAdvice[],
       fixedAspectRatio: this.fixedAspectRatio,
