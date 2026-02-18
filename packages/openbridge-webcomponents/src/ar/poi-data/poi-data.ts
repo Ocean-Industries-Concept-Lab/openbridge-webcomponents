@@ -20,6 +20,10 @@ import {
 
 export {ObcPoiValue as PoiDataValue};
 
+const X_FILTER_CUTOFF_HZ = 16;
+const X_FILTER_DEADBAND_PX = 0.1;
+const X_MOVING_HINT_MS = 120;
+
 /**
  * `<obc-poi-data>` - Data-oriented marker wrapper around `obc-poi` with layout positioning and change notifications.
  *
@@ -110,9 +114,57 @@ export class ObcPoiData extends LitElement {
   @property({type: Boolean, attribute: 'animate-position'})
   animatePosition = false;
 
+  private filteredX = 0;
+  private xFilterInitialized = false;
+  private lastXFilterTimestampMs = 0;
+  private xMovingHintTimeout: number | null = null;
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    if (this.xMovingHintTimeout !== null) {
+      window.clearTimeout(this.xMovingHintTimeout);
+      this.xMovingHintTimeout = null;
+    }
+  }
+
+  private markXMoving() {
+    this.setAttribute('data-x-moving', 'true');
+    if (this.xMovingHintTimeout !== null) {
+      window.clearTimeout(this.xMovingHintTimeout);
+    }
+    this.xMovingHintTimeout = window.setTimeout(() => {
+      this.removeAttribute('data-x-moving');
+      this.xMovingHintTimeout = null;
+    }, X_MOVING_HINT_MS);
+  }
+
   override updated(changedProperties: Map<string, unknown>) {
     if (changedProperties.has('x')) {
-      this.style.left = `${this.x}px`;
+      const targetX = Number.isFinite(this.x) ? this.x : 0;
+      const now = performance.now();
+      const dtSeconds =
+        this.lastXFilterTimestampMs > 0
+          ? Math.min(
+              0.25,
+              Math.max(1 / 120, (now - this.lastXFilterTimestampMs) / 1000)
+            )
+          : 1 / 60;
+      this.lastXFilterTimestampMs = now;
+      const alpha = 1 - Math.exp(-2 * Math.PI * X_FILTER_CUTOFF_HZ * dtSeconds);
+
+      if (!this.xFilterInitialized) {
+        this.xFilterInitialized = true;
+        this.filteredX = targetX;
+      } else {
+        const delta = targetX - this.filteredX;
+        this.filteredX =
+          Math.abs(delta) <= X_FILTER_DEADBAND_PX
+            ? targetX
+            : this.filteredX + delta * alpha;
+      }
+
+      this.style.setProperty('--obc-poi-data-x', `${this.filteredX}px`);
+      this.markXMoving();
     }
     if (
       changedProperties.has('buttonY') ||

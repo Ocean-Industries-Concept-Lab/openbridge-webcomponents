@@ -7,9 +7,6 @@ import {ObcPoiGroup} from '../poi-group/poi-group.js';
 import {ObcPoiData, PoiDataValue} from '../poi-data/poi-data.js';
 import '../building-blocks/poi-header/poi-header.js';
 
-const SUPPORTS_TRANSLATE =
-  typeof document !== 'undefined' &&
-  'translate' in document.createElement('div').style;
 const JUMP_DURATION_MS = 100;
 const JUMP_BEZIER = [0.2, 0, 0, 1] as const;
 
@@ -418,23 +415,18 @@ export class ObcPoiLayerStack extends LitElement {
       const [x1, y1, x2, y2] = JUMP_BEZIER;
       const easing = `cubic-bezier(${x1}, ${y1}, ${x2}, ${y2})`;
       target.style.willChange = 'transform';
-      const animation = SUPPORTS_TRANSLATE
-        ? target.animate(
-            [{translate: `${dx}px ${dy}px`}, {translate: '0px 0px'}],
-            {duration, easing}
-          )
-        : target.animate(
-            [
-              {
-                transform:
-                  baseTransform === 'none'
-                    ? `translate(${dx}px, ${dy}px)`
-                    : `translate(${dx}px, ${dy}px) ${baseTransform}`,
-              },
-              {transform: baseTransform === 'none' ? 'none' : baseTransform},
-            ],
-            {duration, easing}
-          );
+      const animation = target.animate(
+        [
+          {
+            transform:
+              baseTransform === 'none'
+                ? `translate(${dx}px, ${dy}px)`
+                : `translate(${dx}px, ${dy}px) ${baseTransform}`,
+          },
+          {transform: baseTransform === 'none' ? 'none' : baseTransform},
+        ],
+        {duration, easing}
+      );
       const completeMove = () => {
         target.style.willChange = '';
         this.requestLayerGrouping(nextLayer);

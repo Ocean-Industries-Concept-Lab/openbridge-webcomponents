@@ -84,8 +84,8 @@ const meta: Meta<PoiControllerArgs> = {
             slot="stack"
             selection-mode=${PoiLayerSelectionMode.Single}
           >
-            <obc-poi-layer role="selected" .layerIndex=${0}></obc-poi-layer>
-            <obc-poi-layer role="default" .layerIndex=${1}></obc-poi-layer>
+            <obc-poi-layer is-selected></obc-poi-layer>
+            <obc-poi-layer data-controller-layer="background"></obc-poi-layer>
           </obc-poi-layer-stack>
         </obc-poi-controller>
       </div>
@@ -149,7 +149,7 @@ export const SelectionMultiAnimated: Story = {
             class="stack-animated"
             selection-mode=${PoiLayerSelectionMode.Multi}
           >
-            <obc-poi-layer label="Layer A" role="selected" .layerIndex=${1}>
+            <obc-poi-layer label="Layer A" is-selected>
               <obc-poi-data
                 class="anim-poi p0"
                 .x=${520}
@@ -160,14 +160,8 @@ export const SelectionMultiAnimated: Story = {
                 .fixedTarget=${false}
               ></obc-poi-data>
             </obc-poi-layer>
-            <obc-poi-layer
-              label="Layer B"
-              role="filtered"
-              type-filter="enhanced"
-              .layerIndex=${2}
-            >
-            </obc-poi-layer>
-            <obc-poi-layer label="Layer C" role="default" .layerIndex=${3}>
+            <obc-poi-layer label="Layer B"></obc-poi-layer>
+            <obc-poi-layer label="Layer C" data-controller-layer="background">
               <obc-poi-data
                 class="anim-poi p1"
                 .x=${170}

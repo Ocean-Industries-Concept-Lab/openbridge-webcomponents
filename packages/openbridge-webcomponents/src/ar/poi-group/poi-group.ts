@@ -10,6 +10,7 @@ import {
   easeInOutQuad,
   smoothStep,
 } from './animation-utils.js';
+import {getEffectivePoiX} from '../building-blocks/poi/poi-position.js';
 
 const POI_TOUCH_TARGET_VAR = '--maneuvering-components-poi-button-touch-target';
 const POI_GROUP_SPACING_VAR = '--obc-poi-group-expanded-spacing';
@@ -719,23 +720,7 @@ export class ObcPoiGroup extends LitElement {
   }
 
   private getCurrentLeft(element: HTMLElement): number {
-    const inline = element.style.left;
-    if (inline && inline.endsWith('px')) {
-      const parsed = Number.parseFloat(inline);
-      if (!Number.isNaN(parsed)) {
-        const transformOffset = Number.parseFloat(
-          getComputedStyle(element).getPropertyValue(
-            '--obc-poi-target-offset-x'
-          )
-        );
-        return (
-          parsed + (Number.isFinite(transformOffset) ? transformOffset : 0)
-        );
-      }
-    }
-
-    const computedStyle = window.getComputedStyle(element).left;
-    const computedLeft = Number.parseFloat(computedStyle) || 0;
+    const computedLeft = getEffectivePoiX(element);
     const transformOffset = Number.parseFloat(
       getComputedStyle(element).getPropertyValue('--obc-poi-target-offset-x')
     );

@@ -42,7 +42,8 @@ import {
  * ### Best Practices
  * - Keep detection lists small for smooth updates.
  * - Prefer stable IDs or a `keyFn` when detections reorder frequently.
- * - Configure your layer stack with appropriate roles and layer indices.
+ * - Mark exactly one layer as `is-selected` when using stack selection behavior.
+ * - Use `data-controller-layer="background"` on a layer when controller output must target a specific layer.
  *
  * ### Keywords
  * - AR, POI, detections, media overlay, layer stack, targets
@@ -52,10 +53,8 @@ import {
  * <obc-poi-controller fit="contain">
  *   <video slot="media" src="media.mp4"></video>
  *   <obc-poi-layer-stack slot="stack" selection-mode="multi">
- *     <obc-poi-layer label="Selected" role="selected" layerIndex="0">
- *     </obc-poi-layer>
- *     <obc-poi-layer label="Active" layerIndex="1"></obc-poi-layer>
- *     <obc-poi-layer label="Background" role="default" layerIndex="2">
+ *     <obc-poi-layer label="Selected" is-selected></obc-poi-layer>
+ *     <obc-poi-layer label="Background" data-controller-layer="background">
  *     </obc-poi-layer>
  *   </obc-poi-layer-stack>
  * </obc-poi-controller>
@@ -361,12 +360,18 @@ export class ObcPoiController extends LitElement {
 
     const explicitLayer = stack.querySelector(
       'obc-poi-layer[data-controller-layer="background"]'
-    );
-    const roleDefault = stack.querySelector('obc-poi-layer[role="default"]');
+    ) as HTMLElement | null;
     const layers = Array.from(
       stack.querySelectorAll('obc-poi-layer')
     ) as HTMLElement[];
-    const layer = explicitLayer ?? roleDefault ?? layers[layers.length - 1];
+    const isSelectedLayer = (layer: HTMLElement): boolean =>
+      (layer as HTMLElement & {isSelected?: boolean}).isSelected === true ||
+      layer.hasAttribute('is-selected');
+    const firstNonSelectedLayer = layers.find(
+      (layer) => !isSelectedLayer(layer)
+    );
+    const layer =
+      explicitLayer ?? firstNonSelectedLayer ?? layers[layers.length - 1];
     if (!layer) return;
 
     const active = this.getActiveDetections();

@@ -1,4 +1,5 @@
 import {ObcPoiData} from '../poi-data/poi-data.js';
+import {getEffectivePoiX} from '../building-blocks/poi/poi-position.js';
 
 interface UpdateCrossingModeParams {
   targets: ObcPoiData[];
@@ -45,7 +46,7 @@ function updateCrossingModeState({
   const deltas = new Map<ObcPoiData, number>();
 
   targets.forEach((target) => {
-    const left = Number.parseFloat(target.style.left) || 0;
+    const left = getEffectivePoiX(target);
     currentPositions.set(target, left);
 
     const prevPos = previousPositions.get(target);

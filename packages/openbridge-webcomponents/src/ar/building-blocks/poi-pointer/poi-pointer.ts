@@ -33,9 +33,13 @@ const BUTTON_SELECTION_FRAME_SIZE_PX = 39;
 const BUTTON_SELECTION_FRAME_BOX_OFFSET_PX =
   BUTTON_SELECTION_FRAME_SIZE_PX - OBC_POI_SELECTION_FRAME_MIN_CUSTOM_SIZE_PX;
 const POINT_SIZE_PX = 32;
+const POINT_SELECTION_FRAME_BOX_OFFSET_PX =
+  POINT_SIZE_PX - OBC_POI_SELECTION_FRAME_MIN_CUSTOM_SIZE_PX;
 const BUTTON_SIZE_PX = 48;
 const CAMERA_WIDTH_PX = 52;
 const CAMERA_HEIGHT_PX = 44;
+const BOX_FILTER_CUTOFF_HZ = 14;
+const BOX_FILTER_DEADBAND_PX = 0.25;
 
 /**
  * `<obc-poi-pointer>` - Target pointer component for point, button, and camera marker shapes.
@@ -95,6 +99,11 @@ export class ObcPoiPointer extends LitElement {
   @property({type: Number, attribute: 'box-height'})
   boxHeight: number | null = null;
 
+  private filteredBoxWidth = 0;
+  private filteredBoxHeight = 0;
+  private boxFilterInitialized = false;
+  private lastFilterTimestampMs = 0;
+
   private get shouldUseBoxDimensions(): boolean {
     if (this.type === ObcPoiPointerType.Point) {
       return this.state === ObcPoiPointerState.Selected;
@@ -132,9 +141,37 @@ export class ObcPoiPointer extends LitElement {
     return this.boxHeight;
   }
 
+  private get targetBoxWidth(): number {
+    return this.resolvedBoxWidth ?? 0;
+  }
+
+  private get targetBoxHeight(): number {
+    return this.resolvedBoxHeight ?? 0;
+  }
+
+  private filterBoxValue(
+    current: number,
+    target: number,
+    alpha: number
+  ): number {
+    const delta = target - current;
+    if (Math.abs(delta) <= BOX_FILTER_DEADBAND_PX) {
+      return current;
+    }
+
+    return current + delta * alpha;
+  }
+
   private get wrapperStyle(): string | null {
-    const width = this.resolvedBoxWidth;
-    const height = this.resolvedBoxHeight;
+    if (
+      this.type === ObcPoiPointerType.Point &&
+      this.state === ObcPoiPointerState.Selected
+    ) {
+      return null;
+    }
+
+    const width = this.filteredBoxWidth > 0 ? this.filteredBoxWidth : null;
+    const height = this.filteredBoxHeight > 0 ? this.filteredBoxHeight : null;
     const styles: string[] = [];
 
     if (width !== null) {
@@ -166,17 +203,17 @@ export class ObcPoiPointer extends LitElement {
     const isPoint = this.type === ObcPoiPointerType.Point;
     const isButton = this.type === ObcPoiPointerType.Button;
     const hasBoxOverrides =
-      this.resolvedBoxWidth !== null || this.resolvedBoxHeight !== null;
+      this.filteredBoxWidth > 0 || this.filteredBoxHeight > 0;
     const useCustomMode = isPoint || (isButton && hasBoxOverrides);
     const frameType = isPoint
       ? ObcPoiSelectionFrameType.Indicator
       : ObcPoiSelectionFrameType.Button;
     const customBoxWidth = isPoint
-      ? this.resolvedBoxWidth
-      : BUTTON_SELECTION_FRAME_BOX_OFFSET_PX + (this.resolvedBoxWidth ?? 0);
+      ? POINT_SELECTION_FRAME_BOX_OFFSET_PX + this.filteredBoxWidth
+      : BUTTON_SELECTION_FRAME_BOX_OFFSET_PX + this.filteredBoxWidth;
     const customBoxHeight = isPoint
-      ? this.resolvedBoxHeight
-      : BUTTON_SELECTION_FRAME_BOX_OFFSET_PX + (this.resolvedBoxHeight ?? 0);
+      ? POINT_SELECTION_FRAME_BOX_OFFSET_PX + this.filteredBoxHeight
+      : BUTTON_SELECTION_FRAME_BOX_OFFSET_PX + this.filteredBoxHeight;
 
     return html`
       <div class="square-frame" aria-hidden="true">
@@ -210,9 +247,9 @@ export class ObcPoiPointer extends LitElement {
           .state=${ObcPoiSelectionFrameState.Regular}
           .customMode=${true}
           .boxWidth=${CAMERA_SELECTION_FRAME_BOX_WIDTH_PX +
-          (this.resolvedBoxWidth ?? 0)}
+          this.filteredBoxWidth}
           .boxHeight=${CAMERA_SELECTION_FRAME_BOX_HEIGHT_PX +
-          (this.resolvedBoxHeight ?? 0)}
+          this.filteredBoxHeight}
         ></obc-poi-selection-frame>
       </div>
     `;
@@ -293,24 +330,53 @@ export class ObcPoiPointer extends LitElement {
   }
 
   protected override updated(_changedProperties: PropertyValues): void {
-    const extraWidth = this.resolvedBoxWidth ?? 0;
-    const extraHeight = this.resolvedBoxHeight ?? 0;
+    const targetWidth = this.targetBoxWidth;
+    const targetHeight = this.targetBoxHeight;
+
+    const now = performance.now();
+    const dtSeconds =
+      this.lastFilterTimestampMs > 0
+        ? Math.min(
+            0.25,
+            Math.max(1 / 120, (now - this.lastFilterTimestampMs) / 1000)
+          )
+        : 1 / 60;
+    this.lastFilterTimestampMs = now;
+
+    const alpha = 1 - Math.exp(-2 * Math.PI * BOX_FILTER_CUTOFF_HZ * dtSeconds);
+
+    if (!this.boxFilterInitialized) {
+      this.boxFilterInitialized = true;
+      this.filteredBoxWidth = targetWidth;
+      this.filteredBoxHeight = targetHeight;
+    } else {
+      this.filteredBoxWidth = this.filterBoxValue(
+        this.filteredBoxWidth,
+        targetWidth,
+        alpha
+      );
+      this.filteredBoxHeight = this.filterBoxValue(
+        this.filteredBoxHeight,
+        targetHeight,
+        alpha
+      );
+    }
 
     let widthPx = POINT_SIZE_PX;
     let heightPx = POINT_SIZE_PX;
 
     if (this.type === ObcPoiPointerType.Button) {
-      widthPx = BUTTON_SIZE_PX + extraWidth;
-      heightPx = BUTTON_SIZE_PX + extraHeight;
+      widthPx = BUTTON_SIZE_PX + this.filteredBoxWidth;
+      heightPx = BUTTON_SIZE_PX + this.filteredBoxHeight;
     } else if (this.type === ObcPoiPointerType.Camera) {
-      widthPx = CAMERA_WIDTH_PX + extraWidth;
-      heightPx = CAMERA_HEIGHT_PX + extraHeight;
+      widthPx = CAMERA_WIDTH_PX + this.filteredBoxWidth;
+      heightPx = CAMERA_HEIGHT_PX + this.filteredBoxHeight;
     } else if (
       this.type === ObcPoiPointerType.Point &&
       this.state === ObcPoiPointerState.Selected
     ) {
-      widthPx = POINT_SIZE_PX + extraWidth;
-      heightPx = POINT_SIZE_PX + extraHeight;
+      widthPx = POINT_SIZE_PX;
+      heightPx = POINT_SIZE_PX;
     }
 
     this.style.width = `${widthPx}px`;
