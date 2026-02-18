@@ -702,7 +702,6 @@ export class ObcPoiGroup extends LitElement {
         config.currentExpandedOffset = smoothStep(
           config.currentExpandedOffset,
           config.expandedOffset,
-          config.currentExpandedOffset,
           0.1
         );
       }
@@ -851,8 +850,8 @@ export class ObcPoiGroup extends LitElement {
       return;
     }
 
-    const adjustedHeight = Math.max(0, (frontHeight ?? 0) * 0.95);
-    const shift = Math.max(0, (frontHeight ?? 0) - adjustedHeight);
+    const adjustedHeight = Math.max(0, frontHeight * 0.95);
+    const shift = Math.max(0, frontHeight - adjustedHeight);
     target.style.setProperty(
       '--obc-poi-group-overlap-height',
       `${adjustedHeight}px`

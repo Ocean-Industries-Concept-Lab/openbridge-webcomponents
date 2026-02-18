@@ -7,6 +7,7 @@ import {createRef, ref} from 'lit/directives/ref.js';
 import '../poi-button-data/poi-button-data.js';
 import '../../icons/icon-ais-target-activated-iec.js';
 import '../poi-data/poi-data.js';
+import '../building-blocks/poi-header/poi-header.js';
 import {ObcPoiData, PoiDataValue} from '../poi-data/poi-data.js';
 
 const isVitestBrowser = Boolean(
@@ -160,33 +161,41 @@ export const GroupedWithNumbers: Story = {
           >
             <obc-poi-data
               id="target-3"
-              .header=${{content: '3'}}
+              .hasHeader=${true}
               .x=${300}
               .buttonY=${200}
               .y=${150}
-            ></obc-poi-data>
+            >
+              <obc-poi-header slot="header" content="3"></obc-poi-header>
+            </obc-poi-data>
             <obc-poi-data
               id="target-1"
-              .header=${{content: '1'}}
+              .hasHeader=${true}
               .x=${320}
               .buttonY=${200}
               .y=${150}
-            ></obc-poi-data>
+            >
+              <obc-poi-header slot="header" content="1"></obc-poi-header>
+            </obc-poi-data>
             <obc-poi-data
               id="target-2"
-              .header=${{content: '2'}}
+              .hasHeader=${true}
               .x=${340}
               .buttonY=${200}
               .y=${150}
-            ></obc-poi-data>
+            >
+              <obc-poi-header slot="header" content="2"></obc-poi-header>
+            </obc-poi-data>
           </obc-poi-group>
           <obc-poi-data
             id="outside"
-            .header=${{content: '4'}}
+            .hasHeader=${true}
             .x=${200}
             .buttonY=${200}
             .y=${200}
-          ></obc-poi-data>
+          >
+            <obc-poi-header slot="header" content="4"></obc-poi-header>
+          </obc-poi-data>
         </div>
       </div>
     `;

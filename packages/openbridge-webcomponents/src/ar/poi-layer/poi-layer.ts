@@ -27,9 +27,6 @@ const POI_LARGE_VISUAL_TARGET_OVERLAP_VAR =
   '--maneuvering-components-poi-button-large-visual-target-round-overlap';
 const POI_CROSSING_MIN_GAP_VAR = '--obc-poi-layer-crossing-min-gap';
 
-/**
- * Interface for POI button group element properties used by the layer.
- */
 interface PoiButtonGroupElement extends HTMLElement {
   expand?: boolean;
   collapsing?: boolean;
@@ -1187,22 +1184,16 @@ export class ObcPoiLayer extends LitElement {
     `;
   }
 
-  /**
-   * Get a CSS variable value as a number (strips 'px' suffix).
-   * Falls back to the provided default if the variable is not set or invalid.
-   */
   private getCssVarAsNumber(varName: string, fallback: number): number {
     const raw = getComputedStyle(this).getPropertyValue(varName).trim();
     const parsed = Number.parseFloat(raw);
     return Number.isFinite(parsed) ? parsed : fallback;
   }
 
-  /** Get the touch target size from CSS variables (default 48px) */
   private getTouchTargetSize(): number {
     return this.getCssVarAsNumber(POI_TOUCH_TARGET_VAR, 48);
   }
 
-  /** Get the visual target size for a given type and overlap state */
   private getVisualTargetSize(isEnhanced: boolean, isOverlap: boolean): number {
     if (isEnhanced) {
       return isOverlap

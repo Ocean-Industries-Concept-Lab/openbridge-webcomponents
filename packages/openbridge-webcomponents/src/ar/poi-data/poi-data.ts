@@ -48,12 +48,17 @@ export {ObcPoiValue as PoiDataValue};
  * - Use `fixedTarget=false` when `buttonY` should represent button position.
  * - Use `fixedTarget=true` when `buttonY` should represent target position and line length should offset upward.
  * - Keep geometry values finite to avoid fallback behavior.
+ * - Component choice:
+ *   - Use `<obc-poi-data>` for data-oriented callouts with built-in connector/pointer behavior and per-item layout control.
+ *   - Use `<obc-poi>` for lower-level marker rendering when you do not need this data wrapper behavior.
+ *   - Use `<obc-poi-layer>` when multiple markers need coordinated overlap/stacking management.
+ *   - Use `<obc-poi-group>` when related markers should expand/collapse together as one grouped interaction.
  *
  * ## Slots/Content
  * - `header`: Optional custom header content forwarded into `obc-poi`.
  *
  * ## Events
- * - `obc-poi-data-layout-change`: Fired when layout-driving properties change (`x`, `buttonY`, `y`, `lineCompensationY`, `fixedTarget`).
+ * - `obc-poi-data-layout-change`: Fired when layout-driving properties change (`x`, `y`, `buttonY`, `buttonOffsetX`, `targetOffsetX`, `lineCompensationY`, `fixedTarget`, `selected`, `type`).
  *
  * ## Best Practices
  * - Treat `obc-poi-data-layout-change` as a signal to recompute overlap/grouping layout.
@@ -66,7 +71,7 @@ export {ObcPoiValue as PoiDataValue};
  * ```
  *
  * @slot header - Optional custom header content forwarded into `obc-poi`.
- * @fires obc-poi-data-layout-change {CustomEvent<void>} Fired when layout-driving properties change.
+ * @fires obc-poi-data-layout-change {CustomEvent<void>} Fired when layout-driving properties change (`x`, `y`, `buttonY`, `buttonOffsetX`, `targetOffsetX`, `lineCompensationY`, `fixedTarget`, `selected`, `type`).
  */
 @customElement('obc-poi-data')
 export class ObcPoiData extends LitElement {
@@ -123,8 +128,12 @@ export class ObcPoiData extends LitElement {
       changedProperties.has('x') ||
       changedProperties.has('buttonY') ||
       changedProperties.has('y') ||
+      changedProperties.has('buttonOffsetX') ||
+      changedProperties.has('targetOffsetX') ||
       changedProperties.has('lineCompensationY') ||
-      changedProperties.has('fixedTarget')
+      changedProperties.has('fixedTarget') ||
+      changedProperties.has('selected') ||
+      changedProperties.has('type')
     ) {
       this.dispatchEvent(
         new CustomEvent('obc-poi-data-layout-change', {

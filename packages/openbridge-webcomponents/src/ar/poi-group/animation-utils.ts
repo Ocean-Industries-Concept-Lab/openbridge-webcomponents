@@ -100,9 +100,8 @@ export function lerp(from: number, to: number, t: number): number {
  * Smooth step interpolation with configurable speed
  */
 export function smoothStep(
-  from: number,
-  to: number,
   current: number,
+  to: number,
   speed: number = 0.1
 ): number {
   const diff = to - current;
