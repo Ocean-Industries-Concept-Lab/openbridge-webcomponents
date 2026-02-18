@@ -5,6 +5,10 @@ import './poi-layer-stack.js';
 import '../poi-layer/poi-layer.js';
 import '../poi-data/poi-data.js';
 
+const isVitestBrowser = Boolean(
+  (globalThis as {__vitest_browser__?: unknown}).__vitest_browser__
+);
+
 type PoiLayerStackArgs = {
   label: string;
   debug: boolean;
@@ -46,6 +50,15 @@ type AnimatedPoiData = HTMLElement & {
   y: number;
   boxWidth: number | null;
   boxHeight: number | null;
+};
+
+const waitForStorySettle = async () => {
+  if ('fonts' in document) {
+    await (document as Document & {fonts?: FontFaceSet}).fonts?.ready;
+  }
+  await new Promise<void>((resolve) =>
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+  );
 };
 
 const renderTwoLayers = (args: PoiLayerStackArgs) => html`
@@ -119,6 +132,9 @@ export const SelectionMulti: Story = {
     selectionMode: PoiLayerSelectionMode.Multi,
   },
   render: renderThreeLayers,
+  play: async () => {
+    await waitForStorySettle();
+  },
 };
 
 export const SelectionMultiAnimated: Story = {
@@ -194,6 +210,8 @@ export const SelectionMultiAnimated: Story = {
     `;
   },
   play: async ({canvasElement}) => {
+    await waitForStorySettle();
+
     const root = canvasElement.querySelector(
       '.stack-animated'
     ) as HTMLElement | null;
@@ -224,6 +242,31 @@ export const SelectionMultiAnimated: Story = {
     const ampH = [8, 10, 12, 9, 13, 10];
     const freq = [0.72, 0.51, 0.66, 0.61, 0.56, 0.69];
     const phase = [0.15, 0.9, 1.8, 2.45, 3.15, 3.85];
+
+    if (isVitestBrowser) {
+      const t = 1.75;
+      targets.forEach((target, i) => {
+        const waveX = t * freq[i] + phase[i];
+        const waveY = t * (freq[i] + 0.18) + phase[i] * 0.72;
+        const waveW = t * (freq[i] + 0.22) + phase[i] * 1.13;
+        const waveH = t * (freq[i] + 0.31) + phase[i] * 0.84;
+        target.x = base[i].x + ampX[i] * Math.sin(waveX);
+        target.y = base[i].y + ampY[i] * Math.cos(waveY);
+        target.boxWidth = Math.max(
+          32,
+          base[i].boxWidth + ampW[i] * (0.5 + 0.5 * Math.sin(waveW))
+        );
+        target.boxHeight = Math.max(
+          32,
+          base[i].boxHeight + ampH[i] * (0.5 + 0.5 * Math.cos(waveH))
+        );
+      });
+
+      await new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+      );
+      return;
+    }
 
     let rafId = 0;
     const tick = (now: number) => {

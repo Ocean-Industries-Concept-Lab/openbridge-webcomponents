@@ -11,42 +11,54 @@ import {
 } from '../building-blocks/poi-button/poi-button.js';
 
 /**
- * `<obc-poi-controller>` maps detections onto media and renders POI overlays.
+ * `<obc-poi-controller>` - Detection-to-overlay controller that maps points to POI markers (pins/targets) over media.
  *
- * ObcPoiController coordinates media sizing with detection data, projects
- * points into screen space, and renders or updates POI targets in a layer
- * stack. Use it as the top-level controller for AR target overlays.
+ * Coordinates media metrics, detection input, and layer output to keep marker placement in sync with the current frame.
+ * Use this when you need runtime mapping from detection data to rendered POI targets.
  *
- * ### Features
- * - Maps detections to screen coordinates with `fit`, `boxOrigin`, and
- *   `poiAnchor`.
- * - Uses rendered `box_width`/`box_height` to choose POI target size variant.
- * - Supports frame-based detection playback via `frames` and `frameIndex`.
- * - Filters detections with `confidenceMin` and `classFilter`.
- * - Generates stable target keys via `keyFn` when needed.
+ * ### Overview
+ * - Keywords: POI, point-of-interest, marker, pin, target, detection, overlay, tracker.
+ * - Contrast:
+ *   - `obc-poi-controller` handles data ingestion, projection, filtering, and target lifecycle.
+ *   - `obc-poi-layer` handles overlap/group behavior for targets already placed in a layer.
+ *   - `obc-poi-data` / `obc-poi` are target-level components and do not manage detection streams.
+ *
+ * ### Features/Variants
+ * - Detection source selection:
+ *   - `detections` (array) is used directly when provided.
+ *   - `frames` + `frameIndex` supports frame/timestamp-driven playback when `detections` is not provided.
+ * - Projection config:
+ *   - `fit` (`contain` default, `cover` optional) controls scale mode from media space to rendered space.
+ *   - `boxOrigin` (`top-left` default, `center` optional): **TODO(designer)** Confirm intended mapping behavior; property is declared but not consumed in this controller logic.
+ *   - `poiAnchor` (`bottom-center` default, `center` optional): **TODO(designer)** Confirm intended anchor behavior; property is declared but not consumed in this controller logic.
+ * - Target shaping:
+ *   - Uses mapped `box_width`/`box_height` to resolve POI button type.
+ * - Filtering:
+ *   - `confidenceMin` and `classFilter` remove detections before render.
+ * - Stable identity:
+ *   - Key resolution order is `det.id`, then `keyFn(det, index)`, then index fallback.
  *
  * ### Usage Guidelines
- * - Provide a media element in the required `media` slot.
- * - Provide an `obc-poi-layer-stack` in the required `stack` slot.
- * - Provide `detections` or `frames` to render targets.
- * - Use `fit="contain|cover"` to match media and overlay sizing.
- * - Use `boxOrigin` and `poiAnchor` to align detections to POI targets.
+ * - Required inputs:
+ *   - Provide a media element in slot `media`.
+ *   - Provide an `obc-poi-layer-stack` in slot `stack`.
+ * - Data flow:
+ *   - Use `detections` for direct, current-frame updates.
+ *   - Use `frames` for timeline/video synchronization.
+ *   - Use `frameIndex` to force a specific frame; default `null` selects by nearest video timestamp (or first frame for non-video media).
+ * - Identity:
+ *   - Provide stable `id` in detections or set `keyFn` to avoid marker churn when ordering changes.
  *
- * ### Slots
- * - `media` (required) - The video or image element used as the source frame.
- * - `stack` (required) - An `obc-poi-layer-stack` to render into.
+ * ### Slots/Content
+ * - `media` (required): Video or image source used for measurement and timing.
+ * - `stack` (required): `obc-poi-layer-stack` container where controller-managed targets are appended.
  *
  * ### Events
  * - None. This component does not emit custom events.
  *
  * ### Best Practices
- * - Keep detection lists small for smooth updates.
- * - Prefer stable IDs or a `keyFn` when detections reorder frequently.
- * - Mark exactly one layer as `is-selected` when using stack selection behavior.
- * - Use `data-controller-layer="background"` on a layer when controller output must target a specific layer.
- *
- * ### Keywords
- * - AR, POI, detections, media overlay, layer stack, targets
+ * - Keep detection arrays compact to reduce DOM churn.
+ * - Prefer one selected layer in the stack and use `data-controller-layer="background"` when routing output to a specific layer.
  *
  * ### Example
  * ```html

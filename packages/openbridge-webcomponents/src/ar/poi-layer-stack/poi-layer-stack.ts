@@ -441,6 +441,23 @@ export class ObcPoiLayerStack extends LitElement {
     return {x: rect.left + rect.width / 2, y: rect.bottom};
   }
 
+  private getPreferredVisualAnchorRect(options: {
+    buttonWrapper: HTMLElement | null;
+    button: HTMLElement | undefined;
+    wrapper: HTMLElement | null;
+    poi: HTMLElement | undefined;
+    target: ObcPoiData;
+  }): DOMRect {
+    const {buttonWrapper, button, wrapper, poi, target} = options;
+    return (
+      buttonWrapper?.getBoundingClientRect() ??
+      button?.getBoundingClientRect() ??
+      wrapper?.getBoundingClientRect() ??
+      poi?.getBoundingClientRect() ??
+      target.getBoundingClientRect()
+    );
+  }
+
   private getTargetVisualAnchor(target: ObcPoiData): {x: number; y: number} {
     const targetShadow = target.shadowRoot;
     const poi = targetShadow?.querySelector('obc-poi') as
@@ -460,14 +477,13 @@ export class ObcPoiLayerStack extends LitElement {
     const wrapper = buttonShadow?.querySelector(
       '.wrapper'
     ) as HTMLElement | null;
-    const rect =
-      // Anchor math must ignore header mount/unmount, so prefer the fixed
-      // button wrapper over the overall wrapper that grows/shrinks with labels.
-      buttonWrapper?.getBoundingClientRect() ??
-      button?.getBoundingClientRect() ??
-      wrapper?.getBoundingClientRect() ??
-      poi?.getBoundingClientRect() ??
-      target.getBoundingClientRect();
+    const rect = this.getPreferredVisualAnchorRect({
+      buttonWrapper,
+      button,
+      wrapper,
+      poi,
+      target,
+    });
     return this.getRectBottomCenter(rect);
   }
 
@@ -627,7 +643,7 @@ export class ObcPoiLayerStack extends LitElement {
       try {
         const elapsed = now - startTime;
         const progress = Math.min(elapsed / duration, 1);
-        const eased = this.cubicBezier(x1, y1, x2, y2, progress);
+        const eased = this.evaluateCubicBezier(x1, y1, x2, y2, progress);
         const nextCompensation =
           startCompensation + (targetCompensation - startCompensation) * eased;
         target.lineCompensationY = nextCompensation;
@@ -665,19 +681,7 @@ export class ObcPoiLayerStack extends LitElement {
     );
   }
 
-  /**
-   * Evaluates a cubic Bezier easing function at time t.
-   * Uses Newton-Raphson to solve for the y-value given x (time).
-   * Matches CSS cubic-bezier() for synchronizing JS animations with CSS.
-   *
-   * @param x1 - First control point x (0-1)
-   * @param y1 - First control point y
-   * @param x2 - Second control point x (0-1)
-   * @param y2 - Second control point y
-   * @param t - Time progress (0-1)
-   * @returns Eased value
-   */
-  private cubicBezier(
+  private evaluateCubicBezier(
     x1: number,
     y1: number,
     x2: number,

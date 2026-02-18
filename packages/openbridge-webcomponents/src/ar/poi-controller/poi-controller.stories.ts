@@ -4,6 +4,10 @@ import './poi-controller.js';
 import {PoiFitMode} from './poi-controller.js';
 import {PoiLayerSelectionMode} from '../poi-layer-stack/poi-layer-stack.js';
 
+const isVitestBrowser = Boolean(
+  (globalThis as {__vitest_browser__?: unknown}).__vitest_browser__
+);
+
 type PoiControllerArgs = {
   fit: PoiFitMode;
   classFilter: string[];
@@ -15,6 +19,27 @@ type AnimatedPoiData = HTMLElement & {
   boxWidth: number | null;
   boxHeight: number | null;
   relativeDirection: number;
+};
+
+const waitForStorySettle = async (canvasElement: HTMLElement) => {
+  const image = canvasElement.querySelector(
+    '.stage img'
+  ) as HTMLImageElement | null;
+  if (image && !image.complete) {
+    await new Promise<void>((resolve) => {
+      const done = () => resolve();
+      image.addEventListener('load', done, {once: true});
+      image.addEventListener('error', done, {once: true});
+    });
+  }
+
+  if ('fonts' in document) {
+    await (document as Document & {fonts?: FontFaceSet}).fonts?.ready;
+  }
+
+  await new Promise<void>((resolve) =>
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+  );
 };
 
 const meta: Meta<PoiControllerArgs> = {
@@ -79,7 +104,7 @@ const meta: Meta<PoiControllerArgs> = {
           .fit=${args.fit}
           .classFilter=${args.classFilter}
         >
-          <img slot="media" src="/AR-test-image.png" />
+          <img slot="media" src="/assets/AR-test-image.png" />
           <obc-poi-layer-stack
             slot="stack"
             selection-mode=${PoiLayerSelectionMode.Single}
@@ -98,6 +123,9 @@ type Story = StoryObj<PoiControllerArgs>;
 
 export const Primary: Story = {
   args: {},
+  play: async ({canvasElement}) => {
+    await waitForStorySettle(canvasElement);
+  },
 };
 
 export const SelectionMultiAnimated: Story = {
@@ -143,7 +171,7 @@ export const SelectionMultiAnimated: Story = {
           .fit=${args.fit}
           .classFilter=${args.classFilter}
         >
-          <img slot="media" src="/AR-test-image.png" />
+          <img slot="media" src="/assets/AR-test-image.png" />
           <obc-poi-layer-stack
             slot="stack"
             class="stack-animated"
@@ -209,6 +237,8 @@ export const SelectionMultiAnimated: Story = {
     `;
   },
   play: async ({canvasElement}) => {
+    await waitForStorySettle(canvasElement);
+
     const root = canvasElement.querySelector(
       '.controller-animated'
     ) as HTMLElement | null;
@@ -252,6 +282,44 @@ export const SelectionMultiAnimated: Story = {
       ((((deg + 180) % 360) + 360) % 360) - 180;
     const lerpAngleDeg = (from: number, to: number, alpha: number): number =>
       normalizeDeg(from + normalizeDeg(to - from) * alpha);
+
+    if (isVitestBrowser) {
+      const t = 1.75;
+      targets.forEach((target, i) => {
+        const wave = t * freq[i] + phase[i];
+        const waveW = t * (freq[i] + 0.22) + phase[i] * 1.13;
+        const waveH = t * (freq[i] + 0.31) + phase[i] * 0.84;
+        const dirX = driftDirX[i];
+        const dirY = driftDirY[i];
+        const perpX = -dirY;
+        const perpY = dirX;
+        const forward = driftRange[i] * Math.sin(wave);
+        const lateralWave = wave * 0.6 + phase[i] * 0.5;
+        const lateral = lateralRange[i] * Math.sin(lateralWave);
+        target.x = base[i].x + dirX * forward + perpX * lateral;
+        target.y = base[i].y + dirY * forward + perpY * lateral;
+        target.boxWidth = Math.max(
+          32,
+          base[i].boxWidth + ampW[i] * (0.5 + 0.5 * Math.sin(waveW))
+        );
+        target.boxHeight = Math.max(
+          32,
+          base[i].boxHeight + ampH[i] * (0.5 + 0.5 * Math.cos(waveH))
+        );
+        const dForward = driftRange[i] * Math.cos(wave) * freq[i];
+        const dLateral =
+          lateralRange[i] * Math.cos(lateralWave) * (freq[i] * 0.6);
+        const vx = dirX * dForward + perpX * dLateral;
+        const vy = dirY * dForward + perpY * dLateral;
+        target.relativeDirection =
+          (Math.atan2(vy, vx) * 180) / Math.PI + headingOffsetDeg;
+      });
+
+      await new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+      );
+      return;
+    }
 
     let rafId = 0;
     const tick = (now: number) => {

@@ -154,6 +154,17 @@ const keyframes = {
   ]
 }
 
+const mapFrameToViewPosition = (x: number, h: number) => {
+  const height = arVideo.value?.getBoundingClientRect().height ?? 1
+  const labelHeight = height / 2 - 100
+
+  const xTransformed = (576 / 768) * (x - 50) + 50
+  const hPoint = ((h + 270) / 768) * height
+  const hTransformed = hPoint - labelHeight
+
+  return { x: xTransformed, y: hTransformed }
+}
+
 const setPosition = (
   t: number,
   frames: { t: number; x: number; h: number }[],
@@ -162,44 +173,35 @@ const setPosition = (
 ) => {
   if (f === null) throw new Error('f is null')
 
-  // Handle edge cases: before first or after last keyframe
+  let x = frames[0]?.x ?? 0
+  let h = frames[0]?.h ?? 0
+
   if (frames[0] && t <= frames[0].t) {
-    f.$el.y = frames[0].h
-    f.$el.style.left = `${frames[0].x}%`
-    return
-  }
-  if (frames[frames.length - 1] && t >= frames[frames.length - 1]!.t) {
-    f.$el.y = frames[frames.length - 1]!.h
-    f.$el.style.left = `${frames[frames.length - 1]!.x}%`
-    return
-  }
-
-  // Find the two closest keyframes
-  let i = 0
-  while (i < frames.length - 1 && t > frames[i + 1]!.t) {
-    i++
-  }
-  const kf0 = frames[i]!
-  const kf1 = frames[i + 1]!
-
-  // Linear interpolation
-  const alpha = (t - kf0.t) / (kf1.t - kf0.t)
-  const x = kf0.x + (kf1.x - kf0.x) * alpha
-  const h = kf0.h + (kf1.h - kf0.h) * alpha
-
-  const height = arVideo.value?.getBoundingClientRect().height ?? 1
-  const labelHeight = height / 2 - 100
-
-  const xTransformed = (576 / 768) * (x - 50) + 50
-  const hPoint = ((h + 270) / 768) * height
-  const hTransformed = hPoint - labelHeight
-  if (fast) {
-    xFast.value = { x: xTransformed, y: hTransformed }
+    x = frames[0].x
+    h = frames[0].h
+  } else if (frames[frames.length - 1] && t >= frames[frames.length - 1]!.t) {
+    x = frames[frames.length - 1]!.x
+    h = frames[frames.length - 1]!.h
   } else {
-    xLarge.value = { x: xTransformed, y: hTransformed }
+    let i = 0
+    while (i < frames.length - 1 && t > frames[i + 1]!.t) {
+      i++
+    }
+    const kf0 = frames[i]!
+    const kf1 = frames[i + 1]!
+
+    const alpha = (t - kf0.t) / (kf1.t - kf0.t)
+    x = kf0.x + (kf1.x - kf0.x) * alpha
+    h = kf0.h + (kf1.h - kf0.h) * alpha
+  }
+
+  const transformed = mapFrameToViewPosition(x, h)
+  if (fast) {
+    xFast.value = transformed
+  } else {
+    xLarge.value = transformed
   }
 }
-
 function handleKeydown(e: KeyboardEvent) {
   if (e.code === 'Space') {
     if (arVideo.value) {
