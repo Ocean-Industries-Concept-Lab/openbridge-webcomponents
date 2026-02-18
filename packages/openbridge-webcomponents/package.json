@@ -18,6 +18,7 @@
     "typecheck": "tsc --noEmit",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006 --no-open",
+    "prebuild-storybook": "npm run build:translations",
     "build-storybook": "storybook build",
     "storybook:server": "http-server -p 6006 storybook-static",
     "download:icons": "tsx ./script/download-icons.ts",
