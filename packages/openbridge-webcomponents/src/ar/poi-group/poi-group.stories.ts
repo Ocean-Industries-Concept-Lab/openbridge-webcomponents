@@ -415,6 +415,18 @@ export const InternalGroupSwapping: Story = {
     expand: true,
     internalSwapping: true,
   },
+  play: async ({canvasElement, args}) => {
+    if (!isVitestBrowser || !args.expand) return;
+    const group = canvasElement.querySelector(
+      'obc-poi-group'
+    ) as ObcPoiGroup | null;
+    if (!group) return;
+    await ((group as {updateComplete?: Promise<unknown>}).updateComplete ??
+      Promise.resolve());
+    await new Promise((resolve) => setTimeout(resolve, 40));
+    group.expand = true;
+    await new Promise((resolve) => setTimeout(resolve, 260));
+  },
   render: (args) => {
     const hostRef = createRef<HTMLDivElement>();
     let rafId = 0;
@@ -537,7 +549,7 @@ export const InternalGroupSwapping: Story = {
         <div class="stage" ${ref(hostRef)}>
           <obc-poi-group
             style="position: absolute; top: 0; left: 0;"
-            .expand=${args.expand}
+            .expand=${isVitestBrowser ? false : args.expand}
             .internalSwapping=${args.internalSwapping}
             positionVertical="calc(50% - 40px)"
             @expand=${(event: CustomEvent<{expand: boolean}>) => {
