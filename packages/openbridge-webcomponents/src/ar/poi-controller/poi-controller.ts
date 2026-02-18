@@ -4,7 +4,7 @@ import {customElement} from '../../decorator.js';
 import componentStyle from './poi-controller.css?inline';
 import '../poi-layer-stack/poi-layer-stack.js';
 import '../poi-layer/poi-layer.js';
-import '../poi-data/poi-data.js';
+import {ObcPoiData} from '../poi-data/poi-data.js';
 import {
   ObcPoiButtonType,
   resolvePoiButtonTypeFromBoxSize,
@@ -120,8 +120,6 @@ export class ObcPoiController extends LitElement {
   @property({type: Array}) classFilter: string[] | null = null;
   @property({attribute: false})
   keyFn: PoiKeyFn | null = null;
-  @property({type: String}) boxOrigin: PoiBoxOrigin = PoiBoxOrigin.TopLeft;
-  @property({type: String}) poiAnchor: PoiAnchor = PoiAnchor.BottomCenter;
 
   @state() private mediaWidth = 0;
   @state() private mediaHeight = 0;
@@ -136,16 +134,7 @@ export class ObcPoiController extends LitElement {
   private resizeObserver?: ResizeObserver;
   private handleMediaSlotChange = () => this.setupMediaObservers();
   private handleStackSlotChange = () => this.requestUpdate();
-  private controllerTargets = new Map<
-    string,
-    HTMLElement & {
-      x: number;
-      y: number;
-      buttonY: number | null;
-      fixedTarget?: boolean;
-      buttonType: string;
-    }
-  >();
+  private controllerTargets = new Map<string, ObcPoiData>();
   private currentMedia: HTMLVideoElement | HTMLImageElement | null = null;
   private mediaHandlers = {
     loadedmetadata: () => {
@@ -398,13 +387,7 @@ export class ObcPoiController extends LitElement {
 
       let target = this.controllerTargets.get(key);
       if (!target) {
-        target = document.createElement('obc-poi-data') as HTMLElement & {
-          x: number;
-          y: number;
-          buttonY: number | null;
-          fixedTarget?: boolean;
-          buttonType: string;
-        };
+        target = document.createElement('obc-poi-data') as ObcPoiData;
         target.dataset.controller = '1';
         target.dataset.detectionIndex = String(index);
         target.buttonType = ObcPoiButtonType.Button;

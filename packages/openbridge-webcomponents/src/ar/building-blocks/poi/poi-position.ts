@@ -1,3 +1,12 @@
+interface PoiXElement extends HTMLElement {
+  x: number;
+}
+
+function hasFinitePoiX(element: HTMLElement): element is PoiXElement {
+  const xValue = Reflect.get(element, 'x');
+  return typeof xValue === 'number' && Number.isFinite(xValue);
+}
+
 export function getEffectivePoiX(element: HTMLElement): number {
   const cssVarX = Number.parseFloat(
     element.style.getPropertyValue('--obc-poi-data-x')
@@ -20,9 +29,8 @@ export function getEffectivePoiX(element: HTMLElement): number {
     }
   }
 
-  const fallbackX = (element as {x?: unknown}).x;
-  if (typeof fallbackX === 'number' && Number.isFinite(fallbackX)) {
-    return fallbackX;
+  if (hasFinitePoiX(element)) {
+    return element.x;
   }
 
   return 0;

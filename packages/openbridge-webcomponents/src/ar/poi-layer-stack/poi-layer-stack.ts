@@ -82,14 +82,6 @@ export class ObcPoiLayerStack extends LitElement {
     this.selectionIds = new WeakMap<ObcPoiData, string>();
   }
 
-  override render() {
-    return html`
-      <div class="wrapper">
-        <slot></slot>
-      </div>
-    `;
-  }
-
   private onStackClick(event: Event) {
     if (this.selectionMode === PoiLayerSelectionMode.None) return;
     const target = this.getPoiTargetFromEvent(event);
@@ -99,7 +91,7 @@ export class ObcPoiLayerStack extends LitElement {
     const originLayer = this.getTargetLayer(target);
     if (!originLayer) return;
 
-    const selectedLayer = this.getSelectedLayer() ?? this.getTopLayer();
+    const selectedLayer = this.getLayer('selected') ?? this.getLayer('top');
     if (!selectedLayer) return;
 
     const existing = this.selectionMap.get(target);
@@ -177,35 +169,31 @@ export class ObcPoiLayerStack extends LitElement {
     });
   }
 
-  private getTopLayer(): ObcPoiLayer | null {
+  private getLayer(
+    kind: 'top' | 'secondTop' | 'selected' | 'default'
+  ): ObcPoiLayer | null {
     const layers = this.getAllLayers();
-    if (layers.length === 0) return null;
-    return layers[layers.length - 1] ?? null;
-  }
-
-  private getSelectedLayer(): ObcPoiLayer | null {
-    const layers = this.getAllLayers();
-    return layers.find((layer) => layer.isSelected) ?? null;
-  }
-
-  private getDefaultLayer(): ObcPoiLayer | null {
-    const layers = this.getAllLayers();
-    const nonSelected = layers.filter((layer) => !layer.isSelected);
-    return nonSelected[nonSelected.length - 1] ?? null;
-  }
-
-  private getSecondTopLayer(): ObcPoiLayer | null {
-    const layers = this.getAllLayers();
-    if (layers.length < 2) return null;
-    return layers[layers.length - 2] ?? null;
+    switch (kind) {
+      case 'top':
+        return layers[layers.length - 1] ?? null;
+      case 'secondTop':
+        return layers.length >= 2 ? (layers[layers.length - 2] ?? null) : null;
+      case 'selected':
+        return layers.find((layer) => layer.isSelected) ?? null;
+      case 'default': {
+        const nonSelected = layers.filter((layer) => !layer.isSelected);
+        return nonSelected[nonSelected.length - 1] ?? null;
+      }
+    }
   }
 
   private clearOtherTopSelections(target: ObcPoiData) {
-    const activeLayer = this.getSelectedLayer() ?? this.getTopLayer();
+    const topLayer = this.getLayer('top');
+    const activeLayer = this.getLayer('selected') ?? topLayer;
     if (!activeLayer) return;
     const fallbackLayer =
-      this.getDefaultLayer() ??
-      (activeLayer === this.getTopLayer() ? this.getSecondTopLayer() : null);
+      this.getLayer('default') ??
+      (activeLayer === topLayer ? this.getLayer('secondTop') : null);
     const topTargets = this.getLayerTargets(activeLayer);
     topTargets.forEach((other) => {
       if (other === target) return;
@@ -533,7 +521,7 @@ export class ObcPoiLayerStack extends LitElement {
   }
 
   private syncSelectedLayerTargets() {
-    const selectedLayer = this.getSelectedLayer();
+    const selectedLayer = this.getLayer('selected');
     if (!selectedLayer) return;
 
     this.selectionMap.forEach((_record, target) => {
@@ -569,7 +557,7 @@ export class ObcPoiLayerStack extends LitElement {
         return;
       }
       const currentLayer = this.getTargetLayer(target);
-      const fallbackOrigin = this.getDefaultLayer();
+      const fallbackOrigin = this.getLayer('default');
       const originLayer =
         fallbackOrigin && fallbackOrigin !== selectedLayer
           ? fallbackOrigin
@@ -704,6 +692,14 @@ export class ObcPoiLayerStack extends LitElement {
     const by = 3 * (y2 - y1) - cy;
     const ay = 1 - cy - by;
     return ((ay * tParam + by) * tParam + cy) * tParam;
+  }
+
+  override render() {
+    return html`
+      <div class="wrapper">
+        <slot></slot>
+      </div>
+    `;
   }
 
   static override styles = unsafeCSS(componentStyle);
