@@ -5,11 +5,7 @@ import componentStyle from './poi-group.css?inline';
 import {ObcPoiData, PoiDataValue} from '../poi-data/poi-data.js';
 import {ObcPoiButtonType} from '../building-blocks/poi-button/poi-button.js';
 import {customElement} from '../../decorator.js';
-import {
-  AnimationManager,
-  easeInOutQuad,
-  smoothStep,
-} from './animation-utils.js';
+import {AnimationManager, easeInOutQuad, frameLerp} from './animation-utils.js';
 import {getEffectivePoiX} from '../building-blocks/poi/poi-position.js';
 
 const POI_TOUCH_TARGET_VAR = '--maneuvering-components-poi-button-touch-target';
@@ -721,7 +717,7 @@ export class ObcPoiGroup extends LitElement {
       if (snap) {
         config.currentExpandedOffset = config.expandedOffset;
       } else {
-        config.currentExpandedOffset = smoothStep(
+        config.currentExpandedOffset = frameLerp(
           config.currentExpandedOffset,
           config.expandedOffset,
           0.1
