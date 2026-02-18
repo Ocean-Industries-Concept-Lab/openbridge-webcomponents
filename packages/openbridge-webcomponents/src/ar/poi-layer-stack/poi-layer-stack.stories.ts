@@ -68,13 +68,24 @@ const selectionMultiAnimatedSnapshotPose: AnimatedPoiSnapshotPose[] = [
   {x: 119, y: 87, boxWidth: 36, boxHeight: 38},
 ];
 
-const waitForStorySettle = async () => {
+const waitForStorySettle = async (
+  options: {drainTransitions?: boolean} = {}
+) => {
   if ('fonts' in document) {
     await (document as Document & {fonts?: FontFaceSet}).fonts?.ready;
   }
   await new Promise<void>((resolve) =>
     requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
   );
+
+  if (options.drainTransitions && isVitestBrowser) {
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 220);
+    });
+    await new Promise<void>((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+    );
+  }
 };
 
 const renderTwoLayers = (args: PoiLayerStackArgs) => html`
@@ -134,6 +145,9 @@ export const SelectionSingle: Story = {
     selectionMode: PoiLayerSelectionMode.Single,
   },
   render: renderTwoLayers,
+  play: async () => {
+    await waitForStorySettle({drainTransitions: true});
+  },
 };
 
 export const SelectionNone: Story = {
@@ -141,6 +155,9 @@ export const SelectionNone: Story = {
     selectionMode: PoiLayerSelectionMode.None,
   },
   render: renderTwoLayers,
+  play: async () => {
+    await waitForStorySettle({drainTransitions: true});
+  },
 };
 
 export const SelectionMulti: Story = {
@@ -149,7 +166,7 @@ export const SelectionMulti: Story = {
   },
   render: renderThreeLayers,
   play: async () => {
-    await waitForStorySettle();
+    await waitForStorySettle({drainTransitions: true});
   },
 };
 
@@ -233,7 +250,7 @@ export const SelectionMultiAnimated: Story = {
     `;
   },
   play: async ({canvasElement}) => {
-    await waitForStorySettle();
+    await waitForStorySettle({drainTransitions: true});
     if (isVitestBrowser) return;
 
     const root = canvasElement.querySelector(
