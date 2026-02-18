@@ -1,0 +1,110 @@
+:host {
+  display: block;
+  position: relative;
+  width: 100%;
+  min-height: var(--obc-poi-layer-min-height, 0);
+  height: var(--obc-poi-layer-height, auto);
+  pointer-events: auto;
+
+  --obc-poi-layer-height: auto;
+  --obc-poi-layer-auto-group-offset-y: 0;
+  --obc-poi-layer-line-length: 120px;
+  --obc-poi-layer-exit-delay-ms: 140;
+  --obc-poi-layer-group-removal-delay-ms: 250;
+  --obc-poi-layer-exit-lock-duration-ms: 500;
+}
+
+:host([debug]) {
+  background: var(--obc-poi-layer-debug-background, rgb(0 0 0 / 4%));
+}
+
+.wrapper {
+  position: relative;
+  width: 100%;
+
+  height: 100%;
+}
+
+.debug-label {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+
+  font-size: 10px;
+  line-height: 1;
+
+  color: var(--obc-poi-layer-debug-color, rgb(0 0 0 / 60%));
+  pointer-events: none;
+}
+
+::slotted(obc-poi-data),
+::slotted(obc-poi-group) {
+  position: absolute;
+  bottom: 0;
+  height: 100%;
+  transform-origin: 50% 50%;
+
+  --obc-poi-layer-target-scale: 1;
+  --obc-poi-layer-target-shift: calc(
+    (1 - var(--obc-poi-layer-target-scale)) * 100%
+  );
+
+  transform: translateX(-50%)
+    translateY(calc(100% - var(--obc-poi-layer-target-shift)))
+    scale(var(--obc-poi-layer-target-scale));
+  transition:
+    transform 0.1s ease-out,
+    opacity 0.1s ease-out;
+  pointer-events: auto;
+}
+
+::slotted(obc-poi-data[data-grouped]) {
+  opacity: 0;
+}
+
+::slotted(obc-poi-data:not([data-grouped])) {
+  opacity: 1;
+}
+
+::slotted(obc-poi-data[data-behind]) {
+  opacity: 0.4;
+  --poi-size: 32px;
+  --obc-poi-target-icon-opacity: 0;
+}
+
+::slotted(obc-poi-data[data-exiting]) {
+  opacity: 0.4;
+  --poi-size: 32px;
+  --obc-poi-target-icon-opacity: 0;
+}
+
+::slotted(obc-poi-data[data-front]) {
+  opacity: 1;
+  --poi-size: 36px;
+  --obc-poi-target-icon-opacity: 1;
+}
+
+::slotted(obc-poi-group[data-auto-group]) {
+  opacity: 1;
+}
+
+::slotted(obc-poi-group) {
+  bottom: 0;
+  height: 100%;
+  transform: none;
+  pointer-events: none;
+}
+
+::slotted(obc-poi-group[data-auto-group]) {
+  opacity: 0;
+  z-index: 2;
+  transition: opacity 0.1s ease-out;
+}
+
+::slotted(obc-poi-group[data-auto-group][data-visible]) {
+  opacity: 1;
+}
+
+::slotted(obc-poi-group[data-exiting]) {
+  pointer-events: none;
+}

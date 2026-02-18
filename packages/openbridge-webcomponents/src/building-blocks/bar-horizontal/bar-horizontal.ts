@@ -65,20 +65,18 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
   defaultDeadband: 1,
 }) {
   /** Minimum scale value (manual mode) */
-  @property({type: Number}) minValue: number = 0;
+  @property({type: Number}) minValue = 0;
   /** Maximum scale value (manual mode) */
-  @property({type: Number}) maxValue: number = 100;
+  @property({type: Number}) maxValue = 100;
 
   /** Total width in pixels (including padding bands) */
-  @property({type: Number}) width: number = 320;
+  @property({type: Number}) width = 320;
 
   /** Padding left of the drawing area */
-  @property({type: Number}) paddingLeft: number =
-    CHART_DIMENSIONS.CANVAS_PADDING;
+  @property({type: Number}) paddingLeft = CHART_DIMENSIONS.CANVAS_PADDING;
 
   /** Padding right of the drawing area */
-  @property({type: Number}) paddingRight: number =
-    CHART_DIMENSIONS.CANVAS_PADDING;
+  @property({type: Number}) paddingRight = CHART_DIMENSIONS.CANVAS_PADDING;
 
   /** Which side this scale lives on */
   @property({type: String}) side: ExternalScaleSide = ExternalScaleSide.bottom;
