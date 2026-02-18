@@ -3,7 +3,7 @@ import {property, queryAssignedElements, state} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './poi-controller.css?inline';
 import '../poi-layer-stack/poi-layer-stack.js';
-import '../poi-layer/poi-layer.js';
+import {ObcPoiLayer} from '../poi-layer/poi-layer.js';
 import {ObcPoiData} from '../poi-data/poi-data.js';
 import {
   ObcPoiButtonType,
@@ -29,8 +29,6 @@ import {
  *   - `frames` + `frameIndex` supports frame/timestamp-driven playback when `detections` is not provided.
  * - Projection config:
  *   - `fit` (`contain` default, `cover` optional) controls scale mode from media space to rendered space.
- *   - `boxOrigin` (`top-left` default, `center` optional): **TODO(designer)** Confirm intended mapping behavior; property is declared but not consumed in this controller logic.
- *   - `poiAnchor` (`bottom-center` default, `center` optional): **TODO(designer)** Confirm intended anchor behavior; property is declared but not consumed in this controller logic.
  * - Target shaping:
  *   - Uses mapped `box_width`/`box_height` to resolve POI button type.
  * - Filtering:
@@ -98,16 +96,6 @@ export type PoiFrame = {
 export enum PoiFitMode {
   Contain = 'contain',
   Cover = 'cover',
-}
-
-export enum PoiBoxOrigin {
-  TopLeft = 'top-left',
-  Center = 'center',
-}
-
-export enum PoiAnchor {
-  BottomCenter = 'bottom-center',
-  Center = 'center',
 }
 
 @customElement('obc-poi-controller')
@@ -359,15 +347,14 @@ export class ObcPoiController extends LitElement {
       return;
     }
 
-    const explicitLayer = stack.querySelector(
+    const explicitLayer = stack.querySelector<ObcPoiLayer>(
       'obc-poi-layer[data-controller-layer="background"]'
-    ) as HTMLElement | null;
+    );
     const layers = Array.from(
-      stack.querySelectorAll('obc-poi-layer')
-    ) as HTMLElement[];
-    const isSelectedLayer = (layer: HTMLElement): boolean =>
-      (layer as HTMLElement & {isSelected?: boolean}).isSelected === true ||
-      layer.hasAttribute('is-selected');
+      stack.querySelectorAll<ObcPoiLayer>('obc-poi-layer')
+    );
+    const isSelectedLayer = (layer: ObcPoiLayer): boolean =>
+      layer.isSelected === true || layer.hasAttribute('is-selected');
     const firstNonSelectedLayer = layers.find(
       (layer) => !isSelectedLayer(layer)
     );
