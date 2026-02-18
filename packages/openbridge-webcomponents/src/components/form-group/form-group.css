@@ -1,0 +1,79 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: block;
+  max-width: 673px;
+  --obc-form-group-border-radius: 12px;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 4px;
+
+  .title-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .subtitle {
+    @mixin font-overline;
+    color: var(--element-neutral-color);
+
+    .type-inactive & {
+      color: var(--element-inactive-color);
+    }
+  }
+
+  .text {
+    @mixin font-label;
+    color: var(--element-neutral-color);
+  }
+
+  .content-container {
+    border-radius: var(--obc-form-group-border-radius);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    background: transparent;
+
+    .type-enabled-action-first &,
+    .type-enabled-action-last & {
+      background: var(--indent-enabled-background-color);
+    }
+
+    ::slotted(obc-form-item) {
+      width: 100%;
+      max-width: 100%;
+      --obc-form-item-border-radius: 0px;
+      --obc-form-item-border-color-default: var(--border-divider-color);
+      --obc-form-item-divider-display: none;
+    }
+
+    .type-enabled-action-first & ::slotted(obc-form-item),
+    .type-enabled-action-last & ::slotted(obc-form-item) {
+      --obc-form-item-bg-color-enabled: var(--container-global-color);
+    }
+
+    ::slotted(obc-form-item[data-group-item-first]) {
+      --obc-form-item-border-radius-top-left: var(
+        --obc-form-group-border-radius
+      );
+      --obc-form-item-border-radius-top-right: var(
+        --obc-form-group-border-radius
+      );
+    }
+
+    ::slotted(obc-form-item[data-last-group-item]) {
+      --obc-form-item-border-radius-bottom-right: var(
+        --obc-form-group-border-radius
+      );
+      --obc-form-item-border-radius-bottom-left: var(
+        --obc-form-group-border-radius
+      );
+    }
+  }
+}

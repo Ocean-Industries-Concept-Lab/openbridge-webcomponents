@@ -1,0 +1,25 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: block;
+  width: 100%;
+  max-width: 640px;
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: var(--global-size-spacing-touch-target-min);
+  padding-inline-start: var(--global-size-spacing-list-item-padding-horizontal);
+  border-top: 1px solid var(--border-divider-color);
+
+  .actions {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    line-height: 0;
+  }
+}

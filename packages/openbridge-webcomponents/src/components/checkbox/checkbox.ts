@@ -179,13 +179,21 @@ export class ObcCheckbox extends LitElement {
     }
   }
   override render() {
+    const isLabelEmpty = this.label.trim().length === 0;
+
     return html`
-      <div class="visually-hidden">
+      <div
+        class=${classMap({
+          'visually-hidden': true,
+          'no-label': isLabelEmpty,
+        })}
+      >
         <div
           class=${classMap({
             'checkbox-container': true,
             [`status-${this.status}`]: true,
             disabled: this.disabled,
+            'no-label': isLabelEmpty,
           })}
           role="checkbox"
           aria-checked=${this._computedAriaChecked}
@@ -207,11 +215,13 @@ export class ObcCheckbox extends LitElement {
                   ></obi-check-mixed>`
                 : html`<span class="checkbox-icon"></span>`}
           </div>
-          <div class="checkbox-label-container">
-            <span id="checkbox-label" class="checkbox-label">
-              ${this.label}
-            </span>
-          </div>
+          ${isLabelEmpty
+            ? ''
+            : html`<div class="checkbox-label-container">
+                <span id="checkbox-label" class="checkbox-label">
+                  ${this.label}
+                </span>
+              </div>`}
         </div>
       </div>
     `;

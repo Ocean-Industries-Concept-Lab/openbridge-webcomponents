@@ -1,0 +1,259 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: block;
+  max-width: 669px;
+}
+
+:host([data-group-item-not-first]) .content-container {
+  border-top-width: 0;
+}
+
+:host([data-group-item-before-focused]) .content-container {
+  border-bottom-width: 0;
+}
+
+:host([data-group-item-not-first][data-group-item-focused]) .content-container {
+  border-top-width: 1px;
+}
+
+:host([data-group-item-focused]) .wrapper {
+  z-index: 1;
+}
+
+.wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  --obc-form-item-border-radius: 0px;
+
+  .content-container {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    padding-block: var(
+      --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+    );
+    padding-inline-start: var(
+      --global-size-spacing-list-item-padding-horizontal
+    );
+    padding-inline-end: var(--global-size-spacing-icon-icon-size-regular);
+    gap: var(--global-size-spacing-list-item-padding-horizontal);
+    background: var(
+      --obc-form-item-bg-color-enabled,
+      var(--flat-enabled-background-color)
+    );
+    border: 1px solid
+      var(
+        --obc-form-item-border-color-default,
+        var(--flat-enabled-border-color)
+      );
+    border-radius: var(
+        --obc-form-item-border-radius-top-left,
+        var(--obc-form-item-border-radius)
+      )
+      var(
+        --obc-form-item-border-radius-top-right,
+        var(--obc-form-item-border-radius)
+      )
+      var(
+        --obc-form-item-border-radius-bottom-right,
+        var(--obc-form-item-border-radius)
+      )
+      var(
+        --obc-form-item-border-radius-bottom-left,
+        var(--obc-form-item-border-radius)
+      );
+
+    .type-inactive & {
+      padding-inline: 0;
+    }
+
+    .type-enabled-action-first & {
+      gap: var(--global-size-spacing-list-item-item-spacing);
+    }
+
+    .type-enabled-action-last & {
+      padding-right: var(--global-size-spacing-list-item-padding-horizontal);
+    }
+
+    :host(:hover):not([disabled]) & {
+      background: var(--flat-hover-background-color);
+      border-color: var(--border-outline-color);
+    }
+
+    :host(:focus-within):not([disabled]) & {
+      background: var(--flat-focused-background-color);
+      border-color: var(--flat-focused-border-color);
+      border-width: var(--global-size-spacing-border-weight-focusframe, 2px);
+    }
+
+    :host(:active):not([disabled]) & {
+      background: var(--flat-pressed-background-color);
+      border-color: var(--border-outline-color);
+    }
+
+    :host([disabled]) &,
+    .type-inactive &,
+    .basic-state-disabled & {
+      background: var(--flat-disabled-background-color);
+      border-color: var(--normal-disabled-border-color);
+      border-width: 0;
+    }
+
+    .basic-state-amplified & {
+      background: var(--amplified-enabled-background-color);
+    }
+  }
+
+  &.has-shader {
+    .shader-container {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border-radius: inherit;
+      z-index: 0;
+    }
+
+    .shader {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+    }
+
+    .divider {
+      position: absolute;
+      inset-inline-start: 0;
+      inset-inline-end: 0;
+      bottom: 0;
+      height: 1px;
+      display: var(--obc-form-item-divider-display, block);
+      background: var(--border-divider-color);
+    }
+  }
+
+  :host(:hover):not([disabled]) &.has-shader .divider,
+  :host(:focus-within):not([disabled]) &.has-shader .divider,
+  :host(:active):not([disabled]) &.has-shader .divider,
+  :host([disabled]) &.has-shader .divider,
+  &.type-inactive.has-shader .divider,
+  &.basic-state-disabled.has-shader .divider {
+    display: none;
+  }
+
+  &.has-error {
+    .content-container {
+      border-color: var(--alert-error-outline-color);
+    }
+
+    .divider {
+      display: none;
+    }
+  }
+
+  .leading,
+  .trailing {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ui-components-checkbox-label-spacing);
+  }
+
+  .leading {
+    .type-enabled-action-first & {
+      gap: var(--global-size-spacing-list-item-item-spacing);
+    }
+
+    .type-enabled-action-first.has-icon & {
+      margin-inline-end: var(--global-size-spacing-list-item-item-spacing);
+    }
+  }
+
+  .trailing {
+    .type-enabled-action-last & {
+      margin-inline-start: calc(
+        var(--global-size-spacing-list-item-item-spacing) * -1
+      );
+    }
+  }
+
+  .text {
+    position: relative;
+    z-index: 1;
+    @mixin font-body;
+    letter-spacing: -0.1px;
+
+    .type-view &,
+    .type-filled-status-first &,
+    .type-filled-status-last & {
+      color: var(--on-flat-neutral-color);
+    }
+
+    .type-enabled-action-first &,
+    .type-enabled-action-last & {
+      color: var(--on-flat-active-color);
+    }
+
+    .type-inactive & {
+      color: var(--element-inactive-color);
+    }
+  }
+
+  .icon {
+    width: 24px;
+    height: 24px;
+    flex: 0 0 24px;
+  }
+
+  ::slotted([slot="icon"]) {
+    display: block;
+    width: 24px;
+    height: 24px;
+  }
+
+  .status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    color: var(--element-active-color);
+
+    obi-check-google {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .action {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: var(--ui-components-checkbox-touch-target-size);
+    flex: 0 0 var(--ui-components-checkbox-touch-target-size);
+    order: 1;
+
+    obc-checkbox {
+      --ui-components-checkbox-padding-horizontal: 0;
+    }
+  }
+
+  .error-text {
+    @mixin font-label;
+    margin: var(
+        --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+      )
+      0 0
+      var(--global-size-spacing-nav-item-and-menus-padding-horizonal-list-item);
+    color: var(--alert-error-outline-color);
+  }
+}

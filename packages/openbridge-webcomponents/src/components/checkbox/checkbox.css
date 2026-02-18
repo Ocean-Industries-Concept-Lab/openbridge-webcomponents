@@ -1,11 +1,18 @@
 .visually-hidden {
   display: flex;
+  box-sizing: border-box;
   width: 100%;
   height: var(--ui-components-checkbox-touch-target-size);
   padding: 0px var(--ui-components-checkbox-margin);
   align-items: center;
   flex-shrink: 0;
   user-select: none;
+}
+
+.visually-hidden.no-label {
+  width: var(--ui-components-checkbox-touch-target-size);
+  padding: 0;
+  justify-content: center;
 }
 
 .checkbox-container {
@@ -16,6 +23,13 @@
   align-self: stretch;
   border-radius: var(--ui-components-checkbox-list-item-border-radius);
   @mixin style style=flat;
+}
+
+.checkbox-container.no-label {
+  width: 100%;
+  flex: 0 0 auto;
+  justify-content: center;
+  padding: 0;
 }
 
 .checkbox-label-container {
