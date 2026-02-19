@@ -172,16 +172,14 @@ export class ObcToggleButtonVerticalOption extends LitElement {
 
     // Only fire event if not already selected
     if (!this.selected) {
-      return;
+      this.dispatchEvent(
+        new CustomEvent('selected', {
+          detail: {value: this.value},
+          bubbles: true,
+          composed: true,
+        })
+      );
     }
-
-    this.dispatchEvent(
-      new CustomEvent('selected', {
-        detail: {value: this.value},
-        bubbles: true,
-        composed: true,
-      })
-    );
   }
 
   override render() {
