@@ -2,14 +2,15 @@ import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
 import {property, queryAssignedElements, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import componentStyle from './poi-group.css?inline';
-import {ObcPoiData, PoiDataValue} from '../poi-data/poi-data.js';
+import {
+  ObcPoiData,
+  PoiDataValue,
+  PoiDataVisualRectPreference,
+} from '../poi-data/poi-data.js';
 import {ObcPoiButtonType} from '../building-blocks/poi-button/poi-button.js';
 import {customElement} from '../../decorator.js';
-import {
-  AnimationManager,
-  easeInOutQuad,
-  smoothStep,
-} from './animation-utils.js';
+import {AnimationManager, easeInOutQuad, frameLerp} from './animation-utils.js';
+import {getEffectivePoiX} from '../building-blocks/poi/poi-position.js';
 
 const POI_TOUCH_TARGET_VAR = '--maneuvering-components-poi-button-touch-target';
 const POI_GROUP_SPACING_VAR = '--obc-poi-group-expanded-spacing';
@@ -17,11 +18,11 @@ const TOP_OFFSET_ANIMATION_MS_VAR = '--obc-poi-group-top-offset-animation-ms';
 const TOP_OFFSET_ANIMATION_DELAY_MS_VAR =
   '--obc-poi-group-top-offset-animation-delay-ms';
 const POI_VISUAL_TARGET_VAR =
-  '--maneuvering-components-poi-button-visual-target';
+  '--maneuvering-components-poi-button-visual-target-round';
 const POI_VISUAL_TARGET_OVERLAP_VAR =
-  '--maneuvering-components-poi-button-visual-target-overlap';
+  '--maneuvering-components-poi-button-visual-target-round-overlap';
 const POI_LARGE_VISUAL_TARGET_VAR =
-  '--maneuvering-components-poi-button-large-visual-target';
+  '--maneuvering-components-poi-button-large-visual-target-round';
 const POI_LARGE_VISUAL_TARGET_OVERLAP_VAR =
   '--maneuvering-components-poi-button-large-visual-target-round-overlap';
 
@@ -82,8 +83,8 @@ export class ObcPoiGroup extends LitElement {
   @property({type: String}) positionVertical = '0px';
   @property({type: Boolean, attribute: 'internal-swapping'})
   internalSwapping = false;
-  @state() private positionLeft = '0px';
-  @state() private positionRight = '0px';
+  @state() private wrapperOffsetX = '0px';
+  @state() private wrapperWidth = '48px';
   @state() private wrapperVisible = false;
   @state() private wrapperHeight = '48px';
   @state() private wrapperHasValues = false;
@@ -187,9 +188,10 @@ export class ObcPoiGroup extends LitElement {
               wrapper: true,
               'with-values': this.wrapperHasValues,
             })}
-            style="left: ${this.positionLeft}; top: ${this
-              .positionVertical}; right: ${this.positionRight}; height: ${this
-              .wrapperHeight};"
+            style="left: 0; top: ${this.positionVertical}; width: ${this
+              .wrapperWidth}; height: ${this
+              .wrapperHeight}; --obc-poi-group-wrapper-x: ${this
+              .wrapperOffsetX};"
           >
             <div class="visible-wrapper"></div>
           </button>`
@@ -198,34 +200,55 @@ export class ObcPoiGroup extends LitElement {
   }
 
   updatePosition(): void {
+    if (this.expand || this.collapsing) {
+      return;
+    }
+
     let left = Number.MAX_VALUE;
     let right = -Number.MAX_VALUE;
     let maxHeight = 0;
     let hasValueTargets = false;
 
     this._children.forEach((element) => {
-      const boundingBox =
-        element instanceof ObcPoiData
-          ? this.getTargetButtonRect(element)
-          : element.getBoundingClientRect();
+      if (element instanceof ObcPoiData) {
+        const anchorRect = this.getTargetButtonRect(
+          element,
+          PoiDataVisualRectPreference.Anchor
+        );
+        const sizeRect = this.getTargetButtonRect(
+          element,
+          PoiDataVisualRectPreference.Group
+        );
+        left = Math.min(left, anchorRect.left);
+        right = Math.max(right, anchorRect.right);
+        maxHeight = Math.max(maxHeight, sizeRect.height || 0);
+        if (element.data.length > 0) {
+          hasValueTargets = true;
+        }
+        return;
+      }
+
+      const boundingBox = element.getBoundingClientRect();
       left = Math.min(left, boundingBox.left);
       right = Math.max(right, boundingBox.right);
       maxHeight = Math.max(maxHeight, boundingBox.height || 0);
-      if (element instanceof ObcPoiData && element.data.length > 0) {
-        hasValueTargets = true;
-      }
     });
 
     if (left !== Number.MAX_VALUE && right !== -Number.MAX_VALUE) {
       const rootDim = this.getBoundingClientRect();
-      this.positionLeft = `${left - rootDim.left}px`;
-      this.positionRight = `${rootDim.right - right}px`;
+      const targetLeftPx = left - rootDim.left;
+      const targetRightPx = right - rootDim.left;
+      const targetWidth = Math.max(0, targetRightPx - targetLeftPx);
+      this.wrapperOffsetX = `${targetLeftPx}px`;
+      this.wrapperWidth = `${targetWidth}px`;
       const normalizedHeight = Number.isFinite(maxHeight)
         ? Math.max(48, Math.round(maxHeight))
         : 48;
       this.wrapperHeight = `${normalizedHeight}px`;
       this.wrapperHasValues = hasValueTargets;
     } else {
+      this.wrapperOffsetX = '0px';
+      this.wrapperWidth = '48px';
       this.wrapperHeight = '48px';
       this.wrapperHasValues = false;
     }
@@ -699,7 +722,7 @@ export class ObcPoiGroup extends LitElement {
       if (snap) {
         config.currentExpandedOffset = config.expandedOffset;
       } else {
-        config.currentExpandedOffset = smoothStep(
+        config.currentExpandedOffset = frameLerp(
           config.currentExpandedOffset,
           config.expandedOffset,
           0.1
@@ -719,23 +742,7 @@ export class ObcPoiGroup extends LitElement {
   }
 
   private getCurrentLeft(element: HTMLElement): number {
-    const inline = element.style.left;
-    if (inline && inline.endsWith('px')) {
-      const parsed = Number.parseFloat(inline);
-      if (!Number.isNaN(parsed)) {
-        const transformOffset = Number.parseFloat(
-          getComputedStyle(element).getPropertyValue(
-            '--obc-poi-target-offset-x'
-          )
-        );
-        return (
-          parsed + (Number.isFinite(transformOffset) ? transformOffset : 0)
-        );
-      }
-    }
-
-    const computedStyle = window.getComputedStyle(element).left;
-    const computedLeft = Number.parseFloat(computedStyle) || 0;
+    const computedLeft = getEffectivePoiX(element);
     const transformOffset = Number.parseFloat(
       getComputedStyle(element).getPropertyValue('--obc-poi-target-offset-x')
     );
@@ -744,34 +751,11 @@ export class ObcPoiGroup extends LitElement {
     );
   }
 
-  private getTargetButtonRect(target: ObcPoiData): DOMRect {
-    const targetShadow = target.shadowRoot;
-    const poi = targetShadow?.querySelector('obc-poi') as
-      | HTMLElement
-      | undefined;
-    const poiButton = poi?.shadowRoot?.querySelector('obc-poi-button') as
-      | HTMLElement
-      | undefined;
-    const dataButton = targetShadow?.querySelector('obc-poi-button-data') as
-      | HTMLElement
-      | undefined;
-    const button = poiButton ?? dataButton;
-    const buttonShadow = button?.shadowRoot;
-    const buttonWrapper = buttonShadow?.querySelector(
-      '.button-wrapper'
-    ) as HTMLElement | null;
-    const wrapper = buttonShadow?.querySelector(
-      '.wrapper'
-    ) as HTMLElement | null;
-    const hasDataWrapper = wrapper?.classList.contains('has-data') ?? false;
-    return (
-      (hasDataWrapper ? wrapper?.getBoundingClientRect() : null) ??
-      buttonWrapper?.getBoundingClientRect() ??
-      wrapper?.getBoundingClientRect() ??
-      button?.getBoundingClientRect() ??
-      poi?.getBoundingClientRect() ??
-      target.getBoundingClientRect()
-    );
+  private getTargetButtonRect(
+    target: ObcPoiData,
+    preference: PoiDataVisualRectPreference = PoiDataVisualRectPreference.Group
+  ): DOMRect {
+    return target.getVisualRect(preference);
   }
 
   private getCssVarAsNumber(varName: string, fallback: number): number {
@@ -860,11 +844,14 @@ export class ObcPoiGroup extends LitElement {
   }
 
   private resolveTargetValue(
-    _target: ObcPoiData,
+    target: ObcPoiData,
     overlap: boolean
   ): PoiDataValue {
     if (overlap) {
       return PoiDataValue.Overlapped;
+    }
+    if (target.selected) {
+      return PoiDataValue.Checked;
     }
     return PoiDataValue.Unchecked;
   }

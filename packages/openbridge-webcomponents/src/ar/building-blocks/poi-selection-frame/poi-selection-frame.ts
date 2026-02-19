@@ -1,10 +1,9 @@
-import {html, LitElement, nothing, PropertyValues, unsafeCSS} from 'lit';
+import {html, LitElement, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../../decorator.js';
 import componentStyle from './poi-selection-frame.css?inline';
 
 export const OBC_POI_SELECTION_FRAME_MIN_CUSTOM_SIZE_PX = 28;
-const OBC_POI_SELECTION_FRAME_MIN_TOUCH_TARGET_SIZE_PX = 48;
 
 export enum ObcPoiSelectionFrameType {
   Indicator = 'indicator',
@@ -38,7 +37,6 @@ enum ObcPoiSelectionCornerPosition {
  * - `state` (default `regular`): `regular`, `alert`, `none`, or `flat`.
  * - `customMode` (default `false`): Enables explicit frame box sizing.
  * - `boxWidth` / `boxHeight` (default `null`): Optional non-negative offsets added to the minimum custom size.
- * - Touch target handling: In custom mode, host width/height are expanded to at least `48px`.
  *
  * ## Usage Guidelines
  * - Use `state="none"` when no frame should be rendered.
@@ -115,7 +113,7 @@ export class ObcPoiSelectionFrame extends LitElement {
     }
 
     const style = this.customMode
-      ? `width: ${this.resolvedCustomVisualWidthPx}px; height: ${this.resolvedCustomVisualHeightPx}px;`
+      ? `--obc-poi-selection-frame-custom-width: ${this.resolvedCustomVisualWidthPx}px; --obc-poi-selection-frame-custom-height: ${this.resolvedCustomVisualHeightPx}px;`
       : '';
 
     const parts = this.customMode
@@ -130,30 +128,6 @@ export class ObcPoiSelectionFrame extends LitElement {
         ${this.renderCorner(ObcPoiSelectionCornerPosition.BottomRight)}
       </span>
     `;
-  }
-
-  protected override updated(_changedProperties: PropertyValues): void {
-    if (this.customMode && this.state !== ObcPoiSelectionFrameState.None) {
-      const touchTargetWidthPx = Math.max(
-        this.resolvedCustomVisualWidthPx,
-        OBC_POI_SELECTION_FRAME_MIN_TOUCH_TARGET_SIZE_PX
-      );
-      const touchTargetHeightPx = Math.max(
-        this.resolvedCustomVisualHeightPx,
-        OBC_POI_SELECTION_FRAME_MIN_TOUCH_TARGET_SIZE_PX
-      );
-
-      this.style.width = `${touchTargetWidthPx}px`;
-      this.style.height = `${touchTargetHeightPx}px`;
-      this.style.minWidth = `${OBC_POI_SELECTION_FRAME_MIN_TOUCH_TARGET_SIZE_PX}px`;
-      this.style.minHeight = `${OBC_POI_SELECTION_FRAME_MIN_TOUCH_TARGET_SIZE_PX}px`;
-      return;
-    }
-
-    this.style.removeProperty('width');
-    this.style.removeProperty('height');
-    this.style.removeProperty('min-width');
-    this.style.removeProperty('min-height');
   }
 
   override render() {

@@ -90,16 +90,10 @@ export class AnimationManager {
 }
 
 /**
- * Lerp (linear interpolation) between two values
+ * Per-frame lerp that moves `current` toward `to` by a fraction of the remaining distance each frame.
+ * Snaps to `to` when within 0.5 units to avoid asymptotic creep.
  */
-export function lerp(from: number, to: number, t: number): number {
-  return from + (to - from) * t;
-}
-
-/**
- * Smooth step interpolation with configurable speed
- */
-export function smoothStep(
+export function frameLerp(
   current: number,
   to: number,
   speed: number = 0.1
