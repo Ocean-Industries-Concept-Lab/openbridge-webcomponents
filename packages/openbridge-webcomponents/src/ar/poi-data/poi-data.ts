@@ -126,12 +126,101 @@ export class ObcPoiData extends LitElement {
   animatePosition = false;
 
   private filteredX = 0;
+  private xFilterTarget = 0;
   private xFilterInitialized = false;
   private lastXFilterTimestampMs = 0;
+  private xFilterRaf = 0;
   private xMovingHintTimeout: number | null = null;
+
+  private dispatchLayoutChange() {
+    this.dispatchEvent(
+      new CustomEvent('obc-poi-data-layout-change', {
+        bubbles: true,
+        composed: true,
+      })
+    );
+  }
+
+  private stepXFilter = (nowMs: number) => {
+    this.xFilterRaf = 0;
+    if (!this.isConnected || !this.xFilterInitialized) {
+      return;
+    }
+
+    const dtSeconds =
+      this.lastXFilterTimestampMs > 0
+        ? Math.min(
+            0.25,
+            Math.max(1 / 120, (nowMs - this.lastXFilterTimestampMs) / 1000)
+          )
+        : 1 / 60;
+    this.lastXFilterTimestampMs = nowMs;
+
+    const alpha = 1 - Math.exp(-2 * Math.PI * X_FILTER_CUTOFF_HZ * dtSeconds);
+    const delta = this.xFilterTarget - this.filteredX;
+    const nextX =
+      Math.abs(delta) <= X_FILTER_DEADBAND_PX
+        ? this.xFilterTarget
+        : this.filteredX + delta * alpha;
+    const changed = Math.abs(nextX - this.filteredX) > 1e-6;
+    this.filteredX = nextX;
+    if (changed) {
+      this.style.setProperty('--obc-poi-data-x', `${this.filteredX}px`);
+      this.dispatchLayoutChange();
+    }
+
+    const settled =
+      Math.abs(this.xFilterTarget - this.filteredX) <= X_FILTER_DEADBAND_PX;
+
+    if (settled) {
+      this.filteredX = this.xFilterTarget;
+      this.style.setProperty('--obc-poi-data-x', `${this.filteredX}px`);
+      this.lastXFilterTimestampMs = 0;
+      this.markXMoving();
+      return;
+    }
+
+    this.markXMoving();
+    this.xFilterRaf = requestAnimationFrame(this.stepXFilter);
+  };
+
+  private syncXFilterTarget(nextX: number) {
+    this.xFilterTarget = nextX;
+
+    if (!this.xFilterInitialized) {
+      this.xFilterInitialized = true;
+      this.filteredX = nextX;
+      this.style.setProperty('--obc-poi-data-x', `${this.filteredX}px`);
+      this.markXMoving();
+      return;
+    }
+
+    if (Math.abs(nextX - this.filteredX) <= X_FILTER_DEADBAND_PX) {
+      this.filteredX = this.xFilterTarget;
+      this.style.setProperty('--obc-poi-data-x', `${this.filteredX}px`);
+      if (this.xFilterRaf) {
+        cancelAnimationFrame(this.xFilterRaf);
+        this.xFilterRaf = 0;
+      }
+      this.lastXFilterTimestampMs = 0;
+      this.markXMoving();
+      return;
+    }
+
+    if (!this.xFilterRaf) {
+      this.lastXFilterTimestampMs = 0;
+      this.markXMoving();
+      this.xFilterRaf = requestAnimationFrame(this.stepXFilter);
+    }
+  }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
+    if (this.xFilterRaf) {
+      cancelAnimationFrame(this.xFilterRaf);
+      this.xFilterRaf = 0;
+    }
+    this.lastXFilterTimestampMs = 0;
     if (this.xMovingHintTimeout !== null) {
       window.clearTimeout(this.xMovingHintTimeout);
       this.xMovingHintTimeout = null;
@@ -227,31 +316,7 @@ export class ObcPoiData extends LitElement {
 
   override updated(changedProperties: Map<string, unknown>) {
     if (changedProperties.has('x')) {
-      const targetX = Number.isFinite(this.x) ? this.x : 0;
-      const now = performance.now();
-      const dtSeconds =
-        this.lastXFilterTimestampMs > 0
-          ? Math.min(
-              0.25,
-              Math.max(1 / 120, (now - this.lastXFilterTimestampMs) / 1000)
-            )
-          : 1 / 60;
-      this.lastXFilterTimestampMs = now;
-      const alpha = 1 - Math.exp(-2 * Math.PI * X_FILTER_CUTOFF_HZ * dtSeconds);
-
-      if (!this.xFilterInitialized) {
-        this.xFilterInitialized = true;
-        this.filteredX = targetX;
-      } else {
-        const delta = targetX - this.filteredX;
-        this.filteredX =
-          Math.abs(delta) <= X_FILTER_DEADBAND_PX
-            ? targetX
-            : this.filteredX + delta * alpha;
-      }
-
-      this.style.setProperty('--obc-poi-data-x', `${this.filteredX}px`);
-      this.markXMoving();
+      this.syncXFilterTarget(Number.isFinite(this.x) ? this.x : 0);
     }
     if (
       changedProperties.has('buttonY') ||
@@ -274,12 +339,7 @@ export class ObcPoiData extends LitElement {
       changedProperties.has('selected') ||
       changedProperties.has('type')
     ) {
-      this.dispatchEvent(
-        new CustomEvent('obc-poi-data-layout-change', {
-          bubbles: true,
-          composed: true,
-        })
-      );
+      this.dispatchLayoutChange();
     }
   }
 

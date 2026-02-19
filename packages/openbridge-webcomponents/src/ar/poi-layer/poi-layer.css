@@ -108,3 +108,14 @@
 ::slotted(obc-poi-group[data-exiting]) {
   pointer-events: none;
 }
+
+:host([data-stack-inactive]) ::slotted(obc-poi-data:not([data-grouped])),
+:host([data-stack-inactive]) ::slotted(obc-poi-group) {
+  --obc-poi-object-frame-opacity: var(--obc-poi-layer-inactive-opacity, 0.7);
+  --obc-poi-data-content-opacity: var(--obc-poi-layer-inactive-opacity, 0.7);
+  --obc-poi-overlap-elements-opacity: var(
+    --obc-poi-layer-inactive-opacity,
+    0.7
+  );
+  --obc-poi-label-opacity: var(--obc-poi-layer-inactive-opacity, 0.7);
+}

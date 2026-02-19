@@ -336,14 +336,17 @@ export class ObcPoiController extends LitElement {
   }
 
   private syncTargetsToCustomStack() {
+    const clearTargets = () => {
+      if (this.controllerTargets.size === 0) {
+        return;
+      }
+      this.controllerTargets.forEach((target) => target.remove());
+      this.controllerTargets.clear();
+    };
+
     const stack = this.getStackElement();
     if (!stack) {
-      if (this.controllerTargets.size > 0) {
-        this.controllerTargets.forEach((target) => {
-          target.remove();
-        });
-        this.controllerTargets.clear();
-      }
+      clearTargets();
       return;
     }
 
@@ -353,14 +356,20 @@ export class ObcPoiController extends LitElement {
     const layers = Array.from(
       stack.querySelectorAll<ObcPoiLayer>('obc-poi-layer')
     );
-    const isSelectedLayer = (layer: ObcPoiLayer): boolean =>
-      layer.isSelected === true || layer.hasAttribute('is-selected');
+    const isSelectedLayer = (candidate: ObcPoiLayer): boolean =>
+      candidate.isSelected === true || candidate.hasAttribute('is-selected');
     const firstNonSelectedLayer = layers.find(
-      (layer) => !isSelectedLayer(layer)
+      (candidate) => !isSelectedLayer(candidate)
     );
     const layer =
-      explicitLayer ?? firstNonSelectedLayer ?? layers[layers.length - 1];
-    if (!layer) return;
+      explicitLayer ??
+      firstNonSelectedLayer ??
+      layers[layers.length - 1] ??
+      null;
+    if (!layer) {
+      clearTargets();
+      return;
+    }
 
     const active = this.getActiveDetections();
     const activeKeys = new Set<string>();
@@ -380,6 +389,9 @@ export class ObcPoiController extends LitElement {
         target.buttonType = ObcPoiButtonType.Button;
         target.fixedTarget = false;
         this.controllerTargets.set(key, target);
+      }
+
+      if (!target.isConnected || target.parentElement !== layer) {
         layer.appendChild(target);
       }
 

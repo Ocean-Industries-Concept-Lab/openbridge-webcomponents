@@ -200,30 +200,47 @@ export class ObcPoiGroup extends LitElement {
   }
 
   updatePosition(): void {
+    if (this.expand || this.collapsing) {
+      return;
+    }
+
     let left = Number.MAX_VALUE;
     let right = -Number.MAX_VALUE;
     let maxHeight = 0;
     let hasValueTargets = false;
 
     this._children.forEach((element) => {
-      const boundingBox =
-        element instanceof ObcPoiData
-          ? this.getTargetButtonRect(element)
-          : element.getBoundingClientRect();
+      if (element instanceof ObcPoiData) {
+        const anchorRect = this.getTargetButtonRect(
+          element,
+          PoiDataVisualRectPreference.Anchor
+        );
+        const sizeRect = this.getTargetButtonRect(
+          element,
+          PoiDataVisualRectPreference.Group
+        );
+        left = Math.min(left, anchorRect.left);
+        right = Math.max(right, anchorRect.right);
+        maxHeight = Math.max(maxHeight, sizeRect.height || 0);
+        if (element.data.length > 0) {
+          hasValueTargets = true;
+        }
+        return;
+      }
+
+      const boundingBox = element.getBoundingClientRect();
       left = Math.min(left, boundingBox.left);
       right = Math.max(right, boundingBox.right);
       maxHeight = Math.max(maxHeight, boundingBox.height || 0);
-      if (element instanceof ObcPoiData && element.data.length > 0) {
-        hasValueTargets = true;
-      }
     });
 
     if (left !== Number.MAX_VALUE && right !== -Number.MAX_VALUE) {
       const rootDim = this.getBoundingClientRect();
-      const wrapperX = left - rootDim.left;
-      const wrapperWidth = Math.max(0, right - left);
-      this.wrapperOffsetX = `${wrapperX}px`;
-      this.wrapperWidth = `${wrapperWidth}px`;
+      const targetLeftPx = left - rootDim.left;
+      const targetRightPx = right - rootDim.left;
+      const targetWidth = Math.max(0, targetRightPx - targetLeftPx);
+      this.wrapperOffsetX = `${targetLeftPx}px`;
+      this.wrapperWidth = `${targetWidth}px`;
       const normalizedHeight = Number.isFinite(maxHeight)
         ? Math.max(48, Math.round(maxHeight))
         : 48;
@@ -734,8 +751,11 @@ export class ObcPoiGroup extends LitElement {
     );
   }
 
-  private getTargetButtonRect(target: ObcPoiData): DOMRect {
-    return target.getVisualRect(PoiDataVisualRectPreference.Group);
+  private getTargetButtonRect(
+    target: ObcPoiData,
+    preference: PoiDataVisualRectPreference = PoiDataVisualRectPreference.Group
+  ): DOMRect {
+    return target.getVisualRect(preference);
   }
 
   private getCssVarAsNumber(varName: string, fallback: number): number {
@@ -824,11 +844,14 @@ export class ObcPoiGroup extends LitElement {
   }
 
   private resolveTargetValue(
-    _target: ObcPoiData,
+    target: ObcPoiData,
     overlap: boolean
   ): PoiDataValue {
     if (overlap) {
       return PoiDataValue.Overlapped;
+    }
+    if (target.selected) {
+      return PoiDataValue.Checked;
     }
     return PoiDataValue.Unchecked;
   }

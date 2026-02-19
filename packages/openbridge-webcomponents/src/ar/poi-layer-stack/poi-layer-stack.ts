@@ -476,15 +476,30 @@ export class ObcPoiLayerStack extends LitElement {
     });
   }
 
+  private updateLayerInactiveState(selectedLayer: ObcPoiLayer | null) {
+    const layers = this.getAllLayers();
+    layers.forEach((layer) => {
+      if (selectedLayer && layer !== selectedLayer) {
+        layer.setAttribute('data-stack-inactive', 'true');
+      } else {
+        layer.removeAttribute('data-stack-inactive');
+      }
+    });
+  }
+
   private updateLayerOrders() {
     const layers = this.getAllLayers();
     layers.forEach((layer, index) => {
       layer.style.order = String(index);
     });
+
+    const selectedLayer = this.getLayer('selected');
+    this.updateLayerInactiveState(selectedLayer);
   }
 
   private syncSelectedLayerTargets() {
     const selectedLayer = this.getLayer('selected');
+    this.updateLayerInactiveState(selectedLayer);
     if (!selectedLayer) return;
 
     this.selectionMap.forEach((_record, target) => {

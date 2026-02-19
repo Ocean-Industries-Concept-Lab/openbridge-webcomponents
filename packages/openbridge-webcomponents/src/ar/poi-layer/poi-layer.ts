@@ -879,7 +879,7 @@ export class ObcPoiLayer extends LitElement {
       return PoiDataValue.Overlapped;
     }
 
-    if (target.selected && !target.hasAttribute('data-grouped')) {
+    if (target.selected) {
       return PoiDataValue.Checked;
     }
     return PoiDataValue.Unchecked;
