@@ -382,7 +382,7 @@ export class ObcPoiLayerStack extends LitElement {
     const lineDy = firstTargetAnchor.y - lastTargetAnchor.y;
     if (reduceMotion) {
       this.adjustTargetLineLengthByOffset(target, lineDy, false);
-      this.requestLayerGrouping(nextLayer);
+      nextLayer.requestGroupingUpdate();
       finalizeMove();
       return;
     }
@@ -393,7 +393,7 @@ export class ObcPoiLayerStack extends LitElement {
     const hasLineDelta = Number.isFinite(lineDy) && Math.abs(lineDy) >= 0.5;
 
     if (!hasVisualDelta && !hasLineDelta) {
-      this.requestLayerGrouping(nextLayer);
+      nextLayer.requestGroupingUpdate();
       finalizeMove();
       return;
     }
@@ -403,7 +403,7 @@ export class ObcPoiLayerStack extends LitElement {
         this.adjustTargetLineLengthByOffset(target, lineDy, true, frameNow);
       }
       if (!hasVisualDelta) {
-        this.requestLayerGrouping(nextLayer);
+        nextLayer.requestGroupingUpdate();
         finalizeMove();
         return;
       }
@@ -427,7 +427,7 @@ export class ObcPoiLayerStack extends LitElement {
       );
       const completeMove = () => {
         target.style.willChange = '';
-        this.requestLayerGrouping(nextLayer);
+        nextLayer.requestGroupingUpdate();
         finalizeMove();
       };
       animation.addEventListener('finish', completeMove, {once: true});
@@ -456,21 +456,6 @@ export class ObcPoiLayerStack extends LitElement {
       return this.getRectBottomCenter(pointer.getBoundingClientRect());
     }
     return this.getTargetVisualAnchor(target);
-  }
-
-  private requestLayerGrouping(layer: ObcPoiLayer) {
-    const targets = Array.from(
-      layer.querySelectorAll('obc-poi-data')
-    ) as HTMLElement[];
-    targets.forEach((target) => {
-      const marker = target.style.getPropertyValue(
-        '--obc-poi-layer-stack-reflow'
-      );
-      target.style.setProperty(
-        '--obc-poi-layer-stack-reflow',
-        marker === '1' ? '0' : '1'
-      );
-    });
   }
 
   private schedulePlacement() {

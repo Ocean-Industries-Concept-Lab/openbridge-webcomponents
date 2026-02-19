@@ -429,6 +429,11 @@ export class ObcPoiLayer extends LitElement {
     this.layerMutationObserver.observe(this, {childList: true, subtree: true});
   }
 
+  public requestGroupingUpdate() {
+    this.scheduleGrouping();
+    this.scheduleLayerHeightUpdate();
+  }
+
   private scheduleGrouping() {
     if (this.overlapMode === OverlapMode.Crossing) {
       this.scheduleCrossingMode();
