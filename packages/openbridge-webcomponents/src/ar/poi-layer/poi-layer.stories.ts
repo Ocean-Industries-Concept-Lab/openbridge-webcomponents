@@ -11,7 +11,9 @@ const isVitestBrowser = Boolean(
   (globalThis as {__vitest_browser__?: unknown}).__vitest_browser__
 );
 
-const waitForStorySettle = async () => {
+const waitForStorySettle = async (
+  options: {drainTransitions?: boolean} = {}
+) => {
   if ('fonts' in document) {
     await (document as Document & {fonts?: FontFaceSet}).fonts?.ready;
   }
@@ -19,6 +21,15 @@ const waitForStorySettle = async () => {
   await new Promise<void>((resolve) =>
     requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
   );
+
+  if (options.drainTransitions && isVitestBrowser) {
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 220);
+    });
+    await new Promise<void>((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+    );
+  }
 };
 
 type PoiLayerArgs = {
@@ -347,7 +358,7 @@ export const WithValuesTargets: Story = {
     debug: true,
   },
   play: async () => {
-    await waitForStorySettle();
+    await waitForStorySettle({drainTransitions: true});
   },
   render(args) {
     const valuesA = [

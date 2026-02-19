@@ -164,6 +164,10 @@ export class ObcPoiLayerStack extends LitElement {
     return Array.from(this.querySelectorAll('obc-poi-layer')) as ObcPoiLayer[];
   }
 
+  private isLayerSelected(layer: ObcPoiLayer): boolean {
+    return layer.isSelected === true || layer.hasAttribute('is-selected');
+  }
+
   private cleanupSelection() {
     this.selectionMap.forEach((_, target) => {
       if (!target.isConnected) this.selectionMap.delete(target);
@@ -183,9 +187,11 @@ export class ObcPoiLayerStack extends LitElement {
       case 'secondTop':
         return layers.length >= 2 ? (layers[layers.length - 2] ?? null) : null;
       case 'selected':
-        return layers.find((layer) => layer.isSelected) ?? null;
+        return layers.find((layer) => this.isLayerSelected(layer)) ?? null;
       case 'default': {
-        const nonSelected = layers.filter((layer) => !layer.isSelected);
+        const nonSelected = layers.filter(
+          (layer) => !this.isLayerSelected(layer)
+        );
         return nonSelected[nonSelected.length - 1] ?? null;
       }
     }

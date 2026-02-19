@@ -38,7 +38,10 @@ const selectionMultiAnimatedSnapshotPose: AnimatedPoiSnapshotPose[] = [
   {x: 624, y: 100, boxWidth: 33, boxHeight: 35, relativeDirection: 26},
 ];
 
-const waitForStorySettle = async (canvasElement: HTMLElement) => {
+const waitForStorySettle = async (
+  canvasElement: HTMLElement,
+  options: {drainTransitions?: boolean} = {}
+) => {
   const image = canvasElement.querySelector(
     '.stage img'
   ) as HTMLImageElement | null;
@@ -57,6 +60,15 @@ const waitForStorySettle = async (canvasElement: HTMLElement) => {
   await new Promise<void>((resolve) =>
     requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
   );
+
+  if (options.drainTransitions && isVitestBrowser) {
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 220);
+    });
+    await new Promise<void>((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+    );
+  }
 };
 
 const meta: Meta<PoiControllerArgs> = {
@@ -204,13 +216,11 @@ export const SelectionMultiAnimated: Story = {
             <obc-poi-layer label="Layer A" is-selected>
               <obc-poi-data
                 class="anim-poi p0"
-                .x=${isVitestBrowser ? p0.x : 520}
-                .y=${isVitestBrowser ? p0.y : 110}
-                .relativeDirection=${isVitestBrowser
-                  ? p0.relativeDirection
-                  : 18}
-                .boxWidth=${isVitestBrowser ? p0.boxWidth : 32}
-                .boxHeight=${isVitestBrowser ? p0.boxHeight : 32}
+                .x=${p0.x}
+                .y=${p0.y}
+                .relativeDirection=${p0.relativeDirection}
+                .boxWidth=${p0.boxWidth}
+                .boxHeight=${p0.boxHeight}
                 .fixedTarget=${false}
               ></obc-poi-data>
             </obc-poi-layer>
@@ -218,53 +228,43 @@ export const SelectionMultiAnimated: Story = {
             <obc-poi-layer label="Layer C" data-controller-layer="background">
               <obc-poi-data
                 class="anim-poi p1"
-                .x=${isVitestBrowser ? p1.x : 170}
-                .y=${isVitestBrowser ? p1.y : 120}
-                .relativeDirection=${isVitestBrowser
-                  ? p1.relativeDirection
-                  : -36}
-                .boxWidth=${isVitestBrowser ? p1.boxWidth : 32}
-                .boxHeight=${isVitestBrowser ? p1.boxHeight : 32}
+                .x=${p1.x}
+                .y=${p1.y}
+                .relativeDirection=${p1.relativeDirection}
+                .boxWidth=${p1.boxWidth}
+                .boxHeight=${p1.boxHeight}
               ></obc-poi-data>
               <obc-poi-data
                 class="anim-poi p2"
-                .x=${isVitestBrowser ? p2.x : 280}
-                .y=${isVitestBrowser ? p2.y : 80}
-                .relativeDirection=${isVitestBrowser
-                  ? p2.relativeDirection
-                  : 128}
-                .boxWidth=${isVitestBrowser ? p2.boxWidth : 32}
-                .boxHeight=${isVitestBrowser ? p2.boxHeight : 32}
+                .x=${p2.x}
+                .y=${p2.y}
+                .relativeDirection=${p2.relativeDirection}
+                .boxWidth=${p2.boxWidth}
+                .boxHeight=${p2.boxHeight}
               ></obc-poi-data>
               <obc-poi-data
                 class="anim-poi p3"
-                .x=${isVitestBrowser ? p3.x : 390}
-                .y=${isVitestBrowser ? p3.y : 100}
-                .relativeDirection=${isVitestBrowser
-                  ? p3.relativeDirection
-                  : -156}
-                .boxWidth=${isVitestBrowser ? p3.boxWidth : 32}
-                .boxHeight=${isVitestBrowser ? p3.boxHeight : 32}
+                .x=${p3.x}
+                .y=${p3.y}
+                .relativeDirection=${p3.relativeDirection}
+                .boxWidth=${p3.boxWidth}
+                .boxHeight=${p3.boxHeight}
               ></obc-poi-data>
               <obc-poi-data
                 class="anim-poi p4"
-                .x=${isVitestBrowser ? p4.x : 500}
-                .y=${isVitestBrowser ? p4.y : 140}
-                .relativeDirection=${isVitestBrowser
-                  ? p4.relativeDirection
-                  : 42}
-                .boxWidth=${isVitestBrowser ? p4.boxWidth : 32}
-                .boxHeight=${isVitestBrowser ? p4.boxHeight : 32}
+                .x=${p4.x}
+                .y=${p4.y}
+                .relativeDirection=${p4.relativeDirection}
+                .boxWidth=${p4.boxWidth}
+                .boxHeight=${p4.boxHeight}
               ></obc-poi-data>
               <obc-poi-data
                 class="anim-poi p5"
-                .x=${isVitestBrowser ? p5.x : 610}
-                .y=${isVitestBrowser ? p5.y : 90}
-                .relativeDirection=${isVitestBrowser
-                  ? p5.relativeDirection
-                  : 172}
-                .boxWidth=${isVitestBrowser ? p5.boxWidth : 32}
-                .boxHeight=${isVitestBrowser ? p5.boxHeight : 32}
+                .x=${p5.x}
+                .y=${p5.y}
+                .relativeDirection=${p5.relativeDirection}
+                .boxWidth=${p5.boxWidth}
+                .boxHeight=${p5.boxHeight}
               ></obc-poi-data>
             </obc-poi-layer>
           </obc-poi-layer-stack>
@@ -273,7 +273,7 @@ export const SelectionMultiAnimated: Story = {
     `;
   },
   play: async ({canvasElement}) => {
-    await waitForStorySettle(canvasElement);
+    await waitForStorySettle(canvasElement, {drainTransitions: true});
     if (isVitestBrowser) return;
 
     const root = canvasElement.querySelector(
