@@ -197,7 +197,7 @@ export const AnimatedLayoutWithValues: Story = {
     debug: true,
   },
   play: async () => {
-    await waitForStorySettle();
+    await waitForStorySettle({drainTransitions: true});
   },
   render(args) {
     const hostRef = createRef<HTMLDivElement>();
