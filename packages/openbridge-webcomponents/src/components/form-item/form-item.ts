@@ -29,64 +29,79 @@ export type ObcFormItemActionChangeEvent = CustomEvent<{
 }>;
 
 /**
- * `<obc-form-item>` – A form list item with optional action/status controls,
- * icon support, and multi-line text content.
+ * `<obc-form-item>` renders one interactive form row for grouped list content.
  *
- * Uses `<obc-checkbox>` for action variants and `<obi-check-google>` for status
- * variants. The main text content is provided through the default slot and
- * supports multi-line text.
+ * **Overview**
+ * Use this component as an item row, line item, list entry, tile, or cell
+ * inside `obc-form-group` and related form layouts.
  *
- * @slot icon - Optional leading icon (shown when `hasIcon` is true).
- * @slot - Main text content (multi-line).
- * @fires action-change {ObcFormItemActionChangeEvent} - Fired when the internal action checkbox changes.
+ * **Features / Variants**
+ * - Supports layout variants through `type`:
+ *   `view`, `enabled-action-first`, `enabled-action-last`,
+ *   `filled-status-first`, `filled-status-last`, `inactive`.
+ * - Supports non-interactive base states through `basicState`:
+ *   `enabled`, `disabled`, `amplified`.
+ * - Optional leading icon through `hasIcon` + `icon` slot.
+ * - Optional shader for view/inactive variants through `hasShader`.
+ * - Optional action error rendering through `hasError` and `errorText` for
+ *   action variants.
+ * - Optional stable event identity via `itemId`.
+ *
+ * **Usage Guidelines**
+ * - Use action variants when checkbox interaction is needed.
+ * - Use filled-status variants for read-only completion status.
+ * - Keep text content in the default slot to support multi-line wrapping.
+ * - Pair group and item variants consistently in the same section.
+ *
+ * **Slots / Content**
+ * - `icon`: optional leading icon content.
+ * - default slot: main row text/content.
+ *
+ * **Events**
+ * - Emits `action-change` when the internal checkbox changes.
+ * - Event detail includes `itemId`, checkbox `status`, and `disabled` state.
+ *
+ * **Best Practices**
+ * - Prefer semantic `itemId` values when rendering dynamic lists.
+ * - Avoid mixing unrelated item variants in the same visual group.
+ * - Use `basicState` for logical state previews and rely on CSS pseudo-classes
+ *   for real interaction states.
+ *
+ * **Example**
+ * ```html
+ * <obc-form-item
+ *   type="enabled-action-first"
+ *   item-id="engine-room-1"
+ *   has-icon
+ * >
+ *   <obi-placeholder slot="icon"></obi-placeholder>
+ *   Engine room checklist item
+ * </obc-form-item>
+ * ```
+ *
+ * @slot icon - Optional leading icon content.
+ * @slot - Main row text or content.
+ * @fires action-change {ObcFormItemActionChangeEvent} Fired when the internal checkbox state changes.
  */
 @customElement('obc-form-item')
 export class ObcFormItem extends LitElement {
-  /**
-   * Visual layout variant of the form item.
-   */
   @property({type: String}) type: ObcFormItemType = ObcFormItemType.View;
 
-  /**
-   * Optional identifier forwarded in `action-change` detail.
-   * Use it to map checkbox changes back to a specific data item in lists.
-   */
   @property({type: String, attribute: 'item-id'}) itemId = '';
 
-  /**
-   * Shows an error outline around the item.
-   * Only applied for action variants.
-   */
   @property({type: Boolean, reflect: true, attribute: 'has-error'})
   hasError = false;
 
-  /**
-   * Error text shown under the item when `hasError` is true.
-   */
   @property({type: String, attribute: 'error-text'}) errorText = '';
 
-  /**
-   * Shows a leading icon slot when true.
-   * Type-specific layouts can place icon and status together.
-   */
   @property({type: Boolean, attribute: 'has-icon'}) hasIcon = false;
 
-  /**
-   * Logical state override for non-interactive states.
-   * Interactive states (hover/active/focus) are handled via CSS pseudo-classes.
-   */
   @property({type: String, attribute: 'basic-state'})
   basicState: ObcFormItemBasicState = ObcFormItemBasicState.Enabled;
 
-  /**
-   * Shows the divider shader for view/inactive types only.
-   */
   @property({type: Boolean, reflect: true, attribute: 'has-shader'})
   hasShader = false;
 
-  /**
-   * Disables the item interactions.
-   */
   @property({type: Boolean, reflect: true}) disabled = false;
 
   static override styles = unsafeCSS(componentStyle);

@@ -15,22 +15,58 @@ export enum ObcFormGroupType {
 }
 
 /**
- * `<obc-form-group>` – Container for a labeled group of form items.
+ * `<obc-form-group>` groups related form items into one labeled section.
  *
- * Structure:
- * - title-container (subtitle + text)
- * - content-container (one or more form items)
+ * **Overview**
+ * Use this component as a form section, block, cluster, or fieldset-like list
+ * container where multiple `obc-form-item` rows belong together.
  *
- * @slot subtitle - Subtitle text (title container)
- * @slot text - Description text (title container)
- * @slot - Form items (one or more)
- * @fires action-change {ObcFormItemActionChangeEvent} - Fired when a nested form item action checkbox changes.
+ * **Features / Variants**
+ * - Supports title metadata (`subtitle` and `text`) above grouped items.
+ * - Uses `type` to coordinate visuals with nested form items:
+ *   `view`, `enabled-action-first`, `enabled-action-last`,
+ *   `filled-status-first`, `filled-status-last`, `inactive`.
+ * - Marks first/last/focused slotted items to keep borders and radii correct in
+ *   stacked layouts.
+ *
+ * **Usage Guidelines**
+ * - Slot only `obc-form-item` elements in the default slot for predictable
+ *   layout and state behavior.
+ * - Keep `type` aligned with item type patterns in the same section.
+ * - Use `action-change` from this container as the integration event at form
+ *   level instead of wiring each item independently.
+ *
+ * **Slots / Content**
+ * - `subtitle`: secondary heading text for the group.
+ * - `text`: supporting description text for the group.
+ * - default slot: one or more `obc-form-item` rows.
+ *
+ * **Events**
+ * - Re-emits `action-change` from nested items with the original detail.
+ *
+ * **Best Practices**
+ * - Prefer one semantic concern per group.
+ * - Keep item order stable so focus and edge markers map consistently.
+ * - Use the group as the styling boundary, while item-level behavior remains in
+ *   `obc-form-item`.
+ *
+ * **Example**
+ * ```html
+ * <obc-form-group type="enabled-action-first">
+ *   <span slot="subtitle">Subtitle</span>
+ *   <span slot="text">Description</span>
+ *   <obc-form-item type="enabled-action-first">Item 1</obc-form-item>
+ *   <obc-form-item type="enabled-action-first">Item 2</obc-form-item>
+ * </obc-form-group>
+ * ```
+ *
+ * @slot subtitle - Subtitle text rendered in the title area.
+ * @slot text - Description text rendered in the title area.
+ * @slot - One or more `obc-form-item` elements.
+ * @fires action-change {ObcFormItemActionChangeEvent} Fired when a nested form item checkbox state changes.
  */
 @customElement('obc-form-group')
 export class ObcFormGroup extends LitElement {
-  /**
-   * Visual type of the group (mirrors form item types).
-   */
   @property({type: String}) type: ObcFormGroupType = ObcFormGroupType.View;
 
   static override styles = unsafeCSS(componentStyle);

@@ -88,7 +88,7 @@ const meta = {
     <span slot="label">${label}</span>
 ${actionSlots}
   </obc-title-container>
-${contentTitleLine}  <!-- content -->
+${contentTitleLine}
   <obc-form-footer-container slot="footer"${footerHasActionsAttr}>
 ${footerActionItems}
   </obc-form-footer-container>

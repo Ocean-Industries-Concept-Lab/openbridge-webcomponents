@@ -21,6 +21,7 @@
 
   .subtitle {
     @mixin font-overline;
+
     color: var(--element-neutral-color);
 
     .type-inactive & {
@@ -30,6 +31,7 @@
 
   .text {
     @mixin font-label;
+
     color: var(--element-neutral-color);
   }
 

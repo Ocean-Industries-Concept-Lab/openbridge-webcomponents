@@ -20,6 +20,10 @@ export enum ObcFormContainerType {
  * - content-section (body content)
  * - footer-section (footer actions)
  *
+ * Properties:
+ * - `type` - Visual type of the container (`view`, `enabled`, `inactive`, `completed`).
+ * - `contentTitle` - Optional fallback text for the `content-title` slot.
+ *
  * @slot title - Header content (e.g., <obc-title-container>).
  * @slot content-title - Optional content title shown above the main content.
  * @slot - Main content.
@@ -27,15 +31,9 @@ export enum ObcFormContainerType {
  */
 @customElement('obc-form-container')
 export class ObcFormContainer extends LitElement {
-  /**
-   * Visual type of the container.
-   */
   @property({type: String}) type: ObcFormContainerType =
     ObcFormContainerType.View;
 
-  /**
-   * Optional content title text (used when the `content-title` slot is empty).
-   */
   @property({type: String, attribute: 'content-title'}) contentTitle = '';
 
   static override styles = unsafeCSS(componentStyle);
