@@ -18,11 +18,11 @@ const TOP_OFFSET_ANIMATION_MS_VAR = '--obc-poi-group-top-offset-animation-ms';
 const TOP_OFFSET_ANIMATION_DELAY_MS_VAR =
   '--obc-poi-group-top-offset-animation-delay-ms';
 const POI_VISUAL_TARGET_VAR =
-  '--maneuvering-components-poi-button-visual-target';
+  '--maneuvering-components-poi-button-visual-target-round';
 const POI_VISUAL_TARGET_OVERLAP_VAR =
-  '--maneuvering-components-poi-button-visual-target-overlap';
+  '--maneuvering-components-poi-button-visual-target-round-overlap';
 const POI_LARGE_VISUAL_TARGET_VAR =
-  '--maneuvering-components-poi-button-large-visual-target';
+  '--maneuvering-components-poi-button-large-visual-target-round';
 const POI_LARGE_VISUAL_TARGET_OVERLAP_VAR =
   '--maneuvering-components-poi-button-large-visual-target-round-overlap';
 
