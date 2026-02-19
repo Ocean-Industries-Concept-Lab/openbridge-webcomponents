@@ -43,6 +43,14 @@ export type ObcPaginationNavigateEvent = CustomEvent<{
 }>;
 
 /**
+ * Event fired when a page is selected.
+ * @event
+ */
+export type ObcPaginationSelectPageEvent = CustomEvent<{
+  page: number;
+}>;
+
+/**
  * `obc-pagination` – page navigation component for traversing multi-page content.
  *
  * Provides accessible, keyboard-navigable controls for moving between pages of content, such as tables, lists, or document sets. Includes support for ARIA live region updates and multiple visual variants to fit different UI layouts.
@@ -97,9 +105,11 @@ export type ObcPaginationNavigateEvent = CustomEvent<{
  *
  * - `value` – Fired when the current page changes (via user interaction).
  * - `navigate` – Fired when a navigation arrow (first, previous, next, last) is clicked.
+ * - `select-page` – Fired when a specific page is selected.
  *
  * @fires value {ObcPaginationValueChangeEvent} Emitted whenever the current page changes.
  * @fires navigate {ObcPaginationNavigateEvent} Emitted when a navigation arrow is clicked.
+ * @fires select-page {ObcPaginationSelectPageEvent} Emitted when a specific page is selected.
  */
 @customElement('obc-pagination')
 export class ObcPagination extends LitElement {
@@ -187,13 +197,18 @@ export class ObcPagination extends LitElement {
 
   private setCurrentPage(newPage: number) {
     const page = Math.max(1, Math.min(newPage, this.validatedPages));
-    if (page === this.currentPage) return;
+    if (page === this.currentPage) {
+      return false;
+    }
+
     this.currentPage = page;
     this.dispatchEvent(
       new CustomEvent('value', {
         detail: {value: page},
       }) as ObcPaginationValueChangeEvent
     );
+
+    return true;
   }
 
   private dispatchNavigateEvent(
@@ -207,7 +222,15 @@ export class ObcPagination extends LitElement {
   }
 
   private handlePageChange = (event: CustomEvent<{value: string}>) => {
-    this.setCurrentPage(Number(event.detail.value));
+    const success = this.setCurrentPage(Number(event.detail.value));
+
+    if (success) {
+      this.dispatchEvent(
+        new CustomEvent('select-page', {
+          detail: {page: Number(event.detail.value)},
+        }) as ObcPaginationSelectPageEvent
+      );
+    }
   };
 
   private handleFirstClick = () => {
