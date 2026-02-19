@@ -20,6 +20,7 @@ export enum ObcAlertFrameType {
   SmallSideFlip = 'small-side-flip',
   LargeSideFlip = 'large-side-flip',
   BottomFlip = 'bottom-flip',
+  TopFlip = 'top-flip',
 }
 
 /**
@@ -42,6 +43,11 @@ export enum ObcAlertFrameStatus {
   Alarm = 'alarm',
   Warning = 'warning',
   Caution = 'caution',
+}
+
+export enum AlertFrameTextSize {
+  Regular = 'regular',
+  Large = 'large',
 }
 
 /**
@@ -167,6 +173,9 @@ export class ObcAlertFrame extends LitElement {
    */
   @property({type: Boolean}) sharpEdgeBottomRight: boolean = false;
 
+  @property({type: String}) textSize: AlertFrameTextSize =
+    AlertFrameTextSize.Regular;
+
   override render() {
     return html`
       <div
@@ -175,6 +184,7 @@ export class ObcAlertFrame extends LitElement {
           ['thickness-' + this.thickness]: true,
           [this.type]: true,
           [this.status]: true,
+          ['text-size-' + this.textSize]: true,
           'sharp-edge-top-left': this.sharpEdgeTopLeft,
           'sharp-edge-top-right': this.sharpEdgeTopRight,
           'sharp-edge-bottom-left': this.sharpEdgeBottomLeft,
@@ -213,8 +223,15 @@ export class ObcAlertFrame extends LitElement {
         <div class="mask down"></div>
       </div>`;
     }
-    if (this.type === ObcAlertFrameType.BottomFlip) {
-      return html`<div class="flap bottom">
+    if (
+      this.type === ObcAlertFrameType.BottomFlip ||
+      this.type === ObcAlertFrameType.TopFlip
+    ) {
+      return html`<div
+        class="flap ${this.type === ObcAlertFrameType.BottomFlip
+          ? 'bottom'
+          : 'top'}"
+      >
         ${icon}
         <div class="icon"><slot name="icon"></slot></div>
         <div class="label"><slot name="label"></slot></div>
