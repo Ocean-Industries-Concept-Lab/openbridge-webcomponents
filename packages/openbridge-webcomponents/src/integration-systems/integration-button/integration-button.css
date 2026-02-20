@@ -5,75 +5,51 @@
 :host {
   width: 100%;
   display: block;
+  flex: 1 1 0;
 }
 
-.wrapper {
+:host(:has(.touch-target.type-hug)) {
+  width: auto;
+  flex: 0 0 auto;
+}
+
+.touch-target {
   display: flex;
-  flex-direction: column;
-  padding: 0;
-  margin: 0;
+  width: auto;
+  min-height: var(--app-components-integration-system-button-touch-target);
+  padding: 4px 0;
+  align-items: center;
+  gap: 14px;
   border: none;
-  background: none;
+  background: transparent;
   appearance: none;
-  width: 100%;
-  border-radius: var(
-      --app-components-integration-system-button-border-radius-top-left
-    )
-    var(--app-components-integration-system-button-border-radius-top-right)
-    var(--app-components-integration-system-button-border-radius-bottom-right)
-    var(--app-components-integration-system-button-border-radius-bottom-left);
 
-  @mixin style style=integration-normal;
-
-  &.selected {
-    margin-bottom: 2px;
-    margin-top: 2px;
-    @mixin style style=integration-selected;
-
-    .icon {
-      color: var(--integration-on-selected-active-color);
-    }
-
-    .label {
-      color: var(--integration-on-selected-active-color) !important;
-    }
-
-    .status {
-      color: var(--integration-on-selected-neutral-color) !important;
-    }
-
-    .info-item {
-      .info-label {
-        color: var(--integration-on-selected-neutral-color) !important;
-      }
-
-      .info-status {
-        color: var(--integration-on-selected-active-color) !important;
-      }
-    }
-
-    .info-readout-item {
-      .info-item-label {
-        color: var(--integration-on-selected-neutral-color);
-      }
-
-      .info-item-value {
-        color: var(--integration-on-selected-active-color);
-      }
-
-      .info-item-unit {
-        color: var(--integration-on-selected-neutral-color);
-      }
-    }
+  .content-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 0;
+    border-radius: 6px;
+    border: var(--app-components-integration-system-button-stroke-weight-bottom)
+      solid var(--integration-beta-normal-enabled-border-color);
+    background: var(--integration-beta-normal-enabled-background-color);
   }
 
   .main-container {
     display: flex;
-    flex-direction: row;
+    padding: 0;
     align-items: center;
-    width: 100%;
+    gap: 0;
+    align-self: stretch;
+    border: none;
+  }
+
+  .type-rich .main-container {
+    display: flex;
     padding: var(--app-components-integration-system-button-padding-vertical)
-      var(--app-components-integration-system-button-padding-horizontal);
+      var(--app-components-integration-system-button-padding-horizontal-large);
+    align-items: center;
+    gap: var(--app-components-integration-system-button-label-spacing);
+    align-self: stretch;
   }
 
   .icon-container {
@@ -173,6 +149,74 @@
       grid-area: unit;
       @mixin font-label;
       color: var(--integration-on-normal-neutral-color);
+    }
+  }
+
+  &.variant-normal {
+    @mixin style style=integration-normal visibleWrapperClass=.content-container;
+    color: var(--on-normal-active-color);
+
+    & .icon {
+      color: var(--on-normal-neutral-color);
+    }
+
+    &:disabled .icon {
+      color: var(--on-normal-disabled-color);
+    }
+  }
+
+  &.variant-flat {
+    @mixin style style=integration-flat visibleWrapperClass=.content-container;
+    color: var(--on-flat-active-color);
+
+    & .icon {
+      color: var(--on-flat-neutral-color);
+    }
+
+    &:disabled .icon {
+      color: var(--on-flat-disabled-color);
+    }
+  }
+  &.selected {
+    margin-bottom: 2px;
+    margin-top: 2px;
+    @mixin style style=integration-selected
+      visibleWrapperClass=.content-container;
+
+    .icon {
+      color: var(--integration-on-selected-active-color);
+    }
+
+    .label {
+      color: var(--integration-on-selected-active-color) !important;
+    }
+
+    .status {
+      color: var(--integration-on-selected-neutral-color) !important;
+    }
+
+    .info-item {
+      .info-label {
+        color: var(--integration-on-selected-neutral-color) !important;
+      }
+
+      .info-status {
+        color: var(--integration-on-selected-active-color) !important;
+      }
+    }
+
+    .info-readout-item {
+      .info-item-label {
+        color: var(--integration-on-selected-neutral-color);
+      }
+
+      .info-item-value {
+        color: var(--integration-on-selected-active-color);
+      }
+
+      .info-item-unit {
+        color: var(--integration-on-selected-neutral-color);
+      }
     }
   }
 }
