@@ -66,7 +66,7 @@ export const Large: Story = {
   },
 };
 
-export const NoCommand: Story = {
+export const NotInCommand: Story = {
   args: {
     size: AzimuthThrusterLabeledSize.medium,
     width: 384,

@@ -121,9 +121,6 @@ export enum SetpointVisualState {
    * - Silhouette: --border-silhouette-color (both modes)
    */
   focus = 'focus',
-
-  // TODO: minMax for radial only (triangle plus deadband arc range)
-  // minMax = 'minMax',
 }
 
 /**

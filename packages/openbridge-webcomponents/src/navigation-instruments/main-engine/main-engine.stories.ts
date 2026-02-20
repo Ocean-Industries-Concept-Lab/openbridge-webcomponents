@@ -41,9 +41,10 @@ export const InCommand: Story = {
   },
 };
 
-export const Active: Story = {
+export const NotInCommand: Story = {
   args: {
     state: InstrumentState.active,
+    priority: Priority.regular,
   },
 };
 

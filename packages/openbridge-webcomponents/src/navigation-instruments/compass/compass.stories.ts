@@ -4,7 +4,7 @@ import './compass.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
 import {VesselImage} from '../watch/watch.js';
-import {Priority} from '../types.js';
+import {InstrumentState, Priority} from '../types.js';
 
 const meta: Meta<typeof ObcCompass> = {
   title: 'Instruments/Compass',
@@ -58,6 +58,7 @@ const meta: Meta<typeof ObcCompass> = {
       options: Object.values(CompassDirection),
     },
     touching: {control: 'boolean'},
+    state: {control: 'select', options: Object.values(InstrumentState)},
     priority: {control: 'select', options: Object.values(Priority)},
   },
   decorators: [widthDecorator],
@@ -66,17 +67,24 @@ const meta: Meta<typeof ObcCompass> = {
 export default meta;
 type Story = StoryObj<ObcCompass>;
 
-export const NorthUp: Story = {
+export const NorthUpInCommand: Story = {
   args: {},
 };
 
-export const HeadingUp: Story = {
+export const NorthUpNotInCommand: Story = {
+  args: {
+    state: InstrumentState.active,
+    priority: Priority.regular,
+  },
+};
+
+export const HeadingUpInCommand: Story = {
   args: {
     direction: CompassDirection.HeadingUp,
   },
 };
 
-export const CourseUp: Story = {
+export const CourseUpInCommand: Story = {
   args: {
     direction: CompassDirection.CourseUp,
   },

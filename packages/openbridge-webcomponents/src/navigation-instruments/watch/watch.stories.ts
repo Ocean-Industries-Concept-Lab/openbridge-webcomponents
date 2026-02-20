@@ -94,11 +94,21 @@ export default meta;
 type Story = StoryObj<ObcWatch>;
 
 export const InCommand: Story = {
-  // TODO: review the name of this story, is this still inCommand?
   args: {
     angleSetpoint: 90,
     state: InstrumentState.active,
     priority: Priority.enhanced,
+  },
+  argTypes: {
+    angleSetpoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
+  },
+};
+
+export const NotInCommand: Story = {
+  args: {
+    angleSetpoint: 90,
+    state: InstrumentState.active,
+    priority: Priority.regular,
   },
   argTypes: {
     angleSetpoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
@@ -174,16 +184,6 @@ export const WithWind: Story = {
     currentFromDirectionDeg: 238,
     currentSymbolRadius: 190,
     crosshairEnabled: true,
-  },
-};
-
-export const Active: Story = {
-  args: {
-    angleSetpoint: 90,
-    state: InstrumentState.active,
-  },
-  argTypes: {
-    angleSetpoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
   },
 };
 

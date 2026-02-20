@@ -10,7 +10,7 @@ import {SetpointBundle} from '../../svghelpers/setpoint-bundle.js';
 import {rot} from './rot.js';
 import {RateOfTurnController} from '../rate-of-turn/rate-of-turn.controller.js';
 import {customElement} from '../../decorator.js';
-import {Priority} from '../types.js';
+import {InstrumentState, Priority} from '../types.js';
 
 export enum CompassDirection {
   NorthUp = 'northUp',
@@ -115,6 +115,7 @@ export class ObcCompass extends LitElement {
   @property({type: Number}) rotationsPerMinute: number = 1;
   @property({type: String}) direction: CompassDirection =
     CompassDirection.NorthUp;
+  @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
 
   protected override updated(_changedProperties: PropertyValues): void {
@@ -225,6 +226,7 @@ export class ObcCompass extends LitElement {
           .padding=${padding}
           .advices=${this.angleAdviceRaw}
           .tickmarks=${tickmarks}
+          .state=${this.state}
           .watchCircleType=${WatchCircleType.triple}
           .labelFrameEnabled=${true}
           .crosshairEnabled=${true}

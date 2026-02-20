@@ -43,7 +43,6 @@ export default meta;
 type Story = StoryObj<ObcAzimuthThruster>;
 
 export const InCommand: Story = {
-  // TODO: review the name of this story, is this still inCommand?
   args: {
     size: Size.large,
     thrust: 60,
@@ -65,7 +64,6 @@ export const InCommand: Story = {
 };
 
 export const InCommandDetailedTickmarks: Story = {
-  // TODO: review the name of this story, is this still inCommand?
   args: {
     thrust: 60,
     thrustSetpoint: 60,
@@ -78,7 +76,6 @@ export const InCommandDetailedTickmarks: Story = {
 };
 
 export const InCommandDetailedTickmarksInside: Story = {
-  // TODO: review the name of this story, is this still inCommand?
   args: {
     thrust: 60,
     thrustSetpoint: 60,
@@ -159,7 +156,7 @@ export const SingleDirectionWithPropeller: Story = {
   },
 };
 
-export const Active: Story = {
+export const NotInCommand: Story = {
   args: {
     size: Size.large,
     thrust: 60,
@@ -167,10 +164,11 @@ export const Active: Story = {
     angle: 30,
     angleSetpoint: 40,
     state: InstrumentState.active,
+    priority: Priority.regular,
   },
 };
 
-export const ActiveAtSetpoint: Story = {
+export const NotInCommandAtSetpoint: Story = {
   args: {
     size: Size.large,
     thrust: 60,
@@ -178,10 +176,11 @@ export const ActiveAtSetpoint: Story = {
     angle: 30,
     angleSetpoint: 30,
     state: InstrumentState.active,
+    priority: Priority.regular,
   },
 };
 
-export const ActiveNoSetpoint: Story = {
+export const NotInCommandNoSetpoint: Story = {
   args: {
     size: Size.large,
     thrust: 60,
@@ -189,6 +188,7 @@ export const ActiveNoSetpoint: Story = {
     angle: 30,
     angleSetpoint: undefined,
     state: InstrumentState.active,
+    priority: Priority.regular,
   },
 };
 

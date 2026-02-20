@@ -181,20 +181,22 @@ export const InCommandAtSetpointManual: Story = {
   },
 };
 
-export const Active: Story = {
+export const NotInCommand: Story = {
   args: {
     thrust: 50,
     setpoint: 30,
     state: InstrumentState.active,
+    priority: Priority.regular,
   },
 };
 
-export const ActiveAtSetpoint: Story = {
+export const NotInCommandAtSetpoint: Story = {
   args: {
     thrust: 50,
     setpoint: 50,
     atSetpoint: true,
     state: InstrumentState.active,
+    priority: Priority.regular,
   },
 };
 
