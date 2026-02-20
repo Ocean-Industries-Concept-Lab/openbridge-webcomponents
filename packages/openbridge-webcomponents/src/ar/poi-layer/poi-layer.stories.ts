@@ -785,8 +785,7 @@ export const JoinExpandedGroup: Story = {
     joinWhileExpanded: true,
   },
   play: async () => {
-    if (!isVitestBrowser) return;
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await waitForStorySettle({drainTransitions: true});
   },
   render(args) {
     const hostRef = createRef<HTMLDivElement>();
@@ -922,8 +921,7 @@ export const LeaveExpandedGroup: Story = {
     expand: true,
   },
   play: async () => {
-    if (!isVitestBrowser) return;
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await waitForStorySettle({drainTransitions: true});
   },
   render(args) {
     const hostRef = createRef<HTMLDivElement>();
