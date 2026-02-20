@@ -45,6 +45,11 @@ export enum ObcAlertFrameStatus {
   Caution = 'caution',
 }
 
+/**
+ * Text size options for flip-flap typography.
+ * - `regular`: Standard text size (default).
+ * - `large`: Larger text for increased visibility.
+ */
 export enum AlertFrameTextSize {
   Regular = 'regular',
   Large = 'large',
