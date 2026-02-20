@@ -209,6 +209,14 @@ export class ObcTopBar extends LitElement {
   userButtonActivated = false;
 
   /**
+   * Disables the user/profile button.
+   * @type {boolean}
+   * @default false
+   */
+  @property({type: Boolean})
+  userButtonDisabled = false;
+
+  /**
    * Increases the height of the top bar for larger touch targets.
    * @type {boolean}
    * @default false
@@ -549,6 +557,7 @@ export class ObcTopBar extends LitElement {
                 part="user-button"
                 @click=${this.userButtonClicked}
                 ?activated=${this.userButtonActivated}
+                ?disabled=${this.userButtonDisabled}
               >
                 <obi-user></obi-user>
               </obc-icon-button>`
