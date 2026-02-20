@@ -3,6 +3,7 @@ import {ObcSpeedGauge, ObcSpeedGaugeNeedleType} from './speed-gauge.js';
 import './speed-gauge.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
+import {Priority} from '../types.js';
 
 const meta: Meta<typeof ObcSpeedGauge> = {
   title: 'Instruments/Speed gauge',
@@ -13,7 +14,7 @@ const meta: Meta<typeof ObcSpeedGauge> = {
     maxSpeed: 100,
     width: 512,
     speed: 50,
-    enhanced: true,
+    priority: Priority.enhanced,
     touching: false,
   },
   argTypes: {
@@ -23,6 +24,7 @@ const meta: Meta<typeof ObcSpeedGauge> = {
     maxSpeed: {control: {type: 'range', min: 0, max: 100, step: 1}},
     setpoint: {control: {type: 'range', min: -20, max: 100, step: 1}},
     touching: {control: 'boolean'},
+    priority: {control: 'select', options: Object.values(Priority)},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcSpeedGauge>;
@@ -31,10 +33,10 @@ export default meta;
 type Story = StoryObj<ObcSpeedGauge>;
 
 export const Enhanced: Story = {
-  args: {enhanced: true, setpoint: 40},
+  args: {priority: Priority.enhanced, setpoint: 40},
 };
 export const Regular: Story = {
-  args: {enhanced: false},
+  args: {priority: Priority.regular},
 };
 
 export const Labels: Story = {

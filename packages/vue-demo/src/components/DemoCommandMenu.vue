@@ -2,7 +2,7 @@
   <ObcCommandMenu
     class="command-menu"
     :in-command="demoConfigStore.hasCommand"
-    :has-location="!demoConfigStore.hasCommand"
+    :hide-location="demoConfigStore.hasCommand"
     @change="$emit('change', $event)"
   >
     <div slot="command-icon">

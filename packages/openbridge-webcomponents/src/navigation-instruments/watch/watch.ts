@@ -17,12 +17,11 @@ import {
   getSetpointAnimationDurationMs,
   getSetpointOutwardOffset,
   RADIAL_SETPOINT_RADIUS,
-  SetpointColorMode,
   SetpointVisualState,
   SETPOINT_ANIMATION_CSS_VAR,
   SETPOINT_ANIMATION_DURATION_DEFAULT,
 } from '../../svghelpers/setpoint.js';
-import {InstrumentState} from '../types.js';
+import {InstrumentState, Priority} from '../types.js';
 import compentStyle from './watch.css?inline';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {adviceMask, AngleAdviceRaw, renderAdvice} from './advice.js';
@@ -103,7 +102,7 @@ const RADIAL_SETPOINT_INWARD_ADJUST = 4;
  * The `RADIAL_SETPOINT_INWARD_ADJUST` constant (4px) fine-tunes radial setpoint positioning
  * to match Figma designs, applied on top of visual state offsets from setpoint.ts.
  *
- * The `colorMode` property allows overriding the derived color mode (enhanced for inCommand,
+ * The `colorMode` property allows overriding the derived color mode (enhanced for enhanced priority,
  * regular for other states).
  *
  * ## Setpoint Animation (`animateSetpoint`)
@@ -121,19 +120,21 @@ const RADIAL_SETPOINT_INWARD_ADJUST = 4;
  * `_setpointCssAngle` tracks the accumulated CSS angle to avoid long-way-around
  * transitions across the 0°/360° boundary.
  *
- * @property {InstrumentState} state - Instrument state (inCommand, active, loading, off)
+ * @property {InstrumentState} state - Instrument state (active, loading, off)
+ * @property {Priority} priority - Color priority (enhanced = blue palette, regular = gray palette)
  * @property {number|undefined} angleSetpoint - Setpoint angle in degrees (0° = 12 o'clock)
  * @property {number|undefined} newAngleSetpoint - New setpoint being adjusted (focus mode)
  * @property {boolean} atAngleSetpoint - Whether value matches setpoint (within deadband)
  * @property {number} angleSetpointAtZeroDeadband - Deadband for zero detection (default 0.5°)
- * @property {SetpointColorMode|undefined} colorMode - Optional override for setpoint color mode
+ * @property {boolean} setpointOverride - Override to derive setpoint color from priority regardless of state
  */
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {
   private _setpointId = `watch-setpoint-${Math.random().toString(36).slice(2, 9)}`;
   private _newSetpointId = `watch-new-setpoint-${Math.random().toString(36).slice(2, 9)}`;
 
-  @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
+  @property({type: String}) state: InstrumentState = InstrumentState.active;
+  @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) watchCircleType: WatchCircleType =
     WatchCircleType.single;
   @property({type: Boolean}) northArrow: boolean = false;
@@ -141,7 +142,7 @@ export class ObcWatch extends LitElement {
   @property({type: Number}) newAngleSetpoint: number | undefined;
   @property({type: Boolean}) atAngleSetpoint: boolean = false;
   @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
-  @property({type: String}) colorMode: SetpointColorMode | undefined;
+  @property({type: Boolean}) setpointOverride: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
 
   @property({type: Boolean}) animateSetpoint: boolean = false;
@@ -505,15 +506,16 @@ export class ObcWatch extends LitElement {
 
     const derived = deriveRadialSetpointConfig({
       state: this.state,
+      priority: this.priority,
       atSetpoint: this.atAngleSetpoint,
       angleSetpoint: this.angleSetpoint,
       setpointAtZeroDeadband: this.angleSetpointAtZeroDeadband,
       newAngleSetpoint: this.newAngleSetpoint,
       touching: this.touching,
+      setpointOverride: this.setpointOverride,
     });
 
-    const colorMode = this.colorMode ?? derived.colorMode;
-    const {visualState, disabled, hasNewSetpoint} = derived;
+    const {visualState, colorMode, disabled, hasNewSetpoint} = derived;
 
     const outwardOffset = getSetpointOutwardOffset(visualState);
     const radius =

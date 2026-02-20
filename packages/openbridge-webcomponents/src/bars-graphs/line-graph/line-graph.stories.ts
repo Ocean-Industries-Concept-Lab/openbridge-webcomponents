@@ -15,7 +15,10 @@ import {
   AdvicePosition,
 } from '../../building-blocks/external-scale/external-scale.js';
 import {AdviceType} from '../../navigation-instruments/watch/advice.js';
-import {BorderRadiusPosition} from '../../navigation-instruments/types.js';
+import {
+  Priority,
+  BorderRadiusPosition,
+} from '../../navigation-instruments/types.js';
 
 const SAMPLE_DATA = [
   {label: 'Jan', value: 3.5},
@@ -116,7 +119,7 @@ const meta: Meta = {
     showPoints: {control: 'boolean'},
     colors: {control: 'object'},
     legend: {control: 'boolean'},
-    enhanced: {control: 'boolean'},
+    priority: {control: 'select', options: Object.values(Priority)},
     showDebugOverlay: {control: 'boolean'},
     width: {control: {type: 'range', min: 192, max: 1024}},
     height: {control: {type: 'range', min: 48, max: 512}},
@@ -140,7 +143,7 @@ const meta: Meta = {
     timeDisplay: TimeDisplay.minutes,
     colors: [],
     legend: false,
-    enhanced: true,
+    priority: Priority.enhanced,
     showDebugOverlay: false,
     width: 480,
     height: 320,
@@ -170,7 +173,7 @@ export const SingleSeries: Story = {
       .yStepSize=${_args.yStepSize}
       .showPoints=${_args.showPoints}
       .legend=${_args.legend}
-      .enhanced=${_args.enhanced}
+      .priority=${_args.priority}
       .showDebugOverlay=${_args.showDebugOverlay}
       .width=${_args.width}
       .height=${_args.height}
@@ -182,9 +185,10 @@ export const SingleSeriesExternalScales: Story = {
   name: 'Single-series line graph (with external scales)',
   tags: ['!snapshot'],
   argTypes: {
-    enhanced: {
-      control: 'boolean',
-      description: 'Use enhanced color palette for chart and scales',
+    priority: {
+      control: 'select',
+      options: Object.values(Priority),
+      description: 'Use priority-based color palette for chart and scales',
     },
     // External scale controls (vertical/left)
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
@@ -267,7 +271,7 @@ export const SingleSeriesExternalScales: Story = {
     showTickMarks: false,
     width: 480,
     height: 320,
-    enhanced: true,
+    priority: Priority.enhanced,
     // Vertical scale defaults
     vScaleHasBar: false,
     vScaleHideLabels: false,
@@ -299,7 +303,7 @@ export const SingleSeriesExternalScales: Story = {
       .showGridY=${true}
       .width=${_args.width}
       .height=${_args.height}
-      .enhanced=${_args.enhanced}
+      .priority=${_args.priority}
       .borderRadiusPositionExternalScales=${BorderRadiusPosition.outerLastChild}
     >
       <obc-bar-vertical
@@ -329,10 +333,10 @@ export const SingleSeriesExternalScales: Story = {
               {min: 6, max: 7, type: AdviceType.advice, hinted: false},
             ]
           : []}
-        .primaryTickbarsInterval=${1}
-        .secondaryTickbarsInterval=${0.5}
-        .tertiaryTickbarsInterval=${0.125}
-        .enhanced=${_args.enhanced}
+        .primaryTickmarkInterval=${1}
+        .secondaryTickmarkInterval=${0.5}
+        .tertiaryTickmarkInterval=${0.125}
+        .priority=${_args.priority}
       ></obc-bar-vertical>
       <obc-bar-horizontal
         slot="bottom-scale"
@@ -361,10 +365,10 @@ export const SingleSeriesExternalScales: Story = {
               {min: 8, max: 10, type: AdviceType.advice, hinted: false},
             ]
           : []}
-        .primaryTickbarsInterval=${2}
-        .secondaryTickbarsInterval=${1}
-        .tertiaryTickbarsInterval=${0.25}
-        .enhanced=${_args.enhanced}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
+        .tertiaryTickmarkInterval=${0.25}
+        .priority=${_args.priority}
       ></obc-bar-horizontal>
     </obc-line-graph>
   `,
@@ -489,7 +493,7 @@ export const MultiAxis: Story = {
         .showDebugOverlay=${_args.showDebugOverlay}
         .width=${_args.width}
         .height=${_args.height}
-        .enhanced=${_args.enhanced}
+        .priority=${_args.priority}
       ></obc-line-graph>
     `;
   },
@@ -519,7 +523,7 @@ export const RealtimeSqueezing: Story = {
     chart.showTickMarks = true;
     chart.width = _args.width;
     chart.height = _args.height;
-    chart.enhanced = _args.enhanced;
+    chart.priority = _args.priority;
 
     setInterval(() => {
       const last = chart.data[chart.data.length - 1] || {value: 3};
@@ -553,7 +557,7 @@ export const RealtimeShifting: Story = {
     chart.height = _args.height;
     chart.xAxisType = XAxisType.time;
     chart.timeDisplay = TimeDisplay.minutes;
-    chart.enhanced = _args.enhanced;
+    chart.priority = _args.priority;
 
     // Initialize with past time-based data (spread over the last N minutes)
     const minuteMs = 60 * 1000;
