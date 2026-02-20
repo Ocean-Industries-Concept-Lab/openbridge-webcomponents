@@ -16,7 +16,7 @@ import {
 import {ObcAlertButtonType} from '../alert-button/alert-button.js';
 
 const meta: Meta<typeof ObcTopBar> = {
-  title: 'Application Components/Top elements/TopBar',
+  title: 'Application Components/Top Elements/TopBar',
   tags: ['autodocs', '6.0'],
   component: 'obc-top-bar',
   parameters: {

@@ -11,7 +11,7 @@ import {
 import {crossDecorator} from '../../../storybook-util.js';
 import {html} from 'lit';
 const meta: Meta<ObcPoiLine> = {
-  title: 'AR/Building blocks/POI Line',
+  title: 'AR/Building Blocks/POI Line',
   tags: ['autodocs'],
   decorators: [crossDecorator],
   component: 'obc-poi-line',

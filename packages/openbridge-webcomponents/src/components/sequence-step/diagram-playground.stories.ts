@@ -39,7 +39,7 @@ type DiagramRenderOptions = DiagramArgs & {
 };
 
 const meta: Meta = {
-  title: 'Automation/Sequence Step/Diagram playground',
+  title: 'Automation/Sequence Step/Diagram Playground',
   parameters: {
     layout: 'centered',
     docs: {

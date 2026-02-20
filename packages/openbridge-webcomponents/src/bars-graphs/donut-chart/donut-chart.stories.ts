@@ -12,7 +12,7 @@ const SAMPLE_DATA = [
 ];
 
 const meta: Meta = {
-  title: 'Bars and Graphs/Donut chart',
+  title: 'Bars and Graphs/Donut Chart',
   component: 'obc-donut-chart',
   tags: ['autodocs', '6.0'],
   argTypes: {

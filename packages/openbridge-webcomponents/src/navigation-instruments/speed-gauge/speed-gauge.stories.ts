@@ -6,7 +6,7 @@ import {AdviceType} from '../watch/advice.js';
 import {Priority} from '../types.js';
 
 const meta: Meta<typeof ObcSpeedGauge> = {
-  title: 'Instruments/Speed gauge',
+  title: 'Instruments/Speed Gauge',
   tags: ['autodocs', '6.0'],
   component: 'obc-speed-gauge',
   args: {

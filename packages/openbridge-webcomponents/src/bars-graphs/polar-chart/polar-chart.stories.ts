@@ -20,7 +20,7 @@ const SAMPLE_DATA = [
 ];
 
 const meta: Meta = {
-  title: 'Bars and Graphs/Polar chart',
+  title: 'Bars and Graphs/Polar Chart',
   component: 'obc-polar-chart',
   tags: ['autodocs', '6.0'],
   argTypes: {

@@ -13,7 +13,7 @@ import {TickmarkType} from './tickmark.js';
 import {html, svg} from 'lit';
 
 const meta: Meta<typeof ObcWatch> = {
-  title: 'Building blocks/Watch',
+  title: 'Building Blocks/Watch',
   tags: ['autodocs'],
   component: 'obc-watch',
   parameters: {
