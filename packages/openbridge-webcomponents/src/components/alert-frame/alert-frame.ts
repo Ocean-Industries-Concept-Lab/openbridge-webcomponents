@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS, nothing} from 'lit';
+import {LitElement, html, unsafeCSS, nothing, TemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
 import compentStyle from './alert-frame.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
@@ -181,6 +181,9 @@ export class ObcAlertFrame extends LitElement {
   @property({type: String}) textSize: AlertFrameTextSize =
     AlertFrameTextSize.Regular;
 
+  @property({type: Boolean}) showIcon: boolean = false;
+  @property({type: Boolean}) hideAlertCategoryIcon: boolean = false;
+
   override render() {
     return html`
       <div
@@ -207,8 +210,12 @@ export class ObcAlertFrame extends LitElement {
       return nothing;
     }
 
-    let icon = html`<obi-alarm-badge class="icon badge"></obi-alarm-badge>`;
-    if (this.status === ObcAlertFrameStatus.Warning) {
+    let icon: TemplateResult | typeof nothing = html`<obi-alarm-badge
+      class="icon badge"
+    ></obi-alarm-badge>`;
+    if (this.hideAlertCategoryIcon === true) {
+      icon = nothing;
+    } else if (this.status === ObcAlertFrameStatus.Warning) {
       icon = html`<obi-warning-badge class="icon badge"></obi-warning-badge>`;
     } else if (this.status === ObcAlertFrameStatus.Caution) {
       icon = html`<obi-caution-badge class="icon badge"></obi-caution-badge>`;
@@ -223,7 +230,9 @@ export class ObcAlertFrame extends LitElement {
     if (this.type === ObcAlertFrameType.LargeSideFlip) {
       return html`<div class="flap large">
         ${icon}
-        <div class="icon"><slot name="icon"></slot></div>
+        ${this.showIcon
+          ? html`<div class="icon"><slot name="icon"></slot></div>`
+          : nothing}
         <div class="mask up"></div>
         <div class="mask down"></div>
       </div>`;
@@ -238,7 +247,9 @@ export class ObcAlertFrame extends LitElement {
           : 'top'}"
       >
         ${icon}
-        <div class="icon"><slot name="icon"></slot></div>
+        ${this.showIcon
+          ? html`<div class="icon"><slot name="icon"></slot></div>`
+          : nothing}
         <div class="label"><slot name="label"></slot></div>
         <div class="spacer"></div>
         <div class="timer"><slot name="timer"></slot></div>
