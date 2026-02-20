@@ -72,6 +72,7 @@ const meta: Meta<typeof ObcTopBar> = {
       ?showappicon=${args.showAppIcon}
       ?showdate=${args.showDate}
       ?showuserbutton=${args.showUserButton}
+      ?userbuttondisabled=${args.userButtonDisabled}
       ?menuButtonActivated=${args.menuButtonActivated}
       ?tall=${args.tall}
       .appButtonBreakpointPx=${args.appButtonBreakpointPx}
