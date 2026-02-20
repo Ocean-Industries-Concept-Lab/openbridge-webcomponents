@@ -316,14 +316,26 @@ export class ObcStartStopSwitch extends LitElement {
       const trackChecked = this.renderRoot.querySelector(
         '.button-track-checked'
       ) as HTMLElement | null;
-      if (trackChecked) {
-        // Nudge repaint after the thumb transition (0.1s) settles.
-        setTimeout(() => {
+      const button = this.buttonRef;
+      if (trackChecked && button) {
+        const nudgeRepaint = () => {
           trackChecked.style.display = 'none';
           // Force a synchronous layout recalculation
           void trackChecked.offsetHeight;
           trackChecked.style.display = '';
-        }, 120);
+        };
+        // Wait one frame for the browser to start any CSS transitions,
+        // then wait for all animations on the thumb to finish before nudging.
+        requestAnimationFrame(() => {
+          const animations = button.getAnimations();
+          if (animations.length > 0) {
+            Promise.allSettled(animations.map((a) => a.finished)).then(
+              nudgeRepaint
+            );
+          } else {
+            nudgeRepaint();
+          }
+        });
       }
     }
   }
