@@ -5,7 +5,7 @@ import './icon-check-button.js';
 import '../../icons/icon-placeholder.js';
 
 const meta: Meta<typeof ObcIconCheckButton> = {
-  title: 'UI Components/Selection controls and switches/Icon check button',
+  title: 'UI Components/Selection Controls and Switches/Icon Check Button',
   tags: ['6.0'],
   component: 'obc-icon-check-button',
   args: {

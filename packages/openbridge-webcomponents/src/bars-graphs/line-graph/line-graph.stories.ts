@@ -81,7 +81,7 @@ const SAMPLE_MULTI_DATASETS = [
 ];
 
 const meta: Meta = {
-  title: 'Bars and Graphs/Line graph',
+  title: 'Bars and Graphs/Line Graph',
   component: 'obc-line-graph',
   tags: ['autodocs', '6.0'],
   argTypes: {

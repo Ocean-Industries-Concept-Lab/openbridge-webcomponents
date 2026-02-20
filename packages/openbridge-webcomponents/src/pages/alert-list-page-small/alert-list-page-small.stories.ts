@@ -59,7 +59,7 @@ const handleSilence = (e: CustomEvent) => {
 };
 
 const meta: Meta<typeof ObcAlertListPageSmall> = {
-  title: 'Pages/Alert list small',
+  title: 'Pages/Alert List Small',
   tags: ['6.0'],
   component: 'obc-alert-list-page-small',
   args: {

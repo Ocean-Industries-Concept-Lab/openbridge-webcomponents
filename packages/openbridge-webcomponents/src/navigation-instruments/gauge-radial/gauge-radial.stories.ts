@@ -6,7 +6,7 @@ import {AdviceType} from '../watch/advice.js';
 import {Priority} from '../types.js';
 
 const meta: Meta<typeof ObcGaugeRadial> = {
-  title: 'Instruments/Gauge radial',
+  title: 'Instruments/Gauge Radial',
   tags: ['6.0'],
   component: 'obc-gauge-radial',
   decorators: [widthDecorator],

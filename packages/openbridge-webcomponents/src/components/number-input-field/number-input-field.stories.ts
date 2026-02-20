@@ -11,7 +11,7 @@ import '../../icons/icon-placeholder.js';
 import '../../icons/icon-ship.js';
 
 const meta: Meta<typeof ObcNumberInputField> = {
-  title: 'UI Components/Input controls/Number Input Field',
+  title: 'UI Components/Input Controls/Number Input Field',
   tags: ['autodocs', '6.0'],
   component: 'obc-number-input-field',
   args: {},

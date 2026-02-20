@@ -35,7 +35,7 @@ import {
 } from '../../components/alert-frame/alert-frame.js';
 
 const meta: Meta<typeof ObcAutomationButton> = {
-  title: 'Automation/Automation devices/Automation button',
+  title: 'Automation/Automation Devices/Automation Button',
   tags: ['autodocs', '6.0'],
   component: 'obc-automation-button',
   decorators: [crossDecorator],

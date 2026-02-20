@@ -7,7 +7,7 @@ import '../../icons/icon-placeholder.js';
 import {html} from 'lit';
 
 const meta: Meta<ObcAttachmentListItem> = {
-  title: 'UI Components/Attachment List Item',
+  title: 'UI Components/Tables and Lists/Attachment List Item',
   tags: ['autodocs', '6.1'],
   component: 'obc-attachment-list-item',
   args: {

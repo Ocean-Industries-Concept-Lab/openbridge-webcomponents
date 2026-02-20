@@ -3,7 +3,7 @@ import {ObcBearingIndicator} from './bearing-indicator.js';
 import './bearing-indicator.js';
 
 const meta: Meta<typeof ObcBearingIndicator> = {
-  title: 'Instruments/Bearing indicator',
+  title: 'Instruments/Bearing Indicator',
   tags: ['6.0'],
   component: 'obc-bearing-indicator',
   args: {},

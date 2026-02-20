@@ -70,7 +70,7 @@ class CommandMenuStoryWrapper extends LitElement {
 customElements.define('command-menu-story-wrapper', CommandMenuStoryWrapper);
 
 const meta: Meta<typeof ObcCommandMenu> = {
-  title: 'Application Components/Menus/Command menu',
+  title: 'Application Components/Menus/Command Menu',
   tags: ['6.0'],
   component: 'obc-command-menu',
   args: {},

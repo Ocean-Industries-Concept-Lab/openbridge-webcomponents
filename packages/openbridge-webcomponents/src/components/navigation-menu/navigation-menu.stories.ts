@@ -18,7 +18,7 @@ import {html} from 'lit';
 import {expect} from 'storybook/test';
 
 const meta: Meta<typeof ObcNavigationMenu> = {
-  title: 'Application Components/Menus/Navigation menu',
+  title: 'Application Components/Menus/Navigation Menu',
   tags: ['!autodocs', '6.0'],
   component: 'obc-navigation-menu',
   render: (args) => {
