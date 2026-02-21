@@ -61,6 +61,7 @@ export type ObcFormItemChangeEvent = CustomEvent<{
  * @slot label - Rich text content (falls back to `label` property).
  * @slot icon - Leading icon element.
  * @fires change {ObcFormItemChangeEvent} — Emitted when checkbox state changes.
+ * @keywords form item, list item, row, checkbox, toggle, status, label, icon, form control, option, divider, error
  */
 @customElement('obc-form-item')
 export class ObcFormItem extends LitElement {
@@ -135,9 +136,9 @@ export class ObcFormItem extends LitElement {
       </div>
     `;
 
-    const checkIconTemplate = html`
-      <obi-check-google class="form-item-check-icon"></obi-check-google>
-    `;
+    const checkIconTemplate = this.checked
+      ? html`<obi-check-google class="form-item-check-icon"></obi-check-google>`
+      : nothing;
 
     const iconSlot = this.hasIcon
       ? html`<div class="icon-container"><slot name="icon"></slot></div>`
