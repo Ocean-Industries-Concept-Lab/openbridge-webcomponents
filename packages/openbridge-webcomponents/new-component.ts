@@ -22,6 +22,7 @@ const componentType = await select('Type of component', {
   choices: [
     'ui (input, label, tables)',
     'instrument (compass, azimuth)',
+    'indicator (bearing, speed, rot)',
     'page',
     'ar',
     'automation',
@@ -41,6 +42,8 @@ const componentName = name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
 let parentDir: string;
 if (componentType.includes('ui')) {
   parentDir = 'components';
+} else if (componentType.includes('indicator')) {
+  parentDir = 'navigation-instruments';
 } else if (componentType.includes('instrument')) {
   parentDir = 'navigation-instruments';
 } else if (componentType.includes('ar')) {
@@ -111,6 +114,8 @@ if (files.includes('storybook')) {
     storybookGroup = 'Pages';
   } else if (componentType.includes('integration system')) {
     storybookGroup = 'Integration Systems';
+  } else if (componentType.includes('indicator')) {
+    storybookGroup = 'Indicators';
   } else if (componentType.includes('instrument')) {
     storybookGroup = 'Instruments';
   } else if (componentType.includes('bars-graphs')) {

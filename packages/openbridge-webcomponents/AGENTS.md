@@ -27,6 +27,7 @@ yarn typecheck              # TypeScript type-check
 4. Write stories in `component-name.stories.ts`:
    - Add `tags: ['autodocs', '6.0']` for documented OB 6.0 components.
    - Export a `Default` story plus stories for key states and variants.
+   - Use Title Case for story titles (see root `AGENTS.md` § 2).
 5. Write JSDoc following the three-pattern strategy (see root `AGENTS.md` § 3).
 6. Run `yarn analyze` to update `custom-elements.json`.
 7. Run `yarn lint && yarn typecheck` to validate.
@@ -35,17 +36,17 @@ yarn typecheck              # TypeScript type-check
 
 ## Source Directory Layout
 
-| Directory                     | Contents                                                                 |
-| ----------------------------- | ------------------------------------------------------------------------ |
-| `src/components/`             | General UI components (buttons, cards, top-bar, etc.)                    |
-| `src/navigation-instruments/` | Maritime instruments (compass, heading, gauge, etc.)                     |
-| `src/building-blocks/`        | SVG-based low-level instrument pieces (scales, bars, chart bases)        |
-| `src/bars-graphs/`            | Chart components (line graph, area graph, donut, pie, polar, radial-bar) |
-| `src/automation/`             | Automation system components (valves, pumps, motors, etc.)               |
-| `src/ar/`                     | Augmented reality components                                             |
-| `src/icons/`                  | Auto-generated icon components (do not edit manually)                    |
-| `src/svghelpers/`             | Shared SVG utility functions and mixins                                  |
-| `src/charthelpers/`           | Shared chart utility functions                                           |
+| Directory                     | Contents                                                                         |
+| ----------------------------- | -------------------------------------------------------------------------------- |
+| `src/components/`             | General UI components (buttons, cards, top-bar, etc.)                            |
+| `src/navigation-instruments/` | Instruments (compass, heading, gauge, etc.) and indicators (bearing, speed, ROT) |
+| `src/building-blocks/`        | SVG-based low-level instrument pieces (scales, bars, chart bases)                |
+| `src/bars-graphs/`            | Chart components (line graph, area graph, donut, pie, polar, radial-bar)         |
+| `src/automation/`             | Automation system components (valves, pumps, motors, etc.)                       |
+| `src/ar/`                     | Augmented reality components                                                     |
+| `src/icons/`                  | Auto-generated icon components (do not edit manually)                            |
+| `src/svghelpers/`             | Shared SVG utility functions and mixins                                          |
+| `src/charthelpers/`           | Shared chart utility functions                                                   |
 
 ---
 

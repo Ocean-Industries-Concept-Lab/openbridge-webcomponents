@@ -32,6 +32,16 @@ Framework wrappers are **auto-generated** — never edit them directly.
 - **Conventional Commits** for git messages (`feat:`, `fix:`, `docs:`, etc.).
 - Ask for clarification (e.g. a list of questions) before implementing significant changes.
 
+### Storybook title conventions
+
+All story titles use **Title Case** with `/`-separated segments:
+
+- Capitalize every word: `Alert List Item`, `Speed Gauge`, `Automation Button`.
+- Keep short conjunctions and prepositions lowercase: _and, of, or, in, on, at, to, for_.
+  Example: `Message and Alerts`, `Selection Controls and Switches`.
+- Use spaces, not dashes: `Automation Configurations` not `Automation-configurations`.
+- Apply the same rules to every segment: `title: 'UI Components/Input Controls/Slider Double'`.
+
 ---
 
 ## 3. Documentation Rules (JSDoc)
