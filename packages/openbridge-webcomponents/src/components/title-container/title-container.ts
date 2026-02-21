@@ -55,7 +55,7 @@ export class ObcTitleContainer extends LitElement {
     TitleContainerState.Enabled;
 
   /** Title text (slot fallback). */
-  @property({type: String}) title = '';
+  @property({type: String}) override title = '';
 
   /** Label text next to the title (slot fallback). */
   @property({type: String}) label = '';
