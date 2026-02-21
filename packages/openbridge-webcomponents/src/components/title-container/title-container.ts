@@ -47,6 +47,7 @@ export enum TitleContainerState {
  * @slot label - Rich text label (falls back to `label` property).
  * @slot action-1 - Icon for the first action button (shown when `hasAction1` is true).
  * @slot action-2 - Icon for the second action button (shown when `hasAction2` is true).
+ * @keywords title container, title bar, header, heading, icon, action button, form header, section header, label
  */
 @customElement('obc-title-container')
 export class ObcTitleContainer extends LitElement {
