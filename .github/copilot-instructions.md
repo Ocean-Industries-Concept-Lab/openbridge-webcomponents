@@ -1,12 +1,18 @@
 # GitHub Copilot Custom Instructions
 
+> **Canonical instructions live in [`AGENTS.md`](../AGENTS.md).**
+> This file exists because GitHub Copilot reads `.github/copilot-instructions.md`
+> by convention. It re-exports the key pointers; for full details read `AGENTS.md`.
+
 ## Repository-Wide Instructions
 
 This repository contains the Openbridge Web Components library, a collection of maritime navigation and automation UI components built with Lit and TypeScript.
 
+- **Start here →** [`AGENTS.md`](../AGENTS.md) — comprehensive rules for all AI agents (coding standards, JSDoc template, build commands, behavioral rules).
+- **Package-scoped →** [`packages/openbridge-webcomponents/AGENTS.md`](../packages/openbridge-webcomponents/AGENTS.md) — quick reference, component checklist, directory layout.
 - Path-specific instructions for different component types are located in `.github/instructions/`
 - Documentation rules are in `.cursor/rules/comments.mdc` — follow its JSDoc template for all components
-- The repo has three code patterns that require different documentation strategies: **concrete components** (autodocs via `custom-elements.json`), **pure function modules** (manual story docs + module-level JSDoc), and **abstract base classes** (JSDoc with `@ignore` + story description override). See `comments.mdc` for full details.
+- The repo has three code patterns that require different documentation strategies: **concrete components** (autodocs via `custom-elements.json`), **pure function modules** (manual story docs + module-level JSDoc), and **abstract base classes** (JSDoc with `@ignore` + story description override). See `AGENTS.md` § 3 for full details.
 - Ask for clarification (e.g. a list of questions) before implementing significant changes
 
 ## Available Instruction Files
