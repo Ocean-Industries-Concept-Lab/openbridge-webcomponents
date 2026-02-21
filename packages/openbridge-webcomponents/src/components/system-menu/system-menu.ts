@@ -24,6 +24,7 @@ import '../toggle-switch/toggle-switch.js';
 import '../navigation-item/navigation-item.js';
 import '../accordion-item/accordion-item.js';
 import '../button/button.js';
+import '../scrollbar/scrollbar.js';
 
 export interface WifiState {
   enabled: boolean;
@@ -108,8 +109,20 @@ export class ObcSystemMenu extends LitElement {
   @property({type: Boolean}) showSettingsButton: boolean = false;
   @property({type: String}) activeSubMenu: SystemSubMenu = SystemSubMenu.main;
   @property({type: Boolean}) externalControl: boolean = false;
+  @property({type: Boolean}) smallScreen: boolean = false;
+
+  private get effectiveSubMenu(): SystemSubMenu {
+    if (this.smallScreen && this.activeSubMenu === SystemSubMenu.main) {
+      return SystemSubMenu.wifi;
+    }
+    return this.activeSubMenu;
+  }
 
   override render() {
+    if (this.smallScreen) {
+      return this.renderSmallScreen();
+    }
+
     let content: (TemplateResult | symbol)[];
     switch (this.activeSubMenu) {
       case SystemSubMenu.main:
@@ -212,21 +225,23 @@ export class ObcSystemMenu extends LitElement {
     return html`<div class="group">
       ${this.condensed ? nothing : title}
       <div class="content-container">
-        <obc-icon-check-button
-          class="content-item-btn"
-          .checked=${!!this.wifiState.enabled}
-          @icon-check-button-click=${this.handleWifiClick}
-        >
-          ${this.wifiState?.enabled
-            ? html`<obi-wifi2-google slot="icon"></obi-wifi2-google>`
-            : html`<obi-wifi2-off-google slot="icon"></obi-wifi2-off-google>`}
-        </obc-icon-check-button>
-        <div
-          class="content-item-value ${this.wifiState.enabled
-            ? 'enabled'
-            : 'disabled'}"
-        >
-          ${this.wifiState?.networkName}
+        <div class="action-container">
+          <obc-icon-check-button
+            class="content-item-btn"
+            .checked=${!!this.wifiState.enabled}
+            @icon-check-button-click=${this.handleWifiClick}
+          >
+            ${this.wifiState?.enabled
+              ? html`<obi-wifi2-google slot="icon"></obi-wifi2-google>`
+              : html`<obi-wifi2-off-google slot="icon"></obi-wifi2-off-google>`}
+          </obc-icon-check-button>
+          <div
+            class="content-item-value ${this.wifiState.enabled
+              ? 'enabled'
+              : 'disabled'}"
+          >
+            ${this.wifiState?.networkName}
+          </div>
         </div>
         ${this.condensed && showMoreButton
           ? html` <obc-icon-button
@@ -263,20 +278,22 @@ export class ObcSystemMenu extends LitElement {
     return html`<div class="group">
       ${this.condensed ? nothing : title}
       <div class="content-container">
-        <obc-icon-check-button
-          class="content-item-btn"
-          .checked=${!this.audioState.muted}
-          @icon-check-button-click=${this.handleAudioClick}
-        >
-          ${this.audioState.muted
-            ? html`<obi-sound-muted slot="icon"></obi-sound-muted>`
-            : html`<obi-sound slot="icon"></obi-sound>`}
-        </obc-icon-check-button>
-        <obc-slider
-          class="content-item-slider"
-          .value=${this.audioState.volume}
-          @value=${this.handleAudioVolumeChange}
-        ></obc-slider>
+        <div class="action-container">
+          <obc-icon-check-button
+            class="content-item-btn"
+            .checked=${!this.audioState.muted}
+            @icon-check-button-click=${this.handleAudioClick}
+          >
+            ${this.audioState.muted
+              ? html`<obi-sound-muted slot="icon"></obi-sound-muted>`
+              : html`<obi-sound slot="icon"></obi-sound>`}
+          </obc-icon-check-button>
+          <obc-slider
+            class="content-item-slider"
+            .value=${this.audioState.volume}
+            @value=${this.handleAudioVolumeChange}
+          ></obc-slider>
+        </div>
         ${this.condensed && showMoreButton
           ? html` <obc-icon-button
               .variant=${IconButtonVariant.flat}
@@ -314,21 +331,23 @@ export class ObcSystemMenu extends LitElement {
     return html`<div class="group">
       ${this.condensed ? nothing : title}
       <div class="content-container">
-        <obc-icon-check-button
-          class="content-item-btn"
-          .checked=${!this.microphoneState.muted}
-          @icon-check-button-click=${this.handleMicrophoneClick}
-        >
-          ${this.microphoneState.muted
-            ? html`<obi-com-mic-muted-google
-                slot="icon"
-              ></obi-com-mic-muted-google>`
-            : html`<obi-com-microphone slot="icon"></obi-com-microphone>`}
-        </obc-icon-check-button>
-        <div class="content-item-value">
-          <obc-audio-output
-            .volume=${(this.microphoneState.currentLevel / 100) * 8}
-          ></obc-audio-output>
+        <div class="action-container">
+          <obc-icon-check-button
+            class="content-item-btn"
+            .checked=${!this.microphoneState.muted}
+            @icon-check-button-click=${this.handleMicrophoneClick}
+          >
+            ${this.microphoneState.muted
+              ? html`<obi-com-mic-muted-google
+                  slot="icon"
+                ></obi-com-mic-muted-google>`
+              : html`<obi-com-microphone slot="icon"></obi-com-microphone>`}
+          </obc-icon-check-button>
+          <div class="content-item-value">
+            <obc-audio-output
+              .volume=${(this.microphoneState.currentLevel / 100) * 8}
+            ></obc-audio-output>
+          </div>
         </div>
         ${this.condensed && showMoreButton
           ? html` <obc-icon-button
@@ -369,14 +388,18 @@ export class ObcSystemMenu extends LitElement {
     return html`<div class="group">
       ${this.condensed ? nothing : title}
       <div class="content-container battery-container">
-        <div class="battery">
-          <obc-battery-icon
-            .level=${this.batteryState.level}
-            .charging=${this.batteryState.charging}
-          ></obc-battery-icon>
-          <div class="percentage">${this.batteryState.level}%</div>
-          <div class="status">
-            ${this.batteryState.charging ? msg('Charging') : msg('On battery')}
+        <div class="action-container">
+          <div class="battery">
+            <obc-battery-icon
+              .level=${this.batteryState.level}
+              .charging=${this.batteryState.charging}
+            ></obc-battery-icon>
+            <div class="percentage">${this.batteryState.level}%</div>
+            <div class="status">
+              ${this.batteryState.charging
+                ? msg('Charging')
+                : msg('On battery')}
+            </div>
           </div>
         </div>
         ${this.condensed && showMoreButton
@@ -700,6 +723,282 @@ export class ObcSystemMenu extends LitElement {
             `
           )}
         </div>
+      </div>
+    `;
+  }
+
+  // --- Small screen methods ---
+
+  private renderSmallScreen() {
+    const activeTab = this.effectiveSubMenu;
+    let content: TemplateResult | symbol = nothing;
+    switch (activeTab) {
+      case SystemSubMenu.wifi:
+        content = this.renderSmallScreenWifi();
+        break;
+      case SystemSubMenu.audio:
+        content = this.renderSmallScreenAudio();
+        break;
+      case SystemSubMenu.microphone:
+        content = this.renderSmallScreenMicrophone();
+        break;
+      case SystemSubMenu.battery:
+        content = this.renderSmallScreenBattery();
+        break;
+    }
+    return html`<div class="wrapper small-screen">
+      <div class="small-screen-content">${content}</div>
+      ${this.renderMenuBar(activeTab)}
+    </div>`;
+  }
+
+  private handleSmallScreenWifiToggle(event: InputEvent) {
+    const enabled = (event.target as HTMLInputElement).checked;
+    this.dispatchEvent(new CustomEvent('wifi-click', {detail: {enabled}}));
+  }
+
+  private renderSmallScreenWifi() {
+    if (!this.wifiState) {
+      return nothing;
+    }
+    return html`
+      <div class="small-screen-header">
+        <div class="small-screen-title-row">
+          <span>${msg('Wi-Fi')}</span>
+          <obc-toggle-switch
+            .checked=${this.wifiState.enabled}
+            @input=${this.handleSmallScreenWifiToggle}
+          ></obc-toggle-switch>
+        </div>
+      </div>
+      <div class="small-screen-divider"></div>
+      <obc-scrollbar class="small-screen-options">
+        <div class="small-screen-options-content">
+          ${this.wifiState.networks?.map(
+            (network) => html`
+              <obc-navigation-item
+                .label=${network.name}
+                .checked=${network.name === this.wifiState?.networkName}
+                @click=${() => this.handleWifiNetworkClick(network.name)}
+                hasIcon
+              >
+                <obi-wifi2-google slot="icon"></obi-wifi2-google>
+              </obc-navigation-item>
+            `
+          )}
+        </div>
+      </obc-scrollbar>
+    `;
+  }
+
+  private renderSmallScreenAudio() {
+    if (!this.audioState) {
+      return nothing;
+    }
+    return html`
+      <div class="small-screen-header">
+        <div class="small-screen-title-row">
+          <span>${msg('Audio')}</span>
+        </div>
+        <div class="small-screen-controls-row">
+          <obc-icon-check-button
+            .checked=${!this.audioState.muted}
+            @icon-check-button-click=${this.handleAudioClick}
+          >
+            ${this.audioState.muted
+              ? html`<obi-sound-muted slot="icon"></obi-sound-muted>`
+              : html`<obi-sound slot="icon"></obi-sound>`}
+          </obc-icon-check-button>
+          <div class="small-screen-slider-container">
+            <obc-slider
+              class="small-screen-slider"
+              .value=${this.audioState.volume}
+              @value=${this.handleAudioVolumeChange}
+            ></obc-slider>
+            <span class="small-screen-volume-label"
+              >${this.audioState.volume}%</span
+            >
+          </div>
+        </div>
+      </div>
+      <div class="small-screen-divider"></div>
+      <obc-scrollbar class="small-screen-options">
+        <div class="small-screen-options-content">
+          ${(this.audioState.outputs ?? []).map(
+            (output) => html`
+              <obc-radio
+                name="output"
+                .label=${output.name}
+                .checked=${output.name === this.audioState?.selectedOutput}
+                @change=${() => this.handleAudioOutputClick(output.name)}
+              ></obc-radio>
+            `
+          )}
+        </div>
+      </obc-scrollbar>
+    `;
+  }
+
+  private renderSmallScreenMicrophone() {
+    if (!this.microphoneState) {
+      return nothing;
+    }
+    return html`
+      <div class="small-screen-header">
+        <div class="small-screen-title-row">
+          <span>${msg('Microphone')}</span>
+        </div>
+        <div class="small-screen-controls-row">
+          <obc-icon-check-button
+            .checked=${!this.microphoneState.muted}
+            @icon-check-button-click=${this.handleMicrophoneClick}
+          >
+            ${this.microphoneState.muted
+              ? html`<obi-com-mic-muted-google
+                  slot="icon"
+                ></obi-com-mic-muted-google>`
+              : html`<obi-com-microphone slot="icon"></obi-com-microphone>`}
+          </obc-icon-check-button>
+          <obc-audio-output
+            class="small-screen-audio-output"
+            .volume=${(this.microphoneState.currentLevel / 100) * 8}
+          ></obc-audio-output>
+        </div>
+        ${this.microphoneState.pushToTalk !== undefined
+          ? html`<div class="small-screen-toggle-row">
+              <obc-toggle-switch
+                .checked=${this.microphoneState.pushToTalk}
+                @input=${this.handlePushToTalkClick}
+                label=${msg('Push to talk')}
+              ></obc-toggle-switch>
+            </div>`
+          : nothing}
+      </div>
+      <div class="small-screen-divider"></div>
+      <obc-scrollbar class="small-screen-options">
+        <div class="small-screen-options-content">
+          ${(this.microphoneState.inputs ?? []).map(
+            (input) => html`
+              <obc-radio
+                name="input"
+                .label=${input.name}
+                .checked=${input.name === this.microphoneState?.selectedInput}
+                @change=${() => this.handleMicrophoneInputClick(input.name)}
+              ></obc-radio>
+            `
+          )}
+        </div>
+      </obc-scrollbar>
+    `;
+  }
+
+  private renderSmallScreenBattery() {
+    if (!this.batteryState) {
+      return nothing;
+    }
+    return html`
+      <div class="small-screen-header">
+        <div class="small-screen-title-row">
+          <span>${msg('Battery')}</span>
+          <div class="small-screen-battery-info">
+            <obc-battery-icon
+              .level=${this.batteryState.level}
+              .charging=${this.batteryState.charging}
+            ></obc-battery-icon>
+            <span class="small-screen-battery-level"
+              >${this.batteryState.level}%</span
+            >
+          </div>
+        </div>
+        ${this.batteryState.hasUsageButton
+          ? html`<div class="small-screen-button-row">
+              <obc-button @click=${this.handleBatteryUsageClick} fullWidth>
+                ${msg('Usage')}
+              </obc-button>
+            </div>`
+          : nothing}
+        ${this.batteryState.batterySavingMode !== undefined
+          ? html`<div class="small-screen-toggle-row">
+              <obc-toggle-switch
+                .checked=${this.batteryState.batterySavingMode}
+                @toggle-switch-click=${this.handleBatterySavingModeClick}
+                label=${msg('Battery saving mode')}
+              ></obc-toggle-switch>
+            </div>`
+          : nothing}
+      </div>
+      <div class="small-screen-divider"></div>
+      <obc-scrollbar class="small-screen-options">
+        <div class="small-screen-options-content">
+          ${(this.batteryState.modes ?? []).map(
+            (mode) => html`
+              <obc-radio
+                name="mode"
+                .label=${mode.name}
+                .checked=${mode.name === this.batteryState?.selectedMode}
+                @change=${() => this.handleBatteryModeClick(mode.name)}
+              ></obc-radio>
+            `
+          )}
+        </div>
+      </obc-scrollbar>
+    `;
+  }
+
+  private renderMenuBarButton(
+    subMenu: SystemSubMenu,
+    activeTab: SystemSubMenu,
+    label: string,
+    icon: TemplateResult
+  ) {
+    return html`<button
+      class=${activeTab === subMenu ? 'active' : ''}
+      title=${label}
+      @click=${() => this.handleToSubMenuClick(subMenu)}
+    >
+      ${icon}
+    </button>`;
+  }
+
+  private renderMenuBar(activeTab: SystemSubMenu) {
+    return html`
+      <div class="menu-bar">
+        ${this.wifiState
+          ? this.renderMenuBarButton(
+              SystemSubMenu.wifi,
+              activeTab,
+              msg('Wi-Fi'),
+              html`<obi-wifi2-google class="tab-icon"></obi-wifi2-google>`
+            )
+          : nothing}
+        ${this.audioState
+          ? this.renderMenuBarButton(
+              SystemSubMenu.audio,
+              activeTab,
+              msg('Audio'),
+              html`<obi-sound class="tab-icon"></obi-sound>`
+            )
+          : nothing}
+        ${this.microphoneState
+          ? this.renderMenuBarButton(
+              SystemSubMenu.microphone,
+              activeTab,
+              msg('Microphone'),
+              html`<obi-com-microphone class="tab-icon"></obi-com-microphone>`
+            )
+          : nothing}
+        ${this.batteryState
+          ? this.renderMenuBarButton(
+              SystemSubMenu.battery,
+              activeTab,
+              msg('Battery'),
+              html`<obc-battery-icon
+                class="tab-icon"
+                .level=${this.batteryState.level}
+                .charging=${this.batteryState.charging}
+              ></obc-battery-icon>`
+            )
+          : nothing}
       </div>
     `;
   }
