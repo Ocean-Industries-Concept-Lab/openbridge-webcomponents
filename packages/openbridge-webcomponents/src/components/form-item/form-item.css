@@ -1,0 +1,206 @@
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+}
+
+.content-row {
+  display: flex;
+  align-items: center;
+  padding-left: 16px;
+  padding-right: 24px;
+  gap: 16px;
+}
+
+/* Enabled types: equal padding + taller min-height */
+.wrapper.type-enabled-action-first .content-row,
+.wrapper.type-enabled-action-last .content-row {
+  min-height: 56px;
+}
+
+.wrapper.type-enabled-action-last .content-row {
+  padding-right: 16px;
+}
+
+/* Text container fills remaining space */
+.text-container {
+  flex: 1 1 0;
+  min-width: 0;
+  @mixin font-body;
+  color: var(--on-flat-neutral-color);
+}
+
+/* Icon container */
+.icon-container {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  color: var(--element-neutral-color);
+}
+
+.icon-container ::slotted(*) {
+  width: 24px;
+  height: 24px;
+}
+
+/* Inline checkbox box (24x24 visual, 48x48 touch target) */
+.checkbox-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--ui-components-checkbox-visual-target-size, 24px);
+  height: var(--ui-components-checkbox-visual-target-size, 24px);
+  border-radius: var(--ui-components-checkbox-border-radius, 4px);
+  border: 1px solid var(--element-symbol-color);
+  background: var(--indent-enabled-background-color);
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Expand touch target to 48x48 centred on the 24x24 box */
+.checkbox-box::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--ui-components-checkbox-touch-target-size, 48px);
+  height: var(--ui-components-checkbox-touch-target-size, 48px);
+  transform: translate(-50%, -50%);
+}
+
+/* Hover */
+.checkbox-box:hover {
+  background: var(--indent-hover-background-color);
+}
+
+/* Pressed */
+.checkbox-box:active {
+  background: var(--indent-pressed-background-color);
+}
+
+/* Focus */
+.checkbox-box:focus-visible {
+  border-color: var(--element-inactive-color);
+  outline: var(--global-size-spacing-border-weight-focusframe, 2px) solid
+    var(--border-focus-color);
+  outline-offset: 0px;
+}
+
+/* Checked */
+.checkbox-box.checked {
+  background: var(--selected-enabled-background-color);
+  border-color: var(--selected-enabled-border-color);
+}
+
+.checkbox-box.checked:hover {
+  background: var(--selected-hover-background-color);
+  border-color: var(--selected-hover-border-color);
+}
+
+.checkbox-box.checked:active {
+  background: var(--selected-pressed-background-color);
+  border-color: var(--selected-pressed-border-color);
+}
+
+.checkbox-box.checked:focus-visible {
+  background: var(--selected-focused-background-color);
+  outline: var(--global-size-spacing-border-weight-focusframe, 2px) solid
+    var(--border-focus-color);
+  outline-offset: 0px;
+}
+
+/* Disabled */
+.checkbox-box.disabled {
+  border-color: var(--indent-disabled-border-color);
+  background: var(--indent-disabled-background-color);
+  cursor: default;
+}
+
+.checkbox-box.disabled:hover {
+  background: var(--indent-disabled-background-color);
+}
+
+.checkbox-box.disabled.checked {
+  background: var(--selected-disabled-background-color);
+  border-color: var(--selected-disabled-border-color);
+}
+
+.checkbox-box.disabled.checked:hover {
+  background: var(--selected-disabled-background-color);
+}
+
+.checkbox-icon {
+  width: var(--global-size-spacing-icon-icon-size-regular, 24px);
+  height: var(--global-size-spacing-icon-icon-size-regular, 24px);
+  color: var(--on-selected-active-color);
+}
+
+/* Check icon for filled-status variants */
+.form-item-check-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  color: var(--element-active-color);
+}
+
+/* Inactive type */
+.wrapper.type-inactive .text-container {
+  color: var(--element-inactive-color);
+}
+
+.wrapper.type-inactive .icon-container {
+  color: var(--element-inactive-color);
+}
+
+/* Disabled state */
+.wrapper.disabled .text-container {
+  color: var(--element-disabled-color);
+}
+
+/* Bottom divider */
+.divider {
+  position: absolute;
+  bottom: 0;
+  left: 4px;
+  right: 4px;
+  height: 1px;
+  border-radius: 1px;
+  background: var(--border-divider-color);
+}
+
+/* Error state: border around the entire wrapper */
+.wrapper.error {
+  border: var(--global-size-spacing-border-weight-focusframe, 2px) solid
+    var(--alert-error-color);
+  border-radius: 2px;
+}
+
+/* Error text below content */
+.error-container {
+  padding: 4px 4px 0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transform: translateY(100%);
+}
+
+.error-text {
+  @mixin font-label;
+  color: var(--element-neutral-color);
+}
