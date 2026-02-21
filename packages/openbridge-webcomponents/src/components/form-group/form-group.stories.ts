@@ -38,7 +38,6 @@ const meta: Meta<ObcFormGroup> = {
                 ? FormItemType.Inactive
                 : FormItemType.View}
           label="This is a list item with multiple lines that can take up as much space as it needs. Like it can be really long and go on for a while."
-          ?checked=${args.type === FormGroupType.Filled}
           showDivider
         ></obc-form-item>
         <obc-form-item
@@ -50,7 +49,6 @@ const meta: Meta<ObcFormGroup> = {
                 ? FormItemType.Inactive
                 : FormItemType.View}
           label="This is a list item with multiple lines that can take up as much space as it needs. Like it can be really long and go on for a while."
-          ?checked=${args.type === FormGroupType.Filled}
         ></obc-form-item>
       </obc-form-group>
     </div>
