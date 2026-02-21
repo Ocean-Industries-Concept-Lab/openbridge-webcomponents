@@ -1,0 +1,79 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wrapper.type-inactive {
+  gap: 0;
+}
+
+/* Title area */
+.title-area {
+  display: flex;
+  flex-direction: column;
+}
+
+.wrapper.type-enabled .title-area,
+.wrapper.type-filled .title-area {
+  padding-left: 4px;
+}
+
+.subtitle {
+  @mixin font-overline;
+  color: var(--on-flat-neutral-color);
+}
+
+.description {
+  @mixin font-label;
+  color: var(--element-neutral-color);
+}
+
+/* Inactive title colors */
+.wrapper.type-inactive .subtitle {
+  color: var(--element-inactive-color);
+}
+
+.wrapper.type-inactive .description {
+  color: var(--element-neutral-color);
+}
+
+/* Content container — the bordered box wrapping form items */
+.content-container {
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* View type: border only, no fill */
+.wrapper.type-view .content-container {
+  border: 1px solid var(--border-outline-color);
+}
+
+/* Enabled type: border + global background */
+.wrapper.type-enabled .content-container {
+  border: 1px solid var(--border-outline-color);
+  background: var(--container-global-color);
+}
+
+/* Filled type: border + section background */
+.wrapper.type-filled .content-container {
+  border: 1px solid var(--border-outline-color);
+  background: var(--container-section-color);
+}
+
+/* Inactive type: no border, no fill */
+.wrapper.type-inactive .content-container {
+  border: none;
+  background: transparent;
+}
