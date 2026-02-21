@@ -61,9 +61,7 @@ function detectCodePattern(tsCode: string): CodePattern {
   if (hasCustomElement) return CodePattern.concreteComponent;
   if (
     hasAbstract ||
-    (hasClassDecl &&
-      /extends\s+LitElement/.test(tsCode) &&
-      !hasCustomElement)
+    (hasClassDecl && /extends\s+LitElement/.test(tsCode) && !hasCustomElement)
   ) {
     return CodePattern.abstractBaseClass;
   }
