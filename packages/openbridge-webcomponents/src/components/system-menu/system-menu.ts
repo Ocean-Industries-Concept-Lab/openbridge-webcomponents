@@ -914,6 +914,9 @@ export class ObcSystemMenu extends LitElement {
             <obc-battery-icon
               .level=${this.batteryState.level}
               .charging=${this.batteryState.charging}
+              .poweredNotCharging=${this.batteryState.poweredNotCharging ??
+              false}
+              .notification=${this.batteryState.notification ?? false}
             ></obc-battery-icon>
             <span class="small-screen-battery-level"
               >${this.batteryState.level}%</span
@@ -1006,6 +1009,9 @@ export class ObcSystemMenu extends LitElement {
                 class="tab-icon"
                 .level=${this.batteryState.level}
                 .charging=${this.batteryState.charging}
+                .poweredNotCharging=${this.batteryState.poweredNotCharging ??
+                false}
+                .notification=${this.batteryState.notification ?? false}
               ></obc-battery-icon>`
             )
           : nothing}
