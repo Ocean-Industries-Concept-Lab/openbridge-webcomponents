@@ -154,10 +154,6 @@ const meta: Meta<typeof ObcSystemButton> = {
           : undefined,
     };
 
-    console.log(
-      JSON.stringify(systemState, null, 2),
-      JSON.stringify(args, null, 2)
-    );
     return html`<obc-system-button
       variant="${args.variant}"
       .disabled="${args.disabled}"
