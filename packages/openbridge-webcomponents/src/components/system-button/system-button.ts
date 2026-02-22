@@ -13,21 +13,12 @@ import '../../icons/icon-sensor-gps-bad.js';
 import '../../icons/icon-sensor-gps-low.js';
 import '../../icons/icon-sensor-gps-medium.js';
 import '../../icons/icon-sensor-gps-full.js';
-import '../../icons/icon-battery-horizontal-100.js';
-import '../../icons/icon-battery-horizontal-75.js';
-import '../../icons/icon-battery-horizontal-50.js';
-import '../../icons/icon-battery-horizontal-25.js';
-import '../../icons/icon-battery-horizontal-low.js';
-import '../../icons/icon-battery-horizontal-empty.js';
-import '../../icons/icon-battery-horizontal-charging-100.js';
-import '../../icons/icon-battery-horizontal-charging-50.js';
-import '../../icons/icon-battery-horizontal-charging-25.js';
-import '../../icons/icon-battery-horizontal-charging-empty.js';
 import '../../icons/icon-sound-muted.js';
 import '../../icons/icon-sound-no.js';
 import '../../icons/icon-sound-low.js';
 import '../../icons/icon-sound.js';
 import '../button/button.js';
+import '../battery-icon/battery-icon.js';
 
 export enum SystemButtonVariant {
   condensed = 'condensed',
@@ -65,6 +56,8 @@ export interface SystemState {
     enabled: boolean;
     level: number; // 0-100
     charging: boolean;
+    poweredNotCharging?: boolean;
+    notification?: boolean;
   };
   gps: {
     enabled: boolean;
@@ -444,30 +437,17 @@ export class ObcSystemButton extends LitElement {
 
     const level = this.systemState.battery.level;
     const charging = this.systemState.battery.charging;
-
-    if (charging) {
-      // Charging icons
-      if (level >= 100)
-        return html`<obi-battery-horizontal-charging-100></obi-battery-horizontal-charging-100>`;
-      if (level >= 50)
-        return html`<obi-battery-horizontal-charging-50></obi-battery-horizontal-charging-50>`;
-      if (level >= 25)
-        return html`<obi-battery-horizontal-charging-25></obi-battery-horizontal-charging-25>`;
-      return html`<obi-battery-horizontal-charging-empty></obi-battery-horizontal-charging-empty>`;
-    } else {
-      // Regular battery icons
-      if (level >= 100)
-        return html`<obi-battery-horizontal-100></obi-battery-horizontal-100>`;
-      if (level >= 75)
-        return html`<obi-battery-horizontal-75></obi-battery-horizontal-75>`;
-      if (level >= 50)
-        return html`<obi-battery-horizontal-50></obi-battery-horizontal-50>`;
-      if (level >= 25)
-        return html`<obi-battery-horizontal-25></obi-battery-horizontal-25>`;
-      if (level > 0)
-        return html`<obi-battery-horizontal-low></obi-battery-horizontal-low>`;
-      return html`<obi-battery-horizontal-empty></obi-battery-horizontal-empty>`;
-    }
+    const poweredNotCharging =
+      this.systemState.battery.poweredNotCharging ?? false;
+    const notification = this.systemState.battery.notification ?? false;
+    return html`<obc-battery-icon
+      class="icon"
+      .level=${level}
+      .charging=${charging}
+      .poweredNotCharging=${poweredNotCharging}
+      .notification=${notification}
+      horizontal
+    ></obc-battery-icon>`;
   }
 
   override render() {

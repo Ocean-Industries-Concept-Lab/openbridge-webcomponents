@@ -127,3 +127,9 @@
 .system-button--actions obc-button + obc-button::part(visible-wrapper) {
   border-left: none !important;
 }
+
+.icon {
+  width: var(--ui-components-button-icon-size);
+  height: var(--ui-components-button-icon-size);
+  flex-shrink: 0;
+}
