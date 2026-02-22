@@ -66,6 +66,8 @@ const meta: Meta<typeof ObcAlertListPageSmall> = {
     hasShelved: true,
     selectedMode: AlertListMode.ALL,
     showTime: true,
+    timeFormatter: (time) =>
+      time.toLocaleTimeString(undefined, {hour12: false}),
     alerts: [
       {
         id: '1',
@@ -159,6 +161,7 @@ const meta: Meta<typeof ObcAlertListPageSmall> = {
       .hasShelved=${args.hasShelved}
       .selectedMode=${args.selectedMode}
       .showTime=${args.showTime}
+      .timeFormatter=${args.timeFormatter}
       @ack-all-visible-click=${handleAckAllVisible}
       @silence-click=${handleSilence}
       @ack-click=${handleAck}
@@ -174,6 +177,16 @@ type Story = StoryObj<ObcAlertListPageSmall>;
 
 export const Regular: Story = {
   args: {},
+};
+
+const toUtcTimeString = (time: Date) => {
+  return time.toLocaleTimeString(undefined, {hour12: false, timeZone: 'UTC'});
+};
+
+export const CustomTimeFormatter: Story = {
+  args: {
+    timeFormatter: toUtcTimeString,
+  },
 };
 
 export const Empty: Story = {
