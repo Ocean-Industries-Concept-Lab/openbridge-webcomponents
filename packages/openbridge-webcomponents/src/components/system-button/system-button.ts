@@ -36,31 +36,26 @@ export enum SystemButtonVariant {
  * - `gps`: GPS status (enabled, connected, quality)
  */
 export interface SystemState {
-  wifi: {
-    enabled: boolean;
+  wifi?: {
     connected: boolean;
     networkName?: string;
     strength: 0 | 1 | 2 | 3 | 4; // Maps directly to icon variants
   };
-  audio: {
-    enabled: boolean;
+  audio?: {
     muted: boolean;
     volume: number; // 0-100
   };
-  microphone: {
-    enabled: boolean;
+  microphone?: {
     muted: boolean;
     sensitivity: number; // 0-100
   };
-  battery: {
-    enabled: boolean;
+  battery?: {
     level: number; // 0-100
     charging: boolean;
     poweredNotCharging?: boolean;
     notification?: boolean;
   };
-  gps: {
-    enabled: boolean;
+  gps?: {
     connected: boolean;
     quality: 'bad' | 'low' | 'medium' | 'full'; // Maps to GPS icon variants
   };
@@ -172,11 +167,11 @@ export class ObcSystemButton extends LitElement {
    * Default: all indicators disabled except WiFi (connected), audio (volume 65), microphone (sensitivity 80), battery (level 78), GPS (quality medium).
    */
   @property({type: Object}) systemState: SystemState = {
-    wifi: {enabled: false, connected: true, strength: 3},
-    audio: {enabled: false, muted: false, volume: 65},
-    microphone: {enabled: false, muted: false, sensitivity: 80},
-    battery: {enabled: false, level: 78, charging: false},
-    gps: {enabled: false, connected: false, quality: 'medium'},
+    wifi: {connected: true, strength: 3},
+    audio: {muted: false, volume: 65},
+    microphone: {muted: false, sensitivity: 80},
+    battery: {level: 78, charging: false},
+    gps: {connected: false, quality: 'medium'},
   };
 
   /**
@@ -275,15 +270,15 @@ export class ObcSystemButton extends LitElement {
     let buttonCount = 0;
 
     // Count enabled buttons first to determine segment positions
-    if (this.systemState.microphone.enabled) buttonCount++;
-    if (this.systemState.audio.enabled) buttonCount++;
+    if (this.systemState.microphone !== undefined) buttonCount++;
+    if (this.systemState.audio !== undefined) buttonCount++;
     // Always show system icons button
     buttonCount++;
 
     let currentIndex = 0;
 
     // Microphone button
-    if (this.systemState.microphone.enabled) {
+    if (this.systemState.microphone !== undefined) {
       const segmentPosition =
         buttonCount === 1
           ? 'single'
@@ -309,7 +304,7 @@ export class ObcSystemButton extends LitElement {
     }
 
     // Volume button
-    if (this.systemState.audio.enabled) {
+    if (this.systemState.audio !== undefined) {
       const segmentPosition =
         buttonCount === 1
           ? 'single'
@@ -357,7 +352,7 @@ export class ObcSystemButton extends LitElement {
   }
 
   private _renderMicrophoneIcon() {
-    if (!this.systemState.microphone.enabled) return nothing;
+    if (this.systemState.microphone === undefined) return nothing;
 
     if (this.systemState.microphone.muted) {
       return html`<obi-com-mic-muted-google></obi-com-mic-muted-google>`;
@@ -367,7 +362,7 @@ export class ObcSystemButton extends LitElement {
   }
 
   private _renderVolumeIcon() {
-    if (!this.systemState.audio.enabled) return nothing;
+    if (this.systemState.audio === undefined) return nothing;
 
     const volume = this.systemState.audio.volume;
     const muted = this.systemState.audio.muted;
@@ -387,7 +382,7 @@ export class ObcSystemButton extends LitElement {
   }
 
   private _renderWifiIcon() {
-    if (!this.systemState.wifi.enabled) return nothing;
+    if (this.systemState.wifi === undefined) return nothing;
 
     if (!this.systemState.wifi.connected) {
       return html`<obi-wifi2-off-google></obi-wifi2-off-google>`;
@@ -411,7 +406,7 @@ export class ObcSystemButton extends LitElement {
   }
 
   private _renderGpsIcon() {
-    if (!this.systemState.gps.enabled) return nothing;
+    if (this.systemState.gps === undefined) return nothing;
 
     if (!this.systemState.gps.connected) {
       return html`<obi-sensor-gps-bad></obi-sensor-gps-bad>`;
@@ -433,7 +428,7 @@ export class ObcSystemButton extends LitElement {
   }
 
   private _renderBatteryIcon() {
-    if (!this.systemState.battery.enabled) return nothing;
+    if (this.systemState.battery === undefined) return nothing;
 
     const level = this.systemState.battery.level;
     const charging = this.systemState.battery.charging;

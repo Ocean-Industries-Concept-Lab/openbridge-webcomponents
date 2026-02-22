@@ -405,7 +405,9 @@ export class ObcSystemMenu extends LitElement {
               .notification=${this.batteryState.notification ?? false}
             ></obc-battery-icon>
             <div class="percentage">${this.batteryState.level}%</div>
-            <div class="status" slot="battery-status">${batteryStatus}</div>
+            <div class="status">
+              <slot name="battery-status">${batteryStatus}</slot>
+            </div>
           </div>
         </div>
         ${this.condensed && showMoreButton
