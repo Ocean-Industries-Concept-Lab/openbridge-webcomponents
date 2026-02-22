@@ -189,6 +189,19 @@ Required modifications after pasting:
 6. **Run `yarn lint`** after code changes to catch issues early.
 7. **Insert `TODO(designer)`** for any documentation detail whose purpose is unclear from code alone.
 8. **Keep stories tagged** with `['autodocs', '6.0']` for documented OB 6.0 components; `['alpha']` for in-development; `['!snapshot']` to exclude from visual tests.
+9. **Do not run full builds or start Storybook automatically.** Avoid `npm run build`, `yarn build`, `npm run storybook`, or `yarn storybook` unless the user explicitly requests it. These are expensive, long-running operations.
+10. **Run visual tests for a single component** instead of the full suite:
+    ```bash
+    npx vitest run --project storybook 'component-name'
+    ```
+11. **Update baselines for a single component:**
+    ```bash
+    npx vitest run --project storybook --update 'component-name'
+    ```
+12. **Always verify after updating baselines** — re-run the test without `--update` to confirm the new baselines are stable:
+    ```bash
+    npx vitest run --project storybook 'component-name'
+    ```
 
 ---
 
