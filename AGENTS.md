@@ -14,7 +14,7 @@
 | Repo | `Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip` |
 | License | Apache-2.0 |
 | Runtime | Lit 3 + TypeScript (web components) |
-| Package manager | Yarn (workspaces) |
+| Package manager | npm (workspaces) |
 | Monorepo packages | `openbridge-webcomponents` (core), `-react`, `-vue`, `-ng`, `-svelte` (auto-generated wrappers), `react-demo`, `vue-demo` |
 
 The library provides maritime navigation and automation UI components.
@@ -120,39 +120,42 @@ All commands are run from `packages/openbridge-webcomponents/` unless noted.
 
 ```bash
 # Install dependencies (from repo root)
-yarn install
+npm install
+
+# Dev build (translations → vite)
+npm run build
 
 # Full build (translations → typecheck → bundle → vite → CEM → wrappers)
-yarn build
+npm run build:full
 
 # Type-check only
-yarn typecheck
+npm run typecheck
 
 # Lint
-yarn lint              # lit-analyzer + eslint
-yarn lint:eslint       # eslint only
+npm run lint              # lit-analyzer + eslint
+npm run lint:eslint       # eslint only
 
 # Format
-yarn format            # prettier write
-yarn format:check      # prettier check
+npm run format            # prettier write
+npm run format:check      # prettier check
 
 # Storybook
-yarn storybook         # dev server on :6006
-yarn build-storybook   # static build
+npm run storybook         # dev server on :6006
+npm run build-storybook   # static build
 
 # Tests
-yarn test-storybook          # visual snapshot tests (Vitest + Playwright)
-yarn test-storybook:watch    # watch mode
-yarn update-snapshots        # replace baselines
+npm run test-storybook          # visual snapshot tests (Vitest + Playwright)
+npm run test-storybook:watch    # watch mode
+npm run update-snapshots        # replace baselines
 
 # Custom element manifest
-yarn analyze           # regenerate custom-elements.json
+npm run analyze           # regenerate custom-elements.json
 
 # Create new component (interactive)
-yarn new:component
+npm run new:component
 
 # Download icons from Figma
-yarn download:icons
+npm run download:icons
 ```
 
 Snapshot baselines: `__vis__/linux/__baselines__/` (CI) and `__vis__/darwin/__baselines__/` (macOS).
@@ -184,12 +187,12 @@ Required modifications after pasting:
 1. **Read before writing.** Always read the relevant source, story, and instruction file before modifying a component.
 2. **Follow the three-pattern strategy** (§ 3) when writing or updating JSDoc.
 3. **Respect glob-scoped instructions** (§ 4) — read the matching `.instructions.md` file when touching files in its scope.
-4. **Do not edit auto-generated packages** (`-react`, `-vue`, `-ng`, `-svelte`). Run `yarn build:wrappers` instead.
-5. **Run `yarn analyze`** after adding or renaming a `@customElement` to keep `custom-elements.json` in sync.
-6. **Run `yarn lint`** after code changes to catch issues early.
+4. **Do not edit auto-generated packages** (`-react`, `-vue`, `-ng`, `-svelte`). Run `npm run wrappers` (or `npm run build:wrappers`) instead.
+5. **Run `npm run analyze`** after adding or renaming a `@customElement` to keep `custom-elements.json` in sync.
+6. **Run `npm run lint`** after code changes to catch issues early.
 7. **Insert `TODO(designer)`** for any documentation detail whose purpose is unclear from code alone.
 8. **Keep stories tagged** with `['autodocs', '6.0']` for documented OB 6.0 components; `['alpha']` for in-development; `['!snapshot']` to exclude from visual tests.
-9. **Do not run full builds or start Storybook automatically.** Avoid `npm run build`, `yarn build`, `npm run storybook`, or `yarn storybook` unless the user explicitly requests it. These are expensive, long-running operations.
+9. **Do not run full builds or start Storybook automatically.** Avoid `npm run build`, `npm run storybook` unless the user explicitly requests it. These are expensive, long-running operations.
 10. **Run visual tests for a single component** instead of the full suite:
     ```bash
     npx vitest run --project storybook 'component-name'

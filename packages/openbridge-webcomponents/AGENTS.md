@@ -8,20 +8,20 @@
 ## Quick Reference
 
 ```bash
-yarn storybook              # dev server on :6006
-yarn test-storybook         # visual snapshot tests
-yarn test-storybook:watch   # watch mode
-yarn new:component          # scaffold a new component (interactive)
-yarn analyze                # regenerate custom-elements.json
-yarn lint                   # lit-analyzer + eslint
-yarn typecheck              # TypeScript type-check
+npm run storybook              # dev server on :6006
+npm run test-storybook         # visual snapshot tests
+npm run test-storybook:watch   # watch mode
+npm run new:component          # scaffold a new component (interactive)
+npm run analyze                # regenerate custom-elements.json
+npm run lint                   # lit-analyzer + eslint
+npm run typecheck              # TypeScript type-check
 ```
 
 ---
 
 ## Component Creation Checklist
 
-1. Run `yarn new:component` to scaffold files.
+1. Run `npm run new:component` to scaffold files.
 2. Implement the component in `component-name.ts` (extend `LitElement`, register with `@customElement`).
 3. Write styles in `component-name.css` (PostCSS, use mixins from root instructions).
 4. Write stories in `component-name.stories.ts`:
@@ -29,8 +29,8 @@ yarn typecheck              # TypeScript type-check
    - Export a `Default` story plus stories for key states and variants.
    - Use Title Case for story titles (see root `AGENTS.md` § 2).
 5. Write JSDoc following the three-pattern strategy (see root `AGENTS.md` § 3).
-6. Run `yarn analyze` to update `custom-elements.json`.
-7. Run `yarn lint && yarn typecheck` to validate.
+6. Run `npm run analyze` to update `custom-elements.json`.
+7. Run `npm run lint && npm run typecheck` to validate.
 
 ---
 
@@ -69,5 +69,5 @@ When editing files in the scopes below, read the corresponding instruction file 
 
 - Visual snapshot tests: Vitest + storybook-addon-vis + Playwright.
 - Baselines: `__vis__/linux/__baselines__/` (CI), `__vis__/darwin/__baselines__/` (macOS).
-- Update snapshots: `yarn update-snapshots` or press `u` in Vitest watch mode.
+- Update snapshots: `npm run update-snapshots` or press `u` in Vitest watch mode.
 - Tag stories `['!snapshot']` to exclude from visual tests.

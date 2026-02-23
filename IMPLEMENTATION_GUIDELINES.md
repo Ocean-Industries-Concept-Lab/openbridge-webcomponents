@@ -27,7 +27,7 @@ Each component typically has:
 
 Vue, React, Angular, and Svelte wrappers are auto-generated from the web components:
 ```bash
-yarn run build:wrappers
+npm run build:wrappers
 ```
 Do not edit the generated wrapper packages directly.
 
@@ -45,14 +45,14 @@ Visual snapshot tests are run via [Vitest](https://vitest.dev/) + [storybook-add
 
 ```bash
 # Run all snapshot tests
-yarn test-storybook
+npm run test-storybook
 
 # Watch mode
-yarn test-storybook:watch
+npm run test-storybook:watch
 
 # Update snapshots interactively (press 'u' in Vitest terminal)
 # Or replace baselines wholesale:
-yarn update-snapshots
+npm run update-snapshots
 ```
 
 Snapshot baselines are stored in `__vis__/linux/__baselines__/` (and `__vis__/darwin/__baselines__/` for macOS).
@@ -112,12 +112,12 @@ There are multiple mixins for styling text:
 
 ## Icons
 The icons are exported to webcomponents in the `packages/openbridge-webcomponents/src/icons` directory.
-They are exported from figma by running: `yarn run download:icons`.
+They are exported from figma by running: `npm run download:icons`.
 
 ## Create a new component
 To create a new component, use the `new:component` script:
 ```bash
-yarn run new:component
+npm run new:component
 ```
 This will create the needed files, using the default template.
 
