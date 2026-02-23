@@ -25,6 +25,8 @@ jobs:
         run: npm ci
       - name: Analyze openbridge-webcomponents
         run: cd packages/openbridge-webcomponents && npm run analyze
+      - name: Typecheck openbridge-webcomponents
+        run: cd packages/openbridge-webcomponents && npm run typecheck
       - name: Lint openbridge-webcomponents
         run: cd packages/openbridge-webcomponents && npm run lint
       - name: Check formatting openbridge-webcomponents
