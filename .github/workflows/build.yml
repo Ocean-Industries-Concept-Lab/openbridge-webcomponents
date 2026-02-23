@@ -23,6 +23,8 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+      - name: Build translations
+        run: cd packages/openbridge-webcomponents && npm run build:translations
       - name: Analyze openbridge-webcomponents
         run: cd packages/openbridge-webcomponents && npm run analyze
       - name: Typecheck openbridge-webcomponents
@@ -49,7 +51,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Build openbridge-webcomponents
-        run: cd packages/openbridge-webcomponents && npm run build
+        run: cd packages/openbridge-webcomponents && npm run build:full
       - name: Build openbridge-webcomponents-vue
         run: cd packages/openbridge-webcomponents-vue && npm run build
       - name: Build openbridge-webcomponents-react
