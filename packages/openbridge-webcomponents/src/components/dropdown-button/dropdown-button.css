@@ -108,7 +108,7 @@
 }
 
 .wrapper.open-top select::picker(select) {
-  inset-area: block-start span-inline-end;
+  position-area: block-start span-inline-end;
 }
 
 option {
