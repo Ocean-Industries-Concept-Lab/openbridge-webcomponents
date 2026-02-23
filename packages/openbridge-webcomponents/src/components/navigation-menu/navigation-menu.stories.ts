@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
   ObcNavigationMenu,
   ObcNavigationMenuVariant,
+  ObcNavigationMenuFlyoutVariant,
 } from './navigation-menu.js';
 import './navigation-menu.js';
 import '../navigation-item/navigation-item.js';
@@ -25,6 +26,7 @@ const meta: Meta<typeof ObcNavigationMenu> = {
     return html`
       <obc-navigation-menu
         .variant=${args.variant}
+        .flyoutVariant=${args.flyoutVariant}
         .smallScreen=${args.smallScreen}
         style="position: fixed; top: 0; bottom: 0; left: 0;"
       >
@@ -89,12 +91,17 @@ const meta: Meta<typeof ObcNavigationMenu> = {
   },
   args: {
     variant: ObcNavigationMenuVariant.Full,
+    flyoutVariant: ObcNavigationMenuFlyoutVariant.Full,
     smallScreen: false,
   },
   argTypes: {
     variant: {
       control: {type: 'select'},
       options: Object.values(ObcNavigationMenuVariant),
+    },
+    flyoutVariant: {
+      control: {type: 'select'},
+      options: Object.values(ObcNavigationMenuFlyoutVariant),
     },
     smallScreen: {
       control: {type: 'boolean'},
@@ -159,6 +166,13 @@ export const IconOnlyLarge: Story = {
 export const Compact: Story = {
   args: {
     variant: ObcNavigationMenuVariant.Compact,
+  },
+};
+
+export const CompactFlyout: Story = {
+  args: {
+    variant: ObcNavigationMenuVariant.Full,
+    flyoutVariant: ObcNavigationMenuFlyoutVariant.Compact,
   },
 };
 
