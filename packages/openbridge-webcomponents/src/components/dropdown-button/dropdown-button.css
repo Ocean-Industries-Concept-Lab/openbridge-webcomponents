@@ -34,9 +34,21 @@
     padding-right: var(--ui-components-button-padding-horizontal);
   }
 
+  & .icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: var(--global-size-spacing-icon-icon-size-regular);
+    width: var(--global-size-spacing-icon-icon-size-regular);
+  }
+
   & .icon {
     height: var(--global-size-spacing-icon-icon-size-regular);
     width: var(--global-size-spacing-icon-icon-size-regular);
+  }
+
+  &.disabled .icon-container {
+    color: var(--on-normal-disabled-color);
   }
 
   &.disabled .icon {
@@ -84,6 +96,7 @@
 
 ::picker(select) {
   appearance: base-select;
+  border: none;
   min-width: var(--ui-components-context-menu-menu-width);
   border-radius: 12px;
   background: var(--container-global-color);
@@ -92,6 +105,10 @@
     var(--ui-components-context-menu-margin-horizontal);
 
   overflow-y: auto;
+}
+
+.wrapper.open-top select::picker(select) {
+  inset-area: block-start span-inline-end;
 }
 
 option {
