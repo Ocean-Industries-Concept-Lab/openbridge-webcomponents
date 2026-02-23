@@ -2,6 +2,8 @@
 
 [![discord, join chat](https://img.shields.io/badge/discord-join_chat-brightgreen.svg?logo=discord&labelColor=white&style=flat&color=%235865F2)](https://discord.gg/wSCPxPH3RJ)
 
+![OpenBridge](https://images.squarespace-cdn.com/content/v1/6849ac014efe446e56d1407f/56264565-d1b4-4fe6-bbf5-d6efa06aec9c/logo-black.png "OpenBridge")
+
 Welcome to the Openbridge Web Components! This readme file provides an overview of the project and its components.
 
 ## 🎉 We are preparing to release OpenBridge 6.0 in March 2026
