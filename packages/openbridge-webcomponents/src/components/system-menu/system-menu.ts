@@ -64,6 +64,8 @@ export interface MicrophoneState {
 export interface BatteryState {
   level: number; // 0-100, 0 is empty, 100 is full
   charging: boolean; // true if charging, false if not charging,
+  poweredNotCharging?: boolean; // true if powered and not charging, else false
+  notification?: boolean; // true if notification, else false
   batterySavingMode?: boolean; // true if battery saving mode is enabled, false if not enabled, undefined if not supported
   hasUsageButton: boolean; // true if usage button is should be shown, false if not shown
   modes?: {
@@ -385,6 +387,11 @@ export class ObcSystemMenu extends LitElement {
       : html`<div class="title-container">
           <div class="title">${msg('Battery')}</div>
         </div>`;
+    const batteryStatus = this.batteryState.charging
+      ? msg('Charging')
+      : this.batteryState.poweredNotCharging
+        ? msg('Powered & not charging')
+        : msg('On battery');
     return html`<div class="group">
       ${this.condensed ? nothing : title}
       <div class="content-container battery-container">
@@ -393,12 +400,13 @@ export class ObcSystemMenu extends LitElement {
             <obc-battery-icon
               .level=${this.batteryState.level}
               .charging=${this.batteryState.charging}
+              .poweredNotCharging=${this.batteryState.poweredNotCharging ??
+              false}
+              .notification=${this.batteryState.notification ?? false}
             ></obc-battery-icon>
             <div class="percentage">${this.batteryState.level}%</div>
             <div class="status">
-              ${this.batteryState.charging
-                ? msg('Charging')
-                : msg('On battery')}
+              <slot name="battery-status">${batteryStatus}</slot>
             </div>
           </div>
         </div>
@@ -580,6 +588,8 @@ export class ObcSystemMenu extends LitElement {
           class="icon large"
           .level=${this.batteryState.level}
           .charging=${this.batteryState.charging}
+          .poweredNotCharging=${this.batteryState.poweredNotCharging ?? false}
+          .notification=${this.batteryState.notification ?? false}
         ></obc-battery-icon>
         <div class="title">
           ${this.batteryState.level}
@@ -904,6 +914,9 @@ export class ObcSystemMenu extends LitElement {
             <obc-battery-icon
               .level=${this.batteryState.level}
               .charging=${this.batteryState.charging}
+              .poweredNotCharging=${this.batteryState.poweredNotCharging ??
+              false}
+              .notification=${this.batteryState.notification ?? false}
             ></obc-battery-icon>
             <span class="small-screen-battery-level"
               >${this.batteryState.level}%</span
@@ -996,6 +1009,9 @@ export class ObcSystemMenu extends LitElement {
                 class="tab-icon"
                 .level=${this.batteryState.level}
                 .charging=${this.batteryState.charging}
+                .poweredNotCharging=${this.batteryState.poweredNotCharging ??
+                false}
+                .notification=${this.batteryState.notification ?? false}
               ></obc-battery-icon>`
             )
           : nothing}
