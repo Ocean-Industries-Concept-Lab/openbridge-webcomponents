@@ -32,6 +32,16 @@ export enum SequenceValue {
   completed = 'completed',
 }
 
+/**
+ * Visual variants used by sequence toolbar layouts.
+ * These map to `:host([variant="..."])` selectors in the component CSS.
+ */
+export enum SequenceVariant {
+  toolbarAdd = 'toolbar-add',
+  toolbarCondensedIcon = 'toolbar-condensed-icon',
+  toolbarPrev = 'toolbar-prev',
+}
+
 @customElement('obc-sequence-step')
 /**
  * `<obc-sequence-step>` renders the visual node of a sequence diagram.
@@ -44,6 +54,7 @@ export class ObcSequenceStep extends LitElement {
   @property({type: String}) type: SequenceType = SequenceType.medium;
   @property({type: String}) styleType: SequenceStyle = SequenceStyle.regular;
   @property({type: String}) value: SequenceValue = SequenceValue.regular;
+  @property({type: String, reflect: true}) variant?: SequenceVariant;
   /** Displays the built-in state icon for medium/large regular steps. */
   @property({type: Boolean}) hasIcon = false;
   @property({type: Boolean}) hideStepInputConnector = false;
@@ -155,6 +166,12 @@ export class ObcSequenceStep extends LitElement {
     return `Sequence step ${readable}`;
   }
 
+  private get resolvedAriaLabel(): string {
+    // If the consumer provides an explicit accessible name on the host,
+    // prefer it over the generic state-based label.
+    return this.getAttribute('aria-label') ?? this.stepAriaLabel;
+  }
+
   private renderSmallIndicator(): TemplateResult {
     const showCheck =
       this.styleType === SequenceStyle.regular &&
@@ -220,13 +237,14 @@ export class ObcSequenceStep extends LitElement {
   static override styles = unsafeCSS(style);
 
   override render(): TemplateResult {
+    const ariaLabel = this.resolvedAriaLabel;
     if (this.styleType === SequenceStyle.connector) {
       return html`
         <div
           class=${classMap(this.getWrapperClasses())}
           part="wrapper"
           role="listitem"
-          aria-label=${this.stepAriaLabel}
+          aria-label=${ariaLabel}
           aria-current=${ifDefined(this.stepAriaCurrent ?? undefined)}
         >
           <div class="body" part="body">
@@ -291,7 +309,7 @@ export class ObcSequenceStep extends LitElement {
           class=${wrapperClasses}
           part="wrapper"
           role="listitem"
-          aria-label=${this.stepAriaLabel}
+          aria-label=${ariaLabel}
           aria-current=${ifDefined(ariaCurrent)}
         >
           ${contents}
@@ -304,7 +322,7 @@ export class ObcSequenceStep extends LitElement {
         class=${wrapperClasses}
         part="wrapper"
         role="listitem"
-        aria-label=${this.stepAriaLabel}
+        aria-label=${ariaLabel}
         aria-current=${ifDefined(ariaCurrent)}
       >
         ${contents}
