@@ -152,26 +152,26 @@ To get started with the project, follow these steps:
 6. Run the command `Dev Container: Open Workspace in Container`
    Select the `openbridge-webcomponents.code-workspace` file in the root folder of the repository.
    This will open the project in a containerized environment with all the necessary dependencies installed.
-7. Once the dev container is running, go to the `packages/openbridge-webcomponents` folder and run `yarn storybook` to start the Storybook development environment (typically at `http://localhost:6006/`).
+7. Once the dev container is running, go to the `packages/openbridge-webcomponents` folder and run `npm run storybook` to start the Storybook development environment (typically at `http://localhost:6006/`).
 8. When creating new components or modifying stories:
-   - Run `yarn test-storybook` to run visual snapshot tests.
+   - Run `npm run test-storybook` to run visual snapshot tests.
    - If you've intentionally changed the component's appearance, press `u` when prompted to update the snapshots.
 9. Check [CONTRIBUTING.md](CONTRIBUTING.md) for branch and commit naming conventions.
 10. Before you push your changes, run:
 
-- `yarn format` to format the code, and
-- `yarn lint` to check for linting errors (and fix the reported errors).
+- `npm run format` to format the code, and
+- `npm run lint` to check for linting errors (and fix the reported errors).
 
-11. Optional: Go to the `packages/vue-demo` folder and run `yarn dev` to run the Vue.js demo application.
+11. Optional: Go to the `packages/vue-demo` folder and run `npm run dev` to run the Vue.js demo application.
 
 ### Without VS Code devcontainer, not recommended ⚠️
 
 1. Clone the repository.
-2. Install Node.js (version 20) and Yarn.
-3. Run `yarn install` in the root folder to install the dependencies.
-4. Run `yarn run build:lib` to build all libraries.
-5. Optional: Go to the `package/openbridge-webcomponents` folder and run `yarn storbook` to start the Storybook development environment.
-6. Optional: Go to the `package/vue-demo` folder and run `yarn dev` to run the Vue.js demo application.
+2. Install Node.js (version 20) and npm.
+3. Run `npm install` in the root folder to install the dependencies.
+4. Run `npm run build:lib` to build all libraries.
+5. Optional: Go to the `package/openbridge-webcomponents` folder and run `npm run storybook` to start the Storybook development environment.
+6. Optional: Go to the `package/vue-demo` folder and run `npm run dev` to run the Vue.js demo application.
 
 ## Packages:
 
@@ -185,18 +185,16 @@ This mono-repo contains the following packages:
 
 ### Formatting:
 
-Run `yarn format:all` to format the code using Prettier.
+Run `npm run format:all` to format the code using Prettier.
 
 ### Testing:
 
 We use snapshot testing of the components through storybook.
 To run the test:
 
-1. Ensure that storybook is running. If it is not running, go to the `package/openbridge-webcomponents` folder and run `yarn storybook` to start storybook.
-2. Run `yarn test-storybook` in the `package/openbridge-webcomponents` folder to run the tests.
-
-Use the `yarn test-storybook --watch` command to watch for changes and re-run the tests.
-Use the `yarn test-storybook -u` command to update the snapshots.
+1. Ensure that storybook is running. If it is not running, go to the `package/openbridge-webcomponents` folder and run `npm run storybook` to start storybook.
+2. Run `npm run test-storybook` in the `package/openbridge-webcomponents` folder to run the tests.
+   Press `u` to update the snapshot when the test run is completed.
 
 ## Contributing
 

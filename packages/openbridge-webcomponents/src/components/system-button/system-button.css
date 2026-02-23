@@ -54,12 +54,11 @@
     left: 0;
     margin-top: auto;
     margin-bottom: auto;
-    z-index: -1;
     display: block;
     height: 16px;
     width: 1px;
     border-radius: 1px;
-    background: var(--border-divider-color, rgba(0, 0, 0, 0.08));
+    background: var(--border-divider-color);
   }
 
   .expanded-inner-wrapper::after {
@@ -71,12 +70,11 @@
     right: 0;
     margin-top: auto;
     margin-bottom: auto;
-    z-index: -1;
     display: block;
     height: 16px;
     width: 1px;
     border-radius: 1px;
-    background: var(--border-divider-color, rgba(0, 0, 0, 0.08));
+    background: var(--border-divider-color);
   }
 
   .expanded-icon-container {
@@ -126,4 +124,10 @@
 /* Remove borders between segments */
 .system-button--actions obc-button + obc-button::part(visible-wrapper) {
   border-left: none !important;
+}
+
+.icon {
+  width: var(--ui-components-button-icon-size);
+  height: var(--ui-components-button-icon-size);
+  flex-shrink: 0;
 }

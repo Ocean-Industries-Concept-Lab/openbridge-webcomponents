@@ -26,6 +26,15 @@ import * as tankerSide from './vessels/tanker-side.js';
 import * as tankerTop from './vessels/tanker-top.js';
 import * as usvLargeSide from './vessels/usv-large-side.js';
 import * as usvSmallSide from './vessels/usv-small-side.js';
+import * as droneMediumFront from './vessels/drone-medium-front.js';
+import * as droneMediumStbdSide from './vessels/drone-medium-stbd-side.js';
+import * as droneMediumTop from './vessels/drone-medium-top.js';
+import * as droneSmallFront from './vessels/drone-small-front.js';
+import * as droneSmallStbdSide from './vessels/drone-small-stbd-side.js';
+import * as droneSmallTop from './vessels/drone-small-top.js';
+import * as rovFront from './vessels/rov-front.js';
+import * as rovSide from './vessels/rov-side.js';
+import * as rovTop from './vessels/rov-top.js';
 
 export enum VesselImageSize {
   none = 'none',
@@ -60,6 +69,15 @@ export enum VesselImage {
   tankerTop = 'tanker-top',
   usvLargeSide = 'usv-large-side',
   usvSmallSide = 'usv-small-side',
+  droneMediumFront = 'drone-medium-front',
+  droneMediumStbdSide = 'drone-medium-stbd-side',
+  droneMediumTop = 'drone-medium-top',
+  droneSmallFront = 'drone-small-front',
+  droneSmallStbdSide = 'drone-small-stbd-side',
+  droneSmallTop = 'drone-small-top',
+  rovFront = 'rov-front',
+  rovSide = 'rov-side',
+  rovTop = 'rov-top',
 }
 
 // Map of vessel images
@@ -89,4 +107,13 @@ export const vesselImages: Record<VesselImage, SVGTemplateResult> = {
   [VesselImage.tankerTop]: tankerTop.default,
   [VesselImage.usvLargeSide]: usvLargeSide.default,
   [VesselImage.usvSmallSide]: usvSmallSide.default,
+  [VesselImage.droneMediumFront]: droneMediumFront.default,
+  [VesselImage.droneMediumStbdSide]: droneMediumStbdSide.default,
+  [VesselImage.droneMediumTop]: droneMediumTop.default,
+  [VesselImage.droneSmallFront]: droneSmallFront.default,
+  [VesselImage.droneSmallStbdSide]: droneSmallStbdSide.default,
+  [VesselImage.droneSmallTop]: droneSmallTop.default,
+  [VesselImage.rovFront]: rovFront.default,
+  [VesselImage.rovSide]: rovSide.default,
+  [VesselImage.rovTop]: rovTop.default,
 };

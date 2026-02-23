@@ -3,14 +3,18 @@ import {ObcGaugeRadial, ObcGaugeRadialType} from './gauge-radial.js';
 import './gauge-radial.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
+import {Priority} from '../types.js';
 
 const meta: Meta<typeof ObcGaugeRadial> = {
-  title: 'Instruments/Gauge radial',
+  title: 'Instruments/Gauge Radial',
   tags: ['6.0'],
   component: 'obc-gauge-radial',
   decorators: [widthDecorator],
   args: {
     width: 400,
+  },
+  argTypes: {
+    priority: {control: 'select', options: Object.values(Priority)},
   },
 } satisfies Meta<ObcGaugeRadial>;
 
@@ -41,7 +45,7 @@ export const EnhancedFilled: Story = {
     maxValue: 100,
     minValue: 0,
     type: ObcGaugeRadialType.filled,
-    enhanced: true,
+    priority: Priority.enhanced,
     setpoint: 75,
   },
 };
@@ -52,7 +56,7 @@ export const EnhancedBar: Story = {
     maxValue: 100,
     minValue: 0,
     type: ObcGaugeRadialType.bar,
-    enhanced: true,
+    priority: Priority.enhanced,
     setpoint: 75,
   },
 };
@@ -63,7 +67,7 @@ export const EnhancedNeedle: Story = {
     maxValue: 100,
     minValue: 0,
     type: ObcGaugeRadialType.needle,
-    enhanced: true,
+    priority: Priority.enhanced,
     setpoint: 75,
   },
 };

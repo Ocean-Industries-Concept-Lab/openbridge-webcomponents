@@ -4,7 +4,12 @@ import type {PropertyValues} from 'lit';
 import {customElement} from '../../decorator.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {CHART_DIMENSIONS} from '../../charthelpers/constants.js';
-import {InstrumentState, FrameStyle, BorderRadiusPosition} from '../types.js';
+import {
+  InstrumentState,
+  FrameStyle,
+  BorderRadiusPosition,
+  Priority,
+} from '../types.js';
 import type {AdviceType} from '../watch/advice.js';
 import type {
   ExternalScaleAdvice,
@@ -24,6 +29,7 @@ import {
   ExternalScaleOrientation,
   ExternalScaleSide,
 } from '../../building-blocks/external-scale/external-scale.js';
+import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 
 // Re-export shared enums for convenience
 export {
@@ -53,13 +59,13 @@ export {
  * - **Fixed Layout:** Width (384px), padding (32px), bar/tick/label thicknesses, and border radius are fixed for consistent gauge appearance.
  * - **Scale Configuration:**
  *   - Configurable `minValue` and `maxValue` for the value range.
- *   - Optional main, primary, secondary, and tertiary tickbars at specified intervals.
- *   - Labels shown at primary tickbar intervals (can be hidden via `hideLabels`).
+ *   - Optional main, primary, secondary, and tertiary tickmarks at specified intervals.
+ *   - Labels shown at primary tickmark intervals (can be hidden via `hideLabels`).
  * - **Side Positioning:** Can be placed on the `top` or `bottom` side via the `side` property.
  * - **Value Display:**
  *   - `value` property drives the bar fill.
  *   - `fillMode` controls visualization: `fill` shows bar from `fillMin` to `fillMax`; `tint` adds a marker at the `value` position.
- *   - `enhanced` mode uses enhanced instrument colors.
+ *   - Set `priority` to `Priority.enhanced` to use the blue/enhanced color palette for bar fill and setpoint (default: `Priority.regular`).
  * - **Setpoint Marker:**
  *   - Optional `setpoint` value displays a marker.
  *   - Automatic at-setpoint detection with configurable deadband.
@@ -112,8 +118,8 @@ export {
  *   min-value="0"
  *   max-value="100"
  *   value="75"
- *   primary-tickbars-interval="20"
- *   secondary-tickbars-interval="10"
+ *   primary-tickmark-interval="20"
+ *   secondary-tickmark-interval="10"
  *   setpoint="80"
  *   side="bottom"
  * ></obc-gauge-horizontal>
@@ -122,7 +128,9 @@ export {
  * @fires scale-dimensions-changed {CustomEvent} Fired when layout-affecting properties change, providing dimension info for parent chart integration.
  */
 @customElement('obc-gauge-horizontal')
-export class ObcGaugeHorizontal extends LitElement {
+export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
+  defaultDeadband: 1,
+}) {
   /** Minimum scale value */
   @property({type: Number}) minValue = 0;
   /** Maximum scale value */
@@ -188,14 +196,14 @@ export class ObcGaugeHorizontal extends LitElement {
   private readonly tickThickness = 24;
   private readonly labelThickness = 60;
 
-  /** Array of values for main tickbars. When undefined, no main tickbars shown. When empty array [], defaults to [minValue, 0, maxValue]. */
-  @property({attribute: false}) mainTickbars?: number[] = [];
+  /** Array of values for main tickmarks. When undefined, no main tickmarks shown. When empty array [], defaults to [minValue, 0, maxValue]. */
+  @property({attribute: false}) mainTickmarks?: number[] = [];
   /** Interval for primary (longest) tickmarks with labels */
-  @property({type: Number}) primaryTickbarsInterval?: number = undefined;
+  @property({type: Number}) primaryTickmarkInterval?: number = undefined;
   /** Interval for secondary (medium) tickmarks */
-  @property({type: Number}) secondaryTickbarsInterval?: number = undefined;
+  @property({type: Number}) secondaryTickmarkInterval?: number = undefined;
   /** Interval for tertiary (shortest) tickmarks */
-  @property({type: Number}) tertiaryTickbarsInterval?: number = undefined;
+  @property({type: Number}) tertiaryTickmarkInterval?: number = undefined;
   private readonly scaleType: ScaleType = ScaleType.regular;
   private readonly frameStyle: FrameStyle = FrameStyle.regular;
   /** Border radius position based on component layout */
@@ -217,8 +225,8 @@ export class ObcGaugeHorizontal extends LitElement {
     return true;
   }
 
-  /** Enhanced visual mode: when true, uses enhanced instrument colors for bar fill and setpoint */
-  @property({type: Boolean}) enhanced = false;
+  /** Color priority: enhanced uses blue instrument colors for bar fill and setpoint */
+  @property({type: String}) priority: Priority = Priority.regular;
   /** Fill visualization mode: 'fill' shows bar from fillMin to fillMax; 'tint' adds a marker at the value position */
   @property({type: String}) fillMode: FillMode = FillMode.fill;
   /** Minimum fill value (defaults to 0) */
@@ -228,30 +236,12 @@ export class ObcGaugeHorizontal extends LitElement {
   /** Current value (bar fill level) */
   @property({type: Number}) value?: number = undefined;
 
-  /** Setpoint/target value to display as indicator. When undefined, setpoint is off. */
-  @property({type: Number}) setpoint?: number = undefined;
+  /** Instrument state: active, loading, or off */
+  @property({type: String}) state: InstrumentState = InstrumentState.active;
+
   /**
-   * New setpoint value being adjusted (focus/adjustment mode).
-   * When defined, displays a second setpoint marker in 'focus' visual state,
-   * while the original `setpoint` marker is dimmed (0.5 opacity).
-   * This enables the "adjustment preview" UX where users can see both the current
-   * and proposed setpoint positions simultaneously.
-   */
-  @property({type: Number}) newSetpoint?: number = undefined;
-  /** Whether value is at setpoint (manual override when disableAutoAtSetpoint=true) */
-  @property({type: Boolean}) atSetpoint = false;
-  /** Disable automatic atSetpoint calculation based on value and deadband */
-  @property({type: Boolean}) disableAutoAtSetpoint = false;
-  /** Deadband for automatic atSetpoint detection (when disableAutoAtSetpoint=false) */
-  @property({type: Number}) autoAtSetpointDeadband = 1;
-  /** Deadband around zero for setpoint positioning */
-  @property({type: Number}) setpointAtZeroDeadband = 0.5;
-  /** Instrument state: inCommand, active, loading, or off */
-  @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
-  /**
-   * When true, the setpoint marker is in "focus" state (user is actively adjusting).
-   * Displays the outlined/hollow triangle variant at full size.
-   * @default false
+   * @deprecated Use `touching` (from SetpointMixin) instead.
+   * Kept for backward compatibility. Synced to `touching` in `willUpdate()`.
    */
   @property({type: Boolean}) focused = false;
 
@@ -288,15 +278,15 @@ export class ObcGaugeHorizontal extends LitElement {
       barThickness: this.barThickness,
       tickThickness: this.tickThickness,
       labelThickness: this.labelThickness,
-      mainTickbars: this.mainTickbars,
-      primaryTickbarsInterval: this.primaryTickbarsInterval,
-      secondaryTickbarsInterval: this.secondaryTickbarsInterval,
-      tertiaryTickbarsInterval: this.tertiaryTickbarsInterval,
+      mainTickmarks: this.mainTickmarks,
+      primaryTickmarkInterval: this.primaryTickmarkInterval,
+      secondaryTickmarkInterval: this.secondaryTickmarkInterval,
+      tertiaryTickmarkInterval: this.tertiaryTickmarkInterval,
       scaleType: this.scaleType,
       frameStyle: this.frameStyle,
       borderRadiusPosition: this.borderRadiusPosition,
       borderRadius: this.borderRadius,
-      enhanced: this.enhanced,
+      priority: this.priority,
       fillMode: this.fillMode,
       fillMin: this.fillMin,
       fillMax: this.fillMax,
@@ -307,8 +297,11 @@ export class ObcGaugeHorizontal extends LitElement {
       disableAutoAtSetpoint: this.disableAutoAtSetpoint,
       autoAtSetpointDeadband: this.autoAtSetpointDeadband,
       setpointAtZeroDeadband: this.setpointAtZeroDeadband,
+      animateSetpoint: this.animateSetpoint,
+      departingNewSetpoint: this.departingNewSetpoint,
       state: this.state,
-      focused: this.focused,
+      touching: this.touching,
+      setpointOverride: this.setpointOverride,
       advicePosition: this.advicePosition,
       advices: this.advices as ExternalScaleAdvice[],
       fixedAspectRatio: this.fixedAspectRatio,
@@ -346,6 +339,16 @@ export class ObcGaugeHorizontal extends LitElement {
         ${parts.currentValueDot} ${parts.setpoint}
       </svg>
     `;
+  }
+
+  override willUpdate(changed: PropertyValues): void {
+    super.willUpdate(changed);
+
+    // Sync deprecated alias to mixin property
+    // Only sync if the alias was set and the mixin property was NOT also set.
+    if (changed.has('focused') && !changed.has('touching')) {
+      this.touching = this.focused;
+    }
   }
 
   override updated(changed: PropertyValues) {

@@ -9,6 +9,7 @@ import {
   LinearAdviceRaw,
 } from '../../building-blocks/instrument-linear/advice.js';
 import {AdviceState} from '../watch/advice.js';
+import {Priority} from '../types.js';
 
 @customElement('obc-heave')
 export class ObcHeave extends LitElement {
@@ -21,7 +22,7 @@ export class ObcHeave extends LitElement {
 
   @property({type: Number}) instrumentRange = 10;
   @property({type: String}) vesselImage: VesselImage = VesselImage.psvFore;
-  @property({type: Boolean}) enhanced = false;
+  @property({type: String}) priority: Priority = Priority.regular;
 
   private _toTranslatedValue(value: number) {
     return (value * (this._boxWidth / 2)) / this.instrumentRange;
@@ -94,11 +95,11 @@ export class ObcHeave extends LitElement {
                 value: this.heave,
               },
               {container: 'var(--instrument-frame-primary-color)'},
-              {hideContainer: false, off: false, enhanced: this.enhanced},
+              {hideContainer: false, off: false, priority: this.priority},
               {
-                mainTickbar: true,
-                primaryTickbarsInterval: this.instrumentRange <= 5 ? 1 : 5,
-                secondaryTickbarsInterval: this.instrumentRange <= 5 ? 0.5 : 1,
+                mainTickmarks: [0],
+                primaryTickmarkInterval: this.instrumentRange <= 5 ? 1 : 5,
+                secondaryTickmarkInterval: this.instrumentRange <= 5 ? 0.5 : 1,
               },
               this._getAdvice()
             )}

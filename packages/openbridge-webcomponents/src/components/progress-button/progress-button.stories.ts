@@ -26,7 +26,7 @@ interface ProgressButtonArgs {
 }
 
 const meta: Meta<typeof ObcProgressButton> = {
-  title: 'UI Components/Messages and notifications/Progress Button',
+  title: 'UI Components/Messages and Notifications/Progress Button',
   tags: ['6.0'],
   component: 'obc-progress-button',
   decorators: [

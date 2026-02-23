@@ -8,6 +8,7 @@ import {
   InstrumentState,
   FrameStyle,
   BorderRadiusPosition,
+  Priority,
 } from '../../navigation-instruments/types.js';
 import type {AdviceType} from '../../navigation-instruments/watch/advice.js';
 import type {
@@ -31,7 +32,7 @@ import {
   ExternalScaleOrientation,
   ExternalScaleSide,
 } from '../external-scale/external-scale.js';
-import {SetpointColorMode} from '../../svghelpers/setpoint.js';
+import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 
 // Re-export shared enums for convenience
 export {
@@ -41,9 +42,9 @@ export {
   FrameStyle,
   BorderRadiusPosition,
   InstrumentState,
+  Priority,
   BarContainerStyle,
   ExternalScaleSide,
-  SetpointColorMode,
 };
 
 /**
@@ -56,9 +57,15 @@ export {
  * - `renderExternalScale(config)`
  *
  * For renderer documentation see: **Building Blocks/External Scale**.
+ *
+ * Set `priority` to `Priority.enhanced` to use the blue/enhanced color palette
+ * for bar fill and setpoint instead of the default gray/regular palette
+ * (default: `Priority.regular`).
  */
 @customElement('obc-bar-vertical')
-export class ObcBarVertical extends LitElement {
+export class ObcBarVertical extends SetpointMixin(LitElement, {
+  defaultDeadband: 1,
+}) {
   /** Minimum scale value (manual mode) */
   @property({type: Number}) minValue = 0;
   /** Maximum scale value (manual mode) */
@@ -154,25 +161,25 @@ export class ObcBarVertical extends LitElement {
 
   // Tick configuration
   /**
-   * Array of values for main tickbars. When undefined, no main tickbars shown.
+   * Array of values for main tickmarks. When undefined, no main tickmarks shown.
    * When empty array [], defaults to [minValue, 0, maxValue].
    */
-  @property({attribute: false}) mainTickbars?: number[] = [];
+  @property({attribute: false}) mainTickmarks?: number[] = [];
   /**
    * Interval for primary (longest) tickmarks with labels (minimum 1).
-   * When undefined, no primary tickbars are shown.
+   * When undefined, no primary tickmarks are shown.
    */
-  @property({type: Number}) primaryTickbarsInterval?: number = undefined;
+  @property({type: Number}) primaryTickmarkInterval?: number = undefined;
   /**
    * Interval for secondary (medium) tickmarks (minimum 1).
-   * When undefined, no secondary tickbars are shown.
+   * When undefined, no secondary tickmarks are shown.
    */
-  @property({type: Number}) secondaryTickbarsInterval?: number = undefined;
+  @property({type: Number}) secondaryTickmarkInterval?: number = undefined;
   /**
    * Interval for tertiary (shortest) tickmarks (minimum 1).
-   * When undefined, no tertiary tickbars are shown.
+   * When undefined, no tertiary tickmarks are shown.
    */
-  @property({type: Number}) tertiaryTickbarsInterval?: number = undefined;
+  @property({type: Number}) tertiaryTickmarkInterval?: number = undefined;
   /** Scale display mode: regular or condensed (shorter ticks) */
   @property({type: String}) scaleType: ScaleType = ScaleType.regular;
   /** Frame style: regular (4px gap for all), flat (main tickmarks touch edge), framed, or instrument */
@@ -214,18 +221,8 @@ export class ObcBarVertical extends LitElement {
   });
 
   // Values
-  /** Enhanced visual mode: when true, uses enhanced instrument colors for bar fill and setpoint */
-  @property({type: Boolean}) enhanced = false;
-  /**
-   * Explicit color mode override for setpoint marker.
-   * When provided, this takes precedence over the `enhanced` boolean.
-   *
-   * - `SetpointColorMode.enhanced`: Use enhanced colors (brighter)
-   * - `SetpointColorMode.regular`: Use regular colors
-   *
-   * Note: Disabled state is auto-derived from `state` (loading/off).
-   */
-  @property({type: String}) colorMode?: SetpointColorMode;
+  /** Color priority: enhanced uses blue instrument colors for bar fill and setpoint */
+  @property({type: String}) priority: Priority = Priority.regular;
   /** Fill visualization mode: fill or tint */
   @property({type: String}) fillMode: FillMode = FillMode.fill;
   /** Minimum fill value for tint mode (defaults to 0) */
@@ -235,36 +232,8 @@ export class ObcBarVertical extends LitElement {
   /** Current value (bar fill level) */
   @property({type: Number}) value?: number = undefined;
 
-  // Setpoint
-  /**
-   * Setpoint/input value to display as indicator.
-   * When undefined, no setpoint shown.
-   */
-  @property({type: Number}) setpoint?: number = undefined;
-  /**
-   * New setpoint value being adjusted (focus/adjustment mode).
-   * When defined, displays a second setpoint marker in 'focus' visual state,
-   * while the original `setpoint` marker is dimmed (0.5 opacity).
-   * This enables the "adjustment preview" UX where users can see both the current
-   * and proposed setpoint positions simultaneously.
-   */
-  @property({type: Number}) newSetpoint?: number = undefined;
-  /** Whether value is at setpoint (manual override when disableAutoAtSetpoint=true) */
-  @property({type: Boolean}) atSetpoint = false;
-  /** Disable automatic atSetpoint calculation based on value and deadband */
-  @property({type: Boolean}) disableAutoAtSetpoint = false;
-  /** Deadband for automatic atSetpoint detection (when disableAutoAtSetpoint=false) */
-  @property({type: Number}) autoAtSetpointDeadband = 1;
-  /** Deadband around zero for setpoint positioning */
-  @property({type: Number}) setpointAtZeroDeadband = 0.5;
   /** Instrument state (affects colors and some marker behavior) */
-  @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
-  /**
-   * When true, the setpoint marker is in "focus" state (user is actively adjusting).
-   * Displays the outlined/hollow triangle variant at full size.
-   * @default false
-   */
-  @property({type: Boolean}) focused = false;
+  @property({type: String}) state: InstrumentState = InstrumentState.active;
 
   // Advice
   /** Advice overlay positioning: center (in bar), inner (covers minor ticks), outer (no overlap) */
@@ -330,15 +299,15 @@ export class ObcBarVertical extends LitElement {
       tickThickness: this.tickThickness,
       labelThickness: this.labelThickness,
       borderRadius: this._getEffectiveBorderRadius(),
-      mainTickbars: this.mainTickbars,
-      primaryTickbarsInterval: this.primaryTickbarsInterval,
-      secondaryTickbarsInterval: this.secondaryTickbarsInterval,
-      tertiaryTickbarsInterval: this.tertiaryTickbarsInterval,
+      mainTickmarks: this.mainTickmarks,
+      primaryTickmarkInterval: this.primaryTickmarkInterval,
+      secondaryTickmarkInterval: this.secondaryTickmarkInterval,
+      tertiaryTickmarkInterval: this.tertiaryTickmarkInterval,
       scaleType: this.scaleType,
       frameStyle: this.frameStyle,
       borderRadiusPosition: this.borderRadiusPosition,
-      enhanced: this.enhanced,
-      colorMode: this.colorMode,
+      priority: this.priority,
+      setpointOverride: this.setpointOverride,
       fillMode: this.fillMode,
       fillMin: this.fillMin,
       fillMax: this.fillMax,
@@ -349,8 +318,10 @@ export class ObcBarVertical extends LitElement {
       disableAutoAtSetpoint: this.disableAutoAtSetpoint,
       autoAtSetpointDeadband: this.autoAtSetpointDeadband,
       setpointAtZeroDeadband: this.setpointAtZeroDeadband,
+      animateSetpoint: this.animateSetpoint,
+      departingNewSetpoint: this.departingNewSetpoint,
       state: this.state,
-      focused: this.focused,
+      touching: this.touching,
       advicePosition: this.advicePosition,
       advices: this.advices as ExternalScaleAdvice[],
       fixedAspectRatio: this.fixedAspectRatio,

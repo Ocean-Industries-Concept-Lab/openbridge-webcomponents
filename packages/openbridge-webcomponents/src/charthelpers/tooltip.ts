@@ -13,7 +13,7 @@ export function getChartTooltipOptions(
     enabled: true,
     displayColors: true,
     caretSize: 0,
-    boxPadding: 4, // TODO (CSS): double-check, 8px margin-right after the color square
+    boxPadding: 4, // TODO(CSS): double-check, 8px margin-right after the color square
     boxWidth: 16,
     boxHeight: 16,
     backgroundColor: getCssVariableValue(host, TOOLTIP_CONFIG.bgColorVar),

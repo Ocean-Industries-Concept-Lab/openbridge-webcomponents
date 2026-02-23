@@ -39,6 +39,57 @@
   z-index: 1;
 }
 
+:host([variant="toolbar-add"]) {
+  margin-left: var(--ui-components-button-label-spacing, 8px);
+}
+
+:host([variant="toolbar-add"]) .wrapper.type-large .visible-wrapper {
+  background-color: var(--normal-enabled-background-color, transparent);
+  border-color: var(--normal-enabled-border-color, currentColor);
+}
+
+:host([variant="toolbar-add"]) .wrapper.type-large:hover .visible-wrapper {
+  background-color: var(--normal-hover-background-color, transparent);
+  border-color: var(--normal-hover-border-color, currentColor);
+}
+
+:host([variant="toolbar-add"]) .content {
+  display: flex;
+  padding: 0;
+}
+
+:host([variant="toolbar-add"])
+  .wrapper.type-large
+  .visible-wrapper
+  .node
+  .content {
+  padding: 0;
+}
+
+:host([variant="toolbar-condensed-icon"]) .wrapper.type-large .visible-wrapper {
+  background-color: transparent;
+  border-color: transparent;
+}
+
+:host([variant="toolbar-condensed-icon"])
+  .wrapper.type-large:hover
+  .visible-wrapper {
+  background-color: var(--normal-hover-background-color, transparent);
+  border-color: transparent;
+}
+
+:host([variant="toolbar-condensed-icon"]) .content {
+  padding: 0;
+}
+
+:host([variant="toolbar-condensed-icon"])
+  .wrapper.type-large
+  .visible-wrapper
+  .node
+  .content {
+  padding: 0;
+}
+
 .connector {
   width: 5px;
   height: 2px;
@@ -451,4 +502,29 @@ button {
       }
     }
   }
+}
+
+@keyframes loading-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+:host(.condensed-label) .wrapper,
+:host(.condensed-label) button {
+  cursor: default;
+  pointer-events: none;
+}
+
+:host([variant="toolbar-prev"]) .wrapper.type-large .visible-wrapper {
+  background-color: var(--normal-enabled-background-color, transparent);
+  border-color: var(--normal-enabled-border-color, currentColor);
+}
+
+:host([variant="toolbar-prev"]) .wrapper.type-large:hover .visible-wrapper {
+  background-color: var(--normal-hover-background-color, transparent);
+  border-color: var(--normal-hover-border-color, currentColor);
 }

@@ -9,6 +9,7 @@ import {
 import {WatchCircleType} from '../../navigation-instruments/watch/watch.js';
 import {Tickmark} from '../../navigation-instruments/watch/tickmark.js';
 import {TickmarkType} from '../../navigation-instruments/watch/tickmark.js';
+import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 
 export enum ObcGaugeRadialType {
   filled = 'filled',
@@ -23,13 +24,12 @@ export interface GaugeRadialAdvice {
   hinted: boolean;
 }
 @customElement('obc-instrument-radial')
-export class ObcInstrumentRadial extends LitElement {
+export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
+  // setpoint, newSetpoint, atSetpoint, touching, disableAutoAtSetpoint,
+  // autoAtSetpointDeadband, setpointAtZeroDeadband, setpointOverride
+  // — all inherited from SetpointMixin
+
   @property({type: Number}) value = 0;
-  @property({type: Number}) setpoint: number | undefined;
-  @property({type: Boolean}) atSetpoint: boolean = false;
-  @property({type: Boolean}) touching: boolean = false;
-  @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
-  @property({type: Number}) autoAtSetpointDeadband: number = 2;
   @property({type: Number}) maxValue = 100;
   @property({type: Number}) minValue = 0;
   @property({attribute: false}) getAngle!: (v: number) => number;
@@ -46,21 +46,6 @@ export class ObcInstrumentRadial extends LitElement {
   @property({type: Number}) clipTop: number = 0; // in percent of height
   @property({type: Number}) clipBottom: number = 0; // in percent of height
 
-  atSetpointCalc(): boolean {
-    if (this.setpoint === undefined) {
-      return false;
-    }
-
-    if (this.touching) {
-      return false;
-    }
-
-    if (!this.disableAutoAtSetpoint) {
-      return Math.abs(this.value - this.setpoint) < this.autoAtSetpointDeadband;
-    }
-    return this.atSetpoint;
-  }
-
   get minAngle(): number {
     return this.getAngle(this.minValue);
   }
@@ -73,6 +58,10 @@ export class ObcInstrumentRadial extends LitElement {
     const barColor = this.barColor;
     const setpointAngle =
       this.setpoint !== undefined ? this.getAngle(this.setpoint) : undefined;
+    const newSetpointAngle =
+      this.newSetpoint !== undefined
+        ? this.getAngle(this.newSetpoint)
+        : undefined;
 
     const barAreas =
       this.type === ObcGaugeRadialType.needle
@@ -94,7 +83,11 @@ export class ObcInstrumentRadial extends LitElement {
       <div class="container">
         <obc-watch
           .angleSetpoint=${setpointAngle}
-          .atAngleSetpoint=${this.atSetpointCalc()}
+          .newAngleSetpoint=${newSetpointAngle}
+          .atAngleSetpoint=${this.computeAtSetpoint(this.value)}
+          .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
+          .setpointOverride=${this.setpointOverride}
+          .animateSetpoint=${this.animateSetpoint}
           .padding=${48}
           .tickmarks=${this.tickmarks}
           .advices=${this._advices}

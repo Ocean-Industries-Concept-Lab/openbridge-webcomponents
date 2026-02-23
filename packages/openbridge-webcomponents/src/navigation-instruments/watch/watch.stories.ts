@@ -8,14 +8,59 @@ import {
 import './watch.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceState, AdviceType} from './advice.js';
-import {InstrumentState} from '../types.js';
+import {InstrumentState, Priority} from '../types.js';
 import {TickmarkType} from './tickmark.js';
 import {html, svg} from 'lit';
 
 const meta: Meta<typeof ObcWatch> = {
-  title: 'Building blocks/Watch',
+  title: 'Building Blocks/Watch',
   tags: ['autodocs'],
   component: 'obc-watch',
+  parameters: {
+    docs: {
+      description: {
+        component: `# \`<obc-watch>\` - Core SVG renderer for circular/radial watch-based instruments
+
+This component renders all circular instrument elements including rings, tickmarks, bar areas, needles, advices, setpoints, vessel images, and environmental indicators (wind/current). It serves as the foundation for compass, heading, rudder, speed-gauge, and other radial navigation instruments.
+
+## Setpoint Behavior
+
+The setpoint marker visual state is derived from the combination of \`atAngleSetpoint\`, \`atAngleSetpointZero\`, and \`focused\` properties:
+
+- **notEqual**: Value differs from setpoint (triangular marker, offset outward)
+- **equal**: Value matches setpoint (line marker, sits on ring)
+- **equalZero**: Value matches setpoint at zero angle (double-line marker, offset outward)
+- **focus**: User is actively adjusting (e.g., dragging) - shows focus visual state
+
+The \`RADIAL_SETPOINT_INWARD_ADJUST\` constant (4px) fine-tunes radial setpoint positioning to match Figma designs, applied on top of visual state offsets from setpoint.ts.
+
+The \`setpointOverride\` property allows overriding the derived disabled state so the setpoint marker derives its color from \`priority\` even in loading/off instrument states.
+
+## Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| \`state\` | \`InstrumentState\` | Instrument state (active, loading, off) |
+| \`angleSetpoint\` | \`number \\| undefined\` | Setpoint angle in degrees (0° = 12 o'clock) |
+| \`atAngleSetpoint\` | \`boolean\` | Whether value matches setpoint (within deadband) |
+| \`atAngleSetpointZero\` | \`boolean\` | Whether setpoint is at zero angle |
+| \`focused\` | \`boolean\` | Whether user is actively adjusting the setpoint |
+| \`setpointOverride\` | \`boolean\` | When true, derive setpoint color from priority even in loading/off states |
+
+## Usage
+
+This component is typically not used directly. Instead, use the higher-level wrapper components:
+- \`obc-compass\` - Full compass with HDG/COG arrows, ROT, vessel, wind/current
+- \`obc-heading\` - Simplified compass with HDG/COG arrows only
+- \`obc-rudder\` - Half-circle rudder indicator
+- \`obc-speed-gauge\` - Speed arc with needle
+- \`obc-azimuth-thruster\` - Thruster with angle setpoint and thrust bar
+- \`obc-instrument-radial\` - Generic building block for radial gauges
+
+Source of truth: \`packages/openbridge-webcomponents/src/navigation-instruments/watch/watch.ts\``,
+      },
+    },
+  },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 800, step: 10}},
     state: {control: {type: 'select'}, options: Object.values(InstrumentState)},
@@ -35,6 +80,7 @@ const meta: Meta<typeof ObcWatch> = {
     },
     currentSymbolRadius: {control: {type: 'range', min: 0, max: 360, step: 1}},
     rotation: {control: {type: 'range', min: 0, max: 360, step: 1}},
+    priority: {control: 'select', options: Object.values(Priority)},
   },
   args: {
     width: 400,
@@ -50,7 +96,19 @@ type Story = StoryObj<ObcWatch>;
 export const InCommand: Story = {
   args: {
     angleSetpoint: 90,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
+  },
+  argTypes: {
+    angleSetpoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
+  },
+};
+
+export const NotInCommand: Story = {
+  args: {
+    angleSetpoint: 90,
+    state: InstrumentState.active,
+    priority: Priority.regular,
   },
   argTypes: {
     angleSetpoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
@@ -60,7 +118,8 @@ export const InCommand: Story = {
 export const WithVesselImage: Story = {
   args: {
     angleSetpoint: 90,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     vessels: [
       {
         size: VesselImageSize.large,
@@ -76,7 +135,8 @@ export const WithVesselImage: Story = {
 
 export const WithBarAreas: Story = {
   args: {
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     areas: [
       {
         startAngle: -90,
@@ -108,7 +168,8 @@ export const WithBarAreas: Story = {
 
 export const WithStarboardPortIndicator: Story = {
   args: {
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     starboardPortIndicator: true,
   },
 };
@@ -123,16 +184,6 @@ export const WithWind: Story = {
     currentFromDirectionDeg: 238,
     currentSymbolRadius: 190,
     crosshairEnabled: true,
-  },
-};
-
-export const Active: Story = {
-  args: {
-    angleSetpoint: 90,
-    state: InstrumentState.active,
-  },
-  argTypes: {
-    angleSetpoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
   },
 };
 
@@ -261,7 +312,8 @@ export const Tripple: Story = {
     windSymbolRadius: 160,
     currentSymbolRadius: 160,
     angleSetpoint: 90,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     watchCircleType: WatchCircleType.triple,
   },
 
@@ -645,4 +697,200 @@ export const TickmarksTestInsideRotation: Story = {
       </div>
     `;
   },
+};
+
+/**
+ * Side-by-side comparison of setpoint visual states for radial instruments.
+ *
+ * This story demonstrates the same state grid as bar-vertical/horizontal and
+ * gauge-vertical/horizontal components, but for radial (watch-based) instruments.
+ */
+export const StateComparison: Story = {
+  name: 'State comparison',
+
+  render: () => html`
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+      <!-- Header row -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(2, 1fr); gap: 16px; align-items: center;"
+      >
+        <div></div>
+        <div
+          style="text-align: center; font-weight: bold; font-size: 12px; color: #ccc;"
+        >
+          regular
+        </div>
+        <div
+          style="text-align: center; font-weight: bold; font-size: 12px; color: #ccc;"
+        >
+          enhanced
+        </div>
+      </div>
+
+      <!-- active row -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(2, 1fr); gap: 16px; align-items: center;"
+      >
+        <div style="font-size: 12px; color: #888;">active</div>
+        <div style="width: 160px; height: 160px;">
+          <obc-watch
+            .state=${InstrumentState.active}
+            .priority=${Priority.regular}
+            .angleSetpoint=${45}
+            .atAngleSetpoint=${false}
+            .watchCircleType=${WatchCircleType.double}
+            .areas=${[
+              {
+                startAngle: -90,
+                endAngle: 90,
+                roundInsideCut: true,
+                roundOutsideCut: true,
+              },
+            ]}
+            .barAreas=${[
+              {
+                startAngle: 0,
+                endAngle: 30,
+                fillColor: 'var(--instrument-regular-tertiary-color)',
+              },
+            ]}
+          ></obc-watch>
+        </div>
+        <div style="width: 160px; height: 160px;">
+          <obc-watch
+            .state=${InstrumentState.active}
+            .priority=${Priority.enhanced}
+            .angleSetpoint=${45}
+            .atAngleSetpoint=${false}
+            .watchCircleType=${WatchCircleType.double}
+            .areas=${[
+              {
+                startAngle: -90,
+                endAngle: 90,
+                roundInsideCut: true,
+                roundOutsideCut: true,
+              },
+            ]}
+            .barAreas=${[
+              {
+                startAngle: 0,
+                endAngle: 30,
+                fillColor: 'var(--instrument-enhanced-tertiary-color)',
+              },
+            ]}
+          ></obc-watch>
+        </div>
+      </div>
+
+      <!-- loading row -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(2, 1fr); gap: 16px; align-items: center;"
+      >
+        <div style="font-size: 12px; color: #888;">loading</div>
+        <div style="width: 160px; height: 160px;">
+          <obc-watch
+            .state=${InstrumentState.loading}
+            .priority=${Priority.regular}
+            .angleSetpoint=${45}
+            .atAngleSetpoint=${false}
+            .watchCircleType=${WatchCircleType.double}
+            .areas=${[
+              {
+                startAngle: -90,
+                endAngle: 90,
+                roundInsideCut: true,
+                roundOutsideCut: true,
+              },
+            ]}
+            .barAreas=${[
+              {
+                startAngle: 0,
+                endAngle: 30,
+                fillColor: 'var(--instrument-frame-tertiary-color)',
+              },
+            ]}
+          ></obc-watch>
+        </div>
+        <div style="width: 160px; height: 160px;">
+          <obc-watch
+            .state=${InstrumentState.loading}
+            .priority=${Priority.enhanced}
+            .angleSetpoint=${45}
+            .atAngleSetpoint=${false}
+            .watchCircleType=${WatchCircleType.double}
+            .areas=${[
+              {
+                startAngle: -90,
+                endAngle: 90,
+                roundInsideCut: true,
+                roundOutsideCut: true,
+              },
+            ]}
+            .barAreas=${[
+              {
+                startAngle: 0,
+                endAngle: 30,
+                fillColor: 'var(--instrument-frame-tertiary-color)',
+              },
+            ]}
+          ></obc-watch>
+        </div>
+      </div>
+
+      <!-- off row -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(2, 1fr); gap: 16px; align-items: center;"
+      >
+        <div style="font-size: 12px; color: #888;">off</div>
+        <div style="width: 160px; height: 160px;">
+          <obc-watch
+            .state=${InstrumentState.off}
+            .priority=${Priority.regular}
+            .angleSetpoint=${45}
+            .atAngleSetpoint=${false}
+            .watchCircleType=${WatchCircleType.double}
+            .areas=${[
+              {
+                startAngle: -90,
+                endAngle: 90,
+                roundInsideCut: true,
+                roundOutsideCut: true,
+              },
+            ]}
+            .barAreas=${[
+              {
+                startAngle: 0,
+                endAngle: 30,
+                fillColor: 'var(--instrument-frame-tertiary-color)',
+              },
+            ]}
+          ></obc-watch>
+        </div>
+        <div style="width: 160px; height: 160px;">
+          <obc-watch
+            .state=${InstrumentState.off}
+            .priority=${Priority.enhanced}
+            .angleSetpoint=${45}
+            .atAngleSetpoint=${false}
+            .watchCircleType=${WatchCircleType.double}
+            .areas=${[
+              {
+                startAngle: -90,
+                endAngle: 90,
+                roundInsideCut: true,
+                roundOutsideCut: true,
+              },
+            ]}
+            .barAreas=${[
+              {
+                startAngle: 0,
+                endAngle: 30,
+                fillColor: 'var(--instrument-frame-tertiary-color)',
+              },
+            ]}
+          ></obc-watch>
+        </div>
+      </div>
+    </div>
+  `,
 };
