@@ -39,6 +39,7 @@ export type ObcDropdownButtonChangeEvent = CustomEvent<{
  * - `fullWidth` (boolean): Expands the component to fill its container when true. Default is false.
  *
  * ### Events
+ * - `dropdown-change` – Fired when the user selects a different option. The event detail includes `{ value, label }` of the selected option.
  * - `change` – Fired when the user selects a different option. The event detail includes `{ value, label }` of the selected option.
  *
  * ### Best Practices
@@ -61,6 +62,7 @@ export type ObcDropdownButtonChangeEvent = CustomEvent<{
  * ```
  *
  * @slot - (No named slots; all content is provided via properties)
+ * @fires dropdown-change {ObcDropdownButtonChangeEvent} - Fires when the value of the select changes
  * @fires change {ObcDropdownButtonChangeEvent} - Fires when the value of the select changes
  */
 @customElement('obc-dropdown-button')
@@ -159,8 +161,9 @@ export class ObcDropdownButton extends LitElement {
   }
 
   /**
-   * Handles the change event when a new option is selected. Updates the selected value and label, and dispatches a `change` event with the new selection.
+   * Handles the dropdown-change and change event when a new option is selected. Updates the selected value and label, and dispatches a `dropdown-change` and 'change' event with the new selection.
    *
+   * @fires dropdown-change {ObcDropdownButtonChangeEvent} - Fired when the user selects a different option.
    * @fires change {ObcDropdownButtonChangeEvent} - Fired when the user selects a different option.
    */
   private changeHandler(event: Event) {
@@ -169,6 +172,11 @@ export class ObcDropdownButton extends LitElement {
     this.selectedLabel = this.options
       .find((item) => item.value === this.selectedValue)!
       .label.trim();
+    this.dispatchEvent(
+      new CustomEvent('dropdown-change', {
+        detail: {value: this.selectedValue, label: this.selectedLabel},
+      })
+    );
     this.dispatchEvent(
       new CustomEvent('change', {
         detail: {value: this.selectedValue, label: this.selectedLabel},
