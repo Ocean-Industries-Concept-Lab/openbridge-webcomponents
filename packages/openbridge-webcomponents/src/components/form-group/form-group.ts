@@ -138,8 +138,8 @@ export class ObcFormGroup extends LitElement {
       item.removeAttribute('data-group-item-before-focused');
     });
 
-    const focusedItem = this.querySelector<HTMLElement>(
-      'obc-form-item:focus-within'
+    const focusedItem = slottedItems.find((item) =>
+      item.matches(':focus-within')
     );
     if (!focusedItem) return;
 

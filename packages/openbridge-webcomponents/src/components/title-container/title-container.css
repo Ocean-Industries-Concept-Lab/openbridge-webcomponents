@@ -38,10 +38,6 @@
     height: var(--global-size-spacing-visual-target-min);
     flex: 0 0 var(--global-size-spacing-visual-target-min);
     color: var(--element-neutral-color);
-
-    .state-inactive & {
-      color: var(--element-inactive-color);
-    }
   }
 
   ::slotted([slot="icon"]) {
@@ -59,26 +55,20 @@
 
   .title {
     @mixin font-title;
+
     color: var(--element-active-color);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-
-    .state-inactive & {
-      color: var(--element-inactive-color);
-    }
   }
 
   .label {
     @mixin font-body;
+
     color: var(--element-neutral-color);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-
-    .state-inactive & {
-      color: var(--element-inactive-color);
-    }
   }
 
   .actions {
@@ -92,8 +82,16 @@
     color: var(--on-flat-neutral-color);
   }
 
-  .state-inactive ::slotted([slot="actions"]) {
-    color: var(--element-inactive-color);
-    --on-flat-neutral-color: var(--element-inactive-color);
+  &.state-inactive {
+    .icon,
+    .title,
+    .label {
+      color: var(--element-inactive-color);
+    }
+
+    ::slotted([slot="actions"]) {
+      color: var(--element-inactive-color);
+      --on-flat-neutral-color: var(--element-inactive-color);
+    }
   }
 }
