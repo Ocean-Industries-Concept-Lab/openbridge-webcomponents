@@ -234,6 +234,7 @@ Required modifications after pasting:
     ```bash
     npx vitest run --project storybook 'component-name'
     ```
+13. **Keep the main context clean.** Delegate broad codebase exploration to subagents; only read files directly in the main thread when you are about to edit them or need a few specific lines.
 
 ---
 

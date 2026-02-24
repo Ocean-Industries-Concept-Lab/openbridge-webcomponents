@@ -216,7 +216,7 @@ See the [CONTRIBUTING.md](CONTRIBUTING.md) file for details on how to contribute
 
 Code quality and visual precision are very important in this project (even half a pixel matters!). For that reason, try to avoid AI hallucinations as much as possible:
 - provide precise context (list all the file names, enums, examples, etc.)
-- ask the AI to read the whole files into memory/context
+- ask the AI to read the files it is working on into memory (for broader exploration, let it use subagents)
 - instruct the AI to ask clarifying questions before it begins
 - use the latest AI models (the difference can be huge between a paid or latest model compared to free/older ones)
 - keep the AI on a short leash
