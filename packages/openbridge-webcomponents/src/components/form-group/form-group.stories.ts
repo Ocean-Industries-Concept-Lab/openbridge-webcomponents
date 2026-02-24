@@ -43,7 +43,7 @@ const mapGroupTypeToItemType = (type: ObcFormGroupType): ObcFormItemType => {
 };
 
 const meta = {
-  title: 'UI Components/Form components/Form group',
+  title: 'UI Components/Forms/Form Group',
   component: 'obc-form-group',
   decorators: [
     (story) =>

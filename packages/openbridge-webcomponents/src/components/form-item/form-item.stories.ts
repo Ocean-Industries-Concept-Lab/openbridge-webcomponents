@@ -8,6 +8,7 @@ import './form-item.js';
 import {
   type ObcFormItemActionChangeEvent,
   ObcFormItemBasicState,
+  ObcFormItemStatusIcon,
   ObcFormItemType,
 } from './form-item.js';
 import '../../icons/icon-placeholder.js';
@@ -26,6 +27,7 @@ type FormItemArgs = {
   errorText?: string;
   hasIcon?: boolean;
   hasShader?: boolean;
+  statusIcon?: ObcFormItemStatusIcon;
   disabled?: boolean;
   text?: string;
   onActionChange?: (event: ObcFormItemActionChangeEvent) => void;
@@ -48,6 +50,7 @@ const resolveArgs = (args: FormItemArgs) => {
     errorText: args.errorText ?? 'Error text',
     hasIcon: args.hasIcon ?? false,
     hasShader: typeSupportsShaderToggle(type) && (args.hasShader ?? false),
+    statusIcon: args.statusIcon ?? ObcFormItemStatusIcon.Check,
     disabled: args.disabled ?? false,
     text: args.text ?? defaultText,
   };
@@ -64,12 +67,13 @@ const defaultArgs: FormItemArgs = {
   errorText: 'Error text',
   hasIcon: false,
   hasShader: false,
+  statusIcon: ObcFormItemStatusIcon.Check,
   disabled: false,
   text: defaultText,
 };
 
 const meta = {
-  title: 'UI Components/Form components/Form item',
+  title: 'UI Components/Forms/Form Item',
   tags: ['autodocs'],
   component: 'obc-form-item',
   decorators: [
@@ -90,6 +94,7 @@ const meta = {
         'errorText',
         'text',
         'basicState',
+        'statusIcon',
       ],
     },
     docs: {
@@ -117,6 +122,9 @@ const meta = {
           }
           if (args.hasIcon) attrPairs.push('has-icon');
           if (args.hasShader) attrPairs.push('has-shader');
+          if (args.statusIcon === ObcFormItemStatusIcon.Dash) {
+            attrPairs.push('status-icon="dash"');
+          }
           if (args.disabled) attrPairs.push('disabled');
 
           const attrs = attrPairs.length ? ` ${attrPairs.join(' ')}` : '';
@@ -150,6 +158,10 @@ ${iconLine}  ${args.text}
         'disabled',
         'amplified',
       ],
+    },
+    statusIcon: {
+      control: 'select',
+      options: Object.values(ObcFormItemStatusIcon),
     },
   },
 } satisfies Meta<FormItemArgs>;
@@ -203,6 +215,7 @@ const renderItem = (args: FormItemArgs = {}) => {
       .errorText=${resolved.errorText}
       .hasIcon=${resolved.hasIcon}
       .hasShader=${resolved.hasShader}
+      .statusIcon=${resolved.statusIcon}
       .disabled=${resolved.disabled}
       data-demo-state=${demoState}
       @action-change=${args.onActionChange}
@@ -239,6 +252,14 @@ export const FilledStatusFirst: Story = {
   render: (args) => renderItem(args),
 };
 
+export const FilledStatusFirstDash: Story = {
+  args: {
+    type: ObcFormItemType.FilledStatusFirst,
+    statusIcon: ObcFormItemStatusIcon.Dash,
+  },
+  render: (args) => renderItem(args),
+};
+
 export const EnabledActionLast: Story = {
   args: {
     type: ObcFormItemType.EnabledActionLast,
@@ -250,6 +271,15 @@ export const EnabledActionLast: Story = {
 
 export const FilledStatusLast: Story = {
   args: {type: ObcFormItemType.FilledStatusLast, hasIcon: true},
+  render: (args) => renderItem(args),
+};
+
+export const FilledStatusLastDash: Story = {
+  args: {
+    type: ObcFormItemType.FilledStatusLast,
+    statusIcon: ObcFormItemStatusIcon.Dash,
+    hasIcon: true,
+  },
   render: (args) => renderItem(args),
 };
 

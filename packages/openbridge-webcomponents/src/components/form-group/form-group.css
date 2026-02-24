@@ -57,7 +57,7 @@
 
     .type-enabled-action-first & ::slotted(obc-form-item),
     .type-enabled-action-last & ::slotted(obc-form-item) {
-      --obc-form-item-bg-color-enabled: var(--container-global-color);
+      --obc-form-item-bg-color: var(--container-global-color);
     }
 
     ::slotted(obc-form-item[data-group-item-first]) {

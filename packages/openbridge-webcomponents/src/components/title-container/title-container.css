@@ -23,7 +23,7 @@
         var(--global-size-spacing-list-item-item-spacing)
     );
   gap: var(--global-size-spacing-list-item-item-spacing);
-  border-bottom: 1px solid var(--border-divider-color);
+  border-bottom: 1px solid var(--border-outline-color);
 
   .left {
     display: flex;

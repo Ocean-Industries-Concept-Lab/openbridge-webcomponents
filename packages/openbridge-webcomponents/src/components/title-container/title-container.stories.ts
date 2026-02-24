@@ -14,7 +14,7 @@ type TitleContainerArgs = {
 };
 
 const meta = {
-  title: 'UI Components/Form components/Title container',
+  title: 'UI Components/Forms/Title Container',
   tags: ['!autodocs'],
   component: 'obc-title-container',
   decorators: [

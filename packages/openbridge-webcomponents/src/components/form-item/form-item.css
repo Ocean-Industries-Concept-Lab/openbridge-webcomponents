@@ -38,16 +38,13 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
-    padding-block: var(
-      --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
-    );
     padding-inline-start: var(
       --global-size-spacing-list-item-padding-horizontal
     );
     padding-inline-end: var(--global-size-spacing-icon-icon-size-regular);
     gap: var(--global-size-spacing-list-item-padding-horizontal);
     background: var(
-      --obc-form-item-bg-color-enabled,
+      --obc-form-item-bg-color,
       var(--flat-enabled-background-color)
     );
     border: 1px solid
@@ -77,11 +74,13 @@
     }
 
     .type-enabled-action-first & {
-      gap: var(--global-size-spacing-list-item-item-spacing);
+      padding-inline-start: var(--global-size-spacing-target-padding);
+      gap: var(--global-size-spacing-target-padding);
     }
 
     .type-enabled-action-last & {
-      padding-right: var(--global-size-spacing-list-item-padding-horizontal);
+      padding-inline-end: var(--global-size-spacing-target-padding);
+      gap: var(--global-size-spacing-target-padding);
     }
 
     :host(:hover):not([disabled]) & {
@@ -227,7 +226,8 @@
     height: 24px;
     color: var(--element-active-color);
 
-    obi-check-google {
+    obi-check-google,
+    obi-check-mixed {
       width: 100%;
       height: 100%;
     }

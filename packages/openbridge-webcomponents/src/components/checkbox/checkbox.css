@@ -25,6 +25,17 @@
   @mixin style style=flat;
 }
 
+.checkbox-container.box-only-states:not(.disabled),
+.checkbox-container.box-only-states:not(.disabled):hover,
+.checkbox-container.box-only-states:not(.disabled):active,
+.checkbox-container.box-only-states:not(.disabled):focus,
+.checkbox-container.box-only-states:not(.disabled):focus-visible {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  outline: none;
+}
+
 .checkbox-container.no-label {
   width: 100%;
   flex: 0 0 auto;
@@ -81,6 +92,50 @@
 .checkbox-container.status-checked .checkbox-box,
 .checkbox-container.status-mixed .checkbox-box {
   background: var(--selected-enabled-background-color);
+}
+
+.checkbox-container.box-only-states.status-unchecked:not(.disabled):hover
+  .checkbox-box {
+  background: var(--indent-hover-background-color);
+  border-color: var(--indent-hover-border-color);
+}
+
+.checkbox-container.box-only-states.status-unchecked:not(.disabled):active
+  .checkbox-box {
+  background: var(--indent-pressed-background-color);
+  border-color: var(--indent-pressed-border-color);
+}
+
+.checkbox-container.box-only-states.status-unchecked:not(
+    .disabled
+  ):focus-visible
+  .checkbox-box {
+  background: var(--indent-focused-background-color);
+  border-color: var(--indent-focused-border-color);
+}
+
+.checkbox-container.box-only-states.status-checked:not(.disabled):hover
+  .checkbox-box,
+.checkbox-container.box-only-states.status-mixed:not(.disabled):hover
+  .checkbox-box {
+  background: var(--selected-hover-background-color);
+  border-color: var(--selected-hover-border-color);
+}
+
+.checkbox-container.box-only-states.status-checked:not(.disabled):active
+  .checkbox-box,
+.checkbox-container.box-only-states.status-mixed:not(.disabled):active
+  .checkbox-box {
+  background: var(--selected-pressed-background-color);
+  border-color: var(--selected-pressed-border-color);
+}
+
+.checkbox-container.box-only-states.status-checked:not(.disabled):focus-visible
+  .checkbox-box,
+.checkbox-container.box-only-states.status-mixed:not(.disabled):focus-visible
+  .checkbox-box {
+  background: var(--selected-focused-background-color);
+  border-color: var(--selected-focused-border-color);
 }
 
 .checkbox-icon {

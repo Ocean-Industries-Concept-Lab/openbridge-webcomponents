@@ -13,7 +13,10 @@ import '../form-item/form-item.js';
 import '../form-footer-container/form-footer-container.js';
 import '../icon-button/icon-button.js';
 import {ObcFormGroupType} from '../form-group/form-group.js';
-import {ObcFormItemType} from '../form-item/form-item.js';
+import {
+  ObcFormItemStatusIcon,
+  ObcFormItemType,
+} from '../form-item/form-item.js';
 import '../../icons/icon-placeholder.js';
 
 type FormContainerArgs = {
@@ -24,7 +27,7 @@ type FormContainerArgs = {
 };
 
 const meta = {
-  title: 'UI Components/Form components/Form container',
+  title: 'UI Components/Forms/Form Container',
   component: 'obc-form-container',
   decorators: [
     (story) =>
@@ -114,7 +117,7 @@ ${footerActionItems}
 export default meta;
 type Story = StoryObj<FormContainerArgs>;
 
-const renderContent = (type: ObcFormContainerType) => {
+const renderContent = (type: ObcFormContainerType, showDashExample = false) => {
   const isInactive = type === ObcFormContainerType.Inactive;
   const isCompleted = type === ObcFormContainerType.Completed;
   const formGroupType = isInactive
@@ -133,29 +136,24 @@ const renderContent = (type: ObcFormContainerType) => {
         ? ObcFormItemType.EnabledActionFirst
         : ObcFormItemType.View;
 
+  const itemText =
+    'This is a list item with multiple lines that can take up as much space as it needs. Like it can be really long and go on for a while.';
+
+  const renderItem = (statusIcon = ObcFormItemStatusIcon.Check) => html`
+    <obc-form-item .type=${itemType} .statusIcon=${statusIcon}>
+      ${itemText}
+    </obc-form-item>
+  `;
+
   const secondGroupExtra =
     type === ObcFormContainerType.View ||
     type === ObcFormContainerType.Enabled ||
     type === ObcFormContainerType.Inactive
-      ? html`
-          <obc-form-item .type=${itemType}>
-            This is a list item with multiple lines that can take up as much
-            space as it needs. Like it can be really long and go on for a while.
-          </obc-form-item>
-        `
+      ? renderItem()
       : null;
 
   const completedExtraItems = isCompleted
-    ? html`
-        <obc-form-item .type=${itemType}>
-          This is a list item with multiple lines that can take up as much space
-          as it needs. Like it can be really long and go on for a while.
-        </obc-form-item>
-        <obc-form-item .type=${itemType}>
-          This is a list item with multiple lines that can take up as much space
-          as it needs. Like it can be really long and go on for a while.
-        </obc-form-item>
-      `
+    ? html` ${renderItem()} ${renderItem()} `
     : null;
 
   return html`
@@ -164,29 +162,19 @@ const renderContent = (type: ObcFormContainerType) => {
       <span slot="text" class="text"
         >Some text here to describe what this part is about</span
       >
-      <obc-form-item .type=${itemType}>
-        This is a list item with multiple lines that can take up as much space
-        as it needs. Like it can be really long and go on for a while.
-      </obc-form-item>
-      <obc-form-item .type=${itemType}>
-        This is a list item with multiple lines that can take up as much space
-        as it needs. Like it can be really long and go on for a while.
-      </obc-form-item>
+      ${renderItem(
+        isCompleted && showDashExample
+          ? ObcFormItemStatusIcon.Dash
+          : ObcFormItemStatusIcon.Check
+      )}
+      ${renderItem()}
     </obc-form-group>
     <obc-form-group .type=${formGroupType}>
       <span slot="subtitle" class="subtitle">Subtitle</span>
       <span slot="text" class="text"
         >Some text here to describe what this part is about</span
       >
-      <obc-form-item .type=${itemType}>
-        This is a list item with multiple lines that can take up as much space
-        as it needs. Like it can be really long and go on for a while.
-      </obc-form-item>
-      <obc-form-item .type=${itemType}>
-        This is a list item with multiple lines that can take up as much space
-        as it needs. Like it can be really long and go on for a while.
-      </obc-form-item>
-      ${secondGroupExtra} ${completedExtraItems}
+      ${renderItem()} ${renderItem()} ${secondGroupExtra} ${completedExtraItems}
     </obc-form-group>
   `;
 };
@@ -279,7 +267,10 @@ const renderFooter = () => {
   `;
 };
 
-const renderFormContainer = (args: FormContainerArgs) => {
+const renderFormContainer = (
+  args: FormContainerArgs,
+  showDashExample = false
+) => {
   const {type, contentTitle} = args;
   const showContentTitle = contentTitle.trim() !== '';
   return html`
@@ -288,7 +279,7 @@ const renderFormContainer = (args: FormContainerArgs) => {
       ${showContentTitle
         ? html`<span slot="content-title">${contentTitle}</span>`
         : null}
-      ${renderContent(type)} ${renderFooter()}
+      ${renderContent(type, showDashExample)} ${renderFooter()}
     </obc-form-container>
   `;
 };
@@ -336,4 +327,14 @@ export const Completed: Story = {
     contentTitle: 'Some information here',
   },
   render: (args) => renderFormContainer(args),
+};
+
+export const CompletedWithDashItem: Story = {
+  args: {
+    type: ObcFormContainerType.Completed,
+    title: 'Title',
+    label: 'Label',
+    contentTitle: 'Some information here',
+  },
+  render: (args) => renderFormContainer(args, true),
 };

@@ -36,8 +36,6 @@ export class ObcFormContainer extends LitElement {
 
   @property({type: String, attribute: 'content-title'}) contentTitle = '';
 
-  static override styles = unsafeCSS(componentStyle);
-
   private renderTitle(): TemplateResult | typeof nothing {
     return html`
       <div class="title-section" part="title-section">
@@ -99,6 +97,8 @@ export class ObcFormContainer extends LitElement {
       </div>
     `;
   }
+
+  static override styles = unsafeCSS(componentStyle);
 }
 
 declare global {

@@ -107,6 +107,15 @@ export class ObcCheckbox extends LitElement {
   @property({type: String}) label = 'Checkbox item';
 
   /**
+   * If true, interactive visual states (hover/pressed/focus) are rendered only
+   * on the 24px checkbox box, while keeping the 48px touch target clickable.
+   *
+   * @default false
+   */
+  @property({type: Boolean, attribute: 'box-only-states'})
+  boxOnlyStates = false;
+
+  /**
    * ID reference(s) for additional descriptive text – reflected to `aria-describedby`.
    * Accepts a single ID or a space‑separated list.
    *
@@ -194,6 +203,7 @@ export class ObcCheckbox extends LitElement {
             [`status-${this.status}`]: true,
             disabled: this.disabled,
             'no-label': isLabelEmpty,
+            'box-only-states': this.boxOnlyStates,
           })}
           role="checkbox"
           aria-checked=${this._computedAriaChecked}

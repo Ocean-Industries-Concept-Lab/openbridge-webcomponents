@@ -14,7 +14,7 @@
   width: 100%;
   height: var(--global-size-spacing-touch-target-min);
   padding-inline-start: var(--global-size-spacing-list-item-padding-horizontal);
-  border-top: 1px solid var(--border-divider-color);
+  border-top: 1px solid var(--border-outline-color);
 
   .actions {
     display: flex;

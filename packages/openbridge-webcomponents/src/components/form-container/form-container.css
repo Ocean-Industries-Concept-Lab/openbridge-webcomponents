@@ -82,15 +82,15 @@
   }
 
   &.type-view {
-    --obc-form-item-bg-color-enabled: var(--container-background-color);
+    --obc-form-item-bg-color: var(--container-background-color);
   }
 
   &.type-enabled {
-    --obc-form-item-bg-color-enabled: var(--normal-enabled-background-color);
+    --obc-form-item-bg-color: var(--normal-enabled-background-color);
   }
 
   &.type-inactive {
-    --obc-form-item-bg-color-enabled: var(--container-background-color);
+    --obc-form-item-bg-color: var(--container-background-color);
 
     .content-title,
     ::slotted([slot="content-title"]) {
@@ -103,7 +103,7 @@
   }
 
   &.type-completed {
-    --obc-form-item-bg-color-enabled: var(--indent-enabled-background-color);
+    --obc-form-item-bg-color: var(--indent-enabled-background-color);
 
     .content-scrollbar {
       --indent-enabled-background-color: var(--border-outline-color);

@@ -5,6 +5,7 @@ import {customElement} from '../../decorator.js';
 import componentStyle from './form-item.css?inline';
 import '../checkbox/checkbox.js';
 import '../../icons/icon-check-google.js';
+import '../../icons/icon-check-mixed.js';
 import type {ObcCheckboxChangeEvent} from '../checkbox/checkbox.js';
 
 export enum ObcFormItemType {
@@ -20,6 +21,11 @@ export enum ObcFormItemBasicState {
   Enabled = 'enabled',
   Disabled = 'disabled',
   Amplified = 'amplified',
+}
+
+export enum ObcFormItemStatusIcon {
+  Check = 'check',
+  Dash = 'dash',
 }
 
 export type ObcFormItemActionChangeEvent = CustomEvent<{
@@ -45,6 +51,7 @@ export type ObcFormItemActionChangeEvent = CustomEvent<{
  * - Optional shader for view/inactive variants through `hasShader`.
  * - Optional action error rendering through `hasError` and `errorText` for
  *   action variants.
+ * - Filled status icon variant via `statusIcon` (`check` or `dash`).
  * - Optional stable event identity via `itemId`.
  *
  * **Usage Guidelines**
@@ -103,6 +110,9 @@ export class ObcFormItem extends LitElement {
   hasShader = false;
 
   @property({type: Boolean, reflect: true}) disabled = false;
+
+  @property({type: String, attribute: 'status-icon'})
+  statusIcon: ObcFormItemStatusIcon = ObcFormItemStatusIcon.Check;
 
   static override styles = unsafeCSS(componentStyle);
 
@@ -163,6 +173,7 @@ export class ObcFormItem extends LitElement {
       <div class="action" part="action">
         <obc-checkbox
           label=""
+          box-only-states
           .disabled=${this.actionDisabled}
           @change=${this.handleActionChange}
         ></obc-checkbox>
@@ -186,11 +197,12 @@ export class ObcFormItem extends LitElement {
   };
 
   private renderStatus(): TemplateResult {
-    return html`
-      <div class="status" part="status">
-        <obi-check-google></obi-check-google>
-      </div>
-    `;
+    const icon =
+      this.statusIcon === ObcFormItemStatusIcon.Dash
+        ? html`<obi-check-mixed></obi-check-mixed>`
+        : html`<obi-check-google></obi-check-google>`;
+
+    return html` <div class="status" part="status">${icon}</div> `;
   }
 
   private renderLeading(): TemplateResult | typeof nothing {
