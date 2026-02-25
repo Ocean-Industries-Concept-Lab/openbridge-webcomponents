@@ -9,6 +9,7 @@ import '../../icons/icon-chevron-down-google.js';
 import '../../icons/icon-chevron-right-google.js';
 import '../../icons/icon-chevron-left-google.js';
 import {customElement} from '../../decorator.js';
+import {classMap} from 'lit/directives/class-map.js';
 
 /**
  * The visual and behavioral variant of the stepper box.
@@ -95,6 +96,11 @@ export class ObcStepperBox extends LitElement {
    */
   @property({type: Boolean}) hasHelperText = false;
 
+  /**
+   * If true, the stepper box is disabled and the buttons are not clickable.
+   */
+  @property({type: Boolean}) disabled = false;
+
   get leftIcon() {
     if (this.type === ObcStepperBoxType.upDown) {
       return html`<obi-chevron-down-google></obi-chevron-down-google>`;
@@ -116,9 +122,18 @@ export class ObcStepperBox extends LitElement {
   }
 
   override render() {
+    const wrapperClasses = {
+      wrapper: true,
+      disabled: this.disabled,
+    };
+
     return html`
-      <div class="wrapper">
-        <obc-icon-button cornerleft @click=${() => this.down()}>
+      <div class=${classMap(wrapperClasses)} aria-disabled=${this.disabled}>
+        <obc-icon-button
+          cornerleft
+          ?disabled=${this.disabled}
+          @click=${() => this.down()}
+        >
           ${this.leftIcon}
         </obc-icon-button>
         <div class="display">
@@ -129,12 +144,20 @@ export class ObcStepperBox extends LitElement {
             <slot name="unit"></slot>
           </div>
         </div>
-        <obc-icon-button cornerright @click=${() => this.up()}>
+        <obc-icon-button
+          cornerright
+          ?disabled=${this.disabled}
+          @click=${() => this.up()}
+        >
           ${this.rightIcon}
         </obc-icon-button>
       </div>
       ${this.hasHelperText
-        ? html`<div class="helper-text"><slot name="helper-text"></slot></div>`
+        ? html`<div
+            class=${classMap({'helper-text': true, disabled: this.disabled})}
+          >
+            <slot name="helper-text"></slot>
+          </div>`
         : ''}
     `;
   }
@@ -144,6 +167,9 @@ export class ObcStepperBox extends LitElement {
    * @fires down
    */
   down() {
+    if (this.disabled) {
+      return;
+    }
     this.dispatchEvent(new CustomEvent('down'));
   }
 
@@ -152,6 +178,9 @@ export class ObcStepperBox extends LitElement {
    * @fires up
    */
   up() {
+    if (this.disabled) {
+      return;
+    }
     this.dispatchEvent(new CustomEvent('up'));
   }
 

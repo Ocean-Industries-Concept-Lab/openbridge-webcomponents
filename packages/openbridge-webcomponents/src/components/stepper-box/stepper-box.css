@@ -33,6 +33,11 @@
   gap: 2px;
 }
 
+.wrapper.disabled .display {
+  background-color: var(--normal-disabled-background-color);
+  border-color: var(--normal-disabled-border-color);
+}
+
 .value {
   color: var(--element-inactive-color);
   @mixin font-button;
@@ -56,4 +61,8 @@
   padding-bottom: var(
     --ui-components-input-fields-text-input-field-padding-vertical
   );
+}
+
+.helper-text.disabled {
+  color: var(--element-disabled-color);
 }
