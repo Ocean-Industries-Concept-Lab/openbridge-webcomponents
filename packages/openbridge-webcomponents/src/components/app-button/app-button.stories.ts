@@ -28,6 +28,9 @@ const meta: Meta<typeof ObcAppButton> = {
     checked: {
       control: {type: 'boolean'},
     },
+    disabled: {
+      control: {type: 'boolean'},
+    },
   },
   render: (args) => {
     const icon = args.icon
@@ -39,6 +42,7 @@ const meta: Meta<typeof ObcAppButton> = {
       .label=${args.label}
       ?hideLabel=${args.hideLabel}
       ?integration=${args.integration}
+      ?disabled=${args.disabled}
       >${icon}</obc-app-button
     >`;
   },
@@ -73,5 +77,12 @@ export const SmallHidelabel: Story = {
 export const Integration: Story = {
   args: {
     integration: true,
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    label: 'Disabled',
+    disabled: true,
   },
 };
