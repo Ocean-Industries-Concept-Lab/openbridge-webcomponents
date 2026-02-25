@@ -199,6 +199,8 @@ export class ObcSlider extends LitElement {
    */
   @property({type: Number}) seekingSpeed = 1 / 3;
 
+  @property({type: Boolean}) disabled = false;
+
   private animationFrame: number | null = null;
   private isMouseDown = false;
   private isTouchActive = false;
@@ -223,6 +225,7 @@ export class ObcSlider extends LitElement {
    * Decrements the value by `stepClick` when the left icon button is clicked.
    */
   onReduceClick() {
+    if (this.disabled) return;
     this.onInput(Math.max(this.value - this.stepClick, this.min));
   }
 
@@ -230,6 +233,7 @@ export class ObcSlider extends LitElement {
    * Increments the value by `stepClick` when the right icon button is clicked.
    */
   onIncreaseClick() {
+    if (this.disabled) return;
     this.onInput(Math.min(this.value + this.stepClick, this.max));
   }
 
@@ -259,7 +263,7 @@ export class ObcSlider extends LitElement {
   }
 
   private onMouseDown(e: MouseEvent) {
-    if (this.variant === ObcSliderVariant.NoInput) return;
+    if (this.variant === ObcSliderVariant.NoInput || this.disabled) return;
     if (this.isClickingThumb(e)) return;
     this.isMouseDown = true;
     this.updateTargetValue(e);
@@ -270,7 +274,7 @@ export class ObcSlider extends LitElement {
   }
 
   private onTouchStart(e: TouchEvent) {
-    if (this.variant === ObcSliderVariant.NoInput) return;
+    if (this.variant === ObcSliderVariant.NoInput || this.disabled) return;
     if (this.isClickingThumb(e)) return;
     this.isTouchActive = true;
     this.updateTargetValue(e);
@@ -409,11 +413,21 @@ export class ObcSlider extends LitElement {
   override render() {
     return html`
       ${this.hasLeftIcon
-        ? html` <obc-icon-button @click=${this.onReduceClick} variant="normal">
+        ? html` <obc-icon-button
+            ?disabled=${this.disabled}
+            @click=${this.onReduceClick}
+            variant="normal"
+          >
             <slot name="icon-left"></slot>
           </obc-icon-button>`
         : null}
-      <div class=${classMap({wrapper: true, [this.variant]: true})}>
+      <div
+        class=${classMap({
+          wrapper: true,
+          [this.variant]: true,
+          disabled: this.disabled,
+        })}
+      >
         <div class="track"></div>
         <input
           type="range"
@@ -421,7 +435,8 @@ export class ObcSlider extends LitElement {
           max=${this.max}
           step=${ifDefined(this.step)}
           .value=${this.value.toString()}
-          ?disabled=${this.variant === ObcSliderVariant.NoInput}
+          ?disabled=${this.variant === ObcSliderVariant.NoInput ||
+          this.disabled}
           class="slider"
           @input=${(event: Event) => {
             this.value = Number((event.target as HTMLInputElement).value);
@@ -456,7 +471,11 @@ export class ObcSlider extends LitElement {
         <div class="thumb"></div>
       </div>
       ${this.hasRightIcon
-        ? html`<obc-icon-button @click=${this.onIncreaseClick} variant="normal">
+        ? html`<obc-icon-button
+            ?disabled=${this.disabled}
+            @click=${this.onIncreaseClick}
+            variant="normal"
+          >
             <slot name="icon-right"></slot>
           </obc-icon-button>`
         : null}

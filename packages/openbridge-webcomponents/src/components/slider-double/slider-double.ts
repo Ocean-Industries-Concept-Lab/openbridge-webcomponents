@@ -169,6 +169,8 @@ export class ObcSliderDouble extends LitElement {
    */
   @property({type: Boolean}) allowSeeking = false;
 
+  @property({type: Boolean}) disabled = false;
+
   /**
    * Animation speed for seeking, in inverse seconds.
    * The value will go from min to max in 1 / seekingSpeed seconds.
@@ -288,7 +290,8 @@ export class ObcSliderDouble extends LitElement {
   }
 
   private onMouseDown(e: MouseEvent) {
-    if (this.variant === ObcSliderDoubleVariant.NoInput) return;
+    if (this.variant === ObcSliderDoubleVariant.NoInput || this.disabled)
+      return;
     if (this.isClickingMinThumb(e)) {
       this.isTargetingLow = true;
       this.isDragging = true;
@@ -450,6 +453,7 @@ export class ObcSliderDouble extends LitElement {
           [this.variant]: true,
           mouseDown: this.isMouseDown,
           dragging: this.isDragging,
+          disabled: this.disabled,
         })}
         @mousedown=${this.onMouseDown}
         @mouseup=${this.onMouseUp}
@@ -463,7 +467,8 @@ export class ObcSliderDouble extends LitElement {
           class="slider min"
           step=${ifDefined(this.step)}
           .value=${this.low.toString()}
-          ?disabled=${this.variant === ObcSliderDoubleVariant.NoInput}
+          ?disabled=${this.variant === ObcSliderDoubleVariant.NoInput ||
+          this.disabled}
           @input=${this.onInput}
         />
         <input
@@ -473,7 +478,8 @@ export class ObcSliderDouble extends LitElement {
           max=${this.max}
           step=${ifDefined(this.step)}
           .value=${this.high.toString()}
-          ?disabled=${this.variant === ObcSliderDoubleVariant.NoInput}
+          ?disabled=${this.variant === ObcSliderDoubleVariant.NoInput ||
+          this.disabled}
           @input=${this.onInput}
         />
         <div class="interactive-track"></div>
