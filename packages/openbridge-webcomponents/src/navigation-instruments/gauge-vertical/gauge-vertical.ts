@@ -102,7 +102,7 @@ export {
  *
  * For renderer documentation see: **Building Blocks/External Scale**.
  *
- * For a version where these properties are user-configurable, see **Building Blocks/Bar Vertical**.
+ * For a version where these properties are user-configurable, see **Bars and Graphs/Bar Vertical**.
  *
  * ---
  *
