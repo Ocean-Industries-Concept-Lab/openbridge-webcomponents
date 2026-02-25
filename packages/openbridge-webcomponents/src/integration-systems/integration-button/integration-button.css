@@ -23,6 +23,7 @@
   border: none;
   background: transparent;
   appearance: none;
+  color: var(--integration-on-normal-active-color);
 
   .content-container {
     display: flex;
@@ -106,12 +107,10 @@
 
     .label {
       @mixin font-button;
-      color: var(--integration-on-normal-active-color);
     }
 
     .status {
       @mixin font-label;
-      color: var(--integration-on-normal-neutral-color);
     }
   }
 
@@ -150,12 +149,10 @@
 
       .info-label {
         @mixin font-label;
-        color: var(--integration-on-normal-neutral-color);
       }
 
       .info-status {
         @mixin font-label-active;
-        color: var(--integration-on-normal-active-color);
       }
     }
   }
@@ -174,72 +171,58 @@
       justify-self: flex-start;
       grid-area: label;
       @mixin font-label;
-      color: var(--integration-on-normal-neutral-color);
     }
 
     .info-item-value {
       grid-area: value;
       @mixin font-label-active;
-      color: var(--integration-on-normal-active-color);
     }
 
     .info-item-unit {
       grid-area: unit;
       @mixin font-label;
-      color: var(--integration-on-normal-neutral-color);
     }
   }
 
   &.variant-normal {
     @mixin style style=integration-normal visibleWrapperClass=.content-container;
-    color: var(--on-normal-active-color);
 
     & .icon {
-      color: var(--on-normal-neutral-color);
+      color: var(--integration-on-normal-neutral-color);
+    }
+
+    &:disabled {
+      color: var(--integration-on-normal-disabled-color);
     }
 
     &:disabled .icon {
-      color: var(--on-normal-disabled-color);
+      color: var(--integration-on-normal-disabled-color);
     }
   }
 
   &.variant-flat {
     @mixin style style=integration-flat visibleWrapperClass=.content-container;
-    color: var(--on-flat-active-color);
+    color: var(--integration-on-flat-active-color);
 
     & .icon {
-      color: var(--on-flat-neutral-color);
+      color: var(--integration-on-flat-neutral-color);
+    }
+
+    &:disabled {
+      color: var(--integration-on-flat-disabled-color);
     }
 
     &:disabled .icon {
-      color: var(--on-flat-disabled-color);
+      color: var(--integration-on-flat-disabled-color);
     }
   }
 
-  &.selected .content-container {
-    background: #fcfcfc;
-
-    .label {
-      color: #1e1e1e;
-    }
-
-    .status {
-      color: #1e1e1e;
-    }
-    .info-label {
-      color: #353535;
-    }
-    .info-status {
-      color: #1e1e1e;
-    }
-    .info-item-label {
-      color: #353535;
-    }
-    .info-item-value {
-      color: #1e1e1e;
-    }
-    .info-item-unit {
-      color: #353535;
+  &.selected {
+    @mixin style style=integration-selected
+      visibleWrapperClass=.content-container;
+    color: var(--integration-on-selected-active-color);
+    .icon {
+      color: var(--integration-on-selected-neutral-color);
     }
   }
 }
