@@ -2,7 +2,7 @@ import {LitElement, html} from 'lit';
 import {customElement} from '../../decorator.js';
 import {property} from 'lit/decorators.js';
 import {AdviceType} from '../watch/advice.js';
-import {Priority} from '../types.js';
+import {InstrumentState, Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/instrument-radial/instrument-radial.js';
 
@@ -84,6 +84,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   @property({type: Boolean}) labels: boolean = false;
   @property({type: Number}) primaryTickmarkInterval = 50;
   @property({type: Number}) secondaryTickmarkInterval = 10;
+  @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) type: ObcGaugeRadialType =
     ObcGaugeRadialType.filled;
@@ -99,8 +100,16 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   }
 
   private get _barColor(): string {
+    if (
+      this.state === InstrumentState.loading ||
+      this.state === InstrumentState.off
+    ) {
+      return 'transparent';
+    }
     if (this.type === ObcGaugeRadialType.filled) {
-      return this._needleColor;
+      return this.priority === Priority.enhanced
+        ? 'var(--instrument-enhanced-secondary-color)'
+        : 'var(--instrument-regular-secondary-color)';
     }
     return this.priority === Priority.enhanced
       ? 'var(--instrument-enhanced-tertiary-color)'
@@ -113,6 +122,8 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
     return html`
       <obc-instrument-radial
         .value=${this.value}
+        .state=${this.state}
+        .priority=${this.priority}
         .setpoint=${this.setpoint}
         .newSetpoint=${this.newSetpoint}
         .setpointAtZeroDeadband=${this.setpointAtZeroDeadband}
@@ -138,6 +149,12 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   }
 
   private get _needleColor(): string {
+    if (
+      this.state === InstrumentState.loading ||
+      this.state === InstrumentState.off
+    ) {
+      return 'transparent';
+    }
     return this.priority === Priority.enhanced
       ? 'var(--instrument-enhanced-secondary-color)'
       : 'var(--instrument-regular-secondary-color)';
