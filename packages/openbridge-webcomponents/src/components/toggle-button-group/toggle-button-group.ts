@@ -14,6 +14,10 @@ export type ObcToggleButtonGroupValueChangeEvent = CustomEvent<{
   previousValue: string;
 }>;
 
+export type ObcToggleButtonGroupChangeEvent = CustomEvent<{
+  value: string;
+}>;
+
 /**
  * `<obc-toggle-button-group>` – A segmented control for selecting a single option from a set (also known as a button group or segmented button).
  *
@@ -118,6 +122,7 @@ export type ObcToggleButtonGroupValueChangeEvent = CustomEvent<{
  *
  * @slot - Place one or more `<obc-toggle-button-option>` elements here to define the selectable options.
  * @fires value {CustomEvent<{value: string, previousValue: string}>} Fired when the selected value changes.
+ * @fires change {CustomEvent<{value: string}>} Fired when the selected value changes by user interaction.
  */
 @customElement('obc-toggle-button-group')
 export class ObcToggleButtonGroup extends LitElement {
@@ -214,7 +219,11 @@ export class ObcToggleButtonGroup extends LitElement {
     return Array.from(this.options).find((opt) => !opt.disabled) || null;
   }
 
-  private updateSelection(newValue: string, emitEvent: boolean = true) {
+  private updateSelection(
+    newValue: string,
+    emitValueEvent: boolean = true,
+    emitChangeEvent: boolean = false
+  ) {
     const oldValue = this.value;
 
     if (!this.hasAnyEnabledOption()) {
@@ -245,10 +254,18 @@ export class ObcToggleButtonGroup extends LitElement {
 
     this.setNoDivider();
 
-    if (emitEvent && oldValue !== newValue) {
+    if (emitValueEvent && oldValue !== newValue) {
       this.dispatchEvent(
         new CustomEvent('value', {
           detail: {value: newValue, previousValue: oldValue},
+        })
+      );
+    }
+
+    if (emitChangeEvent && oldValue !== newValue) {
+      this.dispatchEvent(
+        new CustomEvent('change', {
+          detail: {value: newValue},
         })
       );
     }
@@ -364,8 +381,14 @@ export class ObcToggleButtonGroup extends LitElement {
           detail: {value, previousValue: this.value},
         })
       );
+
+      this.dispatchEvent(
+        new CustomEvent('change', {
+          detail: {value},
+        })
+      );
     } else {
-      this.updateSelection(value);
+      this.updateSelection(value, true, true);
     }
   }
 
