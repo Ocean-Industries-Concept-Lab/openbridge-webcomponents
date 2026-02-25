@@ -74,7 +74,6 @@
     }
 
     .type-enabled-action-first & {
-      padding-inline-start: var(--global-size-spacing-target-padding);
       gap: var(--global-size-spacing-target-padding);
     }
 
@@ -244,10 +243,8 @@
 
   .error-text {
     @mixin font-label;
-    margin: var(
-        --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
-      )
-      0 0
+
+    margin: var(--global-size-spacing-target-padding) 0 0
       var(--global-size-spacing-nav-item-and-menus-padding-horizonal-list-item);
     color: var(--alert-error-outline-color);
   }
