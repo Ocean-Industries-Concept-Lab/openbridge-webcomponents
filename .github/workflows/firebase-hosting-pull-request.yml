@@ -38,6 +38,8 @@ jobs:
         run: npm ci
       - name: Build storybook
         run: cd packages/openbridge-webcomponents && npm run analyze && npm run build-storybook
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
       - uses: actions/upload-artifact@v4
         with:
           name: storybook

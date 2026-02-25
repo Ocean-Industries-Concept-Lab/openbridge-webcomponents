@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import ObcThruster from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/thruster/ObcThruster.vue'
-import { InstrumentState } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types'
+import {
+  InstrumentState,
+  Priority
+} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types'
 import ObcAzimuthThruster from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster.vue'
 import ObcMainEngine from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/main-engine/ObcMainEngine.vue'
 import ObcRudder from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/rudder/ObcRudder.vue'
@@ -101,7 +104,8 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
     </div>
     <ObcMainEngine
       class="main-engine-1"
-      :state="configStore.hasCommand ? InstrumentState.inCommand : InstrumentState.active"
+      :state="InstrumentState.active"
+      :priority="configStore.hasCommand ? Priority.enhanced : Priority.regular"
       :thrust="sim.propulsion.propeller.value"
       :thrust-setpoint="sim.propulsion.propellerSet.value"
       :speed="49"
@@ -110,7 +114,8 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
     />
     <ObcMainEngine
       class="main-engine-2"
-      :state="configStore.hasCommand ? InstrumentState.inCommand : InstrumentState.active"
+      :state="InstrumentState.active"
+      :priority="configStore.hasCommand ? Priority.enhanced : Priority.regular"
       :thrust="sim.propulsion.propeller.value"
       :thrust-setpoint="sim.propulsion.propellerSet.value"
       :speed="49"
@@ -119,7 +124,8 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
     />
     <ObcRudder
       class="rudder-1"
-      :state="configStore.hasCommand ? InstrumentState.inCommand : InstrumentState.active"
+      :state="InstrumentState.active"
+      :priority="configStore.hasCommand ? Priority.enhanced : Priority.regular"
       :angle="rudderInstrumentAngle"
       :setpoint="rudderInstrumentAngleSetpoint"
       :max-angle="60"
@@ -127,7 +133,8 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
     />
     <ObcRudder
       class="rudder-2"
-      :state="configStore.hasCommand ? InstrumentState.inCommand : InstrumentState.active"
+      :state="InstrumentState.active"
+      :priority="configStore.hasCommand ? Priority.enhanced : Priority.regular"
       :angle="rudderInstrumentAngle"
       :setpoint="rudderInstrumentAngleSetpoint"
       :max-angle="60"

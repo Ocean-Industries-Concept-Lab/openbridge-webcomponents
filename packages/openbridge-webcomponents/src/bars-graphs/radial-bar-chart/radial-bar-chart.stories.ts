@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import './radial-bar-chart.js';
 import {ObcRadialBarChart} from './radial-bar-chart.js';
+import {Priority} from '../../navigation-instruments/types.js';
 
 const SAMPLE_DATA = [70, 50, 30];
 
@@ -17,8 +18,9 @@ const meta: Meta = {
     },
     data: {control: 'object'},
     colors: {control: 'object'},
-    enhanced: {
-      control: 'boolean',
+    priority: {
+      control: 'select',
+      options: Object.values(Priority),
       description:
         'Use enhanced color palette (blue) instead of default (gray)',
     },
@@ -39,7 +41,7 @@ const meta: Meta = {
     fixedHeight: 320,
     data: SAMPLE_DATA,
     colors: [],
-    enhanced: true,
+    priority: Priority.enhanced,
     max: 100,
     circumference: 270,
     minRingThickness: 16,
@@ -58,7 +60,7 @@ export const Default: Story = {
     <obc-radial-bar-chart
       .data=${args.data}
       .colors=${args.colors}
-      .enhanced=${args.enhanced}
+      .priority=${args.priority}
       .max=${args.max}
       .circumference=${args.circumference}
       .minRingThickness=${args.minRingThickness}
@@ -108,7 +110,7 @@ export const CustomColors: Story = {
   name: 'Custom colors radial bar',
   args: {
     colors: ['#e74c3c', '#3498db', '#2ecc71'],
-    enhanced: false,
+    priority: Priority.regular,
   },
 };
 
@@ -121,7 +123,7 @@ export const Realtime: Story = {
   render: (args) => {
     const chart = document.createElement('obc-radial-bar-chart');
     chart.data = [...args.data];
-    chart.enhanced = args.enhanced;
+    chart.priority = args.priority;
     chart.max = args.max;
     chart.circumference = args.circumference;
     chart.minRingThickness = args.minRingThickness;

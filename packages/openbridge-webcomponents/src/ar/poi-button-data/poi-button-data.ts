@@ -5,6 +5,7 @@ import {customElement} from '../../decorator.js';
 
 /**
  * `<obc-poi-button-data>` - Convenience wrapper over `obc-poi-button` that auto-injects a default icon when default content is missing.
+ * Keywords: poi, point-of-interest, marker, data pin, icon, tag, token, badge, vessel.
  *
  * ## Overview
  * Use this component when marker button consumers may omit default icon content.

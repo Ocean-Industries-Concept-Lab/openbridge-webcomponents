@@ -437,6 +437,7 @@
 }
 
 .data-wrapper {
+  opacity: var(--obc-poi-data-content-opacity, 1);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -488,4 +489,8 @@
       background-color: var(--overlay-border-outline-color);
     }
   }
+}
+
+.relation-wrapper {
+  opacity: var(--obc-poi-data-content-opacity, 1);
 }

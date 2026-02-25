@@ -48,7 +48,7 @@
  *       disableAutoAtSetpoint: this.disableAutoAtAngleSetpoint,
  *       autoAtSetpointDeadband: this.autoAtAngleSetpointDeadband,
  *       setpointAtZeroDeadband: this.angleSetpointAtZeroDeadband,
- *       setpointColorMode: this.angleSetpointColorMode,
+ *       setpointOverride: this.angleSetpointOverride,
  *     });
  *     this._thrustSp.sync({
  *       setpoint: this.thrustSetpoint,
@@ -69,14 +69,7 @@
  * ```
  */
 
-import {
-  computeAtSetpoint,
-  SetpointColorMode,
-  SETPOINT_ANIMATION_DURATION_MS,
-} from './setpoint.js';
-
-// Re-export for consumer convenience
-export {SetpointColorMode};
+import {computeAtSetpoint, SETPOINT_ANIMATION_DURATION_MS} from './setpoint.js';
 
 // ============================================================================
 // Bundle Options
@@ -132,7 +125,7 @@ export interface SetpointBundleSyncInput {
   disableAutoAtSetpoint?: boolean;
   autoAtSetpointDeadband?: number;
   setpointAtZeroDeadband?: number;
-  setpointColorMode?: SetpointColorMode | undefined;
+  setpointOverride?: boolean;
   animateSetpoint?: boolean;
 }
 
@@ -169,8 +162,8 @@ export class SetpointBundle {
   /** Zero-snap tolerance */
   setpointAtZeroDeadband: number;
 
-  /** Color palette override */
-  setpointColorMode: SetpointColorMode | undefined;
+  /** Override to derive color from priority regardless of instrument state */
+  setpointOverride: boolean = false;
 
   /** Enable CSS-animated confirm transition. */
   animateSetpoint: boolean = false;
@@ -223,8 +216,8 @@ export class SetpointBundle {
       this.autoAtSetpointDeadband = input.autoAtSetpointDeadband;
     if (input.setpointAtZeroDeadband !== undefined)
       this.setpointAtZeroDeadband = input.setpointAtZeroDeadband;
-    if (input.setpointColorMode !== undefined || 'setpointColorMode' in input)
-      this.setpointColorMode = input.setpointColorMode;
+    if (input.setpointOverride !== undefined)
+      this.setpointOverride = input.setpointOverride;
     if (input.animateSetpoint !== undefined)
       this.animateSetpoint = input.animateSetpoint;
 

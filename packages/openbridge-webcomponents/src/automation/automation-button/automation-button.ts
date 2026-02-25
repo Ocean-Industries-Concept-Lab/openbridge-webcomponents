@@ -100,6 +100,8 @@ export class ObcAutomationButton extends LitElement {
     ObcAlertFrameThickness.Small;
   @property({type: String}) alertFrameStatus: ObcAlertFrameStatus =
     ObcAlertFrameStatus.Alarm;
+  @property({type: Boolean}) hideAlertCategoryIcon: boolean = false;
+  @property({type: Boolean}) showAlertIcon: boolean = false;
   @property({type: Boolean}) progress: boolean = false;
   @property({type: String}) direction: AutomationButtonDirection =
     AutomationButtonDirection.forward;
@@ -176,6 +178,8 @@ export class ObcAutomationButton extends LitElement {
               .type=${this.alertFrameType}
               .thickness=${this.alertFrameThickness}
               .status=${this.alertFrameStatus}
+              .hideAlertCategoryIcon=${this.hideAlertCategoryIcon}
+              .showIcon=${this.showAlertIcon}
             >
               <span slot="icon"><slot name="alert-icon"></slot></span>
               <span slot="label"><slot name="alert-label"></slot></span>

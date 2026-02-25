@@ -2,6 +2,7 @@ import {LitElement, html} from 'lit';
 import {customElement} from '../../decorator.js';
 import {property} from 'lit/decorators.js';
 import {AdviceType} from '../watch/advice.js';
+import {Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/instrument-radial/instrument-radial.js';
 
@@ -35,7 +36,7 @@ export interface GaugeRadialAdvice {
  * - **Bipolar range support**: When `minValue < 0` the gauge switches to a
  *   ±135° layout centered at 12 o'clock; otherwise it uses a 270° sweep.
  * - **Setpoint via mixin**: `setpoint`, `newSetpoint`, `touching`,
- *   `autoAtSetpointDeadband`, `setpointColorMode`, and all other setpoint
+ *   `autoAtSetpointDeadband`, `setpointOverride`, and all other setpoint
  *   properties are provided by `SetpointMixin` and forwarded to the inner
  *   `<obc-instrument-radial>`.
  * - **Advice zones**: Pass an array of {@link GaugeRadialAdvice} objects to
@@ -44,7 +45,7 @@ export interface GaugeRadialAdvice {
  * ## Usage Guidelines
  *
  * - Set `minValue` / `maxValue` to define the scale range.
- * - Use `enhanced` to switch between regular and in-command color palettes.
+ * - Use `priority` to switch between regular and enhanced color palettes.
  * - Provide `primaryTickmarkInterval` and `secondaryTickmarkInterval` to
  *   control tickmark density.
  * - Enable `labels` to show numeric labels at primary tickmarks.
@@ -83,7 +84,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   @property({type: Boolean}) labels: boolean = false;
   @property({type: Number}) primaryTickmarkInterval = 50;
   @property({type: Number}) secondaryTickmarkInterval = 10;
-  @property({type: Boolean}) enhanced: boolean = false;
+  @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) type: ObcGaugeRadialType =
     ObcGaugeRadialType.filled;
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
@@ -101,7 +102,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
     if (this.type === ObcGaugeRadialType.filled) {
       return this._needleColor;
     }
-    return this.enhanced
+    return this.priority === Priority.enhanced
       ? 'var(--instrument-enhanced-tertiary-color)'
       : 'var(--instrument-regular-tertiary-color)';
   }
@@ -115,7 +116,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
         .setpoint=${this.setpoint}
         .newSetpoint=${this.newSetpoint}
         .setpointAtZeroDeadband=${this.setpointAtZeroDeadband}
-        .setpointColorMode=${this.setpointColorMode}
+        .setpointOverride=${this.setpointOverride}
         .touching=${this.touching}
         .disableAutoAtSetpoint=${this.disableAutoAtSetpoint}
         .autoAtSetpointDeadband=${this.autoAtSetpointDeadband}
@@ -137,7 +138,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   }
 
   private get _needleColor(): string {
-    return this.enhanced
+    return this.priority === Priority.enhanced
       ? 'var(--instrument-enhanced-secondary-color)'
       : 'var(--instrument-regular-secondary-color)';
   }
