@@ -25,5 +25,3 @@ packages/openbridge-webcomponents-svelte
 **/.claude/
 **/settings.local.json
 packages/openbridge-webcomponents/__vis__/darwin/
-.idea/
-**/.idea/

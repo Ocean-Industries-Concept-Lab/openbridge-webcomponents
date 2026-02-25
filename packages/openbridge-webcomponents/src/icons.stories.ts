@@ -4,7 +4,7 @@ import {html, unsafeStatic} from 'lit/static-html.js';
 import {iconIds} from './icons/names.js';
 
 const meta: Meta = {
-  title: 'Icons/icon',
+  title: 'Icons/Icon',
 } satisfies Meta;
 
 export default meta;

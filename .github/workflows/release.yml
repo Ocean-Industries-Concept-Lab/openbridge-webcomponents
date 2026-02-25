@@ -57,6 +57,14 @@ jobs:
           rm -rf node_modules/@oicl || true
           rm -rf node_modules/@ocean-industries-concept-lab || true
           npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
+      - name: Publish angular wrapper to GitHub Packages
+        working-directory: ./packages/openbridge-webcomponents-ng
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          rm -rf node_modules/@oicl || true
+          rm -rf node_modules/@ocean-industries-concept-lab || true
+          npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
 
       - name: Publish svelte wrapper to GitHub Packages
         env:
@@ -68,16 +76,4 @@ jobs:
           npm run build
           rm -rf node_modules/@oicl || true
           rm -rf node_modules/@ocean-industries-concept-lab || true
-          npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
-
-      - name: Publish angular wrapper to GitHub Packages
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Remove package-lock.json as the previous dependencies are linked to current version of the package
-          rm package-lock.json
-          npm install
-          cd packages/openbridge-webcomponents-ng
-          npm run build
-          cd dist
           npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted

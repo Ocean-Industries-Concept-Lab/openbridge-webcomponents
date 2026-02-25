@@ -5,7 +5,7 @@ import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcAppButton> = {
-  title: 'UI Components/Buttons/App button',
+  title: 'UI Components/Buttons/App Button',
   tags: ['autodocs', '6.0'],
   component: 'obc-app-button',
   args: {

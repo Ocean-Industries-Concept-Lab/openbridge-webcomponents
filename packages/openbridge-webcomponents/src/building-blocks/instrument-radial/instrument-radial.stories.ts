@@ -3,6 +3,7 @@ import {ObcInstrumentRadial, ObcGaugeRadialType} from './instrument-radial.js';
 import './instrument-radial.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../../navigation-instruments/watch/advice.js';
+import {Priority} from '../../navigation-instruments/types.js';
 
 const meta: Meta<typeof ObcInstrumentRadial> = {
   title: 'Building Blocks/Instrument Radial',
@@ -14,6 +15,9 @@ const meta: Meta<typeof ObcInstrumentRadial> = {
     getAngle: (v: number) => (v / 100) * 270 - 135,
     needleColor: 'var(--instrument-regular-secondary-color)',
     barColor: 'var(--instrument-regular-tertiary-color)',
+  },
+  argTypes: {
+    priority: {control: 'select', options: Object.values(Priority)},
   },
 } satisfies Meta<ObcInstrumentRadial>;
 
@@ -45,7 +49,7 @@ export const EnhancedFilled: Story = {
     maxValue: 100,
     minValue: 0,
     type: ObcGaugeRadialType.filled,
-    enhanced: true,
+    priority: Priority.enhanced,
     setpoint: 75,
   },
 };
@@ -56,7 +60,7 @@ export const EnhancedBar: Story = {
     maxValue: 100,
     minValue: 0,
     type: ObcGaugeRadialType.bar,
-    enhanced: true,
+    priority: Priority.enhanced,
     setpoint: 75,
   },
 };
@@ -67,7 +71,7 @@ export const EnhancedNeedle: Story = {
     maxValue: 100,
     minValue: 0,
     type: ObcGaugeRadialType.needle,
-    enhanced: true,
+    priority: Priority.enhanced,
     setpoint: 75,
   },
 };

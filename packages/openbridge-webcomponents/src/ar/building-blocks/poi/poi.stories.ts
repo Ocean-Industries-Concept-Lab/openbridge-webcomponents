@@ -34,7 +34,7 @@ type PoiStoryArgs = {
 };
 
 const meta: Meta<PoiStoryArgs> = {
-  title: 'AR/Building blocks/POI',
+  title: 'AR/Building Blocks/POI',
   tags: ['autodocs'],
   component: 'obc-poi',
   decorators: [crossDecorator],

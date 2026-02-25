@@ -3,7 +3,7 @@ import {property} from 'lit/decorators.js';
 import '../watch/watch.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {WatchCircleType} from '../watch/watch.js';
-import {InstrumentState} from '../types.js';
+import {InstrumentState, Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {customElement} from '../../decorator.js';
@@ -32,9 +32,9 @@ export enum ObcRudderVariant {
  * - **Symmetric range**: The gauge spans ±`maxAngle` around the 180° center
  *   (zero position at bottom).
  * - **State-aware colors**: Bar and needle colors adapt to the current
- *   `InstrumentState` (inCommand, active, loading, off).
+ *   `InstrumentState` (active, loading, off) and `Priority` (enhanced, regular).
  * - **Setpoint via mixin**: `setpoint`, `newSetpoint`, `touching`,
- *   `autoAtSetpointDeadband`, `setpointColorMode`, and all other setpoint
+ *   `autoAtSetpointDeadband`, `setpointOverride`, and all other setpoint
  *   properties are provided by `SetpointMixin` and forwarded to `<obc-watch>`.
  * - **Advice zones**: Pass an array of `AngleAdvice` objects to render
  *   caution/alert arcs; triggered state is derived from whether the setpoint
@@ -43,6 +43,8 @@ export enum ObcRudderVariant {
  * ## Usage Guidelines
  *
  * - Set `maxAngle` to define the symmetric ± range (default: 90°).
+ * - Use `priority` to switch between regular and enhanced color palettes
+ *   (default: `Priority.regular`).
  * - Use `state` to control the instrument color palette.
  * - Enable `labels` to show numeric angle labels at tickmarks.
  * - Choose `variant` to switch between bar and needle display.
@@ -75,7 +77,8 @@ export class ObcRudder extends SetpointMixin(LitElement) {
   @property({type: String}) variant: ObcRudderVariant = ObcRudderVariant.Bar;
   @property({type: Number}) maxAngle = 90;
   @property({type: Boolean}) labels: boolean = false;
-  @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
+  @property({type: String}) state: InstrumentState = InstrumentState.active;
+  @property({type: String}) priority: Priority = Priority.regular;
   @property({type: Array, attribute: false}) advices: AngleAdvice[] = [];
 
   getAngle(value: number) {
@@ -84,29 +87,25 @@ export class ObcRudder extends SetpointMixin(LitElement) {
 
   get barColor() {
     if (this.variant === ObcRudderVariant.Needle) {
-      if (this.state === InstrumentState.inCommand) {
-        return 'var(--instrument-enhanced-tertiary-color)';
-      } else if (this.state === InstrumentState.active) {
-        return 'var(--instrument-regular-tertiary-color)';
-      } else if (
+      if (
         this.state === InstrumentState.loading ||
         this.state === InstrumentState.off
       ) {
         return 'var(--instrument-frame-tertiary-color)';
       }
-      return 'var(--instrument-regular-secondary-color)';
+      return this.priority === Priority.enhanced
+        ? 'var(--instrument-enhanced-tertiary-color)'
+        : 'var(--instrument-regular-tertiary-color)';
     } else {
-      if (this.state === InstrumentState.inCommand) {
-        return 'var(--instrument-enhanced-secondary-color)';
-      } else if (this.state === InstrumentState.active) {
-        return 'var(--instrument-regular-secondary-color)';
-      } else if (
+      if (
         this.state === InstrumentState.loading ||
         this.state === InstrumentState.off
       ) {
         return 'var(--instrument-frame-tertiary-color)';
       }
-      return 'var(--instrument-regular-secondary-color)';
+      return this.priority === Priority.enhanced
+        ? 'var(--instrument-enhanced-secondary-color)'
+        : 'var(--instrument-regular-secondary-color)';
     }
   }
 
@@ -115,17 +114,16 @@ export class ObcRudder extends SetpointMixin(LitElement) {
       return nothing;
     }
     let color: string;
-    if (this.state === InstrumentState.inCommand) {
-      color = 'var(--instrument-enhanced-secondary-color)';
-    } else if (this.state === InstrumentState.active) {
-      color = 'var(--instrument-regular-secondary-color)';
-    } else if (
+    if (
       this.state === InstrumentState.loading ||
       this.state === InstrumentState.off
     ) {
       color = 'var(--instrument-frame-tertiary-color)';
     } else {
-      color = 'var(--instrument-enhanced-secondary-color)';
+      color =
+        this.priority === Priority.enhanced
+          ? 'var(--instrument-enhanced-secondary-color)'
+          : 'var(--instrument-regular-secondary-color)';
     }
     return svg`
       <path
@@ -228,13 +226,14 @@ export class ObcRudder extends SetpointMixin(LitElement) {
             : undefined}
           .atAngleSetpoint=${this.computeAtSetpoint(this.angle)}
           .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
-          .colorMode=${this.setpointColorMode}
+          .setpointOverride=${this.setpointOverride}
           .animateSetpoint=${this.animateSetpoint}
           .padding=${48}
           .tickmarks=${tickmarks}
           .watchCircleType=${WatchCircleType.double}
           .barAreas=${barAreas}
           .state=${this.state}
+          .priority=${this.priority}
           .advices=${advices}
         ></obc-watch>
         <svg viewBox="-224 -44.8 448 268.8">${this.renderNeedle()}</svg>

@@ -33,9 +33,13 @@ const BUTTON_SELECTION_FRAME_SIZE_PX = 39;
 const BUTTON_SELECTION_FRAME_BOX_OFFSET_PX =
   BUTTON_SELECTION_FRAME_SIZE_PX - OBC_POI_SELECTION_FRAME_MIN_CUSTOM_SIZE_PX;
 const POINT_SIZE_PX = 32;
+const POINT_SELECTION_FRAME_BOX_OFFSET_PX =
+  POINT_SIZE_PX - OBC_POI_SELECTION_FRAME_MIN_CUSTOM_SIZE_PX;
 const BUTTON_SIZE_PX = 48;
 const CAMERA_WIDTH_PX = 52;
 const CAMERA_HEIGHT_PX = 44;
+const BOX_FILTER_CUTOFF_HZ = 14;
+const BOX_FILTER_DEADBAND_PX = 0.25;
 
 /**
  * `<obc-poi-pointer>` - Target pointer component for point, button, and camera marker shapes.
@@ -95,6 +99,14 @@ export class ObcPoiPointer extends LitElement {
   @property({type: Number, attribute: 'box-height'})
   boxHeight: number | null = null;
 
+  private filteredBoxWidth = 0;
+  private filteredBoxHeight = 0;
+  private boxFilterTargetWidth = 0;
+  private boxFilterTargetHeight = 0;
+  private boxFilterInitialized = false;
+  private lastFilterTimestampMs = 0;
+  private boxFilterRaf = 0;
+
   private get shouldUseBoxDimensions(): boolean {
     if (this.type === ObcPoiPointerType.Point) {
       return this.state === ObcPoiPointerState.Selected;
@@ -132,9 +144,171 @@ export class ObcPoiPointer extends LitElement {
     return this.boxHeight;
   }
 
+  private get targetBoxWidth(): number {
+    return this.resolvedBoxWidth ?? 0;
+  }
+
+  private get targetBoxHeight(): number {
+    return this.resolvedBoxHeight ?? 0;
+  }
+
+  private filterBoxValue(
+    current: number,
+    target: number,
+    alpha: number
+  ): number {
+    const delta = target - current;
+    if (Math.abs(delta) <= BOX_FILTER_DEADBAND_PX) {
+      return current;
+    }
+
+    return current + delta * alpha;
+  }
+
+  private applyPointerSize() {
+    let widthPx = POINT_SIZE_PX;
+    let heightPx = POINT_SIZE_PX;
+
+    if (this.type === ObcPoiPointerType.Button) {
+      widthPx = BUTTON_SIZE_PX + this.filteredBoxWidth;
+      heightPx = BUTTON_SIZE_PX + this.filteredBoxHeight;
+    } else if (this.type === ObcPoiPointerType.Camera) {
+      widthPx = CAMERA_WIDTH_PX + this.filteredBoxWidth;
+      heightPx = CAMERA_HEIGHT_PX + this.filteredBoxHeight;
+    } else if (
+      this.type === ObcPoiPointerType.Point &&
+      this.state === ObcPoiPointerState.Selected
+    ) {
+      widthPx = POINT_SIZE_PX;
+      heightPx = POINT_SIZE_PX;
+    }
+
+    this.style.width = `${widthPx}px`;
+    this.style.height = `${heightPx}px`;
+  }
+
+  private stepBoxFilter = (nowMs: number) => {
+    this.boxFilterRaf = 0;
+    if (!this.isConnected || !this.boxFilterInitialized) {
+      this.lastFilterTimestampMs = 0;
+      return;
+    }
+
+    const dtSeconds =
+      this.lastFilterTimestampMs > 0
+        ? Math.min(
+            0.25,
+            Math.max(1 / 120, (nowMs - this.lastFilterTimestampMs) / 1000)
+          )
+        : 1 / 60;
+    this.lastFilterTimestampMs = nowMs;
+
+    const alpha = 1 - Math.exp(-2 * Math.PI * BOX_FILTER_CUTOFF_HZ * dtSeconds);
+    const prevWidth = this.filteredBoxWidth;
+    const prevHeight = this.filteredBoxHeight;
+
+    this.filteredBoxWidth = this.filterBoxValue(
+      this.filteredBoxWidth,
+      this.boxFilterTargetWidth,
+      alpha
+    );
+    this.filteredBoxHeight = this.filterBoxValue(
+      this.filteredBoxHeight,
+      this.boxFilterTargetHeight,
+      alpha
+    );
+
+    const settledWidth =
+      Math.abs(this.boxFilterTargetWidth - this.filteredBoxWidth) <=
+      BOX_FILTER_DEADBAND_PX;
+    const settledHeight =
+      Math.abs(this.boxFilterTargetHeight - this.filteredBoxHeight) <=
+      BOX_FILTER_DEADBAND_PX;
+    const settled = settledWidth && settledHeight;
+
+    if (settled) {
+      this.filteredBoxWidth = this.boxFilterTargetWidth;
+      this.filteredBoxHeight = this.boxFilterTargetHeight;
+    }
+
+    const changed =
+      Math.abs(this.filteredBoxWidth - prevWidth) > 1e-6 ||
+      Math.abs(this.filteredBoxHeight - prevHeight) > 1e-6;
+    this.applyPointerSize();
+    if (changed || settled) {
+      this.requestUpdate();
+    }
+
+    if (settled) {
+      this.lastFilterTimestampMs = 0;
+      return;
+    }
+
+    this.boxFilterRaf = requestAnimationFrame(this.stepBoxFilter);
+  };
+
+  private syncBoxFilterTargets() {
+    this.boxFilterTargetWidth = this.targetBoxWidth;
+    this.boxFilterTargetHeight = this.targetBoxHeight;
+
+    if (!this.boxFilterInitialized) {
+      this.boxFilterInitialized = true;
+      this.filteredBoxWidth = this.boxFilterTargetWidth;
+      this.filteredBoxHeight = this.boxFilterTargetHeight;
+      this.applyPointerSize();
+      this.requestUpdate();
+      return;
+    }
+
+    const settled =
+      Math.abs(this.boxFilterTargetWidth - this.filteredBoxWidth) <=
+        BOX_FILTER_DEADBAND_PX &&
+      Math.abs(this.boxFilterTargetHeight - this.filteredBoxHeight) <=
+        BOX_FILTER_DEADBAND_PX;
+
+    if (settled) {
+      const changed =
+        Math.abs(this.boxFilterTargetWidth - this.filteredBoxWidth) > 1e-6 ||
+        Math.abs(this.boxFilterTargetHeight - this.filteredBoxHeight) > 1e-6;
+      this.filteredBoxWidth = this.boxFilterTargetWidth;
+      this.filteredBoxHeight = this.boxFilterTargetHeight;
+      this.applyPointerSize();
+      if (this.boxFilterRaf) {
+        cancelAnimationFrame(this.boxFilterRaf);
+        this.boxFilterRaf = 0;
+      }
+      this.lastFilterTimestampMs = 0;
+      if (changed) {
+        this.requestUpdate();
+      }
+      return;
+    }
+
+    if (!this.boxFilterRaf) {
+      this.lastFilterTimestampMs = 0;
+      this.boxFilterRaf = requestAnimationFrame(this.stepBoxFilter);
+    }
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    if (this.boxFilterRaf) {
+      cancelAnimationFrame(this.boxFilterRaf);
+      this.boxFilterRaf = 0;
+    }
+    this.lastFilterTimestampMs = 0;
+  }
+
   private get wrapperStyle(): string | null {
-    const width = this.resolvedBoxWidth;
-    const height = this.resolvedBoxHeight;
+    if (
+      this.type === ObcPoiPointerType.Point &&
+      this.state === ObcPoiPointerState.Selected
+    ) {
+      return null;
+    }
+
+    const width = this.filteredBoxWidth > 0 ? this.filteredBoxWidth : null;
+    const height = this.filteredBoxHeight > 0 ? this.filteredBoxHeight : null;
     const styles: string[] = [];
 
     if (width !== null) {
@@ -166,17 +340,17 @@ export class ObcPoiPointer extends LitElement {
     const isPoint = this.type === ObcPoiPointerType.Point;
     const isButton = this.type === ObcPoiPointerType.Button;
     const hasBoxOverrides =
-      this.resolvedBoxWidth !== null || this.resolvedBoxHeight !== null;
+      this.filteredBoxWidth > 0 || this.filteredBoxHeight > 0;
     const useCustomMode = isPoint || (isButton && hasBoxOverrides);
     const frameType = isPoint
       ? ObcPoiSelectionFrameType.Indicator
       : ObcPoiSelectionFrameType.Button;
     const customBoxWidth = isPoint
-      ? this.resolvedBoxWidth
-      : BUTTON_SELECTION_FRAME_BOX_OFFSET_PX + (this.resolvedBoxWidth ?? 0);
+      ? POINT_SELECTION_FRAME_BOX_OFFSET_PX + this.filteredBoxWidth
+      : BUTTON_SELECTION_FRAME_BOX_OFFSET_PX + this.filteredBoxWidth;
     const customBoxHeight = isPoint
-      ? this.resolvedBoxHeight
-      : BUTTON_SELECTION_FRAME_BOX_OFFSET_PX + (this.resolvedBoxHeight ?? 0);
+      ? POINT_SELECTION_FRAME_BOX_OFFSET_PX + this.filteredBoxHeight
+      : BUTTON_SELECTION_FRAME_BOX_OFFSET_PX + this.filteredBoxHeight;
 
     return html`
       <div class="square-frame" aria-hidden="true">
@@ -210,9 +384,9 @@ export class ObcPoiPointer extends LitElement {
           .state=${ObcPoiSelectionFrameState.Regular}
           .customMode=${true}
           .boxWidth=${CAMERA_SELECTION_FRAME_BOX_WIDTH_PX +
-          (this.resolvedBoxWidth ?? 0)}
+          this.filteredBoxWidth}
           .boxHeight=${CAMERA_SELECTION_FRAME_BOX_HEIGHT_PX +
-          (this.resolvedBoxHeight ?? 0)}
+          this.filteredBoxHeight}
         ></obc-poi-selection-frame>
       </div>
     `;
@@ -293,28 +467,7 @@ export class ObcPoiPointer extends LitElement {
   }
 
   protected override updated(_changedProperties: PropertyValues): void {
-    const extraWidth = this.resolvedBoxWidth ?? 0;
-    const extraHeight = this.resolvedBoxHeight ?? 0;
-
-    let widthPx = POINT_SIZE_PX;
-    let heightPx = POINT_SIZE_PX;
-
-    if (this.type === ObcPoiPointerType.Button) {
-      widthPx = BUTTON_SIZE_PX + extraWidth;
-      heightPx = BUTTON_SIZE_PX + extraHeight;
-    } else if (this.type === ObcPoiPointerType.Camera) {
-      widthPx = CAMERA_WIDTH_PX + extraWidth;
-      heightPx = CAMERA_HEIGHT_PX + extraHeight;
-    } else if (
-      this.type === ObcPoiPointerType.Point &&
-      this.state === ObcPoiPointerState.Selected
-    ) {
-      widthPx = POINT_SIZE_PX + extraWidth;
-      heightPx = POINT_SIZE_PX + extraHeight;
-    }
-
-    this.style.width = `${widthPx}px`;
-    this.style.height = `${heightPx}px`;
+    this.syncBoxFilterTargets();
   }
 
   static override styles = unsafeCSS(componentStyle);

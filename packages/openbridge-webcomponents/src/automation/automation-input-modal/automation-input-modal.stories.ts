@@ -22,7 +22,7 @@ import {
 import '../../components/notification-badge-button/notification-badge-button.js';
 
 const meta: Meta<typeof ObcAutomationInputModal> = {
-  title: 'Automation/Automation control',
+  title: 'Automation/Automation Control',
   tags: ['autodocs'],
   component: 'obc-automation-input-modal',
   args: {},

@@ -26,7 +26,7 @@ export interface GaugeRadialAdvice {
 @customElement('obc-instrument-radial')
 export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   // setpoint, newSetpoint, atSetpoint, touching, disableAutoAtSetpoint,
-  // autoAtSetpointDeadband, setpointAtZeroDeadband, setpointColorMode
+  // autoAtSetpointDeadband, setpointAtZeroDeadband, setpointOverride
   // — all inherited from SetpointMixin
 
   @property({type: Number}) value = 0;
@@ -86,7 +86,7 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
           .newAngleSetpoint=${newSetpointAngle}
           .atAngleSetpoint=${this.computeAtSetpoint(this.value)}
           .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
-          .colorMode=${this.setpointColorMode}
+          .setpointOverride=${this.setpointOverride}
           .animateSetpoint=${this.animateSetpoint}
           .padding=${48}
           .tickmarks=${this.tickmarks}

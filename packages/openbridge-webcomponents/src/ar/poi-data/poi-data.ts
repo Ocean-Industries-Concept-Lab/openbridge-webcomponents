@@ -19,6 +19,21 @@ import {
 } from '../building-blocks/poi-pointer/poi-pointer.js';
 
 export {ObcPoiValue as PoiDataValue};
+export enum PoiDataVisualRectPreference {
+  Largest = 'largest',
+  Group = 'group',
+  Anchor = 'anchor',
+  Size = 'size',
+}
+
+type PoiDataVisualElementPreference =
+  | PoiDataVisualRectPreference.Group
+  | PoiDataVisualRectPreference.Anchor
+  | PoiDataVisualRectPreference.Size;
+
+const X_FILTER_CUTOFF_HZ = 16;
+const X_FILTER_DEADBAND_PX = 0.1;
+const X_MOVING_HINT_MS = 120;
 
 /**
  * `<obc-poi-data>` - Data-oriented marker wrapper around `obc-poi` with layout positioning and change notifications.
@@ -48,12 +63,17 @@ export {ObcPoiValue as PoiDataValue};
  * - Use `fixedTarget=false` when `buttonY` should represent button position.
  * - Use `fixedTarget=true` when `buttonY` should represent target position and line length should offset upward.
  * - Keep geometry values finite to avoid fallback behavior.
+ * - Component choice:
+ *   - Use `<obc-poi-data>` for data-oriented callouts with built-in connector/pointer behavior and per-item layout control.
+ *   - Use `<obc-poi>` for lower-level marker rendering when you do not need this data wrapper behavior.
+ *   - Use `<obc-poi-layer>` when multiple markers need coordinated overlap/stacking management.
+ *   - Use `<obc-poi-group>` when related markers should expand/collapse together as one grouped interaction.
  *
  * ## Slots/Content
  * - `header`: Optional custom header content forwarded into `obc-poi`.
  *
  * ## Events
- * - `obc-poi-data-layout-change`: Fired when layout-driving properties change (`x`, `buttonY`, `y`, `lineCompensationY`, `fixedTarget`).
+ * - `obc-poi-data-layout-change`: Fired when layout-driving properties change (`x`, `y`, `buttonY`, `buttonOffsetX`, `targetOffsetX`, `lineCompensationY`, `fixedTarget`, `selected`, `type`).
  *
  * ## Best Practices
  * - Treat `obc-poi-data-layout-change` as a signal to recompute overlap/grouping layout.
@@ -66,7 +86,7 @@ export {ObcPoiValue as PoiDataValue};
  * ```
  *
  * @slot header - Optional custom header content forwarded into `obc-poi`.
- * @fires obc-poi-data-layout-change {CustomEvent<void>} Fired when layout-driving properties change.
+ * @fires obc-poi-data-layout-change {CustomEvent<void>} Fired when layout-driving properties change (`x`, `y`, `buttonY`, `buttonOffsetX`, `targetOffsetX`, `lineCompensationY`, `fixedTarget`, `selected`, `type`).
  */
 @customElement('obc-poi-data')
 export class ObcPoiData extends LitElement {
@@ -105,9 +125,198 @@ export class ObcPoiData extends LitElement {
   @property({type: Boolean, attribute: 'animate-position'})
   animatePosition = false;
 
+  private filteredX = 0;
+  private xFilterTarget = 0;
+  private xFilterInitialized = false;
+  private lastXFilterTimestampMs = 0;
+  private xFilterRaf = 0;
+  private xMovingHintTimeout: number | null = null;
+
+  private dispatchLayoutChange() {
+    this.dispatchEvent(
+      new CustomEvent('obc-poi-data-layout-change', {
+        bubbles: true,
+        composed: true,
+      })
+    );
+  }
+
+  private stepXFilter = (nowMs: number) => {
+    this.xFilterRaf = 0;
+    if (!this.isConnected || !this.xFilterInitialized) {
+      return;
+    }
+
+    const dtSeconds =
+      this.lastXFilterTimestampMs > 0
+        ? Math.min(
+            0.25,
+            Math.max(1 / 120, (nowMs - this.lastXFilterTimestampMs) / 1000)
+          )
+        : 1 / 60;
+    this.lastXFilterTimestampMs = nowMs;
+
+    const alpha = 1 - Math.exp(-2 * Math.PI * X_FILTER_CUTOFF_HZ * dtSeconds);
+    const delta = this.xFilterTarget - this.filteredX;
+    const nextX =
+      Math.abs(delta) <= X_FILTER_DEADBAND_PX
+        ? this.xFilterTarget
+        : this.filteredX + delta * alpha;
+    const changed = Math.abs(nextX - this.filteredX) > 1e-6;
+    this.filteredX = nextX;
+    if (changed) {
+      this.style.setProperty('--obc-poi-data-x', `${this.filteredX}px`);
+      this.dispatchLayoutChange();
+    }
+
+    const settled =
+      Math.abs(this.xFilterTarget - this.filteredX) <= X_FILTER_DEADBAND_PX;
+
+    if (settled) {
+      this.filteredX = this.xFilterTarget;
+      this.style.setProperty('--obc-poi-data-x', `${this.filteredX}px`);
+      this.lastXFilterTimestampMs = 0;
+      this.markXMoving();
+      return;
+    }
+
+    this.markXMoving();
+    this.xFilterRaf = requestAnimationFrame(this.stepXFilter);
+  };
+
+  private syncXFilterTarget(nextX: number) {
+    this.xFilterTarget = nextX;
+
+    if (!this.xFilterInitialized) {
+      this.xFilterInitialized = true;
+      this.filteredX = nextX;
+      this.style.setProperty('--obc-poi-data-x', `${this.filteredX}px`);
+      this.markXMoving();
+      return;
+    }
+
+    if (Math.abs(nextX - this.filteredX) <= X_FILTER_DEADBAND_PX) {
+      this.filteredX = this.xFilterTarget;
+      this.style.setProperty('--obc-poi-data-x', `${this.filteredX}px`);
+      if (this.xFilterRaf) {
+        cancelAnimationFrame(this.xFilterRaf);
+        this.xFilterRaf = 0;
+      }
+      this.lastXFilterTimestampMs = 0;
+      this.markXMoving();
+      return;
+    }
+
+    if (!this.xFilterRaf) {
+      this.lastXFilterTimestampMs = 0;
+      this.markXMoving();
+      this.xFilterRaf = requestAnimationFrame(this.stepXFilter);
+    }
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    if (this.xFilterRaf) {
+      cancelAnimationFrame(this.xFilterRaf);
+      this.xFilterRaf = 0;
+    }
+    this.lastXFilterTimestampMs = 0;
+    if (this.xMovingHintTimeout !== null) {
+      window.clearTimeout(this.xMovingHintTimeout);
+      this.xMovingHintTimeout = null;
+    }
+  }
+
+  public getVisualRect(
+    preference: PoiDataVisualRectPreference = PoiDataVisualRectPreference.Largest
+  ): DOMRect {
+    const {poi, button, wrapper, buttonWrapper} = this.getVisualNodes();
+    const candidates = [wrapper, buttonWrapper, button, poi].filter(
+      (element): element is HTMLElement => !!element
+    );
+
+    if (preference === PoiDataVisualRectPreference.Group) {
+      const hasDataWrapper = wrapper?.classList.contains('has-data') ?? false;
+      return (
+        (hasDataWrapper ? wrapper?.getBoundingClientRect() : null) ??
+        buttonWrapper?.getBoundingClientRect() ??
+        wrapper?.getBoundingClientRect() ??
+        button?.getBoundingClientRect() ??
+        poi?.getBoundingClientRect() ??
+        this.getBoundingClientRect()
+      );
+    }
+
+    if (preference === PoiDataVisualRectPreference.Anchor) {
+      return (
+        buttonWrapper?.getBoundingClientRect() ??
+        button?.getBoundingClientRect() ??
+        wrapper?.getBoundingClientRect() ??
+        poi?.getBoundingClientRect() ??
+        this.getBoundingClientRect()
+      );
+    }
+
+    if (preference === PoiDataVisualRectPreference.Size) {
+      return (
+        wrapper?.getBoundingClientRect() ??
+        buttonWrapper?.getBoundingClientRect() ??
+        button?.getBoundingClientRect() ??
+        poi?.getBoundingClientRect() ??
+        this.getBoundingClientRect()
+      );
+    }
+
+    if (candidates.length === 0) {
+      return this.getBoundingClientRect();
+    }
+
+    const candidateRects = candidates.map((element) =>
+      element.getBoundingClientRect()
+    );
+    return candidateRects.reduce((best, rect) =>
+      rect.height > best.height ? rect : best
+    );
+  }
+
+  public getVisualElement(
+    preference: PoiDataVisualElementPreference = PoiDataVisualRectPreference.Size
+  ): HTMLElement {
+    const {poi, button, wrapper, buttonWrapper} = this.getVisualNodes();
+
+    if (preference === PoiDataVisualRectPreference.Group) {
+      const hasDataWrapper = wrapper?.classList.contains('has-data') ?? false;
+      return (
+        (hasDataWrapper ? wrapper : null) ??
+        buttonWrapper ??
+        wrapper ??
+        button ??
+        poi ??
+        this
+      );
+    }
+
+    if (preference === PoiDataVisualRectPreference.Anchor) {
+      return buttonWrapper ?? button ?? wrapper ?? poi ?? this;
+    }
+
+    return wrapper ?? buttonWrapper ?? button ?? poi ?? this;
+  }
+
+  private markXMoving() {
+    this.setAttribute('data-x-moving', 'true');
+    if (this.xMovingHintTimeout !== null) {
+      window.clearTimeout(this.xMovingHintTimeout);
+    }
+    this.xMovingHintTimeout = window.setTimeout(() => {
+      this.removeAttribute('data-x-moving');
+      this.xMovingHintTimeout = null;
+    }, X_MOVING_HINT_MS);
+  }
+
   override updated(changedProperties: Map<string, unknown>) {
     if (changedProperties.has('x')) {
-      this.style.left = `${this.x}px`;
+      this.syncXFilterTarget(Number.isFinite(this.x) ? this.x : 0);
     }
     if (
       changedProperties.has('buttonY') ||
@@ -123,15 +332,14 @@ export class ObcPoiData extends LitElement {
       changedProperties.has('x') ||
       changedProperties.has('buttonY') ||
       changedProperties.has('y') ||
+      changedProperties.has('buttonOffsetX') ||
+      changedProperties.has('targetOffsetX') ||
       changedProperties.has('lineCompensationY') ||
-      changedProperties.has('fixedTarget')
+      changedProperties.has('fixedTarget') ||
+      changedProperties.has('selected') ||
+      changedProperties.has('type')
     ) {
-      this.dispatchEvent(
-        new CustomEvent('obc-poi-data-layout-change', {
-          bubbles: true,
-          composed: true,
-        })
-      );
+      this.dispatchLayoutChange();
     }
   }
 
@@ -195,6 +403,31 @@ export class ObcPoiData extends LitElement {
     return Object.values(ObcPoiState).includes(this.state as ObcPoiState)
       ? (this.state as ObcPoiState)
       : ObcPoiState.Enabled;
+  }
+
+  private getVisualNodes(): {
+    poi: HTMLElement | null;
+    button: HTMLElement | null;
+    wrapper: HTMLElement | null;
+    buttonWrapper: HTMLElement | null;
+  } {
+    const targetShadow = this.shadowRoot;
+    const poi = targetShadow?.querySelector('obc-poi') as HTMLElement | null;
+    const poiButton = poi?.shadowRoot?.querySelector(
+      'obc-poi-button'
+    ) as HTMLElement | null;
+    const dataButton = targetShadow?.querySelector(
+      'obc-poi-button-data'
+    ) as HTMLElement | null;
+    const button = poiButton ?? dataButton;
+    const buttonShadow = button?.shadowRoot ?? null;
+    const buttonWrapper = buttonShadow?.querySelector(
+      '.button-wrapper'
+    ) as HTMLElement | null;
+    const wrapper = buttonShadow?.querySelector(
+      '.wrapper'
+    ) as HTMLElement | null;
+    return {poi, button, wrapper, buttonWrapper};
   }
 
   override render() {
