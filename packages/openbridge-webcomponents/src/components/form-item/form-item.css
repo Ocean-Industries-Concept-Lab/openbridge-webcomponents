@@ -80,7 +80,6 @@
 
     .type-enabled-action-last & {
       padding-inline-end: var(--global-size-spacing-target-padding);
-      gap: var(--global-size-spacing-target-padding);
     }
 
     :host(:hover):not([disabled]) & {
