@@ -100,26 +100,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
     }
   }
 
-  private get _barColor(): string {
-    if (
-      this.state === InstrumentState.loading ||
-      this.state === InstrumentState.off
-    ) {
-      return 'transparent';
-    }
-    if (this.type === ObcGaugeRadialType.filled) {
-      return this.priority === Priority.enhanced
-        ? 'var(--instrument-enhanced-secondary-color)'
-        : 'var(--instrument-regular-secondary-color)';
-    }
-    return this.priority === Priority.enhanced
-      ? 'var(--instrument-enhanced-tertiary-color)'
-      : 'var(--instrument-regular-tertiary-color)';
-  }
-
   override render() {
-    const barColor = this._barColor;
-
     return html`
       <obc-instrument-radial
         .value=${this.value}
@@ -136,8 +117,6 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
         .maxValue=${this.maxValue}
         .minValue=${this.minValue}
         .getAngle=${this.getAngle}
-        .needleColor=${this._needleColor}
-        .barColor=${barColor}
         .labels=${this.labels}
         .primaryTickmarkInterval=${this.primaryTickmarkInterval}
         .secondaryTickmarkInterval=${this.secondaryTickmarkInterval}
@@ -148,18 +127,6 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
       >
       </obc-instrument-radial>
     `;
-  }
-
-  private get _needleColor(): string {
-    if (
-      this.state === InstrumentState.loading ||
-      this.state === InstrumentState.off
-    ) {
-      return 'transparent';
-    }
-    return this.priority === Priority.enhanced
-      ? 'var(--instrument-enhanced-secondary-color)'
-      : 'var(--instrument-regular-secondary-color)';
   }
 }
 
