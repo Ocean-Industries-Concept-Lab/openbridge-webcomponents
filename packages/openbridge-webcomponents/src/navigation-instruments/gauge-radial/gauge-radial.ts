@@ -88,6 +88,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) type: ObcGaugeRadialType =
     ObcGaugeRadialType.filled;
+  @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
 
   getAngle(v: number): number {
@@ -142,6 +143,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
         .secondaryTickmarkInterval=${this.secondaryTickmarkInterval}
         .type=${this.type}
         .needleType=${this.type}
+        .tickmarksInside=${this.tickmarksInside}
         .advices=${this.advices}
       >
       </obc-instrument-radial>

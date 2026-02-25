@@ -83,6 +83,19 @@ export function tickmark(
   } else {
     return [textSvg(text ?? '', angle, inside, scale, textRadius)];
   }
+
+  // When inside, anchor ticks at the outer ring edge and grow inward,
+  // preserving the same gap from the ring edge as the outside case.
+  // Outside: gap = innerRadius - RING2 (320/2). E.g. secondary: 164 - 160 = 4px gap.
+  // Inside: mirror that gap from the outer ring (368/2).
+  if (inside) {
+    const outerRingRadius = 368 / 2;
+    const ring2Radius = 320 / 2;
+    const tickLength = outerRadius - innerRadius;
+    const gapFromRingEdge = Math.max(0, innerRadius - ring2Radius);
+    outerRadius = outerRingRadius - gapFromRingEdge;
+    innerRadius = outerRadius - tickLength;
+  }
   const colorName = color ?? tickmarkColor(style);
 
   const x1 = Math.sin(rad) * innerRadius;

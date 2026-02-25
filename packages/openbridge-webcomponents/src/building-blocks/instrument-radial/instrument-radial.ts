@@ -46,6 +46,7 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
     ObcGaugeRadialType.filled;
   @property({type: String}) needleType: ObcGaugeRadialType =
     ObcGaugeRadialType.filled;
+  @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
   @property({type: Number}) clipTop: number = 0; // in percent of height
   @property({type: Number}) clipBottom: number = 0; // in percent of height
@@ -125,6 +126,7 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
           .animateSetpoint=${this.animateSetpoint}
           .padding=${48}
           .tickmarks=${this.tickmarks}
+          .tickmarksInside=${this.tickmarksInside}
           .advices=${this._advices}
           .areas=${[
             {

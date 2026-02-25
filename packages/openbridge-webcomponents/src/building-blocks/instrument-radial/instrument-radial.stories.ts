@@ -17,6 +17,7 @@ const meta: Meta<typeof ObcInstrumentRadial> = {
   argTypes: {
     state: {control: 'select', options: Object.values(InstrumentState)},
     priority: {control: 'select', options: Object.values(Priority)},
+    tickmarksInside: {control: 'boolean'},
   },
 } satisfies Meta<ObcInstrumentRadial>;
 
