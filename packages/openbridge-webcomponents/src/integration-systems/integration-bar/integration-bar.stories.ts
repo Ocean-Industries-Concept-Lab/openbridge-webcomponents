@@ -19,6 +19,12 @@ const meta: Meta<typeof ObcIntegrationBar> = {
     showDimmingButton: true,
     showUserButton: true,
     fleetButtonSelected: false,
+    fleetButtonLabel: 'Fleet',
+    vesselSelectorOptions: [
+      {value: 'Vessel 1', label: 'Vessel Name 1'},
+      {value: 'Vessel 2', label: 'Vessel Name 2'},
+      {value: 'Vessel 3', label: 'Vessel Name 3'},
+    ],
   },
   argTypes: {
     showDate: {
@@ -31,18 +37,9 @@ const meta: Meta<typeof ObcIntegrationBar> = {
       .showDimmingButton=${args.showDimmingButton}
       .showUserButton=${args.showUserButton}
       .fleetButtonSelected=${args.fleetButtonSelected}
+      .vesselSelectorOptions=${args.vesselSelectorOptions}
+      .fleetButtonLabel=${args.fleetButtonLabel}
     >
-      <obc-dropdown-button
-        slot="vessel-selector"
-        integration
-        value="Vessel 1"
-        .options=${[
-          {value: 'Vessel 1', label: 'Vessel Name 1'},
-          {value: 'Vessel 2', label: 'Vessel Name 2'},
-          {value: 'Vessel 3', label: 'Vessel Name 3'},
-        ]}
-      >
-      </obc-dropdown-button>
       <obc-clock
         integrationBarMode
         .date=${args.date}
