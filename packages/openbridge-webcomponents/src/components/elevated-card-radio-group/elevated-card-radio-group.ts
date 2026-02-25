@@ -4,6 +4,7 @@ import compentStyle from './elevated-card-radio-group.css?inline';
 import {ObcElevatedCardPosition} from '../elevated-card/elevated-card.js';
 import '../elevated-card-radio/elevated-card-radio.js';
 import {customElement} from '../../decorator.js';
+import {classMap} from 'lit/directives/class-map.js';
 
 export type ObcElevatedCardRadioGroupChangeEvent = CustomEvent<{
   value: string;
@@ -129,7 +130,12 @@ export class ObcElevatedCardRadioGroup extends LitElement {
   }
 
   override render() {
-    return html`<div class="wrapper">
+    const wrapperClasses = {
+      wrapper: true,
+      disabled: this.disabled,
+    };
+
+    return html`<div class=${classMap(wrapperClasses)}>
       ${this.options.map((option, i) => {
         let position: ObcElevatedCardPosition = ObcElevatedCardPosition.Center;
         if (i === 0 && this.top) {

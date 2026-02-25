@@ -3,6 +3,20 @@
 .wrapper {
   display: flex;
   flex-direction: column;
+
+  &.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  &.disabled obc-elevated-card-radio {
+    opacity: 0.6;
+  }
+
+  &.disabled .obc-elevated-card-radio__label {
+    color: var(--element-disabled-color);
+    cursor: not-allowed;
+  }
 }
 
 .obc-elevated-card-radio__label {
