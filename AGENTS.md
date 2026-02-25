@@ -4,6 +4,8 @@
 > this repository (GitHub Copilot, Cursor, Cline, Aider, Windsurf, Codex,
 > OpenAI Codex CLI, or any other agent that reads `AGENTS.md`).
 
+**Quick nav:** [Overview](#1-repository-overview) · [Coding Standards](#2-coding-standards) · [JSDoc](#3-documentation-rules-jsdoc) · [Instructions](#4-path-scoped-instruction-files) · [Build & Test](#5-build-test--run) · [SVG](#6-svg-component-guidelines) · [CSS](#7-css--postcss-reference) · [Behavioral Rules](#8-behavioral-rules-for-ai-agents) · [Related Docs](#9-related-documentation)
+
 ---
 
 ## 1. Repository Overview
