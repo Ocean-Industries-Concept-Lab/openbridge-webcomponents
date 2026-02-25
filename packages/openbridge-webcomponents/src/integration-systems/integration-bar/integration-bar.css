@@ -20,12 +20,13 @@
 .fleet-vessel-container {
   display: flex;
   align-items: center;
-  gap: var(--app-components-integration-system-topbar-item-spacing, 8px);
+  gap: var(--app-components-integration-system-menu-spacing-horizontal);
 }
 
 .vessel-container {
   display: flex;
   align-items: center;
+  gap: 0px;
 }
 .home-button {
   width: var(--app-components-integration-system-icon-button-touch-target);

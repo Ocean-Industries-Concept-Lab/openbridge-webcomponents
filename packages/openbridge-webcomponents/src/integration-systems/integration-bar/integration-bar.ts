@@ -147,7 +147,6 @@ export class ObcIntegrationBar extends LitElement {
     return html`
       <obc-integration-button
         class="fleet-button"
-        hasLeadingIcon
         .variant=${IntegrationButtonVariant.normal}
         ?selected=${this.fleetButtonSelected}
         @click=${() =>
@@ -156,30 +155,28 @@ export class ObcIntegrationBar extends LitElement {
         <span slot="label">${this.fleetButtonLabel}</span>
       </obc-integration-button>
 
-      <div class="fleet-vessel-container">
+      <div class="vessel-container">
         ${vesselItems.map((vessel) => {
           const isSelected =
             this.selectedVesselValue === vessel.value ||
             (this.selectedVesselValue === '' && vessel === vesselItems[0]);
           return html`
-            <div class="vessel-container">
-              <obc-integration-button
-                hasLeadingIcon
-                .variant=${isSelected
-                  ? IntegrationButtonVariant.normal
-                  : IntegrationButtonVariant.flat}
-                ?selected=${isSelected}
-                @click=${() =>
-                  this.dispatchEvent(
-                    new CustomEvent('vessel-selected', {
-                      detail: {value: vessel.value, label: vessel.label},
-                    })
-                  )}
-              >
-                <obi-ship slot="leading-icon"></obi-ship>
-                <span slot="label">${vessel.label}</span>
-              </obc-integration-button>
-            </div>
+            <obc-integration-button
+              hasLeadingIcon
+              .variant=${isSelected
+                ? IntegrationButtonVariant.normal
+                : IntegrationButtonVariant.flat}
+              ?selected=${isSelected}
+              @click=${() =>
+                this.dispatchEvent(
+                  new CustomEvent('vessel-selected', {
+                    detail: {value: vessel.value, label: vessel.label},
+                  })
+                )}
+            >
+              <obi-ship slot="leading-icon"></obi-ship>
+              <span slot="label">${vessel.label}</span>
+            </obc-integration-button>
           `;
         })}
       </div>
