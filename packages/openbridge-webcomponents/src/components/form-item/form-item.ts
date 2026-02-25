@@ -1,12 +1,19 @@
 import {LitElement, html, nothing, unsafeCSS, type TemplateResult} from 'lit';
-import {property} from 'lit/decorators.js';
+import {property, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './form-item.css?inline';
-import '../checkbox/checkbox.js';
+import {
+  CheckButtonCheckboxAppearance,
+  CheckButtonType,
+} from '../check-button/check-button.js';
+import '../check-button/check-button.js';
 import '../../icons/icon-check-google.js';
 import '../../icons/icon-check-mixed.js';
-import type {ObcCheckboxChangeEvent} from '../checkbox/checkbox.js';
+import {
+  CheckboxStatus,
+  type ObcCheckboxChangeEvent,
+} from '../checkbox/checkbox.js';
 
 export enum ObcFormItemType {
   View = 'view',
@@ -32,6 +39,10 @@ export type ObcFormItemActionChangeEvent = CustomEvent<{
   itemId: string | null;
   status: ObcCheckboxChangeEvent['detail']['status'];
   disabled: boolean;
+}>;
+
+type ObcCheckButtonClickEvent = CustomEvent<{
+  checked: boolean;
 }>;
 
 /**
@@ -114,6 +125,8 @@ export class ObcFormItem extends LitElement {
   @property({type: String, attribute: 'status-icon'})
   statusIcon: ObcFormItemStatusIcon = ObcFormItemStatusIcon.Check;
 
+  @state() private actionChecked = false;
+
   static override styles = unsafeCSS(componentStyle);
 
   private get isActionType(): boolean {
@@ -171,24 +184,32 @@ export class ObcFormItem extends LitElement {
   private renderAction(): TemplateResult {
     return html`
       <div class="action" part="action">
-        <obc-checkbox
-          label=""
-          box-only-states
+        <obc-check-button
+          .type=${CheckButtonType.checkbox}
+          .checkboxAppearance=${CheckButtonCheckboxAppearance.updated}
+          .checked=${this.actionChecked}
           .disabled=${this.actionDisabled}
-          @change=${this.handleActionChange}
-        ></obc-checkbox>
+          @check-button-click=${this.handleActionChange}
+        ></obc-check-button>
       </div>
     `;
   }
 
-  private handleActionChange = (event: ObcCheckboxChangeEvent): void => {
+  private handleActionChange = (event: ObcCheckButtonClickEvent): void => {
+    this.actionChecked = event.detail.checked;
+
+    const status: ObcCheckboxChangeEvent['detail']['status'] = event.detail
+      .checked
+      ? CheckboxStatus.checked
+      : CheckboxStatus.unchecked;
+
     const resolvedItemId = this.itemId.trim() || this.id.trim() || null;
     this.dispatchEvent(
       new CustomEvent('action-change', {
         detail: {
           itemId: resolvedItemId,
-          status: event.detail.status,
-          disabled: event.detail.disabled,
+          status,
+          disabled: this.actionDisabled,
         },
         bubbles: true,
         composed: true,

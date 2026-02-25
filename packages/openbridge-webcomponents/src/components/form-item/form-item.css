@@ -241,10 +241,6 @@
     min-height: var(--ui-components-checkbox-touch-target-size);
     flex: 0 0 var(--ui-components-checkbox-touch-target-size);
     order: 1;
-
-    obc-checkbox {
-      --ui-components-checkbox-padding-horizontal: 0;
-    }
   }
 
   .error-text {
