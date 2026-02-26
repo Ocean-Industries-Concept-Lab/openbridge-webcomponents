@@ -2,7 +2,7 @@ import {LitElement, html} from 'lit';
 import {customElement} from '../../decorator.js';
 import {property} from 'lit/decorators.js';
 import {AdviceType} from '../watch/advice.js';
-import {Priority} from '../types.js';
+import {InstrumentState, Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/instrument-radial/instrument-radial.js';
 
@@ -84,9 +84,11 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   @property({type: Boolean}) labels: boolean = false;
   @property({type: Number}) primaryTickmarkInterval = 50;
   @property({type: Number}) secondaryTickmarkInterval = 10;
+  @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) type: ObcGaugeRadialType =
     ObcGaugeRadialType.filled;
+  @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
 
   getAngle(v: number): number {
@@ -98,21 +100,12 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
     }
   }
 
-  private get _barColor(): string {
-    if (this.type === ObcGaugeRadialType.filled) {
-      return this._needleColor;
-    }
-    return this.priority === Priority.enhanced
-      ? 'var(--instrument-enhanced-tertiary-color)'
-      : 'var(--instrument-regular-tertiary-color)';
-  }
-
   override render() {
-    const barColor = this._barColor;
-
     return html`
       <obc-instrument-radial
         .value=${this.value}
+        .state=${this.state}
+        .priority=${this.priority}
         .setpoint=${this.setpoint}
         .newSetpoint=${this.newSetpoint}
         .setpointAtZeroDeadband=${this.setpointAtZeroDeadband}
@@ -124,23 +117,16 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
         .maxValue=${this.maxValue}
         .minValue=${this.minValue}
         .getAngle=${this.getAngle}
-        .needleColor=${this._needleColor}
-        .barColor=${barColor}
         .labels=${this.labels}
         .primaryTickmarkInterval=${this.primaryTickmarkInterval}
         .secondaryTickmarkInterval=${this.secondaryTickmarkInterval}
         .type=${this.type}
         .needleType=${this.type}
+        .tickmarksInside=${this.tickmarksInside}
         .advices=${this.advices}
       >
       </obc-instrument-radial>
     `;
-  }
-
-  private get _needleColor(): string {
-    return this.priority === Priority.enhanced
-      ? 'var(--instrument-enhanced-secondary-color)'
-      : 'var(--instrument-regular-secondary-color)';
   }
 }
 
