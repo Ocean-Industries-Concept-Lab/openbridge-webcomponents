@@ -37,14 +37,18 @@ export class ObcIntegrationBar extends LitElement {
   @property({type: String}) type: IntegrationBarType =
     IntegrationBarType.vesselname;
   @property({type: Boolean}) showClock = false;
-  @property({type: Boolean}) showNotificationButton = false;
-  @property({type: Boolean}) notificationButtonActivated = false;
   @property({type: Boolean}) showUserButton = false;
   @property({type: Boolean}) userButtonActivated = false;
   @property({type: Boolean}) showDimmingButton = false;
   @property({type: Boolean}) dimmingButtonActivated = false;
   @property({type: Boolean}) showSystemButton = false;
   @property({type: Boolean}) systemButtonActivated = false;
+  @property({type: Boolean}) showScreenButton = false;
+  @property({type: Boolean}) screenButtonActivated = false;
+  @property({type: Boolean}) showNotificationButton = false;
+  @property({type: Boolean}) notificationButtonActivated = false;
+  @property({type: Boolean}) showAlertButton = false;
+  @property({type: Boolean}) alertButtonActivated = false;
   @property({type: Boolean}) fleetButtonSelected = false;
   @property({type: String}) fleetButtonLabel = 'Fleet';
   @property({type: String}) selectedVesselValue = '';
@@ -55,7 +59,7 @@ export class ObcIntegrationBar extends LitElement {
 
   override render() {
     return html`
-      <div class="wrapper">
+      <nav class="wrapper">
         <div class="content-container">
           <obc-icon-button class="home-button" variant="integration">
             <obi-home></obi-home>
@@ -65,6 +69,18 @@ export class ObcIntegrationBar extends LitElement {
           </div>
         </div>
         <div class="right-content-container">
+          ${this.showAlertButton
+            ? html`<obc-icon-button
+                class="alert-button"
+                part="alert-button"
+                variant="integration"
+                @click=${() =>
+                  this.dispatchEvent(new CustomEvent('alert-button-clicked'))}
+                ?activated=${this.alertButtonActivated}
+              >
+                <obi-alerts></obi-alerts>
+              </obc-icon-button>`
+            : null}
           ${this.showNotificationButton
             ? html`<obc-icon-button
                 class="notification-button"
@@ -77,6 +93,18 @@ export class ObcIntegrationBar extends LitElement {
                 ?activated=${this.notificationButtonActivated}
               >
                 <obi-notification></obi-notification>
+              </obc-icon-button>`
+            : null}
+          ${this.showScreenButton
+            ? html`<obc-icon-button
+                class="screen-button"
+                part="screen-button"
+                variant="integration"
+                @click=${() =>
+                  this.dispatchEvent(new CustomEvent('screen-button-clicked'))}
+                ?activated=${this.screenButtonActivated}
+              >
+                <obi-screen-desk></obi-screen-desk>
               </obc-icon-button>`
             : null}
           ${this.showSystemButton
@@ -117,7 +145,7 @@ export class ObcIntegrationBar extends LitElement {
             : null}
           ${this.showClock ? html`<slot name="clock"></slot>` : null}
         </div>
-      </div>
+      </nav>
     `;
   }
 

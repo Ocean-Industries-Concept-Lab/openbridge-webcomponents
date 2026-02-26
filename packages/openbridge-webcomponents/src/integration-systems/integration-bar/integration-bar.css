@@ -38,3 +38,9 @@
 obc-icon-button::part(visible-wrapper) {
   background-color: transparent;
 }
+
+.right-content-container {
+  display: flex;
+  align-items: center;
+  border-left: 1px solid var(--integration-border-outline);
+}

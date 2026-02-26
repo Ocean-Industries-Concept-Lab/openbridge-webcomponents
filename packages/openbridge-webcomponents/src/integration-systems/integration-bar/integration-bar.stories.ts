@@ -16,8 +16,13 @@ const meta: Meta<typeof ObcIntegrationBar> = {
     showDate: true,
     showTimezone: true,
     timeZoneOffsetHours: 1,
-    showDimmingButton: true,
     showUserButton: true,
+    showDimmingButton: true,
+    showSystemButton: true,
+    showScreenButton: true,
+    showNotificationButton: true,
+    showAlertButton: true,
+
     fleetButtonSelected: false,
     fleetButtonLabel: 'Fleet',
     vesselSelectorOptions: [
@@ -34,8 +39,12 @@ const meta: Meta<typeof ObcIntegrationBar> = {
   render: (args) =>
     html`<obc-integration-bar
       .showClock=${args.showClock}
-      .showDimmingButton=${args.showDimmingButton}
       .showUserButton=${args.showUserButton}
+      .showDimmingButton=${args.showDimmingButton}
+      .showSystemButton=${args.showSystemButton}
+      .showAlertButton=${args.showAlertButton}
+      .showScreenButton=${args.showScreenButton}
+      .showNotificationButton=${args.showNotificationButton}
       .fleetButtonSelected=${args.fleetButtonSelected}
       .vesselSelectorOptions=${args.vesselSelectorOptions}
       .fleetButtonLabel=${args.fleetButtonLabel}
