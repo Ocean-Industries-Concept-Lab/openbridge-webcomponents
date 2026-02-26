@@ -12,6 +12,8 @@ import '../../icons/icon-configure.js';
 import '../../icons/icon-notification.js';
 import '../../icons/icon-home.js';
 import '../../icons/icon-ship.js';
+import '../../icons/icon-screen-desk.js';
+import '../../icons/icon-alerts.js';
 import {property} from 'lit/decorators.js';
 
 export enum IntegrationBarType {
