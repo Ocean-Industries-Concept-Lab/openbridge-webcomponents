@@ -58,7 +58,7 @@ export {
  *
  * For renderer documentation see: **Building Blocks/External Scale**.
  *
- * For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Deadband tuning and Zero snap behavior) see: **Building Blocks/Bar Vertical**.
+ * For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Deadband tuning and Zero snap behavior) see: **Bars and Graphs/Bar Vertical**.
  *
  * Set `priority` to `Priority.enhanced` to use the blue/enhanced color palette
  * for bar fill and setpoint instead of the default gray/regular palette

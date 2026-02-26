@@ -31,7 +31,7 @@ const SAMPLE_DATA = [
 ];
 
 const meta: Meta = {
-  title: 'Building Blocks/Bar Vertical',
+  title: 'Bars and Graphs/Bar Vertical',
   tags: ['autodocs', '6.0'],
   component: 'obc-bar-vertical',
   argTypes: {

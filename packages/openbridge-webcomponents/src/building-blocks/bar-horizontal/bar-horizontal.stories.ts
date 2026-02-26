@@ -30,7 +30,7 @@ const SAMPLE_DATA = [
 ];
 
 const meta: Meta = {
-  title: 'Building Blocks/Bar Horizontal',
+  title: 'Bars and Graphs/Bar Horizontal',
   tags: ['autodocs', '6.0'],
   component: 'obc-bar-horizontal',
   argTypes: {
