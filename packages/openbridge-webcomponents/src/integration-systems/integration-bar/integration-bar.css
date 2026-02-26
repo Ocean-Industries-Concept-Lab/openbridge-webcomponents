@@ -41,6 +41,29 @@ obc-icon-button::part(visible-wrapper) {
 
 .right-content-container {
   display: flex;
+  align-self: stretch;
   align-items: center;
-  border-left: 1px solid var(--integration-border-outline);
+  border-left: var(
+      --app-components-integration-system-navigation-item-horizontal-stroke-weight-right,
+      1px
+    )
+    solid
+    var(
+      --integration-beta-flat-enabled-border-color,
+      var(--integration-border-outline)
+    );
+}
+
+.separator {
+  flex: 0 0 auto;
+  align-self: center;
+  width: var(
+    --app-components-integration-system-navigation-item-horizontal-stroke-weight-right,
+    1px
+  );
+  height: var(--app-components-integration-system-button-visual-target, 24px);
+  background-color: var(
+    --integration-beta-flat-enabled-border-color,
+    var(--integration-border-outline)
+  );
 }

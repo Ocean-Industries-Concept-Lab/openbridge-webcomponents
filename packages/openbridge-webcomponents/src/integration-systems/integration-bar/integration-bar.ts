@@ -39,6 +39,8 @@ export class ObcIntegrationBar extends LitElement {
   @property({type: String}) type: IntegrationBarType =
     IntegrationBarType.vesselname;
   @property({type: Boolean}) showClock = false;
+  @property({type: Boolean}) showLinkButton = false;
+  @property({type: Boolean}) linkButtonActivated = false;
   @property({type: Boolean}) showUserButton = false;
   @property({type: Boolean}) userButtonActivated = false;
   @property({type: Boolean}) showDimmingButton = false;
@@ -66,6 +68,18 @@ export class ObcIntegrationBar extends LitElement {
           <obc-icon-button class="home-button" variant="integration">
             <obi-home></obi-home>
           </obc-icon-button>
+          ${this.showLinkButton
+            ? html`<obc-icon-button
+                class="link-button"
+                part="link-button"
+                variant="integration"
+                @click=${() =>
+                  this.dispatchEvent(new CustomEvent('link-button-clicked'))}
+                ?activated=${this.notificationButtonActivated}
+              >
+                <obi-link></obi-link>
+              </obc-icon-button>`
+            : null}
           <div class="fleet-vessel-container">
             ${this.renderFleetVesselContainerByType()}
           </div>
@@ -186,10 +200,11 @@ export class ObcIntegrationBar extends LitElement {
       </obc-integration-button>
 
       <div class="vessel-container">
-        ${vesselItems.map((vessel) => {
+        ${vesselItems.map((vessel, index) => {
           const isSelected =
             this.selectedVesselValue === vessel.value ||
             (this.selectedVesselValue === '' && vessel === vesselItems[0]);
+          const shouldRenderSeparator = index < vesselItems.length - 1;
           return html`
             <obc-integration-button
               hasLeadingIcon
@@ -207,6 +222,9 @@ export class ObcIntegrationBar extends LitElement {
               <obi-ship slot="leading-icon"></obi-ship>
               <span slot="label">${vessel.label}</span>
             </obc-integration-button>
+            ${shouldRenderSeparator
+              ? html`<div class="separator"></div>`
+              : null}
           `;
         })}
       </div>
