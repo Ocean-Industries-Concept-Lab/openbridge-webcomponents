@@ -1,37 +1,26 @@
 # Implementation guidelines
 
 The project is divided into three main parts:
-- [openbridge-webcomponents](packages/openbridge-webcomponents/README.md) — the core Lit web component library
-- [openbridge-webcomponents-vue](packages/openbridge-webcomponents-vue/README.md) / [openbridge-webcomponents-react](packages/openbridge-webcomponents-react/README.md) — auto-generated framework wrappers
-- [vue-demo](packages/vue-demo/README.md) / [react-demo](packages/react-demo/README.md) — demo applications
 
-# openbridge-webcomponents
-This package contains the implementation of the web components.
-The components are implemented through the use of the [LitElement](https://lit-element.polymer-project.org/) library.
+1. [openbridge-webcomponents](packages/openbridge-webcomponents/README.md) — the core Lit web component library
 
-Components are organized by category under `packages/openbridge-webcomponents/src/`:
-- `components/` — general UI components (buttons, cards, top-bar, etc.)
-- `navigation-instruments/` — maritime instruments (compass, heading, gauge, etc.)
-- `building-blocks/` — SVG-based low-level instrument pieces (scales, bars, chart bases)
-- `bars-graphs/` — chart components (line graph, area graph, donut, pie, polar, radial-bar)
-- `automation/` — automation system components (valves, pumps, motors, etc.)
-- `ar/` — augmented reality components
-- `icons/` — auto-generated icon components
+   This package contains the implementation of the web components.
+   The components are implemented through the use of the [LitElement](https://lit-element.polymer-project.org/) library.
 
-Each component typically has:
-- `component-name.ts` — the Lit component implementation
-- `component-name.css` — PostCSS styles
-- `component-name.stories.ts` — Storybook stories
+   For each component, there is a corresponding folder in the `packages/openbridge-webcomponents/src/components` directory.
+   The components are implemented in the `*.ts` files and the corresponding `*.css` files, with a `*.stories.ts` file for the storybook.
 
-## Framework wrappers
+2. [openbridge-webcomponents-vue](packages/openbridge-webcomponents-vue/README.md) / [openbridge-webcomponents-react](packages/openbridge-webcomponents-react/README.md) — auto-generated framework wrappers
 
-Vue, React, Angular, and Svelte wrappers are auto-generated from the web components:
-```bash
-npm run build:wrappers
-```
-Do not edit the generated wrapper packages directly.
+   Vue, React, Angular, and Svelte wrappers are auto-generated from the web components:
+   ```bash
+   npm run build:wrappers
+   ```
+   ⚠️ **Warning:** Do not edit the generated wrapper packages directly.
 
-## Storybook stories
+3. [vue-demo](packages/vue-demo/README.md) / [react-demo](packages/react-demo/README.md) — demo applications
+
+## 📚 Storybook stories
 
 Each component's `*.stories.ts` file should:
 - Use `tags: ['autodocs', '6.0']` for documented OpenBridge 6.0 components
@@ -39,16 +28,13 @@ Each component's `*.stories.ts` file should:
 - Use `tags: ['!snapshot']` to exclude a story from visual snapshot testing
 - Export a `Default` story and additional stories for key states and variants
 
-## Testing
+## 🧪 Testing
 
 Visual snapshot tests are run via [Vitest](https://vitest.dev/) + [storybook-addon-vis](https://github.com/nickelspy/storybook-addon-vis) + Playwright:
 
 ```bash
 # Run all snapshot tests
 npm run test-storybook
-
-# Watch mode
-npm run test-storybook:watch
 
 # Update snapshots interactively (press 'u' in Vitest terminal)
 # Or replace baselines wholesale:
@@ -57,7 +43,7 @@ npm run update-snapshots
 
 Snapshot baselines are stored in `__vis__/linux/__baselines__/` (and `__vis__/darwin/__baselines__/` for macOS).
 
-## PostCSS
+## 🎨 PostCSS
 The css files are post-processed by [PostCSS](https://postcss.org/).
 There is one global css file for the palettes, `variables.css`, which contains the color palettes for the components.
 All other css code should be kept in the `*.css` files in the component folders.
@@ -110,18 +96,18 @@ There are multiple mixins for styling text:
 - `@mixin font-label`
 - `@mixin font-overline`
 
-## Icons
+## 🎴 Icons
 The icons are exported to webcomponents in the `packages/openbridge-webcomponents/src/icons` directory.
 They are exported from figma by running: `npm run download:icons`.
 
-## Create a new component
+## 📄 Create a new component
 To create a new component, use the `new:component` script:
 ```bash
 npm run new:component
 ```
 This will create the needed files, using the default template.
 
-## SVG based components
+## 🧭 SVG based components
 Instrument components are based on SVG.
 Typically they are implemented by copying the SVG code from Figma and pasting it into the component file.
 Note that these modifications should be done:
