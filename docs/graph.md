@@ -32,7 +32,7 @@ function getCssVariableValue(variable, ctx) {
 }
 
 const redStroke = getCssVariableValue("--base-red-400", ctx);
-const greenStroke = getCssVariableValue("--base-green-400", ctx);
+const blueStroke = getCssVariableValue("--base-blue-400", ctx);
 const elementNeutralColor = getCssVariableValue("--element-neutral-color", ctx);
 const instrumentFrameTertiary = getCssVariableValue(
   "--instrument-frame-tertiary-color",
@@ -105,7 +105,7 @@ const power = [
           borderColor: {
             axis: 'y',
             colors: {
-              '0': negativeStroke, // Green for values between 0 and 50
+              '0': negativeStroke, // Blue for values between 0 and 50
               [target]: negativeStroke,
               [target + 0.0001]: positiveStroke, // Red for values between 50.0001 and 100
               '100': positiveStroke
