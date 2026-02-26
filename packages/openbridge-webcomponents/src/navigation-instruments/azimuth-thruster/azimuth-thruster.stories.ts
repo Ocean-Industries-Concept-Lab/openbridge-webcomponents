@@ -214,3 +214,17 @@ export const Off: Story = {
     state: InstrumentState.off,
   },
 };
+
+export const OffWithAngleSetpointOverride: Story = {
+  args: {
+    size: Size.large,
+    thrust: 0,
+    thrustSetpoint: 0,
+    angle: 0,
+    angleSetpoint: 0,
+    state: InstrumentState.off,
+    angleSetpointOverride: true,
+    thrustSetpointOverride: false,
+    priority: Priority.enhanced,
+  },
+};
