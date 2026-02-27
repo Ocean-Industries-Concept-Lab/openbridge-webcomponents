@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { InstrumentState } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types'
+import {
+  InstrumentState,
+  Priority
+} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types'
 import ObcAzimuthThruster from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster.vue'
 import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
 import { InstrumentFieldSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
@@ -95,7 +98,8 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
     />
     <ObcAzimuthThruster
       class="aft-thruster"
-      :state="configStore.hasCommand ? InstrumentState.inCommand : InstrumentState.active"
+      :state="InstrumentState.active"
+      :priority="configStore.hasCommand ? Priority.enhanced : Priority.regular"
       :angle="angle"
       :angle-setpoint="angleSetpoint"
       :thrust="sim.propulsion.propeller.value"

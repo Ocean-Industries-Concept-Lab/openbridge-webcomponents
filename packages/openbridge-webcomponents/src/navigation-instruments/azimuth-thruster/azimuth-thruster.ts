@@ -1,9 +1,8 @@
 import {html, LitElement, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import type {PropertyValues} from 'lit';
-import {InstrumentState} from '../types.js';
+import {InstrumentState, Priority} from '../types.js';
 import {SetpointBundle} from '../../svghelpers/setpoint-bundle.js';
-import type {SetpointColorMode} from '../../svghelpers/setpoint.js';
 import {thruster} from '../thruster/thruster.js';
 import '../watch/watch.js';
 import componentStyle from './azimuth-thruster.css?inline';
@@ -33,9 +32,7 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: Boolean})
   atAngleSetpoint: boolean = false;
   @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
-  @property({type: String}) angleSetpointColorMode:
-    | SetpointColorMode
-    | undefined;
+  @property({type: Boolean}) angleSetpointOverride: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Boolean}) disableAutoAtAngleSetpoint: boolean = false;
   @property({type: Number}) autoAtAngleSetpointDeadband: number = 2;
@@ -49,9 +46,11 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: Boolean})
   atThrustSetpoint: boolean = false;
   @property({type: Number}) thrustSetpointAtZeroDeadband: number = 0.1;
+  @property({type: Boolean}) thrustSetpointOverride: boolean = false;
   @property({type: Boolean}) disableAutoAtThrustSetpoint: boolean = false;
   @property({type: Number}) autoAtThrustSetpointDeadband: number = 1;
-  @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
+  @property({type: String}) state: InstrumentState = InstrumentState.active;
+  @property({type: String}) priority: Priority = Priority.regular;
 
   private _angleSp = new SetpointBundle({
     angularWraparound: true,
@@ -74,7 +73,7 @@ export class ObcAzimuthThruster extends LitElement {
       disableAutoAtSetpoint: this.disableAutoAtAngleSetpoint,
       autoAtSetpointDeadband: this.autoAtAngleSetpointDeadband,
       setpointAtZeroDeadband: this.angleSetpointAtZeroDeadband,
-      setpointColorMode: this.angleSetpointColorMode,
+      setpointOverride: this.angleSetpointOverride,
       animateSetpoint: this.animateSetpoint,
     });
     this._thrustSp.sync({
@@ -85,6 +84,7 @@ export class ObcAzimuthThruster extends LitElement {
       disableAutoAtSetpoint: this.disableAutoAtThrustSetpoint,
       autoAtSetpointDeadband: this.autoAtThrustSetpointDeadband,
       setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
+      setpointOverride: this.thrustSetpointOverride,
       animateSetpoint: this.animateSetpoint,
     });
   }
@@ -208,11 +208,12 @@ export class ObcAzimuthThruster extends LitElement {
           .touching=${this.touching}
           .tickmarks=${tickmarks}
           .state=${this.state}
+          .priority=${this.priority}
           .angleSetpoint=${this.angleSetpoint}
           .newAngleSetpoint=${this.newAngleSetpoint}
           .atAngleSetpoint=${this._angleSp.computeAtSetpoint(this.angle)}
           .angleSetpointAtZeroDeadband=${this.angleSetpointAtZeroDeadband}
-          .colorMode=${this.angleSetpointColorMode}
+          .setpointOverride=${this.angleSetpointOverride}
           .animateSetpoint=${this.animateSetpoint}
           .tickmarksInside=${this.tickmarksInside}
           padding=${ifDefined(this.noPadding ? 16 : undefined)}
@@ -221,25 +222,32 @@ export class ObcAzimuthThruster extends LitElement {
         ></obc-watch>
         <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg">
           <g transform="rotate(${rotateAngle})">
-            ${thruster(this.thrust, this.thrustSetpoint, this.state, {
-              atSetpoint: this.atThrustSetpoint,
-              singleSided: true,
-              singleDirection: false,
-              singleDirectionHalfSize: this.singleDirection,
-              tunnel: false,
-              autoAtSetpoint: !this.disableAutoAtThrustSetpoint,
-              autoSetpointDeadband: this.autoAtThrustSetpointDeadband,
-              setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
-              touching: this.touching,
-              advices: this.thrustAdvices,
-              topPropeller: this.topPropeller,
-              bottomPropeller: this.bottomPropeller,
-              narrow: true,
-              newSetpoint: this.newThrustSetpoint,
-              setpointId: this._thrustSetpointId,
-              animateSetpoint: this.animateSetpoint,
-              departingNewSetpoint: this._thrustSp.departingNewSetpoint,
-            })}
+            ${thruster(
+              this.thrust,
+              this.thrustSetpoint,
+              this.state,
+              this.priority,
+              {
+                atSetpoint: this.atThrustSetpoint,
+                singleSided: true,
+                singleDirection: false,
+                singleDirectionHalfSize: this.singleDirection,
+                tunnel: false,
+                autoAtSetpoint: !this.disableAutoAtThrustSetpoint,
+                autoSetpointDeadband: this.autoAtThrustSetpointDeadband,
+                setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
+                touching: this.touching,
+                advices: this.thrustAdvices,
+                topPropeller: this.topPropeller,
+                bottomPropeller: this.bottomPropeller,
+                narrow: true,
+                newSetpoint: this.newThrustSetpoint,
+                setpointId: this._thrustSetpointId,
+                animateSetpoint: this.animateSetpoint,
+                departingNewSetpoint: this._thrustSp.departingNewSetpoint,
+                setpointOverride: this.thrustSetpointOverride,
+              }
+            )}
           </g>
         </svg>
       </div>

@@ -5,10 +5,14 @@ export enum Size {
 }
 
 export enum InstrumentState {
-  inCommand = 'inCommand',
   active = 'active',
   loading = 'loading',
   off = 'off',
+}
+
+export enum Priority {
+  regular = 'regular',
+  enhanced = 'enhanced',
 }
 
 /**

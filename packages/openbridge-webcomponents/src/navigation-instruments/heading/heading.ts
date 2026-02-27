@@ -7,7 +7,7 @@ import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {WatchCircleType} from '../watch/watch.js';
 import {SetpointBundle} from '../../svghelpers/setpoint-bundle.js';
-import type {SetpointColorMode} from '../../svghelpers/setpoint.js';
+import {Priority} from '../types.js';
 import {customElement} from '../../decorator.js';
 
 export enum CompassDirection {
@@ -25,9 +25,7 @@ export class ObcHeading extends LitElement {
   @property({type: Number}) newHeadingSetpoint: number | undefined;
   @property({type: Boolean}) atHeadingSetpoint: boolean = false;
   @property({type: Number}) headingSetpointAtZeroDeadband: number = 0.5;
-  @property({type: String}) headingSetpointColorMode:
-    | SetpointColorMode
-    | undefined;
+  @property({type: Boolean}) headingSetpointOverride: boolean = false;
   @property({type: Boolean}) disableAutoAtHeadingSetpoint: boolean = false;
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
   @property({type: Boolean}) animateSetpoint: boolean = false;
@@ -35,7 +33,7 @@ export class ObcHeading extends LitElement {
   @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
   @property({type: String}) direction: CompassDirection =
     CompassDirection.NorthUp;
-  @property({type: Boolean}) enhanced: boolean = false;
+  @property({type: String}) priority: Priority = Priority.regular;
 
   private _headingSp = new SetpointBundle({
     angularWraparound: true,
@@ -52,7 +50,7 @@ export class ObcHeading extends LitElement {
       disableAutoAtSetpoint: this.disableAutoAtHeadingSetpoint,
       autoAtSetpointDeadband: this.autoAtHeadingSetpointDeadband,
       setpointAtZeroDeadband: this.headingSetpointAtZeroDeadband,
-      setpointColorMode: this.headingSetpointColorMode,
+      setpointOverride: this.headingSetpointOverride,
       animateSetpoint: this.animateSetpoint,
     });
   }
@@ -129,7 +127,8 @@ export class ObcHeading extends LitElement {
           .newAngleSetpoint=${this.newHeadingSetpoint}
           .atAngleSetpoint=${this._headingSp.computeAtSetpoint(this.heading)}
           .angleSetpointAtZeroDeadband=${this.headingSetpointAtZeroDeadband}
-          .colorMode=${this.headingSetpointColorMode}
+          .setpointOverride=${this.headingSetpointOverride}
+          .priority=${this.priority}
           .animateSetpoint=${this.animateSetpoint}
           .rotation=${this.getRotation()}
         >
@@ -138,12 +137,12 @@ export class ObcHeading extends LitElement {
           ${arrow(
             ArrowStyle.HDG,
             this.heading + (this.getRotation() ?? 0),
-            this.enhanced
+            this.priority
           )}
           ${arrow(
             ArrowStyle.COG,
             this.courseOverGround + (this.getRotation() ?? 0),
-            false
+            Priority.regular
           )}
         </svg>
       </div>

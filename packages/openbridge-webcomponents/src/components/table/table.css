@@ -72,9 +72,12 @@
     pointer-events: none;
   }
 
+  @mixin scrollbar;
+
   .grid-body {
     grid-row: 3;
     overflow: auto;
+    scrollbar-gutter: stable;
     display: grid;
     grid-column: 1/-1;
     grid-template-columns: subgrid;

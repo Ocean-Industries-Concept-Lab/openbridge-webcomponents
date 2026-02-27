@@ -6,7 +6,7 @@ import '../alert-icon/alert-icon.js';
 import {ObcAlertMenuItem, ObcAlertMenuItemStatus} from './alert-menu-item.js';
 
 const meta: Meta<ObcAlertMenuItem> = {
-  title: 'Application Components/Alerts/Alert menu item',
+  title: 'Application Components/Alerts/Alert Menu Item',
   component: 'obc-alert-menu-item',
   tags: ['autodocs', '6.0'],
   args: {

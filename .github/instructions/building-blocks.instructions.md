@@ -130,6 +130,7 @@ When working with SVG helper utilities:
    - `rectangular.ts`: Helpers for rectangular shapes and layouts
    - `circle.ts`: Helpers for circular/radial shapes
    - `roundedArch.ts`: Helpers for rounded arch paths
+   - `setpoint.ts`, `setpoint-mixin.ts`, `setpoint-bundle.ts`: Setpoint marker design layer, state management, and animation. See `setpoint.instructions.md` for full documentation.
    - `index.ts`: Export all helpers for convenient importing
    - Organize helpers by shape/concept, not by component
 

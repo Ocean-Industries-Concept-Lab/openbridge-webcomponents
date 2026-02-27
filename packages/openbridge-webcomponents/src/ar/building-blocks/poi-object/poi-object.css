@@ -72,8 +72,10 @@
   position: absolute;
   border-radius: var(--maneuvering-components-poi-button-border-radius-round);
   bottom: var(--obc-poi-bottom-offset);
+  opacity: var(--obc-poi-object-frame-opacity, 1);
   box-shadow: var(--obc-poi-object-shadow, none);
   transition:
+    opacity var(--obc-poi-opacity-transition-duration, 0.1s) ease-out,
     width var(--obc-poi-size-transition-duration, 0.1s) ease-out,
     height var(--obc-poi-size-transition-duration, 0.1s) ease-out,
     background-color var(--obc-poi-color-transition-duration, 0.1s) ease-out,

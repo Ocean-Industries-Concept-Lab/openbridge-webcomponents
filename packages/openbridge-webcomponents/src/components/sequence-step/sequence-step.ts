@@ -5,6 +5,11 @@ import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement} from '../../decorator.js';
 import style from './sequence-step.css?inline';
 import '../../icons/icon-check-google.js';
+import {
+  SequenceLoadingSpinnerProgressionType,
+  SequenceLoadingSpinnerType,
+} from '../sequence-loading-spinner/sequence-loading-spinner.js';
+import '../sequence-loading-spinner/sequence-loading-spinner.js';
 
 export enum SequenceOrientation {
   vertical = 'vertical',
@@ -32,6 +37,16 @@ export enum SequenceValue {
   completed = 'completed',
 }
 
+/**
+ * Visual variants used by sequence toolbar layouts.
+ * These map to `:host([variant="..."])` selectors in the component CSS.
+ */
+export enum SequenceVariant {
+  toolbarAdd = 'toolbar-add',
+  toolbarCondensedIcon = 'toolbar-condensed-icon',
+  toolbarPrev = 'toolbar-prev',
+}
+
 @customElement('obc-sequence-step')
 /**
  * `<obc-sequence-step>` renders the visual node of a sequence diagram.
@@ -44,6 +59,7 @@ export class ObcSequenceStep extends LitElement {
   @property({type: String}) type: SequenceType = SequenceType.medium;
   @property({type: String}) styleType: SequenceStyle = SequenceStyle.regular;
   @property({type: String}) value: SequenceValue = SequenceValue.regular;
+  @property({type: String, reflect: true}) variant?: SequenceVariant;
   /** Displays the built-in state icon for medium/large regular steps. */
   @property({type: Boolean}) hasIcon = false;
   @property({type: Boolean}) hideStepInputConnector = false;
@@ -103,11 +119,13 @@ export class ObcSequenceStep extends LitElement {
 
     if (this.value === SequenceValue.loading) {
       return html`
-        <span
-          class="state-icon state-icon--spinner sequence-step-spinner"
+        <obc-sequence-loading-spinner
+          class="state-icon state-icon--spinner"
           part="state-icon"
           aria-hidden="true"
-        ></span>
+          .type=${this.loadingSpinnerType}
+          .progression=${SequenceLoadingSpinnerProgressionType.determinate}
+        ></obc-sequence-loading-spinner>
       `;
     }
 
@@ -155,6 +173,12 @@ export class ObcSequenceStep extends LitElement {
     return `Sequence step ${readable}`;
   }
 
+  private get resolvedAriaLabel(): string {
+    // If the consumer provides an explicit accessible name on the host,
+    // prefer it over the generic state-based label.
+    return this.getAttribute('aria-label') ?? this.stepAriaLabel;
+  }
+
   private renderSmallIndicator(): TemplateResult {
     const showCheck =
       this.styleType === SequenceStyle.regular &&
@@ -162,14 +186,54 @@ export class ObcSequenceStep extends LitElement {
 
     return html`
       <div class="node" part="node" aria-hidden="true">
-        ${showCheck
-          ? html`<obi-check-google
-              class="small-check"
-              part="state-icon"
-              aria-hidden="true"
-            ></obi-check-google>`
-          : nothing}
+        ${this.value === SequenceValue.loading
+          ? this.renderLoadingSpinner()
+          : showCheck
+            ? html`<obi-check-google
+                class="small-check"
+                part="state-icon"
+                aria-hidden="true"
+              ></obi-check-google>`
+            : nothing}
       </div>
+    `;
+  }
+
+  private get loadingSpinnerType(): SequenceLoadingSpinnerType {
+    const isPoint = this.styleType === SequenceStyle.point;
+    if (this.type === SequenceType.small) {
+      return isPoint
+        ? SequenceLoadingSpinnerType.indicatorPoint
+        : SequenceLoadingSpinnerType.indicator;
+    }
+    if (this.type === SequenceType.medium) {
+      return isPoint
+        ? SequenceLoadingSpinnerType.tagPoint
+        : SequenceLoadingSpinnerType.tag;
+    }
+    return isPoint
+      ? SequenceLoadingSpinnerType.buttonPoint
+      : SequenceLoadingSpinnerType.button;
+  }
+
+  private renderLoadingSpinner(): TemplateResult {
+    return html`
+      <obc-sequence-loading-spinner
+        aria-hidden="true"
+        .type=${this.loadingSpinnerType}
+        .progression=${SequenceLoadingSpinnerProgressionType.determinate}
+      ></obc-sequence-loading-spinner>
+    `;
+  }
+
+  private renderPointLoadingSpinner(): TemplateResult {
+    return html`
+      <span class="loading-spinner" aria-hidden="true">
+        <obc-sequence-loading-spinner
+          .type=${this.loadingSpinnerType}
+          .progression=${SequenceLoadingSpinnerProgressionType.determinate}
+        ></obc-sequence-loading-spinner>
+      </span>
     `;
   }
 
@@ -194,6 +258,10 @@ export class ObcSequenceStep extends LitElement {
       return this.renderSmallIndicator();
     }
     if (this.isMediumPoint || this.isLargePoint) {
+      const loadingSpinner =
+        this.value === SequenceValue.loading
+          ? this.renderPointLoadingSpinner()
+          : nothing;
       return html`
         <div
           class="node ${this.type === 'medium' && this.styleType === 'point'
@@ -201,6 +269,7 @@ export class ObcSequenceStep extends LitElement {
             : ''}"
           part="node"
         >
+          ${loadingSpinner}
           <div class="content" part="label">
             <slot></slot>
           </div>
@@ -220,13 +289,14 @@ export class ObcSequenceStep extends LitElement {
   static override styles = unsafeCSS(style);
 
   override render(): TemplateResult {
+    const ariaLabel = this.resolvedAriaLabel;
     if (this.styleType === SequenceStyle.connector) {
       return html`
         <div
           class=${classMap(this.getWrapperClasses())}
           part="wrapper"
           role="listitem"
-          aria-label=${this.stepAriaLabel}
+          aria-label=${ariaLabel}
           aria-current=${ifDefined(this.stepAriaCurrent ?? undefined)}
         >
           <div class="body" part="body">
@@ -291,7 +361,7 @@ export class ObcSequenceStep extends LitElement {
           class=${wrapperClasses}
           part="wrapper"
           role="listitem"
-          aria-label=${this.stepAriaLabel}
+          aria-label=${ariaLabel}
           aria-current=${ifDefined(ariaCurrent)}
         >
           ${contents}
@@ -304,7 +374,7 @@ export class ObcSequenceStep extends LitElement {
         class=${wrapperClasses}
         part="wrapper"
         role="listitem"
-        aria-label=${this.stepAriaLabel}
+        aria-label=${ariaLabel}
         aria-current=${ifDefined(ariaCurrent)}
       >
         ${contents}

@@ -46,12 +46,38 @@ import compentStyle from './scrollbar.css?inline';
  */
 @customElement('obc-scrollbar')
 export class ObcScrollbar extends LitElement {
+  private _resizeObserver: ResizeObserver | null = null;
+
   override render() {
     return html`
       <div class="wrapper">
         <slot></slot>
       </div>
     `;
+  }
+
+  override firstUpdated() {
+    const wrapper = this.shadowRoot?.querySelector('.wrapper');
+    if (wrapper) {
+      this._resizeObserver = new ResizeObserver(() => this._checkOverflow());
+      this._resizeObserver.observe(wrapper);
+      // Also observe slotted children size changes
+      const slot = wrapper.querySelector('slot');
+      slot?.addEventListener('slotchange', () => this._checkOverflow());
+    }
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this._resizeObserver?.disconnect();
+    this._resizeObserver = null;
+  }
+
+  private _checkOverflow() {
+    const wrapper = this.shadowRoot?.querySelector('.wrapper');
+    if (!wrapper) return;
+    const isOverflowing = wrapper.scrollHeight > wrapper.clientHeight;
+    this.toggleAttribute('overflowing', isOverflowing);
   }
 
   /**

@@ -11,7 +11,7 @@ import {
 } from './poi-graphic-line.js';
 
 const meta: Meta<ObcPoiGraphicLine> = {
-  title: 'AR/Building blocks/POI Graphic Line',
+  title: 'AR/Building Blocks/POI Graphic Line',
   tags: ['autodocs'],
   component: 'obc-poi-graphic-line',
   argTypes: {

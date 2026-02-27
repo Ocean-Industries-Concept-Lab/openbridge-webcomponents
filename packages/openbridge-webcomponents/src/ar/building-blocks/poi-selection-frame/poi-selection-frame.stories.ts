@@ -8,7 +8,7 @@ import {
 import './poi-selection-frame.js';
 
 const meta: Meta<ObcPoiSelectionFrame> = {
-  title: 'AR/Building blocks/POI Selection Frame',
+  title: 'AR/Building Blocks/POI Selection Frame',
   tags: ['autodocs', '6.1'],
   component: 'obc-poi-selection-frame',
   args: {
