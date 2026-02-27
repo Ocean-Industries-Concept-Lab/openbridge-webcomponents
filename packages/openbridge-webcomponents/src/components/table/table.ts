@@ -24,6 +24,7 @@ import {
   FillMode,
   FrameStyle,
   InstrumentState,
+  Priority,
   ScaleType,
 } from '../../building-blocks/bar-horizontal/bar-horizontal.js';
 
@@ -105,7 +106,7 @@ export interface ObcTableCellDataHorizontalBar {
   hasBar?: boolean;
   hasScale?: boolean;
   hideLabels?: boolean;
-  enhanced?: boolean;
+  priority?: Priority;
   fillMode?: FillMode;
   fillMin?: number;
   fillMax?: number;
@@ -1099,7 +1100,6 @@ export class ObcTable extends LitElement {
       const hasBar = value.hasBar ?? true;
       const hasScale = value.hasScale ?? false;
       const hideLabels = value.hideLabels ?? true;
-      const enhanced = value.enhanced ?? true;
       const fixedAspectRatio = value.fixedAspectRatio ?? true;
       return html`<div
         class=${classMap({
@@ -1119,7 +1119,7 @@ export class ObcTable extends LitElement {
           .hasBar=${hasBar}
           .hasScale=${hasScale}
           .hideLabels=${hideLabels}
-          .enhanced=${enhanced}
+          .priority=${value.priority ?? Priority.regular}
           .fillMode=${value.fillMode ?? FillMode.fill}
           .fillMin=${value.fillMin}
           .fillMax=${value.fillMax}
@@ -1127,7 +1127,7 @@ export class ObcTable extends LitElement {
           .scaleType=${value.scaleType ?? ScaleType.regular}
           .frameStyle=${value.frameStyle ?? FrameStyle.regular}
           .side=${value.side ?? ExternalScaleSide.bottom}
-          .state=${value.state ?? InstrumentState.inCommand}
+          .state=${value.state ?? InstrumentState.active}
           .fixedAspectRatio=${fixedAspectRatio}
           .scaleReferenceSize=${value.scaleReferenceSize ?? 384}
           part=${ifDefined(cssPart(value, 'bar'))}
