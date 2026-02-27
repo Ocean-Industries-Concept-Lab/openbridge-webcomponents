@@ -16,6 +16,8 @@
     "build:translations": "lit localize build",
     "build:wrappers": "lit labs gen --framework=vue --framework=react --framework=angular --framework=svelte --out=.. && node fix-generated.cjs",
     "typecheck": "tsc --noEmit",
+    "preview": "vite preview",
+    "prebuild-storybook": "npm run build:translations",
     "storybook": "npm run analyze && storybook dev -p 6006 --no-open",
     "build-storybook": "storybook build",
     "storybook:server": "http-server -p 6006 storybook-static",

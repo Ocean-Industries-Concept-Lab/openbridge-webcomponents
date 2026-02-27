@@ -14,12 +14,44 @@
   align-content: start;
   grid-template-rows: min-content min-content 1fr;
 
+  &.has-selection-column {
+    grid-template-columns:
+      var(
+        --selection-column-width,
+        var(--menu-navigation-components-table-item-touch-target-size)
+      )
+      repeat(var(--grid-columns-rest), minmax(0, 1fr));
+  }
+
   .grid-header {
     grid-row: 1;
     display: grid;
     grid-column: 1/-1;
     grid-template-columns: subgrid;
     padding: 0 var(--menu-navigation-components-table-header-row-margin);
+  }
+
+  .grid-header .selection-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    min-width: var(
+      --selection-column-width,
+      var(--menu-navigation-components-table-item-touch-target-size)
+    );
+    min-height: var(
+      --menu-navigation-components-table-header-item-touch-target-size
+    );
+  }
+
+  .grid-header .selection-header obc-checkbox {
+    --flat-hover-background-color: transparent;
+    --flat-hover-border-color: transparent;
+    --flat-active-background-color: transparent;
+    --flat-active-border-color: transparent;
+    --flat-pressed-background-color: transparent;
+    --flat-pressed-border-color: transparent;
   }
 
   .grid-header-divider {
@@ -60,18 +92,34 @@
     will-change: transform, opacity;
     position: relative;
     padding: 0;
-
     &.striped {
       background: var(--container-section-color);
     }
 
     @mixin style style=flat;
-    border: none;
+    border: 1px solid transparent;
+    --flat-active-background-color: transparent;
     @mixin outline-inward;
     border-radius: var(--global-border-radius-border-radius-base);
 
     &.selected {
       @mixin style style=amplified;
+    }
+
+    &.selected-with-prev {
+      border-top-color: transparent;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+    }
+
+    &.selected-with-next {
+      border-bottom-color: transparent;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    &.selected-with-next .grid-row-divider {
+      display: none;
     }
 
     &.animating {
@@ -89,6 +137,22 @@
       gap: var(--menu-navigation-components-table-item-label-spacing);
       @mixin font-body;
       color: var(--on-flat-active-color);
+
+      &.selection {
+        min-width: var(
+          --selection-column-width,
+          var(--menu-navigation-components-table-item-touch-target-size)
+        );
+        width: var(
+          --selection-column-width,
+          var(--menu-navigation-components-table-item-touch-target-size)
+        );
+        max-width: var(
+          --selection-column-width,
+          var(--menu-navigation-components-table-item-touch-target-size)
+        );
+        padding: 0;
+      }
 
       &.neutral {
         color: var(--on-flat-neutral-color);
@@ -159,6 +223,52 @@
       &.button {
         obc-button {
           width: 100%;
+        }
+      }
+
+      &.checkbox {
+        min-width: 0;
+        @mixin style style=flat noClick;
+        background: transparent;
+        --flat-active-background-color: transparent;
+        --flat-hover-background-color: transparent;
+      }
+
+      &.checkbox obc-checkbox {
+        --flat-hover-background-color: transparent;
+        --flat-hover-border-color: transparent;
+        --flat-active-background-color: transparent;
+        --flat-active-border-color: transparent;
+        --flat-pressed-background-color: transparent;
+        --flat-pressed-border-color: transparent;
+      }
+
+      &.horizontal-bar {
+        padding: 0
+          var(--menu-navigation-components-table-item-padding-horizontal);
+      }
+
+      &.horizontal-bar obc-bar-horizontal {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      &.tags {
+        gap: calc(
+          var(--menu-navigation-components-table-item-badge-spacing) * 2
+        );
+
+        .tag-overflow {
+          @mixin font-label;
+          color: var(--on-flat-neutral-color);
+          white-space: nowrap;
+          margin: 0;
+        }
+
+        &.wrap {
+          flex-wrap: wrap;
+          align-content: center;
         }
       }
     }
