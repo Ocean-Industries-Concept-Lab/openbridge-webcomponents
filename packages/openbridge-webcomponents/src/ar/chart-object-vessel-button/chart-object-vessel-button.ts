@@ -37,12 +37,57 @@ export enum Type {
 }
 
 /**
- * A button that displays a vessel on a chart.
+ * `<obc-chart-object-vessel-button>` - Vessel marker button/flat visual with heading, speed/turn indicators, and optional metadata labels.
  *
- * @slot - Vessel type icon.
- * @slot silhouette - Vessel type icon, same as the icon in default slot.
- * @slot number - The number of the vessel.
- * @slot name - The name of the vessel.
+ * ## Overview
+ * Use this component to render a vessel-shaped marker with configurable states and optional text badges.
+ * Keywords/synonyms: vessel marker, chart object button, heading marker, target symbol.
+ *
+ * ## Features/Variants
+ * - `type` (default `flat`): `flat`, `button`, `flat-large`, `large`, `flat-speed-rot`, `button-speed-rot`.
+ * - `state` (default `enabled`): `enabled`, `active`, `disabled`, `caution`, `warning`, `alarm`.
+ * - `selected` (default `false`): toggles selection frame.
+ * - `heading` (default `0`): rotates visible wrapper.
+ * - `speedIndicator` (default `two`): `stopped`, `one`, `two`, `three`, `anchored`.
+ * - `turnRate` (default `0`): contributes to turn-rate arc shape when speed/turn variants are used.
+ * - `course` + `courseArrowPx`: renders optional course arrow line with provided height.
+ * - `ownShipIndicator` (default `false`): renders cross-line indicator overlay.
+ * - `vesselImage` + `vesselImageSize`: renders preset vessel image or slotted fallback.
+ * - `number` and `name`: show optional text chips with overridable slots.
+ * - TODO(designer): Confirm intended interaction differences between `button` and `flat` families.
+ *
+ * ## Usage Guidelines
+ * - Use `button`/`large`/`button-speed-rot` when the marker should behave like a button element.
+ * - Use `flat` variants for non-button rendering where semantic button behavior is not required.
+ * - Provide either `vesselImage` or `vessel-image` slot content for custom imagery.
+ *
+ * ## Slots/Content
+ * - Default slot: Primary vessel icon.
+ * - `silhouette`: Optional secondary vessel silhouette icon.
+ * - `number`: Optional content for the number badge.
+ * - `name`: Optional content for the name badge.
+ * - `vessel-image`: Optional vessel image content used when `vesselImage` is not set.
+ *
+ * ## Events
+ * This component does not emit custom events.
+ *
+ * ## Best Practices
+ * - Keep `heading` and `course` values in degrees from the same source to avoid visual drift.
+ * - Use `speedIndicator` and `turnRate` together only with speed/turn-capable `type` variants.
+ *
+ * ## Example
+ * ```html
+ * <obc-chart-object-vessel-button type="button" state="enabled" selected>
+ *   <obi-placeholder></obi-placeholder>
+ *   <obi-placeholder slot="silhouette"></obi-placeholder>
+ * </obc-chart-object-vessel-button>
+ * ```
+ *
+ * @slot - Primary vessel icon.
+ * @slot silhouette - Optional secondary vessel silhouette icon.
+ * @slot number - Optional content for the number badge.
+ * @slot name - Optional content for the name badge.
+ * @slot vessel-image - Optional vessel image content used when `vesselImage` is not set.
  */
 @customElement('obc-chart-object-vessel-button')
 export class ObcChartObjectVesselButton extends LitElement {
@@ -89,10 +134,10 @@ export class ObcChartObjectVesselButton extends LitElement {
         <div
             class="icon-wrapper" 
           >
-            <span class="icon-silhouette">
+            <span class="icon-silhouette" part="icon-silhouette">
               <slot name="silhouette"></slot>
             </span>
-            <span class="icon-primary">
+            <span class="icon-primary" part="icon">
               <slot></slot>
             </span>
 

@@ -4,6 +4,7 @@ import './compass.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
 import {VesselImage} from '../watch/watch.js';
+import {InstrumentState, Priority} from '../types.js';
 
 const meta: Meta<typeof ObcCompass> = {
   title: 'Instruments/Compass',
@@ -21,7 +22,7 @@ const meta: Meta<typeof ObcCompass> = {
         hinted: false,
       },
     ],
-    headingSetPoint: 311,
+    headingSetpoint: 311,
     windSpeed: 4,
     windFromDirection: 45,
     currentSpeed: 3,
@@ -29,12 +30,14 @@ const meta: Meta<typeof ObcCompass> = {
     rotationsPerMinute: 1,
     vesselImage: VesselImage.psvTop,
     direction: CompassDirection.NorthUp,
+    touching: false,
+    priority: Priority.enhanced,
   },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
     heading: {control: {type: 'range', min: 0, max: 360, step: 1}},
     courseOverGround: {control: {type: 'range', min: 0, max: 360, step: 1}},
-    headingSetPoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
+    headingSetpoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
     windSpeed: {control: {type: 'range', min: 0, max: 14, step: 1}},
     windFromDirection: {control: {type: 'range', min: 0, max: 360, step: 1}},
     currentSpeed: {control: {type: 'range', min: 0, max: 4, step: 1}},
@@ -54,6 +57,9 @@ const meta: Meta<typeof ObcCompass> = {
       control: {type: 'select'},
       options: Object.values(CompassDirection),
     },
+    touching: {control: 'boolean'},
+    state: {control: 'select', options: Object.values(InstrumentState)},
+    priority: {control: 'select', options: Object.values(Priority)},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcCompass>;
@@ -61,17 +67,24 @@ const meta: Meta<typeof ObcCompass> = {
 export default meta;
 type Story = StoryObj<ObcCompass>;
 
-export const NorthUp: Story = {
+export const NorthUpInCommand: Story = {
   args: {},
 };
 
-export const HeadingUp: Story = {
+export const NorthUpNotInCommand: Story = {
+  args: {
+    state: InstrumentState.active,
+    priority: Priority.regular,
+  },
+};
+
+export const HeadingUpInCommand: Story = {
   args: {
     direction: CompassDirection.HeadingUp,
   },
 };
 
-export const CourseUp: Story = {
+export const CourseUpInCommand: Story = {
   args: {
     direction: CompassDirection.CourseUp,
   },

@@ -5,6 +5,7 @@ import chartCommonStyle from '../../charthelpers/chart-common.css?inline';
 import chartDebugStyle from '../../charthelpers/chart-debug.css?inline';
 import chartLegendStyle from '../../charthelpers/chart-legend.css?inline';
 import {customElement} from '../../decorator.js';
+import {Priority} from '../../navigation-instruments/types.js';
 import {
   Chart,
   PieController,
@@ -40,6 +41,7 @@ const PIE_DIMENSIONS = {
 } as const;
 
 const PIE_RECREATE_PROP_NAMES = [
+  'priority',
   'sunburst',
   'showOuterLabels',
   'showUnit',
@@ -54,7 +56,7 @@ const PIE_WATCHED_PROP_NAMES = [
   'legend',
   'data',
   'colors',
-  'enhanced',
+  'priority',
   'sunburst',
   'showOuterLabels',
   'showUnit',
@@ -84,6 +86,8 @@ const PIE_WATCHED_PROP_NAMES = [
  * - **Customization:**
  *   - Custom segment colors (with automatic fallback to theme palette).
  *   - Adjustable outer label formatting and units.
+ * - **Color Priority:** Set `priority` to `Priority.enhanced` to use the blue/enhanced
+ *   color palette instead of the default gray/regular palette (default: `Priority.regular`).
  * - **Responsive Behavior:**
  *   - Automatically hides labels when height < 192px.
  *   - Maintains aspect ratio and adjusts padding for optimal label positioning.
@@ -165,8 +169,8 @@ export class ObcPieChart extends LitElement {
   @property({attribute: false})
   colors: string[] = [];
 
-  @property({type: Boolean})
-  enhanced = false;
+  @property({type: String})
+  priority: Priority = Priority.regular;
 
   @property({type: Boolean})
   showOuterLabels = false;
@@ -372,7 +376,9 @@ export class ObcPieChart extends LitElement {
     const chartColors = getChartColorsOrDefault(
       this,
       this.colors,
-      this.enhanced ? CHART_SECTOR_ENHANCED_COLORS : CHART_SECTOR_DEFAULT_COLORS
+      this.priority === Priority.enhanced
+        ? CHART_SECTOR_ENHANCED_COLORS
+        : CHART_SECTOR_DEFAULT_COLORS
     );
     const segmentColors = values.map(
       (_, index) => chartColors[index % chartColors.length]

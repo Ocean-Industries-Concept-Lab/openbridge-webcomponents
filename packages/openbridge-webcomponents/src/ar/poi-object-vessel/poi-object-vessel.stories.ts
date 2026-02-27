@@ -92,9 +92,9 @@ export const Default: Story = {
   render: (args) => html`
     <obc-poi-object-vessel
       type=${args.type}
-      objectStyle=${args.objectStyle}
-      state=${args.state}
-      ?interactive=${args.interactive}
+      .objectStyle=${args.objectStyle}
+      .state=${args.state}
+      .interactive=${args.interactive}
     >
       ${args.type === ObcPoiObjectVesselType.Indicator
         ? html`<obi-vessel-type-psv-filled
@@ -118,9 +118,9 @@ export const Interactive: Story = {
       <div style="text-align: center;">
         <obc-poi-object-vessel
           type="regular"
-          objectStyle=${args.objectStyle}
-          state=${args.state}
-          ?interactive=${args.interactive}
+          .objectStyle=${args.objectStyle}
+          .state=${args.state}
+          .interactive=${args.interactive}
           @click=${() => console.log('Regular clicked')}
         >
           <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
@@ -132,9 +132,9 @@ export const Interactive: Story = {
       <div style="text-align: center;">
         <obc-poi-object-vessel
           type="indicator"
-          objectStyle=${args.objectStyle}
-          state=${args.state}
-          ?interactive=${args.interactive}
+          .objectStyle=${args.objectStyle}
+          .state=${args.state}
+          .interactive=${args.interactive}
           @click=${() => console.log('Indicator clicked')}
         >
           <obi-vessel-type-psv-filled useCssColor></obi-vessel-type-psv-filled>
@@ -156,8 +156,8 @@ export const Indicator: Story = {
   render: (args) => html`
     <obc-poi-object-vessel
       type=${args.type}
-      objectStyle=${args.objectStyle}
-      state=${args.state}
+      .objectStyle=${args.objectStyle}
+      .state=${args.state}
     >
       <obi-vessel-type-psv-filled useCssColor></obi-vessel-type-psv-filled>
     </obc-poi-object-vessel>
@@ -171,8 +171,8 @@ export const Regular: Story = {
   render: (args) => html`
     <obc-poi-object-vessel
       type=${args.type}
-      objectStyle=${args.objectStyle}
-      state=${args.state}
+      .objectStyle=${args.objectStyle}
+      .state=${args.state}
     >
       <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
     </obc-poi-object-vessel>
@@ -186,8 +186,8 @@ export const Large: Story = {
   render: (args) => html`
     <obc-poi-object-vessel
       type=${args.type}
-      objectStyle=${args.objectStyle}
-      state=${args.state}
+      .objectStyle=${args.objectStyle}
+      .state=${args.state}
     >
       <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
     </obc-poi-object-vessel>
@@ -201,8 +201,8 @@ export const SpeedRot: Story = {
   render: (args) => html`
     <obc-poi-object-vessel
       type=${args.type}
-      objectStyle=${args.objectStyle}
-      state=${args.state}
+      .objectStyle=${args.objectStyle}
+      .state=${args.state}
     >
       ${speedRotSlots}
     </obc-poi-object-vessel>
@@ -216,8 +216,8 @@ export const NUp: Story = {
   render: (args) => html`
     <obc-poi-object-vessel
       type=${args.type}
-      objectStyle=${args.objectStyle}
-      state=${args.state}
+      .objectStyle=${args.objectStyle}
+      .state=${args.state}
     >
       <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
     </obc-poi-object-vessel>
@@ -231,8 +231,8 @@ export const NUpLarge: Story = {
   render: (args) => html`
     <obc-poi-object-vessel
       type=${args.type}
-      objectStyle=${args.objectStyle}
-      state=${args.state}
+      .objectStyle=${args.objectStyle}
+      .state=${args.state}
     >
       <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
     </obc-poi-object-vessel>
@@ -248,8 +248,8 @@ export const Categorical: Story = {
   render: (args) => html`
     <obc-poi-object-vessel
       type=${args.type}
-      objectStyle=${args.objectStyle}
-      state=${args.state}
+      .objectStyle=${args.objectStyle}
+      .state=${args.state}
     >
       <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
     </obc-poi-object-vessel>
@@ -265,8 +265,8 @@ export const Checked: Story = {
   render: (args) => html`
     <obc-poi-object-vessel
       type=${args.type}
-      objectStyle=${args.objectStyle}
-      state=${args.state}
+      .objectStyle=${args.objectStyle}
+      .state=${args.state}
     >
       <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
     </obc-poi-object-vessel>
@@ -280,8 +280,8 @@ export const StaticUnchecked: Story = {
   render: (args) => html`
     <obc-poi-object-vessel
       type=${args.type}
-      objectStyle=${args.objectStyle}
-      state=${args.state}
+      .objectStyle=${args.objectStyle}
+      .state=${args.state}
     >
       <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
     </obc-poi-object-vessel>
@@ -295,8 +295,8 @@ export const StaticChecked: Story = {
   render: (args) => html`
     <obc-poi-object-vessel
       type=${args.type}
-      objectStyle=${args.objectStyle}
-      state=${args.state}
+      .objectStyle=${args.objectStyle}
+      .state=${args.state}
     >
       <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
     </obc-poi-object-vessel>
@@ -310,8 +310,8 @@ export const Activated: Story = {
   render: (args) => html`
     <obc-poi-object-vessel
       type=${args.type}
-      objectStyle=${args.objectStyle}
-      state=${args.state}
+      .objectStyle=${args.objectStyle}
+      .state=${args.state}
     >
       <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
     </obc-poi-object-vessel>
@@ -325,8 +325,8 @@ export const Overlapped: Story = {
   render: (args) => html`
     <obc-poi-object-vessel
       type=${args.type}
-      objectStyle=${args.objectStyle}
-      state=${args.state}
+      .objectStyle=${args.objectStyle}
+      .state=${args.state}
     >
       <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
     </obc-poi-object-vessel>
@@ -392,7 +392,7 @@ export const AllTypes: Story = {
       <h3 style=${headerStyle}>All Types - Categorical Style</h3>
       <div style=${rowStyle}>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel type="indicator" objectStyle="categorical">
+          <obc-poi-object-vessel type="indicator" .objectStyle=${'categorical'}>
             <obi-vessel-type-psv-filled
               useCssColor
             ></obi-vessel-type-psv-filled>
@@ -400,31 +400,34 @@ export const AllTypes: Story = {
           <div style=${labelStyle}>Indicator</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel type="regular" objectStyle="categorical">
+          <obc-poi-object-vessel type="regular" .objectStyle=${'categorical'}>
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Regular</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel type="large" objectStyle="categorical">
+          <obc-poi-object-vessel type="large" .objectStyle=${'categorical'}>
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Large</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel type="speed-rot" objectStyle="categorical">
+          <obc-poi-object-vessel type="speed-rot" .objectStyle=${'categorical'}>
             ${speedRotSlots}
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Speed+ROT</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel type="n-up" objectStyle="categorical">
+          <obc-poi-object-vessel type="n-up" .objectStyle=${'categorical'}>
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>N-up</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel type="n-up-large" objectStyle="categorical">
+          <obc-poi-object-vessel
+            type="n-up-large"
+            .objectStyle=${'categorical'}
+          >
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>N-up Large</div>
@@ -440,37 +443,37 @@ export const AllStates: Story = {
       <h3 style=${headerStyle}>All States - Regular Style</h3>
       <div style=${rowStyle}>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel state="unchecked">
+          <obc-poi-object-vessel .state=${'unchecked'}>
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Unchecked</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel state="checked">
+          <obc-poi-object-vessel .state=${'checked'}>
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Checked</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel state="static-unchecked">
+          <obc-poi-object-vessel .state=${'static-unchecked'}>
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Static Unchecked</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel state="static-checked">
+          <obc-poi-object-vessel .state=${'static-checked'}>
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Static Checked</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel state="activated">
+          <obc-poi-object-vessel .state=${'activated'}>
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Activated</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel state="overlapped">
+          <obc-poi-object-vessel .state=${'overlapped'}>
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Overlapped</div>
@@ -482,21 +485,27 @@ export const AllStates: Story = {
       <h3 style=${headerStyle}>All States - Categorical Style</h3>
       <div style=${rowStyle}>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel objectStyle="categorical" state="unchecked">
+          <obc-poi-object-vessel
+            .objectStyle=${'categorical'}
+            .state=${'unchecked'}
+          >
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Unchecked</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel objectStyle="categorical" state="checked">
+          <obc-poi-object-vessel
+            .objectStyle=${'categorical'}
+            .state=${'checked'}
+          >
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Checked</div>
         </div>
         <div style=${itemStyle}>
           <obc-poi-object-vessel
-            objectStyle="categorical"
-            state="static-unchecked"
+            .objectStyle=${'categorical'}
+            .state=${'static-unchecked'}
           >
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
@@ -504,21 +513,27 @@ export const AllStates: Story = {
         </div>
         <div style=${itemStyle}>
           <obc-poi-object-vessel
-            objectStyle="categorical"
-            state="static-checked"
+            .objectStyle=${'categorical'}
+            .state=${'static-checked'}
           >
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Static Checked</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel objectStyle="categorical" state="activated">
+          <obc-poi-object-vessel
+            .objectStyle=${'categorical'}
+            .state=${'activated'}
+          >
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Activated</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel objectStyle="categorical" state="overlapped">
+          <obc-poi-object-vessel
+            .objectStyle=${'categorical'}
+            .state=${'overlapped'}
+          >
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Overlapped</div>
@@ -534,13 +549,13 @@ export const AllStyles: Story = {
       <h3 style=${headerStyle}>Regular vs Categorical Style</h3>
       <div style=${rowStyle}>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel objectStyle="regular">
+          <obc-poi-object-vessel .objectStyle=${'regular'}>
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Regular</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel objectStyle="categorical">
+          <obc-poi-object-vessel .objectStyle=${'categorical'}>
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Categorical</div>
@@ -552,7 +567,7 @@ export const AllStyles: Story = {
       <h3 style=${headerStyle}>Indicator Style Comparison</h3>
       <div style=${rowStyle}>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel type="indicator" objectStyle="regular">
+          <obc-poi-object-vessel type="indicator" .objectStyle=${'regular'}>
             <obi-vessel-type-psv-filled
               useCssColor
             ></obi-vessel-type-psv-filled>
@@ -560,7 +575,7 @@ export const AllStyles: Story = {
           <div style=${labelStyle}>Regular</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel type="indicator" objectStyle="categorical">
+          <obc-poi-object-vessel type="indicator" .objectStyle=${'categorical'}>
             <obi-vessel-type-psv-filled
               useCssColor
             ></obi-vessel-type-psv-filled>
@@ -578,7 +593,7 @@ export const IndicatorAllStates: Story = {
       <h3 style=${headerStyle}>Indicator - All States</h3>
       <div style=${rowStyle}>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel type="indicator" state="unchecked">
+          <obc-poi-object-vessel type="indicator" .state=${'unchecked'}>
             <obi-vessel-type-psv-filled
               useCssColor
             ></obi-vessel-type-psv-filled>
@@ -586,7 +601,7 @@ export const IndicatorAllStates: Story = {
           <div style=${labelStyle}>Unchecked</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel type="indicator" state="checked">
+          <obc-poi-object-vessel type="indicator" .state=${'checked'}>
             <obi-vessel-type-psv-filled
               useCssColor
             ></obi-vessel-type-psv-filled>
@@ -594,7 +609,7 @@ export const IndicatorAllStates: Story = {
           <div style=${labelStyle}>Checked</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel type="indicator" state="static-unchecked">
+          <obc-poi-object-vessel type="indicator" .state=${'static-unchecked'}>
             <obi-vessel-type-psv-filled
               useCssColor
             ></obi-vessel-type-psv-filled>
@@ -602,7 +617,7 @@ export const IndicatorAllStates: Story = {
           <div style=${labelStyle}>Static Unchecked</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel type="indicator" state="static-checked">
+          <obc-poi-object-vessel type="indicator" .state=${'static-checked'}>
             <obi-vessel-type-psv-filled
               useCssColor
             ></obi-vessel-type-psv-filled>
@@ -610,7 +625,7 @@ export const IndicatorAllStates: Story = {
           <div style=${labelStyle}>Static Checked</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel type="indicator" state="activated">
+          <obc-poi-object-vessel type="indicator" .state=${'activated'}>
             <obi-vessel-type-psv-filled
               useCssColor
             ></obi-vessel-type-psv-filled>
@@ -618,7 +633,7 @@ export const IndicatorAllStates: Story = {
           <div style=${labelStyle}>Activated</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel type="indicator" state="overlapped">
+          <obc-poi-object-vessel type="indicator" .state=${'overlapped'}>
             <obi-vessel-type-psv-filled
               useCssColor
             ></obi-vessel-type-psv-filled>
@@ -636,21 +651,27 @@ export const CategoricalAllStates: Story = {
       <h3 style=${headerStyle}>Categorical - All States</h3>
       <div style=${rowStyle}>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel objectStyle="categorical" state="unchecked">
+          <obc-poi-object-vessel
+            .objectStyle=${'categorical'}
+            .state=${'unchecked'}
+          >
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Unchecked</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel objectStyle="categorical" state="checked">
+          <obc-poi-object-vessel
+            .objectStyle=${'categorical'}
+            .state=${'checked'}
+          >
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Checked</div>
         </div>
         <div style=${itemStyle}>
           <obc-poi-object-vessel
-            objectStyle="categorical"
-            state="static-unchecked"
+            .objectStyle=${'categorical'}
+            .state=${'static-unchecked'}
           >
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
@@ -658,21 +679,27 @@ export const CategoricalAllStates: Story = {
         </div>
         <div style=${itemStyle}>
           <obc-poi-object-vessel
-            objectStyle="categorical"
-            state="static-checked"
+            .objectStyle=${'categorical'}
+            .state=${'static-checked'}
           >
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Static Checked</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel objectStyle="categorical" state="activated">
+          <obc-poi-object-vessel
+            .objectStyle=${'categorical'}
+            .state=${'activated'}
+          >
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Activated</div>
         </div>
         <div style=${itemStyle}>
-          <obc-poi-object-vessel objectStyle="categorical" state="overlapped">
+          <obc-poi-object-vessel
+            .objectStyle=${'categorical'}
+            .state=${'overlapped'}
+          >
             <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
           </obc-poi-object-vessel>
           <div style=${labelStyle}>Overlapped</div>

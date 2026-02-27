@@ -12,8 +12,8 @@ import '../../icons/icon-placeholder.js';
 import '../../icons/icon-own-ship-alternative-filled.js';
 import {html} from 'lit';
 
-const meta: Meta<typeof ObcChartObjectVesselButton> = {
-  title: 'AR/Chart object vessel button',
+const meta: Meta<ObcChartObjectVesselButton> = {
+  title: 'AR/Chart Object Vessel Button',
   tags: ['6.0'],
   component: 'obc-chart-object-vessel-button',
   args: {

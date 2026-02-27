@@ -179,9 +179,16 @@ export class ObcCommandMenu extends LitElement {
    * @fires change {CustomEvent<{inCommand: boolean}>} Fired when the command state is toggled.
    */
   private onChange(event: ObcStartStopSwitchChangeEvent) {
+    // Stop the start-stop-switch's composed event from leaking through
+    // our shadow DOM — consumers should only see command-menu's own event.
+    event.stopPropagation();
+    const newValue = event.detail.checked;
+    this.inCommand = newValue;
     this.dispatchEvent(
       new CustomEvent<{inCommand: boolean}>('change', {
-        detail: {inCommand: event.detail.checked},
+        detail: {inCommand: newValue},
+        bubbles: true,
+        composed: true,
       })
     );
   }

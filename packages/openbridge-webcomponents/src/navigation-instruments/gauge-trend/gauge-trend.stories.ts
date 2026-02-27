@@ -7,6 +7,7 @@ import {
   BorderRadiusPosition,
   ScaleType,
 } from '../../building-blocks/bar-vertical/bar-vertical.js';
+import {Priority} from '../types.js';
 
 const SAMPLE_DATA = [
   {label: '00', value: 45},
@@ -114,8 +115,9 @@ const meta: Meta = {
     height: {
       control: {type: 'range', min: 128, max: 960, step: 10},
     },
-    enhanced: {
-      control: 'boolean',
+    priority: {
+      control: 'select',
+      options: Object.values(Priority),
     },
     minValue: {
       control: {type: 'number'},
@@ -128,6 +130,10 @@ const meta: Meta = {
     },
     setpoint: {
       control: {type: 'range', min: 0, max: 100, step: 1},
+    },
+    newSetpoint: {
+      control: {type: 'range', min: 0, max: 100, step: 1},
+      description: 'Pending setpoint during adjustment (shows dual markers)',
     },
     hasBar: {
       control: 'boolean',
@@ -151,12 +157,15 @@ const meta: Meta = {
     chartFill: {
       control: 'boolean',
     },
+    touching: {
+      control: 'boolean',
+    },
   },
   args: {
     browserContainerWidth: 384,
     width: 384,
     height: 384,
-    enhanced: false,
+    priority: Priority.regular,
     minValue: 0,
     maxValue: 100,
     value: 50,
@@ -168,18 +177,21 @@ const meta: Meta = {
     fillMin: 0,
     // Note: fillMax intentionally omitted - in 'fill' mode it auto-derives from value
     chartFill: true,
+    touching: false,
   },
   render: (args) => html`
     <obc-gauge-trend
       .data=${SAMPLE_DATA}
       .width=${args.width}
       .height=${args.height}
-      .enhanced=${args.enhanced}
+      .priority=${args.priority}
       .chartFill=${args.chartFill}
       .minValue=${args.minValue}
       .maxValue=${args.maxValue}
       .value=${args.value}
       .setpoint=${args.setpoint}
+      .newSetpoint=${args.newSetpoint}
+      .touching=${args.touching}
       .hasBar=${args.hasBar}
       .hasScale=${args.hasScale}
       .hasAdvice=${args.hasAdvice}
@@ -215,12 +227,14 @@ export const GaugeTrend: Story = {
       .data=${SAMPLE_DATA}
       .width=${_args.width}
       .height=${_args.height}
-      .enhanced=${_args.enhanced}
+      .priority=${_args.priority}
       .chartFill=${_args.chartFill}
       .minValue=${_args.minValue ?? 0}
       .maxValue=${_args.maxValue ?? 100}
       .value=${_args.value}
       .setpoint=${_args.setpoint}
+      .newSetpoint=${_args.newSetpoint}
+      .touching=${_args.touching}
       .hasBar=${_args.hasBar}
       .hasScale=${_args.hasScale}
       .hasAdvice=${_args.hasAdvice}
@@ -253,12 +267,14 @@ export const GaugeTrendScaleReferenceSize: Story = {
       .data=${SAMPLE_DATA}
       .width=${_args.width}
       .height=${_args.height}
-      .enhanced=${_args.enhanced}
+      .priority=${_args.priority}
       .chartFill=${_args.chartFill}
       .minValue=${_args.minValue ?? 0}
       .maxValue=${_args.maxValue ?? 100}
       .value=${_args.value}
       .setpoint=${_args.setpoint}
+      .newSetpoint=${_args.newSetpoint}
+      .touching=${_args.touching}
       .hasBar=${_args.hasBar}
       .hasScale=${_args.hasScale}
       .hasAdvice=${_args.hasAdvice}
@@ -383,7 +399,7 @@ export const ScaleReferenceSizeComparison: StoryObj = {
               .height=${240}
               .scaleReferenceSize=${240}
               .chartFill=${true}
-              .enhanced=${false}
+              .priority=${Priority.regular}
               .minValue=${args.minValue ?? 0}
               .maxValue=${args.maxValue ?? 100}
               .value=${args.value}
@@ -411,7 +427,7 @@ export const ScaleReferenceSizeComparison: StoryObj = {
               .height=${384}
               .scaleReferenceSize=${240}
               .chartFill=${true}
-              .enhanced=${false}
+              .priority=${Priority.regular}
               .minValue=${args.minValue ?? 0}
               .maxValue=${args.maxValue ?? 100}
               .value=${args.value}
@@ -439,7 +455,7 @@ export const ScaleReferenceSizeComparison: StoryObj = {
               .height=${384}
               .scaleReferenceSize=${384}
               .chartFill=${true}
-              .enhanced=${false}
+              .priority=${Priority.regular}
               .minValue=${args.minValue ?? 0}
               .maxValue=${args.maxValue ?? 100}
               .value=${args.value}
@@ -472,7 +488,7 @@ export const GaugeTrendWithoutScale: Story = {
       .data=${SAMPLE_DATA}
       .width=${_args.width}
       .height=${_args.height}
-      .enhanced=${_args.enhanced}
+      .priority=${_args.priority}
       .chartFill=${_args.chartFill}
       .minValue=${_args.minValue ?? 0}
       .maxValue=${_args.maxValue ?? 100}
@@ -513,12 +529,14 @@ export const GaugeTrendWithoutBar: Story = {
       .data=${SAMPLE_DATA}
       .width=${_args.width}
       .height=${_args.height}
-      .enhanced=${_args.enhanced}
+      .priority=${_args.priority}
       .chartFill=${_args.chartFill}
       .minValue=${_args.minValue ?? 0}
       .maxValue=${_args.maxValue ?? 100}
       .value=${_args.value}
       .setpoint=${_args.setpoint}
+      .newSetpoint=${_args.newSetpoint}
+      .touching=${_args.touching}
       .hasBar=${_args.hasBar}
       .hasScale=${_args.hasScale}
       .hasAdvice=${_args.hasAdvice}
@@ -556,12 +574,14 @@ export const GaugeTrendWithAdvice: Story = {
       .data=${SAMPLE_DATA}
       .width=${_args.width}
       .height=${_args.height}
-      .enhanced=${_args.enhanced}
+      .priority=${_args.priority}
       .chartFill=${_args.chartFill}
       .minValue=${_args.minValue ?? 0}
       .maxValue=${_args.maxValue ?? 100}
       .value=${_args.value}
       .setpoint=${_args.setpoint}
+      .newSetpoint=${_args.newSetpoint}
+      .touching=${_args.touching}
       .hasBar=${_args.hasBar}
       .hasScale=${_args.hasScale}
       .hasAdvice=${_args.hasAdvice}
@@ -626,7 +646,7 @@ export const GaugeTrendCustomScaleRange: Story = {
   args: {
     width: 384,
     height: 384,
-    enhanced: true,
+    priority: Priority.enhanced,
     minValue: 25,
     maxValue: 75,
     value: 50,
@@ -645,12 +665,14 @@ export const GaugeTrendCustomScaleRange: Story = {
       .data=${SAMPLE_DATA}
       .width=${_args.width}
       .height=${_args.height}
-      .enhanced=${_args.enhanced}
+      .priority=${_args.priority}
       .chartFill=${_args.chartFill}
       .minValue=${_args.minValue}
       .maxValue=${_args.maxValue}
       .value=${_args.value}
       .setpoint=${_args.setpoint}
+      .newSetpoint=${_args.newSetpoint}
+      .touching=${_args.touching}
       .hasBar=${_args.hasBar}
       .hasScale=${_args.hasScale}
       .hasAdvice=${_args.hasAdvice}
@@ -688,7 +710,7 @@ export const GaugeTrendLabelsOnly: Story = {
       .data=${SAMPLE_DATA}
       .width=${_args.width}
       .height=${_args.height}
-      .enhanced=${_args.enhanced}
+      .priority=${_args.priority}
       .chartFill=${_args.chartFill}
       .minValue=${_args.minValue ?? 0}
       .maxValue=${_args.maxValue ?? 100}
@@ -815,7 +837,7 @@ export const FixedAspectRatioScalingComparison: StoryObj = {
             .width=${args.width}
             .height=${args.height}
             .showGrid=${false}
-            .enhanced=${false}
+            .priority=${Priority.regular}
             .fixedAspectRatioScaling=${false}
             .borderRadiusPosition=${BorderRadiusPosition.innerFirstChild}
             .borderRadiusPositionExternalScales=${BorderRadiusPosition.middleChild}
@@ -843,12 +865,12 @@ export const FixedAspectRatioScalingComparison: StoryObj = {
               .fillMode=${FillMode.fill}
               .value=${args.value}
               .setpoint=${args.setpoint}
-              .primaryTickbarsInterval=${10}
-              .secondaryTickbarsInterval=${5}
-              .tertiaryTickbarsInterval=${1}
+              .primaryTickmarkInterval=${10}
+              .secondaryTickmarkInterval=${5}
+              .tertiaryTickmarkInterval=${1}
               .scaleBackground=${true}
               .fixedAspectRatio=${false}
-              .enhanced=${false}
+              .priority=${Priority.regular}
             ></obc-bar-vertical>
           </obc-area-graph>
         </div>
@@ -865,11 +887,12 @@ export const FixedAspectRatioScalingComparison: StoryObj = {
             .height=${args.height}
             .scaleReferenceSize=${args.scaleReferenceSize}
             .chartFill=${true}
-            .enhanced=${true}
+            .priority=${Priority.enhanced}
             .minValue=${args.minValue ?? 0}
             .maxValue=${args.maxValue ?? 100}
             .value=${args.value}
             .setpoint=${args.setpoint}
+            .touching=${args.touching}
             .hasBar=${true}
             .hasScale=${true}
             .primaryInterval=${10}
@@ -964,7 +987,7 @@ export const RealtimeShifting: Story = {
     g1.width = commonProps.width;
     g1.height = commonProps.height;
     g1.chartFill = true;
-    g1.enhanced = true;
+    g1.priority = Priority.enhanced;
     g1.minValue = commonProps.minValue;
     g1.maxValue = commonProps.maxValue;
     g1.chartMinValue = commonProps.chartMinValue;
@@ -984,7 +1007,7 @@ export const RealtimeShifting: Story = {
     g2.width = commonProps.width;
     g2.height = commonProps.height;
     g2.chartFill = false;
-    g2.enhanced = false;
+    g2.priority = Priority.regular;
     g2.minValue = commonProps.minValue;
     g2.maxValue = commonProps.maxValue;
     g2.chartMinValue = commonProps.chartMinValue;
@@ -1005,7 +1028,7 @@ export const RealtimeShifting: Story = {
     g3.width = commonProps.width;
     g3.height = commonProps.height;
     g3.chartFill = false;
-    g3.enhanced = false;
+    g3.priority = Priority.regular;
     g3.minValue = commonProps.minValue;
     g3.maxValue = commonProps.maxValue;
     g3.chartMinValue = commonProps.chartMinValue;

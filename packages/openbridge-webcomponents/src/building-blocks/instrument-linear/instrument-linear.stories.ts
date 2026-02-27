@@ -6,6 +6,7 @@ import {
   AdviceType,
 } from '../../navigation-instruments/watch/advice.js';
 import {html} from 'lit';
+import {Priority} from '../../navigation-instruments/types.js';
 
 const meta: Meta = {
   title: 'Building Blocks/Instrument Linear',
@@ -67,29 +68,28 @@ const meta: Meta = {
         max: 512,
       },
     },
-    mainTickmark: {
+    mainTickmarks: {
       control: {
-        type: 'boolean',
+        type: 'object',
       },
     },
-    primaryTickbarsInterval: {
+    primaryTickmarkInterval: {
       control: {
         type: 'range',
         min: 1,
         max: 100,
       },
     },
-    secondaryTickbarsInterval: {
+    secondaryTickmarkInterval: {
       control: {
         type: 'range',
         min: 1,
         max: 100,
       },
     },
-    enhanced: {
-      control: {
-        type: 'boolean',
-      },
+    priority: {
+      control: 'select',
+      options: Object.values(Priority),
     },
     advice: {
       control: {
@@ -105,10 +105,10 @@ const meta: Meta = {
     width: 72,
     scaleWidth: 24,
     height: 370,
-    mainTickmark: true,
-    primaryTickbarsInterval: 50,
-    secondaryTickbarsInterval: 10,
-    enhanced: false,
+    mainTickmarks: [0],
+    primaryTickmarkInterval: 50,
+    secondaryTickmarkInterval: 10,
+    priority: Priority.regular,
     advice: [],
   },
   render: (args) => {
@@ -134,12 +134,12 @@ const meta: Meta = {
         {
           hideContainer: false,
           off: false,
-          enhanced: args.enhanced,
+          priority: args.priority,
         },
         {
-          mainTickbar: args.mainTickmark,
-          primaryTickbarsInterval: args.primaryTickbarsInterval,
-          secondaryTickbarsInterval: args.secondaryTickbarsInterval,
+          mainTickmarks: args.mainTickmarks,
+          primaryTickmarkInterval: args.primaryTickmarkInterval,
+          secondaryTickmarkInterval: args.secondaryTickmarkInterval,
         },
         args.advice
       )}
@@ -175,8 +175,8 @@ export const Range: Story = {
     min: -20,
     max: 20,
     value: 0,
-    mainTickmark: 10,
-    secondaryTickbarsInterval: 10,
+    mainTickmarks: [0],
+    secondaryTickmarkInterval: 10,
   },
 };
 

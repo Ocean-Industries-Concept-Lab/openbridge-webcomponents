@@ -7,7 +7,7 @@ import {html, nothing} from 'lit';
 import {ifDefined} from 'lit/directives/if-defined.js';
 
 const meta: Meta<typeof ObcToggletip> = {
-  title: 'UI Components/Message and alerts/Toggletip',
+  title: 'UI Components/Message and Alerts/Toggletip',
   tags: ['autodocs', '6.0'],
   component: 'obc-toggletip',
   args: {

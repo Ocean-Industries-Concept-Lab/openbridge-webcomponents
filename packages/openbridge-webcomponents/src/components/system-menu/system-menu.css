@@ -5,7 +5,7 @@
 .wrapper {
   display: flex;
   user-select: none;
-  width: 320px;
+  width: var(--global-size-spacing-column-width);
   flex-direction: column;
   align-items: flex-start;
   border-radius: var(--app-components-system-menu-border-radius);
@@ -107,8 +107,14 @@
       var(--app-components-system-menu-padding-vertical)
       var(--app-components-system-menu-margin-horizontal);
 
+    .action-container {
+      display: flex;
+      align-items: center;
+      flex: 1 0 0;
+      padding: 0 var(--app-components-system-menu-padding-horizontal);
+    }
+
     .content-item-btn {
-      padding-left: var(--app-components-system-menu-padding-horizontal);
       min-height: var(--ui-components-icon-button-touch-target-size);
     }
 
@@ -135,8 +141,7 @@
     .battery {
       color: var(--element-active-color);
       display: flex;
-      padding: var(--app-components-system-menu-padding-vertical)
-        var(--app-components-system-menu-padding-horizontal);
+      padding: var(--app-components-system-menu-padding-vertical) 0;
       align-items: center;
       justify-content: flex-start;
       gap: var(--app-components-system-menu-spacing);
@@ -153,6 +158,182 @@
 
       .status {
         @mixin font-body;
+      }
+    }
+  }
+
+  &.small-screen {
+    width: var(--global-size-spacing-column-width);
+    height: calc(var(--global-size-spacing-column-width) * 375 / 320);
+
+    .small-screen-content {
+      flex: 1;
+      width: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .small-screen-header {
+      display: flex;
+      flex-direction: column;
+      padding: 0 var(--app-components-system-menu-margin-horizontal)
+        var(--app-components-system-menu-padding-vertical);
+    }
+
+    .small-screen-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: var(--app-components-system-menu-touch-target-size);
+      padding: 0 var(--app-components-system-menu-padding-horizontal);
+      @mixin font-overline;
+      color: var(--element-neutral-color);
+
+      obc-toggle-switch {
+        flex-grow: 0;
+      }
+    }
+
+    .small-screen-controls-row {
+      display: flex;
+      align-items: center;
+      gap: var(--app-components-system-menu-spacing);
+      min-height: var(--app-components-system-menu-touch-target-size);
+      padding: 0 var(--app-components-system-menu-padding-horizontal);
+
+      .small-screen-audio-output {
+        flex-grow: 1;
+      }
+    }
+
+    .small-screen-slider-container {
+      display: flex;
+      align-items: center;
+      flex-grow: 1;
+      gap: 0;
+
+      .small-screen-slider {
+        flex-grow: 1;
+        margin-right: -10px;
+      }
+    }
+
+    .small-screen-volume-label {
+      @mixin font-button;
+      color: var(--element-active-color);
+      width: 40px;
+      flex-shrink: 0;
+      text-align: right;
+    }
+
+    .small-screen-battery-info {
+      display: flex;
+      align-items: center;
+      gap: var(--app-components-system-menu-spacing);
+      @mixin font-body-active;
+      color: var(--element-active-color);
+
+      obc-battery-icon {
+        width: var(--global-size-spacing-icon-icon-size-regular);
+        height: var(--global-size-spacing-icon-icon-size-regular);
+        color: var(--instrument-enhanced-secondary-color);
+      }
+    }
+
+    .small-screen-battery-level {
+      @mixin font-body-active;
+      color: var(--element-active-color);
+    }
+
+    .small-screen-toggle-row {
+      display: flex;
+      align-items: center;
+      padding: 0 var(--app-components-system-menu-padding-horizontal);
+
+      obc-toggle-switch {
+        width: 100%;
+      }
+    }
+
+    .small-screen-button-row {
+      display: flex;
+      align-items: center;
+      padding: 0 var(--app-components-system-menu-padding-horizontal);
+
+      obc-button {
+        flex-grow: 1;
+      }
+    }
+
+    .small-screen-divider {
+      width: 100%;
+      height: 1px;
+      background: var(--border-divider-color);
+      flex-shrink: 0;
+    }
+
+    .small-screen-options {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .small-screen-options-content {
+      padding: var(--app-components-system-menu-padding-vertical)
+        var(--app-components-system-menu-margin-horizontal)
+        var(--app-components-system-menu-padding-vertical)
+        var(--app-components-system-menu-margin-horizontal);
+
+      obc-radio {
+        width: 100%;
+      }
+    }
+
+    obc-scrollbar[overflowing] .small-screen-options-content {
+      padding-right: 0;
+    }
+
+    .menu-bar {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      min-height: var(--menu-navigation-components-tab-item-touch-target-size);
+      flex-shrink: 0;
+      border-top: 1px solid var(--border-divider-color);
+      background: var(--container-section-color);
+
+      button {
+        @mixin style style=flat;
+        appearance: none;
+        border: none;
+        border-left: 1px solid transparent;
+        border-right: 1px solid transparent;
+        background: transparent;
+        flex: 1;
+        height: 100%;
+        min-height: var(
+          --menu-navigation-components-tab-item-touch-target-size
+        );
+        min-width: var(--menu-navigation-components-tab-item-touch-target-size);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--element-neutral-color);
+        cursor: pointer;
+        padding: 0 var(--menu-navigation-components-tab-item-padding-horizontal);
+
+        &.active {
+          background: var(--container-global-color);
+          border-left-color: var(--border-divider-color);
+          border-right-color: var(--border-divider-color);
+          color: var(--instrument-enhanced-secondary-color);
+        }
+
+        .tab-icon {
+          width: var(--menu-navigation-components-tab-item-icon-size);
+          height: var(--menu-navigation-components-tab-item-icon-size);
+        }
       }
     }
   }
@@ -241,7 +422,7 @@
       flex-direction: column;
       align-items: stretch;
       gap: 0;
-      padding-left: 0;
+      padding: 0;
     }
 
     .icon {

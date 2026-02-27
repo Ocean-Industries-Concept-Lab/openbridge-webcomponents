@@ -95,6 +95,8 @@ export enum segmentPosition {
  * </obc-button>
  * ```
  *
+ * @fires click - Fired when the button is clicked (if not disabled).
+ *
  * @slot - Default slot for button label text (required for accessibility)
  * @slot leading-icon - Slot for an icon to appear before the label (shown when `showLeadingIcon` is true)
  * @slot trailing-icon - Slot for an icon to appear after the label (shown when `showTrailingIcon` is true)
