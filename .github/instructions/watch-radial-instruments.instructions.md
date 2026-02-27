@@ -57,6 +57,7 @@ The watch-based instrument system follows a **core renderer + thin wrapper** pat
 │  • label.ts - compass label rendering                                          │
 │  • vessel.ts - vessel image SVGs                                               │
 │  • environment.ts - wind/current symbols                                       │
+│  • setpoint.ts - setpoint indicator rendering                                  │
 └─────────────────────────────────────────────────────────────────────────────────┘
                                         │
                     ┌───────────────────┼───────────────────┐
@@ -305,12 +306,13 @@ The overlay SVG must use the **same clipped viewBox** to align correctly.
 
 Location: `watch.ts` → `renderSetpoint()` method
 
+> **See `setpoint.instructions.md`** for the full setpoint architecture (design layer, mixin vs bundle, confirm animation, `cssSafeAngle()` short-path rotation, CSS transition pattern).
+
 ```typescript
-// Triangle shape (SVG path):
-path = 'M23.5119 8C24.6981 6.35191...';
+// Triangle shape (SVG path) coming from svghelpers/setpoint.ts
 
 // Radial position (distance from center):
-<g transform="rotate(${this.angleSetpoint + 90}) translate(-168 0)">
+<g transform="rotate(${this.angleSetpoint + 90}) translate(${-radius}, 0)...)">
 //                                                         ↑
 //                                               Change this for position
 ```

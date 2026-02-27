@@ -1,0 +1,40 @@
+:host {
+  display: block;
+  --obc-poi-line-line-color: var(--overlay-element-active-color);
+  --obc-poi-line-outline-color: var(--element-disabled-color);
+  --obc-poi-line-dash-array: 1 3;
+  --obc-poi-line-route-dash-array: 4 3;
+  --obc-poi-line-current-dash-array: var(--obc-poi-line-dash-array);
+}
+
+:host([line-style="selected"]),
+:host([line-style="enhanced"]) {
+  --obc-poi-line-line-color: var(--overlay-element-active-color);
+  --obc-poi-line-outline-color: var(--element-active-color);
+}
+
+:host([line-style="alarm"]) {
+  --obc-poi-line-line-color: var(--alert-alarm-color);
+  --obc-poi-line-outline-color: var(--on-alarm-color);
+}
+
+:host([line-style="caution"]) {
+  --obc-poi-line-line-color: var(--alert-caution-color);
+  --obc-poi-line-outline-color: var(--alert-caution-outline-color);
+}
+
+:host([line-style="warning"]) {
+  --obc-poi-line-line-color: var(--alert-warning-color);
+  --obc-poi-line-outline-color: var(--on-warning-color);
+}
+
+:host([line-style="route"]) {
+  --obc-poi-line-line-color: var(--instrument-enhanced-secondary-color);
+  --obc-poi-line-outline-color: var(--overlay-element-active-color);
+}
+
+:host([line-type="dashed"][line-style="route"]) {
+  --obc-poi-line-line-color: var(--base-blue-500);
+  --obc-poi-line-outline-color: var(--base-blue-050);
+  --obc-poi-line-current-dash-array: var(--obc-poi-line-route-dash-array);
+}

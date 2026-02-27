@@ -8,7 +8,7 @@ import './automation-button-readout-stack.js';
 import {html} from 'lit';
 
 const meta: Meta = {
-  title: 'Building Blocks/Automation button readout stack',
+  title: 'Building Blocks/Automation Button Readout Stack',
   tags: ['6.0'],
   component: 'obc-automation-button-readout-stack',
   args: {

@@ -4,7 +4,7 @@ import './horizontal-line.js';
 import {crossDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcHorizontalLine> = {
-  title: 'Automation/Line/Horizontal line',
+  title: 'Automation/Line/Horizontal Line',
   tags: ['autodocs'],
   component: 'obc-horizontal-line',
   decorators: [crossDecorator],

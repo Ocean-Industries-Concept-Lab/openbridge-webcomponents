@@ -4,6 +4,7 @@ import './heave.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {VesselImage} from '../watch/watch.js';
 import {AdviceType} from '../watch/advice.js';
+import {Priority} from '../types.js';
 
 const meta: Meta<typeof ObcHeave> = {
   title: 'Instruments/Heave',
@@ -27,6 +28,7 @@ const meta: Meta<typeof ObcHeave> = {
       control: {type: 'select'},
       options: Object.values(VesselImage),
     },
+    priority: {control: 'select', options: Object.values(Priority)},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcHeave>;
@@ -40,7 +42,7 @@ export const Regular: Story = {
 
 export const Enhanced: Story = {
   args: {
-    enhanced: true,
+    priority: Priority.enhanced,
   },
 };
 

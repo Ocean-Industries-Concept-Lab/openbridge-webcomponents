@@ -5,7 +5,7 @@ import {html} from 'lit';
 import {AlertType} from '../../types.js';
 
 const meta: Meta<typeof ObcAlertIcon> = {
-  title: 'Application Components/Alerts/Alert icon',
+  title: 'Application Components/Alerts/Alert Icon',
   tags: ['autodocs', '6.0'],
   component: 'obc-alert-icon',
   args: {

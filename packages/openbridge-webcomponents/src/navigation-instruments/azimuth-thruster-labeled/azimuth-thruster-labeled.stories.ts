@@ -10,7 +10,7 @@ import {widthDecorator} from '../../storybook-util.js';
 import {PropellerType} from '../thruster/propeller.js';
 
 const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
-  title: 'Instruments/Azimuth thruster labeled',
+  title: 'Instruments/Azimuth Thruster Labeled',
   tags: ['autodocs', '6.0'],
   component: 'obc-azimuth-thruster-labeled',
   args: {
@@ -66,7 +66,7 @@ export const Large: Story = {
   },
 };
 
-export const NoCommand: Story = {
+export const NotInCommand: Story = {
   args: {
     size: AzimuthThrusterLabeledSize.medium,
     width: 384,
