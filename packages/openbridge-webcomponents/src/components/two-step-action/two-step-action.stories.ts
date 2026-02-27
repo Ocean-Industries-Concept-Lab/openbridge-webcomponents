@@ -1,9 +1,14 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
-import {ObcTwoStepAction, ObcTwoStepActionState} from './two-step-action.js';
+import {ObcTwoStepActionState} from './two-step-action.js';
 import './two-step-action.js';
 
-const meta: Meta<typeof ObcTwoStepAction> = {
+type TwoStepActionStoryArgs = {
+  disabled: boolean;
+  label: string;
+};
+
+const meta = {
   title: 'UI Components/Buttons/Two Step Action',
   tags: ['6.0'],
   component: 'obc-two-step-action',
@@ -25,22 +30,24 @@ const meta: Meta<typeof ObcTwoStepAction> = {
       handles: ['change'],
     },
   },
-  render: (args) => html`
-    <div
-      style="display: flex; justify-content: center; align-items: center; width: 100%; min-height: 100vh;"
-    >
-      <obc-two-step-action
-        .state=${ObcTwoStepActionState.enabled}
-        .disabled=${args.disabled}
+  render: (args) => {
+    return html`
+      <div
+        style="display: flex; justify-content: center; align-items: center; width: 100%; min-height: 100vh;"
       >
-        ${args.label}
-      </obc-two-step-action>
-    </div>
-  `,
-} satisfies Meta<ObcTwoStepAction>;
+        <obc-two-step-action
+          .state=${ObcTwoStepActionState.enabled}
+          .disabled=${args.disabled}
+        >
+          ${args.label}
+        </obc-two-step-action>
+      </div>
+    `;
+  },
+} satisfies Meta<TwoStepActionStoryArgs>;
 
 export default meta;
-type Story = StoryObj<ObcTwoStepAction>;
+type Story = StoryObj<typeof meta>;
 
 export const Enabled: Story = {
   args: {},

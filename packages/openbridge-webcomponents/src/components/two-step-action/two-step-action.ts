@@ -22,7 +22,7 @@ export type ObcTwoStepActionChangeEvent = CustomEvent<{
 const LABEL_BOUNCE_DURATION_MS = 220;
 const ARMED_HINT_DURATION_MS = 1600;
 const ARMED_SLIDE_DURATION_MS = 900;
-const THUMB_DRAG_COMPLETE_TO_ARMED_MS = 320;
+const SWIPE_COMPLETE_TO_ACTIVE_MS = 220;
 
 /** Two-step action control: `enabled` -> `armed` -> `active`, with auto-reset from `armed`. */
 @customElement('obc-two-step-action')
@@ -65,6 +65,11 @@ export class ObcTwoStepAction extends LitElement {
       default:
         return current;
     }
+  }
+
+  private getActionLabelText() {
+    const label = this.textContent?.replace(/\s+/g, ' ').trim();
+    return label && label.length > 0 ? label : 'Action';
   }
 
   private triggerLabelBounce() {
@@ -114,10 +119,15 @@ export class ObcTwoStepAction extends LitElement {
     this.thumbCompleteTimeout = undefined;
   }
 
+  private clearDisarmSlideTimer() {
+    window.clearTimeout(this.disarmSlideTimeout);
+    this.disarmSlideTimeout = undefined;
+  }
+
   private getArmedHintDurationMs() {
-    return this.armedResetDelay > 0
-      ? this.armedResetDelay
-      : ARMED_HINT_DURATION_MS;
+    const baseDurationMs =
+      this.armedResetDelay > 0 ? this.armedResetDelay : ARMED_HINT_DURATION_MS;
+    return baseDurationMs;
   }
 
   private scheduleArmedReset() {
@@ -133,7 +143,7 @@ export class ObcTwoStepAction extends LitElement {
 
     this.armedResetTimeout = window.setTimeout(() => {
       this.resetToEnabled();
-    }, this.armedResetDelay);
+    }, this.getArmedHintDurationMs());
   }
 
   private resetToEnabled() {
@@ -166,14 +176,11 @@ export class ObcTwoStepAction extends LitElement {
   }
 
   private triggerDisarmSlide() {
-    this.disarmSlide = false;
-    window.requestAnimationFrame(() => {
-      this.disarmSlide = true;
-      window.clearTimeout(this.disarmSlideTimeout);
-      this.disarmSlideTimeout = window.setTimeout(() => {
-        this.disarmSlide = false;
-      }, ARMED_SLIDE_DURATION_MS);
-    });
+    this.disarmSlide = true;
+    this.clearDisarmSlideTimer();
+    this.disarmSlideTimeout = window.setTimeout(() => {
+      this.disarmSlide = false;
+    }, ARMED_SLIDE_DURATION_MS);
   }
 
   private advanceState() {
@@ -212,7 +219,8 @@ export class ObcTwoStepAction extends LitElement {
     }
     if (
       this.state === ObcTwoStepActionState.armed &&
-      !this.isLabelClick(event)
+      !this.isLabelClick(event) &&
+      !this.isThumbClick(event)
     ) {
       this.triggerArmedHint();
       return;
@@ -243,19 +251,18 @@ export class ObcTwoStepAction extends LitElement {
     this.thumbDragScaleX = 1;
   }
 
-  private tryAdvanceToArmedByDrag() {
+  private tryAdvanceToActiveByDrag() {
     if (this.state !== ObcTwoStepActionState.enabled || this.disabled) return;
 
-    this.triggerArmedSlide();
-    this.advanceState();
+    const previousState = this.state;
+    this.state = ObcTwoStepActionState.active;
+    this.dispatchChange(previousState);
     this.suppressNextClick = false;
   }
 
-  private completeThumbDragToArmed(target: HTMLElement) {
+  private completeThumbDragToActive(target: HTMLElement) {
     const completionX = this.thumbDragMaxX;
-    const startX = this.thumbDragX;
     this.stopThumbDrag(target, true);
-    this.thumbDragX = startX;
     this.thumbCompleting = true;
     this.suppressNextClick = true;
     window.requestAnimationFrame(() => {
@@ -265,8 +272,8 @@ export class ObcTwoStepAction extends LitElement {
     this.thumbCompleteTimeout = window.setTimeout(() => {
       this.thumbCompleting = false;
       this.thumbDragX = 0;
-      this.tryAdvanceToArmedByDrag();
-    }, THUMB_DRAG_COMPLETE_TO_ARMED_MS);
+      this.tryAdvanceToActiveByDrag();
+    }, SWIPE_COMPLETE_TO_ACTIVE_MS);
   }
 
   private handleThumbPointerDown(event: PointerEvent) {
@@ -328,7 +335,7 @@ export class ObcTwoStepAction extends LitElement {
 
     if (thumbCenterX >= parentMidX) {
       const thumb = event.currentTarget as HTMLElement;
-      this.completeThumbDragToArmed(thumb);
+      this.completeThumbDragToActive(thumb);
     }
   }
 
@@ -364,7 +371,7 @@ export class ObcTwoStepAction extends LitElement {
     this.suppressNextClick = true;
   }
 
-  override updated(changedProperties: Map<string, unknown>) {
+  override willUpdate(changedProperties: Map<string, unknown>) {
     if (changedProperties.has('state')) {
       const previousState = changedProperties.get('state') as
         | ObcTwoStepActionState
@@ -377,7 +384,9 @@ export class ObcTwoStepAction extends LitElement {
         this.triggerDisarmSlide();
       }
     }
+  }
 
+  override updated(changedProperties: Map<string, unknown>) {
     if (
       changedProperties.has('state') ||
       changedProperties.has('disabled') ||
@@ -413,6 +422,8 @@ export class ObcTwoStepAction extends LitElement {
     const isEnabled = this.state === ObcTwoStepActionState.enabled;
     const isArmed = this.state === ObcTwoStepActionState.armed;
     const isActive = this.state === ObcTwoStepActionState.active;
+    const showThumbLabel = isArmed;
+    const actionLabel = this.getActionLabelText();
 
     return html`
       <button
@@ -425,6 +436,8 @@ export class ObcTwoStepAction extends LitElement {
           'armed-hint': this.armedHint,
           'armed-slide': this.armedSlide,
           'disarm-slide': this.disarmSlide,
+          'thumb-dragging': this.thumbDragging,
+          'thumb-completing': this.thumbCompleting,
         })}
         ?disabled=${this.disabled}
         @click=${this.handleClick}
@@ -434,38 +447,52 @@ export class ObcTwoStepAction extends LitElement {
         aria-pressed=${isActive ? 'true' : 'false'}
       >
         <div class="visible-wrapper" part="visible-wrapper">
-          <div
-            class=${classMap({
-              'thumb-container': true,
-              'thumb-dragging': this.thumbDragging,
-              'thumb-completing': this.thumbCompleting,
-            })}
-            style=${`--thumb-drag-x: ${this.thumbDragX}px;`}
-            part="thumb-container"
-            @pointerdown=${this.handleThumbPointerDown}
-            @pointermove=${this.handleThumbPointerMove}
-            @pointerup=${this.handleThumbPointerUp}
-            @pointercancel=${this.handleThumbPointerCancel}
-          >
-            <div class="thumb-visible" part="thumb-visible">
-              ${isArmed
-                ? html`<obi-chevron-double-right-google
-                    class="icon"
-                  ></obi-chevron-double-right-google>`
-                : html`<obi-chevron-right-google
-                    class="icon"
-                  ></obi-chevron-right-google>`}
+          <div class="segments-track" part="segments-track">
+            <div class="thumb-preview" part="thumb-preview">
+              <div class="thumb-visible" part="thumb-preview-visible">
+                <obi-chevron-double-right-google
+                  class="icon"
+                ></obi-chevron-double-right-google>
+              </div>
             </div>
-          </div>
 
-          <obc-button
-            class="state-container"
-            variant="normal"
-            .disabled=${this.disabled}
-            part="state-container"
-          >
-            <slot>Action</slot>
-          </obc-button>
+            <div
+              class=${classMap({
+                'thumb-container': true,
+                'thumb-dragging': this.thumbDragging,
+                'thumb-completing': this.thumbCompleting,
+              })}
+              part="thumb-container"
+              @pointerdown=${this.handleThumbPointerDown}
+              @pointermove=${this.handleThumbPointerMove}
+              @pointerup=${this.handleThumbPointerUp}
+              @pointercancel=${this.handleThumbPointerCancel}
+            >
+              <div
+                class=${classMap({
+                  'thumb-visible': true,
+                  'show-label': showThumbLabel,
+                })}
+                part="thumb-visible"
+              >
+                <span class="thumb-icon-layer" aria-hidden="true">
+                  <obi-chevron-right-google
+                    class="icon"
+                  ></obi-chevron-right-google>
+                </span>
+                <span class="thumb-label">${actionLabel}</span>
+              </div>
+            </div>
+
+            <obc-button
+              class="state-container"
+              variant="normal"
+              .disabled=${this.disabled}
+              part="state-container"
+            >
+              <slot>Action</slot>
+            </obc-button>
+          </div>
 
           <div class="state-segment" part="state-segment">
             <obi-check-google class="icon"></obi-check-google>
@@ -481,7 +508,7 @@ export class ObcTwoStepAction extends LitElement {
     this.clearArmedResetTimer();
     window.clearTimeout(this.armedHintTimeout);
     window.clearTimeout(this.armedSlideTimeout);
-    window.clearTimeout(this.disarmSlideTimeout);
+    this.clearDisarmSlideTimer();
     this.clearThumbCompleteTimer();
   }
 
