@@ -117,6 +117,10 @@ export class ObcCompass extends LitElement {
     CompassDirection.NorthUp;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
+  /** Show compass NSEW labels and north arrow. */
+  @property({type: Boolean}) showLabels: boolean = false;
+  /** When true, labels and north arrow are placed inside the outer ring. */
+  @property({type: Boolean}) tickmarksInside: boolean = false;
 
   protected override updated(_changedProperties: PropertyValues): void {
     super.updated(_changedProperties);
@@ -228,8 +232,10 @@ export class ObcCompass extends LitElement {
           .tickmarks=${tickmarks}
           .state=${this.state}
           .watchCircleType=${WatchCircleType.triple}
-          .labelFrameEnabled=${true}
+          .labelFrameEnabled=${this.showLabels}
+          .tickmarksInside=${this.tickmarksInside}
           .crosshairEnabled=${true}
+          .northArrow=${true}
           .angleSetpoint=${this.headingSetpoint ?? undefined}
           .newAngleSetpoint=${this.newHeadingSetpoint}
           .atAngleSetpoint=${this._headingSp.computeAtSetpoint(this.heading)}

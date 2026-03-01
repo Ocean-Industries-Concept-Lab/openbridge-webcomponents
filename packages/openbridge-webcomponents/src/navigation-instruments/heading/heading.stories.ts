@@ -13,6 +13,7 @@ const meta: Meta<typeof ObcHeading> = {
     width: 512,
     heading: 311,
     courseOverGround: 338,
+    showLabels: true,
     headingAdvices: [
       {
         minAngle: 20,
@@ -35,6 +36,8 @@ const meta: Meta<typeof ObcHeading> = {
       options: Object.values(CompassDirection),
     },
     touching: {control: 'boolean'},
+    showLabels: {control: 'boolean'},
+    tickmarksInside: {control: 'boolean'},
     priority: {control: 'select', options: Object.values(Priority)},
   },
   decorators: [widthDecorator],

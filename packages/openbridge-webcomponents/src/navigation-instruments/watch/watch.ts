@@ -26,7 +26,7 @@ import compentStyle from './watch.css?inline';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {adviceMask, AngleAdviceRaw, renderAdvice} from './advice.js';
 import {Tickmark, TickmarkStyle, tickmark} from './tickmark.js';
-import {renderLabels} from './label.js';
+import {renderLabels, renderNorthArrow} from './label.js';
 import {VesselImage, VesselImageSize, vesselImages} from './vessel.js';
 import {renderCurrent, renderWind} from './environment.js';
 import {customElement} from '../../decorator.js';
@@ -464,8 +464,21 @@ export class ObcWatch extends LitElement {
       ? this.advices.map((a) => renderAdvice(a))
       : nothing;
     const labels = this.labelFrameEnabled
-      ? renderLabels(scale, this.rotation)
+      ? renderLabels({
+          scale,
+          rotation: this.rotation,
+          inside: this.tickmarksInside,
+          innerRadius: this.innerRingRadius,
+        })
       : nothing;
+    const northArrowEl =
+      this.northArrow || this.labelFrameEnabled
+        ? renderNorthArrow({
+            scale,
+            rotation: this.rotation,
+            inside: this.tickmarksInside,
+          })
+        : nothing;
     const wind =
       this.wind != null && this.windFromDirectionDeg != null
         ? svg`<g transform="scale(${this.scaleWindIcon})">${renderWind({
@@ -492,8 +505,8 @@ export class ObcWatch extends LitElement {
       >
         ${this.watchCircle()} ${this.renderBars()}
         ${this.crosshairEnabled ? this.renderCrosshair(184) : nothing}
-        ${this.renderNorthArrow()} ${this.renderStarboardPortIndicator()}
-        ${current} ${wind} ${tickmarks} ${advices} ${angleSetpoint} ${labels}
+        ${northArrowEl} ${this.renderStarboardPortIndicator()} ${current}
+        ${wind} ${tickmarks} ${advices} ${angleSetpoint} ${labels}
         ${this.renderVesselImage()} ${this.renderNeedles()}
       </svg>
     `;
@@ -601,14 +614,6 @@ export class ObcWatch extends LitElement {
     return originalSetpoint;
   }
 
-  private renderNorthArrow(): SVGTemplateResult | typeof nothing {
-    if (!this.northArrow) {
-      return nothing;
-    }
-    return svg`
-<path transform="translate(-256, -256)" fill-rule="evenodd" clip-rule="evenodd" d="M238.152 96.9842L255.998 72L273.844 96.9839C267.985 96.3338 262.031 96 256 96C249.967 96 244.012 96.3339 238.152 96.9842Z" fill="var(--instrument-frame-tertiary-color)"/>
-    `;
-  }
   private renderVesselImage(): SVGTemplateResult[] | typeof nothing {
     if (this.vessels.length === 0) {
       return nothing;
