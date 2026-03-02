@@ -9,6 +9,53 @@ export interface RenderLabelsOptions {
   innerRadius?: number;
 }
 
+/** Position data for a single compass label. */
+export interface LabelPosition {
+  label: string;
+  x: number;
+  y: number;
+}
+
+/**
+ * Computes the centre positions for NSEW compass labels.
+ *
+ * These positions are used both for rendering the labels themselves
+ * and for building a crosshair knockout mask so the crosshair doesn't
+ * bleed through the text.
+ */
+export function getLabelPositions(opts: {
+  scale: number;
+  inside: boolean;
+  innerRadius: number;
+}): LabelPosition[] {
+  const {scale, inside, innerRadius} = opts;
+  const labelWidth = 16;
+  const gap = 8;
+  const outerRadius = 368 / 2;
+
+  const offset = (dir: number) =>
+    dir *
+    (inside
+      ? innerRadius - gap / scale - labelWidth / 2
+      : outerRadius + gap / scale + labelWidth / 2);
+
+  const positions: LabelPosition[] = [
+    {label: 'E', x: offset(1), y: 0},
+    {label: 'S', x: 0, y: offset(1)},
+    {label: 'W', x: offset(-1), y: 0},
+  ];
+
+  // At small scales the decorative north arrow doesn't have a letter "N",
+  // so add an "N" text label at the appropriate position.
+  // When inside, the north arrow is always a compact triangle without "N".
+  const isSmall = scale < 0.58;
+  if (isSmall || inside) {
+    positions.push({label: 'N', x: 0, y: offset(-1)});
+  }
+
+  return positions;
+}
+
 /**
  * Renders the compass NSEW text labels (without the north arrow).
  *
@@ -40,44 +87,15 @@ export function renderLabels(
     innerRadius = scaleOrOpts.innerRadius ?? 368 / 2;
   }
 
-  const labelWidth = 16;
-  const gap = 8;
-  const outerRadius: number = 368 / 2;
-
-  // Outside: labels sit beyond the outer ring.
-  // Inside: labels sit inside the inner ring (direction stays the same).
-  const offset = (dir: number) =>
-    dir *
-    (inside
-      ? innerRadius - gap / scale - labelWidth / 2
-      : outerRadius + gap / scale + labelWidth / 2);
-
-  const labels = [
-    {label: 'E', x: offset(1), y: 0, class: 'label'},
-    {label: 'S', x: 0, y: offset(1), class: 'label'},
-    {label: 'W', x: offset(-1), y: 0, class: 'label'},
-  ];
-
-  // At small scales the decorative north arrow doesn't have a letter "N",
-  // so add an "N" text label at the appropriate position.
-  // When inside, the north arrow is always a compact triangle without "N".
-  const isSmall = scale < 0.58;
-  if (isSmall || inside) {
-    labels.push({
-      label: 'N',
-      x: 0,
-      y: offset(-1),
-      class: 'label',
-    });
-  }
+  const positions = getLabelPositions({scale, inside, innerRadius});
 
   return svg`
-    ${labels.map(
+    ${positions.map(
       (l) => svg`
         <text
           x="${l.x}"
           y="${l.y}"
-          class="${l.class}"
+          class="label"
           transform="rotate(${-(rot ?? 0)})"
           transform-origin="${l.x} ${l.y}"
         >

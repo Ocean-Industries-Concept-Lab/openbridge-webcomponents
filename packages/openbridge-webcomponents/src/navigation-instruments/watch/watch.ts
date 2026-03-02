@@ -26,7 +26,12 @@ import compentStyle from './watch.css?inline';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {adviceMask, AngleAdviceRaw, renderAdvice} from './advice.js';
 import {Tickmark, TickmarkStyle, tickmark} from './tickmark.js';
-import {renderLabels, renderNorthArrow} from './label.js';
+import {
+  renderLabels,
+  renderNorthArrow,
+  getLabelPositions,
+  LabelPosition,
+} from './label.js';
 import {VesselImage, VesselImageSize, vesselImages} from './vessel.js';
 import {renderCurrent, renderWind} from './environment.js';
 import {customElement} from '../../decorator.js';
@@ -319,26 +324,85 @@ export class ObcWatch extends LitElement {
     return result;
   }
 
-  private renderCrosshair(radius: number): SVGTemplateResult {
+  private renderCrosshair(
+    radius: number,
+    labelKnockouts?: {
+      positions: LabelPosition[];
+      rotation: number | undefined;
+      scale: number;
+      /** Inner ring radius – crosshair is hidden between labelRadius and this value. */
+      innerRingRadius: number;
+    }
+  ): SVGTemplateResult {
+    const hasMask = labelKnockouts && labelKnockouts.positions.length > 0;
+
+    // Radius at which labels sit (distance from centre).
+    // Any position is equally valid — they're all at the same radial distance.
+    const labelRadius = hasMask
+      ? Math.max(
+          ...labelKnockouts!.positions.map((l) =>
+            Math.abs(l.x !== 0 ? l.x : l.y)
+          )
+        )
+      : 0;
+    // Small extra padding so the crosshair doesn't start/end right at the
+    // label edge — use the same visual pad as the letter knockouts.
+    const ringGapPad = hasMask ? 3 / labelKnockouts!.scale : 0;
+
     return svg`
-      <line
-        x1="-${radius}"
-        y1="0"
-        x2="${radius}"
-        y2="0"
-        stroke="var(--instrument-frame-tertiary-color)"
-        stroke-width="1"
-        vector-effect="non-scaling-stroke"
-      />
-      <line
-        x1="0"
-        y1="-${radius}"
-        x2="0"
-        y2="${radius}"
-        stroke="var(--instrument-frame-tertiary-color)"
-        stroke-width="1"
-        vector-effect="non-scaling-stroke"
-      />
+      ${
+        hasMask
+          ? svg`
+        <defs>
+          <mask
+            id="crosshair-label-mask"
+            maskUnits="userSpaceOnUse"
+            x="-${radius}" y="-${radius}"
+            width="${radius * 2}" height="${radius * 2}"
+          >
+            <rect x="-${radius}" y="-${radius}" width="${radius * 2}" height="${radius * 2}" fill="white"/>
+            <!-- Annular ring knockout: hide crosshair between labels and inner ring -->
+            <circle cx="0" cy="0" r="${labelKnockouts!.innerRingRadius}" fill="black"/>
+            <circle cx="0" cy="0" r="${labelRadius - ringGapPad}" fill="white"/>
+            <!-- Per-label rectangular knockouts -->
+            ${labelKnockouts!.positions.map((l) => {
+              const fontSize = 12 / labelKnockouts!.scale;
+              const pad = 3 / labelKnockouts!.scale;
+              const size = fontSize + pad * 2;
+              return svg`
+                <rect
+                  x="${l.x - size / 2}" y="${l.y - size / 2}"
+                  width="${size}" height="${size}"
+                  fill="black"
+                  transform="rotate(${-(labelKnockouts!.rotation ?? 0)})"
+                  transform-origin="${l.x} ${l.y}"
+                />
+              `;
+            })}
+          </mask>
+        </defs>`
+          : nothing
+      }
+      <g mask=${hasMask ? 'url(#crosshair-label-mask)' : nothing}>
+        <line
+          x1="-${radius}"
+          y1="0"
+          x2="${radius}"
+          y2="0"
+          stroke="var(--instrument-frame-tertiary-color)"
+          stroke-width="1"
+          vector-effect="non-scaling-stroke"
+        />
+        <line
+          x1="0"
+          y1="-${radius}"
+          x2="0"
+          y2="${radius}"
+          stroke="var(--instrument-frame-tertiary-color)"
+          stroke-width="1"
+          vector-effect="non-scaling-stroke"
+        />
+      </g>
     `;
   }
 
@@ -463,7 +527,18 @@ export class ObcWatch extends LitElement {
     const advices = this.advices
       ? this.advices.map((a) => renderAdvice(a))
       : nothing;
-    const labels = this.labelFrameEnabled
+
+    // Compute label positions once – used for both rendering and crosshair knockout.
+    const insideLabels = this.tickmarksInside && this.labelFrameEnabled;
+    const labelPositions = this.labelFrameEnabled
+      ? getLabelPositions({
+          scale,
+          inside: this.tickmarksInside,
+          innerRadius: this.innerRingRadius,
+        })
+      : undefined;
+
+    const labels = labelPositions
       ? renderLabels({
           scale,
           rotation: this.rotation,
@@ -504,7 +579,19 @@ export class ObcWatch extends LitElement {
         transform="rotate(${this.rotation ?? 0})"
       >
         ${this.watchCircle()} ${this.renderBars()}
-        ${this.crosshairEnabled ? this.renderCrosshair(184) : nothing}
+        ${this.crosshairEnabled
+          ? this.renderCrosshair(
+              184,
+              insideLabels && labelPositions
+                ? {
+                    positions: labelPositions,
+                    rotation: this.rotation,
+                    scale,
+                    innerRingRadius: this.innerRingRadius,
+                  }
+                : undefined
+            )
+          : nothing}
         ${northArrowEl} ${this.renderStarboardPortIndicator()} ${current}
         ${wind} ${tickmarks} ${advices} ${angleSetpoint} ${labels}
         ${this.renderVesselImage()} ${this.renderNeedles()}
