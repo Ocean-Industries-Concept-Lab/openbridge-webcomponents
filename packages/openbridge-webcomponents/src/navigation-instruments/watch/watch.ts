@@ -546,14 +546,13 @@ export class ObcWatch extends LitElement {
           innerRadius: this.innerRingRadius,
         })
       : nothing;
-    const northArrowEl =
-      this.northArrow || this.labelFrameEnabled
-        ? renderNorthArrow({
-            scale,
-            rotation: this.rotation,
-            inside: this.tickmarksInside,
-          })
-        : nothing;
+    const northArrowEl = this.northArrow
+      ? renderNorthArrow({
+          scale,
+          rotation: this.rotation,
+          inside: this.tickmarksInside,
+        })
+      : nothing;
     const wind =
       this.wind != null && this.windFromDirectionDeg != null
         ? svg`<g transform="scale(${this.scaleWindIcon})">${renderWind({
