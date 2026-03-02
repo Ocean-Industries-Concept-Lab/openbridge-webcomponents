@@ -12,7 +12,7 @@ import {AutomationButtonReadoutStackSize} from '../../components/automation-butt
 import {argTypesAbstractAutomationButtonMotorized} from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 const meta: Meta<typeof ObcFan> = {
-  title: 'Automation/Automation devices/Fan',
+  title: 'Automation/Automation Devices/Fan',
   tags: ['autodocs', '6.0'],
   component: 'obc-fan',
   decorators: [crossDecorator],

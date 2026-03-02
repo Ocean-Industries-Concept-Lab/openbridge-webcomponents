@@ -9,7 +9,7 @@ import {
 import './progress-bar.js';
 
 const meta: Meta<typeof ObcProgressBar> = {
-  title: 'UI Components/Messages and notifications/Progress bar',
+  title: 'UI Components/Messages and Notifications/Progress Bar',
   tags: ['6.0'],
   component: 'obc-progress-bar',
   decorators: [

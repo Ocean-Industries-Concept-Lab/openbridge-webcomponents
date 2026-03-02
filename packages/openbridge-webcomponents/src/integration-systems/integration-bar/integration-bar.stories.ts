@@ -6,7 +6,7 @@ import '../../components/dropdown-button/dropdown-button.js';
 import '../../components/clock/clock.js';
 
 const meta: Meta<typeof ObcIntegrationBar> = {
-  title: 'Integration Systems/Integration bar',
+  title: 'Integration Systems/Integration Bar',
   tags: ['6.0', 'WIP'],
   component: 'obc-integration-bar',
   args: {

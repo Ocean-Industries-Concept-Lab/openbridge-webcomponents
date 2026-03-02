@@ -17,7 +17,7 @@
  * | `disableAutoAtSetpoint`  | `boolean`                      | `false`              | Disable auto at-setpoint calculation         |
  * | `autoAtSetpointDeadband` | `number`                       | configurable (def 2) | Tolerance for auto at-setpoint detection     |
  * | `setpointAtZeroDeadband` | `number`                       | configurable (def 0.5)| Zero-snap tolerance                         |
- * | `setpointColorMode`      | `SetpointColorMode \| undefined` | `undefined`        | Color palette override                       |
+ * | `setpointOverride`       | `boolean`                        | `false`              | Override to derive color from priority       |
  * | `computeAtSetpoint()`    | `(value) => boolean`           | —                    | Unified at-setpoint calculation              |
  *
  * ## `touching` vs `newSetpoint`
@@ -105,7 +105,6 @@
 import {LitElement, PropertyValues} from 'lit';
 import {property, state} from 'lit/decorators.js';
 import {computeAtSetpoint, getSetpointAnimationDurationMs} from './setpoint.js';
-import type {SetpointColorMode} from './setpoint.js';
 
 // ============================================================================
 // Types
@@ -167,8 +166,15 @@ export declare class SetpointMixinInterface {
   /** Tolerance for zero-snap visual state (equalZero). */
   setpointAtZeroDeadband: number;
 
-  /** Explicit color palette override. When undefined, derived from instrument state. */
-  setpointColorMode: SetpointColorMode | undefined;
+  /**
+   * Override to derive the setpoint color from the instrument's `priority`
+   * regardless of instrument state. When false (default), loading/off states
+   * render the setpoint in disabled (tertiary) color.
+   *
+   * - `false`: default behavior — setpoint inherits instrument state/color
+   * - `true`: color derived from `priority`, never disabled
+   */
+  setpointOverride: boolean;
 
   /**
    * Enable CSS-animated confirm transition.
@@ -298,8 +304,11 @@ export function SetpointMixin<T extends Constructor<LitElement>>(
     @property({type: Number}) setpointAtZeroDeadband: number =
       defaultZeroDeadband;
 
-    /** Explicit color palette override. */
-    @property({type: String}) setpointColorMode: SetpointColorMode | undefined;
+    /**
+     * Override to derive the setpoint color from the instrument's `priority`
+     * regardless of instrument state.
+     */
+    @property({type: Boolean}) setpointOverride: boolean = false;
 
     /**
      * Enable CSS-animated confirm transition.

@@ -139,6 +139,7 @@ export enum ObcInputTextAlign {
  * @slot trailing-icon - Icon displayed after the input field (when `hasTrailingIcon` is true)
  * @slot helper-text - Helper or validation text shown below the input field
  * @fires input - Dispatched when the value of the input changes
+ * @fires change - Dispatched when the value of the input changes by user interaction
  */
 @customElement('obc-input')
 export class ObcInput extends LitElement {
@@ -228,6 +229,14 @@ export class ObcInput extends LitElement {
     this.passwordVisible = !this.passwordVisible;
   }
 
+  private fireChangeEvent(e: Event) {
+    if (this.disabled) {
+      e.preventDefault();
+      return;
+    }
+    this.dispatchEvent(new CustomEvent('change'));
+  }
+
   override render() {
     const isPasswordToggle =
       this.passwordToggle && this.type === HTMLInputTypeAttribute.Password;
@@ -260,6 +269,7 @@ export class ObcInput extends LitElement {
             ?disabled=${this.disabled}
             ?required=${this.required}
             @input=${this.onInput}
+            @change=${this.fireChangeEvent}
             part="input"
           />
           ${this.hasLeadingIcon

@@ -1,10 +1,16 @@
-import {LitElement, html, unsafeCSS, PropertyValues} from 'lit';
+import {LitElement, html, unsafeCSS, nothing, PropertyValues} from 'lit';
 import {property, state} from 'lit/decorators.js';
 import compentStyle from './dropdown-button.css?inline';
 import '../../icons/icon-drop-down-google.js';
 import '../button/button.js';
 import {customElement} from '../../decorator.js';
 import {classMap} from 'lit/directives/class-map.js';
+
+export enum DropdownButtonType {
+  label = 'label',
+  icon = 'icon',
+  labelIcon = 'label-icon',
+}
 
 export type ObcDropdownButtonChangeEvent = CustomEvent<{
   value: string;
@@ -39,6 +45,7 @@ export type ObcDropdownButtonChangeEvent = CustomEvent<{
  * - `fullWidth` (boolean): Expands the component to fill its container when true. Default is false.
  *
  * ### Events
+ * - `dropdown-change` – Fired when the user selects a different option. The event detail includes `{ value, label }` of the selected option.
  * - `change` – Fired when the user selects a different option. The event detail includes `{ value, label }` of the selected option.
  *
  * ### Best Practices
@@ -61,6 +68,8 @@ export type ObcDropdownButtonChangeEvent = CustomEvent<{
  * ```
  *
  * @slot - (No named slots; all content is provided via properties)
+ * @slot icon - Icon displayed at the start of the button when `type` is `icon` or `label-icon`.
+ * @fires dropdown-change {ObcDropdownButtonChangeEvent} - Fires when the value of the select changes
  * @fires change {ObcDropdownButtonChangeEvent} - Fires when the value of the select changes
  */
 @customElement('obc-dropdown-button')
@@ -90,6 +99,19 @@ export class ObcDropdownButton extends LitElement {
    * If true, the select expands to fill the width of its container. Default is false.
    */
   @property({type: Boolean}) fullWidth = false;
+
+  /**
+   * Controls the button's display type.
+   * - `label`: Text label only (default)
+   * - `icon`: Icon only, no label
+   * - `label-icon`: Icon before the label
+   */
+  @property({type: String}) type: DropdownButtonType = DropdownButtonType.label;
+
+  /**
+   * If true, the dropdown menu opens above the button.
+   */
+  @property({type: Boolean}) openTop = false;
 
   /**
    * If true, the select is integration style. Default is false, only for integration bar.
@@ -128,12 +150,18 @@ export class ObcDropdownButton extends LitElement {
         class=${classMap({
           wrapper: true,
           'full-width': this.fullWidth,
+          'open-top': this.openTop,
           integration: this.integration,
           disabled: this.disabled,
         })}
       >
         <div class="visible-wrapper">
-          <div class="label">${this.selectedLabel}</div>
+          ${this.type !== DropdownButtonType.label
+            ? html`<div class="icon-container"><slot name="icon"></slot></div>`
+            : nothing}
+          ${this.type !== DropdownButtonType.icon
+            ? html`<div class="label">${this.selectedLabel}</div>`
+            : nothing}
           <div class="icon">
             <obi-drop-down-google></obi-drop-down-google>
           </div>
@@ -159,8 +187,9 @@ export class ObcDropdownButton extends LitElement {
   }
 
   /**
-   * Handles the change event when a new option is selected. Updates the selected value and label, and dispatches a `change` event with the new selection.
+   * Handles the dropdown-change and change event when a new option is selected. Updates the selected value and label, and dispatches a `dropdown-change` and 'change' event with the new selection.
    *
+   * @fires dropdown-change {ObcDropdownButtonChangeEvent} - Fired when the user selects a different option.
    * @fires change {ObcDropdownButtonChangeEvent} - Fired when the user selects a different option.
    */
   private changeHandler(event: Event) {
@@ -169,6 +198,11 @@ export class ObcDropdownButton extends LitElement {
     this.selectedLabel = this.options
       .find((item) => item.value === this.selectedValue)!
       .label.trim();
+    this.dispatchEvent(
+      new CustomEvent('dropdown-change', {
+        detail: {value: this.selectedValue, label: this.selectedLabel},
+      })
+    );
     this.dispatchEvent(
       new CustomEvent('change', {
         detail: {value: this.selectedValue, label: this.selectedLabel},

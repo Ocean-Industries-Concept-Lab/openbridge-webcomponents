@@ -17,7 +17,7 @@ interface NotificationButtonArgs {
 }
 
 const meta: Meta<typeof ObcNotificationButton> = {
-  title: 'Application Components/Notifications/Notification button',
+  title: 'Application Components/Notifications/Notification Button',
   tags: ['6.0'],
   component: 'obc-notification-button',
   decorators: [

@@ -5,6 +5,7 @@ import {WatchCircleType} from '../watch/watch.js';
 import {AdviceType, AngleAdviceRaw, AdviceState} from '../watch/advice.js';
 import {InstrumentFieldSize} from '../instrument-field/instrument-field.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
+import {Priority} from '../types.js';
 import {customElement} from '../../decorator.js';
 
 export enum ObcSpeedGaugeNeedleType {
@@ -38,7 +39,7 @@ export interface SpeedAdvice {
  * - **Optional readout**: Enable `showReadout` to display an
  *   `<obc-instrument-field>` with the current speed, unit (KN), and tag (STW).
  * - **Setpoint via mixin**: `setpoint`, `newSetpoint`, `touching`,
- *   `autoAtSetpointDeadband`, `setpointColorMode`, and all other setpoint
+ *   `autoAtSetpointDeadband`, `setpointOverride`, and all other setpoint
  *   properties are provided by `SetpointMixin`; the setpoint angle and
  *   at-setpoint state are computed and forwarded to `<obc-watch>`.
  * - **Speed advice zones**: Pass an array of {@link SpeedAdvice} objects to
@@ -48,7 +49,8 @@ export interface SpeedAdvice {
  * ## Usage Guidelines
  *
  * - Set `maxSpeed` (and optionally `minSpeed`) to define the gauge range.
- * - Use `enhanced` to switch between regular and in-command color palettes.
+ * - Use `priority` to switch between regular and enhanced color palettes
+ *   (default: `Priority.regular`).
  * - Provide `tickmarkInterval` to control tickmark spacing.
  * - Enable `labels` to show numeric labels at primary tickmarks.
  * - Enable `showReadout` to display the numeric value below the gauge.
@@ -85,7 +87,7 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
   @property({type: Number}) minSpeed = 0;
   @property({type: Boolean}) labels: boolean = false;
   @property({type: Number}) tickmarkInterval = 20;
-  @property({type: Boolean}) enhanced: boolean = false;
+  @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) needleType: ObcSpeedGaugeNeedleType =
     ObcSpeedGaugeNeedleType.full;
   @property({type: Array, attribute: false}) speedAdvices: SpeedAdvice[] = [];
@@ -102,9 +104,10 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
   maxAngle = 180 - 45;
 
   override render() {
-    const barColor = this.enhanced
-      ? 'var(--instrument-enhanced-tertiary-color)'
-      : 'var(--instrument-regular-tertiary-color)';
+    const barColor =
+      this.priority === Priority.enhanced
+        ? 'var(--instrument-enhanced-tertiary-color)'
+        : 'var(--instrument-regular-tertiary-color)';
     const setpointAngle =
       this.setpoint !== undefined ? this.getAngle(this.setpoint) : undefined;
 
@@ -120,7 +123,7 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
             : undefined}
           .atAngleSetpoint=${this.computeAtSetpoint(this.speed)}
           .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
-          .colorMode=${this.setpointColorMode}
+          .setpointOverride=${this.setpointOverride}
           .animateSetpoint=${this.animateSetpoint}
           .padding=${48}
           .tickmarks=${this.tickmarks}
@@ -148,7 +151,7 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
               <obc-instrument-field
                 class="speed-gauge-value"
                 .size=${InstrumentFieldSize.enhanced}
-                .neutralColor=${!this.enhanced}
+                .neutralColor=${this.priority !== Priority.enhanced}
                 .value=${this.speed}
                 horizontal
                 unit="KN"
@@ -163,9 +166,10 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
   }
 
   get needle() {
-    const needleColor = this.enhanced
-      ? 'var(--instrument-enhanced-secondary-color)'
-      : 'var(--instrument-regular-secondary-color)';
+    const needleColor =
+      this.priority === Priority.enhanced
+        ? 'var(--instrument-enhanced-secondary-color)'
+        : 'var(--instrument-regular-secondary-color)';
     if (this.needleType === ObcSpeedGaugeNeedleType.full) {
       return svg`<g transform="rotate(${this.getAngle(this.speed)}) translate(-256, -256)">
       <circle cx="256" cy="256" r="14" fill=${needleColor}/>

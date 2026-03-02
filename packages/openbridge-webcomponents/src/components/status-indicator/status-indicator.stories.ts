@@ -4,7 +4,7 @@ import './status-indicator.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcStatusIndicator> = {
-  title: 'UI components/Message and alerts/Status indicator',
+  title: 'UI Components/Message and Alerts/Status Indicator',
   tags: ['alpha'],
   component: 'obc-status-indicator',
   args: {},

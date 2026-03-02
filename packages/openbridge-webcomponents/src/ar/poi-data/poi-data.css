@@ -1,6 +1,12 @@
 :host {
   display: inline-block;
   position: absolute;
+  left: 0;
+  translate: var(--obc-poi-data-x, 0px) 0;
+}
+
+:host([data-x-moving]) {
+  will-change: translate;
 }
 
 obc-poi {

@@ -4,7 +4,7 @@ import './integration-tabs.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcIntegrationTabs> = {
-  title: 'Integration Systems/Building blocks/Integration Tabs',
+  title: 'Integration Systems/Building Blocks/Integration Tabs',
   tags: ['6.0'],
   component: 'obc-integration-tabs',
   args: {},

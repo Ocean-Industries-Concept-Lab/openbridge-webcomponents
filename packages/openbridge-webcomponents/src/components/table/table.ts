@@ -13,13 +13,27 @@ import '../table-header-item/table-header-item.js';
 import {ObcTableHeaderItemType} from '../table-header-item/table-header-item.js';
 import {classMap} from 'lit/directives/class-map.js';
 import '../button/button.js';
+import {CheckboxStatus, ObcCheckboxChangeEvent} from '../checkbox/checkbox.js';
+import {TagColor} from '../tag/tag.js';
+import '../../building-blocks/bar-horizontal/bar-horizontal.js';
 import {repeat} from 'lit/directives/repeat.js';
 import {map} from 'lit/directives/map.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
+import {
+  ExternalScaleSide,
+  FillMode,
+  FrameStyle,
+  InstrumentState,
+  Priority,
+  ScaleType,
+} from '../../building-blocks/bar-horizontal/bar-horizontal.js';
 
 export enum ObcTableCellType {
   Regular = 'regular',
   Button = 'button',
+  Checkbox = 'checkbox',
+  Tag = 'tag',
+  HorizontalBar = 'horizontal-bar',
 }
 
 export interface ObcTableCellDataRegular {
@@ -44,7 +58,73 @@ export interface ObcTableCellDataButton {
   icon?: HTMLTemplateResult;
 }
 
-export type ObcTableCellData = ObcTableCellDataRegular | ObcTableCellDataButton;
+export interface ObcTableCellDataCheckbox {
+  type: ObcTableCellType.Checkbox;
+  cssPart?: string;
+  label?: string;
+  text?: string;
+  status?: CheckboxStatus;
+  disabled?: boolean;
+  ariaDescribedBy?: string;
+  align?: 'left' | 'center' | 'right';
+}
+
+export interface ObcTableTagData {
+  id: string;
+  label: string;
+  color?: TagColor;
+  hasIcon?: boolean;
+  icon?: HTMLTemplateResult;
+  cssPart?: string;
+}
+
+export interface ObcTableCellDataTag {
+  type: ObcTableCellType.Tag;
+  cssPart?: string;
+  align?: 'left' | 'center' | 'right';
+  label?: string;
+  text?: string;
+  color?: TagColor;
+  hasIcon?: boolean;
+  icon?: HTMLTemplateResult;
+  tagId?: string;
+  tag?: ObcTableTagData;
+  tags?: ObcTableTagData[];
+  wrap?: boolean;
+  maxTags?: number;
+  overflowLabel?: string;
+}
+
+export interface ObcTableCellDataHorizontalBar {
+  type: ObcTableCellType.HorizontalBar;
+  cssPart?: string;
+  align?: 'left' | 'center' | 'right';
+  minValue?: number;
+  maxValue?: number;
+  value?: number;
+  setpoint?: number;
+  hasBar?: boolean;
+  hasScale?: boolean;
+  hideLabels?: boolean;
+  priority?: Priority;
+  fillMode?: FillMode;
+  fillMin?: number;
+  fillMax?: number;
+  barThickness?: number;
+  scaleType?: ScaleType;
+  frameStyle?: FrameStyle;
+  side?: ExternalScaleSide;
+  state?: InstrumentState;
+  fixedAspectRatio?: boolean;
+  scaleReferenceSize?: number;
+}
+
+export type ObcTableCellData =
+  | ObcTableCellDataRegular
+  | ObcTableCellDataButton
+  | ObcTableCellDataCheckbox
+  | ObcTableCellDataTag
+  | ObcTableCellDataHorizontalBar;
 
 export interface ObcTableRow {
   selected?: boolean;
@@ -58,6 +138,7 @@ export interface ObcTableColumnUnsortable<
 > {
   label: string;
   key: string;
+  headerType?: ObcTableHeaderItemType;
   renderHeaderIcon?: () => HTMLTemplateResult;
   renderCell?: (value: T, row: S, rowId: string) => HTMLTemplateResult;
   dividerRight?: boolean;
@@ -82,6 +163,25 @@ export type ObcTableCellClickEvent = CustomEvent<{
   columnKey: string;
 }>;
 
+export type ObcTableCellCheckboxChangeEvent = CustomEvent<{
+  rowId: string;
+  columnKey: string;
+  status: CheckboxStatus;
+  disabled: boolean;
+}>;
+
+export type ObcTableCellTagClickEvent = CustomEvent<{
+  rowId: string;
+  columnKey: string;
+  tagId: string;
+}>;
+
+export type ObcTableSelectionChangeEvent = CustomEvent<{
+  selectedRowIds: string[];
+  selectedRows: ObcTableRow[];
+  source: 'row' | 'header';
+}>;
+
 export type ObcTableRowClickEvent = CustomEvent<{
   row: ObcTableRow;
 }>;
@@ -94,8 +194,55 @@ function cssPart(value: ObcTableCellData, subpart: string): string | undefined {
 }
 
 /**
+ * `<obc-table>` renders tabular data with configurable columns and cell types.
+ *
+ * Overview
+ * Use this component to display structured datasets with optional selection, sorting, and rich cell
+ * rendering. It accepts `data` and `columns` and renders rows based on column configuration.
+ *
+ * Features/Variants
+ * - Selectable rows with header “select all” checkbox via `selectable=true`.
+ * - Cell rendering variants: `checkbox`, `tag`, `horizontal-bar`, and `button` cell types.
+ * - Visual variants: `rowDivider`, `striped`, `narrowHeader`, and `noHeader`.
+ * - Sorting support for sortable columns via column definitions.
+ *
+ * Usage Guidelines
+ * - Controlled selection: pass `selectedRowIds` and update it on `selection-change`.
+ * - Uncontrolled selection: pass `defaultSelectedRowIds` and listen to `selection-change`.
+ * - Use `selectAllAriaLabel` to customize the header checkbox accessibility label.
+ * - Use `selectAllLabel` to provide a visible label in the selection header.
+ *
+ * Slots/Content
+ * - This component does not expose public slots. Provide content via `data` and `columns`.
+ *
+ * Events
+ * - `row-click` fires when a row is clicked.
+ * - `cell-button-click` fires when a button cell is clicked.
+ * - `cell-checkbox-change` fires when a checkbox cell changes.
+ * - `cell-tag-click` fires when a tag inside a cell is clicked.
+ * - `selection-change` fires when row selection changes (source: `row` or `header`).
+ *
+ * Best Practices
+ * - Keep column `key` values stable across renders to avoid selection or sorting resets.
+ * - Prefer `selectedRowIds` for deterministic state in apps with external stores.
+ * - For dense tables, combine `narrowHeader` and `rowDivider` for visual clarity.
+ *
+ * Example (keywords: table, data grid, grid, tabular, datatable)
+ * ```ts
+ * html`<obc-table
+ *   .data=${rows}
+ *   .columns=${columns}
+ *   selectable
+ *   striped
+ *   @selection-change=${onSelectionChange}
+ * ></obc-table>`;
+ * ```
+ *
  * @fires row-click {ObcTableRowClickEvent} - Fired when a row is clicked.
  * @fires cell-button-click {ObcTableCellClickEvent} - Fired when a cell button is clicked.
+ * @fires cell-checkbox-change {ObcTableCellCheckboxChangeEvent} - Fired when a cell checkbox is changed.
+ * @fires cell-tag-click {ObcTableCellTagClickEvent} - Fired when a tag inside a cell is clicked.
+ * @fires selection-change {ObcTableSelectionChangeEvent} - Fired when row selection changes.
  */
 @customElement('obc-table')
 export class ObcTable extends LitElement {
@@ -105,12 +252,20 @@ export class ObcTable extends LitElement {
   @property({type: Boolean}) narrowHeader = false;
   @property({type: Boolean}) noHeader = false;
   @property({type: Boolean}) striped = false;
+  @property({type: Boolean}) selectable = false;
+  @property({type: Array}) selectedRowIds?: string[];
+  @property({type: Array}) defaultSelectedRowIds?: string[];
+  @property({type: String}) selectAllAriaLabel = 'Select all rows';
+  @property({type: String}) selectAllLabel = '';
 
   @state()
   private _sortByColumnIdx: number | undefined = undefined;
 
   @state()
   private _sortDirection: 'asc' | 'desc' = 'asc';
+
+  @state()
+  private _selectedRowIds: Set<string> = new Set();
 
   private _previousPositions: {top: number; index: string}[] = [];
 
@@ -184,7 +339,7 @@ export class ObcTable extends LitElement {
   private _focusHeaderByIndex(index: number) {
     const headers = Array.from(
       this.renderRoot.querySelectorAll<HTMLElement>(
-        '.grid-header obc-table-header-item'
+        '.grid-header [role="columnheader"]'
       )
     );
     if (headers.length === 0) return;
@@ -209,7 +364,7 @@ export class ObcTable extends LitElement {
 
     const headers = Array.from(
       this.renderRoot.querySelectorAll<HTMLElement>(
-        '.grid-header obc-table-header-item'
+        '.grid-header [role="columnheader"]'
       )
     );
     if (headers.length === 0) return;
@@ -351,6 +506,30 @@ export class ObcTable extends LitElement {
   private _hasRenderedRows = false;
 
   override willUpdate(changedProperties: PropertyValues) {
+    if (changedProperties.has('defaultSelectedRowIds')) {
+      if (
+        this.selectedRowIds === undefined &&
+        this._selectedRowIds.size === 0
+      ) {
+        this._selectedRowIds = new Set(this.defaultSelectedRowIds ?? []);
+      }
+    }
+
+    if (changedProperties.has('selectedRowIds')) {
+      if (this.selectedRowIds !== undefined) {
+        this._selectedRowIds = new Set(this.selectedRowIds);
+      }
+    }
+
+    if (changedProperties.has('data')) {
+      const availableIds = new Set(this.data.map((row) => row.id));
+      this._selectedRowIds.forEach((id) => {
+        if (!availableIds.has(id)) {
+          this._selectedRowIds.delete(id);
+        }
+      });
+    }
+
     if (changedProperties.has('data')) {
       if (this._hasRenderedRows) {
         this._updatePositions();
@@ -394,41 +573,70 @@ export class ObcTable extends LitElement {
   }
 
   override render() {
+    const effectiveColumns = this.selectable
+      ? ([
+          {
+            label: '',
+            key: '__selection__',
+          } as ObcTableColumn,
+          ...this.columns,
+        ] as ObcTableColumn[])
+      : this.columns;
+    const selectionColumnCount = this.selectable
+      ? Math.max(0, effectiveColumns.length - 1)
+      : effectiveColumns.length;
     return html`
       <div
-        class="grid-container"
+        class=${classMap({
+          'grid-container': true,
+          'has-selection-column': this.selectable,
+        })}
         part="grid"
-        style="--grid-columns: ${this.columns.length}"
+        style="
+          --grid-columns: ${effectiveColumns.length};
+          --grid-columns-rest: ${selectionColumnCount};
+          --selection-column-width: var(--menu-navigation-components-table-item-touch-target-size);
+        "
         role="table"
       >
         ${this.noHeader
           ? nothing
           : html`
               <div class="grid-header" role="row">
-                ${this.columns.map((col, colIdx) => {
+                ${effectiveColumns.map((col) => {
+                  const isSelectionColumn =
+                    this.selectable && col.key === '__selection__';
                   const isNotLast =
-                    this.columns.indexOf(col) !== this.columns.length - 1;
+                    effectiveColumns.indexOf(col) !==
+                    effectiveColumns.length - 1;
                   const icon = col.renderHeaderIcon
                     ? html`<span slot="leading-icon"
                         >${col.renderHeaderIcon()}</span
                       >`
                     : nothing;
 
+                  const columnIndex = this.columns.findIndex(
+                    (column) => column.key === col.key
+                  );
                   const sorted =
                     'sortable' in col &&
                     col.sortable &&
-                    this._sortByColumnIdx === colIdx;
+                    this._sortByColumnIdx === columnIndex;
                   const sortDirection = sorted ? this._sortDirection : 'none';
-                  if ('sortable' in col && col.sortable) {
+                  const headerType =
+                    col.headerType ??
+                    (this.narrowHeader
+                      ? ObcTableHeaderItemType.Narrow
+                      : ObcTableHeaderItemType.Regular);
+                  if ('sortable' in col && col.sortable && !isSelectionColumn) {
                     return html`<obc-table-header-item
                       role="columnheader"
+                      class=${isSelectionColumn ? 'selection-header' : ''}
                       .showDivider=${isNotLast}
                       ?hasLeadingIcon=${icon !== nothing}
                       .sortDirection=${sortDirection}
                       .sortable=${true}
-                      type=${this.narrowHeader
-                        ? ObcTableHeaderItemType.Narrow
-                        : ObcTableHeaderItemType.Regular}
+                      type=${headerType}
                       @click=${() =>
                         this._handleSortClick(
                           col as ObcTableColumnSortable<
@@ -440,13 +648,34 @@ export class ObcTable extends LitElement {
                       >${icon}${col.label}</obc-table-header-item
                     > `;
                   } else {
+                    if (isSelectionColumn) {
+                      return html`<div
+                        role="columnheader"
+                        class=${classMap({
+                          'selection-header': true,
+                        })}
+                        tabindex="0"
+                        @keydown=${this._handleHeaderKeyDown}
+                      >
+                        <obc-checkbox
+                          .label=${this.selectAllLabel}
+                          .status=${this._getSelectionStatus()}
+                          .disabled=${false}
+                          aria-label=${this.selectAllAriaLabel}
+                          @click=${(event: MouseEvent) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                          }}
+                          @change=${() => this._toggleAllSelection()}
+                        ></obc-checkbox>
+                      </div>`;
+                    }
                     return html`<obc-table-header-item
                       role="columnheader"
+                      class=${isSelectionColumn ? 'selection-header' : ''}
                       .showDivider=${isNotLast}
                       ?hasLeadingIcon=${icon !== nothing}
-                      type=${this.narrowHeader
-                        ? ObcTableHeaderItemType.Narrow
-                        : ObcTableHeaderItemType.Regular}
+                      type=${headerType}
                       >${icon}${col.label}</obc-table-header-item
                     >`;
                   }
@@ -466,12 +695,33 @@ export class ObcTable extends LitElement {
               const hasDivider =
                 this.rowDivider && this.data.length - 1 !== rowIndex;
               const isStriped = this.striped && rowIndex % 2 === 1;
+              const isRowSelected =
+                (row.selected ?? false) ||
+                (this.selectable && this._selectedRowIds.has(row.id));
+              const previousRow =
+                rowIndex > 0 ? this.sortedData[rowIndex - 1] : undefined;
+              const nextRow =
+                rowIndex < this.sortedData.length - 1
+                  ? this.sortedData[rowIndex + 1]
+                  : undefined;
+              const hasSelectedPreviousRow =
+                previousRow !== undefined &&
+                ((previousRow.selected ?? false) ||
+                  (this.selectable &&
+                    this._selectedRowIds.has(previousRow.id)));
+              const hasSelectedNextRow =
+                nextRow !== undefined &&
+                ((nextRow.selected ?? false) ||
+                  (this.selectable && this._selectedRowIds.has(nextRow.id)));
               return html`
                 <button
                   role="row"
                   class=${classMap({
                     'grid-row': true,
-                    selected: row.selected ?? false,
+                    selected: isRowSelected,
+                    'selected-with-prev':
+                      isRowSelected && hasSelectedPreviousRow,
+                    'selected-with-next': isRowSelected && hasSelectedNextRow,
                     striped: isStriped,
                   })}
                   @click=${() => this._handleRowClick(row)}
@@ -480,8 +730,32 @@ export class ObcTable extends LitElement {
                   style="grid-row: ${rowIndex + 1}"
                   part="row"
                 >
-                  ${map(this.columns, (col) => {
+                  ${map(effectiveColumns, (col) => {
+                    if (this.selectable && col.key === '__selection__') {
+                      const checked = this._selectedRowIds.has(row.id);
+                      return html`<div
+                        class="grid-cell checkbox align-center selection"
+                        role="cell"
+                      >
+                        <obc-checkbox
+                          .label=${''}
+                          .status=${checked
+                            ? CheckboxStatus.checked
+                            : CheckboxStatus.unchecked}
+                          .disabled=${false}
+                          aria-label=${`Select row ${row.id}`}
+                          @click=${(event: MouseEvent) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                          }}
+                          @change=${() => this._toggleRowSelection(row.id)}
+                        ></obc-checkbox>
+                      </div>`;
+                    }
                     const value = row[col.key];
+                    if (value === undefined) {
+                      return html`<div class="grid-cell" role="cell"></div>`;
+                    }
                     if (col.renderCell) {
                       return html`<div
                         class="grid-cell ${col.dividerRight
@@ -512,7 +786,7 @@ export class ObcTable extends LitElement {
             }
           )}
           ${repeat(
-            this.columns,
+            effectiveColumns,
             (col) => col.key,
             (col, colIndex) =>
               col.dividerRight
@@ -565,6 +839,102 @@ export class ObcTable extends LitElement {
       detail: {rowId: row.id, columnKey},
     });
     this.dispatchEvent(e);
+  }
+
+  private _handleCellTagClick(
+    event: MouseEvent,
+    row: ObcTableRow,
+    columnKey: string,
+    tagId: string
+  ) {
+    event.preventDefault();
+    event.stopPropagation();
+    const e: ObcTableCellTagClickEvent = new CustomEvent('cell-tag-click', {
+      detail: {rowId: row.id, columnKey, tagId},
+    });
+    this.dispatchEvent(e);
+  }
+
+  private _handleCellCheckboxChange(
+    event: ObcCheckboxChangeEvent,
+    row: ObcTableRow,
+    columnKey: string
+  ) {
+    event.preventDefault();
+    event.stopPropagation();
+    const e: ObcTableCellCheckboxChangeEvent = new CustomEvent(
+      'cell-checkbox-change',
+      {
+        detail: {
+          rowId: row.id,
+          columnKey,
+          status: event.detail.status,
+          disabled: event.detail.disabled,
+        },
+      }
+    );
+    this.dispatchEvent(e);
+  }
+
+  private _getSelectableRowIds(): string[] {
+    return this.data.map((row) => row.id);
+  }
+
+  private _getSelectionStatus(): CheckboxStatus {
+    const rowIds = this._getSelectableRowIds();
+    if (rowIds.length === 0) return CheckboxStatus.unchecked;
+    const selectedCount = rowIds.filter((id) =>
+      this._selectedRowIds.has(id)
+    ).length;
+    if (selectedCount === 0) return CheckboxStatus.unchecked;
+    if (selectedCount === rowIds.length) return CheckboxStatus.checked;
+    return CheckboxStatus.mixed;
+  }
+
+  private _emitSelectionChange(
+    selectedRowIds: string[],
+    source: 'row' | 'header'
+  ) {
+    const selectedRows = this.data.filter((row) =>
+      selectedRowIds.includes(row.id)
+    );
+    const e: ObcTableSelectionChangeEvent = new CustomEvent(
+      'selection-change',
+      {
+        detail: {selectedRowIds, selectedRows, source},
+      }
+    );
+    this.dispatchEvent(e);
+  }
+
+  private _applySelectionChange(
+    nextSelection: Set<string>,
+    source: 'row' | 'header'
+  ) {
+    const selectedRowIds = Array.from(nextSelection);
+    this._emitSelectionChange(selectedRowIds, source);
+    if (this.selectedRowIds === undefined) {
+      this._selectedRowIds = nextSelection;
+      this.requestUpdate();
+    }
+  }
+
+  private _toggleRowSelection(rowId: string) {
+    const nextSelection = new Set(this._selectedRowIds);
+    if (nextSelection.has(rowId)) {
+      nextSelection.delete(rowId);
+    } else {
+      nextSelection.add(rowId);
+    }
+    this._applySelectionChange(nextSelection, 'row');
+  }
+
+  private _toggleAllSelection() {
+    const rowIds = this._getSelectableRowIds();
+    const status = this._getSelectionStatus();
+    const nextSelection =
+      status === CheckboxStatus.checked ? new Set<string>() : new Set(rowIds);
+    this._applySelectionChange(nextSelection, 'header');
   }
 
   private _renderCell(
@@ -639,6 +1009,129 @@ export class ObcTable extends LitElement {
               >`
             : nothing}
         </obc-button>
+      </div>`;
+    } else if (value.type === ObcTableCellType.Checkbox) {
+      const checkboxLabel = value.label ?? value.text ?? '';
+      const ariaLabel =
+        checkboxLabel.trim() === '' ? (column.label ?? 'Checkbox') : undefined;
+      return html`<div
+        class=${classMap({
+          'grid-cell': true,
+          checkbox: true,
+          [`align-${value.align ?? 'center'}`]: true,
+          'divider-right': column.dividerRight ?? false,
+        })}
+        role="cell"
+        part=${ifDefined(cssPart(value, 'cell'))}
+      >
+        <obc-checkbox
+          .label=${checkboxLabel}
+          .status=${value.status ?? CheckboxStatus.unchecked}
+          .disabled=${value.disabled ?? false}
+          aria-describedby=${ifDefined(value.ariaDescribedBy)}
+          aria-label=${ifDefined(ariaLabel)}
+          part=${ifDefined(cssPart(value, 'checkbox'))}
+          @click=${(event: MouseEvent) => {
+            event.preventDefault();
+            event.stopPropagation();
+          }}
+          @change=${(event: ObcCheckboxChangeEvent) =>
+            this._handleCellCheckboxChange(event, row, column.key)}
+        ></obc-checkbox>
+      </div>`;
+    } else if (value.type === ObcTableCellType.Tag) {
+      const tags: ObcTableTagData[] = value.tags ??
+        (value.tag ? [value.tag] : undefined) ?? [
+          {
+            id: value.tagId ?? 'tag',
+            label: value.label ?? value.text ?? 'Label',
+            color: value.color,
+            hasIcon: value.hasIcon,
+            icon: value.icon,
+          },
+        ];
+      const wrap = value.wrap ?? value.tags !== undefined;
+      const defaultMaxTags = value.tags ? 2 : undefined;
+      const maxTags =
+        (value.maxTags ?? defaultMaxTags) !== undefined
+          ? Math.max(0, Math.floor(value.maxTags ?? defaultMaxTags ?? 0))
+          : undefined;
+      const visibleTags = maxTags !== undefined ? tags.slice(0, maxTags) : tags;
+      const overflowCount =
+        maxTags !== undefined ? Math.max(0, tags.length - maxTags) : 0;
+      const overflowLabel =
+        value.overflowLabel ?? `+${overflowCount.toString()}`;
+      return html`<div
+        class=${classMap({
+          'grid-cell': true,
+          tags: tags.length > 1,
+          wrap,
+          [`align-${value.align ?? 'left'}`]: true,
+          'divider-right': column.dividerRight ?? false,
+        })}
+        role="cell"
+        part=${ifDefined(cssPart(value, 'cell'))}
+      >
+        ${visibleTags.map((tag) => {
+          const hasIcon = tag.hasIcon ?? tag.icon !== undefined;
+          return html`<obc-tag
+            .label=${tag.label}
+            color=${tag.color ?? TagColor.gray}
+            ?hasIcon=${hasIcon}
+            part=${ifDefined(
+              [cssPart(value, 'tag'), tag.cssPart].filter(Boolean).join(' ') ||
+                undefined
+            )}
+            @click=${(event: MouseEvent) =>
+              this._handleCellTagClick(event, row, column.key, tag.id)}
+          >
+            ${hasIcon && tag.icon ? tag.icon : nothing}
+          </obc-tag>`;
+        })}
+        ${overflowCount > 0
+          ? html`<span
+              class="tag-overflow"
+              part=${ifDefined(cssPart(value, 'tag-overflow'))}
+              >${overflowLabel}</span
+            >`
+          : nothing}
+      </div>`;
+    } else if (value.type === ObcTableCellType.HorizontalBar) {
+      const hasBar = value.hasBar ?? true;
+      const hasScale = value.hasScale ?? false;
+      const hideLabels = value.hideLabels ?? true;
+      const fixedAspectRatio = value.fixedAspectRatio ?? true;
+      return html`<div
+        class=${classMap({
+          'grid-cell': true,
+          'horizontal-bar': true,
+          [`align-${value.align ?? 'left'}`]: true,
+          'divider-right': column.dividerRight ?? false,
+        })}
+        role="cell"
+        part=${ifDefined(cssPart(value, 'cell'))}
+      >
+        <obc-bar-horizontal
+          .minValue=${value.minValue ?? 0}
+          .maxValue=${value.maxValue ?? 100}
+          .value=${value.value}
+          .setpoint=${value.setpoint}
+          .hasBar=${hasBar}
+          .hasScale=${hasScale}
+          .hideLabels=${hideLabels}
+          .priority=${value.priority ?? Priority.regular}
+          .fillMode=${value.fillMode ?? FillMode.fill}
+          .fillMin=${value.fillMin}
+          .fillMax=${value.fillMax}
+          .barThickness=${value.barThickness ?? 24}
+          .scaleType=${value.scaleType ?? ScaleType.regular}
+          .frameStyle=${value.frameStyle ?? FrameStyle.regular}
+          .side=${value.side ?? ExternalScaleSide.bottom}
+          .state=${value.state ?? InstrumentState.active}
+          .fixedAspectRatio=${fixedAspectRatio}
+          .scaleReferenceSize=${value.scaleReferenceSize ?? 384}
+          part=${ifDefined(cssPart(value, 'bar'))}
+        ></obc-bar-horizontal>
       </div>`;
     } else {
       return nothing;

@@ -6,7 +6,7 @@ import '../../icons/icon-placeholder.js';
 import '../../icons/icon-check-google.js';
 
 const meta: Meta<ObcFilterChip> = {
-  title: 'UI Components/Selection controls and switches/Filter Chip',
+  title: 'UI Components/Selection Controls and Switches/Filter Chip',
   tags: ['6.0'],
   component: 'obc-filter-chip',
   argTypes: {

@@ -10,7 +10,7 @@ import {
 import '../../../icons/icon-placeholder.js';
 
 const meta: Meta<ObcPoiObject> = {
-  title: 'AR/Building blocks/POI Object',
+  title: 'AR/Building Blocks/POI Object',
   component: 'obc-poi-object',
   tags: ['autodocs'],
   argTypes: {

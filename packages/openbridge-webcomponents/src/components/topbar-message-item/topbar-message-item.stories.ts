@@ -19,7 +19,7 @@ interface StoryArgs extends Partial<ObcTopbarMessageItem> {
 }
 
 const meta: Meta<StoryArgs> = {
-  title: 'UI Components/Message and alerts/Topbar Message Item',
+  title: 'UI Components/Message and Alerts/Topbar Message Item',
   tags: ['autodocs', '6.0'],
   component: 'obc-topbar-message-item',
   args: {

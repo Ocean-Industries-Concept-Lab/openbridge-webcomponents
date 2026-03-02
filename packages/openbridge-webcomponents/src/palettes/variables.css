@@ -671,10 +671,8 @@
     --global-size-spacing-icon-icon-size-regular
   );
   --ui-components-accordion-item-label-spacing: 8px;
-  --ui-components-accordion-item-padding-horizontal: var(
-    --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
-  );
-  --ui-components-accordion-item-border-radius: var(--border-radius-br-6);
+  --ui-components-accordion-item-padding-horizontal: 16px;
+  --ui-components-accordion-item-border-radius: var(--border-radius-br-0);
   --ui-components-accordion-item-margin-horizontal: var(
     --global-size-spacing-nav-item-and-menus-margin-horizontal-list-item
   );
@@ -1989,78 +1987,78 @@
     --icon-button-border-radius-bottom-left
   );
   --app-components-integration-system-icon-button-stroke-weight: 1px;
-  --app-components-integration-system-button-iconsize: var(
+  --app-components-integration-system-navigation-item-horizontal-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-integration-system-button-visual-target: 40px;
-  --app-components-integration-system-button-touch-target: var(
+  --app-components-integration-system-navigation-item-horizontal-visual-target: 40px;
+  --app-components-integration-system-navigation-item-horizontal-touch-target: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-integration-system-button-border-radius: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --app-components-integration-system-button-border-radius-top-left: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-top-left: var(
     --button-border-radius-top-left
   );
-  --app-components-integration-system-button-border-radius-top-right: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-top-right: var(
     --button-border-radius-top-right
   );
-  --app-components-integration-system-button-border-radius-bottom-right: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-bottom-right: var(
     --button-border-radius-bottom-right
   );
-  --app-components-integration-system-button-border-radius-bottom-left: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-bottom-left: var(
     --button-border-radius-bottom-left
   );
-  --app-components-integration-system-button-stroke-weight: 1px;
-  --app-components-integration-system-button-padding-horizontal: 8px;
-  --app-components-integration-system-button-label-spacing: 8px;
-  --app-components-integration-system-button-stroke-weight-left: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight: 1px;
+  --app-components-integration-system-navigation-item-horizontal-padding-horizontal: 8px;
+  --app-components-integration-system-navigation-item-horizontal-label-spacing: 8px;
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-left: var(
     --button-stroke-weight-left
   );
-  --app-components-integration-system-button-stroke-weight-top: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-top: var(
     --button-stroke-weight-top
   );
-  --app-components-integration-system-button-stroke-weight-right: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-right: var(
     --button-stroke-weight-right
   );
-  --app-components-integration-system-button-stroke-weight-bottom: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-bottom: var(
     --button-stroke-weight-bottom
   );
-  --app-components-integration-system-button-icon-size-large: var(
+  --app-components-integration-system-navigation-item-horizontal-icon-size-large: var(
     --global-size-spacing-icon-icon-size-large
   );
-  --app-components-integration-system-button-padding-vertical: 8px;
-  --app-components-integration-system-button-label-spacing-small: 2px;
-  --app-components-integration-system-list-item-icon-size: var(
+  --app-components-integration-system-navigation-item-horizontal-padding-vertical: 8px;
+  --app-components-integration-system-navigation-item-horizontal-label-spacing-xsmall: 2px;
+  --app-components-integration-system-navigation-item-vertical-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-integration-system-list-item-icon-size-large: var(
+  --app-components-integration-system-navigation-item-vertical-icon-size-large: var(
     --global-size-spacing-icon-icon-size-large
   );
-  --app-components-integration-system-list-item-visual-target: 40px;
-  --app-components-integration-system-list-item-label-spacing: 8px;
-  --app-components-integration-system-list-item-label-spacing-small: 2px;
-  --app-components-integration-system-list-item-touch-target: var(
+  --app-components-integration-system-navigation-item-vertical-visual-target: 40px;
+  --app-components-integration-system-navigation-item-vertical-label-spacing: 8px;
+  --app-components-integration-system-navigation-item-vertical-label-spacing-small: 2px;
+  --app-components-integration-system-navigation-item-vertical-touch-target: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-integration-system-list-item-border-radius: var(
+  --app-components-integration-system-navigation-item-vertical-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --app-components-integration-system-list-item-stroke-weight: 1px;
-  --app-components-integration-system-list-item-stroke-weight-left: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight: 1px;
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-left: var(
     --button-stroke-weight-left
   );
-  --app-components-integration-system-list-item-stroke-weight-top: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-top: var(
     --button-stroke-weight-top
   );
-  --app-components-integration-system-list-item-stroke-weight-right: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-right: var(
     --button-stroke-weight-right
   );
-  --app-components-integration-system-list-item-stroke-weight-bottom: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-bottom: var(
     --button-stroke-weight-bottom
   );
-  --app-components-integration-system-list-item-padding-horizontal: 8px;
-  --app-components-integration-system-list-item-padding-vertical: 8px;
+  --app-components-integration-system-navigation-item-vertical-padding-horizontal: 8px;
+  --app-components-integration-system-navigation-item-vertical-padding-vertical: 8px;
   --global-typography-instrument-value-large-padding-bottom: 2px;
   --global-typography-instrument-value-large-font-weight-regular: var(
     --font-weight-regular
@@ -2493,15 +2491,48 @@
   --instrument-components-watchface-frame-condenced-track-size: 24px;
   --instrument-components-watchface-frame-condenced-track-margin: 10px;
   --instrument-components-watchface-frame-condenced-double-thickness: 48px;
-  --app-components-integration-system-menu-padding-horizontal: 8px;
-  --app-components-integration-system-menu-spacing-horizontal: 8px;
-  --app-components-integration-system-menu-action-container-height: 64px;
-  --app-components-integration-system-menu-border-radius: var(
+  --app-components-integration-system-dropdown-menu-padding-horizontal: 8px;
+  --app-components-integration-system-dropdown-menu-spacing-horizontal: 8px;
+  --app-components-integration-system-dropdown-menu-action-container-height: 64px;
+  --app-components-integration-system-dropdown-menu-border-radius: var(
     --global-border-radius-border-radius-floating
   );
   --ui-components-app-button-border-radius-small: 12px;
   --ui-components-app-button-border-radius-large: 20px;
   --app-components-integration-system-app-bar-fleet-container-border-radius: 18px;
+  --ui-components-two-step-action-border-radius: var(
+    --global-border-radius-border-radius-base
+  );
+  --ui-components-two-step-action-touch-target-size: var(
+    --global-size-spacing-touch-target-min
+  );
+  --ui-components-two-step-action-visual-target-size: var(
+    --global-size-spacing-visual-target-min
+  );
+  --app-components-integration-system-navigation-item-horizontal-label-spacing-small: 4px;
+  --global-typography-ui-title-font-size: 22px;
+  --global-typography-ui-title-line-height: 24px;
+  --global-typography-ui-title-font-weight: var(
+    --typography-font-weight-semibold
+  );
+  --global-typography-ui-title-letter-spacing: -0.5px;
+  --app-components-integration-system-navigation-item-horizontal-padding-horizontal-large: 12px;
+  --ui-components-accordion-item-label-spacing-small: 4px;
+  --menu-navigation-components-navigation-item-label-spacing-small: 4px;
+  --app-components-integration-system-topbar-margin-global: 4px;
+  --app-components-integration-system-topbar-touch-target-size: var(
+    --app-components-topbar-touch-target-size
+  );
+  --app-components-integration-system-topbar-item-spacing: 8px;
+  --app-components-integration-system-status-indicator-padding-horizontal: 8px;
+  --app-components-integration-system-status-indicator-label-spacing: 8px;
+  --app-components-integration-system-status-indicator-border-radius: var(
+    --global-border-radius-border-radius-floating
+  );
+  --app-components-integration-system-status-indicator-icon-size: var(
+    --global-size-spacing-icon-icon-size-regular
+  );
+  --app-components-integration-system-status-indicator-height: 40px;
 }
 .obc-component-size-medium {
   --global-size-spacing-touch-target-min: 56px;
@@ -3182,7 +3213,7 @@
   --ui-components-accordion-item-padding-horizontal: var(
     --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
   );
-  --ui-components-accordion-item-border-radius: var(--border-radius-br-6);
+  --ui-components-accordion-item-border-radius: var(--border-radius-br-0);
   --ui-components-accordion-item-margin-horizontal: var(
     --global-size-spacing-nav-item-and-menus-margin-horizontal-list-item
   );
@@ -4499,78 +4530,78 @@
     --icon-button-border-radius-bottom-left
   );
   --app-components-integration-system-icon-button-stroke-weight: 1px;
-  --app-components-integration-system-button-iconsize: var(
+  --app-components-integration-system-navigation-item-horizontal-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-integration-system-button-visual-target: 48px;
-  --app-components-integration-system-button-touch-target: var(
+  --app-components-integration-system-navigation-item-horizontal-visual-target: 48px;
+  --app-components-integration-system-navigation-item-horizontal-touch-target: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-integration-system-button-border-radius: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --app-components-integration-system-button-border-radius-top-left: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-top-left: var(
     --button-border-radius-top-left
   );
-  --app-components-integration-system-button-border-radius-top-right: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-top-right: var(
     --button-border-radius-top-right
   );
-  --app-components-integration-system-button-border-radius-bottom-right: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-bottom-right: var(
     --button-border-radius-bottom-right
   );
-  --app-components-integration-system-button-border-radius-bottom-left: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-bottom-left: var(
     --button-border-radius-bottom-left
   );
-  --app-components-integration-system-button-stroke-weight: 1px;
-  --app-components-integration-system-button-padding-horizontal: 8px;
-  --app-components-integration-system-button-label-spacing: 4px;
-  --app-components-integration-system-button-stroke-weight-left: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight: 1px;
+  --app-components-integration-system-navigation-item-horizontal-padding-horizontal: 8px;
+  --app-components-integration-system-navigation-item-horizontal-label-spacing: 4px;
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-left: var(
     --button-stroke-weight-left
   );
-  --app-components-integration-system-button-stroke-weight-top: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-top: var(
     --button-stroke-weight-top
   );
-  --app-components-integration-system-button-stroke-weight-right: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-right: var(
     --button-stroke-weight-right
   );
-  --app-components-integration-system-button-stroke-weight-bottom: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-bottom: var(
     --button-stroke-weight-bottom
   );
-  --app-components-integration-system-button-icon-size-large: var(
+  --app-components-integration-system-navigation-item-horizontal-icon-size-large: var(
     --global-size-spacing-icon-icon-size-large
   );
-  --app-components-integration-system-button-padding-vertical: 8px;
-  --app-components-integration-system-button-label-spacing-small: 2px;
-  --app-components-integration-system-list-item-icon-size: var(
+  --app-components-integration-system-navigation-item-horizontal-padding-vertical: 8px;
+  --app-components-integration-system-navigation-item-horizontal-label-spacing-xsmall: 2px;
+  --app-components-integration-system-navigation-item-vertical-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-integration-system-list-item-icon-size-large: var(
+  --app-components-integration-system-navigation-item-vertical-icon-size-large: var(
     --global-size-spacing-icon-icon-size-large
   );
-  --app-components-integration-system-list-item-visual-target: 48px;
-  --app-components-integration-system-list-item-label-spacing: 8px;
-  --app-components-integration-system-list-item-label-spacing-small: 2px;
-  --app-components-integration-system-list-item-touch-target: var(
+  --app-components-integration-system-navigation-item-vertical-visual-target: 48px;
+  --app-components-integration-system-navigation-item-vertical-label-spacing: 8px;
+  --app-components-integration-system-navigation-item-vertical-label-spacing-small: 2px;
+  --app-components-integration-system-navigation-item-vertical-touch-target: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-integration-system-list-item-border-radius: var(
+  --app-components-integration-system-navigation-item-vertical-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --app-components-integration-system-list-item-stroke-weight: 1px;
-  --app-components-integration-system-list-item-stroke-weight-left: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight: 1px;
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-left: var(
     --button-stroke-weight-left
   );
-  --app-components-integration-system-list-item-stroke-weight-top: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-top: var(
     --button-stroke-weight-top
   );
-  --app-components-integration-system-list-item-stroke-weight-right: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-right: var(
     --button-stroke-weight-right
   );
-  --app-components-integration-system-list-item-stroke-weight-bottom: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-bottom: var(
     --button-stroke-weight-bottom
   );
-  --app-components-integration-system-list-item-padding-horizontal: 8px;
-  --app-components-integration-system-list-item-padding-vertical: 8px;
+  --app-components-integration-system-navigation-item-vertical-padding-horizontal: 8px;
+  --app-components-integration-system-navigation-item-vertical-padding-vertical: 8px;
   --global-typography-instrument-value-large-padding-bottom: 4px;
   --global-typography-instrument-value-large-font-weight-regular: var(
     --font-weight-regular
@@ -5003,13 +5034,46 @@
   --instrument-components-watchface-frame-condenced-track-size: 48px;
   --instrument-components-watchface-frame-condenced-track-margin: 28px;
   --instrument-components-watchface-frame-condenced-double-thickness: 96px;
-  --app-components-integration-system-menu-padding-horizontal: 8px;
-  --app-components-integration-system-menu-spacing-horizontal: 8px;
-  --app-components-integration-system-menu-action-container-height: 64px;
-  --app-components-integration-system-menu-border-radius: 64px;
+  --app-components-integration-system-dropdown-menu-padding-horizontal: 8px;
+  --app-components-integration-system-dropdown-menu-spacing-horizontal: 8px;
+  --app-components-integration-system-dropdown-menu-action-container-height: 64px;
+  --app-components-integration-system-dropdown-menu-border-radius: 64px;
   --ui-components-app-button-border-radius-small: 16px;
   --ui-components-app-button-border-radius-large: 24px;
   --app-components-integration-system-app-bar-fleet-container-border-radius: 18px;
+  --ui-components-two-step-action-border-radius: var(
+    --global-border-radius-border-radius-base
+  );
+  --ui-components-two-step-action-touch-target-size: var(
+    --global-size-spacing-touch-target-min
+  );
+  --ui-components-two-step-action-visual-target-size: var(
+    --global-size-spacing-visual-target-min
+  );
+  --app-components-integration-system-navigation-item-horizontal-label-spacing-small: 4px;
+  --global-typography-ui-title-font-size: 34px;
+  --global-typography-ui-title-line-height: 32px;
+  --global-typography-ui-title-font-weight: var(
+    --typography-font-weight-semibold
+  );
+  --global-typography-ui-title-letter-spacing: -0.5px;
+  --app-components-integration-system-navigation-item-horizontal-padding-horizontal-large: 12px;
+  --ui-components-accordion-item-label-spacing-small: 4px;
+  --menu-navigation-components-navigation-item-label-spacing-small: 4px;
+  --app-components-integration-system-topbar-margin-global: 4px;
+  --app-components-integration-system-topbar-touch-target-size: var(
+    --app-components-topbar-touch-target-size
+  );
+  --app-components-integration-system-topbar-item-spacing: 8px;
+  --app-components-integration-system-status-indicator-padding-horizontal: 8px;
+  --app-components-integration-system-status-indicator-label-spacing: 8px;
+  --app-components-integration-system-status-indicator-border-radius: var(
+    --global-border-radius-border-radius-floating
+  );
+  --app-components-integration-system-status-indicator-icon-size: var(
+    --global-size-spacing-icon-icon-size-regular
+  );
+  --app-components-integration-system-status-indicator-height: 40px;
 }
 .obc-component-size-large {
   --global-size-spacing-touch-target-min: 72px;
@@ -5692,7 +5756,7 @@
   --ui-components-accordion-item-padding-horizontal: var(
     --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
   );
-  --ui-components-accordion-item-border-radius: var(--border-radius-br-8);
+  --ui-components-accordion-item-border-radius: var(--border-radius-br-0);
   --ui-components-accordion-item-margin-horizontal: var(
     --global-size-spacing-nav-item-and-menus-margin-horizontal-list-item
   );
@@ -6997,78 +7061,78 @@
     --icon-button-border-radius-bottom-left
   );
   --app-components-integration-system-icon-button-stroke-weight: 1px;
-  --app-components-integration-system-button-iconsize: var(
+  --app-components-integration-system-navigation-item-horizontal-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-integration-system-button-visual-target: 60px;
-  --app-components-integration-system-button-touch-target: var(
+  --app-components-integration-system-navigation-item-horizontal-visual-target: 60px;
+  --app-components-integration-system-navigation-item-horizontal-touch-target: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-integration-system-button-border-radius: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --app-components-integration-system-button-border-radius-top-left: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-top-left: var(
     --button-border-radius-top-left
   );
-  --app-components-integration-system-button-border-radius-top-right: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-top-right: var(
     --button-border-radius-top-right
   );
-  --app-components-integration-system-button-border-radius-bottom-right: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-bottom-right: var(
     --button-border-radius-bottom-right
   );
-  --app-components-integration-system-button-border-radius-bottom-left: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-bottom-left: var(
     --button-border-radius-bottom-left
   );
-  --app-components-integration-system-button-stroke-weight: 1px;
-  --app-components-integration-system-button-padding-horizontal: 12px;
-  --app-components-integration-system-button-label-spacing: 6px;
-  --app-components-integration-system-button-stroke-weight-left: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight: 1px;
+  --app-components-integration-system-navigation-item-horizontal-padding-horizontal: 12px;
+  --app-components-integration-system-navigation-item-horizontal-label-spacing: 6px;
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-left: var(
     --button-stroke-weight-left
   );
-  --app-components-integration-system-button-stroke-weight-top: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-top: var(
     --button-stroke-weight-top
   );
-  --app-components-integration-system-button-stroke-weight-right: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-right: var(
     --button-stroke-weight-right
   );
-  --app-components-integration-system-button-stroke-weight-bottom: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-bottom: var(
     --button-stroke-weight-bottom
   );
-  --app-components-integration-system-button-icon-size-large: var(
+  --app-components-integration-system-navigation-item-horizontal-icon-size-large: var(
     --global-size-spacing-icon-icon-size-large
   );
-  --app-components-integration-system-button-padding-vertical: 12px;
-  --app-components-integration-system-button-label-spacing-small: 3px;
-  --app-components-integration-system-list-item-icon-size: var(
+  --app-components-integration-system-navigation-item-horizontal-padding-vertical: 12px;
+  --app-components-integration-system-navigation-item-horizontal-label-spacing-xsmall: 3px;
+  --app-components-integration-system-navigation-item-vertical-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-integration-system-list-item-icon-size-large: var(
+  --app-components-integration-system-navigation-item-vertical-icon-size-large: var(
     --global-size-spacing-icon-icon-size-large
   );
-  --app-components-integration-system-list-item-visual-target: 60px;
-  --app-components-integration-system-list-item-label-spacing: 12px;
-  --app-components-integration-system-list-item-label-spacing-small: 3px;
-  --app-components-integration-system-list-item-touch-target: var(
+  --app-components-integration-system-navigation-item-vertical-visual-target: 60px;
+  --app-components-integration-system-navigation-item-vertical-label-spacing: 12px;
+  --app-components-integration-system-navigation-item-vertical-label-spacing-small: 3px;
+  --app-components-integration-system-navigation-item-vertical-touch-target: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-integration-system-list-item-border-radius: var(
+  --app-components-integration-system-navigation-item-vertical-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --app-components-integration-system-list-item-stroke-weight: 1px;
-  --app-components-integration-system-list-item-stroke-weight-left: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight: 1px;
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-left: var(
     --button-stroke-weight-left
   );
-  --app-components-integration-system-list-item-stroke-weight-top: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-top: var(
     --button-stroke-weight-top
   );
-  --app-components-integration-system-list-item-stroke-weight-right: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-right: var(
     --button-stroke-weight-right
   );
-  --app-components-integration-system-list-item-stroke-weight-bottom: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-bottom: var(
     --button-stroke-weight-bottom
   );
-  --app-components-integration-system-list-item-padding-horizontal: 12px;
-  --app-components-integration-system-list-item-padding-vertical: 12px;
+  --app-components-integration-system-navigation-item-vertical-padding-horizontal: 12px;
+  --app-components-integration-system-navigation-item-vertical-padding-vertical: 12px;
   --global-typography-instrument-value-large-padding-bottom: 4px;
   --global-typography-instrument-value-large-font-weight-regular: var(
     --font-weight-regular
@@ -7501,13 +7565,46 @@
   --instrument-components-watchface-frame-condenced-track-size: 96px;
   --instrument-components-watchface-frame-condenced-track-margin: 42px;
   --instrument-components-watchface-frame-condenced-double-thickness: 96px;
-  --app-components-integration-system-menu-padding-horizontal: 12px;
-  --app-components-integration-system-menu-spacing-horizontal: 12px;
-  --app-components-integration-system-menu-action-container-height: 96px;
-  --app-components-integration-system-menu-border-radius: 96px;
+  --app-components-integration-system-dropdown-menu-padding-horizontal: 12px;
+  --app-components-integration-system-dropdown-menu-spacing-horizontal: 12px;
+  --app-components-integration-system-dropdown-menu-action-container-height: 96px;
+  --app-components-integration-system-dropdown-menu-border-radius: 96px;
   --ui-components-app-button-border-radius-small: 20px;
   --ui-components-app-button-border-radius-large: 30px;
   --app-components-integration-system-app-bar-fleet-container-border-radius: 24px;
+  --ui-components-two-step-action-border-radius: var(
+    --global-border-radius-border-radius-base
+  );
+  --ui-components-two-step-action-touch-target-size: var(
+    --global-size-spacing-touch-target-min
+  );
+  --ui-components-two-step-action-visual-target-size: var(
+    --global-size-spacing-visual-target-min
+  );
+  --app-components-integration-system-navigation-item-horizontal-label-spacing-small: 6px;
+  --global-typography-ui-title-font-size: 44px;
+  --global-typography-ui-title-line-height: 48px;
+  --global-typography-ui-title-font-weight: var(
+    --typography-font-weight-semibold
+  );
+  --global-typography-ui-title-letter-spacing: -0.5px;
+  --app-components-integration-system-navigation-item-horizontal-padding-horizontal-large: 16px;
+  --ui-components-accordion-item-label-spacing-small: 6px;
+  --menu-navigation-components-navigation-item-label-spacing-small: 6px;
+  --app-components-integration-system-topbar-margin-global: 6px;
+  --app-components-integration-system-topbar-touch-target-size: var(
+    --app-components-topbar-touch-target-size
+  );
+  --app-components-integration-system-topbar-item-spacing: 12px;
+  --app-components-integration-system-status-indicator-padding-horizontal: 12px;
+  --app-components-integration-system-status-indicator-label-spacing: 12px;
+  --app-components-integration-system-status-indicator-border-radius: var(
+    --global-border-radius-border-radius-floating
+  );
+  --app-components-integration-system-status-indicator-icon-size: var(
+    --global-size-spacing-icon-icon-size-regular
+  );
+  --app-components-integration-system-status-indicator-height: 56px;
 }
 .obc-component-size-xl {
   --global-size-spacing-touch-target-min: 96px;
@@ -8190,7 +8287,7 @@
   --ui-components-accordion-item-padding-horizontal: var(
     --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
   );
-  --ui-components-accordion-item-border-radius: var(--border-radius-br-12);
+  --ui-components-accordion-item-border-radius: var(--border-radius-br-0);
   --ui-components-accordion-item-margin-horizontal: var(
     --global-size-spacing-nav-item-and-menus-margin-horizontal-list-item
   );
@@ -9509,78 +9606,78 @@
     --icon-button-border-radius-bottom-left
   );
   --app-components-integration-system-icon-button-stroke-weight: 1px;
-  --app-components-integration-system-button-iconsize: var(
+  --app-components-integration-system-navigation-item-horizontal-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-integration-system-button-visual-target: 80px;
-  --app-components-integration-system-button-touch-target: var(
+  --app-components-integration-system-navigation-item-horizontal-visual-target: 80px;
+  --app-components-integration-system-navigation-item-horizontal-touch-target: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-integration-system-button-border-radius: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --app-components-integration-system-button-border-radius-top-left: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-top-left: var(
     --button-border-radius-top-left
   );
-  --app-components-integration-system-button-border-radius-top-right: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-top-right: var(
     --button-border-radius-top-right
   );
-  --app-components-integration-system-button-border-radius-bottom-right: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-bottom-right: var(
     --button-border-radius-bottom-right
   );
-  --app-components-integration-system-button-border-radius-bottom-left: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-bottom-left: var(
     --button-border-radius-bottom-left
   );
-  --app-components-integration-system-button-stroke-weight: 1px;
-  --app-components-integration-system-button-padding-horizontal: 16px;
-  --app-components-integration-system-button-label-spacing: 8px;
-  --app-components-integration-system-button-stroke-weight-left: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight: 1px;
+  --app-components-integration-system-navigation-item-horizontal-padding-horizontal: 16px;
+  --app-components-integration-system-navigation-item-horizontal-label-spacing: 8px;
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-left: var(
     --button-stroke-weight-left
   );
-  --app-components-integration-system-button-stroke-weight-top: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-top: var(
     --button-stroke-weight-top
   );
-  --app-components-integration-system-button-stroke-weight-right: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-right: var(
     --button-stroke-weight-right
   );
-  --app-components-integration-system-button-stroke-weight-bottom: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-bottom: var(
     --button-stroke-weight-bottom
   );
-  --app-components-integration-system-button-icon-size-large: var(
+  --app-components-integration-system-navigation-item-horizontal-icon-size-large: var(
     --global-size-spacing-icon-icon-size-large
   );
-  --app-components-integration-system-button-padding-vertical: 16px;
-  --app-components-integration-system-button-label-spacing-small: 4px;
-  --app-components-integration-system-list-item-icon-size: var(
+  --app-components-integration-system-navigation-item-horizontal-padding-vertical: 16px;
+  --app-components-integration-system-navigation-item-horizontal-label-spacing-xsmall: 4px;
+  --app-components-integration-system-navigation-item-vertical-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-integration-system-list-item-icon-size-large: var(
+  --app-components-integration-system-navigation-item-vertical-icon-size-large: var(
     --global-size-spacing-icon-icon-size-large
   );
-  --app-components-integration-system-list-item-visual-target: 80px;
-  --app-components-integration-system-list-item-label-spacing: 16px;
-  --app-components-integration-system-list-item-label-spacing-small: 4px;
-  --app-components-integration-system-list-item-touch-target: var(
+  --app-components-integration-system-navigation-item-vertical-visual-target: 80px;
+  --app-components-integration-system-navigation-item-vertical-label-spacing: 16px;
+  --app-components-integration-system-navigation-item-vertical-label-spacing-small: 4px;
+  --app-components-integration-system-navigation-item-vertical-touch-target: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-integration-system-list-item-border-radius: var(
+  --app-components-integration-system-navigation-item-vertical-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --app-components-integration-system-list-item-stroke-weight: 1px;
-  --app-components-integration-system-list-item-stroke-weight-left: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight: 1px;
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-left: var(
     --button-stroke-weight-left
   );
-  --app-components-integration-system-list-item-stroke-weight-top: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-top: var(
     --button-stroke-weight-top
   );
-  --app-components-integration-system-list-item-stroke-weight-right: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-right: var(
     --button-stroke-weight-right
   );
-  --app-components-integration-system-list-item-stroke-weight-bottom: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-bottom: var(
     --button-stroke-weight-bottom
   );
-  --app-components-integration-system-list-item-padding-horizontal: 16px;
-  --app-components-integration-system-list-item-padding-vertical: 16px;
+  --app-components-integration-system-navigation-item-vertical-padding-horizontal: 16px;
+  --app-components-integration-system-navigation-item-vertical-padding-vertical: 16px;
   --global-typography-instrument-value-large-padding-bottom: 0px;
   --global-typography-instrument-value-large-font-weight-regular: var(
     --font-weight-semibold
@@ -10017,13 +10114,46 @@
   --instrument-components-watchface-frame-condenced-track-size: 128px;
   --instrument-components-watchface-frame-condenced-track-margin: 56px;
   --instrument-components-watchface-frame-condenced-double-thickness: 24px;
-  --app-components-integration-system-menu-padding-horizontal: 16px;
-  --app-components-integration-system-menu-spacing-horizontal: 16px;
-  --app-components-integration-system-menu-action-container-height: 128px;
-  --app-components-integration-system-menu-border-radius: 128px;
+  --app-components-integration-system-dropdown-menu-padding-horizontal: 16px;
+  --app-components-integration-system-dropdown-menu-spacing-horizontal: 16px;
+  --app-components-integration-system-dropdown-menu-action-container-height: 128px;
+  --app-components-integration-system-dropdown-menu-border-radius: 128px;
   --ui-components-app-button-border-radius-small: 24px;
   --ui-components-app-button-border-radius-large: 40px;
   --app-components-integration-system-app-bar-fleet-container-border-radius: 36px;
+  --ui-components-two-step-action-border-radius: var(
+    --global-border-radius-border-radius-base
+  );
+  --ui-components-two-step-action-touch-target-size: var(
+    --global-size-spacing-touch-target-min
+  );
+  --ui-components-two-step-action-visual-target-size: var(
+    --global-size-spacing-visual-target-min
+  );
+  --app-components-integration-system-navigation-item-horizontal-label-spacing-small: 8px;
+  --global-typography-ui-title-font-size: 0px;
+  --global-typography-ui-title-line-height: 0px;
+  --global-typography-ui-title-font-weight: var(
+    --typography-font-weight-semibold
+  );
+  --global-typography-ui-title-letter-spacing: -0.5px;
+  --app-components-integration-system-navigation-item-horizontal-padding-horizontal-large: 24px;
+  --ui-components-accordion-item-label-spacing-small: 8px;
+  --menu-navigation-components-navigation-item-label-spacing-small: 8px;
+  --app-components-integration-system-topbar-margin-global: 8px;
+  --app-components-integration-system-topbar-touch-target-size: var(
+    --app-components-topbar-touch-target-size
+  );
+  --app-components-integration-system-topbar-item-spacing: 16px;
+  --app-components-integration-system-status-indicator-padding-horizontal: 16px;
+  --app-components-integration-system-status-indicator-label-spacing: 16px;
+  --app-components-integration-system-status-indicator-border-radius: var(
+    --global-border-radius-border-radius-floating
+  );
+  --app-components-integration-system-status-indicator-icon-size: var(
+    --global-size-spacing-icon-icon-size-regular
+  );
+  --app-components-integration-system-status-indicator-height: 80px;
 }
 * {
   --font-size-075: 12px;
@@ -10760,12 +10890,12 @@
   --integration-selected-focused-background-color: rgb(252, 252, 252);
   --integration-selected-disabled-background-color: rgb(0, 0, 0, 0);
   --integration-selected-disabled-border-color: rgb(0, 0, 0, 0);
-  --integration-normal-enabled-background-color: rgb(21, 21, 21);
-  --integration-normal-enabled-border-color: rgb(42, 42, 42);
-  --integration-normal-hover-background-color: rgb(42, 42, 42);
-  --integration-normal-hover-border-color: rgb(69, 69, 69);
-  --integration-normal-pressed-background-color: rgb(30, 30, 30);
-  --integration-normal-pressed-border-color: rgb(42, 42, 42);
+  --integration-normal-enabled-background-color: rgb(30, 30, 30);
+  --integration-normal-enabled-border-color: rgb(53, 53, 53);
+  --integration-normal-hover-background-color: rgb(53, 53, 53);
+  --integration-normal-hover-border-color: rgb(89, 89, 89);
+  --integration-normal-pressed-background-color: rgb(42, 42, 42);
+  --integration-normal-pressed-border-color: rgb(69, 69, 69);
   --integration-normal-focused-background-color: rgb(255, 255, 255, 0);
   --integration-normal-disabled-background-color: rgb(255, 255, 255, 0);
   --integration-normal-disabled-border-color: rgb(
@@ -10778,7 +10908,7 @@
   --palette-name: "day";
   --integration-on-indent-neutral-color: rgb(217, 217, 217);
   --integration-on-indent-active-color: rgb(240, 240, 240);
-  --integration-on-indent-disabled-color: rgb(89, 89, 89);
+  --integration-on-indent-disabled-color: rgb(53, 53, 53);
   --integration-indent-enabled-background-color: rgb(42, 42, 42);
   --integration-indent-enabled-border-color: rgb(69, 69, 69);
   --integration-indent-hover-background-color: rgb(53, 53, 53);
@@ -10840,7 +10970,7 @@
   --base-gray-400: rgb(112, 112, 112);
   --base-gray-500: rgb(83, 83, 83);
   --base-gray-600: rgb(61, 61, 61);
-  --integration-border-outline: rgb(30, 30, 30);
+  --integration-border-outline: rgb(53, 53, 53);
   --integration-raised: rgb(255, 255, 255);
   --integration-element-active-color: rgb(247, 247, 247);
   --integration-element-neutral-color: rgb(217, 217, 217);
@@ -10848,7 +10978,7 @@
   --integration-element-disabled-color: rgb(89, 89, 89);
   --overlay-element-inactive-inverted-color: rgb(0, 0, 0, 0.5400000214576721);
   --overlay-element-disabled-inverted-color: rgb(0, 0, 0, 0.23000000417232513);
-  --navigation-chart-simple-depdw: rgb(247, 247, 247);
+  --navigation-chart-simple-depdw-color: rgb(247, 247, 247);
   --element-active-enhanced-color: rgb(29, 60, 103);
   --element-neutral-enhanced-color: rgb(45, 84, 139);
   --element-inactive-enhanced-color: rgb(66, 113, 179);
@@ -10874,23 +11004,23 @@
   --integration-flat-focused-border-color: rgb(255, 255, 255, 0);
   --integration-flat-disabled-background-color: rgb(255, 255, 255, 0);
   --integration-flat-disabled-border-color: rgb(255, 255, 255, 0);
-  --integration-container-section-color: rgb(12, 12, 12);
+  --integration-container-section-color: rgb(21, 21, 21);
   --integration-on-selected-disabled-color: rgb(180, 180, 180);
   --integration-border-focused-border-color: rgb(93, 143, 213);
-  --integration-border-divider: rgb(30, 30, 30);
+  --integration-border-divider: rgb(53, 53, 53);
   --integration-on-flat-active-color: rgb(217, 217, 217);
   --integration-on-flat-neutral-color: rgb(180, 180, 180);
-  --integration-on-flat-disabled-color: rgb(103, 103, 103);
+  --integration-on-flat-disabled-color: rgb(53, 53, 53);
   --alert-low-integrity-background-color: rgb(255, 240, 136);
   --alert-invalid-background-color: rgb(255, 210, 203);
   --element-symbol-color: rgb(142, 142, 142);
   --element-symbol-inverted-color: rgb(89, 89, 89);
   --integration-container-overlay-color: rgb(0, 0, 0, 0.75);
-  --navigation-chart-simple-depvs: rgb(224, 224, 224);
-  --navigation-chart-simple-lndare: rgb(240, 240, 240);
-  --navigation-chart-simple-lndare-outline: rgb(190, 190, 190);
-  --navigation-chart-simple-depvs-outline: rgb(190, 190, 190);
-  --integration-container-background-color: rgb(21, 21, 21);
+  --navigation-chart-simple-depvs-color: rgb(224, 224, 224);
+  --navigation-chart-simple-lndare-color: rgb(240, 240, 240);
+  --navigation-chart-simple-lndare-outline-color: rgb(190, 190, 190);
+  --navigation-chart-simple-depvs-outline-color: rgb(190, 190, 190);
+  --integration-container-background-color: rgb(12, 12, 12);
   --integration-container-transparent-hover: rgb(
     255,
     255,
@@ -10981,6 +11111,19 @@
   --integration-on-indent-inactive-color: rgb(149, 149, 149);
   --alert-low-integrity-border-color: rgb(107, 79, 0);
   --alert-invalid-border-color: rgb(127, 0, 0);
+  --integration-flat-activated-background-color: rgb(
+    255,
+    255,
+    255,
+    0.1599999964237213
+  );
+  --integration-flat-activated-border-color: rgb(
+    255,
+    255,
+    255,
+    0.20999999344348907
+  );
+  --navigation-chart-simple-chmgd-color: rgb(142, 142, 142);
 }
 :root[data-obc-theme="dusk"] {
   --icon-02-chevron-up: url('data:image/svg+xml,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 14.0002L7.41 15.4102L12 10.8302L16.59 15.4102L18 14.0002L12 8.00016L6 14.0002Z" fill="rgba(255, 255, 255, .550)"/></svg>');
@@ -11583,7 +11726,7 @@
   --integration-element-disabled-color: rgb(111, 111, 111);
   --overlay-element-inactive-inverted-color: rgb(0, 0, 0, 0.5400000214576721);
   --overlay-element-disabled-inverted-color: rgb(0, 0, 0, 0.23999999463558197);
-  --navigation-chart-simple-depdw: rgb(15, 15, 15);
+  --navigation-chart-simple-depdw-color: rgb(15, 15, 15);
   --element-active-enhanced-color: rgb(177, 214, 255);
   --element-neutral-enhanced-color: rgb(132, 179, 239);
   --element-inactive-enhanced-color: rgb(103, 143, 195);
@@ -11621,10 +11764,10 @@
   --element-symbol-color: rgb(111, 111, 111);
   --element-symbol-inverted-color: rgb(147, 147, 147);
   --integration-container-overlay-color: rgb(255, 255, 255);
-  --navigation-chart-simple-depvs: rgb(31, 31, 31);
-  --navigation-chart-simple-lndare: rgb(46, 46, 46);
-  --navigation-chart-simple-lndare-outline: rgb(80, 80, 80);
-  --navigation-chart-simple-depvs-outline: rgb(111, 111, 111);
+  --navigation-chart-simple-depvs-color: rgb(31, 31, 31);
+  --navigation-chart-simple-lndare-color: rgb(46, 46, 46);
+  --navigation-chart-simple-lndare-outline-color: rgb(80, 80, 80);
+  --navigation-chart-simple-depvs-outline-color: rgb(111, 111, 111);
   --integration-container-background-color: rgb(31, 31, 31);
   --integration-container-transparent-hover: rgb(0, 0, 0, 0.05000000074505806);
   --integration-container-transparent-pressed: rgb(
@@ -11716,6 +11859,19 @@
   --integration-on-indent-inactive-color: rgb(176, 176, 176);
   --alert-low-integrity-border-color: rgb(142, 106, 0);
   --alert-invalid-border-color: rgb(166, 0, 0);
+  --integration-flat-activated-background-color: rgb(
+    255,
+    255,
+    255,
+    0.14000000059604645
+  );
+  --integration-flat-activated-border-color: rgb(
+    255,
+    255,
+    255,
+    0.20000000298023224
+  );
+  --navigation-chart-simple-chmgd-color: rgb(111, 111, 111);
 }
 :root[data-obc-theme="night"] {
   --icon-02-chevron-up: url('data:image/svg+xml,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 14.0002L7.41 15.4102L12 10.8302L16.59 15.4102L18 14.0002L12 8.00016L6 14.0002Z" fill="rgb(51, 51, 0)"/></svg>');
@@ -12268,7 +12424,7 @@
   --integration-element-disabled-color: rgb(238, 175, 104, 0.2800000011920929);
   --overlay-element-inactive-inverted-color: rgb(0, 0, 0, 0.6100000143051147);
   --overlay-element-disabled-inverted-color: rgb(0, 0, 0, 0.27000001072883606);
-  --navigation-chart-simple-depdw: rgb(0, 0, 0);
+  --navigation-chart-simple-depdw-color: rgb(0, 0, 0);
   --element-active-enhanced-color: rgb(88, 200, 162);
   --element-neutral-enhanced-color: rgb(56, 167, 132);
   --element-inactive-enhanced-color: rgb(44, 131, 102);
@@ -12301,10 +12457,10 @@
   --element-symbol-color: rgb(120, 83, 44);
   --element-symbol-inverted-color: rgb(127, 87, 45);
   --integration-container-overlay-color: rgb(0, 0, 0);
-  --navigation-chart-simple-depvs: rgb(25, 17, 9);
-  --navigation-chart-simple-lndare: rgb(39, 27, 16);
-  --navigation-chart-simple-lndare-outline: rgb(72, 52, 31);
-  --navigation-chart-simple-depvs-outline: rgb(72, 52, 31);
+  --navigation-chart-simple-depvs-color: rgb(25, 17, 9);
+  --navigation-chart-simple-lndare-color: rgb(39, 27, 16);
+  --navigation-chart-simple-lndare-outline-color: rgb(72, 52, 31);
+  --navigation-chart-simple-depvs-outline-color: rgb(72, 52, 31);
   --integration-container-background-color: rgb(0, 0, 0);
   --integration-container-transparent-hover: rgb(0, 0, 0, 0.05000000074505806);
   --integration-container-transparent-pressed: rgb(
@@ -12396,6 +12552,14 @@
   --integration-on-indent-inactive-color: rgb(255, 255, 255);
   --alert-low-integrity-border-color: rgb(67, 55, 0);
   --alert-invalid-border-color: rgb(166, 0, 0);
+  --integration-flat-activated-background-color: rgb(230, 175, 112, 0);
+  --integration-flat-activated-border-color: rgb(
+    238,
+    175,
+    104,
+    0.2800000011920929
+  );
+  --navigation-chart-simple-chmgd-color: rgb(120, 83, 44);
 }
 :root[data-obc-theme="bright"] {
   --icon-02-chevron-up: url('data:image/svg+xml,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 14.0002L7.41 15.4102L12 10.8302L16.59 15.4102L18 14.0002L12 8.00016L6 14.0002Z" fill="rgba(0, 0, 0, .650)"/></svg>');
@@ -12968,7 +13132,7 @@
   --integration-element-disabled-color: rgb(89, 89, 89);
   --overlay-element-inactive-inverted-color: rgb(0, 0, 0, 0.699999988079071);
   --overlay-element-disabled-inverted-color: rgb(0, 0, 0, 0.699999988079071);
-  --navigation-chart-simple-depdw: rgb(247, 247, 247);
+  --navigation-chart-simple-depdw-color: rgb(247, 247, 247);
   --element-active-enhanced-color: rgb(12, 32, 58);
   --element-neutral-enhanced-color: rgb(29, 60, 103);
   --element-inactive-enhanced-color: rgb(45, 84, 139);
@@ -13006,10 +13170,10 @@
   --element-symbol-color: rgb(112, 112, 112);
   --element-symbol-inverted-color: rgb(89, 89, 89);
   --integration-container-overlay-color: rgb(0, 0, 0, 0.75);
-  --navigation-chart-simple-depvs: rgb(224, 224, 224);
-  --navigation-chart-simple-lndare: rgb(240, 240, 240);
-  --navigation-chart-simple-lndare-outline: rgb(142, 142, 142);
-  --navigation-chart-simple-depvs-outline: rgb(142, 142, 142);
+  --navigation-chart-simple-depvs-color: rgb(224, 224, 224);
+  --navigation-chart-simple-lndare-color: rgb(240, 240, 240);
+  --navigation-chart-simple-lndare-outline-color: rgb(142, 142, 142);
+  --navigation-chart-simple-depvs-outline-color: rgb(142, 142, 142);
   --integration-container-background-color: rgb(0, 0, 0);
   --integration-container-transparent-hover: rgb(0, 0, 0, 0.05000000074505806);
   --integration-container-transparent-pressed: rgb(
@@ -13091,6 +13255,14 @@
   --integration-on-indent-inactive-color: rgb(255, 255, 255);
   --alert-low-integrity-border-color: rgb(143, 107, 0);
   --alert-invalid-border-color: rgb(255, 77, 71);
+  --integration-flat-activated-background-color: rgb(
+    255,
+    255,
+    255,
+    0.1599999964237213
+  );
+  --integration-flat-activated-border-color: rgb(255, 255, 255, 0);
+  --navigation-chart-simple-chmgd-color: rgb(112, 112, 112);
 }
 
 @property --alarm-blink-on {

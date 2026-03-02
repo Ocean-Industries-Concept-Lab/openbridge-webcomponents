@@ -3,7 +3,7 @@ import {CheckboxStatus, ObcCheckbox} from './checkbox.js';
 import './checkbox.js';
 
 const meta = {
-  title: 'UI Components/Selection controls and switches/Checkbox',
+  title: 'UI Components/Selection Controls and Switches/Checkbox',
   tags: ['6.0'],
   component: 'obc-checkbox',
   parameters: {

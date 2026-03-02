@@ -36,7 +36,7 @@ const ack = (item: Alert) => {
 };
 
 const meta: Meta<typeof ObcAlertListDetails> = {
-  title: 'Application Components/Alerts/Alert list details',
+  title: 'Application Components/Alerts/Alert List Details',
   tags: ['6.0'],
   component: 'obc-alert-list-details',
   args: {

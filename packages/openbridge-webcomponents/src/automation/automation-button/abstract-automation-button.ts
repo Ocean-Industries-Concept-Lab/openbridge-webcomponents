@@ -36,6 +36,8 @@ export class ObcAbstractAutomationButton extends LitElement {
     ObcAlertFrameThickness.Small;
   @property({type: String}) alertFrameStatus: ObcAlertFrameStatus =
     ObcAlertFrameStatus.Alarm;
+  @property({type: Boolean}) hideAlertCategoryIcon: boolean = false;
+  @property({type: Boolean}) showAlertIcon: boolean = false;
   @property({type: Boolean}) progress: boolean = false;
   @property({type: String}) tag: string = '';
   @property({type: String}) direction: AutomationButtonDirection =
@@ -118,6 +120,8 @@ export class ObcAbstractAutomationButton extends LitElement {
       .alertFrameType=${this.alertFrameType}
       .alertFrameThickness=${this.alertFrameThickness}
       .alertFrameStatus=${this.alertFrameStatus}
+      .hideAlertCategoryIcon=${this.hideAlertCategoryIcon}
+      .showAlertIcon=${this.showAlertIcon}
       ?progress=${this.progress}
       .variant=${this._variant}
       .direction=${this.direction}

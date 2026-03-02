@@ -4,13 +4,14 @@ import {
   ObcAlertFrameThickness,
   ObcAlertFrameType,
   ObcAlertFrameStatus,
+  AlertFrameTextSize,
 } from './alert-frame.js';
 import './alert-frame.js';
 import '../../icons/icon-placeholder.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcAlertFrame> = {
-  title: 'UI Components/Message and alerts/Alert Frame',
+  title: 'UI Components/Message and Alerts/Alert Frame',
   tags: ['autodocs', '6.0'],
   component: 'obc-alert-frame',
   args: {
@@ -18,6 +19,8 @@ const meta: Meta<typeof ObcAlertFrame> = {
     thickness: ObcAlertFrameThickness.Small,
     status: ObcAlertFrameStatus.Alarm,
     demoWidth: 200,
+    showIcon: true,
+    hideAlertCategoryIcon: false,
   },
   argTypes: {
     type: {
@@ -56,6 +59,9 @@ const meta: Meta<typeof ObcAlertFrame> = {
         .type=${args.type}
         .thickness=${args.thickness}
         .status=${args.status}
+        .textSize=${args.textSize}
+        .showIcon=${args.showIcon}
+        .hideAlertCategoryIcon=${args.hideAlertCategoryIcon}
       >
         <obi-placeholder slot="icon"></obi-placeholder>
         <div slot="label">Label</div>
@@ -124,10 +130,74 @@ export const AlarmThinnBottomFlip: Story = {
   },
 };
 
+export const AlarmThickBottomFlipLargeText: Story = {
+  args: {
+    thickness: ObcAlertFrameThickness.Large,
+    type: ObcAlertFrameType.BottomFlip,
+    textSize: AlertFrameTextSize.Large,
+  },
+};
+
 export const AlarmNarrowBottomFlip: Story = {
   args: {
     thickness: ObcAlertFrameThickness.Large,
     type: ObcAlertFrameType.BottomFlip,
     demoWidth: 50,
   },
+};
+
+export const AlarmThickTopFlip: Story = {
+  args: {
+    thickness: ObcAlertFrameThickness.Large,
+    type: ObcAlertFrameType.TopFlip,
+  },
+  render: (args) => {
+    return html` <div style="width: fit-content; position: relative;">
+      <div
+        style="width: ${args.demoWidth}px; height: 150px; background-color: #999; margin-top: 100px;"
+      ></div>
+      <obc-alert-frame
+        .type=${args.type}
+        .thickness=${args.thickness}
+        .status=${args.status}
+        .sharpEdgeTopRight=${args.sharpEdgeTopRight}
+        .sharpEdgeBottomRight=${args.sharpEdgeBottomRight}
+        .sharpEdgeTopLeft=${args.sharpEdgeTopLeft}
+        .textSize=${args.textSize}
+        .showIcon=${args.showIcon}
+        .hideAlertCategoryIcon=${args.hideAlertCategoryIcon}
+      >
+        <obi-placeholder slot="icon"></obi-placeholder>
+        <div slot="label">Label</div>
+        <div slot="timer">00:00</div>
+      </obc-alert-frame>
+    </div>`;
+  },
+};
+
+export const AlarmThinnTopFlip: Story = {
+  args: {
+    thickness: ObcAlertFrameThickness.Small,
+    type: ObcAlertFrameType.TopFlip,
+  },
+  render: AlarmThickTopFlip.render,
+};
+
+export const AlarmThickTopFlipLargeText: Story = {
+  args: {
+    thickness: ObcAlertFrameThickness.Large,
+    type: ObcAlertFrameType.TopFlip,
+    textSize: AlertFrameTextSize.Large,
+  },
+  render: AlarmThickTopFlip.render,
+};
+
+export const AlarmThickTopFlipNoIcons: Story = {
+  args: {
+    thickness: ObcAlertFrameThickness.Large,
+    type: ObcAlertFrameType.TopFlip,
+    showIcon: false,
+    hideAlertCategoryIcon: true,
+  },
+  render: AlarmThickTopFlip.render,
 };

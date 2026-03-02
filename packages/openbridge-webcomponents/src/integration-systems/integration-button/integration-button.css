@@ -24,6 +24,19 @@
   background: transparent;
   appearance: none;
   color: var(--integration-on-normal-active-color);
+  width: 100%;
+  border-radius: var(
+      --app-components-integration-system-navigation-item-horizontal-border-radius-top-left
+    )
+    var(
+      --app-components-integration-system-navigation-item-horizontal-border-radius-top-right
+    )
+    var(
+      --app-components-integration-system-navigation-item-horizontal-border-radius-bottom-right
+    )
+    var(
+      --app-components-integration-system-navigation-item-horizontal-border-radius-bottom-left
+    );
 
   .content-container {
     display: flex;
@@ -103,7 +116,10 @@
     flex-direction: column;
     align-items: flex-start;
     flex-grow: 1;
-    padding: 0 var(--app-components-integration-system-button-label-spacing);
+    padding: 0
+      var(
+        --app-components-integration-system-navigation-item-horizontal-label-spacing
+      );
 
     .label {
       @mixin font-button;
@@ -131,12 +147,20 @@
   .info-container {
     display: flex;
     padding: 0
-      var(--app-components-integration-system-button-padding-horizontal)
-      var(--app-components-integration-system-button-padding-vertical)
-      var(--app-components-integration-system-button-padding-horizontal);
+      var(
+        --app-components-integration-system-navigation-item-horizontal-padding-horizontal
+      )
+      var(
+        --app-components-integration-system-navigation-item-horizontal-padding-vertical
+      )
+      var(
+        --app-components-integration-system-navigation-item-horizontal-padding-horizontal
+      );
     align-items: center;
     justify-content: flex-start;
-    gap: var(--app-components-integration-system-button-label-spacing);
+    gap: var(
+      --app-components-integration-system-navigation-item-horizontal-label-spacing
+    );
     align-self: stretch;
 
     .info-item {
@@ -144,8 +168,7 @@
       flex-direction: column;
       justify-content: center;
       align-items: flex-start;
-      flex-grow: 0;
-      flex-basis: 120px;
+      flex-grow: 1;
 
       .info-label {
         @mixin font-label;
@@ -164,7 +187,7 @@
     justify-content: flex-start;
     align-items: flex-start;
     column-gap: var(
-      --app-components-integration-system-button-label-spacing-small
+      --app-components-integration-system-navigation-item-horizontal-label-spacing-small
     );
 
     .info-item-label {
