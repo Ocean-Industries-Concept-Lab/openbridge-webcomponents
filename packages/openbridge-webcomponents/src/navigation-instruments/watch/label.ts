@@ -7,6 +7,8 @@ export interface RenderLabelsOptions {
   inside?: boolean;
   /** Inner ring radius used for inside label positioning (default: OUTER_RING_RADIUS). */
   innerRadius?: number;
+  /** When true, always include the "N" label regardless of scale/inside heuristic. */
+  includeNorth?: boolean;
 }
 
 /** Position data for a single compass label. */
@@ -27,8 +29,10 @@ export function getLabelPositions(opts: {
   scale: number;
   inside: boolean;
   innerRadius: number;
+  /** When true, always include the "N" label regardless of scale/inside heuristic. */
+  includeNorth?: boolean;
 }): LabelPosition[] {
-  const {scale, inside, innerRadius} = opts;
+  const {scale, inside, innerRadius, includeNorth} = opts;
   const labelWidth = 16;
   const gap = 8;
   const outerRadius = 368 / 2;
@@ -45,11 +49,12 @@ export function getLabelPositions(opts: {
     {label: 'W', x: offset(-1), y: 0},
   ];
 
-  // At small scales the decorative north arrow doesn't have a letter "N",
-  // so add an "N" text label at the appropriate position.
-  // When inside, the north arrow is always a compact triangle without "N".
+  // Include "N" as a text label when:
+  // - explicitly requested (includeNorth === true), e.g. when northArrow is off
+  // - at small scales where the decorative north arrow lacks the "N" glyph
+  // - when inside, where the north arrow is a compact triangle without "N"
   const isSmall = scale < 0.58;
-  if (isSmall || inside) {
+  if (includeNorth || isSmall || inside) {
     positions.push({label: 'N', x: 0, y: offset(-1)});
   }
 
@@ -75,6 +80,7 @@ export function renderLabels(
   let rot: number | undefined;
   let inside: boolean;
   let innerRadius: number;
+  let includeNorth: boolean | undefined;
   if (typeof scaleOrOpts === 'number') {
     scale = scaleOrOpts;
     rot = rotation;
@@ -85,9 +91,15 @@ export function renderLabels(
     rot = scaleOrOpts.rotation;
     inside = scaleOrOpts.inside ?? false;
     innerRadius = scaleOrOpts.innerRadius ?? 368 / 2;
+    includeNorth = scaleOrOpts.includeNorth;
   }
 
-  const positions = getLabelPositions({scale, inside, innerRadius});
+  const positions = getLabelPositions({
+    scale,
+    inside,
+    innerRadius,
+    includeNorth,
+  });
 
   return svg`
     ${positions.map(

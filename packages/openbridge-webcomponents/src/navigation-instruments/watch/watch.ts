@@ -172,7 +172,7 @@ export class ObcWatch extends LitElement {
   @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: Array, attribute: false}) advices: AngleAdviceRaw[] = [];
   @property({type: Boolean}) crosshairEnabled: boolean = false;
-  @property({type: Boolean}) labelFrameEnabled: boolean = false;
+  @property({type: Boolean}) showLabels: boolean = false;
   @property({type: Array, attribute: false}) vessels: WatchVessel[] = [];
   @property({type: Number}) wind: number | null = null;
   @property({type: Number}) windFromDirectionDeg: number | null = null;
@@ -516,7 +516,7 @@ export class ObcWatch extends LitElement {
         size: t.type,
         style: TickmarkStyle.hinted,
         scale,
-        text: t.text,
+        text: this.showLabels ? undefined : t.text,
         inside: this.tickmarksInside,
         textRadius,
         rotation: this.rotation,
@@ -529,12 +529,14 @@ export class ObcWatch extends LitElement {
       : nothing;
 
     // Compute label positions once – used for both rendering and crosshair knockout.
-    const insideLabels = this.tickmarksInside && this.labelFrameEnabled;
-    const labelPositions = this.labelFrameEnabled
+    const insideLabels = this.tickmarksInside && this.showLabels;
+    const includeNorth = !this.northArrow;
+    const labelPositions = this.showLabels
       ? getLabelPositions({
           scale,
           inside: this.tickmarksInside,
           innerRadius: this.innerRingRadius,
+          includeNorth,
         })
       : undefined;
 
@@ -544,6 +546,7 @@ export class ObcWatch extends LitElement {
           rotation: this.rotation,
           inside: this.tickmarksInside,
           innerRadius: this.innerRingRadius,
+          includeNorth,
         })
       : nothing;
     const northArrowEl = this.northArrow

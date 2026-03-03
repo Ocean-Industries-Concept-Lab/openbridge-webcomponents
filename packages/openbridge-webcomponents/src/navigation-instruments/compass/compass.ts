@@ -232,7 +232,7 @@ export class ObcCompass extends LitElement {
           .tickmarks=${tickmarks}
           .state=${this.state}
           .watchCircleType=${WatchCircleType.triple}
-          .labelFrameEnabled=${this.showLabels}
+          .showLabels=${this.showLabels}
           .tickmarksInside=${this.tickmarksInside}
           .crosshairEnabled=${true}
           .northArrow=${true}

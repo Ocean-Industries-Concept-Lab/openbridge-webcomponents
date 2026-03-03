@@ -125,7 +125,7 @@ export class ObcHeading extends LitElement {
           .advices=${this.angleAdviceRaw}
           .tickmarks=${tickmarks}
           .watchCircleType=${WatchCircleType.single}
-          .labelFrameEnabled=${this.showLabels}
+          .showLabels=${this.showLabels}
           .tickmarksInside=${this.tickmarksInside}
           .crosshairEnabled=${true}
           .northArrow=${true}
