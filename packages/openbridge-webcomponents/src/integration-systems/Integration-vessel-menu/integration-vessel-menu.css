@@ -3,16 +3,17 @@
 }
 
 .wrapper {
+  @mixin style style=integration-normal noClick=true;
   display: flex;
   flex-direction: column;
-  height: 350px;
-  min-width: 580px;
+  height: 100%;
+  min-width: 788px;
   align-items: center;
+  background: var(--container-global-color);
   border-radius: var(
     --app-components-integration-system-dropdown-menu-border-radius
   );
   border: 2px solid var(--integration-beta-border-menu-outline-color);
-  background: var(--container-global-color);
   box-shadow: var(--shadow-floating-x) var(--shadow-floating-y)
     var(--shadow-floating-blur) var(--shadow-raised-spread)
     var(--shadow-floating-color);
@@ -20,13 +21,12 @@
 
 .header-container {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   align-self: stretch;
   width: 100%;
-  padding: var(--card-header-padding-vertical)
-    var(--ui-components-card-padding-horizontal);
+  padding: 8px var(--ui-components-card-padding-horizontal);
   border-bottom: 1px solid var(--integration-beta-border-menu-outline-color);
-  background: var(--integration-beta-container-global-color);
+  background: var(--integration-container-global-color);
 }
 
 .title-container {
@@ -35,6 +35,7 @@
 }
 
 .container-title {
+  @mixin font-overline;
   display: flex;
   padding: 0 var(--ui-components-card-label-spacing);
   justify-content: center;
@@ -42,17 +43,21 @@
 }
 
 .footer-container {
+  width: 100%;
   display: flex;
   height: var(
     --app-components-integration-system-dropdown-menu-action-container-height
   );
   padding: 0
     var(--app-components-integration-system-dropdown-menu-padding-horizontal);
-  align-items: center;
   gap: var(--app-components-alert-menu-button-spacing);
-  align-self: stretch;
   border-top: 1px solid var(--border-divider-color);
   background: var(--container-global-color);
+}
+
+.footer-container obc-button {
+  flex-grow: 1;
+  white-space: nowrap;
 }
 
 .content-container {
@@ -66,4 +71,12 @@
 
 .alert-list {
   width: 100%;
+}
+
+.leading-icon {
+  color: var(--integration-on-normal-neutral-color);
+}
+
+.container-title {
+  color: var(--integration-on-normal-neutral-color);
 }

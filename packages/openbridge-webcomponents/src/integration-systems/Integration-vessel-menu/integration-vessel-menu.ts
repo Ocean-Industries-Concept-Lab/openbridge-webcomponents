@@ -15,6 +15,28 @@ export class ObcIntegrationVesselMenu extends LitElement {
   @property({type: Boolean}) hideHeader = false;
   @property({type: Number}) numberOfButtons = 3;
 
+  /**
+   * `<obc-integration-vessel-menu>` – A menu to be shown when selecting a obc-integration-button from a obc-integration-bar.
+   *
+   * @slot leading-icon - Icon shown in the header.
+   * @slot title - Header title text.
+   * @slot button-1-leading-icon - Leading icon for the first button.
+   * @slot button-1-label - Label for the first button.
+   * @slot button-2-leading-icon - Leading icon for the second button.
+   * @slot button-2-label - Label for the second button.
+   * @slot button-3-leading-icon - Leading icon for the third button.
+   * @slot button-3-label - Label for the third button.
+   * @slot content - Main content shown in the content area.
+   * @slot alarms - Alarm items rendered inside the alert list.
+   *
+   * @fires button-1-click {CustomEvent} - Fired when the first button is clicked.
+   * @fires button-2-click {CustomEvent} - Fired when the second button is clicked.
+   * @fires button-3-click {CustomEvent} - Fired when the third button is clicked.
+   *
+   * @property {boolean} hideHeader - Hides the header section when true.
+   * @property {number} numberOfButtons - Number of buttons to render (up to 3).
+   */
+
   private onButton1Click = () =>
     this.dispatchEvent(new CustomEvent('button-1-click'));
   private onButton2Click = () =>
@@ -25,19 +47,37 @@ export class ObcIntegrationVesselMenu extends LitElement {
   private renderButtons() {
     let but = null;
     if (this.numberOfButtons >= 1) {
-      but = html`<obc-button @click=${this.onButton1Click}
-        >Button 1</obc-button
-      >`;
+      but = html`<obc-button
+        @click=${this.onButton1Click}
+        ?showLeadingIcon=${true}
+        ?fullWidth=${true}
+        class="button"
+      >
+        <slot name="button-1-leading-icon" slot="leading-icon"></slot>
+        <slot name="button-1-label"></slot>
+      </obc-button>`;
     }
     if (this.numberOfButtons >= 2) {
-      but = html`${but}<obc-button @click=${this.onButton2Click}
-          >Button 2</obc-button
-        >`;
+      but = html`${but}<obc-button
+          @click=${this.onButton2Click}
+          ?showLeadingIcon=${true}
+          ?fullWidth=${true}
+          class="button"
+        >
+          <slot name="button-2-leading-icon" slot="leading-icon"></slot>
+          <slot name="button-2-label"></slot>
+        </obc-button>`;
     }
     if (this.numberOfButtons >= 3) {
-      but = html`${but}<obc-button @click=${this.onButton3Click}
-          >Button 3</obc-button
-        >`;
+      but = html`${but}<obc-button
+          @click=${this.onButton3Click}
+          ?showLeadingIcon=${true}
+          ?fullWidth=${true}
+          class="button"
+        >
+          <slot name="button-3-leading-icon" slot="leading-icon"></slot>
+          <slot name="button-3-label"></slot>
+        </obc-button>`;
     }
     return but;
   }

@@ -31,6 +31,19 @@ export enum IntegrationButtonType {
  * @slot status - Status/description text (shown when `hasDescription` is true and type is not hug)
  * @slot info-label - Info label text
  * @slot info-status - Info status text
+ *
+ * @event click - Fired when the internal button is activated.
+ *
+ * @property {boolean} hasTrailingIcon - Shows the `trailing-icon` slot.
+ * @property {boolean} hasTrailingIcon2 - Shows the `trailing-icon2` slot.
+ * @property {boolean} hasLeadingIcon - Shows the `leading-icon` slot.
+ * @property {boolean} hasDescription - Shows the `status` slot for non-hug types.
+ * @property {IntegrationButtonReadout[]} readouts - List of readout items shown in the rich type.
+ * @property {boolean} disabled - Disables the internal button.
+ * @property {boolean} selected - Applies selected state styling.
+ * @property {boolean} dividerBottom - Shows a bottom divider under the button.
+ * @property {IntegrationButtonVariant} variant - Visual variant (`normal` or `flat`).
+ * @property {IntegrationButtonType} type - Layout type (`hug`, `regular`, or `rich`).
  */
 @customElement('obc-integration-button')
 export class ObcIntegrationButton extends LitElement {

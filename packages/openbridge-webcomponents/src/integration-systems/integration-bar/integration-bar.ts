@@ -26,13 +26,41 @@ export enum IntegrationBarType {
 }
 
 /**
+ * `<obc-integration-bar>` – A compact top-level integration header for vessel and system navigation controls.
  *
+ * Provides a configurable integration bar with home/navigation controls, optional fleet and vessel selection,
+ * and optional utility actions such as alerts, notifications, screen, system, dimming, user, and clock.
+ *
+ * @slot clock - Custom clock content, rendered when `showClock` is true
+ * @property {IntegrationBarType} type - Integration bar mode for fleet/vessel presentation
+ * @property {boolean} showClock - Toggles rendering of the clock slot
+ * @property {boolean} showLinkButton - Toggles visibility of link button
+ * @property {boolean} linkButtonActivated - Activated state of link button
+ * @property {boolean} showUserButton - Toggles visibility of user button
+ * @property {boolean} userButtonActivated - Activated state of user button
+ * @property {boolean} showDimmingButton - Toggles visibility of dimming button
+ * @property {boolean} dimmingButtonActivated - Activated state of dimming button
+ * @property {boolean} showSystemButton - Toggles visibility of system button
+ * @property {boolean} systemButtonActivated - Activated state of system button
+ * @property {boolean} showScreenButton - Toggles visibility of screen button
+ * @property {boolean} screenButtonActivated - Activated state of screen button
+ * @property {boolean} showNotificationButton - Toggles visibility of notification button
+ * @property {boolean} notificationButtonActivated - Activated state of notification button
+ * @property {boolean} showAlertButton - Toggles visibility of alert button
+ * @property {boolean} alertButtonActivated - Activated state of alert button
+ * @property {boolean} fleetButtonSelected - Selected state of fleet button
+ * @property {string} fleetButtonLabel - Label for the fleet button
+ * @property {string} selectedVesselValue - Selected vessel value
+ * @property {{value: string; label: string}[]} vesselSelectorOptions - Available vessel options
  * @fires fleet-button-click - Fired when the fleet button is clicked
  * @fires vessel-selected - Fired when a vessel is selected, detail contains {value, label}
- * @fires dimming-button-clicked - Fired when the dimming button is clicked
- * @fires notification-button-clicked - Firaed when the notification button is clicked
- * @fires user-button-clicked - Fired when the user button is clicked
+ * @fires link-button-clicked - Fired when the link button is clicked
+ * @fires alert-button-clicked - Fired when the alert button is clicked
+ * @fires notification-button-clicked - Fired when the notification button is clicked
+ * @fires screen-button-clicked - Fired when the screen button is clicked
  * @fires system-button-clicked - Fired when the system button is clicked
+ * @fires dimming-button-clicked - Fired when the dimming button is clicked
+ * @fires user-button-clicked - Fired when the user button is clicked
  */
 @customElement('obc-integration-bar')
 export class ObcIntegrationBar extends LitElement {

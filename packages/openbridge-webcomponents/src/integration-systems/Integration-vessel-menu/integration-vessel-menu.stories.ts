@@ -121,7 +121,7 @@ const meta: Meta<ObcIntegrationVesselMenu> = {
   },
   decorators: [
     (story) => html`
-      <div style="width: 600px; height: 400px; display: flex;">${story()}</div>
+      <div style="height: 400px; display: flex;">${story()}</div>
     `,
   ],
 };
@@ -147,8 +147,16 @@ const template: IntegrationVesselMenuTemplate = (args) => html`
     @button-3-click=${() => console.log('Button 3 clicked')}
   >
     <div slot="content" style="padding: 24px;">
-      <p>Add content here</p>
+      <div style="width: 496px; height: 256;">
+        <p>Content area</p>
+      </div>
     </div>
+    <obi-placeholder slot="button-1-leading-icon"></obi-placeholder>
+    <div slot="button-1-label">Action 1</div>
+    <obi-placeholder slot="button-2-leading-icon"></obi-placeholder>
+    <div slot="button-2-label">Ac. 2</div>
+    <obi-placeholder slot="button-3-leading-icon"></obi-placeholder>
+    <div slot="button-3-label">Action number 3</div>
     ${renderAlarms()}
   </obc-integration-vessel-menu>
 `;
