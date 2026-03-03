@@ -9,7 +9,7 @@ interface DateItemStoryArgs extends Partial<ObcDateItem> {
 }
 
 const meta: Meta<DateItemStoryArgs> = {
-  title: 'Application components/Calendar/Date Item',
+  title: 'Application Components/Calendar/Date Item',
   tags: ['6.0'],
   component: 'obc-date-item',
   argTypes: {

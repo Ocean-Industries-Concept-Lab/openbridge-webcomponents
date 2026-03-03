@@ -1,0 +1,154 @@
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+  width: 100%;
+  border-radius: var(--ui-components-attachment-item-border-radius, 6px);
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  user-select: none;
+  text-align: left;
+  @mixin style style=flat visibleWrapperClass=.content-container;
+
+  &.amplified {
+    @mixin style style=amplified visibleWrapperClass=.content-container noClick;
+  }
+
+  &.disabled {
+    cursor: not-allowed;
+
+    .file-name,
+    .index-label,
+    .date-label,
+    .time-label,
+    .leading-icon {
+      color: var(--on-flat-disabled-color);
+    }
+  }
+}
+
+.content-container {
+  display: flex;
+  align-items: center;
+  padding-left: 16px;
+  border-radius: var(--ui-components-attachment-item-border-radius, 6px);
+  width: 100%;
+  min-height: 48px;
+}
+
+.label-group {
+  display: flex;
+  flex: 1 0 0;
+  align-items: center;
+  gap: var(--ui-components-attachment-item-label-spacing, 8px);
+  min-width: 0;
+  min-height: 1px;
+}
+
+.index-label {
+  @mixin font-body-active;
+  color: var(--on-flat-neutral-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 0;
+  width: auto;
+}
+
+.leading-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  color: var(--on-flat-neutral-color);
+}
+
+.leading-icon ::slotted(*) {
+  width: 100%;
+  height: 100%;
+}
+
+.file-name-container {
+  display: flex;
+  flex: 1 0 0;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  min-width: 0;
+  min-height: 1px;
+}
+
+.file-name {
+  @mixin font-body;
+  color: var(--on-flat-neutral-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.trailing-group {
+  display: flex;
+  align-items: center;
+  padding-right: 8px;
+  flex-shrink: 0;
+}
+
+.time-date-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  padding: 0 var(--ui-components-attachment-item-label-spacing-large, 16px);
+  margin-right: -8px;
+  flex-shrink: 0;
+}
+
+.date-label {
+  @mixin font-label-active;
+  color: var(--on-flat-neutral-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.time-label {
+  @mixin font-label;
+  color: var(--on-flat-neutral-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trailing-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-right: -8px;
+  flex-shrink: 0;
+}
+
+.divider {
+  position: absolute;
+  bottom: 0;
+  left: 4px;
+  right: 4px;
+  height: 1px;
+  border-radius: 1px;
+  background: var(--border-divider-color, #ddd);
+}

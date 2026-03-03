@@ -1,9 +1,10 @@
-import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
+import {LitElement, PropertyValues, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import '../../icons/icon-check-mixed.js';
 import '../../icons/icon-check-google.js';
 import componentStyle from './checkbox.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement} from '../../decorator.js';
 
 /**
@@ -178,19 +179,39 @@ export class ObcCheckbox extends LitElement {
         return 'false';
     }
   }
+
+  private get _hasVisibleLabel() {
+    return this.label.trim().length > 0;
+  }
+
   override render() {
+    const ariaLabel = this.getAttribute('aria-label') ?? undefined;
+    const hostAriaLabelledBy =
+      this.getAttribute('aria-labelledby') ?? undefined;
+    const ariaLabelledBy = ariaLabel
+      ? undefined
+      : (hostAriaLabelledBy ??
+        (this._hasVisibleLabel ? 'checkbox-label' : undefined));
+
     return html`
-      <div class="visually-hidden">
+      <div
+        class=${classMap({
+          'visually-hidden': true,
+          'label-hidden': !this._hasVisibleLabel,
+        })}
+      >
         <div
           class=${classMap({
             'checkbox-container': true,
             [`status-${this.status}`]: true,
             disabled: this.disabled,
+            'label-hidden': !this._hasVisibleLabel,
           })}
           role="checkbox"
           aria-checked=${this._computedAriaChecked}
-          aria-labelledby="checkbox"
-          aria-describedby=${this.ariaDescribedBy}
+          aria-labelledby=${ifDefined(ariaLabelledBy)}
+          aria-label=${ifDefined(ariaLabel)}
+          aria-describedby=${ifDefined(this.ariaDescribedBy || undefined)}
           aria-disabled=${this.disabled ? 'true' : 'false'}
           tabindex=${this.disabled ? '-1' : '0'}
           @click=${this.toggleStatus}
@@ -207,11 +228,13 @@ export class ObcCheckbox extends LitElement {
                   ></obi-check-mixed>`
                 : html`<span class="checkbox-icon"></span>`}
           </div>
-          <div class="checkbox-label-container">
-            <span id="checkbox-label" class="checkbox-label">
-              ${this.label}
-            </span>
-          </div>
+          ${this._hasVisibleLabel
+            ? html`<div class="checkbox-label-container">
+                <span id="checkbox-label" class="checkbox-label">
+                  ${this.label}
+                </span>
+              </div>`
+            : nothing}
         </div>
       </div>
     `;

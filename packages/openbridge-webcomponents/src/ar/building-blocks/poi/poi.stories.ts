@@ -2,21 +2,39 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import {crossDecorator} from '../../../storybook-util.js';
 import './poi.js';
-import {ObcPoi, ObcPoiState, ObcPoiType, ObcPoiValue} from './poi.js';
+import {ObcPoiState, ObcPoiType, ObcPoiValue} from './poi.js';
 import {
   ObcPoiPointerState,
   ObcPoiPointerType,
 } from '../poi-pointer/poi-pointer.js';
-import {
-  ObcPoiHeaderSize,
-  ObcPoiHeaderState,
-  ObcPoiHeaderType,
-} from '../poi-header/poi-header.js';
+import {ObcPoiButtonDataItem} from '../poi-button/poi-button.js';
 import '../../../icons/icon-placeholder.js';
-import '../../../icons/icon-collision-avoidance-overtaking.js';
+import '../poi-header/poi-header.js';
 
-const meta: Meta<ObcPoi> = {
-  title: 'AR/Building blocks/POI',
+type PoiStoryArgs = {
+  type: ObcPoiType;
+  value: ObcPoiValue;
+  state: ObcPoiState;
+  x: number;
+  y: number;
+  buttonY: number;
+  fixedTarget: boolean;
+  outsideAngle: number;
+  hasPointer: boolean;
+  hasHeader: boolean;
+  pointerType: ObcPoiPointerType | undefined;
+  pointerState: ObcPoiPointerState | undefined;
+  animatePosition: boolean;
+  overlapOpaque: boolean;
+  relativeDirection: number;
+  buttonOffsetX: number;
+  targetOffsetX: number;
+  selected: boolean;
+  data: ObcPoiButtonDataItem[];
+};
+
+const meta: Meta<PoiStoryArgs> = {
+  title: 'AR/Building Blocks/POI',
   tags: ['autodocs'],
   component: 'obc-poi',
   decorators: [crossDecorator],
@@ -30,15 +48,15 @@ const meta: Meta<ObcPoi> = {
     fixedTarget: false,
     outsideAngle: 315,
     hasPointer: false,
+    hasHeader: false,
     pointerType: undefined,
     pointerState: undefined,
     animatePosition: false,
+    overlapOpaque: false,
     relativeDirection: 0,
     buttonOffsetX: 0,
     targetOffsetX: 0,
-    header: null,
     selected: false,
-    hasRelation: false,
     data: [],
   },
   argTypes: {
@@ -63,6 +81,7 @@ const meta: Meta<ObcPoi> = {
       if: {arg: 'type', eq: ObcPoiType.Outside},
     },
     hasPointer: {control: {type: 'boolean'}},
+    hasHeader: {control: {type: 'boolean'}},
     pointerType: {
       control: {type: 'select'},
       options: [undefined, ...Object.values(ObcPoiPointerType)],
@@ -72,12 +91,11 @@ const meta: Meta<ObcPoi> = {
       options: [undefined, ...Object.values(ObcPoiPointerState)],
     },
     animatePosition: {control: {type: 'boolean'}},
+    overlapOpaque: {control: {type: 'boolean'}},
     relativeDirection: {control: {type: 'range', min: 0, max: 360}},
     buttonOffsetX: {control: {type: 'range', min: -150, max: 150, step: 1}},
     targetOffsetX: {control: {type: 'range', min: -150, max: 150, step: 1}},
-    header: {control: {type: 'object'}},
     selected: {control: {type: 'boolean'}},
-    hasRelation: {control: {type: 'boolean'}},
     data: {
       control: 'object',
       description:
@@ -96,15 +114,15 @@ const meta: Meta<ObcPoi> = {
         'fixedTarget',
         'outsideAngle',
         'hasPointer',
+        'hasHeader',
         'pointerType',
         'pointerState',
         'animatePosition',
+        'overlapOpaque',
         'relativeDirection',
         'buttonOffsetX',
         'targetOffsetX',
-        'header',
         'selected',
-        'hasRelation',
         'data',
       ],
     },
@@ -129,32 +147,36 @@ const meta: Meta<ObcPoi> = {
           .fixedTarget=${args.fixedTarget}
           .outsideAngle=${args.outsideAngle}
           .hasPointer=${args.hasPointer}
+          .hasHeader=${args.hasHeader}
           .pointerType=${args.pointerType}
           .pointerState=${args.pointerState}
           .animatePosition=${args.animatePosition}
+          .overlapOpaque=${args.overlapOpaque}
           .relativeDirection=${args.relativeDirection}
           .buttonOffsetX=${args.buttonOffsetX}
           .targetOffsetX=${args.targetOffsetX}
-          .header=${args.header}
           .selected=${args.selected}
-          .hasRelation=${args.hasRelation}
           .data=${args.data}
         >
+          <obc-poi-header
+            slot="header"
+            content="1"
+            type="id"
+            state="selected"
+            size="regular"
+            has-indicator
+          >
+            <obi-placeholder slot="indicator"></obi-placeholder>
+          </obc-poi-header>
           <obi-placeholder></obi-placeholder>
-          ${args.header?.hasIndicator
-            ? html`<obi-placeholder slot="id-label"></obi-placeholder>`
-            : html``}
-          <obi-collision-avoidance-overtaking
-            slot="relation"
-          ></obi-collision-avoidance-overtaking>
         </obc-poi>
       </div>
     `;
   },
-} satisfies Meta<ObcPoi>;
+} satisfies Meta<PoiStoryArgs>;
 
 export default meta;
-type Story = StoryObj<ObcPoi>;
+type Story = StoryObj<PoiStoryArgs>;
 
 export const Line: Story = {
   args: {
@@ -220,13 +242,7 @@ export const WithHeader: Story = {
   args: {
     type: ObcPoiType.Line,
     value: ObcPoiValue.Unchecked,
-    header: {
-      content: '1',
-      type: ObcPoiHeaderType.Id,
-      state: ObcPoiHeaderState.Selected,
-      size: ObcPoiHeaderSize.Regular,
-      hasIndicator: true,
-    },
+    hasHeader: true,
   },
 };
 

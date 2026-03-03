@@ -11,6 +11,8 @@ import '../../icons/icon-placeholder.js';
 import '../../icons/icon-acdc-converter.js';
 import '../../icons/icon-ship-carferry.js';
 import {widthDecorator} from '../../storybook-util.js';
+import {CheckboxStatus} from '../checkbox/checkbox.js';
+import {TagColor} from '../tag/tag.js';
 
 const meta: Meta<typeof ObcTable> = {
   title: 'UI Components/Tables/Table',
@@ -127,8 +129,336 @@ const meta: Meta<typeof ObcTable> = {
 export default meta;
 type Story = StoryObj<ObcTable>;
 
+const playgroundColumns = [
+  {
+    label: 'Label',
+    key: 'label',
+    sortable: true,
+    sortDirection: 'none' as const,
+    compareFunction: (a: ObcTableCellData, b: ObcTableCellData) =>
+      (a.text ?? '').localeCompare(b.text ?? ''),
+  },
+];
+
+const playgroundData: ObcTableRow[] = [
+  {
+    id: '0',
+    label: {type: ObcTableCellType.Regular, text: 'Table item'},
+  },
+  {
+    id: '1',
+    label: {type: ObcTableCellType.Regular, text: 'Table item'},
+  },
+  {
+    id: '2',
+    label: {type: ObcTableCellType.Regular, text: 'Table item'},
+  },
+  {
+    id: '3',
+    label: {type: ObcTableCellType.Regular, text: 'Table item'},
+  },
+  {
+    id: '4',
+    label: {type: ObcTableCellType.Regular, text: 'Table item'},
+  },
+  {
+    id: '5',
+    label: {type: ObcTableCellType.Regular, text: 'Table item'},
+  },
+  {
+    id: '6',
+    label: {type: ObcTableCellType.Regular, text: 'Table item'},
+  },
+];
+
+const renderTable = (args: ObcTable & {height?: number}) => {
+  const tableStyle =
+    typeof args.height === 'number' ? `height: ${args.height}px;` : '';
+  return html`<obc-table
+    style=${tableStyle}
+    .data=${args.data}
+    .columns=${args.columns}
+    .rowDivider=${args.rowDivider}
+    .narrowHeader=${args.narrowHeader}
+    .noHeader=${args.noHeader}
+    .striped=${args.striped}
+    .selectable=${args.selectable}
+    .defaultSelectedRowIds=${args.defaultSelectedRowIds}
+    .selectedRowIds=${args.selectedRowIds}
+    .selectAllAriaLabel=${args.selectAllAriaLabel}
+    .selectAllLabel=${args.selectAllLabel}
+  ></obc-table>`;
+};
+
 export const Primary: Story = {
   args: {},
+};
+
+export const Playground: Story = {
+  args: {
+    width: 320,
+    height: 460,
+    selectable: true,
+    rowDivider: true,
+    striped: false,
+    narrowHeader: false,
+    noHeader: false,
+    selectAllLabel: 'Label',
+    selectAllAriaLabel: 'Select all table items',
+    defaultSelectedRowIds: ['1', '4'],
+    columns: playgroundColumns,
+    data: playgroundData,
+  },
+  argTypes: {
+    columns: {
+      table: {disable: true},
+    },
+    data: {
+      table: {disable: true},
+    },
+    selectedRowIds: {
+      table: {disable: true},
+    },
+    width: {
+      control: {type: 'range', min: 200, max: 900, step: 10},
+    },
+    height: {
+      control: {type: 'range', min: 240, max: 900, step: 10},
+    },
+    selectable: {
+      control: {type: 'boolean'},
+    },
+    rowDivider: {
+      control: {type: 'boolean'},
+    },
+    striped: {
+      control: {type: 'boolean'},
+    },
+    narrowHeader: {
+      control: {type: 'boolean'},
+    },
+    noHeader: {
+      control: {type: 'boolean'},
+    },
+    defaultSelectedRowIds: {
+      control: {type: 'object'},
+    },
+    selectAllLabel: {
+      control: {type: 'text'},
+    },
+    selectAllAriaLabel: {
+      control: {type: 'text'},
+    },
+  },
+  parameters: {
+    controls: {expanded: true},
+    docs: {
+      description: {
+        story:
+          'Interactive playground for table selection, row styling, and header options.',
+      },
+    },
+  },
+  render: renderTable,
+};
+
+export const CheckboxCells: Story = {
+  tags: ['skip-snapshots'],
+  args: {
+    columns: [
+      {label: 'Name', key: 'name'},
+      {label: 'Track', key: 'track'},
+      {label: 'Action', key: 'action'},
+    ],
+    data: [
+      {
+        id: '0',
+        name: {type: ObcTableCellType.Regular, title: 'Stella', text: 'Brown'},
+        track: {
+          type: ObcTableCellType.Checkbox,
+          status: CheckboxStatus.checked,
+          label: '',
+        },
+        action: {type: ObcTableCellType.Button, text: 'Open'},
+      },
+      {
+        id: '1',
+        name: {type: ObcTableCellType.Regular, title: 'Aurora', text: 'Doe'},
+        track: {
+          type: ObcTableCellType.Checkbox,
+          status: CheckboxStatus.unchecked,
+          label: '',
+        },
+        action: {type: ObcTableCellType.Button, text: 'Details'},
+      },
+      {
+        id: '2',
+        name: {type: ObcTableCellType.Regular, title: 'Nimbus', text: 'Jane'},
+        track: {
+          type: ObcTableCellType.Checkbox,
+          status: CheckboxStatus.mixed,
+          label: '',
+        },
+        action: {type: ObcTableCellType.Button, text: 'Open'},
+      },
+      {
+        id: '3',
+        name: {type: ObcTableCellType.Regular, title: 'Dock', text: 'Disabled'},
+        track: {
+          type: ObcTableCellType.Checkbox,
+          status: CheckboxStatus.checked,
+          disabled: true,
+          label: '',
+        },
+        action: {type: ObcTableCellType.Button, text: 'Open'},
+      },
+    ],
+  },
+};
+
+export const TagMultiTagCells: Story = {
+  args: {
+    columns: [
+      {label: 'Name', key: 'name'},
+      {label: 'Status', key: 'status'},
+      {label: 'Tags', key: 'tags'},
+      {label: 'Action', key: 'action'},
+    ],
+    data: [
+      {
+        id: '0',
+        name: {type: ObcTableCellType.Regular, title: 'Stella', text: 'Brown'},
+        status: {
+          type: ObcTableCellType.Tag,
+          tag: {
+            id: 'active',
+            label: 'Active',
+            color: TagColor.green,
+          },
+        },
+        tags: {
+          type: ObcTableCellType.Tag,
+          wrap: true,
+          tags: [
+            {id: 'priority', label: 'Priority', color: TagColor.red},
+            {id: 'eta', label: 'ETA 12:40', color: TagColor.blue},
+          ],
+        },
+        action: {type: ObcTableCellType.Button, text: 'Open'},
+      },
+      {
+        id: '1',
+        name: {type: ObcTableCellType.Regular, title: 'Aurora', text: 'Doe'},
+        status: {
+          type: ObcTableCellType.Tag,
+          tag: {
+            id: 'attention',
+            label: 'Attention',
+            color: TagColor.yellow,
+            hasIcon: true,
+            icon: html`<obi-placeholder></obi-placeholder>`,
+          },
+        },
+        tags: {
+          type: ObcTableCellType.Tag,
+          tags: [
+            {id: 'eta', label: 'ETA 12:40', color: TagColor.cyan},
+            {
+              id: 'alarm',
+              label: 'Alarm',
+              color: TagColor.orange,
+              hasIcon: true,
+              icon: html`<obi-placeholder></obi-placeholder>`,
+            },
+            {id: 'nav', label: 'Nav', color: TagColor.teal},
+          ],
+        },
+        action: {type: ObcTableCellType.Button, text: 'Details'},
+      },
+    ],
+  },
+};
+
+export const HorizontalBarCells: Story = {
+  args: {
+    columns: [
+      {label: 'Name', key: 'name'},
+      {label: 'Load', key: 'load'},
+      {label: 'Action', key: 'action'},
+    ],
+    data: [
+      {
+        id: '0',
+        name: {type: ObcTableCellType.Regular, title: 'Stella', text: 'Brown'},
+        load: {
+          type: ObcTableCellType.HorizontalBar,
+          value: 45,
+          setpoint: 60,
+        },
+        action: {type: ObcTableCellType.Button, text: 'Open'},
+      },
+      {
+        id: '1',
+        name: {type: ObcTableCellType.Regular, title: 'Aurora', text: 'Doe'},
+        load: {
+          type: ObcTableCellType.HorizontalBar,
+          value: 70,
+          setpoint: 80,
+        },
+        action: {type: ObcTableCellType.Button, text: 'Details'},
+      },
+    ],
+  },
+};
+
+export const SelectableTable: Story = {
+  tags: ['skip-snapshots'],
+  args: {
+    selectable: true,
+    columns: [
+      {label: 'Name', key: 'name'},
+      {label: 'Track', key: 'track'},
+      {label: 'Action', key: 'action'},
+    ],
+    data: [
+      {
+        id: '0',
+        name: {type: ObcTableCellType.Regular, title: 'Stella', text: 'Brown'},
+        track: {
+          type: ObcTableCellType.Checkbox,
+          status: CheckboxStatus.checked,
+        },
+        action: {type: ObcTableCellType.Button, text: 'Open'},
+      },
+      {
+        id: '1',
+        name: {type: ObcTableCellType.Regular, title: 'Aurora', text: 'Doe'},
+        track: {
+          type: ObcTableCellType.Checkbox,
+          status: CheckboxStatus.unchecked,
+        },
+        action: {type: ObcTableCellType.Button, text: 'Details'},
+      },
+      {
+        id: '2',
+        name: {type: ObcTableCellType.Regular, title: 'Nova', text: 'Lane'},
+        track: {
+          type: ObcTableCellType.Checkbox,
+          status: CheckboxStatus.checked,
+        },
+        action: {type: ObcTableCellType.Button, text: 'Open'},
+      },
+      {
+        id: '3',
+        name: {type: ObcTableCellType.Regular, title: 'Orion', text: 'Reed'},
+        track: {
+          type: ObcTableCellType.Checkbox,
+          status: CheckboxStatus.unchecked,
+        },
+        action: {type: ObcTableCellType.Button, text: 'Details'},
+      },
+    ],
+  },
 };
 
 export const RowDivider: Story = {

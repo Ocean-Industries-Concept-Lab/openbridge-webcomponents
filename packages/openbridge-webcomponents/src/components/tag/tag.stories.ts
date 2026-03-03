@@ -5,7 +5,7 @@ import './tag.js';
 import '../../icons/icon-placeholder.js';
 
 const meta: Meta<ObcTag> = {
-  title: 'UI Components/Selection controls and switches/Tag',
+  title: 'UI Components/Selection Controls and Switches/Tag',
   tags: ['6.0'],
   component: 'obc-tag',
   argTypes: {

@@ -35,17 +35,11 @@ import {
 } from '../../components/alert-frame/alert-frame.js';
 
 const meta: Meta<typeof ObcAutomationButton> = {
-  title: 'Automation/Automation devices/Automation button',
+  title: 'Automation/Automation Devices/Automation Button',
   tags: ['autodocs', '6.0'],
   component: 'obc-automation-button',
   decorators: [crossDecorator],
   argTypes: {
-    hasReadoutStack: {
-      control: {type: 'boolean'},
-    },
-    hasIdTag: {
-      control: {type: 'boolean'},
-    },
     readoutPosition: {
       options: ['top', 'bottom', 'left', 'right'],
       control: {type: 'radio'},
@@ -84,6 +78,7 @@ const meta: Meta<typeof ObcAutomationButton> = {
     readoutPosition: AutomationButtonReadoutPosition.bottom,
     readoutSize: AutomationButtonReadoutStackSize.regular,
     positioning: AutomationButtonPositioning.point,
+    showAlertIcon: true,
   },
   parameters: {
     // Overrides the default behavior and pauses the animation at the first frame at the component level for all stories.
@@ -111,6 +106,8 @@ export const ValveOpen: Story = {
       .tag=${tag}
       .variant=${args.variant}
       .positioning=${args.positioning}
+      .hideAlertCategoryIcon=${args.hideAlertCategoryIcon}
+      .showAlertIcon=${args.showAlertIcon}
       ?alert=${args.alert}
       ?progress=${args.progress}
     >
@@ -174,6 +171,8 @@ export const ValveAlert: Story = {
       .alertFrameStatus=${args.alertFrameStatus}
       .alertFrameThickness=${args.alertFrameThickness}
       .alertFrameType=${args.alertFrameType}
+      .hideAlertCategoryIcon=${args.hideAlertCategoryIcon}
+      .showAlertIcon=${args.showAlertIcon}
       .positioning=${args.positioning}
       ?alert=${args.alert}
       ?progress=${args.progress}

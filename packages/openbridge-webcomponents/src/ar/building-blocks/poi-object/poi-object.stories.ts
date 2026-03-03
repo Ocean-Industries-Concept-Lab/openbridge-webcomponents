@@ -10,7 +10,7 @@ import {
 import '../../../icons/icon-placeholder.js';
 
 const meta: Meta<ObcPoiObject> = {
-  title: 'AR/Building blocks/POI Object',
+  title: 'AR/Building Blocks/POI Object',
   component: 'obc-poi-object',
   tags: ['autodocs'],
   argTypes: {
@@ -52,7 +52,6 @@ const renderIconForType = (type: ObcPoiObjectType) => {
   return type === ObcPoiObjectType.Indicator ? indicatorIcon : regularIcon;
 };
 
-// Interactive playground
 export const Default: Story = {
   render: (args) => html`
     <obc-poi-object
@@ -65,8 +64,6 @@ export const Default: Story = {
     </obc-poi-object>
   `,
 };
-
-// === INTERACTIVE STORY ===
 
 export const Interactive: Story = {
   args: {
@@ -105,8 +102,6 @@ export const Interactive: Story = {
     </div>
   `,
 };
-
-// === TYPE STORIES ===
 
 export const Indicator: Story = {
   args: {
@@ -183,8 +178,6 @@ export const NUpLarge: Story = {
   `,
 };
 
-// === STYLE STORIES ===
-
 export const Categorical: Story = {
   args: {
     objectStyle: ObcPoiObjectStyle.Categorical,
@@ -199,8 +192,6 @@ export const Categorical: Story = {
     </obc-poi-object>
   `,
 };
-
-// === STATE STORIES ===
 
 export const Checked: Story = {
   args: {
@@ -276,8 +267,6 @@ export const Overlapped: Story = {
     </obc-poi-object>
   `,
 };
-
-// === OVERVIEW STORIES ===
 
 const sectionStyle = 'margin-bottom: 24px;';
 const headerStyle =

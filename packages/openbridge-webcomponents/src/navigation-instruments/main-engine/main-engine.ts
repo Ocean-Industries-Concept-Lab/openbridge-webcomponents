@@ -1,7 +1,7 @@
 import {LitElement, html, unsafeCSS, svg, nothing} from 'lit';
 import {property} from 'lit/decorators.js';
 import compentStyle from './main-engine.css?inline';
-import {InstrumentState} from '../types.js';
+import {InstrumentState, Priority} from '../types.js';
 import {
   atSetpoint,
   convertThrustAdvices,
@@ -31,7 +31,8 @@ export class ObcMainEngine extends LitElement {
   @property({type: Number}) autoAtSpeedSetpointDeadband: number = 1;
   @property({type: Number}) thrustSetpointAtZeroDeadband: number = 0.5;
   @property({type: Number}) speedSetpointAtZeroDeadband: number = 0.5;
-  @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
+  @property({type: String}) state: InstrumentState = InstrumentState.active;
+  @property({type: String}) priority: Priority = Priority.regular;
   @property({type: Array}) thrustAdvices: LinearAdvice[] = [];
 
   override render() {
@@ -46,7 +47,8 @@ export class ObcMainEngine extends LitElement {
         atSetpoint: thrustAtSetpoint,
         touching: this.thrustTouching,
       },
-      this.state
+      this.state,
+      this.priority
     );
     const speedAtSetpoint = atSetpoint(this.speed, this.speedSetpoint, {
       atSetpoint: this.atSpeedSetpoint,
@@ -59,7 +61,8 @@ export class ObcMainEngine extends LitElement {
         atSetpoint: speedAtSetpoint,
         touching: this.speedTouching,
       },
-      this.state
+      this.state,
+      this.priority
     );
     const container = svg`<rect x="-80" y="-176" width="160" height="352" fill="var(--instrument-frame-primary-color)" stroke="var(--instrument-frame-tertiary-color)" rx="8"/>`;
     const border = svg`<rect x="-80" y="-176" width="160" height="352" fill="none" stroke="var(--instrument-frame-tertiary-color)" rx="8" vector-effect="non-scaling-stroke"/>`;
@@ -103,6 +106,7 @@ export class ObcMainEngine extends LitElement {
             this.thrustSetpoint,
             {
               state: this.state,
+              priority: this.priority,
               atSetpoint: thrustAtSetpoint,
               touching: this.thrustTouching,
               setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
@@ -116,7 +120,7 @@ export class ObcMainEngine extends LitElement {
     const speedHeight = 352 * (this.speed / 100) + 2;
     const speedY = 176 - speedHeight;
     const speedBoxColor =
-      this.state === InstrumentState.inCommand
+      this.priority === Priority.enhanced
         ? 'var(--instrument-enhanced-tertiary-color)'
         : 'var(--instrument-regular-tertiary-color)';
     const speedBox = svg`<rect x="-56" y=${speedY} width="48" height=${speedHeight} fill=${speedBoxColor} stroke=${speedBoxColor} vector-effect="non-scaling-stroke">`;
@@ -129,6 +133,7 @@ export class ObcMainEngine extends LitElement {
             this.speedSetpoint,
             {
               state: this.state,
+              priority: this.priority,
               atSetpoint: speedAtSetpoint,
               touching: this.speedTouching,
               setpointAtZeroDeadband: this.speedSetpointAtZeroDeadband,

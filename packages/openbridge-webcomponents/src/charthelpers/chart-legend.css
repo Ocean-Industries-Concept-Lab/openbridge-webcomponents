@@ -9,7 +9,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px; /* TODO (CSS): 16px from Figma but brainstorm not enough height use case */
+  margin-bottom: 8px; /* TODO(CSS): 16px from Figma but brainstorm not enough height use case */
   min-height: 16px;
 }
 

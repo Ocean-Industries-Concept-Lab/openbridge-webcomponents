@@ -110,6 +110,18 @@
         50% calc(100% - var(--thickness)),
         var(--thickness) 50%
       );
+
+      .top & {
+        top: unset;
+        bottom: calc(-1 * var(--ui-components-button-border-radius));
+        clip-path: polygon(
+          0 0,
+          100% 0,
+          var(--thickness) 50%,
+          50% var(--thickness),
+          0 100%
+        );
+      }
     }
 
     &.right {
@@ -123,6 +135,18 @@
         50% calc(100% - var(--thickness)),
         calc(100% - var(--thickness)) 50%
       );
+
+      .top & {
+        top: unset;
+        bottom: calc(-1 * var(--ui-components-button-border-radius));
+        clip-path: polygon(
+          0 0,
+          100% 0,
+          100% 100%,
+          50% var(--thickness),
+          calc(100% - var(--thickness)) 50%
+        );
+      }
     }
   }
 
@@ -139,7 +163,8 @@
       var(--app-components-alert-frame-large-flip-border-radius) 0px;
   }
 
-  &.bottom {
+  &.bottom,
+  &.top {
     left: 0;
     right: 0;
     padding: var(--app-components-alert-frame-large-flip-padding-vertical)
@@ -157,6 +182,35 @@
 
     & .spacer {
       flex: 1;
+    }
+
+    .text-size-large & {
+      @mixin font-body;
+      bottom: calc(
+        var(--thickness) / 2 - var(--global-typography-ui-body-line-height) -
+          var(--app-components-alert-frame-large-flip-padding-vertical) * 2
+      );
+
+      .label {
+        @mixin font-body-active;
+      }
+    }
+  }
+
+  &.top {
+    bottom: unset !important;
+    top: calc(
+      var(--thickness) / 2 - var(--global-typography-ui-label-line-height) -
+        var(--app-components-alert-frame-large-flip-padding-vertical) * 2
+    );
+    border-radius: var(--button-border-radius-bottom-right)
+      var(--button-border-radius-bottom-right) 0px 0px;
+
+    .text-size-large & {
+      top: calc(
+        var(--thickness) / 2 - var(--global-typography-ui-body-line-height) -
+          var(--app-components-alert-frame-large-flip-padding-vertical) * 2
+      );
     }
   }
 

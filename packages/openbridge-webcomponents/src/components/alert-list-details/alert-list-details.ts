@@ -225,7 +225,11 @@ export class ObcAlertListDetails extends LitElement {
         key: 'tagId',
         sortable: true,
         compareFunction: (a, b) => {
-          return (a.text as string).localeCompare(b.text as string);
+          const aText =
+            a?.type === ObcTableCellType.Regular ? String(a.text ?? '') : '';
+          const bText =
+            b?.type === ObcTableCellType.Regular ? String(b.text ?? '') : '';
+          return aText.localeCompare(bText);
         },
       });
       return columns;

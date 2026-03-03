@@ -208,6 +208,22 @@
   flex-shrink: 0;
 }
 
+.wrapper.state-enabled ::slotted([slot="indicator"]) {
+  color: var(--overlay-element-active-color, #fff);
+  --element-active-color: var(--overlay-element-active-color, #fff);
+}
+
+.wrapper.type-id:is(.state-selected, .state-caution, .state-warning)
+  ::slotted([slot="indicator"]) {
+  color: var(--on-warning-color, #1a1a1a);
+  --element-active-color: var(--on-warning-color, #1a1a1a);
+}
+
+.wrapper.type-id.state-alarm ::slotted([slot="indicator"]) {
+  color: var(--overlay-element-active-color, #fff);
+  --element-active-color: var(--overlay-element-active-color, #fff);
+}
+
 .wrapper.state-enabled .indicator .bar {
   border-radius: 7px;
   background: var(--overlay-element-active-color, #fff);

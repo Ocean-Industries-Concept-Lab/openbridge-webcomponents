@@ -139,6 +139,7 @@ export class ObcAlertListPageSmall extends LitElement {
           .alerts=${this.alerts}
           .selectedMode=${this._mode}
           .showTime=${this.showTime}
+          .timeFormatter=${this.timeFormatter}
           @ack-click=${this.onAckClick}
           @row-click=${this.onRowClick}
         ></obc-alert-list-details>
