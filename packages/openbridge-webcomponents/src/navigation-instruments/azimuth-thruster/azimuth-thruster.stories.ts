@@ -72,6 +72,7 @@ export const InCommandDetailedTickmarks: Story = {
     state: InstrumentState.active,
     priority: Priority.enhanced,
     detailedTickmarks: true,
+    showLabels: true,
   },
 };
 
@@ -84,6 +85,7 @@ export const InCommandDetailedTickmarksInside: Story = {
     state: InstrumentState.active,
     priority: Priority.enhanced,
     detailedTickmarks: true,
+    showLabels: true,
     tickmarksInside: true,
   },
 };

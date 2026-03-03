@@ -1290,6 +1290,7 @@ export const SetpointAzimuthThrusterFlow: StoryObj<{
           .priority=${Priority.enhanced}
           .animateSetpoint=${true}
           .detailedTickmarks=${true}
+          .showLabels=${true}
           .tickmarksInside=${true}
         ></obc-azimuth-thruster>
       </div>
