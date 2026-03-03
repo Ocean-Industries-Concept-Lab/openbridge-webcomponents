@@ -53,6 +53,7 @@ export interface SpeedAdvice {
  *   (default: `Priority.regular`).
  * - Provide `tickmarkInterval` to control tickmark spacing.
  * - Enable `showLabels` to show numeric labels at primary tickmarks.
+ * - Enable `tickmarksInside` to render tickmarks inside the ring.
  * - Enable `showReadout` to display the numeric value below the gauge.
  *
  * ## Best Practices
@@ -86,6 +87,8 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
   @property({type: Number}) maxSpeed = 100;
   @property({type: Number}) minSpeed = 0;
   @property({type: Boolean}) showLabels: boolean = false;
+  /** Whether to render tickmarks inside the ring. */
+  @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: Number}) tickmarkInterval = 20;
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) needleType: ObcSpeedGaugeNeedleType =
@@ -127,6 +130,7 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
           .animateSetpoint=${this.animateSetpoint}
           .padding=${48}
           .tickmarks=${this.tickmarks}
+          .tickmarksInside=${this.tickmarksInside}
           .advices=${this._advices}
           .areas=${[
             {

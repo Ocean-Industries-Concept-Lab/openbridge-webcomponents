@@ -25,6 +25,8 @@ const meta: Meta<typeof ObcRotSector> = {
       control: {type: 'range', min: -60, max: 60, step: 1},
     },
     priority: {control: 'select', options: Object.values(Priority)},
+    showLabels: {control: 'boolean'},
+    tickmarksInside: {control: 'boolean'},
   },
 } satisfies Meta<ObcRotSector>;
 

@@ -26,6 +26,8 @@ const meta: Meta<typeof ObcAzimuthThruster> = {
     },
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
     detailedTickmarks: {control: {type: 'boolean'}},
+    showLabels: {control: 'boolean'},
+    tickmarksInside: {control: 'boolean'},
     touching: {control: 'boolean'},
     priority: {control: 'select', options: Object.values(Priority)},
   },

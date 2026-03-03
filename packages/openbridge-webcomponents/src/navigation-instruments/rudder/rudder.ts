@@ -47,6 +47,7 @@ export enum ObcRudderVariant {
  *   (default: `Priority.regular`).
  * - Use `state` to control the instrument color palette.
  * - Enable `showLabels` to show numeric angle labels at tickmarks.
+ * - Enable `tickmarksInside` to render tickmarks inside the ring.
  * - Choose `variant` to switch between bar and needle display.
  *
  * ## Best Practices
@@ -77,6 +78,8 @@ export class ObcRudder extends SetpointMixin(LitElement) {
   @property({type: String}) variant: ObcRudderVariant = ObcRudderVariant.Bar;
   @property({type: Number}) maxAngle = 90;
   @property({type: Boolean}) showLabels: boolean = false;
+  /** Whether to render tickmarks inside the ring. */
+  @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: Array, attribute: false}) advices: AngleAdvice[] = [];
@@ -230,6 +233,7 @@ export class ObcRudder extends SetpointMixin(LitElement) {
           .animateSetpoint=${this.animateSetpoint}
           .padding=${48}
           .tickmarks=${tickmarks}
+          .tickmarksInside=${this.tickmarksInside}
           .watchCircleType=${WatchCircleType.double}
           .barAreas=${barAreas}
           .state=${this.state}

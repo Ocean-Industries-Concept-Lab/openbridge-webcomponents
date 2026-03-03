@@ -83,6 +83,8 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
   @property({type: Number}) value = 0;
   @property({type: Number}) maxValue = 100;
   @property({type: Boolean}) showLabels: boolean = false;
+  /** Whether to render tickmarks inside the ring. */
+  @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: Number}) primaryTickmarkInterval = 50;
   @property({type: Number}) secondaryTickmarkInterval = 10;
   @property({type: String}) priority: Priority = Priority.regular;
@@ -131,6 +133,7 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
         .needleColor=${this._needleColor}
         .barColor=${barColor}
         .showLabels=${this.showLabels}
+        .tickmarksInside=${this.tickmarksInside}
         .primaryTickmarkInterval=${this.primaryTickmarkInterval}
         .secondaryTickmarkInterval=${this.secondaryTickmarkInterval}
         .type=${this._type}
