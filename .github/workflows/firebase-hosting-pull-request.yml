@@ -16,7 +16,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Build openbridge-webcomponents
-        run: cd packages/openbridge-webcomponents && npm run build:full
+        run: cd packages/openbridge-webcomponents && npm run build
       - name: Build openbridge-webcomponents-vue
         run: cd packages/openbridge-webcomponents-vue && npm run build
       - name: Build vue-demo
