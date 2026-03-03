@@ -39,7 +39,7 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   @property({attribute: false}) getAngle!: (v: number) => number;
   @property({type: String}) needleColor: string | undefined;
   @property({type: String}) barColor: string | undefined;
-  @property({type: Boolean}) labels: boolean = false;
+  @property({type: Boolean}) showLabels: boolean = false;
   @property({type: Number}) primaryTickmarkInterval = 50;
   @property({type: Number}) secondaryTickmarkInterval = 10;
   @property({type: String}) type: ObcGaugeRadialType =
@@ -178,15 +178,15 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
       tickmarks.push({
         angle: this.getAngle(i),
         type: TickmarkType.primary,
-        text: this.labels ? i.toString() : undefined,
+        text: this.showLabels ? i.toString() : undefined,
       });
     }
 
-    if (this.labels && this.maxValue % this.primaryTickmarkInterval === 0) {
+    if (this.showLabels && this.maxValue % this.primaryTickmarkInterval === 0) {
       tickmarks.push({
         angle: this.getAngle(this.maxValue),
         type: TickmarkType.textOnly,
-        text: this.labels ? this.maxValue.toString() : undefined,
+        text: this.showLabels ? this.maxValue.toString() : undefined,
       });
     }
 
@@ -198,15 +198,15 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
       tickmarks.push({
         angle: this.getAngle(i),
         type: TickmarkType.primary,
-        text: this.labels ? i.toString() : undefined,
+        text: this.showLabels ? i.toString() : undefined,
       });
     }
 
-    if (this.labels && this.minValue % this.primaryTickmarkInterval === 0) {
+    if (this.showLabels && this.minValue % this.primaryTickmarkInterval === 0) {
       tickmarks.push({
         angle: this.getAngle(this.minValue),
         type: TickmarkType.textOnly,
-        text: this.labels ? this.minValue.toString() : undefined,
+        text: this.showLabels ? this.minValue.toString() : undefined,
       });
     }
 
@@ -250,7 +250,7 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
       tickmarks.push({
         angle: this.getAngle(0),
         type: this.minValue < 0 ? TickmarkType.main : TickmarkType.textOnly,
-        text: this.labels ? '0' : undefined,
+        text: this.showLabels ? '0' : undefined,
       });
     }
 

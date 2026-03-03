@@ -83,7 +83,7 @@ export const WithLabels: Story = {
     maxValue: 100,
     minValue: 0,
     type: ObcGaugeRadialType.filled,
-    labels: true,
+    showLabels: true,
   },
 };
 

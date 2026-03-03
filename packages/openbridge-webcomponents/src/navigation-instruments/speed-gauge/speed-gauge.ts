@@ -52,7 +52,7 @@ export interface SpeedAdvice {
  * - Use `priority` to switch between regular and enhanced color palettes
  *   (default: `Priority.regular`).
  * - Provide `tickmarkInterval` to control tickmark spacing.
- * - Enable `labels` to show numeric labels at primary tickmarks.
+ * - Enable `showLabels` to show numeric labels at primary tickmarks.
  * - Enable `showReadout` to display the numeric value below the gauge.
  *
  * ## Best Practices
@@ -70,7 +70,7 @@ export interface SpeedAdvice {
  *   maxSpeed="25"
  *   needleType="full"
  *   enhanced
- *   labels
+ *   showLabels
  *   showReadout
  *   tickmarkInterval="5"
  *   setpoint="15"
@@ -85,7 +85,7 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
   @property({type: Number}) speed = 0;
   @property({type: Number}) maxSpeed = 100;
   @property({type: Number}) minSpeed = 0;
-  @property({type: Boolean}) labels: boolean = false;
+  @property({type: Boolean}) showLabels: boolean = false;
   @property({type: Number}) tickmarkInterval = 20;
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) needleType: ObcSpeedGaugeNeedleType =
@@ -195,15 +195,15 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
       tickmarks.push({
         angle: this.getAngle(i),
         type: TickmarkType.primary,
-        text: this.labels ? i.toString() : undefined,
+        text: this.showLabels ? i.toString() : undefined,
       });
     }
 
-    if (this.labels && this.maxSpeed % this.tickmarkInterval === 0) {
+    if (this.showLabels && this.maxSpeed % this.tickmarkInterval === 0) {
       tickmarks.push({
         angle: this.getAngle(this.maxSpeed),
         type: TickmarkType.textOnly,
-        text: this.labels ? this.maxSpeed.toString() : undefined,
+        text: this.showLabels ? this.maxSpeed.toString() : undefined,
       });
     }
 
@@ -215,22 +215,22 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
       tickmarks.push({
         angle: this.getAngle(i),
         type: TickmarkType.main,
-        text: this.labels ? i.toString() : undefined,
+        text: this.showLabels ? i.toString() : undefined,
       });
     }
 
-    if (this.labels && this.minSpeed % this.tickmarkInterval === 0) {
+    if (this.showLabels && this.minSpeed % this.tickmarkInterval === 0) {
       tickmarks.push({
         angle: this.getAngle(this.minSpeed),
         type: TickmarkType.textOnly,
-        text: this.labels ? this.minSpeed.toString() : undefined,
+        text: this.showLabels ? this.minSpeed.toString() : undefined,
       });
     }
 
     tickmarks.push({
       angle: this.getAngle(0),
       type: this.minSpeed < 0 ? TickmarkType.main : TickmarkType.textOnly,
-      text: this.labels ? '0' : undefined,
+      text: this.showLabels ? '0' : undefined,
     });
 
     return tickmarks;

@@ -56,7 +56,7 @@ export const EnhancedPortStarboard: Story = {
 export const WithLabels: Story = {
   args: {
     value: 50,
-    labels: true,
+    showLabels: true,
   },
 };
 

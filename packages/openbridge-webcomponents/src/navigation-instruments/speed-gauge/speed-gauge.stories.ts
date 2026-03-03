@@ -40,7 +40,7 @@ export const Regular: Story = {
 };
 
 export const Labels: Story = {
-  args: {labels: true},
+  args: {showLabels: true},
 };
 
 export const NeedleBar: Story = {

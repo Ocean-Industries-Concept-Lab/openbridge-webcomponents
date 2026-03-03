@@ -51,7 +51,7 @@ export interface GaugeRadialAdvice {
  * - Enable `portStarboard` to show directional coloring.
  * - Provide `primaryTickmarkInterval` and `secondaryTickmarkInterval` to
  *   control tickmark density.
- * - Enable `labels` to show numeric labels at primary tickmarks.
+ * - Enable `showLabels` to show numeric labels at primary tickmarks.
  *
  * ## Best Practices
  *
@@ -68,7 +68,7 @@ export interface GaugeRadialAdvice {
  *   maxValue="60"
  *   enhanced
  *   portStarboard
- *   labels
+ *   showLabels
  *   primaryTickmarkInterval="20"
  *   secondaryTickmarkInterval="10"
  *   setpoint="30"
@@ -82,7 +82,7 @@ export interface GaugeRadialAdvice {
 export class ObcRotSector extends SetpointMixin(LitElement) {
   @property({type: Number}) value = 0;
   @property({type: Number}) maxValue = 100;
-  @property({type: Boolean}) labels: boolean = false;
+  @property({type: Boolean}) showLabels: boolean = false;
   @property({type: Number}) primaryTickmarkInterval = 50;
   @property({type: Number}) secondaryTickmarkInterval = 10;
   @property({type: String}) priority: Priority = Priority.regular;
@@ -130,7 +130,7 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
         .getAngle=${this.getAngle}
         .needleColor=${this._needleColor}
         .barColor=${barColor}
-        .labels=${this.labels}
+        .showLabels=${this.showLabels}
         .primaryTickmarkInterval=${this.primaryTickmarkInterval}
         .secondaryTickmarkInterval=${this.secondaryTickmarkInterval}
         .type=${this._type}
