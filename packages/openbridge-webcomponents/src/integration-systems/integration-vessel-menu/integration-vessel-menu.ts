@@ -29,9 +29,9 @@ export class ObcIntegrationVesselMenu extends LitElement {
    * @slot content - Main content shown in the content area.
    * @slot alarms - Alarm items rendered inside the alert list.
    *
-   * @fires button-1-click {CustomEvent} - Fired when the first button is clicked.
-   * @fires button-2-click {CustomEvent} - Fired when the second button is clicked.
-   * @fires button-3-click {CustomEvent} - Fired when the third button is clicked.
+   * @fires button-1-click - Fired when the first button is clicked.
+   * @fires button-2-click - Fired when the second button is clicked.
+   * @fires button-3-click - Fired when the third button is clicked.
    *
    * @property {boolean} hideHeader - Hides the header section when true.
    * @property {number} numberOfButtons - Number of buttons to render (up to 3).
