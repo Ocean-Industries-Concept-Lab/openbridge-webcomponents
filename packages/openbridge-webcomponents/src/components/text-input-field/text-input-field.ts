@@ -9,6 +9,8 @@ import '../../icons/icon-close-google.js';
 import '../../icons/icon-visibility-on-google.js';
 import '../../icons/icon-visibility-off-google.js';
 
+export type ObcTextInputFieldBlurEvent = CustomEvent<{value: string}>;
+
 /**
  * Common HTML input types for practical use with `<obc-text-input-field>`.
  * Focuses on the most commonly used input types in real applications.
@@ -43,11 +45,15 @@ export enum ObcTextInputFieldPlacement {
 /**
  * `<obc-text-input-field>` – A text input field component with optional icons, label, and helper text.
  *
+ *
+ *
  * @slot leading-icon - Icon displayed before the input value (when `hasLeadingIcon` is true)
  * @slot label-icon - Icon displayed before the label text (when `hasLabelIcon` is true)
  * @slot helper-icon - Icon displayed before helper or error text (when `hasHelperIcon` is true)
  * @fires input - Standard input event on value change
+ * @fires change - Standard change event on value change
  * @fires clear - Fired when the clear button is clicked
+ * @fires blur - Fired when the input field is blurred
  */
 @customElement('obc-text-input-field')
 export class ObcTextInputField extends LitElement {
@@ -62,6 +68,10 @@ export class ObcTextInputField extends LitElement {
   @property({type: Boolean, reflect: true}) readonly = false;
   @property({type: Boolean, reflect: true}) error = false;
   @property({type: String}) errorText = '';
+  /** If true, the input field will not update its value on focus */
+  @property({type: Boolean}) rejectUpdatesOnFocus = false;
+  /** If true, the value will only be initially set, and not updated on change */
+  @property({type: Boolean}) rejectUpdates = false;
 
   /** Name attribute for form integration */
   @property({type: String}) name = '';
@@ -94,11 +104,26 @@ export class ObcTextInputField extends LitElement {
 
   /** Internal state for password visibility toggle */
   @state() private passwordVisible = false;
+  @state() private initialValue = '';
+  @state() private hasFocus = false;
 
   @query('.value-input') private inputElement!: HTMLInputElement;
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.initialValue = this.value;
+  }
+
   private onInput(e: Event) {
     this.value = (e.target as HTMLInputElement).value;
+  }
+
+  private onFocus() {
+    this.hasFocus = true;
+  }
+
+  private onBlur() {
+    this.hasFocus = false;
   }
 
   private handleClear(e: Event) {
@@ -159,6 +184,10 @@ export class ObcTextInputField extends LitElement {
     </div>`;
   }
 
+  private fireChangeEvent() {
+    this.dispatchEvent(new CustomEvent('change'));
+  }
+
   override render() {
     const hasHelperOrError =
       Boolean(this.helperText) || Boolean(this.error && this.errorText);
@@ -174,6 +203,13 @@ export class ObcTextInputField extends LitElement {
     // Determine trailing button state for padding adjustment
     const hasTrailingButton = showPasswordToggle || showClearButton;
     const hasTwoTrailingButtons = showPasswordToggle && showClearButton;
+
+    const shouldUpdateValue = !(this.rejectUpdatesOnFocus && this.hasFocus);
+    let value = this.rejectUpdates ? this.initialValue : this.value;
+
+    if (!shouldUpdateValue) {
+      value = this.inputElement.value;
+    }
 
     return html`
       <label
@@ -220,7 +256,9 @@ export class ObcTextInputField extends LitElement {
                 type=${effectiveType}
                 inputmode=${this.getInputMode()}
                 class="value-input"
-                .value=${this.value}
+                .value=${value}
+                @focus=${this.onFocus}
+                @blur=${this.onBlur}
                 .placeholder=${this.placeholder}
                 name=${ifDefined(this.name || undefined)}
                 ?disabled=${this.disabled}
@@ -234,6 +272,7 @@ export class ObcTextInputField extends LitElement {
                 )}
                 autocomplete="off"
                 @input=${this.onInput}
+                @change=${this.fireChangeEvent}
               />
             </div>
             ${showPasswordToggle
