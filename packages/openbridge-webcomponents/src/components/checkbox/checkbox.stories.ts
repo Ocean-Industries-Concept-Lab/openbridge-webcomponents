@@ -9,7 +9,11 @@ const statusVariants = [
   CheckboxStatus.mixed,
 ] as const;
 
-const renderStatusGroup = (state: CheckboxState, disabled = false) => html`
+const renderStatusGroup = (
+  state: CheckboxState,
+  disabled = false,
+  noHoverEffects = false
+) => html`
   <div style="display:flex; justify-content:flex-start; width:100%;">
     <div style="display:flex; align-items:center; gap:24px; min-height:96px;">
       ${statusVariants.map(
@@ -18,6 +22,7 @@ const renderStatusGroup = (state: CheckboxState, disabled = false) => html`
             .status=${status}
             .state=${state}
             .disabled=${disabled}
+            .noHoverEffects=${noHoverEffects}
             aria-label=${`${state} ${status} checkbox`}
           ></obc-checkbox>`
       )}
@@ -30,9 +35,6 @@ const meta = {
   tags: ['6.0'],
   component: 'obc-checkbox',
   parameters: {
-    controls: {
-      exclude: /^(?!(status|state)$).*/i,
-    },
     actions: {
       handles: ['change'],
     },
@@ -41,6 +43,7 @@ const meta = {
     const checkbox = html`<obc-checkbox
       .status=${args.status}
       .state=${args.state}
+      .noHoverEffects=${args.noHoverEffects}
       aria-label="Checkbox item"
     ></obc-checkbox>`;
 
@@ -69,6 +72,10 @@ const meta = {
       options: Object.values(CheckboxState),
       control: {type: 'select'},
     },
+    noHoverEffects: {
+      name: 'No Hover Effects',
+      control: {type: 'boolean'},
+    },
   },
 } satisfies Meta<ObcCheckbox>;
 
@@ -93,7 +100,12 @@ export const Enabled: Story = {
     status: CheckboxStatus.unchecked,
     state: CheckboxState.enabled,
   },
-  render: () => renderStatusGroup(CheckboxState.enabled),
+  render: (args) =>
+    renderStatusGroup(
+      CheckboxState.enabled,
+      args.disabled,
+      args.noHoverEffects
+    ),
 };
 
 export const Pressed: Story = {
@@ -101,7 +113,8 @@ export const Pressed: Story = {
     status: CheckboxStatus.checked,
     state: CheckboxState.pressed,
   },
-  render: () => renderStatusGroup(CheckboxState.pressed),
+  render: (args) =>
+    renderStatusGroup(CheckboxState.pressed, args.disabled, false),
 };
 
 export const Disabled: Story = {

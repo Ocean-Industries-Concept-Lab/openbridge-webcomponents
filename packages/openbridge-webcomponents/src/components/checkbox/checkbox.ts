@@ -124,19 +124,8 @@ export class ObcCheckbox extends LitElement {
    */
   @property({type: Boolean}) disabled = false;
 
-  /**
-   * Internal: suppresses focus ring rendering on the visual checkbox.
-   * Used by wrapper components such as `obc-checkbox-item`.
-   */
-  @property({type: Boolean, attribute: 'suppress-focus-ring', reflect: true})
-  suppressFocusRing = false;
-
-  /**
-   * Internal: forces visual focus-ring style.
-   * Used by wrapper components to proxy keyboard focus state.
-   */
-  @property({type: Boolean, attribute: 'force-focus-visible', reflect: true})
-  forceFocusVisible = false;
+  /** Internal: disables hover effects on the checkbox. Used by wrapper components such as `obc-checkbox-item`. */
+  @property({type: Boolean}) noHoverEffects = false;
 
   @query('.visually-hidden') private checkboxControl?: HTMLDivElement;
 
@@ -229,6 +218,7 @@ export class ObcCheckbox extends LitElement {
           [`status-${this.status}`]: true,
           [`state-${this.state}`]: true,
           disabled: this.disabled,
+          'no-hover-effects': this.noHoverEffects,
         })}
         role="checkbox"
         aria-checked=${this._computedAriaChecked}

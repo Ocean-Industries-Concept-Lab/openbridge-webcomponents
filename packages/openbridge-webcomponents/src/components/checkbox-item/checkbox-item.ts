@@ -220,6 +220,8 @@ export class ObcCheckboxItem extends LitElement {
             .disabled=${isDisabled}
             .suppressFocusRing=${this.hoverStyle ===
             ObcCheckboxItemHoverStyle.touchTarget}
+            .noHoverEffects=${this.hoverStyle ===
+            ObcCheckboxItemHoverStyle.touchTarget}
             aria-label=${ifDefined(checkboxAriaLabel)}
             aria-describedby=${ifDefined(this.ariaDescribedBy || undefined)}
             @change=${this.handleCheckboxChange}

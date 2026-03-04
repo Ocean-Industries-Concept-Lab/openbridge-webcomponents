@@ -81,6 +81,35 @@
   }
 }
 
+.status-unchecked:not(.no-hover-effects) {
+  @mixin style style=indent visibleWrapperClass=.checkbox-box;
+
+  &:not(.disabled) .checkbox-box,
+  &:not(.disabled):hover .checkbox-box {
+    border-color: var(--element-symbol-color);
+  }
+}
+
+.status-unchecked.no-hover-effects {
+  @mixin style style=indent noClick visibleWrapperClass=.checkbox-box;
+}
+
+.status-checked.no-hover-effects {
+  @mixin style style=selected noClick visibleWrapperClass=.checkbox-box;
+}
+
+.status-mixed.no-hover-effects {
+  @mixin style style=amplified noClick visibleWrapperClass=.checkbox-box;
+}
+
+.status-checked:not(.no-hover-effects) {
+  @mixin style style=selected visibleWrapperClass=.checkbox-box;
+}
+
+.status-mixed:not(.no-hover-effects) {
+  @mixin style style=amplified visibleWrapperClass=.checkbox-box;
+}
+
 .checkbox-box {
   box-sizing: border-box;
   position: relative;
@@ -94,9 +123,13 @@
   border: 1px solid transparent;
   background: transparent;
 
-  .status-unchecked & {
-    border: 1px solid var(--element-symbol-color);
-    background: var(--indent-enabled-background-color);
+  .status-unchecked:not(.no-hover-effects):hover:not(.disabled) & {
+    border-color: var(--element-symbol-color);
+  }
+
+  .status-unchecked.no-hover-effects & {
+    @mixin style style=indent noClick;
+    border-color: var(--element-symbol-color);
   }
 
   .status-checked & {
@@ -107,16 +140,6 @@
   .status-mixed & {
     border: 1px solid var(--instrument-enhanced-secondary-color);
     background: var(--amplified-enabled-background-color);
-  }
-
-  :not(.disabled).state-enabled.status-unchecked:hover & {
-    border: 1px solid var(--element-symbol-color);
-    background: var(--indent-hover-background-color);
-  }
-
-  :not(.disabled).state-enabled.status-checked:hover & {
-    border: 1px solid var(--selected-hover-border-color);
-    background: var(--selected-hover-background-color);
   }
 
   :not(.disabled).state-enabled.status-mixed:hover & {
@@ -142,34 +165,6 @@
     background: var(--amplified-pressed-background-color);
   }
 
-  :host(:not([suppress-focus-ring]))
-    :not(.disabled).state-enabled.status-unchecked:focus-visible
-    & {
-    background: var(--indent-enabled-background-color);
-  }
-
-  :host(:not([suppress-focus-ring]))
-    :not(.disabled).state-enabled.status-checked:focus-visible
-    & {
-    border-radius: var(--ui-components-checkbox-border-radius);
-    background: var(--selected-focused-background-color);
-  }
-
-  :host(:not([suppress-focus-ring]))
-    :not(.disabled).state-enabled.status-mixed:focus-visible
-    & {
-    background: var(--amplified-focused-background-color);
-  }
-
-  :host(:not([suppress-focus-ring]))
-    :not(.disabled).state-enabled:focus-visible
-    & {
-    border: 1px solid var(--container-global-color);
-    outline: var(--global-size-spacing-border-weight-focusframe, 2px) solid
-      var(--border-focus-color);
-    outline-offset: 1px;
-  }
-
   .disabled.status-unchecked & {
     border: 1px solid var(--indent-disabled-border-color);
     background: var(--indent-disabled-background-color);
@@ -184,15 +179,6 @@
     border: 1px solid var(--amplified-disabled-border-color);
     background: var(--amplified-disabled-background-color);
   }
-}
-
-:host([force-focus-visible]):not([suppress-focus-ring])
-  .visually-hidden:not(.disabled).state-enabled
-  .checkbox-box {
-  border: 1px solid var(--container-global-color);
-  outline: var(--global-size-spacing-border-weight-focusframe, 2px) solid
-    var(--border-focus-color);
-  outline-offset: 1px;
 }
 
 :host([force-focus-visible]):not([suppress-focus-ring])
