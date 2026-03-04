@@ -32,7 +32,7 @@ export enum IntegrationButtonType {
  * @slot info-label - Info label text
  * @slot info-status - Info status text
  *
- * @event click - Fired when the internal button is activated.
+ * @fires click - Fired when the internal button is activated.
  *
  * @property {boolean} hasTrailingIcon - Shows the `trailing-icon` slot.
  * @property {boolean} hasTrailingIcon2 - Shows the `trailing-icon2` slot.
