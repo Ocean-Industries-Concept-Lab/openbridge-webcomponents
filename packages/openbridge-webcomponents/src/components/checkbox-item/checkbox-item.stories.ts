@@ -147,25 +147,9 @@ const meta = {
       options: Object.values(ObcCheckboxItemHoverStyle),
       control: {type: 'select'},
     },
-    disabled: {
-      name: 'Disabled',
-      control: {type: 'boolean'},
-    },
     label: {
       name: 'Label',
       control: {type: 'text'},
-    },
-    isNested: {
-      name: 'Is nested',
-      control: {type: 'boolean'},
-    },
-    isLevel1: {
-      name: 'Is level 1',
-      control: {type: 'boolean'},
-    },
-    isLevel2: {
-      name: 'Is level 2',
-      control: {type: 'boolean'},
     },
   },
 } satisfies Meta<ObcCheckboxItem>;

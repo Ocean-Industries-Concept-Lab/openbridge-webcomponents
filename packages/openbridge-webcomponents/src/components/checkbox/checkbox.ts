@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
 import {property, query} from 'lit/decorators.js';
 import '../../icons/icon-check-mixed.js';
 import '../../icons/icon-check-google.js';
@@ -33,14 +33,12 @@ export enum CheckboxState {
 }
 
 /**
- * The payload for `change` events emitted by `<obc-checkbox>`.
+ * The payload for `change` and `disabled` events emitted by `<obc-checkbox>`.
  * - `status`: The current checkbox status.
- * - `state`: The current visual interaction state.
  * - `disabled`: Whether the checkbox is currently disabled.
  */
 export type ObcCheckboxChangeEvent = CustomEvent<{
   status: CheckboxStatus;
-  state: CheckboxState;
   disabled: boolean;
 }>;
 
@@ -85,7 +83,9 @@ export type ObcCheckboxChangeEvent = CustomEvent<{
  *
  * ### Events
  * - `change` – Fired when the checkbox status changes.
- *   **detail:** `{ status, state, disabled }`
+ *   **detail:** `{ status, disabled }`
+ * - `disabled` – Fired when the `disabled` property changes.
+ *   **detail:** `{ status, disabled }`
  *
  * ### Example
  * ```html
@@ -98,6 +98,7 @@ export type ObcCheckboxChangeEvent = CustomEvent<{
  *
  * @slot - No named slots.
  * @fires change {ObcCheckboxChangeEvent} – Emitted when the status changes.
+ * @fires disabled {ObcCheckboxChangeEvent} – Emitted when the disabled state changes.
  */
 @customElement('obc-checkbox')
 export class ObcCheckbox extends LitElement {
@@ -143,6 +144,19 @@ export class ObcCheckbox extends LitElement {
     return this.disabled || this.state === CheckboxState.loading;
   }
 
+  protected override updated(changed: PropertyValues<this>): void {
+    if (changed.has('disabled')) {
+      this.dispatchEvent(
+        new CustomEvent('disabled', {
+          detail: {
+            status: this.status,
+            disabled: this.disabled,
+          },
+        })
+      );
+    }
+  }
+
   private toggleStatus() {
     if (this._isInteractionLocked) return;
 
@@ -156,7 +170,6 @@ export class ObcCheckbox extends LitElement {
       new CustomEvent('change', {
         detail: {
           status: this.status,
-          state: this.state,
           disabled: this.disabled,
         },
       })
