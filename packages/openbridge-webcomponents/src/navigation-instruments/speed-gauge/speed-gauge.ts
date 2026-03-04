@@ -89,7 +89,11 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
   @property({type: Boolean}) showLabels: boolean = false;
   /** Whether to render tickmarks inside the ring. */
   @property({type: Boolean}) tickmarksInside: boolean = false;
-  @property({type: Number}) tickmarkInterval = 20;
+  /**
+   * Interval for tickmarks in speed units.
+   * When undefined or <= 0, no tickmarks are shown (only the zero mark).
+   */
+  @property({type: Number}) tickmarkInterval: number | undefined = 20;
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) needleType: ObcSpeedGaugeNeedleType =
     ObcSpeedGaugeNeedleType.full;
@@ -191,46 +195,44 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
 
   get tickmarks(): Tickmark[] {
     const tickmarks: Tickmark[] = [];
-    for (
-      let i = this.tickmarkInterval;
-      i < this.maxSpeed;
-      i += this.tickmarkInterval
-    ) {
-      tickmarks.push({
-        angle: this.getAngle(i),
-        type: TickmarkType.primary,
-        text: this.showLabels ? i.toString() : undefined,
-      });
+
+    // Tickmarks — skip when undefined or <= 0 to prevent infinite loops
+    const interval = this.tickmarkInterval;
+    if (interval !== undefined && interval > 0 && Number.isFinite(interval)) {
+      for (let i = interval; i < this.maxSpeed; i += interval) {
+        tickmarks.push({
+          angle: this.getAngle(i),
+          type: TickmarkType.primary,
+          text: this.showLabels ? i.toString() : undefined,
+        });
+      }
+
+      if (this.showLabels && this.maxSpeed % interval === 0) {
+        tickmarks.push({
+          angle: this.getAngle(this.maxSpeed),
+          type: TickmarkType.textOnly,
+          text: this.showLabels ? this.maxSpeed.toString() : undefined,
+        });
+      }
+
+      for (let i = -interval; i > this.minSpeed; i -= interval) {
+        tickmarks.push({
+          angle: this.getAngle(i),
+          type: TickmarkType.main,
+          text: this.showLabels ? i.toString() : undefined,
+        });
+      }
+
+      if (this.showLabels && this.minSpeed % interval === 0) {
+        tickmarks.push({
+          angle: this.getAngle(this.minSpeed),
+          type: TickmarkType.textOnly,
+          text: this.showLabels ? this.minSpeed.toString() : undefined,
+        });
+      }
     }
 
-    if (this.showLabels && this.maxSpeed % this.tickmarkInterval === 0) {
-      tickmarks.push({
-        angle: this.getAngle(this.maxSpeed),
-        type: TickmarkType.textOnly,
-        text: this.showLabels ? this.maxSpeed.toString() : undefined,
-      });
-    }
-
-    for (
-      let i = -this.tickmarkInterval;
-      i > this.minSpeed;
-      i -= this.tickmarkInterval
-    ) {
-      tickmarks.push({
-        angle: this.getAngle(i),
-        type: TickmarkType.main,
-        text: this.showLabels ? i.toString() : undefined,
-      });
-    }
-
-    if (this.showLabels && this.minSpeed % this.tickmarkInterval === 0) {
-      tickmarks.push({
-        angle: this.getAngle(this.minSpeed),
-        type: TickmarkType.textOnly,
-        text: this.showLabels ? this.minSpeed.toString() : undefined,
-      });
-    }
-
+    // Zero tickmark
     tickmarks.push({
       angle: this.getAngle(0),
       type: this.minSpeed < 0 ? TickmarkType.main : TickmarkType.textOnly,
