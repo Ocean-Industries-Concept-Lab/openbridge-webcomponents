@@ -148,8 +148,9 @@ export interface Attachment {
  * | `leading-icon` | `hasLeadingIcon=true`  | Displays a contextual icon before the input.  |
  *
  * ## Events
- *
- * - `value-changed` – Fired when the textarea loses focus (blur) and the value has changed since the last emit.
+ * - `input` – Fired when the textarea value changes.
+ * - `change` – Fired when the textarea value changes and loses focus (blur).
+ * - `blur` – Fired when the textarea loses focus (blur).
  * - `send-click` – Fired when the send button is clicked (Message type only), with the current value.
  * - `add-click` – Fired when the add (+) button is clicked.
  * - `screenshot-click` – Fired when the screenshot button is clicked.
