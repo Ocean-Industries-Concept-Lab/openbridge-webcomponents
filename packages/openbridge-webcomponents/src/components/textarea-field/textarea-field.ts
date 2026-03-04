@@ -313,19 +313,13 @@ export class ObcTextareaField extends LitElement {
    */
   @property({type: Array}) attachments: Attachment[] = [];
 
-  private _initialValue = '';
   @state() private _focused = false;
   @state() private _statusAnnouncement = '';
   @state() private _isPlayingRecording = false;
 
-  @query('.input-field') private _textarea!: HTMLTextAreaElement;
+  @query('.input-field') private _textarea?: HTMLTextAreaElement;
   @query('.action-container obc-icon-button')
   private _firstActionButton?: HTMLElement;
-
-  override connectedCallback() {
-    super.connectedCallback();
-    this._initialValue = this.value;
-  }
 
   protected override updated(changedProperties: Map<string, unknown>) {
     super.updated(changedProperties);
@@ -367,7 +361,7 @@ export class ObcTextareaField extends LitElement {
     }
 
     if (changedProperties.has('value')) {
-      if (!this.shouldUpdateValue) {
+      if (!this.shouldUpdateValue && this._textarea) {
         this.value = this._textarea.value;
       }
     }
@@ -572,15 +566,17 @@ export class ObcTextareaField extends LitElement {
   }
 
   private get shouldUpdateValue(): boolean {
-    return !(this.rejectUpdatesOnFocus && this._focused);
+    if (this.rejectUpdates) return false;
+    if (this.rejectUpdatesOnFocus && this._focused) return false;
+    return true;
   }
 
   private renderTextarea() {
     if (this.recording) return nothing;
 
-    let value = this.rejectUpdates ? this._initialValue : this.value;
+    let value = this.value;
 
-    if (!this.shouldUpdateValue) {
+    if (!this.shouldUpdateValue && this._textarea) {
       value = this._textarea.value;
     }
 

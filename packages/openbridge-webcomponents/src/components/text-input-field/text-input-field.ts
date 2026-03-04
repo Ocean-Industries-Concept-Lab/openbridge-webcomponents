@@ -104,15 +104,9 @@ export class ObcTextInputField extends LitElement {
 
   /** Internal state for password visibility toggle */
   @state() private passwordVisible = false;
-  @state() private initialValue = '';
   @state() private hasFocus = false;
 
-  @query('.value-input') private inputElement!: HTMLInputElement;
-
-  override connectedCallback() {
-    super.connectedCallback();
-    this.initialValue = this.value;
-  }
+  @query('.value-input') private inputElement?: HTMLInputElement;
 
   private onInput(e: Event) {
     this.value = (e.target as HTMLInputElement).value;
@@ -189,16 +183,21 @@ export class ObcTextInputField extends LitElement {
   }
 
   private get shouldUpdateValue(): boolean {
-    return !(this.rejectUpdatesOnFocus && this.hasFocus);
+    if (this.rejectUpdates) return false;
+    if (this.rejectUpdatesOnFocus && this.hasFocus) return false;
+    return true;
   }
 
   override updated(changedProperties: Map<string, unknown>) {
     super.updated(changedProperties);
-    if (changedProperties.has('value') && !this.shouldUpdateValue) {
+    if (
+      changedProperties.has('value') &&
+      !this.shouldUpdateValue &&
+      this.inputElement
+    ) {
       this.value = this.inputElement.value;
     }
   }
-
   override render() {
     const hasHelperOrError =
       Boolean(this.helperText) || Boolean(this.error && this.errorText);
@@ -215,10 +214,9 @@ export class ObcTextInputField extends LitElement {
     const hasTrailingButton = showPasswordToggle || showClearButton;
     const hasTwoTrailingButtons = showPasswordToggle && showClearButton;
 
-    const shouldUpdateValue = !(this.rejectUpdatesOnFocus && this.hasFocus);
-    let value = this.rejectUpdates ? this.initialValue : this.value;
+    let value = this.value;
 
-    if (!shouldUpdateValue) {
+    if (!this.shouldUpdateValue && this.inputElement) {
       value = this.inputElement.value;
     }
 
