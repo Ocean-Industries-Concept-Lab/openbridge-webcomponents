@@ -367,7 +367,7 @@ export class ObcTextareaField extends LitElement {
     }
 
     if (changedProperties.has('value')) {
-      if (!this.shouldUpdateValue) {
+      if (!this.shouldUpdateValue && this._textarea) {
         this.value = this._textarea.value;
       }
     }
