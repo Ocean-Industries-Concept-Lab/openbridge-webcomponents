@@ -22,6 +22,58 @@ export enum ObcCheckboxItemHoverStyle {
   visualTarget = 'visual-target',
 }
 
+/**
+ * `<obc-checkbox-item>` – A list-item wrapper for `<obc-checkbox>` with label
+ * and optional nested indentation affordances.
+ *
+ * ### Overview
+ * Combines checkbox interaction with a row-like container used in menus and
+ * hierarchical selection lists. The component proxies checkbox state changes,
+ * supports touch-target or visual-target interaction behavior, and can render
+ * nested structure indicators.
+ *
+ * ### Features
+ * - Three checkbox statuses: `unchecked`, `checked`, `mixed`.
+ * - Item state control: `enabled` or `disabled`.
+ * - Two hover/focus interaction modes: `touch-target` and `visual-target`.
+ * - Optional nested layout controls via `isNested`, `isLevel1`, `isLevel2`.
+ * - Forwards `aria-describedby` to the inner checkbox for assistive context.
+ *
+ * ### Variants
+ * - **Nested level 1:** Chevron icon is shown.
+ * - **Nested level 2:** Chevron slot is reserved and nested spacer is shown.
+ *
+ * ### Usage Guidelines
+ * - Use for checkbox rows that require text labels and optional hierarchy.
+ * - Keep `status` as the source of truth for checked/mixed/unchecked value.
+ * - Use `state="disabled"` or `disabled` to lock interaction.
+ * - Prefer `hoverStyle="touch-target"` for standard list behavior.
+ *
+ * ### Slots / Content
+ * - No named slots. Label content is provided through the `label` property.
+ *
+ * ### Events
+ * - `change` – Fired when status changes (from row click or inner checkbox).
+ *   **detail:** `{ status, disabled }`
+ *
+ * ### Best Practices
+ * - Provide non-empty `label` for accessible naming.
+ * - Use `aria-describedby` when additional contextual text exists outside.
+ * - For deep hierarchies, use `isNested` with `isLevel1` / `isLevel2`
+ *   consistently to preserve spacing and alignment.
+ *
+ * ### Example
+ * ```html
+ * <obc-checkbox-item
+ *   status="mixed"
+ *   label="Include archived items"
+ *   hoverStyle="touch-target"
+ * ></obc-checkbox-item>
+ * ```
+ *
+ * @slot - No named slots.
+ * @fires change {ObcCheckboxChangeEvent} - Emitted when status changes.
+ */
 @customElement('obc-checkbox-item')
 export class ObcCheckboxItem extends LitElement {
   @property({type: String}) status: CheckboxStatus = CheckboxStatus.unchecked;
@@ -70,7 +122,6 @@ export class ObcCheckboxItem extends LitElement {
       new CustomEvent('change', {
         detail: {
           status: this.status,
-          state: CheckboxState.enabled,
           disabled: isDisabled,
         },
       })
@@ -92,12 +143,8 @@ export class ObcCheckboxItem extends LitElement {
     if (this.hoverStyle !== ObcCheckboxItemHoverStyle.visualTarget) return;
 
     const container = event.currentTarget as HTMLElement | null;
-    if (!container?.matches(':focus-visible')) {
-      this.setCheckboxFocusProxyEnabled(false);
-      return;
-    }
-
-    this.setCheckboxFocusProxyEnabled(true);
+    const isFocusVisible = container?.matches(':focus-visible') ?? false;
+    this.setCheckboxFocusProxyEnabled(isFocusVisible);
     this.checkboxElement?.focus();
   }
 

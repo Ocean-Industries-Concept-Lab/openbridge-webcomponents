@@ -1009,9 +1009,7 @@ export class ObcTable extends LitElement {
     } else if (value.type === ObcTableCellType.Checkbox) {
       const checkboxLabel = value.label ?? value.text ?? '';
       const ariaLabel =
-        checkboxLabel.trim() === ''
-          ? (column.label ?? 'Checkbox')
-          : checkboxLabel;
+        checkboxLabel.trim() || column.label?.trim() || 'Checkbox';
       return html`<div
         class=${classMap({
           'grid-cell': true,
