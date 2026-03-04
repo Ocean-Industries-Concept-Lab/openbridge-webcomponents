@@ -188,6 +188,17 @@ export class ObcTextInputField extends LitElement {
     this.dispatchEvent(new CustomEvent('change'));
   }
 
+  private get shouldUpdateValue(): boolean {
+    return !(this.rejectUpdatesOnFocus && this.hasFocus);
+  }
+
+  override updated(changedProperties: Map<string, unknown>) {
+    super.updated(changedProperties);
+    if (changedProperties.has('value') && !this.shouldUpdateValue) {
+      this.value = this.inputElement.value;
+    }
+  }
+
   override render() {
     const hasHelperOrError =
       Boolean(this.helperText) || Boolean(this.error && this.errorText);

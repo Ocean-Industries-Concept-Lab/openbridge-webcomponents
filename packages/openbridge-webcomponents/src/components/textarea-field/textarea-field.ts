@@ -188,7 +188,7 @@ export interface Attachment {
  * @slot leading-icon - Displays a contextual icon before the input when `hasLeadingIcon` is true.
  *
  * @fires change {CustomEvent<void>} Fired on change when value has changed.
- * @fires input {CustomEvent<>} Fired on input when value changes.
+ * @fires input {CustomEvent<void>} Fired on input when value changes.
  * @fires blur {CustomEvent<void>} Fired on blur.
  * @fires send-click {CustomEvent<{value: string}>} Fired when the send button is clicked (Message type only).
  * @fires add-click {CustomEvent<void>} Fired when the add (+) button is clicked.
