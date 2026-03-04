@@ -29,26 +29,19 @@ export class ObcIntegrationVesselMenu extends LitElement {
    * @slot content - Main content shown in the content area.
    * @slot alarms - Alarm items rendered inside the alert list.
    *
+   * @property {boolean} hideHeader - Hides the header section when true.
+   * @property {number} numberOfButtons - Number of buttons to render (up to 3).
+   *
    * @fires button-1-click - Fired when the first button is clicked.
    * @fires button-2-click - Fired when the second button is clicked.
    * @fires button-3-click - Fired when the third button is clicked.
-   *
-   * @property {boolean} hideHeader - Hides the header section when true.
-   * @property {number} numberOfButtons - Number of buttons to render (up to 3).
    */
-
-  private onButton1Click = () =>
-    this.dispatchEvent(new CustomEvent('button-1-click'));
-  private onButton2Click = () =>
-    this.dispatchEvent(new CustomEvent('button-2-click'));
-  private onButton3Click = () =>
-    this.dispatchEvent(new CustomEvent('button-3-click'));
 
   private renderButtons() {
     let but = null;
     if (this.numberOfButtons >= 1) {
       but = html`<obc-button
-        @click=${this.onButton1Click}
+        @click=${() => this.dispatchEvent(new CustomEvent('button-1-click'))}
         ?showLeadingIcon=${true}
         ?fullWidth=${true}
         class="button"
@@ -59,7 +52,7 @@ export class ObcIntegrationVesselMenu extends LitElement {
     }
     if (this.numberOfButtons >= 2) {
       but = html`${but}<obc-button
-          @click=${this.onButton2Click}
+          @click=${() => this.dispatchEvent(new CustomEvent('button-2-click'))}
           ?showLeadingIcon=${true}
           ?fullWidth=${true}
           class="button"
@@ -70,7 +63,7 @@ export class ObcIntegrationVesselMenu extends LitElement {
     }
     if (this.numberOfButtons >= 3) {
       but = html`${but}<obc-button
-          @click=${this.onButton3Click}
+          @click=${() => this.dispatchEvent(new CustomEvent('button-3-click'))}
           ?showLeadingIcon=${true}
           ?fullWidth=${true}
           class="button"
