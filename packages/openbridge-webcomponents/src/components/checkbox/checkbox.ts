@@ -23,12 +23,10 @@ export enum CheckboxStatus {
 /**
  * Represents the visual interaction state of the checkbox.
  * - `enabled`: Default interactive state.
- * - `pressed`: Pressed visual override.
  * - `loading`: Shows loading spinner and locks interaction.
  */
 export enum CheckboxState {
   enabled = 'enabled',
-  pressed = 'pressed',
   loading = 'loading',
 }
 
@@ -52,7 +50,7 @@ export type ObcCheckboxChangeEvent = CustomEvent<{
  * ### Features
  * - **Three‑state support:** Allows `checked`, `unchecked`, and `mixed` (indeterminate) status for parent/child
  *   selection scenarios.
- * - **Visual state support:** `state` allows `enabled`, `pressed`, and `loading` visual behavior.
+ * - **Visual state support:** `state` allows `enabled` and `loading` visual behavior.
  * - **Disabled state:** Can be set to non‑interactive, visually indicating its disabled status.
  * - **Accessible:** Implements proper ARIA role and keyboard interaction (Space **or** Enter toggles state).
  * - **Touch target:** Uses a minimum 48x48 interactive area.
@@ -75,7 +73,7 @@ export type ObcCheckboxChangeEvent = CustomEvent<{
  *
  * ### Properties and Attributes
  * - `status` (`checked` | `unchecked` | `mixed`) · *default:* `unchecked` – Controls the checkbox status.
- * - `state` (`enabled` | `pressed` | `loading`) · *default:* `enabled` – Controls the checkbox visual state.
+ * - `state` (`enabled` | `loading`) · *default:* `enabled` – Controls the checkbox visual state.
  * - `disabled` (`boolean`) · Disables interaction and applies disabled styling.
  * - `aria-label` (`string`) · Accessible name for screen readers.
  * - `aria-labelledby` (`string`) · ID reference to an external visible label.
@@ -110,7 +108,7 @@ export class ObcCheckbox extends LitElement {
   @property({type: String}) status: CheckboxStatus = CheckboxStatus.unchecked;
 
   /**
-   * Controls the visual state: `enabled`, `pressed`, or `loading`.
+   * Controls the visual state: `enabled` or `loading`.
    *
    * Defaults to `enabled`.
    */

@@ -43,6 +43,7 @@ const meta = {
     const checkbox = html`<obc-checkbox
       .status=${args.status}
       .state=${args.state}
+      .disabled=${args.disabled}
       .noHoverEffects=${args.noHoverEffects}
       aria-label="Checkbox item"
     ></obc-checkbox>`;
@@ -72,10 +73,6 @@ const meta = {
       options: Object.values(CheckboxState),
       control: {type: 'select'},
     },
-    noHoverEffects: {
-      name: 'No Hover Effects',
-      control: {type: 'boolean'},
-    },
   },
 } satisfies Meta<ObcCheckbox>;
 
@@ -86,10 +83,11 @@ export const Playground: Story = {
   args: {
     status: CheckboxStatus.unchecked,
     state: CheckboxState.enabled,
+    disabled: false,
   },
   parameters: {
     controls: {
-      exclude: /^(?!(status|state)$).*/i,
+      exclude: /^(noHoverEffects)$/i,
       expanded: true,
     },
   },
@@ -106,15 +104,6 @@ export const Enabled: Story = {
       args.disabled,
       args.noHoverEffects
     ),
-};
-
-export const Pressed: Story = {
-  args: {
-    status: CheckboxStatus.checked,
-    state: CheckboxState.pressed,
-  },
-  render: (args) =>
-    renderStatusGroup(CheckboxState.pressed, args.disabled, false),
 };
 
 export const Disabled: Story = {

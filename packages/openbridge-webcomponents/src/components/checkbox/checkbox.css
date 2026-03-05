@@ -19,10 +19,6 @@
   &.disabled {
     cursor: not-allowed;
   }
-
-  &:focus-visible {
-    outline: none;
-  }
 }
 
 .checkbox-container {
@@ -33,8 +29,8 @@
 }
 
 .checkbox-loading-spinner {
-  width: var(--global-size-spacing-icon-icon-size-small, 16px);
-  height: var(--global-size-spacing-icon-icon-size-small, 16px);
+  width: var(--global-size-spacing-icon-icon-size-small);
+  height: var(--global-size-spacing-icon-icon-size-small);
   align-self: center;
   margin: auto;
   animation: checkbox-loading-spin 1000ms linear infinite;
@@ -43,8 +39,7 @@
     fill: none;
     stroke: currentColor;
     stroke-width: var(
-      --ui-components-progressbars-progress-bar--circular-bar-weight-small,
-      2px
+      --ui-components-progressbars-progress-bar--circular-bar-weight-small
     );
     stroke-linecap: round;
     stroke-dasharray: 24 14;
@@ -70,14 +65,6 @@
 
   .status-checked & {
     color: var(--on-selected-active-color);
-  }
-
-  :not(.disabled).status-mixed & {
-    color: var(--on-amplified-active-color);
-  }
-
-  .disabled.status-mixed & {
-    color: var(--on-amplified-disabled-color);
   }
 }
 
@@ -123,75 +110,23 @@
   border: 1px solid transparent;
   background: transparent;
 
-  .status-unchecked:not(.no-hover-effects):hover:not(.disabled) & {
-    border-color: var(--element-symbol-color);
+  .status-mixed:not(.disabled) &,
+  .status-mixed:not(.disabled):hover &,
+  .status-mixed:not(.disabled):active & {
+    border-color: var(--instrument-enhanced-secondary-color);
   }
 
   .status-unchecked.no-hover-effects & {
     @mixin style style=indent noClick;
     border-color: var(--element-symbol-color);
   }
-
-  .status-checked & {
-    border: 1px solid var(--selected-enabled-border-color);
-    background: var(--selected-enabled-background-color);
-  }
-
-  .status-mixed & {
-    border: 1px solid var(--instrument-enhanced-secondary-color);
-    background: var(--amplified-enabled-background-color);
-  }
-
-  :not(.disabled).state-enabled.status-mixed:hover & {
-    border: 1px solid var(--instrument-enhanced-secondary-color);
-    background: var(--amplified-hover-background-color);
-  }
-
-  :not(.disabled).state-pressed.status-unchecked &,
-  :not(.disabled).state-enabled.status-unchecked:active & {
-    border: 1px solid var(--element-symbol-color);
-    background: var(--indent-pressed-background-color);
-  }
-
-  :not(.disabled).state-pressed.status-checked &,
-  :not(.disabled).state-enabled.status-checked:active & {
-    border: 1px solid var(--selected-pressed-border-color);
-    background: var(--selected-pressed-background-color);
-  }
-
-  :not(.disabled).state-pressed.status-mixed &,
-  :not(.disabled).state-enabled.status-mixed:active & {
-    border: 1px solid var(--instrument-enhanced-secondary-color);
-    background: var(--amplified-pressed-background-color);
-  }
-
-  .disabled.status-unchecked & {
-    border: 1px solid var(--indent-disabled-border-color);
-    background: var(--indent-disabled-background-color);
-  }
-
-  .disabled.status-checked & {
-    border: 1px solid var(--selected-disabled-border-color);
-    background: var(--selected-disabled-background-color);
-  }
-
-  .disabled.status-mixed & {
-    border: 1px solid var(--amplified-disabled-border-color);
-    background: var(--amplified-disabled-background-color);
-  }
 }
 
-:host([force-focus-visible]):not([suppress-focus-ring])
-  .visually-hidden:not(.disabled).state-enabled.status-checked
+.status-unchecked.state-enabled:not(.disabled):not(
+    .no-hover-effects
+  ):focus-visible
   .checkbox-box {
-  border-radius: var(--ui-components-checkbox-border-radius);
-  background: var(--selected-focused-background-color);
-}
-
-:host([force-focus-visible]):not([suppress-focus-ring])
-  .visually-hidden:not(.disabled).state-enabled.status-mixed
-  .checkbox-box {
-  background: var(--amplified-focused-background-color);
+  border-color: transparent;
 }
 
 @keyframes checkbox-loading-spin {

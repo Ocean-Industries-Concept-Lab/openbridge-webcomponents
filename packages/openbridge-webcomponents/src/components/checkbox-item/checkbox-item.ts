@@ -99,15 +99,6 @@ export class ObcCheckboxItem extends LitElement {
 
   @query('obc-checkbox') private checkboxElement?: HTMLElement;
 
-  private setCheckboxFocusProxyEnabled(enabled: boolean) {
-    if (!this.checkboxElement) return;
-    if (enabled) {
-      this.checkboxElement.setAttribute('force-focus-visible', '');
-      return;
-    }
-    this.checkboxElement.removeAttribute('force-focus-visible');
-  }
-
   private toggleStatusFromItem() {
     const isDisabled =
       this.disabled || this.state === ObcCheckboxItemState.disabled;
@@ -138,29 +129,6 @@ export class ObcCheckboxItem extends LitElement {
     this.toggleStatusFromItem();
   }
 
-  private handleItemFocus(event: FocusEvent) {
-    if (this.disabled || this.state === ObcCheckboxItemState.disabled) return;
-    if (this.hoverStyle !== ObcCheckboxItemHoverStyle.visualTarget) return;
-
-    const container = event.currentTarget as HTMLElement | null;
-    const isFocusVisible = container?.matches(':focus-visible') ?? false;
-    this.setCheckboxFocusProxyEnabled(isFocusVisible);
-    this.checkboxElement?.focus();
-  }
-
-  private handleItemFocusOut(event: FocusEvent) {
-    if (this.hoverStyle !== ObcCheckboxItemHoverStyle.visualTarget) return;
-
-    const container = event.currentTarget as HTMLElement | null;
-    if (!container) return;
-
-    queueMicrotask(() => {
-      if (!container.matches(':focus-within')) {
-        this.setCheckboxFocusProxyEnabled(false);
-      }
-    });
-  }
-
   private handleCheckboxChange(event: Event) {
     const checkboxEvent = event as ObcCheckboxChangeEvent;
     this.status = checkboxEvent.detail.status;
@@ -175,9 +143,10 @@ export class ObcCheckboxItem extends LitElement {
   override render() {
     const isDisabled =
       this.disabled || this.state === ObcCheckboxItemState.disabled;
+    const shouldDisableCheckboxHoverEffects =
+      this.hoverStyle === ObcCheckboxItemHoverStyle.touchTarget && !isDisabled;
     const shouldRenderNestedSpacer = this.isNested && this.isLevel2;
-    const shouldRenderChevronContainer =
-      this.isNested && (this.isLevel1 || this.isLevel2);
+    const shouldRenderChevronContainer = this.isNested;
     const shouldRenderChevronIcon = this.isNested && this.isLevel1;
     const checkboxAriaLabel =
       this.label.trim().length > 0 ? this.label : undefined;
@@ -193,13 +162,7 @@ export class ObcCheckboxItem extends LitElement {
           'is-level-2': this.isLevel2,
           disabled: isDisabled,
         })}
-        tabindex=${isDisabled ||
-        this.hoverStyle !== ObcCheckboxItemHoverStyle.visualTarget
-          ? '-1'
-          : '0'}
         @click=${this.handleItemClick}
-        @focus=${this.handleItemFocus}
-        @focusout=${this.handleItemFocusOut}
       >
         ${shouldRenderChevronContainer
           ? html`<div class="chevron-container" aria-hidden="true">
@@ -218,10 +181,7 @@ export class ObcCheckboxItem extends LitElement {
             .status=${this.status}
             .state=${CheckboxState.enabled}
             .disabled=${isDisabled}
-            .suppressFocusRing=${this.hoverStyle ===
-            ObcCheckboxItemHoverStyle.touchTarget}
-            .noHoverEffects=${this.hoverStyle ===
-            ObcCheckboxItemHoverStyle.touchTarget}
+            .noHoverEffects=${shouldDisableCheckboxHoverEffects}
             aria-label=${ifDefined(checkboxAriaLabel)}
             aria-describedby=${ifDefined(this.ariaDescribedBy || undefined)}
             @change=${this.handleCheckboxChange}
