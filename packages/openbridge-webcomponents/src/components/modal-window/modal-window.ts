@@ -21,6 +21,21 @@ export enum ObcModalWindowSize {
 }
 
 /**
+ * Event fired when close action is clicked.
+ */
+export type ObcModalWindowCloseClickEvent = CustomEvent<void>;
+
+/**
+ * Event fired when cancel action is clicked.
+ */
+export type ObcModalWindowCancelClickEvent = CustomEvent<void>;
+
+/**
+ * Event fired when done action is clicked.
+ */
+export type ObcModalWindowDoneClickEvent = CustomEvent<void>;
+
+/**
  * `<obc-modal-window>` – A modular dialog component for displaying content and capturing user actions.
  *
  * The `obc-modal-window` provides a structured layout with a header (title and leading icon), a content area, and a footer with action buttons (Cancel, Done, and an optional custom action).
@@ -65,9 +80,9 @@ export enum ObcModalWindowSize {
  * </obc-modal-window>
  * ```
  *
- * @fires close-click - {CustomEvent} - Fired when the close button is clicked.
- * @fires cancel-click - {CustomEvent} - Fired when the cancel button is clicked.
- * @fires done-click - {CustomEvent} - Fired when the done button is clicked.
+ * @fires close-click {ObcModalWindowCloseClickEvent} Fired when the close button is clicked.
+ * @fires cancel-click {ObcModalWindowCancelClickEvent} Fired when the cancel button is clicked.
+ * @fires done-click {ObcModalWindowDoneClickEvent} Fired when the done button is clicked.
  * @fires option-click - {CustomEvent} - Fired when the optional action button is clicked.
  *
  * @slot leading-icon - Slot for an icon to appear before the title (shown when `hasLeadingIcon` is true)
@@ -76,6 +91,7 @@ export enum ObcModalWindowSize {
  * @slot option-label - Slot for the label of the optional action button (shown when `hasOptionalAction` is true)
  * @slot cancel-label - Slot for the label of the cancel button
  * @slot done-label - Slot for the label of the done button
+
  */
 @customElement('obc-modal-window')
 export class ObcModalWindow extends LitElement {
@@ -88,18 +104,29 @@ export class ObcModalWindow extends LitElement {
    * Whether to show an optional third action button.
    */
   @property({type: Boolean}) hasOptionalAction = false;
+  @property({type: Boolean}) hideCancelAction = false;
+  @property({type: Boolean}) hideCloseAction = false;
 
   /**
    * Whether to show the leading icon slot in the header.
    */
   @property({type: Boolean}) hasLeadingIcon = false;
 
+  /**
+   * Handles close-button-click and emits `close-click`.
+   */
   private onCloseClick = () =>
     this.dispatchEvent(new CustomEvent('close-click'));
 
+  /**
+   * Handles cancel-button-click and emits `cancel-click`.
+   */
   private onCancelClick = () =>
     this.dispatchEvent(new CustomEvent('cancel-click'));
 
+  /**
+   * Handles done-button-click and emits `done-click`.
+   */
   private onDoneClick = () => this.dispatchEvent(new CustomEvent('done-click'));
 
   private onOptionClick = () =>
@@ -128,9 +155,11 @@ export class ObcModalWindow extends LitElement {
               <slot name="title">Title</slot>
             </div>
           </div>
-          <obc-icon-button variant="flat" @click=${this.onCloseClick}>
-            <obi-close-google></obi-close-google>
-          </obc-icon-button>
+          ${!this.hideCloseAction
+            ? html`<obc-icon-button variant="flat" @click=${this.onCloseClick}>
+                <obi-close-google></obi-close-google>
+              </obc-icon-button>`
+            : nothing}
           <div class="divider"></div>
         </div>
 
@@ -155,12 +184,14 @@ export class ObcModalWindow extends LitElement {
               'primary-action-vertical': isSmall,
             })}
           >
-            <obc-button
-              @click=${this.onCancelClick}
-              .fullWidth=${isSmall || isMedium}
-            >
-              <slot name="cancel-label">Cancel</slot>
-            </obc-button>
+            ${!this.hideCancelAction
+              ? html`<obc-button
+                  @click=${this.onCancelClick}
+                  .fullWidth=${isSmall || isMedium}
+                >
+                  <slot name="cancel-label">Cancel</slot>
+                </obc-button>`
+              : nothing}
             <obc-button
               variant="raised"
               @click=${this.onDoneClick}

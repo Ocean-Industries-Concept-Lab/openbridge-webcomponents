@@ -27,3 +27,5 @@ packages/openbridge-webcomponents-svelte
 packages/openbridge-webcomponents/__vis__/darwin/
 .idea/
 **/.idea/
+
+/tgz
