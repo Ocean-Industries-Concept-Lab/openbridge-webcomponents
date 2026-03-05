@@ -33,7 +33,7 @@ export class ObcWindIndicator extends LitElement {
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          transform="rotate(${this.northUp ? 0 : -this.angle}, 24, 24)"
+          transform="rotate(${this.northUp ? 0 : this.angle}, 24, 24)"
           d="M23.5929 1.56961L19.5645 7.20938C19.3281 7.54031 19.5646 8 19.9713 8L28.0281 8C28.4348 8 28.6714 7.54031 28.435 7.20938L24.4066 1.56961C24.2072 1.29044 23.7923 1.29044 23.5929 1.56961Z"
           fill="var(--instrument-tick-mark-tertiary-color)"
         />
@@ -46,7 +46,7 @@ export class ObcWindIndicator extends LitElement {
         />
         <g
           transform="translate(24 24) rotate(${this.northUp
-            ? -this.angle
+            ? this.angle
             : 0}) translate(-12 -12)"
         >
           ${windSymbol}
