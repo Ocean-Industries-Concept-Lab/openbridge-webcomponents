@@ -2,7 +2,7 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import compentStyle from './wind-indicator.css?inline';
 import {customElement} from '../../decorator.js';
-import {environmentSvgs} from '../../navigation-instruments/watch/environment.js';
+import {environmentSvgs} from '../watch/environment.js';
 
 /**
  * @element obc-wind-indicator
