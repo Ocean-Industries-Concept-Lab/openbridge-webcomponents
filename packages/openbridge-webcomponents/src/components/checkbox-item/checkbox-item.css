@@ -92,6 +92,13 @@
   box-shadow: none;
   border-radius: var(--ui-components-checkbox-list-item-border-radius);
 
+  .checkbox-item-container.hover-style-visual-target:not(.is-nested):not(
+      .is-level-1
+    ):not(.is-level-2)
+    & {
+    margin-left: calc(var(--ui-components-checkbox-padding-horizontal) * -1);
+  }
+
   .checkbox-item-container.hover-style-visual-target:hover &,
   .checkbox-item-container.hover-style-visual-target:active &,
   .checkbox-item-container.hover-style-visual-target:focus-within & {
