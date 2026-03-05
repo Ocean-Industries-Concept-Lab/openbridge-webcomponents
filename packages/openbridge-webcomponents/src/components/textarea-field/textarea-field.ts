@@ -188,8 +188,8 @@ export interface Attachment {
  *
  * @slot leading-icon - Displays a contextual icon before the input when `hasLeadingIcon` is true.
  *
- * @fires change {CustomEvent<void>} Fired on change when value has changed.
- * @fires input {CustomEvent<void>} Fired on input when value changes.
+ * @fires change {CustomEvent<{value: string}>} Fired on change when value has changed.
+ * @fires input {CustomEvent<{value: string}>} Fired on input when value changes.
  * @fires blur {CustomEvent<void>} Fired on blur.
  * @fires send-click {CustomEvent<{value: string}>} Fired when the send button is clicked (Message type only).
  * @fires add-click {CustomEvent<void>} Fired when the add (+) button is clicked.
@@ -451,6 +451,10 @@ export class ObcTextareaField extends LitElement {
   private handleInput(e: Event) {
     const target = e.target as HTMLTextAreaElement;
     this.value = target.value;
+    e.stopPropagation();
+    this.dispatchEvent(
+      new CustomEvent('input', {detail: {value: target.value}})
+    );
   }
 
   private handleKeyDown(e: KeyboardEvent) {
@@ -603,8 +607,11 @@ export class ObcTextareaField extends LitElement {
     `;
   }
 
-  private fireChangeEvent() {
-    this.dispatchEvent(new CustomEvent('change'));
+  private fireChangeEvent(e: Event) {
+    const target = e.target as HTMLTextAreaElement;
+    this.dispatchEvent(
+      new CustomEvent('change', {detail: {value: target.value}})
+    );
   }
 
   private renderAttachments() {
