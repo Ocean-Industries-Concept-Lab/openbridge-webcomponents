@@ -34,6 +34,7 @@ export enum IntegrationBarType {
  *
  * @slot clock - Custom clock content, rendered when `showClock` is true
  * @property {IntegrationBarType} type - Integration bar mode for fleet/vessel presentation
+ * @property {boolean} hideHomeButton - Hides the home button when true
  * @property {boolean} showClock - Toggles rendering of the clock slot
  * @property {boolean} showLinkButton - Toggles visibility of link button
  * @property {boolean} linkButtonActivated - Activated state of link button
@@ -67,6 +68,7 @@ export enum IntegrationBarType {
 export class ObcIntegrationBar extends LitElement {
   @property({type: String}) type: IntegrationBarType =
     IntegrationBarType.vesselname;
+  @property({type: Boolean}) hideHomeButton = false;
   @property({type: Boolean}) showClock = false;
   @property({type: Boolean}) showLinkButton = false;
   @property({type: Boolean}) linkButtonActivated = false;
@@ -94,9 +96,11 @@ export class ObcIntegrationBar extends LitElement {
     return html`
       <nav class="wrapper">
         <div class="content-container">
-          <obc-icon-button class="home-button" variant="integration">
-            <obi-home></obi-home>
-          </obc-icon-button>
+          ${!this.hideHomeButton
+            ? html`<obc-icon-button class="home-button" variant="integration">
+                <obi-home></obi-home>
+              </obc-icon-button>`
+            : null}
           ${this.showLinkButton
             ? html`<obc-icon-button
                 class="link-button"
@@ -231,8 +235,8 @@ export class ObcIntegrationBar extends LitElement {
       <div class="vessel-container">
         ${vesselItems.map((vessel, index) => {
           const isSelected =
-            this.selectedVesselValue === vessel.value ||
-            (this.selectedVesselValue === '' && vessel === vesselItems[0]);
+            this.selectedVesselValue !== '' &&
+            this.selectedVesselValue === vessel.value;
           const shouldRenderSeparator = index < vesselItems.length - 1;
           return html`
             <obc-integration-button

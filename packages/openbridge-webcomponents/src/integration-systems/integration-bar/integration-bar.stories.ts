@@ -16,6 +16,7 @@ const meta: Meta<typeof ObcIntegrationBar> = {
     showDate: false,
     showTimezone: false,
     timeZoneOffsetHours: 1,
+    hideHomeButton: false,
     showUserButton: true,
     showDimmingButton: true,
     showSystemButton: true,
@@ -38,6 +39,7 @@ const meta: Meta<typeof ObcIntegrationBar> = {
   },
   render: (args) =>
     html`<obc-integration-bar
+      .hideHomeButton=${args.hideHomeButton}
       .showClock=${args.showClock}
       .showUserButton=${args.showUserButton}
       .showDimmingButton=${args.showDimmingButton}
