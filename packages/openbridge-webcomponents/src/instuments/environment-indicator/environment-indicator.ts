@@ -50,48 +50,6 @@ export class ObcEnvironmentIndicator extends LitElement {
           fill="var(--instrument-frame-primary-color)"
           stroke="var(--instrument-frame-tertiary-color"
         />
-        <mask
-          id="mask0_8_1771"
-          style="mask-type:alpha"
-          maskUnits="userSpaceOnUse"
-          x="0"
-          y="0"
-          width="48"
-          height="48"
-        >
-          <path
-            d="M24 8C32.8366 8 40 15.1634 40 24C40 32.8366 32.8366 40 24 40C15.1634 40 8 32.8366 8 24C8 15.1634 15.1634 8 24 8ZM24 10C16.268 10 10 16.268 10 24C10 31.732 16.268 38 24 38C31.732 38 38 31.732 38 24C38 16.268 31.732 10 24 10Z"
-            fill="var(--instrument-frame-primary-color)"
-          />
-        </mask>
-        <g mask="url(#mask0_8_1771)">
-          <path
-            d="M24 0V24M24 24L19.8324 0.364611M24 24L15.7915 1.44736M24 24L12 3.21539M24 24L8.5731 5.61493M24 24L5.61494 8.5731M24 24L3.21539 12M24 24L1.44738 15.7915M24 24L0.364617 19.8324M24 24H0M24 24L0.364611 28.1676M24 24L1.44739 32.2085M24 24L3.21539 36M24 24L5.61493 39.4269M24 24L8.5731 42.3851M24 24L12 44.7846M24 24L15.7915 46.5526M24 24L19.8324 47.6354M24 24V48M24 24L28.1676 47.6354M24 24L32.2085 46.5526M24 24L36 44.7846M24 24L39.4269 42.3851M24 24L42.3851 39.4269M24 24L44.7846 36M24 24L46.5526 32.2085M24 24L47.6354 28.1676M24 24H48M24 24L47.6354 19.8325M24 24L46.5526 15.7915M24 24L44.7846 12M24 24L42.3851 8.57313M24 24L39.4269 5.61497M24 24L36 3.21539M24 24L32.2085 1.44741M24 24L28.1676 0.364646"
-            stroke="var(--instrument-frame-tertiary-color"
-          />
-        </g>
-        <mask
-          id="mask1_8_1771"
-          style="mask-type:alpha"
-          maskUnits="userSpaceOnUse"
-          x="-14"
-          y="-14"
-          width="76"
-          height="76"
-        >
-          <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
-            d="M24 42C33.9411 42 42 33.9411 42 24C42 14.0589 33.9411 6 24 6C14.0589 6 6 14.0589 6 24C6 33.9411 14.0589 42 24 42ZM24 36C30.6274 36 36 30.6274 36 24C36 17.3726 30.6274 12 24 12C17.3726 12 12 17.3726 12 24C12 30.6274 17.3726 36 24 36Z"
-            fill="var(--instrument-frame-primary-color)"
-          />
-        </mask>
-        <g mask="url(#mask1_8_1771)">
-          <path
-            d="M24 0V24M24 24H0M24 24V48M24 24H48"
-            stroke="var(--instrument-frame-tertiary-color"
-          />
-        </g>
         ${arrow}
       </svg>
     `;
