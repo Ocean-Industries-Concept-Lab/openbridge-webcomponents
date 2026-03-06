@@ -68,9 +68,16 @@ obc-icon-button::part(visible-wrapper) {
   );
 }
 
-.post-click-selection-menu {
+.vessel-integration-menu-container {
   position: absolute;
   position-anchor: --integration-menu-anchor;
+  top: anchor(bottom);
+  justify-self: anchor-center;
+}
+
+.right-side-system-menu-container {
+  position: absolute;
+  position-anchor: --settings-menu-anchor;
   top: anchor(bottom);
   justify-self: anchor-center;
 }

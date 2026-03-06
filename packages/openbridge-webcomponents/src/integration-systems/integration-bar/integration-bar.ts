@@ -98,14 +98,10 @@ export class ObcIntegrationBar extends LitElement {
   }[] = [];
 
   private onFleetButtonClick() {
-    this.fleetButtonActivated = true;
-    this.activeVesselValue = '';
     this.dispatchEvent(new CustomEvent('fleet-button-click'));
   }
 
   private onVesselButtonClick(vessel: {value: string; label: string}) {
-    this.fleetButtonActivated = false;
-    this.activeVesselValue = vessel.value;
     this.dispatchEvent(
       new CustomEvent('vessel-selected', {
         detail: {value: vessel.value, label: vessel.label},
@@ -216,7 +212,10 @@ export class ObcIntegrationBar extends LitElement {
           ${this.showClock ? html`<slot name="clock"></slot>` : null}
         </div>
       </nav>
-      <div class="post-click-selection-menu">
+      <div class="vessel-integration-menu-container">
+        <slot name="vessel-integration-menu"></slot>
+      </div>
+      <div class="right-side-system-menu-container">
         <slot name="vessel-integration-menu"></slot>
       </div>
     `;

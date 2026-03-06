@@ -18,7 +18,10 @@ const meta: Meta<typeof ObcIntegrationBar> = {
     showTimezone: false,
     timeZoneOffsetHours: 1,
     hideHomeButton: false,
+    showLinkButton: false,
+    linkButtonActivated: false,
     showUserButton: true,
+    userButtonActivated: false,
     showDimmingButton: true,
     showSystemButton: true,
     showScreenButton: true,
@@ -44,11 +47,64 @@ const meta: Meta<typeof ObcIntegrationBar> = {
       control: {type: 'boolean'},
     },
   },
-  render: (args) =>
-    html`<obc-integration-bar
+  render: (args) => {
+    const findIntegrationBar = (event: Event) => {
+      const eventTarget = event.currentTarget as HTMLElement | null;
+      return eventTarget?.closest(
+        'obc-integration-bar'
+      ) as ObcIntegrationBar | null;
+    };
+
+    const onFleetButtonClick = (event: Event) => {
+      const integrationBar = event.currentTarget as ObcIntegrationBar;
+      integrationBar.fleetButtonActivated = true;
+      integrationBar.activeVesselValue = '';
+    };
+
+    const onVesselSelected = (event: Event) => {
+      const integrationBar = event.currentTarget as ObcIntegrationBar;
+      const vesselEvent = event as CustomEvent<{value: string; label: string}>;
+      integrationBar.fleetButtonActivated = false;
+      integrationBar.activeVesselValue = vesselEvent.detail.value;
+    };
+
+    const onMenuConfirmClick = (event: Event) => {
+      const integrationBar = findIntegrationBar(event);
+      if (!integrationBar) {
+        return;
+      }
+
+      if (integrationBar.activeVesselValue !== '') {
+        integrationBar.selectedVesselValue = integrationBar.activeVesselValue;
+        integrationBar.fleetButtonSelected = false;
+      } else if (integrationBar.fleetButtonActivated) {
+        integrationBar.fleetButtonSelected = true;
+        integrationBar.selectedVesselValue = '';
+      }
+
+      integrationBar.activeVesselValue = '';
+      integrationBar.fleetButtonActivated = false;
+    };
+
+    const onMenuCancelClick = (event: Event) => {
+      const integrationBar = findIntegrationBar(event);
+      if (!integrationBar) {
+        return;
+      }
+
+      integrationBar.activeVesselValue = '';
+      integrationBar.fleetButtonActivated = false;
+    };
+
+    return html`<obc-integration-bar
+      @fleet-button-click=${onFleetButtonClick}
+      @vessel-selected=${onVesselSelected}
       .hideHomeButton=${args.hideHomeButton}
+      .showLinkButton=${args.showLinkButton}
+      .linkButtonActivated=${args.linkButtonActivated}
       .showClock=${args.showClock}
       .showUserButton=${args.showUserButton}
+      .userButtonActivated=${args.userButtonActivated}
       .showDimmingButton=${args.showDimmingButton}
       .showSystemButton=${args.showSystemButton}
       .showAlertButton=${args.showAlertButton}
@@ -74,11 +130,14 @@ const meta: Meta<typeof ObcIntegrationBar> = {
         ? html`<obc-integration-vessel-menu
             slot="vessel-integration-menu"
             numberOfButtons="2"
+            @button1-click=${onMenuConfirmClick}
+            @button2-click=${onMenuCancelClick}
             ><div slot="button-1-label">Confirm</div>
             <div slot="button-2-label">Cancel</div></obc-integration-vessel-menu
           >`
         : null}
-    </obc-integration-bar>`,
+    </obc-integration-bar>`;
+  },
 } satisfies Meta<ObcIntegrationBar>;
 
 export default meta;
