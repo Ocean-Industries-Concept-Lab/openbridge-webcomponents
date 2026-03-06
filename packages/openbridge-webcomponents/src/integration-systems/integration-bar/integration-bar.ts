@@ -33,6 +33,7 @@ export enum IntegrationBarType {
  * and optional utility actions such as alerts, notifications, screen, system, dimming, user, and clock.
  *
  * @slot clock - Custom clock content, rendered when `showClock` is true
+ * @slot vessel-integration-menu - Modal that will appear achored below the fleet/vessel button. Typically a obc-integration-vessel-menu
  * @property {IntegrationBarType} type - Integration bar mode for fleet/vessel presentation
  * @property {boolean} hideHomeButton - Hides the home button when true
  * @property {boolean} showClock - Toggles rendering of the clock slot
@@ -51,8 +52,10 @@ export enum IntegrationBarType {
  * @property {boolean} showAlertButton - Toggles visibility of alert button
  * @property {boolean} alertButtonActivated - Activated state of alert button
  * @property {boolean} fleetButtonSelected - Selected state of fleet button
+ * @property {boolean} fleetButtonActivated - Active state of fleet button while selection is pending
  * @property {string} fleetButtonLabel - Label for the fleet button
  * @property {string} selectedVesselValue - Selected vessel value
+ * @property {string} activeVesselValue - Active vessel value while selection is pending
  * @property {{value: string; label: string}[]} vesselSelectorOptions - Available vessel options
  * @fires fleet-button-click - Fired when the fleet button is clicked
  * @fires vessel-selected - Fired when a vessel is selected, detail contains {value, label}
@@ -85,12 +88,30 @@ export class ObcIntegrationBar extends LitElement {
   @property({type: Boolean}) showAlertButton = false;
   @property({type: Boolean}) alertButtonActivated = false;
   @property({type: Boolean}) fleetButtonSelected = false;
+  @property({type: Boolean}) fleetButtonActivated = false;
   @property({type: String}) fleetButtonLabel = 'Fleet';
   @property({type: String}) selectedVesselValue = '';
+  @property({type: String}) activeVesselValue = '';
   @property({type: Array}) vesselSelectorOptions: {
     value: string;
     label: string;
   }[] = [];
+
+  private onFleetButtonClick() {
+    this.fleetButtonActivated = true;
+    this.activeVesselValue = '';
+    this.dispatchEvent(new CustomEvent('fleet-button-click'));
+  }
+
+  private onVesselButtonClick(vessel: {value: string; label: string}) {
+    this.fleetButtonActivated = false;
+    this.activeVesselValue = vessel.value;
+    this.dispatchEvent(
+      new CustomEvent('vessel-selected', {
+        detail: {value: vessel.value, label: vessel.label},
+      })
+    );
+  }
 
   override render() {
     return html`
@@ -195,6 +216,9 @@ export class ObcIntegrationBar extends LitElement {
           ${this.showClock ? html`<slot name="clock"></slot>` : null}
         </div>
       </nav>
+      <div class="post-click-selection-menu">
+        <slot name="vessel-integration-menu"></slot>
+      </div>
     `;
   }
 
@@ -220,14 +244,18 @@ export class ObcIntegrationBar extends LitElement {
       this.vesselSelectorOptions.length > 0
         ? this.vesselSelectorOptions
         : fallbackVessels;
+    const isFleetButtonAnchored = this.fleetButtonActivated;
 
     return html`
       <obc-integration-button
         class="fleet-button"
         .variant=${IntegrationButtonVariant.normal}
         ?selected=${this.fleetButtonSelected}
-        @click=${() =>
-          this.dispatchEvent(new CustomEvent('fleet-button-click'))}
+        ?activated=${this.fleetButtonActivated}
+        style=${isFleetButtonAnchored
+          ? 'anchor-name: --integration-menu-anchor;'
+          : ''}
+        @click=${() => this.onFleetButtonClick()}
       >
         <span slot="label">${this.fleetButtonLabel}</span>
       </obc-integration-button>
@@ -237,6 +265,9 @@ export class ObcIntegrationBar extends LitElement {
           const isSelected =
             this.selectedVesselValue !== '' &&
             this.selectedVesselValue === vessel.value;
+          const isActivated =
+            this.activeVesselValue !== '' &&
+            this.activeVesselValue === vessel.value;
           const shouldRenderSeparator = index < vesselItems.length - 1;
           return html`
             <obc-integration-button
@@ -245,12 +276,11 @@ export class ObcIntegrationBar extends LitElement {
                 ? IntegrationButtonVariant.normal
                 : IntegrationButtonVariant.flat}
               ?selected=${isSelected}
-              @click=${() =>
-                this.dispatchEvent(
-                  new CustomEvent('vessel-selected', {
-                    detail: {value: vessel.value, label: vessel.label},
-                  })
-                )}
+              ?activated=${isActivated}
+              style=${isActivated
+                ? 'anchor-name: --integration-menu-anchor;'
+                : ''}
+              @click=${() => this.onVesselButtonClick(vessel)}
             >
               <obi-ship slot="leading-icon"></obi-ship>
               <span slot="label">${vessel.label}</span>

@@ -67,3 +67,10 @@ obc-icon-button::part(visible-wrapper) {
     var(--integration-border-outline)
   );
 }
+
+.post-click-selection-menu {
+  position: absolute;
+  position-anchor: --integration-menu-anchor;
+  top: anchor(bottom);
+  justify-self: anchor-center;
+}

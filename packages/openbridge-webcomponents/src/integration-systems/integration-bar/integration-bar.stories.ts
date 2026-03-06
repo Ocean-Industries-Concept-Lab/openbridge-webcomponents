@@ -4,6 +4,7 @@ import './integration-bar.js';
 import {html} from 'lit';
 import '../../components/dropdown-button/dropdown-button.js';
 import '../../components/clock/clock.js';
+import '../integration-vessel-menu/integration-vessel-menu.js';
 
 const meta: Meta<typeof ObcIntegrationBar> = {
   title: 'Integration Systems/Integration Bar',
@@ -23,9 +24,12 @@ const meta: Meta<typeof ObcIntegrationBar> = {
     showScreenButton: true,
     showNotificationButton: true,
     showAlertButton: true,
+    showVesselIntegrationMenu: false,
 
     fleetButtonSelected: false,
+    fleetButtonActivated: false,
     fleetButtonLabel: 'Fleet',
+    activeVesselValue: '',
     vesselSelectorOptions: [
       {value: 'Vessel 1', label: 'Vessel Name 1'},
       {value: 'Vessel 2', label: 'Vessel Name 2'},
@@ -34,6 +38,9 @@ const meta: Meta<typeof ObcIntegrationBar> = {
   },
   argTypes: {
     showDate: {
+      control: {type: 'boolean'},
+    },
+    showVesselIntegrationMenu: {
       control: {type: 'boolean'},
     },
   },
@@ -48,8 +55,11 @@ const meta: Meta<typeof ObcIntegrationBar> = {
       .showScreenButton=${args.showScreenButton}
       .showNotificationButton=${args.showNotificationButton}
       .fleetButtonSelected=${args.fleetButtonSelected}
+      .fleetButtonActivated=${args.fleetButtonActivated}
       .vesselSelectorOptions=${args.vesselSelectorOptions}
       .fleetButtonLabel=${args.fleetButtonLabel}
+      .activeVesselValue=${args.activeVesselValue}
+      .selectedVesselValue=${args.selectedVesselValue}
     >
       <obc-clock
         integrationBarMode
@@ -60,6 +70,14 @@ const meta: Meta<typeof ObcIntegrationBar> = {
         .timeZoneOffsetHours=${args.timeZoneOffsetHours}
         .blinkOnlyBreakpointPx=${args.clockMinimizeBreakpointPx}
       ></obc-clock>
+      ${args.showVesselIntegrationMenu
+        ? html`<obc-integration-vessel-menu
+            slot="vessel-integration-menu"
+            numberOfButtons="2"
+            ><div slot="button-1-label">Confirm</div>
+            <div slot="button-2-label">Cancel</div></obc-integration-vessel-menu
+          >`
+        : null}
     </obc-integration-bar>`,
 } satisfies Meta<ObcIntegrationBar>;
 
@@ -73,5 +91,20 @@ export const Primary: Story = {
 export const FleetButtonSelected: Story = {
   args: {
     fleetButtonSelected: true,
+  },
+};
+
+export const WithVesselIntegrationMenu: Story = {
+  args: {
+    showVesselIntegrationMenu: true,
+    selectedVesselValue: 'Vessel 3',
+  },
+};
+
+export const PendingVesselSelection: Story = {
+  args: {
+    showVesselIntegrationMenu: true,
+    selectedVesselValue: 'Vessel 2',
+    activeVesselValue: 'Vessel 3',
   },
 };

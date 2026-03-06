@@ -40,6 +40,7 @@ export enum IntegrationButtonType {
  * @property {boolean} hasDescription - Shows the `status` slot for non-hug types.
  * @property {IntegrationButtonReadout[]} readouts - List of readout items shown in the rich type.
  * @property {boolean} disabled - Disables the internal button.
+ * @property {boolean} activated - Applies active state styling while a selection is pending.
  * @property {boolean} selected - Applies selected state styling.
  * @property {boolean} dividerBottom - Shows a bottom divider under the button.
  * @property {IntegrationButtonVariant} variant - Visual variant (`normal` or `flat`).
@@ -54,6 +55,7 @@ export class ObcIntegrationButton extends LitElement {
   @property({type: Array, attribute: false})
   readouts: IntegrationButtonReadout[] = [];
   @property({type: Boolean}) disabled = false;
+  @property({type: Boolean}) activated = false;
   @property({type: Boolean}) selected = false;
   @property({type: Boolean}) dividerBottom = false;
   @property({type: String}) variant: IntegrationButtonVariant =
@@ -61,17 +63,22 @@ export class ObcIntegrationButton extends LitElement {
   @property({type: String}) type: IntegrationButtonType =
     IntegrationButtonType.regular;
 
+  private getButtonClasses() {
+    return {
+      'touch-target': true,
+      selected: this.selected,
+      activated: this.activated,
+      disabled: this.disabled,
+      'has-description': this.hasDescription,
+      ['variant-' + this.variant]: true,
+      ['type-' + this.type]: true,
+    };
+  }
+
   renderRich() {
     return html`
       <button
-        class=${classMap({
-          'touch-target': true,
-          selected: this.selected,
-          disabled: this.disabled,
-          'has-description': this.hasDescription,
-          ['variant-' + this.variant]: true,
-          ['type-' + this.type]: true,
-        })}
+        class=${classMap(this.getButtonClasses())}
         ?disabled=${this.disabled}
       >
         <div class="content-container">
@@ -123,14 +130,7 @@ export class ObcIntegrationButton extends LitElement {
   renderRegular() {
     return html`
       <button
-        class=${classMap({
-          'touch-target': true,
-          selected: this.selected,
-          disabled: this.disabled,
-          'has-description': this.hasDescription,
-          ['variant-' + this.variant]: true,
-          ['type-' + this.type]: true,
-        })}
+        class=${classMap(this.getButtonClasses())}
         ?disabled=${this.disabled}
       >
         <div class="content-container">
@@ -165,14 +165,7 @@ export class ObcIntegrationButton extends LitElement {
   renderHug() {
     return html`
       <button
-        class=${classMap({
-          'touch-target': true,
-          selected: this.selected,
-          disabled: this.disabled,
-          'has-description': this.hasDescription,
-          ['variant-' + this.variant]: true,
-          ['type-' + this.type]: true,
-        })}
+        class=${classMap(this.getButtonClasses())}
         ?disabled=${this.disabled}
       >
         <div class="content-container">
