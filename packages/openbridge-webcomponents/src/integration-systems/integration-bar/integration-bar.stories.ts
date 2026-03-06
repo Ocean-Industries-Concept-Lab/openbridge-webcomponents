@@ -23,10 +23,15 @@ const meta: Meta<typeof ObcIntegrationBar> = {
     showUserButton: true,
     userButtonActivated: false,
     showDimmingButton: true,
+    dimmingButtonActivated: false,
     showSystemButton: true,
+    systemButtonActivated: false,
     showScreenButton: true,
+    screenButtonActivated: false,
     showNotificationButton: true,
+    notificationButtonActivated: false,
     showAlertButton: true,
+    alertButtonActivated: false,
     showVesselIntegrationMenu: false,
 
     fleetButtonSelected: false,
@@ -106,10 +111,15 @@ const meta: Meta<typeof ObcIntegrationBar> = {
       .showUserButton=${args.showUserButton}
       .userButtonActivated=${args.userButtonActivated}
       .showDimmingButton=${args.showDimmingButton}
+      .dimmingButtonActivated=${args.dimmingButtonActivated}
       .showSystemButton=${args.showSystemButton}
+      .systemButtonActivated=${args.systemButtonActivated}
       .showAlertButton=${args.showAlertButton}
+      .alertButtonActivated=${args.alertButtonActivated}
       .showScreenButton=${args.showScreenButton}
+      .screenButtonActivated=${args.screenButtonActivated}
       .showNotificationButton=${args.showNotificationButton}
+      .notificationButtonActivated=${args.notificationButtonActivated}
       .fleetButtonSelected=${args.fleetButtonSelected}
       .fleetButtonActivated=${args.fleetButtonActivated}
       .vesselSelectorOptions=${args.vesselSelectorOptions}

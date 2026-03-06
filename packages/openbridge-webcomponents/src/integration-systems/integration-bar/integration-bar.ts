@@ -16,6 +16,7 @@ import '../../icons/icon-screen-desk.js';
 import '../../icons/icon-alerts.js';
 import '../../icons/icon-link.js';
 import {property} from 'lit/decorators.js';
+import {classMap} from 'lit/directives/class-map.js';
 
 export enum IntegrationBarType {
   vesselname = 'vessel-name',
@@ -120,12 +121,15 @@ export class ObcIntegrationBar extends LitElement {
             : null}
           ${this.showLinkButton
             ? html`<obc-icon-button
-                class="link-button"
+                class=${classMap({
+                  'link-button': true,
+                  activated: this.linkButtonActivated,
+                })}
                 part="link-button"
                 variant="integration"
                 @click=${() =>
                   this.dispatchEvent(new CustomEvent('link-button-clicked'))}
-                ?activated=${this.notificationButtonActivated}
+                ?activated=${this.linkButtonActivated}
               >
                 <obi-link></obi-link>
               </obc-icon-button>`
@@ -137,9 +141,15 @@ export class ObcIntegrationBar extends LitElement {
         <div class="right-content-container">
           ${this.showAlertButton
             ? html`<obc-icon-button
-                class="alert-button"
+                class=${classMap({
+                  'alert-button': true,
+                  activated: this.alertButtonActivated,
+                })}
                 part="alert-button"
                 variant="integration"
+                style=${this.alertButtonActivated
+                  ? 'anchor-name: --settings-menu-anchor;'
+                  : ''}
                 @click=${() =>
                   this.dispatchEvent(new CustomEvent('alert-button-clicked'))}
                 ?activated=${this.alertButtonActivated}
@@ -149,9 +159,15 @@ export class ObcIntegrationBar extends LitElement {
             : null}
           ${this.showNotificationButton
             ? html`<obc-icon-button
-                class="notification-button"
+                class=${classMap({
+                  'notification-button': true,
+                  activated: this.notificationButtonActivated,
+                })}
                 part="notification-button"
                 variant="integration"
+                style=${this.notificationButtonActivated
+                  ? 'anchor-name: --settings-menu-anchor;'
+                  : ''}
                 @click=${() =>
                   this.dispatchEvent(
                     new CustomEvent('notification-button-clicked')
@@ -163,9 +179,15 @@ export class ObcIntegrationBar extends LitElement {
             : null}
           ${this.showScreenButton
             ? html`<obc-icon-button
-                class="screen-button"
+                class=${classMap({
+                  'screen-button': true,
+                  activated: this.screenButtonActivated,
+                })}
                 part="screen-button"
                 variant="integration"
+                style=${this.screenButtonActivated
+                  ? 'anchor-name: --settings-menu-anchor;'
+                  : ''}
                 @click=${() =>
                   this.dispatchEvent(new CustomEvent('screen-button-clicked'))}
                 ?activated=${this.screenButtonActivated}
@@ -175,9 +197,15 @@ export class ObcIntegrationBar extends LitElement {
             : null}
           ${this.showSystemButton
             ? html`<obc-icon-button
-                class="system-button"
+                class=${classMap({
+                  'system-button': true,
+                  activated: this.systemButtonActivated,
+                })}
                 part="system-button"
                 variant="integration"
+                style=${this.systemButtonActivated
+                  ? 'anchor-name: --settings-menu-anchor;'
+                  : ''}
                 @click=${() =>
                   this.dispatchEvent(new CustomEvent('system-button-clicked'))}
                 ?activated=${this.systemButtonActivated}
@@ -187,9 +215,15 @@ export class ObcIntegrationBar extends LitElement {
             : null}
           ${this.showDimmingButton
             ? html`<obc-icon-button
-                class="dimming-button"
+                class=${classMap({
+                  'dimming-button': true,
+                  activated: this.dimmingButtonActivated,
+                })}
                 part="dimming-button"
                 variant="integration"
+                style=${this.dimmingButtonActivated
+                  ? 'anchor-name: --settings-menu-anchor;'
+                  : ''}
                 @click=${() =>
                   this.dispatchEvent(new CustomEvent('dimming-button-clicked'))}
                 ?activated=${this.dimmingButtonActivated}
@@ -199,9 +233,15 @@ export class ObcIntegrationBar extends LitElement {
             : null}
           ${this.showUserButton
             ? html`<obc-icon-button
-                class="user-button"
+                class=${classMap({
+                  'user-button': true,
+                  activated: this.userButtonActivated,
+                })}
                 part="user-button"
                 variant="integration"
+                style=${this.userButtonActivated
+                  ? 'anchor-name: --settings-menu-anchor;'
+                  : ''}
                 @click=${() =>
                   this.dispatchEvent(new CustomEvent('user-button-clicked'))}
                 ?activated=${this.userButtonActivated}
