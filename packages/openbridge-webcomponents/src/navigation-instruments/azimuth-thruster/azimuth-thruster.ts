@@ -106,7 +106,7 @@ export class ObcAzimuthThruster extends LitElement {
     });
   }
   @property({type: Number}) loading: number = 0;
-  @property({type: Boolean}) noPadding: boolean = false;
+  @property({type: Boolean, attribute: false}) hasLabelSpacer: boolean = true;
   @property({type: Array, attribute: false}) angleAdvices: AngleAdvice[] = [];
   @property({type: Array, attribute: false}) thrustAdvices: LinearAdvice[] = [];
   @property({type: Boolean}) singleDirection: boolean = false;
@@ -222,7 +222,7 @@ export class ObcAzimuthThruster extends LitElement {
     const tickmarks = this.getTickmarks();
 
     let viewBox: string;
-    if (this.noPadding) {
+    if (!this.hasLabelSpacer) {
       viewBox = '-192 -192 384 384';
     } else if (this.showLabels && !this.tickmarksInside) {
       viewBox = '-236 -236 472 472';
@@ -244,7 +244,7 @@ export class ObcAzimuthThruster extends LitElement {
           .setpointOverride=${this.angleSetpointOverride}
           .animateSetpoint=${this.animateSetpoint}
           .tickmarksInside=${this.tickmarksInside}
-          padding=${ifDefined(this.noPadding ? 16 : undefined)}
+          padding=${ifDefined(!this.hasLabelSpacer ? 16 : undefined)}
           .advices=${this.angleAdviceRaw}
           .starboardPortIndicator=${this.starboardPortIndicator}
         ></obc-watch>

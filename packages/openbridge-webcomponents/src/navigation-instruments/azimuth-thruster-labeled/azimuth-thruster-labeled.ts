@@ -99,7 +99,7 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
         ></obc-instrument-field>
         <obc-azimuth-thruster
           class="azimuth-thruster"
-          nopadding
+          .hasLabelSpacer=${false}
           .thrust=${this.thrust}
           .thrustSetpoint=${this.thrustSetpoint}
           .disableAutoAtThrustSetpoint=${this.disableAutoAtThrustSetpoint}
