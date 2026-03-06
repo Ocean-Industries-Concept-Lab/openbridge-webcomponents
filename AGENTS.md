@@ -10,13 +10,13 @@
 
 ## 1. Repository Overview
 
-| Item | Value |
-|---|---|
-| Name | **Openbridge Web Components** |
-| Repo | `Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip` |
-| License | Apache-2.0 |
-| Runtime | Lit 3 + TypeScript (web components) |
-| Package manager | npm (workspaces) |
+| Item              | Value                                                                                                                     |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Name              | **Openbridge Web Components**                                                                                             |
+| Repo              | `Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip`                                                               |
+| License           | Apache-2.0                                                                                                                |
+| Runtime           | Lit 3 + TypeScript (web components)                                                                                       |
+| Package manager   | npm (workspaces)                                                                                                          |
 | Monorepo packages | `openbridge-webcomponents` (core), `-react`, `-vue`, `-ng`, `-svelte` (auto-generated wrappers), `react-demo`, `vue-demo` |
 
 The library provides maritime navigation and automation UI components.
@@ -49,6 +49,37 @@ All paths below are relative to `packages/openbridge-webcomponents/`.
 - **Only comment a property** if the name is not self-explanatory.
 - **Conventional Commits** for git messages (`feat:`, `fix:`, `docs:`, etc.).
 - Ask for clarification (e.g. a list of questions) before implementing significant changes.
+
+### Boolean property naming
+
+Always name boolean properties and parameters using **positive** (affirmative) phrasing so that the default value is `false` and the "opt-in" value is `true`.
+
+| Bad (negative)                  | Good (positive)         |
+| ------------------------------- | ----------------------- |
+| `disableAutoAtSetpoint = false` | `autoAtSetpoint = true` |
+| `hideLabels = false`            | `showLabels = true`     |
+| `hideBar = false`               | `hasBar = true`         |
+| `noTooltip = false`             | `showTooltip = true`    |
+
+**Why:** Negative booleans create double-negation confusion (`if (!disableFoo)`) and violate the Lit convention that HTML boolean attributes are absent-means-false. A positive name makes template bindings and story controls read naturally:
+
+```html
+<!-- Clear intent -->
+<obc-gauge showLabels></obc-gauge>
+
+<!-- Confusing double negative -->
+<obc-gauge .hideLabels="${false}"></obc-gauge>
+```
+
+**`attribute: false` for `true`-default booleans:** Because the positive name defaults to `true`, it cannot work as an HTML boolean attribute (presence = true, absence = false — the opposite of what you want). Declare these properties with `attribute: false` so they are only settable via JavaScript:
+
+```ts
+@property({type: Boolean, attribute: false}) autoAtSetpoint = true;
+```
+
+Framework wrappers (React, Vue, Angular, Svelte) always set values via properties, so removing the attribute has no effect on wrapper consumers. For plain HTML usage, the property must be set via JavaScript (`el.autoAtSetpoint = false`).
+
+When refactoring an existing negative boolean, also rename it in the interface, mixin/bundle, stories, and all consumer components to keep the public API consistent.
 
 ### Storybook title conventions
 
@@ -106,13 +137,13 @@ Examples: `ObcChartLineBase` (abstract base for `obc-line-graph` and `obc-area-g
 
 #### Summary table
 
-| Aspect | Concrete component | Pure function module | Abstract base class |
-|---|---|---|---|
-| JSDoc location | On the class | Module-level block comment | On the abstract class (`@ignore`) |
-| Story `meta.component` | `'obc-tag-name'` | Omitted | Concrete subclass tag |
-| Story `parameters.docs.description` | Not needed (auto) | Required (full Markdown) | Required (override) |
-| `argTypes` | Auto from manifest | Manual | Partially auto |
-| Rendering in story | Direct `<obc-tag>` | Throwaway inline wrapper | Concrete subclass element |
+| Aspect                              | Concrete component | Pure function module       | Abstract base class               |
+| ----------------------------------- | ------------------ | -------------------------- | --------------------------------- |
+| JSDoc location                      | On the class       | Module-level block comment | On the abstract class (`@ignore`) |
+| Story `meta.component`              | `'obc-tag-name'`   | Omitted                    | Concrete subclass tag             |
+| Story `parameters.docs.description` | Not needed (auto)  | Required (full Markdown)   | Required (override)               |
+| `argTypes`                          | Auto from manifest | Manual                     | Partially auto                    |
+| Rendering in story                  | Direct `<obc-tag>` | Throwaway inline wrapper   | Concrete subclass element         |
 
 ---
 
@@ -121,14 +152,14 @@ Examples: `ObcChartLineBase` (abstract base for `obc-line-graph` and `obc-area-g
 Detailed component-family rules are in `.github/instructions/`.
 Agents that support glob-scoped instructions should apply them automatically.
 
-| File | Scope (globs) | Description |
-|---|---|---|
-| `building-blocks.instructions.md` | `building-blocks/**`, `svghelpers/**` | SVG-based building block components and shared utilities |
-| `circular-charts.instructions.md` | `bars-graphs/**`, `charthelpers/**` | Circular chart components (donut, pie, polar, radial-bar) |
-| `external-scale.instructions.md` | `external-scale/**`, `bar-vertical/**`, `bar-horizontal/**`, `gauge-vertical/**`, `gauge-horizontal/**` | External scale renderer and bar/gauge wrappers |
-| `line-area-charts.instructions.md` | `chart-line/**`, `line-graph/**`, `area-graph/**`, `gauge-trend/**` | Line/area charts and composite gauge-trend component |
-| `watch-radial-instruments.instructions.md` | `watch/**`, `compass/**`, `heading/**`, `rudder/**`, `wind/**`, `roll/**`, `speed-gauge/**`, `gauge-radial/**`, `rot-sector/**`, `azimuth-thruster/**`, `instrument-radial/**` | Circular watch-based instruments and radial gauges |
-| `setpoint.instructions.md` | `svghelpers/setpoint*.ts`, `building-blocks/setpoint/**` | Setpoint design layer, mixin/bundle, confirm animation |
+| File                                       | Scope (globs)                                                                                                                                                                  | Description                                               |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------- |
+| `building-blocks.instructions.md`          | `building-blocks/**`, `svghelpers/**`                                                                                                                                          | SVG-based building block components and shared utilities  |
+| `circular-charts.instructions.md`          | `bars-graphs/**`, `charthelpers/**`                                                                                                                                            | Circular chart components (donut, pie, polar, radial-bar) |
+| `external-scale.instructions.md`           | `external-scale/**`, `bar-vertical/**`, `bar-horizontal/**`, `gauge-vertical/**`, `gauge-horizontal/**`                                                                        | External scale renderer and bar/gauge wrappers            |
+| `line-area-charts.instructions.md`         | `chart-line/**`, `line-graph/**`, `area-graph/**`, `gauge-trend/**`                                                                                                            | Line/area charts and composite gauge-trend component      |
+| `watch-radial-instruments.instructions.md` | `watch/**`, `compass/**`, `heading/**`, `rudder/**`, `wind/**`, `roll/**`, `speed-gauge/**`, `gauge-radial/**`, `rot-sector/**`, `azimuth-thruster/**`, `instrument-radial/**` | Circular watch-based instruments and radial gauges        |
+| `setpoint.instructions.md`                 | `svghelpers/setpoint*.ts`, `building-blocks/setpoint/**`                                                                                                                       | Setpoint design layer, mixin/bundle, confirm animation    |
 
 ---
 
@@ -242,11 +273,11 @@ Required modifications after pasting:
 
 ## 9. Related Documentation
 
-| Document | Purpose |
-|---|---|
-| [IMPLEMENTATION_GUIDELINES.md](IMPLEMENTATION_GUIDELINES.md) | Detailed architecture, PostCSS mixins, SVG practices, component creation |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | Contribution workflow, commit conventions, PR guidelines |
-| [packages/openbridge-webcomponents/README.md](packages/openbridge-webcomponents/README.md) | Installation, setup, bundle usage |
-| [.cursor/rules/comments.mdc](.cursor/rules/comments.mdc) | Full JSDoc template and structured-tag rules |
-| [.github/instructions/](.github/instructions/) | Path-scoped instruction files for component families |
-| [packages/openbridge-webcomponents/script/docgen/](packages/openbridge-webcomponents/script/docgen/) | OpenAI-powered JSDoc generation CLI (`docs-gen.ts`) |
+| Document                                                                                             | Purpose                                                                  |
+| ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| [IMPLEMENTATION_GUIDELINES.md](IMPLEMENTATION_GUIDELINES.md)                                         | Detailed architecture, PostCSS mixins, SVG practices, component creation |
+| [CONTRIBUTING.md](CONTRIBUTING.md)                                                                   | Contribution workflow, commit conventions, PR guidelines                 |
+| [packages/openbridge-webcomponents/README.md](packages/openbridge-webcomponents/README.md)           | Installation, setup, bundle usage                                        |
+| [.cursor/rules/comments.mdc](.cursor/rules/comments.mdc)                                             | Full JSDoc template and structured-tag rules                             |
+| [.github/instructions/](.github/instructions/)                                                       | Path-scoped instruction files for component families                     |
+| [packages/openbridge-webcomponents/script/docgen/](packages/openbridge-webcomponents/script/docgen/) | OpenAI-powered JSDoc generation CLI (`docs-gen.ts`)                      |
