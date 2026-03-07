@@ -26,7 +26,7 @@ export interface GaugeRadialAdvice {
 }
 @customElement('obc-instrument-radial')
 export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
-  // setpoint, newSetpoint, atSetpoint, touching, disableAutoAtSetpoint,
+  // setpoint, newSetpoint, atSetpoint, touching, autoAtSetpoint,
   // autoAtSetpointDeadband, setpointAtZeroDeadband, setpointOverride
   // — all inherited from SetpointMixin
 

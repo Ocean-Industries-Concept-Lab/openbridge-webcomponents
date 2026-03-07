@@ -122,7 +122,7 @@ import {
  *   value: 40,
  *   setpoint: 50,
  *   atSetpoint: false,
- *   disableAutoAtSetpoint: false,
+ *   autoAtSetpoint: true,
  *   autoAtSetpointDeadband: 1,
  *   setpointAtZeroDeadband: 0.5,
  *   state: InstrumentState.active,
@@ -541,10 +541,10 @@ export interface ExternalScaleConfig {
    * and proposed setpoint positions simultaneously.
    */
   newSetpoint?: number;
-  /** Manual override used when disableAutoAtSetpoint=true. */
+  /** Manual override used when autoAtSetpoint=false. */
   atSetpoint: boolean;
-  /** When false, at-setpoint is derived from value/setpoint and deadband. */
-  disableAutoAtSetpoint: boolean;
+  /** When true, at-setpoint is derived from value/setpoint and deadband. */
+  autoAtSetpoint: boolean;
   /** Deadband used for automatic at-setpoint detection. */
   autoAtSetpointDeadband: number;
   /** Deadband around 0 where the setpoint indicator snaps to exactly 0. */
@@ -844,7 +844,7 @@ function calculateAtSetpoint(config: ExternalScaleConfig): boolean {
     value: config.value,
     setpoint: config.setpoint,
     touching: isTouching,
-    disableAuto: config.disableAutoAtSetpoint,
+    auto: config.autoAtSetpoint,
     deadband: config.autoAtSetpointDeadband,
     atSetpointManual: config.atSetpoint,
   });

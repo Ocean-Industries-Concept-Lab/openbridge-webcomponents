@@ -47,7 +47,7 @@ export class ObcThruster extends SetpointMixin(LitElement, {
         atSetpoint: this.atSetpoint,
         tunnel: this.tunnel,
         setpointAtZeroDeadband: this.setpointAtZeroDeadband,
-        autoAtSetpoint: !this.disableAutoAtSetpoint,
+        autoAtSetpoint: this.autoAtSetpoint,
         autoSetpointDeadband: this.autoAtSetpointDeadband,
         touching: this.touching,
         singleSided: this.singleSided,

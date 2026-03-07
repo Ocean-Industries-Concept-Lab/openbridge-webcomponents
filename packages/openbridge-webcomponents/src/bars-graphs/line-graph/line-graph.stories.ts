@@ -192,7 +192,7 @@ export const SingleSeriesExternalScales: Story = {
     },
     // External scale controls (vertical/left)
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
-    vScaleHideLabels: {
+    vScaleShowLabels: {
       control: 'boolean',
       description: 'Vertical scale: hide labels',
     },
@@ -231,7 +231,7 @@ export const SingleSeriesExternalScales: Story = {
       control: 'boolean',
       description: 'Horizontal scale: show bar',
     },
-    hScaleHideLabels: {
+    hScaleShowLabels: {
       control: 'boolean',
       description: 'Horizontal scale: hide labels',
     },
@@ -274,7 +274,7 @@ export const SingleSeriesExternalScales: Story = {
     priority: Priority.enhanced,
     // Vertical scale defaults
     vScaleHasBar: false,
-    vScaleHideLabels: false,
+    vScaleShowLabels: true,
     vScaleAdvices: true,
     vScaleFillMode: 'fill',
     vScaleAdvicePosition: 'inner',
@@ -284,7 +284,7 @@ export const SingleSeriesExternalScales: Story = {
     vScaleFillMax: 5,
     // Horizontal scale defaults
     hScaleHasBar: false,
-    hScaleHideLabels: false,
+    hScaleShowLabels: true,
     hScaleAdvices: true,
     hScaleFillMode: 'tint',
     hScaleAdvicePosition: 'inner',
@@ -313,7 +313,7 @@ export const SingleSeriesExternalScales: Story = {
         .height=${_args.height}
         .side=${'left'}
         .hasScale=${true}
-        .hideLabels=${_args.vScaleHideLabels}
+        .showLabels=${_args.vScaleShowLabels}
         .hasBar=${_args.vScaleHasBar}
         .fillMode=${_args.vScaleFillMode === 'fill'
           ? FillMode.fill
@@ -345,7 +345,7 @@ export const SingleSeriesExternalScales: Story = {
         .width=${_args.width}
         .side=${'bottom'}
         .hasScale=${true}
-        .hideLabels=${_args.hScaleHideLabels}
+        .showLabels=${_args.hScaleShowLabels}
         .hasBar=${_args.hScaleHasBar}
         .fillMode=${_args.hScaleFillMode === 'fill'
           ? FillMode.fill

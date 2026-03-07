@@ -60,7 +60,7 @@ export {
  * - **Scale Configuration:**
  *   - Configurable `minValue` and `maxValue` for the value range.
  *   - Optional main, primary, secondary, and tertiary tickmarks at specified intervals.
- *   - Labels shown at primary tickmark intervals (can be hidden via `hideLabels`).
+ *   - Labels shown at primary tickmark intervals (controlled via `showLabels`).
  * - **Side Positioning:** Can be placed on the `left` or `right` side via the `side` property.
  * - **Value Display:**
  *   - `value` property drives the bar fill.
@@ -107,7 +107,7 @@ export {
  * ---
  *
  * ### Events
- * - `scale-dimensions-changed` – Fired when layout-affecting properties (`side`, `hideLabels`) change, reporting dimensions to parent chart components.
+ * - `scale-dimensions-changed` – Fired when layout-affecting properties (`side`, `showLabels`) change, reporting dimensions to parent chart components.
  *
  * ---
  *
@@ -190,8 +190,8 @@ export class ObcGaugeVertical extends SetpointMixin(LitElement, {
     },
   });
 
-  /** Hide numerical value labels at primary tickmarks */
-  @property({type: Boolean}) hideLabels = false;
+  /** Show numerical value labels at primary tickmarks */
+  @property({type: Boolean, attribute: false}) showLabels = true;
   private readonly barThickness = 48;
   private readonly tickThickness = 24;
   private readonly labelThickness = 60;
@@ -272,7 +272,7 @@ export class ObcGaugeVertical extends SetpointMixin(LitElement, {
       minValue: this.minValue,
       maxValue: this.maxValue,
       hasScale: this.hasScale,
-      labels: !this.hideLabels,
+      labels: this.showLabels,
       hasBar: this.hasBar,
       scaleBackground: this.scaleBackground,
       barThickness: this.barThickness,
@@ -294,7 +294,7 @@ export class ObcGaugeVertical extends SetpointMixin(LitElement, {
       setpoint: this.setpoint,
       newSetpoint: this.newSetpoint,
       atSetpoint: this.atSetpoint,
-      disableAutoAtSetpoint: this.disableAutoAtSetpoint,
+      autoAtSetpoint: this.autoAtSetpoint,
       autoAtSetpointDeadband: this.autoAtSetpointDeadband,
       setpointAtZeroDeadband: this.setpointAtZeroDeadband,
       animateSetpoint: this.animateSetpoint,
@@ -359,7 +359,7 @@ export class ObcGaugeVertical extends SetpointMixin(LitElement, {
     // In regular mode, only emit when layout-affecting properties change
     if (
       !this.fixedAspectRatio &&
-      (changed.has('side') || changed.has('hideLabels'))
+      (changed.has('side') || changed.has('showLabels'))
     ) {
       this.reportDimensions();
     }
@@ -383,7 +383,7 @@ export class ObcGaugeVertical extends SetpointMixin(LitElement, {
       side: this.side,
       hasBar: this.hasBar,
       hasScale: this.hasScale,
-      labels: !this.hideLabels,
+      labels: this.showLabels,
       barThickness: effectiveBarThickness,
       tickThickness: this.tickThickness,
       labelThickness: this.labelThickness,

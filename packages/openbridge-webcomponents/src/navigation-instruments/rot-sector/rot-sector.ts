@@ -133,7 +133,7 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
         .setpointAtZeroDeadband=${this.setpointAtZeroDeadband}
         .setpointOverride=${this.setpointOverride}
         .touching=${this.touching}
-        .disableAutoAtSetpoint=${this.disableAutoAtSetpoint}
+        .autoAtSetpoint=${this.autoAtSetpoint}
         .autoAtSetpointDeadband=${this.autoAtSetpointDeadband}
         .maxValue=${this.maxValue}
         .minValue=${-this.maxValue}

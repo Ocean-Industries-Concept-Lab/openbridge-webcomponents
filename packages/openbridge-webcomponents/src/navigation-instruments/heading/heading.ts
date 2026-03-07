@@ -26,7 +26,8 @@ export class ObcHeading extends LitElement {
   @property({type: Boolean}) atHeadingSetpoint: boolean = false;
   @property({type: Number}) headingSetpointAtZeroDeadband: number = 0.5;
   @property({type: Boolean}) headingSetpointOverride: boolean = false;
-  @property({type: Boolean}) disableAutoAtHeadingSetpoint: boolean = false;
+  @property({type: Boolean, attribute: false}) autoAtHeadingSetpoint: boolean =
+    true;
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
   @property({type: Boolean}) animateSetpoint: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
@@ -51,7 +52,7 @@ export class ObcHeading extends LitElement {
       newSetpoint: this.newHeadingSetpoint,
       atSetpoint: this.atHeadingSetpoint,
       touching: this.touching,
-      disableAutoAtSetpoint: this.disableAutoAtHeadingSetpoint,
+      autoAtSetpoint: this.autoAtHeadingSetpoint,
       autoAtSetpointDeadband: this.autoAtHeadingSetpointDeadband,
       setpointAtZeroDeadband: this.headingSetpointAtZeroDeadband,
       setpointOverride: this.headingSetpointOverride,
