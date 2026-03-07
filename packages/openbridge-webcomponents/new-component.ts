@@ -20,13 +20,15 @@ const name = await question(
 );
 const componentType = await select('Type of component', {
   choices: [
-    'ui(input, label, tables)',
+    'ui (input, label, tables)',
     'instrument (compass, azimuth)',
+    'indicator (bearing, speed, rot)',
     'page',
     'ar',
     'automation',
     'integration system',
-    'build-block',
+    'building-block',
+    'bars-graphs (line, area, donut, pie)',
   ],
 });
 const files = await multiselect('Create files', {
@@ -40,6 +42,8 @@ const componentName = name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
 let parentDir: string;
 if (componentType.includes('ui')) {
   parentDir = 'components';
+} else if (componentType.includes('indicator')) {
+  parentDir = 'navigation-instruments';
 } else if (componentType.includes('instrument')) {
   parentDir = 'navigation-instruments';
 } else if (componentType.includes('ar')) {
@@ -48,10 +52,12 @@ if (componentType.includes('ui')) {
   parentDir = 'automation';
 } else if (componentType.includes('page')) {
   parentDir = 'pages';
-} else if (componentType.includes('build-block')) {
-  parentDir = 'build-blocks';
+} else if (componentType.includes('building-block')) {
+  parentDir = 'building-blocks';
 } else if (componentType.includes('integration system')) {
   parentDir = 'integration-systems';
+} else if (componentType.includes('bars-graphs')) {
+  parentDir = 'bars-graphs';
 } else {
   throw new Error('Invalid component type');
 }
@@ -63,9 +69,9 @@ fs.mkdirSync(dir, {recursive: true});
 // Create lit file
 const hasCss = files.includes('css');
 const litFile = path.join(dir, `${componentName}.ts`);
-const content = `import { LitElement, html${hasCss ? `, unsafeCSS ` : ` `}} from 'lit'
-import { customElement } from '../../decorator.js'
-${hasCss ? `import compentStyle from "./${componentName}.css?inline";` : ''}
+const content = `import {LitElement, html${hasCss ? `, unsafeCSS` : ``}} from 'lit';
+import {customElement} from '../../decorator.js';
+${hasCss ? `import componentStyle from './${componentName}.css?inline';` : ''}
 
 @customElement('obc-${componentName}')
 export class Obc${name} extends LitElement {
@@ -74,15 +80,15 @@ export class Obc${name} extends LitElement {
     return html\`
       <div class="wrapper">
       </div>
-      \`
+    \`;
   }
 
-${hasCss ? `static override styles = unsafeCSS(compentStyle);` : ''}
+${hasCss ? `  static override styles = unsafeCSS(componentStyle);` : ''}
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-${componentName}': Obc${name}
+    'obc-${componentName}': Obc${name};
   }
 }
 `;
@@ -102,25 +108,31 @@ if (files.includes('storybook')) {
     storybookGroup = 'AR';
   } else if (componentType.includes('automation')) {
     storybookGroup = 'Automation';
-  } else if (componentType.includes('build-block')) {
-    storybookGroup = 'Build Blocks';
+  } else if (componentType.includes('building-block')) {
+    storybookGroup = 'Building Blocks';
   } else if (componentType.includes('page')) {
     storybookGroup = 'Pages';
   } else if (componentType.includes('integration system')) {
     storybookGroup = 'Integration Systems';
+  } else if (componentType.includes('indicator')) {
+    storybookGroup = 'Indicators';
+  } else if (componentType.includes('instrument')) {
+    storybookGroup = 'Instruments';
+  } else if (componentType.includes('bars-graphs')) {
+    storybookGroup = 'Bars and Graphs';
   } else {
     storybookGroup = await question('Storybook group ');
   }
   const storybookTitle = await question('Storybook title ');
   const storybookFile = path.join(dir, `${componentName}.stories.ts`);
-  const content = `import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { Obc${name} } from './${componentName}.js';
+  const content = `import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import {Obc${name}} from './${componentName}.js';
 import './${componentName}.js';
 
 const meta: Meta<typeof Obc${name}> = {
   title: '${storybookGroup}/${storybookTitle}',
-  tags: ['6.0'],
-  component: "obc-${componentName}",
+  tags: ['autodocs', '6.0'],
+  component: 'obc-${componentName}',
   args: {
   },
 } satisfies Meta<Obc${name}>;
@@ -131,6 +143,6 @@ type Story = StoryObj<Obc${name}>;
 export const Primary: Story = {
   args: {
   },
-}`;
+};`;
   fs.writeFileSync(storybookFile, content);
 }

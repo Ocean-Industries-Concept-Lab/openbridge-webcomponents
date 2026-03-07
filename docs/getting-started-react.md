@@ -123,7 +123,7 @@ Then set palette by modifying the `html` tag in `index.html`
 <html lang="en" data-obc-theme="day"></html>
 ```
 
-The `data-obc-theme` can be bright, day, dusk or night. Changeing it will set the palette.
+The `data-obc-theme` can be bright, day, dusk or night. Changing it will set the palette.
 
 ## Set component sizing
 
@@ -133,7 +133,7 @@ We need to set the component sizing. Again modify `index.html`. But this time ad
 <body class="obc-component-size-regular"></body>
 ```
 
-This could be regular, normal, large or xl. It sets the component size of all decendent components.
+This could be `regular`, `medium`, `large`, or `xl`. It sets the component size of all descendant components.
 
 ## Load font
 
@@ -150,7 +150,7 @@ Next this file must be loaded by the css. So add it to index.css:
 
 You should now have a working top bar. Styled with OpenBridge styles.
 
-Try changeing the palette to night:
+Try changing the palette to night:
 
 ```html
 <html lang="en" data-obc-theme="night"></html>
@@ -171,10 +171,10 @@ body {
 }
 ```
 
-Note how the color is set by the `css custom property` `--container-backdrop-color`. Using it the background will change when changeing the palette attribute (or the palette colors are updated by the designers).
+Note how the color is set by the `css custom property` `--container-backdrop-color`. Using it the background will change when changing the palette attribute (or the palette colors are updated by the designers).
 
 The entire page should now be dark. Go back to day palette
-Try changeing the palette to night:
+Try changing the palette to night:
 
 ```html
 <html lang="en" data-obc-theme="day"></html>
@@ -333,7 +333,7 @@ function App() {
 export default App;
 ```
 
-Try changeing the palette.
+Try changing the palette.
 
 # Add a clock
 
@@ -952,7 +952,7 @@ Try to use the navigation menu.
 You may notice two problems:
 
 - The active page in nav menu is not updating
-- When changeing page, the entire page is reloaded.
+- When changing page, the entire page is reloaded.
 
 ## Use react router <Link>
 
