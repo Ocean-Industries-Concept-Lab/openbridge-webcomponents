@@ -1,0 +1,402 @@
+* {
+  box-sizing: border-box;
+}
+
+/* === Wrapper === */
+
+.aton-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Standard size types */
+.type-indicator,
+.type-regular,
+.type-aton,
+.type-n-up {
+  width: var(--maneuvering-components-poi-button-touch-target, 48px);
+  height: var(--maneuvering-components-poi-button-touch-target, 48px);
+}
+
+/* Large size types */
+.type-large,
+.type-n-up-large {
+  width: var(--maneuvering-components-poi-button-large-touch-target, 64px);
+  height: var(--maneuvering-components-poi-button-large-touch-target, 64px);
+}
+
+/* ==========================================================================
+   Non-indicator, non-aton types (Regular, Large, NUp, NUpLarge)
+   — delegate to inner obc-poi-object, override CSS custom properties
+   ========================================================================== */
+
+.style-green obc-poi-object {
+  --overlay-container-background-color: var(
+    --overlay-navigation-green-primary-color
+  );
+  --overlay-border-outline-color: var(
+    --overlay-navigation-green-secondary-color
+  );
+  --element-neutral-color: var(
+    --overlay-navigation-green-on-primary-color,
+    #005f43
+  );
+  --element-active-color: var(
+    --overlay-navigation-green-on-primary-color,
+    #005f43
+  );
+  --indicator-stroke-color: var(--overlay-navigation-green-primary-color);
+}
+
+.style-red obc-poi-object {
+  --overlay-container-background-color: var(
+    --overlay-navigation-red-primary-color
+  );
+  --overlay-border-outline-color: var(--overlay-navigation-red-secondary-color);
+  --element-neutral-color: var(
+    --overlay-navigation-red-on-primary-color,
+    #863d3c
+  );
+  --element-active-color: var(
+    --overlay-navigation-red-on-primary-color,
+    #863d3c
+  );
+  --indicator-stroke-color: var(--overlay-navigation-red-primary-color);
+}
+
+.style-yellow obc-poi-object {
+  --overlay-container-background-color: var(
+    --overlay-navigation-yellow-primary-color
+  );
+  --overlay-border-outline-color: var(
+    --overlay-navigation-yellow-secondary-color
+  );
+  --element-neutral-color: var(
+    --overlay-navigation-yellow-on-primary-color,
+    #635200
+  );
+  --element-active-color: var(
+    --overlay-navigation-yellow-on-primary-color,
+    #635200
+  );
+  --indicator-stroke-color: var(--overlay-navigation-yellow-primary-color);
+}
+
+/* Indicator type: flip fill to primary (light), stroke to on-primary (dark) */
+.type-indicator.style-green obc-poi-object {
+  --element-neutral-color: var(--overlay-navigation-green-primary-color);
+  --element-active-color: var(--overlay-navigation-green-primary-color);
+  --indicator-stroke-color: var(
+    --overlay-navigation-green-on-primary-color,
+    #005f43
+  );
+}
+
+.type-indicator.style-red obc-poi-object {
+  --element-neutral-color: var(--overlay-navigation-red-primary-color);
+  --element-active-color: var(--overlay-navigation-red-primary-color);
+  --indicator-stroke-color: var(
+    --overlay-navigation-red-on-primary-color,
+    #863d3c
+  );
+}
+
+.type-indicator.style-yellow obc-poi-object {
+  --element-neutral-color: var(--overlay-navigation-yellow-primary-color);
+  --element-active-color: var(--overlay-navigation-yellow-primary-color);
+  --indicator-stroke-color: var(
+    --overlay-navigation-yellow-on-primary-color,
+    #635200
+  );
+}
+
+/* Indicator static: revert fill to on-primary (dark) since stroke is removed */
+.type-indicator.state-static-unchecked.style-green obc-poi-object,
+.type-indicator.state-static-checked.style-green obc-poi-object {
+  --element-neutral-color: var(
+    --overlay-navigation-green-on-primary-color,
+    #005f43
+  );
+  --element-active-color: var(
+    --overlay-navigation-green-on-primary-color,
+    #005f43
+  );
+}
+
+.type-indicator.state-static-unchecked.style-red obc-poi-object,
+.type-indicator.state-static-checked.style-red obc-poi-object {
+  --element-neutral-color: var(
+    --overlay-navigation-red-on-primary-color,
+    #863d3c
+  );
+  --element-active-color: var(
+    --overlay-navigation-red-on-primary-color,
+    #863d3c
+  );
+}
+
+.type-indicator.state-static-unchecked.style-yellow obc-poi-object,
+.type-indicator.state-static-checked.style-yellow obc-poi-object {
+  --element-neutral-color: var(
+    --overlay-navigation-yellow-on-primary-color,
+    #635200
+  );
+  --element-active-color: var(
+    --overlay-navigation-yellow-on-primary-color,
+    #635200
+  );
+}
+
+/* Alert states: use global background for the inner poi-object */
+.is-alert obc-poi-object {
+  --overlay-container-background-color: var(
+    --overlay-container-global-color,
+    #fcfcfc
+  );
+}
+
+/* ==========================================================================
+   AtoN Diamond Type — custom rendering (no obc-poi-object)
+   ========================================================================== */
+
+.aton-diamond-frame {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Diamond background */
+.aton-diamond-background {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  transform: rotate(45deg);
+  border-radius: var(
+    --maneuvering-components-poi-button-border-radius-square,
+    6px
+  );
+  background-color: var(--overlay-container-background-color);
+  border: 1px solid var(--overlay-border-outline-color);
+  overflow: hidden;
+}
+
+/* Diamond color styles */
+.style-green .aton-diamond-background {
+  background-color: var(--overlay-navigation-green-primary-color);
+  border-color: var(--overlay-navigation-green-secondary-color);
+}
+
+.style-red .aton-diamond-background {
+  background-color: var(--overlay-navigation-red-primary-color);
+  border-color: var(--overlay-navigation-red-secondary-color);
+}
+
+.style-yellow .aton-diamond-background {
+  background-color: var(--overlay-navigation-yellow-primary-color);
+  border-color: var(--overlay-navigation-yellow-secondary-color);
+}
+
+/* Diamond static state — regular/white switches to flat background */
+.state-static-unchecked.style-regular .aton-diamond-background,
+.state-static-checked.style-regular .aton-diamond-background {
+  background-color: var(--normal-enabled-background-color);
+  border-color: var(--normal-enabled-border-color);
+}
+
+/* Diamond overlapped state — smaller diamond, hidden icon */
+.state-overlapped .aton-diamond-background {
+  width: 28px;
+  height: 28px;
+}
+
+.state-overlapped .aton-icon-container {
+  opacity: 0;
+}
+
+/* Diamond alert state background */
+.is-alert .aton-diamond-background {
+  background-color: var(--overlay-container-global-color, #fcfcfc);
+}
+
+/* Diamond icon container */
+.aton-icon-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--maneuvering-components-poi-button-icon-size, 24px);
+  height: var(--maneuvering-components-poi-button-icon-size, 24px);
+  z-index: 1;
+}
+
+/* Diamond icon — default uses element-neutral-color */
+.aton-icon-container ::slotted(*) {
+  width: 100%;
+  height: 100%;
+  color: var(--element-neutral-color);
+  --element-active-color: var(--element-neutral-color);
+}
+
+/* Diamond icon — colored styles always use on-primary-color regardless of state */
+.style-green .aton-icon-container ::slotted(*) {
+  color: var(--overlay-navigation-green-on-primary-color, #005f43);
+  --element-active-color: var(
+    --overlay-navigation-green-on-primary-color,
+    #005f43
+  );
+}
+
+.style-red .aton-icon-container ::slotted(*) {
+  color: var(--overlay-navigation-red-on-primary-color, #863d3c);
+  --element-active-color: var(
+    --overlay-navigation-red-on-primary-color,
+    #863d3c
+  );
+}
+
+.style-yellow .aton-icon-container ::slotted(*) {
+  color: var(--overlay-navigation-yellow-on-primary-color, #635200);
+  --element-active-color: var(
+    --overlay-navigation-yellow-on-primary-color,
+    #635200
+  );
+}
+
+/* Diamond icon — regular/white checked/activated switches to active color */
+.state-checked.style-regular .aton-icon-container ::slotted(*),
+.state-static-checked.style-regular .aton-icon-container ::slotted(*),
+.state-activated.style-regular .aton-icon-container ::slotted(*) {
+  color: var(--element-active-color);
+  --element-active-color: inherit;
+}
+
+/* ==========================================================================
+   Alert Frame — shared across all types
+   ========================================================================== */
+
+.alert-frame {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Round alert frame for regular/indicator/large */
+.type-regular .alert-frame,
+.type-indicator .alert-frame {
+  inset: 6px;
+}
+
+.type-large .alert-frame {
+  inset: 8px;
+}
+
+.alert-frame-background {
+  position: absolute;
+  inset: 0;
+  border: 5px solid var(--alert-alarm-outline-color);
+  border-radius: var(
+    --maneuvering-components-poi-button-border-radius-round,
+    1000px
+  );
+}
+
+.alert-frame-foreground {
+  position: absolute;
+  inset: -2.5px;
+  border: 4px solid var(--alert-alarm-color);
+  border-radius: var(
+    --maneuvering-components-poi-button-border-radius-round,
+    1000px
+  );
+}
+
+/* N-up square alert frame */
+.type-n-up .alert-frame {
+  width: var(--maneuvering-components-poi-button-visual-target-square, 32px);
+  height: var(--maneuvering-components-poi-button-visual-target-square, 32px);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  inset: auto;
+}
+
+.type-n-up-large .alert-frame {
+  width: var(
+    --maneuvering-components-poi-button-large-visual-target-square,
+    48px
+  );
+  height: var(
+    --maneuvering-components-poi-button-large-visual-target-square,
+    48px
+  );
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  inset: auto;
+}
+
+.type-n-up .alert-frame-background,
+.type-n-up-large .alert-frame-background {
+  border-radius: var(
+    --maneuvering-components-poi-button-border-radius-square,
+    6px
+  );
+}
+
+.type-n-up .alert-frame-foreground,
+.type-n-up-large .alert-frame-foreground {
+  border-radius: var(
+    --maneuvering-components-poi-button-border-radius-square,
+    6px
+  );
+}
+
+/* AtoN diamond alert frame — rotated 45deg */
+.type-aton .alert-frame {
+  width: 48px;
+  height: 48px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  inset: auto;
+}
+
+.type-aton .alert-frame-background {
+  border-radius: var(
+    --maneuvering-components-poi-button-border-radius-square,
+    6px
+  );
+}
+
+.type-aton .alert-frame-foreground {
+  border-radius: var(
+    --maneuvering-components-poi-button-border-radius-square,
+    6px
+  );
+}
+
+/* Caution state colors */
+.state-caution .alert-frame-background {
+  border-color: var(--alert-caution-outline-color);
+}
+
+.state-caution .alert-frame-foreground {
+  border-color: var(--alert-caution-color);
+}
+
+/* Warning state colors */
+.state-warning .alert-frame-background {
+  border-color: var(--alert-warning-outline-color);
+}
+
+.state-warning .alert-frame-foreground {
+  border-color: var(--alert-warning-color);
+}

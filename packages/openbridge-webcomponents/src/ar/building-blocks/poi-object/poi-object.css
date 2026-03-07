@@ -278,11 +278,24 @@
 
 /* Indicator type icon stroke outline */
 .is-indicator .icon-container ::slotted(*) {
-  stroke: rgb(255, 255, 255);
-  stroke-width: 2px;
+  stroke: var(--indicator-stroke-color, rgb(255, 255, 255));
+  stroke-width: var(--indicator-stroke-width, 2px);
   stroke-linejoin: round;
   paint-order: stroke fill;
-  --element-active-inverted-color: rgb(255, 255, 255);
+  overflow: visible;
+  --element-active-inverted-color: var(
+    --indicator-stroke-color,
+    rgb(255, 255, 255)
+  );
+}
+
+/* Static and overlapped indicators lose the stroke outline */
+.is-indicator.is-static .icon-container ::slotted(*),
+.is-indicator.is-overlapped .icon-container ::slotted(*) {
+  stroke: none;
+  stroke-width: 0;
+  paint-order: normal;
+  overflow: hidden;
 }
 
 .is-indicator.has-placeholder-icon .indicator-placeholder-fill {
