@@ -471,6 +471,7 @@ export class ObcPoiData extends LitElement {
         .targetOffsetX=${this.targetOffsetX}
         .boxWidth=${this.boxWidth}
         .boxHeight=${this.boxHeight}
+        exportparts="icon"
       >
         ${this.hasHeader
           ? html`<slot name="header" slot="header"></slot>`
