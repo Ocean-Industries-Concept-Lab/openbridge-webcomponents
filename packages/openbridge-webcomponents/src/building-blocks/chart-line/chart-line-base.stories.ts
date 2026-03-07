@@ -665,7 +665,7 @@ export const ExternalScalesAllSides: Story = {
     },
     // External scale controls (vertical/left)
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
-    vScaleHideLabels: {
+    vScaleShowLabels: {
       control: 'boolean',
       description: 'Vertical scale: hide labels',
     },
@@ -704,7 +704,7 @@ export const ExternalScalesAllSides: Story = {
       control: 'boolean',
       description: 'Horizontal scale: show bar',
     },
-    hScaleHideLabels: {
+    hScaleShowLabels: {
       control: 'boolean',
       description: 'Horizontal scale: hide labels',
     },
@@ -747,7 +747,7 @@ export const ExternalScalesAllSides: Story = {
     priority: Priority.enhanced,
     // Vertical scale defaults
     vScaleHasBar: true,
-    vScaleHideLabels: false,
+    vScaleShowLabels: true,
     vScaleHasAdvice: true,
     vScaleFillMode: 'fill',
     vScaleAdvicePosition: 'inner',
@@ -757,7 +757,7 @@ export const ExternalScalesAllSides: Story = {
     vScaleFillMax: 5,
     // Horizontal scale defaults
     hScaleHasBar: true,
-    hScaleHideLabels: false,
+    hScaleShowLabels: true,
     hScaleHasAdvice: true,
     hScaleFillMode: 'tint',
     hScaleAdvicePosition: 'inner',
@@ -786,7 +786,7 @@ export const ExternalScalesAllSides: Story = {
         .height=${_args.height}
         .side=${'left'}
         .hasScale=${true}
-        .hideLabels=${_args.vScaleHideLabels}
+        .showLabels=${_args.vScaleShowLabels}
         .hasBar=${_args.vScaleHasBar}
         .fillMode=${_args.vScaleFillMode === 'fill'
           ? FillMode.fill
@@ -818,7 +818,7 @@ export const ExternalScalesAllSides: Story = {
         .height=${_args.height}
         .side=${'right'}
         .hasScale=${true}
-        .hideLabels=${_args.vScaleHideLabels}
+        .showLabels=${_args.vScaleShowLabels}
         .hasBar=${_args.vScaleHasBar}
         .fillMode=${_args.vScaleFillMode === 'fill'
           ? FillMode.fill
@@ -850,7 +850,7 @@ export const ExternalScalesAllSides: Story = {
         .width=${_args.width}
         .side=${'bottom'}
         .hasScale=${true}
-        .hideLabels=${_args.hScaleHideLabels}
+        .showLabels=${_args.hScaleShowLabels}
         .hasBar=${_args.hScaleHasBar}
         .fillMode=${_args.hScaleFillMode === 'fill'
           ? FillMode.fill
@@ -882,7 +882,7 @@ export const ExternalScalesAllSides: Story = {
         .width=${_args.width}
         .side=${'top'}
         .hasScale=${true}
-        .hideLabels=${_args.hScaleHideLabels}
+        .showLabels=${_args.hScaleShowLabels}
         .hasBar=${_args.hScaleHasBar}
         .fillMode=${_args.hScaleFillMode === 'fill'
           ? FillMode.fill
@@ -932,7 +932,7 @@ export const ExternalScalesMinimal: Story = {
     fillMode: AreaFillMode.threshold,
     showPoints: true,
     priority: Priority.enhanced,
-    hideLabels: false,
+    showLabels: true,
   },
   render: (_args) => html`
     <obc-area-graph
@@ -955,7 +955,7 @@ export const ExternalScalesMinimal: Story = {
         .height=${192}
         .side=${'right'}
         .hasScale=${true}
-        .hideLabels=${_args.hideLabels}
+        .showLabels=${_args.showLabels}
         .hasBar=${false}
         .primaryTickmarkInterval=${2}
         .secondaryTickmarkInterval=${1}
@@ -968,7 +968,7 @@ export const ExternalScalesMinimal: Story = {
         .width=${192}
         .side=${'bottom'}
         .hasScale=${true}
-        .hideLabels=${_args.hideLabels}
+        .showLabels=${_args.showLabels}
         .hasBar=${false}
         .primaryTickmarkInterval=${2}
         .secondaryTickmarkInterval=${1}

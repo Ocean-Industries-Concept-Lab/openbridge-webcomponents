@@ -54,7 +54,7 @@ const meta: Meta = {
       control: {type: 'select'},
       options: Object.values(FrameStyle),
     },
-    hideLabels: {control: {type: 'boolean'}},
+    showLabels: {control: {type: 'boolean'}},
     hasBar: {control: {type: 'boolean'}},
     scaleBackground: {control: {type: 'boolean'}},
     borderRadiusPosition: {
@@ -73,7 +73,7 @@ const meta: Meta = {
     setpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
     newSetpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
     atSetpoint: {control: {type: 'boolean'}},
-    disableAutoAtSetpoint: {control: {type: 'boolean'}},
+    autoAtSetpoint: {control: {type: 'boolean'}},
     autoAtSetpointDeadband: {
       control: {type: 'number', min: 0, max: 10, step: 0.5},
     },
@@ -103,7 +103,7 @@ const meta: Meta = {
     tertiaryTickmarkInterval: undefined,
     scaleType: ScaleType.regular,
     frameStyle: FrameStyle.regular,
-    hideLabels: false,
+    showLabels: true,
     hasBar: false,
     scaleBackground: false,
     borderRadiusPosition: undefined,
@@ -116,7 +116,7 @@ const meta: Meta = {
     setpoint: undefined,
     newSetpoint: undefined,
     atSetpoint: false,
-    disableAutoAtSetpoint: false,
+    autoAtSetpoint: true,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
     state: 'active',
@@ -137,7 +137,7 @@ const meta: Meta = {
       .tertiaryTickmarkInterval=${args.tertiaryTickmarkInterval}
       .scaleType=${args.scaleType}
       .frameStyle=${args.frameStyle}
-      .hideLabels=${args.hideLabels}
+      .showLabels=${args.showLabels}
       .hasBar=${args.hasBar}
       .scaleBackground=${args.scaleBackground}
       .borderRadiusPosition=${args.borderRadiusPosition}
@@ -149,7 +149,7 @@ const meta: Meta = {
       .setpoint=${args.setpoint}
       .newSetpoint=${args.newSetpoint}
       .atSetpoint=${args.atSetpoint}
-      .disableAutoAtSetpoint=${args.disableAutoAtSetpoint}
+      .autoAtSetpoint=${args.autoAtSetpoint}
       .autoAtSetpointDeadband=${args.autoAtSetpointDeadband}
       .setpointAtZeroDeadband=${args.setpointAtZeroDeadband}
       .state=${args.state}
@@ -760,7 +760,7 @@ export const ChartIntegrationBottom: Story = {
       control: 'boolean',
       description: 'Horizontal scale: show bar',
     },
-    hScaleHideLabels: {
+    hScaleShowLabels: {
       control: 'boolean',
       description: 'Horizontal scale: hide labels',
     },
@@ -806,7 +806,7 @@ export const ChartIntegrationBottom: Story = {
     height: 320,
     // Horizontal scale defaults
     hScaleHasBar: true,
-    hScaleHideLabels: false,
+    hScaleShowLabels: true,
     hScaleAdvices: true,
     hScaleFillMode: 'fill',
     hScaleAdvicePosition: 'inner',
@@ -835,7 +835,7 @@ export const ChartIntegrationBottom: Story = {
         .width=${_args.width}
         .side=${ExternalScaleSide.bottom}
         .hasScale=${true}
-        .hideLabels=${_args.hScaleHideLabels}
+        .showLabels=${_args.hScaleShowLabels}
         .hasBar=${_args.hScaleHasBar}
         .barThickness=${_args.hScaleBarThickness}
         .fillMode=${_args.hScaleFillMode === 'fill'
@@ -876,7 +876,7 @@ export const ChartIntegrationBottomBackground: Story = {
       control: 'boolean',
       description: 'Horizontal scale: show bar',
     },
-    hScaleHideLabels: {
+    hScaleShowLabels: {
       control: 'boolean',
       description: 'Horizontal scale: hide labels',
     },
@@ -922,7 +922,7 @@ export const ChartIntegrationBottomBackground: Story = {
     height: 320,
     // Horizontal scale defaults
     hScaleHasBar: true,
-    hScaleHideLabels: false,
+    hScaleShowLabels: true,
     hScaleAdvices: true,
     hScaleFillMode: 'fill',
     hScaleAdvicePosition: 'inner',
@@ -951,7 +951,7 @@ export const ChartIntegrationBottomBackground: Story = {
         .width=${_args.width}
         .side=${ExternalScaleSide.bottom}
         .hasScale=${true}
-        .hideLabels=${_args.hScaleHideLabels}
+        .showLabels=${_args.hScaleShowLabels}
         .hasBar=${_args.hScaleHasBar}
         .barThickness=${_args.hScaleBarThickness}
         .fillMode=${_args.hScaleFillMode === 'fill'

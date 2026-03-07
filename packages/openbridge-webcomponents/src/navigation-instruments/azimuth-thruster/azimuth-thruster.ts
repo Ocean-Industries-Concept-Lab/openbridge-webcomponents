@@ -34,7 +34,8 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
   @property({type: Boolean}) angleSetpointOverride: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
-  @property({type: Boolean}) disableAutoAtAngleSetpoint: boolean = false;
+  @property({type: Boolean, attribute: false}) autoAtAngleSetpoint: boolean =
+    true;
   @property({type: Number}) autoAtAngleSetpointDeadband: number = 2;
   @property({type: Boolean}) animateSetpoint: boolean = false;
   @property({type: Boolean}) detailedTickmarks: boolean = false;
@@ -47,7 +48,8 @@ export class ObcAzimuthThruster extends LitElement {
   atThrustSetpoint: boolean = false;
   @property({type: Number}) thrustSetpointAtZeroDeadband: number = 0.1;
   @property({type: Boolean}) thrustSetpointOverride: boolean = false;
-  @property({type: Boolean}) disableAutoAtThrustSetpoint: boolean = false;
+  @property({type: Boolean, attribute: false}) autoAtThrustSetpoint: boolean =
+    true;
   @property({type: Number}) autoAtThrustSetpointDeadband: number = 1;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
@@ -70,7 +72,7 @@ export class ObcAzimuthThruster extends LitElement {
       newSetpoint: this.newAngleSetpoint,
       atSetpoint: this.atAngleSetpoint,
       touching: this.touching,
-      disableAutoAtSetpoint: this.disableAutoAtAngleSetpoint,
+      autoAtSetpoint: this.autoAtAngleSetpoint,
       autoAtSetpointDeadband: this.autoAtAngleSetpointDeadband,
       setpointAtZeroDeadband: this.angleSetpointAtZeroDeadband,
       setpointOverride: this.angleSetpointOverride,
@@ -81,7 +83,7 @@ export class ObcAzimuthThruster extends LitElement {
       newSetpoint: this.newThrustSetpoint,
       touching: this.touching,
       atSetpoint: this.atThrustSetpoint,
-      disableAutoAtSetpoint: this.disableAutoAtThrustSetpoint,
+      autoAtSetpoint: this.autoAtThrustSetpoint,
       autoAtSetpointDeadband: this.autoAtThrustSetpointDeadband,
       setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
       setpointOverride: this.thrustSetpointOverride,
@@ -233,7 +235,7 @@ export class ObcAzimuthThruster extends LitElement {
                 singleDirection: false,
                 singleDirectionHalfSize: this.singleDirection,
                 tunnel: false,
-                autoAtSetpoint: !this.disableAutoAtThrustSetpoint,
+                autoAtSetpoint: this.autoAtThrustSetpoint,
                 autoSetpointDeadband: this.autoAtThrustSetpointDeadband,
                 setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
                 touching: this.touching,

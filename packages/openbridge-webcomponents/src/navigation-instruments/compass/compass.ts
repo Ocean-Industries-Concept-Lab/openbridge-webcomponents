@@ -77,7 +77,7 @@ export enum CompassDirection {
  * @property {number} courseOverGround - The current course over ground in degrees.
  * @property {number | null} headingSetpoint - The set point for the heading in degrees.
  * @property {boolean} atHeadingSetpoint - Indicates if the vessel is at the heading set point.
- * @property {boolean} disableAutoAtHeadingSetpoint - Disables automatic at heading set point calculation.
+ * @property {boolean} autoAtHeadingSetpoint - Enables automatic at heading set point calculation.
  * @property {number} autoAtHeadingSetpointDeadband - The deadband for the heading set point in degrees.
  * @property {boolean} touching - Indicates if the compass is being touched.
  * @property {Array<AngleAdvice>} headingAdvices - An array of angle advices for the compass.
@@ -102,7 +102,8 @@ export class ObcCompass extends LitElement {
   @property({type: Boolean}) atHeadingSetpoint: boolean = false;
   @property({type: Number}) headingSetpointAtZeroDeadband: number = 0.5;
   @property({type: Boolean}) headingSetpointOverride: boolean = false;
-  @property({type: Boolean}) disableAutoAtHeadingSetpoint: boolean = false;
+  @property({type: Boolean, attribute: false}) autoAtHeadingSetpoint: boolean =
+    true;
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
   @property({type: Boolean}) animateSetpoint: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
@@ -140,7 +141,7 @@ export class ObcCompass extends LitElement {
       newSetpoint: this.newHeadingSetpoint,
       atSetpoint: this.atHeadingSetpoint,
       touching: this.touching,
-      disableAutoAtSetpoint: this.disableAutoAtHeadingSetpoint,
+      autoAtSetpoint: this.autoAtHeadingSetpoint,
       autoAtSetpointDeadband: this.autoAtHeadingSetpointDeadband,
       setpointAtZeroDeadband: this.headingSetpointAtZeroDeadband,
       setpointOverride: this.headingSetpointOverride,

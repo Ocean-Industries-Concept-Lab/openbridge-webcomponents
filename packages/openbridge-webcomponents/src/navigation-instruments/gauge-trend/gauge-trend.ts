@@ -110,7 +110,7 @@ export {FillMode, ScaleType};
  *
  * Setpoint properties are inherited from {@link SetpointMixin}.
  * These are forwarded to the internal `obc-bar-vertical` scale:
- * `setpoint`, `newSetpoint`, `touching`, `atSetpoint`, `disableAutoAtSetpoint`,
+ * `setpoint`, `newSetpoint`, `touching`, `atSetpoint`, `autoAtSetpoint`,
  * `autoAtSetpointDeadband`, `setpointAtZeroDeadband`, `setpointOverride`.
  * See {@link SetpointMixinInterface} for full documentation.
  */
@@ -236,7 +236,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
     barVertical.newSetpoint = this.newSetpoint;
     barVertical.touching = this.touching;
     barVertical.atSetpoint = this.atSetpoint;
-    barVertical.disableAutoAtSetpoint = this.disableAutoAtSetpoint;
+    barVertical.autoAtSetpoint = this.autoAtSetpoint;
     barVertical.autoAtSetpointDeadband = this.autoAtSetpointDeadband;
     barVertical.setpointAtZeroDeadband = this.setpointAtZeroDeadband;
     barVertical.animateSetpoint = this.animateSetpoint;
@@ -403,7 +403,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
   primaryInterval?: number = undefined;
 
   // Setpoint properties (setpoint, newSetpoint, touching, atSetpoint,
-  // disableAutoAtSetpoint, autoAtSetpointDeadband, setpointAtZeroDeadband,
+  // autoAtSetpoint, autoAtSetpointDeadband, setpointAtZeroDeadband,
   // setpointOverride, computeAtSetpoint()) are provided by SetpointMixin.
   // See setpoint-mixin.ts for full docs.
 
@@ -507,7 +507,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
       changed.has('newSetpoint') ||
       changed.has('touching') ||
       changed.has('atSetpoint') ||
-      changed.has('disableAutoAtSetpoint') ||
+      changed.has('autoAtSetpoint') ||
       changed.has('autoAtSetpointDeadband') ||
       changed.has('setpointAtZeroDeadband') ||
       changed.has('setpointOverride') ||
