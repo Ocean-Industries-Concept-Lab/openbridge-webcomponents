@@ -50,6 +50,12 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
    * When undefined or <= 0, no secondary tickmarks are shown.
    */
   @property({type: Number}) secondaryTickmarkInterval: number | undefined = 10;
+  /**
+   * Interval for tertiary tickmarks in value units.
+   * When undefined or <= 0, no tertiary tickmarks are shown.
+   */
+  @property({type: Number}) tertiaryTickmarkInterval: number | undefined =
+    undefined;
   @property({type: String}) type: ObcGaugeRadialType =
     ObcGaugeRadialType.filled;
   @property({type: String}) needleType: ObcGaugeRadialType =
@@ -253,6 +259,40 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
         tickmarks.push({
           angle: this.getAngle(i),
           type: TickmarkType.secondary,
+        });
+      }
+    }
+
+    // Tertiary tickmarks — skip when undefined or <= 0 to prevent infinite loops
+    const tertiaryInterval = this.tertiaryTickmarkInterval;
+    if (
+      tertiaryInterval !== undefined &&
+      tertiaryInterval > 0 &&
+      Number.isFinite(tertiaryInterval)
+    ) {
+      const existingTickmarks = tickmarks.map((t) => t.angle);
+
+      for (let i = tertiaryInterval; i < this.maxValue; i += tertiaryInterval) {
+        if (existingTickmarks.includes(this.getAngle(i))) {
+          continue;
+        }
+        tickmarks.push({
+          angle: this.getAngle(i),
+          type: TickmarkType.tertiary,
+        });
+      }
+
+      for (
+        let i = -tertiaryInterval;
+        i > this.minValue;
+        i -= tertiaryInterval
+      ) {
+        if (existingTickmarks.includes(this.getAngle(i))) {
+          continue;
+        }
+        tickmarks.push({
+          angle: this.getAngle(i),
+          type: TickmarkType.tertiary,
         });
       }
     }

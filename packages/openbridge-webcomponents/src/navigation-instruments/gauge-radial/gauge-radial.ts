@@ -84,6 +84,12 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   @property({type: Boolean}) showLabels: boolean = false;
   @property({type: Number}) primaryTickmarkInterval = 50;
   @property({type: Number}) secondaryTickmarkInterval = 10;
+  /**
+   * Interval for tertiary tickmarks in value units.
+   * When undefined or <= 0, no tertiary tickmarks are shown.
+   */
+  @property({type: Number}) tertiaryTickmarkInterval: number | undefined =
+    undefined;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) type: ObcGaugeRadialType =
@@ -120,6 +126,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
         .showLabels=${this.showLabels}
         .primaryTickmarkInterval=${this.primaryTickmarkInterval}
         .secondaryTickmarkInterval=${this.secondaryTickmarkInterval}
+        .tertiaryTickmarkInterval=${this.tertiaryTickmarkInterval}
         .type=${this.type}
         .needleType=${this.type}
         .tickmarksInside=${this.tickmarksInside}
