@@ -52,9 +52,9 @@ We have made an [short introduction to the library](https://www.youtube.com/watc
 ## 🎨 CSS file for palettes
 
 The CSS file for the palettes is located at [packages/openbridge-webcomponents/dist/openbridge.css](packages/openbridge-webcomponents/dist/openbridge.css).
-The file is called `variables.css` and contains all the openbridge pallets (bright, day, dusk, night).
+The source file is `variables.css`, which is compiled into `openbridge.css` in the final package. It contains all the OpenBridge palettes (bright, day, dusk, night).
 It can be used to set the color theme of components.
-To select the pallet, set the `data-obc-theme` attribute on the `html` tag:
+To select the palette, set the `data-obc-theme` attribute on the `html` tag:
 
 ```html
 <html lang="en" data-obc-theme="day"></html>
@@ -66,18 +66,18 @@ The components for this project are implemented in the `packages/openbridge-webc
 
 ## 💾 Installation
 
-To use the components in your project, you can install the package from github package repo.
+To use the components in your project, you can install the package from GitHub package repo.
 
-Start by creating a classic personal access token in github
-Go to [github settings](https://github.com/settings/tokens/new) to make a classic token. Give the token the `read:packages` permission. Click "Generate token" and copy the token.
+Start by creating a classic personal access token in GitHub
+Go to [GitHub settings](https://github.com/settings/tokens/new) to make a classic token. Give the token the `read:packages` permission. Click "Generate token" and copy the token.
 
-Login into github package repo:
+Login into GitHub package repo:
 
 ```bash
 npm login --registry https://npm.pkg.github.com/ --scope=@ocean-industries-concept-lab
 ```
 
-Use our github username as username and past in the generated token as password.
+Use our GitHub username as username and paste in the generated token as password.
 
 You can now install the package:
 
@@ -97,7 +97,7 @@ npm install @ocean-industries-concept-lab/openbridge-webcomponents-vue
    ```javascript
    import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/openbridge.css";
    ```
-2. Select the pallet by setting the `data-obc-theme` attribute on the `html` tag:
+2. Select the palette by setting the `data-obc-theme` attribute on the `html` tag:
    ```html
    <html lang="en" data-obc-theme="day"></html>
    ```
@@ -105,7 +105,7 @@ npm install @ocean-industries-concept-lab/openbridge-webcomponents-vue
    ```html
    <body class="obc-component-size-regular"></body>
    ```
-   When the upgrade to OpenBridge 6.0 the size of each component can be modified individually by setting the class on each component. It can also be used to set the size of all components in a container.
+   After upgrading to OpenBridge 6.0, the size of each component can be modified individually by setting the class on each component. It can also be used to set the size of all components in a container.
 4. Install the Noto Sans font by using the attached `NotoSans.ttf` file. Add the following to your css:
 
    ```css

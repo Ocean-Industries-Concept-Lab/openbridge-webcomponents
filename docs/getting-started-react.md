@@ -28,18 +28,18 @@ This will start a development server, typically accessible at `http://localhost:
 
 ## Install OpenBridge web components
 
-To use the components in your project, you can install the package from github package repo.
+To use the components in your project, you can install the package from GitHub package repo.
 
-Start by creating a classic personal access token in github
-Go to [github settings](https://github.com/settings/tokens/new) to make a classic token. Give the token the `read:packages` permission. Click "Generate token" and copy the token.
+Start by creating a classic personal access token in GitHub
+Go to [GitHub settings](https://github.com/settings/tokens/new) to make a classic token. Give the token the `read:packages` permission. Click "Generate token" and copy the token.
 
-Login into github package repo:
+Login into GitHub package repo:
 
 ```bash
 npm login --registry https://npm.pkg.github.com/ --scope=@ocean-industries-concept-lab
 ```
 
-Use our github username as username and past in the generated token as password.
+Use our GitHub username as username and past in the generated token as password.
 
 You can now install the package:
 
@@ -300,7 +300,7 @@ function App() {
     setShowBrillianceMenu(!showBrillianceMenu);
   };
 
-  const handlePalleteChange = (e: ObcPaletteChangeEvent) => {
+  const handlePaletteChange = (e: ObcPaletteChangeEvent) => {
     document.documentElement.setAttribute("data-obc-theme", e.detail.value);
     setPalette(e.detail.value);
   };
@@ -319,7 +319,7 @@ function App() {
       <main>
         {showBrillianceMenu && (
           <ObcBrillianceMenu
-            onPaletteChanged={handlePalleteChange}
+            onPaletteChanged={handlePaletteChange}
             palette={palette}
             hideBrightness
             className="brilliance"
@@ -355,7 +355,7 @@ function App() {
   const [isBrillianceMenuOpen, setIsBrillianceMenuOpen] = useState(false);
   const [palette, setPalette] = useState(ObcPalette.day);
 
-  const handlePalleteChange = (e: ObcPaletteChangeEvent) => {
+  const handlePaletteChange = (e: ObcPaletteChangeEvent) => {
     document.documentElement.setAttribute("data-obc-theme", e.detail.value);
     setPalette(e.detail.value);
   };
@@ -381,7 +381,7 @@ function App() {
         {isBrillianceMenuOpen && (
           <ObcBrillianceMenu
             className="brilliance"
-            onPaletteChanged={handlePalleteChange}
+            onPaletteChanged={handlePaletteChange}
             palette={palette}
           />
         )}
@@ -448,7 +448,7 @@ function App() {
   const [isBrillianceMenuOpen, setIsBrillianceMenuOpen] = useState(false);
   const [palette, setPalette] = useState(ObcPalette.day);
 
-  const handlePalleteChange = (e: ObcPaletteChangeEvent) => {
+  const handlePaletteChange = (e: ObcPaletteChangeEvent) => {
     document.documentElement.setAttribute("data-obc-theme", e.detail.value);
     setPalette(e.detail.value);
   };
@@ -475,7 +475,7 @@ function App() {
         {isBrillianceMenuOpen && (
           <ObcBrillianceMenu
             className="brilliance"
-            onPaletteChanged={handlePalleteChange}
+            onPaletteChanged={handlePaletteChange}
             palette={palette}
           />
         )}
