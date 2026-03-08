@@ -41,7 +41,7 @@ export class ObcMainEngine extends LitElement {
     const thrustAtSetpoint = atSetpoint(this.thrust, this.thrustSetpoint, {
       atSetpoint: this.atThrustSetpoint,
       autoAtSetpoint: this.autoAtThrustSetpoint,
-      autoSetpointDeadband: this.autoAtThrustSetpointDeadband,
+      autoAtSetpointDeadband: this.autoAtThrustSetpointDeadband,
       touching: this.thrustTouching,
     });
     const cThrust = thrusterColors(
@@ -55,7 +55,7 @@ export class ObcMainEngine extends LitElement {
     const speedAtSetpoint = atSetpoint(this.speed, this.speedSetpoint, {
       atSetpoint: this.atSpeedSetpoint,
       autoAtSetpoint: this.autoAtSpeedSetpoint,
-      autoSetpointDeadband: this.autoAtSpeedSetpointDeadband,
+      autoAtSetpointDeadband: this.autoAtSpeedSetpointDeadband,
       touching: this.speedTouching,
     });
     const cSpeed = thrusterColors(

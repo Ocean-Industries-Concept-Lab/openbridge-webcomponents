@@ -264,7 +264,7 @@ export class ObcAzimuthThruster extends LitElement {
                 singleDirectionHalfSize: this.singleDirection,
                 tunnel: false,
                 autoAtSetpoint: this.autoAtThrustSetpoint,
-                autoSetpointDeadband: this.autoAtThrustSetpointDeadband,
+                autoAtSetpointDeadband: this.autoAtThrustSetpointDeadband,
                 setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
                 touching: this.touching,
                 advices: this.thrustAdvices,

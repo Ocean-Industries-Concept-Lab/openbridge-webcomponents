@@ -9,7 +9,7 @@ export function atSetpoint(
   setpoint: number | undefined,
   options: {
     autoAtSetpoint: boolean;
-    autoSetpointDeadband: number;
+    autoAtSetpointDeadband: number;
     touching: boolean;
     atSetpoint: boolean;
   }
@@ -19,7 +19,7 @@ export function atSetpoint(
   }
 
   if (options.autoAtSetpoint && setpoint !== undefined) {
-    return Math.abs(thrust - setpoint) < options.autoSetpointDeadband;
+    return Math.abs(thrust - setpoint) < options.autoAtSetpointDeadband;
   }
 
   return options.atSetpoint;
