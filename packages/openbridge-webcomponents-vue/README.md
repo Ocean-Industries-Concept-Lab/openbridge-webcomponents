@@ -82,7 +82,7 @@ See also the [vue demo](https://github.com/Ocean-Industries-Concept-Lab/openbrid
 4. Import the desired components in your project, for instance:
 
    ```javascript
-   import ObcTopBar from "@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/top-bar/ObcTopBar";
+   import ObcTopBar from "@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/top-bar/ObcTopBar.vue";
    ```
 
 5. Use the components in your project:

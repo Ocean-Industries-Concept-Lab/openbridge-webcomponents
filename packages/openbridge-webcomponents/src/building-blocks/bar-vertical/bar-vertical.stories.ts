@@ -781,7 +781,7 @@ Sometimes you need to control the "at setpoint" visual state directly, independe
 
 #### How it works
 
-- Set \`autoAtSetpoint={true}\` to disable automatic calculation
+- Set \`autoAtSetpoint={false}\` to disable automatic calculation (manual mode)
 - Control marker size via \`atSetpoint={true/false}\` property directly
 - The component **ignores** \`value\`, \`setpoint\`, and \`autoAtSetpointDeadband\`
 
@@ -796,7 +796,7 @@ Sometimes you need to control the "at setpoint" visual state directly, independe
 - Toggle \`atSetpoint\` to **true** → Marker **shrinks to 80%** even though value is far from setpoint
 - Toggle \`atSetpoint\` to **false** → Marker **grows to 100%**
 - Change \`value\` to **70** (match setpoint) → Marker size **doesn't change** (manual mode ignores values)
-- Set \`autoAtSetpoint={false}\` → Switch back to auto mode (marker immediately reflects actual distance)`,
+- Set \`autoAtSetpoint={true}\` → Switch back to auto mode (marker immediately reflects actual distance)`,
       },
     },
   },
@@ -1065,7 +1065,7 @@ export const ChartIntegrationRight: Story = {
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
     vScaleShowLabels: {
       control: 'boolean',
-      description: 'Vertical scale: hide labels',
+      description: 'Vertical scale: show labels',
     },
     vScaleAdvices: {
       control: 'object',
@@ -1176,7 +1176,7 @@ export const ChartIntegrationRightBackground: Story = {
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
     vScaleShowLabels: {
       control: 'boolean',
-      description: 'Vertical scale: hide labels',
+      description: 'Vertical scale: show labels',
     },
     vScaleAdvices: {
       control: 'object',
@@ -1301,7 +1301,7 @@ export const GaugeTrend: Story = {
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
     vScaleShowLabels: {
       control: 'boolean',
-      description: 'Vertical scale: hide labels',
+      description: 'Vertical scale: show labels',
     },
     vScaleAdvices: {
       control: 'object',

@@ -36,7 +36,7 @@ Go to [github settings](https://github.com/settings/tokens/new) to make a classi
 Login into github package repo:
 
 ```bash
-npm login --registry https://npm.pkg.github.com/ --scope=ocean-industries-concept-lab
+npm login --registry https://npm.pkg.github.com/ --scope=@ocean-industries-concept-lab
 ```
 
 Use our github username as username and past in the generated token as password.
@@ -828,7 +828,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 ```
 

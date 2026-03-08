@@ -762,7 +762,7 @@ export const ChartIntegrationBottom: Story = {
     },
     hScaleShowLabels: {
       control: 'boolean',
-      description: 'Horizontal scale: hide labels',
+      description: 'Horizontal scale: show labels',
     },
     hScaleAdvices: {
       control: 'boolean',
@@ -878,7 +878,7 @@ export const ChartIntegrationBottomBackground: Story = {
     },
     hScaleShowLabels: {
       control: 'boolean',
-      description: 'Horizontal scale: hide labels',
+      description: 'Horizontal scale: show labels',
     },
     hScaleAdvices: {
       control: 'boolean',

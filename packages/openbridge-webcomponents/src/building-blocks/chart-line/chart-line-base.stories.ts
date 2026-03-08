@@ -667,7 +667,7 @@ export const ExternalScalesAllSides: Story = {
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
     vScaleShowLabels: {
       control: 'boolean',
-      description: 'Vertical scale: hide labels',
+      description: 'Vertical scale: show labels',
     },
     vScaleHasAdvice: {
       control: 'boolean',
@@ -706,7 +706,7 @@ export const ExternalScalesAllSides: Story = {
     },
     hScaleShowLabels: {
       control: 'boolean',
-      description: 'Horizontal scale: hide labels',
+      description: 'Horizontal scale: show labels',
     },
     hScaleHasAdvice: {
       control: 'boolean',

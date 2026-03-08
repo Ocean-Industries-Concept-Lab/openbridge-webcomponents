@@ -127,7 +127,11 @@ const openbridgePlugin = {
             // accepted escape hatch for true-default booleans (see AGENTS.md § 2).
             const property =
               propertyDecorator.expression?.arguments[0]?.properties?.find(
-                (p) => p.key.name === 'attribute'
+                (p) =>
+                  p.type === 'Property' &&
+                  !p.computed &&
+                  p.key.type === 'Identifier' &&
+                  p.key.name === 'attribute'
               );
             const isBuildingBlock = context
               .getFilename()

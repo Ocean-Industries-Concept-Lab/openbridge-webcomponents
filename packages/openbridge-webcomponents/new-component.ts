@@ -40,23 +40,23 @@ const files = await multiselect('Create files', {
 const componentName = name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
 
 let parentDir: string;
-if (componentType.includes('ui')) {
+if (componentType === 'ui (input, label, tables)') {
   parentDir = 'components';
-} else if (componentType.includes('indicator')) {
+} else if (componentType === 'indicator (bearing, speed, rot)') {
   parentDir = 'navigation-instruments';
-} else if (componentType.includes('instrument')) {
+} else if (componentType === 'instrument (compass, azimuth)') {
   parentDir = 'navigation-instruments';
-} else if (componentType.includes('ar')) {
+} else if (componentType === 'ar') {
   parentDir = 'ar';
-} else if (componentType.includes('automation')) {
+} else if (componentType === 'automation') {
   parentDir = 'automation';
-} else if (componentType.includes('page')) {
+} else if (componentType === 'page') {
   parentDir = 'pages';
-} else if (componentType.includes('building-block')) {
+} else if (componentType === 'building-block') {
   parentDir = 'building-blocks';
-} else if (componentType.includes('integration system')) {
+} else if (componentType === 'integration system') {
   parentDir = 'integration-systems';
-} else if (componentType.includes('bars-graphs')) {
+} else if (componentType === 'bars-graphs (line, area, donut, pie)') {
   parentDir = 'bars-graphs';
 } else {
   throw new Error('Invalid component type');
@@ -104,21 +104,21 @@ if (files.includes('css')) {
 // Create storybook file
 if (files.includes('storybook')) {
   let storybookGroup = '';
-  if (componentType.includes('ar')) {
+  if (componentType === 'ar') {
     storybookGroup = 'AR';
-  } else if (componentType.includes('automation')) {
+  } else if (componentType === 'automation') {
     storybookGroup = 'Automation';
-  } else if (componentType.includes('building-block')) {
+  } else if (componentType === 'building-block') {
     storybookGroup = 'Building Blocks';
-  } else if (componentType.includes('page')) {
+  } else if (componentType === 'page') {
     storybookGroup = 'Pages';
-  } else if (componentType.includes('integration system')) {
+  } else if (componentType === 'integration system') {
     storybookGroup = 'Integration Systems';
-  } else if (componentType.includes('indicator')) {
+  } else if (componentType === 'indicator (bearing, speed, rot)') {
     storybookGroup = 'Indicators';
-  } else if (componentType.includes('instrument')) {
+  } else if (componentType === 'instrument (compass, azimuth)') {
     storybookGroup = 'Instruments';
-  } else if (componentType.includes('bars-graphs')) {
+  } else if (componentType === 'bars-graphs (line, area, donut, pie)') {
     storybookGroup = 'Bars and Graphs';
   } else {
     storybookGroup = await question('Storybook group ');

@@ -263,7 +263,7 @@ export const Playground: Story = {
 };
 
 export const CheckboxCells: Story = {
-  tags: ['skip-snapshots'],
+  tags: ['!snapshot'],
   args: {
     columns: [
       {label: 'Name', key: 'name'},
@@ -412,7 +412,7 @@ export const HorizontalBarCells: Story = {
 };
 
 export const SelectableTable: Story = {
-  tags: ['skip-snapshots'],
+  tags: ['!snapshot'],
   args: {
     selectable: true,
     columns: [

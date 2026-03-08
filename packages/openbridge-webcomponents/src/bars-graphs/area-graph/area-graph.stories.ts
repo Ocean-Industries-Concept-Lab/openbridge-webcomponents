@@ -190,7 +190,7 @@ export const SemitransparentExternalScales: Story = {
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
     vScaleShowLabels: {
       control: 'boolean',
-      description: 'Vertical scale: hide labels',
+      description: 'Vertical scale: show labels',
     },
     vScaleAdvices: {
       control: 'boolean',
@@ -229,7 +229,7 @@ export const SemitransparentExternalScales: Story = {
     },
     hScaleShowLabels: {
       control: 'boolean',
-      description: 'Horizontal scale: hide labels',
+      description: 'Horizontal scale: show labels',
     },
     hScaleAdvices: {
       control: 'boolean',

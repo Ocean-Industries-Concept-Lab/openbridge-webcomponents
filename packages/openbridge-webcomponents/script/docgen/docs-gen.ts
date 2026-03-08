@@ -55,14 +55,12 @@ enum CodePattern {
 
 function detectCodePattern(tsCode: string): CodePattern {
   const hasCustomElement = /@customElement\s*\(/.test(tsCode);
-  const hasClassDecl = /\bclass\s+\w+/.test(tsCode);
+  // Match named classes (`class Foo`) and anonymous class expressions (`class extends`)
+  const hasClassDecl = /\bclass\s+(\w+\s+)?extends\b/.test(tsCode);
   const hasAbstract = /\babstract\s+class\b/.test(tsCode);
 
   if (hasCustomElement) return CodePattern.concreteComponent;
-  if (
-    hasAbstract ||
-    (hasClassDecl && /extends\s+LitElement/.test(tsCode) && !hasCustomElement)
-  ) {
+  if (hasAbstract || hasClassDecl) {
     return CodePattern.abstractBaseClass;
   }
   return CodePattern.pureFunctionModule;
@@ -110,8 +108,10 @@ function patternInstructions(pattern: CodePattern): string {
 async function generateDocsFor(tsPath: string) {
   // 6a. Pull in main file + optional siblings
   const tsCode = await fs.readFile(tsPath, 'utf8');
-  const story = await readIf(tsPath.replace(/\.ts$/, '.stories.ts'));
-  const css = await readIf(tsPath.replace(/\.ts$/, '.css'));
+  const {dir, name, ext} = path.parse(tsPath);
+  const basePath = path.join(dir, name);
+  const story = await readIf(`${basePath}.stories.ts`);
+  const css = await readIf(`${basePath}.css`);
 
   // 6b. Detect code pattern to tailor the prompt
   const pattern = detectCodePattern(tsCode);
@@ -163,7 +163,7 @@ async function generateDocsFor(tsPath: string) {
 
   // 6f. Write output next to source (<name>.generated.ts)
   const newCode = chat.choices[0].message!.content!;
-  const generatedPath = tsPath.replace(/\.ts$/, '.generated.ts');
+  const generatedPath = `${basePath}.generated${ext}`;
   await fs.writeFile(generatedPath, newCode);
   console.log('  ✅ Wrote', generatedPath);
 }

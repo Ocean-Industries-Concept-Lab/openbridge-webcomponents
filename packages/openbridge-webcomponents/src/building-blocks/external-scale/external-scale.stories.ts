@@ -463,7 +463,7 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
     },
     autoAtSetpoint: {
       description:
-        'When false, at-setpoint is derived from value/setpoint and deadband.',
+        'When true, at-setpoint is derived from value/setpoint and deadband; when false, atSetpoint is used as a manual override.',
       control: {type: 'boolean'},
     },
     autoAtSetpointDeadband: {

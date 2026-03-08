@@ -209,7 +209,7 @@ export class ObcAzimuthThruster extends LitElement {
         tickmarks.push({
           angle: i,
           type: TickmarkType.tertiary,
-          color: 'var(--instrument-tick-mark-secondary-color)',
+          color: 'var(--instrument-tick-mark-tertiary-color)',
         });
         skipAngles.push(i);
       }

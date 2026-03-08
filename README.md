@@ -74,7 +74,7 @@ Go to [github settings](https://github.com/settings/tokens/new) to make a classi
 Login into github package repo:
 
 ```bash
-npm login --registry https://npm.pkg.github.com/ --scope=ocean-industries-concept-lab
+npm login --registry https://npm.pkg.github.com/ --scope=@ocean-industries-concept-lab
 ```
 
 Use our github username as username and past in the generated token as password.
@@ -215,38 +215,39 @@ See the [CONTRIBUTING.md](CONTRIBUTING.md) file for details on how to contribute
 ## 🤖 AI
 
 Code quality and visual precision are very important in this project (even half a pixel matters!). For that reason, try to avoid AI hallucinations as much as possible:
+
 - provide precise context (list all the file names, enums, examples, etc.)
 - ask the AI to read the files it is working on into memory (for broader exploration, let it use subagents)
 - instruct the AI to ask clarifying questions before it begins
 - use the latest AI models (the difference can be huge between a paid or latest model compared to free/older ones)
 - keep the AI on a short leash
 
-| Document | Description |
-|---|---|
-| [AGENTS.md](AGENTS.md) | Canonical rules for all AI coding assistants — coding standards, JSDoc, build commands, behavioral rules |
-| [.github/copilot-instructions.md](.github/copilot-instructions.md) | GitHub Copilot entry point (re-exports AGENTS.md) |
-| [.cursor/rules/comments.mdc](.cursor/rules/comments.mdc) | Full JSDoc template and structured-tag rules |
-| [Doc-Generator README](packages/openbridge-webcomponents/script/docgen/README.md) | OpenAI-powered JSDoc generation CLI |
-| [building-blocks.instructions.md](.github/instructions/building-blocks.instructions.md) | SVG-based building block components and shared SVG utilities |
-| [circular-charts.instructions.md](.github/instructions/circular-charts.instructions.md) | Circular chart components (donut, pie, polar, radial-bar) |
-| [external-scale.instructions.md](.github/instructions/external-scale.instructions.md) | External scale renderer and bar/gauge wrappers |
-| [line-area-charts.instructions.md](.github/instructions/line-area-charts.instructions.md) | Line/area charts and composite gauge-trend component |
-| [setpoint.instructions.md](.github/instructions/setpoint.instructions.md) | Setpoint design layer, mixin/bundle, confirm animation |
-| [watch-radial-instruments.instructions.md](.github/instructions/watch-radial-instruments.instructions.md) | Circular watch-based instruments and radial gauges |
+| Document                                                                                                  | Description                                                                                              |
+| --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| [AGENTS.md](AGENTS.md)                                                                                    | Canonical rules for all AI coding assistants — coding standards, JSDoc, build commands, behavioral rules |
+| [.github/copilot-instructions.md](.github/copilot-instructions.md)                                        | GitHub Copilot entry point (re-exports AGENTS.md)                                                        |
+| [.cursor/rules/comments.mdc](.cursor/rules/comments.mdc)                                                  | Full JSDoc template and structured-tag rules                                                             |
+| [Doc-Generator README](packages/openbridge-webcomponents/script/docgen/README.md)                         | OpenAI-powered JSDoc generation CLI                                                                      |
+| [building-blocks.instructions.md](.github/instructions/building-blocks.instructions.md)                   | SVG-based building block components and shared SVG utilities                                             |
+| [circular-charts.instructions.md](.github/instructions/circular-charts.instructions.md)                   | Circular chart components (donut, pie, polar, radial-bar)                                                |
+| [external-scale.instructions.md](.github/instructions/external-scale.instructions.md)                     | External scale renderer and bar/gauge wrappers                                                           |
+| [line-area-charts.instructions.md](.github/instructions/line-area-charts.instructions.md)                 | Line/area charts and composite gauge-trend component                                                     |
+| [setpoint.instructions.md](.github/instructions/setpoint.instructions.md)                                 | Setpoint design layer, mixin/bundle, confirm animation                                                   |
+| [watch-radial-instruments.instructions.md](.github/instructions/watch-radial-instruments.instructions.md) | Circular watch-based instruments and radial gauges                                                       |
 
 ## 📄 Documentation Index
 
 You may be interested in the following documents as well:
 
-| Document | Description |
-|---|---|
-| [Core Package README](packages/openbridge-webcomponents/README.md) | Installation, setup, bundle usage, and package API |
-| [Getting Started (React)](docs/getting-started-react.md) | Step-by-step tutorial for React applications |
-| [Getting Started (Angular)](docs/getting-started-angular.md) | Step-by-step tutorial for Angular applications |
-| [Charts and Graphs Guide](docs/graph.md) | Usage guide for all chart components (line, area, donut, pie, polar, radial-bar) |
-| [Vue Demo](packages/vue-demo/README.md) | Running the Vue.js demo application |
-| [React Demo](packages/react-demo/README.md) | Running the React demo application |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | Contribution workflow, commit conventions, PR guidelines |
-| [IMPLEMENTATION_GUIDELINES.md](IMPLEMENTATION_GUIDELINES.md) | Architecture overview, PostCSS mixins, SVG practices, component creation |
-| [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) | Contributor Covenant Code of Conduct |
-| [LICENSE.TXT](LICENSE.TXT) | Apache 2.0 license |
+| Document                                                           | Description                                                                      |
+| ------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| [Core Package README](packages/openbridge-webcomponents/README.md) | Installation, setup, bundle usage, and package API                               |
+| [Getting Started (React)](docs/getting-started-react.md)           | Step-by-step tutorial for React applications                                     |
+| [Getting Started (Angular)](docs/getting-started-angular.md)       | Step-by-step tutorial for Angular applications                                   |
+| [Charts and Graphs Guide](docs/graph.md)                           | Usage guide for all chart components (line, area, donut, pie, polar, radial-bar) |
+| [Vue Demo](packages/vue-demo/README.md)                            | Running the Vue.js demo application                                              |
+| [React Demo](packages/react-demo/README.md)                        | Running the React demo application                                               |
+| [CONTRIBUTING.md](CONTRIBUTING.md)                                 | Contribution workflow, commit conventions, PR guidelines                         |
+| [IMPLEMENTATION_GUIDELINES.md](IMPLEMENTATION_GUIDELINES.md)       | Architecture overview, PostCSS mixins, SVG practices, component creation         |
+| [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)                           | Contributor Covenant Code of Conduct                                             |
+| [LICENSE.TXT](LICENSE.TXT)                                         | Apache 2.0 license                                                               |
