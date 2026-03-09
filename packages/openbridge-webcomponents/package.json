@@ -81,7 +81,7 @@
     "@vitest/browser-playwright": "^4.0.15",
     "@vitest/coverage-v8": "^4.0.15",
     "dotenv": "^17.2.3",
-    "eslint": "^9.39.1",
+    "eslint": "^10.0.3",
     "eslint-plugin-file-extension-in-import-ts": "^2.1.1",
     "eslint-plugin-storybook": "^10.2.8",
     "figma-api": "^1.12.0",
