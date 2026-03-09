@@ -266,9 +266,11 @@ export class ObcPoiButton extends LitElement {
         .objectStyle=${ObcPoiObjectStyle.Regular}
         .state=${this.poiObjectState}
         .interactive=${false}
+        exportparts="icon"
       >
         <span
           class="icon"
+          part="icon"
           style="transform: rotate(${this.relativeDirection}deg);"
         >
           <slot></slot>

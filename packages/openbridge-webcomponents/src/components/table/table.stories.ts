@@ -186,7 +186,6 @@ const renderTable = (args: ObcTable & {height?: number}) => {
     .defaultSelectedRowIds=${args.defaultSelectedRowIds}
     .selectedRowIds=${args.selectedRowIds}
     .selectAllAriaLabel=${args.selectAllAriaLabel}
-    .selectAllLabel=${args.selectAllLabel}
   ></obc-table>`;
 };
 
@@ -203,7 +202,6 @@ export const Playground: Story = {
     striped: false,
     narrowHeader: false,
     noHeader: false,
-    selectAllLabel: 'Label',
     selectAllAriaLabel: 'Select all table items',
     defaultSelectedRowIds: ['1', '4'],
     columns: playgroundColumns,
@@ -242,9 +240,6 @@ export const Playground: Story = {
     },
     defaultSelectedRowIds: {
       control: {type: 'object'},
-    },
-    selectAllLabel: {
-      control: {type: 'text'},
     },
     selectAllAriaLabel: {
       control: {type: 'text'},

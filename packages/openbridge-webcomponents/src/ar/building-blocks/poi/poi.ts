@@ -409,6 +409,7 @@ export class ObcPoi extends LitElement {
         .overlapOpaque=${this.overlapOpaque}
         .type=${this.buttonType}
         .data=${this.data}
+        exportparts="icon"
       >
         <slot></slot>
         <slot name="header" slot="header"></slot>
