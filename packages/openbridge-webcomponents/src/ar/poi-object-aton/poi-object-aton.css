@@ -149,12 +149,25 @@
   );
 }
 
-/* Alert states: use global background for the inner poi-object */
-.is-alert obc-poi-object {
-  --overlay-container-background-color: var(
-    --overlay-container-global-color,
-    #fcfcfc
-  );
+/* Static states: colored styles keep their navigation background, not flat white.
+   The inner obc-poi-object always receives objectStyle="regular", so its static rule
+   applies flat white. We override via ::part(background-frame) for colored styles. */
+.state-static-unchecked.style-green obc-poi-object::part(background-frame),
+.state-static-checked.style-green obc-poi-object::part(background-frame) {
+  background-color: var(--overlay-navigation-green-primary-color);
+  border-color: var(--overlay-navigation-green-secondary-color);
+}
+
+.state-static-unchecked.style-red obc-poi-object::part(background-frame),
+.state-static-checked.style-red obc-poi-object::part(background-frame) {
+  background-color: var(--overlay-navigation-red-primary-color);
+  border-color: var(--overlay-navigation-red-secondary-color);
+}
+
+.state-static-unchecked.style-yellow obc-poi-object::part(background-frame),
+.state-static-checked.style-yellow obc-poi-object::part(background-frame) {
+  background-color: var(--overlay-navigation-yellow-primary-color);
+  border-color: var(--overlay-navigation-yellow-secondary-color);
 }
 
 /* ==========================================================================
@@ -173,6 +186,8 @@
 /* Diamond background */
 .aton-diamond-background {
   position: absolute;
+  inset: 0;
+  margin: auto;
   width: 32px;
   height: 32px;
   transform: rotate(45deg);
@@ -216,11 +231,6 @@
 
 .state-overlapped .aton-icon-container {
   opacity: 0;
-}
-
-/* Diamond alert state background */
-.is-alert .aton-diamond-background {
-  background-color: var(--overlay-container-global-color, #fcfcfc);
 }
 
 /* Diamond icon container */
@@ -273,130 +283,4 @@
 .state-activated.style-regular .aton-icon-container ::slotted(*) {
   color: var(--element-active-color);
   --element-active-color: inherit;
-}
-
-/* ==========================================================================
-   Alert Frame — shared across all types
-   ========================================================================== */
-
-.alert-frame {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-  pointer-events: none;
-}
-
-/* Round alert frame for regular/indicator/large */
-.type-regular .alert-frame,
-.type-indicator .alert-frame {
-  inset: 6px;
-}
-
-.type-large .alert-frame {
-  inset: 8px;
-}
-
-.alert-frame-background {
-  position: absolute;
-  inset: 0;
-  border: 5px solid var(--alert-alarm-outline-color);
-  border-radius: var(
-    --maneuvering-components-poi-button-border-radius-round,
-    1000px
-  );
-}
-
-.alert-frame-foreground {
-  position: absolute;
-  inset: -2.5px;
-  border: 4px solid var(--alert-alarm-color);
-  border-radius: var(
-    --maneuvering-components-poi-button-border-radius-round,
-    1000px
-  );
-}
-
-/* N-up square alert frame */
-.type-n-up .alert-frame {
-  width: var(--maneuvering-components-poi-button-visual-target-square, 32px);
-  height: var(--maneuvering-components-poi-button-visual-target-square, 32px);
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  inset: auto;
-}
-
-.type-n-up-large .alert-frame {
-  width: var(
-    --maneuvering-components-poi-button-large-visual-target-square,
-    48px
-  );
-  height: var(
-    --maneuvering-components-poi-button-large-visual-target-square,
-    48px
-  );
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  inset: auto;
-}
-
-.type-n-up .alert-frame-background,
-.type-n-up-large .alert-frame-background {
-  border-radius: var(
-    --maneuvering-components-poi-button-border-radius-square,
-    6px
-  );
-}
-
-.type-n-up .alert-frame-foreground,
-.type-n-up-large .alert-frame-foreground {
-  border-radius: var(
-    --maneuvering-components-poi-button-border-radius-square,
-    6px
-  );
-}
-
-/* AtoN diamond alert frame — rotated 45deg */
-.type-aton .alert-frame {
-  width: 48px;
-  height: 48px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(45deg);
-  inset: auto;
-}
-
-.type-aton .alert-frame-background {
-  border-radius: var(
-    --maneuvering-components-poi-button-border-radius-square,
-    6px
-  );
-}
-
-.type-aton .alert-frame-foreground {
-  border-radius: var(
-    --maneuvering-components-poi-button-border-radius-square,
-    6px
-  );
-}
-
-/* Caution state colors */
-.state-caution .alert-frame-background {
-  border-color: var(--alert-caution-outline-color);
-}
-
-.state-caution .alert-frame-foreground {
-  border-color: var(--alert-caution-color);
-}
-
-/* Warning state colors */
-.state-warning .alert-frame-background {
-  border-color: var(--alert-warning-outline-color);
-}
-
-.state-warning .alert-frame-foreground {
-  border-color: var(--alert-warning-color);
 }

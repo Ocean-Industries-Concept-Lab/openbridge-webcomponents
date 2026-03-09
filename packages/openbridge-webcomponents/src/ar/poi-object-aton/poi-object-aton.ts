@@ -1,4 +1,4 @@
-import {html, css, unsafeCSS, nothing, TemplateResult} from 'lit';
+import {html, css, unsafeCSS, TemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
@@ -32,9 +32,6 @@ export enum ObcPoiObjectAtonState {
   StaticChecked = 'static-checked',
   Activated = 'activated',
   Overlapped = 'overlapped',
-  Caution = 'caution',
-  Warning = 'warning',
-  Alarm = 'alarm',
 }
 
 @customElement('obc-poi-object-aton')
@@ -47,19 +44,10 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
   override objectStyle: ObcPoiObjectAtonStyle = ObcPoiObjectAtonStyle.Regular;
 
   @property({type: String})
-  // @ts-expect-error — widening type to include alert states
   override state: ObcPoiObjectAtonState = ObcPoiObjectAtonState.Unchecked;
 
   private get isAtonType(): boolean {
     return this.type === ObcPoiObjectAtonType.AtoN;
-  }
-
-  private get isAlertState(): boolean {
-    return (
-      this.state === ObcPoiObjectAtonState.Caution ||
-      this.state === ObcPoiObjectAtonState.Warning ||
-      this.state === ObcPoiObjectAtonState.Alarm
-    );
   }
 
   override get baseType(): ObcPoiObjectType {
@@ -80,9 +68,6 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
   }
 
   private get mappedBaseState(): ObcPoiObjectState {
-    if (this.isAlertState) {
-      return ObcPoiObjectState.Unchecked;
-    }
     return this.state as unknown as ObcPoiObjectState;
   }
 
@@ -90,22 +75,10 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
     return html`<slot></slot>`;
   }
 
-  private renderAlertFrame(): TemplateResult | typeof nothing {
-    if (!this.isAlertState) return nothing;
-    return html`
-      <div class="alert-frame">
-        <div class="alert-frame-background">
-          <div class="alert-frame-foreground"></div>
-        </div>
-      </div>
-    `;
-  }
-
   private renderAtonDiamond(): TemplateResult {
     return html`
       <div class="aton-diamond-frame">
         <div class="aton-diamond-background"></div>
-        ${this.renderAlertFrame()}
         <div class="aton-icon-container">
           <slot></slot>
         </div>
@@ -119,7 +92,6 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
       [`type-${this.type}`]: true,
       [`style-${this.objectStyle}`]: true,
       [`state-${this.state}`]: true,
-      'is-alert': this.isAlertState,
     };
 
     if (this.isAtonType) {
@@ -130,7 +102,6 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
 
     return html`
       <div class=${classMap(wrapperClasses)}>
-        ${this.renderAlertFrame()}
         <obc-poi-object
           .type=${this.baseType}
           .objectStyle=${'regular'}
