@@ -85,7 +85,7 @@ interface ExternalScaleElement extends HTMLElement {
   paddingStart?: number;
   paddingEnd?: number;
   primaryTickmarkInterval?: number;
-  labels?: boolean;
+  showLabels?: boolean;
   fixedAspectRatio?: boolean;
   scaleReferenceSize?: number;
   state?: InstrumentState;
@@ -1255,10 +1255,10 @@ export class ObcChartLineBase extends LitElement {
     const effectiveWidth = this.getEffectiveWidth();
     const effectiveHeight = this.getEffectiveHeight();
 
-    // Determine if we should hide labels (below threshold)
-    const hideLabels =
-      effectiveWidth < RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS ||
-      effectiveHeight < RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
+    // Determine if we should show labels (above threshold)
+    const showLabels =
+      effectiveWidth >= RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS &&
+      effectiveHeight >= RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
 
     // Calculate viewBox padding for external scales.
     // When fixedAspectRatioScaling is true, the chart's Canvas padding is scaled by
@@ -1298,7 +1298,7 @@ export class ObcChartLineBase extends LitElement {
     //   basePadding: padding,
     //   verticalViewBoxPadding,
     //   horizontalViewBoxPadding,
-    //   hideLabels,
+    //   showLabels,
     // });
 
     // Update each slotted scale
@@ -1323,7 +1323,7 @@ export class ObcChartLineBase extends LitElement {
           paddingBottom: verticalViewBoxPadding.bottom,
           paddingStart: verticalViewBoxPadding.top,
           paddingEnd: verticalViewBoxPadding.bottom,
-          labels: !hideLabels,
+          showLabels,
           fixedAspectRatio: this.fixedAspectRatioScaling,
           // Use chart's scaleReferenceSize property for proportional scaling
           scaleReferenceSize: this.scaleReferenceSize,
@@ -1353,7 +1353,7 @@ export class ObcChartLineBase extends LitElement {
           paddingBottom: verticalViewBoxPadding.bottom,
           paddingStart: verticalViewBoxPadding.top,
           paddingEnd: verticalViewBoxPadding.bottom,
-          labels: !hideLabels,
+          showLabels,
           fixedAspectRatio: this.fixedAspectRatioScaling,
           // Use chart's scaleReferenceSize property for proportional scaling
           scaleReferenceSize: this.scaleReferenceSize,
@@ -1383,7 +1383,7 @@ export class ObcChartLineBase extends LitElement {
           paddingRight: horizontalViewBoxPadding.right,
           paddingStart: horizontalViewBoxPadding.left,
           paddingEnd: horizontalViewBoxPadding.right,
-          labels: !hideLabels,
+          showLabels,
           fixedAspectRatio: this.fixedAspectRatioScaling,
           // Use chart's scaleReferenceSize property for proportional scaling
           scaleReferenceSize: this.scaleReferenceSize,
@@ -1413,7 +1413,7 @@ export class ObcChartLineBase extends LitElement {
           paddingRight: horizontalViewBoxPadding.right,
           paddingStart: horizontalViewBoxPadding.left,
           paddingEnd: horizontalViewBoxPadding.right,
-          labels: !hideLabels,
+          showLabels,
           fixedAspectRatio: this.fixedAspectRatioScaling,
           // Use chart's scaleReferenceSize property for proportional scaling
           scaleReferenceSize: this.scaleReferenceSize,

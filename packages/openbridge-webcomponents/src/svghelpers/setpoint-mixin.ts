@@ -14,7 +14,7 @@
  * | `newSetpoint`            | `number \| undefined`          | `undefined`          | Adjustment preview (2-step interface)        |
  * | `atSetpoint`             | `boolean`                      | `false`              | Manual at-setpoint override                  |
  * | `touching`               | `boolean`                      | `false`              | User is physically interacting               |
- * | `disableAutoAtSetpoint`  | `boolean`                      | `false`              | Disable auto at-setpoint calculation         |
+ * | `autoAtSetpoint`         | `boolean`                      | `true`               | Enable auto at-setpoint calculation          |
  * | `autoAtSetpointDeadband` | `number`                       | configurable (def 2) | Tolerance for auto at-setpoint detection     |
  * | `setpointAtZeroDeadband` | `number`                       | configurable (def 0.5)| Zero-snap tolerance                         |
  * | `setpointOverride`       | `boolean`                        | `false`              | Override to derive color from priority       |
@@ -142,7 +142,7 @@ export declare class SetpointMixinInterface {
 
   /**
    * Manual at-setpoint override.
-   * Used when `disableAutoAtSetpoint` is true. Ignored when auto mode is active.
+   * Used when `autoAtSetpoint` is false. Ignored when auto mode is active.
    */
   atSetpoint: boolean;
 
@@ -157,8 +157,8 @@ export declare class SetpointMixinInterface {
    */
   touching: boolean;
 
-  /** When true, `computeAtSetpoint()` uses manual `atSetpoint` boolean. */
-  disableAutoAtSetpoint: boolean;
+  /** When false, `computeAtSetpoint()` uses manual `atSetpoint` boolean. */
+  autoAtSetpoint: boolean;
 
   /** Tolerance for auto at-setpoint detection. */
   autoAtSetpointDeadband: number;
@@ -285,8 +285,8 @@ export function SetpointMixin<T extends Constructor<LitElement>>(
      */
     @property({type: Number}) newSetpoint: number | undefined;
 
-    /** Manual at-setpoint override (used when `disableAutoAtSetpoint` is true). */
-    @property({type: Boolean}) atSetpoint: boolean = false;
+    /** Manual at-setpoint override (used when `autoAtSetpoint` is false). */
+    @property({type: Boolean, attribute: false}) atSetpoint: boolean = false;
 
     /**
      * User is physically interacting with the control.
@@ -294,8 +294,8 @@ export function SetpointMixin<T extends Constructor<LitElement>>(
      */
     @property({type: Boolean}) touching: boolean = false;
 
-    /** When true, uses manual `atSetpoint` boolean instead of auto-calculation. */
-    @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
+    /** When false, uses manual `atSetpoint` boolean instead of auto-calculation. */
+    @property({type: Boolean, attribute: false}) autoAtSetpoint: boolean = true;
 
     /** Tolerance for auto at-setpoint detection. */
     @property({type: Number}) autoAtSetpointDeadband: number = defaultDeadband;
@@ -356,7 +356,7 @@ export function SetpointMixin<T extends Constructor<LitElement>>(
         value: currentValue,
         setpoint: this.setpoint,
         touching: this.touching,
-        disableAuto: this.disableAutoAtSetpoint,
+        auto: this.autoAtSetpoint,
         deadband: this.autoAtSetpointDeadband,
         atSetpointManual: this.atSetpoint,
         angularWraparound,

@@ -45,7 +45,7 @@
  *       newSetpoint: this.newAngleSetpoint,
  *       atSetpoint: this.atAngleSetpoint,
  *       touching: this.touching,  // shared
- *       disableAutoAtSetpoint: this.disableAutoAtAngleSetpoint,
+ *       autoAtSetpoint: this.autoAtAngleSetpoint,
  *       autoAtSetpointDeadband: this.autoAtAngleSetpointDeadband,
  *       setpointAtZeroDeadband: this.angleSetpointAtZeroDeadband,
  *       setpointOverride: this.angleSetpointOverride,
@@ -54,7 +54,7 @@
  *       setpoint: this.thrustSetpoint,
  *       touching: this.touching,  // shared
  *       atSetpoint: this.atThrustSetpoint,
- *       disableAutoAtSetpoint: this.disableAutoAtThrustSetpoint,
+ *       autoAtSetpoint: this.autoAtThrustSetpoint,
  *       autoAtSetpointDeadband: this.autoAtThrustSetpointDeadband,
  *       setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
  *     });
@@ -122,7 +122,7 @@ export interface SetpointBundleSyncInput {
   newSetpoint?: number | undefined;
   atSetpoint?: boolean;
   touching?: boolean;
-  disableAutoAtSetpoint?: boolean;
+  autoAtSetpoint?: boolean;
   autoAtSetpointDeadband?: number;
   setpointAtZeroDeadband?: number;
   setpointOverride?: boolean;
@@ -153,8 +153,8 @@ export class SetpointBundle {
   /** User is interacting */
   touching: boolean = false;
 
-  /** Disable auto-calculation */
-  disableAutoAtSetpoint: boolean = false;
+  /** Enable auto-calculation */
+  autoAtSetpoint: boolean = true;
 
   /** Auto at-setpoint tolerance */
   autoAtSetpointDeadband: number;
@@ -210,8 +210,8 @@ export class SetpointBundle {
       this.newSetpoint = input.newSetpoint;
     if (input.atSetpoint !== undefined) this.atSetpoint = input.atSetpoint;
     if (input.touching !== undefined) this.touching = input.touching;
-    if (input.disableAutoAtSetpoint !== undefined)
-      this.disableAutoAtSetpoint = input.disableAutoAtSetpoint;
+    if (input.autoAtSetpoint !== undefined)
+      this.autoAtSetpoint = input.autoAtSetpoint;
     if (input.autoAtSetpointDeadband !== undefined)
       this.autoAtSetpointDeadband = input.autoAtSetpointDeadband;
     if (input.setpointAtZeroDeadband !== undefined)
@@ -256,7 +256,7 @@ export class SetpointBundle {
       value: currentValue,
       setpoint: this.setpoint,
       touching: this.touching,
-      disableAuto: this.disableAutoAtSetpoint,
+      auto: this.autoAtSetpoint,
       deadband: this.autoAtSetpointDeadband,
       atSetpointManual: this.atSetpoint,
       angularWraparound: this._angularWraparound,

@@ -1094,7 +1094,7 @@ export class ObcTable extends LitElement {
     } else if (value.type === ObcTableCellType.HorizontalBar) {
       const hasBar = value.hasBar ?? true;
       const hasScale = value.hasScale ?? false;
-      const hideLabels = value.hideLabels ?? true;
+      const showLabels = !(value.hideLabels ?? true);
       const fixedAspectRatio = value.fixedAspectRatio ?? true;
       return html`<div
         class=${classMap({
@@ -1113,7 +1113,7 @@ export class ObcTable extends LitElement {
           .setpoint=${value.setpoint}
           .hasBar=${hasBar}
           .hasScale=${hasScale}
-          .hideLabels=${hideLabels}
+          .showLabels=${showLabels}
           .priority=${value.priority ?? Priority.regular}
           .fillMode=${value.fillMode ?? FillMode.fill}
           .fillMin=${value.fillMin}

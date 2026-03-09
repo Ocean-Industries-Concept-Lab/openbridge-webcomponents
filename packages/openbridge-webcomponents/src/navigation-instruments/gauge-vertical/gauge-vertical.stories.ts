@@ -25,7 +25,7 @@ const meta: Meta = {
     primaryTickmarkInterval: {control: {type: 'number', min: 1}},
     secondaryTickmarkInterval: {control: {type: 'number', min: 1}},
     tertiaryTickmarkInterval: {control: {type: 'number', min: 1}},
-    hideLabels: {control: {type: 'boolean'}},
+    showLabels: {control: {type: 'boolean'}},
     borderRadiusPosition: {
       control: {type: 'select'},
       options: Object.values(BorderRadiusPosition),
@@ -38,7 +38,7 @@ const meta: Meta = {
     setpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
     newSetpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
     atSetpoint: {control: {type: 'boolean'}},
-    disableAutoAtSetpoint: {control: {type: 'boolean'}},
+    autoAtSetpoint: {control: {type: 'boolean'}},
     autoAtSetpointDeadband: {
       control: {type: 'number', min: 0, max: 10, step: 0.5},
     },
@@ -56,7 +56,7 @@ const meta: Meta = {
     primaryTickmarkInterval: 20,
     secondaryTickmarkInterval: 10,
     tertiaryTickmarkInterval: undefined,
-    hideLabels: false,
+    showLabels: true,
     borderRadiusPosition: BorderRadiusPosition.innerFirstChild,
     priority: Priority.regular,
     fillMode: FillMode.fill,
@@ -66,7 +66,7 @@ const meta: Meta = {
     setpoint: undefined,
     newSetpoint: undefined,
     atSetpoint: false,
-    disableAutoAtSetpoint: false,
+    autoAtSetpoint: true,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
     state: 'active',
@@ -81,7 +81,7 @@ const meta: Meta = {
       .primaryTickmarkInterval=${args.primaryTickmarkInterval}
       .secondaryTickmarkInterval=${args.secondaryTickmarkInterval}
       .tertiaryTickmarkInterval=${args.tertiaryTickmarkInterval}
-      .hideLabels=${args.hideLabels}
+      .showLabels=${args.showLabels}
       .borderRadiusPosition=${args.borderRadiusPosition}
       .priority=${args.priority}
       .fillMode=${args.fillMode}
@@ -91,7 +91,7 @@ const meta: Meta = {
       .setpoint=${args.setpoint}
       .newSetpoint=${args.newSetpoint}
       .atSetpoint=${args.atSetpoint}
-      .disableAutoAtSetpoint=${args.disableAutoAtSetpoint}
+      .autoAtSetpoint=${args.autoAtSetpoint}
       .autoAtSetpointDeadband=${args.autoAtSetpointDeadband}
       .setpointAtZeroDeadband=${args.setpointAtZeroDeadband}
       .state=${args.state}
@@ -552,7 +552,7 @@ Real-world values fluctuate. Without a deadband, the indicator would constantly 
     priority: Priority.enhanced,
     value: 50, // Start at setpoint
     setpoint: 50,
-    disableAutoAtSetpoint: false, // Auto mode
+    autoAtSetpoint: true, // Auto mode
     autoAtSetpointDeadband: 1, // 1-unit tolerance
     state: 'active',
     primaryTickmarkInterval: 50,
@@ -580,7 +580,7 @@ Sometimes you need to control the "at setpoint" visual state directly, independe
 
 #### How it works
 
-- Set \`disableAutoAtSetpoint={true}\` to disable automatic calculation
+- Set \`autoAtSetpoint={true}\` to disable automatic calculation
 - Control marker size via \`atSetpoint={true/false}\` property directly
 - The component **ignores** \`value\`, \`setpoint\`, and \`autoAtSetpointDeadband\`
 
@@ -595,7 +595,7 @@ Sometimes you need to control the "at setpoint" visual state directly, independe
 - Toggle \`atSetpoint\` to **true** → Marker **shrinks to 80%** even though value is far from setpoint
 - Toggle \`atSetpoint\` to **false** → Marker **grows to 100%**
 - Change \`value\` to **70** (match setpoint) → Marker size **doesn't change** (manual mode ignores values)
-- Set \`disableAutoAtSetpoint={false}\` → Switch back to auto mode (marker immediately reflects actual distance)`,
+- Set \`autoAtSetpoint={false}\` → Switch back to auto mode (marker immediately reflects actual distance)`,
       },
     },
   },
@@ -606,7 +606,7 @@ Sometimes you need to control the "at setpoint" visual state directly, independe
     priority: Priority.enhanced,
     value: 30, // Value at 30
     setpoint: 70, // Setpoint at 70 (far apart)
-    disableAutoAtSetpoint: true, // Manual mode
+    autoAtSetpoint: false, // Manual mode
     atSetpoint: false, // Manually set to false (try toggling to true!)
     state: 'active',
     primaryTickmarkInterval: 50,
@@ -664,7 +664,7 @@ The deadband determines how close the value must be to the setpoint before the s
     priority: Priority.enhanced,
     value: 45, // 5 units away from setpoint
     setpoint: 50,
-    disableAutoAtSetpoint: false,
+    autoAtSetpoint: true,
     autoAtSetpointDeadband: 1, // Try changing to 10 (at setpoint) or 0.1 (away)
     state: 'active',
     primaryTickmarkInterval: 50,

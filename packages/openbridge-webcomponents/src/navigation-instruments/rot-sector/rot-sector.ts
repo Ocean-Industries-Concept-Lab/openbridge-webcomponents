@@ -95,6 +95,12 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
    * When undefined or <= 0, no secondary tickmarks are shown.
    */
   @property({type: Number}) secondaryTickmarkInterval: number | undefined = 10;
+  /**
+   * Interval for tertiary tickmarks in value units.
+   * When undefined or <= 0, no tertiary tickmarks are shown.
+   */
+  @property({type: Number}) tertiaryTickmarkInterval: number | undefined =
+    undefined;
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: Boolean}) portStarboard: boolean = false;
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
@@ -133,7 +139,7 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
         .setpointAtZeroDeadband=${this.setpointAtZeroDeadband}
         .setpointOverride=${this.setpointOverride}
         .touching=${this.touching}
-        .disableAutoAtSetpoint=${this.disableAutoAtSetpoint}
+        .autoAtSetpoint=${this.autoAtSetpoint}
         .autoAtSetpointDeadband=${this.autoAtSetpointDeadband}
         .maxValue=${this.maxValue}
         .minValue=${-this.maxValue}
@@ -144,6 +150,7 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
         .tickmarksInside=${this.tickmarksInside}
         .primaryTickmarkInterval=${this.primaryTickmarkInterval}
         .secondaryTickmarkInterval=${this.secondaryTickmarkInterval}
+        .tertiaryTickmarkInterval=${this.tertiaryTickmarkInterval}
         .type=${this._type}
         .needleType=${this._type}
         .advices=${this.advices}

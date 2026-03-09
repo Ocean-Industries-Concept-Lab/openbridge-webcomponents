@@ -135,17 +135,17 @@ export const Pod: Story = {
   },
 };
 
-export const InCommandAtSetpointDisableAutoSetpoint: Story = {
+export const InCommandAtSetpointManualMode: Story = {
   args: {
     size: Size.large,
     thrust: 60,
     thrustSetpoint: 65,
     atThrustSetpoint: true,
-    disableAutoAtThrustSetpoint: true,
+    autoAtThrustSetpoint: false,
     angle: 30,
     angleSetpoint: 35,
     atAngleSetpoint: true,
-    disableAutoAtAngleSetpoint: true,
+    autoAtAngleSetpoint: false,
     state: InstrumentState.active,
     priority: Priority.enhanced,
   },
