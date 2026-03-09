@@ -290,6 +290,9 @@ function createIconRef(
 ): IconRef {
   const name = child.name
     .toLocaleLowerCase()
+    .replace(/æ/g, 'ae')
+    .replace(/ø/g, 'oe')
+    .replace(/å/g, 'aa')
     .replace(/ /g, '')
     .replace(/%/g, '');
   const javascriptName = 'svg' + name.replace(/[^a-zA-Z0-9]/g, '');
