@@ -140,6 +140,7 @@ export class ObcTextInputField extends LitElement {
     e.stopPropagation();
 
     this.value = '';
+    this.inputElement!.value = '';
     this.dispatchEvent(
       new CustomEvent('clear', {bubbles: true, composed: true})
     );

@@ -1,4 +1,4 @@
-import {LitElement, html, nothing, unsafeCSS} from 'lit';
+import {LitElement, html, nothing, unsafeCSS, PropertyValues} from 'lit';
 import {customElement} from '../../decorator.js';
 import componentStyle from './textarea-field.css?inline';
 import {property, state, query} from 'lit/decorators.js';
@@ -223,6 +223,12 @@ export class ObcTextareaField extends LitElement {
   @property({type: Boolean}) rejectUpdates = false;
 
   /**
+   * If true, the textarea will not update its value if the value is the same as the previous value.
+   * Useful to avoid React re-rendering resetting the value.
+   */
+  @property({type: Boolean}) rejectDuplicateUpdates = false;
+
+  /**
    * Placeholder text shown when the input is empty.
    */
   @property({type: String}) placeholder = '';
@@ -317,10 +323,22 @@ export class ObcTextareaField extends LitElement {
   @state() private _focused = false;
   @state() private _statusAnnouncement = '';
   @state() private _isPlayingRecording = false;
+  @state() private _previousValue = '';
+  @state() private _previousInputElementValue = '';
 
   @query('.input-field') private _textarea?: HTMLTextAreaElement;
   @query('.action-container obc-icon-button')
   private _firstActionButton?: HTMLElement;
+
+  override willUpdate(changedProperties: PropertyValues) {
+    if (
+      changedProperties.has('value') &&
+      !this.shouldUpdateValue &&
+      this._textarea
+    ) {
+      this.value = this._textarea.value;
+    }
+  }
 
   protected override updated(changedProperties: Map<string, unknown>) {
     super.updated(changedProperties);
@@ -361,10 +379,12 @@ export class ObcTextareaField extends LitElement {
       }
     }
 
-    if (changedProperties.has('value')) {
-      if (!this.shouldUpdateValue && this._textarea) {
-        this.value = this._textarea.value;
-      }
+    if (
+      this.rejectDuplicateUpdates &&
+      this.value !== this._previousValue &&
+      (this._previousInputElementValue !== this.value || !this._focused)
+    ) {
+      this._previousValue = this.value;
     }
   }
 
@@ -451,6 +471,7 @@ export class ObcTextareaField extends LitElement {
   private handleInput(e: Event) {
     const target = e.target as HTMLTextAreaElement;
     this.value = target.value;
+    this._previousInputElementValue = this.value;
     e.stopPropagation();
     this.dispatchEvent(
       new CustomEvent('input', {detail: {value: target.value}})
@@ -573,6 +594,9 @@ export class ObcTextareaField extends LitElement {
   private get shouldUpdateValue(): boolean {
     if (this.rejectUpdates) return false;
     if (this.rejectUpdatesOnFocus && this._focused) return false;
+    if (this.rejectDuplicateUpdates && this.value === this._previousValue) {
+      return false;
+    }
     return true;
   }
 
