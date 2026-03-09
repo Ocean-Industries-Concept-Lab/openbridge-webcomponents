@@ -3,7 +3,7 @@ import {property} from 'lit/decorators.js';
 import compentStyle from './context-menu-input.css?inline';
 import '../../icons/icon-arrow-flyout-google.js';
 import '../../icons/icon-close-google.js';
-import '../checkbox/checkbox.js';
+import '../checkbox-item/checkbox-item.js';
 import '../navigation-item/navigation-item.js';
 import {ObcNavigationMenuVariant} from '../navigation-menu/navigation-menu.js';
 import {customElement} from '../../decorator.js';
@@ -488,11 +488,11 @@ export class ObcContextMenuInput extends LitElement {
         class="menu-item checkbox-item-wrapper"
         style=${indent ? `padding-left:${indent}px` : ''}
       >
-        <obc-checkbox
+        <obc-checkbox-item
           .label=${o.label}
           .status=${isSelected ? 'checked' : 'unchecked'}
           @change=${(e: Event) => this.handleCheckboxChange(o, e)}
-        ></obc-checkbox>
+        ></obc-checkbox-item>
       </div>`;
     });
   }
@@ -524,11 +524,11 @@ export class ObcContextMenuInput extends LitElement {
       return children.map((c) => {
         const isSelected = this.isOptionSelected(c.value);
         return html`<div class="menu-item checkbox-item-wrapper">
-          <obc-checkbox
+          <obc-checkbox-item
             .label=${c.label}
             .status=${isSelected ? 'checked' : 'unchecked'}
             @change=${(e: Event) => this.handleCheckboxChange(c, e)}
-          ></obc-checkbox>
+          ></obc-checkbox-item>
         </div>`;
       });
     }
@@ -600,11 +600,11 @@ export class ObcContextMenuInput extends LitElement {
         return columnOptions.map((o) => {
           const isSelected = this.isOptionSelected(o.value);
           return html`<div class="menu-item checkbox-item-wrapper">
-            <obc-checkbox
+            <obc-checkbox-item
               .label=${o.label}
               .status=${isSelected ? 'checked' : 'unchecked'}
               @change=${(e: Event) => this.handleCheckboxChange(o, e)}
-            ></obc-checkbox>
+            ></obc-checkbox-item>
           </div>`;
         });
       }
