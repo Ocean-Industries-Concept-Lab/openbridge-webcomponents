@@ -25,7 +25,23 @@ const meta: Meta<typeof ObcAzimuthThruster> = {
       options: Object.values(PropellerType),
     },
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
-    detailedTickmarks: {control: {type: 'boolean'}},
+    primaryTickmarkInterval: {
+      control: {type: 'number'},
+      description:
+        'Interval in degrees for primary tickmarks. undefined = none.',
+    },
+    secondaryTickmarkInterval: {
+      control: {type: 'number'},
+      description:
+        'Interval in degrees for secondary tickmarks. undefined = none.',
+    },
+    tertiaryTickmarkInterval: {
+      control: {type: 'number'},
+      description:
+        'Interval in degrees for tertiary tickmarks. undefined = none.',
+    },
+    showLabels: {control: 'boolean'},
+    tickmarksInside: {control: 'boolean'},
     touching: {control: 'boolean'},
     priority: {control: 'select', options: Object.values(Priority)},
   },
@@ -71,7 +87,10 @@ export const InCommandDetailedTickmarks: Story = {
     angleSetpoint: 30,
     state: InstrumentState.active,
     priority: Priority.enhanced,
-    detailedTickmarks: true,
+    primaryTickmarkInterval: 45,
+    secondaryTickmarkInterval: 5,
+    tertiaryTickmarkInterval: 1,
+    showLabels: true,
   },
 };
 
@@ -83,7 +102,10 @@ export const InCommandDetailedTickmarksInside: Story = {
     angleSetpoint: 30,
     state: InstrumentState.active,
     priority: Priority.enhanced,
-    detailedTickmarks: true,
+    primaryTickmarkInterval: 45,
+    secondaryTickmarkInterval: 5,
+    tertiaryTickmarkInterval: 1,
+    showLabels: true,
     tickmarksInside: true,
   },
 };

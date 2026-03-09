@@ -34,6 +34,10 @@ export class ObcHeading extends LitElement {
   @property({type: String}) direction: CompassDirection =
     CompassDirection.NorthUp;
   @property({type: String}) priority: Priority = Priority.regular;
+  /** Show compass NSEW labels. */
+  @property({type: Boolean}) showLabels: boolean = false;
+  /** When true, labels and north arrow are placed inside the outer ring. */
+  @property({type: Boolean}) tickmarksInside: boolean = false;
 
   private _headingSp = new SetpointBundle({
     angularWraparound: true,
@@ -121,8 +125,10 @@ export class ObcHeading extends LitElement {
           .advices=${this.angleAdviceRaw}
           .tickmarks=${tickmarks}
           .watchCircleType=${WatchCircleType.single}
-          .labelFrameEnabled=${true}
+          .showLabels=${this.showLabels}
+          .tickmarksInside=${this.tickmarksInside}
           .crosshairEnabled=${true}
+          .northArrow=${true}
           .angleSetpoint=${this.headingSetpoint ?? undefined}
           .newAngleSetpoint=${this.newHeadingSetpoint}
           .atAngleSetpoint=${this._headingSp.computeAtSetpoint(this.heading)}

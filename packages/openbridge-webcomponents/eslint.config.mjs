@@ -124,10 +124,7 @@ const openbridgePlugin = {
               .getFilename()
               .includes('building-blocks');
             if (property?.value?.value === false) {
-              // Check if the file is in the building-blocks directory
-              if (isBuildingBlock) {
-                return;
-              }
+              return;
             }
             let message = 'Prefer boolean property default values of false';
             if (isBuildingBlock) {
@@ -179,8 +176,7 @@ const openbridgePlugin = {
 
             context.report({
               node,
-              message:
-                'Avoid string-literal union types; use an enum instead.',
+              message: 'Avoid string-literal union types; use an enum instead.',
             });
           },
 

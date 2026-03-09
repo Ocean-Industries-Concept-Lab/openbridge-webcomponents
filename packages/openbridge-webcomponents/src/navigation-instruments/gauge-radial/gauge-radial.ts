@@ -48,7 +48,7 @@ export interface GaugeRadialAdvice {
  * - Use `priority` to switch between regular and enhanced color palettes.
  * - Provide `primaryTickmarkInterval` and `secondaryTickmarkInterval` to
  *   control tickmark density.
- * - Enable `labels` to show numeric labels at primary tickmarks.
+ * - Enable `showLabels` to show numeric labels at primary tickmarks.
  *
  * ## Best Practices
  *
@@ -66,7 +66,7 @@ export interface GaugeRadialAdvice {
  *   maxValue="100"
  *   type="filled"
  *   enhanced
- *   labels
+ *   showLabels
  *   primaryTickmarkInterval="25"
  *   secondaryTickmarkInterval="5"
  *   setpoint="60"
@@ -81,7 +81,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   @property({type: Number}) value = 0;
   @property({type: Number}) maxValue = 100;
   @property({type: Number}) minValue = 0;
-  @property({type: Boolean}) labels: boolean = false;
+  @property({type: Boolean}) showLabels: boolean = false;
   @property({type: Number}) primaryTickmarkInterval = 50;
   @property({type: Number}) secondaryTickmarkInterval = 10;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
@@ -117,7 +117,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
         .maxValue=${this.maxValue}
         .minValue=${this.minValue}
         .getAngle=${this.getAngle}
-        .labels=${this.labels}
+        .showLabels=${this.showLabels}
         .primaryTickmarkInterval=${this.primaryTickmarkInterval}
         .secondaryTickmarkInterval=${this.secondaryTickmarkInterval}
         .type=${this.type}
