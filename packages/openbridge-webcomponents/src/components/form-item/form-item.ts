@@ -3,17 +3,13 @@ import {property, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './form-item.css?inline';
-import {
-  CheckButtonCheckboxAppearance,
-  CheckButtonType,
-} from '../check-button/check-button.js';
-import '../check-button/check-button.js';
 import '../../icons/icon-check-google.js';
 import '../../icons/icon-check-mixed.js';
 import {
   CheckboxStatus,
   type ObcCheckboxChangeEvent,
 } from '../checkbox/checkbox.js';
+import '../checkbox/checkbox.js';
 
 export enum ObcFormItemType {
   View = 'view',
@@ -39,10 +35,6 @@ export type ObcFormItemActionChangeEvent = CustomEvent<{
   itemId: string | null;
   status: ObcCheckboxChangeEvent['detail']['status'];
   disabled: boolean;
-}>;
-
-type ObcCheckButtonClickEvent = CustomEvent<{
-  checked: boolean;
 }>;
 
 /**
@@ -182,34 +174,33 @@ export class ObcFormItem extends LitElement {
   }
 
   private renderAction(): TemplateResult {
+    const ariaLabel =
+      this.textContent?.replace(/\s+/g, ' ').trim() || 'Select item';
+
     return html`
       <div class="action" part="action">
-        <obc-check-button
-          .type=${CheckButtonType.checkbox}
-          .checkboxAppearance=${CheckButtonCheckboxAppearance.updated}
-          .checked=${this.actionChecked}
+        <obc-checkbox
+          .status=${this.actionChecked
+            ? CheckboxStatus.checked
+            : CheckboxStatus.unchecked}
           .disabled=${this.actionDisabled}
-          @check-button-click=${this.handleActionChange}
-        ></obc-check-button>
+          aria-label=${ariaLabel}
+          @change=${this.handleActionChange}
+        ></obc-checkbox>
       </div>
     `;
   }
 
-  private handleActionChange = (event: ObcCheckButtonClickEvent): void => {
-    this.actionChecked = event.detail.checked;
-
-    const status: ObcCheckboxChangeEvent['detail']['status'] = event.detail
-      .checked
-      ? CheckboxStatus.checked
-      : CheckboxStatus.unchecked;
-
+  private handleActionChange = (event: ObcCheckboxChangeEvent): void => {
+    const {status, disabled} = event.detail;
+    this.actionChecked = status === CheckboxStatus.checked;
     const resolvedItemId = this.itemId.trim() || this.id.trim() || null;
     this.dispatchEvent(
       new CustomEvent('action-change', {
         detail: {
           itemId: resolvedItemId,
           status,
-          disabled: this.actionDisabled,
+          disabled,
         },
         bubbles: true,
         composed: true,
