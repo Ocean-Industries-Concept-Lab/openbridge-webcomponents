@@ -41,11 +41,12 @@ export type ObcCheckboxChangeEvent = CustomEvent<{
 }>;
 
 /**
- * `<obc-checkbox>` – A selectable input component for toggling a binary or mixed state.
+ * ### Overview
+ * `<obc-checkbox>` is a selectable input for binary and mixed states.
+ * It supports `checked`, `unchecked`, and `mixed` (indeterminate) status
+ * and is intended for forms, lists, and settings.
  *
- * Provides a standard checkbox UI element that supports checked, unchecked, and mixed (indeterminate) states.
- * Designed for use in forms, lists, or settings where users need to select one or more options. The component is
- * accessible, keyboard‑navigable, and visually indicates its current state.
+ * Keywords: checkbox, check box, tickbox, tri-state, indeterminate, select all.
  *
  * ### Features
  * - **Three‑state support:** Allows `checked`, `unchecked`, and `mixed` (indeterminate) status for parent/child
