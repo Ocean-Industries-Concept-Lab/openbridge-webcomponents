@@ -20,6 +20,19 @@
     "ss04" on;
 }
 
+@define-mixin font-overlay-outline-shadow {
+  text-shadow:
+    1px 0 0 var(--overlay-element-active-inverted-color, #1a1a1a),
+    -1px 0 0 var(--overlay-element-active-inverted-color, #1a1a1a),
+    0 1px 0 var(--overlay-element-active-inverted-color, #1a1a1a),
+    0 -1px 0 var(--overlay-element-active-inverted-color, #1a1a1a),
+    1px 1px 0 var(--overlay-element-active-inverted-color, #1a1a1a),
+    -1px 1px 0 var(--overlay-element-active-inverted-color, #1a1a1a),
+    1px -1px 0 var(--overlay-element-active-inverted-color, #1a1a1a),
+    -1px -1px 0 var(--overlay-element-active-inverted-color, #1a1a1a),
+    0 1px 2px #000;
+}
+
 @define-mixin font-body {
   font-family: var(--font-family-main);
   font-weight: var(--global-typography-ui-body-font-weight);

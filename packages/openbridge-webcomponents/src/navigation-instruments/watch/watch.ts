@@ -1,23 +1,27 @@
 import {
   LitElement,
+  PropertyValues,
   SVGTemplateResult,
   html,
   nothing,
   svg,
   unsafeCSS,
 } from 'lit';
-import {property} from 'lit/decorators.js';
+import {property, state} from 'lit/decorators.js';
 import {circle} from '../../svghelpers/index.js';
 import {roundedArch} from '../../svghelpers/roundedArch.js';
 import {
+  cssSafeAngle,
   deriveRadialSetpointConfig,
   drawSetpointMarker,
+  getSetpointAnimationDurationMs,
   getSetpointOutwardOffset,
   RADIAL_SETPOINT_RADIUS,
-  SetpointColorMode,
   SetpointVisualState,
+  SETPOINT_ANIMATION_CSS_VAR,
+  SETPOINT_ANIMATION_DURATION_DEFAULT,
 } from '../../svghelpers/setpoint.js';
-import {InstrumentState} from '../types.js';
+import {InstrumentState, Priority} from '../types.js';
 import compentStyle from './watch.css?inline';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {adviceMask, AngleAdviceRaw, renderAdvice} from './advice.js';
@@ -98,22 +102,39 @@ const RADIAL_SETPOINT_INWARD_ADJUST = 4;
  * The `RADIAL_SETPOINT_INWARD_ADJUST` constant (4px) fine-tunes radial setpoint positioning
  * to match Figma designs, applied on top of visual state offsets from setpoint.ts.
  *
- * The `colorMode` property allows overriding the derived color mode (enhanced for inCommand,
+ * The `colorMode` property allows overriding the derived color mode (enhanced for enhanced priority,
  * regular for other states).
  *
- * @property {InstrumentState} state - Instrument state (inCommand, active, loading, off)
+ * ## Setpoint Animation (`animateSetpoint`)
+ *
+ * When `animateSetpoint` is true and a confirm occurs (`newAngleSetpoint` → `undefined`):
+ * - The original setpoint slides to the new position via CSS transition
+ * - The departing new-setpoint marker fades out
+ * - Angular transitions always take the shortest path via accumulated
+ *   CSS-safe angles (`cssSafeAngle()`), so even 350° → 10° animates +20°
+ *
+ * Duration: `var(--setpoint-animation-duration, 300ms)`
+ *
+ * Internally, `_departingNewAngleSetpoint` captures the departing angle during confirm
+ * fade-out and `_animationTimer` auto-clears it after the animation duration.
+ * `_setpointCssAngle` tracks the accumulated CSS angle to avoid long-way-around
+ * transitions across the 0°/360° boundary.
+ *
+ * @property {InstrumentState} state - Instrument state (active, loading, off)
+ * @property {Priority} priority - Color priority (enhanced = blue palette, regular = gray palette)
  * @property {number|undefined} angleSetpoint - Setpoint angle in degrees (0° = 12 o'clock)
  * @property {number|undefined} newAngleSetpoint - New setpoint being adjusted (focus mode)
  * @property {boolean} atAngleSetpoint - Whether value matches setpoint (within deadband)
  * @property {number} angleSetpointAtZeroDeadband - Deadband for zero detection (default 0.5°)
- * @property {SetpointColorMode|undefined} colorMode - Optional override for setpoint color mode
+ * @property {boolean} setpointOverride - Override to derive setpoint color from priority regardless of state
  */
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {
   private _setpointId = `watch-setpoint-${Math.random().toString(36).slice(2, 9)}`;
   private _newSetpointId = `watch-new-setpoint-${Math.random().toString(36).slice(2, 9)}`;
 
-  @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
+  @property({type: String}) state: InstrumentState = InstrumentState.active;
+  @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) watchCircleType: WatchCircleType =
     WatchCircleType.single;
   @property({type: Boolean}) northArrow: boolean = false;
@@ -121,7 +142,23 @@ export class ObcWatch extends LitElement {
   @property({type: Number}) newAngleSetpoint: number | undefined;
   @property({type: Boolean}) atAngleSetpoint: boolean = false;
   @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
-  @property({type: String}) colorMode: SetpointColorMode | undefined;
+  @property({type: Boolean}) setpointOverride: boolean = false;
+  @property({type: Boolean}) touching: boolean = false;
+
+  @property({type: Boolean}) animateSetpoint: boolean = false;
+
+  @state() private _departingNewAngleSetpoint: number | undefined;
+  private _animationTimer?: ReturnType<typeof setTimeout>;
+
+  /**
+   * Accumulated CSS-safe angle for the original setpoint marker.
+   * Ensures CSS rotate() transitions always take the shortest path,
+   * even across the 0°/360° boundary.
+   */
+  private _setpointCssAngle: number = 0;
+
+  /** Whether the setpoint CSS angle has been initialised (to skip transition on first render). */
+  private _setpointCssAngleInit = false;
   @property({type: Number}) padding: number | undefined;
   @property({type: Array, attribute: false}) areas: WatchArea[] = [];
   @property({type: Array, attribute: false}) barAreas: WatchBarArea[] = [];
@@ -147,6 +184,28 @@ export class ObcWatch extends LitElement {
   // @ts-expect-error TS6133: The controller ensures that the render
   // function is called on resize of the element
   private _resizeController = new ResizeController(this, {});
+
+  override willUpdate(changed: PropertyValues): void {
+    super.willUpdate(changed);
+
+    // Detect confirm: newAngleSetpoint was defined, now undefined
+    if (changed.has('newAngleSetpoint') && this.animateSetpoint) {
+      const prev = changed.get('newAngleSetpoint') as number | undefined;
+      if (prev !== undefined && this.newAngleSetpoint === undefined) {
+        this._departingNewAngleSetpoint = prev;
+        clearTimeout(this._animationTimer);
+        const duration = getSetpointAnimationDurationMs(this);
+        this._animationTimer = setTimeout(() => {
+          this._departingNewAngleSetpoint = undefined;
+        }, duration);
+      }
+    }
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    clearTimeout(this._animationTimer);
+  }
 
   private get innerRingRadius(): number {
     if (this.watchCircleType === WatchCircleType.single) {
@@ -447,14 +506,16 @@ export class ObcWatch extends LitElement {
 
     const derived = deriveRadialSetpointConfig({
       state: this.state,
+      priority: this.priority,
       atSetpoint: this.atAngleSetpoint,
       angleSetpoint: this.angleSetpoint,
       setpointAtZeroDeadband: this.angleSetpointAtZeroDeadband,
       newAngleSetpoint: this.newAngleSetpoint,
+      touching: this.touching,
+      setpointOverride: this.setpointOverride,
     });
 
-    const colorMode = this.colorMode ?? derived.colorMode;
-    const {visualState, disabled, hasNewSetpoint} = derived;
+    const {visualState, colorMode, disabled, hasNewSetpoint} = derived;
 
     const outwardOffset = getSetpointOutwardOffset(visualState);
     const radius =
@@ -469,14 +530,41 @@ export class ObcWatch extends LitElement {
       id: this._setpointId,
     });
 
-    const originalSetpoint = svg`
-      <g transform="rotate(${this.angleSetpoint + 90}) translate(${-radius}, 0) rotate(270)" opacity="${opacity}">
-        ${originalMarker}
-      </g>
-    `;
+    const animate = this.animateSetpoint;
+    const hasDeparting = this._departingNewAngleSetpoint !== undefined;
+
+    // Compute CSS-safe accumulated angle so transitions always take the short path
+    const rawAngle = this.angleSetpoint + 90;
+    if (!this._setpointCssAngleInit) {
+      // First render: set angle without transition
+      this._setpointCssAngle = rawAngle;
+      this._setpointCssAngleInit = true;
+    } else {
+      this._setpointCssAngle = cssSafeAngle(this._setpointCssAngle, rawAngle);
+    }
+
+    // Use CSS style transform when animating for smooth transition
+    const originalSetpoint = animate
+      ? svg`
+        <g style="transform: rotate(${this._setpointCssAngle}deg) translateX(${-radius}px) rotate(270deg); opacity: ${opacity}; transition: transform var(${SETPOINT_ANIMATION_CSS_VAR}, ${SETPOINT_ANIMATION_DURATION_DEFAULT}) ease-out, opacity var(${SETPOINT_ANIMATION_CSS_VAR}, ${SETPOINT_ANIMATION_DURATION_DEFAULT}) ease-out;">
+          ${originalMarker}
+        </g>
+      `
+      : svg`
+        <g transform="rotate(${this.angleSetpoint + 90}) translate(${-radius}, 0) rotate(270)" opacity="${opacity}">
+          ${originalMarker}
+        </g>
+      `;
 
     // Render newAngleSetpoint in focus state (always on top)
-    if (hasNewSetpoint) {
+    // OR render departing newAngleSetpoint during confirm fade-out
+    if (hasNewSetpoint || hasDeparting) {
+      const isActive = hasNewSetpoint;
+      const newAngle = isActive
+        ? this.newAngleSetpoint!
+        : this._departingNewAngleSetpoint!;
+      const targetOpacity = isActive ? 1 : 0;
+
       const focusOutwardOffset = getSetpointOutwardOffset(
         SetpointVisualState.focus
       );
@@ -492,9 +580,19 @@ export class ObcWatch extends LitElement {
         id: this._newSetpointId,
       });
 
+      if (animate) {
+        const duration = `var(${SETPOINT_ANIMATION_CSS_VAR}, ${SETPOINT_ANIMATION_DURATION_DEFAULT})`;
+        return svg`
+          ${originalSetpoint}
+          <g style="transform: rotate(${newAngle + 90}deg) translateX(${-focusRadius}px) rotate(270deg); opacity: ${targetOpacity}; transition: opacity ${duration} ease-out;">
+            ${newMarker}
+          </g>
+        `;
+      }
+
       return svg`
         ${originalSetpoint}
-        <g transform="rotate(${this.newAngleSetpoint! + 90}) translate(${-focusRadius}, 0) rotate(270)">
+        <g transform="rotate(${newAngle + 90}) translate(${-focusRadius}, 0) rotate(270)" opacity="${targetOpacity}">
           ${newMarker}
         </g>
       `;

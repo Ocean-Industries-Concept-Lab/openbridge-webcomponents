@@ -1,4 +1,5 @@
 import {SVGTemplateResult, svg} from 'lit';
+import {Priority} from '../types.js';
 
 export enum ArrowStyle {
   HDG = 'HDG',
@@ -7,9 +8,13 @@ export enum ArrowStyle {
 
 export function arrow(
   style: ArrowStyle,
-  angle: number
+  angle: number,
+  priority: Priority = Priority.regular
 ): SVGTemplateResult | SVGTemplateResult[] {
-  const colorName = 'var(--instrument-enhanced-secondary-color)';
+  const colorName =
+    priority === Priority.enhanced
+      ? 'var(--instrument-enhanced-secondary-color)'
+      : 'var(--instrument-regular-secondary-color)';
 
   if (style === ArrowStyle.HDG) {
     return svg`

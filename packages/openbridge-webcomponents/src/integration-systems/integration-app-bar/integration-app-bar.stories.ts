@@ -29,3 +29,25 @@ export default meta;
 type Story = StoryObj<ObcIntegrationAppBar>;
 
 export const Primary: Story = {};
+
+export const WithLabels: Story = {
+  render: () => html`
+    <obc-integration-app-bar>
+      <obc-app-button slot="apps" size="small" label="Vessel 1" integration>
+        <obi-ship slot="icon"></obi-ship>
+      </obc-app-button>
+      <obc-app-button slot="apps" size="small" label="Vessel 2" integration>
+        <obi-ship slot="icon"></obi-ship>
+      </obc-app-button>
+      <obc-app-button
+        slot="apps"
+        size="small"
+        label="Vessel 3"
+        integration
+        checked
+      >
+        <obi-ship slot="icon"></obi-ship>
+      </obc-app-button>
+    </obc-integration-app-bar>
+  `,
+};

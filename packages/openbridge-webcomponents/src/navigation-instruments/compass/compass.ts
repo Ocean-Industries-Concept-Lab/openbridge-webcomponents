@@ -6,10 +6,11 @@ import {arrow, ArrowStyle} from './arrow.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {VesselImage, VesselImageSize, WatchCircleType} from '../watch/watch.js';
-import {SetpointColorMode} from '../../svghelpers/setpoint.js';
+import {SetpointBundle} from '../../svghelpers/setpoint-bundle.js';
 import {rot} from './rot.js';
 import {RateOfTurnController} from '../rate-of-turn/rate-of-turn.controller.js';
 import {customElement} from '../../decorator.js';
+import {InstrumentState, Priority} from '../types.js';
 
 export enum CompassDirection {
   NorthUp = 'northUp',
@@ -18,10 +19,63 @@ export enum CompassDirection {
 }
 
 /**
+ * `<obc-compass>` – Full-featured compass with HDG/COG arrows, rate-of-turn indicator, and environmental overlays.
+ *
+ * Renders a circular compass instrument that displays heading (HDG) and
+ * course-over-ground (COG) as rotating arrows over a triple-ring watch face.
+ * It supports wind and current indicators, a vessel silhouette, heading
+ * setpoint with auto at-setpoint detection, advice zones, and a rate-of-turn
+ * (ROT) dot indicator. The compass can be oriented north-up, heading-up, or
+ * course-up.
+ *
+ * ## Features
+ *
+ * - **Direction modes**: `northUp` (default), `headingUp`, or `courseUp`
+ *   via the `direction` property.
+ * - **HDG / COG arrows**: Two styled arrows overlay the watch face,
+ *   rotating independently.
+ * - **Heading setpoint**: Optional setpoint marker with auto at-setpoint
+ *   detection via `headingSetpoint`, `atHeadingSetpoint`, and deadband
+ *   tuning properties.
+ * - **Advice zones**: Pass `headingAdvices` to render caution/alert arcs;
+ *   triggered state is derived from whether the current heading falls
+ *   inside the advice range.
+ * - **Rate of turn**: Animated ROT dot driven by `rotationsPerMinute`.
+ * - **Environmental overlays**: Wind speed/direction and current
+ *   speed/direction indicators on the watch face.
+ * - **Vessel image**: Configurable vessel silhouette centered on the
+ *   compass, rotating with heading.
+ * - **Color priority**: Set `priority` to `Priority.enhanced` to use the
+ *   blue/enhanced color palette instead of the default gray/regular palette
+ *   (default: `Priority.regular`).
+ *
+ * ## Usage Guidelines
+ *
+ * - Set `heading` and `courseOverGround` to the current sensor values
+ *   in degrees.
+ * - Use `direction` to control the compass orientation mode.
+ * - Use `headingSetpoint` to show a target heading marker.
+ * - Pass `headingAdvices` as an array of `AngleAdvice` objects for
+ *   caution/alert zones.
+ * - Set `windSpeed` / `windFromDirection` and `currentSpeed` /
+ *   `currentFromDirection` to display environmental indicators.
+ *
+ * ## Example
+ *
+ * ```html
+ * <obc-compass
+ *   heading="45"
+ *   courseOverGround="50"
+ *   direction="northUp"
+ *   headingSetpoint="90"
+ *   priority="regular"
+ *   vesselImage="genericTop"
+ * ></obc-compass>
+ * ```
  *
  * @property {number} heading - The current heading of the vessel in degrees.
  * @property {number} courseOverGround - The current course over ground in degrees.
- * @property {number | null} headingSetPoint - The set point for the heading in degrees.
+ * @property {number | null} headingSetpoint - The set point for the heading in degrees.
  * @property {boolean} atHeadingSetpoint - Indicates if the vessel is at the heading set point.
  * @property {boolean} disableAutoAtHeadingSetpoint - Disables automatic at heading set point calculation.
  * @property {number} autoAtHeadingSetpointDeadband - The deadband for the heading set point in degrees.
@@ -33,6 +87,7 @@ export enum CompassDirection {
  * @property {number | null} currentFromDirection - The direction the current is coming from in degrees.
  * @property {VesselImage} vesselImage - The image of the vessel.
  * @property {number} rotationsPerMinute - The number of rotations per minute for the rate of turn controller.
+ * @property {Priority} priority - Color priority: `Priority.enhanced` uses the blue/enhanced color palette, `Priority.regular` (default) uses the standard palette.
  *
  * @ignition-base-height: 512px
  * @ignition-base-width: 512px
@@ -41,15 +96,15 @@ export enum CompassDirection {
 export class ObcCompass extends LitElement {
   @property({type: Number}) heading = 0;
   @property({type: Number}) courseOverGround = 0;
-  @property({type: Number}) headingSetPoint: number | null = null;
+
+  @property({type: Number}) headingSetpoint: number | null = null;
   @property({type: Number}) newHeadingSetpoint: number | undefined;
   @property({type: Boolean}) atHeadingSetpoint: boolean = false;
   @property({type: Number}) headingSetpointAtZeroDeadband: number = 0.5;
-  @property({type: String}) headingSetpointColorMode:
-    | SetpointColorMode
-    | undefined;
+  @property({type: Boolean}) headingSetpointOverride: boolean = false;
   @property({type: Boolean}) disableAutoAtHeadingSetpoint: boolean = false;
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
+  @property({type: Boolean}) animateSetpoint: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
   @property({type: Number}) windSpeed: number | null = null;
@@ -60,6 +115,8 @@ export class ObcCompass extends LitElement {
   @property({type: Number}) rotationsPerMinute: number = 1;
   @property({type: String}) direction: CompassDirection =
     CompassDirection.NorthUp;
+  @property({type: String}) state: InstrumentState = InstrumentState.active;
+  @property({type: String}) priority: Priority = Priority.regular;
 
   protected override updated(_changedProperties: PropertyValues): void {
     super.updated(_changedProperties);
@@ -69,6 +126,31 @@ export class ObcCompass extends LitElement {
     ) {
       this.rateOfTurnController.rotationsPerMinute = this.rotationsPerMinute;
     }
+  }
+
+  private _headingSp = new SetpointBundle({
+    angularWraparound: true,
+    onAnimationEnd: () => this.requestUpdate(),
+  });
+
+  override willUpdate(changed: PropertyValues): void {
+    super.willUpdate(changed);
+    this._headingSp.sync({
+      setpoint: this.headingSetpoint ?? undefined,
+      newSetpoint: this.newHeadingSetpoint,
+      atSetpoint: this.atHeadingSetpoint,
+      touching: this.touching,
+      disableAutoAtSetpoint: this.disableAutoAtHeadingSetpoint,
+      autoAtSetpointDeadband: this.autoAtHeadingSetpointDeadband,
+      setpointAtZeroDeadband: this.headingSetpointAtZeroDeadband,
+      setpointOverride: this.headingSetpointOverride,
+      animateSetpoint: this.animateSetpoint,
+    });
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this._headingSp.dispose();
   }
 
   @query('#rot')
@@ -140,17 +222,21 @@ export class ObcCompass extends LitElement {
     return html`
       <div class="container">
         <obc-watch
+          .touching=${this.touching}
           .padding=${padding}
           .advices=${this.angleAdviceRaw}
           .tickmarks=${tickmarks}
+          .state=${this.state}
           .watchCircleType=${WatchCircleType.triple}
           .labelFrameEnabled=${true}
           .crosshairEnabled=${true}
-          .angleSetpoint=${this.headingSetPoint ?? undefined}
+          .angleSetpoint=${this.headingSetpoint ?? undefined}
           .newAngleSetpoint=${this.newHeadingSetpoint}
-          .atAngleSetpoint=${this.atHeadingSetpointCalc()}
+          .atAngleSetpoint=${this._headingSp.computeAtSetpoint(this.heading)}
           .angleSetpointAtZeroDeadband=${this.headingSetpointAtZeroDeadband}
-          .colorMode=${this.headingSetpointColorMode}
+          .setpointOverride=${this.headingSetpointOverride}
+          .priority=${this.priority}
+          .animateSetpoint=${this.animateSetpoint}
           .vessels=${[
             {
               size: VesselImageSize.medium,
@@ -166,32 +252,20 @@ export class ObcCompass extends LitElement {
         >
         </obc-watch>
         <svg viewBox="${viewBox}">
-          ${arrow(ArrowStyle.HDG, this.heading + (this.getRotation() ?? 0))}
+          ${arrow(
+            ArrowStyle.HDG,
+            this.heading + (this.getRotation() ?? 0),
+            this.priority
+          )}
           ${arrow(
             ArrowStyle.COG,
-            this.courseOverGround + (this.getRotation() ?? 0)
+            this.courseOverGround + (this.getRotation() ?? 0),
+            this.priority
           )}
           <g id="rot">${rot}</g>
         </svg>
       </div>
     `;
-  }
-
-  atHeadingSetpointCalc(): boolean {
-    if (this.headingSetPoint === null) {
-      return false;
-    }
-
-    if (this.touching) {
-      return false;
-    }
-
-    if (!this.disableAutoAtHeadingSetpoint) {
-      const diff = Math.abs(this.heading - this.headingSetPoint);
-      const angularDistance = diff > 180 ? 360 - diff : diff;
-      return angularDistance < this.autoAtHeadingSetpointDeadband;
-    }
-    return this.atHeadingSetpoint;
   }
 
   static override styles = css`

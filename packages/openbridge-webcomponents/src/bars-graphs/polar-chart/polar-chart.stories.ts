@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import './polar-chart.js';
 import {ObcPolarChart} from './polar-chart.js';
+import {Priority} from '../../navigation-instruments/types.js';
 
 const SAMPLE_DATA = [
   {label: 'Sector A', value: 80},
@@ -19,7 +20,7 @@ const SAMPLE_DATA = [
 ];
 
 const meta: Meta = {
-  title: 'Bars and Graphs/Polar chart',
+  title: 'Bars and Graphs/Polar Chart',
   component: 'obc-polar-chart',
   tags: ['autodocs', '6.0'],
   argTypes: {
@@ -51,8 +52,9 @@ const meta: Meta = {
     showDebugOverlay: {control: 'boolean'},
     data: {control: 'object'},
     colors: {control: 'object'},
-    enhanced: {
-      control: 'boolean',
+    priority: {
+      control: 'select',
+      options: Object.values(Priority),
       description:
         'Use enhanced color palette (blue) instead of default (gray)',
     },
@@ -71,7 +73,7 @@ const meta: Meta = {
     showDebugOverlay: false,
     data: SAMPLE_DATA,
     colors: [],
-    enhanced: true,
+    priority: Priority.enhanced,
     legend: false,
   },
 };
@@ -86,7 +88,7 @@ export const Default: Story = {
     <obc-polar-chart
       .data=${args.data}
       .colors=${args.colors}
-      .enhanced=${args.enhanced}
+      .priority=${args.priority}
       .monochrome=${args.monochrome}
       .discreteColorStops=${args.discreteColorStops}
       .showSectorLabels=${args.showSectorLabels}
@@ -160,7 +162,7 @@ export const WithLegend: Story = {
 export const CustomColors: Story = {
   args: {
     colors: ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6'],
-    enhanced: false,
+    priority: Priority.regular,
   },
 };
 
@@ -172,7 +174,7 @@ export const Realtime: Story = {
   render: (args) => {
     const chart = document.createElement('obc-polar-chart');
     chart.data = JSON.parse(JSON.stringify(SAMPLE_DATA));
-    chart.enhanced = args.enhanced;
+    chart.priority = args.priority;
     chart.fixedHeight = args.fixedHeight;
 
     setInterval(() => {

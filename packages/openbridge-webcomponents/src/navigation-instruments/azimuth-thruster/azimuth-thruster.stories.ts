@@ -1,13 +1,13 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcAzimuthThruster} from './azimuth-thruster.js';
 import './azimuth-thruster.js';
-import {InstrumentState, Size} from '../types.js';
+import {InstrumentState, Priority, Size} from '../types.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
 import {PropellerType} from '../thruster/propeller.js';
 
 const meta: Meta<typeof ObcAzimuthThruster> = {
-  title: 'Instruments/Azimuth thruster',
+  title: 'Instruments/Azimuth Thruster',
   tags: ['autodocs', '6.0'],
   component: 'obc-azimuth-thruster',
   argTypes: {
@@ -26,12 +26,15 @@ const meta: Meta<typeof ObcAzimuthThruster> = {
     },
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
     detailedTickmarks: {control: {type: 'boolean'}},
+    touching: {control: 'boolean'},
+    priority: {control: 'select', options: Object.values(Priority)},
   },
   args: {
     width: 512,
     autoAtThrustSetpointDeadband: 1,
     autoAtAngleSetpointDeadband: 2,
     thrustSetpointAtZeroDeadband: 0.1,
+    touching: false,
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcAzimuthThruster>;
@@ -46,7 +49,8 @@ export const InCommand: Story = {
     thrustSetpoint: 70,
     angle: 30,
     angleSetpoint: 40,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     angleAdvices: [
       {minAngle: 20, maxAngle: 50, type: AdviceType.advice, hinted: true},
       {minAngle: 60, maxAngle: 100, type: AdviceType.caution, hinted: true},
@@ -65,6 +69,8 @@ export const InCommandDetailedTickmarks: Story = {
     thrustSetpoint: 60,
     angle: 30,
     angleSetpoint: 30,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     detailedTickmarks: true,
   },
 };
@@ -75,6 +81,8 @@ export const InCommandDetailedTickmarksInside: Story = {
     thrustSetpoint: 60,
     angle: 30,
     angleSetpoint: 30,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     detailedTickmarks: true,
     tickmarksInside: true,
   },
@@ -86,7 +94,8 @@ export const InCommandAtSetpoint: Story = {
     thrustSetpoint: 60,
     angle: 30,
     angleSetpoint: 30,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
   },
 };
 
@@ -97,7 +106,8 @@ export const Pod: Story = {
     thrustSetpoint: 60,
     angle: 30,
     angleSetpoint: 30,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     topPropeller: PropellerType.single,
     bottomPropeller: PropellerType.cap,
   },
@@ -114,7 +124,8 @@ export const InCommandAtSetpointDisableAutoSetpoint: Story = {
     angleSetpoint: 35,
     atAngleSetpoint: true,
     disableAutoAtAngleSetpoint: true,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
   },
 };
 
@@ -125,7 +136,8 @@ export const SingleDirection: Story = {
     thrustSetpoint: 60,
     angle: 30,
     angleSetpoint: 30,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     singleDirection: true,
   },
 };
@@ -137,13 +149,14 @@ export const SingleDirectionWithPropeller: Story = {
     thrustSetpoint: 60,
     angle: 30,
     angleSetpoint: 30,
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     singleDirection: true,
     bottomPropeller: PropellerType.single,
   },
 };
 
-export const Active: Story = {
+export const NotInCommand: Story = {
   args: {
     size: Size.large,
     thrust: 60,
@@ -151,10 +164,11 @@ export const Active: Story = {
     angle: 30,
     angleSetpoint: 40,
     state: InstrumentState.active,
+    priority: Priority.regular,
   },
 };
 
-export const ActiveAtSetpoint: Story = {
+export const NotInCommandAtSetpoint: Story = {
   args: {
     size: Size.large,
     thrust: 60,
@@ -162,10 +176,11 @@ export const ActiveAtSetpoint: Story = {
     angle: 30,
     angleSetpoint: 30,
     state: InstrumentState.active,
+    priority: Priority.regular,
   },
 };
 
-export const ActiveNoSetpoint: Story = {
+export const NotInCommandNoSetpoint: Story = {
   args: {
     size: Size.large,
     thrust: 60,
@@ -173,6 +188,7 @@ export const ActiveNoSetpoint: Story = {
     angle: 30,
     angleSetpoint: undefined,
     state: InstrumentState.active,
+    priority: Priority.regular,
   },
 };
 
@@ -196,5 +212,19 @@ export const Off: Story = {
     angle: 0,
     angleSetpoint: 0,
     state: InstrumentState.off,
+  },
+};
+
+export const OffWithAngleSetpointOverride: Story = {
+  args: {
+    size: Size.large,
+    thrust: 0,
+    thrustSetpoint: 0,
+    angle: 0,
+    angleSetpoint: 0,
+    state: InstrumentState.off,
+    angleSetpointOverride: true,
+    thrustSetpointOverride: false,
+    priority: Priority.enhanced,
   },
 };

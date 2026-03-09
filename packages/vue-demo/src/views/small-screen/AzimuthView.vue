@@ -9,7 +9,10 @@ import {
   type AngleAdvice
 } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js'
 import { computed } from 'vue'
-import { InstrumentState } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types.js'
+import {
+  InstrumentState,
+  Priority
+} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types.js'
 import { PropellerType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/thruster/propeller.js'
 
 const sim = useSim()
@@ -74,7 +77,8 @@ const angleAdvice = computed<AngleAdvice[]>(() => {
       :thrust="thrust"
       :thrust-setpoint="thrustSet"
       :angle-advices="angleAdvice"
-      :state="demoConfig.hasCommand ? InstrumentState.inCommand : InstrumentState.active"
+      :state="InstrumentState.active"
+      :priority="demoConfig.hasCommand ? Priority.enhanced : Priority.regular"
       :top-propeller="details ? PropellerType.single : undefined"
       :bottom-propeller="details ? PropellerType.single : undefined"
     />
