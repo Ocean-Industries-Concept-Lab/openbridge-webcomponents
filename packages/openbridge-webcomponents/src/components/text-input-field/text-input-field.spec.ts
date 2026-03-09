@@ -1,6 +1,6 @@
-import {describe, it, expect, beforeEach} from 'vitest';
+import {describe, it, expect, beforeEach, vi} from 'vitest';
 import './text-input-field.js';
-import {ObcTextInputField} from './text-input-field.js';
+import {ObcTextInputField, HTMLInputTypeAttribute} from './text-input-field.js';
 import {render} from 'vitest-browser-lit';
 import {html} from 'lit';
 
@@ -89,6 +89,130 @@ describe('obc-text-input-field', () => {
 
       expect(input.value).toBe('hello there');
       expect(el.value).toBe('hello there');
+    });
+  });
+
+  describe('input handling', () => {
+    it('updates el.value when user types in the input', async () => {
+      input.value = 'hello world';
+      input.dispatchEvent(new InputEvent('input', {bubbles: true}));
+      await el.updateComplete;
+
+      expect(el.value).toBe('hello world');
+    });
+
+    it('dispatches input event when user types', async () => {
+      const inputHandler = vi.fn();
+      el.addEventListener('input', inputHandler);
+
+      input.value = 'hello world';
+      input.dispatchEvent(
+        new InputEvent('input', {bubbles: true, composed: true})
+      );
+      await el.updateComplete;
+
+      expect(inputHandler).toHaveBeenCalled();
+    });
+  });
+
+  describe('event dispatching', () => {
+    let clearButton: HTMLButtonElement;
+
+    beforeEach(async () => {
+      el.hasClearButton = true;
+      await el.updateComplete;
+      clearButton = el.shadowRoot!.querySelector(
+        '.trailing-icon-button'
+      ) as HTMLButtonElement;
+    });
+
+    it('dispatches clear event when clear button is clicked', async () => {
+      const clearHandler = vi.fn();
+      el.addEventListener('clear', clearHandler);
+
+      clearButton.click();
+      await el.updateComplete;
+
+      expect(clearHandler).toHaveBeenCalled();
+    });
+
+    it('dispatches input and change events when clear button is clicked', async () => {
+      const inputHandler = vi.fn();
+      const changeHandler = vi.fn();
+      el.addEventListener('input', inputHandler);
+      el.addEventListener('change', changeHandler);
+
+      clearButton.click();
+      await el.updateComplete;
+
+      expect(inputHandler).toHaveBeenCalled();
+      expect(changeHandler).toHaveBeenCalled();
+    });
+
+    it('returns focus to input after clear button is clicked', async () => {
+      input.focus();
+      expect(document.activeElement).toBe(el);
+      expect(el.shadowRoot?.activeElement).toBe(input);
+
+      clearButton.click();
+      await el.updateComplete;
+
+      expect(el.shadowRoot?.activeElement).toBe(input);
+    });
+  });
+
+  describe('change event', () => {
+    it('dispatches change event when input value changes and blur occurs', async () => {
+      const changeHandler = vi.fn();
+      el.addEventListener('change', changeHandler);
+
+      input.value = 'new value';
+      input.dispatchEvent(new InputEvent('input', {bubbles: true}));
+      input.dispatchEvent(new Event('change', {bubbles: true}));
+      await el.updateComplete;
+
+      expect(changeHandler).toHaveBeenCalled();
+    });
+  });
+
+  describe('password visibility', () => {
+    beforeEach(async () => {
+      el.type = HTMLInputTypeAttribute.Password;
+      el.value = 'secret';
+      await el.updateComplete;
+    });
+
+    it('shows password toggle button when type is password', async () => {
+      const toggleButton = el.shadowRoot!.querySelector(
+        '.trailing-icon-button'
+      ) as HTMLButtonElement;
+      expect(toggleButton).toBeTruthy();
+    });
+
+    it('toggles input type between password and text when toggle is clicked', async () => {
+      const toggleButton = el.shadowRoot!.querySelector(
+        '.trailing-icon-button'
+      ) as HTMLButtonElement;
+
+      expect(input.type).toBe('password');
+
+      toggleButton.click();
+      await el.updateComplete;
+      expect(input.type).toBe('text');
+
+      toggleButton.click();
+      await el.updateComplete;
+      expect(input.type).toBe('password');
+    });
+
+    it('hides password toggle when disabled', async () => {
+      el.disabled = true;
+      await el.updateComplete;
+
+      const toggleButton = el.shadowRoot!.querySelector(
+        '.trailing-icon-button'
+      ) as HTMLButtonElement;
+      expect(toggleButton).toBeNull();
     });
   });
 
