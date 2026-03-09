@@ -1,4 +1,11 @@
-import {LitElement, html, nothing, unsafeCSS, TemplateResult} from 'lit';
+import {
+  LitElement,
+  html,
+  nothing,
+  unsafeCSS,
+  TemplateResult,
+  PropertyValues,
+} from 'lit';
 import {property, state, query} from 'lit/decorators.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import componentStyle from './text-input-field.css?inline';
@@ -73,6 +80,11 @@ export class ObcTextInputField extends LitElement {
   /** If true, the value will only be initially set, and not updated on change */
   @property({type: Boolean}) rejectUpdates = false;
 
+  /** If true, the input field will not update its value if the value is the same as the previous value
+   * This is useful to avoid React re-rendering to reset the value.
+   */
+  @property({type: Boolean}) rejectDuplicateUpdates = false;
+
   /** Name attribute for form integration */
   @property({type: String}) name = '';
 
@@ -105,11 +117,14 @@ export class ObcTextInputField extends LitElement {
   /** Internal state for password visibility toggle */
   @state() private passwordVisible = false;
   @state() private hasFocus = false;
+  @state() private previousValue = '';
+  @state() private previousInputElementValue = '';
 
   @query('.value-input') private inputElement?: HTMLInputElement;
 
   private onInput(e: Event) {
     this.value = (e.target as HTMLInputElement).value;
+    this.previousInputElementValue = this.value;
   }
 
   private onFocus() {
@@ -185,11 +200,13 @@ export class ObcTextInputField extends LitElement {
   private get shouldUpdateValue(): boolean {
     if (this.rejectUpdates) return false;
     if (this.rejectUpdatesOnFocus && this.hasFocus) return false;
+    if (this.rejectDuplicateUpdates && this.value === this.previousValue) {
+      return false;
+    }
     return true;
   }
 
-  override updated(changedProperties: Map<string, unknown>) {
-    super.updated(changedProperties);
+  override willUpdate(changedProperties: PropertyValues) {
     if (
       changedProperties.has('value') &&
       !this.shouldUpdateValue &&
@@ -198,6 +215,17 @@ export class ObcTextInputField extends LitElement {
       this.value = this.inputElement.value;
     }
   }
+
+  override updated() {
+    if (
+      this.rejectDuplicateUpdates &&
+      this.value !== this.previousValue &&
+      (this.previousInputElementValue !== this.value || !this.hasFocus)
+    ) {
+      this.previousValue = this.value;
+    }
+  }
+
   override render() {
     const hasHelperOrError =
       Boolean(this.helperText) || Boolean(this.error && this.errorText);

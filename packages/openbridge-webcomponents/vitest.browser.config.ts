@@ -6,7 +6,6 @@ export default defineConfig({
     browser: {
       enabled: true,
       provider: playwright(),
-      // https://vitest.dev/config/browser/playwright
       instances: [{browser: 'chromium'}],
     },
   },
