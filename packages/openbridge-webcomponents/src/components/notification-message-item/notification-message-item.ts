@@ -251,13 +251,13 @@ export class ObcNotificationMessageItem extends LitElement {
         ${this.hasSecondaryIcon
           ? html`<slot name="secondary-icon" slot="secondary-icon"></slot>`
           : nothing}
-        ${this.showTitle
+        ${this.title && this.showTitle
           ? html`<span slot="title">${this.title}</span>`
           : nothing}
-        ${this.showDescription
+        ${this.description && this.showDescription
           ? html`<span slot="description">${this.description}</span>`
           : nothing}
-        ${this.showTimestamp
+        ${this.time && this.showTimestamp
           ? html`<span slot="time">${this.time}</span>`
           : nothing}
         ${this.timeSecondary && this.hasTimestamp2

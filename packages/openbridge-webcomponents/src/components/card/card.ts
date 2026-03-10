@@ -36,7 +36,7 @@ import {customElement} from '../../decorator.js';
  * ### Slots
  * | Slot Name        | Renders When...          | Purpose                                            |
  * |------------------|-------------------------|----------------------------------------------------|
- * | `title`          | Always                   | Main card header/title.                            |
+ * | `title`          | `showTitle` is true      | Main card header/title.                            |
  * | (default)        | Always                   | Main card content area.                            |
  * | `dialog-title`   | `hasDialog` is true      | Title/header for the dialog overlay.               |
  * | `dialog-content` | `hasDialog` is true      | Content area for the dialog overlay.               |
@@ -44,6 +44,7 @@ import {customElement} from '../../decorator.js';
  * ---
  *
  * ### Properties
+ * - `showTitle` (boolean): Controls whether the title header is rendered. (Default: true)
  * - `hasDialog` (boolean): Enables dialog mode. When true, the card acts as a button and opens a modal dialog on click. (Default: false)
  * - `dialogTimeOutSeconds` (number): Total time in milliseconds before the dialog auto-closes. (Default: 20000)
  * - `dialogVisibleTimerSeconds` (number): Duration in milliseconds for which the countdown indicator is shown before auto-dismiss. (Default: 10000)

@@ -18,7 +18,7 @@ const meta: Meta<typeof ObcNotificationMessageItem> = {
     size: 'regular',
     showTitle: true,
     showDescription: true,
-    hasTimestamp: true,
+    showTimestamp: true,
     hasTimestamp2: false,
     hasSecondaryIcon: false,
     large: false,
@@ -36,15 +36,15 @@ const meta: Meta<typeof ObcNotificationMessageItem> = {
       options: ['regular', 'tall'],
       description: 'Size variant of the notification',
     },
-    hasTitle: {
+    showTitle: {
       control: {type: 'boolean'},
       description: 'Whether to show the title',
     },
-    hasDescription: {
+    showDescription: {
       control: {type: 'boolean'},
       description: 'Whether to show the description',
     },
-    hasTimestamp: {
+    showTimestamp: {
       control: {type: 'boolean'},
       description: 'Whether to show the primary timestamp',
     },
@@ -213,7 +213,7 @@ export const WithBothTimestamps: Story = {
     description: 'Database backup in progress',
     time: '14:30:00',
     timeSecondary: '15m elapsed',
-    hasTimestamp: true,
+    showTimestamp: true,
     hasTimestamp2: true,
     type: 'simple',
   },

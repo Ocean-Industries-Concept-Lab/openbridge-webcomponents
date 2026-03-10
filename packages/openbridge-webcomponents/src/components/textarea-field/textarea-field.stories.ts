@@ -70,15 +70,15 @@ const meta: Meta<typeof ObcTextareaField> = {
     },
     showLabel: {
       control: {type: 'boolean'},
-      description: 'Hides the label',
+      description: 'Shows the label above the input',
     },
     showToolbar: {
       control: {type: 'boolean'},
-      description: 'Hides the toolbar buttons',
+      description: 'Shows the toolbar buttons',
     },
     showVoiceRecording: {
       control: {type: 'boolean'},
-      description: 'Hides the voice recording button',
+      description: 'Shows the voice recording button',
     },
     hasLeadingIcon: {
       control: {type: 'boolean'},

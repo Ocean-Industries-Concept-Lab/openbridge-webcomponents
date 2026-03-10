@@ -18,7 +18,7 @@ import '../../icons/icon-joystick.js';
  *   when `false` it slots a no-command icon and "NO CMD" status.
  *   Default: `false`.
  * @property {boolean} showLocation - Forwarded to `<obc-command-menu>` to
- *   hide or show the command location slot. Default: `false`.
+ *   hide or show the command location slot. Default: `true`.
  *
  * @example
  * ```html

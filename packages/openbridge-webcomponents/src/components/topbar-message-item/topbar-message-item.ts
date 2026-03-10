@@ -82,9 +82,9 @@ export enum ObcTopbarMessageItemSize {
  * |-------------------|------------------------------------------------|--------------------------------------------------------------|
  * | primary-icon      | Always (except inactive)                       | Main icon representing the message type or status            |
  * | secondary-icon    | If `hasSecondaryIcon` is true                  | Additional icon for context or severity                      |
- * | title             | If `hasTitle` is true                          | Title or heading of the message                              |
- * | description       | If `hasDescription` is true                    | Detailed message text                                        |
- * | time              | If `hasTimestamp` is true                      | Primary timestamp (e.g., time of event)                      |
+ * | title             | If `showTitle` is true                         | Title or heading of the message                              |
+ * | description       | If `showDescription` is true                   | Detailed message text                                        |
+ * | time              | If `showTimestamp` is true                     | Primary timestamp (e.g., time of event)                      |
  * | time-secondary    | If `hasTimestamp2` is true                     | Secondary timestamp (e.g., duration, relative time)          |
  * | action-text       | If type is `with-button`                       | Label/content for the text action button                     |
  * | action-icon       | If type is `with-icon-button`                  | Icon for the icon action button                              |
@@ -109,7 +109,7 @@ export enum ObcTopbarMessageItemSize {
  *
  * **Example:**
  * ```html
- * <obc-topbar-message-item type="with-button" size="regular" hasTitle hasDescription hasTimestamp>
+ * <obc-topbar-message-item type="with-button" size="regular">
  *   <obi-placeholder slot="primary-icon"></obi-placeholder>
  *   <obi-placeholder slot="secondary-icon"></obi-placeholder>
  *   <span slot="title">System Update</span>
@@ -121,9 +121,9 @@ export enum ObcTopbarMessageItemSize {
  *
  * @slot primary-icon - Main icon representing the message type or status.
  * @slot secondary-icon - Additional icon for context or severity (shown if `hasSecondaryIcon` is true).
- * @slot title - Title or heading of the message (shown if `hasTitle` is true).
- * @slot description - Detailed message text (shown if `hasDescription` is true).
- * @slot time - Primary timestamp (shown if `hasTimestamp` is true).
+ * @slot title - Title or heading of the message (shown if `showTitle` is true).
+ * @slot description - Detailed message text (shown if `showDescription` is true).
+ * @slot time - Primary timestamp (shown if `showTimestamp` is true).
  * @slot time-secondary - Secondary timestamp (shown if `hasTimestamp2` is true).
  * @slot action-text - Content for the text action button (shown if type is `with-button`).
  * @slot action-icon - Icon for the icon action button (shown if type is `with-icon-button`).

@@ -245,17 +245,17 @@ export class ObcTextareaField extends LitElement {
   @property({type: Boolean}) required = false;
 
   /**
-   * Hides the label above the input field.
+   * Shows the label above the input field.
    */
   @property({type: Boolean, attribute: false}) showLabel: boolean = true;
 
   /**
-   * Hides the toolbar with action buttons.
+   * Shows the toolbar with action buttons.
    */
   @property({type: Boolean, attribute: false}) showToolbar: boolean = true;
 
   /**
-   * Hides the voice recording button.
+   * Shows the voice recording button.
    */
   @property({type: Boolean, attribute: false}) showVoiceRecording: boolean =
     true;

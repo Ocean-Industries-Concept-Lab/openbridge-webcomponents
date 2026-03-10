@@ -25,7 +25,7 @@ const meta: Meta<typeof ObcBadge> = {
     },
     showNumber: {
       control: {type: 'boolean'},
-      description: 'Hides the number in the badge',
+      description: 'Whether to show the number in the badge',
     },
     size: {
       control: {type: 'select'},
@@ -105,7 +105,7 @@ export const NoNumber: Story = {
   },
   render(args) {
     return html`<obc-badge
-      .showNumber=${false}
+      .showNumber=${args.showNumber}
       size=${args.size}
       type=${args.type}
       variant=${args.variant}
@@ -125,7 +125,7 @@ export const NoNumberLarge: Story = {
   },
   render(args) {
     return html`<obc-badge
-      .showNumber=${false}
+      .showNumber=${args.showNumber}
       size=${args.size}
       type=${args.type}
       variant=${args.variant}
@@ -307,7 +307,7 @@ export const FlatHideNumber: Story = {
       size=${args.size}
       type=${args.type}
       variant="flat"
-      .showNumber=${false}
+      .showNumber=${args.showNumber}
       ?showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>

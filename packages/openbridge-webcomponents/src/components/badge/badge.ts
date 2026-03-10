@@ -109,7 +109,7 @@ export enum BadgeVariant {
  *
  * ### Properties and Attributes
  * - `number` (number): The numeric value to display in the badge. Defaults to 0.
- * - `showNumber` (boolean): If true, the number is hidden and only the icon (if any) is shown.
+ * - `showNumber` (boolean): If true, the number is shown. Set to `false` for symbolic or icon-only badges.
  * - `type` (string): Visual style of the badge. See **Type options** above for possible values. Defaults to `regular`.
  * - `size` (string): Badge size, either `regular` (default) or `large`.
  * - `variant` (string): Visual variant, either `default` (filled) or `flat` (minimal). Defaults to `default`.
@@ -150,9 +150,9 @@ export class ObcBadge extends LitElement {
   @property({type: Number}) number = 0;
 
   /**
-   * Hides the number in the badge when true.
+   * Shows the number in the badge when true.
    *
-   * Use this for symbolic or icon-only badges.
+   * Set to `false` for symbolic or icon-only badges.
    */
   @property({type: Boolean, attribute: false}) showNumber: boolean = true;
 
