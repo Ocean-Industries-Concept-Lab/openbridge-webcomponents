@@ -227,7 +227,7 @@ export class ObcMenuButton extends LitElement {
 
   @state() private isOpen = false;
 
-  @query('.positioned-menu') private menu!: HTMLElement;
+  @query('.positioned-menu') private menu?: HTMLElement;
 
   private get effectiveMultiSelect(): boolean {
     if (this.multiSelect !== undefined) return this.multiSelect;
@@ -342,6 +342,7 @@ export class ObcMenuButton extends LitElement {
   }
 
   private handleMenuClose() {
+    if (this.menu === undefined) return;
     this.menu.hidePopover();
   }
 
@@ -380,14 +381,18 @@ export class ObcMenuButton extends LitElement {
       >
         <div class="visible-wrapper">
           <div class="content-container">
-            ${this.hasIcon
-              ? html`
-                  <div class="icon-container"><slot name="icon"></slot></div>
-                `
-              : nothing}
-            ${this.label
-              ? html` <div class="label-container">${this.label}</div> `
-              : nothing}
+            ${
+              this.hasIcon
+                ? html`
+                    <div class="icon-container"><slot name="icon"></slot></div>
+                  `
+                : nothing
+            }
+            ${
+              this.label
+                ? html` <div class="label-container">${this.label}</div> `
+                : nothing
+            }
           </div>
           <div class="arrow-flyout-container">
             <obi-arrow-flyout-google></obi-arrow-flyout-google>
