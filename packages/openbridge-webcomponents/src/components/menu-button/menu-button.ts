@@ -287,24 +287,8 @@ export class ObcMenuButton extends LitElement {
      * @type {CustomEvent<{selectedValues: string[], selectedOptions: Array<ContextMenuOption>}>}
      */
     this.dispatchEvent(new CustomEvent('change', {detail: e.detail}));
-
-    const isFlyoutMenu = this.menuType === ContextMenuType.Flyout;
-
-    // If we're in flyout+multi mode, close on leaf selection
-    if (isFlyoutMenu && this.effectiveMultiSelect) {
-      // (Optional) Only close if a leaf was just toggled.
-      // Find the last selected/removed value (not strictly needed for close-all)
-      setTimeout(() => {
-        this.handleMenuClose();
-      }, 0);
-      return;
-    }
-
-    // For flyout, don't close automatically (handled in @item-click for single-select)
-    if (!isFlyoutMenu) {
-      setTimeout(() => {
-        this.handleMenuClose();
-      }, 0);
+    if (!this.effectiveMultiSelect) {
+      this.handleMenuClose();
     }
   }
 
@@ -316,6 +300,7 @@ export class ObcMenuButton extends LitElement {
      * @event item-click
      * @type {CustomEvent<{value: string, option: ContextMenuOption}>}
      */
+    this.dispatchEvent(new CustomEvent('item-click', {detail: e.detail}));
     const option = e.detail.option;
     if (option.children?.length) {
       return;
@@ -325,20 +310,10 @@ export class ObcMenuButton extends LitElement {
       this.menuType === ContextMenuType.Flyout ||
       this.menuType === ContextMenuType.NestedCheckboxes;
 
-    // Close for leaf items (in flyout menus)
-    // Use setTimeout to allow any other click/change events to process before closing the menu.
-    if (isFlyoutMenu) {
-      setTimeout(() => {
-        this.handleMenuClose();
-      }, 0);
+    if (isFlyoutMenu && !this.effectiveMultiSelect) {
+      this.handleMenuClose();
       return;
     }
-
-    // For non-flyout menus, close after selection
-    // Use setTimeout to allow any other click/change events to process before closing the menu.
-    setTimeout(() => {
-      this.handleMenuClose();
-    }, 0);
   }
 
   private handleMenuClose() {
@@ -362,9 +337,6 @@ export class ObcMenuButton extends LitElement {
   }
 
   override render() {
-    // Pass selected values only if we're persisting selection
-    const selectedValues = this.effectiveMultiSelect ? this.selectedValues : [];
-
     return html`
       <button
         class=${classMap({
@@ -399,13 +371,15 @@ export class ObcMenuButton extends LitElement {
           </div>
         </div>
 
-        <obc-context-menu-input
+        
+      </button>
+      <obc-context-menu-input
           popover="auto"
           id="menu-popover"
           class="positioned-menu"
           .type=${this.effectiveMenuType}
           .options=${this.options}
-          .selectedValues=${selectedValues}
+          .selectedValues=${this.selectedValues}
           .multiSelect=${this.isMultiSelect}
           .selectPerGroup=${this.effectiveSelectPerGroup}
           .hasTitleBar=${this.hasTitleBar}
@@ -417,7 +391,6 @@ export class ObcMenuButton extends LitElement {
           @close=${this.handleMenuClose}
           @toggle=${this.handlePopoverToggle}
         /></obc-context-menu-input>
-      </button>
     `;
   }
 
