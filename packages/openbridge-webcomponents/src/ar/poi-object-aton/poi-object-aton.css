@@ -284,3 +284,75 @@
   color: var(--element-active-color);
   --element-active-color: inherit;
 }
+
+/* ==========================================================================
+   Interactive hover/active states for AtoN diamond
+   ========================================================================== */
+
+.aton-wrapper.interactive {
+  cursor: pointer;
+}
+
+.aton-wrapper.interactive .aton-diamond-background {
+  transition:
+    background-color var(--obc-poi-color-transition-duration, 0.1s) ease,
+    border-color var(--obc-poi-color-transition-duration, 0.1s) ease;
+}
+
+/* Regular style — uses flat hover/pressed colors */
+:host(:hover) .aton-wrapper.interactive.style-regular .aton-diamond-background {
+  background-color: var(--flat-hover-background-color);
+}
+
+:host(:active) .aton-wrapper.interactive.style-regular .aton-diamond-background {
+  background-color: var(--flat-pressed-background-color);
+}
+
+/* Colored styles — lighten on hover/active via color-mix */
+:host(:hover) .aton-wrapper.interactive.style-green .aton-diamond-background {
+  background-color: color-mix(
+    in srgb,
+    var(--overlay-navigation-green-primary-color) 85%,
+    white
+  );
+}
+
+:host(:active) .aton-wrapper.interactive.style-green .aton-diamond-background {
+  background-color: color-mix(
+    in srgb,
+    var(--overlay-navigation-green-primary-color) 75%,
+    white
+  );
+}
+
+:host(:hover) .aton-wrapper.interactive.style-red .aton-diamond-background {
+  background-color: color-mix(
+    in srgb,
+    var(--overlay-navigation-red-primary-color) 85%,
+    white
+  );
+}
+
+:host(:active) .aton-wrapper.interactive.style-red .aton-diamond-background {
+  background-color: color-mix(
+    in srgb,
+    var(--overlay-navigation-red-primary-color) 75%,
+    white
+  );
+}
+
+:host(:hover) .aton-wrapper.interactive.style-yellow .aton-diamond-background {
+  background-color: color-mix(
+    in srgb,
+    var(--overlay-navigation-yellow-primary-color) 85%,
+    white
+  );
+}
+
+:host(:active) .aton-wrapper.interactive.style-yellow .aton-diamond-background {
+  background-color: color-mix(
+    in srgb,
+    var(--overlay-navigation-yellow-primary-color) 75%,
+    white
+  );
+}

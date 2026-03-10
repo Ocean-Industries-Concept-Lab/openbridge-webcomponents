@@ -4,11 +4,12 @@ import {customElement} from '../../decorator.js';
 import componentStyle from './poi-layer-stack.css?inline';
 import {ObcPoiLayer} from '../poi-layer/poi-layer.js';
 import {ObcPoiGroup} from '../poi-group/poi-group.js';
+import {PoiDataValue, PoiDataVisualRectPreference} from '../poi-data/poi-data.js';
 import {
-  ObcPoiData,
-  PoiDataValue,
-  PoiDataVisualRectPreference,
-} from '../poi-data/poi-data.js';
+  PoiLayerTarget,
+  isPoiLayerTarget,
+  POI_TARGET_ATTR,
+} from '../poi-layer-target.js';
 import '../building-blocks/poi-header/poi-header.js';
 
 const JUMP_DURATION_MS = 100;
@@ -48,12 +49,12 @@ export class ObcPoiLayerStack extends LitElement {
   private handleStackClick = (event: Event) => this.onStackClick(event);
   private handleSlotChange = () => this.schedulePlacement();
   private selectionMap = new Map<
-    ObcPoiData,
+    PoiLayerTarget,
     {originLayer: ObcPoiLayer; originLineLength: number}
   >();
   private selectionCounter = 0;
-  private selectionIds = new WeakMap<ObcPoiData, string>();
-  private movingTargets = new Set<ObcPoiData>();
+  private selectionIds = new WeakMap<PoiLayerTarget, string>();
+  private movingTargets = new Set<PoiLayerTarget>();
   private placementRaf = 0;
   private mutationObserver?: MutationObserver;
 
@@ -83,7 +84,7 @@ export class ObcPoiLayerStack extends LitElement {
     this.selectionMap.clear();
     this.movingTargets.clear();
     this.selectionCounter = 0;
-    this.selectionIds = new WeakMap<ObcPoiData, string>();
+    this.selectionIds = new WeakMap<PoiLayerTarget, string>();
   }
 
   private onStackClick(event: Event) {
@@ -138,26 +139,27 @@ export class ObcPoiLayerStack extends LitElement {
     this.schedulePlacement();
   }
 
-  private getPoiTargetFromEvent(event: Event): ObcPoiData | null {
+  private getPoiTargetFromEvent(event: Event): PoiLayerTarget | null {
     const path = event.composedPath?.() ?? [];
     for (const item of path) {
-      if (
-        item instanceof HTMLElement &&
-        item.tagName.toLowerCase() === 'obc-poi-data'
-      ) {
-        return item as ObcPoiData;
+      if (item instanceof HTMLElement && isPoiLayerTarget(item)) {
+        return item;
       }
     }
     const direct = event.target instanceof HTMLElement ? event.target : null;
-    return direct?.closest('obc-poi-data') as ObcPoiData | null;
+    if (!direct) return null;
+    const closest = direct.closest(`[${POI_TARGET_ATTR}]`);
+    return closest && isPoiLayerTarget(closest) ? closest : null;
   }
 
   private getTargetLayer(target: Element): ObcPoiLayer | null {
     return target.closest('obc-poi-layer') as ObcPoiLayer | null;
   }
 
-  private getLayerTargets(layer: ParentNode): ObcPoiData[] {
-    return Array.from(layer.querySelectorAll('obc-poi-data')) as ObcPoiData[];
+  private getLayerTargets(layer: ParentNode): PoiLayerTarget[] {
+    return Array.from(
+      layer.querySelectorAll(`[${POI_TARGET_ATTR}]`)
+    ).filter((el): el is PoiLayerTarget => isPoiLayerTarget(el));
   }
 
   private getAllLayers(): ObcPoiLayer[] {
@@ -197,7 +199,7 @@ export class ObcPoiLayerStack extends LitElement {
     }
   }
 
-  private clearOtherTopSelections(target: ObcPoiData) {
+  private clearOtherTopSelections(target: PoiLayerTarget) {
     const topLayer = this.getLayer('top');
     const activeLayer = this.getLayer('selected') ?? topLayer;
     if (!activeLayer) return;
@@ -212,7 +214,8 @@ export class ObcPoiLayerStack extends LitElement {
     });
   }
 
-  private setTargetSelectedId(target: ObcPoiData) {
+  private setTargetSelectedId(target: PoiLayerTarget) {
+    if (target.hasHeader === undefined) return;
     const hasExternalHeader =
       target.querySelector('[slot="header"]:not([data-stack-header])') !== null;
     if (hasExternalHeader) {
@@ -239,15 +242,17 @@ export class ObcPoiLayerStack extends LitElement {
     target.hasHeader = true;
   }
 
-  private clearTargetSelectedId(target: ObcPoiData) {
+  private clearTargetSelectedId(target: PoiLayerTarget) {
     const stackHeader = target.querySelector(
       'obc-poi-header[data-stack-header]'
     );
     stackHeader?.remove();
-    target.hasHeader = target.querySelector('[slot="header"]') !== null;
+    if (target.hasHeader !== undefined) {
+      target.hasHeader = target.querySelector('[slot="header"]') !== null;
+    }
   }
 
-  private clearTargetGroupingAttributes(target: ObcPoiData) {
+  private clearTargetGroupingAttributes(target: PoiLayerTarget) {
     target.removeAttribute('data-grouped');
     target.removeAttribute('data-pregrouped');
     target.removeAttribute('data-behind');
@@ -258,7 +263,7 @@ export class ObcPoiLayerStack extends LitElement {
   }
 
   private setSelectedTargetInteractivity(
-    target: ObcPoiData,
+    target: PoiLayerTarget,
     selected: boolean
   ) {
     const isInAutoGroup =
@@ -281,7 +286,7 @@ export class ObcPoiLayerStack extends LitElement {
   }
 
   private resetSelectionForTarget(
-    target: ObcPoiData,
+    target: PoiLayerTarget,
     record?: {
       originLayer: ObcPoiLayer;
       originLineLength: number;
@@ -312,7 +317,7 @@ export class ObcPoiLayerStack extends LitElement {
     this.clearTargetSelectedId(target);
   }
 
-  private clearSelectionMapExcept(target: ObcPoiData) {
+  private clearSelectionMapExcept(target: PoiLayerTarget) {
     const entries = Array.from(this.selectionMap.entries());
     entries.forEach(([other, record]) => {
       if (other === target) return;
@@ -327,8 +332,8 @@ export class ObcPoiLayerStack extends LitElement {
         for (const node of Array.from(mutation.addedNodes)) {
           if (!(node instanceof HTMLElement)) continue;
           if (
-            node.tagName.toLowerCase() === 'obc-poi-data' ||
-            node.querySelector?.('obc-poi-data')
+            isPoiLayerTarget(node) ||
+            node.querySelector?.(`[${POI_TARGET_ATTR}]`)
           ) {
             this.schedulePlacement();
             return;
@@ -340,7 +345,7 @@ export class ObcPoiLayerStack extends LitElement {
   }
 
   private moveTargetToLayer(
-    target: ObcPoiData,
+    target: PoiLayerTarget,
     nextLayer: ObcPoiLayer,
     afterMove?: () => void
   ) {
@@ -439,19 +444,13 @@ export class ObcPoiLayerStack extends LitElement {
     return {x: rect.left + rect.width / 2, y: rect.bottom};
   }
 
-  private getTargetVisualAnchor(target: ObcPoiData): {x: number; y: number} {
+  private getTargetVisualAnchor(target: PoiLayerTarget): {x: number; y: number} {
     const rect = target.getVisualRect(PoiDataVisualRectPreference.Anchor);
     return this.getRectBottomCenter(rect);
   }
 
-  private getTargetPointAnchor(target: ObcPoiData): {x: number; y: number} {
-    const targetShadow = target.shadowRoot;
-    const poi = targetShadow?.querySelector('obc-poi') as
-      | HTMLElement
-      | undefined;
-    const pointer = poi?.shadowRoot?.querySelector(
-      'obc-poi-pointer.pointer'
-    ) as HTMLElement | null;
+  private getTargetPointAnchor(target: PoiLayerTarget): {x: number; y: number} {
+    const pointer = target.getPointerElement();
     if (pointer) {
       return this.getRectBottomCenter(pointer.getBoundingClientRect());
     }
@@ -546,7 +545,7 @@ export class ObcPoiLayerStack extends LitElement {
   }
 
   private syncInitialSelectedTargetLineCompensation(
-    target: ObcPoiData,
+    target: PoiLayerTarget,
     originLayer: ObcPoiLayer,
     selectedLayer: ObcPoiLayer
   ) {
@@ -575,13 +574,13 @@ export class ObcPoiLayerStack extends LitElement {
     this.animateTargetLineCompensation(target, expectedCompensation, false);
   }
 
-  private getTargetLineCompensation(target: ObcPoiData): number {
+  private getTargetLineCompensation(target: PoiLayerTarget): number {
     const compensation = target.lineCompensationY;
     return Number.isFinite(compensation) ? compensation : 0;
   }
 
   private animateTargetLineCompensation(
-    target: ObcPoiData,
+    target: PoiLayerTarget,
     targetCompensation: number,
     animate: boolean,
     startTimeOverride?: number
@@ -620,7 +619,7 @@ export class ObcPoiLayerStack extends LitElement {
   }
 
   private adjustTargetLineLengthByOffset(
-    target: ObcPoiData,
+    target: PoiLayerTarget,
     offset: number,
     animate = true,
     startTimeOverride?: number
