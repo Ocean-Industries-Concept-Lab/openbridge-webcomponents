@@ -101,7 +101,7 @@ export const PlaybackPlaying: Story = {
 };
 
 export const InteractiveDemo: Story = {
-  tags: ['skip-snapshot'],
+  tags: ['!snapshot'],
   render: () => {
     let levels: number[] = [];
     let recordedDuration = 0;

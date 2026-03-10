@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Build openbridge-webcomponents
-        run: cd packages/openbridge-webcomponents && npm run build
+        run: cd packages/openbridge-webcomponents && npm run build:full
       - name: Build openbridge-webcomponents-vue
         run: cd packages/openbridge-webcomponents-vue && npm run build
       - name: Build vue-demo
@@ -56,6 +56,8 @@ jobs:
         run: cd packages/openbridge-webcomponents && npm run analyze
       - name: Build storybook
         run: cd packages/openbridge-webcomponents && npm run build-storybook
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"

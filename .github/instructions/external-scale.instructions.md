@@ -1,33 +1,33 @@
 ---
-applyTo: "packages/openbridge-webcomponents/src/building-blocks/external-scale/**,packages/openbridge-webcomponents/src/building-blocks/bar-vertical/**,packages/openbridge-webcomponents/src/building-blocks/bar-horizontal/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-vertical/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-horizontal/**"
+applyTo: "packages/openbridge-webcomponents/src/building-blocks/external-scale/**,packages/openbridge-webcomponents/src/building-blocks/bar-vertical/**,packages/openbridge-webcomponents/src/building-blocks/bar-horizontal/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-vertical/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-horizontal/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-trend/**"
 ---
 
 # GitHub Copilot Custom Instructions
 
 ## Path-Specific Instructions for External Scale & Bar/Gauge Components
 
-These instructions apply to the external scale renderer and its thin wrapper components (bar-vertical, bar-horizontal, gauge-vertical, gauge-horizontal).
+These instructions apply to the external scale renderer and its thin wrapper components (bar-vertical, bar-horizontal, gauge-vertical, gauge-horizontal, gauge-trend).
 
 > **⚠️ IMPORTANT: Interconnected Components**
 >
 > All components in this system are **tightly interconnected** and share a common API surface:
 >
-> - `external-scale.ts` ↔ `bar-vertical.ts` ↔ `bar-horizontal.ts` ↔ `gauge-vertical.ts` ↔ `gauge-horizontal.ts`
+> - `external-scale.ts` ↔ `bar-vertical.ts` ↔ `bar-horizontal.ts` ↔ `gauge-vertical.ts` ↔ `gauge-horizontal.ts` ↔ `gauge-trend.ts`
 >
 > **When implementing a new feature or changing existing behavior:**
 >
 > 1. Changes must **cascade through ALL related components** to maintain consistency
 > 2. All wrappers expose similar properties with orientation-specific naming (e.g., `height`/`width`, `paddingTop`/`paddingLeft`)
-> 3. If you add a property to `bar-vertical`, you likely need to add the equivalent to `bar-horizontal`, `gauge-vertical`, `gauge-horizontal` and `external-scale`
+> 3. If you add a property to `bar-vertical`, you likely need to add the equivalent to `bar-horizontal`, `gauge-vertical`, `gauge-horizontal`, `gauge-trend` and `external-scale`
 > 4. If you add a config option to `external-scale.ts`, all wrappers need to expose and pass it
-> 5. Gauge variants (`gauge-vertical`/`gauge-horizontal`) may intentionally NOT expose certain properties (they use fixed values)
+> 5. Gauge variants (`gauge-vertical`/`gauge-horizontal`/`gauge-trend`) may intentionally NOT expose certain properties (they use fixed values)
 >
 > **Before completing any change, verify:**
 >
 > - [ ] `external-scale.ts` has the core logic/config
 > - [ ] `bar-vertical.ts` exposes and maps the property correctly
 > - [ ] `bar-horizontal.ts` has the mirrored equivalent
-> - [ ] `gauge-vertical.ts` / `gauge-horizontal.ts` are updated if applicable
+> - [ ] `gauge-vertical.ts` / `gauge-horizontal.ts` / `gauge-trend.ts` are updated if applicable
 > - [ ] All components remain API-consistent
 
 ## Architecture Overview
@@ -42,16 +42,16 @@ The external scale system follows a **renderer + wrapper** pattern:
 │  • renderExternalScale()                                        │
 │  • Layout calculations, coordinate mapping, theming             │
 └─────────────────────────────────────────────────────────────────┘
-                              ▲
-                              │ imports
-    ┌─────────────────────────┼─────────────────────────┐
-    │                         │                         │
-    ▼                         ▼                         ▼
-┌──────────────┐     ┌──────────────┐      ┌──────────────────────┐
-│ bar-vertical │     │bar-horizontal│      │ gauge-vertical/horiz │
-│   (Thin      │     │   (Thin      │      │ (Fixed-config thin   │
-│   wrapper)   │     │   wrapper)   │      │  wrappers)           │
-└──────────────┘     └──────────────┘      └──────────────────────┘
+                           ▲
+                           │ imports
+    ┌──────────────────────┼─────────────────────┬─────────────────────────┐
+    │                      │                     │                         │
+    ▼                      ▼                     ▼                         ▼
+┌──────────────┐   ┌──────────────┐   ┌──────────────────────┐   ┌────────────────────┐
+│ bar-vertical │   │bar-horizontal│   │ gauge-vertical/horiz │   │ gauge-trend        │
+│   (Thin      │   │   (Thin      │   │ (Fixed-config thin   │   │ (Fixed-config thin │
+│   wrapper)   │   │   wrapper)   │   │  wrappers)           │   │  wrapper)          │
+└──────────────┘   └──────────────┘   └──────────────────────┘   └────────────────────┘
 ```
 
 ### Key Principle: Logic in `external-scale.ts`, Wrappers Stay Thin
@@ -59,6 +59,7 @@ The external scale system follows a **renderer + wrapper** pattern:
 - **`external-scale.ts`**: Contains ALL rendering logic, layout calculations, coordinate transformations, and theming. This is the source of truth.
 - **`bar-vertical.ts` / `bar-horizontal.ts`**: Thin web component wrappers that set up the outer `<svg>` viewBox and delegate to `renderExternalScale()`.
 - **`gauge-vertical.ts` / `gauge-horizontal.ts`**: Fixed-config variants of the bar components with locked dimensions for consistent gauge appearance.
+- **`gauge-trend.ts`**: Composite instrument that uses the bar components internally, with `instrumentMode=true` to adjust sizing behavior.
 
 When adding new features or fixing bugs:
 
@@ -131,13 +132,13 @@ When adding new features or fixing bugs:
      - Note: `barThickness` minimum is `borderRadius * 2` (see `computeExternalScaleEffectiveBarThickness`)
    - **Inside navigation/ship instruments** (`instrumentMode=true`): When `bar-horizontal/vertical` are used inside composite instruments (e.g., `gauge-trend`), set `instrumentMode=true`. In this mode:
      - `.obc-component-size-*` **only affects `labelFontSize`**
-     - `borderRadius` uses the explicit `borderRadius` property value (or defaults to 8px regular / 4px condensed)
+     - `borderRadius` uses the explicit `borderRadius` property value (or defaults to regular / condensed)
      - `barThickness` is controlled by the parent instrument's configuration
-   - **gauge-vertical/gauge-horizontal**: These already behave like instrument mode by design (fixed `borderRadius=8`)
+   - **gauge-vertical/gauge-horizontal**: These already behave like instrument mode by design (fixed `borderRadius`)
 
 9. **Fixed Aspect Ratio Scaling & Dimension Reporting**:
    - When `fixedAspectRatioScaling` is enabled in a parent component (e.g., `gauge-trend`), all child scales must account for proportional scaling
-   - The `scaleReferenceSize` (default: 384px) defines the "native" size at which the scale renders 1:1
+   - The `scaleReferenceSize` (default: 384px) defines the "native" size at which the scale renders 1:1 (to the Figma design)
    - **Dimension reporting** must use the scaled dimensions, not the reference dimensions:
      - Observers and `scale-dimensions-changed` events should report thickness values **after** proportional scaling is applied
      - Use `computeFixedAspectRatioScale()` to calculate the scale factor: `actualSize / scaleReferenceSize`
@@ -224,6 +225,10 @@ When adding new features or fixing bugs:
 
 ## Adding New Features
 
+### Setpoint Properties
+
+The setpoint marker rendering (including confirm animation) is handled inside `external-scale.ts` via `renderSingleSetpoint()`. For the full setpoint architecture (mixin vs bundle, animation, property cascade), see **`setpoint.instructions.md`**.
+
 ### Feature Goes in `external-scale.ts` If:
 
 - It affects rendering (tickmarks, fills, markers, overlays)
@@ -239,13 +244,13 @@ When adding new features or fixing bugs:
 
 ### Checklist for Changes:
 
-1. ☐ Read full file context before editing
-2. ☐ Implement in `external-scale.ts` if applicable
-3. ☐ Add config property to `ExternalScaleConfig` interface if needed
-4. ☐ Update both bar-vertical AND bar-horizontal wrappers
-5. ☐ Update both gauge-vertical AND gauge-horizontal if applicable
-6. ☐ Test all orientations (vertical/horizontal) and sides (left/right/top/bottom)
-7. ☐ Verify fixed aspect ratio mode works correctly
+1. [ ] Read full file context before editing
+2. [ ] Implement in `external-scale.ts` if applicable
+3. [ ] Add config property to `ExternalScaleConfig` interface if needed
+4. [ ] Update both bar-vertical AND bar-horizontal wrappers
+5. [ ] Update both gauge-vertical AND gauge-horizontal if applicable
+6. [ ] Test all orientations (vertical/horizontal) and sides (left/right/top/bottom)
+7. [ ] Verify fixed aspect ratio mode works correctly
 
 ---
 

@@ -14,10 +14,10 @@
  * | `newSetpoint`            | `number \| undefined`          | `undefined`          | Adjustment preview (2-step interface)        |
  * | `atSetpoint`             | `boolean`                      | `false`              | Manual at-setpoint override                  |
  * | `touching`               | `boolean`                      | `false`              | User is physically interacting               |
- * | `disableAutoAtSetpoint`  | `boolean`                      | `false`              | Disable auto at-setpoint calculation         |
+ * | `autoAtSetpoint`         | `boolean`                      | `true`               | Enable auto at-setpoint calculation          |
  * | `autoAtSetpointDeadband` | `number`                       | configurable (def 2) | Tolerance for auto at-setpoint detection     |
  * | `setpointAtZeroDeadband` | `number`                       | configurable (def 0.5)| Zero-snap tolerance                         |
- * | `setpointColorMode`      | `SetpointColorMode \| undefined` | `undefined`        | Color palette override                       |
+ * | `setpointOverride`       | `boolean`                        | `false`              | Override to derive color from priority       |
  * | `computeAtSetpoint()`    | `(value) => boolean`           | —                    | Unified at-setpoint calculation              |
  *
  * ## `touching` vs `newSetpoint`
@@ -103,9 +103,8 @@
  */
 
 import {LitElement, PropertyValues} from 'lit';
-import {property} from 'lit/decorators.js';
-import {computeAtSetpoint} from './setpoint.js';
-import type {SetpointColorMode} from './setpoint.js';
+import {property, state} from 'lit/decorators.js';
+import {computeAtSetpoint, getSetpointAnimationDurationMs} from './setpoint.js';
 
 // ============================================================================
 // Types
@@ -143,7 +142,7 @@ export declare class SetpointMixinInterface {
 
   /**
    * Manual at-setpoint override.
-   * Used when `disableAutoAtSetpoint` is true. Ignored when auto mode is active.
+   * Used when `autoAtSetpoint` is false. Ignored when auto mode is active.
    */
   atSetpoint: boolean;
 
@@ -158,8 +157,8 @@ export declare class SetpointMixinInterface {
    */
   touching: boolean;
 
-  /** When true, `computeAtSetpoint()` uses manual `atSetpoint` boolean. */
-  disableAutoAtSetpoint: boolean;
+  /** When false, `computeAtSetpoint()` uses manual `atSetpoint` boolean. */
+  autoAtSetpoint: boolean;
 
   /** Tolerance for auto at-setpoint detection. */
   autoAtSetpointDeadband: number;
@@ -167,8 +166,40 @@ export declare class SetpointMixinInterface {
   /** Tolerance for zero-snap visual state (equalZero). */
   setpointAtZeroDeadband: number;
 
-  /** Explicit color palette override. When undefined, derived from instrument state. */
-  setpointColorMode: SetpointColorMode | undefined;
+  /**
+   * Override to derive the setpoint color from the instrument's `priority`
+   * regardless of instrument state. When false (default), loading/off states
+   * render the setpoint in disabled (tertiary) color.
+   *
+   * - `false`: default behavior — setpoint inherits instrument state/color
+   * - `true`: color derived from `priority`, never disabled
+   */
+  setpointOverride: boolean;
+
+  /**
+   * Enable CSS-animated confirm transition.
+   *
+   * When true and a confirm occurs (newSetpoint → undefined, setpoint → new value):
+   * - The original setpoint marker slides from old to new position (300ms CSS transition)
+   * - The original setpoint marker regains full opacity (0.75 → 1.0)
+   * - The departing new-setpoint marker fades out (opacity 1 → 0, 300ms)
+   *
+   * Duration is overridable via CSS custom property `--setpoint-animation-duration`.
+   */
+  animateSetpoint: boolean;
+
+  /**
+   * Value of the departing new-setpoint during a confirm animation.
+   *
+   * Set automatically when `animateSetpoint=true` and `newSetpoint` transitions
+   * from defined → undefined. Cleared after the animation duration (300ms).
+   *
+   * Renderers use this to keep the new-setpoint marker in the DOM during
+   * its fade-out animation.
+   *
+   * @readonly — managed by the mixin, do not set externally
+   */
+  readonly departingNewSetpoint: number | undefined;
 
   /**
    * Compute whether the current value is at the setpoint.
@@ -254,8 +285,8 @@ export function SetpointMixin<T extends Constructor<LitElement>>(
      */
     @property({type: Number}) newSetpoint: number | undefined;
 
-    /** Manual at-setpoint override (used when `disableAutoAtSetpoint` is true). */
-    @property({type: Boolean}) atSetpoint: boolean = false;
+    /** Manual at-setpoint override (used when `autoAtSetpoint` is false). */
+    @property({type: Boolean, attribute: false}) atSetpoint: boolean = false;
 
     /**
      * User is physically interacting with the control.
@@ -263,8 +294,8 @@ export function SetpointMixin<T extends Constructor<LitElement>>(
      */
     @property({type: Boolean}) touching: boolean = false;
 
-    /** When true, uses manual `atSetpoint` boolean instead of auto-calculation. */
-    @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
+    /** When false, uses manual `atSetpoint` boolean instead of auto-calculation. */
+    @property({type: Boolean, attribute: false}) autoAtSetpoint: boolean = true;
 
     /** Tolerance for auto at-setpoint detection. */
     @property({type: Number}) autoAtSetpointDeadband: number = defaultDeadband;
@@ -273,8 +304,35 @@ export function SetpointMixin<T extends Constructor<LitElement>>(
     @property({type: Number}) setpointAtZeroDeadband: number =
       defaultZeroDeadband;
 
-    /** Explicit color palette override. */
-    @property({type: String}) setpointColorMode: SetpointColorMode | undefined;
+    /**
+     * Override to derive the setpoint color from the instrument's `priority`
+     * regardless of instrument state.
+     */
+    @property({type: Boolean}) setpointOverride: boolean = false;
+
+    /**
+     * Enable CSS-animated confirm transition.
+     * @see SetpointMixinInterface.animateSetpoint
+     */
+    @property({type: Boolean}) animateSetpoint: boolean = false;
+
+    // ------------------------------------------------------------------
+    // Animation state (managed by the mixin, not settable externally)
+    // ------------------------------------------------------------------
+
+    /**
+     * Value of the departing new-setpoint during confirm animation fade-out.
+     * Renderers use this to keep the new-setpoint marker in the DOM.
+     */
+    @state() private _departingNewSetpoint: number | undefined;
+
+    /** Timer handle for clearing departingNewSetpoint after animation completes. */
+    private _animationTimer?: ReturnType<typeof setTimeout>;
+
+    /** Public getter for renderers/wrappers to access the departing value. */
+    get departingNewSetpoint(): number | undefined {
+      return this._departingNewSetpoint;
+    }
 
     // ------------------------------------------------------------------
     // Computation (replaces per-instrument atSetpointCalc methods)
@@ -298,7 +356,7 @@ export function SetpointMixin<T extends Constructor<LitElement>>(
         value: currentValue,
         setpoint: this.setpoint,
         touching: this.touching,
-        disableAuto: this.disableAutoAtSetpoint,
+        auto: this.autoAtSetpoint,
         deadband: this.autoAtSetpointDeadband,
         atSetpointManual: this.atSetpoint,
         angularWraparound,
@@ -308,9 +366,30 @@ export function SetpointMixin<T extends Constructor<LitElement>>(
     /**
      * Override point for subclasses that need to run logic in `willUpdate`.
      * Always call `super.willUpdate(changed)` to preserve mixin behavior.
+     *
+     * Detects "confirm" transitions (newSetpoint defined → undefined) and
+     * stores the departing value for animation purposes.
      */
     override willUpdate(changed: PropertyValues): void {
       super.willUpdate(changed);
+
+      // Detect confirm: newSetpoint was defined, now undefined
+      if (changed.has('newSetpoint') && this.animateSetpoint) {
+        const prev = changed.get('newSetpoint') as number | undefined;
+        if (prev !== undefined && this.newSetpoint === undefined) {
+          this._departingNewSetpoint = prev;
+          clearTimeout(this._animationTimer);
+          const duration = getSetpointAnimationDurationMs(this);
+          this._animationTimer = setTimeout(() => {
+            this._departingNewSetpoint = undefined;
+          }, duration);
+        }
+      }
+    }
+
+    override disconnectedCallback(): void {
+      super.disconnectedCallback();
+      clearTimeout(this._animationTimer);
     }
   }
 

@@ -1,0 +1,244 @@
+:host {
+  display: inline-flex;
+  --obc-poi-header-indicator-size: var(
+    --global-typography-ui-label-active-font-size,
+    calc(var(--maneuvering-components-poi-id-tag-min-size, 16px) * 0.75)
+  );
+}
+
+.wrapper {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-width: var(--maneuvering-components-poi-id-tag-min-size, 16px);
+  border-radius: 100px;
+  user-select: none;
+}
+
+.wrapper.type-id {
+  padding: 0 4px;
+}
+
+.wrapper.type-data {
+  gap: 2px;
+  padding-right: 4px;
+}
+
+.wrapper.type-id.state-selected {
+  background: var(--overlay-container-global-color, #fcfcfc);
+  border: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.wrapper.type-id.state-caution {
+  background: var(--alert-caution-color);
+  border: 1px solid var(--alert-caution-outline-color);
+}
+
+.wrapper.type-id.state-warning {
+  background: var(--alert-warning-color);
+  border: 1px solid var(--alert-warning-outline-color);
+}
+
+.wrapper.type-id.state-alarm {
+  background: var(--alert-alarm-color);
+  border: 1px solid var(--alert-alarm-outline-color);
+}
+
+.wrapper.type-data:is(
+    .state-selected,
+    .state-caution,
+    .state-warning,
+    .state-alarm
+  ) {
+  background: rgba(247, 247, 247, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.wrapper.type-id.single-char-content:not(.has-indicator) {
+  width: var(--maneuvering-components-poi-id-tag-min-size, 16px);
+  min-width: var(--maneuvering-components-poi-id-tag-min-size, 16px);
+  height: var(--maneuvering-components-poi-id-tag-min-size, 16px);
+  padding: 0;
+}
+
+.wrapper.type-data.single-char-content .id-pill {
+  width: var(--maneuvering-components-poi-id-tag-min-size, 16px);
+  padding: 0;
+}
+
+.id-only-text {
+  @mixin font-label-active;
+  text-align: center;
+  color: var(--element-active-color);
+  font-feature-settings: "ss04" 1;
+}
+
+.wrapper.type-id.state-warning .id-only-text {
+  color: var(--on-warning-color);
+}
+
+.wrapper.type-id.state-alarm .id-only-text {
+  color: var(--on-alarm-color);
+}
+
+.id-pill {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--maneuvering-components-poi-id-tag-min-size, 16px);
+  height: var(--maneuvering-components-poi-id-tag-min-size, 16px);
+  border-radius: 100px;
+  padding: 0 4px;
+}
+
+.wrapper.type-data.state-enabled .id-pill {
+  width: var(--maneuvering-components-poi-id-tag-min-size, 16px);
+  padding: 0;
+}
+
+.wrapper.type-data.state-selected .id-pill {
+  background: var(--overlay-container-global-color, #fcfcfc);
+  border: 1px solid var(--element-inactive-color, #707070);
+}
+
+.wrapper.type-data.state-caution .id-pill {
+  background: var(--alert-caution-color);
+  border: 1px solid var(--alert-caution-outline-color);
+}
+
+.wrapper.type-data.state-warning .id-pill {
+  background: var(--alert-warning-color);
+  border: 1px solid var(--alert-warning-outline-color);
+}
+
+.wrapper.type-data.state-alarm .id-pill {
+  background: var(--alert-alarm-color);
+  border: 1px solid var(--alert-alarm-outline-color);
+}
+
+.id-text {
+  @mixin font-label-active;
+  text-align: center;
+  color: var(--element-active-color);
+  font-feature-settings: "ss04" 1;
+}
+
+.wrapper.type-data.state-warning .id-text {
+  color: var(--on-warning-color);
+}
+
+.wrapper.type-data.state-alarm .id-text {
+  color: var(--on-alarm-color);
+}
+
+.label-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+.label-text {
+  @mixin font-label-active;
+  text-align: center;
+  color: var(--element-active-color);
+  font-feature-settings: "ss04" 1;
+}
+
+.wrapper.type-id.state-enabled .id-only-text,
+.wrapper.type-data.state-enabled .id-text,
+.wrapper.type-data.state-enabled .label-text {
+  @mixin font-label-active;
+  @mixin font-overlay-outline-shadow;
+  color: var(--overlay-element-active-color, #fff);
+  text-align: center;
+}
+
+.indicator-frame {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--maneuvering-components-poi-id-tag-min-size, 16px);
+  height: var(--maneuvering-components-poi-id-tag-min-size, 16px);
+}
+
+.indicator {
+  box-sizing: border-box;
+  display: inline-block;
+  position: relative;
+  width: var(--obc-poi-header-indicator-size);
+  height: var(--obc-poi-header-indicator-size);
+  flex-shrink: 0;
+}
+
+.indicator .bar {
+  box-sizing: border-box;
+  position: absolute;
+  background: var(--element-neutral-color, #535353);
+  border-radius: 999px;
+}
+
+.indicator .bar.left {
+  width: 16.6667%;
+  height: 33.3333%;
+  left: 16.6667%;
+  top: 33.3333%;
+}
+
+.indicator .bar.middle {
+  width: 16.6667%;
+  height: 66.6667%;
+  left: 41.6667%;
+  top: 16.6667%;
+}
+
+.indicator .bar.right {
+  width: 16.6667%;
+  height: 33.3333%;
+  left: 66.6667%;
+  top: 33.3333%;
+}
+
+::slotted([slot="indicator"]) {
+  width: var(--obc-poi-header-indicator-size);
+  height: var(--obc-poi-header-indicator-size);
+  flex-shrink: 0;
+}
+
+.wrapper.state-enabled ::slotted([slot="indicator"]) {
+  color: var(--overlay-element-active-color, #fff);
+  --element-active-color: var(--overlay-element-active-color, #fff);
+}
+
+.wrapper.type-id:is(.state-selected, .state-caution, .state-warning)
+  ::slotted([slot="indicator"]) {
+  color: var(--on-warning-color, #1a1a1a);
+  --element-active-color: var(--on-warning-color, #1a1a1a);
+}
+
+.wrapper.type-id.state-alarm ::slotted([slot="indicator"]) {
+  color: var(--overlay-element-active-color, #fff);
+  --element-active-color: var(--overlay-element-active-color, #fff);
+}
+
+.wrapper.state-enabled .indicator .bar {
+  border-radius: 7px;
+  background: var(--overlay-element-active-color, #fff);
+  box-shadow:
+    0 0 0 1px var(--overlay-element-active-inverted-color, #1a1a1a),
+    0 1px 2px 0 #000;
+}
+
+.wrapper.type-id:is(.state-selected, .state-caution, .state-warning)
+  .indicator
+  .bar {
+  border-radius: 7px;
+  background: var(--on-warning-color, #1a1a1a);
+}
+
+.wrapper.type-id.state-alarm .indicator .bar {
+  background: var(--overlay-element-active-color, #fff);
+}

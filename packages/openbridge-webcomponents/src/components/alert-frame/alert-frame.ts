@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS, nothing} from 'lit';
+import {LitElement, html, unsafeCSS, nothing, TemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
 import compentStyle from './alert-frame.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
@@ -20,6 +20,7 @@ export enum ObcAlertFrameType {
   SmallSideFlip = 'small-side-flip',
   LargeSideFlip = 'large-side-flip',
   BottomFlip = 'bottom-flip',
+  TopFlip = 'top-flip',
 }
 
 /**
@@ -42,6 +43,16 @@ export enum ObcAlertFrameStatus {
   Alarm = 'alarm',
   Warning = 'warning',
   Caution = 'caution',
+}
+
+/**
+ * Text size options for flip-flap typography.
+ * - `regular`: Standard text size (default).
+ * - `large`: Larger text for increased visibility.
+ */
+export enum AlertFrameTextSize {
+  Regular = 'regular',
+  Large = 'large',
 }
 
 /**
@@ -167,6 +178,12 @@ export class ObcAlertFrame extends LitElement {
    */
   @property({type: Boolean}) sharpEdgeBottomRight: boolean = false;
 
+  @property({type: String}) textSize: AlertFrameTextSize =
+    AlertFrameTextSize.Regular;
+
+  @property({type: Boolean}) showIcon: boolean = false;
+  @property({type: Boolean}) hideAlertCategoryIcon: boolean = false;
+
   override render() {
     return html`
       <div
@@ -175,6 +192,7 @@ export class ObcAlertFrame extends LitElement {
           ['thickness-' + this.thickness]: true,
           [this.type]: true,
           [this.status]: true,
+          ['text-size-' + this.textSize]: true,
           'sharp-edge-top-left': this.sharpEdgeTopLeft,
           'sharp-edge-top-right': this.sharpEdgeTopRight,
           'sharp-edge-bottom-left': this.sharpEdgeBottomLeft,
@@ -192,8 +210,12 @@ export class ObcAlertFrame extends LitElement {
       return nothing;
     }
 
-    let icon = html`<obi-alarm-badge class="icon badge"></obi-alarm-badge>`;
-    if (this.status === ObcAlertFrameStatus.Warning) {
+    let icon: TemplateResult | typeof nothing = html`<obi-alarm-badge
+      class="icon badge"
+    ></obi-alarm-badge>`;
+    if (this.hideAlertCategoryIcon === true) {
+      icon = nothing;
+    } else if (this.status === ObcAlertFrameStatus.Warning) {
       icon = html`<obi-warning-badge class="icon badge"></obi-warning-badge>`;
     } else if (this.status === ObcAlertFrameStatus.Caution) {
       icon = html`<obi-caution-badge class="icon badge"></obi-caution-badge>`;
@@ -208,15 +230,26 @@ export class ObcAlertFrame extends LitElement {
     if (this.type === ObcAlertFrameType.LargeSideFlip) {
       return html`<div class="flap large">
         ${icon}
-        <div class="icon"><slot name="icon"></slot></div>
+        ${this.showIcon
+          ? html`<div class="icon"><slot name="icon"></slot></div>`
+          : nothing}
         <div class="mask up"></div>
         <div class="mask down"></div>
       </div>`;
     }
-    if (this.type === ObcAlertFrameType.BottomFlip) {
-      return html`<div class="flap bottom">
+    if (
+      this.type === ObcAlertFrameType.BottomFlip ||
+      this.type === ObcAlertFrameType.TopFlip
+    ) {
+      return html`<div
+        class="flap ${this.type === ObcAlertFrameType.BottomFlip
+          ? 'bottom'
+          : 'top'}"
+      >
         ${icon}
-        <div class="icon"><slot name="icon"></slot></div>
+        ${this.showIcon
+          ? html`<div class="icon"><slot name="icon"></slot></div>`
+          : nothing}
         <div class="label"><slot name="label"></slot></div>
         <div class="spacer"></div>
         <div class="timer"><slot name="timer"></slot></div>

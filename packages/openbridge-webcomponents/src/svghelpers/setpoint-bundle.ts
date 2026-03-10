@@ -45,16 +45,16 @@
  *       newSetpoint: this.newAngleSetpoint,
  *       atSetpoint: this.atAngleSetpoint,
  *       touching: this.touching,  // shared
- *       disableAutoAtSetpoint: this.disableAutoAtAngleSetpoint,
+ *       autoAtSetpoint: this.autoAtAngleSetpoint,
  *       autoAtSetpointDeadband: this.autoAtAngleSetpointDeadband,
  *       setpointAtZeroDeadband: this.angleSetpointAtZeroDeadband,
- *       setpointColorMode: this.angleSetpointColorMode,
+ *       setpointOverride: this.angleSetpointOverride,
  *     });
  *     this._thrustSp.sync({
  *       setpoint: this.thrustSetpoint,
  *       touching: this.touching,  // shared
  *       atSetpoint: this.atThrustSetpoint,
- *       disableAutoAtSetpoint: this.disableAutoAtThrustSetpoint,
+ *       autoAtSetpoint: this.autoAtThrustSetpoint,
  *       autoAtSetpointDeadband: this.autoAtThrustSetpointDeadband,
  *       setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
  *     });
@@ -69,10 +69,7 @@
  * ```
  */
 
-import {computeAtSetpoint, SetpointColorMode} from './setpoint.js';
-
-// Re-export for consumer convenience
-export {SetpointColorMode};
+import {computeAtSetpoint, SETPOINT_ANIMATION_DURATION_MS} from './setpoint.js';
 
 // ============================================================================
 // Bundle Options
@@ -99,6 +96,15 @@ export interface SetpointBundleOptions {
    * @default false
    */
   angularWraparound?: boolean;
+
+  /**
+   * Callback invoked when the confirm animation completes.
+   * Use this to trigger a re-render of the host component when
+   * `departingNewSetpoint` is cleared.
+   *
+   * Typically: `onAnimationEnd: () => this.requestUpdate()`
+   */
+  onAnimationEnd?: () => void;
 }
 
 // ============================================================================
@@ -116,10 +122,11 @@ export interface SetpointBundleSyncInput {
   newSetpoint?: number | undefined;
   atSetpoint?: boolean;
   touching?: boolean;
-  disableAutoAtSetpoint?: boolean;
+  autoAtSetpoint?: boolean;
   autoAtSetpointDeadband?: number;
   setpointAtZeroDeadband?: number;
-  setpointColorMode?: SetpointColorMode | undefined;
+  setpointOverride?: boolean;
+  animateSetpoint?: boolean;
 }
 
 // ============================================================================
@@ -146,8 +153,8 @@ export class SetpointBundle {
   /** User is interacting */
   touching: boolean = false;
 
-  /** Disable auto-calculation */
-  disableAutoAtSetpoint: boolean = false;
+  /** Enable auto-calculation */
+  autoAtSetpoint: boolean = true;
 
   /** Auto at-setpoint tolerance */
   autoAtSetpointDeadband: number;
@@ -155,16 +162,33 @@ export class SetpointBundle {
   /** Zero-snap tolerance */
   setpointAtZeroDeadband: number;
 
-  /** Color palette override */
-  setpointColorMode: SetpointColorMode | undefined;
+  /** Override to derive color from priority regardless of instrument state */
+  setpointOverride: boolean = false;
+
+  /** Enable CSS-animated confirm transition. */
+  animateSetpoint: boolean = false;
+
+  /**
+   * Value of the departing new-setpoint during confirm animation.
+   * Set when `newSetpoint` goes from defined → undefined while animateSetpoint is true.
+   * Cleared after the animation duration.
+   */
+  departingNewSetpoint: number | undefined;
 
   /** Whether to use angular wraparound */
   private readonly _angularWraparound: boolean;
+
+  /** Callback to trigger host re-render when animation ends */
+  private readonly _onAnimationEnd?: () => void;
+
+  /** Timer for clearing departing state */
+  private _animationTimer?: ReturnType<typeof setTimeout>;
 
   constructor(options?: SetpointBundleOptions) {
     this.autoAtSetpointDeadband = options?.defaultDeadband ?? 2;
     this.setpointAtZeroDeadband = options?.defaultZeroDeadband ?? 0.5;
     this._angularWraparound = options?.angularWraparound ?? false;
+    this._onAnimationEnd = options?.onAnimationEnd;
   }
 
   /**
@@ -172,22 +196,52 @@ export class SetpointBundle {
    * Only provided properties are updated; others keep their current value.
    *
    * Call this in `willUpdate()` to sync prefixed public props → bundle.
+   *
+   * Automatically detects confirm transitions (newSetpoint defined → undefined)
+   * and manages `departingNewSetpoint` state for animation.
    */
   sync(input: SetpointBundleSyncInput): void {
+    // Capture previous newSetpoint for confirm detection
+    const prevNewSetpoint = this.newSetpoint;
+
     if (input.setpoint !== undefined || 'setpoint' in input)
       this.setpoint = input.setpoint;
     if (input.newSetpoint !== undefined || 'newSetpoint' in input)
       this.newSetpoint = input.newSetpoint;
     if (input.atSetpoint !== undefined) this.atSetpoint = input.atSetpoint;
     if (input.touching !== undefined) this.touching = input.touching;
-    if (input.disableAutoAtSetpoint !== undefined)
-      this.disableAutoAtSetpoint = input.disableAutoAtSetpoint;
+    if (input.autoAtSetpoint !== undefined)
+      this.autoAtSetpoint = input.autoAtSetpoint;
     if (input.autoAtSetpointDeadband !== undefined)
       this.autoAtSetpointDeadband = input.autoAtSetpointDeadband;
     if (input.setpointAtZeroDeadband !== undefined)
       this.setpointAtZeroDeadband = input.setpointAtZeroDeadband;
-    if (input.setpointColorMode !== undefined || 'setpointColorMode' in input)
-      this.setpointColorMode = input.setpointColorMode;
+    if (input.setpointOverride !== undefined)
+      this.setpointOverride = input.setpointOverride;
+    if (input.animateSetpoint !== undefined)
+      this.animateSetpoint = input.animateSetpoint;
+
+    // Detect confirm: newSetpoint was defined, now undefined
+    if (
+      prevNewSetpoint !== undefined &&
+      this.newSetpoint === undefined &&
+      this.animateSetpoint
+    ) {
+      this.departingNewSetpoint = prevNewSetpoint;
+      clearTimeout(this._animationTimer);
+      this._animationTimer = setTimeout(() => {
+        this.departingNewSetpoint = undefined;
+        this._onAnimationEnd?.();
+      }, SETPOINT_ANIMATION_DURATION_MS);
+    }
+  }
+
+  /**
+   * Clean up pending animation timer.
+   * Call from the host component's `disconnectedCallback()`.
+   */
+  dispose(): void {
+    clearTimeout(this._animationTimer);
   }
 
   /**
@@ -202,7 +256,7 @@ export class SetpointBundle {
       value: currentValue,
       setpoint: this.setpoint,
       touching: this.touching,
-      disableAuto: this.disableAutoAtSetpoint,
+      auto: this.autoAtSetpoint,
       deadband: this.autoAtSetpointDeadband,
       atSetpointManual: this.atSetpoint,
       angularWraparound: this._angularWraparound,

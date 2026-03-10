@@ -7,7 +7,7 @@ import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {WatchCircleType} from '../watch/watch.js';
 import {SetpointBundle} from '../../svghelpers/setpoint-bundle.js';
-import type {SetpointColorMode} from '../../svghelpers/setpoint.js';
+import {Priority} from '../types.js';
 import {customElement} from '../../decorator.js';
 
 export enum CompassDirection {
@@ -25,18 +25,25 @@ export class ObcHeading extends LitElement {
   @property({type: Number}) newHeadingSetpoint: number | undefined;
   @property({type: Boolean}) atHeadingSetpoint: boolean = false;
   @property({type: Number}) headingSetpointAtZeroDeadband: number = 0.5;
-  @property({type: String}) headingSetpointColorMode:
-    | SetpointColorMode
-    | undefined;
-  @property({type: Boolean}) disableAutoAtHeadingSetpoint: boolean = false;
+  @property({type: Boolean}) headingSetpointOverride: boolean = false;
+  @property({type: Boolean, attribute: false}) autoAtHeadingSetpoint: boolean =
+    true;
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
+  @property({type: Boolean}) animateSetpoint: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
   @property({type: String}) direction: CompassDirection =
     CompassDirection.NorthUp;
-  @property({type: Boolean}) enhanced: boolean = false;
+  @property({type: String}) priority: Priority = Priority.regular;
+  /** Show compass NSEW labels. */
+  @property({type: Boolean}) showLabels: boolean = false;
+  /** When true, labels and north arrow are placed inside the outer ring. */
+  @property({type: Boolean}) tickmarksInside: boolean = false;
 
-  private _headingSp = new SetpointBundle({angularWraparound: true});
+  private _headingSp = new SetpointBundle({
+    angularWraparound: true,
+    onAnimationEnd: () => this.requestUpdate(),
+  });
 
   override willUpdate(changed: PropertyValues): void {
     super.willUpdate(changed);
@@ -45,11 +52,17 @@ export class ObcHeading extends LitElement {
       newSetpoint: this.newHeadingSetpoint,
       atSetpoint: this.atHeadingSetpoint,
       touching: this.touching,
-      disableAutoAtSetpoint: this.disableAutoAtHeadingSetpoint,
+      autoAtSetpoint: this.autoAtHeadingSetpoint,
       autoAtSetpointDeadband: this.autoAtHeadingSetpointDeadband,
       setpointAtZeroDeadband: this.headingSetpointAtZeroDeadband,
-      setpointColorMode: this.headingSetpointColorMode,
+      setpointOverride: this.headingSetpointOverride,
+      animateSetpoint: this.animateSetpoint,
     });
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this._headingSp.dispose();
   }
 
   // @ts-expect-error TS6133: The controller ensures that the render
@@ -113,13 +126,17 @@ export class ObcHeading extends LitElement {
           .advices=${this.angleAdviceRaw}
           .tickmarks=${tickmarks}
           .watchCircleType=${WatchCircleType.single}
-          .labelFrameEnabled=${true}
+          .showLabels=${this.showLabels}
+          .tickmarksInside=${this.tickmarksInside}
           .crosshairEnabled=${true}
+          .northArrow=${true}
           .angleSetpoint=${this.headingSetpoint ?? undefined}
           .newAngleSetpoint=${this.newHeadingSetpoint}
           .atAngleSetpoint=${this._headingSp.computeAtSetpoint(this.heading)}
           .angleSetpointAtZeroDeadband=${this.headingSetpointAtZeroDeadband}
-          .colorMode=${this.headingSetpointColorMode}
+          .setpointOverride=${this.headingSetpointOverride}
+          .priority=${this.priority}
+          .animateSetpoint=${this.animateSetpoint}
           .rotation=${this.getRotation()}
         >
         </obc-watch>
@@ -127,12 +144,12 @@ export class ObcHeading extends LitElement {
           ${arrow(
             ArrowStyle.HDG,
             this.heading + (this.getRotation() ?? 0),
-            this.enhanced
+            this.priority
           )}
           ${arrow(
             ArrowStyle.COG,
             this.courseOverGround + (this.getRotation() ?? 0),
-            false
+            Priority.regular
           )}
         </svg>
       </div>

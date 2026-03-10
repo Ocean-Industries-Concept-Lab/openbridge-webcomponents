@@ -2,6 +2,7 @@ import {LitElement, html} from 'lit';
 import {customElement} from '../../decorator.js';
 import {property} from 'lit/decorators.js';
 import {AdviceType} from '../watch/advice.js';
+import {Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/instrument-radial/instrument-radial.js';
 
@@ -37,7 +38,7 @@ export interface GaugeRadialAdvice {
  * - **Bar display**: Always renders as a `bar` type — no needle or filled
  *   variants.
  * - **Setpoint via mixin**: `setpoint`, `newSetpoint`, `touching`,
- *   `autoAtSetpointDeadband`, `setpointColorMode`, and all other setpoint
+ *   `autoAtSetpointDeadband`, `setpointOverride`, and all other setpoint
  *   properties are provided by `SetpointMixin` and forwarded to the inner
  *   `<obc-instrument-radial>`.
  * - **Advice zones**: Pass an array of {@link GaugeRadialAdvice} objects to
@@ -46,11 +47,11 @@ export interface GaugeRadialAdvice {
  * ## Usage Guidelines
  *
  * - Set `maxValue` to define the symmetric ± range.
- * - Use `enhanced` to switch between regular and in-command color palettes.
+ * - Use `priority` to switch between regular and enhanced color palettes.
  * - Enable `portStarboard` to show directional coloring.
  * - Provide `primaryTickmarkInterval` and `secondaryTickmarkInterval` to
  *   control tickmark density.
- * - Enable `labels` to show numeric labels at primary tickmarks.
+ * - Enable `showLabels` to show numeric labels at primary tickmarks.
  *
  * ## Best Practices
  *
@@ -67,7 +68,7 @@ export interface GaugeRadialAdvice {
  *   maxValue="60"
  *   enhanced
  *   portStarboard
- *   labels
+ *   showLabels
  *   primaryTickmarkInterval="20"
  *   secondaryTickmarkInterval="10"
  *   setpoint="30"
@@ -81,10 +82,26 @@ export interface GaugeRadialAdvice {
 export class ObcRotSector extends SetpointMixin(LitElement) {
   @property({type: Number}) value = 0;
   @property({type: Number}) maxValue = 100;
-  @property({type: Boolean}) labels: boolean = false;
-  @property({type: Number}) primaryTickmarkInterval = 50;
-  @property({type: Number}) secondaryTickmarkInterval = 10;
-  @property({type: Boolean}) enhanced: boolean = false;
+  @property({type: Boolean}) showLabels: boolean = false;
+  /** Whether to render tickmarks inside the ring. */
+  @property({type: Boolean}) tickmarksInside: boolean = false;
+  /**
+   * Interval for primary tickmarks in value units.
+   * When undefined or <= 0, no primary tickmarks are shown.
+   */
+  @property({type: Number}) primaryTickmarkInterval: number | undefined = 50;
+  /**
+   * Interval for secondary tickmarks in value units.
+   * When undefined or <= 0, no secondary tickmarks are shown.
+   */
+  @property({type: Number}) secondaryTickmarkInterval: number | undefined = 10;
+  /**
+   * Interval for tertiary tickmarks in value units.
+   * When undefined or <= 0, no tertiary tickmarks are shown.
+   */
+  @property({type: Number}) tertiaryTickmarkInterval: number | undefined =
+    undefined;
+  @property({type: String}) priority: Priority = Priority.regular;
   @property({type: Boolean}) portStarboard: boolean = false;
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
 
@@ -97,7 +114,7 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
   }
 
   private get _barColor(): string {
-    if (!this.enhanced) {
+    if (this.priority !== Priority.enhanced) {
       return 'var(--instrument-regular-tertiary-color)';
     }
 
@@ -120,18 +137,20 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
         .setpoint=${this.setpoint}
         .newSetpoint=${this.newSetpoint}
         .setpointAtZeroDeadband=${this.setpointAtZeroDeadband}
-        .setpointColorMode=${this.setpointColorMode}
+        .setpointOverride=${this.setpointOverride}
         .touching=${this.touching}
-        .disableAutoAtSetpoint=${this.disableAutoAtSetpoint}
+        .autoAtSetpoint=${this.autoAtSetpoint}
         .autoAtSetpointDeadband=${this.autoAtSetpointDeadband}
         .maxValue=${this.maxValue}
         .minValue=${-this.maxValue}
         .getAngle=${this.getAngle}
         .needleColor=${this._needleColor}
         .barColor=${barColor}
-        .labels=${this.labels}
+        .showLabels=${this.showLabels}
+        .tickmarksInside=${this.tickmarksInside}
         .primaryTickmarkInterval=${this.primaryTickmarkInterval}
         .secondaryTickmarkInterval=${this.secondaryTickmarkInterval}
+        .tertiaryTickmarkInterval=${this.tertiaryTickmarkInterval}
         .type=${this._type}
         .needleType=${this._type}
         .advices=${this.advices}
@@ -142,7 +161,7 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
   }
 
   private get _needleColor(): string {
-    if (!this.enhanced) {
+    if (this.priority !== Priority.enhanced) {
       return 'var(--instrument-regular-secondary-color)';
     }
 

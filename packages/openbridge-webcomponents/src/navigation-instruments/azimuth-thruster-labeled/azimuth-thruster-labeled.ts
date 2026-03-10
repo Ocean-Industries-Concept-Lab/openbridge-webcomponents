@@ -7,12 +7,11 @@ import '../badge-command/badge-command.js';
 import '../instrument-field/instrument-field.js';
 import '../azimuth-thruster/azimuth-thruster.js';
 import {InstrumentFieldSize} from '../instrument-field/instrument-field.js';
-import {InstrumentState} from '../types.js';
+import {InstrumentState, Priority} from '../types.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import {AngleAdvice} from '../watch/advice.js';
 import {LinearAdvice} from '../thruster/advice.js';
 import {PropellerType} from '../thruster/propeller.js';
-import type {SetpointColorMode} from '../../svghelpers/setpoint.js';
 import {customElement} from '../../decorator.js';
 
 export enum AzimuthThrusterLabeledSize {
@@ -33,10 +32,9 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
   @property({type: Boolean})
   atAngleSetpoint: boolean = false;
   @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
-  @property({type: String}) angleSetpointColorMode:
-    | SetpointColorMode
-    | undefined;
-  @property({type: Boolean}) disableAutoAtAngleSetpoint: boolean = false;
+  @property({type: Boolean}) angleSetpointOverride: boolean = false;
+  @property({type: Boolean, attribute: false}) autoAtAngleSetpoint: boolean =
+    true;
   @property({type: Number}) autoAtAngleSetpointDeadband: number = 2;
   @property({type: Boolean}) touching: boolean = false;
 
@@ -44,9 +42,11 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
   @property({type: Number}) thrustSetpoint: number | undefined;
   @property({type: Boolean})
   atThrustSetpoint: boolean = false;
-  @property({type: Boolean}) disableAutoAtThrustSetpoint: boolean = false;
+  @property({type: Boolean, attribute: false}) autoAtThrustSetpoint: boolean =
+    true;
   @property({type: Number}) autoAtThrustSetpointDeadband: number = 1;
   @property({type: Number}) thrustSetpointAtZeroDeadband: number = 0.1;
+  @property({type: Boolean}) thrustSetpointOverride: boolean = false;
   @property({type: Array, attribute: false}) angleAdvices: AngleAdvice[] = [];
   @property({type: Array, attribute: false}) thrustAdvices: LinearAdvice[] = [];
   @property({type: Boolean}) singleDirection: boolean = false;
@@ -58,7 +58,8 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
       this.size === AzimuthThrusterLabeledSize.large
         ? InstrumentFieldSize.enhanced
         : InstrumentFieldSize.regular;
-    let state: InstrumentState = InstrumentState.inCommand;
+    let state: InstrumentState = InstrumentState.active;
+    let priority: Priority = Priority.enhanced;
     if (
       [
         CommandStatus.NoCommand,
@@ -67,6 +68,7 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
       ].includes(this.commandStatus)
     ) {
       state = InstrumentState.active;
+      priority = Priority.regular;
     }
 
     return html`
@@ -99,22 +101,24 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
         ></obc-instrument-field>
         <obc-azimuth-thruster
           class="azimuth-thruster"
-          nopadding
+          .hasLabelSpacer=${false}
           .thrust=${this.thrust}
           .thrustSetpoint=${this.thrustSetpoint}
-          .disableAutoAtThrustSetpoint=${this.disableAutoAtThrustSetpoint}
+          .autoAtThrustSetpoint=${this.autoAtThrustSetpoint}
           .autoAtThrustSetpointDeadband=${this.autoAtThrustSetpointDeadband}
           .angle=${this.angle}
           .angleSetpoint=${this.angleSetpoint}
-          .disableAutoAtAngleSetpoint=${this.disableAutoAtAngleSetpoint}
+          .autoAtAngleSetpoint=${this.autoAtAngleSetpoint}
           .autoAtAngleSetpointDeadband=${this.autoAtAngleSetpointDeadband}
           .atThrustSetpoint=${this.atThrustSetpoint}
           .atAngleSetpoint=${this.atAngleSetpoint}
           .newAngleSetpoint=${this.newAngleSetpoint}
           .angleSetpointAtZeroDeadband=${this.angleSetpointAtZeroDeadband}
-          .angleSetpointColorMode=${this.angleSetpointColorMode}
+          .angleSetpointOverride=${this.angleSetpointOverride}
           .thrustSetpointAtZeroDeadband=${this.thrustSetpointAtZeroDeadband}
+          .thrustSetpointOverride=${this.thrustSetpointOverride}
           .state=${state}
+          .priority=${priority}
           .touching=${this.touching}
           .angleAdvices=${this.angleAdvices}
           .thrustAdvices=${this.thrustAdvices}

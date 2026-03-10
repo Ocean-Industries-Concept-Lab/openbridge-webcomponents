@@ -18,8 +18,6 @@
   --ui-components-toggle-switch-item-border-radius: var(
     --border-radius-br-round
   );
-  --sequence-step-target-size: 32px;
-  --sequence-step-visual-size: 24px;
   --global-typography-ui-button-font-size: var(--font-size-100);
   --global-typography-ui-button-line-height: var(--line-height-100);
   --global-typography-ui-button-font-weight: var(--font-weight-semibold);
@@ -673,10 +671,8 @@
     --global-size-spacing-icon-icon-size-regular
   );
   --ui-components-accordion-item-label-spacing: 8px;
-  --ui-components-accordion-item-padding-horizontal: var(
-    --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
-  );
-  --ui-components-accordion-item-border-radius: var(--border-radius-br-6);
+  --ui-components-accordion-item-padding-horizontal: 16px;
+  --ui-components-accordion-item-border-radius: var(--border-radius-br-0);
   --ui-components-accordion-item-margin-horizontal: var(
     --global-size-spacing-nav-item-and-menus-margin-horizontal-list-item
   );
@@ -1168,19 +1164,21 @@
   --global-typography-instrument-tick-mark-active-line-height: var(
     --line-height-075
   );
-  --instrument-components-advice-indicator-margin: 2px;
-  --instrument-components-advice-indicator-margin-condenced: 2px;
-  --instrument-components-advice-indicator-margin-none: 2px;
-  --instrument-components-advice-indicator-margin-regular: 2px;
+  --instrument-components-advice-indicator-margin-indicator-margin: 2px;
+  --instrument-components-advice-indicator-margin-indicator-margin-condenced: 2px;
+  --instrument-components-advice-indicator-margin-indicator-margin-none: 2px;
+  --instrument-components-advice-indicator-margin-indicator-margin-regular: 2px;
   --instrument-components-advice-indicator-optional-padding: 4px;
-  --instrument-components-advice-indicator-padding: var(--indicator-padding);
-  --instrument-components-advice-indicator-padding-condenced: 2px;
-  --instrument-components-advice-indicator-padding-none: 0px;
-  --instrument-components-advice-indicator-padding-regular: 2px;
-  --instrument-components-advice-indicator-point-stroke-thickness: 1px;
-  --instrument-components-advice-indicator-thickness-alert: 2px;
-  --instrument-components-advice-indicator-thickness-enhanced: 8px;
-  --instrument-components-advice-indicator-thickness-regular: 4px;
+  --instrument-components-advice-indicator-padding-indicator-padding: var(
+    --advice-indicator-padding
+  );
+  --instrument-components-advice-indicator-padding-indicator-padding-condenced: 2px;
+  --instrument-components-advice-indicator-padding-indicator-padding-none: 0px;
+  --instrument-components-advice-indicator-padding-indicator-padding-regular: 2px;
+  --instrument-components-advice-indicator-indicator-point-stroke-thickness: 1px;
+  --instrument-components-advice-indicator-indicator-thickness-alert: 2px;
+  --instrument-components-advice-indicator-indicator-thickness-enhanced: 8px;
+  --instrument-components-advice-indicator-indicator-thickness-regular: 4px;
   --infographic-components-bar-chart-bar-border-radius: 2px;
   --infographic-components-bar-chart-bar-horizontal-border-radius-bottom-left: var(
     --bar-chart-bar-horizontal-border-radius-bottom-left
@@ -1286,9 +1284,9 @@
   --instrument-components-watchface-label-icon-size: 16px;
   --instrument-components-watchface-label-vertical-padding: 4px;
   --instrument-components-watchface-scale-margin: var(--scale-margin);
-  --instrument-components-watchface-scale-margin-condenced: 4px;
-  --instrument-components-watchface-scale-margin-indication: 4px;
-  --instrument-components-watchface-scale-margin-regular: 12px;
+  --instrument-components-watchface-scale-margin-condenced: 6px;
+  --instrument-components-watchface-scale-margin-indication: 0px;
+  --instrument-components-watchface-scale-margin-regular: 10px;
   --instrument-components-watchface-scale-padding: var(--scale-padding);
   --instrument-components-watchface-scale-padding-condenced: 2px;
   --instrument-components-watchface-scale-padding-none: 2px;
@@ -1626,13 +1624,25 @@
   --ui-components-slider-value-track-min-padding: 8px;
   --ui-components-slider-icon-track-min-padding-2: 8px;
   --ui-components-slider-indicator-track-min-padding: 4px;
-  --instrument-components-watchface-frame-regular-thickness: 12px;
-  --instrument-components-watchface-frame-regular-margin: 2px;
+  --instrument-components-watchface-frame-main-thickness: var(
+    --frame-thickness
+  );
+  --instrument-components-watchface-frame-main-outer-margin: var(
+    --frame-outer-margin
+  );
   --instrument-components-watchface-number: 0px;
-  --instrument-components-watchface-frame-regular-track-thickness: 36px;
-  --instrument-components-watchface-frame-regular-border-radius: 4px;
-  --instrument-components-watchface-frame-regular-double-thickness: 48px;
-  --instrument-components-watchface-frame-regular-track-size: 24px;
+  --instrument-components-watchface-frame-main-track-thickness: var(
+    --instrument-components-watchface-frame-regular-track-thickness
+  );
+  --instrument-components-watchface-frame-main-border-radius: var(
+    --frame-border-radius
+  );
+  --instrument-components-watchface-frame-main-double-thickness: var(
+    --frame-double-thickness
+  );
+  --instrument-components-watchface-frame-main-track-size: var(
+    --frame-track-size
+  );
   --instrument-components-compass-icon-size: 24px;
   --instrument-components-compass-icon-margin: 14px;
   --maneuvering-components-poi-selection-frame-border-width: 1.5px;
@@ -1876,7 +1886,7 @@
   --menu-navigation-components-table-item-icon-size-small: var(
     --global-size-spacing-icon-icon-size-small
   );
-  --instrument-components-advice-indicator-tick-mark-padding: 8px;
+  --instrument-components-advice-indicator-indicator-tick-mark-padding: 8px;
   --ui-components-communication-item-label-spacing: var(
     --global-size-spacing-list-item-item-spacing
   );
@@ -1929,14 +1939,14 @@
   --ui-components-input-fields-number-input-field-label-spacing-title: 4px;
   --ui-components-input-fields-text-input-field-label-spacing-title: 4px;
   --app-components-alert-frame-label-spacing: 4px;
-  --app-components-integration-icon-button-icon-size: var(
+  --app-components-integration-system-icon-button-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-integration-icon-button-visual-target: 40px;
-  --app-components-integration-icon-button-touch-target: var(
+  --app-components-integration-system-icon-button-visual-target: 40px;
+  --app-components-integration-system-icon-button-touch-target: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-integration-icon-button-border-radius: var(
+  --app-components-integration-system-icon-button-border-radius: var(
     --global-border-radius-border-radius-base
   );
   --ui-components-icon-button-border-radius-top-left: var(
@@ -1963,92 +1973,92 @@
   --ui-components-icon-button-stroke-weight-bottom: var(
     --icon-button-stroke-weight-bottom
   );
-  --app-components-integration-icon-button-padding-horizontal: 48px;
-  --app-components-integration-icon-button-border-radius-top-left: var(
+  --app-components-integration-system-icon-button-padding-horizontal: 48px;
+  --app-components-integration-system-icon-button-border-radius-top-left: var(
     --icon-button-border-radius-top-left
   );
-  --app-components-integration-icon-button-border-radius-top-right: var(
+  --app-components-integration-system-icon-button-border-radius-top-right: var(
     --icon-button-border-radius-top-right
   );
-  --app-components-integration-icon-button-border-radius-bottom-right: var(
+  --app-components-integration-system-icon-button-border-radius-bottom-right: var(
     --icon-button-border-radius-bottom-right
   );
-  --app-components-integration-icon-button-border-radius-bottom-left: var(
+  --app-components-integration-system-icon-button-border-radius-bottom-left: var(
     --icon-button-border-radius-bottom-left
   );
-  --app-components-integration-icon-button-stroke-weight: 1px;
-  --app-components-integration-button-icon-size: var(
+  --app-components-integration-system-icon-button-stroke-weight: 1px;
+  --app-components-integration-system-navigation-item-horizontal-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-integration-button-visual-target: 40px;
-  --app-components-integration-button-touch-target: var(
+  --app-components-integration-system-navigation-item-horizontal-visual-target: 40px;
+  --app-components-integration-system-navigation-item-horizontal-touch-target: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-integration-button-border-radius: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --app-components-integration-button-border-radius-top-left: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-top-left: var(
     --button-border-radius-top-left
   );
-  --app-components-integration-button-border-radius-top-right: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-top-right: var(
     --button-border-radius-top-right
   );
-  --app-components-integration-button-border-radius-bottom-right: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-bottom-right: var(
     --button-border-radius-bottom-right
   );
-  --app-components-integration-button-border-radius-bottom-left: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-bottom-left: var(
     --button-border-radius-bottom-left
   );
-  --app-components-integration-button-stroke-weight: 1px;
-  --app-components-integration-button-padding-horizontal: 8px;
-  --app-components-integration-button-label-spacing: 8px;
-  --app-components-integration-button-stroke-weight-left: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight: 1px;
+  --app-components-integration-system-navigation-item-horizontal-padding-horizontal: 8px;
+  --app-components-integration-system-navigation-item-horizontal-label-spacing: 8px;
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-left: var(
     --button-stroke-weight-left
   );
-  --app-components-integration-button-stroke-weight-top: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-top: var(
     --button-stroke-weight-top
   );
-  --app-components-integration-button-stroke-weight-right: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-right: var(
     --button-stroke-weight-right
   );
-  --app-components-integration-button-stroke-weight-bottom: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-bottom: var(
     --button-stroke-weight-bottom
   );
-  --app-components-integration-button-icon-size-large: var(
+  --app-components-integration-system-navigation-item-horizontal-icon-size-large: var(
     --global-size-spacing-icon-icon-size-large
   );
-  --app-components-integration-button-padding-vertical: 8px;
-  --app-components-integration-button-label-spacing-small: 2px;
-  --app-components-integration-list-item-icon-size: var(
+  --app-components-integration-system-navigation-item-horizontal-padding-vertical: 8px;
+  --app-components-integration-system-navigation-item-horizontal-label-spacing-xsmall: 2px;
+  --app-components-integration-system-navigation-item-vertical-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-integration-list-item-icon-size-large: var(
+  --app-components-integration-system-navigation-item-vertical-icon-size-large: var(
     --global-size-spacing-icon-icon-size-large
   );
-  --app-components-integration-list-item-visual-target: 40px;
-  --app-components-integration-list-item-label-spacing: 8px;
-  --app-components-integration-list-item-label-spacing-small: 2px;
-  --app-components-integration-list-item-touch-target: var(
+  --app-components-integration-system-navigation-item-vertical-visual-target: 40px;
+  --app-components-integration-system-navigation-item-vertical-label-spacing: 8px;
+  --app-components-integration-system-navigation-item-vertical-label-spacing-small: 2px;
+  --app-components-integration-system-navigation-item-vertical-touch-target: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-integration-list-item-border-radius: var(
+  --app-components-integration-system-navigation-item-vertical-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --app-components-integration-list-item-stroke-weight: 1px;
-  --app-components-integration-list-item-stroke-weight-left: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight: 1px;
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-left: var(
     --button-stroke-weight-left
   );
-  --app-components-integration-list-item-stroke-weight-top: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-top: var(
     --button-stroke-weight-top
   );
-  --app-components-integration-list-item-stroke-weight-right: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-right: var(
     --button-stroke-weight-right
   );
-  --app-components-integration-list-item-stroke-weight-bottom: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-bottom: var(
     --button-stroke-weight-bottom
   );
-  --app-components-integration-list-item-padding-horizontal: 8px;
-  --app-components-integration-list-item-padding-vertical: 8px;
+  --app-components-integration-system-navigation-item-vertical-padding-horizontal: 8px;
+  --app-components-integration-system-navigation-item-vertical-padding-vertical: 8px;
   --global-typography-instrument-value-large-padding-bottom: 2px;
   --global-typography-instrument-value-large-font-weight-regular: var(
     --font-weight-regular
@@ -2263,13 +2273,13 @@
   --instrument-components-watchface-tick-marks-visibility-primary-indicator: 0px;
   --instrument-components-watchface-tick-marks-visibility-secondary-indicator: 0px;
   --instrument-components-watchface-tick-marks-visibility-tertiary-indicator: 0px;
-  --instrument-components-advice-indicator-visibility: var(
+  --instrument-components-advice-indicator-visibility-indicator-visibility: var(
     --advice-indicator-visibility
   );
-  --instrument-components-advice-indicator-visibility-condenced: 100px;
-  --instrument-components-advice-indicator-visibility-none: 0px;
-  --instrument-components-advice-indicator-visibility-regular: 100px;
-  --instrument-components-advice-indicator-visibility-indicator: 100px;
+  --instrument-components-advice-indicator-visibility-indicator-visibility-condenced: 100px;
+  --instrument-components-advice-indicator-visibility-indicator-visibility-none: 0px;
+  --instrument-components-advice-indicator-visibility-indicator-visibility-regular: 100px;
+  --instrument-components-advice-indicator-visibility-indicator-visibility-indicator: 100px;
   --ui-components-boolean-indicator-container-border-radius: 4px;
   --ui-components-boolean-indicator-container-padding: 4px;
   --ui-components-tag-visual-target-large: 32px;
@@ -2312,20 +2322,8 @@
   --automation-components-badge-new-icon-size-flat: 16px;
   --automation-components-button-new-badge-container: 48px;
   --ui-components-progressbars-progress-bar--circular-bar-weight-small: 2px;
-  --instrument-components-advice-alert-indicator-alert-border-radius: 1px;
-  --instrument-components-advice-indicator-optimal-border-radius: 9999px;
-  --instrument-components-advice-alert-indicator-alert-border-radius-top-left: var(
-    --advice-alert-indicator-border-radius-top-left
-  );
-  --instrument-components-advice-alert-indicator-alert-border-radius-top-right: var(
-    --advice-alert-indicator-border-radius-top-right
-  );
-  --instrument-components-advice-alert-indicator-alert-border-radius-bottom-left: var(
-    --advice-alert-indicator-border-radius-bottom-left
-  );
-  --instrument-components-advice-alert-indicator-alert-border-radius-bottom-right: var(
-    --advice-alert-indicator-border-radius-bottom-right
-  );
+  --instrument-components-advice-indicator-alert-border-radius-value: 1px;
+  --instrument-components-advice-indicator-optimal-border-radius-indicator-optimal-border-radius: 9999px;
   --ui-components-mode-switch-touch-target-size: var(
     --global-size-spacing-touch-target-min
   );
@@ -2369,6 +2367,172 @@
   --ui-components-mode-switch-indicator-active-height: 24px;
   --ui-components-mode-switch-indicator-inactive-width: 0px;
   --ui-components-mode-switch-indicator-inactive-height: 0px;
+  --ui-components-mode-switch-indicator-padding-horizontal: 4px;
+  --ui-components-mode-switch-padding-vertical: 4px;
+  --automation-components-hydraulic-valve-thumb-size: 0px;
+  --instrument-components-advice-indicator-offset-offset-padding: var(
+    --advice-indicator-offset
+  );
+  --instrument-components-advice-indicator-offset-offset-regular: 2px;
+  --instrument-components-advice-indicator-offset-offset-condenced: 2px;
+  --instrument-components-advice-indicator-offset-offset-indication: 2px;
+  --instrument-components-advice-indicator-offset-offset-indication-internal: 8px;
+  --instrument-components-advice-indicator-offset-offset-indication-center: 0px;
+  --instrument-components-advice-indicator-offset-offset-none: 0px;
+  --instrument-components-watchface-scale-size-internal: 0px;
+  --instrument-components-advice-indicator-container-size: 8px;
+  --instrument-components-advice-indicator-container-size-container-size: var(
+    --advice-indicator-container-size
+  );
+  --instrument-components-advice-indicator-container-size-size-regular: 8px;
+  --instrument-components-advice-indicator-container-size-size-condenced: 8px;
+  --instrument-components-advice-indicator-container-size-size-indication: 8px;
+  --instrument-components-advice-indicator-container-size-size-indication-internal: 0px;
+  --instrument-components-advice-indicator-container-size-size-indication-center: 0px;
+  --instrument-components-advice-indicator-container-size-size-none: 0px;
+  --instrument-components-advice-indicator-area-line-padding: 0px;
+  --instrument-components-advice-indicator-padding-indicator-padding-indication: 0px;
+  --instrument-components-advice-indicator-padding-indicator-padding-internal: 2px;
+  --instrument-components-advice-indicator-optimal-border-radius-top-left: var(
+    --advice-optimal-top-left
+  );
+  --instrument-components-advice-indicator-optimal-border-radius-top-right: var(
+    --advice-optimal-top-right
+  );
+  --instrument-components-advice-indicator-optimal-border-radius-bottom-left: var(
+    --advice-optimal-bottom-left
+  );
+  --instrument-components-advice-indicator-optimal-border-radius-bottom-right: var(
+    --advice-optimal-bottom-right
+  );
+  --instrument-components-advice-indicator-alert-border-radius-frame-top-left: var(
+    --advice-frame-top-left
+  );
+  --instrument-components-advice-indicator-alert-border-radius-frame-top-right: var(
+    --advice-frame-top-right
+  );
+  --instrument-components-advice-indicator-alert-border-radius-frame-bottom-left: var(
+    --advice-frame-bottom-left
+  );
+  --instrument-components-advice-indicator-alert-border-radius-frame-bottom-right: var(
+    --advice-frame-bottom-right
+  );
+  --instrument-components-advice-indicator-padding-indicator-padding-leading: 2px;
+  --instrument-components-advice-indicator-alert-padding-padding-leading: var(
+    --advice-frame-padding-leading
+  );
+  --instrument-components-advice-indicator-alert-padding-padding-trailing: var(
+    --advice-frame-padding-trailing
+  );
+  --instrument-components-advice-indicator-alert-padding-internal-padding-leading: var(
+    --advice-frame-internal-padding-leading
+  );
+  --instrument-components-advice-indicator-alert-padding-internal-padding-trailing: var(
+    --advice-frame-internal-padding-trailing
+  );
+  --instrument-components-advice-indicator-alert-border-radius-indicator-top-left: var(
+    --advice-indication-top-left
+  );
+  --instrument-components-advice-indicator-alert-border-radius-indicator-top-right: var(
+    --advice-indication-top-right
+  );
+  --instrument-components-advice-indicator-alert-border-radius-indicator-bottom-left: var(
+    --advice-indication-bottom-left
+  );
+  --instrument-components-advice-indicator-alert-border-radius-indicator-bottom-right: var(
+    --advice-indication-bottom-right
+  );
+  --instrument-components-advice-indicator-optimal-padding-leading: var(
+    --advice-frame-internal-padding-leading
+  );
+  --instrument-components-advice-indicator-optimal-padding-trailing: var(
+    --advice-frame-internal-padding-trailing
+  );
+  --instrument-components-advice-indicator-alert-point-width: 4px;
+  --instrument-components-advice-indicator-alert-point-height: 2px;
+  --instrument-components-advice-indicator-optimal-point-size: 4px;
+  --ui-components-audio-input-spacing: 4px;
+  --ui-components-audio-input-dot-size: 4px;
+  --ui-components-audio-input-height: 32px;
+  --ui-components-audio-recording-item-touch-target-size: var(
+    --global-size-spacing-touch-target-min
+  );
+  --ui-components-audio-recording-item-visual-target: var(
+    --global-size-spacing-visual-target-min
+  );
+  --ui-components-audio-recording-item-padding-horizontal: 8px;
+  --ui-components-audio-recording-item-label-spacing: 8px;
+  --ui-components-audio-recording-item-border-radius: var(
+    --global-border-radius-border-radius-base
+  );
+  --ui-components-audio-output-border-radius: var(
+    --global-border-radius-border-radius-round
+  );
+  --ui-components-audio-input-border-radius: var(
+    --global-border-radius-border-radius-round
+  );
+  --ui-components-audio-recording-item-delete-button-container-size: 40px;
+  --instrument-components-watchface-frame-main-track-margin: var(
+    --frame-track-margin
+  );
+  --instrument-components-advice-indicator-optimal-tick-mark-padding: 2px;
+  --menu-navigation-components-date-item-appointment-container-padding: 4px;
+  --instrument-components-watchface-frame-regular-thickness: 12px;
+  --instrument-components-watchface-frame-regular-outer-margin: 2px;
+  --instrument-components-watchface-frame-regular-border-radius: 4px;
+  --instrument-components-watchface-frame-regular-track-thickness: 36px;
+  --instrument-components-watchface-frame-regular-track-size: 24px;
+  --instrument-components-watchface-frame-regular-track-margin: 14px;
+  --instrument-components-watchface-frame-regular-double-thickness: 48px;
+  --instrument-components-watchface-frame-condenced-thickness: 8px;
+  --instrument-components-watchface-frame-condenced-outer-margin: 2px;
+  --instrument-components-watchface-frame-condenced-border-radius: 4px;
+  --instrument-components-watchface-frame-condenced-total-thickness: 36px;
+  --instrument-components-watchface-frame-condenced-track-size: 24px;
+  --instrument-components-watchface-frame-condenced-track-margin: 10px;
+  --instrument-components-watchface-frame-condenced-double-thickness: 48px;
+  --app-components-integration-system-dropdown-menu-padding-horizontal: 8px;
+  --app-components-integration-system-dropdown-menu-spacing-horizontal: 8px;
+  --app-components-integration-system-dropdown-menu-action-container-height: 64px;
+  --app-components-integration-system-dropdown-menu-border-radius: var(
+    --global-border-radius-border-radius-floating
+  );
+  --ui-components-app-button-border-radius-small: 12px;
+  --ui-components-app-button-border-radius-large: 20px;
+  --app-components-integration-system-app-bar-fleet-container-border-radius: 18px;
+  --ui-components-two-step-action-border-radius: var(
+    --global-border-radius-border-radius-base
+  );
+  --ui-components-two-step-action-touch-target-size: var(
+    --global-size-spacing-touch-target-min
+  );
+  --ui-components-two-step-action-visual-target-size: var(
+    --global-size-spacing-visual-target-min
+  );
+  --app-components-integration-system-navigation-item-horizontal-label-spacing-small: 4px;
+  --global-typography-ui-title-font-size: 22px;
+  --global-typography-ui-title-line-height: 24px;
+  --global-typography-ui-title-font-weight: var(
+    --typography-font-weight-semibold
+  );
+  --global-typography-ui-title-letter-spacing: -0.5px;
+  --app-components-integration-system-navigation-item-horizontal-padding-horizontal-large: 12px;
+  --ui-components-accordion-item-label-spacing-small: 4px;
+  --menu-navigation-components-navigation-item-label-spacing-small: 4px;
+  --app-components-integration-system-topbar-margin-global: 4px;
+  --app-components-integration-system-topbar-touch-target-size: var(
+    --app-components-topbar-touch-target-size
+  );
+  --app-components-integration-system-topbar-item-spacing: 8px;
+  --app-components-integration-system-status-indicator-padding-horizontal: 8px;
+  --app-components-integration-system-status-indicator-label-spacing: 8px;
+  --app-components-integration-system-status-indicator-border-radius: var(
+    --global-border-radius-border-radius-floating
+  );
+  --app-components-integration-system-status-indicator-icon-size: var(
+    --global-size-spacing-icon-icon-size-regular
+  );
+  --app-components-integration-system-status-indicator-height: 40px;
 }
 .obc-component-size-medium {
   --global-size-spacing-touch-target-min: 56px;
@@ -2389,8 +2553,6 @@
   --ui-components-toggle-switch-item-border-radius: var(
     --border-radius-br-round
   );
-  --sequence-step-target-size: 32px;
-  --sequence-step-visual-size: 24px;
   --global-typography-ui-button-font-size: var(--font-size-150);
   --global-typography-ui-button-line-height: var(--line-height-150);
   --global-typography-ui-button-font-weight: var(--font-weight-semibold);
@@ -3051,7 +3213,7 @@
   --ui-components-accordion-item-padding-horizontal: var(
     --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
   );
-  --ui-components-accordion-item-border-radius: var(--border-radius-br-6);
+  --ui-components-accordion-item-border-radius: var(--border-radius-br-0);
   --ui-components-accordion-item-margin-horizontal: var(
     --global-size-spacing-nav-item-and-menus-margin-horizontal-list-item
   );
@@ -3545,19 +3707,21 @@
   --global-typography-instrument-tick-mark-active-line-height: var(
     --line-height-100
   );
-  --instrument-components-advice-indicator-margin: 4px;
-  --instrument-components-advice-indicator-margin-condenced: 4px;
-  --instrument-components-advice-indicator-margin-none: 4px;
-  --instrument-components-advice-indicator-margin-regular: 4px;
+  --instrument-components-advice-indicator-margin-indicator-margin: 4px;
+  --instrument-components-advice-indicator-margin-indicator-margin-condenced: 4px;
+  --instrument-components-advice-indicator-margin-indicator-margin-none: 4px;
+  --instrument-components-advice-indicator-margin-indicator-margin-regular: 4px;
   --instrument-components-advice-indicator-optional-padding: 8px;
-  --instrument-components-advice-indicator-padding: var(--indicator-padding);
-  --instrument-components-advice-indicator-padding-condenced: 4px;
-  --instrument-components-advice-indicator-padding-none: 0px;
-  --instrument-components-advice-indicator-padding-regular: 4px;
-  --instrument-components-advice-indicator-point-stroke-thickness: 2px;
-  --instrument-components-advice-indicator-thickness-alert: 4px;
-  --instrument-components-advice-indicator-thickness-enhanced: 16px;
-  --instrument-components-advice-indicator-thickness-regular: 8px;
+  --instrument-components-advice-indicator-padding-indicator-padding: var(
+    --advice-indicator-padding
+  );
+  --instrument-components-advice-indicator-padding-indicator-padding-condenced: 4px;
+  --instrument-components-advice-indicator-padding-indicator-padding-none: 0px;
+  --instrument-components-advice-indicator-padding-indicator-padding-regular: 4px;
+  --instrument-components-advice-indicator-indicator-point-stroke-thickness: 2px;
+  --instrument-components-advice-indicator-indicator-thickness-alert: 4px;
+  --instrument-components-advice-indicator-indicator-thickness-enhanced: 16px;
+  --instrument-components-advice-indicator-indicator-thickness-regular: 8px;
   --infographic-components-bar-chart-bar-border-radius: 4px;
   --infographic-components-bar-chart-bar-horizontal-border-radius-bottom-left: var(
     --bar-chart-bar-horizontal-border-radius-bottom-left
@@ -3663,9 +3827,9 @@
   --instrument-components-watchface-label-icon-size: 24px;
   --instrument-components-watchface-label-vertical-padding: 8px;
   --instrument-components-watchface-scale-margin: var(--scale-margin);
-  --instrument-components-watchface-scale-margin-condenced: 8px;
+  --instrument-components-watchface-scale-margin-condenced: 12px;
   --instrument-components-watchface-scale-margin-indication: 8px;
-  --instrument-components-watchface-scale-margin-regular: 24px;
+  --instrument-components-watchface-scale-margin-regular: 20px;
   --instrument-components-watchface-scale-padding: var(--scale-padding);
   --instrument-components-watchface-scale-padding-condenced: 4px;
   --instrument-components-watchface-scale-padding-none: 4px;
@@ -3697,7 +3861,7 @@
   --instrument-components-watchface-tick-marks-length-tertiary: var(
     --tick-mark-tertiary
   );
-  --instrument-components-watchface-tick-marks-length-tertiary-condenced: 4px;
+  --instrument-components-watchface-tick-marks-length-tertiary-condenced: 0px;
   --instrument-components-watchface-tick-marks-length-tertiary-none: 0px;
   --instrument-components-watchface-tick-marks-length-tertiary-regular: 4px;
   --instrument-components-demo: 0px;
@@ -4003,13 +4167,25 @@
   --ui-components-slider-value-track-min-padding: 8px;
   --ui-components-slider-icon-track-min-padding-2: 8px;
   --ui-components-slider-indicator-track-min-padding: 4px;
-  --instrument-components-watchface-frame-regular-thickness: 24px;
-  --instrument-components-watchface-frame-regular-margin: 4px;
+  --instrument-components-watchface-frame-main-thickness: var(
+    --frame-thickness
+  );
+  --instrument-components-watchface-frame-main-outer-margin: var(
+    --frame-outer-margin
+  );
   --instrument-components-watchface-number: 0px;
-  --instrument-components-watchface-frame-regular-track-thickness: 72px;
-  --instrument-components-watchface-frame-regular-border-radius: 8px;
-  --instrument-components-watchface-frame-regular-double-thickness: 96px;
-  --instrument-components-watchface-frame-regular-track-size: 48px;
+  --instrument-components-watchface-frame-main-track-thickness: var(
+    --instrument-components-watchface-frame-regular-track-thickness
+  );
+  --instrument-components-watchface-frame-main-border-radius: var(
+    --frame-border-radius
+  );
+  --instrument-components-watchface-frame-main-double-thickness: var(
+    --frame-double-thickness
+  );
+  --instrument-components-watchface-frame-main-track-size: var(
+    --frame-track-size
+  );
   --instrument-components-compass-icon-size: 48px;
   --instrument-components-compass-icon-margin: 28px;
   --maneuvering-components-poi-selection-frame-border-width: 2px;
@@ -4253,7 +4429,7 @@
   --menu-navigation-components-table-item-icon-size-small: var(
     --global-size-spacing-icon-icon-size-small
   );
-  --instrument-components-advice-indicator-tick-mark-padding: 8px;
+  --instrument-components-advice-indicator-indicator-tick-mark-padding: 8px;
   --ui-components-communication-item-label-spacing: var(
     --global-size-spacing-list-item-item-spacing
   );
@@ -4306,14 +4482,14 @@
   --ui-components-input-fields-number-input-field-label-spacing-title: 4px;
   --ui-components-input-fields-text-input-field-label-spacing-title: 4px;
   --app-components-alert-frame-label-spacing: 4px;
-  --app-components-integration-icon-button-icon-size: var(
+  --app-components-integration-system-icon-button-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-integration-icon-button-visual-target: 48px;
-  --app-components-integration-icon-button-touch-target: var(
+  --app-components-integration-system-icon-button-visual-target: 48px;
+  --app-components-integration-system-icon-button-touch-target: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-integration-icon-button-border-radius: var(
+  --app-components-integration-system-icon-button-border-radius: var(
     --global-border-radius-border-radius-base
   );
   --ui-components-icon-button-border-radius-top-left: var(
@@ -4340,92 +4516,92 @@
   --ui-components-icon-button-stroke-weight-bottom: var(
     --icon-button-stroke-weight-bottom
   );
-  --app-components-integration-icon-button-padding-horizontal: 56px;
-  --app-components-integration-icon-button-border-radius-top-left: var(
+  --app-components-integration-system-icon-button-padding-horizontal: 56px;
+  --app-components-integration-system-icon-button-border-radius-top-left: var(
     --icon-button-border-radius-top-left
   );
-  --app-components-integration-icon-button-border-radius-top-right: var(
+  --app-components-integration-system-icon-button-border-radius-top-right: var(
     --icon-button-border-radius-top-right
   );
-  --app-components-integration-icon-button-border-radius-bottom-right: var(
+  --app-components-integration-system-icon-button-border-radius-bottom-right: var(
     --icon-button-border-radius-bottom-right
   );
-  --app-components-integration-icon-button-border-radius-bottom-left: var(
+  --app-components-integration-system-icon-button-border-radius-bottom-left: var(
     --icon-button-border-radius-bottom-left
   );
-  --app-components-integration-icon-button-stroke-weight: 1px;
-  --app-components-integration-button-icon-size: var(
+  --app-components-integration-system-icon-button-stroke-weight: 1px;
+  --app-components-integration-system-navigation-item-horizontal-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-integration-button-visual-target: 48px;
-  --app-components-integration-button-touch-target: var(
+  --app-components-integration-system-navigation-item-horizontal-visual-target: 48px;
+  --app-components-integration-system-navigation-item-horizontal-touch-target: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-integration-button-border-radius: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --app-components-integration-button-border-radius-top-left: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-top-left: var(
     --button-border-radius-top-left
   );
-  --app-components-integration-button-border-radius-top-right: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-top-right: var(
     --button-border-radius-top-right
   );
-  --app-components-integration-button-border-radius-bottom-right: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-bottom-right: var(
     --button-border-radius-bottom-right
   );
-  --app-components-integration-button-border-radius-bottom-left: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-bottom-left: var(
     --button-border-radius-bottom-left
   );
-  --app-components-integration-button-stroke-weight: 1px;
-  --app-components-integration-button-padding-horizontal: 8px;
-  --app-components-integration-button-label-spacing: 4px;
-  --app-components-integration-button-stroke-weight-left: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight: 1px;
+  --app-components-integration-system-navigation-item-horizontal-padding-horizontal: 8px;
+  --app-components-integration-system-navigation-item-horizontal-label-spacing: 4px;
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-left: var(
     --button-stroke-weight-left
   );
-  --app-components-integration-button-stroke-weight-top: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-top: var(
     --button-stroke-weight-top
   );
-  --app-components-integration-button-stroke-weight-right: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-right: var(
     --button-stroke-weight-right
   );
-  --app-components-integration-button-stroke-weight-bottom: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-bottom: var(
     --button-stroke-weight-bottom
   );
-  --app-components-integration-button-icon-size-large: var(
+  --app-components-integration-system-navigation-item-horizontal-icon-size-large: var(
     --global-size-spacing-icon-icon-size-large
   );
-  --app-components-integration-button-padding-vertical: 8px;
-  --app-components-integration-button-label-spacing-small: 2px;
-  --app-components-integration-list-item-icon-size: var(
+  --app-components-integration-system-navigation-item-horizontal-padding-vertical: 8px;
+  --app-components-integration-system-navigation-item-horizontal-label-spacing-xsmall: 2px;
+  --app-components-integration-system-navigation-item-vertical-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-integration-list-item-icon-size-large: var(
+  --app-components-integration-system-navigation-item-vertical-icon-size-large: var(
     --global-size-spacing-icon-icon-size-large
   );
-  --app-components-integration-list-item-visual-target: 48px;
-  --app-components-integration-list-item-label-spacing: 8px;
-  --app-components-integration-list-item-label-spacing-small: 2px;
-  --app-components-integration-list-item-touch-target: var(
+  --app-components-integration-system-navigation-item-vertical-visual-target: 48px;
+  --app-components-integration-system-navigation-item-vertical-label-spacing: 8px;
+  --app-components-integration-system-navigation-item-vertical-label-spacing-small: 2px;
+  --app-components-integration-system-navigation-item-vertical-touch-target: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-integration-list-item-border-radius: var(
+  --app-components-integration-system-navigation-item-vertical-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --app-components-integration-list-item-stroke-weight: 1px;
-  --app-components-integration-list-item-stroke-weight-left: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight: 1px;
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-left: var(
     --button-stroke-weight-left
   );
-  --app-components-integration-list-item-stroke-weight-top: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-top: var(
     --button-stroke-weight-top
   );
-  --app-components-integration-list-item-stroke-weight-right: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-right: var(
     --button-stroke-weight-right
   );
-  --app-components-integration-list-item-stroke-weight-bottom: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-bottom: var(
     --button-stroke-weight-bottom
   );
-  --app-components-integration-list-item-padding-horizontal: 8px;
-  --app-components-integration-list-item-padding-vertical: 8px;
+  --app-components-integration-system-navigation-item-vertical-padding-horizontal: 8px;
+  --app-components-integration-system-navigation-item-vertical-padding-vertical: 8px;
   --global-typography-instrument-value-large-padding-bottom: 4px;
   --global-typography-instrument-value-large-font-weight-regular: var(
     --font-weight-regular
@@ -4640,13 +4816,13 @@
   --instrument-components-watchface-tick-marks-visibility-primary-indicator: 0px;
   --instrument-components-watchface-tick-marks-visibility-secondary-indicator: 0px;
   --instrument-components-watchface-tick-marks-visibility-tertiary-indicator: 0px;
-  --instrument-components-advice-indicator-visibility: var(
+  --instrument-components-advice-indicator-visibility-indicator-visibility: var(
     --advice-indicator-visibility
   );
-  --instrument-components-advice-indicator-visibility-condenced: 100px;
-  --instrument-components-advice-indicator-visibility-none: 0px;
-  --instrument-components-advice-indicator-visibility-regular: 100px;
-  --instrument-components-advice-indicator-visibility-indicator: 100px;
+  --instrument-components-advice-indicator-visibility-indicator-visibility-condenced: 100px;
+  --instrument-components-advice-indicator-visibility-indicator-visibility-none: 0px;
+  --instrument-components-advice-indicator-visibility-indicator-visibility-regular: 100px;
+  --instrument-components-advice-indicator-visibility-indicator-visibility-indicator: 100px;
   --ui-components-boolean-indicator-container-border-radius: 6px;
   --ui-components-boolean-indicator-container-padding: 4px;
   --ui-components-tag-visual-target-large: 40px;
@@ -4689,20 +4865,8 @@
   --automation-components-badge-new-icon-size-flat: 20px;
   --automation-components-button-new-badge-container: 64px;
   --ui-components-progressbars-progress-bar--circular-bar-weight-small: 2px;
-  --instrument-components-advice-alert-indicator-alert-border-radius: 2px;
-  --instrument-components-advice-indicator-optimal-border-radius: 9999px;
-  --instrument-components-advice-alert-indicator-alert-border-radius-top-left: var(
-    --advice-alert-indicator-border-radius-top-left
-  );
-  --instrument-components-advice-alert-indicator-alert-border-radius-top-right: var(
-    --advice-alert-indicator-border-radius-top-right
-  );
-  --instrument-components-advice-alert-indicator-alert-border-radius-bottom-left: var(
-    --advice-alert-indicator-border-radius-bottom-left
-  );
-  --instrument-components-advice-alert-indicator-alert-border-radius-bottom-right: var(
-    --advice-alert-indicator-border-radius-bottom-right
-  );
+  --instrument-components-advice-indicator-alert-border-radius-value: 2px;
+  --instrument-components-advice-indicator-optimal-border-radius-indicator-optimal-border-radius: 9999px;
   --ui-components-mode-switch-touch-target-size: var(
     --global-size-spacing-touch-target-min
   );
@@ -4746,6 +4910,170 @@
   --ui-components-mode-switch-indicator-active-height: 32px;
   --ui-components-mode-switch-indicator-inactive-width: 0px;
   --ui-components-mode-switch-indicator-inactive-height: 0px;
+  --ui-components-mode-switch-indicator-padding-horizontal: 4px;
+  --ui-components-mode-switch-padding-vertical: 4px;
+  --automation-components-hydraulic-valve-thumb-size: 0px;
+  --instrument-components-advice-indicator-offset-offset-padding: var(
+    --advice-indicator-offset
+  );
+  --instrument-components-advice-indicator-offset-offset-regular: 0px;
+  --instrument-components-advice-indicator-offset-offset-condenced: 0px;
+  --instrument-components-advice-indicator-offset-offset-indication: 0px;
+  --instrument-components-advice-indicator-offset-offset-indication-internal: 16px;
+  --instrument-components-advice-indicator-offset-offset-indication-center: 0px;
+  --instrument-components-advice-indicator-offset-offset-none: 0px;
+  --instrument-components-watchface-scale-size-internal: 0px;
+  --instrument-components-advice-indicator-container-size: 16px;
+  --instrument-components-advice-indicator-container-size-container-size: var(
+    --advice-indicator-container-size
+  );
+  --instrument-components-advice-indicator-container-size-size-regular: 16px;
+  --instrument-components-advice-indicator-container-size-size-condenced: 16px;
+  --instrument-components-advice-indicator-container-size-size-indication: 16px;
+  --instrument-components-advice-indicator-container-size-size-indication-internal: 0px;
+  --instrument-components-advice-indicator-container-size-size-indication-center: 0px;
+  --instrument-components-advice-indicator-container-size-size-none: 0px;
+  --instrument-components-advice-indicator-area-line-padding: 0px;
+  --instrument-components-advice-indicator-padding-indicator-padding-indication: 0px;
+  --instrument-components-advice-indicator-padding-indicator-padding-internal: 4px;
+  --instrument-components-advice-indicator-optimal-border-radius-top-left: var(
+    --advice-optimal-top-left
+  );
+  --instrument-components-advice-indicator-optimal-border-radius-top-right: var(
+    --advice-optimal-top-right
+  );
+  --instrument-components-advice-indicator-optimal-border-radius-bottom-left: var(
+    --advice-optimal-bottom-left
+  );
+  --instrument-components-advice-indicator-optimal-border-radius-bottom-right: var(
+    --advice-optimal-bottom-right
+  );
+  --instrument-components-advice-indicator-alert-border-radius-frame-top-left: var(
+    --advice-frame-top-left
+  );
+  --instrument-components-advice-indicator-alert-border-radius-frame-top-right: var(
+    --advice-frame-top-right
+  );
+  --instrument-components-advice-indicator-alert-border-radius-frame-bottom-left: var(
+    --advice-frame-bottom-left
+  );
+  --instrument-components-advice-indicator-alert-border-radius-frame-bottom-right: var(
+    --advice-frame-bottom-right
+  );
+  --instrument-components-advice-indicator-padding-indicator-padding-leading: 4px;
+  --instrument-components-advice-indicator-alert-padding-padding-leading: var(
+    --advice-frame-padding-leading
+  );
+  --instrument-components-advice-indicator-alert-padding-padding-trailing: var(
+    --advice-frame-padding-trailing
+  );
+  --instrument-components-advice-indicator-alert-padding-internal-padding-leading: var(
+    --advice-frame-internal-padding-leading
+  );
+  --instrument-components-advice-indicator-alert-padding-internal-padding-trailing: var(
+    --advice-frame-internal-padding-trailing
+  );
+  --instrument-components-advice-indicator-alert-border-radius-indicator-top-left: var(
+    --advice-indication-top-left
+  );
+  --instrument-components-advice-indicator-alert-border-radius-indicator-top-right: var(
+    --advice-indication-top-right
+  );
+  --instrument-components-advice-indicator-alert-border-radius-indicator-bottom-left: var(
+    --advice-indication-bottom-left
+  );
+  --instrument-components-advice-indicator-alert-border-radius-indicator-bottom-right: var(
+    --advice-indication-bottom-right
+  );
+  --instrument-components-advice-indicator-optimal-padding-leading: var(
+    --advice-frame-internal-padding-leading
+  );
+  --instrument-components-advice-indicator-optimal-padding-trailing: var(
+    --advice-frame-internal-padding-trailing
+  );
+  --instrument-components-advice-indicator-alert-point-width: 8px;
+  --instrument-components-advice-indicator-alert-point-height: 2px;
+  --instrument-components-advice-indicator-optimal-point-size: 8px;
+  --ui-components-audio-input-spacing: 4px;
+  --ui-components-audio-input-dot-size: 4px;
+  --ui-components-audio-input-height: 32px;
+  --ui-components-audio-recording-item-touch-target-size: var(
+    --global-size-spacing-touch-target-min
+  );
+  --ui-components-audio-recording-item-visual-target: var(
+    --global-size-spacing-visual-target-min
+  );
+  --ui-components-audio-recording-item-padding-horizontal: 8px;
+  --ui-components-audio-recording-item-label-spacing: 8px;
+  --ui-components-audio-recording-item-border-radius: var(
+    --global-border-radius-border-radius-base
+  );
+  --ui-components-audio-output-border-radius: var(
+    --global-border-radius-border-radius-round
+  );
+  --ui-components-audio-input-border-radius: var(
+    --global-border-radius-border-radius-round
+  );
+  --ui-components-audio-recording-item-delete-button-container-size: 44px;
+  --instrument-components-watchface-frame-main-track-margin: var(
+    --frame-track-margin
+  );
+  --instrument-components-advice-indicator-optimal-tick-mark-padding: 4px;
+  --menu-navigation-components-date-item-appointment-container-padding: 4px;
+  --instrument-components-watchface-frame-regular-thickness: 24px;
+  --instrument-components-watchface-frame-regular-outer-margin: 4px;
+  --instrument-components-watchface-frame-regular-border-radius: 8px;
+  --instrument-components-watchface-frame-regular-track-thickness: 72px;
+  --instrument-components-watchface-frame-regular-track-size: 48px;
+  --instrument-components-watchface-frame-regular-track-margin: 28px;
+  --instrument-components-watchface-frame-regular-double-thickness: 96px;
+  --instrument-components-watchface-frame-condenced-thickness: 16px;
+  --instrument-components-watchface-frame-condenced-outer-margin: 4px;
+  --instrument-components-watchface-frame-condenced-border-radius: 8px;
+  --instrument-components-watchface-frame-condenced-total-thickness: 72px;
+  --instrument-components-watchface-frame-condenced-track-size: 48px;
+  --instrument-components-watchface-frame-condenced-track-margin: 28px;
+  --instrument-components-watchface-frame-condenced-double-thickness: 96px;
+  --app-components-integration-system-dropdown-menu-padding-horizontal: 8px;
+  --app-components-integration-system-dropdown-menu-spacing-horizontal: 8px;
+  --app-components-integration-system-dropdown-menu-action-container-height: 64px;
+  --app-components-integration-system-dropdown-menu-border-radius: 64px;
+  --ui-components-app-button-border-radius-small: 16px;
+  --ui-components-app-button-border-radius-large: 24px;
+  --app-components-integration-system-app-bar-fleet-container-border-radius: 18px;
+  --ui-components-two-step-action-border-radius: var(
+    --global-border-radius-border-radius-base
+  );
+  --ui-components-two-step-action-touch-target-size: var(
+    --global-size-spacing-touch-target-min
+  );
+  --ui-components-two-step-action-visual-target-size: var(
+    --global-size-spacing-visual-target-min
+  );
+  --app-components-integration-system-navigation-item-horizontal-label-spacing-small: 4px;
+  --global-typography-ui-title-font-size: 34px;
+  --global-typography-ui-title-line-height: 32px;
+  --global-typography-ui-title-font-weight: var(
+    --typography-font-weight-semibold
+  );
+  --global-typography-ui-title-letter-spacing: -0.5px;
+  --app-components-integration-system-navigation-item-horizontal-padding-horizontal-large: 12px;
+  --ui-components-accordion-item-label-spacing-small: 4px;
+  --menu-navigation-components-navigation-item-label-spacing-small: 4px;
+  --app-components-integration-system-topbar-margin-global: 4px;
+  --app-components-integration-system-topbar-touch-target-size: var(
+    --app-components-topbar-touch-target-size
+  );
+  --app-components-integration-system-topbar-item-spacing: 8px;
+  --app-components-integration-system-status-indicator-padding-horizontal: 8px;
+  --app-components-integration-system-status-indicator-label-spacing: 8px;
+  --app-components-integration-system-status-indicator-border-radius: var(
+    --global-border-radius-border-radius-floating
+  );
+  --app-components-integration-system-status-indicator-icon-size: var(
+    --global-size-spacing-icon-icon-size-regular
+  );
+  --app-components-integration-system-status-indicator-height: 40px;
 }
 .obc-component-size-large {
   --global-size-spacing-touch-target-min: 72px;
@@ -4766,8 +5094,6 @@
   --ui-components-toggle-switch-item-border-radius: var(
     --border-radius-br-round
   );
-  --sequence-step-target-size: 48px;
-  --sequence-step-visual-size: 36px;
   --global-typography-ui-button-font-size: var(--font-size-200);
   --global-typography-ui-button-line-height: var(--line-height-200);
   --global-typography-ui-button-font-weight: var(--font-weight-semibold);
@@ -5430,7 +5756,7 @@
   --ui-components-accordion-item-padding-horizontal: var(
     --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
   );
-  --ui-components-accordion-item-border-radius: var(--border-radius-br-8);
+  --ui-components-accordion-item-border-radius: var(--border-radius-br-0);
   --ui-components-accordion-item-margin-horizontal: var(
     --global-size-spacing-nav-item-and-menus-margin-horizontal-list-item
   );
@@ -5924,19 +6250,21 @@
   --global-typography-instrument-tick-mark-active-line-height: var(
     --line-height-150
   );
-  --instrument-components-advice-indicator-margin: 4px;
-  --instrument-components-advice-indicator-margin-condenced: 4px;
-  --instrument-components-advice-indicator-margin-none: 6px;
-  --instrument-components-advice-indicator-margin-regular: 4px;
+  --instrument-components-advice-indicator-margin-indicator-margin: 6px;
+  --instrument-components-advice-indicator-margin-indicator-margin-condenced: 4px;
+  --instrument-components-advice-indicator-margin-indicator-margin-none: 6px;
+  --instrument-components-advice-indicator-margin-indicator-margin-regular: 4px;
   --instrument-components-advice-indicator-optional-padding: 8px;
-  --instrument-components-advice-indicator-padding: var(--indicator-padding);
-  --instrument-components-advice-indicator-padding-condenced: 4px;
-  --instrument-components-advice-indicator-padding-none: 0px;
-  --instrument-components-advice-indicator-padding-regular: 4px;
-  --instrument-components-advice-indicator-point-stroke-thickness: 2px;
-  --instrument-components-advice-indicator-thickness-alert: 8px;
-  --instrument-components-advice-indicator-thickness-enhanced: 16px;
-  --instrument-components-advice-indicator-thickness-regular: 8px;
+  --instrument-components-advice-indicator-padding-indicator-padding: var(
+    --advice-indicator-padding
+  );
+  --instrument-components-advice-indicator-padding-indicator-padding-condenced: 4px;
+  --instrument-components-advice-indicator-padding-indicator-padding-none: 0px;
+  --instrument-components-advice-indicator-padding-indicator-padding-regular: 4px;
+  --instrument-components-advice-indicator-indicator-point-stroke-thickness: 2px;
+  --instrument-components-advice-indicator-indicator-thickness-alert: 8px;
+  --instrument-components-advice-indicator-indicator-thickness-enhanced: 24px;
+  --instrument-components-advice-indicator-indicator-thickness-regular: 12px;
   --infographic-components-bar-chart-bar-border-radius: 0px;
   --infographic-components-bar-chart-bar-horizontal-border-radius-bottom-left: var(
     --bar-chart-bar-horizontal-border-radius-bottom-left
@@ -6372,13 +6700,25 @@
   --ui-components-slider-value-track-min-padding: 12px;
   --ui-components-slider-icon-track-min-padding-2: 12px;
   --ui-components-slider-indicator-track-min-padding: 8px;
-  --instrument-components-watchface-frame-regular-thickness: 24px;
-  --instrument-components-watchface-frame-regular-margin: 28px;
+  --instrument-components-watchface-frame-main-thickness: var(
+    --frame-thickness
+  );
+  --instrument-components-watchface-frame-main-outer-margin: var(
+    --frame-outer-margin
+  );
   --instrument-components-watchface-number: 0px;
-  --instrument-components-watchface-frame-regular-track-thickness: 96px;
-  --instrument-components-watchface-frame-regular-border-radius: 12px;
-  --instrument-components-watchface-frame-regular-double-thickness: 96px;
-  --instrument-components-watchface-frame-regular-track-size: 96px;
+  --instrument-components-watchface-frame-main-track-thickness: var(
+    --instrument-components-watchface-frame-regular-track-thickness
+  );
+  --instrument-components-watchface-frame-main-border-radius: var(
+    --frame-border-radius
+  );
+  --instrument-components-watchface-frame-main-double-thickness: var(
+    --frame-double-thickness
+  );
+  --instrument-components-watchface-frame-main-track-size: var(
+    --frame-track-size
+  );
   --instrument-components-compass-icon-size: 72px;
   --instrument-components-compass-icon-margin: 42px;
   --maneuvering-components-poi-selection-frame-border-width: 0px;
@@ -6620,7 +6960,7 @@
   --menu-navigation-components-table-item-icon-size-small: var(
     --global-size-spacing-icon-icon-size-small
   );
-  --instrument-components-advice-indicator-tick-mark-padding: 8px;
+  --instrument-components-advice-indicator-indicator-tick-mark-padding: 8px;
   --ui-components-communication-item-label-spacing: var(
     --global-size-spacing-list-item-item-spacing
   );
@@ -6673,14 +7013,14 @@
   --ui-components-input-fields-number-input-field-label-spacing-title: 6px;
   --ui-components-input-fields-text-input-field-label-spacing-title: 6px;
   --app-components-alert-frame-label-spacing: 6px;
-  --app-components-integration-icon-button-icon-size: var(
+  --app-components-integration-system-icon-button-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-integration-icon-button-visual-target: 60px;
-  --app-components-integration-icon-button-touch-target: var(
+  --app-components-integration-system-icon-button-visual-target: 60px;
+  --app-components-integration-system-icon-button-touch-target: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-integration-icon-button-border-radius: var(
+  --app-components-integration-system-icon-button-border-radius: var(
     --global-border-radius-border-radius-base
   );
   --ui-components-icon-button-border-radius-top-left: var(
@@ -6707,92 +7047,92 @@
   --ui-components-icon-button-stroke-weight-bottom: var(
     --icon-button-stroke-weight-bottom
   );
-  --app-components-integration-icon-button-padding-horizontal: 72px;
-  --app-components-integration-icon-button-border-radius-top-left: var(
+  --app-components-integration-system-icon-button-padding-horizontal: 72px;
+  --app-components-integration-system-icon-button-border-radius-top-left: var(
     --icon-button-border-radius-top-left
   );
-  --app-components-integration-icon-button-border-radius-top-right: var(
+  --app-components-integration-system-icon-button-border-radius-top-right: var(
     --icon-button-border-radius-top-right
   );
-  --app-components-integration-icon-button-border-radius-bottom-right: var(
+  --app-components-integration-system-icon-button-border-radius-bottom-right: var(
     --icon-button-border-radius-bottom-right
   );
-  --app-components-integration-icon-button-border-radius-bottom-left: var(
+  --app-components-integration-system-icon-button-border-radius-bottom-left: var(
     --icon-button-border-radius-bottom-left
   );
-  --app-components-integration-icon-button-stroke-weight: 1px;
-  --app-components-integration-button-icon-size: var(
+  --app-components-integration-system-icon-button-stroke-weight: 1px;
+  --app-components-integration-system-navigation-item-horizontal-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-integration-button-visual-target: 60px;
-  --app-components-integration-button-touch-target: var(
+  --app-components-integration-system-navigation-item-horizontal-visual-target: 60px;
+  --app-components-integration-system-navigation-item-horizontal-touch-target: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-integration-button-border-radius: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --app-components-integration-button-border-radius-top-left: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-top-left: var(
     --button-border-radius-top-left
   );
-  --app-components-integration-button-border-radius-top-right: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-top-right: var(
     --button-border-radius-top-right
   );
-  --app-components-integration-button-border-radius-bottom-right: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-bottom-right: var(
     --button-border-radius-bottom-right
   );
-  --app-components-integration-button-border-radius-bottom-left: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-bottom-left: var(
     --button-border-radius-bottom-left
   );
-  --app-components-integration-button-stroke-weight: 1px;
-  --app-components-integration-button-padding-horizontal: 12px;
-  --app-components-integration-button-label-spacing: 6px;
-  --app-components-integration-button-stroke-weight-left: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight: 1px;
+  --app-components-integration-system-navigation-item-horizontal-padding-horizontal: 12px;
+  --app-components-integration-system-navigation-item-horizontal-label-spacing: 6px;
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-left: var(
     --button-stroke-weight-left
   );
-  --app-components-integration-button-stroke-weight-top: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-top: var(
     --button-stroke-weight-top
   );
-  --app-components-integration-button-stroke-weight-right: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-right: var(
     --button-stroke-weight-right
   );
-  --app-components-integration-button-stroke-weight-bottom: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-bottom: var(
     --button-stroke-weight-bottom
   );
-  --app-components-integration-button-icon-size-large: var(
+  --app-components-integration-system-navigation-item-horizontal-icon-size-large: var(
     --global-size-spacing-icon-icon-size-large
   );
-  --app-components-integration-button-padding-vertical: 12px;
-  --app-components-integration-button-label-spacing-small: 3px;
-  --app-components-integration-list-item-icon-size: var(
+  --app-components-integration-system-navigation-item-horizontal-padding-vertical: 12px;
+  --app-components-integration-system-navigation-item-horizontal-label-spacing-xsmall: 3px;
+  --app-components-integration-system-navigation-item-vertical-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-integration-list-item-icon-size-large: var(
+  --app-components-integration-system-navigation-item-vertical-icon-size-large: var(
     --global-size-spacing-icon-icon-size-large
   );
-  --app-components-integration-list-item-visual-target: 60px;
-  --app-components-integration-list-item-label-spacing: 12px;
-  --app-components-integration-list-item-label-spacing-small: 3px;
-  --app-components-integration-list-item-touch-target: var(
+  --app-components-integration-system-navigation-item-vertical-visual-target: 60px;
+  --app-components-integration-system-navigation-item-vertical-label-spacing: 12px;
+  --app-components-integration-system-navigation-item-vertical-label-spacing-small: 3px;
+  --app-components-integration-system-navigation-item-vertical-touch-target: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-integration-list-item-border-radius: var(
+  --app-components-integration-system-navigation-item-vertical-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --app-components-integration-list-item-stroke-weight: 1px;
-  --app-components-integration-list-item-stroke-weight-left: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight: 1px;
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-left: var(
     --button-stroke-weight-left
   );
-  --app-components-integration-list-item-stroke-weight-top: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-top: var(
     --button-stroke-weight-top
   );
-  --app-components-integration-list-item-stroke-weight-right: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-right: var(
     --button-stroke-weight-right
   );
-  --app-components-integration-list-item-stroke-weight-bottom: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-bottom: var(
     --button-stroke-weight-bottom
   );
-  --app-components-integration-list-item-padding-horizontal: 12px;
-  --app-components-integration-list-item-padding-vertical: 12px;
+  --app-components-integration-system-navigation-item-vertical-padding-horizontal: 12px;
+  --app-components-integration-system-navigation-item-vertical-padding-vertical: 12px;
   --global-typography-instrument-value-large-padding-bottom: 4px;
   --global-typography-instrument-value-large-font-weight-regular: var(
     --font-weight-regular
@@ -7007,13 +7347,13 @@
   --instrument-components-watchface-tick-marks-visibility-primary-indicator: 0px;
   --instrument-components-watchface-tick-marks-visibility-secondary-indicator: 0px;
   --instrument-components-watchface-tick-marks-visibility-tertiary-indicator: 0px;
-  --instrument-components-advice-indicator-visibility: var(
+  --instrument-components-advice-indicator-visibility-indicator-visibility: var(
     --advice-indicator-visibility
   );
-  --instrument-components-advice-indicator-visibility-condenced: 100px;
-  --instrument-components-advice-indicator-visibility-none: 0px;
-  --instrument-components-advice-indicator-visibility-regular: 100px;
-  --instrument-components-advice-indicator-visibility-indicator: 100px;
+  --instrument-components-advice-indicator-visibility-indicator-visibility-condenced: 100px;
+  --instrument-components-advice-indicator-visibility-indicator-visibility-none: 0px;
+  --instrument-components-advice-indicator-visibility-indicator-visibility-regular: 100px;
+  --instrument-components-advice-indicator-visibility-indicator-visibility-indicator: 100px;
   --ui-components-boolean-indicator-container-border-radius: 8px;
   --ui-components-boolean-indicator-container-padding: 8px;
   --ui-components-tag-visual-target-large: 48px;
@@ -7056,20 +7396,8 @@
   --automation-components-badge-new-icon-size-flat: 24px;
   --automation-components-button-new-badge-container: 80px;
   --ui-components-progressbars-progress-bar--circular-bar-weight-small: 4px;
-  --instrument-components-advice-alert-indicator-alert-border-radius: 4px;
-  --instrument-components-advice-indicator-optimal-border-radius: 9999px;
-  --instrument-components-advice-alert-indicator-alert-border-radius-top-left: var(
-    --advice-alert-indicator-border-radius-top-left
-  );
-  --instrument-components-advice-alert-indicator-alert-border-radius-top-right: var(
-    --advice-alert-indicator-border-radius-top-right
-  );
-  --instrument-components-advice-alert-indicator-alert-border-radius-bottom-left: var(
-    --advice-alert-indicator-border-radius-bottom-left
-  );
-  --instrument-components-advice-alert-indicator-alert-border-radius-bottom-right: var(
-    --advice-alert-indicator-border-radius-bottom-right
-  );
+  --instrument-components-advice-indicator-alert-border-radius-value: 4px;
+  --instrument-components-advice-indicator-optimal-border-radius-indicator-optimal-border-radius: 9999px;
   --ui-components-mode-switch-touch-target-size: var(
     --global-size-spacing-touch-target-min
   );
@@ -7113,6 +7441,170 @@
   --ui-components-mode-switch-indicator-active-height: 48px;
   --ui-components-mode-switch-indicator-inactive-width: 0px;
   --ui-components-mode-switch-indicator-inactive-height: 0px;
+  --ui-components-mode-switch-indicator-padding-horizontal: 8px;
+  --ui-components-mode-switch-padding-vertical: 6px;
+  --automation-components-hydraulic-valve-thumb-size: 0px;
+  --instrument-components-advice-indicator-offset-offset-padding: var(
+    --advice-indicator-offset
+  );
+  --instrument-components-advice-indicator-offset-offset-regular: 0px;
+  --instrument-components-advice-indicator-offset-offset-condenced: 0px;
+  --instrument-components-advice-indicator-offset-offset-indication: 0px;
+  --instrument-components-advice-indicator-offset-offset-indication-internal: 24px;
+  --instrument-components-advice-indicator-offset-offset-indication-center: 0px;
+  --instrument-components-advice-indicator-offset-offset-none: 0px;
+  --instrument-components-watchface-scale-size-internal: 0px;
+  --instrument-components-advice-indicator-container-size: 24px;
+  --instrument-components-advice-indicator-container-size-container-size: var(
+    --advice-indicator-container-size
+  );
+  --instrument-components-advice-indicator-container-size-size-regular: 24px;
+  --instrument-components-advice-indicator-container-size-size-condenced: 24px;
+  --instrument-components-advice-indicator-container-size-size-indication: 24px;
+  --instrument-components-advice-indicator-container-size-size-indication-internal: 0px;
+  --instrument-components-advice-indicator-container-size-size-indication-center: 0px;
+  --instrument-components-advice-indicator-container-size-size-none: 0px;
+  --instrument-components-advice-indicator-area-line-padding: 0px;
+  --instrument-components-advice-indicator-padding-indicator-padding-indication: 0px;
+  --instrument-components-advice-indicator-padding-indicator-padding-internal: 4px;
+  --instrument-components-advice-indicator-optimal-border-radius-top-left: var(
+    --advice-optimal-top-left
+  );
+  --instrument-components-advice-indicator-optimal-border-radius-top-right: var(
+    --advice-optimal-top-right
+  );
+  --instrument-components-advice-indicator-optimal-border-radius-bottom-left: var(
+    --advice-optimal-bottom-left
+  );
+  --instrument-components-advice-indicator-optimal-border-radius-bottom-right: var(
+    --advice-optimal-bottom-right
+  );
+  --instrument-components-advice-indicator-alert-border-radius-frame-top-left: var(
+    --advice-frame-top-left
+  );
+  --instrument-components-advice-indicator-alert-border-radius-frame-top-right: var(
+    --advice-frame-top-right
+  );
+  --instrument-components-advice-indicator-alert-border-radius-frame-bottom-left: var(
+    --advice-frame-bottom-left
+  );
+  --instrument-components-advice-indicator-alert-border-radius-frame-bottom-right: var(
+    --advice-frame-bottom-right
+  );
+  --instrument-components-advice-indicator-padding-indicator-padding-leading: 4px;
+  --instrument-components-advice-indicator-alert-padding-padding-leading: var(
+    --advice-frame-padding-leading
+  );
+  --instrument-components-advice-indicator-alert-padding-padding-trailing: var(
+    --advice-frame-padding-trailing
+  );
+  --instrument-components-advice-indicator-alert-padding-internal-padding-leading: var(
+    --advice-frame-internal-padding-leading
+  );
+  --instrument-components-advice-indicator-alert-padding-internal-padding-trailing: var(
+    --advice-frame-internal-padding-trailing
+  );
+  --instrument-components-advice-indicator-alert-border-radius-indicator-top-left: var(
+    --advice-indication-top-left
+  );
+  --instrument-components-advice-indicator-alert-border-radius-indicator-top-right: var(
+    --advice-indication-top-right
+  );
+  --instrument-components-advice-indicator-alert-border-radius-indicator-bottom-left: var(
+    --advice-indication-bottom-left
+  );
+  --instrument-components-advice-indicator-alert-border-radius-indicator-bottom-right: var(
+    --advice-indication-bottom-right
+  );
+  --instrument-components-advice-indicator-optimal-padding-leading: var(
+    --advice-frame-internal-padding-leading
+  );
+  --instrument-components-advice-indicator-optimal-padding-trailing: var(
+    --advice-frame-internal-padding-trailing
+  );
+  --instrument-components-advice-indicator-alert-point-width: 12px;
+  --instrument-components-advice-indicator-alert-point-height: 4px;
+  --instrument-components-advice-indicator-optimal-point-size: 12px;
+  --ui-components-audio-input-spacing: 6px;
+  --ui-components-audio-input-dot-size: 6px;
+  --ui-components-audio-input-height: 48px;
+  --ui-components-audio-recording-item-touch-target-size: var(
+    --global-size-spacing-touch-target-min
+  );
+  --ui-components-audio-recording-item-visual-target: var(
+    --global-size-spacing-visual-target-min
+  );
+  --ui-components-audio-recording-item-padding-horizontal: 12px;
+  --ui-components-audio-recording-item-label-spacing: 12px;
+  --ui-components-audio-recording-item-border-radius: var(
+    --global-border-radius-border-radius-base
+  );
+  --ui-components-audio-output-border-radius: var(
+    --global-border-radius-border-radius-round
+  );
+  --ui-components-audio-input-border-radius: var(
+    --global-border-radius-border-radius-round
+  );
+  --ui-components-audio-recording-item-delete-button-container-size: 60px;
+  --instrument-components-watchface-frame-main-track-margin: var(
+    --frame-track-margin
+  );
+  --instrument-components-advice-indicator-optimal-tick-mark-padding: 6px;
+  --menu-navigation-components-date-item-appointment-container-padding: 6px;
+  --instrument-components-watchface-frame-regular-thickness: 36px;
+  --instrument-components-watchface-frame-regular-outer-margin: 6px;
+  --instrument-components-watchface-frame-regular-border-radius: 12px;
+  --instrument-components-watchface-frame-regular-track-thickness: 128px;
+  --instrument-components-watchface-frame-regular-track-size: 96px;
+  --instrument-components-watchface-frame-regular-track-margin: 42px;
+  --instrument-components-watchface-frame-regular-double-thickness: 96px;
+  --instrument-components-watchface-frame-condenced-thickness: 24px;
+  --instrument-components-watchface-frame-condenced-outer-margin: 6px;
+  --instrument-components-watchface-frame-condenced-border-radius: 12px;
+  --instrument-components-watchface-frame-condenced-total-thickness: 128px;
+  --instrument-components-watchface-frame-condenced-track-size: 96px;
+  --instrument-components-watchface-frame-condenced-track-margin: 42px;
+  --instrument-components-watchface-frame-condenced-double-thickness: 96px;
+  --app-components-integration-system-dropdown-menu-padding-horizontal: 12px;
+  --app-components-integration-system-dropdown-menu-spacing-horizontal: 12px;
+  --app-components-integration-system-dropdown-menu-action-container-height: 96px;
+  --app-components-integration-system-dropdown-menu-border-radius: 96px;
+  --ui-components-app-button-border-radius-small: 20px;
+  --ui-components-app-button-border-radius-large: 30px;
+  --app-components-integration-system-app-bar-fleet-container-border-radius: 24px;
+  --ui-components-two-step-action-border-radius: var(
+    --global-border-radius-border-radius-base
+  );
+  --ui-components-two-step-action-touch-target-size: var(
+    --global-size-spacing-touch-target-min
+  );
+  --ui-components-two-step-action-visual-target-size: var(
+    --global-size-spacing-visual-target-min
+  );
+  --app-components-integration-system-navigation-item-horizontal-label-spacing-small: 6px;
+  --global-typography-ui-title-font-size: 44px;
+  --global-typography-ui-title-line-height: 48px;
+  --global-typography-ui-title-font-weight: var(
+    --typography-font-weight-semibold
+  );
+  --global-typography-ui-title-letter-spacing: -0.5px;
+  --app-components-integration-system-navigation-item-horizontal-padding-horizontal-large: 16px;
+  --ui-components-accordion-item-label-spacing-small: 6px;
+  --menu-navigation-components-navigation-item-label-spacing-small: 6px;
+  --app-components-integration-system-topbar-margin-global: 6px;
+  --app-components-integration-system-topbar-touch-target-size: var(
+    --app-components-topbar-touch-target-size
+  );
+  --app-components-integration-system-topbar-item-spacing: 12px;
+  --app-components-integration-system-status-indicator-padding-horizontal: 12px;
+  --app-components-integration-system-status-indicator-label-spacing: 12px;
+  --app-components-integration-system-status-indicator-border-radius: var(
+    --global-border-radius-border-radius-floating
+  );
+  --app-components-integration-system-status-indicator-icon-size: var(
+    --global-size-spacing-icon-icon-size-regular
+  );
+  --app-components-integration-system-status-indicator-height: 56px;
 }
 .obc-component-size-xl {
   --global-size-spacing-touch-target-min: 96px;
@@ -7133,8 +7625,6 @@
   --ui-components-toggle-switch-item-border-radius: var(
     --border-radius-br-round
   );
-  --sequence-step-target-size: 54px;
-  --sequence-step-visual-size: 40px;
   --global-typography-ui-button-font-size: var(--font-size-200);
   --global-typography-ui-button-line-height: var(--line-height-200);
   --global-typography-ui-button-font-weight: var(--font-weight-semibold);
@@ -7797,7 +8287,7 @@
   --ui-components-accordion-item-padding-horizontal: var(
     --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
   );
-  --ui-components-accordion-item-border-radius: var(--border-radius-br-12);
+  --ui-components-accordion-item-border-radius: var(--border-radius-br-0);
   --ui-components-accordion-item-margin-horizontal: var(
     --global-size-spacing-nav-item-and-menus-margin-horizontal-list-item
   );
@@ -8297,19 +8787,21 @@
   --global-typography-instrument-tick-mark-active-line-height: var(
     --line-height-200
   );
-  --instrument-components-advice-indicator-margin: 2px;
-  --instrument-components-advice-indicator-margin-condenced: 2px;
-  --instrument-components-advice-indicator-margin-none: 2px;
-  --instrument-components-advice-indicator-margin-regular: 2px;
+  --instrument-components-advice-indicator-margin-indicator-margin: 8px;
+  --instrument-components-advice-indicator-margin-indicator-margin-condenced: 4px;
+  --instrument-components-advice-indicator-margin-indicator-margin-none: 2px;
+  --instrument-components-advice-indicator-margin-indicator-margin-regular: 2px;
   --instrument-components-advice-indicator-optional-padding: 4px;
-  --instrument-components-advice-indicator-padding: var(--indicator-padding);
-  --instrument-components-advice-indicator-padding-condenced: 2px;
-  --instrument-components-advice-indicator-padding-none: 0px;
-  --instrument-components-advice-indicator-padding-regular: 2px;
-  --instrument-components-advice-indicator-point-stroke-thickness: 1px;
-  --instrument-components-advice-indicator-thickness-alert: 2px;
-  --instrument-components-advice-indicator-thickness-enhanced: 8px;
-  --instrument-components-advice-indicator-thickness-regular: 4px;
+  --instrument-components-advice-indicator-padding-indicator-padding: var(
+    --advice-indicator-padding
+  );
+  --instrument-components-advice-indicator-padding-indicator-padding-condenced: 2px;
+  --instrument-components-advice-indicator-padding-indicator-padding-none: 0px;
+  --instrument-components-advice-indicator-padding-indicator-padding-regular: 2px;
+  --instrument-components-advice-indicator-indicator-point-stroke-thickness: 1px;
+  --instrument-components-advice-indicator-indicator-thickness-alert: 12px;
+  --instrument-components-advice-indicator-indicator-thickness-enhanced: 32px;
+  --instrument-components-advice-indicator-indicator-thickness-regular: 16px;
   --infographic-components-bar-chart-bar-border-radius: 2px;
   --infographic-components-bar-chart-bar-horizontal-border-radius-bottom-left: var(
     --bar-chart-bar-horizontal-border-radius-bottom-left
@@ -8753,13 +9245,25 @@
   --ui-components-slider-value-track-min-padding: 16px;
   --ui-components-slider-icon-track-min-padding-2: 16px;
   --ui-components-slider-indicator-track-min-padding: 12px;
-  --instrument-components-watchface-frame-regular-thickness: 24px;
-  --instrument-components-watchface-frame-regular-margin: 28px;
+  --instrument-components-watchface-frame-main-thickness: var(
+    --frame-thickness
+  );
+  --instrument-components-watchface-frame-main-outer-margin: var(
+    --frame-outer-margin
+  );
   --instrument-components-watchface-number: 0px;
-  --instrument-components-watchface-frame-regular-track-thickness: 24px;
-  --instrument-components-watchface-frame-regular-border-radius: 28px;
-  --instrument-components-watchface-frame-regular-double-thickness: 24px;
-  --instrument-components-watchface-frame-regular-track-size: 24px;
+  --instrument-components-watchface-frame-main-track-thickness: var(
+    --instrument-components-watchface-frame-regular-track-thickness
+  );
+  --instrument-components-watchface-frame-main-border-radius: var(
+    --frame-border-radius
+  );
+  --instrument-components-watchface-frame-main-double-thickness: var(
+    --frame-double-thickness
+  );
+  --instrument-components-watchface-frame-main-track-size: var(
+    --frame-track-size
+  );
   --instrument-components-compass-icon-size: 0px;
   --instrument-components-compass-icon-margin: 0px;
   --maneuvering-components-poi-selection-frame-border-width: 0px;
@@ -9001,7 +9505,7 @@
   --menu-navigation-components-table-item-icon-size-small: var(
     --global-size-spacing-icon-icon-size-small
   );
-  --instrument-components-advice-indicator-tick-mark-padding: 4px;
+  --instrument-components-advice-indicator-indicator-tick-mark-padding: 4px;
   --ui-components-communication-item-label-spacing: var(
     --global-size-spacing-list-item-item-spacing
   );
@@ -9054,14 +9558,14 @@
   --ui-components-input-fields-number-input-field-label-spacing-title: 8px;
   --ui-components-input-fields-text-input-field-label-spacing-title: 8px;
   --app-components-alert-frame-label-spacing: 8px;
-  --app-components-integration-icon-button-icon-size: var(
+  --app-components-integration-system-icon-button-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-integration-icon-button-visual-target: 80px;
-  --app-components-integration-icon-button-touch-target: var(
+  --app-components-integration-system-icon-button-visual-target: 80px;
+  --app-components-integration-system-icon-button-touch-target: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-integration-icon-button-border-radius: var(
+  --app-components-integration-system-icon-button-border-radius: var(
     --global-border-radius-border-radius-base
   );
   --ui-components-icon-button-border-radius-top-left: var(
@@ -9088,92 +9592,92 @@
   --ui-components-icon-button-stroke-weight-bottom: var(
     --icon-button-stroke-weight-bottom
   );
-  --app-components-integration-icon-button-padding-horizontal: 96px;
-  --app-components-integration-icon-button-border-radius-top-left: var(
+  --app-components-integration-system-icon-button-padding-horizontal: 96px;
+  --app-components-integration-system-icon-button-border-radius-top-left: var(
     --icon-button-border-radius-top-left
   );
-  --app-components-integration-icon-button-border-radius-top-right: var(
+  --app-components-integration-system-icon-button-border-radius-top-right: var(
     --icon-button-border-radius-top-right
   );
-  --app-components-integration-icon-button-border-radius-bottom-right: var(
+  --app-components-integration-system-icon-button-border-radius-bottom-right: var(
     --icon-button-border-radius-bottom-right
   );
-  --app-components-integration-icon-button-border-radius-bottom-left: var(
+  --app-components-integration-system-icon-button-border-radius-bottom-left: var(
     --icon-button-border-radius-bottom-left
   );
-  --app-components-integration-icon-button-stroke-weight: 1px;
-  --app-components-integration-button-icon-size: var(
+  --app-components-integration-system-icon-button-stroke-weight: 1px;
+  --app-components-integration-system-navigation-item-horizontal-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-integration-button-visual-target: 80px;
-  --app-components-integration-button-touch-target: var(
+  --app-components-integration-system-navigation-item-horizontal-visual-target: 80px;
+  --app-components-integration-system-navigation-item-horizontal-touch-target: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-integration-button-border-radius: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --app-components-integration-button-border-radius-top-left: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-top-left: var(
     --button-border-radius-top-left
   );
-  --app-components-integration-button-border-radius-top-right: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-top-right: var(
     --button-border-radius-top-right
   );
-  --app-components-integration-button-border-radius-bottom-right: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-bottom-right: var(
     --button-border-radius-bottom-right
   );
-  --app-components-integration-button-border-radius-bottom-left: var(
+  --app-components-integration-system-navigation-item-horizontal-border-radius-bottom-left: var(
     --button-border-radius-bottom-left
   );
-  --app-components-integration-button-stroke-weight: 1px;
-  --app-components-integration-button-padding-horizontal: 16px;
-  --app-components-integration-button-label-spacing: 8px;
-  --app-components-integration-button-stroke-weight-left: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight: 1px;
+  --app-components-integration-system-navigation-item-horizontal-padding-horizontal: 16px;
+  --app-components-integration-system-navigation-item-horizontal-label-spacing: 8px;
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-left: var(
     --button-stroke-weight-left
   );
-  --app-components-integration-button-stroke-weight-top: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-top: var(
     --button-stroke-weight-top
   );
-  --app-components-integration-button-stroke-weight-right: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-right: var(
     --button-stroke-weight-right
   );
-  --app-components-integration-button-stroke-weight-bottom: var(
+  --app-components-integration-system-navigation-item-horizontal-stroke-weight-bottom: var(
     --button-stroke-weight-bottom
   );
-  --app-components-integration-button-icon-size-large: var(
+  --app-components-integration-system-navigation-item-horizontal-icon-size-large: var(
     --global-size-spacing-icon-icon-size-large
   );
-  --app-components-integration-button-padding-vertical: 16px;
-  --app-components-integration-button-label-spacing-small: 4px;
-  --app-components-integration-list-item-icon-size: var(
+  --app-components-integration-system-navigation-item-horizontal-padding-vertical: 16px;
+  --app-components-integration-system-navigation-item-horizontal-label-spacing-xsmall: 4px;
+  --app-components-integration-system-navigation-item-vertical-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-integration-list-item-icon-size-large: var(
+  --app-components-integration-system-navigation-item-vertical-icon-size-large: var(
     --global-size-spacing-icon-icon-size-large
   );
-  --app-components-integration-list-item-visual-target: 80px;
-  --app-components-integration-list-item-label-spacing: 16px;
-  --app-components-integration-list-item-label-spacing-small: 4px;
-  --app-components-integration-list-item-touch-target: var(
+  --app-components-integration-system-navigation-item-vertical-visual-target: 80px;
+  --app-components-integration-system-navigation-item-vertical-label-spacing: 16px;
+  --app-components-integration-system-navigation-item-vertical-label-spacing-small: 4px;
+  --app-components-integration-system-navigation-item-vertical-touch-target: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-integration-list-item-border-radius: var(
+  --app-components-integration-system-navigation-item-vertical-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --app-components-integration-list-item-stroke-weight: 1px;
-  --app-components-integration-list-item-stroke-weight-left: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight: 1px;
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-left: var(
     --button-stroke-weight-left
   );
-  --app-components-integration-list-item-stroke-weight-top: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-top: var(
     --button-stroke-weight-top
   );
-  --app-components-integration-list-item-stroke-weight-right: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-right: var(
     --button-stroke-weight-right
   );
-  --app-components-integration-list-item-stroke-weight-bottom: var(
+  --app-components-integration-system-navigation-item-vertical-stroke-weight-bottom: var(
     --button-stroke-weight-bottom
   );
-  --app-components-integration-list-item-padding-horizontal: 16px;
-  --app-components-integration-list-item-padding-vertical: 16px;
+  --app-components-integration-system-navigation-item-vertical-padding-horizontal: 16px;
+  --app-components-integration-system-navigation-item-vertical-padding-vertical: 16px;
   --global-typography-instrument-value-large-padding-bottom: 0px;
   --global-typography-instrument-value-large-font-weight-regular: var(
     --font-weight-semibold
@@ -9392,13 +9896,13 @@
   --instrument-components-watchface-tick-marks-visibility-primary-indicator: 0px;
   --instrument-components-watchface-tick-marks-visibility-secondary-indicator: 0px;
   --instrument-components-watchface-tick-marks-visibility-tertiary-indicator: 0px;
-  --instrument-components-advice-indicator-visibility: var(
+  --instrument-components-advice-indicator-visibility-indicator-visibility: var(
     --advice-indicator-visibility
   );
-  --instrument-components-advice-indicator-visibility-condenced: 100px;
-  --instrument-components-advice-indicator-visibility-none: 0px;
-  --instrument-components-advice-indicator-visibility-regular: 100px;
-  --instrument-components-advice-indicator-visibility-indicator: 100px;
+  --instrument-components-advice-indicator-visibility-indicator-visibility-condenced: 100px;
+  --instrument-components-advice-indicator-visibility-indicator-visibility-none: 0px;
+  --instrument-components-advice-indicator-visibility-indicator-visibility-regular: 100px;
+  --instrument-components-advice-indicator-visibility-indicator-visibility-indicator: 100px;
   --ui-components-boolean-indicator-container-border-radius: 8px;
   --ui-components-boolean-indicator-container-padding: 8px;
   --ui-components-tag-visual-target-large: 64px;
@@ -9441,20 +9945,8 @@
   --automation-components-badge-new-icon-size-flat: 24px;
   --automation-components-button-new-badge-container: 72px;
   --ui-components-progressbars-progress-bar--circular-bar-weight-small: 8px;
-  --instrument-components-advice-alert-indicator-alert-border-radius: 8px;
-  --instrument-components-advice-indicator-optimal-border-radius: 9999px;
-  --instrument-components-advice-alert-indicator-alert-border-radius-top-left: var(
-    --advice-alert-indicator-border-radius-top-left
-  );
-  --instrument-components-advice-alert-indicator-alert-border-radius-top-right: var(
-    --advice-alert-indicator-border-radius-top-right
-  );
-  --instrument-components-advice-alert-indicator-alert-border-radius-bottom-left: var(
-    --advice-alert-indicator-border-radius-bottom-left
-  );
-  --instrument-components-advice-alert-indicator-alert-border-radius-bottom-right: var(
-    --advice-alert-indicator-border-radius-bottom-right
-  );
+  --instrument-components-advice-indicator-alert-border-radius-value: 8px;
+  --instrument-components-advice-indicator-optimal-border-radius-indicator-optimal-border-radius: 9999px;
   --ui-components-mode-switch-touch-target-size: var(
     --global-size-spacing-touch-target-min
   );
@@ -9498,6 +9990,170 @@
   --ui-components-mode-switch-indicator-active-height: 56px;
   --ui-components-mode-switch-indicator-inactive-width: 0px;
   --ui-components-mode-switch-indicator-inactive-height: 0px;
+  --ui-components-mode-switch-indicator-padding-horizontal: 12px;
+  --ui-components-mode-switch-padding-vertical: 8px;
+  --automation-components-hydraulic-valve-thumb-size: 0px;
+  --instrument-components-advice-indicator-offset-offset-padding: var(
+    --advice-indicator-offset
+  );
+  --instrument-components-advice-indicator-offset-offset-regular: 0px;
+  --instrument-components-advice-indicator-offset-offset-condenced: 0px;
+  --instrument-components-advice-indicator-offset-offset-indication: 0px;
+  --instrument-components-advice-indicator-offset-offset-indication-internal: 32px;
+  --instrument-components-advice-indicator-offset-offset-indication-center: 0px;
+  --instrument-components-advice-indicator-offset-offset-none: 0px;
+  --instrument-components-watchface-scale-size-internal: 0px;
+  --instrument-components-advice-indicator-container-size: 24px;
+  --instrument-components-advice-indicator-container-size-container-size: var(
+    --advice-indicator-container-size
+  );
+  --instrument-components-advice-indicator-container-size-size-regular: 32px;
+  --instrument-components-advice-indicator-container-size-size-condenced: 32px;
+  --instrument-components-advice-indicator-container-size-size-indication: 32px;
+  --instrument-components-advice-indicator-container-size-size-indication-internal: 0px;
+  --instrument-components-advice-indicator-container-size-size-indication-center: 0px;
+  --instrument-components-advice-indicator-container-size-size-none: 0px;
+  --instrument-components-advice-indicator-area-line-padding: 0px;
+  --instrument-components-advice-indicator-padding-indicator-padding-indication: 0px;
+  --instrument-components-advice-indicator-padding-indicator-padding-internal: 8px;
+  --instrument-components-advice-indicator-optimal-border-radius-top-left: var(
+    --advice-optimal-top-left
+  );
+  --instrument-components-advice-indicator-optimal-border-radius-top-right: var(
+    --advice-optimal-top-right
+  );
+  --instrument-components-advice-indicator-optimal-border-radius-bottom-left: var(
+    --advice-optimal-bottom-left
+  );
+  --instrument-components-advice-indicator-optimal-border-radius-bottom-right: var(
+    --advice-optimal-bottom-right
+  );
+  --instrument-components-advice-indicator-alert-border-radius-frame-top-left: var(
+    --advice-frame-top-left
+  );
+  --instrument-components-advice-indicator-alert-border-radius-frame-top-right: var(
+    --advice-frame-top-right
+  );
+  --instrument-components-advice-indicator-alert-border-radius-frame-bottom-left: var(
+    --advice-frame-bottom-left
+  );
+  --instrument-components-advice-indicator-alert-border-radius-frame-bottom-right: var(
+    --advice-frame-bottom-right
+  );
+  --instrument-components-advice-indicator-padding-indicator-padding-leading: 2px;
+  --instrument-components-advice-indicator-alert-padding-padding-leading: var(
+    --advice-frame-padding-leading
+  );
+  --instrument-components-advice-indicator-alert-padding-padding-trailing: var(
+    --advice-frame-padding-trailing
+  );
+  --instrument-components-advice-indicator-alert-padding-internal-padding-leading: var(
+    --advice-frame-internal-padding-leading
+  );
+  --instrument-components-advice-indicator-alert-padding-internal-padding-trailing: var(
+    --advice-frame-internal-padding-trailing
+  );
+  --instrument-components-advice-indicator-alert-border-radius-indicator-top-left: var(
+    --advice-indication-top-left
+  );
+  --instrument-components-advice-indicator-alert-border-radius-indicator-top-right: var(
+    --advice-indication-top-right
+  );
+  --instrument-components-advice-indicator-alert-border-radius-indicator-bottom-left: var(
+    --advice-indication-bottom-left
+  );
+  --instrument-components-advice-indicator-alert-border-radius-indicator-bottom-right: var(
+    --advice-indication-bottom-right
+  );
+  --instrument-components-advice-indicator-optimal-padding-leading: var(
+    --advice-frame-internal-padding-leading
+  );
+  --instrument-components-advice-indicator-optimal-padding-trailing: var(
+    --advice-frame-internal-padding-trailing
+  );
+  --instrument-components-advice-indicator-alert-point-width: 16px;
+  --instrument-components-advice-indicator-alert-point-height: 6px;
+  --instrument-components-advice-indicator-optimal-point-size: 16px;
+  --ui-components-audio-input-spacing: 8px;
+  --ui-components-audio-input-dot-size: 8px;
+  --ui-components-audio-input-height: 64px;
+  --ui-components-audio-recording-item-touch-target-size: var(
+    --global-size-spacing-touch-target-min
+  );
+  --ui-components-audio-recording-item-visual-target: var(
+    --global-size-spacing-visual-target-min
+  );
+  --ui-components-audio-recording-item-padding-horizontal: 16px;
+  --ui-components-audio-recording-item-label-spacing: 16px;
+  --ui-components-audio-recording-item-border-radius: var(
+    --global-border-radius-border-radius-base
+  );
+  --ui-components-audio-output-border-radius: var(
+    --global-border-radius-border-radius-round
+  );
+  --ui-components-audio-input-border-radius: var(
+    --global-border-radius-border-radius-round
+  );
+  --ui-components-audio-recording-item-delete-button-container-size: 80px;
+  --instrument-components-watchface-frame-main-track-margin: var(
+    --frame-track-margin
+  );
+  --instrument-components-advice-indicator-optimal-tick-mark-padding: 8px;
+  --menu-navigation-components-date-item-appointment-container-padding: 8px;
+  --instrument-components-watchface-frame-regular-thickness: 48px;
+  --instrument-components-watchface-frame-regular-outer-margin: 8px;
+  --instrument-components-watchface-frame-regular-border-radius: 16px;
+  --instrument-components-watchface-frame-regular-track-thickness: 176px;
+  --instrument-components-watchface-frame-regular-track-size: 128px;
+  --instrument-components-watchface-frame-regular-track-margin: 56px;
+  --instrument-components-watchface-frame-regular-double-thickness: 24px;
+  --instrument-components-watchface-frame-condenced-thickness: 32px;
+  --instrument-components-watchface-frame-condenced-outer-margin: 8px;
+  --instrument-components-watchface-frame-condenced-border-radius: 16px;
+  --instrument-components-watchface-frame-condenced-total-thickness: 176px;
+  --instrument-components-watchface-frame-condenced-track-size: 128px;
+  --instrument-components-watchface-frame-condenced-track-margin: 56px;
+  --instrument-components-watchface-frame-condenced-double-thickness: 24px;
+  --app-components-integration-system-dropdown-menu-padding-horizontal: 16px;
+  --app-components-integration-system-dropdown-menu-spacing-horizontal: 16px;
+  --app-components-integration-system-dropdown-menu-action-container-height: 128px;
+  --app-components-integration-system-dropdown-menu-border-radius: 128px;
+  --ui-components-app-button-border-radius-small: 24px;
+  --ui-components-app-button-border-radius-large: 40px;
+  --app-components-integration-system-app-bar-fleet-container-border-radius: 36px;
+  --ui-components-two-step-action-border-radius: var(
+    --global-border-radius-border-radius-base
+  );
+  --ui-components-two-step-action-touch-target-size: var(
+    --global-size-spacing-touch-target-min
+  );
+  --ui-components-two-step-action-visual-target-size: var(
+    --global-size-spacing-visual-target-min
+  );
+  --app-components-integration-system-navigation-item-horizontal-label-spacing-small: 8px;
+  --global-typography-ui-title-font-size: 0px;
+  --global-typography-ui-title-line-height: 0px;
+  --global-typography-ui-title-font-weight: var(
+    --typography-font-weight-semibold
+  );
+  --global-typography-ui-title-letter-spacing: -0.5px;
+  --app-components-integration-system-navigation-item-horizontal-padding-horizontal-large: 24px;
+  --ui-components-accordion-item-label-spacing-small: 8px;
+  --menu-navigation-components-navigation-item-label-spacing-small: 8px;
+  --app-components-integration-system-topbar-margin-global: 8px;
+  --app-components-integration-system-topbar-touch-target-size: var(
+    --app-components-topbar-touch-target-size
+  );
+  --app-components-integration-system-topbar-item-spacing: 16px;
+  --app-components-integration-system-status-indicator-padding-horizontal: 16px;
+  --app-components-integration-system-status-indicator-label-spacing: 16px;
+  --app-components-integration-system-status-indicator-border-radius: var(
+    --global-border-radius-border-radius-floating
+  );
+  --app-components-integration-system-status-indicator-icon-size: var(
+    --global-size-spacing-icon-icon-size-regular
+  );
+  --app-components-integration-system-status-indicator-height: 80px;
 }
 * {
   --font-size-075: 12px;
@@ -9690,29 +10346,47 @@
   --icon-button-stroke-weight-top: var(--ui-components-button-stroke-weight);
   --icon-button-stroke-weight-right: var(--ui-components-button-stroke-weight);
   --icon-button-stroke-weight-bottom: var(--ui-components-button-stroke-weight);
-  --advice-alert-indicator-border-radius-top-left: var(
-    --instrument-components-advice-alert-indicator-alert-border-radius
+  --advice-indication-top-left: var(
+    --instrument-components-advice-indicator-alert-border-radius-value
   );
-  --advice-alert-indicator-border-radius-top-right: var(
-    --instrument-components-advice-alert-indicator-alert-border-radius
+  --advice-indication-top-right: var(
+    --instrument-components-advice-indicator-alert-border-radius-value
   );
-  --advice-alert-indicator-border-radius-bottom-left: var(
-    --instrument-components-advice-alert-indicator-alert-border-radius
+  --advice-indication-bottom-left: var(
+    --instrument-components-advice-indicator-alert-border-radius-value
   );
-  --advice-alert-indicator-border-radius-bottom-right: var(
-    --instrument-components-advice-alert-indicator-alert-border-radius
+  --advice-indication-bottom-right: var(
+    --instrument-components-advice-indicator-alert-border-radius-value
   );
-  --advice-optimal-indicator-border-radius-top-left: var(
-    --instrument-components-advice-indicator-optimal-border-radius
+  --advice-optimal-top-left: var(
+    --instrument-components-advice-indicator-optimal-border-radius-indicator-optimal-border-radius
   );
-  --advice-optimal-indicator-border-radius-top-right: var(
-    --instrument-components-advice-indicator-optimal-border-radius
+  --advice-optimal-top-right: var(
+    --instrument-components-advice-indicator-optimal-border-radius-indicator-optimal-border-radius
   );
-  --advice-optimal-indicator-border-radius-bottom-left: var(
-    --instrument-components-advice-indicator-optimal-border-radius
+  --advice-optimal-bottom-left: var(
+    --instrument-components-advice-indicator-optimal-border-radius-indicator-optimal-border-radius
   );
-  --advice-optimal-indicator-border-radius-bottom-right: var(
-    --instrument-components-advice-indicator-optimal-border-radius
+  --advice-optimal-bottom-right: var(
+    --instrument-components-advice-indicator-optimal-border-radius-indicator-optimal-border-radius
+  );
+  --advice-chart-top-left: 0px;
+  --advice-chart-top-right: 0px;
+  --advice-chart-bottom-left: 0px;
+  --advice-chart-bottom-right: 0px;
+  --advice-frame-top-left: 0px;
+  --advice-frame-top-right: 0px;
+  --advice-frame-bottom-left: 0px;
+  --advice-frame-bottom-right: 0px;
+  --advice-indication-padding-leading: 0px;
+  --advice-indication-padding-trailing: 0px;
+  --advice-frame-padding-leading: 0px;
+  --advice-frame-padding-trailing: 0px;
+  --advice-frame-internal-padding-leading: var(
+    --instrument-components-advice-indicator-padding-indicator-padding
+  );
+  --advice-frame-internal-padding-trailing: var(
+    --instrument-components-advice-indicator-padding-indicator-padding
   );
   --border-radius-br-round: 1000px;
   --selection-size-min: 24px;
@@ -9783,7 +10457,7 @@
   --data-categorical-qualitative-03: rgb(29, 157, 161);
   --data-categorical-qualitative-04: rgb(118, 101, 178);
   --normal-enabled-border-color: rgb(190, 190, 190);
-  --normal-hover-background-color: rgb(237, 237, 237);
+  --normal-hover-background-color: rgb(240, 240, 240);
   --normal-hover-border-color: rgb(190, 190, 190);
   --normal-pressed-background-color: rgb(221, 221, 221);
   --normal-pressed-border-color: rgb(190, 190, 190);
@@ -9930,7 +10604,7 @@
   --on-running-color: rgb(255, 255, 255);
   --flat-activated-background-color: rgb(0, 0, 0, 0.03999999910593033);
   --flat-activated-border-color: rgb(0, 0, 0, 0.03999999910593033);
-  --normal-activated-background-color: rgb(237, 237, 237);
+  --normal-activated-background-color: rgb(240, 240, 240);
   --normal-activated-border-color: rgb(190, 190, 190);
   --base-blue-050: rgb(228, 238, 253);
   --base-blue-300: rgb(93, 143, 213);
@@ -9990,7 +10664,7 @@
   --automation-pipe-tertiary-inverted-color: rgb(142, 142, 142);
   --thumb-enabled-background-color: rgb(255, 255, 255);
   --thumb-enabled-border-color: rgb(190, 190, 190);
-  --thumb-hover-background-color: rgb(237, 237, 237);
+  --thumb-hover-background-color: rgb(240, 240, 240);
   --thumb-hover-border-color: rgb(190, 190, 190);
   --thumb-pressed-background-color: rgb(221, 221, 221);
   --thumb-pressed-border-color: rgb(190, 190, 190);
@@ -10201,35 +10875,40 @@
   --overlay-element-disabled-color: rgb(255, 255, 255, 0.20999999344348907);
   --overlay-container-global-color: rgb(252, 252, 252);
   --overlay-container-background-color: rgb(255, 255, 255, 0.7099999785423279);
-  --overlay-border-outline-color: rgb(237, 237, 237);
-  --integration-on-selected-neutral-color: rgb(30, 30, 30);
-  --integration-on-selected-active-color: rgb(12, 12, 12);
-  --integration-on-normal-neutral-color: rgb(163, 163, 163);
-  --integration-on-normal-active-color: rgb(217, 217, 217);
-  --integration-on-normal-disabled-color: rgb(69, 69, 69);
-  --integration-selected-enabled-background-color: rgb(240, 240, 240);
-  --integration-selected-enabled-border-color: rgb(240, 240, 240);
-  --integration-selected-hover-background-color: rgb(217, 217, 217);
-  --integration-selected-hover-border-color: rgb(217, 217, 217);
-  --integration-selected-pressed-background-color: rgb(195, 195, 195);
-  --integration-selected-pressed-border-color: rgb(195, 195, 195);
-  --integration-selected-focused-background-color: rgb(240, 240, 240);
+  --overlay-border-outline-color: rgb(240, 240, 240);
+  --integration-on-selected-neutral-color: rgb(53, 53, 53);
+  --integration-on-selected-active-color: rgb(30, 30, 30);
+  --integration-on-normal-neutral-color: rgb(217, 217, 217);
+  --integration-on-normal-active-color: rgb(247, 247, 247);
+  --integration-on-normal-disabled-color: rgb(53, 53, 53);
+  --integration-selected-enabled-background-color: rgb(252, 252, 252);
+  --integration-selected-enabled-border-color: rgb(252, 252, 252);
+  --integration-selected-hover-background-color: rgb(247, 247, 247);
+  --integration-selected-hover-border-color: rgb(247, 247, 247);
+  --integration-selected-pressed-background-color: rgb(235, 235, 235);
+  --integration-selected-pressed-border-color: rgb(235, 235, 235);
+  --integration-selected-focused-background-color: rgb(252, 252, 252);
   --integration-selected-disabled-background-color: rgb(0, 0, 0, 0);
   --integration-selected-disabled-border-color: rgb(0, 0, 0, 0);
-  --integration-normal-enabled-background-color: rgb(0, 0, 0, 0);
-  --integration-normal-enabled-border-color: rgb(0, 0, 0, 0);
-  --integration-normal-hover-background-color: rgb(12, 12, 12);
-  --integration-normal-hover-border-color: rgb(30, 30, 30);
-  --integration-normal-pressed-background-color: rgb(21, 21, 21);
-  --integration-normal-pressed-border-color: rgb(42, 42, 42);
-  --integration-normal-focused-background-color: rgb(0, 0, 0, 0);
-  --integration-normal-disabled-background-color: rgb(0, 0, 0, 0);
-  --integration-normal-disabled-border-color: rgb(0, 0, 0, 0);
+  --integration-normal-enabled-background-color: rgb(30, 30, 30);
+  --integration-normal-enabled-border-color: rgb(53, 53, 53);
+  --integration-normal-hover-background-color: rgb(53, 53, 53);
+  --integration-normal-hover-border-color: rgb(89, 89, 89);
+  --integration-normal-pressed-background-color: rgb(42, 42, 42);
+  --integration-normal-pressed-border-color: rgb(69, 69, 69);
+  --integration-normal-focused-background-color: rgb(255, 255, 255, 0);
+  --integration-normal-disabled-background-color: rgb(255, 255, 255, 0);
+  --integration-normal-disabled-border-color: rgb(
+    255,
+    255,
+    255,
+    0.20999999344348907
+  );
   --integration-container-global-color: rgb(0, 0, 0);
   --palette-name: "day";
-  --integration-on-indent-neutral-color: rgb(174, 174, 174);
-  --integration-on-indent-active-color: rgb(255, 255, 255);
-  --integration-on-indent-disabled-color: rgb(255, 255, 255);
+  --integration-on-indent-neutral-color: rgb(217, 217, 217);
+  --integration-on-indent-active-color: rgb(240, 240, 240);
+  --integration-on-indent-disabled-color: rgb(53, 53, 53);
   --integration-indent-enabled-background-color: rgb(42, 42, 42);
   --integration-indent-enabled-border-color: rgb(69, 69, 69);
   --integration-indent-hover-background-color: rgb(53, 53, 53);
@@ -10283,23 +10962,23 @@
   --instrument-tick-mark-label-primary-color: rgb(61, 61, 61);
   --instrument-tick-mark-label-secondary-color: rgb(112, 112, 112);
   --integration-border-menu-outline-color: rgb(0, 0, 0);
-  --integration-normal-focused-border-color: rgb(0, 0, 0, 0);
-  --base-gray-050: rgb(237, 237, 237);
+  --integration-normal-focused-border-color: rgb(255, 255, 255, 0);
+  --base-gray-050: rgb(240, 240, 240);
   --base-gray-100: rgb(221, 221, 221);
   --base-gray-200: rgb(190, 190, 190);
   --base-gray-300: rgb(142, 142, 142);
   --base-gray-400: rgb(112, 112, 112);
   --base-gray-500: rgb(83, 83, 83);
   --base-gray-600: rgb(61, 61, 61);
-  --integration-border-outline: rgb(255, 255, 255, 0.1599999964237213);
+  --integration-border-outline: rgb(53, 53, 53);
   --integration-raised: rgb(255, 255, 255);
-  --integration-element-active-color: rgb(255, 255, 255);
-  --integration-element-neutral-color: rgb(255, 255, 255, 0.5899999737739563);
-  --integration-element-inactive-color: rgb(255, 255, 255, 0.4699999988079071);
-  --integration-element-disabled-color: rgb(255, 255, 255, 0.20999999344348907);
+  --integration-element-active-color: rgb(247, 247, 247);
+  --integration-element-neutral-color: rgb(217, 217, 217);
+  --integration-element-inactive-color: rgb(149, 149, 149);
+  --integration-element-disabled-color: rgb(89, 89, 89);
   --overlay-element-inactive-inverted-color: rgb(0, 0, 0, 0.5400000214576721);
   --overlay-element-disabled-inverted-color: rgb(0, 0, 0, 0.23000000417232513);
-  --navigation-chart-simple-depdw: rgb(247, 247, 247);
+  --navigation-chart-simple-depdw-color: rgb(247, 247, 247);
   --element-active-enhanced-color: rgb(29, 60, 103);
   --element-neutral-enhanced-color: rgb(45, 84, 139);
   --element-inactive-enhanced-color: rgb(66, 113, 179);
@@ -10307,38 +10986,41 @@
   --element-symbol-enhanced-color: rgb(93, 143, 213);
   --integration-flat-enabled-background-color: rgb(255, 255, 255, 0);
   --integration-flat-enabled-border-color: rgb(255, 255, 255, 0);
-  --integration-flat-hover-background-color: rgb(30, 30, 30);
-  --integration-flat-hover-border-color: rgb(30, 30, 30);
-  --integration-flat-pressed-background-color: rgb(42, 42, 42);
-  --integration-flat-pressed-border-color: rgb(42, 42, 42);
+  --integration-flat-hover-background-color: rgb(
+    255,
+    255,
+    255,
+    0.1599999964237213
+  );
+  --integration-flat-hover-border-color: rgb(255, 255, 255, 0);
+  --integration-flat-pressed-background-color: rgb(
+    255,
+    255,
+    255,
+    0.11999999731779099
+  );
+  --integration-flat-pressed-border-color: rgb(255, 255, 255, 0);
   --integration-flat-focused-background-color: rgb(255, 255, 255, 0);
   --integration-flat-focused-border-color: rgb(255, 255, 255, 0);
   --integration-flat-disabled-background-color: rgb(255, 255, 255, 0);
   --integration-flat-disabled-border-color: rgb(255, 255, 255, 0);
-  --integration-container-section-color: rgb(12, 12, 12);
-  --integration-on-selected-disabled-color: rgb(69, 69, 69);
+  --integration-container-section-color: rgb(21, 21, 21);
+  --integration-on-selected-disabled-color: rgb(180, 180, 180);
   --integration-border-focused-border-color: rgb(93, 143, 213);
-  --integration-border-divider: rgb(255, 255, 255, 0.20999999344348907);
+  --integration-border-divider: rgb(53, 53, 53);
   --integration-on-flat-active-color: rgb(217, 217, 217);
-  --integration-flat-focused-border-color-2: rgb(42, 42, 42);
-  --integration-on-flat-neutral-color: rgb(163, 163, 163);
-  --integration-on-flat-disabled-color: rgb(69, 69, 69);
+  --integration-on-flat-neutral-color: rgb(180, 180, 180);
+  --integration-on-flat-disabled-color: rgb(53, 53, 53);
   --alert-low-integrity-background-color: rgb(255, 240, 136);
   --alert-invalid-background-color: rgb(255, 210, 203);
   --element-symbol-color: rgb(142, 142, 142);
   --element-symbol-inverted-color: rgb(89, 89, 89);
-
-  --sequence-step-size-negative-1px: -1px;
-
-  --sequence-step-size-1-5px: 1.5px;
-  --sequence-step-size-2-5px: 2.5px;
-  --sequence-step-size-7px: 7px;
   --integration-container-overlay-color: rgb(0, 0, 0, 0.75);
-  --navigation-chart-simple-depvs: rgb(224, 224, 224);
-  --navigation-chart-simple-lndare: rgb(240, 240, 240);
-  --navigation-chart-simple-lndare-outline: rgb(190, 190, 190);
-  --navigation-chart-simple-depvs-outline: rgb(142, 142, 142);
-  --integration-container-background-color: rgb(21, 21, 21);
+  --navigation-chart-simple-depvs-color: rgb(224, 224, 224);
+  --navigation-chart-simple-lndare-color: rgb(240, 240, 240);
+  --navigation-chart-simple-lndare-outline-color: rgb(190, 190, 190);
+  --navigation-chart-simple-depvs-outline-color: rgb(190, 190, 190);
+  --integration-container-background-color: rgb(12, 12, 12);
   --integration-container-transparent-hover: rgb(
     255,
     255,
@@ -10410,6 +11092,38 @@
   --alert-caution-container-border-color: rgb(232, 179, 0);
   --alert-warning-container-border-color: rgb(255, 192, 141);
   --alert-alarm-container-border-color: rgb(255, 189, 179);
+  --border-edge-color: rgb(0, 0, 0, 0);
+  --integration-amplified-enabled-background-color: rgb(255, 255, 255, 0);
+  --integration-amplified-enabled-border-color: rgb(255, 255, 255, 0);
+  --integration-amplified-hover-background-color: rgb(30, 30, 30);
+  --integration-amplified-hover-border-color: rgb(30, 30, 30);
+  --integration-amplified-pressed-background-color: rgb(12, 12, 12);
+  --integration-amplified-pressed-border-color: rgb(12, 12, 12);
+  --integration-amplified-focused-background-color: rgb(255, 255, 255, 0);
+  --integration-amplified-focused-border-color: rgb(255, 255, 255, 0);
+  --integration-amplified-disabled-background-color: rgb(255, 255, 255, 0);
+  --integration-amplified-disabled-border-color: rgb(255, 255, 255, 0);
+  --automation-medium-base-blue-primary-color: rgb(202, 222, 252);
+  --automation-medium-base-blue-secondary-color: rgb(93, 143, 213);
+  --automation-medium-base-blue-tertiary-color: rgb(45, 84, 139);
+  --integration-on-normal-inactive-color: rgb(149, 149, 149);
+  --integration-on-flat-inactive-color: rgb(149, 149, 149);
+  --integration-on-indent-inactive-color: rgb(149, 149, 149);
+  --alert-low-integrity-border-color: rgb(107, 79, 0);
+  --alert-invalid-border-color: rgb(127, 0, 0);
+  --integration-flat-activated-background-color: rgb(
+    255,
+    255,
+    255,
+    0.1599999964237213
+  );
+  --integration-flat-activated-border-color: rgb(
+    255,
+    255,
+    255,
+    0.20999999344348907
+  );
+  --navigation-chart-simple-chmgd-color: rgb(142, 142, 142);
 }
 :root[data-obc-theme="dusk"] {
   --icon-02-chevron-up: url('data:image/svg+xml,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 14.0002L7.41 15.4102L12 10.8302L16.59 15.4102L18 14.0002L12 8.00016L6 14.0002Z" fill="rgba(255, 255, 255, .550)"/></svg>');
@@ -10422,7 +11136,7 @@
   --container-background-color: rgb(31, 31, 31);
   --container-section-color: rgb(38, 38, 38);
   --container-backdrop-color: rgb(15, 15, 15);
-  --border-outline-color: rgb(67, 67, 67);
+  --border-outline-color: rgb(55, 55, 55);
   --border-divider-color: rgb(67, 67, 67);
   --border-silhouette-color: rgb(31, 31, 31);
   --instrument-enhanced-secondary-color: rgb(132, 179, 239);
@@ -10576,8 +11290,8 @@
   --indent-focused-border-color: rgb(132, 179, 239);
   --indent-disabled-background-color: rgb(255, 255, 255, 0);
   --indent-disabled-border-color: rgb(255, 255, 255, 0.20000000298023224);
-  --on-indent-active-color: rgb(176, 176, 176);
-  --on-indent-neutral-color: rgb(140, 140, 140);
+  --on-indent-active-color: rgb(211, 211, 211);
+  --on-indent-neutral-color: rgb(176, 176, 176);
   --on-indent-disabled-color: rgb(80, 80, 80);
   --on-caution-active-color: rgb(37, 37, 37);
   --on-caution-neutral-color: rgb(65, 65, 65);
@@ -10875,40 +11589,80 @@
   --overlay-container-global-color: rgb(46, 46, 46);
   --overlay-container-background-color: rgb(31, 31, 31, 0.75);
   --overlay-border-outline-color: rgb(80, 80, 80);
-  --integration-on-selected-neutral-color: rgb(30, 30, 30);
-  --integration-on-selected-active-color: rgb(12, 12, 12);
-  --integration-on-normal-neutral-color: rgb(163, 163, 163);
-  --integration-on-normal-active-color: rgb(217, 217, 217);
-  --integration-on-normal-disabled-color: rgb(69, 69, 69);
-  --integration-selected-enabled-background-color: rgb(240, 240, 240);
-  --integration-selected-enabled-border-color: rgb(240, 240, 240);
-  --integration-selected-hover-background-color: rgb(217, 217, 217);
-  --integration-selected-hover-border-color: rgb(217, 217, 217);
-  --integration-selected-pressed-background-color: rgb(195, 195, 195);
-  --integration-selected-pressed-border-color: rgb(195, 195, 195);
-  --integration-selected-focused-background-color: rgb(240, 240, 240);
+  --integration-on-selected-neutral-color: rgb(211, 211, 211);
+  --integration-on-selected-active-color: rgb(255, 255, 255);
+  --integration-on-normal-neutral-color: rgb(211, 211, 211);
+  --integration-on-normal-active-color: rgb(253, 253, 253);
+  --integration-on-normal-disabled-color: rgb(80, 80, 80);
+  --integration-selected-enabled-background-color: rgb(55, 55, 55);
+  --integration-selected-enabled-border-color: rgb(55, 55, 55);
+  --integration-selected-hover-background-color: rgb(80, 80, 80);
+  --integration-selected-hover-border-color: rgb(80, 80, 80);
+  --integration-selected-pressed-background-color: rgb(67, 67, 67);
+  --integration-selected-pressed-border-color: rgb(67, 67, 67);
+  --integration-selected-focused-background-color: rgb(46, 46, 46);
   --integration-selected-disabled-background-color: rgb(0, 0, 0, 0);
   --integration-selected-disabled-border-color: rgb(0, 0, 0, 0);
-  --integration-normal-enabled-background-color: rgb(0, 0, 0, 0);
-  --integration-normal-enabled-border-color: rgb(0, 0, 0, 0);
-  --integration-normal-hover-background-color: rgb(12, 12, 12);
-  --integration-normal-hover-border-color: rgb(30, 30, 30);
-  --integration-normal-pressed-background-color: rgb(21, 21, 21);
-  --integration-normal-pressed-border-color: rgb(42, 42, 42);
-  --integration-normal-focused-background-color: rgb(0, 0, 0, 0);
-  --integration-normal-disabled-background-color: rgb(0, 0, 0, 0);
-  --integration-normal-disabled-border-color: rgb(0, 0, 0, 0);
+  --integration-normal-enabled-background-color: rgb(
+    255,
+    255,
+    255,
+    0.029999999329447746
+  );
+  --integration-normal-enabled-border-color: rgb(
+    255,
+    255,
+    255,
+    0.14000000059604645
+  );
+  --integration-normal-hover-background-color: rgb(
+    255,
+    255,
+    255,
+    0.14000000059604645
+  );
+  --integration-normal-hover-border-color: rgb(
+    255,
+    255,
+    255,
+    0.25999999046325684
+  );
+  --integration-normal-pressed-background-color: rgb(
+    255,
+    255,
+    255,
+    0.07999999821186066
+  );
+  --integration-normal-pressed-border-color: rgb(
+    255,
+    255,
+    255,
+    0.20000000298023224
+  );
+  --integration-normal-focused-background-color: rgb(
+    255,
+    255,
+    255,
+    0.029999999329447746
+  );
+  --integration-normal-disabled-background-color: rgb(255, 255, 255, 0);
+  --integration-normal-disabled-border-color: rgb(
+    255,
+    255,
+    255,
+    0.14000000059604645
+  );
   --integration-container-global-color: rgb(0, 0, 0);
   --palette-name: "dusk";
-  --integration-on-indent-neutral-color: rgb(255, 255, 255);
-  --integration-on-indent-active-color: rgb(255, 255, 255);
-  --integration-on-indent-disabled-color: rgb(255, 255, 255);
-  --integration-indent-enabled-background-color: rgb(213, 213, 213);
-  --integration-indent-enabled-border-color: rgb(170, 170, 170);
-  --integration-indent-hover-background-color: rgb(194, 194, 194);
-  --integration-indent-hover-border-color: rgb(147, 147, 147);
-  --integration-indent-pressed-background-color: rgb(170, 170, 170);
-  --integration-indent-pressed-border-color: rgb(130, 130, 130);
+  --integration-on-indent-neutral-color: rgb(211, 211, 211);
+  --integration-on-indent-active-color: rgb(253, 253, 253);
+  --integration-on-indent-disabled-color: rgb(111, 111, 111);
+  --integration-indent-enabled-background-color: rgb(37, 37, 37);
+  --integration-indent-enabled-border-color: rgb(51, 51, 51);
+  --integration-indent-hover-background-color: rgb(65, 65, 65);
+  --integration-indent-hover-border-color: rgb(88, 88, 88);
+  --integration-indent-pressed-background-color: rgb(51, 51, 51);
+  --integration-indent-pressed-border-color: rgb(65, 65, 65);
   --integration-indent-focused-background-color: rgb(213, 213, 213);
   --integration-indent-disabled-background-color: rgb(255, 255, 255);
   --integration-indent-disabled-border-color: rgb(255, 255, 255);
@@ -10956,7 +11710,7 @@
   --instrument-tick-mark-label-primary-color: rgb(211, 211, 211);
   --instrument-tick-mark-label-secondary-color: rgb(140, 140, 140);
   --integration-border-menu-outline-color: rgb(0, 0, 0);
-  --integration-normal-focused-border-color: rgb(255, 255, 255);
+  --integration-normal-focused-border-color: rgb(255, 255, 255, 0);
   --base-gray-050: rgb(46, 46, 46);
   --base-gray-100: rgb(55, 55, 55);
   --base-gray-200: rgb(80, 80, 80);
@@ -10964,48 +11718,57 @@
   --base-gray-400: rgb(140, 140, 140);
   --base-gray-500: rgb(176, 176, 176);
   --base-gray-600: rgb(211, 211, 211);
-  --integration-border-outline: rgb(0, 0, 0, 0.17000000178813934);
+  --integration-border-outline: rgb(55, 55, 55);
   --integration-raised: rgb(255, 255, 255);
-  --integration-element-active-color: rgb(0, 0, 0);
-  --integration-element-neutral-color: rgb(0, 0, 0, 0.6499999761581421);
-  --integration-element-inactive-color: rgb(0, 0, 0, 0.5400000214576721);
-  --integration-element-disabled-color: rgb(0, 0, 0, 0.5400000214576721);
+  --integration-element-active-color: rgb(253, 253, 253);
+  --integration-element-neutral-color: rgb(211, 211, 211);
+  --integration-element-inactive-color: rgb(176, 176, 176);
+  --integration-element-disabled-color: rgb(111, 111, 111);
   --overlay-element-inactive-inverted-color: rgb(0, 0, 0, 0.5400000214576721);
   --overlay-element-disabled-inverted-color: rgb(0, 0, 0, 0.23999999463558197);
-  --navigation-chart-simple-depdw: rgb(15, 15, 15);
+  --navigation-chart-simple-depdw-color: rgb(15, 15, 15);
   --element-active-enhanced-color: rgb(177, 214, 255);
   --element-neutral-enhanced-color: rgb(132, 179, 239);
   --element-inactive-enhanced-color: rgb(103, 143, 195);
   --element-disabled-enhanced-color: rgb(61, 82, 109);
   --element-symbol-enhanced-color: rgb(82, 113, 154);
-  --integration-flat-enabled-background-color: rgb(255, 255, 255);
-  --integration-flat-enabled-border-color: rgb(255, 255, 255);
-  --integration-flat-hover-background-color: rgb(229, 229, 229);
-  --integration-flat-hover-border-color: rgb(229, 229, 229);
-  --integration-flat-pressed-background-color: rgb(213, 213, 213);
-  --integration-flat-pressed-border-color: rgb(213, 213, 213);
-  --integration-flat-focused-background-color: rgb(255, 255, 255);
-  --integration-flat-focused-border-color: rgb(255, 255, 255);
-  --integration-flat-disabled-background-color: rgb(255, 255, 255);
-  --integration-flat-disabled-border-color: rgb(255, 255, 255);
-  --integration-container-section-color: rgb(241, 241, 241);
-  --integration-on-selected-disabled-color: rgb(170, 170, 170);
+  --integration-flat-enabled-background-color: rgb(255, 255, 255, 0);
+  --integration-flat-enabled-border-color: rgb(255, 255, 255, 0);
+  --integration-flat-hover-background-color: rgb(
+    255,
+    255,
+    255,
+    0.14000000059604645
+  );
+  --integration-flat-hover-border-color: rgb(255, 255, 255, 0);
+  --integration-flat-pressed-background-color: rgb(
+    255,
+    255,
+    255,
+    0.07999999821186066
+  );
+  --integration-flat-pressed-border-color: rgb(255, 255, 255, 0);
+  --integration-flat-focused-background-color: rgb(255, 255, 255, 0);
+  --integration-flat-focused-border-color: rgb(255, 255, 255, 0);
+  --integration-flat-disabled-background-color: rgb(255, 255, 255, 0);
+  --integration-flat-disabled-border-color: rgb(255, 255, 255, 0);
+  --integration-container-section-color: rgb(15, 15, 15);
+  --integration-on-selected-disabled-color: rgb(111, 111, 111);
   --integration-border-focused-border-color: rgb(82, 113, 154);
-  --integration-border-divider: rgb(0, 0, 0, 0.23999999463558197);
-  --integration-on-flat-active-color: rgb(37, 37, 37);
-  --integration-flat-focused-border-color-2: rgb(213, 213, 213);
-  --integration-on-flat-neutral-color: rgb(76, 76, 76);
-  --integration-on-flat-disabled-color: rgb(170, 170, 170);
+  --integration-border-divider: rgb(55, 55, 55);
+  --integration-on-flat-active-color: rgb(253, 253, 253);
+  --integration-on-flat-neutral-color: rgb(211, 211, 211);
+  --integration-on-flat-disabled-color: rgb(80, 80, 80);
   --alert-low-integrity-background-color: rgb(59, 42, 0);
   --alert-invalid-background-color: rgb(98, 0, 0);
   --element-symbol-color: rgb(111, 111, 111);
   --element-symbol-inverted-color: rgb(147, 147, 147);
-  --integration-container-overlay-color: rgb(255, 255, 255, 0.800000011920929);
-  --navigation-chart-simple-depvs: rgb(31, 31, 31);
-  --navigation-chart-simple-lndare: rgb(46, 46, 46);
-  --navigation-chart-simple-lndare-outline: rgb(80, 80, 80);
-  --navigation-chart-simple-depvs-outline: rgb(111, 111, 111);
-  --integration-container-background-color: rgb(241, 241, 241);
+  --integration-container-overlay-color: rgb(255, 255, 255);
+  --navigation-chart-simple-depvs-color: rgb(31, 31, 31);
+  --navigation-chart-simple-lndare-color: rgb(46, 46, 46);
+  --navigation-chart-simple-lndare-outline-color: rgb(80, 80, 80);
+  --navigation-chart-simple-depvs-outline-color: rgb(111, 111, 111);
+  --integration-container-background-color: rgb(31, 31, 31);
   --integration-container-transparent-hover: rgb(0, 0, 0, 0.05000000074505806);
   --integration-container-transparent-pressed: rgb(
     0,
@@ -11067,6 +11830,48 @@
   --alert-caution-container-border-color: rgb(72, 52, 0);
   --alert-warning-container-border-color: rgb(97, 37, 0);
   --alert-alarm-container-border-color: rgb(119, 0, 0);
+  --border-edge-color: rgb(15, 15, 15);
+  --integration-amplified-enabled-background-color: rgb(255, 255, 255, 0);
+  --integration-amplified-enabled-border-color: rgb(255, 255, 255, 0);
+  --integration-amplified-hover-background-color: rgb(
+    255,
+    255,
+    255,
+    0.07999999821186066
+  );
+  --integration-amplified-hover-border-color: rgb(255, 255, 255, 0);
+  --integration-amplified-pressed-background-color: rgb(
+    255,
+    255,
+    255,
+    0.029999999329447746
+  );
+  --integration-amplified-pressed-border-color: rgb(255, 255, 255, 0);
+  --integration-amplified-focused-background-color: rgb(255, 255, 255, 0);
+  --integration-amplified-focused-border-color: rgb(255, 255, 255, 0);
+  --integration-amplified-disabled-background-color: rgb(255, 255, 255, 0);
+  --integration-amplified-disabled-border-color: rgb(255, 255, 255, 0);
+  --automation-medium-base-blue-primary-color: rgb(132, 179, 239);
+  --automation-medium-base-blue-secondary-color: rgb(82, 113, 154);
+  --automation-medium-base-blue-tertiary-color: rgb(132, 179, 239);
+  --integration-on-normal-inactive-color: rgb(176, 176, 176);
+  --integration-on-flat-inactive-color: rgb(176, 176, 176);
+  --integration-on-indent-inactive-color: rgb(176, 176, 176);
+  --alert-low-integrity-border-color: rgb(142, 106, 0);
+  --alert-invalid-border-color: rgb(166, 0, 0);
+  --integration-flat-activated-background-color: rgb(
+    255,
+    255,
+    255,
+    0.14000000059604645
+  );
+  --integration-flat-activated-border-color: rgb(
+    255,
+    255,
+    255,
+    0.20000000298023224
+  );
+  --navigation-chart-simple-chmgd-color: rgb(111, 111, 111);
 }
 :root[data-obc-theme="night"] {
   --icon-02-chevron-up: url('data:image/svg+xml,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 14.0002L7.41 15.4102L12 10.8302L16.59 15.4102L18 14.0002L12 8.00016L6 14.0002Z" fill="rgb(51, 51, 0)"/></svg>');
@@ -11368,7 +12173,7 @@
   --shadow-flat-x: 0px;
   --shadow-flat-y: 0px;
   --shadow-flat-blur: 0px;
-  --shadow-flat-color: rgb(71, 71, 0, 0.20000000298023224);
+  --shadow-flat-color: rgb(230, 175, 112, 0);
   --shadow-raised-x: 0px;
   --shadow-raised-y: 0px;
   --shadow-raised-blur: 0px;
@@ -11381,7 +12186,7 @@
   --shadow-overlay-y: 0px;
   --shadow-overlay-blur: 0px;
   --shadow-overlay-color: rgb(71, 71, 0, 0.20000000298023224);
-  --shadow-flat-spread: 1px;
+  --shadow-flat-spread: 0px;
   --shadow-raised-spread: 1px;
   --shadow-floating-spread: 1px;
   --shadow-overlay-spread: 1px;
@@ -11532,29 +12337,29 @@
   --overlay-container-global-color: rgb(0, 0, 0);
   --overlay-container-background-color: rgb(0, 0, 0, 0.75);
   --overlay-border-outline-color: rgb(238, 175, 104, 0.2800000011920929);
-  --integration-on-selected-neutral-color: rgb(212, 147, 74);
-  --integration-on-selected-active-color: rgb(223, 156, 82);
-  --integration-on-normal-neutral-color: rgb(0, 0, 0, 0.8600000143051147);
+  --integration-on-selected-neutral-color: rgb(234, 167, 94);
+  --integration-on-selected-active-color: rgb(255, 211, 167);
+  --integration-on-normal-neutral-color: rgb(199, 136, 66);
   --integration-on-normal-active-color: rgb(234, 167, 94);
-  --integration-on-normal-disabled-color: rgb(0, 0, 0, 0.3499999940395355);
-  --integration-selected-enabled-background-color: rgb(0, 0, 0);
-  --integration-selected-enabled-border-color: rgb(0, 0, 0);
-  --integration-selected-hover-background-color: rgb(234, 167, 94);
-  --integration-selected-hover-border-color: rgb(234, 167, 94);
-  --integration-selected-pressed-background-color: rgb(234, 167, 94);
-  --integration-selected-pressed-border-color: rgb(234, 167, 94);
-  --integration-selected-focused-background-color: rgb(0, 0, 0);
-  --integration-selected-disabled-background-color: rgb(0, 0, 0, 0);
+  --integration-on-normal-disabled-color: rgb(72, 52, 31);
+  --integration-selected-enabled-background-color: rgb(25, 17, 9);
+  --integration-selected-enabled-border-color: rgb(72, 52, 31);
+  --integration-selected-hover-background-color: rgb(0, 10, 4);
+  --integration-selected-hover-border-color: rgb(0, 61, 26);
+  --integration-selected-pressed-background-color: rgb(0, 10, 4);
+  --integration-selected-pressed-border-color: rgb(0, 41, 17);
+  --integration-selected-focused-background-color: rgb(0, 10, 4);
+  --integration-selected-disabled-background-color: rgb(0, 10, 4);
   --integration-selected-disabled-border-color: rgb(0, 0, 0, 0);
-  --integration-normal-enabled-background-color: rgb(255, 255, 255);
-  --integration-normal-enabled-border-color: rgb(255, 255, 255);
-  --integration-normal-hover-background-color: rgb(255, 255, 255);
-  --integration-normal-hover-border-color: rgb(255, 255, 255);
-  --integration-normal-pressed-background-color: rgb(255, 255, 255);
-  --integration-normal-pressed-border-color: rgb(255, 255, 255);
-  --integration-normal-focused-background-color: rgb(255, 255, 255);
-  --integration-normal-disabled-background-color: rgb(255, 255, 255);
-  --integration-normal-disabled-border-color: rgb(255, 255, 255);
+  --integration-normal-enabled-background-color: rgb(0, 0, 0);
+  --integration-normal-enabled-border-color: rgb(72, 52, 31);
+  --integration-normal-hover-background-color: rgb(0, 0, 0);
+  --integration-normal-hover-border-color: rgb(95, 67, 38);
+  --integration-normal-pressed-background-color: rgb(0, 0, 0);
+  --integration-normal-pressed-border-color: rgb(120, 83, 44);
+  --integration-normal-focused-background-color: rgb(0, 0, 0);
+  --integration-normal-disabled-background-color: rgb(230, 175, 112, 0);
+  --integration-normal-disabled-border-color: rgb(39, 27, 16);
   --integration-container-global-color: rgb(0, 0, 0);
   --palette-name: "night";
   --integration-on-indent-neutral-color: rgb(255, 255, 255);
@@ -11603,7 +12408,7 @@
   --instrument-tick-mark-label-primary-color: rgb(234, 167, 94);
   --instrument-tick-mark-label-secondary-color: rgb(156, 106, 52);
   --integration-border-menu-outline-color: rgb(223, 156, 82);
-  --integration-normal-focused-border-color: rgb(255, 255, 255);
+  --integration-normal-focused-border-color: rgb(230, 175, 112, 0);
   --base-gray-050: rgb(18, 18, 18);
   --base-gray-100: rgb(30, 30, 30);
   --base-gray-200: rgb(56, 56, 56);
@@ -11613,46 +12418,50 @@
   --base-gray-600: rgb(180, 180, 180);
   --integration-border-outline: rgb(0, 0, 0, 0.18000000715255737);
   --integration-raised: rgb(255, 255, 255);
-  --integration-element-active-color: rgb(0, 0, 0);
-  --integration-element-neutral-color: rgb(0, 0, 0, 0.7699999809265137);
-  --integration-element-inactive-color: rgb(0, 0, 0, 0.6100000143051147);
-  --integration-element-disabled-color: rgb(0, 0, 0, 0.27000001072883606);
+  --integration-element-active-color: rgb(234, 167, 94);
+  --integration-element-neutral-color: rgb(253, 176, 89, 0.7799999713897705);
+  --integration-element-inactive-color: rgb(253, 176, 89, 0.6100000143051147);
+  --integration-element-disabled-color: rgb(238, 175, 104, 0.2800000011920929);
   --overlay-element-inactive-inverted-color: rgb(0, 0, 0, 0.6100000143051147);
   --overlay-element-disabled-inverted-color: rgb(0, 0, 0, 0.27000001072883606);
-  --navigation-chart-simple-depdw: rgb(255, 255, 255);
+  --navigation-chart-simple-depdw-color: rgb(0, 0, 0);
   --element-active-enhanced-color: rgb(88, 200, 162);
   --element-neutral-enhanced-color: rgb(56, 167, 132);
   --element-inactive-enhanced-color: rgb(44, 131, 102);
   --element-disabled-enhanced-color: rgb(30, 62, 50);
   --element-symbol-enhanced-color: rgb(40, 101, 80);
-  --integration-flat-enabled-background-color: rgb(255, 255, 255);
-  --integration-flat-enabled-border-color: rgb(255, 255, 255);
-  --integration-flat-hover-background-color: rgb(212, 147, 74);
-  --integration-flat-hover-border-color: rgb(212, 147, 74);
-  --integration-flat-pressed-background-color: rgb(197, 135, 65);
-  --integration-flat-pressed-border-color: rgb(197, 135, 65);
-  --integration-flat-focused-background-color: rgb(255, 255, 255);
-  --integration-flat-focused-border-color: rgb(255, 255, 255);
-  --integration-flat-disabled-background-color: rgb(255, 255, 255);
-  --integration-flat-disabled-border-color: rgb(255, 255, 255);
-  --integration-container-section-color: rgb(223, 156, 82);
-  --integration-on-selected-disabled-color: rgb(153, 104, 51);
+  --integration-flat-enabled-background-color: rgb(230, 175, 112, 0);
+  --integration-flat-enabled-border-color: rgb(230, 175, 112, 0);
+  --integration-flat-hover-background-color: rgb(230, 175, 112, 0);
+  --integration-flat-hover-border-color: rgb(238, 175, 104, 0.2800000011920929);
+  --integration-flat-pressed-background-color: rgb(230, 175, 112, 0);
+  --integration-flat-pressed-border-color: rgb(
+    247,
+    176,
+    95,
+    0.3799999952316284
+  );
+  --integration-flat-focused-background-color: rgb(230, 175, 112, 0);
+  --integration-flat-focused-border-color: rgb(230, 175, 112, 0);
+  --integration-flat-disabled-background-color: rgb(230, 175, 112, 0);
+  --integration-flat-disabled-border-color: rgb(230, 175, 112, 0);
+  --integration-container-section-color: rgb(0, 0, 0);
+  --integration-on-selected-disabled-color: rgb(120, 83, 44);
   --integration-border-focused-border-color: rgb(66, 92, 130);
   --integration-border-divider: rgb(0, 0, 0, 0.27000001072883606);
   --integration-on-flat-active-color: rgb(234, 167, 94);
-  --integration-flat-focused-border-color-2: rgb(197, 135, 65);
-  --integration-on-flat-neutral-color: rgb(33, 24, 14);
-  --integration-on-flat-disabled-color: rgb(153, 104, 51);
+  --integration-on-flat-neutral-color: rgb(199, 136, 66);
+  --integration-on-flat-disabled-color: rgb(127, 87, 45);
   --alert-low-integrity-background-color: rgb(24, 19, 0);
   --alert-invalid-background-color: rgb(98, 0, 0);
   --element-symbol-color: rgb(120, 83, 44);
   --element-symbol-inverted-color: rgb(127, 87, 45);
-  --integration-container-overlay-color: rgb(234, 167, 94);
-  --navigation-chart-simple-depvs: rgb(255, 255, 255);
-  --navigation-chart-simple-lndare: rgb(255, 255, 255);
-  --navigation-chart-simple-lndare-outline: rgb(255, 255, 255);
-  --navigation-chart-simple-depvs-outline: rgb(255, 255, 255);
-  --integration-container-background-color: rgb(223, 156, 82);
+  --integration-container-overlay-color: rgb(0, 0, 0);
+  --navigation-chart-simple-depvs-color: rgb(25, 17, 9);
+  --navigation-chart-simple-lndare-color: rgb(39, 27, 16);
+  --navigation-chart-simple-lndare-outline-color: rgb(72, 52, 31);
+  --navigation-chart-simple-depvs-outline-color: rgb(72, 52, 31);
+  --integration-container-background-color: rgb(0, 0, 0);
   --integration-container-transparent-hover: rgb(0, 0, 0, 0.05000000074505806);
   --integration-container-transparent-pressed: rgb(
     0,
@@ -11714,6 +12523,43 @@
   --alert-caution-container-border-color: rgb(37, 29, 0);
   --alert-warning-container-border-color: rgb(53, 20, 0);
   --alert-alarm-container-border-color: rgb(70, 0, 0);
+  --border-edge-color: rgb(55, 40, 25);
+  --integration-amplified-enabled-background-color: rgb(230, 175, 112, 0);
+  --integration-amplified-enabled-border-color: rgb(230, 175, 112, 0);
+  --integration-amplified-hover-background-color: rgb(230, 175, 112, 0);
+  --integration-amplified-hover-border-color: rgb(
+    238,
+    175,
+    104,
+    0.2800000011920929
+  );
+  --integration-amplified-pressed-background-color: rgb(230, 175, 112, 0);
+  --integration-amplified-pressed-border-color: rgb(
+    247,
+    176,
+    95,
+    0.3799999952316284
+  );
+  --integration-amplified-focused-background-color: rgb(230, 175, 112, 0);
+  --integration-amplified-focused-border-color: rgb(255, 255, 255, 0);
+  --integration-amplified-disabled-background-color: rgb(230, 175, 112, 0);
+  --integration-amplified-disabled-border-color: rgb(230, 175, 112, 0);
+  --automation-medium-base-blue-primary-color: rgb(66, 92, 130);
+  --automation-medium-base-blue-secondary-color: rgb(43, 56, 77);
+  --automation-medium-base-blue-tertiary-color: rgb(83, 118, 170);
+  --integration-on-normal-inactive-color: rgb(199, 136, 66);
+  --integration-on-flat-inactive-color: rgb(199, 136, 66);
+  --integration-on-indent-inactive-color: rgb(255, 255, 255);
+  --alert-low-integrity-border-color: rgb(67, 55, 0);
+  --alert-invalid-border-color: rgb(166, 0, 0);
+  --integration-flat-activated-background-color: rgb(230, 175, 112, 0);
+  --integration-flat-activated-border-color: rgb(
+    238,
+    175,
+    104,
+    0.2800000011920929
+  );
+  --navigation-chart-simple-chmgd-color: rgb(120, 83, 44);
 }
 :root[data-obc-theme="bright"] {
   --icon-02-chevron-up: url('data:image/svg+xml,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 14.0002L7.41 15.4102L12 10.8302L16.59 15.4102L18 14.0002L12 8.00016L6 14.0002Z" fill="rgba(0, 0, 0, .650)"/></svg>');
@@ -11760,7 +12606,7 @@
   --data-categorical-qualitative-03: rgb(0, 93, 97);
   --data-categorical-qualitative-04: rgb(88, 73, 137);
   --normal-enabled-border-color: rgb(142, 142, 142);
-  --normal-hover-background-color: rgb(237, 237, 237);
+  --normal-hover-background-color: rgb(240, 240, 240);
   --normal-hover-border-color: rgb(142, 142, 142);
   --normal-pressed-background-color: rgb(221, 221, 221);
   --normal-pressed-border-color: rgb(142, 142, 142);
@@ -11783,7 +12629,7 @@
   --on-normal-disabled-color: rgb(142, 142, 142);
   --flat-enabled-background-color: rgb(0, 0, 0, 0);
   --flat-enabled-border-color: rgb(0, 0, 0, 0);
-  --flat-hover-background-color: rgb(237, 237, 237);
+  --flat-hover-background-color: rgb(240, 240, 240);
   --flat-hover-border-color: rgb(0, 0, 0, 0);
   --flat-pressed-background-color: rgb(221, 221, 221);
   --flat-pressed-border-color: rgb(0, 0, 0, 0);
@@ -11827,7 +12673,7 @@
   --navigation-light-red-color: rgb(252, 210, 207);
   --navigation-light-yellow-color: rgb(248, 242, 167);
   --alert-limit-primary-color: rgb(221, 221, 221);
-  --alert-limit-secondary-color: rgb(237, 237, 237);
+  --alert-limit-secondary-color: rgb(240, 240, 240);
   --alarm-enabled-background-color: rgb(227, 0, 25);
   --alarm-enabled-border-color: rgb(127, 0, 0);
   --alarm-hover-background-color: rgb(171, 0, 0);
@@ -11861,7 +12707,7 @@
   --data-weather-sun-primary-color: rgb(163, 97, 28);
   --data-weather-sun-secondary-color: rgb(244, 215, 191);
   --data-weather-cloud-light-primary-color: rgb(142, 142, 142);
-  --data-weather-cloud-light-seconday-color: rgb(237, 237, 237);
+  --data-weather-cloud-light-seconday-color: rgb(240, 240, 240);
   --data-weather-cloud-rain-primary-color: rgb(112, 112, 112);
   --data-weather-cloud-rain-secondary-color: rgb(190, 190, 190);
   --data-weather-cloud-heavy-secondary-color: rgb(112, 112, 112);
@@ -11879,9 +12725,9 @@
   --indent-focused-background-color: rgb(240, 240, 240);
   --indent-focused-border-color: rgb(29, 60, 103);
   --indent-disabled-background-color: rgb(255, 255, 255, 0);
-  --indent-disabled-border-color: rgb(237, 237, 237);
+  --indent-disabled-border-color: rgb(240, 240, 240);
   --on-indent-active-color: rgb(26, 26, 26);
-  --on-indent-neutral-color: rgb(83, 83, 83);
+  --on-indent-neutral-color: rgb(31, 31, 31);
   --on-indent-disabled-color: rgb(142, 142, 142);
   --on-caution-active-color: rgb(26, 26, 26);
   --on-caution-neutral-color: rgb(77, 56, 0);
@@ -11967,7 +12813,7 @@
   --automation-pipe-tertiary-inverted-color: rgb(190, 190, 190);
   --thumb-enabled-background-color: rgb(252, 252, 252);
   --thumb-enabled-border-color: rgb(190, 190, 190);
-  --thumb-hover-background-color: rgb(237, 237, 237);
+  --thumb-hover-background-color: rgb(240, 240, 240);
   --thumb-hover-border-color: rgb(190, 190, 190);
   --thumb-pressed-background-color: rgb(221, 221, 221);
   --thumb-pressed-border-color: rgb(190, 190, 190);
@@ -12179,16 +13025,11 @@
   --overlay-container-global-color: rgb(255, 255, 255);
   --overlay-container-background-color: rgb(255, 255, 255, 0.800000011920929);
   --overlay-border-outline-color: rgb(26, 26, 26);
-  --integration-on-selected-neutral-color: rgb(30, 30, 30);
-  --integration-on-selected-active-color: rgb(12, 12, 12);
-  --integration-on-normal-neutral-color: rgb(255, 255, 255, 0.6399999856948853);
-  --integration-on-normal-active-color: rgb(255, 255, 255, 0.8500000238418579);
-  --integration-on-normal-disabled-color: rgb(
-    255,
-    255,
-    255,
-    0.27000001072883606
-  );
+  --integration-on-selected-neutral-color: rgb(53, 53, 53);
+  --integration-on-selected-active-color: rgb(0, 0, 0);
+  --integration-on-normal-neutral-color: rgb(255, 255, 255);
+  --integration-on-normal-active-color: rgb(255, 255, 255);
+  --integration-on-normal-disabled-color: rgb(89, 89, 89);
   --integration-selected-enabled-background-color: rgb(240, 240, 240);
   --integration-selected-enabled-border-color: rgb(240, 240, 240);
   --integration-selected-hover-background-color: rgb(217, 217, 217);
@@ -12198,16 +13039,20 @@
   --integration-selected-focused-background-color: rgb(240, 240, 240);
   --integration-selected-disabled-background-color: rgb(0, 0, 0, 0);
   --integration-selected-disabled-border-color: rgb(0, 0, 0, 0);
-
-  --integration-normal-enabled-background-color: rgb(0, 0, 0, 0);
-  --integration-normal-enabled-border-color: rgb(0, 0, 0, 0);
-  --integration-normal-hover-background-color: rgb(12, 12, 12);
-  --integration-normal-hover-border-color: rgb(30, 30, 30);
-  --integration-normal-pressed-background-color: rgb(21, 21, 21);
-  --integration-normal-pressed-border-color: rgb(42, 42, 42);
-  --integration-normal-focused-background-color: rgb(0, 0, 0, 0);
-  --integration-normal-disabled-background-color: rgb(0, 0, 0, 0);
-  --integration-normal-disabled-border-color: rgb(0, 0, 0, 0);
+  --integration-normal-enabled-background-color: rgb(0, 0, 0);
+  --integration-normal-enabled-border-color: rgb(117, 117, 117);
+  --integration-normal-hover-background-color: rgb(42, 42, 42);
+  --integration-normal-hover-border-color: rgb(149, 149, 149);
+  --integration-normal-pressed-background-color: rgb(30, 30, 30);
+  --integration-normal-pressed-border-color: rgb(134, 134, 134);
+  --integration-normal-focused-background-color: rgb(0, 0, 0);
+  --integration-normal-disabled-background-color: rgb(255, 255, 255, 0);
+  --integration-normal-disabled-border-color: rgb(
+    255,
+    255,
+    255,
+    0.20999999344348907
+  );
   --integration-container-global-color: rgb(0, 0, 0);
   --palette-name: "bright";
   --integration-on-indent-neutral-color: rgb(255, 255, 255);
@@ -12271,56 +13116,65 @@
   --instrument-tick-mark-label-primary-color: rgb(142, 142, 142);
   --instrument-tick-mark-label-secondary-color: rgb(142, 142, 142);
   --integration-border-menu-outline-color: rgb(26, 26, 26);
-  --integration-normal-focused-border-color: rgb(255, 255, 255);
-  --base-gray-050: rgb(237, 237, 237);
+  --integration-normal-focused-border-color: rgb(255, 255, 255, 0);
+  --base-gray-050: rgb(240, 240, 240);
   --base-gray-100: rgb(221, 221, 221);
   --base-gray-200: rgb(190, 190, 190);
   --base-gray-300: rgb(142, 142, 142);
   --base-gray-400: rgb(112, 112, 112);
   --base-gray-500: rgb(83, 83, 83);
   --base-gray-600: rgb(61, 61, 61);
-  --integration-border-outline: rgb(255, 255, 255, 0.1599999964237213);
+  --integration-border-outline: rgb(89, 89, 89);
   --integration-raised: rgb(255, 255, 255);
   --integration-element-active-color: rgb(255, 255, 255);
-  --integration-element-neutral-color: rgb(255, 255, 255, 0.5899999737739563);
-  --integration-element-inactive-color: rgb(255, 255, 255, 0.4699999988079071);
-  --integration-element-disabled-color: rgb(255, 255, 255, 0.20999999344348907);
+  --integration-element-neutral-color: rgb(217, 217, 217);
+  --integration-element-inactive-color: rgb(149, 149, 149);
+  --integration-element-disabled-color: rgb(89, 89, 89);
   --overlay-element-inactive-inverted-color: rgb(0, 0, 0, 0.699999988079071);
   --overlay-element-disabled-inverted-color: rgb(0, 0, 0, 0.699999988079071);
-  --navigation-chart-simple-depdw: rgb(255, 255, 255);
+  --navigation-chart-simple-depdw-color: rgb(247, 247, 247);
   --element-active-enhanced-color: rgb(12, 32, 58);
   --element-neutral-enhanced-color: rgb(29, 60, 103);
   --element-inactive-enhanced-color: rgb(45, 84, 139);
   --element-disabled-enhanced-color: rgb(156, 193, 245);
   --element-symbol-enhanced-color: rgb(66, 113, 179);
-  --integration-flat-enabled-background-color: rgb(255, 255, 255);
-  --integration-flat-enabled-border-color: rgb(255, 255, 255);
-  --integration-flat-hover-background-color: rgb(30, 30, 30);
-  --integration-flat-hover-border-color: rgb(30, 30, 30);
-  --integration-flat-pressed-background-color: rgb(42, 42, 42);
-  --integration-flat-pressed-border-color: rgb(42, 42, 42);
-  --integration-flat-focused-background-color: rgb(255, 255, 255);
-  --integration-flat-focused-border-color: rgb(255, 255, 255);
-  --integration-flat-disabled-background-color: rgb(255, 255, 255);
-  --integration-flat-disabled-border-color: rgb(255, 255, 255);
-  --integration-container-section-color: rgb(12, 12, 12);
+  --integration-flat-enabled-background-color: rgb(255, 255, 255, 0);
+  --integration-flat-enabled-border-color: rgb(255, 255, 255, 0);
+  --integration-flat-hover-background-color: rgb(
+    255,
+    255,
+    255,
+    0.1599999964237213
+  );
+  --integration-flat-hover-border-color: rgb(255, 255, 255, 0);
+  --integration-flat-pressed-background-color: rgb(
+    255,
+    255,
+    255,
+    0.11999999731779099
+  );
+  --integration-flat-pressed-border-color: rgb(255, 255, 255, 0);
+  --integration-flat-focused-background-color: rgb(255, 255, 255, 0);
+  --integration-flat-focused-border-color: rgb(255, 255, 255, 0);
+  --integration-flat-disabled-background-color: rgb(255, 255, 255, 0);
+  --integration-flat-disabled-border-color: rgb(255, 255, 255, 0);
+  --integration-container-section-color: rgb(0, 0, 0);
   --integration-on-selected-disabled-color: rgb(69, 69, 69);
   --integration-border-focused-border-color: rgb(93, 143, 213);
-  --integration-border-divider: rgb(255, 255, 255, 0.20999999344348907);
-  --integration-on-flat-active-color: rgb(217, 217, 217);
-  --integration-flat-focused-border-color-2: rgb(42, 42, 42);
-  --integration-on-flat-neutral-color: rgb(163, 163, 163);
-  --integration-on-flat-disabled-color: rgb(69, 69, 69);
+  --integration-border-divider: rgb(89, 89, 89);
+  --integration-on-flat-active-color: rgb(255, 255, 255);
+  --integration-on-flat-neutral-color: rgb(217, 217, 217);
+  --integration-on-flat-disabled-color: rgb(89, 89, 89);
   --alert-low-integrity-background-color: rgb(255, 240, 136);
   --alert-invalid-background-color: rgb(255, 210, 203);
   --element-symbol-color: rgb(112, 112, 112);
   --element-symbol-inverted-color: rgb(89, 89, 89);
   --integration-container-overlay-color: rgb(0, 0, 0, 0.75);
-  --navigation-chart-simple-depvs: rgb(255, 255, 255);
-  --navigation-chart-simple-lndare: rgb(255, 255, 255);
-  --navigation-chart-simple-lndare-outline: rgb(255, 255, 255);
-  --navigation-chart-simple-depvs-outline: rgb(255, 255, 255);
-  --integration-container-background-color: rgb(21, 21, 21);
+  --navigation-chart-simple-depvs-color: rgb(224, 224, 224);
+  --navigation-chart-simple-lndare-color: rgb(240, 240, 240);
+  --navigation-chart-simple-lndare-outline-color: rgb(142, 142, 142);
+  --navigation-chart-simple-depvs-outline-color: rgb(142, 142, 142);
+  --integration-container-background-color: rgb(0, 0, 0);
   --integration-container-transparent-hover: rgb(0, 0, 0, 0.05000000074505806);
   --integration-container-transparent-pressed: rgb(
     0,
@@ -12382,6 +13236,33 @@
   --alert-caution-container-border-color: rgb(255, 240, 136);
   --alert-warning-container-border-color: rgb(255, 212, 175);
   --alert-alarm-container-border-color: rgb(255, 189, 179);
+  --border-edge-color: rgb(190, 190, 190);
+  --integration-amplified-enabled-background-color: rgb(255, 255, 255, 0);
+  --integration-amplified-enabled-border-color: rgb(255, 255, 255, 0);
+  --integration-amplified-hover-background-color: rgb(30, 30, 30);
+  --integration-amplified-hover-border-color: rgb(30, 30, 30);
+  --integration-amplified-pressed-background-color: rgb(42, 42, 42);
+  --integration-amplified-pressed-border-color: rgb(42, 42, 42);
+  --integration-amplified-focused-background-color: rgb(255, 255, 255, 0);
+  --integration-amplified-focused-border-color: rgb(255, 255, 255, 0);
+  --integration-amplified-disabled-background-color: rgb(255, 255, 255, 0);
+  --integration-amplified-disabled-border-color: rgb(255, 255, 255, 0);
+  --automation-medium-base-blue-primary-color: rgb(45, 84, 139);
+  --automation-medium-base-blue-secondary-color: rgb(66, 113, 179);
+  --automation-medium-base-blue-tertiary-color: rgb(45, 84, 139);
+  --integration-on-normal-inactive-color: rgb(149, 149, 149);
+  --integration-on-flat-inactive-color: rgb(149, 149, 149);
+  --integration-on-indent-inactive-color: rgb(255, 255, 255);
+  --alert-low-integrity-border-color: rgb(143, 107, 0);
+  --alert-invalid-border-color: rgb(255, 77, 71);
+  --integration-flat-activated-background-color: rgb(
+    255,
+    255,
+    255,
+    0.1599999964237213
+  );
+  --integration-flat-activated-border-color: rgb(255, 255, 255, 0);
+  --navigation-chart-simple-chmgd-color: rgb(112, 112, 112);
 }
 
 @property --alarm-blink-on {

@@ -1,5 +1,5 @@
 import {svg, SVGTemplateResult, nothing} from 'lit';
-import {InstrumentState} from '../../navigation-instruments/types.js';
+import {InstrumentState, Priority} from '../../navigation-instruments/types.js';
 
 import {LinearAdviceRaw} from '../../navigation-instruments/thruster/advice.js';
 import {renderAdvice} from './advice.js';
@@ -9,7 +9,7 @@ export function atSetpoint(
   setpoint: number | undefined,
   options: {
     autoAtSetpoint: boolean;
-    autoSetpointDeadband: number;
+    autoAtSetpointDeadband: number;
     touching: boolean;
     atSetpoint: boolean;
   }
@@ -19,7 +19,7 @@ export function atSetpoint(
   }
 
   if (options.autoAtSetpoint && setpoint !== undefined) {
-    return Math.abs(thrust - setpoint) < options.autoSetpointDeadband;
+    return Math.abs(thrust - setpoint) < options.autoAtSetpointDeadband;
   }
 
   return options.atSetpoint;
@@ -58,12 +58,13 @@ export function watchfaceLinear(
   options: {
     hideContainer: boolean;
     off: boolean;
-    enhanced: boolean;
+    priority: Priority;
   },
   tickmarks: {
-    mainTickbar: boolean;
-    primaryTickbarsInterval?: number;
-    secondaryTickbarsInterval?: number;
+    /** Array of values where full-width main tickmarks are drawn. */
+    mainTickmarks?: number[];
+    primaryTickmarkInterval?: number;
+    secondaryTickmarkInterval?: number;
   },
   advice: LinearAdviceRaw[]
 ) {
@@ -92,7 +93,9 @@ export function watchfaceLinear(
     track = nothing;
   }
 
-  const {boxFill, boxStroke, barFill, barStroke} = getColors(options.enhanced);
+  const {boxFill, boxStroke, barFill, barStroke} = getColors(
+    options.priority === Priority.enhanced
+  );
 
   const tickmarksSvg: SVGTemplateResult[] = [];
   const maskId = 'boxMask';
@@ -105,44 +108,54 @@ export function watchfaceLinear(
   </defs>`;
   const maskAttr = options.hideContainer ? undefined : `url(#${maskId})`;
 
-  const tickmarksY0 = valueToY(0, minValue, maxValue, height);
-  const skipYValues: number[] = [];
-  if (tickmarks.mainTickbar) {
-    const y = tickmarksY0;
-    tickmarksSvg.push(
-      svg`<line x1=${-width / 2} x2=${width / 2} y1=${y} y2=${y} stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
-    );
-    skipYValues.push(y);
+  const skipValues: number[] = [];
+  if (tickmarks.mainTickmarks) {
+    for (const value of tickmarks.mainTickmarks) {
+      if (value < minValue || value > maxValue) continue;
+      const y = valueToY(value, minValue, maxValue, height);
+      tickmarksSvg.push(
+        svg`<line x1=${-width / 2} x2=${width / 2} y1=${y} y2=${y} stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
+      );
+      skipValues.push(value);
+    }
   }
 
   const tickmarksX = width / 2 - scaleWidth + 4;
 
-  if (tickmarks.primaryTickbarsInterval !== undefined) {
-    const {svgs, yValues} = generateTickmarks({
+  if (
+    tickmarks.primaryTickmarkInterval !== undefined &&
+    tickmarks.primaryTickmarkInterval > 0 &&
+    Number.isFinite(tickmarks.primaryTickmarkInterval)
+  ) {
+    const {svgs, values} = generateTickmarks({
       height,
-      interval: tickmarks.primaryTickbarsInterval,
+      interval: tickmarks.primaryTickmarkInterval,
       minValue,
       maxValue,
       tickmarksX,
       tickmarksWidth: width / 2 - tickmarksX,
-      skipYValues,
+      skipValues,
     });
     tickmarksSvg.push(...svgs);
-    skipYValues.push(...yValues);
+    skipValues.push(...values);
   }
 
-  if (tickmarks.secondaryTickbarsInterval !== undefined) {
-    const {svgs, yValues} = generateTickmarks({
+  if (
+    tickmarks.secondaryTickmarkInterval !== undefined &&
+    tickmarks.secondaryTickmarkInterval > 0 &&
+    Number.isFinite(tickmarks.secondaryTickmarkInterval)
+  ) {
+    const {svgs, values} = generateTickmarks({
       height,
-      interval: tickmarks.secondaryTickbarsInterval,
+      interval: tickmarks.secondaryTickmarkInterval,
       minValue,
       maxValue,
       tickmarksX,
       tickmarksWidth: 8,
-      skipYValues,
+      skipValues,
     });
     tickmarksSvg.push(...svgs);
-    skipYValues.push(...yValues);
+    skipValues.push(...values);
   }
   const boxX = -width / 2;
   const boxWidth = width - scaleWidth;
@@ -193,7 +206,7 @@ function generateTickmarks({
   tickmarksWidth,
   minValue,
   maxValue,
-  skipYValues,
+  skipValues,
 }: {
   height: number;
   interval: number;
@@ -201,31 +214,31 @@ function generateTickmarks({
   tickmarksWidth: number;
   minValue: number;
   maxValue: number;
-  skipYValues: number[];
-}): {svgs: SVGTemplateResult[]; yValues: number[]} {
+  skipValues: number[];
+}): {svgs: SVGTemplateResult[]; values: number[]} {
   const tickmarksSvg: SVGTemplateResult[] = [];
-  const yValues: number[] = [];
-  for (let yValue = 0; yValue < maxValue; yValue += interval) {
-    if (skipYValues.includes(yValue)) {
+  const values: number[] = [];
+  for (let v = 0; v < maxValue; v += interval) {
+    if (skipValues.includes(v)) {
       continue;
     }
-    const y = valueToY(yValue, minValue, maxValue, height);
-    yValues.push(yValue);
+    const y = valueToY(v, minValue, maxValue, height);
+    values.push(v);
     tickmarksSvg.push(
       svg`<line x1=${tickmarksX} x2=${tickmarksX + tickmarksWidth} y1=${y} y2=${y} stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
     );
   }
-  for (let yValue = -interval; yValue > minValue; yValue -= interval) {
-    if (skipYValues.includes(yValue)) {
+  for (let v = -interval; v > minValue; v -= interval) {
+    if (skipValues.includes(v)) {
       continue;
     }
-    const y = valueToY(yValue, minValue, maxValue, height);
-    yValues.push(yValue);
+    const y = valueToY(v, minValue, maxValue, height);
+    values.push(v);
     tickmarksSvg.push(
       svg`<line x1=${tickmarksX} x2=${tickmarksX + tickmarksWidth} y1=${y} y2=${y} stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
     );
   }
-  return {svgs: tickmarksSvg, yValues};
+  return {svgs: tickmarksSvg, values};
 }
 
 function getColors(enhanced: boolean): {
@@ -253,26 +266,26 @@ function getColors(enhanced: boolean): {
 
 export function thrusterColors(
   options: {atSetpoint: boolean; touching: boolean},
-  state: InstrumentState
+  state: InstrumentState,
+  priority: Priority = Priority.regular
 ) {
-  let boxColor = 'var(--instrument-enhanced-secondary-color)';
-  let setPointColor = 'var(--instrument-enhanced-primary-color)';
+  const isEnhanced = priority === Priority.enhanced;
+  let boxColor = isEnhanced
+    ? 'var(--instrument-enhanced-secondary-color)'
+    : 'var(--instrument-regular-secondary-color)';
+  let setPointColor = isEnhanced
+    ? 'var(--instrument-enhanced-primary-color)'
+    : 'var(--instrument-regular-primary-color)';
   let arrowColor = 'var(--instrument-regular-secondary-color)';
   let containerBackgroundColor = 'var(--instrument-frame-primary-color)';
-  let zeroLineColor = 'var(--instrument-enhanced-secondary-color)';
+  let zeroLineColor = isEnhanced
+    ? 'var(--instrument-enhanced-secondary-color)'
+    : 'var(--instrument-regular-secondary-color)';
   let hideTicks = false;
   if (options.atSetpoint) {
     setPointColor = boxColor;
   }
-  if (state === InstrumentState.active) {
-    boxColor = 'var(--instrument-regular-secondary-color)';
-    zeroLineColor = 'var(--instrument-regular-secondary-color)';
-    setPointColor = 'var(--instrument-regular-primary-color)';
-    arrowColor = 'var(--instrument-regular-secondary-color)';
-    if (options.atSetpoint) {
-      setPointColor = boxColor;
-    }
-  } else if (state === InstrumentState.loading) {
+  if (state === InstrumentState.loading) {
     boxColor = 'transparent';
     setPointColor = 'var(--instrument-frame-tertiary-color)';
     zeroLineColor = 'var(--instrument-frame-tertiary-color)';

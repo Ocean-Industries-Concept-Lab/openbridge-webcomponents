@@ -23,8 +23,19 @@
     display: flex;
     flex-direction: column;
     padding: 8px
-      calc(4px + var(--app-components-integration-button-padding-horizontal)) 0
-      calc(4px + var(--app-components-integration-button-padding-horizontal));
+      calc(
+        4px +
+          var(
+            --app-components-integration-system-navigation-item-horizontal-padding-horizontal
+          )
+      )
+      0
+      calc(
+        4px +
+          var(
+            --app-components-integration-system-navigation-item-horizontal-padding-horizontal
+          )
+      );
     align-items: flex-start;
     gap: 4px;
     color: var(--integration-on-normal-neutral-color);

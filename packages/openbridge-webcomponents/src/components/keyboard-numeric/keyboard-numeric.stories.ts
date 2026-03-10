@@ -20,7 +20,7 @@ type ObcKeyboardNumericArgs = {
 };
 
 const meta: Meta<ObcKeyboardNumericArgs> = {
-  title: 'Application Components/Input/Keyboard numeric',
+  title: 'Application Components/Input/Keyboard Numeric',
   tags: ['6.0'],
   component: 'obc-keyboard-numeric',
   parameters: {

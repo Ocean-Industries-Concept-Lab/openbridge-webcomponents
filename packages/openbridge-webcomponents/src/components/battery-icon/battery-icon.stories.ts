@@ -9,6 +9,9 @@ const meta: Meta<typeof ObcBatteryIcon> = {
   args: {
     level: 100,
     charging: false,
+    poweredNotCharging: false,
+    notification: false,
+    horizontal: false,
   },
   argTypes: {
     level: {
@@ -23,6 +26,28 @@ type Story = StoryObj<ObcBatteryIcon>;
 export const Full: Story = {
   args: {
     level: 100,
+  },
+};
+
+export const HorizontalFull: Story = {
+  args: {
+    level: 100,
+    horizontal: true,
+  },
+};
+
+export const PoweredNotCharging: Story = {
+  args: {
+    level: 100,
+    poweredNotCharging: true,
+  },
+};
+
+export const PoweredNotChargingHorizontal: Story = {
+  args: {
+    level: 100,
+    poweredNotCharging: true,
+    horizontal: true,
   },
 };
 
@@ -57,9 +82,25 @@ export const Charging: Story = {
   },
 };
 
+export const ChargingHorizontal: Story = {
+  args: {
+    level: 50,
+    charging: true,
+    horizontal: true,
+  },
+};
+
 export const Notification: Story = {
   args: {
     level: 5,
     notification: true,
+  },
+};
+
+export const NotificationHorizontal: Story = {
+  args: {
+    level: 5,
+    notification: true,
+    horizontal: true,
   },
 };

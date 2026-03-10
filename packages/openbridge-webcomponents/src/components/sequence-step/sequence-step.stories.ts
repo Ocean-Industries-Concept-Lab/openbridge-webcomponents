@@ -125,25 +125,32 @@ const renderStateGrid = ({
 `;
 
 export const Playground: Story = {
-  render: (args) => html`
-    <obc-sequence-step
-      .type=${args.type}
-      .styleType=${args.styleType}
-      .value=${args.value}
-      .orientation=${args.orientation}
-      .hideStepInputConnector=${args.hideStepInputConnector}
-      .hideStepOutputConnector=${args.hideStepOutputConnector}
-      .hasIcon=${args.hasIcon}
-    >
-      ${args.hasIcon
-        ? iconIdToIconHtml(args.leadingIcon as string, {
-            slot: 'leading-icon',
-            useCssColor: '',
-          })
-        : nothing}
-      ${args.label}
-    </obc-sequence-step>
-  `,
+  render: (args) => {
+    const labelText =
+      args.styleType === SequenceStyle.point &&
+      (args.type === SequenceType.medium || args.type === SequenceType.large)
+        ? '1'
+        : args.label;
+    return html`
+      <obc-sequence-step
+        .type=${args.type}
+        .styleType=${args.styleType}
+        .value=${args.value}
+        .orientation=${args.orientation}
+        .hideStepInputConnector=${args.hideStepInputConnector}
+        .hideStepOutputConnector=${args.hideStepOutputConnector}
+        .hasIcon=${args.hasIcon}
+      >
+        ${args.hasIcon
+          ? iconIdToIconHtml(args.leadingIcon as string, {
+              slot: 'leading-icon',
+              useCssColor: '',
+            })
+          : nothing}
+        ${labelText}
+      </obc-sequence-step>
+    `;
+  },
 };
 
 export const TypeOverview: Story = {

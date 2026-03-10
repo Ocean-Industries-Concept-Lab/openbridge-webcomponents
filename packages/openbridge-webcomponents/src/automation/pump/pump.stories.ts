@@ -12,7 +12,7 @@ import {AutomationButtonReadoutStackSize} from '../../components/automation-butt
 import {argTypesAbstractAutomationButtonMotorized} from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 const meta: Meta<typeof ObcPump> = {
-  title: 'Automation/Automation devices/Pump',
+  title: 'Automation/Automation Devices/Pump',
   tags: ['6.0'],
   component: 'obc-pump',
   decorators: [crossDecorator],

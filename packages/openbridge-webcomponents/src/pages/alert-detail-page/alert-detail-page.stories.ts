@@ -20,7 +20,7 @@ const alert: Alert = {
 };
 
 const meta: Meta<typeof ObcAlertDetailPage> = {
-  title: 'Pages/Alert detail page',
+  title: 'Pages/Alert Detail Page',
   tags: ['6.0'],
   component: 'obc-alert-detail-page',
   args: {

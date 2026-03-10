@@ -5,7 +5,7 @@ import {html} from 'lit';
 import {ObcMessageMenuItemSize} from '../message-menu-item/message-menu-item.js';
 
 const meta: Meta<typeof ObcNotificationMenuItem> = {
-  title: 'Application Components/Notifications/Notification menu item',
+  title: 'Application Components/Notifications/Notification Menu Item',
   tags: ['autodocs', '6.0'],
   component: 'obc-notification-menu-item',
   args: {

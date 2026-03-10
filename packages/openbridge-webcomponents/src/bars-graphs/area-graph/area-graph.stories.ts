@@ -9,7 +9,10 @@ import {
   AdvicePosition,
 } from '../../building-blocks/external-scale/external-scale.js';
 import {AdviceType} from '../../navigation-instruments/watch/advice.js';
-import {BorderRadiusPosition} from '../../navigation-instruments/types.js';
+import {
+  Priority,
+  BorderRadiusPosition,
+} from '../../navigation-instruments/types.js';
 
 const SAMPLE_DATA = [
   {label: 'Jan', value: 3.5},
@@ -72,7 +75,7 @@ const SAMPLE_MULTI_DATASETS = [
 ];
 
 const meta: Meta = {
-  title: 'Bars and Graphs/Area graph',
+  title: 'Bars and Graphs/Area Graph',
   component: 'obc-area-graph',
   tags: ['autodocs', '6.0'],
   render: (_args) => html`
@@ -96,7 +99,7 @@ const meta: Meta = {
       .fillMode=${_args.fillMode}
       .stacked=${_args.stacked}
       .legend=${_args.legend}
-      .enhanced=${_args.enhanced}
+      .priority=${_args.priority}
       .showDebugOverlay=${_args.showDebugOverlay}
       .width=${_args.width}
       .height=${_args.height}
@@ -133,7 +136,7 @@ const meta: Meta = {
     stacked: {control: 'boolean'},
     colors: {control: 'object'},
     legend: {control: 'boolean'},
-    enhanced: {control: 'boolean'},
+    priority: {control: 'select', options: Object.values(Priority)},
     showDebugOverlay: {control: 'boolean'},
     width: {control: {type: 'range', min: 192, max: 1024}},
     height: {control: {type: 'range', min: 48, max: 512}},
@@ -159,7 +162,7 @@ const meta: Meta = {
     stacked: false,
     colors: [],
     legend: false,
-    enhanced: true,
+    priority: Priority.enhanced,
     showDebugOverlay: false,
     width: 480,
     height: 320,
@@ -178,15 +181,16 @@ export const SemitransparentExternalScales: Story = {
   name: 'Semitransparent area graph (with external scales)',
   tags: ['!snapshot'],
   argTypes: {
-    enhanced: {
-      control: 'boolean',
-      description: 'Use enhanced color palette for chart and scales',
+    priority: {
+      control: 'select',
+      options: Object.values(Priority),
+      description: 'Use priority-based color palette for chart and scales',
     },
     // External scale controls (vertical/left)
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
-    vScaleHideLabels: {
+    vScaleShowLabels: {
       control: 'boolean',
-      description: 'Vertical scale: hide labels',
+      description: 'Vertical scale: show labels',
     },
     vScaleAdvices: {
       control: 'boolean',
@@ -223,9 +227,9 @@ export const SemitransparentExternalScales: Story = {
       control: 'boolean',
       description: 'Horizontal scale: show bar',
     },
-    hScaleHideLabels: {
+    hScaleShowLabels: {
       control: 'boolean',
-      description: 'Horizontal scale: hide labels',
+      description: 'Horizontal scale: show labels',
     },
     hScaleAdvices: {
       control: 'boolean',
@@ -263,10 +267,10 @@ export const SemitransparentExternalScales: Story = {
     showTickMarks: false,
     width: 480,
     height: 320,
-    enhanced: true,
+    priority: Priority.enhanced,
     // Vertical scale defaults
     vScaleHasBar: false,
-    vScaleHideLabels: false,
+    vScaleShowLabels: true,
     vScaleAdvices: true,
     vScaleFillMode: 'fill',
     vScaleAdvicePosition: 'inner',
@@ -276,7 +280,7 @@ export const SemitransparentExternalScales: Story = {
     vScaleFillMax: 5,
     // Horizontal scale defaults
     hScaleHasBar: false,
-    hScaleHideLabels: false,
+    hScaleShowLabels: true,
     hScaleAdvices: true,
     hScaleFillMode: 'tint',
     hScaleAdvicePosition: 'inner',
@@ -295,7 +299,7 @@ export const SemitransparentExternalScales: Story = {
       .showGridY=${true}
       .width=${_args.width}
       .height=${_args.height}
-      .enhanced=${_args.enhanced}
+      .priority=${_args.priority}
       .borderRadiusPositionExternalScales=${BorderRadiusPosition.outerLastChild}
     >
       <obc-bar-vertical
@@ -305,7 +309,7 @@ export const SemitransparentExternalScales: Story = {
         .height=${_args.height}
         .side=${'left'}
         .hasScale=${true}
-        .hideLabels=${_args.vScaleHideLabels}
+        .showLabels=${_args.vScaleShowLabels}
         .hasBar=${_args.vScaleHasBar}
         .fillMode=${_args.vScaleFillMode === 'fill'
           ? FillMode.fill
@@ -325,10 +329,10 @@ export const SemitransparentExternalScales: Story = {
               {min: 6, max: 7, type: AdviceType.advice, hinted: false},
             ]
           : []}
-        .primaryTickbarsInterval=${1}
-        .secondaryTickbarsInterval=${0.5}
-        .tertiaryTickbarsInterval=${0.125}
-        .enhanced=${_args.enhanced}
+        .primaryTickmarkInterval=${1}
+        .secondaryTickmarkInterval=${0.5}
+        .tertiaryTickmarkInterval=${0.125}
+        .priority=${_args.priority}
       ></obc-bar-vertical>
       <obc-bar-horizontal
         slot="bottom-scale"
@@ -337,7 +341,7 @@ export const SemitransparentExternalScales: Story = {
         .width=${_args.width}
         .side=${'bottom'}
         .hasScale=${true}
-        .hideLabels=${_args.hScaleHideLabels}
+        .showLabels=${_args.hScaleShowLabels}
         .hasBar=${_args.hScaleHasBar}
         .fillMode=${_args.hScaleFillMode === 'fill'
           ? FillMode.fill
@@ -357,10 +361,10 @@ export const SemitransparentExternalScales: Story = {
               {min: 8, max: 10, type: AdviceType.advice, hinted: false},
             ]
           : []}
-        .primaryTickbarsInterval=${2}
-        .secondaryTickbarsInterval=${1}
-        .tertiaryTickbarsInterval=${0.25}
-        .enhanced=${_args.enhanced}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
+        .tertiaryTickmarkInterval=${0.25}
+        .priority=${_args.priority}
       ></obc-bar-horizontal>
     </obc-area-graph>
   `,
@@ -511,7 +515,7 @@ export const MultiAxis: Story = {
         .showDebugOverlay=${_args.showDebugOverlay}
         .width=${_args.width}
         .height=${_args.height}
-        .enhanced=${_args.enhanced}
+        .priority=${_args.priority}
       ></obc-area-graph>
     `;
   },
@@ -541,7 +545,7 @@ export const RealtimeSqueezing: Story = {
     chart.showTickMarks = true;
     chart.height = _args.height;
     chart.width = _args.width;
-    chart.enhanced = _args.enhanced;
+    chart.priority = _args.priority;
 
     setInterval(() => {
       const last = chart.data[chart.data.length - 1] || {value: 3};
@@ -575,7 +579,7 @@ export const RealtimeShifting: Story = {
     chart.height = _args.height;
     chart.xAxisType = 'time';
     chart.timeDisplay = 'minutes';
-    chart.enhanced = _args.enhanced;
+    chart.priority = _args.priority;
 
     // Initialize with past time-based data (spread over the last N minutes)
     const minuteMs = 60 * 1000;
