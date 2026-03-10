@@ -64,9 +64,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-
-  & .icon {
     width: var(--ui-components-button-icon-size);
     height: var(--ui-components-button-icon-size);
     color: var(--on-normal-neutral-color);
@@ -90,7 +87,7 @@
     color: var(--on-normal-neutral-color);
   }
 
-  &:disabled .icon {
+  &:disabled .icon-container {
     color: var(--on-normal-disabled-color);
   }
 
