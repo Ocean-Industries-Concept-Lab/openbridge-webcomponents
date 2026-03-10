@@ -182,7 +182,8 @@ export class ObcAlertFrame extends LitElement {
     AlertFrameTextSize.Regular;
 
   @property({type: Boolean}) showIcon: boolean = false;
-  @property({type: Boolean}) hideAlertCategoryIcon: boolean = false;
+  @property({type: Boolean, attribute: false}) showAlertCategoryIcon: boolean =
+    true;
 
   override render() {
     return html`
@@ -213,7 +214,7 @@ export class ObcAlertFrame extends LitElement {
     let icon: TemplateResult | typeof nothing = html`<obi-alarm-badge
       class="icon badge"
     ></obi-alarm-badge>`;
-    if (this.hideAlertCategoryIcon === true) {
+    if (!this.showAlertCategoryIcon) {
       icon = nothing;
     } else if (this.status === ObcAlertFrameStatus.Warning) {
       icon = html`<obi-warning-badge class="icon badge"></obi-warning-badge>`;

@@ -105,7 +105,7 @@ export class ObcCommunicationTable extends LitElement {
     return html`<obc-table
       .data=${data}
       .columns=${columns}
-      noHeader
+      .showHeader=${false}
       rowDivider
       @row-click=${this._handleRowClick}
     ></obc-table>`;

@@ -12,7 +12,7 @@ const statusVariants = [
 const renderStatusGroup = (
   state: CheckboxState,
   disabled = false,
-  noHoverEffects = false
+  hasHoverEffects = true
 ) => html`
   <div style="display:flex; justify-content:flex-start; width:100%;">
     <div style="display:flex; align-items:center; gap:24px; min-height:96px;">
@@ -22,7 +22,7 @@ const renderStatusGroup = (
             .status=${status}
             .state=${state}
             .disabled=${disabled}
-            .noHoverEffects=${noHoverEffects}
+            .hasHoverEffects=${hasHoverEffects}
             aria-label=${`${state} ${status} checkbox`}
           ></obc-checkbox>`
       )}
@@ -44,7 +44,7 @@ const meta = {
       .status=${args.status}
       .state=${args.state}
       .disabled=${args.disabled}
-      .noHoverEffects=${args.noHoverEffects}
+      .hasHoverEffects=${args.hasHoverEffects}
       aria-label="Checkbox item"
     ></obc-checkbox>`;
 
@@ -87,7 +87,7 @@ export const Playground: Story = {
   },
   parameters: {
     controls: {
-      exclude: /^(noHoverEffects)$/i,
+      exclude: /^(hasHoverEffects)$/i,
       expanded: true,
     },
   },
@@ -102,7 +102,7 @@ export const Enabled: Story = {
     renderStatusGroup(
       CheckboxState.enabled,
       args.disabled,
-      args.noHoverEffects
+      args.hasHoverEffects
     ),
 };
 
