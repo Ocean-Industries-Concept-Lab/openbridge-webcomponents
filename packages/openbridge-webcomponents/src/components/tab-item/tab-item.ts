@@ -196,7 +196,7 @@ export class ObcTabItem extends LitElement {
    *
    * Default: false
    */
-  @property({type: Boolean}) badgeHideNumber = false;
+  @property({type: Boolean, attribute: false}) badgeShowNumber: boolean = true;
 
   /**
    * The numeric value to display in the badge (e.g., count of notifications).
@@ -286,7 +286,7 @@ export class ObcTabItem extends LitElement {
                   .number=${this.badgeCount}
                   .type=${this.badgeType || BadgeType.regular}
                   .size=${this.badgeSize || BadgeSize.regular}
-                  .hideNumber=${this.badgeHideNumber}
+                  .showNumber=${this.badgeShowNumber}
                   .showIcon=${this.showLeadingBadgeIcon}
                 >
                   ${this.showLeadingBadgeIcon
@@ -303,7 +303,7 @@ export class ObcTabItem extends LitElement {
                 .number=${this.badgeCount}
                 .type=${this.badgeType || BadgeType.regular}
                 .size=${this.badgeSize || BadgeSize.regular}
-                .hideNumber=${this.badgeHideNumber}
+                .showNumber=${this.badgeShowNumber}
                 .showIcon=${this.showLeadingBadgeIcon}
               >
                 ${this.showLeadingBadgeIcon

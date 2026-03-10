@@ -158,19 +158,19 @@ export class ObcTopbarMessageItem extends LitElement {
     ObcTopbarMessageItemSize.Regular;
 
   /**
-   * Whether to hide the title slot.
+   * Whether to show the title slot.
    */
-  @property({type: Boolean}) hideTitle = false;
+  @property({type: Boolean, attribute: false}) showTitle: boolean = true;
 
   /**
-   * Whether to hide the description slot.
+   * Whether to show the description slot.
    */
-  @property({type: Boolean}) hideDescription = false;
+  @property({type: Boolean, attribute: false}) showDescription: boolean = true;
 
   /**
-   * Whether to hide the primary timestamp slot.
+   * Whether to show the primary timestamp slot.
    */
-  @property({type: Boolean}) hideTimestamp = false;
+  @property({type: Boolean, attribute: false}) showTimestamp: boolean = true;
 
   /**
    * Whether to display the secondary timestamp slot.
@@ -231,7 +231,7 @@ export class ObcTopbarMessageItem extends LitElement {
                       : nothing}
                     <div class="message-container ${isLarge ? 'large' : ''}">
                       <div class="title-container">
-                        ${!this.hideTitle
+                        ${this.showTitle
                           ? html`<div class="title">
                               <slot name="title"></slot>
                             </div>`
@@ -239,7 +239,7 @@ export class ObcTopbarMessageItem extends LitElement {
                         ${isLarge
                           ? html`
                               <div class="timestamp-container">
-                                ${!this.hideTimestamp
+                                ${this.showTimestamp
                                   ? html`<div class="time">
                                       <slot name="time"></slot>
                                     </div>`
@@ -253,7 +253,7 @@ export class ObcTopbarMessageItem extends LitElement {
                             `
                           : nothing}
                       </div>
-                      ${!this.hideDescription
+                      ${this.showDescription
                         ? html`<div class="description">
                             <slot name="description"></slot>
                           </div>`
@@ -263,7 +263,7 @@ export class ObcTopbarMessageItem extends LitElement {
                   ${!isLarge
                     ? html`
                         <div class="timestamp-container">
-                          ${!this.hideTimestamp
+                          ${this.showTimestamp
                             ? html`<div class="time">
                                 <slot name="time"></slot>
                               </div>`

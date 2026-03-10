@@ -32,7 +32,7 @@ const meta: Meta<EventListStoryArgs> = {
   component: 'obc-event-list',
   decorators: [widthDecorator],
   argTypes: {
-    hideHeader: {
+    showHeader: {
       control: 'boolean',
     },
     date: {
@@ -51,7 +51,7 @@ const meta: Meta<EventListStoryArgs> = {
   },
   args: {
     width: 320,
-    hideHeader: false,
+    showHeader: true,
     date: new Date(2025, 0, 11), // January 11, 2025 (Saturday)
     events: sampleEvents,
   },
@@ -66,7 +66,7 @@ export const Primary: Story = {
 
 export const WithoutHeader: Story = {
   args: {
-    hideHeader: true,
+    showHeader: false,
   },
 };
 

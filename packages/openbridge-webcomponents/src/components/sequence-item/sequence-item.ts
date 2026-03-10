@@ -70,8 +70,10 @@ export class ObcSequenceItem extends LitElement {
   @property({type: String}) stepType: SequenceType = SequenceType.small;
   @property({type: String}) stepStyle: SequenceStyle = SequenceStyle.point;
   @property({type: String}) stepValue?: SequenceValue;
-  @property({type: Boolean}) hideStepInputConnector = false;
-  @property({type: Boolean}) hideStepOutputConnector = false;
+  @property({type: Boolean, attribute: false}) showStepInputConnector: boolean =
+    true;
+  @property({type: Boolean, attribute: false})
+  showStepOutputConnector: boolean = true;
   @property({type: Boolean}) stepHasIcon = false;
 
   static override styles = unsafeCSS(style);
@@ -194,9 +196,10 @@ export class ObcSequenceItem extends LitElement {
       'sequence-item__wrapper--multi-line':
         this.labelType === SequenceItemLabelType.multiLine,
       'sequence-item__wrapper--has-description': this.hasDescription,
-      'sequence-item__wrapper--no-input-connector': this.hideStepInputConnector,
+      'sequence-item__wrapper--no-input-connector':
+        !this.showStepInputConnector,
       'sequence-item__wrapper--no-output-connector':
-        this.hideStepOutputConnector,
+        !this.showStepOutputConnector,
     };
 
     const meta = this.renderMeta();

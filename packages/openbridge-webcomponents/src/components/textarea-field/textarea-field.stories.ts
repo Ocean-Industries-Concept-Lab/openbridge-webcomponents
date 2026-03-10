@@ -19,9 +19,9 @@ const meta: Meta<typeof ObcTextareaField> = {
     disabled: false,
     error: false,
     required: false,
-    hideLabel: false,
-    hideToolbar: false,
-    hideVoiceRecording: false,
+    showLabel: true,
+    showToolbar: true,
+    showVoiceRecording: true,
     hasLeadingIcon: false,
     recording: false,
     recordingDuration: 0,
@@ -68,15 +68,15 @@ const meta: Meta<typeof ObcTextareaField> = {
       control: {type: 'boolean'},
       description: 'Shows required indicator next to label',
     },
-    hideLabel: {
+    showLabel: {
       control: {type: 'boolean'},
       description: 'Hides the label',
     },
-    hideToolbar: {
+    showToolbar: {
       control: {type: 'boolean'},
       description: 'Hides the toolbar buttons',
     },
-    hideVoiceRecording: {
+    showVoiceRecording: {
       control: {type: 'boolean'},
       description: 'Hides the voice recording button',
     },
@@ -136,9 +136,9 @@ const meta: Meta<typeof ObcTextareaField> = {
       ?disabled=${args.disabled}
       ?error=${args.error}
       ?required=${args.required}
-      ?hideLabel=${args.hideLabel}
-      ?hideToolbar=${args.hideToolbar}
-      ?hideVoiceRecording=${args.hideVoiceRecording}
+      .showLabel=${args.showLabel}
+      .showToolbar=${args.showToolbar}
+      .showVoiceRecording=${args.showVoiceRecording}
       ?hasLeadingIcon=${args.hasLeadingIcon}
       ?recording=${args.recording}
       .recordingDuration=${args.recordingDuration ?? 0}
@@ -164,7 +164,7 @@ export const Default: Story = {
     placeholder: 'Enter description...',
     value:
       'This is a rich text field with toolbar and voice recording enabled.',
-    hideToolbar: false,
+    showToolbar: true,
   },
 };
 
@@ -172,7 +172,7 @@ export const Empty: Story = {
   args: {
     type: TextareaFieldType.Rich,
     placeholder: 'Type your text here...',
-    hideToolbar: true,
+    showToolbar: false,
   },
 };
 
@@ -181,7 +181,7 @@ export const Filled: Story = {
     type: TextareaFieldType.Rich,
     value: 'This is some text content in the rich text field.',
     placeholder: 'Type your text here...',
-    hideToolbar: true,
+    showToolbar: false,
   },
 };
 
@@ -194,7 +194,7 @@ export const WithLabel: Story = {
     type: TextareaFieldType.Rich,
     label: 'Description',
     placeholder: 'Enter description...',
-    hideToolbar: true,
+    showToolbar: false,
   },
 };
 
@@ -204,7 +204,7 @@ export const WithLabelRequired: Story = {
     label: 'Description',
     placeholder: 'Enter description...',
     required: true,
-    hideToolbar: true,
+    showToolbar: false,
   },
 };
 
@@ -217,7 +217,7 @@ export const WithToolbar: Story = {
     type: TextareaFieldType.Rich,
     label: 'Description',
     placeholder: 'Type your text here...',
-    hideToolbar: false,
+    showToolbar: true,
   },
 };
 
@@ -232,7 +232,7 @@ export const ErrorState: Story = {
     error: true,
     errorText: 'This field is required',
     value: '',
-    hideToolbar: true,
+    showToolbar: false,
   },
 };
 
@@ -242,7 +242,7 @@ export const Disabled: Story = {
     label: 'Description',
     disabled: true,
     placeholder: 'This field is disabled...',
-    hideToolbar: true,
+    showToolbar: false,
   },
 };
 
@@ -537,8 +537,8 @@ if (!customElements.get('obc-textarea-demo-message')) {
               .type=${args.type ?? TextareaFieldType.Message}
               .label=${args.label ?? ''}
               .placeholder=${args.placeholder ?? 'Type a message...'}
-              ?hideToolbar=${args.hideToolbar}
-              ?hideVoiceRecording=${args.hideVoiceRecording}
+              .showToolbar=${args.showToolbar ?? true}
+              .showVoiceRecording=${args.showVoiceRecording ?? true}
               @voice-action=${(e: CustomEvent<VoiceActionDetail>) => {
                 switch (e.detail.action) {
                   case VoiceAction.Start:
@@ -689,8 +689,8 @@ if (!customElements.get('obc-textarea-demo-rich')) {
               .type=${args.type ?? TextareaFieldType.Rich}
               .label=${args.label ?? ''}
               .placeholder=${args.placeholder ?? 'Type your text...'}
-              ?hideToolbar=${args.hideToolbar}
-              ?hideVoiceRecording=${args.hideVoiceRecording}
+              .showToolbar=${args.showToolbar ?? true}
+              .showVoiceRecording=${args.showVoiceRecording ?? true}
               @voice-action=${(e: CustomEvent<VoiceActionDetail>) => {
                 switch (e.detail.action) {
                   case VoiceAction.Start:

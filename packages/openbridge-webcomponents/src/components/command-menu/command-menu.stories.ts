@@ -17,20 +17,20 @@ import '../../icons/icon-joystick.js';
  *   When `true` the wrapper slots a joystick icon and "Joystick" status;
  *   when `false` it slots a no-command icon and "NO CMD" status.
  *   Default: `false`.
- * @property {boolean} hideLocation - Forwarded to `<obc-command-menu>` to
+ * @property {boolean} showLocation - Forwarded to `<obc-command-menu>` to
  *   hide or show the command location slot. Default: `false`.
  *
  * @example
  * ```html
  * <command-menu-story-wrapper
  *   .inCommand=${true}
- *   .hideLocation=${false}
+ *   .showLocation=${true}
  * ></command-menu-story-wrapper>
  * ```
  */
 class CommandMenuStoryWrapper extends LitElement {
   @property({type: Boolean}) inCommand = false;
-  @property({type: Boolean}) hideLocation = false;
+  @property({type: Boolean, attribute: false}) showLocation: boolean = true;
 
   override createRenderRoot() {
     return this;
@@ -44,7 +44,7 @@ class CommandMenuStoryWrapper extends LitElement {
     return html`
       <obc-command-menu
         .inCommand=${this.inCommand}
-        .hideLocation=${this.hideLocation}
+        .showLocation=${this.showLocation}
         @change=${this.onCommandChange}
       >
         <div slot="command-icon">
@@ -73,13 +73,15 @@ const meta: Meta<typeof ObcCommandMenu> = {
   title: 'Application Components/Menus/Command Menu',
   tags: ['6.0'],
   component: 'obc-command-menu',
-  args: {},
+  args: {
+    showLocation: true,
+  },
 
   render: (args) => {
     return html`
       <command-menu-story-wrapper
         .inCommand=${args.inCommand}
-        .hideLocation=${args.hideLocation}
+        .showLocation=${args.showLocation}
       ></command-menu-story-wrapper>
     `;
   },

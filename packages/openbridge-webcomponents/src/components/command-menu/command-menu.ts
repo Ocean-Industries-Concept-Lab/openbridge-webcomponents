@@ -107,7 +107,7 @@ export class ObcCommandMenu extends LitElement {
    * Whether to display the location slot.
    * If true, the location is omitted from the menu.
    */
-  @property({type: Boolean}) hideLocation = false;
+  @property({type: Boolean, attribute: false}) showLocation: boolean = true;
 
   override render() {
     return html`
@@ -116,7 +116,7 @@ export class ObcCommandMenu extends LitElement {
           card: true,
           'in-command': this.inCommand,
           'no-command': !this.inCommand,
-          'has-location': !this.hideLocation,
+          'has-location': this.showLocation,
         })}
       >
         <div class="title-container">Command</div>
@@ -133,7 +133,7 @@ export class ObcCommandMenu extends LitElement {
                 <div class="command-description">
                   <slot name="command-description"></slot>
                 </div>
-                ${!this.hideLocation
+                ${this.showLocation
                   ? html` <div class="divider"></div>
                       <div class="command-location">
                         <slot name="command-location"></slot>

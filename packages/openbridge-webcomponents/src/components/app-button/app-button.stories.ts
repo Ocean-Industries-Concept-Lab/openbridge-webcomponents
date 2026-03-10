@@ -12,6 +12,7 @@ const meta: Meta<typeof ObcAppButton> = {
     size: AppButtonSize.Normal,
     icon: 'ship',
     label: 'Button',
+    showLabel: true,
   },
   argTypes: {
     icon: {
@@ -37,7 +38,7 @@ const meta: Meta<typeof ObcAppButton> = {
       .size=${args.size}
       ?checked=${args.checked}
       .label=${args.label}
-      ?hideLabel=${args.hideLabel}
+      .showLabel=${args.showLabel}
       ?integration=${args.integration}
       >${icon}</obc-app-button
     >`;
@@ -63,10 +64,10 @@ export const Small: Story = {
   },
 };
 
-export const SmallHidelabel: Story = {
+export const SmallHideLabel: Story = {
   args: {
     size: 'small',
-    hideLabel: true,
+    showLabel: false,
   },
 };
 

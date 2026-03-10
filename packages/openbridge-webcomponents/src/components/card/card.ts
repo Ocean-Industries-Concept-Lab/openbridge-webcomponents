@@ -78,7 +78,7 @@ import {customElement} from '../../decorator.js';
  */
 @customElement('obc-card')
 export class ObcCard extends LitElement {
-  @property({type: Boolean}) noTitle = false;
+  @property({type: Boolean, attribute: false}) showTitle: boolean = true;
   /**
    * Enables dialog mode. When true, the card acts as a button and opens a modal dialog on click.
    *
@@ -121,7 +121,7 @@ export class ObcCard extends LitElement {
     return html`
       <${wrapperTag} class=${classMap({wrapper: true, 'has-dialog': this.hasDialog})} @click=${this.openDialog}>
         ${
-          this.noTitle
+          !this.showTitle
             ? nothing
             : html`<div class="header">
                 <div></div>

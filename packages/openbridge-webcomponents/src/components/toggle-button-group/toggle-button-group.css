@@ -73,7 +73,7 @@
   align-items: flex-start;
 }
 
-::slotted([nodivider])::before {
+::slotted(:not([showdivider]))::before {
   content: none !important;
 }
 

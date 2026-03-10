@@ -1,5 +1,5 @@
 import React, { useReducer, useEffect } from "react";
-import { ObcPoiTarget } from "../../openbridge-webcomponents-react/ar/poi-target/poi-target";
+import { ObcPoiData } from "../../openbridge-webcomponents-react/ar/poi-data/poi-data";
 import "./PoiTargetsWrapper.css";
 
 const UPDATE_HEIGHTS = "UPDATE_HEIGHTS";
@@ -61,7 +61,7 @@ function PoiTargetsWrapper({
         height: randomHeight,
         incrementing: Math.random() >= 0.5,
       };
-    })
+    }),
   );
 
   useEffect(() => {
@@ -78,7 +78,7 @@ function PoiTargetsWrapper({
       style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}
     >
       {poiTargets.map((poi) => (
-        <ObcPoiTarget key={poi.id} height={poi.height} />
+        <ObcPoiData key={poi.id} y={poi.height} />
       ))}
     </div>
   );
