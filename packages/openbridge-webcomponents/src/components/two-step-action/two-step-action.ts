@@ -22,7 +22,8 @@ export type ObcTwoStepActionChangeEvent = CustomEvent<{
 const LABEL_BOUNCE_DURATION_MS = 220;
 const ARMED_HINT_DURATION_MS = 1600;
 const ARMED_SLIDE_DURATION_MS = 900;
-const SWIPE_COMPLETE_TO_ACTIVE_MS = 220;
+const SWIPE_COMPLETE_TO_ACTIVE_MS = 900;
+const THUMB_DRAG_GROWTH_FACTOR = 0.4146;
 
 /** Two-step action control: `enabled` -> `armed` -> `active`, with auto-reset from `armed`. */
 @customElement('obc-two-step-action')
@@ -40,21 +41,28 @@ export class ObcTwoStepAction extends LitElement {
   @state() private disarmSlide = false;
   @state() private thumbDragX = 0;
   @state() private thumbDragging = false;
-  @state() private thumbCompleting = false;
+  @state() private swipeArmedPhase = false;
   private labelBounceTimeout?: number;
   private armedResetTimeout?: number;
   private armedHintTimeout?: number;
   private armedSlideTimeout?: number;
   private disarmSlideTimeout?: number;
-  private thumbCompleteTimeout?: number;
+  private swipeArmedToActiveTimeout?: number;
   private thumbDragPointerId?: number;
   private thumbDragStartX = 0;
   private thumbDragMaxX = 0;
-  private thumbDragThumbWidth = 0;
-  private thumbDragVisibleWidth = 0;
+  private thumbDragCompleteX = 0;
   private thumbDragScaleX = 1;
   private thumbDragMoved = false;
   private suppressNextClick = false;
+
+  private getButtonStrokeWidthPx() {
+    const raw = getComputedStyle(this).getPropertyValue(
+      '--ui-components-button-stroke-weight'
+    );
+    const parsed = Number.parseFloat(raw);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
 
   private getNextState(current: ObcTwoStepActionState) {
     switch (current) {
@@ -72,6 +80,14 @@ export class ObcTwoStepAction extends LitElement {
     return label && label.length > 0 ? label : 'Action';
   }
 
+  private isClickOnClass(event: Event, className: string) {
+    const path = event.composedPath();
+    return path.some(
+      (node) =>
+        node instanceof HTMLElement && node.classList.contains(className)
+    );
+  }
+
   private triggerLabelBounce() {
     this.labelBounce = false;
     window.requestAnimationFrame(() => {
@@ -84,19 +100,11 @@ export class ObcTwoStepAction extends LitElement {
   }
 
   private isLabelClick(event: Event) {
-    const path = event.composedPath();
-    return path.some((node) => {
-      if (!(node instanceof HTMLElement)) return false;
-      return node.classList.contains('state-container');
-    });
+    return this.isClickOnClass(event, 'state-container');
   }
 
   private isThumbClick(event: Event) {
-    const path = event.composedPath();
-    return path.some((node) => {
-      if (!(node instanceof HTMLElement)) return false;
-      return node.classList.contains('thumb-container');
-    });
+    return this.isClickOnClass(event, 'thumb-container');
   }
 
   private dispatchChange(previousState: ObcTwoStepActionState) {
@@ -114,9 +122,19 @@ export class ObcTwoStepAction extends LitElement {
     this.armedResetTimeout = undefined;
   }
 
-  private clearThumbCompleteTimer() {
-    window.clearTimeout(this.thumbCompleteTimeout);
-    this.thumbCompleteTimeout = undefined;
+  private clearArmedHintTimer() {
+    window.clearTimeout(this.armedHintTimeout);
+    this.armedHintTimeout = undefined;
+  }
+
+  private clearArmedSlideTimer() {
+    window.clearTimeout(this.armedSlideTimeout);
+    this.armedSlideTimeout = undefined;
+  }
+
+  private clearSwipeArmedToActiveTimer() {
+    window.clearTimeout(this.swipeArmedToActiveTimeout);
+    this.swipeArmedToActiveTimeout = undefined;
   }
 
   private clearDisarmSlideTimer() {
@@ -136,6 +154,7 @@ export class ObcTwoStepAction extends LitElement {
     if (
       this.disabled ||
       this.state !== ObcTwoStepActionState.armed ||
+      this.swipeArmedToActiveTimeout !== undefined ||
       this.armedResetDelay <= 0
     ) {
       return;
@@ -159,7 +178,7 @@ export class ObcTwoStepAction extends LitElement {
     this.armedHint = false;
     window.requestAnimationFrame(() => {
       this.armedHint = true;
-      window.clearTimeout(this.armedHintTimeout);
+      this.clearArmedHintTimer();
       this.armedHintTimeout = window.setTimeout(() => {
         this.armedHint = false;
       }, hintDurationMs);
@@ -169,7 +188,7 @@ export class ObcTwoStepAction extends LitElement {
 
   private triggerArmedSlide() {
     this.armedSlide = true;
-    window.clearTimeout(this.armedSlideTimeout);
+    this.clearArmedSlideTimer();
     this.armedSlideTimeout = window.setTimeout(() => {
       this.armedSlide = false;
     }, ARMED_SLIDE_DURATION_MS);
@@ -188,6 +207,9 @@ export class ObcTwoStepAction extends LitElement {
     if (nextState === this.state) return;
 
     const previousState = this.state;
+    if (nextState === ObcTwoStepActionState.active) {
+      this.swipeArmedPhase = false;
+    }
     this.state = nextState;
     if (nextState === ObcTwoStepActionState.active) {
       this.dispatchChange(previousState);
@@ -196,7 +218,6 @@ export class ObcTwoStepAction extends LitElement {
 
   private handleClick(event: MouseEvent) {
     if (this.disabled) return;
-    if (this.thumbCompleting) return;
     if (this.suppressNextClick) {
       this.suppressNextClick = false;
       return;
@@ -229,7 +250,7 @@ export class ObcTwoStepAction extends LitElement {
     this.advanceState();
   }
 
-  private stopThumbDrag(target?: HTMLElement, keepPosition = false) {
+  private stopThumbDrag(target?: HTMLElement) {
     if (target && this.thumbDragPointerId !== undefined) {
       try {
         if (target.hasPointerCapture(this.thumbDragPointerId)) {
@@ -241,39 +262,39 @@ export class ObcTwoStepAction extends LitElement {
     }
 
     this.thumbDragging = false;
-    if (!keepPosition) this.thumbDragX = 0;
+    this.thumbDragX = 0;
     this.thumbDragPointerId = undefined;
     this.thumbDragMoved = false;
     this.thumbDragStartX = 0;
     this.thumbDragMaxX = 0;
-    this.thumbDragThumbWidth = 0;
-    this.thumbDragVisibleWidth = 0;
+    this.thumbDragCompleteX = 0;
     this.thumbDragScaleX = 1;
   }
 
-  private tryAdvanceToActiveByDrag() {
+  private armThenAutoAdvanceToActiveByDrag() {
     if (this.state !== ObcTwoStepActionState.enabled || this.disabled) return;
 
-    const previousState = this.state;
-    this.state = ObcTwoStepActionState.active;
-    this.dispatchChange(previousState);
-    this.suppressNextClick = false;
+    this.swipeArmedPhase = true;
+    this.state = ObcTwoStepActionState.armed;
+    this.clearSwipeArmedToActiveTimer();
+    this.swipeArmedToActiveTimeout = window.setTimeout(() => {
+      if (this.disabled || this.state !== ObcTwoStepActionState.armed) return;
+      const previousState = this.state;
+      this.swipeArmedPhase = false;
+      this.thumbDragX = 0;
+      this.state = ObcTwoStepActionState.active;
+      this.dispatchChange(previousState);
+      this.clearSwipeArmedToActiveTimer();
+      this.suppressNextClick = false;
+    }, SWIPE_COMPLETE_TO_ACTIVE_MS);
   }
 
   private completeThumbDragToActive(target: HTMLElement) {
     const completionX = this.thumbDragMaxX;
-    this.stopThumbDrag(target, true);
-    this.thumbCompleting = true;
+    this.stopThumbDrag(target);
+    this.thumbDragX = completionX;
     this.suppressNextClick = true;
-    window.requestAnimationFrame(() => {
-      this.thumbDragX = completionX;
-    });
-    this.clearThumbCompleteTimer();
-    this.thumbCompleteTimeout = window.setTimeout(() => {
-      this.thumbCompleting = false;
-      this.thumbDragX = 0;
-      this.tryAdvanceToActiveByDrag();
-    }, SWIPE_COMPLETE_TO_ACTIVE_MS);
+    this.armThenAutoAdvanceToActiveByDrag();
   }
 
   private handleThumbPointerDown(event: PointerEvent) {
@@ -292,17 +313,23 @@ export class ObcTwoStepAction extends LitElement {
     if (!visible) return;
 
     const visibleRect = visible.getBoundingClientRect();
-    const visibleWidth = visible.offsetWidth || 1;
+    const visibleWidth = visible.offsetWidth;
+    const safeVisibleWidth = visibleWidth || 1;
 
     this.thumbDragPointerId = event.pointerId;
     this.thumbDragStartX = event.clientX;
-    this.thumbDragThumbWidth = thumb.offsetWidth;
-    this.thumbDragVisibleWidth = visible.offsetWidth;
-    this.thumbDragMaxX = Math.max(
+    const thumbWidth = thumb.offsetWidth;
+    const buttonStrokeWidth = this.getButtonStrokeWidthPx();
+    const dragSpace = Math.max(
       0,
-      this.thumbDragVisibleWidth - this.thumbDragThumbWidth
+      visibleWidth - thumbWidth - buttonStrokeWidth
     );
-    this.thumbDragScaleX = Math.max(0.01, visibleRect.width / visibleWidth);
+    this.thumbDragMaxX = dragSpace;
+    this.thumbDragCompleteX = Math.min(
+      this.thumbDragMaxX,
+      dragSpace / (1 + THUMB_DRAG_GROWTH_FACTOR)
+    );
+    this.thumbDragScaleX = Math.max(0.01, visibleRect.width / safeVisibleWidth);
     this.thumbDragMoved = false;
     this.thumbDragX = 0;
     this.thumbDragging = true;
@@ -330,10 +357,7 @@ export class ObcTwoStepAction extends LitElement {
     this.thumbDragX = nextDragX;
     if (nextDragX > 3) this.thumbDragMoved = true;
 
-    const thumbCenterX = nextDragX + this.thumbDragThumbWidth / 2;
-    const parentMidX = this.thumbDragVisibleWidth / 2;
-
-    if (thumbCenterX >= parentMidX) {
+    if (nextDragX >= this.thumbDragCompleteX) {
       const thumb = event.currentTarget as HTMLElement;
       this.completeThumbDragToActive(thumb);
     }
@@ -396,25 +420,18 @@ export class ObcTwoStepAction extends LitElement {
     }
 
     if (this.state !== ObcTwoStepActionState.armed) {
+      this.swipeArmedPhase = false;
       this.armedHint = false;
-      window.clearTimeout(this.armedHintTimeout);
-      this.armedHintTimeout = undefined;
+      this.clearArmedHintTimer();
 
       this.armedSlide = false;
-      window.clearTimeout(this.armedSlideTimeout);
-      this.armedSlideTimeout = undefined;
+      this.clearArmedSlideTimer();
+      this.clearSwipeArmedToActiveTimer();
     }
 
     if (this.state !== ObcTwoStepActionState.enabled) {
       this.disarmSlide = false;
-      window.clearTimeout(this.disarmSlideTimeout);
-      this.disarmSlideTimeout = undefined;
-    }
-
-    if (this.state !== ObcTwoStepActionState.enabled && this.thumbCompleting) {
-      this.thumbCompleting = false;
-      this.thumbDragX = 0;
-      this.clearThumbCompleteTimer();
+      this.clearDisarmSlideTimer();
     }
   }
 
@@ -437,7 +454,7 @@ export class ObcTwoStepAction extends LitElement {
           'armed-slide': this.armedSlide,
           'disarm-slide': this.disarmSlide,
           'thumb-dragging': this.thumbDragging,
-          'thumb-completing': this.thumbCompleting,
+          'swipe-armed-phase': this.swipeArmedPhase,
         })}
         ?disabled=${this.disabled}
         @click=${this.handleClick}
@@ -447,6 +464,7 @@ export class ObcTwoStepAction extends LitElement {
         aria-pressed=${isActive ? 'true' : 'false'}
       >
         <div class="visible-wrapper" part="visible-wrapper">
+          <div class="active-layer" part="active-layer"></div>
           <div class="segments-track" part="segments-track">
             <div class="thumb-preview" part="thumb-preview">
               <div class="thumb-visible" part="thumb-preview-visible">
@@ -460,7 +478,6 @@ export class ObcTwoStepAction extends LitElement {
               class=${classMap({
                 'thumb-container': true,
                 'thumb-dragging': this.thumbDragging,
-                'thumb-completing': this.thumbCompleting,
               })}
               part="thumb-container"
               @pointerdown=${this.handleThumbPointerDown}
@@ -494,6 +511,8 @@ export class ObcTwoStepAction extends LitElement {
             </obc-button>
           </div>
 
+          <span class="active-label" part="active-label">${actionLabel}</span>
+
           <div class="state-segment" part="state-segment">
             <obi-check-google class="icon"></obi-check-google>
           </div>
@@ -506,10 +525,10 @@ export class ObcTwoStepAction extends LitElement {
     super.disconnectedCallback();
     window.clearTimeout(this.labelBounceTimeout);
     this.clearArmedResetTimer();
-    window.clearTimeout(this.armedHintTimeout);
-    window.clearTimeout(this.armedSlideTimeout);
+    this.clearArmedHintTimer();
+    this.clearArmedSlideTimer();
     this.clearDisarmSlideTimer();
-    this.clearThumbCompleteTimer();
+    this.clearSwipeArmedToActiveTimer();
   }
 
   static override styles = unsafeCSS(componentStyle);
