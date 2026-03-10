@@ -9,6 +9,7 @@ import {
   LinearAdviceRaw,
 } from '../../building-blocks/instrument-linear/advice.js';
 import {AdviceState} from '../watch/advice.js';
+import {Priority} from '../types.js';
 
 @customElement('obc-depth-actual')
 export class ObcDepthActual extends LitElement {
@@ -18,10 +19,10 @@ export class ObcDepthActual extends LitElement {
   @property({type: Number}) vesselScale = 1;
 
   @property({type: Number}) instrumentRange = 10;
-  @property({type: Number}) primaryTickbarsInterval = 50;
-  @property({type: Number}) secondaryTickbarsInterval = 10;
+  @property({type: Number}) primaryTickmarkInterval = 50;
+  @property({type: Number}) secondaryTickmarkInterval = 10;
   @property({type: String}) vesselImage: VesselImage = VesselImage.psvFore;
-  @property({type: Boolean}) enhanced = false;
+  @property({type: String}) priority: Priority = Priority.regular;
 
   private _toValue(value: number) {
     return -value;
@@ -58,9 +59,10 @@ export class ObcDepthActual extends LitElement {
     const seabed = svg`
     <rect fill="url(#seabedPattern)" y=${this._toTranslatedValue(this.depth)} x=${-this._boxWidth / 2} width=${this._boxWidth - this._gaugeWidth} height=${this._toTranslatedValue(this.instrumentRange - this.depth)} fill="red" />
     `;
-    const darkColor = this.enhanced
-      ? 'var(--instrument-enhanced-secondary-color)'
-      : 'var(--instrument-regular-secondary-color)';
+    const darkColor =
+      this.priority === Priority.enhanced
+        ? 'var(--instrument-enhanced-secondary-color)'
+        : 'var(--instrument-regular-secondary-color)';
 
     const vesselScale = (this.vesselScale * 50) / this.instrumentRange;
 
@@ -100,11 +102,10 @@ export class ObcDepthActual extends LitElement {
                 value: this._toValue(this.depth),
               },
               {container: 'var(--instrument-frame-primary-color)'},
-              {hideContainer: false, off: false, enhanced: this.enhanced},
+              {hideContainer: false, off: false, priority: this.priority},
               {
-                mainTickbar: false,
-                primaryTickbarsInterval: this.primaryTickbarsInterval,
-                secondaryTickbarsInterval: this.secondaryTickbarsInterval,
+                primaryTickmarkInterval: this.primaryTickmarkInterval,
+                secondaryTickmarkInterval: this.secondaryTickmarkInterval,
               },
               this._getAdvice()
             )}

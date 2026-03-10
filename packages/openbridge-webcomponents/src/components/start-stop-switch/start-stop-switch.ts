@@ -307,6 +307,39 @@ export class ObcStartStopSwitch extends LitElement {
     if (this.buttonRef) this.resizeObserver.observe(this.buttonRef);
   }
 
+  override updated(changedProperties: Map<string, unknown>) {
+    super.updated(changedProperties);
+    // CSS Anchor Positioning (`right: anchor(center)`) on .button-track-checked
+    // may not repaint when the thumb moves via a CSS transition (checked property change).
+    // Force the browser to recalculate anchor positions after the transition completes.
+    if (changedProperties.has('checked') && !this.dragging) {
+      const trackChecked = this.renderRoot.querySelector(
+        '.button-track-checked'
+      ) as HTMLElement | null;
+      const button = this.buttonRef;
+      if (trackChecked && button) {
+        const nudgeRepaint = () => {
+          trackChecked.style.display = 'none';
+          // Force a synchronous layout recalculation
+          void trackChecked.offsetHeight;
+          trackChecked.style.display = '';
+        };
+        // Wait one frame for the browser to start any CSS transitions,
+        // then wait for all animations on the thumb to finish before nudging.
+        requestAnimationFrame(() => {
+          const animations = button.getAnimations();
+          if (animations.length > 0) {
+            Promise.allSettled(animations.map((a) => a.finished)).then(
+              nudgeRepaint
+            );
+          } else {
+            nudgeRepaint();
+          }
+        });
+      }
+    }
+  }
+
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.resizeObserver?.disconnect();

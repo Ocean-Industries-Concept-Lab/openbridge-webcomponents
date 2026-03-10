@@ -17,17 +17,21 @@ import {
   getSetpointAnimationDurationMs,
   getSetpointOutwardOffset,
   RADIAL_SETPOINT_RADIUS,
-  SetpointColorMode,
   SetpointVisualState,
   SETPOINT_ANIMATION_CSS_VAR,
   SETPOINT_ANIMATION_DURATION_DEFAULT,
 } from '../../svghelpers/setpoint.js';
-import {InstrumentState} from '../types.js';
+import {InstrumentState, Priority} from '../types.js';
 import compentStyle from './watch.css?inline';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {adviceMask, AngleAdviceRaw, renderAdvice} from './advice.js';
 import {Tickmark, TickmarkStyle, tickmark} from './tickmark.js';
-import {renderLabels} from './label.js';
+import {
+  renderLabels,
+  renderNorthArrow,
+  getLabelPositions,
+  LabelPosition,
+} from './label.js';
 import {VesselImage, VesselImageSize, vesselImages} from './vessel.js';
 import {renderCurrent, renderWind} from './environment.js';
 import {customElement} from '../../decorator.js';
@@ -103,7 +107,7 @@ const RADIAL_SETPOINT_INWARD_ADJUST = 4;
  * The `RADIAL_SETPOINT_INWARD_ADJUST` constant (4px) fine-tunes radial setpoint positioning
  * to match Figma designs, applied on top of visual state offsets from setpoint.ts.
  *
- * The `colorMode` property allows overriding the derived color mode (enhanced for inCommand,
+ * The `colorMode` property allows overriding the derived color mode (enhanced for enhanced priority,
  * regular for other states).
  *
  * ## Setpoint Animation (`animateSetpoint`)
@@ -121,19 +125,21 @@ const RADIAL_SETPOINT_INWARD_ADJUST = 4;
  * `_setpointCssAngle` tracks the accumulated CSS angle to avoid long-way-around
  * transitions across the 0°/360° boundary.
  *
- * @property {InstrumentState} state - Instrument state (inCommand, active, loading, off)
+ * @property {InstrumentState} state - Instrument state (active, loading, off)
+ * @property {Priority} priority - Color priority (enhanced = blue palette, regular = gray palette)
  * @property {number|undefined} angleSetpoint - Setpoint angle in degrees (0° = 12 o'clock)
  * @property {number|undefined} newAngleSetpoint - New setpoint being adjusted (focus mode)
  * @property {boolean} atAngleSetpoint - Whether value matches setpoint (within deadband)
  * @property {number} angleSetpointAtZeroDeadband - Deadband for zero detection (default 0.5°)
- * @property {SetpointColorMode|undefined} colorMode - Optional override for setpoint color mode
+ * @property {boolean} setpointOverride - Override to derive setpoint color from priority regardless of state
  */
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {
   private _setpointId = `watch-setpoint-${Math.random().toString(36).slice(2, 9)}`;
   private _newSetpointId = `watch-new-setpoint-${Math.random().toString(36).slice(2, 9)}`;
 
-  @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
+  @property({type: String}) state: InstrumentState = InstrumentState.active;
+  @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) watchCircleType: WatchCircleType =
     WatchCircleType.single;
   @property({type: Boolean}) northArrow: boolean = false;
@@ -141,7 +147,7 @@ export class ObcWatch extends LitElement {
   @property({type: Number}) newAngleSetpoint: number | undefined;
   @property({type: Boolean}) atAngleSetpoint: boolean = false;
   @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
-  @property({type: String}) colorMode: SetpointColorMode | undefined;
+  @property({type: Boolean}) setpointOverride: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
 
   @property({type: Boolean}) animateSetpoint: boolean = false;
@@ -166,7 +172,7 @@ export class ObcWatch extends LitElement {
   @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: Array, attribute: false}) advices: AngleAdviceRaw[] = [];
   @property({type: Boolean}) crosshairEnabled: boolean = false;
-  @property({type: Boolean}) labelFrameEnabled: boolean = false;
+  @property({type: Boolean}) showLabels: boolean = false;
   @property({type: Array, attribute: false}) vessels: WatchVessel[] = [];
   @property({type: Number}) wind: number | null = null;
   @property({type: Number}) windFromDirectionDeg: number | null = null;
@@ -318,26 +324,85 @@ export class ObcWatch extends LitElement {
     return result;
   }
 
-  private renderCrosshair(radius: number): SVGTemplateResult {
+  private renderCrosshair(
+    radius: number,
+    labelKnockouts?: {
+      positions: LabelPosition[];
+      rotation: number | undefined;
+      scale: number;
+      /** Inner ring radius – crosshair is hidden between labelRadius and this value. */
+      innerRingRadius: number;
+    }
+  ): SVGTemplateResult {
+    const hasMask = labelKnockouts && labelKnockouts.positions.length > 0;
+
+    // Radius at which labels sit (distance from centre).
+    // Any position is equally valid — they're all at the same radial distance.
+    const labelRadius = hasMask
+      ? Math.max(
+          ...labelKnockouts!.positions.map((l) =>
+            Math.abs(l.x !== 0 ? l.x : l.y)
+          )
+        )
+      : 0;
+    // Small extra padding so the crosshair doesn't start/end right at the
+    // label edge — use the same visual pad as the letter knockouts.
+    const ringGapPad = hasMask ? 3 / labelKnockouts!.scale : 0;
+
     return svg`
-      <line
-        x1="-${radius}"
-        y1="0"
-        x2="${radius}"
-        y2="0"
-        stroke="var(--instrument-frame-tertiary-color)"
-        stroke-width="1"
-        vector-effect="non-scaling-stroke"
-      />
-      <line
-        x1="0"
-        y1="-${radius}"
-        x2="0"
-        y2="${radius}"
-        stroke="var(--instrument-frame-tertiary-color)"
-        stroke-width="1"
-        vector-effect="non-scaling-stroke"
-      />
+      ${
+        hasMask
+          ? svg`
+        <defs>
+          <mask
+            id="crosshair-label-mask"
+            maskUnits="userSpaceOnUse"
+            x="-${radius}" y="-${radius}"
+            width="${radius * 2}" height="${radius * 2}"
+          >
+            <rect x="-${radius}" y="-${radius}" width="${radius * 2}" height="${radius * 2}" fill="white"/>
+            <!-- Annular ring knockout: hide crosshair between labels and inner ring -->
+            <circle cx="0" cy="0" r="${labelKnockouts!.innerRingRadius}" fill="black"/>
+            <circle cx="0" cy="0" r="${labelRadius - ringGapPad}" fill="white"/>
+            <!-- Per-label rectangular knockouts -->
+            ${labelKnockouts!.positions.map((l) => {
+              const fontSize = 12 / labelKnockouts!.scale;
+              const pad = 3 / labelKnockouts!.scale;
+              const size = fontSize + pad * 2;
+              return svg`
+                <rect
+                  x="${l.x - size / 2}" y="${l.y - size / 2}"
+                  width="${size}" height="${size}"
+                  fill="black"
+                  transform="rotate(${-(labelKnockouts!.rotation ?? 0)})"
+                  transform-origin="${l.x} ${l.y}"
+                />
+              `;
+            })}
+          </mask>
+        </defs>`
+          : nothing
+      }
+      <g mask=${hasMask ? 'url(#crosshair-label-mask)' : nothing}>
+        <line
+          x1="-${radius}"
+          y1="0"
+          x2="${radius}"
+          y2="0"
+          stroke="var(--instrument-frame-tertiary-color)"
+          stroke-width="1"
+          vector-effect="non-scaling-stroke"
+        />
+        <line
+          x1="0"
+          y1="-${radius}"
+          x2="0"
+          y2="${radius}"
+          stroke="var(--instrument-frame-tertiary-color)"
+          stroke-width="1"
+          vector-effect="non-scaling-stroke"
+        />
+      </g>
     `;
   }
 
@@ -451,7 +516,7 @@ export class ObcWatch extends LitElement {
         size: t.type,
         style: TickmarkStyle.hinted,
         scale,
-        text: t.text,
+        text: this.showLabels ? undefined : t.text,
         inside: this.tickmarksInside,
         textRadius,
         rotation: this.rotation,
@@ -462,8 +527,34 @@ export class ObcWatch extends LitElement {
     const advices = this.advices
       ? this.advices.map((a) => renderAdvice(a))
       : nothing;
-    const labels = this.labelFrameEnabled
-      ? renderLabels(scale, this.rotation)
+
+    // Compute label positions once – used for both rendering and crosshair knockout.
+    const insideLabels = this.tickmarksInside && this.showLabels;
+    const includeNorth = !this.northArrow;
+    const labelPositions = this.showLabels
+      ? getLabelPositions({
+          scale,
+          inside: this.tickmarksInside,
+          innerRadius: this.innerRingRadius,
+          includeNorth,
+        })
+      : undefined;
+
+    const labels = labelPositions
+      ? renderLabels({
+          scale,
+          rotation: this.rotation,
+          inside: this.tickmarksInside,
+          innerRadius: this.innerRingRadius,
+          includeNorth,
+        })
+      : nothing;
+    const northArrowEl = this.northArrow
+      ? renderNorthArrow({
+          scale,
+          rotation: this.rotation,
+          inside: this.tickmarksInside,
+        })
       : nothing;
     const wind =
       this.wind != null && this.windFromDirectionDeg != null
@@ -490,9 +581,21 @@ export class ObcWatch extends LitElement {
         transform="rotate(${this.rotation ?? 0})"
       >
         ${this.watchCircle()} ${this.renderBars()}
-        ${this.crosshairEnabled ? this.renderCrosshair(184) : nothing}
-        ${this.renderNorthArrow()} ${this.renderStarboardPortIndicator()}
-        ${current} ${wind} ${tickmarks} ${advices} ${angleSetpoint} ${labels}
+        ${this.crosshairEnabled
+          ? this.renderCrosshair(
+              184,
+              insideLabels && labelPositions
+                ? {
+                    positions: labelPositions,
+                    rotation: this.rotation,
+                    scale,
+                    innerRingRadius: this.innerRingRadius,
+                  }
+                : undefined
+            )
+          : nothing}
+        ${northArrowEl} ${this.renderStarboardPortIndicator()} ${current}
+        ${wind} ${tickmarks} ${advices} ${angleSetpoint} ${labels}
         ${this.renderVesselImage()} ${this.renderNeedles()}
       </svg>
     `;
@@ -505,15 +608,16 @@ export class ObcWatch extends LitElement {
 
     const derived = deriveRadialSetpointConfig({
       state: this.state,
+      priority: this.priority,
       atSetpoint: this.atAngleSetpoint,
       angleSetpoint: this.angleSetpoint,
       setpointAtZeroDeadband: this.angleSetpointAtZeroDeadband,
       newAngleSetpoint: this.newAngleSetpoint,
       touching: this.touching,
+      setpointOverride: this.setpointOverride,
     });
 
-    const colorMode = this.colorMode ?? derived.colorMode;
-    const {visualState, disabled, hasNewSetpoint} = derived;
+    const {visualState, colorMode, disabled, hasNewSetpoint} = derived;
 
     const outwardOffset = getSetpointOutwardOffset(visualState);
     const radius =
@@ -599,14 +703,6 @@ export class ObcWatch extends LitElement {
     return originalSetpoint;
   }
 
-  private renderNorthArrow(): SVGTemplateResult | typeof nothing {
-    if (!this.northArrow) {
-      return nothing;
-    }
-    return svg`
-<path transform="translate(-256, -256)" fill-rule="evenodd" clip-rule="evenodd" d="M238.152 96.9842L255.998 72L273.844 96.9839C267.985 96.3338 262.031 96 256 96C249.967 96 244.012 96.3339 238.152 96.9842Z" fill="var(--instrument-frame-tertiary-color)"/>
-    `;
-  }
   private renderVesselImage(): SVGTemplateResult[] | typeof nothing {
     if (this.vessels.length === 0) {
       return nothing;

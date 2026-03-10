@@ -5,7 +5,7 @@ import {ObcTextInputFieldSize} from '../text-input-field/text-input-field.js';
 import './keyboard-full.js';
 
 const meta: Meta<typeof ObcKeyboardFull> = {
-  title: 'Application Components/Input/Keyboard full',
+  title: 'Application Components/Input/Keyboard Full',
   tags: ['6.0'],
   component: 'obc-keyboard-full',
   parameters: {

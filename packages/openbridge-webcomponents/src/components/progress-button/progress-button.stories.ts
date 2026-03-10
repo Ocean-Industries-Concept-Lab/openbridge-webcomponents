@@ -26,7 +26,7 @@ interface ProgressButtonArgs {
 }
 
 const meta: Meta<typeof ObcProgressButton> = {
-  title: 'UI Components/Messages and notifications/Progress Button',
+  title: 'UI Components/Messages and Notifications/Progress Button',
   tags: ['6.0'],
   component: 'obc-progress-button',
   decorators: [
@@ -365,7 +365,7 @@ export const CircularWithLabelAndAlert: Story = {
 
 export const LinearProgressAnimation: Story = {
   name: 'Linear - Progress Animation Demo',
-  tags: ['skip-snapshot'],
+  tags: ['!snapshot'],
   args: {
     type: ProgressButtonType.Linear,
     buttonStyle: ButtonStyle.Raised,
@@ -415,7 +415,7 @@ export const LinearProgressAnimation: Story = {
 
 export const CircularProgressAnimation: Story = {
   name: 'Circular - Progress Animation Demo',
-  tags: ['skip-snapshot'],
+  tags: ['!snapshot'],
   args: {
     type: ProgressButtonType.Circular,
     buttonStyle: ButtonStyle.Raised,

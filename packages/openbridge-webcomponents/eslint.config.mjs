@@ -115,19 +115,29 @@ const openbridgePlugin = {
             if (node.value === undefined || node.value === null) return;
             if (node.value.type !== 'Literal') return;
             if (node.value.value !== true) return;
-            // Check if the property decorator has an attribute property set to false
+            // Only apply to @property()-decorated fields (plain class fields are exempt)
+            const propertyDecorator = node.decorators?.find(
+              (d) =>
+                d.expression?.type === 'CallExpression' &&
+                d.expression.callee?.type === 'Identifier' &&
+                d.expression.callee.name === 'property'
+            );
+            if (!propertyDecorator) return;
+            // Check if the property decorator has attribute: false — that's the
+            // accepted escape hatch for true-default booleans (see AGENTS.md § 2).
             const property =
-              node.decorators[0]?.expression?.arguments[0]?.properties?.find(
-                (p) => p.key.name === 'attribute'
+              propertyDecorator.expression?.arguments[0]?.properties?.find(
+                (p) =>
+                  p.type === 'Property' &&
+                  !p.computed &&
+                  p.key.type === 'Identifier' &&
+                  p.key.name === 'attribute'
               );
             const isBuildingBlock = context
               .getFilename()
               .includes('building-blocks');
             if (property?.value?.value === false) {
-              // Check if the file is in the building-blocks directory
-              if (isBuildingBlock) {
-                return;
-              }
+              return;
             }
             let message = 'Prefer boolean property default values of false';
             if (isBuildingBlock) {
@@ -179,8 +189,7 @@ const openbridgePlugin = {
 
             context.report({
               node,
-              message:
-                'Avoid string-literal union types; use an enum instead.',
+              message: 'Avoid string-literal union types; use an enum instead.',
             });
           },
 
