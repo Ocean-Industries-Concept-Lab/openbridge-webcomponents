@@ -11,21 +11,17 @@ import compentStyle from './scrollbar.css?inline';
  *
  * ## Features
  * - **Scrollbar thickness variants:** Supports `wide`, `normal`, and `thin` types to adapt to different UI density or accessibility needs.
- * - **Custom styling:** Scrollbar colors, thumb, track, and buttons are styled via CSS variables for easy theming.
- * - **Touch target optimization:** Ensures scrollbar handles are large enough for comfortable interaction, especially on touch devices.
- * - **Scroll to bottom method:** Exposes a `scrollToBottom()` method to programmatically scroll content to the end.
+ * - **Touch target optimization:** Ensures scrollbar handles are large enough for comfortable interaction, especially on touch devices where gloves are worn or for low sensitivity touch screens
  * - **Slot content:** Wraps any child content, making it flexible for lists, tables, or custom layouts.
  * - **Responsive:** Adapts to the container’s height and width, supporting both vertical and horizontal scrolling.
  *
  * ## Usage Guidelines
- * Use `obc-scrollbar` to provide a visually consistent and accessible scrolling experience for content that may overflow its container. Ideal for long lists, data tables, chat logs, or any area where default browser scrollbars are insufficient or inconsistent with the application’s design.
  *
- * Choose the `type` (wide, normal, thin) based on the context:
- * - **Wide:** Recommended for touch interfaces or when maximum accessibility is needed.
- * - **Normal:** Suitable for standard desktop use.
- * - **Thin:** For dense layouts where space is at a premium, but be mindful of accessibility.
+ * Choose the `type` (obc-wide-scrollbar, obc-normal-scrollbar, obc-thin-scrollbar) based on the context, note that this is not a property of the component, but a CSS class.
+ * - **obc-wide-scrollbar:** Recommended for touch interfaces where gloves are worn or for low sensitivity touch screens.
+ * - **obc-normal-scrollbar:** Suitable for touch interfaces where a scrollbar is used to navigate.
+ * - **obc-thin-scrollbar:** Suitable for desktop use or for touch interfaces where swipe gestures are used to navigate.
  *
- * **TODO(designer):** Confirm if there are recommended minimum/maximum heights or content types for optimal usability.
  *
  * ## Example
  * ```html
@@ -33,14 +29,9 @@ import compentStyle from './scrollbar.css?inline';
  *   <div style="height: 1000px; width: 100%; background: linear-gradient(blue, red);"></div>
  * </obc-scrollbar>
  * ```
- * In this example, the scrollbar wraps a tall div, enabling vertical scrolling with a wide, styled scrollbar.
  *
  * ## Best Practices
  * - Use only one scrollbar per scrollable region to avoid nested scrollbars, which can confuse users.
- * - For accessibility, prefer the `wide` type on touch devices or when targeting users who may need larger controls.
- * - Ensure the container has a fixed height or max-height to enable scrolling.
- * - Use the `scrollToBottom()` method to programmatically scroll to the end (e.g., for chat or log viewers).
- * - The component does not provide built-in keyboard navigation; ensure child content is keyboard accessible if needed.
  *
  * @slot - Default slot for scrollable content (renders all children inside the scrollable area)
  */
