@@ -13,12 +13,21 @@ const meta: Meta<typeof ObcScrollbar> = {
   argTypes: {
     type: {
       control: 'select',
-      options: ['wide', 'normal', 'thin'],
+      options: [
+        'obc-wide-scrollbar',
+        'obc-normal-scrollbar',
+        'obc-thin-scrollbar',
+      ],
+      description:
+        'Type of scrollbar NB: Add this as a CSS class to the scrollbar element, this is not a property of the component.',
+      table: {
+        category: 'CSS class',
+      },
     },
   },
   render: (args) => {
     return html`
-      <obc-scrollbar style="height: 500px" class="obc-${args.type}-scrollbar">
+      <obc-scrollbar style="height: 500px" class=${args.type}>
         <div
           style="height: 1000px; width: 100%; background: linear-gradient(blue, red);"
         ></div>
@@ -32,18 +41,18 @@ type Story = StoryObj<ObcScrollbar>;
 
 export const Wide: Story = {
   args: {
-    type: 'wide',
+    type: 'obc-wide-scrollbar',
   },
 };
 
 export const Normal: Story = {
   args: {
-    type: 'normal',
+    type: 'obc-normal-scrollbar',
   },
 };
 
 export const Thin: Story = {
   args: {
-    type: 'thin',
+    type: 'obc-thin-scrollbar',
   },
 };
