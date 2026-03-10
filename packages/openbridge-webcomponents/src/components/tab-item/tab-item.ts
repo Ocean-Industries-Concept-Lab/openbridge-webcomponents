@@ -31,7 +31,7 @@ import {BadgeSize, BadgeType} from '../badge/badge.js';
  * ### Variants and Configuration
  * - **Badge Types:** Supports all badge types from `obc-badge` (e.g., `alarm`, `warning`, `notification`, etc.).
  * - **Badge Sizes:** Regular and large badge sizes.
- * - **Hide Badge Number:** Optionally hide the badge number for status-only badges.
+ * - **Badge Number Toggle:** Optionally hide the badge number via `badgeShowNumber` for status-only badges.
  * - **Show Leading Badge Icon:** Optionally display an icon within the badge.
  *
  * ### Usage Guidelines
@@ -192,9 +192,9 @@ export class ObcTabItem extends LitElement {
   @property({type: String}) badgeSize: string = BadgeSize.regular;
 
   /**
-   * Hides the badge's numeric value, showing only the badge background (for status-only badges).
+   * Shows the badge's numeric value. When false, only the badge background is rendered (for status-only badges).
    *
-   * Default: false
+   * Default: true
    */
   @property({type: Boolean, attribute: false}) badgeShowNumber: boolean = true;
 
