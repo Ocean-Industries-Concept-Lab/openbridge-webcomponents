@@ -365,7 +365,6 @@ export class ObcSlider extends LitElement {
         const expectedValue =
           this.animationStartValue + direction * range * expectedProgress;
         // Snap to step
-        nextValue = this.animationStartValue;
         if (direction > 0) {
           nextValue =
             step === undefined

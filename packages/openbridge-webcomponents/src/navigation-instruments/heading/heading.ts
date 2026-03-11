@@ -73,7 +73,7 @@ export class ObcHeading extends LitElement {
     const size = Math.min(this.clientHeight, this.clientWidth);
     const deltaWidth = 512 - size;
     const steps = deltaWidth / 128;
-    let deltaPadding = 0;
+    let deltaPadding;
     if (deltaWidth > 0) {
       deltaPadding = steps * 48;
     } else {

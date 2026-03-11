@@ -5,7 +5,6 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import js from '@eslint/js';
 import {FlatCompat} from '@eslint/eslintrc';
-import fileExtension from 'eslint-plugin-file-extension-in-import-ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -53,7 +52,7 @@ const customElementPlugin = {
                     'customElement should be imported from local src/decorator.js',
                   fix(fixer) {
                     const fixes = [];
-                    const sourceFile = context.getFilename();
+                    const sourceFile = context.filename;
                     const relativePathToDecorator = path
                       .relative(
                         path.dirname(sourceFile),
@@ -133,9 +132,9 @@ const openbridgePlugin = {
                   p.key.type === 'Identifier' &&
                   p.key.name === 'attribute'
               );
-            const isBuildingBlock = context
-              .getFilename()
-              .includes('building-blocks');
+            const isBuildingBlock =
+              typeof context.filename === 'string' &&
+              context.filename.includes('building-blocks');
             if (property?.value?.value === false) {
               return;
             }
@@ -249,7 +248,6 @@ export default [
   {
     plugins: {
       '@typescript-eslint': typescriptEslint,
-      'file-extension-in-import-ts': fileExtension,
       'custom-element': customElementPlugin,
       openbridge: openbridgePlugin,
     },
@@ -279,10 +277,12 @@ export default [
           argsIgnorePattern: '^_',
         },
       ],
-      'file-extension-in-import-ts/file-extension-in-import-ts': 'error',
       'custom-element/prefer-local-decorator': 'error',
       'openbridge/prefer-enum-over-string-literal-union': 'error',
       'openbridge/prefer-boolean-property-default-false': 'error',
+      // Disabled because eslint-plugin-file-extension-in-import-ts is not yet
+      // compatible with ESLint v10 (it still uses deprecated context methods).
+      'file-extension-in-import-ts/file-extension-in-import-ts': 'off',
     },
   },
   {
