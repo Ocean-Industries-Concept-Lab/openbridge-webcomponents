@@ -1458,7 +1458,7 @@ function generateBarContainer(
         const isRight = config.side === 'right';
 
         // Stroke path excludes the edge touching the scale
-        let strokePath = '';
+        let strokePath: string;
         if (isRight) {
           // Exclude right edge (touching scale on right side)
           strokePath = `M ${rectX} ${rectY + (noCornersRounded ? 0 : r)} L ${rectX} ${rectY + rectHeight - (noCornersRounded ? 0 : r)}`; // Left edge
@@ -1537,7 +1537,7 @@ function generateBarContainer(
       const isRight = config.side === 'right';
 
       // Stroke path excludes the edge touching the scale
-      let strokePath = '';
+      let strokePath: string;
       if (isRight) {
         // Exclude right edge
         strokePath = `M ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
@@ -1637,7 +1637,7 @@ function generateBarContainer(
       const isBottom = config.side === 'bottom';
 
       // Stroke path excludes the edge touching the scale
-      let strokePath = '';
+      let strokePath: string;
       if (isBottom) {
         // Exclude bottom edge (touching scale on bottom side)
         strokePath = `M ${rectX + (noCornersRounded ? 0 : r)} ${rectY}`; // Top edge start
@@ -1717,7 +1717,7 @@ function generateBarContainer(
     const isBottom = config.side === 'bottom';
 
     // Stroke path excludes the edge touching the scale
-    let strokePath = '';
+    let strokePath: string;
     if (isBottom) {
       // Exclude bottom edge
       strokePath = `M ${x + (shouldRoundTopLeft ? r : 0)} ${y}`;

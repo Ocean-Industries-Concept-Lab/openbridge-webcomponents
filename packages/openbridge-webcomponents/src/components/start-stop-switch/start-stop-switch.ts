@@ -229,7 +229,7 @@ export class ObcStartStopSwitch extends LitElement {
 
   private onDragMove = (e: MouseEvent | TouchEvent) => {
     if (!this.dragging) return;
-    let clientX = 0;
+    let clientX;
     if (e instanceof MouseEvent) {
       clientX = e.clientX;
     } else {

@@ -131,7 +131,7 @@ function textSvg(
   scale: number,
   textRadius: number
 ) {
-  let positionClass = 'top';
+  let positionClass;
   if (angle === 0) {
     positionClass = 'top';
   } else if (angle < 180 && angle > 0) {
