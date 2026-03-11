@@ -230,7 +230,7 @@ export const NoShelf: Story = {
 };
 
 export const AcknowledgmentTest: Story = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   args: {
     hasShelved: true,
     selectedMode: AlertListMode.UNACKED,
@@ -265,7 +265,7 @@ export const AcknowledgmentTest: Story = {
 };
 
 export const AckAllTest: Story = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   args: {
     selectedMode: AlertListMode.UNACKED,
   },
@@ -304,7 +304,7 @@ export const AckAllTest: Story = {
 };
 
 export const MakeEmptyTest: Story = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   args: {
     selectedMode: AlertListMode.UNACKED,
   },

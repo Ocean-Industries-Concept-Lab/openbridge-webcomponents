@@ -116,7 +116,7 @@ export const CustomColors: Story = {
 
 export const Realtime: Story = {
   name: 'Realtime radial bar',
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   args: {
     fixedHeight: 320,
   },

@@ -1413,7 +1413,7 @@ export const GaugeTrend: Story = {
  * This story demonstrates both modes side-by-side with resizable containers.
  */
 export const FixedAspectRatioComparison: StoryObj = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   render: () => {
     const wrapper = document.createElement('div');
     wrapper.style.cssText = `

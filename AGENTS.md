@@ -253,7 +253,7 @@ Required modifications after pasting:
 5. **Run `npm run analyze`** after adding or renaming a `@customElement` to keep `custom-elements.json` in sync.
 6. **Run `npm run lint`** after code changes to catch issues early.
 7. **Insert `TODO(designer)`** for any documentation detail whose purpose is unclear from code alone.
-8. **Keep stories tagged** with `['autodocs', '6.0']` for documented OB 6.0 components; `['alpha']` for in-development; `['!snapshot']` to exclude from visual tests.
+8. **Keep stories tagged** with `['autodocs', '6.0']` for documented OB 6.0 components; `['alpha']` for in-development; `['skip-test']` to exclude from visual tests.
 9. **Do not run full builds or start Storybook automatically.** Avoid `npm run build`, `npm run storybook` unless the user explicitly requests it. These are expensive, long-running operations.
 10. **Run visual tests for a single component** instead of the full suite:
     ```bash

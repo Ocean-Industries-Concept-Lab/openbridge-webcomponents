@@ -500,7 +500,7 @@ export const CustomColors: Story = {
 
 export const RealtimeSqueezing: Story = {
   name: 'Realtime (squeezing)',
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   render: (_args) => {
     const chart = document.createElement('obc-area-graph');
     chart.data = JSON.parse(JSON.stringify(SAMPLE_DATA));
@@ -533,7 +533,7 @@ export const RealtimeSqueezing: Story = {
 
 export const RealtimeShifting: Story = {
   name: 'Realtime (shifting)',
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   render: (_args) => {
     const chart = document.createElement('obc-area-graph');
     chart.showDebugOverlay = _args.showDebugOverlay;
@@ -980,7 +980,7 @@ export const ExternalScalesMinimal: Story = {
 
 export const FixedAspectRatioScaling: StoryObj = {
   name: 'Fixed aspect ratio scaling (responsive)',
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   decorators: [],
   args: {
     width: 400,
