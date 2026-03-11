@@ -37,6 +37,7 @@
     "lint:lit-analyzer": "lit-analyzer --strict --maxWarnings 0",
     "fix-imports": "node fix-imports.mjs",
     "fix-imports:check": "node fix-imports.mjs --dry-run",
+    "test:browser": "vitest --config=vitest.browser.config.ts",
     "📦_WRAPPERS__________________________________________________": "echo _____",
     "wrappers": "npm run wrappers:clean && npm run wrappers:generate && npm run wrappers:post-fix",
     "wrappers:clean": "git clean -fdx ../openbridge-webcomponents-*",

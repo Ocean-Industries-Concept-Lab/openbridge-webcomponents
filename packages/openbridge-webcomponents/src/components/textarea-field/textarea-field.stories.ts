@@ -146,6 +146,8 @@ const meta: Meta<typeof ObcTextareaField> = {
       .recordingStatus=${args.recordingStatus ?? 'recording'}
       .playbackPosition=${args.playbackPosition ?? 0}
       .attachments=${(args.attachments as Attachment[]) ?? []}
+      .rejectUpdates=${args.rejectUpdates}
+      .rejectUpdatesOnFocus=${args.rejectUpdatesOnFocus}
     ></obc-textarea-field>
   `,
 } satisfies Meta<ObcTextareaField>;

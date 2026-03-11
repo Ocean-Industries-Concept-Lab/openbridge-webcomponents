@@ -1,4 +1,4 @@
-import {LitElement, html, nothing, unsafeCSS} from 'lit';
+import {LitElement, html, nothing, unsafeCSS, PropertyValues} from 'lit';
 import {customElement} from '../../decorator.js';
 import componentStyle from './textarea-field.css?inline';
 import {property, state, query} from 'lit/decorators.js';
@@ -148,8 +148,9 @@ export interface Attachment {
  * | `leading-icon` | `hasLeadingIcon=true`  | Displays a contextual icon before the input.  |
  *
  * ## Events
- *
- * - `value-changed` – Fired when the textarea loses focus (blur) and the value has changed since the last emit.
+ * - `input` – Fired when the textarea value changes.
+ * - `change` – Fired when the textarea value changes and loses focus (blur).
+ * - `blur` – Fired when the textarea loses focus (blur).
  * - `send-click` – Fired when the send button is clicked (Message type only), with the current value.
  * - `add-click` – Fired when the add (+) button is clicked.
  * - `screenshot-click` – Fired when the screenshot button is clicked.
@@ -187,7 +188,9 @@ export interface Attachment {
  *
  * @slot leading-icon - Displays a contextual icon before the input when `hasLeadingIcon` is true.
  *
- * @fires value-changed {CustomEvent<{value: string}>} Fired on blur when value has changed.
+ * @fires change {CustomEvent<{value: string}>} Fired on change when value has changed.
+ * @fires input {CustomEvent<{value: string}>} Fired on input when value changes.
+ * @fires blur {CustomEvent<void>} Fired on blur.
  * @fires send-click {CustomEvent<{value: string}>} Fired when the send button is clicked (Message type only).
  * @fires add-click {CustomEvent<void>} Fired when the add (+) button is clicked.
  * @fires screenshot-click {CustomEvent<void>} Fired when the screenshot button is clicked.
@@ -208,6 +211,22 @@ export class ObcTextareaField extends LitElement {
    * The current text value of the input field.
    */
   @property({type: String}) value = '';
+
+  /**
+   * If true, the textarea will not update its value from external changes while focused.
+   */
+  @property({type: Boolean}) rejectUpdatesOnFocus = false;
+
+  /**
+   * If true, the value will only be initially set from the external model and not updated on subsequent changes.
+   */
+  @property({type: Boolean}) rejectUpdates = false;
+
+  /**
+   * If true, the textarea will not update its value if the value is the same as the previous value.
+   * Useful to avoid React re-rendering resetting the value.
+   */
+  @property({type: Boolean}) rejectDuplicateUpdates = false;
 
   /**
    * Placeholder text shown when the input is empty.
@@ -305,19 +324,20 @@ export class ObcTextareaField extends LitElement {
   @state() private _focused = false;
   @state() private _statusAnnouncement = '';
   @state() private _isPlayingRecording = false;
-
-  private _lastEmittedValue = '';
+  @state() private _previousValue = '';
+  @state() private _previousInputElementValue = '';
 
   @query('.input-field') private _textarea?: HTMLTextAreaElement;
   @query('.action-container obc-icon-button')
   private _firstActionButton?: HTMLElement;
 
-  protected override willUpdate(changedProperties: Map<string, unknown>) {
-    super.willUpdate(changedProperties);
-
-    // Sync _lastEmittedValue when value is set externally (not during editing)
-    if (changedProperties.has('value') && !this._focused) {
-      this._lastEmittedValue = this.value;
+  override willUpdate(changedProperties: PropertyValues) {
+    if (
+      changedProperties.has('value') &&
+      !this.shouldUpdateValue &&
+      this._textarea
+    ) {
+      this.value = this._textarea.value;
     }
   }
 
@@ -358,6 +378,14 @@ export class ObcTextareaField extends LitElement {
           this.announceStatus('Recording resumed');
         }
       }
+    }
+
+    if (
+      this.rejectDuplicateUpdates &&
+      this.value !== this._previousValue &&
+      (this._previousInputElementValue !== this.value || !this._focused)
+    ) {
+      this._previousValue = this.value;
     }
   }
 
@@ -444,6 +472,11 @@ export class ObcTextareaField extends LitElement {
   private handleInput(e: Event) {
     const target = e.target as HTMLTextAreaElement;
     this.value = target.value;
+    this._previousInputElementValue = this.value;
+    e.stopPropagation();
+    this.dispatchEvent(
+      new CustomEvent('input', {detail: {value: target.value}})
+    );
   }
 
   private handleKeyDown(e: KeyboardEvent) {
@@ -462,11 +495,6 @@ export class ObcTextareaField extends LitElement {
 
   private handleBlur() {
     this._focused = false;
-    // Only emit value-changed if the value actually changed since last emit
-    if (this.value !== this._lastEmittedValue) {
-      this._lastEmittedValue = this.value;
-      this.emitIfEnabled('value-changed', {value: this.value});
-    }
   }
 
   private handleSendClick() {
@@ -564,15 +592,31 @@ export class ObcTextareaField extends LitElement {
     `;
   }
 
+  private get shouldUpdateValue(): boolean {
+    if (this.rejectUpdates) return false;
+    if (this.rejectUpdatesOnFocus && this._focused) return false;
+    if (this.rejectDuplicateUpdates && this.value === this._previousValue) {
+      return false;
+    }
+    return true;
+  }
+
   private renderTextarea() {
     if (this.recording) return nothing;
+
+    let value = this.value;
+
+    if (!this.shouldUpdateValue && this._textarea) {
+      value = this._textarea.value;
+    }
 
     return html`
       <textarea
         class="input-field"
         .placeholder=${this.placeholder}
-        .value=${this.value}
+        .value=${value}
         @input=${this.handleInput}
+        @change=${this.fireChangeEvent}
         @keydown=${this.handleKeyDown}
         @focus=${this.handleFocus}
         @blur=${this.handleBlur}
@@ -586,6 +630,13 @@ export class ObcTextareaField extends LitElement {
         aria-required=${this.required ? 'true' : 'false'}
       ></textarea>
     `;
+  }
+
+  private fireChangeEvent(e: Event) {
+    const target = e.target as HTMLTextAreaElement;
+    this.dispatchEvent(
+      new CustomEvent('change', {detail: {value: target.value}})
+    );
   }
 
   private renderAttachments() {

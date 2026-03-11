@@ -141,8 +141,8 @@ const meta: Meta<typeof ObcTextInputField> = {
           ?hasLabelIcon=${args.hasLabelIcon}
           .labelPlacement=${args.labelPlacement ??
           ObcTextInputFieldPlacement.Left}
-          @input=${console.log}
-          @change=${console.log}
+          .rejectUpdates=${args.rejectUpdates}
+          .rejectUpdatesOnFocus=${args.rejectUpdatesOnFocus}
         >
           ${args.hasLeadingIcon
             ? html`<obi-search slot="leading-icon"></obi-search>`
