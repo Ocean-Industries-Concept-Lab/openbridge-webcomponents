@@ -307,7 +307,7 @@ export const GaugeTrendScaleReferenceSize: Story = {
  */
 export const ScaleReferenceSizeComparison: StoryObj = {
   name: 'Scale reference size comparison',
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   decorators: [(story) => story()],
   args: {
     browserContainerWidth: 1200,
@@ -746,7 +746,7 @@ export const GaugeTrendLabelsOnly: Story = {
  */
 export const FixedAspectRatioScalingComparison: StoryObj = {
   name: 'Fixed aspect ratio scaling comparison',
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   decorators: [],
   args: {
     width: 384,
@@ -915,7 +915,7 @@ export const FixedAspectRatioScalingComparison: StoryObj = {
  */
 export const RealtimeShifting: Story = {
   name: 'Realtime (shifting)',
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   render: (_args) => {
     // Create wrapper container
     const wrapper = document.createElement('div');

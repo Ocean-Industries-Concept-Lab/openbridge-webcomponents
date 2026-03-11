@@ -165,7 +165,7 @@ export const CustomColors: Story = {
 };
 
 export const Realtime: Story = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   render: (args) => {
     const chart = document.createElement('obc-donut-chart');
     chart.data = JSON.parse(JSON.stringify(SAMPLE_DATA));

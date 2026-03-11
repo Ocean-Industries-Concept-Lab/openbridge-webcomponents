@@ -174,7 +174,7 @@ export const CustomColors: Story = {
 };
 
 export const Realtime: Story = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   render: (args) => {
     const chart = document.createElement('obc-pie-chart');
     chart.data = JSON.parse(JSON.stringify(SUNBURST_DATA));

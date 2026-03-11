@@ -815,7 +815,7 @@ export const VerticalRightScaleBackground: Story = {
  * the pure function renderer.
  */
 export const FixedAspectRatioComparison: StoryObj = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   render: () => {
     const wrapper = document.createElement('div');
     wrapper.style.cssText = `

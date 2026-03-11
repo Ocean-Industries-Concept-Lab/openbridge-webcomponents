@@ -167,7 +167,7 @@ export const CustomColors: Story = {
 };
 
 export const Realtime: Story = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   args: {
     fixedHeight: 320,
   },
