@@ -25,14 +25,7 @@ export enum ObcPoiObjectAtonStyle {
   Yellow = 'yellow',
 }
 
-export enum ObcPoiObjectAtonState {
-  Unchecked = 'unchecked',
-  Checked = 'checked',
-  StaticUnchecked = 'static-unchecked',
-  StaticChecked = 'static-checked',
-  Activated = 'activated',
-  Overlapped = 'overlapped',
-}
+export {ObcPoiObjectState as ObcPoiObjectAtonState};
 
 @customElement('obc-poi-object-aton')
 export class ObcPoiObjectAton extends ObcAbstractPoiObject {
@@ -43,11 +36,16 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
   // @ts-expect-error — widening type to include AtoN-specific styles
   override objectStyle: ObcPoiObjectAtonStyle = ObcPoiObjectAtonStyle.Regular;
 
-  @property({type: String})
-  override state: ObcPoiObjectAtonState = ObcPoiObjectAtonState.Unchecked;
-
   private get isAtonType(): boolean {
     return this.type === ObcPoiObjectAtonType.AtoN;
+  }
+
+  private get isOverlapped(): boolean {
+    return this.state === ObcPoiObjectState.Overlapped;
+  }
+
+  private get isInteractive(): boolean {
+    return this.interactive && !this.isOverlapped;
   }
 
   override get baseType(): ObcPoiObjectType {
@@ -78,7 +76,7 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
   private renderAtonDiamond(): TemplateResult {
     return html`
       <div class="aton-diamond-frame">
-        <div class="aton-diamond-background"></div>
+        <div class="aton-diamond-background" part="background-frame"></div>
         <div class="aton-icon-container">
           <slot></slot>
         </div>
@@ -92,6 +90,7 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
       [`type-${this.type}`]: true,
       [`style-${this.objectStyle}`]: true,
       [`state-${this.state}`]: true,
+      interactive: this.isInteractive,
     };
 
     if (this.isAtonType) {
@@ -103,6 +102,7 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
     return html`
       <div class=${classMap(wrapperClasses)}>
         <obc-poi-object
+          exportparts="background-frame"
           .type=${this.baseType}
           .objectStyle=${'regular'}
           .state=${this.mappedBaseState}

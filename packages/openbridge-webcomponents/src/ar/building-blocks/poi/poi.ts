@@ -170,6 +170,7 @@ export class ObcPoi extends LitElement {
     ) {
       this.updatePosition();
     }
+    this.syncSlottedButtonProps();
   }
 
   private updatePosition() {
@@ -393,26 +394,53 @@ export class ObcPoi extends LitElement {
     </div>`;
   }
 
-  protected renderPoiButton() {
+  /* ---------- Slotted button sync ---------- */
+
+  private slottedButton: HTMLElement | null = null;
+
+  private handleButtonSlotChange(e: Event) {
+    const slot = e.target as HTMLSlotElement;
+    const assigned = slot.assignedElements({flatten: false});
+    this.slottedButton =
+      assigned.length > 0 ? (assigned[0] as HTMLElement) : null;
+    this.syncSlottedButtonProps();
+  }
+
+  private syncSlottedButtonProps() {
+    const btn = this.slottedButton;
+    if (!btn) return;
+
+    const props = btn as unknown as Record<string, unknown>;
+    props.layout = 'inline';
+    props.relativeDirection = this.relativeDirection;
+    props.selected = this.selected;
+    props.hasHeader = this.hasHeader;
+    props.state = this.buttonState;
+    props.value = this.buttonVisualState;
+    props.overlapOpaque = this.overlapOpaque;
+    props.type = this.buttonType;
+    props.data = this.data;
+  }
+
+  private renderPoiButton() {
     return html`
-      <obc-poi-button
-        layout="inline"
-        class=${classMap({
-          'poi-button': true,
-          overlapped: this.value === ObcPoiValue.Overlapped,
-        })}
-        .relativeDirection=${this.relativeDirection}
-        .selected=${this.selected}
-        .hasHeader=${this.hasHeader}
-        .state=${this.buttonState}
-        .value=${this.buttonVisualState}
-        .overlapOpaque=${this.overlapOpaque}
-        .type=${this.buttonType}
-        .data=${this.data}
-      >
-        <slot></slot>
-        <slot name="header" slot="header"></slot>
-      </obc-poi-button>
+      <slot name="button" @slotchange=${this.handleButtonSlotChange}>
+        <obc-poi-button
+          layout="inline"
+          class="poi-button"
+          .relativeDirection=${this.relativeDirection}
+          .selected=${this.selected}
+          .hasHeader=${this.hasHeader}
+          .state=${this.buttonState}
+          .value=${this.buttonVisualState}
+          .overlapOpaque=${this.overlapOpaque}
+          .type=${this.buttonType}
+          .data=${this.data}
+        >
+          <slot></slot>
+          <slot name="header" slot="header"></slot>
+        </obc-poi-button>
+      </slot>
     `;
   }
 

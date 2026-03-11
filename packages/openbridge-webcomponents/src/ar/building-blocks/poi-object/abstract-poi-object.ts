@@ -37,6 +37,7 @@ export class ObcAbstractPoiObject extends LitElement {
 
   override render() {
     return html`<obc-poi-object
+      exportparts="background-frame"
       .type=${this.baseType}
       .objectStyle=${this.objectStyle}
       .state=${this.state}

@@ -24,13 +24,15 @@
   transition: none;
 }
 
-.poi-button {
+.poi-button,
+::slotted([slot="button"]) {
   z-index: 1;
   transform: translateY(0);
   transition: transform 0.1s ease-out;
 }
 
-.wrapper.no-motion .poi-button {
+.wrapper.no-motion .poi-button,
+.wrapper.no-motion ::slotted([slot="button"]) {
   transition: none;
 }
 
