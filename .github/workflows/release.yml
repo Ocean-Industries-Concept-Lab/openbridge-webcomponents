@@ -38,6 +38,11 @@ jobs:
         run: |
           npm publish  --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
 
+      - name: Build and generate wrappers
+        working-directory: ./packages/openbridge-webcomponents
+        run: |
+          npm run build:full
+
       - name: Publish react wrapper to GitHub Packages
         working-directory: ./packages/openbridge-webcomponents-react
         env:

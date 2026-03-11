@@ -24,7 +24,7 @@ const meta: Meta = {
     primaryTickmarkInterval: {control: {type: 'number', min: 1}},
     secondaryTickmarkInterval: {control: {type: 'number', min: 1}},
     tertiaryTickmarkInterval: {control: {type: 'number', min: 1}},
-    hideLabels: {control: {type: 'boolean'}},
+    showLabels: {control: {type: 'boolean'}},
     borderRadiusPosition: {
       control: {type: 'select'},
       options: Object.values(BorderRadiusPosition),
@@ -37,7 +37,7 @@ const meta: Meta = {
     setpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
     newSetpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
     atSetpoint: {control: {type: 'boolean'}},
-    disableAutoAtSetpoint: {control: {type: 'boolean'}},
+    autoAtSetpoint: {control: {type: 'boolean'}},
     autoAtSetpointDeadband: {
       control: {type: 'number', min: 0, max: 10, step: 0.5},
     },
@@ -55,7 +55,7 @@ const meta: Meta = {
     primaryTickmarkInterval: 20,
     secondaryTickmarkInterval: 10,
     tertiaryTickmarkInterval: undefined,
-    hideLabels: false,
+    showLabels: true,
     borderRadiusPosition: BorderRadiusPosition.innerFirstChild,
     priority: Priority.regular,
     fillMode: FillMode.fill,
@@ -65,7 +65,7 @@ const meta: Meta = {
     setpoint: undefined,
     newSetpoint: undefined,
     atSetpoint: false,
-    disableAutoAtSetpoint: false,
+    autoAtSetpoint: true,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
     state: 'active',
@@ -80,7 +80,7 @@ const meta: Meta = {
       .primaryTickmarkInterval=${args.primaryTickmarkInterval}
       .secondaryTickmarkInterval=${args.secondaryTickmarkInterval}
       .tertiaryTickmarkInterval=${args.tertiaryTickmarkInterval}
-      .hideLabels=${args.hideLabels}
+      .showLabels=${args.showLabels}
       .borderRadiusPosition=${args.borderRadiusPosition}
       .priority=${args.priority}
       .fillMode=${args.fillMode}
@@ -90,7 +90,7 @@ const meta: Meta = {
       .setpoint=${args.setpoint}
       .newSetpoint=${args.newSetpoint}
       .atSetpoint=${args.atSetpoint}
-      .disableAutoAtSetpoint=${args.disableAutoAtSetpoint}
+      .autoAtSetpoint=${args.autoAtSetpoint}
       .autoAtSetpointDeadband=${args.autoAtSetpointDeadband}
       .setpointAtZeroDeadband=${args.setpointAtZeroDeadband}
       .state=${args.state}

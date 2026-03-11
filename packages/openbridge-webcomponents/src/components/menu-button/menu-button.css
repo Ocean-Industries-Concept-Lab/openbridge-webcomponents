@@ -6,6 +6,7 @@
   height: var(--ui-components-button-touch-target-size);
   min-width: var(--ui-components-button-touch-target-size);
   appearance: none;
+  text-align: start;
   border: none;
   display: flex;
   align-items: center;
@@ -63,9 +64,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-
-  & .icon {
     width: var(--ui-components-button-icon-size);
     height: var(--ui-components-button-icon-size);
     color: var(--on-normal-neutral-color);
@@ -89,7 +87,7 @@
     color: var(--on-normal-neutral-color);
   }
 
-  &:disabled .icon {
+  &:disabled .icon-container {
     color: var(--on-normal-disabled-color);
   }
 
@@ -115,6 +113,11 @@
   position-anchor: --context-menu-trigger;
   left: calc(anchor(right) + 8px);
   top: anchor(top);
+  margin: unset;
+  padding: 0;
+  border: none;
+  background: none;
+  overflow: visible;
 }
 
 .wrapper.disabled .label-container,

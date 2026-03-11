@@ -107,6 +107,15 @@ export class ObcCompassFlat extends LitElement {
       cardinalInterval = 0;
     }
 
+    // Guard against zero/negative/non-finite interval to prevent infinite loops
+    if (
+      !this.tickInterval ||
+      this.tickInterval <= 0 ||
+      !Number.isFinite(this.tickInterval)
+    ) {
+      return tickmarks;
+    }
+
     for (
       let angle = -180;
       angle < this.maxFOV * 3;

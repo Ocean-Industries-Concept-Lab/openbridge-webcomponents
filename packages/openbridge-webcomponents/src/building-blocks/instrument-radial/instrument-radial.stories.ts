@@ -18,6 +18,7 @@ const meta: Meta<typeof ObcInstrumentRadial> = {
     state: {control: 'select', options: Object.values(InstrumentState)},
     priority: {control: 'select', options: Object.values(Priority)},
     tickmarksInside: {control: 'boolean'},
+    showLabels: {control: 'boolean'},
   },
 } satisfies Meta<ObcInstrumentRadial>;
 
@@ -85,7 +86,7 @@ export const WithLabels: Story = {
     maxValue: 100,
     minValue: 0,
     type: ObcGaugeRadialType.filled,
-    labels: true,
+    showLabels: true,
   },
 };
 

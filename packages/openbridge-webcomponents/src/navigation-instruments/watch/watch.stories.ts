@@ -81,6 +81,8 @@ Source of truth: \`packages/openbridge-webcomponents/src/navigation-instruments/
     currentSymbolRadius: {control: {type: 'range', min: 0, max: 360, step: 1}},
     rotation: {control: {type: 'range', min: 0, max: 360, step: 1}},
     priority: {control: 'select', options: Object.values(Priority)},
+    showLabels: {control: 'boolean'},
+    tickmarksInside: {control: 'boolean'},
   },
   args: {
     width: 400,

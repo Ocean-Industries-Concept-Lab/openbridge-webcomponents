@@ -721,7 +721,7 @@ if (!customElements.get('obc-textarea-demo-rich')) {
 }
 
 export const InteractiveDemoMessage: Story = {
-  tags: ['skip-snapshot'],
+  tags: ['!snapshot'],
   args: {
     type: TextareaFieldType.Message,
     label: 'Message Demo',
@@ -733,7 +733,7 @@ export const InteractiveDemoMessage: Story = {
 };
 
 export const InteractiveDemoRich: Story = {
-  tags: ['skip-snapshot'],
+  tags: ['!snapshot'],
   args: {
     type: TextareaFieldType.Rich,
     label: 'Rich Demo',

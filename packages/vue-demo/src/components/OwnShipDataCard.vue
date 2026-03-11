@@ -6,6 +6,7 @@
         class="indicator"
         :angle="sim.vessel.headingDeg.value"
         :arrow="CompassIndicatorArrow.Heading"
+        :show-labels="true"
       >
       </ObcCompassIndicator>
       <ObcInstrumentField
