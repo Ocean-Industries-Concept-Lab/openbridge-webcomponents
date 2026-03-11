@@ -46,6 +46,12 @@ const meta: Meta<ObcIntegrationDropdownButton> = {
         label: 'Helge Ingstad',
         icon: html`<obi-ship slot="icon"></obi-ship>`,
       },
+      {
+        value: 'disabled',
+        label: 'Disabled',
+        icon: html`<obi-ship slot="icon"></obi-ship>`,
+        disabled: true,
+      },
     ],
     value: 'oslo',
     hasFleet: true,
@@ -57,6 +63,7 @@ const meta: Meta<ObcIntegrationDropdownButton> = {
       .value=${args.value}
       .hasFleet=${args.hasFleet}
       .fleetLabel=${args.fleetLabel}
+      .disabled=${args.disabled}
     >
       <obc-integration-button
         slot="fleet"
@@ -82,5 +89,17 @@ export const WithFleet: Story = {
 export const WithoutFleet: Story = {
   args: {
     hasFleet: false,
+  },
+};
+
+export const SelectedDisabled: Story = {
+  args: {
+    value: 'disabled',
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    disabled: true,
   },
 };

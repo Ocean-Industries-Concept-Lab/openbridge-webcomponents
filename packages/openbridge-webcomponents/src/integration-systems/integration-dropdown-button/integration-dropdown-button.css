@@ -53,7 +53,9 @@
     color: var(--integration-on-normal-neutral-color);
   }
 
-  &:disabled .icon {
+  &.disabled .icon,
+  &.disabled .icon-container,
+  &.disabled .label {
     color: var(--integration-on-normal-disabled-color);
   }
 
@@ -119,6 +121,13 @@
     color: var(--integration-on-flat-neutral-color);
   }
 
+  &:disabled {
+    color: var(--integration-on-flat-disabled-color);
+    .icon {
+      color: var(--integration-on-flat-disabled-color);
+    }
+  }
+
   &:checked {
     @mixin style style=integration-selected;
     color: var(--integration-on-selected-active-color);
@@ -126,6 +135,12 @@
 
     & .icon {
       color: var(--integration-on-selected-active-color);
+    }
+    &:disabled {
+      color: var(--integration-on-selected-disabled-color);
+      .icon {
+        color: var(--integration-on-selected-disabled-color);
+      }
     }
   }
 

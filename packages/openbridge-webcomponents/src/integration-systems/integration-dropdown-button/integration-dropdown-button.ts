@@ -15,7 +15,6 @@ export type ObcIntegrationDropdownButtonChangeEvent = CustomEvent<{
 
 /**
  * @slot fleet - Fleet button displayed when `hasFleet` is true.
- * @fires dropdown-change {ObcIntegrationDropdownButtonChangeEvent} - Fires when the value of the select changes
  * @fires change {ObcIntegrationDropdownButtonChangeEvent} - Fires when the value of the select changes
  */
 @customElement('obc-integration-dropdown-button')
@@ -25,14 +24,15 @@ export class ObcIntegrationDropdownButton extends LitElement {
    *
    * Example:
    * [
-   *   { value: 'volvo', label: 'Volvo' },
-   *   { value: 'xc90', label: 'XC 90', level: 2 }
+   *   { value: 'volvo', label: 'Volvo', icon: html`<obi-ship></obi-ship>` },
+   *   { value: 'xc90', label: 'XC 90', icon: html`<obi-ship></obi-ship>` }
    * ]
    */
   @property({type: Array}) options: {
     value: string;
     label: string;
     icon: HTMLTemplateResult;
+    disabled?: boolean;
   }[] = [];
 
   @property({type: Boolean}) hasFleet: boolean = false;
@@ -114,6 +114,7 @@ export class ObcIntegrationDropdownButton extends LitElement {
             return html`<option
               value=${item.value}
               ?selected=${item.value === this.value}
+              ?disabled=${item.disabled}
             >
               <div class="icon">${item.icon}</div>
               <div class="label">${item.label}</div>
@@ -134,8 +135,12 @@ export class ObcIntegrationDropdownButton extends LitElement {
     const target = event.target as HTMLSelectElement;
     this.value = target.value;
     this.dispatchEvent(
-      new CustomEvent('dropdown-change', {
-        detail: {value: this.value, label: this.selectedItem?.label},
+      new CustomEvent('change', {
+        detail: {
+          value: this.value,
+          label:
+            this.value === 'fleet' ? this.fleetLabel : this.selectedItem?.label,
+        },
       })
     );
   }
