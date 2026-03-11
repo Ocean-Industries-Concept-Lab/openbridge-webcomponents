@@ -2,14 +2,19 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './poi-layer-stack.css?inline';
-import {ObcPoiLayer} from '../poi-layer/poi-layer.js';
-import {ObcPoiGroup} from '../poi-group/poi-group.js';
+
+import '../poi-layer/poi-layer.js';
+import '../poi-group/poi-group.js';
+import '../poi-data/poi-data.js';
+import '../building-blocks/poi-header/poi-header.js';
+
+import type {ObcPoiLayer} from '../poi-layer/poi-layer.js';
+import type {ObcPoiGroup} from '../poi-group/poi-group.js';
+import type {ObcPoiData} from '../poi-data/poi-data.js';
 import {
-  ObcPoiData,
   PoiDataValue,
   PoiDataVisualRectPreference,
 } from '../poi-data/poi-data.js';
-import '../building-blocks/poi-header/poi-header.js';
 
 const JUMP_DURATION_MS = 100;
 const JUMP_BEZIER = [0.2, 0, 0, 1] as const;
