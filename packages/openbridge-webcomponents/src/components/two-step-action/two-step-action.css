@@ -15,6 +15,17 @@
   --obc-two-step-track-enabled-offset: calc(
     -1 * var(--obc-two-step-thumb-width)
   );
+  --obc-two-step-armed-border-clip-adjustment: 3.5px;
+  --obc-two-step-state-drag-shift-factor: 0.9;
+  --obc-two-step-state-drag-shift-max-factor: 0.65;
+  --obc-two-step-state-drag-padding-factor: 0.05;
+  --obc-two-step-state-label-clip-adjustment: 1px;
+  --obc-two-step-state-label-shift-factor: 0.1;
+  --obc-two-step-duration-fast: 200ms;
+  --obc-two-step-duration-content: 220ms;
+  --obc-two-step-duration-slide: 900ms;
+  --obc-two-step-easing-standard: cubic-bezier(0, 0, 0, 0.99);
+  --obc-two-step-easing-emphasized: cubic-bezier(0.22, 1, 0.36, 1);
   height: var(--ui-components-button-touch-target-size);
   max-width: var(--obc-two-step-control-width);
   margin: 0;
@@ -39,8 +50,10 @@
     border-radius: var(--global-border-radius-border-radius-base);
     overflow: hidden;
     transition:
-      background-color 200ms cubic-bezier(0, 0, 0, 0.99),
-      border-color 200ms cubic-bezier(0, 0, 0, 0.99);
+      background-color var(--obc-two-step-duration-fast)
+        var(--obc-two-step-easing-standard),
+      border-color var(--obc-two-step-duration-fast)
+        var(--obc-two-step-easing-standard);
 
     .state-enabled &,
     .state-armed & {
@@ -70,14 +83,15 @@
       background-color: var(--indent-enabled-background-color);
     }
 
-    .swipe-armed-phase.state-armed & {
-      transition: none;
-    }
-
     .state-armed &::before {
       border-color: var(--base-cyan-200);
       clip-path: inset(
-        0 calc(100% - var(--obc-two-step-thumb-width) - 3.5px) 0 0
+        0
+          calc(
+            100% - var(--obc-two-step-thumb-width) -
+              var(--obc-two-step-armed-border-clip-adjustment)
+          )
+          0 0
       );
     }
 
@@ -98,7 +112,7 @@
     pointer-events: none;
     z-index: 5;
     transition:
-      transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 420ms var(--obc-two-step-easing-emphasized),
       opacity 260ms ease-out;
 
     .state-active & {
@@ -123,15 +137,14 @@
 
     .state-enabled.thumb-dragging & {
       transform: translateX(
-        calc(
-          var(--obc-two-step-track-enabled-offset) + var(--thumb-drag-x, 0px)
-        )
+        calc(var(--obc-two-step-track-enabled-offset) + var(--thumb-drag-x))
       );
     }
 
     .state-armed.armed-slide &,
     .state-enabled.disarm-slide & {
-      transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+      transition: transform var(--obc-two-step-duration-slide)
+        var(--obc-two-step-easing-emphasized);
     }
   }
 
@@ -160,21 +173,12 @@
     box-shadow: none;
     pointer-events: none;
     transition:
-      width 200ms cubic-bezier(0, 0, 0, 0.99),
-      opacity 200ms cubic-bezier(0, 0, 0, 0.99);
+      width var(--obc-two-step-duration-fast)
+        var(--obc-two-step-easing-standard),
+      opacity var(--obc-two-step-duration-fast)
+        var(--obc-two-step-easing-standard);
     position: relative;
     z-index: 1;
-
-    .swipe-armed-phase.state-armed & {
-      opacity: 1;
-      transition: none;
-      background: var(--base-cyan-050);
-      border-color: var(--base-cyan-200);
-      border-width: var(--ui-components-button-stroke-weight);
-      border-inline-end-width: 0;
-      animation: two-step-content-in-from-left 460ms
-        cubic-bezier(0.22, 1, 0.36, 1) both;
-    }
 
     .state-active & {
       width: 0;
@@ -233,25 +237,29 @@
       width: clamp(
         var(--obc-two-step-thumb-width),
         calc(
-          var(--obc-two-step-thumb-width) + (var(--thumb-drag-x, 0px) * 0.4146)
+          var(--obc-two-step-thumb-width) +
+            (var(--thumb-drag-x) * var(--obc-two-step-thumb-drag-growth-factor))
         ),
         calc(
-          var(--obc-two-step-control-width) - var(--thumb-drag-x, 0px) -
+          var(--obc-two-step-control-width) - var(--thumb-drag-x) -
             var(--ui-components-button-stroke-weight)
         )
       );
     }
 
     .state-enabled.label-bounce & {
-      animation: two-step-bounce-right 220ms cubic-bezier(0, 0, 0, 0.99);
+      animation: two-step-bounce-right var(--obc-two-step-duration-content)
+        var(--obc-two-step-easing-standard);
     }
 
     .state-armed.armed-slide &,
     .state-enabled.disarm-slide & {
       transition:
-        width 900ms cubic-bezier(0.22, 1, 0.36, 1),
-        opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
-        transform 150ms cubic-bezier(0.22, 1, 0.36, 1);
+        width var(--obc-two-step-duration-slide)
+          var(--obc-two-step-easing-emphasized),
+        opacity var(--obc-two-step-duration-slide)
+          var(--obc-two-step-easing-emphasized),
+        transform 150ms var(--obc-two-step-easing-emphasized);
     }
 
     .state-armed.armed-hint & {
@@ -260,8 +268,7 @@
       border-width: var(--ui-components-button-stroke-weight);
       box-shadow: none;
       margin-left: 0;
-      animation: armed-hint-fade var(--armed-hint-duration, 1800ms) ease-out
-        both;
+      animation: armed-hint-fade var(--armed-hint-duration) ease-out both;
     }
 
     .state-active & {
@@ -279,37 +286,40 @@
       transition: none;
       margin-left: calc(
         min(
-            calc(var(--thumb-drag-x, 0px) * 0.9),
-            calc(var(--obc-two-step-state-width) * 0.65)
+            calc(
+              var(--thumb-drag-x) * var(--obc-two-step-state-drag-shift-factor)
+            ),
+            calc(
+              var(--obc-two-step-state-width) *
+                var(--obc-two-step-state-drag-shift-max-factor)
+            )
           ) *
           -1
       );
       padding-right: calc(
         var(--ui-components-button-label-spacing) -
-          (var(--thumb-drag-x, 0px) * 0.05)
+          (var(--thumb-drag-x) * var(--obc-two-step-state-drag-padding-factor))
       );
 
       &::part(label) {
         transition: none;
         clip-path: inset(
-          0 calc(var(--ui-components-button-stroke-weight) + 1px) 0 0
+          0
+            calc(
+              var(--ui-components-button-stroke-weight) +
+                var(--obc-two-step-state-label-clip-adjustment)
+            )
+            0 0
         );
         transform: translateX(
           min(
-            calc(var(--thumb-drag-x, 0px) * 0.1),
+            calc(
+              var(--thumb-drag-x) * var(--obc-two-step-state-label-shift-factor)
+            ),
             calc(var(--ui-components-button-label-spacing) / 2)
           )
         );
       }
-    }
-
-    .swipe-armed-phase.state-armed & {
-      transition: none;
-      background: var(--normal-enabled-background-color);
-      border-color: var(--normal-enabled-border-color);
-      box-shadow: none;
-      width: var(--obc-two-step-state-width);
-      opacity: 1;
     }
   }
 
@@ -324,9 +334,12 @@
     overflow: hidden;
     height: var(--ui-components-button-visual-size);
     transition:
-      opacity 200ms cubic-bezier(0, 0, 0, 0.99),
-      margin 200ms cubic-bezier(0, 0, 0, 0.99),
-      transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+      opacity var(--obc-two-step-duration-fast)
+        var(--obc-two-step-easing-standard),
+      margin var(--obc-two-step-duration-fast)
+        var(--obc-two-step-easing-standard),
+      transform var(--obc-two-step-duration-content)
+        var(--obc-two-step-easing-emphasized);
     width: 0;
     opacity: 0;
     transform: translateX(-8px);
@@ -340,13 +353,12 @@
       );
       opacity: 1;
       transform: translateX(0);
-      position: relative;
-      z-index: 7;
     }
 
     .state-active & .icon {
-      animation: two-step-content-in-from-left 220ms
-        cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation: two-step-content-in-from-left
+        var(--obc-two-step-duration-content)
+        var(--obc-two-step-easing-emphasized) both;
     }
   }
 
@@ -382,8 +394,9 @@
     .state-active & {
       opacity: 1;
       transform: translateX(0);
-      animation: two-step-content-in-from-left 220ms
-        cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation: two-step-content-in-from-left
+        var(--obc-two-step-duration-content)
+        var(--obc-two-step-easing-emphasized) both;
     }
   }
 
@@ -410,7 +423,7 @@
   }
 
   .thumb-icon-layer,
-  .thumb-label {
+  .thumb-label-layer {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -426,22 +439,30 @@
     opacity: 1;
   }
 
+  .thumb-label-layer {
+    opacity: 0;
+  }
+
   .thumb-label {
     @mixin font-button;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
     padding: 0 var(--ui-components-button-padding-horizontal);
     font-weight: var(--global-typography-ui-button-font-weight);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     color: inherit;
-    opacity: 0;
   }
 
   .thumb-visible.show-label .thumb-icon-layer {
     opacity: 0;
   }
 
-  .thumb-visible.show-label .thumb-label {
+  .thumb-visible.show-label .thumb-label-layer {
     opacity: 1;
   }
 
@@ -454,8 +475,10 @@
     overflow: hidden;
     border-radius: var(--global-border-radius-border-radius-base);
     transition:
-      background-color 200ms cubic-bezier(0, 0, 0, 0.99),
-      margin-left 200ms cubic-bezier(0, 0, 0, 0.99);
+      background-color var(--obc-two-step-duration-fast)
+        var(--obc-two-step-easing-standard),
+      margin-left var(--obc-two-step-duration-fast)
+        var(--obc-two-step-easing-standard);
     position: relative;
     z-index: 1;
 
@@ -496,42 +519,8 @@
     }
 
     .state-enabled.label-bounce & {
-      animation: two-step-bounce-right 220ms cubic-bezier(0, 0, 0, 0.99);
-    }
-
-    .state-armed & {
-      border-radius: var(--global-border-radius-border-radius-base);
-      overflow: hidden;
-    }
-
-    .swipe-armed-phase.state-armed & {
-      pointer-events: none;
-      --normal-hover-background-color: var(--normal-enabled-background-color);
-      --normal-hover-border-color: var(--normal-enabled-border-color);
-      --normal-hover-text-color: var(--on-normal-neutral-color);
-      margin-left: 0;
-      transition: none;
-      animation: two-step-content-in-from-left 540ms
-        cubic-bezier(0.22, 1, 0.36, 1) both;
-    }
-
-    .swipe-armed-phase.state-armed &::part(visible-wrapper) {
-      border-color: var(--normal-enabled-border-color) !important;
-    }
-
-    .swipe-armed-phase.state-armed &::part(visible-wrapper):hover,
-    .swipe-armed-phase.state-armed &::part(visible-wrapper):active,
-    .swipe-armed-phase.state-armed &::part(visible-wrapper):focus,
-    .swipe-armed-phase.state-armed &::part(visible-wrapper):focus-visible {
-      border-color: var(--normal-enabled-border-color) !important;
-    }
-
-    .swipe-armed-phase.state-armed &::part(label) {
-      clip-path: inset(
-        0 calc(var(--ui-components-button-stroke-weight) + 1px) 0 0
-      );
-      animation: two-step-content-in-from-left 760ms
-        cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation: two-step-bounce-right var(--obc-two-step-duration-content)
+        var(--obc-two-step-easing-standard);
     }
 
     .state-armed.armed-slide & {
@@ -548,7 +537,6 @@
       margin-left: var(
         --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
       );
-      position: relative;
       z-index: 7;
     }
 
@@ -563,12 +551,65 @@
     }
   }
 
-  .swipe-armed-phase.state-armed
+  &.swipe-armed-phase.state-armed .visible-wrapper {
+    transition: none;
+  }
+
+  &.swipe-armed-phase.state-armed .thumb-preview {
+    opacity: 1;
+    transition: none;
+    background: var(--base-cyan-050);
+    border-color: var(--base-cyan-200);
+    border-width: var(--ui-components-button-stroke-weight);
+    border-inline-end-width: 0;
+    animation: two-step-content-in-from-left 780ms
+      var(--obc-two-step-easing-emphasized) 140ms both;
+  }
+
+  &.swipe-armed-phase.state-armed .thumb-container {
+    transition: none;
+    background: var(--normal-enabled-background-color);
+    border-color: var(--normal-enabled-border-color);
+    box-shadow: none;
+    width: var(--obc-two-step-state-width);
+    opacity: 1;
+  }
+
+  &.swipe-armed-phase.state-armed .thumb-container .thumb-visible {
+    animation: none;
+    color: var(--on-normal-neutral-color);
+  }
+
+  &.swipe-armed-phase.state-armed
     .thumb-container
-    .thumb-visible.show-label
-    .thumb-label {
-    animation: two-step-content-in-from-left 760ms
-      cubic-bezier(0.22, 1, 0.36, 1) both;
+    .thumb-visible
+    .thumb-icon-layer {
+    transition: none;
+    animation: two-step-swipe-icon-out 160ms
+      var(--obc-two-step-easing-emphasized) both;
+  }
+
+  &.swipe-armed-phase.state-armed
+    .thumb-container
+    .thumb-visible
+    .thumb-label-layer {
+    transition: none;
+    opacity: 1;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    animation: two-step-swipe-label-in 1000ms
+      var(--obc-two-step-easing-emphasized) 140ms both;
+  }
+
+  &.swipe-armed-phase.state-armed .thumb-container .thumb-visible .thumb-label {
+    width: auto;
+    max-width: calc(
+      100% - (var(--ui-components-button-padding-horizontal) * 2)
+    );
+    padding: 0;
+    animation: none;
   }
 
   .icon {
@@ -595,6 +636,30 @@
   from {
     opacity: 0;
     transform: translateX(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes two-step-swipe-icon-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+}
+
+@keyframes two-step-swipe-label-in {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
   }
 
   to {

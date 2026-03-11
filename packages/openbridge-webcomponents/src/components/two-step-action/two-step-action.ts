@@ -22,8 +22,10 @@ export type ObcTwoStepActionChangeEvent = CustomEvent<{
 const LABEL_BOUNCE_DURATION_MS = 220;
 const ARMED_HINT_DURATION_MS = 1600;
 const ARMED_SLIDE_DURATION_MS = 900;
-const SWIPE_COMPLETE_TO_ACTIVE_MS = 900;
+const SWIPE_COMPLETE_TO_ACTIVE_MS = 1200;
 const THUMB_DRAG_GROWTH_FACTOR = 0.4146;
+const THUMB_DRAG_MOVE_THRESHOLD_PX = 3;
+const THUMB_DRAG_MIN_SCALE_X = 0.01;
 
 /** Two-step action control: `enabled` -> `armed` -> `active`, with auto-reset from `armed`. */
 @customElement('obc-two-step-action')
@@ -64,27 +66,15 @@ export class ObcTwoStepAction extends LitElement {
     return Number.isFinite(parsed) ? parsed : 0;
   }
 
-  private getNextState(current: ObcTwoStepActionState) {
-    switch (current) {
-      case ObcTwoStepActionState.enabled:
-        return ObcTwoStepActionState.armed;
-      case ObcTwoStepActionState.armed:
-        return ObcTwoStepActionState.active;
-      default:
-        return current;
-    }
-  }
-
   private getActionLabelText() {
     const label = this.textContent?.replace(/\s+/g, ' ').trim();
     return label && label.length > 0 ? label : 'Action';
   }
 
-  private isClickOnClass(event: Event, className: string) {
+  private isClickOnRole(event: Event, role: string) {
     const path = event.composedPath();
     return path.some(
-      (node) =>
-        node instanceof HTMLElement && node.classList.contains(className)
+      (node) => node instanceof HTMLElement && node.dataset.role === role
     );
   }
 
@@ -97,14 +87,6 @@ export class ObcTwoStepAction extends LitElement {
         this.labelBounce = false;
       }, LABEL_BOUNCE_DURATION_MS);
     });
-  }
-
-  private isLabelClick(event: Event) {
-    return this.isClickOnClass(event, 'state-container');
-  }
-
-  private isThumbClick(event: Event) {
-    return this.isClickOnClass(event, 'thumb-container');
   }
 
   private dispatchChange(previousState: ObcTwoStepActionState) {
@@ -142,13 +124,10 @@ export class ObcTwoStepAction extends LitElement {
     this.disarmSlideTimeout = undefined;
   }
 
-  private getArmedHintDurationMs() {
-    const baseDurationMs =
-      this.armedResetDelay > 0 ? this.armedResetDelay : ARMED_HINT_DURATION_MS;
-    return baseDurationMs;
-  }
-
   private scheduleArmedReset() {
+    const armedHintDurationMs =
+      this.armedResetDelay > 0 ? this.armedResetDelay : ARMED_HINT_DURATION_MS;
+
     this.clearArmedResetTimer();
 
     if (
@@ -162,7 +141,7 @@ export class ObcTwoStepAction extends LitElement {
 
     this.armedResetTimeout = window.setTimeout(() => {
       this.resetToEnabled();
-    }, this.getArmedHintDurationMs());
+    }, armedHintDurationMs);
   }
 
   private resetToEnabled() {
@@ -173,7 +152,8 @@ export class ObcTwoStepAction extends LitElement {
   }
 
   private triggerArmedHint() {
-    const hintDurationMs = this.getArmedHintDurationMs();
+    const armedHintDurationMs =
+      this.armedResetDelay > 0 ? this.armedResetDelay : ARMED_HINT_DURATION_MS;
 
     this.armedHint = false;
     window.requestAnimationFrame(() => {
@@ -181,7 +161,7 @@ export class ObcTwoStepAction extends LitElement {
       this.clearArmedHintTimer();
       this.armedHintTimeout = window.setTimeout(() => {
         this.armedHint = false;
-      }, hintDurationMs);
+      }, armedHintDurationMs);
       this.scheduleArmedReset();
     });
   }
@@ -203,7 +183,17 @@ export class ObcTwoStepAction extends LitElement {
   }
 
   private advanceState() {
-    const nextState = this.getNextState(this.state);
+    let nextState = this.state;
+
+    switch (this.state) {
+      case ObcTwoStepActionState.enabled:
+        nextState = ObcTwoStepActionState.armed;
+        break;
+      case ObcTwoStepActionState.armed:
+        nextState = ObcTwoStepActionState.active;
+        break;
+    }
+
     if (nextState === this.state) return;
 
     const previousState = this.state;
@@ -224,7 +214,7 @@ export class ObcTwoStepAction extends LitElement {
     }
     if (
       this.state === ObcTwoStepActionState.enabled &&
-      this.isLabelClick(event)
+      this.isClickOnRole(event, 'state')
     ) {
       this.triggerLabelBounce();
       return;
@@ -232,7 +222,7 @@ export class ObcTwoStepAction extends LitElement {
 
     if (
       this.state === ObcTwoStepActionState.enabled &&
-      this.isThumbClick(event)
+      this.isClickOnRole(event, 'thumb')
     ) {
       this.triggerArmedSlide();
       this.advanceState();
@@ -240,8 +230,8 @@ export class ObcTwoStepAction extends LitElement {
     }
     if (
       this.state === ObcTwoStepActionState.armed &&
-      !this.isLabelClick(event) &&
-      !this.isThumbClick(event)
+      !this.isClickOnRole(event, 'state') &&
+      !this.isClickOnRole(event, 'thumb')
     ) {
       this.triggerArmedHint();
       return;
@@ -329,7 +319,10 @@ export class ObcTwoStepAction extends LitElement {
       this.thumbDragMaxX,
       dragSpace / (1 + THUMB_DRAG_GROWTH_FACTOR)
     );
-    this.thumbDragScaleX = Math.max(0.01, visibleRect.width / safeVisibleWidth);
+    this.thumbDragScaleX = Math.max(
+      THUMB_DRAG_MIN_SCALE_X,
+      visibleRect.width / safeVisibleWidth
+    );
     this.thumbDragMoved = false;
     this.thumbDragX = 0;
     this.thumbDragging = true;
@@ -355,7 +348,9 @@ export class ObcTwoStepAction extends LitElement {
     const delta = (event.clientX - this.thumbDragStartX) / this.thumbDragScaleX;
     const nextDragX = Math.min(this.thumbDragMaxX, Math.max(0, delta));
     this.thumbDragX = nextDragX;
-    if (nextDragX > 3) this.thumbDragMoved = true;
+    if (nextDragX > THUMB_DRAG_MOVE_THRESHOLD_PX) {
+      this.thumbDragMoved = true;
+    }
 
     if (nextDragX >= this.thumbDragCompleteX) {
       const thumb = event.currentTarget as HTMLElement;
@@ -441,6 +436,8 @@ export class ObcTwoStepAction extends LitElement {
     const isActive = this.state === ObcTwoStepActionState.active;
     const showThumbLabel = isArmed;
     const actionLabel = this.getActionLabelText();
+    const armedHintDurationMs =
+      this.armedResetDelay > 0 ? this.armedResetDelay : ARMED_HINT_DURATION_MS;
 
     return html`
       <button
@@ -459,7 +456,7 @@ export class ObcTwoStepAction extends LitElement {
         ?disabled=${this.disabled}
         @click=${this.handleClick}
         part="wrapper"
-        style=${`--armed-hint-duration: ${this.getArmedHintDurationMs()}ms; --thumb-drag-x: ${this.thumbDragX}px;`}
+        style=${`--armed-hint-duration: ${armedHintDurationMs}ms; --thumb-drag-x: ${this.thumbDragX}px; --obc-two-step-thumb-drag-growth-factor: ${THUMB_DRAG_GROWTH_FACTOR};`}
         aria-label="Two step action"
         aria-pressed=${isActive ? 'true' : 'false'}
       >
@@ -479,6 +476,7 @@ export class ObcTwoStepAction extends LitElement {
                 'thumb-container': true,
                 'thumb-dragging': this.thumbDragging,
               })}
+              data-role="thumb"
               part="thumb-container"
               @pointerdown=${this.handleThumbPointerDown}
               @pointermove=${this.handleThumbPointerMove}
@@ -497,18 +495,25 @@ export class ObcTwoStepAction extends LitElement {
                     class="icon"
                   ></obi-chevron-right-google>
                 </span>
-                <span class="thumb-label">${actionLabel}</span>
+                <span class="thumb-label-layer" aria-hidden="true">
+                  <span class="thumb-label">${actionLabel}</span>
+                </span>
               </div>
             </div>
 
-            <obc-button
-              class="state-container"
-              variant="normal"
-              .disabled=${this.disabled}
-              part="state-container"
-            >
-              <slot>Action</slot>
-            </obc-button>
+            ${this.swipeArmedPhase
+              ? null
+              : html`
+                  <obc-button
+                    class="state-container"
+                    data-role="state"
+                    variant="normal"
+                    .disabled=${this.disabled}
+                    part="state-container"
+                  >
+                    <slot>Action</slot>
+                  </obc-button>
+                `}
           </div>
 
           <span class="active-label" part="active-label">${actionLabel}</span>
