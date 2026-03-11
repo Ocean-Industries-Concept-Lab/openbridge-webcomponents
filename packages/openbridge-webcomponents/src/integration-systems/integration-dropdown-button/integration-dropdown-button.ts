@@ -2,7 +2,6 @@ import {LitElement, html, unsafeCSS, nothing, PropertyValues} from 'lit';
 import {property, queryAssignedElements} from 'lit/decorators.js';
 import compentStyle from './integration-dropdown-button.css?inline';
 import '../../icons/icon-drop-down-google.js';
-import '../../components/button/button.js';
 import {customElement} from '../../decorator.js';
 import {classMap} from 'lit/directives/class-map.js';
 import type {HTMLTemplateResult} from 'lit';
