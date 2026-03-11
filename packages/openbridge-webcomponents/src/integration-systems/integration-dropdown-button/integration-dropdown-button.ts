@@ -1,17 +1,12 @@
 import {LitElement, html, unsafeCSS, nothing, PropertyValues} from 'lit';
-import {property, state} from 'lit/decorators.js';
+import {property, queryAssignedElements} from 'lit/decorators.js';
 import compentStyle from './integration-dropdown-button.css?inline';
 import '../../icons/icon-drop-down-google.js';
 import '../../components/button/button.js';
 import {customElement} from '../../decorator.js';
 import {classMap} from 'lit/directives/class-map.js';
 import type {HTMLTemplateResult} from 'lit';
-
-export enum IntegrationDropdownButtonType {
-  label = 'label',
-  icon = 'icon',
-  labelIcon = 'label-icon',
-}
+import {ObcIntegrationButton} from '../integration-button/integration-button';
 
 export type ObcIntegrationDropdownButtonChangeEvent = CustomEvent<{
   value: string;
@@ -19,7 +14,7 @@ export type ObcIntegrationDropdownButtonChangeEvent = CustomEvent<{
 }>;
 
 /**
- * @slot icon - Icon displayed at the start of the button when `type` is `icon` or `label-icon`.
+ * @slot fleet - Fleet button displayed when `hasFleet` is true.
  * @fires dropdown-change {ObcIntegrationDropdownButtonChangeEvent} - Fires when the value of the select changes
  * @fires change {ObcIntegrationDropdownButtonChangeEvent} - Fires when the value of the select changes
  */
@@ -39,6 +34,9 @@ export class ObcIntegrationDropdownButton extends LitElement {
     label: string;
     icon: HTMLTemplateResult;
   }[] = [];
+
+  @property({type: Boolean}) hasFleet: boolean = false;
+  @property({type: String}) fleetLabel: string = '';
 
   /**
    * The value of the currently selected option. If not set, defaults to the first option in the list.
@@ -65,6 +63,25 @@ export class ObcIntegrationDropdownButton extends LitElement {
     return this.options.find((item) => item.value === this.value);
   }
 
+  private get fleetSelected(): boolean {
+    return this.value === 'fleet';
+  }
+
+  @queryAssignedElements({slot: 'fleet'})
+  fleetItems!: Array<HTMLElement>;
+
+  private updateSelectedFleetStatus(): void {
+    this.fleetItems.forEach((item) => {
+      const button = item as ObcIntegrationButton;
+      button.selected = this.fleetSelected;
+    });
+  }
+
+  protected override updated(_changedProperties: PropertyValues): void {
+    super.updated(_changedProperties);
+    this.updateSelectedFleetStatus();
+  }
+
   override render() {
     const selectedItem = this.selectedItem;
     return html`
@@ -77,16 +94,22 @@ export class ObcIntegrationDropdownButton extends LitElement {
         })}
       >
         <div class="visible-wrapper">
-          <div class="icon-container">${selectedItem?.icon}</div>
-          <div class="label">${selectedItem?.label}</div>
+          ${this.fleetSelected
+            ? html`<div class="label">${this.fleetLabel}</div>`
+            : html` <div class="icon-container">${selectedItem?.icon}</div>
+                <div class="label">${selectedItem?.label}</div>`}
           <div class="icon">
             <obi-drop-down-google></obi-drop-down-google>
           </div>
         </div>
         <select @change=${this.changeHandler} ?disabled=${this.disabled}>
-          <option value="fleet">
-            <slot name="fleet"></slot>
-          </option>
+          ${this.hasFleet
+            ? html`
+                <option value="fleet" class="fleet-option">
+                  <slot name="fleet"></slot>
+                </option>
+              `
+            : nothing}
           ${this.options.map((item) => {
             return html`<option
               value=${item.value}

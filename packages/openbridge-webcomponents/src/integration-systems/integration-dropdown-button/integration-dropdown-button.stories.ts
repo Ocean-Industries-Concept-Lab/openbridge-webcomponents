@@ -1,8 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {
-  ObcIntegrationDropdownButton,
-  IntegrationDropdownButtonType,
-} from './integration-dropdown-button.js';
+import {ObcIntegrationDropdownButton} from './integration-dropdown-button.js';
 import './integration-dropdown-button.js';
 import {html} from 'lit';
 import '../../icons/icon-placeholder.js';
@@ -28,10 +25,6 @@ const meta: Meta<ObcIntegrationDropdownButton> = {
     fullWidth: {
       control: 'boolean',
     },
-    type: {
-      control: 'select',
-      options: Object.values(IntegrationDropdownButtonType),
-    },
     openTop: {
       control: 'boolean',
     },
@@ -39,38 +32,40 @@ const meta: Meta<ObcIntegrationDropdownButton> = {
   args: {
     options: [
       {
-        value: 'volvo',
+        value: 'oslo',
         label: 'M/S Oslo',
         icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
       },
       {
-        value: 'xc90',
+        value: 'titanic',
         label: 'Titanic',
         icon: html`<obi-ship slot="icon"></obi-ship>`,
       },
       {
-        value: 'mercedes',
+        value: 'helge-ingstad',
         label: 'Helge Ingstad',
         icon: html`<obi-ship slot="icon"></obi-ship>`,
       },
     ],
-    value: 'volvo',
-    type: IntegrationDropdownButtonType.label,
+    value: 'oslo',
+    hasFleet: true,
+    fleetLabel: 'Fleet',
   },
   render: (args) => html`
     <obc-integration-dropdown-button
       .options=${args.options}
       .value=${args.value}
-      .type=${args.type}
+      .hasFleet=${args.hasFleet}
+      .fleetLabel=${args.fleetLabel}
     >
-      <div slot="fleet">
-        <obc-integration-button style="width: 320px; display: block;">
-          <div slot="label">Fleet</div>
-          <div slot="status">Status</div>
-          <div slot="info-label">Info Label</div>
-          <div slot="info-status">Info Status</div>
-        </obc-integration-button>
-      </div>
+      <obc-integration-button
+        slot="fleet"
+        .readouts=${[{label: 'Label', value: 'Value', unit: 'Unit'}]}
+      >
+        <div slot="label">Fleet name</div>
+        <div slot="info-label">Label</div>
+        <div slot="info-status">Status</div>
+      </obc-integration-button>
     </obc-integration-dropdown-button>
   `,
 } satisfies Meta<ObcIntegrationDropdownButton>;
@@ -78,4 +73,14 @@ const meta: Meta<ObcIntegrationDropdownButton> = {
 export default meta;
 type Story = StoryObj<ObcIntegrationDropdownButton>;
 
-export const Label: Story = {};
+export const WithFleet: Story = {
+  args: {
+    value: 'fleet',
+  },
+};
+
+export const WithoutFleet: Story = {
+  args: {
+    hasFleet: false,
+  },
+};

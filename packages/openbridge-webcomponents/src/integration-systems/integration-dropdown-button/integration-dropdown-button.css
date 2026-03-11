@@ -10,10 +10,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  @mixin font-button;
+  @mixin font-body;
 
-  @mixin style style=integration-selected visibleWrapperClass=.visible-wrapper;
-  color: var(--integration-on-selected-active-color);
+  @mixin style style=integration-normal visibleWrapperClass=.visible-wrapper;
+  color: var(--integration-on-normal-active-color);
 
   &.full-width {
     width: 100%;
@@ -44,19 +44,17 @@
     justify-content: center;
     height: var(--global-size-spacing-icon-icon-size-regular);
     width: var(--global-size-spacing-icon-icon-size-regular);
+    color: var(--integration-on-normal-neutral-color);
   }
 
   & .icon {
     height: var(--global-size-spacing-icon-icon-size-regular);
     width: var(--global-size-spacing-icon-icon-size-regular);
+    color: var(--integration-on-normal-neutral-color);
   }
 
-  &.disabled .icon-container {
-    color: var(--on-normal-disabled-color);
-  }
-
-  &.disabled .icon {
-    color: var(--on-normal-disabled-color);
+  &:disabled .icon {
+    color: var(--integration-on-normal-disabled-color);
   }
 
   & .label {
@@ -65,14 +63,6 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-  }
-
-  & .icon {
-    color: var(--on-normal-neutral-color);
-  }
-
-  &:disabled .icon {
-    color: var(--on-normal-disabled-color);
   }
 
   select {
@@ -100,10 +90,9 @@
   border: none;
   min-width: var(--ui-components-context-menu-menu-width);
   border-radius: 12px;
-  background: var(--container-global-color);
+  background: var(--integration-container-global-color);
   box-shadow: var(--shadow-floating);
-  padding: var(--ui-components-context-menu-margin-vertical)
-    var(--ui-components-context-menu-margin-horizontal);
+  padding: 4px;
 
   overflow-y: auto;
 }
@@ -112,7 +101,7 @@
   position-area: block-start span-inline-end;
 }
 
-option {
+.wrapper option:not(.fleet-option) {
   min-height: var(
     --menu-navigation-components-navigation-item-touch-target-size
   );
@@ -121,17 +110,43 @@ option {
   border-radius: var(
     --menu-navigation-components-navigation-item-border-radius
   );
-  @mixin style style=flat;
+  @mixin style style=integration-flat;
   @mixin font-body;
-  color: var(--on-flat-neutral-color);
+  color: var(--integration-on-flat-active-color);
+  gap: 0;
+
+  & .icon {
+    color: var(--integration-on-flat-neutral-color);
+  }
+
+  &:checked {
+    @mixin style style=integration-selected;
+    color: var(--integration-on-selected-active-color);
+    @mixin font-body-active;
+
+    & .icon {
+      color: var(--integration-on-selected-active-color);
+    }
+  }
+
+  &::checkmark {
+    display: none;
+  }
 }
 
-option:checked {
-  @mixin style style=amplified;
-  color: var(--on-flat-active-color);
-  @mixin font-body-active;
+.wrapper option.fleet-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 0 !important;
+
+  &::checkmark {
+    display: none;
+  }
 }
 
-option::checkmark {
-  display: none;
+::slotted([name="fleet"]) {
+  display: block;
+  width: 100%;
 }

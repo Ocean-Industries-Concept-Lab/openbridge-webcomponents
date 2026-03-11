@@ -112,6 +112,10 @@
       @mixin font-label;
       color: var(--integration-on-normal-neutral-color);
     }
+
+    &:first-child {
+      padding-left: 0;
+    }
   }
 
   .icon {
