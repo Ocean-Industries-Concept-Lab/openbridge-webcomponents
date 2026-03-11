@@ -21,7 +21,7 @@ export const Normal: Story = {
 
 export const NoClick: Story = {
   args: {
-    noClick: true,
+    isClickable: false,
   },
 };
 

@@ -23,6 +23,8 @@ const meta: Meta<typeof ObcRudder> = {
     state: {control: {type: 'select'}, options: Object.values(InstrumentState)},
     touching: {control: 'boolean'},
     priority: {control: 'select', options: Object.values(Priority)},
+    showLabels: {control: 'boolean'},
+    tickmarksInside: {control: 'boolean'},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcRudder>;

@@ -323,7 +323,7 @@ export class ObcAlertListDetails extends LitElement {
                 .data=${data}
                 .columns=${this.columns}
                 .striped=${true}
-                .noHeader=${this.small}
+                .showHeader=${!this.small}
                 @row-click=${this.onRowClick}
                 @cell-button-click=${this.onCellButtonClick}
               ></obc-table>

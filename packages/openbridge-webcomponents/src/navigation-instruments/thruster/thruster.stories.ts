@@ -177,7 +177,7 @@ export const InCommandAtSetpointManual: Story = {
     state: InstrumentState.active,
     priority: Priority.enhanced,
     atSetpoint: true,
-    disableAutoAtSetpoint: true,
+    autoAtSetpoint: false,
   },
 };
 

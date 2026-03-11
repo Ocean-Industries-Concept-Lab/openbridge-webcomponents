@@ -180,13 +180,12 @@ const renderTable = (args: ObcTable & {height?: number}) => {
     .columns=${args.columns}
     .rowDivider=${args.rowDivider}
     .narrowHeader=${args.narrowHeader}
-    .noHeader=${args.noHeader}
+    .showHeader=${args.showHeader}
     .striped=${args.striped}
     .selectable=${args.selectable}
     .defaultSelectedRowIds=${args.defaultSelectedRowIds}
     .selectedRowIds=${args.selectedRowIds}
     .selectAllAriaLabel=${args.selectAllAriaLabel}
-    .selectAllLabel=${args.selectAllLabel}
   ></obc-table>`;
 };
 
@@ -202,8 +201,7 @@ export const Playground: Story = {
     rowDivider: true,
     striped: false,
     narrowHeader: false,
-    noHeader: false,
-    selectAllLabel: 'Label',
+    showHeader: true,
     selectAllAriaLabel: 'Select all table items',
     defaultSelectedRowIds: ['1', '4'],
     columns: playgroundColumns,
@@ -237,14 +235,11 @@ export const Playground: Story = {
     narrowHeader: {
       control: {type: 'boolean'},
     },
-    noHeader: {
+    showHeader: {
       control: {type: 'boolean'},
     },
     defaultSelectedRowIds: {
       control: {type: 'object'},
-    },
-    selectAllLabel: {
-      control: {type: 'text'},
     },
     selectAllAriaLabel: {
       control: {type: 'text'},
@@ -263,7 +258,7 @@ export const Playground: Story = {
 };
 
 export const CheckboxCells: Story = {
-  tags: ['skip-snapshots'],
+  tags: ['!snapshot'],
   args: {
     columns: [
       {label: 'Name', key: 'name'},
@@ -412,7 +407,7 @@ export const HorizontalBarCells: Story = {
 };
 
 export const SelectableTable: Story = {
-  tags: ['skip-snapshots'],
+  tags: ['!snapshot'],
   args: {
     selectable: true,
     columns: [
@@ -534,7 +529,7 @@ export const SmallHeightCase: Story = {
 };
 
 export const AddingData: Story = {
-  tags: ['skip-snapshots'],
+  tags: ['!snapshot'],
   args: {},
   play: async ({canvasElement}) => {
     const table = canvasElement.querySelector('obc-table') as ObcTable;
@@ -555,7 +550,7 @@ export const AddingData: Story = {
 };
 
 export const RemovingData: Story = {
-  tags: ['skip-snapshots'],
+  tags: ['!snapshot'],
   args: {},
   play: async ({canvasElement}) => {
     const table = canvasElement.querySelector('obc-table') as ObcTable;
@@ -614,7 +609,7 @@ const newNames = [
 ];
 
 export const Interactive: Story = {
-  tags: ['skip-snapshots'],
+  tags: ['!snapshot'],
   args: {
     rowDivider: false,
     striped: true,

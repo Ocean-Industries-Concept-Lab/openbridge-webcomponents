@@ -42,8 +42,8 @@ const meta: Meta = {
       control: 'select',
       options: Object.values(SequenceOrientation),
     },
-    hideStepInputConnector: {control: 'boolean'},
-    hideStepOutputConnector: {control: 'boolean'},
+    showStepInputConnector: {control: 'boolean'},
+    showStepOutputConnector: {control: 'boolean'},
     hasIcon: {control: 'boolean'},
     leadingIcon: {
       control: {type: 'select'},
@@ -56,8 +56,8 @@ const meta: Meta = {
     styleType: SequenceStyle.regular,
     value: SequenceValue.regular,
     orientation: SequenceOrientation.horizontal,
-    hideStepInputConnector: false,
-    hideStepOutputConnector: false,
+    showStepInputConnector: true,
+    showStepOutputConnector: true,
     hasIcon: true,
     leadingIcon: 'placeholder',
     label: 'Label',
@@ -137,8 +137,8 @@ export const Playground: Story = {
         .styleType=${args.styleType}
         .value=${args.value}
         .orientation=${args.orientation}
-        .hideStepInputConnector=${args.hideStepInputConnector}
-        .hideStepOutputConnector=${args.hideStepOutputConnector}
+        .showStepInputConnector=${args.showStepInputConnector}
+        .showStepOutputConnector=${args.showStepOutputConnector}
         .hasIcon=${args.hasIcon}
       >
         ${args.hasIcon
@@ -401,8 +401,8 @@ export const ConnectorFlags: Story = {
                 .styleType=${SequenceStyle.regular}
                 .value=${SequenceValue.regular}
                 .orientation=${SequenceOrientation.horizontal}
-                .hideStepInputConnector=${!variant.hasInput}
-                .hideStepOutputConnector=${!variant.hasOutput}
+                .showStepInputConnector=${variant.hasInput}
+                .showStepOutputConnector=${variant.hasOutput}
                 .hasIcon=${variant.hasIcon}
               >
                 ${variant.hasIcon
@@ -436,8 +436,8 @@ export const OrientationShowcase: Story = {
                 .styleType=${SequenceStyle.regular}
                 .value=${SequenceValue.active}
                 .orientation=${SequenceOrientation.horizontal}
-                .hideStepInputConnector=${false}
-                .hideStepOutputConnector=${false}
+                .showStepInputConnector=${true}
+                .showStepOutputConnector=${true}
                 .hasIcon=${type !== SequenceType.small}
               >
                 ${type !== SequenceType.small
@@ -456,8 +456,8 @@ export const OrientationShowcase: Story = {
                 .styleType=${SequenceStyle.regular}
                 .value=${SequenceValue.active}
                 .orientation=${SequenceOrientation.vertical}
-                .hideStepInputConnector=${false}
-                .hideStepOutputConnector=${false}
+                .showStepInputConnector=${true}
+                .showStepOutputConnector=${true}
                 .hasIcon=${type !== SequenceType.small}
               >
                 ${type !== SequenceType.small

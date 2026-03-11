@@ -30,8 +30,8 @@ type SequenceItemArgs = {
   stepType?: SequenceType;
   stepStyle?: SequenceStyle;
   stepValue?: SequenceValue;
-  hideStepInputConnector?: boolean;
-  hideStepOutputConnector?: boolean;
+  showStepInputConnector?: boolean;
+  showStepOutputConnector?: boolean;
   stepHasIcon?: boolean;
 };
 
@@ -114,11 +114,11 @@ const meta: Meta = {
       table: {disable: true},
       control: false,
     },
-    hideStepInputConnector: {
+    showStepInputConnector: {
       table: {disable: true},
       control: false,
     },
-    hideStepOutputConnector: {
+    showStepOutputConnector: {
       table: {disable: true},
       control: false,
     },
@@ -150,8 +150,8 @@ const renderItem = (args: SequenceItemArgs = {}) => html`
     .hasDistanceStamp=${args.hasDistanceStamp ?? false}
     .distanceStamp=${args.distanceStamp ?? ''}
     .stepLabel=${args.stepLabel ?? ''}
-    .hideStepInputConnector=${args.hideStepInputConnector ?? false}
-    .hideStepOutputConnector=${args.hideStepOutputConnector ?? false}
+    .showStepInputConnector=${args.showStepInputConnector ?? true}
+    .showStepOutputConnector=${args.showStepOutputConnector ?? true}
   ></obc-sequence-item>
 `;
 

@@ -278,7 +278,7 @@ const config = {
   value: 40,
   setpoint: 50,
   atSetpoint: false,
-  disableAutoAtSetpoint: false,
+  autoAtSetpoint: true,
   autoAtSetpointDeadband: 1,
   setpointAtZeroDeadband: 0.5,
   state: 'active',
@@ -458,12 +458,12 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
       control: {type: 'number'},
     },
     atSetpoint: {
-      description: 'Manual override used when disableAutoAtSetpoint=true.',
+      description: 'Manual override used when autoAtSetpoint=false.',
       control: {type: 'boolean'},
     },
-    disableAutoAtSetpoint: {
+    autoAtSetpoint: {
       description:
-        'When false, at-setpoint is derived from value/setpoint and deadband.',
+        'When true, at-setpoint is derived from value/setpoint and deadband; when false, atSetpoint is used as a manual override.',
       control: {type: 'boolean'},
     },
     autoAtSetpointDeadband: {
@@ -528,7 +528,7 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
     setpoint: 40,
     newSetpoint: undefined,
     atSetpoint: false,
-    disableAutoAtSetpoint: false,
+    autoAtSetpoint: true,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
     state: InstrumentState.active,
@@ -585,7 +585,7 @@ export const VerticalRightBasic: Story = {
     value: 40,
     setpoint: 50,
     atSetpoint: false,
-    disableAutoAtSetpoint: false,
+    autoAtSetpoint: true,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
     state: InstrumentState.active,
@@ -625,7 +625,7 @@ export const VerticalWithCurrentValueDot: Story = {
     value: 40,
     setpoint: 50,
     atSetpoint: false,
-    disableAutoAtSetpoint: false,
+    autoAtSetpoint: true,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
     state: InstrumentState.active,
@@ -666,7 +666,7 @@ export const VerticalLeftTint: Story = {
     value: 20,
     setpoint: 50,
     atSetpoint: false,
-    disableAutoAtSetpoint: false,
+    autoAtSetpoint: true,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
     state: InstrumentState.active,
@@ -709,7 +709,7 @@ export const HorizontalBottomBasic: Story = {
     value: 40,
     setpoint: 40,
     atSetpoint: false,
-    disableAutoAtSetpoint: false,
+    autoAtSetpoint: true,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
     state: InstrumentState.active,
@@ -749,7 +749,7 @@ export const HorizontalTopTint: Story = {
     value: 20,
     setpoint: 75,
     atSetpoint: false,
-    disableAutoAtSetpoint: false,
+    autoAtSetpoint: true,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
     state: InstrumentState.active,
@@ -794,7 +794,7 @@ export const VerticalRightScaleBackground: Story = {
     value: 40,
     setpoint: 50,
     atSetpoint: false,
-    disableAutoAtSetpoint: false,
+    autoAtSetpoint: true,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
     state: InstrumentState.active,
@@ -878,7 +878,7 @@ export const FixedAspectRatioComparison: StoryObj = {
     barNormal.height = 320;
     barNormal.hasBar = true;
     barNormal.hasScale = true;
-    barNormal.hideLabels = false;
+    barNormal.showLabels = true;
     barNormal.value = 60;
     barNormal.setpoint = 80;
     barNormal.fillMode = FillMode.fill;
@@ -910,7 +910,7 @@ export const FixedAspectRatioComparison: StoryObj = {
     barFixed.height = 320;
     barFixed.hasBar = true;
     barFixed.hasScale = true;
-    barFixed.hideLabels = false;
+    barFixed.showLabels = false;
     barFixed.value = 60;
     barFixed.setpoint = 80;
     barFixed.fillMode = FillMode.fill;

@@ -1,5 +1,5 @@
-import {LitElement, PropertyValues, html, nothing, unsafeCSS} from 'lit';
-import {property} from 'lit/decorators.js';
+import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
+import {property, query} from 'lit/decorators.js';
 import '../../icons/icon-check-mixed.js';
 import '../../icons/icon-check-google.js';
 import componentStyle from './checkbox.css?inline';
@@ -11,7 +11,8 @@ import {customElement} from '../../decorator.js';
  * Represents the possible states of the checkbox.
  * - `unchecked`: The checkbox is not selected.
  * - `checked`: The checkbox is selected.
- * - `mixed`: The checkbox is in an indeterminate state (typically used for parent checkboxes when some, but not all, child checkboxes are selected).
+ * - `mixed`: The checkbox is in an indeterminate state (typically used for
+ *   parent checkboxes when some, but not all, child checkboxes are selected).
  */
 export enum CheckboxStatus {
   unchecked = 'unchecked',
@@ -20,8 +21,18 @@ export enum CheckboxStatus {
 }
 
 /**
+ * Represents the visual interaction state of the checkbox.
+ * - `enabled`: Default interactive state.
+ * - `loading`: Shows loading spinner and locks interaction.
+ */
+export enum CheckboxState {
+  enabled = 'enabled',
+  loading = 'loading',
+}
+
+/**
  * The payload for `change` and `disabled` events emitted by `<obc-checkbox>`.
- * - `status`: The current checkbox state.
+ * - `status`: The current checkbox status.
  * - `disabled`: Whether the checkbox is currently disabled.
  */
 export type ObcCheckboxChangeEvent = CustomEvent<{
@@ -30,43 +41,47 @@ export type ObcCheckboxChangeEvent = CustomEvent<{
 }>;
 
 /**
- * `<obc-checkbox>` – A selectable input component for toggling a binary or mixed state.
+ * ### Overview
+ * `<obc-checkbox>` is a selectable input for binary and mixed states.
+ * It supports `checked`, `unchecked`, and `mixed` (indeterminate) status
+ * and is intended for forms, lists, and settings.
  *
- * Provides a standard checkbox UI element that supports checked, unchecked, and mixed (indeterminate) states.
- * Designed for use in forms, lists, or settings where users need to select one or more options. The component is
- * accessible, keyboard‑navigable, and visually indicates its current state.
+ * Keywords: checkbox, check box, tickbox, tri-state, indeterminate, select all.
  *
  * ### Features
  * - **Three‑state support:** Allows `checked`, `unchecked`, and `mixed` (indeterminate) status for parent/child
  *   selection scenarios.
+ * - **Visual state support:** `state` allows `enabled` and `loading` visual behavior.
  * - **Disabled state:** Can be set to non‑interactive, visually indicating its disabled status.
- * - **Custom label:** Displays a configurable text label next to the checkbox.
- * - **Accessible:** Implements proper ARIA roles and keyboard interaction (Space **or** Enter toggles state).
+ * - **Accessible:** Implements proper ARIA role and keyboard interaction (Space **or** Enter toggles state).
+ * - **Touch target:** Uses a minimum 48x48 interactive area.
  * - **Icon display:** Uses `<obi-check-google>` for checked and `<obi-check-mixed>` for mixed states.
+ * - **Loading display:** Uses an indeterminate spinner when `state="loading"`.
  *
  * ### Variants
  * - **Unchecked** (default): Empty checkbox.
  * - **Checked:** Filled checkbox with a check‑mark icon.
- * - **Mixed:** Partially filled checkbox with a mixed icon – always set programmatically to reflect a partial
- *   selection of child items. User interaction toggles only between **checked** and **unchecked**.
+ * - **Mixed:** Partially filled checkbox with a mixed icon.
+ * - **Loading:** Spinner is shown and interaction is locked.
  *
  * ### Usage Guidelines
  * - Use `obc-checkbox` for independent binary choices or when representing a group selection with a mixed state.
  * - For mutually exclusive choices, use a radio group instead.
  * - The **mixed** state should be applied by application logic; users should not toggle into or out of it directly.
  * - Use the `disabled` property to prevent interaction and visually indicate the option is unavailable.
- * - Provide a clear, concise `label` for each checkbox. If the visual label is omitted, supply an `aria-label` or
- *   link an external label element with `aria-labelledby`.
+ * - Use `state="loading"` for transient async state while preserving layout.
+ * - If there is no visible external label, provide an `aria-label` or `aria-labelledby`.
  *
  * ### Properties and Attributes
- * - `status` (`checked` | `unchecked` | `mixed`) · *default:* `unchecked` – Controls the checkbox state.
+ * - `status` (`checked` | `unchecked` | `mixed`) · *default:* `unchecked` – Controls the checkbox status.
+ * - `state` (`enabled` | `loading`) · *default:* `enabled` – Controls the checkbox visual state.
  * - `disabled` (`boolean`) · Disables interaction and applies disabled styling.
- * - `label` (`string`) · Visible label text.
- * - `ariaDescribedBy` (`string`) · ID reference for supplementary description – reflected to the
- *   `aria-describedby` attribute for screen readers.
+ * - `aria-label` (`string`) · Accessible name for screen readers.
+ * - `aria-labelledby` (`string`) · ID reference to an external visible label.
+ * - `aria-describedby` (`string`) · ID reference(s) for supplementary description.
  *
  * ### Events
- * - `change` – Fired when the checkbox state changes.
+ * - `change` – Fired when the checkbox status changes.
  *   **detail:** `{ status, disabled }`
  * - `disabled` – Fired when the `disabled` property changes.
  *   **detail:** `{ status, disabled }`
@@ -75,67 +90,63 @@ export type ObcCheckboxChangeEvent = CustomEvent<{
  * ```html
  * <obc-checkbox
  *   status="mixed"
- *   label="Select all items"
+ *   state="enabled"
+ *   aria-label="Select all items"
  * ></obc-checkbox>
  * ```
  *
- * @slot - No named slots. The label is provided via the `label` property.
+ * @slot - No named slots.
  * @fires change {ObcCheckboxChangeEvent} – Emitted when the status changes.
  * @fires disabled {ObcCheckboxChangeEvent} – Emitted when the disabled state changes.
  */
 @customElement('obc-checkbox')
 export class ObcCheckbox extends LitElement {
   /**
-   * Controls the checkbox state: `checked`, `unchecked`, or `mixed` (indeterminate).
+   * Controls the checkbox status: `checked`, `unchecked`, or `mixed` (indeterminate).
    *
    * Defaults to `unchecked`.
    */
   @property({type: String}) status: CheckboxStatus = CheckboxStatus.unchecked;
 
   /**
+   * Controls the visual state: `enabled` or `loading`.
+   *
+   * Defaults to `enabled`.
+   */
+  @property({type: String}) state: CheckboxState = CheckboxState.enabled;
+
+  /**
    * Disables the checkbox and prevents user interaction.
    *
    * When `true`, the checkbox is visually styled as disabled and does not respond to user input.
+   * Interaction is also locked when `state === loading`.
    */
   @property({type: Boolean}) disabled = false;
 
-  /**
-   * Text label displayed next to the checkbox.
-   *
-   * This label is visible to users and should clearly describe the checkbox's purpose.
-   * If omitted, provide an `aria-label` or use `aria-labelledby` for accessibility.
-   */
-  @property({type: String}) label = 'Checkbox item';
+  /** Internal: controls hover effects on the checkbox. Used by wrapper components such as `obc-checkbox-item`. */
+  @property({type: Boolean, attribute: false}) hasHoverEffects = true;
 
-  /**
-   * ID reference(s) for additional descriptive text – reflected to `aria-describedby`.
-   * Accepts a single ID or a space‑separated list.
-   *
-   * This helps screen readers provide extra context about the checkbox.
-   */
-  @property({type: String, attribute: 'aria-describedby', reflect: true})
-  ariaDescribedBy = '';
+  @query('.visually-hidden') private checkboxControl?: HTMLDivElement;
+
+  private get _isInteractionLocked() {
+    return this.disabled || this.state === CheckboxState.loading;
+  }
 
   protected override updated(changed: PropertyValues<this>): void {
     if (changed.has('disabled')) {
-      /**
-       * Fired when the `disabled` property changes.
-       *
-       * @event disabled
-       * @type {ObcCheckboxChangeEvent}
-       * @property {CheckboxStatus} status - The current checkbox state.
-       * @property {boolean} disabled - Whether the checkbox is disabled.
-       */
       this.dispatchEvent(
         new CustomEvent('disabled', {
-          detail: {status: this.status, disabled: this.disabled},
+          detail: {
+            status: this.status,
+            disabled: this.disabled,
+          },
         })
       );
     }
   }
 
   private toggleStatus() {
-    if (this.disabled) return;
+    if (this._isInteractionLocked) return;
 
     if (this.status === CheckboxStatus.checked) {
       this.status = CheckboxStatus.unchecked;
@@ -143,14 +154,6 @@ export class ObcCheckbox extends LitElement {
       this.status = CheckboxStatus.checked;
     }
 
-    /**
-     * Fired when the checkbox state changes.
-     *
-     * @event change
-     * @type {ObcCheckboxChangeEvent}
-     * @property {CheckboxStatus} status - The new checkbox state.
-     * @property {boolean} disabled - Whether the checkbox is disabled.
-     */
     this.dispatchEvent(
       new CustomEvent('change', {
         detail: {
@@ -162,7 +165,7 @@ export class ObcCheckbox extends LitElement {
   }
 
   private handleKeydown(e: KeyboardEvent) {
-    if (e.key === ' ' || e.key === 'Space') {
+    if (e.key === ' ' || e.key === 'Space' || e.key === 'Enter') {
       e.preventDefault();
       this.toggleStatus();
     }
@@ -180,61 +183,77 @@ export class ObcCheckbox extends LitElement {
     }
   }
 
-  private get _hasVisibleLabel() {
-    return this.label.trim().length > 0;
+  public override focus(options?: FocusOptions): void {
+    this.checkboxControl?.focus(options);
+  }
+
+  private syncFocusVisibleAttribute() {
+    const isFocusVisible = this.checkboxControl?.matches(':focus-visible');
+    this.toggleAttribute('data-focus-visible', Boolean(isFocusVisible));
+  }
+
+  private handleControlFocus() {
+    queueMicrotask(() => this.syncFocusVisibleAttribute());
+  }
+
+  private handleControlBlur() {
+    this.removeAttribute('data-focus-visible');
   }
 
   override render() {
-    const ariaLabel = this.getAttribute('aria-label') ?? undefined;
+    const hostAriaLabel = this.getAttribute('aria-label') ?? undefined;
     const hostAriaLabelledBy =
       this.getAttribute('aria-labelledby') ?? undefined;
-    const ariaLabelledBy = ariaLabel
+    const hostAriaDescribedBy =
+      this.getAttribute('aria-describedby') ?? undefined;
+    const forwardedAriaLabel = hostAriaLabelledBy
       ? undefined
-      : (hostAriaLabelledBy ??
-        (this._hasVisibleLabel ? 'checkbox-label' : undefined));
+      : (hostAriaLabel ?? 'Checkbox item');
 
     return html`
       <div
         class=${classMap({
           'visually-hidden': true,
-          'label-hidden': !this._hasVisibleLabel,
+          [`status-${this.status}`]: true,
+          [`state-${this.state}`]: true,
+          disabled: this.disabled,
+          'no-hover-effects': !this.hasHoverEffects,
         })}
+        role="checkbox"
+        aria-checked=${this._computedAriaChecked}
+        aria-label=${ifDefined(forwardedAriaLabel)}
+        aria-labelledby=${ifDefined(hostAriaLabelledBy)}
+        aria-describedby=${ifDefined(hostAriaDescribedBy)}
+        aria-disabled=${this._isInteractionLocked ? 'true' : 'false'}
+        aria-busy=${this.state === CheckboxState.loading ? 'true' : 'false'}
+        tabindex=${this._isInteractionLocked ? '-1' : '0'}
+        @click=${this.toggleStatus}
+        @keydown=${this.handleKeydown}
+        @focus=${this.handleControlFocus}
+        @blur=${this.handleControlBlur}
       >
-        <div
-          class=${classMap({
-            'checkbox-container': true,
-            [`status-${this.status}`]: true,
-            disabled: this.disabled,
-            'label-hidden': !this._hasVisibleLabel,
-          })}
-          role="checkbox"
-          aria-checked=${this._computedAriaChecked}
-          aria-labelledby=${ifDefined(ariaLabelledBy)}
-          aria-label=${ifDefined(ariaLabel)}
-          aria-describedby=${ifDefined(this.ariaDescribedBy || undefined)}
-          aria-disabled=${this.disabled ? 'true' : 'false'}
-          tabindex=${this.disabled ? '-1' : '0'}
-          @click=${this.toggleStatus}
-          @keydown=${this.handleKeydown}
-        >
+        <div class="checkbox-container">
           <div class="checkbox-box">
-            ${this.status === 'checked'
-              ? html`<obi-check-google
-                  class="checkbox-icon"
-                ></obi-check-google>`
-              : this.status === 'mixed'
-                ? html`<obi-check-mixed
+            ${this.state === CheckboxState.loading
+              ? html`
+                  <svg
+                    class="checkbox-loading-spinner type-indeterminate size-small style-regular"
+                    viewBox="0 0 16 16"
+                    aria-hidden="true"
+                  >
+                    <circle cx="8" cy="8" r="6"></circle>
+                  </svg>
+                `
+              : this.status === 'checked'
+                ? html`<obi-check-google
                     class="checkbox-icon"
-                  ></obi-check-mixed>`
-                : html`<span class="checkbox-icon"></span>`}
+                  ></obi-check-google>`
+                : this.status === 'mixed'
+                  ? html`<obi-check-mixed
+                      class="checkbox-icon"
+                    ></obi-check-mixed>`
+                  : html`<span class="checkbox-icon"></span>`}
           </div>
-          ${this._hasVisibleLabel
-            ? html`<div class="checkbox-label-container">
-                <span id="checkbox-label" class="checkbox-label">
-                  ${this.label}
-                </span>
-              </div>`
-            : nothing}
         </div>
       </div>
     `;

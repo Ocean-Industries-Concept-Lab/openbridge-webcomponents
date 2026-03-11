@@ -19,7 +19,7 @@ const meta: Meta<typeof ObcSwitch> = {
     alert: false,
     progress: false,
     vertical: false,
-    hideReadoutStack: false,
+    showReadoutStack: true,
     hasIdTag: true,
   },
   argTypes: {
