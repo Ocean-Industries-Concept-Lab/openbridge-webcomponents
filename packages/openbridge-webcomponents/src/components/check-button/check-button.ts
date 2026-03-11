@@ -19,6 +19,16 @@ export enum CheckButtonType {
 }
 
 /**
+ * Optional checkbox appearance variants for `<obc-check-button type="checkbox">`.
+ * - `default`: Existing check-button checkbox visuals.
+ * - `updated`: Updated checkbox visuals (24px box, icon-check mark, custom state tokens).
+ */
+export enum CheckButtonCheckboxAppearance {
+  default = 'default',
+  updated = 'updated',
+}
+
+/**
  * `<obc-check-button>` – A versatile **state‑toggle component** used to represent
  * persistent settings (on/off, enabled/disabled, selected/unselected).  It is
  * **not** intended for transient command actions such as “Send”, “Save”, or
@@ -48,6 +58,7 @@ export enum CheckButtonType {
  *
  * ## Features
  * * **Two Variants** – `regular` & `checkbox` (see above).
+ * * **Checkbox Appearance** – Optional `checkboxAppearance` mode for updated visuals.
  * * **Icon Support** – Single icon (regular) or paired icons (checkbox).
  * * **Width Control** – `fullWidth` (hug content vs. expand) and `width` for a
  *   fixed size when `fullWidth` is true.
@@ -148,6 +159,23 @@ export class ObcCheckButton extends LitElement {
    */
   @property({type: Boolean}) hasUncheckedIcon = false;
 
+  /**
+   * Optional appearance mode for checkbox type.
+   * Keep `default` for existing behavior. Use `updated` for the new checkbox visuals.
+   *
+   * @default 'default'
+   */
+  @property({type: String, attribute: 'checkbox-appearance'})
+  checkboxAppearance: CheckButtonCheckboxAppearance =
+    CheckButtonCheckboxAppearance.default;
+
+  private get isUpdatedCheckboxAppearance(): boolean {
+    return (
+      this.type === CheckButtonType.checkbox &&
+      this.checkboxAppearance === CheckButtonCheckboxAppearance.updated
+    );
+  }
+
   private get customWidthStyle() {
     if (!this.fullWidth || this.width === '') return '';
     return `--custom-width: ${this.width}`;
@@ -197,6 +225,10 @@ export class ObcCheckButton extends LitElement {
   }
 
   private renderCheckedIcon() {
+    if (this.isUpdatedCheckboxAppearance && !this.hasCheckedIcon) {
+      return this.renderUpdatedCheckedIcon();
+    }
+
     if (this.hasCheckedIcon) {
       return html`<slot name="checked-icon"></slot>`;
     }
@@ -204,10 +236,54 @@ export class ObcCheckButton extends LitElement {
   }
 
   private renderUncheckedIcon() {
+    if (this.isUpdatedCheckboxAppearance && !this.hasUncheckedIcon) {
+      return this.renderUpdatedUncheckedIcon();
+    }
+
     if (this.hasUncheckedIcon) {
       return html`<slot name="unchecked-icon"></slot>`;
     }
     return html`<obi-checkbox-uncheck-google></obi-checkbox-uncheck-google>`;
+  }
+
+  private renderUpdatedUncheckedIcon() {
+    return html`
+      <span class="checkbox-appearance-updated-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect
+            x="0.5"
+            y="0.5"
+            width="23"
+            height="23"
+            rx="3.5"
+            fill="var(--obc-check-button-checkbox-unchecked-background, var(--indent-enabled-background-color))"
+            stroke="var(--obc-check-button-checkbox-unchecked-border, var(--element-symbol-color))"
+          />
+        </svg>
+      </span>
+    `;
+  }
+
+  private renderUpdatedCheckedIcon() {
+    return html`
+      <span class="checkbox-appearance-updated-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect
+            x="0.5"
+            y="0.5"
+            width="23"
+            height="23"
+            rx="3.5"
+            fill="var(--obc-check-button-checkbox-checked-background, var(--selected-enabled-background-color))"
+            stroke="var(--obc-check-button-checkbox-checked-border, var(--selected-enabled-border-color))"
+          />
+          <path
+            d="M8.99991 16.17L4.82991 12L3.40991 13.41L8.99991 19L20.9999 7L19.5899 5.59L8.99991 16.17Z"
+            fill="var(--on-selected-active-color)"
+          />
+        </svg>
+      </span>
+    `;
   }
 
   override render() {
@@ -219,6 +295,7 @@ export class ObcCheckButton extends LitElement {
           'state-unchecked': !this.checked,
           'type-regular': this.type === CheckButtonType.regular,
           'type-checkbox': this.type === CheckButtonType.checkbox,
+          'checkbox-appearance-updated': this.isUpdatedCheckboxAppearance,
           hasIcon:
             this.type === CheckButtonType.checkbox ||
             (this.type === CheckButtonType.regular && this.showIcon),

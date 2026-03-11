@@ -105,7 +105,7 @@ export enum ObcInputTextAlign {
  * - `disabled`: Disables the input field.
  * - `required`: Marks the input as required for form validation.
  * - `error`: Shows error styling when true.
- * - `noHorisontalPadding`: Removes horizontal padding for edge-to-edge layouts.
+ * - `hasHorizontalPadding`: Controls whether horizontal padding is applied (default: true).
  * - `hasLeadingIcon`: If true, displays the leading icon slot.
  * - `hasTrailingIcon`: If true, displays the trailing icon slot.
  * - `passwordToggle`: If true and `type="password"`, shows a trailing icon to toggle visibility.
@@ -197,9 +197,10 @@ export class ObcInput extends LitElement {
   @property({type: Boolean}) error: boolean = false;
 
   /**
-   * If true, removes horizontal padding for edge-to-edge layouts.
+   * If true, applies horizontal padding. Set to false for edge-to-edge layouts.
    */
-  @property({type: Boolean}) noHorisontalPadding: boolean = false;
+  @property({type: Boolean, attribute: false}) hasHorizontalPadding: boolean =
+    true;
 
   /**
    * If true, displays the leading icon slot before the input field.
@@ -256,7 +257,7 @@ export class ObcInput extends LitElement {
           [`font-` + this.font]: true,
           disabled: this.disabled,
           error: this.error,
-          'no-horisontal-padding': this.noHorisontalPadding,
+          'no-horisontal-padding': !this.hasHorizontalPadding,
         })}
         part="wrapper"
       >

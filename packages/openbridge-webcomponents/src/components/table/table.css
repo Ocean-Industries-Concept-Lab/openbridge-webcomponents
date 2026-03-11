@@ -45,15 +45,6 @@
     );
   }
 
-  .grid-header .selection-header obc-checkbox {
-    --flat-hover-background-color: transparent;
-    --flat-hover-border-color: transparent;
-    --flat-active-background-color: transparent;
-    --flat-active-border-color: transparent;
-    --flat-pressed-background-color: transparent;
-    --flat-pressed-border-color: transparent;
-  }
-
   .grid-header-divider {
     grid-row: 2;
     grid-column: 1/-1;
@@ -232,15 +223,6 @@
         background: transparent;
         --flat-active-background-color: transparent;
         --flat-hover-background-color: transparent;
-      }
-
-      &.checkbox obc-checkbox {
-        --flat-hover-background-color: transparent;
-        --flat-hover-border-color: transparent;
-        --flat-active-background-color: transparent;
-        --flat-active-border-color: transparent;
-        --flat-pressed-background-color: transparent;
-        --flat-pressed-border-color: transparent;
       }
 
       &.horizontal-bar {

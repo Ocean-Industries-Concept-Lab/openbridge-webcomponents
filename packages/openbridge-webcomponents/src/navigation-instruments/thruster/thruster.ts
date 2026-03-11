@@ -47,8 +47,8 @@ export class ObcThruster extends SetpointMixin(LitElement, {
         atSetpoint: this.atSetpoint,
         tunnel: this.tunnel,
         setpointAtZeroDeadband: this.setpointAtZeroDeadband,
-        autoAtSetpoint: !this.disableAutoAtSetpoint,
-        autoSetpointDeadband: this.autoAtSetpointDeadband,
+        autoAtSetpoint: this.autoAtSetpoint,
+        autoAtSetpointDeadband: this.autoAtSetpointDeadband,
         touching: this.touching,
         singleSided: this.singleSided,
         advices: this.advices,
@@ -561,7 +561,7 @@ export function atSetpoint(
   setpoint: number | undefined,
   options: {
     autoAtSetpoint: boolean;
-    autoSetpointDeadband: number;
+    autoAtSetpointDeadband: number;
     touching: boolean;
     atSetpoint: boolean;
   }
@@ -571,7 +571,7 @@ export function atSetpoint(
   }
 
   if (options.autoAtSetpoint && setpoint !== undefined) {
-    return Math.abs(thrust - setpoint) < options.autoSetpointDeadband;
+    return Math.abs(thrust - setpoint) < options.autoAtSetpointDeadband;
   }
 
   return options.atSetpoint;
@@ -590,7 +590,7 @@ export function thruster(
     singleDirectionHalfSize: boolean;
     setpointAtZeroDeadband: number;
     autoAtSetpoint: boolean;
-    autoSetpointDeadband: number;
+    autoAtSetpointDeadband: number;
     touching: boolean;
     advices: LinearAdvice[];
     topPropeller: PropellerType;

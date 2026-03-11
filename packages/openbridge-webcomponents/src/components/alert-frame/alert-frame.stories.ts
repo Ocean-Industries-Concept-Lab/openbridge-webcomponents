@@ -20,7 +20,7 @@ const meta: Meta<typeof ObcAlertFrame> = {
     status: ObcAlertFrameStatus.Alarm,
     demoWidth: 200,
     showIcon: true,
-    hideAlertCategoryIcon: false,
+    showAlertCategoryIcon: true,
   },
   argTypes: {
     type: {
@@ -61,7 +61,7 @@ const meta: Meta<typeof ObcAlertFrame> = {
         .status=${args.status}
         .textSize=${args.textSize}
         .showIcon=${args.showIcon}
-        .hideAlertCategoryIcon=${args.hideAlertCategoryIcon}
+        .showAlertCategoryIcon=${args.showAlertCategoryIcon}
       >
         <obi-placeholder slot="icon"></obi-placeholder>
         <div slot="label">Label</div>
@@ -165,7 +165,7 @@ export const AlarmThickTopFlip: Story = {
         .sharpEdgeTopLeft=${args.sharpEdgeTopLeft}
         .textSize=${args.textSize}
         .showIcon=${args.showIcon}
-        .hideAlertCategoryIcon=${args.hideAlertCategoryIcon}
+        .showAlertCategoryIcon=${args.showAlertCategoryIcon}
       >
         <obi-placeholder slot="icon"></obi-placeholder>
         <div slot="label">Label</div>
@@ -197,7 +197,7 @@ export const AlarmThickTopFlipNoIcons: Story = {
     thickness: ObcAlertFrameThickness.Large,
     type: ObcAlertFrameType.TopFlip,
     showIcon: false,
-    hideAlertCategoryIcon: true,
+    showAlertCategoryIcon: false,
   },
   render: AlarmThickTopFlip.render,
 };

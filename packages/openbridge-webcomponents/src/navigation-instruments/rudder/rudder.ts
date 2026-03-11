@@ -46,7 +46,8 @@ export enum ObcRudderVariant {
  * - Use `priority` to switch between regular and enhanced color palettes
  *   (default: `Priority.regular`).
  * - Use `state` to control the instrument color palette.
- * - Enable `labels` to show numeric angle labels at tickmarks.
+ * - Enable `showLabels` to show numeric angle labels at tickmarks.
+ * - Enable `tickmarksInside` to render tickmarks inside the ring.
  * - Choose `variant` to switch between bar and needle display.
  *
  * ## Best Practices
@@ -64,7 +65,7 @@ export enum ObcRudderVariant {
  *   maxAngle="45"
  *   variant="needle"
  *   state="in-command"
- *   labels
+ *   showLabels
  *   setpoint="15"
  * ></obc-rudder>
  * ```
@@ -76,7 +77,9 @@ export class ObcRudder extends SetpointMixin(LitElement) {
   @property({type: Number}) angle = 0;
   @property({type: String}) variant: ObcRudderVariant = ObcRudderVariant.Bar;
   @property({type: Number}) maxAngle = 90;
-  @property({type: Boolean}) labels: boolean = false;
+  @property({type: Boolean}) showLabels: boolean = false;
+  /** Whether to render tickmarks inside the ring. */
+  @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: Array, attribute: false}) advices: AngleAdvice[] = [];
@@ -151,7 +154,7 @@ export class ObcRudder extends SetpointMixin(LitElement) {
       {
         angle: 180,
         type: TickmarkType.primary,
-        text: this.labels ? '0' : undefined,
+        text: this.showLabels ? '0' : undefined,
       },
       {
         angle: 180,
@@ -161,12 +164,12 @@ export class ObcRudder extends SetpointMixin(LitElement) {
       {
         angle: 180 - this.maxAngle,
         type: TickmarkType.secondary,
-        text: this.labels ? this.maxAngle.toFixed(0) : undefined,
+        text: this.showLabels ? this.maxAngle.toFixed(0) : undefined,
       },
       {
         angle: 180 + this.maxAngle,
         type: TickmarkType.secondary,
-        text: this.labels ? (-this.maxAngle).toFixed(0) : undefined,
+        text: this.showLabels ? (-this.maxAngle).toFixed(0) : undefined,
       },
     ];
 
@@ -230,6 +233,7 @@ export class ObcRudder extends SetpointMixin(LitElement) {
           .animateSetpoint=${this.animateSetpoint}
           .padding=${48}
           .tickmarks=${tickmarks}
+          .tickmarksInside=${this.tickmarksInside}
           .watchCircleType=${WatchCircleType.double}
           .barAreas=${barAreas}
           .state=${this.state}

@@ -48,7 +48,7 @@ export const WithDialog: Story = {
 
 export const NoTitle: Story = {
   render: () => {
-    return html`<obc-card noTitle>
+    return html`<obc-card .showTitle=${false}>
       <div
         style="height: 100px; width: 100%; background-color: var(--base-red-200); display: flex; align-items: center; justify-content: center;"
       >

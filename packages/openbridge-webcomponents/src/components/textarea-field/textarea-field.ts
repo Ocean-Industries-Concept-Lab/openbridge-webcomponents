@@ -84,12 +84,12 @@ export interface Attachment {
  *   - Screenshot: Capture and attach a screenshot.
  *   - Image: Attach an image file.
  *   - Attachment: Attach any file type.
- *   - Toolbar can be hidden via `hideToolbar`.
+ *   - Toolbar visibility is controlled by `showToolbar`.
  * - **Voice recording:**
  *   - Microphone button to start voice recording (UI only—parent handles audio capture).
  *   - Displays `<obc-audio-recording-item>` waveform during recording.
  *   - Different controls for Rich vs Message types (see Voice Recording Flow below).
- *   - Can be hidden via `hideVoiceRecording`.
+ *   - Visibility is controlled by `showVoiceRecording`.
  * - **Attachments:**
  *   - Display file attachments as removable chips below the input.
  *   - Each chip can be removed, firing `attachment-remove`.
@@ -264,19 +264,20 @@ export class ObcTextareaField extends LitElement {
   @property({type: Boolean}) required = false;
 
   /**
-   * Hides the label above the input field.
+   * Shows the label above the input field.
    */
-  @property({type: Boolean}) hideLabel = false;
+  @property({type: Boolean, attribute: false}) showLabel: boolean = true;
 
   /**
-   * Hides the toolbar with action buttons.
+   * Shows the toolbar with action buttons.
    */
-  @property({type: Boolean}) hideToolbar = false;
+  @property({type: Boolean, attribute: false}) showToolbar: boolean = true;
 
   /**
-   * Hides the voice recording button.
+   * Shows the voice recording button.
    */
-  @property({type: Boolean}) hideVoiceRecording = false;
+  @property({type: Boolean, attribute: false}) showVoiceRecording: boolean =
+    true;
 
   /**
    * Shows a leading icon before the input field.
@@ -430,7 +431,7 @@ export class ObcTextareaField extends LitElement {
   }
 
   private get showTitle(): boolean {
-    return !this.hideLabel && this.label.length > 0;
+    return this.showLabel && this.label.length > 0;
   }
 
   private get isPausedOrPlayback(): boolean {
@@ -441,7 +442,7 @@ export class ObcTextareaField extends LitElement {
   }
 
   private get shouldShowToolbar(): boolean {
-    return !this.hideToolbar || this.isMessageType || this.recording;
+    return this.showToolbar || this.isMessageType || this.recording;
   }
 
   private get isEmpty(): boolean {
@@ -686,7 +687,7 @@ export class ObcTextareaField extends LitElement {
 
   private renderNormalToolbar() {
     return html`
-      ${!this.hideToolbar
+      ${this.showToolbar
         ? html`
             <div class="tool-container">
               <div class="divider"></div>
@@ -727,7 +728,7 @@ export class ObcTextareaField extends LitElement {
         : nothing}
 
       <div class="action-container ${this.isEmpty ? 'inactive' : ''}">
-        ${!this.hideVoiceRecording
+        ${this.showVoiceRecording
           ? html`
               <obc-icon-button
                 variant="normal"

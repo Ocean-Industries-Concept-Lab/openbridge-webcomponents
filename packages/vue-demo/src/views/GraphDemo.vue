@@ -84,7 +84,7 @@ function updateGraph() {
   const opacity = 0.3
   const positiveStroke = getCssVariableValue('--base-red-400')
   const positiveFill = addOpacityToRgb(positiveStroke, opacity)
-  const negativeStroke = getCssVariableValue('--base-green-400')
+  const negativeStroke = getCssVariableValue('--base-blue-400')
   const negativeFill = addOpacityToRgb(negativeStroke, opacity)
   const instrumentEnhancedSecondary = getCssVariableValue('--instrument-enhanced-secondary-color')
 
@@ -182,7 +182,7 @@ function updateGraph() {
           borderColor: {
             axis: 'y',
             colors: {
-              '0': negativeStroke, // Green for values between 0 and 50
+              '0': negativeStroke, // Blue for values between 0 and 50
               [target]: negativeStroke,
               [target + 0.0001]: positiveStroke, // Red for values between 50.0001 and 100
               '100': positiveStroke

@@ -203,14 +203,13 @@ function cssPart(value: ObcTableCellData, subpart: string): string | undefined {
  * Features/Variants
  * - Selectable rows with header “select all” checkbox via `selectable=true`.
  * - Cell rendering variants: `checkbox`, `tag`, `horizontal-bar`, and `button` cell types.
- * - Visual variants: `rowDivider`, `striped`, `narrowHeader`, and `noHeader`.
+ * - Visual variants: `rowDivider`, `striped`, `narrowHeader`, and `showHeader`.
  * - Sorting support for sortable columns via column definitions.
  *
  * Usage Guidelines
  * - Controlled selection: pass `selectedRowIds` and update it on `selection-change`.
  * - Uncontrolled selection: pass `defaultSelectedRowIds` and listen to `selection-change`.
  * - Use `selectAllAriaLabel` to customize the header checkbox accessibility label.
- * - Use `selectAllLabel` to provide a visible label in the selection header.
  *
  * Slots/Content
  * - This component does not expose public slots. Provide content via `data` and `columns`.
@@ -250,13 +249,12 @@ export class ObcTable extends LitElement {
   @property({type: Array}) columns: ObcTableColumn[] = [];
   @property({type: Boolean}) rowDivider = false;
   @property({type: Boolean}) narrowHeader = false;
-  @property({type: Boolean}) noHeader = false;
+  @property({type: Boolean, attribute: false}) showHeader = true;
   @property({type: Boolean}) striped = false;
   @property({type: Boolean}) selectable = false;
   @property({type: Array}) selectedRowIds?: string[];
   @property({type: Array}) defaultSelectedRowIds?: string[];
   @property({type: String}) selectAllAriaLabel = 'Select all rows';
-  @property({type: String}) selectAllLabel = '';
 
   @state()
   private _sortByColumnIdx: number | undefined = undefined;
@@ -599,9 +597,8 @@ export class ObcTable extends LitElement {
         "
         role="table"
       >
-        ${this.noHeader
-          ? nothing
-          : html`
+        ${this.showHeader
+          ? html`
               <div class="grid-header" role="row">
                 ${effectiveColumns.map((col) => {
                   const isSelectionColumn =
@@ -658,7 +655,6 @@ export class ObcTable extends LitElement {
                         @keydown=${this._handleHeaderKeyDown}
                       >
                         <obc-checkbox
-                          .label=${this.selectAllLabel}
                           .status=${this._getSelectionStatus()}
                           .disabled=${false}
                           aria-label=${this.selectAllAriaLabel}
@@ -682,7 +678,8 @@ export class ObcTable extends LitElement {
                 })}
               </div>
               <div class="grid-header-divider"></div>
-            `}
+            `
+          : nothing}
         <div
           class="grid-body"
           style="grid-template-rows: repeat(${this.sortedData
@@ -738,7 +735,6 @@ export class ObcTable extends LitElement {
                         role="cell"
                       >
                         <obc-checkbox
-                          .label=${''}
                           .status=${checked
                             ? CheckboxStatus.checked
                             : CheckboxStatus.unchecked}
@@ -1013,7 +1009,7 @@ export class ObcTable extends LitElement {
     } else if (value.type === ObcTableCellType.Checkbox) {
       const checkboxLabel = value.label ?? value.text ?? '';
       const ariaLabel =
-        checkboxLabel.trim() === '' ? (column.label ?? 'Checkbox') : undefined;
+        checkboxLabel.trim() || column.label?.trim() || 'Checkbox';
       return html`<div
         class=${classMap({
           'grid-cell': true,
@@ -1025,11 +1021,10 @@ export class ObcTable extends LitElement {
         part=${ifDefined(cssPart(value, 'cell'))}
       >
         <obc-checkbox
-          .label=${checkboxLabel}
           .status=${value.status ?? CheckboxStatus.unchecked}
           .disabled=${value.disabled ?? false}
           aria-describedby=${ifDefined(value.ariaDescribedBy)}
-          aria-label=${ifDefined(ariaLabel)}
+          aria-label=${ariaLabel}
           part=${ifDefined(cssPart(value, 'checkbox'))}
           @click=${(event: MouseEvent) => {
             event.preventDefault();
@@ -1099,7 +1094,7 @@ export class ObcTable extends LitElement {
     } else if (value.type === ObcTableCellType.HorizontalBar) {
       const hasBar = value.hasBar ?? true;
       const hasScale = value.hasScale ?? false;
-      const hideLabels = value.hideLabels ?? true;
+      const showLabels = !(value.hideLabels ?? true);
       const fixedAspectRatio = value.fixedAspectRatio ?? true;
       return html`<div
         class=${classMap({
@@ -1118,7 +1113,7 @@ export class ObcTable extends LitElement {
           .setpoint=${value.setpoint}
           .hasBar=${hasBar}
           .hasScale=${hasScale}
-          .hideLabels=${hideLabels}
+          .showLabels=${showLabels}
           .priority=${value.priority ?? Priority.regular}
           .fillMode=${value.fillMode ?? FillMode.fill}
           .fillMin=${value.fillMin}

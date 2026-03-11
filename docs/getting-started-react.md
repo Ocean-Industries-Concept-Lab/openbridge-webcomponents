@@ -28,18 +28,18 @@ This will start a development server, typically accessible at `http://localhost:
 
 ## Install OpenBridge web components
 
-To use the components in your project, you can install the package from github package repo.
+To use the components in your project, you can install the package from GitHub package repo.
 
-Start by creating a classic personal access token in github
-Go to [github settings](https://github.com/settings/tokens/new) to make a classic token. Give the token the `read:packages` permission. Click "Generate token" and copy the token.
+Start by creating a classic personal access token in GitHub
+Go to [GitHub settings](https://github.com/settings/tokens/new) to make a classic token. Give the token the `read:packages` permission. Click "Generate token" and copy the token.
 
-Login into github package repo:
+Login into GitHub package repo:
 
 ```bash
-npm login --registry https://npm.pkg.github.com/ --scope=ocean-industries-concept-lab
+npm login --registry https://npm.pkg.github.com/ --scope=@ocean-industries-concept-lab
 ```
 
-Use our github username as username and past in the generated token as password.
+Use our GitHub username as username and past in the generated token as password.
 
 You can now install the package:
 
@@ -123,7 +123,7 @@ Then set palette by modifying the `html` tag in `index.html`
 <html lang="en" data-obc-theme="day"></html>
 ```
 
-The `data-obc-theme` can be bright, day, dusk or night. Changeing it will set the palette.
+The `data-obc-theme` can be bright, day, dusk or night. Changing it will set the palette.
 
 ## Set component sizing
 
@@ -133,7 +133,7 @@ We need to set the component sizing. Again modify `index.html`. But this time ad
 <body class="obc-component-size-regular"></body>
 ```
 
-This could be regular, normal, large or xl. It sets the component size of all decendent components.
+This could be `regular`, `medium`, `large`, or `xl`. It sets the component size of all descendant components.
 
 ## Load font
 
@@ -150,7 +150,7 @@ Next this file must be loaded by the css. So add it to index.css:
 
 You should now have a working top bar. Styled with OpenBridge styles.
 
-Try changeing the palette to night:
+Try changing the palette to night:
 
 ```html
 <html lang="en" data-obc-theme="night"></html>
@@ -171,10 +171,10 @@ body {
 }
 ```
 
-Note how the color is set by the `css custom property` `--container-backdrop-color`. Using it the background will change when changeing the palette attribute (or the palette colors are updated by the designers).
+Note how the color is set by the `css custom property` `--container-backdrop-color`. Using it the background will change when changing the palette attribute (or the palette colors are updated by the designers).
 
 The entire page should now be dark. Go back to day palette
-Try changeing the palette to night:
+Try changing the palette to night:
 
 ```html
 <html lang="en" data-obc-theme="day"></html>
@@ -269,7 +269,7 @@ function App() {
       </header>
       <main>
         {showBrillianceMenu && (
-          <ObcBrillianceMenu hideBrightness className="brilliance" />
+          <ObcBrillianceMenu showBrightness={false} className="brilliance" />
         )}
       </main>
     </>
@@ -300,7 +300,7 @@ function App() {
     setShowBrillianceMenu(!showBrillianceMenu);
   };
 
-  const handlePalleteChange = (e: ObcPaletteChangeEvent) => {
+  const handlePaletteChange = (e: ObcPaletteChangeEvent) => {
     document.documentElement.setAttribute("data-obc-theme", e.detail.value);
     setPalette(e.detail.value);
   };
@@ -319,9 +319,9 @@ function App() {
       <main>
         {showBrillianceMenu && (
           <ObcBrillianceMenu
-            onPaletteChanged={handlePalleteChange}
+            onPaletteChanged={handlePaletteChange}
             palette={palette}
-            hideBrightness
+            showBrightness={false}
             className="brilliance"
           />
         )}
@@ -333,7 +333,7 @@ function App() {
 export default App;
 ```
 
-Try changeing the palette.
+Try changing the palette.
 
 # Add a clock
 
@@ -355,7 +355,7 @@ function App() {
   const [isBrillianceMenuOpen, setIsBrillianceMenuOpen] = useState(false);
   const [palette, setPalette] = useState(ObcPalette.day);
 
-  const handlePalleteChange = (e: ObcPaletteChangeEvent) => {
+  const handlePaletteChange = (e: ObcPaletteChangeEvent) => {
     document.documentElement.setAttribute("data-obc-theme", e.detail.value);
     setPalette(e.detail.value);
   };
@@ -381,7 +381,7 @@ function App() {
         {isBrillianceMenuOpen && (
           <ObcBrillianceMenu
             className="brilliance"
-            onPaletteChanged={handlePalleteChange}
+            onPaletteChanged={handlePaletteChange}
             palette={palette}
           />
         )}
@@ -448,7 +448,7 @@ function App() {
   const [isBrillianceMenuOpen, setIsBrillianceMenuOpen] = useState(false);
   const [palette, setPalette] = useState(ObcPalette.day);
 
-  const handlePalleteChange = (e: ObcPaletteChangeEvent) => {
+  const handlePaletteChange = (e: ObcPaletteChangeEvent) => {
     document.documentElement.setAttribute("data-obc-theme", e.detail.value);
     setPalette(e.detail.value);
   };
@@ -475,7 +475,7 @@ function App() {
         {isBrillianceMenuOpen && (
           <ObcBrillianceMenu
             className="brilliance"
-            onPaletteChanged={handlePalleteChange}
+            onPaletteChanged={handlePaletteChange}
             palette={palette}
           />
         )}
@@ -609,7 +609,7 @@ function App() {
         {showBrillianceMenu && (
           <ObcBrillianceMenu
             onPaletteChanged={handleBrillianceChange}
-            hideBrightness
+            showBrightness={false}
             className="brilliance"
           />
         )}
@@ -692,7 +692,7 @@ function App() {
         {showBrillianceMenu && (
           <ObcBrillianceMenu
             onPaletteChanged={handleBrillianceChange}
-            hideBrightness
+            showBrightness={false}
             className="brilliance"
           />
         )}
@@ -770,7 +770,7 @@ function App() {
         {showBrillianceMenu && (
           <ObcBrillianceMenu
             onPaletteChanged={handleBrillianceChange}
-            hideBrightness
+            showBrightness={false}
             className="brilliance"
           />
         )}
@@ -828,7 +828,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 ```
 
@@ -892,7 +892,7 @@ function App() {
         {showBrillianceMenu && (
           <ObcBrillianceMenu
             onPaletteChanged={handleBrillianceChange}
-            hideBrightness
+            showBrightness={false}
             className="brilliance"
           />
         )}
@@ -952,7 +952,7 @@ Try to use the navigation menu.
 You may notice two problems:
 
 - The active page in nav menu is not updating
-- When changeing page, the entire page is reloaded.
+- When changing page, the entire page is reloaded.
 
 ## Use react router <Link>
 

@@ -43,7 +43,7 @@ export enum ObcToggleButtonOptionVariant {
  *   - `icon`: Icon only (compact, ideal for limited space).
  *   - `iconText`: Icon and text side-by-side.
  *   - `iconTextUnder`: Icon stacked above text label.
- * - **Divider handling:** Supports automatic divider rendering between options. The `noDivider` property is
+ * - **Divider handling:** Supports automatic divider rendering between options. The `showDivider` property is
  *   managed by the parent group to hide dividers after the selected option for a cohesive appearance.
  * - **Size variants:** Standard and large sizes supported via the `large` property for improved touch targets
  *   and accessibility.
@@ -144,9 +144,10 @@ export class ObcToggleButtonOption extends LitElement {
   @property({type: Boolean}) hugText = false;
 
   /**
-   * If true, hides the divider between options.
+   * If true, renders the divider between options.
    */
-  @property({type: Boolean, reflect: true}) noDivider = false;
+  // eslint-disable-next-line openbridge/prefer-boolean-property-default-false -- reflected attribute used by parent CSS
+  @property({type: Boolean, reflect: true}) showDivider: boolean = true;
 
   /**
    * If true, the option is disabled and cannot be interacted with.
