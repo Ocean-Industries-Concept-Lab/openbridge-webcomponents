@@ -91,6 +91,8 @@ export class ObcAppButton extends LitElement {
    */
   @property({type: String}) size = AppButtonSize.Normal;
 
+  @property({type: Boolean}) disabled = false;
+
   override render() {
     return html` <button
       class="${classMap({
@@ -98,7 +100,9 @@ export class ObcAppButton extends LitElement {
         checked: this.checked,
         small: this.size === AppButtonSize.Small,
         integration: this.integration,
+        disabled: this.disabled,
       })}"
+      ?disabled=${this.disabled}
     >
       <div class="icon-wrapper">
         <span class="icon">
