@@ -2,7 +2,7 @@ import {html} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import '../poi-button-vessel/poi-button-vessel.js';
-import {ObcPoiVariant} from '../building-blocks/poi-variant/poi-variant.js';
+import {ObcPoiBase} from '../building-blocks/poi/poi-base.js';
 import {
   ObcPoiObjectVesselType,
   ObcPoiObjectVesselStyle,
@@ -18,7 +18,7 @@ export {
 /**
  * `<obc-poi-vessel>` - Vessel marker variant with layout positioning and layer integration.
  *
- * Extends `ObcPoiVariant` to provide the "vessel" variant of the POI system.
+ * Extends `ObcPoiBase` to provide the "vessel" variant of the POI system.
  * Renders `<obc-poi>` with a slotted `<obc-poi-button-vessel>`.
  *
  * @slot - Icon content forwarded to the inner vessel object.
@@ -28,7 +28,7 @@ export {
  * @fires obc-poi-data-layout-change {CustomEvent<void>} Fired when layout-driving properties change.
  */
 @customElement('obc-poi-vessel')
-export class ObcPoiVessel extends ObcPoiVariant {
+export class ObcPoiVessel extends ObcPoiBase {
   @property({type: String, attribute: 'vessel-type'})
   vesselType: ObcPoiObjectVesselType = ObcPoiObjectVesselType.Regular;
 
@@ -64,7 +64,7 @@ export class ObcPoiVessel extends ObcPoiVariant {
     `;
   }
 
-  static override styles = ObcPoiVariant.styles;
+  static override styles = ObcPoiBase.styles;
 }
 
 declare global {

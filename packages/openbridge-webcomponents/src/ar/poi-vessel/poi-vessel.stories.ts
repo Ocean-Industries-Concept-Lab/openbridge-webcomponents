@@ -15,7 +15,7 @@ import {
   ObcPoiObjectVesselStyle,
   ObcPoiObjectVesselState,
 } from '../poi-object-vessel/poi-object-vessel.js';
-import {PoiVariantValue} from '../building-blocks/poi-variant/poi-variant.js';
+import {PoiBaseValue as PoiVariantValue} from '../building-blocks/poi/poi-base.js';
 
 const compactDocsHeightDecorator = (story: () => unknown) => html`
   <style>

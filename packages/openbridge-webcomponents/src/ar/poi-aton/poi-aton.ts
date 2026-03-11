@@ -2,7 +2,7 @@ import {html} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import '../poi-button-aton/poi-button-aton.js';
-import {ObcPoiVariant} from '../building-blocks/poi-variant/poi-variant.js';
+import {ObcPoiBase} from '../building-blocks/poi/poi-base.js';
 import {
   ObcPoiObjectAtonType,
   ObcPoiObjectAtonStyle,
@@ -14,7 +14,7 @@ export {ObcPoiObjectAtonType, ObcPoiObjectAtonStyle, ObcPoiObjectAtonState};
 /**
  * `<obc-poi-aton>` - AtoN marker variant with layout positioning and layer integration.
  *
- * Extends `ObcPoiVariant` to provide the "aton" variant of the POI system.
+ * Extends `ObcPoiBase` to provide the "aton" variant of the POI system.
  * Renders `<obc-poi>` with a slotted `<obc-poi-button-aton>`.
  *
  * @slot - Icon content forwarded to the inner aton diamond.
@@ -22,7 +22,7 @@ export {ObcPoiObjectAtonType, ObcPoiObjectAtonStyle, ObcPoiObjectAtonState};
  * @fires obc-poi-data-layout-change {CustomEvent<void>} Fired when layout-driving properties change.
  */
 @customElement('obc-poi-aton')
-export class ObcPoiAton extends ObcPoiVariant {
+export class ObcPoiAton extends ObcPoiBase {
   @property({type: String, attribute: 'aton-type'})
   atonType: ObcPoiObjectAtonType = ObcPoiObjectAtonType.AtoN;
 
@@ -56,7 +56,7 @@ export class ObcPoiAton extends ObcPoiVariant {
     `;
   }
 
-  static override styles = ObcPoiVariant.styles;
+  static override styles = ObcPoiBase.styles;
 }
 
 declare global {

@@ -20,6 +20,61 @@ import {
 } from '../poi-pointer/poi-pointer.js';
 import {customElement} from '../../../decorator.js';
 
+/* ---------- Poi interface & helpers ---------- */
+
+export enum PoiDataVisualRectPreference {
+  Largest = 'largest',
+  Group = 'group',
+  Anchor = 'anchor',
+  Size = 'size',
+}
+
+export const POI_ATTR = 'data-poi-target';
+
+type PoiVisualElementPreference =
+  | PoiDataVisualRectPreference.Group
+  | PoiDataVisualRectPreference.Anchor
+  | PoiDataVisualRectPreference.Size;
+
+/**
+ * Minimum contract for any element that can participate in
+ * `obc-poi-layer` grouping / overlap / crossing / stack selection.
+ *
+ * Implement this interface and set `data-poi-target` on the host
+ * element in `connectedCallback` to make a component layer-compatible.
+ */
+export interface Poi extends HTMLElement {
+  /* Position — required by layer for positioning and grouping */
+  x: number;
+  y: number;
+  buttonOffsetX: number;
+  targetOffsetX: number;
+  lineCompensationY: number;
+  fixedTarget: boolean;
+
+  /* State — read/written by layer and stack */
+  selected: boolean;
+  value: string;
+
+  /* Visual query — used by layer for rect-based grouping */
+  getVisualRect(preference: PoiDataVisualRectPreference): DOMRect;
+  getVisualElement(preference: PoiVisualElementPreference): HTMLElement;
+  getPointerElement(): HTMLElement | null;
+
+  /* Optional — layer/group code guards access before using */
+  buttonY?: number | null;
+  buttonType?: string;
+  data?: unknown[];
+  hasHeader?: boolean;
+  animatePosition?: boolean;
+}
+
+export function isPoi(el: Element): el is Poi {
+  return el.hasAttribute(POI_ATTR);
+}
+
+/* ---------- ObcPoi enums ---------- */
+
 export enum ObcPoiType {
   Line = 'line',
   Offset = 'offset',

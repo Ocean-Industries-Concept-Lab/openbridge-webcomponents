@@ -1,24 +1,20 @@
 import {LitElement, TemplateResult, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
-import componentStyle from './poi-variant.css?inline';
-import '../poi/poi.js';
+import componentStyle from './poi-base.css?inline';
+import './poi.js';
 import {
   ObcPoiButtonType,
   ObcPoiButtonDataItem,
 } from '../poi-button/poi-button.js';
-import {ObcPoiState, ObcPoiType, ObcPoiValue} from '../poi/poi.js';
+import {ObcPoiState, ObcPoiType, ObcPoiValue} from './poi.js';
 import {
   ObcPoiPointerState,
   ObcPoiPointerType,
 } from '../poi-pointer/poi-pointer.js';
-import {
-  POI_TARGET_ATTR,
-  PoiLayerTarget,
-  PoiDataVisualRectPreference,
-} from '../../poi-layer-target.js';
+import {POI_ATTR, Poi, PoiDataVisualRectPreference} from './poi.js';
 
-export {ObcPoiValue as PoiVariantValue};
-export {PoiDataVisualRectPreference as PoiVariantVisualRectPreference};
+export {ObcPoiValue as PoiBaseValue};
+export {PoiDataVisualRectPreference as PoiBaseVisualRectPreference};
 
 /** @internal */
 type VisualElementPreference =
@@ -36,17 +32,14 @@ const VALID_POI_STATES = new Set(Object.values(ObcPoiState));
  * Shared base class for top-level POI variant components (`obc-poi-data`,
  * `obc-poi-aton`, `obc-poi-vessel`).
  *
- * Implements `PoiLayerTarget` and contains all positioning, X-filter,
+ * Implements `Poi` and contains all positioning, X-filter,
  * layout-change dispatch, and visual-query logic so that each variant
  * only needs to override `renderContent()` and `getVisualNodes()`.
  */
-export abstract class ObcPoiVariant
-  extends LitElement
-  implements PoiLayerTarget
-{
+export abstract class ObcPoiBase extends LitElement implements Poi {
   override connectedCallback() {
     super.connectedCallback();
-    this.setAttribute(POI_TARGET_ATTR, '');
+    this.setAttribute(POI_ATTR, '');
   }
 
   /* ---------- POI marker properties ---------- */
@@ -70,7 +63,7 @@ export abstract class ObcPoiVariant
   pointerState: ObcPoiPointerState | null = null;
   @property({type: Number}) relativeDirection = 0;
 
-  /* ---------- PoiLayerTarget — position ---------- */
+  /* ---------- Poi — position ---------- */
 
   @property({type: Number}) x = 0;
   @property({type: Number}) y = 192;
@@ -289,7 +282,7 @@ export abstract class ObcPoiVariant
       : ObcPoiState.Enabled;
   }
 
-  /* ---------- PoiLayerTarget — visual query ---------- */
+  /* ---------- Poi — visual query ---------- */
 
   /**
    * Override in each variant to query the correct inner component tag names.

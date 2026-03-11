@@ -1,20 +1,20 @@
-import {PoiLayerTarget} from '../poi-layer-target.js';
+import {Poi} from '../building-blocks/poi/poi.js';
 import {getEffectivePoiX} from '../building-blocks/poi/poi-position.js';
 
 interface UpdateCrossingModeParams {
-  targets: PoiLayerTarget[];
+  targets: Poi[];
   buttonWidth: number;
   minGap: number;
-  previousPositions: Map<PoiLayerTarget, number>;
-  lastOffsets: Map<PoiLayerTarget, number>;
-  crossingOrder: PoiLayerTarget[];
-  crossingLastEffectiveX: Map<PoiLayerTarget, number>;
+  previousPositions: Map<Poi, number>;
+  lastOffsets: Map<Poi, number>;
+  crossingOrder: Poi[];
+  crossingLastEffectiveX: Map<Poi, number>;
 }
 
 interface UpdateCrossingModeResult {
   shouldContinue: boolean;
-  previousPositions: Map<PoiLayerTarget, number>;
-  crossingOrder: PoiLayerTarget[];
+  previousPositions: Map<Poi, number>;
+  crossingOrder: Poi[];
 }
 
 function updateCrossingModeState({
@@ -36,14 +36,14 @@ function updateCrossingModeState({
     crossingLastEffectiveX.clear();
     return {
       shouldContinue: false,
-      previousPositions: new Map<PoiLayerTarget, number>(),
+      previousPositions: new Map<Poi, number>(),
       crossingOrder: [],
     };
   }
 
-  const currentPositions = new Map<PoiLayerTarget, number>();
-  const movingTargetsSet = new Set<PoiLayerTarget>();
-  const deltas = new Map<PoiLayerTarget, number>();
+  const currentPositions = new Map<Poi, number>();
+  const movingTargetsSet = new Set<Poi>();
+  const deltas = new Map<Poi, number>();
 
   targets.forEach((target) => {
     const left = getEffectivePoiX(target);
@@ -56,7 +56,7 @@ function updateCrossingModeState({
     }
   });
 
-  const orderIndex = new Map<PoiLayerTarget, number>();
+  const orderIndex = new Map<Poi, number>();
   crossingOrder.forEach((target, index) => {
     orderIndex.set(target, index);
   });
@@ -73,13 +73,13 @@ function updateCrossingModeState({
       return (orderIndex.get(a.target) ?? 0) - (orderIndex.get(b.target) ?? 0);
     });
 
-  const targetOffsets = new Map<PoiLayerTarget, number>();
+  const targetOffsets = new Map<Poi, number>();
   orderedTargets.forEach((item) => targetOffsets.set(item.target, 0));
 
   let hasActiveOverlaps = false;
   const smoothstep = (t: number) => t * t * (3 - 2 * t);
 
-  let primaryMoving: PoiLayerTarget | null = null;
+  let primaryMoving: Poi | null = null;
   let primaryDelta = 0;
   deltas.forEach((delta, target) => {
     if (!primaryMoving || Math.abs(delta) > Math.abs(primaryDelta)) {
@@ -94,7 +94,7 @@ function updateCrossingModeState({
       (item) => item.target === primaryMoving
     );
     if (movingItem) {
-      let nearest: {center: number; target: PoiLayerTarget} | null = null;
+      let nearest: {center: number; target: Poi} | null = null;
       for (const other of orderedTargets) {
         if (other.target === movingItem.target) continue;
         const dist = Math.abs(other.center - movingItem.center);
