@@ -64,6 +64,7 @@ const meta: Meta<ObcIntegrationDropdownButton> = {
       .hasFleet=${args.hasFleet}
       .fleetLabel=${args.fleetLabel}
       .disabled=${args.disabled}
+      .placeholder=${args.placeholder}
     >
       <obc-integration-button
         slot="fleet"
@@ -101,5 +102,12 @@ export const SelectedDisabled: Story = {
 export const Disabled: Story = {
   args: {
     disabled: true,
+  },
+};
+
+export const Unselected: Story = {
+  args: {
+    value: undefined,
+    placeholder: 'Select an option',
   },
 };

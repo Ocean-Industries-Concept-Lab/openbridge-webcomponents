@@ -39,9 +39,10 @@ export class ObcIntegrationDropdownButton extends LitElement {
   @property({type: String}) fleetLabel: string = '';
 
   /**
-   * The value of the currently selected option. If not set, defaults to the first option in the list.
+   * The value of the currently selected option.
    */
   @property({type: String}) value: string | undefined;
+  @property({type: String}) placeholder: string = '';
   @property({type: Boolean}) disabled: boolean = false;
 
   /**
@@ -82,8 +83,18 @@ export class ObcIntegrationDropdownButton extends LitElement {
     this.updateSelectedFleetStatus();
   }
 
+  private get renderButtonLabel(): HTMLTemplateResult {
+    if (this.fleetSelected) {
+      return html`<div class="label">${this.fleetLabel}</div>`;
+    }
+    if (this.selectedItem) {
+      return html`<div class="icon-container">${this.selectedItem.icon}</div>
+        <div class="label">${this.selectedItem.label}</div>`;
+    }
+    return html`<div class="label placeholder">${this.placeholder}</div>`;
+  }
+
   override render() {
-    const selectedItem = this.selectedItem;
     return html`
       <div
         class=${classMap({
@@ -94,10 +105,7 @@ export class ObcIntegrationDropdownButton extends LitElement {
         })}
       >
         <div class="visible-wrapper">
-          ${this.fleetSelected
-            ? html`<div class="label">${this.fleetLabel}</div>`
-            : html` <div class="icon-container">${selectedItem?.icon}</div>
-                <div class="label">${selectedItem?.label}</div>`}
+          ${this.renderButtonLabel}
           <div class="icon">
             <obi-drop-down-google></obi-drop-down-google>
           </div>
