@@ -444,7 +444,10 @@ export class ObcSliderDouble extends LitElement {
 
   override render() {
     return html`
-      <div class="label min" style="width: ${this.labelWidth};">
+      <div
+        class=${classMap({label: true, min: true, disabled: this.disabled})}
+        style="width: ${this.labelWidth};"
+      >
         ${this.formatLabel(this.low)}
       </div>
       <div
@@ -486,7 +489,10 @@ export class ObcSliderDouble extends LitElement {
         <div class="thumb min"></div>
         <div class="thumb max"></div>
       </div>
-      <div class="label max" style="width: ${this.labelWidth};">
+      <div
+        class=${classMap({label: true, max: true, disabled: this.disabled})}
+        style="width: ${this.labelWidth};"
+      >
         ${this.formatLabel(this.high)}
       </div>
     `;

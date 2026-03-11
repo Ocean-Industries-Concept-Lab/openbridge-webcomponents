@@ -168,6 +168,12 @@ export class ObcPagination extends LitElement {
   }
 
   private get canNavigateNext() {
+    console.log(
+      'canNavigateNext',
+      this.disabled,
+      this.validatedCurrentPage,
+      this.validatedPages
+    );
     return !this.disabled && this.validatedCurrentPage < this.validatedPages;
   }
 
@@ -270,7 +276,7 @@ export class ObcPagination extends LitElement {
           variant="flat"
           aria-label="First page"
           aria-disabled=${this.canNavigateFirst}
-          ?disabled=${this.canNavigateFirst}
+          ?disabled=${!this.canNavigateFirst}
           @click=${this.handleFirstClick}
         >
           <obi-page-first-google></obi-page-first-google>
@@ -280,7 +286,7 @@ export class ObcPagination extends LitElement {
           variant="flat"
           aria-label="Previous page"
           aria-disabled=${this.canNavigatePrevious}
-          ?disabled=${this.canNavigatePrevious}
+          ?disabled=${!this.canNavigatePrevious}
           @click=${this.handlePreviousClick}
         >
           <obi-chevron-left-google></obi-chevron-left-google>
@@ -301,7 +307,7 @@ export class ObcPagination extends LitElement {
           variant="flat"
           aria-label="Next page"
           aria-disabled=${this.canNavigateNext}
-          ?disabled=${this.canNavigateNext}
+          ?disabled=${!this.canNavigateNext}
           @click=${this.handleNextClick}
         >
           <obi-chevron-right-google></obi-chevron-right-google>
@@ -311,7 +317,7 @@ export class ObcPagination extends LitElement {
           variant="flat"
           aria-label="Last page"
           aria-disabled=${this.canNavigateLast}
-          ?disabled=${this.canNavigateLast}
+          ?disabled=${!this.canNavigateLast}
           @click=${this.handleLastClick}
         >
           <obi-page-last-google></obi-page-last-google>

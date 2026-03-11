@@ -41,11 +41,19 @@
 .value {
   color: var(--element-inactive-color);
   @mixin font-button;
+
+  .disabled & {
+    color: var(--on-normal-disabled-color);
+  }
 }
 
 .unit {
   color: var(--element-inactive-color);
   @mixin font-instrument-unit;
+
+  .disabled & {
+    color: var(--on-normal-disabled-color);
+  }
 }
 
 .helper-text {

@@ -8,7 +8,7 @@
   justify-content: center;
   height: 48px;
 
-  color: var(--element-neutral-color, #1a1a1a);
+  color: var(--element-neutral-color);
 }
 
 :host([hugcontainer]) {
@@ -73,6 +73,10 @@
   white-space: nowrap;
   user-select: none;
   box-sizing: content-box;
+
+  &.disabled {
+    color: var(--on-normal-disabled-color);
+  }
 }
 
 .dragging {
