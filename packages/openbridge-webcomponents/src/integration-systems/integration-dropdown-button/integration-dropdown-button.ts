@@ -14,13 +14,49 @@ export type ObcIntegrationDropdownButtonChangeEvent = CustomEvent<{
 }>;
 
 /**
+ * `obc-integration-dropdown-button` – A composite integration button with an attached select dropdown for choosing a single integration target or a dedicated fleet option.
+ *
+ * ### Overview
+ * This component renders a button-like control paired with a native `<select>` element, allowing the user to choose between predefined integration options or an optional fleet-wide action.
+ * It surfaces the currently selected option (or fleet state) in the visible button area while delegating the actual selection logic to the hidden select element.
+ *
+ * ### Features and variants
+ * - **Selectable options list**: Accepts a list of options via the `options` property, each providing a `value`, `label`, and icon template for the visible button content.
+ * - **Fleet mode**: When `hasFleet` is true, the dropdown prepends a special `fleet` option whose label and selection state are driven by `fleetLabel` and the fleet slot content.
+ * - **Layout controls**: Supports `fullWidth` to stretch to the container width and `openTop` to render the dropdown above the button when space below is constrained.
+ * - **Disabled state**: The `disabled` property disables user interaction and visually indicates that the control is not currently actionable.
+ * - **Placeholder label**: When no value is selected, the component can display a placeholder text via the `placeholder` property.
+ *
+ * ### Slots and content
+ * - **`fleet` slot**: Used when `hasFleet` is true to render the content for the fleet option inside the dropdown.
+ *   The assigned element is treated as an `ObcIntegrationButton` instance and its `selected` state is synchronized with the component's fleet selection.
+ *
+ * ### Events
+ * - **`change`** (`ObcIntegrationDropdownButtonChangeEvent`): Fired when the user selects a new value from the dropdown.
+ *   The event detail contains the `value` and the resolved `label` (either the fleet label or the label of the selected option).
+ *
+ * ### Example
+ * ```html
+ * <obc-integration-dropdown-button
+ *   .options=${[
+ *     { value: 'integration-a', label: 'Integration A', icon: html`<obi-placeholder></obi-placeholder>` },
+ *     { value: 'integration-b', label: 'Integration B', icon: html`<obi-placeholder></obi-placeholder>` },
+ *   ]}
+ *   placeholder="Select integration"
+ *   hasFleet
+ *   fleetLabel="All vessels"
+ * >
+ *   <obc-integration-button slot="fleet" label="Fleet"></obc-integration-button>
+ * </obc-integration-dropdown-button>
+ * ```
+ *
  * @slot fleet - Fleet button displayed when `hasFleet` is true.
  * @fires change {ObcIntegrationDropdownButtonChangeEvent} - Fires when the value of the select changes
  */
 @customElement('obc-integration-dropdown-button')
 export class ObcIntegrationDropdownButton extends LitElement {
   /**
-   * List of selectable options. Each option is an object with a `value` (string), `label` (string), and optional `level` (number) for indentation/grouping.
+   * List of selectable options. Each option is an object with a `value` (string), `label` (string), `icon` (HTMLTemplateResult), and optional `disabled` (boolean).
    *
    * Example:
    * [
@@ -113,7 +149,11 @@ export class ObcIntegrationDropdownButton extends LitElement {
         <select @change=${this.changeHandler} ?disabled=${this.disabled}>
           ${this.hasFleet
             ? html`
-                <option value="fleet" class="fleet-option">
+                <option
+                  value="fleet"
+                  class="fleet-option"
+                  ?selected=${this.fleetSelected}
+                >
                   <slot name="fleet"></slot>
                 </option>
               `

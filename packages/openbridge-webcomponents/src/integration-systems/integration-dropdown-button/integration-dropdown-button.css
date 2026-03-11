@@ -164,8 +164,3 @@
     display: none;
   }
 }
-
-::slotted([name="fleet"]) {
-  display: block;
-  width: 100%;
-}
