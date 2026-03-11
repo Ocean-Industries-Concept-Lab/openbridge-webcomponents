@@ -6,7 +6,7 @@ import '../../components/button/button.js';
 import {customElement} from '../../decorator.js';
 import {classMap} from 'lit/directives/class-map.js';
 import type {HTMLTemplateResult} from 'lit';
-import {ObcIntegrationButton} from '../integration-button/integration-button';
+import {ObcIntegrationButton} from '../integration-button/integration-button.js';
 
 export type ObcIntegrationDropdownButtonChangeEvent = CustomEvent<{
   value: string;
