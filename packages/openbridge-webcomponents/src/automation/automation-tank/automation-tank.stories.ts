@@ -53,7 +53,7 @@ export const VerticalWithBadges: Story = {
         <obc-badge
           slot="badges"
           .size=${BadgeSize.regular}
-          .hideNumber=${true}
+          .showNumber=${false}
           .type=${BadgeType.automation}
           .showIcon=${true}
         >
@@ -62,7 +62,7 @@ export const VerticalWithBadges: Story = {
         <obc-badge
           slot="badges"
           .size=${BadgeSize.regular}
-          .hideNumber=${true}
+          .showNumber=${false}
           .type=${BadgeType.automation}
           .showIcon=${true}
         >

@@ -123,8 +123,8 @@ export class ObcCheckbox extends LitElement {
    */
   @property({type: Boolean}) disabled = false;
 
-  /** Internal: disables hover effects on the checkbox. Used by wrapper components such as `obc-checkbox-item`. */
-  @property({type: Boolean}) noHoverEffects = false;
+  /** Internal: controls hover effects on the checkbox. Used by wrapper components such as `obc-checkbox-item`. */
+  @property({type: Boolean, attribute: false}) hasHoverEffects = true;
 
   @query('.visually-hidden') private checkboxControl?: HTMLDivElement;
 
@@ -217,7 +217,7 @@ export class ObcCheckbox extends LitElement {
           [`status-${this.status}`]: true,
           [`state-${this.state}`]: true,
           disabled: this.disabled,
-          'no-hover-effects': this.noHoverEffects,
+          'no-hover-effects': !this.hasHoverEffects,
         })}
         role="checkbox"
         aria-checked=${this._computedAriaChecked}

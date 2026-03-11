@@ -121,7 +121,7 @@ npm run new:component
 
 This will create the needed files, using the default template.
 
-## ✅ Naming Conventions
+## 👶 Naming Conventions
 
 ### Boolean properties
 

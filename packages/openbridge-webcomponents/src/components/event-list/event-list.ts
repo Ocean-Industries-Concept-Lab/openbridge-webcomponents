@@ -37,7 +37,7 @@ export type {DateItemEvent};
  * ### Properties
  * - `date` (Date | number): The date to display in the header. Accepts Date object or timestamp.
  * - `events` (DateItemEvent[]): Array of events to display in the list.
- * - `hideHeader` (boolean): Whether to hide the date header. Default: `false`.
+ * - `showHeader` (boolean): Whether to show the date header. Default: `true`.
  * - `locale` (string): Locale for date formatting (e.g., 'en-US', 'nb-NO'). Uses browser default if not specified.
  *
  * @slot - No slots. All content is provided via properties.
@@ -48,7 +48,7 @@ export class ObcEventList extends LitElement {
    * Whether to hide the date header.
    * @default false
    */
-  @property({type: Boolean}) hideHeader = false;
+  @property({type: Boolean, attribute: false}) showHeader: boolean = true;
 
   /**
    * The date to display in the header. The component will extract
@@ -113,7 +113,7 @@ export class ObcEventList extends LitElement {
   override render() {
     return html`
       <div class="wrapper">
-        ${!this.hideHeader
+        ${this.showHeader
           ? html`
               <div class="title-container">
                 <div class="label-container">

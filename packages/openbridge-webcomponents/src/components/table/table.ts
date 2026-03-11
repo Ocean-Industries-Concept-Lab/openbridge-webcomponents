@@ -203,7 +203,7 @@ function cssPart(value: ObcTableCellData, subpart: string): string | undefined {
  * Features/Variants
  * - Selectable rows with header “select all” checkbox via `selectable=true`.
  * - Cell rendering variants: `checkbox`, `tag`, `horizontal-bar`, and `button` cell types.
- * - Visual variants: `rowDivider`, `striped`, `narrowHeader`, and `noHeader`.
+ * - Visual variants: `rowDivider`, `striped`, `narrowHeader`, and `showHeader`.
  * - Sorting support for sortable columns via column definitions.
  *
  * Usage Guidelines
@@ -249,7 +249,7 @@ export class ObcTable extends LitElement {
   @property({type: Array}) columns: ObcTableColumn[] = [];
   @property({type: Boolean}) rowDivider = false;
   @property({type: Boolean}) narrowHeader = false;
-  @property({type: Boolean}) noHeader = false;
+  @property({type: Boolean, attribute: false}) showHeader = true;
   @property({type: Boolean}) striped = false;
   @property({type: Boolean}) selectable = false;
   @property({type: Array}) selectedRowIds?: string[];
@@ -597,9 +597,8 @@ export class ObcTable extends LitElement {
         "
         role="table"
       >
-        ${this.noHeader
-          ? nothing
-          : html`
+        ${this.showHeader
+          ? html`
               <div class="grid-header" role="row">
                 ${effectiveColumns.map((col) => {
                   const isSelectionColumn =
@@ -679,7 +678,8 @@ export class ObcTable extends LitElement {
                 })}
               </div>
               <div class="grid-header-divider"></div>
-            `}
+            `
+          : nothing}
         <div
           class="grid-body"
           style="grid-template-rows: repeat(${this.sortedData

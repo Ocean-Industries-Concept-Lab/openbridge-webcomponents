@@ -180,7 +180,7 @@ const renderTable = (args: ObcTable & {height?: number}) => {
     .columns=${args.columns}
     .rowDivider=${args.rowDivider}
     .narrowHeader=${args.narrowHeader}
-    .noHeader=${args.noHeader}
+    .showHeader=${args.showHeader}
     .striped=${args.striped}
     .selectable=${args.selectable}
     .defaultSelectedRowIds=${args.defaultSelectedRowIds}
@@ -201,7 +201,7 @@ export const Playground: Story = {
     rowDivider: true,
     striped: false,
     narrowHeader: false,
-    noHeader: false,
+    showHeader: true,
     selectAllAriaLabel: 'Select all table items',
     defaultSelectedRowIds: ['1', '4'],
     columns: playgroundColumns,
@@ -235,7 +235,7 @@ export const Playground: Story = {
     narrowHeader: {
       control: {type: 'boolean'},
     },
-    noHeader: {
+    showHeader: {
       control: {type: 'boolean'},
     },
     defaultSelectedRowIds: {

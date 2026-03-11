@@ -216,8 +216,8 @@ export class ObcSequenceCard extends LitElement {
         .type=${indicatorType}
         .styleType=${indicatorStyle}
         .value=${this.stepIndicatorValue}
-        .hideStepInputConnector=${true}
-        .hideStepOutputConnector=${true}
+        .showStepInputConnector=${false}
+        .showStepOutputConnector=${false}
         .hasIcon=${false}
       >
         ${this.stepIndicatorLabel}
@@ -266,8 +266,8 @@ export class ObcSequenceCard extends LitElement {
             .type=${this.getResolvedIndicatorType(false)}
             .styleType=${this.stepIndicatorStyle}
             .value=${this.stepIndicatorValue}
-            .hideStepInputConnector=${false}
-            .hideStepOutputConnector=${false}
+            .showStepInputConnector=${true}
+            .showStepOutputConnector=${true}
             .inputConnectorExtended=${true}
             .hasIcon=${false}
           >
@@ -284,8 +284,8 @@ export class ObcSequenceCard extends LitElement {
           .type=${this.getResolvedIndicatorType(false)}
           .styleType=${this.stepIndicatorStyle}
           .value=${this.stepIndicatorValue}
-          .hideStepInputConnector=${false}
-          .hideStepOutputConnector=${false}
+          .showStepInputConnector=${true}
+          .showStepOutputConnector=${true}
           .hasIcon=${false}
         >
           ${this.stepIndicatorLabel}
@@ -373,8 +373,8 @@ export class ObcSequenceCard extends LitElement {
                             .type=${this.horizontalConnectorType}
                             .styleType=${SequenceStyle.connector}
                             .value=${this.progressValue}
-                            .hideStepInputConnector=${true}
-                            .hideStepOutputConnector=${false}
+                            .showStepInputConnector=${false}
+                            .showStepOutputConnector=${true}
                             .hasIcon=${false}
                           ></obc-sequence-step>
                         </div>
@@ -454,8 +454,8 @@ export class ObcSequenceCard extends LitElement {
                   .type=${this.verticalConnectorType}
                   .styleType=${SequenceStyle.connector}
                   .value=${this.progressValue}
-                  .hideStepInputConnector=${false}
-                  .hideStepOutputConnector=${false}
+                  .showStepInputConnector=${true}
+                  .showStepOutputConnector=${true}
                   .inputConnectorExtended=${true}
                   .hasIcon=${false}
                 ></obc-sequence-step>
