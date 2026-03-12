@@ -27,7 +27,7 @@
     "leaflet": "^1.9.4",
     "maplibre-gl": "^5.14.0",
     "pinia": "^3.0.4",
-    "pmtiles": "^4.3.0",
+    "pmtiles": "^4.4.0",
     "proj4": "^2.20.2",
     "proj4leaflet": "^1.0.2",
     "uplot": "^1.6.32",
