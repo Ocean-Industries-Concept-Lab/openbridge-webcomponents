@@ -49,8 +49,15 @@ export class ObcPoiVessel extends ObcPoiBase {
     return html`
       <obc-poi-button-vessel
         slot="button"
+        .relativeDirection=${this.relativeDirection}
+        .selected=${this.selected}
         .hasHeader=${this.hasHeader}
         .headerContent=${this.headerContent}
+        .state=${this.resolvedPoiState}
+        .value=${this.value}
+        .overlapOpaque=${this.overlapOpaque}
+        .type=${this.buttonType}
+        .data=${this.data}
         .vesselType=${this.vesselType}
         .vesselStyle=${this.vesselStyle}
         .vesselState=${this.vesselState}

@@ -349,36 +349,25 @@ export const GroupedMixedTypes: Story = {
           >
             <obc-poi-aton
               id="target-3"
-              .hasHeader=${true}
               .x=${300}
               .buttonY=${200}
               .y=${150}
               aton-type="aton"
               aton-style="green"
             >
-              <obc-poi-header slot="header" content="3"></obc-poi-header>
               <obi-beacon-general-east></obi-beacon-general-east>
             </obc-poi-aton>
-            <obc-poi-vessel
-              id="target-1"
-              .hasHeader=${true}
-              .x=${320}
-              .buttonY=${200}
-              .y=${150}
-            >
-              <obc-poi-header slot="header" content="1"></obc-poi-header>
+            <obc-poi-vessel id="target-1" .x=${320} .buttonY=${200} .y=${150}>
               <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
             </obc-poi-vessel>
             <obc-poi-aton
               id="target-2"
-              .hasHeader=${true}
               .x=${340}
               .buttonY=${200}
               .y=${150}
               aton-type="aton"
               aton-style="red"
             >
-              <obc-poi-header slot="header" content="2"></obc-poi-header>
               <obi-beacon-general-east></obi-beacon-general-east>
             </obc-poi-aton>
           </obc-poi-group>
