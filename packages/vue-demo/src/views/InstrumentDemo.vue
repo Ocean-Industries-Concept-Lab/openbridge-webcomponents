@@ -5,7 +5,7 @@ import ObcCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/
 import ObcSpeedGauge from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/speed-gauge/ObcSpeedGauge.vue'
 import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
 import { InstrumentFieldSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
-import Propulsion from './Propulsion.vue'
+import Propulsion from './PropulsionView.vue'
 import VesselMotion from './VesselMotion.vue'
 import { useSim } from '../composables/useSim'
 import ObcPitchRoll from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/pitch-roll/ObcPitchRoll.vue'
@@ -72,45 +72,23 @@ onUnmounted(() => {
     <ObcCard class="speed">
       <div slot="title">Speed</div>
       <div class="speed-gauge">
-        <ObcSpeedGauge
-          :speed="sim.vessel.speedForwardThroughWaterKnots.value"
-          :min-speed="-5"
-          :max-speed="25"
+        <ObcSpeedGauge :speed="sim.vessel.speedForwardThroughWaterKnots.value" :min-speed="-5" :max-speed="25"
           :speed-advices="[
             { minSpeed: maxSpeed, maxSpeed: 25, type: AdviceType.caution, hinted: true }
-          ]"
-        />
-        <ObcInstrumentField
-          :value="sim.vessel.speedForwardThroughWaterKnots.value"
-          unit="KN"
-          tag="STW"
-          :size="InstrumentFieldSize.enhanced"
-          neutral-color
-          :fraction-digits="1"
-          :max-digits="0"
-        />
+          ]" />
+        <ObcInstrumentField :value="sim.vessel.speedForwardThroughWaterKnots.value" unit="KN" tag="STW"
+          :size="InstrumentFieldSize.enhanced" neutral-color :fraction-digits="1" :max-digits="0" />
       </div>
     </ObcCard>
     <DepthCard />
     <ObcCard class="pitch-roll">
       <div slot="title">Pitch - Roll</div>
       <div class="pitch-roll-container">
-        <ObcPitchRoll
-          :pitch="sim.pitchRoll.pitch.value"
-          :roll="sim.pitchRoll.roll.value"
+        <ObcPitchRoll :pitch="sim.pitchRoll.pitch.value" :roll="sim.pitchRoll.roll.value"
           :vessel-image-fore="vessel === 'psv' ? VesselImage.psvFore : VesselImage.carFerryAft"
-          :vessel-image-side="vessel === 'psv' ? VesselImage.psvSide : VesselImage.carFerrySide"
-          :min-avg-pitch="-4"
-          :max-avg-pitch="4"
-          :max-avg-roll="7"
-          :min-avg-roll="-7"
-        />
-        <ObcInstrumentField
-          :value="sim.pitchRoll.pitch.value"
-          unit="DEG"
-          tag="Pitch"
-          neutral-color
-        />
+          :vessel-image-side="vessel === 'psv' ? VesselImage.psvSide : VesselImage.carFerrySide" :min-avg-pitch="-4"
+          :max-avg-pitch="4" :max-avg-roll="7" :min-avg-roll="-7" />
+        <ObcInstrumentField :value="sim.pitchRoll.pitch.value" unit="DEG" tag="Pitch" neutral-color />
         <ObcInstrumentField :value="sim.pitchRoll.roll.value" unit="DEG" tag="Roll" neutral-color />
       </div>
     </ObcCard>
@@ -120,11 +98,7 @@ onUnmounted(() => {
     </ObcCard>
     <ObcCard class="wind">
       <div slot="title">Wind</div>
-      <WindCard
-        :weather="weather"
-        :vessel-heading-deg="sim.vessel.headingDeg.value"
-        :vessel="vessel"
-      />
+      <WindCard :weather="weather" :vessel-heading-deg="sim.vessel.headingDeg.value" :vessel="vessel" />
     </ObcCard>
     <ObcCard class="vessel-motion">
       <div slot="title">Speed over ground</div>
