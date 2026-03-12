@@ -2,17 +2,17 @@ import {LitElement, html, css, svg} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../decorator.js';
 
-@customElement('obi-camera-on')
-export class ObiCameraOn extends LitElement {
+@customElement('obi-camera-top')
+export class ObiCameraTop extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M18 9.85043V7C18 5.89543 17.1046 5 16 5H5C3.89543 5 3 5.89543 3 7V16C3 17.1046 3.89543 18 5 18H16C17.1046 18 18 17.1046 18 16V13.1496L21 16V7L18 9.85043ZM5 7H16V16H5L5 7Z" fill="currentColor"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M10.3504 5.5L7.5 5.5C6.39543 5.5 5.5 6.39543 5.5 7.5L5.5 18.5C5.5 19.6046 6.39543 20.5 7.5 20.5H16.5C17.6046 20.5 18.5 19.6046 18.5 18.5L18.5 7.5C18.5 6.39543 17.6046 5.5 16.5 5.5L13.6496 5.5L16.5 2.5L7.5 2.5L10.3504 5.5ZM7.5 18.5L7.5 7.5L16.5 7.5L16.5 18.5H7.5Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M18 9.85043V7C18 5.89543 17.1046 5 16 5H5C3.89543 5 3 5.89543 3 7V16C3 17.1046 3.89543 18 5 18H16C17.1046 18 18 17.1046 18 16V13.1496L21 16V7L18 9.85043ZM5 7H16V16H5L5 7Z" style="fill: var(--element-active-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M10.3504 5.5L7.5 5.5C6.39543 5.5 5.5 6.39543 5.5 7.5L5.5 18.5C5.5 19.6046 6.39543 20.5 7.5 20.5H16.5C17.6046 20.5 18.5 19.6046 18.5 18.5L18.5 7.5C18.5 6.39543 17.6046 5.5 16.5 5.5L13.6496 5.5L16.5 2.5L7.5 2.5L10.3504 5.5ZM7.5 18.5L7.5 7.5L16.5 7.5L16.5 18.5H7.5Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 
@@ -37,6 +37,6 @@ export class ObiCameraOn extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obi-camera-on': ObiCameraOn;
+    'obi-camera-top': ObiCameraTop;
   }
 }
