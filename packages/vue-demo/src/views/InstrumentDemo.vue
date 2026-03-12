@@ -5,7 +5,7 @@ import ObcCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/
 import ObcSpeedGauge from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/speed-gauge/ObcSpeedGauge.vue'
 import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
 import { InstrumentFieldSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
-import Propulsion from './Propulsion.vue'
+import Propulsion from './PropulsionView.vue'
 import VesselMotion from './VesselMotion.vue'
 import { useSim } from '../composables/useSim'
 import ObcPitchRoll from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/pitch-roll/ObcPitchRoll.vue'
