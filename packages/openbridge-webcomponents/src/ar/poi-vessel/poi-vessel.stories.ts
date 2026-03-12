@@ -55,7 +55,7 @@ const meta: Meta<ObcPoiVessel> = {
     fixedTarget: false,
     vesselType: ObcPoiObjectVesselType.Regular,
     vesselStyle: ObcPoiObjectVesselStyle.Regular,
-    vesselState: ObcPoiObjectVesselState.Unchecked,
+    vesselState: null,
     vesselInteractive: false,
   },
   decorators: [crossDecorator, compactDocsHeightDecorator],
@@ -118,7 +118,7 @@ const meta: Meta<ObcPoiVessel> = {
       control: {type: 'select'},
     },
     vesselState: {
-      options: Object.values(ObcPoiObjectVesselState),
+      options: [null, ...Object.values(ObcPoiObjectVesselState)],
       control: {type: 'select'},
     },
     vesselInteractive: {control: {type: 'boolean'}},
@@ -336,6 +336,143 @@ export const POIVariants: Story = {
               .type=${ObcPoiType.Outside}
               .outsideAngle=${315}
               .hasPointer=${true}
+            >
+              <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
+            </obc-poi-vessel>
+          </div>
+        </div>
+      </div>
+    `;
+  },
+};
+
+export const POIValuesAndContent: Story = {
+  render: () => {
+    const demoX = 108;
+    const demoY = 72;
+    const demoButtonY = 72;
+    const values = [
+      {value: '10', label: 'Lab', unit: 'Unit'},
+      {value: '20', label: 'Lab 2', unit: 'Unit 2'},
+    ];
+
+    return html`
+      <style>
+        .values-stage {
+          position: relative;
+          width: 760px;
+          height: 420px;
+          transform: translate(-50%, -50%);
+        }
+
+        .values-showcase {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          display: grid;
+          grid-template-columns: repeat(3, 210px);
+          grid-auto-rows: 168px;
+          gap: 26px 14px;
+        }
+
+        .values-item {
+          position: relative;
+          height: 100%;
+        }
+
+        .values-item-label {
+          position: absolute;
+          top: 2px;
+          left: 0;
+          font-size: 11px;
+          font-family: monospace;
+          color: rgba(54, 68, 86, 0.88);
+        }
+
+        .values-item obc-poi-vessel {
+          position: absolute;
+        }
+      </style>
+      <div class="values-stage">
+        <div class="values-showcase">
+          <div class="values-item">
+            <div class="values-item-label">Checked</div>
+            <obc-poi-vessel
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .type=${ObcPoiType.Point}
+              .value=${PoiVariantValue.Checked}
+            >
+              <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
+            </obc-poi-vessel>
+          </div>
+          <div class="values-item">
+            <div class="values-item-label">Activated</div>
+            <obc-poi-vessel
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .type=${ObcPoiType.Point}
+              .value=${PoiVariantValue.Activated}
+            >
+              <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
+            </obc-poi-vessel>
+          </div>
+          <div class="values-item">
+            <div class="values-item-label">Overlapped</div>
+            <obc-poi-vessel
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .type=${ObcPoiType.Point}
+              .value=${PoiVariantValue.Overlapped}
+            >
+              <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
+            </obc-poi-vessel>
+          </div>
+          <div class="values-item">
+            <div class="values-item-label">Alarm</div>
+            <obc-poi-vessel
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .type=${ObcPoiType.Point}
+              .value=${PoiVariantValue.Checked}
+              .state=${ObcPoiState.Alarm}
+            >
+              <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
+            </obc-poi-vessel>
+          </div>
+          <div class="values-item">
+            <div class="values-item-label">With Header</div>
+            <obc-poi-vessel
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .type=${ObcPoiType.Point}
+              .hasHeader=${true}
+            >
+              <obc-poi-header
+                slot="header"
+                content="V1"
+                type="id"
+                state="selected"
+                size="regular"
+                has-indicator
+              ></obc-poi-header>
+              <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
+            </obc-poi-vessel>
+          </div>
+          <div class="values-item">
+            <div class="values-item-label">With Values</div>
+            <obc-poi-vessel
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .type=${ObcPoiType.Point}
+              .data=${values}
             >
               <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
             </obc-poi-vessel>

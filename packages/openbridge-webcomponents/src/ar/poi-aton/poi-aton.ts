@@ -30,7 +30,7 @@ export class ObcPoiAton extends ObcPoiBase {
   atonStyle: ObcPoiObjectAtonStyle = ObcPoiObjectAtonStyle.Regular;
 
   @property({type: String, attribute: 'aton-state'})
-  atonState: ObcPoiObjectAtonState = ObcPoiObjectAtonState.Unchecked;
+  atonState: ObcPoiObjectAtonState | null = null;
 
   @property({type: Boolean, attribute: 'aton-interactive'})
   atonInteractive = false;

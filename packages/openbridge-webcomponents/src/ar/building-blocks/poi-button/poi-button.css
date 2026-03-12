@@ -380,6 +380,11 @@
   padding-top: var(--maneuvering-components-poi-button-overlap-offset-padding);
   box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
 
+  .button-wrapper {
+    visibility: hidden;
+    pointer-events: none;
+  }
+
   .data-wrapper,
   .relation-wrapper,
   .button-wrapper .poi-object,

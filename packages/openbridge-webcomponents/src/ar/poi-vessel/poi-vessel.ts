@@ -36,7 +36,7 @@ export class ObcPoiVessel extends ObcPoiBase {
   vesselStyle: ObcPoiObjectVesselStyle = ObcPoiObjectVesselStyle.Regular;
 
   @property({type: String, attribute: 'vessel-state'})
-  vesselState: ObcPoiObjectVesselState = ObcPoiObjectVesselState.Unchecked;
+  vesselState: ObcPoiObjectVesselState | null = null;
 
   @property({type: Boolean, attribute: 'vessel-interactive'})
   vesselInteractive = false;

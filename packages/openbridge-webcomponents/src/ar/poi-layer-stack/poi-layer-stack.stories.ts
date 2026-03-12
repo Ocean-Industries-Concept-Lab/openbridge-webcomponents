@@ -319,6 +319,66 @@ export const SelectionMultiAnimated: Story = {
   },
 };
 
+const renderWithValues = (args: PoiLayerStackArgs) => html`
+  <style>
+    obc-poi-layer-stack.stack-values {
+      gap: 8px;
+      width: 720px;
+    }
+
+    obc-poi-layer-stack.stack-values obc-poi-layer {
+      --obc-poi-layer-min-height: 88px;
+      width: 100%;
+    }
+  </style>
+  <obc-poi-layer-stack
+    class="stack-values"
+    selection-mode=${args.selectionMode}
+  >
+    <obc-poi-layer label="Layer A" is-selected debug>
+      <obc-poi-data
+        .x=${120}
+        .y=${118}
+        .fixedTarget=${false}
+        .data=${[
+          {value: '10', label: 'SOG', unit: 'kn'},
+          {value: '182', label: 'COG', unit: 'deg'},
+        ]}
+      ></obc-poi-data>
+    </obc-poi-layer>
+    <obc-poi-layer label="Layer B" debug>
+      <obc-poi-data
+        .x=${300}
+        .y=${92}
+        .fixedTarget=${false}
+        .data=${[
+          {value: '24.5', label: 'Depth', unit: 'm'},
+          {value: '6.2', label: 'Current', unit: 'kn'},
+        ]}
+      ></obc-poi-data>
+      <obc-poi-data
+        .x=${520}
+        .y=${132}
+        .fixedTarget=${false}
+        .data=${[
+          {value: '12', label: 'CPA', unit: 'min'},
+          {value: '0.8', label: 'TCPA', unit: 'nm'},
+        ]}
+      ></obc-poi-data>
+    </obc-poi-layer>
+  </obc-poi-layer-stack>
+`;
+
+export const WithValues: Story = {
+  args: {
+    selectionMode: PoiLayerSelectionMode.Single,
+  },
+  render: renderWithValues,
+  play: async () => {
+    await waitForStorySettle({drainTransitions: true});
+  },
+};
+
 const renderMixedTypeLayers = (args: PoiLayerStackArgs) => html`
   <style>
     obc-poi-layer-stack.stack-mixed {

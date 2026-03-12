@@ -3,6 +3,10 @@ import {html} from 'lit';
 import './poi-controller.js';
 import {PoiFitMode} from './poi-controller.js';
 import {PoiLayerSelectionMode} from '../poi-layer-stack/poi-layer-stack.js';
+import '../poi-aton/poi-aton.js';
+import '../poi-vessel/poi-vessel.js';
+import '../../icons/icon-beacon-general-east.js';
+import '../../icons/icon-vessel-type-psv-outlined.js';
 
 const isVitestBrowser = Boolean(
   (globalThis as {__vitest_browser__?: unknown}).__vitest_browser__
@@ -13,7 +17,7 @@ type PoiControllerArgs = {
   classFilter: string[];
 };
 
-type AnimatedPoiData = HTMLElement & {
+type AnimatedPoiTarget = HTMLElement & {
   x: number;
   y: number;
   boxWidth: number | null;
@@ -224,7 +228,14 @@ export const SelectionMultiAnimated: Story = {
                 .fixedTarget=${false}
               ></obc-poi-data>
             </obc-poi-layer>
-            <obc-poi-layer label="Layer B"></obc-poi-layer>
+            <obc-poi-layer label="Layer B">
+              <obc-poi-aton .x=${215} .y=${118}>
+                <obi-beacon-general-east></obi-beacon-general-east>
+              </obc-poi-aton>
+              <obc-poi-aton .x=${372} .y=${92}>
+                <obi-beacon-general-east></obi-beacon-general-east>
+              </obc-poi-aton>
+            </obc-poi-layer>
             <obc-poi-layer label="Layer C" data-controller-layer="background">
               <obc-poi-data
                 class="anim-poi p1"
@@ -234,14 +245,16 @@ export const SelectionMultiAnimated: Story = {
                 .boxWidth=${p1.boxWidth}
                 .boxHeight=${p1.boxHeight}
               ></obc-poi-data>
-              <obc-poi-data
+              <obc-poi-vessel
                 class="anim-poi p2"
                 .x=${p2.x}
                 .y=${p2.y}
                 .relativeDirection=${p2.relativeDirection}
                 .boxWidth=${p2.boxWidth}
                 .boxHeight=${p2.boxHeight}
-              ></obc-poi-data>
+              >
+                <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
+              </obc-poi-vessel>
               <obc-poi-data
                 class="anim-poi p3"
                 .x=${p3.x}
@@ -250,14 +263,16 @@ export const SelectionMultiAnimated: Story = {
                 .boxWidth=${p3.boxWidth}
                 .boxHeight=${p3.boxHeight}
               ></obc-poi-data>
-              <obc-poi-data
+              <obc-poi-vessel
                 class="anim-poi p4"
                 .x=${p4.x}
                 .y=${p4.y}
                 .relativeDirection=${p4.relativeDirection}
                 .boxWidth=${p4.boxWidth}
                 .boxHeight=${p4.boxHeight}
-              ></obc-poi-data>
+              >
+                <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
+              </obc-poi-vessel>
               <obc-poi-data
                 class="anim-poi p5"
                 .x=${p5.x}
@@ -283,8 +298,8 @@ export const SelectionMultiAnimated: Story = {
     root.dataset.animating = 'true';
 
     const targets = Array.from(
-      root.querySelectorAll('obc-poi-data.anim-poi')
-    ) as AnimatedPoiData[];
+      root.querySelectorAll('.anim-poi')
+    ) as AnimatedPoiTarget[];
     if (targets.length === 0) return;
 
     const base = targets.map((target) => ({
