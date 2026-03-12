@@ -15,6 +15,10 @@ export type ObcToggleButtonVerticalGroupValueChangeEvent = CustomEvent<{
   previousValue: string;
 }>;
 
+export type ObcToggleButtonVerticalGroupChangeEvent = CustomEvent<{
+  value: string;
+}>;
+
 /**
  * `<obc-toggle-button-vertical-group>` – A vertically oriented segmented control for selecting a single option from a set.
  *
@@ -104,6 +108,7 @@ export type ObcToggleButtonVerticalGroupValueChangeEvent = CustomEvent<{
  *
  * @slot - Place one or more `<obc-toggle-button-vertical-option>` elements here to define the selectable options.
  * @fires value {CustomEvent<{value: string, previousValue: string}>} Fired when the selected value changes.
+ * @fires change {CustomEvent<{value: string}>} Fired when the selected value changes by user interaction.
  */
 @customElement('obc-toggle-button-vertical-group')
 export class ObcToggleButtonVerticalGroup extends LitElement {
@@ -167,7 +172,11 @@ export class ObcToggleButtonVerticalGroup extends LitElement {
     return Array.from(this.options).find((opt) => !opt.disabled) || null;
   }
 
-  private updateSelection(newValue: string, emitEvent: boolean = true) {
+  private updateSelection(
+    newValue: string,
+    emitValueEvent: boolean = true,
+    emitChangeEvent: boolean = false
+  ) {
     const oldValue = this.value;
 
     if (!this.hasAnyEnabledOption()) {
@@ -198,7 +207,7 @@ export class ObcToggleButtonVerticalGroup extends LitElement {
 
     this.updateDividers();
 
-    if (emitEvent && oldValue !== newValue) {
+    if (emitValueEvent && oldValue !== newValue) {
       /**
        * Fired when the selected option changes.
        *
@@ -210,6 +219,22 @@ export class ObcToggleButtonVerticalGroup extends LitElement {
       this.dispatchEvent(
         new CustomEvent('value', {
           detail: {value: newValue, previousValue: oldValue},
+        })
+      );
+    }
+
+    if (emitChangeEvent && oldValue !== newValue) {
+      /**
+       * Fired when the selected value changes by user interaction.
+       *
+       * The event detail contains the new value:
+       * `{ value: string }`
+       *
+       * @event change
+       */
+      this.dispatchEvent(
+        new CustomEvent('change', {
+          detail: {value: newValue},
         })
       );
     }
@@ -319,7 +344,7 @@ export class ObcToggleButtonVerticalGroup extends LitElement {
 
   private onOptionSelected(e: Event): void {
     const {value} = (e as CustomEvent).detail;
-    this.updateSelection(value);
+    this.updateSelection(value, true, true);
   }
 
   override render() {

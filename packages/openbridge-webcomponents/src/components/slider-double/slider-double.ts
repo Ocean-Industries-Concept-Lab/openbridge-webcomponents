@@ -29,6 +29,15 @@ export type ObcSliderDoubleValueEvent = CustomEvent<{
 }>;
 
 /**
+ * Event type for change event in obc-slider-double (fired after user interaction completes).
+ * Contains the current low and high values of the slider.
+ */
+export type ObcSliderDoubleChangeEvent = CustomEvent<{
+  low: number;
+  high: number;
+}>;
+
+/**
  * `<obc-slider-double>` – A dual-thumb range slider for selecting a value interval within a defined range.
  *
  * This component allows users to select a minimum and maximum value by dragging two thumbs along a horizontal track. It is commonly used for filtering or specifying ranges (such as price, speed, or time intervals) in forms and dashboards. The slider supports both interactive and read-only display modes, as well as visual variants for different UI needs.
@@ -81,7 +90,8 @@ export type ObcSliderDoubleValueEvent = CustomEvent<{
  * - `hugcontainer` (attribute): If present, removes spacing between slider and container edges.
  *
  * ## Events
- * - `value` – Fired whenever the low or high value changes. Event detail contains `{low, high}`.
+ * - `value` – Fired continuously whenever the low or high value changes during user interaction. Event detail contains `{low, high}`.
+ * - `change` – Fired only after user interaction completes (mouse release). Event detail contains `{low, high}`.
  *
  * ## Best Practices and Constraints
  * - Ensure `low` is always less than or equal to `high`; the component enforces this automatically.
@@ -114,6 +124,7 @@ export type ObcSliderDoubleValueEvent = CustomEvent<{
  * @slot icon-left - Slot for the left icon
  * @slot icon-right - Slot for the right icon
  * @fires value {ObcSliderDoubleValueEvent} - Fires when the value is changed
+ * @fires change {ObcSliderDoubleChangeEvent} - Fires when user interaction completes
  */
 @customElement('obc-slider-double')
 export class ObcSliderDouble extends LitElement {
@@ -231,6 +242,15 @@ export class ObcSliderDouble extends LitElement {
     );
   }
 
+  /**
+   * Fires the `change` event with the current low and high values.
+   *
+   * @fires change
+   */
+  private fireChangeEvent() {
+    this.dispatchEvent(new CustomEvent('change'));
+  }
+
   private THUMB_WIDTH = 48;
   private THUMB_VISIBLE_WIDTH = 12;
 
@@ -339,6 +359,7 @@ export class ObcSliderDouble extends LitElement {
     window.removeEventListener('mousemove', this.onWindowMouseMove);
     window.removeEventListener('mouseup', this.onWindowMouseUp);
     this.stopAnimation();
+    this.fireChangeEvent();
   }
 
   private updateTargetValue(e: MouseEvent) {
@@ -472,6 +493,7 @@ export class ObcSliderDouble extends LitElement {
           ?disabled=${this.variant === ObcSliderDoubleVariant.NoInput ||
           this.disabled}
           @input=${this.onInput}
+          @change=${() => this.fireChangeEvent()}
         />
         <input
           type="range"
@@ -483,6 +505,7 @@ export class ObcSliderDouble extends LitElement {
           ?disabled=${this.variant === ObcSliderDoubleVariant.NoInput ||
           this.disabled}
           @input=${this.onInput}
+          @change=${() => this.fireChangeEvent()}
         />
         <div class="interactive-track"></div>
         <div class="thumb min"></div>
