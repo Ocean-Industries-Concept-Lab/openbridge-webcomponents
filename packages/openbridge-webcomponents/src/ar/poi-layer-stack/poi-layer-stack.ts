@@ -72,6 +72,10 @@ export class ObcPoiLayerStack extends LitElement {
     slot?.addEventListener('slotchange', this.handleSlotChange);
     this.setupMutationObserver();
     this.schedulePlacement();
+    requestAnimationFrame(() => {
+      this.schedulePlacement();
+      requestAnimationFrame(() => this.schedulePlacement());
+    });
   }
 
   override disconnectedCallback() {
@@ -266,18 +270,9 @@ export class ObcPoiLayerStack extends LitElement {
     if (!existing) {
       this.selectionIds.set(target, selectedId);
     }
-
-    let header =
-      headers.find((candidate) =>
-        candidate.hasAttribute('data-stack-header')
-      ) ?? null;
-    if (!header) {
-      header = document.createElement('obc-poi-header');
-      header.setAttribute('slot', 'header');
-      header.setAttribute('data-stack-header', 'true');
-      target.appendChild(header);
+    if ('headerContent' in target) {
+      target.headerContent = selectedId;
     }
-    header.setAttribute('content', selectedId);
     target.hasHeader = true;
   }
 
@@ -287,9 +282,10 @@ export class ObcPoiLayerStack extends LitElement {
       .filter((header) => header.hasAttribute('data-stack-header'))
       .forEach((header) => header.remove());
     if (target.hasHeader !== undefined) {
-      target.hasHeader = headers.some(
-        (header) => !header.hasAttribute('data-stack-header')
-      );
+      target.hasHeader = false;
+    }
+    if ('headerContent' in target) {
+      target.headerContent = '';
     }
   }
 
@@ -369,11 +365,15 @@ export class ObcPoiLayerStack extends LitElement {
       for (const mutation of mutations) {
         if (
           mutation.type === 'attributes' &&
-          mutation.target instanceof HTMLElement &&
-          mutation.target.tagName.toLowerCase() === 'obc-poi-layer'
+          mutation.target instanceof HTMLElement
         ) {
-          this.schedulePlacement();
-          return;
+          if (
+            mutation.target.tagName.toLowerCase() === 'obc-poi-layer' ||
+            mutation.attributeName === POI_ATTR
+          ) {
+            this.schedulePlacement();
+            return;
+          }
         }
         for (const node of Array.from(mutation.addedNodes)) {
           if (!(node instanceof HTMLElement)) continue;
@@ -388,7 +388,7 @@ export class ObcPoiLayerStack extends LitElement {
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ['is-selected'],
+      attributeFilter: ['is-selected', POI_ATTR],
     });
   }
 
@@ -541,11 +541,21 @@ export class ObcPoiLayerStack extends LitElement {
   private syncSelectedLayerTargets() {
     const selectedLayer = this.getLayer('selected');
     this.updateLayerInactiveState(selectedLayer);
-    if (!selectedLayer) return;
-
     const allTargets = this.getAllLayers().flatMap((layer) =>
       this.getLayerTargets(layer)
     );
+
+    if (!selectedLayer) {
+      allTargets.forEach((target) => {
+        if (this.movingTargets.has(target)) {
+          return;
+        }
+        this.setSelectedTargetInteractivity(target, false);
+        this.clearTargetSelectedId(target);
+        this.selectionMap.delete(target);
+      });
+      return;
+    }
 
     allTargets.forEach((target) => {
       if (this.movingTargets.has(target)) {

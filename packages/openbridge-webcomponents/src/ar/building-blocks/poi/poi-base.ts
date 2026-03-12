@@ -38,9 +38,12 @@ const VALID_POI_STATES = new Set(Object.values(ObcPoiState));
  * only needs to override `renderContent()` and `getVisualNodes()`.
  */
 export abstract class ObcPoiBase extends LitElement implements Poi {
+  private headerObserver?: MutationObserver;
+
   override connectedCallback() {
     super.connectedCallback();
     this.setAttribute(POI_ATTR, '');
+    this.setupHeaderObserver();
   }
 
   /* ---------- POI marker properties ---------- */
@@ -57,6 +60,7 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
   @property({attribute: false})
   data: ObcPoiButtonDataItem[] = [];
   @property({type: Boolean, attribute: 'has-header'}) hasHeader = false;
+  @property({type: String, attribute: 'header-content'}) headerContent = '';
   @property({type: Boolean}) hasPointer = false;
   @property({type: String, attribute: 'pointer-type'})
   pointerType: ObcPoiPointerType | null = null;
@@ -193,6 +197,8 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
 
   override disconnectedCallback() {
     super.disconnectedCallback();
+    this.headerObserver?.disconnect();
+    this.headerObserver = undefined;
     if (this.xFilterRaf) {
       cancelAnimationFrame(this.xFilterRaf);
       this.xFilterRaf = 0;
@@ -202,6 +208,33 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
       window.clearTimeout(this.xMovingHintTimeout);
       this.xMovingHintTimeout = null;
     }
+  }
+
+  private setupHeaderObserver() {
+    this.headerObserver?.disconnect();
+    this.headerObserver = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type === 'childList') {
+          this.syncHeaderContent();
+          this.syncHeaderState();
+          return;
+        }
+        if (
+          mutation.type === 'attributes' &&
+          mutation.target instanceof HTMLElement &&
+          mutation.target.getAttribute('slot') === 'header'
+        ) {
+          this.syncHeaderContent();
+          this.syncHeaderState();
+          return;
+        }
+      }
+    });
+    this.headerObserver.observe(this, {
+      childList: true,
+      attributes: true,
+      attributeFilter: ['slot'],
+    });
   }
 
   override updated(changedProperties: Map<string, unknown>) {
@@ -456,8 +489,21 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
   }
 
   private syncHeaderContent() {
-    if (!this.hasHeader) {
+    const headerChildren = Array.from(this.children).filter(
+      (child): child is HTMLElement =>
+        child instanceof HTMLElement && child.getAttribute('slot') === 'header'
+    );
+
+    if (headerChildren.length === 0 && !this.hasHeader) {
       return;
+    }
+
+    if (
+      headerChildren.length > 0 &&
+      !this.hasHeader &&
+      this.closest('obc-poi-layer-stack') === null
+    ) {
+      this.hasHeader = true;
     }
 
     const target = (this.shadowRoot?.querySelector('[slot="button"]') ??
@@ -466,13 +512,7 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
       return;
     }
 
-    for (const child of Array.from(this.children)) {
-      if (
-        !(child instanceof HTMLElement) ||
-        child.getAttribute('slot') !== 'header'
-      ) {
-        continue;
-      }
+    for (const child of headerChildren) {
       if (child.parentElement !== target) {
         target.appendChild(child);
       }
@@ -511,6 +551,7 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
         .outsideAngle=${this.outsideAngle}
         .hasPointer=${this.hasPointer}
         .hasHeader=${this.hasHeader}
+        .headerContent=${this.headerContent}
         .animatePosition=${this.animatePosition}
         .relativeDirection=${this.relativeDirection}
         .buttonType=${this.buttonType}

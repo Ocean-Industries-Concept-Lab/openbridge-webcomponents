@@ -67,6 +67,7 @@ export interface Poi extends HTMLElement {
   buttonType?: string;
   data?: unknown[];
   hasHeader?: boolean;
+  headerContent?: string;
   animatePosition?: boolean;
 }
 
@@ -193,6 +194,7 @@ export class ObcPoi extends LitElement {
   overlapOpaque = false;
   @property({type: Array, attribute: false}) data: ObcPoiButtonDataItem[] = [];
   @property({type: Boolean, attribute: 'has-header'}) hasHeader = false;
+  @property({type: String, attribute: 'header-content'}) headerContent = '';
   @property({type: Boolean}) hasPointer = false;
   @property({type: String, attribute: 'pointer-type'})
   pointerType: ObcPoiPointerType | null = null;
@@ -213,6 +215,45 @@ export class ObcPoi extends LitElement {
   @property({type: Number, attribute: 'outside-angle'}) outsideAngle = 315;
   @property({type: Boolean, attribute: 'animate-position'})
   animatePosition = false;
+  private headerObserver?: MutationObserver;
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.setupHeaderObserver();
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.headerObserver?.disconnect();
+    this.headerObserver = undefined;
+  }
+
+  private setupHeaderObserver() {
+    this.headerObserver?.disconnect();
+    this.headerObserver = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type === 'childList') {
+          this.syncFallbackButtonHeaderContent();
+          this.syncAttachedHeaderState();
+          return;
+        }
+        if (
+          mutation.type === 'attributes' &&
+          mutation.target instanceof HTMLElement &&
+          mutation.target.getAttribute('slot') === 'header'
+        ) {
+          this.syncFallbackButtonHeaderContent();
+          this.syncAttachedHeaderState();
+          return;
+        }
+      }
+    });
+    this.headerObserver.observe(this, {
+      childList: true,
+      attributes: true,
+      attributeFilter: ['slot'],
+    });
+  }
 
   private updatePosition() {
     this.style.removeProperty('top');
@@ -517,6 +558,7 @@ export class ObcPoi extends LitElement {
     props.relativeDirection = this.relativeDirection;
     props.selected = this.selected;
     props.hasHeader = this.hasHeader;
+    props.headerContent = this.headerContent;
     props.state = this.buttonState;
     props.value = this.buttonVisualState;
     props.overlapOpaque = this.overlapOpaque;
@@ -533,6 +575,7 @@ export class ObcPoi extends LitElement {
           .relativeDirection=${this.relativeDirection}
           .selected=${this.selected}
           .hasHeader=${this.hasHeader}
+          .headerContent=${this.headerContent}
           .state=${this.buttonState}
           .value=${this.buttonVisualState}
           .overlapOpaque=${this.overlapOpaque}
