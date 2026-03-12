@@ -2,8 +2,8 @@ import {LitElement, html, css, svg} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../decorator.js';
 
-@customElement('obi-drag-indicator')
-export class ObiDragIndicator extends LitElement {
+@customElement('obi-drag-vertical')
+export class ObiDragVertical extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -37,6 +37,6 @@ export class ObiDragIndicator extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obi-drag-indicator': ObiDragIndicator;
+    'obi-drag-vertical': ObiDragVertical;
   }
 }

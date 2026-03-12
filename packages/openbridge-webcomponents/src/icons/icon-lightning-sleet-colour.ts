@@ -2,8 +2,8 @@ import {LitElement, html, css, svg} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../decorator.js';
 
-@customElement('obi-lightning-sleeth-colour')
-export class ObiLightningSleethColour extends LitElement {
+@customElement('obi-lightning-sleet-colour')
+export class ObiLightningSleetColour extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="32" height="32" viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -47,6 +47,6 @@ export class ObiLightningSleethColour extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obi-lightning-sleeth-colour': ObiLightningSleethColour;
+    'obi-lightning-sleet-colour': ObiLightningSleetColour;
   }
 }

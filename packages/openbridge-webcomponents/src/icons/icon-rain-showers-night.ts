@@ -2,8 +2,8 @@ import {LitElement, html, css, svg} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../decorator.js';
 
-@customElement('obi-rain-showers-mon')
-export class ObiRainShowersMon extends LitElement {
+@customElement('obi-rain-showers-night')
+export class ObiRainShowersNight extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="32" height="32" viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -37,6 +37,6 @@ export class ObiRainShowersMon extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obi-rain-showers-mon': ObiRainShowersMon;
+    'obi-rain-showers-night': ObiRainShowersNight;
   }
 }

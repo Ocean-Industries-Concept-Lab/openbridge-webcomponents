@@ -2,8 +2,8 @@ import {LitElement, html, css, svg} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../decorator.js';
 
-@customElement('obi-open-panel-left')
-export class ObiOpenPanelLeft extends LitElement {
+@customElement('obi-panel-left-open')
+export class ObiPanelLeftOpen extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -39,6 +39,6 @@ export class ObiOpenPanelLeft extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obi-open-panel-left': ObiOpenPanelLeft;
+    'obi-panel-left-open': ObiPanelLeftOpen;
   }
 }
