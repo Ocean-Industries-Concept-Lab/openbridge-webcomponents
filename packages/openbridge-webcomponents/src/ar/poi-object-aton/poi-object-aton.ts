@@ -65,10 +65,6 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
     }
   }
 
-  private get mappedBaseState(): ObcPoiObjectState {
-    return this.state as unknown as ObcPoiObjectState;
-  }
-
   override get icon(): TemplateResult {
     return html`<slot></slot>`;
   }
@@ -105,7 +101,7 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
           exportparts="background-frame"
           .type=${this.baseType}
           .objectStyle=${'regular'}
-          .state=${this.mappedBaseState}
+          .state=${this.state}
           ?interactive=${this.interactive}
         >
           <slot></slot>
