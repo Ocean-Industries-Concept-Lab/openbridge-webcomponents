@@ -43,6 +43,8 @@ export class ObcPoiAton extends ObcPoiBase {
     return html`
       <obc-poi-button-aton
         slot="button"
+        .hasHeader=${this.hasHeader}
+        .headerContent=${this.headerContent}
         .atonType=${this.atonType}
         .atonStyle=${this.atonStyle}
         .atonState=${this.atonState}

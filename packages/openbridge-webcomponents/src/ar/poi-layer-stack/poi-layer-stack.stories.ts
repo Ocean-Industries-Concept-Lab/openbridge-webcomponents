@@ -6,13 +6,9 @@ import '../poi-layer/poi-layer.js';
 import '../poi-data/poi-data.js';
 import '../poi-aton/poi-aton.js';
 import '../poi-vessel/poi-vessel.js';
-import '../building-blocks/poi-header/poi-header.js';
 import '../../icons/icon-placeholder.js';
 import '../../icons/icon-beacon-general-east.js';
-import {
-  ObcPoiHeaderState,
-  ObcPoiHeaderType,
-} from '../building-blocks/poi-header/poi-header.js';
+import '../../icons/icon-vessel-type-psv-outlined.js';
 
 const isVitestBrowser = Boolean(
   (globalThis as {__vitest_browser__?: unknown}).__vitest_browser__
@@ -323,130 +319,6 @@ export const SelectionMultiAnimated: Story = {
   },
 };
 
-const renderHeaderDebugLayers = (args: PoiLayerStackArgs) => html`
-  <style>
-    obc-poi-layer-stack.stack-header-debug {
-      gap: 8px;
-      width: 760px;
-    }
-
-    obc-poi-layer-stack.stack-header-debug obc-poi-layer {
-      --obc-poi-layer-min-height: 72px;
-      width: 100%;
-    }
-  </style>
-  <obc-poi-layer-stack
-    class="stack-header-debug"
-    selection-mode=${args.selectionMode}
-  >
-    <obc-poi-layer label="Selected Header Debug" is-selected debug>
-      <obc-poi-data .x=${80} .y=${110} .fixedTarget=${false}></obc-poi-data>
-
-      <obc-poi-data .x=${220} .y=${95} .fixedTarget=${false}>
-        <obc-poi-header
-          slot="header"
-          type=${ObcPoiHeaderType.Id}
-          state=${ObcPoiHeaderState.Selected}
-          content="A"
-        ></obc-poi-header>
-      </obc-poi-data>
-
-      <obc-poi-data .x=${360} .y=${120} .fixedTarget=${false} has-header>
-        <obc-poi-header
-          slot="header"
-          type=${ObcPoiHeaderType.Id}
-          state=${ObcPoiHeaderState.Selected}
-          content="B"
-        ></obc-poi-header>
-      </obc-poi-data>
-
-      <obc-poi-data .x=${500} .y=${100} .fixedTarget=${false} has-header>
-        <obc-poi-header
-          slot="header"
-          type=${ObcPoiHeaderType.Id}
-          state=${ObcPoiHeaderState.Enabled}
-          content="C"
-        ></obc-poi-header>
-      </obc-poi-data>
-
-      <obc-poi-data .x=${640} .y=${85} .fixedTarget=${false} has-header>
-        <obc-poi-header
-          slot="header"
-          type=${ObcPoiHeaderType.Id}
-          state=${ObcPoiHeaderState.Warning}
-          content="D"
-        ></obc-poi-header>
-      </obc-poi-data>
-    </obc-poi-layer>
-
-    <obc-poi-layer label="Reference" debug>
-      <obc-poi-data .x=${160} .y=${105} .fixedTarget=${false}></obc-poi-data>
-      <obc-poi-data .x=${320} .y=${80} .fixedTarget=${false}>
-        <obc-poi-header
-          slot="header"
-          type=${ObcPoiHeaderType.Id}
-          state=${ObcPoiHeaderState.Selected}
-          content="R"
-        ></obc-poi-header>
-      </obc-poi-data>
-    </obc-poi-layer>
-  </obc-poi-layer-stack>
-`;
-
-export const HeaderDebug: Story = {
-  args: {
-    selectionMode: PoiLayerSelectionMode.Single,
-  },
-  render: renderHeaderDebugLayers,
-  play: async () => {
-    await waitForStorySettle({drainTransitions: true});
-  },
-};
-
-const renderSelectedLayerAllTypes = (args: PoiLayerStackArgs) => html`
-  <style>
-    obc-poi-layer-stack.stack-selected-all-types {
-      gap: 8px;
-      width: 760px;
-    }
-
-    obc-poi-layer-stack.stack-selected-all-types obc-poi-layer {
-      --obc-poi-layer-min-height: 72px;
-      width: 100%;
-    }
-  </style>
-  <obc-poi-layer-stack
-    class="stack-selected-all-types"
-    selection-mode=${args.selectionMode}
-  >
-    <obc-poi-layer label="Selected All Types" is-selected debug>
-      <obc-poi-data .x=${120} .y=${108} .fixedTarget=${false}></obc-poi-data>
-      <obc-poi-aton .x=${320} .y=${96} .fixedTarget=${false}>
-        <obi-beacon-general-east></obi-beacon-general-east>
-      </obc-poi-aton>
-      <obc-poi-vessel .x=${520} .y=${118} .fixedTarget=${false}>
-        <obi-placeholder></obi-placeholder>
-      </obc-poi-vessel>
-    </obc-poi-layer>
-    <obc-poi-layer label="Reference" debug>
-      <obc-poi-data .x=${180} .y=${90} .fixedTarget=${false}></obc-poi-data>
-      <obc-poi-aton .x=${420} .y=${82} .fixedTarget=${false}>
-        <obi-beacon-general-east></obi-beacon-general-east>
-      </obc-poi-aton>
-    </obc-poi-layer>
-  </obc-poi-layer-stack>
-`;
-
-export const SelectedLayerAllTypes: Story = {
-  args: {
-    selectionMode: PoiLayerSelectionMode.Single,
-  },
-  render: renderSelectedLayerAllTypes,
-  play: async () => {
-    await waitForStorySettle({drainTransitions: true});
-  },
-};
-
 const renderMixedTypeLayers = (args: PoiLayerStackArgs) => html`
   <style>
     obc-poi-layer-stack.stack-mixed {
@@ -461,10 +333,6 @@ const renderMixedTypeLayers = (args: PoiLayerStackArgs) => html`
   </style>
   <obc-poi-layer-stack class="stack-mixed" selection-mode=${args.selectionMode}>
     <obc-poi-layer label="Selected" is-selected debug></obc-poi-layer>
-    <obc-poi-layer label="Vessels" debug>
-      <obc-poi-data .x=${120} .y=${110}></obc-poi-data>
-      <obc-poi-data .x=${420} .y=${80}></obc-poi-data>
-    </obc-poi-layer>
     <obc-poi-layer label="Buoys" debug>
       <obc-poi-aton .x=${200} aton-type="aton" aton-style="green">
         <obi-beacon-general-east></obi-beacon-general-east>
@@ -473,12 +341,19 @@ const renderMixedTypeLayers = (args: PoiLayerStackArgs) => html`
         <obi-beacon-general-east></obi-beacon-general-east>
       </obc-poi-aton>
     </obc-poi-layer>
+    <obc-poi-layer label="Vessels" debug>
+      <obc-poi-data .x=${120} .y=${110}></obc-poi-data>
+      <obc-poi-vessel .x=${280} .y=${96}>
+        <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
+      </obc-poi-vessel>
+      <obc-poi-data .x=${420} .y=${80}></obc-poi-data>
+    </obc-poi-layer>
   </obc-poi-layer-stack>
 `;
 
 export const MixedComponentTypes: Story = {
   args: {
-    selectionMode: PoiLayerSelectionMode.Single,
+    selectionMode: PoiLayerSelectionMode.Multi,
   },
   render: renderMixedTypeLayers,
   play: async () => {
