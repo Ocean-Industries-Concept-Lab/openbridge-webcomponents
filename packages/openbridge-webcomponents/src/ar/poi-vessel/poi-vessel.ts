@@ -57,9 +57,6 @@ export class ObcPoiVessel extends ObcPoiBase {
         <slot></slot>
         <slot name="turn-indicator" slot="turn-indicator"></slot>
         <slot name="speed-indicator" slot="speed-indicator"></slot>
-        ${this.hasHeader
-          ? html`<slot name="header" slot="header"></slot>`
-          : null}
       </obc-poi-button-vessel>
     `;
   }

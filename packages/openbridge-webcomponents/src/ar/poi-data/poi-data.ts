@@ -23,7 +23,6 @@ export class ObcPoiData extends ObcPoiBase {
 
   protected override renderButtonSlot() {
     return html`
-      ${this.hasHeader ? html`<slot name="header" slot="header"></slot>` : null}
       <obi-vessel-generic-default-filled></obi-vessel-generic-default-filled>
     `;
   }

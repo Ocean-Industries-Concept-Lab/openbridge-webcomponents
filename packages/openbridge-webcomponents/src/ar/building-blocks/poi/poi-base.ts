@@ -6,6 +6,7 @@ import {
   ObcPoiButtonType,
   ObcPoiButtonDataItem,
 } from '../poi-button/poi-button.js';
+import {ObcPoiHeaderState} from '../poi-header/poi-header.js';
 import {ObcPoiState, ObcPoiType, ObcPoiValue} from './poi.js';
 import {
   ObcPoiPointerState,
@@ -230,6 +231,13 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
     ) {
       this.dispatchLayoutChange();
     }
+    this.syncHeaderContent();
+    this.syncHeaderState();
+  }
+
+  protected override firstUpdated(_changedProperties: Map<string, unknown>) {
+    this.syncHeaderContent();
+    this.syncHeaderState();
   }
 
   /* ---------- Vertical positioning ---------- */
@@ -430,6 +438,65 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
    * `<obc-poi>` wrapper with all shared property bindings.
    */
   protected abstract renderButtonSlot(): TemplateResult;
+
+  protected get resolvedHeaderState(): ObcPoiHeaderState {
+    switch (this.resolvedPoiState) {
+      case ObcPoiState.Caution:
+        return ObcPoiHeaderState.Caution;
+      case ObcPoiState.Warning:
+        return ObcPoiHeaderState.Warning;
+      case ObcPoiState.Alarm:
+        return ObcPoiHeaderState.Alarm;
+      case ObcPoiState.Enabled:
+      default:
+        return this.selected
+          ? ObcPoiHeaderState.Selected
+          : ObcPoiHeaderState.Enabled;
+    }
+  }
+
+  private syncHeaderContent() {
+    if (!this.hasHeader) {
+      return;
+    }
+
+    const target = (this.shadowRoot?.querySelector('[slot="button"]') ??
+      this.shadowRoot?.querySelector('obc-poi')) as HTMLElement | null;
+    if (!target) {
+      return;
+    }
+
+    for (const child of Array.from(this.children)) {
+      if (
+        !(child instanceof HTMLElement) ||
+        child.getAttribute('slot') !== 'header'
+      ) {
+        continue;
+      }
+      if (child.parentElement !== target) {
+        target.appendChild(child);
+      }
+      this.applyHeaderState(child);
+    }
+  }
+
+  private applyHeaderState(root: ParentNode) {
+    const headers = [
+      ...(root instanceof Element && root.matches('obc-poi-header')
+        ? [root]
+        : []),
+      ...root.querySelectorAll('obc-poi-header'),
+    ] as HTMLElement[];
+
+    for (const header of headers) {
+      (header as {state?: ObcPoiHeaderState}).state = this.resolvedHeaderState;
+      header.setAttribute('state', this.resolvedHeaderState);
+    }
+  }
+
+  private syncHeaderState() {
+    this.applyHeaderState(this.renderRoot);
+  }
 
   override render() {
     return html`

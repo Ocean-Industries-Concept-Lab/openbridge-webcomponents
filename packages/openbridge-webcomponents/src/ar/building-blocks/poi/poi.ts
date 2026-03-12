@@ -10,6 +10,7 @@ import {
   ObcPoiButtonState,
   PoiButtonVisualState,
 } from '../poi-button/poi-button.js';
+import {ObcPoiHeaderState} from '../poi-header/poi-header.js';
 import {POIStyle} from '../poi-graphic-line/poi-graphic-line.js';
 import {poiArrow} from './arrow.js';
 import '../poi-line/poi-line.js';
@@ -213,21 +214,6 @@ export class ObcPoi extends LitElement {
   @property({type: Boolean, attribute: 'animate-position'})
   animatePosition = false;
 
-  override updated(changedProperties: Map<string, unknown>) {
-    if (changedProperties.has('x')) {
-      this.style.removeProperty('left');
-      this.style.setProperty('--obc-poi-x', `${this.x}px`);
-    }
-    if (
-      changedProperties.has('buttonY') ||
-      changedProperties.has('y') ||
-      changedProperties.has('fixedTarget')
-    ) {
-      this.updatePosition();
-    }
-    this.syncSlottedButtonProps();
-  }
-
   private updatePosition() {
     this.style.removeProperty('top');
     if (this.fixedTarget) {
@@ -279,6 +265,22 @@ export class ObcPoi extends LitElement {
       case ObcPoiState.Enabled:
       default:
         return ObcPoiButtonState.Enabled;
+    }
+  }
+
+  private get resolvedHeaderState(): ObcPoiHeaderState {
+    switch (this.buttonState) {
+      case ObcPoiButtonState.Caution:
+        return ObcPoiHeaderState.Caution;
+      case ObcPoiButtonState.Warning:
+        return ObcPoiHeaderState.Warning;
+      case ObcPoiButtonState.Alarm:
+        return ObcPoiHeaderState.Alarm;
+      case ObcPoiButtonState.Enabled:
+      default:
+        return this.selected
+          ? ObcPoiHeaderState.Selected
+          : ObcPoiHeaderState.Enabled;
     }
   }
 
@@ -458,7 +460,52 @@ export class ObcPoi extends LitElement {
     const assigned = slot.assignedElements({flatten: false});
     this.slottedButton =
       assigned.length > 0 ? (assigned[0] as HTMLElement) : null;
+    this.syncFallbackButtonHeaderContent();
     this.syncSlottedButtonProps();
+  }
+
+  private syncFallbackButtonHeaderContent() {
+    if (this.slottedButton) {
+      return;
+    }
+
+    const button = this.renderRoot.querySelector(
+      'obc-poi-button.poi-button'
+    ) as HTMLElement | null;
+    if (!button) {
+      return;
+    }
+
+    for (const child of Array.from(this.children)) {
+      if (
+        !(child instanceof HTMLElement) ||
+        child.getAttribute('slot') !== 'header'
+      ) {
+        continue;
+      }
+      if (child.parentElement !== button) {
+        button.appendChild(child);
+      }
+      this.applyHeaderState(child);
+    }
+  }
+
+  private applyHeaderState(root: ParentNode) {
+    const headers = [
+      ...(root instanceof Element && root.matches('obc-poi-header')
+        ? [root]
+        : []),
+      ...root.querySelectorAll('obc-poi-header'),
+    ] as HTMLElement[];
+
+    for (const header of headers) {
+      (header as {state?: ObcPoiHeaderState}).state = this.resolvedHeaderState;
+      header.setAttribute('state', this.resolvedHeaderState);
+    }
+  }
+
+  private syncAttachedHeaderState() {
+    this.applyHeaderState(this.renderRoot);
   }
 
   private syncSlottedButtonProps() {
@@ -493,7 +540,6 @@ export class ObcPoi extends LitElement {
           .data=${this.data}
         >
           <slot></slot>
-          <slot name="header" slot="header"></slot>
         </obc-poi-button>
       </slot>
     `;
@@ -521,6 +567,29 @@ export class ObcPoi extends LitElement {
         ${this.renderInlinePointer()} ${this.renderOutsideArrow()}
       </div>
     `;
+  }
+
+  protected override firstUpdated(_changedProperties: Map<string, unknown>) {
+    this.syncFallbackButtonHeaderContent();
+    this.syncAttachedHeaderState();
+  }
+
+  protected override updated(changedProperties: Map<string, unknown>) {
+    super.updated(changedProperties);
+    if (changedProperties.has('x')) {
+      this.style.removeProperty('left');
+      this.style.setProperty('--obc-poi-x', `${this.x}px`);
+    }
+    if (
+      changedProperties.has('buttonY') ||
+      changedProperties.has('y') ||
+      changedProperties.has('fixedTarget')
+    ) {
+      this.updatePosition();
+    }
+    this.syncFallbackButtonHeaderContent();
+    this.syncSlottedButtonProps();
+    this.syncAttachedHeaderState();
   }
 
   static override styles = unsafeCSS(componentStyle);

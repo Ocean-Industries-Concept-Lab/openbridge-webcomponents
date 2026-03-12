@@ -49,9 +49,6 @@ export class ObcPoiAton extends ObcPoiBase {
         .atonInteractive=${this.atonInteractive}
       >
         <slot></slot>
-        ${this.hasHeader
-          ? html`<slot name="header" slot="header"></slot>`
-          : null}
       </obc-poi-button-aton>
     `;
   }

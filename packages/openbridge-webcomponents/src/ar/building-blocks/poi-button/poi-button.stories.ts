@@ -156,20 +156,12 @@ const meta: Meta<ObcPoiButton> = {
     selected: {
       control: {type: 'boolean'},
     },
-    hasData: {
-      control: false,
-      table: {disable: true},
-    },
     hasHeader: {
       control: {type: 'boolean'},
     },
     state: {
       control: {type: 'select'},
       options: Object.values(ObcPoiButtonState),
-    },
-    header: {
-      control: false,
-      table: {disable: true},
     },
     value: {
       control: {type: 'select'},
@@ -181,34 +173,6 @@ const meta: Meta<ObcPoiButton> = {
     },
     overlapOpaque: {
       control: {type: 'boolean'},
-    },
-    resolvedHeaderState: {
-      control: false,
-      table: {disable: true},
-    },
-    resolvedHeaderType: {
-      control: false,
-      table: {disable: true},
-    },
-    resolvedHeaderSize: {
-      control: false,
-      table: {disable: true},
-    },
-    poiObjectType: {
-      control: false,
-      table: {disable: true},
-    },
-    poiObjectState: {
-      control: false,
-      table: {disable: true},
-    },
-    selectionFrameType: {
-      control: false,
-      table: {disable: true},
-    },
-    selectionFrameState: {
-      control: false,
-      table: {disable: true},
     },
   },
   render: (args) => html`

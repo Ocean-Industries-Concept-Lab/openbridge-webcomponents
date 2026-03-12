@@ -218,10 +218,44 @@ export class ObcPoiLayerStack extends LitElement {
     });
   }
 
+  private collectPoiHeaders(target: Poi): HTMLElement[] {
+    const headers = new Set<HTMLElement>();
+
+    const visit = (node: ParentNode) => {
+      if (node instanceof Element && node.matches('obc-poi-header')) {
+        headers.add(node as HTMLElement);
+      }
+
+      const children =
+        node instanceof ShadowRoot || node instanceof Element
+          ? Array.from(node.children)
+          : [];
+
+      for (const child of children) {
+        if (child.matches('obc-poi-header')) {
+          headers.add(child as HTMLElement);
+        }
+        if (child.shadowRoot) {
+          visit(child.shadowRoot);
+        }
+        visit(child);
+      }
+    };
+
+    visit(target);
+    if (target.shadowRoot) {
+      visit(target.shadowRoot);
+    }
+
+    return Array.from(headers);
+  }
+
   private setTargetSelectedId(target: Poi) {
     if (target.hasHeader === undefined) return;
-    const hasExternalHeader =
-      target.querySelector('[slot="header"]:not([data-stack-header])') !== null;
+    const headers = this.collectPoiHeaders(target);
+    const hasExternalHeader = headers.some(
+      (header) => !header.hasAttribute('data-stack-header')
+    );
     if (hasExternalHeader) {
       target.hasHeader = true;
       return;
@@ -233,9 +267,10 @@ export class ObcPoiLayerStack extends LitElement {
       this.selectionIds.set(target, selectedId);
     }
 
-    let header = target.querySelector(
-      'obc-poi-header[data-stack-header]'
-    ) as HTMLElement | null;
+    let header =
+      headers.find((candidate) =>
+        candidate.hasAttribute('data-stack-header')
+      ) ?? null;
     if (!header) {
       header = document.createElement('obc-poi-header');
       header.setAttribute('slot', 'header');
@@ -247,12 +282,14 @@ export class ObcPoiLayerStack extends LitElement {
   }
 
   private clearTargetSelectedId(target: Poi) {
-    const stackHeader = target.querySelector(
-      'obc-poi-header[data-stack-header]'
-    );
-    stackHeader?.remove();
+    const headers = this.collectPoiHeaders(target);
+    headers
+      .filter((header) => header.hasAttribute('data-stack-header'))
+      .forEach((header) => header.remove());
     if (target.hasHeader !== undefined) {
-      target.hasHeader = target.querySelector('[slot="header"]') !== null;
+      target.hasHeader = headers.some(
+        (header) => !header.hasAttribute('data-stack-header')
+      );
     }
   }
 
@@ -330,6 +367,14 @@ export class ObcPoiLayerStack extends LitElement {
     this.mutationObserver?.disconnect();
     this.mutationObserver = new MutationObserver((mutations) => {
       for (const mutation of mutations) {
+        if (
+          mutation.type === 'attributes' &&
+          mutation.target instanceof HTMLElement &&
+          mutation.target.tagName.toLowerCase() === 'obc-poi-layer'
+        ) {
+          this.schedulePlacement();
+          return;
+        }
         for (const node of Array.from(mutation.addedNodes)) {
           if (!(node instanceof HTMLElement)) continue;
           if (isPoi(node) || node.querySelector?.(`[${POI_ATTR}]`)) {
@@ -339,7 +384,12 @@ export class ObcPoiLayerStack extends LitElement {
         }
       }
     });
-    this.mutationObserver.observe(this, {childList: true, subtree: true});
+    this.mutationObserver.observe(this, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['is-selected'],
+    });
   }
 
   private moveTargetToLayer(
@@ -493,24 +543,25 @@ export class ObcPoiLayerStack extends LitElement {
     this.updateLayerInactiveState(selectedLayer);
     if (!selectedLayer) return;
 
-    this.selectionMap.forEach((_record, target) => {
-      if (!target.isConnected) {
-        this.selectionMap.delete(target);
-        return;
-      }
-      const currentLayer = this.getTargetLayer(target);
-      if (currentLayer !== selectedLayer) {
-        this.setSelectedTargetInteractivity(target, false);
-        this.clearTargetSelectedId(target);
-        this.selectionMap.delete(target);
-      }
-    });
+    const allTargets = this.getAllLayers().flatMap((layer) =>
+      this.getLayerTargets(layer)
+    );
 
-    const targets = this.getLayerTargets(selectedLayer);
-    targets.forEach((target) => {
+    allTargets.forEach((target) => {
       if (this.movingTargets.has(target)) {
         return;
       }
+
+      const currentLayer = this.getTargetLayer(target);
+      const isInSelectedLayer = currentLayer === selectedLayer;
+
+      if (!isInSelectedLayer) {
+        this.setSelectedTargetInteractivity(target, false);
+        this.clearTargetSelectedId(target);
+        this.selectionMap.delete(target);
+        return;
+      }
+
       this.setTargetSelectedId(target);
       this.setSelectedTargetInteractivity(target, true);
 
@@ -525,7 +576,6 @@ export class ObcPoiLayerStack extends LitElement {
       ) {
         return;
       }
-      const currentLayer = this.getTargetLayer(target);
       const fallbackOrigin = this.getLayer('default');
       const originLayer =
         fallbackOrigin && fallbackOrigin !== selectedLayer
