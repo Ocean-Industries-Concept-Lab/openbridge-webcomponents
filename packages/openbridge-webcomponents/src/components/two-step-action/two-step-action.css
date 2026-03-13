@@ -474,11 +474,8 @@
     padding: 0 var(--ui-components-button-label-spacing);
     overflow: hidden;
     border-radius: var(--global-border-radius-border-radius-base);
-    transition:
-      background-color var(--obc-two-step-duration-fast)
-        var(--obc-two-step-easing-standard),
-      margin-left var(--obc-two-step-duration-fast)
-        var(--obc-two-step-easing-standard);
+    transition: margin-left var(--obc-two-step-duration-fast)
+      var(--obc-two-step-easing-standard);
     position: relative;
     z-index: 1;
 
@@ -522,12 +519,6 @@
 
     .state-armed.armed-slide & {
       pointer-events: none;
-      --normal-hover-background-color: var(--normal-enabled-background-color);
-      --normal-hover-border-color: var(--normal-enabled-border-color);
-      --normal-hover-text-color: var(--on-normal-neutral-color);
-      --normal-pressed-background-color: var(--normal-enabled-background-color);
-      --normal-pressed-border-color: var(--normal-enabled-border-color);
-      --normal-pressed-text-color: var(--on-normal-neutral-color);
     }
 
     .state-active & {

@@ -18,10 +18,27 @@ const meta = {
   },
   argTypes: {
     disabled: {
-      control: {type: 'boolean'},
+      table: {
+        disable: true,
+      },
+    },
+    state: {
+      table: {
+        disable: true,
+      },
     },
     label: {
       control: {type: 'text'},
+    },
+    armedResetDelay: {
+      table: {
+        disable: true,
+      },
+    },
+    change: {
+      table: {
+        disable: true,
+      },
     },
   },
   parameters: {

@@ -5,7 +5,6 @@ import componentStyle from './two-step-action.css?inline';
 import '../../icons/icon-check-google.js';
 import '../../icons/icon-chevron-right-google.js';
 import '../../icons/icon-chevron-double-right-google.js';
-import '../button/button.js';
 import {customElement} from '../../decorator.js';
 
 export enum ObcTwoStepActionState {
@@ -28,7 +27,7 @@ const THUMB_DRAG_GROWTH_FACTOR = 0.4146;
 const THUMB_DRAG_MOVE_THRESHOLD_PX = 3;
 const THUMB_DRAG_MIN_SCALE_X = 0.01;
 
-/** Two-step action control: `enabled` -> `armed` -> `active`, with auto-reset from `armed`. */
+/** Two-step action control: `enabled` -> `armed` -> `active`, with auto-reset back to `enabled`. */
 @customElement('obc-two-step-action')
 export class ObcTwoStepAction extends LitElement {
   @property({type: String, reflect: true}) state: ObcTwoStepActionState =
@@ -38,26 +37,47 @@ export class ObcTwoStepAction extends LitElement {
 
   @property({type: Number}) armedResetDelay = 1600;
 
+  /** @internal */
   @state() private labelBounce = false;
+  /** @internal */
   @state() private armedHint = false;
+  /** @internal */
   @state() private armedSlide = false;
+  /** @internal */
   @state() private disarmSlide = false;
+  /** @internal */
   @state() private thumbDragX = 0;
+  /** @internal */
   @state() private thumbDragging = false;
+  /** @internal */
   @state() private swipeArmedPhase = false;
+  /** @internal */
   private labelBounceTimeout?: number;
+  /** @internal */
   private armedResetTimeout?: number;
+  /** @internal */
   private armedHintTimeout?: number;
+  /** @internal */
   private armedSlideTimeout?: number;
+  /** @internal */
   private disarmSlideTimeout?: number;
+  /** @internal */
   private swipeArmedToActiveTimeout?: number;
+  /** @internal */
   private activeResetTimeout?: number;
+  /** @internal */
   private thumbDragPointerId?: number;
+  /** @internal */
   private thumbDragStartX = 0;
+  /** @internal */
   private thumbDragMaxX = 0;
+  /** @internal */
   private thumbDragCompleteX = 0;
+  /** @internal */
   private thumbDragScaleX = 1;
+  /** @internal */
   private thumbDragMoved = false;
+  /** @internal */
   private suppressNextClick = false;
 
   private getButtonStrokeWidthPx() {
