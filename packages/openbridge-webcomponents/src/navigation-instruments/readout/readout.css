@@ -1,6 +1,8 @@
 :host {
   display: block;
   width: fit-content;
+  --global-typography-instrument-label-padding-bottom: 1px;
+  --global-typography-instrument-unit-padding-bottom: 1px;
 }
 
 * {
