@@ -65,10 +65,6 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
     }
   }
 
-  private get mappedBaseState(): ObcPoiObjectState {
-    return this.state as unknown as ObcPoiObjectState;
-  }
-
   override get icon(): TemplateResult {
     return html`<slot></slot>`;
   }
@@ -76,7 +72,7 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
   private renderAtonDiamond(): TemplateResult {
     return html`
       <div class="aton-diamond-frame">
-        <div class="aton-diamond-background" part="background-frame"></div>
+        <div class="aton-diamond-background"></div>
         <div class="aton-icon-container">
           <slot></slot>
         </div>
@@ -105,7 +101,7 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
           exportparts="background-frame"
           .type=${this.baseType}
           .objectStyle=${'regular'}
-          .state=${this.mappedBaseState}
+          .state=${this.state}
           ?interactive=${this.interactive}
         >
           <slot></slot>

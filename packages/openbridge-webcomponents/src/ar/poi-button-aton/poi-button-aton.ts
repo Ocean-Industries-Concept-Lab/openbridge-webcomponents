@@ -61,8 +61,7 @@ export class ObcPoiButtonAton extends ObcPoiButton {
         exportparts="background-frame"
         .type=${this.resolvedAtonType}
         .objectStyle=${this.atonStyle}
-        .state=${this.atonState ??
-        (this.poiObjectState as ObcPoiObjectAtonState)}
+        .state=${this.atonState ?? this.poiObjectState}
         ?interactive=${this.atonInteractive}
       >
         <slot></slot>
