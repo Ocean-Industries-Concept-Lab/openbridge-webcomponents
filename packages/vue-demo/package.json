@@ -51,7 +51,7 @@
     "@vue/tsconfig": "^0.9.0",
     "eslint": "^10.0.3",
     "eslint-plugin-vue": "^10.8.0",
-    "firebase-tools": "^15.9.1",
+    "firebase-tools": "^15.10.0",
     "jsdom": "^28.1.0",
     "npm-run-all2": "^8.0.4",
     "prettier": "^3.7.4",
