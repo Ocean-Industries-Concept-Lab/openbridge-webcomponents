@@ -255,14 +255,40 @@
 
 /* Regular style icon colors */
 .wrapper.style-regular .icon-container ::slotted(*) {
-  color: var(--element-neutral-color);
-  --element-active-color: var(--element-neutral-color);
+  color: var(--instrument-regular-secondary-color);
+  --element-active-color: var(--instrument-regular-secondary-color);
+}
+
+.wrapper.style-regular.is-indicator .icon-container ::slotted(*) {
+  color: var(--element-inactive-color);
+  --element-active-color: var(--element-inactive-color);
 }
 
 .wrapper.style-regular.is-checked .icon-container ::slotted(*),
 .wrapper.style-regular.is-activated .icon-container ::slotted(*) {
+  color: var(--element-neutral-color);
+  --element-active-color: var(--element-neutral-color);
+}
+
+.wrapper.style-regular.is-static .icon-container ::slotted(*) {
+  color: var(--element-inactive-color);
+  --element-active-color: var(--element-inactive-color);
+}
+
+.wrapper.style-regular.is-static.is-checked .icon-container ::slotted(*) {
+  color: var(--element-neutral-color);
+  --element-active-color: var(--element-neutral-color);
+}
+
+/* Regular and Enhanced alert state icon colors */
+.wrapper.style-regular.state-caution .icon-container ::slotted(*),
+.wrapper.style-regular.state-warning .icon-container ::slotted(*),
+.wrapper.style-regular.state-alarm .icon-container ::slotted(*),
+.wrapper.style-enhanced.state-caution .icon-container ::slotted(*),
+.wrapper.style-enhanced.state-warning .icon-container ::slotted(*),
+.wrapper.style-enhanced.state-alarm .icon-container ::slotted(*) {
   color: var(--element-active-color);
-  --element-active-color: inherit;
+  --element-active-color: var(--element-active-color);
 }
 
 /* Enhanced style background — same as regular */

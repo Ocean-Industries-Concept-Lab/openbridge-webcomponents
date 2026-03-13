@@ -25,14 +25,14 @@ export {ObcPoiObjectDataState as PoiDataObjectState};
  */
 @customElement('obc-poi-data')
 export class ObcPoiData extends ObcPoiBase {
-  @property({type: String, attribute: 'object-style'})
-  objectStyle: ObcPoiObjectDataStyle = ObcPoiObjectDataStyle.Regular;
+  @property({type: String, attribute: 'data-style'})
+  dataStyle: ObcPoiObjectDataStyle = ObcPoiObjectDataStyle.Regular;
 
-  @property({type: String, attribute: 'object-state'})
-  objectState: ObcPoiObjectDataState | null = null;
+  @property({type: String, attribute: 'data-state'})
+  dataState: ObcPoiObjectDataState | null = null;
 
-  @property({type: Boolean, attribute: 'object-interactive'})
-  objectInteractive = false;
+  @property({type: Boolean, attribute: 'data-interactive'})
+  dataInteractive = false;
 
   protected override getVisualNodes() {
     return this.queryVisualNodes('obc-poi', 'obc-poi-button-data');
@@ -51,9 +51,9 @@ export class ObcPoiData extends ObcPoiBase {
         .overlapOpaque=${this.overlapOpaque}
         .type=${this.buttonType}
         .data=${this.data}
-        .objectStyle=${this.objectStyle}
-        .objectState=${this.objectState}
-        .objectInteractive=${this.objectInteractive}
+        .dataStyle=${this.dataStyle}
+        .dataState=${this.dataState}
+        .dataInteractive=${this.dataInteractive}
       ></obc-poi-button-data>
     `;
   }

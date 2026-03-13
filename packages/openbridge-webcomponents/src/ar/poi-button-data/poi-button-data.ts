@@ -16,8 +16,8 @@ export {ObcPoiObjectDataType, ObcPoiObjectDataStyle, ObcPoiObjectDataState};
 /**
  * `<obc-poi-button-data>` - Data variant of the POI marker button.
  *
- * Renders `<obc-poi-object-data>` as its marker object, exposing `objectStyle`,
- * `objectState`, and `objectInteractive` to control its appearance.
+ * Renders `<obc-poi-object-data>` as its marker object, exposing `dataStyle`,
+ * `dataState`, and `dataInteractive` to control its appearance.
  * Inherits all selection frame, header, and data-row behavior from `obc-poi-button`.
  *
  * @slot - Icon content forwarded to the inner POI object.
@@ -26,14 +26,14 @@ export {ObcPoiObjectDataType, ObcPoiObjectDataStyle, ObcPoiObjectDataState};
  */
 @customElement('obc-poi-button-data')
 export class ObcPoiButtonData extends ObcPoiButton {
-  @property({type: String, attribute: 'object-style'})
-  objectStyle: ObcPoiObjectDataStyle = ObcPoiObjectDataStyle.Regular;
+  @property({type: String, attribute: 'data-style'})
+  dataStyle: ObcPoiObjectDataStyle = ObcPoiObjectDataStyle.Regular;
 
-  @property({type: String, attribute: 'object-state'})
-  objectState: ObcPoiObjectDataState | null = null;
+  @property({type: String, attribute: 'data-state'})
+  dataState: ObcPoiObjectDataState | null = null;
 
-  @property({type: Boolean, attribute: 'object-interactive'})
-  objectInteractive = false;
+  @property({type: Boolean, attribute: 'data-interactive'})
+  dataInteractive = false;
 
   private get resolvedDataType(): ObcPoiObjectDataType {
     switch (this.poiObjectType) {
@@ -50,9 +50,9 @@ export class ObcPoiButtonData extends ObcPoiButton {
         class="poi-object"
         exportparts="background-frame"
         .type=${this.resolvedDataType}
-        .objectStyle=${this.objectStyle}
-        .state=${this.objectState ?? this.poiObjectState}
-        ?interactive=${this.objectInteractive}
+        .objectStyle=${this.dataStyle}
+        .state=${this.dataState ?? this.poiObjectState}
+        ?interactive=${this.dataInteractive}
       >
         <span
           class="icon"
