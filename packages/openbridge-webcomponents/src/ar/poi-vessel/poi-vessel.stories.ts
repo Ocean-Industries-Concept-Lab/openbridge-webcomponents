@@ -10,6 +10,10 @@ import {
 } from '../building-blocks/poi-pointer/poi-pointer.js';
 import '../building-blocks/poi-header/poi-header.js';
 import '../../icons/icon-vessel-type-psv-outlined.js';
+import '../../icons/icon-vessel-type-tanker-outlined.js';
+import '../../icons/icon-vessel-type-cargo-outlined.js';
+import '../../icons/icon-vessel-type-passenger-outlined.js';
+import '../../icons/icon-vessel-type-fishing-outlined.js';
 import {
   ObcPoiObjectVesselType,
   ObcPoiObjectVesselStyle,
@@ -474,6 +478,158 @@ export const POIValuesAndContent: Story = {
               .type=${ObcPoiType.Point}
               .data=${values}
             >
+              <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
+            </obc-poi-vessel>
+          </div>
+        </div>
+      </div>
+    `;
+  },
+};
+
+export const VesselTypesAndIcons: Story = {
+  render: () => {
+    const demoX = 108;
+    const demoY = 72;
+    const demoButtonY = 72;
+
+    return html`
+      <style>
+        .types-stage {
+          position: relative;
+          width: 920px;
+          height: 480px;
+          transform: translate(-50%, -50%);
+        }
+
+        .types-showcase {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          display: grid;
+          grid-template-columns: repeat(4, 210px);
+          grid-auto-rows: 168px;
+          gap: 26px 14px;
+        }
+
+        .types-item {
+          position: relative;
+          height: 100%;
+        }
+
+        .types-item-label {
+          position: absolute;
+          top: 2px;
+          left: 0;
+          font-size: 11px;
+          font-family: monospace;
+          color: rgba(54, 68, 86, 0.88);
+        }
+
+        .types-item obc-poi-vessel {
+          position: absolute;
+        }
+      </style>
+      <div class="types-stage">
+        <div class="types-showcase">
+          <div class="types-item">
+            <div class="types-item-label">Regular + PSV</div>
+            <obc-poi-vessel
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .vesselType=${ObcPoiObjectVesselType.Regular}
+            >
+              <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
+            </obc-poi-vessel>
+          </div>
+          <div class="types-item">
+            <div class="types-item-label">Large + Tanker</div>
+            <obc-poi-vessel
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .vesselType=${ObcPoiObjectVesselType.Large}
+            >
+              <obi-vessel-type-tanker-outlined></obi-vessel-type-tanker-outlined>
+            </obc-poi-vessel>
+          </div>
+          <div class="types-item">
+            <div class="types-item-label">Indicator + Cargo</div>
+            <obc-poi-vessel
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .vesselType=${ObcPoiObjectVesselType.Indicator}
+            >
+              <obi-vessel-type-cargo-outlined></obi-vessel-type-cargo-outlined>
+            </obc-poi-vessel>
+          </div>
+          <div class="types-item">
+            <div class="types-item-label">Speed-Rot + Passenger</div>
+            <obc-poi-vessel
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .vesselType=${ObcPoiObjectVesselType.SpeedRot}
+            >
+              <obi-vessel-type-passenger-outlined></obi-vessel-type-passenger-outlined>
+            </obc-poi-vessel>
+          </div>
+          <div class="types-item">
+            <div class="types-item-label">Fishing + Checked</div>
+            <obc-poi-vessel
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .value=${PoiVariantValue.Checked}
+            >
+              <obi-vessel-type-fishing-outlined></obi-vessel-type-fishing-outlined>
+            </obc-poi-vessel>
+          </div>
+          <div class="types-item">
+            <div class="types-item-label">Cargo + Alarm</div>
+            <obc-poi-vessel
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .value=${PoiVariantValue.Checked}
+              .state=${ObcPoiState.Alarm}
+            >
+              <obi-vessel-type-cargo-outlined></obi-vessel-type-cargo-outlined>
+            </obc-poi-vessel>
+          </div>
+          <div class="types-item">
+            <div class="types-item-label">Tanker + Warning</div>
+            <obc-poi-vessel
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .value=${PoiVariantValue.Checked}
+              .state=${ObcPoiState.Warning}
+            >
+              <obi-vessel-type-tanker-outlined></obi-vessel-type-tanker-outlined>
+            </obc-poi-vessel>
+          </div>
+          <div class="types-item">
+            <div class="types-item-label">PSV + Selected</div>
+            <obc-poi-vessel
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .selected=${true}
+              .hasHeader=${true}
+              .value=${PoiVariantValue.Checked}
+            >
+              <obc-poi-header
+                slot="header"
+                content="V1"
+                type="id"
+                state="selected"
+                size="regular"
+                has-indicator
+              ></obc-poi-header>
               <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
             </obc-poi-vessel>
           </div>

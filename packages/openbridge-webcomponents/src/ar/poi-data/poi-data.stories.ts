@@ -9,6 +9,10 @@ import {
   ObcPoiPointerType,
 } from '../building-blocks/poi-pointer/poi-pointer.js';
 import '../building-blocks/poi-header/poi-header.js';
+import '../../icons/icon-vessel-generic-default-filled.js';
+import '../../icons/icon-vessel-type-tanker-outlined.js';
+import '../../icons/icon-vessel-type-cargo-outlined.js';
+import '../../icons/icon-vessel-type-passenger-outlined.js';
 
 const compactDocsHeightDecorator = (story: () => unknown) => html`
   <style>
@@ -454,6 +458,171 @@ export const POIValuesAndContent: Story = {
               .type=${ObcPoiType.Point}
               .data=${values}
             ></obc-poi-data>
+          </div>
+        </div>
+      </div>
+    `;
+  },
+};
+
+export const IconsAndAlertStates: Story = {
+  render: () => {
+    const demoX = 108;
+    const demoY = 72;
+    const demoButtonY = 72;
+    const values = [
+      {value: '12.3', label: 'SOG', unit: 'kn'},
+      {value: '045', label: 'COG', unit: 'deg'},
+    ];
+
+    return html`
+      <style>
+        .icons-stage {
+          position: relative;
+          width: 920px;
+          height: 560px;
+          transform: translate(-50%, -50%);
+        }
+
+        .icons-showcase {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          display: grid;
+          grid-template-columns: repeat(4, 210px);
+          grid-auto-rows: 168px;
+          gap: 26px 14px;
+        }
+
+        .icons-item {
+          position: relative;
+          height: 100%;
+        }
+
+        .icons-item-label {
+          position: absolute;
+          top: 2px;
+          left: 0;
+          font-size: 11px;
+          font-family: monospace;
+          color: rgba(54, 68, 86, 0.88);
+        }
+
+        .icons-item obc-poi-data {
+          position: absolute;
+        }
+      </style>
+      <div class="icons-stage">
+        <div class="icons-showcase">
+          <div class="icons-item">
+            <div class="icons-item-label">Default</div>
+            <obc-poi-data
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .type=${ObcPoiType.Point}
+            >
+              <obi-vessel-generic-default-filled></obi-vessel-generic-default-filled>
+            </obc-poi-data>
+          </div>
+          <div class="icons-item">
+            <div class="icons-item-label">Tanker</div>
+            <obc-poi-data
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .type=${ObcPoiType.Point}
+            >
+              <obi-vessel-type-tanker-outlined></obi-vessel-type-tanker-outlined>
+            </obc-poi-data>
+          </div>
+          <div class="icons-item">
+            <div class="icons-item-label">Cargo</div>
+            <obc-poi-data
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .type=${ObcPoiType.Point}
+            >
+              <obi-vessel-type-cargo-outlined></obi-vessel-type-cargo-outlined>
+            </obc-poi-data>
+          </div>
+          <div class="icons-item">
+            <div class="icons-item-label">Passenger</div>
+            <obc-poi-data
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .type=${ObcPoiType.Point}
+            >
+              <obi-vessel-type-passenger-outlined></obi-vessel-type-passenger-outlined>
+            </obc-poi-data>
+          </div>
+          <div class="icons-item">
+            <div class="icons-item-label">Caution + Data</div>
+            <obc-poi-data
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .type=${ObcPoiType.Point}
+              .value=${PoiDataValue.Checked}
+              .state=${ObcPoiState.Caution}
+              .data=${values}
+            >
+              <obi-vessel-type-tanker-outlined></obi-vessel-type-tanker-outlined>
+            </obc-poi-data>
+          </div>
+          <div class="icons-item">
+            <div class="icons-item-label">Warning + Data</div>
+            <obc-poi-data
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .type=${ObcPoiType.Point}
+              .value=${PoiDataValue.Checked}
+              .state=${ObcPoiState.Warning}
+              .data=${values}
+            >
+              <obi-vessel-type-cargo-outlined></obi-vessel-type-cargo-outlined>
+            </obc-poi-data>
+          </div>
+          <div class="icons-item">
+            <div class="icons-item-label">Alarm + Data</div>
+            <obc-poi-data
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .type=${ObcPoiType.Point}
+              .value=${PoiDataValue.Checked}
+              .state=${ObcPoiState.Alarm}
+              .data=${values}
+            >
+              <obi-vessel-type-passenger-outlined></obi-vessel-type-passenger-outlined>
+            </obc-poi-data>
+          </div>
+          <div class="icons-item">
+            <div class="icons-item-label">Selected + Header</div>
+            <obc-poi-data
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .type=${ObcPoiType.Point}
+              .selected=${true}
+              .hasHeader=${true}
+              .value=${PoiDataValue.Checked}
+              .data=${values}
+            >
+              <obc-poi-header
+                slot="header"
+                content="D1"
+                type="id"
+                state="selected"
+                size="regular"
+                has-indicator
+              ></obc-poi-header>
+              <obi-vessel-generic-default-filled></obi-vessel-generic-default-filled>
+            </obc-poi-data>
           </div>
         </div>
       </div>

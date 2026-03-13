@@ -2,6 +2,10 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcPoiButtonAton} from './poi-button-aton.js';
 import './poi-button-aton.js';
 import '../../icons/icon-placeholder.js';
+import '../../icons/icon-beacon-general-north.js';
+import '../../icons/icon-beacon-general-south.js';
+import '../../icons/icon-beacon-general-danger.js';
+import '../../icons/icon-beacon-tower-flag.js';
 import '../building-blocks/poi-header/poi-header.js';
 import {html} from 'lit';
 import {crossDecorator} from '../../storybook-util.js';
@@ -106,10 +110,21 @@ type MatrixConfig = {
   selected?: boolean;
   hasHeader?: boolean;
   state?: ObcPoiButtonState;
+  atonType?: ObcPoiObjectAtonType;
   atonStyle?: ObcPoiObjectAtonStyle;
+  type?: ObcPoiButtonType;
   data?: Array<{value: string; label: string; unit: string}>;
   stageTall?: boolean;
+  icon?: 'placeholder' | 'north' | 'south' | 'danger' | 'flag';
   label: string;
+};
+
+const iconMap = {
+  placeholder: html`<obi-placeholder></obi-placeholder>`,
+  north: html`<obi-beacon-general-north></obi-beacon-general-north>`,
+  south: html`<obi-beacon-general-south></obi-beacon-general-south>`,
+  danger: html`<obi-beacon-general-danger></obi-beacon-general-danger>`,
+  flag: html`<obi-beacon-tower-flag></obi-beacon-tower-flag>`,
 };
 
 const renderMatrixButton = (cfg: MatrixConfig) => html`
@@ -121,10 +136,12 @@ const renderMatrixButton = (cfg: MatrixConfig) => html`
         .selected=${cfg.selected ?? false}
         .hasHeader=${cfg.hasHeader ?? false}
         .state=${cfg.state ?? ObcPoiButtonState.Enabled}
+        .atonType=${cfg.atonType ?? ObcPoiObjectAtonType.AtoN}
         .atonStyle=${cfg.atonStyle ?? ObcPoiObjectAtonStyle.Regular}
+        .type=${cfg.type ?? ObcPoiButtonType.Button}
         .data=${cfg.data ?? []}
       >
-        <obi-placeholder></obi-placeholder>
+        ${iconMap[cfg.icon ?? 'placeholder']}
         ${cfg.hasHeader
           ? html`<obc-poi-header
               slot="header"
@@ -282,6 +299,156 @@ export const AllData: Story = {
               {value: '10', label: 'Lab', unit: 'Unit'},
               {value: '20', label: 'Lab 2', unit: 'Unit 2'},
             ],
+          })}
+        </div>
+      </div>
+    `),
+};
+
+export const AllAtonTypes: Story = {
+  render: () =>
+    renderOverview(html`
+      <div style=${sectionStyle}>
+        <div style=${gridStyle}>
+          ${renderMatrixButton({
+            label: 'AtoN (Diamond)',
+            atonType: ObcPoiObjectAtonType.AtoN,
+            icon: 'north',
+          })}
+          ${renderMatrixButton({
+            label: 'Regular',
+            atonType: ObcPoiObjectAtonType.Regular,
+            icon: 'south',
+          })}
+          ${renderMatrixButton({
+            label: 'Large',
+            atonType: ObcPoiObjectAtonType.Large,
+            icon: 'danger',
+          })}
+          ${renderMatrixButton({
+            label: 'Indicator',
+            atonType: ObcPoiObjectAtonType.Indicator,
+            icon: 'flag',
+          })}
+        </div>
+      </div>
+
+      <div style=${sectionStyle}>
+        <div style=${gridStyle}>
+          ${renderMatrixButton({
+            label: 'Enhanced + AtoN',
+            atonType: ObcPoiObjectAtonType.AtoN,
+            type: ObcPoiButtonType.Enhanced,
+            icon: 'north',
+          })}
+          ${renderMatrixButton({
+            label: 'Enhanced + Regular',
+            atonType: ObcPoiObjectAtonType.Regular,
+            type: ObcPoiButtonType.Enhanced,
+            icon: 'south',
+          })}
+          ${renderMatrixButton({
+            label: 'N-Up',
+            atonType: ObcPoiObjectAtonType.NUp,
+            icon: 'danger',
+          })}
+          ${renderMatrixButton({
+            label: 'N-Up Large',
+            atonType: ObcPoiObjectAtonType.NUpLarge,
+            icon: 'flag',
+          })}
+        </div>
+      </div>
+    `),
+};
+
+export const AllAlertStates: Story = {
+  render: () =>
+    renderOverview(html`
+      <div style=${sectionStyle}>
+        <div style=${gridStyle}>
+          ${renderMatrixButton({
+            label: 'Enabled',
+            state: ObcPoiButtonState.Enabled,
+            value: PoiButtonVisualState.Checked,
+            icon: 'north',
+          })}
+          ${renderMatrixButton({
+            label: 'Caution',
+            state: ObcPoiButtonState.Caution,
+            value: PoiButtonVisualState.Checked,
+            icon: 'south',
+          })}
+          ${renderMatrixButton({
+            label: 'Warning',
+            state: ObcPoiButtonState.Warning,
+            value: PoiButtonVisualState.Checked,
+            icon: 'danger',
+          })}
+          ${renderMatrixButton({
+            label: 'Alarm',
+            state: ObcPoiButtonState.Alarm,
+            value: PoiButtonVisualState.Checked,
+            icon: 'flag',
+          })}
+        </div>
+      </div>
+
+      <div style=${sectionStyle}>
+        <div style=${gridStyle}>
+          ${renderMatrixButton({
+            label: 'Caution + Selected',
+            state: ObcPoiButtonState.Caution,
+            value: PoiButtonVisualState.Checked,
+            selected: true,
+            hasHeader: true,
+            icon: 'north',
+          })}
+          ${renderMatrixButton({
+            label: 'Warning + Selected',
+            state: ObcPoiButtonState.Warning,
+            value: PoiButtonVisualState.Checked,
+            selected: true,
+            hasHeader: true,
+            icon: 'danger',
+          })}
+          ${renderMatrixButton({
+            label: 'Alarm + Selected',
+            state: ObcPoiButtonState.Alarm,
+            value: PoiButtonVisualState.Checked,
+            selected: true,
+            hasHeader: true,
+            icon: 'flag',
+          })}
+        </div>
+      </div>
+    `),
+};
+
+export const DifferentIcons: Story = {
+  render: () =>
+    renderOverview(html`
+      <div style=${sectionStyle}>
+        <div style=${gridStyle}>
+          ${renderMatrixButton({
+            label: 'North + Green',
+            atonStyle: ObcPoiObjectAtonStyle.Green,
+            icon: 'north',
+          })}
+          ${renderMatrixButton({
+            label: 'South + Red',
+            atonStyle: ObcPoiObjectAtonStyle.Red,
+            icon: 'south',
+          })}
+          ${renderMatrixButton({
+            label: 'Danger + Yellow',
+            atonStyle: ObcPoiObjectAtonStyle.Yellow,
+            icon: 'danger',
+          })}
+          ${renderMatrixButton({
+            label: 'Flag + Regular',
+            atonStyle: ObcPoiObjectAtonStyle.Regular,
+            icon: 'flag',
           })}
         </div>
       </div>
