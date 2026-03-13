@@ -21,10 +21,6 @@
   height: var(--maneuvering-components-poi-button-large-touch-target, 64px);
 }
 
-.is-indicator .icon-container {
-  filter: drop-shadow(0px 1px 2px black);
-}
-
 .is-indicator.is-static .icon-container,
 .is-indicator.is-activated .icon-container,
 .is-indicator.is-overlapped .icon-container {
@@ -267,6 +263,25 @@
 .wrapper.style-regular.is-activated .icon-container ::slotted(*) {
   color: var(--element-active-color);
   --element-active-color: inherit;
+}
+
+/* Enhanced style background — same as regular */
+.style-enhanced .background-frame {
+  background-color: var(--overlay-container-background-color);
+  border: 1px solid var(--overlay-border-outline-color);
+}
+
+/* Enhanced style static and activated states use flat background */
+.style-enhanced.is-static .background-frame,
+.style-enhanced.is-activated .background-frame {
+  background-color: var(--normal-enabled-background-color);
+  border: 1px solid var(--normal-enabled-border-color);
+}
+
+/* Enhanced style icon colors — uses the instrument enhanced secondary color */
+.wrapper.style-enhanced .icon-container ::slotted(*) {
+  color: var(--instrument-enhanced-secondary-color);
+  --element-active-color: var(--instrument-enhanced-secondary-color);
 }
 
 /* Categorical style icon colors */

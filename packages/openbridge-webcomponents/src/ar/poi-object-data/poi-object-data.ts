@@ -1,4 +1,5 @@
-import {css} from 'lit';
+import {css, html, TemplateResult} from 'lit';
+import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {ObcAbstractPoiObject} from '../building-blocks/poi-object/abstract-poi-object.js';
 import {
@@ -23,9 +24,43 @@ export {ObcPoiObjectState as ObcPoiObjectDataState};
  */
 @customElement('obc-poi-object-data')
 export class ObcPoiObjectData extends ObcAbstractPoiObject {
+  @property({type: String}) type: ObcPoiObjectType = ObcPoiObjectType.Regular;
+
+  override get baseType(): ObcPoiObjectType {
+    switch (this.type) {
+      case ObcPoiObjectType.Indicator:
+        return ObcPoiObjectType.Indicator;
+      case ObcPoiObjectType.Large:
+        return ObcPoiObjectType.Large;
+      case ObcPoiObjectType.NUp:
+        return ObcPoiObjectType.NUp;
+      case ObcPoiObjectType.NUpLarge:
+        return ObcPoiObjectType.NUpLarge;
+      default:
+        return ObcPoiObjectType.Regular;
+    }
+  }
+
+  override get icon(): TemplateResult {
+    return html`<div class="icon-wrapper"><slot></slot></div>`;
+  }
+
   static override styles = css`
     :host {
       display: contents;
+    }
+
+    .icon-wrapper {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-wrapper ::slotted(*) {
+      width: 100%;
+      height: 100%;
     }
   `;
 }
