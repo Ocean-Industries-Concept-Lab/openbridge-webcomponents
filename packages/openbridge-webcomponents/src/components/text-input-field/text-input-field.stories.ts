@@ -367,23 +367,6 @@ export const TypePassword: Story = {
   },
 };
 
-export const TypePasswordWithClearButton: Story = {
-  args: {
-    value: 'secret123',
-    type: HTMLInputTypeAttribute.Password,
-    label: 'Password',
-    hasClearButton: true,
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Password field with both visibility toggle (left) and clear button (right). The visibility toggle appears first, then the clear button.',
-      },
-    },
-  },
-};
-
 export const TypeEmail: Story = {
   args: {
     value: 'user@example.com',

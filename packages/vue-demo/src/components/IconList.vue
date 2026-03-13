@@ -3,14 +3,14 @@
     <div class="top">
       <div class="container">
         <div class="input-form card">
-          <ObcInput
+          <ObcTextInputField
             placeholder="Search for icons"
             class="icon-search"
-            claas="icon-search"
+            :hasLeadingIcon="true"
             @input="onInput"
           >
-            <obi-search slot="icon"></obi-search>
-          </ObcInput>
+            <obi-search slot="leading-icon"></obi-search>
+          </ObcTextInputField>
           <ObcDropdownButton
             :options="filterOptions"
             :value="filterValue"
@@ -106,7 +106,7 @@
 import { ref } from 'vue'
 import { iconIds } from '@ocean-industries-concept-lab/openbridge-webcomponents/src/icons/names'
 import { icon2element } from '@/business/icon2element'
-import ObcInput from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/input/ObcInput.vue'
+import ObcTextInputField from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/text-input-field/ObcTextInputField.vue'
 import { watch } from 'vue'
 import { IconButtonVariant } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/icon-button/icon-button'
 import ObcIconButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/icon-button/ObcIconButton.vue'
