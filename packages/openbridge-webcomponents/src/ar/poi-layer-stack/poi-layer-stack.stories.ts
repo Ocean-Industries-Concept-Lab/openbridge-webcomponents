@@ -72,6 +72,38 @@ type DiagnosticPoiData = HTMLElement & {
   getVisualRect: (preference: PoiDataVisualRectPreference) => DOMRect;
 };
 
+type DiagnosticLayerStack = HTMLElement & {
+  selectionMap?: Map<
+    DiagnosticPoiData,
+    {originLayer: HTMLElement; targetViewportY: number}
+  >;
+};
+
+type ButtonYDiagnosticMeasurement = {
+  sourceTarget: DiagnosticPoiData;
+  activeTarget: DiagnosticPoiData;
+  isProxy: boolean;
+  currentLayer: string;
+  sourceButtonY: number;
+  sourceTargetY: number;
+  activeButtonY: number;
+  activeTargetY: number;
+  renderedHeight: number;
+  buttonAnchorY: number;
+  targetAnchorY: number;
+  measuredLineHeight: number;
+  storedTargetViewportY: number;
+  selectedLayerTop: number;
+  selectedLayerBottom: number;
+  originLayerTop: number;
+  jumpCalcFromTop: number;
+  jumpCalcFromBottom: number;
+  poiHostVarY: string;
+  poiButtonVarY: string;
+  poiHostTop: string;
+  poiButtonTransform: string;
+};
+
 const selectionMultiAnimatedSnapshotPose: AnimatedPoiSnapshotPose[] = [
   {x: 542, y: 109, boxWidth: 44, boxHeight: 35},
   {x: 107, y: 117, boxWidth: 48, boxHeight: 34},
@@ -429,21 +461,30 @@ export const MixedComponentTypes: Story = {
   },
 };
 
-const updateButtonYDiagnosticPanel = (root: HTMLElement) => {
+const readButtonYDiagnosticMeasurement = (
+  root: HTMLElement
+): ButtonYDiagnosticMeasurement | null => {
   const sourceTarget = root.querySelector(
     '#diagnostic-target'
   ) as DiagnosticPoiData | null;
   const activeTarget = (root.querySelector('[data-stack-proxy="true"]') ??
     sourceTarget) as DiagnosticPoiData | null;
-  const readout = root.querySelector('.button-y-readout') as HTMLElement | null;
-  if (!sourceTarget || !activeTarget || !readout) {
-    return;
+  const stack = root.querySelector(
+    'obc-poi-layer-stack.button-y-stack'
+  ) as DiagnosticLayerStack | null;
+  if (!sourceTarget || !activeTarget || !stack) {
+    return null;
   }
 
   const buttonRect = activeTarget.getVisualRect(
     PoiDataVisualRectPreference.Anchor
   );
   const poi = activeTarget.shadowRoot?.querySelector('obc-poi');
+  const poiHostStyle = poi ? getComputedStyle(poi) : null;
+  const poiButton = poi?.shadowRoot?.querySelector(
+    '.poi-button'
+  ) as HTMLElement | null;
+  const poiButtonStyle = poiButton ? getComputedStyle(poiButton) : null;
   const targetAnchor = poi?.shadowRoot?.querySelector(
     '.target-anchor'
   ) as HTMLElement | null;
@@ -458,24 +499,165 @@ const updateButtonYDiagnosticPanel = (root: HTMLElement) => {
   const currentLayer =
     activeTarget.closest('obc-poi-layer')?.getAttribute('label') ?? 'unknown';
   const isProxy = activeTarget !== sourceTarget;
+  const selectedLayer =
+    (Array.from(stack.querySelectorAll('obc-poi-layer')).find((layer) =>
+      layer.hasAttribute('is-selected')
+    ) as HTMLElement | undefined) ?? null;
+  const record = stack.selectionMap?.get(sourceTarget);
+  const originLayer = (record?.originLayer as HTMLElement | undefined) ?? null;
+  const selectedLayerRect = selectedLayer?.getBoundingClientRect() ?? null;
+  const originLayerRect = originLayer?.getBoundingClientRect() ?? null;
+  const storedTargetViewportY = record?.targetViewportY ?? Number.NaN;
+
+  return {
+    sourceTarget,
+    activeTarget,
+    isProxy,
+    currentLayer,
+    sourceButtonY: Number(sourceTarget.buttonY ?? 0),
+    sourceTargetY: Number(sourceTarget.y ?? 0),
+    activeButtonY: Number(activeTarget.buttonY ?? 0),
+    activeTargetY: Number(activeTarget.y ?? 0),
+    renderedHeight,
+    buttonAnchorY,
+    targetAnchorY,
+    measuredLineHeight,
+    storedTargetViewportY,
+    selectedLayerTop: selectedLayerRect?.top ?? Number.NaN,
+    selectedLayerBottom: selectedLayerRect?.bottom ?? Number.NaN,
+    originLayerTop: originLayerRect?.top ?? Number.NaN,
+    jumpCalcFromTop:
+      storedTargetViewportY - (selectedLayerRect?.top ?? Number.NaN),
+    jumpCalcFromBottom:
+      storedTargetViewportY - (selectedLayerRect?.bottom ?? Number.NaN),
+    poiHostVarY: poiHostStyle?.getPropertyValue('--obc-poi-y').trim() ?? 'n/a',
+    poiButtonVarY:
+      poiHostStyle?.getPropertyValue('--obc-poi-button-y').trim() ?? 'n/a',
+    poiHostTop: poiHostStyle?.top ?? 'n/a',
+    poiButtonTransform: poiButtonStyle?.transform ?? 'n/a',
+  };
+};
+
+const setDiagnosticGuide = (
+  root: HTMLElement,
+  selector: string,
+  viewportY: number,
+  label: string,
+  visible: boolean
+) => {
+  const guide = root.querySelector(selector) as HTMLElement | null;
+  if (!guide) {
+    return;
+  }
+
+  if (!visible || !Number.isFinite(viewportY)) {
+    guide.style.display = 'none';
+    return;
+  }
+
+  const rootRect = root.getBoundingClientRect();
+  guide.style.display = 'block';
+  guide.style.top = `${viewportY - rootRect.top}px`;
+  const labelElement = guide.querySelector(
+    '.math-guide-label'
+  ) as HTMLElement | null;
+  if (labelElement) {
+    labelElement.textContent = label;
+  }
+};
+
+const updateButtonYDiagnosticPanel = (root: HTMLElement) => {
+  const readout = root.querySelector('.button-y-readout') as HTMLElement | null;
+  const measurement = readButtonYDiagnosticMeasurement(root);
+  if (!measurement || !readout) {
+    return;
+  }
+
+  setDiagnosticGuide(
+    root,
+    '.math-guide-stored-target',
+    measurement.storedTargetViewportY,
+    `stored targetViewportY ${Math.round(measurement.storedTargetViewportY)}px`,
+    measurement.isProxy
+  );
+  setDiagnosticGuide(
+    root,
+    '.math-guide-selected-top',
+    measurement.selectedLayerTop,
+    `selected layer top ${Math.round(measurement.selectedLayerTop)}px`,
+    measurement.isProxy
+  );
+  setDiagnosticGuide(
+    root,
+    '.math-guide-selected-bottom',
+    measurement.selectedLayerBottom,
+    `selected layer bottom ${Math.round(measurement.selectedLayerBottom)}px`,
+    measurement.isProxy
+  );
+  setDiagnosticGuide(
+    root,
+    '.math-guide-origin-top',
+    measurement.originLayerTop,
+    `origin layer top ${Math.round(measurement.originLayerTop)}px`,
+    measurement.isProxy
+  );
 
   readout.innerHTML = `
-    <div>current layer: <strong>${currentLayer}</strong></div>
-    <div>render target: <strong>${isProxy ? 'proxy' : 'source'}</strong></div>
-    <div>source buttonY prop: <strong>${Math.round(sourceTarget.buttonY ?? 0)}px</strong></div>
-    <div>source target y prop: <strong>${Math.round(sourceTarget.y ?? 0)}px</strong></div>
-    <div>active buttonY prop: <strong>${Math.round(activeTarget.buttonY ?? 0)}px</strong></div>
-    <div>active target y prop: <strong>${Math.round(activeTarget.y ?? 0)}px</strong></div>
-    <div>rendered host height: <strong>${Math.round(renderedHeight)}px</strong></div>
-    <div>button anchor y: <strong>${Math.round(buttonAnchorY)}px</strong></div>
+    <div>current layer: <strong>${measurement.currentLayer}</strong></div>
+    <div>render target: <strong>${measurement.isProxy ? 'proxy' : 'source'}</strong></div>
+    <div>source buttonY prop: <strong>${Math.round(measurement.sourceButtonY)}px</strong></div>
+    <div>source target y prop: <strong>${Math.round(measurement.sourceTargetY)}px</strong></div>
+    <div>active buttonY prop: <strong>${Math.round(measurement.activeButtonY)}px</strong></div>
+    <div>active target y prop: <strong>${Math.round(measurement.activeTargetY)}px</strong></div>
+    <div>rendered host height: <strong>${Math.round(measurement.renderedHeight)}px</strong></div>
+    <div>button anchor y: <strong>${Math.round(measurement.buttonAnchorY)}px</strong></div>
     <div>target anchor y: <strong>${
-      Number.isFinite(targetAnchorY) ? Math.round(targetAnchorY) : 'n/a'
-    }px</strong></div>
-    <div>measured line height: <strong>${
-      Number.isFinite(measuredLineHeight)
-        ? Math.round(measuredLineHeight)
+      Number.isFinite(measurement.targetAnchorY)
+        ? Math.round(measurement.targetAnchorY)
         : 'n/a'
     }px</strong></div>
+    <div>measured line height: <strong>${
+      Number.isFinite(measurement.measuredLineHeight)
+        ? Math.round(measurement.measuredLineHeight)
+        : 'n/a'
+    }px</strong></div>
+    <div>stored targetViewportY: <strong>${
+      Number.isFinite(measurement.storedTargetViewportY)
+        ? Math.round(measurement.storedTargetViewportY)
+        : 'n/a'
+    }px</strong></div>
+    <div>selected layer top: <strong>${
+      Number.isFinite(measurement.selectedLayerTop)
+        ? Math.round(measurement.selectedLayerTop)
+        : 'n/a'
+    }px</strong></div>
+    <div>selected layer bottom: <strong>${
+      Number.isFinite(measurement.selectedLayerBottom)
+        ? Math.round(measurement.selectedLayerBottom)
+        : 'n/a'
+    }px</strong></div>
+    <div>origin layer top: <strong>${
+      Number.isFinite(measurement.originLayerTop)
+        ? Math.round(measurement.originLayerTop)
+        : 'n/a'
+    }px</strong></div>
+    <div>jump calc from top: <strong>${
+      Number.isFinite(measurement.jumpCalcFromTop)
+        ? Math.round(measurement.jumpCalcFromTop)
+        : 'n/a'
+    }px</strong></div>
+    <div>jump calc from bottom: <strong>${
+      Number.isFinite(measurement.jumpCalcFromBottom)
+        ? Math.round(measurement.jumpCalcFromBottom)
+        : 'n/a'
+    }px</strong></div>
+    <div>active button-target delta: <strong>${Math.round(
+      measurement.activeTargetY - measurement.activeButtonY
+    )}px</strong></div>
+    <div>obc-poi --obc-poi-y: <strong>${measurement.poiHostVarY || 'n/a'}</strong></div>
+    <div>obc-poi --obc-poi-button-y: <strong>${measurement.poiButtonVarY || 'n/a'}</strong></div>
+    <div>obc-poi computed top: <strong>${measurement.poiHostTop || 'n/a'}</strong></div>
+    <div>.poi-button transform: <strong>${measurement.poiButtonTransform || 'n/a'}</strong></div>
   `;
 };
 
@@ -486,9 +668,10 @@ export const ButtonYLayerMoveDiagnostic: Story = {
   render: () => html`
     <style>
       .button-y-diagnostic {
-        width: 760px;
+        width: 640px;
         display: grid;
         gap: 16px;
+        position: relative;
       }
 
       .button-y-controls {
@@ -522,12 +705,12 @@ export const ButtonYLayerMoveDiagnostic: Story = {
       }
 
       obc-poi-layer-stack.button-y-stack {
-        gap: 12px;
+        gap: 8px;
         width: 100%;
       }
 
       obc-poi-layer-stack.button-y-stack obc-poi-layer {
-        --obc-poi-layer-min-height: 260px;
+        --obc-poi-layer-min-height: 48px;
         width: 100%;
         position: relative;
       }
@@ -555,8 +738,74 @@ export const ButtonYLayerMoveDiagnostic: Story = {
         border-radius: 999px;
         pointer-events: none;
       }
+
+      .math-guide {
+        position: absolute;
+        left: 0;
+        right: 0;
+        border-top: 1px dashed;
+        pointer-events: none;
+        z-index: 2;
+      }
+
+      .math-guide-label {
+        position: absolute;
+        right: 10px;
+        top: -14px;
+        font:
+          11px/1 ui-monospace,
+          monospace;
+        background: rgba(255, 255, 255, 0.92);
+        padding: 3px 6px;
+        border-radius: 999px;
+        white-space: nowrap;
+      }
+
+      .math-guide-stored-target {
+        border-color: #f08c00;
+      }
+
+      .math-guide-stored-target .math-guide-label {
+        color: #a15c00;
+      }
+
+      .math-guide-selected-top {
+        border-color: #2b6cb0;
+      }
+
+      .math-guide-selected-top .math-guide-label {
+        color: #1f4f83;
+      }
+
+      .math-guide-selected-bottom {
+        border-color: #7b61ff;
+      }
+
+      .math-guide-selected-bottom .math-guide-label {
+        color: #5a47b8;
+      }
+
+      .math-guide-origin-top {
+        border-color: #1f9d55;
+      }
+
+      .math-guide-origin-top .math-guide-label {
+        color: #16683a;
+      }
     </style>
     <div class="button-y-diagnostic">
+      <div class="math-guide math-guide-stored-target">
+        <div class="math-guide-label"></div>
+      </div>
+      <div class="math-guide math-guide-selected-top">
+        <div class="math-guide-label"></div>
+      </div>
+      <div class="math-guide math-guide-selected-bottom">
+        <div class="math-guide-label"></div>
+      </div>
+      <div class="math-guide math-guide-origin-top">
+        <div class="math-guide-label"></div>
+      </div>
       <div class="button-y-controls">
         <button type="button" data-action="click-target">
           Programmatic Click Target
@@ -581,7 +830,7 @@ export const ButtonYLayerMoveDiagnostic: Story = {
           <div class="target-y-label">target y = 110px</div>
           <obc-poi-data
             id="diagnostic-target"
-            .x=${320}
+            .x=${444}
             .y=${110}
             .buttonY=${0}
             .fixedTarget=${false}

@@ -45,6 +45,7 @@ export class ObcPoiLayerStack extends LitElement {
 
   private handleStackClick = (event: Event) => this.onStackClick(event);
   private handleSlotChange = () => this.schedulePlacement();
+  private handleTargetLayoutChange = () => this.schedulePlacement();
   private selectionMap = new Map<
     Poi,
     {originLayer: ObcPoiLayer; targetViewportY: number}
@@ -59,6 +60,10 @@ export class ObcPoiLayerStack extends LitElement {
   override connectedCallback() {
     super.connectedCallback();
     this.addEventListener('click', this.handleStackClick);
+    this.addEventListener(
+      'obc-poi-data-layout-change',
+      this.handleTargetLayoutChange as EventListener
+    );
   }
 
   override firstUpdated() {
@@ -75,6 +80,10 @@ export class ObcPoiLayerStack extends LitElement {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.removeEventListener('click', this.handleStackClick);
+    this.removeEventListener(
+      'obc-poi-data-layout-change',
+      this.handleTargetLayoutChange as EventListener
+    );
     const slot = this.shadowRoot?.querySelector('slot');
     slot?.removeEventListener('slotchange', this.handleSlotChange);
     this.mutationObserver?.disconnect();
@@ -157,6 +166,10 @@ export class ObcPoiLayerStack extends LitElement {
     return target.closest('obc-poi-layer') as ObcPoiLayer | null;
   }
 
+  private isStackProxyTarget(target: Poi): boolean {
+    return target.hasAttribute('data-stack-proxy');
+  }
+
   private getLayerTargets(layer: ParentNode): Poi[] {
     return Array.from(layer.querySelectorAll(`[${POI_ATTR}]`)).filter(
       (el): el is Poi => isPoi(el)
@@ -212,6 +225,35 @@ export class ObcPoiLayerStack extends LitElement {
       if (other === target) return;
       const record = this.selectionMap.get(other);
       this.resetSelectionForTarget(other, record, fallbackLayer);
+    });
+  }
+
+  private bootstrapSelectedLayerTargets(selectedLayer: ObcPoiLayer) {
+    const originLayer =
+      this.getLayer('default') ??
+      (selectedLayer === this.getLayer('top')
+        ? this.getLayer('secondTop')
+        : null);
+    if (!originLayer || originLayer === selectedLayer) {
+      return;
+    }
+
+    const selectedTargets = this.getLayerTargets(selectedLayer).filter(
+      (target) => !this.isStackProxyTarget(target)
+    );
+
+    selectedTargets.forEach((target) => {
+      if (this.selectionMap.has(target)) {
+        return;
+      }
+
+      const targetViewportY = this.getTargetViewportY(target);
+      originLayer.appendChild(target);
+      this.selectionMap.set(target, {originLayer, targetViewportY});
+      this.clearTargetGroupingAttributes(target);
+      this.setSelectedTargetInteractivity(target, true);
+      this.setTargetSelectedId(target);
+      this.suppressSourceTargetWhileProxied(target);
     });
   }
 
@@ -433,7 +475,7 @@ export class ObcPoiLayerStack extends LitElement {
     proxy.hasHeader = target.hasHeader ?? false;
     proxy.headerContent = target.headerContent ?? '';
     proxy.y =
-      record.targetViewportY - selectedLayer.getBoundingClientRect().top;
+      record.targetViewportY - selectedLayer.getBoundingClientRect().bottom;
     this.suppressSourceTargetWhileProxied(target);
     this.requestPoiRender(proxy);
   }
@@ -582,6 +624,8 @@ export class ObcPoiLayerStack extends LitElement {
       });
       return;
     }
+
+    this.bootstrapSelectedLayerTargets(selectedLayer);
 
     this.selectionMap.forEach((record, target) => {
       if (!target.isConnected) {
