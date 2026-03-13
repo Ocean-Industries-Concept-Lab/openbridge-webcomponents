@@ -234,14 +234,14 @@ export class ObcTextInputField extends LitElement {
       this.hasClearButton && this.value.length > 0 && !this.disabled;
     const isPasswordField = this.type === HTMLInputTypeAttribute.Password;
     const showPasswordToggle = isPasswordField && !this.disabled;
+    const isClearButtonVisible = showClearButton && !showPasswordToggle;
     const effectiveType =
       isPasswordField && this.passwordVisible
         ? HTMLInputTypeAttribute.Text
         : this.type;
 
     // Determine trailing button state for padding adjustment
-    const hasTrailingButton = showPasswordToggle || showClearButton;
-    const hasTwoTrailingButtons = showPasswordToggle && showClearButton;
+    const hasTrailingButton = showPasswordToggle || isClearButtonVisible;
 
     let value = this.value;
 
@@ -260,7 +260,6 @@ export class ObcTextInputField extends LitElement {
           helpertext: hasHelperOrError,
           haslabel: Boolean(this.label),
           'has-trailing-button': hasTrailingButton,
-          'has-two-trailing-buttons': hasTwoTrailingButtons,
         })}
       >
         ${this.label
@@ -327,7 +326,7 @@ export class ObcTextInputField extends LitElement {
                     : html`<obi-visibility-off-google></obi-visibility-off-google>`}
                 </obc-icon-button>`
               : nothing}
-            ${showClearButton && !showPasswordToggle
+            ${isClearButtonVisible
               ? html`<obc-icon-button
                   variant="flat"
                   class="trailing-icon-button"
