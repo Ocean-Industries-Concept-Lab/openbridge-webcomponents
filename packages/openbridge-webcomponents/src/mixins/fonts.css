@@ -274,6 +274,24 @@
     "ss04" on;
 }
 
+@define-mixin font-instrument-label-box {
+  display: flex;
+  align-items: flex-end;
+  block-size: var(--global-typography-instrument-label-container-height);
+  max-block-size: var(--global-typography-instrument-label-container-height);
+  padding-bottom: var(--global-typography-instrument-label-padding-bottom);
+  overflow: hidden;
+}
+
+@define-mixin font-instrument-unit-box {
+  display: flex;
+  align-items: flex-end;
+  block-size: var(--global-typography-instrument-unit-container-height);
+  max-block-size: var(--global-typography-instrument-unit-container-height);
+  padding-bottom: var(--global-typography-instrument-unit-padding-bottom);
+  overflow: hidden;
+}
+
 @define-mixin font-instrument-tick-mark {
   font-family: var(--global-typography-font-family);
   font-weight: var(--global-typography-instrument-tick-mark-font-weight);
