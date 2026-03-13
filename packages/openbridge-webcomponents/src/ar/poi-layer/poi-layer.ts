@@ -1075,18 +1075,26 @@ export class ObcPoiLayer extends LitElement {
   }
 
   private getTargetHeight(target: Poi, rects?: Map<Poi, DOMRect>): number {
-    if (Number.isFinite(target.y ?? NaN)) {
-      return target.y ?? 0;
-    }
+    const targetY = Number.isFinite(target.y ?? NaN) ? (target.y ?? 0) : null;
     const yAttr = target.getAttribute('y');
     const yValue = Number.parseFloat(yAttr ?? '');
-    if (!Number.isNaN(yValue)) return yValue;
-    if (typeof target.buttonY === 'number' && Number.isFinite(target.buttonY)) {
-      return target.buttonY;
-    }
+    const attrTargetY = !Number.isNaN(yValue) ? yValue : null;
+    const buttonY =
+      typeof target.buttonY === 'number' && Number.isFinite(target.buttonY)
+        ? target.buttonY
+        : null;
     const buttonYAttr = target.getAttribute('button-y');
     const buttonYValue = Number.parseFloat(buttonYAttr ?? '');
-    if (!Number.isNaN(buttonYValue)) return buttonYValue;
+    const attrButtonY = !Number.isNaN(buttonYValue) ? buttonYValue : null;
+    const logicalHeight = Math.max(
+      targetY ?? 0,
+      attrTargetY ?? 0,
+      buttonY ?? 0,
+      attrButtonY ?? 0
+    );
+    if (logicalHeight > 0) {
+      return logicalHeight;
+    }
     const rect = rects?.get(target) ?? this.getTargetRect(target);
     return rect.height;
   }

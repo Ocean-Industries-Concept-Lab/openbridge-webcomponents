@@ -36,7 +36,7 @@ const meta: Meta<ObcPoiVessel> = {
     state: ObcPoiState.Enabled,
     x: 444,
     y: 192,
-    buttonY: 192,
+    buttonY: 0,
     outsideAngle: 315,
     value: PoiVariantValue.Unchecked,
     hasPointer: true,
@@ -257,7 +257,7 @@ export const POIVariants: Story = {
   render: () => {
     const demoX = 90;
     const demoY = 72;
-    const demoButtonY = 84;
+    const demoButtonY = 0;
     return html`
       <style>
         .variants-stage {
@@ -350,7 +350,7 @@ export const POIValuesAndContent: Story = {
   render: () => {
     const demoX = 108;
     const demoY = 72;
-    const demoButtonY = 72;
+    const demoButtonY = 0;
     const values = [
       {value: '10', label: 'Lab', unit: 'Unit'},
       {value: '20', label: 'Lab 2', unit: 'Unit 2'},

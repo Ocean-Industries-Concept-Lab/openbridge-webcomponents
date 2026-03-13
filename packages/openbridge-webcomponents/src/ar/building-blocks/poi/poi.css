@@ -28,7 +28,7 @@
 .poi-button,
 ::slotted([slot="button"]) {
   z-index: 1;
-  transform: translateY(0);
+  transform: translateY(var(--obc-poi-button-y, 0px));
   transition: transform var(--obc-poi-position-transition-duration, 0.1s)
     ease-out;
 }
@@ -70,7 +70,44 @@
   transition: none;
 }
 
+.target-anchor {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  transform: translate(
+    var(--obc-poi-pointer-x, 0px),
+    var(--obc-poi-pointer-y, 0px)
+  );
+  transition: transform var(--obc-poi-position-transition-duration, 0.1s)
+    ease-out;
+}
+
+.wrapper.no-motion .target-anchor {
+  transition: none;
+}
+
+.line-graphic {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: var(--obc-poi-moving-line-opacity, 1);
+  transition: opacity 0.1s ease-out;
+}
+
 .wrapper.type-outside .line {
+  display: none;
+}
+
+.wrapper.type-outside .target-anchor {
+  display: none;
+}
+
+.wrapper.type-outside .line-graphic {
   display: none;
 }
 

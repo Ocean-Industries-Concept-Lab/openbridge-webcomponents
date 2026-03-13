@@ -58,6 +58,13 @@
   pointer-events: auto;
 }
 
+::slotted([data-poi-target][data-stack-proxy]) {
+  top: 0;
+  bottom: auto;
+  height: 0;
+  transform: translateX(-50%);
+}
+
 ::slotted([data-poi-target][data-grouped]) {
   opacity: 0;
 }

@@ -4,6 +4,7 @@ import {PoiLayerSelectionMode} from './poi-layer-stack.js';
 import './poi-layer-stack.js';
 import '../poi-layer/poi-layer.js';
 import '../poi-data/poi-data.js';
+import {PoiDataVisualRectPreference} from '../poi-data/poi-data.js';
 import '../poi-aton/poi-aton.js';
 import '../poi-vessel/poi-vessel.js';
 import '../../icons/icon-placeholder.js';
@@ -62,6 +63,13 @@ type AnimatedPoiSnapshotPose = {
   y: number;
   boxWidth: number;
   boxHeight: number;
+};
+
+type DiagnosticPoiData = HTMLElement & {
+  x: number;
+  y: number;
+  buttonY?: number | null;
+  getVisualRect: (preference: PoiDataVisualRectPreference) => DOMRect;
 };
 
 const selectionMultiAnimatedSnapshotPose: AnimatedPoiSnapshotPose[] = [
@@ -418,5 +426,250 @@ export const MixedComponentTypes: Story = {
   render: renderMixedTypeLayers,
   play: async () => {
     await waitForStorySettle({drainTransitions: true});
+  },
+};
+
+const updateButtonYDiagnosticPanel = (root: HTMLElement) => {
+  const sourceTarget = root.querySelector(
+    '#diagnostic-target'
+  ) as DiagnosticPoiData | null;
+  const activeTarget = (root.querySelector('[data-stack-proxy="true"]') ??
+    sourceTarget) as DiagnosticPoiData | null;
+  const readout = root.querySelector('.button-y-readout') as HTMLElement | null;
+  if (!sourceTarget || !activeTarget || !readout) {
+    return;
+  }
+
+  const buttonRect = activeTarget.getVisualRect(
+    PoiDataVisualRectPreference.Anchor
+  );
+  const poi = activeTarget.shadowRoot?.querySelector('obc-poi');
+  const targetAnchor = poi?.shadowRoot?.querySelector(
+    '.target-anchor'
+  ) as HTMLElement | null;
+  const targetRect = targetAnchor?.getBoundingClientRect() ?? null;
+  const renderedHeight = activeTarget.getBoundingClientRect().height;
+  const buttonAnchorY = buttonRect.bottom;
+  const targetAnchorY = targetRect?.top ?? Number.NaN;
+  const measuredLineHeight =
+    Number.isFinite(buttonAnchorY) && Number.isFinite(targetAnchorY)
+      ? Math.abs(targetAnchorY - buttonAnchorY)
+      : Number.NaN;
+  const currentLayer =
+    activeTarget.closest('obc-poi-layer')?.getAttribute('label') ?? 'unknown';
+  const isProxy = activeTarget !== sourceTarget;
+
+  readout.innerHTML = `
+    <div>current layer: <strong>${currentLayer}</strong></div>
+    <div>render target: <strong>${isProxy ? 'proxy' : 'source'}</strong></div>
+    <div>source buttonY prop: <strong>${Math.round(sourceTarget.buttonY ?? 0)}px</strong></div>
+    <div>source target y prop: <strong>${Math.round(sourceTarget.y ?? 0)}px</strong></div>
+    <div>active buttonY prop: <strong>${Math.round(activeTarget.buttonY ?? 0)}px</strong></div>
+    <div>active target y prop: <strong>${Math.round(activeTarget.y ?? 0)}px</strong></div>
+    <div>rendered host height: <strong>${Math.round(renderedHeight)}px</strong></div>
+    <div>button anchor y: <strong>${Math.round(buttonAnchorY)}px</strong></div>
+    <div>target anchor y: <strong>${
+      Number.isFinite(targetAnchorY) ? Math.round(targetAnchorY) : 'n/a'
+    }px</strong></div>
+    <div>measured line height: <strong>${
+      Number.isFinite(measuredLineHeight)
+        ? Math.round(measuredLineHeight)
+        : 'n/a'
+    }px</strong></div>
+  `;
+};
+
+export const ButtonYLayerMoveDiagnostic: Story = {
+  args: {
+    selectionMode: PoiLayerSelectionMode.Single,
+  },
+  render: () => html`
+    <style>
+      .button-y-diagnostic {
+        width: 760px;
+        display: grid;
+        gap: 16px;
+      }
+
+      .button-y-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .button-y-controls button {
+        border: 1px solid #8aa0b8;
+        background: #eff3f7;
+        color: #0f1720;
+        padding: 8px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font: inherit;
+      }
+
+      .button-y-readout {
+        display: grid;
+        gap: 4px;
+        font:
+          12px/1.4 ui-monospace,
+          monospace;
+        color: #102132;
+        background: #f4f7fa;
+        border: 1px solid #c9d3de;
+        border-radius: 10px;
+        padding: 12px;
+      }
+
+      obc-poi-layer-stack.button-y-stack {
+        gap: 12px;
+        width: 100%;
+      }
+
+      obc-poi-layer-stack.button-y-stack obc-poi-layer {
+        --obc-poi-layer-min-height: 260px;
+        width: 100%;
+        position: relative;
+      }
+
+      .target-y-guide {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 110px;
+        border-top: 1px dashed #d84e3f;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .target-y-label {
+        position: absolute;
+        right: 10px;
+        top: 96px;
+        font:
+          11px/1 ui-monospace,
+          monospace;
+        color: #d84e3f;
+        background: rgba(255, 255, 255, 0.92);
+        padding: 3px 6px;
+        border-radius: 999px;
+        pointer-events: none;
+      }
+    </style>
+    <div class="button-y-diagnostic">
+      <div class="button-y-controls">
+        <button type="button" data-action="click-target">
+          Programmatic Click Target
+        </button>
+        <button type="button" data-action="button-up">buttonY - 32</button>
+        <button type="button" data-action="button-down">buttonY + 32</button>
+        <button type="button" data-action="reset-button-y">
+          Reset buttonY
+        </button>
+      </div>
+      <div class="button-y-readout"></div>
+      <obc-poi-layer-stack
+        class="button-y-stack"
+        selection-mode=${PoiLayerSelectionMode.Single}
+      >
+        <obc-poi-layer label="Selected" is-selected debug>
+          <div class="target-y-guide"></div>
+          <div class="target-y-label">target y = 110px</div>
+        </obc-poi-layer>
+        <obc-poi-layer label="Origin" debug>
+          <div class="target-y-guide"></div>
+          <div class="target-y-label">target y = 110px</div>
+          <obc-poi-data
+            id="diagnostic-target"
+            .x=${320}
+            .y=${110}
+            .buttonY=${0}
+            .fixedTarget=${false}
+            .hasPointer=${true}
+            .animatePosition=${true}
+          ></obc-poi-data>
+        </obc-poi-layer>
+      </obc-poi-layer-stack>
+    </div>
+  `,
+  play: async ({canvasElement}) => {
+    await waitForStorySettle({drainTransitions: true});
+
+    const root = canvasElement.querySelector(
+      '.button-y-diagnostic'
+    ) as HTMLElement | null;
+    if (!root || root.dataset.bound === 'true') {
+      if (root) {
+        updateButtonYDiagnosticPanel(root);
+      }
+      return;
+    }
+
+    root.dataset.bound = 'true';
+
+    const target = root.querySelector(
+      '#diagnostic-target'
+    ) as DiagnosticPoiData | null;
+    const clickButton = root.querySelector(
+      '[data-action="click-target"]'
+    ) as HTMLButtonElement | null;
+    const upButton = root.querySelector(
+      '[data-action="button-up"]'
+    ) as HTMLButtonElement | null;
+    const downButton = root.querySelector(
+      '[data-action="button-down"]'
+    ) as HTMLButtonElement | null;
+    const resetButton = root.querySelector(
+      '[data-action="reset-button-y"]'
+    ) as HTMLButtonElement | null;
+
+    if (!target) {
+      return;
+    }
+
+    const bind = (
+      button: HTMLButtonElement | null,
+      handler: () => void
+    ): void => {
+      button?.addEventListener('click', handler);
+    };
+
+    bind(clickButton, () => {
+      target.dispatchEvent(
+        new MouseEvent('click', {bubbles: true, composed: true})
+      );
+      requestAnimationFrame(() => updateButtonYDiagnosticPanel(root));
+    });
+    bind(upButton, () => {
+      const next = Number.isFinite(target.buttonY ?? NaN)
+        ? (target.buttonY as number) - 32
+        : 128;
+      target.buttonY = next;
+      updateButtonYDiagnosticPanel(root);
+    });
+    bind(downButton, () => {
+      const next = Number.isFinite(target.buttonY ?? NaN)
+        ? (target.buttonY as number) + 32
+        : 192;
+      target.buttonY = next;
+      updateButtonYDiagnosticPanel(root);
+    });
+    bind(resetButton, () => {
+      target.buttonY = 0;
+      updateButtonYDiagnosticPanel(root);
+    });
+
+    let rafId = 0;
+    const tick = () => {
+      if (!root.isConnected) {
+        cancelAnimationFrame(rafId);
+        return;
+      }
+      updateButtonYDiagnosticPanel(root);
+      rafId = requestAnimationFrame(tick);
+    };
+
+    updateButtonYDiagnosticPanel(root);
+    rafId = requestAnimationFrame(tick);
   },
 };

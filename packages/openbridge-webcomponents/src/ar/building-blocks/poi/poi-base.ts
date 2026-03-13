@@ -83,8 +83,7 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
 
   @property({type: Number}) x = 0;
   @property({type: Number}) y = 192;
-  @property({type: Number, attribute: 'button-y'}) buttonY: number | null =
-    null;
+  @property({type: Number, attribute: 'button-y'}) buttonY: number | null = 0;
   @property({type: Boolean, attribute: 'fixed-target'}) fixedTarget = false;
   @property({type: Number, attribute: 'button-offset-x'}) buttonOffsetX = 0;
   @property({type: Number, attribute: 'target-offset-x'}) targetOffsetX = 0;
@@ -92,8 +91,6 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
     null;
   @property({type: Number, attribute: 'box-height'}) boxHeight: number | null =
     null;
-  @property({type: Number, attribute: 'line-compensation-y'})
-  lineCompensationY = 0;
   @property({type: Number, attribute: 'outside-angle'}) outsideAngle = 315;
   @property({type: Boolean, attribute: 'animate-position'})
   animatePosition = false;
@@ -256,7 +253,6 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
       changedProperties.has('buttonY') ||
       changedProperties.has('y') ||
       changedProperties.has('fixedTarget') ||
-      changedProperties.has('lineCompensationY') ||
       changedProperties.has('selected') ||
       changedProperties.has('type')
     ) {
@@ -268,7 +264,6 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
       changedProperties.has('y') ||
       changedProperties.has('buttonOffsetX') ||
       changedProperties.has('targetOffsetX') ||
-      changedProperties.has('lineCompensationY') ||
       changedProperties.has('fixedTarget') ||
       changedProperties.has('selected') ||
       changedProperties.has('type')
@@ -288,16 +283,11 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
 
   private updatePosition() {
     if (this.fixedTarget) {
-      if (typeof this.buttonY === 'number' && Number.isFinite(this.buttonY)) {
-        this.style.top = `${this.buttonY - this.effectiveLineLength}px`;
+      if (Number.isFinite(this.resolvedButtonY)) {
+        this.style.top = `${this.resolvedButtonY - this.resolvedTargetY}px`;
       } else {
         this.style.removeProperty('top');
       }
-    } else if (
-      typeof this.buttonY === 'number' &&
-      Number.isFinite(this.buttonY)
-    ) {
-      this.style.top = `${this.buttonY}px`;
     } else {
       this.style.removeProperty('top');
     }
@@ -445,35 +435,37 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
 
   public getPointerElement(): HTMLElement | null {
     const {poi} = this.getVisualNodes();
-    return (
+    const pointer =
       (poi?.shadowRoot?.querySelector(
         'obc-poi-pointer.pointer'
-      ) as HTMLElement | null) ?? null
+      ) as HTMLElement | null) ?? null;
+
+    return (
+      (pointer?.shadowRoot?.querySelector(
+        '.anchor-point'
+      ) as HTMLElement | null) ?? pointer
     );
   }
 
   /* ---------- Render helpers ---------- */
 
-  /** Computed effective line length accounting for compensation and vertical offsets. */
-  protected get effectiveLineLength(): number {
-    const resolvedPoiType = this.resolvedPoiType;
-    const lineLength = Number.isFinite(this.y) ? this.y : 0;
-    const lineCompensation = Number.isFinite(this.lineCompensationY)
-      ? this.lineCompensationY
+  /** Public `y` normalized as the target Y input. */
+  protected get resolvedTargetY(): number {
+    return Number.isFinite(this.y) ? this.y : 0;
+  }
+
+  /** Public `buttonY` normalized as the button Y input. */
+  protected get resolvedButtonY(): number {
+    return typeof this.buttonY === 'number' && Number.isFinite(this.buttonY)
+      ? this.buttonY
       : 0;
-    const totalVerticalOffset =
-      this.selectedVerticalOffset + this.layerVerticalOffset;
-    return resolvedPoiType === ObcPoiType.Line ||
-      resolvedPoiType === ObcPoiType.Offset
-      ? lineLength + lineCompensation + totalVerticalOffset
-      : lineLength;
   }
 
   /** Computed effective local button Y offset. */
   protected get effectiveLocalButtonY(): number {
     const totalVerticalOffset =
       this.selectedVerticalOffset + this.layerVerticalOffset;
-    return -totalVerticalOffset;
+    return this.resolvedButtonY - totalVerticalOffset;
   }
 
   /**
@@ -556,7 +548,7 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
         .value=${this.value}
         .state=${this.resolvedPoiState}
         .x=${0}
-        .y=${this.effectiveLineLength}
+        .y=${this.resolvedTargetY}
         .buttonY=${this.effectiveLocalButtonY}
         .fixedTarget=${false}
         .outsideAngle=${this.outsideAngle}

@@ -28,7 +28,7 @@ const meta: Meta<ObcPoiData> = {
     state: ObcPoiState.Enabled,
     x: 444,
     y: 192,
-    buttonY: 192,
+    buttonY: 0,
     outsideAngle: 315,
     value: PoiDataValue.Unchecked,
     hasPointer: true,
@@ -250,7 +250,7 @@ export const POIVariants: Story = {
   render: () => {
     const demoX = 90;
     const demoY = 72;
-    const demoButtonY = 84;
+    const demoButtonY = 0;
     return html`
       <style>
         .variants-stage {
@@ -339,7 +339,7 @@ export const POIValuesAndContent: Story = {
   render: () => {
     const demoX = 108;
     const demoY = 72;
-    const demoButtonY = 72;
+    const demoButtonY = 0;
     const values = [
       {value: '10', label: 'Lab', unit: 'Unit'},
       {value: '20', label: 'Lab 2', unit: 'Unit 2'},
@@ -466,7 +466,7 @@ export const AnimatedOffsetBottom: Story = {
   args: {
     x: 444,
     y: 192,
-    buttonY: 192,
+    buttonY: 0,
     value: PoiDataValue.Checked,
     type: ObcPoiType.Line,
   },
@@ -528,7 +528,7 @@ export const AnimatedOffsetTop: Story = {
   args: {
     x: 444,
     y: 192,
-    buttonY: 192,
+    buttonY: 0,
     value: PoiDataValue.Checked,
     type: ObcPoiType.Line,
   },
@@ -593,12 +593,12 @@ export const AnimatedHeight: Story = {
   args: {
     x: 444,
     y: 150,
-    buttonY: 300,
+    buttonY: 0,
     value: PoiDataValue.Checked,
     type: ObcPoiType.Line,
   },
   render: (args) => {
-    let buttonY = 300;
+    let buttonY = args.buttonY ?? 0;
     let direction = 1;
 
     const animate = () => {
@@ -659,7 +659,7 @@ export const AnimatedLineLength: Story = {
   args: {
     x: 444,
     y: 150,
-    buttonY: 250,
+    buttonY: 0,
     value: PoiDataValue.Checked,
     type: ObcPoiType.Line,
   },
@@ -725,7 +725,7 @@ export const CompareModes: Story = {
   args: {
     x: 300,
     y: 150,
-    buttonY: 300,
+    buttonY: 0,
     value: PoiDataValue.Checked,
     type: ObcPoiType.Line,
   },
@@ -733,7 +733,7 @@ export const CompareModes: Story = {
     let lineLength = 150;
     let direction = 1;
     const fixedButtonY = 100;
-    const normalAnchorY = args.buttonY ?? 300;
+    const normalAnchorY = args.buttonY ?? 0;
 
     const animate = () => {
       const fixedTarget = document.querySelector(

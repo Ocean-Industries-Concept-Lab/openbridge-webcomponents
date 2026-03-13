@@ -44,7 +44,7 @@ const meta: Meta<PoiStoryArgs> = {
     state: ObcPoiState.Enabled,
     x: 444,
     y: 96,
-    buttonY: 80,
+    buttonY: 0,
     fixedTarget: false,
     outsideAngle: 315,
     hasPointer: false,
@@ -255,7 +255,7 @@ export const WithHeader: Story = {
             .state=${state}
             .x=${110}
             .y=${28}
-            .buttonY=${120}
+            .buttonY=${0}
             .hasHeader=${true}
             .selected=${selected}
           >

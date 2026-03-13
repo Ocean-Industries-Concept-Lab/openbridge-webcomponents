@@ -1,5 +1,5 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {property} from 'lit/decorators.js';
+import {property, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {styleMap} from 'lit/directives/style-map.js';
 import componentStyle from './poi.css?inline';
@@ -11,7 +11,12 @@ import {
   PoiButtonVisualState,
 } from '../poi-button/poi-button.js';
 import {ObcPoiHeaderState} from '../poi-header/poi-header.js';
-import {POIStyle} from '../poi-graphic-line/poi-graphic-line.js';
+import {
+  getPOILineConfig,
+  graphicLine,
+  POILineType,
+  POIStyle,
+} from '../poi-graphic-line/poi-graphic-line.js';
 import {poiArrow} from './arrow.js';
 import '../poi-line/poi-line.js';
 import '../poi-pointer/poi-pointer.js';
@@ -50,7 +55,6 @@ export interface Poi extends HTMLElement {
   y: number;
   buttonOffsetX: number;
   targetOffsetX: number;
-  lineCompensationY: number;
   fixedTarget: boolean;
 
   /* State — read/written by layer and stack */
@@ -143,8 +147,8 @@ const POINT_POINTER_OFFSET_PX = 12;
  * Motion and layout notes:
  * - `animatePosition` (default: `false`): when true, enables short position transition timing for line/pointer movement.
  * - `x` (default: `0`): host horizontal position; sets `--obc-poi-x` as `${x}px`.
- * - `y` (default: `96`): connector length basis; non-finite values fall back to `0` in geometry calculations.
- * - `buttonY` (default: `null`): if finite, sets `--obc-poi-y`; if `null`/non-finite, position variable is cleared.
+ * - `y` (default: `96`): absolute local target Y; non-finite values fall back to `0` in geometry calculations.
+ * - `buttonY` (default: `0`): when `fixedTarget=false`, anchors the button at its local Y while the target is derived below it from `y`; when `fixedTarget=true`, preserves the legacy host-anchor behavior.
  * - `buttonOffsetX`/`targetOffsetX` (defaults: `0`/`0`): define connector bend delta via `targetOffsetX - buttonOffsetX`.
  * - `boxWidth`/`boxHeight` (defaults: `null`/`null`): optional pointer frame size extras; invalid/non-finite values are ignored.
  * - `outsideAngle` (default: `315`): controls outside-arrow direction in `outside` mode.
@@ -185,6 +189,8 @@ const POINT_POINTER_OFFSET_PX = 12;
  */
 @customElement('obc-poi')
 export class ObcPoi extends LitElement {
+  private static lineIdCounter = 0;
+  private readonly lineIdPrefix = `poi-line-anchor-${ObcPoi.lineIdCounter++}`;
   @property({type: String}) type: ObcPoiType = ObcPoiType.Line;
   @property({type: String}) value: ObcPoiValue = ObcPoiValue.Unchecked;
   @property({type: String}) state: ObcPoiState = ObcPoiState.Enabled;
@@ -203,8 +209,7 @@ export class ObcPoi extends LitElement {
   @property({type: Number}) relativeDirection = 0;
   @property({type: Number}) x = 0;
   @property({type: Number}) y = DEFAULT_LINE_LENGTH_PX;
-  @property({type: Number, attribute: 'button-y'}) buttonY: number | null =
-    null;
+  @property({type: Number, attribute: 'button-y'}) buttonY: number | null = 0;
   @property({type: Boolean, attribute: 'fixed-target'}) fixedTarget = false;
   @property({type: Number, attribute: 'button-offset-x'}) buttonOffsetX = 0;
   @property({type: Number, attribute: 'target-offset-x'}) targetOffsetX = 0;
@@ -216,6 +221,20 @@ export class ObcPoi extends LitElement {
   @property({type: Boolean, attribute: 'animate-position'})
   animatePosition = false;
   private headerObserver?: MutationObserver;
+  private lineGeometryObserver?: ResizeObserver;
+  private lineGeometryRaf = 0;
+  private lineGeometryTrackingRaf = 0;
+  private lineGeometryTrackingUntil = 0;
+  private observedGeometryElements = new Set<Element>();
+  @state()
+  private lineGeometry: {
+    offsetX: number;
+    lineHeight: number;
+    lineStart: number;
+    totalHeight: number;
+    translateX: number;
+    translateY: number;
+  } | null = null;
 
   override connectedCallback() {
     super.connectedCallback();
@@ -226,6 +245,18 @@ export class ObcPoi extends LitElement {
     super.disconnectedCallback();
     this.headerObserver?.disconnect();
     this.headerObserver = undefined;
+    this.lineGeometryObserver?.disconnect();
+    this.lineGeometryObserver = undefined;
+    this.observedGeometryElements.clear();
+    if (this.lineGeometryRaf) {
+      cancelAnimationFrame(this.lineGeometryRaf);
+      this.lineGeometryRaf = 0;
+    }
+    if (this.lineGeometryTrackingRaf) {
+      cancelAnimationFrame(this.lineGeometryTrackingRaf);
+      this.lineGeometryTrackingRaf = 0;
+    }
+    this.lineGeometryTrackingUntil = 0;
   }
 
   private setupHeaderObserver() {
@@ -258,19 +289,21 @@ export class ObcPoi extends LitElement {
   private updatePosition() {
     this.style.removeProperty('top');
     if (this.fixedTarget) {
-      if (typeof this.buttonY === 'number' && Number.isFinite(this.buttonY)) {
-        const lineLength = Number.isFinite(this.y) ? this.y : 0;
-        this.style.setProperty('--obc-poi-y', `${this.buttonY - lineLength}px`);
+      this.style.removeProperty('--obc-poi-button-y');
+      if (Number.isFinite(this.resolvedButtonY)) {
+        this.style.setProperty(
+          '--obc-poi-y',
+          `${this.resolvedButtonY - this.resolvedTargetY}px`
+        );
       } else {
         this.style.removeProperty('--obc-poi-y');
       }
-    } else if (
-      typeof this.buttonY === 'number' &&
-      Number.isFinite(this.buttonY)
-    ) {
-      this.style.setProperty('--obc-poi-y', `${this.buttonY}px`);
+    } else if (Number.isFinite(this.resolvedButtonY)) {
+      this.style.setProperty('--obc-poi-y', `${this.resolvedButtonY}px`);
+      this.style.setProperty('--obc-poi-button-y', '0px');
     } else {
       this.style.removeProperty('--obc-poi-y');
+      this.style.removeProperty('--obc-poi-button-y');
     }
   }
 
@@ -343,6 +376,18 @@ export class ObcPoi extends LitElement {
 
   private get pointerSelected(): boolean {
     return this.isCheckedLike;
+  }
+
+  /** Public `y` normalized as the target Y input. */
+  private get resolvedTargetY(): number {
+    return Number.isFinite(this.y) ? this.y : 0;
+  }
+
+  /** Public `buttonY` normalized as the button Y input. */
+  private get resolvedButtonY(): number {
+    return typeof this.buttonY === 'number' && Number.isFinite(this.buttonY)
+      ? this.buttonY
+      : 0;
   }
 
   private get lineOffset(): number {
@@ -431,14 +476,37 @@ export class ObcPoi extends LitElement {
       return nothing;
     }
 
-    const height =
-      this.type === ObcPoiType.Point ? 0 : Number.isFinite(this.y) ? this.y : 0;
+    const fallbackTargetDelta =
+      this.type === ObcPoiType.Point
+        ? 0
+        : Math.max(0, Math.abs(this.resolvedTargetY - this.resolvedButtonY));
+
+    if (this.lineGeometry) {
+      const style = getPOILineConfig(this.lineStyle, POILineType.Regular);
+
+      return html`
+        <div
+          class="line-graphic"
+          style="transform: translate(${this.lineGeometry.translateX}px, ${this
+            .lineGeometry.translateY}px);"
+        >
+          ${graphicLine({
+            style,
+            lineHeight: this.lineGeometry.lineHeight,
+            lineStart: this.lineGeometry.lineStart,
+            totalHeight: this.lineGeometry.totalHeight,
+            offset: this.lineGeometry.offsetX,
+            idPrefix: this.lineIdPrefix,
+          })}
+        </div>
+      `;
+    }
 
     return html`
       <obc-poi-line
         class="line"
         .poiStyle=${this.lineStyle}
-        .height=${height}
+        .height=${fallbackTargetDelta}
         .offset=${this.lineOffset}
         .hasPointer=${false}
         .animatePosition=${this.animatePosition}
@@ -451,23 +519,31 @@ export class ObcPoi extends LitElement {
       return nothing;
     }
 
-    const lineLength =
-      this.type === ObcPoiType.Point
-        ? POINT_POINTER_OFFSET_PX
-        : Number.isFinite(this.y)
-          ? this.y
-          : 0;
-
     return html`
       <obc-poi-pointer
         class="pointer"
         style="--obc-poi-pointer-x: ${this
-          .lineOffset}px; --obc-poi-pointer-y: ${lineLength}px;"
+          .lineOffset}px; --obc-poi-pointer-y: ${this.targetAnchorY}px;"
         .type=${this.resolvedPointerType}
         .state=${this.resolvedPointerState}
         .boxWidth=${this.pointerBoxWidthExtra}
         .boxHeight=${this.pointerBoxHeightExtra}
       ></obc-poi-pointer>
+    `;
+  }
+
+  private renderTargetAnchor() {
+    if (this.type === ObcPoiType.Outside) {
+      return nothing;
+    }
+
+    return html`
+      <div
+        class="target-anchor"
+        aria-hidden="true"
+        style="--obc-poi-pointer-x: ${this
+          .lineOffset}px; --obc-poi-pointer-y: ${this.targetAnchorY}px;"
+      ></div>
     `;
   }
 
@@ -496,6 +572,213 @@ export class ObcPoi extends LitElement {
 
   private slottedButton: HTMLElement | null = null;
 
+  private get renderedButtonAnchorElement(): HTMLElement | null {
+    const resolveButtonAnchor = (
+      button: HTMLElement | null
+    ): HTMLElement | null =>
+      (button?.shadowRoot?.querySelector(
+        '.button-wrapper'
+      ) as HTMLElement | null) ??
+      (button?.shadowRoot?.querySelector('.wrapper') as HTMLElement | null) ??
+      button;
+
+    return resolveButtonAnchor(
+      this.slottedButton ??
+        (this.renderRoot.querySelector(
+          'obc-poi-button.poi-button'
+        ) as HTMLElement | null) ??
+        null
+    );
+  }
+
+  private get renderedPointerElement(): HTMLElement | null {
+    return (
+      (this.renderRoot.querySelector(
+        'obc-poi-pointer.pointer'
+      ) as HTMLElement | null) ?? null
+    );
+  }
+
+  private get renderedTargetAnchorElement(): HTMLElement | null {
+    return (
+      (this.renderRoot.querySelector('.target-anchor') as HTMLElement | null) ??
+      null
+    );
+  }
+
+  private get targetAnchorY(): number {
+    const targetDelta = this.resolvedTargetY - this.resolvedButtonY;
+    return this.type === ObcPoiType.Point
+      ? Math.max(POINT_POINTER_OFFSET_PX, targetDelta)
+      : targetDelta;
+  }
+
+  private syncLineGeometryObservers() {
+    if (typeof ResizeObserver === 'undefined') {
+      return;
+    }
+
+    if (!this.lineGeometryObserver) {
+      this.lineGeometryObserver = new ResizeObserver(() =>
+        this.scheduleLineGeometrySync()
+      );
+    }
+
+    const nextElements = [
+      this.renderRoot.querySelector('.wrapper'),
+      this.renderedButtonAnchorElement,
+      this.renderedTargetAnchorElement,
+      this.renderedPointerElement,
+    ].filter((element): element is Element => element instanceof Element);
+
+    const nextSet = new Set(nextElements);
+
+    this.observedGeometryElements.forEach((element) => {
+      if (!nextSet.has(element)) {
+        this.lineGeometryObserver?.unobserve(element);
+      }
+    });
+
+    nextElements.forEach((element) => {
+      if (!this.observedGeometryElements.has(element)) {
+        this.lineGeometryObserver?.observe(element);
+      }
+    });
+
+    this.observedGeometryElements = nextSet;
+  }
+
+  private scheduleLineGeometrySync() {
+    if (this.lineGeometryRaf) {
+      return;
+    }
+
+    this.lineGeometryRaf = requestAnimationFrame(() => {
+      this.lineGeometryRaf = 0;
+      this.syncMeasuredLineGeometry();
+    });
+  }
+
+  private getPositionTransitionDurationMs(): number {
+    const raw = getComputedStyle(this).getPropertyValue(
+      '--obc-poi-position-transition-duration'
+    );
+    const value = raw.trim() || '0.1s';
+    const parsed = Number.parseFloat(value);
+    if (!Number.isFinite(parsed) || parsed <= 0) {
+      return 0;
+    }
+    return value.endsWith('ms') ? parsed : parsed * 1000;
+  }
+
+  private trackLineGeometryMotion() {
+    if (!this.animatePosition) {
+      if (this.lineGeometryTrackingRaf) {
+        cancelAnimationFrame(this.lineGeometryTrackingRaf);
+        this.lineGeometryTrackingRaf = 0;
+      }
+      this.lineGeometryTrackingUntil = 0;
+      return;
+    }
+
+    const durationMs = this.getPositionTransitionDurationMs();
+    if (durationMs <= 0) {
+      return;
+    }
+
+    this.lineGeometryTrackingUntil = performance.now() + durationMs + 34;
+    if (this.lineGeometryTrackingRaf) {
+      return;
+    }
+
+    const step = () => {
+      this.lineGeometryTrackingRaf = 0;
+      this.syncMeasuredLineGeometry();
+      if (performance.now() < this.lineGeometryTrackingUntil) {
+        this.lineGeometryTrackingRaf = requestAnimationFrame(step);
+      }
+    };
+
+    this.lineGeometryTrackingRaf = requestAnimationFrame(step);
+  }
+
+  private syncMeasuredLineGeometry() {
+    const wrapper = this.renderRoot.querySelector(
+      '.wrapper'
+    ) as HTMLElement | null;
+    const button = this.renderedButtonAnchorElement;
+
+    if (!wrapper || !button || this.type === ObcPoiType.Outside) {
+      this.lineGeometry = null;
+      return;
+    }
+
+    if (
+      this.type === ObcPoiType.Point &&
+      (this.isCheckedLike || this.state === ObcPoiState.Alarm)
+    ) {
+      this.lineGeometry = null;
+      return;
+    }
+
+    const wrapperRect = wrapper.getBoundingClientRect();
+    const buttonRect = button.getBoundingClientRect();
+
+    if (wrapperRect.width === 0 && wrapperRect.height === 0) {
+      this.lineGeometry = null;
+      return;
+    }
+
+    const startX = buttonRect.left + buttonRect.width / 2 - wrapperRect.left;
+    const startY = buttonRect.bottom - wrapperRect.top;
+
+    let endX = startX + this.lineOffset;
+    let endY = this.targetAnchorY;
+
+    const targetAnchor = this.renderedTargetAnchorElement;
+    if (targetAnchor) {
+      const targetRect = targetAnchor.getBoundingClientRect();
+      endX = targetRect.left + targetRect.width / 2 - wrapperRect.left;
+      endY = targetRect.top + targetRect.height / 2 - wrapperRect.top;
+    }
+
+    const topPoint =
+      startY <= endY ? {x: startX, y: startY} : {x: endX, y: endY};
+    const bottomPoint =
+      startY <= endY ? {x: endX, y: endY} : {x: startX, y: startY};
+
+    const style = getPOILineConfig(this.lineStyle, POILineType.Regular);
+    const lineStart = style.width / 2;
+    const lineHeight = Math.max(0, bottomPoint.y - topPoint.y);
+    const totalHeight = lineHeight + style.width;
+    const minX = Math.min(topPoint.x, bottomPoint.x);
+    const translateX = minX - lineStart;
+    const translateY = topPoint.y - lineStart;
+    const nextGeometry = {
+      offsetX: bottomPoint.x - topPoint.x,
+      lineHeight,
+      lineStart,
+      totalHeight,
+      translateX,
+      translateY,
+    };
+
+    const current = this.lineGeometry;
+    if (
+      current &&
+      Math.abs(current.offsetX - nextGeometry.offsetX) < 0.01 &&
+      Math.abs(current.lineHeight - nextGeometry.lineHeight) < 0.01 &&
+      Math.abs(current.lineStart - nextGeometry.lineStart) < 0.01 &&
+      Math.abs(current.totalHeight - nextGeometry.totalHeight) < 0.01 &&
+      Math.abs(current.translateX - nextGeometry.translateX) < 0.01 &&
+      Math.abs(current.translateY - nextGeometry.translateY) < 0.01
+    ) {
+      return;
+    }
+
+    this.lineGeometry = nextGeometry;
+  }
+
   private handleButtonSlotChange(e: Event) {
     const slot = e.target as HTMLSlotElement;
     const assigned = slot.assignedElements({flatten: false});
@@ -503,6 +786,9 @@ export class ObcPoi extends LitElement {
       assigned.length > 0 ? (assigned[0] as HTMLElement) : null;
     this.syncFallbackButtonHeaderContent();
     this.syncSlottedButtonProps();
+    this.syncLineGeometryObservers();
+    this.scheduleLineGeometrySync();
+    this.trackLineGeometryMotion();
   }
 
   private syncFallbackButtonHeaderContent() {
@@ -607,7 +893,8 @@ export class ObcPoi extends LitElement {
     return html`
       <div class=${classMap(classes)} style=${styleMap(wrapperStyle)}>
         ${this.renderPoiButton()} ${this.renderLine()}
-        ${this.renderInlinePointer()} ${this.renderOutsideArrow()}
+        ${this.renderTargetAnchor()} ${this.renderInlinePointer()}
+        ${this.renderOutsideArrow()}
       </div>
     `;
   }
@@ -615,6 +902,9 @@ export class ObcPoi extends LitElement {
   protected override firstUpdated(_changedProperties: Map<string, unknown>) {
     this.syncFallbackButtonHeaderContent();
     this.syncAttachedHeaderState();
+    this.syncLineGeometryObservers();
+    this.scheduleLineGeometrySync();
+    this.trackLineGeometryMotion();
   }
 
   protected override updated(changedProperties: Map<string, unknown>) {
@@ -633,6 +923,26 @@ export class ObcPoi extends LitElement {
     this.syncFallbackButtonHeaderContent();
     this.syncSlottedButtonProps();
     this.syncAttachedHeaderState();
+    if (
+      changedProperties.has('type') ||
+      changedProperties.has('y') ||
+      changedProperties.has('buttonY') ||
+      changedProperties.has('fixedTarget') ||
+      changedProperties.has('buttonOffsetX') ||
+      changedProperties.has('targetOffsetX') ||
+      changedProperties.has('selected') ||
+      changedProperties.has('state') ||
+      changedProperties.has('value') ||
+      changedProperties.has('hasPointer') ||
+      changedProperties.has('pointerType') ||
+      changedProperties.has('pointerState') ||
+      changedProperties.has('boxWidth') ||
+      changedProperties.has('boxHeight')
+    ) {
+      this.syncLineGeometryObservers();
+      this.scheduleLineGeometrySync();
+      this.trackLineGeometryMotion();
+    }
   }
 
   static override styles = unsafeCSS(componentStyle);

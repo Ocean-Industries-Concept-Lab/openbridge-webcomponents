@@ -36,6 +36,16 @@
   box-sizing: border-box;
 }
 
+.anchor-point {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
 :host([type="point"][state="regular"]) .wrapper {
   width: 32px;
   height: 32px;
