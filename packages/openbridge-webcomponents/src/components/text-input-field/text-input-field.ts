@@ -323,11 +323,11 @@ export class ObcTextInputField extends LitElement {
                     : 'Show password'}
                 >
                   ${this.passwordVisible
-                    ? html`<obi-visibility-off-google></obi-visibility-off-google>`
-                    : html`<obi-visibility-on-google></obi-visibility-on-google>`}
+                    ? html`<obi-visibility-on-google></obi-visibility-on-google>`
+                    : html`<obi-visibility-off-google></obi-visibility-off-google>`}
                 </obc-icon-button>`
               : nothing}
-            ${showClearButton
+            ${showClearButton && !showPasswordToggle
               ? html`<obc-icon-button
                   variant="flat"
                   class="trailing-icon-button"
