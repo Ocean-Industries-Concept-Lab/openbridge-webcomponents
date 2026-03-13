@@ -481,7 +481,7 @@ export class ObcTwoStepAction extends LitElement {
         @click=${this.handleClick}
         part="wrapper"
         style=${`--armed-hint-duration: ${armedHintDurationMs}ms; --thumb-drag-x: ${this.thumbDragX}px; --obc-two-step-thumb-drag-growth-factor: ${THUMB_DRAG_GROWTH_FACTOR}; --obc-two-step-duration-slide: ${ARMED_SLIDE_DURATION_MS}ms;`}
-        aria-label="Two step action"
+        aria-label=${actionLabel}
         aria-pressed=${isActive ? 'true' : 'false'}
       >
         <div class="visible-wrapper" part="visible-wrapper">
@@ -528,15 +528,24 @@ export class ObcTwoStepAction extends LitElement {
             ${this.swipeArmedPhase
               ? null
               : html`
-                  <obc-button
+                  <div
                     class="state-container"
                     data-role="state"
-                    variant="normal"
-                    .disabled=${this.disabled}
                     part="state-container"
+                    aria-hidden="true"
                   >
-                    <slot>Action</slot>
-                  </obc-button>
+                    <div
+                      class="state-container-visible"
+                      part="state-container-visible"
+                    >
+                      <span
+                        class="state-container-label"
+                        part="state-container-label"
+                      >
+                        <slot>Action</slot>
+                      </span>
+                    </div>
+                  </div>
                 `}
           </div>
 
