@@ -17,7 +17,8 @@
   align-items: center;
   gap: 0;
   transform: translateX(var(--obc-poi-target-top-offset-x, 0px));
-  transition: transform 0.1s ease-out;
+  transition: transform var(--obc-poi-position-transition-duration, 0.1s)
+    ease-out;
 }
 
 .wrapper.no-motion {
@@ -28,7 +29,8 @@
 ::slotted([slot="button"]) {
   z-index: 1;
   transform: translateY(0);
-  transition: transform 0.1s ease-out;
+  transition: transform var(--obc-poi-position-transition-duration, 0.1s)
+    ease-out;
 }
 
 .wrapper.no-motion .poi-button,
@@ -42,6 +44,10 @@
   top: 100%;
   transform: translateX(-50%);
   z-index: 0;
+  opacity: var(--obc-poi-moving-line-opacity, 1);
+  transition:
+    transform var(--obc-poi-position-transition-duration, 0.1s) ease-out,
+    opacity 0.1s ease-out;
 }
 
 .pointer {
@@ -54,7 +60,10 @@
     calc(var(--obc-poi-pointer-y, 0px) - 50%)
   );
   z-index: 0;
-  transition: transform 0.1s ease-out;
+  opacity: var(--obc-poi-moving-pointer-opacity, 1);
+  transition:
+    transform var(--obc-poi-position-transition-duration, 0.1s) ease-out,
+    opacity 0.1s ease-out;
 }
 
 .wrapper.no-motion .pointer {
@@ -78,7 +87,10 @@
     translateY(calc(-50% + var(--obc-poi-outside-arrow-y, 0px)))
     rotate(var(--obc-poi-outside-arrow-angle, 0deg));
   z-index: 2;
-  transition: transform 0.1s ease-out;
+  opacity: var(--obc-poi-moving-outside-arrow-opacity, 1);
+  transition:
+    transform var(--obc-poi-position-transition-duration, 0.1s) ease-out,
+    opacity 0.1s ease-out;
 }
 
 .wrapper.no-motion .outside-arrow {

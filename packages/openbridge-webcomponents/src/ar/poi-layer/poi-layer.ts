@@ -112,6 +112,7 @@ export class ObcPoiLayer extends LitElement {
   private resizeObserver?: ResizeObserver;
   private targetResizeObserver?: ResizeObserver;
   private lastHeight = 0;
+  private persistedHeight = 0;
   private isGrouping = false;
   private targetObservers = new Map<Poi, MutationObserver>();
   private targetSizeElements = new Map<Poi, HTMLElement>();
@@ -289,10 +290,12 @@ export class ObcPoiLayer extends LitElement {
 
   private syncLayerHeight() {
     if (!this.isConnected) return;
+    const minHeight = this.getLayerMinHeight();
     const targets = this.getAllTargets();
     if (targets.length === 0) {
-      this.style.setProperty('--obc-poi-layer-height', '0px');
-      this.updateLayerHeight(0);
+      const nextHeight = Math.max(this.persistedHeight, minHeight);
+      this.style.setProperty('--obc-poi-layer-height', `${nextHeight}px`);
+      this.updateLayerHeight(nextHeight);
       return;
     }
     const rects = new Map<Poi, DOMRect>();
@@ -304,14 +307,14 @@ export class ObcPoiLayer extends LitElement {
         maxHeight = Math.max(maxHeight, height);
       }
     });
-    const minHeight = this.getLayerMinHeight();
-    const nextHeight = Math.max(maxHeight, minHeight);
+    const nextHeight = Math.max(maxHeight, minHeight, this.persistedHeight);
     if (nextHeight <= 0) {
       this.style.setProperty('--obc-poi-layer-height', '0px');
       this.updateLayerHeight(0);
       return;
     }
     const roundedHeight = Math.round(nextHeight);
+    this.persistedHeight = Math.max(this.persistedHeight, roundedHeight);
     this.style.setProperty('--obc-poi-layer-height', `${roundedHeight}px`);
     this.updateLayerHeight(roundedHeight);
   }

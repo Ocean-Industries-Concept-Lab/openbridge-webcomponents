@@ -139,8 +139,11 @@ export class ObcPoiLayerStack extends LitElement {
     this.clearTargetGroupingAttributes(target);
     this.setSelectedTargetInteractivity(target, true);
     if (selectedLayer !== originLayer) {
-      this.setTargetSelectedId(target);
-      this.moveTargetToLayer(target, selectedLayer);
+      this.moveTargetToLayer(target, selectedLayer, undefined, () => {
+        if (target.isConnected) {
+          this.setTargetSelectedId(target);
+        }
+      });
     } else {
       this.setTargetSelectedId(target);
     }
@@ -395,7 +398,8 @@ export class ObcPoiLayerStack extends LitElement {
   private moveTargetToLayer(
     target: Poi,
     nextLayer: ObcPoiLayer,
-    afterMove?: () => void
+    afterMove?: () => void,
+    beforeReveal?: () => void
   ) {
     const currentParent = target.parentElement;
     if (!currentParent || currentParent === nextLayer) {
@@ -404,15 +408,46 @@ export class ObcPoiLayerStack extends LitElement {
     }
     this.movingTargets.add(target);
     const finalizeMove = () => {
+      target.style.removeProperty('--obc-poi-moving-line-opacity');
+      target.style.removeProperty('--obc-poi-moving-pointer-opacity');
+      target.style.removeProperty('--obc-poi-moving-outside-arrow-opacity');
+      target.style.removeProperty('--obc-poi-position-transition-duration');
+      target.style.removeProperty('--obc-poi-transition-duration');
+      target.style.removeProperty('--obc-poi-opacity-transition-duration');
+      target.style.removeProperty('--obc-poi-size-transition-duration');
+      target.style.removeProperty('--obc-poi-color-transition-duration');
       this.movingTargets.delete(target);
       afterMove?.();
     };
     const reduceMotion =
       typeof window !== 'undefined' &&
       window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    let beforeRevealCalled = false;
+    const runBeforeReveal = () => {
+      if (beforeRevealCalled) return;
+      beforeRevealCalled = true;
+      beforeReveal?.();
+    };
     const wasInGroup = currentParent.tagName.toLowerCase() === 'obc-poi-group';
     const firstVisualAnchor = this.getTargetVisualAnchor(target);
     const firstTargetAnchor = this.getTargetPointAnchor(target);
+    const previousVisibility = target.style.visibility;
+    target.style.visibility = 'hidden';
+    target.style.setProperty('--obc-poi-moving-line-opacity', '1');
+    target.style.setProperty('--obc-poi-moving-pointer-opacity', '0');
+    target.style.setProperty('--obc-poi-moving-outside-arrow-opacity', '0');
+    target.style.setProperty('--obc-poi-position-transition-duration', '0s');
+    target.style.setProperty('--obc-poi-transition-duration', '0s');
+    target.style.setProperty('--obc-poi-opacity-transition-duration', '0s');
+    target.style.setProperty('--obc-poi-size-transition-duration', '0s');
+    target.style.setProperty('--obc-poi-color-transition-duration', '0s');
+    const restoreVisibility = () => {
+      if (previousVisibility) {
+        target.style.visibility = previousVisibility;
+      } else {
+        target.style.removeProperty('visibility');
+      }
+    };
     nextLayer.appendChild(target);
     if (wasInGroup) {
       const group = currentParent as ObcPoiGroup;
@@ -428,63 +463,111 @@ export class ObcPoiLayerStack extends LitElement {
       target.style.removeProperty('height');
       target.style.removeProperty('transform');
     }
-    const lastVisualAnchor = this.getTargetVisualAnchor(target);
-    const lastTargetAnchor = this.getTargetPointAnchor(target);
-    const dx = firstVisualAnchor.x - lastVisualAnchor.x;
-    const dy = firstVisualAnchor.y - lastVisualAnchor.y;
-    const lineDy = firstTargetAnchor.y - lastTargetAnchor.y;
-    if (reduceMotion) {
-      this.adjustTargetLineLengthByOffset(target, lineDy, false);
-      nextLayer.requestGroupingUpdate();
-      finalizeMove();
-      return;
-    }
-    const hasVisualDelta =
-      Number.isFinite(dx) &&
-      Number.isFinite(dy) &&
-      (Math.abs(dx) >= 0.5 || Math.abs(dy) >= 0.5);
+    const immediateTargetAnchor = this.getTargetPointAnchor(target);
+    const lineDy = firstTargetAnchor.y - immediateTargetAnchor.y;
     const hasLineDelta = Number.isFinite(lineDy) && Math.abs(lineDy) >= 0.5;
-
-    if (!hasVisualDelta && !hasLineDelta) {
-      nextLayer.requestGroupingUpdate();
-      finalizeMove();
-      return;
+    if (hasLineDelta) {
+      this.adjustTargetLineLengthByOffset(target, lineDy, false);
     }
-
-    requestAnimationFrame((frameNow) => {
-      if (hasLineDelta) {
-        this.adjustTargetLineLengthByOffset(target, lineDy, true, frameNow);
-      }
-      if (!hasVisualDelta) {
+    nextLayer.requestGroupingUpdate();
+    const startSettledMove = (
+      lastVisualAnchor: {x: number; y: number},
+      hasVisualDelta: boolean
+    ) => {
+      if (reduceMotion) {
+        runBeforeReveal();
+        restoreVisibility();
         nextLayer.requestGroupingUpdate();
         finalizeMove();
         return;
       }
 
+      if (!hasVisualDelta && !hasLineDelta) {
+        runBeforeReveal();
+        restoreVisibility();
+        nextLayer.requestGroupingUpdate();
+        finalizeMove();
+        return;
+      }
+      if (!hasVisualDelta) {
+        runBeforeReveal();
+        restoreVisibility();
+        nextLayer.requestGroupingUpdate();
+        finalizeMove();
+        return;
+      }
+
+      const dx = firstVisualAnchor.x - lastVisualAnchor.x;
+      const dy = firstVisualAnchor.y - lastVisualAnchor.y;
       const baseTransform = getComputedStyle(target).transform;
+      const startTransform =
+        baseTransform === 'none'
+          ? `translate(${dx}px, ${dy}px)`
+          : `translate(${dx}px, ${dy}px) ${baseTransform}`;
+      target.style.transform = startTransform;
+      target.style.willChange = 'transform';
+      runBeforeReveal();
+      restoreVisibility();
+
       const duration = JUMP_DURATION_MS;
       const [x1, y1, x2, y2] = JUMP_BEZIER;
       const easing = `cubic-bezier(${x1}, ${y1}, ${x2}, ${y2})`;
-      target.style.willChange = 'transform';
       const animation = target.animate(
         [
-          {
-            transform:
-              baseTransform === 'none'
-                ? `translate(${dx}px, ${dy}px)`
-                : `translate(${dx}px, ${dy}px) ${baseTransform}`,
-          },
+          {transform: startTransform},
           {transform: baseTransform === 'none' ? 'none' : baseTransform},
         ],
         {duration, easing}
       );
       const completeMove = () => {
         target.style.willChange = '';
+        target.style.removeProperty('transform');
         nextLayer.requestGroupingUpdate();
         finalizeMove();
       };
       animation.addEventListener('finish', completeMove, {once: true});
       animation.addEventListener('cancel', completeMove, {once: true});
+    };
+
+    const waitForStableVisualAnchor = (
+      remainingFrames: number,
+      previousAnchor?: {x: number; y: number}
+    ) => {
+      requestAnimationFrame(() => {
+        if (!target.isConnected || this.getTargetLayer(target) !== nextLayer) {
+          restoreVisibility();
+          finalizeMove();
+          return;
+        }
+
+        const lastVisualAnchor = this.getTargetVisualAnchor(target);
+        const dx = firstVisualAnchor.x - lastVisualAnchor.x;
+        const dy = firstVisualAnchor.y - lastVisualAnchor.y;
+        const hasVisualDelta =
+          Number.isFinite(dx) &&
+          Number.isFinite(dy) &&
+          (Math.abs(dx) >= 0.5 || Math.abs(dy) >= 0.5);
+
+        if (
+          previousAnchor &&
+          Math.abs(lastVisualAnchor.x - previousAnchor.x) < 0.5 &&
+          Math.abs(lastVisualAnchor.y - previousAnchor.y) < 0.5
+        ) {
+          startSettledMove(lastVisualAnchor, hasVisualDelta);
+          return;
+        }
+
+        if (remainingFrames <= 0) {
+          startSettledMove(lastVisualAnchor, hasVisualDelta);
+          return;
+        }
+
+        waitForStableVisualAnchor(remainingFrames - 1, lastVisualAnchor);
+      });
+    };
+
+    requestAnimationFrame(() => {
+      waitForStableVisualAnchor(2);
     });
   }
 

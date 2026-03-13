@@ -3,6 +3,7 @@ import {html} from 'lit';
 import './poi-controller.js';
 import {PoiFitMode} from './poi-controller.js';
 import {PoiLayerSelectionMode} from '../poi-layer-stack/poi-layer-stack.js';
+import '../poi-data/poi-data.js';
 import '../poi-aton/poi-aton.js';
 import '../poi-vessel/poi-vessel.js';
 import '../../icons/icon-beacon-general-east.js';
@@ -140,7 +141,7 @@ const meta: Meta<PoiControllerArgs> = {
           <img slot="media" src="/assets/AR-test-image.png" />
           <obc-poi-layer-stack
             slot="stack"
-            selection-mode=${PoiLayerSelectionMode.Single}
+            selection-mode=${PoiLayerSelectionMode.Multi}
           >
             <obc-poi-layer is-selected></obc-poi-layer>
             <obc-poi-layer data-controller-layer="background"></obc-poi-layer>
@@ -202,7 +203,13 @@ export const SelectionMultiAnimated: Story = {
 
         obc-poi-layer {
           --obc-poi-layer-min-height: 48px;
+          --obc-poi-layer-debug-background: rgb(8 12 18 / 52%);
+          --obc-poi-layer-debug-color: rgb(255 255 255 / 100%);
           width: 100%;
+        }
+
+        obc-poi-layer::part(debug-label) {
+          text-shadow: 0 1px 2px rgb(0 0 0 / 70%);
         }
       </style>
       <div class="stage">
@@ -383,5 +390,94 @@ export const SelectionMultiAnimated: Story = {
     };
 
     rafId = requestAnimationFrame(tick);
+  },
+};
+
+export const BottomLayerWithValues: Story = {
+  args: {
+    fit: PoiFitMode.Contain,
+    classFilter: [],
+  },
+  render: (args) => {
+    return html`
+      <style>
+        .stage {
+          width: 100%;
+          max-width: 1200px;
+          aspect-ratio: 16 / 9;
+          background: #11161d;
+        }
+
+        .stage img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+
+        obc-poi-controller.controller-values {
+          width: 100%;
+          height: 100%;
+        }
+
+        obc-poi-layer-stack.stack-values {
+          width: 100%;
+          gap: 8px;
+          transform: translateY(-72px);
+        }
+
+        obc-poi-layer {
+          --obc-poi-layer-min-height: 48px;
+          width: 100%;
+        }
+      </style>
+      <div class="stage">
+        <obc-poi-controller
+          class="controller-values"
+          .fit=${args.fit}
+          .classFilter=${args.classFilter}
+        >
+          <img slot="media" src="/assets/AR-test-image.png" />
+          <obc-poi-layer-stack
+            slot="stack"
+            class="stack-values"
+            selection-mode=${PoiLayerSelectionMode.Multi}
+          >
+            <obc-poi-layer label="Layer A" is-selected debug>
+              <obc-poi-aton .x=${460} .y=${112}>
+                <obi-beacon-general-east></obi-beacon-general-east>
+              </obc-poi-aton>
+            </obc-poi-layer>
+            <obc-poi-layer
+              label="Layer B"
+              debug
+              data-controller-layer="background"
+            >
+              <obc-poi-data
+                .x=${320}
+                .y=${132}
+                .fixedTarget=${false}
+                .data=${[
+                  {value: '10', label: 'Lab', unit: 'Unit'},
+                  {value: '20', label: 'Lab 2', unit: 'Unit 2'},
+                ]}
+              ></obc-poi-data>
+              <obc-poi-data
+                .x=${640}
+                .y=${144}
+                .fixedTarget=${false}
+                .data=${[
+                  {value: '70', label: 'Lab', unit: 'Unit'},
+                  {value: '80', label: 'Lab 2', unit: 'Unit 2'},
+                ]}
+              ></obc-poi-data>
+            </obc-poi-layer>
+          </obc-poi-layer-stack>
+        </obc-poi-controller>
+      </div>
+    `;
+  },
+  play: async ({canvasElement}) => {
+    await waitForStorySettle(canvasElement);
   },
 };
