@@ -4,7 +4,6 @@ import {customElement} from '../../decorator.js';
 import {ObcPoiButton} from '../building-blocks/poi-button/poi-button.js';
 import {ObcPoiObjectType} from '../building-blocks/poi-object/poi-object.js';
 import '../poi-object-data/poi-object-data.js';
-import '../../icons/icon-vessel-generic-default-filled.js';
 import {
   ObcPoiObjectDataType,
   ObcPoiObjectDataStyle,
@@ -58,9 +57,7 @@ export class ObcPoiButtonData extends ObcPoiButton {
           class="icon"
           style="transform: rotate(${this.relativeDirection}deg);"
         >
-          <slot
-            ><obi-vessel-generic-default-filled></obi-vessel-generic-default-filled
-          ></slot>
+          <slot></slot>
         </span>
       </obc-poi-object-data>
     `;

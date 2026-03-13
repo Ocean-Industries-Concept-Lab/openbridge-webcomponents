@@ -1,4 +1,4 @@
-import {LitElement, TemplateResult, html} from 'lit';
+import {LitElement, TemplateResult, css, html} from 'lit';
 import {property} from 'lit/decorators.js';
 import './poi-object.js';
 import {
@@ -46,4 +46,20 @@ export class ObcAbstractPoiObject extends LitElement {
       ${this.icon}
     </obc-poi-object>`;
   }
+
+  static override styles = [
+    css`
+      :host {
+        display: contents;
+      }
+
+      slot {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+      }
+    `,
+  ];
 }

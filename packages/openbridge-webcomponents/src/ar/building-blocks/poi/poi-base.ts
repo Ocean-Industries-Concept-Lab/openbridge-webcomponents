@@ -13,7 +13,6 @@ import {
   ObcPoiPointerType,
 } from '../poi-pointer/poi-pointer.js';
 import {POI_ATTR, Poi, PoiDataVisualRectPreference} from './poi.js';
-
 export {ObcPoiValue as PoiBaseValue};
 export {PoiDataVisualRectPreference as PoiBaseVisualRectPreference};
 
@@ -22,6 +21,17 @@ type VisualElementPreference =
   | PoiDataVisualRectPreference.Group
   | PoiDataVisualRectPreference.Anchor
   | PoiDataVisualRectPreference.Size;
+
+function stripWhitespaceTextNodes(el: Element): void {
+  for (const node of Array.from(el.childNodes)) {
+    if (
+      node.nodeType === Node.TEXT_NODE &&
+      (node.textContent ?? '').trim() === ''
+    ) {
+      node.remove();
+    }
+  }
+}
 
 const X_FILTER_CUTOFF_HZ = 16;
 const X_FILTER_DEADBAND_PX = 0.1;
@@ -41,6 +51,7 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
   private headerObserver?: MutationObserver;
 
   override connectedCallback() {
+    stripWhitespaceTextNodes(this);
     super.connectedCallback();
     this.setAttribute(POI_ATTR, '');
     this.setupHeaderObserver();

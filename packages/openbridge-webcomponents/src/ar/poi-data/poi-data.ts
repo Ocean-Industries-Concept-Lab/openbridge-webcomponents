@@ -3,6 +3,7 @@ import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {ObcPoiBase} from '../building-blocks/poi/poi-base.js';
 import '../poi-button-data/poi-button-data.js';
+import '../../icons/icon-vessel-generic-default-filled.js';
 import {
   ObcPoiObjectDataStyle,
   ObcPoiObjectDataState,
@@ -54,7 +55,11 @@ export class ObcPoiData extends ObcPoiBase {
         .dataStyle=${this.dataStyle}
         .dataState=${this.dataState}
         .dataInteractive=${this.dataInteractive}
-      ></obc-poi-button-data>
+      >
+        <slot
+          ><obi-vessel-generic-default-filled></obi-vessel-generic-default-filled
+        ></slot>
+      </obc-poi-button-data>
     `;
   }
 

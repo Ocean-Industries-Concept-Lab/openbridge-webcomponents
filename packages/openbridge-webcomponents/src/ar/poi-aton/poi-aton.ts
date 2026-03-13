@@ -2,6 +2,7 @@ import {html} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import '../poi-button-aton/poi-button-aton.js';
+import '../../icons/icon-beacon-general-east.js';
 import {ObcPoiBase} from '../building-blocks/poi/poi-base.js';
 import {
   ObcPoiObjectAtonType,
@@ -57,7 +58,7 @@ export class ObcPoiAton extends ObcPoiBase {
         .atonState=${this.atonState}
         .atonInteractive=${this.atonInteractive}
       >
-        <slot></slot>
+        <slot><obi-beacon-general-east></obi-beacon-general-east></slot>
       </obc-poi-button-aton>
     `;
   }

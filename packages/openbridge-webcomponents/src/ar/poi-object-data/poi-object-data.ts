@@ -1,4 +1,3 @@
-import {css, html, TemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {ObcAbstractPoiObject} from '../building-blocks/poi-object/abstract-poi-object.js';
@@ -40,29 +39,6 @@ export class ObcPoiObjectData extends ObcAbstractPoiObject {
         return ObcPoiObjectType.Regular;
     }
   }
-
-  override get icon(): TemplateResult {
-    return html`<div class="icon-wrapper"><slot></slot></div>`;
-  }
-
-  static override styles = css`
-    :host {
-      display: contents;
-    }
-
-    .icon-wrapper {
-      display: flex;
-      width: 100%;
-      height: 100%;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .icon-wrapper ::slotted(*) {
-      width: 100%;
-      height: 100%;
-    }
-  `;
 }
 
 declare global {

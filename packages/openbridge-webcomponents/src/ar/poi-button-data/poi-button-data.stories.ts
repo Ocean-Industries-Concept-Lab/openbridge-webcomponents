@@ -3,6 +3,7 @@ import {ObcPoiButtonData} from './poi-button-data.js';
 import './poi-button-data.js';
 import '../building-blocks/poi-header/poi-header.js';
 import '../../icons/icon-placeholder.js';
+import '../../icons/icon-vessel-generic-default-filled.js';
 import {
   ObcPoiButtonLayout,
   ObcPoiButtonState,
@@ -137,6 +138,7 @@ const meta: Meta<ObcPoiButtonData> = {
         .type=${args.type}
         .inExpandedGroup=${args.inExpandedGroup}
       >
+        <obi-vessel-generic-default-filled></obi-vessel-generic-default-filled>
         <obc-poi-header
           slot="header"
           content="1"

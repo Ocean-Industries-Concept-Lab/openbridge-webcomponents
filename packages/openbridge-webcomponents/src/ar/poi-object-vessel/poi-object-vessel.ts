@@ -1,4 +1,4 @@
-import {html, css, unsafeCSS} from 'lit';
+import {html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {ObcAbstractPoiObject} from '../building-blocks/poi-object/abstract-poi-object.js';
@@ -123,11 +123,7 @@ export class ObcPoiObjectVessel extends ObcAbstractPoiObject {
   }
 
   static override styles = [
-    css`
-      :host {
-        display: contents;
-      }
-    `,
+    ...ObcAbstractPoiObject.styles,
     unsafeCSS(componentStyle),
   ];
 }

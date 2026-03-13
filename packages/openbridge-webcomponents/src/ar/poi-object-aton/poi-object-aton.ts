@@ -1,4 +1,4 @@
-import {html, css, unsafeCSS, TemplateResult} from 'lit';
+import {html, unsafeCSS, TemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
@@ -65,10 +65,6 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
     }
   }
 
-  override get icon(): TemplateResult {
-    return html`<slot></slot>`;
-  }
-
   private renderAtonDiamond(): TemplateResult {
     return html`
       <div class="aton-diamond-frame">
@@ -100,7 +96,7 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
         <obc-poi-object
           exportparts="background-frame"
           .type=${this.baseType}
-          .objectStyle=${'regular'}
+          .objectStyle=${this.objectStyle}
           .state=${this.state}
           ?interactive=${this.interactive}
         >
@@ -111,11 +107,7 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
   }
 
   static override styles = [
-    css`
-      :host {
-        display: contents;
-      }
-    `,
+    ...ObcAbstractPoiObject.styles,
     unsafeCSS(componentStyle),
   ];
 }

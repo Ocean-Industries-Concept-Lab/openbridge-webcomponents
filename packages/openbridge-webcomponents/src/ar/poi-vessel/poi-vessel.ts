@@ -2,6 +2,7 @@ import {html} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import '../poi-button-vessel/poi-button-vessel.js';
+import '../../icons/icon-vessel-generic-default-filled.js';
 import {ObcPoiBase} from '../building-blocks/poi/poi-base.js';
 import {
   ObcPoiObjectVesselType,
@@ -63,7 +64,9 @@ export class ObcPoiVessel extends ObcPoiBase {
         .vesselState=${this.vesselState}
         .vesselInteractive=${this.vesselInteractive}
       >
-        <slot></slot>
+        <slot
+          ><obi-vessel-generic-default-filled></obi-vessel-generic-default-filled
+        ></slot>
         <slot name="turn-indicator" slot="turn-indicator"></slot>
         <slot name="speed-indicator" slot="speed-indicator"></slot>
       </obc-poi-button-vessel>
