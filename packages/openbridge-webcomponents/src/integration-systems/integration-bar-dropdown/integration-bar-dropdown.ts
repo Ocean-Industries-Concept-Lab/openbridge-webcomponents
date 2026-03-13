@@ -19,12 +19,14 @@ import {property} from 'lit/decorators.js';
  * @fires user-button-clicked - Fired when the user button is clicked
  * @fires system-button-clicked - Fired when the system button is clicked
  *
+ * @slot vessel-selector
  * @slot status-label-1
  * @slot status-icon-1
  * @slot status-label-2
  * @slot status-icon-2
  * @slot status-label-3
  * @slot status-icon-3
+ * @slot clock
  */
 @customElement('obc-integration-bar-dropdown')
 export class ObcIntegrationBarDropdown extends LitElement {
@@ -45,7 +47,7 @@ export class ObcIntegrationBarDropdown extends LitElement {
     if (this.nStatusFields <= 0) {
       return nothing;
     }
-    let result = [];
+    const result = [];
     for (let i = 0; i < this.nStatusFields; i++) {
       if (i > 0) {
         result.push(html`<div class="divider"></div>`);
@@ -71,7 +73,7 @@ export class ObcIntegrationBarDropdown extends LitElement {
                 variant="integration"
                 @click=${() =>
                   this.dispatchEvent(new CustomEvent('home-button-clicked'))}
-                ?activated=${this.showHomeButton}
+                ?activated=${this.homeButtonActivated}
               >
                 <obi-home></obi-home>
               </obc-icon-button>`
