@@ -23,7 +23,7 @@
   --obc-two-step-state-label-shift-factor: 0.1;
   --obc-two-step-duration-fast: 200ms;
   --obc-two-step-duration-content: 220ms;
-  --obc-two-step-duration-slide: 900ms;
+  --obc-two-step-duration-slide: 700ms;
   --obc-two-step-easing-standard: cubic-bezier(0, 0, 0, 0.99);
   --obc-two-step-easing-emphasized: cubic-bezier(0.22, 1, 0.36, 1);
   height: var(--ui-components-button-touch-target-size);

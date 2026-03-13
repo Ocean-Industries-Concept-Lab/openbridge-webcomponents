@@ -21,8 +21,9 @@ export type ObcTwoStepActionChangeEvent = CustomEvent<{
 
 const LABEL_BOUNCE_DURATION_MS = 220;
 const ARMED_HINT_DURATION_MS = 1600;
-const ARMED_SLIDE_DURATION_MS = 900;
+const ARMED_SLIDE_DURATION_MS = 700;
 const SWIPE_COMPLETE_TO_ACTIVE_MS = 1200;
+const ACTIVE_RESET_DELAY_MS = 1000;
 const THUMB_DRAG_GROWTH_FACTOR = 0.4146;
 const THUMB_DRAG_MOVE_THRESHOLD_PX = 3;
 const THUMB_DRAG_MIN_SCALE_X = 0.01;
@@ -50,6 +51,7 @@ export class ObcTwoStepAction extends LitElement {
   private armedSlideTimeout?: number;
   private disarmSlideTimeout?: number;
   private swipeArmedToActiveTimeout?: number;
+  private activeResetTimeout?: number;
   private thumbDragPointerId?: number;
   private thumbDragStartX = 0;
   private thumbDragMaxX = 0;
@@ -119,9 +121,27 @@ export class ObcTwoStepAction extends LitElement {
     this.swipeArmedToActiveTimeout = undefined;
   }
 
+  private clearActiveResetTimer() {
+    window.clearTimeout(this.activeResetTimeout);
+    this.activeResetTimeout = undefined;
+  }
+
   private clearDisarmSlideTimer() {
     window.clearTimeout(this.disarmSlideTimeout);
     this.disarmSlideTimeout = undefined;
+  }
+
+  private scheduleActiveReset() {
+    this.clearActiveResetTimer();
+
+    if (this.disabled || this.state !== ObcTwoStepActionState.active) {
+      return;
+    }
+
+    this.activeResetTimeout = window.setTimeout(() => {
+      if (this.disabled || this.state !== ObcTwoStepActionState.active) return;
+      this.state = ObcTwoStepActionState.enabled;
+    }, ACTIVE_RESET_DELAY_MS);
   }
 
   private scheduleArmedReset() {
@@ -428,6 +448,10 @@ export class ObcTwoStepAction extends LitElement {
       this.disarmSlide = false;
       this.clearDisarmSlideTimer();
     }
+
+    if (changedProperties.has('state') || changedProperties.has('disabled')) {
+      this.scheduleActiveReset();
+    }
   }
 
   override render() {
@@ -456,7 +480,7 @@ export class ObcTwoStepAction extends LitElement {
         ?disabled=${this.disabled}
         @click=${this.handleClick}
         part="wrapper"
-        style=${`--armed-hint-duration: ${armedHintDurationMs}ms; --thumb-drag-x: ${this.thumbDragX}px; --obc-two-step-thumb-drag-growth-factor: ${THUMB_DRAG_GROWTH_FACTOR};`}
+        style=${`--armed-hint-duration: ${armedHintDurationMs}ms; --thumb-drag-x: ${this.thumbDragX}px; --obc-two-step-thumb-drag-growth-factor: ${THUMB_DRAG_GROWTH_FACTOR}; --obc-two-step-duration-slide: ${ARMED_SLIDE_DURATION_MS}ms;`}
         aria-label="Two step action"
         aria-pressed=${isActive ? 'true' : 'false'}
       >
@@ -534,6 +558,7 @@ export class ObcTwoStepAction extends LitElement {
     this.clearArmedSlideTimer();
     this.clearDisarmSlideTimer();
     this.clearSwipeArmedToActiveTimer();
+    this.clearActiveResetTimer();
   }
 
   static override styles = unsafeCSS(componentStyle);
