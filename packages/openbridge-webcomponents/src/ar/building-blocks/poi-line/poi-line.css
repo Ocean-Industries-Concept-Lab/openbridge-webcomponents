@@ -5,12 +5,6 @@
 
 .container {
   position: relative;
-  overflow: hidden;
-  transform-origin: top left;
-  transition:
-    height var(--obc-poi-line-transition-duration, 0.1s) ease-out,
-    width var(--obc-poi-line-transition-duration, 0.1s) ease-out,
-    transform var(--obc-poi-line-transition-duration, 0.1s) ease-out;
 }
 
 :host {
