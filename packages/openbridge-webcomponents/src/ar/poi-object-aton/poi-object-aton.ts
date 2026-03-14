@@ -84,6 +84,21 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
     );
   }
 
+  private get isAlert(): boolean {
+    return (
+      this.state === ObcPoiObjectState.Caution ||
+      this.state === ObcPoiObjectState.Warning ||
+      this.state === ObcPoiObjectState.Alarm
+    );
+  }
+
+  private get innerState(): ObcPoiObjectState {
+    if (this.isIndicator && this.isAlert) {
+      return ObcPoiObjectState.Activated;
+    }
+    return this.state;
+  }
+
   override get colorStyleVars(): StyleInfo {
     const tokens = ATON_COLORS[this.objectStyle];
     if (!tokens) return {};
@@ -161,7 +176,7 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
           style=${styleMap(this.colorStyleVars)}
           .type=${this.baseType}
           .objectStyle=${ObcPoiObjectStyle.Regular}
-          .state=${this.state}
+          .state=${this.innerState}
           ?interactive=${this.interactive}
         >
           <slot></slot>
