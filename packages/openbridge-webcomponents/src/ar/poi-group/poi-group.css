@@ -2,9 +2,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  /* Spacing between expanded POI targets in a group */
   --obc-poi-group-expanded-spacing: 50px;
-  /* Animation timing constants (in milliseconds) */
   --obc-poi-group-top-offset-animation-ms: 100;
   --obc-poi-group-top-offset-animation-delay-ms: 0;
 }
@@ -36,7 +34,6 @@
   transform: translate3d(var(--obc-poi-group-wrapper-x, 0px), -100%, 0);
   will-change: transform;
 
-  /* Override mixin colors for visible-wrapper */
   --flat-enabled-border-color: transparent;
   --flat-enabled-background-color: transparent;
   --flat-hover-border-color: var(
@@ -100,7 +97,6 @@
   pointer-events: auto;
 }
 
-/* Ensure targets inside groups inherit layer-style positioning when grouped in a layer. */
 :host([data-in-poi-layer]) ::slotted([data-poi-target]) {
   position: absolute;
   transform-origin: 50% 50%;

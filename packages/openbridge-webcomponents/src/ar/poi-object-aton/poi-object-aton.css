@@ -2,8 +2,6 @@
   box-sizing: border-box;
 }
 
-/* === Wrapper === */
-
 .aton-wrapper {
   position: relative;
   display: inline-flex;
@@ -11,7 +9,6 @@
   justify-content: center;
 }
 
-/* Standard size types */
 .type-indicator,
 .type-regular,
 .type-aton,
@@ -20,16 +17,11 @@
   height: var(--maneuvering-components-poi-button-touch-target, 48px);
 }
 
-/* Large size types */
 .type-large,
 .type-n-up-large {
   width: var(--maneuvering-components-poi-button-large-touch-target, 64px);
   height: var(--maneuvering-components-poi-button-large-touch-target, 64px);
 }
-
-/* ==========================================================================
-   AtoN Diamond Type — custom rendering (no obc-poi-object)
-   ========================================================================== */
 
 .aton-diamond-frame {
   position: relative;
@@ -40,7 +32,6 @@
   height: 100%;
 }
 
-/* Diamond background */
 .aton-diamond-background {
   position: absolute;
   inset: 0;
@@ -57,7 +48,6 @@
   overflow: hidden;
 }
 
-/* Diamond color styles */
 .style-green .aton-diamond-background {
   background-color: var(--overlay-navigation-green-primary-color);
   border-color: var(--overlay-navigation-green-secondary-color);
@@ -73,14 +63,12 @@
   border-color: var(--overlay-navigation-yellow-secondary-color);
 }
 
-/* Diamond static state — regular/white switches to flat background */
 .state-static-unchecked.style-regular .aton-diamond-background,
 .state-static-checked.style-regular .aton-diamond-background {
   background-color: var(--normal-enabled-background-color);
   border-color: var(--normal-enabled-border-color);
 }
 
-/* Diamond overlapped state — smaller diamond, hidden icon */
 .state-overlapped .aton-diamond-background {
   width: 28px;
   height: 28px;
@@ -90,7 +78,6 @@
   opacity: 0;
 }
 
-/* Diamond icon container */
 .aton-icon-container {
   position: relative;
   display: flex;
@@ -101,7 +88,6 @@
   z-index: 1;
 }
 
-/* Diamond icon — default uses element-neutral-color */
 .aton-icon-container ::slotted(*) {
   width: 100%;
   height: 100%;
@@ -109,7 +95,6 @@
   --element-active-color: var(--element-neutral-color);
 }
 
-/* Diamond icon — colored styles always use on-primary-color regardless of state */
 .style-green .aton-icon-container ::slotted(*) {
   color: var(--overlay-navigation-green-on-primary-color, #005f43);
   --element-active-color: var(
@@ -134,7 +119,6 @@
   );
 }
 
-/* Diamond icon — regular/white checked/activated switches to active color */
 .state-checked.style-regular .aton-icon-container ::slotted(*),
 .state-static-checked.style-regular .aton-icon-container ::slotted(*),
 .state-activated.style-regular .aton-icon-container ::slotted(*) {
@@ -142,9 +126,11 @@
   --element-active-color: inherit;
 }
 
-/* ==========================================================================
-   Interactive hover/active states for AtoN diamond
-   ========================================================================== */
+.type-indicator.style-regular.state-caution obc-poi-object,
+.type-indicator.style-regular.state-warning obc-poi-object,
+.type-indicator.style-regular.state-alarm obc-poi-object {
+  --element-neutral-color: var(--element-active-color);
+}
 
 .aton-wrapper.interactive {
   cursor: pointer;
@@ -156,7 +142,6 @@
     border-color var(--obc-poi-color-transition-duration, 0.1s) ease;
 }
 
-/* Regular style — uses flat hover/pressed colors */
 :host(:hover) .aton-wrapper.interactive.style-regular .aton-diamond-background {
   background-color: var(--flat-hover-background-color);
 }
@@ -167,7 +152,6 @@
   background-color: var(--flat-pressed-background-color);
 }
 
-/* Colored styles — lighten on hover/active via color-mix */
 :host(:hover) .aton-wrapper.interactive.style-green .aton-diamond-background {
   background-color: color-mix(
     in srgb,

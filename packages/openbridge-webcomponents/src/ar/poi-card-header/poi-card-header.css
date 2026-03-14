@@ -12,7 +12,6 @@
   min-height: var(--maneuvering-components-poi-id-tag-container-height);
 }
 
-/* Condensed variant */
 .wrapper.variant-condensed {
   background-color: var(--overlay-container-global-color);
   border-bottom: 1px solid var(--border-outline-color);
@@ -22,7 +21,6 @@
   gap: 8px;
 }
 
-/* Regular variant */
 .wrapper.variant-regular {
   background-color: var(--overlay-container-global-color);
   border-bottom: 1px solid var(--border-outline-color);
@@ -34,14 +32,12 @@
   }
 }
 
-/* Detailed variant */
 .wrapper.variant-detailed {
   background-color: var(--container-global-color);
   border-bottom: 1px solid var(--indent-enabled-border-color);
   align-items: center;
 }
 
-/* Index badge - common styles */
 .id-container {
   display: flex;
   align-items: center;
@@ -85,7 +81,6 @@
   text-align: center;
 }
 
-/* Header container */
 .header-container {
   display: flex;
   flex: 1 0 0;
@@ -115,7 +110,6 @@
   height: var(--global-size-spacing-icon-icon-size-regular, 24px);
 }
 
-/* Title - Overline style for condensed/regular */
 .title {
   @mixin font-overline-new;
   color: var(--element-active-color);
@@ -123,14 +117,12 @@
   flex-shrink: 0;
 }
 
-/* Title - Body-active style for detailed */
 .title.detailed-title {
   @mixin font-body-active;
   letter-spacing: 0;
   text-align: left;
 }
 
-/* Source badge */
 .source-badge {
   box-sizing: border-box;
   display: flex;
@@ -164,18 +156,15 @@
   text-align: center;
 }
 
-/* Regular/condensed: source text is active color */
 .wrapper.variant-regular .source-text,
 .wrapper.variant-condensed .source-text {
   color: var(--element-active-color);
 }
 
-/* Detailed: source text is neutral color */
 .wrapper.variant-detailed .source-text {
   color: var(--element-neutral-color);
 }
 
-/* Detailed variant specific */
 .detailed-content {
   display: flex;
   flex: 1 0 0;
