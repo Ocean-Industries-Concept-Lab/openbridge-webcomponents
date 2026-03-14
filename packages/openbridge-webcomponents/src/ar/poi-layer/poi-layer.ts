@@ -112,7 +112,6 @@ export class ObcPoiLayer extends LitElement {
   private resizeObserver?: ResizeObserver;
   private targetResizeObserver?: ResizeObserver;
   private lastHeight = 0;
-  private persistedHeight = 0;
   private isGrouping = false;
   private targetObservers = new Map<Poi, MutationObserver>();
   private targetSizeElements = new Map<Poi, HTMLElement>();
@@ -293,7 +292,7 @@ export class ObcPoiLayer extends LitElement {
     const minHeight = this.getLayerMinHeight();
     const targets = this.getAllTargets();
     if (targets.length === 0) {
-      const nextHeight = Math.max(this.persistedHeight, minHeight);
+      const nextHeight = minHeight;
       this.style.setProperty('--obc-poi-layer-height', `${nextHeight}px`);
       this.updateLayerHeight(nextHeight);
       return;
@@ -307,14 +306,13 @@ export class ObcPoiLayer extends LitElement {
         maxHeight = Math.max(maxHeight, height);
       }
     });
-    const nextHeight = Math.max(maxHeight, minHeight, this.persistedHeight);
+    const nextHeight = Math.max(maxHeight, minHeight);
     if (nextHeight <= 0) {
       this.style.setProperty('--obc-poi-layer-height', '0px');
       this.updateLayerHeight(0);
       return;
     }
     const roundedHeight = Math.round(nextHeight);
-    this.persistedHeight = Math.max(this.persistedHeight, roundedHeight);
     this.style.setProperty('--obc-poi-layer-height', `${roundedHeight}px`);
     this.updateLayerHeight(roundedHeight);
   }
@@ -1115,7 +1113,8 @@ export class ObcPoiLayer extends LitElement {
 
   private getAllTargets(): Poi[] {
     return Array.from(this.querySelectorAll(`[${POI_ATTR}]`)).filter(
-      (node): node is Poi => isPoi(node)
+      (node): node is Poi =>
+        isPoi(node) && !node.hasAttribute('data-stack-selected')
     );
   }
 

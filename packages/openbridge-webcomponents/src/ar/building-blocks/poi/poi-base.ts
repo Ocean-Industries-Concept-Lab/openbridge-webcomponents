@@ -304,14 +304,6 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
     return Number.isFinite(parsed) ? parsed : 0;
   }
 
-  protected get layerVerticalOffset(): number {
-    const offset = getComputedStyle(this).getPropertyValue(
-      '--obc-poi-target-layer-vertical-offset'
-    );
-    const parsed = Number.parseFloat(offset);
-    return Number.isFinite(parsed) ? parsed : 0;
-  }
-
   protected get resolvedPoiType(): ObcPoiType {
     return VALID_POI_TYPES.has(this.type as ObcPoiType)
       ? (this.type as ObcPoiType)
@@ -355,6 +347,14 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
       '.wrapper'
     ) as HTMLElement | null;
     return {poi, button, wrapper, buttonWrapper};
+  }
+
+  public refreshProjectionLayout(trackDurationMs = 0) {
+    const poi = this.shadowRoot?.querySelector('obc-poi') as {
+      refreshProjectionLayout?: (trackDurationMs?: number) => void;
+    } | null;
+    poi?.refreshProjectionLayout?.(trackDurationMs);
+    this.dispatchLayoutChange();
   }
 
   public getVisualRect(
@@ -463,9 +463,7 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
 
   /** Computed effective local button Y offset. */
   protected get effectiveLocalButtonY(): number {
-    const totalVerticalOffset =
-      this.selectedVerticalOffset + this.layerVerticalOffset;
-    return this.resolvedButtonY - totalVerticalOffset;
+    return this.resolvedButtonY - this.selectedVerticalOffset;
   }
 
   /**

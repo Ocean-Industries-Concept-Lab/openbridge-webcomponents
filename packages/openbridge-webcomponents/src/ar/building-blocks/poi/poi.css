@@ -28,21 +28,24 @@
 .poi-button,
 ::slotted([slot="button"]) {
   z-index: 1;
-  transform: translateY(var(--obc-poi-button-y, 0px));
+  transform: translateY(
+    calc(var(--obc-poi-button-y, 0px) + var(--obc-poi-button-projection-y, 0px))
+  );
   transition: transform var(--obc-poi-position-transition-duration, 0.1s)
     ease-out;
 }
 
 .wrapper.no-motion .poi-button,
 .wrapper.no-motion ::slotted([slot="button"]) {
-  transition: none;
+  transition: transform var(--obc-poi-forced-button-transition-duration, 0s)
+    ease-out;
 }
 
 .line {
   position: absolute;
   left: 50%;
   top: 100%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateY(var(--obc-poi-line-projection-y, 0px));
   z-index: 0;
   opacity: var(--obc-poi-moving-line-opacity, 1);
   transition:
@@ -96,7 +99,9 @@
   pointer-events: none;
   z-index: 0;
   opacity: var(--obc-poi-moving-line-opacity, 1);
-  transition: opacity 0.1s ease-out;
+  transition:
+    transform var(--obc-poi-position-transition-duration, 0.1s) ease-out,
+    opacity 0.1s ease-out;
 }
 
 .wrapper.type-outside .line {

@@ -73,6 +73,7 @@ export interface Poi extends HTMLElement {
   hasHeader?: boolean;
   headerContent?: string;
   animatePosition?: boolean;
+  refreshProjectionLayout?: (trackDurationMs?: number) => void;
 }
 
 export function isPoi(el: Element): el is Poi {
@@ -390,6 +391,14 @@ export class ObcPoi extends LitElement {
       : 0;
   }
 
+  private get buttonProjectionY(): number {
+    const raw = getComputedStyle(this).getPropertyValue(
+      '--obc-poi-button-projection-y'
+    );
+    const parsed = Number.parseFloat(raw);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
   private get lineOffset(): number {
     if (this.type === ObcPoiType.Point || this.type === ObcPoiType.Outside) {
       return 0;
@@ -479,7 +488,13 @@ export class ObcPoi extends LitElement {
     const fallbackTargetDelta =
       this.type === ObcPoiType.Point
         ? 0
-        : Math.max(0, Math.abs(this.resolvedTargetY - this.resolvedButtonY));
+        : Math.max(
+            0,
+            Math.abs(
+              this.resolvedTargetY -
+                (this.resolvedButtonY + this.buttonProjectionY)
+            )
+          );
 
     if (this.lineGeometry) {
       const style = getPOILineConfig(this.lineStyle, POILineType.Regular);
@@ -488,7 +503,7 @@ export class ObcPoi extends LitElement {
         <div
           class="line-graphic"
           style="transform: translate(${this.lineGeometry.translateX}px, ${this
-            .lineGeometry.translateY}px);"
+            .lineGeometry.translateY + this.buttonProjectionY}px);"
         >
           ${graphicLine({
             style,
@@ -505,6 +520,7 @@ export class ObcPoi extends LitElement {
     return html`
       <obc-poi-line
         class="line"
+        style="--obc-poi-line-projection-y: ${this.buttonProjectionY}px;"
         .poiStyle=${this.lineStyle}
         .height=${fallbackTargetDelta}
         .offset=${this.lineOffset}
@@ -702,6 +718,27 @@ export class ObcPoi extends LitElement {
     this.lineGeometryTrackingRaf = requestAnimationFrame(step);
   }
 
+  private trackLineGeometryFor(durationMs: number) {
+    if (durationMs <= 0) {
+      return;
+    }
+
+    this.lineGeometryTrackingUntil = performance.now() + durationMs + 34;
+    if (this.lineGeometryTrackingRaf) {
+      return;
+    }
+
+    const step = () => {
+      this.lineGeometryTrackingRaf = 0;
+      this.syncMeasuredLineGeometry();
+      if (performance.now() < this.lineGeometryTrackingUntil) {
+        this.lineGeometryTrackingRaf = requestAnimationFrame(step);
+      }
+    };
+
+    this.lineGeometryTrackingRaf = requestAnimationFrame(step);
+  }
+
   private syncMeasuredLineGeometry() {
     const wrapper = this.renderRoot.querySelector(
       '.wrapper'
@@ -872,6 +909,16 @@ export class ObcPoi extends LitElement {
         </obc-poi-button>
       </slot>
     `;
+  }
+
+  public refreshProjectionLayout(trackDurationMs = 0) {
+    this.syncLineGeometryObservers();
+    this.scheduleLineGeometrySync();
+    if (trackDurationMs > 0) {
+      this.trackLineGeometryFor(trackDurationMs);
+      return;
+    }
+    this.trackLineGeometryMotion();
   }
 
   override render() {
