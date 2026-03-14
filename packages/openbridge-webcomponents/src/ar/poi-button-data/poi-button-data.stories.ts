@@ -13,6 +13,10 @@ import {
   ObcPoiButtonType,
   PoiButtonVisualState,
 } from '../building-blocks/poi-button/poi-button.js';
+import {
+  ObcPoiObjectDataStyle,
+  ObcPoiObjectDataState,
+} from '../poi-object-data/poi-object-data.js';
 import {html} from 'lit';
 import {crossDecorator} from '../../storybook-util.js';
 import {
@@ -39,6 +43,8 @@ const meta: Meta<ObcPoiButtonData> = {
     relativeDirection: 0,
     state: ObcPoiButtonState.Enabled,
     value: PoiButtonVisualState.Unchecked,
+    dataStyle: ObcPoiObjectDataStyle.Regular,
+    dataState: null,
     inExpandedGroup: false,
     data: [],
   },
@@ -75,6 +81,14 @@ const meta: Meta<ObcPoiButtonData> = {
     layout: {
       control: {type: 'select'},
       options: Object.values(ObcPoiButtonLayout),
+    },
+    dataStyle: {
+      control: {type: 'select'},
+      options: Object.values(ObcPoiObjectDataStyle),
+    },
+    dataState: {
+      control: {type: 'select'},
+      options: [null, ...Object.values(ObcPoiObjectDataState)],
     },
     inExpandedGroup: {
       control: {type: 'boolean'},
@@ -118,6 +132,8 @@ const meta: Meta<ObcPoiButtonData> = {
         'relativeDirection',
         'state',
         'value',
+        'dataStyle',
+        'dataState',
         'inExpandedGroup',
         'data',
       ],
@@ -132,6 +148,8 @@ const meta: Meta<ObcPoiButtonData> = {
           'relativeDirection',
           'state',
           'value',
+          'dataStyle',
+          'dataState',
           'inExpandedGroup',
           'data',
         ],
@@ -149,6 +167,8 @@ const meta: Meta<ObcPoiButtonData> = {
         .state=${args.state}
         .value=${args.value}
         .type=${args.type}
+        .dataStyle=${args.dataStyle}
+        .dataState=${args.dataState}
         .inExpandedGroup=${args.inExpandedGroup}
       >
         <obi-vessel-generic-default-filled></obi-vessel-generic-default-filled>

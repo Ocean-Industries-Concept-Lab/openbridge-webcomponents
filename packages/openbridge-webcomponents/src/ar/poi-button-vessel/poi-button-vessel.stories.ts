@@ -27,6 +27,7 @@ import {
 import {
   ObcPoiObjectVesselType,
   ObcPoiObjectVesselStyle,
+  ObcPoiObjectVesselState,
 } from '../poi-object-vessel/poi-object-vessel.js';
 import {
   ObcPoiHeaderSize,
@@ -48,6 +49,7 @@ const meta: Meta<ObcPoiButtonVessel> = {
     value: PoiButtonVisualState.Unchecked,
     vesselType: ObcPoiObjectVesselType.Regular,
     vesselStyle: ObcPoiObjectVesselStyle.Regular,
+    vesselState: null,
     data: [],
   },
   argTypes: {
@@ -74,6 +76,42 @@ const meta: Meta<ObcPoiButtonVessel> = {
       control: {type: 'select'},
       options: Object.values(ObcPoiObjectVesselStyle),
     },
+    vesselState: {
+      control: {type: 'select'},
+      options: [null, ...Object.values(ObcPoiObjectVesselState)],
+    },
+  },
+  parameters: {
+    controls: {
+      include: [
+        'selected',
+        'hasHeader',
+        'type',
+        'overlapOpaque',
+        'state',
+        'value',
+        'vesselType',
+        'vesselStyle',
+        'vesselState',
+        'data',
+      ],
+    },
+    docs: {
+      controls: {
+        include: [
+          'selected',
+          'hasHeader',
+          'type',
+          'overlapOpaque',
+          'state',
+          'value',
+          'vesselType',
+          'vesselStyle',
+          'vesselState',
+          'data',
+        ],
+      },
+    },
   },
   render: (args) => html`
     <obc-poi-button-vessel
@@ -86,6 +124,7 @@ const meta: Meta<ObcPoiButtonVessel> = {
       .type=${args.type}
       .vesselType=${args.vesselType}
       .vesselStyle=${args.vesselStyle}
+      .vesselState=${args.vesselState}
     >
       <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
       <obc-poi-header

@@ -1,7 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcPoiButtonAton} from './poi-button-aton.js';
 import './poi-button-aton.js';
-import '../../icons/icon-placeholder.js';
 import '../../icons/icon-beacon-general-north.js';
 import '../../icons/icon-beacon-general-south.js';
 import '../../icons/icon-beacon-general-danger.js';
@@ -27,6 +26,7 @@ import {
 import {
   ObcPoiObjectAtonType,
   ObcPoiObjectAtonStyle,
+  ObcPoiObjectAtonState,
 } from '../poi-object-aton/poi-object-aton.js';
 import {
   ObcPoiHeaderSize,
@@ -48,6 +48,7 @@ const meta: Meta<ObcPoiButtonAton> = {
     value: PoiButtonVisualState.Unchecked,
     atonType: ObcPoiObjectAtonType.AtoN,
     atonStyle: ObcPoiObjectAtonStyle.Regular,
+    atonState: null,
     data: [],
   },
   argTypes: {
@@ -74,6 +75,42 @@ const meta: Meta<ObcPoiButtonAton> = {
       control: {type: 'select'},
       options: Object.values(ObcPoiObjectAtonStyle),
     },
+    atonState: {
+      control: {type: 'select'},
+      options: [null, ...Object.values(ObcPoiObjectAtonState)],
+    },
+  },
+  parameters: {
+    controls: {
+      include: [
+        'selected',
+        'hasHeader',
+        'type',
+        'overlapOpaque',
+        'state',
+        'value',
+        'atonType',
+        'atonStyle',
+        'atonState',
+        'data',
+      ],
+    },
+    docs: {
+      controls: {
+        include: [
+          'selected',
+          'hasHeader',
+          'type',
+          'overlapOpaque',
+          'state',
+          'value',
+          'atonType',
+          'atonStyle',
+          'atonState',
+          'data',
+        ],
+      },
+    },
   },
   render: (args) => html`
     <obc-poi-button-aton
@@ -86,8 +123,9 @@ const meta: Meta<ObcPoiButtonAton> = {
       .type=${args.type}
       .atonType=${args.atonType}
       .atonStyle=${args.atonStyle}
+      .atonState=${args.atonState}
     >
-      <obi-placeholder></obi-placeholder>
+      <obi-beacon-general-north></obi-beacon-general-north>
       <obc-poi-header
         slot="header"
         .content=${'1'}
@@ -112,15 +150,15 @@ type MatrixConfig = {
   state?: ObcPoiButtonState;
   atonType?: ObcPoiObjectAtonType;
   atonStyle?: ObcPoiObjectAtonStyle;
+  atonState?: ObcPoiObjectAtonState | null;
   type?: ObcPoiButtonType;
   data?: Array<{value: string; label: string; unit: string}>;
   stageTall?: boolean;
-  icon?: 'placeholder' | 'north' | 'south' | 'danger' | 'flag';
+  icon?: 'north' | 'south' | 'danger' | 'flag';
   label: string;
 };
 
 const iconMap = {
-  placeholder: html`<obi-placeholder></obi-placeholder>`,
   north: html`<obi-beacon-general-north></obi-beacon-general-north>`,
   south: html`<obi-beacon-general-south></obi-beacon-general-south>`,
   danger: html`<obi-beacon-general-danger></obi-beacon-general-danger>`,
@@ -138,10 +176,11 @@ const renderMatrixButton = (cfg: MatrixConfig) => html`
         .state=${cfg.state ?? ObcPoiButtonState.Enabled}
         .atonType=${cfg.atonType ?? ObcPoiObjectAtonType.AtoN}
         .atonStyle=${cfg.atonStyle ?? ObcPoiObjectAtonStyle.Regular}
+        .atonState=${cfg.atonState ?? null}
         .type=${cfg.type ?? ObcPoiButtonType.Button}
         .data=${cfg.data ?? []}
       >
-        ${iconMap[cfg.icon ?? 'placeholder']}
+        ${iconMap[cfg.icon ?? 'north']}
         ${cfg.hasHeader
           ? html`<obc-poi-header
               slot="header"
@@ -422,6 +461,120 @@ export const AllAlertStates: Story = {
           })}
         </div>
       </div>
+    `),
+};
+
+export const AtonStyleByType: Story = {
+  render: () =>
+    renderOverview(html`
+      ${Object.values(ObcPoiObjectAtonType).map(
+        (atonType) => html`
+          <div style=${sectionStyle}>
+            <div style=${gridStyle}>
+              ${Object.values(ObcPoiObjectAtonStyle).map(
+                (atonStyle) => html`
+                  ${renderMatrixButton({
+                    label: `${atonType} / ${atonStyle}`,
+                    atonType,
+                    atonStyle,
+                    value: PoiButtonVisualState.Checked,
+                  })}
+                `
+              )}
+            </div>
+          </div>
+        `
+      )}
+    `),
+};
+
+export const AtonStates: Story = {
+  render: () =>
+    renderOverview(html`
+      <div style=${sectionStyle}>
+        <div style=${gridStyle}>
+          ${renderMatrixButton({
+            label: 'No State (null)',
+            atonState: null,
+            value: PoiButtonVisualState.Checked,
+          })}
+          ${renderMatrixButton({
+            label: 'Unchecked',
+            atonState: ObcPoiObjectAtonState.Unchecked,
+          })}
+          ${renderMatrixButton({
+            label: 'Checked',
+            atonState: ObcPoiObjectAtonState.Checked,
+          })}
+          ${renderMatrixButton({
+            label: 'Activated',
+            atonState: ObcPoiObjectAtonState.Activated,
+          })}
+        </div>
+      </div>
+
+      <div style=${sectionStyle}>
+        <div style=${gridStyle}>
+          ${renderMatrixButton({
+            label: 'Static Unchecked',
+            atonState: ObcPoiObjectAtonState.StaticUnchecked,
+          })}
+          ${renderMatrixButton({
+            label: 'Static Checked',
+            atonState: ObcPoiObjectAtonState.StaticChecked,
+          })}
+          ${renderMatrixButton({
+            label: 'Overlapped',
+            atonState: ObcPoiObjectAtonState.Overlapped,
+          })}
+        </div>
+      </div>
+
+      <div style=${sectionStyle}>
+        <div style=${gridStyle}>
+          ${renderMatrixButton({
+            label: 'Caution',
+            atonState: ObcPoiObjectAtonState.Caution,
+          })}
+          ${renderMatrixButton({
+            label: 'Warning',
+            atonState: ObcPoiObjectAtonState.Warning,
+          })}
+          ${renderMatrixButton({
+            label: 'Alarm',
+            atonState: ObcPoiObjectAtonState.Alarm,
+          })}
+        </div>
+      </div>
+    `),
+};
+
+export const AtonStateByStyle: Story = {
+  render: () =>
+    renderOverview(html`
+      ${Object.values(ObcPoiObjectAtonStyle).map(
+        (atonStyle) => html`
+          <div style=${sectionStyle}>
+            <div style=${gridStyle}>
+              ${[
+                ObcPoiObjectAtonState.Checked,
+                ObcPoiObjectAtonState.Activated,
+                ObcPoiObjectAtonState.Caution,
+                ObcPoiObjectAtonState.Warning,
+                ObcPoiObjectAtonState.Alarm,
+              ].map(
+                (atonState) => html`
+                  ${renderMatrixButton({
+                    label: `${atonStyle} / ${atonState}`,
+                    atonStyle,
+                    atonState,
+                  })}
+                `
+              )}
+            </div>
+          </div>
+        `
+      )}
     `),
 };
 
