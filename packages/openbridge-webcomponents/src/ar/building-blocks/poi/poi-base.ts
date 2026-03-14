@@ -257,6 +257,7 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
       changedProperties.has('type')
     ) {
       this.updatePosition();
+      this.syncInnerPoiLayout();
     }
     if (
       changedProperties.has('x') ||
@@ -349,6 +350,16 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
     return {poi, button, wrapper, buttonWrapper};
   }
 
+  private syncInnerPoiLayout() {
+    const poi = this.shadowRoot?.querySelector('obc-poi') as {
+      requestUpdate?: () => void;
+      refreshProjectionLayout?: () => void;
+    } | null;
+
+    poi?.requestUpdate?.();
+    poi?.refreshProjectionLayout?.();
+  }
+
   public refreshProjectionLayout(trackDurationMs = 0) {
     const poi = this.shadowRoot?.querySelector('obc-poi') as {
       refreshProjectionLayout?: (trackDurationMs?: number) => void;
@@ -435,15 +446,10 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
 
   public getPointerElement(): HTMLElement | null {
     const {poi} = this.getVisualNodes();
-    const pointer =
+    return (
       (poi?.shadowRoot?.querySelector(
         'obc-poi-pointer.pointer'
-      ) as HTMLElement | null) ?? null;
-
-    return (
-      (pointer?.shadowRoot?.querySelector(
-        '.anchor-point'
-      ) as HTMLElement | null) ?? pointer
+      ) as HTMLElement | null) ?? null
     );
   }
 

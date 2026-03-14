@@ -13,7 +13,6 @@ import {
 import {ObcPoiHeaderState} from '../poi-header/poi-header.js';
 import {
   getPOILineConfig,
-  graphicLine,
   POILineType,
   POIStyle,
 } from '../poi-graphic-line/poi-graphic-line.js';
@@ -190,8 +189,6 @@ const POINT_POINTER_OFFSET_PX = 12;
  */
 @customElement('obc-poi')
 export class ObcPoi extends LitElement {
-  private static lineIdCounter = 0;
-  private readonly lineIdPrefix = `poi-line-anchor-${ObcPoi.lineIdCounter++}`;
   @property({type: String}) type: ObcPoiType = ObcPoiType.Line;
   @property({type: String}) value: ObcPoiValue = ObcPoiValue.Unchecked;
   @property({type: String}) state: ObcPoiState = ObcPoiState.Enabled;
@@ -224,8 +221,7 @@ export class ObcPoi extends LitElement {
   private headerObserver?: MutationObserver;
   private lineGeometryObserver?: ResizeObserver;
   private lineGeometryRaf = 0;
-  private lineGeometryTrackingRaf = 0;
-  private lineGeometryTrackingUntil = 0;
+  private lineGeometryLoopRaf = 0;
   private observedGeometryElements = new Set<Element>();
   @state()
   private lineGeometry: {
@@ -253,11 +249,7 @@ export class ObcPoi extends LitElement {
       cancelAnimationFrame(this.lineGeometryRaf);
       this.lineGeometryRaf = 0;
     }
-    if (this.lineGeometryTrackingRaf) {
-      cancelAnimationFrame(this.lineGeometryTrackingRaf);
-      this.lineGeometryTrackingRaf = 0;
-    }
-    this.lineGeometryTrackingUntil = 0;
+    this.stopLineGeometryLoop();
   }
 
   private setupHeaderObserver() {
@@ -399,13 +391,6 @@ export class ObcPoi extends LitElement {
     return Number.isFinite(parsed) ? parsed : 0;
   }
 
-  private get shouldUseProjectedLine(): boolean {
-    const raw = getComputedStyle(this).getPropertyValue(
-      '--obc-poi-stack-projection-active'
-    );
-    return raw.trim() === '1';
-  }
-
   private get lineOffset(): number {
     if (this.type === ObcPoiType.Point || this.type === ObcPoiType.Outside) {
       return 0;
@@ -502,24 +487,21 @@ export class ObcPoi extends LitElement {
                 (this.resolvedButtonY + this.buttonProjectionY)
             )
           );
-
-    if (this.lineGeometry && !this.shouldUseProjectedLine) {
-      const style = getPOILineConfig(this.lineStyle, POILineType.Regular);
-
+    if (this.lineGeometry) {
       return html`
         <div
           class="line-graphic"
           style="transform: translate(${this.lineGeometry.translateX}px, ${this
-            .lineGeometry.translateY + this.buttonProjectionY}px);"
+            .lineGeometry
+            .translateY}px); --obc-poi-line-transform-transition-duration: 0s;"
         >
-          ${graphicLine({
-            style,
-            lineHeight: this.lineGeometry.lineHeight,
-            lineStart: this.lineGeometry.lineStart,
-            totalHeight: this.lineGeometry.totalHeight,
-            offset: this.lineGeometry.offsetX,
-            idPrefix: this.lineIdPrefix,
-          })}
+          <obc-poi-line
+            .poiStyle=${this.lineStyle}
+            .height=${this.lineGeometry.lineHeight}
+            .offset=${this.lineGeometry.offsetX}
+            .hasPointer=${false}
+            .animatePosition=${false}
+          ></obc-poi-line>
         </div>
       `;
     }
@@ -682,68 +664,31 @@ export class ObcPoi extends LitElement {
     });
   }
 
-  private getPositionTransitionDurationMs(): number {
-    const raw = getComputedStyle(this).getPropertyValue(
-      '--obc-poi-position-transition-duration'
-    );
-    const value = raw.trim() || '0.1s';
-    const parsed = Number.parseFloat(value);
-    if (!Number.isFinite(parsed) || parsed <= 0) {
-      return 0;
-    }
-    return value.endsWith('ms') ? parsed : parsed * 1000;
-  }
-
-  private trackLineGeometryMotion() {
-    if (!this.animatePosition) {
-      if (this.lineGeometryTrackingRaf) {
-        cancelAnimationFrame(this.lineGeometryTrackingRaf);
-        this.lineGeometryTrackingRaf = 0;
-      }
-      this.lineGeometryTrackingUntil = 0;
-      return;
-    }
-
-    const durationMs = this.getPositionTransitionDurationMs();
-    if (durationMs <= 0) {
-      return;
-    }
-
-    this.lineGeometryTrackingUntil = performance.now() + durationMs + 34;
-    if (this.lineGeometryTrackingRaf) {
+  private startLineGeometryLoop() {
+    if (this.lineGeometryLoopRaf) {
       return;
     }
 
     const step = () => {
-      this.lineGeometryTrackingRaf = 0;
-      this.syncMeasuredLineGeometry();
-      if (performance.now() < this.lineGeometryTrackingUntil) {
-        this.lineGeometryTrackingRaf = requestAnimationFrame(step);
+      if (!this.isConnected) {
+        this.lineGeometryLoopRaf = 0;
+        return;
       }
+
+      this.syncMeasuredLineGeometry();
+      this.lineGeometryLoopRaf = requestAnimationFrame(step);
     };
 
-    this.lineGeometryTrackingRaf = requestAnimationFrame(step);
+    this.lineGeometryLoopRaf = requestAnimationFrame(step);
   }
 
-  private trackLineGeometryFor(durationMs: number) {
-    if (durationMs <= 0) {
+  private stopLineGeometryLoop() {
+    if (!this.lineGeometryLoopRaf) {
       return;
     }
 
-    this.lineGeometryTrackingUntil = performance.now() + durationMs + 34;
-    if (this.lineGeometryTrackingRaf) {
-      return;
-    }
-
-    const step = () => {
-      this.lineGeometryTrackingRaf = 0;
-      this.syncMeasuredLineGeometry();
-      if (performance.now() < this.lineGeometryTrackingUntil) {
-        this.lineGeometryTrackingRaf = requestAnimationFrame(step);
-      }
-    };
-
-    this.lineGeometryTrackingRaf = requestAnimationFrame(step);
+    cancelAnimationFrame(this.lineGeometryLoopRaf);
+    this.lineGeometryLoopRaf = 0;
   }
 
   private syncMeasuredLineGeometry() {
@@ -832,7 +777,6 @@ export class ObcPoi extends LitElement {
     this.syncSlottedButtonProps();
     this.syncLineGeometryObservers();
     this.scheduleLineGeometrySync();
-    this.trackLineGeometryMotion();
   }
 
   private syncFallbackButtonHeaderContent() {
@@ -918,15 +862,10 @@ export class ObcPoi extends LitElement {
     `;
   }
 
-  public refreshProjectionLayout(trackDurationMs = 0) {
+  public refreshProjectionLayout(_trackDurationMs = 0) {
     this.requestUpdate();
     this.syncLineGeometryObservers();
     this.scheduleLineGeometrySync();
-    if (trackDurationMs > 0) {
-      this.trackLineGeometryFor(trackDurationMs);
-      return;
-    }
-    this.trackLineGeometryMotion();
   }
 
   override render() {
@@ -959,7 +898,7 @@ export class ObcPoi extends LitElement {
     this.syncAttachedHeaderState();
     this.syncLineGeometryObservers();
     this.scheduleLineGeometrySync();
-    this.trackLineGeometryMotion();
+    this.startLineGeometryLoop();
   }
 
   protected override updated(changedProperties: Map<string, unknown>) {
@@ -996,7 +935,6 @@ export class ObcPoi extends LitElement {
     ) {
       this.syncLineGeometryObservers();
       this.scheduleLineGeometrySync();
-      this.trackLineGeometryMotion();
     }
   }
 

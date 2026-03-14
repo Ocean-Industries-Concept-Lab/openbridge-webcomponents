@@ -68,6 +68,9 @@ export class ObcPoiLine extends LitElement {
   private geometryAnimationRaf = 0;
   private geometryAnimationTargetHeight = this.height;
   private geometryAnimationTargetOffset = this.offset;
+  private geometryAnimationStartHeight = this.height;
+  private geometryAnimationStartOffset = this.offset;
+  private geometryAnimationStartedAtMs = 0;
 
   override disconnectedCallback() {
     super.disconnectedCallback();
@@ -99,43 +102,53 @@ export class ObcPoiLine extends LitElement {
         cancelAnimationFrame(this.geometryAnimationRaf);
         this.geometryAnimationRaf = 0;
       }
+      this.geometryAnimationStartedAtMs = 0;
       this.renderedHeight = nextHeight;
       this.renderedOffset = nextOffset;
       return;
     }
 
-    const startHeight = this.renderedHeight;
-    const startOffset = this.renderedOffset;
-
     if (
-      Math.abs(startHeight - nextHeight) < 0.01 &&
-      Math.abs(startOffset - nextOffset) < 0.01
+      Math.abs(this.renderedHeight - nextHeight) < 0.01 &&
+      Math.abs(this.renderedOffset - nextOffset) < 0.01
     ) {
       this.renderedHeight = nextHeight;
       this.renderedOffset = nextOffset;
       return;
     }
 
+    const restartAnimation = !this.geometryAnimationRaf;
+    if (restartAnimation) {
+      this.geometryAnimationStartHeight = this.renderedHeight;
+      this.geometryAnimationStartOffset = this.renderedOffset;
+      this.geometryAnimationStartedAtMs = performance.now();
+    }
+
     this.geometryAnimationTargetHeight = nextHeight;
     this.geometryAnimationTargetOffset = nextOffset;
 
     if (this.geometryAnimationRaf) {
-      cancelAnimationFrame(this.geometryAnimationRaf);
-      this.geometryAnimationRaf = 0;
+      return;
     }
 
-    const startedAt = performance.now();
     const duration = ObcPoiLine.POSITION_ANIMATION_DURATION_MS;
 
     const step = (now: number) => {
-      const progress = Math.min(1, (now - startedAt) / duration);
+      const progress = Math.min(
+        1,
+        (now - this.geometryAnimationStartedAtMs) / duration
+      );
       const eased = 1 - (1 - progress) * (1 - progress);
       this.renderedHeight =
-        startHeight +
-        (this.geometryAnimationTargetHeight - startHeight) * eased;
+        this.geometryAnimationStartHeight +
+        (this.geometryAnimationTargetHeight -
+          this.geometryAnimationStartHeight) *
+          eased;
       this.renderedOffset =
-        startOffset +
-        (this.geometryAnimationTargetOffset - startOffset) * eased;
+        this.geometryAnimationStartOffset +
+        (this.geometryAnimationTargetOffset -
+          this.geometryAnimationStartOffset) *
+          eased;
 
       if (progress < 1) {
         this.geometryAnimationRaf = requestAnimationFrame(step);
@@ -143,6 +156,7 @@ export class ObcPoiLine extends LitElement {
       }
 
       this.geometryAnimationRaf = 0;
+      this.geometryAnimationStartedAtMs = 0;
       this.renderedHeight = this.geometryAnimationTargetHeight;
       this.renderedOffset = this.geometryAnimationTargetOffset;
     };
@@ -152,8 +166,13 @@ export class ObcPoiLine extends LitElement {
 
   override render() {
     const style = getPOILineConfig(this.poiStyle, this.lineType);
-    const renderedHeight = Math.max(0, this.renderedHeight);
-    const renderedOffset = this.renderedOffset;
+    const renderedHeight = Math.max(
+      0,
+      this.animatePosition ? this.renderedHeight : this.height
+    );
+    const renderedOffset = this.animatePosition
+      ? this.renderedOffset
+      : this.offset;
     const lineHeight = Math.max(0, renderedHeight - 2);
     const centerX = 2;
     const isRegularStyle =

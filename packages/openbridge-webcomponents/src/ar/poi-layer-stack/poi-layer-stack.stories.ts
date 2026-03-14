@@ -102,6 +102,17 @@ type ButtonYDiagnosticMeasurement = {
   poiButtonVarY: string;
   poiHostTop: string;
   poiButtonTransform: string;
+  poiInternalLineHeight: number;
+  poiInternalLineOffsetX: number;
+  poiInternalLineTranslateY: number;
+  renderedLineHeightProp: number;
+  renderedLineOffsetProp: number;
+  renderedLineStateHeight: number;
+  renderedLineStateOffset: number;
+  renderedLineContainerHeight: number;
+  renderedGraphicLineHeightProp: number;
+  renderedGraphicSvgHeight: number;
+  renderedLineGraphicTransform: string;
 };
 
 const selectionMultiAnimatedSnapshotPose: AnimatedPoiSnapshotPose[] = [
@@ -488,6 +499,31 @@ const readButtonYDiagnosticMeasurement = (
   const targetAnchor = poi?.shadowRoot?.querySelector(
     '.target-anchor'
   ) as HTMLElement | null;
+  const lineGraphic = poi?.shadowRoot?.querySelector(
+    '.line-graphic'
+  ) as HTMLElement | null;
+  const lineGraphicStyle = lineGraphic ? getComputedStyle(lineGraphic) : null;
+  const line = poi?.shadowRoot?.querySelector('obc-poi-line') as
+    | (HTMLElement & {
+        height?: number;
+        offset?: number;
+        renderedHeight?: number;
+        renderedOffset?: number;
+      })
+    | null;
+  const lineContainer = line?.shadowRoot?.querySelector(
+    '.container'
+  ) as HTMLElement | null;
+  const graphicLine = line?.shadowRoot?.querySelector(
+    'obc-poi-graphic-line'
+  ) as (HTMLElement & {lineHeight?: number}) | null;
+  const graphicLineSvg = graphicLine?.shadowRoot?.querySelector(
+    'svg'
+  ) as SVGSVGElement | null;
+  const poiState = poi as {
+    lineGeometry?: {lineHeight?: number; offsetX?: number; translateY?: number};
+  } | null;
+  const internalLineGeometry = poiState?.lineGeometry ?? null;
   const targetRect = targetAnchor?.getBoundingClientRect() ?? null;
   const renderedHeight = activeTarget.getBoundingClientRect().height;
   const buttonAnchorY = buttonRect.bottom;
@@ -535,6 +571,40 @@ const readButtonYDiagnosticMeasurement = (
       poiHostStyle?.getPropertyValue('--obc-poi-button-y').trim() ?? 'n/a',
     poiHostTop: poiHostStyle?.top ?? 'n/a',
     poiButtonTransform: poiButtonStyle?.transform ?? 'n/a',
+    poiInternalLineHeight:
+      typeof internalLineGeometry?.lineHeight === 'number'
+        ? internalLineGeometry.lineHeight
+        : Number.NaN,
+    poiInternalLineOffsetX:
+      typeof internalLineGeometry?.offsetX === 'number'
+        ? internalLineGeometry.offsetX
+        : Number.NaN,
+    poiInternalLineTranslateY:
+      typeof internalLineGeometry?.translateY === 'number'
+        ? internalLineGeometry.translateY
+        : Number.NaN,
+    renderedLineHeightProp:
+      typeof line?.height === 'number' ? line.height : Number.NaN,
+    renderedLineOffsetProp:
+      typeof line?.offset === 'number' ? line.offset : Number.NaN,
+    renderedLineStateHeight:
+      typeof line?.renderedHeight === 'number'
+        ? line.renderedHeight
+        : Number.NaN,
+    renderedLineStateOffset:
+      typeof line?.renderedOffset === 'number'
+        ? line.renderedOffset
+        : Number.NaN,
+    renderedLineContainerHeight:
+      lineContainer?.getBoundingClientRect().height ?? Number.NaN,
+    renderedGraphicLineHeightProp:
+      typeof graphicLine?.lineHeight === 'number'
+        ? graphicLine.lineHeight
+        : Number.NaN,
+    renderedGraphicSvgHeight:
+      Number.parseFloat(graphicLineSvg?.getAttribute('height') ?? '') ||
+      Number.NaN,
+    renderedLineGraphicTransform: lineGraphicStyle?.transform ?? 'n/a',
   };
 };
 
@@ -658,7 +728,76 @@ const updateButtonYDiagnosticPanel = (root: HTMLElement) => {
     <div>obc-poi --obc-poi-button-y: <strong>${measurement.poiButtonVarY || 'n/a'}</strong></div>
     <div>obc-poi computed top: <strong>${measurement.poiHostTop || 'n/a'}</strong></div>
     <div>.poi-button transform: <strong>${measurement.poiButtonTransform || 'n/a'}</strong></div>
+    <div>inner lineGeometry.lineHeight: <strong>${
+      Number.isFinite(measurement.poiInternalLineHeight)
+        ? Math.round(measurement.poiInternalLineHeight)
+        : 'n/a'
+    }px</strong></div>
+    <div>inner lineGeometry.offsetX: <strong>${
+      Number.isFinite(measurement.poiInternalLineOffsetX)
+        ? Math.round(measurement.poiInternalLineOffsetX)
+        : 'n/a'
+    }px</strong></div>
+    <div>inner lineGeometry.translateY: <strong>${
+      Number.isFinite(measurement.poiInternalLineTranslateY)
+        ? Math.round(measurement.poiInternalLineTranslateY)
+        : 'n/a'
+    }px</strong></div>
+    <div>rendered obc-poi-line.height: <strong>${
+      Number.isFinite(measurement.renderedLineHeightProp)
+        ? Math.round(measurement.renderedLineHeightProp)
+        : 'n/a'
+    }px</strong></div>
+    <div>rendered obc-poi-line.offset: <strong>${
+      Number.isFinite(measurement.renderedLineOffsetProp)
+        ? Math.round(measurement.renderedLineOffsetProp)
+        : 'n/a'
+    }px</strong></div>
+    <div>obc-poi-line.renderedHeight: <strong>${
+      Number.isFinite(measurement.renderedLineStateHeight)
+        ? Math.round(measurement.renderedLineStateHeight)
+        : 'n/a'
+    }px</strong></div>
+    <div>obc-poi-line.renderedOffset: <strong>${
+      Number.isFinite(measurement.renderedLineStateOffset)
+        ? Math.round(measurement.renderedLineStateOffset)
+        : 'n/a'
+    }px</strong></div>
+    <div>rendered line container height: <strong>${
+      Number.isFinite(measurement.renderedLineContainerHeight)
+        ? Math.round(measurement.renderedLineContainerHeight)
+        : 'n/a'
+    }px</strong></div>
+    <div>graphic-line.lineHeight: <strong>${
+      Number.isFinite(measurement.renderedGraphicLineHeightProp)
+        ? Math.round(measurement.renderedGraphicLineHeightProp)
+        : 'n/a'
+    }px</strong></div>
+    <div>graphic-line svg height: <strong>${
+      Number.isFinite(measurement.renderedGraphicSvgHeight)
+        ? Math.round(measurement.renderedGraphicSvgHeight)
+        : 'n/a'
+    }px</strong></div>
+    <div>line-graphic transform: <strong>${measurement.renderedLineGraphicTransform || 'n/a'}</strong></div>
   `;
+};
+
+const updateTargetYGuides = (root: HTMLElement, targetY: number) => {
+  const guides = Array.from(
+    root.querySelectorAll('.target-y-guide')
+  ) as HTMLElement[];
+  const labels = Array.from(
+    root.querySelectorAll('.target-y-label')
+  ) as HTMLElement[];
+
+  guides.forEach((guide) => {
+    guide.style.top = `${targetY}px`;
+  });
+
+  labels.forEach((label) => {
+    label.style.top = `${targetY - 14}px`;
+    label.textContent = `target y = ${Math.round(targetY)}px`;
+  });
 };
 
 export const ButtonYLayerMoveDiagnostic: Story = {
@@ -815,6 +954,14 @@ export const ButtonYLayerMoveDiagnostic: Story = {
         <button type="button" data-action="reset-button-y">
           Reset buttonY
         </button>
+        <button type="button" data-action="target-up">targetY - 32</button>
+        <button type="button" data-action="target-down">targetY + 32</button>
+        <button type="button" data-action="reset-target-y">
+          Reset targetY
+        </button>
+        <button type="button" data-action="animate-target-y">
+          Animate targetY
+        </button>
       </div>
       <div class="button-y-readout"></div>
       <obc-poi-layer-stack
@@ -871,10 +1018,43 @@ export const ButtonYLayerMoveDiagnostic: Story = {
     const resetButton = root.querySelector(
       '[data-action="reset-button-y"]'
     ) as HTMLButtonElement | null;
+    const targetUpButton = root.querySelector(
+      '[data-action="target-up"]'
+    ) as HTMLButtonElement | null;
+    const targetDownButton = root.querySelector(
+      '[data-action="target-down"]'
+    ) as HTMLButtonElement | null;
+    const resetTargetButton = root.querySelector(
+      '[data-action="reset-target-y"]'
+    ) as HTMLButtonElement | null;
+    const animateTargetButton = root.querySelector(
+      '[data-action="animate-target-y"]'
+    ) as HTMLButtonElement | null;
 
     if (!target) {
       return;
     }
+
+    const baseTargetY = Number.isFinite(target.y) ? target.y : 110;
+    let targetAnimationRaf = 0;
+
+    const stopTargetAnimation = () => {
+      if (targetAnimationRaf) {
+        cancelAnimationFrame(targetAnimationRaf);
+        targetAnimationRaf = 0;
+      }
+      if (animateTargetButton) {
+        animateTargetButton.textContent = 'Animate targetY';
+      }
+    };
+
+    const syncDiagnostics = () => {
+      updateTargetYGuides(
+        root,
+        Number.isFinite(target.y) ? target.y : baseTargetY
+      );
+      updateButtonYDiagnosticPanel(root);
+    };
 
     const bind = (
       button: HTMLButtonElement | null,
@@ -887,38 +1067,75 @@ export const ButtonYLayerMoveDiagnostic: Story = {
       target.dispatchEvent(
         new MouseEvent('click', {bubbles: true, composed: true})
       );
-      requestAnimationFrame(() => updateButtonYDiagnosticPanel(root));
+      requestAnimationFrame(() => syncDiagnostics());
     });
     bind(upButton, () => {
       const next = Number.isFinite(target.buttonY ?? NaN)
         ? (target.buttonY as number) - 32
         : 128;
       target.buttonY = next;
-      updateButtonYDiagnosticPanel(root);
+      syncDiagnostics();
     });
     bind(downButton, () => {
       const next = Number.isFinite(target.buttonY ?? NaN)
         ? (target.buttonY as number) + 32
         : 192;
       target.buttonY = next;
-      updateButtonYDiagnosticPanel(root);
+      syncDiagnostics();
     });
     bind(resetButton, () => {
       target.buttonY = 0;
-      updateButtonYDiagnosticPanel(root);
+      syncDiagnostics();
+    });
+    bind(targetUpButton, () => {
+      stopTargetAnimation();
+      target.y = (Number.isFinite(target.y) ? target.y : baseTargetY) - 32;
+      syncDiagnostics();
+    });
+    bind(targetDownButton, () => {
+      stopTargetAnimation();
+      target.y = (Number.isFinite(target.y) ? target.y : baseTargetY) + 32;
+      syncDiagnostics();
+    });
+    bind(resetTargetButton, () => {
+      stopTargetAnimation();
+      target.y = baseTargetY;
+      syncDiagnostics();
+    });
+    bind(animateTargetButton, () => {
+      if (targetAnimationRaf) {
+        stopTargetAnimation();
+        target.y = baseTargetY;
+        syncDiagnostics();
+        return;
+      }
+
+      animateTargetButton.textContent = 'Stop targetY';
+      const tickTarget = (now: number) => {
+        if (!root.isConnected) {
+          stopTargetAnimation();
+          return;
+        }
+        const t = now / 1000;
+        target.y = baseTargetY + 56 * Math.sin(t * 1.5);
+        syncDiagnostics();
+        targetAnimationRaf = requestAnimationFrame(tickTarget);
+      };
+      targetAnimationRaf = requestAnimationFrame(tickTarget);
     });
 
     let rafId = 0;
     const tick = () => {
       if (!root.isConnected) {
         cancelAnimationFrame(rafId);
+        stopTargetAnimation();
         return;
       }
-      updateButtonYDiagnosticPanel(root);
+      syncDiagnostics();
       rafId = requestAnimationFrame(tick);
     };
 
-    updateButtonYDiagnosticPanel(root);
+    syncDiagnostics();
     rafId = requestAnimationFrame(tick);
   },
 };

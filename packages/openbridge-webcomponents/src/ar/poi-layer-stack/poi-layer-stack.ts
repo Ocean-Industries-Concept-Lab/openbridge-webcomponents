@@ -391,10 +391,10 @@ export class ObcPoiLayerStack extends LitElement {
       previousAnimatePosition: boolean;
     }
   ) {
+    await this.syncTargetProjection(target, record.originLayer, null);
     this.setSelectedTargetInteractivity(target, false);
     this.clearTargetGroupingAttributes(target);
     this.clearTargetSelectedId(target);
-    await this.syncTargetProjection(target, record.originLayer, null);
     this.clearTargetButtonProjection(target, record.previousAnimatePosition);
     this.requestPoiRender(target);
     this.schedulePlacement();

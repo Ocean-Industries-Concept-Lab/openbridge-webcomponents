@@ -100,7 +100,12 @@
   z-index: 0;
   opacity: var(--obc-poi-moving-line-opacity, 1);
   transition:
-    transform var(--obc-poi-position-transition-duration, 0.1s) ease-out,
+    transform
+      var(
+        --obc-poi-line-transform-transition-duration,
+        var(--obc-poi-position-transition-duration, 0.1s)
+      )
+      ease-out,
     opacity 0.1s ease-out;
 }
 
