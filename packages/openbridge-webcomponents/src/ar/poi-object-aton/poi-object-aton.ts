@@ -1,10 +1,12 @@
 import {html, unsafeCSS, TemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {styleMap, StyleInfo} from 'lit/directives/style-map.js';
 import {customElement} from '../../decorator.js';
 import {ObcAbstractPoiObject} from '../building-blocks/poi-object/abstract-poi-object.js';
 import {
   ObcPoiObjectType,
+  ObcPoiObjectStyle,
   ObcPoiObjectState,
 } from '../building-blocks/poi-object/poi-object.js';
 import componentStyle from './poi-object-aton.css?inline';
@@ -27,13 +29,36 @@ export enum ObcPoiObjectAtonStyle {
 
 export {ObcPoiObjectState as ObcPoiObjectAtonState};
 
+type AtonColorTokens = {
+  primary: string;
+  secondary: string;
+  onPrimary: string;
+};
+
+const ATON_COLORS: Record<string, AtonColorTokens> = {
+  green: {
+    primary: 'var(--overlay-navigation-green-primary-color)',
+    secondary: 'var(--overlay-navigation-green-secondary-color)',
+    onPrimary: 'var(--overlay-navigation-green-on-primary-color, #005f43)',
+  },
+  red: {
+    primary: 'var(--overlay-navigation-red-primary-color)',
+    secondary: 'var(--overlay-navigation-red-secondary-color)',
+    onPrimary: 'var(--overlay-navigation-red-on-primary-color, #863d3c)',
+  },
+  yellow: {
+    primary: 'var(--overlay-navigation-yellow-primary-color)',
+    secondary: 'var(--overlay-navigation-yellow-secondary-color)',
+    onPrimary: 'var(--overlay-navigation-yellow-on-primary-color, #635200)',
+  },
+};
+
 @customElement('obc-poi-object-aton')
 export class ObcPoiObjectAton extends ObcAbstractPoiObject {
   @property({type: String}) type: ObcPoiObjectAtonType =
     ObcPoiObjectAtonType.Regular;
 
   @property({type: String})
-  // @ts-expect-error — widening type to include AtoN-specific styles
   override objectStyle: ObcPoiObjectAtonStyle = ObcPoiObjectAtonStyle.Regular;
 
   private get isAtonType(): boolean {
@@ -46,6 +71,44 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
 
   private get isInteractive(): boolean {
     return this.interactive && !this.isOverlapped;
+  }
+
+  private get isIndicator(): boolean {
+    return this.type === ObcPoiObjectAtonType.Indicator;
+  }
+
+  private get isStatic(): boolean {
+    return (
+      this.state === ObcPoiObjectState.StaticUnchecked ||
+      this.state === ObcPoiObjectState.StaticChecked
+    );
+  }
+
+  override get colorStyleVars(): StyleInfo {
+    const tokens = ATON_COLORS[this.objectStyle];
+    if (!tokens) return {};
+
+    const isIndicatorNonStatic = this.isIndicator && !this.isStatic;
+
+    return {
+      '--overlay-container-background-color': tokens.primary,
+      '--overlay-border-outline-color': tokens.secondary,
+      '--normal-enabled-background-color': tokens.primary,
+      '--normal-enabled-border-color': tokens.secondary,
+      '--flat-enabled-background-color': tokens.primary,
+      '--flat-enabled-border-color': tokens.secondary,
+      '--flat-hover-background-color': `color-mix(in srgb, ${tokens.primary} 85%, white)`,
+      '--flat-pressed-background-color': `color-mix(in srgb, ${tokens.primary} 75%, white)`,
+      '--element-neutral-color': isIndicatorNonStatic
+        ? tokens.primary
+        : tokens.onPrimary,
+      '--element-active-color': isIndicatorNonStatic
+        ? tokens.primary
+        : tokens.onPrimary,
+      '--indicator-stroke-color': isIndicatorNonStatic
+        ? tokens.onPrimary
+        : tokens.primary,
+    };
   }
 
   override get baseType(): ObcPoiObjectType {
@@ -95,8 +158,9 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
       <div class=${classMap(wrapperClasses)}>
         <obc-poi-object
           exportparts="background-frame"
+          style=${styleMap(this.colorStyleVars)}
           .type=${this.baseType}
-          .objectStyle=${this.objectStyle}
+          .objectStyle=${ObcPoiObjectStyle.Regular}
           .state=${this.state}
           ?interactive=${this.interactive}
         >
