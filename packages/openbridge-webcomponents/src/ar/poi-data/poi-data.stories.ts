@@ -24,7 +24,7 @@ const compactDocsHeightDecorator = (story: () => unknown) => html`
   ${story()}
 `;
 const meta: Meta<ObcPoiData> = {
-  title: 'AR/POI Data',
+  title: 'AR/POI Button/POI Data',
   tags: ['autodocs'],
   component: 'obc-poi-data',
   args: {
@@ -34,21 +34,13 @@ const meta: Meta<ObcPoiData> = {
     y: 192,
     buttonY: 192,
     outsideAngle: 315,
-    value: PoiDataValue.Unchecked,
     hasPointer: true,
     hasHeader: false,
     pointerType: undefined,
     pointerState: undefined,
     relativeDirection: 0,
-    buttonOffsetX: 0,
     targetOffsetX: 0,
-    selected: false,
-    boxWidth: null,
-    boxHeight: null,
-    animatePosition: false,
-    overlapOpaque: false,
     data: [],
-    fixedTarget: false,
   },
   decorators: [crossDecorator, compactDocsHeightDecorator],
   argTypes: {
@@ -63,21 +55,12 @@ const meta: Meta<ObcPoiData> = {
     x: {control: {type: 'range', min: 0, max: 640, step: 1}},
     y: {control: {type: 'range', min: 32, max: 400, step: 1}},
     buttonY: {control: {type: 'range', min: 0, max: 480, step: 1}},
-    fixedTarget: {control: {type: 'boolean'}},
     outsideAngle: {
       control: {type: 'range', min: 0, max: 360, step: 1},
       if: {arg: 'type', eq: ObcPoiType.Outside},
     },
     hasPointer: {control: {type: 'boolean'}},
     hasHeader: {control: {type: 'boolean'}},
-    value: {
-      options: Object.values(PoiDataValue),
-      control: {type: 'select'},
-    },
-    buttonType: {
-      options: ['button', 'enhanced'],
-      control: {type: 'select'},
-    },
     pointerType: {
       options: [undefined, ...Object.values(ObcPoiPointerType)],
       control: {type: 'select'},
@@ -89,50 +72,25 @@ const meta: Meta<ObcPoiData> = {
     relativeDirection: {
       control: {type: 'range', min: 0, max: 360},
     },
-    buttonOffsetX: {
-      control: {type: 'range', min: -100, max: 100, step: 1},
-    },
     targetOffsetX: {
       control: {type: 'range', min: -100, max: 100, step: 1},
     },
-    selected: {control: {type: 'boolean'}},
-    boxWidth: {control: {type: 'number', min: 0, step: 1}},
-    boxHeight: {control: {type: 'number', min: 0, step: 1}},
-    animatePosition: {control: {type: 'boolean'}},
-    overlapOpaque: {control: {type: 'boolean'}},
     data: {
       control: 'object',
       description:
         'Array of value objects with value, label, and unit (also accepts JSON via values attribute)',
     },
-  },
-  parameters: {
-    controls: {
-      include: [
-        'type',
-        'state',
-        'x',
-        'y',
-        'buttonY',
-        'fixedTarget',
-        'outsideAngle',
-        'hasPointer',
-        'hasHeader',
-        'value',
-        'buttonType',
-        'pointerType',
-        'pointerState',
-        'relativeDirection',
-        'buttonOffsetX',
-        'targetOffsetX',
-        'selected',
-        'boxWidth',
-        'boxHeight',
-        'animatePosition',
-        'overlapOpaque',
-        'data',
-      ],
-    },
+    value: {table: {disable: true}},
+    selected: {table: {disable: true}},
+    buttonOffsetX: {table: {disable: true}},
+    overlapOpaque: {table: {disable: true}},
+    animatePosition: {table: {disable: true}},
+    fixedTarget: {table: {disable: true}},
+    buttonType: {table: {disable: true}},
+    boxWidth: {table: {disable: true}},
+    boxHeight: {table: {disable: true}},
+    headerContent: {table: {disable: true}},
+    lineCompensationY: {table: {disable: true}},
   },
   render: (args) => {
     return html`
@@ -157,20 +115,11 @@ const meta: Meta<ObcPoiData> = {
         .outsideAngle=${args.outsideAngle}
         .hasPointer=${args.hasPointer}
         .hasHeader=${args.hasHeader}
-        .value=${args.value}
-        .buttonType=${args.buttonType}
         .pointerType=${args.pointerType}
         .pointerState=${args.pointerState}
         .relativeDirection=${args.relativeDirection}
-        .buttonOffsetX=${args.buttonOffsetX}
         .targetOffsetX=${args.targetOffsetX}
-        .selected=${args.selected}
-        .boxWidth=${args.boxWidth}
-        .boxHeight=${args.boxHeight}
-        .animatePosition=${args.animatePosition}
-        .overlapOpaque=${args.overlapOpaque}
         .data=${args.data}
-        .fixedTarget=${args.fixedTarget}
       >
         ${args.hasHeader
           ? html`<obc-poi-header
@@ -219,20 +168,11 @@ export const Preview: Story = {
           .outsideAngle=${args.outsideAngle}
           .hasPointer=${args.hasPointer}
           .hasHeader=${args.hasHeader}
-          .value=${args.value}
-          .buttonType=${args.buttonType}
           .pointerType=${args.pointerType}
           .pointerState=${args.pointerState}
           .relativeDirection=${args.relativeDirection}
-          .buttonOffsetX=${args.buttonOffsetX}
           .targetOffsetX=${args.targetOffsetX}
-          .selected=${args.selected}
-          .boxWidth=${args.boxWidth}
-          .boxHeight=${args.boxHeight}
-          .animatePosition=${args.animatePosition}
-          .overlapOpaque=${args.overlapOpaque}
           .data=${args.data}
-          .fixedTarget=${args.fixedTarget}
         >
           ${args.hasHeader
             ? html`<obc-poi-header

@@ -36,7 +36,7 @@ import {
 } from '../building-blocks/poi-header/poi-header.js';
 
 const meta: Meta<ObcPoiButtonVessel> = {
-  title: 'AR/POI Button Vessel',
+  title: 'AR/POI Button/POI Button Vessel',
   tags: ['autodocs'],
   component: 'obc-poi-button-vessel',
   decorators: [crossDecorator],

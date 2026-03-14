@@ -35,7 +35,7 @@ import {
 } from '../building-blocks/poi-header/poi-header.js';
 
 const meta: Meta<ObcPoiButtonAton> = {
-  title: 'AR/POI Button AtoN',
+  title: 'AR/POI Button/POI Button AtoN',
   tags: ['autodocs'],
   component: 'obc-poi-button-aton',
   decorators: [crossDecorator],

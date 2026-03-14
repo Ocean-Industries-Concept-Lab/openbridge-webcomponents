@@ -9,7 +9,7 @@ import {
 import '../../icons/icon-vessel-generic-default-filled.js';
 
 const meta: Meta = {
-  title: 'AR/POI Object Data',
+  title: 'AR/POI Button/POI Object Data',
   component: 'obc-poi-object-data',
   tags: ['autodocs'],
   argTypes: {

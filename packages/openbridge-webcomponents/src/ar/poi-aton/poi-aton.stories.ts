@@ -32,7 +32,7 @@ const compactDocsHeightDecorator = (story: () => unknown) => html`
 `;
 
 const meta: Meta<ObcPoiAton> = {
-  title: 'AR/POI AtoN',
+  title: 'AR/POI Button/POI AtoN',
   tags: ['autodocs'],
   component: 'obc-poi-aton',
   args: {
@@ -42,21 +42,13 @@ const meta: Meta<ObcPoiAton> = {
     y: 192,
     buttonY: 192,
     outsideAngle: 315,
-    value: PoiVariantValue.Unchecked,
     hasPointer: true,
     hasHeader: false,
     pointerType: undefined,
     pointerState: undefined,
     relativeDirection: 0,
-    buttonOffsetX: 0,
     targetOffsetX: 0,
-    selected: false,
-    boxWidth: null,
-    boxHeight: null,
-    animatePosition: false,
-    overlapOpaque: false,
     data: [],
-    fixedTarget: false,
     atonType: ObcPoiObjectAtonType.AtoN,
     atonStyle: ObcPoiObjectAtonStyle.Regular,
     atonState: null,
@@ -75,21 +67,12 @@ const meta: Meta<ObcPoiAton> = {
     x: {control: {type: 'range', min: 0, max: 640, step: 1}},
     y: {control: {type: 'range', min: 32, max: 400, step: 1}},
     buttonY: {control: {type: 'range', min: 0, max: 480, step: 1}},
-    fixedTarget: {control: {type: 'boolean'}},
     outsideAngle: {
       control: {type: 'range', min: 0, max: 360, step: 1},
       if: {arg: 'type', eq: ObcPoiType.Outside},
     },
     hasPointer: {control: {type: 'boolean'}},
     hasHeader: {control: {type: 'boolean'}},
-    value: {
-      options: Object.values(PoiVariantValue),
-      control: {type: 'select'},
-    },
-    buttonType: {
-      options: ['button', 'enhanced'],
-      control: {type: 'select'},
-    },
     pointerType: {
       options: [undefined, ...Object.values(ObcPoiPointerType)],
       control: {type: 'select'},
@@ -101,17 +84,9 @@ const meta: Meta<ObcPoiAton> = {
     relativeDirection: {
       control: {type: 'range', min: 0, max: 360},
     },
-    buttonOffsetX: {
-      control: {type: 'range', min: -100, max: 100, step: 1},
-    },
     targetOffsetX: {
       control: {type: 'range', min: -100, max: 100, step: 1},
     },
-    selected: {control: {type: 'boolean'}},
-    boxWidth: {control: {type: 'number', min: 0, step: 1}},
-    boxHeight: {control: {type: 'number', min: 0, step: 1}},
-    animatePosition: {control: {type: 'boolean'}},
-    overlapOpaque: {control: {type: 'boolean'}},
     data: {control: 'object'},
     atonType: {
       options: Object.values(ObcPoiObjectAtonType),
@@ -126,6 +101,17 @@ const meta: Meta<ObcPoiAton> = {
       control: {type: 'select'},
     },
     atonInteractive: {control: {type: 'boolean'}},
+    value: {table: {disable: true}},
+    selected: {table: {disable: true}},
+    buttonOffsetX: {table: {disable: true}},
+    overlapOpaque: {table: {disable: true}},
+    animatePosition: {table: {disable: true}},
+    fixedTarget: {table: {disable: true}},
+    buttonType: {table: {disable: true}},
+    boxWidth: {table: {disable: true}},
+    boxHeight: {table: {disable: true}},
+    headerContent: {table: {disable: true}},
+    lineCompensationY: {table: {disable: true}},
   },
   render: (args) => {
     return html`
@@ -150,20 +136,11 @@ const meta: Meta<ObcPoiAton> = {
         .outsideAngle=${args.outsideAngle}
         .hasPointer=${args.hasPointer}
         .hasHeader=${args.hasHeader}
-        .value=${args.value}
-        .buttonType=${args.buttonType}
         .pointerType=${args.pointerType}
         .pointerState=${args.pointerState}
         .relativeDirection=${args.relativeDirection}
-        .buttonOffsetX=${args.buttonOffsetX}
         .targetOffsetX=${args.targetOffsetX}
-        .selected=${args.selected}
-        .boxWidth=${args.boxWidth}
-        .boxHeight=${args.boxHeight}
-        .animatePosition=${args.animatePosition}
-        .overlapOpaque=${args.overlapOpaque}
         .data=${args.data}
-        .fixedTarget=${args.fixedTarget}
         .atonType=${args.atonType}
         .atonStyle=${args.atonStyle}
         .atonState=${args.atonState}
@@ -217,20 +194,11 @@ export const Preview: Story = {
           .outsideAngle=${args.outsideAngle}
           .hasPointer=${args.hasPointer}
           .hasHeader=${args.hasHeader}
-          .value=${args.value}
-          .buttonType=${args.buttonType}
           .pointerType=${args.pointerType}
           .pointerState=${args.pointerState}
           .relativeDirection=${args.relativeDirection}
-          .buttonOffsetX=${args.buttonOffsetX}
           .targetOffsetX=${args.targetOffsetX}
-          .selected=${args.selected}
-          .boxWidth=${args.boxWidth}
-          .boxHeight=${args.boxHeight}
-          .animatePosition=${args.animatePosition}
-          .overlapOpaque=${args.overlapOpaque}
           .data=${args.data}
-          .fixedTarget=${args.fixedTarget}
           .atonType=${args.atonType}
           .atonStyle=${args.atonStyle}
           .atonState=${args.atonState}

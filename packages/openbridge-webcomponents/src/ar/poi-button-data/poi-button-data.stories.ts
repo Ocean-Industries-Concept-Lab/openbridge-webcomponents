@@ -31,7 +31,7 @@ import {
 } from '../building-blocks/poi-button/poi-button-story-utils.js';
 
 const meta: Meta<ObcPoiButtonData> = {
-  title: 'AR/POI Button Data',
+  title: 'AR/POI Button/POI Button Data',
   tags: ['autodocs'],
   component: 'obc-poi-button-data',
   decorators: [crossDecorator],
