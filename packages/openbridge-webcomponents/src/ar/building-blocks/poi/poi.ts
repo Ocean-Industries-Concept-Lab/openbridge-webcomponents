@@ -399,6 +399,13 @@ export class ObcPoi extends LitElement {
     return Number.isFinite(parsed) ? parsed : 0;
   }
 
+  private get shouldUseProjectedLine(): boolean {
+    const raw = getComputedStyle(this).getPropertyValue(
+      '--obc-poi-stack-projection-active'
+    );
+    return raw.trim() === '1';
+  }
+
   private get lineOffset(): number {
     if (this.type === ObcPoiType.Point || this.type === ObcPoiType.Outside) {
       return 0;
@@ -496,7 +503,7 @@ export class ObcPoi extends LitElement {
             )
           );
 
-    if (this.lineGeometry) {
+    if (this.lineGeometry && !this.shouldUseProjectedLine) {
       const style = getPOILineConfig(this.lineStyle, POILineType.Regular);
 
       return html`
@@ -912,6 +919,7 @@ export class ObcPoi extends LitElement {
   }
 
   public refreshProjectionLayout(trackDurationMs = 0) {
+    this.requestUpdate();
     this.syncLineGeometryObservers();
     this.scheduleLineGeometrySync();
     if (trackDurationMs > 0) {

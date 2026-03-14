@@ -319,6 +319,7 @@ export class ObcPoiLayerStack extends LitElement {
 
   private applySelectedTargetProjectionState(target: Poi) {
     target.animatePosition = true;
+    target.style.setProperty('--obc-poi-stack-projection-active', '1');
     target.style.setProperty(
       '--obc-poi-forced-button-transition-duration',
       `${ObcPoiLayerStack.STACK_JUMP_DURATION_MS}ms`
@@ -334,6 +335,7 @@ export class ObcPoiLayerStack extends LitElement {
     if (previousAnimatePosition !== undefined) {
       target.animatePosition = previousAnimatePosition;
     }
+    target.style.removeProperty('--obc-poi-stack-projection-active');
     target.style.removeProperty('--obc-poi-button-projection-y');
     target.style.removeProperty('--obc-poi-forced-button-transition-duration');
     target.style.removeProperty('--obc-poi-layer-inactive-opacity');
