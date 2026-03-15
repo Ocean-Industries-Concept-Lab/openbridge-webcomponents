@@ -553,6 +553,18 @@ export class ObcPoi extends LitElement {
     const btn = this.slottedButton;
     if (!btn) return;
 
+    const exportParts = btn
+      .getAttribute('exportparts')
+      ?.split(',')
+      .map((part) => part.trim())
+      .filter(Boolean);
+    if (!exportParts?.includes('icon')) {
+      btn.setAttribute(
+        'exportparts',
+        exportParts?.length ? `${exportParts.join(',')},icon` : 'icon'
+      );
+    }
+
     const props = btn as unknown as Record<string, unknown>;
     props.layout = 'inline';
     props.relativeDirection = this.relativeDirection;
@@ -571,7 +583,11 @@ export class ObcPoi extends LitElement {
       <slot name="button" @slotchange=${this.handleButtonSlotChange}>
         <obc-poi-button
           layout="inline"
-          class="poi-button"
+          class=${classMap({
+            'poi-button': true,
+            overlapped: this.value === ObcPoiValue.Overlapped,
+          })}
+          exportparts="icon"
           .relativeDirection=${this.relativeDirection}
           .selected=${this.selected}
           .hasHeader=${this.hasHeader}

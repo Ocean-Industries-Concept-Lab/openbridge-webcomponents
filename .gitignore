@@ -11,6 +11,9 @@ packages/vue-demo/public/ar-video.mov
 packages/vue-demo-electron/dist/
 **/.DS_Store
 .DS_Store
+.idea/
+**/.idea/
+CLAUDE.md
 packages/openbridge-webcomponents/custom-elements.json
 packages/openbridge-webcomponents-vue
 !packages/openbridge-webcomponents-vue/readme.md
@@ -25,6 +28,3 @@ packages/openbridge-webcomponents-svelte
 **/.claude/
 **/settings.local.json
 packages/openbridge-webcomponents/__vis__/darwin/
-.idea/
-**/.idea/
-CLAUDE.md

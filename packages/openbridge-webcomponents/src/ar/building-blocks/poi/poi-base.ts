@@ -552,6 +552,7 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
   override render() {
     return html`
       <obc-poi
+        exportparts="icon"
         .type=${this.resolvedPoiType}
         .value=${this.value}
         .state=${this.resolvedPoiState}

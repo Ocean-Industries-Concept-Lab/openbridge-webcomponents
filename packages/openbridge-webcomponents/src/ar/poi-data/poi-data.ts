@@ -43,6 +43,7 @@ export class ObcPoiData extends ObcPoiBase {
     return html`
       <obc-poi-button-data
         slot="button"
+        exportparts="icon"
         .relativeDirection=${this.relativeDirection}
         .selected=${this.selected}
         .hasHeader=${this.hasHeader}
