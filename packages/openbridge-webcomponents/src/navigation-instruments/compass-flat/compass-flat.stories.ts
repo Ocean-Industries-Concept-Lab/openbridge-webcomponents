@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcCompassFlat} from './compass-flat.js';
 import './compass-flat.js';
 import {widthDecorator} from '../../storybook-util.js';
+import {Priority} from '../types.js';
 
 const meta: Meta<typeof ObcCompassFlat> = {
   title: 'Instruments/Compass Flat',
@@ -14,12 +15,14 @@ const meta: Meta<typeof ObcCompassFlat> = {
     courseOverGround: 50,
     FOVIndicator: false,
     minFOV: 90,
+    priority: Priority.enhanced,
   },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
     height: {control: {type: 'range', min: 32, max: 1028, step: 1}},
     heading: {control: {type: 'range', min: 0, max: 360, step: 1}},
     courseOverGround: {control: {type: 'range', min: 0, max: 360, step: 1}},
+    priority: {control: 'select', options: Object.values(Priority)},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcCompassFlat>;
