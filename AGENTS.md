@@ -83,13 +83,8 @@ When refactoring an existing negative boolean, also rename it in the interface, 
 
 ### Storybook title conventions
 
-All story titles use **Title Case** with `/`-separated segments:
-
-- Capitalize every word: `Alert List Item`, `Speed Gauge`, `Automation Button`.
-- Keep short conjunctions and prepositions lowercase: _and, of, or, in, on, at, to, for_.
-  Example: `Message and Alerts`, `Selection Controls and Switches`.
-- Use spaces, not dashes: `Automation Configurations` not `Automation-configurations`.
-- Apply the same rules to every segment: `title: 'UI Components/Input Controls/Slider Double'`.
+Story `title` and `name` fields must use **Title Case** — enforced by ESLint rule `openbridge/storybook-title-case` (auto-fixable).
+See [IMPLEMENTATION_GUIDELINES.md § Storybook stories](IMPLEMENTATION_GUIDELINES.md#-storybook-stories) for the full convention.
 
 ---
 

@@ -8,7 +8,7 @@ import '../automation-badge/automation-badge.js';
 import {argTypesAbstractAutomationButtonPassiveSquare} from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 const meta: Meta<typeof ObcGround> = {
-  title: 'Automation/Automation devices/Ground',
+  title: 'Automation/Automation Devices/Ground',
   tags: ['autodocs'],
   component: 'obc-ground',
   decorators: [crossDecorator],

@@ -129,7 +129,7 @@ export default meta;
 type Story = StoryObj<ObcProgressBar>;
 
 export const LinearDeterminateWithDescriptionAndState: Story = {
-  name: 'Linear - Determinate with Description and State',
+  name: 'Linear - Determinate With Description and State',
   args: {
     type: ProgressBarType.linear,
     mode: ProgressBarMode.determinate,
@@ -155,7 +155,7 @@ export const LinearDeterminateComplete: Story = {
 };
 
 export const LinearDeterminateWithValue: Story = {
-  name: 'Linear - Determinate with Value',
+  name: 'Linear - Determinate With Value',
   args: {
     type: ProgressBarType.linear,
     mode: ProgressBarMode.determinate,
@@ -183,7 +183,7 @@ export const LinearIndeterminateSimple: Story = {
 };
 
 export const LinearIndeterminateWithLoading: Story = {
-  name: 'Linear - Indeterminate with Loading',
+  name: 'Linear - Indeterminate With Loading',
   args: {
     type: ProgressBarType.linear,
     mode: ProgressBarMode.indeterminate,
@@ -206,7 +206,7 @@ export const CircularDeterminate: Story = {
 };
 
 export const CircularDeterminateWithoutUnit: Story = {
-  name: 'Circular - Determinate without Unit',
+  name: 'Circular - Determinate Without Unit',
   args: {
     type: ProgressBarType.circular,
     circularState: CircularProgressState.determinate,
