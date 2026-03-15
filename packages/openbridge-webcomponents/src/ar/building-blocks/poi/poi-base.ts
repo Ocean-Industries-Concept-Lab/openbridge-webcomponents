@@ -47,7 +47,7 @@ const VALID_POI_STATES = new Set(Object.values(ObcPoiState));
  * layout-change dispatch, and visual-query logic so that each variant
  * only needs to override `renderContent()` and `getVisualNodes()`.
  */
-export abstract class ObcPoiBase extends LitElement implements Poi {
+export class ObcPoiBase extends LitElement implements Poi {
   private headerObserver?: MutationObserver;
 
   override connectedCallback() {
@@ -340,12 +340,14 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
    * Override in each variant to query the correct inner component tag names.
    * Returns the poi wrapper element and poi-button element from the shadow DOM.
    */
-  protected abstract getVisualNodes(): {
+  protected getVisualNodes(): {
     poi: HTMLElement | null;
     button: HTMLElement | null;
     wrapper: HTMLElement | null;
     buttonWrapper: HTMLElement | null;
-  };
+  } {
+    return this.queryVisualNodes('obc-poi', 'obc-poi-button');
+  }
 
   /**
    * Helper for common `getVisualNodes()` pattern: query poi tag in own shadow,
@@ -481,7 +483,25 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
    * placed inside `<obc-poi>`. The base class provides the outer
    * `<obc-poi>` wrapper with all shared property bindings.
    */
-  protected abstract renderButtonSlot(): TemplateResult;
+  protected renderButtonSlot(): TemplateResult {
+    return html`
+      <obc-poi-button
+        slot="button"
+        exportparts="icon"
+        .relativeDirection=${this.relativeDirection}
+        .selected=${this.selected}
+        .hasHeader=${this.hasHeader}
+        .headerContent=${this.headerContent}
+        .state=${this.resolvedPoiState}
+        .value=${this.value}
+        .overlapOpaque=${this.overlapOpaque}
+        .type=${this.buttonType}
+        .data=${this.data}
+      >
+        <slot></slot>
+      </obc-poi-button>
+    `;
+  }
 
   protected get resolvedHeaderState(): ObcPoiHeaderState {
     switch (this.resolvedPoiState) {
