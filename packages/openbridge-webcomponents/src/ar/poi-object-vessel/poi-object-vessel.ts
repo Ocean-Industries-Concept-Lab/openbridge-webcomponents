@@ -2,11 +2,7 @@ import {html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {ObcAbstractPoiObject} from '../building-blocks/poi-object/abstract-poi-object.js';
-import {
-  ObcPoiObjectType,
-  ObcPoiObjectStyle,
-  ObcPoiObjectState,
-} from '../building-blocks/poi-object/poi-object.js';
+import {ObcPoiObjectType} from '../building-blocks/poi-object/poi-object.js';
 import componentStyle from './poi-object-vessel.css?inline';
 
 /**
@@ -27,8 +23,23 @@ export enum ObcPoiObjectVesselType {
   NUpLarge = 'n-up-large',
 }
 
-export {ObcPoiObjectStyle as ObcPoiObjectVesselStyle};
-export {ObcPoiObjectState as ObcPoiObjectVesselState};
+export enum ObcPoiObjectVesselStyle {
+  Regular = 'regular',
+  Categorical = 'categorical',
+  Enhanced = 'enhanced',
+}
+
+export enum ObcPoiObjectVesselState {
+  Unchecked = 'unchecked',
+  Checked = 'checked',
+  StaticUnchecked = 'static-unchecked',
+  StaticChecked = 'static-checked',
+  Activated = 'activated',
+  Overlapped = 'overlapped',
+  Caution = 'caution',
+  Warning = 'warning',
+  Alarm = 'alarm',
+}
 
 /**
  * `<obc-poi-object-vessel>` - Specialized `obc-poi-object` wrapper for vessel-style icon markers.

@@ -68,7 +68,7 @@ export class ObcPoiButtonVessel extends ObcPoiButton {
         .type=${this.resolvedVesselType}
         .objectStyle=${this.vesselStyle}
         .state=${this.vesselState ??
-        (this.poiObjectState as ObcPoiObjectVesselState)}
+        (this.poiObjectState as unknown as ObcPoiObjectVesselState)}
         ?interactive=${this.vesselInteractive}
       >
         <span

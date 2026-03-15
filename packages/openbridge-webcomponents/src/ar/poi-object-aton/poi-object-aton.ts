@@ -27,7 +27,17 @@ export enum ObcPoiObjectAtonStyle {
   Yellow = 'yellow',
 }
 
-export {ObcPoiObjectState as ObcPoiObjectAtonState};
+export enum ObcPoiObjectAtonState {
+  Unchecked = 'unchecked',
+  Checked = 'checked',
+  StaticUnchecked = 'static-unchecked',
+  StaticChecked = 'static-checked',
+  Activated = 'activated',
+  Overlapped = 'overlapped',
+  Caution = 'caution',
+  Warning = 'warning',
+  Alarm = 'alarm',
+}
 
 type AtonColorTokens = {
   primary: string;

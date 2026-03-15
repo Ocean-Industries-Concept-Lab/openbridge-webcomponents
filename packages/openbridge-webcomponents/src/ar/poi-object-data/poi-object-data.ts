@@ -1,15 +1,27 @@
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {ObcAbstractPoiObject} from '../building-blocks/poi-object/abstract-poi-object.js';
-import {
-  ObcPoiObjectType,
-  ObcPoiObjectStyle,
-  ObcPoiObjectState,
-} from '../building-blocks/poi-object/poi-object.js';
+import {ObcPoiObjectType} from '../building-blocks/poi-object/poi-object.js';
 
 export {ObcPoiObjectType as ObcPoiObjectDataType};
-export {ObcPoiObjectStyle as ObcPoiObjectDataStyle};
-export {ObcPoiObjectState as ObcPoiObjectDataState};
+
+export enum ObcPoiObjectDataStyle {
+  Regular = 'regular',
+  Categorical = 'categorical',
+  Enhanced = 'enhanced',
+}
+
+export enum ObcPoiObjectDataState {
+  Unchecked = 'unchecked',
+  Checked = 'checked',
+  StaticUnchecked = 'static-unchecked',
+  StaticChecked = 'static-checked',
+  Activated = 'activated',
+  Overlapped = 'overlapped',
+  Caution = 'caution',
+  Warning = 'warning',
+  Alarm = 'alarm',
+}
 
 /**
  * `<obc-poi-object-data>` - Data variant of the POI object marker.
