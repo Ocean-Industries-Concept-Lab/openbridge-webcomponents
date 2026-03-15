@@ -27,6 +27,79 @@ const compactDocsHeightDecorator = (story: () => unknown) => html`
   ${story()}
 `;
 
+const defaultFrameWidth = 888;
+const defaultFrameHeight = 420;
+const previewFrameWidth = 640;
+const previewFrameHeight = 420;
+
+const renderFrame = (
+  content: unknown,
+  width: number,
+  height: number,
+  selector: string
+) => html`
+  <style>
+    .frame {
+      position: relative;
+      width: ${width}px;
+      height: ${height}px;
+      transform: translate(-50%, -50%);
+    }
+
+    .frame ${selector} {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  </style>
+  <div class="frame">${content}</div>
+`;
+
+const renderPoiVessel = (args: ObcPoiVessel) => html`
+  <obc-poi-vessel
+    .type=${args.type}
+    .state=${args.state}
+    .x=${args.x}
+    .y=${args.y}
+    .buttonY=${args.buttonY}
+    .outsideAngle=${args.outsideAngle}
+    .hasPointer=${args.hasPointer}
+    .hasHeader=${args.hasHeader}
+    .value=${args.value}
+    .buttonType=${args.buttonType}
+    .pointerType=${args.pointerType}
+    .pointerState=${args.pointerState}
+    .relativeDirection=${args.relativeDirection}
+    .buttonOffsetX=${args.buttonOffsetX}
+    .targetOffsetX=${args.targetOffsetX}
+    .selected=${args.selected}
+    .boxWidth=${args.boxWidth}
+    .boxHeight=${args.boxHeight}
+    .animatePosition=${args.animatePosition}
+    .overlapOpaque=${args.overlapOpaque}
+    .data=${args.data}
+    .fixedTarget=${args.fixedTarget}
+    .vesselType=${args.vesselType}
+    .vesselStyle=${args.vesselStyle}
+    .vesselState=${args.vesselState}
+    .vesselInteractive=${args.vesselInteractive}
+  >
+    ${args.hasHeader
+      ? html`<obc-poi-header
+          slot="header"
+          content="V1"
+          type="id"
+          state="selected"
+          size="regular"
+          has-indicator
+        ></obc-poi-header>`
+      : html``}
+    <span style="transform: rotate(${args.relativeDirection}deg);">
+      <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
+    </span>
+  </obc-poi-vessel>
+`;
+
 const meta: Meta<ObcPoiVessel> = {
   title: 'AR/POI Vessel',
   tags: ['autodocs'],
@@ -124,62 +197,12 @@ const meta: Meta<ObcPoiVessel> = {
     vesselInteractive: {control: {type: 'boolean'}},
   },
   render: (args) => {
-    return html`
-      <style>
-        .frame {
-          position: relative;
-          width: 888px;
-          height: 2000px;
-          transform: translate(-50%, -50%);
-        }
-
-        .frame obc-poi-vessel {
-          position: absolute;
-        }
-      </style>
-      <obc-poi-vessel
-        .type=${args.type}
-        .state=${args.state}
-        .x=${args.x}
-        .y=${args.y}
-        .buttonY=${args.buttonY}
-        .outsideAngle=${args.outsideAngle}
-        .hasPointer=${args.hasPointer}
-        .hasHeader=${args.hasHeader}
-        .value=${args.value}
-        .buttonType=${args.buttonType}
-        .pointerType=${args.pointerType}
-        .pointerState=${args.pointerState}
-        .relativeDirection=${args.relativeDirection}
-        .buttonOffsetX=${args.buttonOffsetX}
-        .targetOffsetX=${args.targetOffsetX}
-        .selected=${args.selected}
-        .boxWidth=${args.boxWidth}
-        .boxHeight=${args.boxHeight}
-        .animatePosition=${args.animatePosition}
-        .overlapOpaque=${args.overlapOpaque}
-        .data=${args.data}
-        .fixedTarget=${args.fixedTarget}
-        .vesselType=${args.vesselType}
-        .vesselStyle=${args.vesselStyle}
-        .vesselState=${args.vesselState}
-        .vesselInteractive=${args.vesselInteractive}
-      >
-        ${args.hasHeader
-          ? html`<obc-poi-header
-              slot="header"
-              content="V1"
-              type="id"
-              state="selected"
-              size="regular"
-              has-indicator
-            ></obc-poi-header>`
-          : html``}
-        <span style="transform: rotate(${args.relativeDirection}deg);">
-          <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
-        </span>
-      </obc-poi-vessel>
-    `;
+    return renderFrame(
+      renderPoiVessel(args),
+      defaultFrameWidth,
+      defaultFrameHeight,
+      'obc-poi-vessel'
+    );
   },
 } satisfies Meta<ObcPoiVessel>;
 
@@ -189,67 +212,17 @@ type Story = StoryObj<ObcPoiVessel>;
 export const Preview: Story = {
   args: {
     type: ObcPoiType.Line,
-    x: 444,
+    x: previewFrameWidth / 2,
+    y: 300,
+    buttonY: 180,
   },
   render: (args) => {
-    return html`
-      <style>
-        .frame {
-          position: relative;
-          width: 640px;
-          height: 420px;
-          transform: translate(-50%, -50%);
-        }
-
-        .frame obc-poi-vessel {
-          position: absolute;
-        }
-      </style>
-      <div class="frame">
-        <obc-poi-vessel
-          .type=${args.type}
-          .state=${args.state}
-          .x=${args.x}
-          .y=${args.y}
-          .buttonY=${args.buttonY}
-          .outsideAngle=${args.outsideAngle}
-          .hasPointer=${args.hasPointer}
-          .hasHeader=${args.hasHeader}
-          .value=${args.value}
-          .buttonType=${args.buttonType}
-          .pointerType=${args.pointerType}
-          .pointerState=${args.pointerState}
-          .relativeDirection=${args.relativeDirection}
-          .buttonOffsetX=${args.buttonOffsetX}
-          .targetOffsetX=${args.targetOffsetX}
-          .selected=${args.selected}
-          .boxWidth=${args.boxWidth}
-          .boxHeight=${args.boxHeight}
-          .animatePosition=${args.animatePosition}
-          .overlapOpaque=${args.overlapOpaque}
-          .data=${args.data}
-          .fixedTarget=${args.fixedTarget}
-          .vesselType=${args.vesselType}
-          .vesselStyle=${args.vesselStyle}
-          .vesselState=${args.vesselState}
-          .vesselInteractive=${args.vesselInteractive}
-        >
-          ${args.hasHeader
-            ? html`<obc-poi-header
-                slot="header"
-                content="V1"
-                type="id"
-                state="selected"
-                size="regular"
-                has-indicator
-              ></obc-poi-header>`
-            : html``}
-          <span style="transform: rotate(${args.relativeDirection}deg);">
-            <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
-          </span>
-        </obc-poi-vessel>
-      </div>
-    `;
+    return renderFrame(
+      renderPoiVessel(args),
+      previewFrameWidth,
+      previewFrameHeight,
+      'obc-poi-vessel'
+    );
   },
 };
 
@@ -402,7 +375,7 @@ export const POIValuesAndContent: Story = {
               .x=${demoX}
               .y=${demoY}
               .buttonY=${demoButtonY}
-              .type=${ObcPoiType.Point}
+              .type=${ObcPoiType.Line}
               .value=${PoiVariantValue.Checked}
             >
               <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
@@ -414,7 +387,7 @@ export const POIValuesAndContent: Story = {
               .x=${demoX}
               .y=${demoY}
               .buttonY=${demoButtonY}
-              .type=${ObcPoiType.Point}
+              .type=${ObcPoiType.Line}
               .value=${PoiVariantValue.Activated}
             >
               <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
@@ -438,7 +411,7 @@ export const POIValuesAndContent: Story = {
               .x=${demoX}
               .y=${demoY}
               .buttonY=${demoButtonY}
-              .type=${ObcPoiType.Point}
+              .type=${ObcPoiType.Line}
               .value=${PoiVariantValue.Checked}
               .state=${ObcPoiState.Alarm}
             >

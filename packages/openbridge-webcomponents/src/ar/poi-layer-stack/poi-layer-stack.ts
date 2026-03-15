@@ -9,6 +9,7 @@ import '../poi-data/poi-data.js';
 import '../building-blocks/poi-header/poi-header.js';
 
 import type {ObcPoiLayer} from '../poi-layer/poi-layer.js';
+import type {ObcPoiGroup} from '../poi-group/poi-group.js';
 import {PoiDataValue} from '../poi-data/poi-data.js';
 import {Poi, isPoi, POI_ATTR} from '../building-blocks/poi/poi.js';
 
@@ -41,6 +42,7 @@ export enum PoiLayerSelectionMode {
 @customElement('obc-poi-layer-stack')
 export class ObcPoiLayerStack extends LitElement {
   private static readonly STACK_JUMP_DURATION_MS = 100;
+  private static readonly STACK_RETURNING_ATTR = 'data-stack-returning';
 
   @property({type: String, attribute: 'selection-mode'})
   selectionMode: PoiLayerSelectionMode = PoiLayerSelectionMode.None;
@@ -53,6 +55,7 @@ export class ObcPoiLayerStack extends LitElement {
     {
       originLayer: ObcPoiLayer;
       previousAnimatePosition: boolean;
+      keepInSelectedLayer: boolean;
     }
   >();
   private selectionCounter = 0;
@@ -95,7 +98,7 @@ export class ObcPoiLayerStack extends LitElement {
       this.placementRaf = 0;
     }
     this.selectionMap.forEach((_, target) => {
-      this.clearTargetButtonProjection(target);
+      this.clearTargetProjectionStyles(target);
       this.requestPoiRender(target);
     });
     this.selectionMap.clear();
@@ -106,6 +109,7 @@ export class ObcPoiLayerStack extends LitElement {
     if (this.selectionMode === PoiLayerSelectionMode.None) return;
     const target = this.getPoiTargetFromEvent(event);
     if (!target) return;
+    if (target.hasAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR)) return;
 
     this.cleanupSelection();
     const originLayer = this.getTargetLayer(target);
@@ -117,7 +121,6 @@ export class ObcPoiLayerStack extends LitElement {
     const existing = this.selectionMap.get(target);
     if (existing) {
       this.resetSelectionForTarget(target, existing);
-      this.schedulePlacement();
       return;
     }
 
@@ -126,17 +129,15 @@ export class ObcPoiLayerStack extends LitElement {
       this.clearSelectionMapExcept(target);
     }
 
-    this.selectionMap.set(target, {
-      originLayer,
-      previousAnimatePosition: target.animatePosition ?? false,
-    });
-    this.clearTargetGroupingAttributes(target);
-    this.setSelectedTargetInteractivity(target, true);
-    this.setTargetSelectedId(target);
-    this.applySelectedTargetProjectionState(target);
-    target.setAttribute('data-stack-selected', 'true');
-    void this.syncTargetProjection(target, originLayer, selectedLayer);
+    const trackedOriginLayer =
+      originLayer === selectedLayer
+        ? this.inferBootstrapOriginLayer(target, selectedLayer)
+        : originLayer;
 
+    this.trackSelectionTarget(target, trackedOriginLayer, true);
+    const record = this.selectionMap.get(target);
+    if (!record) return;
+    this.activateTrackedTarget(target, record, selectedLayer);
     this.schedulePlacement();
   }
 
@@ -212,6 +213,31 @@ export class ObcPoiLayerStack extends LitElement {
       const record = this.selectionMap.get(other);
       this.resetSelectionForTarget(other, record);
     });
+  }
+
+  private getTargetTagName(target: Poi): string {
+    return target.tagName.toLowerCase();
+  }
+
+  private inferBootstrapOriginLayer(
+    target: Poi,
+    selectedLayer: ObcPoiLayer
+  ): ObcPoiLayer {
+    const targetTagName = this.getTargetTagName(target);
+    const nonSelectedLayers = this.getAllLayers().filter(
+      (layer) => layer !== selectedLayer
+    );
+
+    const typedOrigin = nonSelectedLayers.find((layer) =>
+      this.getLayerTargets(layer).some(
+        (candidate) => this.getTargetTagName(candidate) === targetTagName
+      )
+    );
+    if (typedOrigin) {
+      return typedOrigin;
+    }
+
+    return this.getLayer('default') ?? selectedLayer;
   }
 
   private collectPoiHeaders(target: Poi): HTMLElement[] {
@@ -304,6 +330,12 @@ export class ObcPoiLayerStack extends LitElement {
     return Number.isFinite(parsed) ? parsed : 0;
   }
 
+  private getTargetAnchorProjectionOffset(target: Poi): number {
+    const raw = target.style.getPropertyValue('--obc-poi-target-projection-y');
+    const parsed = Number.parseFloat(raw);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
   private getLayerProjectionOffset(
     originLayer: ObcPoiLayer,
     destinationLayer: ObcPoiLayer | null
@@ -317,9 +349,57 @@ export class ObcPoiLayerStack extends LitElement {
     return destinationRect.bottom - originRect.bottom;
   }
 
+  private getTargetProjectionOffset(
+    originLayer: ObcPoiLayer,
+    selectedLayer: ObcPoiLayer | null
+  ): number {
+    if (!selectedLayer || selectedLayer === originLayer) {
+      return 0;
+    }
+
+    const originRect = originLayer.getBoundingClientRect();
+    const selectedRect = selectedLayer.getBoundingClientRect();
+    return originRect.bottom - selectedRect.bottom;
+  }
+
+  private resetDetachedGroupTargetState(target: Poi) {
+    target.buttonOffsetX = 0;
+    target.targetOffsetX = 0;
+    target.style.removeProperty('position');
+    target.style.removeProperty('width');
+    target.style.removeProperty('min-width');
+    target.style.removeProperty('height');
+    target.style.removeProperty('transform');
+  }
+
+  private detachTargetFromCurrentGroup(target: Poi): ObcPoiLayer | null {
+    const currentLayer = this.getTargetLayer(target);
+    const sourceGroup =
+      target.parentElement?.tagName.toLowerCase() === 'obc-poi-group'
+        ? (target.parentElement as ObcPoiGroup)
+        : null;
+
+    if (!sourceGroup) {
+      return currentLayer;
+    }
+
+    sourceGroup.expand = false;
+    this.resetDetachedGroupTargetState(target);
+    if (currentLayer && target.parentElement !== currentLayer) {
+      currentLayer.appendChild(target);
+    }
+    this.clearTargetGroupingAttributes(target);
+    currentLayer?.requestGroupingUpdate();
+    return currentLayer;
+  }
+
   private applySelectedTargetProjectionState(target: Poi) {
     target.animatePosition = true;
     target.style.setProperty('--obc-poi-stack-projection-active', '1');
+    target.style.setProperty(
+      '--obc-poi-forced-target-transition-duration',
+      '0ms'
+    );
     target.style.setProperty(
       '--obc-poi-forced-button-transition-duration',
       `${ObcPoiLayerStack.STACK_JUMP_DURATION_MS}ms`
@@ -328,7 +408,7 @@ export class ObcPoiLayerStack extends LitElement {
     target.style.setProperty('z-index', '3');
   }
 
-  private clearTargetButtonProjection(
+  private clearTargetProjectionStyles(
     target: Poi,
     previousAnimatePosition?: boolean
   ) {
@@ -337,15 +417,73 @@ export class ObcPoiLayerStack extends LitElement {
     }
     target.style.removeProperty('--obc-poi-stack-projection-active');
     target.style.removeProperty('--obc-poi-button-projection-y');
+    target.style.removeProperty('--obc-poi-target-projection-y');
+    target.style.removeProperty('--obc-poi-forced-target-transition-duration');
     target.style.removeProperty('--obc-poi-forced-button-transition-duration');
     target.style.removeProperty('--obc-poi-layer-inactive-opacity');
     target.style.removeProperty('z-index');
   }
 
+  private async moveTargetIntoSelectedLayer(
+    target: Poi,
+    originLayer: ObcPoiLayer,
+    selectedLayer: ObcPoiLayer,
+    animate = true
+  ) {
+    const targetProjectionOffset = this.getTargetProjectionOffset(
+      originLayer,
+      selectedLayer
+    );
+    const currentTargetProjection =
+      this.getTargetAnchorProjectionOffset(target);
+
+    if (this.getTargetLayer(target) !== selectedLayer) {
+      selectedLayer.appendChild(target);
+    }
+
+    if (Math.abs(targetProjectionOffset) < 0.5) {
+      target.style.removeProperty('--obc-poi-target-projection-y');
+    } else if (
+      Math.abs(currentTargetProjection - targetProjectionOffset) >= 0.5
+    ) {
+      target.style.setProperty(
+        '--obc-poi-target-projection-y',
+        `${targetProjectionOffset}px`
+      );
+    }
+
+    if (!animate || Math.abs(targetProjectionOffset) < 0.5) {
+      target.style.removeProperty('--obc-poi-button-projection-y');
+      this.requestPoiRender(target);
+      this.refreshTargetProjectionLayout(target);
+      return;
+    }
+
+    const currentButtonProjection =
+      this.getTargetButtonProjectionOffset(target);
+    if (Math.abs(currentButtonProjection) < 0.5) {
+      target.style.setProperty(
+        '--obc-poi-button-projection-y',
+        `${targetProjectionOffset}px`
+      );
+      this.requestPoiRender(target);
+      this.refreshTargetProjectionLayout(target);
+      await this.waitForPoiRender(target);
+    }
+
+    target.style.removeProperty('--obc-poi-button-projection-y');
+    this.requestPoiRender(target);
+    this.refreshTargetProjectionLayout(
+      target,
+      ObcPoiLayerStack.STACK_JUMP_DURATION_MS
+    );
+  }
+
   private async syncTargetProjection(
     target: Poi,
     originLayer: ObcPoiLayer,
-    selectedLayer: ObcPoiLayer | null
+    selectedLayer: ObcPoiLayer | null,
+    animate = true
   ) {
     const nextProjectionOffset = this.getLayerProjectionOffset(
       originLayer,
@@ -377,11 +515,15 @@ export class ObcPoiLayerStack extends LitElement {
       );
     }
     this.requestPoiRender(target);
-    this.refreshTargetProjectionLayout(
-      target,
-      ObcPoiLayerStack.STACK_JUMP_DURATION_MS
-    );
-    await this.waitForPoiRender(target);
+    if (animate) {
+      this.refreshTargetProjectionLayout(
+        target,
+        ObcPoiLayerStack.STACK_JUMP_DURATION_MS
+      );
+      await this.waitForPoiRender(target);
+      return;
+    }
+    this.refreshTargetProjectionLayout(target);
   }
 
   private async animateTargetReturnToOrigin(
@@ -389,15 +531,55 @@ export class ObcPoiLayerStack extends LitElement {
     record: {
       originLayer: ObcPoiLayer;
       previousAnimatePosition: boolean;
+      keepInSelectedLayer: boolean;
     }
   ) {
-    await this.syncTargetProjection(target, record.originLayer, null);
-    this.setSelectedTargetInteractivity(target, false);
-    this.clearTargetGroupingAttributes(target);
-    this.clearTargetSelectedId(target);
-    this.clearTargetButtonProjection(target, record.previousAnimatePosition);
-    this.requestPoiRender(target);
-    this.schedulePlacement();
+    target.setAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR, 'true');
+
+    try {
+      const currentLayer =
+        this.detachTargetFromCurrentGroup(target) ??
+        this.getTargetLayer(target);
+
+      if (record.keepInSelectedLayer) {
+        const selectedLayer =
+          currentLayer && currentLayer !== record.originLayer
+            ? currentLayer
+            : this.getLayer('selected');
+        const buttonProjectionOffset = this.getLayerProjectionOffset(
+          record.originLayer,
+          selectedLayer
+        );
+        target.style.removeProperty('--obc-poi-target-projection-y');
+        if (target.parentElement !== record.originLayer) {
+          record.originLayer.appendChild(target);
+        }
+        if (Math.abs(buttonProjectionOffset) < 0.5) {
+          target.style.removeProperty('--obc-poi-button-projection-y');
+        } else {
+          target.style.setProperty(
+            '--obc-poi-button-projection-y',
+            `${buttonProjectionOffset}px`
+          );
+        }
+        this.requestPoiRender(target);
+        this.refreshTargetProjectionLayout(target);
+        await this.waitForPoiRender(target);
+      }
+      await this.syncTargetProjection(target, record.originLayer, null);
+      this.setSelectedTargetInteractivity(target, false);
+      this.clearTargetGroupingAttributes(target);
+      this.clearTargetSelectedId(target);
+      this.clearTargetProjectionStyles(target, record.previousAnimatePosition);
+      this.requestPoiRender(target);
+      if (currentLayer && currentLayer !== record.originLayer) {
+        currentLayer.requestGroupingUpdate();
+      }
+      record.originLayer.requestGroupingUpdate();
+      this.schedulePlacement();
+    } finally {
+      target.removeAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR);
+    }
   }
 
   private clearTargetGroupingAttributes(target: Poi) {
@@ -430,11 +612,116 @@ export class ObcPoiLayerStack extends LitElement {
     }
   }
 
+  private trackSelectionTarget(
+    target: Poi,
+    originLayer: ObcPoiLayer,
+    keepInSelectedLayer = true
+  ) {
+    this.selectionMap.set(target, {
+      originLayer,
+      previousAnimatePosition: target.animatePosition ?? false,
+      keepInSelectedLayer,
+    });
+    target.removeAttribute('data-stack-selected');
+  }
+
+  private activateTrackedTarget(
+    target: Poi,
+    record: {
+      originLayer: ObcPoiLayer;
+      previousAnimatePosition: boolean;
+      keepInSelectedLayer: boolean;
+    },
+    selectedLayer: ObcPoiLayer,
+    animateProjection = true
+  ) {
+    if (record.keepInSelectedLayer) {
+      target.removeAttribute('data-stack-selected');
+      const needsMove = this.getTargetLayer(target) !== selectedLayer;
+      if (needsMove) {
+        this.clearTargetGroupingAttributes(target);
+        void this.moveTargetIntoSelectedLayer(
+          target,
+          record.originLayer,
+          selectedLayer,
+          animateProjection
+        );
+        record.originLayer.requestGroupingUpdate();
+        selectedLayer.requestGroupingUpdate();
+      } else {
+        const targetProjectionOffset = this.getTargetProjectionOffset(
+          record.originLayer,
+          selectedLayer
+        );
+        if (Math.abs(targetProjectionOffset) < 0.5) {
+          target.style.removeProperty('--obc-poi-target-projection-y');
+        } else {
+          target.style.setProperty(
+            '--obc-poi-target-projection-y',
+            `${targetProjectionOffset}px`
+          );
+        }
+        target.style.removeProperty('--obc-poi-button-projection-y');
+        this.requestPoiRender(target);
+        this.refreshTargetProjectionLayout(target);
+      }
+    } else {
+      this.clearTargetGroupingAttributes(target);
+      target.setAttribute('data-stack-selected', 'true');
+      void this.syncTargetProjection(
+        target,
+        record.originLayer,
+        selectedLayer,
+        animateProjection
+      );
+    }
+    this.setSelectedTargetInteractivity(target, true);
+    this.setTargetSelectedId(target);
+    this.applySelectedTargetProjectionState(target);
+    if (record.keepInSelectedLayer) {
+      selectedLayer.requestGroupingUpdate();
+    }
+  }
+
+  private seedSelectedLayerSelections(selectedLayer: ObcPoiLayer): Set<Poi> {
+    const seededTargets = new Set<Poi>();
+    if (this.selectionMode === PoiLayerSelectionMode.None) {
+      return seededTargets;
+    }
+
+    const selectedTargets = this.getLayerTargets(selectedLayer);
+    for (const target of selectedTargets) {
+      if (target.hasAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR)) {
+        continue;
+      }
+      if (this.selectionMap.has(target)) {
+        continue;
+      }
+      if (
+        this.selectionMode === PoiLayerSelectionMode.Single &&
+        this.selectionMap.size > 0
+      ) {
+        break;
+      }
+
+      const originLayer = this.inferBootstrapOriginLayer(target, selectedLayer);
+      this.selectionMap.set(target, {
+        originLayer,
+        previousAnimatePosition: target.animatePosition ?? false,
+        keepInSelectedLayer: true,
+      });
+      target.removeAttribute('data-stack-selected');
+      seededTargets.add(target);
+    }
+    return seededTargets;
+  }
+
   private resetSelectionForTarget(
     target: Poi,
     record?: {
       originLayer: ObcPoiLayer;
       previousAnimatePosition: boolean;
+      keepInSelectedLayer: boolean;
     }
   ) {
     target.removeAttribute('data-stack-selected');
@@ -446,7 +733,7 @@ export class ObcPoiLayerStack extends LitElement {
     this.setSelectedTargetInteractivity(target, false);
     this.clearTargetGroupingAttributes(target);
     this.clearTargetSelectedId(target);
-    this.clearTargetButtonProjection(target);
+    this.clearTargetProjectionStyles(target);
   }
 
   private clearSelectionMapExcept(target: Poi) {
@@ -530,18 +817,28 @@ export class ObcPoiLayerStack extends LitElement {
       return;
     }
 
+    const seededTargets = this.seedSelectedLayerSelections(selectedLayer);
+
     this.selectionMap.forEach((record, target) => {
       if (!target.isConnected) {
         this.selectionMap.delete(target);
         return;
       }
-      this.setTargetSelectedId(target);
-      this.setSelectedTargetInteractivity(target, true);
-      this.applySelectedTargetProjectionState(target);
-      if (!target.hasAttribute('data-stack-selected')) {
+      if (target.hasAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR)) {
+        return;
+      }
+      if (
+        !record.keepInSelectedLayer &&
+        !target.hasAttribute('data-stack-selected')
+      ) {
         target.setAttribute('data-stack-selected', 'true');
       }
-      void this.syncTargetProjection(target, record.originLayer, selectedLayer);
+      this.activateTrackedTarget(
+        target,
+        record,
+        selectedLayer,
+        !seededTargets.has(target)
+      );
     });
   }
 

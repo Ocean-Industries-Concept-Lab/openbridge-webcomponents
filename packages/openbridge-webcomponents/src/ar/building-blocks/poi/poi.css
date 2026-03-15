@@ -43,7 +43,7 @@
 
 .line {
   position: absolute;
-  left: 50%;
+  left: var(--obc-poi-button-anchor-x, 50%);
   top: 100%;
   transform: translateX(-50%) translateY(var(--obc-poi-line-projection-y, 0px));
   z-index: 0;
@@ -55,17 +55,22 @@
 
 .pointer {
   position: absolute;
-  left: 50%;
+  left: var(--obc-poi-button-anchor-x, 50%);
   top: 100%;
   pointer-events: none;
   transform: translate(
-    calc(-50% + var(--obc-poi-pointer-x, 0px)),
+    calc(var(--obc-poi-pointer-x, 0px) - 50%),
     calc(var(--obc-poi-pointer-y, 0px) - 50%)
   );
   z-index: 0;
   opacity: var(--obc-poi-moving-pointer-opacity, 1);
   transition:
-    transform var(--obc-poi-position-transition-duration, 0.1s) ease-out,
+    transform
+      var(
+        --obc-poi-forced-target-transition-duration,
+        var(--obc-poi-position-transition-duration, 0.1s)
+      )
+      ease-out,
     opacity 0.1s ease-out;
 }
 
@@ -75,7 +80,7 @@
 
 .target-anchor {
   position: absolute;
-  left: 50%;
+  left: var(--obc-poi-button-anchor-x, 50%);
   top: 100%;
   width: 0;
   height: 0;
@@ -84,7 +89,11 @@
     var(--obc-poi-pointer-x, 0px),
     var(--obc-poi-pointer-y, 0px)
   );
-  transition: transform var(--obc-poi-position-transition-duration, 0.1s)
+  transition: transform
+    var(
+      --obc-poi-forced-target-transition-duration,
+      var(--obc-poi-position-transition-duration, 0.1s)
+    )
     ease-out;
 }
 

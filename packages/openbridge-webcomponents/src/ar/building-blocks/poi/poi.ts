@@ -391,6 +391,14 @@ export class ObcPoi extends LitElement {
     return Number.isFinite(parsed) ? parsed : 0;
   }
 
+  private get targetProjectionY(): number {
+    const raw = getComputedStyle(this).getPropertyValue(
+      '--obc-poi-target-projection-y'
+    );
+    const parsed = Number.parseFloat(raw);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
   private get lineOffset(): number {
     if (this.type === ObcPoiType.Point || this.type === ObcPoiType.Outside) {
       return 0;
@@ -483,8 +491,9 @@ export class ObcPoi extends LitElement {
         : Math.max(
             0,
             Math.abs(
-              this.resolvedTargetY -
-                (this.resolvedButtonY + this.buttonProjectionY)
+              this.targetAnchorY +
+                this.targetProjectionY -
+                this.buttonProjectionY
             )
           );
     if (this.lineGeometry) {
@@ -528,7 +537,8 @@ export class ObcPoi extends LitElement {
       <obc-poi-pointer
         class="pointer"
         style="--obc-poi-pointer-x: ${this
-          .lineOffset}px; --obc-poi-pointer-y: ${this.targetAnchorY}px;"
+          .lineOffset}px; --obc-poi-pointer-y: ${this.targetAnchorY +
+        this.targetProjectionY}px;"
         .type=${this.resolvedPointerType}
         .state=${this.resolvedPointerState}
         .boxWidth=${this.pointerBoxWidthExtra}
@@ -547,7 +557,8 @@ export class ObcPoi extends LitElement {
         class="target-anchor"
         aria-hidden="true"
         style="--obc-poi-pointer-x: ${this
-          .lineOffset}px; --obc-poi-pointer-y: ${this.targetAnchorY}px;"
+          .lineOffset}px; --obc-poi-pointer-y: ${this.targetAnchorY +
+        this.targetProjectionY}px;"
       ></div>
     `;
   }
@@ -722,7 +733,7 @@ export class ObcPoi extends LitElement {
     const startY = buttonRect.bottom - wrapperRect.top;
 
     let endX = startX + this.lineOffset;
-    let endY = this.targetAnchorY;
+    let endY = this.targetAnchorY + this.targetProjectionY;
 
     const targetAnchor = this.renderedTargetAnchorElement;
     if (targetAnchor) {

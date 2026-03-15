@@ -99,7 +99,8 @@ export enum OverlapMode {
 export class ObcPoiLayer extends LitElement {
   @property({type: String}) label = '';
   @property({type: Boolean, reflect: true}) debug = false;
-  @property({type: String}) overlapMode: OverlapMode = OverlapMode.Grouping;
+  @property({type: String, attribute: 'overlap-mode', reflect: true})
+  overlapMode: OverlapMode = OverlapMode.Grouping;
   @property({type: Boolean, reflect: true, attribute: 'is-selected'})
   isSelected = false;
   @property({type: Boolean, attribute: 'join-while-expanded'})
@@ -290,9 +291,10 @@ export class ObcPoiLayer extends LitElement {
   private syncLayerHeight() {
     if (!this.isConnected) return;
     const minHeight = this.getLayerMinHeight();
+    const heightFloor = this.getLayerHeightFloor(minHeight);
     const targets = this.getAllTargets();
     if (targets.length === 0) {
-      const nextHeight = minHeight;
+      const nextHeight = heightFloor;
       this.style.setProperty('--obc-poi-layer-height', `${nextHeight}px`);
       this.updateLayerHeight(nextHeight);
       return;
@@ -306,7 +308,7 @@ export class ObcPoiLayer extends LitElement {
         maxHeight = Math.max(maxHeight, height);
       }
     });
-    const nextHeight = Math.max(maxHeight, minHeight);
+    const nextHeight = Math.max(maxHeight, heightFloor);
     if (nextHeight <= 0) {
       this.style.setProperty('--obc-poi-layer-height', '0px');
       this.updateLayerHeight(0);
@@ -321,6 +323,14 @@ export class ObcPoiLayer extends LitElement {
     const minHeightRaw = getComputedStyle(this).minHeight;
     const minHeight = Number.parseFloat(minHeightRaw);
     return Number.isFinite(minHeight) ? minHeight : 0;
+  }
+
+  private getLayerHeightFloor(minHeight: number): number {
+    if (!this.hasAttribute('data-stack-inactive')) {
+      return minHeight;
+    }
+
+    return Math.max(minHeight, this.lastHeight);
   }
 
   private updateLayerHeight(nextHeight: number) {

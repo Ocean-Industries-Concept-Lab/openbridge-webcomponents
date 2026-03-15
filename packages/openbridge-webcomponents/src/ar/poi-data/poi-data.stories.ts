@@ -19,6 +19,73 @@ const compactDocsHeightDecorator = (story: () => unknown) => html`
   </style>
   ${story()}
 `;
+
+const defaultFrameWidth = 888;
+const defaultFrameHeight = 420;
+const previewFrameWidth = 640;
+const previewFrameHeight = 420;
+
+const renderFrame = (
+  content: unknown,
+  width: number,
+  height: number,
+  selector: string
+) => html`
+  <style>
+    .frame {
+      position: relative;
+      width: ${width}px;
+      height: ${height}px;
+      transform: translate(-50%, -50%);
+    }
+
+    .frame ${selector} {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  </style>
+  <div class="frame">${content}</div>
+`;
+
+const renderPoiData = (args: ObcPoiData) => html`
+  <obc-poi-data
+    .type=${args.type}
+    .state=${args.state}
+    .x=${args.x}
+    .y=${args.y}
+    .buttonY=${args.buttonY}
+    .outsideAngle=${args.outsideAngle}
+    .hasPointer=${args.hasPointer}
+    .hasHeader=${args.hasHeader}
+    .value=${args.value}
+    .buttonType=${args.buttonType}
+    .pointerType=${args.pointerType}
+    .pointerState=${args.pointerState}
+    .relativeDirection=${args.relativeDirection}
+    .buttonOffsetX=${args.buttonOffsetX}
+    .targetOffsetX=${args.targetOffsetX}
+    .selected=${args.selected}
+    .boxWidth=${args.boxWidth}
+    .boxHeight=${args.boxHeight}
+    .animatePosition=${args.animatePosition}
+    .overlapOpaque=${args.overlapOpaque}
+    .data=${args.data}
+    .fixedTarget=${args.fixedTarget}
+  >
+    ${args.hasHeader
+      ? html`<obc-poi-header
+          slot="header"
+          content="1"
+          type="id"
+          state="selected"
+          size="regular"
+          has-indicator
+        ></obc-poi-header>`
+      : html``}
+  </obc-poi-data>
+`;
+
 const meta: Meta<ObcPoiData> = {
   title: 'AR/POI Data',
   tags: ['autodocs'],
@@ -131,55 +198,12 @@ const meta: Meta<ObcPoiData> = {
     },
   },
   render: (args) => {
-    return html`
-      <style>
-        .frame {
-          position: relative;
-          width: 888px;
-          height: 2000px;
-          transform: translate(-50%, -50%);
-        }
-
-        .frame obc-poi-data {
-          position: absolute;
-        }
-      </style>
-      <obc-poi-data
-        .type=${args.type}
-        .state=${args.state}
-        .x=${args.x}
-        .y=${args.y}
-        .buttonY=${args.buttonY}
-        .outsideAngle=${args.outsideAngle}
-        .hasPointer=${args.hasPointer}
-        .hasHeader=${args.hasHeader}
-        .value=${args.value}
-        .buttonType=${args.buttonType}
-        .pointerType=${args.pointerType}
-        .pointerState=${args.pointerState}
-        .relativeDirection=${args.relativeDirection}
-        .buttonOffsetX=${args.buttonOffsetX}
-        .targetOffsetX=${args.targetOffsetX}
-        .selected=${args.selected}
-        .boxWidth=${args.boxWidth}
-        .boxHeight=${args.boxHeight}
-        .animatePosition=${args.animatePosition}
-        .overlapOpaque=${args.overlapOpaque}
-        .data=${args.data}
-        .fixedTarget=${args.fixedTarget}
-      >
-        ${args.hasHeader
-          ? html`<obc-poi-header
-              slot="header"
-              content="1"
-              type="id"
-              state="selected"
-              size="regular"
-              has-indicator
-            ></obc-poi-header>`
-          : html``}
-      </obc-poi-data>
-    `;
+    return renderFrame(
+      renderPoiData(args),
+      defaultFrameWidth,
+      defaultFrameHeight,
+      'obc-poi-data'
+    );
   },
 } satisfies Meta<ObcPoiData>;
 
@@ -189,60 +213,17 @@ type Story = StoryObj<ObcPoiData>;
 export const Preview: Story = {
   args: {
     type: ObcPoiType.Line,
-    x: 444,
+    x: previewFrameWidth / 2,
+    y: 300,
+    buttonY: 180,
   },
   render: (args) => {
-    return html`
-      <style>
-        .frame {
-          position: relative;
-          width: 640px;
-          height: 420px;
-          transform: translate(-50%, -50%);
-        }
-
-        .frame obc-poi-data {
-          position: absolute;
-        }
-      </style>
-      <div class="frame">
-        <obc-poi-data
-          .type=${args.type}
-          .state=${args.state}
-          .x=${args.x}
-          .y=${args.y}
-          .buttonY=${args.buttonY}
-          .outsideAngle=${args.outsideAngle}
-          .hasPointer=${args.hasPointer}
-          .hasHeader=${args.hasHeader}
-          .value=${args.value}
-          .buttonType=${args.buttonType}
-          .pointerType=${args.pointerType}
-          .pointerState=${args.pointerState}
-          .relativeDirection=${args.relativeDirection}
-          .buttonOffsetX=${args.buttonOffsetX}
-          .targetOffsetX=${args.targetOffsetX}
-          .selected=${args.selected}
-          .boxWidth=${args.boxWidth}
-          .boxHeight=${args.boxHeight}
-          .animatePosition=${args.animatePosition}
-          .overlapOpaque=${args.overlapOpaque}
-          .data=${args.data}
-          .fixedTarget=${args.fixedTarget}
-        >
-          ${args.hasHeader
-            ? html`<obc-poi-header
-                slot="header"
-                content="1"
-                type="id"
-                state="selected"
-                size="regular"
-                has-indicator
-              ></obc-poi-header>`
-            : html``}
-        </obc-poi-data>
-      </div>
-    `;
+    return renderFrame(
+      renderPoiData(args),
+      previewFrameWidth,
+      previewFrameHeight,
+      'obc-poi-data'
+    );
   },
 };
 
@@ -391,7 +372,7 @@ export const POIValuesAndContent: Story = {
               .x=${demoX}
               .y=${demoY}
               .buttonY=${demoButtonY}
-              .type=${ObcPoiType.Point}
+              .type=${ObcPoiType.Line}
               .value=${PoiDataValue.Checked}
             ></obc-poi-data>
           </div>
@@ -401,7 +382,7 @@ export const POIValuesAndContent: Story = {
               .x=${demoX}
               .y=${demoY}
               .buttonY=${demoButtonY}
-              .type=${ObcPoiType.Point}
+              .type=${ObcPoiType.Line}
               .value=${PoiDataValue.Activated}
             ></obc-poi-data>
           </div>
@@ -421,7 +402,7 @@ export const POIValuesAndContent: Story = {
               .x=${demoX}
               .y=${demoY}
               .buttonY=${demoButtonY}
-              .type=${ObcPoiType.Point}
+              .type=${ObcPoiType.Line}
               .value=${PoiDataValue.Checked}
               .state=${ObcPoiState.Alarm}
             ></obc-poi-data>
@@ -592,13 +573,13 @@ export const AnimatedHeight: Story = {
   tags: ['!snapshot'],
   args: {
     x: 444,
-    y: 150,
-    buttonY: 0,
+    y: 300,
+    buttonY: 180,
     value: PoiDataValue.Checked,
     type: ObcPoiType.Line,
   },
   render: (args) => {
-    let buttonY = args.buttonY ?? 0;
+    let buttonY = args.buttonY ?? 180;
     let direction = 1;
 
     const animate = () => {
@@ -608,8 +589,8 @@ export const AnimatedHeight: Story = {
       if (!target || !target.isConnected) return;
 
       buttonY += direction * 1;
-      if (buttonY > 400) direction = -1;
-      if (buttonY < 200) direction = 1;
+      if (buttonY > 220) direction = -1;
+      if (buttonY < 120) direction = 1;
 
       target.buttonY = buttonY;
 
@@ -725,15 +706,15 @@ export const CompareModes: Story = {
   args: {
     x: 300,
     y: 150,
-    buttonY: 0,
+    buttonY: 100,
     value: PoiDataValue.Checked,
     type: ObcPoiType.Line,
   },
   render: (args) => {
     let lineLength = 150;
     let direction = 1;
-    const fixedButtonY = 100;
-    const normalAnchorY = args.buttonY ?? 0;
+    const fixedButtonY = args.buttonY ?? 100;
+    const normalButtonY = fixedButtonY + args.y;
 
     const animate = () => {
       const fixedTarget = document.querySelector(
@@ -756,10 +737,9 @@ export const CompareModes: Story = {
       if (lineLength < 50) direction = 1;
 
       fixedTarget.y = lineLength;
+      fixedTarget.buttonY = fixedButtonY;
       normalTarget.y = lineLength;
-
-      const computedNormalButtonY =
-        (normalTarget.buttonY ?? normalAnchorY) - lineLength;
+      normalTarget.buttonY = fixedButtonY + lineLength;
 
       if (fixedYLabel)
         fixedYLabel.textContent = `y = ${Math.round(lineLength)}px`;
@@ -768,7 +748,9 @@ export const CompareModes: Story = {
       if (normalYLabel)
         normalYLabel.textContent = `y = ${Math.round(lineLength)}px`;
       if (normalButtonYLabel)
-        normalButtonYLabel.textContent = `buttonY = ${Math.round(computedNormalButtonY)}px`;
+        normalButtonYLabel.textContent = `buttonY = ${Math.round(
+          fixedButtonY + lineLength
+        )}px`;
 
       if (fixedTarget.isConnected) {
         requestAnimationFrame(animate);
@@ -799,10 +781,6 @@ export const CompareModes: Story = {
 
         .mode-container obc-poi-data {
           position: absolute;
-        }
-
-        .mode-container.fixed-mode obc-poi-data {
-          top: ${fixedButtonY}px;
         }
 
         .label {
@@ -847,6 +825,7 @@ export const CompareModes: Story = {
             id="compare-fixed"
             .x=${args.x}
             .y=${args.y}
+            .buttonY=${fixedButtonY}
             .fixedTarget=${false}
             .value=${args.value}
             .pointerType=${args.pointerType}
@@ -857,14 +836,14 @@ export const CompareModes: Story = {
           <div class="label variables">
             <div id="normal-y-value" class="var-value">y = ${args.y}px</div>
             <div id="normal-button-y-value" class="var-value">
-              buttonY = ${(normalAnchorY ?? 300) - args.y}px
+              buttonY = ${normalButtonY}px
             </div>
           </div>
           <obc-poi-data
             id="compare-normal"
             .x=${args.x}
             .y=${args.y}
-            .buttonY=${normalAnchorY}
+            .buttonY=${normalButtonY}
             .fixedTarget=${true}
             .value=${args.value}
             .pointerType=${args.pointerType}
