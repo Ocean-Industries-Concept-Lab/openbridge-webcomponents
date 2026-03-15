@@ -2,9 +2,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  /* Spacing between expanded POI targets in a group */
   --obc-poi-group-expanded-spacing: 50px;
-  /* Animation timing constants (in milliseconds) */
   --obc-poi-group-top-offset-animation-ms: 100;
   --obc-poi-group-top-offset-animation-delay-ms: 0;
 }
@@ -36,7 +34,6 @@
   transform: translate3d(var(--obc-poi-group-wrapper-x, 0px), -100%, 0);
   will-change: transform;
 
-  /* Override mixin colors for visible-wrapper */
   --flat-enabled-border-color: transparent;
   --flat-enabled-background-color: transparent;
   --flat-hover-border-color: var(
@@ -96,12 +93,11 @@
   opacity: 0;
 }
 
-::slotted(obc-poi-data) {
+::slotted([data-poi-target]) {
   pointer-events: auto;
 }
 
-/* Ensure targets inside groups inherit layer-style positioning when grouped in a layer. */
-:host([data-in-poi-layer]) ::slotted(obc-poi-data) {
+:host([data-in-poi-layer]) ::slotted([data-poi-target]) {
   position: absolute;
   transform-origin: 50% 50%;
   --obc-poi-layer-target-scale: 1;
@@ -114,7 +110,7 @@
 }
 
 :host([data-in-poi-layer][data-position-mode="bottom"])
-  ::slotted(obc-poi-data) {
+  ::slotted([data-poi-target]) {
   top: auto;
   bottom: 0;
   height: 100%;
@@ -123,14 +119,14 @@
     scale(var(--obc-poi-layer-target-scale));
 }
 
-:host([data-in-poi-layer]) ::slotted(obc-poi-data[data-behind]),
-:host([data-in-poi-layer]) ::slotted(obc-poi-data[data-exiting]) {
+:host([data-in-poi-layer]) ::slotted([data-poi-target][data-behind]),
+:host([data-in-poi-layer]) ::slotted([data-poi-target][data-exiting]) {
   opacity: 0.4;
   --poi-size: 32px;
   --obc-poi-target-icon-opacity: 0;
 }
 
-:host([data-in-poi-layer]) ::slotted(obc-poi-data[data-front]) {
+:host([data-in-poi-layer]) ::slotted([data-poi-target][data-front]) {
   opacity: 1;
   --poi-size: 36px;
   --obc-poi-target-icon-opacity: 1;
@@ -140,7 +136,7 @@
   transform: translate3d(var(--obc-poi-group-wrapper-x, 0px), -100%, 0);
 }
 
-::slotted(obc-poi-data[data-grouped]) {
+::slotted([data-poi-target][data-grouped]) {
   opacity: 1;
   transition: opacity 0.1s ease-out;
 }

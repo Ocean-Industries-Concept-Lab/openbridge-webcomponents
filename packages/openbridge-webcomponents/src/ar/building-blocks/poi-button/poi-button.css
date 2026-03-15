@@ -16,6 +16,7 @@
   --obc-poi-overlap-object-border: rgba(0, 0, 0, 0.3);
   --obc-poi-overlap-wrapper-opacity: 0.6;
   --obc-poi-overlap-data-opacity: 0.6;
+  --obc-poi-surface-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
 }
 
 :host([overlap-opaque]) {
@@ -103,7 +104,7 @@
   }
 
   &:not(.has-data) .poi-object {
-    --obc-poi-object-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
+    --obc-poi-object-shadow: var(--obc-poi-surface-shadow);
   }
 
   & .selection-frame {
@@ -372,13 +373,26 @@
   }
 }
 
+.wrapper.has-data.is-aton-diamond {
+  box-shadow: var(--obc-poi-surface-shadow);
+
+  .poi-object {
+    --obc-poi-aton-object-shadow-opacity: 0;
+  }
+}
+
 /* Overlap state for has-data variant - keep layout, hide values */
 :host([value="overlapped"]) .wrapper.has-data {
   --obc-poi-overlapped-data-bg: var(--overlay-container-background-color);
   --obc-poi-overlapped-data-border: var(--overlay-border-outline-color);
   opacity: var(--obc-poi-overlap-data-opacity, 0.6);
   padding-top: var(--maneuvering-components-poi-button-overlap-offset-padding);
-  box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--obc-poi-surface-shadow);
+
+  .button-wrapper {
+    visibility: hidden;
+    pointer-events: none;
+  }
 
   .data-wrapper,
   .relation-wrapper,
