@@ -102,8 +102,8 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
     );
   }
 
-  private get usesAlarmCircle(): boolean {
-    return this.isAtonType && this.state === ObcPoiObjectState.Alarm;
+  private get usesAlertCircle(): boolean {
+    return this.isAtonType && this.isAlert;
   }
 
   private handleKeyDown(e: KeyboardEvent) {
@@ -212,7 +212,7 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
       interactive: this.isInteractive,
     };
 
-    if (this.isAtonType && !this.usesAlarmCircle) {
+    if (this.isAtonType && !this.usesAlertCircle) {
       return html`
         <div
           class=${classMap(wrapperClasses)}
@@ -229,7 +229,7 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
     return html`
       <div class=${classMap(wrapperClasses)}>
         ${this.renderBasePoiObject(
-          this.usesAlarmCircle ? {} : this.colorStyleVars
+          this.usesAlertCircle ? {} : this.colorStyleVars
         )}
       </div>
     `;
