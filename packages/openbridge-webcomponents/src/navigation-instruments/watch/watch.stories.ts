@@ -81,6 +81,8 @@ Source of truth: \`packages/openbridge-webcomponents/src/navigation-instruments/
     currentSymbolRadius: {control: {type: 'range', min: 0, max: 360, step: 1}},
     rotation: {control: {type: 'range', min: 0, max: 360, step: 1}},
     priority: {control: 'select', options: Object.values(Priority)},
+    showLabels: {control: 'boolean'},
+    tickmarksInside: {control: 'boolean'},
   },
   args: {
     width: 400,
@@ -145,24 +147,40 @@ export const WithBarAreas: Story = {
         roundOutsideCut: true,
       },
     ],
-    barAreas: [
-      {
-        startAngle: -90,
-        endAngle: 0,
-        fillColor: 'var(--instrument-enhanced-tertiary-color)',
-      },
-    ],
-    needles: [
-      {
-        angle: 0,
-        fillColor: 'var(--instrument-enhanced-secondary-color)',
-        strokeColor: 'var(--border-silhouette-color)',
-      },
-    ],
     watchCircleType: WatchCircleType.double,
   },
   argTypes: {
     angleSetpoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
+  },
+  render: (args) => {
+    const isOff =
+      args.state === InstrumentState.off ||
+      args.state === InstrumentState.loading;
+    const barColor = isOff
+      ? 'transparent'
+      : args.priority === Priority.enhanced
+        ? 'var(--instrument-enhanced-tertiary-color)'
+        : 'var(--instrument-regular-tertiary-color)';
+    const needleColor = isOff
+      ? 'transparent'
+      : args.priority === Priority.enhanced
+        ? 'var(--instrument-enhanced-secondary-color)'
+        : 'var(--instrument-regular-secondary-color)';
+    return html`<obc-watch
+      .state=${args.state}
+      .priority=${args.priority}
+      .areas=${args.areas}
+      .watchCircleType=${args.watchCircleType}
+      .angleSetpoint=${args.angleSetpoint}
+      .barAreas=${[{startAngle: -90, endAngle: 0, fillColor: barColor}]}
+      .needles=${[
+        {
+          angle: 0,
+          fillColor: needleColor,
+          strokeColor: 'var(--border-silhouette-color)',
+        },
+      ]}
+    ></obc-watch>`;
   },
 };
 
@@ -348,6 +366,8 @@ export const CutTripleWatch: Story = {
 export const MultiCut: Story = {
   args: {
     watchCircleType: WatchCircleType.double,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
     areas: [
       {
         startAngle: 60,
@@ -374,50 +394,6 @@ export const MultiCut: Story = {
         roundOutsideCut: true,
       },
     ],
-    barAreas: [
-      {
-        startAngle: 70,
-        endAngle: 110,
-        fillColor: 'var(--instrument-enhanced-tertiary-color)',
-      },
-      {
-        startAngle: -10,
-        endAngle: 10,
-        fillColor: 'var(--instrument-enhanced-tertiary-color)',
-      },
-      {
-        startAngle: 190,
-        endAngle: 170,
-        fillColor: 'var(--instrument-enhanced-tertiary-color)',
-      },
-      {
-        startAngle: 240,
-        endAngle: 300,
-        fillColor: 'var(--instrument-enhanced-tertiary-color)',
-      },
-    ],
-    needles: [
-      {
-        angle: 80,
-        fillColor: 'var(--instrument-enhanced-secondary-color)',
-        strokeColor: 'var(--border-silhouette-color)',
-      },
-      {
-        angle: 3,
-        fillColor: 'var(--instrument-enhanced-secondary-color)',
-        strokeColor: 'var(--border-silhouette-color)',
-      },
-      {
-        angle: 183,
-        fillColor: 'var(--instrument-enhanced-secondary-color)',
-        strokeColor: 'var(--border-silhouette-color)',
-      },
-      {
-        angle: 260,
-        fillColor: 'var(--instrument-enhanced-secondary-color)',
-        strokeColor: 'var(--border-silhouette-color)',
-      },
-    ],
     vessels: [
       {
         size: VesselImageSize.large,
@@ -430,6 +406,56 @@ export const MultiCut: Story = {
         transform: 'rotate(3deg)',
       },
     ],
+  },
+  render: (args) => {
+    const isOff =
+      args.state === InstrumentState.off ||
+      args.state === InstrumentState.loading;
+    const barColor = isOff
+      ? 'transparent'
+      : args.priority === Priority.enhanced
+        ? 'var(--instrument-enhanced-tertiary-color)'
+        : 'var(--instrument-regular-tertiary-color)';
+    const needleColor = isOff
+      ? 'transparent'
+      : args.priority === Priority.enhanced
+        ? 'var(--instrument-enhanced-secondary-color)'
+        : 'var(--instrument-regular-secondary-color)';
+    return html`<obc-watch
+      .state=${args.state}
+      .priority=${args.priority}
+      .watchCircleType=${args.watchCircleType}
+      .areas=${args.areas}
+      .vessels=${args.vessels}
+      .barAreas=${[
+        {startAngle: 70, endAngle: 110, fillColor: barColor},
+        {startAngle: -10, endAngle: 10, fillColor: barColor},
+        {startAngle: 190, endAngle: 170, fillColor: barColor},
+        {startAngle: 240, endAngle: 300, fillColor: barColor},
+      ]}
+      .needles=${[
+        {
+          angle: 80,
+          fillColor: needleColor,
+          strokeColor: 'var(--border-silhouette-color)',
+        },
+        {
+          angle: 3,
+          fillColor: needleColor,
+          strokeColor: 'var(--border-silhouette-color)',
+        },
+        {
+          angle: 183,
+          fillColor: needleColor,
+          strokeColor: 'var(--border-silhouette-color)',
+        },
+        {
+          angle: 260,
+          fillColor: needleColor,
+          strokeColor: 'var(--border-silhouette-color)',
+        },
+      ]}
+    ></obc-watch>`;
   },
 };
 

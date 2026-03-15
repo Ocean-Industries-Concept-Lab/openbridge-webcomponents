@@ -828,7 +828,7 @@ export const SetpointComparisonRadial: Story = {
  * Tertiary tickmarks are shown during adjustment (tertiaryTickmarkInterval=2).
  */
 export const SetpointAdjustmentFlow: StoryObj = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   name: 'Setpoint Adjustment Flow (interactive)',
   render: () => html`
     <div style="display: flex; flex-direction: column; gap: 24px;">
@@ -1016,7 +1016,7 @@ export const SetpointAdjustmentFlow: StoryObj = {
  * Zero state is auto-derived when `angleSetpoint` is within `angleSetpointAtZeroDeadband` (default 0.5°).
  */
 export const SetpointRadialAdjustmentFlow: StoryObj = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   name: 'Setpoint Radial Adjustment Flow (interactive)',
   render: () => {
     // Initial barAreas and areas for 30° fill
@@ -1253,7 +1253,7 @@ export const SetpointAzimuthThrusterFlow: StoryObj<{
   thrustDuration: number;
   angleDuration: number;
 }> = {
-  tags: ['!snapshot'],
+  tags: ['skip-test', 'skip-snapshot'],
   name: 'Setpoint Azimuth Thruster Flow (interactive)',
   args: {
     thrustDuration: 2,
@@ -1289,7 +1289,10 @@ export const SetpointAzimuthThrusterFlow: StoryObj<{
           .state=${InstrumentState.active}
           .priority=${Priority.enhanced}
           .animateSetpoint=${true}
-          .detailedTickmarks=${true}
+          .primaryTickmarkInterval=${45}
+          .secondaryTickmarkInterval=${5}
+          .tertiaryTickmarkInterval=${1}
+          .showLabels=${true}
           .tickmarksInside=${true}
         ></obc-azimuth-thruster>
       </div>

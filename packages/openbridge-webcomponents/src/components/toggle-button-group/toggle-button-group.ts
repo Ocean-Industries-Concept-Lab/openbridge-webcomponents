@@ -271,14 +271,14 @@ export class ObcToggleButtonGroup extends LitElement {
       (option) => option.selected
     );
     this.options.forEach((option) => {
-      option.noDivider = false;
+      option.showDivider = true;
     });
     if (selectedOptionIndex === -1) {
       return;
     }
     const nextOption = this.options[selectedOptionIndex + 1];
     if (nextOption) {
-      nextOption.noDivider = true;
+      nextOption.showDivider = false;
     }
   }
 

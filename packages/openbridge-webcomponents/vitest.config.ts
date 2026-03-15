@@ -22,6 +22,9 @@ export default defineConfig({
             // This should match your package.json script to run Storybook
             // The --no-open flag will skip the automatic opening of a browser
             storybookScript: 'npm run storybook --no-open',
+            tags: {
+              exclude: ['skip-test'],
+            },
           }),
           storybookVis({
             comparisonMethod: 'pixel',

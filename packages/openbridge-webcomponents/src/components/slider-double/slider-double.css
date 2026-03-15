@@ -8,7 +8,7 @@
   justify-content: center;
   height: 48px;
 
-  color: var(--element-neutral-color, #1a1a1a);
+  color: var(--element-neutral-color);
 }
 
 :host([hugcontainer]) {
@@ -23,6 +23,46 @@
   cursor: pointer;
   margin-left: -36px;
   margin-right: -36px;
+
+  &.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  &.disabled .track::after {
+    background: var(--flat-disabled-background-color);
+  }
+
+  &.disabled.enhanced .track {
+    background: var(--indent-disabled-background-color);
+    border-color: var(--indent-disabled-border-color);
+  }
+
+  &.disabled.enhanced .track::after {
+    background: var(--indent-disabled-background-color);
+  }
+
+  &.disabled .interactive-track {
+    background: var(--selected-disabled-background-color);
+    border-color: var(--selected-disabled-border-color);
+  }
+
+  &.disabled .thumb {
+    cursor: not-allowed;
+    background: var(--selected-disabled-background-color);
+    border-color: var(--normal-disabled-border-color);
+  }
+
+  &.disabled.enhanced .thumb {
+    cursor: not-allowed;
+    border-color: var(--selected-disabled-border-color);
+    background: var(--container-background-color);
+  }
+
+  &.disabled input::-webkit-slider-thumb {
+    cursor: not-allowed;
+    pointer-events: none;
+  }
 }
 
 .label {
@@ -33,6 +73,10 @@
   white-space: nowrap;
   user-select: none;
   box-sizing: content-box;
+
+  &.disabled {
+    color: var(--on-normal-disabled-color);
+  }
 }
 
 .dragging {

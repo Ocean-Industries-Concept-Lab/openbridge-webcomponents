@@ -3,9 +3,9 @@ import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/openbridge.c
 import { ObcTopBar } from "../../openbridge-webcomponents-react/components/top-bar/top-bar";
 import { ObcBrillianceMenu } from "../../openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
 import "./App.css";
-import PoiTargetsWrapper from "./PoiTargetsWrapper.tsx";
 import { ObcClock } from "../../openbridge-webcomponents-react/components/clock/clock";
 import { ObcButton } from "../../openbridge-webcomponents-react/components/button/button";
+import { ReRenderingInput } from "./ReRenderingInput";
 
 const handleBrillianceChange = (e: CustomEvent) => {
   document.documentElement.setAttribute("data-obc-theme", e.detail.value);
@@ -36,8 +36,9 @@ function App() {
           />
         </ObcTopBar>
       </header>
-      <ObcButton ></ObcButton>
+      <ObcButton></ObcButton>
       <main>
+        <ReRenderingInput />
         {showBrillianceMenu && (
           <ObcBrillianceMenu
             onPaletteChanged={handleBrillianceChange}
@@ -45,8 +46,6 @@ function App() {
             className="brilliance"
           />
         )}
-
-        <PoiTargetsWrapper rows={5} columns={5} />
       </main>
     </>
   );

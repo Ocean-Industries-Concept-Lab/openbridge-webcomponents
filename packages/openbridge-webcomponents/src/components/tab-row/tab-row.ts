@@ -17,7 +17,7 @@ export interface TabData {
   badgeCount?: number;
   badgeType?: BadgeType;
   badgeSize?: BadgeSize;
-  badgeHideNumber?: boolean;
+  badgeShowNumber?: boolean;
   showLeadingBadgeIcon?: boolean;
   disabled?: boolean;
 }
@@ -104,7 +104,7 @@ export interface TabData {
 @customElement('obc-tab-row')
 export class ObcTabRow extends LitElement {
   /**
-   * The list of tabs to display. Each tab is defined by an object with properties such as `id`, `title`, `hasLeadingIcon`, `hasBadge`, `badgeCount`, `badgeType`, `badgeSize`, `badgeHideNumber`, `showLeadingBadgeIcon`, and `disabled`.
+   * The list of tabs to display. Each tab is defined by an object with properties such as `id`, `title`, `hasLeadingIcon`, `hasBadge`, `badgeCount`, `badgeType`, `badgeSize`, `badgeShowNumber`, `showLeadingBadgeIcon`, and `disabled`.
    *
    * - `id` (string): Unique identifier for the tab.
    * - `title` (string): Display label for the tab.
@@ -113,7 +113,7 @@ export class ObcTabRow extends LitElement {
    * - `badgeCount` (number): Number to display in the badge.
    * - `badgeType` (BadgeType): Visual style of the badge (e.g., notification, alarm, enhance).
    * - `badgeSize` (BadgeSize): Size of the badge (e.g., regular, large).
-   * - `badgeHideNumber` (boolean): If true, hides the badge number.
+   * - `badgeShowNumber` (boolean): If true, shows the badge number.
    * - `showLeadingBadgeIcon` (boolean): If true, shows a badge icon.
    * - `disabled` (boolean): If true, disables the tab.
    */
@@ -206,7 +206,7 @@ export class ObcTabRow extends LitElement {
         .badgeCount=${tab.badgeCount || 0}
         .badgeType=${tab.badgeType ?? BadgeType.regular}
         .badgeSize=${tab.badgeSize ?? BadgeSize.regular}
-        .badgeHideNumber=${tab.badgeHideNumber || false}
+        .badgeShowNumber=${tab.badgeShowNumber ?? true}
         .showLeadingBadgeIcon=${tab.showLeadingBadgeIcon || false}
         @tab-click=${(e: Event) => this.handleTabClick(e, tab.id)}
         @tab-close=${(e: Event) => this.handleTabClose(e, tab.id)}

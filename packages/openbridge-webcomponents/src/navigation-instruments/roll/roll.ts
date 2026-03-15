@@ -52,6 +52,7 @@ export class ObcRoll extends LitElement {
         </svg>
         <obc-watch
           .watchCircleType=${WatchCircleType.double}
+          tickmarksInside
           .areas=${[
             {
               startAngle: 135,

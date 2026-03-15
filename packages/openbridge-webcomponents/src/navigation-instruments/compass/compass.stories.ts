@@ -32,6 +32,8 @@ const meta: Meta<typeof ObcCompass> = {
     direction: CompassDirection.NorthUp,
     touching: false,
     priority: Priority.enhanced,
+    showLabels: true,
+    tickmarksInside: false,
   },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
@@ -58,6 +60,8 @@ const meta: Meta<typeof ObcCompass> = {
       options: Object.values(CompassDirection),
     },
     touching: {control: 'boolean'},
+    showLabels: {control: 'boolean'},
+    tickmarksInside: {control: 'boolean'},
     state: {control: 'select', options: Object.values(InstrumentState)},
     priority: {control: 'select', options: Object.values(Priority)},
   },
@@ -87,5 +91,19 @@ export const HeadingUpInCommand: Story = {
 export const CourseUpInCommand: Story = {
   args: {
     direction: CompassDirection.CourseUp,
+  },
+};
+
+export const WithLabelsOutside: Story = {
+  args: {
+    showLabels: true,
+    tickmarksInside: false,
+  },
+};
+
+export const WithLabelsInside: Story = {
+  args: {
+    showLabels: true,
+    tickmarksInside: true,
   },
 };

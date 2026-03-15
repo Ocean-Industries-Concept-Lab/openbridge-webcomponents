@@ -34,11 +34,29 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
   @property({type: Boolean}) angleSetpointOverride: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
-  @property({type: Boolean}) disableAutoAtAngleSetpoint: boolean = false;
+  @property({type: Boolean, attribute: false}) autoAtAngleSetpoint: boolean =
+    true;
   @property({type: Number}) autoAtAngleSetpointDeadband: number = 2;
   @property({type: Boolean}) animateSetpoint: boolean = false;
-  @property({type: Boolean}) detailedTickmarks: boolean = false;
-  @property({type: Number}) labelAngle: number = 45;
+  /**
+   * Interval (in degrees) for primary tickmarks.
+   * When undefined or <= 0, no primary tickmarks are shown (only the zero line).
+   * Default 90 gives ticks at 0°, 90°, 180°, 270°.
+   */
+  @property({type: Number}) primaryTickmarkInterval: number | undefined = 90;
+  /**
+   * Interval (in degrees) for secondary tickmarks.
+   * When undefined or <= 0, no secondary tickmarks are shown.
+   */
+  @property({type: Number}) secondaryTickmarkInterval: number | undefined =
+    undefined;
+  /**
+   * Interval (in degrees) for tertiary tickmarks.
+   * When undefined or <= 0, no tertiary tickmarks are shown.
+   */
+  @property({type: Number}) tertiaryTickmarkInterval: number | undefined =
+    undefined;
+  @property({type: Boolean}) showLabels: boolean = false;
   @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: Number}) thrust = 0;
   @property({type: Number}) thrustSetpoint: number | undefined;
@@ -47,7 +65,8 @@ export class ObcAzimuthThruster extends LitElement {
   atThrustSetpoint: boolean = false;
   @property({type: Number}) thrustSetpointAtZeroDeadband: number = 0.1;
   @property({type: Boolean}) thrustSetpointOverride: boolean = false;
-  @property({type: Boolean}) disableAutoAtThrustSetpoint: boolean = false;
+  @property({type: Boolean, attribute: false}) autoAtThrustSetpoint: boolean =
+    true;
   @property({type: Number}) autoAtThrustSetpointDeadband: number = 1;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
@@ -70,7 +89,7 @@ export class ObcAzimuthThruster extends LitElement {
       newSetpoint: this.newAngleSetpoint,
       atSetpoint: this.atAngleSetpoint,
       touching: this.touching,
-      disableAutoAtSetpoint: this.disableAutoAtAngleSetpoint,
+      autoAtSetpoint: this.autoAtAngleSetpoint,
       autoAtSetpointDeadband: this.autoAtAngleSetpointDeadband,
       setpointAtZeroDeadband: this.angleSetpointAtZeroDeadband,
       setpointOverride: this.angleSetpointOverride,
@@ -81,7 +100,7 @@ export class ObcAzimuthThruster extends LitElement {
       newSetpoint: this.newThrustSetpoint,
       touching: this.touching,
       atSetpoint: this.atThrustSetpoint,
-      disableAutoAtSetpoint: this.disableAutoAtThrustSetpoint,
+      autoAtSetpoint: this.autoAtThrustSetpoint,
       autoAtSetpointDeadband: this.autoAtThrustSetpointDeadband,
       setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
       setpointOverride: this.thrustSetpointOverride,
@@ -89,7 +108,7 @@ export class ObcAzimuthThruster extends LitElement {
     });
   }
   @property({type: Number}) loading: number = 0;
-  @property({type: Boolean}) noPadding: boolean = false;
+  @property({type: Boolean, attribute: false}) hasLabelSpacer: boolean = true;
   @property({type: Array, attribute: false}) angleAdvices: AngleAdvice[] = [];
   @property({type: Array, attribute: false}) thrustAdvices: LinearAdvice[] = [];
   @property({type: Boolean}) singleDirection: boolean = false;
@@ -99,9 +118,7 @@ export class ObcAzimuthThruster extends LitElement {
 
   private get angleAdviceRaw(): AngleAdviceRaw[] {
     return this.angleAdvices.map((advice) => {
-      let triggered = false;
-
-      triggered =
+      const triggered =
         this.angleSetpoint !== undefined &&
         mapAngle0to360(this.angleSetpoint - advice.minAngle) < 180 &&
         mapAngle0to360(this.angleSetpoint - advice.maxAngle) > 180;
@@ -123,68 +140,79 @@ export class ObcAzimuthThruster extends LitElement {
   }
 
   private getTickmarks(): Tickmark[] {
-    if (!this.detailedTickmarks) {
-      return [
-        {
-          angle: 0,
-          type: TickmarkType.zeroLine,
-          color: 'var(--instrument-frame-tertiary-color)',
-        },
-        {
-          angle: 90,
+    const tickmarks: Tickmark[] = [];
+    const skipAngles: number[] = [];
+
+    // Helper for signed label text (0-180 positive, 181-359 negative)
+    const labelText = (angle: number): string | undefined => {
+      if (!this.showLabels) return undefined;
+      return angle <= 180 ? `${angle}` : `${angle - 360}`;
+    };
+
+    // Always add the zero line
+    tickmarks.push({
+      angle: 0,
+      type: TickmarkType.zeroLine,
+      text: this.showLabels ? '0' : undefined,
+      color: 'var(--instrument-frame-tertiary-color)',
+    });
+    skipAngles.push(0);
+
+    // Primary tickmarks — skip when undefined or <= 0 to prevent infinite loops
+    const primaryInterval = this.primaryTickmarkInterval;
+    if (
+      primaryInterval !== undefined &&
+      primaryInterval > 0 &&
+      Number.isFinite(primaryInterval)
+    ) {
+      for (let i = primaryInterval; i < 360; i += primaryInterval) {
+        if (skipAngles.includes(i)) continue;
+        tickmarks.push({
+          angle: i,
           type: TickmarkType.primary,
+          text: labelText(i),
           color: 'var(--instrument-frame-tertiary-color)',
-        },
-        {
-          angle: 180,
-          type: TickmarkType.primary,
-          color: 'var(--instrument-frame-tertiary-color)',
-        },
-        {
-          angle: 270,
-          type: TickmarkType.primary,
-          color: 'var(--instrument-frame-tertiary-color)',
-        },
-      ];
+        });
+        skipAngles.push(i);
+      }
     }
-    const tickmarks: Tickmark[] = [
-      {
-        angle: 0,
-        type: TickmarkType.zeroLine,
-        text: '0',
-        color: 'var(--instrument-frame-tertiary-color)',
-      },
-    ];
-    for (let i = this.labelAngle; i < 360; i += this.labelAngle) {
-      const text = i <= 180 ? `${i}` : `${i - 360}`;
-      tickmarks.push({
-        angle: i,
-        type: TickmarkType.primary,
-        text,
-        color: 'var(--instrument-frame-tertiary-color)',
-      });
-    }
-    const existingTickmarks = tickmarks.map((t) => t.angle);
-    for (let i = 0; i < 360; i += 5) {
-      if (!existingTickmarks.includes(i)) {
+
+    // Secondary tickmarks — skip when undefined or <= 0
+    const secondaryInterval = this.secondaryTickmarkInterval;
+    if (
+      secondaryInterval !== undefined &&
+      secondaryInterval > 0 &&
+      Number.isFinite(secondaryInterval)
+    ) {
+      for (let i = 0; i < 360; i += secondaryInterval) {
+        if (skipAngles.includes(i)) continue;
         tickmarks.push({
           angle: i,
           type: TickmarkType.secondary,
           color: 'var(--instrument-tick-mark-secondary-color)',
         });
-        existingTickmarks.push(i);
+        skipAngles.push(i);
       }
     }
-    for (let i = 0; i < 360; i += 1) {
-      if (!existingTickmarks.includes(i)) {
+
+    // Tertiary tickmarks — skip when undefined or <= 0
+    const tertiaryInterval = this.tertiaryTickmarkInterval;
+    if (
+      tertiaryInterval !== undefined &&
+      tertiaryInterval > 0 &&
+      Number.isFinite(tertiaryInterval)
+    ) {
+      for (let i = 0; i < 360; i += tertiaryInterval) {
+        if (skipAngles.includes(i)) continue;
         tickmarks.push({
           angle: i,
           type: TickmarkType.tertiary,
-          color: 'var(--instrument-tick-mark-secondary-color)',
+          color: 'var(--instrument-tick-mark-tertiary-color)',
         });
-        existingTickmarks.push(i);
+        skipAngles.push(i);
       }
     }
+
     return tickmarks;
   }
 
@@ -194,9 +222,9 @@ export class ObcAzimuthThruster extends LitElement {
     const tickmarks = this.getTickmarks();
 
     let viewBox: string;
-    if (this.noPadding) {
+    if (!this.hasLabelSpacer) {
       viewBox = '-192 -192 384 384';
-    } else if (this.detailedTickmarks && !this.tickmarksInside) {
+    } else if (this.showLabels && !this.tickmarksInside) {
       viewBox = '-236 -236 472 472';
     } else {
       viewBox = '-200 -200 400 400';
@@ -216,7 +244,7 @@ export class ObcAzimuthThruster extends LitElement {
           .setpointOverride=${this.angleSetpointOverride}
           .animateSetpoint=${this.animateSetpoint}
           .tickmarksInside=${this.tickmarksInside}
-          padding=${ifDefined(this.noPadding ? 16 : undefined)}
+          padding=${ifDefined(!this.hasLabelSpacer ? 16 : undefined)}
           .advices=${this.angleAdviceRaw}
           .starboardPortIndicator=${this.starboardPortIndicator}
         ></obc-watch>
@@ -233,8 +261,8 @@ export class ObcAzimuthThruster extends LitElement {
                 singleDirection: false,
                 singleDirectionHalfSize: this.singleDirection,
                 tunnel: false,
-                autoAtSetpoint: !this.disableAutoAtThrustSetpoint,
-                autoSetpointDeadband: this.autoAtThrustSetpointDeadband,
+                autoAtSetpoint: this.autoAtThrustSetpoint,
+                autoAtSetpointDeadband: this.autoAtThrustSetpointDeadband,
                 setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
                 touching: this.touching,
                 advices: this.thrustAdvices,

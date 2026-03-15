@@ -24,11 +24,17 @@
     flex-direction: column;
     padding: 8px
       calc(
-        4px + var(--app-components-integration-system-button-padding-horizontal)
+        4px +
+          var(
+            --app-components-integration-system-navigation-item-horizontal-padding-horizontal
+          )
       )
       0
       calc(
-        4px + var(--app-components-integration-system-button-padding-horizontal)
+        4px +
+          var(
+            --app-components-integration-system-navigation-item-horizontal-padding-horizontal
+          )
       );
     align-items: flex-start;
     gap: 4px;

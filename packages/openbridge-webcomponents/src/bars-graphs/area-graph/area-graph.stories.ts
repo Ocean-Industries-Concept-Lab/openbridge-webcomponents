@@ -179,7 +179,7 @@ export const Semitransparent: Story = {
 
 export const SemitransparentExternalScales: Story = {
   name: 'Semitransparent area graph (with external scales)',
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   argTypes: {
     priority: {
       control: 'select',
@@ -188,9 +188,9 @@ export const SemitransparentExternalScales: Story = {
     },
     // External scale controls (vertical/left)
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
-    vScaleHideLabels: {
+    vScaleShowLabels: {
       control: 'boolean',
-      description: 'Vertical scale: hide labels',
+      description: 'Vertical scale: show labels',
     },
     vScaleAdvices: {
       control: 'boolean',
@@ -227,9 +227,9 @@ export const SemitransparentExternalScales: Story = {
       control: 'boolean',
       description: 'Horizontal scale: show bar',
     },
-    hScaleHideLabels: {
+    hScaleShowLabels: {
       control: 'boolean',
-      description: 'Horizontal scale: hide labels',
+      description: 'Horizontal scale: show labels',
     },
     hScaleAdvices: {
       control: 'boolean',
@@ -270,7 +270,7 @@ export const SemitransparentExternalScales: Story = {
     priority: Priority.enhanced,
     // Vertical scale defaults
     vScaleHasBar: false,
-    vScaleHideLabels: false,
+    vScaleShowLabels: true,
     vScaleAdvices: true,
     vScaleFillMode: 'fill',
     vScaleAdvicePosition: 'inner',
@@ -280,7 +280,7 @@ export const SemitransparentExternalScales: Story = {
     vScaleFillMax: 5,
     // Horizontal scale defaults
     hScaleHasBar: false,
-    hScaleHideLabels: false,
+    hScaleShowLabels: true,
     hScaleAdvices: true,
     hScaleFillMode: 'tint',
     hScaleAdvicePosition: 'inner',
@@ -309,7 +309,7 @@ export const SemitransparentExternalScales: Story = {
         .height=${_args.height}
         .side=${'left'}
         .hasScale=${true}
-        .hideLabels=${_args.vScaleHideLabels}
+        .showLabels=${_args.vScaleShowLabels}
         .hasBar=${_args.vScaleHasBar}
         .fillMode=${_args.vScaleFillMode === 'fill'
           ? FillMode.fill
@@ -341,7 +341,7 @@ export const SemitransparentExternalScales: Story = {
         .width=${_args.width}
         .side=${'bottom'}
         .hasScale=${true}
-        .hideLabels=${_args.hScaleHideLabels}
+        .showLabels=${_args.hScaleShowLabels}
         .hasBar=${_args.hScaleHasBar}
         .fillMode=${_args.hScaleFillMode === 'fill'
           ? FillMode.fill
@@ -534,7 +534,7 @@ export const CustomColors: Story = {
 
 export const RealtimeSqueezing: Story = {
   name: 'Realtime (squeezing)',
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   render: (_args) => {
     const chart = document.createElement('obc-area-graph');
     chart.data = JSON.parse(JSON.stringify(SAMPLE_DATA));
@@ -567,7 +567,7 @@ export const RealtimeSqueezing: Story = {
 
 export const RealtimeShifting: Story = {
   name: 'Realtime (shifting)',
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   render: (_args) => {
     const chart = document.createElement('obc-area-graph');
     chart.showDebugOverlay = _args.showDebugOverlay;

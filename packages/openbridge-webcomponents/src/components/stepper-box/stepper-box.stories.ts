@@ -15,10 +15,17 @@ const meta: Meta<typeof ObcStepperBox> = {
     hasHelperText: {
       control: 'boolean',
     },
+    disabled: {
+      control: 'boolean',
+    },
   },
   render: (args) => {
     return html`
-      <obc-stepper-box type=${args.type} .hasHelperText=${args.hasHelperText}>
+      <obc-stepper-box
+        type=${args.type}
+        .hasHelperText=${args.hasHelperText}
+        .disabled=${args.disabled}
+      >
         <div>100</div>
         <div slot="unit">km</div>
         <div slot="helper-text">Helper text</div>
@@ -42,4 +49,8 @@ export const LeftRight: Story = {
 
 export const WithHelperText: Story = {
   args: {type: ObcStepperBoxType.plusMinus, hasHelperText: true},
+};
+
+export const Disabled: Story = {
+  args: {disabled: true, hasHelperText: true},
 };

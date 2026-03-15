@@ -68,6 +68,9 @@ export class ObcNumberInputField extends LitElement {
   @property({type: String}) helperPlacement: ObcNumberInputFieldPlacement =
     ObcNumberInputFieldPlacement.Left;
 
+  /** Internal property for squared corners, used when input is used in stepper-box */
+  @property({type: Boolean}) squared = false;
+
   private onInput(e: Event) {
     this.value = (e.target as HTMLInputElement).value;
   }
@@ -111,6 +114,7 @@ export class ObcNumberInputField extends LitElement {
           disabled: this.disabled,
           helpertext: hasHelperOrError,
           haslabel: Boolean(this.label),
+          squared: this.squared,
         })}
       >
         ${this.label

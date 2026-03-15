@@ -41,7 +41,7 @@ export enum PointerDirection {
  * - `pointerDirection` (default `none`): `none`, `top`, `bottom`, `left`, `right`.
  * - `fixedSize` (default `false`): toggles fixed `256x256` sizing instead of content-based sizing.
  * - Header options:
- *   - `noHeader` hides the header area.
+ *   - `showHeader` controls whether the header area is visible.
  *   - `headerVariant` controls header layout (`tag`, `condensed`, `regular`, `detailed`).
  *   - `index`, `cardTitle`, `description`, `source`, `timestamp` are forwarded to `obc-poi-card-header`.
  *   - `hasLeadingIcon` and `hasCloseButton` gate header affordances.
@@ -86,7 +86,7 @@ export class ObcPoiCard extends LitElement {
   /** When true, uses fixed 256x256px size; otherwise sizes to content. */
   @property({type: Boolean}) fixedSize = false;
 
-  @property({type: Boolean}) noHeader = false;
+  @property({type: Boolean, attribute: false}) showHeader = true;
 
   @property({type: String}) headerVariant: ObcPoiCardHeaderVariant =
     ObcPoiCardHeaderVariant.Condensed;
@@ -209,7 +209,7 @@ export class ObcPoiCard extends LitElement {
   }
 
   private renderHeader() {
-    if (this.noHeader) return nothing;
+    if (!this.showHeader) return nothing;
     return html`
       <obc-poi-card-header
         variant=${this.headerVariant}

@@ -77,7 +77,7 @@ export enum CompassDirection {
  * @property {number} courseOverGround - The current course over ground in degrees.
  * @property {number | null} headingSetpoint - The set point for the heading in degrees.
  * @property {boolean} atHeadingSetpoint - Indicates if the vessel is at the heading set point.
- * @property {boolean} disableAutoAtHeadingSetpoint - Disables automatic at heading set point calculation.
+ * @property {boolean} autoAtHeadingSetpoint - Enables automatic at heading set point calculation.
  * @property {number} autoAtHeadingSetpointDeadband - The deadband for the heading set point in degrees.
  * @property {boolean} touching - Indicates if the compass is being touched.
  * @property {Array<AngleAdvice>} headingAdvices - An array of angle advices for the compass.
@@ -102,7 +102,8 @@ export class ObcCompass extends LitElement {
   @property({type: Boolean}) atHeadingSetpoint: boolean = false;
   @property({type: Number}) headingSetpointAtZeroDeadband: number = 0.5;
   @property({type: Boolean}) headingSetpointOverride: boolean = false;
-  @property({type: Boolean}) disableAutoAtHeadingSetpoint: boolean = false;
+  @property({type: Boolean, attribute: false}) autoAtHeadingSetpoint: boolean =
+    true;
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
   @property({type: Boolean}) animateSetpoint: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
@@ -117,6 +118,10 @@ export class ObcCompass extends LitElement {
     CompassDirection.NorthUp;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
+  /** Show compass NSEW labels and north arrow. */
+  @property({type: Boolean}) showLabels: boolean = false;
+  /** When true, labels and north arrow are placed inside the outer ring. */
+  @property({type: Boolean}) tickmarksInside: boolean = false;
 
   protected override updated(_changedProperties: PropertyValues): void {
     super.updated(_changedProperties);
@@ -140,7 +145,7 @@ export class ObcCompass extends LitElement {
       newSetpoint: this.newHeadingSetpoint,
       atSetpoint: this.atHeadingSetpoint,
       touching: this.touching,
-      disableAutoAtSetpoint: this.disableAutoAtHeadingSetpoint,
+      autoAtSetpoint: this.autoAtHeadingSetpoint,
       autoAtSetpointDeadband: this.autoAtHeadingSetpointDeadband,
       setpointAtZeroDeadband: this.headingSetpointAtZeroDeadband,
       setpointOverride: this.headingSetpointOverride,
@@ -174,7 +179,7 @@ export class ObcCompass extends LitElement {
     const size = Math.min(this.clientHeight, this.clientWidth);
     const deltaWidth = 512 - size;
     const steps = deltaWidth / 128;
-    let deltaPadding = 0;
+    let deltaPadding;
     if (deltaWidth > 0) {
       deltaPadding = steps * 48;
     } else {
@@ -228,8 +233,10 @@ export class ObcCompass extends LitElement {
           .tickmarks=${tickmarks}
           .state=${this.state}
           .watchCircleType=${WatchCircleType.triple}
-          .labelFrameEnabled=${true}
+          .showLabels=${this.showLabels}
+          .tickmarksInside=${this.tickmarksInside}
           .crosshairEnabled=${true}
+          .northArrow=${true}
           .angleSetpoint=${this.headingSetpoint ?? undefined}
           .newAngleSetpoint=${this.newHeadingSetpoint}
           .atAngleSetpoint=${this._headingSp.computeAtSetpoint(this.heading)}

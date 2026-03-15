@@ -138,8 +138,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
   // Bands (thickness)
   /** Show scale tickmarks */
   @property({type: Boolean, attribute: false}) hasScale = true;
-  /** Hide numerical value labels at primary tickmarks */
-  @property({type: Boolean}) hideLabels = false;
+  @property({type: Boolean, attribute: false}) showLabels = true;
   /** Show bar */
   @property({type: Boolean}) hasBar = false;
   /** Show background behind the scale tickmarks. */
@@ -291,7 +290,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
       minValue: this.minValue,
       maxValue: this.maxValue,
       hasScale: this.hasScale,
-      labels: !this.hideLabels,
+      labels: this.showLabels,
       hasBar: this.hasBar,
       scaleBackground: this.scaleBackground,
       barContainerStyle: this.barContainerStyle,
@@ -315,7 +314,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
       setpoint: this.setpoint,
       newSetpoint: this.newSetpoint,
       atSetpoint: this.atSetpoint,
-      disableAutoAtSetpoint: this.disableAutoAtSetpoint,
+      autoAtSetpoint: this.autoAtSetpoint,
       autoAtSetpointDeadband: this.autoAtSetpointDeadband,
       setpointAtZeroDeadband: this.setpointAtZeroDeadband,
       animateSetpoint: this.animateSetpoint,
@@ -390,7 +389,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
     // even in fixedAspectRatio mode to keep chart padding accurate.
     const layoutChanged =
       changed.has('side') ||
-      changed.has('hideLabels') ||
+      changed.has('showLabels') ||
       changed.has('hasScale') ||
       changed.has('hasBar') ||
       changed.has('barThickness') ||
@@ -430,7 +429,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
       side: this.side,
       hasBar: this.hasBar,
       hasScale: this.hasScale,
-      labels: !this.hideLabels,
+      labels: this.showLabels,
       barThickness: effectiveBarThickness,
       tickThickness: this.tickThickness,
       labelThickness: this.labelThickness,
@@ -458,7 +457,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
     //   effectiveLength,
     //   hasBar: this.hasBar,
     //   hasScale: this.hasScale,
-    //   hideLabels: this.hideLabels,
+    //   showLabels: this.showLabels,
     //   barThickness: this.barThickness,
     //   tickThickness: this.tickThickness,
     //   labelThickness: this.labelThickness,

@@ -90,4 +90,32 @@
       color: var(--integration-element-active-color);
     }
   }
+
+  &.disabled {
+    cursor: not-allowed;
+
+    .icon-wrapper {
+      color: var(--element-disabled-color);
+    }
+
+    .label {
+      color: var(--element-disabled-color);
+    }
+  }
+
+  &.checked.disabled .icon-wrapper {
+    background-color: var(--selected-disabled-background-color);
+    border-color: var(--selected-disabled-border-color);
+    color: var(--on-selected-disabled-color);
+  }
+
+  &.integration.disabled {
+    .icon-wrapper {
+      color: var(--element-disabled-color);
+    }
+
+    .label {
+      color: var(--element-disabled-color);
+    }
+  }
 }

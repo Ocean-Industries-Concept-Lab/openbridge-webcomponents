@@ -122,7 +122,7 @@ import {
  *   value: 40,
  *   setpoint: 50,
  *   atSetpoint: false,
- *   disableAutoAtSetpoint: false,
+ *   autoAtSetpoint: true,
  *   autoAtSetpointDeadband: 1,
  *   setpointAtZeroDeadband: 0.5,
  *   state: InstrumentState.active,
@@ -541,10 +541,10 @@ export interface ExternalScaleConfig {
    * and proposed setpoint positions simultaneously.
    */
   newSetpoint?: number;
-  /** Manual override used when disableAutoAtSetpoint=true. */
+  /** Manual override used when autoAtSetpoint=false. */
   atSetpoint: boolean;
-  /** When false, at-setpoint is derived from value/setpoint and deadband. */
-  disableAutoAtSetpoint: boolean;
+  /** When true, at-setpoint is derived from value/setpoint and deadband. */
+  autoAtSetpoint: boolean;
   /** Deadband used for automatic at-setpoint detection. */
   autoAtSetpointDeadband: number;
   /** Deadband around 0 where the setpoint indicator snaps to exactly 0. */
@@ -844,7 +844,7 @@ function calculateAtSetpoint(config: ExternalScaleConfig): boolean {
     value: config.value,
     setpoint: config.setpoint,
     touching: isTouching,
-    disableAuto: config.disableAutoAtSetpoint,
+    auto: config.autoAtSetpoint,
     deadband: config.autoAtSetpointDeadband,
     atSetpointManual: config.atSetpoint,
   });
@@ -1458,7 +1458,7 @@ function generateBarContainer(
         const isRight = config.side === 'right';
 
         // Stroke path excludes the edge touching the scale
-        let strokePath = '';
+        let strokePath: string;
         if (isRight) {
           // Exclude right edge (touching scale on right side)
           strokePath = `M ${rectX} ${rectY + (noCornersRounded ? 0 : r)} L ${rectX} ${rectY + rectHeight - (noCornersRounded ? 0 : r)}`; // Left edge
@@ -1537,7 +1537,7 @@ function generateBarContainer(
       const isRight = config.side === 'right';
 
       // Stroke path excludes the edge touching the scale
-      let strokePath = '';
+      let strokePath: string;
       if (isRight) {
         // Exclude right edge
         strokePath = `M ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
@@ -1637,7 +1637,7 @@ function generateBarContainer(
       const isBottom = config.side === 'bottom';
 
       // Stroke path excludes the edge touching the scale
-      let strokePath = '';
+      let strokePath: string;
       if (isBottom) {
         // Exclude bottom edge (touching scale on bottom side)
         strokePath = `M ${rectX + (noCornersRounded ? 0 : r)} ${rectY}`; // Top edge start
@@ -1717,7 +1717,7 @@ function generateBarContainer(
     const isBottom = config.side === 'bottom';
 
     // Stroke path excludes the edge touching the scale
-    let strokePath = '';
+    let strokePath: string;
     if (isBottom) {
       // Exclude bottom edge
       strokePath = `M ${x + (shouldRoundTopLeft ? r : 0)} ${y}`;

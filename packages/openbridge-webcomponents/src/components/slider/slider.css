@@ -20,6 +20,38 @@
   flex: 1;
   height: 48px;
   position: relative;
+
+  &.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  &.disabled .track::after {
+    background: var(--flat-disabled-background-color);
+  }
+
+  &.disabled.enhanced .track {
+    background: var(--indent-disabled-background-color);
+  }
+
+  &.disabled.enhanced .track::after {
+    background: var(--indent-disabled-background-color);
+  }
+
+  &.disabled .interactive-track {
+    background: var(--selected-disabled-background-color);
+    border-color: var(--selected-disabled-background-color);
+  }
+
+  &.disabled .thumb {
+    background: var(--selected-disabled-background-color);
+    border-color: var(--normal-disabled-border-color);
+  }
+
+  &.disabled.enhanced .thumb {
+    border-color: var(--selected-disabled-border-color);
+    background: var(--container-background-color);
+  }
 }
 
 .slider {

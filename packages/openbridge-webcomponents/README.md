@@ -21,7 +21,7 @@ Join our discord server to get the latest updates and to ask questions. [Join he
 
 # Introduction video
 
-We have made an short introduction to the library. You can watch it [here](https://www.youtube.com/watch?v=5DiEA4voqzI)
+We have made a short introduction to the library. You can watch it [here](https://www.youtube.com/watch?v=5DiEA4voqzI)
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=5DiEA4voqzI" target="_blank">
  <img src="https://img.youtube.com/vi/5DiEA4voqzI/0.jpg" alt="Watch the video" width="480" height="360" />
@@ -40,13 +40,13 @@ We have made an short introduction to the library. You can watch it [here](https
 
 [Storybook](https://storybook.js.org/) is a development environment for UI components. It allows you to browse a component library, view the different states of each component, and interactively develop and test components in isolation.
 
-To access the Storybook for this project, click [here](https://openbridge-storybook.web.app).
+To access the Storybook for this project, click [here](https://openbridge-jip-storybook.web.app).
 
 ## Demo
 
 The demo showcases the project's functionality using Vue.js. It provides a live demonstration of the project's features and allows you to interact with the application.
 
-To access the demo, click [here](https://openbridge-demo.web.app/).
+To access the demo, click [here](https://openbridge-jip-demo.web.app/).
 
 ## CSS file for palettes
 
@@ -56,9 +56,9 @@ The CSS file for the palettes is located at [packages/openbridge-webcomponents/d
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/openbridge.css';
 ```
 
-The file is called `variables.css` and contains all the openbridge pallets (bright, day, dusk, night).
+The file is called `variables.css` and contains all the openbridge palette (bright, day, dusk, night).
 It can be used to set the color theme of components.
-To select the pallet, set the `data-obc-theme` attribute on the `html` tag:
+To select the palette, set the `data-obc-theme` attribute on the `html` tag:
 
 ```html
 <html lang="en" data-obc-theme="day"></html>
@@ -80,16 +80,16 @@ npm install @ocean-industries-concept-lab/openbridge-webcomponents
    ```javascript
    import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/openbridge.css';
    ```
-2. Select the pallet by setting the `data-obc-theme` attribute on the `html` tag:
+2. Select the palette by setting the `data-obc-theme` attribute on the `html` tag:
    ```html
    <html lang="en" data-obc-theme="day"></html>
    ```
-3. Install the Noto Sans font by using the attached `NotoSans.tff` file. Add the following to your css:
+3. Install the Noto Sans font by using the attached `NotoSans.ttf` file. Add the following to your css:
 
    ```css
    @font-face {
      font-family: 'Noto Sans';
-     src: url('path/to/NotoSans.tff');
+     src: url('path/to/NotoSans.ttf');
    }
 
    * {
