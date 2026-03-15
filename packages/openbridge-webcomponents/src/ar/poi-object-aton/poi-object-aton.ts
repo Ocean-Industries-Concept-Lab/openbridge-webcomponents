@@ -1,4 +1,4 @@
-import {html, unsafeCSS, TemplateResult} from 'lit';
+import {html, unsafeCSS, TemplateResult, nothing} from 'lit';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {styleMap, StyleInfo} from 'lit/directives/style-map.js';
@@ -92,6 +92,30 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
     );
   }
 
+  private get usesAlarmCircle(): boolean {
+    return this.isAtonType && this.state === ObcPoiObjectState.Alarm;
+  }
+
+  private handleKeyDown(e: KeyboardEvent) {
+    if (!this.isInteractive) return;
+    if (e.target !== e.currentTarget) return;
+    if (e.key === ' ') {
+      e.preventDefault();
+    } else if (e.key === 'Enter' && !e.repeat) {
+      e.preventDefault();
+      this.click();
+    }
+  }
+
+  private handleKeyUp(e: KeyboardEvent) {
+    if (!this.isInteractive) return;
+    if (e.target !== e.currentTarget) return;
+    if (e.key === ' ') {
+      e.preventDefault();
+      this.click();
+    }
+  }
+
   private get innerState(): ObcPoiObjectState {
     if (this.isIndicator && this.isAlert) {
       return ObcPoiObjectState.Activated;
@@ -146,11 +170,26 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
   private renderAtonDiamond(): TemplateResult {
     return html`
       <div class="aton-diamond-frame">
-        <div class="aton-diamond-background"></div>
+        <div class="aton-diamond-background" part="background-frame"></div>
         <div class="aton-icon-container">
           <slot></slot>
         </div>
       </div>
+    `;
+  }
+
+  private renderBasePoiObject(styleVars: StyleInfo = this.colorStyleVars) {
+    return html`
+      <obc-poi-object
+        exportparts="background-frame"
+        style=${styleMap(styleVars)}
+        .type=${this.baseType}
+        .objectStyle=${ObcPoiObjectStyle.Regular}
+        .state=${this.innerState}
+        ?interactive=${this.interactive}
+      >
+        <slot></slot>
+      </obc-poi-object>
     `;
   }
 
@@ -163,24 +202,25 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
       interactive: this.isInteractive,
     };
 
-    if (this.isAtonType) {
+    if (this.isAtonType && !this.usesAlarmCircle) {
       return html`
-        <div class=${classMap(wrapperClasses)}>${this.renderAtonDiamond()}</div>
+        <div
+          class=${classMap(wrapperClasses)}
+          role=${this.isInteractive ? 'button' : nothing}
+          tabindex=${this.isInteractive ? '0' : nothing}
+          @keydown=${this.handleKeyDown}
+          @keyup=${this.handleKeyUp}
+        >
+          ${this.renderAtonDiamond()}
+        </div>
       `;
     }
 
     return html`
       <div class=${classMap(wrapperClasses)}>
-        <obc-poi-object
-          exportparts="background-frame"
-          style=${styleMap(this.colorStyleVars)}
-          .type=${this.baseType}
-          .objectStyle=${ObcPoiObjectStyle.Regular}
-          .state=${this.innerState}
-          ?interactive=${this.interactive}
-        >
-          <slot></slot>
-        </obc-poi-object>
+        ${this.renderBasePoiObject(
+          this.usesAlarmCircle ? {} : this.colorStyleVars
+        )}
       </div>
     `;
   }

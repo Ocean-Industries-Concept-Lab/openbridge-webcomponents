@@ -288,6 +288,12 @@ export class ObcPoiButton extends LitElement {
       return ObcPoiObjectState.Overlapped;
     }
 
+    if (this.state === ObcPoiButtonState.Caution)
+      return ObcPoiObjectState.Caution;
+    if (this.state === ObcPoiButtonState.Warning)
+      return ObcPoiObjectState.Warning;
+    if (this.state === ObcPoiButtonState.Alarm) return ObcPoiObjectState.Alarm;
+
     if (this.hasData) {
       if (this.value === PoiButtonVisualState.Activated) {
         return ObcPoiObjectState.Activated;
