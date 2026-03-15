@@ -54,6 +54,12 @@ export class ObcPoiButtonAton extends ObcPoiButton {
     }
   }
 
+  protected override get wrapperVariantClasses(): Record<string, boolean> {
+    return {
+      'is-aton-diamond': this.resolvedAtonType === ObcPoiObjectAtonType.AtoN,
+    };
+  }
+
   protected override renderPoiObject() {
     return html`
       <obc-poi-object-aton

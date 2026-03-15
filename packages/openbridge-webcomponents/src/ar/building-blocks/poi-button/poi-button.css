@@ -16,6 +16,7 @@
   --obc-poi-overlap-object-border: rgba(0, 0, 0, 0.3);
   --obc-poi-overlap-wrapper-opacity: 0.6;
   --obc-poi-overlap-data-opacity: 0.6;
+  --obc-poi-surface-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
 }
 
 :host([overlap-opaque]) {
@@ -72,6 +73,7 @@
     }
   }
 
+  /* Overlap state styles - applied via visual state */
   :host([value="overlapped"]) & {
     --obc-poi-overlap-elements-opacity: 0;
     --obc-poi-label-opacity: 0;
@@ -84,6 +86,7 @@
     }
   }
 
+  /* Transition for elements that fade */
   & .alert-ring,
   & .id-label,
   & .selection-frame {
@@ -101,7 +104,7 @@
   }
 
   &:not(.has-data) .poi-object {
-    --obc-poi-object-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
+    --obc-poi-object-shadow: var(--obc-poi-surface-shadow);
   }
 
   & .selection-frame {
@@ -150,6 +153,7 @@
     border: 0.5px solid var(--alert-caution-outline-color);
     outline: 0.5px solid var(--alert-caution-outline-color);
     outline-offset: -5px;
+    /* make the inner center of the ring transparent */
     clip-path: path("M20.5 5 A15.5 15.5 0 1 0 20.51 5 Z M 0 0 H 41 V 41 H 0 Z");
   }
 
@@ -218,6 +222,7 @@
     bottom var(--obc-poi-size-transition-duration, 0.1s) ease-out;
 }
 
+/* Explicit interaction fallback for POI frame. Keeps behavior even if mixin output changes. */
 @media (hover: hover) {
   :host(:not([value="overlapped"]))
     .wrapper:not(.has-data):hover
@@ -244,6 +249,7 @@
   transform: translate(-50%, -100%);
 }
 
+/* Overlap alert color styles */
 :host([value="overlapped"]) .wrapper {
   &.alert-caution {
     --overlay-container-background-color: var(--alert-caution-color, #ffdb42);
@@ -367,12 +373,21 @@
   }
 }
 
+.wrapper.has-data.is-aton-diamond {
+  box-shadow: var(--obc-poi-surface-shadow);
+
+  .poi-object {
+    --obc-poi-aton-object-shadow-opacity: 0;
+  }
+}
+
+/* Overlap state for has-data variant - keep layout, hide values */
 :host([value="overlapped"]) .wrapper.has-data {
   --obc-poi-overlapped-data-bg: var(--overlay-container-background-color);
   --obc-poi-overlapped-data-border: var(--overlay-border-outline-color);
   opacity: var(--obc-poi-overlap-data-opacity, 0.6);
   padding-top: var(--maneuvering-components-poi-button-overlap-offset-padding);
-  box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--obc-poi-surface-shadow);
 
   .button-wrapper {
     visibility: hidden;
