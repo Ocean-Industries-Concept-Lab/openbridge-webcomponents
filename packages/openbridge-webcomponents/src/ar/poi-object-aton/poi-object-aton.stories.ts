@@ -9,7 +9,7 @@ import {
 import '../../icons/icon-beacon-general-east.js';
 
 const meta: Meta = {
-  title: 'AR/POI Object AtoN',
+  title: 'AR/POI Button/POI Object AtoN',
   component: 'obc-poi-object-aton',
   tags: ['autodocs'],
   argTypes: {

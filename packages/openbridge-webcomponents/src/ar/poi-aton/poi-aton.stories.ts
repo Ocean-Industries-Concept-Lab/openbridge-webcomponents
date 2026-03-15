@@ -10,6 +10,10 @@ import {
 } from '../building-blocks/poi-pointer/poi-pointer.js';
 import '../building-blocks/poi-header/poi-header.js';
 import '../../icons/icon-beacon-general-east.js';
+import '../../icons/icon-beacon-general-north.js';
+import '../../icons/icon-beacon-general-south.js';
+import '../../icons/icon-beacon-general-danger.js';
+import '../../icons/icon-beacon-tower-flag.js';
 import {
   ObcPoiObjectAtonType,
   ObcPoiObjectAtonStyle,
@@ -28,7 +32,7 @@ const compactDocsHeightDecorator = (story: () => unknown) => html`
 `;
 
 const meta: Meta<ObcPoiAton> = {
-  title: 'AR/POI AtoN',
+  title: 'AR/POI Button/POI AtoN',
   tags: ['autodocs'],
   component: 'obc-poi-aton',
   args: {
@@ -38,21 +42,13 @@ const meta: Meta<ObcPoiAton> = {
     y: 192,
     buttonY: 192,
     outsideAngle: 315,
-    value: PoiVariantValue.Unchecked,
     hasPointer: true,
     hasHeader: false,
     pointerType: undefined,
     pointerState: undefined,
     relativeDirection: 0,
-    buttonOffsetX: 0,
     targetOffsetX: 0,
-    selected: false,
-    boxWidth: null,
-    boxHeight: null,
-    animatePosition: false,
-    overlapOpaque: false,
     data: [],
-    fixedTarget: false,
     atonType: ObcPoiObjectAtonType.AtoN,
     atonStyle: ObcPoiObjectAtonStyle.Regular,
     atonState: null,
@@ -71,21 +67,12 @@ const meta: Meta<ObcPoiAton> = {
     x: {control: {type: 'range', min: 0, max: 640, step: 1}},
     y: {control: {type: 'range', min: 32, max: 400, step: 1}},
     buttonY: {control: {type: 'range', min: 0, max: 480, step: 1}},
-    fixedTarget: {control: {type: 'boolean'}},
     outsideAngle: {
       control: {type: 'range', min: 0, max: 360, step: 1},
       if: {arg: 'type', eq: ObcPoiType.Outside},
     },
     hasPointer: {control: {type: 'boolean'}},
     hasHeader: {control: {type: 'boolean'}},
-    value: {
-      options: Object.values(PoiVariantValue),
-      control: {type: 'select'},
-    },
-    buttonType: {
-      options: ['button', 'enhanced'],
-      control: {type: 'select'},
-    },
     pointerType: {
       options: [undefined, ...Object.values(ObcPoiPointerType)],
       control: {type: 'select'},
@@ -97,17 +84,9 @@ const meta: Meta<ObcPoiAton> = {
     relativeDirection: {
       control: {type: 'range', min: 0, max: 360},
     },
-    buttonOffsetX: {
-      control: {type: 'range', min: -100, max: 100, step: 1},
-    },
     targetOffsetX: {
       control: {type: 'range', min: -100, max: 100, step: 1},
     },
-    selected: {control: {type: 'boolean'}},
-    boxWidth: {control: {type: 'number', min: 0, step: 1}},
-    boxHeight: {control: {type: 'number', min: 0, step: 1}},
-    animatePosition: {control: {type: 'boolean'}},
-    overlapOpaque: {control: {type: 'boolean'}},
     data: {control: 'object'},
     atonType: {
       options: Object.values(ObcPoiObjectAtonType),
@@ -122,6 +101,17 @@ const meta: Meta<ObcPoiAton> = {
       control: {type: 'select'},
     },
     atonInteractive: {control: {type: 'boolean'}},
+    value: {table: {disable: true}},
+    selected: {table: {disable: true}},
+    buttonOffsetX: {table: {disable: true}},
+    overlapOpaque: {table: {disable: true}},
+    animatePosition: {table: {disable: true}},
+    fixedTarget: {table: {disable: true}},
+    buttonType: {table: {disable: true}},
+    boxWidth: {table: {disable: true}},
+    boxHeight: {table: {disable: true}},
+    headerContent: {table: {disable: true}},
+    lineCompensationY: {table: {disable: true}},
   },
   render: (args) => {
     return html`
@@ -146,20 +136,11 @@ const meta: Meta<ObcPoiAton> = {
         .outsideAngle=${args.outsideAngle}
         .hasPointer=${args.hasPointer}
         .hasHeader=${args.hasHeader}
-        .value=${args.value}
-        .buttonType=${args.buttonType}
         .pointerType=${args.pointerType}
         .pointerState=${args.pointerState}
         .relativeDirection=${args.relativeDirection}
-        .buttonOffsetX=${args.buttonOffsetX}
         .targetOffsetX=${args.targetOffsetX}
-        .selected=${args.selected}
-        .boxWidth=${args.boxWidth}
-        .boxHeight=${args.boxHeight}
-        .animatePosition=${args.animatePosition}
-        .overlapOpaque=${args.overlapOpaque}
         .data=${args.data}
-        .fixedTarget=${args.fixedTarget}
         .atonType=${args.atonType}
         .atonStyle=${args.atonStyle}
         .atonState=${args.atonState}
@@ -213,20 +194,11 @@ export const Preview: Story = {
           .outsideAngle=${args.outsideAngle}
           .hasPointer=${args.hasPointer}
           .hasHeader=${args.hasHeader}
-          .value=${args.value}
-          .buttonType=${args.buttonType}
           .pointerType=${args.pointerType}
           .pointerState=${args.pointerState}
           .relativeDirection=${args.relativeDirection}
-          .buttonOffsetX=${args.buttonOffsetX}
           .targetOffsetX=${args.targetOffsetX}
-          .selected=${args.selected}
-          .boxWidth=${args.boxWidth}
-          .boxHeight=${args.boxHeight}
-          .animatePosition=${args.animatePosition}
-          .overlapOpaque=${args.overlapOpaque}
           .data=${args.data}
-          .fixedTarget=${args.fixedTarget}
           .atonType=${args.atonType}
           .atonStyle=${args.atonStyle}
           .atonState=${args.atonState}
@@ -469,6 +441,155 @@ export const POIValuesAndContent: Story = {
               .buttonY=${demoButtonY}
               .type=${ObcPoiType.Point}
               .data=${values}
+            >
+              <obi-beacon-general-east></obi-beacon-general-east>
+            </obc-poi-aton>
+          </div>
+        </div>
+      </div>
+    `;
+  },
+};
+
+export const AtonStylesAndTypes: Story = {
+  render: () => {
+    const demoX = 108;
+    const demoY = 72;
+    const demoButtonY = 72;
+
+    return html`
+      <style>
+        .styles-stage {
+          position: relative;
+          width: 920px;
+          height: 480px;
+          transform: translate(-50%, -50%);
+        }
+
+        .styles-showcase {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          display: grid;
+          grid-template-columns: repeat(4, 210px);
+          grid-auto-rows: 168px;
+          gap: 26px 14px;
+        }
+
+        .styles-item {
+          position: relative;
+          height: 100%;
+        }
+
+        .styles-item-label {
+          position: absolute;
+          top: 2px;
+          left: 0;
+          font-size: 11px;
+          font-family: monospace;
+          color: rgba(54, 68, 86, 0.88);
+        }
+
+        .styles-item obc-poi-aton {
+          position: absolute;
+        }
+      </style>
+      <div class="styles-stage">
+        <div class="styles-showcase">
+          <div class="styles-item">
+            <div class="styles-item-label">AtoN + Regular</div>
+            <obc-poi-aton
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .atonType=${ObcPoiObjectAtonType.AtoN}
+              .atonStyle=${ObcPoiObjectAtonStyle.Regular}
+            >
+              <obi-beacon-general-east></obi-beacon-general-east>
+            </obc-poi-aton>
+          </div>
+          <div class="styles-item">
+            <div class="styles-item-label">AtoN + Green</div>
+            <obc-poi-aton
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .atonType=${ObcPoiObjectAtonType.AtoN}
+              .atonStyle=${ObcPoiObjectAtonStyle.Green}
+            >
+              <obi-beacon-general-north></obi-beacon-general-north>
+            </obc-poi-aton>
+          </div>
+          <div class="styles-item">
+            <div class="styles-item-label">AtoN + Red</div>
+            <obc-poi-aton
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .atonType=${ObcPoiObjectAtonType.AtoN}
+              .atonStyle=${ObcPoiObjectAtonStyle.Red}
+            >
+              <obi-beacon-general-south></obi-beacon-general-south>
+            </obc-poi-aton>
+          </div>
+          <div class="styles-item">
+            <div class="styles-item-label">AtoN + Yellow</div>
+            <obc-poi-aton
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .atonType=${ObcPoiObjectAtonType.AtoN}
+              .atonStyle=${ObcPoiObjectAtonStyle.Yellow}
+            >
+              <obi-beacon-general-danger></obi-beacon-general-danger>
+            </obc-poi-aton>
+          </div>
+          <div class="styles-item">
+            <div class="styles-item-label">Regular Type</div>
+            <obc-poi-aton
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .atonType=${ObcPoiObjectAtonType.Regular}
+              .atonStyle=${ObcPoiObjectAtonStyle.Green}
+            >
+              <obi-beacon-tower-flag></obi-beacon-tower-flag>
+            </obc-poi-aton>
+          </div>
+          <div class="styles-item">
+            <div class="styles-item-label">Large Type</div>
+            <obc-poi-aton
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .atonType=${ObcPoiObjectAtonType.Large}
+              .atonStyle=${ObcPoiObjectAtonStyle.Red}
+            >
+              <obi-beacon-general-danger></obi-beacon-general-danger>
+            </obc-poi-aton>
+          </div>
+          <div class="styles-item">
+            <div class="styles-item-label">Indicator Type</div>
+            <obc-poi-aton
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .atonType=${ObcPoiObjectAtonType.Indicator}
+            >
+              <obi-beacon-general-north></obi-beacon-general-north>
+            </obc-poi-aton>
+          </div>
+          <div class="styles-item">
+            <div class="styles-item-label">Green + Alarm</div>
+            <obc-poi-aton
+              .x=${demoX}
+              .y=${demoY}
+              .buttonY=${demoButtonY}
+              .atonType=${ObcPoiObjectAtonType.AtoN}
+              .atonStyle=${ObcPoiObjectAtonStyle.Green}
+              .state=${ObcPoiState.Alarm}
+              .value=${PoiVariantValue.Checked}
             >
               <obi-beacon-general-east></obi-beacon-general-east>
             </obc-poi-aton>

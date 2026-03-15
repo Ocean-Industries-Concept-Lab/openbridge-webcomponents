@@ -10,7 +10,7 @@ import '../../icons/icon-vessel-type-psv-outlined.js';
 import '../../icons/icon-vessel-type-psv-filled.js';
 
 const meta: Meta = {
-  title: 'AR/POI Object Vessel',
+  title: 'AR/POI Button/POI Object Vessel',
   component: 'obc-poi-object-vessel',
   tags: ['autodocs'],
   argTypes: {

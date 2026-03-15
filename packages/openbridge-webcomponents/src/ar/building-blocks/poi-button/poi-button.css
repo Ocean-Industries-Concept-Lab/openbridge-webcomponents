@@ -72,7 +72,6 @@
     }
   }
 
-  /* Overlap state styles - applied via visual state */
   :host([value="overlapped"]) & {
     --obc-poi-overlap-elements-opacity: 0;
     --obc-poi-label-opacity: 0;
@@ -85,7 +84,6 @@
     }
   }
 
-  /* Transition for elements that fade */
   & .alert-ring,
   & .id-label,
   & .selection-frame {
@@ -152,7 +150,6 @@
     border: 0.5px solid var(--alert-caution-outline-color);
     outline: 0.5px solid var(--alert-caution-outline-color);
     outline-offset: -5px;
-    /* make the inner center of the ring transparent */
     clip-path: path("M20.5 5 A15.5 15.5 0 1 0 20.51 5 Z M 0 0 H 41 V 41 H 0 Z");
   }
 
@@ -221,7 +218,6 @@
     bottom var(--obc-poi-size-transition-duration, 0.1s) ease-out;
 }
 
-/* Explicit interaction fallback for POI frame. Keeps behavior even if mixin output changes. */
 @media (hover: hover) {
   :host(:not([value="overlapped"]))
     .wrapper:not(.has-data):hover
@@ -248,7 +244,6 @@
   transform: translate(-50%, -100%);
 }
 
-/* Overlap alert color styles */
 :host([value="overlapped"]) .wrapper {
   &.alert-caution {
     --overlay-container-background-color: var(--alert-caution-color, #ffdb42);
@@ -372,7 +367,6 @@
   }
 }
 
-/* Overlap state for has-data variant - keep layout, hide values */
 :host([value="overlapped"]) .wrapper.has-data {
   --obc-poi-overlapped-data-bg: var(--overlay-container-background-color);
   --obc-poi-overlapped-data-border: var(--overlay-border-outline-color);
