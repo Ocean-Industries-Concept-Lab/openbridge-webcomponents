@@ -26,6 +26,7 @@ import compentStyle from './watch.css?inline';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {adviceMask, AngleAdviceRaw, renderAdvice} from './advice.js';
 import {Tickmark, TickmarkStyle, tickmark} from './tickmark.js';
+export {TickmarkStyle};
 import {
   renderLabels,
   renderNorthArrow,
@@ -170,6 +171,8 @@ export class ObcWatch extends LitElement {
   @property({type: Array, attribute: false}) needles: WatchNeedle[] = [];
   @property({type: Array, attribute: false}) tickmarks: Tickmark[] = [];
   @property({type: Boolean}) tickmarksInside: boolean = false;
+  @property({type: String}) tickmarkStyle: TickmarkStyle =
+    TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: AngleAdviceRaw[] = [];
   @property({type: Boolean}) crosshairEnabled: boolean = false;
   @property({type: Boolean}) showLabels: boolean = false;
@@ -514,7 +517,7 @@ export class ObcWatch extends LitElement {
     const tickmarks = this.tickmarks.map((t) =>
       tickmark(t.angle, {
         size: t.type,
-        style: TickmarkStyle.hinted,
+        style: this.tickmarkStyle,
         scale,
         text: this.showLabels ? undefined : t.text,
         inside: this.tickmarksInside,

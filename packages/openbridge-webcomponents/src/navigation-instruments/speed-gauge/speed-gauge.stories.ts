@@ -3,6 +3,7 @@ import {ObcSpeedGauge, ObcSpeedGaugeNeedleType} from './speed-gauge.js';
 import './speed-gauge.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
+import {TickmarkStyle} from '../watch/tickmark.js';
 import {Priority} from '../types.js';
 
 const meta: Meta<typeof ObcSpeedGauge> = {
@@ -27,6 +28,10 @@ const meta: Meta<typeof ObcSpeedGauge> = {
     priority: {control: 'select', options: Object.values(Priority)},
     showLabels: {control: 'boolean'},
     tickmarksInside: {control: 'boolean'},
+    tickmarkStyle: {
+      control: 'select',
+      options: Object.values(TickmarkStyle),
+    },
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcSpeedGauge>;

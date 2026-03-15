@@ -4,6 +4,7 @@ import './azimuth-thruster.js';
 import {InstrumentState, Priority, Size} from '../types.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
+import {TickmarkStyle} from '../watch/tickmark.js';
 import {PropellerType} from '../thruster/propeller.js';
 
 const meta: Meta<typeof ObcAzimuthThruster> = {
@@ -42,6 +43,10 @@ const meta: Meta<typeof ObcAzimuthThruster> = {
     },
     showLabels: {control: 'boolean'},
     tickmarksInside: {control: 'boolean'},
+    tickmarkStyle: {
+      control: 'select',
+      options: Object.values(TickmarkStyle),
+    },
     touching: {control: 'boolean'},
     priority: {control: 'select', options: Object.values(Priority)},
   },
@@ -51,6 +56,7 @@ const meta: Meta<typeof ObcAzimuthThruster> = {
     autoAtAngleSetpointDeadband: 2,
     thrustSetpointAtZeroDeadband: 0.1,
     touching: false,
+    tickmarkStyle: TickmarkStyle.regular,
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcAzimuthThruster>;

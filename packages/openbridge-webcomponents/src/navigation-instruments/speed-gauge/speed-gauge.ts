@@ -1,6 +1,6 @@
 import {LitElement, css, html, nothing, svg} from 'lit';
 import {property} from 'lit/decorators.js';
-import {Tickmark, TickmarkType} from '../watch/tickmark.js';
+import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
 import {WatchCircleType} from '../watch/watch.js';
 import {AdviceType, AngleAdviceRaw, AdviceState} from '../watch/advice.js';
 import {InstrumentFieldSize} from '../instrument-field/instrument-field.js';
@@ -98,6 +98,8 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
   @property({type: String}) needleType: ObcSpeedGaugeNeedleType =
     ObcSpeedGaugeNeedleType.full;
   @property({type: Array, attribute: false}) speedAdvices: SpeedAdvice[] = [];
+  @property({type: String}) tickmarkStyle: TickmarkStyle =
+    TickmarkStyle.regular;
   @property({type: Boolean}) showReadout: boolean = false;
 
   getAngle(v: number): number {
@@ -135,6 +137,7 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
           .padding=${48}
           .tickmarks=${this.tickmarks}
           .tickmarksInside=${this.tickmarksInside}
+          .tickmarkStyle=${this.tickmarkStyle}
           .advices=${this._advices}
           .areas=${[
             {

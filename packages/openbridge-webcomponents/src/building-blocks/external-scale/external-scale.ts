@@ -2683,7 +2683,7 @@ function renderAdvice(
 
     const maskId = `externalScaleAdviceMask-${advice.min}-${advice.max}-${Math.random().toString(36).slice(2)}`;
 
-    let tickmarkStyle = TickmarkStyle.hinted;
+    let tickmarkStyle = TickmarkStyle.regular;
     if (advice.state === AdviceState.regular)
       tickmarkStyle = TickmarkStyle.regular;
     else if (advice.state === AdviceState.triggered)
@@ -2718,7 +2718,7 @@ function renderAdvice(
   if (advice.state === AdviceState.hinted) {
     strokeColor = 'var(--instrument-frame-tertiary-color)';
     fillColor = 'var(--instrument-frame-primary-color)';
-    tickmarkStyle = TickmarkStyle.hinted;
+    tickmarkStyle = TickmarkStyle.regular;
   } else if (advice.state === AdviceState.regular) {
     strokeColor = 'var(--instrument-regular-secondary-color)';
     fillColor = 'var(--instrument-frame-primary-color)';
