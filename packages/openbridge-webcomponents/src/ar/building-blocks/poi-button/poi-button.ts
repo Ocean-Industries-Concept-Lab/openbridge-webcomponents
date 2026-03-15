@@ -4,7 +4,7 @@ import compentStyle from './poi-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../../decorator.js';
 import '../poi-header/poi-header.js';
-import {ObcPoiHeaderType} from '../poi-header/poi-header.js';
+import {ObcPoiHeaderState, ObcPoiHeaderType} from '../poi-header/poi-header.js';
 import {
   ObcPoiObjectState,
   ObcPoiObjectStyle,
@@ -196,17 +196,17 @@ export class ObcPoiButton extends LitElement {
     return this.state;
   }
 
-  private get resolvedHeaderState(): string {
+  private get resolvedHeaderState(): ObcPoiHeaderState {
     switch (this.state) {
       case ObcPoiButtonState.Caution:
-        return 'caution';
+        return ObcPoiHeaderState.Caution;
       case ObcPoiButtonState.Warning:
-        return 'warning';
+        return ObcPoiHeaderState.Warning;
       case ObcPoiButtonState.Alarm:
-        return 'alarm';
+        return ObcPoiHeaderState.Alarm;
       case ObcPoiButtonState.Enabled:
       default:
-        return 'selected';
+        return ObcPoiHeaderState.Selected;
     }
   }
 
