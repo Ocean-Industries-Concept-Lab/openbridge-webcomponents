@@ -528,7 +528,11 @@ export class ObcTable extends LitElement {
       });
     }
 
-    if (changedProperties.has('data')) {
+    if (
+      changedProperties.has('data') ||
+      changedProperties.has('_sortByColumnIdx') ||
+      changedProperties.has('_sortDirection')
+    ) {
       if (this._hasRenderedRows) {
         this._updatePositions();
       } else {
@@ -558,7 +562,11 @@ export class ObcTable extends LitElement {
       }
     }
 
-    if (changedProperties.has('data')) {
+    if (
+      changedProperties.has('data') ||
+      changedProperties.has('_sortByColumnIdx') ||
+      changedProperties.has('_sortDirection')
+    ) {
       if (this._hasRenderedRows) {
         this._animateRowChanges();
       }
@@ -682,6 +690,7 @@ export class ObcTable extends LitElement {
           : nothing}
         <div
           class="grid-body"
+          part="body"
           style="grid-template-rows: repeat(${this.sortedData
             .length}, min-content)"
         >
