@@ -49,6 +49,8 @@ const VALID_POI_STATES = new Set(Object.values(ObcPoiState));
  */
 export abstract class ObcPoiBase extends LitElement implements Poi {
   private headerObserver?: MutationObserver;
+  private _buttonOffsetX = 0;
+  private _targetOffsetX = 0;
 
   override connectedCallback() {
     stripWhitespaceTextNodes(this);
@@ -85,8 +87,6 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
   @property({type: Number}) y = 192;
   @property({type: Number, attribute: 'button-y'}) buttonY: number | null = 0;
   @property({type: Boolean, attribute: 'fixed-target'}) fixedTarget = false;
-  @property({type: Number, attribute: 'button-offset-x'}) buttonOffsetX = 0;
-  @property({type: Number, attribute: 'target-offset-x'}) targetOffsetX = 0;
   @property({type: Number, attribute: 'box-width'}) boxWidth: number | null =
     null;
   @property({type: Number, attribute: 'box-height'}) boxHeight: number | null =
@@ -94,6 +94,38 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
   @property({type: Number, attribute: 'outside-angle'}) outsideAngle = 315;
   @property({type: Boolean, attribute: 'animate-position'})
   animatePosition = false;
+
+  @property({type: Number, attribute: 'button-offset-x'})
+  get buttonOffsetX(): number {
+    return this._buttonOffsetX;
+  }
+
+  set buttonOffsetX(value: number) {
+    const nextValue = Number.isFinite(value) ? value : 0;
+    const oldValue = this._buttonOffsetX;
+    if (oldValue === nextValue) {
+      return;
+    }
+
+    this._buttonOffsetX = nextValue;
+    this.requestUpdate('buttonOffsetX', oldValue);
+  }
+
+  @property({type: Number, attribute: 'target-offset-x'})
+  get targetOffsetX(): number {
+    return this._targetOffsetX;
+  }
+
+  set targetOffsetX(value: number) {
+    const nextValue = Number.isFinite(value) ? value : 0;
+    const oldValue = this._targetOffsetX;
+    if (oldValue === nextValue) {
+      return;
+    }
+
+    this._targetOffsetX = nextValue;
+    this.requestUpdate('targetOffsetX', oldValue);
+  }
 
   /* ---------- X-filter state ---------- */
 
@@ -350,22 +382,68 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
     return {poi, button, wrapper, buttonWrapper};
   }
 
-  private syncInnerPoiLayout() {
-    const poi = this.shadowRoot?.querySelector('obc-poi') as {
+  private getInnerPoi() {
+    return this.shadowRoot?.querySelector('obc-poi') as {
       requestUpdate?: () => void;
-      refreshProjectionLayout?: () => void;
+      refreshProjectionLayout?: (trackDurationMs?: number) => void;
+      buttonOffsetX?: number;
+      targetOffsetX?: number;
     } | null;
+  }
 
+  private syncInnerPoiLayout() {
+    const poi = this.getInnerPoi();
+
+    if (poi) {
+      poi.buttonOffsetX = this._buttonOffsetX;
+      poi.targetOffsetX = this._targetOffsetX;
+    }
     poi?.requestUpdate?.();
     poi?.refreshProjectionLayout?.();
   }
 
   public refreshProjectionLayout(trackDurationMs = 0) {
-    const poi = this.shadowRoot?.querySelector('obc-poi') as {
-      refreshProjectionLayout?: (trackDurationMs?: number) => void;
-    } | null;
+    const poi = this.getInnerPoi();
     poi?.refreshProjectionLayout?.(trackDurationMs);
     this.dispatchLayoutChange();
+  }
+
+  public setRuntimeHorizontalOffsets(
+    buttonOffsetX: number,
+    targetOffsetX = this._targetOffsetX
+  ) {
+    const nextButtonOffsetX = Number.isFinite(buttonOffsetX)
+      ? buttonOffsetX
+      : 0;
+    const nextTargetOffsetX = Number.isFinite(targetOffsetX)
+      ? targetOffsetX
+      : 0;
+    const oldButtonOffsetX = this._buttonOffsetX;
+    const oldTargetOffsetX = this._targetOffsetX;
+    const buttonOffsetChanged = this._buttonOffsetX !== nextButtonOffsetX;
+    const targetOffsetChanged = this._targetOffsetX !== nextTargetOffsetX;
+
+    if (!buttonOffsetChanged && !targetOffsetChanged) {
+      return;
+    }
+
+    this._buttonOffsetX = nextButtonOffsetX;
+    this._targetOffsetX = nextTargetOffsetX;
+
+    const poi = this.getInnerPoi();
+
+    if (!poi) {
+      if (buttonOffsetChanged) {
+        this.requestUpdate('buttonOffsetX', oldButtonOffsetX);
+      }
+      if (targetOffsetChanged) {
+        this.requestUpdate('targetOffsetX', oldTargetOffsetX);
+      }
+      return;
+    }
+
+    poi.buttonOffsetX = nextButtonOffsetX;
+    poi.targetOffsetX = nextTargetOffsetX;
   }
 
   public getVisualRect(

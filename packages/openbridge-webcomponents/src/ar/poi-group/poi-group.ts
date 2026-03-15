@@ -108,6 +108,11 @@ export class ObcPoiGroup extends LitElement {
   private lockedExpandedCenter: number | null = null;
   private collapseDeltas: Map<Poi, number> = new Map();
   private topOffsetAnimationTarget: 0 | 1 | null = null;
+  private pendingReleasedTarget: {
+    target: Poi;
+    promise: Promise<boolean>;
+    resolve: (released: boolean) => void;
+  } | null = null;
 
   constructor() {
     super();
@@ -144,6 +149,7 @@ export class ObcPoiGroup extends LitElement {
       clearTimeout(this.topOffsetDelayTimeout);
       this.topOffsetDelayTimeout = null;
     }
+    this.resolvePendingRelease(false);
     super.disconnectedCallback();
   }
 
@@ -281,6 +287,37 @@ export class ObcPoiGroup extends LitElement {
     const hasTargets = this._children.some((child) => isPoi(child));
     if (!hasTargets) return;
     this.expand = true;
+  }
+
+  public releaseTarget(target: Poi): Promise<boolean> {
+    if (target.parentElement !== this) {
+      return Promise.resolve(false);
+    }
+
+    if (this.pendingReleasedTarget) {
+      if (this.pendingReleasedTarget.target === target) {
+        return this.pendingReleasedTarget.promise;
+      }
+      return Promise.resolve(false);
+    }
+
+    if (!this.expand && !this.collapsing) {
+      this.releaseTargetToParent(target);
+      return Promise.resolve(true);
+    }
+
+    let resolveRelease!: (released: boolean) => void;
+    const promise = new Promise<boolean>((resolve) => {
+      resolveRelease = resolve;
+    });
+
+    this.pendingReleasedTarget = {
+      target,
+      promise,
+      resolve: resolveRelease,
+    };
+    this.expand = false;
+    return promise;
   }
 
   setExpandedChildren(expand: boolean): void {
@@ -453,6 +490,7 @@ export class ObcPoiGroup extends LitElement {
           this.topOffsetAnimationTarget = null;
           if (targetProgress === 0) {
             this.collapsing = false;
+            this.releasePendingTarget();
             this.dispatchEvent(
               new CustomEvent('collapse-finished', {
                 bubbles: true,
@@ -475,6 +513,7 @@ export class ObcPoiGroup extends LitElement {
           console.error('[poi-group] Error in top offset animation:', error);
           this.topOffsetAnimationTarget = null;
           this.collapsing = false;
+          this.resolvePendingRelease(false);
         },
       }
     );
@@ -505,7 +544,10 @@ export class ObcPoiGroup extends LitElement {
       }
 
       const buttonOffsetX = (config.currentExpandedOffset - delta) * eased;
-      child.buttonOffsetX = buttonOffsetX;
+      child.setRuntimeHorizontalOffsets?.(buttonOffsetX, child.targetOffsetX);
+      if (!child.setRuntimeHorizontalOffsets) {
+        child.buttonOffsetX = buttonOffsetX;
+      }
 
       if (child !== frontChild) {
         const isOverlap = !visualExpanded;
@@ -734,18 +776,21 @@ export class ObcPoiGroup extends LitElement {
       }
 
       this.lastAppliedOffsets.set(child, {buttonOffsetX});
-      child.buttonOffsetX = buttonOffsetX;
+      child.setRuntimeHorizontalOffsets?.(buttonOffsetX, child.targetOffsetX);
+      if (!child.setRuntimeHorizontalOffsets) {
+        child.buttonOffsetX = buttonOffsetX;
+      }
     });
   }
 
   private getCurrentLeft(element: HTMLElement): number {
     const computedLeft = getEffectivePoiX(element);
-    const transformOffset = Number.parseFloat(
-      getComputedStyle(element).getPropertyValue('--obc-poi-target-offset-x')
-    );
-    return (
-      computedLeft + (Number.isFinite(transformOffset) ? transformOffset : 0)
-    );
+    const targetOffsetX =
+      typeof (element as Poi).targetOffsetX === 'number' &&
+      Number.isFinite((element as Poi).targetOffsetX)
+        ? (element as Poi).targetOffsetX
+        : 0;
+    return computedLeft + targetOffsetX;
   }
 
   private getTargetButtonRect(
@@ -849,6 +894,77 @@ export class ObcPoiGroup extends LitElement {
       return PoiDataValue.Checked;
     }
     return PoiDataValue.Unchecked;
+  }
+
+  private releasePendingTarget() {
+    const pending = this.pendingReleasedTarget;
+    if (!pending) {
+      return;
+    }
+
+    const released = this.releaseTargetToParent(pending.target);
+    this.resolvePendingRelease(released);
+  }
+
+  private resolvePendingRelease(released: boolean) {
+    const pending = this.pendingReleasedTarget;
+    if (!pending) {
+      return;
+    }
+
+    this.pendingReleasedTarget = null;
+    pending.resolve(released);
+  }
+
+  private releaseTargetToParent(target: Poi): boolean {
+    if (target.parentElement !== this) {
+      return false;
+    }
+
+    target.setRuntimeHorizontalOffsets?.(0, 0);
+    if (!target.setRuntimeHorizontalOffsets) {
+      target.buttonOffsetX = 0;
+      target.targetOffsetX = 0;
+    }
+    target.removeAttribute('data-grouped');
+    target.removeAttribute('data-joined-expanded');
+    target.removeAttribute('data-pregrouped');
+    target.removeAttribute('data-behind');
+    target.removeAttribute('data-front');
+    target.removeAttribute('data-front-exit');
+    target.removeAttribute('data-exiting');
+    target.removeAttribute('data-exit-lock');
+    target.style.removeProperty('position');
+    target.style.removeProperty('width');
+    target.style.removeProperty('min-width');
+    target.style.removeProperty('height');
+    target.style.removeProperty('transform');
+    target.style.removeProperty('--obc-poi-group-overlap-height');
+    target.style.removeProperty('--obc-poi-group-overlap-shift');
+    this.clearVisualState(target);
+
+    const parent = this.parentElement;
+    if (!parent) {
+      return false;
+    }
+
+    parent.insertBefore(target, this);
+    this.updatePosition();
+
+    const groupParent = parent as HTMLElement & {
+      requestGroupingUpdate?: () => void;
+    };
+    groupParent.requestGroupingUpdate?.();
+
+    this.dispatchEvent(
+      new CustomEvent<{target: Poi}>('obc-poi-group-target-released', {
+        detail: {target},
+        bubbles: true,
+        composed: true,
+      })
+    );
+
+    return true;
   }
 
   static override styles = unsafeCSS(componentStyle);

@@ -362,17 +362,9 @@ export class ObcPoiLayerStack extends LitElement {
     return originRect.bottom - selectedRect.bottom;
   }
 
-  private resetDetachedGroupTargetState(target: Poi) {
-    target.buttonOffsetX = 0;
-    target.targetOffsetX = 0;
-    target.style.removeProperty('position');
-    target.style.removeProperty('width');
-    target.style.removeProperty('min-width');
-    target.style.removeProperty('height');
-    target.style.removeProperty('transform');
-  }
-
-  private detachTargetFromCurrentGroup(target: Poi): ObcPoiLayer | null {
+  private async detachTargetFromCurrentGroup(
+    target: Poi
+  ): Promise<ObcPoiLayer | null> {
     const currentLayer = this.getTargetLayer(target);
     const sourceGroup =
       target.parentElement?.tagName.toLowerCase() === 'obc-poi-group'
@@ -383,13 +375,7 @@ export class ObcPoiLayerStack extends LitElement {
       return currentLayer;
     }
 
-    sourceGroup.expand = false;
-    this.resetDetachedGroupTargetState(target);
-    if (currentLayer && target.parentElement !== currentLayer) {
-      currentLayer.appendChild(target);
-    }
-    this.clearTargetGroupingAttributes(target);
-    currentLayer?.requestGroupingUpdate();
+    await sourceGroup.releaseTarget(target);
     return currentLayer;
   }
 
@@ -479,6 +465,35 @@ export class ObcPoiLayerStack extends LitElement {
     );
   }
 
+  private async moveTrackedTargetToSelectedLayer(
+    target: Poi,
+    record: {
+      originLayer: ObcPoiLayer;
+      previousAnimatePosition: boolean;
+      keepInSelectedLayer: boolean;
+    },
+    selectedLayer: ObcPoiLayer,
+    animateProjection: boolean
+  ) {
+    const currentLayer =
+      (await this.detachTargetFromCurrentGroup(target)) ??
+      this.getTargetLayer(target) ??
+      record.originLayer;
+
+    this.clearTargetGroupingAttributes(target);
+    await this.moveTargetIntoSelectedLayer(
+      target,
+      record.originLayer,
+      selectedLayer,
+      animateProjection
+    );
+
+    if (currentLayer !== selectedLayer) {
+      currentLayer.requestGroupingUpdate();
+    }
+    selectedLayer.requestGroupingUpdate();
+  }
+
   private async syncTargetProjection(
     target: Poi,
     originLayer: ObcPoiLayer,
@@ -538,7 +553,7 @@ export class ObcPoiLayerStack extends LitElement {
 
     try {
       const currentLayer =
-        this.detachTargetFromCurrentGroup(target) ??
+        (await this.detachTargetFromCurrentGroup(target)) ??
         this.getTargetLayer(target);
 
       if (record.keepInSelectedLayer) {
@@ -639,15 +654,12 @@ export class ObcPoiLayerStack extends LitElement {
       target.removeAttribute('data-stack-selected');
       const needsMove = this.getTargetLayer(target) !== selectedLayer;
       if (needsMove) {
-        this.clearTargetGroupingAttributes(target);
-        void this.moveTargetIntoSelectedLayer(
+        void this.moveTrackedTargetToSelectedLayer(
           target,
-          record.originLayer,
+          record,
           selectedLayer,
           animateProjection
         );
-        record.originLayer.requestGroupingUpdate();
-        selectedLayer.requestGroupingUpdate();
       } else {
         const targetProjectionOffset = this.getTargetProjectionOffset(
           record.originLayer,

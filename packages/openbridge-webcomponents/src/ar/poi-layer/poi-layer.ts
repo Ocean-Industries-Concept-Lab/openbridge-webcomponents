@@ -966,7 +966,10 @@ export class ObcPoiLayer extends LitElement {
 
   private resetTarget(target: Poi) {
     if (typeof target.targetOffsetX === 'number') {
-      target.targetOffsetX = 0;
+      target.setRuntimeHorizontalOffsets?.(target.buttonOffsetX, 0);
+      if (!target.setRuntimeHorizontalOffsets) {
+        target.targetOffsetX = 0;
+      }
     }
     this.animateButtonOffsetXToZero(target);
     target.style.removeProperty('--obc-poi-target-offset-x');
@@ -984,7 +987,10 @@ export class ObcPoiLayer extends LitElement {
   private animateButtonOffsetXToZero(target: Poi) {
     const start = target.buttonOffsetX;
     if (!Number.isFinite(start) || Math.abs(start) < 0.5) {
-      target.buttonOffsetX = 0;
+      target.setRuntimeHorizontalOffsets?.(0, target.targetOffsetX);
+      if (!target.setRuntimeHorizontalOffsets) {
+        target.buttonOffsetX = 0;
+      }
       return;
     }
 
@@ -1003,7 +1009,14 @@ export class ObcPoiLayer extends LitElement {
         }
         const t = Math.min((now - startTime) / duration, 1);
         const eased = easeInOutQuad(t);
-        target.buttonOffsetX = start + (0 - start) * eased;
+        const nextButtonOffsetX = start + (0 - start) * eased;
+        target.setRuntimeHorizontalOffsets?.(
+          nextButtonOffsetX,
+          target.targetOffsetX
+        );
+        if (!target.setRuntimeHorizontalOffsets) {
+          target.buttonOffsetX = nextButtonOffsetX;
+        }
         if (t < 1) {
           this.buttonOffsetXResetRaf.set(target, requestAnimationFrame(step));
         } else {

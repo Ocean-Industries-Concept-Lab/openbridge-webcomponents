@@ -1,5 +1,5 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {property, state} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {styleMap} from 'lit/directives/style-map.js';
 import componentStyle from './poi.css?inline';
@@ -11,11 +11,7 @@ import {
   PoiButtonVisualState,
 } from '../poi-button/poi-button.js';
 import {ObcPoiHeaderState} from '../poi-header/poi-header.js';
-import {
-  getPOILineConfig,
-  POILineType,
-  POIStyle,
-} from '../poi-graphic-line/poi-graphic-line.js';
+import {POIStyle} from '../poi-graphic-line/poi-graphic-line.js';
 import {poiArrow} from './arrow.js';
 import '../poi-line/poi-line.js';
 import '../poi-pointer/poi-pointer.js';
@@ -73,6 +69,10 @@ export interface Poi extends HTMLElement {
   headerContent?: string;
   animatePosition?: boolean;
   refreshProjectionLayout?: (trackDurationMs?: number) => void;
+  setRuntimeHorizontalOffsets?: (
+    buttonOffsetX: number,
+    targetOffsetX?: number
+  ) => void;
 }
 
 export function isPoi(el: Element): el is Poi {
@@ -219,19 +219,6 @@ export class ObcPoi extends LitElement {
   @property({type: Boolean, attribute: 'animate-position'})
   animatePosition = false;
   private headerObserver?: MutationObserver;
-  private lineGeometryObserver?: ResizeObserver;
-  private lineGeometryRaf = 0;
-  private lineGeometryLoopRaf = 0;
-  private observedGeometryElements = new Set<Element>();
-  @state()
-  private lineGeometry: {
-    offsetX: number;
-    lineHeight: number;
-    lineStart: number;
-    totalHeight: number;
-    translateX: number;
-    translateY: number;
-  } | null = null;
 
   override connectedCallback() {
     super.connectedCallback();
@@ -242,14 +229,6 @@ export class ObcPoi extends LitElement {
     super.disconnectedCallback();
     this.headerObserver?.disconnect();
     this.headerObserver = undefined;
-    this.lineGeometryObserver?.disconnect();
-    this.lineGeometryObserver = undefined;
-    this.observedGeometryElements.clear();
-    if (this.lineGeometryRaf) {
-      cancelAnimationFrame(this.lineGeometryRaf);
-      this.lineGeometryRaf = 0;
-    }
-    this.stopLineGeometryLoop();
   }
 
   private setupHeaderObserver() {
@@ -496,25 +475,6 @@ export class ObcPoi extends LitElement {
                 this.buttonProjectionY
             )
           );
-    if (this.lineGeometry) {
-      return html`
-        <div
-          class="line-graphic"
-          style="transform: translate(${this.lineGeometry.translateX}px, ${this
-            .lineGeometry
-            .translateY}px); --obc-poi-line-transform-transition-duration: 0s;"
-        >
-          <obc-poi-line
-            .poiStyle=${this.lineStyle}
-            .height=${this.lineGeometry.lineHeight}
-            .offset=${this.lineGeometry.offsetX}
-            .hasPointer=${false}
-            .animatePosition=${false}
-          ></obc-poi-line>
-        </div>
-      `;
-    }
-
     return html`
       <obc-poi-line
         class="line"
@@ -547,22 +507,6 @@ export class ObcPoi extends LitElement {
     `;
   }
 
-  private renderTargetAnchor() {
-    if (this.type === ObcPoiType.Outside) {
-      return nothing;
-    }
-
-    return html`
-      <div
-        class="target-anchor"
-        aria-hidden="true"
-        style="--obc-poi-pointer-x: ${this
-          .lineOffset}px; --obc-poi-pointer-y: ${this.targetAnchorY +
-        this.targetProjectionY}px;"
-      ></div>
-    `;
-  }
-
   private renderOutsideArrow() {
     if (this.type !== ObcPoiType.Outside || !this.hasPointer) {
       return nothing;
@@ -587,196 +531,11 @@ export class ObcPoi extends LitElement {
   /* ---------- Slotted button sync ---------- */
 
   private slottedButton: HTMLElement | null = null;
-
-  private get renderedButtonAnchorElement(): HTMLElement | null {
-    const resolveButtonAnchor = (
-      button: HTMLElement | null
-    ): HTMLElement | null =>
-      (button?.shadowRoot?.querySelector(
-        '.button-wrapper'
-      ) as HTMLElement | null) ??
-      (button?.shadowRoot?.querySelector('.wrapper') as HTMLElement | null) ??
-      button;
-
-    return resolveButtonAnchor(
-      this.slottedButton ??
-        (this.renderRoot.querySelector(
-          'obc-poi-button.poi-button'
-        ) as HTMLElement | null) ??
-        null
-    );
-  }
-
-  private get renderedPointerElement(): HTMLElement | null {
-    return (
-      (this.renderRoot.querySelector(
-        'obc-poi-pointer.pointer'
-      ) as HTMLElement | null) ?? null
-    );
-  }
-
-  private get renderedTargetAnchorElement(): HTMLElement | null {
-    return (
-      (this.renderRoot.querySelector('.target-anchor') as HTMLElement | null) ??
-      null
-    );
-  }
-
   private get targetAnchorY(): number {
     const targetDelta = this.resolvedTargetY - this.resolvedButtonY;
     return this.type === ObcPoiType.Point
       ? Math.max(POINT_POINTER_OFFSET_PX, targetDelta)
       : targetDelta;
-  }
-
-  private syncLineGeometryObservers() {
-    if (typeof ResizeObserver === 'undefined') {
-      return;
-    }
-
-    if (!this.lineGeometryObserver) {
-      this.lineGeometryObserver = new ResizeObserver(() =>
-        this.scheduleLineGeometrySync()
-      );
-    }
-
-    const nextElements = [
-      this.renderRoot.querySelector('.wrapper'),
-      this.renderedButtonAnchorElement,
-      this.renderedTargetAnchorElement,
-      this.renderedPointerElement,
-    ].filter((element): element is Element => element instanceof Element);
-
-    const nextSet = new Set(nextElements);
-
-    this.observedGeometryElements.forEach((element) => {
-      if (!nextSet.has(element)) {
-        this.lineGeometryObserver?.unobserve(element);
-      }
-    });
-
-    nextElements.forEach((element) => {
-      if (!this.observedGeometryElements.has(element)) {
-        this.lineGeometryObserver?.observe(element);
-      }
-    });
-
-    this.observedGeometryElements = nextSet;
-  }
-
-  private scheduleLineGeometrySync() {
-    if (this.lineGeometryRaf) {
-      return;
-    }
-
-    this.lineGeometryRaf = requestAnimationFrame(() => {
-      this.lineGeometryRaf = 0;
-      this.syncMeasuredLineGeometry();
-    });
-  }
-
-  private startLineGeometryLoop() {
-    if (this.lineGeometryLoopRaf) {
-      return;
-    }
-
-    const step = () => {
-      if (!this.isConnected) {
-        this.lineGeometryLoopRaf = 0;
-        return;
-      }
-
-      this.syncMeasuredLineGeometry();
-      this.lineGeometryLoopRaf = requestAnimationFrame(step);
-    };
-
-    this.lineGeometryLoopRaf = requestAnimationFrame(step);
-  }
-
-  private stopLineGeometryLoop() {
-    if (!this.lineGeometryLoopRaf) {
-      return;
-    }
-
-    cancelAnimationFrame(this.lineGeometryLoopRaf);
-    this.lineGeometryLoopRaf = 0;
-  }
-
-  private syncMeasuredLineGeometry() {
-    const wrapper = this.renderRoot.querySelector(
-      '.wrapper'
-    ) as HTMLElement | null;
-    const button = this.renderedButtonAnchorElement;
-
-    if (!wrapper || !button || this.type === ObcPoiType.Outside) {
-      this.lineGeometry = null;
-      return;
-    }
-
-    if (
-      this.type === ObcPoiType.Point &&
-      (this.isCheckedLike || this.state === ObcPoiState.Alarm)
-    ) {
-      this.lineGeometry = null;
-      return;
-    }
-
-    const wrapperRect = wrapper.getBoundingClientRect();
-    const buttonRect = button.getBoundingClientRect();
-
-    if (wrapperRect.width === 0 && wrapperRect.height === 0) {
-      this.lineGeometry = null;
-      return;
-    }
-
-    const startX = buttonRect.left + buttonRect.width / 2 - wrapperRect.left;
-    const startY = buttonRect.bottom - wrapperRect.top;
-
-    let endX = startX + this.lineOffset;
-    let endY = this.targetAnchorY + this.targetProjectionY;
-
-    const targetAnchor = this.renderedTargetAnchorElement;
-    if (targetAnchor) {
-      const targetRect = targetAnchor.getBoundingClientRect();
-      endX = targetRect.left + targetRect.width / 2 - wrapperRect.left;
-      endY = targetRect.top + targetRect.height / 2 - wrapperRect.top;
-    }
-
-    const topPoint =
-      startY <= endY ? {x: startX, y: startY} : {x: endX, y: endY};
-    const bottomPoint =
-      startY <= endY ? {x: endX, y: endY} : {x: startX, y: startY};
-
-    const style = getPOILineConfig(this.lineStyle, POILineType.Regular);
-    const lineStart = style.width / 2;
-    const lineHeight = Math.max(0, bottomPoint.y - topPoint.y);
-    const totalHeight = lineHeight + style.width;
-    const minX = Math.min(topPoint.x, bottomPoint.x);
-    const translateX = minX - lineStart;
-    const translateY = topPoint.y - lineStart;
-    const nextGeometry = {
-      offsetX: bottomPoint.x - topPoint.x,
-      lineHeight,
-      lineStart,
-      totalHeight,
-      translateX,
-      translateY,
-    };
-
-    const current = this.lineGeometry;
-    if (
-      current &&
-      Math.abs(current.offsetX - nextGeometry.offsetX) < 0.01 &&
-      Math.abs(current.lineHeight - nextGeometry.lineHeight) < 0.01 &&
-      Math.abs(current.lineStart - nextGeometry.lineStart) < 0.01 &&
-      Math.abs(current.totalHeight - nextGeometry.totalHeight) < 0.01 &&
-      Math.abs(current.translateX - nextGeometry.translateX) < 0.01 &&
-      Math.abs(current.translateY - nextGeometry.translateY) < 0.01
-    ) {
-      return;
-    }
-
-    this.lineGeometry = nextGeometry;
   }
 
   private handleButtonSlotChange(e: Event) {
@@ -786,8 +545,6 @@ export class ObcPoi extends LitElement {
       assigned.length > 0 ? (assigned[0] as HTMLElement) : null;
     this.syncFallbackButtonHeaderContent();
     this.syncSlottedButtonProps();
-    this.syncLineGeometryObservers();
-    this.scheduleLineGeometrySync();
   }
 
   private syncFallbackButtonHeaderContent() {
@@ -875,8 +632,6 @@ export class ObcPoi extends LitElement {
 
   public refreshProjectionLayout(_trackDurationMs = 0) {
     this.requestUpdate();
-    this.syncLineGeometryObservers();
-    this.scheduleLineGeometrySync();
   }
 
   override render() {
@@ -898,8 +653,7 @@ export class ObcPoi extends LitElement {
     return html`
       <div class=${classMap(classes)} style=${styleMap(wrapperStyle)}>
         ${this.renderPoiButton()} ${this.renderLine()}
-        ${this.renderTargetAnchor()} ${this.renderInlinePointer()}
-        ${this.renderOutsideArrow()}
+        ${this.renderInlinePointer()} ${this.renderOutsideArrow()}
       </div>
     `;
   }
@@ -907,9 +661,6 @@ export class ObcPoi extends LitElement {
   protected override firstUpdated(_changedProperties: Map<string, unknown>) {
     this.syncFallbackButtonHeaderContent();
     this.syncAttachedHeaderState();
-    this.syncLineGeometryObservers();
-    this.scheduleLineGeometrySync();
-    this.startLineGeometryLoop();
   }
 
   protected override updated(changedProperties: Map<string, unknown>) {
@@ -928,25 +679,6 @@ export class ObcPoi extends LitElement {
     this.syncFallbackButtonHeaderContent();
     this.syncSlottedButtonProps();
     this.syncAttachedHeaderState();
-    if (
-      changedProperties.has('type') ||
-      changedProperties.has('y') ||
-      changedProperties.has('buttonY') ||
-      changedProperties.has('fixedTarget') ||
-      changedProperties.has('buttonOffsetX') ||
-      changedProperties.has('targetOffsetX') ||
-      changedProperties.has('selected') ||
-      changedProperties.has('state') ||
-      changedProperties.has('value') ||
-      changedProperties.has('hasPointer') ||
-      changedProperties.has('pointerType') ||
-      changedProperties.has('pointerState') ||
-      changedProperties.has('boxWidth') ||
-      changedProperties.has('boxHeight')
-    ) {
-      this.syncLineGeometryObservers();
-      this.scheduleLineGeometrySync();
-    }
   }
 
   static override styles = unsafeCSS(componentStyle);

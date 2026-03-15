@@ -1,5 +1,5 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {property, state} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import componentStyle from './poi-line.css?inline';
 import '../poi-graphic-line/poi-graphic-line.js';
 import {renderPointerDot} from './pointerDot.js';
@@ -52,8 +52,6 @@ import {customElement} from '../../../decorator.js';
  */
 @customElement('obc-poi-line')
 export class ObcPoiLine extends LitElement {
-  private static readonly POSITION_ANIMATION_DURATION_MS = 100;
-
   @property({type: Number}) height: number = 96;
   @property({type: String, attribute: 'poi-style', reflect: true})
   poiStyle: POIStyle = POIStyle.Normal;
@@ -63,125 +61,16 @@ export class ObcPoiLine extends LitElement {
   @property({type: Boolean}) hasPointer = false;
   @property({type: Boolean, attribute: 'animate-position'})
   animatePosition = false;
-  @state() private renderedHeight = this.height;
-  @state() private renderedOffset = this.offset;
-  private geometryAnimationRaf = 0;
-  private geometryAnimationTargetHeight = this.height;
-  private geometryAnimationTargetOffset = this.offset;
-  private geometryAnimationStartHeight = this.height;
-  private geometryAnimationStartOffset = this.offset;
-  private geometryAnimationStartedAtMs = 0;
-
-  override disconnectedCallback() {
-    super.disconnectedCallback();
-    if (this.geometryAnimationRaf) {
-      cancelAnimationFrame(this.geometryAnimationRaf);
-      this.geometryAnimationRaf = 0;
-    }
-  }
-
-  protected override updated(changedProperties: Map<string, unknown>) {
-    super.updated(changedProperties);
-    if (
-      !changedProperties.has('height') &&
-      !changedProperties.has('offset') &&
-      !changedProperties.has('animatePosition')
-    ) {
-      return;
-    }
-
-    this.syncRenderedGeometry();
-  }
-
-  private syncRenderedGeometry() {
-    const nextHeight = this.height;
-    const nextOffset = this.offset;
-
-    if (!this.animatePosition) {
-      if (this.geometryAnimationRaf) {
-        cancelAnimationFrame(this.geometryAnimationRaf);
-        this.geometryAnimationRaf = 0;
-      }
-      this.geometryAnimationStartedAtMs = 0;
-      this.renderedHeight = nextHeight;
-      this.renderedOffset = nextOffset;
-      return;
-    }
-
-    if (
-      Math.abs(this.renderedHeight - nextHeight) < 0.01 &&
-      Math.abs(this.renderedOffset - nextOffset) < 0.01
-    ) {
-      this.renderedHeight = nextHeight;
-      this.renderedOffset = nextOffset;
-      return;
-    }
-
-    const restartAnimation = !this.geometryAnimationRaf;
-    if (restartAnimation) {
-      this.geometryAnimationStartHeight = this.renderedHeight;
-      this.geometryAnimationStartOffset = this.renderedOffset;
-      this.geometryAnimationStartedAtMs = performance.now();
-    }
-
-    this.geometryAnimationTargetHeight = nextHeight;
-    this.geometryAnimationTargetOffset = nextOffset;
-
-    if (this.geometryAnimationRaf) {
-      return;
-    }
-
-    const duration = ObcPoiLine.POSITION_ANIMATION_DURATION_MS;
-
-    const step = (now: number) => {
-      const progress = Math.min(
-        1,
-        (now - this.geometryAnimationStartedAtMs) / duration
-      );
-      const eased = 1 - (1 - progress) * (1 - progress);
-      this.renderedHeight =
-        this.geometryAnimationStartHeight +
-        (this.geometryAnimationTargetHeight -
-          this.geometryAnimationStartHeight) *
-          eased;
-      this.renderedOffset =
-        this.geometryAnimationStartOffset +
-        (this.geometryAnimationTargetOffset -
-          this.geometryAnimationStartOffset) *
-          eased;
-
-      if (progress < 1) {
-        this.geometryAnimationRaf = requestAnimationFrame(step);
-        return;
-      }
-
-      this.geometryAnimationRaf = 0;
-      this.geometryAnimationStartedAtMs = 0;
-      this.renderedHeight = this.geometryAnimationTargetHeight;
-      this.renderedOffset = this.geometryAnimationTargetOffset;
-    };
-
-    this.geometryAnimationRaf = requestAnimationFrame(step);
-  }
-
   override render() {
     const style = getPOILineConfig(this.poiStyle, this.lineType);
-    const renderedHeight = Math.max(
-      0,
-      this.animatePosition ? this.renderedHeight : this.height
-    );
-    const renderedOffset = this.animatePosition
-      ? this.renderedOffset
-      : this.offset;
-    const lineHeight = Math.max(0, renderedHeight - 2);
+    const lineHeight = this.height - 2;
     const centerX = 2;
     const isRegularStyle =
       this.poiStyle === POIStyle.Regular || this.poiStyle === POIStyle.Normal;
     const centerYOffset = isRegularStyle ? 2 : 1;
 
     const totalHeight = lineHeight + style.width + style.dotStart;
-    const translateX =
-      -style.width / 2 + (renderedOffset < 0 ? renderedOffset : 0);
+    const translateX = -style.width / 2 + (this.offset < 0 ? this.offset : 0);
 
     return html`
       <div
@@ -198,14 +87,14 @@ export class ObcPoiLine extends LitElement {
             .lineHeight=${lineHeight}
             .lineStyle=${this.poiStyle}
             .lineType=${this.lineType}
-            .offset=${renderedOffset}
+            .offset=${this.offset}
           ></obc-poi-graphic-line>
           ${this.hasPointer
             ? renderPointerDot({
                 lineStyle: this.poiStyle,
-                centerX: centerX + (renderedOffset > 0 ? renderedOffset : 0),
+                centerX: centerX + (this.offset > 0 ? this.offset : 0),
                 centerY: lineHeight + centerYOffset,
-                width: style.width + (renderedOffset > 0 ? renderedOffset : 0),
+                width: style.width + (this.offset > 0 ? this.offset : 0),
                 vbHeight: totalHeight,
                 lineColor: style.lineColor,
                 outlineColor: style.outlineColor,
