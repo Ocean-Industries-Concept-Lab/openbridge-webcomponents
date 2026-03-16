@@ -83,6 +83,10 @@
       &:not(:disabled) .icon-container {
         color: var(--on-normal-neutral-color);
       }
+
+      &:not(:disabled) .label-container {
+        color: var(--on-normal-active-color);
+      }
     }
 
     &.state-checked {
@@ -90,6 +94,10 @@
 
       &:not(:disabled) .icon-container {
         color: var(--instrument-enhanced-secondary-color);
+      }
+
+      &:not(:disabled) .label-container {
+        color: var(--on-normal-active-color);
       }
     }
   }
@@ -139,6 +147,10 @@
         color: var(--on-normal-neutral-color);
       }
 
+      &:not(:disabled) .label-container {
+        color: var(--on-normal-active-color);
+      }
+
       &:not(:disabled):hover {
         --obc-check-button-checkbox-unchecked-background: var(
           --indent-hover-background-color
@@ -185,6 +197,10 @@
 
       &:not(:disabled) .icon-container {
         color: var(--instrument-enhanced-secondary-color);
+      }
+
+      &:not(:disabled) .label-container {
+        color: var(--on-normal-active-color);
       }
 
       &:not(:disabled):hover {
