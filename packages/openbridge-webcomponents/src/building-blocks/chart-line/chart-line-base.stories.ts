@@ -83,7 +83,7 @@ const SAMPLE_MULTI_DATASETS = [
 ];
 
 const meta: Meta = {
-  title: 'Building Blocks/Line-Area Chart Base',
+  title: 'Building Blocks/Line Area Chart Base',
   component: 'obc-area-graph',
   tags: ['autodocs', '6.0'],
   parameters: {
@@ -322,39 +322,39 @@ export default meta;
 type Story = StoryObj;
 
 export const SingleSeries: Story = {
-  name: 'Single-series line graph (category)',
+  name: 'Single-Series Line Graph (category)',
 };
 
 export const WithPoints: Story = {
-  name: 'With points line graph',
+  name: 'With Points Line Graph',
   args: {
     showPoints: true,
   },
 };
 
 export const StraightLine: Story = {
-  name: 'Straight line graph',
+  name: 'Straight Line Graph',
   args: {
     lineMode: 'straight',
   },
 };
 
 export const SteppedLine: Story = {
-  name: 'Stepped line graph',
+  name: 'Stepped Line Graph',
   args: {
     lineMode: 'stepped',
   },
 };
 
 export const Filled: Story = {
-  name: 'Filled line graph',
+  name: 'Filled Line Graph',
   args: {
     fill: true,
   },
 };
 
 export const FilledSolid: Story = {
-  name: 'Filled solid line graph',
+  name: 'Filled Solid Line Graph',
   args: {
     fill: true,
     fillMode: 'solid',
@@ -362,7 +362,7 @@ export const FilledSolid: Story = {
 };
 
 export const FilledThreshold: Story = {
-  name: 'Filled threshold line graph',
+  name: 'Filled Threshold Line Graph',
   args: {
     fill: true,
     fillMode: 'threshold',
@@ -370,7 +370,7 @@ export const FilledThreshold: Story = {
 };
 
 export const Stacked: Story = {
-  name: 'Stacked line graph',
+  name: 'Stacked Line Graph',
   args: {
     showGridY: false,
     fill: true,
@@ -382,7 +382,7 @@ export const Stacked: Story = {
 };
 
 export const MultiSeriesTime: Story = {
-  name: 'Multi-series line graph',
+  name: 'Multi-Series Line Graph',
   args: {
     showGridY: false,
     datasets: SAMPLE_MULTI_DATASETS,
@@ -391,7 +391,7 @@ export const MultiSeriesTime: Story = {
 };
 
 export const MinHeight: Story = {
-  name: 'Minimal height line graph (48px)',
+  name: 'Minimal Height Line Graph (48px)',
   args: {
     width: 72,
     height: 48,
@@ -399,7 +399,7 @@ export const MinHeight: Story = {
 };
 
 export const ThresholdHeight: Story = {
-  name: 'Threshold height line graph (192px, where labels appear)',
+  name: 'Threshold Height Line Graph (192px, where labels appear)',
   args: {
     width: 288,
     height: 192,
@@ -407,7 +407,7 @@ export const ThresholdHeight: Story = {
 };
 
 export const NoLabelsNoTicks: Story = {
-  name: 'No labels/ticks line graph (but yes 32px padding for optional points)',
+  name: 'No Labels/ticks Line Graph (but yes 32px padding for optional points)',
   args: {
     showTickMarks: false,
     width: 288,
@@ -419,14 +419,14 @@ export const NoLabelsNoTicks: Story = {
 };
 
 export const WithLegend: Story = {
-  name: 'With legend line graph',
+  name: 'With Legend Line Graph',
   args: {
     legend: true,
   },
 };
 
 export const MultiAxis: Story = {
-  name: 'Multi-axis line graph (left and right y-axes)',
+  name: 'Multi-Axis Line Graph (left and right y-axes)',
   render: (_args) => {
     const multiAxisDatasets: NonNullable<ObcAreaGraph['datasets']> = [
       {
@@ -588,7 +588,7 @@ export const RealtimeShifting: Story = {
 };
 
 export const ExternalScalesBottomRight: Story = {
-  name: 'External scales (480×320, bottom + right)',
+  name: 'External Scales (480×320, bottom + right)',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -652,7 +652,7 @@ export const ExternalScalesBottomRight: Story = {
 };
 
 export const ExternalScalesAllSides: Story = {
-  name: 'External scales (800×600, all 4 sides)',
+  name: 'External Scales (800×600, all 4 sides)',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -912,7 +912,7 @@ export const ExternalScalesAllSides: Story = {
 };
 
 export const ExternalScalesMinimal: Story = {
-  name: 'External scales (192×192, bottom + right, minimal)',
+  name: 'External Scales (192×192, bottom + right, minimal)',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -979,7 +979,7 @@ export const ExternalScalesMinimal: Story = {
 };
 
 export const FixedAspectRatioScaling: StoryObj = {
-  name: 'Fixed aspect ratio scaling (responsive)',
+  name: 'Fixed Aspect Ratio Scaling (responsive)',
   tags: ['skip-test'],
   decorators: [],
   args: {

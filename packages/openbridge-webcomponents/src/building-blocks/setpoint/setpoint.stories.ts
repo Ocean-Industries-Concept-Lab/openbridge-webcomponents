@@ -222,7 +222,7 @@ function renderSetpointDemo(config: {
  * Use the controls to adjust value, setpoint, enhanced mode, etc.
  */
 export const NotEqual: Story = {
-  name: 'notEqual (Input ≠ Output)',
+  name: 'NotEqual (Input ≠ Output)',
   args: {
     value: 20,
     setpoint: 40,
@@ -241,7 +241,7 @@ export const NotEqual: Story = {
  * Use the controls to adjust value, setpoint, enhanced mode, etc.
  */
 export const Equal: Story = {
-  name: 'equal (Input = Output)',
+  name: 'Equal (Input = Output)',
   args: {
     value: 40,
     setpoint: 40,
@@ -261,7 +261,7 @@ export const Equal: Story = {
  * Use the controls to adjust value, setpoint, enhanced mode, etc.
  */
 export const EqualZero: Story = {
-  name: 'equalZero (Input = Output = 0)',
+  name: 'EqualZero (Input = Output = 0)',
   args: {
     value: 0,
     setpoint: 0,
@@ -282,7 +282,7 @@ export const EqualZero: Story = {
  * Use the controls to adjust value, setpoint, newSetpoint, etc.
  */
 export const Focus: Story = {
-  name: 'focus (User adjusting)',
+  name: 'Focus (User adjusting)',
   args: {
     value: 10,
     setpoint: 20,

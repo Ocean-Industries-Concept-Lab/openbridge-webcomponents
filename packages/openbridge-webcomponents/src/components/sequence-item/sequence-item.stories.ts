@@ -193,7 +193,6 @@ export const Active: Story = {
 };
 
 export const HorizontalOrientation: Story = {
-  name: 'Horizontal orientation',
   render: () =>
     renderItem({
       orientation: SequenceItemOrientation.horizontal,
@@ -209,7 +208,6 @@ export const HorizontalOrientation: Story = {
 };
 
 export const VerticalOrientation: Story = {
-  name: 'Vertical orientation',
   render: () =>
     renderItem({
       orientation: SequenceItemOrientation.vertical,
@@ -226,7 +224,7 @@ export const VerticalOrientation: Story = {
 };
 
 export const MultiLineLabel: Story = {
-  name: 'Label: Multi-line',
+  name: 'Label: Multi-Line',
   render: () =>
     renderItem({
       labelType: SequenceItemLabelType.multiLine,
@@ -279,7 +277,7 @@ export const RegularLabel: Story = {
 };
 
 export const WithDetails: Story = {
-  name: 'With description and stamps',
+  name: 'With Description and Stamps',
   render: () =>
     renderItem({
       title: 'Dock',

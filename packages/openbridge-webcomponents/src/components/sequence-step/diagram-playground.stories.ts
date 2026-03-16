@@ -179,7 +179,6 @@ const renderSequenceItemsStory = (
 };
 
 export const SequenceItemsWithDescription: Story = {
-  name: 'Sequence items with description',
   args: {
     steps: [
       {
@@ -333,7 +332,7 @@ const renderStepSequence = (
 };
 
 export const MediumButtonSequence: Story = {
-  name: 'Medium button steps',
+  name: 'Medium Button Steps',
   args: {
     steps: [
       {
@@ -434,7 +433,7 @@ export const MediumButtonSequence: Story = {
 };
 
 export const LargeButtons: Story = {
-  name: 'Large button steps',
+  name: 'Large Button Steps',
   args: {
     steps: [
       {
@@ -507,7 +506,7 @@ export const LargeButtons: Story = {
 };
 
 export const LargePointSequence: Story = {
-  name: 'Point steps',
+  name: 'Point Steps',
   args: {
     steps: [1, 2, 3, 4, 5, 6, 7].map((value, index) => {
       const config = {

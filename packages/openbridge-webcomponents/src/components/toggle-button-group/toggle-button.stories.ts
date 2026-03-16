@@ -11,7 +11,7 @@ import {
 
 const meta: Meta<typeof ObcToggleButtonGroup> = {
   title:
-    'UI Components/Selection controls and switches/Toggle button - Horizontal',
+    'UI Components/Selection Controls and Switches/Toggle Button - Horizontal',
   tags: ['autodocs', '6.0'],
   component: 'obc-toggle-button-group',
   args: {

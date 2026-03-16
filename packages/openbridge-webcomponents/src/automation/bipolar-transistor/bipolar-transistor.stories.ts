@@ -11,7 +11,7 @@ import '../automation-badge/automation-badge.js';
 import {argTypesAbstractAutomationButtonPassiveSquare} from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 const meta: Meta<typeof ObcBipolarTransistor> = {
-  title: 'Automation/Automation devices/Bipolar Transistor',
+  title: 'Automation/Automation Devices/Bipolar Transistor',
   tags: ['autodocs'],
   component: 'obc-bipolar-transistor',
   decorators: [crossDecorator],

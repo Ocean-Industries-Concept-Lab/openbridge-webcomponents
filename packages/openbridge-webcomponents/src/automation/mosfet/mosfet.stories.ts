@@ -8,7 +8,7 @@ import '../automation-badge/automation-badge.js';
 import {argTypesAbstractAutomationButtonPassiveSquare} from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 const meta: Meta<typeof ObcMosfet> = {
-  title: 'Automation/Automation devices/Mosfet',
+  title: 'Automation/Automation Devices/Mosfet',
   tags: ['autodocs'],
   component: 'obc-mosfet',
   decorators: [crossDecorator],

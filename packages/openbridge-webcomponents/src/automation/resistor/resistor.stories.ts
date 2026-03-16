@@ -8,7 +8,7 @@ import '../automation-badge/automation-badge.js';
 import {argTypesAbstractAutomationButtonPassiveSquare} from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 const meta: Meta<typeof ObcResistor> = {
-  title: 'Automation/Automation devices/Resistor',
+  title: 'Automation/Automation Devices/Resistor',
   tags: ['autodocs'],
   component: 'obc-resistor',
   decorators: [crossDecorator],

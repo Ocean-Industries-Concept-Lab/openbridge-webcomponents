@@ -31,6 +31,19 @@ Each component's `*.stories.ts` file should:
 - Use `tags: ['skip-test']` to exclude a story from visual snapshot testing
 - Export a `Default` story and additional stories for key states and variants
 
+### Title conventions
+
+All story `title` and `name` fields use **Title Case** with `/`-separated segments.
+This is enforced by the ESLint rule `openbridge/storybook-title-case` (auto-fixable via `--fix`).
+
+- Capitalize every word: `Alert List Item`, `Speed Gauge`, `Automation Button`.
+- Keep short conjunctions and prepositions lowercase: _and, of, or, in, on, at, to, for_.
+  Example: `Message and Alerts`, `Selection Controls and Switches`.
+- First and last words of a phrase are always capitalized, even if they are conjunctions/prepositions.
+- Use spaces, not dashes: `Automation Configurations` not `Automation-configurations`.
+- Parenthesized content is left as-is: `Minimal Height Donut (48px)`.
+- Apply the same rules to every segment: `title: 'UI Components/Input Controls/Slider Double'`.
+
 ## 🧪 Testing
 
 Visual snapshot tests are run via [Vitest](https://vitest.dev/) + [storybook-addon-vis](https://github.com/nickelspy/storybook-addon-vis) + Playwright:

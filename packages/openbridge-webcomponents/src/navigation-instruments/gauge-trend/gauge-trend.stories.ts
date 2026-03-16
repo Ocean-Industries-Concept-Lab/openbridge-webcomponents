@@ -214,7 +214,7 @@ export default meta;
 type Story = StoryObj;
 
 export const GaugeTrend: Story = {
-  name: 'Gauge trend (default, scaleReferenceSize=384)',
+  name: 'Gauge Trend (default, scaleReferenceSize=384)',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -254,7 +254,7 @@ export const GaugeTrend: Story = {
 };
 
 export const GaugeTrendScaleReferenceSize: Story = {
-  name: 'Using scaleReferenceSize=240',
+  name: 'Using ScaleReferenceSize=240',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -306,7 +306,6 @@ export const GaugeTrendScaleReferenceSize: Story = {
  * Figma 1:1, while the center panel shows the same 240px design scaled up to fit 384px.
  */
 export const ScaleReferenceSizeComparison: StoryObj = {
-  name: 'Scale reference size comparison',
   tags: ['skip-test'],
   decorators: [(story) => story()],
   args: {
@@ -473,7 +472,7 @@ export const ScaleReferenceSizeComparison: StoryObj = {
 };
 
 export const GaugeTrendWithoutScale: Story = {
-  name: 'Without scale',
+  name: 'Without Scale',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -513,7 +512,7 @@ export const GaugeTrendWithoutScale: Story = {
 };
 
 export const GaugeTrendWithoutBar: Story = {
-  name: 'Without bar (scale only)',
+  name: 'Without Bar (scale only)',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -557,7 +556,7 @@ export const GaugeTrendWithoutBar: Story = {
 };
 
 export const GaugeTrendWithAdvice: Story = {
-  name: 'With advice overlays',
+  name: 'With Advice Overlays',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -614,7 +613,7 @@ export const GaugeTrendWithAdvice: Story = {
  * how gauge-trend can be configured for domain-specific measurements.
  */
 export const GaugeTrendCustomScaleRange: Story = {
-  name: 'Custom scale range (25-75)',
+  name: 'Custom Scale Range (25-75)',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -693,7 +692,7 @@ export const GaugeTrendCustomScaleRange: Story = {
 };
 
 export const GaugeTrendLabelsOnly: Story = {
-  name: 'Labels only (no bar, condensed scale)',
+  name: 'Labels Only (no bar, condensed scale)',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -745,7 +744,6 @@ export const GaugeTrendLabelsOnly: Story = {
  * - Right: Chart fills container width, scale proportionally adjusts based on reference size
  */
 export const FixedAspectRatioScalingComparison: StoryObj = {
-  name: 'Fixed aspect ratio scaling comparison',
   tags: ['skip-test'],
   decorators: [],
   args: {

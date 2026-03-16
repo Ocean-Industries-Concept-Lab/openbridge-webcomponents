@@ -8,7 +8,7 @@ import '../automation-badge/automation-badge.js';
 import {argTypesAbstractAutomationButtonPassiveSquare} from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 const meta: Meta<typeof ObcRouter> = {
-  title: 'Automation/Automation devices/Router',
+  title: 'Automation/Automation Devices/Router',
   tags: ['autodocs'],
   component: 'obc-router',
   decorators: [crossDecorator],
