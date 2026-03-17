@@ -1253,7 +1253,7 @@ export const SetpointAzimuthThrusterFlow: StoryObj<{
   thrustDuration: number;
   angleDuration: number;
 }> = {
-  tags: ['skip-test', 'skip-snapshot'],
+  tags: ['skip-test'],
   name: 'Setpoint Azimuth Thruster Flow (interactive)',
   args: {
     thrustDuration: 2,
