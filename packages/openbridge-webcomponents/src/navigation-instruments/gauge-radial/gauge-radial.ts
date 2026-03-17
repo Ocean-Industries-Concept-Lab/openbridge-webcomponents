@@ -5,6 +5,7 @@ import {AdviceType} from '../watch/advice.js';
 import {InstrumentState, Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/instrument-radial/instrument-radial.js';
+import {TickmarkStyle} from '../watch/tickmark.js';
 
 export enum ObcGaugeRadialType {
   filled = 'filled',
@@ -95,6 +96,8 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   @property({type: String}) type: ObcGaugeRadialType =
     ObcGaugeRadialType.filled;
   @property({type: Boolean}) tickmarksInside: boolean = false;
+  @property({type: String}) tickmarkStyle: TickmarkStyle =
+    TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
 
   getAngle(v: number): number {
@@ -130,6 +133,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
         .type=${this.type}
         .needleType=${this.type}
         .tickmarksInside=${this.tickmarksInside}
+        .tickmarkStyle=${this.tickmarkStyle}
         .advices=${this.advices}
       >
       </obc-instrument-radial>

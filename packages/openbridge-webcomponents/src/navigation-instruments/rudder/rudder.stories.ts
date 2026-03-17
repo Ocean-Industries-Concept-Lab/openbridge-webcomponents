@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcRudder, ObcRudderVariant} from './rudder.js';
 import './rudder.js';
 import {widthDecorator} from '../../storybook-util.js';
+import {TickmarkStyle} from '../watch/tickmark.js';
 import {InstrumentState, Priority} from '../types.js';
 const meta: Meta<typeof ObcRudder> = {
   title: 'Instruments/Rudder',
@@ -14,6 +15,7 @@ const meta: Meta<typeof ObcRudder> = {
     maxAngle: 90,
     touching: false,
     priority: Priority.enhanced,
+    tickmarkStyle: TickmarkStyle.regular,
   },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
@@ -25,6 +27,10 @@ const meta: Meta<typeof ObcRudder> = {
     priority: {control: 'select', options: Object.values(Priority)},
     showLabels: {control: 'boolean'},
     tickmarksInside: {control: 'boolean'},
+    tickmarkStyle: {
+      control: 'select',
+      options: Object.values(TickmarkStyle),
+    },
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcRudder>;
