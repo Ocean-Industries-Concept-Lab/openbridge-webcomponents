@@ -1,4 +1,5 @@
 import {svg, SVGTemplateResult} from 'lit';
+import {styleMap} from 'lit/directives/style-map.js';
 
 export function renderWind(options: {
   wind: number;
@@ -37,10 +38,8 @@ function renderEnvironment(options: {
   const {filename, fromDirectionDeg, radius, color} = options;
   const directionRad = ((fromDirectionDeg - 180) * Math.PI) / 180;
   const symbol = environmentSvgs[filename];
-  const colorStyle = color
-    ? `--instrument-regular-secondary-color: ${color}`
-    : '';
-  return svg`<g style="${colorStyle}" transform="translate(${-Math.sin(directionRad) * radius} ${Math.cos(directionRad) * radius}) rotate(${180 + fromDirectionDeg}) translate(-24, 0) scale(2)">
+  const styles = color ? {'--instrument-regular-secondary-color': color} : {};
+  return svg`<g style=${styleMap(styles)} transform="translate(${-Math.sin(directionRad) * radius} ${Math.cos(directionRad) * radius}) rotate(${180 + fromDirectionDeg}) translate(-24, 0) scale(2)">
     ${symbol}
   </g>`;
 }
