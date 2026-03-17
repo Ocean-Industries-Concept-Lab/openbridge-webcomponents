@@ -121,49 +121,12 @@
   display: inline-block;
 }
 
-.circular-svg {
+obc-circular-progress {
   position: absolute;
   top: 0;
   left: 0;
   width: 48px;
   height: 48px;
-}
-
-.circular-background {
-  stroke: var(--container-backdrop-color);
-}
-
-.circular-progress {
-  stroke: var(--instrument-enhanced-secondary-color);
-  transition: stroke-dashoffset 0.3s ease-in-out;
-}
-
-.circular-progress.determinate {
-  stroke-linecap: round;
-}
-
-.circular-progress.complete {
-  stroke: var(--instrument-enhanced-secondary-color);
-}
-
-.circular-progress.indeterminate {
-  stroke-linecap: round;
-  animation: circular-rotate 1.5s linear infinite;
-}
-
-.circular-progress.progressive-indeterminate {
-  stroke-linecap: round;
-  animation: circular-rotate 1.5s linear infinite;
-  transition: stroke-dasharray 0s ease-in-out;
-}
-
-@keyframes circular-rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 .circular-content {

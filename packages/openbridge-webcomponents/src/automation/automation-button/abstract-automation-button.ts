@@ -19,6 +19,7 @@ import {
   ObcAlertFrameType,
 } from '../../components/alert-frame/alert-frame.js';
 import '../automation-badge/automation-badge.js';
+import {CircularProgressMode} from '../../building-blocks/circular-progress/circular-progress.js';
 
 export class ObcAbstractAutomationButton extends LitElement {
   @property({type: Boolean, attribute: false}) showReadoutStack: boolean = true;
@@ -40,6 +41,9 @@ export class ObcAbstractAutomationButton extends LitElement {
     true;
   @property({type: Boolean}) showAlertIcon: boolean = false;
   @property({type: Boolean}) progress: boolean = false;
+  @property({type: String}) progressMode: CircularProgressMode =
+    CircularProgressMode.indeterminate;
+  @property({type: Number}) progressValue: number = 0;
   @property({type: String}) tag: string = '';
   @property({type: String}) direction: AutomationButtonDirection =
     AutomationButtonDirection.forward;
@@ -124,6 +128,8 @@ export class ObcAbstractAutomationButton extends LitElement {
       .showAlertCategoryIcon=${this.showAlertCategoryIcon}
       .showAlertIcon=${this.showAlertIcon}
       ?progress=${this.progress}
+      .progressMode=${this.progressMode}
+      .progressValue=${this.progressValue}
       .variant=${this._variant}
       .direction=${this.direction}
       .hasBadgeSpacer=${this.getBadgeSpacer()}
