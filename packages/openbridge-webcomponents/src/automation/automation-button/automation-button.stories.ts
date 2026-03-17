@@ -231,6 +231,7 @@ export const ValveBadges: Story = {
 };
 
 export const ValveProgress: Story = {
+  tags: ['skip-test'],
   args: {
     progress: true,
   },

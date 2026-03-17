@@ -214,35 +214,21 @@ export class ObcAutomationButton extends LitElement {
       return null;
     }
 
-    const spinnerWidth = parseFloat(
-      getComputedStyle(this).getPropertyValue(
-        '--automation-components-button-device-visual-target'
-      )
-    );
-    const strokeWidth = parseFloat(
-      getComputedStyle(this).getPropertyValue(
-        '--automation-components-button-device-progress-bar-stroke'
-      )
-    );
-    const progressSpinner = html`<svg
-      width="${spinnerWidth}"
-      height="${spinnerWidth}"
-      viewBox="0 0 ${spinnerWidth} ${spinnerWidth}"
+    return html`<svg
+      viewBox="0 0 100 100"
       fill="none"
       class="progress-spinner"
       xmlns="http://www.w3.org/2000/svg"
+      overflow="visible"
     >
       <path
-        d="M${strokeWidth / 2} ${spinnerWidth / 2} A ${(spinnerWidth -
-          strokeWidth) /
-        2} ${(spinnerWidth - strokeWidth) / 2} 0 0 1 ${spinnerWidth /
-        2} ${strokeWidth / 2}"
+        d="M2 50 A 48 48 0 0 1 50 2"
         stroke="var(--instrument-enhanced-secondary-color)"
-        stroke-width=${strokeWidth}
+        stroke-width="var(--automation-components-button-progress-bar-stroke)"
         stroke-linecap="round"
+        vector-effect="non-scaling-stroke"
       />
-    </svg> `;
-    return progressSpinner;
+    </svg>`;
   }
 
   private getDirectionIcon(): null | HTMLTemplateResult {
