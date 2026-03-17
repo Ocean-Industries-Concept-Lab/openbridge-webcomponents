@@ -180,9 +180,11 @@ export class ObcWatch extends LitElement {
   @property({type: Number}) wind: number | null = null;
   @property({type: Number}) windFromDirectionDeg: number | null = null;
   @property({type: Number}) windSymbolRadius: number | null = null;
+  @property({type: String}) windColor: string | undefined;
   @property({type: Number}) current: number | null = null;
   @property({type: Number}) currentFromDirectionDeg: number | null = null;
   @property({type: Number}) currentSymbolRadius: number | null = null;
+  @property({type: String}) currentColor: string | undefined;
   @property({type: Boolean}) starboardPortIndicator: boolean = false;
   @property({type: Number}) clipTop: number = 0; // in percent of height
   @property({type: Number}) clipBottom: number = 0; // in percent of height
@@ -565,6 +567,7 @@ export class ObcWatch extends LitElement {
             wind: this.wind,
             fromDirectionDeg: this.windFromDirectionDeg,
             radius: this.windSymbolRadius ?? 192,
+            color: this.windColor,
           })}</g>`
         : nothing;
     const current =
@@ -573,6 +576,7 @@ export class ObcWatch extends LitElement {
             current: this.current,
             fromDirectionDeg: this.currentFromDirectionDeg,
             radius: this.currentSymbolRadius ?? 192,
+            color: this.currentColor,
           })
         : nothing;
     return html`

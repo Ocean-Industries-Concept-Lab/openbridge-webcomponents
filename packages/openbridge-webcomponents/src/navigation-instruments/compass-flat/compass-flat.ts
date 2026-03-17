@@ -4,6 +4,12 @@ import {property, state} from 'lit/decorators.js';
 import {Tickmark, TickmarkType} from '../watch-flat/tickmark-flat.js';
 import '../watch-flat/watch-flat.js';
 import {customElement} from '../../decorator.js';
+import {Priority} from '../types.js';
+
+export enum CompassFlatPriorityElement {
+  hdg = 'hdg',
+  cog = 'cog',
+}
 
 export enum LabelPosition {
   top = -45,
@@ -34,6 +40,11 @@ export class ObcCompassFlat extends LitElement {
   @property({type: Number}) FOV = 45;
   @property({type: Number}) minFOV = 45;
   @property({type: Number}) maxFOV = 180;
+  @property({type: String}) priority: Priority = Priority.regular;
+  @property({type: Array, attribute: false})
+  priorityElements: CompassFlatPriorityElement[] = [
+    CompassFlatPriorityElement.hdg,
+  ];
 
   @state() private containerWidth = 0;
   @state() private maxContainerWidth = 0;
@@ -185,16 +196,29 @@ export class ObcCompassFlat extends LitElement {
     return indicators;
   }
 
+  private priorityFor(element: CompassFlatPriorityElement): Priority {
+    const selected = Array.isArray(this.priorityElements)
+      ? this.priorityElements
+      : [];
+    return selected.includes(element) ? this.priority : Priority.regular;
+  }
+
+  private arrowColorFor(element: CompassFlatPriorityElement): string {
+    return this.priorityFor(element) === Priority.enhanced
+      ? 'var(--instrument-enhanced-secondary-color)'
+      : 'var(--instrument-regular-secondary-color)';
+  }
+
   private get HDGSvg(): SVGTemplateResult {
     return svg`<g transform="translate(-24, -74)">
-          <path d="M36.7011 44.1445L36.6898 44.1379L36.6781 44.1318L24.2301 37.6823L24.0001 37.5631L23.7701 37.6823L11.3221 44.1318L11.3104 44.1379L11.2991 44.1445C9.25497 45.3438 6.78661 43.308 7.68828 41.0919L22.6036 4.43285C23.1096 3.18905 24.8906 3.18905 25.3967 4.43284L40.3119 41.0919C41.2136 43.308 38.7452 45.3438 36.7011 44.1445Z" fill="var(--instrument-enhanced-secondary-color)" stroke="var(--border-silhouette-color)"/>
+          <path d="M36.7011 44.1445L36.6898 44.1379L36.6781 44.1318L24.2301 37.6823L24.0001 37.5631L23.7701 37.6823L11.3221 44.1318L11.3104 44.1379L11.2991 44.1445C9.25497 45.3438 6.78661 43.308 7.68828 41.0919L22.6036 4.43285C23.1096 3.18905 24.8906 3.18905 25.3967 4.43284L40.3119 41.0919C41.2136 43.308 38.7452 45.3438 36.7011 44.1445Z" fill="${this.arrowColorFor(CompassFlatPriorityElement.hdg)}" stroke="var(--border-silhouette-color)"/>
         </g>`;
   }
 
   private COGSvg(translation: number): SVGTemplateResult {
     return svg`
       <g transform="translate(${-24 + translation}, -74)">
-        <path d="M31.9025 36.0262L33.1068 36.6502L32.5956 35.3938L24.4632 15.406L24.0001 14.2677L23.537 15.406L15.4046 35.3938L14.8935 36.6502L16.0978 36.0262L24.0001 31.9319L31.9025 36.0262ZM36.7011 44.1445L36.6898 44.1379L36.6781 44.1318L24.2301 37.6823L24.0001 37.5631L23.7701 37.6823L11.3221 44.1318L11.3104 44.1379L11.2991 44.1445C9.25497 45.3438 6.78661 43.308 7.68828 41.0919L22.6036 4.43285C23.1096 3.18905 24.8906 3.18905 25.3967 4.43284L40.3119 41.0919C41.2136 43.308 38.7452 45.3438 36.7011 44.1445Z" fill="var(--instrument-enhanced-secondary-color)" stroke="var(--border-silhouette-color)"/>
+        <path d="M31.9025 36.0262L33.1068 36.6502L32.5956 35.3938L24.4632 15.406L24.0001 14.2677L23.537 15.406L15.4046 35.3938L14.8935 36.6502L16.0978 36.0262L24.0001 31.9319L31.9025 36.0262ZM36.7011 44.1445L36.6898 44.1379L36.6781 44.1318L24.2301 37.6823L24.0001 37.5631L23.7701 37.6823L11.3221 44.1318L11.3104 44.1379L11.2991 44.1445C9.25497 45.3438 6.78661 43.308 7.68828 41.0919L22.6036 4.43285C23.1096 3.18905 24.8906 3.18905 25.3967 4.43284L40.3119 41.0919C41.2136 43.308 38.7452 45.3438 36.7011 44.1445Z" fill="${this.arrowColorFor(CompassFlatPriorityElement.cog)}" stroke="var(--border-silhouette-color)"/>
       </g>
     `;
   }

@@ -1,5 +1,9 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {CompassDirection, ObcHeading} from './heading.js';
+import {
+  CompassDirection,
+  HeadingPriorityElement,
+  ObcHeading,
+} from './heading.js';
 import './heading.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
@@ -25,6 +29,7 @@ const meta: Meta<typeof ObcHeading> = {
     headingSetpoint: 311,
     direction: CompassDirection.NorthUp,
     touching: false,
+    priorityElements: [HeadingPriorityElement.hdg],
   },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
@@ -39,6 +44,10 @@ const meta: Meta<typeof ObcHeading> = {
     showLabels: {control: 'boolean'},
     tickmarksInside: {control: 'boolean'},
     priority: {control: 'select', options: Object.values(Priority)},
+    priorityElements: {
+      control: 'multi-select',
+      options: Object.values(HeadingPriorityElement),
+    },
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcHeading>;

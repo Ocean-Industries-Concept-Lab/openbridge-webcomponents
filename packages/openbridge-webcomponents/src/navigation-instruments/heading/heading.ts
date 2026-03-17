@@ -16,6 +16,11 @@ export enum CompassDirection {
   CourseUp = 'courseUp',
 }
 
+export enum HeadingPriorityElement {
+  hdg = 'hdg',
+  cog = 'cog',
+}
+
 @customElement('obc-heading')
 export class ObcHeading extends LitElement {
   @property({type: Number}) heading = 0;
@@ -35,6 +40,8 @@ export class ObcHeading extends LitElement {
   @property({type: String}) direction: CompassDirection =
     CompassDirection.NorthUp;
   @property({type: String}) priority: Priority = Priority.regular;
+  @property({type: Array, attribute: false})
+  priorityElements: HeadingPriorityElement[] = [HeadingPriorityElement.hdg];
   /** Show compass NSEW labels. */
   @property({type: Boolean}) showLabels: boolean = false;
   /** When true, labels and north arrow are placed inside the outer ring. */
@@ -95,6 +102,13 @@ export class ObcHeading extends LitElement {
     });
   }
 
+  private priorityFor(element: HeadingPriorityElement): Priority {
+    const selected = Array.isArray(this.priorityElements)
+      ? this.priorityElements
+      : [];
+    return selected.includes(element) ? this.priority : Priority.regular;
+  }
+
   private getRotation(): number | undefined {
     if (this.direction === CompassDirection.NorthUp) {
       return undefined;
@@ -144,12 +158,12 @@ export class ObcHeading extends LitElement {
           ${arrow(
             ArrowStyle.HDG,
             this.heading + (this.getRotation() ?? 0),
-            this.priority
+            this.priorityFor(HeadingPriorityElement.hdg)
           )}
           ${arrow(
             ArrowStyle.COG,
             this.courseOverGround + (this.getRotation() ?? 0),
-            Priority.regular
+            this.priorityFor(HeadingPriorityElement.cog)
           )}
         </svg>
       </div>

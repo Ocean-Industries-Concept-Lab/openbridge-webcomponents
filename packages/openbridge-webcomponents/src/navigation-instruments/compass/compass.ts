@@ -18,6 +18,14 @@ export enum CompassDirection {
   CourseUp = 'courseUp',
 }
 
+export enum CompassPriorityElement {
+  hdg = 'hdg',
+  cog = 'cog',
+  rot = 'rot',
+  wind = 'wind',
+  current = 'current',
+}
+
 /**
  * `<obc-compass>` – Full-featured compass with HDG/COG arrows, rate-of-turn indicator, and environmental overlays.
  *
@@ -118,6 +126,8 @@ export class ObcCompass extends LitElement {
     CompassDirection.NorthUp;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
+  @property({type: Array, attribute: false})
+  priorityElements: CompassPriorityElement[] = [CompassPriorityElement.hdg];
   /** Show compass NSEW labels and north arrow. */
   @property({type: Boolean}) showLabels: boolean = false;
   /** When true, labels and north arrow are placed inside the outer ring. */
@@ -201,6 +211,19 @@ export class ObcCompass extends LitElement {
     });
   }
 
+  private priorityFor(element: CompassPriorityElement): Priority {
+    const selected = Array.isArray(this.priorityElements)
+      ? this.priorityElements
+      : [];
+    return selected.includes(element) ? this.priority : Priority.regular;
+  }
+
+  private colorFor(element: CompassPriorityElement): string | undefined {
+    return this.priorityFor(element) === Priority.enhanced
+      ? 'var(--instrument-enhanced-secondary-color)'
+      : undefined;
+  }
+
   private getRotation(): number | undefined {
     if (this.direction === CompassDirection.NorthUp) {
       return undefined;
@@ -253,8 +276,10 @@ export class ObcCompass extends LitElement {
           ]}
           .wind=${this.windSpeed}
           .windFromDirectionDeg=${this.windFromDirection}
+          .windColor=${this.colorFor(CompassPriorityElement.wind)}
           .current=${this.currentSpeed}
           .currentFromDirectionDeg=${this.currentFromDirection}
+          .currentColor=${this.colorFor(CompassPriorityElement.current)}
           .rotation=${this.getRotation()}
         >
         </obc-watch>
@@ -262,14 +287,14 @@ export class ObcCompass extends LitElement {
           ${arrow(
             ArrowStyle.HDG,
             this.heading + (this.getRotation() ?? 0),
-            this.priority
+            this.priorityFor(CompassPriorityElement.hdg)
           )}
           ${arrow(
             ArrowStyle.COG,
             this.courseOverGround + (this.getRotation() ?? 0),
-            this.priority
+            this.priorityFor(CompassPriorityElement.cog)
           )}
-          <g id="rot">${rot}</g>
+          <g id="rot">${rot(this.colorFor(CompassPriorityElement.rot))}</g>
         </svg>
       </div>
     `;
