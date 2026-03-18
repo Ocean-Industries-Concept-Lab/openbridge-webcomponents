@@ -5,6 +5,11 @@ import componentStyle from './readout-input.css?inline';
 import {customElement} from '../../decorator.js';
 import '../../icons/icon-input-right.js';
 
+export enum ReadoutInputVariant {
+  input = 'input',
+  advice = 'advice',
+}
+
 export enum ReadoutInputSize {
   small = 'small',
   regular = 'regular',
@@ -15,8 +20,10 @@ export enum ReadoutInputSize {
 export enum ReadoutInputState {
   enabled = 'enabled',
   enhanced = 'enhanced',
+  active = 'active',
   input = 'input',
   inputTemporary = 'input-temporary',
+  amplified = 'amplified',
 }
 
 export enum ReadoutInputWeight {
@@ -31,11 +38,12 @@ export enum ReadoutInputWeight {
  * Renders a leading marker icon and a single value string with optional fixed-width rendering, hinted zero padding, and an optional degree suffix. Use it as a low-level building block inside a larger readout when the input or commanded value must be shown separately from the main value.
  *
  * ## Features
+ * - Variants: Supports `input` and `advice` marker variants.
  * - Sizes: Supports `small`, `regular`, `medium`, and `large`.
- * - Visual states: `enabled` uses the neutral color, while `enhanced`, `input`, and `inputTemporary` use the enhanced secondary color.
+ * - Visual states: `enabled` uses the neutral color, `enhanced`, `input`, and `inputTemporary` use the enhanced secondary color, `active` is reserved for the `advice` variant, and `amplified` uses amplified container styling.
  * - Width control: When `stringWidth` is enabled, `valueLength` defines the visible string width. Longer values are clipped from the left, and empty or whitespace-only `valueLength` hides the rendered value.
  * - Hinted zeros: `hasHintedZeros` adds muted leading zeroes when `stringWidth` is enabled and the visible value is shorter than `valueLength`.
- * - Weight options: Supports `regular`, `active`, and `bold`. `bold` is intended for `regular` size only.
+ * - Weight options: Supports `regular`, `active`, and `bold`. When `weight` is not set, `input` and `inputTemporary` default to `active`; other states default to `regular`. `bold` is intended for `regular` size only.
  * - Degree suffix: `hasDegree` renders a degree symbol only when `size` is `medium`, `weight` is `active`, and `stringWidth` is disabled.
  * - Icon override: A named slot can replace the default leading marker icon.
  *
@@ -52,6 +60,9 @@ export enum ReadoutInputWeight {
  */
 @customElement('obc-readout-input')
 export class ObcReadoutInput extends LitElement {
+  @property({type: String}) variant: ReadoutInputVariant =
+    ReadoutInputVariant.input;
+
   @property({type: String}) size: ReadoutInputSize = ReadoutInputSize.small;
 
   @property({type: String}) state: ReadoutInputState =
@@ -59,8 +70,7 @@ export class ObcReadoutInput extends LitElement {
 
   @property({type: Boolean}) hugContent = false;
 
-  @property({type: String}) weight: ReadoutInputWeight =
-    ReadoutInputWeight.regular;
+  @property({type: String}) weight?: ReadoutInputWeight;
 
   @property({type: Boolean}) stringWidth = false;
 
@@ -113,10 +123,25 @@ export class ObcReadoutInput extends LitElement {
     return this.widthTemplate.length - this.visibleValue.length;
   }
 
+  private get resolvedWeight(): ReadoutInputWeight {
+    if (this.weight) {
+      return this.weight;
+    }
+
+    if (
+      this.state === ReadoutInputState.input ||
+      this.state === ReadoutInputState.inputTemporary
+    ) {
+      return ReadoutInputWeight.active;
+    }
+
+    return ReadoutInputWeight.regular;
+  }
+
   private get supportsDegree(): boolean {
     return (
       this.size === ReadoutInputSize.medium &&
-      this.weight === ReadoutInputWeight.active &&
+      this.resolvedWeight === ReadoutInputWeight.active &&
       !this.stringWidth
     );
   }
@@ -135,7 +160,7 @@ export class ObcReadoutInput extends LitElement {
         class=${classMap({
           'input-value': true,
           [this.size]: true,
-          [`weight-${this.weight}`]: true,
+          [`weight-${this.resolvedWeight}`]: true,
           'string-width': this.stringWidth,
           'with-degree': this.hasDegree && this.supportsDegree,
         })}
@@ -155,7 +180,7 @@ export class ObcReadoutInput extends LitElement {
             <span class="value">${this.visibleValue}</span>
           </span>
           ${this.hasDegree && this.supportsDegree
-            ? html`<span class="degree" aria-hidden="true">°</span>`
+            ? html`<span class="degree">°</span>`
             : nothing}
         </span>
         ${this.hasDegree && this.supportsDegree
@@ -170,6 +195,7 @@ export class ObcReadoutInput extends LitElement {
       <div
         class=${classMap({
           'content-container': true,
+          [`variant-${this.variant}`]: true,
           [this.size]: true,
           [`state-${this.state}`]: true,
           'no-hug-content': !this.hugContent,

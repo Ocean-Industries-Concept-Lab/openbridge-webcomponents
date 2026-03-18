@@ -4,10 +4,12 @@
 
 :host {
   display: inline-flex;
+  height: fit-content;
   max-width: 100%;
 }
 
 .content-container {
+  height: fit-content;
   display: inline-flex;
   inline-size: fit-content;
   padding: 0
@@ -34,6 +36,10 @@
     );
   }
 
+  &.variant-advice.no-hug-content.medium {
+    gap: 11px;
+  }
+
   &.no-hug-content.large {
     gap: calc(
       var(--instrument-components-readout-new-general-regular-icon-gap) * 1.5
@@ -42,6 +48,11 @@
 
   &.state-input-temporary {
     gap: 0;
+  }
+
+  &.state-amplified {
+    @mixin style style=amplified noClick;
+    border-radius: var(--border-radius-br-4);
   }
 
   &.large {
@@ -59,9 +70,17 @@
     color: var(--element-neutral-color);
   }
 
+  .state-amplified & {
+    color: var(--on-amplified-active-color);
+  }
+
   .state-enhanced &,
   .state-input &,
   .state-input-temporary & {
+    color: var(--instrument-enhanced-secondary-color);
+  }
+
+  .variant-advice.state-active & {
     color: var(--instrument-enhanced-secondary-color);
   }
 }
@@ -123,9 +142,17 @@
     color: var(--element-neutral-color);
   }
 
+  .state-amplified & {
+    color: var(--on-amplified-active-color);
+  }
+
   .state-enhanced &,
   .state-input &,
   .state-input-temporary & {
+    color: var(--instrument-enhanced-secondary-color);
+  }
+
+  .variant-advice.state-active & {
     color: var(--instrument-enhanced-secondary-color);
   }
 
@@ -240,6 +267,7 @@
     .degree,
     .degree-template {
       @mixin font-instrument-value-m-active;
+
       display: block;
       text-align: center;
     }
@@ -258,4 +286,8 @@
 .hinted-zero {
   color: var(--border-outline-color);
   pointer-events: none;
+
+  .state-amplified & {
+    color: var(--on-amplified-neutral-color);
+  }
 }

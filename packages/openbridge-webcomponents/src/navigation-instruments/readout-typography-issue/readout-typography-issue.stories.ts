@@ -15,7 +15,6 @@ export default meta;
 type Story = StoryObj;
 
 export const TestGrid: Story = {
-  name: 'Test-Grid',
   render: () => html`
     <style>
       body::before {

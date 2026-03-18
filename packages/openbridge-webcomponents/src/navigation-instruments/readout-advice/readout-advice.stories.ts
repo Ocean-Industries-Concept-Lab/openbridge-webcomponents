@@ -1,12 +1,12 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import {
-  ObcReadoutInput,
-  ReadoutInputSize,
-  ReadoutInputState,
-  ReadoutInputWeight,
-} from './readout-input.js';
-import './readout-input.js';
+  ObcReadoutAdvice,
+  ReadoutAdviceSize,
+  ReadoutAdviceState,
+  ReadoutAdviceWeight,
+} from './readout-advice.js';
+import './readout-advice.js';
 
 const centeredCanvasDecorator = (story: () => unknown) => {
   return html`
@@ -26,13 +26,13 @@ const centeredCanvasDecorator = (story: () => unknown) => {
 };
 
 const meta = {
-  title: 'Instruments/Readout Input',
+  title: 'Instruments/Readout Advice',
   tags: ['autodocs', '6.0'],
-  component: 'obc-readout-input',
+  component: 'obc-readout-advice',
   decorators: [centeredCanvasDecorator],
   render: (args) => {
     return html`
-      <obc-readout-input
+      <obc-readout-advice
         .size=${args.size}
         .state=${args.state}
         .hugContent=${args.hugContent}
@@ -42,12 +42,12 @@ const meta = {
         .valueLength=${args.valueLength}
         .hasHintedZeros=${args.hasHintedZeros}
         .hasDegree=${args.hasDegree}
-      ></obc-readout-input>
+      ></obc-readout-advice>
     `;
   },
   args: {
-    size: ReadoutInputSize.small,
-    state: ReadoutInputState.enabled,
+    size: ReadoutAdviceSize.small,
+    state: ReadoutAdviceState.enabled,
     hugContent: true,
     stringWidth: true,
     value: '123',
@@ -61,31 +61,26 @@ const meta = {
       control: {
         type: 'select',
         labels: {
-          [ReadoutInputSize.small]: 'Small',
-          [ReadoutInputSize.regular]: 'Regular',
-          [ReadoutInputSize.medium]: 'Medium',
-          [ReadoutInputSize.large]: 'Large',
+          [ReadoutAdviceSize.small]: 'Small',
+          [ReadoutAdviceSize.regular]: 'Regular',
+          [ReadoutAdviceSize.medium]: 'Medium',
+          [ReadoutAdviceSize.large]: 'Large',
         },
       },
-      options: Object.values(ReadoutInputSize),
+      options: Object.values(ReadoutAdviceSize),
     },
     state: {
       name: 'State',
       control: {
         type: 'select',
         labels: {
-          [ReadoutInputState.enabled]: 'Enabled',
-          [ReadoutInputState.enhanced]: 'Enhanced',
-          [ReadoutInputState.input]: 'Input',
-          [ReadoutInputState.inputTemporary]: 'Input Temporary',
+          [ReadoutAdviceState.enabled]: 'Enabled',
+          [ReadoutAdviceState.enhanced]: 'Enhanced',
+          [ReadoutAdviceState.active]: 'Active',
+          [ReadoutAdviceState.amplified]: 'Amplified',
         },
       },
-      options: [
-        ReadoutInputState.enabled,
-        ReadoutInputState.enhanced,
-        ReadoutInputState.input,
-        ReadoutInputState.inputTemporary,
-      ],
+      options: Object.values(ReadoutAdviceState),
     },
     hugContent: {
       name: 'Hug Content',
@@ -95,154 +90,120 @@ const meta = {
       control: {
         type: 'select',
         labels: {
-          [ReadoutInputWeight.regular]: 'Regular',
-          [ReadoutInputWeight.active]: 'Active',
-          [ReadoutInputWeight.bold]: 'Bold',
+          [ReadoutAdviceWeight.regular]: 'Regular',
+          [ReadoutAdviceWeight.active]: 'Active',
+          [ReadoutAdviceWeight.bold]: 'Bold',
         },
       },
-      options: Object.values(ReadoutInputWeight),
-      table: {category: 'Input Value'},
+      options: Object.values(ReadoutAdviceWeight),
+      table: {category: 'Advice Value'},
       description: 'Bold is available only for Regular size.',
     },
     stringWidth: {
       name: 'String Width',
-      table: {category: 'Input Value'},
+      table: {category: 'Advice Value'},
     },
     value: {
       name: 'Value',
       control: 'text',
-      table: {category: 'Input Value'},
+      table: {category: 'Advice Value'},
     },
     valueLength: {
       name: 'Value Length',
       control: 'text',
       if: {arg: 'stringWidth', truthy: true},
-      table: {category: 'Input Value'},
+      table: {category: 'Advice Value'},
     },
     hasHintedZeros: {
       name: 'Has Hinted Zeros',
       if: {arg: 'stringWidth', truthy: true},
-      table: {category: 'Input Value'},
+      table: {category: 'Advice Value'},
     },
     hasDegree: {
       name: 'Has Degree',
-      if: {arg: 'size', eq: ReadoutInputSize.medium},
-      table: {category: 'Input Value'},
+      if: {arg: 'size', eq: ReadoutAdviceSize.medium},
+      table: {category: 'Advice Value'},
       description:
         'Available only for Medium when Weight is Active and String Width is false.',
     },
   },
-} satisfies Meta<ObcReadoutInput>;
+} satisfies Meta<ObcReadoutAdvice>;
 
 export default meta;
-type Story = StoryObj<ObcReadoutInput>;
+type Story = StoryObj<ObcReadoutAdvice>;
 
 export const Primary: Story = {};
 
-export const HintedZerosBySize: Story = {
-  render: () => html`
-    <div
-      style="
-        display: flex;
-        align-items: end;
-        gap: 32px;
-      "
-    >
-      ${[
-        ReadoutInputSize.small,
-        ReadoutInputSize.regular,
-        ReadoutInputSize.medium,
-        ReadoutInputSize.large,
-      ].map(
-        (size) => html`
-          <obc-readout-input
-            .size=${size}
-            .state=${ReadoutInputState.enhanced}
-            .hugContent=${true}
-            .weight=${ReadoutInputWeight.regular}
-            .stringWidth=${true}
-            value="12"
-            valueLength="000"
-            .hasHintedZeros=${true}
-            title=${`Size=${size}`}
-          ></obc-readout-input>
-        `
-      )}
-    </div>
-  `,
-};
-
 type Variant = {
-  size: ReadoutInputSize;
-  state: ReadoutInputState;
+  size: ReadoutAdviceSize;
+  state: ReadoutAdviceState;
   hugContent: boolean;
 };
 
-const sizes: ReadoutInputSize[] = [
-  ReadoutInputSize.small,
-  ReadoutInputSize.regular,
-  ReadoutInputSize.medium,
-  ReadoutInputSize.large,
+const sizes: ReadoutAdviceSize[] = [
+  ReadoutAdviceSize.small,
+  ReadoutAdviceSize.regular,
+  ReadoutAdviceSize.medium,
+  ReadoutAdviceSize.large,
 ];
 
 const variantRows: Variant[][] = [
   sizes.map((size) => ({
     size,
-    state: ReadoutInputState.enabled,
+    state: ReadoutAdviceState.enabled,
     hugContent: true,
   })),
   sizes.map((size) => ({
     size,
-    state: ReadoutInputState.enhanced,
+    state: ReadoutAdviceState.enhanced,
     hugContent: true,
   })),
   sizes.map((size) => ({
     size,
-    state: ReadoutInputState.input,
+    state: ReadoutAdviceState.active,
     hugContent: true,
   })),
   sizes.map((size) => ({
     size,
-    state: ReadoutInputState.inputTemporary,
+    state: ReadoutAdviceState.amplified,
     hugContent: true,
   })),
   sizes.map((size) => ({
     size,
-    state: ReadoutInputState.enabled,
+    state: ReadoutAdviceState.enabled,
     hugContent: false,
   })),
   sizes.map((size) => ({
     size,
-    state: ReadoutInputState.enhanced,
+    state: ReadoutAdviceState.enhanced,
     hugContent: false,
   })),
   sizes.map((size) => ({
     size,
-    state: ReadoutInputState.input,
+    state: ReadoutAdviceState.active,
     hugContent: false,
   })),
   sizes.map((size) => ({
     size,
-    state: ReadoutInputState.inputTemporary,
+    state: ReadoutAdviceState.amplified,
     hugContent: false,
   })),
 ];
 
-const useStringWidth = (size: ReadoutInputSize): boolean =>
-  size === ReadoutInputSize.small || size === ReadoutInputSize.large;
+const useStringWidth = (size: ReadoutAdviceSize): boolean =>
+  size === ReadoutAdviceSize.small || size === ReadoutAdviceSize.large;
 
 const renderVariant = (variant: Variant) => html`
-  <obc-readout-input
+  <obc-readout-advice
     .size=${variant.size}
     .state=${variant.state}
     .hugContent=${variant.hugContent}
-    .weight=${ReadoutInputWeight.regular}
     .stringWidth=${useStringWidth(variant.size)}
     value="123"
     valueLength="123"
     .hasHintedZeros=${false}
     title=${`Size=${variant.size}, State=${variant.state}, Hug content=${variant.hugContent}`}
-  ></obc-readout-input>
+  ></obc-readout-advice>
 `;
 
 export const AllCombinations: Story = {
