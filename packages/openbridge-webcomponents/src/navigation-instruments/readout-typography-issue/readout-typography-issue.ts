@@ -1,10 +1,10 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
-import componentStyle from './readout.css?inline';
+import componentStyle from './readout-typography-issue.css?inline';
 import {customElement} from '../../decorator.js';
 
-@customElement('obc-readout')
-export class ObcReadout extends LitElement {
+@customElement('obc-readout-typography-issue')
+export class ObcReadoutTypographyIssue extends LitElement {
   @property({type: String}) value = '';
   @property({type: String}) label = '';
   @property({type: String}) unit = '';
@@ -34,6 +34,6 @@ export class ObcReadout extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-readout': ObcReadout;
+    'obc-readout-typography-issue': ObcReadoutTypographyIssue;
   }
 }
