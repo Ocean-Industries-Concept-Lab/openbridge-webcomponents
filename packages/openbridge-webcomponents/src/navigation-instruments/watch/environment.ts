@@ -1,14 +1,17 @@
 import {svg, SVGTemplateResult} from 'lit';
+import {styleMap} from 'lit/directives/style-map.js';
 
 export function renderWind(options: {
   wind: number;
   fromDirectionDeg: number;
   radius: number;
+  color?: string;
 }): SVGTemplateResult {
   return renderEnvironment({
     filename: `wind-${options.wind + 1}.svg`,
     fromDirectionDeg: options.fromDirectionDeg,
     radius: options.radius,
+    color: options.color,
   });
 }
 
@@ -16,11 +19,13 @@ export function renderCurrent(options: {
   current: number;
   fromDirectionDeg: number;
   radius: number;
+  color?: string;
 }): SVGTemplateResult {
   return renderEnvironment({
     filename: `current-${options.current}.svg`,
     fromDirectionDeg: options.fromDirectionDeg,
     radius: options.radius,
+    color: options.color,
   });
 }
 
@@ -28,11 +33,13 @@ function renderEnvironment(options: {
   filename: string;
   fromDirectionDeg: number;
   radius: number;
+  color?: string;
 }): SVGTemplateResult {
-  const {filename, fromDirectionDeg, radius} = options;
+  const {filename, fromDirectionDeg, radius, color} = options;
   const directionRad = ((fromDirectionDeg - 180) * Math.PI) / 180;
   const symbol = environmentSvgs[filename];
-  return svg`<g transform="translate(${-Math.sin(directionRad) * radius} ${Math.cos(directionRad) * radius}) rotate(${180 + fromDirectionDeg}) translate(-24, 0) scale(2)">
+  const styles = color ? {'--instrument-regular-secondary-color': color} : {};
+  return svg`<g style=${styleMap(styles)} transform="translate(${-Math.sin(directionRad) * radius} ${Math.cos(directionRad) * radius}) rotate(${180 + fromDirectionDeg}) translate(-24, 0) scale(2)">
     ${symbol}
   </g>`;
 }

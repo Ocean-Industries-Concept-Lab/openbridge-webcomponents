@@ -12,13 +12,19 @@ const meta: Meta<typeof ObcIntegrationAppBar> = {
   args: {},
   render: () => html`
     <obc-integration-app-bar>
-      <obc-app-button slot="apps" size="small" hidelabel integration>
+      <obc-app-button slot="apps" size="small" .showLabel=${false} integration>
         <obi-ship slot="icon"></obi-ship>
       </obc-app-button>
-      <obc-app-button slot="apps" size="small" hidelabel integration>
+      <obc-app-button slot="apps" size="small" .showLabel=${false} integration>
         <obi-ship slot="icon"></obi-ship>
       </obc-app-button>
-      <obc-app-button slot="apps" size="small" hidelabel integration checked>
+      <obc-app-button
+        slot="apps"
+        size="small"
+        .showLabel=${false}
+        integration
+        checked
+      >
         <obi-ship slot="icon"></obi-ship>
       </obc-app-button>
     </obc-integration-app-bar>

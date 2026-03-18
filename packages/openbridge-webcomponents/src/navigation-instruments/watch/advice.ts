@@ -81,7 +81,7 @@ export function renderAdvice(advice: AngleAdviceRaw): SVGTemplateResult {
             `);
     }
     const maskId = `adviceMask-${advice.minAngle}-${advice.maxAngle}`;
-    let tickmarkStyle = TickmarkStyle.hinted;
+    let tickmarkStyle = TickmarkStyle.regular;
     if (advice.state === AdviceState.regular) {
       tickmarkStyle = TickmarkStyle.regular;
     } else if (advice.state === AdviceState.triggered) {
@@ -127,7 +127,7 @@ export function renderAdvice(advice: AngleAdviceRaw): SVGTemplateResult {
     let tickmarkStyle;
     if (advice.state === AdviceState.hinted) {
       mainColor = 'var(--instrument-frame-tertiary-color)';
-      tickmarkStyle = TickmarkStyle.hinted;
+      tickmarkStyle = TickmarkStyle.regular;
     } else if (advice.state === AdviceState.regular) {
       mainColor = 'var(--instrument-regular-secondary-color)';
       tickmarkStyle = TickmarkStyle.regular;

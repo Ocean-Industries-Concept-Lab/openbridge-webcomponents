@@ -8,7 +8,7 @@ import '../automation-badge/automation-badge.js';
 import {argTypesAbstractAutomationButtonPassiveSquare} from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 const meta: Meta<typeof ObcFilter> = {
-  title: 'Automation/Automation devices/Filter',
+  title: 'Automation/Automation Devices/Filter',
   tags: ['autodocs'],
   component: 'obc-filter',
   decorators: [crossDecorator],
@@ -18,7 +18,7 @@ const meta: Meta<typeof ObcFilter> = {
     readoutSize: AutomationButtonReadoutStackSize.regular,
     alert: false,
     progress: false,
-    hideReadoutStack: false,
+    showReadoutStack: true,
     hasIdTag: true,
   },
   argTypes: {

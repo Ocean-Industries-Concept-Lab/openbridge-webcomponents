@@ -7,7 +7,7 @@ import '../../icons/icon-vessel-type-passenger-outlined.js';
 interface PoiCardArgs {
   pointerDirection: PointerDirection;
   fixedSize: boolean;
-  noHeader: boolean;
+  showHeader: boolean;
   headerVariant: ObcPoiCardHeaderVariant;
   index: string;
   cardTitle: string;
@@ -66,7 +66,7 @@ const meta: Meta<PoiCardArgs> = {
   args: {
     pointerDirection: PointerDirection.None,
     fixedSize: false,
-    noHeader: false,
+    showHeader: true,
     headerVariant: ObcPoiCardHeaderVariant.Condensed,
     index: '1',
     cardTitle: 'Title',
@@ -97,7 +97,7 @@ const meta: Meta<PoiCardArgs> = {
         <obc-poi-card
           .pointerDirection=${args.pointerDirection}
           .fixedSize=${args.fixedSize}
-          .noHeader=${args.noHeader}
+          .showHeader=${args.showHeader}
           .headerVariant=${args.headerVariant}
           .index=${args.index}
           .cardTitle=${args.cardTitle}
@@ -123,7 +123,7 @@ type Story = StoryObj<PoiCardArgs>;
 export const Default: Story = {
   args: {
     pointerDirection: PointerDirection.None,
-    noHeader: false,
+    showHeader: true,
     index: '1',
     cardTitle: 'Title',
     source: 'SRC',
@@ -132,7 +132,7 @@ export const Default: Story = {
 
 export const NoHeader: Story = {
   args: {
-    noHeader: true,
+    showHeader: false,
   },
 };
 
@@ -178,7 +178,7 @@ export const HeaderRegularVariant: Story = {
       <obc-poi-card
         .pointerDirection=${args.pointerDirection}
         .fixedSize=${args.fixedSize}
-        .noHeader=${args.noHeader}
+        .showHeader=${args.showHeader}
         .headerVariant=${ObcPoiCardHeaderVariant.Regular}
         .index=${'1'}
         .cardTitle=${'Regular Header'}
@@ -202,7 +202,7 @@ export const HeaderDetailedVariant: Story = {
       <obc-poi-card
         .pointerDirection=${args.pointerDirection}
         .fixedSize=${args.fixedSize}
-        .noHeader=${args.noHeader}
+        .showHeader=${args.showHeader}
         .headerVariant=${ObcPoiCardHeaderVariant.Detailed}
         .index=${'1'}
         .cardTitle=${'MV Explorer'}

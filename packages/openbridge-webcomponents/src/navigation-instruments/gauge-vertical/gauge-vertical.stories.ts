@@ -120,7 +120,7 @@ export const DefaultRight: Story = {
 };
 
 export const ComponentSizeComparison: Story = {
-  name: 'Component size comparison (regular/medium/large/xl)',
+  name: 'Component Size Comparison (regular/medium/large/xl)',
 
   render: () => html`
     <div style="display: flex; gap: 40px; align-items: center;">
@@ -217,7 +217,7 @@ export const DefaultLeft: Story = {
 };
 
 export const NegativeRange: Story = {
-  name: 'Negative range (-100 to 100)',
+  name: 'Negative Range (-100 to 100)',
 
   args: {
     minValue: -100,
@@ -228,7 +228,7 @@ export const NegativeRange: Story = {
 };
 
 export const SmallRange: Story = {
-  name: 'Small range (0 to 10)',
+  name: 'Small Range (0 to 10)',
 
   args: {
     minValue: 0,
@@ -239,7 +239,7 @@ export const SmallRange: Story = {
 };
 
 export const WithBarFillRight: Story = {
-  name: 'With bar fill (right side, enhanced)',
+  name: 'With Bar Fill (right side, enhanced)',
 
   args: {
     minValue: 0,
@@ -253,7 +253,7 @@ export const WithBarFillRight: Story = {
 };
 
 export const WithBarFillLeft: Story = {
-  name: 'With bar fill (left side)',
+  name: 'With Bar Fill (left side)',
 
   args: {
     minValue: -100,
@@ -268,7 +268,7 @@ export const WithBarFillLeft: Story = {
 };
 
 export const FillModeComparison: Story = {
-  name: 'Fill mode comparison, enhanced (fill vs tint)',
+  name: 'Fill Mode Comparison, Enhanced (fill vs tint)',
 
   render: () => html`
     <div style="display: flex; gap: 40px; align-items: center;">
@@ -326,7 +326,7 @@ export const FillModeComparison: Story = {
 };
 
 export const TintModeWithAdvice: Story = {
-  name: 'Tint mode with advice overlays',
+  name: 'Tint Mode With Advice Overlays',
 
   args: {
     minValue: -100,
@@ -348,7 +348,7 @@ export const TintModeWithAdvice: Story = {
 };
 
 export const WithAdvice: Story = {
-  name: 'With advice overlays',
+  name: 'With Advice Overlays',
 
   args: {
     minValue: -100,
@@ -371,7 +371,7 @@ export const WithAdvice: Story = {
 };
 
 export const WithSetpointAtValue: Story = {
-  name: 'With setpoint (value at setpoint)',
+  name: 'With Setpoint (value at setpoint)',
 
   args: {
     minValue: -100,
@@ -387,7 +387,7 @@ export const WithSetpointAtValue: Story = {
 };
 
 export const WithSetpointAwayFromValue: Story = {
-  name: 'With setpoint (value away from setpoint)',
+  name: 'With Setpoint (value away from setpoint)',
 
   args: {
     minValue: -100,
@@ -402,8 +402,6 @@ export const WithSetpointAwayFromValue: Story = {
 };
 
 export const StateComparison: Story = {
-  name: 'State comparison',
-
   render: () => html`
     <div style="display: flex; flex-direction: column; gap: 24px;">
       <!-- Header row -->
@@ -521,7 +519,7 @@ export const StateComparison: Story = {
 
 // Test Scenario Stories
 export const TestScenario1_AutoAtSetpoint: Story = {
-  name: 'Test: Auto at-setpoint detection',
+  name: 'Test: Auto At-Setpoint Detection',
 
   parameters: {
     docs: {
@@ -563,7 +561,7 @@ Real-world values fluctuate. Without a deadband, the indicator would constantly 
 };
 
 export const TestScenario2_ManualAtSetpoint: Story = {
-  name: 'Test: Manual at-setpoint control',
+  name: 'Test: Manual At-Setpoint Control',
 
   parameters: {
     docs: {
@@ -615,7 +613,7 @@ Sometimes you need to control the "at setpoint" visual state directly, independe
 };
 
 export const TestScenario3_DeadbandTuning: Story = {
-  name: 'Test: Deadband tuning',
+  name: 'Test: Deadband Tuning',
 
   parameters: {
     docs: {
@@ -673,7 +671,7 @@ The deadband determines how close the value must be to the setpoint before the s
 };
 
 export const TestScenario5_ZeroSnapBehavior: Story = {
-  name: 'Test: Zero snap behavior',
+  name: 'Test: Zero Snap Behavior',
 
   parameters: {
     docs: {
@@ -736,7 +734,7 @@ In maritime and industrial control systems, zero is often a special reference po
 };
 
 export const EnhancedModeComparison: Story = {
-  name: 'Enhanced mode comparison (regular vs enhanced)',
+  name: 'Enhanced Mode Comparison (regular vs enhanced)',
 
   render: () => html`
     <div style="display: flex; gap: 40px; align-items: center;">

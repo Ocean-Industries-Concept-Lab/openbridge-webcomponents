@@ -222,7 +222,7 @@ function renderSetpointDemo(config: {
  * Use the controls to adjust value, setpoint, enhanced mode, etc.
  */
 export const NotEqual: Story = {
-  name: 'notEqual (Input ≠ Output)',
+  name: 'NotEqual (Input ≠ Output)',
   args: {
     value: 20,
     setpoint: 40,
@@ -241,7 +241,7 @@ export const NotEqual: Story = {
  * Use the controls to adjust value, setpoint, enhanced mode, etc.
  */
 export const Equal: Story = {
-  name: 'equal (Input = Output)',
+  name: 'Equal (Input = Output)',
   args: {
     value: 40,
     setpoint: 40,
@@ -261,7 +261,7 @@ export const Equal: Story = {
  * Use the controls to adjust value, setpoint, enhanced mode, etc.
  */
 export const EqualZero: Story = {
-  name: 'equalZero (Input = Output = 0)',
+  name: 'EqualZero (Input = Output = 0)',
   args: {
     value: 0,
     setpoint: 0,
@@ -282,7 +282,7 @@ export const EqualZero: Story = {
  * Use the controls to adjust value, setpoint, newSetpoint, etc.
  */
 export const Focus: Story = {
-  name: 'focus (User adjusting)',
+  name: 'Focus (User adjusting)',
   args: {
     value: 10,
     setpoint: 20,
@@ -828,7 +828,7 @@ export const SetpointComparisonRadial: Story = {
  * Tertiary tickmarks are shown during adjustment (tertiaryTickmarkInterval=2).
  */
 export const SetpointAdjustmentFlow: StoryObj = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   name: 'Setpoint Adjustment Flow (interactive)',
   render: () => html`
     <div style="display: flex; flex-direction: column; gap: 24px;">
@@ -1016,7 +1016,7 @@ export const SetpointAdjustmentFlow: StoryObj = {
  * Zero state is auto-derived when `angleSetpoint` is within `angleSetpointAtZeroDeadband` (default 0.5°).
  */
 export const SetpointRadialAdjustmentFlow: StoryObj = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   name: 'Setpoint Radial Adjustment Flow (interactive)',
   render: () => {
     // Initial barAreas and areas for 30° fill
@@ -1253,7 +1253,7 @@ export const SetpointAzimuthThrusterFlow: StoryObj<{
   thrustDuration: number;
   angleDuration: number;
 }> = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   name: 'Setpoint Azimuth Thruster Flow (interactive)',
   args: {
     thrustDuration: 2,

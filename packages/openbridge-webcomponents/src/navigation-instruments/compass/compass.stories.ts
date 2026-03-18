@@ -1,5 +1,9 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {CompassDirection, ObcCompass} from './compass.js';
+import {
+  CompassDirection,
+  CompassPriorityElement,
+  ObcCompass,
+} from './compass.js';
 import './compass.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
@@ -34,6 +38,7 @@ const meta: Meta<typeof ObcCompass> = {
     priority: Priority.enhanced,
     showLabels: true,
     tickmarksInside: false,
+    priorityElements: [CompassPriorityElement.hdg],
   },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
@@ -64,6 +69,10 @@ const meta: Meta<typeof ObcCompass> = {
     tickmarksInside: {control: 'boolean'},
     state: {control: 'select', options: Object.values(InstrumentState)},
     priority: {control: 'select', options: Object.values(Priority)},
+    priorityElements: {
+      control: 'multi-select',
+      options: Object.values(CompassPriorityElement),
+    },
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcCompass>;

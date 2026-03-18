@@ -83,13 +83,8 @@ When refactoring an existing negative boolean, also rename it in the interface, 
 
 ### Storybook title conventions
 
-All story titles use **Title Case** with `/`-separated segments:
-
-- Capitalize every word: `Alert List Item`, `Speed Gauge`, `Automation Button`.
-- Keep short conjunctions and prepositions lowercase: _and, of, or, in, on, at, to, for_.
-  Example: `Message and Alerts`, `Selection Controls and Switches`.
-- Use spaces, not dashes: `Automation Configurations` not `Automation-configurations`.
-- Apply the same rules to every segment: `title: 'UI Components/Input Controls/Slider Double'`.
+Story `title` and `name` fields must use **Title Case** — enforced by ESLint rule `openbridge/storybook-title-case` (auto-fixable).
+See [IMPLEMENTATION_GUIDELINES.md § Storybook stories](IMPLEMENTATION_GUIDELINES.md#-storybook-stories) for the full convention.
 
 ---
 
@@ -253,7 +248,7 @@ Required modifications after pasting:
 5. **Run `npm run analyze`** after adding or renaming a `@customElement` to keep `custom-elements.json` in sync.
 6. **Run `npm run lint`** after code changes to catch issues early.
 7. **Insert `TODO(designer)`** for any documentation detail whose purpose is unclear from code alone.
-8. **Keep stories tagged** with `['autodocs', '6.0']` for documented OB 6.0 components; `['alpha']` for in-development; `['!snapshot']` to exclude from visual tests.
+8. **Keep stories tagged** with `['autodocs', '6.0']` for documented OB 6.0 components; `['alpha']` for in-development; `['skip-test']` to exclude from visual tests.
 9. **Do not run full builds or start Storybook automatically.** Avoid `npm run build`, `npm run storybook` unless the user explicitly requests it. These are expensive, long-running operations.
 10. **Run visual tests for a single component** instead of the full suite:
     ```bash

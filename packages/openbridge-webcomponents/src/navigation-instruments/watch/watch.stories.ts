@@ -732,8 +732,6 @@ export const TickmarksTestInsideRotation: Story = {
  * gauge-vertical/horizontal components, but for radial (watch-based) instruments.
  */
 export const StateComparison: Story = {
-  name: 'State comparison',
-
   render: () => html`
     <div style="display: flex; flex-direction: column; gap: 24px;">
       <!-- Header row -->

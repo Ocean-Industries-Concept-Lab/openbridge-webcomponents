@@ -8,7 +8,7 @@ import '../watch/watch.js';
 import componentStyle from './azimuth-thruster.css?inline';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
-import {Tickmark, TickmarkType} from '../watch/tickmark.js';
+import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
 import {LinearAdvice} from '../thruster/advice.js';
 import {PropellerType} from '../thruster/propeller.js';
 import {customElement} from '../../decorator.js';
@@ -114,13 +114,13 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: Boolean}) singleDirection: boolean = false;
   @property({type: String}) topPropeller: PropellerType = PropellerType.none;
   @property({type: String}) bottomPropeller: PropellerType = PropellerType.none;
+  @property({type: String}) tickmarkStyle: TickmarkStyle =
+    TickmarkStyle.regular;
   @property({type: Boolean}) starboardPortIndicator: boolean = false;
 
   private get angleAdviceRaw(): AngleAdviceRaw[] {
     return this.angleAdvices.map((advice) => {
-      let triggered = false;
-
-      triggered =
+      const triggered =
         this.angleSetpoint !== undefined &&
         mapAngle0to360(this.angleSetpoint - advice.minAngle) < 180 &&
         mapAngle0to360(this.angleSetpoint - advice.maxAngle) > 180;
@@ -156,7 +156,6 @@ export class ObcAzimuthThruster extends LitElement {
       angle: 0,
       type: TickmarkType.zeroLine,
       text: this.showLabels ? '0' : undefined,
-      color: 'var(--instrument-frame-tertiary-color)',
     });
     skipAngles.push(0);
 
@@ -173,7 +172,6 @@ export class ObcAzimuthThruster extends LitElement {
           angle: i,
           type: TickmarkType.primary,
           text: labelText(i),
-          color: 'var(--instrument-frame-tertiary-color)',
         });
         skipAngles.push(i);
       }
@@ -191,7 +189,6 @@ export class ObcAzimuthThruster extends LitElement {
         tickmarks.push({
           angle: i,
           type: TickmarkType.secondary,
-          color: 'var(--instrument-tick-mark-secondary-color)',
         });
         skipAngles.push(i);
       }
@@ -209,7 +206,6 @@ export class ObcAzimuthThruster extends LitElement {
         tickmarks.push({
           angle: i,
           type: TickmarkType.tertiary,
-          color: 'var(--instrument-tick-mark-tertiary-color)',
         });
         skipAngles.push(i);
       }
@@ -246,6 +242,7 @@ export class ObcAzimuthThruster extends LitElement {
           .setpointOverride=${this.angleSetpointOverride}
           .animateSetpoint=${this.animateSetpoint}
           .tickmarksInside=${this.tickmarksInside}
+          .tickmarkStyle=${this.tickmarkStyle}
           padding=${ifDefined(!this.hasLabelSpacer ? 16 : undefined)}
           .advices=${this.angleAdviceRaw}
           .starboardPortIndicator=${this.starboardPortIndicator}

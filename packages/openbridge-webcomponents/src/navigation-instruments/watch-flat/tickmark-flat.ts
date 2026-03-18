@@ -14,15 +14,12 @@ export enum TickmarkType {
 }
 
 export enum TickmarkStyle {
-  hinted = 'hinted',
   regular = 'regular',
   enhanced = 'enhanced',
 }
 
 export function tickmarkColor(style: TickmarkStyle): string {
-  if (style === TickmarkStyle.hinted) {
-    return 'var(--instrument-frame-tertiary-color)';
-  } else if (style === TickmarkStyle.regular) {
+  if (style === TickmarkStyle.regular) {
     return 'var(--instrument-tick-mark-secondary-color)';
   } else {
     return 'var(--instrument-tick-mark-primary-color)';

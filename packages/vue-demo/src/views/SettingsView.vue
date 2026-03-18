@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ObcInput from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/input/ObcInput.vue'
+import ObcTextInputField from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/text-input-field/ObcTextInputField.vue'
 import SettingsToolbar from '@/components/SettingsToolbar.vue'
 import ObcElevatedCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/elevated-card/ObcElevatedCard.vue'
 
@@ -28,11 +28,11 @@ const alertStore = useAlertStore()
 <template>
   <SettingsToolbar />
   <div class="wrapper">
-    <ObcInput placeholder="Search">
-      <template #icon>
+    <ObcTextInputField has-leading-icon placeholder="Search">
+      <template #leading-icon>
         <obi-search></obi-search>
       </template>
-    </ObcInput>
+    </ObcTextInputField>
     <div class="row">
       <div class="col">
         <ObcElevatedCard

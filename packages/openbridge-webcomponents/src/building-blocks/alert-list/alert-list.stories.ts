@@ -154,7 +154,7 @@ export const Empty: Story = {
 };
 
 export const WithControls: Story = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   args: {},
   render: (args, context) => {
     return html`

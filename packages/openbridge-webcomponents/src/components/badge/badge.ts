@@ -91,7 +91,7 @@ export enum BadgeVariant {
  * ### Usage Guidelines
  * - Use `obc-badge` to highlight status, counts, or alerts in a compact form, such as notification indicators, unread message counts, or system status.
  * - Choose the `type` that matches the semantic meaning (e.g., `alarm` for critical, `warning` for caution, `running` for active).
- * - Use the `number` property to show counts; set `hideNumber` to true for symbolic-only badges.
+ * - Use the `number` property to show counts; set `showNumber` to false for symbolic-only badges.
  * - Use the `flat` variant for less prominent or secondary contexts.
  * - For custom icons, provide an icon element in the `badge-icon` slot.
  * - Avoid using badges for persistent or detailed information; they are intended for brief, glanceable status.
@@ -109,7 +109,7 @@ export enum BadgeVariant {
  *
  * ### Properties and Attributes
  * - `number` (number): The numeric value to display in the badge. Defaults to 0.
- * - `hideNumber` (boolean): If true, the number is hidden and only the icon (if any) is shown.
+ * - `showNumber` (boolean): If true, the number is shown. Set to `false` for symbolic or icon-only badges.
  * - `type` (string): Visual style of the badge. See **Type options** above for possible values. Defaults to `regular`.
  * - `size` (string): Badge size, either `regular` (default) or `large`.
  * - `variant` (string): Visual variant, either `default` (filled) or `flat` (minimal). Defaults to `default`.
@@ -145,16 +145,16 @@ export class ObcBadge extends LitElement {
   /**
    * The number to display in the badge. Set to 0 for no count.
    *
-   * If `hideNumber` is true, the number is not shown.
+   * If `showNumber` is false, the number is hidden.
    */
   @property({type: Number}) number = 0;
 
   /**
-   * Hides the number in the badge when true.
+   * Shows the number in the badge when true.
    *
-   * Use this for symbolic or icon-only badges.
+   * Set to `false` for symbolic or icon-only badges.
    */
-  @property({type: Boolean}) hideNumber = false;
+  @property({type: Boolean, attribute: false}) showNumber: boolean = true;
 
   /**
    * Visual style/type of the badge.
@@ -189,7 +189,7 @@ export class ObcBadge extends LitElement {
   @property({type: Boolean}) showIcon = false;
 
   private get effectiveType(): string {
-    if (!this.showIcon && this.hideNumber) {
+    if (!this.showIcon && !this.showNumber) {
       return BadgeType.empty;
     }
     return this.type;
@@ -258,7 +258,7 @@ export class ObcBadge extends LitElement {
           ['size-' + this.size]: true,
           ['type-' + this.effectiveType]: !isFlat,
           ['variant-flat']: isFlat,
-          hideNumber: this.hideNumber,
+          hideNumber: !this.showNumber,
         })}
       >
         ${this.effectiveType !== BadgeType.empty
@@ -275,7 +275,7 @@ export class ObcBadge extends LitElement {
                     </div>
                   `
                 : nothing}
-              ${!this.hideNumber
+              ${this.showNumber
                 ? html`<div class="number">
                     <span class="number-text">${this.number}</span>
                   </div>`

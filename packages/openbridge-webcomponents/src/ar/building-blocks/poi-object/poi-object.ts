@@ -24,10 +24,12 @@ export enum ObcPoiObjectType {
  * Style variants for POI objects.
  * - `regular`: White/translucent background.
  * - `categorical`: Blue-tinted background for categorized items.
+ * - `enhanced`: Elevated/prominent background style.
  */
 export enum ObcPoiObjectStyle {
   Regular = 'regular',
   Categorical = 'categorical',
+  Enhanced = 'enhanced',
 }
 
 /**
@@ -38,6 +40,9 @@ export enum ObcPoiObjectStyle {
  * - `static-checked`: Flat background style, selected.
  * - `activated`: White outer ring around background.
  * - `overlapped`: Smaller circle with hidden icon (for overlapping markers).
+ * - `caution`: Caution alert state.
+ * - `warning`: Warning alert state.
+ * - `alarm`: Alarm alert state.
  */
 export enum ObcPoiObjectState {
   Unchecked = 'unchecked',
@@ -46,6 +51,9 @@ export enum ObcPoiObjectState {
   StaticChecked = 'static-checked',
   Activated = 'activated',
   Overlapped = 'overlapped',
+  Caution = 'caution',
+  Warning = 'warning',
+  Alarm = 'alarm',
 }
 
 /**

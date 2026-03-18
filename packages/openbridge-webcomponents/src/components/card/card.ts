@@ -36,7 +36,7 @@ import {customElement} from '../../decorator.js';
  * ### Slots
  * | Slot Name        | Renders When...          | Purpose                                            |
  * |------------------|-------------------------|----------------------------------------------------|
- * | `title`          | Always                   | Main card header/title.                            |
+ * | `title`          | `showTitle` is true      | Main card header/title.                            |
  * | (default)        | Always                   | Main card content area.                            |
  * | `dialog-title`   | `hasDialog` is true      | Title/header for the dialog overlay.               |
  * | `dialog-content` | `hasDialog` is true      | Content area for the dialog overlay.               |
@@ -44,6 +44,7 @@ import {customElement} from '../../decorator.js';
  * ---
  *
  * ### Properties
+ * - `showTitle` (boolean): Controls whether the title header is rendered. (Default: true)
  * - `hasDialog` (boolean): Enables dialog mode. When true, the card acts as a button and opens a modal dialog on click. (Default: false)
  * - `dialogTimeOutSeconds` (number): Total time in milliseconds before the dialog auto-closes. (Default: 20000)
  * - `dialogVisibleTimerSeconds` (number): Duration in milliseconds for which the countdown indicator is shown before auto-dismiss. (Default: 10000)
@@ -78,7 +79,7 @@ import {customElement} from '../../decorator.js';
  */
 @customElement('obc-card')
 export class ObcCard extends LitElement {
-  @property({type: Boolean}) noTitle = false;
+  @property({type: Boolean, attribute: false}) showTitle: boolean = true;
   /**
    * Enables dialog mode. When true, the card acts as a button and opens a modal dialog on click.
    *
@@ -121,7 +122,7 @@ export class ObcCard extends LitElement {
     return html`
       <${wrapperTag} class=${classMap({wrapper: true, 'has-dialog': this.hasDialog})} @click=${this.openDialog}>
         ${
-          this.noTitle
+          !this.showTitle
             ? nothing
             : html`<div class="header">
                 <div></div>

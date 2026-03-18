@@ -16,7 +16,7 @@ export function radialTickmarks(
   const radius = 320 / 2;
   const strokeWidth = '1.2';
   const margin = 1.5;
-  const colorName = tickmarkColor(TickmarkStyle.hinted);
+  const colorName = tickmarkColor(TickmarkStyle.regular);
   const tickWidth = type === TickmarkType.secondary ? 4 : 1;
   const tickmarks: SVGTemplateResult[] = [];
 

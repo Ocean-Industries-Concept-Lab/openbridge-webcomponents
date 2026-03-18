@@ -5,7 +5,6 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import js from '@eslint/js';
 import {FlatCompat} from '@eslint/eslintrc';
-import fileExtension from 'eslint-plugin-file-extension-in-import-ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -53,7 +52,7 @@ const customElementPlugin = {
                     'customElement should be imported from local src/decorator.js',
                   fix(fixer) {
                     const fixes = [];
-                    const sourceFile = context.getFilename();
+                    const sourceFile = context.filename;
                     const relativePathToDecorator = path
                       .relative(
                         path.dirname(sourceFile),
@@ -97,9 +96,178 @@ const customElementPlugin = {
   },
 };
 
+// Words that should stay lowercase in Title Case (unless they are the first word of a segment)
+const TITLE_CASE_LOWERCASE_WORDS = new Set([
+  'and',
+  'of',
+  'or',
+  'in',
+  'on',
+  'at',
+  'to',
+  'for',
+]);
+
+function capitalizeWord(word) {
+  if (word.length === 0) return word;
+  // All-uppercase words (acronyms like POI, AR, ROT) are kept as-is
+  if (word === word.toUpperCase() && word.length > 1) return word;
+  // Capitalize each part of a hyphenated compound (e.g. Action-change → Action-Change)
+  if (word.includes('-')) {
+    return word
+      .split('-')
+      .map((part) => capitalizeWord(part))
+      .join('-');
+  }
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
+function titleCaseWords(text) {
+  const words = text.split(/\s+/);
+  const lastIndex = words.length - 1;
+  return words
+    .map((word, i) => {
+      if (word.length === 0) return word;
+      // First and last words are always capitalized
+      if (i === 0 || i === lastIndex) return capitalizeWord(word);
+      // Short conjunctions / prepositions stay lowercase (only unhyphenated)
+      if (TITLE_CASE_LOWERCASE_WORDS.has(word.toLowerCase())) {
+        return word.toLowerCase();
+      }
+      // Everything else is capitalized
+      return capitalizeWord(word);
+    })
+    .join(' ');
+}
+
+// Separator pattern: em dash, en dash, or spaced hyphen used as phrase dividers
+const PHRASE_SEPARATOR = /(\s*[\u2013\u2014]\s*|\s+-\s+)/;
+
+function toTitleCase(segment) {
+  // Split into parts outside and inside parentheses; only title-case outside
+  return segment.replace(/[^()]+/g, (part, offset) => {
+    // Check if this part is inside parentheses by looking at the character before it
+    if (offset > 0 && segment[offset - 1] === '(') return part;
+    // Split on phrase separators (em/en dash, spaced hyphen) so each phrase
+    // gets independent title-casing (first word always capitalized)
+    return part
+      .split(PHRASE_SEPARATOR)
+      .map((chunk) =>
+        PHRASE_SEPARATOR.test(chunk) ? chunk : titleCaseWords(chunk)
+      )
+      .join('');
+  });
+}
+
 // Custom plugin for local OpenBridge lint rules
 const openbridgePlugin = {
   rules: {
+    'storybook-title-case': {
+      meta: {
+        type: 'problem',
+        docs: {
+          description:
+            'Enforce Title Case on Storybook meta `title` (with `/`-separated segments) and story `name` fields',
+        },
+        fixable: 'code',
+      },
+      create(context) {
+        function checkTitleCase(node, value, isSegmented) {
+          if (isSegmented) {
+            const segments = value.split('/');
+            const problems = [];
+
+            for (const [i, segment] of segments.entries()) {
+              const trimmed = segment.trim();
+              if (trimmed.length === 0) {
+                problems.push({index: i, segment, issue: 'empty segment'});
+                continue;
+              }
+              if (/(?<=[a-zA-Z])-(?=[a-zA-Z])/.test(trimmed)) {
+                problems.push({
+                  index: i,
+                  segment: trimmed,
+                  issue: 'use spaces instead of dashes',
+                });
+                continue;
+              }
+              const expected = toTitleCase(trimmed);
+              if (trimmed !== expected) {
+                problems.push({
+                  index: i,
+                  segment: trimmed,
+                  expected,
+                  issue: `should be "${expected}"`,
+                });
+              }
+            }
+
+            if (problems.length === 0) return;
+
+            const fixedTitle = segments
+              .map((s) => {
+                const trimmed = s.trim();
+                const spacedOut = trimmed.replace(
+                  /(?<=[a-zA-Z])-(?=[a-zA-Z])/g,
+                  ' '
+                );
+                return toTitleCase(spacedOut);
+              })
+              .join('/');
+
+            context.report({
+              node,
+              message: `Storybook title segments must use Title Case with spaces (not dashes). ${problems.map((p) => `Segment "${p.segment}": ${p.issue}`).join('; ')}.`,
+              fix(fixer) {
+                return fixer.replaceText(node, `'${fixedTitle}'`);
+              },
+            });
+          } else {
+            const expected = toTitleCase(value);
+            if (value === expected) return;
+
+            context.report({
+              node,
+              message: `Storybook story name must use Title Case. Expected "${expected}".`,
+              fix(fixer) {
+                return fixer.replaceText(node, `'${expected}'`);
+              },
+            });
+          }
+        }
+
+        return {
+          Property(node) {
+            if (node.key.type !== 'Identifier') return;
+            if (
+              node.value.type !== 'Literal' ||
+              typeof node.value.value !== 'string'
+            )
+              return;
+
+            const propName = node.key.name;
+
+            if (propName === 'title') {
+              const value = node.value.value;
+              if (!value.includes('/')) return;
+              checkTitleCase(node.value, value, true);
+            } else if (propName === 'name') {
+              // Only match story-level `name` (Property → ObjectExpression → VariableDeclarator)
+              // to avoid false positives on argTypes/args/controls nested `name` fields
+              const parent = node.parent;
+              if (
+                !parent ||
+                parent.type !== 'ObjectExpression' ||
+                !parent.parent ||
+                parent.parent.type !== 'VariableDeclarator'
+              )
+                return;
+              checkTitleCase(node.value, node.value.value, false);
+            }
+          },
+        };
+      },
+    },
     'prefer-boolean-property-default-false': {
       meta: {
         type: 'problem',
@@ -133,9 +301,9 @@ const openbridgePlugin = {
                   p.key.type === 'Identifier' &&
                   p.key.name === 'attribute'
               );
-            const isBuildingBlock = context
-              .getFilename()
-              .includes('building-blocks');
+            const isBuildingBlock =
+              typeof context.filename === 'string' &&
+              context.filename.includes('building-blocks');
             if (property?.value?.value === false) {
               return;
             }
@@ -249,7 +417,6 @@ export default [
   {
     plugins: {
       '@typescript-eslint': typescriptEslint,
-      'file-extension-in-import-ts': fileExtension,
       'custom-element': customElementPlugin,
       openbridge: openbridgePlugin,
     },
@@ -279,10 +446,13 @@ export default [
           argsIgnorePattern: '^_',
         },
       ],
-      'file-extension-in-import-ts/file-extension-in-import-ts': 'error',
       'custom-element/prefer-local-decorator': 'error',
       'openbridge/prefer-enum-over-string-literal-union': 'error',
       'openbridge/prefer-boolean-property-default-false': 'error',
+      'openbridge/storybook-title-case': 'off',
+      // Disabled because eslint-plugin-file-extension-in-import-ts is not yet
+      // compatible with ESLint v10 (it still uses deprecated context methods).
+      'file-extension-in-import-ts/file-extension-in-import-ts': 'off',
     },
   },
   {
@@ -312,6 +482,13 @@ export default [
 
     rules: {
       'openbridge/prefer-enum-over-string-literal-union': 'off',
+    },
+  },
+  {
+    files: ['**/*.stories.ts'],
+
+    rules: {
+      'openbridge/storybook-title-case': 'error',
     },
   },
 ];

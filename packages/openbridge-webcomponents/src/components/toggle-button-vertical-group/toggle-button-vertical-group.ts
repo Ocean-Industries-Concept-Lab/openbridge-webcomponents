@@ -313,7 +313,7 @@ export class ObcToggleButtonVerticalGroup extends LitElement {
   private updateDividers(): void {
     const last = this.options.length - 1;
     this.options.forEach((opt, idx) => {
-      opt.noDivider = idx === last;
+      opt.showDivider = idx !== last;
     });
   }
 

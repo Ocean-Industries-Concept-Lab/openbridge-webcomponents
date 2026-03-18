@@ -3,6 +3,7 @@ import {live} from 'lit/directives/live.js';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import radioStyles from './radio.css?inline';
+import {classMap} from 'lit/directives/class-map.js';
 
 /**
  * `<obc-radio>` – A single radio button component for selecting one option from a set.
@@ -182,6 +183,9 @@ export class ObcRadio extends LitElement {
   }
 
   onClick() {
+    if (this.disabled) {
+      return;
+    }
     this.renderRoot.querySelector('input')?.click();
   }
 
@@ -197,10 +201,15 @@ export class ObcRadio extends LitElement {
 
   override render() {
     if (this.label !== undefined) {
+      const labelClasses = {
+        'has-label': true,
+        'obc-radio-button': true,
+        disabled: this.disabled,
+      };
       return html`
         <label
           for=${this.inputId}
-          class="has-label obc-radio-button"
+          class=${classMap(labelClasses)}
           @click=${this.onClick}
         >
           <input

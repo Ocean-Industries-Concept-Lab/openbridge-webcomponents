@@ -538,7 +538,7 @@ export const EnterGroupFromTwo: Story = {
 
       const tick = (now: number) => {
         const t = ((now - start) % duration) / duration;
-        let eased = 0;
+        let eased;
         if (t < 0.5) {
           const phase = t / 0.5;
           eased = phase * phase * (3 - 2 * phase);
@@ -1110,7 +1110,7 @@ export const CrossingMode: Story = {
         if (!movingPoi || !staticPoi) return;
 
         staticPoi.x = staticX;
-        let x = leftX;
+        let x: number;
         if (t < 0.35) {
           x = leftX;
         } else if (t < 0.75) {

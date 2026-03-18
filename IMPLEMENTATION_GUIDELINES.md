@@ -28,8 +28,21 @@ Each component's `*.stories.ts` file should:
 
 - Use `tags: ['autodocs', '6.0']` for documented OpenBridge 6.0 components
 - Use `tags: ['alpha']` for components still in development
-- Use `tags: ['!snapshot']` to exclude a story from visual snapshot testing
+- Use `tags: ['skip-test']` to exclude a story from visual snapshot testing
 - Export a `Default` story and additional stories for key states and variants
+
+### Title conventions
+
+All story `title` and `name` fields use **Title Case** with `/`-separated segments.
+This is enforced by the ESLint rule `openbridge/storybook-title-case` (auto-fixable via `--fix`).
+
+- Capitalize every word: `Alert List Item`, `Speed Gauge`, `Automation Button`.
+- Keep short conjunctions and prepositions lowercase: _and, of, or, in, on, at, to, for_.
+  Example: `Message and Alerts`, `Selection Controls and Switches`.
+- First and last words of a phrase are always capitalized, even if they are conjunctions/prepositions.
+- Use spaces, not dashes: `Automation Configurations` not `Automation-configurations`.
+- Parenthesized content is left as-is: `Minimal Height Donut (48px)`.
+- Apply the same rules to every segment: `title: 'UI Components/Input Controls/Slider Double'`.
 
 ## 🧪 Testing
 
@@ -121,7 +134,7 @@ npm run new:component
 
 This will create the needed files, using the default template.
 
-## ✅ Naming Conventions
+## 👶 Naming Conventions
 
 ### Boolean properties
 

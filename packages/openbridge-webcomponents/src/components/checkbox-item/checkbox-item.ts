@@ -143,8 +143,9 @@ export class ObcCheckboxItem extends LitElement {
   override render() {
     const isDisabled =
       this.disabled || this.state === ObcCheckboxItemState.disabled;
-    const shouldDisableCheckboxHoverEffects =
-      this.hoverStyle === ObcCheckboxItemHoverStyle.touchTarget && !isDisabled;
+    const hasCheckboxHoverEffects = !(
+      this.hoverStyle === ObcCheckboxItemHoverStyle.touchTarget && !isDisabled
+    );
     const shouldRenderNestedSpacer = this.isNested && this.isLevel2;
     const shouldRenderChevronContainer = this.isNested;
     const shouldRenderChevronIcon = this.isNested && this.isLevel1;
@@ -181,7 +182,7 @@ export class ObcCheckboxItem extends LitElement {
             .status=${this.status}
             .state=${CheckboxState.enabled}
             .disabled=${isDisabled}
-            .noHoverEffects=${shouldDisableCheckboxHoverEffects}
+            .hasHoverEffects=${hasCheckboxHoverEffects}
             aria-label=${ifDefined(checkboxAriaLabel)}
             aria-describedby=${ifDefined(this.ariaDescribedBy || undefined)}
             @change=${this.handleCheckboxChange}

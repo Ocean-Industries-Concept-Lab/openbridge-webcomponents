@@ -8,8 +8,18 @@ import {
 import './poi-button.js';
 import '../../../icons/icon-placeholder.js';
 import '../../../icons/icon-collision-avoidance-overtaking.js';
+import {
+  sectionStyle,
+  gridStyle,
+  itemStyle,
+  stageStyle,
+  stageTallStyle,
+  buttonAnchorStyle,
+  labelStyle,
+  renderOverview,
+} from './poi-button-story-utils.js';
 import '../poi-header/poi-header.js';
-import {html, TemplateResult} from 'lit';
+import {html} from 'lit';
 import {crossDecorator} from '../../../storybook-util.js';
 import {
   ObcPoiHeaderSize,
@@ -146,20 +156,12 @@ const meta: Meta<ObcPoiButton> = {
     selected: {
       control: {type: 'boolean'},
     },
-    hasData: {
-      control: false,
-      table: {disable: true},
-    },
     hasHeader: {
       control: {type: 'boolean'},
     },
     state: {
       control: {type: 'select'},
       options: Object.values(ObcPoiButtonState),
-    },
-    header: {
-      control: false,
-      table: {disable: true},
     },
     value: {
       control: {type: 'select'},
@@ -171,34 +173,6 @@ const meta: Meta<ObcPoiButton> = {
     },
     overlapOpaque: {
       control: {type: 'boolean'},
-    },
-    resolvedHeaderState: {
-      control: false,
-      table: {disable: true},
-    },
-    resolvedHeaderType: {
-      control: false,
-      table: {disable: true},
-    },
-    resolvedHeaderSize: {
-      control: false,
-      table: {disable: true},
-    },
-    poiObjectType: {
-      control: false,
-      table: {disable: true},
-    },
-    poiObjectState: {
-      control: false,
-      table: {disable: true},
-    },
-    selectionFrameType: {
-      control: false,
-      table: {disable: true},
-    },
-    selectionFrameState: {
-      control: false,
-      table: {disable: true},
     },
   },
   render: (args) => html`
@@ -229,23 +203,6 @@ const meta: Meta<ObcPoiButton> = {
 
 export default meta;
 type Story = StoryObj<ObcPoiButton>;
-
-const canvasStyle =
-  'transform: translate(-50%, -50%); width: min(1100px, 92vw); max-height: 88vh; overflow: auto; padding: 8px 12px 24px;';
-const sectionStyle = 'margin-bottom: 24px;';
-const gridStyle =
-  'display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px 16px; align-items: start;';
-const itemStyle =
-  'display: flex; flex-direction: column; align-items: center; gap: 8px;';
-const stageStyle = 'position: relative; width: 140px; height: 130px;';
-const stageTallStyle = 'position: relative; width: 180px; height: 220px;';
-const buttonAnchorStyle = 'position: absolute; left: 50%; bottom: 0;';
-const labelStyle =
-  'font-size: 11px; line-height: 1.2; text-align: center; font-family: sans-serif;';
-
-function renderOverview(content: TemplateResult) {
-  return html`<div style=${canvasStyle}>${content}</div>`;
-}
 
 type MatrixButtonConfig = {
   type?: ObcPoiButtonType;

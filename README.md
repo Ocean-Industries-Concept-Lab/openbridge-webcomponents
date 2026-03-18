@@ -23,7 +23,7 @@ The code is only available for the partners until the release in March 2026. It 
 
 ## 📽️ Introduction video
 
-We have made an [short introduction to the library](https://www.youtube.com/watch?v=5DiEA4voqzI).
+We have made a [short introduction to the library](https://www.youtube.com/watch?v=5DiEA4voqzI).
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=5DiEA4voqzI" target="_blank">
  <img src="https://img.youtube.com/vi/5DiEA4voqzI/0.jpg" alt="Watch the video: Intro to OpenBridge Web Components" width="480" height="360" />

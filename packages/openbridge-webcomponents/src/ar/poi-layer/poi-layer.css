@@ -37,7 +37,7 @@
   pointer-events: none;
 }
 
-::slotted(obc-poi-data),
+::slotted([data-poi-target]),
 ::slotted(obc-poi-group) {
   position: absolute;
   bottom: 0;
@@ -58,27 +58,27 @@
   pointer-events: auto;
 }
 
-::slotted(obc-poi-data[data-grouped]) {
+::slotted([data-poi-target][data-grouped]) {
   opacity: 0;
 }
 
-::slotted(obc-poi-data:not([data-grouped])) {
+::slotted([data-poi-target]:not([data-grouped])) {
   opacity: 1;
 }
 
-::slotted(obc-poi-data[data-behind]) {
+::slotted([data-poi-target][data-behind]) {
   opacity: 0.4;
   --poi-size: 32px;
   --obc-poi-target-icon-opacity: 0;
 }
 
-::slotted(obc-poi-data[data-exiting]) {
+::slotted([data-poi-target][data-exiting]) {
   opacity: 0.4;
   --poi-size: 32px;
   --obc-poi-target-icon-opacity: 0;
 }
 
-::slotted(obc-poi-data[data-front]) {
+::slotted([data-poi-target][data-front]) {
   opacity: 1;
   --poi-size: 36px;
   --obc-poi-target-icon-opacity: 1;
@@ -109,7 +109,7 @@
   pointer-events: none;
 }
 
-:host([data-stack-inactive]) ::slotted(obc-poi-data:not([data-grouped])),
+:host([data-stack-inactive]) ::slotted([data-poi-target]:not([data-grouped])),
 :host([data-stack-inactive]) ::slotted(obc-poi-group) {
   --obc-poi-object-frame-opacity: var(--obc-poi-layer-inactive-opacity, 0.7);
   --obc-poi-data-content-opacity: var(--obc-poi-layer-inactive-opacity, 0.7);

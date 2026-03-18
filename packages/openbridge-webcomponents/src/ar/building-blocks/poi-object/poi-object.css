@@ -21,10 +21,6 @@
   height: var(--maneuvering-components-poi-button-large-touch-target, 64px);
 }
 
-.is-indicator .icon-container {
-  filter: drop-shadow(0px 1px 2px black);
-}
-
 .is-indicator.is-static .icon-container,
 .is-indicator.is-activated .icon-container,
 .is-indicator.is-overlapped .icon-container {
@@ -96,7 +92,6 @@
   border-radius: var(--maneuvering-components-poi-button-border-radius-square);
 }
 
-/* Regular and Indicator types - standard sizes */
 .type-regular .background-frame,
 .type-indicator .background-frame,
 .type-regular .activated-frame,
@@ -105,7 +100,6 @@
   height: var(--maneuvering-components-poi-button-visual-target-round);
 }
 
-/* Large type */
 .type-large {
   --obc-poi-frame-size: var(
     --maneuvering-components-poi-button-large-visual-target-round
@@ -122,7 +116,6 @@
   height: var(--maneuvering-components-poi-button-large-visual-target-round);
 }
 
-/* N-up type */
 .type-n-up {
   --obc-poi-frame-size: var(
     --maneuvering-components-poi-button-visual-target-square
@@ -135,7 +128,6 @@
   height: var(--maneuvering-components-poi-button-visual-target-square);
 }
 
-/* N-up large type */
 .type-n-up-large {
   --obc-poi-frame-size: var(
     --maneuvering-components-poi-button-large-visual-target-square
@@ -152,7 +144,6 @@
   height: var(--maneuvering-components-poi-button-large-visual-target-square);
 }
 
-/* Overlapped state - smaller background */
 .is-overlapped {
   --obc-poi-bottom-offset: var(
     --maneuvering-components-poi-button-overlap-offset-margin-round
@@ -195,13 +186,11 @@
   height: 24px;
 }
 
-/* Regular style background */
 .style-regular .background-frame {
   background-color: var(--overlay-container-background-color);
   border: 1px solid var(--overlay-border-outline-color);
 }
 
-/* Categorical style background */
 .style-categorical .background-frame {
   background-color: var(--base-blue-100);
   border: 1px solid var(--base-blue-200);
@@ -211,19 +200,16 @@
   border: 1px solid var(--base-blue-050);
 }
 
-/* Static and activated states use flat background */
 .style-regular.is-static .background-frame,
 .style-regular.is-activated .background-frame {
   background-color: var(--normal-enabled-background-color);
   border: 1px solid var(--normal-enabled-border-color);
 }
 
-/* Indicator activated state fills the frame */
 .is-indicator.is-activated .activated-frame {
   background-color: var(--overlay-border-activated-color);
 }
 
-/* Icon container */
 .icon-container {
   position: relative;
   display: flex;
@@ -237,7 +223,6 @@
     transform var(--obc-poi-transition-duration, 0.1s) ease-out;
 }
 
-/* Standard icon sizes */
 .type-regular .icon-container,
 .type-indicator .icon-container,
 .type-n-up .icon-container {
@@ -251,38 +236,87 @@
   height: var(--obc-poi-icon-size);
 }
 
-/* Slotted icon sizing */
 .icon-container ::slotted(*) {
   width: 100%;
   height: 100%;
 }
 
-/* Regular style icon colors */
 .wrapper.style-regular .icon-container ::slotted(*) {
-  color: var(--element-neutral-color);
-  --element-active-color: var(--element-neutral-color);
+  color: var(--instrument-regular-secondary-color);
+  --element-active-color: var(--instrument-regular-secondary-color);
+}
+
+.wrapper.style-regular.is-indicator .icon-container ::slotted(*) {
+  color: var(--element-inactive-color);
+  --element-active-color: var(--element-inactive-color);
 }
 
 .wrapper.style-regular.is-checked .icon-container ::slotted(*),
 .wrapper.style-regular.is-activated .icon-container ::slotted(*) {
-  color: var(--element-active-color);
-  --element-active-color: inherit;
+  color: var(--element-neutral-color);
+  --element-active-color: var(--element-neutral-color);
 }
 
-/* Categorical style icon colors */
+.wrapper.style-regular.is-static .icon-container ::slotted(*) {
+  color: var(--element-inactive-color);
+  --element-active-color: var(--element-inactive-color);
+}
+
+.wrapper.style-regular.is-static.is-checked .icon-container ::slotted(*) {
+  color: var(--element-neutral-color);
+  --element-active-color: var(--element-neutral-color);
+}
+
+.wrapper.style-regular.state-caution .icon-container ::slotted(*),
+.wrapper.style-regular.state-warning .icon-container ::slotted(*),
+.wrapper.style-regular.state-alarm .icon-container ::slotted(*),
+.wrapper.style-enhanced.state-caution .icon-container ::slotted(*),
+.wrapper.style-enhanced.state-warning .icon-container ::slotted(*),
+.wrapper.style-enhanced.state-alarm .icon-container ::slotted(*) {
+  color: var(--element-active-color);
+  --element-active-color: var(--element-active-color);
+}
+
+.style-enhanced .background-frame {
+  background-color: var(--overlay-container-background-color);
+  border: 1px solid var(--overlay-border-outline-color);
+}
+
+.style-enhanced.is-static .background-frame,
+.style-enhanced.is-activated .background-frame {
+  background-color: var(--normal-enabled-background-color);
+  border: 1px solid var(--normal-enabled-border-color);
+}
+
+.wrapper.style-enhanced .icon-container ::slotted(*) {
+  color: var(--instrument-enhanced-secondary-color);
+  --element-active-color: var(--instrument-enhanced-secondary-color);
+}
+
 .wrapper.style-categorical .icon-container ::slotted(*) {
   color: var(--base-blue-500);
   --element-active-color: var(--base-blue-500);
   --element-active-inverted-color: var(--base-blue-100);
 }
 
-/* Indicator type icon stroke outline */
 .is-indicator .icon-container ::slotted(*) {
-  stroke: rgb(255, 255, 255);
-  stroke-width: 2px;
+  stroke: var(--indicator-stroke-color, rgb(255, 255, 255));
+  stroke-width: var(--indicator-stroke-width, 2px);
   stroke-linejoin: round;
   paint-order: stroke fill;
-  --element-active-inverted-color: rgb(255, 255, 255);
+  overflow: visible;
+  --element-active-inverted-color: var(
+    --indicator-stroke-color,
+    rgb(255, 255, 255)
+  );
+}
+
+.is-indicator.is-static .icon-container ::slotted(*),
+.is-indicator.is-overlapped .icon-container ::slotted(*) {
+  stroke: none;
+  stroke-width: 0;
+  paint-order: normal;
+  overflow: hidden;
 }
 
 .is-indicator.has-placeholder-icon .indicator-placeholder-fill {
@@ -311,19 +345,16 @@
   --element-active-inverted-color: var(--base-blue-100);
 }
 
-/* Overlapped state hides icon */
 .is-overlapped .icon-container {
   opacity: 0;
 }
 
-/* Interactive hover/active states on background-frame */
 .wrapper.interactive .background-frame {
   transition:
     background-color var(--obc-poi-color-transition-duration, 0.1s) ease,
     border-color var(--obc-poi-color-transition-duration, 0.1s) ease;
 }
 
-/* Regular type (non-indicator) - uses flat styles */
 :host(:hover) .wrapper.interactive:not(.is-indicator) .background-frame {
   background-color: var(--flat-hover-background-color);
 }
@@ -332,7 +363,6 @@
   background-color: var(--flat-pressed-background-color);
 }
 
-/* Indicator type interactive - transparent by default, shows overlay flat styles on hover */
 .wrapper.interactive.is-indicator .background-frame {
   background-color: transparent;
   border-color: transparent;
@@ -348,7 +378,6 @@
   border-color: var(--overlay-flat-active-border-color);
 }
 
-/* Focus styles */
 .wrapper:focus {
   outline: none;
 }

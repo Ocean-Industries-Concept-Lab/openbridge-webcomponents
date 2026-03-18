@@ -269,7 +269,7 @@ function App() {
       </header>
       <main>
         {showBrillianceMenu && (
-          <ObcBrillianceMenu hideBrightness className="brilliance" />
+          <ObcBrillianceMenu showBrightness={false} className="brilliance" />
         )}
       </main>
     </>
@@ -321,7 +321,7 @@ function App() {
           <ObcBrillianceMenu
             onPaletteChanged={handlePaletteChange}
             palette={palette}
-            hideBrightness
+            showBrightness={false}
             className="brilliance"
           />
         )}
@@ -609,7 +609,7 @@ function App() {
         {showBrillianceMenu && (
           <ObcBrillianceMenu
             onPaletteChanged={handleBrillianceChange}
-            hideBrightness
+            showBrightness={false}
             className="brilliance"
           />
         )}
@@ -692,7 +692,7 @@ function App() {
         {showBrillianceMenu && (
           <ObcBrillianceMenu
             onPaletteChanged={handleBrillianceChange}
-            hideBrightness
+            showBrightness={false}
             className="brilliance"
           />
         )}
@@ -770,7 +770,7 @@ function App() {
         {showBrillianceMenu && (
           <ObcBrillianceMenu
             onPaletteChanged={handleBrillianceChange}
-            hideBrightness
+            showBrightness={false}
             className="brilliance"
           />
         )}
@@ -892,7 +892,7 @@ function App() {
         {showBrillianceMenu && (
           <ObcBrillianceMenu
             onPaletteChanged={handleBrillianceChange}
-            hideBrightness
+            showBrightness={false}
             className="brilliance"
           />
         )}

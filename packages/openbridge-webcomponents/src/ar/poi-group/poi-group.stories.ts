@@ -7,7 +7,11 @@ import {createRef, ref} from 'lit/directives/ref.js';
 import '../poi-button-data/poi-button-data.js';
 import '../../icons/icon-ais-target-activated-iec.js';
 import '../poi-data/poi-data.js';
+import '../poi-aton/poi-aton.js';
+import '../poi-vessel/poi-vessel.js';
 import '../building-blocks/poi-header/poi-header.js';
+import '../../icons/icon-beacon-general-east.js';
+import '../../icons/icon-vessel-type-psv-outlined.js';
 import {ObcPoiData, PoiDataValue} from '../poi-data/poi-data.js';
 
 const isVitestBrowser = Boolean(
@@ -309,6 +313,64 @@ export const GroupedWithValues: Story = {
             .y=${200}
             .data=${valuesOutside}
           ></obc-poi-data>
+        </div>
+      </div>
+    `;
+  },
+};
+
+export const GroupedMixedTypes: Story = {
+  args: {
+    expand: false,
+  },
+  render: (args) => {
+    return html`
+      <style>
+        obc-poi-aton,
+        obc-poi-vessel {
+          position: absolute;
+        }
+
+        .stage {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 640px;
+          height: 480px;
+          transform: translate(-50%, -50%);
+        }
+      </style>
+      <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0;">
+        <div class="stage">
+          <obc-poi-group
+            style="position: absolute; top: 0; left: 0;"
+            .expand=${args.expand}
+            positionVertical="calc(50% - 40px)"
+          >
+            <obc-poi-aton
+              id="target-3"
+              .x=${300}
+              .buttonY=${200}
+              .y=${150}
+              aton-type="aton"
+              aton-style="green"
+            >
+              <obi-beacon-general-east></obi-beacon-general-east>
+            </obc-poi-aton>
+            <obc-poi-vessel id="target-1" .x=${320} .buttonY=${200} .y=${150}>
+              <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
+            </obc-poi-vessel>
+            <obc-poi-aton
+              id="target-2"
+              .x=${340}
+              .buttonY=${200}
+              .y=${150}
+              aton-type="aton"
+              aton-style="red"
+            >
+              <obi-beacon-general-east></obi-beacon-general-east>
+            </obc-poi-aton>
+          </obc-poi-group>
         </div>
       </div>
     `;

@@ -249,7 +249,7 @@ export const ButtonAnimated: Story = {
     type: Type.Button,
     state: State.Active,
   },
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   play: async ({canvasElement}) => {
     const canvas = canvasElement.querySelector(
       'obc-chart-object-vessel-button'

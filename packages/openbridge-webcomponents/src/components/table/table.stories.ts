@@ -180,7 +180,7 @@ const renderTable = (args: ObcTable & {height?: number}) => {
     .columns=${args.columns}
     .rowDivider=${args.rowDivider}
     .narrowHeader=${args.narrowHeader}
-    .noHeader=${args.noHeader}
+    .showHeader=${args.showHeader}
     .striped=${args.striped}
     .selectable=${args.selectable}
     .defaultSelectedRowIds=${args.defaultSelectedRowIds}
@@ -201,7 +201,7 @@ export const Playground: Story = {
     rowDivider: true,
     striped: false,
     narrowHeader: false,
-    noHeader: false,
+    showHeader: true,
     selectAllAriaLabel: 'Select all table items',
     defaultSelectedRowIds: ['1', '4'],
     columns: playgroundColumns,
@@ -235,7 +235,7 @@ export const Playground: Story = {
     narrowHeader: {
       control: {type: 'boolean'},
     },
-    noHeader: {
+    showHeader: {
       control: {type: 'boolean'},
     },
     defaultSelectedRowIds: {
@@ -258,7 +258,7 @@ export const Playground: Story = {
 };
 
 export const CheckboxCells: Story = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   args: {
     columns: [
       {label: 'Name', key: 'name'},
@@ -407,7 +407,7 @@ export const HorizontalBarCells: Story = {
 };
 
 export const SelectableTable: Story = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   args: {
     selectable: true,
     columns: [
@@ -529,7 +529,7 @@ export const SmallHeightCase: Story = {
 };
 
 export const AddingData: Story = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   args: {},
   play: async ({canvasElement}) => {
     const table = canvasElement.querySelector('obc-table') as ObcTable;
@@ -550,7 +550,7 @@ export const AddingData: Story = {
 };
 
 export const RemovingData: Story = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   args: {},
   play: async ({canvasElement}) => {
     const table = canvasElement.querySelector('obc-table') as ObcTable;
@@ -609,7 +609,7 @@ const newNames = [
 ];
 
 export const Interactive: Story = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   args: {
     rowDivider: false,
     striped: true,

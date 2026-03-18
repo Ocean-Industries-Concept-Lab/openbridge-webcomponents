@@ -83,7 +83,7 @@ export class ObcAutomationButton extends LitElement {
   @property({type: String}) state: AutomationButtonState =
     AutomationButtonState.open;
   @property({type: Boolean}) static: boolean = false;
-  @property({type: Boolean}) hideReadoutStack: boolean = false;
+  @property({type: Boolean, attribute: false}) showReadoutStack: boolean = true;
   @property({type: Array, attribute: false})
   readouts: AutomationButtonReadoutStack[] = [];
   @property({attribute: false})
@@ -100,7 +100,8 @@ export class ObcAutomationButton extends LitElement {
     ObcAlertFrameThickness.Small;
   @property({type: String}) alertFrameStatus: ObcAlertFrameStatus =
     ObcAlertFrameStatus.Alarm;
-  @property({type: Boolean}) hideAlertCategoryIcon: boolean = false;
+  @property({type: Boolean, attribute: false}) showAlertCategoryIcon: boolean =
+    true;
   @property({type: Boolean}) showAlertIcon: boolean = false;
   @property({type: Boolean}) progress: boolean = false;
   @property({type: String}) direction: AutomationButtonDirection =
@@ -117,7 +118,7 @@ export class ObcAutomationButton extends LitElement {
       ? (this.tag ?? {value: 0})
       : null;
     const hasLabelContent =
-      !this.hideReadoutStack && (this.readouts.length > 0 || this.hasIdTag);
+      this.showReadoutStack && (this.readouts.length > 0 || this.hasIdTag);
 
     return this.wrapContent(html`
       <button
@@ -160,9 +161,8 @@ export class ObcAutomationButton extends LitElement {
             <slot name="badge-bottom-right"></slot>
           </div>
         </div>
-        ${this.hideReadoutStack
-          ? nothing
-          : html`
+        ${this.showReadoutStack
+          ? html`
               <div class="badge-spacer"></div>
               <obc-automation-button-readout-stack
                 .readouts=${this.readouts}
@@ -171,14 +171,15 @@ export class ObcAutomationButton extends LitElement {
                 .size=${this.readoutSize}
                 .idTagOrientation=${this.getIdTagOrientation()}
               ></obc-automation-button-readout-stack>
-            `}
+            `
+          : nothing}
         ${this.alert
           ? html` <obc-alert-frame
               class="alert-frame"
               .type=${this.alertFrameType}
               .thickness=${this.alertFrameThickness}
               .status=${this.alertFrameStatus}
-              .hideAlertCategoryIcon=${this.hideAlertCategoryIcon}
+              .showAlertCategoryIcon=${this.showAlertCategoryIcon}
               .showIcon=${this.showAlertIcon}
             >
               <span slot="icon"><slot name="alert-icon"></slot></span>
@@ -213,35 +214,21 @@ export class ObcAutomationButton extends LitElement {
       return null;
     }
 
-    const spinnerWidth = parseFloat(
-      getComputedStyle(this).getPropertyValue(
-        '--automation-components-button-device-visual-target'
-      )
-    );
-    const strokeWidth = parseFloat(
-      getComputedStyle(this).getPropertyValue(
-        '--automation-components-button-device-progress-bar-stroke'
-      )
-    );
-    const progressSpinner = html`<svg
-      width="${spinnerWidth}"
-      height="${spinnerWidth}"
-      viewBox="0 0 ${spinnerWidth} ${spinnerWidth}"
+    return html`<svg
+      viewBox="0 0 100 100"
       fill="none"
       class="progress-spinner"
       xmlns="http://www.w3.org/2000/svg"
+      overflow="visible"
     >
       <path
-        d="M${strokeWidth / 2} ${spinnerWidth / 2} A ${(spinnerWidth -
-          strokeWidth) /
-        2} ${(spinnerWidth - strokeWidth) / 2} 0 0 1 ${spinnerWidth /
-        2} ${strokeWidth / 2}"
+        d="M2 50 A 48 48 0 0 1 50 2"
         stroke="var(--instrument-enhanced-secondary-color)"
-        stroke-width=${strokeWidth}
+        stroke-width="var(--automation-components-button-progress-bar-stroke)"
         stroke-linecap="round"
+        vector-effect="non-scaling-stroke"
       />
-    </svg> `;
-    return progressSpinner;
+    </svg>`;
   }
 
   private getDirectionIcon(): null | HTMLTemplateResult {

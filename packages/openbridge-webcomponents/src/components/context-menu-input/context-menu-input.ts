@@ -389,7 +389,7 @@ export class ObcContextMenuInput extends LitElement {
     // Don't process selection for navigation groups in flyout menus or multi
     if (option.children?.length) return;
 
-    let newSelectedValues = this.selectedValues;
+    let newSelectedValues: string[];
 
     if (this.isPerGroupSingleSelect) {
       // Get the group key for this value (column or group)

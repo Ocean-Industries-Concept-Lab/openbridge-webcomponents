@@ -8,7 +8,7 @@ import '../automation-badge/automation-badge.js';
 import {argTypesAbstractAutomationButtonPassiveSquare} from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 const meta: Meta<typeof ObcLogic> = {
-  title: 'Automation/Automation devices/Logic',
+  title: 'Automation/Automation Devices/Logic',
   tags: ['autodocs'],
   component: 'obc-logic',
   decorators: [crossDecorator],
@@ -18,7 +18,7 @@ const meta: Meta<typeof ObcLogic> = {
     readoutSize: AutomationButtonReadoutStackSize.regular,
     alert: false,
     progress: false,
-    hideReadoutStack: false,
+    showReadoutStack: true,
     hasIdTag: true,
   },
   argTypes: {
