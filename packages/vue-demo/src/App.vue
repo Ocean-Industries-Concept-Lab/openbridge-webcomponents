@@ -256,6 +256,12 @@ const goToPreviousPage = () => {
         v-if="showBrilliance"
         :palette="palette"
         :brightness="bridgeStore.brightness"
+        show-brightness
+        show-palette
+        show-bright-palette
+        show-dusk-palette
+        show-day-palette
+        show-night-palette
         show-auto-brightness
         class="brilliance"
         @palette-changed="onPaletteChange"
