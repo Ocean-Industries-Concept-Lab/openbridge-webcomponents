@@ -180,12 +180,6 @@ export class ObcProgressButton extends LitElement {
   private renderCircularProgress() {
     return html`
       <div class="circular-progress-svg-container">
-        <obc-circular-progress
-          .mode=${this.getCircularProgressMode()}
-          .value=${this.value}
-          .viewBoxSize=${42}
-          .strokeWidth=${4}
-        ></obc-circular-progress>
         ${this.hasAlert
           ? html`<svg
               class="circular-alert-svg"
@@ -202,6 +196,13 @@ export class ObcProgressButton extends LitElement {
               />
             </svg>`
           : nothing}
+        <obc-circular-progress
+          .mode=${this.getCircularProgressMode()}
+          .value=${this.value}
+          .viewBoxSize=${42}
+          .strokeWidth=${4}
+          .padding=${1}
+        ></obc-circular-progress>
       </div>
     `;
   }

@@ -16,12 +16,13 @@ export class ObcCircularProgress extends LitElement {
   @property({type: Number}) value = 0;
   @property({type: Number}) strokeWidth = 4;
   @property({type: Number}) viewBoxSize = 42;
+  @property({type: Number}) padding = 0;
 
   override render() {
     const size = this.viewBoxSize;
     const sw = this.strokeWidth;
     const center = size / 2;
-    const radius = (size - sw) / 2;
+    const radius = (size - sw) / 2 - this.padding;
     const circumference = 2 * Math.PI * radius;
     const rawValue = Number.isFinite(this.value) ? this.value : 0;
     const clampedValue = Math.max(0, Math.min(100, rawValue));
