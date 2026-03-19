@@ -3,6 +3,7 @@ import {ObcRotSector} from './rot-sector.js';
 import './rot-sector.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
+import {TickmarkStyle} from '../watch/tickmark.js';
 import {Priority} from '../types.js';
 
 const meta: Meta<typeof ObcRotSector> = {
@@ -27,6 +28,10 @@ const meta: Meta<typeof ObcRotSector> = {
     priority: {control: 'select', options: Object.values(Priority)},
     showLabels: {control: 'boolean'},
     tickmarksInside: {control: 'boolean'},
+    tickmarkStyle: {
+      control: 'select',
+      options: Object.values(TickmarkStyle),
+    },
   },
 } satisfies Meta<ObcRotSector>;
 

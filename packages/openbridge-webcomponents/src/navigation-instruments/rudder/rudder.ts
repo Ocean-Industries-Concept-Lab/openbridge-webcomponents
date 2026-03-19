@@ -1,7 +1,7 @@
 import {LitElement, css, html, nothing, svg} from 'lit';
 import {property} from 'lit/decorators.js';
 import '../watch/watch.js';
-import {Tickmark, TickmarkType} from '../watch/tickmark.js';
+import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
 import {WatchCircleType} from '../watch/watch.js';
 import {InstrumentState, Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
@@ -82,6 +82,8 @@ export class ObcRudder extends SetpointMixin(LitElement) {
   @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
+  @property({type: String}) tickmarkStyle: TickmarkStyle =
+    TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: AngleAdvice[] = [];
 
   getAngle(value: number) {
@@ -234,6 +236,7 @@ export class ObcRudder extends SetpointMixin(LitElement) {
           .padding=${48}
           .tickmarks=${tickmarks}
           .tickmarksInside=${this.tickmarksInside}
+          .tickmarkStyle=${this.tickmarkStyle}
           .watchCircleType=${WatchCircleType.double}
           .barAreas=${barAreas}
           .state=${this.state}

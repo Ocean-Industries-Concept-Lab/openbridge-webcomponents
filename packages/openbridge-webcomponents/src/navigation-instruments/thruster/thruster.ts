@@ -164,7 +164,7 @@ export function thrusterTopSingleSided(
 
   const tickmarks = options.hideTicks
     ? []
-    : [singleSidedTickmark(height, 50, TickmarkStyle.hinted)];
+    : [singleSidedTickmark(height, 50, TickmarkStyle.regular)];
 
   const barHeight = (height * value) / 100;
   const barWidth = options.narrow ? 40 : 48;

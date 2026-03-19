@@ -5,6 +5,7 @@ import {AdviceType} from '../watch/advice.js';
 import {Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/instrument-radial/instrument-radial.js';
+import {TickmarkStyle} from '../watch/tickmark.js';
 
 export enum ObcGaugeRadialType {
   filled = 'filled',
@@ -103,6 +104,8 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
     undefined;
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: Boolean}) portStarboard: boolean = false;
+  @property({type: String}) tickmarkStyle: TickmarkStyle =
+    TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
 
   getAngle(v: number): number {
@@ -148,6 +151,7 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
         .barColor=${barColor}
         .showLabels=${this.showLabels}
         .tickmarksInside=${this.tickmarksInside}
+        .tickmarkStyle=${this.tickmarkStyle}
         .primaryTickmarkInterval=${this.primaryTickmarkInterval}
         .secondaryTickmarkInterval=${this.secondaryTickmarkInterval}
         .tertiaryTickmarkInterval=${this.tertiaryTickmarkInterval}

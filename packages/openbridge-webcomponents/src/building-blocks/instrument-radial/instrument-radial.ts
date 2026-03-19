@@ -9,6 +9,7 @@ import {
 import {WatchCircleType} from '../../navigation-instruments/watch/watch.js';
 import {Tickmark} from '../../navigation-instruments/watch/tickmark.js';
 import {TickmarkType} from '../../navigation-instruments/watch/tickmark.js';
+import {TickmarkStyle} from '../../navigation-instruments/watch/tickmark.js';
 import {InstrumentState, Priority} from '../../navigation-instruments/types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 
@@ -61,6 +62,8 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   @property({type: String}) needleType: ObcGaugeRadialType =
     ObcGaugeRadialType.filled;
   @property({type: Boolean}) tickmarksInside: boolean = false;
+  @property({type: String}) tickmarkStyle: TickmarkStyle =
+    TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
   @property({type: Number}) clipTop: number = 0; // in percent of height
   @property({type: Number}) clipBottom: number = 0; // in percent of height
@@ -141,6 +144,7 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
           .padding=${48}
           .tickmarks=${this.tickmarks}
           .tickmarksInside=${this.tickmarksInside}
+          .tickmarkStyle=${this.tickmarkStyle}
           .advices=${this._advices}
           .areas=${[
             {
