@@ -136,18 +136,17 @@ export class ObcProgressButton extends LitElement {
         @click="${this.handleClick}"
         aria-label="${this.label}"
         aria-busy="${this.showProgress &&
-        (this.mode === ProgressMode.Indeterminate ||
-          this.progressiveIndeterminate)}"
+        this.getCircularProgressMode() !== CircularProgressMode.determinate}"
         aria-valuenow="${this.showProgress &&
-        this.mode === ProgressMode.Determinate
+        this.getCircularProgressMode() === CircularProgressMode.determinate
           ? this.value
           : nothing}"
         aria-valuemin="${this.showProgress &&
-        this.mode === ProgressMode.Determinate
+        this.getCircularProgressMode() === CircularProgressMode.determinate
           ? 0
           : nothing}"
         aria-valuemax="${this.showProgress &&
-        this.mode === ProgressMode.Determinate
+        this.getCircularProgressMode() === CircularProgressMode.determinate
           ? 100
           : nothing}"
         role="button"
