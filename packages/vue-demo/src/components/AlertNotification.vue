@@ -57,9 +57,9 @@ const onMuteAlert = () => {
         ? ObcTopbarMessageItemType.WithButton
         : ObcTopbarMessageItemType.WithIconButton
     "
-    has-description
-    has-title
-    has-timestamp
+    show-description
+    show-title
+    show-timestamp
     :empty="visibleAlert === null"
     @action-click="onAckAlert"
     @message-click="onToggleAlertMenu"
