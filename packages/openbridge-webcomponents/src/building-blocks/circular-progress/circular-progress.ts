@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS, svg} from 'lit';
+import {LitElement, html, unsafeCSS, svg, type SVGTemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
 import componentStyle from './circular-progress.css?inline';
 import {customElement} from '../../decorator.js';
@@ -23,9 +23,10 @@ export class ObcCircularProgress extends LitElement {
     const center = size / 2;
     const radius = (size - sw) / 2;
     const circumference = 2 * Math.PI * radius;
-    const clampedValue = Math.max(0, Math.min(100, this.value));
+    const rawValue = Number.isFinite(this.value) ? this.value : 0;
+    const clampedValue = Math.max(0, Math.min(100, rawValue));
 
-    let progressElement;
+    let progressElement: SVGTemplateResult;
 
     if (this.mode === CircularProgressMode.progressiveIndeterminate) {
       const minArc = circumference * 0.02;

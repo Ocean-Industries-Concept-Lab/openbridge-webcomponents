@@ -101,10 +101,6 @@ export default meta;
 type Story = StoryObj<ObcAutomationButton>;
 
 export const ValveOpen: Story = {
-  args: {
-    direction: AutomationButtonDirection.forwardFast,
-  },
-
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [];
     const tag: AutomationButtonReadoutStackTag | null = {value: 0};
@@ -663,10 +659,14 @@ export const ThreeWayValveOpenRight: Story = {
     value: 70,
   } as Record<string, unknown>,
   render(args) {
-    const storyArgs = args as unknown as Record<string, unknown> & {
+    const storyArgs = args as unknown as {
       value: number;
-      alert?: boolean;
-      progress?: boolean;
+      alert: boolean;
+      progress: boolean;
+      progressMode: CircularProgressMode;
+      progressValue: number;
+      showReadoutStack: boolean;
+      hasIdTag: boolean;
     };
     const readouts: AutomationButtonReadoutStack[] = [
       {
@@ -689,15 +689,14 @@ export const ThreeWayValveOpenRight: Story = {
     const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html` <obc-automation-button
       state="open"
-      .showReadoutStack=${(args as unknown as ObcAutomationButton)
-        .showReadoutStack}
-      .hasIdTag=${(args as unknown as ObcAutomationButton).hasIdTag}
+      .showReadoutStack=${storyArgs.showReadoutStack}
+      .hasIdTag=${storyArgs.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       ?alert=${storyArgs.alert}
       ?progress=${storyArgs.progress}
-      .progressMode=${(args as unknown as ObcAutomationButton).progressMode}
-      .progressValue=${(args as unknown as ObcAutomationButton).progressValue}
+      .progressMode=${storyArgs.progressMode}
+      .progressValue=${storyArgs.progressValue}
     >
       <obc-valve-analog-three-way-icon
         value=${storyArgs.value}

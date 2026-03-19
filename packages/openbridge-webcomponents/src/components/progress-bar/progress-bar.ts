@@ -4,7 +4,6 @@ import {styleMap} from 'lit/directives/style-map.js';
 import componentStyle from './progress-bar.css?inline';
 import {customElement} from '../../decorator.js';
 import '../../icons/icon-placeholder.js';
-import '../../building-blocks/circular-progress/circular-progress.js';
 import {CircularProgressMode} from '../../building-blocks/circular-progress/circular-progress.js';
 
 export enum ProgressBarType {
