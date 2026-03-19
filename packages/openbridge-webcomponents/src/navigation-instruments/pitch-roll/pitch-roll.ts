@@ -5,6 +5,13 @@ import {VesselImage, VesselImageSize, WatchCircleType} from '../watch/watch.js';
 import {TickmarkType} from '../watch/tickmark.js';
 import {AdviceState, AdviceType, AngleAdviceRaw} from '../watch/advice.js';
 import {customElement} from '../../decorator.js';
+import {Priority} from '../types.js';
+
+export enum PitchRollPriorityElement {
+  pitch = 'pitch',
+  roll = 'roll',
+}
+
 @customElement('obc-pitch-roll')
 export class ObcPitchRoll extends LitElement {
   @property({type: Number}) pitch = 0;
@@ -19,6 +26,31 @@ export class ObcPitchRoll extends LitElement {
   @property({type: Number}) maxRollAdvice: number | undefined = undefined;
   @property({type: Boolean}) triggerPitchAdvice = false;
   @property({type: Boolean}) triggerRollAdvice = false;
+  @property({type: String}) priority: Priority = Priority.regular;
+  @property({type: Array, attribute: false})
+  priorityElements: PitchRollPriorityElement[] = [
+    PitchRollPriorityElement.pitch,
+    PitchRollPriorityElement.roll,
+  ];
+
+  private priorityFor(element: PitchRollPriorityElement): Priority {
+    const selected = Array.isArray(this.priorityElements)
+      ? this.priorityElements
+      : [];
+    return selected.includes(element) ? this.priority : Priority.regular;
+  }
+
+  private needleColor(element: PitchRollPriorityElement): string {
+    return this.priorityFor(element) === Priority.enhanced
+      ? 'var(--instrument-enhanced-secondary-color)'
+      : 'var(--instrument-regular-secondary-color)';
+  }
+
+  private barColor(element: PitchRollPriorityElement): string {
+    return this.priorityFor(element) === Priority.enhanced
+      ? 'var(--instrument-enhanced-tertiary-color)'
+      : 'var(--instrument-regular-tertiary-color)';
+  }
 
   override render() {
     return html`
@@ -64,43 +96,43 @@ export class ObcPitchRoll extends LitElement {
             {
               startAngle: this.minAvgRoll,
               endAngle: this.maxAvgRoll,
-              fillColor: 'var(--instrument-enhanced-tertiary-color)',
+              fillColor: this.barColor(PitchRollPriorityElement.roll),
             },
             {
               startAngle: 180 + this.minAvgRoll,
               endAngle: 180 + this.maxAvgRoll,
-              fillColor: 'var(--instrument-enhanced-tertiary-color)',
+              fillColor: this.barColor(PitchRollPriorityElement.roll),
             },
             {
               startAngle: 90 + this.minAvgPitch,
               endAngle: 90 + this.maxAvgPitch,
-              fillColor: 'var(--instrument-enhanced-tertiary-color)',
+              fillColor: this.barColor(PitchRollPriorityElement.pitch),
             },
             {
               startAngle: 270 + this.minAvgPitch,
               endAngle: 270 + this.maxAvgPitch,
-              fillColor: 'var(--instrument-enhanced-tertiary-color)',
+              fillColor: this.barColor(PitchRollPriorityElement.pitch),
             },
           ]}
           .needles=${[
             {
               angle: this.roll,
-              fillColor: 'var(--instrument-enhanced-secondary-color)',
+              fillColor: this.needleColor(PitchRollPriorityElement.roll),
               strokeColor: 'var(--border-silhouette-color)',
             },
             {
               angle: 180 + this.roll,
-              fillColor: 'var(--instrument-enhanced-secondary-color)',
+              fillColor: this.needleColor(PitchRollPriorityElement.roll),
               strokeColor: 'var(--border-silhouette-color)',
             },
             {
               angle: 90 + this.pitch,
-              fillColor: 'var(--instrument-enhanced-secondary-color)',
+              fillColor: this.needleColor(PitchRollPriorityElement.pitch),
               strokeColor: 'var(--border-silhouette-color)',
             },
             {
               angle: 270 + this.pitch,
-              fillColor: 'var(--instrument-enhanced-secondary-color)',
+              fillColor: this.needleColor(PitchRollPriorityElement.pitch),
               strokeColor: 'var(--border-silhouette-color)',
             },
           ]}

@@ -124,6 +124,8 @@
     position: absolute;
     top: -1px;
     left: -1px;
+    width: calc(100% + 2px);
+    height: calc(100% + 2px);
     animation: spin 3s linear infinite;
   }
 }

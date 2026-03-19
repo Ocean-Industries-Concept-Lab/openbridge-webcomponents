@@ -64,7 +64,7 @@ export function renderAdvice(
             `);
     }
     const maskId = `adviceMask-${advice.min}-${advice.max}`;
-    let tickmarkStyle = TickmarkStyle.hinted;
+    let tickmarkStyle = TickmarkStyle.regular;
     if (advice.state === AdviceState.regular) {
       tickmarkStyle = TickmarkStyle.regular;
     } else if (advice.state === AdviceState.triggered) {
@@ -90,7 +90,7 @@ export function renderAdvice(
     if (advice.state === AdviceState.hinted) {
       strokeColor = 'var(--instrument-frame-tertiary-color)';
       fillColor = 'none';
-      tickmarkStyle = TickmarkStyle.hinted;
+      tickmarkStyle = TickmarkStyle.regular;
     } else if (advice.state === AdviceState.regular) {
       strokeColor = 'var(--instrument-regular-secondary-color)';
       fillColor = 'none';

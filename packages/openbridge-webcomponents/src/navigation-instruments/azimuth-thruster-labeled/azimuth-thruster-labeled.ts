@@ -12,6 +12,7 @@ import {ifDefined} from 'lit/directives/if-defined.js';
 import {AngleAdvice} from '../watch/advice.js';
 import {LinearAdvice} from '../thruster/advice.js';
 import {PropellerType} from '../thruster/propeller.js';
+import {TickmarkStyle} from '../watch/tickmark.js';
 import {customElement} from '../../decorator.js';
 
 export enum AzimuthThrusterLabeledSize {
@@ -49,6 +50,8 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
   @property({type: Boolean}) thrustSetpointOverride: boolean = false;
   @property({type: Array, attribute: false}) angleAdvices: AngleAdvice[] = [];
   @property({type: Array, attribute: false}) thrustAdvices: LinearAdvice[] = [];
+  @property({type: String}) tickmarkStyle: TickmarkStyle =
+    TickmarkStyle.regular;
   @property({type: Boolean}) singleDirection: boolean = false;
   @property({type: String}) topPropeller: PropellerType = PropellerType.none;
   @property({type: String}) bottomPropeller: PropellerType = PropellerType.none;
@@ -123,6 +126,7 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
           .angleAdvices=${this.angleAdvices}
           .thrustAdvices=${this.thrustAdvices}
           .singleDirection=${this.singleDirection}
+          .tickmarkStyle=${this.tickmarkStyle}
           .topPropeller=${this.topPropeller}
           .bottomPropeller=${this.bottomPropeller}
         ></obc-azimuth-thruster>

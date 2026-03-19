@@ -18,17 +18,20 @@ export enum TickmarkType {
 }
 
 export enum TickmarkStyle {
-  hinted = 'hinted',
   regular = 'regular',
   enhanced = 'enhanced',
 }
 
-export function tickmarkColor(style: TickmarkStyle): string {
-  if (style === TickmarkStyle.hinted) {
-    return 'var(--instrument-frame-tertiary-color)';
-  } else if (style === TickmarkStyle.regular) {
+export function tickmarkColor(
+  style: TickmarkStyle,
+  tickmarkType?: TickmarkType
+): string {
+  if (style === TickmarkStyle.regular) {
     return 'var(--instrument-tick-mark-tertiary-color)';
   } else {
+    if (tickmarkType === TickmarkType.tertiary) {
+      return 'var(--instrument-tick-mark-secondary-color)';
+    }
     return 'var(--instrument-tick-mark-primary-color)';
   }
 }
@@ -96,7 +99,7 @@ export function tickmark(
     outerRadius = outerRingRadius - gapFromRingEdge;
     innerRadius = outerRadius - tickLength;
   }
-  const colorName = color ?? tickmarkColor(style);
+  const colorName = color ?? tickmarkColor(style, size);
 
   const x1 = Math.sin(rad) * innerRadius;
   const y1 = -Math.cos(rad) * innerRadius;
