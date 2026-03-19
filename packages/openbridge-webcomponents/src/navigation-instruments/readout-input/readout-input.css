@@ -9,6 +9,7 @@
 }
 
 .content-container {
+  color: var(--element-neutral-color);
   height: fit-content;
   display: inline-flex;
   inline-size: fit-content;
@@ -36,8 +37,10 @@
     );
   }
 
-  &.variant-advice.no-hug-content.medium {
-    gap: 11px;
+  &.variant-advice {
+    &.no-hug-content.medium {
+      gap: 11px;
+    }
   }
 
   &.no-hug-content.large {
@@ -52,11 +55,18 @@
 
   &.state-amplified {
     @mixin style style=amplified noClick;
+    color: var(--on-amplified-active-color);
     border-radius: var(--border-radius-br-4);
   }
 
   &.large {
     padding: 0;
+  }
+
+  &.state-enhanced,
+  &.state-input,
+  &.state-input-temporary {
+    color: var(--instrument-enhanced-secondary-color);
   }
 }
 
@@ -65,24 +75,7 @@
   align-items: center;
   justify-content: center;
   flex: none;
-
-  .state-enabled & {
-    color: var(--element-neutral-color);
-  }
-
-  .state-amplified & {
-    color: var(--on-amplified-active-color);
-  }
-
-  .state-enhanced &,
-  .state-input &,
-  .state-input-temporary & {
-    color: var(--instrument-enhanced-secondary-color);
-  }
-
-  .variant-advice.state-active & {
-    color: var(--instrument-enhanced-secondary-color);
-  }
+  color: currentColor;
 }
 
 .input-linear {
@@ -131,30 +124,30 @@
 
 .value-container {
   display: flex;
-  padding: 0 0 var(--global-typography-instrument-value-small-padding-bottom) 0;
   align-items: center;
 }
 
+.value-box {
+  .small & {
+    @mixin font-instrument-value-small-box;
+  }
+
+  .regular & {
+    @mixin font-instrument-value-regular-box;
+  }
+
+  .medium & {
+    @mixin font-instrument-value-m-box;
+  }
+
+  .large & {
+    @mixin font-instrument-value-enhanced-box;
+  }
+}
+
 .input-value {
+  color: currentColor;
   font-variant-numeric: lining-nums tabular-nums;
-
-  .state-enabled & {
-    color: var(--element-neutral-color);
-  }
-
-  .state-amplified & {
-    color: var(--on-amplified-active-color);
-  }
-
-  .state-enhanced &,
-  .state-input &,
-  .state-input-temporary & {
-    color: var(--instrument-enhanced-secondary-color);
-  }
-
-  .variant-advice.state-active & {
-    color: var(--instrument-enhanced-secondary-color);
-  }
 
   &.small {
     @mixin font-instrument-value-small-neutral;
@@ -202,10 +195,6 @@
 
   &.large {
     display: inline-flex;
-    height: var(--global-typography-instrument-value-large-container-height);
-    padding-bottom: var(
-      --global-typography-instrument-value-large-padding-bottom
-    );
     justify-content: flex-end;
     align-items: center;
     gap: var(--instrument-components-readout-new-list-item-large-value-gap);
@@ -236,6 +225,10 @@
     white-space: pre;
   }
 
+  .value {
+    display: block;
+  }
+
   .degree {
     display: none;
     flex: 0 0 var(--global-typography-instrument-value-medium-degree-unit-width);
@@ -245,21 +238,20 @@
     display: none;
   }
 
-  &.string-width {
+  &.string-width,
+  &.with-degree {
     display: grid;
     justify-items: end;
     align-items: center;
+  }
 
+  &.string-width {
     .value-length {
       grid-area: 1 / 1;
     }
   }
 
   &.with-degree {
-    display: grid;
-    justify-items: end;
-    align-items: center;
-
     .degree-template {
       grid-area: 1 / 1;
     }
@@ -279,6 +271,51 @@
     .degree-template {
       justify-self: end;
       visibility: hidden;
+    }
+  }
+}
+
+.variant-advice {
+  &.state-active {
+    color: var(--instrument-enhanced-secondary-color);
+  }
+
+  &.state-active,
+  &.state-amplified {
+    .input-value.small.weight-regular {
+      font-weight: var(
+        --global-typography-instrument-value-small-font-weight-active
+      );
+    }
+  }
+
+  &.state-active:not(.no-hug-content),
+  &.state-amplified:not(.no-hug-content) {
+    .input-value.regular.weight-regular {
+      font-weight: var(
+        --global-typography-instrument-value-regular-font-weight-active
+      );
+    }
+
+    .input-value.medium.weight-regular {
+      font-weight: var(
+        --global-typography-instrument-value-medium-font-weight-active
+      );
+    }
+
+    .input-value.large.weight-regular {
+      font-weight: var(
+        --global-typography-instrument-value-large-font-weight-active
+      );
+    }
+  }
+
+  &.state-active.no-hug-content,
+  &.state-amplified.no-hug-content {
+    .input-value.regular.weight-regular {
+      font-weight: var(
+        --global-typography-instrument-value-small-font-weight-active
+      );
     }
   }
 }

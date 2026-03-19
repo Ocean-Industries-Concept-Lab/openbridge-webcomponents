@@ -236,7 +236,6 @@ const renderVariant = (variant: Variant) => html`
     .size=${variant.size}
     .state=${variant.state}
     .hugContent=${variant.hugContent}
-    .weight=${ReadoutInputWeight.regular}
     .stringWidth=${useStringWidth(variant.size)}
     value="123"
     valueLength="123"

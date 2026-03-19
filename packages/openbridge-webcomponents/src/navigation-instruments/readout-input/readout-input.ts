@@ -211,7 +211,9 @@ export class ObcReadoutInput extends LitElement {
             ${this.renderInputIcon()}
           </div>
         </div>
-        <div class="value-container">${this.renderValueComponent()}</div>
+        <div class="value-container">
+          <div class="value-box">${this.renderValueComponent()}</div>
+        </div>
       </div>
     `;
   }
