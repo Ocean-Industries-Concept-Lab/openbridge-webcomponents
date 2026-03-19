@@ -204,6 +204,12 @@
 
 .progress .icon-holder {
   border-color: transparent !important;
+  background: transparent !important;
+
+  .icon-primary {
+    width: var(--automation-components-button-icon-size);
+    height: var(--automation-components-button-icon-size);
+  }
 }
 
 .state-closed .icon-holder {
