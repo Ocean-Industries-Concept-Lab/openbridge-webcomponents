@@ -36,7 +36,7 @@ export class ObcResistor extends ObcAbstractAutomationButtonSquared {
             ></obi-resistor-2-on>
             <obi-resistor-2-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-resistor-2-on>`;
         } else {
           return html`<obi-resistor-2-off
@@ -45,7 +45,7 @@ export class ObcResistor extends ObcAbstractAutomationButtonSquared {
             ></obi-resistor-2-off>
             <obi-resistor-2-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-resistor-2-off>`;
         }
       case ResistorAlternativeIcon.resistor3:
@@ -56,7 +56,7 @@ export class ObcResistor extends ObcAbstractAutomationButtonSquared {
             ></obi-resistor-3-on>
             <obi-resistor-3-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-resistor-3-on>`;
         } else {
           return html`<obi-resistor-3-off
@@ -65,7 +65,7 @@ export class ObcResistor extends ObcAbstractAutomationButtonSquared {
             ></obi-resistor-3-off>
             <obi-resistor-3-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-resistor-3-off>`;
         }
       case ResistorAlternativeIcon.resistor4:
@@ -76,7 +76,7 @@ export class ObcResistor extends ObcAbstractAutomationButtonSquared {
             ></obi-resistor-4-on>
             <obi-resistor-4-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-resistor-4-on>`;
         } else {
           return html`<obi-resistor-4-off
@@ -85,7 +85,7 @@ export class ObcResistor extends ObcAbstractAutomationButtonSquared {
             ></obi-resistor-4-off>
             <obi-resistor-4-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-resistor-4-off>`;
         }
       case ResistorAlternativeIcon.resistor5:
@@ -96,7 +96,7 @@ export class ObcResistor extends ObcAbstractAutomationButtonSquared {
             ></obi-resistor-5-on>
             <obi-resistor-5-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-resistor-5-on>`;
         } else {
           return html`<obi-resistor-5-off
@@ -105,7 +105,7 @@ export class ObcResistor extends ObcAbstractAutomationButtonSquared {
             ></obi-resistor-5-off>
             <obi-resistor-5-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-resistor-5-off>`;
         }
       default:
@@ -116,7 +116,7 @@ export class ObcResistor extends ObcAbstractAutomationButtonSquared {
             ></obi-resistor-1-on>
             <obi-resistor-1-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-resistor-1-on>`;
         } else {
           return html`<obi-resistor-1-off
@@ -125,7 +125,7 @@ export class ObcResistor extends ObcAbstractAutomationButtonSquared {
             ></obi-resistor-1-off>
             <obi-resistor-1-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-resistor-1-off>`;
         }
     }

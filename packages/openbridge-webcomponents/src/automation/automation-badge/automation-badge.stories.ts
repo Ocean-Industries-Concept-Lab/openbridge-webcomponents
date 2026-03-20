@@ -81,7 +81,7 @@ export const SlottedIcon: Story = {
   render(args) {
     return html`<obc-automation-badge .mode=${args.mode}>
       <obi-command-locked-f></obi-command-locked-f>
-      <obi-command-locked-f slot="icon-siluette"></obi-command-locked-f>
+      <obi-command-locked-f slot="icon-silhouette"></obi-command-locked-f>
     </obc-automation-badge>`;
   },
 };

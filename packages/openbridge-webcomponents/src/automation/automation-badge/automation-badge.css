@@ -14,15 +14,17 @@
     position: relative;
   }
 
-  ::slotted([slot="icon-siluette"]),
+  ::slotted([slot="icon-silhouette"]),
   .icon.siluette {
     stroke-width: 2px;
     stroke: var(--border-silhouette-color);
+    /* TODO: replace the typo 'siluette' with 'silhouette', probably in Figma as well */
   }
 
-  &:not(.flat) ::slotted([slot="icon-siluette"]),
+  &:not(.flat) ::slotted([slot="icon-silhouette"]),
   &:not(.flat) .icon.siluette {
     display: none;
+    /* TODO: replace the typo 'siluette' with 'silhouette', probably in Figma as well */
   }
 
   ::slotted(*),

@@ -9,6 +9,7 @@ import {
   AutomationButtonLabelDirection,
   AutomationButtonPositioning,
 } from './automation-button.js';
+import {CircularProgressMode} from '../../building-blocks/circular-progress/circular-progress.js';
 
 export const argTypesAbstractAutomationButton = {
   readoutPosition: {
@@ -46,6 +47,15 @@ export const argTypesAbstractAutomationButton = {
   },
   badgeAlertOff: {
     control: {type: 'boolean'},
+  },
+  progressMode: {
+    options: Object.values(CircularProgressMode),
+    control: {type: 'select'},
+    if: {arg: 'progress'},
+  },
+  progressValue: {
+    control: {type: 'range', min: 0, max: 100, step: 1},
+    if: {arg: 'progress'},
   },
 };
 

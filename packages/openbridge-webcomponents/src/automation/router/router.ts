@@ -27,7 +27,7 @@ export class ObcRouter extends ObcAbstractAutomationButtonSquared {
             ></obi-router-2-on>
             <obi-router-2-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-router-2-on>`;
         } else {
           return html`<obi-router-2-off
@@ -36,16 +36,19 @@ export class ObcRouter extends ObcAbstractAutomationButtonSquared {
             ></obi-router-2-off>
             <obi-router-2-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-router-2-off>`;
         }
       default:
         if (this.on) {
           return html`<obi-router-on usecsscolor slot="icon"></obi-router-on>
-            <obi-router-on usecsscolor slot="icon-siluette"></obi-router-on>`;
+            <obi-router-on usecsscolor slot="icon-silhouette"></obi-router-on>`;
         } else {
           return html`<obi-router-off usecsscolor slot="icon"></obi-router-off>
-            <obi-router-off usecsscolor slot="icon-siluette"></obi-router-off>`;
+            <obi-router-off
+              usecsscolor
+              slot="icon-silhouette"
+            ></obi-router-off>`;
         }
     }
   }

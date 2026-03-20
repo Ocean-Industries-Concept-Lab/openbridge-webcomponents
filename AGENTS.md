@@ -43,8 +43,8 @@ All paths below are relative to `packages/openbridge-webcomponents/`.
 ## 2. Coding Standards
 
 - **Language:** TypeScript strict mode. English-only identifiers and comments.
-- **Components:** Extend `LitElement`; register with `@customElement('obc-…')`.
-- **Styles:** PostCSS (`.css` files). One global palette in `variables.css`; all other CSS in component folders. Use `@mixin style` for elevation variants. Text: `@mixin font-body`, `@mixin font-label`, etc.
+- **Components:** Extend `LitElement`; register with `@customElement('obc-…')`. Import `customElement` from `src/decorator.js` (local wrapper), **not** from `lit/decorators.js` — enforced by ESLint rule `prefer-local-decorator`.
+- **Styles:** PostCSS (`.css` files). One global palette in `src/palettes/variables.css`; all other CSS in component folders. Use `@mixin style` for elevation variants. Text: `@mixin font-body`, `@mixin font-label`, etc.
 - **No inline comments** unless the code is extremely unusual and impossible to understand without explanation.
 - **Only comment a property** if the name is not self-explanatory.
 - **Conventional Commits** for git messages (`feat:`, `fix:`, `docs:`, etc.).
@@ -155,6 +155,8 @@ Agents that support glob-scoped instructions should apply them automatically.
 | `line-area-charts.instructions.md`         | `chart-line/**`, `line-graph/**`, `area-graph/**`, `gauge-trend/**`                                                                                                            | Line/area charts and composite gauge-trend component      |
 | `watch-radial-instruments.instructions.md` | `watch/**`, `compass/**`, `heading/**`, `rudder/**`, `wind/**`, `roll/**`, `speed-gauge/**`, `gauge-radial/**`, `rot-sector/**`, `azimuth-thruster/**`, `instrument-radial/**` | Circular watch-based instruments and radial gauges        |
 | `setpoint.instructions.md`                 | `svghelpers/setpoint*.ts`, `building-blocks/setpoint/**`                                                                                                                       | Setpoint design layer, mixin/bundle, confirm animation    |
+| `automation-components.instructions.md`    | `automation/**`                                                                                                                                                                | Automation devices, valves, lines, tanks, badges          |
+| `ui-components.instructions.md`            | `components/**`                                                                                                                                                                | General UI components (buttons, cards, inputs, feedback)  |
 
 ---
 
@@ -204,6 +206,14 @@ npm run download:icons
 
 Snapshot baselines: `__vis__/linux/__baselines__/` (CI) and `__vis__/darwin/__baselines__/` (macOS).
 
+### Pre-commit Hooks
+
+Husky runs `lint-staged` on every commit:
+- **TypeScript files** → ESLint (max 4 warnings) + Prettier
+- **CSS, HTML, JSON, MD** → Prettier only
+
+Commits that fail lint or format checks are blocked automatically.
+
 ### Component Creation Checklist
 
 1. Run `npm run new:component` to scaffold files.
@@ -232,7 +242,7 @@ Required modifications after pasting:
 
 ## 7. CSS / PostCSS Reference
 
-- Global palette: `src/variables.css` (bright, day, dusk, night themes via `data-obc-theme` attribute).
+- Global palette: `src/palettes/variables.css` (bright, day, dusk, night themes via `data-obc-theme` attribute).
 - `@mixin style style=<flat|normal|raised|amplified|indent|selected> [visibleWrapperClass=.class]` — elevation styling.
 - Text mixins: `@mixin font-body-active`, `@mixin font-body`, `@mixin font-button`, `@mixin font-label-active`, `@mixin font-label`, `@mixin font-overline`.
 - Icon slots: use `<obi-placeholder></obi-placeholder>` or other `<obi-*>` icons (1000+ available).

@@ -27,6 +27,10 @@ import {
   IdTagOrientation,
 } from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
+import '../../building-blocks/circular-progress/circular-progress.js';
+import {CircularProgressMode} from '../../building-blocks/circular-progress/circular-progress.js';
+
+export {CircularProgressMode};
 
 export enum AutomationButtonVariant {
   regular = 'regular',
@@ -104,6 +108,9 @@ export class ObcAutomationButton extends LitElement {
     true;
   @property({type: Boolean}) showAlertIcon: boolean = false;
   @property({type: Boolean}) progress: boolean = false;
+  @property({type: String}) progressMode: CircularProgressMode =
+    CircularProgressMode.indeterminate;
+  @property({type: Number}) progressValue: number = 0;
   @property({type: String}) direction: AutomationButtonDirection =
     AutomationButtonDirection.forward;
   @property({type: String}) positioning: AutomationButtonPositioning =
@@ -112,8 +119,11 @@ export class ObcAutomationButton extends LitElement {
   @property({type: Boolean}) hasBadgeSpacer: boolean = false;
 
   override render() {
-    const progressSpinner = this.getProgressSpinner();
-    const direction = this.getDirectionIcon();
+    const effectiveVariant = this.progress
+      ? AutomationButtonVariant.regular
+      : this.variant;
+    const progressRing = this.getProgressRing();
+    const direction = this.getDirectionIcon(effectiveVariant);
     const resolvedTag: AutomationButtonReadoutStackTag | null = this.hasIdTag
       ? (this.tag ?? {value: 0})
       : null;
@@ -125,7 +135,7 @@ export class ObcAutomationButton extends LitElement {
         class=${classMap({
           wrapper: true,
           ['positioning-' + this.positioning]: true,
-          ['variant-' + this.variant]: true,
+          ['variant-' + effectiveVariant]: true,
           ['state-' + this.state]: true,
           'label-empty': !hasLabelContent,
           ['label-' + this.readoutPosition]: true,
@@ -141,12 +151,12 @@ export class ObcAutomationButton extends LitElement {
             <div class="icon-primary">
               <slot name="icon"></slot>
             </div>
-            ${this.variant === AutomationButtonVariant.flat
-              ? html` <div class="icon-siluette">
-                  <slot name="icon-siluette"></slot>
+            ${effectiveVariant === AutomationButtonVariant.flat
+              ? html` <div class="icon-silhouette">
+                  <slot name="icon-silhouette"></slot>
                 </div>`
               : nothing}
-            ${progressSpinner}
+            ${progressRing}
           </div>
           <div class="badge-top-right">
             <slot name="badge-top-right"></slot>
@@ -209,30 +219,22 @@ export class ObcAutomationButton extends LitElement {
 
   static override styles = unsafeCSS(compentStyle);
 
-  private getProgressSpinner(): null | HTMLTemplateResult {
+  private getProgressRing(): null | HTMLTemplateResult {
     if (!this.progress) {
       return null;
     }
 
-    return html`<svg
-      viewBox="0 0 100 100"
-      fill="none"
-      class="progress-spinner"
-      xmlns="http://www.w3.org/2000/svg"
-      overflow="visible"
-    >
-      <path
-        d="M2 50 A 48 48 0 0 1 50 2"
-        stroke="var(--instrument-enhanced-secondary-color)"
-        stroke-width="var(--automation-components-button-progress-bar-stroke)"
-        stroke-linecap="round"
-        vector-effect="non-scaling-stroke"
-      />
-    </svg>`;
+    return html`<obc-circular-progress
+      class="progress-ring"
+      .mode=${this.progressMode}
+      .value=${this.progressValue}
+    ></obc-circular-progress>`;
   }
 
-  private getDirectionIcon(): null | HTMLTemplateResult {
-    if (this.variant !== AutomationButtonVariant.double) {
+  private getDirectionIcon(
+    variant: AutomationButtonVariant
+  ): null | HTMLTemplateResult {
+    if (variant !== AutomationButtonVariant.double) {
       return null;
     } else if (this.direction === AutomationButtonDirection.forward) {
       return html`<svg
