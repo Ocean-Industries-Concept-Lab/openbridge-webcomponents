@@ -204,7 +204,7 @@
 
 .progress .icon-holder {
   border-color: transparent !important;
-  background: transparent !important;
+  background: var(--automation-pipe-primary-color) !important;
 
   .icon-primary {
     width: var(--automation-components-button-icon-size);

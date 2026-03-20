@@ -119,8 +119,11 @@ export class ObcAutomationButton extends LitElement {
   @property({type: Boolean}) hasBadgeSpacer: boolean = false;
 
   override render() {
+    const effectiveVariant = this.progress
+      ? AutomationButtonVariant.regular
+      : this.variant;
     const progressRing = this.getProgressRing();
-    const direction = this.getDirectionIcon();
+    const direction = this.getDirectionIcon(effectiveVariant);
     const resolvedTag: AutomationButtonReadoutStackTag | null = this.hasIdTag
       ? (this.tag ?? {value: 0})
       : null;
@@ -132,7 +135,7 @@ export class ObcAutomationButton extends LitElement {
         class=${classMap({
           wrapper: true,
           ['positioning-' + this.positioning]: true,
-          ['variant-' + this.variant]: true,
+          ['variant-' + effectiveVariant]: true,
           ['state-' + this.state]: true,
           'label-empty': !hasLabelContent,
           ['label-' + this.readoutPosition]: true,
@@ -148,7 +151,7 @@ export class ObcAutomationButton extends LitElement {
             <div class="icon-primary">
               <slot name="icon"></slot>
             </div>
-            ${this.variant === AutomationButtonVariant.flat
+            ${effectiveVariant === AutomationButtonVariant.flat
               ? html` <div class="icon-silhouette">
                   <slot name="icon-silhouette"></slot>
                 </div>`
@@ -228,8 +231,10 @@ export class ObcAutomationButton extends LitElement {
     ></obc-circular-progress>`;
   }
 
-  private getDirectionIcon(): null | HTMLTemplateResult {
-    if (this.variant !== AutomationButtonVariant.double) {
+  private getDirectionIcon(
+    variant: AutomationButtonVariant
+  ): null | HTMLTemplateResult {
+    if (variant !== AutomationButtonVariant.double) {
       return null;
     } else if (this.direction === AutomationButtonDirection.forward) {
       return html`<svg
