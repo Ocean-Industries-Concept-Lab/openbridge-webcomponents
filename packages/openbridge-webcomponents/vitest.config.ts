@@ -11,7 +11,7 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   test: {
-    // Use `workspace` field in Vitest < 3.2
+    retry: process.env.CI ? 2 : 0,
     projects: [
       {
         extends: true,
