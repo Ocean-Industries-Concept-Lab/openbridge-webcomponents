@@ -28,6 +28,7 @@ export class ObcAutomationBadge extends LitElement {
 
   @property({type: String}) type?: ObcAutomationBadgeType = undefined;
 
+  // TODO: replace the typo 'siluette' with 'silhouette', probably in Figma as well
   private getIcon() {
     if (this.type === ObcAutomationBadgeType.Auto) {
       return html`<obi-auto class="icon siluette"></obi-auto
@@ -46,7 +47,7 @@ export class ObcAutomationBadge extends LitElement {
         ></obi-alert-off-filled
         ><obi-alert-off-filled class="icon"></obi-alert-off-filled>`;
     } else {
-      return html`<slot name="icon-siluette"></slot><slot></slot>`;
+      return html`<slot name="icon-silhouette"></slot><slot></slot>`;
     }
   }
 

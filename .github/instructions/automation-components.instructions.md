@@ -21,13 +21,13 @@ All button-based components share `ObcAbstractAutomationButton` as root, which p
 
 ## Icon Rendering Pattern
 
-Automation device icons use a **dual-slot** approach — both `icon` (primary color) and `icon-siluette` (background shadow) must be rendered:
+Automation device icons use a **dual-slot** approach — both `icon` (primary color) and `icon-silhouette` (background shadow) must be rendered:
 
 ```ts
 override get icon() {
   return html`
     <obi-pump-on usecsscolor slot="icon"></obi-pump-on>
-    <obi-pump-on usecsscolor slot="icon-siluette"></obi-pump-on>
+    <obi-pump-on usecsscolor slot="icon-silhouette"></obi-pump-on>
   `;
 }
 ```

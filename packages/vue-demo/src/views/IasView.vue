@@ -50,7 +50,7 @@
         <ObiPumpOnHorisontal v-if="motorOn" use-css-color></ObiPumpOnHorisontal>
         <ObiPumpOffHorisontal v-else use-css-color></ObiPumpOffHorisontal>
       </template>
-      <template #icon-siluette>
+      <template #icon-silhouette>
         <ObiPumpOnHorisontal v-if="motorOn" use-css-color></ObiPumpOnHorisontal>
         <ObiPumpOffHorisontal v-else use-css-color></ObiPumpOffHorisontal>
       </template>
@@ -118,7 +118,7 @@
           :value2="valve2"
         ></obc-valve-analog-three-way-icon>
       </template>
-      <template #icon-siluette>
+      <template #icon-silhouette>
         <obc-valve-analog-three-way-icon
           :value="valve1"
           :value2="valve2"

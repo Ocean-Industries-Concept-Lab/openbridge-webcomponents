@@ -149,8 +149,8 @@ export class ObcAutomationButton extends LitElement {
               <slot name="icon"></slot>
             </div>
             ${this.variant === AutomationButtonVariant.flat
-              ? html` <div class="icon-siluette">
-                  <slot name="icon-siluette"></slot>
+              ? html` <div class="icon-silhouette">
+                  <slot name="icon-silhouette"></slot>
                 </div>`
               : nothing}
             ${progressRing}

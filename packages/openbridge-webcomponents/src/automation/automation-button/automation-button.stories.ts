@@ -126,7 +126,7 @@ export const ValveOpen: Story = {
       ></obi-twoway-digital-open>
       <obi-twoway-digital-open
         usecsscolor
-        slot="icon-siluette"
+        slot="icon-silhouette"
         style="display: block; transform: rotate(90deg); line-height: 0;"
       ></obi-twoway-digital-open>
     </obc-automation-button>`;
@@ -223,19 +223,19 @@ export const ValveBadges: Story = {
       ></obi-twoway-digital-open>
       <obc-automation-badge slot="badge-top-right">
         <obi-alert-off-google></obi-alert-off-google>
-        <obi-alert-off-google slot="icon-siluette"></obi-alert-off-google>
+        <obi-alert-off-google slot="icon-silhouette"></obi-alert-off-google>
       </obc-automation-badge>
       <obc-automation-badge slot="badge-top-left">
         <obi-auto></obi-auto>
-        <obi-auto slot="icon-siluette"></obi-auto>
+        <obi-auto slot="icon-silhouette"></obi-auto>
       </obc-automation-badge>
       <obc-automation-badge slot="badge-bottom-left">
         <obi-duty></obi-duty>
-        <obi-duty slot="icon-siluette"></obi-duty>
+        <obi-duty slot="icon-silhouette"></obi-duty>
       </obc-automation-badge>
       <obc-automation-badge slot="badge-bottom-right">
         <obi-command-locked-f></obi-command-locked-f>
-        <obi-command-locked-f slot="icon-siluette"></obi-command-locked-f>
+        <obi-command-locked-f slot="icon-silhouette"></obi-command-locked-f>
       </obc-automation-badge>
     </obc-automation-button>`;
   },
@@ -423,7 +423,7 @@ export const ValveNoLabels: Story = {
       ></obi-twoway-digital-open>
       <obi-twoway-digital-open
         usecsscolor
-        slot="icon-siluette"
+        slot="icon-silhouette"
         style="display: block; transform: rotate(90deg); line-height: 0;"
       ></obi-twoway-digital-open>
     </obc-automation-button>`;
