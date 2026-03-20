@@ -1,25 +1,61 @@
 # Openbridge Web Components
 
-[![discord, join chat](https://img.shields.io/badge/discord-join_chat-brightgreen.svg?logo=discord&labelColor=white&style=flat&color=%235865F2)](https://discord.gg/wSCPxPH3RJ)
+This library implementes the OpenBridge design system in web components.
 
-![OpenBridge](https://images.squarespace-cdn.com/content/v1/6849ac014efe446e56d1407f/56264565-d1b4-4fe6-bbf5-d6efa06aec9c/logo-black.png "OpenBridge")
+[![Slack, join chat](https://img.shields.io/badge/Slack-4A154B?style=flat&logo=slack&logoColor=white)](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ)
 
-Welcome to the Openbridge Web Components! This readme file provides an overview of the project and its components.
+## 🏗️ We are in prerelease 🏗️
 
-## 🎉 We are preparing to release OpenBridge 6.0 in March 2026
+We are gearing up for our first stable release in Q2 2026. It has been a productive first year, with more than 200 components already implemented. Our primary focus now is to stabilize the API and ensure a robust foundation for the 1.0.0 release.
 
-We are currently developing the code in a joint industry project, with funding from industry partners.
-The code is only available for the partners until the release in March 2026. It is possible to get access to the code in active development by joining the project.
+## Join the joint industry project
 
-[👉 Read more about the project.](https://docs.google.com/document/d/18ytBiUrfQrMYOPPz-hd7pgPjnG8ZBG-zr9xYl5Y2TTs/edit?tab=t.0)
+We are committed to the long-term development of this library, but sustainable growth requires funding. We invite industry partners to join our Joint Industry Project. By contributing, you help secure the future of the project and gain influence over the roadmap.
 
-[👉 Register your interest in the form](https://docs.google.com/forms/d/e/1FAIpQLSd2H7bbL_duBTMhHzjw7W52H9XXAiJ9A3sL7PsrfCTW_bNUhw/viewform) (Note: Registering is not a commitment but will enroll you in our process).
+For more information, please contact us on [Slack](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ).
 
-> **⚠️ Caution:** This repository is currently in early development and may not be stable. Please use with caution.
+Her er et utkast til en renskrevet versjon. Jeg har korrigert skrivefeil, strammet opp språket for å gjøre det mer profesjonelt, og strukturert lisensinformasjonen slik at den er lettere å forstå.
 
-## 💬 Discord server
+---
 
-[Join our discord server](https://discord.gg/wSCPxPH3RJ) to get the latest updates and to ask questions.
+## 🏗️ Prerelease Status
+
+We are gearing up for our first stable release in **Q2 2026**. It has been an incredibly productive first year, with more than 200 components already implemented. Our primary focus now is to stabilize the API and ensure a robust foundation for the 1.0.0 release.
+
+## Join the Joint Industry Project (JIP)
+
+We are committed to the long-term development of this library, but sustainable growth requires funding. We invite industry partners to join our Joint Industry Project. By contributing, you help secure the future of the project and gain influence over the roadmap.
+
+For more information, please contact us on [Slack](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ).
+
+---
+
+## New Licensing Model
+
+We will **always remain open source**, but we are evolving our model to ensure continued development. Shortly after the 1.0.0 release in Q2 2026, we will transition to a new licensing system.
+
+### Why the change?
+
+Previously, we maintained two separate codebases: one closed (for the first 12 months) and one public. Maintaining parallel codebases is resource-intensive. Our new model allows us to work in the open while still providing an incentive for project funding.
+
+### How it works:
+
+Under the new model, each release follows a "delayed" permissive license cycle:
+
+1.  **Initial Release:** Each new version is licensed under **AGPL** for the first 6 months.
+2.  **Transition:** After 6 months, the license for that specific version automatically switches to **Apache 2.0**.
+3.  **Supporter Access:** Project donors and sponsors receive **immediate access** to the code under the **Apache 2.0** license.
+
+> **Example:**
+> If version 1.2.2 is released on **August 14, 2026**:
+>
+> - **open-source projects and internal users** can use it immediately under AGPL.
+> - **donors** can use it immediately under **Apache 2.0**.
+> - From **February 14, 2027**, version 1.2.2 becomes available to everyone under the **Apache 2.0** license (e.g., for commercial use without AGPL restrictions).
+
+## 💬 Slack
+
+[Join our Slack](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ) to get the latest updates and to ask questions.
 
 ## 📽️ Introduction video
 
