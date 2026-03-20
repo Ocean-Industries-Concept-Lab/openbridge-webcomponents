@@ -221,16 +221,32 @@
 
 obc-circular-progress {
   position: absolute;
-  width: 42px;
-  height: 42px;
+  width: calc(
+    var(--ui-components-icon-button-visual-target-size) +
+      var(--ui-components-progressbars-progress-button--circular-bar-weight) *
+      2 + 2px
+  );
+  height: calc(
+    var(--ui-components-icon-button-visual-target-size) +
+      var(--ui-components-progressbars-progress-button--circular-bar-weight) *
+      2 + 2px
+  );
   pointer-events: none;
   z-index: 1;
 }
 
 .circular-alert-svg {
   position: absolute;
-  width: 42px;
-  height: 42px;
+  width: calc(
+    var(--ui-components-icon-button-visual-target-size) +
+      var(--ui-components-progressbars-progress-button--circular-bar-weight) *
+      2 + 2px
+  );
+  height: calc(
+    var(--ui-components-icon-button-visual-target-size) +
+      var(--ui-components-progressbars-progress-button--circular-bar-weight) *
+      2 + 2px
+  );
   pointer-events: none;
   z-index: 1;
 }
