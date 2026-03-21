@@ -1,5 +1,12 @@
-import {LitElement, html, nothing, unsafeCSS, TemplateResult} from 'lit';
-import {property} from 'lit/decorators.js';
+import {
+  LitElement,
+  html,
+  nothing,
+  unsafeCSS,
+  TemplateResult,
+  PropertyValues,
+} from 'lit';
+import {property, state, query} from 'lit/decorators.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import componentStyle from './number-input-field.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
@@ -42,6 +49,15 @@ export class ObcNumberInputField extends LitElement {
   @property({type: Boolean, reflect: true}) readonly = false;
   @property({type: Boolean, reflect: true}) error = false;
   @property({type: String}) errorText = '';
+  /** If true, the input field will not update its value on focus */
+  @property({type: Boolean}) rejectUpdatesOnFocus = false;
+  /** If true, the value will only be initially set, and not updated on change */
+  @property({type: Boolean}) rejectUpdates = false;
+
+  /** If true, the input field will not update its value if the value is the same as the previous value
+   * This is useful to avoid React re-rendering to reset the value.
+   */
+  @property({type: Boolean}) rejectDuplicateUpdates = false;
 
   /** Name attribute for form integration */
   @property({type: String}) name = '';
@@ -71,8 +87,52 @@ export class ObcNumberInputField extends LitElement {
   /** Internal property for squared corners, used when input is used in stepper-box */
   @property({type: Boolean}) squared = false;
 
+  @state() private hasFocus = false;
+  @state() private previousValue = '';
+  @state() private previousInputElementValue = '';
+
+  @query('.value-input') private inputElement?: HTMLInputElement;
+
   private onInput(e: Event) {
     this.value = (e.target as HTMLInputElement).value;
+    this.previousInputElementValue = this.value;
+  }
+
+  private onFocus() {
+    this.hasFocus = true;
+  }
+
+  private onBlur() {
+    this.hasFocus = false;
+  }
+
+  private get shouldUpdateValue(): boolean {
+    if (this.rejectUpdates) return false;
+    if (this.rejectUpdatesOnFocus && this.hasFocus) return false;
+    if (this.rejectDuplicateUpdates && this.value === this.previousValue) {
+      return false;
+    }
+    return true;
+  }
+
+  override willUpdate(changedProperties: PropertyValues) {
+    if (
+      changedProperties.has('value') &&
+      !this.shouldUpdateValue &&
+      this.inputElement
+    ) {
+      this.value = this.inputElement.value;
+    }
+  }
+
+  override updated() {
+    if (
+      this.rejectDuplicateUpdates &&
+      this.value !== this.previousValue &&
+      (this.previousInputElementValue !== this.value || !this.hasFocus)
+    ) {
+      this.previousValue = this.value;
+    }
   }
 
   private renderFooterText(
@@ -103,6 +163,12 @@ export class ObcNumberInputField extends LitElement {
     const unitOutside =
       this.unit &&
       this.textAlign === ObcNumberInputFieldTextAlign.RightUnitOutside;
+
+    let value = this.value;
+
+    if (!this.shouldUpdateValue && this.inputElement) {
+      value = this.inputElement.value;
+    }
 
     return html`
       <label
@@ -148,7 +214,9 @@ export class ObcNumberInputField extends LitElement {
                 type="text"
                 inputmode="decimal"
                 class="value-input"
-                .value=${this.value}
+                .value=${value}
+                @focus=${this.onFocus}
+                @blur=${this.onBlur}
                 .placeholder=${this.placeholder}
                 name=${ifDefined(this.name || undefined)}
                 ?disabled=${this.disabled}
