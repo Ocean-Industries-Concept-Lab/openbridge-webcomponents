@@ -1,36 +1,20 @@
 # Openbridge Web Components
 
-This library implementes the OpenBridge design system in web components.
+This library implements the OpenBridge design system in web components.
 
 [![Slack, join chat](https://img.shields.io/badge/Slack-4A154B?style=flat&logo=slack&logoColor=white)](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ)
-
-## 🏗️ We are in prerelease 🏗️
-
-We are gearing up for our first stable release in Q2 2026. It has been a productive first year, with more than 200 components already implemented. Our primary focus now is to stabilize the API and ensure a robust foundation for the 1.0.0 release.
-
-## Join the joint industry project
-
-We are committed to the long-term development of this library, but sustainable growth requires funding. We invite industry partners to join our Joint Industry Project. By contributing, you help secure the future of the project and gain influence over the roadmap.
-
-For more information, please contact us on [Slack](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ).
-
-Her er et utkast til en renskrevet versjon. Jeg har korrigert skrivefeil, strammet opp språket for å gjøre det mer profesjonelt, og strukturert lisensinformasjonen slik at den er lettere å forstå.
-
----
 
 ## 🏗️ Prerelease Status
 
 We are gearing up for our first stable release in **Q2 2026**. It has been an incredibly productive first year, with more than 200 components already implemented. Our primary focus now is to stabilize the API and ensure a robust foundation for the 1.0.0 release.
 
-## Join the Joint Industry Project (JIP)
+## 🤝 Join the Joint Industry Project (JIP)
 
 We are committed to the long-term development of this library, but sustainable growth requires funding. We invite industry partners to join our Joint Industry Project. By contributing, you help secure the future of the project and gain influence over the roadmap.
 
 For more information, please contact us on [Slack](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ).
 
----
-
-## New Licensing Model
+## 📜 New Licensing Model
 
 We will **always remain open source**, but we are evolving our model to ensure continued development. Shortly after the 1.0.0 release in Q2 2026, we will transition to a new licensing system.
 
