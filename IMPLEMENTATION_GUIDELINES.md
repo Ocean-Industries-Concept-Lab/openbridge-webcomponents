@@ -65,7 +65,7 @@ The CSS files are post-processed by [PostCSS](https://postcss.org/).
 There is one global CSS file for the palettes, `variables.css`, which contains the color palettes for the components.
 All other CSS code should be kept in the `*.css` files in the component folders.
 
-Mixins are defined in `src/mixins/` and auto-loaded via `postcss-mixins` (configured in `postcss.config.mjs`). No `@import` is needed to use them.
+Most mixins are defined in `src/mixins/` and auto-loaded via `postcss-mixins` (configured in `postcss.config.mjs`); the `style` mixin used for elevation variants is defined inline in `postcss.config.mjs`. All mixins are available globally in component CSS — no `@import` is needed.
 
 ---
 
@@ -75,7 +75,7 @@ Mixins are defined in `src/mixins/` and auto-loaded via `postcss-mixins` (config
 
 Every interactive component uses a **two-layer DOM structure**: an invisible outer **touch target** and a visible inner **visual target**.
 
-```
+```text
 ┌─────────────────────────────────┐  ← outer wrapper (touch target, e.g. 48px)
 │                                 │     detects :hover, :active, :focus-visible
 │   ┌─────────────────────────┐   │
