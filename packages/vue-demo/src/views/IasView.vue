@@ -147,10 +147,7 @@
 <script lang="ts" setup>
 import ObcAutomationTank from '@oicl/openbridge-webcomponents-vue/automation/automation-tank/ObcAutomationTank.vue'
 import { TankTrend } from '@oicl/openbridge-webcomponents/dist/automation/automation-tank/automation-tank'
-import {
-  LineMedium,
-  LineType
-} from '@oicl/openbridge-webcomponents/dist/automation'
+import { LineMedium, LineType } from '@oicl/openbridge-webcomponents/dist/automation'
 import { computed, onMounted, ref } from 'vue'
 import ObcVerticalLine from '@oicl/openbridge-webcomponents-vue/automation/vertical-line/ObcVerticalLine.vue'
 import ObcHorizontalLine from '@oicl/openbridge-webcomponents-vue/automation/horizontal-line/ObcHorizontalLine.vue'
