@@ -38,6 +38,13 @@ jobs:
         run: |
           npm publish  --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
 
+      - name: Publish to NPM
+        working-directory: ./packages/openbridge-webcomponents
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npm publish --registry=https://registry.npmjs.org --access public
+
       - name: Build and generate wrappers
         working-directory: ./packages/openbridge-webcomponents
         run: |
@@ -62,6 +69,7 @@ jobs:
           rm -rf node_modules/@oicl || true
           rm -rf node_modules/@ocean-industries-concept-lab || true
           npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
+
       - name: Publish angular wrapper to GitHub Packages
         working-directory: ./packages/openbridge-webcomponents-ng
         env:

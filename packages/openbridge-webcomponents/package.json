@@ -1,6 +1,6 @@
 {
-  "name": "@ocean-industries-concept-lab/openbridge-webcomponents",
-  "version": "0.0.16",
+  "name": "@oicl/openbridge-webcomponents",
+  "version": "0.1.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -116,6 +116,14 @@
     "vitest-plugin-vis": "file:vitest-plugin-vis-4.1.0.tgz"
   },
   "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "files": [
+    "./dist",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "customElements": "custom-elements.json",
   "overrides": {
     "storybook": "$storybook"
