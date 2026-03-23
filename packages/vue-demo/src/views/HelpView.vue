@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import SettingsToolbar from '@/components/SettingsToolbar.vue'
-import ObcElevatedCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/elevated-card/ObcElevatedCard.vue'
-import { ObcElevatedCardSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/elevated-card/elevated-card'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-chevron-right-google'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-placeholder'
+import ObcElevatedCard from '@oicl/openbridge-webcomponents-vue/components/elevated-card/ObcElevatedCard.vue'
+import { ObcElevatedCardSize } from '@oicl/openbridge-webcomponents/dist/components/elevated-card/elevated-card'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-chevron-right-google'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-placeholder'
 </script>
 
 <template>

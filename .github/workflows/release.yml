@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: "22"
           registry-url: "https://npm.pkg.github.com/"
-          scope: Ocean-Industries-Concept-Lab
+          scope: oicl
 
       - name: Install dependencies
         run: npm install
@@ -56,7 +56,7 @@ jobs:
         run: |
           npm run build
           rm -rf node_modules/@oicl || true
-          rm -rf node_modules/@ocean-industries-concept-lab || true
+          rm -rf node_modules/@oicl || true
           npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
 
       - name: Publish vue wrapper to GitHub Packages
@@ -66,7 +66,7 @@ jobs:
         run: |
           npm run build
           rm -rf node_modules/@oicl || true
-          rm -rf node_modules/@ocean-industries-concept-lab || true
+          rm -rf node_modules/@oicl || true
           npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
 
       - name: Publish angular wrapper to GitHub Packages
@@ -75,7 +75,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           rm -rf node_modules/@oicl || true
-          rm -rf node_modules/@ocean-industries-concept-lab || true
+          rm -rf node_modules/@oicl || true
           npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
 
       - name: Publish svelte wrapper to GitHub Packages
@@ -87,5 +87,5 @@ jobs:
           cd packages/openbridge-webcomponents-svelte
           npm run build
           rm -rf node_modules/@oicl || true
-          rm -rf node_modules/@ocean-industries-concept-lab || true
+          rm -rf node_modules/@oicl || true
           npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted

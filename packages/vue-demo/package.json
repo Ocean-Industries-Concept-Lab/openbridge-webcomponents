@@ -14,8 +14,8 @@
     "format:check": "prettier --check src/"
   },
   "dependencies": {
-    "@ocean-industries-concept-lab/openbridge-webcomponents": "*",
-    "@ocean-industries-concept-lab/openbridge-webcomponents-vue": "*",
+    "@oicl/openbridge-webcomponents": "*",
+    "@oicl/openbridge-webcomponents-vue": "*",
     "@types/leaflet": "^1.9.21",
     "@vueuse/core": "^14.2.1",
     "@vueuse/firebase": "^14.2.1",

@@ -2,14 +2,14 @@
 import { useAlertStore } from '@/stores/alert'
 import AlertMenu, {
   type ObcAckAllVisibleClickEvent
-} from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-menu/ObcAlertMenu.vue'
-import AlertMenuItem from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-menu-item/ObcAlertMenuItem.vue'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-icon/alert-icon'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-caution-color-iec.js'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-alarm-noack-iec.js'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-warning-noack-iec.js'
+} from '@oicl/openbridge-webcomponents-vue/components/alert-menu/ObcAlertMenu.vue'
+import AlertMenuItem from '@oicl/openbridge-webcomponents-vue/components/alert-menu-item/ObcAlertMenuItem.vue'
+import '@oicl/openbridge-webcomponents/dist/components/alert-icon/alert-icon'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-caution-color-iec.js'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-alarm-noack-iec.js'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-warning-noack-iec.js'
 import { useRouter, useRoute } from 'vue-router'
-import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item.js'
+import { ObcAlertMenuItemStatus } from '@oicl/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item.js'
 import AlertIcon from './AlertIcon.vue'
 import type { App } from '@/router'
 

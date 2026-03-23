@@ -110,7 +110,7 @@ Go to [GitHub settings](https://github.com/settings/tokens/new) to make a classi
 Login into GitHub package repo:
 
 ```bash
-npm login --registry https://npm.pkg.github.com/ --scope=@ocean-industries-concept-lab
+npm login --registry https://npm.pkg.github.com/ --scope=@oicl
 ```
 
 Use our GitHub username as username and paste in the generated token as password.
@@ -118,20 +118,20 @@ Use our GitHub username as username and paste in the generated token as password
 You can now install the package:
 
 ```bash
-npm install @ocean-industries-concept-lab/openbridge-webcomponents
+npm install @oicl/openbridge-webcomponents
 ```
 
 To use the components in your Vue.js project, you can install the package from npm:
 
 ```bash
-npm install @ocean-industries-concept-lab/openbridge-webcomponents-vue
+npm install @oicl/openbridge-webcomponents-vue
 ```
 
 ### Setup
 
 1. Add the css file to your project:
    ```javascript
-   import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/openbridge.css";
+   import "@oicl/openbridge-webcomponents/dist/openbridge.css";
    ```
 2. Select the palette by setting the `data-obc-theme` attribute on the `html` tag:
    ```html
@@ -158,13 +158,13 @@ npm install @ocean-industries-concept-lab/openbridge-webcomponents-vue
 5. Import the desired components in your project, for instance:
 
    ```javascript
-   import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/top-bar/top-bar.js";
+   import "@oicl/openbridge-webcomponents/dist/components/top-bar/top-bar.js";
    ```
 
    or with vue wrapper:
 
    ```javascript
-   import ObcTopBar from "@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/top-bar/ObcTopBar.vue";
+   import ObcTopBar from "@oicl/openbridge-webcomponents-vue/components/top-bar/ObcTopBar.vue";
    ```
 
 6. Use the components in your project:

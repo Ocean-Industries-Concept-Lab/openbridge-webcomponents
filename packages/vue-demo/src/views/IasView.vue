@@ -145,26 +145,26 @@
 </template>
 
 <script lang="ts" setup>
-import ObcAutomationTank from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/automation/automation-tank/ObcAutomationTank.vue'
-import { TankTrend } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/automation-tank/automation-tank'
+import ObcAutomationTank from '@oicl/openbridge-webcomponents-vue/automation/automation-tank/ObcAutomationTank.vue'
+import { TankTrend } from '@oicl/openbridge-webcomponents/dist/automation/automation-tank/automation-tank'
 import {
   LineMedium,
   LineType
-} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation'
+} from '@oicl/openbridge-webcomponents/dist/automation'
 import { computed, onMounted, ref } from 'vue'
-import ObcVerticalLine from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/automation/vertical-line/ObcVerticalLine.vue'
-import ObcHorizontalLine from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/automation/horizontal-line/ObcHorizontalLine.vue'
-import ObcCornerLine from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/automation/corner-line/ObcCornerLine.vue'
-import { CornerLineDirection } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/corner-line/corner-line'
-import ObcAutomationButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/automation/automation-button/ObcAutomationButton.vue'
+import ObcVerticalLine from '@oicl/openbridge-webcomponents-vue/automation/vertical-line/ObcVerticalLine.vue'
+import ObcHorizontalLine from '@oicl/openbridge-webcomponents-vue/automation/horizontal-line/ObcHorizontalLine.vue'
+import ObcCornerLine from '@oicl/openbridge-webcomponents-vue/automation/corner-line/ObcCornerLine.vue'
+import { CornerLineDirection } from '@oicl/openbridge-webcomponents/dist/automation/corner-line/corner-line'
+import ObcAutomationButton from '@oicl/openbridge-webcomponents-vue/automation/automation-button/ObcAutomationButton.vue'
 import {
   AutomationButtonDirection,
   AutomationButtonState
-} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/automation-button/automation-button'
+} from '@oicl/openbridge-webcomponents/dist/automation/automation-button/automation-button'
 
-import ObcValveAnalogThreeWayIcon from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/automation/valve-analog-three-way-icon/ObcValveAnalogThreeWayIcon.vue'
-import ObiPumpOnHorisontal from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/icons/ObiPumpOnHorizontal.vue'
-import ObiPumpOffHorisontal from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/icons/ObiPumpOffHorizontal.vue'
+import ObcValveAnalogThreeWayIcon from '@oicl/openbridge-webcomponents-vue/automation/valve-analog-three-way-icon/ObcValveAnalogThreeWayIcon.vue'
+import ObiPumpOnHorisontal from '@oicl/openbridge-webcomponents-vue/icons/ObiPumpOnHorizontal.vue'
+import ObiPumpOffHorisontal from '@oicl/openbridge-webcomponents-vue/icons/ObiPumpOffHorizontal.vue'
 
 import { useDemoConfigStore } from '@/stores/demoConfig'
 

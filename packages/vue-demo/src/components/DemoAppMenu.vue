@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import AppMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/app-menu/ObcAppMenu.vue'
+import AppMenu from '@oicl/openbridge-webcomponents-vue/components/app-menu/ObcAppMenu.vue'
 import { icon2element } from '../business/icon2element'
 import { apps, type App } from '@/router'
 import { useRoute, useRouter } from 'vue-router'

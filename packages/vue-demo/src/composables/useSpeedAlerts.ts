@@ -1,5 +1,5 @@
 import { ref, watch, type ComputedRef } from 'vue'
-import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item'
+import { ObcAlertMenuItemStatus } from '@oicl/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item'
 import type { Alert } from '../business/model'
 import { useAlertStore } from '../stores/alert'
 import { useSim } from './useSim'
