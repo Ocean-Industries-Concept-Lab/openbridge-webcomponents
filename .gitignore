@@ -23,6 +23,8 @@ packages/openbridge-webcomponents-svelte
 
 .claude/
 **/.claude/
+.junie/
+**/.junie/
 **/settings.local.json
 packages/openbridge-webcomponents/__vis__/darwin/
 .idea/
