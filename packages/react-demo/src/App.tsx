@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/openbridge.css";
+import "@oicl/openbridge-webcomponents/dist/openbridge.css";
 import { ObcTopBar } from "../../openbridge-webcomponents-react/components/top-bar/top-bar";
 import { ObcBrillianceMenu } from "../../openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
 import "./App.css";

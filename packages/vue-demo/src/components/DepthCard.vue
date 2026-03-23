@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import ObcCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/card/ObcCard.vue'
+import ObcCard from '@oicl/openbridge-webcomponents-vue/components/card/ObcCard.vue'
 import DepthGraph from '@/components/DepthGraph.vue'
-import ObcToggleButtonGroup from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/toggle-button-group/ObcToggleButtonGroup.vue'
-import ObcToggleButtonOption from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/toggle-button-option/ObcToggleButtonOption.vue'
-import { ObcToggleButtonOptionType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/toggle-button-option/toggle-button-option.js'
+import ObcToggleButtonGroup from '@oicl/openbridge-webcomponents-vue/components/toggle-button-group/ObcToggleButtonGroup.vue'
+import ObcToggleButtonOption from '@oicl/openbridge-webcomponents-vue/components/toggle-button-option/ObcToggleButtonOption.vue'
+import { ObcToggleButtonOptionType } from '@oicl/openbridge-webcomponents/dist/components/toggle-button-option/toggle-button-option.js'
 import { ref } from 'vue'
-import ObcStepperBox from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/stepper-box/ObcStepperBox.vue'
-import { ObcStepperBoxType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/stepper-box/stepper-box.js'
+import ObcStepperBox from '@oicl/openbridge-webcomponents-vue/components/stepper-box/ObcStepperBox.vue'
+import { ObcStepperBoxType } from '@oicl/openbridge-webcomponents/dist/components/stepper-box/stepper-box.js'
 
 const selectedType = ref('echogram')
 const selector = ref<InstanceType<typeof ObcToggleButtonGroup> | null>(null)

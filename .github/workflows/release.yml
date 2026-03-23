@@ -9,18 +9,18 @@ jobs:
   release:
     runs-on: ubuntu-latest
     permissions:
+      id-token: write
       contents: read
       packages: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: "22"
-          registry-url: "https://npm.pkg.github.com/"
-          scope: Ocean-Industries-Concept-Lab
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org/"
 
       - name: Install dependencies
         run: npm install
@@ -31,54 +31,45 @@ jobs:
           TIMESTAMP=$(date +"%Y%m%d%H%M%S")
           jq --arg TIMESTAMP "$TIMESTAMP" '.version = "0.0." + $TIMESTAMP' package.json > package.tmp.json && mv package.tmp.json package.json
 
-      - name: Publish to GitHub Packages
+      - name: Publish core to NPM
         working-directory: ./packages/openbridge-webcomponents
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          npm publish  --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
+          npm publish --access public
 
       - name: Build and generate wrappers
         working-directory: ./packages/openbridge-webcomponents
         run: |
           npm run build:full
 
-      - name: Publish react wrapper to GitHub Packages
+      - name: Publish react wrapper to NPM
         working-directory: ./packages/openbridge-webcomponents-react
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npm run build
           rm -rf node_modules/@oicl || true
-          rm -rf node_modules/@ocean-industries-concept-lab || true
-          npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
+          rm -rf node_modules/@oicl || true
+          npm publish --access public
 
-      - name: Publish vue wrapper to GitHub Packages
+      - name: Publish vue wrapper to NPM
         working-directory: ./packages/openbridge-webcomponents-vue
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npm run build
           rm -rf node_modules/@oicl || true
-          rm -rf node_modules/@ocean-industries-concept-lab || true
-          npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
-      - name: Publish angular wrapper to GitHub Packages
+          rm -rf node_modules/@oicl || true
+          npm publish --access public
+
+      - name: Publish angular wrapper to NPM
         working-directory: ./packages/openbridge-webcomponents-ng
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           rm -rf node_modules/@oicl || true
-          rm -rf node_modules/@ocean-industries-concept-lab || true
-          npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
+          rm -rf node_modules/@oicl || true
+          npm publish --access public
 
-      - name: Publish svelte wrapper to GitHub Packages
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish svelte wrapper to NPM
         run: |
           rm package-lock.json
           npm install
           cd packages/openbridge-webcomponents-svelte
           npm run build
           rm -rf node_modules/@oicl || true
-          rm -rf node_modules/@ocean-industries-concept-lab || true
-          npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
+          rm -rf node_modules/@oicl || true
+          npm publish --access public

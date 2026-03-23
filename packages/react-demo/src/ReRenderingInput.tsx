@@ -3,7 +3,7 @@
  * It is used to test the re-rendering of the input component when the value changes.
  */
 
-import { ObcTextInputField } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/text-input-field/text-input-field";
+import { ObcTextInputField } from "@oicl/openbridge-webcomponents-react/components/text-input-field/text-input-field";
 import { useEffect, useState } from "react";
 
 export function ReRenderingInput() {
