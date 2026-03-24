@@ -102,29 +102,26 @@ The components for this project are implemented in the `packages/openbridge-webc
 
 ## 💾 Installation
 
-To use the components in your project, you can install the package from GitHub package repo.
-
-Start by creating a classic personal access token in GitHub
-Go to [GitHub settings](https://github.com/settings/tokens/new) to make a classic token. Give the token the `read:packages` permission. Click "Generate token" and copy the token.
-
-Login into GitHub package repo:
-
-```bash
-npm login --registry https://npm.pkg.github.com/ --scope=@oicl
-```
-
-Use our GitHub username as username and paste in the generated token as password.
-
-You can now install the package:
+To use the components in your project, you can install the package from npm:
 
 ```bash
 npm install @oicl/openbridge-webcomponents
 ```
 
-To use the components in your Vue.js project, you can install the package from npm:
+To use the components with a framework wrapper, you can install the corresponding package:
 
 ```bash
+# Vue.js
 npm install @oicl/openbridge-webcomponents-vue
+
+# React
+npm install @oicl/openbridge-webcomponents-react
+
+# Angular
+npm install @oicl/openbridge-webcomponents-ng
+
+# Svelte
+npm install @oicl/openbridge-webcomponents-svelte
 ```
 
 ### Setup
