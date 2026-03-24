@@ -7,6 +7,7 @@
     "url": "git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip.git",
     "directory": "packages/openbridge-webcomponents"
   },
+  "homepage": "https://www.openbridge.no",
   "license": "Apache-2.0",
   "scripts": {
     "👷_BUILD_____________________________________________________": "echo _____",
