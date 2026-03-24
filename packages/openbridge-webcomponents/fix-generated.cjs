@@ -23,6 +23,8 @@ function fixPackageJson(packageName, directory) {
     directory: `packages/${directory}`,
   };
 
+  packageJson.homepage = 'https://www.openbridge.no';
+
   packageJson.license = 'Apache-2.0';
 
   packageJson.publishConfig = {
