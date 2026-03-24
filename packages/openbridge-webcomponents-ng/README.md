@@ -1,10 +1,10 @@
-# Openbridge Web Components Vue
+# Openbridge Web Components Angular
 
 [![discord, join chat](https://img.shields.io/badge/discord-join_chat-brightgreen.svg?logo=discord&labelColor=white&style=flat&color=%235865F2)](https://discord.gg/wSCPxPH3RJ)
 
-This package provides **Vue.js wrappers** for the [Openbridge Web Components](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip/tree/main/packages/openbridge-webcomponents) core library. 
+This package provides **Angular wrappers** for the [Openbridge Web Components](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip/tree/main/packages/openbridge-webcomponents) core library. 
 
-It allows you to use Openbridge components as native Vue components with full IDE support, props, and event handling, while leveraging the underlying Lit-based web components from `@oicl/openbridge-webcomponents`.
+It allows you to use Openbridge components as native Angular components with full IDE support, props, and event handling, while leveraging the underlying Lit-based web components from `@oicl/openbridge-webcomponents`.
 
 # 🎉 We are preparing to release OpenBridge 6.0 in March 2026 🎉
 
@@ -44,7 +44,7 @@ To access the Storybook for this project, click [here](https://openbridge-jip-st
 
 ## Demo
 
-The demo showcases the project's functionality using Vue.js. It provides a live demonstration of the project's features and allows you to interact with the application.
+The demo showcases the project's functionality. It provides a live demonstration of the project's features and allows you to interact with the application.
 
 To access the demo, click [here](https://openbridge-jip-demo.web.app/).
 
@@ -53,16 +53,17 @@ To access the demo, click [here](https://openbridge-jip-demo.web.app/).
 To use the components in your project, you can install the package from npm:
 
 ```bash
-npm install @oicl/openbridge-webcomponents-vue
+npm install @oicl/openbridge-webcomponents-ng
 ```
-
-See also the [vue demo](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/tree/main/packages/vue-demo) for an example of how to use the components in a Vue.js project.
 
 ### Setup
 
-1. Add the css file to your project:
-   ```javascript
-   import "@oicl/openbridge-webcomponents/dist/openbridge.css";
+1. Add the css file to your project in `angular.json`:
+   ```json
+   "styles": [
+     "node_modules/@oicl/openbridge-webcomponents/dist/openbridge.css",
+     "src/styles.css"
+   ]
    ```
 2. Select the pallet by setting the `data-obc-theme` attribute on the `html` tag:
    ```html
@@ -81,15 +82,22 @@ See also the [vue demo](https://github.com/Ocean-Industries-Concept-Lab/openbrid
    }
    ```
 
-4. Import the desired components in your project, for instance:
+4. Import the desired components in your module or component, for instance:
 
-   ```javascript
-   import ObcTopBar from "@oicl/openbridge-webcomponents-vue/components/top-bar/ObcTopBar.vue";
+   ```typescript
+   import { ObcTopBarComponent } from "@oicl/openbridge-webcomponents-ng/components/top-bar/ObcTopBar.component";
+
+   @Component({
+     // ...
+     standalone: true,
+     imports: [ObcTopBarComponent],
+   })
+   export class MyComponent {}
    ```
 
-5. Use the components in your project:
+5. Use the components in your template:
    ```html
-   <ObcTopBar></ObcTopBar>
+   <obc-top-bar></obc-top-bar>
    ```
 
 ## Contributing
