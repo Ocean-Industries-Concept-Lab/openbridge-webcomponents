@@ -1,97 +1,64 @@
-# Openbridge Web Components React
+# @oicl/openbridge-webcomponents-react
 
-[![discord, join chat](https://img.shields.io/badge/discord-join_chat-brightgreen.svg?logo=discord&labelColor=white&style=flat&color=%235865F2)](https://discord.gg/wSCPxPH3RJ)
+React wrappers for the OpenBridge design system.
 
-This package provides **React wrappers** for the [Openbridge Web Components](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip/tree/main/packages/openbridge-webcomponents) core library. 
+[![Slack, join chat](https://img.shields.io/badge/Slack-4A154B?style=flat&logo=slack&logoColor=white)](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ)
 
-It allows you to use Openbridge components as native React components with full IDE support, props, and event handling, while leveraging the underlying Lit-based web components from `@oicl/openbridge-webcomponents`.
+This package provides **React wrappers** for the [@oicl/openbridge-webcomponents](https://www.npmjs.com/package/@oicl/openbridge-webcomponents) core library. It allows you to use OpenBridge components as native React components with full IDE support, props, and event handling.
 
-# 🎉 We are preparing to release OpenBridge 6.0 in March 2026 🎉
+## 🏗️ Project Status
 
-We are currently developing the code in a joint industry project, with funding from industry partners.
-The code is only available for the partners until the release in March 2026. It is possible to get access to the code in active development by joining the project.
+This library is currently in active development. We are gearing up for our first stable release in **Q2 2026**.
 
-[👉 Click here to read more about the project.](https://docs.google.com/document/d/18ytBiUrfQrMYOPPz-hd7pgPjnG8ZBG-zr9xYl5Y2TTs/edit?tab=t.0)
+## 📚 Storybook & Demo
 
-[👉 Click here to register your interest in the form. (Note: Registering is not a commitment but will enroll you in our process.)](https://docs.google.com/forms/d/e/1FAIpQLSd2H7bbL_duBTMhHzjw7W52H9XXAiJ9A3sL7PsrfCTW_bNUhw/viewform)
+- **[Storybook](https://openbridge-jip-storybook.web.app)**: Browse components and view their different states.
+- **[Live Demo](https://openbridge-jip-demo.web.app/)**: See the components in action.
 
-> **❗Caution❗** This repository is currently in early development and may not be stable. Please use with caution.
-
-# Introduction video
-
-We have made an short introduction to the library. You can watch it [here](https://www.youtube.com/watch?v=5DiEA4voqzI)
-
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=5DiEA4voqzI" target="_blank">
- <img src="https://img.youtube.com/vi/5DiEA4voqzI/0.jpg" alt="Watch the video" width="480" height="360" />
-</a>
-
-# Discord server
-
-Join our discord server to get the latest updates and to ask questions. [Join here.](https://discord.gg/wSCPxPH3RJ)
-
-## Table of Contents
-
-- [Storybook](#storybook)
-- [Demo](#demo)
-- [Installation](#installation)
-- [Contributing](#contributing)
-
-## Storybook
-
-[Storybook](https://storybook.js.org/) is a development environment for UI components. It allows you to browse a component library, view the different states of each component, and interactively develop and test components in isolation.
-
-To access the Storybook for this project, click [here](https://openbridge-jip-storybook.web.app).
-
-## Demo
-
-The demo showcases the project's functionality using React. It provides a live demonstration of the project's features and allows you to interact with the application.
-
-To access the demo, click [here](https://openbridge-jip-demo.web.app/).
-
-## Installation
-
-To use the components in your project, you can install the package from npm:
+## 💾 Installation
 
 ```bash
 npm install @oicl/openbridge-webcomponents-react
 ```
 
-See also the [react demo](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip/tree/main/packages/react-demo) for an example of how to use the components in a React application.
+## 🚀 Quick Setup
 
-### Setup
+### 1. Include CSS Palettes
 
-1. Add the css file to your project:
-   ```javascript
-   import "@oicl/openbridge-webcomponents/dist/openbridge.css";
-   ```
-2. Select the pallet by setting the `data-obc-theme` attribute on the `html` tag:
-   ```html
-   <html lang="en" data-obc-theme="day"></html>
-   ```
-3. Install the Noto Sans font by using the attached `NotoSans.ttf` file. Add the following to your css:
+Import the global OpenBridge CSS file in your main entry point (e.g., `index.js` or `App.js`):
 
-   ```css
-   @font-face {
-     font-family: "Noto Sans";
-     src: url("path/to/NotoSans.ttf");
-   }
+```javascript
+import "@oicl/openbridge-webcomponents/dist/openbridge.css";
+```
 
-   * {
-     font-family: Noto Sans;
-   }
-   ```
+### 2. Set the Theme
 
-4. Import the desired components in your project, for instance:
+Select the palette by setting the `data-obc-theme` attribute on the `html` tag (`bright`, `day`, `dusk`, or `night`):
 
-   ```javascript
-   import { ObcTopBar } from "@oicl/openbridge-webcomponents-react/components/top-bar/ObcTopBar";
-   ```
+```html
+<html lang="en" data-obc-theme="day"></html>
+```
 
-5. Use the components in your project:
-   ```jsx
-   <ObcTopBar></ObcTopBar>
-   ```
+### 3. Font Setup
 
-## Contributing
+Ensure **Noto Sans** is available in your project.
 
-Contributions are welcome!
+## 🧩 Usage
+
+Import the desired components and use them in your React components:
+
+```jsx
+import { ObcTopBar } from "@oicl/openbridge-webcomponents-react";
+
+function App() {
+  return (
+    <ObcTopBar />
+  );
+}
+```
+
+For a more complete example, check the [React Demo](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip/tree/main/packages/react-demo).
+
+## 👫 Contributing
+
+Contributions are welcome! Please see the [root README](../../README.md) and [CONTRIBUTING.md](../../CONTRIBUTING.md) for development instructions.

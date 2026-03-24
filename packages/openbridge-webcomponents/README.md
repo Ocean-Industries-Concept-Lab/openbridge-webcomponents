@@ -1,150 +1,107 @@
-# Openbridge Web Components
+# @oicl/openbridge-webcomponents
 
-[![discord, join chat](https://img.shields.io/badge/discord-join_chat-brightgreen.svg?logo=discord&labelColor=white&style=flat&color=%235865F2)](https://discord.gg/wSCPxPH3RJ)
+The core library of the OpenBridge design system, implemented as Lit-based web components.
 
-Welcome to the Openbridge Web Components! This readme file provides an overview of the project and its components.
+[![Slack, join chat](https://img.shields.io/badge/Slack-4A154B?style=flat&logo=slack&logoColor=white)](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ)
 
-# 🎉 We are preparing to release OpenBridge 6.0 in March 2026 🎉
+## 🏗️ Project Status
 
-We are currently developing the code in a joint industry project, with funding from industry partners.
-The code is only available for the partners until the release in March 2026. It is possible to get access to the code in active development by joining the project.
+This library is currently in active development. We are gearing up for our first stable release in **Q2 2026**.
 
-[👉 Click here to read more about the project.](https://docs.google.com/document/d/18ytBiUrfQrMYOPPz-hd7pgPjnG8ZBG-zr9xYl5Y2TTs/edit?tab=t.0)
+[👉 Click here to read more about the project and the JIP.](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ)
 
-[👉 Click here to register your interest in the form. (Note: Registering is not a commitment but will enroll you in our process.)](https://docs.google.com/forms/d/e/1FAIpQLSd2H7bbL_duBTMhHzjw7W52H9XXAiJ9A3sL7PsrfCTW_bNUhw/viewform)
+## 📚 Storybook & Demo
 
-> **❗Caution❗** This repository is currently in early development and may not be stable. Please use with caution.
+- **[Storybook](https://openbridge-jip-storybook.web.app)**: Browse components and view their different states.
+- **[Live Demo](https://openbridge-jip-demo.web.app/)**: See the components in action.
 
-# Discord server
+## 💾 Installation
 
-Join our discord server to get the latest updates and to ask questions. [Join here.](https://discord.gg/wSCPxPH3RJ)
-
-# Introduction video
-
-We have made a short introduction to the library. You can watch it [here](https://www.youtube.com/watch?v=5DiEA4voqzI)
-
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=5DiEA4voqzI" target="_blank">
- <img src="https://img.youtube.com/vi/5DiEA4voqzI/0.jpg" alt="Watch the video" width="480" height="360" />
-</a>
-
-## Table of Contents
-
-- [Storybook](#storybook)
-- [Demo](#demo)
-- [CSS file for palettes](#css-file-for-palettes)
-- [Installation](#installation)
-- [Bundle Version (Browser Only)](#bundle-version-browser-only)
-- [Contributing](#contributing)
-
-## Storybook
-
-[Storybook](https://storybook.js.org/) is a development environment for UI components. It allows you to browse a component library, view the different states of each component, and interactively develop and test components in isolation.
-
-To access the Storybook for this project, click [here](https://openbridge-jip-storybook.web.app).
-
-## Demo
-
-The demo showcases the project's functionality using Vue.js. It provides a live demonstration of the project's features and allows you to interact with the application.
-
-To access the demo, click [here](https://openbridge-jip-demo.web.app/).
-
-## CSS file for palettes
-
-The CSS file for the palettes is located at [packages/openbridge-webcomponents/dist/openbridge.css](packages/openbridge-webcomponents/dist/openbridge.css) or by importing it directly from the package:
-
-```javascript
-import '@oicl/openbridge-webcomponents/dist/openbridge.css';
-```
-
-The file is called `variables.css` and contains all the openbridge palette (bright, day, dusk, night).
-It can be used to set the color theme of components.
-To select the palette, set the `data-obc-theme` attribute on the `html` tag:
-
-```html
-<html lang="en" data-obc-theme="day"></html>
-```
-
-## Installation
-
-If you want to use the components in a Vue.js or React project we suggest that you use the wrapper packages [@oicl/openbridge-webcomponents-vue](https://www.npmjs.com/package/@oicl/openbridge-webcomponents-vue) or [@oicl/openbridge-webcomponents-react](https://www.npmjs.com/package/@oicl/openbridge-webcomponents-react) respectively.
-
-To use the components in your project, you can install the package from npm:
+To use the components in your project, install the package from npm:
 
 ```bash
 npm install @oicl/openbridge-webcomponents
 ```
 
-### Setup
+> **Note:** If you are using Vue, React, Angular, or Svelte, we recommend using our [wrapper packages](#-framework-wrappers) for a better developer experience.
 
-1. Add the css file to your project:
-   ```javascript
-   import '@oicl/openbridge-webcomponents/dist/openbridge.css';
-   ```
-2. Select the palette by setting the `data-obc-theme` attribute on the `html` tag:
-   ```html
-   <html lang="en" data-obc-theme="day"></html>
-   ```
-3. Install the Noto Sans font by using the attached `NotoSans.ttf` file. Add the following to your css:
+## 🚀 Quick Setup
 
-   ```css
-   @font-face {
-     font-family: 'Noto Sans';
-     src: url('path/to/NotoSans.ttf');
-   }
+### 1. Include CSS Palettes
 
-   * {
-     font-family: Noto Sans;
-   }
-   ```
+Import the global OpenBridge CSS file in your main entry point:
 
-4. Import the desired components in your project, for instance:
-
-   ```javascript
-   import '@oicl/openbridge-webcomponents/dist/components/top-bar/top-bar.js';
-   ```
-
-5. Use the components in your project:
-   ```html
-   <obc-top-bar></obc-top-bar>
-   ```
-
-## Bundle Version (Browser Only)
-
-For quick prototyping or simple projects, we provide a bundled version that includes all components in a single file. This can be imported directly in the browser without a build system.
-
-**Note:** The bundle is ~9 MB uncompressed (~1 MB gzipped) and includes all dependencies. For production use, we recommend the modular version above for better performance.
-
-### Usage
-
-```html
-<!DOCTYPE html>
-<html lang="en" data-obc-theme="day">
-  <head>
-    <meta charset="UTF-8" />
-    <title>OpenBridge Components</title>
-
-    <!-- Import CSS -->
-    <link rel="stylesheet" href="path/to/openbridge.css" />
-
-    <!-- Import bundle -->
-    <script
-      type="module"
-      src="path/to/openbridge-webcomponents.bundle.js"
-    ></script>
-  </head>
-  <body>
-    <!-- All components are now available -->
-    <obc-button>Click Me</obc-button>
-    <obc-card>
-      <div slot="header">Card Header</div>
-      <div slot="content">Card content</div>
-    </obc-card>
-  </body>
-</html>
+```javascript
+import '@oicl/openbridge-webcomponents/dist/openbridge.css';
 ```
 
-For more details, see [BUNDLE_USAGE.md](BUNDLE_USAGE.md).
+### 2. Set the Theme
 
-## Contributing
+Select the palette by setting the `data-obc-theme` attribute on the `html` tag (`bright`, `day`, `dusk`, or `night`):
 
-Contributions are welcome!
+```html
+<html lang="en" data-obc-theme="day"></html>
+```
+
+### 3. Set Component Size
+
+Select the global component size by setting a class on the `body` tag (`obc-component-size-regular`, `medium`, `large`, or `xl`):
+
+```html
+<body class="obc-component-size-regular"></body>
+```
+
+### 4. Font Setup
+
+The library uses **Noto Sans**. You should ensure it is available in your project.
+
+```css
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('path/to/NotoSans.ttf');
+}
+
+* {
+  font-family: 'Noto Sans', sans-serif;
+}
+```
+
+## 🧩 Usage
+
+### Standard Web Components
+
+Import the components you need:
+
+```javascript
+import '@oicl/openbridge-webcomponents/dist/components/top-bar/top-bar.js';
+```
+
+Use them in your HTML:
+
+```html
+<obc-top-bar></obc-top-bar>
+```
+
+### Bundle Version (CDN / Prototyping)
+
+For quick prototyping, you can use the bundled version:
+
+```html
+<script
+  type="module"
+  src="node_modules/@oicl/openbridge-webcomponents/dist/openbridge-webcomponents.bundle.js"
+></script>
+```
+
+## 📦 Framework Wrappers
+
+For the best experience in your framework of choice, use our auto-generated wrappers:
+
+- [`@oicl/openbridge-webcomponents-vue`](../openbridge-webcomponents-vue)
+- [`@oicl/openbridge-webcomponents-react`](../openbridge-webcomponents-react)
+- [`@oicl/openbridge-webcomponents-ng`](../openbridge-webcomponents-ng)
+- [`@oicl/openbridge-webcomponents-svelte`](../openbridge-webcomponents-svelte)
+
+## 👫 Contributing
+
+Contributions are welcome! Please see the [root README](../../README.md) and [CONTRIBUTING.md](../../CONTRIBUTING.md) for development instructions.
