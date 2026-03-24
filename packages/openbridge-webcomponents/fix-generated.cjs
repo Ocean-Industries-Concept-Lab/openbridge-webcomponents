@@ -14,6 +14,9 @@ function addRepositoryToPackageJsonVue() {
   // update vite
   packageJson.devDependencies['vite'] = '^6.3.5';
   packageJson.devDependencies['@rollup/plugin-typescript'] = '^12.1.2';
+  packageJson.publishConfig = {
+    access: 'public',
+  };
   fs.writeFileSync(
     '../openbridge-webcomponents-vue/package.json',
     JSON.stringify(packageJson, null, 2)
@@ -28,6 +31,9 @@ function addRepositoryToPackageJsonReact() {
     directory: 'packages/openbridge-webcomponents-react',
   };
   packageJson.license = 'Apache-2.0';
+  packageJson.publishConfig = {
+    access: 'public',
+  };
   fs.writeFileSync(
     '../openbridge-webcomponents-react/package.json',
     JSON.stringify(packageJson, null, 2)
@@ -56,6 +62,42 @@ function fixFilePathInPackageJsonReact() {
   );
 }
 
+function addRepositoryToPackageJsonAngular() {
+  const packageJson = require('../openbridge-webcomponents-ng/package.json');
+  packageJson.repository = {
+    type: 'git',
+    url: 'git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip.git',
+    directory: 'packages/openbridge-webcomponents-ng',
+  };
+  packageJson.license = 'Apache-2.0';
+  packageJson.publishConfig = {
+    access: 'public',
+  };
+  fs.writeFileSync(
+    '../openbridge-webcomponents-ng/package.json',
+    JSON.stringify(packageJson, null, 2)
+  );
+}
+
+function addRepositoryToPackageJsonSvelte() {
+  const packageJson = require('../openbridge-webcomponents-svelte/package.json');
+  packageJson.repository = {
+    type: 'git',
+    url: 'git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip.git',
+    directory: 'packages/openbridge-webcomponents-svelte',
+  };
+  packageJson.license = 'Apache-2.0';
+  packageJson.publishConfig = {
+    access: 'public',
+  };
+  fs.writeFileSync(
+    '../openbridge-webcomponents-svelte/package.json',
+    JSON.stringify(packageJson, null, 2)
+  );
+}
+
 addRepositoryToPackageJsonVue();
 addRepositoryToPackageJsonReact();
 fixFilePathInPackageJsonReact();
+addRepositoryToPackageJsonAngular();
+addRepositoryToPackageJsonSvelte();
