@@ -53,7 +53,7 @@ To access the demo, click [here](https://openbridge-jip-demo.web.app/).
 The CSS file for the palettes is located at [packages/openbridge-webcomponents/dist/openbridge.css](packages/openbridge-webcomponents/dist/openbridge.css) or by importing it directly from the package:
 
 ```javascript
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/openbridge.css';
+import '@oicl/openbridge-webcomponents/dist/openbridge.css';
 ```
 
 The file is called `variables.css` and contains all the openbridge palette (bright, day, dusk, night).
@@ -66,19 +66,19 @@ To select the palette, set the `data-obc-theme` attribute on the `html` tag:
 
 ## Installation
 
-If you want to use the components in a Vue.js or React project we suggest that you use the wrapper packages [@ocean-industries-concept-lab/openbridge-webcomponents-vue](https://www.npmjs.com/package/@ocean-industries-concept-lab/openbridge-webcomponents-vue) or [@ocean-industries-concept-lab/openbridge-webcomponents-react](https://www.npmjs.com/package/@ocean-industries-concept-lab/openbridge-webcomponents-react) respectively.
+If you want to use the components in a Vue.js or React project we suggest that you use the wrapper packages [@oicl/openbridge-webcomponents-vue](https://www.npmjs.com/package/@oicl/openbridge-webcomponents-vue) or [@oicl/openbridge-webcomponents-react](https://www.npmjs.com/package/@oicl/openbridge-webcomponents-react) respectively.
 
 To use the components in your project, you can install the package from npm:
 
 ```bash
-npm install @ocean-industries-concept-lab/openbridge-webcomponents
+npm install @oicl/openbridge-webcomponents
 ```
 
 ### Setup
 
 1. Add the css file to your project:
    ```javascript
-   import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/openbridge.css';
+   import '@oicl/openbridge-webcomponents/dist/openbridge.css';
    ```
 2. Select the palette by setting the `data-obc-theme` attribute on the `html` tag:
    ```html
@@ -100,7 +100,7 @@ npm install @ocean-industries-concept-lab/openbridge-webcomponents
 4. Import the desired components in your project, for instance:
 
    ```javascript
-   import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/top-bar/top-bar.js';
+   import '@oicl/openbridge-webcomponents/dist/components/top-bar/top-bar.js';
    ```
 
 5. Use the components in your project:

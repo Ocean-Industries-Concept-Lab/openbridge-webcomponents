@@ -35,7 +35,7 @@ import type { VNodeRef } from 'vue'
 import { useBridgeStore } from '@/stores/bridge'
 
 import { useSim } from '@/composables/useSim'
-import type { ObcPalette } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu'
+import type { ObcPalette } from '@oicl/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu'
 
 const props = defineProps<{
   showRealTimeDepth: boolean

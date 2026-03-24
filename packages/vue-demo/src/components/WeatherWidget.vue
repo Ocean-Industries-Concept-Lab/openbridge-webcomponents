@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useWeather } from '@/business/getWeather'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon.js'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-temperature-air.js'
+import '@oicl/openbridge-webcomponents/dist/icons/icon.js'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-temperature-air.js'
 
 const { weather } = useWeather()
 </script>

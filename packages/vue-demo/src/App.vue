@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { onMounted, computed, ref, watch } from 'vue'
 
-import TopBar from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/top-bar/ObcTopBar.vue'
-import ObcClock from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/clock/ObcClock.vue'
+import TopBar from '@oicl/openbridge-webcomponents-vue/components/top-bar/ObcTopBar.vue'
+import ObcClock from '@oicl/openbridge-webcomponents-vue/components/clock/ObcClock.vue'
 import DemoNavigationMenu from './components/DemoNavigationMenu.vue'
-import { ObcNavigationMenuVariant } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/navigation-menu/navigation-menu'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-palette-dimming'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-applications'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-speed-high'
+import { ObcNavigationMenuVariant } from '@oicl/openbridge-webcomponents/dist/components/navigation-menu/navigation-menu'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-palette-dimming'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-applications'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-speed-high'
 
-import BrillianceMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu.vue'
-import ObcContextMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/context-menu/ObcContextMenu.vue'
-import ObcCommandButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/command-button/ObcCommandButton.vue'
+import BrillianceMenu from '@oicl/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu.vue'
+import ObcContextMenu from '@oicl/openbridge-webcomponents-vue/components/context-menu/ObcContextMenu.vue'
+import ObcCommandButton from '@oicl/openbridge-webcomponents-vue/components/command-button/ObcCommandButton.vue'
 import AlertNotification from './components/AlertNotification.vue'
 import DemoAppMenu from './components/DemoAppMenu.vue'
 import DemoCommandMenu from './components/DemoCommandMenu.vue'
@@ -29,13 +29,13 @@ import { NavigationMenuVariant, useDemoConfigStore } from './stores/demoConfig'
 import { useSpeedAlerts } from './composables/useSpeedAlerts'
 import { useComponentSize } from './composables/useComponentSize'
 import type { App } from './router'
-import ObcIconButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/icon-button/ObcIconButton.vue'
-import { IconButtonVariant } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/icon-button/icon-button.js'
+import ObcIconButton from '@oicl/openbridge-webcomponents-vue/components/icon-button/ObcIconButton.vue'
+import { IconButtonVariant } from '@oicl/openbridge-webcomponents/dist/components/icon-button/icon-button.js'
 import { useHotkeys } from './composables/useHotkeys'
 import router from './router'
 
 if (import.meta.env.PROD) {
-  import('@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/index.js')
+  import('@oicl/openbridge-webcomponents/dist/icons/index.js')
 }
 
 const {
@@ -133,7 +133,7 @@ onMounted(() => {
 
   useHotkeys()
 
-  import('@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/index.js')
+  import('@oicl/openbridge-webcomponents/dist/icons/index.js')
 })
 
 const palette = computed(() => bridgeStore.palette)

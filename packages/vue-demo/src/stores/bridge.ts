@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { db } from '@/plugin/firestore'
 import { doc, onSnapshot, setDoc } from 'firebase/firestore'
-import { ObcPalette } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu'
+import { ObcPalette } from '@oicl/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu'
 import { useRouter, type Router } from 'vue-router'
 
 export interface ScreenPage {
