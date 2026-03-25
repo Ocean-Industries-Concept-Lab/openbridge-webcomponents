@@ -31,11 +31,6 @@ jobs:
           TIMESTAMP=$(date +"%Y%m%d%H%M%S")
           jq --arg TIMESTAMP "$TIMESTAMP" '.version = "0.0." + $TIMESTAMP' package.json > package.tmp.json && mv package.tmp.json package.json
 
-      - name: Publish core to NPM
-        working-directory: ./packages/openbridge-webcomponents
-        run: |
-          npm publish --access public
-
       - name: Build and generate wrappers
         working-directory: ./packages/openbridge-webcomponents
         run: |
@@ -44,6 +39,11 @@ jobs:
       - name: Install wrapper dependencies
         working-directory: .
         run: npm install
+
+      - name: Publish core to NPM
+        working-directory: ./packages/openbridge-webcomponents
+        run: |
+          npm publish --access public
 
       - name: Publish vue wrapper to NPM
         working-directory: ./packages/openbridge-webcomponents-vue
