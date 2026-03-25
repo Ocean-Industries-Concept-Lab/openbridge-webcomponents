@@ -12,6 +12,8 @@ All UI components extend `LitElement` directly — there are no shared base clas
 
 ## Elevation Variants via `@mixin style`
 
+> Full reference: [IMPLEMENTATION_GUIDELINES.md § PostCSS](../../IMPLEMENTATION_GUIDELINES.md#-postcss)
+
 Most interactive components support elevation variants (`flat`, `normal`, `raised`, `amplified`, `indent`, `selected`). Apply them with the PostCSS mixin:
 
 ```css
@@ -26,9 +28,11 @@ Most interactive components support elevation variants (`flat`, `normal`, `raise
 }
 ```
 
-- Always specify `visibleWrapperClass` — it targets the element that receives the mixin styles
+- Always specify `visibleWrapperClass` — it targets the inner visual element that receives border/background styles
+- The outer wrapper is the touch target (transparent); the inner `.visible-wrapper` is the visual target (styled)
 - Use variant-specific color variables: `--on-flat-active-color`, `--on-normal-active-color`, `--on-raised-active-color`, etc.
-- Interactive state colors follow the pattern: `--[variant]-hover-background-color`, `--[variant]-pressed-background-color`, `--[variant]-focused-background-color`
+- Interactive state colors follow `--{variant}-{state}-background-color` / `--{variant}-{state}-border-color` (see full convention in IMPLEMENTATION_GUIDELINES.md)
+- Use `noClick` for display-only sub-parts that need colors but no interactivity
 
 ## Slot Conventions
 

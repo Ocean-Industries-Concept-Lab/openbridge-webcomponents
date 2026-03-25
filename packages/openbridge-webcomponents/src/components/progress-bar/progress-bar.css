@@ -116,8 +116,8 @@
 
 .circular-wrapper {
   position: relative;
-  width: 48px;
-  height: 48px;
+  width: var(--global-size-spacing-touch-target-min);
+  height: var(--global-size-spacing-touch-target-min);
   display: inline-block;
 }
 
@@ -125,8 +125,8 @@ obc-circular-progress {
   position: absolute;
   top: 0;
   left: 0;
-  width: 48px;
-  height: 48px;
+  width: 100%;
+  height: 100%;
 }
 
 .circular-content {
@@ -160,12 +160,13 @@ obc-circular-progress {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: var(--global-size-spacing-icon-icon-size-regular);
+  height: var(--global-size-spacing-icon-icon-size-regular);
   color: var(--element-active-color);
 }
 
-.circular-icon-container ::slotted(*) {
-  width: 24px;
-  height: 24px;
+.circular-icon-container ::slotted(*),
+.circular-icon-container obi-placeholder {
+  width: var(--global-size-spacing-icon-icon-size-regular);
+  height: var(--global-size-spacing-icon-icon-size-regular);
 }
