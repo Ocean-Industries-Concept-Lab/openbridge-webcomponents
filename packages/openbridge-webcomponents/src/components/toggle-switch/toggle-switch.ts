@@ -144,15 +144,19 @@ export class ObcToggleSwitch extends LitElement {
       e.preventDefault();
       return;
     }
+
+    const nextChecked = !this.checked;
+    if (!this.externalControl) {
+      this.checked = nextChecked;
+    }
     e.stopPropagation();
     this.dispatchEvent(
       new CustomEvent('input', {
-        detail: {checked: !this.checked},
+        detail: {checked: nextChecked},
       })
     );
-    if (!this.externalControl) {
-      this.checked = (e.target as HTMLInputElement).checked;
-    } else {
+
+    if (this.externalControl) {
       (e.target as HTMLInputElement).checked = this.checked;
     }
   }
