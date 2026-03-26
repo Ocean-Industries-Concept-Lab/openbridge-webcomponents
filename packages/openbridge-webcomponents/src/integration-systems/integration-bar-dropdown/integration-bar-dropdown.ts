@@ -13,7 +13,7 @@ import {property} from 'lit/decorators.js';
 
 /**
  *
- * @fires home-button-click - Fired when the home button is clicked
+ * @fires home-button-clicked - Fired when the home button is clicked
  * @fires dimming-button-clicked - Fired when the dimming button is clicked
  * @fires notification-button-clicked - Firaed when the notification button is clicked
  * @fires user-button-clicked - Fired when the user button is clicked
