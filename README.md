@@ -94,21 +94,11 @@ To get started with developing the components:
 3. Run `npm install` in the root folder.
 4. Run `npm run build:lib` to build all libraries.
 
-For more detailed development instructions, see [AGENTS.md](AGENTS.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
+For more detailed development instructions, see [IMPLEMENTATION_GUIDELINES.md](IMPLEMENTATION_GUIDELINES.md), [AGENTS.md](AGENTS.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## 👫 Contributing
 
 We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for branch naming, commit conventions, and PR guidelines.
-
-## 🤖 AI
-
-Code quality and visual precision are very important in this project (even half a pixel matters!). For that reason, try to avoid AI hallucinations as much as possible:
-
-- provide precise context (list all the file names, enums, examples, etc.)
-- ask the AI to read the files it is working on into memory (for broader exploration, let it use subagents)
-- instruct the AI to ask clarifying questions before it begins
-- use the latest AI models (the difference can be huge between a paid or latest model compared to free/older ones)
-- keep the AI on a short leash
 
 ## 📄 Documentation Index
 
