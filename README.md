@@ -45,7 +45,7 @@ Under the new model, each release follows a "delayed" permissive license cycle:
 
 We have made a [short introduction to the library](https://www.youtube.com/watch?v=5DiEA4voqzI).
 
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=5DiEA4voqzI" target="_blank">
+<a href="https://www.youtube.com/watch?feature=player_embedded&v=5DiEA4voqzI" target="_blank">
  <img src="https://img.youtube.com/vi/5DiEA4voqzI/0.jpg" alt="Watch the video: Intro to OpenBridge Web Components" width="480" height="360" />
 </a>
 
