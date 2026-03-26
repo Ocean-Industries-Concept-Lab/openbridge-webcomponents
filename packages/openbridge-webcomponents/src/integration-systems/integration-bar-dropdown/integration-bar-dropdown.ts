@@ -9,6 +9,7 @@ import '../../icons/icon-user.js';
 import '../../icons/icon-configure.js';
 import '../../icons/icon-notification.js';
 import '../../icons/icon-home.js';
+import {NotificationButtonStyle} from '../../components/notification-button/notification-button.js';
 import {property} from 'lit/decorators.js';
 
 /**
@@ -35,6 +36,8 @@ export class ObcIntegrationBarDropdown extends LitElement {
   @property({type: Boolean}) showClock = false;
   @property({type: Boolean}) showNotificationButton = false;
   @property({type: Boolean}) notificationButtonActivated = false;
+  @property({type: Number}) notificationCount = 0;
+  @property({type: Boolean}) showNotificationCount = false;
   @property({type: Boolean}) showUserButton = false;
   @property({type: Boolean}) userButtonActivated = false;
   @property({type: Boolean}) showDimmingButton = false;
@@ -83,19 +86,17 @@ export class ObcIntegrationBarDropdown extends LitElement {
         </div>
         <div class="right-side">
           ${this.showNotificationButton
-            ? html`<obc-icon-button
-                class="notification-button"
-                part="notification-button"
-                variant="integration"
+            ? html`<obc-notification-button
                 @click=${() =>
                   this.dispatchEvent(
                     new CustomEvent('notification-button-clicked')
                   )}
-                ?activated=${this.notificationButtonActivated}
-              >
-                <obi-notification></obi-notification>
-              </obc-icon-button>`
-            : null}
+                .buttonStyle=${NotificationButtonStyle.Enhanced}
+                .showCount=${this.showNotificationCount}
+                .count=${this.notificationCount}
+                ?isActive=${this.notificationButtonActivated}
+              ></obc-notification-button>`
+            : nothing}
           ${this.showSystemButton
             ? html`<obc-icon-button
                 class="system-button"
