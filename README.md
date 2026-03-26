@@ -41,6 +41,14 @@ Under the new model, each release follows a "delayed" permissive license cycle:
 
 [Join our Slack](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ) to get the latest updates and to ask questions.
 
+## 🎬 Introduction video
+
+We have made a [short introduction to the library](https://www.youtube.com/watch?v=5DiEA4voqzI).
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=5DiEA4voqzI" target="_blank">
+ <img src="https://img.youtube.com/vi/5DiEA4voqzI/0.jpg" alt="Watch the video: Intro to OpenBridge Web Components" width="480" height="360" />
+</a>
+
 ## 📋 Table of Contents
 
 - [Monorepo Structure](#-monorepo-structure)
@@ -91,6 +99,16 @@ For more detailed development instructions, see [AGENTS.md](AGENTS.md) and [CONT
 ## 👫 Contributing
 
 We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for branch naming, commit conventions, and PR guidelines.
+
+## 🤖 AI
+
+Code quality and visual precision are very important in this project (even half a pixel matters!). For that reason, try to avoid AI hallucinations as much as possible:
+
+- provide precise context (list all the file names, enums, examples, etc.)
+- ask the AI to read the files it is working on into memory (for broader exploration, let it use subagents)
+- instruct the AI to ask clarifying questions before it begins
+- use the latest AI models (the difference can be huge between a paid or latest model compared to free/older ones)
+- keep the AI on a short leash
 
 ## 📄 Documentation Index
 
