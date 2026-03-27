@@ -41,6 +41,14 @@ Under the new model, each release follows a "delayed" permissive license cycle:
 
 [Join our Slack](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ) to get the latest updates and to ask questions.
 
+## 🎬 Introduction video
+
+We have made a [short introduction to the library](https://www.youtube.com/watch?v=5DiEA4voqzI).
+
+<a href="https://www.youtube.com/watch?feature=player_embedded&v=5DiEA4voqzI" target="_blank">
+ <img src="https://img.youtube.com/vi/5DiEA4voqzI/0.jpg" alt="Watch the video: Intro to OpenBridge Web Components" width="480" height="360" />
+</a>
+
 ## 📋 Table of Contents
 
 - [Monorepo Structure](#-monorepo-structure)
@@ -86,7 +94,7 @@ To get started with developing the components:
 3. Run `npm install` in the root folder.
 4. Run `npm run build:lib` to build all libraries.
 
-For more detailed development instructions, see [AGENTS.md](AGENTS.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
+For more detailed development instructions, see [IMPLEMENTATION_GUIDELINES.md](IMPLEMENTATION_GUIDELINES.md), [AGENTS.md](AGENTS.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## 👫 Contributing
 
