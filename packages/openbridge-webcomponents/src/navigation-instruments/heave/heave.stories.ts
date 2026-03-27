@@ -3,6 +3,7 @@ import {ObcHeave} from './heave.js';
 import './heave.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {VesselImage} from '../watch/watch.js';
+import {foreVessels} from '../watch/vessels/storybook-helper.js';
 import {AdviceType} from '../watch/advice.js';
 import {Priority} from '../types.js';
 
@@ -25,8 +26,8 @@ const meta: Meta<typeof ObcHeave> = {
     maxTrendHeave: {control: {type: 'range', min: -10, max: 10, step: 0.1}},
     draftOffset: {control: {type: 'range', min: -10, max: 10, step: 0.1}},
     vesselImage: {
-      control: {type: 'select'},
-      options: Object.values(VesselImage),
+      control: 'select',
+      options: foreVessels,
     },
     priority: {control: 'select', options: Object.values(Priority)},
   },
