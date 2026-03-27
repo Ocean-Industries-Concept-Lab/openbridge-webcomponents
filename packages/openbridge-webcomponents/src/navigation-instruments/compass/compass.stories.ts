@@ -8,6 +8,7 @@ import './compass.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
 import {VesselImage} from '../watch/watch.js';
+import {topVessels} from '../watch/vessels/storybook-helper.js';
 import {InstrumentState, Priority} from '../types.js';
 
 const meta: Meta<typeof ObcCompass> = {
@@ -55,10 +56,8 @@ const meta: Meta<typeof ObcCompass> = {
         'Rotations per minute. NB: storybook recreates the component on change, which resets the animation.',
     },
     vesselImage: {
-      control: {type: 'select'},
-      options: Object.values(VesselImage).filter((image) =>
-        image.includes('top')
-      ),
+      control: 'select',
+      options: topVessels,
     },
     direction: {
       control: {type: 'select'},

@@ -3,6 +3,8 @@ import {ObcPitchRoll, PitchRollPriorityElement} from './pitch-roll.js';
 import './pitch-roll.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {Priority} from '../types.js';
+import {VesselImage} from '../watch/vessel.js';
+import {sideVessels, foreVessels} from '../watch/vessels/storybook-helper.js';
 
 const meta: Meta<typeof ObcPitchRoll> = {
   title: 'Instruments/Pitch Roll',
@@ -35,6 +37,14 @@ const meta: Meta<typeof ObcPitchRoll> = {
       control: 'multi-select',
       options: Object.values(PitchRollPriorityElement),
     },
+    vesselImageSide: {
+      control: 'select',
+      options: sideVessels,
+    },
+    vesselImageFore: {
+      control: 'select',
+      options: foreVessels,
+    },
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcPitchRoll>;
@@ -44,4 +54,11 @@ type Story = StoryObj<ObcPitchRoll>;
 
 export const Primary: Story = {
   args: {},
+};
+
+export const Rov: Story = {
+  args: {
+    vesselImageSide: VesselImage.rovSide,
+    vesselImageFore: VesselImage.rovFront,
+  },
 };

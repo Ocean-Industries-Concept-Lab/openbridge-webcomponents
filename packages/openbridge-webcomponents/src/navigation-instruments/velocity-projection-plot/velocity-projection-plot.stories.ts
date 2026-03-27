@@ -6,6 +6,8 @@ import {
 import './velocity-projection-plot.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {html} from 'lit';
+import {topVessels} from '../watch/vessels/storybook-helper.js';
+import {VesselImage} from '../watch/vessel.js';
 
 function scaleGeneratedDataPoints(dataPoints: VelocityProjectionDatapoint[]) {
   const sum = dataPoints.reduce((acc, curr) => acc + curr.ratioTotalEnergy, 0);
@@ -24,6 +26,7 @@ const meta: Meta<typeof ObcVelocityProjectionPlot> = {
     width: 256,
     peakEnergyDirection: 90,
     steps: 180,
+    vesselImage: VesselImage.cargoWindTop,
   },
   argTypes: {
     width: {
@@ -47,6 +50,10 @@ const meta: Meta<typeof ObcVelocityProjectionPlot> = {
     instantCurrentSpeedNumber: {
       control: {type: 'range', min: 0, max: 4, step: 1},
     },
+    vesselImage: {
+      control: 'select',
+      options: topVessels,
+    },
   },
   render: (args) => {
     const dataPoints = generateDataPoints(
@@ -60,6 +67,7 @@ const meta: Meta<typeof ObcVelocityProjectionPlot> = {
       .instantWindSpeedNumber=${args.instantWindSpeedNumber}
       .instantCurrentDirectionDeg=${args.instantCurrentDirectionDeg}
       .instantCurrentSpeedNumber=${args.instantCurrentSpeedNumber}
+      .vesselImage=${args.vesselImage}
     ></obc-velocity-projection-plot>`;
   },
 };
