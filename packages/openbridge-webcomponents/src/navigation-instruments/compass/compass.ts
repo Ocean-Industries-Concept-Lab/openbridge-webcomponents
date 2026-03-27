@@ -1,16 +1,21 @@
 import {LitElement, PropertyValues, css, html} from 'lit';
-import {property, query} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import '../watch/watch.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {arrow, ArrowStyle} from './arrow.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
-import {VesselImage, VesselImageSize, WatchCircleType} from '../watch/watch.js';
+import {
+  VesselImage,
+  VesselImageSize,
+  WatchCircleType,
+  RotType,
+  RotPosition,
+} from '../watch/watch.js';
 import {SetpointBundle} from '../../svghelpers/setpoint-bundle.js';
-import {rot} from './rot.js';
-import {RateOfTurnController} from '../rate-of-turn/rate-of-turn.controller.js';
 import {customElement} from '../../decorator.js';
 import {InstrumentState, Priority} from '../types.js';
+export {RotType};
 
 export enum CompassDirection {
   NorthUp = 'northUp',
@@ -122,6 +127,8 @@ export class ObcCompass extends LitElement {
   @property({type: Number}) currentFromDirection: number | null = null;
   @property({type: String}) vesselImage: VesselImage = VesselImage.genericTop;
   @property({type: Number}) rotationsPerMinute: number = 1;
+  @property({type: String}) rotType: RotType = RotType.dots;
+  @property({type: String}) rotPosition: RotPosition = RotPosition.innerCircle;
   @property({type: String}) direction: CompassDirection =
     CompassDirection.NorthUp;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
@@ -132,16 +139,6 @@ export class ObcCompass extends LitElement {
   @property({type: Boolean}) showLabels: boolean = false;
   /** When true, labels and north arrow are placed inside the outer ring. */
   @property({type: Boolean}) tickmarksInside: boolean = false;
-
-  protected override updated(_changedProperties: PropertyValues): void {
-    super.updated(_changedProperties);
-    if (
-      _changedProperties.has('rotationsPerMinute') &&
-      this.rateOfTurnController
-    ) {
-      this.rateOfTurnController.rotationsPerMinute = this.rotationsPerMinute;
-    }
-  }
 
   private _headingSp = new SetpointBundle({
     angularWraparound: true,
@@ -166,19 +163,6 @@ export class ObcCompass extends LitElement {
   override disconnectedCallback(): void {
     super.disconnectedCallback();
     this._headingSp.dispose();
-  }
-
-  @query('#rot')
-  private rot!: HTMLElement;
-
-  private rateOfTurnController?: RateOfTurnController;
-
-  override firstUpdated() {
-    this.rateOfTurnController = new RateOfTurnController(
-      this,
-      this.rot,
-      this.rotationsPerMinute
-    );
   }
 
   // @ts-expect-error TS6133: The controller ensures that the render
@@ -221,6 +205,12 @@ export class ObcCompass extends LitElement {
   private colorFor(element: CompassPriorityElement): string | undefined {
     return this.priorityFor(element) === Priority.enhanced
       ? 'var(--instrument-enhanced-secondary-color)'
+      : undefined;
+  }
+
+  private barColorFor(element: CompassPriorityElement): string | undefined {
+    return this.priorityFor(element) === Priority.enhanced
+      ? 'var(--instrument-enhanced-tertiary-color)'
       : undefined;
   }
 
@@ -281,6 +271,13 @@ export class ObcCompass extends LitElement {
           .currentFromDirectionDeg=${this.currentFromDirection}
           .currentColor=${this.colorFor(CompassPriorityElement.current)}
           .rotation=${this.getRotation()}
+          .rotType=${this.rotType}
+          .rotPosition=${this.rotPosition}
+          .rotStartAngle=${this.heading + (this.getRotation() ?? 0)}
+          .rotEndAngle=${this.courseOverGround + (this.getRotation() ?? 0)}
+          .rotColor=${this.colorFor(CompassPriorityElement.rot)}
+          .rotBarColor=${this.barColorFor(CompassPriorityElement.rot)}
+          .rotationsPerMinute=${this.rotationsPerMinute}
         >
         </obc-watch>
         <svg viewBox="${viewBox}">
@@ -294,7 +291,6 @@ export class ObcCompass extends LitElement {
             this.courseOverGround + (this.getRotation() ?? 0),
             this.priorityFor(CompassPriorityElement.cog)
           )}
-          <g id="rot">${rot(this.colorFor(CompassPriorityElement.rot))}</g>
         </svg>
       </div>
     `;

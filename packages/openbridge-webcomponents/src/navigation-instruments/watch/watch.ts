@@ -28,6 +28,15 @@ import {adviceMask, AngleAdviceRaw, renderAdvice} from './advice.js';
 import {Tickmark, TickmarkStyle, tickmark} from './tickmark.js';
 export {TickmarkStyle};
 import {
+  RotType,
+  RotPosition,
+  renderRotDots,
+  renderRotBarStatic,
+  renderRotBarDots,
+} from '../rate-of-turn/rot-renderer.js';
+export {RotType, RotPosition};
+import {RateOfTurnController} from '../rate-of-turn/rate-of-turn.controller.js';
+import {
   renderLabels,
   renderNorthArrow,
   getLabelPositions,
@@ -191,6 +200,25 @@ export class ObcWatch extends LitElement {
   @property({type: Number}) scaleWindIcon: number = 1;
   @property({type: Number}) rotation: number | undefined;
 
+  @property({type: String}) rotType: RotType | undefined;
+  @property({type: String}) rotPosition: RotPosition = RotPosition.innerCircle;
+  @property({type: Number}) rotStartAngle: number = 0;
+  @property({type: Number}) rotEndAngle: number = 0;
+  @property({type: String}) rotColor: string | undefined;
+  @property({type: String}) rotBarColor: string | undefined;
+  @property({type: Number})
+  set rotationsPerMinute(value: number) {
+    this._rotationsPerMinute = value;
+    if (this._rotController) {
+      this._rotController.rotationsPerMinute = value;
+    }
+  }
+  get rotationsPerMinute() {
+    return this._rotationsPerMinute;
+  }
+  private _rotationsPerMinute = 0;
+  private _rotController?: RateOfTurnController;
+
   // @ts-expect-error TS6133: The controller ensures that the render
   // function is called on resize of the element
   private _resizeController = new ResizeController(this, {});
@@ -215,6 +243,20 @@ export class ObcWatch extends LitElement {
   override disconnectedCallback(): void {
     super.disconnectedCallback();
     clearTimeout(this._animationTimer);
+  }
+
+  override updated(changed: PropertyValues): void {
+    super.updated(changed);
+    if (this.rotType && !this._rotController) {
+      const el = this.renderRoot.querySelector('#rot-spinner');
+      if (el) {
+        this._rotController = new RateOfTurnController(
+          this,
+          el,
+          this._rotationsPerMinute
+        );
+      }
+    }
   }
 
   private get innerRingRadius(): number {
@@ -602,9 +644,41 @@ export class ObcWatch extends LitElement {
             )
           : nothing}
         ${northArrowEl} ${this.renderStarboardPortIndicator()} ${current}
-        ${wind} ${tickmarks} ${advices} ${angleSetpoint} ${labels}
-        ${this.renderVesselImage()} ${this.renderNeedles()}
+        ${wind} ${tickmarks} ${this.renderRot()} ${advices} ${angleSetpoint}
+        ${labels} ${this.renderVesselImage()} ${this.renderNeedles()}
       </svg>
+    `;
+  }
+
+  private renderRot(): SVGTemplateResult | typeof nothing {
+    if (!this.rotType) return nothing;
+
+    const color = this.rotColor ?? 'var(--instrument-regular-secondary-color)';
+    const barColor =
+      this.rotBarColor ?? 'var(--instrument-regular-tertiary-color)';
+
+    if (this.rotType === RotType.bar) {
+      return svg`
+        ${renderRotBarStatic({
+          startAngle: this.rotStartAngle,
+          endAngle: this.rotEndAngle,
+          color,
+          barColor,
+          position: this.rotPosition,
+          maskId: 'rot-bar-mask',
+        })}
+        <g clip-path="url(#rot-bar-mask)">
+          <g id="rot-spinner">
+            ${renderRotBarDots(color, this.rotPosition)}
+          </g>
+        </g>
+      `;
+    }
+
+    return svg`
+      <g id="rot-spinner">
+        ${renderRotDots(color, this.rotPosition)}
+      </g>
     `;
   }
 
