@@ -19,6 +19,10 @@ const COLOR_MAPPINGS: ColorMapping = [
     from: /(fill|stroke)="#F0F0F0"/gi,
     to: '$1="var(--instrument-frame-secondary-color)"',
   },
+  {
+    from: /(fill|stroke)="#F7F7F7"/gi,
+    to: '$1="var(--container-background-color)"',
+  },
 ];
 
 function ensureVectorEffectOnStrokes(svg: string): string {
