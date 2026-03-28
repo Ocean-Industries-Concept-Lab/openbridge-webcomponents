@@ -1,3 +1,38 @@
+/**
+ * Rate-of-turn SVG renderer — pure functions for ROT dot and bar overlays.
+ *
+ * This module provides side-effect-free rendering functions that return
+ * `SVGTemplateResult` fragments for compositing into radial instrument SVGs.
+ * All geometry is derived from a small set of constants (`BAR_HALF_THICKNESS`,
+ * `DOT_COUNT`, and per-position track radii) so dimensions can be tuned from
+ * a single place.
+ *
+ * ## Exported Functions
+ *
+ * - `renderRotDots(color, position)` — Five evenly-spaced filled dots on the
+ *   track circle. Intended to be wrapped in a spinning `<g>` by the caller.
+ * - `renderRotBarStatic(config)` — The static "banana" arc bar, end-dot, and
+ *   `<clipPath>` definition. The clip region is angularly padded at the end
+ *   side so spinning dots snap cleanly in/out.
+ * - `renderRotBarDots(color, position)` — Smaller dots sized to fit inside
+ *   the bar, rendered inside the caller's clip-path group.
+ * - `shortestAngularDeltaDeg(startAngle, endAngle)` — Wraparound-safe
+ *   minimal angular distance (0–180°) used for zero-span thresholds.
+ *
+ * ## Coordinate System
+ *
+ * All functions assume a centered SVG coordinate system (0, 0 at center)
+ * with 0° at 12 o'clock and angles increasing clockwise. The caller
+ * (typically `<obc-watch>`) is responsible for viewBox, rotation, and
+ * animation via `RateOfTurnController`.
+ *
+ * ## Future Extensions
+ *
+ * The internal path builder (`rotBarPath`) accepts an arbitrary track radius,
+ * enabling future use on compass sectors with different radii and on flat
+ * (linear) compass layouts where the arc would be "straightened" into a
+ * horizontal bar.
+ */
 import {svg, SVGTemplateResult} from 'lit';
 
 export enum RotType {
@@ -94,6 +129,14 @@ function rotBarPath(
   ].join(' ');
 }
 
+export function shortestAngularDeltaDeg(
+  startAngle: number,
+  endAngle: number
+): number {
+  const cw = (((endAngle - startAngle) % 360) + 360) % 360;
+  return cw <= 180 ? cw : 360 - cw;
+}
+
 export interface RotBarConfig {
   startAngle: number;
   endAngle: number;
@@ -113,7 +156,7 @@ export function renderRotBarStatic(config: RotBarConfig): SVGTemplateResult {
     maskId = 'rot-bar-mask',
   } = config;
 
-  if (Math.abs(endAngle - startAngle) < 0.1) {
+  if (shortestAngularDeltaDeg(startAngle, endAngle) < 0.1) {
     return svg``;
   }
 
