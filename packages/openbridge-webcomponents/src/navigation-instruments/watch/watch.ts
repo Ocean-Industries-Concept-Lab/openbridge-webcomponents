@@ -33,6 +33,7 @@ import {
   renderRotDots,
   renderRotBarStatic,
   renderRotBarDots,
+  shortestAngularDeltaDeg,
 } from '../rate-of-turn/rot-renderer.js';
 export {RotType, RotPosition};
 import {RateOfTurnController} from '../rate-of-turn/rate-of-turn.controller.js';
@@ -679,7 +680,8 @@ export class ObcWatch extends LitElement {
       this.rotBarColor ?? 'var(--instrument-regular-tertiary-color)';
 
     if (this.rotType === RotType.bar) {
-      const hasBar = Math.abs(this.rotEndAngle - this.rotStartAngle) >= 0.1;
+      const hasBar =
+        shortestAngularDeltaDeg(this.rotStartAngle, this.rotEndAngle) >= 0.1;
       return svg`
         ${renderRotBarStatic({
           startAngle: this.rotStartAngle,
