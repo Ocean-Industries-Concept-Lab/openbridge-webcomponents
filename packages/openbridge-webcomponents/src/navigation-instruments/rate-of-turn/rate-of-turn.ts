@@ -16,6 +16,8 @@ export class ObcRateOfTurn extends LitElement {
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: Number}) barStartAngle: number = 0;
   @property({type: Number}) barEndAngle: number = 30;
+  @property({type: String}) watchCircleType: WatchCircleType =
+    WatchCircleType.single;
 
   private get dotColor(): string {
     return this.priority === Priority.enhanced
@@ -52,7 +54,7 @@ export class ObcRateOfTurn extends LitElement {
   override render() {
     return html`<div class="container">
       <obc-watch
-        .watchCircleType=${WatchCircleType.single}
+        .watchCircleType=${this.watchCircleType}
         .rotType=${this.type}
         .rotPosition=${this.position}
         .rotStartAngle=${this.barStartAngle}

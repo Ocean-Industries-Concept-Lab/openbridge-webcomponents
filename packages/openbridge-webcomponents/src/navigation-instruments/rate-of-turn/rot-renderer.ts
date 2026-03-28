@@ -132,9 +132,11 @@ export function renderRotBarStatic(config: RotBarConfig): SVGTemplateResult {
   );
 
   return svg`
-    <clipPath id="${maskId}">
-      <path d="${clipPath}" />
-    </clipPath>
+    <defs>
+      <clipPath id="${maskId}">
+        <path d="${clipPath}" />
+      </clipPath>
+    </defs>
     <path d="${arcPath}" fill="${barColor}" />
     <circle
       cx="${endCx}" cy="${endCy}" r="${BAR_DOT_RADIUS}"
