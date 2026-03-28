@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcRateOfTurn} from './rate-of-turn.js';
 import './rate-of-turn.js';
 import {RotType, RotPosition} from './rot-renderer.js';
+import {WatchCircleType} from '../watch/watch.js';
 import {Priority} from '../types.js';
 import {widthDecorator} from '../../storybook-util.js';
 
@@ -52,6 +53,7 @@ export const DotsEnhanced: Story = {
 export const DotsInnerCircle: Story = {
   args: {
     position: RotPosition.innerCircle,
+    watchCircleType: WatchCircleType.triple,
   },
 };
 
@@ -78,6 +80,7 @@ export const BarInnerCircle: Story = {
     position: RotPosition.innerCircle,
     barStartAngle: 0,
     barEndAngle: 30,
+    watchCircleType: WatchCircleType.triple,
   },
 };
 

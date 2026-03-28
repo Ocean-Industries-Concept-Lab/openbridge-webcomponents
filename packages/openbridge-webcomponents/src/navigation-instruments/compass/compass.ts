@@ -53,7 +53,10 @@ export enum CompassPriorityElement {
  * - **Advice zones**: Pass `headingAdvices` to render caution/alert arcs;
  *   triggered state is derived from whether the current heading falls
  *   inside the advice range.
- * - **Rate of turn**: Animated ROT dot driven by `rotationsPerMinute`.
+ * - **Rate of turn**: Animated ROT indicator driven by `rotationsPerMinute`.
+ *   Supports spinning dots (`rotType="dots"`) and a banana-shaped arc bar
+ *   (`rotType="bar"`) showing the HDG→COG span. Position on the outer
+ *   scale ring or inner circle via `rotPosition`.
  * - **Environmental overlays**: Wind speed/direction and current
  *   speed/direction indicators on the watch face.
  * - **Vessel image**: Configurable vessel silhouette centered on the
@@ -100,6 +103,8 @@ export enum CompassPriorityElement {
  * @property {number | null} currentFromDirection - The direction the current is coming from in degrees.
  * @property {VesselImage} vesselImage - The image of the vessel.
  * @property {number} rotationsPerMinute - The number of rotations per minute for the rate of turn controller.
+ * @property {RotType} rotType - ROT display mode: `'dots'` (spinning dots, default) or `'bar'` (arc bar from HDG to COG).
+ * @property {RotPosition} rotPosition - ROT track position: `'innerCircle'` (default) or `'scale'` (on the outer ring).
  * @property {Priority} priority - Color priority: `Priority.enhanced` uses the blue/enhanced color palette, `Priority.regular` (default) uses the standard palette.
  *
  * @ignition-base-height: 512px

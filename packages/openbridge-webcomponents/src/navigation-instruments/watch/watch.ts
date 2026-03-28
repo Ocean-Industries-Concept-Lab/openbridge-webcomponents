@@ -142,6 +142,13 @@ const RADIAL_SETPOINT_INWARD_ADJUST = 4;
  * @property {boolean} atAngleSetpoint - Whether value matches setpoint (within deadband)
  * @property {number} angleSetpointAtZeroDeadband - Deadband for zero detection (default 0.5°)
  * @property {boolean} setpointOverride - Override to derive setpoint color from priority regardless of state
+ * @property {RotType|undefined} rotType - ROT visualization type: `'dots'` (spinning dots) or `'bar'` (arc bar with clipped dots). Undefined hides the ROT layer.
+ * @property {RotPosition} rotPosition - Track on which ROT elements are placed: `'scale'` (on the outer ring) or `'innerCircle'` (default, inside the inner ring)
+ * @property {number} rotStartAngle - Start angle of the ROT bar arc in degrees (0° = 12 o'clock, clockwise). Only used when `rotType` is `'bar'`.
+ * @property {number} rotEndAngle - End angle of the ROT bar arc in degrees. The bar is hidden when the difference from `rotStartAngle` is less than 0.1°.
+ * @property {string|undefined} rotColor - Override color for ROT dots and the bar end-dot stroke. Defaults to `--instrument-regular-secondary-color`.
+ * @property {string|undefined} rotBarColor - Override fill color for the ROT bar arc background. Defaults to `--instrument-regular-tertiary-color`.
+ * @property {number} rotationsPerMinute - Spin speed of the ROT dot ring in rotations per minute. Sign controls direction (positive = clockwise).
  */
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {
@@ -243,19 +250,32 @@ export class ObcWatch extends LitElement {
   override disconnectedCallback(): void {
     super.disconnectedCallback();
     clearTimeout(this._animationTimer);
+    this.disposeRotController();
+  }
+
+  private disposeRotController(): void {
+    if (this._rotController) {
+      this.removeController(this._rotController);
+      this._rotController = undefined;
+    }
   }
 
   override updated(changed: PropertyValues): void {
     super.updated(changed);
-    if (this.rotType && !this._rotController) {
-      const el = this.renderRoot.querySelector('#rot-spinner');
-      if (el) {
-        this._rotController = new RateOfTurnController(
-          this,
-          el,
-          this._rotationsPerMinute
-        );
-      }
+    const el = this.rotType
+      ? this.renderRoot.querySelector('#rot-spinner')
+      : null;
+    if (!el) {
+      this.disposeRotController();
+      return;
+    }
+    if (!this._rotController || this._rotController.el !== el) {
+      this.disposeRotController();
+      this._rotController = new RateOfTurnController(
+        this,
+        el,
+        this._rotationsPerMinute
+      );
     }
   }
 
@@ -658,6 +678,7 @@ export class ObcWatch extends LitElement {
       this.rotBarColor ?? 'var(--instrument-regular-tertiary-color)';
 
     if (this.rotType === RotType.bar) {
+      const hasBar = Math.abs(this.rotEndAngle - this.rotStartAngle) >= 0.1;
       return svg`
         ${renderRotBarStatic({
           startAngle: this.rotStartAngle,
@@ -667,7 +688,7 @@ export class ObcWatch extends LitElement {
           position: this.rotPosition,
           maskId: 'rot-bar-mask',
         })}
-        <g clip-path="url(#rot-bar-mask)">
+        <g clip-path=${hasBar ? 'url(#rot-bar-mask)' : nothing}>
           <g id="rot-spinner">
             ${renderRotBarDots(color, this.rotPosition)}
           </g>
