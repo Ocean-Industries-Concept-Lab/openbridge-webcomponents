@@ -12,16 +12,20 @@ export enum RotPosition {
 
 // TODO: RotStyle.port / RotStyle.starboard for port/starboard coloring
 
-const DOT_ANGLES = [0, 72, 144, 216, 288];
+const DOT_COUNT = 5;
+const DOT_ANGLES = Array.from(
+  {length: DOT_COUNT},
+  (_, i) => (360 / DOT_COUNT) * i
+);
 
 const SCALE_RADIUS = 172;
 const INNER_CIRCLE_RADIUS = 100;
 
-const DOT_RADIUS = 8;
-const BAR_DOT_RADIUS = 6;
-const BAR_DOT_STROKE = 4;
-const BAR_DOT_INNER_RADIUS = BAR_DOT_RADIUS - BAR_DOT_STROKE / 2;
 const BAR_HALF_THICKNESS = 8;
+const DOT_RADIUS = BAR_HALF_THICKNESS;
+const BAR_DOT_RADIUS = BAR_HALF_THICKNESS * 0.75;
+const BAR_DOT_STROKE = BAR_HALF_THICKNESS * 0.5;
+const BAR_DOT_INNER_RADIUS = BAR_DOT_RADIUS - BAR_DOT_STROKE / 2;
 
 function getTrackRadius(position: RotPosition): number {
   return position === RotPosition.scale ? SCALE_RADIUS : INNER_CIRCLE_RADIUS;
@@ -49,11 +53,10 @@ export function renderRotDots(
 function rotBarPath(
   startAngle: number,
   endAngle: number,
-  position: RotPosition
+  trackRadius: number
 ): string {
-  const trackR = getTrackRadius(position);
-  const R = trackR + BAR_HALF_THICKNESS;
-  const r = trackR - BAR_HALF_THICKNESS;
+  const R = trackRadius + BAR_HALF_THICKNESS;
+  const r = trackRadius - BAR_HALF_THICKNESS;
 
   const a1 = (startAngle * Math.PI) / 180;
   const a2 = (endAngle * Math.PI) / 180;
@@ -114,21 +117,21 @@ export function renderRotBarStatic(config: RotBarConfig): SVGTemplateResult {
     return svg``;
   }
 
-  const arcPath = rotBarPath(startAngle, endAngle, position);
-  const radius = getTrackRadius(position);
-  const {cx: endCx, cy: endCy} = dotOnTrack(endAngle, radius);
+  const trackRadius = getTrackRadius(position);
+  const arcPath = rotBarPath(startAngle, endAngle, trackRadius);
+  const {cx: endCx, cy: endCy} = dotOnTrack(endAngle, trackRadius);
 
   // Expand the clip region angularly at the COG (end) side only so dots
   // snap fully in/out near the end dot. The HDG (start) side is flat —
   // dots should clip exactly at the bar edge with no extra padding.
   const dotAngularPad =
-    (Math.asin(BAR_DOT_INNER_RADIUS / radius) * 180) / Math.PI;
+    (Math.asin(BAR_DOT_INNER_RADIUS / trackRadius) * 180) / Math.PI;
   const cwSpan = (((endAngle - startAngle) % 360) + 360) % 360;
   const isCW = cwSpan <= 180;
   const clipPath = rotBarPath(
     startAngle,
     endAngle + (isCW ? dotAngularPad : -dotAngularPad),
-    position
+    trackRadius
   );
 
   return svg`
