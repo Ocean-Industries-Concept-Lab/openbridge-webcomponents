@@ -84,4 +84,13 @@ export class RateOfTurnController implements ReactiveController {
       this.animation.pause();
     }
   }
+
+  destroy() {
+    this.animation?.cancel();
+    this.animation = undefined;
+  }
+
+  hostDisconnected() {
+    this.destroy();
+  }
 }

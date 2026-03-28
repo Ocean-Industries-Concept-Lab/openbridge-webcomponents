@@ -255,6 +255,7 @@ export class ObcWatch extends LitElement {
 
   private disposeRotController(): void {
     if (this._rotController) {
+      this._rotController.destroy();
       this.removeController(this._rotController);
       this._rotController = undefined;
     }
@@ -688,11 +689,15 @@ export class ObcWatch extends LitElement {
           position: this.rotPosition,
           maskId: 'rot-bar-mask',
         })}
-        <g clip-path=${hasBar ? 'url(#rot-bar-mask)' : nothing}>
-          <g id="rot-spinner">
-            ${renderRotBarDots(color, this.rotPosition)}
-          </g>
-        </g>
+        ${
+          hasBar
+            ? svg`<g clip-path="url(#rot-bar-mask)">
+              <g id="rot-spinner">
+                ${renderRotBarDots(color, this.rotPosition)}
+              </g>
+            </g>`
+            : nothing
+        }
       `;
     }
 
