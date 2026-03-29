@@ -143,6 +143,8 @@ export interface RotBarConfig {
   color: string;
   barColor: string;
   position: RotPosition;
+  endDotFill?: string;
+  endDotStroke?: string;
   maskId?: string;
 }
 
@@ -153,6 +155,8 @@ export function renderRotBarStatic(config: RotBarConfig): SVGTemplateResult {
     color,
     barColor,
     position,
+    endDotFill = 'var(--instrument-frame-primary-color)',
+    endDotStroke = color,
     maskId = 'rot-bar-mask',
   } = config;
 
@@ -186,8 +190,8 @@ export function renderRotBarStatic(config: RotBarConfig): SVGTemplateResult {
     <path d="${arcPath}" fill="${barColor}" />
     <circle
       cx="${endCx}" cy="${endCy}" r="${BAR_DOT_RADIUS}"
-      fill="var(--instrument-frame-primary-color)"
-      stroke="${color}"
+      fill="${endDotFill}"
+      stroke="${endDotStroke}"
       stroke-width="${BAR_DOT_STROKE}"
     />
   `;
