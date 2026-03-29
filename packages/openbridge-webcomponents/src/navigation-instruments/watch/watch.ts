@@ -147,8 +147,7 @@ const RADIAL_SETPOINT_INWARD_ADJUST = 4;
  * @property {RotPosition} rotPosition - Track on which ROT elements are placed: `'scale'` (on the outer ring) or `'innerCircle'` (default, inside the inner ring)
  * @property {number} rotStartAngle - Start angle of the ROT bar arc in degrees (0° = 12 o'clock, clockwise). Only used when `rotType` is `'bar'`.
  * @property {number} rotEndAngle - End angle of the ROT bar arc in degrees. The bar is hidden when the difference from `rotStartAngle` is less than 0.1°.
- * @property {string|undefined} rotColor - Override color for ROT dots and the bar end-dot stroke. Defaults to `--instrument-regular-secondary-color`.
- * @property {string|undefined} rotBarColor - Override fill color for the ROT bar arc background. Defaults to `--instrument-regular-tertiary-color`.
+ * @property {Priority|undefined} rotPriority - Override priority for ROT color derivation. When set, ROT colors use this instead of the main `priority`. Useful when the ROT element has independent priority (e.g. compass per-element priority).
  * @property {number} rotationsPerMinute - Spin speed of the ROT dot ring in rotations per minute. Sign controls direction (positive = clockwise).
  */
 @customElement('obc-watch')
@@ -212,8 +211,7 @@ export class ObcWatch extends LitElement {
   @property({type: String}) rotPosition: RotPosition = RotPosition.innerCircle;
   @property({type: Number}) rotStartAngle: number = 0;
   @property({type: Number}) rotEndAngle: number = 0;
-  @property({type: String}) rotColor: string | undefined;
-  @property({type: String}) rotBarColor: string | undefined;
+  @property({type: String}) rotPriority: Priority | undefined;
   @property({type: Number})
   set rotationsPerMinute(value: number) {
     this._rotationsPerMinute = value;
@@ -672,12 +670,52 @@ export class ObcWatch extends LitElement {
     `;
   }
 
+  private getRotColors(): {
+    dotColor: string;
+    barBgColor: string;
+    endDotFill: string;
+    endDotStroke: string;
+  } {
+    const p = this.rotPriority ?? this.priority;
+    const isEnhanced = p === Priority.enhanced;
+    const isInner = this.rotPosition === RotPosition.innerCircle;
+
+    if (isInner) {
+      return {
+        dotColor: isEnhanced
+          ? 'var(--instrument-enhanced-tertiary-color)'
+          : 'var(--instrument-regular-tertiary-color)',
+        barBgColor: isEnhanced
+          ? 'var(--instrument-enhanced-secondary-color)'
+          : 'var(--instrument-regular-secondary-color)',
+        endDotFill: 'var(--border-silhouette-color)',
+        endDotStroke: isEnhanced
+          ? 'var(--instrument-enhanced-secondary-color)'
+          : 'var(--instrument-regular-secondary-color)',
+      };
+    }
+
+    return {
+      dotColor: isEnhanced
+        ? 'var(--instrument-enhanced-secondary-color)'
+        : 'var(--instrument-regular-secondary-color)',
+      barBgColor: isEnhanced
+        ? 'var(--instrument-enhanced-tertiary-color)'
+        : 'var(--instrument-regular-tertiary-color)',
+      endDotFill: isEnhanced
+        ? 'var(--instrument-enhanced-secondary-color)'
+        : 'var(--border-silhouette-color)',
+      endDotStroke: isEnhanced
+        ? 'var(--instrument-frame-primary-color)'
+        : 'var(--instrument-regular-secondary-color)',
+    };
+  }
+
   private renderRot(): SVGTemplateResult | typeof nothing {
     if (!this.rotType) return nothing;
 
-    const color = this.rotColor ?? 'var(--instrument-regular-secondary-color)';
-    const barColor =
-      this.rotBarColor ?? 'var(--instrument-regular-tertiary-color)';
+    const {dotColor, barBgColor, endDotFill, endDotStroke} =
+      this.getRotColors();
 
     if (this.rotType === RotType.bar) {
       const hasBar =
@@ -686,16 +724,18 @@ export class ObcWatch extends LitElement {
         ${renderRotBarStatic({
           startAngle: this.rotStartAngle,
           endAngle: this.rotEndAngle,
-          color,
-          barColor,
+          color: dotColor,
+          barColor: barBgColor,
           position: this.rotPosition,
+          endDotFill,
+          endDotStroke,
           maskId: 'rot-bar-mask',
         })}
         ${
           hasBar
             ? svg`<g clip-path="url(#rot-bar-mask)">
               <g id="rot-spinner">
-                ${renderRotBarDots(color, this.rotPosition)}
+                ${renderRotBarDots(dotColor, this.rotPosition)}
               </g>
             </g>`
             : nothing
@@ -705,7 +745,7 @@ export class ObcWatch extends LitElement {
 
     return svg`
       <g id="rot-spinner">
-        ${renderRotDots(color, this.rotPosition)}
+        ${renderRotDots(dotColor, this.rotPosition)}
       </g>
     `;
   }

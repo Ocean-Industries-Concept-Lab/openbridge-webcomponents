@@ -19,18 +19,6 @@ export class ObcRateOfTurn extends LitElement {
   @property({type: String}) watchCircleType: WatchCircleType =
     WatchCircleType.single;
 
-  private get dotColor(): string {
-    return this.priority === Priority.enhanced
-      ? 'var(--instrument-enhanced-secondary-color)'
-      : 'var(--instrument-regular-secondary-color)';
-  }
-
-  private get barBgColor(): string {
-    return this.priority === Priority.enhanced
-      ? 'var(--instrument-enhanced-tertiary-color)'
-      : 'var(--instrument-regular-tertiary-color)';
-  }
-
   static override styles = css`
     * {
       box-sizing: border-box;
@@ -55,12 +43,11 @@ export class ObcRateOfTurn extends LitElement {
     return html`<div class="container">
       <obc-watch
         .watchCircleType=${this.watchCircleType}
+        .priority=${this.priority}
         .rotType=${this.type}
         .rotPosition=${this.position}
         .rotStartAngle=${this.barStartAngle}
         .rotEndAngle=${this.barEndAngle}
-        .rotColor=${this.dotColor}
-        .rotBarColor=${this.barBgColor}
         .rotationsPerMinute=${this.rotationsPerMinute}
       ></obc-watch>
     </div>`;

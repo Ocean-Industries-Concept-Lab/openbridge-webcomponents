@@ -213,12 +213,6 @@ export class ObcCompass extends LitElement {
       : undefined;
   }
 
-  private barColorFor(element: CompassPriorityElement): string | undefined {
-    return this.priorityFor(element) === Priority.enhanced
-      ? 'var(--instrument-enhanced-tertiary-color)'
-      : undefined;
-  }
-
   private getRotation(): number | undefined {
     if (this.direction === CompassDirection.NorthUp) {
       return undefined;
@@ -280,8 +274,7 @@ export class ObcCompass extends LitElement {
           .rotPosition=${this.rotPosition}
           .rotStartAngle=${this.heading + (this.getRotation() ?? 0)}
           .rotEndAngle=${this.courseOverGround + (this.getRotation() ?? 0)}
-          .rotColor=${this.colorFor(CompassPriorityElement.rot)}
-          .rotBarColor=${this.barColorFor(CompassPriorityElement.rot)}
+          .rotPriority=${this.priorityFor(CompassPriorityElement.rot)}
           .rotationsPerMinute=${this.rotationsPerMinute}
         >
         </obc-watch>
