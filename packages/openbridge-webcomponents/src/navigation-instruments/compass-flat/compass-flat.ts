@@ -5,6 +5,9 @@ import {Tickmark, TickmarkType} from '../watch-flat/tickmark-flat.js';
 import '../watch-flat/watch-flat.js';
 import {customElement} from '../../decorator.js';
 import {Priority} from '../types.js';
+import {RotType} from '../rate-of-turn/rot-renderer.js';
+
+export {RotType};
 
 export enum CompassFlatPriorityElement {
   hdg = 'hdg',
@@ -45,6 +48,8 @@ export class ObcCompassFlat extends LitElement {
   priorityElements: CompassFlatPriorityElement[] = [
     CompassFlatPriorityElement.hdg,
   ];
+  @property({type: String}) rotType: RotType | undefined;
+  @property({type: Number}) rotationsPerMinute: number = 1;
 
   @state() private containerWidth = 0;
   @state() private maxContainerWidth = 0;
@@ -176,7 +181,7 @@ export class ObcCompassFlat extends LitElement {
       yAdjustment = scaleFactor * maxAdjustment;
     }
 
-    const y = LabelPosition.bottom + yAdjustment;
+    const y = LabelPosition.bottom + yAdjustment + (this.rotType ? 12 : 0);
 
     indicators.push(svg`
           <text x="-175" y=${y} class="label left" fill=${LabelStyle.regular}>
@@ -245,7 +250,11 @@ export class ObcCompassFlat extends LitElement {
       x: l.x * translationScale,
     }));
 
-    const viewBox = '-192 -128 384 128';
+    const hasBottomBar = !!this.rotType;
+    const arrowViewBoxY = hasBottomBar
+      ? -128 + Math.round((12 * 384) / 352)
+      : -128;
+    const viewBox = `-192 ${arrowViewBoxY} 384 128`;
 
     return html`
       <div class="container" style="max-width:${this.maxContainerWidth}px">
@@ -255,6 +264,13 @@ export class ObcCompassFlat extends LitElement {
           .rotation=${this.heading}
           .tickmarks=${tickmarks}
           .tickmarkSpacing=${translationScale}
+          .bottomBar=${!!this.rotType}
+          .rotType=${this.rotType}
+          .rotStartX=${0}
+          .rotEndX=${translation}
+          .rotDotSpacing=${72 * translationScale}
+          .rotationsPerMinute=${this.rotationsPerMinute}
+          .rotPriority=${this.priority}
         ></obc-watch-flat>
         <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg">
           ${this.HDGSvg}${this.COGSvg(translation)}

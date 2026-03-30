@@ -210,3 +210,146 @@ export function renderRotBarDots(
     })}
   `;
 }
+
+// ============================================================================
+// Linear (flat compass) ROT rendering
+// ============================================================================
+
+/**
+ * Angular spacing between dots in degrees — same as radial (360 / 5 = 72).
+ * In linear mode this is converted to pixels via `dotSpacing = 72 * translationScale`.
+ */
+export const LINEAR_DOT_ANGLE_SPACING = 360 / DOT_COUNT;
+
+export enum LinearRotPosition {
+  track = 'track',
+  scale = 'scale',
+}
+
+/**
+ * Render evenly-spaced filled dots along a horizontal track.
+ *
+ * Dots are placed at multiples of `dotSpacing` centered on x = 0.
+ * The caller wraps the result in a translating `<g id="rot-spinner">`
+ * animated by `RateOfTurnController` in translate mode.
+ *
+ * Enough dots are generated to cover `visibleWidth` plus one full
+ * animation cycle (`5 * dotSpacing`) on each side for seamless looping.
+ */
+export function renderLinearRotDots(
+  color: string,
+  trackY: number,
+  dotSpacing: number,
+  visibleWidth: number
+): SVGTemplateResult {
+  if (dotSpacing <= 0) return svg``;
+  const cyclePx = DOT_COUNT * dotSpacing;
+  const halfRange = visibleWidth / 2 + cyclePx;
+  const firstIdx = Math.floor(-halfRange / dotSpacing);
+  const lastIdx = Math.ceil(halfRange / dotSpacing);
+
+  const dots: SVGTemplateResult[] = [];
+  for (let i = firstIdx; i <= lastIdx; i++) {
+    dots.push(
+      svg`<circle cx="${i * dotSpacing}" cy="${trackY}" r="${DOT_RADIUS}" fill="${color}" />`
+    );
+  }
+  return svg`${dots}`;
+}
+
+export interface LinearRotBarConfig {
+  startX: number;
+  endX: number;
+  color: string;
+  barColor: string;
+  trackY: number;
+  endDotFill?: string;
+  endDotStroke?: string;
+  maskId?: string;
+}
+
+/**
+ * Render the static horizontal bar, end-dot, and `<clipPath>` for a linear
+ * ROT indicator. Analogous to `renderRotBarStatic` for radial instruments.
+ *
+ * The bar is a rounded capsule from `startX` to `endX` at vertical
+ * position `trackY`. A ring-shaped end-dot sits at `endX`. The clip
+ * region is padded at the end side so spinning bar-dots snap in/out
+ * cleanly (same rationale as the angular padding in the radial version).
+ *
+ * Returns empty SVG when the bar span is less than 1 px.
+ */
+export function renderLinearRotBarStatic(
+  config: LinearRotBarConfig
+): SVGTemplateResult {
+  const {
+    startX,
+    endX,
+    color,
+    barColor,
+    trackY,
+    endDotFill = 'var(--instrument-frame-primary-color)',
+    endDotStroke = color,
+    maskId = 'rot-bar-mask-linear',
+  } = config;
+
+  if (Math.abs(endX - startX) < 1) return svg``;
+
+  const left = Math.min(startX, endX);
+  const right = Math.max(startX, endX);
+  const barWidth = right - left;
+  const barHeight = 2 * BAR_HALF_THICKNESS;
+
+  const endPad = BAR_DOT_INNER_RADIUS;
+  const isEndRight = endX >= startX;
+  const clipLeft = isEndRight ? left : left - endPad;
+  const clipRight = isEndRight ? right + endPad : right;
+  const clipWidth = clipRight - clipLeft;
+
+  return svg`
+    <defs>
+      <clipPath id="${maskId}">
+        <rect
+          x="${clipLeft}" y="${trackY - BAR_HALF_THICKNESS}"
+          width="${clipWidth}" height="${barHeight}"
+          rx="${BAR_HALF_THICKNESS}" />
+      </clipPath>
+    </defs>
+    <rect
+      x="${left}" y="${trackY - BAR_HALF_THICKNESS}"
+      width="${barWidth}" height="${barHeight}"
+      rx="${BAR_HALF_THICKNESS}" fill="${barColor}" />
+    <circle
+      cx="${endX}" cy="${trackY}" r="${BAR_DOT_RADIUS}"
+      fill="${endDotFill}" stroke="${endDotStroke}"
+      stroke-width="${BAR_DOT_STROKE}" />
+  `;
+}
+
+/**
+ * Render smaller ring-shaped dots along a horizontal track, intended to
+ * be placed inside a `<g clip-path="…">` that clips to the bar shape.
+ * Analogous to `renderRotBarDots` for radial instruments.
+ */
+export function renderLinearRotBarDots(
+  color: string,
+  trackY: number,
+  dotSpacing: number,
+  visibleWidth: number
+): SVGTemplateResult {
+  if (dotSpacing <= 0) return svg``;
+  const cyclePx = DOT_COUNT * dotSpacing;
+  const halfRange = visibleWidth / 2 + cyclePx;
+  const firstIdx = Math.floor(-halfRange / dotSpacing);
+  const lastIdx = Math.ceil(halfRange / dotSpacing);
+
+  const dots: SVGTemplateResult[] = [];
+  for (let i = firstIdx; i <= lastIdx; i++) {
+    dots.push(
+      svg`<circle cx="${i * dotSpacing}" cy="${trackY}"
+        r="${BAR_DOT_INNER_RADIUS}" fill="none"
+        stroke="${color}" stroke-width="${BAR_DOT_STROKE}" />`
+    );
+  }
+  return svg`${dots}`;
+}

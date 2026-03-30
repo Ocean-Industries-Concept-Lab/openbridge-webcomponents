@@ -1,5 +1,9 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {CompassFlatPriorityElement, ObcCompassFlat} from './compass-flat.js';
+import {
+  CompassFlatPriorityElement,
+  ObcCompassFlat,
+  RotType,
+} from './compass-flat.js';
 import './compass-flat.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {Priority} from '../types.js';
@@ -17,6 +21,8 @@ const meta: Meta<typeof ObcCompassFlat> = {
     minFOV: 90,
     priority: Priority.enhanced,
     priorityElements: [CompassFlatPriorityElement.hdg],
+    rotType: undefined,
+    rotationsPerMinute: 1,
   },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
@@ -27,6 +33,13 @@ const meta: Meta<typeof ObcCompassFlat> = {
     priorityElements: {
       control: 'multi-select',
       options: Object.values(CompassFlatPriorityElement),
+    },
+    rotType: {
+      control: 'select',
+      options: [undefined, ...Object.values(RotType)],
+    },
+    rotationsPerMinute: {
+      control: {type: 'range', min: -10, max: 10, step: 0.5},
     },
   },
   decorators: [widthDecorator],
@@ -40,5 +53,44 @@ export const Primary: Story = {};
 export const WithFOVIndicator: Story = {
   args: {
     FOVIndicator: true,
+  },
+};
+
+export const WithRotDots: Story = {
+  name: 'ROT Dots',
+  args: {
+    rotType: RotType.dots,
+    rotationsPerMinute: 2,
+    courseOverGround: 80,
+  },
+};
+
+export const WithRotBar: Story = {
+  name: 'ROT Bar',
+  args: {
+    rotType: RotType.bar,
+    rotationsPerMinute: 2,
+    courseOverGround: 80,
+  },
+};
+
+export const WithRotBarFOV: Story = {
+  name: 'ROT Bar + FOV Indicator',
+  args: {
+    rotType: RotType.bar,
+    rotationsPerMinute: 1,
+    courseOverGround: 80,
+    FOVIndicator: true,
+  },
+};
+
+export const WithRotBarWideFOV: Story = {
+  name: 'ROT Bar Wide FOV',
+  args: {
+    rotType: RotType.bar,
+    rotationsPerMinute: 1,
+    heading: 0,
+    courseOverGround: 150,
+    minFOV: 90,
   },
 };
