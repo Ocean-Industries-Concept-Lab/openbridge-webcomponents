@@ -221,6 +221,8 @@ export function renderRotBarDots(
  */
 export const LINEAR_DOT_ANGLE_SPACING = 360 / DOT_COUNT;
 
+const LINEAR_DOT_RADIUS = BAR_HALF_THICKNESS / 2;
+
 export enum LinearRotPosition {
   track = 'track',
   scale = 'scale',
@@ -251,7 +253,7 @@ export function renderLinearRotDots(
   const dots: SVGTemplateResult[] = [];
   for (let i = firstIdx; i <= lastIdx; i++) {
     dots.push(
-      svg`<circle cx="${i * dotSpacing}" cy="${trackY}" r="${DOT_RADIUS}" fill="${color}" />`
+      svg`<circle cx="${i * dotSpacing}" cy="${trackY}" r="${LINEAR_DOT_RADIUS}" fill="${color}" />`
     );
   }
   return svg`${dots}`;
@@ -295,30 +297,26 @@ export function renderLinearRotBarStatic(
 
   if (Math.abs(endX - startX) < 1) return svg``;
 
-  const left = Math.min(startX, endX);
-  const right = Math.max(startX, endX);
-  const barWidth = right - left;
-  const barHeight = 2 * BAR_HALF_THICKNESS;
-
-  const endPad = BAR_DOT_INNER_RADIUS;
+  const h = BAR_HALF_THICKNESS;
+  const top = trackY - h;
+  const bot = trackY + h;
   const isEndRight = endX >= startX;
-  const clipLeft = isEndRight ? left : left - endPad;
-  const clipRight = isEndRight ? right + endPad : right;
-  const clipWidth = clipRight - clipLeft;
 
+  // Bar path: flat on HDG/start side, semicircle capsule on COG/end side
+  const flatX = startX;
+  const roundX = endX;
+  const barPath = isEndRight
+    ? `M ${flatX} ${top} L ${roundX} ${top} A ${h} ${h} 0 0 1 ${roundX} ${bot} L ${flatX} ${bot} Z`
+    : `M ${flatX} ${top} L ${roundX} ${top} A ${h} ${h} 0 0 0 ${roundX} ${bot} L ${flatX} ${bot} Z`;
+
+  // Clip path: exact same shape as the bar
   return svg`
     <defs>
       <clipPath id="${maskId}">
-        <rect
-          x="${clipLeft}" y="${trackY - BAR_HALF_THICKNESS}"
-          width="${clipWidth}" height="${barHeight}"
-          rx="${BAR_HALF_THICKNESS}" />
+        <path d="${barPath}" />
       </clipPath>
     </defs>
-    <rect
-      x="${left}" y="${trackY - BAR_HALF_THICKNESS}"
-      width="${barWidth}" height="${barHeight}"
-      rx="${BAR_HALF_THICKNESS}" fill="${barColor}" />
+    <path d="${barPath}" fill="${barColor}" />
     <circle
       cx="${endX}" cy="${trackY}" r="${BAR_DOT_RADIUS}"
       fill="${endDotFill}" stroke="${endDotStroke}"
@@ -327,8 +325,8 @@ export function renderLinearRotBarStatic(
 }
 
 /**
- * Render smaller ring-shaped dots along a horizontal track, intended to
- * be placed inside a `<g clip-path="…">` that clips to the bar shape.
+ * Render filled dots along a horizontal track, intended to be placed
+ * inside a `<g clip-path="…">` that clips to the bar shape.
  * Analogous to `renderRotBarDots` for radial instruments.
  */
 export function renderLinearRotBarDots(
@@ -347,8 +345,7 @@ export function renderLinearRotBarDots(
   for (let i = firstIdx; i <= lastIdx; i++) {
     dots.push(
       svg`<circle cx="${i * dotSpacing}" cy="${trackY}"
-        r="${BAR_DOT_INNER_RADIUS}" fill="none"
-        stroke="${color}" stroke-width="${BAR_DOT_STROKE}" />`
+        r="${LINEAR_DOT_RADIUS}" fill="${color}" />`
     );
   }
   return svg`${dots}`;
