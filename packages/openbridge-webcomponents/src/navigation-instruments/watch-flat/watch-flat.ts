@@ -196,8 +196,8 @@ export class ObcWatchFlat extends LitElement {
     const isEnhanced = this.rotPriority === Priority.enhanced;
     return {
       dotColor: isEnhanced
-        ? 'var(--instrument-enhanced-secondary-color)'
-        : 'var(--instrument-regular-secondary-color)',
+        ? 'var(--instrument-enhanced-tertiary-color)'
+        : 'var(--instrument-regular-tertiary-color)',
       barBgColor: isEnhanced
         ? 'var(--instrument-enhanced-secondary-color)'
         : 'var(--instrument-regular-secondary-color)',
@@ -241,10 +241,14 @@ export class ObcWatchFlat extends LitElement {
       `;
     }
 
+    const dotsColor =
+      this.rotPriority === Priority.enhanced
+        ? 'var(--instrument-enhanced-secondary-color)'
+        : 'var(--instrument-regular-secondary-color)';
     return canAnimateDots
       ? svg`
           <g id="rot-spinner">
-            ${renderLinearRotDots(dotColor, trackY, this.rotDotSpacing, this.width)}
+            ${renderLinearRotDots(dotsColor, trackY, this.rotDotSpacing, this.width)}
           </g>
         `
       : nothing;
