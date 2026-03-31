@@ -12,6 +12,7 @@ export {RotType};
 export enum CompassFlatPriorityElement {
   hdg = 'hdg',
   cog = 'cog',
+  rot = 'rot',
 }
 
 export enum LabelPosition {
@@ -270,7 +271,7 @@ export class ObcCompassFlat extends LitElement {
           .rotEndX=${translation}
           .rotDotSpacing=${72 * translationScale}
           .rotationsPerMinute=${this.rotationsPerMinute}
-          .rotPriority=${this.priority}
+          .rotPriority=${this.priorityFor(CompassFlatPriorityElement.rot)}
         ></obc-watch-flat>
         <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg">
           ${this.HDGSvg}${this.COGSvg(translation)}
