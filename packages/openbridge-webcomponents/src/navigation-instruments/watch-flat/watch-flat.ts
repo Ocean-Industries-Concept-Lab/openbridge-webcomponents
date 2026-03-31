@@ -196,8 +196,8 @@ export class ObcWatchFlat extends LitElement {
     const isEnhanced = this.rotPriority === Priority.enhanced;
     return {
       dotColor: isEnhanced
-        ? 'var(--instrument-enhanced-tertiary-color)'
-        : 'var(--instrument-regular-tertiary-color)',
+        ? 'var(--instrument-enhanced-secondary-color)'
+        : 'var(--instrument-regular-secondary-color)',
       barBgColor: isEnhanced
         ? 'var(--instrument-enhanced-secondary-color)'
         : 'var(--instrument-regular-secondary-color)',
