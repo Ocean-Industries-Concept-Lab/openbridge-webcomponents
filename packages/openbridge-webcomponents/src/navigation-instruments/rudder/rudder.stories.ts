@@ -16,6 +16,7 @@ const meta: Meta<typeof ObcRudder> = {
     touching: false,
     priority: Priority.enhanced,
     tickmarkStyle: TickmarkStyle.regular,
+    zoomToFit: false,
   },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
@@ -31,6 +32,7 @@ const meta: Meta<typeof ObcRudder> = {
       control: 'select',
       options: Object.values(TickmarkStyle),
     },
+    zoomToFit: {control: 'boolean'},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcRudder>;
@@ -45,5 +47,28 @@ export const Primary: Story = {
 export const Needle: Story = {
   args: {
     variant: ObcRudderVariant.Needle,
+  },
+};
+
+export const ZoomedIn: Story = {
+  args: {
+    maxAngle: 45,
+    zoomToFit: true,
+  },
+};
+
+export const ZoomedInNeedle: Story = {
+  args: {
+    maxAngle: 45,
+    variant: ObcRudderVariant.Needle,
+    zoomToFit: true,
+  },
+};
+
+export const ZoomedInNarrow: Story = {
+  args: {
+    maxAngle: 20,
+    zoomToFit: true,
+    showLabels: true,
   },
 };

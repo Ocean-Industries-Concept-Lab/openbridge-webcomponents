@@ -2,11 +2,12 @@ import {LitElement, css, html, nothing, svg} from 'lit';
 import {property} from 'lit/decorators.js';
 import '../watch/watch.js';
 import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
-import {WatchCircleType} from '../watch/watch.js';
+import {OUTER_RING_RADIUS, WatchCircleType} from '../watch/watch.js';
 import {InstrumentState, Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {customElement} from '../../decorator.js';
+import {computeArcViewBox} from '../../svghelpers/arc-frame.js';
 
 export enum ObcRudderVariant {
   Bar = 'bar',
@@ -85,6 +86,7 @@ export class ObcRudder extends SetpointMixin(LitElement) {
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: AngleAdvice[] = [];
+  @property({type: Boolean}) zoomToFit: boolean = false;
 
   getAngle(value: number) {
     return 180 - value;
@@ -141,6 +143,15 @@ export class ObcRudder extends SetpointMixin(LitElement) {
   }
 
   override render() {
+    const areas = [
+      {
+        startAngle: 180 - this.maxAngle,
+        endAngle: 180 + this.maxAngle,
+        roundInsideCut: true,
+        roundOutsideCut: true,
+      },
+    ];
+
     const barAreas = [
       {
         startAngle: this.getAngle(0),
@@ -212,19 +223,22 @@ export class ObcRudder extends SetpointMixin(LitElement) {
       };
     });
 
+    let overlayViewBox: string;
+    if (this.zoomToFit) {
+      const ext = 48;
+      const frame = computeArcViewBox(areas, OUTER_RING_RADIUS, ext, 0.06);
+      overlayViewBox = frame.viewBox;
+    } else {
+      overlayViewBox = '-224 -44.8 448 268.8';
+    }
+
     return html`
       <div class="container">
         <obc-watch
           .touching=${this.touching}
-          .clipTop=${40}
-          .areas=${[
-            {
-              startAngle: 180 - this.maxAngle,
-              endAngle: 180 + this.maxAngle,
-              roundInsideCut: true,
-              roundOutsideCut: true,
-            },
-          ]}
+          .clipTop=${this.zoomToFit ? 0 : 40}
+          .zoomToFit=${this.zoomToFit}
+          .areas=${areas}
           .angleSetpoint=${setpointAngle}
           .newAngleSetpoint=${this.newSetpoint !== undefined
             ? 180 - this.newSetpoint
@@ -243,7 +257,7 @@ export class ObcRudder extends SetpointMixin(LitElement) {
           .priority=${this.priority}
           .advices=${advices}
         ></obc-watch>
-        <svg viewBox="-224 -44.8 448 268.8">${this.renderNeedle()}</svg>
+        <svg viewBox="${overlayViewBox}">${this.renderNeedle()}</svg>
       </div>
     `;
   }

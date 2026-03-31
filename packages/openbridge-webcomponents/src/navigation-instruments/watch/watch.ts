@@ -46,6 +46,7 @@ import {
 import {VesselImage, VesselImageSize, vesselImages} from './vessel.js';
 import {renderCurrent, renderWind} from './environment.js';
 import {customElement} from '../../decorator.js';
+import {computeArcViewBox} from '../../svghelpers/arc-frame.js';
 export {VesselImage, VesselImageSize};
 
 export enum WatchCircleType {
@@ -206,6 +207,7 @@ export class ObcWatch extends LitElement {
   @property({type: Number}) clipBottom: number = 0; // in percent of height
   @property({type: Number}) scaleWindIcon: number = 1;
   @property({type: Number}) rotation: number | undefined;
+  @property({type: Boolean}) zoomToFit: boolean = false;
 
   @property({type: String}) rotType: RotType | undefined;
   @property({type: String}) rotPosition: RotPosition = RotPosition.innerCircle;
@@ -566,11 +568,24 @@ export class ObcWatch extends LitElement {
   }
 
   override render() {
-    const width = (176 + this.getPadding()) * 2;
-    const height = width * (1 - this.clipTop / 100 - this.clipBottom / 100);
-    const top = -width / 2 + (width * this.clipTop) / 100;
+    let width: number;
+    let height: number;
+    let viewBox: string;
+
+    if (this.zoomToFit && this.areas.length > 0) {
+      const ext = this.getPadding();
+      const frame = computeArcViewBox(this.areas, OUTER_RING_RADIUS, ext, 0.06);
+      width = frame.width;
+      height = frame.height;
+      viewBox = frame.viewBox;
+    } else {
+      width = (176 + this.getPadding()) * 2;
+      height = width * (1 - this.clipTop / 100 - this.clipBottom / 100);
+      const top = -width / 2 + (width * this.clipTop) / 100;
+      viewBox = `-${width / 2} ${top} ${width} ${height}`;
+    }
+
     const scale = this.getScale({width, height});
-    const viewBox = `-${width / 2} ${top} ${width} ${height}`;
     const angleSetpoint = this.renderSetpoint();
     const textRadius = this.tickmarksInside
       ? this.innerRingRadius
