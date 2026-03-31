@@ -743,9 +743,14 @@ export class ObcWatch extends LitElement {
       `;
     }
 
+    const p = this.rotPriority ?? this.priority;
+    const dotsColor =
+      p === Priority.enhanced
+        ? 'var(--instrument-enhanced-secondary-color)'
+        : 'var(--instrument-regular-secondary-color)';
     return svg`
       <g id="rot-spinner">
-        ${renderRotDots(dotColor, this.rotPosition)}
+        ${renderRotDots(dotsColor, this.rotPosition)}
       </g>
     `;
   }
