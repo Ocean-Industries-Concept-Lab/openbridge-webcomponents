@@ -209,11 +209,12 @@ export class ObcWatchFlat extends LitElement {
   }
 
   private renderRot(): SVGTemplateResult | typeof nothing {
-    if (!this.rotType || this.rotDotSpacing <= 0) return nothing;
+    if (!this.rotType) return nothing;
 
     const trackY = this.getRotTrackY();
     const {dotColor, barBgColor, endDotFill, endDotStroke} =
       this.getRotColors();
+    const canAnimateDots = this.rotDotSpacing > 0;
 
     if (this.rotType === RotType.bar) {
       const hasBar = Math.abs(this.rotEndX - this.rotStartX) >= 1;
@@ -229,7 +230,7 @@ export class ObcWatchFlat extends LitElement {
           maskId: 'rot-bar-mask-linear',
         })}
         ${
-          hasBar
+          hasBar && canAnimateDots
             ? svg`<g clip-path="url(#rot-bar-mask-linear)">
               <g id="rot-spinner">
                 ${renderLinearRotBarDots(dotColor, trackY, this.rotDotSpacing, this.width)}
@@ -240,11 +241,13 @@ export class ObcWatchFlat extends LitElement {
       `;
     }
 
-    return svg`
-      <g id="rot-spinner">
-        ${renderLinearRotDots(dotColor, trackY, this.rotDotSpacing, this.width)}
-      </g>
-    `;
+    return canAnimateDots
+      ? svg`
+          <g id="rot-spinner">
+            ${renderLinearRotDots(dotColor, trackY, this.rotDotSpacing, this.width)}
+          </g>
+        `
+      : nothing;
   }
 
   private disposeRotController(): void {
