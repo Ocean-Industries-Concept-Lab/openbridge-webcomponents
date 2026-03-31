@@ -8,7 +8,7 @@ import {Priority} from '../types.js';
 
 const meta: Meta<typeof ObcRotSector> = {
   title: 'Instruments/Rate of Turn Sector',
-  tags: ['6.0'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-rot-sector',
   decorators: [widthDecorator],
   args: {
@@ -31,6 +31,10 @@ const meta: Meta<typeof ObcRotSector> = {
     tickmarkStyle: {
       control: 'select',
       options: Object.values(TickmarkStyle),
+    },
+    zoomToFitArc: {control: 'boolean'},
+    arcExtent: {
+      control: {type: 'range', min: 10, max: 60, step: 5},
     },
   },
 } satisfies Meta<ObcRotSector>;
@@ -85,5 +89,29 @@ export const WithAdvices: Story = {
         hinted: true,
       },
     ],
+  },
+};
+
+export const ZoomedIn: Story = {
+  args: {
+    value: 30,
+    maxValue: 60,
+    arcExtent: 40,
+    primaryTickmarkInterval: 20,
+    secondaryTickmarkInterval: 10,
+    showLabels: true,
+    zoomToFitArc: true,
+  },
+};
+
+export const ZoomedInNarrow: Story = {
+  args: {
+    value: 10,
+    maxValue: 60,
+    arcExtent: 20,
+    primaryTickmarkInterval: 20,
+    secondaryTickmarkInterval: 10,
+    showLabels: true,
+    zoomToFitArc: true,
   },
 };

@@ -135,16 +135,12 @@ export const WithLabelsInside: Story = {
 export const WithRotBar: Story = {
   args: {
     rotType: RotType.bar,
-    heading: 311,
-    courseOverGround: 338,
   },
 };
 
 export const WithRotBarEnhanced: Story = {
   args: {
     rotType: RotType.bar,
-    heading: 311,
-    courseOverGround: 338,
     priorityElements: [CompassPriorityElement.hdg, CompassPriorityElement.rot],
   },
 };

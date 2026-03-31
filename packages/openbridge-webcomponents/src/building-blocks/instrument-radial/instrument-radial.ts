@@ -12,6 +12,11 @@ import {TickmarkType} from '../../navigation-instruments/watch/tickmark.js';
 import {TickmarkStyle} from '../../navigation-instruments/watch/tickmark.js';
 import {InstrumentState, Priority} from '../../navigation-instruments/types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
+import {
+  OUTER_RING_RADIUS,
+  innerRingRadiusFor,
+} from '../../navigation-instruments/watch/watch.js';
+import {computeZoomToFitArcFrame} from '../../svghelpers/arc-frame.js';
 
 export enum ObcGaugeRadialType {
   filled = 'filled',
@@ -67,6 +72,9 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
   @property({type: Number}) clipTop: number = 0; // in percent of height
   @property({type: Number}) clipBottom: number = 0; // in percent of height
+  @property({type: Boolean}) zoomToFitArc: boolean = false;
+
+  private _radiusOffset = 0;
 
   get minAngle(): number {
     return this.getAngle(this.minValue);
@@ -125,10 +133,40 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
             },
           ];
 
-    const width = 448;
-    const height = width * (1 - this.clipTop / 100 - this.clipBottom / 100);
-    const top = -width / 2 + (width * this.clipTop) / 100;
-    const viewBox = `-${width / 2} ${top} ${width} ${height}`;
+    const areas = [
+      {
+        startAngle: this.minAngle,
+        endAngle: this.maxAngle,
+        roundInsideCut: true,
+        roundOutsideCut: true,
+      },
+    ];
+
+    const watchCircleType =
+      this.type === ObcGaugeRadialType.needle
+        ? WatchCircleType.single
+        : WatchCircleType.double;
+
+    let viewBox: string;
+    if (this.zoomToFitArc) {
+      const ext = 48;
+      const targetSize = (176 + ext) * 2;
+      const frame = computeZoomToFitArcFrame({
+        areas,
+        outerRadius: OUTER_RING_RADIUS,
+        innerRadius: innerRingRadiusFor(watchCircleType),
+        extension: ext,
+        targetSize,
+      });
+      viewBox = frame.viewBox;
+      this._radiusOffset = frame.radiusOffset;
+    } else {
+      this._radiusOffset = 0;
+      const width = 448;
+      const height = width * (1 - this.clipTop / 100 - this.clipBottom / 100);
+      const top = -width / 2 + (width * this.clipTop) / 100;
+      viewBox = `${-width / 2} ${top} ${width} ${height}`;
+    }
 
     return html`
       <div class="container">
@@ -146,20 +184,12 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
           .tickmarksInside=${this.tickmarksInside}
           .tickmarkStyle=${this.tickmarkStyle}
           .advices=${this._advices}
-          .areas=${[
-            {
-              startAngle: this.minAngle,
-              endAngle: this.maxAngle,
-              roundInsideCut: true,
-              roundOutsideCut: true,
-            },
-          ]}
-          .watchCircleType=${this.type === ObcGaugeRadialType.needle
-            ? WatchCircleType.single
-            : WatchCircleType.double}
+          .areas=${areas}
+          .watchCircleType=${watchCircleType}
           .barAreas=${barAreas}
-          .clipTop=${this.clipTop}
-          .clipBottom=${this.clipBottom}
+          .clipTop=${this.zoomToFitArc ? 0 : this.clipTop}
+          .clipBottom=${this.zoomToFitArc ? 0 : this.clipBottom}
+          .zoomToFitArc=${this.zoomToFitArc}
         ></obc-watch>
         <svg class="gauge-radial" viewBox=${viewBox}>${this._needle}</svg>
       </div>
@@ -171,17 +201,18 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
       return nothing;
     }
     const needleColor = this.needleColor ?? this._derivedNeedleColor;
+    const rOff = this._radiusOffset;
     if (this.type === ObcGaugeRadialType.needle) {
       return svg`<g transform="rotate(${this.getAngle(this.value)}) translate(-256, -256)">
       <circle cx="256" cy="256" r="14" fill=${needleColor}/>
-      <rect x="250" y="96" width="12" height="192" rx="6" fill=${needleColor}/>
-      <rect x="252" y="98" width="8" height="188" rx="4" stroke=${needleColor} fill=${needleColor} stroke-width="4"/>
-      </svg> 
+      <rect x="250" y="${96 - rOff}" width="12" height="${192 + rOff}" rx="6" fill=${needleColor}/>
+      <rect x="252" y="${98 - rOff}" width="8" height="${188 + rOff}" rx="4" stroke=${needleColor} fill=${needleColor} stroke-width="4"/>
+      </g>
 `;
     } else {
       return svg`<g transform="rotate(${this.getAngle(this.value)}) translate(-256, -256)">
-<rect x="252" y="96" width="8" height="48" rx="4" fill=${needleColor} stroke="var(--border-silhouette-color)"/>
-</svg>
+<rect x="252" y="${96 - rOff}" width="8" height="48" rx="4" fill=${needleColor} stroke="var(--border-silhouette-color)"/>
+</g>
       `;
     }
   }
