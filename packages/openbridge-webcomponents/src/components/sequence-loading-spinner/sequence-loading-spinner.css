@@ -129,33 +129,33 @@
           from 90deg,
           var(--element-disabled-color) 0deg,
           var(--element-disabled-color) 135deg,
-          var(--base-blue-500) 136deg,
-          color-mix(
-              in srgb,
-              var(--base-blue-500) 96%,
-              var(--element-disabled-color)
-            )
-            165deg,
-          color-mix(
-              in srgb,
-              var(--base-blue-500) 45%,
-              var(--element-disabled-color)
-            )
-            220deg,
+          var(--element-disabled-color) 136deg,
           color-mix(
               in srgb,
               var(--base-blue-500) 20%,
               var(--element-disabled-color)
             )
-            289deg,
-          var(--element-disabled-color) 360deg
+            207deg,
+          color-mix(
+              in srgb,
+              var(--base-blue-500) 45%,
+              var(--element-disabled-color)
+            )
+            276deg,
+          color-mix(
+              in srgb,
+              var(--base-blue-500) 96%,
+              var(--element-disabled-color)
+            )
+            331deg,
+          var(--base-blue-500) 360deg
         );
       }
-      --spinner-scanning-start-deg: 226deg;
+      --spinner-scanning-head-deg: 90deg;
       .cap-start {
         background: var(--base-blue-500);
         transform: translate(-50%, -50%)
-          rotate(var(--spinner-scanning-start-deg))
+          rotate(var(--spinner-scanning-head-deg))
           translateY(calc(-1 * var(--spinner-radius)));
       }
       .cap-end {
