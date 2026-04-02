@@ -118,6 +118,8 @@ export class ObcDropdownButton extends LitElement {
    */
   @property({type: Boolean}) integration = false;
 
+  @property({type: Boolean}) flat = false;
+
   @state() private selectedValue = '';
   @state() private selectedLabel = '';
 
@@ -152,6 +154,7 @@ export class ObcDropdownButton extends LitElement {
           'full-width': this.fullWidth,
           'open-top': this.openTop,
           integration: this.integration,
+          flat: this.flat,
           disabled: this.disabled,
         })}
       >

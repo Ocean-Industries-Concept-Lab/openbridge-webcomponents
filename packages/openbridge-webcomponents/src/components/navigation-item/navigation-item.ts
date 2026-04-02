@@ -134,6 +134,8 @@ export class ObcNavigationItem extends LitElement {
    */
   @property({type: Boolean, reflect: true}) hasIcon = false;
 
+  @property({type: Boolean}) hasTrailingIcon = false;
+
   /**
    * Fired when the navigation item is clicked (either as a link or button).
    * @fires click {CustomEvent<void>}
@@ -187,6 +189,9 @@ export class ObcNavigationItem extends LitElement {
                   ></obi-arrow-flyout-google>
                 </div>
               `
+            : nothing}
+          ${this.hasTrailingIcon
+            ? html`<slot name="trailing-icon" class="icon trailing"></slot>`
             : nothing}
         </div>
       </a>

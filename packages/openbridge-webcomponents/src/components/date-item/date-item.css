@@ -1,5 +1,6 @@
 :host {
-  display: block;
+  display: flex;
+  justify-content: center;
   height: 100%;
 }
 
@@ -60,6 +61,7 @@
       @mixin style style=amplified visibleWrapperClass=.date-container;
       .date {
         color: var(--on-amplified-active-color);
+        @mixin font-body-active;
       }
 
       .event-dot {
@@ -77,6 +79,7 @@
       @mixin style style=selected visibleWrapperClass=.date-container;
       .date {
         color: var(--on-selected-active-color);
+        @mixin font-body-active;
       }
 
       .event-dot {
@@ -94,11 +97,16 @@
     display: flex;
     width: 100%;
     height: 100%;
+    box-sizing: border-box;
     flex-direction: column;
     align-items: flex-end;
     justify-content: flex-start;
     flex-shrink: 0;
     padding: 0;
+    border-radius: var(--_obc-date-item-border-top-left-radius, 0)
+      var(--_obc-date-item-border-top-right-radius, 0)
+      var(--_obc-date-item-border-bottom-right-radius, 0)
+      var(--_obc-date-item-border-bottom-left-radius, 0);
     @mixin style style=normal;
 
     /* Keyboard press visual feedback */
@@ -127,12 +135,7 @@
       margin-left: auto;
     }
 
-    /* Default (regular): flat styling */
     .date-container {
-      border-radius: var(
-        --menu-navigation-components-date-item-border-radius,
-        6px
-      );
       border: 1px solid var(--flat-enabled-border-color);
       background: var(--flat-enabled-background-color);
 
@@ -145,35 +148,23 @@
       text-align: left;
     }
 
-    /* isToday without checked: amplified styling */
-    &.isToday:not(.checked) {
-      .date-container {
-        border-radius: var(
-          --menu-navigation-components-date-item-border-radius,
-          6px
-        );
-        border: 1px solid var(--amplified-enabled-border-color);
-        background: var(--amplified-enabled-background-color);
+    &.isToday:not(.checked) .date-container {
+      border: 1px solid var(--amplified-enabled-border-color);
+      background: var(--amplified-enabled-background-color);
 
-        .date {
-          color: var(--on-amplified-active-color);
-        }
+      .date {
+        color: var(--on-amplified-active-color);
+        @mixin font-body-active;
       }
     }
 
-    /* checked: selected styling */
-    &.checked {
-      .date-container {
-        border-radius: var(
-          --menu-navigation-components-date-item-border-radius,
-          6px
-        );
-        border: 1px solid var(--selected-enabled-border-color);
-        background: var(--selected-enabled-background-color);
+    &.checked .date-container {
+      border: 1px solid var(--selected-enabled-border-color);
+      background: var(--selected-enabled-background-color);
 
-        .date {
-          color: var(--on-selected-active-color);
-        }
+      .date {
+        color: var(--on-selected-active-color);
+        @mixin font-body-active;
       }
     }
   }
@@ -208,7 +199,7 @@
 .date {
   user-select: none;
   color: var(--on-normal-active-color);
-  @mixin font-body-active;
+  @mixin font-body;
 }
 
 .event-dot {
@@ -244,29 +235,27 @@
 .wrapper:disabled {
   cursor: not-allowed;
 
-  /* Default (regular) disabled: use normal disabled styling */
   .date-container {
-    border-radius: var(
-      --menu-navigation-components-date-item-border-radius,
-      6px
-    );
     border: 1px solid var(--normal-disabled-border-color);
     background: var(--normal-disabled-background-color);
+
     .date {
       color: var(--on-normal-disabled-color);
     }
   }
 
-  /* isToday disabled: amplified disabled styling */
+  &.size-large .date-container {
+    border: 1px solid var(--flat-enabled-border-color);
+    background: var(--flat-enabled-background-color);
+  }
+
   &.isToday:not(.checked) .date-container {
-    border-radius: var(
-      --menu-navigation-components-date-item-border-radius,
-      6px
-    );
     border: 1px solid var(--amplified-disabled-border-color);
     background: var(--amplified-disabled-background-color);
+
     .date {
       color: var(--on-amplified-disabled-color);
+      @mixin font-body-active;
     }
 
     .event-dot {
@@ -274,16 +263,13 @@
     }
   }
 
-  /* checked disabled: selected disabled styling */
   &.checked .date-container {
-    border-radius: var(
-      --menu-navigation-components-date-item-border-radius,
-      6px
-    );
     border: 1px solid var(--selected-disabled-border-color);
     background: var(--selected-disabled-background-color);
+
     .date {
       color: var(--on-selected-disabled-color);
+      @mixin font-body-active;
     }
   }
 
