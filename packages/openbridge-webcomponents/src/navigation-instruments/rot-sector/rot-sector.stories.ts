@@ -33,7 +33,7 @@ const meta: Meta<typeof ObcRotSector> = {
       options: Object.values(TickmarkStyle),
     },
     zoomToFitArc: {control: 'boolean'},
-    arcExtent: {
+    rotArcExtent: {
       control: {type: 'range', min: 10, max: 60, step: 5},
     },
   },
@@ -96,7 +96,7 @@ export const ZoomedIn: Story = {
   args: {
     value: 30,
     maxValue: 60,
-    arcExtent: 40,
+    rotArcExtent: 40,
     primaryTickmarkInterval: 20,
     secondaryTickmarkInterval: 10,
     showLabels: true,
@@ -108,7 +108,7 @@ export const ZoomedInNarrow: Story = {
   args: {
     value: 10,
     maxValue: 60,
-    arcExtent: 20,
+    rotArcExtent: 20,
     primaryTickmarkInterval: 20,
     secondaryTickmarkInterval: 10,
     showLabels: true,

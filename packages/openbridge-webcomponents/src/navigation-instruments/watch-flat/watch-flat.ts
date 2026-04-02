@@ -1,5 +1,6 @@
 import {
   LitElement,
+  PropertyValues,
   SVGTemplateResult,
   html,
   nothing,
@@ -21,7 +22,10 @@ import {
   renderLinearRotBarDots,
   LINEAR_DOT_ANGLE_SPACING,
 } from '../rate-of-turn/rot-renderer.js';
-import {RateOfTurnController} from '../rate-of-turn/rate-of-turn.controller.js';
+import {
+  RateOfTurnController,
+  disposeRotController,
+} from '../rate-of-turn/rate-of-turn.controller.js';
 
 export {RotType, LinearRotPosition};
 
@@ -45,8 +49,16 @@ export class ObcWatchFlat extends LitElement {
   @property({type: String}) rotType: RotType | undefined;
   @property({type: String}) rotPosition: LinearRotPosition =
     LinearRotPosition.track;
+  /** Bar start position in SVG user-space x-coordinates (center-origin). Computed by the parent instrument. */
   @property({type: Number}) rotStartX: number = 0;
+  /** Bar end position in SVG user-space x-coordinates (center-origin). Computed by the parent instrument. */
   @property({type: Number}) rotEndX: number = 0;
+  /**
+   * Pixel spacing between adjacent dots in the linear ROT strip.
+   * Must be > 0 to enable animation; the default `0` intentionally disables
+   * the spinning dots so the parent instrument must supply a meaningful value
+   * derived from the current scale (e.g. `LINEAR_DOT_ANGLE_SPACING * translationScale`).
+   */
   @property({type: Number}) rotDotSpacing: number = 0;
   @property({type: String}) rotPriority: Priority = Priority.regular;
 
@@ -254,28 +266,21 @@ export class ObcWatchFlat extends LitElement {
       : nothing;
   }
 
-  private disposeRotController(): void {
-    if (this._rotController) {
-      this._rotController.destroy();
-      this.removeController(this._rotController);
-      this._rotController = undefined;
-    }
-  }
-
-  override updated(): void {
+  override updated(changed: PropertyValues): void {
+    super.updated(changed);
     const el = this.rotType
       ? this.renderRoot.querySelector('#rot-spinner')
       : null;
 
     if (!el) {
-      this.disposeRotController();
+      this._rotController = disposeRotController(this, this._rotController);
       return;
     }
 
     const cyclePx = 360 * (this.rotDotSpacing / LINEAR_DOT_ANGLE_SPACING);
 
     if (!this._rotController || this._rotController.el !== el) {
-      this.disposeRotController();
+      this._rotController = disposeRotController(this, this._rotController);
       this._rotController = new RateOfTurnController(
         this,
         el,
@@ -289,7 +294,7 @@ export class ObcWatchFlat extends LitElement {
 
   override disconnectedCallback(): void {
     super.disconnectedCallback();
-    this.disposeRotController();
+    this._rotController = disposeRotController(this, this._rotController);
   }
 
   override render() {

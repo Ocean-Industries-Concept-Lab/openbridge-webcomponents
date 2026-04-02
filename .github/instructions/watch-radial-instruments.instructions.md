@@ -438,13 +438,14 @@ The zoom works by adding a **radius offset** (`_rOff` / `_radiusOffset`) to all 
 
 ### File roles
 
-| File                   | Role                                                                                                                                                                                   |
-| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `arc-frame.ts`         | Pure geometry: `computeZoomToFitArcFrame()` binary-searches for the `radiusOffset` that makes the arc's bounding box fill the available space. Also exports `computeAnnularArcBBox()`. |
-| `watch.ts`             | Owns `zoomToFitArc` property and `_rOff` field. Applies offset to ALL radius references (rings, tickmarks, labels, advices, bars, setpoint, needles). Recalculates viewBox.            |
-| `instrument-radial.ts` | Forwards `zoomToFitArc` to `obc-watch`. Tracks `_radiusOffset` for needle position adjustments.                                                                                        |
-| `rudder.ts`            | Has `_needleTransform` getter that scales Y by `(160 + rOff) / 160` so the needle tip reaches the enlarged ring.                                                                       |
-| `rot-sector.ts`        | Exposes `arcExtent` (default 60°) and forwards `zoomToFitArc` to `instrument-radial`.                                                                                                  |
+| File                   | Role                                                                                                                                                                                                                                                                      |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `arc-frame.ts`         | Pure geometry: `computeZoomToFitArcFrame()` binary-searches for the `radiusOffset` that makes the arc's bounding box fill the available space. Also exports `computeAnnularArcBBox()`.                                                                                    |
+| `watch.ts`             | Owns `zoomToFitArc` property and `_rOff` field. Applies offset to ALL radius references (rings, tickmarks, labels, advices, bars, setpoint, needles). Recalculates viewBox.                                                                                               |
+| `instrument-radial.ts` | Forwards `zoomToFitArc` to `obc-watch`. Tracks `_radiusOffset` for needle position adjustments.                                                                                                                                                                           |
+| `rudder.ts`            | Has `_needleTransform` getter that translates the needle outward by `rOff` so the tip reaches the enlarged ring. Uses `translate(0, -rOff)` — an intentional visual compromise that preserves needle proportions at the cost of a slight mismatch at extreme zoom levels. |
+| `rot-sector.ts`        | Exposes `rotArcExtent` (default 60°) and forwards `zoomToFitArc` to `instrument-radial`.                                                                                                                                                                                  |
+| `compass-sector.ts`    | Has its own zoom logic: when `zoomToFitArc` is true and the FOV is small, renders a 1:1-scale arc cropped to content; otherwise uses FOV compression capped at 120°.                                                                                                      |
 
 ### `radiusOffset` propagation
 
@@ -453,29 +454,16 @@ The offset flows through the rendering pipeline:
 1. `watch.ts` computes `_rOff` via `computeZoomToFitArcFrame()`
 2. All `watch.ts` render methods add `_rOff` to radius constants (e.g. `OUTER_RING_RADIUS + this._rOff`)
 3. Helper functions (`tickmark()`, `renderAdvice()`, `adviceMask()`) accept an optional `radiusOffset` parameter
-4. Consumer instruments read back `_radiusOffset` for overlay adjustments (needle scaling)
+4. Consumer instruments read back `_radiusOffset` for overlay adjustments (needle translation)
 
-### Advice hatch pattern at enlarged radius
+### Advice hatch pattern: two code paths
 
 `advice.ts` uses two different hatch-pattern strategies depending on `radiusOffset`:
 
-- **`radiusOffset === 0`** (original): Radial fan of 45 pre-baked 512×512 tiles (`rotate(i) translate(-256 -256)`), each containing two diagonal stripes. This produces 90 crossings over 360° with ~11.7px arc spacing.
-- **`radiusOffset > 0`** (zoom): Direct `<line>` segments drawn from `rInner` to `rOuter` at each angular position around the circle. Each line is slanted 40.4° from radial and extended ±12px beyond the band edges so endpoints fully cover the annular shape. The mask clips overshoot. Line count scales with circumference to maintain constant arc spacing.
-
-**Why the split**: The tile approach works perfectly at design radius but breaks at large offsets — translating tile centers before rotation causes them to orbit the origin, producing inconsistent line widths, triangular shapes, and merging at certain angles. The direct-segment approach eliminates all transform artifacts.
-
-The mask also differs:
-
-- `radiusOffset === 0`: Default SVG mask (`<mask id=...>`) with stroke `'black'`, fill rect `512×512`
-- `radiusOffset > 0`: `maskUnits="userSpaceOnUse"` with dynamic extent (`344/2 + radiusOffset + 32`), stroke `'none'`
+- **`radiusOffset === 0`** (original): Pre-baked tile approach — works at design radius only.
+- **`radiusOffset > 0`** (zoom): Direct `<line>` segments with dynamic line count to maintain consistent arc spacing at any enlarged radius. The mask also switches to `maskUnits="userSpaceOnUse"` with dynamic extent.
 
 > **⚠️ Do not unify** the two code paths. The non-zoom path must produce output identical to `main` to avoid regenerating snapshots for all advice-using instruments.
-
-### `computeZoomToFitArcFrame()` algorithm
-
-1. Start with `hi = targetSize`, double up to 16 times until the arc bbox exceeds available space
-2. Binary search (50 iterations) between `lo=0` and `hi` for the largest `radiusOffset` where the arc bbox fits
-3. Returns `{radiusOffset, x, y, width, height, viewBox}`
 
 ### Adding `zoomToFitArc` to a new instrument
 

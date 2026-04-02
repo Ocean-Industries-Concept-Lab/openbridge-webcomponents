@@ -36,7 +36,10 @@ import {
   shortestAngularDeltaDeg,
 } from '../rate-of-turn/rot-renderer.js';
 export {RotType, RotPosition};
-import {RateOfTurnController} from '../rate-of-turn/rate-of-turn.controller.js';
+import {
+  RateOfTurnController,
+  disposeRotController,
+} from '../rate-of-turn/rate-of-turn.controller.js';
 import {
   renderLabels,
   renderNorthArrow,
@@ -46,7 +49,10 @@ import {
 import {VesselImage, VesselImageSize, vesselImages} from './vessel.js';
 import {renderCurrent, renderWind} from './environment.js';
 import {customElement} from '../../decorator.js';
-import {computeZoomToFitArcFrame} from '../../svghelpers/arc-frame.js';
+import {
+  computeZoomToFitArcFrame,
+  type ZoomToFitArcFrame,
+} from '../../svghelpers/arc-frame.js';
 export {VesselImage, VesselImageSize};
 
 export enum WatchCircleType {
@@ -165,6 +171,7 @@ const RADIAL_SETPOINT_INWARD_ADJUST = 4;
  * @property {number} rotEndAngle - End angle of the ROT bar arc in degrees. The bar is hidden when the difference from `rotStartAngle` is less than 0.1°.
  * @property {Priority|undefined} rotPriority - Override priority for ROT color derivation. When set, ROT colors use this instead of the main `priority`. Useful when the ROT element has independent priority (e.g. compass per-element priority).
  * @property {number} rotationsPerMinute - Spin speed of the ROT dot ring in rotations per minute. Sign controls direction (positive = clockwise).
+ * @property {ZoomToFitArcFrame|undefined} arcFrame - Pre-computed zoom-to-fit arc frame. When set, the watch skips its own `computeZoomToFitArcFrame()` call and uses these values directly. Consumer instruments (e.g. rudder, instrument-radial) should compute the frame once and pass it here to avoid redundant computation.
  */
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {
@@ -176,6 +183,7 @@ export class ObcWatch extends LitElement {
   @property({type: String}) watchCircleType: WatchCircleType =
     WatchCircleType.single;
   @property({type: Boolean}) northArrow: boolean = false;
+  @property({type: Boolean}) northArrowInside: boolean | undefined;
   @property({type: Number}) angleSetpoint: number | undefined;
   @property({type: Number}) newAngleSetpoint: number | undefined;
   @property({type: Boolean}) atAngleSetpoint: boolean = false;
@@ -223,6 +231,8 @@ export class ObcWatch extends LitElement {
   @property({type: Number}) scaleWindIcon: number = 1;
   @property({type: Number}) rotation: number | undefined;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
+  @property({attribute: false}) arcFrame: ZoomToFitArcFrame | undefined;
+  @property({type: Number}) tickFadeAngle: number = 0;
 
   @property({type: String}) rotType: RotType | undefined;
   @property({type: String}) rotPosition: RotPosition = RotPosition.innerCircle;
@@ -266,15 +276,7 @@ export class ObcWatch extends LitElement {
   override disconnectedCallback(): void {
     super.disconnectedCallback();
     clearTimeout(this._animationTimer);
-    this.disposeRotController();
-  }
-
-  private disposeRotController(): void {
-    if (this._rotController) {
-      this._rotController.destroy();
-      this.removeController(this._rotController);
-      this._rotController = undefined;
-    }
+    this._rotController = disposeRotController(this, this._rotController);
   }
 
   override updated(changed: PropertyValues): void {
@@ -283,11 +285,11 @@ export class ObcWatch extends LitElement {
       ? this.renderRoot.querySelector('#rot-spinner')
       : null;
     if (!el) {
-      this.disposeRotController();
+      this._rotController = disposeRotController(this, this._rotController);
       return;
     }
     if (!this._rotController || this._rotController.el !== el) {
-      this.disposeRotController();
+      this._rotController = disposeRotController(this, this._rotController);
       this._rotController = new RateOfTurnController(
         this,
         el,
@@ -360,7 +362,19 @@ export class ObcWatch extends LitElement {
         <rect x="${-maskSize}" y="${-maskSize}" width="${maskSize * 2}" height="${maskSize * 2}" fill="black" />
         ${areas.map((area) => svg`<path d=${area} fill="white" vector-effect="non-scaling-stroke" stroke="white" stroke-width="1"/>`)}
       </mask>`;
-      result = [mask, svg`<g mask="url(#cutMask)">${rings}</g>`];
+      // clipPath for ROT uses r=0 so dots at any track radius stay visible
+      const rotClip = svg`<clipPath id="rot-arc-clip">${this.areas.map(
+        (area) =>
+          svg`<path d=${roundedArch({
+            startAngle: area.startAngle,
+            endAngle: area.endAngle,
+            R: OUTER_RING_RADIUS + this._rOff + 20,
+            r: 0,
+            roundOutsideCut: area.roundOutsideCut,
+            roundInsideCut: area.roundInsideCut,
+          })} />`
+      )}</clipPath>`;
+      result = [mask, rotClip, svg`<g mask="url(#cutMask)">${rings}</g>`];
       areas.forEach((area) => {
         result.push(
           svg`<path d=${area} fill="none" stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>`
@@ -400,6 +414,56 @@ export class ObcWatch extends LitElement {
       }
     }
     return result;
+  }
+
+  private _renderTickFadeDefs(): SVGTemplateResult | typeof nothing {
+    if (this.tickFadeAngle <= 0 || this.areas.length === 0) return nothing;
+    const area = this.areas[0];
+    const arcSpan = area.endAngle - area.startAngle;
+    const fade = Math.min(this.tickFadeAngle, arcSpan / 4);
+    if (fade < 0.5) return nothing;
+
+    const {startAngle, endAngle} = area;
+    const R = OUTER_RING_RADIUS + this._rOff + 200;
+    const toRad = (deg: number) => (deg * Math.PI) / 180;
+    const px = (deg: number) => R * Math.sin(toRad(deg));
+    const py = (deg: number) => -R * Math.cos(toRad(deg));
+
+    const pieSlice = (a: number, b: number): string => {
+      const x1 = px(a),
+        y1 = py(a);
+      const x2 = px(b),
+        y2 = py(b);
+      const largeArc = b - a > 180 ? 1 : 0;
+      return `M 0 0 L ${x1} ${y1} A ${R} ${R} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+    };
+
+    const Rm = (OUTER_RING_RADIUS + this.innerRingRadius) / 2 + this._rOff;
+    const gx = (deg: number) => Rm * Math.sin(toRad(deg));
+    const gy = (deg: number) => -Rm * Math.cos(toRad(deg));
+
+    return svg`
+      <defs>
+        <linearGradient id="tickFadeL" gradientUnits="userSpaceOnUse"
+          x1="${gx(startAngle)}" y1="${gy(startAngle)}"
+          x2="${gx(startAngle + fade)}" y2="${gy(startAngle + fade)}">
+          <stop offset="0" stop-color="black" />
+          <stop offset="1" stop-color="white" />
+        </linearGradient>
+        <linearGradient id="tickFadeR" gradientUnits="userSpaceOnUse"
+          x1="${gx(endAngle - fade)}" y1="${gy(endAngle - fade)}"
+          x2="${gx(endAngle)}" y2="${gy(endAngle)}">
+          <stop offset="0" stop-color="white" />
+          <stop offset="1" stop-color="black" />
+        </linearGradient>
+        <mask id="tickFadeMask" maskUnits="userSpaceOnUse"
+          x="${-R}" y="${-R}" width="${R * 2}" height="${R * 2}">
+          <path d="${pieSlice(startAngle + fade, endAngle - fade)}" fill="white" />
+          <path d="${pieSlice(startAngle, startAngle + fade)}" fill="url(#tickFadeL)" />
+          <path d="${pieSlice(endAngle - fade, endAngle)}" fill="url(#tickFadeR)" />
+        </mask>
+      </defs>
+    `;
   }
 
   private renderCrosshair(
@@ -582,7 +646,12 @@ export class ObcWatch extends LitElement {
     let height: number;
     let viewBox: string;
 
-    if (this.zoomToFitArc && this.areas.length > 0) {
+    if (this.arcFrame) {
+      this._rOff = this.arcFrame.radiusOffset;
+      width = this.arcFrame.width;
+      height = this.arcFrame.height;
+      viewBox = this.arcFrame.viewBox;
+    } else if (this.zoomToFitArc && this.areas.length > 0) {
       const ext = this.getPadding();
       const targetSize = (176 + ext) * 2;
       const frame = computeZoomToFitArcFrame({
@@ -655,7 +724,7 @@ export class ObcWatch extends LitElement {
       ? renderNorthArrow({
           scale,
           rotation: this.rotation,
-          inside: this.tickmarksInside,
+          inside: this.northArrowInside ?? this.tickmarksInside,
         })
       : nothing;
     const wind =
@@ -699,8 +768,18 @@ export class ObcWatch extends LitElement {
             )
           : nothing}
         ${northArrowEl} ${this.renderStarboardPortIndicator()} ${current}
-        ${wind} ${tickmarks} ${this.renderRot()} ${advices} ${angleSetpoint}
-        ${labels} ${this.renderVesselImage()} ${this.renderNeedles()}
+        ${this._renderTickFadeDefs()} ${wind}
+        ${this.tickFadeAngle > 0 && this.areas.length > 0
+          ? svg`<g mask="url(#tickFadeMask)">${tickmarks}</g>`
+          : tickmarks}
+        ${this.areas.length > 0
+          ? svg`<g clip-path="url(#rot-arc-clip)">${this.renderRot()}</g>`
+          : this.renderRot()}
+        ${advices} ${angleSetpoint}
+        ${this.tickFadeAngle > 0 && this.areas.length > 0
+          ? svg`<g mask="url(#tickFadeMask)">${labels}</g>`
+          : labels}
+        ${this.renderVesselImage()} ${this.renderNeedles()}
       </svg>
     `;
   }
@@ -746,15 +825,12 @@ export class ObcWatch extends LitElement {
     };
   }
 
-  // NOTE: ROT helpers do not account for this._rOff yet. When a future
-  // "Compass Sector" component combines rotType with zoomToFitArc, the ROT
-  // radii (renderRotBarStatic, renderRotBarDots, renderRotDots) must be
-  // offset by this._rOff to stay aligned with the enlarged watch rings.
   private renderRot(): SVGTemplateResult | typeof nothing {
     if (!this.rotType) return nothing;
 
     const {dotColor, barBgColor, endDotFill, endDotStroke} =
       this.getRotColors();
+    const rOff = this._rOff;
 
     if (this.rotType === RotType.bar) {
       const hasBar =
@@ -769,12 +845,13 @@ export class ObcWatch extends LitElement {
           endDotFill,
           endDotStroke,
           maskId: 'rot-bar-mask',
+          radiusOffset: rOff,
         })}
         ${
           hasBar
             ? svg`<g clip-path="url(#rot-bar-mask)">
               <g id="rot-spinner">
-                ${renderRotBarDots(dotColor, this.rotPosition)}
+                ${renderRotBarDots(dotColor, this.rotPosition, rOff)}
               </g>
             </g>`
             : nothing
@@ -789,7 +866,7 @@ export class ObcWatch extends LitElement {
         : 'var(--instrument-regular-secondary-color)';
     return svg`
       <g id="rot-spinner">
-        ${renderRotDots(dotsColor, this.rotPosition)}
+        ${renderRotDots(dotsColor, this.rotPosition, rOff)}
       </g>
     `;
   }

@@ -134,6 +134,8 @@ export class ObcCompass extends LitElement {
   @property({type: Number}) rotationsPerMinute: number = 1;
   @property({type: String}) rotType: RotType = RotType.dots;
   @property({type: String}) rotPosition: RotPosition = RotPosition.innerCircle;
+  @property({type: Number}) rotMaxValue: number = 10;
+  @property({type: Number}) rotArcExtent: number = 60;
   @property({type: String}) direction: CompassDirection =
     CompassDirection.NorthUp;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
@@ -273,7 +275,10 @@ export class ObcCompass extends LitElement {
           .rotType=${this.rotType}
           .rotPosition=${this.rotPosition}
           .rotStartAngle=${this.heading + (this.getRotation() ?? 0)}
-          .rotEndAngle=${this.courseOverGround + (this.getRotation() ?? 0)}
+          .rotEndAngle=${this.heading +
+          (this.rotationsPerMinute / (this.rotMaxValue || 1)) *
+            this.rotArcExtent +
+          (this.getRotation() ?? 0)}
           .rotPriority=${this.priorityFor(CompassPriorityElement.rot)}
           .rotationsPerMinute=${this.rotationsPerMinute}
         >

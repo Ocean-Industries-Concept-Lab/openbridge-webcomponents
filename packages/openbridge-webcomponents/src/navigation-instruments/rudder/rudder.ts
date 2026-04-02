@@ -11,7 +11,10 @@ import {InstrumentState, Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {customElement} from '../../decorator.js';
-import {computeZoomToFitArcFrame} from '../../svghelpers/arc-frame.js';
+import {
+  computeZoomToFitArcFrame,
+  type ZoomToFitArcFrame,
+} from '../../svghelpers/arc-frame.js';
 
 export enum ObcRudderVariant {
   Bar = 'bar',
@@ -93,16 +96,12 @@ export class ObcRudder extends SetpointMixin(LitElement) {
   @property({type: Boolean}) zoomToFitArc: boolean = false;
 
   private _radiusOffset = 0;
+  private _arcFrame: ZoomToFitArcFrame | undefined;
 
   private get _needleTransform(): string {
     const rOff = this._radiusOffset;
     if (rOff > 0) {
-      // The needle tip peaks ~160px below center (256) in the 512-based system.
-      // Scale Y around center so the tip extends by radiusOffset, keeping the
-      // same gap from the enlarged ring. Rotation is applied after the scale,
-      // so the stretch follows the needle axis.
-      const f = (160 + rOff) / 160;
-      return `translate(-256, -256) rotate(${-this.angle} 256 256) translate(256, 256) scale(1, ${f}) translate(-256, -256)`;
+      return `translate(-256, -256) rotate(${-this.angle} 256 256) translate(0, ${rOff})`;
     }
     return `translate(-256, -256) rotate(${-this.angle} 256 256)`;
   }
@@ -207,11 +206,11 @@ export class ObcRudder extends SetpointMixin(LitElement) {
     ];
 
     let helpAngle: null | number = null;
-    if (this.maxAngle > 70) {
+    if (maxAngle > 70) {
       helpAngle = 45;
-    } else if (this.maxAngle > 50) {
+    } else if (maxAngle > 50) {
       helpAngle = 30;
-    } else if (this.maxAngle > 40) {
+    } else if (maxAngle > 40) {
       helpAngle = 22.5;
     }
 
@@ -256,9 +255,11 @@ export class ObcRudder extends SetpointMixin(LitElement) {
       });
       overlayViewBox = frame.viewBox;
       this._radiusOffset = frame.radiusOffset;
+      this._arcFrame = frame;
     } else {
       overlayViewBox = '-224 -44.8 448 268.8';
       this._radiusOffset = 0;
+      this._arcFrame = undefined;
     }
 
     return html`
@@ -267,6 +268,7 @@ export class ObcRudder extends SetpointMixin(LitElement) {
           .touching=${this.touching}
           .clipTop=${this.zoomToFitArc ? 0 : 40}
           .zoomToFitArc=${this.zoomToFitArc}
+          .arcFrame=${this._arcFrame}
           .areas=${areas}
           .angleSetpoint=${setpointAngle}
           .newAngleSetpoint=${this.newSetpoint !== undefined

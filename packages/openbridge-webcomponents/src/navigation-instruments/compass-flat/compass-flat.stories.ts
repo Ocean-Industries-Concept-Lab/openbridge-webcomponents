@@ -23,6 +23,8 @@ const meta: Meta<typeof ObcCompassFlat> = {
     priorityElements: [CompassFlatPriorityElement.hdg],
     rotType: undefined,
     rotationsPerMinute: 1,
+    rotMaxValue: 10,
+    rotArcExtent: 60,
   },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
@@ -41,6 +43,8 @@ const meta: Meta<typeof ObcCompassFlat> = {
     rotationsPerMinute: {
       control: {type: 'range', min: -10, max: 10, step: 0.5},
     },
+    rotMaxValue: {control: {type: 'range', min: 1, max: 60, step: 1}},
+    rotArcExtent: {control: {type: 'range', min: 10, max: 180, step: 5}},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcCompassFlat>;
@@ -69,7 +73,7 @@ export const WithRotBar: Story = {
   name: 'ROT Bar',
   args: {
     rotType: RotType.bar,
-    rotationsPerMinute: 2,
+    rotationsPerMinute: 5,
     courseOverGround: 80,
   },
 };
@@ -78,7 +82,7 @@ export const WithRotBarFOV: Story = {
   name: 'ROT Bar + FOV Indicator',
   args: {
     rotType: RotType.bar,
-    rotationsPerMinute: 1,
+    rotationsPerMinute: 3,
     courseOverGround: 80,
     FOVIndicator: true,
   },
@@ -88,7 +92,7 @@ export const WithRotBarWideFOV: Story = {
   name: 'ROT Bar Wide FOV',
   args: {
     rotType: RotType.bar,
-    rotationsPerMinute: 1,
+    rotationsPerMinute: 3,
     heading: 0,
     courseOverGround: 150,
     minFOV: 90,

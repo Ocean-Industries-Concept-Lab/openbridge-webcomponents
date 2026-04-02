@@ -12,8 +12,8 @@ const meta: Meta<typeof ObcRateOfTurn> = {
   component: 'obc-rate-of-turn',
   args: {
     rotationsPerMinute: 1,
-    type: RotType.dots,
-    position: RotPosition.scale,
+    rotType: RotType.dots,
+    rotPosition: RotPosition.scale,
     priority: Priority.regular,
     barStartAngle: 0,
     barEndAngle: 30,
@@ -25,8 +25,8 @@ const meta: Meta<typeof ObcRateOfTurn> = {
       description:
         'rotations per minute. NB: storybook recreates the component on change, which resets the animation.',
     },
-    type: {control: 'select', options: Object.values(RotType)},
-    position: {control: 'select', options: Object.values(RotPosition)},
+    rotType: {control: 'select', options: Object.values(RotType)},
+    rotPosition: {control: 'select', options: Object.values(RotPosition)},
     priority: {control: 'select', options: Object.values(Priority)},
     barStartAngle: {control: {type: 'range', min: -180, max: 180, step: 1}},
     barEndAngle: {control: {type: 'range', min: -180, max: 180, step: 1}},
@@ -52,14 +52,14 @@ export const DotsEnhanced: Story = {
 
 export const DotsInnerCircle: Story = {
   args: {
-    position: RotPosition.innerCircle,
+    rotPosition: RotPosition.innerCircle,
     watchCircleType: WatchCircleType.triple,
   },
 };
 
 export const Bar: Story = {
   args: {
-    type: RotType.bar,
+    rotType: RotType.bar,
     barStartAngle: 0,
     barEndAngle: 45,
   },
@@ -67,7 +67,7 @@ export const Bar: Story = {
 
 export const BarEnhanced: Story = {
   args: {
-    type: RotType.bar,
+    rotType: RotType.bar,
     barStartAngle: 0,
     barEndAngle: 45,
     priority: Priority.enhanced,
@@ -76,8 +76,8 @@ export const BarEnhanced: Story = {
 
 export const BarInnerCircle: Story = {
   args: {
-    type: RotType.bar,
-    position: RotPosition.innerCircle,
+    rotType: RotType.bar,
+    rotPosition: RotPosition.innerCircle,
     barStartAngle: 0,
     barEndAngle: 30,
     watchCircleType: WatchCircleType.triple,

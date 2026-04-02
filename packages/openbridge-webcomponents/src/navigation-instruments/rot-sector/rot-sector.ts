@@ -25,8 +25,8 @@ export interface GaugeRadialAdvice {
  *
  * `ObcRotSector` is a thin wrapper around `<obc-instrument-radial>` that
  * displays a bipolar sector gauge showing rate of turn. The arc extent is
- * configurable via `arcExtent` (default 60°), mapping the value range
- * (−maxValue to +maxValue) to ±arcExtent degrees. The bottom 50% of the
+ * configurable via `rotArcExtent` (default 60°), mapping the value range
+ * (−maxValue to +maxValue) to ±rotArcExtent degrees. The bottom 50% of the
  * circle is clipped, producing a compact sector arc. When `zoomToFitArc`
  * is enabled, clipping is bypassed and the arc is enlarged to fill the
  * available space. It inherits
@@ -37,7 +37,7 @@ export interface GaugeRadialAdvice {
  * ## Features
  *
  * - **Bipolar sector**: Value range is symmetric around zero (−maxValue to
- *   +maxValue), mapped to a ±`arcExtent`° arc (default 60°).
+ *   +maxValue), mapped to a ±`rotArcExtent`° arc (default 60°).
  * - **Port/starboard coloring**: When `portStarboard` is true, positive
  *   values render in starboard (green) and negative in port (red).
  * - **Bar display**: Always renders as a `bar` type — no needle or filled
@@ -112,11 +112,11 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
     TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
   @property({type: Boolean}) zoomToFitArc: boolean = false;
-  @property({type: Number}) arcExtent: number = 60;
+  @property({type: Number}) rotArcExtent: number = 60;
 
   getAngle = (v: number): number => {
     if (!this.maxValue) return 0;
-    return (v / this.maxValue) * this.arcExtent;
+    return (v / this.maxValue) * this.rotArcExtent;
   };
 
   get _type(): ObcGaugeRadialType {

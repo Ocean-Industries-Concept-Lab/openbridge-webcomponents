@@ -37,6 +37,7 @@ const meta: Meta<typeof ObcCompass> = {
     rotationsPerMinute: 1,
     rotType: RotType.dots,
     rotPosition: RotPosition.innerCircle,
+    rotMaxValue: 10,
     vesselImage: VesselImage.psvTop,
     direction: CompassDirection.NorthUp,
     touching: false,
@@ -135,12 +136,14 @@ export const WithLabelsInside: Story = {
 export const WithRotBar: Story = {
   args: {
     rotType: RotType.bar,
+    rotationsPerMinute: 5,
   },
 };
 
 export const WithRotBarEnhanced: Story = {
   args: {
     rotType: RotType.bar,
+    rotationsPerMinute: 5,
     priorityElements: [CompassPriorityElement.hdg, CompassPriorityElement.rot],
   },
 };

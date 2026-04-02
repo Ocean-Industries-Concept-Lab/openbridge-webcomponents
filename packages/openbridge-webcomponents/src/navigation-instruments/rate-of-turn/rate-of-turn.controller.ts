@@ -116,3 +116,19 @@ export class RateOfTurnController implements ReactiveController {
     this.destroy();
   }
 }
+
+/**
+ * Dispose a `RateOfTurnController` reference: destroy the animation,
+ * remove the controller from its host, and return `undefined` to clear
+ * the caller's field.
+ */
+export function disposeRotController(
+  host: ReactiveControllerHost,
+  controller: RateOfTurnController | undefined
+): undefined {
+  if (controller) {
+    controller.destroy();
+    host.removeController(controller);
+  }
+  return undefined;
+}

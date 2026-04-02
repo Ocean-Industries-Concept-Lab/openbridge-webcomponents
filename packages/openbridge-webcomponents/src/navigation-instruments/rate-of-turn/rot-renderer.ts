@@ -53,6 +53,9 @@ const DOT_ANGLES = Array.from(
   (_, i) => (360 / DOT_COUNT) * i
 );
 
+// Midpoints of watch ring pairs — cannot import from watch.ts (circular dep)
+// SCALE_RADIUS = (OUTER_RING_RADIUS + RING2_RADIUS) / 2 = (184 + 160) / 2
+// INNER_CIRCLE_RADIUS = (RING3_RADIUS + RING4_RADIUS) / 2 = (112 + 88) / 2
 const SCALE_RADIUS = 172;
 const INNER_CIRCLE_RADIUS = 100;
 
@@ -62,8 +65,10 @@ const BAR_DOT_RADIUS = BAR_HALF_THICKNESS * 0.75;
 const BAR_DOT_STROKE = BAR_HALF_THICKNESS * 0.5;
 const BAR_DOT_INNER_RADIUS = BAR_DOT_RADIUS - BAR_DOT_STROKE / 2;
 
-function getTrackRadius(position: RotPosition): number {
-  return position === RotPosition.scale ? SCALE_RADIUS : INNER_CIRCLE_RADIUS;
+function getTrackRadius(position: RotPosition, radiusOffset = 0): number {
+  const base =
+    position === RotPosition.scale ? SCALE_RADIUS : INNER_CIRCLE_RADIUS;
+  return base + radiusOffset;
 }
 
 function dotOnTrack(angle: number, radius: number): {cx: number; cy: number} {
@@ -76,9 +81,10 @@ function dotOnTrack(angle: number, radius: number): {cx: number; cy: number} {
 
 export function renderRotDots(
   color: string,
-  position: RotPosition
+  position: RotPosition,
+  radiusOffset = 0
 ): SVGTemplateResult {
-  const radius = getTrackRadius(position);
+  const radius = getTrackRadius(position, radiusOffset);
   return svg`${DOT_ANGLES.map((angle) => {
     const {cx, cy} = dotOnTrack(angle, radius);
     return svg`<circle cx="${cx}" cy="${cy}" r="${DOT_RADIUS}" fill="${color}" />`;
@@ -146,6 +152,7 @@ export interface RotBarConfig {
   endDotFill?: string;
   endDotStroke?: string;
   maskId?: string;
+  radiusOffset?: number;
 }
 
 export function renderRotBarStatic(config: RotBarConfig): SVGTemplateResult {
@@ -158,13 +165,14 @@ export function renderRotBarStatic(config: RotBarConfig): SVGTemplateResult {
     endDotFill = 'var(--instrument-frame-primary-color)',
     endDotStroke = color,
     maskId = 'rot-bar-mask',
+    radiusOffset = 0,
   } = config;
 
   if (shortestAngularDeltaDeg(startAngle, endAngle) < 0.1) {
     return svg``;
   }
 
-  const trackRadius = getTrackRadius(position);
+  const trackRadius = getTrackRadius(position, radiusOffset);
   const arcPath = rotBarPath(startAngle, endAngle, trackRadius);
   const {cx: endCx, cy: endCy} = dotOnTrack(endAngle, trackRadius);
 
@@ -199,9 +207,10 @@ export function renderRotBarStatic(config: RotBarConfig): SVGTemplateResult {
 
 export function renderRotBarDots(
   color: string,
-  position: RotPosition
+  position: RotPosition,
+  radiusOffset = 0
 ): SVGTemplateResult {
-  const radius = getTrackRadius(position);
+  const radius = getTrackRadius(position, radiusOffset);
 
   return svg`
     ${DOT_ANGLES.map((angle) => {
@@ -238,11 +247,12 @@ export enum LinearRotPosition {
  * Enough dots are generated to cover `visibleWidth` plus one full
  * animation cycle (`5 * dotSpacing`) on each side for seamless looping.
  */
-export function renderLinearRotDots(
+function linearDotStrip(
   color: string,
   trackY: number,
   dotSpacing: number,
-  visibleWidth: number
+  visibleWidth: number,
+  r: number
 ): SVGTemplateResult {
   if (dotSpacing <= 0) return svg``;
   const cyclePx = DOT_COUNT * dotSpacing;
@@ -253,10 +263,25 @@ export function renderLinearRotDots(
   const dots: SVGTemplateResult[] = [];
   for (let i = firstIdx; i <= lastIdx; i++) {
     dots.push(
-      svg`<circle cx="${i * dotSpacing}" cy="${trackY}" r="${LINEAR_DOT_RADIUS}" fill="${color}" />`
+      svg`<circle cx="${i * dotSpacing}" cy="${trackY}" r="${r}" fill="${color}" />`
     );
   }
   return svg`${dots}`;
+}
+
+export function renderLinearRotDots(
+  color: string,
+  trackY: number,
+  dotSpacing: number,
+  visibleWidth: number
+): SVGTemplateResult {
+  return linearDotStrip(
+    color,
+    trackY,
+    dotSpacing,
+    visibleWidth,
+    LINEAR_DOT_RADIUS
+  );
 }
 
 export interface LinearRotBarConfig {
@@ -335,18 +360,11 @@ export function renderLinearRotBarDots(
   dotSpacing: number,
   visibleWidth: number
 ): SVGTemplateResult {
-  if (dotSpacing <= 0) return svg``;
-  const cyclePx = DOT_COUNT * dotSpacing;
-  const halfRange = visibleWidth / 2 + cyclePx;
-  const firstIdx = Math.floor(-halfRange / dotSpacing);
-  const lastIdx = Math.ceil(halfRange / dotSpacing);
-
-  const dots: SVGTemplateResult[] = [];
-  for (let i = firstIdx; i <= lastIdx; i++) {
-    dots.push(
-      svg`<circle cx="${i * dotSpacing}" cy="${trackY}"
-        r="${LINEAR_DOT_RADIUS}" fill="${color}" />`
-    );
-  }
-  return svg`${dots}`;
+  return linearDotStrip(
+    color,
+    trackY,
+    dotSpacing,
+    visibleWidth,
+    LINEAR_DOT_RADIUS
+  );
 }

@@ -16,7 +16,10 @@ import {
   OUTER_RING_RADIUS,
   innerRingRadiusFor,
 } from '../../navigation-instruments/watch/watch.js';
-import {computeZoomToFitArcFrame} from '../../svghelpers/arc-frame.js';
+import {
+  computeZoomToFitArcFrame,
+  type ZoomToFitArcFrame,
+} from '../../svghelpers/arc-frame.js';
 
 export enum ObcGaugeRadialType {
   filled = 'filled',
@@ -75,6 +78,7 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   @property({type: Boolean}) zoomToFitArc: boolean = false;
 
   private _radiusOffset = 0;
+  private _arcFrame: ZoomToFitArcFrame | undefined;
 
   get minAngle(): number {
     return this.getAngle(this.minValue);
@@ -160,8 +164,10 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
       });
       viewBox = frame.viewBox;
       this._radiusOffset = frame.radiusOffset;
+      this._arcFrame = frame;
     } else {
       this._radiusOffset = 0;
+      this._arcFrame = undefined;
       const width = 448;
       const height = width * (1 - this.clipTop / 100 - this.clipBottom / 100);
       const top = -width / 2 + (width * this.clipTop) / 100;
@@ -190,6 +196,7 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
           .clipTop=${this.zoomToFitArc ? 0 : this.clipTop}
           .clipBottom=${this.zoomToFitArc ? 0 : this.clipBottom}
           .zoomToFitArc=${this.zoomToFitArc}
+          .arcFrame=${this._arcFrame}
         ></obc-watch>
         <svg class="gauge-radial" viewBox=${viewBox}>${this._needle}</svg>
       </div>

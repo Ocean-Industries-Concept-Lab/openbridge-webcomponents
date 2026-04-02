@@ -38,12 +38,12 @@ export function adviceMask(
   stroke: string,
   radiusOffset = 0
 ): SVGTemplateResult | typeof nothing {
-  const spanRad = ((maxAngle - minAngle) * Math.PI) / 180;
-  const da = Math.min(deltaAngle, spanRad * 0.15);
-  if (spanRad <= da * 2) return nothing;
+  const spanDeg = (((maxAngle - minAngle) % 360) + 360) % 360;
+  const spanRad = (spanDeg * Math.PI) / 180;
+  if (spanRad <= deltaAngle * 2) return nothing;
 
-  const radl = (minAngle * Math.PI) / 180 + da;
-  const radh = (maxAngle * Math.PI) / 180 - da;
+  const radl = (minAngle * Math.PI) / 180 + deltaAngle;
+  const radh = (maxAngle * Math.PI) / 180 - deltaAngle;
   const r1 = 328 / 2 + radiusOffset;
   const r2 = 344 / 2 + radiusOffset;
   const R = (r2 - r1) / 2;
@@ -70,10 +70,6 @@ export function renderAdvice(
   advice: AngleAdviceRaw,
   radiusOffset = 0
 ): SVGTemplateResult | typeof nothing {
-  const spanRad = ((advice.maxAngle - advice.minAngle) * Math.PI) / 180;
-  const da = Math.min(deltaAngle, spanRad * 0.15);
-  if (spanRad <= da * 2) return nothing;
-
   if (advice.type === AdviceType.caution) {
     let mainColor;
     let fillColor: string | null = null;
