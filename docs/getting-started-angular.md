@@ -34,7 +34,7 @@ Go to [GitHub settings](https://github.com/settings/tokens/new) to make a classi
 Login into GitHub package repo:
 
 ```bash
-npm login --registry https://npm.pkg.github.com/ --scope=@ocean-industries-concept-lab
+npm login --registry https://npm.pkg.github.com/ --scope=@oicl
 ```
 
 Use our GitHub username as username and past in the generated token as password.
@@ -42,18 +42,18 @@ Use our GitHub username as username and past in the generated token as password.
 You can now install the package:
 
 ```bash
-npm install @ocean-industries-concept-lab/openbridge-webcomponents-ng
+npm install @oicl/openbridge-webcomponents-ng
 ```
 
 ## Include the wrapper in the tsconfig
 
-The angular wrapper requires that the project builds the wrapper components. Open `tsconfig.app.json` and add `"./node_modules/@ocean-industries-concept-lab/openbridge-webcomponents-ng/src/**/*.ts"` to the `include` array.
+The angular wrapper requires that the project builds the wrapper components. Open `tsconfig.app.json` and add `"./node_modules/@oicl/openbridge-webcomponents-ng/src/**/*.ts"` to the `include` array.
 
 To make it easier to import the components you can also add a path mapping. In the same file, in the `compilerOptions` add:
 
 ```json
     "paths": {
-      "@obc/*": ["./node_modules/@ocean-industries-concept-lab/openbridge-webcomponents-ng/src/*"],
+      "@obc/*": ["./node_modules/@oicl/openbridge-webcomponents-ng/src/*"],
     }
 ```
 
@@ -106,7 +106,7 @@ We need to add the standard css and set some properties.
 Import the css file by adding it to `main.ts`
 
 ```ts
-import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/openbridge.css";
+import "@oicl/openbridge-webcomponents/dist/openbridge.css";
 ```
 
 ## Set palette

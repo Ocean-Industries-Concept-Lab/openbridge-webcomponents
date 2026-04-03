@@ -1,5 +1,5 @@
 {
-  "name": "@ocean-industries-concept-lab/openbridge-webcomponents",
+  "name": "@oicl/openbridge-webcomponents",
   "version": "0.0.16",
   "type": "module",
   "repository": {
@@ -7,6 +7,7 @@
     "url": "git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip.git",
     "directory": "packages/openbridge-webcomponents"
   },
+  "homepage": "https://www.openbridge.no",
   "license": "Apache-2.0",
   "scripts": {
     "👷_BUILD_____________________________________________________": "echo _____",
@@ -40,7 +41,7 @@
     "test:browser": "vitest --config=vitest.browser.config.ts",
     "📦_WRAPPERS__________________________________________________": "echo _____",
     "wrappers": "npm run wrappers:clean && npm run wrappers:generate && npm run wrappers:post-fix",
-    "wrappers:clean": "git clean -fdx ../openbridge-webcomponents-*",
+    "wrappers:clean": "git clean -fdx -e README.md ../openbridge-webcomponents-*",
     "wrappers:generate": "lit labs gen --framework=vue --framework=react --framework=angular --framework=svelte --out=..",
     "wrappers:post-fix": "node fix-generated.cjs",
     "📜_SCRIPTS___________________________________________________": "echo _____",
@@ -116,6 +117,14 @@
     "vitest-plugin-vis": "file:vitest-plugin-vis-4.1.0.tgz"
   },
   "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "files": [
+    "./dist",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "customElements": "custom-elements.json",
   "overrides": {
     "storybook": "$storybook"

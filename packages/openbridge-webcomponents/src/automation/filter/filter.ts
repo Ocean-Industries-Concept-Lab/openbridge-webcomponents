@@ -33,7 +33,7 @@ export class ObcFilter extends ObcAbstractAutomationButtonSquared {
             ></obi-filter-2-on>
             <obi-filter-2-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-filter-2-on>`;
         } else {
           return html`<obi-filter-2-off
@@ -42,7 +42,7 @@ export class ObcFilter extends ObcAbstractAutomationButtonSquared {
             ></obi-filter-2-off>
             <obi-filter-2-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-filter-2-off>`;
         }
       case FilterAlternativeIcon.filter3:
@@ -53,7 +53,7 @@ export class ObcFilter extends ObcAbstractAutomationButtonSquared {
             ></obi-filter-3-on>
             <obi-filter-3-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-filter-3-on>`;
         } else {
           return html`<obi-filter-3-off
@@ -62,7 +62,7 @@ export class ObcFilter extends ObcAbstractAutomationButtonSquared {
             ></obi-filter-3-off>
             <obi-filter-3-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-filter-3-off>`;
         }
       case FilterAlternativeIcon.filter4:
@@ -73,7 +73,7 @@ export class ObcFilter extends ObcAbstractAutomationButtonSquared {
             ></obi-filter-4-on>
             <obi-filter-4-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-filter-4-on>`;
         } else {
           return html`<obi-filter-4-off
@@ -82,7 +82,7 @@ export class ObcFilter extends ObcAbstractAutomationButtonSquared {
             ></obi-filter-4-off>
             <obi-filter-4-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-filter-4-off>`;
         }
       default:
@@ -93,7 +93,7 @@ export class ObcFilter extends ObcAbstractAutomationButtonSquared {
             ></obi-filter-1-on>
             <obi-filter-1-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-filter-1-on>`;
         } else {
           return html`<obi-filter-1-off
@@ -102,7 +102,7 @@ export class ObcFilter extends ObcAbstractAutomationButtonSquared {
             ></obi-filter-1-off>
             <obi-filter-1-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-filter-1-off>`;
         }
     }

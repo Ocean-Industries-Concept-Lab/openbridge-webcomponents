@@ -119,15 +119,38 @@
   @mixin style style=integration-flat;
   @mixin font-body;
   color: var(--integration-on-flat-active-color);
-  gap: 0;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 
   & .icon {
+    color: var(--integration-on-flat-neutral-color);
+  }
+
+  & .text-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex-grow: 1;
+  }
+
+  & .text-container .label {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  & .status {
+    @mixin font-label;
     color: var(--integration-on-flat-neutral-color);
   }
 
   &:disabled {
     color: var(--integration-on-flat-disabled-color);
     .icon {
+      color: var(--integration-on-flat-disabled-color);
+    }
+    .status {
       color: var(--integration-on-flat-disabled-color);
     }
   }
@@ -140,9 +163,20 @@
     & .icon {
       color: var(--integration-on-selected-active-color);
     }
+    & .label {
+      color: var(--integration-on-selected-active-color);
+    }
+    & .status {
+      /* Keep status typography, but swap to the selected neutral color. */
+      @mixin font-label;
+      color: var(--integration-on-selected-neutral-color);
+    }
     &:disabled {
       color: var(--integration-on-selected-disabled-color);
       .icon {
+        color: var(--integration-on-selected-disabled-color);
+      }
+      .status {
         color: var(--integration-on-selected-disabled-color);
       }
     }

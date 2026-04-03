@@ -36,7 +36,7 @@ export class ObcSource extends ObcAbstractAutomationButtonSquared {
             ></obi-sources-02-on>
             <obi-sources-02-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-sources-02-on>`;
         } else {
           return html`<obi-sources-02-off
@@ -45,7 +45,7 @@ export class ObcSource extends ObcAbstractAutomationButtonSquared {
             ></obi-sources-02-off>
             <obi-sources-02-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-sources-02-off>`;
         }
       case SourceAlternativeIcon.sources03:
@@ -56,7 +56,7 @@ export class ObcSource extends ObcAbstractAutomationButtonSquared {
             ></obi-sources-03-on>
             <obi-sources-03-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-sources-03-on>`;
         } else {
           return html`<obi-sources-03-off
@@ -65,7 +65,7 @@ export class ObcSource extends ObcAbstractAutomationButtonSquared {
             ></obi-sources-03-off>
             <obi-sources-03-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-sources-03-off>`;
         }
       case SourceAlternativeIcon.sources04:
@@ -76,7 +76,7 @@ export class ObcSource extends ObcAbstractAutomationButtonSquared {
             ></obi-sources-04-on>
             <obi-sources-04-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-sources-04-on>`;
         } else {
           return html`<obi-sources-04-off
@@ -85,7 +85,7 @@ export class ObcSource extends ObcAbstractAutomationButtonSquared {
             ></obi-sources-04-off>
             <obi-sources-04-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-sources-04-off>`;
         }
       case SourceAlternativeIcon.sources05:
@@ -96,7 +96,7 @@ export class ObcSource extends ObcAbstractAutomationButtonSquared {
             ></obi-sources-05-on>
             <obi-sources-05-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-sources-05-on>`;
         } else {
           return html`<obi-sources-05-off
@@ -105,7 +105,7 @@ export class ObcSource extends ObcAbstractAutomationButtonSquared {
             ></obi-sources-05-off>
             <obi-sources-05-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-sources-05-off>`;
         }
       default:
@@ -116,7 +116,7 @@ export class ObcSource extends ObcAbstractAutomationButtonSquared {
             ></obi-sources-01-on>
             <obi-sources-01-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-sources-01-on>`;
         } else {
           return html`<obi-sources-01-off
@@ -125,7 +125,7 @@ export class ObcSource extends ObcAbstractAutomationButtonSquared {
             ></obi-sources-01-off>
             <obi-sources-01-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-sources-01-off>`;
         }
     }

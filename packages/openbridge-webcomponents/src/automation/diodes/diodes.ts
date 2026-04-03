@@ -39,7 +39,7 @@ export class ObcDiodes extends ObcAbstractAutomationButtonSquared {
             ></obi-diodes-02-on>
             <obi-diodes-02-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-diodes-02-on>`;
         } else {
           return html`<obi-diodes-02-off
@@ -48,7 +48,7 @@ export class ObcDiodes extends ObcAbstractAutomationButtonSquared {
             ></obi-diodes-02-off>
             <obi-diodes-02-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-diodes-02-off>`;
         }
       case DiodesAlternativeIcon.diodes03:
@@ -59,7 +59,7 @@ export class ObcDiodes extends ObcAbstractAutomationButtonSquared {
             ></obi-diodes-03-on>
             <obi-diodes-03-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-diodes-03-on>`;
         } else {
           return html`<obi-diodes-03-off
@@ -68,7 +68,7 @@ export class ObcDiodes extends ObcAbstractAutomationButtonSquared {
             ></obi-diodes-03-off>
             <obi-diodes-03-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-diodes-03-off>`;
         }
       case DiodesAlternativeIcon.diodes04:
@@ -79,7 +79,7 @@ export class ObcDiodes extends ObcAbstractAutomationButtonSquared {
             ></obi-diodes-04-on>
             <obi-diodes-04-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-diodes-04-on>`;
         } else {
           return html`<obi-diodes-04-off
@@ -88,7 +88,7 @@ export class ObcDiodes extends ObcAbstractAutomationButtonSquared {
             ></obi-diodes-04-off>
             <obi-diodes-04-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-diodes-04-off>`;
         }
       case DiodesAlternativeIcon.diodes05:
@@ -99,7 +99,7 @@ export class ObcDiodes extends ObcAbstractAutomationButtonSquared {
             ></obi-diodes-05-on>
             <obi-diodes-05-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-diodes-05-on>`;
         } else {
           return html`<obi-diodes-05-off
@@ -108,7 +108,7 @@ export class ObcDiodes extends ObcAbstractAutomationButtonSquared {
             ></obi-diodes-05-off>
             <obi-diodes-05-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-diodes-05-off>`;
         }
       case DiodesAlternativeIcon.diodes06:
@@ -119,7 +119,7 @@ export class ObcDiodes extends ObcAbstractAutomationButtonSquared {
             ></obi-diodes-06-on>
             <obi-diodes-06-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-diodes-06-on>`;
         } else {
           return html`<obi-diodes-06-off
@@ -128,7 +128,7 @@ export class ObcDiodes extends ObcAbstractAutomationButtonSquared {
             ></obi-diodes-06-off>
             <obi-diodes-06-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-diodes-06-off>`;
         }
       default:
@@ -139,7 +139,7 @@ export class ObcDiodes extends ObcAbstractAutomationButtonSquared {
             ></obi-diodes-01-on>
             <obi-diodes-01-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-diodes-01-on>`;
         } else {
           return html`<obi-diodes-01-off
@@ -148,7 +148,7 @@ export class ObcDiodes extends ObcAbstractAutomationButtonSquared {
             ></obi-diodes-01-off>
             <obi-diodes-01-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-diodes-01-off>`;
         }
     }

@@ -66,6 +66,7 @@ export class ObcIntegrationDropdownButton extends LitElement {
   @property({type: Array}) options: {
     value: string;
     label: string;
+    status?: string;
     icon: HTMLTemplateResult;
     disabled?: boolean;
   }[] = [];
@@ -164,7 +165,12 @@ export class ObcIntegrationDropdownButton extends LitElement {
               ?disabled=${item.disabled}
             >
               <div class="icon">${item.icon}</div>
-              <div class="label">${item.label}</div>
+              <div class="text-container">
+                <div class="label">${item.label}</div>
+                ${item.status
+                  ? html`<div class="status">${item.status}</div>`
+                  : nothing}
+              </div>
             </option>`;
           })}
         </select>

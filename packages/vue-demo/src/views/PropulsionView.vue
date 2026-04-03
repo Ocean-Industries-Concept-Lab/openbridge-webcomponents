@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import ObcThruster from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/thruster/ObcThruster.vue'
+import ObcThruster from '@oicl/openbridge-webcomponents-vue/navigation-instruments/thruster/ObcThruster.vue'
 import {
   InstrumentState,
   Priority
-} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types'
-import ObcAzimuthThruster from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster.vue'
-import ObcMainEngine from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/main-engine/ObcMainEngine.vue'
-import ObcRudder from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/rudder/ObcRudder.vue'
-import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
-import { InstrumentFieldSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
-import ObiLink from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/icons/ObiLink.vue'
+} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types'
+import ObcAzimuthThruster from '@oicl/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster.vue'
+import ObcMainEngine from '@oicl/openbridge-webcomponents-vue/navigation-instruments/main-engine/ObcMainEngine.vue'
+import ObcRudder from '@oicl/openbridge-webcomponents-vue/navigation-instruments/rudder/ObcRudder.vue'
+import ObcInstrumentField from '@oicl/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
+import { InstrumentFieldSize } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
+import ObiLink from '@oicl/openbridge-webcomponents-vue/icons/ObiLink.vue'
 import { useSim } from '../composables/useSim'
 import { computed } from 'vue'
 import { useDemoConfigStore } from '../stores/demoConfig'
 import {
   type AngleAdvice,
   AdviceType
-} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js'
-import { type LinearAdvice } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/thruster/advice.js'
+} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js'
+import { type LinearAdvice } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/thruster/advice.js'
 const sim = useSim()
 
 const configStore = useDemoConfigStore()

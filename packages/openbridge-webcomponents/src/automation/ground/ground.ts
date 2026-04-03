@@ -30,7 +30,7 @@ export class ObcGround extends ObcAbstractAutomationButtonSquared {
             ></obi-ground-2-on>
             <obi-ground-2-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-ground-2-on>`;
         } else {
           return html`<obi-ground-2-off
@@ -39,7 +39,7 @@ export class ObcGround extends ObcAbstractAutomationButtonSquared {
             ></obi-ground-2-off>
             <obi-ground-2-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-ground-2-off>`;
         }
       case GroundAlternativeIcon.ground3:
@@ -50,7 +50,7 @@ export class ObcGround extends ObcAbstractAutomationButtonSquared {
             ></obi-ground-3-on>
             <obi-ground-3-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-ground-3-on>`;
         } else {
           return html`<obi-ground-3-off
@@ -59,7 +59,7 @@ export class ObcGround extends ObcAbstractAutomationButtonSquared {
             ></obi-ground-3-off>
             <obi-ground-3-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-ground-3-off>`;
         }
       default:
@@ -70,7 +70,7 @@ export class ObcGround extends ObcAbstractAutomationButtonSquared {
             ></obi-ground-1-on>
             <obi-ground-1-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-ground-1-on>`;
         } else {
           return html`<obi-ground-1-off
@@ -79,7 +79,7 @@ export class ObcGround extends ObcAbstractAutomationButtonSquared {
             ></obi-ground-1-off>
             <obi-ground-1-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-ground-1-off>`;
         }
     }
