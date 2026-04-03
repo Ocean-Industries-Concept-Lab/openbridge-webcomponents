@@ -40,6 +40,7 @@ export enum ReadoutDirection {
 }
 
 export {ReadoutSourceType};
+export {ReadoutAdviceType, ReadoutInputType};
 
 /**
  * `<obc-readout>` – A component for displaying navigation instrument data.
