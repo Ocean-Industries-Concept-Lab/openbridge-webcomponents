@@ -1,12 +1,28 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
+import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
+import '../../icons/icon-input-right.js';
 import {
-  ObcReadoutInput,
   ReadoutInputSize,
   ReadoutInputState,
-  ReadoutInputWeight,
+  ReadoutInputType,
 } from './readout-input.js';
 import './readout-input.js';
+
+type ReadoutInputStoryArgs = {
+  size: ReadoutInputSize;
+  type?: ReadoutInputType;
+  state: ReadoutInputState;
+  hugText: boolean;
+  iconId?: string;
+  hasFixedLength: boolean;
+  value: string;
+  secondaryValue: string;
+  description: string;
+  valueLength: string;
+  hasHintedZeros: boolean;
+  hasDegree: boolean;
+};
 
 const centeredCanvasDecorator = (story: () => unknown) => {
   return html`
@@ -33,24 +49,34 @@ const meta = {
   render: (args) => {
     return html`
       <obc-readout-input
+        .type=${args.type}
         .size=${args.size}
         .state=${args.state}
-        .hugContent=${args.hugContent}
-        .weight=${args.weight}
-        .stringWidth=${args.stringWidth}
+        .hugContent=${args.hugText}
+        .hasFixedLength=${args.hasFixedLength}
         .value=${args.value}
+        .secondaryValue=${args.secondaryValue}
+        .description=${args.description}
         .valueLength=${args.valueLength}
         .hasHintedZeros=${args.hasHintedZeros}
         .hasDegree=${args.hasDegree}
-      ></obc-readout-input>
+      >
+        ${args.iconId
+          ? iconIdToIconHtml(args.iconId, {slot: 'icon'})
+          : html`<obi-input-right slot="icon"></obi-input-right>`}
+      </obc-readout-input>
     `;
   },
   args: {
     size: ReadoutInputSize.small,
+    type: undefined,
     state: ReadoutInputState.enabled,
-    hugContent: true,
-    stringWidth: true,
+    hugText: true,
+    iconId: undefined,
+    hasFixedLength: true,
     value: '123',
+    secondaryValue: '123',
+    description: 'SET',
     valueLength: '123',
     hasHintedZeros: false,
     hasDegree: false,
@@ -68,6 +94,23 @@ const meta = {
         },
       },
       options: Object.values(ReadoutInputSize),
+    },
+    type: {
+      name: 'Type',
+      control: {
+        type: 'select',
+        labels: {
+          undefined: 'Not selected',
+          [ReadoutInputType.regular]: 'Regular',
+          [ReadoutInputType.enhanced]: 'Enhanced',
+          [ReadoutInputType.description]: 'Description',
+          [ReadoutInputType.range]: 'Range',
+          [ReadoutInputType.verticalStack]: 'Vertical-stack',
+          [ReadoutInputType.baseline]: 'Baseline',
+          [ReadoutInputType.button]: 'Button',
+        },
+      },
+      options: [undefined, ...Object.values(ReadoutInputType)],
     },
     state: {
       name: 'State',
@@ -87,41 +130,45 @@ const meta = {
         ReadoutInputState.inputTemporary,
       ],
     },
-    hugContent: {
-      name: 'Hug Content',
+    hugText: {
+      name: 'Hug Text',
     },
-    weight: {
-      name: 'Weight',
+    iconId: {
+      name: 'Icon',
       control: {
         type: 'select',
         labels: {
-          [ReadoutInputWeight.regular]: 'Regular',
-          [ReadoutInputWeight.active]: 'Active',
-          [ReadoutInputWeight.bold]: 'Bold',
+          undefined: 'Default Arrow',
         },
       },
-      options: Object.values(ReadoutInputWeight),
-      table: {category: 'Input Value'},
-      description: 'Bold is available only for Regular size.',
-    },
-    stringWidth: {
-      name: 'String Width',
-      table: {category: 'Input Value'},
+      options: [undefined, ...iconIds],
     },
     value: {
       name: 'Value',
       control: 'text',
       table: {category: 'Input Value'},
     },
+    secondaryValue: {
+      name: 'Secondary Value',
+      control: 'text',
+      if: {arg: 'type', eq: ReadoutInputType.range},
+      table: {category: 'Input Value'},
+    },
+    description: {
+      name: 'Description',
+      control: 'text',
+      if: {arg: 'type', eq: ReadoutInputType.description},
+      table: {category: 'Input Value'},
+    },
     valueLength: {
       name: 'Value Length',
       control: 'text',
-      if: {arg: 'stringWidth', truthy: true},
+      if: {arg: 'hasFixedLength', truthy: true},
       table: {category: 'Input Value'},
     },
     hasHintedZeros: {
       name: 'Has Hinted Zeros',
-      if: {arg: 'stringWidth', truthy: true},
+      if: {arg: 'hasFixedLength', truthy: true},
       table: {category: 'Input Value'},
     },
     hasDegree: {
@@ -129,13 +176,13 @@ const meta = {
       if: {arg: 'size', eq: ReadoutInputSize.medium},
       table: {category: 'Input Value'},
       description:
-        'Available only for Medium when Weight is Active and String Width is false.',
+        'Available only for Medium active input states when Has Fixed Length is false.',
     },
   },
-} satisfies Meta<ObcReadoutInput>;
+} satisfies Meta<ReadoutInputStoryArgs>;
 
 export default meta;
-type Story = StoryObj<ObcReadoutInput>;
+type Story = StoryObj<ReadoutInputStoryArgs>;
 
 export const Primary: Story = {};
 
@@ -159,13 +206,14 @@ export const HintedZerosBySize: Story = {
             .size=${size}
             .state=${ReadoutInputState.enhanced}
             .hugContent=${true}
-            .weight=${ReadoutInputWeight.regular}
-            .stringWidth=${true}
+            .hasFixedLength=${true}
             value="12"
-            valueLength="000"
+            valueLength="00000"
             .hasHintedZeros=${true}
             title=${`Size=${size}`}
-          ></obc-readout-input>
+          >
+            <obi-input-right slot="icon"></obi-input-right>
+          </obc-readout-input>
         `
       )}
     </div>
@@ -176,6 +224,7 @@ type Variant = {
   size: ReadoutInputSize;
   state: ReadoutInputState;
   hugContent: boolean;
+  hasDegree: boolean;
 };
 
 const sizes: ReadoutInputSize[] = [
@@ -190,45 +239,53 @@ const variantRows: Variant[][] = [
     size,
     state: ReadoutInputState.enabled,
     hugContent: true,
+    hasDegree: false,
   })),
   sizes.map((size) => ({
     size,
     state: ReadoutInputState.enhanced,
     hugContent: true,
+    hasDegree: false,
   })),
   sizes.map((size) => ({
     size,
     state: ReadoutInputState.input,
     hugContent: true,
+    hasDegree: false,
   })),
   sizes.map((size) => ({
     size,
     state: ReadoutInputState.inputTemporary,
     hugContent: true,
+    hasDegree: false,
   })),
   sizes.map((size) => ({
     size,
     state: ReadoutInputState.enabled,
     hugContent: false,
+    hasDegree: false,
   })),
   sizes.map((size) => ({
     size,
     state: ReadoutInputState.enhanced,
     hugContent: false,
+    hasDegree: false,
   })),
   sizes.map((size) => ({
     size,
     state: ReadoutInputState.input,
     hugContent: false,
+    hasDegree: false,
   })),
   sizes.map((size) => ({
     size,
     state: ReadoutInputState.inputTemporary,
     hugContent: false,
+    hasDegree: false,
   })),
 ];
 
-const useStringWidth = (size: ReadoutInputSize): boolean =>
+const usesFixedLength = (size: ReadoutInputSize): boolean =>
   size === ReadoutInputSize.small || size === ReadoutInputSize.large;
 
 const renderVariant = (variant: Variant) => html`
@@ -236,12 +293,15 @@ const renderVariant = (variant: Variant) => html`
     .size=${variant.size}
     .state=${variant.state}
     .hugContent=${variant.hugContent}
-    .stringWidth=${useStringWidth(variant.size)}
+    .hasFixedLength=${usesFixedLength(variant.size)}
+    .hasDegree=${variant.hasDegree}
     value="123"
     valueLength="123"
     .hasHintedZeros=${false}
-    title=${`Size=${variant.size}, State=${variant.state}, Hug content=${variant.hugContent}`}
-  ></obc-readout-input>
+    title=${`Size=${variant.size}, State=${variant.state}, Hug content=${variant.hugContent}, Degree=${variant.hasDegree}`}
+  >
+    <obi-input-right slot="icon"></obi-input-right>
+  </obc-readout-input>
 `;
 
 export const AllCombinations: Story = {

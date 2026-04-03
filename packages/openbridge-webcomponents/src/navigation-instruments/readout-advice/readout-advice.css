@@ -1,5 +1,26 @@
 :host {
   display: inline-flex;
   max-width: 100%;
-  height: fit-content;
+}
+
+.readout-advice-root,
+.readout-advice-wrapper {
+  display: inline-flex;
+}
+
+.readout-advice-root {
+  max-width: 100%;
+}
+
+.readout-advice-wrapper {
+  width: 100%;
+}
+
+.readout-advice-root.state-amplified {
+  @mixin style style=amplified visibleWrapperClass=.readout-advice-wrapper;
+}
+
+.readout-advice-root.state-amplified .readout-advice-wrapper {
+  border-radius: var(--global-border-radius-border-radius-base);
+  overflow: hidden;
 }

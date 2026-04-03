@@ -1,17 +1,22 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
+import {classMap} from 'lit/directives/class-map.js';
 import componentStyle from './readout-advice.css?inline';
 import {customElement} from '../../decorator.js';
 import '../../icons/icon-notification-advice.js';
+import type {
+  ReadoutDirection as ReadoutAdviceDirection,
+  ReadoutType as ReadoutAdviceReadoutStyle,
+} from '../readout/readout.js';
 import {
   ReadoutInputSize as ReadoutAdviceSize,
   ReadoutInputState,
+  ReadoutInputType as ReadoutAdviceType,
   ReadoutInputVariant,
-  ReadoutInputWeight as ReadoutAdviceWeight,
 } from '../readout-input/readout-input.js';
 import '../readout-input/readout-input.js';
 
-export {ReadoutAdviceSize, ReadoutAdviceWeight};
+export {ReadoutAdviceSize, ReadoutAdviceType};
 
 export enum ReadoutAdviceState {
   enabled = 'enabled',
@@ -24,22 +29,24 @@ const adviceStateMap: Record<ReadoutAdviceState, ReadoutInputState> = {
   [ReadoutAdviceState.enabled]: ReadoutInputState.enabled,
   [ReadoutAdviceState.enhanced]: ReadoutInputState.enhanced,
   [ReadoutAdviceState.active]: ReadoutInputState.active,
-  [ReadoutAdviceState.amplified]: ReadoutInputState.amplified,
+  [ReadoutAdviceState.amplified]: ReadoutInputState.enhanced,
 };
 
 /**
  * `<obc-readout-advice>` - A readout advice segment for displaying advisory values with an advice marker icon.
  *
- * Reuses `<obc-readout-input>` and keeps the same value rendering behavior, including fixed-width rendering, hinted zero padding, and the optional degree suffix. Use it when an advisory or guidance value should be displayed as a separate segment inside a larger readout.
+ * Reuses `<obc-readout-input>` and keeps the same value rendering behavior, including fixed-width rendering, hinted zero padding, and the optional degree suffix. Use it when an advice value should be displayed as a separate segment inside a larger readout.
  *
  * ## Features
  * - Sizes: Supports `small`, `regular`, `medium`, and `large`.
- * - Visual states: Supports `enabled`, `enhanced`, `active`, and `amplified`.
- * - Value rendering: Inherits `stringWidth`, `valueLength`, `hasHintedZeros`, `weight`, and `hasDegree` behavior from `<obc-readout-input>`. When `weight` is not set, the `active` state uses `active` weight; other states use `regular`.
+ * - Types: Supports `regular`, `enhanced`, `description`, `range`, `vertical-stack`, `baseline`, and `button`. The selected type defines the internal size and layout preset.
+ * - Visual states: Supports `enabled`, `enhanced`, and `active`.
+ * - Value rendering: Inherits `hasFixedLength`, `valueLength`, `hasHintedZeros`, and `hasDegree` behavior from `<obc-readout-input>`.
+ * - Additional lines: `type="description"` can render a secondary label by using `description`, and `type="range"` can render a second numeric line by using `secondaryValue`.
  * - Advice icon: Uses `notification-advice` by default and allows overriding the icon through a slot.
  *
  * ## Usage Guidelines
- * Use this component when the value should be presented as advice rather than as an input or commanded value. Prefer `<obc-readout-input>` for input-like segments, and use a larger readout container when the advice must be composed with label, unit, or source content.
+ * Use this component when the value should be presented as advice rather than as an input segment. Prefer `<obc-readout-input>` for input-like segments, and use a larger readout container when the advice must be composed with label, unit, or source content.
  *
  * ## Slots
  *
@@ -49,18 +56,36 @@ const adviceStateMap: Record<ReadoutAdviceState, ReadoutInputState> = {
  */
 @customElement('obc-readout-advice')
 export class ObcReadoutAdvice extends LitElement {
+  @property({
+    type: String,
+    attribute: 'readout-style',
+    reflect: true,
+  })
+  readoutStyle?: ReadoutAdviceReadoutStyle;
+
+  @property({
+    type: String,
+    attribute: 'direction',
+    reflect: true,
+  })
+  direction?: ReadoutAdviceDirection;
+
   @property({type: String}) size: ReadoutAdviceSize = ReadoutAdviceSize.small;
+
+  @property({type: String}) type?: ReadoutAdviceType;
 
   @property({type: String}) state: ReadoutAdviceState =
     ReadoutAdviceState.enabled;
 
   @property({type: Boolean}) hugContent = false;
 
-  @property({type: String}) weight?: ReadoutAdviceWeight;
-
-  @property({type: Boolean}) stringWidth = false;
+  @property({type: Boolean}) hasFixedLength = false;
 
   @property({type: String}) value = '';
+
+  @property({type: String}) secondaryValue = '';
+
+  @property({type: String}) description = '';
 
   @property({type: String}) valueLength = '';
 
@@ -68,36 +93,41 @@ export class ObcReadoutAdvice extends LitElement {
 
   @property({type: Boolean}) hasDegree = false;
 
-  private get resolvedWeight(): ReadoutAdviceWeight {
-    if (this.weight) {
-      return this.weight;
-    }
-
-    if (this.state === ReadoutAdviceState.active) {
-      return ReadoutAdviceWeight.active;
-    }
-
-    return ReadoutAdviceWeight.regular;
+  override updated() {
+    this.style.width = this.hugContent ? 'fit-content' : '100%';
   }
 
   override render() {
     return html`
-      <obc-readout-input
-        .variant=${ReadoutInputVariant.advice}
-        .size=${this.size}
-        .state=${adviceStateMap[this.state]}
-        .hugContent=${this.hugContent}
-        .weight=${this.resolvedWeight}
-        .stringWidth=${this.stringWidth}
-        .value=${this.value}
-        .valueLength=${this.valueLength}
-        .hasHintedZeros=${this.hasHintedZeros}
-        .hasDegree=${this.hasDegree}
+      <div
+        class=${classMap({
+          'readout-advice-root': true,
+          [`state-${this.state}`]: true,
+        })}
       >
-        <slot name="icon" slot="icon">
-          <obi-notification-advice class="icon"></obi-notification-advice>
-        </slot>
-      </obc-readout-input>
+        <div class="readout-advice-wrapper">
+          <obc-readout-input
+            .readoutStyle=${this.readoutStyle}
+            .direction=${this.direction}
+            .variant=${ReadoutInputVariant.advice}
+            .type=${this.type}
+            .size=${this.size}
+            .state=${adviceStateMap[this.state]}
+            .hugContent=${this.hugContent}
+            .hasFixedLength=${this.hasFixedLength}
+            .value=${this.value}
+            .secondaryValue=${this.secondaryValue}
+            .description=${this.description}
+            .valueLength=${this.valueLength}
+            .hasHintedZeros=${this.hasHintedZeros}
+            .hasDegree=${this.hasDegree}
+          >
+            <slot name="icon" slot="icon">
+              <obi-notification-advice class="icon"></obi-notification-advice>
+            </slot>
+          </obc-readout-input>
+        </div>
+      </div>
     `;
   }
 

@@ -1,12 +1,27 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
+import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {
-  ObcReadoutAdvice,
   ReadoutAdviceSize,
   ReadoutAdviceState,
-  ReadoutAdviceWeight,
+  ReadoutAdviceType,
 } from './readout-advice.js';
 import './readout-advice.js';
+
+type ReadoutAdviceStoryArgs = {
+  size: ReadoutAdviceSize;
+  type?: ReadoutAdviceType;
+  state: ReadoutAdviceState;
+  hugText: boolean;
+  iconId?: string;
+  hasFixedLength: boolean;
+  value: string;
+  secondaryValue: string;
+  description: string;
+  valueLength: string;
+  hasHintedZeros: boolean;
+  hasDegree: boolean;
+};
 
 const centeredCanvasDecorator = (story: () => unknown) => {
   return html`
@@ -34,23 +49,31 @@ const meta = {
     return html`
       <obc-readout-advice
         .size=${args.size}
+        .type=${args.type}
         .state=${args.state}
-        .hugContent=${args.hugContent}
-        .weight=${args.weight}
-        .stringWidth=${args.stringWidth}
+        .hugContent=${args.hugText}
+        .hasFixedLength=${args.hasFixedLength}
         .value=${args.value}
+        .secondaryValue=${args.secondaryValue}
+        .description=${args.description}
         .valueLength=${args.valueLength}
         .hasHintedZeros=${args.hasHintedZeros}
         .hasDegree=${args.hasDegree}
-      ></obc-readout-advice>
+      >
+        ${args.iconId ? iconIdToIconHtml(args.iconId, {slot: 'icon'}) : null}
+      </obc-readout-advice>
     `;
   },
   args: {
     size: ReadoutAdviceSize.small,
+    type: undefined,
     state: ReadoutAdviceState.enabled,
-    hugContent: true,
-    stringWidth: true,
+    hugText: true,
+    iconId: undefined,
+    hasFixedLength: true,
     value: '123',
+    secondaryValue: '123',
+    description: 'SET',
     valueLength: '123',
     hasHintedZeros: false,
     hasDegree: false,
@@ -69,6 +92,23 @@ const meta = {
       },
       options: Object.values(ReadoutAdviceSize),
     },
+    type: {
+      name: 'Type',
+      control: {
+        type: 'select',
+        labels: {
+          undefined: 'Not selected',
+          [ReadoutAdviceType.regular]: 'Regular',
+          [ReadoutAdviceType.enhanced]: 'Enhanced',
+          [ReadoutAdviceType.description]: 'Description',
+          [ReadoutAdviceType.range]: 'Range',
+          [ReadoutAdviceType.verticalStack]: 'Vertical-stack',
+          [ReadoutAdviceType.baseline]: 'Baseline',
+          [ReadoutAdviceType.button]: 'Button',
+        },
+      },
+      options: [undefined, ...Object.values(ReadoutAdviceType)],
+    },
     state: {
       name: 'State',
       control: {
@@ -82,41 +122,45 @@ const meta = {
       },
       options: Object.values(ReadoutAdviceState),
     },
-    hugContent: {
-      name: 'Hug Content',
+    hugText: {
+      name: 'Hug Text',
     },
-    weight: {
-      name: 'Weight',
+    iconId: {
+      name: 'Icon',
       control: {
         type: 'select',
         labels: {
-          [ReadoutAdviceWeight.regular]: 'Regular',
-          [ReadoutAdviceWeight.active]: 'Active',
-          [ReadoutAdviceWeight.bold]: 'Bold',
+          undefined: 'Default',
         },
       },
-      options: Object.values(ReadoutAdviceWeight),
-      table: {category: 'Advice Value'},
-      description: 'Bold is available only for Regular size.',
-    },
-    stringWidth: {
-      name: 'String Width',
-      table: {category: 'Advice Value'},
+      options: [undefined, ...iconIds],
     },
     value: {
       name: 'Value',
       control: 'text',
       table: {category: 'Advice Value'},
     },
+    secondaryValue: {
+      name: 'Secondary Value',
+      control: 'text',
+      if: {arg: 'type', eq: ReadoutAdviceType.range},
+      table: {category: 'Advice Value'},
+    },
+    description: {
+      name: 'Description',
+      control: 'text',
+      if: {arg: 'type', eq: ReadoutAdviceType.description},
+      table: {category: 'Advice Value'},
+    },
     valueLength: {
       name: 'Value Length',
       control: 'text',
-      if: {arg: 'stringWidth', truthy: true},
+      if: {arg: 'hasFixedLength', truthy: true},
       table: {category: 'Advice Value'},
     },
     hasHintedZeros: {
       name: 'Has Hinted Zeros',
-      if: {arg: 'stringWidth', truthy: true},
+      if: {arg: 'hasFixedLength', truthy: true},
       table: {category: 'Advice Value'},
     },
     hasDegree: {
@@ -124,13 +168,13 @@ const meta = {
       if: {arg: 'size', eq: ReadoutAdviceSize.medium},
       table: {category: 'Advice Value'},
       description:
-        'Available only for Medium when Weight is Active and String Width is false.',
+        'Available only for Medium active advice state when Has Fixed Length is false.',
     },
   },
-} satisfies Meta<ObcReadoutAdvice>;
+} satisfies Meta<ReadoutAdviceStoryArgs>;
 
 export default meta;
-type Story = StoryObj<ObcReadoutAdvice>;
+type Story = StoryObj<ReadoutAdviceStoryArgs>;
 
 export const Primary: Story = {};
 
@@ -190,7 +234,7 @@ const variantRows: Variant[][] = [
   })),
 ];
 
-const useStringWidth = (size: ReadoutAdviceSize): boolean =>
+const usesFixedLength = (size: ReadoutAdviceSize): boolean =>
   size === ReadoutAdviceSize.small || size === ReadoutAdviceSize.large;
 
 const renderVariant = (variant: Variant) => html`
@@ -198,7 +242,7 @@ const renderVariant = (variant: Variant) => html`
     .size=${variant.size}
     .state=${variant.state}
     .hugContent=${variant.hugContent}
-    .stringWidth=${useStringWidth(variant.size)}
+    .hasFixedLength=${usesFixedLength(variant.size)}
     value="123"
     valueLength="123"
     .hasHintedZeros=${false}
