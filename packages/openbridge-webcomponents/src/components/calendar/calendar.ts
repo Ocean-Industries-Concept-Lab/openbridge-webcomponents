@@ -35,6 +35,7 @@ export {
   CalendarType,
   type CalendarEvent,
   type DateCellInfo,
+  type DateItemEvent,
 } from './calendar-utils.js';
 
 /**
@@ -415,7 +416,7 @@ export class ObcCalendar extends LitElement {
                 .date=${eventDate}
                 .events=${events}
                 .locale=${this.locale}
-                showHeader
+                .showHeader=${true}
               ></obc-event-list>
             `;
           })}
