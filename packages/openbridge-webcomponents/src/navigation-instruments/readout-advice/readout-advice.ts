@@ -11,12 +11,22 @@ import type {
 import {
   ReadoutInputSize as ReadoutAdviceSize,
   ReadoutInputState,
-  ReadoutInputType as ReadoutAdviceType,
+  ReadoutInputType,
   ReadoutInputVariant,
 } from '../readout-input/readout-input.js';
 import '../readout-input/readout-input.js';
 
-export {ReadoutAdviceSize, ReadoutAdviceType};
+export {ReadoutAdviceSize};
+
+export enum ReadoutAdviceType {
+  regular = 'regular',
+  enhanced = 'enhanced',
+  description = 'description',
+  range = 'range',
+  verticalStack = 'vertical-stack',
+  baseline = 'baseline',
+  button = 'button',
+}
 
 export enum ReadoutAdviceState {
   enabled = 'enabled',
@@ -30,6 +40,16 @@ const adviceStateMap: Record<ReadoutAdviceState, ReadoutInputState> = {
   [ReadoutAdviceState.enhanced]: ReadoutInputState.enhanced,
   [ReadoutAdviceState.active]: ReadoutInputState.active,
   [ReadoutAdviceState.amplified]: ReadoutInputState.enhanced,
+};
+
+const adviceTypeMap: Record<ReadoutAdviceType, ReadoutInputType> = {
+  [ReadoutAdviceType.regular]: ReadoutInputType.regular,
+  [ReadoutAdviceType.enhanced]: ReadoutInputType.enhanced,
+  [ReadoutAdviceType.description]: ReadoutInputType.description,
+  [ReadoutAdviceType.range]: ReadoutInputType.range,
+  [ReadoutAdviceType.verticalStack]: ReadoutInputType.verticalStack,
+  [ReadoutAdviceType.baseline]: ReadoutInputType.baseline,
+  [ReadoutAdviceType.button]: ReadoutInputType.button,
 };
 
 /**
@@ -110,7 +130,7 @@ export class ObcReadoutAdvice extends LitElement {
             .readoutStyle=${this.readoutStyle}
             .direction=${this.direction}
             .variant=${ReadoutInputVariant.advice}
-            .type=${this.type}
+            .type=${this.type ? adviceTypeMap[this.type] : undefined}
             .size=${this.size}
             .state=${adviceStateMap[this.state]}
             .hugContent=${this.hugContent}
