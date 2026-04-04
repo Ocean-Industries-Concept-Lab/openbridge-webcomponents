@@ -21,6 +21,7 @@
     "📚_STORYBOOK_________________________________________________": "echo _____",
     "storybook": "npm run analyze && storybook dev -p 6006 --no-open",
     "test-storybook": "vitest --project=storybook",
+    "test-storybook:debug": "vitest --project=storybook button",
     "test-storybook:watch": "vitest --project=storybook --watch",
     "update-snapshots": "rm -rf __vis__/linux/__baselines__ && mv __vis__/linux/__results__/ __vis__/linux/__baselines__/",
     "build-storybook": "storybook build",

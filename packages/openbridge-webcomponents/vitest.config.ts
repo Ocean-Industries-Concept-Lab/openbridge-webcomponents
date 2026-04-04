@@ -40,7 +40,11 @@ export default defineConfig({
           browser: {
             enabled: true,
             // Make sure to install Playwright
-            provider: playwright({}),
+            provider: playwright({
+              contextOptions: {
+                deviceScaleFactor: 2,
+              },
+            }),
             headless: true,
             instances: [{browser: 'chromium'}],
           },

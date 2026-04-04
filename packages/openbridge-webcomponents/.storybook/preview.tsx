@@ -4,6 +4,7 @@ import '../src/main.css';
 import {
   Preview,
   setCustomElementsManifest,
+  StoryContext,
 } from '@storybook/web-components-vite';
 
 import customElements from '../custom-elements.json';
@@ -15,6 +16,7 @@ import {withThemeByDataAttribute} from '@storybook/addon-themes';
 import {DecoratorFunction} from 'storybook/internal/types';
 import {html} from 'lit';
 import React from 'react';
+import { TestContext } from 'vitest';
 
 export const decorators: DecoratorFunction[] = [
   withThemeByDataAttribute({
@@ -123,6 +125,10 @@ const preview: Preview = {
   tags: ['autodocs', 'snapshot'],
   initialGlobals: {
     componentSize: 'obc-component-size-regular',
+  },
+  beforeEach: (context: StoryContext) => {
+    console.log("beforeEach", context);
+    window.storybookContext = context;
   },
 };
 
