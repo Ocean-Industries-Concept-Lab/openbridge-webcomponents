@@ -85,7 +85,7 @@
     "dotenv": "^17.3.1",
     "eslint": "^10.0.3",
     "eslint-plugin-storybook": "^10.2.17",
-    "figma-api": "^1.12.0",
+    "figma-api": "^2.1.2-beta",
     "glob": "^13.0.6",
     "globals": "^17.4.0",
     "globby": "^16.1.1",

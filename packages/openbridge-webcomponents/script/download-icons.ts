@@ -1,7 +1,15 @@
-import * as Figma from 'figma-api';
+import {Api} from 'figma-api';
+import type {
+  CanvasNode,
+  ComponentNode,
+  FrameNode,
+  GetFileResponse,
+  Style,
+  SubcanvasNode,
+  TextNode,
+} from '@figma/rest-api-spec';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
-import {GetFileResult} from 'figma-api/lib/api-types';
 import {
   getCssColorIcon,
   getSingleColorIcon,
@@ -20,32 +28,28 @@ interface IconRef {
 }
 const documentId = 'IkDwOtza6OdjLbIdWA7mI7';
 
-const useCache = true;
+const useCache = false;
 
 function recursiveFindNodeByPath(
-  node: Figma.Node<'FRAME'>,
+  node: CanvasNode | FrameNode,
   path: string[]
-): Figma.Node | null {
-  // pop the first element of the path
+): SubcanvasNode | null {
   const oldPath = [...path];
   const name = path.shift();
   for (const child of node.children) {
     if (child.name === name) {
       if (path.length === 0) {
         return child;
-      } else {
-        return recursiveFindNodeByPath(child as Figma.Node<'FRAME'>, path);
       }
+      if (child.type === 'FRAME') {
+        return recursiveFindNodeByPath(child, path);
+      }
+      return null;
     }
   }
-  // if we reach here, we didn't find the node
-  // search for the node in the children of the node
   for (const child of node.children) {
     if (child.type === 'FRAME') {
-      const found = recursiveFindNodeByPath(
-        child as Figma.Node<'FRAME'>,
-        oldPath
-      );
+      const found = recursiveFindNodeByPath(child, oldPath);
       if (found) {
         return found;
       }
@@ -55,8 +59,8 @@ function recursiveFindNodeByPath(
 }
 
 function findIconsInPage(
-  node: Figma.Node<'FRAME'>,
-  styles: {[styleName: string]: Figma.Style}
+  node: CanvasNode,
+  styles: {[styleName: string]: Style}
 ): IconRef[] {
   const icons: IconRef[] = [];
   const pageName = node.name.substring(3); // remove id from name
@@ -76,24 +80,20 @@ function findIconsInPage(
       // Scip "Intro cards"
       continue;
     }
-    const sectionTitle = recursiveFindNodeByPath(card as Figma.Node<'FRAME'>, [
+    const sectionTitle = recursiveFindNodeByPath(card, [
       'Icon section title',
       'Text container',
       'Title',
-    ]) as Figma.Node<'FRAME'>;
+    ]) as FrameNode | null;
     if (!sectionTitle) {
       console.error(
         'No section title found. Page: ' + pageName + ' Card: ' + card.name
       );
       continue;
     }
-    const sectionTitleText = sectionTitle.children[1] as Figma.Node<'TEXT'>;
+    const sectionTitleText = sectionTitle.children[1] as TextNode;
     const title = sectionTitleText.characters;
-    const newIcons = recursiveFindIcons(
-      card as Figma.Node<'FRAME'>,
-      [pageName, title],
-      styles
-    );
+    const newIcons = recursiveFindIcons(card, [pageName, title], styles);
     console.log(
       'Found ' +
         newIcons.map((icon) => icon.name).join(', ') +
@@ -108,22 +108,22 @@ function findIconsInPage(
 }
 
 function recursiveFindIcons(
-  node: Figma.Node<'FRAME'>,
+  node: FrameNode,
   categories: string[],
-  styles: {[styleName: string]: Figma.Style}
+  styles: {[styleName: string]: Style}
 ): IconRef[] {
-  const icons = (
-    node.children.filter(
-      (child) =>
+  const icons = node.children
+    .filter(
+      (child): child is ComponentNode =>
         child.type === 'COMPONENT' &&
         !['01-illustration', '0-illustration'].includes(child.name)
-    ) as Figma.Node<'COMPONENT'>[]
-  ).map((icon) => createIconRef(icon, styles, categories));
-  const frames = node.children.filter((child) => child.type === 'FRAME');
+    )
+    .map((icon) => createIconRef(icon, styles, categories));
+  const frames = node.children.filter(
+    (child): child is FrameNode => child.type === 'FRAME'
+  );
   for (const frame of frames) {
-    icons.push(
-      ...recursiveFindIcons(frame as Figma.Node<'FRAME'>, categories, styles)
-    );
+    icons.push(...recursiveFindIcons(frame, categories, styles));
   }
   return icons;
 }
@@ -140,12 +140,12 @@ export async function main() {
     fs.mkdirSync(iconDir);
   }
 
-  const api = new Figma.Api({
+  const api = new Api({
     personalAccessToken: process.env.FIGMA_TOKEN as string,
   });
 
   const cachepath = './script/.cache-figma.json';
-  let file: GetFileResult;
+  let file: GetFileResponse;
   const cacheExists = fs.existsSync(cachepath);
   const cacheIsOld =
     cacheExists &&
@@ -153,7 +153,7 @@ export async function main() {
   if (cacheExists && useCache && !cacheIsOld) {
     file = JSON.parse(fs.readFileSync(cachepath, 'utf8'));
   } else {
-    file = await api.getFile(documentId);
+    file = await api.getFile({file_key: documentId});
     // save to cache
     fs.writeFileSync(cachepath, JSON.stringify(file));
   }
@@ -166,7 +166,7 @@ export async function main() {
   let icons: IconRef[] = [];
 
   for (const page of pages) {
-    icons.push(...findIconsInPage(page as Figma.Node<'FRAME'>, styles));
+    icons.push(...findIconsInPage(page as CanvasNode, styles));
   }
 
   // remove duplicate icon names
@@ -192,11 +192,14 @@ export async function main() {
   for (let i = 0; i < iconsToDownload.length; i += split) {
     console.log('Got images', i);
     const iconChunks = iconsToDownload.slice(i, i + split);
-    const images = await api.getImage(documentId, {
-      ids: iconChunks.map((icon) => icon.id).join(','),
-      scale: 1,
-      format: 'svg',
-    });
+    const images = await api.getImages(
+      {file_key: documentId},
+      {
+        ids: iconChunks.map((icon) => icon.id).join(','),
+        scale: 1,
+        format: 'svg',
+      }
+    );
 
     // write icons to disk
     await Promise.all(
@@ -284,8 +287,8 @@ declare global {
 
 main();
 function createIconRef(
-  child: Figma.Node<keyof Figma.NodeTypes>,
-  styles: {[styleName: string]: Figma.Style},
+  child: ComponentNode,
+  styles: {[styleName: string]: Style},
   categories: string[] = []
 ): IconRef {
   const name = child.name
