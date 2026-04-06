@@ -1,11 +1,24 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
-import {ObcTwoStepActionState} from './two-step-action.js';
+import {ObcTwoStepActionVariant} from './two-step-action.js';
 import './two-step-action.js';
 
+const storySwitchLabels = {
+  switchThumbLabel: 'Take',
+  switchIdleStateLabel: 'NO CMD',
+  switchArmedPreviewLabel: 'Confirm',
+  switchActivePrimaryLabel: 'IN CMD',
+  switchActiveSecondaryLabel: 'Release',
+} as const;
+
 type TwoStepActionStoryArgs = {
-  disabled: boolean;
   label: string;
+  variant: ObcTwoStepActionVariant;
+  switchThumbLabel: string;
+  switchIdleStateLabel: string;
+  switchArmedPreviewLabel: string;
+  switchActivePrimaryLabel: string;
+  switchActiveSecondaryLabel: string;
 };
 
 const meta = {
@@ -13,32 +26,45 @@ const meta = {
   tags: ['6.0'],
   component: 'obc-two-step-action',
   args: {
-    disabled: false,
     label: 'Action',
+    variant: ObcTwoStepActionVariant.twoStepAction,
+    ...storySwitchLabels,
   },
   argTypes: {
-    disabled: {
-      table: {
-        disable: true,
-      },
-    },
-    state: {
-      table: {
-        disable: true,
-      },
-    },
     label: {
       control: {type: 'text'},
     },
-    armedResetDelay: {
-      table: {
-        disable: true,
-      },
+    variant: {
+      control: 'select',
+      options: [
+        ObcTwoStepActionVariant.twoStepAction,
+        ObcTwoStepActionVariant.twoStepSwitch,
+      ],
     },
     change: {
       table: {
         disable: true,
       },
+    },
+    switchThumbLabel: {
+      control: {type: 'text'},
+      table: {category: 'Switch copy'},
+    },
+    switchIdleStateLabel: {
+      control: {type: 'text'},
+      table: {category: 'Switch copy'},
+    },
+    switchArmedPreviewLabel: {
+      control: {type: 'text'},
+      table: {category: 'Switch copy'},
+    },
+    switchActivePrimaryLabel: {
+      control: {type: 'text'},
+      table: {category: 'Switch copy'},
+    },
+    switchActiveSecondaryLabel: {
+      control: {type: 'text'},
+      table: {category: 'Switch copy'},
     },
   },
   parameters: {
@@ -53,8 +79,12 @@ const meta = {
         style="display: flex; justify-content: center; align-items: center; width: 100%; min-height: 100vh;"
       >
         <obc-two-step-action
-          .state=${ObcTwoStepActionState.enabled}
-          .disabled=${args.disabled}
+          .variant=${args.variant}
+          .switchThumbLabel=${args.switchThumbLabel}
+          .switchIdleStateLabel=${args.switchIdleStateLabel}
+          .switchArmedPreviewLabel=${args.switchArmedPreviewLabel}
+          .switchActivePrimaryLabel=${args.switchActivePrimaryLabel}
+          .switchActiveSecondaryLabel=${args.switchActiveSecondaryLabel}
         >
           ${args.label}
         </obc-two-step-action>
@@ -66,6 +96,13 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Enabled: Story = {
+export const TwoStepAction: Story = {
+  name: 'Two Step Action',
   args: {},
+};
+
+export const TwoStepSwitch: Story = {
+  args: {
+    variant: ObcTwoStepActionVariant.twoStepSwitch,
+  },
 };

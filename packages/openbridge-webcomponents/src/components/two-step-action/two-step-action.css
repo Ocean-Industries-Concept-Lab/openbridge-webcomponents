@@ -1,67 +1,42 @@
-:host {
-  display: inline-flex;
-}
-
 * {
   box-sizing: border-box;
 }
 
+:host {
+  display: inline-flex;
+}
+
 .wrapper {
-  --obc-two-step-control-width: 130px;
-  --obc-two-step-thumb-width: var(--global-size-spacing-touch-target-min);
-  --obc-two-step-state-width: calc(
-    var(--obc-two-step-control-width) - var(--obc-two-step-thumb-width)
+  --obc-two-step-swipe-preview-in-delay: 140ms;
+  --obc-two-step-swipe-preview-in-duration: 780ms;
+  --obc-two-step-armed-preview-nudge-duration-factor: 2;
+  --obc-two-step-armed-preview-nudge-duration: calc(
+    var(--obc-two-step-duration-slide) *
+      var(--obc-two-step-armed-preview-nudge-duration-factor)
   );
-  --obc-two-step-track-enabled-offset: calc(
-    -1 * var(--obc-two-step-thumb-width)
-  );
-  --obc-two-step-armed-border-clip-adjustment: 3.5px;
-  --obc-two-step-state-drag-shift-factor: 0.9;
-  --obc-two-step-state-drag-shift-max-factor: 0.65;
-  --obc-two-step-state-drag-padding-factor: 0.05;
-  --obc-two-step-state-label-clip-adjustment: 1px;
-  --obc-two-step-state-label-shift-factor: 0.1;
-  --obc-two-step-duration-fast: 200ms;
-  --obc-two-step-duration-content: 220ms;
-  --obc-two-step-duration-slide: 700ms;
-  --obc-two-step-easing-standard: cubic-bezier(0, 0, 0, 0.99);
-  --obc-two-step-easing-emphasized: cubic-bezier(0.22, 1, 0.36, 1);
+  --obc-two-step-armed-preview-nudge-easing: cubic-bezier(0.22, 1, 0.36, 1);
+  --obc-two-step-armed-preview-nudge-delay: 0s;
   height: var(--ui-components-button-touch-target-size);
-  max-width: var(--obc-two-step-control-width);
-  margin: 0;
+  max-width: 130px;
   padding: 0;
   background: transparent;
-  appearance: none;
   border: none;
-  cursor: pointer;
 
   &.state-enabled .thumb-container,
   &.state-armed .thumb-container {
-    @mixin style style=normal;
+    @mixin style style=normal visibleWrapperClass=.thumb-visible;
   }
 
   .visible-wrapper {
     display: flex;
     align-items: center;
-    width: var(--obc-two-step-control-width);
-    height: var(--ui-components-button-visual-size);
     position: relative;
     isolation: isolate;
-    border-radius: var(--global-border-radius-border-radius-base);
+    border-radius: var(--ui-components-button-border-radius);
     overflow: hidden;
     transition:
-      background-color var(--obc-two-step-duration-fast)
-        var(--obc-two-step-easing-standard),
-      border-color var(--obc-two-step-duration-fast)
-        var(--obc-two-step-easing-standard);
-
-    .state-enabled &,
-    .state-armed & {
-      @mixin style style=indent noClick;
-      border-width: 0;
-      border-color: transparent;
-      box-shadow: none;
-    }
+      background-color 200ms cubic-bezier(0, 0, 0, 0.99),
+      border-color 200ms cubic-bezier(0, 0, 0, 0.99);
 
     &::before {
       content: "";
@@ -73,536 +48,855 @@
       z-index: 3;
     }
 
-    .state-enabled &::before,
-    .state-armed &::before {
-      border-width: var(--ui-components-button-stroke-weight);
-      border-color: var(--indent-enabled-border-color);
+    .active-layer {
+      @mixin style style=raised noClick;
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      transform-origin: left center;
+      transform: scaleX(0);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 5;
+      transition:
+        transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 320ms ease-out;
     }
 
-    .state-enabled & {
-      background-color: var(--indent-enabled-background-color);
-    }
-
-    .state-armed &::before {
-      border-color: var(--base-cyan-200);
-      clip-path: inset(
-        0
-          calc(
-            100% - var(--obc-two-step-thumb-width) -
-              var(--obc-two-step-armed-border-clip-adjustment)
-          )
-          0 0
-      );
-    }
-
-    .state-active & {
-      background: transparent;
-      border-color: transparent;
-    }
-  }
-
-  .active-layer {
-    @mixin style style=raised noClick;
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    transform-origin: left center;
-    transform: scaleX(0);
-    opacity: 0;
-    pointer-events: none;
-    z-index: 5;
-    transition:
-      transform 420ms var(--obc-two-step-easing-emphasized),
-      opacity 260ms ease-out;
-
-    .state-active & {
-      transform: scaleX(1);
-      opacity: 1;
-    }
-  }
-
-  .segments-track {
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
-    height: var(--ui-components-button-visual-size);
-    transform: translateX(var(--obc-two-step-track-enabled-offset));
-    transition: none;
-    will-change: transform;
-
-    .state-armed &,
-    .state-active & {
-      transform: translateX(0);
-    }
-
-    .state-enabled.thumb-dragging & {
+    .segments-track {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
       transform: translateX(
-        calc(var(--obc-two-step-track-enabled-offset) + var(--thumb-drag-x))
+        calc(-1 * var(--global-size-spacing-touch-target-min))
       );
-    }
-
-    .state-armed.armed-slide &,
-    .state-enabled.disarm-slide & {
-      transition: transform var(--obc-two-step-duration-slide)
-        var(--obc-two-step-easing-emphasized);
-    }
-  }
-
-  .thumb-preview,
-  .thumb-container {
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--global-border-radius-border-radius-base);
-    overflow: hidden;
-    height: var(--ui-components-button-visual-size);
-    width: var(--obc-two-step-thumb-width);
-  }
-
-  .thumb-preview {
-    @mixin style style=flat noClick;
-    background: var(--base-cyan-050);
-    border-color: var(--base-cyan-200);
-    border-inline-end-width: 0;
-    border-start-end-radius: 0;
-    border-end-end-radius: 0;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    overflow: visible;
-    box-shadow: none;
-    pointer-events: none;
-    transition:
-      width var(--obc-two-step-duration-fast)
-        var(--obc-two-step-easing-standard),
-      opacity var(--obc-two-step-duration-fast)
-        var(--obc-two-step-easing-standard);
-    position: relative;
-    z-index: 1;
-
-    .state-active & {
-      width: 0;
-      opacity: 0;
-      border-width: 0;
-    }
-
-    .state-enabled.thumb-dragging & {
-      opacity: 0;
       transition: none;
+      will-change: transform;
+
+      .thumb-preview,
+      .thumb-container {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--ui-components-button-border-radius);
+        overflow: hidden;
+        height: var(--ui-components-button-visual-size);
+        width: var(--global-size-spacing-touch-target-min);
+      }
+
+      .thumb-preview {
+        @mixin style style=flat noClick;
+        background: var(--base-cyan-050);
+        border-color: var(--base-cyan-200);
+        border-inline-end-width: 0;
+        border-start-end-radius: 0;
+        border-end-end-radius: 0;
+        overflow: visible;
+        box-shadow: none;
+        pointer-events: none;
+        transition:
+          width 200ms cubic-bezier(0, 0, 0, 0.99),
+          opacity 200ms cubic-bezier(0, 0, 0, 0.99);
+        position: relative;
+        z-index: 1;
+
+        &::after {
+          content: "";
+          position: absolute;
+          inset-block: 0;
+          inset-inline-end: calc(
+            var(--ui-components-button-stroke-weight) * -1
+          );
+          width: var(--ui-components-button-stroke-weight);
+          background: var(--base-cyan-050);
+          border-block-start: var(--ui-components-button-stroke-weight) solid
+            var(--base-cyan-200);
+          border-block-end: var(--ui-components-button-stroke-weight) solid
+            var(--base-cyan-200);
+          pointer-events: none;
+        }
+
+        .thumb-visible {
+          color: var(--base-cyan-600);
+        }
+      }
+
+      .thumb-container {
+        transition:
+          transform 150ms cubic-bezier(0.22, 1, 0.36, 1),
+          width 200ms cubic-bezier(0, 0, 0, 0.99),
+          opacity 200ms cubic-bezier(0, 0, 0, 0.99);
+        position: relative;
+        z-index: 2;
+        margin: 0;
+        transform: none;
+        touch-action: none;
+
+        .thumb-visible {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+          border-radius: inherit;
+          overflow: hidden;
+          color: var(--on-normal-neutral-color);
+        }
+
+        .thumb-icon-layer,
+        .thumb-label-layer {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          min-width: 0;
+          pointer-events: none;
+          transition: opacity 140ms ease;
+        }
+
+        .thumb-icon-layer {
+          opacity: 1;
+        }
+
+        .thumb-label-layer {
+          opacity: 0;
+        }
+
+        .thumb-label {
+          @mixin font-button;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          min-width: 0;
+          padding: 0 var(--ui-components-button-padding-horizontal);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          color: inherit;
+        }
+
+        .thumb-visible.show-label .thumb-icon-layer {
+          opacity: 0;
+        }
+
+        .thumb-visible.show-label .thumb-label-layer {
+          opacity: 1;
+        }
+
+        &.thumb-dragging {
+          transition: none;
+        }
+
+        &.thumb-dragging + .state-container {
+          transition: none;
+          margin-inline-start: calc(
+            min(
+                calc(var(--thumb-drag-x) * 0.9),
+                calc(
+                  (130px - var(--global-size-spacing-touch-target-min)) * 0.65
+                )
+              ) *
+              -1
+          );
+          padding-inline-end: calc(
+            var(--ui-components-button-label-spacing) -
+              (var(--thumb-drag-x) * 0.05)
+          );
+
+          .state-container-label {
+            transition: none;
+            clip-path: inset(
+              0 calc(var(--ui-components-button-stroke-weight) + 1px) 0 0
+            );
+            transform: translateX(
+              min(
+                calc(var(--thumb-drag-x) * 0.1),
+                calc(var(--ui-components-button-label-spacing) / 2)
+              )
+            );
+          }
+        }
+      }
+
+      .state-container {
+        flex: 0 0 calc(130px - var(--global-size-spacing-touch-target-min));
+        min-width: 0;
+        width: calc(130px - var(--global-size-spacing-touch-target-min));
+        height: var(--ui-components-button-visual-size);
+        padding: 0 var(--ui-components-button-label-spacing);
+        overflow: hidden;
+        border-radius: var(--ui-components-button-border-radius);
+        transition: margin-inline-start 200ms cubic-bezier(0, 0, 0, 0.99);
+        position: relative;
+        z-index: 1;
+
+        .state-container-visible {
+          box-sizing: border-box;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          min-width: 0;
+          height: 100%;
+          min-height: 0;
+          padding: 0;
+          border: 0;
+          background: transparent;
+          overflow: hidden;
+          border-radius: inherit;
+        }
+
+        .state-container-label {
+          @mixin font-body;
+          display: inline-flex;
+          box-sizing: border-box;
+          align-items: center;
+          min-width: 0;
+          width: 100%;
+          max-width: 100%;
+          padding-inline-start: var(--ui-components-button-label-spacing);
+          color: var(--on-indent-active-color);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          transition: color 260ms ease-out;
+        }
+      }
     }
 
-    &::after {
-      content: "";
+    .active-label {
+      @mixin font-button;
       position: absolute;
       inset-block: 0;
-      inset-inline-end: calc(var(--ui-components-button-stroke-weight) * -1);
-      width: var(--ui-components-button-stroke-weight);
-      background: var(--base-cyan-050);
-      border-block-start: var(--ui-components-button-stroke-weight) solid
-        var(--base-cyan-200);
-      border-block-end: var(--ui-components-button-stroke-weight) solid
-        var(--base-cyan-200);
+      inset-inline: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 0;
+      padding-inline-start: calc(
+        var(--ui-components-button-padding-horizontal) +
+          var(--ui-components-button-label-spacing)
+      );
+      padding-inline-end: calc(
+        var(--ui-components-button-icon-size) +
+          var(
+            --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+          ) +
+          var(--ui-components-button-label-spacing)
+      );
+      color: var(--on-raised-active-color);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
       pointer-events: none;
+      opacity: 0;
+      transform: translateX(
+        calc(-1 * var(--ui-components-button-label-spacing))
+      );
+      z-index: 9;
     }
 
-    .state-armed &::after {
+    .state-segment {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 7;
+      border-radius: var(--ui-components-button-border-radius);
+      overflow: hidden;
+      height: var(--ui-components-button-visual-size);
+      transition:
+        opacity 200ms cubic-bezier(0, 0, 0, 0.99),
+        margin 200ms cubic-bezier(0, 0, 0, 0.99),
+        transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+      width: 0;
       opacity: 0;
+      transform: translateX(
+        calc(-1 * var(--ui-components-button-label-spacing))
+      );
+      color: var(--on-raised-active-color);
+    }
+
+    .icon {
+      width: var(--ui-components-button-icon-size);
+      height: var(--ui-components-button-icon-size);
     }
   }
 
-  .thumb-container {
-    transition:
-      transform 150ms cubic-bezier(0.22, 1, 0.36, 1),
-      width 200ms cubic-bezier(0, 0, 0, 0.99),
-      opacity 200ms cubic-bezier(0, 0, 0, 0.99);
-    position: relative;
-    z-index: 2;
-    margin: 0;
-    transform: none;
-    touch-action: none;
+  &.variant-two-step-action {
+    .visible-wrapper {
+      height: var(--ui-components-button-visual-size);
 
-    .state-armed & {
-      width: var(--obc-two-step-state-width);
-      opacity: 1;
-    }
-
-    .state-enabled:active & {
-      border-color: var(--normal-enabled-border-color);
-    }
-
-    .state-enabled.thumb-dragging & {
-      background: var(--normal-enabled-background-color);
-      border-color: var(--normal-enabled-border-color);
-      box-shadow: none;
-      width: clamp(
-        var(--obc-two-step-thumb-width),
-        calc(
-          var(--obc-two-step-thumb-width) +
-            (var(--thumb-drag-x) * var(--obc-two-step-thumb-drag-growth-factor))
-        ),
-        calc(
-          var(--obc-two-step-control-width) - var(--thumb-drag-x) -
-            var(--ui-components-button-stroke-weight)
-        )
-      );
-    }
-
-    .state-enabled.label-bounce & {
-      animation: two-step-bounce-right var(--obc-two-step-duration-content)
-        var(--obc-two-step-easing-standard);
-    }
-
-    .state-armed.armed-slide &,
-    .state-enabled.disarm-slide & {
-      transition:
-        width var(--obc-two-step-duration-slide)
-          var(--obc-two-step-easing-emphasized),
-        opacity var(--obc-two-step-duration-slide)
-          var(--obc-two-step-easing-emphasized),
-        transform 150ms var(--obc-two-step-easing-emphasized);
-    }
-
-    .state-armed.armed-hint & {
-      background: var(--base-cyan-100);
-      border-color: var(--base-cyan-200);
-      border-width: var(--ui-components-button-stroke-weight);
-      box-shadow: none;
-      margin-left: 0;
-      animation: armed-hint-fade var(--armed-hint-duration) ease-out both;
-    }
-
-    .state-active & {
-      width: 0;
-      margin: 0;
-      opacity: 0;
-      border-width: 0;
-    }
-
-    &.thumb-dragging {
-      transition: none;
-    }
-
-    &.thumb-dragging + .state-container {
-      transition: none;
-      margin-left: calc(
-        min(
-            calc(
-              var(--thumb-drag-x) * var(--obc-two-step-state-drag-shift-factor)
-            ),
-            calc(
-              var(--obc-two-step-state-width) *
-                var(--obc-two-step-state-drag-shift-max-factor)
-            )
-          ) *
-          -1
-      );
-      padding-right: calc(
-        var(--ui-components-button-label-spacing) -
-          (var(--thumb-drag-x) * var(--obc-two-step-state-drag-padding-factor))
-      );
-
-      .state-container-label {
-        transition: none;
-        clip-path: inset(
-          0
-            calc(
-              var(--ui-components-button-stroke-weight) +
-                var(--obc-two-step-state-label-clip-adjustment)
-            )
-            0 0
-        );
-        transform: translateX(
-          min(
-            calc(
-              var(--thumb-drag-x) * var(--obc-two-step-state-label-shift-factor)
-            ),
-            calc(var(--ui-components-button-label-spacing) / 2)
-          )
-        );
+      .segments-track {
+        height: var(--ui-components-button-visual-size);
       }
     }
   }
 
-  .state-segment {
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    z-index: 7;
-    border-radius: var(--global-border-radius-border-radius-base);
-    overflow: hidden;
-    height: var(--ui-components-button-visual-size);
-    transition:
-      opacity var(--obc-two-step-duration-fast)
-        var(--obc-two-step-easing-standard),
-      margin var(--obc-two-step-duration-fast)
-        var(--obc-two-step-easing-standard),
-      transform var(--obc-two-step-duration-content)
-        var(--obc-two-step-easing-emphasized);
-    width: 0;
-    opacity: 0;
-    transform: translateX(-8px);
-    color: var(--on-raised-active-color);
-
-    .state-active & {
-      width: var(--ui-components-button-icon-size);
-      margin-left: var(--ui-components-button-label-spacing);
-      margin-right: var(
-        --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
-      );
-      opacity: 1;
-      transform: translateX(0);
-    }
-
-    .state-active & .icon {
-      animation: two-step-content-in-from-left
-        var(--obc-two-step-duration-content)
-        var(--obc-two-step-easing-emphasized) both;
-    }
+  &.state-enabled .visible-wrapper,
+  &.state-armed .visible-wrapper {
+    @mixin style style=indent noClick;
+    border-width: 0;
+    border-color: transparent;
+    box-shadow: none;
   }
 
-  .active-label {
-    @mixin font-button;
-    position: absolute;
-    inset-block: 0;
-    inset-inline: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 0;
-    padding-left: calc(
-      var(--ui-components-button-padding-horizontal) +
-        var(--ui-components-button-label-spacing)
-    );
-    padding-right: calc(
-      var(--ui-components-button-icon-size) +
-        var(
-          --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
-        ) +
-        var(--ui-components-button-label-spacing)
-    );
-    color: var(--on-raised-active-color);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    pointer-events: none;
-    opacity: 0;
-    transform: translateX(-8px);
-    z-index: 9;
-
-    .state-active & {
-      opacity: 1;
-      transform: translateX(0);
-      animation: two-step-content-in-from-left
-        var(--obc-two-step-duration-content)
-        var(--obc-two-step-easing-emphasized) both;
-    }
-  }
-
-  .thumb-visible {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .thumb-preview .thumb-visible {
-    color: var(--base-cyan-600);
-  }
-
-  .thumb-container .thumb-visible {
-    color: var(--on-normal-neutral-color);
-  }
-
-  .state-armed .thumb-container .thumb-visible {
-    color: var(--on-normal-active-color);
-  }
-
-  .thumb-icon-layer,
-  .thumb-label-layer {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    min-width: 0;
-    pointer-events: none;
-    transition: opacity 140ms ease;
-  }
-
-  .thumb-icon-layer {
-    opacity: 1;
-  }
-
-  .thumb-label-layer {
-    opacity: 0;
-  }
-
-  .thumb-label {
-    @mixin font-button;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    min-width: 0;
-    padding: 0 var(--ui-components-button-padding-horizontal);
-    font-weight: var(--global-typography-ui-button-font-weight);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: inherit;
-  }
-
-  .thumb-visible.show-label .thumb-icon-layer {
-    opacity: 0;
-  }
-
-  .thumb-visible.show-label .thumb-label-layer {
-    opacity: 1;
-  }
-
-  .state-container {
-    flex: 0 0 var(--obc-two-step-state-width);
-    min-width: 0;
-    width: var(--obc-two-step-state-width);
-    height: var(--ui-components-button-visual-size);
-    padding: 0 var(--ui-components-button-label-spacing);
-    overflow: hidden;
-    border-radius: var(--global-border-radius-border-radius-base);
-    transition: margin-left var(--obc-two-step-duration-fast)
-      var(--obc-two-step-easing-standard);
-    position: relative;
-    z-index: 1;
-
-    .state-container-visible {
-      box-sizing: border-box;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      min-width: 0;
-      height: 100%;
-      min-height: 0;
-      padding: 0;
-      border: 0;
-      background: transparent;
-      overflow: hidden;
-      border-radius: inherit;
-    }
-
-    .state-container-label {
-      @mixin font-button;
-      display: inline-flex;
-      box-sizing: border-box;
-      align-items: center;
-      min-width: 0;
-      width: 100%;
-      max-width: 100%;
-      padding-left: var(--ui-components-button-label-spacing);
-      font-weight: var(--global-typography-ui-body-font-weight);
-      color: var(--on-indent-active-color);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      transition: color 260ms ease-out;
-    }
-
-    .state-enabled.label-bounce & {
-      animation: two-step-bounce-right var(--obc-two-step-duration-content)
-        var(--obc-two-step-easing-standard);
-    }
-
-    .state-armed.armed-slide & {
-      pointer-events: none;
-    }
-
-    .state-active & {
-      margin-left: var(
-        --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
-      );
-      z-index: 7;
-    }
-
-    .state-active & .state-container-label {
-      opacity: 0;
-      animation: none;
-    }
-
-    .state-armed &,
-    .state-active & {
-      padding: 0 var(--ui-components-button-padding-horizontal);
-    }
-  }
-
-  &.swipe-armed-phase.state-armed .visible-wrapper {
-    transition: none;
-  }
-
-  &.swipe-armed-phase.state-armed .thumb-preview {
-    opacity: 1;
-    transition: none;
-    background: var(--base-cyan-050);
-    border-color: var(--base-cyan-200);
+  &.state-enabled .visible-wrapper::before,
+  &.state-armed .visible-wrapper::before {
     border-width: var(--ui-components-button-stroke-weight);
-    border-inline-end-width: 0;
-    animation: two-step-content-in-from-left 780ms
-      var(--obc-two-step-easing-emphasized) 140ms both;
+    border-color: var(--indent-enabled-border-color);
   }
 
-  &.swipe-armed-phase.state-armed .thumb-container {
+  &.state-enabled .visible-wrapper {
+    background-color: var(--indent-enabled-background-color);
+  }
+
+  &.state-armed .visible-wrapper::before {
+    border-color: var(--base-cyan-200);
+    clip-path: inset(
+      0 calc(100% - var(--global-size-spacing-touch-target-min) - 3.5px) 0 0
+    );
+  }
+
+  &.state-active {
+    .visible-wrapper {
+      background: transparent;
+      border-color: transparent;
+
+      .active-layer {
+        transform: scaleX(1);
+        opacity: 1;
+      }
+
+      .segments-track {
+        .thumb-preview {
+          width: 0;
+          opacity: 0;
+          border-width: 0;
+        }
+
+        .thumb-container {
+          width: 0;
+          margin: 0;
+          opacity: 0;
+          border-width: 0;
+        }
+
+        .state-container {
+          margin-inline-start: var(
+            --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+          );
+          z-index: 7;
+
+          .state-container-label {
+            opacity: 0;
+            animation: none;
+          }
+        }
+      }
+
+      .state-segment {
+        width: var(--ui-components-button-icon-size);
+        margin-inline-start: var(--ui-components-button-label-spacing);
+        margin-inline-end: var(
+          --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+        );
+        opacity: 1;
+        transform: translateX(0);
+
+        .icon {
+          animation: two-step-content-in-from-left 220ms
+            cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+      }
+
+      .active-label {
+        opacity: 1;
+        transform: translateX(0);
+        animation: two-step-content-in-from-left 220ms
+          cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+    }
+  }
+
+  &.state-armed .visible-wrapper .segments-track,
+  &.state-active .visible-wrapper .segments-track {
+    transform: translateX(0);
+  }
+
+  &.state-enabled.thumb-dragging .visible-wrapper .segments-track {
+    transform: translateX(
+      calc(var(--thumb-drag-x) - var(--global-size-spacing-touch-target-min))
+    );
+  }
+
+  &.state-armed.armed-slide .visible-wrapper .segments-track,
+  &.state-enabled.disarm-slide .visible-wrapper .segments-track {
+    transition: transform var(--obc-two-step-duration-slide)
+      cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  &.state-enabled.thumb-dragging
+    .visible-wrapper
+    .segments-track
+    .thumb-preview {
+    opacity: 0;
     transition: none;
+  }
+
+  &.state-armed .visible-wrapper .segments-track .thumb-preview::after {
+    opacity: 0;
+  }
+
+  &.state-armed .visible-wrapper .segments-track .thumb-preview .thumb-visible {
+    animation: two-step-armed-preview-content-nudge
+      var(--obc-two-step-armed-preview-nudge-duration)
+      var(--obc-two-step-armed-preview-nudge-easing)
+      var(--obc-two-step-armed-preview-nudge-delay) both;
+  }
+
+  &.state-armed .visible-wrapper .segments-track .thumb-container {
+    width: calc(130px - var(--global-size-spacing-touch-target-min));
+    opacity: 1;
+  }
+
+  &.state-enabled:active .visible-wrapper .segments-track .thumb-container {
+    border-color: var(--normal-enabled-border-color);
+  }
+
+  &.state-enabled.thumb-dragging
+    .visible-wrapper
+    .segments-track
+    .thumb-container {
     background: var(--normal-enabled-background-color);
     border-color: var(--normal-enabled-border-color);
     box-shadow: none;
-    width: var(--obc-two-step-state-width);
-    opacity: 1;
-  }
-
-  &.swipe-armed-phase.state-armed .thumb-container .thumb-visible {
-    animation: none;
-    color: var(--on-normal-neutral-color);
-  }
-
-  &.swipe-armed-phase.state-armed
-    .thumb-container
-    .thumb-visible
-    .thumb-icon-layer {
-    transition: none;
-    animation: two-step-swipe-icon-out 160ms
-      var(--obc-two-step-easing-emphasized) both;
-  }
-
-  &.swipe-armed-phase.state-armed
-    .thumb-container
-    .thumb-visible
-    .thumb-label-layer {
-    transition: none;
-    opacity: 1;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 3;
-    animation: two-step-swipe-label-in 1000ms
-      var(--obc-two-step-easing-emphasized) 140ms both;
-  }
-
-  &.swipe-armed-phase.state-armed .thumb-container .thumb-visible .thumb-label {
-    width: auto;
-    max-width: calc(
-      100% - (var(--ui-components-button-padding-horizontal) * 2)
+    width: clamp(
+      var(--global-size-spacing-touch-target-min),
+      calc(
+        var(--global-size-spacing-touch-target-min) +
+          (var(--thumb-drag-x) * var(--obc-two-step-thumb-drag-growth-factor))
+      ),
+      calc(
+        130px - var(--thumb-drag-x) - var(--ui-components-button-stroke-weight)
+      )
     );
-    padding: 0;
-    animation: none;
   }
 
-  .icon {
-    width: var(--ui-components-button-icon-size);
-    height: var(--ui-components-button-icon-size);
+  &.state-enabled.label-bounce
+    .visible-wrapper
+    .segments-track
+    .thumb-container {
+    animation: two-step-bounce-right 220ms cubic-bezier(0, 0, 0, 0.99);
+  }
+
+  &.state-armed.armed-slide .visible-wrapper .segments-track .thumb-container,
+  &.state-enabled.disarm-slide
+    .visible-wrapper
+    .segments-track
+    .thumb-container {
+    transition:
+      width var(--obc-two-step-duration-slide) cubic-bezier(0.22, 1, 0.36, 1),
+      opacity var(--obc-two-step-duration-slide) cubic-bezier(0.22, 1, 0.36, 1),
+      transform 150ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  &.state-armed.armed-hint .visible-wrapper .segments-track .thumb-container {
+    background: var(--base-cyan-100);
+    border-color: var(--base-cyan-200);
+    border-width: var(--ui-components-button-stroke-weight);
+    box-shadow: none;
+    margin-inline-start: 0;
+    animation: armed-hint-fade var(--armed-hint-duration) ease-out both;
+  }
+
+  &.state-armed
+    .visible-wrapper
+    .segments-track
+    .thumb-container
+    .thumb-visible {
+    color: var(--on-normal-active-color);
+  }
+
+  &.state-enabled.label-bounce
+    .visible-wrapper
+    .segments-track
+    .state-container {
+    animation: two-step-bounce-right 220ms cubic-bezier(0, 0, 0, 0.99);
+  }
+
+  &.state-armed.armed-slide .visible-wrapper .segments-track .state-container {
+    pointer-events: none;
+  }
+
+  &.state-armed .visible-wrapper .segments-track .state-container,
+  &.state-active .visible-wrapper .segments-track .state-container {
+    padding: 0 var(--ui-components-button-padding-horizontal);
+  }
+
+  &.swipe-armed-phase.state-armed {
+    .visible-wrapper {
+      --obc-two-step-armed-preview-nudge-delay: var(
+        --obc-two-step-swipe-preview-in-delay
+      );
+      --obc-two-step-armed-preview-nudge-duration: calc(
+        var(--obc-two-step-swipe-preview-in-duration) *
+          var(--obc-two-step-armed-preview-nudge-duration-factor)
+      );
+      transition: none;
+
+      .segments-track {
+        .thumb-preview {
+          opacity: 1;
+          transition: none;
+          background: var(--base-cyan-050);
+          border-color: var(--base-cyan-200);
+          border-width: var(--ui-components-button-stroke-weight);
+          border-inline-end-width: 0;
+          animation: two-step-content-in-from-left
+            var(--obc-two-step-swipe-preview-in-duration)
+            cubic-bezier(0.22, 1, 0.36, 1)
+            var(--obc-two-step-swipe-preview-in-delay) both;
+        }
+
+        .thumb-container {
+          transition: none;
+          background: var(--normal-enabled-background-color);
+          border-color: var(--normal-enabled-border-color);
+          box-shadow: none;
+          width: calc(130px - var(--global-size-spacing-touch-target-min));
+          opacity: 1;
+
+          .thumb-visible {
+            animation: none;
+            color: var(--on-normal-neutral-color);
+
+            .thumb-icon-layer {
+              transition: none;
+              animation: two-step-swipe-icon-out 160ms
+                cubic-bezier(0.22, 1, 0.36, 1) both;
+            }
+
+            .thumb-label-layer {
+              transition: none;
+              opacity: 1;
+              inset: 0;
+              width: 100%;
+              height: 100%;
+              z-index: 3;
+              animation: two-step-swipe-label-in 1000ms
+                cubic-bezier(0.22, 1, 0.36, 1) 140ms both;
+            }
+
+            .thumb-label {
+              width: auto;
+              max-width: calc(
+                100% - (var(--ui-components-button-padding-horizontal) * 2)
+              );
+              padding: 0;
+              animation: none;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &.variant-two-step-switch {
+    --obc-two-step-switch-track-width: 256px;
+    --obc-two-step-switch-column-width: 128px;
+    --obc-two-step-switch-wide-cyan-width: calc(
+      var(--obc-two-step-switch-column-width) + 7px
+    );
+    --obc-two-step-switch-secondary-overlap: 8px;
+
+    max-width: var(--obc-two-step-switch-track-width);
+
+    .visible-wrapper {
+      width: var(--obc-two-step-switch-track-width);
+      height: auto;
+
+      .segments-track {
+        height: auto;
+
+        .thumb-preview {
+          height: var(--ui-components-button-touch-target-size);
+          transition:
+            width var(--obc-two-step-duration-slide)
+              cubic-bezier(0.22, 1, 0.36, 1),
+            flex-basis var(--obc-two-step-duration-slide)
+              cubic-bezier(0.22, 1, 0.36, 1),
+            min-width var(--obc-two-step-duration-slide)
+              cubic-bezier(0.22, 1, 0.36, 1),
+            opacity var(--obc-two-step-duration-slide)
+              cubic-bezier(0.22, 1, 0.36, 1),
+            margin var(--obc-two-step-duration-slide)
+              cubic-bezier(0.22, 1, 0.36, 1),
+            padding var(--obc-two-step-duration-slide)
+              cubic-bezier(0.22, 1, 0.36, 1),
+            border-width 200ms cubic-bezier(0, 0, 0, 0.99);
+        }
+
+        .thumb-container {
+          height: var(--ui-components-button-touch-target-size);
+        }
+
+        .state-container .state-container-label {
+          width: fit-content;
+          max-width: 100%;
+        }
+      }
+    }
+
+    &.state-enabled.thumb-dragging
+      .visible-wrapper
+      .segments-track
+      .thumb-preview {
+      transition: none;
+    }
+
+    &.state-enabled .visible-wrapper .segments-track {
+      transform: translateX(0);
+
+      .thumb-preview {
+        flex: 0 0 0;
+        width: 0;
+        min-width: 0;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        opacity: 0;
+        border-width: 0;
+      }
+
+      .thumb-container,
+      .state-container {
+        flex: 0 0 var(--obc-two-step-switch-column-width);
+        width: var(--obc-two-step-switch-column-width);
+        min-width: 0;
+      }
+
+      .state-container {
+        height: var(--ui-components-button-touch-target-size);
+      }
+    }
+
+    &.state-enabled.thumb-dragging .visible-wrapper .segments-track {
+      transform: translateX(var(--thumb-drag-x));
+
+      .thumb-container {
+        flex: 0 0 auto;
+        width: clamp(
+          var(--obc-two-step-switch-column-width),
+          calc(
+            var(--obc-two-step-switch-column-width) +
+              (
+                var(--thumb-drag-x) *
+                  var(--obc-two-step-thumb-drag-growth-factor)
+              )
+          ),
+          calc(
+            var(--obc-two-step-switch-track-width) - var(--thumb-drag-x) -
+              var(--ui-components-button-stroke-weight)
+          )
+        );
+      }
+
+      .state-container {
+        flex: 0 0 var(--obc-two-step-switch-column-width);
+        width: var(--obc-two-step-switch-column-width);
+        min-width: 0;
+        height: var(--ui-components-button-touch-target-size);
+      }
+
+      .thumb-container.thumb-dragging + .state-container {
+        margin-inline-start: calc(
+          min(
+              calc(var(--thumb-drag-x) * 0.9),
+              calc(var(--obc-two-step-switch-column-width) * 0.65)
+            ) *
+            -1
+        );
+      }
+    }
+
+    &.state-armed .visible-wrapper .segments-track,
+    &.swipe-armed-phase.state-armed .visible-wrapper .segments-track {
+      .thumb-preview {
+        flex: 0 0 var(--obc-two-step-switch-wide-cyan-width);
+        width: var(--obc-two-step-switch-wide-cyan-width);
+        height: var(--ui-components-button-touch-target-size);
+        min-width: 0;
+        margin: 0;
+        margin-inline-end: calc(
+          var(--obc-two-step-switch-column-width) -
+            var(--obc-two-step-switch-wide-cyan-width)
+        );
+        padding: 0;
+        overflow: hidden;
+        opacity: 1;
+        border-width: var(--ui-components-button-stroke-weight);
+        border-inline-end-width: 0;
+        z-index: 4;
+      }
+
+      .thumb-preview .thumb-visible {
+        padding: 0 var(--ui-components-button-padding-horizontal);
+      }
+
+      .thumb-preview .thumb-preview-switch-pending {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--ui-components-button-label-spacing);
+        max-width: 100%;
+        min-width: 0;
+      }
+
+      .thumb-preview .thumb-preview-pending-label {
+        @mixin font-button;
+        font-weight: 370;
+        white-space: nowrap;
+        color: inherit;
+      }
+
+      .thumb-container {
+        flex: 0 0 var(--obc-two-step-switch-column-width);
+        width: var(--obc-two-step-switch-column-width);
+        z-index: 5;
+      }
+
+      .state-container {
+        flex: 0 0 var(--obc-two-step-switch-column-width);
+        width: var(--obc-two-step-switch-column-width);
+        height: var(--ui-components-button-touch-target-size);
+      }
+    }
+
+    &.state-active {
+      .visible-wrapper {
+        .state-segment {
+          width: 0;
+          min-width: 0;
+          margin-inline: 0;
+          padding: 0;
+          overflow: hidden;
+          opacity: 0;
+          border-width: 0;
+        }
+
+        .switch-secondary-control {
+          @mixin font-button;
+          position: absolute;
+          inset-block: 0;
+          inset-inline-end: 0;
+          width: 0;
+          min-width: 0;
+          overflow: hidden;
+          opacity: 0;
+          z-index: 22;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          pointer-events: none;
+          box-sizing: border-box;
+          color: var(--on-normal-active-color);
+        }
+      }
+
+      &:not(.switch-secondary-phase) .visible-wrapper .active-layer {
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        right: auto;
+      }
+
+      &.switch-secondary-phase {
+        .visible-wrapper {
+          .active-layer {
+            width: var(--obc-two-step-switch-wide-cyan-width);
+            border-radius: 0;
+          }
+
+          .switch-secondary-control {
+            @mixin style style=normal;
+            pointer-events: auto;
+            width: var(--obc-two-step-switch-column-width);
+            opacity: 1;
+            border-radius: var(--ui-components-button-border-radius);
+            margin-inline-start: calc(
+              -1 * var(--obc-two-step-switch-secondary-overlap)
+            );
+          }
+
+          .active-label {
+            inset-inline-end: calc(
+              var(--obc-two-step-switch-track-width) -
+                var(--obc-two-step-switch-wide-cyan-width)
+            );
+            padding-inline: var(--ui-components-button-padding-horizontal);
+          }
+        }
+      }
+
+      &.switch-secondary-slide {
+        .visible-wrapper {
+          .active-layer {
+            transition:
+              transform var(--obc-two-step-duration-slide)
+                cubic-bezier(0.22, 1, 0.36, 1),
+              opacity var(--obc-two-step-duration-slide) ease-out,
+              width var(--obc-two-step-duration-slide)
+                cubic-bezier(0.22, 1, 0.36, 1),
+              border-radius var(--obc-two-step-duration-slide)
+                cubic-bezier(0.22, 1, 0.36, 1);
+          }
+
+          .switch-secondary-control {
+            transition:
+              width var(--obc-two-step-duration-slide)
+                cubic-bezier(0.22, 1, 0.36, 1),
+              opacity var(--obc-two-step-duration-slide)
+                cubic-bezier(0.22, 1, 0.36, 1),
+              min-width var(--obc-two-step-duration-slide)
+                cubic-bezier(0.22, 1, 0.36, 1),
+              border-radius var(--obc-two-step-duration-slide)
+                cubic-bezier(0.22, 1, 0.36, 1);
+          }
+
+          .active-label {
+            transition:
+              padding-inline var(--obc-two-step-duration-slide)
+                cubic-bezier(0.22, 1, 0.36, 1),
+              inset-inline-end var(--obc-two-step-duration-slide)
+                cubic-bezier(0.22, 1, 0.36, 1);
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes two-step-armed-preview-content-nudge {
+  0% {
+    transform: translateX(0);
+    animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+  }
+
+  58% {
+    transform: translateX(15px);
+    animation-timing-function: cubic-bezier(0.34, 1.02, 0.64, 1);
+  }
+
+  100% {
+    transform: translateX(0);
   }
 }
 
@@ -623,7 +917,7 @@
 @keyframes two-step-content-in-from-left {
   from {
     opacity: 0;
-    transform: translateX(-8px);
+    transform: translateX(calc(-1 * var(--ui-components-button-label-spacing)));
   }
 
   to {
@@ -640,14 +934,14 @@
 
   to {
     opacity: 0;
-    transform: translateX(8px);
+    transform: translateX(var(--ui-components-button-label-spacing));
   }
 }
 
 @keyframes two-step-swipe-label-in {
   from {
     opacity: 0;
-    transform: translateX(-24px);
+    transform: translateX(calc(-3 * var(--ui-components-button-label-spacing)));
   }
 
   to {

@@ -1,6 +1,6 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html, nothing, unsafeCSS, type PropertyValues} from 'lit';
 import {property, state} from 'lit/decorators.js';
-import {classMap} from 'lit/directives/class-map.js';
+import {classMap, type ClassInfo} from 'lit/directives/class-map.js';
 import componentStyle from './two-step-action.css?inline';
 import '../../icons/icon-check-google.js';
 import '../../icons/icon-chevron-right-google.js';
@@ -13,6 +13,11 @@ export enum ObcTwoStepActionState {
   active = 'active',
 }
 
+export enum ObcTwoStepActionVariant {
+  twoStepAction = 'two-step-action',
+  twoStepSwitch = 'two-step-switch',
+}
+
 export type ObcTwoStepActionChangeEvent = CustomEvent<{
   state: ObcTwoStepActionState;
   previousState: ObcTwoStepActionState;
@@ -20,22 +25,73 @@ export type ObcTwoStepActionChangeEvent = CustomEvent<{
 
 const LABEL_BOUNCE_DURATION_MS = 220;
 const ARMED_HINT_DURATION_MS = 1600;
-const ARMED_SLIDE_DURATION_MS = 700;
+const ARMED_SLIDE_DURATION_MS = 880;
 const SWIPE_COMPLETE_TO_ACTIVE_MS = 1200;
 const ACTIVE_RESET_DELAY_MS = 1000;
+const ARMED_RESET_DELAY_MS = 1600;
 const THUMB_DRAG_GROWTH_FACTOR = 0.4146;
 const THUMB_DRAG_MOVE_THRESHOLD_PX = 3;
 const THUMB_DRAG_MIN_SCALE_X = 0.01;
+const SWITCH_ACTIVE_TO_SECONDARY_PHASE_MS = 700;
 
-/** Two-step action control: `enabled` -> `armed` -> `active`, with auto-reset back to `enabled`. */
+/**
+ * `<obc-two-step-action>` – A guarded control that moves through `enabled` → `armed` → `active`, then resets to `enabled`.
+ *
+ * ## Features
+ * - **Variants:** `two-step-action` (default, 130px track); `two-step-switch` uses a 256px-wide track with 128px columns; `enabled` and `armed` use `switchThumbLabel`, `switchIdleStateLabel`, and `switchArmedPreviewLabel` (plus double chevron); `active` uses `switchActivePrimaryLabel` and `switchActiveSecondaryLabel` (no default-slot label or check icon); 128px preview and thumb widths in `armed`. **Switch only:** after the full-width `active` surface appears, a follow-up `active` layout slides the primary segment left while a secondary control segment slides in from the right; activating the secondary segment returns to `enabled` and emits `change` with `previousState` `active`. All visible copy is supplied by the host (default slot and `switch*` properties).
+ *
+ * ## Slots
+ *
+ * | Slot Name | Renders When... | Purpose |
+ * | — (default) | `two-step-action` always; `two-step-switch` only in `active` | Primary label / final state copy from slot text. Switch uses `switchIdleStateLabel` in the state column for `enabled` and `armed`. |
+ *
+ * @slot - Default label in the track.
+ * @fires change {ObcTwoStepActionChangeEvent} When entering `active` from `armed`, or when leaving `active` for `enabled` via the switch secondary control.
+ */
 @customElement('obc-two-step-action')
 export class ObcTwoStepAction extends LitElement {
-  @property({type: String, reflect: true}) state: ObcTwoStepActionState =
-    ObcTwoStepActionState.enabled;
+  @property({type: String, reflect: true})
+  variant: ObcTwoStepActionVariant = ObcTwoStepActionVariant.twoStepAction;
 
   @property({type: Boolean, reflect: true}) disabled = false;
 
-  @property({type: Number}) armedResetDelay = 1600;
+  /** @internal */
+  @state() private state: ObcTwoStepActionState = ObcTwoStepActionState.enabled;
+
+  @property({
+    type: String,
+    attribute: 'switch-thumb-label',
+    reflect: false,
+  })
+  switchThumbLabel = '';
+
+  @property({
+    type: String,
+    attribute: 'switch-idle-state-label',
+    reflect: false,
+  })
+  switchIdleStateLabel = '';
+
+  @property({
+    type: String,
+    attribute: 'switch-armed-preview-label',
+    reflect: false,
+  })
+  switchArmedPreviewLabel = '';
+
+  @property({
+    type: String,
+    attribute: 'switch-active-primary-label',
+    reflect: false,
+  })
+  switchActivePrimaryLabel = '';
+
+  @property({
+    type: String,
+    attribute: 'switch-active-secondary-label',
+    reflect: false,
+  })
+  switchActiveSecondaryLabel = '';
 
   /** @internal */
   @state() private labelBounce = false;
@@ -52,6 +108,10 @@ export class ObcTwoStepAction extends LitElement {
   /** @internal */
   @state() private swipeArmedPhase = false;
   /** @internal */
+  @state() private switchSecondaryPhase = false;
+  /** @internal */
+  @state() private switchSecondarySlide = false;
+  /** @internal */
   private labelBounceTimeout?: number;
   /** @internal */
   private armedResetTimeout?: number;
@@ -65,6 +125,10 @@ export class ObcTwoStepAction extends LitElement {
   private swipeArmedToActiveTimeout?: number;
   /** @internal */
   private activeResetTimeout?: number;
+  /** @internal */
+  private switchSecondaryTimeout?: number;
+  /** @internal */
+  private switchSecondarySlideTimeout?: number;
   /** @internal */
   private thumbDragPointerId?: number;
   /** @internal */
@@ -89,8 +153,56 @@ export class ObcTwoStepAction extends LitElement {
   }
 
   private getActionLabelText() {
-    const label = this.textContent?.replace(/\s+/g, ' ').trim();
-    return label && label.length > 0 ? label : 'Action';
+    return this.textContent?.replace(/\s+/g, ' ').trim() ?? '';
+  }
+
+  private resolveSwitchLabels() {
+    return {
+      thumb: this.switchThumbLabel.trim(),
+      idleState: this.switchIdleStateLabel.trim(),
+      armedPreview: this.switchArmedPreviewLabel.trim(),
+      activePrimary: this.switchActivePrimaryLabel.trim(),
+      activeSecondary: this.switchActiveSecondaryLabel.trim(),
+    };
+  }
+
+  private queryVisibleWrapper(): HTMLElement | null {
+    return this.renderRoot.querySelector('.visible-wrapper');
+  }
+
+  private buildWrapperClassInfo(
+    isEnabled: boolean,
+    isArmed: boolean,
+    isActive: boolean,
+    isSwitch: boolean
+  ): ClassInfo {
+    const switchActive = isSwitch && isActive;
+    return {
+      wrapper: true,
+      'variant-two-step-action':
+        this.variant === ObcTwoStepActionVariant.twoStepAction,
+      'variant-two-step-switch': isSwitch,
+      'state-enabled': isEnabled,
+      'state-armed': isArmed,
+      'state-active': isActive,
+      'label-bounce': this.labelBounce,
+      'armed-hint': this.armedHint,
+      'armed-slide': this.armedSlide,
+      'disarm-slide': this.disarmSlide,
+      'thumb-dragging': this.thumbDragging,
+      'swipe-armed-phase': this.swipeArmedPhase,
+      'switch-secondary-phase': switchActive && this.switchSecondaryPhase,
+      'switch-secondary-slide': switchActive && this.switchSecondarySlide,
+    };
+  }
+
+  private buildWrapperInlineStyle(armedHintDurationMs: number): string {
+    return [
+      `--armed-hint-duration: ${armedHintDurationMs}ms`,
+      `--thumb-drag-x: ${this.thumbDragX}px`,
+      `--obc-two-step-thumb-drag-growth-factor: ${THUMB_DRAG_GROWTH_FACTOR}`,
+      `--obc-two-step-duration-slide: ${ARMED_SLIDE_DURATION_MS}ms`,
+    ].join('; ');
   }
 
   private isClickOnRole(event: Event, role: string) {
@@ -98,6 +210,24 @@ export class ObcTwoStepAction extends LitElement {
     return path.some(
       (node) => node instanceof HTMLElement && node.dataset.role === role
     );
+  }
+
+  private handleSwitchSecondaryClick(event: MouseEvent) {
+    if (this.disabled) return;
+    if (
+      this.variant !== ObcTwoStepActionVariant.twoStepSwitch ||
+      this.state !== ObcTwoStepActionState.active ||
+      !this.switchSecondaryPhase
+    ) {
+      return;
+    }
+    if (this.suppressNextClick) {
+      this.suppressNextClick = false;
+      event.stopPropagation();
+      return;
+    }
+    event.stopPropagation();
+    this.completeSwitchSecondaryInteraction();
   }
 
   private triggerLabelBounce() {
@@ -111,10 +241,13 @@ export class ObcTwoStepAction extends LitElement {
     });
   }
 
-  private dispatchChange(previousState: ObcTwoStepActionState) {
+  private emitChange(
+    state: ObcTwoStepActionState,
+    previousState: ObcTwoStepActionState
+  ) {
     this.dispatchEvent(
       new CustomEvent('change', {
-        detail: {state: this.state, previousState},
+        detail: {state, previousState},
         bubbles: true,
         composed: true,
       })
@@ -146,6 +279,21 @@ export class ObcTwoStepAction extends LitElement {
     this.activeResetTimeout = undefined;
   }
 
+  private clearSwitchSecondaryTimer() {
+    window.clearTimeout(this.switchSecondaryTimeout);
+    this.switchSecondaryTimeout = undefined;
+  }
+
+  private clearSwitchSecondarySlideTimer() {
+    window.clearTimeout(this.switchSecondarySlideTimeout);
+    this.switchSecondarySlideTimeout = undefined;
+  }
+
+  private clearSwitchSecondaryTimers() {
+    this.clearSwitchSecondaryTimer();
+    this.clearSwitchSecondarySlideTimer();
+  }
+
   private clearDisarmSlideTimer() {
     window.clearTimeout(this.disarmSlideTimeout);
     this.disarmSlideTimeout = undefined;
@@ -158,15 +306,54 @@ export class ObcTwoStepAction extends LitElement {
       return;
     }
 
+    if (this.variant === ObcTwoStepActionVariant.twoStepSwitch) {
+      return;
+    }
+
     this.activeResetTimeout = window.setTimeout(() => {
       if (this.disabled || this.state !== ObcTwoStepActionState.active) return;
       this.state = ObcTwoStepActionState.enabled;
     }, ACTIVE_RESET_DELAY_MS);
   }
 
+  private scheduleSwitchSecondaryPhase() {
+    this.clearSwitchSecondaryTimers();
+    this.switchSecondaryPhase = false;
+    this.switchSecondarySlide = false;
+
+    if (
+      this.disabled ||
+      this.state !== ObcTwoStepActionState.active ||
+      this.variant !== ObcTwoStepActionVariant.twoStepSwitch
+    ) {
+      return;
+    }
+
+    this.switchSecondaryTimeout = window.setTimeout(() => {
+      if (this.disabled || this.state !== ObcTwoStepActionState.active) return;
+      this.switchSecondaryPhase = true;
+      this.switchSecondarySlide = true;
+      this.clearSwitchSecondarySlideTimer();
+      this.switchSecondarySlideTimeout = window.setTimeout(() => {
+        this.switchSecondarySlide = false;
+        this.switchSecondarySlideTimeout = undefined;
+      }, ARMED_SLIDE_DURATION_MS);
+    }, SWITCH_ACTIVE_TO_SECONDARY_PHASE_MS);
+  }
+
+  private completeSwitchSecondaryInteraction() {
+    this.clearSwitchSecondaryTimers();
+    this.switchSecondaryPhase = false;
+    this.switchSecondarySlide = false;
+    this.state = ObcTwoStepActionState.enabled;
+    this.emitChange(
+      ObcTwoStepActionState.enabled,
+      ObcTwoStepActionState.active
+    );
+  }
+
   private scheduleArmedReset() {
-    const armedHintDurationMs =
-      this.armedResetDelay > 0 ? this.armedResetDelay : ARMED_HINT_DURATION_MS;
+    const armedHintDurationMs = ARMED_RESET_DELAY_MS;
 
     this.clearArmedResetTimer();
 
@@ -174,7 +361,7 @@ export class ObcTwoStepAction extends LitElement {
       this.disabled ||
       this.state !== ObcTwoStepActionState.armed ||
       this.swipeArmedToActiveTimeout !== undefined ||
-      this.armedResetDelay <= 0
+      armedHintDurationMs <= 0
     ) {
       return;
     }
@@ -192,8 +379,7 @@ export class ObcTwoStepAction extends LitElement {
   }
 
   private triggerArmedHint() {
-    const armedHintDurationMs =
-      this.armedResetDelay > 0 ? this.armedResetDelay : ARMED_HINT_DURATION_MS;
+    const armedHintDurationMs = ARMED_RESET_DELAY_MS;
 
     this.armedHint = false;
     window.requestAnimationFrame(() => {
@@ -242,7 +428,7 @@ export class ObcTwoStepAction extends LitElement {
     }
     this.state = nextState;
     if (nextState === ObcTwoStepActionState.active) {
-      this.dispatchChange(previousState);
+      this.emitChange(nextState, previousState);
     }
   }
 
@@ -313,7 +499,7 @@ export class ObcTwoStepAction extends LitElement {
       this.swipeArmedPhase = false;
       this.thumbDragX = 0;
       this.state = ObcTwoStepActionState.active;
-      this.dispatchChange(previousState);
+      this.emitChange(this.state, previousState);
       this.clearSwipeArmedToActiveTimer();
       this.suppressNextClick = false;
     }, SWIPE_COMPLETE_TO_ACTIVE_MS);
@@ -337,9 +523,7 @@ export class ObcTwoStepAction extends LitElement {
     }
 
     const thumb = event.currentTarget as HTMLElement;
-    const visible = this.renderRoot.querySelector(
-      '.visible-wrapper'
-    ) as HTMLElement | null;
+    const visible = this.queryVisibleWrapper();
     if (!visible) return;
 
     const visibleRect = visible.getBoundingClientRect();
@@ -430,7 +614,7 @@ export class ObcTwoStepAction extends LitElement {
     this.suppressNextClick = true;
   }
 
-  override willUpdate(changedProperties: Map<string, unknown>) {
+  override willUpdate(changedProperties: PropertyValues<this>) {
     if (changedProperties.has('state')) {
       const previousState = changedProperties.get('state') as
         | ObcTwoStepActionState
@@ -445,12 +629,8 @@ export class ObcTwoStepAction extends LitElement {
     }
   }
 
-  override updated(changedProperties: Map<string, unknown>) {
-    if (
-      changedProperties.has('state') ||
-      changedProperties.has('disabled') ||
-      changedProperties.has('armedResetDelay')
-    ) {
+  override updated(changedProperties: PropertyValues<this>) {
+    if (changedProperties.has('state') || changedProperties.has('disabled')) {
       this.scheduleArmedReset();
     }
 
@@ -472,36 +652,73 @@ export class ObcTwoStepAction extends LitElement {
     if (changedProperties.has('state') || changedProperties.has('disabled')) {
       this.scheduleActiveReset();
     }
+
+    if (
+      this.state !== ObcTwoStepActionState.active ||
+      this.variant !== ObcTwoStepActionVariant.twoStepSwitch ||
+      this.disabled
+    ) {
+      this.clearSwitchSecondaryTimers();
+      if (this.switchSecondaryPhase || this.switchSecondarySlide) {
+        this.switchSecondaryPhase = false;
+        this.switchSecondarySlide = false;
+      }
+    }
+
+    if (
+      (changedProperties.has('state') ||
+        changedProperties.has('variant') ||
+        (changedProperties.has('disabled') && !this.disabled)) &&
+      this.state === ObcTwoStepActionState.active &&
+      this.variant === ObcTwoStepActionVariant.twoStepSwitch &&
+      !this.disabled
+    ) {
+      this.scheduleSwitchSecondaryPhase();
+    }
   }
 
   override render() {
     const isEnabled = this.state === ObcTwoStepActionState.enabled;
     const isArmed = this.state === ObcTwoStepActionState.armed;
     const isActive = this.state === ObcTwoStepActionState.active;
-    const showThumbLabel = isArmed;
     const actionLabel = this.getActionLabelText();
-    const armedHintDurationMs =
-      this.armedResetDelay > 0 ? this.armedResetDelay : ARMED_HINT_DURATION_MS;
+    const armedHintDurationMs = ARMED_RESET_DELAY_MS;
+    const isSwitch = this.variant === ObcTwoStepActionVariant.twoStepSwitch;
+    const switchEnabledPrimary = isSwitch && isEnabled;
+    const switchStateColumnFixedCopy = isSwitch && !isActive;
+    const switchShowsDefaultThumbLabel = isSwitch && (isEnabled || isArmed);
+    const showActionLabelOnThumb = isArmed && !isSwitch;
+    const sc = isSwitch ? this.resolveSwitchLabels() : null;
+    const switchSwipeThumbDisplayText =
+      isSwitch && isArmed && this.swipeArmedPhase && sc
+        ? sc.thumb
+        : actionLabel;
+    const switchArmedPreview = isSwitch && isArmed;
+    const switchPendingLabel = switchArmedPreview && sc ? sc.armedPreview : '';
+    const switchSecondaryLabel =
+      isSwitch && isActive && sc ? sc.activeSecondary : '';
+    const ariaLabel =
+      sc && isActive && this.switchSecondaryPhase
+        ? `${sc.activePrimary}, ${sc.activeSecondary}`
+        : sc && isActive
+          ? sc.activePrimary
+          : sc && !isActive
+            ? isArmed
+              ? `${sc.thumb}, ${sc.armedPreview}, ${sc.idleState}`
+              : `${sc.thumb}, ${sc.idleState}`
+            : actionLabel;
 
     return html`
       <button
-        class=${classMap({
-          wrapper: true,
-          'state-enabled': isEnabled,
-          'state-armed': isArmed,
-          'state-active': isActive,
-          'label-bounce': this.labelBounce,
-          'armed-hint': this.armedHint,
-          'armed-slide': this.armedSlide,
-          'disarm-slide': this.disarmSlide,
-          'thumb-dragging': this.thumbDragging,
-          'swipe-armed-phase': this.swipeArmedPhase,
-        })}
+        type="button"
+        class=${classMap(
+          this.buildWrapperClassInfo(isEnabled, isArmed, isActive, isSwitch)
+        )}
         ?disabled=${this.disabled}
         @click=${this.handleClick}
         part="wrapper"
-        style=${`--armed-hint-duration: ${armedHintDurationMs}ms; --thumb-drag-x: ${this.thumbDragX}px; --obc-two-step-thumb-drag-growth-factor: ${THUMB_DRAG_GROWTH_FACTOR}; --obc-two-step-duration-slide: ${ARMED_SLIDE_DURATION_MS}ms;`}
-        aria-label=${actionLabel}
+        style=${this.buildWrapperInlineStyle(armedHintDurationMs)}
+        aria-label=${ariaLabel}
         aria-pressed=${isActive ? 'true' : 'false'}
       >
         <div class="visible-wrapper" part="visible-wrapper">
@@ -509,9 +726,20 @@ export class ObcTwoStepAction extends LitElement {
           <div class="segments-track" part="segments-track">
             <div class="thumb-preview" part="thumb-preview">
               <div class="thumb-visible" part="thumb-preview-visible">
-                <obi-chevron-double-right-google
-                  class="icon"
-                ></obi-chevron-double-right-google>
+                ${switchArmedPreview
+                  ? html`<span class="thumb-preview-switch-pending">
+                      <span class="thumb-preview-pending-label"
+                        >${switchPendingLabel}</span
+                      >
+                      <obi-chevron-double-right-google
+                        class="icon"
+                      ></obi-chevron-double-right-google>
+                    </span>`
+                  : switchEnabledPrimary
+                    ? nothing
+                    : html`<obi-chevron-double-right-google
+                        class="icon"
+                      ></obi-chevron-double-right-google>`}
               </div>
             </div>
 
@@ -530,17 +758,21 @@ export class ObcTwoStepAction extends LitElement {
               <div
                 class=${classMap({
                   'thumb-visible': true,
-                  'show-label': showThumbLabel,
+                  'show-label': showActionLabelOnThumb,
                 })}
                 part="thumb-visible"
               >
                 <span class="thumb-icon-layer" aria-hidden="true">
-                  <obi-chevron-right-google
-                    class="icon"
-                  ></obi-chevron-right-google>
+                  ${switchShowsDefaultThumbLabel && sc
+                    ? html`<span class="thumb-label">${sc.thumb}</span>`
+                    : html`<obi-chevron-right-google
+                        class="icon"
+                      ></obi-chevron-right-google>`}
                 </span>
                 <span class="thumb-label-layer" aria-hidden="true">
-                  <span class="thumb-label">${actionLabel}</span>
+                  <span class="thumb-label"
+                    >${switchSwipeThumbDisplayText}</span
+                  >
                 </span>
               </div>
             </div>
@@ -562,18 +794,34 @@ export class ObcTwoStepAction extends LitElement {
                         class="state-container-label"
                         part="state-container-label"
                       >
-                        <slot>Action</slot>
+                        ${switchStateColumnFixedCopy && sc
+                          ? sc.idleState
+                          : html`<slot></slot>`}
                       </span>
                     </div>
                   </div>
                 `}
           </div>
 
-          <span class="active-label" part="active-label">${actionLabel}</span>
+          <span class="active-label" part="active-label"
+            >${sc && isActive ? sc.activePrimary : actionLabel}</span
+          >
 
           <div class="state-segment" part="state-segment">
-            <obi-check-google class="icon"></obi-check-google>
+            ${isSwitch && isActive
+              ? nothing
+              : html`<obi-check-google class="icon"></obi-check-google>`}
           </div>
+
+          ${isSwitch && isActive
+            ? html`<span
+                class="switch-secondary-control"
+                part="switch-secondary"
+                data-role="switch-secondary"
+                @click=${this.handleSwitchSecondaryClick}
+                >${switchSecondaryLabel}</span
+              >`
+            : nothing}
         </div>
       </button>
     `;
@@ -588,6 +836,7 @@ export class ObcTwoStepAction extends LitElement {
     this.clearDisarmSlideTimer();
     this.clearSwipeArmedToActiveTimer();
     this.clearActiveResetTimer();
+    this.clearSwitchSecondaryTimers();
   }
 
   static override styles = unsafeCSS(componentStyle);
