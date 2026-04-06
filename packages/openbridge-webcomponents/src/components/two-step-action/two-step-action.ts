@@ -24,7 +24,6 @@ export type ObcTwoStepActionChangeEvent = CustomEvent<{
 }>;
 
 const LABEL_BOUNCE_DURATION_MS = 220;
-const ARMED_HINT_DURATION_MS = 1600;
 const ARMED_SLIDE_DURATION_MS = 880;
 const SWIPE_COMPLETE_TO_ACTIVE_MS = 1200;
 const ACTIVE_RESET_DELAY_MS = 1000;
@@ -615,10 +614,10 @@ export class ObcTwoStepAction extends LitElement {
   }
 
   override willUpdate(changedProperties: PropertyValues<this>) {
-    if (changedProperties.has('state')) {
-      const previousState = changedProperties.get('state') as
-        | ObcTwoStepActionState
-        | undefined;
+    if (changedProperties.has('state' as keyof LitElement)) {
+      const previousState = changedProperties.get(
+        'state' as keyof LitElement
+      ) as ObcTwoStepActionState | undefined;
 
       if (
         previousState === ObcTwoStepActionState.armed &&
@@ -630,7 +629,10 @@ export class ObcTwoStepAction extends LitElement {
   }
 
   override updated(changedProperties: PropertyValues<this>) {
-    if (changedProperties.has('state') || changedProperties.has('disabled')) {
+    if (
+      changedProperties.has('state' as keyof LitElement) ||
+      changedProperties.has('disabled')
+    ) {
       this.scheduleArmedReset();
     }
 
@@ -649,7 +651,10 @@ export class ObcTwoStepAction extends LitElement {
       this.clearDisarmSlideTimer();
     }
 
-    if (changedProperties.has('state') || changedProperties.has('disabled')) {
+    if (
+      changedProperties.has('state' as keyof LitElement) ||
+      changedProperties.has('disabled')
+    ) {
       this.scheduleActiveReset();
     }
 
@@ -666,7 +671,7 @@ export class ObcTwoStepAction extends LitElement {
     }
 
     if (
-      (changedProperties.has('state') ||
+      (changedProperties.has('state' as keyof LitElement) ||
         changedProperties.has('variant') ||
         (changedProperties.has('disabled') && !this.disabled)) &&
       this.state === ObcTwoStepActionState.active &&
