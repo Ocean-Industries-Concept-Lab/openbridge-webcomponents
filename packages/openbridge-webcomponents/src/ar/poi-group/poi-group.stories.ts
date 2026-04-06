@@ -7,7 +7,11 @@ import {createRef, ref} from 'lit/directives/ref.js';
 import '../poi-button-data/poi-button-data.js';
 import '../../icons/icon-ais-target-activated-iec.js';
 import '../poi-data/poi-data.js';
+import '../poi-aton/poi-aton.js';
+import '../poi-vessel/poi-vessel.js';
 import '../building-blocks/poi-header/poi-header.js';
+import '../../icons/icon-beacon-general-east.js';
+import '../../icons/icon-vessel-type-psv-outlined.js';
 import {ObcPoiData, PoiDataValue} from '../poi-data/poi-data.js';
 
 const isVitestBrowser = Boolean(
@@ -38,6 +42,19 @@ const meta: Meta<PoiGroupStoryArgs> = {
   args: {
     expand: false,
     internalSwapping: false,
+  },
+  parameters: {
+    controls: {
+      include: ['expand', 'internalSwapping'],
+    },
+  },
+  argTypes: {
+    expand: {
+      control: {type: 'boolean'},
+    },
+    internalSwapping: {
+      control: {type: 'boolean'},
+    },
   },
   render: (args: PoiGroupStoryArgs) => {
     const wrapperRef = createRef<HTMLDivElement>();
@@ -302,6 +319,64 @@ export const GroupedWithValues: Story = {
   },
 };
 
+export const GroupedMixedTypes: Story = {
+  args: {
+    expand: false,
+  },
+  render: (args) => {
+    return html`
+      <style>
+        obc-poi-aton,
+        obc-poi-vessel {
+          position: absolute;
+        }
+
+        .stage {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 640px;
+          height: 480px;
+          transform: translate(-50%, -50%);
+        }
+      </style>
+      <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0;">
+        <div class="stage">
+          <obc-poi-group
+            style="position: absolute; top: 0; left: 0;"
+            .expand=${args.expand}
+            positionVertical="calc(50% - 40px)"
+          >
+            <obc-poi-aton
+              id="target-3"
+              .x=${300}
+              .buttonY=${200}
+              .y=${150}
+              aton-type="aton"
+              aton-style="green"
+            >
+              <obi-beacon-general-east></obi-beacon-general-east>
+            </obc-poi-aton>
+            <obc-poi-vessel id="target-1" .x=${320} .buttonY=${200} .y=${150}>
+              <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
+            </obc-poi-vessel>
+            <obc-poi-aton
+              id="target-2"
+              .x=${340}
+              .buttonY=${200}
+              .y=${150}
+              aton-type="aton"
+              aton-style="red"
+            >
+              <obi-beacon-general-east></obi-beacon-general-east>
+            </obc-poi-aton>
+          </obc-poi-group>
+        </div>
+      </div>
+    `;
+  },
+};
+
 export const Expanded: Story = {
   args: {
     expand: true,
@@ -432,16 +507,19 @@ export const InternalGroupSwapping: Story = {
     let rafId = 0;
     let observer: MutationObserver | null = null;
     let startTime: number | null = null;
+    const setX = (target: ObcPoiData, value: number) => {
+      target.style.setProperty('--obc-poi-data-x', `${value}px`);
+    };
     const resetPositions = () => {
       const root = hostRef.value;
       if (!root) return;
-      const a = root.querySelector('#swap-a') as HTMLElement | null;
-      const b = root.querySelector('#swap-b') as HTMLElement | null;
-      const c = root.querySelector('#swap-c') as HTMLElement | null;
+      const a = root.querySelector('#swap-a') as ObcPoiData | null;
+      const b = root.querySelector('#swap-b') as ObcPoiData | null;
+      const c = root.querySelector('#swap-c') as ObcPoiData | null;
       if (!a || !b || !c) return;
-      a.style.left = '300px';
-      b.style.left = '320px';
-      c.style.left = '340px';
+      setX(a, 300);
+      setX(b, 320);
+      setX(c, 340);
     };
 
     const stopAnimation = () => {
@@ -479,33 +557,33 @@ export const InternalGroupSwapping: Story = {
         const elapsed = now - startTime;
         const t = (elapsed % duration) / duration;
 
-        const a = root.querySelector('#swap-a') as HTMLElement | null;
-        const b = root.querySelector('#swap-b') as HTMLElement | null;
-        const c = root.querySelector('#swap-c') as HTMLElement | null;
+        const a = root.querySelector('#swap-a') as ObcPoiData | null;
+        const b = root.querySelector('#swap-b') as ObcPoiData | null;
+        const c = root.querySelector('#swap-c') as ObcPoiData | null;
         if (!a || !b || !c) return;
 
         if (t < 0.35) {
-          a.style.left = '300px';
-          b.style.left = '320px';
-          c.style.left = '340px';
+          setX(a, 300);
+          setX(b, 320);
+          setX(c, 340);
         } else if (t < 0.75) {
           const phase = (t - 0.35) / 0.4;
           const eased = phase * phase * (3 - 2 * phase);
           const x3 = 340 + (240 - 340) * eased;
           const x1 = 300 + (380 - 300) * eased;
           const x2 = 320 + (400 - 320) * eased;
-          c.style.left = `${Math.round(x3)}px`;
-          a.style.left = `${Math.round(x1)}px`;
-          b.style.left = `${Math.round(x2)}px`;
+          setX(c, x3);
+          setX(a, x1);
+          setX(b, x2);
         } else {
           const phase = (t - 0.75) / 0.25;
           const eased = phase * phase * (3 - 2 * phase);
           const x3 = 240 + (340 - 240) * eased;
           const x1 = 380 + (300 - 380) * eased;
           const x2 = 400 + (320 - 400) * eased;
-          c.style.left = `${Math.round(x3)}px`;
-          a.style.left = `${Math.round(x1)}px`;
-          b.style.left = `${Math.round(x2)}px`;
+          setX(c, x3);
+          setX(a, x1);
+          setX(b, x2);
         }
 
         rafId = requestAnimationFrame(tick);

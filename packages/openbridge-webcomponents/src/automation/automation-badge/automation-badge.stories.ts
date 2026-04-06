@@ -9,7 +9,7 @@ import {html} from 'lit';
 import '../../icons/icon-command-locked-f.js';
 
 const meta: Meta<typeof ObcAutomationBadge> = {
-  title: 'Automation/Automation-configurations/Automation-badge',
+  title: 'Automation/Automation Configurations/Automation Badge',
   tags: ['autodocs', '6.0'],
   component: 'obc-automation-badge',
   args: {
@@ -81,7 +81,7 @@ export const SlottedIcon: Story = {
   render(args) {
     return html`<obc-automation-badge .mode=${args.mode}>
       <obi-command-locked-f></obi-command-locked-f>
-      <obi-command-locked-f slot="icon-siluette"></obi-command-locked-f>
+      <obi-command-locked-f slot="icon-silhouette"></obi-command-locked-f>
     </obc-automation-badge>`;
   },
 };

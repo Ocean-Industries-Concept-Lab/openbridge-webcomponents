@@ -3,10 +3,11 @@ import {playwright} from '@vitest/browser-playwright';
 
 export default defineConfig({
   test: {
+    // ignore files in dist folder
+    exclude: ['dist/**'],
     browser: {
       enabled: true,
       provider: playwright(),
-      // https://vitest.dev/config/browser/playwright
       instances: [{browser: 'chromium'}],
     },
   },

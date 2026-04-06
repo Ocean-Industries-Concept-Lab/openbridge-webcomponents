@@ -15,7 +15,7 @@ import '../radio/radio.js';
 import {spread} from '@open-wc/lit-helpers';
 
 const meta: Meta<typeof ObcElevatedCard> = {
-  title: 'UI Components/Sections/Elevated card',
+  title: 'UI Components/Sections/Elevated Card',
   tags: ['autodocs', '6.0'],
   component: 'obc-elevated-card',
   args: {
@@ -113,7 +113,7 @@ export const Top: Story = {
 export const RegularWithStatusAndNotClickable: Story = {
   args: {
     size: ObcElevatedCardSize.DoubleLine,
-    notClickable: true,
+    isClickable: false,
     hasLeadingIcon: true,
     hasStatus: true,
   },

@@ -1,85 +1,66 @@
-import '../building-blocks/poi-button/poi-button.js';
-import '../../icons/icon-vessel-generic-default-filled.js';
-import {ObcPoiButton} from '../building-blocks/poi-button/poi-button.js';
+import {html} from 'lit';
+import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
+import {ObcPoiButton} from '../building-blocks/poi-button/poi-button.js';
+import {ObcPoiObjectType} from '../building-blocks/poi-object/poi-object.js';
+import '../poi-object-data/poi-object-data.js';
+import {
+  ObcPoiObjectDataType,
+  ObcPoiObjectDataStyle,
+  ObcPoiObjectDataState,
+} from '../poi-object-data/poi-object-data.js';
+
+export {ObcPoiObjectDataType, ObcPoiObjectDataStyle, ObcPoiObjectDataState};
 
 /**
- * `<obc-poi-button-data>` - Convenience wrapper over `obc-poi-button` that auto-injects a default icon when default content is missing.
- * Keywords: poi, point-of-interest, marker, data pin, icon, tag, token, badge, vessel.
+ * `<obc-poi-button-data>` - Data variant of the POI marker button.
  *
- * ## Overview
- * Use this component when marker button consumers may omit default icon content.
- * It preserves `obc-poi-button` behavior while ensuring a fallback icon is present.
- * TODO(designer): Confirm intended product contexts where this wrapper should be preferred over direct `obc-poi-button`.
+ * Renders `<obc-poi-object-data>` as its marker object, exposing `dataStyle`,
+ * `dataState`, and `dataInteractive` to control its appearance.
+ * Inherits all selection frame, header, and data-row behavior from `obc-poi-button`.
  *
- * ## Features/Variants
- * - Inherits all visual variants, states, and layout behavior from `obc-poi-button`.
- * - Adds default-content fallback logic in `connectedCallback`.
- * - Leaves provided default content untouched when present.
- * - Leaves named-slot content untouched (`header`).
- * - TODO(designer): Confirm whether alternative default icons are needed by variant/theme.
- *
- * ## Usage Guidelines
- * - Prefer `<obc-poi-button-data>` when consumer markup may omit a default icon/content node.
- * - Use the same public properties as `obc-poi-button` (`data`, `value`, `type`, `hasHeader`, etc.).
- * - Provide explicit default content when a domain-specific icon should replace the fallback icon.
- *
- * ## Slots/Content
- *
- * - Default slot: Main icon/content for the POI object body (fallback icon is injected when empty).
- * - `header`: Optional custom header content forwarded to `obc-poi-button`.
- *
- * ## Events
- * This component does not emit custom events.
- * Native `click` behavior is inherited from `obc-poi-button`.
- * TODO(designer): Confirm whether analytics/semantic custom events should be emitted by this wrapper.
- *
- * ## Best Practices
- *
- * - Use this component to enforce consistent fallback visuals for data markers.
- * - Keep `data` rows and slotted `header` synchronized with domain state to avoid mixed UI semantics.
- * - Prefer explicit content for specialized icons; rely on fallback only as a safe default.
- *
- * ## Example
- *
- * ```html
- * <obc-poi-button-data
- *   value="unchecked"
- *   type="button"
- *   .data=${[]}
- * ></obc-poi-button-data>
- * ```
- *
- * @slot - Default icon/content slot for the POI object body.
- * @slot header - Optional custom header content.
+ * @slot - Icon content forwarded to the inner POI object.
+ * @slot header - Optional header content.
+ * @slot relation - Optional relation icon/content in data mode.
  */
 @customElement('obc-poi-button-data')
 export class ObcPoiButtonData extends ObcPoiButton {
-  override connectedCallback() {
-    super.connectedCallback();
-    this.ensureDefaultIcon();
+  @property({type: String, attribute: 'data-style'})
+  dataStyle: ObcPoiObjectDataStyle = ObcPoiObjectDataStyle.Regular;
+
+  @property({type: String, attribute: 'data-state'})
+  dataState: ObcPoiObjectDataState | null = null;
+
+  @property({type: Boolean, attribute: 'data-interactive'})
+  dataInteractive = false;
+
+  private get resolvedDataType(): ObcPoiObjectDataType {
+    switch (this.poiObjectType) {
+      case ObcPoiObjectType.Large:
+        return ObcPoiObjectDataType.Large;
+      default:
+        return ObcPoiObjectDataType.Regular;
+    }
   }
 
-  private ensureDefaultIcon() {
-    if (this.querySelector('obi-vessel-generic-default-filled:not([slot])')) {
-      return;
-    }
-
-    const hasDefaultContent = Array.from(this.childNodes).some((node) => {
-      if (node.nodeType === Node.TEXT_NODE) {
-        return node.textContent?.trim();
-      }
-      if (node.nodeType === Node.ELEMENT_NODE) {
-        return !(node as Element).hasAttribute('slot');
-      }
-      return false;
-    });
-
-    if (!hasDefaultContent) {
-      this.appendChild(
-        document.createElement('obi-vessel-generic-default-filled')
-      );
-    }
+  protected override renderPoiObject() {
+    return html`
+      <obc-poi-object-data
+        class="poi-object"
+        exportparts="background-frame"
+        .type=${this.resolvedDataType}
+        .objectStyle=${this.dataStyle}
+        .state=${this.dataState ?? this.poiObjectState}
+        ?interactive=${this.dataInteractive}
+      >
+        <span
+          class="icon"
+          style="transform: rotate(${this.relativeDirection}deg);"
+        >
+          <slot></slot>
+        </span>
+      </obc-poi-object-data>
+    `;
   }
 }
 

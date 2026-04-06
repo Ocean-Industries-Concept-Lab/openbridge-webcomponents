@@ -10,8 +10,9 @@
  *
  * 1. **Design layer** (this file): Pure visual states and drawing functions.
  *    - `SetpointVisualState`: What the marker looks like (notEqual/equal/equalZero/focus)
- *    - `SetpointColorMode`: Which color palette to use (enhanced/regular)
+ *    - `SetpointColorMode`: Internal color palette (enhanced/regular), derived from Priority
  *    - `disabled`: Boolean flag for disabled state (separate from color mode)
+ *    - `setpointOverride`: Boolean to force color derivation from Priority even in loading/off states
  *    - `drawSetpointMarker()`: Returns SVG at origin, caller applies transforms
  *
  * 2. **API layer** (in parent instruments): Maps instrument state to visual state.
@@ -55,6 +56,7 @@
  * // Radial instrument (watch.ts)
  * const {visualState, colorMode, disabled} = deriveRadialSetpointConfig({
  *   state: this.state,
+ *   priority: this.priority,
  *   atSetpoint: this.atAngleSetpoint,
  * });
  * svg`
@@ -119,26 +121,25 @@ export enum SetpointVisualState {
    * - Silhouette: --border-silhouette-color (both modes)
    */
   focus = 'focus',
-
-  // TODO: minMax for radial only (triangle plus deadband arc range)
-  // minMax = 'minMax',
 }
 
 /**
- * Color priority mode — determines which color palette to use.
+ * Color palette mode — determines which color palette to use for rendering.
  *
- * This is separate from InstrumentState to allow independent control.
- * Parent instruments map their state to this.
+ * This is an **internal** rendering enum. Parent instruments do not set this
+ * directly; instead they set `setpointOverride: boolean` on the public API.
+ * The derivation functions (`deriveRadialSetpointConfig`, `deriveSetpointColorMode`)
+ * map `Priority` → `SetpointColorMode` internally.
  *
  * Note: Disabled state is handled via a separate `disabled` boolean flag,
  * not as part of this enum. This allows combining any color mode with
  * the disabled state.
  */
 export enum SetpointColorMode {
-  /** Use enhanced colors (typically for inCommand state) */
+  /** Use enhanced colors (typically for Priority.enhanced instruments) */
   enhanced = 'enhanced',
 
-  /** Use regular colors (typically for active state) */
+  /** Use regular colors (typically for Priority.regular instruments) */
   regular = 'regular',
 }
 
@@ -308,7 +309,7 @@ export interface DrawSetpointMarkerConfig {
   /** Which visual state to render */
   visualState: SetpointVisualState;
 
-  /** Color palette to use (enhanced = inCommand colors, regular = active colors) */
+  /** Color palette to use (enhanced = Priority.enhanced colors, regular = Priority.regular colors) */
   colorMode: SetpointColorMode;
 
   /**
@@ -634,10 +635,10 @@ export type {SVGTemplateResult};
  * This creates a dependency on the types module, but keeps all setpoint
  * logic centralized in this file.
  */
-import {InstrumentState} from '../navigation-instruments/types.js';
+import {InstrumentState, Priority} from '../navigation-instruments/types.js';
 
 // Re-export for convenience (callers may need it for their state properties)
-export {InstrumentState};
+export {InstrumentState, Priority};
 
 /**
  * Configuration for deriving setpoint visual parameters for radial instruments.
@@ -657,8 +658,15 @@ export {InstrumentState};
  * and proposed setpoint positions simultaneously.
  */
 export interface RadialSetpointConfig {
-  /** Current instrument state (inCommand, active, loading, off) */
+  /** Current instrument state (active, loading, off) — used for disabled detection */
   state: InstrumentState;
+
+  /**
+   * Color priority mode.
+   * - `Priority.enhanced`: Use enhanced (blue) color palette
+   * - `Priority.regular`: Use regular (gray) color palette
+   */
+  priority: Priority;
 
   /**
    * Whether the current value equals the setpoint (within deadband).
@@ -698,6 +706,18 @@ export interface RadialSetpointConfig {
    * @default false
    */
   touching?: boolean;
+
+  /**
+   * When true, the setpoint color is derived from `priority` regardless of
+   * instrument state (loading/off). This prevents the setpoint from being
+   * rendered in disabled (tertiary) color when the instrument is loading or off.
+   *
+   * - `false` / `undefined`: default behavior — loading/off → disabled color
+   * - `true`: color derived from `priority`, never disabled
+   *
+   * @default false
+   */
+  setpointOverride?: boolean;
 }
 
 /**
@@ -725,19 +745,26 @@ export interface RadialSetpointDerivedConfig {
  *
  * ## State Mapping
  *
- * | InstrumentState | atSetpoint | atZero | newAngleSetpoint | → visualState | → colorMode | → disabled |
- * |-----------------|------------|--------|------------------|---------------|-------------|------------|
- * | inCommand       | false      | *      | undefined        | false    | notEqual      | enhanced    | false      |
- * | inCommand       | false      | *      | undefined        | true     | focus         | enhanced    | false      |
- * | inCommand       | true       | false  | undefined        | false    | equal         | enhanced    | false      |
- * | inCommand       | true       | true   | undefined        | false    | equalZero     | enhanced    | false      |
- * | inCommand       | *          | *      | defined          | *        | (original dimmed) | enhanced | false     |
- * | active          | false      | *      | undefined        | false    | notEqual      | regular     | false      |
- * | active          | false      | *      | undefined        | true     | focus         | regular     | false      |
- * | active          | true       | false  | undefined        | false    | equal         | regular     | false      |
- * | active          | true       | true   | undefined        | false    | equalZero     | regular     | false      |
- * | loading         | *          | *      | *                | *        | notEqual      | regular     | true       |
- * | off             | *          | *      | *                | *        | notEqual      | regular     | true       |
+ * | Priority  | InstrumentState | atSetpoint | atZero | touching | → visualState       | → colorMode | → disabled |
+ * |-----------|-----------------|------------|--------|----------|---------------------|-------------|------------|
+ * | enhanced  | active          | false      | *      | false    | notEqual            | enhanced    | false      |
+ * | enhanced  | active          | false      | *      | true     | focus               | enhanced    | false      |
+ * | enhanced  | active          | true       | false  | false    | equal               | enhanced    | false      |
+ * | enhanced  | active          | true       | true   | false    | equalZero           | enhanced    | false      |
+ * | enhanced  | active          | *          | *      | *        | (original dimmed)   | enhanced    | false      |
+ * | regular   | active          | false      | *      | false    | notEqual            | regular     | false      |
+ * | regular   | active          | false      | *      | true     | focus               | regular     | false      |
+ * | regular   | active          | true       | false  | false    | equal               | regular     | false      |
+ * | regular   | active          | true       | true   | false    | equalZero           | regular     | false      |
+ * | *         | loading         | *          | *      | *        | notEqual            | regular     | true       |
+ * | *         | off             | *          | *      | *        | notEqual            | regular     | true       |
+ *
+ * When `setpointOverride` is true, loading/off states derive color from `priority` instead of disabling:
+ *
+ * | Priority  | InstrumentState | setpointOverride | → colorMode | → disabled |
+ * |-----------|-----------------|------------------|-------------|------------|
+ * | enhanced  | loading / off   | true             | enhanced    | false      |
+ * | regular   | loading / off   | true             | regular     | false      |
  *
  * Note: When `newAngleSetpoint` is defined, the original setpoint marker is dimmed
  * and a second marker is rendered in focus state at the new position.
@@ -750,32 +777,35 @@ export function deriveRadialSetpointConfig(
 ): RadialSetpointDerivedConfig {
   const {
     state,
+    priority,
     atSetpoint,
     angleSetpoint,
     setpointAtZeroDeadband = 0.5,
     newAngleSetpoint,
     touching = false,
+    setpointOverride = false,
   } = config;
 
   const hasNewSetpoint = newAngleSetpoint !== undefined;
 
+  // Determine color mode based on priority:
+  // - Priority.enhanced → enhanced colors (blue palette)
+  // - Priority.regular → regular colors (gray palette)
+  const colorMode =
+    priority === Priority.enhanced
+      ? SetpointColorMode.enhanced
+      : SetpointColorMode.regular;
+
   // Disabled states (loading, off) override all other logic
+  // Unless setpointOverride is true, in which case color is derived from priority
   if (state === InstrumentState.loading || state === InstrumentState.off) {
     return {
       visualState: SetpointVisualState.notEqual, // Full size, filled
-      colorMode: SetpointColorMode.regular,
-      disabled: true, // Tertiary color
+      colorMode,
+      disabled: !setpointOverride, // Tertiary color unless override is active
       hasNewSetpoint,
     };
   }
-
-  // Determine color mode based on instrument state:
-  // - inCommand → enhanced colors
-  // - active → regular colors
-  const colorMode =
-    state === InstrumentState.inCommand
-      ? SetpointColorMode.enhanced
-      : SetpointColorMode.regular;
 
   // Priority 1: Focus state
   // When touching=true and no newAngleSetpoint is defined, the single marker
@@ -794,7 +824,7 @@ export function deriveRadialSetpointConfig(
     angleSetpoint !== undefined &&
     Math.abs(angleSetpoint) < setpointAtZeroDeadband;
 
-  // For inCommand and active states:
+  // For non-disabled states:
   // - atSetpoint + atZero triggers equalZero visual state (80% size)
   // - atSetpoint triggers equal visual state (80% size)
   // - otherwise notEqual (full size)
@@ -867,17 +897,17 @@ export interface ComputeAtSetpointConfig {
   touching: boolean;
 
   /**
-   * When true, skips auto-calculation and uses the manual `atSetpointManual` boolean.
-   * When false (default), auto-detects at-setpoint via deadband comparison.
+   * When true (default), auto-detects at-setpoint via deadband comparison.
+   * When false, uses the manual `atSetpointManual` boolean instead.
    */
-  disableAuto: boolean;
+  auto: boolean;
 
   /** Tolerance for auto at-setpoint detection */
   deadband: number;
 
   /**
    * Manual at-setpoint override.
-   * Only used when `disableAuto` is true.
+   * Only used when `auto` is false.
    */
   atSetpointManual: boolean;
 
@@ -914,13 +944,13 @@ export interface ComputeAtSetpointConfig {
  * // Simple linear instrument
  * computeAtSetpoint({
  *   value: 42, setpoint: 40, touching: false,
- *   disableAuto: false, deadband: 2, atSetpointManual: false,
+ *   auto: true, deadband: 2, atSetpointManual: false,
  * }); // → true (|42-40| = 2 <= 2)
  *
  * // Compass with wraparound
  * computeAtSetpoint({
  *   value: 359, setpoint: 1, touching: false,
- *   disableAuto: false, deadband: 3, atSetpointManual: false,
+ *   auto: true, deadband: 3, atSetpointManual: false,
  *   angularWraparound: true,
  * }); // → true (angular distance = 2 <= 3)
  * ```
@@ -930,7 +960,7 @@ export function computeAtSetpoint(config: ComputeAtSetpointConfig): boolean {
     value,
     setpoint,
     touching,
-    disableAuto,
+    auto,
     deadband,
     atSetpointManual,
     angularWraparound = false,
@@ -939,7 +969,7 @@ export function computeAtSetpoint(config: ComputeAtSetpointConfig): boolean {
   if (value === undefined || setpoint === undefined) return false;
   if (touching) return false;
 
-  if (!disableAuto) {
+  if (auto) {
     let distance = Math.abs(value - setpoint);
     if (angularWraparound && distance > 180) {
       distance = 360 - distance;

@@ -19,15 +19,15 @@ interface StoryArgs extends Partial<ObcTopbarMessageItem> {
 }
 
 const meta: Meta<StoryArgs> = {
-  title: 'UI Components/Message and alerts/Topbar Message Item',
+  title: 'UI Components/Message and Alerts/Topbar Message Item',
   tags: ['autodocs', '6.0'],
   component: 'obc-topbar-message-item',
   args: {
     type: ObcTopbarMessageItemType.WithButton,
     size: ObcTopbarMessageItemSize.Regular,
-    hideTitle: false,
-    hideDescription: false,
-    hideTimestamp: false,
+    showTitle: true,
+    showDescription: true,
+    showTimestamp: true,
     hasTimestamp2: false,
     hasSecondaryIcon: true,
     title: 'Message title',
@@ -49,15 +49,15 @@ const meta: Meta<StoryArgs> = {
       options: Object.values(ObcTopbarMessageItemSize),
       description: 'Sets the vertical size of the message item',
     },
-    hideTitle: {
+    showTitle: {
       control: {type: 'boolean'},
       description: 'Whether to display the title slot',
     },
-    hideDescription: {
+    showDescription: {
       control: {type: 'boolean'},
       description: 'Whether to display the description slot',
     },
-    hideTimestamp: {
+    showTimestamp: {
       control: {type: 'boolean'},
       description: 'Whether to display the primary timestamp slot',
     },
@@ -74,9 +74,9 @@ const meta: Meta<StoryArgs> = {
     <obc-topbar-message-item
       .type=${args.type ?? ObcTopbarMessageItemType.WithButton}
       .size=${args.size ?? ObcTopbarMessageItemSize.Regular}
-      .hideTitle=${args.hideTitle ?? false}
-      .hideDescription=${args.hideDescription ?? false}
-      .hideTimestamp=${args.hideTimestamp ?? false}
+      .showTitle=${args.showTitle ?? true}
+      .showDescription=${args.showDescription ?? true}
+      .showTimestamp=${args.showTimestamp ?? true}
       .hasTimestamp2=${args.hasTimestamp2 ?? false}
       .hasSecondaryIcon=${args.hasSecondaryIcon ?? false}
     >
@@ -193,28 +193,28 @@ export const EmptyLarge: Story = {
 export const NoTitle: Story = {
   args: {
     type: ObcTopbarMessageItemType.WithButton,
-    hideTitle: true,
+    showTitle: false,
   },
 };
 
 export const NoDescription: Story = {
   args: {
     type: ObcTopbarMessageItemType.WithButton,
-    hideDescription: true,
+    showDescription: false,
   },
 };
 
 export const NoTimestamp: Story = {
   args: {
     type: ObcTopbarMessageItemType.WithButton,
-    hideTimestamp: true,
+    showTimestamp: false,
   },
 };
 
 export const SecondaryTimestamp: Story = {
   args: {
     type: ObcTopbarMessageItemType.WithButton,
-    hideTimestamp: true,
+    showTimestamp: false,
     hasTimestamp2: true,
     timeSecondaryContent: '2m 12s',
   },
@@ -239,8 +239,8 @@ export const NoSecondaryIcon: Story = {
 export const MinimalMessage: Story = {
   args: {
     type: ObcTopbarMessageItemType.Simple,
-    hideDescription: true,
-    hideTimestamp: true,
+    showDescription: false,
+    showTimestamp: false,
     hasSecondaryIcon: false,
   },
 };
@@ -258,9 +258,9 @@ export const InteractiveExample: Story = {
       <obc-topbar-message-item
         .type=${args.type ?? ObcTopbarMessageItemType.WithButton}
         .size=${args.size ?? ObcTopbarMessageItemSize.Regular}
-        .hideTitle=${args.hideTitle ?? false}
-        .hideDescription=${args.hideDescription ?? false}
-        .hideTimestamp=${args.hideTimestamp ?? false}
+        .showTitle=${args.showTitle ?? true}
+        .showDescription=${args.showDescription ?? true}
+        .showTimestamp=${args.showTimestamp ?? true}
         .hasTimestamp2=${args.hasTimestamp2 ?? false}
         .hasSecondaryIcon=${args.hasSecondaryIcon ?? false}
         @message-click=${() => {

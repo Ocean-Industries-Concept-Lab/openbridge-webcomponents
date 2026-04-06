@@ -8,7 +8,7 @@ import {html} from 'lit';
 import '../../icons/icon-placeholder.js';
 
 const meta: Meta<typeof ObcTableHeaderItem> = {
-  title: 'UI Components/Tables/Building blocks/Table Header Item',
+  title: 'UI Components/Tables/Building Blocks/Table Header Item',
   tags: ['6.0'],
   component: 'obc-table-header-item',
   args: {

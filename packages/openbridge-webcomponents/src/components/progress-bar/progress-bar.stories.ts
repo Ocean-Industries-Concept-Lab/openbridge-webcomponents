@@ -9,7 +9,7 @@ import {
 import './progress-bar.js';
 
 const meta: Meta<typeof ObcProgressBar> = {
-  title: 'UI Components/Messages and notifications/Progress bar',
+  title: 'UI Components/Messages and Notifications/Progress Bar',
   tags: ['6.0'],
   component: 'obc-progress-bar',
   decorators: [
@@ -129,7 +129,7 @@ export default meta;
 type Story = StoryObj<ObcProgressBar>;
 
 export const LinearDeterminateWithDescriptionAndState: Story = {
-  name: 'Linear - Determinate with Description and State',
+  name: 'Linear - Determinate With Description and State',
   args: {
     type: ProgressBarType.linear,
     mode: ProgressBarMode.determinate,
@@ -155,7 +155,7 @@ export const LinearDeterminateComplete: Story = {
 };
 
 export const LinearDeterminateWithValue: Story = {
-  name: 'Linear - Determinate with Value',
+  name: 'Linear - Determinate With Value',
   args: {
     type: ProgressBarType.linear,
     mode: ProgressBarMode.determinate,
@@ -183,7 +183,7 @@ export const LinearIndeterminateSimple: Story = {
 };
 
 export const LinearIndeterminateWithLoading: Story = {
-  name: 'Linear - Indeterminate with Loading',
+  name: 'Linear - Indeterminate With Loading',
   args: {
     type: ProgressBarType.linear,
     mode: ProgressBarMode.indeterminate,
@@ -206,7 +206,7 @@ export const CircularDeterminate: Story = {
 };
 
 export const CircularDeterminateWithoutUnit: Story = {
-  name: 'Circular - Determinate without Unit',
+  name: 'Circular - Determinate Without Unit',
   args: {
     type: ProgressBarType.circular,
     circularState: CircularProgressState.determinate,
@@ -283,7 +283,7 @@ export const CircularProgressiveIndeterminateComplete: Story = {
 
 export const LinearProgressAnimation: Story = {
   name: 'Linear - Progress Animation Demo',
-  tags: ['skip-snapshot'],
+  tags: ['skip-test'],
   args: {
     type: ProgressBarType.linear,
     mode: ProgressBarMode.determinate,
@@ -328,7 +328,7 @@ export const LinearProgressAnimation: Story = {
 
 export const CircularProgressAnimation: Story = {
   name: 'Circular - Progress Animation Demo',
-  tags: ['skip-snapshot'],
+  tags: ['skip-test'],
   args: {
     type: ProgressBarType.circular,
     circularState: CircularProgressState.determinate,
@@ -368,7 +368,7 @@ export const CircularProgressAnimation: Story = {
 
 export const CircularProgressiveIndeterminateAnimation: Story = {
   name: 'Circular - Progressive Indeterminate Animation Demo',
-  tags: ['skip-snapshot'],
+  tags: ['skip-test'],
   args: {
     type: ProgressBarType.circular,
     progressiveIndeterminate: true,

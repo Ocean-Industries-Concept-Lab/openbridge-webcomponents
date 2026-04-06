@@ -4,7 +4,7 @@ import {ObcPagination, PaginationVariant} from './pagination.js';
 import './pagination.js';
 
 const meta: Meta<ObcPagination> = {
-  title: 'UI Components/Menus and navigation/Pagination',
+  title: 'UI Components/Menus and Navigation/Pagination',
   component: 'obc-pagination',
   tags: ['6.0'],
 
@@ -22,6 +22,9 @@ const meta: Meta<ObcPagination> = {
     fullWidth: {
       control: {type: 'boolean'},
     },
+    disabled: {
+      control: {type: 'boolean'},
+    },
   },
 
   args: {
@@ -29,6 +32,7 @@ const meta: Meta<ObcPagination> = {
     pages: 5,
     currentPage: 1,
     fullWidth: false,
+    disabled: false,
   },
 };
 export default meta;
@@ -42,6 +46,7 @@ function renderPagination(args: ObcPagination) {
       .pages=${args.pages}
       .currentPage=${args.currentPage}
       .fullWidth=${args.fullWidth}
+      .disabled=${args.disabled}
     ></obc-pagination>
   `;
 }
@@ -116,6 +121,16 @@ export const LargeSet: Story = {
     variant: PaginationVariant.regular,
     pages: 20,
     currentPage: 10,
+  },
+  render: renderPagination,
+};
+
+export const Disabled: Story = {
+  args: {
+    variant: PaginationVariant.regular,
+    pages: 5,
+    currentPage: 2,
+    disabled: true,
   },
   render: renderPagination,
 };

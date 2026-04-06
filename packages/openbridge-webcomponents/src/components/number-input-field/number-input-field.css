@@ -20,6 +20,10 @@
   text-align: right;
 }
 
+.squared .input-field-container {
+  border-radius: 0;
+}
+
 /* Unit */
 .unit-text {
   @mixin font-instrument-unit;

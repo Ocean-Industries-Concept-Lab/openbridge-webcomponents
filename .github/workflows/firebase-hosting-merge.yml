@@ -14,22 +14,28 @@ jobs:
       pull-requests: write
       checks: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Set up Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 24
           cache: "npm"
+
       - name: Install dependencies
         run: npm ci
+
       - name: Build openbridge-webcomponents
-        run: cd packages/openbridge-webcomponents && npm run build
+        run: cd packages/openbridge-webcomponents && npm run build:full
+
       - name: Build openbridge-webcomponents-vue
         run: cd packages/openbridge-webcomponents-vue && npm run build
+
       - name: Build vue-demo
         run: cd packages/vue-demo && npm run build
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
@@ -44,18 +50,25 @@ jobs:
       pull-requests: write
       checks: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
+
       - name: Set up Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 24
           cache: "npm"
+
       - name: Install dependencies
         run: npm ci
+
       - name: Analyze
         run: cd packages/openbridge-webcomponents && npm run analyze
+
       - name: Build storybook
         run: cd packages/openbridge-webcomponents && npm run build-storybook
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"

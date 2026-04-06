@@ -6,6 +6,7 @@ import {
   Type,
 } from './chart-object-vessel-button.js';
 import {VesselImage} from '../../navigation-instruments/watch/vessel.js';
+import {topVessels} from '../../navigation-instruments/watch/vessels/storybook-helper.js';
 import './chart-object-vessel-button.js';
 import '../../icons/icon-vessel-type-cargo-filled.js';
 import '../../icons/icon-placeholder.js';
@@ -13,7 +14,7 @@ import '../../icons/icon-own-ship-alternative-filled.js';
 import {html} from 'lit';
 
 const meta: Meta<ObcChartObjectVesselButton> = {
-  title: 'AR/Chart object vessel button',
+  title: 'AR/Chart Object Vessel Button',
   tags: ['6.0'],
   component: 'obc-chart-object-vessel-button',
   args: {
@@ -46,6 +47,10 @@ const meta: Meta<ObcChartObjectVesselButton> = {
     },
     vesselImageSize: {
       control: {type: 'range', min: 28, max: 224, step: 1},
+    },
+    vesselImage: {
+      control: 'select',
+      options: topVessels,
     },
   },
   render: (args) => html`
@@ -249,7 +254,7 @@ export const ButtonAnimated: Story = {
     type: Type.Button,
     state: State.Active,
   },
-  tags: ['skip-snapshot'],
+  tags: ['skip-test'],
   play: async ({canvasElement}) => {
     const canvas = canvasElement.querySelector(
       'obc-chart-object-vessel-button'

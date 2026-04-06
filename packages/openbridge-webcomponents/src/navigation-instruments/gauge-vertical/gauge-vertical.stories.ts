@@ -9,6 +9,7 @@ import {
   BorderRadiusPosition,
   InstrumentState,
 } from './gauge-vertical.js';
+import {Priority} from '../types.js';
 
 const meta: Meta = {
   title: 'Instruments/Gauge Vertical',
@@ -17,19 +18,19 @@ const meta: Meta = {
   argTypes: {
     minValue: {control: {type: 'range', min: -100, max: 100}},
     maxValue: {control: {type: 'range', min: 0, max: 1000}},
-    mainTickbars: {
+    mainTickmarks: {
       control: {type: 'object'},
       table: {type: {summary: 'number[] | undefined'}},
     },
-    primaryTickbarsInterval: {control: {type: 'number', min: 1}},
-    secondaryTickbarsInterval: {control: {type: 'number', min: 1}},
-    tertiaryTickbarsInterval: {control: {type: 'number', min: 1}},
-    hideLabels: {control: {type: 'boolean'}},
+    primaryTickmarkInterval: {control: {type: 'number', min: 1}},
+    secondaryTickmarkInterval: {control: {type: 'number', min: 1}},
+    tertiaryTickmarkInterval: {control: {type: 'number', min: 1}},
+    showLabels: {control: {type: 'boolean'}},
     borderRadiusPosition: {
       control: {type: 'select'},
       options: Object.values(BorderRadiusPosition),
     },
-    enhanced: {control: {type: 'boolean'}},
+    priority: {control: 'select', options: Object.values(Priority)},
     fillMode: {control: {type: 'radio'}, options: ['fill', 'tint']},
     fillMin: {control: {type: 'number'}},
     fillMax: {control: {type: 'number'}},
@@ -37,7 +38,7 @@ const meta: Meta = {
     setpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
     newSetpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
     atSetpoint: {control: {type: 'boolean'}},
-    disableAutoAtSetpoint: {control: {type: 'boolean'}},
+    autoAtSetpoint: {control: {type: 'boolean'}},
     autoAtSetpointDeadband: {
       control: {type: 'number', min: 0, max: 10, step: 0.5},
     },
@@ -51,13 +52,13 @@ const meta: Meta = {
   args: {
     minValue: 0,
     maxValue: 100,
-    mainTickbars: [],
-    primaryTickbarsInterval: 20,
-    secondaryTickbarsInterval: 10,
-    tertiaryTickbarsInterval: undefined,
-    hideLabels: false,
+    mainTickmarks: [],
+    primaryTickmarkInterval: 20,
+    secondaryTickmarkInterval: 10,
+    tertiaryTickmarkInterval: undefined,
+    showLabels: true,
     borderRadiusPosition: BorderRadiusPosition.innerFirstChild,
-    enhanced: false,
+    priority: Priority.regular,
     fillMode: FillMode.fill,
     fillMin: 0,
     fillMax: 40,
@@ -65,10 +66,10 @@ const meta: Meta = {
     setpoint: undefined,
     newSetpoint: undefined,
     atSetpoint: false,
-    disableAutoAtSetpoint: false,
+    autoAtSetpoint: true,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
-    state: 'inCommand',
+    state: 'active',
     side: 'right',
     advices: [],
   },
@@ -76,13 +77,13 @@ const meta: Meta = {
     <obc-gauge-vertical
       .minValue=${args.minValue}
       .maxValue=${args.maxValue}
-      .mainTickbars=${args.mainTickbars}
-      .primaryTickbarsInterval=${args.primaryTickbarsInterval}
-      .secondaryTickbarsInterval=${args.secondaryTickbarsInterval}
-      .tertiaryTickbarsInterval=${args.tertiaryTickbarsInterval}
-      .hideLabels=${args.hideLabels}
+      .mainTickmarks=${args.mainTickmarks}
+      .primaryTickmarkInterval=${args.primaryTickmarkInterval}
+      .secondaryTickmarkInterval=${args.secondaryTickmarkInterval}
+      .tertiaryTickmarkInterval=${args.tertiaryTickmarkInterval}
+      .showLabels=${args.showLabels}
       .borderRadiusPosition=${args.borderRadiusPosition}
-      .enhanced=${args.enhanced}
+      .priority=${args.priority}
       .fillMode=${args.fillMode}
       .fillMin=${args.fillMin}
       .fillMax=${args.fillMax}
@@ -90,7 +91,7 @@ const meta: Meta = {
       .setpoint=${args.setpoint}
       .newSetpoint=${args.newSetpoint}
       .atSetpoint=${args.atSetpoint}
-      .disableAutoAtSetpoint=${args.disableAutoAtSetpoint}
+      .autoAtSetpoint=${args.autoAtSetpoint}
       .autoAtSetpointDeadband=${args.autoAtSetpointDeadband}
       .setpointAtZeroDeadband=${args.setpointAtZeroDeadband}
       .state=${args.state}
@@ -111,7 +112,7 @@ export const DefaultRight: Story = {
     maxValue: 100,
     side: 'right',
 
-    tertiaryTickbarsInterval: 2,
+    tertiaryTickmarkInterval: 2,
     setpoint: 50,
     value: 40,
     advices: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
@@ -119,7 +120,7 @@ export const DefaultRight: Story = {
 };
 
 export const ComponentSizeComparison: Story = {
-  name: 'Component size comparison (regular/medium/large/xl)',
+  name: 'Component Size Comparison (regular/medium/large/xl)',
 
   render: () => html`
     <div style="display: flex; gap: 40px; align-items: center;">
@@ -132,9 +133,9 @@ export const ComponentSizeComparison: Story = {
             minValue="0"
             maxValue="100"
             side="right"
-            primaryTickbarsInterval="20"
-            secondaryTickbarsInterval="10"
-            tertiaryTickbarsInterval="2"
+            primaryTickmarkInterval="20"
+            secondaryTickmarkInterval="10"
+            tertiaryTickmarkInterval="2"
             setpoint="50"
             value="40"
             .advices=${[
@@ -152,9 +153,9 @@ export const ComponentSizeComparison: Story = {
             minValue="0"
             maxValue="100"
             side="right"
-            primaryTickbarsInterval="20"
-            secondaryTickbarsInterval="10"
-            tertiaryTickbarsInterval="2"
+            primaryTickmarkInterval="20"
+            secondaryTickmarkInterval="10"
+            tertiaryTickmarkInterval="2"
             setpoint="50"
             value="40"
             .advices=${[
@@ -172,9 +173,9 @@ export const ComponentSizeComparison: Story = {
             minValue="0"
             maxValue="100"
             side="right"
-            primaryTickbarsInterval="20"
-            secondaryTickbarsInterval="10"
-            tertiaryTickbarsInterval="2"
+            primaryTickmarkInterval="20"
+            secondaryTickmarkInterval="10"
+            tertiaryTickmarkInterval="2"
             setpoint="50"
             value="40"
             .advices=${[
@@ -190,9 +191,9 @@ export const ComponentSizeComparison: Story = {
             minValue="0"
             maxValue="100"
             side="right"
-            primaryTickbarsInterval="20"
-            secondaryTickbarsInterval="10"
-            tertiaryTickbarsInterval="2"
+            primaryTickmarkInterval="20"
+            secondaryTickmarkInterval="10"
+            tertiaryTickmarkInterval="2"
             setpoint="50"
             value="40"
             .advices=${[
@@ -216,58 +217,58 @@ export const DefaultLeft: Story = {
 };
 
 export const NegativeRange: Story = {
-  name: 'Negative range (-100 to 100)',
+  name: 'Negative Range (-100 to 100)',
 
   args: {
     minValue: -100,
     maxValue: 100,
-    primaryTickbarsInterval: 50,
-    secondaryTickbarsInterval: 10,
+    primaryTickmarkInterval: 50,
+    secondaryTickmarkInterval: 10,
   },
 };
 
 export const SmallRange: Story = {
-  name: 'Small range (0 to 10)',
+  name: 'Small Range (0 to 10)',
 
   args: {
     minValue: 0,
     maxValue: 10,
-    primaryTickbarsInterval: 2,
-    secondaryTickbarsInterval: 1,
+    primaryTickmarkInterval: 2,
+    secondaryTickmarkInterval: 1,
   },
 };
 
 export const WithBarFillRight: Story = {
-  name: 'With bar fill (right side, enhanced)',
+  name: 'With Bar Fill (right side, enhanced)',
 
   args: {
     minValue: 0,
     maxValue: 100,
 
-    enhanced: true,
+    priority: Priority.enhanced,
     value: 65,
-    primaryTickbarsInterval: 20,
-    secondaryTickbarsInterval: 10,
+    primaryTickmarkInterval: 20,
+    secondaryTickmarkInterval: 10,
   },
 };
 
 export const WithBarFillLeft: Story = {
-  name: 'With bar fill (left side)',
+  name: 'With Bar Fill (left side)',
 
   args: {
     minValue: -100,
     maxValue: 100,
 
-    enhanced: false,
+    priority: Priority.regular,
     value: 45,
-    primaryTickbarsInterval: 20,
-    secondaryTickbarsInterval: 10,
+    primaryTickmarkInterval: 20,
+    secondaryTickmarkInterval: 10,
     side: 'left',
   },
 };
 
 export const FillModeComparison: Story = {
-  name: 'Fill mode comparison, enhanced (fill vs tint)',
+  name: 'Fill Mode Comparison, Enhanced (fill vs tint)',
 
   render: () => html`
     <div style="display: flex; gap: 40px; align-items: center;">
@@ -278,14 +279,14 @@ export const FillModeComparison: Story = {
         <obc-gauge-vertical
           minValue="0"
           maxValue="100"
-          enhanced
+          priority="enhanced"
           fillMode="${FillMode.fill}"
           fillMin="0"
           fillMax="65"
           value="65"
           setpoint="70"
-          primaryTickbarsInterval="20"
-          secondaryTickbarsInterval="10"
+          primaryTickmarkInterval="20"
+          secondaryTickmarkInterval="10"
         ></obc-gauge-vertical>
       </div>
       <div style="text-align: center;">
@@ -295,14 +296,14 @@ export const FillModeComparison: Story = {
         <obc-gauge-vertical
           minValue="0"
           maxValue="100"
-          enhanced
+          priority="enhanced"
           fillMode="${FillMode.tint}"
           fillMin="40"
           fillMax="80"
           value="65"
           setpoint="70"
-          primaryTickbarsInterval="20"
-          secondaryTickbarsInterval="10"
+          primaryTickmarkInterval="20"
+          secondaryTickmarkInterval="10"
         ></obc-gauge-vertical>
       </div>
       <div style="text-align: center;">
@@ -312,12 +313,12 @@ export const FillModeComparison: Story = {
         <obc-gauge-vertical
           minValue="0"
           maxValue="100"
-          enhanced
+          priority="enhanced"
           fillMode="${FillMode.tint}"
           value="65"
           setpoint="70"
-          primaryTickbarsInterval="20"
-          secondaryTickbarsInterval="10"
+          primaryTickmarkInterval="20"
+          secondaryTickmarkInterval="10"
         ></obc-gauge-vertical>
       </div>
     </div>
@@ -325,20 +326,20 @@ export const FillModeComparison: Story = {
 };
 
 export const TintModeWithAdvice: Story = {
-  name: 'Tint mode with advice overlays',
+  name: 'Tint Mode With Advice Overlays',
 
   args: {
     minValue: -100,
     maxValue: 100,
 
-    enhanced: true,
+    priority: Priority.enhanced,
     fillMode: FillMode.tint,
     fillMin: -50,
     fillMax: 50,
     value: 20,
     setpoint: 30,
-    primaryTickbarsInterval: 50,
-    secondaryTickbarsInterval: 10,
+    primaryTickmarkInterval: 50,
+    secondaryTickmarkInterval: 10,
     advices: [
       {min: 40, max: 60, type: AdviceType.caution, hinted: true},
       {min: -60, max: -40, type: AdviceType.caution, hinted: true},
@@ -347,7 +348,7 @@ export const TintModeWithAdvice: Story = {
 };
 
 export const WithAdvice: Story = {
-  name: 'With advice overlays',
+  name: 'With Advice Overlays',
 
   args: {
     minValue: -100,
@@ -355,9 +356,9 @@ export const WithAdvice: Story = {
 
     value: 10,
     setpoint: 10,
-    primaryTickbarsInterval: 50,
-    secondaryTickbarsInterval: 10,
-    tertiaryTickbarsInterval: 2,
+    primaryTickmarkInterval: 50,
+    secondaryTickmarkInterval: 10,
+    tertiaryTickmarkInterval: 2,
     advices: [
       {min: 80, max: 100, type: AdviceType.caution, hinted: true},
       {min: 50, max: 70, type: AdviceType.caution, hinted: false},
@@ -370,114 +371,147 @@ export const WithAdvice: Story = {
 };
 
 export const WithSetpointAtValue: Story = {
-  name: 'With setpoint (value at setpoint)',
+  name: 'With Setpoint (value at setpoint)',
 
   args: {
     minValue: -100,
     maxValue: 100,
-    enhanced: true,
+    priority: Priority.enhanced,
     value: 50, // Current value
     setpoint: 50, // Setpoint marker at same position
-    primaryTickbarsInterval: 50,
-    secondaryTickbarsInterval: 10,
+    primaryTickmarkInterval: 50,
+    secondaryTickmarkInterval: 10,
     fillMin: 0,
     fillMax: 50,
   },
 };
 
 export const WithSetpointAwayFromValue: Story = {
-  name: 'With setpoint (value away from setpoint)',
+  name: 'With Setpoint (value away from setpoint)',
 
   args: {
     minValue: -100,
     maxValue: 100,
 
-    enhanced: true,
+    priority: Priority.enhanced,
     value: 30, // Current value
     setpoint: 70, // Setpoint marker at different position
-    primaryTickbarsInterval: 50,
-    secondaryTickbarsInterval: 10,
+    primaryTickmarkInterval: 50,
+    secondaryTickmarkInterval: 10,
   },
 };
 
 export const StateComparison: Story = {
-  name: 'State comparison (inCommand/active/loading/off/focus)',
-
   render: () => html`
-    <div style="display: flex; gap: 40px; align-items: center;">
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
-          inCommand
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+      <!-- Header row -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(2, 1fr); gap: 16px; align-items: center;"
+      >
+        <div></div>
+        <div
+          style="text-align: center; font-weight: bold; font-size: 12px; color: #ccc;"
+        >
+          regular
         </div>
-        <obc-gauge-vertical
-          minValue="-100"
-          maxValue="100"
+        <div
+          style="text-align: center; font-weight: bold; font-size: 12px; color: #ccc;"
+        >
           enhanced
-          value="50"
-          setpoint="50"
-          state="inCommand"
-          primaryTickbarsInterval="50"
-          secondaryTickbarsInterval="10"
-        ></obc-gauge-vertical>
-      </div>
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
-          active
         </div>
-        <obc-gauge-vertical
-          minValue="-100"
-          maxValue="100"
-          enhanced
-          value="30"
-          setpoint="70"
-          state="active"
-          primaryTickbarsInterval="50"
-          secondaryTickbarsInterval="10"
-        ></obc-gauge-vertical>
       </div>
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
-          loading
+
+      <!-- active row -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(2, 1fr); gap: 16px; align-items: center;"
+      >
+        <div style="font-size: 12px; color: #888;">active</div>
+        <div style="text-align: center;">
+          <obc-gauge-vertical
+            minValue="-100"
+            maxValue="100"
+            priority="regular"
+            value="30"
+            setpoint="50"
+            state="active"
+            primaryTickmarkInterval="50"
+            secondaryTickmarkInterval="10"
+          ></obc-gauge-vertical>
         </div>
-        <obc-gauge-vertical
-          minValue="-100"
-          maxValue="100"
-          enhanced
-          value="-20"
-          setpoint="40"
-          state="loading"
-          primaryTickbarsInterval="50"
-          secondaryTickbarsInterval="10"
-        ></obc-gauge-vertical>
-      </div>
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">off</div>
-        <obc-gauge-vertical
-          minValue="-100"
-          maxValue="100"
-          enhanced
-          value="60"
-          setpoint="-30"
-          state="off"
-          primaryTickbarsInterval="50"
-          secondaryTickbarsInterval="10"
-        ></obc-gauge-vertical>
-      </div>
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
-          adjusting/touching
+        <div style="text-align: center;">
+          <obc-gauge-vertical
+            minValue="-100"
+            maxValue="100"
+            priority="enhanced"
+            value="30"
+            setpoint="50"
+            state="active"
+            primaryTickmarkInterval="50"
+            secondaryTickmarkInterval="10"
+          ></obc-gauge-vertical>
         </div>
-        <obc-gauge-vertical
-          minValue="-100"
-          maxValue="100"
-          enhanced
-          value="30"
-          setpoint="30"
-          .newSetpoint=${70}
-          state="inCommand"
-          primaryTickbarsInterval="50"
-          secondaryTickbarsInterval="10"
-        ></obc-gauge-vertical>
+      </div>
+
+      <!-- loading row -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(2, 1fr); gap: 16px; align-items: center;"
+      >
+        <div style="font-size: 12px; color: #888;">loading</div>
+        <div style="text-align: center;">
+          <obc-gauge-vertical
+            minValue="-100"
+            maxValue="100"
+            priority="regular"
+            value="30"
+            setpoint="50"
+            state="loading"
+            primaryTickmarkInterval="50"
+            secondaryTickmarkInterval="10"
+          ></obc-gauge-vertical>
+        </div>
+        <div style="text-align: center;">
+          <obc-gauge-vertical
+            minValue="-100"
+            maxValue="100"
+            priority="enhanced"
+            value="30"
+            setpoint="50"
+            state="loading"
+            primaryTickmarkInterval="50"
+            secondaryTickmarkInterval="10"
+          ></obc-gauge-vertical>
+        </div>
+      </div>
+
+      <!-- off row -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(2, 1fr); gap: 16px; align-items: center;"
+      >
+        <div style="font-size: 12px; color: #888;">off</div>
+        <div style="text-align: center;">
+          <obc-gauge-vertical
+            minValue="-100"
+            maxValue="100"
+            priority="regular"
+            value="30"
+            setpoint="50"
+            state="off"
+            primaryTickmarkInterval="50"
+            secondaryTickmarkInterval="10"
+          ></obc-gauge-vertical>
+        </div>
+        <div style="text-align: center;">
+          <obc-gauge-vertical
+            minValue="-100"
+            maxValue="100"
+            priority="enhanced"
+            value="30"
+            setpoint="50"
+            state="off"
+            primaryTickmarkInterval="50"
+            secondaryTickmarkInterval="10"
+          ></obc-gauge-vertical>
+        </div>
       </div>
     </div>
   `,
@@ -485,7 +519,7 @@ export const StateComparison: Story = {
 
 // Test Scenario Stories
 export const TestScenario1_AutoAtSetpoint: Story = {
-  name: 'Test: Auto at-setpoint detection',
+  name: 'Test: Auto At-Setpoint Detection',
 
   parameters: {
     docs: {
@@ -513,21 +547,21 @@ Real-world values fluctuate. Without a deadband, the indicator would constantly 
   args: {
     minValue: -100,
     maxValue: 100,
-    enhanced: true,
+    priority: Priority.enhanced,
     value: 50, // Start at setpoint
     setpoint: 50,
-    disableAutoAtSetpoint: false, // Auto mode
+    autoAtSetpoint: true, // Auto mode
     autoAtSetpointDeadband: 1, // 1-unit tolerance
-    state: 'inCommand',
-    primaryTickbarsInterval: 50,
-    secondaryTickbarsInterval: 10,
+    state: 'active',
+    primaryTickmarkInterval: 50,
+    secondaryTickmarkInterval: 10,
     fillMin: 0,
     fillMax: 50,
   },
 };
 
 export const TestScenario2_ManualAtSetpoint: Story = {
-  name: 'Test: Manual at-setpoint control',
+  name: 'Test: Manual At-Setpoint Control',
 
   parameters: {
     docs: {
@@ -544,7 +578,7 @@ Sometimes you need to control the "at setpoint" visual state directly, independe
 
 #### How it works
 
-- Set \`disableAutoAtSetpoint={true}\` to disable automatic calculation
+- Set \`autoAtSetpoint={true}\` to disable automatic calculation
 - Control marker size via \`atSetpoint={true/false}\` property directly
 - The component **ignores** \`value\`, \`setpoint\`, and \`autoAtSetpointDeadband\`
 
@@ -559,7 +593,7 @@ Sometimes you need to control the "at setpoint" visual state directly, independe
 - Toggle \`atSetpoint\` to **true** → Marker **shrinks to 80%** even though value is far from setpoint
 - Toggle \`atSetpoint\` to **false** → Marker **grows to 100%**
 - Change \`value\` to **70** (match setpoint) → Marker size **doesn't change** (manual mode ignores values)
-- Set \`disableAutoAtSetpoint={false}\` → Switch back to auto mode (marker immediately reflects actual distance)`,
+- Set \`autoAtSetpoint={false}\` → Switch back to auto mode (marker immediately reflects actual distance)`,
       },
     },
   },
@@ -567,19 +601,19 @@ Sometimes you need to control the "at setpoint" visual state directly, independe
     minValue: -100,
     maxValue: 100,
 
-    enhanced: true,
+    priority: Priority.enhanced,
     value: 30, // Value at 30
     setpoint: 70, // Setpoint at 70 (far apart)
-    disableAutoAtSetpoint: true, // Manual mode
+    autoAtSetpoint: false, // Manual mode
     atSetpoint: false, // Manually set to false (try toggling to true!)
-    state: 'inCommand',
-    primaryTickbarsInterval: 50,
-    secondaryTickbarsInterval: 10,
+    state: 'active',
+    primaryTickmarkInterval: 50,
+    secondaryTickmarkInterval: 10,
   },
 };
 
 export const TestScenario3_DeadbandTuning: Story = {
-  name: 'Test: Deadband tuning',
+  name: 'Test: Deadband Tuning',
 
   parameters: {
     docs: {
@@ -625,19 +659,19 @@ The deadband determines how close the value must be to the setpoint before the s
     minValue: -100,
     maxValue: 100,
 
-    enhanced: true,
+    priority: Priority.enhanced,
     value: 45, // 5 units away from setpoint
     setpoint: 50,
-    disableAutoAtSetpoint: false,
+    autoAtSetpoint: true,
     autoAtSetpointDeadband: 1, // Try changing to 10 (at setpoint) or 0.1 (away)
-    state: 'inCommand',
-    primaryTickbarsInterval: 50,
-    secondaryTickbarsInterval: 10,
+    state: 'active',
+    primaryTickmarkInterval: 50,
+    secondaryTickmarkInterval: 10,
   },
 };
 
 export const TestScenario5_ZeroSnapBehavior: Story = {
-  name: 'Test: Zero snap behavior',
+  name: 'Test: Zero Snap Behavior',
 
   parameters: {
     docs: {
@@ -687,20 +721,20 @@ In maritime and industrial control systems, zero is often a special reference po
   args: {
     minValue: -100,
     maxValue: 100,
-    enhanced: true,
+    priority: Priority.enhanced,
     value: 0,
     setpoint: 0.3, // Close to zero (should snap)
     setpointAtZeroDeadband: 0.5, // Try changing to 0.1 (no snap) or 1.0 (wider snap)
-    state: 'inCommand',
-    primaryTickbarsInterval: 50,
-    secondaryTickbarsInterval: 10,
+    state: 'active',
+    primaryTickmarkInterval: 50,
+    secondaryTickmarkInterval: 10,
     fillMax: 0,
-    // mainTickbars: [0],
+    // mainTickmarks: [0],
   },
 };
 
 export const EnhancedModeComparison: Story = {
-  name: 'Enhanced mode comparison (regular vs enhanced)',
+  name: 'Enhanced Mode Comparison (regular vs enhanced)',
 
   render: () => html`
     <div style="display: flex; gap: 40px; align-items: center;">
@@ -713,8 +747,8 @@ export const EnhancedModeComparison: Story = {
           maxValue="100"
           value="35"
           setpoint="50"
-          primaryTickbarsInterval="50"
-          secondaryTickbarsInterval="10"
+          primaryTickmarkInterval="50"
+          secondaryTickmarkInterval="10"
           side="right"
         ></obc-gauge-vertical>
       </div>
@@ -725,11 +759,11 @@ export const EnhancedModeComparison: Story = {
         <obc-gauge-vertical
           minValue="-100"
           maxValue="100"
-          enhanced
+          priority="enhanced"
           value="60"
           setpoint="50"
-          primaryTickbarsInterval="50"
-          secondaryTickbarsInterval="10"
+          primaryTickmarkInterval="50"
+          secondaryTickmarkInterval="10"
           side="right"
         ></obc-gauge-vertical>
       </div>
@@ -740,11 +774,11 @@ export const EnhancedModeComparison: Story = {
         <obc-gauge-vertical
           minValue="-100"
           maxValue="100"
-          enhanced
+          priority="enhanced"
           value="-45"
           setpoint="-30"
-          primaryTickbarsInterval="50"
-          secondaryTickbarsInterval="10"
+          primaryTickmarkInterval="50"
+          secondaryTickmarkInterval="10"
           side="left"
         ></obc-gauge-vertical>
       </div>

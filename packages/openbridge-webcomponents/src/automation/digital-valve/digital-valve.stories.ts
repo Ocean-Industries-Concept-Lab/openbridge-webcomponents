@@ -7,7 +7,7 @@ import {crossDecorator} from '../../storybook-util.js';
 import {argTypesAbstractAutomationButtonPassiveRound} from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 const meta: Meta<typeof ObcDigitalValve> = {
-  title: 'Automation/Automation devices/Digital Valve',
+  title: 'Automation/Automation Devices/Digital Valve',
   tags: ['autodocs'],
   component: 'obc-digital-valve',
   decorators: [crossDecorator],
@@ -18,7 +18,7 @@ const meta: Meta<typeof ObcDigitalValve> = {
     alert: false,
     progress: false,
     vertical: false,
-    hideReadoutStack: false,
+    showReadoutStack: true,
     hasIdTag: true,
   },
   argTypes: {

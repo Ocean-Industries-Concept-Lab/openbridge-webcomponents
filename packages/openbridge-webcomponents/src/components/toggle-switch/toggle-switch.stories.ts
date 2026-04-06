@@ -5,7 +5,7 @@ import {html} from 'lit';
 import '../../icons/icon-placeholder.js';
 
 const meta: Meta<typeof ObcToggleSwitch> = {
-  title: 'UI Components/Selection controls and switches/Toggle Switch',
+  title: 'UI Components/Selection Controls and Switches/Toggle Switch',
   tags: ['6.0'],
   component: 'obc-toggle-switch',
   argTypes: {
@@ -46,7 +46,8 @@ const renderToggleSwitch = (args) => {
   return html`<div style="width: 350px;">
     <obc-toggle-switch
       label="${args.label}"
-      ?checked=${args.checked}
+      .checked=${args.checked}
+      .externalControl=${args.externalControl}
       ?disabled=${args.disabled}
       ?hasDescription=${args.hasDescription}
       description="${args.description}"

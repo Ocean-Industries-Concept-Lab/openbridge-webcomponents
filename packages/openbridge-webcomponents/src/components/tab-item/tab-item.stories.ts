@@ -6,7 +6,7 @@ import '../../icons/icon-placeholder.js';
 import {BadgeType, BadgeSize} from '../badge/badge.js';
 
 const meta: Meta<typeof ObcTabItem> = {
-  title: 'UI Components/Menus and navigation/Tab Item',
+  title: 'UI Components/Menus and Navigation/Tab Item',
   tags: ['autodocs', '6.0'],
   component: 'obc-tab-item',
   render: (args) => html`
@@ -23,7 +23,7 @@ const meta: Meta<typeof ObcTabItem> = {
       badgeCount=${args.badgeCount}
       badgeType=${args.badgeType}
       badgeSize=${args.badgeSize}
-      .badgeHideNumber=${args.badgeHideNumber}
+      .badgeShowNumber=${args.badgeShowNumber}
       .showLeadingBadgeIcon=${args.showLeadingBadgeIcon}
       .centerContent=${args.centerContent}
     >
@@ -49,7 +49,7 @@ const meta: Meta<typeof ObcTabItem> = {
     disabled: false,
     badgeType: BadgeType.regular,
     badgeSize: BadgeSize.regular,
-    badgeHideNumber: false,
+    badgeShowNumber: true,
     showLeadingBadgeIcon: false,
     centerContent: false,
   },
@@ -139,7 +139,7 @@ export const HasDivider = {
     badgeCount: 99,
     badgeType: BadgeType.notification,
     badgeSize: BadgeSize.regular,
-    badgeHideNumber: true,
+    badgeShowNumber: false,
     hasClose: false,
     centerContent: false,
     title: 'Notification Badge',
@@ -302,7 +302,7 @@ export const BadgeHideNumber = {
     badgeCount: 99,
     badgeType: BadgeType.caution,
     badgeSize: BadgeSize.large,
-    badgeHideNumber: true,
+    badgeShowNumber: false,
     hasClose: false,
     centerContent: false,
     title: 'Caution Hide Number',

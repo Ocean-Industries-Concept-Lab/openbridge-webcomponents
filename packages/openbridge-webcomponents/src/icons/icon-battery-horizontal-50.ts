@@ -7,12 +7,12 @@ export class ObiBatteryHorizontal50 extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M4 7C2.89543 7 2 7.89543 2 9V15C2 16.1046 2.89543 17 4 17H19C20.1046 17 21 16.1046 21 15V14H22C22.5523 14 23 13.5523 23 13V11C23 10.4477 22.5523 10 22 10H21V9C21 7.89543 20.1046 7 19 7H4ZM19 9V15H12V9H19Z" fill="currentColor"/>
+<path d="M19 7C20.1046 7 21 7.89543 21 9V10H22C22.5523 10 23 10.4477 23 11V13C23 13.5523 22.5523 14 22 14H21V15C21 16.1046 20.1046 17 19 17H4C2.89543 17 2 16.1046 2 15V9C2 7.89543 2.89543 7 4 7H19ZM12 15H19V9H12V15Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M4 7C2.89543 7 2 7.89543 2 9V15C2 16.1046 2.89543 17 4 17H19C20.1046 17 21 16.1046 21 15V14H22C22.5523 14 23 13.5523 23 13V11C23 10.4477 22.5523 10 22 10H21V9C21 7.89543 20.1046 7 19 7H4ZM19 9V15H12V9H19Z" style="fill: var(--element-active-color)"/>
+<path d="M19 7C20.1046 7 21 7.89543 21 9V10H22C22.5523 10 23 10.4477 23 11V13C23 13.5523 22.5523 14 22 14H21V15C21 16.1046 20.1046 17 19 17H4C2.89543 17 2 16.1046 2 15V9C2 7.89543 2.89543 7 4 7H19ZM12 15H19V9H12V15Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

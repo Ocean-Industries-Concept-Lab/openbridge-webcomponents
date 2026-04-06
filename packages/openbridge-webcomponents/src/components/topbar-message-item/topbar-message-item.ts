@@ -82,9 +82,9 @@ export enum ObcTopbarMessageItemSize {
  * |-------------------|------------------------------------------------|--------------------------------------------------------------|
  * | primary-icon      | Always (except inactive)                       | Main icon representing the message type or status            |
  * | secondary-icon    | If `hasSecondaryIcon` is true                  | Additional icon for context or severity                      |
- * | title             | If `hasTitle` is true                          | Title or heading of the message                              |
- * | description       | If `hasDescription` is true                    | Detailed message text                                        |
- * | time              | If `hasTimestamp` is true                      | Primary timestamp (e.g., time of event)                      |
+ * | title             | If `showTitle` is true                         | Title or heading of the message                              |
+ * | description       | If `showDescription` is true                   | Detailed message text                                        |
+ * | time              | If `showTimestamp` is true                     | Primary timestamp (e.g., time of event)                      |
  * | time-secondary    | If `hasTimestamp2` is true                     | Secondary timestamp (e.g., duration, relative time)          |
  * | action-text       | If type is `with-button`                       | Label/content for the text action button                     |
  * | action-icon       | If type is `with-icon-button`                  | Icon for the icon action button                              |
@@ -109,7 +109,7 @@ export enum ObcTopbarMessageItemSize {
  *
  * **Example:**
  * ```html
- * <obc-topbar-message-item type="with-button" size="regular" hasTitle hasDescription hasTimestamp>
+ * <obc-topbar-message-item type="with-button" size="regular">
  *   <obi-placeholder slot="primary-icon"></obi-placeholder>
  *   <obi-placeholder slot="secondary-icon"></obi-placeholder>
  *   <span slot="title">System Update</span>
@@ -121,9 +121,9 @@ export enum ObcTopbarMessageItemSize {
  *
  * @slot primary-icon - Main icon representing the message type or status.
  * @slot secondary-icon - Additional icon for context or severity (shown if `hasSecondaryIcon` is true).
- * @slot title - Title or heading of the message (shown if `hasTitle` is true).
- * @slot description - Detailed message text (shown if `hasDescription` is true).
- * @slot time - Primary timestamp (shown if `hasTimestamp` is true).
+ * @slot title - Title or heading of the message (shown if `showTitle` is true).
+ * @slot description - Detailed message text (shown if `showDescription` is true).
+ * @slot time - Primary timestamp (shown if `showTimestamp` is true).
  * @slot time-secondary - Secondary timestamp (shown if `hasTimestamp2` is true).
  * @slot action-text - Content for the text action button (shown if type is `with-button`).
  * @slot action-icon - Icon for the icon action button (shown if type is `with-icon-button`).
@@ -158,19 +158,19 @@ export class ObcTopbarMessageItem extends LitElement {
     ObcTopbarMessageItemSize.Regular;
 
   /**
-   * Whether to hide the title slot.
+   * Whether to show the title slot.
    */
-  @property({type: Boolean}) hideTitle = false;
+  @property({type: Boolean, attribute: false}) showTitle: boolean = true;
 
   /**
-   * Whether to hide the description slot.
+   * Whether to show the description slot.
    */
-  @property({type: Boolean}) hideDescription = false;
+  @property({type: Boolean, attribute: false}) showDescription: boolean = true;
 
   /**
-   * Whether to hide the primary timestamp slot.
+   * Whether to show the primary timestamp slot.
    */
-  @property({type: Boolean}) hideTimestamp = false;
+  @property({type: Boolean, attribute: false}) showTimestamp: boolean = true;
 
   /**
    * Whether to display the secondary timestamp slot.
@@ -231,7 +231,7 @@ export class ObcTopbarMessageItem extends LitElement {
                       : nothing}
                     <div class="message-container ${isLarge ? 'large' : ''}">
                       <div class="title-container">
-                        ${!this.hideTitle
+                        ${this.showTitle
                           ? html`<div class="title">
                               <slot name="title"></slot>
                             </div>`
@@ -239,7 +239,7 @@ export class ObcTopbarMessageItem extends LitElement {
                         ${isLarge
                           ? html`
                               <div class="timestamp-container">
-                                ${!this.hideTimestamp
+                                ${this.showTimestamp
                                   ? html`<div class="time">
                                       <slot name="time"></slot>
                                     </div>`
@@ -253,7 +253,7 @@ export class ObcTopbarMessageItem extends LitElement {
                             `
                           : nothing}
                       </div>
-                      ${!this.hideDescription
+                      ${this.showDescription
                         ? html`<div class="description">
                             <slot name="description"></slot>
                           </div>`
@@ -263,7 +263,7 @@ export class ObcTopbarMessageItem extends LitElement {
                   ${!isLarge
                     ? html`
                         <div class="timestamp-container">
-                          ${!this.hideTimestamp
+                          ${this.showTimestamp
                             ? html`<div class="time">
                                 <slot name="time"></slot>
                               </div>`

@@ -2,7 +2,7 @@
   <ObcCommandMenu
     class="command-menu"
     :in-command="demoConfigStore.hasCommand"
-    :has-location="!demoConfigStore.hasCommand"
+    :hide-location="demoConfigStore.hasCommand"
     @change="$emit('change', $event)"
   >
     <div slot="command-icon">
@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import ObcCommandMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/command-menu/ObcCommandMenu.vue'
+import ObcCommandMenu from '@oicl/openbridge-webcomponents-vue/components/command-menu/ObcCommandMenu.vue'
 import { useDemoConfigStore } from '../stores/demoConfig'
 
 defineEmits<{

@@ -16,7 +16,10 @@ import {
   FillMode,
   AdvicePosition,
 } from '../../building-blocks/external-scale/external-scale.js';
-import {BorderRadiusPosition} from '../../navigation-instruments/types.js';
+import {
+  Priority,
+  BorderRadiusPosition,
+} from '../../navigation-instruments/types.js';
 import {AdviceType} from '../../navigation-instruments/watch/advice.js';
 
 const SAMPLE_DATA = [
@@ -80,7 +83,7 @@ const SAMPLE_MULTI_DATASETS = [
 ];
 
 const meta: Meta = {
-  title: 'Building Blocks/Line-Area Chart Base',
+  title: 'Building Blocks/Line Area Chart Base',
   component: 'obc-area-graph',
   tags: ['autodocs', '6.0'],
   parameters: {
@@ -183,7 +186,7 @@ Abstract base class for line and area chart components built on Chart.js.
       .fillMode=${_args.fillMode}
       .stacked=${_args.stacked}
       .legend=${_args.legend}
-      .enhanced=${_args.enhanced}
+      .priority=${_args.priority}
       .showDebugOverlay=${_args.showDebugOverlay}
       .width=${_args.width}
       .height=${_args.height}
@@ -269,8 +272,9 @@ Abstract base class for line and area chart components built on Chart.js.
     },
     colors: {control: 'object'},
     legend: {control: 'boolean'},
-    enhanced: {
-      control: 'boolean',
+    priority: {
+      control: 'select',
+      options: Object.values(Priority),
       description:
         'Use enhanced color palette (blue) instead of default (gray)',
     },
@@ -306,7 +310,7 @@ Abstract base class for line and area chart components built on Chart.js.
     stacked: false,
     colors: [],
     legend: false,
-    enhanced: true,
+    priority: Priority.enhanced,
     showDebugOverlay: false,
     width: 480,
     height: 320,
@@ -318,39 +322,39 @@ export default meta;
 type Story = StoryObj;
 
 export const SingleSeries: Story = {
-  name: 'Single-series line graph (category)',
+  name: 'Single-Series Line Graph (category)',
 };
 
 export const WithPoints: Story = {
-  name: 'With points line graph',
+  name: 'With Points Line Graph',
   args: {
     showPoints: true,
   },
 };
 
 export const StraightLine: Story = {
-  name: 'Straight line graph',
+  name: 'Straight Line Graph',
   args: {
     lineMode: 'straight',
   },
 };
 
 export const SteppedLine: Story = {
-  name: 'Stepped line graph',
+  name: 'Stepped Line Graph',
   args: {
     lineMode: 'stepped',
   },
 };
 
 export const Filled: Story = {
-  name: 'Filled line graph',
+  name: 'Filled Line Graph',
   args: {
     fill: true,
   },
 };
 
 export const FilledSolid: Story = {
-  name: 'Filled solid line graph',
+  name: 'Filled Solid Line Graph',
   args: {
     fill: true,
     fillMode: 'solid',
@@ -358,7 +362,7 @@ export const FilledSolid: Story = {
 };
 
 export const FilledThreshold: Story = {
-  name: 'Filled threshold line graph',
+  name: 'Filled Threshold Line Graph',
   args: {
     fill: true,
     fillMode: 'threshold',
@@ -366,7 +370,7 @@ export const FilledThreshold: Story = {
 };
 
 export const Stacked: Story = {
-  name: 'Stacked line graph',
+  name: 'Stacked Line Graph',
   args: {
     showGridY: false,
     fill: true,
@@ -378,7 +382,7 @@ export const Stacked: Story = {
 };
 
 export const MultiSeriesTime: Story = {
-  name: 'Multi-series line graph',
+  name: 'Multi-Series Line Graph',
   args: {
     showGridY: false,
     datasets: SAMPLE_MULTI_DATASETS,
@@ -387,7 +391,7 @@ export const MultiSeriesTime: Story = {
 };
 
 export const MinHeight: Story = {
-  name: 'Minimal height line graph (48px)',
+  name: 'Minimal Height Line Graph (48px)',
   args: {
     width: 72,
     height: 48,
@@ -395,7 +399,7 @@ export const MinHeight: Story = {
 };
 
 export const ThresholdHeight: Story = {
-  name: 'Threshold height line graph (192px, where labels appear)',
+  name: 'Threshold Height Line Graph (192px, where labels appear)',
   args: {
     width: 288,
     height: 192,
@@ -403,7 +407,7 @@ export const ThresholdHeight: Story = {
 };
 
 export const NoLabelsNoTicks: Story = {
-  name: 'No labels/ticks line graph (but yes 32px padding for optional points)',
+  name: 'No Labels/ticks Line Graph (but yes 32px padding for optional points)',
   args: {
     showTickMarks: false,
     width: 288,
@@ -415,14 +419,14 @@ export const NoLabelsNoTicks: Story = {
 };
 
 export const WithLegend: Story = {
-  name: 'With legend line graph',
+  name: 'With Legend Line Graph',
   args: {
     legend: true,
   },
 };
 
 export const MultiAxis: Story = {
-  name: 'Multi-axis line graph (left and right y-axes)',
+  name: 'Multi-Axis Line Graph (left and right y-axes)',
   render: (_args) => {
     const multiAxisDatasets: NonNullable<ObcAreaGraph['datasets']> = [
       {
@@ -477,7 +481,7 @@ export const MultiAxis: Story = {
         .showDebugOverlay=${_args.showDebugOverlay}
         .width=${_args.width}
         .height=${_args.height}
-        .enhanced=${_args.enhanced}
+        .priority=${_args.priority}
       ></obc-area-graph>
     `;
   },
@@ -496,7 +500,7 @@ export const CustomColors: Story = {
 
 export const RealtimeSqueezing: Story = {
   name: 'Realtime (squeezing)',
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   render: (_args) => {
     const chart = document.createElement('obc-area-graph');
     chart.data = JSON.parse(JSON.stringify(SAMPLE_DATA));
@@ -507,7 +511,7 @@ export const RealtimeSqueezing: Story = {
     chart.showTickMarks = true;
     chart.width = _args.width;
     chart.height = _args.height;
-    chart.enhanced = _args.enhanced;
+    chart.priority = _args.priority;
 
     setInterval(() => {
       const last = chart.data[chart.data.length - 1] || {value: 3};
@@ -529,7 +533,7 @@ export const RealtimeSqueezing: Story = {
 
 export const RealtimeShifting: Story = {
   name: 'Realtime (shifting)',
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   render: (_args) => {
     const chart = document.createElement('obc-area-graph');
     chart.showDebugOverlay = _args.showDebugOverlay;
@@ -541,7 +545,7 @@ export const RealtimeShifting: Story = {
     chart.height = _args.height;
     chart.xAxisType = XAxisType.time;
     chart.timeDisplay = TimeDisplay.minutes;
-    chart.enhanced = _args.enhanced;
+    chart.priority = _args.priority;
 
     // Initialize with past time-based data (spread over the last N minutes)
     const minuteMs = 60 * 1000;
@@ -584,15 +588,16 @@ export const RealtimeShifting: Story = {
 };
 
 export const ExternalScalesBottomRight: Story = {
-  name: 'External scales (480×320, bottom + right)',
+  name: 'External Scales (480×320, bottom + right)',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
   },
   argTypes: {
-    enhanced: {
-      control: 'boolean',
-      description: 'Use enhanced color palette for chart and scales',
+    priority: {
+      control: 'select',
+      options: Object.values(Priority),
+      description: 'Use priority-based color palette for chart and scales',
     },
   },
   args: {
@@ -602,7 +607,7 @@ export const ExternalScalesBottomRight: Story = {
     fill: true,
     fillMode: AreaFillMode.semitransparent,
     showPoints: true,
-    enhanced: true,
+    priority: Priority.enhanced,
   },
   render: (_args) => html`
     <obc-area-graph
@@ -616,7 +621,7 @@ export const ExternalScalesBottomRight: Story = {
       .fill=${true}
       .fillMode=${_args.fillMode}
       .showPoints=${_args.showPoints}
-      .enhanced=${_args.enhanced}
+      .priority=${_args.priority}
     >
       <obc-bar-vertical
         slot="right-scale"
@@ -626,9 +631,9 @@ export const ExternalScalesBottomRight: Story = {
         .side=${'right'}
         .hasScale=${true}
         .hasBar=${false}
-        .primaryTickbarsInterval=${2}
-        .secondaryTickbarsInterval=${1}
-        .enhanced=${_args.enhanced}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
+        .priority=${_args.priority}
       ></obc-bar-vertical>
       <obc-bar-horizontal
         slot="bottom-scale"
@@ -638,30 +643,31 @@ export const ExternalScalesBottomRight: Story = {
         .side=${'bottom'}
         .hasScale=${true}
         .hasBar=${false}
-        .primaryTickbarsInterval=${2}
-        .secondaryTickbarsInterval=${1}
-        .enhanced=${_args.enhanced}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
+        .priority=${_args.priority}
       ></obc-bar-horizontal>
     </obc-area-graph>
   `,
 };
 
 export const ExternalScalesAllSides: Story = {
-  name: 'External scales (800×600, all 4 sides)',
+  name: 'External Scales (800×600, all 4 sides)',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
   },
   argTypes: {
-    enhanced: {
-      control: 'boolean',
-      description: 'Use enhanced color palette for chart and scales',
+    priority: {
+      control: 'select',
+      options: Object.values(Priority),
+      description: 'Use priority-based color palette for chart and scales',
     },
     // External scale controls (vertical/left)
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
-    vScaleHideLabels: {
+    vScaleShowLabels: {
       control: 'boolean',
-      description: 'Vertical scale: hide labels',
+      description: 'Vertical scale: show labels',
     },
     vScaleHasAdvice: {
       control: 'boolean',
@@ -698,9 +704,9 @@ export const ExternalScalesAllSides: Story = {
       control: 'boolean',
       description: 'Horizontal scale: show bar',
     },
-    hScaleHideLabels: {
+    hScaleShowLabels: {
       control: 'boolean',
-      description: 'Horizontal scale: hide labels',
+      description: 'Horizontal scale: show labels',
     },
     hScaleHasAdvice: {
       control: 'boolean',
@@ -738,10 +744,10 @@ export const ExternalScalesAllSides: Story = {
     showTickMarks: false,
     width: 800,
     height: 600,
-    enhanced: true,
+    priority: Priority.enhanced,
     // Vertical scale defaults
     vScaleHasBar: true,
-    vScaleHideLabels: false,
+    vScaleShowLabels: true,
     vScaleHasAdvice: true,
     vScaleFillMode: 'fill',
     vScaleAdvicePosition: 'inner',
@@ -751,7 +757,7 @@ export const ExternalScalesAllSides: Story = {
     vScaleFillMax: 5,
     // Horizontal scale defaults
     hScaleHasBar: true,
-    hScaleHideLabels: false,
+    hScaleShowLabels: true,
     hScaleHasAdvice: true,
     hScaleFillMode: 'tint',
     hScaleAdvicePosition: 'inner',
@@ -771,7 +777,7 @@ export const ExternalScalesAllSides: Story = {
       .width=${_args.width}
       .height=${_args.height}
       .borderRadiusPositionExternalScales=${BorderRadiusPosition.outerLastChild}
-      .enhanced=${_args.enhanced}
+      .priority=${_args.priority}
     >
       <obc-bar-vertical
         slot="left-scale"
@@ -780,7 +786,7 @@ export const ExternalScalesAllSides: Story = {
         .height=${_args.height}
         .side=${'left'}
         .hasScale=${true}
-        .hideLabels=${_args.vScaleHideLabels}
+        .showLabels=${_args.vScaleShowLabels}
         .hasBar=${_args.vScaleHasBar}
         .fillMode=${_args.vScaleFillMode === 'fill'
           ? FillMode.fill
@@ -800,10 +806,10 @@ export const ExternalScalesAllSides: Story = {
               {min: 6, max: 7, type: AdviceType.advice, hinted: false},
             ]
           : []}
-        .primaryTickbarsInterval=${1}
-        .secondaryTickbarsInterval=${0.5}
-        .tertiaryTickbarsInterval=${0.125}
-        .enhanced=${_args.enhanced}
+        .primaryTickmarkInterval=${1}
+        .secondaryTickmarkInterval=${0.5}
+        .tertiaryTickmarkInterval=${0.125}
+        .priority=${_args.priority}
       ></obc-bar-vertical>
       <obc-bar-vertical
         slot="right-scale"
@@ -812,7 +818,7 @@ export const ExternalScalesAllSides: Story = {
         .height=${_args.height}
         .side=${'right'}
         .hasScale=${true}
-        .hideLabels=${_args.vScaleHideLabels}
+        .showLabels=${_args.vScaleShowLabels}
         .hasBar=${_args.vScaleHasBar}
         .fillMode=${_args.vScaleFillMode === 'fill'
           ? FillMode.fill
@@ -832,10 +838,10 @@ export const ExternalScalesAllSides: Story = {
               {min: 6, max: 7, type: AdviceType.advice, hinted: false},
             ]
           : []}
-        .primaryTickbarsInterval=${1}
-        .secondaryTickbarsInterval=${0.5}
-        .tertiaryTickbarsInterval=${0.125}
-        .enhanced=${_args.enhanced}
+        .primaryTickmarkInterval=${1}
+        .secondaryTickmarkInterval=${0.5}
+        .tertiaryTickmarkInterval=${0.125}
+        .priority=${_args.priority}
       ></obc-bar-vertical>
       <obc-bar-horizontal
         slot="bottom-scale"
@@ -844,7 +850,7 @@ export const ExternalScalesAllSides: Story = {
         .width=${_args.width}
         .side=${'bottom'}
         .hasScale=${true}
-        .hideLabels=${_args.hScaleHideLabels}
+        .showLabels=${_args.hScaleShowLabels}
         .hasBar=${_args.hScaleHasBar}
         .fillMode=${_args.hScaleFillMode === 'fill'
           ? FillMode.fill
@@ -864,10 +870,10 @@ export const ExternalScalesAllSides: Story = {
               {min: 8, max: 10, type: AdviceType.advice, hinted: false},
             ]
           : []}
-        .primaryTickbarsInterval=${2}
-        .secondaryTickbarsInterval=${1}
-        .tertiaryTickbarsInterval=${0.25}
-        .enhanced=${_args.enhanced}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
+        .tertiaryTickmarkInterval=${0.25}
+        .priority=${_args.priority}
       ></obc-bar-horizontal>
       <obc-bar-horizontal
         slot="top-scale"
@@ -876,7 +882,7 @@ export const ExternalScalesAllSides: Story = {
         .width=${_args.width}
         .side=${'top'}
         .hasScale=${true}
-        .hideLabels=${_args.hScaleHideLabels}
+        .showLabels=${_args.hScaleShowLabels}
         .hasBar=${_args.hScaleHasBar}
         .fillMode=${_args.hScaleFillMode === 'fill'
           ? FillMode.fill
@@ -896,25 +902,26 @@ export const ExternalScalesAllSides: Story = {
               {min: 8, max: 10, type: AdviceType.advice, hinted: false},
             ]
           : []}
-        .primaryTickbarsInterval=${2}
-        .secondaryTickbarsInterval=${1}
-        .tertiaryTickbarsInterval=${0.25}
-        .enhanced=${_args.enhanced}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
+        .tertiaryTickmarkInterval=${0.25}
+        .priority=${_args.priority}
       ></obc-bar-horizontal>
     </obc-area-graph>
   `,
 };
 
 export const ExternalScalesMinimal: Story = {
-  name: 'External scales (192×192, bottom + right, minimal)',
+  name: 'External Scales (192×192, bottom + right, minimal)',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
   },
   argTypes: {
-    enhanced: {
-      control: 'boolean',
-      description: 'Use enhanced color palette for chart and scales',
+    priority: {
+      control: 'select',
+      options: Object.values(Priority),
+      description: 'Use priority-based color palette for chart and scales',
     },
   },
   args: {
@@ -924,8 +931,8 @@ export const ExternalScalesMinimal: Story = {
     fill: true,
     fillMode: AreaFillMode.threshold,
     showPoints: true,
-    enhanced: true,
-    hideLabels: false,
+    priority: Priority.enhanced,
+    showLabels: true,
   },
   render: (_args) => html`
     <obc-area-graph
@@ -939,7 +946,7 @@ export const ExternalScalesMinimal: Story = {
       .fill=${true}
       .fillMode=${_args.fillMode}
       .showPoints=${_args.showPoints}
-      .enhanced=${_args.enhanced}
+      .priority=${_args.priority}
     >
       <obc-bar-vertical
         slot="right-scale"
@@ -948,11 +955,11 @@ export const ExternalScalesMinimal: Story = {
         .height=${192}
         .side=${'right'}
         .hasScale=${true}
-        .hideLabels=${_args.hideLabels}
+        .showLabels=${_args.showLabels}
         .hasBar=${false}
-        .primaryTickbarsInterval=${2}
-        .secondaryTickbarsInterval=${1}
-        .enhanced=${_args.enhanced}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
+        .priority=${_args.priority}
       ></obc-bar-vertical>
       <obc-bar-horizontal
         slot="bottom-scale"
@@ -961,19 +968,19 @@ export const ExternalScalesMinimal: Story = {
         .width=${192}
         .side=${'bottom'}
         .hasScale=${true}
-        .hideLabels=${_args.hideLabels}
+        .showLabels=${_args.showLabels}
         .hasBar=${false}
-        .primaryTickbarsInterval=${2}
-        .secondaryTickbarsInterval=${1}
-        .enhanced=${_args.enhanced}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
+        .priority=${_args.priority}
       ></obc-bar-horizontal>
     </obc-area-graph>
   `,
 };
 
 export const FixedAspectRatioScaling: StoryObj = {
-  name: 'Fixed aspect ratio scaling (responsive)',
-  tags: ['!snapshot'],
+  name: 'Fixed Aspect Ratio Scaling (responsive)',
+  tags: ['skip-test'],
   decorators: [],
   args: {
     width: 400,
@@ -1069,7 +1076,7 @@ export const FixedAspectRatioScaling: StoryObj = {
             .fill=${true}
             .fillMode=${'semitransparent'}
             .showPoints=${true}
-            .enhanced=${false}
+            .priority=${Priority.regular}
             .fixedAspectRatioScaling=${false}
           ></obc-area-graph>
         </div>
@@ -1090,7 +1097,7 @@ export const FixedAspectRatioScaling: StoryObj = {
             .fill=${true}
             .fillMode=${'semitransparent'}
             .showPoints=${true}
-            .enhanced=${true}
+            .priority=${Priority.enhanced}
             .fixedAspectRatioScaling=${true}
           ></obc-area-graph>
         </div>

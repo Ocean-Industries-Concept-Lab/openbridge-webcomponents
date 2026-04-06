@@ -8,7 +8,7 @@ import '../automation-badge/automation-badge.js';
 import {argTypesAbstractAutomationButtonPassiveSquare} from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 const meta: Meta<typeof ObcDamper> = {
-  title: 'Automation/Automation devices/Damper',
+  title: 'Automation/Automation Devices/Damper',
   tags: ['autodocs'],
   component: 'obc-damper',
   decorators: [crossDecorator],
@@ -19,7 +19,7 @@ const meta: Meta<typeof ObcDamper> = {
     alert: false,
     progress: false,
     vertical: false,
-    hideReadoutStack: false,
+    showReadoutStack: true,
     hasIdTag: true,
   },
   argTypes: {

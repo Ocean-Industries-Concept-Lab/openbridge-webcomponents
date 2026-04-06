@@ -12,7 +12,7 @@ import {AutomationButtonReadoutStackSize} from '../../components/automation-butt
 import {argTypesAbstractAutomationButtonMotorized} from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 const meta: Meta<typeof ObcMotor> = {
-  title: 'Automation/Automation devices/Motor',
+  title: 'Automation/Automation Devices/Motor',
   tags: ['autodocs', '6.0'],
   component: 'obc-motor',
   decorators: [crossDecorator],
@@ -22,7 +22,7 @@ const meta: Meta<typeof ObcMotor> = {
     readoutSize: AutomationButtonReadoutStackSize.regular,
     alert: false,
     progress: false,
-    hideReadoutStack: false,
+    showReadoutStack: true,
     hasIdTag: true,
   },
   argTypes: {

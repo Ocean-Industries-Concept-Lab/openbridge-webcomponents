@@ -34,7 +34,7 @@ type PoiStoryArgs = {
 };
 
 const meta: Meta<PoiStoryArgs> = {
-  title: 'AR/Building blocks/POI',
+  title: 'AR/Building Blocks/POI',
   tags: ['autodocs'],
   component: 'obc-poi',
   decorators: [crossDecorator],
@@ -239,10 +239,54 @@ export const Alarm: Story = {
 };
 
 export const WithHeader: Story = {
-  args: {
-    type: ObcPoiType.Line,
-    value: ObcPoiValue.Unchecked,
-    hasHeader: true,
+  render: () => {
+    const renderPoi = (
+      label: string,
+      state: ObcPoiState,
+      selected = false
+    ) => html`
+      <div
+        style="display: flex; flex-direction: column; align-items: center; gap: 16px;"
+      >
+        <div style="position: relative; width: 220px; height: 220px;">
+          <obc-poi
+            .type=${ObcPoiType.Line}
+            .value=${ObcPoiValue.Unchecked}
+            .state=${state}
+            .x=${110}
+            .y=${28}
+            .buttonY=${120}
+            .hasHeader=${true}
+            .selected=${selected}
+          >
+            <obc-poi-header
+              slot="header"
+              content="1"
+              type="id"
+              state="enabled"
+              size="regular"
+              has-indicator
+            >
+              <obi-placeholder slot="indicator"></obi-placeholder>
+            </obc-poi-header>
+            <obi-placeholder></obi-placeholder>
+          </obc-poi>
+        </div>
+        <div>${label}</div>
+      </div>
+    `;
+
+    return html`
+      <div
+        style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 24px; width: 100%;"
+      >
+        ${renderPoi('POI Enabled', ObcPoiState.Enabled)}
+        ${renderPoi('POI Selected', ObcPoiState.Enabled, true)}
+        ${renderPoi('POI Caution', ObcPoiState.Caution)}
+        ${renderPoi('POI Warning', ObcPoiState.Warning)}
+        ${renderPoi('POI Alarm', ObcPoiState.Alarm)}
+      </div>
+    `;
   },
 };
 

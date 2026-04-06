@@ -1,6 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import './donut-chart.js';
+import {Priority} from '../../navigation-instruments/types.js';
 
 const SAMPLE_DATA = [
   {label: 'Sector A', value: 50},
@@ -11,7 +12,7 @@ const SAMPLE_DATA = [
 ];
 
 const meta: Meta = {
-  title: 'Bars and Graphs/Donut chart',
+  title: 'Bars and Graphs/Donut Chart',
   component: 'obc-donut-chart',
   tags: ['autodocs', '6.0'],
   argTypes: {
@@ -36,8 +37,9 @@ const meta: Meta = {
     centerReadoutUnit: {control: 'text'},
     data: {control: 'object'},
     colors: {control: 'object'},
-    enhanced: {
-      control: 'boolean',
+    priority: {
+      control: 'select',
+      options: Object.values(Priority),
       description:
         'Use enhanced color palette (blue) instead of default (gray)',
     },
@@ -58,7 +60,7 @@ const meta: Meta = {
     centerReadoutLabel: 'Total',
     data: SAMPLE_DATA,
     colors: [],
-    enhanced: true,
+    priority: Priority.enhanced,
     max: 100,
     thickness: 24,
     legend: false,
@@ -70,12 +72,11 @@ export default meta;
 type Story = StoryObj;
 
 export const FullDonut: Story = {
-  name: 'Full donut',
   render: (args) => html`
     <obc-donut-chart
       .data=${args.data}
       .colors=${args.colors}
-      .enhanced=${args.enhanced}
+      .priority=${args.priority}
       .half=${args.half}
       .max=${args.max}
       .thickness=${args.thickness}
@@ -94,14 +95,13 @@ export const FullDonut: Story = {
 };
 
 export const HalfDonut: Story = {
-  name: 'Half donut',
   args: {
     half: true,
   },
 };
 
 export const HalfDonutWithoutRemaining: Story = {
-  name: 'Half donut without remaining segment',
+  name: 'Half Donut Without Remaining Segment',
   args: {
     half: true,
     max: 50,
@@ -109,7 +109,7 @@ export const HalfDonutWithoutRemaining: Story = {
 };
 
 export const LongUnit: Story = {
-  name: 'Long label unit donut',
+  name: 'Long Label Unit Donut',
   args: {
     showOuterLabels: true,
     outerLabelUnit: ' km/h-unbelievably-long',
@@ -118,7 +118,7 @@ export const LongUnit: Story = {
 };
 
 export const TrimLabels: Story = {
-  name: 'Trim label length donut',
+  name: 'Trim Label Length Donut',
   args: {
     showOuterLabels: true,
     outerLabelUnit: ' km/h-unbelievably-long',
@@ -127,7 +127,7 @@ export const TrimLabels: Story = {
 };
 
 export const WithDecimals: Story = {
-  name: 'Decimal places donut',
+  name: 'Decimal Places Donut',
   args: {
     showOuterLabels: true,
     outerLabelDecimalPlaces: 2,
@@ -135,21 +135,21 @@ export const WithDecimals: Story = {
 };
 
 export const MinHeight: Story = {
-  name: 'Minimal height donut (48px)',
+  name: 'Minimal Height Donut (48px)',
   args: {
     fixedHeight: 48,
   },
 };
 
 export const ThresholdHeight: Story = {
-  name: 'Threshold height donut (192px, where labels appear)',
+  name: 'Threshold Height Donut (192px, where labels appear)',
   args: {
     fixedHeight: 192,
   },
 };
 
 export const WithLegend: Story = {
-  name: 'With legend donut',
+  name: 'With Legend Donut',
   args: {
     legend: true,
   },
@@ -158,16 +158,16 @@ export const WithLegend: Story = {
 export const CustomColors: Story = {
   args: {
     colors: ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6'],
-    enhanced: false,
+    priority: Priority.regular,
   },
 };
 
 export const Realtime: Story = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   render: (args) => {
     const chart = document.createElement('obc-donut-chart');
     chart.data = JSON.parse(JSON.stringify(SAMPLE_DATA));
-    chart.enhanced = args.enhanced;
+    chart.priority = args.priority;
     chart.half = args.half;
     chart.showOuterLabels = args.showOuterLabels;
     chart.showUnit = args.showUnit;

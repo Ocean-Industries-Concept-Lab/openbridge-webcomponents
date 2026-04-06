@@ -21,7 +21,7 @@ const handleAck = (e: Event) => {
 };
 
 const meta: Meta<typeof ObcAlertList> = {
-  title: 'Application Components/Alerts/Alert list',
+  title: 'Application Components/Alerts/Alert List',
   tags: ['6.0'],
   component: 'obc-alert-list',
   args: {},
@@ -154,7 +154,7 @@ export const Empty: Story = {
 };
 
 export const WithControls: Story = {
-  tags: ['skip-snapshot'],
+  tags: ['skip-test'],
   args: {},
   render: (args, context) => {
     return html`

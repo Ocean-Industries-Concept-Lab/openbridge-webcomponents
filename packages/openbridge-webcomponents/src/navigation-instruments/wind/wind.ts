@@ -27,6 +27,7 @@ export class ObcWind extends LitElement {
           .windSymbolRadius=${118 / 0.8}
           crosshairEnabled
           northArrow
+          tickmarksInside
           .scaleWindIcon=${0.8}
           .vessels=${[
             {

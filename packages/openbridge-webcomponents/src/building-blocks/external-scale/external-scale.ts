@@ -1,6 +1,7 @@
 import {SVGTemplateResult, nothing, svg} from 'lit';
 import {
   InstrumentState,
+  Priority,
   FrameStyle,
   BorderRadiusPosition,
 } from '../../navigation-instruments/types.js';
@@ -108,23 +109,23 @@ import {
  *   barThickness: 24,
  *   tickThickness: 24,
  *   labelThickness: 60,
- *   mainTickbars: [],
- *   primaryTickbarsInterval: 20,
- *   secondaryTickbarsInterval: 10,
- *   tertiaryTickbarsInterval: 2,
+ *   mainTickmarks: [],
+ *   primaryTickmarkInterval: 20,
+ *   secondaryTickmarkInterval: 10,
+ *   tertiaryTickmarkInterval: 2,
  *   scaleType: ScaleType.regular,
  *   frameStyle: FrameStyle.regular,
- *   enhanced: true,
+ *   priority: Priority.enhanced,
  *   fillMode: FillMode.fill,
  *   fillMin: 0,
  *   fillMax: 40,
  *   value: 40,
  *   setpoint: 50,
  *   atSetpoint: false,
- *   disableAutoAtSetpoint: false,
+ *   autoAtSetpoint: true,
  *   autoAtSetpointDeadband: 1,
  *   setpointAtZeroDeadband: 0.5,
- *   state: InstrumentState.inCommand,
+ *   state: InstrumentState.active,
  *   advicePosition: AdvicePosition.inner,
  *   advices: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
  * };
@@ -421,7 +422,7 @@ export interface ExternalScaleConfig {
   // Layout bands (thickness, in px)
   /** Show scale tickmarks. */
   hasScale: boolean;
-  /** Show labels at primary tickbar intervals. */
+  /** Show labels at primary tickmark intervals. */
   labels?: boolean;
   /** Show bar. */
   hasBar: boolean;
@@ -444,23 +445,23 @@ export interface ExternalScaleConfig {
   labelThickness: number;
 
   // Tick configuration
-  /** Array of values for main tickbars. Defaults to [minValue, 0, maxValue] if empty. */
-  mainTickbars?: number[];
+  /** Array of values for main tickmarks. Defaults to [minValue, 0, maxValue] if empty. */
+  mainTickmarks?: number[];
   /**
-   * Interval for primary tickbars. When undefined, no primary tickbars are shown.
-   * When a positive number, primary tickbars are shown at that interval.
+   * Interval for primary tickmarks. When undefined, no primary tickmarks are shown.
+   * When a positive number, primary tickmarks are shown at that interval.
    */
-  primaryTickbarsInterval?: number;
+  primaryTickmarkInterval?: number;
   /**
-   * Interval for secondary tickbars. When undefined, no secondary tickbars are shown.
-   * When a positive number, secondary tickbars are shown at that interval.
+   * Interval for secondary tickmarks. When undefined, no secondary tickmarks are shown.
+   * When a positive number, secondary tickmarks are shown at that interval.
    */
-  secondaryTickbarsInterval?: number;
+  secondaryTickmarkInterval?: number;
   /**
-   * Interval for tertiary tickbars. When undefined, no tertiary tickbars are shown.
-   * When a positive number, tertiary tickbars are shown at that interval.
+   * Interval for tertiary tickmarks. When undefined, no tertiary tickmarks are shown.
+   * When a positive number, tertiary tickmarks are shown at that interval.
    */
-  tertiaryTickbarsInterval?: number;
+  tertiaryTickmarkInterval?: number;
   /**
    * Tick density preset.
    * - ScaleType.regular: longer ticks
@@ -489,20 +490,23 @@ export interface ExternalScaleConfig {
   borderRadius?: number;
 
   // Visual state
-  enhanced: boolean;
   /**
-   * Explicit color mode override for setpoint marker.
-   * When provided, this takes precedence over the `enhanced` boolean.
-   *
-   * - `SetpointColorMode.enhanced`: Use enhanced colors (brighter)
-   * - `SetpointColorMode.regular`: Use regular colors
-   *
-   * Note: Disabled state is controlled separately via `setpointDisabled` or
-   * auto-derived from `state` (loading/off states).
-   *
-   * @default undefined (falls back to enhanced boolean)
+   * Color priority mode.
+   * - `Priority.enhanced`: Use enhanced (blue) color palette
+   * - `Priority.regular`: Use regular (gray) color palette
    */
-  colorMode?: SetpointColorMode;
+  priority: Priority;
+  /**
+   * When true, the setpoint color is derived from `priority` regardless of
+   * instrument state (loading/off). This prevents the setpoint from being
+   * rendered in disabled (tertiary) color when the instrument is loading or off.
+   *
+   * - `false` / `undefined`: default behavior — loading/off → disabled color
+   * - `true`: color derived from `priority`, never disabled
+   *
+   * @default false
+   */
+  setpointOverride?: boolean;
 
   /**
    * Explicit disabled state override for setpoint marker.
@@ -537,10 +541,10 @@ export interface ExternalScaleConfig {
    * and proposed setpoint positions simultaneously.
    */
   newSetpoint?: number;
-  /** Manual override used when disableAutoAtSetpoint=true. */
+  /** Manual override used when autoAtSetpoint=false. */
   atSetpoint: boolean;
-  /** When false, at-setpoint is derived from value/setpoint and deadband. */
-  disableAutoAtSetpoint: boolean;
+  /** When true, at-setpoint is derived from value/setpoint and deadband. */
+  autoAtSetpoint: boolean;
   /** Deadband used for automatic at-setpoint detection. */
   autoAtSetpointDeadband: number;
   /** Deadband around 0 where the setpoint indicator snaps to exactly 0. */
@@ -591,7 +595,7 @@ export interface ExternalScaleConfig {
    *
    * The dot is:
    * - 12x12px filled circle with 2px stroke (16px total visual size)
-   * - Fill: --instrument-regular-secondary-color (or enhanced variant when enhanced=true)
+   * - Fill: --instrument-regular-secondary-color (or enhanced variant when priority=enhanced)
    * - Stroke: --instrument-frame-primary-color
    *
    * @default false
@@ -605,18 +609,9 @@ export interface ExternalScaleConfig {
    * - `calculateAtSetpoint()` returns false (suppressed)
    * - Single setpoint marker renders in focus visual state
    *
-   * Unified name for what was previously `focused` in linear instruments
-   * and `touching` in radial instruments.
-   *
    * @default false
    */
   touching?: boolean;
-
-  /**
-   * @deprecated Use `touching` instead. Will be removed in a future version.
-   * When set, behaves identically to `touching`.
-   */
-  focused?: boolean;
 
   // Animation
   /**
@@ -844,12 +839,12 @@ function rangeIncludesZero(minValue: number, maxValue: number): boolean {
 }
 
 function calculateAtSetpoint(config: ExternalScaleConfig): boolean {
-  const isTouching = config.touching ?? config.focused ?? false;
+  const isTouching = config.touching ?? false;
   return computeAtSetpoint({
     value: config.value,
     setpoint: config.setpoint,
     touching: isTouching,
-    disableAuto: config.disableAutoAtSetpoint,
+    auto: config.autoAtSetpoint,
     deadband: config.autoAtSetpointDeadband,
     atSetpointManual: config.atSetpoint,
   });
@@ -866,7 +861,7 @@ function calculateAtSetpoint(config: ExternalScaleConfig): boolean {
  * to the design-only visual state enum.
  *
  * Priority order:
- * 1. focus (focused property is true - user actively adjusting)
+ * 1. focus (touching property is true - user actively adjusting)
  * 2. equalZero (at setpoint AND setpoint is at zero)
  * 3. equal (at setpoint)
  * 4. notEqual (default)
@@ -875,14 +870,12 @@ function calculateAtSetpoint(config: ExternalScaleConfig): boolean {
  * which returns a boolean flag, not via a separate visual state.
  *
  * State mapping:
- * - InstrumentState.inCommand → notEqual/equal/equalZero (based on deadband)
- * - InstrumentState.active → notEqual/equal/equalZero (based on deadband) with regular colors
+ * - InstrumentState.active → notEqual/equal/equalZero (based on deadband)
  * - InstrumentState.loading → disabled=true (via deriveSetpointDisabled)
  * - InstrumentState.off → disabled=true (via deriveSetpointDisabled)
  *
- * Note: `focus` visual state is only triggered by the `focused` property
+ * Note: `focus` visual state is only triggered by the `touching` property
  * (user actively adjusting via touch/drag), not by InstrumentState.
- * The `focused` property will be exposed as a future instrument API state.
  */
 function deriveSetpointVisualState(
   config: ExternalScaleConfig
@@ -890,12 +883,12 @@ function deriveSetpointVisualState(
   // Priority 1: Focus state
   // - When `touching` property is true (user is actively adjusting)
   // - BUT only when newSetpoint is not defined (otherwise original should be dimmed)
-  const isTouching = config.touching ?? config.focused ?? false;
+  const isTouching = config.touching ?? false;
   if (isTouching && config.newSetpoint === undefined) {
     return SetpointVisualState.focus;
   }
 
-  // For inCommand and active states, check deadband-based states
+  // For enhanced and active states, check deadband-based states
   // Check if at setpoint
   const isAt = calculateAtSetpoint(config);
 
@@ -918,28 +911,15 @@ function deriveSetpointVisualState(
 /**
  * Derive the SetpointColorMode from ExternalScaleConfig.
  *
- * Priority:
- * 1. Explicit colorMode takes precedence
- * 2. InstrumentState.active always uses regular colors
- * 3. Otherwise, maps config.enhanced to enhanced/regular color palette
+ * Maps `config.priority` to enhanced/regular color palette.
  *
  * Note: Disabled state is handled separately via deriveSetpointDisabled().
  */
 function deriveSetpointColorMode(
   config: ExternalScaleConfig
 ): SetpointColorMode {
-  // Explicit colorMode takes precedence
-  if (config.colorMode !== undefined) {
-    return config.colorMode;
-  }
-
-  // Active state always uses regular colors
-  if (config.state === InstrumentState.active) {
-    return SetpointColorMode.regular;
-  }
-
-  // Fall back to enhanced boolean mapping
-  return config.enhanced
+  // Map priority to color mode
+  return config.priority === Priority.enhanced
     ? SetpointColorMode.enhanced
     : SetpointColorMode.regular;
 }
@@ -949,13 +929,19 @@ function deriveSetpointColorMode(
  *
  * Priority:
  * 1. Explicit setpointDisabled takes precedence
- * 2. Instrument states (loading, off) are treated as disabled
- * 3. Otherwise, not disabled
+ * 2. When setpointOverride is true, never auto-disable
+ * 3. Instrument states (loading, off) are treated as disabled
+ * 4. Otherwise, not disabled
  */
 function deriveSetpointDisabled(config: ExternalScaleConfig): boolean {
   // Explicit setpointDisabled takes precedence
   if (config.setpointDisabled !== undefined) {
     return config.setpointDisabled;
+  }
+
+  // When override is active, don't auto-disable for loading/off
+  if (config.setpointOverride) {
+    return false;
   }
 
   // Disabled states (loading, off) use disabled color mode
@@ -975,25 +961,26 @@ function colors(config: ExternalScaleConfig): {
   markerStrokeColor: string;
   setpointColor: string;
 } {
+  const isEnhanced = config.priority === Priority.enhanced;
   // Fill mode uses secondary color, tint mode uses tertiary color
   let barFillColor =
     config.fillMode === 'tint'
-      ? config.enhanced
+      ? isEnhanced
         ? 'var(--instrument-enhanced-tertiary-color)'
         : 'var(--instrument-regular-tertiary-color)'
-      : config.enhanced
+      : isEnhanced
         ? 'var(--instrument-enhanced-secondary-color)'
         : 'var(--instrument-regular-secondary-color)';
 
-  let markerFillColor = config.enhanced
+  let markerFillColor = isEnhanced
     ? 'var(--instrument-enhanced-secondary-color)'
     : 'var(--instrument-regular-secondary-color)';
 
-  let markerStrokeColor = config.enhanced
+  let markerStrokeColor = isEnhanced
     ? 'var(--instrument-enhanced-tertiary-color)'
     : 'var(--instrument-regular-tertiary-color)';
 
-  let setpointColor = config.enhanced
+  let setpointColor = isEnhanced
     ? 'var(--instrument-enhanced-primary-color)'
     : 'var(--instrument-regular-primary-color)';
 
@@ -1174,24 +1161,24 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
     skipValues.push(0);
   }
 
-  // Main tickbars - show when mainTickbars is defined (array presence means enabled)
+  // Main tickmarks - show when mainTickmarks is defined (array presence means enabled)
   // Use defensive guard to handle null/undefined/empty the same way as advices
-  if (config.mainTickbars) {
+  if (config.mainTickmarks) {
     const start = config.frameStyle === 'flat' ? base : tickmarksStart;
     const mainLen = config.frameStyle === 'flat' ? main + 4 : main;
     const dirLen = isOutwardPositive(config) ? mainLen : -mainLen;
 
     // Use provided array or default to [minValue, 0, maxValue]
     const mainTickValues =
-      config.mainTickbars.length > 0
-        ? config.mainTickbars
+      config.mainTickmarks.length > 0
+        ? config.mainTickmarks
         : [config.minValue, 0, config.maxValue];
 
     for (const value of mainTickValues) {
       // Skip if outside range
       if (value < config.minValue || value > config.maxValue) continue;
 
-      // Skip min/max tickbars when scaleBackground is enabled (they align with the background edges)
+      // Skip min/max tickmarks when scaleBackground is enabled (they align with the background edges)
       if (
         config.scaleBackground &&
         (value === config.minValue || value === config.maxValue)
@@ -1209,12 +1196,12 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
 
   // Primary - show when interval is defined and > 0
   if (
-    config.primaryTickbarsInterval !== undefined &&
-    config.primaryTickbarsInterval > 0
+    config.primaryTickmarkInterval !== undefined &&
+    config.primaryTickmarkInterval > 0
   ) {
     const {svgs: s, values} = generateTickmarksAtInterval(
       config,
-      config.primaryTickbarsInterval,
+      config.primaryTickmarkInterval,
       tickmarksStart,
       isOutwardPositive(config) ? primary : -primary,
       skipValues
@@ -1225,12 +1212,12 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
 
   // Secondary - show when interval is defined and > 0
   if (
-    config.secondaryTickbarsInterval !== undefined &&
-    config.secondaryTickbarsInterval > 0
+    config.secondaryTickmarkInterval !== undefined &&
+    config.secondaryTickmarkInterval > 0
   ) {
     const {svgs: s} = generateTickmarksAtInterval(
       config,
-      config.secondaryTickbarsInterval,
+      config.secondaryTickmarkInterval,
       tickmarksStart,
       isOutwardPositive(config) ? secondary : -secondary,
       skipValues
@@ -1240,12 +1227,12 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
 
   // Tertiary - show when interval is defined and > 0
   if (
-    config.tertiaryTickbarsInterval !== undefined &&
-    config.tertiaryTickbarsInterval > 0
+    config.tertiaryTickmarkInterval !== undefined &&
+    config.tertiaryTickmarkInterval > 0
   ) {
     const {svgs: s} = generateTickmarksAtInterval(
       config,
-      config.tertiaryTickbarsInterval,
+      config.tertiaryTickmarkInterval,
       tickmarksStart,
       isOutwardPositive(config) ? tertiary : -tertiary,
       skipValues
@@ -1257,9 +1244,9 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
 }
 
 function generateLabels(config: ExternalScaleConfig): SVGTemplateResult[] {
-  if (!config.labels || config.primaryTickbarsInterval === undefined) return [];
+  if (!config.labels || config.primaryTickmarkInterval === undefined) return [];
 
-  const interval = config.primaryTickbarsInterval;
+  const interval = config.primaryTickmarkInterval;
   if (interval <= 0 || !Number.isFinite(interval)) return [];
 
   const fontFamily = 'var(--font-family-main)';
@@ -1471,7 +1458,7 @@ function generateBarContainer(
         const isRight = config.side === 'right';
 
         // Stroke path excludes the edge touching the scale
-        let strokePath = '';
+        let strokePath: string;
         if (isRight) {
           // Exclude right edge (touching scale on right side)
           strokePath = `M ${rectX} ${rectY + (noCornersRounded ? 0 : r)} L ${rectX} ${rectY + rectHeight - (noCornersRounded ? 0 : r)}`; // Left edge
@@ -1550,7 +1537,7 @@ function generateBarContainer(
       const isRight = config.side === 'right';
 
       // Stroke path excludes the edge touching the scale
-      let strokePath = '';
+      let strokePath: string;
       if (isRight) {
         // Exclude right edge
         strokePath = `M ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
@@ -1650,7 +1637,7 @@ function generateBarContainer(
       const isBottom = config.side === 'bottom';
 
       // Stroke path excludes the edge touching the scale
-      let strokePath = '';
+      let strokePath: string;
       if (isBottom) {
         // Exclude bottom edge (touching scale on bottom side)
         strokePath = `M ${rectX + (noCornersRounded ? 0 : r)} ${rectY}`; // Top edge start
@@ -1730,7 +1717,7 @@ function generateBarContainer(
     const isBottom = config.side === 'bottom';
 
     // Stroke path excludes the edge touching the scale
-    let strokePath = '';
+    let strokePath: string;
     if (isBottom) {
       // Exclude bottom edge
       strokePath = `M ${x + (shouldRoundTopLeft ? r : 0)} ${y}`;
@@ -2411,7 +2398,7 @@ function setpointMarker(
 
     // newSetpoint always renders in focus visual state
     const visualState = SetpointVisualState.focus;
-    // Use the same color mode derivation but could be enhanced when focused
+    // Use the same color mode derivation for new setpoint
     const colorMode = deriveSetpointColorMode(config);
     // newSetpoint is never disabled (it's the active adjustment target)
     const disabled = false;
@@ -2439,7 +2426,7 @@ function setpointMarker(
  * The dot is:
  * - 12x12px filled circle with 2px stroke (16px total visual size)
  * - Positioned in the scale band, touching its inner edge (towards the chart)
- * - Fill uses secondary color (enhanced or regular based on config.enhanced)
+ * - Fill uses secondary color (enhanced or regular based on config.priority)
  * - Stroke uses --instrument-frame-primary-color
  *
  * @param config - Scale configuration
@@ -2696,7 +2683,7 @@ function renderAdvice(
 
     const maskId = `externalScaleAdviceMask-${advice.min}-${advice.max}-${Math.random().toString(36).slice(2)}`;
 
-    let tickmarkStyle = TickmarkStyle.hinted;
+    let tickmarkStyle = TickmarkStyle.regular;
     if (advice.state === AdviceState.regular)
       tickmarkStyle = TickmarkStyle.regular;
     else if (advice.state === AdviceState.triggered)
@@ -2731,7 +2718,7 @@ function renderAdvice(
   if (advice.state === AdviceState.hinted) {
     strokeColor = 'var(--instrument-frame-tertiary-color)';
     fillColor = 'var(--instrument-frame-primary-color)';
-    tickmarkStyle = TickmarkStyle.hinted;
+    tickmarkStyle = TickmarkStyle.regular;
   } else if (advice.state === AdviceState.regular) {
     strokeColor = 'var(--instrument-regular-secondary-color)';
     fillColor = 'var(--instrument-frame-primary-color)';

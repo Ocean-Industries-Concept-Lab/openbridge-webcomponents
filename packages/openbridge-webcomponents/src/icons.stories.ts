@@ -4,14 +4,14 @@ import {html, unsafeStatic} from 'lit/static-html.js';
 import {iconIds} from './icons/names.js';
 
 const meta: Meta = {
-  title: 'Icons/icon',
+  title: 'Icons/Icon',
 } satisfies Meta;
 
 export default meta;
 type Story = StoryObj;
 
 export const List: Story = {
-  tags: ['skip-snapshot'],
+  tags: ['skip-test'],
   args: {
     search: '',
     useCssColor: true,
@@ -60,7 +60,7 @@ export const List: Story = {
 };
 
 export const UseFontColor: Story = {
-  tags: ['skip-snapshot'],
+  tags: ['skip-test'],
   args: {
     useCssColor: false,
     name: 'log-add',

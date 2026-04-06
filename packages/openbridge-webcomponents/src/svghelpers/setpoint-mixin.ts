@@ -14,10 +14,10 @@
  * | `newSetpoint`            | `number \| undefined`          | `undefined`          | Adjustment preview (2-step interface)        |
  * | `atSetpoint`             | `boolean`                      | `false`              | Manual at-setpoint override                  |
  * | `touching`               | `boolean`                      | `false`              | User is physically interacting               |
- * | `disableAutoAtSetpoint`  | `boolean`                      | `false`              | Disable auto at-setpoint calculation         |
+ * | `autoAtSetpoint`         | `boolean`                      | `true`               | Enable auto at-setpoint calculation          |
  * | `autoAtSetpointDeadband` | `number`                       | configurable (def 2) | Tolerance for auto at-setpoint detection     |
  * | `setpointAtZeroDeadband` | `number`                       | configurable (def 0.5)| Zero-snap tolerance                         |
- * | `setpointColorMode`      | `SetpointColorMode \| undefined` | `undefined`        | Color palette override                       |
+ * | `setpointOverride`       | `boolean`                        | `false`              | Override to derive color from priority       |
  * | `computeAtSetpoint()`    | `(value) => boolean`           | —                    | Unified at-setpoint calculation              |
  *
  * ## `touching` vs `newSetpoint`
@@ -105,7 +105,6 @@
 import {LitElement, PropertyValues} from 'lit';
 import {property, state} from 'lit/decorators.js';
 import {computeAtSetpoint, getSetpointAnimationDurationMs} from './setpoint.js';
-import type {SetpointColorMode} from './setpoint.js';
 
 // ============================================================================
 // Types
@@ -143,7 +142,7 @@ export declare class SetpointMixinInterface {
 
   /**
    * Manual at-setpoint override.
-   * Used when `disableAutoAtSetpoint` is true. Ignored when auto mode is active.
+   * Used when `autoAtSetpoint` is false. Ignored when auto mode is active.
    */
   atSetpoint: boolean;
 
@@ -158,8 +157,8 @@ export declare class SetpointMixinInterface {
    */
   touching: boolean;
 
-  /** When true, `computeAtSetpoint()` uses manual `atSetpoint` boolean. */
-  disableAutoAtSetpoint: boolean;
+  /** When false, `computeAtSetpoint()` uses manual `atSetpoint` boolean. */
+  autoAtSetpoint: boolean;
 
   /** Tolerance for auto at-setpoint detection. */
   autoAtSetpointDeadband: number;
@@ -167,8 +166,15 @@ export declare class SetpointMixinInterface {
   /** Tolerance for zero-snap visual state (equalZero). */
   setpointAtZeroDeadband: number;
 
-  /** Explicit color palette override. When undefined, derived from instrument state. */
-  setpointColorMode: SetpointColorMode | undefined;
+  /**
+   * Override to derive the setpoint color from the instrument's `priority`
+   * regardless of instrument state. When false (default), loading/off states
+   * render the setpoint in disabled (tertiary) color.
+   *
+   * - `false`: default behavior — setpoint inherits instrument state/color
+   * - `true`: color derived from `priority`, never disabled
+   */
+  setpointOverride: boolean;
 
   /**
    * Enable CSS-animated confirm transition.
@@ -279,8 +285,8 @@ export function SetpointMixin<T extends Constructor<LitElement>>(
      */
     @property({type: Number}) newSetpoint: number | undefined;
 
-    /** Manual at-setpoint override (used when `disableAutoAtSetpoint` is true). */
-    @property({type: Boolean}) atSetpoint: boolean = false;
+    /** Manual at-setpoint override (used when `autoAtSetpoint` is false). */
+    @property({type: Boolean, attribute: false}) atSetpoint: boolean = false;
 
     /**
      * User is physically interacting with the control.
@@ -288,8 +294,8 @@ export function SetpointMixin<T extends Constructor<LitElement>>(
      */
     @property({type: Boolean}) touching: boolean = false;
 
-    /** When true, uses manual `atSetpoint` boolean instead of auto-calculation. */
-    @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
+    /** When false, uses manual `atSetpoint` boolean instead of auto-calculation. */
+    @property({type: Boolean, attribute: false}) autoAtSetpoint: boolean = true;
 
     /** Tolerance for auto at-setpoint detection. */
     @property({type: Number}) autoAtSetpointDeadband: number = defaultDeadband;
@@ -298,8 +304,11 @@ export function SetpointMixin<T extends Constructor<LitElement>>(
     @property({type: Number}) setpointAtZeroDeadband: number =
       defaultZeroDeadband;
 
-    /** Explicit color palette override. */
-    @property({type: String}) setpointColorMode: SetpointColorMode | undefined;
+    /**
+     * Override to derive the setpoint color from the instrument's `priority`
+     * regardless of instrument state.
+     */
+    @property({type: Boolean}) setpointOverride: boolean = false;
 
     /**
      * Enable CSS-animated confirm transition.
@@ -347,7 +356,7 @@ export function SetpointMixin<T extends Constructor<LitElement>>(
         value: currentValue,
         setpoint: this.setpoint,
         touching: this.touching,
-        disableAuto: this.disableAutoAtSetpoint,
+        auto: this.autoAtSetpoint,
         deadband: this.autoAtSetpointDeadband,
         atSetpointManual: this.atSetpoint,
         angularWraparound,

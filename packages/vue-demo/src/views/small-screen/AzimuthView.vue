@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import { useSim } from '@/composables/useSim'
 import { useDemoConfigStore } from '@/stores/demoConfig'
-import ObcAzimuthThruster from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster.vue'
-import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
-import { InstrumentFieldSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field.js'
+import ObcAzimuthThruster from '@oicl/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster.vue'
+import ObcInstrumentField from '@oicl/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
+import { InstrumentFieldSize } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field.js'
 import {
   AdviceType,
   type AngleAdvice
-} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js'
+} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js'
 import { computed } from 'vue'
-import { InstrumentState } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types.js'
-import { PropellerType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/thruster/propeller.js'
+import {
+  InstrumentState,
+  Priority
+} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types.js'
+import { PropellerType } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/thruster/propeller.js'
 
 const sim = useSim()
 const demoConfig = useDemoConfigStore()
@@ -74,7 +77,8 @@ const angleAdvice = computed<AngleAdvice[]>(() => {
       :thrust="thrust"
       :thrust-setpoint="thrustSet"
       :angle-advices="angleAdvice"
-      :state="demoConfig.hasCommand ? InstrumentState.inCommand : InstrumentState.active"
+      :state="InstrumentState.active"
+      :priority="demoConfig.hasCommand ? Priority.enhanced : Priority.regular"
       :top-propeller="details ? PropellerType.single : undefined"
       :bottom-propeller="details ? PropellerType.single : undefined"
     />

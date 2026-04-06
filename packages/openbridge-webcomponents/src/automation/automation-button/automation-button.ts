@@ -27,6 +27,10 @@ import {
   IdTagOrientation,
 } from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
+import '../../building-blocks/circular-progress/circular-progress.js';
+import {CircularProgressMode} from '../../building-blocks/circular-progress/circular-progress.js';
+
+export {CircularProgressMode};
 
 export enum AutomationButtonVariant {
   regular = 'regular',
@@ -83,7 +87,7 @@ export class ObcAutomationButton extends LitElement {
   @property({type: String}) state: AutomationButtonState =
     AutomationButtonState.open;
   @property({type: Boolean}) static: boolean = false;
-  @property({type: Boolean}) hideReadoutStack: boolean = false;
+  @property({type: Boolean, attribute: false}) showReadoutStack: boolean = true;
   @property({type: Array, attribute: false})
   readouts: AutomationButtonReadoutStack[] = [];
   @property({attribute: false})
@@ -100,7 +104,13 @@ export class ObcAutomationButton extends LitElement {
     ObcAlertFrameThickness.Small;
   @property({type: String}) alertFrameStatus: ObcAlertFrameStatus =
     ObcAlertFrameStatus.Alarm;
+  @property({type: Boolean, attribute: false}) showAlertCategoryIcon: boolean =
+    true;
+  @property({type: Boolean}) showAlertIcon: boolean = false;
   @property({type: Boolean}) progress: boolean = false;
+  @property({type: String}) progressMode: CircularProgressMode =
+    CircularProgressMode.indeterminate;
+  @property({type: Number}) progressValue: number = 0;
   @property({type: String}) direction: AutomationButtonDirection =
     AutomationButtonDirection.forward;
   @property({type: String}) positioning: AutomationButtonPositioning =
@@ -109,20 +119,23 @@ export class ObcAutomationButton extends LitElement {
   @property({type: Boolean}) hasBadgeSpacer: boolean = false;
 
   override render() {
-    const progressSpinner = this.getProgressSpinner();
-    const direction = this.getDirectionIcon();
+    const effectiveVariant = this.progress
+      ? AutomationButtonVariant.regular
+      : this.variant;
+    const progressRing = this.getProgressRing();
+    const direction = this.getDirectionIcon(effectiveVariant);
     const resolvedTag: AutomationButtonReadoutStackTag | null = this.hasIdTag
       ? (this.tag ?? {value: 0})
       : null;
     const hasLabelContent =
-      !this.hideReadoutStack && (this.readouts.length > 0 || this.hasIdTag);
+      this.showReadoutStack && (this.readouts.length > 0 || this.hasIdTag);
 
     return this.wrapContent(html`
       <button
         class=${classMap({
           wrapper: true,
           ['positioning-' + this.positioning]: true,
-          ['variant-' + this.variant]: true,
+          ['variant-' + effectiveVariant]: true,
           ['state-' + this.state]: true,
           'label-empty': !hasLabelContent,
           ['label-' + this.readoutPosition]: true,
@@ -138,12 +151,12 @@ export class ObcAutomationButton extends LitElement {
             <div class="icon-primary">
               <slot name="icon"></slot>
             </div>
-            ${this.variant === AutomationButtonVariant.flat
-              ? html` <div class="icon-siluette">
-                  <slot name="icon-siluette"></slot>
+            ${effectiveVariant === AutomationButtonVariant.flat
+              ? html` <div class="icon-silhouette">
+                  <slot name="icon-silhouette"></slot>
                 </div>`
               : nothing}
-            ${progressSpinner}
+            ${progressRing}
           </div>
           <div class="badge-top-right">
             <slot name="badge-top-right"></slot>
@@ -158,9 +171,8 @@ export class ObcAutomationButton extends LitElement {
             <slot name="badge-bottom-right"></slot>
           </div>
         </div>
-        ${this.hideReadoutStack
-          ? nothing
-          : html`
+        ${this.showReadoutStack
+          ? html`
               <div class="badge-spacer"></div>
               <obc-automation-button-readout-stack
                 .readouts=${this.readouts}
@@ -169,13 +181,16 @@ export class ObcAutomationButton extends LitElement {
                 .size=${this.readoutSize}
                 .idTagOrientation=${this.getIdTagOrientation()}
               ></obc-automation-button-readout-stack>
-            `}
+            `
+          : nothing}
         ${this.alert
           ? html` <obc-alert-frame
               class="alert-frame"
               .type=${this.alertFrameType}
               .thickness=${this.alertFrameThickness}
               .status=${this.alertFrameStatus}
+              .showAlertCategoryIcon=${this.showAlertCategoryIcon}
+              .showIcon=${this.showAlertIcon}
             >
               <span slot="icon"><slot name="alert-icon"></slot></span>
               <span slot="label"><slot name="alert-label"></slot></span>
@@ -204,44 +219,22 @@ export class ObcAutomationButton extends LitElement {
 
   static override styles = unsafeCSS(compentStyle);
 
-  private getProgressSpinner(): null | HTMLTemplateResult {
+  private getProgressRing(): null | HTMLTemplateResult {
     if (!this.progress) {
       return null;
     }
 
-    const spinnerWidth = parseFloat(
-      getComputedStyle(this).getPropertyValue(
-        '--automation-components-button-device-visual-target'
-      )
-    );
-    const strokeWidth = parseFloat(
-      getComputedStyle(this).getPropertyValue(
-        '--automation-components-button-device-progress-bar-stroke'
-      )
-    );
-    const progressSpinner = html`<svg
-      width="${spinnerWidth}"
-      height="${spinnerWidth}"
-      viewBox="0 0 ${spinnerWidth} ${spinnerWidth}"
-      fill="none"
-      class="progress-spinner"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M${strokeWidth / 2} ${spinnerWidth / 2} A ${(spinnerWidth -
-          strokeWidth) /
-        2} ${(spinnerWidth - strokeWidth) / 2} 0 0 1 ${spinnerWidth /
-        2} ${strokeWidth / 2}"
-        stroke="var(--instrument-enhanced-secondary-color)"
-        stroke-width=${strokeWidth}
-        stroke-linecap="round"
-      />
-    </svg> `;
-    return progressSpinner;
+    return html`<obc-circular-progress
+      class="progress-ring"
+      .mode=${this.progressMode}
+      .value=${this.progressValue}
+    ></obc-circular-progress>`;
   }
 
-  private getDirectionIcon(): null | HTMLTemplateResult {
-    if (this.variant !== AutomationButtonVariant.double) {
+  private getDirectionIcon(
+    variant: AutomationButtonVariant
+  ): null | HTMLTemplateResult {
+    if (variant !== AutomationButtonVariant.double) {
       return null;
     } else if (this.direction === AutomationButtonDirection.forward) {
       return html`<svg

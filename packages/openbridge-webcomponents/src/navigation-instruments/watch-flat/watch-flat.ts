@@ -127,7 +127,7 @@ export class ObcWatchFlat extends LitElement {
           ${this.tickmarks.map(
             (t) => svg`
             <g transform="translate(${-this.rotation * this.tickmarkSpacing}, 0)">
-              ${tickmark(t.angle, t.type, TickmarkStyle.hinted)}
+              ${tickmark(t.angle, t.type, TickmarkStyle.regular)}
             </g>
           `
           )}

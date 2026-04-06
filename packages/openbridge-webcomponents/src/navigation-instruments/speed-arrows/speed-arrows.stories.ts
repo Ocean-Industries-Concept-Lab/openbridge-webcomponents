@@ -3,7 +3,7 @@ import {ActiveColor, Direction, ObcSpeedArrows} from './speed-arrows.js';
 import './speed-arrows.js';
 
 const meta: Meta<typeof ObcSpeedArrows> = {
-  title: 'Instruments/Speed arrows',
+  title: 'Instruments/Speed Arrows',
   tags: ['6.0'],
   component: 'obc-speed-arrows',
   args: {

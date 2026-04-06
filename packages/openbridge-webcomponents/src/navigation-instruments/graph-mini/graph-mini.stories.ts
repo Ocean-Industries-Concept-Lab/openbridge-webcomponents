@@ -3,7 +3,7 @@ import {ObcGraphMini} from './graph-mini.js';
 import './graph-mini.js';
 
 const meta: Meta<typeof ObcGraphMini> = {
-  title: 'Bars and Graphs/Graph mini',
+  title: 'Bars and Graphs/Graph Mini',
   tags: ['6.0'],
   component: 'obc-graph-mini',
   args: {
@@ -20,7 +20,7 @@ type Story = StoryObj<ObcGraphMini>;
 export const Primary: Story = {};
 
 export const Realtime: Story = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   args: {
     data: [
       Array.from({length: 60}, (_, i) => i),

@@ -42,8 +42,8 @@ const meta: Meta = {
       control: 'select',
       options: Object.values(SequenceOrientation),
     },
-    hideStepInputConnector: {control: 'boolean'},
-    hideStepOutputConnector: {control: 'boolean'},
+    showStepInputConnector: {control: 'boolean'},
+    showStepOutputConnector: {control: 'boolean'},
     hasIcon: {control: 'boolean'},
     leadingIcon: {
       control: {type: 'select'},
@@ -56,8 +56,8 @@ const meta: Meta = {
     styleType: SequenceStyle.regular,
     value: SequenceValue.regular,
     orientation: SequenceOrientation.horizontal,
-    hideStepInputConnector: false,
-    hideStepOutputConnector: false,
+    showStepInputConnector: true,
+    showStepOutputConnector: true,
     hasIcon: true,
     leadingIcon: 'placeholder',
     label: 'Label',
@@ -125,25 +125,32 @@ const renderStateGrid = ({
 `;
 
 export const Playground: Story = {
-  render: (args) => html`
-    <obc-sequence-step
-      .type=${args.type}
-      .styleType=${args.styleType}
-      .value=${args.value}
-      .orientation=${args.orientation}
-      .hideStepInputConnector=${args.hideStepInputConnector}
-      .hideStepOutputConnector=${args.hideStepOutputConnector}
-      .hasIcon=${args.hasIcon}
-    >
-      ${args.hasIcon
-        ? iconIdToIconHtml(args.leadingIcon as string, {
-            slot: 'leading-icon',
-            useCssColor: '',
-          })
-        : nothing}
-      ${args.label}
-    </obc-sequence-step>
-  `,
+  render: (args) => {
+    const labelText =
+      args.styleType === SequenceStyle.point &&
+      (args.type === SequenceType.medium || args.type === SequenceType.large)
+        ? '1'
+        : args.label;
+    return html`
+      <obc-sequence-step
+        .type=${args.type}
+        .styleType=${args.styleType}
+        .value=${args.value}
+        .orientation=${args.orientation}
+        .showStepInputConnector=${args.showStepInputConnector}
+        .showStepOutputConnector=${args.showStepOutputConnector}
+        .hasIcon=${args.hasIcon}
+      >
+        ${args.hasIcon
+          ? iconIdToIconHtml(args.leadingIcon as string, {
+              slot: 'leading-icon',
+              useCssColor: '',
+            })
+          : nothing}
+        ${labelText}
+      </obc-sequence-step>
+    `;
+  },
 };
 
 export const TypeOverview: Story = {
@@ -394,8 +401,8 @@ export const ConnectorFlags: Story = {
                 .styleType=${SequenceStyle.regular}
                 .value=${SequenceValue.regular}
                 .orientation=${SequenceOrientation.horizontal}
-                .hideStepInputConnector=${!variant.hasInput}
-                .hideStepOutputConnector=${!variant.hasOutput}
+                .showStepInputConnector=${variant.hasInput}
+                .showStepOutputConnector=${variant.hasOutput}
                 .hasIcon=${variant.hasIcon}
               >
                 ${variant.hasIcon
@@ -429,8 +436,8 @@ export const OrientationShowcase: Story = {
                 .styleType=${SequenceStyle.regular}
                 .value=${SequenceValue.active}
                 .orientation=${SequenceOrientation.horizontal}
-                .hideStepInputConnector=${false}
-                .hideStepOutputConnector=${false}
+                .showStepInputConnector=${true}
+                .showStepOutputConnector=${true}
                 .hasIcon=${type !== SequenceType.small}
               >
                 ${type !== SequenceType.small
@@ -449,8 +456,8 @@ export const OrientationShowcase: Story = {
                 .styleType=${SequenceStyle.regular}
                 .value=${SequenceValue.active}
                 .orientation=${SequenceOrientation.vertical}
-                .hideStepInputConnector=${false}
-                .hideStepOutputConnector=${false}
+                .showStepInputConnector=${true}
+                .showStepOutputConnector=${true}
                 .hasIcon=${type !== SequenceType.small}
               >
                 ${type !== SequenceType.small

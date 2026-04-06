@@ -12,7 +12,7 @@ import '../../icons/icon-placeholder.js';
 import '../../icons/icon-search.js';
 
 const meta: Meta<typeof ObcTextInputField> = {
-  title: 'UI Components/Input controls/Text Input Field',
+  title: 'UI Components/Input Controls/Text Input Field',
   tags: ['autodocs', '6.0'],
   component: 'obc-text-input-field',
   args: {},
@@ -141,8 +141,8 @@ const meta: Meta<typeof ObcTextInputField> = {
           ?hasLabelIcon=${args.hasLabelIcon}
           .labelPlacement=${args.labelPlacement ??
           ObcTextInputFieldPlacement.Left}
-          @input=${console.log}
-          @change=${console.log}
+          .rejectUpdates=${args.rejectUpdates}
+          .rejectUpdatesOnFocus=${args.rejectUpdatesOnFocus}
         >
           ${args.hasLeadingIcon
             ? html`<obi-search slot="leading-icon"></obi-search>`
@@ -362,23 +362,6 @@ export const TypePassword: Story = {
       description: {
         story:
           'Password fields automatically include a visibility toggle button.',
-      },
-    },
-  },
-};
-
-export const TypePasswordWithClearButton: Story = {
-  args: {
-    value: 'secret123',
-    type: HTMLInputTypeAttribute.Password,
-    label: 'Password',
-    hasClearButton: true,
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Password field with both visibility toggle (left) and clear button (right). The visibility toggle appears first, then the clear button.',
       },
     },
   },

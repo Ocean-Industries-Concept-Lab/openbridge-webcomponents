@@ -1,8 +1,13 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {CompassDirection, ObcHeading} from './heading.js';
+import {
+  CompassDirection,
+  HeadingPriorityElement,
+  ObcHeading,
+} from './heading.js';
 import './heading.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
+import {Priority} from '../types.js';
 
 const meta: Meta<typeof ObcHeading> = {
   title: 'Instruments/Heading',
@@ -12,6 +17,7 @@ const meta: Meta<typeof ObcHeading> = {
     width: 512,
     heading: 311,
     courseOverGround: 338,
+    showLabels: true,
     headingAdvices: [
       {
         minAngle: 20,
@@ -23,6 +29,7 @@ const meta: Meta<typeof ObcHeading> = {
     headingSetpoint: 311,
     direction: CompassDirection.NorthUp,
     touching: false,
+    priorityElements: [HeadingPriorityElement.hdg],
   },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
@@ -34,6 +41,13 @@ const meta: Meta<typeof ObcHeading> = {
       options: Object.values(CompassDirection),
     },
     touching: {control: 'boolean'},
+    showLabels: {control: 'boolean'},
+    tickmarksInside: {control: 'boolean'},
+    priority: {control: 'select', options: Object.values(Priority)},
+    priorityElements: {
+      control: 'multi-select',
+      options: Object.values(HeadingPriorityElement),
+    },
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcHeading>;
@@ -49,7 +63,7 @@ export const Primary: Story = {
 
 export const Enhanced: Story = {
   args: {
-    enhanced: true,
+    priority: Priority.enhanced,
     headingSetpoint: 311,
   },
 };

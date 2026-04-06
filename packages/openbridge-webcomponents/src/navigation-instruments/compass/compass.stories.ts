@@ -1,9 +1,15 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {CompassDirection, ObcCompass} from './compass.js';
+import {
+  CompassDirection,
+  CompassPriorityElement,
+  ObcCompass,
+} from './compass.js';
 import './compass.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
 import {VesselImage} from '../watch/watch.js';
+import {topVessels} from '../watch/vessels/storybook-helper.js';
+import {InstrumentState, Priority} from '../types.js';
 
 const meta: Meta<typeof ObcCompass> = {
   title: 'Instruments/Compass',
@@ -30,6 +36,10 @@ const meta: Meta<typeof ObcCompass> = {
     vesselImage: VesselImage.psvTop,
     direction: CompassDirection.NorthUp,
     touching: false,
+    priority: Priority.enhanced,
+    showLabels: true,
+    tickmarksInside: false,
+    priorityElements: [CompassPriorityElement.hdg],
   },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
@@ -46,16 +56,22 @@ const meta: Meta<typeof ObcCompass> = {
         'Rotations per minute. NB: storybook recreates the component on change, which resets the animation.',
     },
     vesselImage: {
-      control: {type: 'select'},
-      options: Object.values(VesselImage).filter((image) =>
-        image.includes('top')
-      ),
+      control: 'select',
+      options: topVessels,
     },
     direction: {
       control: {type: 'select'},
       options: Object.values(CompassDirection),
     },
     touching: {control: 'boolean'},
+    showLabels: {control: 'boolean'},
+    tickmarksInside: {control: 'boolean'},
+    state: {control: 'select', options: Object.values(InstrumentState)},
+    priority: {control: 'select', options: Object.values(Priority)},
+    priorityElements: {
+      control: 'multi-select',
+      options: Object.values(CompassPriorityElement),
+    },
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcCompass>;
@@ -63,18 +79,39 @@ const meta: Meta<typeof ObcCompass> = {
 export default meta;
 type Story = StoryObj<ObcCompass>;
 
-export const NorthUp: Story = {
+export const NorthUpInCommand: Story = {
   args: {},
 };
 
-export const HeadingUp: Story = {
+export const NorthUpNotInCommand: Story = {
+  args: {
+    state: InstrumentState.active,
+    priority: Priority.regular,
+  },
+};
+
+export const HeadingUpInCommand: Story = {
   args: {
     direction: CompassDirection.HeadingUp,
   },
 };
 
-export const CourseUp: Story = {
+export const CourseUpInCommand: Story = {
   args: {
     direction: CompassDirection.CourseUp,
+  },
+};
+
+export const WithLabelsOutside: Story = {
+  args: {
+    showLabels: true,
+    tickmarksInside: false,
+  },
+};
+
+export const WithLabelsInside: Story = {
+  args: {
+    showLabels: true,
+    tickmarksInside: true,
   },
 };

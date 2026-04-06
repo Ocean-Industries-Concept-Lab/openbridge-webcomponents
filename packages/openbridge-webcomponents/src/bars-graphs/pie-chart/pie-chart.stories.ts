@@ -1,6 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import './pie-chart.js';
+import {Priority} from '../../navigation-instruments/types.js';
 
 const SUNBURST_DATA = [
   {
@@ -39,7 +40,7 @@ const SUNBURST_DATA = [
 ];
 
 const meta: Meta = {
-  title: 'Bars and Graphs/Pie chart',
+  title: 'Bars and Graphs/Pie Chart',
   component: 'obc-pie-chart',
   tags: ['autodocs', '6.0'],
   argTypes: {
@@ -62,8 +63,9 @@ const meta: Meta = {
     sunburst: {control: 'boolean'},
     data: {control: 'object'},
     colors: {control: 'object'},
-    enhanced: {
-      control: 'boolean',
+    priority: {
+      control: 'select',
+      options: Object.values(Priority),
       description:
         'Use enhanced color palette (blue) instead of default (gray)',
     },
@@ -80,7 +82,7 @@ const meta: Meta = {
     sunburst: false,
     data: SUNBURST_DATA,
     colors: [],
-    enhanced: true,
+    priority: Priority.enhanced,
     legend: false,
   },
 };
@@ -90,12 +92,12 @@ export default meta;
 type Story = StoryObj;
 
 export const Default: Story = {
-  name: 'Default pie',
+  name: 'Default Pie',
   render: (args) => html`
     <obc-pie-chart
       .data=${args.data}
       .colors=${args.colors}
-      .enhanced=${args.enhanced}
+      .priority=${args.priority}
       .showOuterLabels=${args.showOuterLabels}
       .showUnit=${args.showUnit}
       .outerLabelUnit=${args.outerLabelUnit}
@@ -110,7 +112,7 @@ export const Default: Story = {
 };
 
 export const Sunburst: Story = {
-  name: 'Sunburst subsegments pie (click interaction)',
+  name: 'Sunburst Subsegments Pie (click interaction)',
   args: {
     sunburst: true,
     data: SUNBURST_DATA,
@@ -118,7 +120,7 @@ export const Sunburst: Story = {
 };
 
 export const LongUnit: Story = {
-  name: 'Long label unit pie',
+  name: 'Long Label Unit Pie',
   args: {
     showOuterLabels: true,
     outerLabelUnit: ' km/h-unbelievably-long',
@@ -127,7 +129,7 @@ export const LongUnit: Story = {
 };
 
 export const TrimLabels: Story = {
-  name: 'Trim label length pie',
+  name: 'Trim Label Length Pie',
   args: {
     showOuterLabels: true,
     outerLabelUnit: ' km/h-unbelievably-long',
@@ -136,7 +138,7 @@ export const TrimLabels: Story = {
 };
 
 export const WithDecimals: Story = {
-  name: 'Decimal places pie',
+  name: 'Decimal Places Pie',
   args: {
     showOuterLabels: true,
     outerLabelDecimalPlaces: 2,
@@ -144,21 +146,21 @@ export const WithDecimals: Story = {
 };
 
 export const MinHeight: Story = {
-  name: 'Minimal height pie (48px)',
+  name: 'Minimal Height Pie (48px)',
   args: {
     fixedHeight: 48,
   },
 };
 
 export const ThresholdHeight: Story = {
-  name: 'Threshold height pie (192px, where labels appear)',
+  name: 'Threshold Height Pie (192px, where labels appear)',
   args: {
     fixedHeight: 192,
   },
 };
 
 export const WithLegend: Story = {
-  name: 'With legend pie',
+  name: 'With Legend Pie',
   args: {
     legend: true,
   },
@@ -167,16 +169,16 @@ export const WithLegend: Story = {
 export const CustomColors: Story = {
   args: {
     colors: ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6'],
-    enhanced: false,
+    priority: Priority.regular,
   },
 };
 
 export const Realtime: Story = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   render: (args) => {
     const chart = document.createElement('obc-pie-chart');
     chart.data = JSON.parse(JSON.stringify(SUNBURST_DATA));
-    chart.enhanced = args.enhanced;
+    chart.priority = args.priority;
     chart.showOuterLabels = args.showOuterLabels;
     chart.showUnit = args.showUnit;
     chart.outerLabelUnit = args.outerLabelUnit;

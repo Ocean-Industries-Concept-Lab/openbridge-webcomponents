@@ -6,6 +6,12 @@
   display: flex;
   align-items: center;
   width: 100%;
+
+  &.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.6;
+  }
 }
 
 :host([full-width]) .navigation-wrapper > obc-toggle-button-group,

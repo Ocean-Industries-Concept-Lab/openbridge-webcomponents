@@ -4,7 +4,7 @@ import './clock.js';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcClock> = {
-  title: 'Application components/Top elements/Clock',
+  title: 'Application Components/Top Elements/Clock',
   tags: ['autodocs', '6.0'],
   component: 'obc-clock',
   args: {
@@ -21,7 +21,7 @@ export const Normal: Story = {
 
 export const NoClick: Story = {
   args: {
-    noClick: true,
+    isClickable: false,
   },
 };
 
@@ -114,7 +114,7 @@ export const LiveClock: Story = {
     locale: 'en-GB',
     showSeconds: true,
   },
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   render: (args) => {
     const clock = document.createElement('obc-clock');
     clock.date = args.date;

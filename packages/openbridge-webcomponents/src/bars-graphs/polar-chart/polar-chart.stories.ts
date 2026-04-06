@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import './polar-chart.js';
 import {ObcPolarChart} from './polar-chart.js';
+import {Priority} from '../../navigation-instruments/types.js';
 
 const SAMPLE_DATA = [
   {label: 'Sector A', value: 80},
@@ -19,7 +20,7 @@ const SAMPLE_DATA = [
 ];
 
 const meta: Meta = {
-  title: 'Bars and Graphs/Polar chart',
+  title: 'Bars and Graphs/Polar Chart',
   component: 'obc-polar-chart',
   tags: ['autodocs', '6.0'],
   argTypes: {
@@ -51,8 +52,9 @@ const meta: Meta = {
     showDebugOverlay: {control: 'boolean'},
     data: {control: 'object'},
     colors: {control: 'object'},
-    enhanced: {
-      control: 'boolean',
+    priority: {
+      control: 'select',
+      options: Object.values(Priority),
       description:
         'Use enhanced color palette (blue) instead of default (gray)',
     },
@@ -71,7 +73,7 @@ const meta: Meta = {
     showDebugOverlay: false,
     data: SAMPLE_DATA,
     colors: [],
-    enhanced: true,
+    priority: Priority.enhanced,
     legend: false,
   },
 };
@@ -81,12 +83,12 @@ export default meta;
 type Story = StoryObj<ObcPolarChart>;
 
 export const Default: Story = {
-  name: 'Default polar',
+  name: 'Default Polar',
   render: (args) => html`
     <obc-polar-chart
       .data=${args.data}
       .colors=${args.colors}
-      .enhanced=${args.enhanced}
+      .priority=${args.priority}
       .monochrome=${args.monochrome}
       .discreteColorStops=${args.discreteColorStops}
       .showSectorLabels=${args.showSectorLabels}
@@ -103,35 +105,35 @@ export const Default: Story = {
 };
 
 export const Monochrome: Story = {
-  name: 'Monochrome polar',
+  name: 'Monochrome Polar',
   args: {
     monochrome: true,
   },
 };
 
 export const DiscreteColorStops: Story = {
-  name: 'Discrete color stops polar',
+  name: 'Discrete Color Stops Polar',
   args: {
     discreteColorStops: true,
   },
 };
 
 export const MinHeight: Story = {
-  name: 'Minimal height polar (48px)',
+  name: 'Minimal Height Polar (48px)',
   args: {
     fixedHeight: 48,
   },
 };
 
 export const ThresholdHeight: Story = {
-  name: 'Threshold height polar (192px, where labels appear)',
+  name: 'Threshold Height Polar (192px, where labels appear)',
   args: {
     fixedHeight: 192,
   },
 };
 
 export const WithAnglesAndDegreeSymbol: Story = {
-  name: 'With angles and degree symbol polar',
+  name: 'With Angles and Degree Symbol Polar',
   args: {
     showSectorLabels: false,
     showOuterLabels: true,
@@ -142,7 +144,7 @@ export const WithAnglesAndDegreeSymbol: Story = {
 };
 
 export const WithSectorLabels: Story = {
-  name: 'With sector labels polar (no angles)',
+  name: 'With Sector Labels Polar (no angles)',
   args: {
     showSectorLabels: true,
     showOuterLabels: true,
@@ -151,7 +153,7 @@ export const WithSectorLabels: Story = {
 };
 
 export const WithLegend: Story = {
-  name: 'With legend polar',
+  name: 'With Legend Polar',
   args: {
     legend: true,
   },
@@ -160,19 +162,19 @@ export const WithLegend: Story = {
 export const CustomColors: Story = {
   args: {
     colors: ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6'],
-    enhanced: false,
+    priority: Priority.regular,
   },
 };
 
 export const Realtime: Story = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   args: {
     fixedHeight: 320,
   },
   render: (args) => {
     const chart = document.createElement('obc-polar-chart');
     chart.data = JSON.parse(JSON.stringify(SAMPLE_DATA));
-    chart.enhanced = args.enhanced;
+    chart.priority = args.priority;
     chart.fixedHeight = args.fixedHeight;
 
     setInterval(() => {

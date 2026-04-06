@@ -76,6 +76,7 @@ const preview: Preview = {
           'UI Components',
           'Bars and Graphs',
           'Instruments',
+          'Indicators',
           'Automation',
           'AR',
           'Integration',

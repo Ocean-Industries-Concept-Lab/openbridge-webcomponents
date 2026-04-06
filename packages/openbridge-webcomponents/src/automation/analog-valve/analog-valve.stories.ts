@@ -8,7 +8,7 @@ import '../automation-badge/automation-badge.js';
 import {argTypesAbstractAutomationButtonPassiveRound} from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 const meta: Meta<typeof ObcAnalogValve> = {
-  title: 'Automation/Automation devices/Analog Valve',
+  title: 'Automation/Automation Devices/Analog Valve',
   tags: ['autodocs'],
   component: 'obc-analog-valve',
   decorators: [crossDecorator],
@@ -19,7 +19,7 @@ const meta: Meta<typeof ObcAnalogValve> = {
     alert: false,
     progress: false,
     vertical: false,
-    hideReadoutStack: false,
+    showReadoutStack: true,
     hasIdTag: true,
   },
   argTypes: {

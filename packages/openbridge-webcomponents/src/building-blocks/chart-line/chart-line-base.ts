@@ -21,6 +21,7 @@ import {
   InstrumentState,
   FrameStyle,
   BorderRadiusPosition,
+  Priority,
 } from '../../navigation-instruments/types.js';
 import {
   CHART_SECTOR_DEFAULT_COLORS,
@@ -83,12 +84,12 @@ interface ExternalScaleElement extends HTMLElement {
   paddingRight?: number;
   paddingStart?: number;
   paddingEnd?: number;
-  primaryTickbarsInterval?: number;
-  labels?: boolean;
+  primaryTickmarkInterval?: number;
+  showLabels?: boolean;
   fixedAspectRatio?: boolean;
   scaleReferenceSize?: number;
   state?: InstrumentState;
-  enhanced?: boolean;
+  priority?: Priority;
   frameStyle?: FrameStyle;
   borderRadiusPosition?: BorderRadiusPosition;
 }
@@ -134,7 +135,7 @@ const LINE_GRAPH_WATCHED_PROP_NAMES = [
   'xStepSize',
   'yTicksLimit',
   'yStepSize',
-  'enhanced', // Triggers color palette change
+  'priority', // Triggers color palette change
   'borderRadiusPosition', // Triggers border styling update
   'borderRadiusPositionExternalScales', // Triggers external scale border styling update
   // legend only affects HTML; do not use it to drive chart updates
@@ -165,6 +166,8 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
  * - **Grid & ticks**: Toggle grid lines (`showGrid`, `showGridX`, `showGridY`) and tick marks (`showTickMarks`)
  * - **Legend support**: Optional HTML legend showing series labels with `legend` property
  * - **External axis support**: via slots
+ * - **Color priority**: Set `priority` to `Priority.enhanced` to use the blue/enhanced
+ *   color palette instead of the default gray/regular palette (default: `Priority.regular`)
  *
  * ## Size Behavior
  * - Above 192px: Shows labels, tick marks, and grid lines with standard padding
@@ -402,11 +405,11 @@ export class ObcChartLineBase extends LitElement {
 
   /** Instrument state affecting colors of external scales. */
   @property({type: String})
-  state: InstrumentState = InstrumentState.inCommand;
+  state: InstrumentState = InstrumentState.active;
 
-  /** Use enhanced color palette (blue) instead of default (gray). */
-  @property({type: Boolean})
-  enhanced = false;
+  /** Color priority: enhanced uses blue palette instead of default gray. */
+  @property({type: String})
+  priority: Priority = Priority.regular;
 
   /** Frame style for chart and external scales. */
   @property({type: String})
@@ -1252,10 +1255,10 @@ export class ObcChartLineBase extends LitElement {
     const effectiveWidth = this.getEffectiveWidth();
     const effectiveHeight = this.getEffectiveHeight();
 
-    // Determine if we should hide labels (below threshold)
-    const hideLabels =
-      effectiveWidth < RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS ||
-      effectiveHeight < RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
+    // Determine if we should show labels (above threshold)
+    const showLabels =
+      effectiveWidth >= RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS &&
+      effectiveHeight >= RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
 
     // Calculate viewBox padding for external scales.
     // When fixedAspectRatioScaling is true, the chart's Canvas padding is scaled by
@@ -1295,7 +1298,7 @@ export class ObcChartLineBase extends LitElement {
     //   basePadding: padding,
     //   verticalViewBoxPadding,
     //   horizontalViewBoxPadding,
-    //   hideLabels,
+    //   showLabels,
     // });
 
     // Update each slotted scale
@@ -1320,18 +1323,18 @@ export class ObcChartLineBase extends LitElement {
           paddingBottom: verticalViewBoxPadding.bottom,
           paddingStart: verticalViewBoxPadding.top,
           paddingEnd: verticalViewBoxPadding.bottom,
-          labels: !hideLabels,
+          showLabels,
           fixedAspectRatio: this.fixedAspectRatioScaling,
           // Use chart's scaleReferenceSize property for proportional scaling
           scaleReferenceSize: this.scaleReferenceSize,
           state: this.state,
-          enhanced: this.enhanced,
+          priority: this.priority,
           frameStyle: this.frameStyle,
           borderRadiusPosition: this.borderRadiusPositionExternalScales,
         };
         // Only override interval if explicitly set
         if (this.yStepSize !== undefined) {
-          props.primaryTickbarsInterval = this.yStepSize;
+          props.primaryTickmarkInterval = this.yStepSize;
         }
         updates.push([this.leftScaleSlot, scale, props]);
       });
@@ -1350,18 +1353,18 @@ export class ObcChartLineBase extends LitElement {
           paddingBottom: verticalViewBoxPadding.bottom,
           paddingStart: verticalViewBoxPadding.top,
           paddingEnd: verticalViewBoxPadding.bottom,
-          labels: !hideLabels,
+          showLabels,
           fixedAspectRatio: this.fixedAspectRatioScaling,
           // Use chart's scaleReferenceSize property for proportional scaling
           scaleReferenceSize: this.scaleReferenceSize,
           state: this.state,
-          enhanced: this.enhanced,
+          priority: this.priority,
           frameStyle: this.frameStyle,
           borderRadiusPosition: this.borderRadiusPositionExternalScales,
         };
         // Only override interval if explicitly set
         if (this.yStepSize !== undefined) {
-          props.primaryTickbarsInterval = this.yStepSize;
+          props.primaryTickmarkInterval = this.yStepSize;
         }
         updates.push([this.rightScaleSlot, scale, props]);
       });
@@ -1380,18 +1383,18 @@ export class ObcChartLineBase extends LitElement {
           paddingRight: horizontalViewBoxPadding.right,
           paddingStart: horizontalViewBoxPadding.left,
           paddingEnd: horizontalViewBoxPadding.right,
-          labels: !hideLabels,
+          showLabels,
           fixedAspectRatio: this.fixedAspectRatioScaling,
           // Use chart's scaleReferenceSize property for proportional scaling
           scaleReferenceSize: this.scaleReferenceSize,
           state: this.state,
-          enhanced: this.enhanced,
+          priority: this.priority,
           frameStyle: this.frameStyle,
           borderRadiusPosition: this.borderRadiusPositionExternalScales,
         };
         // Only override interval if explicitly set
         if (this.xStepSize !== undefined) {
-          props.primaryTickbarsInterval = this.xStepSize;
+          props.primaryTickmarkInterval = this.xStepSize;
         }
         updates.push([this.topScaleSlot, scale, props]);
       });
@@ -1410,18 +1413,18 @@ export class ObcChartLineBase extends LitElement {
           paddingRight: horizontalViewBoxPadding.right,
           paddingStart: horizontalViewBoxPadding.left,
           paddingEnd: horizontalViewBoxPadding.right,
-          labels: !hideLabels,
+          showLabels,
           fixedAspectRatio: this.fixedAspectRatioScaling,
           // Use chart's scaleReferenceSize property for proportional scaling
           scaleReferenceSize: this.scaleReferenceSize,
           state: this.state,
-          enhanced: this.enhanced,
+          priority: this.priority,
           frameStyle: this.frameStyle,
           borderRadiusPosition: this.borderRadiusPositionExternalScales,
         };
         // Only override interval if explicitly set
         if (this.xStepSize !== undefined) {
-          props.primaryTickbarsInterval = this.xStepSize;
+          props.primaryTickmarkInterval = this.xStepSize;
         }
         updates.push([this.bottomScaleSlot, scale, props]);
       });
@@ -1894,9 +1897,10 @@ export class ObcChartLineBase extends LitElement {
    * Prepare normalized datasets for multi-series charts
    */
   protected prepareMultiSeriesDatasets() {
-    const defaultPalette = this.enhanced
-      ? CHART_SECTOR_ENHANCED_COLORS
-      : CHART_SECTOR_DEFAULT_COLORS;
+    const defaultPalette =
+      this.priority === Priority.enhanced
+        ? CHART_SECTOR_ENHANCED_COLORS
+        : CHART_SECTOR_DEFAULT_COLORS;
     const chartColors = getChartColorsOrDefault(
       this,
       this.colors,
@@ -1916,9 +1920,10 @@ export class ObcChartLineBase extends LitElement {
   protected prepareSingleSeriesDatasets() {
     const values = this.data.map((d) => d.value);
     const labels = this.data.map((d) => d.label);
-    const defaultPalette = this.enhanced
-      ? CHART_SECTOR_ENHANCED_COLORS
-      : CHART_SECTOR_DEFAULT_COLORS;
+    const defaultPalette =
+      this.priority === Priority.enhanced
+        ? CHART_SECTOR_ENHANCED_COLORS
+        : CHART_SECTOR_DEFAULT_COLORS;
     const chartColors = getChartColorsOrDefault(
       this,
       this.colors,

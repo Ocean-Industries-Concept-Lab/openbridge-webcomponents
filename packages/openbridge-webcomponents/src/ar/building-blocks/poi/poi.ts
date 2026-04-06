@@ -10,6 +10,7 @@ import {
   ObcPoiButtonState,
   PoiButtonVisualState,
 } from '../poi-button/poi-button.js';
+import {ObcPoiHeaderState} from '../poi-header/poi-header.js';
 import {POIStyle} from '../poi-graphic-line/poi-graphic-line.js';
 import {poiArrow} from './arrow.js';
 import '../poi-line/poi-line.js';
@@ -19,6 +20,62 @@ import {
   ObcPoiPointerType,
 } from '../poi-pointer/poi-pointer.js';
 import {customElement} from '../../../decorator.js';
+
+/* ---------- Poi interface & helpers ---------- */
+
+export enum PoiDataVisualRectPreference {
+  Largest = 'largest',
+  Group = 'group',
+  Anchor = 'anchor',
+  Size = 'size',
+}
+
+export const POI_ATTR = 'data-poi-target';
+
+type PoiVisualElementPreference =
+  | PoiDataVisualRectPreference.Group
+  | PoiDataVisualRectPreference.Anchor
+  | PoiDataVisualRectPreference.Size;
+
+/**
+ * Minimum contract for any element that can participate in
+ * `obc-poi-layer` grouping / overlap / crossing / stack selection.
+ *
+ * Implement this interface and set `data-poi-target` on the host
+ * element in `connectedCallback` to make a component layer-compatible.
+ */
+export interface Poi extends HTMLElement {
+  /* Position — required by layer for positioning and grouping */
+  x: number;
+  y: number;
+  buttonOffsetX: number;
+  targetOffsetX: number;
+  lineCompensationY: number;
+  fixedTarget: boolean;
+
+  /* State — read/written by layer and stack */
+  selected: boolean;
+  value: string;
+
+  /* Visual query — used by layer for rect-based grouping */
+  getVisualRect(preference: PoiDataVisualRectPreference): DOMRect;
+  getVisualElement(preference: PoiVisualElementPreference): HTMLElement;
+  getPointerElement(): HTMLElement | null;
+
+  /* Optional — layer/group code guards access before using */
+  buttonY?: number | null;
+  buttonType?: string;
+  data?: unknown[];
+  hasHeader?: boolean;
+  headerContent?: string;
+  animatePosition?: boolean;
+}
+
+export function isPoi(el: Element): el is Poi {
+  return el.hasAttribute(POI_ATTR);
+}
+
+/* ---------- ObcPoi enums ---------- */
 
 export enum ObcPoiType {
   Line = 'line',
@@ -137,6 +194,7 @@ export class ObcPoi extends LitElement {
   overlapOpaque = false;
   @property({type: Array, attribute: false}) data: ObcPoiButtonDataItem[] = [];
   @property({type: Boolean, attribute: 'has-header'}) hasHeader = false;
+  @property({type: String, attribute: 'header-content'}) headerContent = '';
   @property({type: Boolean}) hasPointer = false;
   @property({type: String, attribute: 'pointer-type'})
   pointerType: ObcPoiPointerType | null = null;
@@ -157,19 +215,44 @@ export class ObcPoi extends LitElement {
   @property({type: Number, attribute: 'outside-angle'}) outsideAngle = 315;
   @property({type: Boolean, attribute: 'animate-position'})
   animatePosition = false;
+  private headerObserver?: MutationObserver;
 
-  override updated(changedProperties: Map<string, unknown>) {
-    if (changedProperties.has('x')) {
-      this.style.removeProperty('left');
-      this.style.setProperty('--obc-poi-x', `${this.x}px`);
-    }
-    if (
-      changedProperties.has('buttonY') ||
-      changedProperties.has('y') ||
-      changedProperties.has('fixedTarget')
-    ) {
-      this.updatePosition();
-    }
+  override connectedCallback() {
+    super.connectedCallback();
+    this.setupHeaderObserver();
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.headerObserver?.disconnect();
+    this.headerObserver = undefined;
+  }
+
+  private setupHeaderObserver() {
+    this.headerObserver?.disconnect();
+    this.headerObserver = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type === 'childList') {
+          this.syncFallbackButtonHeaderContent();
+          this.syncAttachedHeaderState();
+          return;
+        }
+        if (
+          mutation.type === 'attributes' &&
+          mutation.target instanceof HTMLElement &&
+          mutation.target.getAttribute('slot') === 'header'
+        ) {
+          this.syncFallbackButtonHeaderContent();
+          this.syncAttachedHeaderState();
+          return;
+        }
+      }
+    });
+    this.headerObserver.observe(this, {
+      childList: true,
+      attributes: true,
+      attributeFilter: ['slot'],
+    });
   }
 
   private updatePosition() {
@@ -223,6 +306,22 @@ export class ObcPoi extends LitElement {
       case ObcPoiState.Enabled:
       default:
         return ObcPoiButtonState.Enabled;
+    }
+  }
+
+  private get resolvedHeaderState(): ObcPoiHeaderState {
+    switch (this.buttonState) {
+      case ObcPoiButtonState.Caution:
+        return ObcPoiHeaderState.Caution;
+      case ObcPoiButtonState.Warning:
+        return ObcPoiHeaderState.Warning;
+      case ObcPoiButtonState.Alarm:
+        return ObcPoiHeaderState.Alarm;
+      case ObcPoiButtonState.Enabled:
+      default:
+        return this.selected
+          ? ObcPoiHeaderState.Selected
+          : ObcPoiHeaderState.Enabled;
     }
   }
 
@@ -393,26 +492,115 @@ export class ObcPoi extends LitElement {
     </div>`;
   }
 
-  protected renderPoiButton() {
+  /* ---------- Slotted button sync ---------- */
+
+  private slottedButton: HTMLElement | null = null;
+
+  private handleButtonSlotChange(e: Event) {
+    const slot = e.target as HTMLSlotElement;
+    const assigned = slot.assignedElements({flatten: false});
+    this.slottedButton =
+      assigned.length > 0 ? (assigned[0] as HTMLElement) : null;
+    this.syncFallbackButtonHeaderContent();
+    this.syncSlottedButtonProps();
+  }
+
+  private syncFallbackButtonHeaderContent() {
+    if (this.slottedButton) {
+      return;
+    }
+
+    const button = this.renderRoot.querySelector(
+      'obc-poi-button.poi-button'
+    ) as HTMLElement | null;
+    if (!button) {
+      return;
+    }
+
+    for (const child of Array.from(this.children)) {
+      if (
+        !(child instanceof HTMLElement) ||
+        child.getAttribute('slot') !== 'header'
+      ) {
+        continue;
+      }
+      if (child.parentElement !== button) {
+        button.appendChild(child);
+      }
+      this.applyHeaderState(child);
+    }
+  }
+
+  private applyHeaderState(root: ParentNode) {
+    const headers = [
+      ...(root instanceof Element && root.matches('obc-poi-header')
+        ? [root]
+        : []),
+      ...root.querySelectorAll('obc-poi-header'),
+    ] as HTMLElement[];
+
+    for (const header of headers) {
+      (header as {state?: ObcPoiHeaderState}).state = this.resolvedHeaderState;
+      header.setAttribute('state', this.resolvedHeaderState);
+    }
+  }
+
+  private syncAttachedHeaderState() {
+    this.applyHeaderState(this.renderRoot);
+  }
+
+  private syncSlottedButtonProps() {
+    const btn = this.slottedButton;
+    if (!btn) return;
+
+    const exportParts = btn
+      .getAttribute('exportparts')
+      ?.split(',')
+      .map((part) => part.trim())
+      .filter(Boolean);
+    if (!exportParts?.includes('icon')) {
+      btn.setAttribute(
+        'exportparts',
+        exportParts?.length ? `${exportParts.join(',')},icon` : 'icon'
+      );
+    }
+
+    const props = btn as unknown as Record<string, unknown>;
+    props.layout = 'inline';
+    props.relativeDirection = this.relativeDirection;
+    props.selected = this.selected;
+    props.hasHeader = this.hasHeader;
+    props.headerContent = this.headerContent;
+    props.state = this.buttonState;
+    props.value = this.buttonVisualState;
+    props.overlapOpaque = this.overlapOpaque;
+    props.type = this.buttonType;
+    props.data = this.data;
+  }
+
+  private renderPoiButton() {
     return html`
-      <obc-poi-button
-        layout="inline"
-        class=${classMap({
-          'poi-button': true,
-          overlapped: this.value === ObcPoiValue.Overlapped,
-        })}
-        .relativeDirection=${this.relativeDirection}
-        .selected=${this.selected}
-        .hasHeader=${this.hasHeader}
-        .state=${this.buttonState}
-        .value=${this.buttonVisualState}
-        .overlapOpaque=${this.overlapOpaque}
-        .type=${this.buttonType}
-        .data=${this.data}
-      >
-        <slot></slot>
-        <slot name="header" slot="header"></slot>
-      </obc-poi-button>
+      <slot name="button" @slotchange=${this.handleButtonSlotChange}>
+        <obc-poi-button
+          layout="inline"
+          class=${classMap({
+            'poi-button': true,
+            overlapped: this.value === ObcPoiValue.Overlapped,
+          })}
+          exportparts="icon"
+          .relativeDirection=${this.relativeDirection}
+          .selected=${this.selected}
+          .hasHeader=${this.hasHeader}
+          .headerContent=${this.headerContent}
+          .state=${this.buttonState}
+          .value=${this.buttonVisualState}
+          .overlapOpaque=${this.overlapOpaque}
+          .type=${this.buttonType}
+          .data=${this.data}
+        >
+          <slot></slot>
+        </obc-poi-button>
+      </slot>
     `;
   }
 
@@ -438,6 +626,29 @@ export class ObcPoi extends LitElement {
         ${this.renderInlinePointer()} ${this.renderOutsideArrow()}
       </div>
     `;
+  }
+
+  protected override firstUpdated(_changedProperties: Map<string, unknown>) {
+    this.syncFallbackButtonHeaderContent();
+    this.syncAttachedHeaderState();
+  }
+
+  protected override updated(changedProperties: Map<string, unknown>) {
+    super.updated(changedProperties);
+    if (changedProperties.has('x')) {
+      this.style.removeProperty('left');
+      this.style.setProperty('--obc-poi-x', `${this.x}px`);
+    }
+    if (
+      changedProperties.has('buttonY') ||
+      changedProperties.has('y') ||
+      changedProperties.has('fixedTarget')
+    ) {
+      this.updatePosition();
+    }
+    this.syncFallbackButtonHeaderContent();
+    this.syncSlottedButtonProps();
+    this.syncAttachedHeaderState();
   }
 
   static override styles = unsafeCSS(componentStyle);

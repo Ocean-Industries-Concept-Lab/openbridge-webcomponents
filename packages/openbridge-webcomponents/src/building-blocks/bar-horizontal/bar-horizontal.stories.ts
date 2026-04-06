@@ -12,6 +12,7 @@ import {
   BorderRadiusPosition,
   InstrumentState,
 } from './bar-horizontal.js';
+import {Priority} from '../../navigation-instruments/types.js';
 
 const SAMPLE_DATA = [
   {label: 'Jan', value: 3.5},
@@ -29,7 +30,7 @@ const SAMPLE_DATA = [
 ];
 
 const meta: Meta = {
-  title: 'Building Blocks/Bar Horizontal',
+  title: 'Bars and Graphs/Bar Horizontal',
   tags: ['autodocs', '6.0'],
   component: 'obc-bar-horizontal',
   argTypes: {
@@ -38,13 +39,13 @@ const meta: Meta = {
     width: {control: {type: 'range', min: 0, max: 768}},
     barThickness: {control: {type: 'range', min: 8, max: 48}},
     hasScale: {control: {type: 'boolean'}},
-    mainTickbars: {
+    mainTickmarks: {
       control: {type: 'object'},
       table: {type: {summary: 'number[] | undefined'}},
     },
-    primaryTickbarsInterval: {control: {type: 'number', min: 1}},
-    secondaryTickbarsInterval: {control: {type: 'number', min: 1}},
-    tertiaryTickbarsInterval: {control: {type: 'number', min: 1}},
+    primaryTickmarkInterval: {control: {type: 'number', min: 1}},
+    secondaryTickmarkInterval: {control: {type: 'number', min: 1}},
+    tertiaryTickmarkInterval: {control: {type: 'number', min: 1}},
     scaleType: {
       control: {type: 'select'},
       options: Object.values(ScaleType),
@@ -53,7 +54,7 @@ const meta: Meta = {
       control: {type: 'select'},
       options: Object.values(FrameStyle),
     },
-    hideLabels: {control: {type: 'boolean'}},
+    showLabels: {control: {type: 'boolean'}},
     hasBar: {control: {type: 'boolean'}},
     scaleBackground: {control: {type: 'boolean'}},
     borderRadiusPosition: {
@@ -64,7 +65,7 @@ const meta: Meta = {
       control: {type: 'select'},
       options: Object.values(BorderRadiusPosition),
     },
-    enhanced: {control: {type: 'boolean'}},
+    priority: {control: 'select', options: Object.values(Priority)},
     fillMode: {control: {type: 'radio'}, options: ['fill', 'tint']},
     fillMin: {control: {type: 'number'}},
     fillMax: {control: {type: 'number'}},
@@ -72,7 +73,7 @@ const meta: Meta = {
     setpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
     newSetpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
     atSetpoint: {control: {type: 'boolean'}},
-    disableAutoAtSetpoint: {control: {type: 'boolean'}},
+    autoAtSetpoint: {control: {type: 'boolean'}},
     autoAtSetpointDeadband: {
       control: {type: 'number', min: 0, max: 10, step: 0.5},
     },
@@ -96,18 +97,18 @@ const meta: Meta = {
     width: 480,
     barThickness: 24,
     hasScale: true,
-    mainTickbars: [],
-    primaryTickbarsInterval: 20,
-    secondaryTickbarsInterval: 10,
-    tertiaryTickbarsInterval: undefined,
+    mainTickmarks: [],
+    primaryTickmarkInterval: 20,
+    secondaryTickmarkInterval: 10,
+    tertiaryTickmarkInterval: undefined,
     scaleType: ScaleType.regular,
     frameStyle: FrameStyle.regular,
-    hideLabels: false,
+    showLabels: true,
     hasBar: false,
     scaleBackground: false,
     borderRadiusPosition: undefined,
     borderRadiusPositionExternalScales: undefined,
-    enhanced: false,
+    priority: Priority.regular,
     fillMode: FillMode.fill,
     fillMin: 0,
     fillMax: 40,
@@ -115,10 +116,10 @@ const meta: Meta = {
     setpoint: undefined,
     newSetpoint: undefined,
     atSetpoint: false,
-    disableAutoAtSetpoint: false,
+    autoAtSetpoint: true,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
-    state: 'inCommand',
+    state: 'active',
     side: ExternalScaleSide.bottom,
     advicePosition: AdvicePosition.inner,
     advices: [],
@@ -130,17 +131,17 @@ const meta: Meta = {
       .width=${args.width}
       .barThickness=${args.barThickness}
       .hasScale=${args.hasScale}
-      .mainTickbars=${args.mainTickbars}
-      .primaryTickbarsInterval=${args.primaryTickbarsInterval}
-      .secondaryTickbarsInterval=${args.secondaryTickbarsInterval}
-      .tertiaryTickbarsInterval=${args.tertiaryTickbarsInterval}
+      .mainTickmarks=${args.mainTickmarks}
+      .primaryTickmarkInterval=${args.primaryTickmarkInterval}
+      .secondaryTickmarkInterval=${args.secondaryTickmarkInterval}
+      .tertiaryTickmarkInterval=${args.tertiaryTickmarkInterval}
       .scaleType=${args.scaleType}
       .frameStyle=${args.frameStyle}
-      .hideLabels=${args.hideLabels}
+      .showLabels=${args.showLabels}
       .hasBar=${args.hasBar}
       .scaleBackground=${args.scaleBackground}
       .borderRadiusPosition=${args.borderRadiusPosition}
-      .enhanced=${args.enhanced}
+      .priority=${args.priority}
       .fillMode=${args.fillMode}
       .fillMin=${args.fillMin}
       .fillMax=${args.fillMax}
@@ -148,7 +149,7 @@ const meta: Meta = {
       .setpoint=${args.setpoint}
       .newSetpoint=${args.newSetpoint}
       .atSetpoint=${args.atSetpoint}
-      .disableAutoAtSetpoint=${args.disableAutoAtSetpoint}
+      .autoAtSetpoint=${args.autoAtSetpoint}
       .autoAtSetpointDeadband=${args.autoAtSetpointDeadband}
       .setpointAtZeroDeadband=${args.setpointAtZeroDeadband}
       .state=${args.state}
@@ -170,7 +171,7 @@ export const DefaultBottom: Story = {
     maxValue: 100,
     width: 480,
     side: ExternalScaleSide.bottom,
-    tertiaryTickbarsInterval: 2,
+    tertiaryTickmarkInterval: 2,
     hasBar: true,
     setpoint: 50,
     value: 40,
@@ -179,7 +180,7 @@ export const DefaultBottom: Story = {
 };
 
 export const ComponentSizeComparison: Story = {
-  name: 'Component size comparison (regular/medium/large/xl)',
+  name: 'Component Size Comparison (regular/medium/large/xl)',
 
   render: () => html`
     <div
@@ -195,9 +196,9 @@ export const ComponentSizeComparison: Story = {
             maxValue="100"
             width="480"
             side="bottom"
-            primaryTickbarsInterval="20"
-            secondaryTickbarsInterval="10"
-            tertiaryTickbarsInterval="2"
+            primaryTickmarkInterval="20"
+            secondaryTickmarkInterval="10"
+            tertiaryTickmarkInterval="2"
             hasBar
             setpoint="50"
             value="40"
@@ -217,9 +218,9 @@ export const ComponentSizeComparison: Story = {
             maxValue="100"
             width="480"
             side="bottom"
-            primaryTickbarsInterval="20"
-            secondaryTickbarsInterval="10"
-            tertiaryTickbarsInterval="2"
+            primaryTickmarkInterval="20"
+            secondaryTickmarkInterval="10"
+            tertiaryTickmarkInterval="2"
             hasBar
             setpoint="50"
             value="40"
@@ -239,9 +240,9 @@ export const ComponentSizeComparison: Story = {
             maxValue="100"
             width="480"
             side="bottom"
-            primaryTickbarsInterval="20"
-            secondaryTickbarsInterval="10"
-            tertiaryTickbarsInterval="2"
+            primaryTickmarkInterval="20"
+            secondaryTickmarkInterval="10"
+            tertiaryTickmarkInterval="2"
             hasBar
             setpoint="50"
             value="40"
@@ -259,9 +260,9 @@ export const ComponentSizeComparison: Story = {
             maxValue="100"
             width="480"
             side="bottom"
-            primaryTickbarsInterval="20"
-            secondaryTickbarsInterval="10"
-            tertiaryTickbarsInterval="2"
+            primaryTickmarkInterval="20"
+            secondaryTickmarkInterval="10"
+            tertiaryTickmarkInterval="2"
             hasBar
             setpoint="50"
             value="40"
@@ -287,7 +288,7 @@ export const DefaultTop: Story = {
 };
 
 export const WithBarBottom: Story = {
-  name: 'With bar (bottom side)',
+  name: 'With Bar (bottom side)',
 
   args: {
     minValue: 0,
@@ -298,7 +299,7 @@ export const WithBarBottom: Story = {
 };
 
 export const WithBarTop: Story = {
-  name: 'With bar (top side)',
+  name: 'With Bar (top side)',
 
   args: {
     minValue: 0,
@@ -310,62 +311,62 @@ export const WithBarTop: Story = {
 };
 
 export const NegativeRange: Story = {
-  name: 'Negative range (-100 to 100)',
+  name: 'Negative Range (-100 to 100)',
 
   args: {
     minValue: -100,
     maxValue: 100,
     width: 480,
-    primaryTickbarsInterval: 50,
-    secondaryTickbarsInterval: 10,
+    primaryTickmarkInterval: 50,
+    secondaryTickmarkInterval: 10,
   },
 };
 
 export const SmallRange: Story = {
-  name: 'Small range (0 to 10)',
+  name: 'Small Range (0 to 10)',
 
   args: {
     minValue: 0,
     maxValue: 10,
     width: 480,
-    primaryTickbarsInterval: 2,
-    secondaryTickbarsInterval: 1,
+    primaryTickmarkInterval: 2,
+    secondaryTickmarkInterval: 1,
   },
 };
 
 export const WithBarFillBottom: Story = {
-  name: 'With bar fill (bottom side, enhanced)',
+  name: 'With Bar Fill (bottom side, enhanced)',
 
   args: {
     minValue: 0,
     maxValue: 100,
     width: 480,
     hasBar: true,
-    enhanced: true,
+    priority: Priority.enhanced,
     value: 65,
-    primaryTickbarsInterval: 20,
-    secondaryTickbarsInterval: 10,
+    primaryTickmarkInterval: 20,
+    secondaryTickmarkInterval: 10,
   },
 };
 
 export const WithBarFillTop: Story = {
-  name: 'With bar fill (top side)',
+  name: 'With Bar Fill (top side)',
 
   args: {
     minValue: -100,
     maxValue: 100,
     width: 480,
     hasBar: true,
-    enhanced: false,
+    priority: Priority.regular,
     value: 45,
-    primaryTickbarsInterval: 20,
-    secondaryTickbarsInterval: 10,
+    primaryTickmarkInterval: 20,
+    secondaryTickmarkInterval: 10,
     side: ExternalScaleSide.top,
   },
 };
 
 export const FillModeComparison: Story = {
-  name: 'Fill mode comparison, enhanced (fill vs tint)',
+  name: 'Fill Mode Comparison, Enhanced (fill vs tint)',
 
   render: () => html`
     <div
@@ -380,14 +381,14 @@ export const FillModeComparison: Story = {
           maxValue="100"
           width="480"
           hasBar
-          enhanced
+          priority="enhanced"
           fillMode="${FillMode.fill}"
           fillMin="0"
           fillMax="65"
           value="65"
           setpoint="70"
-          primaryTickbarsInterval="20"
-          secondaryTickbarsInterval="10"
+          primaryTickmarkInterval="20"
+          secondaryTickmarkInterval="10"
         ></obc-bar-horizontal>
       </div>
       <div style="text-align: center;">
@@ -399,14 +400,14 @@ export const FillModeComparison: Story = {
           maxValue="100"
           width="480"
           hasBar
-          enhanced
+          priority="enhanced"
           fillMode="${FillMode.tint}"
           fillMin="40"
           fillMax="80"
           value="65"
           setpoint="70"
-          primaryTickbarsInterval="20"
-          secondaryTickbarsInterval="10"
+          primaryTickmarkInterval="20"
+          secondaryTickmarkInterval="10"
         ></obc-bar-horizontal>
       </div>
       <div style="text-align: center;">
@@ -418,12 +419,12 @@ export const FillModeComparison: Story = {
           maxValue="100"
           width="480"
           hasBar
-          enhanced
+          priority="enhanced"
           fillMode="${FillMode.tint}"
           value="65"
           setpoint="70"
-          primaryTickbarsInterval="20"
-          secondaryTickbarsInterval="10"
+          primaryTickmarkInterval="20"
+          secondaryTickmarkInterval="10"
         ></obc-bar-horizontal>
       </div>
     </div>
@@ -431,21 +432,21 @@ export const FillModeComparison: Story = {
 };
 
 export const TintModeWithAdvice: Story = {
-  name: 'Tint mode with advice overlays',
+  name: 'Tint Mode With Advice Overlays',
 
   args: {
     minValue: -100,
     maxValue: 100,
     width: 520,
     hasBar: true,
-    enhanced: true,
+    priority: Priority.enhanced,
     fillMode: FillMode.tint,
     fillMin: -50,
     fillMax: 50,
     value: 20,
     setpoint: 30,
-    primaryTickbarsInterval: 50,
-    secondaryTickbarsInterval: 10,
+    primaryTickmarkInterval: 50,
+    secondaryTickmarkInterval: 10,
     advicePosition: AdvicePosition.center,
     advices: [
       {min: 40, max: 60, type: AdviceType.caution, hinted: true},
@@ -455,7 +456,7 @@ export const TintModeWithAdvice: Story = {
 };
 
 export const WithAdviceInner: Story = {
-  name: 'With advice overlays (inner positioning)',
+  name: 'With Advice Overlays (inner positioning)',
 
   args: {
     minValue: -100,
@@ -464,9 +465,9 @@ export const WithAdviceInner: Story = {
     hasBar: true,
     value: 10,
     setpoint: 10,
-    primaryTickbarsInterval: 50,
-    secondaryTickbarsInterval: 10,
-    tertiaryTickbarsInterval: 2,
+    primaryTickmarkInterval: 50,
+    secondaryTickmarkInterval: 10,
+    tertiaryTickmarkInterval: 2,
     advicePosition: AdvicePosition.inner,
     advices: [
       {min: 80, max: 100, type: AdviceType.caution, hinted: true},
@@ -480,15 +481,15 @@ export const WithAdviceInner: Story = {
 };
 
 export const WithAdviceOuter: Story = {
-  name: 'With advice overlays (outer positioning)',
+  name: 'With Advice Overlays (outer positioning)',
 
   args: {
     minValue: -100,
     maxValue: 100,
     width: 520,
     hasBar: true,
-    primaryTickbarsInterval: 50,
-    secondaryTickbarsInterval: 10,
+    primaryTickmarkInterval: 50,
+    secondaryTickmarkInterval: 10,
     advicePosition: AdvicePosition.outer,
     advices: [
       {min: 80, max: 100, type: AdviceType.caution, hinted: true},
@@ -502,15 +503,15 @@ export const WithAdviceOuter: Story = {
 };
 
 export const WithAdviceCenter: Story = {
-  name: 'With advice overlays (center positioning)',
+  name: 'With Advice Overlays (center positioning)',
 
   args: {
     minValue: -100,
     maxValue: 100,
     width: 520,
     hasBar: true,
-    primaryTickbarsInterval: 50,
-    secondaryTickbarsInterval: 10,
+    primaryTickmarkInterval: 50,
+    secondaryTickmarkInterval: 10,
     advicePosition: AdvicePosition.center,
     advices: [
       {min: 80, max: 100, type: AdviceType.caution, hinted: true},
@@ -524,134 +525,167 @@ export const WithAdviceCenter: Story = {
 };
 
 export const WithSetpointAtValue: Story = {
-  name: 'With setpoint (value at setpoint)',
+  name: 'With Setpoint (value at setpoint)',
 
   args: {
     minValue: -100,
     maxValue: 100,
     width: 480,
     hasBar: true,
-    enhanced: true,
+    priority: Priority.enhanced,
     value: 50,
     setpoint: 50,
-    primaryTickbarsInterval: 50,
-    secondaryTickbarsInterval: 10,
+    primaryTickmarkInterval: 50,
+    secondaryTickmarkInterval: 10,
   },
 };
 
 export const WithSetpointAwayFromValue: Story = {
-  name: 'With setpoint (value away from setpoint)',
+  name: 'With Setpoint (value away from setpoint)',
 
   args: {
     minValue: -100,
     maxValue: 100,
     width: 480,
     hasBar: true,
-    enhanced: true,
+    priority: Priority.enhanced,
     value: 30,
     setpoint: 70,
-    primaryTickbarsInterval: 50,
-    secondaryTickbarsInterval: 10,
+    primaryTickmarkInterval: 50,
+    secondaryTickmarkInterval: 10,
   },
 };
 
-export const SetpointStateComparison: Story = {
-  name: 'State comparison (inCommand/active/loading/off/focus)',
-
+export const StateComparison: Story = {
   render: () => html`
-    <div
-      style="display: flex; flex-direction:column; gap: 40px; align-items: flex-start;"
-    >
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
-          inCommand
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+      <!-- Header row -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(2, 1fr); gap: 16px; align-items: center;"
+      >
+        <div></div>
+        <div
+          style="text-align: center; font-weight: bold; font-size: 12px; color: #ccc;"
+        >
+          regular
         </div>
-        <obc-bar-horizontal
-          minValue="-100"
-          maxValue="100"
-          width="480"
-          hasBar
+        <div
+          style="text-align: center; font-weight: bold; font-size: 12px; color: #ccc;"
+        >
           enhanced
-          value="50"
-          setpoint="50"
-          state="inCommand"
-          primaryTickbarsInterval="50"
-          secondaryTickbarsInterval="10"
-        ></obc-bar-horizontal>
-      </div>
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
-          active
         </div>
-        <obc-bar-horizontal
-          minValue="-100"
-          maxValue="100"
-          width="480"
-          hasBar
-          enhanced
-          value="30"
-          setpoint="70"
-          state="active"
-          primaryTickbarsInterval="50"
-          secondaryTickbarsInterval="10"
-        ></obc-bar-horizontal>
       </div>
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
-          loading
+
+      <!-- active row -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(2, 1fr); gap: 16px; align-items: center;"
+      >
+        <div style="font-size: 12px; color: #888;">active</div>
+        <div>
+          <obc-bar-horizontal
+            minValue="-100"
+            maxValue="100"
+            width="480"
+            hasBar
+            priority="regular"
+            value="30"
+            setpoint="50"
+            state="active"
+            primaryTickmarkInterval="50"
+            secondaryTickmarkInterval="10"
+          ></obc-bar-horizontal>
         </div>
-        <obc-bar-horizontal
-          minValue="-100"
-          maxValue="100"
-          width="480"
-          hasBar
-          enhanced
-          value="-20"
-          setpoint="40"
-          state="loading"
-          primaryTickbarsInterval="50"
-          secondaryTickbarsInterval="10"
-        ></obc-bar-horizontal>
-      </div>
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">off</div>
-        <obc-bar-horizontal
-          minValue="-100"
-          maxValue="100"
-          width="480"
-          hasBar
-          enhanced
-          value="60"
-          setpoint="-30"
-          state="off"
-          primaryTickbarsInterval="50"
-          secondaryTickbarsInterval="10"
-        ></obc-bar-horizontal>
-      </div>
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
-          adjusting/touching
+        <div>
+          <obc-bar-horizontal
+            minValue="-100"
+            maxValue="100"
+            width="480"
+            hasBar
+            priority="enhanced"
+            value="30"
+            setpoint="50"
+            state="active"
+            primaryTickmarkInterval="50"
+            secondaryTickmarkInterval="10"
+          ></obc-bar-horizontal>
         </div>
-        <obc-bar-horizontal
-          minValue="-100"
-          maxValue="100"
-          width="480"
-          hasBar
-          enhanced
-          value="30"
-          setpoint="30"
-          .newSetpoint=${70}
-          state="inCommand"
-          primaryTickbarsInterval="50"
-          secondaryTickbarsInterval="10"
-        ></obc-bar-horizontal>
+      </div>
+
+      <!-- loading row -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(2, 1fr); gap: 16px; align-items: center;"
+      >
+        <div style="font-size: 12px; color: #888;">loading</div>
+        <div>
+          <obc-bar-horizontal
+            minValue="-100"
+            maxValue="100"
+            width="480"
+            hasBar
+            priority="regular"
+            value="30"
+            setpoint="50"
+            state="loading"
+            primaryTickmarkInterval="50"
+            secondaryTickmarkInterval="10"
+          ></obc-bar-horizontal>
+        </div>
+        <div>
+          <obc-bar-horizontal
+            minValue="-100"
+            maxValue="100"
+            width="480"
+            hasBar
+            priority="enhanced"
+            value="30"
+            setpoint="50"
+            state="loading"
+            primaryTickmarkInterval="50"
+            secondaryTickmarkInterval="10"
+          ></obc-bar-horizontal>
+        </div>
+      </div>
+
+      <!-- off row -->
+      <div
+        style="display: grid; grid-template-columns: 80px repeat(2, 1fr); gap: 16px; align-items: center;"
+      >
+        <div style="font-size: 12px; color: #888;">off</div>
+        <div>
+          <obc-bar-horizontal
+            minValue="-100"
+            maxValue="100"
+            width="480"
+            hasBar
+            priority="regular"
+            value="30"
+            setpoint="50"
+            state="off"
+            primaryTickmarkInterval="50"
+            secondaryTickmarkInterval="10"
+          ></obc-bar-horizontal>
+        </div>
+        <div>
+          <obc-bar-horizontal
+            minValue="-100"
+            maxValue="100"
+            width="480"
+            hasBar
+            priority="enhanced"
+            value="30"
+            setpoint="50"
+            state="off"
+            primaryTickmarkInterval="50"
+            secondaryTickmarkInterval="10"
+          ></obc-bar-horizontal>
+        </div>
       </div>
     </div>
   `,
 };
 
 export const ScaleTypeComparison: Story = {
-  name: 'Scale type comparison (regular vs condensed)',
+  name: 'Scale Type Comparison (regular vs condensed)',
 
   render: () => html`
     <div
@@ -666,9 +700,9 @@ export const ScaleTypeComparison: Story = {
           .maxValue=${100}
           .width=${480}
           .scaleType=${ScaleType.regular}
-          .primaryTickbarsInterval=${20}
-          .secondaryTickbarsInterval=${10}
-          .tertiaryTickbarsInterval=${2}
+          .primaryTickmarkInterval=${20}
+          .secondaryTickmarkInterval=${10}
+          .tertiaryTickmarkInterval=${2}
           .hasBar=${true}
         ></obc-bar-horizontal>
       </div>
@@ -681,9 +715,9 @@ export const ScaleTypeComparison: Story = {
           .maxValue=${100}
           .width=${480}
           .scaleType=${ScaleType.condensed}
-          .primaryTickbarsInterval=${20}
-          .secondaryTickbarsInterval=${10}
-          .tertiaryTickbarsInterval=${2}
+          .primaryTickmarkInterval=${20}
+          .secondaryTickmarkInterval=${10}
+          .tertiaryTickmarkInterval=${2}
           .hasBar=${true}
         ></obc-bar-horizontal>
       </div>
@@ -692,7 +726,7 @@ export const ScaleTypeComparison: Story = {
 };
 
 export const HorizontalBottomScaleBackground: Story = {
-  name: 'With scale background (Gauge style, bottom side)',
+  name: 'With Scale Background (Gauge style, bottom side)',
 
   args: {
     minValue: 0,
@@ -702,18 +736,18 @@ export const HorizontalBottomScaleBackground: Story = {
     hasBar: true,
     borderRadiusPosition: BorderRadiusPosition.innerFirstChild,
     scaleBackground: true,
-    enhanced: true,
+    priority: Priority.enhanced,
     value: 40,
     // setpoint: 50,
-    primaryTickbarsInterval: 20,
-    secondaryTickbarsInterval: 10,
-    tertiaryTickbarsInterval: 2,
+    primaryTickmarkInterval: 20,
+    secondaryTickmarkInterval: 10,
+    tertiaryTickmarkInterval: 2,
     advices: [],
   },
 };
 
 export const ChartIntegrationBottom: Story = {
-  name: 'Chart integration (as external bottom axis)',
+  name: 'Chart Integration (as external bottom axis)',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -724,9 +758,9 @@ export const ChartIntegrationBottom: Story = {
       control: 'boolean',
       description: 'Horizontal scale: show bar',
     },
-    hScaleHideLabels: {
+    hScaleShowLabels: {
       control: 'boolean',
-      description: 'Horizontal scale: hide labels',
+      description: 'Horizontal scale: show labels',
     },
     hScaleAdvices: {
       control: 'boolean',
@@ -770,7 +804,7 @@ export const ChartIntegrationBottom: Story = {
     height: 320,
     // Horizontal scale defaults
     hScaleHasBar: true,
-    hScaleHideLabels: false,
+    hScaleShowLabels: true,
     hScaleAdvices: true,
     hScaleFillMode: 'fill',
     hScaleAdvicePosition: 'inner',
@@ -799,7 +833,7 @@ export const ChartIntegrationBottom: Story = {
         .width=${_args.width}
         .side=${ExternalScaleSide.bottom}
         .hasScale=${true}
-        .hideLabels=${_args.hScaleHideLabels}
+        .showLabels=${_args.hScaleShowLabels}
         .hasBar=${_args.hScaleHasBar}
         .barThickness=${_args.hScaleBarThickness}
         .fillMode=${_args.hScaleFillMode === 'fill'
@@ -820,16 +854,16 @@ export const ChartIntegrationBottom: Story = {
               {min: 8, max: 9.5, type: AdviceType.advice, hinted: false},
             ]
           : []}
-        .primaryTickbarsInterval=${1}
-        .secondaryTickbarsInterval=${0.5}
-        .tertiaryTickbarsInterval=${0.125}
+        .primaryTickmarkInterval=${1}
+        .secondaryTickmarkInterval=${0.5}
+        .tertiaryTickmarkInterval=${0.125}
       ></obc-bar-horizontal>
     </obc-line-graph>
   `,
 };
 
 export const ChartIntegrationBottomBackground: Story = {
-  name: 'Chart integration (as external bottom axis, scaleBackground)',
+  name: 'Chart Integration (as external bottom axis, scaleBackground)',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -840,9 +874,9 @@ export const ChartIntegrationBottomBackground: Story = {
       control: 'boolean',
       description: 'Horizontal scale: show bar',
     },
-    hScaleHideLabels: {
+    hScaleShowLabels: {
       control: 'boolean',
-      description: 'Horizontal scale: hide labels',
+      description: 'Horizontal scale: show labels',
     },
     hScaleAdvices: {
       control: 'boolean',
@@ -886,7 +920,7 @@ export const ChartIntegrationBottomBackground: Story = {
     height: 320,
     // Horizontal scale defaults
     hScaleHasBar: true,
-    hScaleHideLabels: false,
+    hScaleShowLabels: true,
     hScaleAdvices: true,
     hScaleFillMode: 'fill',
     hScaleAdvicePosition: 'inner',
@@ -915,7 +949,7 @@ export const ChartIntegrationBottomBackground: Story = {
         .width=${_args.width}
         .side=${ExternalScaleSide.bottom}
         .hasScale=${true}
-        .hideLabels=${_args.hScaleHideLabels}
+        .showLabels=${_args.hScaleShowLabels}
         .hasBar=${_args.hScaleHasBar}
         .barThickness=${_args.hScaleBarThickness}
         .fillMode=${_args.hScaleFillMode === 'fill'
@@ -934,9 +968,9 @@ export const ChartIntegrationBottomBackground: Story = {
           {min: 2, max: 5, type: AdviceType.caution, hinted: true},
           {min: 8, max: 9.5, type: AdviceType.advice, hinted: false},
         ]}
-        .primaryTickbarsInterval=${1}
-        .secondaryTickbarsInterval=${0.5}
-        .tertiaryTickbarsInterval=${0.125}
+        .primaryTickmarkInterval=${1}
+        .secondaryTickmarkInterval=${0.5}
+        .tertiaryTickmarkInterval=${0.125}
         .scaleBackground=${true}
       ></obc-bar-horizontal>
     </obc-line-graph>
@@ -953,7 +987,7 @@ export const ChartIntegrationBottomBackground: Story = {
  * This story demonstrates both modes side-by-side with resizable containers.
  */
 export const FixedAspectRatioComparison: StoryObj = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   render: () => {
     const wrapper = document.createElement('div');
     wrapper.style.cssText = `
@@ -1018,8 +1052,8 @@ export const FixedAspectRatioComparison: StoryObj = {
     barNormal.setpoint = 80;
     // setpoint is now shown when defined
     barNormal.fillMode = FillMode.fill;
-    barNormal.enhanced = false;
-    barNormal.primaryTickbarsInterval = 20;
+    barNormal.priority = Priority.regular;
+    barNormal.primaryTickmarkInterval = 20;
     barNormal.fixedAspectRatio = false;
     barNormal.style.cssText = 'flex: 1; height: 100%;';
 
@@ -1047,8 +1081,8 @@ export const FixedAspectRatioComparison: StoryObj = {
     barFixed.setpoint = 80;
     // setpoint is now shown when defined
     barFixed.fillMode = FillMode.fill;
-    barFixed.enhanced = true;
-    barFixed.primaryTickbarsInterval = 20;
+    barFixed.priority = Priority.enhanced;
+    barFixed.primaryTickmarkInterval = 20;
     barFixed.fixedAspectRatio = true;
     barFixed.style.cssText = 'flex: 1; height: 100%;';
 

@@ -1,10 +1,11 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcSliderDouble, ObcSliderDoubleVariant} from './slider-double.js';
 import './slider-double.js';
+import {html} from 'lit';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcSliderDouble> = {
-  title: 'UI Components/Input controls/Slider Double',
+  title: 'UI Components/Input Controls/Slider Double',
   tags: ['autodocs', '6.0'],
   component: 'obc-slider-double',
   args: {
@@ -32,13 +33,28 @@ const meta: Meta<typeof ObcSliderDouble> = {
       options: Object.values(ObcSliderDoubleVariant),
       control: {type: 'select'},
     },
-    hugContainer: {
-      control: {type: 'boolean'},
-    },
     allowSeeking: {
       control: {type: 'boolean'},
     },
+    disabled: {
+      control: {type: 'boolean'},
+    },
   },
+  render: (args) => html`
+    <obc-slider-double
+      .low=${args.low}
+      .high=${args.high}
+      .min=${args.min}
+      .max=${args.max}
+      .step=${args.step}
+      .labelUnit=${args.labelUnit}
+      .labelDecimals=${args.labelDecimals}
+      .labelWidth=${args.labelWidth}
+      .variant=${args.variant}
+      ?allowSeeking=${args.allowSeeking}
+      .disabled=${args.disabled}
+    ></obc-slider-double>
+  `,
 } satisfies Meta<typeof ObcSliderDouble>;
 
 export default meta;
@@ -87,5 +103,13 @@ export const Step: Story = {
 export const AllowSeeking: Story = {
   args: {
     allowSeeking: true,
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    low: 20,
+    high: 80,
+    disabled: true,
   },
 };

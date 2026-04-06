@@ -2,12 +2,6 @@
   box-sizing: border-box;
 }
 
-@keyframes spin {
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
 .point-wrapper {
   width: 0;
   height: 0;
@@ -106,25 +100,12 @@
     flex-direction: row-reverse;
   }
 
-  &.progress .icon-holder::before {
-    box-sizing: border-box;
-    content: "";
+  .progress-ring {
     position: absolute;
     top: -1px;
     left: -1px;
     width: calc(100% + 2px);
     height: calc(100% + 2px);
-    border: var(--automation-components-button-progress-bar-stroke) solid
-      var(--container-backdrop-color);
-    border-radius: 100%;
-    z-index: 0;
-  }
-
-  .progress-spinner {
-    position: absolute;
-    top: -1px;
-    left: -1px;
-    animation: spin 3s linear infinite;
   }
 }
 
@@ -191,7 +172,7 @@
     }
   }
 
-  .icon-siluette {
+  .icon-silhouette {
     stroke: var(--border-silhouette-color);
     stroke-width: 2;
     position: absolute;
@@ -219,6 +200,16 @@
 .badge-bottom-left {
   bottom: 0;
   left: 0;
+}
+
+.progress .icon-holder {
+  border-color: transparent !important;
+  background: var(--automation-pipe-primary-color) !important;
+
+  .icon-primary {
+    width: var(--automation-components-button-icon-size);
+    height: var(--automation-components-button-icon-size);
+  }
 }
 
 .state-closed .icon-holder {

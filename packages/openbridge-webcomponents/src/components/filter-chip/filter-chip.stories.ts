@@ -6,7 +6,7 @@ import '../../icons/icon-placeholder.js';
 import '../../icons/icon-check-google.js';
 
 const meta: Meta<ObcFilterChip> = {
-  title: 'UI Components/Selection controls and switches/Filter Chip',
+  title: 'UI Components/Selection Controls and Switches/Filter Chip',
   tags: ['6.0'],
   component: 'obc-filter-chip',
   argTypes: {
@@ -42,25 +42,25 @@ const Template = (args) => html`
 /* ─────────────────────────  STORIES  ───────────────────────── */
 
 export const CheckedWithIcon: Story = {
-  name: 'Checked – icon on',
+  name: 'Checked – Icon On',
   args: {checked: true, showIcon: true},
   render: Template,
 };
 
 export const CheckedNoIcon: Story = {
-  name: 'Checked – icon off',
+  name: 'Checked – Icon Off',
   args: {checked: true, showIcon: false},
   render: Template,
 };
 
 export const UncheckedWithIcon: Story = {
-  name: 'Unchecked – icon on',
+  name: 'Unchecked – Icon On',
   args: {checked: false, showIcon: true},
   render: Template,
 };
 
 export const UncheckedNoIcon: Story = {
-  name: 'Unchecked – icon off',
+  name: 'Unchecked – Icon Off',
   args: {checked: false, showIcon: false},
   render: Template,
 };

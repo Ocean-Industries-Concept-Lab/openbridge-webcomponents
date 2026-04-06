@@ -33,19 +33,14 @@ import {
   ObcAlertFrameThickness,
   ObcAlertFrameType,
 } from '../../components/alert-frame/alert-frame.js';
+import {CircularProgressMode} from '../../building-blocks/circular-progress/circular-progress.js';
 
 const meta: Meta<typeof ObcAutomationButton> = {
-  title: 'Automation/Automation devices/Automation button',
+  title: 'Automation/Automation Devices/Automation Button',
   tags: ['autodocs', '6.0'],
   component: 'obc-automation-button',
   decorators: [crossDecorator],
   argTypes: {
-    hasReadoutStack: {
-      control: {type: 'boolean'},
-    },
-    hasIdTag: {
-      control: {type: 'boolean'},
-    },
     readoutPosition: {
       options: ['top', 'bottom', 'left', 'right'],
       control: {type: 'radio'},
@@ -77,13 +72,24 @@ const meta: Meta<typeof ObcAutomationButton> = {
       ],
       control: {type: 'radio'},
     },
+    progressMode: {
+      options: Object.values(CircularProgressMode),
+      control: {type: 'select'},
+      if: {arg: 'progress'},
+    },
+    progressValue: {
+      control: {type: 'range', min: 0, max: 100, step: 1},
+      if: {arg: 'progress'},
+    },
   },
   args: {
-    hideReadoutStack: false,
+    showReadoutStack: true,
+    showAlertCategoryIcon: true,
     hasIdTag: true,
     readoutPosition: AutomationButtonReadoutPosition.bottom,
     readoutSize: AutomationButtonReadoutStackSize.regular,
     positioning: AutomationButtonPositioning.point,
+    showAlertIcon: true,
   },
   parameters: {
     // Overrides the default behavior and pauses the animation at the first frame at the component level for all stories.
@@ -95,24 +101,23 @@ export default meta;
 type Story = StoryObj<ObcAutomationButton>;
 
 export const ValveOpen: Story = {
-  args: {
-    direction: 'forward-fast',
-    tag: {},
-  },
-
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [];
     const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html`<obc-automation-button
       state="open"
-      .hideReadoutStack=${args.hideReadoutStack}
+      .showReadoutStack=${args.showReadoutStack}
       .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       .variant=${args.variant}
       .positioning=${args.positioning}
+      .showAlertCategoryIcon=${args.showAlertCategoryIcon}
+      .showAlertIcon=${args.showAlertIcon}
       ?alert=${args.alert}
       ?progress=${args.progress}
+      .progressMode=${args.progressMode}
+      .progressValue=${args.progressValue}
     >
       <obi-twoway-digital-open
         usecsscolor
@@ -121,7 +126,7 @@ export const ValveOpen: Story = {
       ></obi-twoway-digital-open>
       <obi-twoway-digital-open
         usecsscolor
-        slot="icon-siluette"
+        slot="icon-silhouette"
         style="display: block; transform: rotate(90deg); line-height: 0;"
       ></obi-twoway-digital-open>
     </obc-automation-button>`;
@@ -167,16 +172,20 @@ export const ValveAlert: Story = {
     const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html` <obc-automation-button
       state="open"
-      .hideReadoutStack=${args.hideReadoutStack}
+      .showReadoutStack=${args.showReadoutStack}
       .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       .alertFrameStatus=${args.alertFrameStatus}
       .alertFrameThickness=${args.alertFrameThickness}
       .alertFrameType=${args.alertFrameType}
+      .showAlertCategoryIcon=${args.showAlertCategoryIcon}
+      .showAlertIcon=${args.showAlertIcon}
       .positioning=${args.positioning}
       ?alert=${args.alert}
       ?progress=${args.progress}
+      .progressMode=${args.progressMode}
+      .progressValue=${args.progressValue}
     >
       <obi-twoway-digital-open
         usecsscolor
@@ -196,12 +205,14 @@ export const ValveBadges: Story = {
     const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html` <obc-automation-button
       state="open"
-      .hideReadoutStack=${args.hideReadoutStack}
+      .showReadoutStack=${args.showReadoutStack}
       .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       ?alert=${args.alert}
       ?progress=${args.progress}
+      .progressMode=${args.progressMode}
+      .progressValue=${args.progressValue}
       hasBadgeSpacer
       .positioning=${args.positioning}
     >
@@ -212,39 +223,44 @@ export const ValveBadges: Story = {
       ></obi-twoway-digital-open>
       <obc-automation-badge slot="badge-top-right">
         <obi-alert-off-google></obi-alert-off-google>
-        <obi-alert-off-google slot="icon-siluette"></obi-alert-off-google>
+        <obi-alert-off-google slot="icon-silhouette"></obi-alert-off-google>
       </obc-automation-badge>
       <obc-automation-badge slot="badge-top-left">
         <obi-auto></obi-auto>
-        <obi-auto slot="icon-siluette"></obi-auto>
+        <obi-auto slot="icon-silhouette"></obi-auto>
       </obc-automation-badge>
       <obc-automation-badge slot="badge-bottom-left">
         <obi-duty></obi-duty>
-        <obi-duty slot="icon-siluette"></obi-duty>
+        <obi-duty slot="icon-silhouette"></obi-duty>
       </obc-automation-badge>
       <obc-automation-badge slot="badge-bottom-right">
         <obi-command-locked-f></obi-command-locked-f>
-        <obi-command-locked-f slot="icon-siluette"></obi-command-locked-f>
+        <obi-command-locked-f slot="icon-silhouette"></obi-command-locked-f>
       </obc-automation-badge>
     </obc-automation-button>`;
   },
 };
 
 export const ValveProgress: Story = {
+  tags: ['skip-test'],
   args: {
     progress: true,
+    progressMode: CircularProgressMode.indeterminate,
+    progressValue: 0,
   },
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [];
     const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html` <obc-automation-button
       state="open"
-      .hideReadoutStack=${args.hideReadoutStack}
+      .showReadoutStack=${args.showReadoutStack}
       .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       ?alert=${args.alert}
       ?progress=${args.progress}
+      .progressMode=${args.progressMode}
+      .progressValue=${args.progressValue}
       .positioning=${args.positioning}
     >
       <obi-twoway-digital-open
@@ -256,19 +272,115 @@ export const ValveProgress: Story = {
   },
 };
 
+export const ValveProgressDeterminate: Story = {
+  tags: ['skip-test'],
+  args: {
+    progress: true,
+    progressMode: CircularProgressMode.determinate,
+    progressValue: 65,
+  },
+  render(args) {
+    const readouts: AutomationButtonReadoutStack[] = [];
+    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
+    return html` <obc-automation-button
+      state="open"
+      .showReadoutStack=${args.showReadoutStack}
+      .hasIdTag=${args.hasIdTag}
+      .readouts=${readouts}
+      .tag=${tag}
+      ?alert=${args.alert}
+      ?progress=${args.progress}
+      .progressMode=${args.progressMode}
+      .progressValue=${args.progressValue}
+      .positioning=${args.positioning}
+    >
+      <obi-twoway-digital-open
+        usecsscolor
+        slot="icon"
+        style="display: block; transform: rotate(90deg); line-height: 0;"
+      ></obi-twoway-digital-open>
+    </obc-automation-button>`;
+  },
+};
+
+export const ValveProgressProgressive: Story = {
+  tags: ['skip-test'],
+  args: {
+    progress: true,
+    progressMode: CircularProgressMode.progressiveIndeterminate,
+    progressValue: 40,
+  },
+  render(args) {
+    const readouts: AutomationButtonReadoutStack[] = [];
+    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
+    return html` <obc-automation-button
+      state="open"
+      .showReadoutStack=${args.showReadoutStack}
+      .hasIdTag=${args.hasIdTag}
+      .readouts=${readouts}
+      .tag=${tag}
+      ?alert=${args.alert}
+      ?progress=${args.progress}
+      .progressMode=${args.progressMode}
+      .progressValue=${args.progressValue}
+      .positioning=${args.positioning}
+    >
+      <obi-twoway-digital-open
+        usecsscolor
+        slot="icon"
+        style="display: block; transform: rotate(90deg); line-height: 0;"
+      ></obi-twoway-digital-open>
+    </obc-automation-button>`;
+  },
+};
+
+export const SquareProgressDeterminate: Story = {
+  tags: ['skip-test'],
+  args: {
+    progress: true,
+    progressMode: CircularProgressMode.determinate,
+    progressValue: 50,
+    variant: AutomationButtonVariant.square,
+  },
+  render(args) {
+    const readouts: AutomationButtonReadoutStack[] = [];
+    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
+    return html` <obc-automation-button
+      state="open"
+      .showReadoutStack=${args.showReadoutStack}
+      .hasIdTag=${args.hasIdTag}
+      .readouts=${readouts}
+      .tag=${tag}
+      ?alert=${args.alert}
+      ?progress=${args.progress}
+      .progressMode=${args.progressMode}
+      .progressValue=${args.progressValue}
+      .variant=${args.variant}
+      .positioning=${args.positioning}
+    >
+      <obi-switch-horizontal-on
+        usecsscolor
+        slot="icon"
+      ></obi-switch-horizontal-on>
+    </obc-automation-button>`;
+  },
+};
+
 export const ValveClosed: Story = {
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [];
     const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html` <obc-automation-button
       state="closed"
-      .hideReadoutStack=${args.hideReadoutStack}
+      .showReadoutStack=${args.showReadoutStack}
       .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       .static=${args.static}
       ?alert=${args.alert}
       ?progress=${args.progress}
+      .progressMode=${args.progressMode}
+      .progressValue=${args.progressValue}
       .positioning=${args.positioning}
     >
       <obi-twoway-digital-closed
@@ -293,13 +405,15 @@ export const ValveNoLabels: Story = {
     const tag: AutomationButtonReadoutStackTag | null = null;
     return html` <obc-automation-button
       state="open"
-      .hideReadoutStack=${true}
+      .showReadoutStack=${false}
       .hasIdTag=${false}
       .readouts=${readouts}
       .tag=${tag}
       .variant=${args.variant}
       ?alert=${args.alert}
       ?progress=${args.progress}
+      .progressMode=${args.progressMode}
+      .progressValue=${args.progressValue}
       .positioning=${args.positioning}
     >
       <obi-twoway-digital-open
@@ -309,7 +423,7 @@ export const ValveNoLabels: Story = {
       ></obi-twoway-digital-open>
       <obi-twoway-digital-open
         usecsscolor
-        slot="icon-siluette"
+        slot="icon-silhouette"
         style="display: block; transform: rotate(90deg); line-height: 0;"
       ></obi-twoway-digital-open>
     </obc-automation-button>`;
@@ -325,12 +439,14 @@ export const SwitchOn: Story = {
     return html` <obc-automation-button
       state="open"
       variant="square"
-      .hideReadoutStack=${args.hideReadoutStack}
+      .showReadoutStack=${args.showReadoutStack}
       .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       ?alert=${args.alert}
       ?progress=${args.progress}
+      .progressMode=${args.progressMode}
+      .progressValue=${args.progressValue}
       .positioning=${args.positioning}
     >
       <obi-switch-horizontal-on
@@ -351,12 +467,14 @@ export const SwitchOff: Story = {
     return html` <obc-automation-button
       state="closed"
       variant="square"
-      .hideReadoutStack=${args.hideReadoutStack}
+      .showReadoutStack=${args.showReadoutStack}
       .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       ?alert=${args.alert}
       ?progress=${args.progress}
+      .progressMode=${args.progressMode}
+      .progressValue=${args.progressValue}
       .positioning=${args.positioning}
     >
       <obi-switch-horizontal-off
@@ -377,12 +495,14 @@ export const DamperOn: Story = {
     return html` <obc-automation-button
       state="open"
       variant="square"
-      .hideReadoutStack=${args.hideReadoutStack}
+      .showReadoutStack=${args.showReadoutStack}
       .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       ?alert=${args.alert}
       ?progress=${args.progress}
+      .progressMode=${args.progressMode}
+      .progressValue=${args.progressValue}
       .positioning=${args.positioning}
     >
       <obi-damper-horizontal-on
@@ -403,12 +523,14 @@ export const DamperOff: Story = {
     return html` <obc-automation-button
       state="closed"
       variant="square"
-      .hideReadoutStack=${args.hideReadoutStack}
+      .showReadoutStack=${args.showReadoutStack}
       .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       ?alert=${args.alert}
       ?progress=${args.progress}
+      .progressMode=${args.progressMode}
+      .progressValue=${args.progressValue}
       .positioning=${args.positioning}
     >
       <obi-damper-horizontal-off
@@ -429,12 +551,14 @@ export const DamperBadges: Story = {
     return html` <obc-automation-button
       state="open"
       variant="square"
-      .hideReadoutStack=${args.hideReadoutStack}
+      .showReadoutStack=${args.showReadoutStack}
       .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       ?alert=${args.alert}
       ?progress=${args.progress}
+      .progressMode=${args.progressMode}
+      .progressValue=${args.progressValue}
       .positioning=${args.positioning}
     >
       <obi-damper-horizontal-on
@@ -471,13 +595,15 @@ export const MotorOn: Story = {
       state="open"
       variant="double"
       direction="forward"
-      .hideReadoutStack=${args.hideReadoutStack}
+      .showReadoutStack=${args.showReadoutStack}
       .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       direction=${args.direction}
       ?alert=${args.alert}
       ?progress=${args.progress}
+      .progressMode=${args.progressMode}
+      .progressValue=${args.progressValue}
       .positioning=${args.positioning}
     >
       <obi-pump-on-horizontal
@@ -502,13 +628,15 @@ export const MotorOff: Story = {
       state="closed"
       variant="double"
       direction="forward-stopped"
-      .hideReadoutStack=${args.hideReadoutStack}
+      .showReadoutStack=${args.showReadoutStack}
       .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       .direction=${args.direction}
       ?alert=${args.alert}
       ?progress=${args.progress}
+      .progressMode=${args.progressMode}
+      .progressValue=${args.progressValue}
       .positioning=${args.positioning}
     >
       <obi-pump-off-horizontal
@@ -531,10 +659,14 @@ export const ThreeWayValveOpenRight: Story = {
     value: 70,
   } as Record<string, unknown>,
   render(args) {
-    const storyArgs = args as unknown as Record<string, unknown> & {
+    const storyArgs = args as unknown as {
       value: number;
-      alert?: boolean;
-      progress?: boolean;
+      alert: boolean;
+      progress: boolean;
+      progressMode: CircularProgressMode;
+      progressValue: number;
+      showReadoutStack: boolean;
+      hasIdTag: boolean;
     };
     const readouts: AutomationButtonReadoutStack[] = [
       {
@@ -557,13 +689,14 @@ export const ThreeWayValveOpenRight: Story = {
     const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html` <obc-automation-button
       state="open"
-      .hideReadoutStack=${(args as unknown as ObcAutomationButton)
-        .hideReadoutStack}
-      .hasIdTag=${(args as unknown as ObcAutomationButton).hasIdTag}
+      .showReadoutStack=${storyArgs.showReadoutStack}
+      .hasIdTag=${storyArgs.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       ?alert=${storyArgs.alert}
       ?progress=${storyArgs.progress}
+      .progressMode=${storyArgs.progressMode}
+      .progressValue=${storyArgs.progressValue}
     >
       <obc-valve-analog-three-way-icon
         value=${storyArgs.value}

@@ -48,7 +48,7 @@ After forking, clone your fork to your local machine to begin making changes:
 
 ```
 git clone https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip.git
-cd openbridge-webcomponents
+cd openbridge-webcomponents-jip
 ```
 
 #### Create a Branch

@@ -41,7 +41,7 @@ export enum ObcToggleButtonLabelPlacement {
  *   - `regular` (default): Standard appearance with full background and border styling.
  *   - `flat`: Minimal style with reduced visual weight.
  *   - `normal`: **TODO(designer)** – Clarify the visual difference and intended use case for the `normal` variant compared to `regular` and `flat`.
- * - **Divider handling:** Supports automatic divider rendering between options. The `noDivider` property is
+ * - **Divider handling:** Supports automatic divider rendering between options. The `showDivider` property is
  *   managed by the parent group to hide dividers after the last option for a cohesive appearance.
  *
  * ### Usage Guidelines
@@ -119,10 +119,11 @@ export class ObcToggleButtonVerticalOption extends LitElement {
   @property({type: String}) type = ObcToggleButtonVerticalOptionType.regular;
 
   /**
-   * If true, hides the divider after this option.
+   * If true, renders the divider after this option.
    * Managed by the parent group.
    */
-  @property({type: Boolean, reflect: true}) noDivider = false;
+  // eslint-disable-next-line openbridge/prefer-boolean-property-default-false -- reflected attribute used by parent CSS
+  @property({type: Boolean, reflect: true}) showDivider: boolean = true;
 
   /**
    * If true, the option expects icon content in the icon slot.
@@ -172,16 +173,14 @@ export class ObcToggleButtonVerticalOption extends LitElement {
 
     // Only fire event if not already selected
     if (!this.selected) {
-      return;
+      this.dispatchEvent(
+        new CustomEvent('selected', {
+          detail: {value: this.value},
+          bubbles: true,
+          composed: true,
+        })
+      );
     }
-
-    this.dispatchEvent(
-      new CustomEvent('selected', {
-        detail: {value: this.value},
-        bubbles: true,
-        composed: true,
-      })
-    );
   }
 
   override render() {

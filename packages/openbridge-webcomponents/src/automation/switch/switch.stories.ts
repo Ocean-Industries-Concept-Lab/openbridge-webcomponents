@@ -8,7 +8,7 @@ import '../automation-badge/automation-badge.js';
 import {argTypesAbstractAutomationButtonPassiveSquare} from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 const meta: Meta<typeof ObcSwitch> = {
-  title: 'Automation/Automation devices/Switch',
+  title: 'Automation/Automation Devices/Switch',
   tags: ['autodocs'],
   component: 'obc-switch',
   decorators: [crossDecorator],
@@ -19,7 +19,7 @@ const meta: Meta<typeof ObcSwitch> = {
     alert: false,
     progress: false,
     vertical: false,
-    hideReadoutStack: false,
+    showReadoutStack: true,
     hasIdTag: true,
   },
   argTypes: {

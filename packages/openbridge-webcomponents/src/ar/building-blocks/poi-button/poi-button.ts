@@ -3,6 +3,8 @@ import {property} from 'lit/decorators.js';
 import compentStyle from './poi-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../../decorator.js';
+import '../poi-header/poi-header.js';
+import {ObcPoiHeaderState, ObcPoiHeaderType} from '../poi-header/poi-header.js';
 import {
   ObcPoiObjectState,
   ObcPoiObjectStyle,
@@ -143,6 +145,45 @@ export class ObcPoiButton extends LitElement {
   @property({type: Boolean}) inExpandedGroup = false;
   @property({type: Array, attribute: false}) data: ObcPoiButtonDataItem[] = [];
   @property({type: Boolean}) hasRelation = false;
+  @property({type: String, attribute: 'header-content'}) headerContent = '';
+  private headerContentObserver?: MutationObserver;
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.setupHeaderContentObserver();
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.headerContentObserver?.disconnect();
+    this.headerContentObserver = undefined;
+  }
+
+  private setupHeaderContentObserver() {
+    this.headerContentObserver?.disconnect();
+    this.headerContentObserver = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type === 'childList') {
+          this.requestUpdate();
+          return;
+        }
+        if (
+          mutation.type === 'attributes' &&
+          mutation.target instanceof HTMLElement &&
+          mutation.target.getAttribute('slot') === 'header'
+        ) {
+          this.requestUpdate();
+          return;
+        }
+      }
+    });
+    this.headerContentObserver.observe(this, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['slot'],
+    });
+  }
 
   get hasData(): boolean {
     return this.data.length > 0;
@@ -155,22 +196,26 @@ export class ObcPoiButton extends LitElement {
     return this.state;
   }
 
-  private get resolvedHeaderState(): string {
+  private get resolvedHeaderState(): ObcPoiHeaderState {
     switch (this.state) {
       case ObcPoiButtonState.Caution:
-        return 'caution';
+        return ObcPoiHeaderState.Caution;
       case ObcPoiButtonState.Warning:
-        return 'warning';
+        return ObcPoiHeaderState.Warning;
       case ObcPoiButtonState.Alarm:
-        return 'alarm';
+        return ObcPoiHeaderState.Alarm;
       case ObcPoiButtonState.Enabled:
       default:
-        return 'selected';
+        return ObcPoiHeaderState.Selected;
     }
   }
 
   private get hasHeaderContent(): boolean {
     return this.querySelector('[slot="header"]') !== null;
+  }
+
+  private get hasGeneratedHeaderContent(): boolean {
+    return this.headerContent.trim().length > 0;
   }
 
   private syncSlottedHeaderState() {
@@ -209,13 +254,25 @@ export class ObcPoiButton extends LitElement {
   }
 
   protected renderHeader() {
-    if (!this.hasHeader || !this.hasHeaderContent) {
+    if (
+      !this.hasHeader ||
+      (!this.hasHeaderContent && !this.hasGeneratedHeaderContent)
+    ) {
       return nothing;
     }
 
     return html`
       <div class="id-label">
-        <slot name="header" @slotchange=${this.handleHeaderSlotChange}></slot>
+        ${this.hasHeaderContent
+          ? html`<slot
+              name="header"
+              @slotchange=${this.handleHeaderSlotChange}
+            ></slot>`
+          : html`<obc-poi-header
+              .content=${this.headerContent}
+              .state=${this.resolvedHeaderState}
+              .type=${ObcPoiHeaderType.Id}
+            ></obc-poi-header>`}
       </div>
     `;
   }
@@ -230,6 +287,12 @@ export class ObcPoiButton extends LitElement {
     if (this.value === PoiButtonVisualState.Overlapped) {
       return ObcPoiObjectState.Overlapped;
     }
+
+    if (this.state === ObcPoiButtonState.Caution)
+      return ObcPoiObjectState.Caution;
+    if (this.state === ObcPoiButtonState.Warning)
+      return ObcPoiObjectState.Warning;
+    if (this.state === ObcPoiButtonState.Alarm) return ObcPoiObjectState.Alarm;
 
     if (this.hasData) {
       if (this.value === PoiButtonVisualState.Activated) {
@@ -251,6 +314,10 @@ export class ObcPoiButton extends LitElement {
     return ObcPoiObjectState.Unchecked;
   }
 
+  protected get wrapperVariantClasses(): Record<string, boolean> {
+    return {};
+  }
+
   override render() {
     if (this.hasData) {
       return this.renderWithData();
@@ -266,9 +333,11 @@ export class ObcPoiButton extends LitElement {
         .objectStyle=${ObcPoiObjectStyle.Regular}
         .state=${this.poiObjectState}
         .interactive=${false}
+        exportparts="icon"
       >
         <span
           class="icon"
+          part="icon"
           style="transform: rotate(${this.relativeDirection}deg);"
         >
           <slot></slot>
@@ -287,6 +356,7 @@ export class ObcPoiButton extends LitElement {
           [`alert-${this.alertClassSuffix}`]: true,
           [`type-${this.type}`]: true,
           expanded: this.inExpandedGroup,
+          ...this.wrapperVariantClasses,
         })}
       >
         ${this.renderHeader()}
@@ -306,10 +376,13 @@ export class ObcPoiButton extends LitElement {
           wrapper: true,
           'has-data': true,
           selected: this.selected,
-          'has-header': this.hasHeader && this.hasHeaderContent,
+          'has-header':
+            this.hasHeader &&
+            (this.hasHeaderContent || this.hasGeneratedHeaderContent),
           [`alert-${this.alertClassSuffix}`]: true,
           [`type-${this.type}`]: true,
           expanded: this.inExpandedGroup,
+          ...this.wrapperVariantClasses,
         })}
       >
         ${this.renderHeader()}

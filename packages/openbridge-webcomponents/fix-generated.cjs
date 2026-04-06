@@ -1,61 +1,69 @@
 const fs = require('fs');
 
-function addRepositoryToPackageJsonVue() {
-  const packageJson = require('../openbridge-webcomponents-vue/package.json');
+function fixPackageJson(packageName, directory) {
+  const packageJsonPath = `../${directory}/package.json`;
+  const corePackageJson = require('./package.json');
+  const packageJson = require(packageJsonPath);
+
+  // set version to match core
+  packageJson.version = corePackageJson.version;
+
+  // set core dependency version
+  if (
+    packageJson.dependencies &&
+    packageJson.dependencies['@oicl/openbridge-webcomponents']
+  ) {
+    packageJson.dependencies['@oicl/openbridge-webcomponents'] =
+      `^${corePackageJson.version}`;
+  }
+
   packageJson.repository = {
     type: 'git',
     url: 'git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip.git',
-    directory: 'packages/openbridge-webcomponents-vue',
+    directory: `packages/${directory}`,
   };
 
-  // add license
+  packageJson.homepage = 'https://www.openbridge.no';
+
   packageJson.license = 'Apache-2.0';
 
-  // update vite
-  packageJson.devDependencies['vite'] = '^6.3.5';
-  packageJson.devDependencies['@rollup/plugin-typescript'] = '^12.1.2';
-  fs.writeFileSync(
-    '../openbridge-webcomponents-vue/package.json',
-    JSON.stringify(packageJson, null, 2)
-  );
-}
-
-function addRepositoryToPackageJsonReact() {
-  const packageJson = require('../openbridge-webcomponents-react/package.json');
-  packageJson.repository = {
-    type: 'git',
-    url: 'git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip.git',
-    directory: 'packages/openbridge-webcomponents-react',
+  packageJson.publishConfig = {
+    access: 'public',
   };
-  packageJson.license = 'Apache-2.0';
-  fs.writeFileSync(
-    '../openbridge-webcomponents-react/package.json',
-    JSON.stringify(packageJson, null, 2)
-  );
+
+  if (!packageJson.files) {
+    packageJson.files = [];
+  }
+  if (!packageJson.files.includes('README.md')) {
+    packageJson.files.push('README.md');
+  }
+
+  if (packageName === 'vue') {
+    packageJson.devDependencies['vite'] = '^6.3.5';
+    packageJson.devDependencies['@rollup/plugin-typescript'] = '^12.1.2';
+  }
+
+  if (packageName === 'react') {
+    packageJson.files = packageJson.files.map((file) => {
+      return file.replace('dist/', '');
+    });
+    packageJson.peerDependencies = {
+      react: '^17 || ^18 || ^19',
+      '@types/react': '^17 || ^18 || ^19',
+    };
+
+    const tsConfigFile = require(`../${directory}/tsconfig.json`);
+    tsConfigFile.compilerOptions.skipLibCheck = true;
+    fs.writeFileSync(
+      `../${directory}/tsconfig.json`,
+      JSON.stringify(tsConfigFile, null, 2)
+    );
+  }
+
+  fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
 }
 
-function fixFilePathInPackageJsonReact() {
-  const packageJson = require('../openbridge-webcomponents-react/package.json');
-  packageJson.files = packageJson.files.map((file) => {
-    return file.replace('dist/', '');
-  });
-  packageJson.peerDependencies = {
-    react: '^17 || ^18 || ^19',
-    '@types/react': '^17 || ^18 || ^19',
-  };
-  fs.writeFileSync(
-    '../openbridge-webcomponents-react/package.json',
-    JSON.stringify(packageJson, null, 2)
-  );
-
-  const tsConfigFile = require('../openbridge-webcomponents-react/tsconfig.json');
-  tsConfigFile.compilerOptions.skipLibCheck = true;
-  fs.writeFileSync(
-    '../openbridge-webcomponents-react/tsconfig.json',
-    JSON.stringify(tsConfigFile, null, 2)
-  );
-}
-
-addRepositoryToPackageJsonVue();
-addRepositoryToPackageJsonReact();
-fixFilePathInPackageJsonReact();
+fixPackageJson('vue', 'openbridge-webcomponents-vue');
+fixPackageJson('react', 'openbridge-webcomponents-react');
+fixPackageJson('angular', 'openbridge-webcomponents-ng');
+fixPackageJson('svelte', 'openbridge-webcomponents-svelte');
