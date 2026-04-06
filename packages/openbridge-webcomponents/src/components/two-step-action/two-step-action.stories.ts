@@ -5,20 +5,19 @@ import './two-step-action.js';
 
 const storySwitchLabels = {
   switchThumbLabel: 'Take',
-  switchIdleStateLabel: 'NO CMD',
-  switchArmedPreviewLabel: 'Confirm',
-  switchActivePrimaryLabel: 'IN CMD',
-  switchActiveSecondaryLabel: 'Release',
+  switchIdleLabel: 'NO CMD',
+  switchArmedLabel: 'Confirm',
+  switchSecondaryLabel: 'Release',
 } as const;
 
 type TwoStepActionStoryArgs = {
   label: string;
   variant: ObcTwoStepActionVariant;
+  disabled: boolean;
   switchThumbLabel: string;
-  switchIdleStateLabel: string;
-  switchArmedPreviewLabel: string;
-  switchActivePrimaryLabel: string;
-  switchActiveSecondaryLabel: string;
+  switchIdleLabel: string;
+  switchArmedLabel: string;
+  switchSecondaryLabel: string;
 };
 
 const meta = {
@@ -28,6 +27,7 @@ const meta = {
   args: {
     label: 'Action',
     variant: ObcTwoStepActionVariant.twoStepAction,
+    disabled: false,
     ...storySwitchLabels,
   },
   argTypes: {
@@ -50,19 +50,15 @@ const meta = {
       control: {type: 'text'},
       table: {category: 'Switch copy'},
     },
-    switchIdleStateLabel: {
+    switchIdleLabel: {
       control: {type: 'text'},
       table: {category: 'Switch copy'},
     },
-    switchArmedPreviewLabel: {
+    switchArmedLabel: {
       control: {type: 'text'},
       table: {category: 'Switch copy'},
     },
-    switchActivePrimaryLabel: {
-      control: {type: 'text'},
-      table: {category: 'Switch copy'},
-    },
-    switchActiveSecondaryLabel: {
+    switchSecondaryLabel: {
       control: {type: 'text'},
       table: {category: 'Switch copy'},
     },
@@ -80,14 +76,13 @@ const meta = {
       >
         <obc-two-step-action
           .variant=${args.variant}
+          ?disabled=${args.disabled}
+          .label=${args.label}
           .switchThumbLabel=${args.switchThumbLabel}
-          .switchIdleStateLabel=${args.switchIdleStateLabel}
-          .switchArmedPreviewLabel=${args.switchArmedPreviewLabel}
-          .switchActivePrimaryLabel=${args.switchActivePrimaryLabel}
-          .switchActiveSecondaryLabel=${args.switchActiveSecondaryLabel}
-        >
-          ${args.label}
-        </obc-two-step-action>
+          .switchIdleLabel=${args.switchIdleLabel}
+          .switchArmedLabel=${args.switchArmedLabel}
+          .switchSecondaryLabel=${args.switchSecondaryLabel}
+        ></obc-two-step-action>
       </div>
     `;
   },
@@ -104,5 +99,6 @@ export const TwoStepAction: Story = {
 export const TwoStepSwitch: Story = {
   args: {
     variant: ObcTwoStepActionVariant.twoStepSwitch,
+    label: 'IN CMD',
   },
 };

@@ -54,6 +54,8 @@ export class ObcTwoStepAction extends LitElement {
 
   @property({type: Boolean, reflect: true}) disabled = false;
 
+  @property({type: String, reflect: false}) label = '';
+
   /** @internal */
   @state() private state: ObcTwoStepActionState = ObcTwoStepActionState.enabled;
 
@@ -66,31 +68,24 @@ export class ObcTwoStepAction extends LitElement {
 
   @property({
     type: String,
-    attribute: 'switch-idle-state-label',
+    attribute: 'switch-idle-label',
     reflect: false,
   })
-  switchIdleStateLabel = '';
+  switchIdleLabel = '';
 
   @property({
     type: String,
-    attribute: 'switch-armed-preview-label',
+    attribute: 'switch-armed-label',
     reflect: false,
   })
-  switchArmedPreviewLabel = '';
+  switchArmedLabel = '';
 
   @property({
     type: String,
-    attribute: 'switch-active-primary-label',
+    attribute: 'switch-secondary-label',
     reflect: false,
   })
-  switchActivePrimaryLabel = '';
-
-  @property({
-    type: String,
-    attribute: 'switch-active-secondary-label',
-    reflect: false,
-  })
-  switchActiveSecondaryLabel = '';
+  switchSecondaryLabel = '';
 
   /** @internal */
   @state() private labelBounce = false;
@@ -152,16 +147,15 @@ export class ObcTwoStepAction extends LitElement {
   }
 
   private getActionLabelText() {
-    return this.textContent?.replace(/\s+/g, ' ').trim() ?? '';
+    return this.label.trim();
   }
 
   private resolveSwitchLabels() {
     return {
       thumb: this.switchThumbLabel.trim(),
-      idleState: this.switchIdleStateLabel.trim(),
-      armedPreview: this.switchArmedPreviewLabel.trim(),
-      activePrimary: this.switchActivePrimaryLabel.trim(),
-      activeSecondary: this.switchActiveSecondaryLabel.trim(),
+      idle: this.switchIdleLabel.trim(),
+      armed: this.switchArmedLabel.trim(),
+      secondary: this.switchSecondaryLabel.trim(),
     };
   }
 
@@ -699,18 +693,17 @@ export class ObcTwoStepAction extends LitElement {
         ? sc.thumb
         : actionLabel;
     const switchArmedPreview = isSwitch && isArmed;
-    const switchPendingLabel = switchArmedPreview && sc ? sc.armedPreview : '';
-    const switchSecondaryLabel =
-      isSwitch && isActive && sc ? sc.activeSecondary : '';
+    const switchPendingLabel = switchArmedPreview && sc ? sc.armed : '';
+    const switchSecondaryLabel = isSwitch && isActive && sc ? sc.secondary : '';
     const ariaLabel =
       sc && isActive && this.switchSecondaryPhase
-        ? `${sc.activePrimary}, ${sc.activeSecondary}`
+        ? `${actionLabel}, ${switchSecondaryLabel}`
         : sc && isActive
-          ? sc.activePrimary
+          ? actionLabel
           : sc && !isActive
             ? isArmed
-              ? `${sc.thumb}, ${sc.armedPreview}, ${sc.idleState}`
-              : `${sc.thumb}, ${sc.idleState}`
+              ? `${sc.thumb}, ${sc.armed}, ${sc.idle}`
+              : `${sc.thumb}, ${sc.idle}`
             : actionLabel;
 
     return html`
@@ -800,17 +793,15 @@ export class ObcTwoStepAction extends LitElement {
                         part="state-container-label"
                       >
                         ${switchStateColumnFixedCopy && sc
-                          ? sc.idleState
-                          : html`<slot></slot>`}
+                          ? sc.idle
+                          : actionLabel}
                       </span>
                     </div>
                   </div>
                 `}
           </div>
 
-          <span class="active-label" part="active-label"
-            >${sc && isActive ? sc.activePrimary : actionLabel}</span
-          >
+          <span class="active-label" part="active-label">${actionLabel}</span>
 
           <div class="state-segment" part="state-segment">
             ${isSwitch && isActive
