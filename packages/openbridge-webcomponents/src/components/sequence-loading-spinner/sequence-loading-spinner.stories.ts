@@ -72,30 +72,12 @@ const meta = {
         eq: SequenceLoadingSpinnerProgressionType.determinate,
       },
     },
-    fillToFullDurationMs: {
-      name: 'fill to full duration ms',
-      control: {type: 'range', min: 0, max: 8000, step: 100},
-      if: {
-        arg: 'progression',
-        eq: SequenceLoadingSpinnerProgressionType.determinate,
-      },
-    },
-    fillToFullSteps: {
-      name: 'fill to full steps',
-      control: {type: 'range', min: 1, max: 24, step: 1},
-      if: {
-        arg: 'progression',
-        eq: SequenceLoadingSpinnerProgressionType.determinate,
-      },
-    },
   },
   args: {
     type: SequenceLoadingSpinnerType.indicator,
     progression: SequenceLoadingSpinnerProgressionType.determinate,
     rotationDurationMs: 1000,
     progressPercent: 25,
-    fillToFullDurationMs: 3200,
-    fillToFullSteps: 8,
   },
 } satisfies Meta;
 
@@ -105,35 +87,8 @@ type Story = StoryObj;
 
 export const Playground: Story = {
   parameters: {
-    docs: {
-      description: {
-        story: [
-          '`<obc-sequence-loading-spinner>` — circular loading indicator for sequence UI.',
-          '',
-          '**Determinate:** gray track; blue arc starts at `progress-percent`. With default Playground `fill-to-full-duration-ms`, the arc **steps** to 100% over that time (set to **0** for a fixed arc only—no auto fill). No whole-ring spin.',
-          '**Scanning:** indeterminate segment spin; `rotation-duration-ms` applies here only.',
-          '',
-          '```html',
-          '<obc-sequence-loading-spinner',
-          '  type="button"',
-          '  progression="determinate"',
-          '  progress-percent="25"',
-          '  fill-to-full-duration-ms="3200"',
-          '  fill-to-full-steps="8"',
-          '></obc-sequence-loading-spinner>',
-          '```',
-        ].join('\n'),
-      },
-    },
     controls: {
-      include: [
-        'type',
-        'progression',
-        'rotationDurationMs',
-        'progressPercent',
-        'fillToFullDurationMs',
-        'fillToFullSteps',
-      ],
+      include: ['type', 'progression', 'rotationDurationMs', 'progressPercent'],
     },
   },
   render: (args) => html`
@@ -142,11 +97,6 @@ export const Playground: Story = {
       .progression=${args.progression}
       .rotationDurationMs=${args.rotationDurationMs}
       .progressPercent=${args.progressPercent}
-      .fillToFullDurationMs=${args.progression ===
-      SequenceLoadingSpinnerProgressionType.scanning
-        ? 0
-        : args.fillToFullDurationMs}
-      .fillToFullSteps=${args.fillToFullSteps}
     ></obc-sequence-loading-spinner>
   `,
 };
@@ -154,9 +104,7 @@ export const Playground: Story = {
 const renderTypes = (
   progression: SequenceLoadingSpinnerProgressionType,
   progressPercent: number = 25,
-  rotationDurationMs: number = 1000,
-  fillToFullDurationMs: number = 0,
-  fillToFullSteps: number = 8
+  rotationDurationMs: number = 1000
 ) => html`
   <div
     style="
@@ -189,11 +137,6 @@ const renderTypes = (
             .progression=${progression}
             .progressPercent=${progressPercent}
             .rotationDurationMs=${rotationDurationMs}
-            .fillToFullDurationMs=${progression ===
-            SequenceLoadingSpinnerProgressionType.scanning
-              ? 0
-              : fillToFullDurationMs}
-            .fillToFullSteps=${fillToFullSteps}
           ></obc-sequence-loading-spinner>
           <span
             style="
@@ -213,13 +156,7 @@ const renderTypes = (
 export const Determinate: Story = {
   parameters: {controls: {disable: true}},
   render: () =>
-    renderTypes(
-      SequenceLoadingSpinnerProgressionType.determinate,
-      25,
-      1000,
-      3200,
-      8
-    ),
+    renderTypes(SequenceLoadingSpinnerProgressionType.determinate, 25, 1000),
 };
 
 export const Scanning: Story = {
@@ -237,9 +174,7 @@ export const Types: Story = {
         ${renderTypes(
           SequenceLoadingSpinnerProgressionType.determinate,
           25,
-          1000,
-          3200,
-          8
+          1000
         )}
       </div>
       <div style="display: grid; gap: 12px;">

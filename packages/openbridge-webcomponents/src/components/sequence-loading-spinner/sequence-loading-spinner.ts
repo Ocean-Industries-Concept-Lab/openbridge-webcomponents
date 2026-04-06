@@ -6,6 +6,9 @@ import {styleMap} from 'lit/directives/style-map.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './sequence-loading-spinner.css?inline';
 
+const DEFAULT_DETERMINATE_FILL_DURATION_MS = 3200;
+const DEFAULT_DETERMINATE_FILL_STEPS = 8;
+
 export enum SequenceLoadingSpinnerType {
   indicator = 'indicator',
   indicatorPoint = 'indicator-point',
@@ -24,32 +27,29 @@ export enum SequenceLoadingSpinnerProgressionType {
  * `<obc-sequence-loading-spinner>` — circular loading indicator for sequence UI.
  *
  * Overview:
- * - Compact spinner for sequence steps, tags, or buttons.
- * - Determinate progress arc or scanning (indeterminate) segment animation.
+ * A compact spinner used alongside sequence steps, tags, or buttons.
  *
- * Features and Variants:
+ * Features / Variants:
  * - `type`: `indicator | indicator-point | tag | tag-point | button | button-point`.
  * - `progression`: `determinate | scanning`.
- * - `progress-percent`: number `0–100` (when `progression="determinate"`), starting arc before any fill animation.
- * - `fill-to-full-duration-ms`: when `> 0` and determinate only, the blue arc **steps** from `progress-percent` to **100%** over this duration (no whole-ring spin).
- * - `fill-to-full-steps`: discrete jumps count for that animation (default 8).
- * - `rotation-duration-ms`: applies to `progression="scanning"` only.
+ * - `progress-percent`: number `0–100` (used when `progression="determinate"`).
+ * - Determinate progression uses a built-in stepped fill animation from the current arc toward full completion.
+ * - `rotation-duration-ms`: number in ms (controls spin speed).
  *
  * Usage Guidelines:
  * - Use `type` to match the surrounding element size.
- * - Use `fill-to-full-duration-ms="0"` for a fixed arc at `progress-percent` only.
  * - With `progression="determinate"`, the arc starts at 12 o'clock on the ring and grows clockwise to match `progress-percent`.
- * - While `fill-to-full-duration-ms` is `> 0`, changing `progress-percent`, `fill-to-full-duration-ms`, or `fill-to-full-steps` restarts the stepped fill from the new start toward 100%.
+ * - Changing `progress-percent` during determinate progression restarts the built-in stepped fill from the new start toward full completion.
  *
- * Slots:
+ * Slots / Content:
  * - None.
  *
  * Events:
  * - None.
  *
  * Best Practices:
+ * - Keep `progress-percent` within `0–100` for predictable rendering.
  * - Prefer `scanning` for indefinite loading states.
- * - Avoid a long `fill-to-full-duration-ms` if the host updates `progress-percent` frequently (each update restarts the animation).
  *
  * Example:
  * ```html
@@ -57,8 +57,6 @@ export enum SequenceLoadingSpinnerProgressionType {
  *   type="button"
  *   progression="determinate"
  *   progress-percent="25"
- *   fill-to-full-duration-ms="3200"
- *   fill-to-full-steps="8"
  * ></obc-sequence-loading-spinner>
  * ```
  */
@@ -72,10 +70,6 @@ export class ObcSequenceLoadingSpinner extends LitElement {
   rotationDurationMs = 1000;
   @property({type: Number, attribute: 'progress-percent'})
   progressPercent = 25;
-  @property({type: Number, attribute: 'fill-to-full-duration-ms'})
-  fillToFullDurationMs = 0;
-  @property({type: Number, attribute: 'fill-to-full-steps'})
-  fillToFullSteps = 8;
 
   @state() private determinateDisplayPercent = 0;
 
@@ -153,18 +147,13 @@ export class ObcSequenceLoadingSpinner extends LitElement {
     ) {
       return;
     }
-    const rerun = [
-      'progressPercent',
-      'fillToFullDurationMs',
-      'fillToFullSteps',
-      'progression',
-    ].some((k) => changed.has(k));
+    const rerun = ['progressPercent', 'progression'].some((k) =>
+      changed.has(k)
+    );
     if (!rerun) {
       return;
     }
-    const duration = Number.isFinite(this.fillToFullDurationMs)
-      ? this.fillToFullDurationMs
-      : 0;
+    const duration = DEFAULT_DETERMINATE_FILL_DURATION_MS;
     if (duration > 0) {
       this.startDeterminateFillAnimation();
     } else {
@@ -185,11 +174,8 @@ export class ObcSequenceLoadingSpinner extends LitElement {
     this.clearFillAnimation();
     const generation = this.fillAnimGeneration;
     const start = this.clampedProgressPercent;
-    const rawSteps = Number.isFinite(this.fillToFullSteps)
-      ? this.fillToFullSteps
-      : 8;
-    const steps = Math.max(1, Math.round(rawSteps));
-    const duration = Math.max(0, this.fillToFullDurationMs);
+    const steps = DEFAULT_DETERMINATE_FILL_STEPS;
+    const duration = DEFAULT_DETERMINATE_FILL_DURATION_MS;
 
     if (start >= 100) {
       this.determinateDisplayPercent = 100;
