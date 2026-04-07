@@ -1,8 +1,8 @@
-import {setProjectAnnotations} from '@storybook/web-components-vite';
+import { setProjectAnnotations } from '@storybook/web-components-vite';
 import * as projectAnnotations from './preview.js';
-import {vis, visAnnotations} from 'storybook-addon-vis/vitest-setup';
-import {type TestContext, afterEach} from 'vitest';
-import {page} from '@vitest/browser/context';
+import { vis, visAnnotations } from 'storybook-addon-vis/vitest-setup';
+import { type TestContext, afterEach } from 'vitest';
+import { page } from '@vitest/browser/context';
 import defaultSizes from '../default-sizes.json';
 
 interface StorybookTestMeta {
@@ -23,8 +23,8 @@ function getCustomElementMeta(tag: string): DefaultSizeEntry | undefined {
   return manifest.find(m => m.tagname === tag);
 }
 
-function getStorybookTestMeta(context: TestContext): StorybookTestMeta   {
-  const {task} = context;
+function getStorybookTestMeta(context: TestContext): StorybookTestMeta {
+  const { task } = context;
   const testName = task.name;
   const filepath = task.file.filepath;
   const filename = filepath.split('/').pop()!;
@@ -43,7 +43,7 @@ const setSize = (el: HTMLElement, meta: StorybookTestMeta) => {
   const customElementMeta = getCustomElementMeta(meta.name);
   if (customElementMeta) {
     if (customElementMeta.baseWidthPx) {
-    el.style.width = customElementMeta.baseWidthPx + 'px';
+      el.style.width = customElementMeta.baseWidthPx + 'px';
     }
     if (customElementMeta.baseHeightPx) {
       el.style.height = customElementMeta.baseHeightPx + 'px';
@@ -63,34 +63,32 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-setProjectAnnotations([projectAnnotations, visAnnotations]);
-const takeScreenshot = true;
+const viteEnv = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env;
+const takeScreenshot = viteEnv?.VITE_STORYBOOK_TAKE_SCREENSHOT === 'true';
 if (takeScreenshot) {
-
-afterEach(async (context: TestContext) => {
-  const storybookMeta = getStorybookTestMeta(context);
-  const el = document.querySelector(storybookMeta.name);
-  if (!el) return;
-  // Add a wrapper element to the parent of the element
-  //await page.viewport(2048, 2048);
-  const wrapper = document.createElement('div');
-  wrapper.style.display = 'block';
-  wrapper.style.width = 'fit-content';
-  wrapper.style.boxSizing = 'border-box';
-  setSize(wrapper, storybookMeta);
-  wrapper.appendChild(el);
-  document.body.appendChild(wrapper);
-  await new Promise(resolve => setTimeout(resolve, 1));
-  const slug = storybookMeta.testName.replace(/\s+/g, '-').replace(/[/\\?%*:|"<>]/g, '_');
-  await page.elementLocator(wrapper).screenshot({ path: `${storybookMeta.relativePathToSrc}/screenshots/${storybookMeta.name}-${slug}.png`});
-  document.body.removeChild(wrapper);
-});
-}
-
-else {
-// This is an important step to apply the right configuration when testing your stories.
-// More info at: https://storybook.js.org/docs/api/portable-stories/portable-stories-vitest#setprojectannotations
-
-vis.setup();
+  setProjectAnnotations([projectAnnotations]);
+  afterEach(async (context: TestContext) => {
+    const storybookMeta = getStorybookTestMeta(context);
+    const el = document.querySelector(storybookMeta.name);
+    if (!el) return;
+    // Add a wrapper element to the parent of the element
+    //await page.viewport(2048, 2048);
+    const wrapper = document.createElement('div');
+    wrapper.style.display = 'block';
+    wrapper.style.width = 'fit-content';
+    wrapper.style.boxSizing = 'border-box';
+    setSize(wrapper, storybookMeta);
+    wrapper.appendChild(el);
+    document.body.appendChild(wrapper);
+    await new Promise(resolve => setTimeout(resolve, 1));
+    const slug = storybookMeta.testName.replace(/\s+/g, '-').replace(/[/\\?%*:|"<>]/g, '_');
+    await page.elementLocator(wrapper).screenshot({ path: `${storybookMeta.relativePathToSrc}/screenshots/${storybookMeta.name}-${slug}.png` });
+    document.body.removeChild(wrapper);
+  });
+} else {
+  setProjectAnnotations([projectAnnotations, visAnnotations]);
+  // This is an important step to apply the right configuration when testing your stories.
+  // More info at: https://storybook.js.org/docs/api/portable-stories/portable-stories-vitest#setprojectannotations
+  vis.setup();
 
 }

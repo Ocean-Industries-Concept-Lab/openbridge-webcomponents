@@ -4,7 +4,6 @@ import '../src/main.css';
 import {
   Preview,
   setCustomElementsManifest,
-  StoryContext,
 } from '@storybook/web-components-vite';
 
 import customElements from '../custom-elements.json';
