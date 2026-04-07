@@ -6,8 +6,10 @@ import {styleMap} from 'lit/directives/style-map.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './sequence-loading-spinner.css?inline';
 
-const DEFAULT_DETERMINATE_FILL_DURATION_MS = 3200;
-const DEFAULT_DETERMINATE_FILL_STEPS = 8;
+const DETERMINATE_MS_PER_PERCENT = 50;
+const DETERMINATE_MIN_DURATION_MS = 1200;
+const DETERMINATE_MAX_DURATION_MS = 9000;
+const DETERMINATE_START_DELAY_MS = 1000;
 
 export enum SequenceLoadingSpinnerType {
   indicator = 'indicator',
@@ -74,7 +76,8 @@ export class ObcSequenceLoadingSpinner extends LitElement {
   @state() private determinateDisplayPercent = 0;
 
   private fillAnimGeneration = 0;
-  private fillTimeouts: number[] = [];
+  private determinateFillFrame?: number;
+  private determinateStartDelayTimeout?: number;
 
   private get isButtonType(): boolean {
     return (
@@ -153,20 +156,16 @@ export class ObcSequenceLoadingSpinner extends LitElement {
     if (!rerun) {
       return;
     }
-    const duration = DEFAULT_DETERMINATE_FILL_DURATION_MS;
-    if (duration > 0) {
-      this.startDeterminateFillAnimation();
-    } else {
-      this.clearFillAnimation();
-      this.determinateDisplayPercent = this.clampedProgressPercent;
-    }
+    this.startDeterminateFillAnimation();
   }
 
   private clearFillAnimation(): void {
-    for (const id of this.fillTimeouts) {
-      window.clearTimeout(id);
+    if (this.determinateFillFrame !== undefined) {
+      window.cancelAnimationFrame(this.determinateFillFrame);
     }
-    this.fillTimeouts = [];
+    this.determinateFillFrame = undefined;
+    window.clearTimeout(this.determinateStartDelayTimeout);
+    this.determinateStartDelayTimeout = undefined;
     this.fillAnimGeneration++;
   }
 
@@ -174,8 +173,14 @@ export class ObcSequenceLoadingSpinner extends LitElement {
     this.clearFillAnimation();
     const generation = this.fillAnimGeneration;
     const start = this.clampedProgressPercent;
-    const steps = DEFAULT_DETERMINATE_FILL_STEPS;
-    const duration = DEFAULT_DETERMINATE_FILL_DURATION_MS;
+    const remaining = Math.max(0, 100 - start);
+    const duration = Math.min(
+      DETERMINATE_MAX_DURATION_MS,
+      Math.max(
+        DETERMINATE_MIN_DURATION_MS,
+        remaining * DETERMINATE_MS_PER_PERCENT
+      )
+    );
 
     if (start >= 100) {
       this.determinateDisplayPercent = 100;
@@ -184,22 +189,26 @@ export class ObcSequenceLoadingSpinner extends LitElement {
 
     this.determinateDisplayPercent = start;
 
-    if (!Number.isFinite(duration) || duration <= 0) {
-      return;
-    }
-
-    const stepMs = duration / steps;
-    for (let i = 1; i <= steps; i++) {
-      const delay = Math.round(i * stepMs);
-      const id = window.setTimeout(() => {
-        if (generation !== this.fillAnimGeneration) {
-          return;
-        }
-        const t = i / steps;
-        this.determinateDisplayPercent = start + (100 - start) * t;
-      }, delay);
-      this.fillTimeouts.push(id);
-    }
+    let startTime: number | undefined = undefined;
+    const tick = () => {
+      if (generation !== this.fillAnimGeneration) return;
+      if (startTime === undefined) {
+        startTime = performance.now();
+      }
+      const elapsed = performance.now() - startTime;
+      const t = Math.min(1, elapsed / Math.max(duration, 1));
+      this.determinateDisplayPercent = start + (100 - start) * t;
+      if (t < 1) {
+        this.determinateFillFrame = window.requestAnimationFrame(tick);
+      } else {
+        this.determinateFillFrame = undefined;
+        this.determinateDisplayPercent = 100;
+      }
+    };
+    this.determinateStartDelayTimeout = window.setTimeout(() => {
+      if (generation !== this.fillAnimGeneration) return;
+      this.determinateFillFrame = window.requestAnimationFrame(tick);
+    }, DETERMINATE_START_DELAY_MS);
   }
 
   override render() {
