@@ -140,8 +140,13 @@ export async function main() {
     fs.mkdirSync(iconDir);
   }
 
+  const api_token = process.env.FIGMA_TOKEN;
+  if (!api_token) {
+    throw new Error('FIGMA_TOKEN is not set, please set it in the .env file');
+  }
+
   const api = new Api({
-    personalAccessToken: process.env.FIGMA_TOKEN as string,
+    personalAccessToken: api_token,
   });
 
   const cachepath = './script/.cache-figma.json';

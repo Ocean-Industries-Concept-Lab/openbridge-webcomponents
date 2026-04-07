@@ -21,15 +21,6 @@ const documentId = 'TPoHGyeEtlcpnNekOa4lY3';
 
 const useCache = false;
 
-const names = [
-  'alarm-rectified-iec',
-  'alarm-silenced-iec',
-  'alarm-unacknowledged-iec',
-  'warning-rectified-iec',
-  'warning-silenced-iec',
-  'warning-unacknowledged-iec',
-];
-
 const iconMapUrl: {url: string; name: string; typeA: boolean}[] = [
   {
     url: 'https://www.figma.com/file/TPoHGyeEtlcpnNekOa4lY3/OpenBridge-CAM?type=design&node-id=850-47442&mode=design&t=QA1ohadrbRZxW1ss-4',
@@ -91,8 +82,13 @@ export async function main() {
     fs.mkdirSync(cacheDir, {recursive: true});
   }
 
+  const api_token = process.env.FIGMA_TOKEN;
+  if (!api_token) {
+    throw new Error('FIGMA_TOKEN is not set, please set it in the .env file');
+  }
+
   const api = new Api({
-    personalAccessToken: process.env.FIGMA_TOKEN as string,
+    personalAccessToken: api_token,
   });
 
   const cachepath = './script/.cache-figma-alert.json';
