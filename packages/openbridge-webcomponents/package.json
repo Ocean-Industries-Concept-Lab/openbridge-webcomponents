@@ -49,7 +49,8 @@
     "analyze": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\"",
     "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\" --watch",
     "言_TRANSLATIONS______________________________________________": "echo _____",
-    "translations:extract": "lit localize extract"
+    "translations:extract": "lit localize extract",
+    "clean": "rm -rf node_modules dist bundle custom-elements.json"
   },
   "dependencies": {
     "@lit-labs/observers": "^2.1.0",
