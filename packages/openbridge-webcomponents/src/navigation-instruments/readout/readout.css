@@ -290,6 +290,26 @@
   }
 }
 
+.readout.horizontal:not(.stack) {
+  .label-container > slot[name="label"] {
+    line-height: calc(
+      var(--global-typography-instrument-label-container-height) - 1px
+    );
+  }
+
+  :is(
+    .unit-container > slot[name="unit"],
+    .label,
+    .unit,
+    .source,
+    .source-container.source-type-delta .source-content
+  ) {
+    line-height: calc(
+      var(--global-typography-instrument-unit-container-height) - 1px
+    );
+  }
+}
+
 .label {
   @mixin font-instrument-unit-box;
   color: var(--element-neutral-color);
@@ -357,6 +377,7 @@
 
   .source-picker {
     &:not(.no-hug)::part(label) {
+      padding-left: 0;
       padding-right: var(--instrument-components-readout-padding-horizontal);
     }
 
@@ -393,6 +414,7 @@
 
 .source-picker {
   anchor-name: --source-picker;
+  width: 100%;
 
   &::part(wrapper) {
     height: auto;
@@ -433,9 +455,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
+  width: var(--instrument-components-readout-new-general-regular-icon-size);
+  min-width: var(--instrument-components-readout-new-general-regular-icon-size);
+  height: var(--instrument-components-readout-new-general-regular-icon-size);
   color: inherit;
+}
+
+:is(
+    .readout.horizontal.regular .readout-source-wrapper.source-small,
+    .readout.horizontal.enhanced .readout-source-wrapper,
+    .readout.horizontal.stack .readout-source-wrapper
+  )
+  .source-leading-icon {
+  margin-inline-end: var(--instrument-components-readout-padding-horizontal);
 }
 
 .source-picker-content {

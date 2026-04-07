@@ -234,16 +234,11 @@
     }
 
     &.regular {
-      inline-size: var(--global-size-spacing-icon-icon-size-small);
-      block-size: var(--global-size-spacing-icon-icon-size-small);
-    }
-
-    &.medium {
       inline-size: var(
-        --instrument-components-readout-new-general-medium-icon-size
+        --instrument-components-readout-new-general-regular-icon-size
       );
       block-size: var(
-        --instrument-components-readout-new-general-medium-icon-size
+        --instrument-components-readout-new-general-regular-icon-size
       );
     }
 
@@ -518,7 +513,6 @@ slot[name="value"] {
   }
 
   &.large {
-    @mixin font-instrument-value-enhanced-box;
     align-items: center;
   }
 }
