@@ -1,11 +1,11 @@
-import {defineConfig} from 'vitest/config';
-import {playwright} from '@vitest/browser-playwright';
+import { defineConfig } from 'vitest/config';
+import { playwright } from '@vitest/browser-playwright';
 
-import {storybookTest} from '@storybook/addon-vitest/vitest-plugin';
-import {storybookVis} from 'storybook-addon-vis/vitest-plugin';
+import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
+import { storybookVis } from 'storybook-addon-vis/vitest-plugin';
 
 import path from 'node:path';
-import {fileURLToPath} from 'node:url';
+import { fileURLToPath } from 'node:url';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -42,11 +42,11 @@ export default defineConfig({
             // Make sure to install Playwright
             provider: playwright({
               contextOptions: {
-                deviceScaleFactor: 2,
+                deviceScaleFactor: process.env.VITE_STORYBOOK_TAKE_SCREENSHOT === 'true' ? 2 : undefined,
               },
             }),
             headless: true,
-            instances: [{browser: 'chromium'}],
+            instances: [{ browser: 'chromium' }],
           },
           setupFiles: ['./.storybook/vitest.setup.ts'],
         },
