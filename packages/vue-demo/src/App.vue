@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, computed, ref, watch } from 'vue'
-
+import { html } from 'lit'
 import TopBar from '@oicl/openbridge-webcomponents-vue/components/top-bar/ObcTopBar.vue'
 import ObcClock from '@oicl/openbridge-webcomponents-vue/components/clock/ObcClock.vue'
 import DemoNavigationMenu from './components/DemoNavigationMenu.vue'
@@ -10,7 +10,7 @@ import '@oicl/openbridge-webcomponents/dist/icons/icon-applications'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-speed-high'
 
 import BrillianceMenu from '@oicl/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu.vue'
-import ObcContextMenu from '@oicl/openbridge-webcomponents-vue/components/context-menu/ObcContextMenu.vue'
+import ObcContextMenuInput from '@oicl/openbridge-webcomponents-vue/components/context-menu-input/ObcContextMenuInput.vue'
 import ObcCommandButton from '@oicl/openbridge-webcomponents-vue/components/command-button/ObcCommandButton.vue'
 import AlertNotification from './components/AlertNotification.vue'
 import DemoAppMenu from './components/DemoAppMenu.vue'
@@ -33,6 +33,7 @@ import ObcIconButton from '@oicl/openbridge-webcomponents-vue/components/icon-bu
 import { IconButtonVariant } from '@oicl/openbridge-webcomponents/dist/components/icon-button/icon-button.js'
 import { useHotkeys } from './composables/useHotkeys'
 import router from './router'
+import type { ObcContextMenuInputChangeEvent } from '@oicl/openbridge-webcomponents/dist/components/context-menu-input/context-menu-input'
 
 if (import.meta.env.PROD) {
   import('@oicl/openbridge-webcomponents/dist/icons/index.js')
@@ -166,118 +167,73 @@ const onCommandChange = (event: CustomEvent) => {
 const goToPreviousPage = () => {
   router.go(-1)
 }
+
+const moreMenuOptions = computed(() => {
+  return [
+    { label: 'Dimming', icon: html`<obi-palette-dimming slot="icon"></obi-palette-dimming>`, value: 'dimming' },
+    { label: 'Apps', icon: html`<obi-applications slot="icon"></obi-applications>`, value: 'apps' }
+  ]
+})
+
+function onMoreMenuChange(event: ObcContextMenuInputChangeEvent) {
+  if (event.detail.selectedValues.includes('dimming')) {
+    toggleBrilliance()
+  } else if (event.detail.selectedValues.includes('apps')) {
+    toggleAppMenu()
+  }
+}
 </script>
 
 <!-- eslint-disable vue/no-deprecated-slot-attribute -->
 <template>
   <header v-if="app?.noTopBar">
-    <ObcIconButton
-      :variant="IconButtonVariant.flat"
-      :activated="showAppMenu"
-      class="app-menu-button"
-      @click="toggleAppMenu"
-    >
+    <ObcIconButton :variant="IconButtonVariant.flat" :activated="showAppMenu" class="app-menu-button"
+      @click="toggleAppMenu">
       <obi-applications></obi-applications>
     </ObcIconButton>
   </header>
   <header v-else-if="showTopBar">
-    <TopBar
-      class="topbar"
-      app-title="OpenBridge"
-      :page-name="pageTitle"
-      show-apps-button
-      show-dimming-button
-      show-clock
-      :inactive="inactive"
-      :app-button-breakpoint-px="700"
-      :dimming-button-breakpoint-px="700"
+    <TopBar class="topbar" app-title="OpenBridge" :page-name="pageTitle" show-apps-button show-dimming-button show-clock
+      :inactive="inactive" :app-button-breakpoint-px="700" :dimming-button-breakpoint-px="700"
       :app-title-breakpoint-px="smallScreen ? 100000 : 400"
-      :clock-minimize-breakpoint-px="inactive && smallScreen ? 100000 : 300"
-      :menu-button-activated="showNavigation"
-      :dimming-button-activated="showBrilliance"
-      :apps-button-activated="showAppMenu"
-      :left-more-button-activated="showMoreMenu"
-      :settings="settingsTopBar"
-      @menu-button-clicked="toggleNavigation"
-      @dimming-button-clicked="toggleBrilliance"
-      @apps-button-clicked="toggleAppMenu"
-      @left-more-button-clicked="toggleMoreMenu"
-      @close="goToPreviousPage"
-    >
+      :clock-minimize-breakpoint-px="inactive && smallScreen ? 100000 : 300" :menu-button-activated="showNavigation"
+      :dimming-button-activated="showBrilliance" :apps-button-activated="showAppMenu"
+      :left-more-button-activated="showMoreMenu" :settings="settingsTopBar" @menu-button-clicked="toggleNavigation"
+      @dimming-button-clicked="toggleBrilliance" @apps-button-clicked="toggleAppMenu"
+      @left-more-button-clicked="toggleMoreMenu" @close="goToPreviousPage">
       <template v-if="app?.showInCommandMenu" #command-button>
-        <ObcCommandButton
-          class="command-button"
-          :in-command="demoConfigStore.hasCommand"
-          @click="toggleCommandMenu"
-        />
+        <ObcCommandButton class="command-button" :in-command="demoConfigStore.hasCommand" @click="toggleCommandMenu" />
       </template>
       <template #alerts>
-        <AlertNotification
-          :visible-alert="visibleAlert"
-          :visible-alert-type="visibleAlertType"
-          :inactive="inactive"
-          :show-alert-menu="showAlertMenu"
-          :silenced="silenced"
-          @ack-alert="onAckAlert"
-          @toggle-alert-menu="toggleAlertMenu"
-          @mute-alert="onMuteAlert"
-        />
+        <AlertNotification :visible-alert="visibleAlert" :visible-alert-type="visibleAlertType" :inactive="inactive"
+          :show-alert-menu="showAlertMenu" :silenced="silenced" @ack-alert="onAckAlert"
+          @toggle-alert-menu="toggleAlertMenu" @mute-alert="onMuteAlert" />
       </template>
       <template #clock>
-        <ObcClock
-          :date="date"
-          :time-zone-offset-hours="offset"
-          show-timezone
-          :blink-only-breakpoint-px="600"
-        />
+        <ObcClock :date="date" :time-zone-offset-hours="offset" show-timezone :blink-only-breakpoint-px="600" />
       </template>
     </TopBar>
   </header>
-  <main
-    :class="{
-      'hide-top-bar': !showTopBar,
-      'small-screen': smallScreen,
-      ['nav-type-' + demoConfigStore.navigationMenuVariant]: true
-    }"
-  >
+  <main :class="{
+    'hide-top-bar': !showTopBar,
+    'small-screen': smallScreen,
+    ['nav-type-' + demoConfigStore.navigationMenuVariant]: true
+  }">
     <div class="content">
       <router-view></router-view>
       <div v-show="showBackdrop" class="backdrop" @click.stop="hideAll"></div>
       <!-- Use v-show so that company logo is loaded agressively -->
-      <DemoNavigationMenu
-        :inactive="inactive"
-        :show-navigation-menu="showNavigationMenu"
-        :navigation-menu-variant="navigationMenuVariant"
-        :small-screen="smallScreen ?? false"
-        @hide-all="hideAll"
-      />
+      <DemoNavigationMenu :inactive="inactive" :show-navigation-menu="showNavigationMenu"
+        :navigation-menu-variant="navigationMenuVariant" :small-screen="smallScreen ?? false" @hide-all="hideAll" />
       <DemoCommandMenu v-if="showCommandMenu" @change="onCommandChange" />
-      <BrillianceMenu
-        v-if="showBrilliance"
-        :palette="palette"
-        :brightness="bridgeStore.brightness"
-        show-brightness
-        show-palette
-        show-bright-palette
-        show-dusk-palette
-        show-day-palette
-        show-night-palette
-        show-auto-brightness
-        class="brilliance"
-        @palette-changed="onPaletteChange"
-        @brightness-changed="onBrightnessChange"
-      >
+      <BrillianceMenu v-if="showBrilliance" :palette="palette" :brightness="bridgeStore.brightness" show-brightness
+        show-palette show-bright-palette show-dusk-palette show-day-palette show-night-palette show-auto-brightness
+        class="brilliance" @palette-changed="onPaletteChange" @brightness-changed="onBrightnessChange">
       </BrillianceMenu>
       <DemoAppMenu :show-app-menu="showAppMenu" @hide-all="hideAll" />
       <DemoAlertMenu v-model="showAlertMenu" />
-      <ObcContextMenu v-if="showMoreMenu" class="more-menu">
-        <obc-navigation-item label="Dimming" @click="toggleBrilliance">
-          <obi-palette-dimming slot="icon"></obi-palette-dimming>
-        </obc-navigation-item>
-        <obc-navigation-item label="Apps" @click="toggleAppMenu">
-          <obi-application slot="icon"></obi-application>
-        </obc-navigation-item>
-      </ObcContextMenu>
+      <ObcContextMenuInput v-if="showMoreMenu" class="more-menu" :options="moreMenuOptions" @change="onMoreMenuChange">
+      </ObcContextMenuInput>
     </div>
   </main>
 </template>
@@ -326,10 +282,7 @@ header {
 }
 
 .nav-type-rail-icon-large .content {
-  padding-left: calc(
-    var(--app-components-navigation-menu-footer-margin-horizontal) * 2 +
-      var(--menu-navigation-components-navigation-item-touch-target-size)
-  );
+  padding-left: calc(var(--app-components-navigation-menu-footer-margin-horizontal) * 2 + var(--menu-navigation-components-navigation-item-touch-target-size));
 }
 
 .nav-type-rail-icon .content {
@@ -341,6 +294,7 @@ header {
 }
 
 @position-try --small-screen-dimming-button {
+  position-anchor: --more-menu-button;
   right: 4px;
 }
 
@@ -372,13 +326,9 @@ header {
   position-anchor: --more-menu-button;
   top: calc(anchor(bottom) + 4px);
   right: calc(anchor(right) + 8px);
-  display: none;
 }
 
 @media screen and (max-width: 500px) {
-  .more-menu {
-    display: revert;
-  }
 
   .brilliance {
     top: calc(anchor(bottom) + 4px);

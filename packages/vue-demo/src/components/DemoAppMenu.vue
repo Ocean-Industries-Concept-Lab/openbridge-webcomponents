@@ -41,31 +41,26 @@ const currentApp = computed(() => {
 </script>
 
 <template>
-  <AppMenu
-    v-if="showAppMenu"
-    ref="appMenu"
-    class="app-menu"
-    @search="(e) => (appSearch = e.detail)"
-  >
-    <obc-app-button
-      v-for="(a, i) in filteredApps"
-      :key="i"
-      :icon="a.appIcon"
-      :label="a.name"
-      :checked="a.name === currentApp?.name"
-      @click="() => onAppSelected(a)"
-      v-html="icon2element(a.appIcon, { slot: 'icon' })"
-    >
+  <AppMenu v-if="showAppMenu" ref="appMenu" class="app-menu" @search="(e) => (appSearch = e.detail)">
+    <obc-app-button v-for="(a, i) in filteredApps" :key="i" :icon="a.appIcon" :label="a.name"
+      :checked="a.name === currentApp?.name" @click="() => onAppSelected(a)"
+      v-html="icon2element(a.appIcon, { slot: 'icon' })">
     </obc-app-button>
   </AppMenu>
 </template>
 
 <style scoped>
+@position-try --small-screen-app-menu {
+  position-anchor: --more-menu-button;
+  right: 4px;
+}
+
 .app-menu {
   position: fixed;
   position-anchor: --apps-menu-button;
   top: calc(anchor(bottom) + 4px);
   right: calc(anchor(right) + 8px);
-  max-width: calc(100% - 16px);
+  max-width: calc(100% - 8px);
+  position-try: --small-screen-app-menu;
 }
 </style>
