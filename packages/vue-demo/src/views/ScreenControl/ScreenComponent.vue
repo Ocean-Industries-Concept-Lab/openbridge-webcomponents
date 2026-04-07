@@ -1,14 +1,23 @@
 <template>
   <div class="screen-item">
-    <button class="screen" :style="{ 'anchor-name': `--screen-anchor-${screen.name}` } as any"
-      @click="showContextMenu = !showContextMenu">
+    <button
+      class="screen"
+      :style="{ 'anchor-name': `--screen-anchor-${screen.name}` } as any"
+      @click="showContextMenu = !showContextMenu"
+    >
       <ObiIcon :icon="screen.page.icon" class="screen-icon" />
       <div class="screen-item-text font-ui-button">{{ screen.page.name }}</div>
     </button>
     <div class="screen-name font-ui-label">Screen {{ screen.name }}</div>
-    <ObcContextMenuInput v-if="showContextMenu" :type="ContextMenuType.Flyout" class="screen-context-menu"
-      :style="{ 'position-anchor': `--screen-anchor-${screen.name}` } as any" :options="contextMenuOptions"
-      :selected-values="selectedMenuValues" @change="onContextMenuChange" />
+    <ObcContextMenuInput
+      v-if="showContextMenu"
+      :type="ContextMenuType.Flyout"
+      class="screen-context-menu"
+      :style="{ 'position-anchor': `--screen-anchor-${screen.name}` } as any"
+      :options="contextMenuOptions"
+      :selected-values="selectedMenuValues"
+      @change="onContextMenuChange"
+    />
   </div>
 </template>
 
@@ -42,14 +51,14 @@ const contextMenuOptions = computed((): ContextMenuOption[] => {
         label: app.app,
         children: app.pages.map((page) => ({
           value: page.path,
-          label: page.name,
+          label: page.name
         }))
       }
     }
     const page = app.pages[0]!
     return {
       value: page.path,
-      label: page.name,
+      label: page.name
     }
   })
 })
