@@ -1,16 +1,21 @@
 import {LitElement, PropertyValues, css, html} from 'lit';
-import {property, query} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import '../watch/watch.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {arrow, ArrowStyle} from './arrow.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
-import {VesselImage, VesselImageSize, WatchCircleType} from '../watch/watch.js';
+import {
+  VesselImage,
+  VesselImageSize,
+  WatchCircleType,
+  RotType,
+  RotPosition,
+} from '../watch/watch.js';
 import {SetpointBundle} from '../../svghelpers/setpoint-bundle.js';
-import {rot} from './rot.js';
-import {RateOfTurnController} from '../rate-of-turn/rate-of-turn.controller.js';
 import {customElement} from '../../decorator.js';
 import {InstrumentState, Priority} from '../types.js';
+export {RotType};
 
 export enum CompassDirection {
   NorthUp = 'northUp',
@@ -48,7 +53,10 @@ export enum CompassPriorityElement {
  * - **Advice zones**: Pass `headingAdvices` to render caution/alert arcs;
  *   triggered state is derived from whether the current heading falls
  *   inside the advice range.
- * - **Rate of turn**: Animated ROT dot driven by `rotationsPerMinute`.
+ * - **Rate of turn**: Animated ROT indicator driven by `rotationsPerMinute`.
+ *   Supports spinning dots (`rotType="dots"`) and a banana-shaped arc bar
+ *   (`rotType="bar"`) showing the HDG→COG span. Position on the outer
+ *   scale ring or inner circle via `rotPosition`.
  * - **Environmental overlays**: Wind speed/direction and current
  *   speed/direction indicators on the watch face.
  * - **Vessel image**: Configurable vessel silhouette centered on the
@@ -95,6 +103,8 @@ export enum CompassPriorityElement {
  * @property {number | null} currentFromDirection - The direction the current is coming from in degrees.
  * @property {VesselImage} vesselImage - The image of the vessel.
  * @property {number} rotationsPerMinute - The number of rotations per minute for the rate of turn controller.
+ * @property {RotType} rotType - ROT display mode: `'dots'` (spinning dots, default) or `'bar'` (arc bar from HDG to COG).
+ * @property {RotPosition} rotPosition - ROT track position: `'innerCircle'` (default) or `'scale'` (on the outer ring).
  * @property {Priority} priority - Color priority: `Priority.enhanced` uses the blue/enhanced color palette, `Priority.regular` (default) uses the standard palette.
  *
  * @ignition-base-height: 512px
@@ -122,6 +132,10 @@ export class ObcCompass extends LitElement {
   @property({type: Number}) currentFromDirection: number | null = null;
   @property({type: String}) vesselImage: VesselImage = VesselImage.genericTop;
   @property({type: Number}) rotationsPerMinute: number = 1;
+  @property({type: String}) rotType: RotType = RotType.dots;
+  @property({type: String}) rotPosition: RotPosition = RotPosition.innerCircle;
+  @property({type: Number}) rotMaxValue: number = 10;
+  @property({type: Number}) rotArcExtent: number = 60;
   @property({type: String}) direction: CompassDirection =
     CompassDirection.NorthUp;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
@@ -132,16 +146,6 @@ export class ObcCompass extends LitElement {
   @property({type: Boolean}) showLabels: boolean = false;
   /** When true, labels and north arrow are placed inside the outer ring. */
   @property({type: Boolean}) tickmarksInside: boolean = false;
-
-  protected override updated(_changedProperties: PropertyValues): void {
-    super.updated(_changedProperties);
-    if (
-      _changedProperties.has('rotationsPerMinute') &&
-      this.rateOfTurnController
-    ) {
-      this.rateOfTurnController.rotationsPerMinute = this.rotationsPerMinute;
-    }
-  }
 
   private _headingSp = new SetpointBundle({
     angularWraparound: true,
@@ -166,19 +170,6 @@ export class ObcCompass extends LitElement {
   override disconnectedCallback(): void {
     super.disconnectedCallback();
     this._headingSp.dispose();
-  }
-
-  @query('#rot')
-  private rot!: HTMLElement;
-
-  private rateOfTurnController?: RateOfTurnController;
-
-  override firstUpdated() {
-    this.rateOfTurnController = new RateOfTurnController(
-      this,
-      this.rot,
-      this.rotationsPerMinute
-    );
   }
 
   // @ts-expect-error TS6133: The controller ensures that the render
@@ -281,6 +272,15 @@ export class ObcCompass extends LitElement {
           .currentFromDirectionDeg=${this.currentFromDirection}
           .currentColor=${this.colorFor(CompassPriorityElement.current)}
           .rotation=${this.getRotation()}
+          .rotType=${this.rotType}
+          .rotPosition=${this.rotPosition}
+          .rotStartAngle=${this.heading + (this.getRotation() ?? 0)}
+          .rotEndAngle=${this.heading +
+          (this.rotationsPerMinute / (this.rotMaxValue || 1)) *
+            this.rotArcExtent +
+          (this.getRotation() ?? 0)}
+          .rotPriority=${this.priorityFor(CompassPriorityElement.rot)}
+          .rotationsPerMinute=${this.rotationsPerMinute}
         >
         </obc-watch>
         <svg viewBox="${viewBox}">
@@ -294,7 +294,6 @@ export class ObcCompass extends LitElement {
             this.courseOverGround + (this.getRotation() ?? 0),
             this.priorityFor(CompassPriorityElement.cog)
           )}
-          <g id="rot">${rot(this.colorFor(CompassPriorityElement.rot))}</g>
         </svg>
       </div>
     `;

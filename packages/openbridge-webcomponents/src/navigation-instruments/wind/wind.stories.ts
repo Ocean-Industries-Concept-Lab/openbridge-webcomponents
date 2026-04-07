@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcWind, WindHistogramData} from './wind.js';
 import './wind.js';
 import {widthDecorator} from '../../storybook-util.js';
+import {topVessels} from '../watch/vessels/storybook-helper.js';
 
 // Needs to go from 0 to 360
 const windHistogramData: WindHistogramData[] = [
@@ -77,6 +78,21 @@ const meta: Meta<typeof ObcWind> = {
     currentWindFromDirection: 100,
     currentWindSpeedBeaufort: 5,
     windHistogramData: windHistogramData,
+  },
+  argTypes: {
+    width: {control: {type: 'range', min: 100, max: 1000, step: 1}},
+    vesselHeadingDeg: {control: {type: 'range', min: 0, max: 360, step: 1}},
+    currentWindFromDirection: {
+      control: {type: 'range', min: 0, max: 360, step: 1},
+    },
+    currentWindSpeedBeaufort: {
+      control: {type: 'range', min: 0, max: 12, step: 1},
+    },
+    windHistogramData: {control: 'object'},
+    vesselImage: {
+      control: 'select',
+      options: topVessels,
+    },
   },
 } satisfies Meta<ObcWind>;
 

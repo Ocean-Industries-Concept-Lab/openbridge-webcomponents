@@ -31,7 +31,8 @@ export class ObcVelocityProjectionPlot extends LitElement {
   instantCurrentDirectionDeg: number | null = null;
   @property({type: Number})
   instantCurrentSpeedNumber: number | null = null;
-
+  @property({type: String})
+  vesselImage: VesselImage = VesselImage.cargoWindTop;
   override render() {
     const width = 320;
     const viewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
@@ -44,7 +45,7 @@ export class ObcVelocityProjectionPlot extends LitElement {
           .vessels=${[
             {
               size: VesselImageSize.small,
-              vesselImage: VesselImage.cargoWindTop,
+              vesselImage: this.vesselImage,
               transform: '',
             },
           ]}
