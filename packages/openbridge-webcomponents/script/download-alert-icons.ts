@@ -165,10 +165,7 @@ export async function main() {
             // download icons
             const request = await fetch(imageUrl);
             const imageData = await request.text();
-            fs.writeFileSync(
-              `${cacheDir}/${icon.name}.svg`,
-              imageData
-            );
+            fs.writeFileSync(`${cacheDir}/${icon.name}.svg`, imageData);
           }
         })
       );
@@ -177,10 +174,7 @@ export async function main() {
 
   const fileImport: string[] = [];
   for (const icon of icons) {
-    const imageData = fs.readFileSync(
-      `${cacheDir}/${icon.name}.svg`,
-      'utf8'
-    );
+    const imageData = fs.readFileSync(`${cacheDir}/${icon.name}.svg`, 'utf8');
     const cssColorIcon = getCssColorIcon(imageData, icon);
 
     // convert icon.name from kebab case to upper cammel case
