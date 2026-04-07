@@ -35,13 +35,13 @@ export enum SequenceLoadingSpinnerProgressionType {
  * - `type`: `indicator | indicator-point | tag | tag-point | button | button-point`.
  * - `progression`: `determinate | scanning`.
  * - `progress-percent`: number `0–100` (used when `progression="determinate"`).
- * - Determinate progression uses a built-in stepped fill animation from the current arc toward full completion.
+ * - Determinate progression uses a built-in fill animation from the current arc toward full completion.
  * - `rotation-duration-ms`: number in ms (controls spin speed).
  *
  * Usage Guidelines:
  * - Use `type` to match the surrounding element size.
  * - With `progression="determinate"`, the arc starts at 12 o'clock on the ring and grows clockwise to match `progress-percent`.
- * - Changing `progress-percent` during determinate progression restarts the built-in stepped fill from the new start toward full completion.
+ * - Changing `progress-percent` during determinate progression restarts the built-in fill from the new start toward full completion.
  *
  * Slots / Content:
  * - None.
@@ -71,7 +71,7 @@ export class ObcSequenceLoadingSpinner extends LitElement {
   @property({type: Number, attribute: 'rotation-duration-ms'})
   rotationDurationMs = 1000;
   @property({type: Number, attribute: 'progress-percent'})
-  progressPercent = 25;
+  progressPercent = 0;
 
   @state() private determinateDisplayPercent = 0;
 
@@ -119,19 +119,12 @@ export class ObcSequenceLoadingSpinner extends LitElement {
         '--spinner-rotation-duration': `${this.clampedRotationDurationMs}ms`,
       });
     }
+    const percent = this.hasUpdated
+      ? this.determinateDisplayPercent
+      : this.clampedProgressPercent;
     return styleMap({
-      '--spinner-progress-deg': `${this.determinateDisplayPercent * 3.6}deg`,
+      '--spinner-progress-deg': `${percent * 3.6}deg`,
     });
-  }
-
-  override willUpdate(changed: PropertyValues): void {
-    super.willUpdate(changed);
-    if (
-      !this.hasUpdated &&
-      this.progression === SequenceLoadingSpinnerProgressionType.determinate
-    ) {
-      this.determinateDisplayPercent = this.clampedProgressPercent;
-    }
   }
 
   override disconnectedCallback(): void {
@@ -192,10 +185,11 @@ export class ObcSequenceLoadingSpinner extends LitElement {
     let startTime: number | undefined = undefined;
     const tick = () => {
       if (generation !== this.fillAnimGeneration) return;
+      const now = performance.now();
       if (startTime === undefined) {
-        startTime = performance.now();
+        startTime = now;
       }
-      const elapsed = performance.now() - startTime;
+      const elapsed = now - startTime;
       const t = Math.min(1, elapsed / Math.max(duration, 1));
       this.determinateDisplayPercent = start + (100 - start) * t;
       if (t < 1) {
