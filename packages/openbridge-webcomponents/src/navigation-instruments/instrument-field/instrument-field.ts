@@ -35,10 +35,8 @@ export enum InstrumentFieldSize {
  * | Slot Name           | Purpose                                                                 |
  * |---------------------|-------------------------------------------------------------------------|
  * | off-value           | Content to display when the `off` property is true (defaults to "OFF"). |
- * | src-picker-content  | Content for the source picker context menu (e.g., a list of sources).     |
  *
  * @slot off-value - Content to display when the `off` property is true (defaults to "OFF").
- * @slot src-picker-content - Content for the source picker context menu (e.g., a list of sources).
  *
  * @csspart label - The container for the tag and unit.
  * @csspart tag - The tag text element.
