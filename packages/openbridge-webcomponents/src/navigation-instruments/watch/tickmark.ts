@@ -48,6 +48,7 @@ export function tickmark(
     rotation,
     maxDigits,
     color,
+    radiusOffset = 0,
   }: {
     size: TickmarkType;
     style: TickmarkStyle;
@@ -58,31 +59,33 @@ export function tickmark(
     rotation?: number;
     maxDigits: number;
     color?: string;
+    radiusOffset?: number;
   }
 ): SVGTemplateResult | SVGTemplateResult[] {
   // check if scale is not infinite
   if (scale === Infinity || scale < 0) {
     throw new Error('Tick scale is not valid');
   }
+  const rOff = radiusOffset;
   let innerRadius: number;
   let outerRadius: number;
   textRadius = textRadius + (3 / scale + 3) * (inside ? -1 : 1);
   const rad = (angle * Math.PI) / 180;
   if (size === TickmarkType.primary) {
-    innerRadius = 328 / 2;
-    outerRadius = 368 / 2;
+    innerRadius = 328 / 2 + rOff;
+    outerRadius = 368 / 2 + rOff;
   } else if (size === TickmarkType.secondary) {
-    innerRadius = 328 / 2;
-    outerRadius = 344 / 2;
+    innerRadius = 328 / 2 + rOff;
+    outerRadius = 344 / 2 + rOff;
   } else if (size === TickmarkType.main || size === TickmarkType.zeroLine) {
-    innerRadius = 320 / 2;
-    outerRadius = 368 / 2;
+    innerRadius = 320 / 2 + rOff;
+    outerRadius = 368 / 2 + rOff;
   } else if (size === TickmarkType.zeroLineThick) {
-    innerRadius = 224 / 2;
-    outerRadius = 368 / 2;
+    innerRadius = 224 / 2 + rOff;
+    outerRadius = 368 / 2 + rOff;
   } else if (size === TickmarkType.tertiary) {
-    innerRadius = 328 / 2;
-    outerRadius = 336 / 2;
+    innerRadius = 328 / 2 + rOff;
+    outerRadius = 336 / 2 + rOff;
   } else {
     return [textSvg(text ?? '', angle, inside, scale, textRadius)];
   }
@@ -92,8 +95,8 @@ export function tickmark(
   // Outside: gap = innerRadius - RING2 (320/2). E.g. secondary: 164 - 160 = 4px gap.
   // Inside: mirror that gap from the outer ring (368/2).
   if (inside) {
-    const outerRingRadius = 368 / 2;
-    const ring2Radius = 320 / 2;
+    const outerRingRadius = 368 / 2 + rOff;
+    const ring2Radius = 320 / 2 + rOff;
     const tickLength = outerRadius - innerRadius;
     const gapFromRingEdge = Math.max(0, innerRadius - ring2Radius);
     outerRadius = outerRingRadius - gapFromRingEdge;

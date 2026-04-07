@@ -15,3 +15,9 @@ type Story = StoryObj<ObcWatchFlat>;
 export const Primary: Story = {
   args: {},
 };
+
+export const WithBottomBar: Story = {
+  args: {
+    bottomBar: true,
+  },
+};
