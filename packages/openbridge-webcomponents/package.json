@@ -47,6 +47,7 @@
     "wrappers:post-fix": "node fix-generated.cjs",
     "📜_SCRIPTS___________________________________________________": "echo _____",
     "download:icons": "tsx ./script/download-icons.ts",
+    "generate:default-sizes": "tsx ./script/generate-default-sizes.ts",
     "analyze": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\"",
     "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\" --watch",
     "言_TRANSLATIONS______________________________________________": "echo _____",

@@ -28,8 +28,8 @@ export interface Label {
 
 /**
  *
- * @ignition-base-height: 170px
- * @ignition-base-width: 512px
+ * @snapshot-base-height 170px
+ * @snapshot-base-width 512px
  */
 @customElement('obc-compass-flat')
 export class ObcCompassFlat extends LitElement {

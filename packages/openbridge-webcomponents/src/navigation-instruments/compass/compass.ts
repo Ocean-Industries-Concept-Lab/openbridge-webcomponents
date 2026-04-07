@@ -97,8 +97,8 @@ export enum CompassPriorityElement {
  * @property {number} rotationsPerMinute - The number of rotations per minute for the rate of turn controller.
  * @property {Priority} priority - Color priority: `Priority.enhanced` uses the blue/enhanced color palette, `Priority.regular` (default) uses the standard palette.
  *
- * @ignition-base-height: 512px
- * @ignition-base-width: 512px
+ * @snapshot-base-height 512px
+ * @snapshot-base-width 512px
  */
 @customElement('obc-compass')
 export class ObcCompass extends LitElement {

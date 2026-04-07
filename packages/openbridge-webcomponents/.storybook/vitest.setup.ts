@@ -3,13 +3,24 @@ import * as projectAnnotations from './preview.js';
 import {vis, visAnnotations} from 'storybook-addon-vis/vitest-setup';
 import {type TestContext, afterEach} from 'vitest';
 import {page} from '@vitest/browser/context';
-import * as customElements from '../custom-elements.json';
+import defaultSizes from '../default-sizes.json';
 
 interface StorybookTestMeta {
   testName: string;
   name: string;
   relativePathToSrc: string;
-  isInstrument: boolean;
+}
+
+interface DefaultSizeEntry {
+  tagname: string;
+  baseHeightPx?: number;
+  baseWidthPx?: number;
+}
+
+
+function getCustomElementMeta(tag: string): DefaultSizeEntry | undefined {
+  const manifest = Array.from(defaultSizes.defaultSizes);
+  return manifest.find(m => m.tagname === tag);
 }
 
 function getStorybookTestMeta(context: TestContext): StorybookTestMeta   {
@@ -25,14 +36,18 @@ function getStorybookTestMeta(context: TestContext): StorybookTestMeta   {
     testName: testName,
     name: name,
     relativePathToSrc: relativePathToSrc,
-    isInstrument: filepath.includes('navigation-instruments') && !name.includes('indicator'),
   };
 }
 
 const setSize = (el: HTMLElement, meta: StorybookTestMeta) => {
-  if (meta.isInstrument) {
-    el.style.width = '528px';
-    el.style.height = '528px';
+  const customElementMeta = getCustomElementMeta(meta.name);
+  if (customElementMeta) {
+    if (customElementMeta.baseWidthPx) {
+    el.style.width = customElementMeta.baseWidthPx + 'px';
+    }
+    if (customElementMeta.baseHeightPx) {
+      el.style.height = customElementMeta.baseHeightPx + 'px';
+    }
   }
 }
 
@@ -53,15 +68,12 @@ const takeScreenshot = true;
 if (takeScreenshot) {
 
 afterEach(async (context: TestContext) => {
-  console.log("afterEach", window.storybookContext);
-  console.log("customElements", customElements);
   const storybookMeta = getStorybookTestMeta(context);
   const el = document.querySelector(storybookMeta.name);
   if (!el) return;
   // Add a wrapper element to the parent of the element
   //await page.viewport(2048, 2048);
   const wrapper = document.createElement('div');
-  wrapper.style.padding = '8px';
   wrapper.style.display = 'block';
   wrapper.style.width = 'fit-content';
   wrapper.style.boxSizing = 'border-box';

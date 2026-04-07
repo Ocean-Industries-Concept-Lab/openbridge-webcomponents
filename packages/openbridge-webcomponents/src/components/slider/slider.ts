@@ -120,6 +120,7 @@ export type ObcSliderValueEvent = CustomEvent<number>;
  * @slot icon-right - Slot for the right icon button (shown when `hasRightIcon` is true)
  * @attr hugcontainer - If set, the slider will not have any spacing between the slider icons and the container
  * @fires value {ObcSliderValueEvent} - Fired when the value is changed
+ * @snapshot-base-width 300px
  */
 @customElement('obc-slider')
 export class ObcSlider extends LitElement {
