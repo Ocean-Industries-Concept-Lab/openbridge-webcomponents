@@ -40,8 +40,9 @@ export enum SequenceLoadingSpinnerProgressionType {
  *
  * Usage Guidelines:
  * - Use `type` to match the surrounding element size.
- * - With `progression="determinate"`, the arc starts at 12 o'clock on the ring and grows clockwise to match `progress-percent`.
- * - Changing `progress-percent` during determinate progression restarts the built-in fill from the new start toward full completion.
+ * - With `progression="determinate"`, the arc starts at 12 o'clock on the ring and grows clockwise.
+ * - `progress-percent` is used as the starting offset for the determinate fill. After a short delay, the arc animates smoothly from that start value toward full completion.
+ * - Changing `progress-percent` during determinate progression restarts the fill from the new start value.
  *
  * Slots / Content:
  * - None.
