@@ -96,14 +96,20 @@ export class ObcSequenceLoadingSpinner extends LitElement {
   private get clampedProgressPercent(): number {
     const percent = Number.isFinite(this.progressPercent)
       ? this.progressPercent
-      : 25;
+      : 0;
     return Math.min(100, Math.max(0, percent));
+  }
+
+  private get determinateRenderPercent(): number {
+    return this.hasUpdated
+      ? this.determinateDisplayPercent
+      : this.clampedProgressPercent;
   }
 
   private get rootClasses() {
     const isDeterminate =
       this.progression === SequenceLoadingSpinnerProgressionType.determinate;
-    const p = this.determinateDisplayPercent;
+    const p = this.determinateRenderPercent;
     return {
       'sequence-loading-spinner': true,
       [`type-${this.type}`]: true,
@@ -119,9 +125,7 @@ export class ObcSequenceLoadingSpinner extends LitElement {
         '--spinner-rotation-duration': `${this.clampedRotationDurationMs}ms`,
       });
     }
-    const percent = this.hasUpdated
-      ? this.determinateDisplayPercent
-      : this.clampedProgressPercent;
+    const percent = this.determinateRenderPercent;
     return styleMap({
       '--spinner-progress-deg': `${percent * 3.6}deg`,
     });
@@ -130,6 +134,20 @@ export class ObcSequenceLoadingSpinner extends LitElement {
   override disconnectedCallback(): void {
     this.clearFillAnimation();
     super.disconnectedCallback();
+  }
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    if (!this.hasUpdated) return;
+    if (
+      this.progression !== SequenceLoadingSpinnerProgressionType.determinate
+    ) {
+      return;
+    }
+    if (this.clampedProgressPercent >= 100) {
+      return;
+    }
+    this.startDeterminateFillAnimation();
   }
 
   override updated(changed: PropertyValues): void {
