@@ -49,8 +49,12 @@ function parseSnapshotSizeFromFile(filePath: string): DefaultSizeEntry[] {
     const defaultHeightPx = isInstrument ? 512 : undefined;
     const defaultWidthPx = isInstrument ? 512 : undefined;
 
-    const baseHeightPx = baseHeightMatch ? Number(baseHeightMatch[1]) : defaultHeightPx;
-    const baseWidthPx = baseWidthMatch ? Number(baseWidthMatch[1]) : defaultWidthPx;
+    const baseHeightPx = baseHeightMatch
+      ? Number(baseHeightMatch[1])
+      : defaultHeightPx;
+    const baseWidthPx = baseWidthMatch
+      ? Number(baseWidthMatch[1])
+      : defaultWidthPx;
 
     entries.push({
       tagname,
@@ -67,9 +71,9 @@ function parseSnapshotSizeFromFile(filePath: string): DefaultSizeEntry[] {
     return entries;
   }
 
- 
   // Get tags without documentation
-  const tagsWithoutDocumentation = content.matchAll(/@customElement\((['"`])([^'"`]+)\1\)/g) ?? [];
+  const tagsWithoutDocumentation =
+    content.matchAll(/@customElement\((['"`])([^'"`]+)\1\)/g) ?? [];
   for (const match of tagsWithoutDocumentation) {
     const tagname = match[2];
     if (IGNORE_TAGS.includes(tagname)) {
@@ -108,9 +112,14 @@ function generateDefaultSizesFile() {
     new Map(allEntries.map((entry) => [entry.tagname, entry])).values()
   ).sort((a, b) => a.tagname.localeCompare(b.tagname));
 
-  fs.writeFileSync(OUTPUT_FILE, JSON.stringify({defaultSizes: deduplicated}, null, 2) + '\n');
+  fs.writeFileSync(
+    OUTPUT_FILE,
+    JSON.stringify({defaultSizes: deduplicated}, null, 2) + '\n'
+  );
 
-  console.log(`Generated ${path.basename(OUTPUT_FILE)} (${deduplicated.length})`);
+  console.log(
+    `Generated ${path.basename(OUTPUT_FILE)} (${deduplicated.length})`
+  );
 }
 
 generateDefaultSizesFile();
