@@ -88,8 +88,25 @@ export function formatTextSegment(
     };
   }
 
+  const templateLength = trimmedLengthTemplate.length;
+
+  if (value.length <= templateLength) {
+    return {
+      visibleValue: value,
+      widthTemplate: trimmedLengthTemplate,
+    };
+  }
+
+  if (value.startsWith('-') && templateLength > 1) {
+    const digits = value.slice(1);
+    return {
+      visibleValue: `-${digits.slice(-(templateLength - 1))}`,
+      widthTemplate: trimmedLengthTemplate,
+    };
+  }
+
   return {
-    visibleValue: value.slice(0, trimmedLengthTemplate.length),
+    visibleValue: value.slice(-templateLength),
     widthTemplate: trimmedLengthTemplate,
   };
 }

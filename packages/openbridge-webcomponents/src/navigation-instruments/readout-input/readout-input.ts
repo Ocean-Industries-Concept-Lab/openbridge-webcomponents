@@ -11,6 +11,7 @@ import type {
 } from '../readout/readout.js';
 import {
   formatReadoutValue,
+  formatTextSegment,
   getHintZeros,
   type ReadoutNumericFormatOptions,
 } from '../readout/readout-formatters.js';
@@ -220,11 +221,8 @@ export class ObcReadoutInput extends LitElement {
       return this.valueText;
     }
 
-    if (!this.valueLength.trim()) {
-      return '';
-    }
-
-    return this.valueText;
+    return formatTextSegment(this.valueText, true, this.valueLength)
+      .visibleValue;
   }
 
   private get inlineValueRenderModel(): ReadoutValueRenderModel {
