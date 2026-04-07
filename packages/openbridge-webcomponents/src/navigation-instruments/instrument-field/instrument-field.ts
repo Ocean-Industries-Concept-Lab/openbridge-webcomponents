@@ -1,10 +1,9 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {property, state} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import compentStyle from './instrument-field.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import '../../components/button/button.js';
 import '../../icons/icon-drop-down-google.js';
-import '../../components/context-menu/context-menu.js';
 import '../../components/navigation-item/navigation-item.js';
 import {customElement} from '../../decorator.js';
 
@@ -95,17 +94,11 @@ export class ObcInstrumentField extends LitElement {
   /** If true, displays the "off" state (e.g., showing "OFF" instead of value). */
   @property({type: Boolean}) off = false;
 
-  /** If true, the source field acts as a button to open a picker. */
-  @property({type: Boolean}) hasSrcPicker = false;
-
   /** If true, automatically hides the setpoint when the value is close to it. */
   @property({type: Boolean}) autoHideSetpoint = false;
 
   /** The deadband within which the setpoint is hidden if `autoHideSetpoint` is true. */
   @property({type: Number}) autoHideDeadband = 0;
-
-  /** Controls the visibility of the source picker context menu. */
-  @state() private srcPickerContentVisible = false;
 
   /**
    * Generates a dashed string representation for undefined values.
@@ -169,10 +162,10 @@ export class ObcInstrumentField extends LitElement {
               </svg>
               <div class="setpoint-value">${this.setpointValueBlueNumbers}</div>
             </div>`
-          : null}
+          : nothing}
         ${this.horizontal && !this.labelOnly && this.hasSetpoint
           ? html`<div class="divider"></div>`
-          : null}
+          : nothing}
         ${!this.labelOnly
           ? html` <div class="value">
               ${this.off
@@ -182,7 +175,7 @@ export class ObcInstrumentField extends LitElement {
                 : html` <div class="value-hint-zero">${this.hintZeros}</div>
                     <div class="value-blue">${this.valueBlueNumbers}</div>`}
             </div>`
-          : null}
+          : nothing}
         <div class="label" part="label">
           ${this.horizontal && this.size === InstrumentFieldSize.regular
             ? nothing
@@ -191,36 +184,9 @@ export class ObcInstrumentField extends LitElement {
         </div>
         ${this.hasSrc && this.horizontal
           ? html`<div class="divider src-divider"></div>`
-          : null}
-        ${this.hasSrc
-          ? this.hasSrcPicker
-            ? html`<div class="src">
-                <obc-button
-                  variant="flat"
-                  showTrailingIcon
-                  class="src-picker"
-                  @click=${() =>
-                    (this.srcPickerContentVisible =
-                      !this.srcPickerContentVisible)}
-                  showTrailingIcon
-                >
-                  ${this.src}
-                  <obi-drop-down-google
-                    slot="trailing-icon"
-                  ></obi-drop-down-google>
-                </obc-button>
-              </div>`
-            : html`<div class="src">${this.src}</div>`
-          : null}
+          : nothing}
+        ${this.hasSrc ? html`<div class="src">${this.src}</div>` : nothing}
       </div>
-      ${this.hasSrcPicker && this.srcPickerContentVisible
-        ? html`<obc-context-menu
-            class="src-picker-content"
-            @click=${() => (this.srcPickerContentVisible = false)}
-          >
-            <slot name="src-picker-content"></slot>
-          </obc-context-menu>`
-        : nothing}
     `;
   }
 
