@@ -136,6 +136,7 @@ export class ObcCompass extends LitElement {
   @property({type: String}) rotPosition: RotPosition = RotPosition.innerCircle;
   @property({type: Number}) rotMaxValue: number = 10;
   @property({type: Number}) rotArcExtent: number = 60;
+  @property({type: Boolean}) rotPortStarboard: boolean = false;
   @property({type: String}) direction: CompassDirection =
     CompassDirection.NorthUp;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
@@ -280,6 +281,7 @@ export class ObcCompass extends LitElement {
             this.rotArcExtent +
           (this.getRotation() ?? 0)}
           .rotPriority=${this.priorityFor(CompassPriorityElement.rot)}
+          .rotPortStarboard=${this.rotPortStarboard}
           .rotationsPerMinute=${this.rotationsPerMinute}
         >
         </obc-watch>

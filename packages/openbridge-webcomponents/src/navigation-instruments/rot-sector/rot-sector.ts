@@ -124,15 +124,17 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
   }
 
   private get _barColor(): string {
-    if (this.priority !== Priority.enhanced) {
-      return 'var(--instrument-regular-tertiary-color)';
-    }
-
     if (this.portStarboard) {
       if (this.value > 0) {
         return 'var(--instrument-starboard-secondary-color)';
       }
-      return 'var(--instrument-port-secondary-color)';
+      if (this.value < 0) {
+        return 'var(--instrument-port-secondary-color)';
+      }
+    }
+
+    if (this.priority !== Priority.enhanced) {
+      return 'var(--instrument-regular-tertiary-color)';
     }
 
     return 'var(--instrument-enhanced-tertiary-color)';
@@ -173,10 +175,6 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
   }
 
   private get _needleColor(): string {
-    if (this.priority !== Priority.enhanced) {
-      return 'var(--instrument-regular-secondary-color)';
-    }
-
     if (this.portStarboard) {
       if (this.value > 0) {
         return 'var(--instrument-starboard-primary-color)';
@@ -184,6 +182,10 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
       if (this.value < 0) {
         return 'var(--instrument-port-primary-color)';
       }
+      return 'var(--instrument-regular-secondary-color)';
+    }
+
+    if (this.priority !== Priority.enhanced) {
       return 'var(--instrument-regular-secondary-color)';
     }
 

@@ -74,13 +74,28 @@ export const BarEnhanced: Story = {
   },
 };
 
-export const BarInnerCircle: Story = {
+export const BarEnhancedInnerCirclePortStarboard: Story = {
   args: {
     rotType: RotType.bar,
     rotPosition: RotPosition.innerCircle,
     barStartAngle: 0,
     barEndAngle: 30,
     watchCircleType: WatchCircleType.triple,
+    priority: Priority.enhanced,
+    rotPortStarboard: true,
+  },
+};
+
+export const BarEnhancedInnerCirclePortStarboardPort: Story = {
+  args: {
+    rotType: RotType.bar,
+    rotPosition: RotPosition.innerCircle,
+    barStartAngle: 0,
+    barEndAngle: -30,
+    watchCircleType: WatchCircleType.triple,
+    priority: Priority.enhanced,
+    rotPortStarboard: true,
+    rotationsPerMinute: -1,
   },
 };
 

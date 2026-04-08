@@ -48,6 +48,7 @@ export class ObcRateOfTurn extends LitElement {
   @property({type: Number}) barEndAngle: number = 30;
   @property({type: String}) watchCircleType: WatchCircleType =
     WatchCircleType.single;
+  @property({type: Boolean}) rotPortStarboard: boolean = false;
 
   static override styles = css`
     * {
@@ -79,6 +80,7 @@ export class ObcRateOfTurn extends LitElement {
         .rotStartAngle=${this.barStartAngle}
         .rotEndAngle=${this.barEndAngle}
         .rotationsPerMinute=${this.rotationsPerMinute}
+        .rotPortStarboard=${this.rotPortStarboard}
       ></obc-watch>
     </div>`;
   }

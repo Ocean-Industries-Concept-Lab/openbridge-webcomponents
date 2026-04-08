@@ -116,6 +116,7 @@ export class ObcCompassSector extends LitElement {
   @property({type: String}) rotPosition: RotPosition = RotPosition.innerCircle;
   @property({type: Number}) rotationsPerMinute: number = 1;
   @property({type: Number}) rotMaxValue: number = 10;
+  @property({type: Boolean}) rotPortStarboard: boolean = false;
 
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
@@ -409,6 +410,7 @@ export class ObcCompassSector extends LitElement {
           .rotStartAngle=${this.heading}
           .rotEndAngle=${this._rotEndAngle}
           .rotPriority=${this.priorityFor(CompassSectorPriorityElement.rot)}
+          .rotPortStarboard=${this.rotPortStarboard}
           .rotationsPerMinute=${this.rotationsPerMinute}
         >
         </obc-watch>
