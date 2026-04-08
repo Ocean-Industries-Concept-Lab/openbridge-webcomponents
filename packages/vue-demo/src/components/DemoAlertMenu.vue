@@ -2,8 +2,8 @@
 import { useAlertStore } from '@/stores/alert'
 import AlertMenu, {
   type ObcAckAllVisibleClickEvent
-} from '@oicl/openbridge-webcomponents-vue/components/alert-menu/ObcAlertMenu'
-import AlertMenuItem from '@oicl/openbridge-webcomponents-vue/components/alert-menu-item/ObcAlertMenuItem'
+} from '@oicl/openbridge-webcomponents-vue/components/alert-menu/ObcAlertMenu.vue'
+import AlertMenuItem from '@oicl/openbridge-webcomponents-vue/components/alert-menu-item/ObcAlertMenuItem.vue'
 import '@oicl/openbridge-webcomponents/dist/components/alert-icon/alert-icon'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-caution-color-iec.js'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-alarm-noack-iec.js'

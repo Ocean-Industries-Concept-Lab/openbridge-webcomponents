@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import ObcSlider from '@oicl/openbridge-webcomponents-vue/components/slider/ObcSlider'
+import ObcSlider from '@oicl/openbridge-webcomponents-vue/components/slider/ObcSlider.vue'
 import { useDemoConfigStore } from '@/stores/demoConfig'
 
 const demoConfigStore = useDemoConfigStore()

@@ -45,10 +45,10 @@
 </template>
 
 <script setup lang="ts">
-import ObiIcon from '@oicl/openbridge-webcomponents-vue/icons/ObiIcon'
-import ObcContextMenu from '@oicl/openbridge-webcomponents-vue/components/context-menu/ObcContextMenu'
-import ObcNavigationItemGroup from '@oicl/openbridge-webcomponents-vue/components/navigation-item-group/ObcNavigationItemGroup'
-import ObcNavigationItem from '@oicl/openbridge-webcomponents-vue/components/navigation-item/ObcNavigationItem'
+import ObiIcon from '@oicl/openbridge-webcomponents-vue/icons/ObiIcon.vue'
+import ObcContextMenu from '@oicl/openbridge-webcomponents-vue/components/context-menu/ObcContextMenu.vue'
+import ObcNavigationItemGroup from '@oicl/openbridge-webcomponents-vue/components/navigation-item-group/ObcNavigationItemGroup.vue'
+import ObcNavigationItem from '@oicl/openbridge-webcomponents-vue/components/navigation-item/ObcNavigationItem.vue'
 import { ref, useTemplateRef } from 'vue'
 import { useBridgeStore, type Screen, type ScreenPage } from '@/stores/bridge'
 import { screenPages } from '@/router'

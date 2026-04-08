@@ -26,9 +26,9 @@
 
 <script setup lang="ts">
 import { ButtonVariant } from '@oicl/openbridge-webcomponents/dist/components/button/button.js'
-import ObcButton from '@oicl/openbridge-webcomponents-vue/components/button/ObcButton'
+import ObcButton from '@oicl/openbridge-webcomponents-vue/components/button/ObcButton.vue'
 import { IconButtonVariant } from '@oicl/openbridge-webcomponents/dist/components/icon-button/icon-button'
-import ObcIconButton from '@oicl/openbridge-webcomponents-vue/components/icon-button/ObcIconButton'
+import ObcIconButton from '@oicl/openbridge-webcomponents-vue/components/icon-button/ObcIconButton.vue'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-close-google'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-arrow-left-google'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-arrow-right-google'

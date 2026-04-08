@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import ObcTopbarMessageItem from '@oicl/openbridge-webcomponents-vue/components/topbar-message-item/ObcTopbarMessageItem'
-import ObcAlertButton from '@oicl/openbridge-webcomponents-vue/components/alert-button/ObcAlertButton'
+import ObcTopbarMessageItem from '@oicl/openbridge-webcomponents-vue/components/topbar-message-item/ObcTopbarMessageItem.vue'
+import ObcAlertButton from '@oicl/openbridge-webcomponents-vue/components/alert-button/ObcAlertButton.vue'
 import AlertIcon from './AlertIcon.vue'
 import { ObcTopbarMessageItemType } from '@oicl/openbridge-webcomponents/dist/components/topbar-message-item/topbar-message-item'
 import { ObcAlertButtonType } from '@oicl/openbridge-webcomponents/dist/components/alert-button/alert-button'

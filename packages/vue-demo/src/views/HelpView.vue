@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import SettingsToolbar from '@/components/SettingsToolbar.vue'
-import ObcElevatedCard from '@oicl/openbridge-webcomponents-vue/components/elevated-card/ObcElevatedCard'
+import ObcElevatedCard from '@oicl/openbridge-webcomponents-vue/components/elevated-card/ObcElevatedCard.vue'
 import { ObcElevatedCardSize } from '@oicl/openbridge-webcomponents/dist/components/elevated-card/elevated-card'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-chevron-right-google'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-placeholder'

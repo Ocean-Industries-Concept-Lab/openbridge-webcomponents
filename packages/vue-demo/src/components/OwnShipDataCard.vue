@@ -262,15 +262,15 @@
 <script lang="ts" setup>
 import { ref, computed } from 'vue'
 import { useSim } from '@/composables/useSim'
-import ObcCard from '@oicl/openbridge-webcomponents-vue/components/card/ObcCard'
-import ObcInstrumentField from '@oicl/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField'
+import ObcCard from '@oicl/openbridge-webcomponents-vue/components/card/ObcCard.vue'
+import ObcInstrumentField from '@oicl/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
 import { InstrumentFieldSize } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
 import { CompassIndicatorArrow } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/compass-indicator/compass-indicator'
-import ObcCompassIndicator from '@oicl/openbridge-webcomponents-vue/navigation-instruments/compass-indicator/ObcCompassIndicator'
-import ObcRotIndicator from '@oicl/openbridge-webcomponents-vue/navigation-instruments/rot-indicator/ObcRotIndicator'
-import ObcSpeedIndicator from '@oicl/openbridge-webcomponents-vue/navigation-instruments/speed-indicator/ObcSpeedIndicator'
-import ObcGraphMini from '@oicl/openbridge-webcomponents-vue/navigation-instruments/graph-mini/ObcGraphMini'
-import ObcNavigationItem from '@oicl/openbridge-webcomponents-vue/components/navigation-item/ObcNavigationItem'
+import ObcCompassIndicator from '@oicl/openbridge-webcomponents-vue/navigation-instruments/compass-indicator/ObcCompassIndicator.vue'
+import ObcRotIndicator from '@oicl/openbridge-webcomponents-vue/navigation-instruments/rot-indicator/ObcRotIndicator.vue'
+import ObcSpeedIndicator from '@oicl/openbridge-webcomponents-vue/navigation-instruments/speed-indicator/ObcSpeedIndicator.vue'
+import ObcGraphMini from '@oicl/openbridge-webcomponents-vue/navigation-instruments/graph-mini/ObcGraphMini.vue'
+import ObcNavigationItem from '@oicl/openbridge-webcomponents-vue/components/navigation-item/ObcNavigationItem.vue'
 
 const sim = useSim()
 const headingSrc = ref('GYR1')

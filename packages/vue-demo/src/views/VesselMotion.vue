@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import ObcSpeedArrows from '@oicl/openbridge-webcomponents-vue/navigation-instruments/speed-arrows/ObcSpeedArrows'
+import ObcSpeedArrows from '@oicl/openbridge-webcomponents-vue/navigation-instruments/speed-arrows/ObcSpeedArrows.vue'
 import {
   Direction,
   ActiveColor
 } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/speed-arrows/speed-arrows'
 import { useSim } from '../composables/useSim'
 import { computed } from 'vue'
-import ObcInstrumentField from '@oicl/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField'
+import ObcInstrumentField from '@oicl/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
 import { InstrumentFieldSize } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
 const sim = useSim()
 

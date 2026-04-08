@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import ObcTextInputField from '@oicl/openbridge-webcomponents-vue/components/text-input-field/ObcTextInputField'
+import ObcTextInputField from '@oicl/openbridge-webcomponents-vue/components/text-input-field/ObcTextInputField.vue'
 import SettingsToolbar from '@/components/SettingsToolbar.vue'
-import ObcElevatedCard from '@oicl/openbridge-webcomponents-vue/components/elevated-card/ObcElevatedCard'
+import ObcElevatedCard from '@oicl/openbridge-webcomponents-vue/components/elevated-card/ObcElevatedCard.vue'
 
 import {
   ObcElevatedCardPosition,

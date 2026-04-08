@@ -2,10 +2,10 @@
 import { computed } from 'vue'
 import DemoRouterLink from './DemoRouterLink.vue'
 
-import NavigationMenu from '@oicl/openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu'
-import ObcNavigationItem from '@oicl/openbridge-webcomponents-vue/components/navigation-item/ObcNavigationItem'
+import NavigationMenu from '@oicl/openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu.vue'
+import ObcNavigationItem from '@oicl/openbridge-webcomponents-vue/components/navigation-item/ObcNavigationItem.vue'
 import { ObcNavigationMenuVariant } from '@oicl/openbridge-webcomponents/dist/components/navigation-menu/navigation-menu'
-import ObcVendorButton from '@oicl/openbridge-webcomponents-vue/components/vendor-button/ObcVendorButton'
+import ObcVendorButton from '@oicl/openbridge-webcomponents-vue/components/vendor-button/ObcVendorButton.vue'
 
 // Navigation-specific icon imports
 import '@oicl/openbridge-webcomponents/dist/components/navigation-item/navigation-item.js'
