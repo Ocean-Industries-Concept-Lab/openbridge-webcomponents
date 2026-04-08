@@ -18,8 +18,8 @@ This library is currently in active development. We are gearing up for our first
 
 ## 📚 Storybook & Demo
 
-- **[Storybook](https://openbridge-jip-storybook.web.app)**: Browse components and view their different states.
-- **[Live Demo](https://openbridge-jip-demo.web.app/)**: See the components in action (built with Vue).
+- **[Storybook](https://openbridge-storybook.web.app)**: Browse components and view their different states.
+- **[Live Demo](https://openbridge-demo.web.app/)**: See the components in action (built with Vue).
 
 ## 💾 Installation
 
