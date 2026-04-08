@@ -30,3 +30,5 @@ packages/openbridge-webcomponents/__vis__/darwin/
 .idea/
 **/.idea/
 CLAUDE.md
+**/screenshots/
+packages/openbridge-webcomponents/default-sizes.json

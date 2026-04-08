@@ -114,6 +114,7 @@ export type ObcSliderDoubleValueEvent = CustomEvent<{
  * @slot icon-left - Slot for the left icon
  * @slot icon-right - Slot for the right icon
  * @fires value {ObcSliderDoubleValueEvent} - Fires when the value is changed
+ * @snapshot-base-width 300px
  */
 @customElement('obc-slider-double')
 export class ObcSliderDouble extends LitElement {

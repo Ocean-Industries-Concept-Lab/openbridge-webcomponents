@@ -64,8 +64,8 @@ export interface Label {
  * @property {number} rotMaxValue - Maximum ROT value for bar-extent mapping.
  * @property {number} rotArcExtent - Degrees of bar arc per max-value ROT (default 60).
  *
- * @ignition-base-height: 170px
- * @ignition-base-width: 512px
+ * @snapshot-base-height 170px
+ * @snapshot-base-width 512px
  */
 @customElement('obc-compass-flat')
 export class ObcCompassFlat extends LitElement {
