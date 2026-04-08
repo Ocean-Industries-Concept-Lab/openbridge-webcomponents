@@ -154,7 +154,7 @@ export class ObcDropdownButton extends LitElement {
           'full-width': this.fullWidth,
           'open-top': this.openTop,
           integration: this.integration,
-          flat: this.flat,
+          flat: this.flat && !this.integration,
           disabled: this.disabled,
         })}
       >

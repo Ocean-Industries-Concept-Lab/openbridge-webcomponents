@@ -98,6 +98,7 @@ export class ObcCalendar extends LitElement {
   @property({type: Boolean, attribute: false}) hasFooter = true;
   @property({type: String}) locale?: string;
   @property({type: Number}) firstDayOfWeek = 1;
+  @property({type: String}) footerLabel = 'Calendar';
 
   @state() private _displayMonth: Date = new Date();
 
@@ -109,6 +110,20 @@ export class ObcCalendar extends LitElement {
         1
       );
     }
+    if (changed.has('selectedDate') && this.selectedDate) {
+      const m = this.selectedDate.getMonth();
+      const y = this.selectedDate.getFullYear();
+      if (
+        m !== this._displayMonth.getMonth() ||
+        y !== this._displayMonth.getFullYear()
+      ) {
+        this._displayMonth = new Date(y, m, 1);
+      }
+    }
+  }
+
+  private _getEventsForDate(date: Date): CalendarEvent[] {
+    return this.events.filter((e) => isSameDay(e.date, date));
   }
 
   private get _monthOptions(): {value: string; label: string}[] {
@@ -132,7 +147,7 @@ export class ObcCalendar extends LitElement {
   }
 
   private _navigateDay(offset: number) {
-    const base = this.selectedDate ?? new Date();
+    const base = this.selectedDate ?? this._displayMonth;
     const next = new Date(
       base.getFullYear(),
       base.getMonth(),
@@ -156,7 +171,7 @@ export class ObcCalendar extends LitElement {
       new CustomEvent('date-select', {
         bubbles: true,
         composed: true,
-        detail: {date: next, events: []},
+        detail: {date: next, events: this._getEventsForDate(next)},
       })
     );
   }
@@ -180,7 +195,7 @@ export class ObcCalendar extends LitElement {
       new CustomEvent('date-select', {
         bubbles: true,
         composed: true,
-        detail: {date: today, events: []},
+        detail: {date: today, events: this._getEventsForDate(today)},
       })
     );
   }
@@ -308,6 +323,7 @@ export class ObcCalendar extends LitElement {
         <obc-icon-button
           variant="flat"
           cornerLeft
+          aria-label="Previous"
           @click=${this._handlePrevDay}
         >
           <obi-chevron-left-google></obi-chevron-left-google>
@@ -318,6 +334,7 @@ export class ObcCalendar extends LitElement {
         <obc-icon-button
           variant="flat"
           cornerRight
+          aria-label="Next"
           @click=${this._handleNextDay}
         >
           <obi-chevron-right-google></obi-chevron-right-google>
@@ -405,7 +422,7 @@ export class ObcCalendar extends LitElement {
 
     return html`
       <div class="event-panel">
-        <obc-scrollbar class="obc-thin-scrollbar">
+        <obc-scrollbar class="obc-thin-scrollbar" transparent-track>
           ${relevantKeys.map((key) => {
             const [y, m, d] = key.split('-').map(Number);
             const eventDate = new Date(y, m - 1, d);
@@ -428,7 +445,7 @@ export class ObcCalendar extends LitElement {
     return html`
       <div class="footer-container">
         <obc-navigation-item
-          label="Calendar"
+          label=${this.footerLabel}
           hasIcon
           hasTrailingIcon
           @click=${this._handleCalendarClick}

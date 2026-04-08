@@ -24,7 +24,8 @@
 
   &.size-small {
     @mixin style style=flat visibleWrapperClass=.date-container;
-    width: var(--menu-navigation-components-date-item-touch-target);
+    width: 100%;
+    max-width: var(--menu-navigation-components-date-item-touch-target);
     height: var(--menu-navigation-components-date-item-touch-target);
     padding: var(--menu-navigation-components-date-item-padding-vertical)
       var(--menu-navigation-components-date-item-padding-horizontal);

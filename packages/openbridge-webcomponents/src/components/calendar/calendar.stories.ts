@@ -10,6 +10,7 @@ interface CalendarStoryArgs {
   events: CalendarEvent[];
   hasEventList: boolean;
   hasFooter: boolean;
+  footerLabel: string;
   locale?: string;
   firstDayOfWeek: number;
   width?: number;
@@ -327,6 +328,7 @@ function renderCalendar(args: CalendarStoryArgs) {
         .events=${args.events}
         .hasEventList=${args.hasEventList}
         .hasFooter=${args.hasFooter}
+        .footerLabel=${args.footerLabel}
         .locale=${args.locale}
         .firstDayOfWeek=${args.firstDayOfWeek}
       ></obc-calendar>
@@ -346,6 +348,7 @@ const meta: Meta<CalendarStoryArgs> = {
     },
     hasEventList: {control: 'boolean'},
     hasFooter: {control: 'boolean'},
+    footerLabel: {control: 'text'},
     locale: {control: 'text'},
     firstDayOfWeek: {
       control: 'select',
@@ -368,6 +371,7 @@ const meta: Meta<CalendarStoryArgs> = {
     events: generateSampleEvents(2026, 0),
     hasEventList: true,
     hasFooter: true,
+    footerLabel: 'Calendar',
     firstDayOfWeek: 1,
     width: 400,
     height: 600,

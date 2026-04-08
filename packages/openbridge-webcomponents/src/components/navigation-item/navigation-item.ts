@@ -191,7 +191,7 @@ export class ObcNavigationItem extends LitElement {
                 </div>
               `
             : nothing}
-          ${this.hasTrailingIcon
+          ${this.hasTrailingIcon && !showFlyout
             ? html`<slot name="trailing-icon" class="icon trailing"></slot>`
             : nothing}
         </div>
