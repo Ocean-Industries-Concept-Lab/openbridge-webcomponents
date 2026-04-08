@@ -145,23 +145,23 @@
 </template>
 
 <script lang="ts" setup>
-import ObcAutomationTank from '@oicl/openbridge-webcomponents-vue/automation/automation-tank/ObcAutomationTank.vue'
+import ObcAutomationTank from '@oicl/openbridge-webcomponents-vue/automation/automation-tank/ObcAutomationTank'
 import { TankTrend } from '@oicl/openbridge-webcomponents/dist/automation/automation-tank/automation-tank'
 import { LineMedium, LineType } from '@oicl/openbridge-webcomponents/dist/automation'
 import { computed, onMounted, ref } from 'vue'
-import ObcVerticalLine from '@oicl/openbridge-webcomponents-vue/automation/vertical-line/ObcVerticalLine.vue'
-import ObcHorizontalLine from '@oicl/openbridge-webcomponents-vue/automation/horizontal-line/ObcHorizontalLine.vue'
-import ObcCornerLine from '@oicl/openbridge-webcomponents-vue/automation/corner-line/ObcCornerLine.vue'
+import ObcVerticalLine from '@oicl/openbridge-webcomponents-vue/automation/vertical-line/ObcVerticalLine'
+import ObcHorizontalLine from '@oicl/openbridge-webcomponents-vue/automation/horizontal-line/ObcHorizontalLine'
+import ObcCornerLine from '@oicl/openbridge-webcomponents-vue/automation/corner-line/ObcCornerLine'
 import { CornerLineDirection } from '@oicl/openbridge-webcomponents/dist/automation/corner-line/corner-line'
-import ObcAutomationButton from '@oicl/openbridge-webcomponents-vue/automation/automation-button/ObcAutomationButton.vue'
+import ObcAutomationButton from '@oicl/openbridge-webcomponents-vue/automation/automation-button/ObcAutomationButton'
 import {
   AutomationButtonDirection,
   AutomationButtonState
 } from '@oicl/openbridge-webcomponents/dist/automation/automation-button/automation-button'
 
-import ObcValveAnalogThreeWayIcon from '@oicl/openbridge-webcomponents-vue/automation/valve-analog-three-way-icon/ObcValveAnalogThreeWayIcon.vue'
-import ObiPumpOnHorisontal from '@oicl/openbridge-webcomponents-vue/icons/ObiPumpOnHorizontal.vue'
-import ObiPumpOffHorisontal from '@oicl/openbridge-webcomponents-vue/icons/ObiPumpOffHorizontal.vue'
+import ObcValveAnalogThreeWayIcon from '@oicl/openbridge-webcomponents-vue/automation/valve-analog-three-way-icon/ObcValveAnalogThreeWayIcon'
+import ObiPumpOnHorisontal from '@oicl/openbridge-webcomponents-vue/icons/ObiPumpOnHorizontal'
+import ObiPumpOffHorisontal from '@oicl/openbridge-webcomponents-vue/icons/ObiPumpOffHorizontal'
 
 import { useDemoConfigStore } from '@/stores/demoConfig'
 

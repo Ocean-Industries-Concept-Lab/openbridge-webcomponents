@@ -77,9 +77,9 @@ import { ref, computed, unref } from 'vue'
 import { useSim } from '@/composables/useSim'
 import { getCpa, type AisData } from '@/business/aisData'
 import type { Ref } from 'vue'
-import ObcDropdownButton from '@oicl/openbridge-webcomponents-vue/components/dropdown-button/ObcDropdownButton.vue'
+import ObcDropdownButton from '@oicl/openbridge-webcomponents-vue/components/dropdown-button/ObcDropdownButton'
 import { getVesselImage } from '@/business/aisData'
-import ObcBearingIndicator from '@oicl/openbridge-webcomponents-vue/navigation-instruments/bearing-indicator/ObcBearingIndicator.vue'
+import ObcBearingIndicator from '@oicl/openbridge-webcomponents-vue/navigation-instruments/bearing-indicator/ObcBearingIndicator'
 
 interface TargetWithCpa extends AisData {
   distance: number

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import ObcCompass from '@oicl/openbridge-webcomponents-vue/navigation-instruments/compass/ObcCompass.vue'
+import ObcCompass from '@oicl/openbridge-webcomponents-vue/navigation-instruments/compass/ObcCompass'
 import { useSim } from '../composables/useSim'
 import { useWeather } from '@/business/getWeather'
 import { VesselImage } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/vessel'
 import { computed, ref, onMounted, onUnmounted } from 'vue'
-import ObcInstrumentField from '@oicl/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
+import ObcInstrumentField from '@oicl/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField'
 import { InstrumentFieldSize } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
 import {
   type AngleAdvice,

@@ -23,12 +23,12 @@
 
 <script setup lang="ts">
 import { ButtonVariant } from '@oicl/openbridge-webcomponents/dist/components/button/button.js'
-import ObcButton from '@oicl/openbridge-webcomponents-vue/components/button/ObcButton.vue'
+import ObcButton from '@oicl/openbridge-webcomponents-vue/components/button/ObcButton'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-silence-iec'
 import ObcAlertListDetails, {
   type Alert,
   type ObcAckClickEvent
-} from '@oicl/openbridge-webcomponents-vue/components/alert-list-details/ObcAlertListDetails.vue'
+} from '@oicl/openbridge-webcomponents-vue/components/alert-list-details/ObcAlertListDetails'
 import { useAlertStore } from '@/stores/alert'
 import { computed, ref } from 'vue'
 import { ObcAlertMenuItemStatus } from '@oicl/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item.js'

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import ObcElevatedCardRadioGroup from '@oicl/openbridge-webcomponents-vue/components/elevated-card-radio-group/ObcElevatedCardRadioGroup.vue'
+import ObcElevatedCardRadioGroup from '@oicl/openbridge-webcomponents-vue/components/elevated-card-radio-group/ObcElevatedCardRadioGroup'
 import {
   ObcElevatedCardPosition,
   ObcElevatedCardSize
 } from '@oicl/openbridge-webcomponents/dist/components/elevated-card/elevated-card'
-import ObcElevatedCard from '@oicl/openbridge-webcomponents-vue/components/elevated-card/ObcElevatedCard.vue'
+import ObcElevatedCard from '@oicl/openbridge-webcomponents-vue/components/elevated-card/ObcElevatedCard'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-chevron-up-google'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-chevron-right-google'
 

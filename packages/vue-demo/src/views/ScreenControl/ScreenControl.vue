@@ -34,8 +34,8 @@
 </template>
 
 <script setup lang="ts">
-import ObcToggleButtonGroup from '@oicl/openbridge-webcomponents-vue/components/toggle-button-group/ObcToggleButtonGroup.vue'
-import ObcToggleButtonOption from '@oicl/openbridge-webcomponents-vue/components/toggle-button-option/ObcToggleButtonOption.vue'
+import ObcToggleButtonGroup from '@oicl/openbridge-webcomponents-vue/components/toggle-button-group/ObcToggleButtonGroup'
+import ObcToggleButtonOption from '@oicl/openbridge-webcomponents-vue/components/toggle-button-option/ObcToggleButtonOption'
 import { ObcToggleButtonOptionType } from '@oicl/openbridge-webcomponents/dist/components/toggle-button-option/toggle-button-option.js'
 import { useBridgeStore } from '@/stores/bridge'
 import type { ObcToggleButtonGroupValueChangeEvent } from '@oicl/openbridge-webcomponents/dist/components/toggle-button-group/toggle-button-group.js'

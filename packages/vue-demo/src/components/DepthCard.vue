@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import ObcCard from '@oicl/openbridge-webcomponents-vue/components/card/ObcCard.vue'
+import ObcCard from '@oicl/openbridge-webcomponents-vue/components/card/ObcCard'
 import DepthGraph from '@/components/DepthGraph.vue'
-import ObcToggleButtonGroup from '@oicl/openbridge-webcomponents-vue/components/toggle-button-group/ObcToggleButtonGroup.vue'
-import ObcToggleButtonOption from '@oicl/openbridge-webcomponents-vue/components/toggle-button-option/ObcToggleButtonOption.vue'
+import ObcToggleButtonGroup from '@oicl/openbridge-webcomponents-vue/components/toggle-button-group/ObcToggleButtonGroup'
+import ObcToggleButtonOption from '@oicl/openbridge-webcomponents-vue/components/toggle-button-option/ObcToggleButtonOption'
 import { ObcToggleButtonOptionType } from '@oicl/openbridge-webcomponents/dist/components/toggle-button-option/toggle-button-option.js'
 import { ref } from 'vue'
-import ObcStepperBox from '@oicl/openbridge-webcomponents-vue/components/stepper-box/ObcStepperBox.vue'
+import ObcStepperBox from '@oicl/openbridge-webcomponents-vue/components/stepper-box/ObcStepperBox'
 import { ObcStepperBoxType } from '@oicl/openbridge-webcomponents/dist/components/stepper-box/stepper-box.js'
 
 const selectedType = ref('echogram')

@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import ObcThruster from '@oicl/openbridge-webcomponents-vue/navigation-instruments/thruster/ObcThruster.vue'
+import ObcThruster from '@oicl/openbridge-webcomponents-vue/navigation-instruments/thruster/ObcThruster'
 import {
   InstrumentState,
   Priority
 } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types'
-import ObcAzimuthThruster from '@oicl/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster.vue'
-import ObcMainEngine from '@oicl/openbridge-webcomponents-vue/navigation-instruments/main-engine/ObcMainEngine.vue'
-import ObcRudder from '@oicl/openbridge-webcomponents-vue/navigation-instruments/rudder/ObcRudder.vue'
-import ObcInstrumentField from '@oicl/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
+import ObcAzimuthThruster from '@oicl/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster'
+import ObcMainEngine from '@oicl/openbridge-webcomponents-vue/navigation-instruments/main-engine/ObcMainEngine'
+import ObcRudder from '@oicl/openbridge-webcomponents-vue/navigation-instruments/rudder/ObcRudder'
+import ObcInstrumentField from '@oicl/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField'
 import { InstrumentFieldSize } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
-import ObiLink from '@oicl/openbridge-webcomponents-vue/icons/ObiLink.vue'
+import ObiLink from '@oicl/openbridge-webcomponents-vue/icons/ObiLink'
 import { useSim } from '../composables/useSim'
 import { computed } from 'vue'
 import { useDemoConfigStore } from '../stores/demoConfig'
