@@ -61,11 +61,17 @@ const currentApp = computed(() => {
 </template>
 
 <style scoped>
+@position-try --small-screen-app-menu {
+  position-anchor: --more-menu-button;
+  right: 4px;
+}
+
 .app-menu {
   position: fixed;
   position-anchor: --apps-menu-button;
   top: calc(anchor(bottom) + 4px);
   right: calc(anchor(right) + 8px);
-  max-width: calc(100% - 16px);
+  max-width: calc(100% - 8px);
+  position-try: --small-screen-app-menu;
 }
 </style>
