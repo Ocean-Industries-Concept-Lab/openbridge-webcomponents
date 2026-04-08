@@ -21,7 +21,7 @@
 
     width: var(--ui-components-app-button-visual-size-enhanced);
     height: var(--ui-components-app-button-visual-size-enhanced);
-    border-radius: 100%;
+    border-radius: var(--ui-components-app-button-border-radius-large);
 
     display: flex;
 
@@ -48,6 +48,7 @@
     & .icon-wrapper {
       width: var(--ui-components-app-button-visual-size);
       height: var(--ui-components-app-button-visual-size);
+      border-radius: var(--ui-components-app-button-border-radius-small);
     }
 
     & .icon {
