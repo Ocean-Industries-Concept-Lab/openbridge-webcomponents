@@ -19,7 +19,7 @@ function fixPackageJson(packageName, directory) {
 
   packageJson.repository = {
     type: 'git',
-    url: 'git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip.git',
+    url: 'git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents.git',
     directory: `packages/${directory}`,
   };
 

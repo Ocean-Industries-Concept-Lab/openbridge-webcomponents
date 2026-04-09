@@ -11,9 +11,9 @@
 ## 1. Repository Overview
 
 | Item              | Value                                                                                                                     |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| ----------------- |---------------------------------------------------------------------------------------------------------------------------|
 | Name              | **Openbridge Web Components**                                                                                             |
-| Repo              | `Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip`                                                               |
+| Repo              | `Ocean-Industries-Concept-Lab/openbridge-webcomponents`                                                                   |
 | License           | Apache-2.0                                                                                                                |
 | Runtime           | Lit 3 + TypeScript (web components)                                                                                       |
 | Package manager   | npm (workspaces)                                                                                                          |

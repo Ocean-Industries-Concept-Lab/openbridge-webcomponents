@@ -63,7 +63,7 @@ function App() {
 }
 ```
 
-For a more complete example, check the [React Demo](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip/tree/main/packages/react-demo).
+For a more complete example, check the [React Demo](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/tree/main/packages/react-demo).
 
 ## 👫 Contributing
 

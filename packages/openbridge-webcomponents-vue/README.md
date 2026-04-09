@@ -63,7 +63,7 @@ import { ObcTopBar } from "@oicl/openbridge-webcomponents-vue";
 </template>
 ```
 
-For a more complete example, check the [Vue Demo](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip/tree/main/packages/vue-demo).
+For a more complete example, check the [Vue Demo](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/tree/main/packages/vue-demo).
 
 ## 👫 Contributing
 
