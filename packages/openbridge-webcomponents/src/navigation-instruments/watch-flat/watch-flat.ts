@@ -21,6 +21,9 @@ import {
   renderLinearRotBarStatic,
   renderLinearRotBarDots,
   LINEAR_DOT_ANGLE_SPACING,
+  renderLinearRotZeroPill,
+  BAR_HALF_THICKNESS,
+  ROT_ZERO_DEADBAND_PX,
 } from '../rate-of-turn/rot-renderer.js';
 import {
   RateOfTurnController,
@@ -61,6 +64,7 @@ export class ObcWatchFlat extends LitElement {
    */
   @property({type: Number}) rotDotSpacing: number = 0;
   @property({type: String}) rotPriority: Priority = Priority.regular;
+  @property({type: Boolean}) rotPortStarboard: boolean = false;
 
   @property({type: Number})
   set rotationsPerMinute(value: number) {
@@ -202,19 +206,36 @@ export class ObcWatchFlat extends LitElement {
   private getRotColors(): {
     dotColor: string;
     barBgColor: string;
-    endDotFill: string;
-    endDotStroke: string;
   } {
     const isEnhanced = this.rotPriority === Priority.enhanced;
+
+    if (this.rotPortStarboard) {
+      // For bar type, derive direction from bar positions (visual direction);
+      // for dots, use spinner RPM.
+      const direction =
+        this.rotType === RotType.bar
+          ? this.rotEndX - this.rotStartX
+          : this._rotationsPerMinute;
+
+      if (direction > 0) {
+        return {
+          dotColor: 'var(--instrument-starboard-secondary-color)',
+          barBgColor: 'var(--instrument-starboard-primary-color)',
+        };
+      }
+      if (direction < 0) {
+        return {
+          dotColor: 'var(--instrument-port-secondary-color)',
+          barBgColor: 'var(--instrument-port-primary-color)',
+        };
+      }
+    }
+
     return {
       dotColor: isEnhanced
         ? 'var(--instrument-enhanced-tertiary-color)'
         : 'var(--instrument-regular-tertiary-color)',
       barBgColor: isEnhanced
-        ? 'var(--instrument-enhanced-secondary-color)'
-        : 'var(--instrument-regular-secondary-color)',
-      endDotFill: 'var(--border-silhouette-color)',
-      endDotStroke: isEnhanced
         ? 'var(--instrument-enhanced-secondary-color)'
         : 'var(--instrument-regular-secondary-color)',
     };
@@ -224,25 +245,30 @@ export class ObcWatchFlat extends LitElement {
     if (!this.rotType) return nothing;
 
     const trackY = this.getRotTrackY();
-    const {dotColor, barBgColor, endDotFill, endDotStroke} =
-      this.getRotColors();
+    const {dotColor, barBgColor} = this.getRotColors();
     const canAnimateDots = this.rotDotSpacing > 0;
 
     if (this.rotType === RotType.bar) {
-      const hasBar = Math.abs(this.rotEndX - this.rotStartX) >= 1;
+      const span = Math.abs(this.rotEndX - this.rotStartX);
+
+      if (span < ROT_ZERO_DEADBAND_PX) {
+        return renderLinearRotZeroPill(barBgColor, this.rotStartX, trackY);
+      }
+
+      if (span < BAR_HALF_THICKNESS) {
+        return nothing;
+      }
+
       return svg`
         ${renderLinearRotBarStatic({
           startX: this.rotStartX,
           endX: this.rotEndX,
-          color: dotColor,
           barColor: barBgColor,
           trackY,
-          endDotFill,
-          endDotStroke,
           maskId: 'rot-bar-mask-linear',
         })}
         ${
-          hasBar && canAnimateDots
+          canAnimateDots
             ? svg`<g clip-path="url(#rot-bar-mask-linear)">
               <g id="rot-spinner">
                 ${renderLinearRotBarDots(dotColor, trackY, this.rotDotSpacing, this.width)}
@@ -253,10 +279,18 @@ export class ObcWatchFlat extends LitElement {
       `;
     }
 
-    const dotsColor =
-      this.rotPriority === Priority.enhanced
-        ? 'var(--instrument-enhanced-secondary-color)'
-        : 'var(--instrument-regular-secondary-color)';
+    const isEnhanced = this.rotPriority === Priority.enhanced;
+    const neutralDotsColor = isEnhanced
+      ? 'var(--instrument-enhanced-secondary-color)'
+      : 'var(--instrument-regular-secondary-color)';
+    let dotsColor = neutralDotsColor;
+    if (this.rotPortStarboard) {
+      if (this._rotationsPerMinute > 0) {
+        dotsColor = 'var(--instrument-starboard-secondary-color)';
+      } else if (this._rotationsPerMinute < 0) {
+        dotsColor = 'var(--instrument-port-secondary-color)';
+      }
+    }
     return canAnimateDots
       ? svg`
           <g id="rot-spinner">

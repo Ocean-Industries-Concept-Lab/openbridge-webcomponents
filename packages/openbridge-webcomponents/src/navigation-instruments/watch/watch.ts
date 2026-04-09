@@ -34,6 +34,9 @@ import {
   renderRotBarStatic,
   renderRotBarDots,
   shortestAngularDeltaDeg,
+  renderRotZeroPill,
+  rotBarThresholdAngle,
+  ROT_ZERO_DEADBAND_DEG,
 } from '../rate-of-turn/rot-renderer.js';
 export {RotType, RotPosition};
 import {
@@ -239,6 +242,7 @@ export class ObcWatch extends LitElement {
   @property({type: Number}) rotStartAngle: number = 0;
   @property({type: Number}) rotEndAngle: number = 0;
   @property({type: String}) rotPriority: Priority | undefined;
+  @property({type: Boolean}) rotPortStarboard: boolean = false;
   @property({type: Number})
   set rotationsPerMinute(value: number) {
     this._rotationsPerMinute = value;
@@ -787,40 +791,42 @@ export class ObcWatch extends LitElement {
   private getRotColors(): {
     dotColor: string;
     barBgColor: string;
-    endDotFill: string;
-    endDotStroke: string;
   } {
     const p = this.rotPriority ?? this.priority;
     const isEnhanced = p === Priority.enhanced;
-    const isInner = this.rotPosition === RotPosition.innerCircle;
 
-    if (isInner) {
-      return {
-        dotColor: isEnhanced
-          ? 'var(--instrument-enhanced-tertiary-color)'
-          : 'var(--instrument-regular-tertiary-color)',
-        barBgColor: isEnhanced
-          ? 'var(--instrument-enhanced-secondary-color)'
-          : 'var(--instrument-regular-secondary-color)',
-        endDotFill: 'var(--border-silhouette-color)',
-        endDotStroke: isEnhanced
-          ? 'var(--instrument-enhanced-secondary-color)'
-          : 'var(--instrument-regular-secondary-color)',
-      };
+    if (this.rotPortStarboard) {
+      // For bar type, derive direction from bar angles (visual direction);
+      // for dots, use spinner RPM.
+      let direction: number;
+      if (this.rotType === RotType.bar) {
+        const cwSpan =
+          (((this.rotEndAngle - this.rotStartAngle) % 360) + 360) % 360;
+        direction = cwSpan <= 180 ? cwSpan : cwSpan - 360;
+      } else {
+        direction = this._rotationsPerMinute;
+      }
+
+      if (direction > 0) {
+        return {
+          dotColor: 'var(--instrument-starboard-secondary-color)',
+          barBgColor: 'var(--instrument-starboard-primary-color)',
+        };
+      }
+      if (direction < 0) {
+        return {
+          dotColor: 'var(--instrument-port-secondary-color)',
+          barBgColor: 'var(--instrument-port-primary-color)',
+        };
+      }
     }
 
     return {
       dotColor: isEnhanced
-        ? 'var(--instrument-enhanced-secondary-color)'
-        : 'var(--instrument-regular-secondary-color)',
-      barBgColor: isEnhanced
         ? 'var(--instrument-enhanced-tertiary-color)'
         : 'var(--instrument-regular-tertiary-color)',
-      endDotFill: isEnhanced
+      barBgColor: isEnhanced
         ? 'var(--instrument-enhanced-secondary-color)'
-        : 'var(--border-silhouette-color)',
-      endDotStroke: isEnhanced
-        ? 'var(--instrument-frame-primary-color)'
         : 'var(--instrument-regular-secondary-color)',
     };
   }
@@ -828,42 +834,58 @@ export class ObcWatch extends LitElement {
   private renderRot(): SVGTemplateResult | typeof nothing {
     if (!this.rotType) return nothing;
 
-    const {dotColor, barBgColor, endDotFill, endDotStroke} =
-      this.getRotColors();
+    const {dotColor, barBgColor} = this.getRotColors();
     const rOff = this._rOff;
 
     if (this.rotType === RotType.bar) {
-      const hasBar =
-        shortestAngularDeltaDeg(this.rotStartAngle, this.rotEndAngle) >= 0.1;
+      const angularDelta = shortestAngularDeltaDeg(
+        this.rotStartAngle,
+        this.rotEndAngle
+      );
+      const threshold = rotBarThresholdAngle(this.rotPosition, rOff);
+
+      if (angularDelta < ROT_ZERO_DEADBAND_DEG) {
+        return renderRotZeroPill(
+          barBgColor,
+          this.rotStartAngle,
+          this.rotPosition,
+          rOff
+        );
+      }
+
+      if (angularDelta < threshold) {
+        return nothing;
+      }
+
       return svg`
         ${renderRotBarStatic({
           startAngle: this.rotStartAngle,
           endAngle: this.rotEndAngle,
-          color: dotColor,
           barColor: barBgColor,
           position: this.rotPosition,
-          endDotFill,
-          endDotStroke,
           maskId: 'rot-bar-mask',
           radiusOffset: rOff,
         })}
-        ${
-          hasBar
-            ? svg`<g clip-path="url(#rot-bar-mask)">
-              <g id="rot-spinner">
-                ${renderRotBarDots(dotColor, this.rotPosition, rOff)}
-              </g>
-            </g>`
-            : nothing
-        }
+        ${svg`<g clip-path="url(#rot-bar-mask)">
+            <g id="rot-spinner">
+              ${renderRotBarDots(dotColor, this.rotPosition, rOff)}
+            </g>
+          </g>`}
       `;
     }
 
     const p = this.rotPriority ?? this.priority;
-    const dotsColor =
-      p === Priority.enhanced
-        ? 'var(--instrument-enhanced-secondary-color)'
-        : 'var(--instrument-regular-secondary-color)';
+    const isEnhanced = p === Priority.enhanced;
+    let dotsColor: string = isEnhanced
+      ? 'var(--instrument-enhanced-secondary-color)'
+      : 'var(--instrument-regular-secondary-color)';
+    if (this.rotPortStarboard) {
+      if (this._rotationsPerMinute > 0) {
+        dotsColor = 'var(--instrument-starboard-secondary-color)';
+      } else if (this._rotationsPerMinute < 0) {
+        dotsColor = 'var(--instrument-port-secondary-color)';
+      }
+    }
     return svg`
       <g id="rot-spinner">
         ${renderRotDots(dotsColor, this.rotPosition, rOff)}
