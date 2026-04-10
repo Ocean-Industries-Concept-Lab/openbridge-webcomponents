@@ -40,13 +40,13 @@ jobs:
 
               <type>(optional-scope): <description>
 
-            ✅ Valid examples:
-              feat: add user login
-              fix(api): handle null response
-              docs: update README
-              refactor(core)!: change initialization flow (ekample of breaking change)
+            ✅Valid examples:
+              - feat: add user login
+              - fix(api): handle null response
+              - docs: update README
+              - refactor(core)!: change initialization flow (ekample of breaking change)
 
-            📌 Rules:
+            📌Rules:
               - type must be one of: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert
               - scope is optional, but must be lowercase (e.g. api, ui, auth)
               - use `!` before `:` for breaking changes
