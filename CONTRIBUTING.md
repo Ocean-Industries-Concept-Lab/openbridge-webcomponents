@@ -89,8 +89,8 @@ We enforce [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/
 
 Examples:
 - `feat: Add new button component`
-- `fix: Resolve gauge alignment issue`
-- `feat!: Breaking change in the component API` (use `!` for breaking changes)
+- `fix: resolve gauge alignment issue`
+- `feat!: breaking change in the component API` (use `!` for breaking changes)
 
 Please ensure your title is clear and follows the syntax.
 
