@@ -193,7 +193,7 @@ export const ComponentSizeComparison: Story = {
           <obc-bar-vertical
             minValue="0"
             maxValue="100"
-            height="320"
+            height="520"
             side="right"
             primaryTickmarkInterval="20"
             secondaryTickmarkInterval="10"
