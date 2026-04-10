@@ -136,6 +136,10 @@ option::checkmark {
   display: none;
 }
 
+.wrapper.flat {
+  @mixin style style=flat visibleWrapperClass=.visible-wrapper;
+}
+
 .wrapper.integration {
   @mixin style style=integration-selected visibleWrapperClass=.visible-wrapper;
 
