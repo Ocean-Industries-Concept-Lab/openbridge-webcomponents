@@ -48,6 +48,7 @@
     "download:icons": "tsx ./script/download-icons.ts",
     "analyze": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\"",
     "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\" --watch",
+    "clean": "rm -rf node_modules dist bundle custom-elements.json",
     "言_TRANSLATIONS______________________________________________": "echo _____",
     "translations:extract": "lit localize extract"
   },
