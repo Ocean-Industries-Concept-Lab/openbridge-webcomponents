@@ -200,7 +200,7 @@ export const ComponentSizeComparison: Story = {
             tertiaryTickmarkInterval="2"
             hasBar
             setpoint="50"
-            value="40"
+            value="20"
             .advices=${[
               {min: 60, max: 80, type: AdviceType.caution, hinted: true},
             ]}
