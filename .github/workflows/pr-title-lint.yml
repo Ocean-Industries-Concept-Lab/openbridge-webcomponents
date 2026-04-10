@@ -49,4 +49,4 @@ jobs:
               - feat: add user login
               - fix(api): handle null response
               - docs: update README
-              - refactor(core)!: change initialization flow (ekample of breaking change)
+              - refactor(core)!: change initialization flow (example of breaking change)
