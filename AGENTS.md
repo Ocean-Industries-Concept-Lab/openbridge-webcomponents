@@ -47,7 +47,7 @@ All paths below are relative to `packages/openbridge-webcomponents/`.
 - **Styles:** PostCSS (`.css` files). One global palette in `src/palettes/variables.css`; all other CSS in component folders. Use `@mixin style` for elevation variants. Text: `@mixin font-body`, `@mixin font-label`, etc.
 - **No inline comments** unless the code is extremely unusual and impossible to understand without explanation.
 - **Only comment a property** if the name is not self-explanatory.
-- **Conventional Commits** for git messages (`feat:`, `fix:`, `docs:`, etc.).
+- **Conventional Commits** for git messages and **Pull Request titles** (`feat:`, `fix:`, `feat!:`, etc.). An automated linting process validates PR titles.
 - Ask for clarification (e.g. a list of questions) before implementing significant changes.
 
 ### Boolean property naming

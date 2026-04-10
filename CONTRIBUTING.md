@@ -84,6 +84,16 @@ git push origin your-branch-name
 
 Go to the repository on GitHub, and you'll see a prompt to submit a pull request. Fill in the necessary details and submit.
 
+**Note on Pull Request Titles:**
+We enforce [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for Pull Request titles. An automated check will validate your PR title. If it doesn't follow the rules, the check will fail.
+
+Examples:
+- `feat: Add new button component`
+- `fix: Resolve gauge alignment issue`
+- `feat!: Breaking change in the component API` (use `!` for breaking changes)
+
+Please ensure your title is clear and follows the syntax.
+
 ### Additional Ways to Contribute
 
 - Reviewing pull requests

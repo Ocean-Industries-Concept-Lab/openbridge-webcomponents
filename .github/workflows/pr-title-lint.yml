@@ -1,0 +1,44 @@
+name: "Lint PR Title"
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+
+permissions:
+  pull-requests: read
+
+jobs:
+  main:
+    name: Validate Conventional Commit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Semantic PR Check
+        uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            fix
+            feat
+            docs
+            style
+            refactor
+            perf
+            test
+            build
+            ci
+            chore
+            revert
+          requireScope: false
+          headerPattern: '^(\w*)(?:\(([\w$.\-* ]*)\))?(!?): .+$'
+          headerPatternError: |
+            The PR title does not match the Conventional Commits spec.
+            See: https://www.conventionalcommits.org/en/v1.0.0/
+
+            Examples:
+            - fix: update login logic
+            - feat(api)!: breaking change with scope
+            - chore!: breaking change without scope
