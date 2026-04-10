@@ -1,4 +1,4 @@
-name: "Lint PR Title"
+name: Validate PR Title (Conventional Commits)
 
 on:
   pull_request:
@@ -6,23 +6,21 @@ on:
       - opened
       - edited
       - synchronize
-
-permissions:
-  pull-requests: read
+      - reopened
 
 jobs:
-  main:
-    name: Validate Conventional Commit
+  semantic-pr:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Semantic PR Check
+      - name: Validate PR title
         uses: amannn/action-semantic-pull-request@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           types: |
-            fix
             feat
+            fix
             docs
             style
             refactor
@@ -33,12 +31,36 @@ jobs:
             chore
             revert
           requireScope: false
-          headerPattern: '^(\w*)(?:\(([\w$.\-* ]*)\))?(!?): .+$'
+          headerPattern: '^(\w+)(\([a-z0-9\-]+\))?(!)?: (.+)$'
+
           headerPatternError: |
-            The PR title does not match the Conventional Commits spec.
-            See: https://www.conventionalcommits.org/en/v1.0.0/
+            Invalid PR title format
+
+            Your PR title must follow the Conventional Commits specification:
+
+              <type>(optional-scope): <description>
+
+            ✅ Valid examples:
+              feat: add user login
+              fix(api): handle null response
+              docs: update README
+              refactor(core)!: change initialization flow (ekample of breaking change)
+
+            📌 Rules:
+              - type must be one of: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert
+              - scope is optional, but must be lowercase (e.g. api, ui, auth)
+              - use `!` before `:` for breaking changes
+              - description must not be empty
+              - use lowercase and imperative mood (e.g. "add", not "added")
+
+          # Optional: enforce subject formatting
+          subjectPattern: '^[a-z].+$'
+          subjectPatternError: |
+            ❌ Invalid description
+
+            The description must:
+              - start with a lowercase letter
+              - not be empty
 
             Examples:
-            - fix: update login logic
-            - feat(api)!: breaking change with scope
-            - chore!: breaking change without scope
+              - feat: add authentication support
