@@ -1,6 +1,7 @@
 import {LitElement, html, unsafeCSS, nothing, type PropertyValues} from 'lit';
 import {property, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './calendar.css?inline';
 import {
@@ -99,6 +100,7 @@ export class ObcCalendar extends LitElement {
   @property({type: String}) locale?: string;
   @property({type: Number}) firstDayOfWeek = 1;
   @property({type: String}) footerLabel = 'Calendar';
+  @property({type: String}) footerHref?: string;
 
   @state() private _displayMonth: Date = new Date();
 
@@ -446,6 +448,7 @@ export class ObcCalendar extends LitElement {
       <div class="footer-container">
         <obc-navigation-item
           label=${this.footerLabel}
+          href=${ifDefined(this.footerHref)}
           hasIcon
           hasTrailingIcon
           @click=${this._handleCalendarClick}
