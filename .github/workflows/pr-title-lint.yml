@@ -32,35 +32,21 @@ jobs:
             revert
           requireScope: false
           headerPattern: '^(\w+)(\([a-z0-9\-]+\))?(!)?: (.+)$'
-
-          headerPatternError: |
-            Invalid PR title format
-
+          subjectPattern: '^[a-z].+$'
+          subjectPatternError: |
             Your PR title must follow the Conventional Commits specification:
 
               <type>(optional-scope): <description>
 
-            ✅Valid examples:
+              Rules:
+              - type must be one of: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert
+              - scope is optional, but must be lowercase (e.g. api, ui, auth)
+              - use `!` before `:` for breaking changes
+              - description must not be empty and start with a lowercase letter
+              - use lowercase and imperative mood (e.g. "add", not "added")✅
+            
+              Valid examples:
               - feat: add user login
               - fix(api): handle null response
               - docs: update README
               - refactor(core)!: change initialization flow (ekample of breaking change)
-
-            📌Rules:
-              - type must be one of: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert
-              - scope is optional, but must be lowercase (e.g. api, ui, auth)
-              - use `!` before `:` for breaking changes
-              - description must not be empty
-              - use lowercase and imperative mood (e.g. "add", not "added")
-
-          # Optional: enforce subject formatting
-          subjectPattern: '^[a-z].+$'
-          subjectPatternError: |
-            ❌ Invalid description
-
-            The description must:
-              - start with a lowercase letter
-              - not be empty
-
-            Examples:
-              - feat: add authentication support
