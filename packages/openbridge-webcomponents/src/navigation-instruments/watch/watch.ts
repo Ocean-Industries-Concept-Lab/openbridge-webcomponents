@@ -243,6 +243,7 @@ export class ObcWatch extends LitElement {
   @property({type: Number}) rotEndAngle: number = 0;
   @property({type: String}) rotPriority: Priority | undefined;
   @property({type: Boolean}) rotPortStarboard: boolean = false;
+  @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_DEG;
   @property({type: Number})
   set rotationsPerMinute(value: number) {
     this._rotationsPerMinute = value;
@@ -843,18 +844,17 @@ export class ObcWatch extends LitElement {
         this.rotEndAngle
       );
       const threshold = rotBarThresholdAngle(this.rotPosition, rOff);
+      const zeroDb = Number.isFinite(this.rotAtZeroDeadband)
+        ? this.rotAtZeroDeadband
+        : ROT_ZERO_DEADBAND_DEG;
 
-      if (angularDelta < ROT_ZERO_DEADBAND_DEG) {
+      if (angularDelta < Math.max(zeroDb, threshold)) {
         return renderRotZeroPill(
           barBgColor,
           this.rotStartAngle,
           this.rotPosition,
           rOff
         );
-      }
-
-      if (angularDelta < threshold) {
-        return nothing;
       }
 
       return svg`

@@ -8,6 +8,7 @@ import {Priority} from '../types.js';
 import {
   RotType,
   LINEAR_DOT_ANGLE_SPACING,
+  ROT_ZERO_DEADBAND_DEG,
 } from '../rate-of-turn/rot-renderer.js';
 
 export {RotType};
@@ -86,6 +87,7 @@ export class ObcCompassFlat extends LitElement {
   @property({type: Number}) rotMaxValue: number = 10;
   @property({type: Number}) rotArcExtent: number = 60;
   @property({type: Boolean}) rotPortStarboard: boolean = false;
+  @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_DEG;
 
   @state() private containerWidth = 0;
   @state() private maxContainerWidth = 0;
@@ -310,6 +312,7 @@ export class ObcCompassFlat extends LitElement {
           .rotationsPerMinute=${this.rotationsPerMinute}
           .rotPriority=${this.priorityFor(CompassFlatPriorityElement.rot)}
           .rotPortStarboard=${this.rotPortStarboard}
+          .rotAtZeroDeadband=${this.rotAtZeroDeadband * translationScale}
         ></obc-watch-flat>
         <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg">
           ${this.HDGSvg}${this.COGSvg(translation)}

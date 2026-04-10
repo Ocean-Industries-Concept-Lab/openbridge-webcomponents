@@ -65,6 +65,7 @@ export class ObcWatchFlat extends LitElement {
   @property({type: Number}) rotDotSpacing: number = 0;
   @property({type: String}) rotPriority: Priority = Priority.regular;
   @property({type: Boolean}) rotPortStarboard: boolean = false;
+  @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_PX;
 
   @property({type: Number})
   set rotationsPerMinute(value: number) {
@@ -250,13 +251,12 @@ export class ObcWatchFlat extends LitElement {
 
     if (this.rotType === RotType.bar) {
       const span = Math.abs(this.rotEndX - this.rotStartX);
+      const zeroDb = Number.isFinite(this.rotAtZeroDeadband)
+        ? this.rotAtZeroDeadband
+        : ROT_ZERO_DEADBAND_PX;
 
-      if (span < ROT_ZERO_DEADBAND_PX) {
+      if (span < Math.max(zeroDb, BAR_HALF_THICKNESS)) {
         return renderLinearRotZeroPill(barBgColor, this.rotStartX, trackY);
-      }
-
-      if (span < BAR_HALF_THICKNESS) {
-        return nothing;
       }
 
       return svg`
