@@ -96,7 +96,7 @@ header {
 }
 ```
 
-Check out all details in the [storybook](https://openbridge-jip-storybook.web.app/?path=/docs/application-topbar--docs).
+Check out all details in the [storybook](https://openbridge-storybook.web.app/?path=/docs/application-topbar--docs).
 Turn on some details:
 
 ```tsx
@@ -137,7 +137,7 @@ This could be `regular`, `medium`, `large`, or `xl`. It sets the component size 
 
 ## Load font
 
-Lastly Noto Sans needs to be added. You can download it from the [OpenBridge repo](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip/raw/refs/heads/main/packages/openbridge-webcomponents/public/NotoSans.ttf). Place the NotoSans.ttf file in the public folder.
+Lastly Noto Sans needs to be added. You can download it from the [OpenBridge repo](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/raw/refs/heads/main/packages/openbridge-webcomponents/public/NotoSans.ttf). Place the NotoSans.ttf file in the public folder.
 
 Next this file must be loaded by the css. So add it to index.css:
 
@@ -239,7 +239,7 @@ main {
 ```
 
 We can now add a state to store if the dimming menu is open or not. Also add an handler when the dimming menu button is clicked.
-Find the event name under events in [storybook](https://openbridge-jip-storybook.web.app/?path=/docs/application-topbar--docs).Remember also to set the `dimmingButtonActivated` which marks the button grey when activated.
+Find the event name under events in [storybook](https://openbridge-storybook.web.app/?path=/docs/application-topbar--docs).Remember also to set the `dimmingButtonActivated` which marks the button grey when activated.
 
 ```tsx
 import { useState } from "react";
@@ -489,7 +489,7 @@ export default App;
 
 # Add navigation menu
 
-We can now add a navigation menu. Start by looking it up in [storybook](https://openbridge-jip-storybook.web.app/?path=/docs/menu-navigation-menu--docs). Click on "Show code" to view the example code.
+We can now add a navigation menu. Start by looking it up in [storybook](https://openbridge-storybook.web.app/?path=/docs/menu-navigation-menu--docs). Click on "Show code" to view the example code.
 
 Start by making an navigation menu component. Create `NavigationMenu.tsx` in `src/components` and copy the example file into the new React component:
 
@@ -909,7 +909,7 @@ export default App;
 We can now use these path in the navigation menu:
 
 - set the href to the path in router
-- find some good labels and [icons](https://openbridge-jip-demo.web.app/icons)
+- find some good labels and [icons](https://openbridge-demo.web.app/icons)
 
 ```tsx
 import { ObcNavigationMenu } from "@oicl/openbridge-webcomponents-react/components/navigation-menu/navigation-menu";

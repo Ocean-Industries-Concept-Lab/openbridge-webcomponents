@@ -2,6 +2,7 @@ import {LitElement, css, html} from 'lit';
 import {property} from 'lit/decorators.js';
 import '../watch/watch.js';
 import {WatchCircleType, RotType, RotPosition} from '../watch/watch.js';
+import {ROT_ZERO_DEADBAND_DEG} from './rot-renderer.js';
 import {customElement} from '../../decorator.js';
 import {Priority} from '../types.js';
 
@@ -48,6 +49,8 @@ export class ObcRateOfTurn extends LitElement {
   @property({type: Number}) barEndAngle: number = 30;
   @property({type: String}) watchCircleType: WatchCircleType =
     WatchCircleType.single;
+  @property({type: Boolean}) rotPortStarboard: boolean = false;
+  @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_DEG;
 
   static override styles = css`
     * {
@@ -79,6 +82,8 @@ export class ObcRateOfTurn extends LitElement {
         .rotStartAngle=${this.barStartAngle}
         .rotEndAngle=${this.barEndAngle}
         .rotationsPerMinute=${this.rotationsPerMinute}
+        .rotPortStarboard=${this.rotPortStarboard}
+        .rotAtZeroDeadband=${this.rotAtZeroDeadband}
       ></obc-watch>
     </div>`;
   }
