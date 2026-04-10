@@ -89,11 +89,11 @@ jobs:
       - name: Build openbridge-webcomponents-react
         run: cd packages/openbridge-webcomponents-react && npm run build
 
-      - name: Build openbridge-webcomponents-svelte
-        run: cd packages/openbridge-webcomponents-svelte && npm run build
-
       - name: Install wrapper dependencies
         run: npm install
+
+      - name: Build openbridge-webcomponents-svelte
+        run: cd packages/openbridge-webcomponents-svelte && npm run build
 
       - name: Build openbridge-webcomponents-ng
         run: cd packages/openbridge-webcomponents-ng && npm run build
