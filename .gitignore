@@ -30,3 +30,4 @@ packages/openbridge-webcomponents/__vis__/darwin/
 .idea/
 **/.idea/
 CLAUDE.md
+/.env
