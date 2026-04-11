@@ -44,8 +44,8 @@ import {customElement} from '../../../decorator.js';
  * ```html
  * <obc-poi-line
  *   height="96"
- *   poi-style="regular"
- *   line-type="regular"
+ *   .poiStyle=${POIStyle.Regular}
+ *   .lineType=${POILineType.Regular}
  *   .hasPointer=${true}
  * ></obc-poi-line>
  * ```
@@ -53,9 +53,9 @@ import {customElement} from '../../../decorator.js';
 @customElement('obc-poi-line')
 export class ObcPoiLine extends LitElement {
   @property({type: Number}) height: number = 96;
-  @property({type: String, attribute: 'poi-style', reflect: true})
+  @property({type: String, attribute: false})
   poiStyle: POIStyle = POIStyle.Normal;
-  @property({type: String, attribute: 'line-type', reflect: true})
+  @property({type: String, attribute: false})
   lineType: POILineType = POILineType.Regular;
   @property({type: Number}) offset: number = 0;
   @property({type: Boolean}) hasPointer = false;
@@ -74,10 +74,8 @@ export class ObcPoiLine extends LitElement {
 
     return html`
       <div
-        class="offset-wrapper"
-        style="--obc-poi-line-transition-duration: ${this.animatePosition
-          ? '0.1s'
-          : '0s'};"
+        class="offset-wrapper poi-style-${this.poiStyle} line-type-${this
+          .lineType}${this.animatePosition ? ' animate-position' : ''}"
       >
         <div
           class="container"
