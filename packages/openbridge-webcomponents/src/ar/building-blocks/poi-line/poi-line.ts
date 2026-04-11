@@ -53,14 +53,13 @@ import {customElement} from '../../../decorator.js';
 @customElement('obc-poi-line')
 export class ObcPoiLine extends LitElement {
   @property({type: Number}) height: number = 96;
-  @property({type: String, attribute: false})
+  @property({type: String})
   poiStyle: POIStyle = POIStyle.Normal;
-  @property({type: String, attribute: false})
+  @property({type: String})
   lineType: POILineType = POILineType.Regular;
   @property({type: Number}) offset: number = 0;
   @property({type: Boolean}) hasPointer = false;
-  @property({type: Boolean, attribute: 'animate-position'})
-  animatePosition = false;
+  @property({type: Boolean}) animatePosition = false;
   override render() {
     const style = getPOILineConfig(this.poiStyle, this.lineType);
     const lineHeight = this.height - 2;
