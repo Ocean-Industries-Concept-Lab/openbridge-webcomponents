@@ -23,9 +23,7 @@ interface CustomElementsJson {
 
 const filePath = path.join(process.cwd(), 'custom-elements.json');
 
-const data: CustomElementsJson = JSON.parse(
-  fs.readFileSync(filePath, 'utf8')
-);
+const data: CustomElementsJson = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
 const filteredModules = data.modules
   .map((module): Module | null => {
