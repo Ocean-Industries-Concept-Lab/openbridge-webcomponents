@@ -311,15 +311,17 @@ export class ObcPoiGraphicLine extends LitElement {
     const style = getPOILineConfig(this.lineStyle, this.lineType);
 
     return html`
-      <div class="wrapper line-style-${this.lineStyle} line-type-${this.lineType}">
-      ${graphicLine({
-        style,
-        lineHeight: this.lineHeight,
-        lineStart: this.lineStart,
-        totalHeight: this.lineHeight + this.lineStart,
-        offset: this.offset,
-        idPrefix: this._idPrefix,
-      })}
+      <div
+        class="wrapper line-style-${this.lineStyle} line-type-${this.lineType}"
+      >
+        ${graphicLine({
+          style,
+          lineHeight: this.lineHeight,
+          lineStart: this.lineStart,
+          totalHeight: this.lineHeight + this.lineStart,
+          offset: this.offset,
+          idPrefix: this._idPrefix,
+        })}
       </div>
     `;
   }

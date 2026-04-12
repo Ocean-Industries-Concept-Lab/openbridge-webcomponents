@@ -392,7 +392,11 @@ const renderMixedTypeLayers = (args: PoiLayerStackArgs) => html`
     }
   </style>
   <obc-poi-layer-stack class="stack-mixed" selection-mode=${args.selectionMode}>
-    <obc-poi-layer label="Selected" .isSelected=${true} .debug=${true}></obc-poi-layer>
+    <obc-poi-layer
+      label="Selected"
+      .isSelected=${true}
+      .debug=${true}
+    ></obc-poi-layer>
     <obc-poi-layer label="Buoys" .debug=${true}>
       <obc-poi-aton .x=${200} aton-type="aton" aton-style="green">
         <obi-beacon-general-east></obi-beacon-general-east>

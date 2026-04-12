@@ -131,7 +131,12 @@ export class ObcPoiSelectionFrame extends LitElement {
   }
 
   override render() {
-    return html`<span class="frame type-${this.type} state-${this.state}${this.customMode ? ' custom-mode' : ''}" part="frame" aria-hidden="true"
+    return html`<span
+      class="frame type-${this.type} state-${this.state}${this.customMode
+        ? ' custom-mode'
+        : ''}"
+      part="frame"
+      aria-hidden="true"
       >${this.renderFrame()}</span
     >`;
   }

@@ -66,7 +66,10 @@ export class ObcPoiLayerStack extends LitElement {
   override connectedCallback() {
     super.connectedCallback();
     this.addEventListener('click', this.handleStackClick);
-    this.addEventListener('layer-selection-changed', this.handleLayerSelectionChanged);
+    this.addEventListener(
+      'layer-selection-changed',
+      this.handleLayerSelectionChanged
+    );
   }
 
   override firstUpdated() {
@@ -83,7 +86,10 @@ export class ObcPoiLayerStack extends LitElement {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.removeEventListener('click', this.handleStackClick);
-    this.removeEventListener('layer-selection-changed', this.handleLayerSelectionChanged);
+    this.removeEventListener(
+      'layer-selection-changed',
+      this.handleLayerSelectionChanged
+    );
     const slot = this.shadowRoot?.querySelector('slot');
     slot?.removeEventListener('slotchange', this.handleSlotChange);
     this.mutationObserver?.disconnect();
