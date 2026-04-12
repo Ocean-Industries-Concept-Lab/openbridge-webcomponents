@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS, nothing} from 'lit';
+import {LitElement, PropertyValues, html, unsafeCSS, nothing} from 'lit';
 import {property, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import componentStyle from './poi-object.css?inline';
@@ -110,6 +110,31 @@ export class ObcPoiObject extends LitElement {
   @property({type: Boolean}) interactive = false;
 
   @state() private hasPlaceholderIcon = false;
+
+  private applyHostSize() {
+    if (this.isLargeSize) {
+      this.style.width =
+        'var(--maneuvering-components-poi-button-large-touch-target, 64px)';
+      this.style.height =
+        'var(--maneuvering-components-poi-button-large-touch-target, 64px)';
+    } else {
+      this.style.width =
+        'var(--maneuvering-components-poi-button-touch-target, 48px)';
+      this.style.height =
+        'var(--maneuvering-components-poi-button-touch-target, 48px)';
+    }
+  }
+
+  protected override updated(changedProperties: PropertyValues): void {
+    if (changedProperties.has('type')) {
+      this.applyHostSize();
+    }
+  }
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    this.applyHostSize();
+  }
 
   private get isChecked() {
     return (
