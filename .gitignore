@@ -31,6 +31,3 @@ packages/openbridge-webcomponents/__vis__/darwin/
 **/.idea/
 CLAUDE.md
 /.env
-
-# OpenMemory - IDE/Assistant specific rules
-.cursor/rules/openmemory.mdc
