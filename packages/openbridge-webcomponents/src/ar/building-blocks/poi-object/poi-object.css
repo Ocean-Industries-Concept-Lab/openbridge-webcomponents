@@ -6,14 +6,6 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: var(--maneuvering-components-poi-button-touch-target, 48px);
-  height: var(--maneuvering-components-poi-button-touch-target, 48px);
-}
-
-:host([type="large"]),
-:host([type="n-up-large"]) {
-  width: var(--maneuvering-components-poi-button-large-touch-target, 64px);
-  height: var(--maneuvering-components-poi-button-large-touch-target, 64px);
 }
 
 .is-large {
@@ -32,8 +24,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 100%;
+  width: var(--maneuvering-components-poi-button-touch-target, 48px);
+  height: var(--maneuvering-components-poi-button-touch-target, 48px);
   --obc-poi-touch-target: var(
     --maneuvering-components-poi-button-touch-target,
     48px

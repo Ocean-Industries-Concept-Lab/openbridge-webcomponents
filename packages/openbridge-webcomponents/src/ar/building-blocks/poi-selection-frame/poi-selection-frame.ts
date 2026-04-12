@@ -66,13 +66,13 @@ enum ObcPoiSelectionCornerPosition {
  */
 @customElement('obc-poi-selection-frame')
 export class ObcPoiSelectionFrame extends LitElement {
-  @property({type: String, reflect: true})
+  @property({type: String})
   type: ObcPoiSelectionFrameType = ObcPoiSelectionFrameType.Indicator;
 
-  @property({type: String, reflect: true})
+  @property({type: String})
   state: ObcPoiSelectionFrameState = ObcPoiSelectionFrameState.Regular;
 
-  @property({type: Boolean, reflect: true, attribute: 'custom-mode'})
+  @property({type: Boolean})
   customMode = false;
 
   @property({type: Number, attribute: 'box-width'})
@@ -131,7 +131,7 @@ export class ObcPoiSelectionFrame extends LitElement {
   }
 
   override render() {
-    return html`<span class="frame" part="frame" aria-hidden="true"
+    return html`<span class="frame type-${this.type} state-${this.state}${this.customMode ? ' custom-mode' : ''}" part="frame" aria-hidden="true"
       >${this.renderFrame()}</span
     >`;
   }

@@ -98,7 +98,7 @@ export enum ObcPoiObjectState {
  */
 @customElement('obc-poi-object')
 export class ObcPoiObject extends LitElement {
-  @property({type: String, reflect: true})
+  @property({type: String})
   type: ObcPoiObjectType = ObcPoiObjectType.Regular;
 
   @property({type: String}) objectStyle: ObcPoiObjectStyle =
