@@ -391,32 +391,26 @@ export class ObcPoiLayerStack extends LitElement {
   }
 
   private applySelectedTargetProjectionState(target: Poi) {
-    target.animatePosition = true;
+    // NOTE: do NOT set animatePosition = true here.
+    // That removes the no-motion class, enabling CSS transitions on the
+    // wrapper/button/line. The group's frame-by-frame expand/collapse
+    // animation conflicts with CSS transitions, causing X wiggle.
+    // The FLIP jump animation uses Web Animations API (fill:'forwards')
+    // which overrides CSS anyway — it doesn't need CSS transitions.
     target.style.setProperty('--obc-poi-stack-projection-active', '1');
     target.style.setProperty(
       '--obc-poi-forced-target-transition-duration',
       '0ms'
     );
-    target.style.setProperty(
-      '--obc-poi-forced-button-transition-duration',
-      `${ObcPoiLayerStack.STACK_JUMP_DURATION_MS}ms`
-    );
     target.style.setProperty('--obc-poi-layer-inactive-opacity', '1');
     target.style.setProperty('z-index', '3');
   }
 
-  private clearTargetProjectionStyles(
-    target: Poi,
-    previousAnimatePosition?: boolean
-  ) {
-    if (previousAnimatePosition !== undefined) {
-      target.animatePosition = previousAnimatePosition;
-    }
+  private clearTargetProjectionStyles(target: Poi) {
     target.style.removeProperty('--obc-poi-stack-projection-active');
     target.style.removeProperty('--obc-poi-button-projection-y');
     target.style.removeProperty('--obc-poi-target-projection-y');
     target.style.removeProperty('--obc-poi-forced-target-transition-duration');
-    target.style.removeProperty('--obc-poi-forced-button-transition-duration');
     target.style.removeProperty('--obc-poi-layer-inactive-opacity');
     target.style.removeProperty('z-index');
   }
@@ -660,7 +654,7 @@ export class ObcPoiLayerStack extends LitElement {
       this.setSelectedTargetInteractivity(target, false);
       this.clearTargetGroupingAttributes(target);
       this.clearTargetSelectedId(target);
-      this.clearTargetProjectionStyles(target, record.previousAnimatePosition);
+      this.clearTargetProjectionStyles(target);
       this.requestPoiRender(target);
       if (currentLayer && currentLayer !== record.originLayer) {
         currentLayer.requestGroupingUpdate();
@@ -709,7 +703,7 @@ export class ObcPoiLayerStack extends LitElement {
     target.selected = selected;
     if (selected) {
       target.style.setProperty('--obc-poi-overlap-pointer-events', 'auto');
-      if (!isInAutoGroup) {
+      if (!isInAutoGroup && target.value !== PoiDataValue.Overlapped) {
         target.value = PoiDataValue.Checked;
         target.removeAttribute('data-behind');
         target.setAttribute('data-front', 'true');
