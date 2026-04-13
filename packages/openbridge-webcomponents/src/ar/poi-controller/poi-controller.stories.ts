@@ -3,9 +3,9 @@ import {html} from 'lit';
 import './poi-controller.js';
 import {PoiFitMode} from './poi-controller.js';
 import {PoiLayerSelectionMode} from '../poi-layer-stack/poi-layer-stack.js';
-import '../poi-data/poi-data.js';
-import '../poi-aton/poi-aton.js';
-import '../poi-vessel/poi-vessel.js';
+import '../poi/poi-data.js';
+import '../poi/poi-aton.js';
+import '../poi/poi-vessel.js';
 import '../../icons/icon-beacon-general-east.js';
 import '../../icons/icon-vessel-type-psv-outlined.js';
 
@@ -97,7 +97,7 @@ const meta: Meta<PoiControllerArgs> = {
         detections: [
           {
             x: 1750,
-            y: 310,
+            y: 1210,
             box_width: 40,
             box_height: 36,
             confidence: 0.38,
@@ -106,7 +106,7 @@ const meta: Meta<PoiControllerArgs> = {
           },
           {
             x: 590,
-            y: 320,
+            y: 1220,
             box_width: 38,
             box_height: 34,
             confidence: 0.62,

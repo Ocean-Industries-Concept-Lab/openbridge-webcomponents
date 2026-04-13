@@ -4,15 +4,15 @@ import './poi-group.js';
 import {crossDecorator} from '../../storybook-util.js';
 import {html} from 'lit';
 import {createRef, ref} from 'lit/directives/ref.js';
-import '../poi-button-data/poi-button-data.js';
+import '../poi-button/poi-button-data.js';
 import '../../icons/icon-ais-target-activated-iec.js';
-import '../poi-data/poi-data.js';
-import '../poi-aton/poi-aton.js';
-import '../poi-vessel/poi-vessel.js';
+import '../poi/poi-data.js';
+import '../poi/poi-aton.js';
+import '../poi/poi-vessel.js';
 import '../building-blocks/poi-header/poi-header.js';
 import '../../icons/icon-beacon-general-east.js';
 import '../../icons/icon-vessel-type-psv-outlined.js';
-import {ObcPoiData, PoiDataValue} from '../poi-data/poi-data.js';
+import {ObcPoiData, PoiDataValue} from '../poi/poi-data.js';
 
 const isVitestBrowser = Boolean(
   (globalThis as {__vitest_browser__?: unknown}).__vitest_browser__

@@ -5,13 +5,13 @@ import componentStyle from './poi-layer-stack.css?inline';
 
 import '../poi-layer/poi-layer.js';
 import '../poi-group/poi-group.js';
-import '../poi-data/poi-data.js';
+import '../poi/poi-data.js';
 import '../building-blocks/poi-header/poi-header.js';
 
 import type {ObcPoiLayer} from '../poi-layer/poi-layer.js';
 import type {ObcPoiGroup} from '../poi-group/poi-group.js';
-import {PoiDataValue} from '../poi-data/poi-data.js';
-import {Poi, isPoi, POI_ATTR} from '../building-blocks/poi/poi.js';
+import {PoiDataValue} from '../poi/poi-data.js';
+import {Poi, isPoi, POI_ATTR} from '../poi/poi.js';
 
 export enum PoiLayerSelectionMode {
   None = 'none',

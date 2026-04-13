@@ -3,8 +3,8 @@ import {html} from 'lit';
 import {createRef, ref} from 'lit/directives/ref.js';
 import {OverlapMode} from './poi-layer.js';
 import './poi-layer.js';
-import '../poi-data/poi-data.js';
-import {ObcPoiData, PoiDataValue} from '../poi-data/poi-data.js';
+import '../poi/poi-data.js';
+import {ObcPoiData, PoiDataValue} from '../poi/poi-data.js';
 import '../poi-group/poi-group.js';
 
 const isVitestBrowser = Boolean(

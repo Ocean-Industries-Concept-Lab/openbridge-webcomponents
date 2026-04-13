@@ -2,15 +2,12 @@ import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
 import {property, queryAssignedElements, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import componentStyle from './poi-group.css?inline';
-import {
-  PoiDataValue,
-  PoiDataVisualRectPreference,
-} from '../poi-data/poi-data.js';
-import {Poi, isPoi} from '../building-blocks/poi/poi.js';
-import {ObcPoiButtonType} from '../building-blocks/poi-button/poi-button.js';
+import {PoiDataValue, PoiDataVisualRectPreference} from '../poi/poi-data.js';
+import {Poi, isPoi} from '../poi/poi.js';
+import {ObcPoiButtonType} from '../poi-button/poi-button.js';
 import {customElement} from '../../decorator.js';
 import {AnimationManager, easeInOutQuad, frameLerp} from './animation-utils.js';
-import {getEffectivePoiX} from '../building-blocks/poi/poi-position.js';
+import {getEffectivePoiX} from '../poi/poi-position.js';
 
 const POI_TOUCH_TARGET_VAR = '--maneuvering-components-poi-button-touch-target';
 const POI_GROUP_SPACING_VAR = '--obc-poi-group-expanded-spacing';

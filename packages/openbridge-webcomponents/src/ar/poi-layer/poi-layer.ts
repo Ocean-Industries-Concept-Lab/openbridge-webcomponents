@@ -3,19 +3,16 @@ import {property, query} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './poi-layer.css?inline';
 import '../poi-group/poi-group.js';
-import {
-  PoiDataValue,
-  PoiDataVisualRectPreference,
-} from '../poi-data/poi-data.js';
-import {Poi, isPoi, POI_ATTR} from '../building-blocks/poi/poi.js';
-import {ObcPoiButtonType} from '../building-blocks/poi-button/poi-button.js';
+import {PoiDataValue, PoiDataVisualRectPreference} from '../poi/poi-data.js';
+import {Poi, isPoi, POI_ATTR} from '../poi/poi.js';
+import {ObcPoiButtonType} from '../poi-button/poi-button.js';
 import {
   buildAdjacencyMaps,
   buildClusters,
   type GroupingThresholds,
 } from './poi-layer-grouping-utils.js';
 import {updateCrossingModeState} from './poi-layer-crossing-utils.js';
-import {getEffectivePoiX} from '../building-blocks/poi/poi-position.js';
+import {getEffectivePoiX} from '../poi/poi-position.js';
 import {easeInOutQuad} from '../poi-group/animation-utils.js';
 
 const EXIT_DELAY_MS_VAR = '--obc-poi-layer-exit-delay-ms';
@@ -945,34 +942,25 @@ export class ObcPoiLayer extends LitElement {
 
   private getGroupPositionVertical(
     targets: Poi[],
-    _rects: Map<Poi, DOMRect>,
+    rects: Map<Poi, DOMRect>,
     layerRect: DOMRect,
-    _group?: PoiButtonGroupElement
+    group?: PoiButtonGroupElement
   ) {
-    // The wrapper uses translateY(-100%), so positionVertical = the Y
-    // where the wrapper bottom edge should sit.  Use the button's visual
-    // rect to find the bottom, then ensure it's at least the wrapper
-    // height (min 48px touch target) so the wrapper doesn't clip above
-    // the layer.
-    let maxButtonBottom = Number.NEGATIVE_INFINITY;
-    let maxButtonHeight = 0;
+    let maxBottom = Number.NEGATIVE_INFINITY;
     targets.forEach((target) => {
-      if (isPoi(target)) {
-        const buttonRect = target.getVisualRect(
-          PoiDataVisualRectPreference.Group
-        );
-        maxButtonBottom = Math.max(maxButtonBottom, buttonRect.bottom);
-        maxButtonHeight = Math.max(maxButtonHeight, buttonRect.height);
-      } else {
-        const rect = (target as HTMLElement).getBoundingClientRect();
-        maxButtonBottom = Math.max(maxButtonBottom, rect.bottom);
-        maxButtonHeight = Math.max(maxButtonHeight, rect.height);
-      }
+      const rect = rects.get(target) ?? target.getBoundingClientRect();
+      maxBottom = Math.max(maxBottom, rect.bottom);
     });
-    const wrapperHeight = Math.max(48, maxButtonHeight);
-    const buttonBottom = maxButtonBottom - layerRect.top;
-    const baseBottom = Math.max(buttonBottom, wrapperHeight);
-    return Math.round(baseBottom);
+    const baseBottom = maxBottom - layerRect.top;
+    const isAutoGroup = group?.hasAttribute('data-auto-group') ?? false;
+    const offsetRaw = getComputedStyle(this).getPropertyValue(
+      '--obc-poi-layer-auto-group-offset-y'
+    );
+    let offset = Number.parseFloat(offsetRaw) || 0;
+    if (isAutoGroup && this.closest('obc-poi-layer-stack')) {
+      offset = 0;
+    }
+    return Math.round(baseBottom + offset);
   }
 
   private resetTarget(target: Poi) {

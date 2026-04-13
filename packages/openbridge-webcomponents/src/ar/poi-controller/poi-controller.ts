@@ -4,11 +4,8 @@ import {customElement} from '../../decorator.js';
 import componentStyle from './poi-controller.css?inline';
 import '../poi-layer-stack/poi-layer-stack.js';
 import {ObcPoiLayer} from '../poi-layer/poi-layer.js';
-import {ObcPoiData} from '../poi-data/poi-data.js';
-import {
-  ObcPoiButtonType,
-  resolvePoiButtonTypeFromBoxSize,
-} from '../building-blocks/poi-button/poi-button.js';
+import {ObcPoiData} from '../poi/poi-data.js';
+import {resolvePoiButtonTypeFromBoxSize} from '../poi-button/poi-button.js';
 
 /**
  * `<obc-poi-controller>` - Detection-to-overlay controller that maps points to POI markers (pins/targets) over media.
@@ -83,6 +80,8 @@ export type PoiDetection = {
   confidence?: number;
   class?: string;
   class_id?: number;
+  heading?: number;
+  direction?: number;
 };
 
 export type PoiKeyFn = (det: PoiDetection, index: number) => string;
@@ -120,10 +119,15 @@ export class ObcPoiController extends LitElement {
   private stackElements!: HTMLElement[];
 
   private resizeObserver?: ResizeObserver;
+  private layerResizeObserver?: ResizeObserver;
   private handleMediaSlotChange = () => this.setupMediaObservers();
-  private handleStackSlotChange = () => this.requestUpdate();
+  private handleStackSlotChange = () => {
+    this.setupLayerObserver();
+    this.requestUpdate();
+  };
   private controllerTargets = new Map<string, ObcPoiData>();
   private currentMedia: HTMLVideoElement | HTMLImageElement | null = null;
+  private currentLayer: ObcPoiLayer | null = null;
   private mediaHandlers = {
     loadedmetadata: () => {
       if (this.currentMedia) this.updateMediaMetrics(this.currentMedia);
@@ -151,12 +155,52 @@ export class ObcPoiController extends LitElement {
     super.disconnectedCallback();
     this.resizeObserver?.disconnect();
     this.resizeObserver = undefined;
+    this.layerResizeObserver?.disconnect();
+    this.layerResizeObserver = undefined;
+    this.currentLayer = null;
     this.detachMediaListeners();
     this.controllerTargets.clear();
     const slot = this.shadowRoot?.querySelector('slot[name="media"]');
     slot?.removeEventListener('slotchange', this.handleMediaSlotChange);
     const stackSlot = this.shadowRoot?.querySelector('slot[name="stack"]');
     stackSlot?.removeEventListener('slotchange', this.handleStackSlotChange);
+  }
+
+  private setupLayerObserver() {
+    const layer = this.resolveTargetLayer();
+    if (layer === this.currentLayer) return;
+
+    this.layerResizeObserver?.disconnect();
+    this.layerResizeObserver = undefined;
+    this.currentLayer = layer;
+
+    if (!layer) return;
+
+    this.layerResizeObserver = new ResizeObserver(() => {
+      this.requestUpdate();
+    });
+    this.layerResizeObserver.observe(layer);
+  }
+
+  private resolveTargetLayer(): ObcPoiLayer | null {
+    const stack = this.getStackElement();
+    if (!stack) return null;
+
+    const explicitLayer = stack.querySelector<ObcPoiLayer>(
+      'obc-poi-layer[data-controller-layer="background"]'
+    );
+    if (explicitLayer) return explicitLayer;
+
+    const layers = Array.from(
+      stack.querySelectorAll<ObcPoiLayer>('obc-poi-layer')
+    );
+    const isSelectedLayer = (candidate: ObcPoiLayer): boolean =>
+      candidate.isSelected === true || candidate.hasAttribute('is-selected');
+    return (
+      layers.find((candidate) => !isSelectedLayer(candidate)) ??
+      layers[layers.length - 1] ??
+      null
+    );
   }
 
   private setupMediaObservers() {
@@ -344,32 +388,22 @@ export class ObcPoiController extends LitElement {
       this.controllerTargets.clear();
     };
 
-    const stack = this.getStackElement();
-    if (!stack) {
-      clearTargets();
-      return;
-    }
-
-    const explicitLayer = stack.querySelector<ObcPoiLayer>(
-      'obc-poi-layer[data-controller-layer="background"]'
-    );
-    const layers = Array.from(
-      stack.querySelectorAll<ObcPoiLayer>('obc-poi-layer')
-    );
-    const isSelectedLayer = (candidate: ObcPoiLayer): boolean =>
-      candidate.isSelected === true || candidate.hasAttribute('is-selected');
-    const firstNonSelectedLayer = layers.find(
-      (candidate) => !isSelectedLayer(candidate)
-    );
-    const layer =
-      explicitLayer ??
-      firstNonSelectedLayer ??
-      layers[layers.length - 1] ??
-      null;
+    const layer = this.resolveTargetLayer();
     if (!layer) {
       clearTargets();
       return;
     }
+
+    // Ensure we're observing this layer for resize
+    if (layer !== this.currentLayer) {
+      this.setupLayerObserver();
+    }
+
+    // Measure layer geometry relative to the controller.
+    // layerBottomInController = layer's bottom edge in controller-local coords.
+    const controllerRect = this.getBoundingClientRect();
+    const layerRect = layer.getBoundingClientRect();
+    const layerBottomInController = layerRect.bottom - controllerRect.top;
 
     const active = this.getActiveDetections();
     const activeKeys = new Set<string>();
@@ -386,18 +420,37 @@ export class ObcPoiController extends LitElement {
         target = document.createElement('obc-poi-data') as ObcPoiData;
         target.dataset.controller = '1';
         target.dataset.detectionIndex = String(index);
-        target.buttonType = ObcPoiButtonType.Button;
         target.fixedTarget = false;
         this.controllerTargets.set(key, target);
       }
 
-      if (!target.isConnected || target.parentElement !== layer) {
+      // Only append to background layer if the target hasn't been
+      // moved elsewhere (e.g. selected layer by layer-stack click)
+      if (!target.isConnected) {
         layer.appendChild(target);
+      } else if (
+        target.parentElement === layer ||
+        target.parentElement === null
+      ) {
+        // Still in the background layer or detached — re-append
+        if (target.parentElement !== layer) {
+          layer.appendChild(target);
+        }
       }
+      // Otherwise: target is in a different layer (selected) — don't move it
 
       target.dataset.detectionIndex = String(index);
+
+      // X: screen-space horizontal position (works directly)
       target.x = mapped.x;
-      target.y = mapped.y;
+
+      // Y: line length from layer bottom to detection point.
+      // mapped.y is in controller-local coords (from controller top).
+      // layerBottomInController is the layer's bottom in the same space.
+      // Line length = how far below the layer bottom the detection sits.
+      target.y = Math.max(0, mapped.y - layerBottomInController);
+
+      // Box dimensions — set on element for visual sizing
       const boxWidth =
         typeof det.box_width === 'number' && Number.isFinite(det.box_width)
           ? det.box_width * mapped.scale
@@ -406,7 +459,15 @@ export class ObcPoiController extends LitElement {
         typeof det.box_height === 'number' && Number.isFinite(det.box_height)
           ? det.box_height * mapped.scale
           : null;
+      target.boxWidth = boxWidth;
+      target.boxHeight = boxHeight;
       target.buttonType = resolvePoiButtonTypeFromBoxSize(boxWidth, boxHeight);
+
+      // Heading / direction
+      const heading = det.heading ?? det.direction;
+      if (typeof heading === 'number' && Number.isFinite(heading)) {
+        target.relativeDirection = heading;
+      }
     });
 
     Array.from(this.controllerTargets.entries()).forEach(([key, target]) => {
