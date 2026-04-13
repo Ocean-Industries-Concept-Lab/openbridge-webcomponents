@@ -410,59 +410,131 @@ export class ObcPoiLayerStack extends LitElement {
     target.style.removeProperty('z-index');
   }
 
+  /**
+   * Find the button and line elements inside the POI's shadow DOM.
+   */
+  private getAnimationElements(target: Poi): {
+    button: HTMLElement | null;
+    line: HTMLElement | null;
+  } {
+    const host = target as HTMLElement;
+    const innerPoi = host.shadowRoot?.querySelector('obc-poi');
+    const poiShadow = innerPoi?.shadowRoot;
+
+    // Button is slotted — find via slot.assignedElements
+    let button: HTMLElement | null = null;
+    const buttonSlot = poiShadow?.querySelector(
+      'slot[name="button"]'
+    ) as HTMLSlotElement | null;
+    if (buttonSlot) {
+      const assigned = buttonSlot.assignedElements({flatten: true});
+      button = (assigned[0] as HTMLElement) ?? null;
+    }
+
+    const line = poiShadow?.querySelector('.line') as HTMLElement | null;
+    return {button, line};
+  }
+
+  /**
+   * Animate a layer jump using Web Animations API.
+   * fill:'forwards' overrides ALL CSS/Lit styles during animation.
+   * After cancel(), Lit's final-state styles take over.
+   */
+  private async animateLayerJump(
+    target: Poi,
+    beforeButtonRect: DOMRect | null,
+    beforeLineRect: DOMRect | null
+  ): Promise<void> {
+    const {button, line} = this.getAnimationElements(target);
+
+    const afterButtonRect = button?.getBoundingClientRect();
+    const afterLineRect = line?.getBoundingClientRect();
+
+    const duration = ObcPoiLayerStack.STACK_JUMP_DURATION_MS;
+    const easing = 'ease-out';
+    const animations: Animation[] = [];
+
+    // Button: animate translateY from old position to new
+    if (button && beforeButtonRect && afterButtonRect) {
+      const deltaY = beforeButtonRect.top - afterButtonRect.top;
+      if (Math.abs(deltaY) >= 0.5) {
+        // Read the current (final) computed transform to use as end state
+        const finalTransform = getComputedStyle(button).transform;
+        const startTransform =
+          finalTransform === 'none'
+            ? `translateY(${deltaY}px)`
+            : `${finalTransform} translateY(${deltaY}px)`;
+
+        animations.push(
+          button.animate(
+            [{transform: startTransform}, {transform: finalTransform}],
+            {duration, easing, fill: 'forwards'}
+          )
+        );
+      }
+    }
+
+    // Line: animate both position (translateY matching button) and
+    // height (scaleY). Web Animations don't affect layout, so the line's
+    // CSS top:100% stays at the final position — we must translate it
+    // by the same delta as the button.
+    if (line && button && beforeButtonRect && afterButtonRect) {
+      const buttonDeltaY = beforeButtonRect.top - afterButtonRect.top;
+      // Line height: before vs after
+      const beforeH = beforeLineRect?.height ?? 0;
+      const afterH = afterLineRect?.height ?? (beforeH || 1);
+      const scaleRatio = afterH > 0 ? beforeH / afterH : 1;
+
+      if (Math.abs(buttonDeltaY) >= 0.5 || Math.abs(scaleRatio - 1) > 0.01) {
+        animations.push(
+          line.animate(
+            [
+              {
+                transform: `translateX(-50%) translateY(${buttonDeltaY}px) scaleY(${scaleRatio})`,
+                transformOrigin: 'top center',
+              },
+              {
+                transform: 'translateX(-50%) translateY(0px) scaleY(1)',
+                transformOrigin: 'top center',
+              },
+            ],
+            {duration, easing, fill: 'forwards'}
+          )
+        );
+      }
+    }
+
+    if (animations.length > 0) {
+      await Promise.all(animations.map((a) => a.finished));
+      animations.forEach((a) => a.cancel());
+    }
+  }
+
   private async moveTargetIntoSelectedLayer(
     target: Poi,
     originLayer: ObcPoiLayer,
     selectedLayer: ObcPoiLayer,
     animate = true
   ) {
-    const targetProjectionOffset = this.getTargetProjectionOffset(
-      originLayer,
-      selectedLayer
-    );
-    const currentTargetProjection =
-      this.getTargetAnchorProjectionOffset(target);
+    // BEFORE: measure button and line positions
+    const {button, line} = this.getAnimationElements(target);
+    const beforeButtonRect = button?.getBoundingClientRect() ?? null;
+    const beforeLineRect = line?.getBoundingClientRect() ?? null;
 
+    // Move to destination layer
     if (this.getTargetLayer(target) !== selectedLayer) {
       selectedLayer.appendChild(target);
     }
 
-    if (Math.abs(targetProjectionOffset) < 0.5) {
-      target.style.removeProperty('--obc-poi-target-projection-y');
-    } else if (
-      Math.abs(currentTargetProjection - targetProjectionOffset) >= 0.5
-    ) {
-      target.style.setProperty(
-        '--obc-poi-target-projection-y',
-        `${targetProjectionOffset}px`
-      );
-    }
-
-    if (!animate || Math.abs(targetProjectionOffset) < 0.5) {
-      target.style.removeProperty('--obc-poi-button-projection-y');
-      this.requestPoiRender(target);
-      this.refreshTargetProjectionLayout(target);
-      return;
-    }
-
-    const currentButtonProjection =
-      this.getTargetButtonProjectionOffset(target);
-    if (Math.abs(currentButtonProjection) < 0.5) {
-      target.style.setProperty(
-        '--obc-poi-button-projection-y',
-        `${targetProjectionOffset}px`
-      );
-      this.requestPoiRender(target);
-      this.refreshTargetProjectionLayout(target);
-      await this.waitForPoiRender(target);
-    }
-
-    target.style.removeProperty('--obc-poi-button-projection-y');
+    // Render at final state (no projection variables needed)
     this.requestPoiRender(target);
-    this.refreshTargetProjectionLayout(
-      target,
-      ObcPoiLayerStack.STACK_JUMP_DURATION_MS
-    );
+    this.refreshTargetProjectionLayout(target);
+    await this.waitForPoiRender(target);
+
+    if (!animate) return;
+
+    // AFTER: animate from old positions to new
+    await this.animateLayerJump(target, beforeButtonRect, beforeLineRect);
   }
 
   private async moveTrackedTargetToSelectedLayer(
@@ -556,32 +628,24 @@ export class ObcPoiLayerStack extends LitElement {
         (await this.detachTargetFromCurrentGroup(target)) ??
         this.getTargetLayer(target);
 
-      if (record.keepInSelectedLayer) {
-        const selectedLayer =
-          currentLayer && currentLayer !== record.originLayer
-            ? currentLayer
-            : this.getLayer('selected');
-        const buttonProjectionOffset = this.getLayerProjectionOffset(
-          record.originLayer,
-          selectedLayer
-        );
-        target.style.removeProperty('--obc-poi-target-projection-y');
-        if (target.parentElement !== record.originLayer) {
-          record.originLayer.appendChild(target);
-        }
-        if (Math.abs(buttonProjectionOffset) < 0.5) {
-          target.style.removeProperty('--obc-poi-button-projection-y');
-        } else {
-          target.style.setProperty(
-            '--obc-poi-button-projection-y',
-            `${buttonProjectionOffset}px`
-          );
-        }
-        this.requestPoiRender(target);
-        this.refreshTargetProjectionLayout(target);
-        await this.waitForPoiRender(target);
+      // BEFORE: measure button and line
+      const {button: beforeBtn, line: beforeLine} =
+        this.getAnimationElements(target);
+      const beforeButtonRect = beforeBtn?.getBoundingClientRect() ?? null;
+      const beforeLineRect = beforeLine?.getBoundingClientRect() ?? null;
+
+      // Clear projections, move to origin layer, render at final state
+      target.style.removeProperty('--obc-poi-target-projection-y');
+      target.style.removeProperty('--obc-poi-button-projection-y');
+      if (target.parentElement !== record.originLayer) {
+        record.originLayer.appendChild(target);
       }
-      await this.syncTargetProjection(target, record.originLayer, null);
+      this.requestPoiRender(target);
+      this.refreshTargetProjectionLayout(target);
+      await this.waitForPoiRender(target);
+
+      // AFTER: animate from old positions to new
+      await this.animateLayerJump(target, beforeButtonRect, beforeLineRect);
       this.setSelectedTargetInteractivity(target, false);
       this.clearTargetGroupingAttributes(target);
       this.clearTargetSelectedId(target);
