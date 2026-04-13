@@ -55,7 +55,6 @@ const meta: Meta<PoiLayerArgs> = {
         }
 
         .poi-layer-story-frame obc-poi-layer {
-          --obc-poi-layer-auto-group-offset-y: -12px;
         }
       </style>
       <div class="poi-layer-story-frame">${story()}</div>

@@ -945,25 +945,33 @@ export class ObcPoiLayer extends LitElement {
 
   private getGroupPositionVertical(
     targets: Poi[],
-    rects: Map<Poi, DOMRect>,
-    layerRect: DOMRect,
-    group?: PoiButtonGroupElement
+    _rects: Map<Poi, DOMRect>,
+    layerRect: DOMRect
   ) {
-    let maxBottom = Number.NEGATIVE_INFINITY;
+    // The wrapper uses translateY(-100%), so positionVertical = the Y
+    // where the wrapper bottom edge should sit.  Use the button's visual
+    // rect to find the bottom, then ensure it's at least the wrapper
+    // height (min 48px touch target) so the wrapper doesn't clip above
+    // the layer.
+    let maxButtonBottom = Number.NEGATIVE_INFINITY;
+    let maxButtonHeight = 0;
     targets.forEach((target) => {
-      const rect = rects.get(target) ?? target.getBoundingClientRect();
-      maxBottom = Math.max(maxBottom, rect.bottom);
+      if (isPoi(target)) {
+        const buttonRect = target.getVisualRect(
+          PoiDataVisualRectPreference.Group
+        );
+        maxButtonBottom = Math.max(maxButtonBottom, buttonRect.bottom);
+        maxButtonHeight = Math.max(maxButtonHeight, buttonRect.height);
+      } else {
+        const rect = (target as HTMLElement).getBoundingClientRect();
+        maxButtonBottom = Math.max(maxButtonBottom, rect.bottom);
+        maxButtonHeight = Math.max(maxButtonHeight, rect.height);
+      }
     });
-    const baseBottom = maxBottom - layerRect.top;
-    const isAutoGroup = group?.hasAttribute('data-auto-group') ?? false;
-    const offsetRaw = getComputedStyle(this).getPropertyValue(
-      '--obc-poi-layer-auto-group-offset-y'
-    );
-    let offset = Number.parseFloat(offsetRaw) || 0;
-    if (isAutoGroup && this.closest('obc-poi-layer-stack')) {
-      offset = 0;
-    }
-    return Math.round(baseBottom + offset);
+    const wrapperHeight = Math.max(48, maxButtonHeight);
+    const buttonBottom = maxButtonBottom - layerRect.top;
+    const baseBottom = Math.max(buttonBottom, wrapperHeight);
+    return Math.round(baseBottom);
   }
 
   private resetTarget(target: Poi) {
