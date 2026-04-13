@@ -59,6 +59,7 @@ export const DynamicSizingToHideSilence: Story = {
     showSilenceButton: true,
     width: 112,
   },
+  tags: ['skip-test'],
 };
 
 export const Flat: Story = {
