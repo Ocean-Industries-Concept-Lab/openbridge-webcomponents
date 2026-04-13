@@ -47,7 +47,7 @@
   }
 }
 
-.full .footer nav {
+:host(:has(> [slot="footer"])) .full .footer nav {
   border-bottom: 1px solid var(--border-outline-color, rgba(0, 0, 0, 0.08));
 }
 
