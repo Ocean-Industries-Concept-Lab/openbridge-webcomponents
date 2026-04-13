@@ -3,7 +3,8 @@ import {ObcGaugeRadial, ObcGaugeRadialType} from './gauge-radial.js';
 import './gauge-radial.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
-import {Priority} from '../types.js';
+import {TickmarkStyle} from '../watch/tickmark.js';
+import {InstrumentState, Priority} from '../types.js';
 
 const meta: Meta<typeof ObcGaugeRadial> = {
   title: 'Instruments/Gauge Radial',
@@ -14,7 +15,14 @@ const meta: Meta<typeof ObcGaugeRadial> = {
     width: 400,
   },
   argTypes: {
+    state: {control: 'select', options: Object.values(InstrumentState)},
     priority: {control: 'select', options: Object.values(Priority)},
+    tickmarksInside: {control: 'boolean'},
+    tickmarkStyle: {
+      control: 'select',
+      options: Object.values(TickmarkStyle),
+    },
+    showLabels: {control: 'boolean'},
   },
 } satisfies Meta<ObcGaugeRadial>;
 
@@ -45,6 +53,7 @@ export const EnhancedFilled: Story = {
     maxValue: 100,
     minValue: 0,
     type: ObcGaugeRadialType.filled,
+    state: InstrumentState.active,
     priority: Priority.enhanced,
     setpoint: 75,
   },
@@ -56,6 +65,7 @@ export const EnhancedBar: Story = {
     maxValue: 100,
     minValue: 0,
     type: ObcGaugeRadialType.bar,
+    state: InstrumentState.active,
     priority: Priority.enhanced,
     setpoint: 75,
   },
@@ -67,6 +77,7 @@ export const EnhancedNeedle: Story = {
     maxValue: 100,
     minValue: 0,
     type: ObcGaugeRadialType.needle,
+    state: InstrumentState.active,
     priority: Priority.enhanced,
     setpoint: 75,
   },
@@ -78,7 +89,7 @@ export const WithLabels: Story = {
     maxValue: 100,
     minValue: 0,
     type: ObcGaugeRadialType.filled,
-    labels: true,
+    showLabels: true,
   },
 };
 

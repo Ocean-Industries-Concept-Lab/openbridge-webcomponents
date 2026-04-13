@@ -28,23 +28,23 @@ This will start a development server, typically accessible at `http://localhost:
 
 ## Install OpenBridge web components
 
-To use the components in your project, you can install the package from github package repo.
+To use the components in your project, you can install the package from GitHub package repo.
 
-Start by creating a classic personal access token in github
-Go to [github settings](https://github.com/settings/tokens/new) to make a classic token. Give the token the `read:packages` permission. Click "Generate token" and copy the token.
+Start by creating a classic personal access token in GitHub
+Go to [GitHub settings](https://github.com/settings/tokens/new) to make a classic token. Give the token the `read:packages` permission. Click "Generate token" and copy the token.
 
-Login into github package repo:
+Login into GitHub package repo:
 
 ```bash
-npm login --registry https://npm.pkg.github.com/ --scope=ocean-industries-concept-lab
+npm login --registry https://npm.pkg.github.com/ --scope=@oicl
 ```
 
-Use our github username as username and past in the generated token as password.
+Use our GitHub username as username and past in the generated token as password.
 
 You can now install the package:
 
 ```bash
-npm install @ocean-industries-concept-lab/openbridge-webcomponents-react
+npm install @oicl/openbridge-webcomponents-react
 ```
 
 ## Start making an app
@@ -68,7 +68,7 @@ export default App;
 ### Add topbar
 
 ```tsx {1,8-10}
-import { ObcTopBar } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/top-bar/top-bar";
+import { ObcTopBar } from "@oicl/openbridge-webcomponents-react/components/top-bar/top-bar";
 import "./App.css";
 
 function App() {
@@ -96,7 +96,7 @@ header {
 }
 ```
 
-Check out all details in the [storybook](https://openbridge-jip-storybook.web.app/?path=/docs/application-topbar--docs).
+Check out all details in the [storybook](https://openbridge-storybook.web.app/?path=/docs/application-topbar--docs).
 Turn on some details:
 
 ```tsx
@@ -112,7 +112,7 @@ But it does not look like OpenBridge. We need to add the standard css and set so
 Import the css file by adding it to `main.ts`
 
 ```ts
-import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/openbridge.css";
+import "@oicl/openbridge-webcomponents/dist/openbridge.css";
 ```
 
 ## Set palette
@@ -123,7 +123,7 @@ Then set palette by modifying the `html` tag in `index.html`
 <html lang="en" data-obc-theme="day"></html>
 ```
 
-The `data-obc-theme` can be bright, day, dusk or night. Changeing it will set the palette.
+The `data-obc-theme` can be bright, day, dusk or night. Changing it will set the palette.
 
 ## Set component sizing
 
@@ -133,11 +133,11 @@ We need to set the component sizing. Again modify `index.html`. But this time ad
 <body class="obc-component-size-regular"></body>
 ```
 
-This could be regular, normal, large or xl. It sets the component size of all decendent components.
+This could be `regular`, `medium`, `large`, or `xl`. It sets the component size of all descendant components.
 
 ## Load font
 
-Lastly Noto Sans needs to be added. You can download it from the [OpenBridge repo](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip/raw/refs/heads/main/packages/openbridge-webcomponents/public/NotoSans.ttf). Place the NotoSans.ttf file in the public folder.
+Lastly Noto Sans needs to be added. You can download it from the [OpenBridge repo](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/raw/refs/heads/main/packages/openbridge-webcomponents/public/NotoSans.ttf). Place the NotoSans.ttf file in the public folder.
 
 Next this file must be loaded by the css. So add it to index.css:
 
@@ -150,7 +150,7 @@ Next this file must be loaded by the css. So add it to index.css:
 
 You should now have a working top bar. Styled with OpenBridge styles.
 
-Try changeing the palette to night:
+Try changing the palette to night:
 
 ```html
 <html lang="en" data-obc-theme="night"></html>
@@ -171,10 +171,10 @@ body {
 }
 ```
 
-Note how the color is set by the `css custom property` `--container-backdrop-color`. Using it the background will change when changeing the palette attribute (or the palette colors are updated by the designers).
+Note how the color is set by the `css custom property` `--container-backdrop-color`. Using it the background will change when changing the palette attribute (or the palette colors are updated by the designers).
 
 The entire page should now be dark. Go back to day palette
-Try changeing the palette to night:
+Try changing the palette to night:
 
 ```html
 <html lang="en" data-obc-theme="day"></html>
@@ -185,8 +185,8 @@ Try changeing the palette to night:
 We can now add the brilliance menu and the dimming button to the top bar
 
 ```tsx
-import { ObcTopBar } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/top-bar/top-bar";
-import { ObcBrillianceMenu } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
+import { ObcTopBar } from "@oicl/openbridge-webcomponents-react/components/top-bar/top-bar";
+import { ObcBrillianceMenu } from "@oicl/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
 
 import "./App.css";
 
@@ -239,12 +239,12 @@ main {
 ```
 
 We can now add a state to store if the dimming menu is open or not. Also add an handler when the dimming menu button is clicked.
-Find the event name under events in [storybook](https://openbridge-jip-storybook.web.app/?path=/docs/application-topbar--docs).Remember also to set the `dimmingButtonActivated` which marks the button grey when activated.
+Find the event name under events in [storybook](https://openbridge-storybook.web.app/?path=/docs/application-topbar--docs).Remember also to set the `dimmingButtonActivated` which marks the button grey when activated.
 
 ```tsx
 import { useState } from "react";
-import { ObcTopBar } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/top-bar/top-bar";
-import { ObcBrillianceMenu } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
+import { ObcTopBar } from "@oicl/openbridge-webcomponents-react/components/top-bar/top-bar";
+import { ObcBrillianceMenu } from "@oicl/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
 
 import "./App.css";
 
@@ -269,7 +269,7 @@ function App() {
       </header>
       <main>
         {showBrillianceMenu && (
-          <ObcBrillianceMenu hideBrightness className="brilliance" />
+          <ObcBrillianceMenu showBrightness={false} className="brilliance" />
         )}
       </main>
     </>
@@ -283,12 +283,12 @@ We can now add an handler for palette switching.
 
 ```tsx
 import { useState } from "react";
-import { ObcTopBar } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/top-bar/top-bar";
+import { ObcTopBar } from "@oicl/openbridge-webcomponents-react/components/top-bar/top-bar";
 import {
   ObcBrillianceMenu,
   type ObcPaletteChangeEvent,
-} from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
-import { ObcPalette } from "@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu";
+} from "@oicl/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
+import { ObcPalette } from "@oicl/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu";
 
 import "./App.css";
 
@@ -300,7 +300,7 @@ function App() {
     setShowBrillianceMenu(!showBrillianceMenu);
   };
 
-  const handlePalleteChange = (e: ObcPaletteChangeEvent) => {
+  const handlePaletteChange = (e: ObcPaletteChangeEvent) => {
     document.documentElement.setAttribute("data-obc-theme", e.detail.value);
     setPalette(e.detail.value);
   };
@@ -319,9 +319,9 @@ function App() {
       <main>
         {showBrillianceMenu && (
           <ObcBrillianceMenu
-            onPaletteChanged={handlePalleteChange}
+            onPaletteChanged={handlePaletteChange}
             palette={palette}
-            hideBrightness
+            showBrightness={false}
             className="brilliance"
           />
         )}
@@ -333,29 +333,29 @@ function App() {
 export default App;
 ```
 
-Try changeing the palette.
+Try changing the palette.
 
 # Add a clock
 
 Add the clock to the topbar. Set both the showClock attribute in the top bar and add ObcClock into it with the `slot=clock`
 
 ```tsx
-import { ObcTopBar } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/top-bar/top-bar";
+import { ObcTopBar } from "@oicl/openbridge-webcomponents-react/components/top-bar/top-bar";
 import {
   ObcBrillianceMenu,
   type ObcPaletteChangeEvent,
-} from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
-import { ObcClock } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/clock/clock.js";
+} from "@oicl/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
+import { ObcClock } from "@oicl/openbridge-webcomponents-react/components/clock/clock.js";
 
 import "./App.css";
 import { useState } from "react";
-import { ObcPalette } from "@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu";
+import { ObcPalette } from "@oicl/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu";
 
 function App() {
   const [isBrillianceMenuOpen, setIsBrillianceMenuOpen] = useState(false);
   const [palette, setPalette] = useState(ObcPalette.day);
 
-  const handlePalleteChange = (e: ObcPaletteChangeEvent) => {
+  const handlePaletteChange = (e: ObcPaletteChangeEvent) => {
     document.documentElement.setAttribute("data-obc-theme", e.detail.value);
     setPalette(e.detail.value);
   };
@@ -381,7 +381,7 @@ function App() {
         {isBrillianceMenuOpen && (
           <ObcBrillianceMenu
             className="brilliance"
-            onPaletteChanged={handlePalleteChange}
+            onPaletteChanged={handlePaletteChange}
             palette={palette}
           />
         )}
@@ -432,23 +432,23 @@ export default useMinuteUpdate;
 It returns a ISO time string every minute. Set that as property for the top bar.
 
 ```tsx
-import { ObcTopBar } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/top-bar/top-bar";
+import { ObcTopBar } from "@oicl/openbridge-webcomponents-react/components/top-bar/top-bar";
 import {
   ObcBrillianceMenu,
   type ObcPaletteChangeEvent,
-} from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
-import { ObcClock } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/clock/clock.js";
+} from "@oicl/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
+import { ObcClock } from "@oicl/openbridge-webcomponents-react/components/clock/clock.js";
 
 import "./App.css";
 import { useState } from "react";
-import { ObcPalette } from "@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu";
+import { ObcPalette } from "@oicl/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu";
 import useMinuteUpdate from "./hooks/useMinuteUpdate";
 
 function App() {
   const [isBrillianceMenuOpen, setIsBrillianceMenuOpen] = useState(false);
   const [palette, setPalette] = useState(ObcPalette.day);
 
-  const handlePalleteChange = (e: ObcPaletteChangeEvent) => {
+  const handlePaletteChange = (e: ObcPaletteChangeEvent) => {
     document.documentElement.setAttribute("data-obc-theme", e.detail.value);
     setPalette(e.detail.value);
   };
@@ -475,7 +475,7 @@ function App() {
         {isBrillianceMenuOpen && (
           <ObcBrillianceMenu
             className="brilliance"
-            onPaletteChanged={handlePalleteChange}
+            onPaletteChanged={handlePaletteChange}
             palette={palette}
           />
         )}
@@ -489,7 +489,7 @@ export default App;
 
 # Add navigation menu
 
-We can now add a navigation menu. Start by looking it up in [storybook](https://openbridge-jip-storybook.web.app/?path=/docs/menu-navigation-menu--docs). Click on "Show code" to view the example code.
+We can now add a navigation menu. Start by looking it up in [storybook](https://openbridge-storybook.web.app/?path=/docs/menu-navigation-menu--docs). Click on "Show code" to view the example code.
 
 Start by making an navigation menu component. Create `NavigationMenu.tsx` in `src/components` and copy the example file into the new React component:
 
@@ -530,14 +530,14 @@ This is using the web components directly. Modify it so that it uses the react w
 - Import the needed components
 
 ```tsx
-import { ObcNavigationMenu } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/navigation-menu/navigation-menu";
-import { ObcNavigationItem } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/navigation-item/navigation-item";
-import { ObiApplications } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-applications";
-import { ObiAlerts } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-alerts";
-import { ObiPaletteDimming } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-palette-dimming";
-import { ObiSupportGoogle } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-support-google";
-import { ObiSettingsIec } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-settings-iec";
-import { ObiAlertList } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-alert-list";
+import { ObcNavigationMenu } from "@oicl/openbridge-webcomponents-react/components/navigation-menu/navigation-menu";
+import { ObcNavigationItem } from "@oicl/openbridge-webcomponents-react/components/navigation-item/navigation-item";
+import { ObiApplications } from "@oicl/openbridge-webcomponents-react/icons/icon-applications";
+import { ObiAlerts } from "@oicl/openbridge-webcomponents-react/icons/icon-alerts";
+import { ObiPaletteDimming } from "@oicl/openbridge-webcomponents-react/icons/icon-palette-dimming";
+import { ObiSupportGoogle } from "@oicl/openbridge-webcomponents-react/icons/icon-support-google";
+import { ObiSettingsIec } from "@oicl/openbridge-webcomponents-react/icons/icon-settings-iec";
+import { ObiAlertList } from "@oicl/openbridge-webcomponents-react/icons/icon-alert-list";
 
 export function NavigationMenu({ ...delegated }) {
   return (
@@ -572,8 +572,8 @@ Add this component to the `App.tsx`
 
 ```tsx
 import { useState } from "react";
-import { ObcTopBar } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/top-bar/top-bar";
-import { ObcBrillianceMenu } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
+import { ObcTopBar } from "@oicl/openbridge-webcomponents-react/components/top-bar/top-bar";
+import { ObcBrillianceMenu } from "@oicl/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
 import useMinuteUpdate from "./hooks/useMinuteUpdate";
 
 import "./App.css";
@@ -609,7 +609,7 @@ function App() {
         {showBrillianceMenu && (
           <ObcBrillianceMenu
             onPaletteChanged={handleBrillianceChange}
-            hideBrightness
+            showBrightness={false}
             className="brilliance"
           />
         )}
@@ -645,8 +645,8 @@ We need to add logic for showing the navigation menu. Notice that the dimming me
 
 ```tsx
 import { useState } from "react";
-import { ObcTopBar } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/top-bar/top-bar";
-import { ObcBrillianceMenu } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
+import { ObcTopBar } from "@oicl/openbridge-webcomponents-react/components/top-bar/top-bar";
+import { ObcBrillianceMenu } from "@oicl/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
 import useMinuteUpdate from "./hooks/useMinuteUpdate";
 
 import "./App.css";
@@ -692,7 +692,7 @@ function App() {
         {showBrillianceMenu && (
           <ObcBrillianceMenu
             onPaletteChanged={handleBrillianceChange}
-            hideBrightness
+            showBrightness={false}
             className="brilliance"
           />
         )}
@@ -710,7 +710,7 @@ We need some content to show.
 Add a instrument demo page `src/pages/InstrumentsDemo.tsx`
 
 ```tsx
-import { ObcAzimuthThruster } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/navigation-instruments/azimuth-thruster/azimuth-thruster";
+import { ObcAzimuthThruster } from "@oicl/openbridge-webcomponents-react/navigation-instruments/azimuth-thruster/azimuth-thruster";
 
 export function InstrumentDemo() {
   return <ObcAzimuthThruster />;
@@ -721,8 +721,8 @@ import it to `App.tsx`
 
 ```tsx
 import { useState } from "react";
-import { ObcTopBar } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/top-bar/top-bar";
-import { ObcBrillianceMenu } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
+import { ObcTopBar } from "@oicl/openbridge-webcomponents-react/components/top-bar/top-bar";
+import { ObcBrillianceMenu } from "@oicl/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
 import useMinuteUpdate from "./hooks/useMinuteUpdate";
 
 import "./App.css";
@@ -770,7 +770,7 @@ function App() {
         {showBrillianceMenu && (
           <ObcBrillianceMenu
             onPaletteChanged={handleBrillianceChange}
-            hideBrightness
+            showBrightness={false}
             className="brilliance"
           />
         )}
@@ -792,7 +792,7 @@ We will now add another page, later we will look into routing between the pages.
 Add another page `src/pages/ThrusterDemo.tsx`:
 
 ```tsx
-import { ObcThruster } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/navigation-instruments/thruster/thruster";
+import { ObcThruster } from "@oicl/openbridge-webcomponents-react/navigation-instruments/thruster/thruster";
 
 export function ThrusterDemo() {
   return <ObcThruster />;
@@ -828,7 +828,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 ```
 
@@ -839,8 +839,8 @@ Now, modify `App.tsx` to define your application's routes using `Routes` and `Ro
 ```tsx
 import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import { ObcTopBar } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/top-bar/top-bar";
-import { ObcBrillianceMenu } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
+import { ObcTopBar } from "@oicl/openbridge-webcomponents-react/components/top-bar/top-bar";
+import { ObcBrillianceMenu } from "@oicl/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
 import useMinuteUpdate from "./hooks/useMinuteUpdate";
 
 import "./App.css";
@@ -892,7 +892,7 @@ function App() {
         {showBrillianceMenu && (
           <ObcBrillianceMenu
             onPaletteChanged={handleBrillianceChange}
-            hideBrightness
+            showBrightness={false}
             className="brilliance"
           />
         )}
@@ -909,16 +909,16 @@ export default App;
 We can now use these path in the navigation menu:
 
 - set the href to the path in router
-- find some good labels and [icons](https://openbridge-jip-demo.web.app/icons)
+- find some good labels and [icons](https://openbridge-demo.web.app/icons)
 
 ```tsx
-import { ObcNavigationMenu } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/navigation-menu/navigation-menu";
-import { ObcNavigationItem } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/navigation-item/navigation-item";
-import { ObiSupportGoogle } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-support-google";
-import { ObiSettingsIec } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-settings-iec";
-import { ObiAlertList } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-alert-list";
-import { ObiPropulsionAzimuthThruster } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-propulsion-azimuth-thruster";
-import { ObiPropulsionTunnelThruster } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-propulsion-tunnel-thruster";
+import { ObcNavigationMenu } from "@oicl/openbridge-webcomponents-react/components/navigation-menu/navigation-menu";
+import { ObcNavigationItem } from "@oicl/openbridge-webcomponents-react/components/navigation-item/navigation-item";
+import { ObiSupportGoogle } from "@oicl/openbridge-webcomponents-react/icons/icon-support-google";
+import { ObiSettingsIec } from "@oicl/openbridge-webcomponents-react/icons/icon-settings-iec";
+import { ObiAlertList } from "@oicl/openbridge-webcomponents-react/icons/icon-alert-list";
+import { ObiPropulsionAzimuthThruster } from "@oicl/openbridge-webcomponents-react/icons/icon-propulsion-azimuth-thruster";
+import { ObiPropulsionTunnelThruster } from "@oicl/openbridge-webcomponents-react/icons/icon-propulsion-tunnel-thruster";
 import "./NavigationMenu.css";
 
 export function NavigationMenu() {
@@ -952,7 +952,7 @@ Try to use the navigation menu.
 You may notice two problems:
 
 - The active page in nav menu is not updating
-- When changeing page, the entire page is reloaded.
+- When changing page, the entire page is reloaded.
 
 ## Use react router <Link>
 
@@ -962,13 +962,13 @@ So we wrapp the navigation items with a link, notice that the slot must be moved
 
 ```tsx
 import { Link } from "react-router-dom";
-import { ObcNavigationMenu } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/navigation-menu/navigation-menu";
-import { ObcNavigationItem } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/navigation-item/navigation-item";
-import { ObiSupportGoogle } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-support-google";
-import { ObiSettingsIec } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-settings-iec";
-import { ObiAlertList } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-alert-list";
-import { ObiPropulsionAzimuthThruster } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-propulsion-azimuth-thruster";
-import { ObiPropulsionTunnelThruster } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-propulsion-tunnel-thruster";
+import { ObcNavigationMenu } from "@oicl/openbridge-webcomponents-react/components/navigation-menu/navigation-menu";
+import { ObcNavigationItem } from "@oicl/openbridge-webcomponents-react/components/navigation-item/navigation-item";
+import { ObiSupportGoogle } from "@oicl/openbridge-webcomponents-react/icons/icon-support-google";
+import { ObiSettingsIec } from "@oicl/openbridge-webcomponents-react/icons/icon-settings-iec";
+import { ObiAlertList } from "@oicl/openbridge-webcomponents-react/icons/icon-alert-list";
+import { ObiPropulsionAzimuthThruster } from "@oicl/openbridge-webcomponents-react/icons/icon-propulsion-azimuth-thruster";
+import { ObiPropulsionTunnelThruster } from "@oicl/openbridge-webcomponents-react/icons/icon-propulsion-tunnel-thruster";
 import "./NavigationMenu.css";
 
 export function NavigationMenu() {
@@ -1019,13 +1019,13 @@ We can use `useLocation` from `react-router-dom` to get the current page and che
 
 ```tsx
 import { Link, useLocation } from "react-router-dom";
-import { ObcNavigationMenu } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/navigation-menu/navigation-menu";
-import { ObcNavigationItem } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/navigation-item/navigation-item";
-import { ObiSupportGoogle } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-support-google";
-import { ObiSettingsIec } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-settings-iec";
-import { ObiAlertList } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-alert-list";
-import { ObiPropulsionAzimuthThruster } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-propulsion-azimuth-thruster";
-import { ObiPropulsionTunnelThruster } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-propulsion-tunnel-thruster";
+import { ObcNavigationMenu } from "@oicl/openbridge-webcomponents-react/components/navigation-menu/navigation-menu";
+import { ObcNavigationItem } from "@oicl/openbridge-webcomponents-react/components/navigation-item/navigation-item";
+import { ObiSupportGoogle } from "@oicl/openbridge-webcomponents-react/icons/icon-support-google";
+import { ObiSettingsIec } from "@oicl/openbridge-webcomponents-react/icons/icon-settings-iec";
+import { ObiAlertList } from "@oicl/openbridge-webcomponents-react/icons/icon-alert-list";
+import { ObiPropulsionAzimuthThruster } from "@oicl/openbridge-webcomponents-react/icons/icon-propulsion-azimuth-thruster";
+import { ObiPropulsionTunnelThruster } from "@oicl/openbridge-webcomponents-react/icons/icon-propulsion-tunnel-thruster";
 import "./NavigationMenu.css";
 
 export function NavigationMenu() {
@@ -1069,8 +1069,8 @@ The router link should now be refacto out to a seperate component. That is left 
 To show how to use output data from an component we can add a slider to the `InstrumentDemo.tsx` page.
 
 ```tsx
-import { ObcAzimuthThruster } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/navigation-instruments/azimuth-thruster/azimuth-thruster";
-import { ObcSlider } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/slider/slider";
+import { ObcAzimuthThruster } from "@oicl/openbridge-webcomponents-react/navigation-instruments/azimuth-thruster/azimuth-thruster";
+import { ObcSlider } from "@oicl/openbridge-webcomponents-react/components/slider/slider";
 import { useState } from "react";
 
 export function InstrumentDemo() {

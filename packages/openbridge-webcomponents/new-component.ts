@@ -20,13 +20,15 @@ const name = await question(
 );
 const componentType = await select('Type of component', {
   choices: [
-    'ui(input, label, tables)',
+    'ui (input, label, tables)',
     'instrument (compass, azimuth)',
+    'indicator (bearing, speed, rot)',
     'page',
     'ar',
     'automation',
     'integration system',
-    'build-block',
+    'building-block',
+    'bars-graphs (line, area, donut, pie)',
   ],
 });
 const files = await multiselect('Create files', {
@@ -38,20 +40,24 @@ const files = await multiselect('Create files', {
 const componentName = name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
 
 let parentDir: string;
-if (componentType.includes('ui')) {
+if (componentType === 'ui (input, label, tables)') {
   parentDir = 'components';
-} else if (componentType.includes('instrument')) {
+} else if (componentType === 'indicator (bearing, speed, rot)') {
   parentDir = 'navigation-instruments';
-} else if (componentType.includes('ar')) {
+} else if (componentType === 'instrument (compass, azimuth)') {
+  parentDir = 'navigation-instruments';
+} else if (componentType === 'ar') {
   parentDir = 'ar';
-} else if (componentType.includes('automation')) {
+} else if (componentType === 'automation') {
   parentDir = 'automation';
-} else if (componentType.includes('page')) {
+} else if (componentType === 'page') {
   parentDir = 'pages';
-} else if (componentType.includes('build-block')) {
-  parentDir = 'build-blocks';
-} else if (componentType.includes('integration system')) {
+} else if (componentType === 'building-block') {
+  parentDir = 'building-blocks';
+} else if (componentType === 'integration system') {
   parentDir = 'integration-systems';
+} else if (componentType === 'bars-graphs (line, area, donut, pie)') {
+  parentDir = 'bars-graphs';
 } else {
   throw new Error('Invalid component type');
 }
@@ -63,9 +69,9 @@ fs.mkdirSync(dir, {recursive: true});
 // Create lit file
 const hasCss = files.includes('css');
 const litFile = path.join(dir, `${componentName}.ts`);
-const content = `import { LitElement, html${hasCss ? `, unsafeCSS ` : ` `}} from 'lit'
-import { customElement } from '../../decorator.js'
-${hasCss ? `import compentStyle from "./${componentName}.css?inline";` : ''}
+const content = `import {LitElement, html${hasCss ? `, unsafeCSS` : ``}} from 'lit';
+import {customElement} from '../../decorator.js';
+${hasCss ? `import componentStyle from './${componentName}.css?inline';` : ''}
 
 @customElement('obc-${componentName}')
 export class Obc${name} extends LitElement {
@@ -74,15 +80,15 @@ export class Obc${name} extends LitElement {
     return html\`
       <div class="wrapper">
       </div>
-      \`
+    \`;
   }
 
-${hasCss ? `static override styles = unsafeCSS(compentStyle);` : ''}
+${hasCss ? `  static override styles = unsafeCSS(componentStyle);` : ''}
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-${componentName}': Obc${name}
+    'obc-${componentName}': Obc${name};
   }
 }
 `;
@@ -98,29 +104,35 @@ if (files.includes('css')) {
 // Create storybook file
 if (files.includes('storybook')) {
   let storybookGroup = '';
-  if (componentType.includes('ar')) {
+  if (componentType === 'ar') {
     storybookGroup = 'AR';
-  } else if (componentType.includes('automation')) {
+  } else if (componentType === 'automation') {
     storybookGroup = 'Automation';
-  } else if (componentType.includes('build-block')) {
-    storybookGroup = 'Build Blocks';
-  } else if (componentType.includes('page')) {
+  } else if (componentType === 'building-block') {
+    storybookGroup = 'Building Blocks';
+  } else if (componentType === 'page') {
     storybookGroup = 'Pages';
-  } else if (componentType.includes('integration system')) {
+  } else if (componentType === 'integration system') {
     storybookGroup = 'Integration Systems';
+  } else if (componentType === 'indicator (bearing, speed, rot)') {
+    storybookGroup = 'Indicators';
+  } else if (componentType === 'instrument (compass, azimuth)') {
+    storybookGroup = 'Instruments';
+  } else if (componentType === 'bars-graphs (line, area, donut, pie)') {
+    storybookGroup = 'Bars and Graphs';
   } else {
     storybookGroup = await question('Storybook group ');
   }
   const storybookTitle = await question('Storybook title ');
   const storybookFile = path.join(dir, `${componentName}.stories.ts`);
-  const content = `import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { Obc${name} } from './${componentName}.js';
+  const content = `import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import {Obc${name}} from './${componentName}.js';
 import './${componentName}.js';
 
 const meta: Meta<typeof Obc${name}> = {
   title: '${storybookGroup}/${storybookTitle}',
-  tags: ['6.0'],
-  component: "obc-${componentName}",
+  tags: ['autodocs', '6.0'],
+  component: 'obc-${componentName}',
   args: {
   },
 } satisfies Meta<Obc${name}>;
@@ -131,6 +143,6 @@ type Story = StoryObj<Obc${name}>;
 export const Primary: Story = {
   args: {
   },
-}`;
+};`;
   fs.writeFileSync(storybookFile, content);
 }

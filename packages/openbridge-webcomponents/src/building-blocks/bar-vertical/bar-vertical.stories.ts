@@ -31,7 +31,7 @@ const SAMPLE_DATA = [
 ];
 
 const meta: Meta = {
-  title: 'Building Blocks/Bar Vertical',
+  title: 'Bars and Graphs/Bar Vertical',
   tags: ['autodocs', '6.0'],
   component: 'obc-bar-vertical',
   argTypes: {
@@ -55,7 +55,7 @@ const meta: Meta = {
       control: {type: 'select'},
       options: Object.values(FrameStyle),
     },
-    hideLabels: {control: {type: 'boolean'}},
+    showLabels: {control: {type: 'boolean'}},
     hasBar: {control: {type: 'boolean'}},
     scaleBackground: {control: {type: 'boolean'}},
     borderRadiusPosition: {
@@ -74,7 +74,7 @@ const meta: Meta = {
     setpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
     newSetpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
     atSetpoint: {control: {type: 'boolean'}},
-    disableAutoAtSetpoint: {control: {type: 'boolean'}},
+    autoAtSetpoint: {control: {type: 'boolean'}},
     autoAtSetpointDeadband: {
       control: {type: 'number', min: 0, max: 10, step: 0.5},
     },
@@ -104,7 +104,7 @@ const meta: Meta = {
     tertiaryTickmarkInterval: undefined,
     scaleType: ScaleType.regular,
     frameStyle: FrameStyle.regular,
-    hideLabels: false,
+    showLabels: true,
     hasBar: false,
     scaleBackground: false,
     borderRadiusPosition: undefined,
@@ -117,7 +117,7 @@ const meta: Meta = {
     setpoint: undefined,
     newSetpoint: undefined,
     atSetpoint: false,
-    disableAutoAtSetpoint: false,
+    autoAtSetpoint: true,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
     state: 'active',
@@ -138,7 +138,7 @@ const meta: Meta = {
       .tertiaryTickmarkInterval=${args.tertiaryTickmarkInterval}
       .scaleType=${args.scaleType}
       .frameStyle=${args.frameStyle}
-      .hideLabels=${args.hideLabels}
+      .showLabels=${args.showLabels}
       .hasBar=${args.hasBar}
       .scaleBackground=${args.scaleBackground}
       .borderRadiusPosition=${args.borderRadiusPosition}
@@ -150,7 +150,7 @@ const meta: Meta = {
       .setpoint=${args.setpoint}
       .newSetpoint=${args.newSetpoint}
       .atSetpoint=${args.atSetpoint}
-      .disableAutoAtSetpoint=${args.disableAutoAtSetpoint}
+      .autoAtSetpoint=${args.autoAtSetpoint}
       .autoAtSetpointDeadband=${args.autoAtSetpointDeadband}
       .setpointAtZeroDeadband=${args.setpointAtZeroDeadband}
       .state=${args.state}
@@ -181,7 +181,7 @@ export const DefaultRight: Story = {
 };
 
 export const ComponentSizeComparison: Story = {
-  name: 'Component size comparison (regular/medium/large/xl)',
+  name: 'Component Size Comparison (regular/medium/large/xl)',
 
   render: () => html`
     <div style="display: flex; gap: 40px; align-items: center;">
@@ -287,7 +287,7 @@ export const DefaultLeft: Story = {
 };
 
 export const WithBarRight: Story = {
-  name: 'With bar (right side)',
+  name: 'With Bar (right side)',
 
   args: {
     minValue: 0,
@@ -298,7 +298,7 @@ export const WithBarRight: Story = {
 };
 
 export const WithBarLeft: Story = {
-  name: 'With bar (left side)',
+  name: 'With Bar (left side)',
 
   args: {
     minValue: 0,
@@ -310,7 +310,7 @@ export const WithBarLeft: Story = {
 };
 
 export const NegativeRange: Story = {
-  name: 'Negative range (-100 to 100)',
+  name: 'Negative Range (-100 to 100)',
 
   args: {
     minValue: -100,
@@ -322,7 +322,7 @@ export const NegativeRange: Story = {
 };
 
 export const SmallRange: Story = {
-  name: 'Small range (0 to 10)',
+  name: 'Small Range (0 to 10)',
 
   args: {
     minValue: 0,
@@ -350,7 +350,7 @@ export const SmallRange: Story = {
 // };
 
 export const WithBarFillRight: Story = {
-  name: 'With bar fill (right side, enhanced)',
+  name: 'With Bar Fill (right side, enhanced)',
 
   args: {
     minValue: 0,
@@ -365,7 +365,7 @@ export const WithBarFillRight: Story = {
 };
 
 export const WithBarFillLeft: Story = {
-  name: 'With bar fill (left side)',
+  name: 'With Bar Fill (left side)',
 
   args: {
     minValue: -100,
@@ -381,7 +381,7 @@ export const WithBarFillLeft: Story = {
 };
 
 export const FillModeComparison: Story = {
-  name: 'Fill mode comparison, enhanced (fill vs tint)',
+  name: 'Fill Mode Comparison, Enhanced (fill vs tint)',
 
   render: () => html`
     <div style="display: flex; gap: 40px; align-items: center;">
@@ -445,7 +445,7 @@ export const FillModeComparison: Story = {
 };
 
 export const TintModeWithAdvice: Story = {
-  name: 'Tint mode with advice overlays',
+  name: 'Tint Mode With Advice Overlays',
 
   args: {
     minValue: -100,
@@ -469,7 +469,7 @@ export const TintModeWithAdvice: Story = {
 };
 
 export const WithAdviceInner: Story = {
-  name: 'With advice overlays (inner positioning)',
+  name: 'With Advice Overlays (inner positioning)',
 
   args: {
     minValue: -100,
@@ -494,7 +494,7 @@ export const WithAdviceInner: Story = {
 };
 
 export const WithAdviceOuter: Story = {
-  name: 'With advice overlays (outer positioning)',
+  name: 'With Advice Overlays (outer positioning)',
 
   args: {
     minValue: -100,
@@ -516,7 +516,7 @@ export const WithAdviceOuter: Story = {
 };
 
 export const WithAdviceCenter: Story = {
-  name: 'With advice overlays (center positioning)',
+  name: 'With Advice Overlays (center positioning)',
 
   args: {
     minValue: -100,
@@ -538,7 +538,7 @@ export const WithAdviceCenter: Story = {
 };
 
 export const WithSetpointAtValue: Story = {
-  name: 'With setpoint (value at setpoint)',
+  name: 'With Setpoint (value at setpoint)',
 
   args: {
     minValue: -100,
@@ -554,7 +554,7 @@ export const WithSetpointAtValue: Story = {
 };
 
 export const WithSetpointAwayFromValue: Story = {
-  name: 'With setpoint (value away from setpoint)',
+  name: 'With Setpoint (value away from setpoint)',
 
   args: {
     minValue: -100,
@@ -570,8 +570,6 @@ export const WithSetpointAwayFromValue: Story = {
 };
 
 export const StateComparison: Story = {
-  name: 'State comparison',
-
   render: () => html`
     <div style="display: flex; flex-direction: column; gap: 24px;">
       <!-- Header row -->
@@ -700,7 +698,7 @@ export const StateComparison: Story = {
 };
 
 export const VerticalRightScaleBackground: Story = {
-  name: 'With scale background (Gauge style, right side)',
+  name: 'With Scale Background (Gauge style, right side)',
 
   args: {
     minValue: 0,
@@ -722,7 +720,7 @@ export const VerticalRightScaleBackground: Story = {
 
 // Test Scenario Stories
 export const TestScenario1_AutoAtSetpoint: Story = {
-  name: 'Test: Auto at-setpoint detection',
+  name: 'Test: Auto At-Setpoint Detection',
 
   parameters: {
     docs: {
@@ -755,7 +753,7 @@ Real-world values fluctuate. Without a deadband, the indicator would constantly 
     priority: Priority.enhanced,
     value: 50, // Start at setpoint
     setpoint: 50,
-    disableAutoAtSetpoint: false, // Auto mode
+    autoAtSetpoint: true, // Auto mode
     autoAtSetpointDeadband: 1, // 1-unit tolerance
     state: 'active',
     primaryTickmarkInterval: 50,
@@ -764,7 +762,7 @@ Real-world values fluctuate. Without a deadband, the indicator would constantly 
 };
 
 export const TestScenario2_ManualAtSetpoint: Story = {
-  name: 'Test: Manual at-setpoint control',
+  name: 'Test: Manual At-Setpoint Control',
 
   parameters: {
     docs: {
@@ -781,7 +779,7 @@ Sometimes you need to control the "at setpoint" visual state directly, independe
 
 #### How it works
 
-- Set \`disableAutoAtSetpoint={true}\` to disable automatic calculation
+- Set \`autoAtSetpoint={false}\` to disable automatic calculation (manual mode)
 - Control marker size via \`atSetpoint={true/false}\` property directly
 - The component **ignores** \`value\`, \`setpoint\`, and \`autoAtSetpointDeadband\`
 
@@ -796,7 +794,7 @@ Sometimes you need to control the "at setpoint" visual state directly, independe
 - Toggle \`atSetpoint\` to **true** → Marker **shrinks to 80%** even though value is far from setpoint
 - Toggle \`atSetpoint\` to **false** → Marker **grows to 100%**
 - Change \`value\` to **70** (match setpoint) → Marker size **doesn't change** (manual mode ignores values)
-- Set \`disableAutoAtSetpoint={false}\` → Switch back to auto mode (marker immediately reflects actual distance)`,
+- Set \`autoAtSetpoint={true}\` → Switch back to auto mode (marker immediately reflects actual distance)`,
       },
     },
   },
@@ -808,7 +806,7 @@ Sometimes you need to control the "at setpoint" visual state directly, independe
     priority: Priority.enhanced,
     value: 30, // Value at 30
     setpoint: 70, // Setpoint at 70 (far apart)
-    disableAutoAtSetpoint: true, // Manual mode
+    autoAtSetpoint: false, // Manual mode
     atSetpoint: false, // Manually set to false (try toggling to true!)
     state: 'active',
     primaryTickmarkInterval: 50,
@@ -817,7 +815,7 @@ Sometimes you need to control the "at setpoint" visual state directly, independe
 };
 
 export const TestScenario3_DeadbandTuning: Story = {
-  name: 'Test: Deadband tuning',
+  name: 'Test: Deadband Tuning',
 
   parameters: {
     docs: {
@@ -867,7 +865,7 @@ The deadband determines how close the value must be to the setpoint before the s
     priority: Priority.enhanced,
     value: 45, // 5 units away from setpoint
     setpoint: 50,
-    disableAutoAtSetpoint: false,
+    autoAtSetpoint: true,
     autoAtSetpointDeadband: 1, // Try changing to 10 (at setpoint) or 0.1 (away)
     state: 'active',
     primaryTickmarkInterval: 50,
@@ -876,7 +874,7 @@ The deadband determines how close the value must be to the setpoint before the s
 };
 
 export const TestScenario5_ZeroSnapBehavior: Story = {
-  name: 'Test: Zero snap behavior',
+  name: 'Test: Zero Snap Behavior',
 
   parameters: {
     docs: {
@@ -940,7 +938,7 @@ In maritime and industrial control systems, zero is often a special reference po
 };
 
 export const EnhancedModeComparison: Story = {
-  name: 'Enhanced mode comparison (regular vs enhanced)',
+  name: 'Enhanced Mode Comparison (regular vs enhanced)',
 
   render: () => html`
     <div style="display: flex; gap: 40px; align-items: center;">
@@ -999,7 +997,7 @@ export const EnhancedModeComparison: Story = {
 };
 
 export const ScaleTypeComparison: Story = {
-  name: 'Scale type comparison (regular vs condensed)',
+  name: 'Scale Type Comparison (regular vs condensed)',
 
   render: () => html`
     <div style="display: flex; gap: 40px; align-items: center;">
@@ -1055,7 +1053,7 @@ export const ScaleTypeComparison: Story = {
 };
 
 export const ChartIntegrationRight: Story = {
-  name: 'Chart integration (as external right axis)',
+  name: 'Chart Integration (as external right axis)',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -1063,9 +1061,9 @@ export const ChartIntegrationRight: Story = {
   argTypes: {
     // External scale controls (vertical/right)
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
-    vScaleHideLabels: {
+    vScaleShowLabels: {
       control: 'boolean',
-      description: 'Vertical scale: hide labels',
+      description: 'Vertical scale: show labels',
     },
     vScaleAdvices: {
       control: 'object',
@@ -1109,7 +1107,7 @@ export const ChartIntegrationRight: Story = {
     height: 320,
     // Vertical scale defaults
     vScaleHasBar: true,
-    vScaleHideLabels: false,
+    vScaleShowLabels: true,
     vScaleAdvices: [
       {min: 3, max: 5, type: AdviceType.caution, hinted: true},
       {min: 6, max: 7, type: AdviceType.advice, hinted: false},
@@ -1141,7 +1139,7 @@ export const ChartIntegrationRight: Story = {
         .height=${_args.height}
         .side=${ExternalScaleSide.right}
         .hasScale=${true}
-        .hideLabels=${_args.vScaleHideLabels}
+        .showLabels=${_args.vScaleShowLabels}
         .hasBar=${_args.vScaleHasBar}
         .barThickness=${_args.vScaleBarThickness}
         .fillMode=${_args.vScaleFillMode === 'fill'
@@ -1166,7 +1164,7 @@ export const ChartIntegrationRight: Story = {
 };
 
 export const ChartIntegrationRightBackground: Story = {
-  name: 'Chart integration (as external right axis, scaleBackground)',
+  name: 'Chart Integration (as external right axis, scaleBackground)',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -1174,9 +1172,9 @@ export const ChartIntegrationRightBackground: Story = {
   argTypes: {
     // External scale controls (vertical/right)
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
-    vScaleHideLabels: {
+    vScaleShowLabels: {
       control: 'boolean',
-      description: 'Vertical scale: hide labels',
+      description: 'Vertical scale: show labels',
     },
     vScaleAdvices: {
       control: 'object',
@@ -1220,7 +1218,7 @@ export const ChartIntegrationRightBackground: Story = {
     height: 320,
     // Vertical scale defaults
     vScaleHasBar: true,
-    vScaleHideLabels: false,
+    vScaleShowLabels: true,
     vScaleAdvices: [
       {min: 3, max: 5, type: AdviceType.caution, hinted: true},
       {min: 6, max: 7, type: AdviceType.advice, hinted: false},
@@ -1252,7 +1250,7 @@ export const ChartIntegrationRightBackground: Story = {
         .height=${_args.height}
         .side=${ExternalScaleSide.right}
         .hasScale=${true}
-        .hideLabels=${_args.vScaleHideLabels}
+        .showLabels=${_args.vScaleShowLabels}
         .hasBar=${_args.vScaleHasBar}
         .barThickness=${_args.vScaleBarThickness}
         .fillMode=${_args.vScaleFillMode === 'fill'
@@ -1278,7 +1276,7 @@ export const ChartIntegrationRightBackground: Story = {
 };
 
 export const GaugeTrend: Story = {
-  name: 'Chart integration (Gauge-trend style)',
+  name: 'Chart Integration (Gauge-trend style)',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -1299,9 +1297,9 @@ export const GaugeTrend: Story = {
     },
     // External scale controls (vertical/right)
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
-    vScaleHideLabels: {
+    vScaleShowLabels: {
       control: 'boolean',
-      description: 'Vertical scale: hide labels',
+      description: 'Vertical scale: show labels',
     },
     vScaleAdvices: {
       control: 'object',
@@ -1346,7 +1344,7 @@ export const GaugeTrend: Story = {
     priority: Priority.regular,
     // Vertical scale defaults
     vScaleHasBar: true,
-    vScaleHideLabels: false,
+    vScaleShowLabels: true,
     vScaleAdvices: [],
     vScaleFillMode: 'fill',
     vScaleAdvicePosition: 'inner',
@@ -1376,7 +1374,7 @@ export const GaugeTrend: Story = {
         .height=${_args.height}
         .side=${ExternalScaleSide.right}
         .hasScale=${true}
-        .hideLabels=${_args.vScaleHideLabels}
+        .showLabels=${_args.vScaleShowLabels}
         .hasBar=${_args.vScaleHasBar}
         .barThickness=${_args.vScaleBarThickness}
         .fillMode=${_args.vScaleFillMode === 'fill'
@@ -1413,7 +1411,7 @@ export const GaugeTrend: Story = {
  * This story demonstrates both modes side-by-side with resizable containers.
  */
 export const FixedAspectRatioComparison: StoryObj = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   render: () => {
     const wrapper = document.createElement('div');
     wrapper.style.cssText = `

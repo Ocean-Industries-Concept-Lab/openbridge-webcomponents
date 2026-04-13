@@ -47,7 +47,7 @@ Before making changes, you should fork the project's repository to your own acco
 After forking, clone your fork to your local machine to begin making changes:
 
 ```
-git clone https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip.git
+git clone https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents.git
 cd openbridge-webcomponents
 ```
 
@@ -83,6 +83,16 @@ git push origin your-branch-name
 #### Submit a Pull Request
 
 Go to the repository on GitHub, and you'll see a prompt to submit a pull request. Fill in the necessary details and submit.
+
+**Note on Pull Request Titles:**
+We enforce [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for Pull Request titles. An automated check will validate your PR title. If it doesn't follow the rules, the check will fail.
+
+Examples:
+- `feat: Add new button component`
+- `fix: resolve gauge alignment issue`
+- `feat!: breaking change in the component API` (use `!` for breaking changes)
+
+Please ensure your title is clear and follows the syntax.
 
 ### Additional Ways to Contribute
 

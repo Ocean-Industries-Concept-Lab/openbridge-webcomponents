@@ -12,6 +12,7 @@ import {ifDefined} from 'lit/directives/if-defined.js';
 import {AngleAdvice} from '../watch/advice.js';
 import {LinearAdvice} from '../thruster/advice.js';
 import {PropellerType} from '../thruster/propeller.js';
+import {TickmarkStyle} from '../watch/tickmark.js';
 import {customElement} from '../../decorator.js';
 
 export enum AzimuthThrusterLabeledSize {
@@ -33,7 +34,8 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
   atAngleSetpoint: boolean = false;
   @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
   @property({type: Boolean}) angleSetpointOverride: boolean = false;
-  @property({type: Boolean}) disableAutoAtAngleSetpoint: boolean = false;
+  @property({type: Boolean, attribute: false}) autoAtAngleSetpoint: boolean =
+    true;
   @property({type: Number}) autoAtAngleSetpointDeadband: number = 2;
   @property({type: Boolean}) touching: boolean = false;
 
@@ -41,12 +43,15 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
   @property({type: Number}) thrustSetpoint: number | undefined;
   @property({type: Boolean})
   atThrustSetpoint: boolean = false;
-  @property({type: Boolean}) disableAutoAtThrustSetpoint: boolean = false;
+  @property({type: Boolean, attribute: false}) autoAtThrustSetpoint: boolean =
+    true;
   @property({type: Number}) autoAtThrustSetpointDeadband: number = 1;
   @property({type: Number}) thrustSetpointAtZeroDeadband: number = 0.1;
   @property({type: Boolean}) thrustSetpointOverride: boolean = false;
   @property({type: Array, attribute: false}) angleAdvices: AngleAdvice[] = [];
   @property({type: Array, attribute: false}) thrustAdvices: LinearAdvice[] = [];
+  @property({type: String}) tickmarkStyle: TickmarkStyle =
+    TickmarkStyle.regular;
   @property({type: Boolean}) singleDirection: boolean = false;
   @property({type: String}) topPropeller: PropellerType = PropellerType.none;
   @property({type: String}) bottomPropeller: PropellerType = PropellerType.none;
@@ -99,14 +104,14 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
         ></obc-instrument-field>
         <obc-azimuth-thruster
           class="azimuth-thruster"
-          nopadding
+          .hasLabelSpacer=${false}
           .thrust=${this.thrust}
           .thrustSetpoint=${this.thrustSetpoint}
-          .disableAutoAtThrustSetpoint=${this.disableAutoAtThrustSetpoint}
+          .autoAtThrustSetpoint=${this.autoAtThrustSetpoint}
           .autoAtThrustSetpointDeadband=${this.autoAtThrustSetpointDeadband}
           .angle=${this.angle}
           .angleSetpoint=${this.angleSetpoint}
-          .disableAutoAtAngleSetpoint=${this.disableAutoAtAngleSetpoint}
+          .autoAtAngleSetpoint=${this.autoAtAngleSetpoint}
           .autoAtAngleSetpointDeadband=${this.autoAtAngleSetpointDeadband}
           .atThrustSetpoint=${this.atThrustSetpoint}
           .atAngleSetpoint=${this.atAngleSetpoint}
@@ -121,6 +126,7 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
           .angleAdvices=${this.angleAdvices}
           .thrustAdvices=${this.thrustAdvices}
           .singleDirection=${this.singleDirection}
+          .tickmarkStyle=${this.tickmarkStyle}
           .topPropeller=${this.topPropeller}
           .bottomPropeller=${this.bottomPropeller}
         ></obc-azimuth-thruster>

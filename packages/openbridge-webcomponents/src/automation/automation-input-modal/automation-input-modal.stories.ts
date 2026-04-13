@@ -4,7 +4,7 @@ import './automation-input-modal.js';
 import '../../components/icon-button/icon-button.js';
 import '../../icons/icon-close-google.js';
 import '../../icons/icon-forward.js';
-import '../../components/input/input.js';
+import '../../components/number-input-field/number-input-field.js';
 import '../../components/notification-badge-button/notification-badge-button.js';
 import '../../icons/icon-chevron-double-left-google.js';
 import '../../icons/icon-chevron-left-google.js';
@@ -20,6 +20,7 @@ import {
   ObcToggleButtonOptionVariant,
 } from '../../components/toggle-button-option/toggle-button-option.js';
 import '../../components/notification-badge-button/notification-badge-button.js';
+import {ObcNumberInputFieldTextAlign} from '../../components/number-input-field/number-input-field.js';
 
 const meta: Meta<typeof ObcAutomationInputModal> = {
   title: 'Automation/Automation Control',
@@ -88,13 +89,11 @@ export const Compact: Story = {
         <obc-notification-badge-button icon openRight>
           <obi-chevron-left-google></obi-chevron-left-google>
         </obc-notification-badge-button>
-        <obc-input
+        <obc-number-input-field
           value="10"
-          squared
-          noHorisontalPadding
-          textAlign="center"
-          font="button"
-        ></obc-input>
+          .textAlign=${ObcNumberInputFieldTextAlign.Center}
+          .squared=${true}
+        ></obc-number-input-field>
         <obc-notification-badge-button icon openLeft>
           <obi-chevron-right-google></obi-chevron-right-google>
         </obc-notification-badge-button>

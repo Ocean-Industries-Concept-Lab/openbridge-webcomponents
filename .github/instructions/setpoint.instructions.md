@@ -88,25 +88,25 @@ The setpoint system is split into three layers:
 
 ## When to Use Mixin vs Bundle
 
-| Scenario | Use | Example |
-|----------|-----|---------|
-| Component has **one** setpoint | `SetpointMixin` | `speed-gauge`, `rudder`, `gauge-radial` |
-| Component has **multiple** independent setpoints | `SetpointBundle` (one per axis) | `azimuth-thruster` (angle + thrust) |
-| Component exposes **prefixed** property names | `SetpointBundle` with `sync()` | `compass` (angleSetpoint → bundle.setpoint) |
-| Component uses **generic** property names | `SetpointMixin` directly | `instrument-radial` (setpoint, newSetpoint) |
+| Scenario                                         | Use                             | Example                                     |
+| ------------------------------------------------ | ------------------------------- | ------------------------------------------- |
+| Component has **one** setpoint                   | `SetpointMixin`                 | `speed-gauge`, `rudder`, `gauge-radial`     |
+| Component has **multiple** independent setpoints | `SetpointBundle` (one per axis) | `azimuth-thruster` (angle + thrust)         |
+| Component exposes **prefixed** property names    | `SetpointBundle` with `sync()`  | `compass` (angleSetpoint → bundle.setpoint) |
+| Component uses **generic** property names        | `SetpointMixin` directly        | `instrument-radial` (setpoint, newSetpoint) |
 
 ### SetpointMixin Usage
 
 ```ts
-import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
+import { SetpointMixin } from "../../svghelpers/setpoint-mixin.js";
 
-class MyGauge extends SetpointMixin(LitElement, {angularWraparound: true}) {
-  @property({type: Number}) value = 0;
+class MyGauge extends SetpointMixin(LitElement, { angularWraparound: true }) {
+  @property({ type: Number }) value = 0;
 
   override render() {
     const isAtSetpoint = this.computeAtSetpoint(this.value);
     // Properties available: setpoint, newSetpoint, touching, atSetpoint,
-    //   disableAutoAtSetpoint, autoAtSetpointDeadband, setpointAtZeroDeadband,
+    //   autoAtSetpoint, autoAtSetpointDeadband, setpointAtZeroDeadband,
     //   setpointOverride, animateSetpoint, departingNewSetpoint
   }
 }
@@ -115,11 +115,11 @@ class MyGauge extends SetpointMixin(LitElement, {angularWraparound: true}) {
 ### SetpointBundle Usage
 
 ```ts
-import {SetpointBundle} from '../../svghelpers/setpoint-bundle.js';
+import { SetpointBundle } from "../../svghelpers/setpoint-bundle.js";
 
 class MyDualInstrument extends LitElement {
-  @property({type: Number}) angleSetpoint: number | undefined;
-  @property({type: Number}) thrustSetpoint: number | undefined;
+  @property({ type: Number }) angleSetpoint: number | undefined;
+  @property({ type: Number }) thrustSetpoint: number | undefined;
 
   private _angleSp = new SetpointBundle({
     angularWraparound: true,
@@ -147,7 +147,7 @@ class MyDualInstrument extends LitElement {
 
   override disconnectedCallback() {
     super.disconnectedCallback();
-    this._angleSp.dispose();  // Clean up animation timers
+    this._angleSp.dispose(); // Clean up animation timers
     this._thrustSp.dispose();
   }
 }
@@ -162,17 +162,18 @@ When `animateSetpoint=true`, a **confirm transition** (user finalizes a setpoint
 ### Trigger Condition
 
 A confirm is detected when:
+
 1. `newSetpoint` transitions from **defined → `undefined`**
 2. `setpoint` jumps to the new target value (same render cycle)
 3. `animateSetpoint` is `true`
 
 ### What Animates
 
-| Element | Animation | Duration |
-|---------|-----------|----------|
-| Original setpoint marker | Slides from old position to new position | 300ms `ease-out` |
-| Original setpoint marker | Opacity `0.75 → 1.0` (was dimmed during adjustment) | 300ms `ease-out` |
-| Departing new-setpoint marker | Fades out `opacity: 1 → 0` | 300ms `ease-out` |
+| Element                       | Animation                                           | Duration         |
+| ----------------------------- | --------------------------------------------------- | ---------------- |
+| Original setpoint marker      | Slides from old position to new position            | 300ms `ease-out` |
+| Original setpoint marker      | Opacity `0.75 → 1.0` (was dimmed during adjustment) | 300ms `ease-out` |
+| Departing new-setpoint marker | Fades out `opacity: 1 → 0`                          | 300ms `ease-out` |
 
 After 300ms, the departing marker is removed from DOM.
 
@@ -180,8 +181,9 @@ After 300ms, the departing marker is removed from DOM.
 
 ```css
 /* Applied via inline style on the setpoint marker <g> element */
-transition: transform var(--setpoint-animation-duration, 300ms) ease-out,
-            opacity var(--setpoint-animation-duration, 300ms) ease-out;
+transition:
+  transform var(--setpoint-animation-duration, 300ms) ease-out,
+  opacity var(--setpoint-animation-duration, 300ms) ease-out;
 ```
 
 **Key requirement:** CSS `style="transform: ..."` must be used instead of the SVG `transform` attribute. SVG `transform` is not animatable via CSS transitions.
@@ -211,9 +213,9 @@ When a confirm occurs, the new-setpoint marker needs to stay in the DOM for 300m
 CSS `transform: rotate()` interpolates linearly between degree values. `rotate(350deg)` → `rotate(10deg)` would animate −340° instead of +20°. The `cssSafeAngle()` function returns an unbounded angle within ±180° of the previous value, ensuring CSS transitions **always** take the shortest path — no wraparound guard or skip logic needed:
 
 ```ts
-cssSafeAngle(350, 10)   // → 370  (350 + 20)
-cssSafeAngle(10, 350)   // → -10  (10 − 20)
-cssSafeAngle(0, 181)    // → -179 (short path is −179°)
+cssSafeAngle(350, 10); // → 370  (350 + 20)
+cssSafeAngle(10, 350); // → -10  (10 − 20)
+cssSafeAngle(0, 181); // → -179 (short path is −179°)
 ```
 
 `watch.ts` maintains a `_setpointCssAngle` accumulator that tracks the last angle written to CSS. On each render, the raw angle is passed through `cssSafeAngle()` so the transition delta is always ≤ 180°.
@@ -265,20 +267,20 @@ azimuth-thruster.ts
 
 ### Visual States
 
-| State | Scale | Offset | When |
-|-------|-------|--------|------|
-| `notEqual` | 100% | 4px outward | Value ≠ setpoint |
-| `equal` | 80% | 0px | Value = setpoint (within deadband) |
-| `equalZero` | 80% | 8px outward | Both value and setpoint at zero |
-| `focus` | 100% | 4px outward | User actively adjusting (`touching` or `newSetpoint` defined) |
+| State       | Scale | Offset      | When                                                          |
+| ----------- | ----- | ----------- | ------------------------------------------------------------- |
+| `notEqual`  | 100%  | 4px outward | Value ≠ setpoint                                              |
+| `equal`     | 80%   | 0px         | Value = setpoint (within deadband)                            |
+| `equalZero` | 80%   | 8px outward | Both value and setpoint at zero                               |
+| `focus`     | 100%  | 4px outward | User actively adjusting (`touching` or `newSetpoint` defined) |
 
 ### Color Modes
 
-| Mode | Primary fill | Focus fill | Focus stroke |
-|------|-------------|------------|--------------|
-| `enhanced` | `--instrument-enhanced-primary-color` | `--base-blue-100` | `--element-neutral-enhanced-color` |
-| `regular` | `--instrument-regular-primary-color` | `--instrument-regular-tertiary-color` | `--instrument-regular-secondary-color` |
-| `disabled` | `--instrument-frame-tertiary-color` | — | — |
+| Mode       | Primary fill                          | Focus fill                            | Focus stroke                           |
+| ---------- | ------------------------------------- | ------------------------------------- | -------------------------------------- |
+| `enhanced` | `--instrument-enhanced-primary-color` | `--base-blue-100`                     | `--element-neutral-enhanced-color`     |
+| `regular`  | `--instrument-regular-primary-color`  | `--instrument-regular-tertiary-color` | `--instrument-regular-secondary-color` |
+| `disabled` | `--instrument-frame-tertiary-color`   | —                                     | —                                      |
 
 ### Marker Geometry
 
@@ -289,14 +291,14 @@ azimuth-thruster.ts
 
 ### Key Functions
 
-| Function | Purpose |
-|----------|---------|
-| `drawSetpointMarker(config)` | Renders SVG marker at origin |
+| Function                             | Purpose                                                      |
+| ------------------------------------ | ------------------------------------------------------------ |
+| `drawSetpointMarker(config)`         | Renders SVG marker at origin                                 |
 | `deriveRadialSetpointConfig(config)` | Maps instrument state → visual config for radial instruments |
-| `computeAtSetpoint(config)` | Unified deadband comparison (linear or angular) |
-| `cssSafeAngle(prev, target)` | Ensures CSS rotate() takes shortest path |
-| `shortestAngularDistance(from, to)` | Angular delta in [0, 180] |
-| `getSetpointAnimationDurationMs(el)` | Reads `--setpoint-animation-duration` from CSS |
+| `computeAtSetpoint(config)`          | Unified deadband comparison (linear or angular)              |
+| `cssSafeAngle(prev, target)`         | Ensures CSS rotate() takes shortest path                     |
+| `shortestAngularDistance(from, to)`  | Angular delta in [0, 180]                                    |
+| `getSetpointAnimationDurationMs(el)` | Reads `--setpoint-animation-duration` from CSS               |
 
 ---
 
@@ -309,7 +311,7 @@ computeAtSetpoint({
   value: number | undefined,        // Current instrument value
   setpoint: number | undefined,     // Target setpoint
   touching: boolean,                // User interacting? → false
-  disableAuto: boolean,             // Use manual override?
+  auto: boolean,                    // Auto-detect via deadband? (true = yes)
   deadband: number,                 // Tolerance (e.g., 2°)
   atSetpointManual: boolean,        // Manual override value
   angularWraparound?: boolean,      // 360° wraparound (compass)
@@ -317,9 +319,10 @@ computeAtSetpoint({
 ```
 
 **Rules:**
+
 - If `value` or `setpoint` is `undefined` → `false`
 - If `touching` → `false` (suppress during interaction)
-- If `disableAuto` → return `atSetpointManual` directly
+- If `auto` is `false` → return `atSetpointManual` directly
 - If `angularWraparound` → use `shortestAngularDistance()` for comparison
 - Otherwise → `Math.abs(value - setpoint) <= deadband`
 
@@ -329,11 +332,11 @@ computeAtSetpoint({
 
 Interactive stories for the setpoint system live in `building-blocks/setpoint/setpoint.stories.ts`:
 
-| Story | Component | Demonstrates |
-|-------|-----------|-------------|
-| `SetpointAdjustmentFlow` | `bar-vertical` + `gauge-horizontal` | Linear setpoint animation (t=0→t=3) |
-| `SetpointRadialAdjustmentFlow` | `obc-watch` | Radial setpoint animation with bar areas |
-| `SetpointAzimuthThrusterFlow` | `obc-azimuth-thruster` | Dual-axis animation (angle + thrust) |
+| Story                          | Component                           | Demonstrates                             |
+| ------------------------------ | ----------------------------------- | ---------------------------------------- |
+| `SetpointAdjustmentFlow`       | `bar-vertical` + `gauge-horizontal` | Linear setpoint animation (t=0→t=3)      |
+| `SetpointRadialAdjustmentFlow` | `obc-watch`                         | Radial setpoint animation with bar areas |
+| `SetpointAzimuthThrusterFlow`  | `obc-azimuth-thruster`              | Dual-axis animation (angle + thrust)     |
 
 Stories use a 4-step interactive flow (Reset → Initiate → Move → Confirm) with GSAP for vessel response simulation. The confirm step (t=3) uses the component's built-in CSS transitions — GSAP is **not** used for setpoint marker animation.
 

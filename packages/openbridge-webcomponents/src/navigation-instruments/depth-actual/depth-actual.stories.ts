@@ -3,6 +3,7 @@ import {ObcDepthActual} from './depth-actual.js';
 import './depth-actual.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {VesselImage} from '../watch/watch.js';
+import {foreVessels} from '../watch/vessels/storybook-helper.js';
 import {AdviceType} from '../watch/advice.js';
 import {Priority} from '../types.js';
 
@@ -27,8 +28,8 @@ const meta: Meta<typeof ObcDepthActual> = {
     draft: {control: {type: 'range', min: 0, max: 10, step: 0.1}},
     vesselScale: {control: {type: 'range', min: 0.5, max: 2, step: 0.1}},
     vesselImage: {
-      control: {type: 'select'},
-      options: Object.values(VesselImage),
+      control: 'select',
+      options: foreVessels,
     },
     priority: {
       control: 'select',

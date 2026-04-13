@@ -1,5 +1,3 @@
-/* Vessel-specific styles for speed-rot type */
-
 .speed-rot-wrapper {
   display: flex;
   flex-direction: column;
@@ -37,6 +35,5 @@
 .speed-indicator ::slotted(*) {
   width: 100%;
   height: 100%;
-  /* Inherit color from parent for proper theming */
   color: inherit;
 }

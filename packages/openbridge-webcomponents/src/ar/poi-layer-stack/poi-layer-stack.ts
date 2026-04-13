@@ -59,6 +59,7 @@ export class ObcPoiLayerStack extends LitElement {
     }
   >();
   private selectionCounter = 0;
+  private movingTargets = new Set<Poi>();
   private placementRaf = 0;
   private mutationObserver?: MutationObserver;
 
@@ -102,6 +103,7 @@ export class ObcPoiLayerStack extends LitElement {
       this.requestPoiRender(target);
     });
     this.selectionMap.clear();
+    this.movingTargets.clear();
     this.selectionCounter = 0;
   }
 
@@ -179,6 +181,11 @@ export class ObcPoiLayerStack extends LitElement {
     this.selectionMap.forEach((_, target) => {
       if (!target.isConnected) {
         this.selectionMap.delete(target);
+      }
+    });
+    this.movingTargets.forEach((target) => {
+      if (!target.isConnected) {
+        this.movingTargets.delete(target);
       }
     });
   }
@@ -326,12 +333,6 @@ export class ObcPoiLayerStack extends LitElement {
 
   private getTargetButtonProjectionOffset(target: Poi): number {
     const raw = target.style.getPropertyValue('--obc-poi-button-projection-y');
-    const parsed = Number.parseFloat(raw);
-    return Number.isFinite(parsed) ? parsed : 0;
-  }
-
-  private getTargetAnchorProjectionOffset(target: Poi): number {
-    const raw = target.style.getPropertyValue('--obc-poi-target-projection-y');
     const parsed = Number.parseFloat(raw);
     return Number.isFinite(parsed) ? parsed : 0;
   }
@@ -512,29 +513,35 @@ export class ObcPoiLayerStack extends LitElement {
 
   private async moveTargetIntoSelectedLayer(
     target: Poi,
-    originLayer: ObcPoiLayer,
+    _originLayer: ObcPoiLayer,
     selectedLayer: ObcPoiLayer,
     animate = true
   ) {
-    // BEFORE: measure button and line positions
-    const {button, line} = this.getAnimationElements(target);
-    const beforeButtonRect = button?.getBoundingClientRect() ?? null;
-    const beforeLineRect = line?.getBoundingClientRect() ?? null;
+    this.movingTargets.add(target);
+    try {
+      const {button, line} = this.getAnimationElements(target);
+      const beforeButtonRect = button?.getBoundingClientRect() ?? null;
+      const beforeLineRect = line?.getBoundingClientRect() ?? null;
 
-    // Move to destination layer
-    if (this.getTargetLayer(target) !== selectedLayer) {
-      selectedLayer.appendChild(target);
+      if (this.getTargetLayer(target) !== selectedLayer) {
+        selectedLayer.appendChild(target);
+      }
+
+      target.setAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR, 'true');
+
+      this.requestPoiRender(target);
+      this.refreshTargetProjectionLayout(target);
+      await this.waitForPoiRender(target);
+
+      if (!animate) {
+        return;
+      }
+
+      await this.animateLayerJump(target, beforeButtonRect, beforeLineRect);
+    } finally {
+      target.removeAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR);
+      this.movingTargets.delete(target);
     }
-
-    // Render at final state (no projection variables needed)
-    this.requestPoiRender(target);
-    this.refreshTargetProjectionLayout(target);
-    await this.waitForPoiRender(target);
-
-    if (!animate) return;
-
-    // AFTER: animate from old positions to new
-    await this.animateLayerJump(target, beforeButtonRect, beforeLineRect);
   }
 
   private async moveTrackedTargetToSelectedLayer(
@@ -621,6 +628,7 @@ export class ObcPoiLayerStack extends LitElement {
       keepInSelectedLayer: boolean;
     }
   ) {
+    this.movingTargets.add(target);
     target.setAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR, 'true');
 
     try {
@@ -658,6 +666,7 @@ export class ObcPoiLayerStack extends LitElement {
       this.schedulePlacement();
     } finally {
       target.removeAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR);
+      this.movingTargets.delete(target);
     }
   }
 
@@ -898,6 +907,9 @@ export class ObcPoiLayerStack extends LitElement {
     this.selectionMap.forEach((record, target) => {
       if (!target.isConnected) {
         this.selectionMap.delete(target);
+        return;
+      }
+      if (this.movingTargets.has(target)) {
         return;
       }
       if (target.hasAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR)) {

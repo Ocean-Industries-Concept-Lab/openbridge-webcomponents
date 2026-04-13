@@ -3,6 +3,7 @@ import {ObcSpeedGauge, ObcSpeedGaugeNeedleType} from './speed-gauge.js';
 import './speed-gauge.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
+import {TickmarkStyle} from '../watch/tickmark.js';
 import {Priority} from '../types.js';
 
 const meta: Meta<typeof ObcSpeedGauge> = {
@@ -25,6 +26,12 @@ const meta: Meta<typeof ObcSpeedGauge> = {
     setpoint: {control: {type: 'range', min: -20, max: 100, step: 1}},
     touching: {control: 'boolean'},
     priority: {control: 'select', options: Object.values(Priority)},
+    showLabels: {control: 'boolean'},
+    tickmarksInside: {control: 'boolean'},
+    tickmarkStyle: {
+      control: 'select',
+      options: Object.values(TickmarkStyle),
+    },
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcSpeedGauge>;
@@ -40,7 +47,7 @@ export const Regular: Story = {
 };
 
 export const Labels: Story = {
-  args: {labels: true},
+  args: {showLabels: true},
 };
 
 export const NeedleBar: Story = {

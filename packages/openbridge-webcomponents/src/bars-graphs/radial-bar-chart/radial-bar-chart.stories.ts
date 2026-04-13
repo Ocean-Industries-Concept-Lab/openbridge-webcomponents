@@ -55,7 +55,7 @@ export default meta;
 type Story = StoryObj<ObcRadialBarChart>;
 
 export const Default: Story = {
-  name: 'Default radial bar',
+  name: 'Default Radial Bar',
   render: (args) => html`
     <obc-radial-bar-chart
       .data=${args.data}
@@ -72,42 +72,42 @@ export const Default: Story = {
 };
 
 export const FullCircle: Story = {
-  name: 'Full circle radial bar (360°)',
+  name: 'Full Circle Radial Bar (360°)',
   args: {
     circumference: 360,
   },
 };
 
 export const MinHeight: Story = {
-  name: 'Minimal height radial bar (48px)',
+  name: 'Minimal Height Radial Bar (48px)',
   args: {
     fixedHeight: 48,
   },
 };
 
 export const ManyRings: Story = {
-  name: 'Many rings radial bar',
+  name: 'Many Rings Radial Bar',
   args: {
     data: [90, 75, 60, 45, 30],
   },
 };
 
 export const AutoShrinkRings: Story = {
-  name: 'Auto-shrink ring thickness (8 rings)',
+  name: 'Auto-Shrink Ring Thickness (8 rings)',
   args: {
     data: [95, 90, 85, 80, 75, 70, 65, 60],
   },
 };
 
 export const WithLegend: Story = {
-  name: 'With legend radial bar',
+  name: 'With Legend Radial Bar',
   args: {
     legend: true,
   },
 };
 
 export const CustomColors: Story = {
-  name: 'Custom colors radial bar',
+  name: 'Custom Colors Radial Bar',
   args: {
     colors: ['#e74c3c', '#3498db', '#2ecc71'],
     priority: Priority.regular,
@@ -115,8 +115,8 @@ export const CustomColors: Story = {
 };
 
 export const Realtime: Story = {
-  name: 'Realtime radial bar',
-  tags: ['!snapshot'],
+  name: 'Realtime Radial Bar',
+  tags: ['skip-test'],
   args: {
     fixedHeight: 320,
   },

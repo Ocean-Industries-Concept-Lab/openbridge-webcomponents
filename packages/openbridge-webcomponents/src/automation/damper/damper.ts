@@ -14,7 +14,7 @@ export class ObcDamper extends ObcAbstractAutomationButtonSquared {
         ></obi-damper-horizontal-on>
         <obi-damper-horizontal-on
           usecsscolor
-          slot="icon-siluette"
+          slot="icon-silhouette"
         ></obi-damper-horizontal-on>`;
     } else {
       return html`<obi-damper-horizontal-off
@@ -23,7 +23,7 @@ export class ObcDamper extends ObcAbstractAutomationButtonSquared {
         ></obi-damper-horizontal-off>
         <obi-damper-horizontal-off
           usecsscolor
-          slot="icon-siluette"
+          slot="icon-silhouette"
         ></obi-damper-horizontal-off>`;
     }
   }

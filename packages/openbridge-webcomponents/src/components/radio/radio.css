@@ -16,6 +16,17 @@
 
       &:checked {
         @mixin style style=selected;
+
+        &:disabled {
+          @mixin style style=selected noClick;
+          background-color: var(--element-disabled-color);
+          border-color: var(--element-disabled-color);
+        }
+      }
+
+      &:disabled {
+        @mixin style style=indent noClick;
+        cursor: not-allowed;
       }
     }
   }
@@ -36,6 +47,10 @@
 
       &:checked {
         @mixin style style=selected noClick;
+      }
+
+      &[disabled] {
+        cursor: not-allowed;
       }
     }
   }
@@ -97,8 +112,31 @@
       outline-style: solid;
     }
 
+    &.disabled,
+    &.disabled:hover,
+    &.disabled:focus,
+    &.disabled:active {
+      color: var(--element-disabled-color);
+      cursor: not-allowed;
+    }
+
+    &.disabled .label,
+    &.disabled:hover .label,
+    &.disabled:focus .label,
+    &.disabled:active .label {
+      color: var(--element-disabled-color);
+    }
+
     &:has(input:checked) {
       @mixin font-body-active;
+    }
+
+    &[disabled],
+    &[disabled]:hover,
+    &[disabled]:focus,
+    &[disabled]:active {
+      color: var(--element-disabled-color);
+      cursor: not-allowed;
     }
   }
 }

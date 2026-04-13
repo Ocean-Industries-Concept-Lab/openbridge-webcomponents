@@ -522,7 +522,9 @@ export class ObcPoiLayer extends LitElement {
       }
 
       const targets = this.getAllTargets().filter(
-        (target) => !manualGroupedTargets.has(target)
+        (target) =>
+          !manualGroupedTargets.has(target) &&
+          !target.hasAttribute('data-stack-returning')
       );
 
       const layerRect = this.getBoundingClientRect();

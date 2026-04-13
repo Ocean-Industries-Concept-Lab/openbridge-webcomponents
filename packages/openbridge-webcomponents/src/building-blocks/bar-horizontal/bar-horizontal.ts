@@ -58,7 +58,7 @@ export {
  *
  * For renderer documentation see: **Building Blocks/External Scale**.
  *
- * For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Deadband tuning and Zero snap behavior) see: **Building Blocks/Bar Vertical**.
+ * For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Deadband tuning and Zero snap behavior) see: **Bars and Graphs/Bar Vertical**.
  *
  * Set `priority` to `Priority.enhanced` to use the blue/enhanced color palette
  * for bar fill and setpoint instead of the default gray/regular palette
@@ -77,10 +77,12 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
   @property({type: Number}) width = 320;
 
   /** Padding left of the drawing area */
-  @property({type: Number}) paddingLeft = CHART_DIMENSIONS.CANVAS_PADDING;
+  @property({type: Number}) paddingLeft: number =
+    CHART_DIMENSIONS.CANVAS_PADDING;
 
   /** Padding right of the drawing area */
-  @property({type: Number}) paddingRight = CHART_DIMENSIONS.CANVAS_PADDING;
+  @property({type: Number}) paddingRight: number =
+    CHART_DIMENSIONS.CANVAS_PADDING;
 
   /** Which side this scale lives on */
   @property({type: String}) side: ExternalScaleSide = ExternalScaleSide.bottom;
@@ -140,8 +142,7 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
   // Bands (thickness)
   /** Show scale tickmarks */
   @property({type: Boolean, attribute: false}) hasScale = true;
-  /** Hide numerical value labels at primary tickmarks */
-  @property({type: Boolean}) hideLabels = false;
+  @property({type: Boolean, attribute: false}) showLabels = true;
   /** Show bar */
   @property({type: Boolean}) hasBar = false;
   /** Show background behind the scale tickmarks. */
@@ -293,7 +294,7 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
       minValue: this.minValue,
       maxValue: this.maxValue,
       hasScale: this.hasScale,
-      labels: !this.hideLabels,
+      labels: this.showLabels,
       hasBar: this.hasBar,
       scaleBackground: this.scaleBackground,
       barContainerStyle: this.barContainerStyle,
@@ -317,7 +318,7 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
       setpoint: this.setpoint,
       newSetpoint: this.newSetpoint,
       atSetpoint: this.atSetpoint,
-      disableAutoAtSetpoint: this.disableAutoAtSetpoint,
+      autoAtSetpoint: this.autoAtSetpoint,
       autoAtSetpointDeadband: this.autoAtSetpointDeadband,
       setpointAtZeroDeadband: this.setpointAtZeroDeadband,
       animateSetpoint: this.animateSetpoint,
@@ -392,7 +393,7 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
     // even in fixedAspectRatio mode to keep chart padding accurate.
     const layoutChanged =
       changed.has('side') ||
-      changed.has('hideLabels') ||
+      changed.has('showLabels') ||
       changed.has('hasScale') ||
       changed.has('hasBar') ||
       changed.has('barThickness') ||
@@ -432,7 +433,7 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
       side: this.side,
       hasBar: this.hasBar,
       hasScale: this.hasScale,
-      labels: !this.hideLabels,
+      labels: this.showLabels,
       barThickness: effectiveBarThickness,
       tickThickness: this.tickThickness,
       labelThickness: this.labelThickness,
@@ -460,7 +461,7 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
     //   effectiveLength,
     //   hasBar: this.hasBar,
     //   hasScale: this.hasScale,
-    //   hideLabels: this.hideLabels,
+    //   showLabels: this.showLabels,
     //   barThickness: this.barThickness,
     //   tickThickness: this.tickThickness,
     //   labelThickness: this.labelThickness,

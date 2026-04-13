@@ -1,4 +1,11 @@
-import {LitElement, html, nothing, unsafeCSS, TemplateResult} from 'lit';
+import {
+  LitElement,
+  html,
+  nothing,
+  unsafeCSS,
+  TemplateResult,
+  PropertyValues,
+} from 'lit';
 import {property, state, query} from 'lit/decorators.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import componentStyle from './text-input-field.css?inline';
@@ -8,6 +15,8 @@ import '../icon-button/icon-button.js';
 import '../../icons/icon-close-google.js';
 import '../../icons/icon-visibility-on-google.js';
 import '../../icons/icon-visibility-off-google.js';
+
+export type ObcTextInputFieldBlurEvent = CustomEvent<{value: string}>;
 
 /**
  * Common HTML input types for practical use with `<obc-text-input-field>`.
@@ -43,11 +52,15 @@ export enum ObcTextInputFieldPlacement {
 /**
  * `<obc-text-input-field>` – A text input field component with optional icons, label, and helper text.
  *
+ *
+ *
  * @slot leading-icon - Icon displayed before the input value (when `hasLeadingIcon` is true)
  * @slot label-icon - Icon displayed before the label text (when `hasLabelIcon` is true)
  * @slot helper-icon - Icon displayed before helper or error text (when `hasHelperIcon` is true)
  * @fires input - Standard input event on value change
+ * @fires change - Standard change event on value change
  * @fires clear - Fired when the clear button is clicked
+ * @fires blur - Fired when the input field is blurred
  */
 @customElement('obc-text-input-field')
 export class ObcTextInputField extends LitElement {
@@ -62,6 +75,15 @@ export class ObcTextInputField extends LitElement {
   @property({type: Boolean, reflect: true}) readonly = false;
   @property({type: Boolean, reflect: true}) error = false;
   @property({type: String}) errorText = '';
+  /** If true, the input field will not update its value on focus */
+  @property({type: Boolean}) rejectUpdatesOnFocus = false;
+  /** If true, the value will only be initially set, and not updated on change */
+  @property({type: Boolean}) rejectUpdates = false;
+
+  /** If true, the input field will not update its value if the value is the same as the previous value
+   * This is useful to avoid React re-rendering to reset the value.
+   */
+  @property({type: Boolean}) rejectDuplicateUpdates = false;
 
   /** Name attribute for form integration */
   @property({type: String}) name = '';
@@ -94,11 +116,23 @@ export class ObcTextInputField extends LitElement {
 
   /** Internal state for password visibility toggle */
   @state() private passwordVisible = false;
+  @state() private hasFocus = false;
+  @state() private previousValue = '';
+  @state() private previousInputElementValue = '';
 
-  @query('.value-input') private inputElement!: HTMLInputElement;
+  @query('.value-input') private inputElement?: HTMLInputElement;
 
   private onInput(e: Event) {
     this.value = (e.target as HTMLInputElement).value;
+    this.previousInputElementValue = this.value;
+  }
+
+  private onFocus() {
+    this.hasFocus = true;
+  }
+
+  private onBlur() {
+    this.hasFocus = false;
   }
 
   private handleClear(e: Event) {
@@ -106,6 +140,7 @@ export class ObcTextInputField extends LitElement {
     e.stopPropagation();
 
     this.value = '';
+    this.inputElement!.value = '';
     this.dispatchEvent(
       new CustomEvent('clear', {bubbles: true, composed: true})
     );
@@ -159,6 +194,39 @@ export class ObcTextInputField extends LitElement {
     </div>`;
   }
 
+  private fireChangeEvent() {
+    this.dispatchEvent(new CustomEvent('change'));
+  }
+
+  private get shouldUpdateValue(): boolean {
+    if (this.rejectUpdates) return false;
+    if (this.rejectUpdatesOnFocus && this.hasFocus) return false;
+    if (this.rejectDuplicateUpdates && this.value === this.previousValue) {
+      return false;
+    }
+    return true;
+  }
+
+  override willUpdate(changedProperties: PropertyValues) {
+    if (
+      changedProperties.has('value') &&
+      !this.shouldUpdateValue &&
+      this.inputElement
+    ) {
+      this.value = this.inputElement.value;
+    }
+  }
+
+  override updated() {
+    if (
+      this.rejectDuplicateUpdates &&
+      this.value !== this.previousValue &&
+      (this.previousInputElementValue !== this.value || !this.hasFocus)
+    ) {
+      this.previousValue = this.value;
+    }
+  }
+
   override render() {
     const hasHelperOrError =
       Boolean(this.helperText) || Boolean(this.error && this.errorText);
@@ -166,14 +234,20 @@ export class ObcTextInputField extends LitElement {
       this.hasClearButton && this.value.length > 0 && !this.disabled;
     const isPasswordField = this.type === HTMLInputTypeAttribute.Password;
     const showPasswordToggle = isPasswordField && !this.disabled;
+    const isClearButtonVisible = showClearButton && !showPasswordToggle;
     const effectiveType =
       isPasswordField && this.passwordVisible
         ? HTMLInputTypeAttribute.Text
         : this.type;
 
     // Determine trailing button state for padding adjustment
-    const hasTrailingButton = showPasswordToggle || showClearButton;
-    const hasTwoTrailingButtons = showPasswordToggle && showClearButton;
+    const hasTrailingButton = showPasswordToggle || isClearButtonVisible;
+
+    let value = this.value;
+
+    if (!this.shouldUpdateValue && this.inputElement) {
+      value = this.inputElement.value;
+    }
 
     return html`
       <label
@@ -186,7 +260,6 @@ export class ObcTextInputField extends LitElement {
           helpertext: hasHelperOrError,
           haslabel: Boolean(this.label),
           'has-trailing-button': hasTrailingButton,
-          'has-two-trailing-buttons': hasTwoTrailingButtons,
         })}
       >
         ${this.label
@@ -220,7 +293,9 @@ export class ObcTextInputField extends LitElement {
                 type=${effectiveType}
                 inputmode=${this.getInputMode()}
                 class="value-input"
-                .value=${this.value}
+                .value=${value}
+                @focus=${this.onFocus}
+                @blur=${this.onBlur}
                 .placeholder=${this.placeholder}
                 name=${ifDefined(this.name || undefined)}
                 ?disabled=${this.disabled}
@@ -234,6 +309,7 @@ export class ObcTextInputField extends LitElement {
                 )}
                 autocomplete="off"
                 @input=${this.onInput}
+                @change=${this.fireChangeEvent}
               />
             </div>
             ${showPasswordToggle
@@ -246,11 +322,11 @@ export class ObcTextInputField extends LitElement {
                     : 'Show password'}
                 >
                   ${this.passwordVisible
-                    ? html`<obi-visibility-off-google></obi-visibility-off-google>`
-                    : html`<obi-visibility-on-google></obi-visibility-on-google>`}
+                    ? html`<obi-visibility-on-google></obi-visibility-on-google>`
+                    : html`<obi-visibility-off-google></obi-visibility-off-google>`}
                 </obc-icon-button>`
               : nothing}
-            ${showClearButton
+            ${isClearButtonVisible
               ? html`<obc-icon-button
                   variant="flat"
                   class="trailing-icon-button"

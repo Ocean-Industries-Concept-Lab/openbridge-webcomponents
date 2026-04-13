@@ -32,6 +32,9 @@ import * as droneMediumTop from './vessels/drone-medium-top.js';
 import * as droneSmallFront from './vessels/drone-small-front.js';
 import * as droneSmallStbdSide from './vessels/drone-small-stbd-side.js';
 import * as droneSmallTop from './vessels/drone-small-top.js';
+import * as droneGenericFront from './vessels/drone-generic-front.js';
+import * as droneGenericSide from './vessels/drone-generic-side.js';
+import * as droneGenericTop from './vessels/drone-generic-top.js';
 import * as rovFront from './vessels/rov-front.js';
 import * as rovSide from './vessels/rov-side.js';
 import * as rovTop from './vessels/rov-top.js';
@@ -75,6 +78,9 @@ export enum VesselImage {
   droneSmallFront = 'drone-small-front',
   droneSmallStbdSide = 'drone-small-stbd-side',
   droneSmallTop = 'drone-small-top',
+  droneGenericFront = 'drone-generic-front',
+  droneGenericSide = 'drone-generic-side',
+  droneGenericTop = 'drone-generic-top',
   rovFront = 'rov-front',
   rovSide = 'rov-side',
   rovTop = 'rov-top',
@@ -113,6 +119,9 @@ export const vesselImages: Record<VesselImage, SVGTemplateResult> = {
   [VesselImage.droneSmallFront]: droneSmallFront.default,
   [VesselImage.droneSmallStbdSide]: droneSmallStbdSide.default,
   [VesselImage.droneSmallTop]: droneSmallTop.default,
+  [VesselImage.droneGenericFront]: droneGenericFront.default,
+  [VesselImage.droneGenericSide]: droneGenericSide.default,
+  [VesselImage.droneGenericTop]: droneGenericTop.default,
   [VesselImage.rovFront]: rovFront.default,
   [VesselImage.rovSide]: rovSide.default,
   [VesselImage.rovTop]: rovTop.default,

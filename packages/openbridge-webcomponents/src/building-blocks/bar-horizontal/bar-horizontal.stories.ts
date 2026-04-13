@@ -30,7 +30,7 @@ const SAMPLE_DATA = [
 ];
 
 const meta: Meta = {
-  title: 'Building Blocks/Bar Horizontal',
+  title: 'Bars and Graphs/Bar Horizontal',
   tags: ['autodocs', '6.0'],
   component: 'obc-bar-horizontal',
   argTypes: {
@@ -54,7 +54,7 @@ const meta: Meta = {
       control: {type: 'select'},
       options: Object.values(FrameStyle),
     },
-    hideLabels: {control: {type: 'boolean'}},
+    showLabels: {control: {type: 'boolean'}},
     hasBar: {control: {type: 'boolean'}},
     scaleBackground: {control: {type: 'boolean'}},
     borderRadiusPosition: {
@@ -73,7 +73,7 @@ const meta: Meta = {
     setpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
     newSetpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
     atSetpoint: {control: {type: 'boolean'}},
-    disableAutoAtSetpoint: {control: {type: 'boolean'}},
+    autoAtSetpoint: {control: {type: 'boolean'}},
     autoAtSetpointDeadband: {
       control: {type: 'number', min: 0, max: 10, step: 0.5},
     },
@@ -103,7 +103,7 @@ const meta: Meta = {
     tertiaryTickmarkInterval: undefined,
     scaleType: ScaleType.regular,
     frameStyle: FrameStyle.regular,
-    hideLabels: false,
+    showLabels: true,
     hasBar: false,
     scaleBackground: false,
     borderRadiusPosition: undefined,
@@ -116,7 +116,7 @@ const meta: Meta = {
     setpoint: undefined,
     newSetpoint: undefined,
     atSetpoint: false,
-    disableAutoAtSetpoint: false,
+    autoAtSetpoint: true,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
     state: 'active',
@@ -137,7 +137,7 @@ const meta: Meta = {
       .tertiaryTickmarkInterval=${args.tertiaryTickmarkInterval}
       .scaleType=${args.scaleType}
       .frameStyle=${args.frameStyle}
-      .hideLabels=${args.hideLabels}
+      .showLabels=${args.showLabels}
       .hasBar=${args.hasBar}
       .scaleBackground=${args.scaleBackground}
       .borderRadiusPosition=${args.borderRadiusPosition}
@@ -149,7 +149,7 @@ const meta: Meta = {
       .setpoint=${args.setpoint}
       .newSetpoint=${args.newSetpoint}
       .atSetpoint=${args.atSetpoint}
-      .disableAutoAtSetpoint=${args.disableAutoAtSetpoint}
+      .autoAtSetpoint=${args.autoAtSetpoint}
       .autoAtSetpointDeadband=${args.autoAtSetpointDeadband}
       .setpointAtZeroDeadband=${args.setpointAtZeroDeadband}
       .state=${args.state}
@@ -180,7 +180,7 @@ export const DefaultBottom: Story = {
 };
 
 export const ComponentSizeComparison: Story = {
-  name: 'Component size comparison (regular/medium/large/xl)',
+  name: 'Component Size Comparison (regular/medium/large/xl)',
 
   render: () => html`
     <div
@@ -288,7 +288,7 @@ export const DefaultTop: Story = {
 };
 
 export const WithBarBottom: Story = {
-  name: 'With bar (bottom side)',
+  name: 'With Bar (bottom side)',
 
   args: {
     minValue: 0,
@@ -299,7 +299,7 @@ export const WithBarBottom: Story = {
 };
 
 export const WithBarTop: Story = {
-  name: 'With bar (top side)',
+  name: 'With Bar (top side)',
 
   args: {
     minValue: 0,
@@ -311,7 +311,7 @@ export const WithBarTop: Story = {
 };
 
 export const NegativeRange: Story = {
-  name: 'Negative range (-100 to 100)',
+  name: 'Negative Range (-100 to 100)',
 
   args: {
     minValue: -100,
@@ -323,7 +323,7 @@ export const NegativeRange: Story = {
 };
 
 export const SmallRange: Story = {
-  name: 'Small range (0 to 10)',
+  name: 'Small Range (0 to 10)',
 
   args: {
     minValue: 0,
@@ -335,7 +335,7 @@ export const SmallRange: Story = {
 };
 
 export const WithBarFillBottom: Story = {
-  name: 'With bar fill (bottom side, enhanced)',
+  name: 'With Bar Fill (bottom side, enhanced)',
 
   args: {
     minValue: 0,
@@ -350,7 +350,7 @@ export const WithBarFillBottom: Story = {
 };
 
 export const WithBarFillTop: Story = {
-  name: 'With bar fill (top side)',
+  name: 'With Bar Fill (top side)',
 
   args: {
     minValue: -100,
@@ -366,7 +366,7 @@ export const WithBarFillTop: Story = {
 };
 
 export const FillModeComparison: Story = {
-  name: 'Fill mode comparison, enhanced (fill vs tint)',
+  name: 'Fill Mode Comparison, Enhanced (fill vs tint)',
 
   render: () => html`
     <div
@@ -432,7 +432,7 @@ export const FillModeComparison: Story = {
 };
 
 export const TintModeWithAdvice: Story = {
-  name: 'Tint mode with advice overlays',
+  name: 'Tint Mode With Advice Overlays',
 
   args: {
     minValue: -100,
@@ -456,7 +456,7 @@ export const TintModeWithAdvice: Story = {
 };
 
 export const WithAdviceInner: Story = {
-  name: 'With advice overlays (inner positioning)',
+  name: 'With Advice Overlays (inner positioning)',
 
   args: {
     minValue: -100,
@@ -481,7 +481,7 @@ export const WithAdviceInner: Story = {
 };
 
 export const WithAdviceOuter: Story = {
-  name: 'With advice overlays (outer positioning)',
+  name: 'With Advice Overlays (outer positioning)',
 
   args: {
     minValue: -100,
@@ -503,7 +503,7 @@ export const WithAdviceOuter: Story = {
 };
 
 export const WithAdviceCenter: Story = {
-  name: 'With advice overlays (center positioning)',
+  name: 'With Advice Overlays (center positioning)',
 
   args: {
     minValue: -100,
@@ -525,7 +525,7 @@ export const WithAdviceCenter: Story = {
 };
 
 export const WithSetpointAtValue: Story = {
-  name: 'With setpoint (value at setpoint)',
+  name: 'With Setpoint (value at setpoint)',
 
   args: {
     minValue: -100,
@@ -541,7 +541,7 @@ export const WithSetpointAtValue: Story = {
 };
 
 export const WithSetpointAwayFromValue: Story = {
-  name: 'With setpoint (value away from setpoint)',
+  name: 'With Setpoint (value away from setpoint)',
 
   args: {
     minValue: -100,
@@ -557,8 +557,6 @@ export const WithSetpointAwayFromValue: Story = {
 };
 
 export const StateComparison: Story = {
-  name: 'State comparison',
-
   render: () => html`
     <div style="display: flex; flex-direction: column; gap: 24px;">
       <!-- Header row -->
@@ -687,7 +685,7 @@ export const StateComparison: Story = {
 };
 
 export const ScaleTypeComparison: Story = {
-  name: 'Scale type comparison (regular vs condensed)',
+  name: 'Scale Type Comparison (regular vs condensed)',
 
   render: () => html`
     <div
@@ -728,7 +726,7 @@ export const ScaleTypeComparison: Story = {
 };
 
 export const HorizontalBottomScaleBackground: Story = {
-  name: 'With scale background (Gauge style, bottom side)',
+  name: 'With Scale Background (Gauge style, bottom side)',
 
   args: {
     minValue: 0,
@@ -749,7 +747,7 @@ export const HorizontalBottomScaleBackground: Story = {
 };
 
 export const ChartIntegrationBottom: Story = {
-  name: 'Chart integration (as external bottom axis)',
+  name: 'Chart Integration (as external bottom axis)',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -760,9 +758,9 @@ export const ChartIntegrationBottom: Story = {
       control: 'boolean',
       description: 'Horizontal scale: show bar',
     },
-    hScaleHideLabels: {
+    hScaleShowLabels: {
       control: 'boolean',
-      description: 'Horizontal scale: hide labels',
+      description: 'Horizontal scale: show labels',
     },
     hScaleAdvices: {
       control: 'boolean',
@@ -806,7 +804,7 @@ export const ChartIntegrationBottom: Story = {
     height: 320,
     // Horizontal scale defaults
     hScaleHasBar: true,
-    hScaleHideLabels: false,
+    hScaleShowLabels: true,
     hScaleAdvices: true,
     hScaleFillMode: 'fill',
     hScaleAdvicePosition: 'inner',
@@ -835,7 +833,7 @@ export const ChartIntegrationBottom: Story = {
         .width=${_args.width}
         .side=${ExternalScaleSide.bottom}
         .hasScale=${true}
-        .hideLabels=${_args.hScaleHideLabels}
+        .showLabels=${_args.hScaleShowLabels}
         .hasBar=${_args.hScaleHasBar}
         .barThickness=${_args.hScaleBarThickness}
         .fillMode=${_args.hScaleFillMode === 'fill'
@@ -865,7 +863,7 @@ export const ChartIntegrationBottom: Story = {
 };
 
 export const ChartIntegrationBottomBackground: Story = {
-  name: 'Chart integration (as external bottom axis, scaleBackground)',
+  name: 'Chart Integration (as external bottom axis, scaleBackground)',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -876,9 +874,9 @@ export const ChartIntegrationBottomBackground: Story = {
       control: 'boolean',
       description: 'Horizontal scale: show bar',
     },
-    hScaleHideLabels: {
+    hScaleShowLabels: {
       control: 'boolean',
-      description: 'Horizontal scale: hide labels',
+      description: 'Horizontal scale: show labels',
     },
     hScaleAdvices: {
       control: 'boolean',
@@ -922,7 +920,7 @@ export const ChartIntegrationBottomBackground: Story = {
     height: 320,
     // Horizontal scale defaults
     hScaleHasBar: true,
-    hScaleHideLabels: false,
+    hScaleShowLabels: true,
     hScaleAdvices: true,
     hScaleFillMode: 'fill',
     hScaleAdvicePosition: 'inner',
@@ -951,7 +949,7 @@ export const ChartIntegrationBottomBackground: Story = {
         .width=${_args.width}
         .side=${ExternalScaleSide.bottom}
         .hasScale=${true}
-        .hideLabels=${_args.hScaleHideLabels}
+        .showLabels=${_args.hScaleShowLabels}
         .hasBar=${_args.hScaleHasBar}
         .barThickness=${_args.hScaleBarThickness}
         .fillMode=${_args.hScaleFillMode === 'fill'
@@ -989,7 +987,7 @@ export const ChartIntegrationBottomBackground: Story = {
  * This story demonstrates both modes side-by-side with resizable containers.
  */
 export const FixedAspectRatioComparison: StoryObj = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   render: () => {
     const wrapper = document.createElement('div');
     wrapper.style.cssText = `

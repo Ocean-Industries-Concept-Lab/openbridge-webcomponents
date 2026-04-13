@@ -37,7 +37,7 @@ export type {DateItemEvent};
  * ### Properties
  * - `date` (Date | number): The date to display in the header. Accepts Date object or timestamp.
  * - `events` (DateItemEvent[]): Array of events to display in the list.
- * - `hideHeader` (boolean): Whether to hide the date header. Default: `false`.
+ * - `showHeader` (boolean): Whether to show the date header. Default: `true`.
  * - `locale` (string): Locale for date formatting (e.g., 'en-US', 'nb-NO'). Uses browser default if not specified.
  *
  * @slot - No slots. All content is provided via properties.
@@ -48,7 +48,7 @@ export class ObcEventList extends LitElement {
    * Whether to hide the date header.
    * @default false
    */
-  @property({type: Boolean}) hideHeader = false;
+  @property({type: Boolean, attribute: false}) showHeader: boolean = true;
 
   /**
    * The date to display in the header. The component will extract
@@ -88,11 +88,11 @@ export class ObcEventList extends LitElement {
   }
 
   /**
-   * Get the formatted month name (e.g., "January").
+   * Get the formatted abbreviated month name (e.g., "Jan").
    */
   private get _monthName(): string {
     return this._normalizedDate.toLocaleDateString(this.locale, {
-      month: 'long',
+      month: 'short',
     });
   }
 
@@ -113,7 +113,7 @@ export class ObcEventList extends LitElement {
   override render() {
     return html`
       <div class="wrapper">
-        ${!this.hideHeader
+        ${this.showHeader
           ? html`
               <div class="title-container">
                 <div class="label-container">
@@ -123,11 +123,8 @@ export class ObcEventList extends LitElement {
                       <span class="comma">,</span>
                     </span>
                     <span class="date-container">
+                      <span>${this._dateNumber}</span>
                       <span class="month">${this._monthName}</span>
-                      <span class="date-value">
-                        <span>${this._dateNumber}</span>
-                        <span class="comma">,</span>
-                      </span>
                     </span>
                     <span class="year">${this._year}</span>
                   </div>
@@ -135,7 +132,6 @@ export class ObcEventList extends LitElement {
               </div>
             `
           : nothing}
-        <div class="spacer"></div>
         <div class="content-container">
           <div class="event-container" role="list" aria-label="Events">
             ${repeat(

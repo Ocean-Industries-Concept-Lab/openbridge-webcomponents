@@ -20,7 +20,7 @@ type Story = StoryObj<ObcGraphMini>;
 export const Primary: Story = {};
 
 export const Realtime: Story = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   args: {
     data: [
       Array.from({length: 60}, (_, i) => i),

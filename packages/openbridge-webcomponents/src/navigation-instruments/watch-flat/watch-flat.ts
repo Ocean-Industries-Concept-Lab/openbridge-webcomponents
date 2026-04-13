@@ -1,10 +1,36 @@
-import {LitElement, SVGTemplateResult, html, svg, unsafeCSS} from 'lit';
+import {
+  LitElement,
+  PropertyValues,
+  SVGTemplateResult,
+  html,
+  nothing,
+  svg,
+  unsafeCSS,
+} from 'lit';
 import {property} from 'lit/decorators.js';
 import compentStyle from './watch-flat.css?inline';
 import {Tickmark, TickmarkStyle, tickmark} from './tickmark-flat.js';
 import {rect} from '../../svghelpers/rectangular.js';
 import {Label} from '../compass-flat/compass-flat.js';
 import {customElement} from '../../decorator.js';
+import {Priority} from '../types.js';
+import {
+  RotType,
+  LinearRotPosition,
+  renderLinearRotDots,
+  renderLinearRotBarStatic,
+  renderLinearRotBarDots,
+  LINEAR_DOT_ANGLE_SPACING,
+  renderLinearRotZeroPill,
+  BAR_HALF_THICKNESS,
+  ROT_ZERO_DEADBAND_PX,
+} from '../rate-of-turn/rot-renderer.js';
+import {
+  RateOfTurnController,
+  disposeRotController,
+} from '../rate-of-turn/rate-of-turn.controller.js';
+
+export {RotType, LinearRotPosition};
 
 @customElement('obc-watch-flat')
 export class ObcWatchFlat extends LitElement {
@@ -21,12 +47,49 @@ export class ObcWatchFlat extends LitElement {
   @property({type: Number}) trackHeight = (2 / 3) * this.height;
   @property({type: Number}) ticksHeight = this.height - this.trackHeight;
   @property({type: Number}) borderRadius = 8;
+  @property({type: Boolean}) bottomBar = false;
+
+  @property({type: String}) rotType: RotType | undefined;
+  @property({type: String}) rotPosition: LinearRotPosition =
+    LinearRotPosition.track;
+  /** Bar start position in SVG user-space x-coordinates (center-origin). Computed by the parent instrument. */
+  @property({type: Number}) rotStartX: number = 0;
+  /** Bar end position in SVG user-space x-coordinates (center-origin). Computed by the parent instrument. */
+  @property({type: Number}) rotEndX: number = 0;
+  /**
+   * Pixel spacing between adjacent dots in the linear ROT strip.
+   * Must be > 0 to enable animation; the default `0` intentionally disables
+   * the spinning dots so the parent instrument must supply a meaningful value
+   * derived from the current scale (e.g. `LINEAR_DOT_ANGLE_SPACING * translationScale`).
+   */
+  @property({type: Number}) rotDotSpacing: number = 0;
+  @property({type: String}) rotPriority: Priority = Priority.regular;
+  @property({type: Boolean}) rotPortStarboard: boolean = false;
+  @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_PX;
+
+  @property({type: Number})
+  set rotationsPerMinute(value: number) {
+    this._rotationsPerMinute = value;
+    if (this._rotController) {
+      this._rotController.rotationsPerMinute = value;
+    }
+  }
+  get rotationsPerMinute() {
+    return this._rotationsPerMinute;
+  }
+
+  private _rotationsPerMinute = 0;
+  private _rotController?: RateOfTurnController;
+
+  private get totalHeight(): number {
+    return this.bottomBar ? this.height + this.ticksHeight : this.height;
+  }
 
   private renderClipPath(offsetY: number = 0): SVGTemplateResult {
     return svg`
       <clipPath id="frameClipPath${offsetY === 0 ? '' : 'Tickmarks'}">
-        <rect x="${-this.width / 2}" y="${-this.height / 2 + offsetY}" 
-              width="${this.width}" height="${this.height}" 
+        <rect x="${-this.width / 2}" y="${-this.totalHeight / 2 + offsetY}" 
+              width="${this.width}" height="${this.totalHeight}" 
               rx="${this.borderRadius}" />
       </clipPath>
     `;
@@ -71,6 +134,8 @@ export class ObcWatchFlat extends LitElement {
 
   private watchFace(): SVGTemplateResult {
     const strokeWidth = 1;
+    const th = this.totalHeight;
+    const topTicksY = -th / 2;
 
     return svg`
       ${this.renderClipPath()}
@@ -79,7 +144,8 @@ export class ObcWatchFlat extends LitElement {
         ${rect('frame-track', {
           width: this.width,
           height: this.trackHeight,
-          y: this.height / 2 - this.trackHeight,
+          y:
+            th / 2 - this.trackHeight - (this.bottomBar ? this.ticksHeight : 0),
           strokeWidth: strokeWidth,
           strokeColor: 'var(--instrument-frame-secondary-color)',
           strokePosition: 'inside',
@@ -89,17 +155,31 @@ export class ObcWatchFlat extends LitElement {
         ${rect('frame-ticks', {
           width: this.width,
           height: this.ticksHeight,
-          y: this.height / 2 - this.trackHeight - this.ticksHeight,
+          y: topTicksY,
           strokeWidth: strokeWidth,
           strokeColor: 'var(--instrument-frame-primary-color)',
           strokePosition: 'inside',
           fillColor: 'var(--instrument-frame-primary-color)',
           borderRadius: 0,
         })}
+        ${
+          this.bottomBar
+            ? rect('frame-bottom-bar', {
+                width: this.width,
+                height: this.ticksHeight,
+                y: th / 2 - this.ticksHeight,
+                strokeWidth: strokeWidth,
+                strokeColor: 'var(--instrument-frame-primary-color)',
+                strokePosition: 'inside',
+                fillColor: 'var(--instrument-frame-primary-color)',
+                borderRadius: 0,
+              })
+            : nothing
+        }
       </g>
       ${rect('frame-outline', {
         width: this.width,
-        height: this.height,
+        height: th,
         strokeWidth: strokeWidth,
         strokeColor: 'var(--instrument-frame-tertiary-color)',
         strokePosition: 'inside',
@@ -109,10 +189,155 @@ export class ObcWatchFlat extends LitElement {
     `;
   }
 
+  // ---------------------------------------------------------------------------
+  // ROT (Rate of Turn) — linear
+  // ---------------------------------------------------------------------------
+
+  private getRotTrackY(): number {
+    const th = this.totalHeight;
+    if (this.rotPosition === LinearRotPosition.scale) {
+      return -th / 2 + this.ticksHeight / 2;
+    }
+    if (this.bottomBar) {
+      return th / 2 - this.ticksHeight / 2;
+    }
+    return this.height / 2 - this.trackHeight / 2;
+  }
+
+  private getRotColors(): {
+    dotColor: string;
+    barBgColor: string;
+  } {
+    const isEnhanced = this.rotPriority === Priority.enhanced;
+
+    if (this.rotPortStarboard) {
+      // For bar type, derive direction from bar positions (visual direction);
+      // for dots, use spinner RPM.
+      const direction =
+        this.rotType === RotType.bar
+          ? this.rotEndX - this.rotStartX
+          : this._rotationsPerMinute;
+
+      if (direction > 0) {
+        return {
+          dotColor: 'var(--instrument-starboard-secondary-color)',
+          barBgColor: 'var(--instrument-starboard-primary-color)',
+        };
+      }
+      if (direction < 0) {
+        return {
+          dotColor: 'var(--instrument-port-secondary-color)',
+          barBgColor: 'var(--instrument-port-primary-color)',
+        };
+      }
+    }
+
+    return {
+      dotColor: isEnhanced
+        ? 'var(--instrument-enhanced-tertiary-color)'
+        : 'var(--instrument-regular-tertiary-color)',
+      barBgColor: isEnhanced
+        ? 'var(--instrument-enhanced-secondary-color)'
+        : 'var(--instrument-regular-secondary-color)',
+    };
+  }
+
+  private renderRot(): SVGTemplateResult | typeof nothing {
+    if (!this.rotType) return nothing;
+
+    const trackY = this.getRotTrackY();
+    const {dotColor, barBgColor} = this.getRotColors();
+    const canAnimateDots = this.rotDotSpacing > 0;
+
+    if (this.rotType === RotType.bar) {
+      const span = Math.abs(this.rotEndX - this.rotStartX);
+      const zeroDb = Number.isFinite(this.rotAtZeroDeadband)
+        ? this.rotAtZeroDeadband
+        : ROT_ZERO_DEADBAND_PX;
+
+      if (span < Math.max(zeroDb, BAR_HALF_THICKNESS)) {
+        return renderLinearRotZeroPill(barBgColor, this.rotStartX, trackY);
+      }
+
+      return svg`
+        ${renderLinearRotBarStatic({
+          startX: this.rotStartX,
+          endX: this.rotEndX,
+          barColor: barBgColor,
+          trackY,
+          maskId: 'rot-bar-mask-linear',
+        })}
+        ${
+          canAnimateDots
+            ? svg`<g clip-path="url(#rot-bar-mask-linear)">
+              <g id="rot-spinner">
+                ${renderLinearRotBarDots(dotColor, trackY, this.rotDotSpacing, this.width)}
+              </g>
+            </g>`
+            : nothing
+        }
+      `;
+    }
+
+    const isEnhanced = this.rotPriority === Priority.enhanced;
+    const neutralDotsColor = isEnhanced
+      ? 'var(--instrument-enhanced-secondary-color)'
+      : 'var(--instrument-regular-secondary-color)';
+    let dotsColor = neutralDotsColor;
+    if (this.rotPortStarboard) {
+      if (this._rotationsPerMinute > 0) {
+        dotsColor = 'var(--instrument-starboard-secondary-color)';
+      } else if (this._rotationsPerMinute < 0) {
+        dotsColor = 'var(--instrument-port-secondary-color)';
+      }
+    }
+    return canAnimateDots
+      ? svg`
+          <g id="rot-spinner">
+            ${renderLinearRotDots(dotsColor, trackY, this.rotDotSpacing, this.width)}
+          </g>
+        `
+      : nothing;
+  }
+
+  override updated(changed: PropertyValues): void {
+    super.updated(changed);
+    const el = this.rotType
+      ? this.renderRoot.querySelector('#rot-spinner')
+      : null;
+
+    if (!el) {
+      this._rotController = disposeRotController(this, this._rotController);
+      return;
+    }
+
+    const cyclePx = 360 * (this.rotDotSpacing / LINEAR_DOT_ANGLE_SPACING);
+
+    if (!this._rotController || this._rotController.el !== el) {
+      this._rotController = disposeRotController(this, this._rotController);
+      this._rotController = new RateOfTurnController(
+        this,
+        el,
+        this._rotationsPerMinute,
+        cyclePx
+      );
+    } else {
+      this._rotController.cyclePx = cyclePx;
+    }
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this._rotController = disposeRotController(this, this._rotController);
+  }
+
   override render() {
     const width = (this.width / 2 + this.padding) * 2;
-    const viewBox = `-${width / 2} -${this.height / 2} ${width} ${this.height}`;
+    const th = this.totalHeight;
+    const viewBox = `-${width / 2} -${th / 2} ${width} ${th}`;
     const scale = this.clientWidth / width;
+
+    const contentOffsetY = this.bottomBar ? -this.ticksHeight / 2 : 0;
 
     return html`
       <svg
@@ -121,20 +346,25 @@ export class ObcWatchFlat extends LitElement {
         viewBox=${viewBox}
         style="--scale: ${scale}"
       >
-        ${this.watchFace()} ${this.renderLabelMask()} ${this.FOVIndicator}
+        ${this.watchFace()} ${this.renderLabelMask()}
 
-        <g clip-path="url(#frameClipPath)">
-          ${this.tickmarks.map(
-            (t) => svg`
-            <g transform="translate(${-this.rotation * this.tickmarkSpacing}, 0)">
-              ${tickmark(t.angle, t.type, TickmarkStyle.hinted)}
-            </g>
-          `
-          )}
+        <g transform="translate(0, ${contentOffsetY})">
+          <g clip-path="url(#frameClipPath)">
+            ${this.tickmarks.map(
+              (t) => svg`
+              <g transform="translate(${-this.rotation * this.tickmarkSpacing}, 0)">
+                ${tickmark(t.angle, t.type, TickmarkStyle.regular)}
+              </g>
+            `
+            )}
+          </g>
+
+          <g mask="url(#labelMask)">${this.renderLabels(scale)}</g>
         </g>
 
-        <g mask="url(#labelMask)">
-          ${this.renderLabels(scale)}
+        ${this.FOVIndicator}
+
+        <g clip-path="url(#frameClipPath)">${this.renderRot()}</g>
       </svg>
     `;
   }

@@ -4,6 +4,7 @@ import './azimuth-thruster.js';
 import {InstrumentState, Priority, Size} from '../types.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
+import {TickmarkStyle} from '../watch/tickmark.js';
 import {PropellerType} from '../thruster/propeller.js';
 
 const meta: Meta<typeof ObcAzimuthThruster> = {
@@ -25,7 +26,27 @@ const meta: Meta<typeof ObcAzimuthThruster> = {
       options: Object.values(PropellerType),
     },
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
-    detailedTickmarks: {control: {type: 'boolean'}},
+    primaryTickmarkInterval: {
+      control: {type: 'number'},
+      description:
+        'Interval in degrees for primary tickmarks. undefined = none.',
+    },
+    secondaryTickmarkInterval: {
+      control: {type: 'number'},
+      description:
+        'Interval in degrees for secondary tickmarks. undefined = none.',
+    },
+    tertiaryTickmarkInterval: {
+      control: {type: 'number'},
+      description:
+        'Interval in degrees for tertiary tickmarks. undefined = none.',
+    },
+    showLabels: {control: 'boolean'},
+    tickmarksInside: {control: 'boolean'},
+    tickmarkStyle: {
+      control: 'select',
+      options: Object.values(TickmarkStyle),
+    },
     touching: {control: 'boolean'},
     priority: {control: 'select', options: Object.values(Priority)},
   },
@@ -35,6 +56,7 @@ const meta: Meta<typeof ObcAzimuthThruster> = {
     autoAtAngleSetpointDeadband: 2,
     thrustSetpointAtZeroDeadband: 0.1,
     touching: false,
+    tickmarkStyle: TickmarkStyle.regular,
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcAzimuthThruster>;
@@ -71,7 +93,10 @@ export const InCommandDetailedTickmarks: Story = {
     angleSetpoint: 30,
     state: InstrumentState.active,
     priority: Priority.enhanced,
-    detailedTickmarks: true,
+    primaryTickmarkInterval: 45,
+    secondaryTickmarkInterval: 5,
+    tertiaryTickmarkInterval: 1,
+    showLabels: true,
   },
 };
 
@@ -83,7 +108,10 @@ export const InCommandDetailedTickmarksInside: Story = {
     angleSetpoint: 30,
     state: InstrumentState.active,
     priority: Priority.enhanced,
-    detailedTickmarks: true,
+    primaryTickmarkInterval: 45,
+    secondaryTickmarkInterval: 5,
+    tertiaryTickmarkInterval: 1,
+    showLabels: true,
     tickmarksInside: true,
   },
 };
@@ -113,17 +141,17 @@ export const Pod: Story = {
   },
 };
 
-export const InCommandAtSetpointDisableAutoSetpoint: Story = {
+export const InCommandAtSetpointManualMode: Story = {
   args: {
     size: Size.large,
     thrust: 60,
     thrustSetpoint: 65,
     atThrustSetpoint: true,
-    disableAutoAtThrustSetpoint: true,
+    autoAtThrustSetpoint: false,
     angle: 30,
     angleSetpoint: 35,
     atAngleSetpoint: true,
-    disableAutoAtAngleSetpoint: true,
+    autoAtAngleSetpoint: false,
     state: InstrumentState.active,
     priority: Priority.enhanced,
   },
@@ -212,5 +240,19 @@ export const Off: Story = {
     angle: 0,
     angleSetpoint: 0,
     state: InstrumentState.off,
+  },
+};
+
+export const OffWithAngleSetpointOverride: Story = {
+  args: {
+    size: Size.large,
+    thrust: 0,
+    thrustSetpoint: 0,
+    angle: 0,
+    angleSetpoint: 0,
+    state: InstrumentState.off,
+    angleSetpointOverride: true,
+    thrustSetpointOverride: false,
+    priority: Priority.enhanced,
   },
 };
