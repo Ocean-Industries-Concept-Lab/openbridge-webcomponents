@@ -946,7 +946,8 @@ export class ObcPoiLayer extends LitElement {
   private getGroupPositionVertical(
     targets: Poi[],
     _rects: Map<Poi, DOMRect>,
-    layerRect: DOMRect
+    layerRect: DOMRect,
+    _group?: PoiButtonGroupElement
   ) {
     // The wrapper uses translateY(-100%), so positionVertical = the Y
     // where the wrapper bottom edge should sit.  Use the button's visual
