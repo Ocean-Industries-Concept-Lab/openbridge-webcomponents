@@ -22,7 +22,7 @@ const compactDocsHeightDecorator = (story: () => unknown) => html`
 
 const defaultFrameWidth = 888;
 const defaultFrameHeight = 420;
-const previewFrameWidth = 640;
+const previewFrameWidth = 888;
 const previewFrameHeight = 420;
 
 const renderFrame = (
@@ -123,7 +123,7 @@ const meta: Meta<ObcPoiData> = {
       options: Object.values(ObcPoiState),
       control: {type: 'select'},
     },
-    x: {control: {type: 'range', min: 0, max: 640, step: 1}},
+    x: {control: {type: 'range', min: 0, max: 888, step: 1}},
     y: {control: {type: 'range', min: 32, max: 400, step: 1}},
     buttonY: {control: {type: 'range', min: 0, max: 480, step: 1}},
     fixedTarget: {control: {type: 'boolean'}},
@@ -213,7 +213,7 @@ type Story = StoryObj<ObcPoiData>;
 export const Preview: Story = {
   args: {
     type: ObcPoiType.Line,
-    x: previewFrameWidth / 2,
+    x: 444,
     y: 300,
     buttonY: 180,
   },
@@ -639,13 +639,13 @@ export const AnimatedLineLength: Story = {
   tags: ['!snapshot'],
   args: {
     x: 444,
-    y: 150,
-    buttonY: 0,
+    y: 250,
+    buttonY: 100,
     value: PoiDataValue.Checked,
     type: ObcPoiType.Line,
   },
   render: (args) => {
-    let lineLength = 150;
+    let lineLength = 250;
     let direction = 1;
 
     const animate = () => {
@@ -696,159 +696,6 @@ export const AnimatedLineLength: Story = {
           .value=${args.value}
           .pointerType=${args.pointerType}
         ></obc-poi-data>
-      </div>
-    `;
-  },
-};
-
-export const CompareModes: Story = {
-  tags: ['!snapshot'],
-  args: {
-    x: 300,
-    y: 150,
-    buttonY: 100,
-    value: PoiDataValue.Checked,
-    type: ObcPoiType.Line,
-  },
-  render: (args) => {
-    let lineLength = 150;
-    let direction = 1;
-    const fixedButtonY = args.buttonY ?? 100;
-    const normalButtonY = fixedButtonY + args.y;
-
-    const animate = () => {
-      const fixedTarget = document.querySelector(
-        '#compare-fixed'
-      ) as ObcPoiData;
-      const normalTarget = document.querySelector(
-        '#compare-normal'
-      ) as ObcPoiData;
-      const fixedYLabel = document.querySelector('#fixed-y-value');
-      const fixedButtonYLabel = document.querySelector('#fixed-button-y-value');
-      const normalYLabel = document.querySelector('#normal-y-value');
-      const normalButtonYLabel = document.querySelector(
-        '#normal-button-y-value'
-      );
-
-      if (!fixedTarget?.isConnected || !normalTarget?.isConnected) return;
-
-      lineLength += direction * 1;
-      if (lineLength > 300) direction = -1;
-      if (lineLength < 50) direction = 1;
-
-      fixedTarget.y = lineLength;
-      fixedTarget.buttonY = fixedButtonY;
-      normalTarget.y = lineLength;
-      normalTarget.buttonY = fixedButtonY + lineLength;
-
-      if (fixedYLabel)
-        fixedYLabel.textContent = `y = ${Math.round(lineLength)}px`;
-      if (fixedButtonYLabel)
-        fixedButtonYLabel.textContent = `buttonY = ${fixedButtonY}px`;
-      if (normalYLabel)
-        normalYLabel.textContent = `y = ${Math.round(lineLength)}px`;
-      if (normalButtonYLabel)
-        normalButtonYLabel.textContent = `buttonY = ${Math.round(
-          fixedButtonY + lineLength
-        )}px`;
-
-      if (fixedTarget.isConnected) {
-        requestAnimationFrame(animate);
-      }
-    };
-
-    setTimeout(() => {
-      requestAnimationFrame(animate);
-    }, 100);
-
-    return html`
-      <style>
-        .frame {
-          position: relative;
-          width: 888px;
-          height: 480px;
-          transform: translate(-50%, -50%);
-          background: rgba(0, 0, 0, 0.015);
-          display: flex;
-          gap: 100px;
-        }
-
-        .mode-container {
-          position: relative;
-          flex: 1;
-          height: 100%;
-        }
-
-        .mode-container obc-poi-data {
-          position: absolute;
-        }
-
-        .label {
-          position: absolute;
-          left: 10px;
-          font-size: 12px;
-          font-family: monospace;
-          font-weight: 600;
-          color: rgba(54, 68, 86, 0.88);
-        }
-
-        .title {
-          top: 10px;
-          font-size: 14px;
-        }
-
-        .variables {
-          top: 35px;
-          background: rgba(31, 36, 44, 0.62);
-          color: rgba(241, 245, 250, 0.92);
-          padding: 8px 12px;
-          border-radius: 4px;
-          font-weight: normal;
-          line-height: 1.6;
-        }
-
-        .var-value {
-          color: rgba(224, 233, 244, 0.95);
-          font-weight: bold;
-        }
-      </style>
-      <div class="frame">
-        <div class="mode-container fixed-mode">
-          <div class="label title">fixed-target=false (Layer Mode)</div>
-          <div class="label variables">
-            <div id="fixed-y-value" class="var-value">y = ${args.y}px</div>
-            <div id="fixed-button-y-value" class="var-value">
-              buttonY = ${fixedButtonY}px
-            </div>
-          </div>
-          <obc-poi-data
-            id="compare-fixed"
-            .x=${args.x}
-            .y=${args.y}
-            .buttonY=${fixedButtonY}
-            .fixedTarget=${false}
-            .value=${args.value}
-            .pointerType=${args.pointerType}
-          ></obc-poi-data>
-        </div>
-        <div class="mode-container">
-          <div class="label title">fixed-target=true (CV Mode)</div>
-          <div class="label variables">
-            <div id="normal-y-value" class="var-value">y = ${args.y}px</div>
-            <div id="normal-button-y-value" class="var-value">
-              buttonY = ${normalButtonY}px
-            </div>
-          </div>
-          <obc-poi-data
-            id="compare-normal"
-            .x=${args.x}
-            .y=${args.y}
-            .buttonY=${normalButtonY}
-            .fixedTarget=${true}
-            .value=${args.value}
-            .pointerType=${args.pointerType}
-          ></obc-poi-data>
-        </div>
       </div>
     `;
   },
