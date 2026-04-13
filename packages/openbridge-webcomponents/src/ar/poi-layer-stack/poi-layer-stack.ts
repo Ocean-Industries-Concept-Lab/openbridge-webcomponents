@@ -387,6 +387,10 @@ export class ObcPoiLayerStack extends LitElement {
       sourceGroup.expand = false;
     }
 
+    // Hide the wrapper immediately so it doesn't flash for one frame
+    // while updateGrouping catches up.
+    sourceGroup.removeAttribute('data-visible');
+
     return currentLayer;
   }
 
