@@ -383,7 +383,11 @@ export class ObcPoiLayerStack extends LitElement {
     this.clearTargetGroupingStyles(target);
 
     // Collapse the group independently — it handles its own cleanup.
-    if (sourceGroup.expand || sourceGroup.collapsing) {
+    // Set collapsing BEFORE expand=false so updateGrouping (which may
+    // fire via mutation observer before the group's updated() runs)
+    // sees collapsing=true and returns early instead of disbanding.
+    if (sourceGroup.expand) {
+      sourceGroup.collapsing = true;
       sourceGroup.expand = false;
     }
 
@@ -636,6 +640,10 @@ export class ObcPoiLayerStack extends LitElement {
       const currentLayer =
         this.detachTargetFromCurrentGroup(target) ??
         this.getTargetLayer(target);
+
+      // Clear grouping attributes immediately so the target doesn't
+      // arrive in the origin layer with data-grouped (which sets opacity:0).
+      this.clearTargetGroupingAttributes(target);
 
       // BEFORE: measure button and line
       const {button: beforeBtn, line: beforeLine} =
