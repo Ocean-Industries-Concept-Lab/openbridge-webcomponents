@@ -82,7 +82,7 @@ export class ObcPoiSelectionFrame extends LitElement {
   boxHeight: number | null = null;
 
   private applyHostSize() {
-    let size = 31;
+    let size: number;
     if (this.type === ObcPoiSelectionFrameType.Button) {
       if (this.state === ObcPoiSelectionFrameState.Flat) size = 31;
       else if (this.state === ObcPoiSelectionFrameState.Alert) size = 43;
