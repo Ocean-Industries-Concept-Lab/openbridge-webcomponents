@@ -59,7 +59,6 @@ export class ObcPoiLayerStack extends LitElement {
     }
   >();
   private selectionCounter = 0;
-  private movingTargets = new Set<Poi>();
   private placementRaf = 0;
   private mutationObserver?: MutationObserver;
 
@@ -103,7 +102,6 @@ export class ObcPoiLayerStack extends LitElement {
       this.requestPoiRender(target);
     });
     this.selectionMap.clear();
-    this.movingTargets.clear();
     this.selectionCounter = 0;
   }
 
@@ -181,11 +179,6 @@ export class ObcPoiLayerStack extends LitElement {
     this.selectionMap.forEach((_, target) => {
       if (!target.isConnected) {
         this.selectionMap.delete(target);
-      }
-    });
-    this.movingTargets.forEach((target) => {
-      if (!target.isConnected) {
-        this.movingTargets.delete(target);
       }
     });
   }
@@ -337,6 +330,12 @@ export class ObcPoiLayerStack extends LitElement {
     return Number.isFinite(parsed) ? parsed : 0;
   }
 
+  private getTargetAnchorProjectionOffset(target: Poi): number {
+    const raw = target.style.getPropertyValue('--obc-poi-target-projection-y');
+    const parsed = Number.parseFloat(raw);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
   private getLayerProjectionOffset(
     originLayer: ObcPoiLayer,
     destinationLayer: ObcPoiLayer | null
@@ -363,9 +362,7 @@ export class ObcPoiLayerStack extends LitElement {
     return originRect.bottom - selectedRect.bottom;
   }
 
-  private async detachTargetFromCurrentGroup(
-    target: Poi
-  ): Promise<ObcPoiLayer | null> {
+  private detachTargetFromCurrentGroup(target: Poi): ObcPoiLayer | null {
     const currentLayer = this.getTargetLayer(target);
     const sourceGroup =
       target.parentElement?.tagName.toLowerCase() === 'obc-poi-group'
@@ -376,7 +373,20 @@ export class ObcPoiLayerStack extends LitElement {
       return currentLayer;
     }
 
-    await sourceGroup.releaseTarget(target);
+    // Yank target out immediately — don't await group collapse.
+    // Clean up group-owned state (mirrors releaseTargetToParent in poi-group).
+    target.setRuntimeHorizontalOffsets?.(0, 0);
+    if (!target.setRuntimeHorizontalOffsets) {
+      target.buttonOffsetX = 0;
+      target.targetOffsetX = 0;
+    }
+    this.clearTargetGroupingStyles(target);
+
+    // Collapse the group independently — it handles its own cleanup.
+    if (sourceGroup.expand || sourceGroup.collapsing) {
+      sourceGroup.expand = false;
+    }
+
     return currentLayer;
   }
 
@@ -513,35 +523,29 @@ export class ObcPoiLayerStack extends LitElement {
 
   private async moveTargetIntoSelectedLayer(
     target: Poi,
-    _originLayer: ObcPoiLayer,
+    originLayer: ObcPoiLayer,
     selectedLayer: ObcPoiLayer,
     animate = true
   ) {
-    this.movingTargets.add(target);
-    try {
-      const {button, line} = this.getAnimationElements(target);
-      const beforeButtonRect = button?.getBoundingClientRect() ?? null;
-      const beforeLineRect = line?.getBoundingClientRect() ?? null;
+    // BEFORE: measure button and line positions
+    const {button, line} = this.getAnimationElements(target);
+    const beforeButtonRect = button?.getBoundingClientRect() ?? null;
+    const beforeLineRect = line?.getBoundingClientRect() ?? null;
 
-      if (this.getTargetLayer(target) !== selectedLayer) {
-        selectedLayer.appendChild(target);
-      }
-
-      target.setAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR, 'true');
-
-      this.requestPoiRender(target);
-      this.refreshTargetProjectionLayout(target);
-      await this.waitForPoiRender(target);
-
-      if (!animate) {
-        return;
-      }
-
-      await this.animateLayerJump(target, beforeButtonRect, beforeLineRect);
-    } finally {
-      target.removeAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR);
-      this.movingTargets.delete(target);
+    // Move to destination layer
+    if (this.getTargetLayer(target) !== selectedLayer) {
+      selectedLayer.appendChild(target);
     }
+
+    // Render at final state (no projection variables needed)
+    this.requestPoiRender(target);
+    this.refreshTargetProjectionLayout(target);
+    await this.waitForPoiRender(target);
+
+    if (!animate) return;
+
+    // AFTER: animate from old positions to new
+    await this.animateLayerJump(target, beforeButtonRect, beforeLineRect);
   }
 
   private async moveTrackedTargetToSelectedLayer(
@@ -555,7 +559,7 @@ export class ObcPoiLayerStack extends LitElement {
     animateProjection: boolean
   ) {
     const currentLayer =
-      (await this.detachTargetFromCurrentGroup(target)) ??
+      this.detachTargetFromCurrentGroup(target) ??
       this.getTargetLayer(target) ??
       record.originLayer;
 
@@ -628,12 +632,11 @@ export class ObcPoiLayerStack extends LitElement {
       keepInSelectedLayer: boolean;
     }
   ) {
-    this.movingTargets.add(target);
     target.setAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR, 'true');
 
     try {
       const currentLayer =
-        (await this.detachTargetFromCurrentGroup(target)) ??
+        this.detachTargetFromCurrentGroup(target) ??
         this.getTargetLayer(target);
 
       // BEFORE: measure button and line
@@ -666,18 +669,36 @@ export class ObcPoiLayerStack extends LitElement {
       this.schedulePlacement();
     } finally {
       target.removeAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR);
-      this.movingTargets.delete(target);
     }
   }
 
   private clearTargetGroupingAttributes(target: Poi) {
     target.removeAttribute('data-grouped');
+    target.removeAttribute('data-joined-expanded');
     target.removeAttribute('data-pregrouped');
     target.removeAttribute('data-behind');
     target.removeAttribute('data-front');
     target.removeAttribute('data-front-exit');
     target.removeAttribute('data-exiting');
     target.removeAttribute('data-exit-lock');
+  }
+
+  /** Clear inline styles and CSS vars set by poi-group on a target. */
+  private clearTargetGroupingStyles(target: Poi) {
+    target.style.removeProperty('position');
+    target.style.removeProperty('width');
+    target.style.removeProperty('min-width');
+    target.style.removeProperty('height');
+    target.style.removeProperty('transform');
+    target.style.removeProperty('--obc-poi-group-overlap-height');
+    target.style.removeProperty('--obc-poi-group-overlap-shift');
+    target.style.removeProperty('--poi-size');
+    target.style.removeProperty('--obc-poi-target-icon-opacity');
+    target.style.removeProperty('--obc-poi-overlap');
+    target.style.removeProperty('--obc-poi-overlap-elements-opacity');
+    target.style.removeProperty('--obc-poi-label-opacity');
+    target.style.removeProperty('--obc-poi-label-visibility');
+    target.style.removeProperty('--obc-poi-overlap-pointer-events');
   }
 
   private setSelectedTargetInteractivity(target: Poi, selected: boolean) {
@@ -763,9 +784,6 @@ export class ObcPoiLayerStack extends LitElement {
     this.setSelectedTargetInteractivity(target, true);
     this.setTargetSelectedId(target);
     this.applySelectedTargetProjectionState(target);
-    if (record.keepInSelectedLayer) {
-      selectedLayer.requestGroupingUpdate();
-    }
   }
 
   private seedSelectedLayerSelections(selectedLayer: ObcPoiLayer): Set<Poi> {
@@ -907,9 +925,6 @@ export class ObcPoiLayerStack extends LitElement {
     this.selectionMap.forEach((record, target) => {
       if (!target.isConnected) {
         this.selectionMap.delete(target);
-        return;
-      }
-      if (this.movingTargets.has(target)) {
         return;
       }
       if (target.hasAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR)) {
