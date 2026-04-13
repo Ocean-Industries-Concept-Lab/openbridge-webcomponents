@@ -196,8 +196,15 @@
 }
 
 .wrapper.has-data {
-  @mixin style style=flat;
+  @mixin style style=flat visibleWrapperClass=.visible-wrapper;
   transition: none;
+
+  .visible-wrapper {
+    position: absolute;
+    inset: 0;
+    border-radius: 6px;
+    pointer-events: none;
+  }
 }
 
 .wrapper.has-data:hover,

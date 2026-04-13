@@ -371,6 +371,7 @@ export class ObcPoiButton extends LitElement {
           expanded: this.inExpandedGroup,
         })}
       >
+        <div class="visible-wrapper"></div>
         ${this.renderHeader()}
         <div class="data-wrapper">
           ${this.data.map(
