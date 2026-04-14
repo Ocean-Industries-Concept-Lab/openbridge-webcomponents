@@ -7,6 +7,32 @@ import {ObcPoiLayer} from '../poi-layer/poi-layer.js';
 import {ObcPoiData} from '../poi/poi-data.js';
 import {resolvePoiButtonTypeFromBoxSize} from '../poi-button/poi-button.js';
 
+export type PoiDetection = {
+  x: number;
+  y: number;
+  box_width?: number;
+  box_height?: number;
+  id?: string;
+  confidence?: number;
+  class?: string;
+  class_id?: number;
+  heading?: number;
+  direction?: number;
+};
+
+export type PoiKeyFn = (det: PoiDetection, index: number) => string;
+
+export type PoiFrame = {
+  frame?: number;
+  timestamp?: number;
+  detections: PoiDetection[];
+};
+
+export enum PoiFitMode {
+  Contain = 'contain',
+  Cover = 'cover',
+}
+
 /**
  * `<obc-poi-controller>` — Maps detection data onto POI markers over a video or image.
  *
@@ -109,33 +135,6 @@ import {resolvePoiButtonTypeFromBoxSize} from '../poi-button/poi-button.js';
  * @slot media - Video or image element. Sets the projection source dimensions.
  * @slot stack - `obc-poi-layer-stack` containing the layers for target placement.
  */
-
-export type PoiDetection = {
-  x: number;
-  y: number;
-  box_width?: number;
-  box_height?: number;
-  id?: string;
-  confidence?: number;
-  class?: string;
-  class_id?: number;
-  heading?: number;
-  direction?: number;
-};
-
-export type PoiKeyFn = (det: PoiDetection, index: number) => string;
-
-export type PoiFrame = {
-  frame?: number;
-  timestamp?: number;
-  detections: PoiDetection[];
-};
-
-export enum PoiFitMode {
-  Contain = 'contain',
-  Cover = 'cover',
-}
-
 @customElement('obc-poi-controller')
 export class ObcPoiController extends LitElement {
   @property({type: String}) fit: PoiFitMode = PoiFitMode.Contain;
