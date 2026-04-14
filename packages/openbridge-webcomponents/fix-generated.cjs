@@ -31,10 +31,7 @@ function fixPackageJson(packageName, directory) {
     access: 'public',
   };
 
-  if (!packageJson.files) {
-    packageJson.files = [];
-  }
-  if (!packageJson.files.includes('README.md')) {
+  if (packageJson.files && !packageJson.files.includes('README.md')) {
     packageJson.files.push('README.md');
   }
 

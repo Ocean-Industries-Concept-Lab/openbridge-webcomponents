@@ -66,5 +66,7 @@ jobs:
       - name: Publish angular wrapper to NPM
         working-directory: ./packages/openbridge-webcomponents-ng
         run: |
+          npm run build
+          cd dist
           npm publish --access public
 
