@@ -293,7 +293,7 @@ export const POI_VISUAL_VARIANTS: Array<{
  * ## Example
  *
  * ```html
- * <obc-poi-graphic-line line-height="96" line-style="enhanced" line-type="regular" offset="0"></obc-poi-graphic-line>
+ * <obc-poi-graphic-line .lineStyle=${POIStyle.Enhanced} .lineType=${POILineType.Regular} .lineHeight=${96} .offset=${0}></obc-poi-graphic-line>
  * ```
  */
 @customElement('obc-poi-graphic-line')
@@ -302,9 +302,9 @@ export class ObcPoiGraphicLine extends LitElement {
   private readonly _idPrefix = `poi-graphic-line-${ObcPoiGraphicLine._idCounter++}`;
   @property({type: Number}) lineHeight: number = 96;
   @property({type: Number}) lineStart: number = 1;
-  @property({type: String, attribute: 'line-style', reflect: true})
+  @property({type: String})
   lineStyle: POIStyle = POIStyle.Enhanced;
-  @property({type: String, attribute: 'line-type', reflect: true})
+  @property({type: String})
   lineType: POILineType = POILineType.Regular;
   @property({type: Number}) offset: number = 0;
   override render() {
@@ -312,14 +312,18 @@ export class ObcPoiGraphicLine extends LitElement {
     const style = getPOILineConfig(this.lineStyle, this.lineType);
 
     return html`
-      ${graphicLine({
-        style,
-        lineHeight: this.lineHeight,
-        lineStart: this.lineStart,
-        totalHeight: this.lineHeight + this.lineStart,
-        offset: this.offset,
-        idPrefix: this._idPrefix,
-      })}
+      <div
+        class="wrapper line-style-${this.lineStyle} line-type-${this.lineType}"
+      >
+        ${graphicLine({
+          style,
+          lineHeight: this.lineHeight,
+          lineStart: this.lineStart,
+          totalHeight: this.lineHeight + this.lineStart,
+          offset: this.offset,
+          idPrefix: this._idPrefix,
+        })}
+      </div>
     `;
   }
 
