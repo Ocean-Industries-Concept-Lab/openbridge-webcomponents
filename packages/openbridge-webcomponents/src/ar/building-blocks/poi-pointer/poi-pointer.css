@@ -9,21 +9,8 @@
   );
   --obc-poi-pointer-camera-selection-width: 64px;
   --obc-poi-pointer-camera-selection-height: 56px;
-}
-
-:host([type="point"]) {
   width: 32px;
   height: 32px;
-}
-
-:host([type="button"]) {
-  width: var(--maneuvering-components-poi-button-touch-target, 48px);
-  height: var(--maneuvering-components-poi-button-touch-target, 48px);
-}
-
-:host([type="camera"]) {
-  width: 52px;
-  height: 44px;
 }
 
 .wrapper {
@@ -36,7 +23,7 @@
   box-sizing: border-box;
 }
 
-:host([type="point"][state="regular"]) .wrapper {
+.wrapper.point.state-regular {
   width: 32px;
   height: 32px;
   padding: 2px;
