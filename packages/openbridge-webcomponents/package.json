@@ -57,6 +57,7 @@
     "@lit/localize": "^0.12.2",
     "chart.js": "^4.5.1",
     "lit": "^3.3.2",
+    "semver": "^7.7.4",
     "uplot": "^1.6.32"
   },
   "devDependencies": {

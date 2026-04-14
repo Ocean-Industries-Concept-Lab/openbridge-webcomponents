@@ -112,7 +112,9 @@ jobs:
         working-directory: ./packages/openbridge-webcomponents-ng
         run: |
          npm run build
+         cd dist
          npm publish --tag latest --access public
+         
 
       - name: Commit version and changelog
         env:
