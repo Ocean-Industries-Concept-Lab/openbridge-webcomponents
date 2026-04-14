@@ -42,10 +42,3 @@ jobs:
           name: playwright-report
           path: packages/openbridge-webcomponents/__vis__/linux/__diffs__
           retention-days: 30
-
-      - uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: playwright-results
-          path: packages/openbridge-webcomponents/__vis__/linux/__results__/ar/poi-controller/
-          retention-days: 1
