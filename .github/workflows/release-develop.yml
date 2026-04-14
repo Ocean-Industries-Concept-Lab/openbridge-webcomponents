@@ -7,7 +7,7 @@ on:
 
 jobs:
   release:
-    if: github.actor != 'github-actions[bot]'
+    if: github.actor != 'github-actions[bot]' && !contains(github.event.head_commit.message, '[skip CI]') && !contains(github.event.head_commit.message, '[skip ci]')
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -90,7 +90,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
           git add packages/openbridge-webcomponents/package.json packages/openbridge-webcomponents-*/package.json packages/openbridge-webcomponents/CHANGELOG.md
-          git commit -m "chore(release): ${{ env.VERSION }} [skip ci]"
+          git commit -m "chore(release): $VERSION [skip CI]"
 
       - name: Create and push git tag
         env:
