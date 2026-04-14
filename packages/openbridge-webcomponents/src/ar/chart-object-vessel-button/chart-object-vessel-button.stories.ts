@@ -15,7 +15,7 @@ import {html} from 'lit';
 
 const meta: Meta<ObcChartObjectVesselButton> = {
   title: 'AR/Chart Object Vessel Button',
-  tags: ['6.0'],
+  tags: ['6.1'],
   component: 'obc-chart-object-vessel-button',
   args: {
     number: 2,

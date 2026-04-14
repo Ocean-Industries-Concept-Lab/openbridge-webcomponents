@@ -44,7 +44,7 @@ type PoiLayerArgs = {
 
 const meta: Meta<PoiLayerArgs> = {
   title: 'AR/POI Layer',
-  tags: ['6.0'],
+  tags: ['6.1'],
   component: 'obc-poi-layer',
   decorators: [
     (story) => html`
