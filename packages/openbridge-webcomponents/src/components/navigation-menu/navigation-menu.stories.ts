@@ -183,10 +183,7 @@ export const SmallScreen: Story = {
   },
 };
 
-/**
- * Shows the navigation menu with no footer items (empty alerts/button area).
- * The divider between the footer nav and the vendor button should be hidden.
- */
+export const EmptyFooter: Story = {
 export const EmptyFooter: Story = {
   render: (args) => {
     return html`
