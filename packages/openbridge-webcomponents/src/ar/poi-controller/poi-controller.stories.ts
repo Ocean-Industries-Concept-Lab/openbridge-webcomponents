@@ -479,5 +479,25 @@ export const BottomLayerWithValues: Story = {
   },
   play: async ({canvasElement}) => {
     await waitForStorySettle(canvasElement, {drainTransitions: true});
+    // Wait for controller to place targets (RAF-debounced sync)
+    const layer = canvasElement.querySelector(
+      'obc-poi-layer[data-controller-layer="background"]'
+    );
+    if (layer) {
+      await new Promise<void>((resolve) => {
+        const check = () => {
+          if (layer.querySelectorAll('obc-poi-data').length > 0) {
+            resolve();
+          } else {
+            requestAnimationFrame(check);
+          }
+        };
+        check();
+      });
+      // Extra settle after targets are placed
+      await new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+      );
+    }
   },
 };
