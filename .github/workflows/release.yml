@@ -40,7 +40,7 @@ jobs:
           registry-url: "https://registry.npmjs.org/"
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Compute next stable version
         working-directory: ./packages/openbridge-webcomponents
@@ -83,7 +83,7 @@ jobs:
         run: npm run build:full
 
       - name: Install wrapper dependencies
-        run: npm install
+        run: npm ci
 
       - name: Publish core to NPM
         working-directory: ./packages/openbridge-webcomponents
