@@ -39,6 +39,13 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: playwright-report
+          name: playwright-diffs
           path: packages/openbridge-webcomponents/__vis__/linux/__diffs__
+          retention-days: 30
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-results
+          path: packages/openbridge-webcomponents/__vis__/linux/__results__/ar/
           retention-days: 30
