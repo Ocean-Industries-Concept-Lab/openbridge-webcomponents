@@ -79,7 +79,7 @@ export type ExpandEvent = CustomEvent<{expand: boolean}>;
 @customElement('obc-poi-group')
 export class ObcPoiGroup extends LitElement {
   @property({type: Boolean}) expand = false;
-  @property({type: Boolean, reflect: true}) collapsing = false;
+  @property({type: Boolean}) collapsing = false;
   @property({type: String}) positionVertical = '0px';
   @property({type: Boolean, attribute: 'internal-swapping'})
   internalSwapping = false;
