@@ -24,6 +24,13 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Ensure Rollup native binary is installed
+        shell: bash
+        run: |
+          ROLLUP_VERSION=$(node -p "require('./node_modules/rollup/package.json').version")
+          node -e "require('@rollup/rollup-linux-x64-gnu')" || npm install --no-save "@rollup/rollup-linux-x64-gnu@$ROLLUP_VERSION"
+
       - name: Build translations
         run: cd packages/openbridge-webcomponents && npm run build:translations
 
@@ -60,6 +67,13 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Ensure Rollup native binary is installed
+        shell: bash
+        run: |
+          ROLLUP_VERSION=$(node -p "require('./node_modules/rollup/package.json').version")
+          node -e "require('@rollup/rollup-linux-x64-gnu')" || npm install --no-save "@rollup/rollup-linux-x64-gnu@$ROLLUP_VERSION"
+
       - name: Run unit tests openbridge-webcomponents
         run: npm run test:browser
         working-directory: packages/openbridge-webcomponents
@@ -77,6 +91,12 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Ensure Rollup native binary is installed
+        shell: bash
+        run: |
+          ROLLUP_VERSION=$(node -p "require('./node_modules/rollup/package.json').version")
+          node -e "require('@rollup/rollup-linux-x64-gnu')" || npm install --no-save "@rollup/rollup-linux-x64-gnu@$ROLLUP_VERSION"
 
       # During the npm release phase we update the version number.
       # This can give dependencies issues as the wrapper package are dependent on the core package.
