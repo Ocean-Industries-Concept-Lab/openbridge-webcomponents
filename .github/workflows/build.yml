@@ -25,11 +25,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Ensure Rollup native binary is installed
+      - name: Ensure native optional dependencies are installed
         shell: bash
         run: |
-          ROLLUP_VERSION=$(node -p "require('./node_modules/rollup/package.json').version")
-          node -e "require('@rollup/rollup-linux-x64-gnu')" || npm install --no-save "@rollup/rollup-linux-x64-gnu@$ROLLUP_VERSION"
+          ensure_native_package() {
+            local package_name="$1"
+            local native_package="$2"
+            local package_version
+            package_version=$(node -p "require('./node_modules/${package_name}/package.json').version")
+            node -e "require('${native_package}')" || npm install --no-save "${native_package}@${package_version}"
+          }
+
+          ensure_native_package "rollup" "@rollup/rollup-linux-x64-gnu"
+          ensure_native_package "oxc-resolver" "@oxc-resolver/binding-linux-x64-gnu"
 
       - name: Build translations
         run: cd packages/openbridge-webcomponents && npm run build:translations
@@ -68,11 +76,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Ensure Rollup native binary is installed
+      - name: Ensure native optional dependencies are installed
         shell: bash
         run: |
-          ROLLUP_VERSION=$(node -p "require('./node_modules/rollup/package.json').version")
-          node -e "require('@rollup/rollup-linux-x64-gnu')" || npm install --no-save "@rollup/rollup-linux-x64-gnu@$ROLLUP_VERSION"
+          ensure_native_package() {
+            local package_name="$1"
+            local native_package="$2"
+            local package_version
+            package_version=$(node -p "require('./node_modules/${package_name}/package.json').version")
+            node -e "require('${native_package}')" || npm install --no-save "${native_package}@${package_version}"
+          }
+
+          ensure_native_package "rollup" "@rollup/rollup-linux-x64-gnu"
+          ensure_native_package "oxc-resolver" "@oxc-resolver/binding-linux-x64-gnu"
 
       - name: Run unit tests openbridge-webcomponents
         run: npm run test:browser
@@ -92,11 +108,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Ensure Rollup native binary is installed
+      - name: Ensure native optional dependencies are installed
         shell: bash
         run: |
-          ROLLUP_VERSION=$(node -p "require('./node_modules/rollup/package.json').version")
-          node -e "require('@rollup/rollup-linux-x64-gnu')" || npm install --no-save "@rollup/rollup-linux-x64-gnu@$ROLLUP_VERSION"
+          ensure_native_package() {
+            local package_name="$1"
+            local native_package="$2"
+            local package_version
+            package_version=$(node -p "require('./node_modules/${package_name}/package.json').version")
+            node -e "require('${native_package}')" || npm install --no-save "${native_package}@${package_version}"
+          }
+
+          ensure_native_package "rollup" "@rollup/rollup-linux-x64-gnu"
+          ensure_native_package "oxc-resolver" "@oxc-resolver/binding-linux-x64-gnu"
 
       # During the npm release phase we update the version number.
       # This can give dependencies issues as the wrapper package are dependent on the core package.
@@ -114,6 +138,20 @@ jobs:
 
       - name: Install wrapper dependencies
         run: npm install
+
+      - name: Ensure native optional dependencies are installed
+        shell: bash
+        run: |
+          ensure_native_package() {
+            local package_name="$1"
+            local native_package="$2"
+            local package_version
+            package_version=$(node -p "require('./node_modules/${package_name}/package.json').version")
+            node -e "require('${native_package}')" || npm install --no-save "${native_package}@${package_version}"
+          }
+
+          ensure_native_package "rollup" "@rollup/rollup-linux-x64-gnu"
+          ensure_native_package "oxc-resolver" "@oxc-resolver/binding-linux-x64-gnu"
 
       - name: Build openbridge-webcomponents-vue
         run: cd packages/openbridge-webcomponents-vue && npm run build
