@@ -18,14 +18,14 @@ import {
   labelStyle,
   renderOverview,
 } from './poi-button-story-utils.js';
-import '../poi-header/poi-header.js';
+import '../building-blocks/poi-header/poi-header.js';
 import {html} from 'lit';
 import {crossDecorator} from '../../storybook-util.js';
 import {
   ObcPoiHeaderSize,
   ObcPoiHeaderState,
   ObcPoiHeaderType,
-} from '../poi-header/poi-header.js';
+} from '../building-blocks/poi-header/poi-header.js';
 
 const overlapToggleLoops = new Map<string, number>();
 
