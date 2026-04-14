@@ -1,0 +1,131 @@
+name: Publish Stable to NPM (Manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Version bump type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: stable
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org/"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Compute next stable version
+        working-directory: ./packages/openbridge-webcomponents
+        env:
+          BUMP: ${{ inputs.bump }}
+        run: |
+          CURRENT_VERSION=$(node -e "console.log(require('./package.json').version)")
+          echo "[next-stable-version] Current version: $CURRENT_VERSION"
+          
+          NEXT_VERSION=$(node -e "
+            const semver = require('semver');
+            const current = '$CURRENT_VERSION';
+            const bump = '${{ env.BUMP }}';
+            
+            // Cap major bumps to minor (keep below 1.0.0)
+            let finalBump = bump;
+            if (bump === 'major' && semver.major(current) < 1) {
+              console.error('[next-stable-version] Capping major bump to minor (version constraint: keep below 1.0.0)');
+              finalBump = 'minor';
+            }
+            
+            const next = semver.inc(current, finalBump);
+            console.log(next);
+          ")
+          
+          echo "VERSION=$NEXT_VERSION" >> $GITHUB_ENV
+          echo "TAG=v$NEXT_VERSION" >> $GITHUB_ENV
+          echo "[next-stable-version] Next version: $NEXT_VERSION"
+
+      - name: Set version in package.json files
+        working-directory: ./packages/openbridge-webcomponents
+        env:
+          VERSION: ${{ env.VERSION }}
+        run: |
+          npm version ${{ env.VERSION }} --no-git-tag-version --workspaces
+          npm version ${{ env.VERSION }} --no-git-tag-version
+
+      - name: Generate changelog entry
+        working-directory: ./packages/openbridge-webcomponents
+        env:
+          VERSION: ${{ env.VERSION }}
+          TAG: ${{ env.TAG }}
+        run: node script/update-changelog.mjs
+
+      - name: Build and generate wrappers
+        working-directory: ./packages/openbridge-webcomponents
+        run: npm run build:full
+
+      - name: Install wrapper dependencies
+        run: npm install
+
+      - name: Publish core to NPM
+        working-directory: ./packages/openbridge-webcomponents
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --tag latest --access public
+
+      - name: Publish Vue wrapper to NPM
+        working-directory: ./packages/openbridge-webcomponents-vue
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --tag latest --access public
+
+      - name: Publish Svelte wrapper to NPM
+        working-directory: ./packages/openbridge-webcomponents-svelte
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --tag latest --access public
+
+      - name: Publish React wrapper to NPM
+        working-directory: ./packages/openbridge-webcomponents-react
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --tag latest --access public
+
+      - name: Publish Angular wrapper to NPM
+        working-directory: ./packages/openbridge-webcomponents-ng
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --tag latest --access public
+
+      - name: Commit version and changelog
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add packages/openbridge-webcomponents/package.json packages/openbridge-webcomponents-*/package.json packages/openbridge-webcomponents/CHANGELOG.md
+          git commit -m "chore(release): ${{ env.VERSION }} [skip ci]"
+
+      - name: Create and push git tag
+        env:
+          TAG: ${{ env.TAG }}
+        run: |
+          git tag ${{ env.TAG }}
+          git push origin stable --follow-tags

@@ -1,0 +1,100 @@
+name: Publish Develop to NPM (Canary)
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org/"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Compute next canary version
+        working-directory: ./packages/openbridge-webcomponents
+        run: node script/next-canary-version.mjs
+
+      - name: Set version in package.json files
+        working-directory: ./packages/openbridge-webcomponents
+        env:
+          VERSION: ${{ env.VERSION }}
+          TAG: ${{ env.TAG }}
+        run: |
+          npm version ${{ env.VERSION }} --no-git-tag-version --workspaces
+          npm version ${{ env.VERSION }} --no-git-tag-version
+
+      - name: Generate changelog entry
+        working-directory: ./packages/openbridge-webcomponents
+        env:
+          VERSION: ${{ env.VERSION }}
+          TAG: ${{ env.TAG }}
+        run: node script/update-changelog.mjs
+
+      - name: Build and generate wrappers
+        working-directory: ./packages/openbridge-webcomponents
+        run: npm run build:full
+
+      - name: Install wrapper dependencies
+        run: npm install
+
+      - name: Publish core to NPM
+        working-directory: ./packages/openbridge-webcomponents
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --tag develop --access public
+
+      - name: Publish Vue wrapper to NPM
+        working-directory: ./packages/openbridge-webcomponents-vue
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --tag develop --access public || echo "Vue wrapper already published or not ready"
+
+      - name: Publish Svelte wrapper to NPM
+        working-directory: ./packages/openbridge-webcomponents-svelte
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --tag develop --access public || echo "Svelte wrapper already published or not ready"
+
+      - name: Publish React wrapper to NPM
+        working-directory: ./packages/openbridge-webcomponents-react
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --tag develop --access public || echo "React wrapper already published or not ready"
+
+      - name: Publish Angular wrapper to NPM
+        working-directory: ./packages/openbridge-webcomponents-ng
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --tag develop --access public || echo "Angular wrapper already published or not ready"
+
+      - name: Commit version and changelog
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add packages/openbridge-webcomponents/package.json packages/openbridge-webcomponents-*/package.json packages/openbridge-webcomponents/CHANGELOG.md
+          git commit -m "chore(release): ${{ env.VERSION }} [skip ci]"
+
+      - name: Create and push git tag
+        env:
+          TAG: ${{ env.TAG }}
+        run: |
+          git tag ${{ env.TAG }}
+          git push origin develop --follow-tags
+
