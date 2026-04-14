@@ -5,14 +5,14 @@ import {ObcPoiBase} from './poi-base.js';
 import '../poi-button/poi-button-data.js';
 import '../../icons/icon-vessel-generic-default-filled.js';
 import {
-  ObcPoiObjectDataStyle,
-  ObcPoiObjectDataState,
-} from '../poi-object/poi-object-data.js';
+  ObcPoiObjectStyle,
+  ObcPoiObjectState,
+} from '../poi-object/poi-object.js';
 
 export {PoiBaseValue as PoiDataValue} from './poi-base.js';
 export {PoiDataVisualRectPreference} from './poi.js';
-export {ObcPoiObjectDataStyle as PoiDataObjectStyle};
-export {ObcPoiObjectDataState as PoiDataObjectState};
+export {ObcPoiObjectStyle as PoiDataObjectStyle};
+export {ObcPoiObjectState as PoiDataObjectState};
 
 /**
  * `<obc-poi-data>` - Data-oriented marker variant with layout positioning and layer integration.
@@ -27,10 +27,10 @@ export {ObcPoiObjectDataState as PoiDataObjectState};
 @customElement('obc-poi-data')
 export class ObcPoiData extends ObcPoiBase {
   @property({type: String, attribute: 'data-style'})
-  dataStyle: ObcPoiObjectDataStyle = ObcPoiObjectDataStyle.Regular;
+  dataStyle: ObcPoiObjectStyle = ObcPoiObjectStyle.Regular;
 
   @property({type: String, attribute: 'data-state'})
-  dataState: ObcPoiObjectDataState | null = null;
+  dataState: ObcPoiObjectState | null = null;
 
   @property({type: Boolean, attribute: 'data-interactive'})
   dataInteractive = false;

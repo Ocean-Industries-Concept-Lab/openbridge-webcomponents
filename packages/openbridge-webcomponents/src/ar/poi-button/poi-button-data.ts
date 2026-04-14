@@ -2,15 +2,17 @@ import {html} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {ObcPoiButton} from './poi-button.js';
-import {ObcPoiObjectType} from '../poi-object/poi-object.js';
-import '../poi-object/poi-object-data.js';
 import {
-  ObcPoiObjectDataType,
-  ObcPoiObjectDataStyle,
-  ObcPoiObjectDataState,
-} from '../poi-object/poi-object-data.js';
+  ObcPoiObjectType,
+  ObcPoiObjectStyle,
+  ObcPoiObjectState,
+} from '../poi-object/poi-object.js';
+import '../poi-object/poi-object-data.js';
+import {ObcPoiObjectDataType} from '../poi-object/poi-object-data.js';
 
-export {ObcPoiObjectDataType, ObcPoiObjectDataStyle, ObcPoiObjectDataState};
+export {ObcPoiObjectDataType};
+export {ObcPoiObjectStyle as ObcPoiObjectDataStyle};
+export {ObcPoiObjectState as ObcPoiObjectDataState};
 
 /**
  * `<obc-poi-button-data>` - Data variant of the POI marker button.
@@ -26,10 +28,10 @@ export {ObcPoiObjectDataType, ObcPoiObjectDataStyle, ObcPoiObjectDataState};
 @customElement('obc-poi-button-data')
 export class ObcPoiButtonData extends ObcPoiButton {
   @property({type: String, attribute: 'data-style'})
-  dataStyle: ObcPoiObjectDataStyle = ObcPoiObjectDataStyle.Regular;
+  dataStyle: ObcPoiObjectStyle = ObcPoiObjectStyle.Regular;
 
   @property({type: String, attribute: 'data-state'})
-  dataState: ObcPoiObjectDataState | null = null;
+  dataState: ObcPoiObjectState | null = null;
 
   @property({type: Boolean, attribute: 'data-interactive'})
   dataInteractive = false;

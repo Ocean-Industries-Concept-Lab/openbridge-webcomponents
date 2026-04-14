@@ -2,15 +2,15 @@ import {html} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {ObcPoiButton} from './poi-button.js';
-import {ObcPoiObjectType} from '../poi-object/poi-object.js';
+import {ObcPoiObjectType, ObcPoiObjectState} from '../poi-object/poi-object.js';
 import '../poi-object/poi-object-aton.js';
 import {
   ObcPoiObjectAtonType,
   ObcPoiObjectAtonStyle,
-  ObcPoiObjectAtonState,
 } from '../poi-object/poi-object-aton.js';
 
-export {ObcPoiObjectAtonType, ObcPoiObjectAtonStyle, ObcPoiObjectAtonState};
+export {ObcPoiObjectAtonType, ObcPoiObjectAtonStyle};
+export {ObcPoiObjectState as ObcPoiObjectAtonState};
 
 /**
  * `<obc-poi-button-aton>` - A poi-button variant that renders an AtoN diamond
@@ -32,7 +32,7 @@ export class ObcPoiButtonAton extends ObcPoiButton {
   atonStyle: ObcPoiObjectAtonStyle = ObcPoiObjectAtonStyle.Regular;
 
   @property({type: String, attribute: 'aton-state'})
-  atonState: ObcPoiObjectAtonState | null = null;
+  atonState: ObcPoiObjectState | null = null;
 
   @property({type: Boolean, attribute: 'aton-interactive'})
   atonInteractive = false;

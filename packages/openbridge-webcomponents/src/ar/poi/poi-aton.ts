@@ -4,13 +4,14 @@ import {customElement} from '../../decorator.js';
 import '../poi-button/poi-button-aton.js';
 import '../../icons/icon-beacon-general-east.js';
 import {ObcPoiBase} from './poi-base.js';
+import {ObcPoiObjectState} from '../poi-object/poi-object.js';
 import {
   ObcPoiObjectAtonType,
   ObcPoiObjectAtonStyle,
-  ObcPoiObjectAtonState,
 } from '../poi-object/poi-object-aton.js';
 
-export {ObcPoiObjectAtonType, ObcPoiObjectAtonStyle, ObcPoiObjectAtonState};
+export {ObcPoiObjectAtonType, ObcPoiObjectAtonStyle};
+export {ObcPoiObjectState as ObcPoiObjectAtonState};
 
 /**
  * `<obc-poi-aton>` - AtoN marker variant with layout positioning and layer integration.
@@ -31,7 +32,7 @@ export class ObcPoiAton extends ObcPoiBase {
   atonStyle: ObcPoiObjectAtonStyle = ObcPoiObjectAtonStyle.Regular;
 
   @property({type: String, attribute: 'aton-state'})
-  atonState: ObcPoiObjectAtonState | null = null;
+  atonState: ObcPoiObjectState | null = null;
 
   @property({type: Boolean, attribute: 'aton-interactive'})
   atonInteractive = false;
