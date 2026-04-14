@@ -1,7 +1,7 @@
 import {html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
-import {ObcAbstractPoiObject} from './abstract-poi-object.js';
+import {AbstractPoiObject} from './abstract-poi-object.js';
 import {ObcPoiObjectType} from './poi-object.js';
 import componentStyle from './poi-object-vessel.css?inline';
 
@@ -50,7 +50,7 @@ export enum ObcPoiObjectVesselState {
  *
  * ## Features/Variants
  * - `type` (default `regular`): `indicator`, `regular`, `large`, `speed-rot`, `n-up`, `n-up-large`.
- * - Inherits `objectStyle`, `state`, and `interactive` behavior from `ObcAbstractPoiObject`.
+ * - Inherits `objectStyle`, `state`, and `interactive` behavior from `AbstractPoiObject`.
  * - `speed-rot` layout renders a three-part composition:
  *   - `turn-indicator` slot
  *   - default slot (main vessel icon)
@@ -88,7 +88,7 @@ export enum ObcPoiObjectVesselState {
  * @slot speed-indicator - Optional speed indicator content used by `speed-rot`.
  */
 @customElement('obc-poi-object-vessel')
-export class ObcPoiObjectVessel extends ObcAbstractPoiObject {
+export class ObcPoiObjectVessel extends AbstractPoiObject {
   @property({type: String}) type: ObcPoiObjectVesselType =
     ObcPoiObjectVesselType.Regular;
 
@@ -134,7 +134,7 @@ export class ObcPoiObjectVessel extends ObcAbstractPoiObject {
   }
 
   static override styles = [
-    ...ObcAbstractPoiObject.styles,
+    ...AbstractPoiObject.styles,
     unsafeCSS(componentStyle),
   ];
 }

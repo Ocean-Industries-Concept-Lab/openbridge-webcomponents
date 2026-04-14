@@ -16,7 +16,7 @@ export {ObcPoiObjectType, ObcPoiObjectStyle, ObcPoiObjectState};
  * variants. Subclasses override the `icon` and `baseType` getters to
  * define their specific icon template and type mapping.
  */
-export class ObcAbstractPoiObject extends LitElement {
+export class AbstractPoiObject extends LitElement {
   @property({type: String}) objectStyle: ObcPoiObjectStyle =
     ObcPoiObjectStyle.Regular;
 

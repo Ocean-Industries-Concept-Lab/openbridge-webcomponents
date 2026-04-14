@@ -2,7 +2,7 @@ import {html, unsafeCSS, TemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
-import {ObcAbstractPoiObject} from './abstract-poi-object.js';
+import {AbstractPoiObject} from './abstract-poi-object.js';
 import {
   ObcPoiObjectType,
   ObcPoiObjectState,
@@ -29,7 +29,7 @@ export enum ObcPoiObjectAtonStyle {
 export {ObcPoiObjectState as ObcPoiObjectAtonState};
 
 @customElement('obc-poi-object-aton')
-export class ObcPoiObjectAton extends ObcAbstractPoiObject {
+export class ObcPoiObjectAton extends AbstractPoiObject {
   @property({type: String}) type: ObcPoiObjectAtonType =
     ObcPoiObjectAtonType.Regular;
 
@@ -108,7 +108,7 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
   }
 
   static override styles = [
-    ...ObcAbstractPoiObject.styles,
+    ...AbstractPoiObject.styles,
     unsafeCSS(componentStyle),
   ];
 }

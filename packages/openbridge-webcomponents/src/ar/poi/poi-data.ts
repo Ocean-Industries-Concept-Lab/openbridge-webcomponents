@@ -1,7 +1,7 @@
 import {html} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
-import {ObcPoiBase} from './poi-base.js';
+import {PoiBase} from './poi-base.js';
 import '../poi-button/poi-button-data.js';
 import '../../icons/icon-vessel-generic-default-filled.js';
 import {
@@ -17,7 +17,7 @@ export {ObcPoiObjectState as PoiDataObjectState};
 /**
  * `<obc-poi-data>` - Data-oriented marker variant with layout positioning and layer integration.
  *
- * Extends `ObcPoiBase` to provide the "data" variant of the POI system.
+ * Extends `PoiBase` to provide the "data" variant of the POI system.
  * Renders `<obc-poi>` with a slotted `<obc-poi-button-data>`.
  *
  * @slot - Icon content forwarded to the inner POI object. Defaults to a vessel icon.
@@ -25,7 +25,7 @@ export {ObcPoiObjectState as PoiDataObjectState};
  * @fires obc-poi-data-layout-change {CustomEvent<void>} Fired when layout-driving properties change.
  */
 @customElement('obc-poi-data')
-export class ObcPoiData extends ObcPoiBase {
+export class ObcPoiData extends PoiBase {
   @property({type: String, attribute: 'data-style'})
   dataStyle: ObcPoiObjectStyle = ObcPoiObjectStyle.Regular;
 
@@ -63,7 +63,7 @@ export class ObcPoiData extends ObcPoiBase {
     `;
   }
 
-  static override styles = ObcPoiBase.styles;
+  static override styles = PoiBase.styles;
 }
 
 declare global {

@@ -47,7 +47,7 @@ const VALID_POI_STATES = new Set(Object.values(ObcPoiState));
  * layout-change dispatch, and visual-query logic so that each variant
  * only needs to override `renderContent()` and `getVisualNodes()`.
  */
-export abstract class ObcPoiBase extends LitElement implements Poi {
+export abstract class PoiBase extends LitElement implements Poi {
   private headerObserver?: MutationObserver;
   private _buttonOffsetX = 0;
   private _targetOffsetX = 0;

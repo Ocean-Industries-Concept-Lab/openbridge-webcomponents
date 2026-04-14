@@ -1,6 +1,6 @@
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
-import {ObcAbstractPoiObject} from './abstract-poi-object.js';
+import {AbstractPoiObject} from './abstract-poi-object.js';
 import {
   ObcPoiObjectType,
   ObcPoiObjectStyle,
@@ -22,7 +22,7 @@ export {ObcPoiObjectState as ObcPoiObjectDataState};
  * @slot - Icon content rendered inside the POI object.
  */
 @customElement('obc-poi-object-data')
-export class ObcPoiObjectData extends ObcAbstractPoiObject {
+export class ObcPoiObjectData extends AbstractPoiObject {
   @property({type: String}) type: ObcPoiObjectType = ObcPoiObjectType.Regular;
 
   override get baseType(): ObcPoiObjectType {
