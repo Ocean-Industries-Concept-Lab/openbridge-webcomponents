@@ -76,7 +76,6 @@ jobs:
         env:
           VERSION: ${{ env.VERSION }}
         run: |
-          npm version ${{ env.VERSION }} --no-git-tag-version --workspaces
           npm version ${{ env.VERSION }} --no-git-tag-version
 
       - name: Build and generate wrappers
