@@ -1,6 +1,7 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
+import {styleMap} from 'lit/directives/style-map.js';
 import componentStyle from './slider.css?inline';
 import '../icon-button/icon-button.js';
 import {classMap} from 'lit/directives/class-map.js';
@@ -201,6 +202,14 @@ export class ObcSlider extends LitElement {
 
   @property({type: Boolean}) disabled = false;
 
+  private get ratio(): number {
+    const range = this.max - this.min;
+    if (!Number.isFinite(range) || range <= 0) return 0;
+    const ratio = (this.value - this.min) / range;
+    if (!Number.isFinite(ratio)) return 0;
+    return Math.max(0, Math.min(1, ratio));
+  }
+
   private animationFrame: number | null = null;
   private isMouseDown = false;
   private isTouchActive = false;
@@ -246,13 +255,11 @@ export class ObcSlider extends LitElement {
     const left = rect.left + 24;
     const width = rect.width - 48;
     const thumbWidth = 48;
-    const ratioValue =
-      parseFloat(this.slider.value) /
-      (parseFloat(this.slider.max) - parseFloat(this.slider.min));
+    const ratioValue = this.ratio;
     const thumbCenter = left + width * ratioValue;
 
     let clientX: number;
-    if (e instanceof TouchEvent) {
+    if ('touches' in e) {
       clientX = e.touches[0].clientX;
     } else {
       clientX = e.clientX;
@@ -425,6 +432,9 @@ export class ObcSlider extends LitElement {
           wrapper: true,
           [this.variant]: true,
           disabled: this.disabled,
+        })}
+        style=${styleMap({
+          '--_ratio': String(this.ratio),
         })}
       >
         <div class="track"></div>
