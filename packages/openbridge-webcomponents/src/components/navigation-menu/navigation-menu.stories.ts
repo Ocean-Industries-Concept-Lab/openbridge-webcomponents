@@ -184,7 +184,6 @@ export const SmallScreen: Story = {
 };
 
 export const EmptyFooter: Story = {
-export const EmptyFooter: Story = {
   render: (args) => {
     return html`
       <obc-navigation-menu
