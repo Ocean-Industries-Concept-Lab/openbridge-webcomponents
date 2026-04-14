@@ -3,7 +3,11 @@ import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 import {ObcAbstractPoiObject} from './abstract-poi-object.js';
-import {ObcPoiObjectType, ObcPoiObjectState} from './poi-object.js';
+import {
+  ObcPoiObjectType,
+  ObcPoiObjectState,
+  ObcPoiObjectStyle,
+} from './poi-object.js';
 import componentStyle from './poi-object-aton.css?inline';
 
 export enum ObcPoiObjectAtonType {
@@ -93,7 +97,7 @@ export class ObcPoiObjectAton extends ObcAbstractPoiObject {
         <obc-poi-object
           exportparts="background-frame"
           .type=${this.baseType}
-          .objectStyle=${this.objectStyle}
+          .objectStyle=${ObcPoiObjectStyle.Regular}
           .state=${this.state}
           ?interactive=${this.interactive}
         >
