@@ -153,82 +153,55 @@ export class ObcDateItem extends LitElement {
     this.requestUpdate('date', oldValue);
   }
 
-  /**
-   * Internal state tracking how many events can fit in the available space.
-   * When null, auto-calculation is not active (shows all events).
-   */
   @state() private _maxVisibleEvents: number | null = null;
 
-  private _resizeObserver: ResizeObserver | null = null;
-  private _headerHeight = 48; // Height of the header container (date + today label)
-  private _eventHeight = 48; // Min height of each event item
+  private _resizeObserver?: ResizeObserver;
+  private static readonly _HEADER_HEIGHT = 48;
+  private static readonly _EVENT_HEIGHT = 48;
 
   override connectedCallback() {
     super.connectedCallback();
-    this._setupResizeObserver();
+    if (typeof ResizeObserver !== 'undefined') {
+      this._resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          this._recalcVisibleEvents(entry.contentRect.height);
+        }
+      });
+    }
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
-    this._cleanupResizeObserver();
-  }
-
-  private _setupResizeObserver() {
-    if (typeof ResizeObserver === 'undefined') return;
-
-    this._resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        this._calculateVisibleEvents(entry.contentRect.height);
-      }
-    });
-  }
-
-  private _cleanupResizeObserver() {
-    if (this._resizeObserver) {
-      this._resizeObserver.disconnect();
-      this._resizeObserver = null;
-    }
-  }
-
-  private _calculateVisibleEvents(containerHeight: number) {
-    if (this.size !== DateItemSize.Large) {
-      this._maxVisibleEvents = null;
-      return;
-    }
-
-    const availableHeight = containerHeight - this._headerHeight;
-    if (availableHeight <= 0) {
-      this._maxVisibleEvents = 0;
-      return;
-    }
-
-    // Calculate how many full events can fit
-    const maxEvents = Math.floor(availableHeight / this._eventHeight);
-
-    // Only update if value changed to avoid unnecessary re-renders
-    if (this._maxVisibleEvents !== maxEvents) {
-      this._maxVisibleEvents = maxEvents;
-    }
+    this._resizeObserver?.disconnect();
+    this._resizeObserver = undefined;
   }
 
   override firstUpdated() {
-    // Start observing the host element itself
-    if (this._resizeObserver && this.size === DateItemSize.Large) {
-      this._resizeObserver.observe(this);
+    if (this.size === DateItemSize.Large) {
+      this._resizeObserver?.observe(this);
     }
   }
 
   override updated(changedProps: Map<string, unknown>) {
-    // Re-observe when size changes
     if (changedProps.has('size')) {
-      if (this._resizeObserver) {
-        this._resizeObserver.disconnect();
-      }
+      this._resizeObserver?.disconnect();
       if (this.size === DateItemSize.Large) {
         this._resizeObserver?.observe(this);
       } else {
         this._maxVisibleEvents = null;
       }
+    }
+  }
+
+  private _recalcVisibleEvents(containerHeight: number) {
+    const available = containerHeight - ObcDateItem._HEADER_HEIGHT;
+    if (available <= 0) {
+      this._maxVisibleEvents = 0;
+      return;
+    }
+    const maxEvents = Math.floor(available / ObcDateItem._EVENT_HEIGHT);
+    if (this._maxVisibleEvents !== maxEvents) {
+      this._maxVisibleEvents = maxEvents;
     }
   }
 

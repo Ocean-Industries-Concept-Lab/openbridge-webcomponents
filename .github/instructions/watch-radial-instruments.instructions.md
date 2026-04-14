@@ -428,6 +428,52 @@ Common instrument CSS variables used in `watch.ts` and helpers:
 
 ---
 
+## Zoom-to-Fit Arc (`zoomToFitArc`)
+
+When an instrument displays a narrow arc (e.g. ±20° instead of a full circle), `zoomToFitArc` enlarges the rings to fill the available space rather than leaving large empty areas around a small arc.
+
+### Approach: Radius Enlargement (not vector scaling)
+
+The zoom works by adding a **radius offset** (`_rOff` / `_radiusOffset`) to all ring radii, tickmark positions, advice bands, and needle positions. The viewBox is recalculated via `computeZoomToFitArcFrame()` so the enlarged arc fills the component bounds.
+
+### File roles
+
+| File                   | Role                                                                                                                                                                                                                                                                      |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `arc-frame.ts`         | Pure geometry: `computeZoomToFitArcFrame()` binary-searches for the `radiusOffset` that makes the arc's bounding box fill the available space. Also exports `computeAnnularArcBBox()`.                                                                                    |
+| `watch.ts`             | Owns `zoomToFitArc` property and `_rOff` field. Applies offset to ALL radius references (rings, tickmarks, labels, advices, bars, setpoint, needles). Recalculates viewBox.                                                                                               |
+| `instrument-radial.ts` | Forwards `zoomToFitArc` to `obc-watch`. Tracks `_radiusOffset` for needle position adjustments.                                                                                                                                                                           |
+| `rudder.ts`            | Has `_needleTransform` getter that translates the needle outward by `rOff` so the tip reaches the enlarged ring. Uses `translate(0, -rOff)` — an intentional visual compromise that preserves needle proportions at the cost of a slight mismatch at extreme zoom levels. |
+| `rot-sector.ts`        | Exposes `rotArcExtent` (default 60°) and forwards `zoomToFitArc` to `instrument-radial`.                                                                                                                                                                                  |
+| `compass-sector.ts`    | Has its own zoom logic: when `zoomToFitArc` is true and the FOV is small, renders a 1:1-scale arc cropped to content; otherwise uses FOV compression capped at 120°.                                                                                                      |
+
+### `radiusOffset` propagation
+
+The offset flows through the rendering pipeline:
+
+1. `watch.ts` computes `_rOff` via `computeZoomToFitArcFrame()`
+2. All `watch.ts` render methods add `_rOff` to radius constants (e.g. `OUTER_RING_RADIUS + this._rOff`)
+3. Helper functions (`tickmark()`, `renderAdvice()`, `adviceMask()`) accept an optional `radiusOffset` parameter
+4. Consumer instruments read back `_radiusOffset` for overlay adjustments (needle translation)
+
+### Advice hatch pattern: two code paths
+
+`advice.ts` uses two different hatch-pattern strategies depending on `radiusOffset`:
+
+- **`radiusOffset === 0`** (original): Pre-baked tile approach — works at design radius only.
+- **`radiusOffset > 0`** (zoom): Direct `<line>` segments with dynamic line count to maintain consistent arc spacing at any enlarged radius. The mask also switches to `maskUnits="userSpaceOnUse"` with dynamic extent.
+
+> **⚠️ Do not unify** the two code paths. The non-zoom path must produce output identical to `main` to avoid regenerating snapshots for all advice-using instruments.
+
+### Adding `zoomToFitArc` to a new instrument
+
+1. Add `@property({type: Boolean}) zoomToFitArc = false` to the instrument
+2. Forward it to `obc-watch` (or `instrument-radial`) via template binding
+3. If the instrument has an overlay needle/element, read `_radiusOffset` and adjust positioning
+4. Add `ZoomedIn` / `ZoomedInNarrow` stories with representative `arcExtent` values
+
+---
+
 ## Checklist for Adding New Features
 
 - [ ] Is the feature visual/rendering? → Add to `watch.ts`

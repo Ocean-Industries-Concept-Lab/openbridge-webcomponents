@@ -5,10 +5,18 @@ import {Tickmark, TickmarkType} from '../watch-flat/tickmark-flat.js';
 import '../watch-flat/watch-flat.js';
 import {customElement} from '../../decorator.js';
 import {Priority} from '../types.js';
+import {
+  RotType,
+  LINEAR_DOT_ANGLE_SPACING,
+  ROT_ZERO_DEADBAND_DEG,
+} from '../rate-of-turn/rot-renderer.js';
+
+export {RotType};
 
 export enum CompassFlatPriorityElement {
   hdg = 'hdg',
   cog = 'cog',
+  rot = 'rot',
 }
 
 export enum LabelPosition {
@@ -27,6 +35,35 @@ export interface Label {
 }
 
 /**
+ * `<obc-compass-flat>` — Horizontal strip compass with HDG/COG arrows and optional rate-of-turn indicator.
+ *
+ * Renders a flat (non-circular) compass strip that scrolls horizontally to
+ * display the current heading. A filled HDG arrow sits at the center while a
+ * hollow COG arrow is positioned at the angular difference. The strip
+ * auto-scales its field of view so both arrows remain visible. Cardinal
+ * labels (N, S, E, W) and tickmarks are generated at densities responsive to
+ * the strip width.
+ *
+ * ## Features
+ *
+ * - **Auto-scaling FOV**: The visible compass range widens to keep both HDG
+ *   and COG arrows in view, bounded by `minFOV` / `maxFOV`.
+ * - **HDG / COG arrows**: Filled (HDG) and hollow (COG) arrow SVGs positioned
+ *   along the strip.
+ * - **FOV indicator**: Optional numeric labels showing the port/starboard
+ *   bearing range and current heading.
+ * - **Rate of turn**: Animated linear ROT indicator (spinning dots or
+ *   horizontal bar) via `rotType`. When enabled, a bottom bar is added to
+ *   the strip to house the indicator.
+ * - **Color priority**: Per-element priority for HDG, COG, and ROT via
+ *   `priorityElements`.
+ *
+ * @property {number} heading - Current heading in degrees.
+ * @property {number} courseOverGround - Current COG in degrees.
+ * @property {RotType|undefined} rotType - ROT display mode: `'dots'`, `'bar'`, or `undefined` (hidden).
+ * @property {number} rotationsPerMinute - ROT spin speed; sign controls direction.
+ * @property {number} rotMaxValue - Maximum ROT value for bar-extent mapping.
+ * @property {number} rotArcExtent - Degrees of bar arc per max-value ROT (default 60).
  *
  * @ignition-base-height: 170px
  * @ignition-base-width: 512px
@@ -45,6 +82,12 @@ export class ObcCompassFlat extends LitElement {
   priorityElements: CompassFlatPriorityElement[] = [
     CompassFlatPriorityElement.hdg,
   ];
+  @property({type: String}) rotType: RotType | undefined;
+  @property({type: Number}) rotationsPerMinute: number = 1;
+  @property({type: Number}) rotMaxValue: number = 10;
+  @property({type: Number}) rotArcExtent: number = 60;
+  @property({type: Boolean}) rotPortStarboard: boolean = false;
+  @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_DEG;
 
   @state() private containerWidth = 0;
   @state() private maxContainerWidth = 0;
@@ -176,7 +219,7 @@ export class ObcCompassFlat extends LitElement {
       yAdjustment = scaleFactor * maxAdjustment;
     }
 
-    const y = LabelPosition.bottom + yAdjustment;
+    const y = LabelPosition.bottom + yAdjustment + (this.rotType ? 12 : 0);
 
     indicators.push(svg`
           <text x="-175" y=${y} class="label left" fill=${LabelStyle.regular}>
@@ -245,7 +288,11 @@ export class ObcCompassFlat extends LitElement {
       x: l.x * translationScale,
     }));
 
-    const viewBox = '-192 -128 384 128';
+    const hasBottomBar = !!this.rotType;
+    const arrowViewBoxY = hasBottomBar
+      ? -128 + Math.round((12 * 384) / 352)
+      : -128;
+    const viewBox = `-192 ${arrowViewBoxY} 384 128`;
 
     return html`
       <div class="container" style="max-width:${this.maxContainerWidth}px">
@@ -255,6 +302,17 @@ export class ObcCompassFlat extends LitElement {
           .rotation=${this.heading}
           .tickmarks=${tickmarks}
           .tickmarkSpacing=${translationScale}
+          .bottomBar=${!!this.rotType}
+          .rotType=${this.rotType}
+          .rotStartX=${0}
+          .rotEndX=${(this.rotationsPerMinute / (this.rotMaxValue || 1)) *
+          this.rotArcExtent *
+          translationScale}
+          .rotDotSpacing=${LINEAR_DOT_ANGLE_SPACING * translationScale}
+          .rotationsPerMinute=${this.rotationsPerMinute}
+          .rotPriority=${this.priorityFor(CompassFlatPriorityElement.rot)}
+          .rotPortStarboard=${this.rotPortStarboard}
+          .rotAtZeroDeadband=${this.rotAtZeroDeadband * translationScale}
         ></obc-watch-flat>
         <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg">
           ${this.HDGSvg}${this.COGSvg(translation)}

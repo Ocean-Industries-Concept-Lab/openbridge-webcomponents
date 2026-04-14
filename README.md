@@ -73,8 +73,8 @@ This repository uses npm workspaces and is organized as follows:
 
 ## 📚 Storybook & Demo
 
-- **[Storybook](https://openbridge-jip-storybook.web.app)**: Browse components, view states, and interact with them in isolation.
-- **[Live Demo](https://openbridge-jip-demo.web.app/)**: See the components in action within a Vue.js application.
+- **[Storybook](https://openbridge-storybook.web.app)**: Browse components, view states, and interact with them in isolation.
+- **[Live Demo](https://openbridge-demo.web.app/)**: See the components in action within a Vue.js application.
 
 ## 🚩 Getting Started Development
 

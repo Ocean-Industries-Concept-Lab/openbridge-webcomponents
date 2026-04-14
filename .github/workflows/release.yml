@@ -3,7 +3,7 @@ name: Publish to NPM
 on:
   push:
     branches:
-      - main
+      - develop
 
 jobs:
   release:
@@ -66,5 +66,7 @@ jobs:
       - name: Publish angular wrapper to NPM
         working-directory: ./packages/openbridge-webcomponents-ng
         run: |
+          npm run build
+          cd dist
           npm publish --access public
 
