@@ -330,12 +330,6 @@ export class ObcPoiLayerStack extends LitElement {
     return Number.isFinite(parsed) ? parsed : 0;
   }
 
-  private getTargetAnchorProjectionOffset(target: Poi): number {
-    const raw = target.style.getPropertyValue('--obc-poi-target-projection-y');
-    const parsed = Number.parseFloat(raw);
-    return Number.isFinite(parsed) ? parsed : 0;
-  }
-
   private getLayerProjectionOffset(
     originLayer: ObcPoiLayer,
     destinationLayer: ObcPoiLayer | null
@@ -525,7 +519,7 @@ export class ObcPoiLayerStack extends LitElement {
 
   private async moveTargetIntoSelectedLayer(
     target: Poi,
-    originLayer: ObcPoiLayer,
+    _originLayer: ObcPoiLayer,
     selectedLayer: ObcPoiLayer,
     animate = true
   ) {
