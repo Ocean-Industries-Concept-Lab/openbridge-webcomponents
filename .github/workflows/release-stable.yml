@@ -12,6 +12,11 @@ on:
           - patch
           - minor
           - major
+      commit_message:
+        description: 'Optional commit message override'
+        required: false
+        default: ''
+        type: string
 
 jobs:
   release:
@@ -117,11 +122,17 @@ jobs:
         run: npm publish --tag latest --access public
 
       - name: Commit version and changelog
+        env:
+          INPUT_COMMIT_MESSAGE: ${{ inputs.commit_message }}
         run: |
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
           git add packages/openbridge-webcomponents/package.json packages/openbridge-webcomponents-*/package.json packages/openbridge-webcomponents/CHANGELOG.md
-          git commit -m "chore(release): ${{ env.VERSION }} [skip ci]"
+          COMMIT_MESSAGE="$INPUT_COMMIT_MESSAGE"
+          if [ -z "$COMMIT_MESSAGE" ]; then
+            COMMIT_MESSAGE="chore(release): $VERSION [skip ci]"
+          fi
+          git commit -m "$COMMIT_MESSAGE"
 
       - name: Create and push git tag
         env:
