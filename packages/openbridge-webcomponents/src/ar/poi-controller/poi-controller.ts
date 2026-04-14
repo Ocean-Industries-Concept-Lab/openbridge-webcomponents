@@ -63,7 +63,7 @@ import {
  * <obc-poi-controller fit="contain">
  *   <video slot="media" src="media.mp4"></video>
  *   <obc-poi-layer-stack slot="stack" selection-mode="multi">
- *     <obc-poi-layer label="Selected" is-selected></obc-poi-layer>
+ *     <obc-poi-layer label="Selected" .isSelected=${true}></obc-poi-layer>
  *     <obc-poi-layer label="Background" data-controller-layer="background">
  *     </obc-poi-layer>
  *   </obc-poi-layer-stack>
@@ -357,7 +357,7 @@ export class ObcPoiController extends LitElement {
       stack.querySelectorAll<ObcPoiLayer>('obc-poi-layer')
     );
     const isSelectedLayer = (candidate: ObcPoiLayer): boolean =>
-      candidate.isSelected === true || candidate.hasAttribute('is-selected');
+      candidate.isSelected === true;
     const firstNonSelectedLayer = layers.find(
       (candidate) => !isSelectedLayer(candidate)
     );

@@ -46,7 +46,7 @@
     "wrappers:post-fix": "node fix-generated.cjs",
     "📜_SCRIPTS___________________________________________________": "echo _____",
     "download:icons": "tsx ./script/download-icons.ts",
-    "analyze": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\"",
+    "analyze": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\" && tsx ./script/sort-custom-element-manifest.ts",
     "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\" --watch",
     "clean": "rm -rf node_modules dist bundle custom-elements.json",
     "言_TRANSLATIONS______________________________________________": "echo _____",
