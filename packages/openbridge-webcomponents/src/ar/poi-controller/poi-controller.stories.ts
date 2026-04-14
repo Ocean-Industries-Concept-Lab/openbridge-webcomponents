@@ -478,6 +478,6 @@ export const BottomLayerWithValues: Story = {
     `;
   },
   play: async ({canvasElement}) => {
-    await waitForStorySettle(canvasElement);
+    await waitForStorySettle(canvasElement, {drainTransitions: true});
   },
 };
