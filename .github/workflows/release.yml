@@ -23,7 +23,7 @@ jobs:
           registry-url: "https://registry.npmjs.org/"
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Append timestamp to version
         working-directory: ./packages/openbridge-webcomponents
