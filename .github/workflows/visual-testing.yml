@@ -4,8 +4,6 @@ on:
     branches: [develop, stable]
   pull_request:
     branches: [develop, stable]
-  permissions:
-    contents: write
 jobs:
   test:
     timeout-minutes: 60
@@ -18,9 +16,6 @@ jobs:
       LC_NUMERIC: en_US.UTF-8
     steps:
       - uses: actions/checkout@v6
-        with:
-          ref: ${{ github.head_ref }}
-          token: ${{ github.token }}
 
       - uses: actions/setup-node@v6
         with:
@@ -36,21 +31,6 @@ jobs:
       - name: Analyze openbridge-webcomponents
         run: npm run analyze
         working-directory: packages/openbridge-webcomponents
-
-      - name: Update AR snapshots
-        if: github.event_name == 'pull_request'
-        run: npx vitest --project=storybook --update --maxWorkers=4 src/ar/
-        working-directory: packages/openbridge-webcomponents
-
-      - name: Commit updated AR snapshots
-        if: github.event_name == 'pull_request'
-        run: |
-          git config --global user.name "thomsoren"
-          git config --global user.email "tsorensen007@gmail.com"
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          git add packages/openbridge-webcomponents/__vis__/linux/__baselines__/ar/
-          git diff --cached --quiet || git commit -m "fix: update AR snapshots from CI"
-          git push origin HEAD:${{ github.head_ref }}
 
       - name: Serve Storybook and run tests
         run: npm run test-storybook
