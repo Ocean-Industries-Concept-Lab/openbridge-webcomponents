@@ -308,6 +308,7 @@ export class ObcPoiGraphicLine extends LitElement {
   lineType: POILineType = POILineType.Regular;
   @property({type: Number}) offset: number = 0;
   override render() {
+    console.log('lineStyle', this.lineStyle, this.lineType);
     const style = getPOILineConfig(this.lineStyle, this.lineType);
 
     return html`
