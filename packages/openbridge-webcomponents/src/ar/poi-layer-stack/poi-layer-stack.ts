@@ -32,7 +32,7 @@ export enum PoiLayerSelectionMode {
  * ### Example
  * ```html
  * <obc-poi-layer-stack selection-mode="single">
- *   <obc-poi-layer label="Radar" is-selected></obc-poi-layer>
+ *   <obc-poi-layer label="Radar" .isSelected=${true}></obc-poi-layer>
  *   <obc-poi-layer label="AIS"></obc-poi-layer>
  * </obc-poi-layer-stack>
  * ```
@@ -50,6 +50,7 @@ export class ObcPoiLayerStack extends LitElement {
   private handleStackClick = (event: Event) => this.onStackClick(event);
   private handleSlotChange = () => this.schedulePlacement();
   private handleTargetLayoutChange = () => this.schedulePlacement();
+  private handleLayerSelectionChanged = () => this.schedulePlacement();
   private selectionMap = new Map<
     Poi,
     {
@@ -68,6 +69,10 @@ export class ObcPoiLayerStack extends LitElement {
     this.addEventListener(
       'obc-poi-data-layout-change',
       this.handleTargetLayoutChange as EventListener
+    );
+    this.addEventListener(
+      'layer-selection-changed',
+      this.handleLayerSelectionChanged
     );
   }
 
@@ -88,6 +93,10 @@ export class ObcPoiLayerStack extends LitElement {
     this.removeEventListener(
       'obc-poi-data-layout-change',
       this.handleTargetLayoutChange as EventListener
+    );
+    this.removeEventListener(
+      'layer-selection-changed',
+      this.handleLayerSelectionChanged
     );
     const slot = this.shadowRoot?.querySelector('slot');
     slot?.removeEventListener('slotchange', this.handleSlotChange);
@@ -172,7 +181,7 @@ export class ObcPoiLayerStack extends LitElement {
   }
 
   private isLayerSelected(layer: ObcPoiLayer): boolean {
-    return layer.isSelected === true || layer.hasAttribute('is-selected');
+    return layer.isSelected === true;
   }
 
   private cleanupSelection() {
@@ -855,10 +864,7 @@ export class ObcPoiLayerStack extends LitElement {
           mutation.type === 'attributes' &&
           mutation.target instanceof HTMLElement
         ) {
-          if (
-            mutation.target.tagName.toLowerCase() === 'obc-poi-layer' ||
-            mutation.attributeName === POI_ATTR
-          ) {
+          if (mutation.attributeName === POI_ATTR) {
             this.schedulePlacement();
             return;
           }
@@ -876,7 +882,7 @@ export class ObcPoiLayerStack extends LitElement {
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ['is-selected', POI_ATTR],
+      attributeFilter: [POI_ATTR],
     });
   }
 

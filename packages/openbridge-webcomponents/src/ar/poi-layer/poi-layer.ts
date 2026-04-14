@@ -1,4 +1,4 @@
-import {LitElement, html, nothing, unsafeCSS} from 'lit';
+import {LitElement, PropertyValues, html, nothing, unsafeCSS} from 'lit';
 import {property, query} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './poi-layer.css?inline';
@@ -95,10 +95,9 @@ export enum OverlapMode {
 @customElement('obc-poi-layer')
 export class ObcPoiLayer extends LitElement {
   @property({type: String}) label = '';
-  @property({type: Boolean, reflect: true}) debug = false;
-  @property({type: String, attribute: 'overlap-mode', reflect: true})
-  overlapMode: OverlapMode = OverlapMode.Grouping;
-  @property({type: Boolean, reflect: true, attribute: 'is-selected'})
+  @property({type: Boolean}) debug = false;
+  @property({type: String}) overlapMode: OverlapMode = OverlapMode.Grouping;
+  @property({type: Boolean})
   isSelected = false;
   @property({type: Boolean, attribute: 'join-while-expanded'})
   joinWhileExpanded = false;
@@ -1146,9 +1145,15 @@ export class ObcPoiLayer extends LitElement {
     );
   }
 
+  protected override updated(changedProperties: PropertyValues): void {
+    if (changedProperties.has('isSelected')) {
+      this.dispatchEvent(new Event('layer-selection-changed', {bubbles: true}));
+    }
+  }
+
   override render() {
     return html`
-      <div class="wrapper">
+      <div class="wrapper${this.debug ? ' debug' : ''}">
         ${this.debug
           ? html`<span class="debug-label">${this.label || 'Layer'}</span>`
           : nothing}

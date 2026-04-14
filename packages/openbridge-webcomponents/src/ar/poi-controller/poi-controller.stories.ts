@@ -143,7 +143,7 @@ const meta: Meta<PoiControllerArgs> = {
             slot="stack"
             selection-mode=${PoiLayerSelectionMode.Multi}
           >
-            <obc-poi-layer is-selected></obc-poi-layer>
+            <obc-poi-layer .isSelected=${true}></obc-poi-layer>
             <obc-poi-layer data-controller-layer="background"></obc-poi-layer>
           </obc-poi-layer-stack>
         </obc-poi-controller>
@@ -224,7 +224,7 @@ export const SelectionMultiAnimated: Story = {
             class="stack-animated"
             selection-mode=${PoiLayerSelectionMode.Multi}
           >
-            <obc-poi-layer label="Layer A" is-selected>
+            <obc-poi-layer label="Layer A" .isSelected=${true}>
               <obc-poi-data
                 class="anim-poi p0"
                 .x=${p0.x}
@@ -443,7 +443,7 @@ export const BottomLayerWithValues: Story = {
             class="stack-values"
             selection-mode=${PoiLayerSelectionMode.Multi}
           >
-            <obc-poi-layer label="Layer A" is-selected debug>
+            <obc-poi-layer label="Layer A" .isSelected=${true} .debug=${true}>
               <obc-poi-aton .x=${460} .y=${112}>
                 <obi-beacon-general-east></obi-beacon-general-east>
               </obc-poi-aton>

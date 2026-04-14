@@ -62,8 +62,7 @@ export abstract class ObcPoiBase extends LitElement implements Poi {
   /* ---------- POI marker properties ---------- */
 
   @property({type: String}) type: ObcPoiType = ObcPoiType.Line;
-  @property({type: String, reflect: true}) value: ObcPoiValue =
-    ObcPoiValue.Unchecked;
+  @property({type: String}) value: ObcPoiValue = ObcPoiValue.Unchecked;
   @property({type: String}) state: ObcPoiState = ObcPoiState.Enabled;
   @property({type: Boolean}) selected = false;
   @property({type: String, attribute: 'button-type'})

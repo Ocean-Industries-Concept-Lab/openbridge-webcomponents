@@ -19,7 +19,7 @@
   --obc-poi-surface-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
 }
 
-:host([overlap-opaque]) {
+.wrapper.overlap-opaque {
   --obc-poi-overlap-object-bg: #fff;
   --obc-poi-overlap-object-border: var(--overlay-border-outline-color);
   --obc-poi-overlap-wrapper-opacity: 1;
@@ -74,7 +74,7 @@
   }
 
   /* Overlap state styles - applied via visual state */
-  :host([value="overlapped"]) & {
+  &.value-overlapped {
     --obc-poi-overlap-elements-opacity: 0;
     --obc-poi-label-opacity: 0;
     --obc-poi-label-visibility: hidden;
@@ -213,8 +213,7 @@
   transition: none;
 }
 
-:host([value="overlapped"]) .wrapper.has-data,
-:host(:not([value="overlapped"])) .wrapper.has-data {
+.wrapper.has-data {
   transition:
     opacity var(--obc-poi-opacity-transition-duration) ease-out,
     box-shadow var(--obc-poi-transition-duration) ease-out,
@@ -231,33 +230,30 @@
 
 /* Explicit interaction fallback for POI frame. Keeps behavior even if mixin output changes. */
 @media (hover: hover) {
-  :host(:not([value="overlapped"]))
-    .wrapper:not(.has-data):hover
+  .wrapper:not(.value-overlapped):not(.has-data):hover
     .poi-object::part(background-frame) {
     background-color: var(--flat-hover-background-color);
   }
 }
 
-:host(:not([value="overlapped"]))
-  .wrapper:not(.has-data):active
+.wrapper:not(.value-overlapped):not(.has-data):active
   .poi-object::part(background-frame) {
   background-color: var(--flat-pressed-background-color);
 }
 
-:host(:not([value="overlapped"]))
-  .wrapper:not(.has-data):focus-visible
+.wrapper:not(.value-overlapped):not(.has-data):focus-visible
   .poi-object::part(background-frame) {
   outline-color: var(--border-focus-color);
   outline-width: var(--global-size-spacing-border-weight-focusframe);
   outline-style: solid;
 }
 
-:host([layout="inline"]) .wrapper {
+.wrapper.layout-inline {
   transform: translate(-50%, -100%);
 }
 
 /* Overlap alert color styles */
-:host([value="overlapped"]) .wrapper {
+.wrapper.value-overlapped {
   &.alert-caution {
     --overlay-container-background-color: var(--alert-caution-color, #ffdb42);
     --overlay-border-outline-color: var(--alert-caution-outline-color);
@@ -289,23 +285,17 @@
   }
 }
 
-:host([value="overlapped"])
-  .wrapper.alert-caution
-  .poi-object::part(background-frame) {
+.wrapper.value-overlapped.alert-caution .poi-object::part(background-frame) {
   background-color: var(--alert-caution-color, #ffdb42);
   border-color: var(--alert-caution-outline-color);
 }
 
-:host([value="overlapped"])
-  .wrapper.alert-warning
-  .poi-object::part(background-frame) {
+.wrapper.value-overlapped.alert-warning .poi-object::part(background-frame) {
   background-color: var(--alert-warning-color, #fe9413);
   border-color: var(--alert-warning-outline-color);
 }
 
-:host([value="overlapped"])
-  .wrapper.alert-alarm
-  .poi-object::part(background-frame) {
+.wrapper.value-overlapped.alert-alarm .poi-object::part(background-frame) {
   background-color: var(--alert-alarm-color, #e30019);
   border-color: var(--alert-alarm-outline-color);
 }
@@ -389,7 +379,7 @@
 }
 
 /* Overlap state for has-data variant - keep layout, hide values */
-:host([value="overlapped"]) .wrapper.has-data {
+.wrapper.value-overlapped.has-data {
   --obc-poi-overlapped-data-bg: var(--overlay-container-background-color);
   --obc-poi-overlapped-data-border: var(--overlay-border-outline-color);
   opacity: var(--obc-poi-overlap-data-opacity, 0.6);
@@ -420,33 +410,33 @@
   }
 }
 
-:host([value="overlapped"]) .wrapper:not(.has-data) {
+.wrapper.value-overlapped:not(.has-data) {
   opacity: var(--obc-poi-overlap-wrapper-opacity, 0.6);
 }
 
-:host([value="overlapped"]) .wrapper.has-data.alert-caution {
+.wrapper.value-overlapped.has-data.alert-caution {
   background: var(--alert-caution-color, #ffdb42);
   border-color: var(--alert-caution-outline-color);
 }
 
-:host([value="overlapped"]) .wrapper.has-data.alert-warning {
+.wrapper.value-overlapped.has-data.alert-warning {
   background: var(--alert-warning-color, #fe9413);
   border-color: var(--alert-warning-outline-color);
 }
 
-:host([value="overlapped"]) .wrapper.has-data.alert-alarm {
+.wrapper.value-overlapped.has-data.alert-alarm {
   background: var(--alert-alarm-color, #e30019);
   border-color: var(--alert-alarm-outline-color);
 }
 
-:host([value="overlapped"]:not([layout="inline"])) .wrapper.has-data {
+.wrapper.value-overlapped:not(.layout-inline).has-data {
   width: var(--maneuvering-components-poi-button-touch-target, 48px);
   min-width: var(--maneuvering-components-poi-button-touch-target, 48px);
   max-width: var(--maneuvering-components-poi-button-touch-target, 48px);
   height: 96px;
 }
 
-:host([layout="inline"][value="overlapped"]) .wrapper.has-data {
+.wrapper.layout-inline.value-overlapped.has-data {
   padding-top: 0;
   height: var(--obc-poi-group-overlap-height, auto);
   transform: translate(

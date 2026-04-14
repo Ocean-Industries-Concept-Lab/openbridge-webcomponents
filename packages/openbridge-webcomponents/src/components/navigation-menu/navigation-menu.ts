@@ -1,5 +1,5 @@
 import {LitElement, PropertyValues, html, nothing, unsafeCSS} from 'lit';
-import {property} from 'lit/decorators.js';
+import {property, state} from 'lit/decorators.js';
 import compentStyle from './navigation-menu.css?inline';
 import {ObcNavigationItemGroup} from '../navigation-item-group/navigation-item-group.js';
 import {ObcNavigationItem} from '../navigation-item/navigation-item.js';
@@ -146,6 +146,7 @@ export class ObcNavigationMenu extends LitElement {
   @property({type: Boolean}) smallScreen = false;
 
   private slotObservers: MutationObserver[] = [];
+  @state() private hasFooter = false;
 
   findAllElements<T extends Element>(
     el: Element,
@@ -236,6 +237,8 @@ export class ObcNavigationMenu extends LitElement {
     const footerSlot = this.shadowRoot?.querySelector(
       'slot[name="footer"]'
     ) as HTMLSlotElement;
+
+    this.hasFooter = footerSlot?.assignedElements().length > 0;
 
     [mainSlot, footerSlot].forEach((slot) => {
       if (slot) {
@@ -359,7 +362,7 @@ export class ObcNavigationMenu extends LitElement {
             <slot name="main" @slotchange=${this.handleSlotChange}></slot>
           </ol>
         </nav>
-        <div class="footer">
+        <div class="footer ${this.hasFooter ? 'has-footer' : ''}">
           <nav>
             <ol>
               <slot name="footer" @slotchange=${this.handleSlotChange}></slot>
