@@ -76,7 +76,7 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       # During the npm release phase we update the version number.
       # This can give dependencies issues as the wrapper package are dependent on the core package.
