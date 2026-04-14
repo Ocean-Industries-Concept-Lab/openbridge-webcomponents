@@ -423,7 +423,6 @@ export const BottomLayerWithValues: Story = {
         obc-poi-layer-stack.stack-values {
           width: 100%;
           gap: 8px;
-          transform: translateY(-72px);
         }
 
         obc-poi-layer {
