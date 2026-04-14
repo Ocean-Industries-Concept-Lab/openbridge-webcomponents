@@ -32,6 +32,18 @@ jobs:
         run: npm run analyze
         working-directory: packages/openbridge-webcomponents
 
+      - name: Update AR snapshots
+        run: npx vitest --project=storybook --update --maxWorkers=4 src/ar/
+        working-directory: packages/openbridge-webcomponents
+
+      - name: Commit updated AR snapshots
+        run: |
+          git config user.name "thomsoren"
+          git config user.email "thomas@sorensen.email"
+          git add packages/openbridge-webcomponents/__vis__/linux/__baselines__/ar/
+          git diff --cached --quiet || git commit -m "fix: update AR snapshots from CI"
+          git push
+
       - name: Serve Storybook and run tests
         run: npm run test-storybook
         working-directory: packages/openbridge-webcomponents
