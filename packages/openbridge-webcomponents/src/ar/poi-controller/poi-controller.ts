@@ -8,67 +8,106 @@ import {ObcPoiData} from '../poi/poi-data.js';
 import {resolvePoiButtonTypeFromBoxSize} from '../poi-button/poi-button.js';
 
 /**
- * `<obc-poi-controller>` - Detection-to-overlay controller that maps points to POI markers (pins/targets) over media.
+ * `<obc-poi-controller>` — Maps detection data onto POI markers over a video or image.
  *
- * Coordinates media metrics, detection input, and layer output to keep marker placement in sync with the current frame.
- * Use this when you need runtime mapping from detection data to rendered POI targets.
+ * Takes detection coordinates in media pixel space (e.g. x,y in a 1920x1080 frame),
+ * projects them to screen space using the media's rendered size and fit mode, and
+ * creates/updates `obc-poi-data` targets inside a layer stack.
  *
- * ### Overview
- * - Keywords: POI, point-of-interest, marker, pin, target, detection, overlay, tracker.
- * - Contrast:
- *   - `obc-poi-controller` handles data ingestion, projection, filtering, and target lifecycle.
- *   - `obc-poi-layer` handles overlap/group behavior for targets already placed in a layer.
- *   - `obc-poi-data` / `obc-poi` are target-level components and do not manage detection streams.
+ * ## Quick Start
  *
- * ### Features/Variants
- * - Detection source selection:
- *   - `detections` (array) is used directly when provided.
- *   - `frames` + `frameIndex` supports frame/timestamp-driven playback when `detections` is not provided.
- * - Projection config:
- *   - `fit` (`contain` default, `cover` optional) controls scale mode from media space to rendered space.
- * - Target shaping:
- *   - Uses mapped `box_width`/`box_height` to resolve POI button type.
- * - Filtering:
- *   - `confidenceMin` and `classFilter` remove detections before render.
- * - Stable identity:
- *   - Key resolution order is `det.id`, then `keyFn(det, index)`, then index fallback.
+ * The media slot accepts a `<video>` (live stream, HLS, file) or `<img>` element.
  *
- * ### Usage Guidelines
- * - Required inputs:
- *   - Provide a media element in slot `media`.
- *   - Provide an `obc-poi-layer-stack` in slot `stack`.
- * - Data flow:
- *   - Use `detections` for direct, current-frame updates.
- *   - Use `frames` for timeline/video synchronization.
- *   - Use `frameIndex` to force a specific frame; default `null` selects by nearest video timestamp (or first frame for non-video media).
- * - Identity:
- *   - Provide stable `id` in detections or set `keyFn` to avoid marker churn when ordering changes.
- *
- * ### Slots/Content
- * - `media` (required): Video or image source used for measurement and timing.
- * - `stack` (required): `obc-poi-layer-stack` container where controller-managed targets are appended.
- *
- * ### Events
- * - None. This component does not emit custom events.
- *
- * ### Best Practices
- * - Keep detection arrays compact to reduce DOM churn.
- * - Prefer one selected layer in the stack and use `data-controller-layer="background"` when routing output to a specific layer.
- *
- * ### Example
  * ```html
- * <obc-poi-controller fit="contain">
- *   <video slot="media" src="media.mp4"></video>
+ * <obc-poi-controller fit="cover">
+ *   <video slot="media" src="stream.mp4" autoplay muted></video>
  *   <obc-poi-layer-stack slot="stack" selection-mode="multi">
- *     <obc-poi-layer label="Selected" .isSelected=${true}></obc-poi-layer>
- *     <obc-poi-layer label="Background" data-controller-layer="background">
- *     </obc-poi-layer>
+ *     <obc-poi-layer is-selected></obc-poi-layer>
+ *     <obc-poi-layer data-controller-layer="background"></obc-poi-layer>
  *   </obc-poi-layer-stack>
  * </obc-poi-controller>
  * ```
  *
- * @slot media - Required media element (video or image).
- * @slot stack - Required layer stack.
+ * Then set detections from your data source (WebSocket, API, etc.):
+ *
+ * ```js
+ * const controller = document.querySelector('obc-poi-controller');
+ * controller.detections = [
+ *   { id: 'track-1', x: 400, y: 800, box_width: 50, box_height: 40, heading: -15 },
+ *   { id: 'track-2', x: 900, y: 750, box_width: 35, box_height: 30, heading: 45 },
+ * ];
+ * ```
+ *
+ * ## Framework Usage
+ *
+ * **Lit:**
+ * ```html
+ * <obc-poi-controller .detections=${detections} fit="cover">
+ * ```
+ *
+ * **Vue:**
+ * ```html
+ * <obc-poi-controller :detections="detections" fit="cover">
+ * ```
+ *
+ * **Svelte:**
+ * ```html
+ * <obc-poi-controller detections={detections} fit="cover">
+ * ```
+ *
+ * **React 18** (needs ref for array props):
+ * ```tsx
+ * const ref = useRef(null);
+ * useEffect(() => { ref.current.detections = detections; }, [detections]);
+ * <obc-poi-controller ref={ref} fit="cover">
+ * ```
+ *
+ * **React 19+** (native custom element support):
+ * ```tsx
+ * <obc-poi-controller detections={detections} fit="cover">
+ * ```
+ *
+ * ## Coordinate Model
+ *
+ * Detection `x` and `y` are in **media pixel space** (e.g. 0-1920 for a 1920x1080 video).
+ * The controller projects them to screen space using the `fit` mode (`contain` or `cover`)
+ * and the media element's rendered dimensions.
+ *
+ * The Y coordinate maps to the line length from the layer's top edge down to the
+ * detection point. The button sits at the top of the layer; the line extends downward.
+ *
+ * ## Detection Data
+ *
+ * Each detection can include:
+ * - `x`, `y` (required) — position in media pixel space
+ * - `id` — stable identity key (prevents marker churn when array order changes)
+ * - `box_width`, `box_height` — bounding box size; determines button type (regular vs enhanced)
+ * - `heading` or `direction` — rotation angle for the icon arrow (degrees)
+ * - `confidence` — filtered by `confidenceMin`
+ * - `class` — filtered by `classFilter`
+ *
+ * ## Layer Setup
+ *
+ * The stack needs at least two layers:
+ * 1. A **selected layer** (`is-selected`) — targets jump here when clicked
+ * 2. A **background layer** (`data-controller-layer="background"`) — where the controller places targets
+ *
+ * If no `data-controller-layer="background"` is set, the controller uses the first non-selected layer.
+ *
+ * ## Selection
+ *
+ * Clicking a target moves it to the selected layer with a FLIP animation.
+ * The controller does not interfere with selected targets — it only manages
+ * targets in the background layer. The layer-stack owns selection state.
+ *
+ * ## CSS Custom Properties
+ *
+ * - `--obc-poi-controller-stack-top` (default `15%`) — vertical position of the stack
+ * - `--obc-poi-controller-stack-height` (default `50%`) — height of the stack
+ * - `--obc-poi-controller-stack-gap` (default `8px`) — gap between layers
+ *
+ * @slot media - Video or image element. Sets the projection source dimensions.
+ * @slot stack - `obc-poi-layer-stack` containing the layers for target placement.
  */
 
 export type PoiDetection = {
@@ -222,7 +261,7 @@ export class ObcPoiController extends LitElement {
       stack.querySelectorAll<ObcPoiLayer>('obc-poi-layer')
     );
     const isSelectedLayer = (candidate: ObcPoiLayer): boolean =>
-      candidate.isSelected === true || candidate.hasAttribute('is-selected');
+      candidate.isSelected === true;
     return (
       layers.find((candidate) => !isSelectedLayer(candidate)) ??
       layers[layers.length - 1] ??
@@ -447,7 +486,7 @@ export class ObcPoiController extends LitElement {
         this.controllerTargets.set(key, target);
       }
 
-      // Append to background layer unless layer-stack moved it elsewhere (e.g. selected layer)
+      // Append to background layer unless layer-stack moved it elsewhere
       if (!target.isConnected || target.parentElement === null) {
         layer.appendChild(target);
       }

@@ -96,7 +96,7 @@ export class ObcPoiLayer extends LitElement {
   @property({type: String}) label = '';
   @property({type: Boolean}) debug = false;
   @property({type: String}) overlapMode: OverlapMode = OverlapMode.Grouping;
-  @property({type: Boolean})
+  @property({type: Boolean, attribute: 'is-selected'})
   isSelected = false;
   @property({type: Boolean, attribute: 'join-while-expanded'})
   joinWhileExpanded = false;
