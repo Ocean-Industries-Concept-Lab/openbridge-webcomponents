@@ -4,6 +4,8 @@ on:
     branches: [develop, stable]
   pull_request:
     branches: [develop, stable]
+  permissions:
+    contents: write
 jobs:
   test:
     timeout-minutes: 60
@@ -16,6 +18,9 @@ jobs:
       LC_NUMERIC: en_US.UTF-8
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ github.token }}
 
       - uses: actions/setup-node@v6
         with:
