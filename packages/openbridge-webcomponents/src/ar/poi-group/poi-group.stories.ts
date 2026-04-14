@@ -138,6 +138,25 @@ export const GroupedWithNumbers: Story = {
   args: {
     expand: false,
   },
+  play: async ({canvasElement}) => {
+    if (!isVitestBrowser) return;
+    const group = canvasElement.querySelector(
+      'obc-poi-group'
+    ) as ObcPoiGroup | null;
+    if (!group) return;
+    await (group.updateComplete ?? Promise.resolve());
+    const targets = Array.from(canvasElement.querySelectorAll('obc-poi-data'));
+    await Promise.all(
+      targets.map(
+        (target) =>
+          ((target as {updateComplete?: Promise<unknown>}).updateComplete ??
+            Promise.resolve()) as Promise<unknown>
+      )
+    );
+    await new Promise((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(resolve))
+    );
+  },
   render: (args) => {
     const wrapperRef = createRef<HTMLDivElement>();
     const onExpand = (event: CustomEvent<{expand: boolean}>) => {
@@ -222,6 +241,25 @@ export const GroupedWithNumbers: Story = {
 export const GroupedWithValues: Story = {
   args: {
     expand: false,
+  },
+  play: async ({canvasElement}) => {
+    if (!isVitestBrowser) return;
+    const group = canvasElement.querySelector(
+      'obc-poi-group'
+    ) as ObcPoiGroup | null;
+    if (!group) return;
+    await (group.updateComplete ?? Promise.resolve());
+    const targets = Array.from(canvasElement.querySelectorAll('obc-poi-data'));
+    await Promise.all(
+      targets.map(
+        (target) =>
+          ((target as {updateComplete?: Promise<unknown>}).updateComplete ??
+            Promise.resolve()) as Promise<unknown>
+      )
+    );
+    await new Promise((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(resolve))
+    );
   },
   render: (args) => {
     const wrapperRef = createRef<HTMLDivElement>();
