@@ -14,20 +14,19 @@ import {
 import {updateCrossingModeState} from './poi-layer-crossing-utils.js';
 import {getEffectivePoiX} from '../poi/poi-position.js';
 import {easeInOutQuad} from '../poi-group/animation-utils.js';
+import {
+  getCssVarAsNumber,
+  getTouchTargetSize,
+  getVisualTargetSize,
+} from '../poi/poi-css-vars.js';
+import {
+  applyPoiVisualState,
+  clearPoiVisualState,
+} from '../poi/poi-visual-state.js';
 
 const EXIT_DELAY_MS_VAR = '--obc-poi-layer-exit-delay-ms';
 const GROUP_REMOVAL_DELAY_MS_VAR = '--obc-poi-layer-group-removal-delay-ms';
 const EXIT_LOCK_DURATION_MS_VAR = '--obc-poi-layer-exit-lock-duration-ms';
-
-const POI_TOUCH_TARGET_VAR = '--maneuvering-components-poi-button-touch-target';
-const POI_VISUAL_TARGET_VAR =
-  '--maneuvering-components-poi-button-visual-target-round';
-const POI_VISUAL_TARGET_OVERLAP_VAR =
-  '--maneuvering-components-poi-button-visual-target-round-overlap';
-const POI_LARGE_VISUAL_TARGET_VAR =
-  '--maneuvering-components-poi-button-large-visual-target-round';
-const POI_LARGE_VISUAL_TARGET_OVERLAP_VAR =
-  '--maneuvering-components-poi-button-large-visual-target-round-overlap';
 const POI_CROSSING_MIN_GAP_VAR = '--obc-poi-layer-crossing-min-gap';
 
 interface PoiButtonGroupElement extends HTMLElement {
@@ -466,8 +465,9 @@ export class ObcPoiLayer extends LitElement {
       this.crossingTargetsDirty = false;
     }
     const targets = this.cachedCrossingTargets;
-    const buttonWidth = this.getTouchTargetSize();
-    const minGap = this.getCssVarAsNumber(
+    const buttonWidth = getTouchTargetSize(this);
+    const minGap = getCssVarAsNumber(
+      this,
       POI_CROSSING_MIN_GAP_VAR,
       buttonWidth + 4
     );
@@ -649,7 +649,7 @@ export class ObcPoiLayer extends LitElement {
               child.getBoundingClientRect();
             }
           });
-          const exitDelay = this.getCssVarAsNumber(EXIT_DELAY_MS_VAR, 140);
+          const exitDelay = getCssVarAsNumber(this, EXIT_DELAY_MS_VAR, 140);
           window.setTimeout(() => {
             children.forEach((child) => {
               if (!front || child !== front) {
@@ -850,26 +850,8 @@ export class ObcPoiLayer extends LitElement {
 
   private applyStandaloneVisualState(target: Poi, overlap: boolean) {
     const isEnhanced = target.buttonType === ObcPoiButtonType.Enhanced;
-    const size = this.getVisualTargetSize(isEnhanced, overlap);
-    target.style.setProperty('--poi-size', `${size}px`);
-    target.style.setProperty(
-      '--obc-poi-target-icon-opacity',
-      overlap ? '0' : '1'
-    );
-    target.style.setProperty('--obc-poi-overlap', overlap ? '1' : '0');
-    target.style.setProperty(
-      '--obc-poi-overlap-elements-opacity',
-      overlap ? '0' : '1'
-    );
-    target.style.setProperty('--obc-poi-label-opacity', overlap ? '0' : '1');
-    target.style.setProperty(
-      '--obc-poi-label-visibility',
-      overlap ? 'hidden' : 'visible'
-    );
-    target.style.setProperty(
-      '--obc-poi-overlap-pointer-events',
-      overlap ? 'none' : 'auto'
-    );
+    const size = getVisualTargetSize(this, isEnhanced, overlap);
+    applyPoiVisualState(target, overlap, size);
   }
 
   private resolveTargetValue(target: Poi, overlap: boolean): PoiDataValue {
@@ -884,13 +866,7 @@ export class ObcPoiLayer extends LitElement {
   }
 
   private clearStandaloneVisualState(target: HTMLElement) {
-    target.style.removeProperty('--poi-size');
-    target.style.removeProperty('--obc-poi-target-icon-opacity');
-    target.style.removeProperty('--obc-poi-overlap');
-    target.style.removeProperty('--obc-poi-overlap-elements-opacity');
-    target.style.removeProperty('--obc-poi-label-opacity');
-    target.style.removeProperty('--obc-poi-label-visibility');
-    target.style.removeProperty('--obc-poi-overlap-pointer-events');
+    clearPoiVisualState(target);
   }
 
   private refreshGroupPositions(
@@ -1035,7 +1011,8 @@ export class ObcPoiLayer extends LitElement {
       window.clearTimeout(existing);
     }
     group.setAttribute('data-exiting', 'true');
-    const removalDelay = this.getCssVarAsNumber(
+    const removalDelay = getCssVarAsNumber(
+      this,
       GROUP_REMOVAL_DELAY_MS_VAR,
       250
     );
@@ -1050,7 +1027,11 @@ export class ObcPoiLayer extends LitElement {
     target.setAttribute('data-exit-lock', 'true');
     const existing = this.exitLockTimers.get(target);
     if (existing) window.clearTimeout(existing);
-    const lockDuration = this.getCssVarAsNumber(EXIT_LOCK_DURATION_MS_VAR, 500);
+    const lockDuration = getCssVarAsNumber(
+      this,
+      EXIT_LOCK_DURATION_MS_VAR,
+      500
+    );
     const timeoutId = window.setTimeout(() => {
       target.removeAttribute('data-exit-lock');
       this.exitLockTimers.delete(target);
@@ -1160,27 +1141,6 @@ export class ObcPoiLayer extends LitElement {
         <slot></slot>
       </div>
     `;
-  }
-
-  private getCssVarAsNumber(varName: string, fallback: number): number {
-    const raw = getComputedStyle(this).getPropertyValue(varName).trim();
-    const parsed = Number.parseFloat(raw);
-    return Number.isFinite(parsed) ? parsed : fallback;
-  }
-
-  private getTouchTargetSize(): number {
-    return this.getCssVarAsNumber(POI_TOUCH_TARGET_VAR, 48);
-  }
-
-  private getVisualTargetSize(isEnhanced: boolean, isOverlap: boolean): number {
-    if (isEnhanced) {
-      return isOverlap
-        ? this.getCssVarAsNumber(POI_LARGE_VISUAL_TARGET_OVERLAP_VAR, 36)
-        : this.getCssVarAsNumber(POI_LARGE_VISUAL_TARGET_VAR, 52);
-    }
-    return isOverlap
-      ? this.getCssVarAsNumber(POI_VISUAL_TARGET_OVERLAP_VAR, 32)
-      : this.getCssVarAsNumber(POI_VISUAL_TARGET_VAR, 36);
   }
 
   static override styles = unsafeCSS(componentStyle);

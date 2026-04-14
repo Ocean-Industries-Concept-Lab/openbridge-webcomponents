@@ -12,6 +12,10 @@ import type {ObcPoiLayer} from '../poi-layer/poi-layer.js';
 import type {ObcPoiGroup} from '../poi-group/poi-group.js';
 import {PoiDataValue} from '../poi/poi-data.js';
 import {Poi, isPoi, POI_ATTR} from '../poi/poi.js';
+import {
+  clearTargetGroupingAttributes,
+  clearTargetGroupingStyles,
+} from '../poi/poi-grouping-attrs.js';
 
 export enum PoiLayerSelectionMode {
   None = 'none',
@@ -383,7 +387,7 @@ export class ObcPoiLayerStack extends LitElement {
       target.buttonOffsetX = 0;
       target.targetOffsetX = 0;
     }
-    this.clearTargetGroupingStyles(target);
+    clearTargetGroupingStyles(target);
 
     // Collapse the group independently — it handles its own cleanup.
     // Set collapsing BEFORE expand=false so updateGrouping (which may
@@ -408,7 +412,6 @@ export class ObcPoiLayerStack extends LitElement {
     // animation conflicts with CSS transitions, causing X wiggle.
     // The FLIP jump animation uses Web Animations API (fill:'forwards')
     // which overrides CSS anyway — it doesn't need CSS transitions.
-    target.style.setProperty('--obc-poi-stack-projection-active', '1');
     target.style.setProperty(
       '--obc-poi-forced-target-transition-duration',
       '0ms'
@@ -418,7 +421,6 @@ export class ObcPoiLayerStack extends LitElement {
   }
 
   private clearTargetProjectionStyles(target: Poi) {
-    target.style.removeProperty('--obc-poi-stack-projection-active');
     target.style.removeProperty('--obc-poi-button-projection-y');
     target.style.removeProperty('--obc-poi-target-projection-y');
     target.style.removeProperty('--obc-poi-forced-target-transition-duration');
@@ -568,7 +570,7 @@ export class ObcPoiLayerStack extends LitElement {
       this.getTargetLayer(target) ??
       record.originLayer;
 
-    this.clearTargetGroupingAttributes(target);
+    clearTargetGroupingAttributes(target);
     await this.moveTargetIntoSelectedLayer(
       target,
       record.originLayer,
@@ -646,7 +648,7 @@ export class ObcPoiLayerStack extends LitElement {
 
       // Clear grouping attributes immediately so the target doesn't
       // arrive in the origin layer with data-grouped (which sets opacity:0).
-      this.clearTargetGroupingAttributes(target);
+      clearTargetGroupingAttributes(target);
 
       // BEFORE: measure button and line
       const {button: beforeBtn, line: beforeLine} =
@@ -667,7 +669,7 @@ export class ObcPoiLayerStack extends LitElement {
       // AFTER: animate from old positions to new
       await this.animateLayerJump(target, beforeButtonRect, beforeLineRect);
       this.setSelectedTargetInteractivity(target, false);
-      this.clearTargetGroupingAttributes(target);
+      clearTargetGroupingAttributes(target);
       this.clearTargetSelectedId(target);
       this.clearTargetProjectionStyles(target);
       this.requestPoiRender(target);
@@ -679,35 +681,6 @@ export class ObcPoiLayerStack extends LitElement {
     } finally {
       target.removeAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR);
     }
-  }
-
-  private clearTargetGroupingAttributes(target: Poi) {
-    target.removeAttribute('data-grouped');
-    target.removeAttribute('data-joined-expanded');
-    target.removeAttribute('data-pregrouped');
-    target.removeAttribute('data-behind');
-    target.removeAttribute('data-front');
-    target.removeAttribute('data-front-exit');
-    target.removeAttribute('data-exiting');
-    target.removeAttribute('data-exit-lock');
-  }
-
-  /** Clear inline styles and CSS vars set by poi-group on a target. */
-  private clearTargetGroupingStyles(target: Poi) {
-    target.style.removeProperty('position');
-    target.style.removeProperty('width');
-    target.style.removeProperty('min-width');
-    target.style.removeProperty('height');
-    target.style.removeProperty('transform');
-    target.style.removeProperty('--obc-poi-group-overlap-height');
-    target.style.removeProperty('--obc-poi-group-overlap-shift');
-    target.style.removeProperty('--poi-size');
-    target.style.removeProperty('--obc-poi-target-icon-opacity');
-    target.style.removeProperty('--obc-poi-overlap');
-    target.style.removeProperty('--obc-poi-overlap-elements-opacity');
-    target.style.removeProperty('--obc-poi-label-opacity');
-    target.style.removeProperty('--obc-poi-label-visibility');
-    target.style.removeProperty('--obc-poi-overlap-pointer-events');
   }
 
   private setSelectedTargetInteractivity(target: Poi, selected: boolean) {
@@ -781,7 +754,7 @@ export class ObcPoiLayerStack extends LitElement {
         this.refreshTargetProjectionLayout(target);
       }
     } else {
-      this.clearTargetGroupingAttributes(target);
+      clearTargetGroupingAttributes(target);
       target.setAttribute('data-stack-selected', 'true');
       void this.syncTargetProjection(
         target,
@@ -843,7 +816,7 @@ export class ObcPoiLayerStack extends LitElement {
       return;
     }
     this.setSelectedTargetInteractivity(target, false);
-    this.clearTargetGroupingAttributes(target);
+    clearTargetGroupingAttributes(target);
     this.clearTargetSelectedId(target);
     this.clearTargetProjectionStyles(target);
   }

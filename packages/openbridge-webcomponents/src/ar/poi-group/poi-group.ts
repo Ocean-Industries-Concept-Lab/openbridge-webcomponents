@@ -8,20 +8,20 @@ import {ObcPoiButtonType} from '../poi-button/poi-button.js';
 import {customElement} from '../../decorator.js';
 import {AnimationManager, easeInOutQuad, frameLerp} from './animation-utils.js';
 import {getEffectivePoiX} from '../poi/poi-position.js';
+import {
+  getCssVarAsNumber,
+  getTouchTargetSize,
+  getVisualTargetSize,
+} from '../poi/poi-css-vars.js';
+import {
+  applyPoiVisualState,
+  clearPoiVisualState,
+} from '../poi/poi-visual-state.js';
 
-const POI_TOUCH_TARGET_VAR = '--maneuvering-components-poi-button-touch-target';
 const POI_GROUP_SPACING_VAR = '--obc-poi-group-expanded-spacing';
 const TOP_OFFSET_ANIMATION_MS_VAR = '--obc-poi-group-top-offset-animation-ms';
 const TOP_OFFSET_ANIMATION_DELAY_MS_VAR =
   '--obc-poi-group-top-offset-animation-delay-ms';
-const POI_VISUAL_TARGET_VAR =
-  '--maneuvering-components-poi-button-visual-target-round';
-const POI_VISUAL_TARGET_OVERLAP_VAR =
-  '--maneuvering-components-poi-button-visual-target-round-overlap';
-const POI_LARGE_VISUAL_TARGET_VAR =
-  '--maneuvering-components-poi-button-large-visual-target-round';
-const POI_LARGE_VISUAL_TARGET_OVERLAP_VAR =
-  '--maneuvering-components-poi-button-large-visual-target-round-overlap';
 
 export type ExpandEvent = CustomEvent<{expand: boolean}>;
 
@@ -443,7 +443,8 @@ export class ObcPoiGroup extends LitElement {
         const delta = currentLeft - config.originalLeft;
         this.collapseDeltas.set(child, delta);
       });
-      const delayMs = this.getCssVarAsNumber(
+      const delayMs = getCssVarAsNumber(
+        this,
         TOP_OFFSET_ANIMATION_DELAY_MS_VAR,
         0
       );
@@ -467,7 +468,7 @@ export class ObcPoiGroup extends LitElement {
     targetProgress: number,
     frontChild: Poi | null
   ) {
-    const duration = this.getCssVarAsNumber(TOP_OFFSET_ANIMATION_MS_VAR, 100);
+    const duration = getCssVarAsNumber(this, TOP_OFFSET_ANIMATION_MS_VAR, 100);
 
     this.topOffsetAnimationManager.start(
       targetProgress,
@@ -551,9 +552,17 @@ export class ObcPoiGroup extends LitElement {
         const nextValue = this.resolveTargetValue(child, isOverlap);
         child.value = nextValue;
         if (nextValue === PoiDataValue.Overlapped) {
-          this.applyVisualState(child, true);
+          applyPoiVisualState(
+            child,
+            true,
+            getVisualTargetSize(
+              this,
+              child.buttonType === ObcPoiButtonType.Enhanced,
+              true
+            )
+          );
         } else {
-          this.clearVisualState(child);
+          clearPoiVisualState(child);
         }
         this.setOverlappedDataHeight(
           child,
@@ -562,12 +571,12 @@ export class ObcPoiGroup extends LitElement {
         );
       } else {
         child.value = this.resolveTargetValue(child, false);
-        this.clearVisualState(child);
+        clearPoiVisualState(child);
         this.setOverlappedDataHeight(child, false, frontHeight);
       }
 
       if (touchAreaExpanded) {
-        const touchTarget = `${this.getTouchTargetSize()}px`;
+        const touchTarget = `${getTouchTargetSize(this)}px`;
         child.style.width = touchTarget;
         child.style.minWidth = touchTarget;
         child.style.height = touchTarget;
@@ -627,9 +636,17 @@ export class ObcPoiGroup extends LitElement {
       const nextValue = this.resolveTargetValue(child, isOverlap);
       child.value = nextValue;
       if (nextValue === PoiDataValue.Overlapped) {
-        this.applyVisualState(child, true);
+        applyPoiVisualState(
+          child,
+          true,
+          getVisualTargetSize(
+            this,
+            child.buttonType === ObcPoiButtonType.Enhanced,
+            true
+          )
+        );
       } else {
-        this.clearVisualState(child);
+        clearPoiVisualState(child);
       }
       if (front && child === front) {
         child.setAttribute('data-front', 'true');
@@ -797,64 +814,9 @@ export class ObcPoiGroup extends LitElement {
     return target.getVisualRect(preference);
   }
 
-  private getCssVarAsNumber(varName: string, fallback: number): number {
-    const raw = getComputedStyle(this).getPropertyValue(varName).trim();
-    const parsed = Number.parseFloat(raw);
-    return Number.isFinite(parsed) ? parsed : fallback;
-  }
-
-  private getTouchTargetSize(): number {
-    return this.getCssVarAsNumber(POI_TOUCH_TARGET_VAR, 48);
-  }
-
   private getExpandedSpacing(): number {
-    const baseSpacing = this.getCssVarAsNumber(POI_GROUP_SPACING_VAR, 50);
+    const baseSpacing = getCssVarAsNumber(this, POI_GROUP_SPACING_VAR, 50);
     return this.wrapperHasValues ? baseSpacing + 2 : baseSpacing;
-  }
-
-  private getVisualTargetSize(isEnhanced: boolean, isOverlap: boolean): number {
-    if (isEnhanced) {
-      return isOverlap
-        ? this.getCssVarAsNumber(POI_LARGE_VISUAL_TARGET_OVERLAP_VAR, 36)
-        : this.getCssVarAsNumber(POI_LARGE_VISUAL_TARGET_VAR, 52);
-    }
-    return isOverlap
-      ? this.getCssVarAsNumber(POI_VISUAL_TARGET_OVERLAP_VAR, 32)
-      : this.getCssVarAsNumber(POI_VISUAL_TARGET_VAR, 36);
-  }
-
-  private applyVisualState(target: Poi, overlap: boolean) {
-    const isEnhanced = target.buttonType === ObcPoiButtonType.Enhanced;
-    const size = this.getVisualTargetSize(isEnhanced, overlap);
-    target.style.setProperty('--poi-size', `${size}px`);
-    target.style.setProperty(
-      '--obc-poi-target-icon-opacity',
-      overlap ? '0' : '1'
-    );
-    target.style.setProperty('--obc-poi-overlap', overlap ? '1' : '0');
-    target.style.setProperty(
-      '--obc-poi-overlap-elements-opacity',
-      overlap ? '0' : '1'
-    );
-    target.style.setProperty('--obc-poi-label-opacity', overlap ? '0' : '1');
-    target.style.setProperty(
-      '--obc-poi-label-visibility',
-      overlap ? 'hidden' : 'visible'
-    );
-    target.style.setProperty(
-      '--obc-poi-overlap-pointer-events',
-      overlap ? 'none' : 'auto'
-    );
-  }
-
-  private clearVisualState(target: Poi) {
-    target.style.removeProperty('--poi-size');
-    target.style.removeProperty('--obc-poi-target-icon-opacity');
-    target.style.removeProperty('--obc-poi-overlap');
-    target.style.removeProperty('--obc-poi-overlap-elements-opacity');
-    target.style.removeProperty('--obc-poi-label-opacity');
-    target.style.removeProperty('--obc-poi-label-visibility');
-    target.style.removeProperty('--obc-poi-overlap-pointer-events');
   }
 
   private setOverlappedDataHeight(
@@ -938,7 +900,7 @@ export class ObcPoiGroup extends LitElement {
     target.style.removeProperty('transform');
     target.style.removeProperty('--obc-poi-group-overlap-height');
     target.style.removeProperty('--obc-poi-group-overlap-shift');
-    this.clearVisualState(target);
+    clearPoiVisualState(target);
 
     const parent = this.parentElement;
     if (!parent) {
