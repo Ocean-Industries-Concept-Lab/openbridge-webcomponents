@@ -42,7 +42,7 @@
     "📦_WRAPPERS__________________________________________________": "echo _____",
     "wrappers": "npm run wrappers:clean && npm run wrappers:generate && npm run wrappers:post-fix",
     "wrappers:clean": "git clean -fdx -e README.md ../openbridge-webcomponents-*",
-    "wrappers:generate": "lit labs gen --framework=vue --framework=react --framework=angular --framework=svelte --out=..",
+    "wrappers:generate": "lit labs gen --framework=vue --framework=react --framework=angular --framework=svelte --out=.. --exclude src/ar/poi/poi-base.ts --exclude src/ar/poi-object/abstract-poi-object.ts",
     "wrappers:post-fix": "node fix-generated.cjs",
     "📜_SCRIPTS___________________________________________________": "echo _____",
     "download:icons": "tsx ./script/download-icons.ts",
