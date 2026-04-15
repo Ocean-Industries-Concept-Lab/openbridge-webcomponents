@@ -43,41 +43,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Compute next stable version
-        working-directory: ./packages/openbridge-webcomponents
-        env:
-          BUMP: ${{ inputs.bump }}
-        run: |
-          CURRENT_VERSION=$(node -e "console.log(require('./package.json').version)")
-          echo "[next-stable-version] Current version: $CURRENT_VERSION"
-          
-          NEXT_VERSION=$(node -e "
-            const semver = require('semver');
-            const current = '$CURRENT_VERSION';
-            const bump = '${{ env.BUMP }}';
-            
-            // Cap major bumps to minor (keep below 1.0.0)
-            let finalBump = bump;
-            if (bump === 'major' && semver.major(current) < 1) {
-              console.error('[next-stable-version] Capping major bump to minor (version constraint: keep below 1.0.0)');
-              finalBump = 'minor';
-            }
-            
-            const next = semver.inc(current, finalBump);
-            console.log(next);
-          ")
-          
-          echo "VERSION=$NEXT_VERSION" >> $GITHUB_ENV
-          echo "TAG=v$NEXT_VERSION" >> $GITHUB_ENV
-          echo "[next-stable-version] Next version: $NEXT_VERSION"
-
-      - name: Set version in package.json files
-        working-directory: ./packages/openbridge-webcomponents
-        env:
-          VERSION: ${{ env.VERSION }}
-        run: |
-          jq --arg VERSION "$VERSION" '.version = "" + $VERSION' package.json > package.tmp.json && mv package.tmp.json package.json
-
       - name: Build and generate wrappers
         working-directory: ./packages/openbridge-webcomponents
         run: npm run build:full
@@ -113,24 +78,3 @@ jobs:
          npm run build
          cd dist
          npm publish --tag latest --access public
-         
-
-      - name: Commit version and changelog
-        env:
-          INPUT_COMMIT_MESSAGE: ${{ inputs.commit_message }}
-        run: |
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git config user.name "github-actions[bot]"
-          git add packages/openbridge-webcomponents/package.json
-          COMMIT_MESSAGE="$INPUT_COMMIT_MESSAGE"
-          if [ -z "$COMMIT_MESSAGE" ]; then
-            COMMIT_MESSAGE="chore(release): $VERSION [skip ci]"
-          fi
-          git commit -m "$COMMIT_MESSAGE"
-
-      - name: Create and push git tag
-        env:
-          TAG: ${{ env.TAG }}
-        run: |
-          git tag ${{ env.TAG }}
-          git push origin stable --follow-tags
