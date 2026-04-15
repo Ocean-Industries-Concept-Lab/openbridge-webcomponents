@@ -121,7 +121,7 @@ jobs:
         run: |
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
-          git add packages/openbridge-webcomponents/package.json packages/openbridge-webcomponents-*/package.json
+          git add packages/openbridge-webcomponents/package.json
           COMMIT_MESSAGE="$INPUT_COMMIT_MESSAGE"
           if [ -z "$COMMIT_MESSAGE" ]; then
             COMMIT_MESSAGE="chore(release): $VERSION [skip ci]"
