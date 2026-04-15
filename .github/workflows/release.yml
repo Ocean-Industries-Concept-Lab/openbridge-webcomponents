@@ -76,7 +76,7 @@ jobs:
         env:
           VERSION: ${{ env.VERSION }}
         run: |
-          npm version ${{ env.VERSION }} --no-git-tag-version
+          jq --arg VERSION "$VERSION" '.version = "" + $VERSION' package.json > package.tmp.json && mv package.tmp.json package.json
 
       - name: Build and generate wrappers
         working-directory: ./packages/openbridge-webcomponents
