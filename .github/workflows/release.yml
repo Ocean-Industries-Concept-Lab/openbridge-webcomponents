@@ -83,7 +83,7 @@ jobs:
         run: npm run build:full
 
       - name: Install wrapper dependencies
-        run: npm ci
+        run: npm install
 
       - name: Publish core to NPM
         working-directory: ./packages/openbridge-webcomponents
