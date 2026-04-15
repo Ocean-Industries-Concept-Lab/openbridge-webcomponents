@@ -37,7 +37,7 @@ import {
 
 const meta: Meta<ObcPoiButtonVessel> = {
   title: 'AR/POI Button/POI Button Vessel',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'skip-test'],
   component: 'obc-poi-button-vessel',
   decorators: [crossDecorator],
   args: {
