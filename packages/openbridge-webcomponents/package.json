@@ -4,7 +4,7 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip.git",
+    "url": "git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents.git",
     "directory": "packages/openbridge-webcomponents"
   },
   "homepage": "https://www.openbridge.no",
@@ -46,8 +46,9 @@
     "wrappers:post-fix": "node fix-generated.cjs",
     "📜_SCRIPTS___________________________________________________": "echo _____",
     "download:icons": "tsx ./script/download-icons.ts",
-    "analyze": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\"",
+    "analyze": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\" && tsx ./script/sort-custom-element-manifest.ts",
     "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\" --watch",
+    "clean": "rm -rf node_modules dist bundle custom-elements.json",
     "言_TRANSLATIONS______________________________________________": "echo _____",
     "translations:extract": "lit localize extract"
   },
@@ -56,16 +57,18 @@
     "@lit/localize": "^0.12.2",
     "chart.js": "^4.5.1",
     "lit": "^3.3.2",
+    "semver": "^7.7.4",
     "uplot": "^1.6.32"
   },
   "devDependencies": {
     "@custom-elements-manifest/analyzer": "^0.11.0",
     "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^10.0.1",
+    "@figma/rest-api-spec": "^0.37.0",
     "@jackolope/ts-lit-plugin": "^3.1.6",
     "@lit-labs/cli": "file:lit-labs-cli-0.6.5.tgz",
     "@lit-labs/cli-localize": "^0.2.2",
-    "@lit-labs/gen-wrapper-angular": "file:lit-labs-gen-wrapper-angular-0.1.4.tgz",
+    "@lit-labs/gen-wrapper-angular": "file:lit-labs-gen-wrapper-angular-2bfcb97e.tgz",
     "@lit-labs/gen-wrapper-react": "^0.3.5",
     "@lit-labs/gen-wrapper-svelte": "file:lit-labs-gen-wrapper-svelte-cf2df9d.tgz",
     "@lit-labs/gen-wrapper-vue": "file:lit-labs-gen-wrapper-vue-0.4.1.tgz",
@@ -85,7 +88,7 @@
     "dotenv": "^17.3.1",
     "eslint": "^10.0.3",
     "eslint-plugin-storybook": "^10.2.17",
-    "figma-api": "^1.12.0",
+    "figma-api": "^2.1.2-beta",
     "glob": "^13.0.6",
     "globals": "^17.4.0",
     "globby": "^16.1.1",
@@ -118,10 +121,6 @@
   },
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
-  "files": [
-    "./dist",
-    "README.md"
-  ],
   "publishConfig": {
     "access": "public"
   },

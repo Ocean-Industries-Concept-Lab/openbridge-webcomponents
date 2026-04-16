@@ -19,7 +19,7 @@ function fixPackageJson(packageName, directory) {
 
   packageJson.repository = {
     type: 'git',
-    url: 'git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip.git',
+    url: 'git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents.git',
     directory: `packages/${directory}`,
   };
 
@@ -31,10 +31,7 @@ function fixPackageJson(packageName, directory) {
     access: 'public',
   };
 
-  if (!packageJson.files) {
-    packageJson.files = [];
-  }
-  if (!packageJson.files.includes('README.md')) {
+  if (packageJson.files && !packageJson.files.includes('README.md')) {
     packageJson.files.push('README.md');
   }
 
