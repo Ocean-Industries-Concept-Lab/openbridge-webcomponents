@@ -1,12 +1,12 @@
 # OpenBridge Charts and Graphs
 
-The OpenBridge Web Components library includes a set of ready-to-use chart components for common visualization needs. For highly customized plots, you can also use Chart.js directly with OpenBridge styling. See the Storybook for interactive examples of built-in chart types such as the [Line Graph](https://openbridge-jip-storybook.web.app/?path=/docs/bars-and-graphs-line-graph--docs) and [Donut Chart](https://openbridge-jip-storybook.web.app/?path=/docs/bars-and-graphs-donut-chart--docs).
+The OpenBridge Web Components library includes a set of ready-to-use chart components for common visualization needs. For highly customized plots, you can also use Chart.js directly with OpenBridge styling. See the Storybook for interactive examples of built-in chart types such as the [Line Graph](https://openbridge-storybook.web.app/?path=/docs/bars-and-graphs-line-graph--docs) and [Donut Chart](https://openbridge-storybook.web.app/?path=/docs/bars-and-graphs-donut-chart--docs).
 
 ---
 
 ## Custom Chart.js Plots
 
-For plots that need to be tailored for a specific application, you can use Chart.js directly with OpenBridge theming. Below is an example of a custom chart using Chart.js, demonstrated in the [vue demo app](https://openbridge-jip-demo.web.app/graph) ([source code](../packages/vue-demo/src/views/GraphDemo.vue)).
+For plots that need to be tailored for a specific application, you can use Chart.js directly with OpenBridge theming. Below is an example of a custom chart using Chart.js, demonstrated in the [vue demo app](https://openbridge-demo.web.app/graph) ([source code](../packages/vue-demo/src/views/GraphDemo.vue)).
 
 First define a html node to use for the plot:
 

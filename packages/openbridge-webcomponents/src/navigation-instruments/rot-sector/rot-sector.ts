@@ -24,8 +24,12 @@ export interface GaugeRadialAdvice {
  * `<obc-rot-sector>` — Rate-of-turn sector gauge for rotational velocity.
  *
  * `ObcRotSector` is a thin wrapper around `<obc-instrument-radial>` that
- * displays a bipolar ±60° sector gauge showing rate of turn. The bottom
- * 50% of the circle is clipped, producing a compact sector arc. It inherits
+ * displays a bipolar sector gauge showing rate of turn. The arc extent is
+ * configurable via `rotArcExtent` (default 60°), mapping the value range
+ * (−maxValue to +maxValue) to ±rotArcExtent degrees. The bottom 50% of the
+ * circle is clipped, producing a compact sector arc. When `zoomToFitArc`
+ * is enabled, clipping is bypassed and the arc is enlarged to fill the
+ * available space. It inherits
  * a full setpoint property bundle from {@link SetpointMixin}, including
  * auto at-setpoint detection, dual-marker adjustment preview, and deadband
  * tuning.
@@ -33,7 +37,7 @@ export interface GaugeRadialAdvice {
  * ## Features
  *
  * - **Bipolar sector**: Value range is symmetric around zero (−maxValue to
- *   +maxValue), mapped to a ±60° arc.
+ *   +maxValue), mapped to a ±`rotArcExtent`° arc (default 60°).
  * - **Port/starboard coloring**: When `portStarboard` is true, positive
  *   values render in starboard (green) and negative in port (red).
  * - **Bar display**: Always renders as a `bar` type — no needle or filled
@@ -107,25 +111,30 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
+  @property({type: Boolean}) zoomToFitArc: boolean = false;
+  @property({type: Number}) rotArcExtent: number = 60;
 
-  getAngle(v: number): number {
-    return (v / this.maxValue) * 60;
-  }
+  getAngle = (v: number): number => {
+    if (!this.maxValue) return 0;
+    return (v / this.maxValue) * this.rotArcExtent;
+  };
 
   get _type(): ObcGaugeRadialType {
     return ObcGaugeRadialType.bar;
   }
 
   private get _barColor(): string {
-    if (this.priority !== Priority.enhanced) {
-      return 'var(--instrument-regular-tertiary-color)';
-    }
-
     if (this.portStarboard) {
       if (this.value > 0) {
         return 'var(--instrument-starboard-secondary-color)';
       }
-      return 'var(--instrument-port-secondary-color)';
+      if (this.value < 0) {
+        return 'var(--instrument-port-secondary-color)';
+      }
+    }
+
+    if (this.priority !== Priority.enhanced) {
+      return 'var(--instrument-regular-tertiary-color)';
     }
 
     return 'var(--instrument-enhanced-tertiary-color)';
@@ -159,16 +168,13 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
         .needleType=${this._type}
         .advices=${this.advices}
         .clipBottom=${50}
+        .zoomToFitArc=${this.zoomToFitArc}
       >
       </obc-instrument-radial>
     `;
   }
 
   private get _needleColor(): string {
-    if (this.priority !== Priority.enhanced) {
-      return 'var(--instrument-regular-secondary-color)';
-    }
-
     if (this.portStarboard) {
       if (this.value > 0) {
         return 'var(--instrument-starboard-primary-color)';
@@ -176,6 +182,10 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
       if (this.value < 0) {
         return 'var(--instrument-port-primary-color)';
       }
+      return 'var(--instrument-regular-secondary-color)';
+    }
+
+    if (this.priority !== Priority.enhanced) {
       return 'var(--instrument-regular-secondary-color)';
     }
 

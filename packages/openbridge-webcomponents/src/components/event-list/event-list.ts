@@ -88,11 +88,11 @@ export class ObcEventList extends LitElement {
   }
 
   /**
-   * Get the formatted month name (e.g., "January").
+   * Get the formatted abbreviated month name (e.g., "Jan").
    */
   private get _monthName(): string {
     return this._normalizedDate.toLocaleDateString(this.locale, {
-      month: 'long',
+      month: 'short',
     });
   }
 
@@ -123,11 +123,8 @@ export class ObcEventList extends LitElement {
                       <span class="comma">,</span>
                     </span>
                     <span class="date-container">
+                      <span>${this._dateNumber}</span>
                       <span class="month">${this._monthName}</span>
-                      <span class="date-value">
-                        <span>${this._dateNumber}</span>
-                        <span class="comma">,</span>
-                      </span>
                     </span>
                     <span class="year">${this._year}</span>
                   </div>
@@ -135,7 +132,6 @@ export class ObcEventList extends LitElement {
               </div>
             `
           : nothing}
-        <div class="spacer"></div>
         <div class="content-container">
           <div class="event-container" role="list" aria-label="Events">
             ${repeat(

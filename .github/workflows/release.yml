@@ -1,70 +1,136 @@
-name: Publish to NPM
+name: Publish Stable to NPM (Manual)
+
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Version bump type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      commit_message:
+        description: 'Optional commit message override'
+        required: false
+        default: ''
+        type: string
 
 jobs:
   release:
+    if: github.ref == 'refs/heads/stable'
     runs-on: ubuntu-latest
     permissions:
       id-token: write
-      contents: read
+      contents: write
       packages: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: stable
 
       - name: Set up Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: "24"
           registry-url: "https://registry.npmjs.org/"
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Append timestamp to version
+      - name: Compute next stable version
         working-directory: ./packages/openbridge-webcomponents
+        env:
+          BUMP: ${{ inputs.bump }}
         run: |
-          TIMESTAMP=$(date +"%Y%m%d%H%M%S")
-          jq --arg TIMESTAMP "$TIMESTAMP" '.version = "0.0." + $TIMESTAMP' package.json > package.tmp.json && mv package.tmp.json package.json
+          CURRENT_VERSION=$(node -e "console.log(require('./package.json').version)")
+          echo "[next-stable-version] Current version: $CURRENT_VERSION"
+          
+          NEXT_VERSION=$(node -e "
+            const semver = require('semver');
+            const current = '$CURRENT_VERSION';
+            const bump = '${{ env.BUMP }}';
+            
+            // Cap major bumps to minor (keep below 1.0.0)
+            let finalBump = bump;
+            if (bump === 'major' && semver.major(current) < 1) {
+              console.error('[next-stable-version] Capping major bump to minor (version constraint: keep below 1.0.0)');
+              finalBump = 'minor';
+            }
+            
+            const next = semver.inc(current, finalBump);
+            console.log(next);
+          ")
+          
+          echo "VERSION=$NEXT_VERSION" >> $GITHUB_ENV
+          echo "TAG=v$NEXT_VERSION" >> $GITHUB_ENV
+          echo "[next-stable-version] Next version: $NEXT_VERSION"
 
-      - name: Publish core to NPM
+      - name: Set version in package.json files
         working-directory: ./packages/openbridge-webcomponents
+        env:
+          VERSION: ${{ env.VERSION }}
         run: |
-          npm publish --access public
+          npm version ${{ env.VERSION }} --no-git-tag-version
 
       - name: Build and generate wrappers
         working-directory: ./packages/openbridge-webcomponents
-        run: |
-          npm run build:full
+        run: npm run build:full
 
       - name: Install wrapper dependencies
-        working-directory: .
         run: npm install
 
-      - name: Publish vue wrapper to NPM
+      - name: Publish core to NPM
+        working-directory: ./packages/openbridge-webcomponents
+        run: npm publish --tag latest --access public
+
+      - name: Publish Vue wrapper to NPM
         working-directory: ./packages/openbridge-webcomponents-vue
         run: |
-          npm run build
-          npm publish --access public
+         npm run build
+         npm publish --tag latest --access public
 
-      - name: Publish svelte wrapper to NPM
+      - name: Publish Svelte wrapper to NPM
         working-directory: ./packages/openbridge-webcomponents-svelte
         run: |
-          npm run build
-          npm publish --access public
+         npm run build
+         npm publish --tag latest --access public
 
-      - name: Publish react wrapper to NPM
+      - name: Publish React wrapper to NPM
         working-directory: ./packages/openbridge-webcomponents-react
         run: |
-          npm run build
-          npm publish --access public
+         npm run build
+         npm publish --tag latest --access public
 
-      - name: Publish angular wrapper to NPM
+      - name: Publish Angular wrapper to NPM
         working-directory: ./packages/openbridge-webcomponents-ng
         run: |
-          npm publish --access public
+         npm run build
+         cd dist
+         npm publish --tag latest --access public
+         
 
+      - name: Commit version and changelog
+        env:
+          INPUT_COMMIT_MESSAGE: ${{ inputs.commit_message }}
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add packages/openbridge-webcomponents/package.json packages/openbridge-webcomponents-*/package.json
+          COMMIT_MESSAGE="$INPUT_COMMIT_MESSAGE"
+          if [ -z "$COMMIT_MESSAGE" ]; then
+            COMMIT_MESSAGE="chore(release): $VERSION [skip ci]"
+          fi
+          git commit -m "$COMMIT_MESSAGE"
+
+      - name: Create and push git tag
+        env:
+          TAG: ${{ env.TAG }}
+        run: |
+          git tag ${{ env.TAG }}
+          git push origin stable --follow-tags

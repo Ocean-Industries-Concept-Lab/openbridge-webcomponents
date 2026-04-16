@@ -77,14 +77,37 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      # During the npm release phase we update the version number.
+      # This can give dependencies issues as the wrapper package are dependent on the core package.
+      # Earlier the npm release action failed during "npm install" as the core package had a 
+      # different version number than what was in package-lock.json.
+      - name: Append timestamp to version, to simulate a new release
+        working-directory: ./packages/openbridge-webcomponents
+        run: |
+          TIMESTAMP=$(date +"%Y%m%d%H%M%S")
+          jq --arg TIMESTAMP "$TIMESTAMP" '.version = "0.0." + $TIMESTAMP' package.json > package.tmp.json && mv package.tmp.json package.json
+
+
       - name: Build openbridge-webcomponents
         run: cd packages/openbridge-webcomponents && npm run build:full
+
+      - name: Install wrapper dependencies
+        run: npm install
 
       - name: Build openbridge-webcomponents-vue
         run: cd packages/openbridge-webcomponents-vue && npm run build
 
+      - name: Build vue-demo
+        run: cd packages/vue-demo && npm run build
+
       - name: Build openbridge-webcomponents-react
         run: cd packages/openbridge-webcomponents-react && npm run build
 
-      - name: Build vue-demo
-        run: cd packages/vue-demo && npm run build
+      - name: Build openbridge-webcomponents-svelte
+        run: cd packages/openbridge-webcomponents-svelte && npm run build
+
+      - name: Build openbridge-webcomponents-ng
+        run: cd packages/openbridge-webcomponents-ng && npm run build
+
+      

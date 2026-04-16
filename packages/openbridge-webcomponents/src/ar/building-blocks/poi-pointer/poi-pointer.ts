@@ -87,10 +87,10 @@ const BOX_FILTER_DEADBAND_PX = 0.25;
  */
 @customElement('obc-poi-pointer')
 export class ObcPoiPointer extends LitElement {
-  @property({type: String, reflect: true})
+  @property({type: String})
   type: ObcPoiPointerType = ObcPoiPointerType.Point;
 
-  @property({type: String, reflect: true})
+  @property({type: String})
   state: ObcPoiPointerState = ObcPoiPointerState.Regular;
 
   @property({type: Number, attribute: 'box-width'})
@@ -456,6 +456,7 @@ export class ObcPoiPointer extends LitElement {
           point: this.type === ObcPoiPointerType.Point,
           button: this.type === ObcPoiPointerType.Button,
           camera: this.type === ObcPoiPointerType.Camera,
+          [`state-${this.state}`]: true,
         })}
         style=${this.wrapperStyle ?? nothing}
       >

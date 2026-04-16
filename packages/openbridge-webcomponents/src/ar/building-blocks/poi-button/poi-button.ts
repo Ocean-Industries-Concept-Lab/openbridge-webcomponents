@@ -131,15 +131,15 @@ export interface ObcPoiButtonDataItem {
 export class ObcPoiButton extends LitElement {
   @property({type: Number}) relativeDirection = 0;
   @property({type: Boolean}) selected = false;
-  @property({type: String, reflect: true}) layout: ObcPoiButtonLayout =
+  @property({type: String}) layout: ObcPoiButtonLayout =
     ObcPoiButtonLayout.Anchored;
-  @property({type: Boolean, reflect: true, attribute: 'has-header'})
+  @property({type: Boolean})
   hasHeader = false;
-  @property({type: String, reflect: true})
+  @property({type: String})
   state: ObcPoiButtonState = ObcPoiButtonState.Enabled;
-  @property({type: String, reflect: true})
+  @property({type: String})
   value: PoiButtonVisualState = PoiButtonVisualState.Unchecked;
-  @property({type: Boolean, reflect: true, attribute: 'overlap-opaque'})
+  @property({type: Boolean})
   overlapOpaque = false;
   @property({type: String}) type = ObcPoiButtonType.Button;
   @property({type: Boolean}) inExpandedGroup = false;
@@ -355,6 +355,9 @@ export class ObcPoiButton extends LitElement {
           selected: this.selected,
           [`alert-${this.alertClassSuffix}`]: true,
           [`type-${this.type}`]: true,
+          [`value-${this.value}`]: true,
+          [`layout-${this.layout}`]: true,
+          'overlap-opaque': this.overlapOpaque,
           expanded: this.inExpandedGroup,
           ...this.wrapperVariantClasses,
         })}
@@ -381,6 +384,9 @@ export class ObcPoiButton extends LitElement {
             (this.hasHeaderContent || this.hasGeneratedHeaderContent),
           [`alert-${this.alertClassSuffix}`]: true,
           [`type-${this.type}`]: true,
+          [`value-${this.value}`]: true,
+          [`layout-${this.layout}`]: true,
+          'overlap-opaque': this.overlapOpaque,
           expanded: this.inExpandedGroup,
           ...this.wrapperVariantClasses,
         })}

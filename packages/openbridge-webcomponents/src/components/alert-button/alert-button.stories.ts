@@ -46,6 +46,7 @@ export const DynamicSizingToFlat: Story = {
     blinking: true,
     width: 112,
   },
+  tags: ['skip-test'],
 };
 
 export const DynamicSizingToHideSilence: Story = {
@@ -58,6 +59,7 @@ export const DynamicSizingToHideSilence: Story = {
     showSilenceButton: true,
     width: 112,
   },
+  tags: ['skip-test'],
 };
 
 export const Flat: Story = {

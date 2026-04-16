@@ -36,7 +36,7 @@
   & .footer {
     display: flex;
     flex-direction: column;
-    border-top: 1px solid var(--border-outline-color, rgba(0, 0, 0, 0.08));
+    border-top: 1px solid var(--border-outline-color);
     flex: 0;
   }
 
@@ -47,8 +47,8 @@
   }
 }
 
-.full .footer nav {
-  border-bottom: 1px solid var(--border-outline-color, rgba(0, 0, 0, 0.08));
+.full .footer.has-footer nav {
+  border-bottom: 1px solid var(--border-outline-color);
 }
 
 .full .logo {

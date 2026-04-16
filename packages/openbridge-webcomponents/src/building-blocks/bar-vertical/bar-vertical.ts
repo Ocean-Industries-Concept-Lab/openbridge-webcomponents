@@ -75,10 +75,12 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
   @property({type: Number}) height = 320;
 
   /** Padding above the drawing area */
-  @property({type: Number}) paddingTop = CHART_DIMENSIONS.CANVAS_PADDING;
+  @property({type: Number}) paddingTop: number =
+    CHART_DIMENSIONS.CANVAS_PADDING;
 
   /** Padding below the drawing area */
-  @property({type: Number}) paddingBottom = CHART_DIMENSIONS.CANVAS_PADDING;
+  @property({type: Number}) paddingBottom: number =
+    CHART_DIMENSIONS.CANVAS_PADDING;
 
   /** Which side this scale lives on */
   @property({type: String}) side: ExternalScaleSide = ExternalScaleSide.right;
