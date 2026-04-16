@@ -478,6 +478,7 @@ export class ObcTwoStepAction extends LitElement {
     const isArmed = this.state === ObcTwoStepActionState.armed;
     const isActive = this.state === ObcTwoStepActionState.active;
     const actionLabel = this.getActionLabelText();
+    const ariaLabel = actionLabel || 'Action';
 
     return html`
       <obc-button
@@ -488,7 +489,7 @@ export class ObcTwoStepAction extends LitElement {
         ?disabled=${this.disabled}
         @click=${this.handleClick}
         part="wrapper"
-        aria-label=${actionLabel}
+        aria-label=${ariaLabel}
         aria-pressed=${isActive ? 'true' : 'false'}
       >
         <div class="visible-wrapper" part="visible-wrapper">

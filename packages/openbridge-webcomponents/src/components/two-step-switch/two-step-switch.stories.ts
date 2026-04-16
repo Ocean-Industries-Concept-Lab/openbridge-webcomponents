@@ -58,6 +58,5 @@ export default meta;
 type Story = StoryObj<TwoStepSwitchStoryArgs>;
 
 export const Default: Story = {
-  name: 'Default',
   args: {},
 };

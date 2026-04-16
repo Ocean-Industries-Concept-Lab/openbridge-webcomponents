@@ -43,6 +43,5 @@ export default meta;
 type Story = StoryObj<CriticalActionStoryArgs>;
 
 export const Default: Story = {
-  name: 'Default',
   args: {},
 };
