@@ -1,9 +1,14 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {property, state} from 'lit/decorators.js';
+import {property, query, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import componentStyle from './readout.css?inline';
 import {customElement} from '../../decorator.js';
-import '../../components/context-menu/context-menu.js';
+import '../../components/context-menu-input/context-menu-input.js';
+import {
+  ContextMenuType,
+  type ContextMenuOption,
+  type ObcContextMenuInputItemClickEvent,
+} from '../../components/context-menu-input/context-menu-input.js';
 import '../../icons/icon-input-right.js';
 import '../../icons/icon-placeholder.js';
 import {
@@ -180,6 +185,11 @@ export class ObcReadout extends LitElement {
 
   @state() private sourcePickerContentVisible = false;
 
+  @state() private sourcePickerOptions: ContextMenuOption[] = [];
+
+  @query('slot[name="src-picker-content"]')
+  private sourcePickerSlot?: HTMLSlotElement;
+
   private get isHorizontal() {
     return this.direction === ReadoutDirection.horizontal;
   }
@@ -224,6 +234,82 @@ export class ObcReadout extends LitElement {
       ? ReadoutSourceType.small
       : ReadoutSourceType.regular;
   }
+
+  private getSourcePickerNavigationItems() {
+    const assignedElements =
+      this.sourcePickerSlot?.assignedElements({flatten: true}) ?? [];
+
+    return assignedElements.flatMap((element) => {
+      if (!(element instanceof HTMLElement)) {
+        return [];
+      }
+
+      if (element.localName === 'obc-navigation-item') {
+        return [element];
+      }
+
+      return Array.from(element.querySelectorAll('obc-navigation-item'));
+    });
+  }
+
+  private createSourcePickerOptionIcon(element: HTMLElement) {
+    const iconElement = element.querySelector('[slot="icon"]');
+
+    if (!(iconElement instanceof HTMLElement)) {
+      return undefined;
+    }
+
+    return html`${iconElement.cloneNode(true)}`;
+  }
+
+  private getSourcePickerItemInfo(item: HTMLElement, index: number) {
+    const itemWithValues = item as HTMLElement & {
+      label?: string;
+      value?: string;
+    };
+    const itemLabel = itemWithValues.label || item.getAttribute('label') || '';
+    const itemValue =
+      item.getAttribute('data-value') ||
+      itemWithValues.value ||
+      item.getAttribute('value') ||
+      itemLabel ||
+      `source-option-${index}`;
+
+    return {itemLabel, itemValue};
+  }
+
+  private findSourcePickerOptionElement(value: string) {
+    const navigationItems = this.getSourcePickerNavigationItems();
+    for (const [index, item] of navigationItems.entries()) {
+      const {itemValue} = this.getSourcePickerItemInfo(item, index);
+      if (itemValue === value) {
+        return item;
+      }
+    }
+    return undefined;
+  }
+
+  private syncSourcePickerOptions() {
+    const navigationItems = this.getSourcePickerNavigationItems();
+
+    this.sourcePickerOptions = navigationItems.map((item, index) => {
+      const {itemLabel, itemValue} = this.getSourcePickerItemInfo(item, index);
+
+      return {
+        value: itemValue,
+        label: itemLabel,
+        icon: this.createSourcePickerOptionIcon(item),
+      };
+    });
+  }
+
+  private handleSourcePickerItemClick(
+    event: ObcContextMenuInputItemClickEvent
+  ) {
+    this.findSourcePickerOptionElement(event.detail.value)?.click();
+    this.sourcePickerContentVisible = false;
+  }
+
   private renderAdvice() {
     if (!this.hasAdvice) {
       return nothing;
@@ -354,12 +440,23 @@ export class ObcReadout extends LitElement {
     }
 
     return html`
-      <obc-context-menu
+      <obc-context-menu-input
+        .type=${ContextMenuType.Regular}
+        .options=${this.sourcePickerOptions}
+        .selectedValues=${this.src ? [this.src] : []}
         class="source-picker-content"
-        @click=${() => (this.sourcePickerContentVisible = false)}
-      >
-        <slot name="src-picker-content"></slot>
-      </obc-context-menu>
+        @item-click=${this.handleSourcePickerItemClick}
+      ></obc-context-menu-input>
+    `;
+  }
+
+  private renderSourcePickerSlot() {
+    return html`
+      <slot
+        name="src-picker-content"
+        hidden
+        @slotchange=${this.syncSourcePickerOptions}
+      ></slot>
     `;
   }
 
@@ -492,6 +589,7 @@ export class ObcReadout extends LitElement {
         ${!this.labelOnly && this.isHorizontal
           ? this.renderHorizontalLayout()
           : nothing}
+        ${this.renderSourcePickerSlot()}
       </div>
       ${this.renderSourcePickerContent()}
     `;

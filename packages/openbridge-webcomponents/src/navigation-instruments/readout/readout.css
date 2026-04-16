@@ -143,7 +143,7 @@
 
     &.stack {
       .readout-inline-value-wrapper > obc-readout-input {
-        display: inline;
+        display: inline-flex;
         padding-inline: var(--instrument-components-readout-padding-horizontal);
       }
 
@@ -477,7 +477,5 @@
     anchor(bottom) + var(--instrument-components-readout-padding-vertical)
   );
   left: anchor(left);
-  --obc-context-menu-width: anchor-size(width);
-  --obc-context-menu-min-width: anchor-size(width);
   z-index: 1;
 }
