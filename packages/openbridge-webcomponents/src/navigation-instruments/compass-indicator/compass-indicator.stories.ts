@@ -1,20 +1,34 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
-  CompassIndicatorArrow,
+  CompassIndicatorDirection,
+  CompassIndicatorType,
   ObcCompassIndicator,
 } from './compass-indicator.js';
 import './compass-indicator.js';
 
 const meta: Meta<typeof ObcCompassIndicator> = {
-  title: 'Indicators/Compass Indicator',
-  tags: ['6.0'],
+  title: 'Indicators/Conning Compass Indicator',
+  tags: ['autodocs', '6.0'],
   component: 'obc-compass-indicator',
+  parameters: {
+    layout: 'centered',
+  },
   args: {
-    angle: 45,
+    angle: 315,
+    type: CompassIndicatorType.Regular,
+    direction: CompassIndicatorDirection.Heading,
   },
   argTypes: {
     angle: {
       control: {type: 'range', min: 0, max: 360, step: 1},
+    },
+    type: {
+      control: 'select',
+      options: Object.values(CompassIndicatorType),
+    },
+    direction: {
+      control: 'select',
+      options: Object.values(CompassIndicatorDirection),
     },
   },
 } satisfies Meta<ObcCompassIndicator>;
@@ -22,28 +36,50 @@ const meta: Meta<typeof ObcCompassIndicator> = {
 export default meta;
 type Story = StoryObj<ObcCompassIndicator>;
 
-export const Heading: Story = {
+export const RegularHeading: Story = {
   args: {
-    arrow: CompassIndicatorArrow.Heading,
+    type: CompassIndicatorType.Regular,
+    direction: CompassIndicatorDirection.Heading,
+    angle: 45,
   },
 };
 
-export const HeadingNorthUp: Story = {
+export const RegularCourse: Story = {
   args: {
-    arrow: CompassIndicatorArrow.Heading,
-    northUp: true,
+    type: CompassIndicatorType.Regular,
+    direction: CompassIndicatorDirection.Course,
+    angle: 45,
   },
 };
 
-export const Course: Story = {
+export const RegularNorth: Story = {
   args: {
-    arrow: CompassIndicatorArrow.Course,
+    type: CompassIndicatorType.Regular,
+    direction: CompassIndicatorDirection.North,
+    angle: 315,
   },
 };
 
-export const CourseNorthUp: Story = {
+export const LabeledHeading: Story = {
   args: {
-    arrow: CompassIndicatorArrow.Course,
-    northUp: true,
+    type: CompassIndicatorType.Labeled,
+    direction: CompassIndicatorDirection.Heading,
+    angle: 0,
+  },
+};
+
+export const LabeledCourse: Story = {
+  args: {
+    type: CompassIndicatorType.Labeled,
+    direction: CompassIndicatorDirection.Course,
+    angle: 0,
+  },
+};
+
+export const LabeledNorth: Story = {
+  args: {
+    type: CompassIndicatorType.Labeled,
+    direction: CompassIndicatorDirection.North,
+    angle: 315,
   },
 };
