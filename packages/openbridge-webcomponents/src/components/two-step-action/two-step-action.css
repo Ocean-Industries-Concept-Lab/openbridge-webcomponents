@@ -6,17 +6,22 @@
   display: inline-flex;
 }
 
+obc-button.wrapper {
+  &::part(wrapper) {
+    max-width: 100%;
+  }
+  &::part(visible-wrapper),
+  &::part(label) {
+    display: contents;
+  }
+}
+
 .wrapper {
-  --obc-two-step-swipe-preview-in-delay: 140ms;
-  --obc-two-step-swipe-preview-in-duration: 780ms;
-  --obc-two-step-armed-preview-nudge-duration-factor: 2;
-  --obc-two-step-armed-preview-nudge-duration: calc(
-    var(--obc-two-step-duration-slide) *
-      var(--obc-two-step-armed-preview-nudge-duration-factor)
-  );
-  --obc-two-step-armed-preview-nudge-easing: cubic-bezier(0.22, 1, 0.36, 1);
-  --obc-two-step-armed-preview-nudge-delay: 0s;
+  --armed-hint-duration: 1600ms;
+  --thumb-drag-x: 0px;
+  --obc-two-step-thumb-drag-growth-factor: 0.4146;
   height: var(--ui-components-button-touch-target-size);
+  width: 130px;
   max-width: 130px;
   padding: 0;
   background: transparent;
@@ -27,7 +32,7 @@
     @mixin style style=normal visibleWrapperClass=.thumb-visible;
   }
 
-  &:disabled {
+  &[disabled] {
     cursor: default;
 
     .visible-wrapper {
@@ -56,17 +61,12 @@
 
     .thumb-visible,
     .active-label,
-    .switch-secondary-control,
     .icon {
       color: var(--on-normal-disabled-color);
     }
   }
 
-  &:disabled .visible-wrapper .segments-track .thumb-container .thumb-visible {
-    color: var(--on-normal-disabled-color);
-  }
-
-  &:not(:disabled) .state-container-label {
+  &:not([disabled]) .state-container-label {
     color: var(--on-indent-active-color);
   }
 
@@ -74,7 +74,7 @@
     display: flex;
     align-items: center;
     position: relative;
-    isolation: isolate;
+    height: var(--ui-components-button-visual-size);
     border-radius: var(--ui-components-button-border-radius);
     overflow: hidden;
     transition:
@@ -110,11 +110,11 @@
       flex: 0 0 auto;
       display: flex;
       align-items: center;
+      height: var(--ui-components-button-visual-size);
       transform: translateX(
         calc(-1 * var(--global-size-spacing-touch-target-min))
       );
       transition: none;
-      will-change: transform;
 
       .thumb-preview,
       .thumb-container {
@@ -221,7 +221,6 @@
           padding: 0 var(--ui-components-button-padding-horizontal);
           white-space: nowrap;
           overflow: hidden;
-          text-overflow: ellipsis;
           color: inherit;
         }
 
@@ -312,7 +311,6 @@
       color: var(--on-raised-active-color);
       white-space: nowrap;
       overflow: hidden;
-      text-overflow: ellipsis;
       pointer-events: none;
       opacity: 0;
       transform: translateX(
@@ -349,27 +347,18 @@
     }
   }
 
-  &.variant-two-step-action {
+  &.state-enabled,
+  &.state-armed {
     .visible-wrapper {
-      height: var(--ui-components-button-visual-size);
-
-      .segments-track {
-        height: var(--ui-components-button-visual-size);
-      }
+      @mixin style style=indent noClick;
+      border-width: 0;
+      border-color: transparent;
+      box-shadow: none;
     }
-  }
 
-  &.state-enabled .visible-wrapper,
-  &.state-armed .visible-wrapper {
-    @mixin style style=indent noClick;
-    border-width: 0;
-    border-color: transparent;
-    box-shadow: none;
-  }
-
-  &.state-enabled .visible-wrapper::before,
-  &.state-armed .visible-wrapper::before {
-    border-width: var(--ui-components-button-stroke-weight);
+    .visible-wrapper::before {
+      border-width: var(--ui-components-button-stroke-weight);
+    }
   }
 
   &.state-armed .visible-wrapper::before {
@@ -381,7 +370,6 @@
 
   &.state-active {
     .visible-wrapper {
-      background: transparent;
       border-color: transparent;
 
       .active-layer {
@@ -444,116 +432,89 @@
     transform: translateX(0);
   }
 
-  &.state-enabled.thumb-dragging .visible-wrapper .segments-track {
-    transform: translateX(
-      calc(var(--thumb-drag-x) - var(--global-size-spacing-touch-target-min))
-    );
+  &.state-enabled {
+    &.thumb-dragging .visible-wrapper .segments-track {
+      transform: translateX(
+        calc(var(--thumb-drag-x) - var(--global-size-spacing-touch-target-min))
+      );
+    }
+
+    &.thumb-dragging .visible-wrapper .segments-track .thumb-preview {
+      opacity: 0;
+      transition: none;
+    }
+
+    &:active .visible-wrapper .segments-track .thumb-container {
+      border-color: var(--normal-enabled-border-color);
+    }
+
+    &.thumb-dragging .visible-wrapper .segments-track .thumb-container {
+      background: var(--normal-enabled-background-color);
+      border-color: var(--normal-enabled-border-color);
+      box-shadow: none;
+      width: clamp(
+        var(--global-size-spacing-touch-target-min),
+        calc(
+          var(--global-size-spacing-touch-target-min) +
+            (var(--thumb-drag-x) * var(--obc-two-step-thumb-drag-growth-factor))
+        ),
+        calc(
+          130px - var(--thumb-drag-x) -
+            var(--ui-components-button-stroke-weight)
+        )
+      );
+    }
+
+    &.label-bounce {
+      .visible-wrapper {
+        .segments-track {
+          .thumb-container,
+          .state-container {
+            animation: two-step-bounce-right 220ms cubic-bezier(0, 0, 0, 0.99);
+          }
+        }
+      }
+    }
   }
 
-  &.state-armed.armed-slide .visible-wrapper .segments-track,
-  &.state-enabled.disarm-slide .visible-wrapper .segments-track {
-    transition: transform var(--obc-two-step-duration-slide)
-      cubic-bezier(0.22, 1, 0.36, 1);
-  }
+  &.state-armed {
+    .visible-wrapper .segments-track .thumb-preview::after {
+      opacity: 0;
+    }
 
-  &.state-enabled.thumb-dragging
-    .visible-wrapper
-    .segments-track
-    .thumb-preview {
-    opacity: 0;
-    transition: none;
-  }
+    .visible-wrapper .segments-track .thumb-preview .thumb-visible {
+      animation: two-step-armed-preview-content-nudge 1760ms
+        cubic-bezier(0.22, 1, 0.36, 1) 0s both;
+    }
 
-  &.state-armed .visible-wrapper .segments-track .thumb-preview::after {
-    opacity: 0;
-  }
+    .visible-wrapper .segments-track .thumb-container {
+      width: calc(130px - var(--global-size-spacing-touch-target-min));
+      opacity: 1;
+    }
 
-  &.state-armed .visible-wrapper .segments-track .thumb-preview .thumb-visible {
-    animation: two-step-armed-preview-content-nudge
-      var(--obc-two-step-armed-preview-nudge-duration)
-      var(--obc-two-step-armed-preview-nudge-easing)
-      var(--obc-two-step-armed-preview-nudge-delay) both;
-  }
+    &.armed-hint .visible-wrapper .segments-track .thumb-container {
+      margin-inline-start: 0;
+    }
 
-  &.state-armed .visible-wrapper .segments-track .thumb-container {
-    width: calc(130px - var(--global-size-spacing-touch-target-min));
-    opacity: 1;
-  }
+    &.armed-hint
+      .visible-wrapper
+      .segments-track
+      .thumb-container
+      .thumb-visible {
+      background-color: var(--base-cyan-100);
+      border-color: var(--base-cyan-200);
+      border-width: var(--ui-components-button-stroke-weight);
+      box-shadow: none;
+      animation: armed-hint-fade var(--armed-hint-duration) ease-out both;
+    }
 
-  &.state-enabled:active .visible-wrapper .segments-track .thumb-container {
-    border-color: var(--normal-enabled-border-color);
-  }
+    .visible-wrapper .segments-track .thumb-container .thumb-visible {
+      color: var(--on-normal-active-color);
+    }
 
-  &.state-enabled.thumb-dragging
-    .visible-wrapper
-    .segments-track
-    .thumb-container {
-    background: var(--normal-enabled-background-color);
-    border-color: var(--normal-enabled-border-color);
-    box-shadow: none;
-    width: clamp(
-      var(--global-size-spacing-touch-target-min),
-      calc(
-        var(--global-size-spacing-touch-target-min) +
-          (var(--thumb-drag-x) * var(--obc-two-step-thumb-drag-growth-factor))
-      ),
-      calc(
-        130px - var(--thumb-drag-x) - var(--ui-components-button-stroke-weight)
-      )
-    );
-  }
-
-  &.state-enabled.label-bounce
-    .visible-wrapper
-    .segments-track
-    .thumb-container {
-    animation: two-step-bounce-right 220ms cubic-bezier(0, 0, 0, 0.99);
-  }
-
-  &.state-armed.armed-slide .visible-wrapper .segments-track .thumb-container,
-  &.state-enabled.disarm-slide
-    .visible-wrapper
-    .segments-track
-    .thumb-container {
-    transition:
-      width var(--obc-two-step-duration-slide) cubic-bezier(0.22, 1, 0.36, 1),
-      opacity var(--obc-two-step-duration-slide) cubic-bezier(0.22, 1, 0.36, 1),
-      transform 150ms cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  &.state-armed.armed-hint .visible-wrapper .segments-track .thumb-container {
-    margin-inline-start: 0;
-  }
-
-  &.state-armed.armed-hint
-    .visible-wrapper
-    .segments-track
-    .thumb-container
-    .thumb-visible {
-    background-color: var(--base-cyan-100);
-    border-color: var(--base-cyan-200);
-    border-width: var(--ui-components-button-stroke-weight);
-    box-shadow: none;
-    animation: armed-hint-fade var(--armed-hint-duration) ease-out both;
-  }
-
-  &.state-armed
-    .visible-wrapper
-    .segments-track
-    .thumb-container
-    .thumb-visible {
-    color: var(--on-normal-active-color);
-  }
-
-  &.state-enabled.label-bounce
-    .visible-wrapper
-    .segments-track
-    .state-container {
-    animation: two-step-bounce-right 220ms cubic-bezier(0, 0, 0, 0.99);
-  }
-
-  &.state-armed.armed-slide .visible-wrapper .segments-track .state-container {
-    pointer-events: none;
+    &.armed-slide .visible-wrapper .segments-track .state-container {
+      pointer-events: none;
+    }
   }
 
   &.state-armed .visible-wrapper .segments-track .state-container,
@@ -561,32 +522,49 @@
     padding: 0 var(--ui-components-button-padding-horizontal);
   }
 
+  &.state-enabled.disarm-slide .visible-wrapper .segments-track,
+  &.state-armed.armed-slide .visible-wrapper .segments-track {
+    transition: transform 880ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  &.state-enabled.disarm-slide
+    .visible-wrapper
+    .segments-track
+    .thumb-container,
+  &.state-armed.armed-slide .visible-wrapper .segments-track .thumb-container {
+    transition:
+      width 880ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 880ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 150ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
   &.swipe-armed-phase.state-armed {
     .visible-wrapper {
-      --obc-two-step-armed-preview-nudge-delay: var(
-        --obc-two-step-swipe-preview-in-delay
-      );
-      --obc-two-step-armed-preview-nudge-duration: calc(
-        var(--obc-two-step-swipe-preview-in-duration) *
-          var(--obc-two-step-armed-preview-nudge-duration-factor)
-      );
       transition: none;
 
       .segments-track {
+        .thumb-preview,
+        .thumb-container,
+        .thumb-container .thumb-visible .thumb-icon-layer,
+        .thumb-container .thumb-visible .thumb-label-layer {
+          transition: none;
+        }
+
+        .thumb-preview .thumb-visible {
+          animation: two-step-armed-preview-content-nudge 1560ms
+            cubic-bezier(0.22, 1, 0.36, 1) 140ms both;
+        }
+
         .thumb-preview {
           opacity: 1;
-          transition: none;
           @mixin style style=amplified noClick;
           border-width: var(--ui-components-button-stroke-weight);
           border-inline-end-width: 0;
-          animation: two-step-content-in-from-left
-            var(--obc-two-step-swipe-preview-in-duration)
-            cubic-bezier(0.22, 1, 0.36, 1)
-            var(--obc-two-step-swipe-preview-in-delay) both;
+          animation: two-step-content-in-from-left 780ms
+            cubic-bezier(0.22, 1, 0.36, 1) 140ms both;
         }
 
         .thumb-container {
-          transition: none;
           background: var(--normal-enabled-background-color);
           border-color: var(--normal-enabled-border-color);
           box-shadow: none;
@@ -598,16 +576,12 @@
             color: var(--on-normal-neutral-color);
 
             .thumb-icon-layer {
-              transition: none;
               animation: two-step-swipe-icon-out 160ms
                 cubic-bezier(0.22, 1, 0.36, 1) both;
             }
 
             .thumb-label-layer {
-              transition: none;
               opacity: 1;
-              inset: 0;
-              width: 100%;
               height: 100%;
               z-index: 3;
               animation: two-step-swipe-label-in 1000ms
@@ -622,275 +596,6 @@
               padding: 0;
               animation: none;
             }
-          }
-        }
-      }
-    }
-  }
-
-  &.variant-two-step-switch {
-    --obc-two-step-switch-track-width: 256px;
-    --obc-two-step-switch-column-width: 128px;
-    --obc-two-step-switch-wide-cyan-width: calc(
-      var(--obc-two-step-switch-column-width) + 7px
-    );
-    --obc-two-step-switch-secondary-overlap: 8px;
-
-    max-width: var(--obc-two-step-switch-track-width);
-
-    .visible-wrapper {
-      width: var(--obc-two-step-switch-track-width);
-      height: auto;
-
-      .active-label {
-        padding-inline-end: 0;
-      }
-
-      .segments-track {
-        height: auto;
-
-        .thumb-preview {
-          height: var(--ui-components-button-touch-target-size);
-          transition:
-            width var(--obc-two-step-duration-slide)
-              cubic-bezier(0.22, 1, 0.36, 1),
-            flex-basis var(--obc-two-step-duration-slide)
-              cubic-bezier(0.22, 1, 0.36, 1),
-            min-width var(--obc-two-step-duration-slide)
-              cubic-bezier(0.22, 1, 0.36, 1),
-            opacity var(--obc-two-step-duration-slide)
-              cubic-bezier(0.22, 1, 0.36, 1),
-            margin var(--obc-two-step-duration-slide)
-              cubic-bezier(0.22, 1, 0.36, 1),
-            padding var(--obc-two-step-duration-slide)
-              cubic-bezier(0.22, 1, 0.36, 1),
-            border-width 200ms cubic-bezier(0, 0, 0, 0.99);
-        }
-
-        .thumb-container {
-          height: var(--ui-components-button-touch-target-size);
-        }
-
-        .state-container .state-container-label {
-          width: fit-content;
-          max-width: 100%;
-        }
-      }
-    }
-
-    &.state-enabled.thumb-dragging
-      .visible-wrapper
-      .segments-track
-      .thumb-preview {
-      transition: none;
-    }
-
-    &.state-enabled .visible-wrapper .segments-track {
-      transform: translateX(0);
-
-      .thumb-preview {
-        flex: 0 0 0;
-        width: 0;
-        min-width: 0;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        opacity: 0;
-        border-width: 0;
-      }
-
-      .thumb-container,
-      .state-container {
-        flex: 0 0 var(--obc-two-step-switch-column-width);
-      }
-
-      .state-container {
-        height: var(--ui-components-button-touch-target-size);
-      }
-    }
-
-    &.state-enabled.thumb-dragging .visible-wrapper .segments-track {
-      transform: translateX(var(--thumb-drag-x));
-
-      .thumb-container {
-        flex: 0 0 auto;
-        width: clamp(
-          var(--obc-two-step-switch-column-width),
-          calc(
-            var(--obc-two-step-switch-column-width) +
-              (
-                var(--thumb-drag-x) *
-                  var(--obc-two-step-thumb-drag-growth-factor)
-              )
-          ),
-          calc(
-            var(--obc-two-step-switch-track-width) - var(--thumb-drag-x) -
-              var(--ui-components-button-stroke-weight)
-          )
-        );
-      }
-
-      .state-container {
-        flex: 0 0 var(--obc-two-step-switch-column-width);
-        width: var(--obc-two-step-switch-column-width);
-        min-width: 0;
-        height: var(--ui-components-button-touch-target-size);
-      }
-
-      .thumb-container.thumb-dragging + .state-container {
-        margin-inline-start: calc(
-          min(
-              calc(var(--thumb-drag-x) * 0.9),
-              calc(var(--obc-two-step-switch-column-width) * 0.65)
-            ) *
-            -1
-        );
-      }
-    }
-
-    &.state-armed .visible-wrapper .segments-track,
-    &.swipe-armed-phase.state-armed .visible-wrapper .segments-track {
-      .thumb-preview {
-        flex: 0 0 var(--obc-two-step-switch-wide-cyan-width);
-        width: var(--obc-two-step-switch-wide-cyan-width);
-        height: var(--ui-components-button-touch-target-size);
-        min-width: 0;
-        margin: 0;
-        margin-inline-end: calc(
-          var(--obc-two-step-switch-column-width) -
-            var(--obc-two-step-switch-wide-cyan-width)
-        );
-        padding: 0;
-        overflow: hidden;
-        opacity: 1;
-        border-width: var(--ui-components-button-stroke-weight);
-        border-inline-end-width: 0;
-        z-index: 4;
-      }
-
-      .thumb-preview .thumb-visible {
-        padding: 0 var(--ui-components-button-padding-horizontal);
-      }
-
-      .thumb-preview .thumb-preview-switch-pending {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: var(--ui-components-button-label-spacing);
-        max-width: 100%;
-        min-width: 0;
-      }
-
-      .thumb-preview .thumb-preview-pending-label {
-        @mixin font-button;
-        font-weight: 370;
-        white-space: nowrap;
-        color: inherit;
-      }
-
-      .thumb-container {
-        flex: 0 0 var(--obc-two-step-switch-column-width);
-        width: var(--obc-two-step-switch-column-width);
-        z-index: 5;
-      }
-
-      .state-container {
-        flex: 0 0 var(--obc-two-step-switch-column-width);
-        width: var(--obc-two-step-switch-column-width);
-        height: var(--ui-components-button-touch-target-size);
-      }
-    }
-
-    &.state-active {
-      .visible-wrapper {
-        .state-segment {
-          width: 0;
-          min-width: 0;
-          margin-inline: 0;
-          padding: 0;
-          overflow: hidden;
-          opacity: 0;
-          border-width: 0;
-        }
-
-        .switch-secondary-control {
-          @mixin font-button;
-          position: absolute;
-          inset-block: 0;
-          inset-inline-end: 0;
-          width: 0;
-          min-width: 0;
-          overflow: hidden;
-          opacity: 0;
-          z-index: 22;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          pointer-events: none;
-          box-sizing: border-box;
-          color: var(--on-normal-active-color);
-        }
-      }
-
-      &:not(.switch-secondary-phase) .visible-wrapper .active-layer {
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 100%;
-        right: auto;
-      }
-
-      &.switch-secondary-phase {
-        .visible-wrapper {
-          .switch-secondary-control {
-            @mixin style style=normal;
-            pointer-events: auto;
-            width: var(--obc-two-step-switch-column-width);
-            opacity: 1;
-            border-radius: var(--ui-components-button-border-radius);
-          }
-
-          .active-label {
-            inset-inline-end: calc(
-              var(--obc-two-step-switch-track-width) -
-                var(--obc-two-step-switch-wide-cyan-width)
-            );
-            padding-inline: var(--ui-components-button-padding-horizontal);
-          }
-        }
-      }
-
-      &.switch-secondary-slide {
-        .visible-wrapper {
-          .active-layer {
-            transition:
-              transform var(--obc-two-step-duration-slide)
-                cubic-bezier(0.22, 1, 0.36, 1),
-              opacity var(--obc-two-step-duration-slide) ease-out,
-              width var(--obc-two-step-duration-slide)
-                cubic-bezier(0.22, 1, 0.36, 1),
-              border-radius var(--obc-two-step-duration-slide)
-                cubic-bezier(0.22, 1, 0.36, 1);
-          }
-
-          .switch-secondary-control {
-            transition:
-              width var(--obc-two-step-duration-slide)
-                cubic-bezier(0.22, 1, 0.36, 1),
-              opacity var(--obc-two-step-duration-slide)
-                cubic-bezier(0.22, 1, 0.36, 1),
-              min-width var(--obc-two-step-duration-slide)
-                cubic-bezier(0.22, 1, 0.36, 1),
-              border-radius var(--obc-two-step-duration-slide)
-                cubic-bezier(0.22, 1, 0.36, 1);
-          }
-
-          .active-label {
-            transition:
-              padding-inline var(--obc-two-step-duration-slide)
-                cubic-bezier(0.22, 1, 0.36, 1),
-              inset-inline-end var(--obc-two-step-duration-slide)
-                cubic-bezier(0.22, 1, 0.36, 1);
           }
         }
       }

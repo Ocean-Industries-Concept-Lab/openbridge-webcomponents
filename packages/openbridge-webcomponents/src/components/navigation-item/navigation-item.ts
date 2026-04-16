@@ -97,6 +97,8 @@ export class ObcNavigationItem extends LitElement {
    */
   @property({type: String}) label = 'Label';
 
+  @property({type: String}) description = '';
+
   /**
    * The URL to navigate to when the item is clicked.
    * If set, the item is rendered as a link (`<a href="..." />`).
@@ -146,6 +148,7 @@ export class ObcNavigationItem extends LitElement {
     const showFlyout =
       this.group && this.variant !== ObcNavigationMenuVariant.IconOnly;
     const isCompact = this.variant === ObcNavigationMenuVariant.Compact;
+    const hasDescription = this.description.trim().length > 0;
 
     return html`
       <a
@@ -154,6 +157,7 @@ export class ObcNavigationItem extends LitElement {
           checked: this.checked,
           'group-selected': this.groupSelected && this.group,
           'has-icon': this.hasIcon,
+          'has-description': hasDescription,
           [this.variant]: true,
         })}"
         href=${ifDefined(this.href)}
@@ -168,14 +172,19 @@ export class ObcNavigationItem extends LitElement {
             ObcNavigationMenuVariant.IconOnlyLarge,
           ].includes(this.variant)
             ? html`
-                <span
-                  part="label"
-                  class=${classMap({
-                    label: true,
-                    'label-flyout': showFlyout && !isCompact,
-                  })}
-                >
-                  ${this.label}
+                <span class="label-block">
+                  <span
+                    part="label"
+                    class=${classMap({
+                      label: true,
+                      'label-flyout': showFlyout && !isCompact,
+                    })}
+                  >
+                    ${this.label}
+                  </span>
+                  ${hasDescription
+                    ? html`<span class="description">${this.description}</span>`
+                    : nothing}
                 </span>
               `
             : nothing}

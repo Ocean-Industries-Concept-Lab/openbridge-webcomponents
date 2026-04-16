@@ -40,6 +40,8 @@ export interface ContextMenuOption {
   value: string;
   /** Display label for the option. */
   label: string;
+  /** Optional secondary text shown under the label. */
+  description?: string;
   /** Optional nesting level (for hierarchical/nested options). */
   level?: number;
   /** Optional icon (TemplateResult, e.g., `<obi-placeholder slot="icon"></obi-placeholder>`). */
@@ -506,6 +508,7 @@ export class ObcContextMenuInput extends LitElement {
     >
       <obc-navigation-item
         .label=${o.label}
+        .description=${o.description ?? ''}
         .checked=${isSelected}
         .variant=${ObcNavigationMenuVariant.Full}
         @click=${(e: Event) => this.handleMenuItemClick(o, e)}
@@ -536,6 +539,7 @@ export class ObcContextMenuInput extends LitElement {
       const isSelected = this.isOptionSelected(c.value);
       return html`<obc-navigation-item
         .label=${c.label}
+        .description=${c.description ?? ''}
         .checked=${isSelected}
         .variant=${ObcNavigationMenuVariant.Full}
         @click=${(e: Event) => this.handleMenuItemClick(c, e)}
