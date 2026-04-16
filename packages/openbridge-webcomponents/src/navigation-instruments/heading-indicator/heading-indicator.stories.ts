@@ -6,7 +6,7 @@ import {
 import './heading-indicator.js';
 
 const meta: Meta<typeof ObcHeadingIndicator> = {
-  title: 'Indicators/Conning Heading Indicator',
+  title: 'Indicators/Heading Indicator',
   tags: ['autodocs', '6.0'],
   component: 'obc-heading-indicator',
   parameters: {
@@ -33,6 +33,10 @@ const meta: Meta<typeof ObcHeadingIndicator> = {
 
 export default meta;
 type Story = StoryObj<ObcHeadingIndicator>;
+
+export const Default: Story = {
+  args: {},
+};
 
 export const Hdg: Story = {
   args: {

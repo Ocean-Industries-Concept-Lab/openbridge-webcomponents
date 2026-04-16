@@ -7,7 +7,7 @@ import {
 import './compass-indicator.js';
 
 const meta: Meta<typeof ObcCompassIndicator> = {
-  title: 'Indicators/Conning Compass Indicator',
+  title: 'Indicators/Compass Indicator',
   tags: ['autodocs', '6.0'],
   component: 'obc-compass-indicator',
   parameters: {
@@ -35,6 +35,10 @@ const meta: Meta<typeof ObcCompassIndicator> = {
 
 export default meta;
 type Story = StoryObj<ObcCompassIndicator>;
+
+export const Default: Story = {
+  args: {},
+};
 
 export const RegularHeading: Story = {
   args: {
