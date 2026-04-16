@@ -4,9 +4,9 @@ The core library of the OpenBridge design system, implemented as Lit-based web c
 
 [![Slack, join chat](https://img.shields.io/badge/Slack-4A154B?style=flat&logo=slack&logoColor=white)](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ)
 
-## 🏗️ Project Status
+## 🚀 Project Status
 
-This library is currently in active development. We are gearing up for our first stable release in **Q2 2026**.
+**v1.0.0 is now released!** The code was officially opened by **Prince Sverre Magnus of Norway**, and the library is now stable and publicly available.
 
 [👉 Click here to read more about the project and the JIP.](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ)
 
