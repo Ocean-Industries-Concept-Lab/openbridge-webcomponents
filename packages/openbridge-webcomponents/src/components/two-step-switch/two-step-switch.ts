@@ -27,7 +27,7 @@ enum Phase {
   Drag = 'drag',
 }
 
-enum FlowDirection {
+export enum FlowDirection {
   Forward = 'forward',
   Backward = 'backward',
 }
