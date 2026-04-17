@@ -10,8 +10,8 @@ The core library of the OpenBridge design system, implemented as Lit-based web c
 
 We use npm tags to manage our releases:
 
-- **`latest`**: The stable, production-ready version of the library. It is updated approximately once every quarter.
-- **`next`**: The latest development version, containing new features and improvements. This version may include breaking changes and is intended for early adopters.
+- **`latest`**: The stable, production-ready version of the library. It is updated approximately once every quarter. It's based on the `stable` branch in the GitHub repository.
+- **`next`**: The latest development version, containing new features and improvements. This version may include breaking changes and is intended for early adopters. It's based on the `develop` branch in the GitHub repository.
 
 ## 🤝 Support the Project
 
@@ -119,10 +119,10 @@ For quick prototyping, you can use the bundled version:
 
 For the best experience in your framework of choice, use our auto-generated wrappers:
 
-- [`@oicl/openbridge-webcomponents-vue`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/tree/main/packages/openbridge-webcomponents-vue)
-- [`@oicl/openbridge-webcomponents-react`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/tree/main/packages/openbridge-webcomponents-react)
-- [`@oicl/openbridge-webcomponents-ng`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/tree/main/packages/openbridge-webcomponents-ng)
-- [`@oicl/openbridge-webcomponents-svelte`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/tree/main/packages/openbridge-webcomponents-svelte)
+- [`@oicl/openbridge-webcomponents-vue`](https://www.npmjs.com/package/@oicl/openbridge-webcomponents-vue)
+- [`@oicl/openbridge-webcomponents-react`](https://www.npmjs.com/package/@oicl/openbridge-webcomponents-react)
+- [`@oicl/openbridge-webcomponents-ng`](https://www.npmjs.com/package/@oicl/openbridge-webcomponents-ng)
+- [`@oicl/openbridge-webcomponents-svelte`](https://www.npmjs.com/package/@oicl/openbridge-webcomponents-svelte)
 
 ## 💬 Slack
 
@@ -132,4 +132,4 @@ For the best experience in your framework of choice, use our auto-generated wrap
 
 ## 👫 Contributing
 
-Contributions are welcome! Please see the [root README](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/blob/main/README.md) and [CONTRIBUTING.md](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/blob/main/CONTRIBUTING.md) for development instructions.
+Contributions are welcome! Please see the [root README](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/blob/stable/README.md) and [CONTRIBUTING.md](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/blob/stable/CONTRIBUTING.md) for development instructions.

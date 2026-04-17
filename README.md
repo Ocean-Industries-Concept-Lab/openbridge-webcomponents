@@ -36,7 +36,7 @@ We will **always remain open source**, but we have evolved our model to ensure c
 
 ### How it works:
 
-Under the new model, each release follows a "delayed" permissive license cycle:
+Under the new model, each release, both based on `develop` and `stable` branch, follows a "delayed" permissive license cycle:
 
 1.  **Initial Release:** Each new version is licensed under **AGPL** for the first 6 months.
 2.  **Transition:** After 6 months, the license for that specific version automatically switches to **Apache 2.0**.
@@ -62,14 +62,6 @@ We have made a [short introduction to the library](https://www.youtube.com/watch
 <a href="https://www.youtube.com/watch?feature=player_embedded&v=5DiEA4voqzI" target="_blank">
  <img src="https://img.youtube.com/vi/5DiEA4voqzI/0.jpg" alt="Watch the video: Intro to OpenBridge Web Components" width="480" height="360" />
 </a>
-
-## 📋 Table of Contents
-
-- [Monorepo Structure](#-monorepo-structure)
-- [Storybook & Demo](#-storybook--demo)
-- [Getting Started (Development)](#-getting-started-development)
-- [Contributing](#-contributing)
-- [Documentation Index](#-documentation-index)
 
 ## 📂 Monorepo Structure
 

@@ -18,8 +18,8 @@ This package is **automatically generated** from the [core library](https://gith
 
 We use npm tags to manage our releases:
 
-- **`latest`**: The stable, production-ready version of the library. It is updated approximately once every quarter.
-- **`next`**: The latest development version, containing new features and improvements. This version may include breaking changes and is intended for early adopters.
+- **`latest`**: The stable, production-ready version of the library. It is updated approximately once every quarter. It's based on the `stable` branch in the GitHub repository.
+- **`next`**: The latest development version, containing new features and improvements. This version may include breaking changes and is intended for early adopters. It's based on the `develop` branch in the GitHub repository.
 
 ## 🤝 Support the Project
 
