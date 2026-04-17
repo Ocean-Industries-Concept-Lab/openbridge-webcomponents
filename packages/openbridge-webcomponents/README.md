@@ -6,12 +6,12 @@ The core library of the OpenBridge design system, implemented as Lit-based web c
 
 **v1.0.0 is now released!** The code was officially opened by **Prince Sverre Magnus of Norway**, and the library is now stable and publicly available.
 
-## 🌿 Branching Strategy
+## 🏷️ Tag Strategy
 
-We use two main branches to manage our development:
+We use npm tags to manage our releases:
 
-- **`develop`**: This is the active development branch. It contains the latest changes and features. Note that this branch may include breaking changes and is intended for contributors and early adopters. Releases based on this branch are tagged as `next` on [npm](https://www.npmjs.com/package/@oicl/openbridge-webcomponents).
-- **`stable`**: This branch contains the stable, production-ready version of the library. It is updated from the `develop` branch approximately once every quarter. Releases based on this branch are tagged as `latest` on [npm](https://www.npmjs.com/package/@oicl/openbridge-webcomponents).
+- **`latest`**: The stable, production-ready version of the library. It is updated approximately once every quarter.
+- **`next`**: The latest development version, containing new features and improvements. This version may include breaking changes and is intended for early adopters.
 
 ## 🤝 Support the Project
 
