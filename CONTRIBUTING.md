@@ -69,7 +69,7 @@ Once you've made your changes, add them to the branch. Use [Conventional Commits
 
 ```
 git add .
-git commit -m "feat: Add some feature"
+git commit -m "feat: add some feature"
 ```
 
 #### Push to Your Fork
@@ -88,7 +88,7 @@ Go to the repository on GitHub, and you'll see a prompt to submit a pull request
 We enforce [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for Pull Request titles. An automated check will validate your PR title. If it doesn't follow the rules, the check will fail.
 
 Examples:
-- `feat: Add new button component`
+- `feat: add new button component`
 - `fix: resolve gauge alignment issue`
 - `feat!: breaking change in the component API` (use `!` for breaking changes)
 
