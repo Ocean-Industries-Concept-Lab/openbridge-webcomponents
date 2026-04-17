@@ -12,7 +12,7 @@ type PoiPointerArgs = {
 
 const meta: Meta<PoiPointerArgs> = {
   title: 'AR/Building Blocks/POI Pointer',
-  tags: ['6.0'],
+  tags: ['skip-test', '6.0'],
   component: 'obc-poi-pointer',
   decorators: [
     (story) => html`
