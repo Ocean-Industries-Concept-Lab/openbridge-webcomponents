@@ -2,11 +2,8 @@
   display: inline-block;
   position: relative;
 
-  --obc-poi-pointer-active: var(--overlay-element-active-color, #fff);
-  --obc-poi-pointer-neutral: var(
-    --overlay-element-neutral-color,
-    rgb(255 255 255 / 0.59)
-  );
+  --obc-poi-pointer-active: var(--overlay-element-active-color);
+  --obc-poi-pointer-neutral: var(--overlay-element-neutral-color);
   --obc-poi-pointer-camera-selection-width: 64px;
   --obc-poi-pointer-camera-selection-height: 56px;
   width: 32px;
@@ -136,7 +133,8 @@
 }
 
 .wrapper > .camera.regular {
-  border: 1px solid rgb(255 255 255 / 0.5);
+  border: 1px solid
+    color-mix(in srgb, var(--overlay-element-active-color) 50%, transparent);
 }
 
 .wrapper > .camera.active,
@@ -146,7 +144,7 @@
 
 .wrapper > .camera.selected {
   border-radius: 2px;
-  border: 1px solid var(--overlay-element-active-color, #fff);
+  border: 1px solid var(--overlay-element-active-color);
 }
 
 .wrapper > .camera.uncertain {

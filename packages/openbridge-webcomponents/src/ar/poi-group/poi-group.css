@@ -41,7 +41,7 @@
   --flat-enabled-background-color: transparent;
   --flat-hover-border-color: var(
     --overlay-flat-hover-border-color,
-    rgb(255 255 255 / 12%)
+    color-mix(in srgb, var(--overlay-element-active-color) 12%, transparent)
   );
   --flat-hover-background-color: var(
     --overlay-flat-hover-background-color,
@@ -49,7 +49,7 @@
   );
   --flat-pressed-border-color: var(
     --overlay-flat-active-border-color,
-    rgb(255 255 255 / 12%)
+    color-mix(in srgb, var(--overlay-element-active-color) 12%, transparent)
   );
   --flat-pressed-background-color: var(
     --overlay-flat-active-background-color,

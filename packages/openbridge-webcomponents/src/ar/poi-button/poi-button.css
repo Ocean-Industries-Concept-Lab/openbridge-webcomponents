@@ -12,7 +12,11 @@
   --obc-poi-overlap-pointer-events: auto;
   --obc-poi-transition-duration: 0.1s;
   --obc-poi-opacity-transition-duration: 0.1s;
-  --obc-poi-overlap-object-bg: rgba(255, 255, 255, 0.5);
+  --obc-poi-overlap-object-bg: color-mix(
+    in srgb,
+    var(--normal-enabled-background-color) 50%,
+    transparent
+  );
   --obc-poi-overlap-object-border: rgba(0, 0, 0, 0.3);
   --obc-poi-overlap-wrapper-opacity: 0.6;
   --obc-poi-overlap-data-opacity: 0.6;
@@ -20,7 +24,7 @@
 }
 
 .wrapper.overlap-opaque {
-  --obc-poi-overlap-object-bg: #fff;
+  --obc-poi-overlap-object-bg: var(--normal-enabled-background-color);
   --obc-poi-overlap-object-border: var(--overlay-border-outline-color);
   --obc-poi-overlap-wrapper-opacity: 1;
   --obc-poi-overlap-data-opacity: 1;
@@ -43,11 +47,6 @@
 
   user-select: none;
   pointer-events: var(--obc-poi-overlap-pointer-events, auto);
-
-  & .poi-object {
-    --overlay-container-background-color: #fff;
-    --normal-enabled-background-color: #fff;
-  }
 
   & .button-wrapper {
     position: relative;
@@ -180,18 +179,10 @@
   }
 
   .poi-object {
-    --flat-enabled-background-color: #fff;
-    --flat-activated-background-color: #fff;
-    --flat-hover-background-color: color-mix(
-      in srgb,
-      #fff 88%,
-      var(--overlay-flat-hover-background-color)
-    );
-    --flat-pressed-background-color: color-mix(
-      in srgb,
-      #fff 82%,
-      var(--overlay-flat-active-background-color)
-    );
+    --flat-enabled-background-color: var(--normal-enabled-background-color);
+    --flat-activated-background-color: var(--normal-enabled-background-color);
+    --flat-hover-background-color: var(--normal-hover-background-color);
+    --flat-pressed-background-color: var(--normal-pressed-background-color);
   }
 }
 

@@ -311,14 +311,14 @@
 
 /* Indicator type icon stroke outline */
 .is-indicator .icon-container ::slotted(*) {
-  stroke: var(--indicator-stroke-color, rgb(255, 255, 255));
+  stroke: var(--indicator-stroke-color, var(--overlay-element-active-color));
   stroke-width: var(--indicator-stroke-width, 2px);
   stroke-linejoin: round;
   paint-order: stroke fill;
   overflow: visible;
   --element-active-inverted-color: var(
     --indicator-stroke-color,
-    rgb(255, 255, 255)
+    var(--overlay-element-active-color)
   );
 }
 

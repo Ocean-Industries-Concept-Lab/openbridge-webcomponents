@@ -340,7 +340,7 @@
   background-color: color-mix(
     in srgb,
     var(--overlay-navigation-green-primary-color) 85%,
-    white
+    var(--overlay-container-global-color)
   );
 }
 
@@ -348,7 +348,7 @@
   background-color: color-mix(
     in srgb,
     var(--overlay-navigation-green-primary-color) 75%,
-    white
+    var(--overlay-container-global-color)
   );
 }
 
@@ -356,7 +356,7 @@
   background-color: color-mix(
     in srgb,
     var(--overlay-navigation-red-primary-color) 85%,
-    white
+    var(--overlay-container-global-color)
   );
 }
 
@@ -364,7 +364,7 @@
   background-color: color-mix(
     in srgb,
     var(--overlay-navigation-red-primary-color) 75%,
-    white
+    var(--overlay-container-global-color)
   );
 }
 
@@ -372,7 +372,7 @@
   background-color: color-mix(
     in srgb,
     var(--overlay-navigation-yellow-primary-color) 85%,
-    white
+    var(--overlay-container-global-color)
   );
 }
 
@@ -380,6 +380,6 @@
   background-color: color-mix(
     in srgb,
     var(--overlay-navigation-yellow-primary-color) 75%,
-    white
+    var(--overlay-container-global-color)
   );
 }
