@@ -12,9 +12,9 @@ This package is **automatically generated** from the core library.
 
 **Do not edit this package directly.** All changes should be made in the core library, and the wrappers should be updated by running the wrapper generation script.
 
-## 🏗️ Project Status
+## 🚀 Project Status
 
-This library is currently in active development. We are gearing up for our first stable release in **Q2 2026**.
+**v1.0.0 is now released!** The code was officially opened by **Prince Sverre Magnus of Norway**, and the library is now stable and publicly available.
 
 ## 📚 Storybook & Demo
 

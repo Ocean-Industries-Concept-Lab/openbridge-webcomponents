@@ -4,9 +4,9 @@ This monorepo contains the OpenBridge design system implemented as web component
 
 [![Slack, join chat](https://img.shields.io/badge/Slack-4A154B?style=flat&logo=slack&logoColor=white)](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ)
 
-## 🏗️ Prerelease Status
+## 🚀 Project Status
 
-We are gearing up for our first stable release in **Q2 2026**. It has been an incredibly productive first year, with more than 200 components already implemented. Our primary focus now is to stabilize the API and ensure a robust foundation for the 1.0.0 release.
+**v1.0.0 is now released!** It has been an incredibly productive first year, with more than 200 components already implemented. The code was officially opened by **Prince Sverre Magnus of Norway** and is now publicly available, marking our first stable milestone.
 
 ## 🤝 Join the Joint Industry Project (JIP)
 
@@ -14,13 +14,13 @@ We are committed to the long-term development of this library, but sustainable g
 
 For more information, please contact us on [Slack](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ).
 
-## 📜 New Licensing Model
+## 📜 Licensing Model
 
-We will **always remain open source**, but we are evolving our model to ensure continued development. Shortly after the 1.0.0 release in Q2 2026, we will transition to a new licensing system.
+We will **always remain open source**, but we have evolved our model to ensure continued development. With the 1.0.0 release, we have transitioned to a new licensing system.
 
 ### Why the change?
 
-Previously, we maintained two separate codebases: one closed (for the first 12 months) and one public. Maintaining parallel codebases is resource-intensive. Our new model allows us to work in the open while still providing an incentive for project funding.
+Previously, we maintained two separate codebases: one closed (for the first 12 months) and one public. Our new model allows us to work in the open while still providing an incentive for project funding.
 
 ### How it works:
 
