@@ -13,7 +13,7 @@ We use two main branches to manage our development:
 - **`develop`**: This is the active development branch. It contains the latest changes and features. Note that this branch may include breaking changes and is intended for contributors and early adopters. Releases based on this branch are tagged as `next` on [npm](https://www.npmjs.com/package/@oicl/openbridge-webcomponents).
 - **`stable`**: This branch contains the stable, production-ready version of the library. It is updated from the `develop` branch approximately once every quarter. Releases based on this branch are tagged as `latest` on [npm](https://www.npmjs.com/package/@oicl/openbridge-webcomponents).
 
-## 🤝 Join the Joint Industry Project (JIP) & Support the Project
+## 🤝 Support the Project
 
 We are thrilled if you would like to support the OpenBridge Web Components project. Your contribution plays a vital role in maintaining an open, high-quality design system.
 

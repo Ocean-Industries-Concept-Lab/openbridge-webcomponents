@@ -15,11 +15,22 @@ We use npm tags to manage our releases:
 
 ## 🤝 Support the Project
 
-We invite industry partners to join our Joint Industry Project. By contributing, you help secure the future of the project and gain influence over the roadmap. Donors also receive special benefits including immediate access under the Apache License 2.0.
+We are thrilled if you would like to support the OpenBridge Web Components project. Your contribution plays a vital role in maintaining an open, high-quality design system.
 
-If you are interested in supporting the project, please fill out the **[Support Form](https://docs.google.com/forms/d/e/1FAIpQLSc6JVRyyIease2PkUArirNkG0DeTB__YnWEovjVwISlaYdktA/viewform?usp=header)**.
+We invite industry partners to join our Joint Industry Project. By becoming a donor, you help secure the future of the project and gain influence over the roadmap.
 
-[👉 Click here to learn more about supporting the project and donor benefits.](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/blob/main/README.md#-join-the-joint-industry-project-jip--support-the-project)
+### Donor Benefits
+
+By becoming a donor, you aren’t just supporting code—you’re joining a collaborative movement. To show our appreciation, donors receive a specialized benefits package valid for 12 months upon receipt of payment:
+
+- **Proudly Show Your Support:** You are authorized to use the official "OpenBridge Member" logo in your marketing materials and corporate communications.
+- **Early & Easy Access:** You gain the right to use all new releases of the project’s software components directly under the Apache License 2.0.
+
+### How to Support
+
+If you are interested in supporting the project, please fill out this **[Support Form](https://docs.google.com/forms/d/e/1FAIpQLSc6JVRyyIease2PkUArirNkG0DeTB__YnWEovjVwISlaYdktA/viewform?usp=header)**.
+
+For more information, please contact **Torstein A. Bø** at [torstein.bo@openstudio.no](mailto:torstein.bo@openstudio.no) or contact us on [Slack](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ).
 
 ## 📚 Storybook & Demo
 
