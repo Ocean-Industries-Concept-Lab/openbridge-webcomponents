@@ -137,7 +137,7 @@ This could be `regular`, `medium`, `large`, or `xl`. It sets the component size 
 
 ## Load font
 
-Lastly Noto Sans needs to be added. You can download it from the [OpenBridge repo](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/raw/refs/heads/main/packages/openbridge-webcomponents/public/NotoSans.ttf). Place the NotoSans.ttf file in the public folder.
+Lastly Noto Sans needs to be added. You can download it from the [OpenBridge repo](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/raw/refs/heads/stable/packages/openbridge-webcomponents/public/NotoSans.ttf). Place the NotoSans.ttf file in the public folder.
 
 Next this file must be loaded by the css. So add it to index.css:
 

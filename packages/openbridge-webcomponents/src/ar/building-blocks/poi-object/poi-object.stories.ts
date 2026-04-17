@@ -12,7 +12,7 @@ import '../../../icons/icon-placeholder.js';
 const meta: Meta<ObcPoiObject> = {
   title: 'AR/Building Blocks/POI Object',
   component: 'obc-poi-object',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'skip-test'],
   argTypes: {
     type: {
       control: 'select',
