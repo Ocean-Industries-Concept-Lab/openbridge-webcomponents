@@ -1,16 +1,33 @@
 import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
 import {property, query} from 'lit/decorators.js';
-import compentStyle from './rot-indicator.css?inline';
+import componentStyle from './rot-indicator.css?inline';
 import {RateOfTurnController} from '../rate-of-turn/rate-of-turn.controller.js';
 import {customElement} from '../../decorator.js';
 
+export enum RotIndicatorType {
+  radial = 'radial',
+  linear = 'linear',
+}
+
 @customElement('obc-rot-indicator')
 export class ObcRotIndicator extends LitElement {
+  @property({type: String})
+  type: RotIndicatorType = RotIndicatorType.radial;
+
   @property({type: Number})
   rotationsPerMinute = 0;
 
   protected override updated(_changedProperties: PropertyValues): void {
     super.updated(_changedProperties);
+
+    if (_changedProperties.has('type')) {
+      if (this.type === RotIndicatorType.radial) {
+        this.connectRadialController();
+      } else {
+        this.disconnectController();
+      }
+    }
+
     if (
       _changedProperties.has('rotationsPerMinute') &&
       this.rateOfTurnController
@@ -20,11 +37,20 @@ export class ObcRotIndicator extends LitElement {
   }
 
   @query('#rot')
-  private rot!: HTMLElement;
+  private rot?: HTMLElement;
 
   private rateOfTurnController?: RateOfTurnController;
 
-  override firstUpdated() {
+  private disconnectController(): void {
+    this.rateOfTurnController?.destroy();
+    this.rateOfTurnController = undefined;
+  }
+
+  private connectRadialController(): void {
+    if (this.rateOfTurnController) return;
+    this.rot ??=
+      this.renderRoot.querySelector<HTMLElement>('#rot') ?? undefined;
+    if (!this.rot) return;
     this.rateOfTurnController = new RateOfTurnController(
       this,
       this.rot,
@@ -32,11 +58,23 @@ export class ObcRotIndicator extends LitElement {
     );
   }
 
+  override firstUpdated() {
+    if (this.type !== RotIndicatorType.radial) return;
+    this.connectRadialController();
+  }
+
   override render() {
+    if (this.type === RotIndicatorType.linear) {
+      return this.renderLinear();
+    }
+    return this.renderRadial();
+  }
+
+  private renderRadial() {
     return html`
       <svg
-        width="48"
-        height="48"
+        width="100%"
+        height="100%"
         viewBox="6 6 48 48"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -97,7 +135,78 @@ export class ObcRotIndicator extends LitElement {
     `;
   }
 
-  static override styles = unsafeCSS(compentStyle);
+  private clamp(value: number, min: number, max: number): number {
+    return Math.min(max, Math.max(min, value));
+  }
+
+  private getLinearDotCenterX(): number {
+    const clamped = this.clamp(this.rotationsPerMinute, -3, 3);
+    const t = clamped / 3;
+    const centerX = 24;
+    const maxOffset = 15;
+    return centerX + t * maxOffset;
+  }
+
+  private renderLinear() {
+    const trackX = 6;
+    const trackY = 20;
+    const trackWidth = 36;
+    const trackHeight = 8;
+    const trackR = 4;
+    const dotCy = 24;
+    const dotR = 3;
+    const dotCx = this.getLinearDotCenterX();
+
+    const segmentX = 13;
+    const segmentY = 20;
+    const segmentWidth = 11;
+    const segmentHeight = 8;
+    const segmentRadius = segmentHeight / 2;
+    const segmentRightX = segmentX + segmentWidth;
+    const segmentBottomY = segmentY + segmentHeight;
+
+    return html`
+      <svg
+        width="100%"
+        height="100%"
+        viewBox="0 0 48 48"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect
+          x=${trackX}
+          y=${trackY}
+          width=${trackWidth}
+          height=${trackHeight}
+          rx=${trackR}
+          ry=${trackR}
+          fill="var(--instrument-frame-primary-color)"
+          stroke="var(--instrument-frame-tertiary-color)"
+          stroke-width="1"
+        />
+        <path
+          d="M ${segmentX + segmentRadius} ${segmentY}
+             H ${segmentRightX}
+             V ${segmentBottomY}
+             H ${segmentX + segmentRadius}
+             A ${segmentRadius} ${segmentRadius} 0 0 1 ${segmentX} ${segmentY +
+          segmentRadius}
+             A ${segmentRadius} ${segmentRadius} 0 0 1 ${segmentX +
+          segmentRadius} ${segmentY}
+             Z"
+          fill="var(--instrument-port-secondary-color)"
+        />
+        <circle
+          cx=${dotCx}
+          cy=${dotCy}
+          r=${dotR}
+          fill="var(--instrument-port-primary-color)"
+        />
+      </svg>
+    `;
+  }
+
+  static override styles = unsafeCSS(componentStyle);
 }
 
 declare global {
