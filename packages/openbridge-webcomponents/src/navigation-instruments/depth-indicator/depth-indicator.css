@@ -1,0 +1,33 @@
+:host {
+  display: inline-block;
+  width: var(--obc-depth-indicator-size, 48px);
+  height: var(--obc-depth-indicator-size, 48px);
+}
+
+.indicator {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.frame {
+  fill: var(--instrument-frame-primary-color);
+  stroke: var(--instrument-frame-tertiary-color);
+  stroke-width: 1;
+}
+
+.fill {
+  fill: var(--instrument-enhanced-tertiary-color);
+}
+
+.line {
+  fill: none;
+  stroke: var(--instrument-enhanced-secondary-color);
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.dot {
+  fill: var(--instrument-enhanced-secondary-color);
+}
