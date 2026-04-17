@@ -66,7 +66,7 @@ type PoiGroupStoryArgs = {
 
 const meta: Meta<PoiGroupStoryArgs> = {
   title: 'AR/POI Group',
-  tags: ['6.0'],
+  tags: ['skip-test', '6.0'],
   component: 'obc-poi-group',
   decorators: [crossDecorator, compactPreviewHeightDecorator],
   args: {

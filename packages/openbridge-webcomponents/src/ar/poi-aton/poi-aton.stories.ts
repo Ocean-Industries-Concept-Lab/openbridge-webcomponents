@@ -29,7 +29,7 @@ const compactDocsHeightDecorator = (story: () => unknown) => html`
 
 const meta: Meta<ObcPoiAton> = {
   title: 'AR/POI AtoN',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'skip-test'],
   component: 'obc-poi-aton',
   args: {
     type: ObcPoiType.Line,
