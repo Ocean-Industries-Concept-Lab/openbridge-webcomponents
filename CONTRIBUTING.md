@@ -119,6 +119,10 @@ Please ensure your title is clear and follows the syntax.
 
 ## Getting Help
 
-If you have any question start by contacting us on our discord. [Join here.](https://discord.gg/wSCPxPH3RJ)
+If you have any questions, start by joining our **Slack** community.
+
+[![Slack, join chat](https://img.shields.io/badge/Slack-4A154B?style=flat&logo=slack&logoColor=white)](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ)
+
+[Join here](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ) to get the latest updates and to ask questions.
 
 Thank you for contributing to OpenBridge webcomponents!

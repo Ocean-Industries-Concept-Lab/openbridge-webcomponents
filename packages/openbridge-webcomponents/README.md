@@ -2,13 +2,24 @@
 
 The core library of the OpenBridge design system, implemented as Lit-based web components.
 
-[![Slack, join chat](https://img.shields.io/badge/Slack-4A154B?style=flat&logo=slack&logoColor=white)](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ)
-
 ## 🚀 Project Status
 
 **v1.0.0 is now released!** The code was officially opened by **Prince Sverre Magnus of Norway**, and the library is now stable and publicly available.
 
-[👉 Click here to read more about the project and the JIP.](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ)
+## 🌿 Branching Strategy
+
+We use two main branches to manage our development:
+
+- **`develop`**: This is the active development branch. It contains the latest changes and features. Note that this branch may include breaking changes and is intended for contributors and early adopters. Releases based on this branch are tagged as `next` on [npm](https://www.npmjs.com/package/@oicl/openbridge-webcomponents).
+- **`stable`**: This branch contains the stable, production-ready version of the library. It is updated from the `develop` branch approximately once every quarter. Releases based on this branch are tagged as `latest` on [npm](https://www.npmjs.com/package/@oicl/openbridge-webcomponents).
+
+## 🤝 Support the Project
+
+We invite industry partners to join our Joint Industry Project. By contributing, you help secure the future of the project and gain influence over the roadmap. Donors also receive special benefits including immediate access under the Apache License 2.0.
+
+If you are interested in supporting the project, please fill out the **[Support Form](https://docs.google.com/forms/d/e/1FAIpQLSc6JVRyyIease2PkUArirNkG0DeTB__YnWEovjVwISlaYdktA/viewform?usp=header)**.
+
+[👉 Click here to learn more about supporting the project and donor benefits.](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/blob/main/README.md#-join-the-joint-industry-project-jip--support-the-project)
 
 ## 📚 Storybook & Demo
 
@@ -97,11 +108,17 @@ For quick prototyping, you can use the bundled version:
 
 For the best experience in your framework of choice, use our auto-generated wrappers:
 
-- [`@oicl/openbridge-webcomponents-vue`](../openbridge-webcomponents-vue)
-- [`@oicl/openbridge-webcomponents-react`](../openbridge-webcomponents-react)
-- [`@oicl/openbridge-webcomponents-ng`](../openbridge-webcomponents-ng)
-- [`@oicl/openbridge-webcomponents-svelte`](../openbridge-webcomponents-svelte)
+- [`@oicl/openbridge-webcomponents-vue`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/tree/main/packages/openbridge-webcomponents-vue)
+- [`@oicl/openbridge-webcomponents-react`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/tree/main/packages/openbridge-webcomponents-react)
+- [`@oicl/openbridge-webcomponents-ng`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/tree/main/packages/openbridge-webcomponents-ng)
+- [`@oicl/openbridge-webcomponents-svelte`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/tree/main/packages/openbridge-webcomponents-svelte)
+
+## 💬 Slack
+
+[![Slack, join chat](https://img.shields.io/badge/Slack-4A154B?style=flat&logo=slack&logoColor=white)](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ)
+
+[Join our Slack](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ) to get the latest updates and to ask questions.
 
 ## 👫 Contributing
 
-Contributions are welcome! Please see the [root README](../../README.md) and [CONTRIBUTING.md](../../CONTRIBUTING.md) for development instructions.
+Contributions are welcome! Please see the [root README](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/blob/main/README.md) and [CONTRIBUTING.md](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/blob/main/CONTRIBUTING.md) for development instructions.
