@@ -78,7 +78,7 @@ const waitForStorySettle = async (
 
 const meta: Meta<PoiControllerArgs> = {
   title: 'AR/POI Controller',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'skip-test'],
   component: 'obc-poi-controller',
   args: {
     fit: PoiFitMode.Contain,

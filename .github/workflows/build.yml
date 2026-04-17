@@ -44,6 +44,7 @@ jobs:
 
       - name: Check formatting vue-demo
         run: cd packages/vue-demo && npm run format:check
+
   test-browser:
     container:
       image: mcr.microsoft.com/playwright:v1.58.0-noble
@@ -60,9 +61,11 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
       - name: Run unit tests openbridge-webcomponents
         run: npm run test:browser
         working-directory: packages/openbridge-webcomponents
+
   build:
     runs-on: ubuntu-latest
     steps:
@@ -90,24 +93,28 @@ jobs:
 
 
       - name: Build openbridge-webcomponents
-        run: cd packages/openbridge-webcomponents && npm run build:full
+        working-directory: ./packages/openbridge-webcomponents
+        run: npm run build:full
 
       - name: Install wrapper dependencies
         run: npm install
 
       - name: Build openbridge-webcomponents-vue
-        run: cd packages/openbridge-webcomponents-vue && npm run build
+        working-directory: ./packages/openbridge-webcomponents-vue
+        run: npm run build
 
       - name: Build vue-demo
-        run: cd packages/vue-demo && npm run build
+        working-directory: ./packages/vue-demo
+        run: npm run build
 
       - name: Build openbridge-webcomponents-react
-        run: cd packages/openbridge-webcomponents-react && npm run build
+        working-directory: ./packages/openbridge-webcomponents-react
+        run: npm run build
 
       - name: Build openbridge-webcomponents-svelte
-        run: cd packages/openbridge-webcomponents-svelte && npm run build
+        working-directory: ./packages/openbridge-webcomponents-svelte
+        run: npm run build
 
       - name: Build openbridge-webcomponents-ng
-        run: cd packages/openbridge-webcomponents-ng && npm run build
-
-      
+        working-directory: ./packages/openbridge-webcomponents-ng
+        run: npm run build

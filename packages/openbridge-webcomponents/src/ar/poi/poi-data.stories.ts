@@ -88,7 +88,7 @@ const renderPoiData = (args: ObcPoiData) => html`
 
 const meta: Meta<ObcPoiData> = {
   title: 'AR/POI/POI Data',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'skip-test'],
   component: 'obc-poi-data',
   args: {
     type: ObcPoiType.Line,

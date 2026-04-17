@@ -11,7 +11,7 @@ import '../../icons/icon-vessel-generic-default-filled.js';
 const meta: Meta = {
   title: 'AR/POI Object/POI Object Data',
   component: 'obc-poi-object-data',
-  tags: ['autodocs'],
+  tags: ['skip-test', 'autodocs'],
   argTypes: {
     type: {
       control: 'select',

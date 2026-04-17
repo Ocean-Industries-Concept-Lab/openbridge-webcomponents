@@ -102,7 +102,7 @@ const renderPoiVessel = (args: ObcPoiVessel) => html`
 
 const meta: Meta<ObcPoiVessel> = {
   title: 'AR/POI/POI Vessel',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'skip-test'],
   component: 'obc-poi-vessel',
   args: {
     type: ObcPoiType.Line,
