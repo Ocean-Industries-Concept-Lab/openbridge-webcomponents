@@ -157,9 +157,14 @@ export class ObcRotIndicator extends LitElement {
     const dotR = 3;
     const dotCx = this.getLinearDotCenterX();
 
-    const segmentX = 13;
-    const segmentY = 20;
     const segmentWidth = 11;
+    const segmentDotOffsetX = 4;
+    const segmentX = this.clamp(
+      dotCx - segmentDotOffsetX,
+      trackX,
+      trackX + trackWidth - segmentWidth
+    );
+    const segmentY = 20;
     const segmentHeight = 8;
     const segmentRadius = segmentHeight / 2;
     const segmentRightX = segmentX + segmentWidth;
