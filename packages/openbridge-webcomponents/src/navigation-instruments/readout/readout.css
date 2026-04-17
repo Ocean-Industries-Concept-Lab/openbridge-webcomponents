@@ -99,8 +99,8 @@
         );
       }
 
-      :is(.readout-input, .readout-value-unit-wrapper) {
-        align-items: center;
+      .readout-value-unit-wrapper {
+        align-items: flex-end;
       }
 
       .readout-value-unit-wrapper {
@@ -115,12 +115,8 @@
         grid-template-areas: "meta inline";
       }
 
-      :is(
-        .readout-input,
-        .readout-source-wrapper,
-        .readout-value-unit-wrapper
-      ) {
-        align-items: center;
+      .readout-value-unit-wrapper {
+        align-items: flex-end;
       }
 
       .readout-source-wrapper {
@@ -253,6 +249,10 @@
   max-block-size: var(--instrument-components-readout-divider-height-small);
 }
 
+.readout.horizontal :is(.advice-divider, .input-divider, .source-divider) {
+  align-self: center;
+}
+
 .instrument-label-unit-container {
   display: inline-flex;
   flex-direction: row;
@@ -308,6 +308,32 @@
       var(--global-typography-instrument-unit-container-height) - 1px
     );
   }
+
+  :is(
+    .readout-label-wrapper,
+    .readout-meta-wrapper,
+    .readout-value-wrapper,
+    .readout-value-unit-wrapper,
+    .readout-source-wrapper
+  ) {
+    align-self: flex-end;
+  }
+
+  .readout-input {
+    align-self: center;
+  }
+}
+
+.readout.horizontal.has-input-button:not(.stack) {
+  :is(
+    .readout-label-wrapper,
+    .readout-meta-wrapper,
+    .readout-value-wrapper,
+    .readout-value-unit-wrapper,
+    .readout-source-wrapper
+  ) {
+    align-self: center;
+  }
 }
 
 .label {
@@ -341,7 +367,6 @@
   }
 
   &.source-type-flyout .source-content {
-    justify-content: space-between;
     padding-inline: 0;
   }
 
@@ -439,7 +464,8 @@
   }
 
   .readout-source-wrapper.has-trailing-icon &::part(visible-wrapper) {
-    justify-content: space-between;
+    justify-content: flex-end;
+    gap: var(--instrument-components-readout-padding-horizontal);
   }
 
   &::part(label) {
@@ -447,6 +473,27 @@
     padding: 0;
     padding-left: var(--instrument-components-readout-padding-horizontal);
     color: inherit;
+  }
+}
+
+.readout-source-wrapper.has-trailing-icon {
+  width: 100%;
+  justify-content: flex-end;
+
+  .source-container {
+    width: fit-content;
+    justify-content: flex-end;
+  }
+
+  .source-content {
+    width: fit-content;
+    justify-content: flex-end;
+    padding-inline: 0;
+    gap: var(--instrument-components-readout-padding-horizontal);
+  }
+
+  .source-picker {
+    width: fit-content;
   }
 }
 

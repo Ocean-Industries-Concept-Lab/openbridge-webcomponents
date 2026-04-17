@@ -186,7 +186,7 @@ export function renderReadoutSource({
           <slot name="source">
             <obc-button
               variant="flat"
-              .fullWidth=${true}
+              .fullWidth=${!sourceHug}
               ?showLeadingIcon=${showLeadingIcon}
               ?showTrailingIcon=${showTrailingIcon}
               class=${classMap(sourcePickerClasses)}

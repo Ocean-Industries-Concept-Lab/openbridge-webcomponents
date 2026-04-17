@@ -566,6 +566,8 @@ export class ObcReadout extends LitElement {
           [this.type]: true,
           [this.direction]: true,
           'has-source': this.hasSrc,
+          'has-input-button':
+            this.isHorizontal && this.inputType === ReadoutInputType.button,
           'no-hug': !this.hug,
           'label-only': this.labelOnly,
         })}
