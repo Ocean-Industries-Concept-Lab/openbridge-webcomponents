@@ -18,36 +18,6 @@ const isVitestBrowser = Boolean(
   (globalThis as {__vitest_browser__?: unknown}).__vitest_browser__
 );
 
-async function waitForPoiGroupLayoutSettle(
-  canvasElement: HTMLElement
-): Promise<void> {
-  if (!isVitestBrowser) return;
-  const group = canvasElement.querySelector(
-    'obc-poi-group'
-  ) as ObcPoiGroup | null;
-  if (!group) return;
-  await (group.updateComplete ?? Promise.resolve());
-  const targets = Array.from(canvasElement.querySelectorAll('obc-poi-data'));
-  await Promise.all(
-    targets.map(
-      (target) =>
-        ((target as {updateComplete?: Promise<unknown>}).updateComplete ??
-          Promise.resolve()) as Promise<unknown>
-    )
-  );
-  await new Promise((resolve) =>
-    requestAnimationFrame(() => requestAnimationFrame(resolve))
-  );
-  await (group.updateComplete ?? Promise.resolve());
-  await Promise.all(
-    targets.map(
-      (target) =>
-        ((target as {updateComplete?: Promise<unknown>}).updateComplete ??
-          Promise.resolve()) as Promise<unknown>
-    )
-  );
-}
-
 const compactPreviewHeightDecorator = (story: () => unknown) => html`
   <style>
     .wrapper {
@@ -168,9 +138,6 @@ export const GroupedWithNumbers: Story = {
   args: {
     expand: false,
   },
-  play: async ({canvasElement}) => {
-    await waitForPoiGroupLayoutSettle(canvasElement);
-  },
   render: (args) => {
     const wrapperRef = createRef<HTMLDivElement>();
     const onExpand = (event: CustomEvent<{expand: boolean}>) => {
@@ -255,9 +222,6 @@ export const GroupedWithNumbers: Story = {
 export const GroupedWithValues: Story = {
   args: {
     expand: false,
-  },
-  play: async ({canvasElement}) => {
-    await waitForPoiGroupLayoutSettle(canvasElement);
   },
   render: (args) => {
     const wrapperRef = createRef<HTMLDivElement>();
