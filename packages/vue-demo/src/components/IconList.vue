@@ -166,9 +166,9 @@ import { ObcElevatedCardSize } from '@oicl/openbridge-webcomponents/dist/compone
 import ObcCard from '@oicl/openbridge-webcomponents-vue/components/card/ObcCard.vue'
 import ObcButton from '@oicl/openbridge-webcomponents-vue/components/button/ObcButton.vue'
 import { ButtonVariant } from '@oicl/openbridge-webcomponents/dist/components/button/button'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-close-google'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-content-copy-google'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-check-google'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-close-google.js'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-content-copy-google.js'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-check-google.js'
 
 const search = ref('')
 const bridgeStore = useBridgeStore()
@@ -372,19 +372,25 @@ function importSnippet(name: string): string {
 }
 
 async function copy(text: string, kind: 'tag' | 'import') {
+  let success = false
   try {
     await navigator.clipboard.writeText(text)
+    success = true
   } catch {
     const ta = document.createElement('textarea')
-    ta.value = text
-    ta.setAttribute('readonly', '')
-    ta.style.position = 'fixed'
-    ta.style.opacity = '0'
-    document.body.appendChild(ta)
-    ta.select()
-    document.execCommand('copy')
-    document.body.removeChild(ta)
+    try {
+      ta.value = text
+      ta.setAttribute('readonly', '')
+      ta.style.position = 'fixed'
+      ta.style.opacity = '0'
+      document.body.appendChild(ta)
+      ta.select()
+      success = document.execCommand('copy')
+    } finally {
+      if (ta.parentNode) ta.parentNode.removeChild(ta)
+    }
   }
+  if (!success) return
   copied.value = kind
   if (copiedTimeout !== undefined) {
     window.clearTimeout(copiedTimeout)
@@ -442,6 +448,16 @@ async function copy(text: string, kind: 'tag' | 'import') {
   background-color: var(--button-flat-active-background-color, rgba(255, 255, 255, 0.08));
 }
 
+.icon-item:focus {
+  outline: none;
+}
+
+.icon-item:focus-visible {
+  outline: 2px solid var(--button-flat-focus-outline-color, var(--element-active-color, #3ea8ff));
+  outline-offset: 2px;
+  background-color: var(--button-flat-hover-background-color, rgba(255, 255, 255, 0.04));
+}
+
 .icon {
   width: 32px;
   height: 32px;
@@ -463,7 +479,6 @@ async function copy(text: string, kind: 'tag' | 'import') {
   cursor: pointer;
   font: inherit;
 }
-
 
 .container {
   display: flex;
