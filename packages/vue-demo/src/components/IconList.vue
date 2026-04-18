@@ -1,5 +1,5 @@
 <template>
-  <div class="icon-list-container">
+  <div class="icon-list-container" :class="{ 'has-detail-open': selectedIcon !== null }">
     <div class="top">
       <div class="container">
         <div class="input-form card">
@@ -84,20 +84,65 @@
           <div v-for="(subgroup, subgroupKey) in group" :key="subgroupKey" class="sub-category">
             <div class="font-ui-subtitle color-element-neutral subtitle">{{ subgroupKey }}</div>
             <div class="icon-list">
-              <div v-for="icon in subgroup" :key="icon.name" class="icon-item font-ui-label">
-                <ObcIconButton
-                  class="color-element-active icon"
-                  :variant="IconButtonVariant.flat"
-                  size="large"
-                >
-                  <span v-html="icon.icon"></span>
-                </ObcIconButton>
-                <span class="color-element-neutral icon-description">{{ icon.name }}</span>
-              </div>
+              <button
+                v-for="icon in subgroup"
+                :key="icon.name"
+                class="icon-item"
+                :class="{ selected: selectedIcon?.name === icon.name }"
+                :title="icon.name"
+                @click="openIconDialog(icon)"
+              >
+                <span class="color-element-active icon" v-html="icon.icon"></span>
+              </button>
             </div>
           </div>
         </div>
       </div>
+    </div>
+
+    <div v-if="selectedIcon" class="icon-detail-wrapper">
+      <ObcCard class="icon-detail-panel" :showTitle="false">
+        <ObcIconButton
+          class="panel-close"
+          :variant="IconButtonVariant.flat"
+          size="regular"
+          aria-label="Close"
+          @click="closeIconDialog"
+        >
+          <obi-close-google></obi-close-google>
+        </ObcIconButton>
+
+        <div class="panel-content">
+          <div class="preview">
+            <span class="preview-icon color-element-active" v-html="selectedIcon.icon"></span>
+          </div>
+          <div class="panel-info">
+            <div class="panel-name font-ui-title color-element-active">
+              {{ selectedIcon.name }}
+            </div>
+            <div class="panel-actions">
+              <ObcButton
+                :variant="ButtonVariant.raised"
+                :showLeadingIcon="true"
+                @click="copy(importSnippet(selectedIcon.name), 'import')"
+              >
+                <obi-check-google v-if="copied === 'import'" slot="leading-icon"></obi-check-google>
+                <obi-content-copy-google v-else slot="leading-icon"></obi-content-copy-google>
+                {{ copied === 'import' ? 'Copied!' : 'Copy import' }}
+              </ObcButton>
+              <ObcButton
+                :variant="ButtonVariant.raised"
+                :showLeadingIcon="true"
+                @click="copy(tagSnippet(selectedIcon.name), 'tag')"
+              >
+                <obi-check-google v-if="copied === 'tag'" slot="leading-icon"></obi-check-google>
+                <obi-content-copy-google v-else slot="leading-icon"></obi-content-copy-google>
+                {{ copied === 'tag' ? 'Copied!' : 'Copy tag' }}
+              </ObcButton>
+            </div>
+          </div>
+        </div>
+      </ObcCard>
     </div>
   </div>
 </template>
@@ -118,6 +163,12 @@ import ObcDropdownButton from '@oicl/openbridge-webcomponents-vue/components/dro
 import { computed } from 'vue'
 import ObcElevatedCard from '@oicl/openbridge-webcomponents-vue/components/elevated-card/ObcElevatedCard.vue'
 import { ObcElevatedCardSize } from '@oicl/openbridge-webcomponents/dist/components/elevated-card/elevated-card'
+import ObcCard from '@oicl/openbridge-webcomponents-vue/components/card/ObcCard.vue'
+import ObcButton from '@oicl/openbridge-webcomponents-vue/components/button/ObcButton.vue'
+import { ButtonVariant } from '@oicl/openbridge-webcomponents/dist/components/button/button'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-close-google'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-content-copy-google'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-check-google'
 
 const search = ref('')
 const bridgeStore = useBridgeStore()
@@ -292,6 +343,57 @@ function updateIconList() {
 }
 
 watch([search, filterValue], updateIconList, { immediate: true })
+
+// Icon details dialog with copy-to-clipboard
+const selectedIcon = ref<Icon | null>(null)
+const copied = ref<'tag' | 'import' | null>(null)
+let copiedTimeout: number | undefined
+
+function openIconDialog(icon: Icon) {
+  selectedIcon.value = icon
+  copied.value = null
+}
+
+function closeIconDialog() {
+  selectedIcon.value = null
+  copied.value = null
+  if (copiedTimeout !== undefined) {
+    window.clearTimeout(copiedTimeout)
+    copiedTimeout = undefined
+  }
+}
+
+function tagSnippet(name: string): string {
+  return `<obi-${name}></obi-${name}>`
+}
+
+function importSnippet(name: string): string {
+  return `import '@oicl/openbridge-webcomponents/dist/icons/icon-${name}.js'`
+}
+
+async function copy(text: string, kind: 'tag' | 'import') {
+  try {
+    await navigator.clipboard.writeText(text)
+  } catch {
+    const ta = document.createElement('textarea')
+    ta.value = text
+    ta.setAttribute('readonly', '')
+    ta.style.position = 'fixed'
+    ta.style.opacity = '0'
+    document.body.appendChild(ta)
+    ta.select()
+    document.execCommand('copy')
+    document.body.removeChild(ta)
+  }
+  copied.value = kind
+  if (copiedTimeout !== undefined) {
+    window.clearTimeout(copiedTimeout)
+  }
+  copiedTimeout = window.setTimeout(() => {
+    copied.value = null
+    copiedTimeout = undefined
+  }, 1500)
+}
 </script>
 
 <style scoped>
@@ -299,36 +401,69 @@ watch([search, filterValue], updateIconList, { immediate: true })
   isolation: isolate;
 }
 
+.icon-list-container.has-detail-open {
+  padding-bottom: 200px;
+}
+
 .content-container {
   display: flex;
   flex-direction: column;
-  gap: 48px;
+  gap: 32px;
 }
 
 .main-catergory {
   display: flex;
   flex-direction: column;
-  gap: 48px;
+  gap: 24px;
 }
 
 .icon-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+  gap: 4px;
 }
 
 .icon-item {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  text-align: center;
+  justify-content: center;
+  padding: 14px;
+  border-radius: 6px;
+  min-width: 0;
+  aspect-ratio: 1;
+  transition: background-color 0.12s ease-out;
 }
 
-.icon::part(icon) {
-  width: 36px;
-  height: 36px;
+.icon-item:hover {
+  background-color: var(--button-flat-hover-background-color, rgba(255, 255, 255, 0.04));
 }
+
+.icon-item.selected {
+  background-color: var(--button-flat-active-background-color, rgba(255, 255, 255, 0.08));
+}
+
+.icon {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon :deep(svg) {
+  width: 32px;
+  height: 32px;
+}
+
+/* Native button reset */
+.icon-item {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+}
+
 
 .container {
   display: flex;
@@ -416,25 +551,114 @@ watch([search, filterValue], updateIconList, { immediate: true })
 }
 
 .title {
-  margin-bottom: -48px;
+  margin-bottom: 0;
 }
 
 .subtitle {
-  padding-bottom: 24px;
+  padding-bottom: 16px;
 }
 
-.icon-description {
-  color: var(--element-neutral-color, rgba(0, 0, 0, 0.59));
-  text-align: center;
-  font-feature-settings:
-    'ss02' on,
-    'liga' off,
-    'clig' off;
-  font-family: 'Noto Sans';
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 370;
-  line-height: 24px;
-  /* 150% */
+.icon-detail-wrapper {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 16px;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  padding: 0 16px;
+}
+
+.icon-detail-panel {
+  position: relative;
+  width: 560px;
+  max-width: 100%;
+  pointer-events: auto;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.icon-detail-panel::part(content) {
+  padding: 0;
+}
+
+.panel-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1;
+}
+
+.panel-content {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 20px;
+  padding: 20px;
+  padding-right: 56px;
+  align-items: center;
+
+  @media screen and (max-width: 520px) {
+    grid-template-columns: 1fr;
+    padding: 20px;
+    padding-top: 56px;
+  }
+}
+
+.preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 120px;
+  background: var(--container-global-color, rgba(0, 0, 0, 0.04));
+  border-radius: 6px;
+  flex-shrink: 0;
+  justify-self: start;
+}
+
+.preview-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-icon :deep(*) {
+  width: 72px;
+  height: 72px;
+}
+
+.preview-icon :deep(svg) {
+  width: 72px;
+  height: 72px;
+  display: block;
+}
+
+.panel-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  align-items: flex-start;
+}
+
+.panel-name {
+  font-size: 18px;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.panel-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+.panel-actions obc-button {
+  flex-shrink: 0;
+  min-width: 140px;
 }
 </style>
