@@ -2,6 +2,12 @@
   box-sizing: border-box;
 }
 
+:host {
+  display: block;
+  width: fit-content;
+  translate: -50% -50%;
+}
+
 .trend-icon {
   display: block;
   width: 24px;
@@ -12,10 +18,6 @@
   display: flex;
   width: fit-content;
   flex-direction: column;
-  /* This is a hack to make the badge appear above the content */
-  position: relative;
-  top: -20px;
-  transform: translateX(-50%);
 }
 
 .badges {
