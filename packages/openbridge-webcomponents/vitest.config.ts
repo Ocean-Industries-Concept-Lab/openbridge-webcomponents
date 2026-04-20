@@ -35,6 +35,7 @@ export default defineConfig({
         ],
         test: {
           name: 'storybook',
+          setupFiles: ['./.storybook/vitest.setup.ts'],
           // Enable browser mode
           browser: {
             enabled: true,
