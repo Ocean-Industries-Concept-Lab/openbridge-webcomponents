@@ -30,7 +30,7 @@
     ["@semantic-release/npm", { "pkgRoot": "./packages/openbridge-webcomponents-vue" }],
     ["@semantic-release/npm", { "pkgRoot": "./packages/openbridge-webcomponents-svelte" }],
     ["@semantic-release/npm", { "pkgRoot": "./packages/openbridge-webcomponents-react" }],
-    ["@semantic-release/exec", { "pkgRoot": "./packages/openbridge-webcomponents-ng/dist" }],
+    ["@semantic-release/npm", { "pkgRoot": "./packages/openbridge-webcomponents-ng/dist" }],
     "@semantic-release/github",
     ["@semantic-release/git", {
       "assets": ["CHANGELOG.md", "package.json", "packages/openbridge-webcomponents/package.json"],
