@@ -1,3 +1,13 @@
+## [1.0.0-next.3](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v1.0.0-next.2...v1.0.0-next.3) (2026-04-20)
+
+### ⚠ BREAKING CHANGES
+
+- **ci:** update GitHub Actions to newer versions of checkout and setup-node steps (#800)
+
+### Features
+
+- **ci:** update GitHub Actions to newer versions of checkout and setup-node steps ([#800](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/800)) ([a85837f](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/a85837f0974cbf81af463c74c8ff9e3882afabdb))
+
 ## [1.0.0-next.2](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v1.0.0-next.1...v1.0.0-next.2) (2026-04-20)
 
 ### ⚠ BREAKING CHANGES
