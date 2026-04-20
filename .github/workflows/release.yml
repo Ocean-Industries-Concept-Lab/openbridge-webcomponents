@@ -3,8 +3,8 @@ name: Release
 on:
   push:
     branches:
-      - stable
       - develop
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -16,6 +16,7 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/stable' || github.ref == 'refs/heads/develop'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
