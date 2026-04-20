@@ -22,18 +22,26 @@
       ]
     }],
     ["@semantic-release/release-notes-generator", { "preset": "conventionalcommits" }],
-    ["@semantic-release/changelog", { "changelogFile": "CHANGELOG.md" }],
+    ["@semantic-release/changelog", { "changelogFile": "packages/openbridge-webcomponents/CHANGELOG.md" }],
     ["@semantic-release/npm", { "pkgRoot": "./packages/openbridge-webcomponents" }],
     ["@semantic-release/exec", {
-      "prepareCmd": "node scripts/prepare-wrappers.js ${nextRelease.version}"
+      "prepareCmd": "node scripts/prepare-wrappers.js ${nextRelease.version} && npm install --package-lock-only"
     }],
     ["@semantic-release/npm", { "pkgRoot": "./packages/openbridge-webcomponents-vue" }],
     ["@semantic-release/npm", { "pkgRoot": "./packages/openbridge-webcomponents-svelte" }],
     ["@semantic-release/npm", { "pkgRoot": "./packages/openbridge-webcomponents-react" }],
     ["@semantic-release/npm", { "pkgRoot": "./packages/openbridge-webcomponents-ng/dist" }],
-    "@semantic-release/github",
+    ["@semantic-release/github", {
+      "successComment": false,
+      "failComment": false
+    }],
     ["@semantic-release/git", {
-      "assets": ["CHANGELOG.md", "package.json", "packages/openbridge-webcomponents/package.json"],
+      "assets": [
+        "packages/openbridge-webcomponents/CHANGELOG.md",
+        "packages/openbridge-webcomponents/package.json",
+        "package-lock.json"
+
+      ],
       "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
     }]
   ]
