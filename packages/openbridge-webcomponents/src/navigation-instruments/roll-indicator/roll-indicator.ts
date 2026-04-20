@@ -20,6 +20,7 @@ const SCALE = (VIEW_SIZE - STROKE_WIDTH) / DESIGN_SIZE;
 export const ROLL_INDICATOR_MAX_ROLL_DEG = 30;
 
 const MAX_ROLL = ROLL_INDICATOR_MAX_ROLL_DEG;
+const TRACK_END_ANGLE_DEG = 52.2;
 const SECTOR_RAY_PX = VIEW_SIZE * 2;
 const SECTOR_BASE_ANGLE_DEG = 90;
 
@@ -108,14 +109,18 @@ export class ObcRollIndicator extends LitElement {
     return this.clampRoll(this.roll);
   }
 
+  private get mappedTrackAngle(): number {
+    return (this.clampedRoll / MAX_ROLL) * TRACK_END_ANGLE_DEG;
+  }
+
   private get displayAngle(): number {
-    return this.clampedRoll;
+    return this.mappedTrackAngle;
   }
 
   private get sectorPathD(): string {
     const baseRadians = (SECTOR_BASE_ANGLE_DEG * Math.PI) / 180;
     const edgeRadians =
-      ((SECTOR_BASE_ANGLE_DEG + this.displayAngle) * Math.PI) / 180;
+      ((SECTOR_BASE_ANGLE_DEG + this.mappedTrackAngle) * Math.PI) / 180;
 
     const baseX = CX + Math.cos(baseRadians) * SECTOR_RAY_PX;
     const baseY = CY + Math.sin(baseRadians) * SECTOR_RAY_PX;
