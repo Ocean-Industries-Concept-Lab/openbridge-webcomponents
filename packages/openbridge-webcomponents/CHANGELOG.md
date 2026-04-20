@@ -1,3 +1,13 @@
+## [1.0.0-next.2](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v1.0.0-next.1...v1.0.0-next.2) (2026-04-20)
+
+### ⚠ BREAKING CHANGES
+
+- **changelog:** clean up changelog and set the basis as v1.0.0
+
+### Features
+
+- **changelog:** clean up changelog and set the basis as v1.0.0 ([71a4b16](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/71a4b16d03a86ec0540ff8d36a24c21d16ec9309))
+
 ### Changelog
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
