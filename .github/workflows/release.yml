@@ -41,6 +41,10 @@ jobs:
       - name: Install wrapper dependencies
         run: npm install
 
+      - name: Build Angular wrapper
+        working-directory: ./packages/openbridge-webcomponents-ng
+        run: npm run build
+
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
