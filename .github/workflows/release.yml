@@ -1,80 +1,48 @@
-name: Publish Stable to NPM (Manual)
-
+name: Release
 
 on:
+  push:
+    branches:
+      - develop
   workflow_dispatch:
-    inputs:
-      bump:
-        description: 'Version bump type'
-        required: true
-        default: 'patch'
-        type: choice
-        options:
-          - patch
-          - minor
-          - major
-      commit_message:
-        description: 'Optional commit message override'
-        required: false
-        default: ''
-        type: string
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  id-token: write
 
 jobs:
   release:
-    if: github.ref == 'refs/heads/stable'
+    name: Release
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: write
-      packages: write
+    if: github.ref == 'refs/heads/stable' || github.ref == 'refs/heads/develop'
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: stable
+          persist-credentials: false
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "24"
           registry-url: "https://registry.npmjs.org/"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Build and generate wrappers
+      - name: Build core and generate wrappers
         working-directory: ./packages/openbridge-webcomponents
         run: npm run build:full
 
       - name: Install wrapper dependencies
         run: npm install
 
-      - name: Publish core to NPM
-        working-directory: ./packages/openbridge-webcomponents
-        run: npm publish --tag latest --access public
-
-      - name: Publish Vue wrapper to NPM
-        working-directory: ./packages/openbridge-webcomponents-vue
-        run: |
-         npm run build
-         npm publish --tag latest --access public
-
-      - name: Publish Svelte wrapper to NPM
-        working-directory: ./packages/openbridge-webcomponents-svelte
-        run: |
-         npm run build
-         npm publish --tag latest --access public
-
-      - name: Publish React wrapper to NPM
-        working-directory: ./packages/openbridge-webcomponents-react
-        run: |
-         npm run build
-         npm publish --tag latest --access public
-
-      - name: Publish Angular wrapper to NPM
-        working-directory: ./packages/openbridge-webcomponents-ng
-        run: |
-         npm run build
-         cd dist
-         npm publish --tag latest --access public
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_CONFIG_PROVENANCE: "true"
+        run: npx semantic-release
