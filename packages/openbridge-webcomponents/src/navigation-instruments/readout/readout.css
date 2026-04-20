@@ -87,8 +87,35 @@
 
     &.regular {
       .readout-horizontal-layout {
+        align-items: baseline;
         grid-template-columns: auto auto;
         grid-template-areas: "label inline";
+      }
+
+      :is(
+        .readout-inline-value-wrapper,
+        .instrument-label-unit-container,
+        .readout-value-unit-wrapper
+      ) {
+        align-items: baseline;
+      }
+
+      :is(
+        .source-container.source-type-regular .source,
+        .source-picker.source-type-regular::part(label)
+      ) {
+        @mixin font-instrument-unit;
+        @mixin font-instrument-unit-box;
+      }
+
+      :is(
+        .source-container.source-type-regular .source,
+        .source-picker.source-type-regular::part(label),
+        .readout-label-wrapper,
+        .readout-value-unit-wrapper,
+        .readout-source-wrapper
+      ) {
+        align-self: baseline;
       }
 
       .label-container {
@@ -97,10 +124,6 @@
           var(--instrument-components-readout-padding-horizontal) * 3 +
             var(--instrument-components-readout-padding-vertical)
         );
-      }
-
-      .readout-value-unit-wrapper {
-        align-items: flex-end;
       }
 
       .readout-value-unit-wrapper {

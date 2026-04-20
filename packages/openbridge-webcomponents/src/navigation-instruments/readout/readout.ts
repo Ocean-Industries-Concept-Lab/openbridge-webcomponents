@@ -90,6 +90,9 @@ export {ReadoutAdviceType, ReadoutInputType};
 export class ObcReadout extends LitElement {
   @property({type: String}) type: ReadoutType = ReadoutType.regular;
 
+  @property({type: String, attribute: 'readout-style'})
+  readoutStyle?: ReadoutType;
+
   @property({type: String}) direction: ReadoutDirection =
     ReadoutDirection.vertical;
 
@@ -199,11 +202,11 @@ export class ObcReadout extends LitElement {
   }
 
   private get isEnhanced() {
-    return this.type === ReadoutType.enhanced;
+    return this.resolvedReadoutStyle === ReadoutType.enhanced;
   }
 
   private get isStack() {
-    return this.type === ReadoutType.stack;
+    return this.resolvedReadoutStyle === ReadoutType.stack;
   }
 
   private get showAdviceDivider() {
@@ -219,7 +222,13 @@ export class ObcReadout extends LitElement {
   }
 
   private get showUnitZone() {
-    return this.type === ReadoutType.regular && this.isHorizontal;
+    return (
+      this.resolvedReadoutStyle === ReadoutType.regular && this.isHorizontal
+    );
+  }
+
+  private get resolvedReadoutStyle(): ReadoutType {
+    return this.readoutStyle ?? this.type;
   }
 
   private get resolvedSourceType(): ReadoutSourceType {
@@ -227,9 +236,9 @@ export class ObcReadout extends LitElement {
       return this.sourceType;
     }
 
-    return this.type === ReadoutType.regular ||
-      ((this.type === ReadoutType.enhanced ||
-        this.type === ReadoutType.stack) &&
+    return this.resolvedReadoutStyle === ReadoutType.regular ||
+      ((this.resolvedReadoutStyle === ReadoutType.enhanced ||
+        this.resolvedReadoutStyle === ReadoutType.stack) &&
         this.isVertical)
       ? ReadoutSourceType.small
       : ReadoutSourceType.regular;
@@ -319,7 +328,7 @@ export class ObcReadout extends LitElement {
       <div class="readout-segment-wrapper readout-advice" part="advice-wrapper">
         <slot name="advice">
           <obc-readout-advice
-            .readoutStyle=${this.type}
+            .readoutStyle=${this.resolvedReadoutStyle}
             .direction=${this.direction}
             .type=${this.adviceType}
             .state=${this.adviceState}
@@ -349,7 +358,7 @@ export class ObcReadout extends LitElement {
       <div class="readout-segment-wrapper readout-input" part="input-wrapper">
         <slot name="input">
           <obc-readout-input
-            .readoutStyle=${this.type}
+            .readoutStyle=${this.resolvedReadoutStyle}
             .direction=${this.direction}
             .type=${this.inputType}
             .state=${this.inputState}
@@ -417,7 +426,7 @@ export class ObcReadout extends LitElement {
       src: this.src,
       sourceDeltaValue: this.sourceDeltaValue,
       sourceType: this.resolvedSourceType,
-      readoutType: this.type,
+      readoutType: this.resolvedReadoutStyle,
       readoutDirection: this.direction,
       sourceHug: this.sourceHug,
       hasSourceLeadingIcon: this.hasSourceLeadingIcon,
@@ -464,7 +473,7 @@ export class ObcReadout extends LitElement {
     return html`
       <obc-readout-input
         .variant=${ReadoutInputVariant.value}
-        .readoutStyle=${this.type}
+        .readoutStyle=${this.resolvedReadoutStyle}
         .direction=${this.direction}
         .value=${this.value}
         .showZeroPadding=${this.showZeroPadding}
@@ -509,7 +518,7 @@ export class ObcReadout extends LitElement {
         class="readout-segment-wrapper readout-horizontal-layout"
         part="horizontal-layout"
       >
-        ${this.type === ReadoutType.regular && this.isHorizontal
+        ${this.resolvedReadoutStyle === ReadoutType.regular && this.isHorizontal
           ? renderReadoutLabelZone(
               this.label,
               this.hasLabelFixedLength,
@@ -563,7 +572,7 @@ export class ObcReadout extends LitElement {
       <div
         class=${classMap({
           readout: true,
-          [this.type]: true,
+          [this.resolvedReadoutStyle]: true,
           [this.direction]: true,
           'has-source': this.hasSrc,
           'has-input-button':

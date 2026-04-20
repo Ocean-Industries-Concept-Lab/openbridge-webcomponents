@@ -97,11 +97,11 @@ export class ObcReadoutAdvice extends LitElement {
   @property({type: String}) state: ReadoutAdviceState =
     ReadoutAdviceState.enabled;
 
-  @property({type: Boolean}) hugContent = false;
+  @property({type: Boolean, reflect: true}) hugContent = false;
 
   @property({type: Boolean}) hasFixedLength = false;
 
-  @property({type: String}) value = '';
+  @property() value: number | string | undefined = '';
 
   @property({type: String}) secondaryValue = '';
 
@@ -112,10 +112,6 @@ export class ObcReadoutAdvice extends LitElement {
   @property({type: Boolean}) hasHintedZeros = false;
 
   @property({type: Boolean}) hasDegree = false;
-
-  override updated() {
-    this.style.width = this.hugContent ? 'fit-content' : '100%';
-  }
 
   override render() {
     return html`
