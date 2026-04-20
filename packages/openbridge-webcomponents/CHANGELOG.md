@@ -1,3 +1,19 @@
+## [2.0.0-next.1](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.0...v2.0.0-next.1) (2026-04-20)
+
+### Bug Fixes
+
+- restore visual snapshot testing config ([#799](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/799)) ([a1ef835](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/a1ef8358f2252973b8981d0563357258cf5f6924)), closes [79da15b#diff-98da398d44d37a907da86a76d2cf1d1117ecd4b44096683bb63b349de6b9c303](https://github.com/Ocean-Industries-Concept-Lab/79da15b/issues/diff-98da398d44d37a907da86a76d2cf1d1117ecd4b44096683bb63b349de6b9c303)
+
+## [1.0.0-next.3](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v1.0.0-next.2...v1.0.0-next.3) (2026-04-20)
+
+### ⚠ BREAKING CHANGES
+
+- **ci:** update GitHub Actions to newer versions of checkout and setup-node steps (#800)
+
+### Features
+
+- **ci:** update GitHub Actions to newer versions of checkout and setup-node steps ([#800](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/800)) ([a85837f](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/a85837f0974cbf81af463c74c8ff9e3882afabdb))
+
 ## [1.0.0-next.2](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v1.0.0-next.1...v1.0.0-next.2) (2026-04-20)
 
 ### ⚠ BREAKING CHANGES
