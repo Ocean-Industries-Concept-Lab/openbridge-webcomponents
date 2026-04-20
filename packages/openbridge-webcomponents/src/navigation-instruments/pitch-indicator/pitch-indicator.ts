@@ -12,10 +12,6 @@ const CX = VIEW_SIZE / 2;
 const CY = VIEW_SIZE / 2;
 const FRAME_OFFSET = 5.5;
 const FRAME_RADIUS = 17.5;
-
-export const PITCH_INDICATOR_MAX_PITCH_DEG = 30;
-
-const MAX_PITCH = PITCH_INDICATOR_MAX_PITCH_DEG;
 const TRACK_END_ANGLE_DEG = 52.2;
 const SECTOR_RAY = VIEW_SIZE * 2;
 
@@ -58,24 +54,24 @@ const TRACK_D =
 /**
  * `<obc-pitch-indicator>` – Compact pitch indicator with a horizontal reference line, side track, and vessel pointer.
  *
- * Presents pitch as a rotating vessel group and a filled sector inside the side track. The component footprint is **48×48** px, with the inner graphic sized to **36×36**.
+ * Presents a normalized value as a rotating vessel group and a filled sector inside the side track. The component footprint is **48×48** px, with the inner graphic sized to **36×36**.
  *
  * ## Features
  *
  * - **Variants:** `enhanced` and `regular` share the same geometry and behavior, with the dynamic elements switching between enhanced and regular secondary colors.
- * - **Pitch:** Degrees; `pitch = 0` aligns the needle with the horizontal reference line. Values are clamped to ±**`PITCH_INDICATOR_MAX_PITCH_DEG`**° (**30°** full scale on the track).
+ * - **Normalized value:** `value` in `[-1, 1]` maps directly to the track angle.
  * - **Tokens:** Frame uses instrument frame tokens; the live sector and pointer use regular or enhanced secondary tokens by variant.
  *
  * ## Usage Guidelines
  *
- * Use for compact layouts where you need the pitch behavior from `obc-pitch` but with a simplified indicator design. Use `obc-pitch` when you need the larger full instrument treatment.
+ * Use for compact layouts where you need a small pitch cue next to other compact indicators.
  */
 @customElement('obc-pitch-indicator')
 export class ObcPitchIndicator extends LitElement {
   @property({type: String}) type: PitchIndicatorType =
     PitchIndicatorType.enhanced;
 
-  @property({type: Number}) pitch = 0;
+  @property({type: Number}) value = 0;
 
   private readonly trackMaskId = `obc-pitch-indicator-track-mask-${nextTrackMaskId++}`;
   private readonly contentMaskId = `obc-pitch-indicator-content-mask-${nextContentMaskId++}`;
@@ -101,20 +97,19 @@ export class ObcPitchIndicator extends LitElement {
     }
   `;
 
-  private clampPitch(value: number): number {
+  private clampNormalized(value: number): number {
     if (!Number.isFinite(value)) {
       return 0;
     }
-
-    return Math.max(-MAX_PITCH, Math.min(MAX_PITCH, value));
+    return Math.max(-1, Math.min(1, value));
   }
 
-  private get clampedPitch(): number {
-    return this.clampPitch(this.pitch);
+  private get clampedValue(): number {
+    return this.clampNormalized(this.value);
   }
 
   private get mappedTrackAngle(): number {
-    return (this.clampedPitch / MAX_PITCH) * TRACK_END_ANGLE_DEG;
+    return this.clampedValue * TRACK_END_ANGLE_DEG;
   }
 
   private get displayAngle(): number {

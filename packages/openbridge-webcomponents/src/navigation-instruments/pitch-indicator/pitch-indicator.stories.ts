@@ -1,21 +1,18 @@
 import {html} from 'lit';
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {
-  PITCH_INDICATOR_MAX_PITCH_DEG,
-  PitchIndicatorType,
-} from './pitch-indicator.js';
+import {PitchIndicatorType} from './pitch-indicator.js';
 import './pitch-indicator.js';
 
 type PitchIndicatorArgs = {
   type: PitchIndicatorType;
-  pitch: number;
+  value: number;
 };
 
 function renderPitchIndicator(args: PitchIndicatorArgs) {
   return html`
     <obc-pitch-indicator
       .type=${args.type}
-      .pitch=${args.pitch}
+      .value=${args.value}
     ></obc-pitch-indicator>
   `;
 }
@@ -27,7 +24,7 @@ function pitchIndicatorPreviewDecorator(story: () => unknown) {
 }
 
 const defaultPitchControls = {
-  pitch: 15,
+  value: 0.5,
 };
 
 const meta = {
@@ -48,12 +45,12 @@ const meta = {
       options: ['enhanced', 'regular'],
       table: {category: 'Attributes'},
     },
-    pitch: {
+    value: {
       control: {
         type: 'range',
-        min: -PITCH_INDICATOR_MAX_PITCH_DEG,
-        max: PITCH_INDICATOR_MAX_PITCH_DEG,
-        step: 0.2,
+        min: -1,
+        max: 1,
+        step: 0.01,
       },
       table: {category: 'Attributes'},
     },

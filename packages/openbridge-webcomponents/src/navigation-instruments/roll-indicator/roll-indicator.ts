@@ -16,10 +16,6 @@ const STROKE_WIDTH = 1;
 
 const OFFSET = STROKE_WIDTH / 2;
 const SCALE = (VIEW_SIZE - STROKE_WIDTH) / DESIGN_SIZE;
-
-export const ROLL_INDICATOR_MAX_ROLL_DEG = 30;
-
-const MAX_ROLL = ROLL_INDICATOR_MAX_ROLL_DEG;
 const TRACK_END_ANGLE_DEG = 52.2;
 const SECTOR_RAY_PX = VIEW_SIZE * 2;
 const SECTOR_BASE_ANGLE_DEG = 90;
@@ -53,13 +49,13 @@ let nextTrackMaskId = 0;
 let nextTrackClipId = 0;
 
 /**
- * `<obc-roll-indicator>` – A compact roll indicator that visualizes a roll angle in a 48×48 layout with a 36×36 SVG graphic.
+ * `<obc-roll-indicator>` – A compact roll indicator with a 48×48 layout and a 36×36 SVG graphic.
  *
- * This component visualizes a single instantaneous roll value using a compact graphic layout (arc, track, pointer, vessel).
+ * This component visualizes a single instantaneous normalized value using a compact graphic layout (arc, track, pointer, vessel).
  *
  * ## Features
  *
- * - **Roll:** Bank angle in degrees; pointer and sector follow **`roll`** clamped within ±**`ROLL_INDICATOR_MAX_ROLL_DEG`**°.
+ * - **Normalized value:** `value` in `[-1, 1]` maps directly to the track angle.
  * - **Variants:** `enhanced` and `regular` change the accent color.
  *
  * ## Usage Guidelines
@@ -71,7 +67,7 @@ export class ObcRollIndicator extends LitElement {
   @property({type: String}) type: RollIndicatorType =
     RollIndicatorType.enhanced;
 
-  @property({type: Number}) roll = 0;
+  @property({type: Number}) value = 0;
 
   private readonly sectorClipId = `obc-roll-indicator-sector-clip-${nextSectorClipId++}`;
   private readonly trackMaskId = `obc-roll-indicator-track-mask-${nextTrackMaskId++}`;
@@ -97,20 +93,19 @@ export class ObcRollIndicator extends LitElement {
     }
   `;
 
-  private clampRoll(value: number): number {
+  private clampNormalized(value: number): number {
     if (!Number.isFinite(value)) {
       return 0;
     }
-
-    return Math.max(-MAX_ROLL, Math.min(MAX_ROLL, value));
+    return Math.max(-1, Math.min(1, value));
   }
 
-  private get clampedRoll(): number {
-    return this.clampRoll(this.roll);
+  private get clampedValue(): number {
+    return this.clampNormalized(this.value);
   }
 
   private get mappedTrackAngle(): number {
-    return (this.clampedRoll / MAX_ROLL) * TRACK_END_ANGLE_DEG;
+    return this.clampedValue * TRACK_END_ANGLE_DEG;
   }
 
   private get displayAngle(): number {

@@ -1,21 +1,18 @@
 import {html} from 'lit';
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {
-  RollIndicatorType,
-  ROLL_INDICATOR_MAX_ROLL_DEG,
-} from './roll-indicator.js';
+import {RollIndicatorType} from './roll-indicator.js';
 import './roll-indicator.js';
 
 type RollIndicatorArgs = {
   type: RollIndicatorType;
-  roll: number;
+  value: number;
 };
 
 function renderRollIndicator(args: RollIndicatorArgs) {
   return html`
     <obc-roll-indicator
       .type=${args.type}
-      .roll=${args.roll}
+      .value=${args.value}
     ></obc-roll-indicator>
   `;
 }
@@ -36,7 +33,7 @@ const meta = {
   render: renderRollIndicator,
   args: {
     type: RollIndicatorType.enhanced,
-    roll: 0,
+    value: 0,
   },
   argTypes: {
     type: {
@@ -44,12 +41,12 @@ const meta = {
       options: ['enhanced', 'regular'],
       table: {category: 'Attributes'},
     },
-    roll: {
+    value: {
       control: {
         type: 'range',
-        min: -ROLL_INDICATOR_MAX_ROLL_DEG,
-        max: ROLL_INDICATOR_MAX_ROLL_DEG,
-        step: 0.2,
+        min: -1,
+        max: 1,
+        step: 0.01,
       },
       table: {category: 'Attributes'},
     },
