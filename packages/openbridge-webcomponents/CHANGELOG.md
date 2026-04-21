@@ -1,3 +1,9 @@
+## [2.0.0-next.3](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.2...v2.0.0-next.3) (2026-04-21)
+
+### Bug Fixes
+
+- update font asset paths in Storybook configuration ([#757](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/757)) ([c8f6653](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/c8f6653db8de1ac181da37e750e425e270cb3faf))
+
 ## [2.0.0-next.2](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.1...v2.0.0-next.2) (2026-04-21)
 
 ### Bug Fixes
