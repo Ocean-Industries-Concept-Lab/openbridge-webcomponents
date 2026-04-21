@@ -37,15 +37,8 @@ jobs:
         working-directory: packages/openbridge-webcomponents
 
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: failure()
         with:
           name: playwright-report
           path: packages/openbridge-webcomponents/__vis__/linux/__diffs__
           retention-days: 30
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: playwright-results
-          path: packages/openbridge-webcomponents/__vis__/linux/__results__/ar/
-          retention-days: 1
