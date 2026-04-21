@@ -12,7 +12,7 @@ import '../../icons/icon-vessel-type-psv-filled.js';
 const meta: Meta = {
   title: 'AR/POI Object/POI Object Vessel',
   component: 'obc-poi-object-vessel',
-  tags: ['autodocs', 'skip-test'],
+  tags: ['autodocs'],
   argTypes: {
     type: {
       control: 'select',

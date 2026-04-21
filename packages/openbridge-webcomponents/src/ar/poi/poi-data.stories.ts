@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcPoiData, PoiDataValue} from './poi-data.js';
 import './poi-data.js';
 import {crossDecorator} from '../../storybook-util.js';
+import {waitForStorySettle} from '../_test-utils.js';
 import {html} from 'lit';
 import {ObcPoiState, ObcPoiType} from './poi.js';
 import {
@@ -88,7 +89,7 @@ const renderPoiData = (args: ObcPoiData) => html`
 
 const meta: Meta<ObcPoiData> = {
   title: 'AR/POI/POI Data',
-  tags: ['autodocs', 'skip-test'],
+  tags: ['autodocs'],
   component: 'obc-poi-data',
   args: {
     type: ObcPoiType.Line,
@@ -228,6 +229,9 @@ export const Preview: Story = {
 };
 
 export const POIVariants: Story = {
+  play: async () => {
+    await waitForStorySettle({drainTransitions: true});
+  },
   render: () => {
     const demoX = 90;
     const demoY = 72;
@@ -317,6 +321,9 @@ export const POIVariants: Story = {
 };
 
 export const POIValuesAndContent: Story = {
+  play: async () => {
+    await waitForStorySettle({drainTransitions: true});
+  },
   render: () => {
     const demoX = 108;
     const demoY = 72;

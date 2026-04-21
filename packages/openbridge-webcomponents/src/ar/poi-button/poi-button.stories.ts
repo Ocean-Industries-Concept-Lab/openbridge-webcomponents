@@ -136,7 +136,7 @@ function startOverlappedDataButtonLoop(
 
 const meta: Meta<ObcPoiButton> = {
   title: 'AR/POI Button/POI Button',
-  tags: ['autodocs', 'skip-test'],
+  tags: ['autodocs'],
   component: 'obc-poi-button',
   decorators: [crossDecorator],
   args: {

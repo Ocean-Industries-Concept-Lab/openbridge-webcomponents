@@ -35,7 +35,7 @@ type PoiStoryArgs = {
 
 const meta: Meta<PoiStoryArgs> = {
   title: 'AR/POI/POI',
-  tags: ['autodocs', 'skip-test'],
+  tags: ['autodocs'],
   component: 'obc-poi',
   decorators: [crossDecorator],
   args: {

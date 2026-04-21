@@ -22,7 +22,7 @@ type PoiLayerStackArgs = {
 
 const meta: Meta<PoiLayerStackArgs> = {
   title: 'AR/POI Layer Stack',
-  tags: ['skip-test', '6.1'],
+  tags: ['6.1'],
   component: 'obc-poi-layer-stack',
   decorators: [
     (story) => html`

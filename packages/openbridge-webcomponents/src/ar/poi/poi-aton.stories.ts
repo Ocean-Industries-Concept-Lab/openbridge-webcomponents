@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcPoiAton} from './poi-aton.js';
 import './poi-aton.js';
 import {crossDecorator} from '../../storybook-util.js';
+import {waitForStorySettle} from '../_test-utils.js';
 import {html} from 'lit';
 import {ObcPoiState, ObcPoiType} from './poi.js';
 import {
@@ -100,7 +101,7 @@ const renderPoiAton = (args: ObcPoiAton) => html`
 
 const meta: Meta<ObcPoiAton> = {
   title: 'AR/POI/POI AtoN',
-  tags: ['autodocs', 'skip-test'],
+  tags: ['autodocs'],
   component: 'obc-poi-aton',
   args: {
     type: ObcPoiType.Line,
@@ -225,6 +226,9 @@ export const Preview: Story = {
 };
 
 export const POIVariants: Story = {
+  play: async () => {
+    await waitForStorySettle({drainTransitions: true});
+  },
   render: () => {
     const demoX = 90;
     const demoY = 72;
@@ -318,6 +322,9 @@ export const POIVariants: Story = {
 };
 
 export const POIValuesAndContent: Story = {
+  play: async () => {
+    await waitForStorySettle({drainTransitions: true});
+  },
   render: () => {
     const demoX = 108;
     const demoY = 72;
