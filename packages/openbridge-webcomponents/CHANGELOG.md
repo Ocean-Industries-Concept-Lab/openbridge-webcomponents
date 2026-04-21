@@ -1,3 +1,9 @@
+## [2.0.0-next.2](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.1...v2.0.0-next.2) (2026-04-21)
+
+### Bug Fixes
+
+- **bundle:** remove spec file from bundle ([#801](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/801)) ([4e3e6c2](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/4e3e6c22d65a930dfa9da295c6b3d3a6defc5012))
+
 ## [2.0.0-next.1](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.0...v2.0.0-next.1) (2026-04-20)
 
 ### Bug Fixes
