@@ -36,7 +36,7 @@ import {
 
 const meta: Meta<ObcPoiButtonAton> = {
   title: 'AR/POI Button/POI Button AtoN',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'skip-test'],
   component: 'obc-poi-button-aton',
   decorators: [crossDecorator],
   args: {

@@ -1,72 +1,59 @@
-name: Publish to NPM
+name: Release
 
 on:
   push:
     branches:
       - develop
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  id-token: write
 
 jobs:
   release:
+    name: Release
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-      packages: write
+    if: github.ref == 'refs/heads/stable' || github.ref == 'refs/heads/develop'
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: "24"
           registry-url: "https://registry.npmjs.org/"
+          cache: "npm"
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Append timestamp to version
+      - name: Build core and generate wrappers
         working-directory: ./packages/openbridge-webcomponents
-        run: |
-          TIMESTAMP=$(date +"%Y%m%d%H%M%S")
-          jq --arg TIMESTAMP "$TIMESTAMP" '.version = "0.0." + $TIMESTAMP' package.json > package.tmp.json && mv package.tmp.json package.json
-
-      - name: Publish core to NPM
-        working-directory: ./packages/openbridge-webcomponents
-        run: |
-          npm publish --access public
-
-      - name: Build and generate wrappers
-        working-directory: ./packages/openbridge-webcomponents
-        run: |
-          npm run build:full
+        run: npm run build:full
 
       - name: Install wrapper dependencies
-        working-directory: .
         run: npm install
 
-      - name: Publish vue wrapper to NPM
-        working-directory: ./packages/openbridge-webcomponents-vue
-        run: |
-          npm run build
-          npm publish --access public
-
-      - name: Publish svelte wrapper to NPM
-        working-directory: ./packages/openbridge-webcomponents-svelte
-        run: |
-          npm run build
-          npm publish --access public
-
-      - name: Publish react wrapper to NPM
-        working-directory: ./packages/openbridge-webcomponents-react
-        run: |
-          npm run build
-          npm publish --access public
-
-      - name: Publish angular wrapper to NPM
+      - name: Build Angular wrapper
         working-directory: ./packages/openbridge-webcomponents-ng
-        run: |
-          npm run build
-          cd dist
-          npm publish --access public
+        run: npm run build
 
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          NPM_CONFIG_PROVENANCE: "true"
+        run: npx semantic-release
