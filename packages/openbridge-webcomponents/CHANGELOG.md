@@ -1,3 +1,31 @@
+## [2.0.0-next.5](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.4...v2.0.0-next.5) (2026-04-22)
+
+### Features
+
+- **vue-demo:** click-to-copy icon snippets with detail panel ([#790](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/790)) ([032dcad](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/032dcadbd2489fbe0637e18aa73783db29da2eba))
+
+## [2.0.0-next.4](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.3...v2.0.0-next.4) (2026-04-22)
+
+### ⚠ BREAKING CHANGES
+
+- **ar:** new poi position logic (#761)
+
+### Features
+
+- **ar:** new poi position logic ([#761](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/761)) ([61b4b17](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/61b4b177c37ea899cd0ac9d92bcf37fe88570264))
+
+## [2.0.0-next.3](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.2...v2.0.0-next.3) (2026-04-21)
+
+### Bug Fixes
+
+- update font asset paths in Storybook configuration ([#757](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/757)) ([c8f6653](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/c8f6653db8de1ac181da37e750e425e270cb3faf))
+
+## [2.0.0-next.2](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.1...v2.0.0-next.2) (2026-04-21)
+
+### Bug Fixes
+
+- **bundle:** remove spec file from bundle ([#801](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/801)) ([4e3e6c2](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/4e3e6c22d65a930dfa9da295c6b3d3a6defc5012))
+
 ## [2.0.0-next.1](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.0...v2.0.0-next.1) (2026-04-20)
 
 ### Bug Fixes

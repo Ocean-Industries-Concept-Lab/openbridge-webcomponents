@@ -1,7 +1,7 @@
 :host {
   display: inline-block;
   position: relative;
-  --obc-ruler-pointer-active: var(--overlay-element-active-color, #fff);
+  --obc-ruler-pointer-active: var(--overlay-element-active-color);
   --obc-ruler-pointer-neutral-inverted: var(
     --overlay-element-neutral-inverted-color,
     rgb(0 0 0 / 0.66)
