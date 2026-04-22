@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import SettingCard from '@/components/SettingCard.vue'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-menu-iec.js'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-menu-iec.js'
 import { ref } from 'vue'
 import { NavigationMenuVariant, useDemoConfigStore } from '@/stores/demoConfig'
 

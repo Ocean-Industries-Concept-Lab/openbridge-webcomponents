@@ -172,21 +172,21 @@ export class ObcAdviceMessageItem extends LitElement {
 
   /**
    * Whether to show the title.
-   * If true, the title is hidden even if set.
+   * If false, the title is hidden even if set.
    */
-  @property({type: Boolean}) hideTitle = false;
+  @property({type: Boolean, attribute: false}) showTitle: boolean = true;
 
   /**
    * Whether to show the description.
-   * If true, the description is hidden even if set.
+   * If false, the description is hidden even if set.
    */
-  @property({type: Boolean}) hideDescription = false;
+  @property({type: Boolean, attribute: false}) showDescription: boolean = true;
 
   /**
    * Whether to show the primary timestamp.
-   * If true, the `time` slot is not rendered.
+   * If false, the `time` slot is not rendered.
    */
-  @property({type: Boolean}) hideTimestamp = false;
+  @property({type: Boolean, attribute: false}) showTimestamp: boolean = true;
 
   /**
    * Whether to show the secondary timestamp.
@@ -244,9 +244,9 @@ export class ObcAdviceMessageItem extends LitElement {
       <obc-topbar-message-item
         .type=${this.mappedType}
         .size=${this.size}
-        .hideTitle=${this.hideTitle}
-        .hideDescription=${this.hideDescription}
-        .hideTimestamp=${this.hideTimestamp}
+        .showTitle=${this.showTitle}
+        .showDescription=${this.showDescription}
+        .showTimestamp=${this.showTimestamp}
         .hasTimestamp2=${this.hasTimestamp2}
         .hasSecondaryIcon=${this.hasSecondaryIcon}
         @message-click=${this.handleMessageClick}
@@ -259,13 +259,13 @@ export class ObcAdviceMessageItem extends LitElement {
         ${this.hasSecondaryIcon
           ? html`<slot name="secondary-icon" slot="secondary-icon"></slot>`
           : nothing}
-        ${this.title && !this.hideTitle
+        ${this.title && this.showTitle
           ? html`<span slot="title">${this.title}</span>`
           : nothing}
-        ${this.description && !this.hideDescription
+        ${this.description && this.showDescription
           ? html`<span slot="description">${this.description}</span>`
           : nothing}
-        ${this.time && !this.hideTimestamp
+        ${this.time && this.showTimestamp
           ? html`<span slot="time">${this.time}</span>`
           : nothing}
         ${this.timeSecondary && this.hasTimestamp2

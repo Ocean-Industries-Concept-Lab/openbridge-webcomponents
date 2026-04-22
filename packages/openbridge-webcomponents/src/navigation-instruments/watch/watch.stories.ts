@@ -81,6 +81,8 @@ Source of truth: \`packages/openbridge-webcomponents/src/navigation-instruments/
     currentSymbolRadius: {control: {type: 'range', min: 0, max: 360, step: 1}},
     rotation: {control: {type: 'range', min: 0, max: 360, step: 1}},
     priority: {control: 'select', options: Object.values(Priority)},
+    showLabels: {control: 'boolean'},
+    tickmarksInside: {control: 'boolean'},
   },
   args: {
     width: 400,
@@ -730,8 +732,6 @@ export const TickmarksTestInsideRotation: Story = {
  * gauge-vertical/horizontal components, but for radial (watch-based) instruments.
  */
 export const StateComparison: Story = {
-  name: 'State comparison',
-
   render: () => html`
     <div style="display: flex; flex-direction: column; gap: 24px;">
       <!-- Header row -->

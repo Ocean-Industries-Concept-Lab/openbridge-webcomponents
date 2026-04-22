@@ -20,7 +20,7 @@ export class ObcPump extends ObcAbstractAutomationButtonMotorized {
           ></obi-pump-on-vertical>
           <obi-pump-on-vertical
             usecsscolor
-            slot="icon-siluette"
+            slot="icon-silhouette"
           ></obi-pump-on-vertical>`;
       } else {
         return html`<obi-pump-off-vertical
@@ -29,7 +29,7 @@ export class ObcPump extends ObcAbstractAutomationButtonMotorized {
           ></obi-pump-off-vertical>
           <obi-pump-off-vertical
             usecsscolor
-            slot="icon-siluette"
+            slot="icon-silhouette"
           ></obi-pump-off-vertical>`;
       }
     } else {
@@ -40,7 +40,7 @@ export class ObcPump extends ObcAbstractAutomationButtonMotorized {
           ></obi-pump-on-horizontal>
           <obi-pump-on-horizontal
             usecsscolor
-            slot="icon-siluette"
+            slot="icon-silhouette"
           ></obi-pump-on-horizontal>`;
       } else {
         return html`<obi-pump-off-horizontal
@@ -49,7 +49,7 @@ export class ObcPump extends ObcAbstractAutomationButtonMotorized {
           ></obi-pump-off-horizontal>
           <obi-pump-off-horizontal
             usecsscolor
-            slot="icon-siluette"
+            slot="icon-silhouette"
           ></obi-pump-off-horizontal>`;
       }
     }

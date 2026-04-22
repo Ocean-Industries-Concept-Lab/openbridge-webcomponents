@@ -1,79 +1,59 @@
-name: Publish to NPM
+name: Release
 
 on:
   push:
     branches:
-      - main
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  id-token: write
 
 jobs:
   release:
+    name: Release
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
+    if: github.ref == 'refs/heads/stable' || github.ref == 'refs/heads/develop'
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v6
         with:
-          node-version: "22"
-          registry-url: "https://npm.pkg.github.com/"
-          scope: Ocean-Industries-Concept-Lab
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org/"
+          cache: "npm"
 
       - name: Install dependencies
+        run: npm ci
+
+      - name: Build core and generate wrappers
+        working-directory: ./packages/openbridge-webcomponents
+        run: npm run build:full
+
+      - name: Install wrapper dependencies
         run: npm install
 
-      - name: Append timestamp to version
-        working-directory: ./packages/openbridge-webcomponents
-        run: |
-          TIMESTAMP=$(date +"%Y%m%d%H%M%S")
-          jq --arg TIMESTAMP "$TIMESTAMP" '.version = "0.0." + $TIMESTAMP' package.json > package.tmp.json && mv package.tmp.json package.json
-
-      - name: Publish to GitHub Packages
-        working-directory: ./packages/openbridge-webcomponents
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          npm publish  --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
-
-      - name: Publish react wrapper to GitHub Packages
-        working-directory: ./packages/openbridge-webcomponents-react
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          npm run build
-          rm -rf node_modules/@oicl || true
-          rm -rf node_modules/@ocean-industries-concept-lab || true
-          npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
-
-      - name: Publish vue wrapper to GitHub Packages
-        working-directory: ./packages/openbridge-webcomponents-vue
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          npm run build
-          rm -rf node_modules/@oicl || true
-          rm -rf node_modules/@ocean-industries-concept-lab || true
-          npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
-      - name: Publish angular wrapper to GitHub Packages
+      - name: Build Angular wrapper
         working-directory: ./packages/openbridge-webcomponents-ng
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          rm -rf node_modules/@oicl || true
-          rm -rf node_modules/@ocean-industries-concept-lab || true
-          npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
+        run: npm run build
 
-      - name: Publish svelte wrapper to GitHub Packages
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - name: Release
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          rm package-lock.json
-          npm install
-          cd packages/openbridge-webcomponents-svelte
-          npm run build
-          rm -rf node_modules/@oicl || true
-          rm -rf node_modules/@ocean-industries-concept-lab || true
-          npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          NPM_CONFIG_PROVENANCE: "true"
+        run: npx semantic-release

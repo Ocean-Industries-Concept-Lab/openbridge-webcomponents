@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import ObcInput from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/input/ObcInput.vue'
+import ObcTextInputField from '@oicl/openbridge-webcomponents-vue/components/text-input-field/ObcTextInputField.vue'
 import SettingsToolbar from '@/components/SettingsToolbar.vue'
-import ObcElevatedCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/elevated-card/ObcElevatedCard.vue'
+import ObcElevatedCard from '@oicl/openbridge-webcomponents-vue/components/elevated-card/ObcElevatedCard.vue'
 
 import {
   ObcElevatedCardPosition,
   ObcElevatedCardSize
-} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/elevated-card/elevated-card'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-chevron-right-google'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-content-copy-google'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-license-google'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-placeholder'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-simulation'
+} from '@oicl/openbridge-webcomponents/dist/components/elevated-card/elevated-card'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-chevron-right-google'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-content-copy-google'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-license-google'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-placeholder'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-simulation'
 import ComponentSizeSetting from './ComponentSizeSetting.vue'
 import AutomationVariantSetting from './AutomationVariantSetting.vue'
 import NavigationMenuSetting from './NavigationMenuSetting.vue'
@@ -28,11 +28,11 @@ const alertStore = useAlertStore()
 <template>
   <SettingsToolbar />
   <div class="wrapper">
-    <ObcInput placeholder="Search">
-      <template #icon>
+    <ObcTextInputField has-leading-icon placeholder="Search">
+      <template #leading-icon>
         <obi-search></obi-search>
       </template>
-    </ObcInput>
+    </ObcTextInputField>
     <div class="row">
       <div class="col">
         <ObcElevatedCard

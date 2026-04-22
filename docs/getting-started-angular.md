@@ -26,34 +26,34 @@ This will start a development server, typically accessible at `http://localhost:
 
 ## Install OpenBridge web components angular wrapper
 
-To use the components in your project, you can install the package from github package repo.
+To use the components in your project, you can install the package from GitHub package repo.
 
-Start by creating a classic personal access token in github
-Go to [github settings](https://github.com/settings/tokens/new) to make a classic token. Give the token the `read:packages` permission. Click "Generate token" and copy the token.
+Start by creating a classic personal access token in GitHub
+Go to [GitHub settings](https://github.com/settings/tokens/new) to make a classic token. Give the token the `read:packages` permission. Click "Generate token" and copy the token.
 
-Login into github package repo:
+Login into GitHub package repo:
 
 ```bash
-npm login --registry https://npm.pkg.github.com/ --scope=ocean-industries-concept-lab
+npm login --registry https://npm.pkg.github.com/ --scope=@oicl
 ```
 
-Use our github username as username and past in the generated token as password.
+Use our GitHub username as username and past in the generated token as password.
 
 You can now install the package:
 
 ```bash
-npm install @ocean-industries-concept-lab/openbridge-webcomponents-ng
+npm install @oicl/openbridge-webcomponents-ng
 ```
 
 ## Include the wrapper in the tsconfig
 
-The angular wrapper requires that the project builds the wrapper components. Open `tsconfig.app.json` and add `"./node_modules/@ocean-industries-concept-lab/openbridge-webcomponents-ng/src/**/*.ts"` to the `include` array.
+The angular wrapper requires that the project builds the wrapper components. Open `tsconfig.app.json` and add `"./node_modules/@oicl/openbridge-webcomponents-ng/src/**/*.ts"` to the `include` array.
 
 To make it easier to import the components you can also add a path mapping. In the same file, in the `compilerOptions` add:
 
 ```json
     "paths": {
-      "@obc/*": ["./node_modules/@ocean-industries-concept-lab/openbridge-webcomponents-ng/src/*"],
+      "@obc/*": ["./node_modules/@oicl/openbridge-webcomponents-ng/src/*"],
     }
 ```
 
@@ -106,7 +106,7 @@ We need to add the standard css and set some properties.
 Import the css file by adding it to `main.ts`
 
 ```ts
-import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/openbridge.css";
+import "@oicl/openbridge-webcomponents/dist/openbridge.css";
 ```
 
 ## Set palette
@@ -117,7 +117,7 @@ Then set palette by modifying the `html` tag in `index.html`
 <html lang="en" data-obc-theme="day"></html>
 ```
 
-The `data-obc-theme` can be bright, day, dusk or night. Changeing it will set the palette.
+The `data-obc-theme` can be bright, day, dusk or night. Changing it will set the palette.
 
 ## Set component sizing
 
@@ -127,11 +127,11 @@ We need to set the component sizing. Again modify `index.html`. But this time ad
 <body class="obc-component-size-regular"></body>
 ```
 
-This could be regular, normal, large or xl. It sets the component size of all decendent components.
+This could be `regular`, `medium`, `large`, or `xl`. It sets the component size of all descendant components.
 
 ## Load font
 
-Lastly Noto Sans needs to be added. You can download it from the [OpenBridge repo](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip/raw/refs/heads/main/packages/openbridge-webcomponents/public/NotoSans.ttf). Place the NotoSans.ttf file in the public folder.
+Lastly Noto Sans needs to be added. You can download it from the [OpenBridge repo](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/raw/refs/heads/stable/packages/openbridge-webcomponents/public/NotoSans.ttf). Place the NotoSans.ttf file in the public folder.
 
 Next this file must be loaded by the css. So add it to styles.css:
 
@@ -182,7 +182,7 @@ main {
 
 ## Add some input to the topbar
 
-We can now modify the topbar. Go to the [storybook](https://openbridge-jip-storybook.web.app/?path=/docs/application-topbar--docs) for details of attributes.
+We can now modify the topbar. Go to the [storybook](https://openbridge-storybook.web.app/?path=/docs/application-topbar--docs) for details of attributes.
 
 For instance add these properties:
 
@@ -194,7 +194,7 @@ Where title is a variable of the component.
 
 ## Add background
 
-Try changeing the palette to night:
+Try changing the palette to night:
 
 ```html
 <html lang="en" data-obc-theme="night"></html>
@@ -213,10 +213,10 @@ body {
 }
 ```
 
-Note how the color is set by the `css custom property` `--container-backdrop-color`. Using it the background will change when changeing the palette attribute (or the palette colors are updated by the designers).
+Note how the color is set by the `css custom property` `--container-backdrop-color`. Using it the background will change when changing the palette attribute (or the palette colors are updated by the designers).
 
 The entire page should now be dark. Go back to day palette
-Try changeing the palette to day:
+Try changing the palette to day:
 
 ```html
 <html lang="en" data-obc-theme="day"></html>
@@ -276,7 +276,7 @@ And add the css to `app.css`
 ```
 
 We can now add a state to store if the dimming menu is open or not. Also add an handler when the dimming menu button is clicked.
-Find the event name under events in [storybook](https://openbridge-jip-storybook.web.app/?path=/docs/application-topbar--docs). Remember also to set the `dimmingButtonActivated` which marks the button grey when activated. Lastly we also change the pallet when pressed.
+Find the event name under events in [storybook](https://openbridge-storybook.web.app/?path=/docs/application-topbar--docs). Remember also to set the `dimmingButtonActivated` which marks the button grey when activated. Lastly we also change the palette when pressed.
 
 ```ts
 import { Component } from "@angular/core";
@@ -429,7 +429,7 @@ export class AppComponent {
 
 # Add navigation menu
 
-We can now add a navigation menu. Start by looking it up in [storybook](https://openbridge-jip-storybook.web.app/?path=/docs/menu-navigation-menu--docs). Click on "Show code" to view the example code.
+We can now add a navigation menu. Start by looking it up in [storybook](https://openbridge-storybook.web.app/?path=/docs/menu-navigation-menu--docs). Click on "Show code" to view the example code.
 
 Start by making an new component. Run `ng generate component` in the command line. Give it NavMenu as name. Copy the example file into the new html file:
 
@@ -690,7 +690,7 @@ Try going to: http://localhost:4200/tunnel
 We can now use these path in the navigation menu:
 
 - set the href to the path in router
-- find some good labels and [icons](https://openbridge-jip-demo.web.app/icons)
+- find some good labels and [icons](https://openbridge-demo.web.app/icons)
 
 ```html
 <obc-navigation-menu>
@@ -756,7 +756,7 @@ Try to use the navigation menu.
 You may notice two problems:
 
 - The active page in nav menu is not updating
-- When changeing page, the entire page is reloaded.
+- When changing page, the entire page is reloaded.
 
 ## Use Angular routerLink directive
 

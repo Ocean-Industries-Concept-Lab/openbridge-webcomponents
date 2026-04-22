@@ -87,6 +87,13 @@ const styleMixin = (data) => {
     focusVisibleWrapper = `${focusVisibleWrapper} ${params.visibleWrapperClass}`;
   }
 
+  const isIntegration = params.style.startsWith('integration-');
+  let disabledColor = `var(--on-${params.style}-disabled-color)`;
+  if (isIntegration) {
+    const styleWithoutIntegration = params.style.replace('integration-', '');
+    disabledColor = `var(--integration-on-${styleWithoutIntegration}-disabled-color)`;
+  }
+
   const out = {
     '&': {
       cursor: 'pointer',
@@ -138,7 +145,7 @@ const styleMixin = (data) => {
       psudoClass: 'disabled',
       otherParameters: {
         cursor: 'not-allowed',
-        color: `var(--on-${params.style}-disabled-color)`,
+        color: disabledColor + ' !important',
       },
     }),
     ...colors({
@@ -148,7 +155,7 @@ const styleMixin = (data) => {
       className: 'disabled',
       otherParameters: {
         cursor: 'not-allowed',
-        color: `var(--on-${params.style}-disabled-color)`,
+        color: disabledColor + ' !important',
       },
     }),
   };

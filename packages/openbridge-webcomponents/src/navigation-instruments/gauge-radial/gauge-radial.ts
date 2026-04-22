@@ -5,6 +5,7 @@ import {AdviceType} from '../watch/advice.js';
 import {InstrumentState, Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/instrument-radial/instrument-radial.js';
+import {TickmarkStyle} from '../watch/tickmark.js';
 
 export enum ObcGaugeRadialType {
   filled = 'filled',
@@ -48,7 +49,7 @@ export interface GaugeRadialAdvice {
  * - Use `priority` to switch between regular and enhanced color palettes.
  * - Provide `primaryTickmarkInterval` and `secondaryTickmarkInterval` to
  *   control tickmark density.
- * - Enable `labels` to show numeric labels at primary tickmarks.
+ * - Enable `showLabels` to show numeric labels at primary tickmarks.
  *
  * ## Best Practices
  *
@@ -66,7 +67,7 @@ export interface GaugeRadialAdvice {
  *   maxValue="100"
  *   type="filled"
  *   enhanced
- *   labels
+ *   showLabels
  *   primaryTickmarkInterval="25"
  *   secondaryTickmarkInterval="5"
  *   setpoint="60"
@@ -81,14 +82,22 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   @property({type: Number}) value = 0;
   @property({type: Number}) maxValue = 100;
   @property({type: Number}) minValue = 0;
-  @property({type: Boolean}) labels: boolean = false;
+  @property({type: Boolean}) showLabels: boolean = false;
   @property({type: Number}) primaryTickmarkInterval = 50;
   @property({type: Number}) secondaryTickmarkInterval = 10;
+  /**
+   * Interval for tertiary tickmarks in value units.
+   * When undefined or <= 0, no tertiary tickmarks are shown.
+   */
+  @property({type: Number}) tertiaryTickmarkInterval: number | undefined =
+    undefined;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) type: ObcGaugeRadialType =
     ObcGaugeRadialType.filled;
   @property({type: Boolean}) tickmarksInside: boolean = false;
+  @property({type: String}) tickmarkStyle: TickmarkStyle =
+    TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
 
   getAngle(v: number): number {
@@ -111,18 +120,20 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
         .setpointAtZeroDeadband=${this.setpointAtZeroDeadband}
         .setpointOverride=${this.setpointOverride}
         .touching=${this.touching}
-        .disableAutoAtSetpoint=${this.disableAutoAtSetpoint}
+        .autoAtSetpoint=${this.autoAtSetpoint}
         .autoAtSetpointDeadband=${this.autoAtSetpointDeadband}
         .animateSetpoint=${this.animateSetpoint}
         .maxValue=${this.maxValue}
         .minValue=${this.minValue}
         .getAngle=${this.getAngle}
-        .labels=${this.labels}
+        .showLabels=${this.showLabels}
         .primaryTickmarkInterval=${this.primaryTickmarkInterval}
         .secondaryTickmarkInterval=${this.secondaryTickmarkInterval}
+        .tertiaryTickmarkInterval=${this.tertiaryTickmarkInterval}
         .type=${this.type}
         .needleType=${this.type}
         .tickmarksInside=${this.tickmarksInside}
+        .tickmarkStyle=${this.tickmarkStyle}
         .advices=${this.advices}
       >
       </obc-instrument-radial>

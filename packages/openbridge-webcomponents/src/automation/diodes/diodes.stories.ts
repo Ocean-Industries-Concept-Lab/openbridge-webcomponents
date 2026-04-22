@@ -8,7 +8,7 @@ import '../automation-badge/automation-badge.js';
 import {argTypesAbstractAutomationButtonPassiveSquare} from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 const meta: Meta<typeof ObcDiodes> = {
-  title: 'Automation/Automation devices/Diodes',
+  title: 'Automation/Automation Devices/Diodes',
   tags: ['autodocs'],
   component: 'obc-diodes',
   decorators: [crossDecorator],
@@ -18,7 +18,7 @@ const meta: Meta<typeof ObcDiodes> = {
     readoutSize: AutomationButtonReadoutStackSize.regular,
     alert: false,
     progress: false,
-    hideReadoutStack: false,
+    showReadoutStack: true,
     hasIdTag: true,
   },
   argTypes: {

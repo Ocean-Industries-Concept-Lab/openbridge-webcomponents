@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {html, nothing} from 'lit';
+import {html, nothing, type LitElement} from 'lit';
 import './sequence-step.js';
 import {
   SequenceOrientation,
@@ -8,6 +8,24 @@ import {
   SequenceValue,
 } from './sequence-step.js';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
+
+/**
+ * Force all loading spinners inside sequence steps to their final state
+ * so visual snapshots are deterministic.
+ */
+const settleLoadingSpinners: Story['play'] = async ({canvasElement}) => {
+  const steps = canvasElement.querySelectorAll('obc-sequence-step');
+  for (const step of steps) {
+    await (step as LitElement).updateComplete;
+    const spinner = step.shadowRoot?.querySelector(
+      'obc-sequence-loading-spinner'
+    ) as (LitElement & {progressPercent: number}) | null;
+    if (spinner) {
+      spinner.progressPercent = 100;
+      await spinner.updateComplete;
+    }
+  }
+};
 
 const states: SequenceValue[] = [
   SequenceValue.notStarted,
@@ -42,8 +60,8 @@ const meta: Meta = {
       control: 'select',
       options: Object.values(SequenceOrientation),
     },
-    hideStepInputConnector: {control: 'boolean'},
-    hideStepOutputConnector: {control: 'boolean'},
+    showStepInputConnector: {control: 'boolean'},
+    showStepOutputConnector: {control: 'boolean'},
     hasIcon: {control: 'boolean'},
     leadingIcon: {
       control: {type: 'select'},
@@ -56,8 +74,8 @@ const meta: Meta = {
     styleType: SequenceStyle.regular,
     value: SequenceValue.regular,
     orientation: SequenceOrientation.horizontal,
-    hideStepInputConnector: false,
-    hideStepOutputConnector: false,
+    showStepInputConnector: true,
+    showStepOutputConnector: true,
     hasIcon: true,
     leadingIcon: 'placeholder',
     label: 'Label',
@@ -137,8 +155,8 @@ export const Playground: Story = {
         .styleType=${args.styleType}
         .value=${args.value}
         .orientation=${args.orientation}
-        .hideStepInputConnector=${args.hideStepInputConnector}
-        .hideStepOutputConnector=${args.hideStepOutputConnector}
+        .showStepInputConnector=${args.showStepInputConnector}
+        .showStepOutputConnector=${args.showStepOutputConnector}
         .hasIcon=${args.hasIcon}
       >
         ${args.hasIcon
@@ -209,6 +227,7 @@ export const SmallRegularStates: Story = {
       orientations: [SequenceOrientation.horizontal],
       includeIcon: false,
     }),
+  play: settleLoadingSpinners,
 };
 
 export const SmallPointStates: Story = {
@@ -220,6 +239,7 @@ export const SmallPointStates: Story = {
       orientations: [SequenceOrientation.horizontal],
       includeIcon: false,
     }),
+  play: settleLoadingSpinners,
 };
 
 export const MediumRegularStates: Story = {
@@ -233,6 +253,7 @@ export const MediumRegularStates: Story = {
         SequenceOrientation.vertical,
       ],
     }),
+  play: settleLoadingSpinners,
 };
 
 export const MediumPointStates: Story = {
@@ -248,6 +269,7 @@ export const MediumPointStates: Story = {
       includeIcon: false,
       labelText: '1',
     }),
+  play: settleLoadingSpinners,
 };
 
 export const LargeButtonStates: Story = {
@@ -261,6 +283,7 @@ export const LargeButtonStates: Story = {
         SequenceOrientation.vertical,
       ],
     }),
+  play: settleLoadingSpinners,
 };
 
 export const LargePointStates: Story = {
@@ -276,6 +299,7 @@ export const LargePointStates: Story = {
       includeIcon: false,
       labelText: '1',
     }),
+  play: settleLoadingSpinners,
 };
 
 export const ConnectorStyles: Story = {
@@ -401,8 +425,8 @@ export const ConnectorFlags: Story = {
                 .styleType=${SequenceStyle.regular}
                 .value=${SequenceValue.regular}
                 .orientation=${SequenceOrientation.horizontal}
-                .hideStepInputConnector=${!variant.hasInput}
-                .hideStepOutputConnector=${!variant.hasOutput}
+                .showStepInputConnector=${variant.hasInput}
+                .showStepOutputConnector=${variant.hasOutput}
                 .hasIcon=${variant.hasIcon}
               >
                 ${variant.hasIcon
@@ -436,8 +460,8 @@ export const OrientationShowcase: Story = {
                 .styleType=${SequenceStyle.regular}
                 .value=${SequenceValue.active}
                 .orientation=${SequenceOrientation.horizontal}
-                .hideStepInputConnector=${false}
-                .hideStepOutputConnector=${false}
+                .showStepInputConnector=${true}
+                .showStepOutputConnector=${true}
                 .hasIcon=${type !== SequenceType.small}
               >
                 ${type !== SequenceType.small
@@ -456,8 +480,8 @@ export const OrientationShowcase: Story = {
                 .styleType=${SequenceStyle.regular}
                 .value=${SequenceValue.active}
                 .orientation=${SequenceOrientation.vertical}
-                .hideStepInputConnector=${false}
-                .hideStepOutputConnector=${false}
+                .showStepInputConnector=${true}
+                .showStepOutputConnector=${true}
                 .hasIcon=${type !== SequenceType.small}
               >
                 ${type !== SequenceType.small

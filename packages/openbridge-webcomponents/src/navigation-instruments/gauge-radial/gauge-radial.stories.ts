@@ -3,6 +3,7 @@ import {ObcGaugeRadial, ObcGaugeRadialType} from './gauge-radial.js';
 import './gauge-radial.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
+import {TickmarkStyle} from '../watch/tickmark.js';
 import {InstrumentState, Priority} from '../types.js';
 
 const meta: Meta<typeof ObcGaugeRadial> = {
@@ -17,6 +18,11 @@ const meta: Meta<typeof ObcGaugeRadial> = {
     state: {control: 'select', options: Object.values(InstrumentState)},
     priority: {control: 'select', options: Object.values(Priority)},
     tickmarksInside: {control: 'boolean'},
+    tickmarkStyle: {
+      control: 'select',
+      options: Object.values(TickmarkStyle),
+    },
+    showLabels: {control: 'boolean'},
   },
 } satisfies Meta<ObcGaugeRadial>;
 
@@ -83,7 +89,7 @@ export const WithLabels: Story = {
     maxValue: 100,
     minValue: 0,
     type: ObcGaugeRadialType.filled,
-    labels: true,
+    showLabels: true,
   },
 };
 

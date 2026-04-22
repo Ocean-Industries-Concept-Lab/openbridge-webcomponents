@@ -27,7 +27,7 @@ export class ObcTransformer extends ObcAbstractAutomationButtonSquared {
             ></obi-transformer-02-on>
             <obi-transformer-02-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-transformer-02-on>`;
         } else {
           return html`<obi-transformer-02-off
@@ -36,7 +36,7 @@ export class ObcTransformer extends ObcAbstractAutomationButtonSquared {
             ></obi-transformer-02-off>
             <obi-transformer-02-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-transformer-02-off>`;
         }
       default:
@@ -47,7 +47,7 @@ export class ObcTransformer extends ObcAbstractAutomationButtonSquared {
             ></obi-transformer-01-on>
             <obi-transformer-01-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-transformer-01-on>`;
         } else {
           return html`<obi-transformer-01-off
@@ -56,7 +56,7 @@ export class ObcTransformer extends ObcAbstractAutomationButtonSquared {
             ></obi-transformer-01-off>
             <obi-transformer-01-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-transformer-01-off>`;
         }
     }

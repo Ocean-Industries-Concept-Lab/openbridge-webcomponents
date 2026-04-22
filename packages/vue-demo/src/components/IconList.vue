@@ -3,14 +3,14 @@
     <div class="top">
       <div class="container">
         <div class="input-form card">
-          <ObcInput
+          <ObcTextInputField
             placeholder="Search for icons"
             class="icon-search"
-            claas="icon-search"
+            :hasLeadingIcon="true"
             @input="onInput"
           >
-            <obi-search slot="icon"></obi-search>
-          </ObcInput>
+            <obi-search slot="leading-icon"></obi-search>
+          </ObcTextInputField>
           <ObcDropdownButton
             :options="filterOptions"
             :value="filterValue"
@@ -104,20 +104,20 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { iconIds } from '@ocean-industries-concept-lab/openbridge-webcomponents/src/icons/names'
+import { iconIds } from '@oicl/openbridge-webcomponents/src/icons/names'
 import { icon2element } from '@/business/icon2element'
-import ObcInput from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/input/ObcInput.vue'
+import ObcTextInputField from '@oicl/openbridge-webcomponents-vue/components/text-input-field/ObcTextInputField.vue'
 import { watch } from 'vue'
-import { IconButtonVariant } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/icon-button/icon-button'
-import ObcIconButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/icon-button/ObcIconButton.vue'
+import { IconButtonVariant } from '@oicl/openbridge-webcomponents/dist/components/icon-button/icon-button'
+import ObcIconButton from '@oicl/openbridge-webcomponents-vue/components/icon-button/ObcIconButton.vue'
 import { useBridgeStore } from '@/stores/bridge'
-import ObcToggleButtonGroup from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/toggle-button-group/ObcToggleButtonGroup.vue'
-import { ObcToggleButtonOptionType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/toggle-button-option/toggle-button-option'
-import ObcToggleButtonOption from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/toggle-button-option/ObcToggleButtonOption.vue'
-import ObcDropdownButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/dropdown-button/ObcDropdownButton.vue'
+import ObcToggleButtonGroup from '@oicl/openbridge-webcomponents-vue/components/toggle-button-group/ObcToggleButtonGroup.vue'
+import { ObcToggleButtonOptionType } from '@oicl/openbridge-webcomponents/dist/components/toggle-button-option/toggle-button-option'
+import ObcToggleButtonOption from '@oicl/openbridge-webcomponents-vue/components/toggle-button-option/ObcToggleButtonOption.vue'
+import ObcDropdownButton from '@oicl/openbridge-webcomponents-vue/components/dropdown-button/ObcDropdownButton.vue'
 import { computed } from 'vue'
-import ObcElevatedCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/elevated-card/ObcElevatedCard.vue'
-import { ObcElevatedCardSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/elevated-card/elevated-card'
+import ObcElevatedCard from '@oicl/openbridge-webcomponents-vue/components/elevated-card/ObcElevatedCard.vue'
+import { ObcElevatedCardSize } from '@oicl/openbridge-webcomponents/dist/components/elevated-card/elevated-card'
 
 const search = ref('')
 const bridgeStore = useBridgeStore()

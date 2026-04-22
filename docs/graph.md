@@ -1,6 +1,12 @@
-# OpenBridge styled plots
+# OpenBridge Charts and Graphs
 
-Plots are needed in many OpenBridge applications. We have not implemented any plots in the library as plots typically needs to be tailormade for each application. I have therefore made an example in the [vue demo app](https://openbridge-jip-demo.web.app/graph) of a graph using chart.js. See the [source code](../packages/vue-demo/src/views/GraphDemo.vue). I picked chart.js as it is a flexible and well maintained library. There are many wrapper libraries for chart.js, so for vue I use vue-chartjs. In this post I will use char.js directly.
+The OpenBridge Web Components library includes a set of ready-to-use chart components for common visualization needs. For highly customized plots, you can also use Chart.js directly with OpenBridge styling. See the Storybook for interactive examples of built-in chart types such as the [Line Graph](https://openbridge-storybook.web.app/?path=/docs/bars-and-graphs-line-graph--docs) and [Donut Chart](https://openbridge-storybook.web.app/?path=/docs/bars-and-graphs-donut-chart--docs).
+
+---
+
+## Custom Chart.js Plots
+
+For plots that need to be tailored for a specific application, you can use Chart.js directly with OpenBridge theming. Below is an example of a custom chart using Chart.js, demonstrated in the [vue demo app](https://openbridge-demo.web.app/graph) ([source code](../packages/vue-demo/src/views/GraphDemo.vue)).
 
 First define a html node to use for the plot:
 
@@ -26,7 +32,7 @@ function getCssVariableValue(variable, ctx) {
 }
 
 const redStroke = getCssVariableValue("--base-red-400", ctx);
-const greenStroke = getCssVariableValue("--base-green-400", ctx);
+const blueStroke = getCssVariableValue("--base-blue-400", ctx);
 const elementNeutralColor = getCssVariableValue("--element-neutral-color", ctx);
 const instrumentFrameTertiary = getCssVariableValue(
   "--instrument-frame-tertiary-color",
@@ -99,7 +105,7 @@ const power = [
           borderColor: {
             axis: 'y',
             colors: {
-              '0': negativeStroke, // Green for values between 0 and 50
+              '0': negativeStroke, // Blue for values between 0 and 50
               [target]: negativeStroke,
               [target + 0.0001]: positiveStroke, // Red for values between 50.0001 and 100
               '100': positiveStroke
@@ -219,10 +225,9 @@ Or react-chartjs-2:
 ## Palette switch
 
 We need to ensure that the plot is redrawn on palette switch.
-The dection of palette switch can be done in many ways.
-In vue a pinia store than be used to store the palette state, then a watcher can be used to detect switch of the palette variable.
-For react the context api can be used to store the palette state and the useEffect hook for redrawing the chart.
-Note that since
+The detection of palette switch can be done in many ways.
+In Vue, a Pinia store can be used to store the palette state, then a watcher can be used to detect switch of the palette variable.
+For React, the context API can be used to store the palette state and the `useEffect` hook for redrawing the chart.
 
 To redraw the chart use the `update` function.
 

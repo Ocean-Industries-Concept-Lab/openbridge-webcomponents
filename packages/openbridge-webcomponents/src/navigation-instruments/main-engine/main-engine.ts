@@ -25,8 +25,10 @@ export class ObcMainEngine extends LitElement {
   @property({type: Number}) speedSetpoint: number | undefined;
   @property({type: Boolean}) speedTouching: boolean = false;
   @property({type: Boolean}) atSpeedSetpoint: boolean = false;
-  @property({type: Boolean}) disableAutoAtThrustSetpoint: boolean = false;
-  @property({type: Boolean}) disableAutoAtSpeedSetpoint: boolean = false;
+  @property({type: Boolean, attribute: false}) autoAtThrustSetpoint: boolean =
+    true;
+  @property({type: Boolean, attribute: false}) autoAtSpeedSetpoint: boolean =
+    true;
   @property({type: Number}) autoAtThrustSetpointDeadband: number = 1;
   @property({type: Number}) autoAtSpeedSetpointDeadband: number = 1;
   @property({type: Number}) thrustSetpointAtZeroDeadband: number = 0.5;
@@ -38,8 +40,8 @@ export class ObcMainEngine extends LitElement {
   override render() {
     const thrustAtSetpoint = atSetpoint(this.thrust, this.thrustSetpoint, {
       atSetpoint: this.atThrustSetpoint,
-      autoAtSetpoint: !this.disableAutoAtThrustSetpoint,
-      autoSetpointDeadband: this.autoAtThrustSetpointDeadband,
+      autoAtSetpoint: this.autoAtThrustSetpoint,
+      autoAtSetpointDeadband: this.autoAtThrustSetpointDeadband,
       touching: this.thrustTouching,
     });
     const cThrust = thrusterColors(
@@ -52,8 +54,8 @@ export class ObcMainEngine extends LitElement {
     );
     const speedAtSetpoint = atSetpoint(this.speed, this.speedSetpoint, {
       atSetpoint: this.atSpeedSetpoint,
-      autoAtSetpoint: !this.disableAutoAtSpeedSetpoint,
-      autoSetpointDeadband: this.autoAtSpeedSetpointDeadband,
+      autoAtSetpoint: this.autoAtSpeedSetpoint,
+      autoAtSetpointDeadband: this.autoAtSpeedSetpointDeadband,
       touching: this.speedTouching,
     });
     const cSpeed = thrusterColors(

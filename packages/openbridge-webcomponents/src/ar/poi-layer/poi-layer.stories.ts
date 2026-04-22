@@ -3,34 +3,10 @@ import {html} from 'lit';
 import {createRef, ref} from 'lit/directives/ref.js';
 import {OverlapMode} from './poi-layer.js';
 import './poi-layer.js';
-import '../poi-data/poi-data.js';
-import {ObcPoiData, PoiDataValue} from '../poi-data/poi-data.js';
+import '../poi/poi-data.js';
+import {ObcPoiData, PoiDataValue} from '../poi/poi-data.js';
 import '../poi-group/poi-group.js';
-
-const isVitestBrowser = Boolean(
-  (globalThis as {__vitest_browser__?: unknown}).__vitest_browser__
-);
-
-const waitForStorySettle = async (
-  options: {drainTransitions?: boolean} = {}
-) => {
-  if ('fonts' in document) {
-    await (document as Document & {fonts?: FontFaceSet}).fonts?.ready;
-  }
-
-  await new Promise<void>((resolve) =>
-    requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
-  );
-
-  if (options.drainTransitions && isVitestBrowser) {
-    await new Promise<void>((resolve) => {
-      setTimeout(resolve, 220);
-    });
-    await new Promise<void>((resolve) =>
-      requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
-    );
-  }
-};
+import {isVitestBrowser, waitForStorySettle} from '../_test-utils.js';
 
 type PoiLayerArgs = {
   label: string;
@@ -44,7 +20,7 @@ type PoiLayerArgs = {
 
 const meta: Meta<PoiLayerArgs> = {
   title: 'AR/POI Layer',
-  tags: ['6.0'],
+  tags: ['6.1'],
   component: 'obc-poi-layer',
   decorators: [
     (story) => html`
@@ -52,6 +28,9 @@ const meta: Meta<PoiLayerArgs> = {
         .poi-layer-story-frame {
           min-height: 200px;
           display: block;
+        }
+
+        .poi-layer-story-frame obc-poi-layer {
         }
       </style>
       <div class="poi-layer-story-frame">${story()}</div>
@@ -538,7 +517,7 @@ export const EnterGroupFromTwo: Story = {
 
       const tick = (now: number) => {
         const t = ((now - start) % duration) / duration;
-        let eased = 0;
+        let eased;
         if (t < 0.5) {
           const phase = t / 0.5;
           eased = phase * phase * (3 - 2 * phase);
@@ -1110,7 +1089,7 @@ export const CrossingMode: Story = {
         if (!movingPoi || !staticPoi) return;
 
         staticPoi.x = staticX;
-        let x = leftX;
+        let x: number;
         if (t < 0.35) {
           x = leftX;
         } else if (t < 0.75) {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import ObcWind from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/wind/ObcWind.vue'
-import { VesselImage } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/vessel'
-import { type WindHistogramData } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/wind/wind'
+import ObcWind from '@oicl/openbridge-webcomponents-vue/navigation-instruments/wind/ObcWind.vue'
+import { VesselImage } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/vessel'
+import { type WindHistogramData } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/wind/wind'
 import type { WeatherData } from '@/business/getWeather'
 
 interface Props {

@@ -27,8 +27,8 @@
 }
 
 .wrapper.type-id.state-selected {
-  background: var(--overlay-container-global-color, #fcfcfc);
-  border: 1px solid rgba(0, 0, 0, 0.3);
+  background: var(--overlay-container-global-color);
+  border: 1px solid var(--overlay-border-outline-color);
 }
 
 .wrapper.type-id.state-caution {
@@ -52,8 +52,8 @@
     .state-warning,
     .state-alarm
   ) {
-  background: rgba(247, 247, 247, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: var(--overlay-container-background-color);
+  border: 1px solid var(--overlay-border-outline-color);
 }
 
 .wrapper.type-id.single-char-content:not(.has-indicator) {
@@ -100,8 +100,8 @@
 }
 
 .wrapper.type-data.state-selected .id-pill {
-  background: var(--overlay-container-global-color, #fcfcfc);
-  border: 1px solid var(--element-inactive-color, #707070);
+  background: var(--overlay-container-global-color);
+  border: 1px solid var(--overlay-border-outline-color);
 }
 
 .wrapper.type-data.state-caution .id-pill {
@@ -153,7 +153,7 @@
 .wrapper.type-data.state-enabled .label-text {
   @mixin font-label-active;
   @mixin font-overlay-outline-shadow;
-  color: var(--overlay-element-active-color, #fff);
+  color: var(--overlay-element-active-color);
   text-align: center;
 }
 
@@ -177,7 +177,7 @@
 .indicator .bar {
   box-sizing: border-box;
   position: absolute;
-  background: var(--element-neutral-color, #535353);
+  background: var(--element-neutral-color);
   border-radius: 999px;
 }
 
@@ -209,36 +209,36 @@
 }
 
 .wrapper.state-enabled ::slotted([slot="indicator"]) {
-  color: var(--overlay-element-active-color, #fff);
-  --element-active-color: var(--overlay-element-active-color, #fff);
+  color: var(--overlay-element-active-color);
+  --element-active-color: var(--overlay-element-active-color);
 }
 
 .wrapper.type-id:is(.state-selected, .state-caution, .state-warning)
   ::slotted([slot="indicator"]) {
-  color: var(--on-warning-color, #1a1a1a);
-  --element-active-color: var(--on-warning-color, #1a1a1a);
+  color: var(--on-warning-color);
+  --element-active-color: var(--on-warning-color);
 }
 
 .wrapper.type-id.state-alarm ::slotted([slot="indicator"]) {
-  color: var(--overlay-element-active-color, #fff);
-  --element-active-color: var(--overlay-element-active-color, #fff);
+  color: var(--overlay-element-active-color);
+  --element-active-color: var(--overlay-element-active-color);
 }
 
 .wrapper.state-enabled .indicator .bar {
   border-radius: 7px;
-  background: var(--overlay-element-active-color, #fff);
+  background: var(--overlay-element-active-color);
   box-shadow:
-    0 0 0 1px var(--overlay-element-active-inverted-color, #1a1a1a),
-    0 1px 2px 0 #000;
+    0 0 0 1px var(--overlay-element-active-inverted-color),
+    var(--shadow-flat);
 }
 
 .wrapper.type-id:is(.state-selected, .state-caution, .state-warning)
   .indicator
   .bar {
   border-radius: 7px;
-  background: var(--on-warning-color, #1a1a1a);
+  background: var(--on-warning-color);
 }
 
 .wrapper.type-id.state-alarm .indicator .bar {
-  background: var(--overlay-element-active-color, #fff);
+  background: var(--overlay-element-active-color);
 }

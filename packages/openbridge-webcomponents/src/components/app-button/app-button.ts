@@ -74,10 +74,10 @@ export class ObcAppButton extends LitElement {
   @property({type: Boolean}) checked = false;
 
   /**
-   * If true, hides the button's label.
-   * @default false
+   * If true, shows the button's label.
+   * @default true
    */
-  @property({type: Boolean}) hideLabel = false;
+  @property({type: Boolean, attribute: false}) showLabel: boolean = true;
 
   /**
    * If true, applies integration styles for the integration app bar.
@@ -91,6 +91,8 @@ export class ObcAppButton extends LitElement {
    */
   @property({type: String}) size = AppButtonSize.Normal;
 
+  @property({type: Boolean}) disabled = false;
+
   override render() {
     return html` <button
       class="${classMap({
@@ -98,16 +100,16 @@ export class ObcAppButton extends LitElement {
         checked: this.checked,
         small: this.size === AppButtonSize.Small,
         integration: this.integration,
+        disabled: this.disabled,
       })}"
+      ?disabled=${this.disabled}
     >
       <div class="icon-wrapper">
         <span class="icon">
           <slot name="icon"></slot>
         </span>
       </div>
-      ${!this.hideLabel
-        ? html`<div class="label">${this.label}</div>`
-        : nothing}
+      ${this.showLabel ? html`<div class="label">${this.label}</div>` : nothing}
     </button>`;
   }
 

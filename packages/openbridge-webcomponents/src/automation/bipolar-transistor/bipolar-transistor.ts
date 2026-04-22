@@ -37,7 +37,7 @@ export class ObcBipolarTransistor extends ObcAbstractAutomationButtonSquared {
             ></obi-bipolar_transistor-02-on>
             <obi-bipolar_transistor-02-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-bipolar_transistor-02-on>`;
         } else {
           return html`<obi-bipolar_transistor-02-off
@@ -46,7 +46,7 @@ export class ObcBipolarTransistor extends ObcAbstractAutomationButtonSquared {
             ></obi-bipolar_transistor-02-off>
             <obi-bipolar_transistor-02-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-bipolar_transistor-02-off>`;
         }
       case BipolarTransistorAlternativeIcon.bipolarTransistor03:
@@ -57,7 +57,7 @@ export class ObcBipolarTransistor extends ObcAbstractAutomationButtonSquared {
             ></obi-bipolar_transistor-03-on>
             <obi-bipolar_transistor-03-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-bipolar_transistor-03-on>`;
         } else {
           return html`<obi-bipolar_transistor-03-off
@@ -66,7 +66,7 @@ export class ObcBipolarTransistor extends ObcAbstractAutomationButtonSquared {
             ></obi-bipolar_transistor-03-off>
             <obi-bipolar_transistor-03-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-bipolar_transistor-03-off>`;
         }
       case BipolarTransistorAlternativeIcon.bipolarTransistor04:
@@ -77,7 +77,7 @@ export class ObcBipolarTransistor extends ObcAbstractAutomationButtonSquared {
             ></obi-bipolar_transistor-04-on>
             <obi-bipolar_transistor-04-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-bipolar_transistor-04-on>`;
         } else {
           return html`<obi-bipolar_transistor-04-off
@@ -86,7 +86,7 @@ export class ObcBipolarTransistor extends ObcAbstractAutomationButtonSquared {
             ></obi-bipolar_transistor-04-off>
             <obi-bipolar_transistor-04-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-bipolar_transistor-04-off>`;
         }
       case BipolarTransistorAlternativeIcon.bipolarTransistor03Flat:
@@ -96,7 +96,7 @@ export class ObcBipolarTransistor extends ObcAbstractAutomationButtonSquared {
           ></obi-bipolar_transistor-03-flat>
           <obi-bipolar_transistor-03-flat
             usecsscolor
-            slot="icon-siluette"
+            slot="icon-silhouette"
           ></obi-bipolar_transistor-03-flat>`;
       case BipolarTransistorAlternativeIcon.bipolarTransistor04Flat:
         return html`<obi-bipolar_transistor-04-flat
@@ -105,7 +105,7 @@ export class ObcBipolarTransistor extends ObcAbstractAutomationButtonSquared {
           ></obi-bipolar_transistor-04-flat>
           <obi-bipolar_transistor-04-flat
             usecsscolor
-            slot="icon-siluette"
+            slot="icon-silhouette"
           ></obi-bipolar_transistor-04-flat>`;
       default:
         if (this.on) {
@@ -115,7 +115,7 @@ export class ObcBipolarTransistor extends ObcAbstractAutomationButtonSquared {
             ></obi-bipolar_transistor-on>
             <obi-bipolar_transistor-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-bipolar_transistor-on>`;
         } else {
           return html`<obi-bipolar_transistor-off
@@ -124,7 +124,7 @@ export class ObcBipolarTransistor extends ObcAbstractAutomationButtonSquared {
             ></obi-bipolar_transistor-off>
             <obi-bipolar_transistor-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-bipolar_transistor-off>`;
         }
     }

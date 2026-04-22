@@ -19,9 +19,10 @@ import {
   ObcAlertFrameType,
 } from '../../components/alert-frame/alert-frame.js';
 import '../automation-badge/automation-badge.js';
+import {CircularProgressMode} from '../../building-blocks/circular-progress/circular-progress.js';
 
 export class ObcAbstractAutomationButton extends LitElement {
-  @property({type: Boolean}) hideReadoutStack: boolean = false;
+  @property({type: Boolean, attribute: false}) showReadoutStack: boolean = true;
   @property({type: Boolean}) hasIdTag: boolean = false;
   @property({type: String}) readoutPosition: AutomationButtonReadoutPosition =
     AutomationButtonReadoutPosition.bottom;
@@ -36,9 +37,13 @@ export class ObcAbstractAutomationButton extends LitElement {
     ObcAlertFrameThickness.Small;
   @property({type: String}) alertFrameStatus: ObcAlertFrameStatus =
     ObcAlertFrameStatus.Alarm;
-  @property({type: Boolean}) hideAlertCategoryIcon: boolean = false;
+  @property({type: Boolean, attribute: false}) showAlertCategoryIcon: boolean =
+    true;
   @property({type: Boolean}) showAlertIcon: boolean = false;
   @property({type: Boolean}) progress: boolean = false;
+  @property({type: String}) progressMode: CircularProgressMode =
+    CircularProgressMode.indeterminate;
+  @property({type: Number}) progressValue: number = 0;
   @property({type: String}) tag: string = '';
   @property({type: String}) direction: AutomationButtonDirection =
     AutomationButtonDirection.forward;
@@ -74,7 +79,7 @@ export class ObcAbstractAutomationButton extends LitElement {
   badgeBottomRight!: HTMLElement[];
 
   private getBadgeSpacer(): boolean {
-    if (this.hideReadoutStack) {
+    if (!this.showReadoutStack) {
       return false;
     }
     const topLeft = this.badgeTopLeft.length > 0 || this.badgeAuto;
@@ -112,7 +117,7 @@ export class ObcAbstractAutomationButton extends LitElement {
         : AutomationButtonState.closed}
       .readouts=${readouts}
       .tag=${tagValue}
-      .hideReadoutStack=${this.hideReadoutStack}
+      .showReadoutStack=${this.showReadoutStack}
       .hasIdTag=${this.hasIdTag}
       .readoutPosition=${this.readoutPosition}
       .readoutSize=${this.readoutSize}
@@ -120,9 +125,11 @@ export class ObcAbstractAutomationButton extends LitElement {
       .alertFrameType=${this.alertFrameType}
       .alertFrameThickness=${this.alertFrameThickness}
       .alertFrameStatus=${this.alertFrameStatus}
-      .hideAlertCategoryIcon=${this.hideAlertCategoryIcon}
+      .showAlertCategoryIcon=${this.showAlertCategoryIcon}
       .showAlertIcon=${this.showAlertIcon}
       ?progress=${this.progress}
+      .progressMode=${this.progressMode}
+      .progressValue=${this.progressValue}
       .variant=${this._variant}
       .direction=${this.direction}
       .hasBadgeSpacer=${this.getBadgeSpacer()}

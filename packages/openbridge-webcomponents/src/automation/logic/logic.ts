@@ -39,7 +39,7 @@ export class ObcLogic extends ObcAbstractAutomationButtonSquared {
             ></obi-logic-02-on>
             <obi-logic-02-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-logic-02-on>`;
         } else {
           return html`<obi-logic-02-off
@@ -48,7 +48,7 @@ export class ObcLogic extends ObcAbstractAutomationButtonSquared {
             ></obi-logic-02-off>
             <obi-logic-02-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-logic-02-off>`;
         }
       case LogicAlternativeIcon.logic03:
@@ -59,7 +59,7 @@ export class ObcLogic extends ObcAbstractAutomationButtonSquared {
             ></obi-logic-03-on>
             <obi-logic-03-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-logic-03-on>`;
         } else {
           return html`<obi-logic-03-off
@@ -68,7 +68,7 @@ export class ObcLogic extends ObcAbstractAutomationButtonSquared {
             ></obi-logic-03-off>
             <obi-logic-03-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-logic-03-off>`;
         }
       case LogicAlternativeIcon.logic04:
@@ -79,7 +79,7 @@ export class ObcLogic extends ObcAbstractAutomationButtonSquared {
             ></obi-logic-04-on>
             <obi-logic-04-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-logic-04-on>`;
         } else {
           return html`<obi-logic-04-off
@@ -88,7 +88,7 @@ export class ObcLogic extends ObcAbstractAutomationButtonSquared {
             ></obi-logic-04-off>
             <obi-logic-04-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-logic-04-off>`;
         }
       case LogicAlternativeIcon.logic05:
@@ -99,7 +99,7 @@ export class ObcLogic extends ObcAbstractAutomationButtonSquared {
             ></obi-logic-05-on>
             <obi-logic-05-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-logic-05-on>`;
         } else {
           return html`<obi-logic-05-off
@@ -108,7 +108,7 @@ export class ObcLogic extends ObcAbstractAutomationButtonSquared {
             ></obi-logic-05-off>
             <obi-logic-05-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-logic-05-off>`;
         }
       case LogicAlternativeIcon.logic06:
@@ -119,7 +119,7 @@ export class ObcLogic extends ObcAbstractAutomationButtonSquared {
             ></obi-logic-06-on>
             <obi-logic-06-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-logic-06-on>`;
         } else {
           return html`<obi-logic-06-off
@@ -128,7 +128,7 @@ export class ObcLogic extends ObcAbstractAutomationButtonSquared {
             ></obi-logic-06-off>
             <obi-logic-06-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-logic-06-off>`;
         }
       default:
@@ -139,7 +139,7 @@ export class ObcLogic extends ObcAbstractAutomationButtonSquared {
             ></obi-logic-01-on>
             <obi-logic-01-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-logic-01-on>`;
         } else {
           return html`<obi-logic-01-off
@@ -148,7 +148,7 @@ export class ObcLogic extends ObcAbstractAutomationButtonSquared {
             ></obi-logic-01-off>
             <obi-logic-01-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-logic-01-off>`;
         }
     }

@@ -8,6 +8,7 @@ import {CommandStatus} from '../badge-command/badge-command.js';
 import {AdviceType} from '../watch/advice.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {PropellerType} from '../thruster/propeller.js';
+import {TickmarkStyle} from '../watch/tickmark.js';
 
 const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
   title: 'Instruments/Azimuth Thruster Labeled',
@@ -45,6 +46,10 @@ const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
     },
     width: {
       control: {type: 'range', min: 100, max: 2000, step: 1},
+    },
+    tickmarkStyle: {
+      control: 'select',
+      options: Object.values(TickmarkStyle),
     },
   },
 } satisfies Meta<ObcAzimuthThrusterLabeled>;

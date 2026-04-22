@@ -45,7 +45,7 @@ export class ObcMosfet extends ObcAbstractAutomationButtonSquared {
             ></obi-mosfet-ntype-2-on>
             <obi-mosfet-ntype-2-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-mosfet-ntype-2-on>`;
         } else {
           return html`<obi-mosfet-ntype-2-off
@@ -54,7 +54,7 @@ export class ObcMosfet extends ObcAbstractAutomationButtonSquared {
             ></obi-mosfet-ntype-2-off>
             <obi-mosfet-ntype-2-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-mosfet-ntype-2-off>`;
         }
       case MosfetAlternativeIcon.mosfetNtype3:
@@ -65,7 +65,7 @@ export class ObcMosfet extends ObcAbstractAutomationButtonSquared {
             ></obi-mosfet-ntype-3-on>
             <obi-mosfet-ntype-3-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-mosfet-ntype-3-on>`;
         } else {
           return html`<obi-mosfet-ntype-3-off
@@ -74,7 +74,7 @@ export class ObcMosfet extends ObcAbstractAutomationButtonSquared {
             ></obi-mosfet-ntype-3-off>
             <obi-mosfet-ntype-3-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-mosfet-ntype-3-off>`;
         }
       case MosfetAlternativeIcon.mosfetNtype4:
@@ -85,7 +85,7 @@ export class ObcMosfet extends ObcAbstractAutomationButtonSquared {
             ></obi-mosfet-ntype-4-on>
             <obi-mosfet-ntype-4-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-mosfet-ntype-4-on>`;
         } else {
           return html`<obi-mosfet-ntype-4-off
@@ -94,7 +94,7 @@ export class ObcMosfet extends ObcAbstractAutomationButtonSquared {
             ></obi-mosfet-ntype-4-off>
             <obi-mosfet-ntype-4-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-mosfet-ntype-4-off>`;
         }
       case MosfetAlternativeIcon.mosfetPtype1:
@@ -105,7 +105,7 @@ export class ObcMosfet extends ObcAbstractAutomationButtonSquared {
             ></obi-mosfet-ptype-1-on>
             <obi-mosfet-ptype-1-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-mosfet-ptype-1-on>`;
         } else {
           return html`<obi-mosfet-ptype-1-off
@@ -114,7 +114,7 @@ export class ObcMosfet extends ObcAbstractAutomationButtonSquared {
             ></obi-mosfet-ptype-1-off>
             <obi-mosfet-ptype-1-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-mosfet-ptype-1-off>`;
         }
       case MosfetAlternativeIcon.mosfetPtype2:
@@ -125,7 +125,7 @@ export class ObcMosfet extends ObcAbstractAutomationButtonSquared {
             ></obi-mosfet-ptype-2-on>
             <obi-mosfet-ptype-2-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-mosfet-ptype-2-on>`;
         } else {
           return html`<obi-mosfet-ptype-2-off
@@ -134,7 +134,7 @@ export class ObcMosfet extends ObcAbstractAutomationButtonSquared {
             ></obi-mosfet-ptype-2-off>
             <obi-mosfet-ptype-2-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-mosfet-ptype-2-off>`;
         }
       case MosfetAlternativeIcon.mosfetPtype3:
@@ -145,7 +145,7 @@ export class ObcMosfet extends ObcAbstractAutomationButtonSquared {
             ></obi-mosfet-ptype-3-on>
             <obi-mosfet-ptype-3-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-mosfet-ptype-3-on>`;
         } else {
           return html`<obi-mosfet-ptype-3-off
@@ -154,7 +154,7 @@ export class ObcMosfet extends ObcAbstractAutomationButtonSquared {
             ></obi-mosfet-ptype-3-off>
             <obi-mosfet-ptype-3-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-mosfet-ptype-3-off>`;
         }
       case MosfetAlternativeIcon.mosfetPtype4:
@@ -165,7 +165,7 @@ export class ObcMosfet extends ObcAbstractAutomationButtonSquared {
             ></obi-mosfet-ptype-4-on>
             <obi-mosfet-ptype-4-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-mosfet-ptype-4-on>`;
         } else {
           return html`<obi-mosfet-ptype-4-off
@@ -174,7 +174,7 @@ export class ObcMosfet extends ObcAbstractAutomationButtonSquared {
             ></obi-mosfet-ptype-4-off>
             <obi-mosfet-ptype-4-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-mosfet-ptype-4-off>`;
         }
       default:
@@ -185,7 +185,7 @@ export class ObcMosfet extends ObcAbstractAutomationButtonSquared {
             ></obi-mosfet-ntype-1-on>
             <obi-mosfet-ntype-1-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-mosfet-ntype-1-on>`;
         } else {
           return html`<obi-mosfet-ntype-1-off
@@ -194,7 +194,7 @@ export class ObcMosfet extends ObcAbstractAutomationButtonSquared {
             ></obi-mosfet-ntype-1-off>
             <obi-mosfet-ntype-1-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-mosfet-ntype-1-off>`;
         }
     }

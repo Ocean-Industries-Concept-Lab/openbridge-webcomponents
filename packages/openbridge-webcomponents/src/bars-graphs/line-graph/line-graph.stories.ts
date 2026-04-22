@@ -155,7 +155,14 @@ export default meta;
 type Story = StoryObj;
 
 export const SingleSeries: Story = {
-  name: 'Single-series line graph (category)',
+  name: 'Single-Series Line Graph (category)',
+  play: async ({canvasElement}) => {
+    await document.fonts.ready;
+    const chart = canvasElement.querySelector('obc-line-graph') as
+      | (HTMLElement & {chart?: {update(): void}})
+      | null;
+    chart?.chart?.update();
+  },
   render: (_args) => html`
     <obc-line-graph
       .data=${_args.data}
@@ -182,8 +189,8 @@ export const SingleSeries: Story = {
 };
 
 export const SingleSeriesExternalScales: Story = {
-  name: 'Single-series line graph (with external scales)',
-  tags: ['!snapshot'],
+  name: 'Single-Series Line Graph (with external scales)',
+  tags: ['skip-test'],
   argTypes: {
     priority: {
       control: 'select',
@@ -192,9 +199,9 @@ export const SingleSeriesExternalScales: Story = {
     },
     // External scale controls (vertical/left)
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
-    vScaleHideLabels: {
+    vScaleShowLabels: {
       control: 'boolean',
-      description: 'Vertical scale: hide labels',
+      description: 'Vertical scale: show labels',
     },
     vScaleAdvices: {
       control: 'boolean',
@@ -231,9 +238,9 @@ export const SingleSeriesExternalScales: Story = {
       control: 'boolean',
       description: 'Horizontal scale: show bar',
     },
-    hScaleHideLabels: {
+    hScaleShowLabels: {
       control: 'boolean',
-      description: 'Horizontal scale: hide labels',
+      description: 'Horizontal scale: show labels',
     },
     hScaleAdvices: {
       control: 'boolean',
@@ -274,7 +281,7 @@ export const SingleSeriesExternalScales: Story = {
     priority: Priority.enhanced,
     // Vertical scale defaults
     vScaleHasBar: false,
-    vScaleHideLabels: false,
+    vScaleShowLabels: true,
     vScaleAdvices: true,
     vScaleFillMode: 'fill',
     vScaleAdvicePosition: 'inner',
@@ -284,7 +291,7 @@ export const SingleSeriesExternalScales: Story = {
     vScaleFillMax: 5,
     // Horizontal scale defaults
     hScaleHasBar: false,
-    hScaleHideLabels: false,
+    hScaleShowLabels: true,
     hScaleAdvices: true,
     hScaleFillMode: 'tint',
     hScaleAdvicePosition: 'inner',
@@ -313,7 +320,7 @@ export const SingleSeriesExternalScales: Story = {
         .height=${_args.height}
         .side=${'left'}
         .hasScale=${true}
-        .hideLabels=${_args.vScaleHideLabels}
+        .showLabels=${_args.vScaleShowLabels}
         .hasBar=${_args.vScaleHasBar}
         .fillMode=${_args.vScaleFillMode === 'fill'
           ? FillMode.fill
@@ -345,7 +352,7 @@ export const SingleSeriesExternalScales: Story = {
         .width=${_args.width}
         .side=${'bottom'}
         .hasScale=${true}
-        .hideLabels=${_args.hScaleHideLabels}
+        .showLabels=${_args.hScaleShowLabels}
         .hasBar=${_args.hScaleHasBar}
         .fillMode=${_args.hScaleFillMode === 'fill'
           ? FillMode.fill
@@ -375,28 +382,28 @@ export const SingleSeriesExternalScales: Story = {
 };
 
 export const WithPoints: Story = {
-  name: 'With points line graph',
+  name: 'With Points Line Graph',
   args: {
     showPoints: true,
   },
 };
 
 export const StraightLine: Story = {
-  name: 'Straight line graph',
+  name: 'Straight Line Graph',
   args: {
     lineMode: LineMode.straight,
   },
 };
 
 export const SteppedLine: Story = {
-  name: 'Stepped line graph',
+  name: 'Stepped Line Graph',
   args: {
     lineMode: LineMode.stepped,
   },
 };
 
 export const MultiSeriesTime: Story = {
-  name: 'Multi-series line graph',
+  name: 'Multi-Series Line Graph',
   args: {
     showGridY: false,
     datasets: SAMPLE_MULTI_DATASETS,
@@ -405,7 +412,7 @@ export const MultiSeriesTime: Story = {
 };
 
 export const MinHeight: Story = {
-  name: 'Minimal height line graph (48px)',
+  name: 'Minimal Height Line Graph (48px)',
   args: {
     width: 72,
     height: 48,
@@ -413,7 +420,7 @@ export const MinHeight: Story = {
 };
 
 export const ThresholdHeight: Story = {
-  name: 'Threshold height line graph (192px, where labels appear)',
+  name: 'Threshold Height Line Graph (192px, where labels appear)',
   args: {
     width: 288,
     height: 192,
@@ -421,7 +428,7 @@ export const ThresholdHeight: Story = {
 };
 
 export const NoLabelsNoTicks: Story = {
-  name: 'No labels/ticks line graph (but yes 32px padding for optional points)',
+  name: 'No Labels/ticks Line Graph (but yes 32px padding for optional points)',
   args: {
     showTickMarks: false,
     width: 288,
@@ -431,14 +438,14 @@ export const NoLabelsNoTicks: Story = {
 };
 
 export const WithLegend: Story = {
-  name: 'With legend line graph',
+  name: 'With Legend Line Graph',
   args: {
     legend: true,
   },
 };
 
 export const MultiAxis: Story = {
-  name: 'Multi-axis line graph (left and right y-axes)',
+  name: 'Multi-Axis Line Graph (left and right y-axes)',
   render: (_args) => {
     const multiAxisDatasets: NonNullable<ObcLineGraph['datasets']> = [
       {
@@ -512,7 +519,7 @@ export const CustomColors: Story = {
 
 export const RealtimeSqueezing: Story = {
   name: 'Realtime (squeezing)',
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   render: (_args) => {
     const chart = document.createElement('obc-line-graph');
     chart.data = JSON.parse(JSON.stringify(SAMPLE_DATA));
@@ -545,7 +552,7 @@ export const RealtimeSqueezing: Story = {
 
 export const RealtimeShifting: Story = {
   name: 'Realtime (shifting)',
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   render: (_args) => {
     const chart = document.createElement('obc-line-graph');
     chart.showDebugOverlay = _args.showDebugOverlay;

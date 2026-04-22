@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import ObcCompass from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/compass/ObcCompass.vue'
+import ObcCompass from '@oicl/openbridge-webcomponents-vue/navigation-instruments/compass/ObcCompass.vue'
 import { useSim } from '../composables/useSim'
 import { useWeather } from '@/business/getWeather'
-import { VesselImage } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/vessel'
+import { VesselImage } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/vessel'
 import { computed, ref, onMounted, onUnmounted } from 'vue'
-import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
-import { InstrumentFieldSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
+import ObcInstrumentField from '@oicl/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
+import { InstrumentFieldSize } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
 import {
   type AngleAdvice,
   AdviceType
-} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js'
+} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js'
 import {
   InstrumentState,
   Priority
-} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types'
+} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types'
 import { useDemoConfigStore } from '../stores/demoConfig'
 
 const sim = useSim()

@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {html, nothing} from 'lit';
+import {html, nothing, type LitElement} from 'lit';
 import './sequence-step.js';
 import '../sequence-item/sequence-item.js';
 import {
@@ -9,6 +9,26 @@ import {
 } from '../sequence-item/sequence-item.js';
 import {SequenceStyle, SequenceType, SequenceValue} from './sequence-step.js';
 import {iconIdToIconHtml} from '../../storybook-util.js';
+
+type Story = StoryObj<typeof meta>;
+
+/**
+ * Force all loading spinners inside sequence steps to their final state
+ * so visual snapshots are deterministic.
+ */
+const settleLoadingSpinners: Story['play'] = async ({canvasElement}) => {
+  const steps = canvasElement.querySelectorAll('obc-sequence-step');
+  for (const step of steps) {
+    await (step as LitElement).updateComplete;
+    const spinner = step.shadowRoot?.querySelector(
+      'obc-sequence-loading-spinner'
+    ) as (LitElement & {progressPercent: number}) | null;
+    if (spinner) {
+      spinner.progressPercent = 100;
+      await spinner.updateComplete;
+    }
+  }
+};
 
 type DiagramArgs = {
   steps: Array<{
@@ -100,8 +120,6 @@ const meta: Meta = {
 
 export default meta;
 
-type Story = StoryObj<typeof meta>;
-
 export const SequenceItems: Story = {
   args: {
     steps: [
@@ -179,7 +197,6 @@ const renderSequenceItemsStory = (
 };
 
 export const SequenceItemsWithDescription: Story = {
-  name: 'Sequence items with description',
   args: {
     steps: [
       {
@@ -249,8 +266,8 @@ const renderDiagram = ({
   return html`
     <div style=${containerStyle}>
       ${steps.map((step, index) => {
-        const hideInputConnector = step.stepHasInputConnector === false;
-        const hideOutputConnector = step.stepHasOutputConnector === false;
+        const showInputConnector = step.stepHasInputConnector !== false;
+        const showOutputConnector = step.stepHasOutputConnector !== false;
         return html`
           <div style=${itemWrapperStyle}>
             <obc-sequence-item
@@ -271,9 +288,9 @@ const renderDiagram = ({
               .stepType=${step.stepType ?? SequenceType.small}
               .stepStyle=${step.stepStyle ?? SequenceStyle.regular}
               .stepValue=${step.value}
-              .hideStepInputConnector=${hideInputConnector ?? index === 0}
-              .hideStepOutputConnector=${hideOutputConnector ??
-              index === steps.length - 1}
+              .showStepInputConnector=${showInputConnector ?? index !== 0}
+              .showStepOutputConnector=${showOutputConnector ??
+              index !== steps.length - 1}
               .stepHasIcon=${step.stepHasIcon ?? false}
             ></obc-sequence-item>
           </div>
@@ -308,16 +325,16 @@ const renderStepSequence = (
               useCssColor: '',
             })
           : nothing;
-        const hideInputConnector = step.stepHasInputConnector !== true;
-        const hideOutputConnector = step.stepHasOutputConnector !== true;
+        const showInputConnector = step.stepHasInputConnector === true;
+        const showOutputConnector = step.stepHasOutputConnector === true;
         return html`
           <obc-sequence-step
             .type=${resolvedType}
             .styleType=${resolvedStyle}
             .value=${step.value}
             orientation=${orientation}
-            .hideStepInputConnector=${hideInputConnector}
-            .hideStepOutputConnector=${hideOutputConnector}
+            .showStepInputConnector=${showInputConnector}
+            .showStepOutputConnector=${showOutputConnector}
             .hasIcon=${showIcon}
           >
             ${iconTemplate}
@@ -333,7 +350,7 @@ const renderStepSequence = (
 };
 
 export const MediumButtonSequence: Story = {
-  name: 'Medium button steps',
+  name: 'Medium Button Steps',
   args: {
     steps: [
       {
@@ -431,10 +448,11 @@ export const MediumButtonSequence: Story = {
       ${renderStepSequence(steps, SequenceType.medium, 'vertical')}
     </div>
   `,
+  play: settleLoadingSpinners,
 };
 
 export const LargeButtons: Story = {
-  name: 'Large button steps',
+  name: 'Large Button Steps',
   args: {
     steps: [
       {
@@ -504,10 +522,11 @@ export const LargeButtons: Story = {
       ${renderStepSequence(steps, SequenceType.large, 'vertical')}
     </div>
   `,
+  play: settleLoadingSpinners,
 };
 
 export const LargePointSequence: Story = {
-  name: 'Point steps',
+  name: 'Point Steps',
   args: {
     steps: [1, 2, 3, 4, 5, 6, 7].map((value, index) => {
       const config = {
@@ -582,16 +601,16 @@ export const LargePointSequence: Story = {
     <div style="display: flex; flex-direction: column; gap: 32px; width: 100%;">
       <div style="display: flex; align-items: center;">
         ${steps.map((step) => {
-          const hideInputConnector = step.stepHasInputConnector !== true;
-          const hideOutputConnector = step.stepHasOutputConnector !== true;
+          const showInputConnector = step.stepHasInputConnector === true;
+          const showOutputConnector = step.stepHasOutputConnector === true;
           return html`
             <obc-sequence-step
               .type=${step.stepType ?? SequenceType.medium}
               .styleType=${SequenceStyle.point}
               .value=${step.value}
               orientation="horizontal"
-              .hideStepInputConnector=${hideInputConnector}
-              .hideStepOutputConnector=${hideOutputConnector}
+              .showStepInputConnector=${showInputConnector}
+              .showStepOutputConnector=${showOutputConnector}
             >
               ${step.stepLabel}
             </obc-sequence-step>
@@ -600,16 +619,16 @@ export const LargePointSequence: Story = {
       </div>
       <div style="display: flex; flex-direction: column; align-items: center;">
         ${steps.map((step) => {
-          const hideInputConnector = step.stepHasInputConnector !== true;
-          const hideOutputConnector = step.stepHasOutputConnector !== true;
+          const showInputConnector = step.stepHasInputConnector === true;
+          const showOutputConnector = step.stepHasOutputConnector === true;
           return html`
             <obc-sequence-step
               .type=${step.stepType ?? SequenceType.medium}
               .styleType=${SequenceStyle.point}
               .value=${step.value}
               orientation="vertical"
-              .hideStepInputConnector=${hideInputConnector}
-              .hideStepOutputConnector=${hideOutputConnector}
+              .showStepInputConnector=${showInputConnector}
+              .showStepOutputConnector=${showOutputConnector}
             >
               ${step.stepLabel}
             </obc-sequence-step>

@@ -4,6 +4,20 @@ import {property, state} from 'lit/decorators.js';
 import {Tickmark, TickmarkType} from '../watch-flat/tickmark-flat.js';
 import '../watch-flat/watch-flat.js';
 import {customElement} from '../../decorator.js';
+import {Priority} from '../types.js';
+import {
+  RotType,
+  LINEAR_DOT_ANGLE_SPACING,
+  ROT_ZERO_DEADBAND_DEG,
+} from '../rate-of-turn/rot-renderer.js';
+
+export {RotType};
+
+export enum CompassFlatPriorityElement {
+  hdg = 'hdg',
+  cog = 'cog',
+  rot = 'rot',
+}
 
 export enum LabelPosition {
   top = -45,
@@ -21,6 +35,35 @@ export interface Label {
 }
 
 /**
+ * `<obc-compass-flat>` — Horizontal strip compass with HDG/COG arrows and optional rate-of-turn indicator.
+ *
+ * Renders a flat (non-circular) compass strip that scrolls horizontally to
+ * display the current heading. A filled HDG arrow sits at the center while a
+ * hollow COG arrow is positioned at the angular difference. The strip
+ * auto-scales its field of view so both arrows remain visible. Cardinal
+ * labels (N, S, E, W) and tickmarks are generated at densities responsive to
+ * the strip width.
+ *
+ * ## Features
+ *
+ * - **Auto-scaling FOV**: The visible compass range widens to keep both HDG
+ *   and COG arrows in view, bounded by `minFOV` / `maxFOV`.
+ * - **HDG / COG arrows**: Filled (HDG) and hollow (COG) arrow SVGs positioned
+ *   along the strip.
+ * - **FOV indicator**: Optional numeric labels showing the port/starboard
+ *   bearing range and current heading.
+ * - **Rate of turn**: Animated linear ROT indicator (spinning dots or
+ *   horizontal bar) via `rotType`. When enabled, a bottom bar is added to
+ *   the strip to house the indicator.
+ * - **Color priority**: Per-element priority for HDG, COG, and ROT via
+ *   `priorityElements`.
+ *
+ * @property {number} heading - Current heading in degrees.
+ * @property {number} courseOverGround - Current COG in degrees.
+ * @property {RotType|undefined} rotType - ROT display mode: `'dots'`, `'bar'`, or `undefined` (hidden).
+ * @property {number} rotationsPerMinute - ROT spin speed; sign controls direction.
+ * @property {number} rotMaxValue - Maximum ROT value for bar-extent mapping.
+ * @property {number} rotArcExtent - Degrees of bar arc per max-value ROT (default 60).
  *
  * @ignition-base-height: 170px
  * @ignition-base-width: 512px
@@ -34,6 +77,17 @@ export class ObcCompassFlat extends LitElement {
   @property({type: Number}) FOV = 45;
   @property({type: Number}) minFOV = 45;
   @property({type: Number}) maxFOV = 180;
+  @property({type: String}) priority: Priority = Priority.regular;
+  @property({type: Array, attribute: false})
+  priorityElements: CompassFlatPriorityElement[] = [
+    CompassFlatPriorityElement.hdg,
+  ];
+  @property({type: String}) rotType: RotType | undefined;
+  @property({type: Number}) rotationsPerMinute: number = 1;
+  @property({type: Number}) rotMaxValue: number = 10;
+  @property({type: Number}) rotArcExtent: number = 60;
+  @property({type: Boolean}) rotPortStarboard: boolean = false;
+  @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_DEG;
 
   @state() private containerWidth = 0;
   @state() private maxContainerWidth = 0;
@@ -107,6 +161,15 @@ export class ObcCompassFlat extends LitElement {
       cardinalInterval = 0;
     }
 
+    // Guard against zero/negative/non-finite interval to prevent infinite loops
+    if (
+      !this.tickInterval ||
+      this.tickInterval <= 0 ||
+      !Number.isFinite(this.tickInterval)
+    ) {
+      return tickmarks;
+    }
+
     for (
       let angle = -180;
       angle < this.maxFOV * 3;
@@ -156,7 +219,7 @@ export class ObcCompassFlat extends LitElement {
       yAdjustment = scaleFactor * maxAdjustment;
     }
 
-    const y = LabelPosition.bottom + yAdjustment;
+    const y = LabelPosition.bottom + yAdjustment + (this.rotType ? 12 : 0);
 
     indicators.push(svg`
           <text x="-175" y=${y} class="label left" fill=${LabelStyle.regular}>
@@ -176,16 +239,29 @@ export class ObcCompassFlat extends LitElement {
     return indicators;
   }
 
+  private priorityFor(element: CompassFlatPriorityElement): Priority {
+    const selected = Array.isArray(this.priorityElements)
+      ? this.priorityElements
+      : [];
+    return selected.includes(element) ? this.priority : Priority.regular;
+  }
+
+  private arrowColorFor(element: CompassFlatPriorityElement): string {
+    return this.priorityFor(element) === Priority.enhanced
+      ? 'var(--instrument-enhanced-secondary-color)'
+      : 'var(--instrument-regular-secondary-color)';
+  }
+
   private get HDGSvg(): SVGTemplateResult {
     return svg`<g transform="translate(-24, -74)">
-          <path d="M36.7011 44.1445L36.6898 44.1379L36.6781 44.1318L24.2301 37.6823L24.0001 37.5631L23.7701 37.6823L11.3221 44.1318L11.3104 44.1379L11.2991 44.1445C9.25497 45.3438 6.78661 43.308 7.68828 41.0919L22.6036 4.43285C23.1096 3.18905 24.8906 3.18905 25.3967 4.43284L40.3119 41.0919C41.2136 43.308 38.7452 45.3438 36.7011 44.1445Z" fill="var(--instrument-enhanced-secondary-color)" stroke="var(--border-silhouette-color)"/>
+          <path d="M36.7011 44.1445L36.6898 44.1379L36.6781 44.1318L24.2301 37.6823L24.0001 37.5631L23.7701 37.6823L11.3221 44.1318L11.3104 44.1379L11.2991 44.1445C9.25497 45.3438 6.78661 43.308 7.68828 41.0919L22.6036 4.43285C23.1096 3.18905 24.8906 3.18905 25.3967 4.43284L40.3119 41.0919C41.2136 43.308 38.7452 45.3438 36.7011 44.1445Z" fill="${this.arrowColorFor(CompassFlatPriorityElement.hdg)}" stroke="var(--border-silhouette-color)"/>
         </g>`;
   }
 
   private COGSvg(translation: number): SVGTemplateResult {
     return svg`
       <g transform="translate(${-24 + translation}, -74)">
-        <path d="M31.9025 36.0262L33.1068 36.6502L32.5956 35.3938L24.4632 15.406L24.0001 14.2677L23.537 15.406L15.4046 35.3938L14.8935 36.6502L16.0978 36.0262L24.0001 31.9319L31.9025 36.0262ZM36.7011 44.1445L36.6898 44.1379L36.6781 44.1318L24.2301 37.6823L24.0001 37.5631L23.7701 37.6823L11.3221 44.1318L11.3104 44.1379L11.2991 44.1445C9.25497 45.3438 6.78661 43.308 7.68828 41.0919L22.6036 4.43285C23.1096 3.18905 24.8906 3.18905 25.3967 4.43284L40.3119 41.0919C41.2136 43.308 38.7452 45.3438 36.7011 44.1445Z" fill="var(--instrument-enhanced-secondary-color)" stroke="var(--border-silhouette-color)"/>
+        <path d="M31.9025 36.0262L33.1068 36.6502L32.5956 35.3938L24.4632 15.406L24.0001 14.2677L23.537 15.406L15.4046 35.3938L14.8935 36.6502L16.0978 36.0262L24.0001 31.9319L31.9025 36.0262ZM36.7011 44.1445L36.6898 44.1379L36.6781 44.1318L24.2301 37.6823L24.0001 37.5631L23.7701 37.6823L11.3221 44.1318L11.3104 44.1379L11.2991 44.1445C9.25497 45.3438 6.78661 43.308 7.68828 41.0919L22.6036 4.43285C23.1096 3.18905 24.8906 3.18905 25.3967 4.43284L40.3119 41.0919C41.2136 43.308 38.7452 45.3438 36.7011 44.1445Z" fill="${this.arrowColorFor(CompassFlatPriorityElement.cog)}" stroke="var(--border-silhouette-color)"/>
       </g>
     `;
   }
@@ -212,7 +288,11 @@ export class ObcCompassFlat extends LitElement {
       x: l.x * translationScale,
     }));
 
-    const viewBox = '-192 -128 384 128';
+    const hasBottomBar = !!this.rotType;
+    const arrowViewBoxY = hasBottomBar
+      ? -128 + Math.round((12 * 384) / 352)
+      : -128;
+    const viewBox = `-192 ${arrowViewBoxY} 384 128`;
 
     return html`
       <div class="container" style="max-width:${this.maxContainerWidth}px">
@@ -222,6 +302,17 @@ export class ObcCompassFlat extends LitElement {
           .rotation=${this.heading}
           .tickmarks=${tickmarks}
           .tickmarkSpacing=${translationScale}
+          .bottomBar=${!!this.rotType}
+          .rotType=${this.rotType}
+          .rotStartX=${0}
+          .rotEndX=${(this.rotationsPerMinute / (this.rotMaxValue || 1)) *
+          this.rotArcExtent *
+          translationScale}
+          .rotDotSpacing=${LINEAR_DOT_ANGLE_SPACING * translationScale}
+          .rotationsPerMinute=${this.rotationsPerMinute}
+          .rotPriority=${this.priorityFor(CompassFlatPriorityElement.rot)}
+          .rotPortStarboard=${this.rotPortStarboard}
+          .rotAtZeroDeadband=${this.rotAtZeroDeadband * translationScale}
         ></obc-watch-flat>
         <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg">
           ${this.HDGSvg}${this.COGSvg(translation)}

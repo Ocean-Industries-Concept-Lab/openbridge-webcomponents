@@ -33,7 +33,7 @@ export class ObcConverter extends ObcAbstractAutomationButtonSquared {
             ></obi-converter-dcac-on>
             <obi-converter-dcac-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-converter-dcac-on>`;
         } else {
           return html`<obi-converter-dcac-off
@@ -42,7 +42,7 @@ export class ObcConverter extends ObcAbstractAutomationButtonSquared {
             ></obi-converter-dcac-off>
             <obi-converter-dcac-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-converter-dcac-off>`;
         }
       case ConverterAlternativeIcon.converterAcdc:
@@ -53,7 +53,7 @@ export class ObcConverter extends ObcAbstractAutomationButtonSquared {
             ></obi-converter-acdc-on>
             <obi-converter-acdc-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-converter-acdc-on>`;
         } else {
           return html`<obi-converter-acdc-off
@@ -62,7 +62,7 @@ export class ObcConverter extends ObcAbstractAutomationButtonSquared {
             ></obi-converter-acdc-off>
             <obi-converter-acdc-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-converter-acdc-off>`;
         }
       case ConverterAlternativeIcon.converterFilter1:
@@ -73,7 +73,7 @@ export class ObcConverter extends ObcAbstractAutomationButtonSquared {
             ></obi-converter-filter-1-on>
             <obi-converter-filter-1-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-converter-filter-1-on>`;
         } else {
           return html`<obi-converter-filter-1-off
@@ -82,7 +82,7 @@ export class ObcConverter extends ObcAbstractAutomationButtonSquared {
             ></obi-converter-filter-1-off>
             <obi-converter-filter-1-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-converter-filter-1-off>`;
         }
       default:
@@ -93,7 +93,7 @@ export class ObcConverter extends ObcAbstractAutomationButtonSquared {
             ></obi-converter-dcdc-on>
             <obi-converter-dcdc-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-converter-dcdc-on>`;
         } else {
           return html`<obi-converter-dcdc-off
@@ -102,7 +102,7 @@ export class ObcConverter extends ObcAbstractAutomationButtonSquared {
             ></obi-converter-dcdc-off>
             <obi-converter-dcdc-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-converter-dcdc-off>`;
         }
     }

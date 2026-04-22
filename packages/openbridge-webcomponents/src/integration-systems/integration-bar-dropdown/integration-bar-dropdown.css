@@ -1,0 +1,61 @@
+* {
+  box-sizing: border-box;
+}
+
+.wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: var(--app-components-topbar-touch-target-size);
+  padding: 0 var(--app-components-topbar-margin-global);
+  background: var(--integration-container-background-color);
+  box-shadow: var(--shadow-flat);
+
+  .left-side,
+  .right-side {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.status {
+  display: flex;
+  margin-left: var(--app-components-integration-system-topbar-item-spacing);
+  padding: 8px
+    var(--app-components-integration-system-status-indicator-padding-horizontal);
+  height: 40px;
+  align-items: center;
+  gap: var(--app-components-integration-system-status-indicator-label-spacing);
+  border-radius: var(
+    --app-components-integration-system-status-indicator-border-radius
+  );
+  border: 1px solid var(--integration-border-outline);
+  background: var(--integration-container-section-color);
+
+  .status-item {
+    display: flex;
+
+    .status-icon {
+      color: var(--integration-on-normal-neutral-color);
+      width: var(
+        --app-components-integration-system-status-indicator-icon-size
+      );
+      height: var(
+        --app-components-integration-system-status-indicator-icon-size
+      );
+    }
+
+    .status-label::slotted(*) {
+      @mixin font-body;
+      color: var(--integration-on-normal-active-color);
+      padding: 0
+        var(--app-components-integration-system-status-indicator-label-spacing);
+    }
+  }
+
+  .divider {
+    width: 1px;
+    height: var(--ui-components-divider-height-regular);
+    background-color: var(--integration-border-divider);
+  }
+}

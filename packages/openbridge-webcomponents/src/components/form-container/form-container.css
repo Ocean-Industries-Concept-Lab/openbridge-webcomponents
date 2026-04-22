@@ -1,0 +1,118 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: block;
+  width: 640px;
+  height: 640px;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--border-outline-color);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--container-background-color);
+  box-shadow: var(--shadow-flat-x) var(--shadow-flat-y) var(--shadow-flat-blur)
+    var(--shadow-flat-spread) var(--shadow-flat-color);
+
+  .content-section {
+    display: flex;
+    flex-direction: column;
+    padding: 16px 24px;
+    flex: 0 0 544px;
+    max-height: 544px;
+
+    & ::slotted(obc-form-group) {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .type-completed & {
+      max-height: 100%;
+      overflow: visible;
+    }
+  }
+
+  .main-section {
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 auto;
+    min-height: 0;
+
+    .type-completed & {
+      min-height: 100%;
+    }
+  }
+
+  .content-body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .content-scrollbar {
+    display: block;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .content-title,
+  ::slotted([slot="content-title"]) {
+    @mixin font-subtitle;
+    color: var(--element-active-color);
+  }
+
+  .footer-section {
+    display: flex;
+    align-items: center;
+    flex: 0 0 48px;
+    height: 48px;
+    min-height: 48px;
+
+    & ::slotted(obc-form-footer-container) {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &.type-view {
+    --obc-form-item-bg-color: var(--container-background-color);
+  }
+
+  &.type-enabled {
+    --obc-form-item-bg-color: var(--normal-enabled-background-color);
+  }
+
+  &.type-inactive {
+    --obc-form-item-bg-color: var(--container-background-color);
+
+    .content-title,
+    ::slotted([slot="content-title"]) {
+      color: var(--element-inactive-color);
+    }
+
+    .footer-section ::slotted(obc-form-footer-container) {
+      --on-flat-neutral-color: var(--on-flat-disabled-color);
+    }
+  }
+
+  &.type-completed {
+    --obc-form-item-bg-color: var(--indent-enabled-background-color);
+
+    .content-scrollbar {
+      --indent-enabled-background-color: var(--border-outline-color);
+      --obc-scrollbar-track-padding-top: var(
+        --menu-navigation-components-scroll-bar-padding
+      );
+      --obc-scrollbar-track-padding-bottom: var(
+        --menu-navigation-components-scroll-bar-padding
+      );
+    }
+  }
+}

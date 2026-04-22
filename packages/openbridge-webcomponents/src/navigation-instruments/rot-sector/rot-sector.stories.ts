@@ -3,11 +3,12 @@ import {ObcRotSector} from './rot-sector.js';
 import './rot-sector.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
+import {TickmarkStyle} from '../watch/tickmark.js';
 import {Priority} from '../types.js';
 
 const meta: Meta<typeof ObcRotSector> = {
   title: 'Instruments/Rate of Turn Sector',
-  tags: ['6.0'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-rot-sector',
   decorators: [widthDecorator],
   args: {
@@ -25,6 +26,16 @@ const meta: Meta<typeof ObcRotSector> = {
       control: {type: 'range', min: -60, max: 60, step: 1},
     },
     priority: {control: 'select', options: Object.values(Priority)},
+    showLabels: {control: 'boolean'},
+    tickmarksInside: {control: 'boolean'},
+    tickmarkStyle: {
+      control: 'select',
+      options: Object.values(TickmarkStyle),
+    },
+    zoomToFitArc: {control: 'boolean'},
+    rotArcExtent: {
+      control: {type: 'range', min: 10, max: 60, step: 5},
+    },
   },
 } satisfies Meta<ObcRotSector>;
 
@@ -56,7 +67,7 @@ export const EnhancedPortStarboard: Story = {
 export const WithLabels: Story = {
   args: {
     value: 50,
-    labels: true,
+    showLabels: true,
   },
 };
 
@@ -78,5 +89,29 @@ export const WithAdvices: Story = {
         hinted: true,
       },
     ],
+  },
+};
+
+export const ZoomedIn: Story = {
+  args: {
+    value: 30,
+    maxValue: 60,
+    rotArcExtent: 40,
+    primaryTickmarkInterval: 20,
+    secondaryTickmarkInterval: 10,
+    showLabels: true,
+    zoomToFitArc: true,
+  },
+};
+
+export const ZoomedInNarrow: Story = {
+  args: {
+    value: 10,
+    maxValue: 60,
+    rotArcExtent: 20,
+    primaryTickmarkInterval: 20,
+    secondaryTickmarkInterval: 10,
+    showLabels: true,
+    zoomToFitArc: true,
   },
 };
