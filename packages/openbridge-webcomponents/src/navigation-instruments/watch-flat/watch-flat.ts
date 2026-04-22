@@ -365,6 +365,13 @@ export class ObcWatchFlat extends LitElement {
         ${this.FOVIndicator}
 
         <g clip-path="url(#frameClipPath)">${this.renderRot()}</g>
+        ${svg`<line
+          x1="0" y1="${-this.totalHeight / 2 + this.ticksHeight}"
+          x2="0" y2="${this.totalHeight / 2}"
+          stroke="var(--instrument-frame-tertiary-color)"
+          stroke-width="1"
+          vector-effect="non-scaling-stroke"
+        />`}
       </svg>
     `;
   }
