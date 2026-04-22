@@ -193,6 +193,19 @@ export class ObcReadout extends LitElement {
   @query('slot[name="src-picker-content"]')
   private sourcePickerSlot?: HTMLSlotElement;
 
+  private readonly onWindowPointerDown = (event: PointerEvent) => {
+    if (!this.sourcePickerContentVisible) {
+      return;
+    }
+
+    const path = event.composedPath();
+    if (path.includes(this)) {
+      return;
+    }
+
+    this.sourcePickerContentVisible = false;
+  };
+
   private get isHorizontal() {
     return this.direction === ReadoutDirection.horizontal;
   }
@@ -317,6 +330,20 @@ export class ObcReadout extends LitElement {
   ) {
     this.findSourcePickerOptionElement(event.detail.value)?.click();
     this.sourcePickerContentVisible = false;
+  }
+
+  override updated(changedProperties: Map<string, unknown>) {
+    super.updated(changedProperties);
+
+    if (!changedProperties.has('sourcePickerContentVisible')) {
+      return;
+    }
+
+    if (this.sourcePickerContentVisible) {
+      window.addEventListener('pointerdown', this.onWindowPointerDown, true);
+    } else {
+      window.removeEventListener('pointerdown', this.onWindowPointerDown, true);
+    }
   }
 
   private renderAdvice() {
@@ -607,6 +634,11 @@ export class ObcReadout extends LitElement {
   }
 
   static override styles = unsafeCSS(componentStyle);
+
+  override disconnectedCallback() {
+    window.removeEventListener('pointerdown', this.onWindowPointerDown, true);
+    super.disconnectedCallback();
+  }
 }
 
 declare global {
