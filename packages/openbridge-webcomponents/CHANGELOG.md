@@ -1,3 +1,9 @@
+## [2.0.0-next.6](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.5...v2.0.0-next.6) (2026-04-22)
+
+### Bug Fixes
+
+- **compass:** add missing center line to compass-sector and compass-flat ([#798](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/798)) ([858bdf7](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/858bdf70f4bbc551f93cc0bbab24bf269e46414b))
+
 ## [2.0.0-next.5](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.4...v2.0.0-next.5) (2026-04-22)
 
 ### Features
