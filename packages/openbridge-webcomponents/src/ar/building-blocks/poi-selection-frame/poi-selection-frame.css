@@ -8,6 +8,7 @@
   --obc-poi-selection-frame-corner-size: 8px;
   --obc-poi-selection-frame-corner-stroke: 1.5px;
   --obc-poi-selection-frame-corner-radius: 3.5px;
+  --obc-poi-selection-frame-stroke-color: var(--overlay-element-active-color);
 }
 
 .frame.type-indicator.state-regular,
@@ -96,9 +97,9 @@
   width: var(--obc-poi-selection-frame-corner-size, 8px);
   height: var(--obc-poi-selection-frame-corner-size, 8px);
   box-sizing: border-box;
-  border: 0 solid white;
+  border: 0 solid var(--obc-poi-selection-frame-stroke-color);
   border-width: 0;
-  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 100%));
+  filter: drop-shadow(0 1px 2px var(--shadow-flat-color));
 }
 
 .frame.custom-mode .corner {

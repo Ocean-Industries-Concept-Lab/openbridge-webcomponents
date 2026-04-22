@@ -10,7 +10,7 @@ import './poi-header.js';
 
 const meta: Meta<ObcPoiHeader> = {
   title: 'AR/Building Blocks/POI Header',
-  tags: ['autodocs', 'skip-test'],
+  tags: ['autodocs'],
   component: 'obc-poi-header',
   args: {
     content: '1',
