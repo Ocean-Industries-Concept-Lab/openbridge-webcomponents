@@ -15,7 +15,7 @@ import {html} from 'lit';
 
 const meta: Meta<ObcChartObjectVesselButton> = {
   title: 'AR/Chart Object Vessel Button',
-  tags: ['skip-test', '6.0'],
+  tags: ['6.1'],
   component: 'obc-chart-object-vessel-button',
   args: {
     number: 2,
@@ -254,7 +254,7 @@ export const ButtonAnimated: Story = {
     type: Type.Button,
     state: State.Active,
   },
-  tags: ['skip-test'],
+  tags: [],
   play: async ({canvasElement}) => {
     const canvas = canvasElement.querySelector(
       'obc-chart-object-vessel-button'
