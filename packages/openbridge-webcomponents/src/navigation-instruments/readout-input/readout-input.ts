@@ -494,13 +494,7 @@ export class ObcReadoutInput extends LitElement {
       return this.renderValueVariantComponent();
     }
 
-    const supportsDegree =
-      this.resolvedVariantSize === ReadoutInputSize.medium &&
-      (this.state === ReadoutInputState.input ||
-        this.state === ReadoutInputState.inputTemporary ||
-        (this.variant === ReadoutInputVariant.advice &&
-          this.state === ReadoutInputState.active)) &&
-      !this.hasFixedLength;
+    const supportsDegree = this.resolvedVariantSize === ReadoutInputSize.medium;
 
     if (this.type === ReadoutInputType.button) {
       return html`

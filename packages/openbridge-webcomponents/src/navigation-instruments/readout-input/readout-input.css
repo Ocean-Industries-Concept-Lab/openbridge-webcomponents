@@ -463,7 +463,7 @@ slot[name="value"] {
     color: inherit;
   }
 
-  .input-value .degree {
+  .input-value:not(.with-degree) .degree {
     display: none;
   }
 
