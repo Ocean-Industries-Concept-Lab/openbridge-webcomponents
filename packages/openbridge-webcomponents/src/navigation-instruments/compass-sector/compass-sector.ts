@@ -34,6 +34,7 @@ const WATCH_TYPE = WatchCircleType.triple;
 const INNER_RADIUS = innerRingRadiusFor(WATCH_TYPE);
 /** Half of the fixed 120° arc on the watch face. */
 const ARC_HALF_EXTENT = 60;
+const SCALE_INNER_RADIUS = innerRingRadiusFor(WatchCircleType.single);
 
 interface TickDensity {
   mainInterval: number;
@@ -418,6 +419,17 @@ export class ObcCompassSector extends LitElement {
         >
         </obc-watch>
         <svg viewBox="${viewBox}" transform="rotate(${rotation})">
+          <g transform="rotate(${this.heading})">
+            <line
+              x1="0"
+              y1="${-(SCALE_INNER_RADIUS + rOff)}"
+              x2="0"
+              y2="${-(INNER_RADIUS + rOff)}"
+              stroke="var(--instrument-frame-tertiary-color)"
+              stroke-width="1"
+              vector-effect="non-scaling-stroke"
+            />
+          </g>
           ${this._renderNorthArrow(rOff)}
           ${arrow(
             ArrowStyle.HDG,
