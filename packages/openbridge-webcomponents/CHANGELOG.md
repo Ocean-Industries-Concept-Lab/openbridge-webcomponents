@@ -1,3 +1,9 @@
+## [2.0.0-next.5](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.4...v2.0.0-next.5) (2026-04-22)
+
+### Features
+
+- **vue-demo:** click-to-copy icon snippets with detail panel ([#790](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/790)) ([032dcad](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/032dcadbd2489fbe0637e18aa73783db29da2eba))
+
 ## [2.0.0-next.4](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.3...v2.0.0-next.4) (2026-04-22)
 
 ### ⚠ BREAKING CHANGES
