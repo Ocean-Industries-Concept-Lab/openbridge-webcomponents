@@ -1,3 +1,13 @@
+## [2.0.0-next.4](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.3...v2.0.0-next.4) (2026-04-22)
+
+### ⚠ BREAKING CHANGES
+
+- **ar:** new poi position logic (#761)
+
+### Features
+
+- **ar:** new poi position logic ([#761](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/761)) ([61b4b17](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/61b4b177c37ea899cd0ac9d92bcf37fe88570264))
+
 ## [2.0.0-next.3](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.2...v2.0.0-next.3) (2026-04-21)
 
 ### Bug Fixes
