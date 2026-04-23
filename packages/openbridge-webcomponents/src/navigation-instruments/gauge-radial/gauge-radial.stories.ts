@@ -115,3 +115,35 @@ export const WithAdvices: Story = {
     ],
   },
 };
+
+export const IrregularRange: Story = {
+  args: {
+    value: 300,
+    minValue: 200,
+    maxValue: 400,
+    type: ObcGaugeRadialType.filled,
+    showLabels: true,
+    primaryTickmarkInterval: 50,
+    secondaryTickmarkInterval: 25,
+  },
+};
+
+export const WideAdviceSpan: Story = {
+  args: {
+    value: 320,
+    minValue: 200,
+    maxValue: 400,
+    type: ObcGaugeRadialType.filled,
+    showLabels: true,
+    primaryTickmarkInterval: 50,
+    secondaryTickmarkInterval: 25,
+    advices: [
+      {
+        minValue: 230,
+        maxValue: 390,
+        type: AdviceType.caution,
+        hinted: true,
+      },
+    ],
+  },
+};
