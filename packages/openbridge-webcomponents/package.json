@@ -91,7 +91,7 @@
     "@types/node": "^25.5.0",
     "@typescript-eslint/eslint-plugin": "^8.57.0",
     "@vitest/browser-playwright": "^4.0.18",
-    "@vitest/coverage-v8": "^4.0.18",
+    "@vitest/coverage-v8": "^4.1.5",
     "conventional-changelog-conventionalcommits": "^9.3.1",
     "dotenv": "^17.3.1",
     "eslint": "^10.0.3",
