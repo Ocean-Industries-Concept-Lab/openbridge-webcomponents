@@ -1,3 +1,9 @@
+## [2.0.0-next.7](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.6...v2.0.0-next.7) (2026-04-23)
+
+### Bug Fixes
+
+- improve keyboard accessibility for menu and split buttons ([#811](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/811)) ([6a0cfbc](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/6a0cfbcc837a2e748cd3e7bf93b12865a702cd88))
+
 ## [2.0.0-next.6](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.5...v2.0.0-next.6) (2026-04-22)
 
 ### Bug Fixes
