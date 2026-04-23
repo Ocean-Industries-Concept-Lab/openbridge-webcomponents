@@ -1,3 +1,9 @@
+## [2.0.0-next.8](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.7...v2.0.0-next.8) (2026-04-23)
+
+### Bug Fixes
+
+- normalize radial gauge ranges and advice arc rendering ([f0121f8](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/f0121f87715f035d2cbb6f47eb279beee86f04f1)), closes [#808](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/808)
+
 ## [2.0.0-next.7](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.6...v2.0.0-next.7) (2026-04-23)
 
 ### Bug Fixes
