@@ -52,3 +52,5 @@ src/generated-without-style
 **/__vis__/local
 bundle.ts
 /bundle
+
+/tmp
