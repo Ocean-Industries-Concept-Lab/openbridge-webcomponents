@@ -1,3 +1,9 @@
+## [2.0.0-next.9](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.8...v2.0.0-next.9) (2026-04-24)
+
+### Features
+
+- **alert-menu:** add props to toggle silence and alert list buttons ([#820](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/820)) ([ea5c320](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/ea5c3204d36554652e8d1fd41eb5b6b2837f0697))
+
 ## [2.0.0-next.8](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.7...v2.0.0-next.8) (2026-04-23)
 
 ### Bug Fixes
