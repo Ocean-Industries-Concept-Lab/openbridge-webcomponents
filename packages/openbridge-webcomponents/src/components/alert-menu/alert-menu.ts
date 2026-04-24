@@ -63,6 +63,8 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
  * ### Properties
  * - `hasShelved` (boolean): If true, displays the "Shelved" tab and enables shelving support. Default: false.
  * - `canAckAll` (boolean): If true, enables the "ACK visible" button for bulk acknowledgment. Default: false.
+ * - `showSilenceButton` (boolean): If true, shows the "Silence" button. Default: true.
+ * - `showAlertListButton` (boolean): If true, shows the "Alerts" navigation button. Default: true.
  *
  * ### Events
  * - **ack-all-visible-click** – Fired when the "ACK visible" button is clicked. The event detail includes the list of visible alert elements and the current tab name.
@@ -122,6 +124,24 @@ export class ObcAlertMenu extends LitElement {
    * Default: false.
    */
   @property({type: Boolean}) canAckAll: boolean = false;
+
+  /**
+   * If true, shows the "Silence" button in the action bar.
+   * When hidden, the "ACK visible" button expands to fill the freed space.
+   *
+   * Default: true.
+   */
+  @property({type: Boolean, attribute: false}) showSilenceButton: boolean =
+    true;
+
+  /**
+   * If true, shows the "Alerts" navigation button in the action bar.
+   * When hidden, the "ACK visible" button expands to fill the freed space.
+   *
+   * Default: true.
+   */
+  @property({type: Boolean, attribute: false}) showAlertListButton: boolean =
+    true;
 
   @state() private _selectedTabIndex = 1;
 
@@ -233,32 +253,38 @@ export class ObcAlertMenu extends LitElement {
             >
               ${msg('ACK visible')}
             </obc-button>
-            <obc-button
-              variant="normal"
-              fullWidth
-              class="btn"
-              showLeadingIcon
-              @click=${() =>
-                this.dispatchEvent(new CustomEvent('silence-click'))}
-            >
-              <obi-silence-iec slot="leading-icon"></obi-silence-iec>
-              ${msg('Silence')}
-            </obc-button>
-            <obc-button
-              variant="normal"
-              class="btn"
-              fullWidth
-              showLeadingIcon
-              showTrailingIcon
-              @click=${() =>
-                this.dispatchEvent(new CustomEvent('go-to-alert-list-click'))}
-            >
-              <obi-alert-list slot="leading-icon"></obi-alert-list>
-              <obi-chevron-right-google
-                slot="trailing-icon"
-              ></obi-chevron-right-google>
-              ${msg('Alerts')}
-            </obc-button>
+            ${this.showSilenceButton
+              ? html`<obc-button
+                  variant="normal"
+                  fullWidth
+                  class="btn"
+                  showLeadingIcon
+                  @click=${() =>
+                    this.dispatchEvent(new CustomEvent('silence-click'))}
+                >
+                  <obi-silence-iec slot="leading-icon"></obi-silence-iec>
+                  ${msg('Silence')}
+                </obc-button>`
+              : nothing}
+            ${this.showAlertListButton
+              ? html`<obc-button
+                  variant="normal"
+                  class="btn"
+                  fullWidth
+                  showLeadingIcon
+                  showTrailingIcon
+                  @click=${() =>
+                    this.dispatchEvent(
+                      new CustomEvent('go-to-alert-list-click')
+                    )}
+                >
+                  <obi-alert-list slot="leading-icon"></obi-alert-list>
+                  <obi-chevron-right-google
+                    slot="trailing-icon"
+                  ></obi-chevron-right-google>
+                  ${msg('Alerts')}
+                </obc-button>`
+              : nothing}
           </div>
         </div>
       </obc-tabbed-card>
