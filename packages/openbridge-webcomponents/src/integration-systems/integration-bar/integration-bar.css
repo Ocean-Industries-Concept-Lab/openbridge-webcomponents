@@ -1,0 +1,83 @@
+* {
+  box-sizing: border-box;
+}
+
+.wrapper {
+  display: flex;
+  padding: 0 var(--app-components-integration-system-topbar-margin-global);
+  justify-content: space-between;
+  align-items: center;
+  background: var(--integration-container-global-color);
+  box-shadow: var(--shadow-flat-x) var(--shadow-flat-y) var(--shadow-flat-blur)
+    var(--shadow-flat-spread) var(--shadow-flat-color);
+}
+
+.content-container {
+  display: flex;
+  align-items: center;
+}
+
+.fleet-vessel-container {
+  display: flex;
+  align-items: center;
+  gap: var(--app-components-integration-system-menu-spacing-horizontal);
+}
+
+.vessel-container {
+  display: flex;
+  align-items: center;
+  gap: 0px;
+}
+.home-button {
+  width: var(--app-components-integration-system-icon-button-touch-target);
+  height: var(--app-components-integration-system-icon-button-touch-target);
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+}
+obc-icon-button::part(visible-wrapper) {
+  background-color: transparent;
+}
+
+.right-content-container {
+  display: flex;
+  align-self: stretch;
+  align-items: center;
+  border-left: var(
+      --app-components-integration-system-navigation-item-horizontal-stroke-weight-right,
+      1px
+    )
+    solid
+    var(
+      --integration-beta-flat-enabled-border-color,
+      var(--integration-border-outline)
+    );
+}
+
+.separator {
+  flex: 0 0 auto;
+  align-self: center;
+  width: var(
+    --app-components-integration-system-navigation-item-horizontal-stroke-weight-right,
+    1px
+  );
+  height: var(--app-components-integration-system-button-visual-target, 24px);
+  background-color: var(
+    --integration-beta-flat-enabled-border-color,
+    var(--integration-border-outline)
+  );
+}
+
+.vessel-integration-menu-container {
+  position: absolute;
+  position-anchor: --integration-menu-anchor;
+  top: anchor(bottom);
+  justify-self: anchor-center;
+}
+
+.right-side-system-menu-container {
+  position: absolute;
+  position-anchor: --settings-menu-anchor;
+  top: anchor(bottom);
+  justify-self: anchor-center;
+}

@@ -5,16 +5,25 @@
 :host {
   width: 100%;
   display: block;
+  flex: 1 1 0;
 }
 
-.wrapper {
+:host(:has(.touch-target.type-hug)) {
+  width: auto;
+  flex: 0 0 auto;
+}
+
+.touch-target {
   display: flex;
-  flex-direction: column;
-  padding: 0;
-  margin: 0;
+  width: auto;
+  min-height: var(--app-components-integration-system-button-touch-target);
+  padding: 4px 0;
+  align-items: center;
+  gap: 14px;
   border: none;
-  background: none;
+  background: transparent;
   appearance: none;
+  color: var(--integration-on-normal-active-color);
   width: 100%;
   border-radius: var(
       --app-components-integration-system-navigation-item-horizontal-border-radius-top-left
@@ -29,61 +38,70 @@
       --app-components-integration-system-navigation-item-horizontal-border-radius-bottom-left
     );
 
-  @mixin style style=integration-normal;
+  .content-container {
+    display: flex;
+    min-height: var(--app-components-integration-system-button-visual-target);
+    padding: 4px
+      var(--app-components-integration-system-button-padding-horizontal);
+    align-items: center;
+    gap: var(--app-components-integration-system-button-label-spacing);
+    flex: 1 0 0;
+    border-radius: 6px;
+    border: var(--app-components-integration-system-button-stroke-weight-bottom)
+      solid var(--integration-beta-normal-enabled-border-color);
+    background: var(--integration-beta-normal-enabled-background-color);
+  }
 
-  &.selected {
-    margin-bottom: 2px;
-    margin-top: 2px;
-    @mixin style style=integration-selected;
+  &.type-hug .content-container {
+    display: flex;
+    min-height: var(--app-components-integration-system-button-visual-target);
+    padding: 4px
+      var(--app-components-integration-system-button-padding-horizontal);
+    align-items: center;
+    gap: var(--app-components-integration-system-button-label-spacing);
+    border-radius: 6px;
+    border-top: 1px solid var(--integration-beta-normal-enabled-border-color);
+    border-right: var(
+        --app-components-integration-system-button-stroke-weight-bottom
+      )
+      solid var(--integration-beta-normal-enabled-border-color);
+    border-bottom: 1px solid var(--integration-beta-normal-enabled-border-color);
+    border-left: 1px solid var(--integration-beta-normal-enabled-border-color);
+    background: var(--integration-beta-normal-enabled-background-color);
+  }
 
-    .icon {
-      color: var(--integration-on-selected-active-color);
-    }
-
-    .label {
-      color: var(--integration-on-selected-active-color) !important;
-    }
-
-    .status {
-      color: var(--integration-on-selected-neutral-color) !important;
-    }
-
-    .info-item {
-      .info-label {
-        color: var(--integration-on-selected-neutral-color) !important;
-      }
-
-      .info-status {
-        color: var(--integration-on-selected-active-color) !important;
-      }
-    }
-
-    .info-readout-item {
-      .info-item-label {
-        color: var(--integration-on-selected-neutral-color);
-      }
-
-      .info-item-value {
-        color: var(--integration-on-selected-active-color);
-      }
-
-      .info-item-unit {
-        color: var(--integration-on-selected-neutral-color);
-      }
-    }
+  &.type-rich .content-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+    border-radius: 6px;
+    border-top: var(
+        --app-components-integration-system-button-stroke-weight-top
+      )
+      solid var(--integration-beta-normal-enabled-border-color);
+    border-right: var(
+        --app-components-integration-system-button-stroke-weight-right
+      )
+      solid var(--integration-beta-normal-enabled-border-color);
+    border-bottom: var(
+        --app-components-integration-system-button-stroke-weight-bottom
+      )
+      solid var(--integration-beta-normal-enabled-border-color);
+    border-left: var(
+        --app-components-integration-system-button-stroke-weight-left
+      )
+      solid var(--integration-beta-normal-enabled-border-color);
+    background: var(--integration-beta-normal-enabled-background-color);
   }
 
   .main-container {
     display: flex;
-    flex-direction: row;
+    padding: var(--app-components-integration-system-button-padding-vertical)
+      var(--app-components-integration-system-button-padding-horizontal-large);
     align-items: center;
-    width: 100%;
-    padding: var(
-        --app-components-integration-system-navigation-item-horizontal-padding-vertical
-      )
-      var(
-        --app-components-integration-system-navigation-item-horizontal-padding-horizontal
-      );
+    gap: var(--app-components-integration-system-button-label-spacing);
+    align-self: stretch;
   }
 
   .icon-container {
@@ -105,16 +123,10 @@
 
     .label {
       @mixin font-button;
-      color: var(--integration-on-normal-active-color);
     }
 
     .status {
       @mixin font-label;
-      color: var(--integration-on-normal-neutral-color);
-    }
-
-    &:first-child {
-      padding-left: 0;
     }
   }
 
@@ -123,12 +135,8 @@
   }
 
   .icon.leading {
-    width: var(
-      --app-components-integration-system-navigation-item-horizontal-icon-size-large
-    );
-    height: var(
-      --app-components-integration-system-navigation-item-horizontal-icon-size-large
-    );
+    width: var(--app-components-integration-system-button-iconsize);
+    height: var(--app-components-integration-system-button-iconsize);
   }
 
   .icon.trailing {
@@ -164,12 +172,10 @@
 
       .info-label {
         @mixin font-label;
-        color: var(--integration-on-normal-neutral-color);
       }
 
       .info-status {
         @mixin font-label-active;
-        color: var(--integration-on-normal-active-color);
       }
     }
   }
@@ -188,21 +194,68 @@
       justify-self: flex-start;
       grid-area: label;
       @mixin font-label;
-      color: var(--integration-on-normal-neutral-color);
     }
 
     .info-item-value {
       grid-area: value;
       @mixin font-label-active;
-      color: var(--integration-on-normal-active-color);
     }
 
     .info-item-unit {
       grid-area: unit;
       @mixin font-label;
-      color: var(--integration-on-normal-neutral-color);
     }
   }
+
+  &.variant-normal {
+    @mixin style style=integration-normal visibleWrapperClass=.content-container;
+
+    & .icon {
+      color: var(--integration-on-normal-neutral-color);
+    }
+
+    &:disabled {
+      color: var(--integration-on-normal-disabled-color);
+    }
+
+    &:disabled .icon {
+      color: var(--integration-on-normal-disabled-color);
+    }
+  }
+
+  &.variant-flat {
+    @mixin style style=integration-flat visibleWrapperClass=.content-container;
+    color: var(--integration-on-flat-active-color);
+
+    & .icon {
+      color: var(--integration-on-flat-neutral-color);
+    }
+
+    &:disabled {
+      color: var(--integration-on-flat-disabled-color);
+    }
+
+    &:disabled .icon {
+      color: var(--integration-on-flat-disabled-color);
+    }
+  }
+
+  &.selected {
+    @mixin style style=integration-selected
+      visibleWrapperClass=.content-container;
+    color: var(--integration-on-selected-active-color);
+    .icon {
+      color: var(--integration-on-selected-neutral-color);
+    }
+  }
+}
+
+.type-hug.touch-target {
+  display: inline-flex;
+}
+
+.type-rich.touch-target {
+  align-items: flex-start;
 }
 
 .divider-bottom {

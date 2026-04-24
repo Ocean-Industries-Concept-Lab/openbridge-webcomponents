@@ -7,9 +7,9 @@ import '../../components/clock/clock.js';
 import '../../icons/icon-placeholder.js';
 
 const meta: Meta<typeof ObcIntegrationBarDropdown> = {
-  title: 'Integration Systems/Integration Bar',
+  title: 'Integration Systems/Integration Bar Dropdown',
   tags: ['6.0', 'WIP'],
-  component: 'obc-integration-bar',
+  component: 'obc-integration-bar-dropdown',
   args: {
     showClock: true,
     date: '2021-01-01T11:11:11.111Z',
