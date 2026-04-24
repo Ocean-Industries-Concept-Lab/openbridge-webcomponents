@@ -89,6 +89,8 @@ const meta: Meta<typeof ObcAlertMenu> = {
   args: {
     hasShelved: true,
     canAckAll: true,
+    showSilenceButton: true,
+    showAlertListButton: true,
   },
   argTypes: {},
   render: (args) => {
@@ -96,6 +98,8 @@ const meta: Meta<typeof ObcAlertMenu> = {
       data-testid="alert-menu"
       .hasShelved=${args.hasShelved}
       .canAckAll=${args.canAckAll}
+      .showSilenceButton=${args.showSilenceButton}
+      .showAlertListButton=${args.showAlertListButton}
       @ack-all-visible-click=${handleAckAllVisible}
       @silence-click=${handleSilence}
     >
@@ -254,6 +258,25 @@ export const OneItem: Story = {
 export const NoShelf: Story = {
   args: {
     hasShelved: false,
+  },
+};
+
+export const NoSilenceButton: Story = {
+  args: {
+    showSilenceButton: false,
+  },
+};
+
+export const NoAlertListButton: Story = {
+  args: {
+    showAlertListButton: false,
+  },
+};
+
+export const OnlyAckButton: Story = {
+  args: {
+    showSilenceButton: false,
+    showAlertListButton: false,
   },
 };
 
