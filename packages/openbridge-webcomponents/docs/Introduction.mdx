@@ -9,3 +9,25 @@ OpenBridge Web Components is part of the OpenBridge Design System, an open-sourc
 The OpenBridge Design System provides a comprehensive set of guidelines, components, and tools to ensure consistency, usability, and safety in complex environments. Originally created for maritime use cases, it now supports a wide range of industrial applications.
 
 Learn more about the OpenBridge Design System at [openbridge.no](https://www.openbridge.no/).
+
+## Release channels
+
+OpenBridge Web Components is published in two parallel channels. Each channel
+has its own Storybook deployment so you can browse the exact set of components
+that ships with the npm tag you depend on.
+
+{/* URLs are mirrored from .storybook/channels.ts — keep in sync. */}
+
+- **[Stable Storybook](https://openbridge-storybook.web.app)** — built from the
+  `stable` branch and published to the `latest` npm tag roughly once every
+  quarter. Use this for production work; the API is frozen between releases.
+- **[Develop Storybook](https://openbridge-storybook-next.web.app)** — built
+  from the `develop` branch and published to the `next` npm tag on every merge.
+  Includes upcoming features and fixes that have not yet shipped to `stable`,
+  and may contain breaking changes.
+
+You can jump to the develop build at any time using the **View Develop Build**
+link under the OpenBridge wordmark in the sidebar.
+
+When running Storybook locally with `npm run storybook`, the build reflects
+whichever branch is currently checked out — typically `develop`.
