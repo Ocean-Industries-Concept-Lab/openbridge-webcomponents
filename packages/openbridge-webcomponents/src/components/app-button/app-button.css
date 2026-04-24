@@ -2,7 +2,12 @@
   box-sizing: border-box;
 }
 
+:host {
+  display: inline-block;
+}
+
 .wrapper {
+  width: 100%;
   display: inline-flex;
   min-width: var(--ui-components-app-button-touch-target-size-enhanced);
   min-height: var(--ui-components-app-button-touch-target-size-enhanced);
