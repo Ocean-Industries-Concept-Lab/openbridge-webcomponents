@@ -1,3 +1,55 @@
+## [2.0.0-next.9](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.8...v2.0.0-next.9) (2026-04-24)
+
+### Features
+
+- **alert-menu:** add props to toggle silence and alert list buttons ([#820](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/820)) ([ea5c320](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/ea5c3204d36554652e8d1fd41eb5b6b2837f0697))
+
+## [2.0.0-next.8](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.7...v2.0.0-next.8) (2026-04-23)
+
+### Bug Fixes
+
+- normalize radial gauge ranges and advice arc rendering ([f0121f8](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/f0121f87715f035d2cbb6f47eb279beee86f04f1)), closes [#808](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/808)
+
+## [2.0.0-next.7](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.6...v2.0.0-next.7) (2026-04-23)
+
+### Bug Fixes
+
+- improve keyboard accessibility for menu and split buttons ([#811](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/811)) ([6a0cfbc](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/6a0cfbcc837a2e748cd3e7bf93b12865a702cd88))
+
+## [2.0.0-next.6](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.5...v2.0.0-next.6) (2026-04-22)
+
+### Bug Fixes
+
+- **compass:** add missing center line to compass-sector and compass-flat ([#798](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/798)) ([858bdf7](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/858bdf70f4bbc551f93cc0bbab24bf269e46414b))
+
+## [2.0.0-next.5](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.4...v2.0.0-next.5) (2026-04-22)
+
+### Features
+
+- **vue-demo:** click-to-copy icon snippets with detail panel ([#790](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/790)) ([032dcad](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/032dcadbd2489fbe0637e18aa73783db29da2eba))
+
+## [2.0.0-next.4](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.3...v2.0.0-next.4) (2026-04-22)
+
+### ⚠ BREAKING CHANGES
+
+- **ar:** new poi position logic (#761)
+
+### Features
+
+- **ar:** new poi position logic ([#761](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/761)) ([61b4b17](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/61b4b177c37ea899cd0ac9d92bcf37fe88570264))
+
+## [2.0.0-next.3](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.2...v2.0.0-next.3) (2026-04-21)
+
+### Bug Fixes
+
+- update font asset paths in Storybook configuration ([#757](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/757)) ([c8f6653](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/c8f6653db8de1ac181da37e750e425e270cb3faf))
+
+## [2.0.0-next.2](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.1...v2.0.0-next.2) (2026-04-21)
+
+### Bug Fixes
+
+- **bundle:** remove spec file from bundle ([#801](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/801)) ([4e3e6c2](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/4e3e6c22d65a930dfa9da295c6b3d3a6defc5012))
+
 ## [2.0.0-next.1](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.0...v2.0.0-next.1) (2026-04-20)
 
 ### Bug Fixes

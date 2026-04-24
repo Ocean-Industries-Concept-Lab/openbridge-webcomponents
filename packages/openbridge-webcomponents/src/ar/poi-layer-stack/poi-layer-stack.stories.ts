@@ -3,9 +3,9 @@ import {html} from 'lit';
 import {PoiLayerSelectionMode} from './poi-layer-stack.js';
 import './poi-layer-stack.js';
 import '../poi-layer/poi-layer.js';
-import '../poi-data/poi-data.js';
-import '../poi-aton/poi-aton.js';
-import '../poi-vessel/poi-vessel.js';
+import '../poi/poi-data.js';
+import '../poi/poi-aton.js';
+import '../poi/poi-vessel.js';
 import '../../icons/icon-placeholder.js';
 import '../../icons/icon-beacon-general-east.js';
 import '../../icons/icon-vessel-type-psv-outlined.js';
@@ -22,7 +22,7 @@ type PoiLayerStackArgs = {
 
 const meta: Meta<PoiLayerStackArgs> = {
   title: 'AR/POI Layer Stack',
-  tags: ['skip-test', '6.0'],
+  tags: ['6.1'],
   component: 'obc-poi-layer-stack',
   decorators: [
     (story) => html`
