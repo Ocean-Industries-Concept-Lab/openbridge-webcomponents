@@ -173,7 +173,9 @@ const RADIAL_SETPOINT_INWARD_ADJUST = 4;
  * @property {number} rotStartAngle - Start angle of the ROT bar arc in degrees (0° = 12 o'clock, clockwise). Only used when `rotType` is `'bar'`.
  * @property {number} rotEndAngle - End angle of the ROT bar arc in degrees. The bar is hidden when the difference from `rotStartAngle` is less than 0.1°.
  * @property {Priority|undefined} rotPriority - Override priority for ROT color derivation. When set, ROT colors use this instead of the main `priority`. Useful when the ROT element has independent priority (e.g. compass per-element priority).
- * @property {number} rotationsPerMinute - Spin speed of the ROT dot ring in rotations per minute. Sign controls direction (positive = clockwise).
+ * @property {number|undefined} rateOfTurnDegreesPerMinute - Measured rate of turn in degrees per minute (the maritime/AIS convention, see ES-TRIN 2025/1 Art. 3.02 and ITU-R M.1371). Sign controls direction (positive = starboard/clockwise). When defined, this drives both the dot animation (multiplied by `rotDotAnimationFactor`) and the port/starboard direction sign.
+ * @property {number} rotDotAnimationFactor - Visual amplification factor applied only to the spinning-dot animation (not to bar extent). Default `18` keeps the legacy visual feel (≈1 rpm at 20°/min).
+ * @property {number} rotationsPerMinute - **Deprecated.** Spin speed of the ROT dot ring in rotations per minute. Sign controls direction (positive = clockwise). Use `rateOfTurnDegreesPerMinute` instead.
  * @property {ZoomToFitArcFrame|undefined} arcFrame - Pre-computed zoom-to-fit arc frame. When set, the watch skips its own `computeZoomToFitArcFrame()` call and uses these values directly. Consumer instruments (e.g. rudder, instrument-radial) should compute the frame once and pass it here to avoid redundant computation.
  */
 @customElement('obc-watch')
@@ -244,18 +246,38 @@ export class ObcWatch extends LitElement {
   @property({type: String}) rotPriority: Priority | undefined;
   @property({type: Boolean}) rotPortStarboard: boolean = false;
   @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_DEG;
+  @property({type: Number}) rateOfTurnDegreesPerMinute: number | undefined;
+  @property({type: Number}) rotDotAnimationFactor: number = 18;
+  /**
+   * @deprecated Use `rateOfTurnDegreesPerMinute` (and optionally `rotDotAnimationFactor`) instead.
+   * Kept as a backward-compatible alias; takes effect only when
+   * `rateOfTurnDegreesPerMinute` is `undefined`.
+   */
   @property({type: Number})
   set rotationsPerMinute(value: number) {
-    this._rotationsPerMinute = value;
-    if (this._rotController) {
-      this._rotController.rotationsPerMinute = value;
-    }
+    this._legacyRotationsPerMinute = value;
   }
   get rotationsPerMinute() {
-    return this._rotationsPerMinute;
+    return this._legacyRotationsPerMinute;
   }
-  private _rotationsPerMinute = 0;
+  private _legacyRotationsPerMinute = 0;
   private _rotController?: RateOfTurnController;
+
+  /**
+   * Effective rotations-per-minute for the spinning dot animation and
+   * port/starboard direction sign. Resolves to:
+   *   • `(rateOfTurnDegreesPerMinute / 360) * rotDotAnimationFactor` when the
+   *     new physical API is in use, OR
+   *   • the legacy `rotationsPerMinute` value otherwise.
+   */
+  private get _effectiveRpm(): number {
+    if (this.rateOfTurnDegreesPerMinute != null) {
+      return (
+        (this.rateOfTurnDegreesPerMinute / 360) * this.rotDotAnimationFactor
+      );
+    }
+    return this._legacyRotationsPerMinute;
+  }
 
   // @ts-expect-error TS6133: The controller ensures that the render
   // function is called on resize of the element
@@ -263,6 +285,17 @@ export class ObcWatch extends LitElement {
 
   override willUpdate(changed: PropertyValues): void {
     super.willUpdate(changed);
+
+    // Push the resolved effective RPM into the live controller whenever any
+    // of the inputs that compose it change.
+    if (
+      this._rotController &&
+      (changed.has('rateOfTurnDegreesPerMinute') ||
+        changed.has('rotDotAnimationFactor') ||
+        changed.has('rotationsPerMinute'))
+    ) {
+      this._rotController.rotationsPerMinute = this._effectiveRpm;
+    }
 
     // Detect confirm: newAngleSetpoint was defined, now undefined
     if (changed.has('newAngleSetpoint') && this.animateSetpoint) {
@@ -298,7 +331,7 @@ export class ObcWatch extends LitElement {
       this._rotController = new RateOfTurnController(
         this,
         el,
-        this._rotationsPerMinute
+        this._effectiveRpm
       );
     }
   }
@@ -805,7 +838,7 @@ export class ObcWatch extends LitElement {
           (((this.rotEndAngle - this.rotStartAngle) % 360) + 360) % 360;
         direction = cwSpan <= 180 ? cwSpan : cwSpan - 360;
       } else {
-        direction = this._rotationsPerMinute;
+        direction = this._effectiveRpm;
       }
 
       if (direction > 0) {
@@ -880,9 +913,9 @@ export class ObcWatch extends LitElement {
       ? 'var(--instrument-enhanced-secondary-color)'
       : 'var(--instrument-regular-secondary-color)';
     if (this.rotPortStarboard) {
-      if (this._rotationsPerMinute > 0) {
+      if (this._effectiveRpm > 0) {
         dotsColor = 'var(--instrument-starboard-secondary-color)';
-      } else if (this._rotationsPerMinute < 0) {
+      } else if (this._effectiveRpm < 0) {
         dotsColor = 'var(--instrument-port-secondary-color)';
       }
     }
