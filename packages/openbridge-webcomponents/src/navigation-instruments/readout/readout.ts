@@ -9,11 +9,12 @@ import {
   type ContextMenuOption,
   type ObcContextMenuInputItemClickEvent,
 } from '../../components/context-menu-input/context-menu-input.js';
+import {Priority} from '../types.js';
 import '../../icons/icon-input-right.js';
 import '../../icons/icon-placeholder.js';
 import {
   ReadoutAdviceState,
-  ReadoutAdviceType,
+  ReadoutAdviceFormat,
 } from '../readout-advice/readout-advice.js';
 import '../readout-advice/readout-advice.js';
 import {
@@ -27,13 +28,14 @@ import {
   supportsReadoutSourcePicker,
 } from './readout-source.js';
 import {
-  ReadoutInputState,
-  ReadoutInputType,
+  ReadoutInputMode,
+  ReadoutInputFormat,
   ReadoutInputVariant,
+  ReadoutInputSize,
 } from '../readout-input/readout-input.js';
 import '../readout-input/readout-input.js';
 
-export enum ReadoutType {
+export enum ReadoutVariant {
   regular = 'regular',
   enhanced = 'enhanced',
   stack = 'stack',
@@ -44,8 +46,15 @@ export enum ReadoutDirection {
   horizontal = 'horizontal',
 }
 
+export enum ReadoutPriorityElement {
+  value = 'value',
+  input = 'input',
+  advice = 'advice',
+  source = 'source',
+  meta = 'meta',
+}
+
 export {ReadoutSourceType};
-export {ReadoutAdviceType, ReadoutInputType};
 
 /**
  * `<obc-readout>` – A component for displaying navigation instrument data.
@@ -75,6 +84,9 @@ export {ReadoutAdviceType, ReadoutInputType};
  * | source              | Replaces the source row content.                                           |
  * | src-picker-content  | Content for the source picker context menu (e.g., a list of sources).      |
  *
+ * @fires source-flyout-click {CustomEvent<{src: string, sourceType?: ReadoutSourceType}>} Fired when the source row is clicked while `sourceType="flyout"`.
+ * @fires source-change {CustomEvent<{value: string, label?: string}>} Fired when a source picker option is selected.
+ *
  * @slot advice - Replaces the fallback advice segment.
  * @slot advice-icon - Replaces the fallback advice icon.
  * @slot input - Replaces the fallback input segment.
@@ -88,10 +100,11 @@ export {ReadoutAdviceType, ReadoutInputType};
  */
 @customElement('obc-readout')
 export class ObcReadout extends LitElement {
-  @property({type: String}) type: ReadoutType = ReadoutType.regular;
+  @property({type: String}) variant: ReadoutVariant = ReadoutVariant.regular;
 
-  @property({type: String, attribute: 'readout-style'})
-  readoutStyle?: ReadoutType;
+  @property({type: String}) priority?: Priority;
+
+  @property({attribute: false}) priorityElements: ReadoutPriorityElement[] = [];
 
   @property({type: String}) direction: ReadoutDirection =
     ReadoutDirection.vertical;
@@ -115,6 +128,14 @@ export class ObcReadout extends LitElement {
   @property({type: Boolean}) showZeroPadding = false;
 
   @property({type: Number}) fractionDigits = 0;
+
+  @property({type: Boolean}) valueHasFixedLength = false;
+
+  @property({type: String}) valueLength = '';
+
+  @property({type: Boolean}) valueHasHintedZeros = false;
+
+  @property({type: Boolean}) valueHasDegree = false;
 
   @property({type: String}) unit = '';
 
@@ -150,11 +171,13 @@ export class ObcReadout extends LitElement {
 
   @property({type: String}) unitLength = '';
 
-  @property({type: String}) adviceType: ReadoutAdviceType =
-    ReadoutAdviceType.regular;
+  @property({type: String}) adviceFormat: ReadoutAdviceFormat =
+    ReadoutAdviceFormat.regular;
 
   @property({type: String}) adviceState: ReadoutAdviceState =
     ReadoutAdviceState.enabled;
+
+  @property({type: String}) advicePriority?: Priority;
 
   @property({type: Boolean}) adviceHasFixedLength = false;
 
@@ -168,11 +191,12 @@ export class ObcReadout extends LitElement {
 
   @property({type: Boolean}) adviceHasDegree = false;
 
-  @property({type: String}) inputType: ReadoutInputType =
-    ReadoutInputType.regular;
+  @property({type: String}) inputFormat: ReadoutInputFormat =
+    ReadoutInputFormat.regular;
 
-  @property({type: String}) inputState: ReadoutInputState =
-    ReadoutInputState.enabled;
+  @property({type: String}) inputInteractionMode?: ReadoutInputMode;
+
+  @property({type: String}) inputPriority?: Priority;
 
   @property({type: Boolean}) inputHasFixedLength = false;
 
@@ -215,11 +239,11 @@ export class ObcReadout extends LitElement {
   }
 
   private get isEnhanced() {
-    return this.resolvedReadoutStyle === ReadoutType.enhanced;
+    return this.variant === ReadoutVariant.enhanced;
   }
 
   private get isStack() {
-    return this.resolvedReadoutStyle === ReadoutType.stack;
+    return this.variant === ReadoutVariant.stack;
   }
 
   private get showAdviceDivider() {
@@ -235,13 +259,78 @@ export class ObcReadout extends LitElement {
   }
 
   private get showUnitZone() {
-    return (
-      this.resolvedReadoutStyle === ReadoutType.regular && this.isHorizontal
-    );
+    return this.variant === ReadoutVariant.regular && this.isHorizontal;
   }
 
-  private get resolvedReadoutStyle(): ReadoutType {
-    return this.readoutStyle ?? this.type;
+  private priorityFor(element: ReadoutPriorityElement): Priority {
+    const selected = Array.isArray(this.priorityElements)
+      ? this.priorityElements
+      : [];
+    const priority = this.priority ?? Priority.regular;
+    return selected.includes(element) ? priority : Priority.regular;
+  }
+
+  private isPriorityEnhanced(element: ReadoutPriorityElement): boolean {
+    return this.priorityFor(element) === Priority.enhanced;
+  }
+
+  private resolveInputMode(): ReadoutInputMode | undefined {
+    return this.inputInteractionMode;
+  }
+
+  private resolveInputPriority(): Priority | undefined {
+    if (this.inputPriority) {
+      return this.inputPriority;
+    }
+
+    return this.isPriorityEnhanced(ReadoutPriorityElement.input)
+      ? Priority.enhanced
+      : undefined;
+  }
+
+  private resolveInputFormat(): ReadoutInputFormat | undefined {
+    return this.inputFormat;
+  }
+
+  /**
+   * Segment size mapping for nested input/advice segments.
+   *
+   * Mapping table (variant × direction):
+   * - regular × vertical   → regular
+   * - regular × horizontal → regular
+   * - enhanced × vertical  → medium
+   * - enhanced × horizontal→ medium
+   * - stack × vertical     → medium
+   * - stack × horizontal   → medium
+   *
+   * Rationale:
+   * - Container must not rely on segment defaults (which are `small`).
+   * - `regular` presentation uses regular-sized segments.
+   * - `enhanced/stack` presentations use a larger segment baseline.
+   */
+  private get resolvedSegmentSize(): ReadoutInputSize {
+    return this.variant === ReadoutVariant.regular
+      ? ReadoutInputSize.regular
+      : ReadoutInputSize.medium;
+  }
+
+  /**
+   * Container-level layout decision for nested input/advice segments.
+   *
+   * - Hugging keeps icon + value compact (avoids full-width stretching).
+   * - Non-hugging allows segments to participate in full-width compositions
+   *   where left/right alignment is intentional.
+   */
+  private get shouldHugNestedSegments(): boolean {
+    if (this.variant === ReadoutVariant.stack) {
+      return false;
+    }
+
+    if (this.variant === ReadoutVariant.enhanced && this.isVertical) {
+      return false;
+    }
+
+    return true;
   }
 
   private get resolvedSourceType(): ReadoutSourceType {
@@ -249,9 +338,9 @@ export class ObcReadout extends LitElement {
       return this.sourceType;
     }
 
-    return this.resolvedReadoutStyle === ReadoutType.regular ||
-      ((this.resolvedReadoutStyle === ReadoutType.enhanced ||
-        this.resolvedReadoutStyle === ReadoutType.stack) &&
+    return this.variant === ReadoutVariant.regular ||
+      ((this.variant === ReadoutVariant.enhanced ||
+        this.variant === ReadoutVariant.stack) &&
         this.isVertical)
       ? ReadoutSourceType.small
       : ReadoutSourceType.regular;
@@ -328,6 +417,16 @@ export class ObcReadout extends LitElement {
   private handleSourcePickerItemClick(
     event: ObcContextMenuInputItemClickEvent
   ) {
+    this.dispatchEvent(
+      new CustomEvent('source-change', {
+        bubbles: true,
+        composed: true,
+        detail: {
+          value: event.detail.value,
+          label: event.detail.option?.label,
+        },
+      })
+    );
     this.findSourcePickerOptionElement(event.detail.value)?.click();
     this.sourcePickerContentVisible = false;
   }
@@ -355,9 +454,19 @@ export class ObcReadout extends LitElement {
       <div class="readout-segment-wrapper readout-advice" part="advice-wrapper">
         <slot name="advice">
           <obc-readout-advice
-            .readoutStyle=${this.resolvedReadoutStyle}
+            data-obc-value-typography=${this.variant ===
+              ReadoutVariant.regular && this.isVertical
+              ? 'medium'
+              : nothing}
+            .readoutStyle=${this.variant}
             .direction=${this.direction}
-            .type=${this.adviceType}
+            .size=${this.resolvedSegmentSize}
+            .hugContent=${this.shouldHugNestedSegments}
+            .priority=${this.advicePriority ??
+            (this.isPriorityEnhanced(ReadoutPriorityElement.advice)
+              ? Priority.enhanced
+              : undefined)}
+            .format=${this.adviceFormat}
             .state=${this.adviceState}
             .hasFixedLength=${this.adviceHasFixedLength}
             .value=${this.adviceValue}
@@ -385,10 +494,17 @@ export class ObcReadout extends LitElement {
       <div class="readout-segment-wrapper readout-input" part="input-wrapper">
         <slot name="input">
           <obc-readout-input
-            .readoutStyle=${this.resolvedReadoutStyle}
+            data-obc-value-typography=${this.variant ===
+              ReadoutVariant.regular && this.isVertical
+              ? 'medium'
+              : nothing}
+            .readoutStyle=${this.variant}
             .direction=${this.direction}
-            .type=${this.inputType}
-            .state=${this.inputState}
+            .size=${this.resolvedSegmentSize}
+            .format=${this.resolveInputFormat()}
+            .mode=${this.resolveInputMode()}
+            .priority=${this.resolveInputPriority()}
+            .hugContent=${this.shouldHugNestedSegments}
             .hasFixedLength=${this.inputHasFixedLength}
             .value=${this.inputValue}
             .secondaryValue=${this.inputSecondaryValue}
@@ -453,13 +569,26 @@ export class ObcReadout extends LitElement {
       src: this.src,
       sourceDeltaValue: this.sourceDeltaValue,
       sourceType: this.resolvedSourceType,
-      readoutType: this.resolvedReadoutStyle,
+      readoutType: this.variant,
       readoutDirection: this.direction,
       sourceHug: this.sourceHug,
       hasSourceLeadingIcon: this.hasSourceLeadingIcon,
       hasSourceTrailingIcon: this.hasSourceTrailingIcon,
+      priorityEnhanced: this.isPriorityEnhanced(ReadoutPriorityElement.source),
       onTogglePicker: () => {
         this.sourcePickerContentVisible = !this.sourcePickerContentVisible;
+      },
+      onFlyoutClick: () => {
+        this.dispatchEvent(
+          new CustomEvent('source-flyout-click', {
+            bubbles: true,
+            composed: true,
+            detail: {
+              src: this.src,
+              sourceType: this.resolvedSourceType,
+            },
+          })
+        );
       },
     });
   }
@@ -497,15 +626,33 @@ export class ObcReadout extends LitElement {
   }
 
   private renderValueInput() {
+    const elevateValueTypography =
+      this.variant === ReadoutVariant.regular && this.isVertical;
+    const valuePriority = this.isPriorityEnhanced(ReadoutPriorityElement.value)
+      ? Priority.enhanced
+      : undefined;
+    const scopeValuePriority = Array.isArray(this.priorityElements)
+      ? this.priorityElements.includes(ReadoutPriorityElement.value)
+      : false;
+
     return html`
       <obc-readout-input
         .variant=${ReadoutInputVariant.value}
-        .readoutStyle=${this.resolvedReadoutStyle}
+        .readoutStyle=${this.variant}
         .direction=${this.direction}
+        .size=${this.resolvedSegmentSize}
+        .hugContent=${this.shouldHugNestedSegments}
+        data-obc-value-typography=${elevateValueTypography ? 'medium' : nothing}
+        ?data-obc-priority-scoped=${scopeValuePriority}
+        .priority=${valuePriority}
         .value=${this.value}
         .showZeroPadding=${this.showZeroPadding}
         .maxDigits=${this.maxDigits}
         .fractionDigits=${this.fractionDigits}
+        .hasFixedLength=${this.valueHasFixedLength}
+        .valueLength=${this.valueLength}
+        .hasHintedZeros=${this.valueHasHintedZeros}
+        .hasDegree=${this.valueHasDegree}
       >
         ${this.hasLeadingIcon
           ? html`
@@ -545,7 +692,7 @@ export class ObcReadout extends LitElement {
         class="readout-segment-wrapper readout-horizontal-layout"
         part="horizontal-layout"
       >
-        ${this.resolvedReadoutStyle === ReadoutType.regular && this.isHorizontal
+        ${this.variant === ReadoutVariant.regular && this.isHorizontal
           ? renderReadoutLabelZone(
               this.label,
               this.hasLabelFixedLength,
@@ -599,11 +746,11 @@ export class ObcReadout extends LitElement {
       <div
         class=${classMap({
           readout: true,
-          [this.resolvedReadoutStyle]: true,
+          [this.variant]: true,
           [this.direction]: true,
           'has-source': this.hasSrc,
           'has-input-button':
-            this.isHorizontal && this.inputType === ReadoutInputType.button,
+            this.isHorizontal && this.inputFormat === ReadoutInputFormat.button,
           'no-hug': !this.hug,
           'label-only': this.labelOnly,
         })}
@@ -619,6 +766,9 @@ export class ObcReadout extends LitElement {
               labelLength: this.labelLength,
               hasUnitFixedLength: this.hasUnitFixedLength,
               unitLength: this.unitLength,
+              priorityEnhanced: this.isPriorityEnhanced(
+                ReadoutPriorityElement.meta
+              ),
             })
           : nothing}
         ${!this.labelOnly && this.hasSrc && this.isVertical

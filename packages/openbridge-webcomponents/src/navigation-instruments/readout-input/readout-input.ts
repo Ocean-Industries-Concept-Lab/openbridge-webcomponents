@@ -7,8 +7,9 @@ import '../../components/button/button.js';
 import '../../icons/icon-notification-advice.js';
 import type {
   ReadoutDirection as ReadoutInputDirection,
-  ReadoutType as ReadoutInputReadoutStyle,
+  ReadoutVariant as ReadoutInputReadoutStyle,
 } from '../readout/readout.js';
+import {Priority} from '../types.js';
 import {
   formatReadoutValue,
   formatTextSegment,
@@ -29,9 +30,8 @@ export enum ReadoutInputSize {
   large = 'large',
 }
 
-export enum ReadoutInputType {
+export enum ReadoutInputFormat {
   regular = 'regular',
-  enhanced = 'enhanced',
   description = 'description',
   range = 'range',
   verticalStack = 'vertical-stack',
@@ -39,25 +39,11 @@ export enum ReadoutInputType {
   button = 'button',
 }
 
-export enum ReadoutInputState {
-  enabled = 'enabled',
-  enhanced = 'enhanced',
-  active = 'active',
+export enum ReadoutInputMode {
+  display = 'display',
   input = 'input',
   inputTemporary = 'input-temporary',
 }
-
-const READOUT_INPUT_TYPE_PRESET_SIZE: Partial<
-  Record<ReadoutInputType, ReadoutInputSize>
-> = {
-  [ReadoutInputType.regular]: ReadoutInputSize.medium,
-  [ReadoutInputType.enhanced]: ReadoutInputSize.large,
-  [ReadoutInputType.description]: ReadoutInputSize.regular,
-  [ReadoutInputType.range]: ReadoutInputSize.regular,
-  [ReadoutInputType.verticalStack]: ReadoutInputSize.medium,
-  [ReadoutInputType.baseline]: ReadoutInputSize.medium,
-  [ReadoutInputType.button]: ReadoutInputSize.medium,
-};
 
 type ReadoutValueRenderModel = {
   hintedText: string;
@@ -74,11 +60,12 @@ type ReadoutValueRenderModel = {
  * ## Features
  * - Variants: Supports `input`, `advice`, and `value`.
  * - Sizes: Supports `small`, `regular`, `medium`, and `large`.
- * - Types: Supports `regular`, `enhanced`, `description`, `range`, `vertical-stack`, `baseline`, and `button`. The selected type defines the internal size and layout preset.
- * - Visual states: `enabled` uses the neutral color, `enhanced`, `input`, and `inputTemporary` use the enhanced secondary color, and `active` is reserved for the `advice` variant.
+ * - Formats: Supports `regular`, `description`, `range`, `vertical-stack`, `baseline`, and `button`. Format selects the structural subtype; size is controlled independently via the `size` property.
+ * - Mode axis: `mode` controls behavior/typography (`display`, `input`, `inputTemporary`).
+ * - Priority axis: `priority` controls color emphasis (`regular`/`enhanced`).
  * - Width control: When `hasFixedLength` is enabled, `valueLength` defines the minimum visible string width. Longer values expand the segment width beyond the template, and empty or whitespace-only `valueLength` hides the rendered value.
  * - Hinted zeros: `hasHintedZeros` adds muted leading zeroes when `hasFixedLength` is enabled and the visible value is shorter than `valueLength`.
- * - Degree suffix: `hasDegree` renders a degree symbol only when `size` is `medium`, the segment is in an active input/advice state, and `hasFixedLength` is disabled.
+ * - Degree suffix: `hasDegree` renders a trailing degree symbol (`°`).
  * - Description line: `type="description"` can render a secondary label below the value by using the `description` property.
  * - Range line: `type="range"` can render a second numeric line below the value by using the `secondaryValue` property.
  * - Vertical stack marker: `type="vertical-stack"` renders a trailing label to the right of the value.
@@ -118,10 +105,11 @@ export class ObcReadoutInput extends LitElement {
 
   @property({type: String}) size: ReadoutInputSize = ReadoutInputSize.small;
 
-  @property({type: String}) type?: ReadoutInputType;
+  @property({type: String}) format?: ReadoutInputFormat;
 
-  @property({type: String}) state: ReadoutInputState =
-    ReadoutInputState.enabled;
+  @property({type: String}) mode?: ReadoutInputMode;
+
+  @property({type: String}) priority?: Priority;
 
   @property({type: Boolean}) hugContent = false;
 
@@ -149,17 +137,39 @@ export class ObcReadoutInput extends LitElement {
 
   @query('slot[name="icon"]') private iconSlot?: HTMLSlotElement;
 
-  private get resolvedSize(): ReadoutInputSize {
-    if (this.type) {
-      return READOUT_INPUT_TYPE_PRESET_SIZE[this.type] ?? this.size;
-    }
+  private get resolvedFormat(): ReadoutInputFormat {
+    return this.format ?? ReadoutInputFormat.regular;
+  }
 
+  private get resolvedMode(): ReadoutInputMode {
+    return this.mode ?? ReadoutInputMode.display;
+  }
+
+  private get resolvedStateClass(): string {
+    if (this.resolvedMode === ReadoutInputMode.inputTemporary) {
+      return 'input-temporary';
+    }
+    if (this.resolvedMode === ReadoutInputMode.input) {
+      return 'input';
+    }
+    return (this.priority ?? Priority.regular) === Priority.enhanced
+      ? 'enhanced'
+      : 'enabled';
+  }
+
+  private get resolvedSize(): ReadoutInputSize {
     return this.size;
   }
 
   private get resolvedInlineSize(): ReadoutInputSize {
+    const format = this.resolvedFormat;
+    const canPromoteToLarge =
+      format !== ReadoutInputFormat.description &&
+      format !== ReadoutInputFormat.range;
+
     if (
       this.direction === 'horizontal' &&
+      canPromoteToLarge &&
       (this.readoutStyle === 'enhanced' || this.readoutStyle === 'stack') &&
       (this.resolvedSize === ReadoutInputSize.regular ||
         this.resolvedSize === ReadoutInputSize.medium)
@@ -178,6 +188,10 @@ export class ObcReadoutInput extends LitElement {
       return ReadoutInputSize.large;
     }
 
+    if (this.readoutStyle === 'regular') {
+      return this.resolvedInlineSize;
+    }
+
     if (this.readoutStyle) {
       return ReadoutInputSize.medium;
     }
@@ -191,17 +205,6 @@ export class ObcReadoutInput extends LitElement {
     }
 
     return this.resolvedInlineSize;
-  }
-
-  private get resolvedSemanticSizeClass(): ReadoutInputSize | undefined {
-    if (
-      this.type === ReadoutInputType.regular ||
-      this.type === ReadoutInputType.enhanced
-    ) {
-      return undefined;
-    }
-
-    return this.resolvedVariantSize;
   }
 
   private get valueText(): string {
@@ -250,13 +253,37 @@ export class ObcReadoutInput extends LitElement {
       maxDigits: this.maxDigits,
       fractionDigits: this.fractionDigits,
     };
-    const valueText = formatReadoutValue(this.value, numericFormatOptions);
+    const formattedText = formatReadoutValue(this.value, numericFormatOptions);
+
+    if (this.hasFixedLength) {
+      const segment = formatTextSegment(formattedText, true, this.valueLength);
+      const templateText = segment.widthTemplate;
+      const hintedText =
+        this.hasHintedZeros &&
+        templateText.length > 0 &&
+        templateText.length > segment.visibleValue.length
+          ? '0'.repeat(templateText.length - segment.visibleValue.length)
+          : '';
+
+      return {
+        hintedText,
+        hintedVisible: hintedText.length > 0,
+        templateText,
+        valueText: segment.visibleValue,
+      };
+    }
+
+    const hintedText = getHintZeros(
+      this.value,
+      formattedText,
+      numericFormatOptions
+    );
 
     return {
-      hintedText: getHintZeros(this.value, valueText, numericFormatOptions),
-      hintedVisible: this.showZeroPadding,
+      hintedText,
+      hintedVisible: hintedText.length > 0,
       templateText: '',
-      valueText,
+      valueText: formattedText,
     };
   }
 
@@ -284,29 +311,30 @@ export class ObcReadoutInput extends LitElement {
   }
 
   override updated() {
+    const format = this.resolvedFormat;
     const hugs =
       this.hugContent ||
-      this.type === ReadoutInputType.button ||
+      format === ReadoutInputFormat.button ||
       (this.readoutStyle === 'stack' &&
         this.direction === 'horizontal' &&
-        (this.type === ReadoutInputType.description ||
-          this.type === ReadoutInputType.range));
+        (format === ReadoutInputFormat.description ||
+          format === ReadoutInputFormat.range));
     this.style.width = hugs ? 'fit-content' : '100%';
   }
 
   private get toneAccent() {
     if (this.variant === ReadoutInputVariant.value) {
+      if (this.readoutStyle) {
+        return (
+          this.hasAttribute('data-obc-priority-scoped') &&
+          (this.priority ?? Priority.regular) === Priority.enhanced
+        );
+      }
+
       return true;
     }
 
-    if (this.variant === ReadoutInputVariant.input) {
-      return true;
-    }
-
-    return (
-      this.variant === ReadoutInputVariant.advice &&
-      this.state !== ReadoutInputState.enabled
-    );
+    return (this.priority ?? Priority.regular) === Priority.enhanced;
   }
 
   private get wrapperBaseClasses() {
@@ -316,11 +344,9 @@ export class ObcReadoutInput extends LitElement {
       'tone-accent': this.toneAccent,
       [`direction-${this.direction}`]: Boolean(this.direction),
       [`readout-style-${this.readoutStyle}`]: Boolean(this.readoutStyle),
-      [this.resolvedSemanticSizeClass ?? '']: Boolean(
-        this.resolvedSemanticSizeClass
-      ),
-      [`type-${this.type}`]: Boolean(this.type),
-      [`state-${this.state}`]: true,
+      [this.resolvedSize]: true,
+      [`type-${this.resolvedFormat}`]: true,
+      [`state-${this.resolvedStateClass}`]: true,
       'no-hug-content': !this.hugContent,
     };
   }
@@ -394,7 +420,7 @@ export class ObcReadoutInput extends LitElement {
           'tone-accent': this.toneAccent,
           [`direction-${this.direction}`]: Boolean(this.direction),
           [`readout-style-${this.readoutStyle}`]: Boolean(this.readoutStyle),
-          [`state-${this.state}`]: true,
+          [`state-${this.resolvedStateClass}`]: true,
           [size]: true,
         })}
       >
@@ -403,7 +429,11 @@ export class ObcReadoutInput extends LitElement {
           class=${classMap({
             'variant-value-content': true,
             [size]: true,
+            'has-fixed-length': this.hasFixedLength,
           })}
+          style=${this.hasFixedLength && valueModel.templateText.length > 0
+            ? `--obc-readout-input-fixed-ch:${valueModel.templateText.length};`
+            : ''}
         >
           <slot name="value"> ${this.renderValueTextContent(valueModel)} </slot>
         </span>
@@ -411,22 +441,86 @@ export class ObcReadoutInput extends LitElement {
     `;
   }
 
-  private renderValueComponent(supportsDegree: boolean) {
+  private renderRegularValueInlineIcon(size: ReadoutInputSize) {
+    const hideStyle = this.hasAssignedValueIcon
+      ? ''
+      : this.direction === 'vertical'
+        ? 'visibility:hidden;'
+        : 'display:none;';
+
+    return html`
+      <div class="icon-container" aria-hidden="true" style=${hideStyle}>
+        <div
+          class=${classMap({
+            'input-linear': true,
+            [size]: true,
+          })}
+        >
+          <slot
+            name="icon"
+            @slotchange=${(event: Event) => {
+              this.hasAssignedValueIcon =
+                ((event.target as HTMLSlotElement).assignedElements({
+                  flatten: true,
+                }).length ?? 0) > 0;
+            }}
+          ></slot>
+        </div>
+      </div>
+    `;
+  }
+
+  private renderRegularVerticalReadoutValueLikeInline() {
+    const size = this.resolvedInlineSize;
+    const valueModel = this.valueVariantRenderModel;
+
+    return html`
+      <div
+        class=${classMap({
+          'readout-input-wrapper': true,
+          'tone-accent': this.toneAccent,
+          [`direction-${this.direction}`]: Boolean(this.direction),
+          [`readout-style-${this.readoutStyle}`]: Boolean(this.readoutStyle),
+          [`state-${this.resolvedStateClass}`]: true,
+          [size]: true,
+          [`type-${this.resolvedFormat}`]: true,
+          'no-hug-content': !this.hugContent,
+        })}
+      >
+        ${this.renderRegularValueInlineIcon(size)}
+        <div
+          class=${classMap({
+            'input-value': true,
+            [size]: true,
+            'with-degree': this.hasDegree,
+          })}
+        >
+          <span class="value-content-container">
+            ${this.renderValueTextContent(valueModel)}
+            ${this.hasDegree ? html`<span class="degree">°</span>` : nothing}
+          </span>
+        </div>
+      </div>
+    `;
+  }
+
+  private renderValueComponent() {
+    const format = this.resolvedFormat;
     const valueModel = this.inlineValueRenderModel;
     const showsDescription =
-      this.type === ReadoutInputType.description &&
+      format === ReadoutInputFormat.description &&
       this.description.trim().length > 0;
     const showsVerticalStackLabel =
-      this.type === ReadoutInputType.verticalStack &&
+      format === ReadoutInputFormat.verticalStack &&
       this.description.trim().length > 0;
     const resolvedSecondaryValue =
       this.secondaryValue !== '' ? this.secondaryValue : this.valueText;
     const showsSecondaryValue =
-      this.type === ReadoutInputType.range &&
+      format === ReadoutInputFormat.range &&
       resolvedSecondaryValue.trim().length > 0;
     const showsValueLengthTemplate =
-      this.type !== ReadoutInputType.description &&
-      this.type !== ReadoutInputType.range &&
+      format !== ReadoutInputFormat.description &&
+      format !== ReadoutInputFormat.range &&
       this.hasFixedLength &&
       valueModel.templateText.length > 0;
 
@@ -438,9 +532,7 @@ export class ObcReadoutInput extends LitElement {
           : ''}
       >
         ${this.renderValueTextContent(valueModel)}
-        ${this.hasDegree && supportsDegree
-          ? html`<span class="degree">°</span>`
-          : nothing}
+        ${this.hasDegree ? html`<span class="degree">°</span>` : nothing}
       </span>
       ${showsDescription
         ? html`
@@ -466,7 +558,7 @@ export class ObcReadoutInput extends LitElement {
     `;
   }
 
-  private renderButtonComponent(supportsDegree: boolean) {
+  private renderButtonComponent() {
     return html`
       <obc-button
         class="readout-input-button"
@@ -480,10 +572,10 @@ export class ObcReadoutInput extends LitElement {
         <span
           class=${classMap({
             ...this.inputValueClasses,
-            'with-degree': this.hasDegree && supportsDegree,
+            'with-degree': this.hasDegree,
           })}
         >
-          ${this.renderValueComponent(supportsDegree)}
+          ${this.renderValueComponent()}
         </span>
       </obc-button>
     `;
@@ -491,15 +583,16 @@ export class ObcReadoutInput extends LitElement {
 
   override render() {
     if (this.variant === ReadoutInputVariant.value) {
+      if (this.readoutStyle === 'regular') {
+        return this.renderRegularVerticalReadoutValueLikeInline();
+      }
       return this.renderValueVariantComponent();
     }
 
-    const supportsDegree = this.resolvedVariantSize === ReadoutInputSize.medium;
-
-    if (this.type === ReadoutInputType.button) {
+    if (this.resolvedFormat === ReadoutInputFormat.button) {
       return html`
         <div class=${classMap(this.wrapperBaseClasses)}>
-          ${this.renderButtonComponent(supportsDegree)}
+          ${this.renderButtonComponent()}
         </div>
       `;
     }
@@ -519,10 +612,10 @@ export class ObcReadoutInput extends LitElement {
         <div
           class=${classMap({
             ...this.inputValueClasses,
-            'with-degree': this.hasDegree && supportsDegree,
+            'with-degree': this.hasDegree,
           })}
         >
-          ${this.renderValueComponent(supportsDegree)}
+          ${this.renderValueComponent()}
         </div>
       </div>
     `;

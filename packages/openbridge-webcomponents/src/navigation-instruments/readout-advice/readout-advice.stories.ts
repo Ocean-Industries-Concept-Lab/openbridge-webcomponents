@@ -2,16 +2,18 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {
+  ReadoutAdviceFormat,
   ReadoutAdviceSize,
   ReadoutAdviceState,
-  ReadoutAdviceType,
 } from './readout-advice.js';
 import './readout-advice.js';
+import {Priority} from '../types.js';
 
 type ReadoutAdviceStoryArgs = {
   size: ReadoutAdviceSize;
-  type?: ReadoutAdviceType;
   state: ReadoutAdviceState;
+  format?: ReadoutAdviceFormat;
+  priority?: Priority;
   hugText: boolean;
   iconId?: string;
   hasFixedLength: boolean;
@@ -35,7 +37,7 @@ const centeredCanvasDecorator = (story: () => unknown) => {
         padding: 24px;
       "
     >
-      ${story()}
+      <div class="obc-component-size-regular">${story()}</div>
     </div>
   `;
 };
@@ -49,8 +51,9 @@ const meta = {
     return html`
       <obc-readout-advice
         .size=${args.size}
-        .type=${args.type}
         .state=${args.state}
+        .format=${args.format}
+        .priority=${args.priority}
         .hugContent=${args.hugText}
         .hasFixedLength=${args.hasFixedLength}
         .value=${args.value}
@@ -66,8 +69,9 @@ const meta = {
   },
   args: {
     size: ReadoutAdviceSize.small,
-    type: undefined,
     state: ReadoutAdviceState.enabled,
+    format: ReadoutAdviceFormat.regular,
+    priority: undefined,
     hugText: true,
     iconId: undefined,
     hasFixedLength: true,
@@ -79,6 +83,9 @@ const meta = {
     hasDegree: false,
   },
   argTypes: {
+    direction: {table: {disable: true}, control: false},
+    readoutStyle: {table: {disable: true}, control: false},
+    hugContent: {table: {disable: true}, control: false},
     size: {
       name: 'Size',
       control: {
@@ -92,35 +99,29 @@ const meta = {
       },
       options: Object.values(ReadoutAdviceSize),
     },
-    type: {
-      name: 'Type',
-      control: {
-        type: 'select',
-        labels: {
-          undefined: 'Not selected',
-          [ReadoutAdviceType.regular]: 'Regular',
-          [ReadoutAdviceType.enhanced]: 'Enhanced',
-          [ReadoutAdviceType.description]: 'Description',
-          [ReadoutAdviceType.range]: 'Range',
-          [ReadoutAdviceType.verticalStack]: 'Vertical-stack',
-          [ReadoutAdviceType.baseline]: 'Baseline',
-          [ReadoutAdviceType.button]: 'Button',
-        },
-      },
-      options: [undefined, ...Object.values(ReadoutAdviceType)],
-    },
     state: {
       name: 'State',
       control: {
         type: 'select',
         labels: {
           [ReadoutAdviceState.enabled]: 'Enabled',
-          [ReadoutAdviceState.enhanced]: 'Enhanced',
           [ReadoutAdviceState.active]: 'Active',
           [ReadoutAdviceState.amplified]: 'Amplified',
         },
       },
       options: Object.values(ReadoutAdviceState),
+    },
+    format: {
+      name: 'Format',
+      control: {type: 'select'},
+      options: [undefined, ...Object.values(ReadoutAdviceFormat)],
+      description: 'Structural subtype axis.',
+    },
+    priority: {
+      name: 'Priority',
+      control: {type: 'select'},
+      options: [undefined, ...Object.values(Priority)],
+      description: 'Emphasis/color axis.',
     },
     hugText: {
       name: 'Hug Text',
@@ -143,13 +144,13 @@ const meta = {
     secondaryValue: {
       name: 'Secondary Value',
       control: 'text',
-      if: {arg: 'type', eq: ReadoutAdviceType.range},
+      if: {arg: 'format', eq: ReadoutAdviceFormat.range},
       table: {category: 'Advice Value'},
     },
     description: {
       name: 'Description',
       control: 'text',
-      if: {arg: 'type', eq: ReadoutAdviceType.description},
+      if: {arg: 'format', eq: ReadoutAdviceFormat.description},
       table: {category: 'Advice Value'},
     },
     valueLength: {
@@ -165,10 +166,8 @@ const meta = {
     },
     hasDegree: {
       name: 'Has Degree',
-      if: {arg: 'size', eq: ReadoutAdviceSize.medium},
       table: {category: 'Advice Value'},
-      description:
-        'Available only for Medium active advice state when Has Fixed Length is false.',
+      description: 'Renders a ° suffix when enabled.',
     },
   },
 } satisfies Meta<ReadoutAdviceStoryArgs>;
@@ -177,6 +176,83 @@ export default meta;
 type Story = StoryObj<ReadoutAdviceStoryArgs>;
 
 export const Primary: Story = {};
+
+export const StatePriorityMatrix: Story = {
+  name: 'State × Priority (Model)',
+  render: () => {
+    const cases: Array<{
+      label: string;
+      state: ReadoutAdviceState;
+      priority?: Priority;
+    }> = [
+      {label: 'enabled + regular', state: ReadoutAdviceState.enabled},
+      {
+        label: 'enabled + enhanced',
+        state: ReadoutAdviceState.enabled,
+        priority: Priority.enhanced,
+      },
+      {
+        label: 'active + regular',
+        state: ReadoutAdviceState.active,
+        priority: Priority.regular,
+      },
+      {
+        label: 'active + enhanced',
+        state: ReadoutAdviceState.active,
+        priority: Priority.enhanced,
+      },
+      {
+        label: 'amplified + regular',
+        state: ReadoutAdviceState.amplified,
+        priority: Priority.regular,
+      },
+      {
+        label: 'amplified + enhanced',
+        state: ReadoutAdviceState.amplified,
+        priority: Priority.enhanced,
+      },
+    ];
+
+    return html`
+      <div style="display: flex; flex-wrap: wrap; gap: 24px;">
+        ${cases.map(
+          (c) => html`
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                min-width: 180px;
+              "
+            >
+              <div
+                style="
+                  font: 10px/1.2 var(--global-typography-ui-label-font-family, inherit);
+                  text-transform: uppercase;
+                  letter-spacing: 0.04em;
+                  color: var(--element-neutral-color, #777);
+                "
+              >
+                ${c.label}
+              </div>
+              <obc-readout-advice
+                .size=${ReadoutAdviceSize.regular}
+                .state=${c.state}
+                .priority=${c.priority}
+                .hugContent=${true}
+                .hasFixedLength=${true}
+                .value=${'123'}
+                .valueLength=${'000'}
+                .hasHintedZeros=${true}
+              ></obc-readout-advice>
+            </div>
+          `
+        )}
+      </div>
+    `;
+  },
+};
 
 type Variant = {
   size: ReadoutAdviceSize;
@@ -199,11 +275,6 @@ const variantRows: Variant[][] = [
   })),
   sizes.map((size) => ({
     size,
-    state: ReadoutAdviceState.enhanced,
-    hugContent: true,
-  })),
-  sizes.map((size) => ({
-    size,
     state: ReadoutAdviceState.active,
     hugContent: true,
   })),
@@ -215,11 +286,6 @@ const variantRows: Variant[][] = [
   sizes.map((size) => ({
     size,
     state: ReadoutAdviceState.enabled,
-    hugContent: false,
-  })),
-  sizes.map((size) => ({
-    size,
-    state: ReadoutAdviceState.enhanced,
     hugContent: false,
   })),
   sizes.map((size) => ({

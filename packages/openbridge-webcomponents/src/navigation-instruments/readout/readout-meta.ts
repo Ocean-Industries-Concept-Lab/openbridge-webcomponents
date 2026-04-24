@@ -19,6 +19,7 @@ type ReadoutMetaZoneRenderOptions = {
   labelLength: string;
   hasUnitFixedLength: boolean;
   unitLength: string;
+  priorityEnhanced?: boolean;
 };
 
 function renderTextContainer({
@@ -88,10 +89,15 @@ export function renderReadoutMetaZone({
   labelLength,
   hasUnitFixedLength,
   unitLength,
+  priorityEnhanced,
 }: ReadoutMetaZoneRenderOptions): TemplateResult {
   return html`
     <div
-      class="readout-segment-wrapper readout-meta-wrapper"
+      class=${classMap({
+        'readout-segment-wrapper': true,
+        'readout-meta-wrapper': true,
+        'priority-enhanced': Boolean(priorityEnhanced),
+      })}
       part="meta-wrapper"
     >
       <div

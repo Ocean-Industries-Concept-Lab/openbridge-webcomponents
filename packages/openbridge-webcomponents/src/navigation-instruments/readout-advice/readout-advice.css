@@ -1,7 +1,6 @@
 :host {
   display: inline-flex;
   width: 100%;
-  max-width: 100%;
 }
 
 :host([hugcontent]) {
@@ -11,14 +10,6 @@
 .readout-advice-root,
 .readout-advice-wrapper {
   display: inline-flex;
-}
-
-.readout-advice-root {
-  width: 100%;
-  max-width: 100%;
-}
-
-.readout-advice-wrapper {
   width: 100%;
 }
 

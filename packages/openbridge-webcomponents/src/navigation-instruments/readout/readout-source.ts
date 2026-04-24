@@ -8,7 +8,7 @@ import '../../icons/icon-drop-down-google.js';
 import '../../icons/icon-placeholder.js';
 import type {
   ReadoutDirection as ReadoutPresentationDirection,
-  ReadoutType as ReadoutPresentationType,
+  ReadoutVariant as ReadoutPresentationType,
 } from './readout.js';
 
 export enum ReadoutSourceType {
@@ -25,7 +25,7 @@ export function supportsReadoutSourcePicker(sourceType: ReadoutSourceType) {
   );
 }
 
-type ReadoutSourceRenderOptions = {
+export type ReadoutSourceRenderOptions = {
   hasSrc: boolean;
   hasSrcPicker: boolean;
   src: string;
@@ -36,7 +36,9 @@ type ReadoutSourceRenderOptions = {
   sourceHug: boolean;
   hasSourceLeadingIcon: boolean;
   hasSourceTrailingIcon: boolean;
+  priorityEnhanced?: boolean;
   onTogglePicker: () => void;
+  onFlyoutClick: () => void;
 };
 
 function renderSourceLeadingIcon(
@@ -133,7 +135,9 @@ export function renderReadoutSource({
   sourceHug,
   hasSourceLeadingIcon,
   hasSourceTrailingIcon,
+  priorityEnhanced,
   onTogglePicker,
+  onFlyoutClick,
 }: ReadoutSourceRenderOptions): TemplateResult | typeof nothing {
   if (!hasSrc) {
     return nothing;
@@ -161,6 +165,7 @@ export function renderReadoutSource({
     'source-horizontal': readoutDirection === 'horizontal',
     'source-vertical': readoutDirection === 'vertical',
     'no-hug': !sourceHug,
+    'priority-enhanced': Boolean(priorityEnhanced),
   };
   const sourceContentClasses = {
     'source-content': true,
@@ -191,6 +196,29 @@ export function renderReadoutSource({
               ?showTrailingIcon=${showTrailingIcon}
               class=${classMap(sourcePickerClasses)}
               @click=${onTogglePicker}
+            >
+              ${renderSourceLeadingIconSlot(sourceType, showLeadingIcon)}
+              ${renderSourceText(sourceType, src, sourceDeltaValue)}
+              ${renderSourceTrailingIconSlot(sourceType, showTrailingIcon)}
+            </obc-button>
+          </slot>
+        </div>
+      </div>
+    `;
+  }
+
+  if (sourceType === ReadoutSourceType.flyout) {
+    return html`
+      <div class=${classMap(sourceWrapperClasses)} part="source-wrapper">
+        <div class=${classMap(sourceClasses)} part="source-container">
+          <slot name="source">
+            <obc-button
+              variant="flat"
+              .fullWidth=${!sourceHug}
+              ?showLeadingIcon=${showLeadingIcon}
+              ?showTrailingIcon=${showTrailingIcon}
+              class=${classMap(sourcePickerClasses)}
+              @click=${onFlyoutClick}
             >
               ${renderSourceLeadingIconSlot(sourceType, showLeadingIcon)}
               ${renderSourceText(sourceType, src, sourceDeltaValue)}

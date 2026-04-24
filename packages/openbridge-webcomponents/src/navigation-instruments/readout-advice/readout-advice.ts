@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import componentStyle from './readout-advice.css?inline';
@@ -6,21 +6,21 @@ import {customElement} from '../../decorator.js';
 import '../../icons/icon-notification-advice.js';
 import type {
   ReadoutDirection as ReadoutAdviceDirection,
-  ReadoutType as ReadoutAdviceReadoutStyle,
+  ReadoutVariant as ReadoutAdviceReadoutStyle,
 } from '../readout/readout.js';
+import {Priority} from '../types.js';
 import {
   ReadoutInputSize as ReadoutAdviceSize,
-  ReadoutInputState,
-  ReadoutInputType,
   ReadoutInputVariant,
+  ReadoutInputFormat,
+  ReadoutInputMode,
 } from '../readout-input/readout-input.js';
 import '../readout-input/readout-input.js';
 
 export {ReadoutAdviceSize};
 
-export enum ReadoutAdviceType {
+export enum ReadoutAdviceFormat {
   regular = 'regular',
-  enhanced = 'enhanced',
   description = 'description',
   range = 'range',
   verticalStack = 'vertical-stack',
@@ -30,27 +30,9 @@ export enum ReadoutAdviceType {
 
 export enum ReadoutAdviceState {
   enabled = 'enabled',
-  enhanced = 'enhanced',
   active = 'active',
   amplified = 'amplified',
 }
-
-const adviceStateMap: Record<ReadoutAdviceState, ReadoutInputState> = {
-  [ReadoutAdviceState.enabled]: ReadoutInputState.enabled,
-  [ReadoutAdviceState.enhanced]: ReadoutInputState.enhanced,
-  [ReadoutAdviceState.active]: ReadoutInputState.active,
-  [ReadoutAdviceState.amplified]: ReadoutInputState.enhanced,
-};
-
-const adviceTypeMap: Record<ReadoutAdviceType, ReadoutInputType> = {
-  [ReadoutAdviceType.regular]: ReadoutInputType.regular,
-  [ReadoutAdviceType.enhanced]: ReadoutInputType.enhanced,
-  [ReadoutAdviceType.description]: ReadoutInputType.description,
-  [ReadoutAdviceType.range]: ReadoutInputType.range,
-  [ReadoutAdviceType.verticalStack]: ReadoutInputType.verticalStack,
-  [ReadoutAdviceType.baseline]: ReadoutInputType.baseline,
-  [ReadoutAdviceType.button]: ReadoutInputType.button,
-};
 
 /**
  * `<obc-readout-advice>` - A readout advice segment for displaying advisory values with an advice marker icon.
@@ -59,8 +41,9 @@ const adviceTypeMap: Record<ReadoutAdviceType, ReadoutInputType> = {
  *
  * ## Features
  * - Sizes: Supports `small`, `regular`, `medium`, and `large`.
- * - Types: Supports `regular`, `enhanced`, `description`, `range`, `vertical-stack`, `baseline`, and `button`. The selected type defines the internal size and layout preset.
- * - Visual states: Supports `enabled`, `enhanced`, and `active`.
+ * - Formats: Supports `regular`, `description`, `range`, `vertical-stack`, `baseline`, and `button`. Format selects the structural subtype; size is controlled independently via the `size` property.
+ * - State axis: Supports `enabled`, `active`, and `amplified`. State controls behavior/typography (e.g. `active` uses active value typography).
+ * - Priority axis: Uses `priority` (`regular`/`enhanced`) for color emphasis. `active`/`amplified` default to `Priority.enhanced` when `priority` is not provided.
  * - Value rendering: Inherits `hasFixedLength`, `valueLength`, `hasHintedZeros`, and `hasDegree` behavior from `<obc-readout-input>`.
  * - Additional lines: `type="description"` can render a secondary label by using `description`, and `type="range"` can render a second numeric line by using `secondaryValue`.
  * - Advice icon: Uses `notification-advice` by default and allows overriding the icon through a slot.
@@ -92,7 +75,9 @@ export class ObcReadoutAdvice extends LitElement {
 
   @property({type: String}) size: ReadoutAdviceSize = ReadoutAdviceSize.small;
 
-  @property({type: String}) type?: ReadoutAdviceType;
+  @property({type: String}) format?: ReadoutAdviceFormat;
+
+  @property({type: String}) priority?: Priority;
 
   @property({type: String}) state: ReadoutAdviceState =
     ReadoutAdviceState.enabled;
@@ -113,7 +98,29 @@ export class ObcReadoutAdvice extends LitElement {
 
   @property({type: Boolean}) hasDegree = false;
 
+  private get resolvedFormat(): ReadoutAdviceFormat {
+    return this.format ?? ReadoutAdviceFormat.regular;
+  }
+
+  private get resolvedPriority(): Priority | undefined {
+    if (this.state === ReadoutAdviceState.amplified) {
+      return this.priority ?? Priority.enhanced;
+    }
+    return this.priority;
+  }
+
+  private get resolvedMode(): ReadoutInputMode {
+    if (this.state === ReadoutAdviceState.active) {
+      return ReadoutInputMode.input;
+    }
+    return ReadoutInputMode.display;
+  }
+
   override render() {
+    const valueTypographyOverride = this.getAttribute(
+      'data-obc-value-typography'
+    );
+
     return html`
       <div
         class=${classMap({
@@ -123,12 +130,14 @@ export class ObcReadoutAdvice extends LitElement {
       >
         <div class="readout-advice-wrapper">
           <obc-readout-input
+            data-obc-value-typography=${valueTypographyOverride ?? nothing}
             .readoutStyle=${this.readoutStyle}
             .direction=${this.direction}
             .variant=${ReadoutInputVariant.advice}
-            .type=${this.type ? adviceTypeMap[this.type] : undefined}
+            .format=${this.resolvedFormat as unknown as ReadoutInputFormat}
             .size=${this.size}
-            .state=${adviceStateMap[this.state]}
+            .mode=${this.resolvedMode}
+            .priority=${this.resolvedPriority}
             .hugContent=${this.hugContent}
             .hasFixedLength=${this.hasFixedLength}
             .value=${this.value}

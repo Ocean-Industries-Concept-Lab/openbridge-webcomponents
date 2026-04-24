@@ -3,16 +3,18 @@ import {html} from 'lit';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import '../../icons/icon-input-right.js';
 import {
+  ReadoutInputMode,
+  ReadoutInputFormat,
   ReadoutInputSize,
-  ReadoutInputState,
-  ReadoutInputType,
 } from './readout-input.js';
 import './readout-input.js';
+import {Priority} from '../types.js';
 
 type ReadoutInputStoryArgs = {
   size: ReadoutInputSize;
-  type?: ReadoutInputType;
-  state: ReadoutInputState;
+  format?: ReadoutInputFormat;
+  mode: ReadoutInputMode;
+  priority?: Priority;
   hugText: boolean;
   iconId?: string;
   hasFixedLength: boolean;
@@ -36,7 +38,7 @@ const centeredCanvasDecorator = (story: () => unknown) => {
         padding: 24px;
       "
     >
-      ${story()}
+      <div class="obc-component-size-regular">${story()}</div>
     </div>
   `;
 };
@@ -49,9 +51,10 @@ const meta = {
   render: (args) => {
     return html`
       <obc-readout-input
-        .type=${args.type}
         .size=${args.size}
-        .state=${args.state}
+        .format=${args.format}
+        .mode=${args.mode}
+        .priority=${args.priority}
         .hugContent=${args.hugText}
         .hasFixedLength=${args.hasFixedLength}
         .value=${args.value}
@@ -69,8 +72,9 @@ const meta = {
   },
   args: {
     size: ReadoutInputSize.small,
-    type: undefined,
-    state: ReadoutInputState.enabled,
+    format: undefined,
+    mode: ReadoutInputMode.display,
+    priority: undefined,
     hugText: true,
     iconId: undefined,
     hasFixedLength: true,
@@ -95,40 +99,23 @@ const meta = {
       },
       options: Object.values(ReadoutInputSize),
     },
-    type: {
-      name: 'Type',
-      control: {
-        type: 'select',
-        labels: {
-          undefined: 'Not selected',
-          [ReadoutInputType.regular]: 'Regular',
-          [ReadoutInputType.enhanced]: 'Enhanced',
-          [ReadoutInputType.description]: 'Description',
-          [ReadoutInputType.range]: 'Range',
-          [ReadoutInputType.verticalStack]: 'Vertical-stack',
-          [ReadoutInputType.baseline]: 'Baseline',
-          [ReadoutInputType.button]: 'Button',
-        },
-      },
-      options: [undefined, ...Object.values(ReadoutInputType)],
+    format: {
+      name: 'Format',
+      control: {type: 'select'},
+      options: [undefined, ...Object.values(ReadoutInputFormat)],
+      description: 'Structural subtype axis.',
     },
-    state: {
-      name: 'State',
-      control: {
-        type: 'select',
-        labels: {
-          [ReadoutInputState.enabled]: 'Enabled',
-          [ReadoutInputState.enhanced]: 'Enhanced',
-          [ReadoutInputState.input]: 'Input',
-          [ReadoutInputState.inputTemporary]: 'Input Temporary',
-        },
-      },
-      options: [
-        ReadoutInputState.enabled,
-        ReadoutInputState.enhanced,
-        ReadoutInputState.input,
-        ReadoutInputState.inputTemporary,
-      ],
+    mode: {
+      name: 'Mode',
+      control: {type: 'select'},
+      options: Object.values(ReadoutInputMode),
+      description: 'Interaction axis.',
+    },
+    priority: {
+      name: 'Priority',
+      control: {type: 'select'},
+      options: [undefined, ...Object.values(Priority)],
+      description: 'Emphasis/color axis.',
     },
     hugText: {
       name: 'Hug Text',
@@ -143,6 +130,10 @@ const meta = {
       },
       options: [undefined, ...iconIds],
     },
+    variant: {table: {disable: true}, control: false},
+    direction: {table: {disable: true}, control: false},
+    readoutStyle: {table: {disable: true}, control: false},
+    hugContent: {table: {disable: true}, control: false},
     value: {
       name: 'Value',
       control: 'text',
@@ -151,13 +142,16 @@ const meta = {
     secondaryValue: {
       name: 'Secondary Value',
       control: 'text',
-      if: {arg: 'type', eq: ReadoutInputType.range},
+      if: {arg: 'format', eq: ReadoutInputFormat.range},
       table: {category: 'Input Value'},
     },
     description: {
-      name: 'Description',
+      name: 'Description / Stack Label',
       control: 'text',
-      if: {arg: 'type', eq: ReadoutInputType.description},
+      if: {
+        arg: 'format',
+        in: [ReadoutInputFormat.description, ReadoutInputFormat.verticalStack],
+      },
       table: {category: 'Input Value'},
     },
     valueLength: {
@@ -173,10 +167,8 @@ const meta = {
     },
     hasDegree: {
       name: 'Has Degree',
-      if: {arg: 'size', eq: ReadoutInputSize.medium},
       table: {category: 'Input Value'},
-      description:
-        'Available only for Medium active input states when Has Fixed Length is false.',
+      description: 'Renders a ° suffix when enabled.',
     },
   },
 } satisfies Meta<ReadoutInputStoryArgs>;
@@ -185,6 +177,90 @@ export default meta;
 type Story = StoryObj<ReadoutInputStoryArgs>;
 
 export const Primary: Story = {};
+
+export const SegmentHugVsFullWidth: Story = {
+  name: 'Layout / Segment Hug Vs Full Width',
+  render: () => html`
+    <div
+      style="
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        width: 360px;
+        max-width: 100%;
+        padding: 16px;
+        border: 1px dashed rgba(0, 0, 0, 0.2);
+        box-sizing: border-box;
+      "
+    >
+      <div
+        style="
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          background: rgba(0, 0, 0, 0.04);
+          padding: 12px;
+          border-radius: 6px;
+        "
+      >
+        <div
+          style="
+            font: 12px/1.2 var(--global-typography-ui-label-font-family, inherit);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--element-neutral-color, #777);
+          "
+        >
+          hugContent = true (fit-content)
+        </div>
+        <obc-readout-input
+          .size=${ReadoutInputSize.regular}
+          .format=${ReadoutInputFormat.regular}
+          .mode=${ReadoutInputMode.display}
+          .priority=${Priority.enhanced}
+          .hugContent=${true}
+          value="123"
+          title="hugContent=true"
+        >
+          <obi-input-right slot="icon"></obi-input-right>
+        </obc-readout-input>
+      </div>
+
+      <div
+        style="
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          background: rgba(0, 0, 0, 0.04);
+          padding: 12px;
+          border-radius: 6px;
+        "
+      >
+        <div
+          style="
+            font: 12px/1.2 var(--global-typography-ui-label-font-family, inherit);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--element-neutral-color, #777);
+          "
+        >
+          hugContent = false (width: 100%)
+        </div>
+        <obc-readout-input
+          .size=${ReadoutInputSize.regular}
+          .format=${ReadoutInputFormat.regular}
+          .mode=${ReadoutInputMode.display}
+          .priority=${Priority.enhanced}
+          .hugContent=${false}
+          value="123"
+          title="hugContent=false"
+        >
+          <obi-input-right slot="icon"></obi-input-right>
+        </obc-readout-input>
+      </div>
+    </div>
+  `,
+};
 
 export const HintedZerosBySize: Story = {
   render: () => html`
@@ -204,7 +280,8 @@ export const HintedZerosBySize: Story = {
         (size) => html`
           <obc-readout-input
             .size=${size}
-            .state=${ReadoutInputState.enhanced}
+            .mode=${ReadoutInputMode.display}
+            .priority=${Priority.enhanced}
             .hugContent=${true}
             .hasFixedLength=${true}
             value="12"
@@ -222,7 +299,8 @@ export const HintedZerosBySize: Story = {
 
 type Variant = {
   size: ReadoutInputSize;
-  state: ReadoutInputState;
+  mode: ReadoutInputMode;
+  priority?: Priority;
   hugContent: boolean;
   hasDegree: boolean;
 };
@@ -237,49 +315,57 @@ const sizes: ReadoutInputSize[] = [
 const variantRows: Variant[][] = [
   sizes.map((size) => ({
     size,
-    state: ReadoutInputState.enabled,
+    mode: ReadoutInputMode.display,
+    priority: undefined,
     hugContent: true,
     hasDegree: false,
   })),
   sizes.map((size) => ({
     size,
-    state: ReadoutInputState.enhanced,
+    mode: ReadoutInputMode.display,
+    priority: Priority.enhanced,
     hugContent: true,
     hasDegree: false,
   })),
   sizes.map((size) => ({
     size,
-    state: ReadoutInputState.input,
+    mode: ReadoutInputMode.input,
+    priority: undefined,
     hugContent: true,
     hasDegree: false,
   })),
   sizes.map((size) => ({
     size,
-    state: ReadoutInputState.inputTemporary,
+    mode: ReadoutInputMode.inputTemporary,
+    priority: undefined,
     hugContent: true,
     hasDegree: false,
   })),
   sizes.map((size) => ({
     size,
-    state: ReadoutInputState.enabled,
+    mode: ReadoutInputMode.display,
+    priority: undefined,
     hugContent: false,
     hasDegree: false,
   })),
   sizes.map((size) => ({
     size,
-    state: ReadoutInputState.enhanced,
+    mode: ReadoutInputMode.display,
+    priority: Priority.enhanced,
     hugContent: false,
     hasDegree: false,
   })),
   sizes.map((size) => ({
     size,
-    state: ReadoutInputState.input,
+    mode: ReadoutInputMode.input,
+    priority: undefined,
     hugContent: false,
     hasDegree: false,
   })),
   sizes.map((size) => ({
     size,
-    state: ReadoutInputState.inputTemporary,
+    mode: ReadoutInputMode.inputTemporary,
+    priority: undefined,
     hugContent: false,
     hasDegree: false,
   })),
@@ -291,14 +377,16 @@ const usesFixedLength = (size: ReadoutInputSize): boolean =>
 const renderVariant = (variant: Variant) => html`
   <obc-readout-input
     .size=${variant.size}
-    .state=${variant.state}
+    .format=${ReadoutInputFormat.regular}
+    .mode=${variant.mode}
+    .priority=${variant.priority}
     .hugContent=${variant.hugContent}
     .hasFixedLength=${usesFixedLength(variant.size)}
-    .hasDegree=${variant.hasDegree}
-    value="123"
-    valueLength="123"
+    .value=${'123'}
+    .valueLength=${'123'}
     .hasHintedZeros=${false}
-    title=${`Size=${variant.size}, State=${variant.state}, Hug content=${variant.hugContent}, Degree=${variant.hasDegree}`}
+    .hasDegree=${variant.hasDegree}
+    title=${`Size=${variant.size}, Mode=${variant.mode}, Priority=${variant.priority}, Hug content=${variant.hugContent}, Degree=${variant.hasDegree}`}
   >
     <obi-input-right slot="icon"></obi-input-right>
   </obc-readout-input>
