@@ -35,7 +35,7 @@ export enum HeadingIndicatorType {
  * ## Features
  *
  * - **Types**: `HDG` uses a circular compass scale with a centered heading cue.
- * - **Types**: `XTD` uses a split rectangular frame with a fixed centerline and a movable position cue driven by `xtd`.
+ * - **Types**: `XTD` uses a split rectangular frame with a fixed centerline, a movable position cue driven by `xtd`, and arrow rotation driven by `angle`.
  * - **Fixed-size output**: both variants render inside the same 48 x 48 viewport.
  *
  * ## Usage Guidelines
@@ -192,8 +192,10 @@ export class ObcHeadingIndicator extends LitElement {
     const XTD_FRAME_X = 7.5;
     const XTD_FRAME_INNER_WIDTH = 32;
     const XTD_ARROW_WIDTH = 12;
+    const XTD_ARROW_HEIGHT = 12;
     const XTD_BLUE_LINE_WIDTH = 2;
     const XTD_CENTER_X = 23;
+    const XTD_ARROW_Y = 24;
     const XTD_BLUE_LINE_X_BASE = XTD_CENTER_X - XTD_BLUE_LINE_WIDTH / 2;
     const XTD_ARROW_X_BASE = XTD_CENTER_X - XTD_ARROW_WIDTH / 2;
     const maxOffsetPx = Math.min(
@@ -202,6 +204,9 @@ export class ObcHeadingIndicator extends LitElement {
     );
     const clampedXtd = Math.max(-1, Math.min(1, this.xtd));
     const offsetPx = clampedXtd * maxOffsetPx;
+    const arrowX = XTD_ARROW_X_BASE + offsetPx;
+    const arrowCenterX = arrowX + XTD_ARROW_WIDTH / 2;
+    const arrowCenterY = XTD_ARROW_Y + XTD_ARROW_HEIGHT / 2;
 
     return html`
       <svg
@@ -234,20 +239,25 @@ export class ObcHeadingIndicator extends LitElement {
             stroke-width="2"
           />
         </svg>
-        <svg
-          x=${XTD_ARROW_X_BASE + offsetPx}
-          y="24"
-          width="12"
-          height="12"
-          viewBox="0 0 12 12"
-          fill="none"
+        <g
+          transform="rotate(${this
+            .normalizedAngle}, ${arrowCenterX}, ${arrowCenterY})"
         >
-          <path
-            d="${HDG_ARROW_HEAD_PATH}"
-            fill="var(--instrument-enhanced-secondary-color)"
-            stroke="var(--border-silhouette-color)"
-          />
-        </svg>
+          <svg
+            x=${arrowX}
+            y="${XTD_ARROW_Y}"
+            width="${XTD_ARROW_WIDTH}"
+            height="${XTD_ARROW_HEIGHT}"
+            viewBox="0 0 12 12"
+            fill="none"
+          >
+            <path
+              d="${HDG_ARROW_HEAD_PATH}"
+              fill="var(--instrument-enhanced-secondary-color)"
+              stroke="var(--border-silhouette-color)"
+            />
+          </svg>
+        </g>
       </svg>
     `;
   }
