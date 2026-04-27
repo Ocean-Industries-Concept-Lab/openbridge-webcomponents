@@ -232,6 +232,12 @@ export class ObcWatch extends LitElement {
   @property({type: Number}) clipTop: number = 0; // in percent of height
   @property({type: Number}) clipBottom: number = 0; // in percent of height
   @property({type: Number}) scaleWindIcon: number = 1;
+  @property({type: Boolean}) directionNotch: boolean = false;
+  @property({type: Number}) directionNotchAngle: number | undefined;
+  @property({type: Number}) directionNotchWidth: number = 28;
+  @property({type: Number}) directionNotchDepth: number = 16;
+  @property({type: String}) directionNotchColor: string =
+    'var(--instrument-frame-tertiary-color)';
   @property({type: Number}) rotation: number | undefined;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
   @property({attribute: false}) arcFrame: ZoomToFitArcFrame | undefined;
@@ -404,6 +410,16 @@ export class ObcWatch extends LitElement {
             strokeColor: 'var(--instrument-frame-tertiary-color)',
             strokePosition: 'center',
             fillColor: 'none',
+            notch:
+              this.directionNotch && this.directionNotchAngle !== undefined
+                ? {
+                    angle: this.directionNotchAngle,
+                    width: this.directionNotchWidth,
+                    depth: this.directionNotchDepth,
+                    strokeColor: this.directionNotchColor,
+                    strokeWidth: 1,
+                  }
+                : undefined,
           })}
         `);
       } else {
