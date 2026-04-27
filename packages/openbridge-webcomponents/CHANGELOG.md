@@ -1,3 +1,9 @@
+## [2.0.0-next.11](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.10...v2.0.0-next.11) (2026-04-27)
+
+### Features
+
+- **slider-double:** make readouts optional and slottable ([#804](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/804)) ([#816](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/816)) ([501665e](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/501665efa03e0b697c4c96f9b9c2648bf707a03c)), closes [#744](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/744)
+
 ## [2.0.0-next.10](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.9...v2.0.0-next.10) (2026-04-27)
 
 ### Bug Fixes
