@@ -1,7 +1,7 @@
 import {LitElement, css, html, nothing, svg} from 'lit';
 import {property} from 'lit/decorators.js';
 import '../watch/watch.js';
-import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
+import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {
   OUTER_RING_RADIUS,
   WatchCircleType,
@@ -9,6 +9,7 @@ import {
 } from '../watch/watch.js';
 import {InstrumentState, Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
+import {VisualConfigMixin} from '../../svghelpers/visual-config-mixin.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {customElement} from '../../decorator.js';
 import {
@@ -81,17 +82,10 @@ export enum ObcRudderVariant {
  * @element obc-rudder
  */
 @customElement('obc-rudder')
-export class ObcRudder extends SetpointMixin(LitElement) {
+export class ObcRudder extends VisualConfigMixin(SetpointMixin(LitElement)) {
   @property({type: Number}) angle = 0;
   @property({type: String}) variant: ObcRudderVariant = ObcRudderVariant.Bar;
   @property({type: Number}) maxAngle = 90;
-  @property({type: Boolean}) showLabels: boolean = false;
-  /** Whether to render tickmarks inside the ring. */
-  @property({type: Boolean}) tickmarksInside: boolean = false;
-  @property({type: String}) state: InstrumentState = InstrumentState.active;
-  @property({type: String}) priority: Priority = Priority.regular;
-  @property({type: String}) tickmarkStyle: TickmarkStyle =
-    TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: AngleAdvice[] = [];
   @property({type: Boolean}) zoomToFitArc: boolean = false;
 

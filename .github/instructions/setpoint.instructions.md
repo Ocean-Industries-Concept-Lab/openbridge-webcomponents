@@ -328,6 +328,73 @@ computeAtSetpoint({
 
 ---
 
+## `isAtZero()` — Zero-Snap Helper
+
+Companion to `computeAtSetpoint`, used to decide whether a setpoint that is
+*near zero* should snap to the visual "at zero" state (typically rendered
+in muted colors). Defined in `setpoint.ts`:
+
+```ts
+isAtZero(value: number | undefined, deadband: number): boolean
+```
+
+**Rules:**
+
+- Returns `false` if `value` is `undefined` or `NaN`.
+- Returns `false` if `deadband` is not finite.
+- Otherwise returns `Math.abs(value) < deadband` — note **strict less-than**.
+
+### `<` vs `<=` distinction
+
+| Helper               | Comparison | Rationale                                                                                |
+| -------------------- | ---------- | ---------------------------------------------------------------------------------------- |
+| `computeAtSetpoint`  | `<=`       | Inclusive — the setpoint marker should "lock" at the boundary as soon as it is reached. |
+| `isAtZero`           | `<`        | Exclusive — a value exactly equal to the deadband is still considered nonzero.           |
+
+**Both helpers MUST be used instead of any local `Math.abs(...) < deadband`
+math.** A grep for `Math.abs.*setpoint` outside `src/svghelpers/` should
+return zero matches.
+
+---
+
+## Single Source of Truth
+
+All deadband / zero-snap math for setpoints lives in `src/svghelpers/setpoint.ts`:
+
+- **`computeAtSetpoint(config)`** — for "is `value` at `setpoint`?"
+- **`isAtZero(value, deadband)`** — for "is `value` at zero?"
+
+**Forbidden:** Defining a local `atSetpointCalc()`, `atSetpointFn()`, or
+inline `Math.abs(value - setpoint) <= deadband` anywhere outside
+`src/svghelpers/`. If the canonical helpers don't cover your use case, add
+a parameter to them rather than forking the math.
+
+---
+
+## Companion Mixins
+
+The setpoint mixin sits next to two other reactive-property cluster mixins
+that follow the same Lit-mixin pattern. Compose them by chaining:
+
+```ts
+class ObcGaugeRadial extends TickmarkIntervalMixin(
+  VisualConfigMixin(SetpointMixin(LitElement)),
+  {defaultPrimary: 50, defaultSecondary: 10}
+) { … }
+```
+
+| Mixin                       | File                                          | Adds (5 / 5 / 3 props)                                                                  |
+| --------------------------- | --------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `SetpointMixin`             | `svghelpers/setpoint-mixin.ts`                | `setpoint`, `newSetpoint`, `atSetpoint`, `touching`, `autoAtSetpoint`, …                |
+| `VisualConfigMixin`         | `svghelpers/visual-config-mixin.ts`           | `state`, `priority`, `tickmarkStyle`, `showLabels`, `tickmarksInside`                   |
+| `TickmarkIntervalMixin`     | `svghelpers/tickmark-interval-mixin.ts`       | `primaryTickmarkInterval`, `secondaryTickmarkInterval`, `tertiaryTickmarkInterval`      |
+
+Use `TickmarkIntervalMixin(superClass, {defaultPrimary, defaultSecondary, defaultTertiary})`
+to pass per-component default cadences. All three intervals always exist;
+omit a `default*` to leave that tier `undefined` (no tickmarks rendered).
+
+---
+
 ## Stories
 
 Interactive stories for the setpoint system live in `building-blocks/setpoint/setpoint.stories.ts`:

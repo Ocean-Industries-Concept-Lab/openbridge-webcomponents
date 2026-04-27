@@ -820,9 +820,7 @@ export function deriveRadialSetpointConfig(
   }
 
   // Auto-derive atZero from angleSetpoint and deadband
-  const atZero =
-    angleSetpoint !== undefined &&
-    Math.abs(angleSetpoint) < setpointAtZeroDeadband;
+  const atZero = isAtZero(angleSetpoint, setpointAtZeroDeadband);
 
   // For non-disabled states:
   // - atSetpoint + atZero triggers equalZero visual state (80% size)
@@ -979,4 +977,22 @@ export function computeAtSetpoint(config: ComputeAtSetpointConfig): boolean {
   }
 
   return atSetpointManual;
+}
+
+/**
+ * Whether `value` is within the zero-snap deadband (i.e. should render in
+ * the `equalZero` visual state).
+ *
+ * **Note the deliberate boundary semantics:** zero-snap uses **strict less
+ * than (`<`)**, while {@link computeAtSetpoint}'s deadband uses **inclusive
+ * (`<=`)**. The two checks serve different concerns — `isAtZero` decides
+ * whether the setpoint marker shrinks to its 80% "equalZero" size, while
+ * `computeAtSetpoint` decides whether the value has reached the target.
+ *
+ * Returns `false` for `undefined`, `NaN`, or non-finite `deadband`.
+ */
+export function isAtZero(value: number | undefined, deadband: number): boolean {
+  if (value === undefined || !Number.isFinite(value)) return false;
+  if (!Number.isFinite(deadband)) return false;
+  return Math.abs(value) < deadband;
 }

@@ -6,6 +6,7 @@ import '../../components/button/button.js';
 import '../../icons/icon-drop-down-google.js';
 import '../../components/navigation-item/navigation-item.js';
 import {customElement} from '../../decorator.js';
+import {computeAtSetpoint} from '../../svghelpers/setpoint.js';
 
 /**
  * Enum for instrument field sizes.
@@ -118,9 +119,14 @@ export class ObcInstrumentField extends LitElement {
     const hideSetpoint =
       this.hasSetpoint &&
       this.autoHideSetpoint &&
-      this.setpoint !== undefined &&
-      this.value !== undefined &&
-      Math.abs(this.setpoint - this.value) <= this.autoHideDeadband;
+      computeAtSetpoint({
+        value: this.value,
+        setpoint: this.setpoint,
+        touching: false,
+        auto: true,
+        deadband: this.autoHideDeadband,
+        atSetpointManual: false,
+      });
 
     return html`
       <div

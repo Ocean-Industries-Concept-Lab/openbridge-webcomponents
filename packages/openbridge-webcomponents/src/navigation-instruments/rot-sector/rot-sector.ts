@@ -4,6 +4,7 @@ import {property} from 'lit/decorators.js';
 import {AdviceType} from '../watch/advice.js';
 import {Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
+import {TickmarkIntervalMixin} from '../../svghelpers/tickmark-interval-mixin.js';
 import '../../building-blocks/instrument-radial/instrument-radial.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 
@@ -84,28 +85,15 @@ export interface GaugeRadialAdvice {
  * @typedef {import('./rot-sector.js').GaugeRadialAdvice} GaugeRadialAdvice
  */
 @customElement('obc-rot-sector')
-export class ObcRotSector extends SetpointMixin(LitElement) {
+export class ObcRotSector extends TickmarkIntervalMixin(
+  SetpointMixin(LitElement),
+  {defaultPrimary: 50, defaultSecondary: 10}
+) {
   @property({type: Number}) value = 0;
   @property({type: Number}) maxValue = 100;
   @property({type: Boolean}) showLabels: boolean = false;
   /** Whether to render tickmarks inside the ring. */
   @property({type: Boolean}) tickmarksInside: boolean = false;
-  /**
-   * Interval for primary tickmarks in value units.
-   * When undefined or <= 0, no primary tickmarks are shown.
-   */
-  @property({type: Number}) primaryTickmarkInterval: number | undefined = 50;
-  /**
-   * Interval for secondary tickmarks in value units.
-   * When undefined or <= 0, no secondary tickmarks are shown.
-   */
-  @property({type: Number}) secondaryTickmarkInterval: number | undefined = 10;
-  /**
-   * Interval for tertiary tickmarks in value units.
-   * When undefined or <= 0, no tertiary tickmarks are shown.
-   */
-  @property({type: Number}) tertiaryTickmarkInterval: number | undefined =
-    undefined;
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: Boolean}) portStarboard: boolean = false;
   @property({type: String}) tickmarkStyle: TickmarkStyle =

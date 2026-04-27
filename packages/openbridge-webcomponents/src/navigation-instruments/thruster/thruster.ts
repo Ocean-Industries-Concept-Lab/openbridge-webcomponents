@@ -8,8 +8,10 @@ import {singleSidedTickmark} from './tickmark.js';
 import {PropellerType, bottomPropeller, topPropeller} from './propeller.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {
+  computeAtSetpoint,
   drawSetpointMarker,
   getSetpointOutwardOffset,
+  isAtZero,
   SetpointColorMode,
   SetpointVisualState,
   SETPOINT_ANIMATION_CSS_VAR,
@@ -373,8 +375,7 @@ export function renderThrusterSetpoint(
   setpointValue: number,
   config: ThrusterSetpointConfig
 ): SVGTemplateResult {
-  const setpointAtZero =
-    Math.abs(setpointValue) < config.setpointAtZeroDeadband;
+  const setpointAtZero = isAtZero(setpointValue, config.setpointAtZeroDeadband);
   const hasNewSetpoint = config.newSetpoint !== undefined;
   const hasDepartingNewSetpoint = config.departingNewSetpoint !== undefined;
   const animate = config.animateSetpoint === true;
@@ -451,7 +452,7 @@ export function renderThrusterSetpoint(
     const newValue = isActive
       ? config.newSetpoint!
       : config.departingNewSetpoint!;
-    const newAtZero = Math.abs(newValue) < config.setpointAtZeroDeadband;
+    const newAtZero = isAtZero(newValue, config.setpointAtZeroDeadband);
     const newY = thrusterSetpointY(height, newValue, newAtZero);
     const focusOffset = getSetpointOutwardOffset(SetpointVisualState.focus);
     const newTipX = baseX + focusOffset - THRUSTER_SETPOINT_INWARD_ADJUST;
@@ -556,6 +557,17 @@ export function setpointSvg(
   `;
 }
 
+/**
+ * Thin adapter around the canonical `computeAtSetpoint()` from
+ * `svghelpers/setpoint.ts`, preserving the legacy positional signature used
+ * by `thruster()` and `<obc-main-engine>`.
+ *
+ * Behaviorally identical to the canonical function: inclusive deadband
+ * (`distance <= deadband`), `touching` short-circuit, and `Number.isFinite`
+ * guard on the deadband. The previous local implementation used `<` instead
+ * of `<=`, so a value exactly at the deadband boundary now correctly reports
+ * as "at setpoint" — matching every other instrument.
+ */
 export function atSetpoint(
   thrust: number,
   setpoint: number | undefined,
@@ -566,15 +578,14 @@ export function atSetpoint(
     atSetpoint: boolean;
   }
 ): boolean {
-  if (options.touching) {
-    return false;
-  }
-
-  if (options.autoAtSetpoint && setpoint !== undefined) {
-    return Math.abs(thrust - setpoint) < options.autoAtSetpointDeadband;
-  }
-
-  return options.atSetpoint;
+  return computeAtSetpoint({
+    value: thrust,
+    setpoint,
+    touching: options.touching,
+    auto: options.autoAtSetpoint,
+    deadband: options.autoAtSetpointDeadband,
+    atSetpointManual: options.atSetpoint,
+  });
 }
 
 export function thruster(
@@ -630,8 +641,10 @@ export function thruster(
     centerLine = svg`<rect x=${x} y="-2" width=${width} height="4" stroke-width="1" fill=${tc.zeroLineColor} stroke=${tc.zeroLineColor} vector-effect="non-scaling-stroke"/>`;
   }
 
-  const setpointAtZero =
-    Math.abs(setpoint || 0) < options.setpointAtZeroDeadband;
+  const setpointAtZero = isAtZero(
+    setpoint ?? 0,
+    options.setpointAtZeroDeadband
+  );
 
   const {topAdvices, bottomAdvices} = convertThrustAdvices(
     options.advices,

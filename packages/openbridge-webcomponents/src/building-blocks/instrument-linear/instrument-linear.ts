@@ -3,6 +3,7 @@ import {InstrumentState, Priority} from '../../navigation-instruments/types.js';
 
 import {LinearAdviceRaw} from '../../navigation-instruments/thruster/advice.js';
 import {renderAdvice} from './advice.js';
+import {computeAtSetpoint} from '../../svghelpers/setpoint.js';
 
 export function atSetpoint(
   thrust: number,
@@ -14,15 +15,14 @@ export function atSetpoint(
     atSetpoint: boolean;
   }
 ): boolean {
-  if (options.touching) {
-    return false;
-  }
-
-  if (options.autoAtSetpoint && setpoint !== undefined) {
-    return Math.abs(thrust - setpoint) < options.autoAtSetpointDeadband;
-  }
-
-  return options.atSetpoint;
+  return computeAtSetpoint({
+    value: thrust,
+    setpoint,
+    touching: options.touching,
+    auto: options.autoAtSetpoint,
+    deadband: options.autoAtSetpointDeadband,
+    atSetpointManual: options.atSetpoint,
+  });
 }
 
 /**

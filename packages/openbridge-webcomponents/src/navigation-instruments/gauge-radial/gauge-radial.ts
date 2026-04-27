@@ -2,10 +2,10 @@ import {LitElement, html} from 'lit';
 import {customElement} from '../../decorator.js';
 import {property} from 'lit/decorators.js';
 import {AdviceType} from '../watch/advice.js';
-import {InstrumentState, Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
+import {VisualConfigMixin} from '../../svghelpers/visual-config-mixin.js';
+import {TickmarkIntervalMixin} from '../../svghelpers/tickmark-interval-mixin.js';
 import '../../building-blocks/instrument-radial/instrument-radial.js';
-import {TickmarkStyle} from '../watch/tickmark.js';
 
 export enum ObcGaugeRadialType {
   filled = 'filled',
@@ -78,26 +78,15 @@ export interface GaugeRadialAdvice {
  * @typedef {import('./gauge-radial.js').GaugeRadialAdvice} GaugeRadialAdvice
  */
 @customElement('obc-gauge-radial')
-export class ObcGaugeRadial extends SetpointMixin(LitElement) {
+export class ObcGaugeRadial extends TickmarkIntervalMixin(
+  VisualConfigMixin(SetpointMixin(LitElement)),
+  {defaultPrimary: 50, defaultSecondary: 10}
+) {
   @property({type: Number}) value = 0;
   @property({type: Number}) maxValue = 100;
   @property({type: Number}) minValue = 0;
-  @property({type: Boolean}) showLabels: boolean = false;
-  @property({type: Number}) primaryTickmarkInterval = 50;
-  @property({type: Number}) secondaryTickmarkInterval = 10;
-  /**
-   * Interval for tertiary tickmarks in value units.
-   * When undefined or <= 0, no tertiary tickmarks are shown.
-   */
-  @property({type: Number}) tertiaryTickmarkInterval: number | undefined =
-    undefined;
-  @property({type: String}) state: InstrumentState = InstrumentState.active;
-  @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) type: ObcGaugeRadialType =
     ObcGaugeRadialType.filled;
-  @property({type: Boolean}) tickmarksInside: boolean = false;
-  @property({type: String}) tickmarkStyle: TickmarkStyle =
-    TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
 
   getAngle(v: number): number {

@@ -1,14 +1,15 @@
 import {html, LitElement, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import type {PropertyValues} from 'lit';
-import {InstrumentState, Priority} from '../types.js';
 import {SetpointBundle} from '../../svghelpers/setpoint-bundle.js';
+import {VisualConfigMixin} from '../../svghelpers/visual-config-mixin.js';
+import {TickmarkIntervalMixin} from '../../svghelpers/tickmark-interval-mixin.js';
 import {thruster} from '../thruster/thruster.js';
 import '../watch/watch.js';
 import componentStyle from './azimuth-thruster.css?inline';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
-import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
+import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {LinearAdvice} from '../thruster/advice.js';
 import {PropellerType} from '../thruster/propeller.js';
 import {customElement} from '../../decorator.js';
@@ -23,7 +24,10 @@ function mapAngle0to360(angle: number): number {
 }
 
 @customElement('obc-azimuth-thruster')
-export class ObcAzimuthThruster extends LitElement {
+export class ObcAzimuthThruster extends TickmarkIntervalMixin(
+  VisualConfigMixin(LitElement),
+  {defaultPrimary: 90}
+) {
   private _thrustSetpointId = `azimuth-thrust-sp-${Math.random().toString(36).slice(2, 9)}`;
 
   @property({type: Number}) angle = 0;
@@ -38,26 +42,6 @@ export class ObcAzimuthThruster extends LitElement {
     true;
   @property({type: Number}) autoAtAngleSetpointDeadband: number = 2;
   @property({type: Boolean}) animateSetpoint: boolean = false;
-  /**
-   * Interval (in degrees) for primary tickmarks.
-   * When undefined or <= 0, no primary tickmarks are shown (only the zero line).
-   * Default 90 gives ticks at 0°, 90°, 180°, 270°.
-   */
-  @property({type: Number}) primaryTickmarkInterval: number | undefined = 90;
-  /**
-   * Interval (in degrees) for secondary tickmarks.
-   * When undefined or <= 0, no secondary tickmarks are shown.
-   */
-  @property({type: Number}) secondaryTickmarkInterval: number | undefined =
-    undefined;
-  /**
-   * Interval (in degrees) for tertiary tickmarks.
-   * When undefined or <= 0, no tertiary tickmarks are shown.
-   */
-  @property({type: Number}) tertiaryTickmarkInterval: number | undefined =
-    undefined;
-  @property({type: Boolean}) showLabels: boolean = false;
-  @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: Number}) thrust = 0;
   @property({type: Number}) thrustSetpoint: number | undefined;
   @property({type: Number}) newThrustSetpoint: number | undefined;
@@ -68,8 +52,6 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: Boolean, attribute: false}) autoAtThrustSetpoint: boolean =
     true;
   @property({type: Number}) autoAtThrustSetpointDeadband: number = 1;
-  @property({type: String}) state: InstrumentState = InstrumentState.active;
-  @property({type: String}) priority: Priority = Priority.regular;
 
   private _angleSp = new SetpointBundle({
     angularWraparound: true,
@@ -114,8 +96,6 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: Boolean}) singleDirection: boolean = false;
   @property({type: String}) topPropeller: PropellerType = PropellerType.none;
   @property({type: String}) bottomPropeller: PropellerType = PropellerType.none;
-  @property({type: String}) tickmarkStyle: TickmarkStyle =
-    TickmarkStyle.regular;
   @property({type: Boolean}) starboardPortIndicator: boolean = false;
 
   private get angleAdviceRaw(): AngleAdviceRaw[] {

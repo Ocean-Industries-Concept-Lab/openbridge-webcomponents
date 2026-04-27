@@ -9,9 +9,10 @@ import {
 import {WatchCircleType} from '../../navigation-instruments/watch/watch.js';
 import {Tickmark} from '../../navigation-instruments/watch/tickmark.js';
 import {TickmarkType} from '../../navigation-instruments/watch/tickmark.js';
-import {TickmarkStyle} from '../../navigation-instruments/watch/tickmark.js';
 import {InstrumentState, Priority} from '../../navigation-instruments/types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
+import {VisualConfigMixin} from '../../svghelpers/visual-config-mixin.js';
+import {TickmarkIntervalMixin} from '../../svghelpers/tickmark-interval-mixin.js';
 import {
   OUTER_RING_RADIUS,
   innerRingRadiusFor,
@@ -56,13 +57,17 @@ function strongerTickmarkType(
 }
 
 @customElement('obc-instrument-radial')
-export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
+export class ObcInstrumentRadial extends TickmarkIntervalMixin(
+  VisualConfigMixin(SetpointMixin(LitElement)),
+  {defaultPrimary: 50, defaultSecondary: 10}
+) {
   // setpoint, newSetpoint, atSetpoint, touching, autoAtSetpoint,
   // autoAtSetpointDeadband, setpointAtZeroDeadband, setpointOverride
   // — all inherited from SetpointMixin
-
-  @property({type: String}) state: InstrumentState = InstrumentState.active;
-  @property({type: String}) priority: Priority = Priority.regular;
+  // state, priority, tickmarkStyle, showLabels, tickmarksInside
+  // — all inherited from VisualConfigMixin
+  // primaryTickmarkInterval, secondaryTickmarkInterval, tertiaryTickmarkInterval
+  // — all inherited from TickmarkIntervalMixin
 
   @property({type: Number}) value = 0;
   @property({type: Number}) maxValue = 100;
@@ -70,30 +75,10 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   @property({attribute: false}) getAngle!: (v: number) => number;
   @property({type: String}) needleColor: string | undefined;
   @property({type: String}) barColor: string | undefined;
-  @property({type: Boolean}) showLabels: boolean = false;
-  /**
-   * Interval for primary tickmarks in value units.
-   * When undefined or <= 0, no primary tickmarks are shown.
-   */
-  @property({type: Number}) primaryTickmarkInterval: number | undefined = 50;
-  /**
-   * Interval for secondary tickmarks in value units.
-   * When undefined or <= 0, no secondary tickmarks are shown.
-   */
-  @property({type: Number}) secondaryTickmarkInterval: number | undefined = 10;
-  /**
-   * Interval for tertiary tickmarks in value units.
-   * When undefined or <= 0, no tertiary tickmarks are shown.
-   */
-  @property({type: Number}) tertiaryTickmarkInterval: number | undefined =
-    undefined;
   @property({type: String}) type: ObcGaugeRadialType =
     ObcGaugeRadialType.filled;
   @property({type: String}) needleType: ObcGaugeRadialType =
     ObcGaugeRadialType.filled;
-  @property({type: Boolean}) tickmarksInside: boolean = false;
-  @property({type: String}) tickmarkStyle: TickmarkStyle =
-    TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
   @property({type: Number}) clipTop: number = 0; // in percent of height
   @property({type: Number}) clipBottom: number = 0; // in percent of height

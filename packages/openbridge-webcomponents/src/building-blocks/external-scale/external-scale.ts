@@ -26,6 +26,7 @@ import {
   generateSetpointId,
   getSetpointOutwardOffset,
   computeAtSetpoint,
+  isAtZero,
   SETPOINT_ANIMATION_CSS_VAR,
   SETPOINT_ANIMATION_DURATION_DEFAULT,
 } from '../../svghelpers/setpoint.js';
@@ -894,9 +895,10 @@ function deriveSetpointVisualState(
 
   if (isAt) {
     // Check if setpoint is at zero (using setpointAtZeroDeadband)
-    const setpointAtZero =
-      config.setpoint !== undefined &&
-      Math.abs(config.setpoint) < config.setpointAtZeroDeadband;
+    const setpointAtZero = isAtZero(
+      config.setpoint,
+      config.setpointAtZeroDeadband
+    );
 
     if (setpointAtZero) {
       return SetpointVisualState.equalZero;
@@ -2288,8 +2290,7 @@ function renderSingleSetpoint(
   const stateOffset = getSetpointOutwardOffset(visualState);
 
   // Check if setpoint snaps to zero
-  const setpointAtZero =
-    Math.abs(setpointValue) < config.setpointAtZeroDeadband;
+  const setpointAtZero = isAtZero(setpointValue, config.setpointAtZeroDeadband);
 
   // Main axis position (where the marker sits along the scale)
   // Always use valueToMainAxis — even for zero-snap, since coordinate 0
