@@ -41,3 +41,20 @@ export const Rov: Story = {
     vesselImageFore: VesselImage.rovFront,
   },
 };
+
+export const ZoomedIn: Story = {
+  args: {
+    zoomToFitArc: true,
+  },
+};
+
+export const ZoomedInNarrow: Story = {
+  args: {
+    zoomToFitArc: true,
+    arcAngle: 15,
+    roll: 6,
+    minAvgRoll: -4,
+    maxAvgRoll: 8,
+    maxRollAdvice: 10,
+  },
+};
