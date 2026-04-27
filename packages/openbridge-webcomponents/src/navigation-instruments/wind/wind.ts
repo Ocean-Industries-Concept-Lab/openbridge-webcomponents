@@ -11,6 +11,9 @@ export interface WindHistogramData {
 
 @customElement('obc-wind')
 export class ObcWind extends LitElement {
+  private _histMaskId = `wind-hist-mask-${Math.random().toString(36).slice(2, 9)}`;
+  private _notchClipId = `wind-notch-clip-${Math.random().toString(36).slice(2, 9)}`;
+
   @property({type: Number}) currentWindFromDirection: number = 0;
   @property({type: Number}) currentWindSpeedBeaufort: number = 1;
   @property({type: Array, attribute: false})
@@ -45,6 +48,10 @@ export class ObcWind extends LitElement {
   private renderWindHistogram() {
     const maxRadius = 109; // Max bar length
     const minRadius = 50; // Optional: minimum bar length for visibility
+    const notchWidth = 60;
+    const notchDepth = 35;
+    const notchThickness = 6;
+    const notchOutlineThickness = notchThickness + 2;
     const center = {x: 0, y: 0};
 
     // Find the max occurrences for scaling
@@ -89,9 +96,26 @@ export class ObcWind extends LitElement {
       outerPathPoints += `L ${x2} ${y2} `;
     }
 
+    const notchAngle = ((this.currentWindFromDirection - 90) * Math.PI) / 180;
+    const notchTipRadius = maxRadius - notchDepth;
+    const baseX = center.x + maxRadius * Math.cos(notchAngle);
+    const baseY = center.y + maxRadius * Math.sin(notchAngle);
+    const leftX = baseX - (notchWidth / 2) * Math.sin(notchAngle);
+    const leftY = baseY + (notchWidth / 2) * Math.cos(notchAngle);
+    const rightX = baseX + (notchWidth / 2) * Math.sin(notchAngle);
+    const rightY = baseY - (notchWidth / 2) * Math.cos(notchAngle);
+    const tipX = center.x + notchTipRadius * Math.cos(notchAngle);
+    const tipY = center.y + notchTipRadius * Math.sin(notchAngle);
+    const notchPath = `M ${leftX} ${leftY} L ${tipX} ${tipY} L ${rightX} ${rightY}`;
+
     return html`
       <svg width="100%" height="100%" viewBox="-200 -200 400 400">
-        <mask id="mask">
+        <defs>
+          <clipPath id=${this._notchClipId}>
+            <circle cx="0" cy="0" r=${maxRadius + 0.26} />
+          </clipPath>
+        </defs>
+        <mask id=${this._histMaskId}>
           <circle cx="0" cy="0" r="109" stroke-width="1" fill="white" />
           <path d="M 0 ${-maxRadius} ${outerPathPoints}Z" fill="black" />
           <circle
@@ -112,8 +136,33 @@ export class ObcWind extends LitElement {
           stroke="var(--instrument-regular-tertiary-color)"
           stroke-width="1"
           fill="var(--instrument-regular-tertiary-color)"
-          mask="url(#mask)"
+          mask="url(#${this._histMaskId})"
         />
+        <circle
+          cx="0"
+          cy="0"
+          r="109"
+          vector-effect="non-scaling-stroke"
+          stroke="var(--instrument-regular-tertiary-color)"
+          stroke-width="1"
+          fill="none"
+        />
+        <g clip-path="url(#${this._notchClipId})">
+          <path
+            d=${notchPath}
+            fill="none"
+            stroke="var(--instrument-regular-tertiary-color)"
+            stroke-width=${notchOutlineThickness}
+            vector-effect="non-scaling-stroke"
+          />
+          <path
+            d=${notchPath}
+            fill="none"
+            stroke="var(--instrument-frame-secondary-color)"
+            stroke-width=${notchThickness}
+            vector-effect="non-scaling-stroke"
+          />
+        </g>
       </svg>
     `;
   }
