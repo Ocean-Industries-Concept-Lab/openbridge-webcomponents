@@ -2,6 +2,7 @@ import {SVGTemplateResult} from 'lit';
 
 // Import all vessel images statically
 import * as carFerryAft from './vessels/car-ferry-aft.js';
+import * as carFerryFore from './vessels/car-ferry-fore.js';
 import * as carFerrySide from './vessels/car-ferry-side.js';
 import * as carFerryTop from './vessels/car-ferry-top.js';
 import * as cargoFore from './vessels/cargo-fore.js';
@@ -48,6 +49,7 @@ export enum VesselImageSize {
 
 export enum VesselImage {
   carFerryAft = 'car-ferry-aft',
+  carFerryFore = 'car-ferry-fore',
   carFerrySide = 'car-ferry-side',
   carFerryTop = 'car-ferry-top',
   cargoFore = 'cargo-fore',
@@ -89,6 +91,7 @@ export enum VesselImage {
 // Map of vessel images
 export const vesselImages: Record<VesselImage, SVGTemplateResult> = {
   [VesselImage.carFerryAft]: carFerryAft.default,
+  [VesselImage.carFerryFore]: carFerryFore.default,
   [VesselImage.carFerrySide]: carFerrySide.default,
   [VesselImage.carFerryTop]: carFerryTop.default,
   [VesselImage.cargoFore]: cargoFore.default,

@@ -22,6 +22,7 @@ const meta: Meta<typeof ObcPitchRoll> = {
     maxRollAdvice: 15,
     triggerPitchAdvice: true,
     triggerRollAdvice: false,
+    scaleForeImage: 1,
     priority: Priority.enhanced,
     priorityElements: [
       PitchRollPriorityElement.pitch,
@@ -32,6 +33,7 @@ const meta: Meta<typeof ObcPitchRoll> = {
     width: {control: {type: 'range', min: 100, max: 1000, step: 1}},
     pitch: {control: {type: 'range', min: -10, max: 10, step: 0.1}},
     roll: {control: {type: 'range', min: -10, max: 10, step: 0.1}},
+    scaleForeImage: {control: {type: 'range', min: 0, max: 2, step: 0.01}},
     priority: {control: 'select', options: Object.values(Priority)},
     priorityElements: {
       control: 'multi-select',
