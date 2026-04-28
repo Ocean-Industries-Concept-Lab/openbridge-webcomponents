@@ -1,3 +1,21 @@
+## [2.0.0-next.12](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.11...v2.0.0-next.12) (2026-04-28)
+
+### Bug Fixes
+
+- **alert-list-page-small:** add silence-click event ([#823](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/823)) ([c8f9526](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/c8f95265e3ab262d11c7e67b5fe996f5e4a1b4ce))
+
+## [2.0.0-next.11](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.10...v2.0.0-next.11) (2026-04-27)
+
+### Features
+
+- **slider-double:** make readouts optional and slottable ([#804](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/804)) ([#816](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/816)) ([501665e](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/501665efa03e0b697c4c96f9b9c2648bf707a03c)), closes [#744](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/744)
+
+## [2.0.0-next.10](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.9...v2.0.0-next.10) (2026-04-27)
+
+### Bug Fixes
+
+- **watch:** guard roundedArch to prevent NaN SVG paths ([#822](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/822)) ([ec3fd44](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/ec3fd444555b8a9a6394e247d5c3cb08513b0024)), closes [#819](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/819)
+
 ## [2.0.0-next.9](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.8...v2.0.0-next.9) (2026-04-24)
 
 ### Features
