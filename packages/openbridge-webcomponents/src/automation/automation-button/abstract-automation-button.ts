@@ -19,7 +19,36 @@ import {
   ObcAlertFrameType,
 } from '../../components/alert-frame/alert-frame.js';
 import '../automation-badge/automation-badge.js';
+import {ObcAutomationBadgeType} from '../automation-badge/automation-badge.js';
 import {CircularProgressMode} from '../../building-blocks/circular-progress/circular-progress.js';
+
+export enum AutomationButtonBadgeAlert {
+  None = 'none',
+  Silence = 'silence',
+  Caution = 'caution',
+  Warning = 'warning',
+  Alarm = 'alarm',
+}
+
+export enum AutomationButtonBadgeInterlock {
+  None = 'none',
+  Interlock = 'interlock',
+  InterlockInhibit = 'interlock-inhibit',
+}
+
+export enum AutomationButtonBadgeControl {
+  None = 'none',
+  Local = 'local',
+  LocalOnly = 'local-only',
+  Manual = 'manual',
+  ManualOnly = 'manual-only',
+  Auto = 'auto',
+}
+
+export enum AutomationButtonBadgeCommandLocked {
+  None = 'none',
+  CommandLocked = 'command-locked',
+}
 
 export class ObcAbstractAutomationButton extends LitElement {
   @property({type: Boolean, attribute: false}) showReadoutStack: boolean = true;
@@ -47,10 +76,15 @@ export class ObcAbstractAutomationButton extends LitElement {
   @property({type: String}) tag: string = '';
   @property({type: String}) direction: AutomationButtonDirection =
     AutomationButtonDirection.forward;
-  @property({type: Boolean}) badgeAuto: boolean = false;
-  @property({type: Boolean}) badgeCommandLocked: boolean = false;
-  @property({type: Boolean}) badgeDuty: boolean = false;
-  @property({type: Boolean}) badgeAlertOff: boolean = false;
+  @property({type: String}) badgeControl: AutomationButtonBadgeControl =
+    AutomationButtonBadgeControl.None;
+  @property({type: String})
+  badgeCommandLocked: AutomationButtonBadgeCommandLocked =
+    AutomationButtonBadgeCommandLocked.None;
+  @property({type: String}) badgeInterlock: AutomationButtonBadgeInterlock =
+    AutomationButtonBadgeInterlock.None;
+  @property({type: String}) badgeAlert: AutomationButtonBadgeAlert =
+    AutomationButtonBadgeAlert.None;
 
   get icon(): TemplateResult {
     throw new Error('Method "icon" must be implemented in subclass');
@@ -82,11 +116,18 @@ export class ObcAbstractAutomationButton extends LitElement {
     if (!this.showReadoutStack) {
       return false;
     }
-    const topLeft = this.badgeTopLeft.length > 0 || this.badgeAuto;
-    const topRight = this.badgeTopRight.length > 0 || this.badgeAlertOff;
-    const bottomLeft = this.badgeBottomLeft.length > 0 || this.badgeDuty;
+    const topLeft =
+      this.badgeTopLeft.length > 0 ||
+      this.badgeControl !== AutomationButtonBadgeControl.None;
+    const topRight =
+      this.badgeTopRight.length > 0 ||
+      this.badgeAlert !== AutomationButtonBadgeAlert.None;
+    const bottomLeft =
+      this.badgeBottomLeft.length > 0 ||
+      this.badgeInterlock !== AutomationButtonBadgeInterlock.None;
     const bottomRight =
-      this.badgeBottomRight.length > 0 || this.badgeCommandLocked;
+      this.badgeBottomRight.length > 0 ||
+      this.badgeCommandLocked !== AutomationButtonBadgeCommandLocked.None;
     if (this.readoutPosition === AutomationButtonReadoutPosition.top) {
       return topRight || topLeft;
     } else if (
@@ -105,11 +146,64 @@ export class ObcAbstractAutomationButton extends LitElement {
     this.requestUpdate();
   }
 
+  private getBadgeAlertType(): ObcAutomationBadgeType | null {
+    if (this.badgeAlert === AutomationButtonBadgeAlert.Silence) {
+      return ObcAutomationBadgeType.AlertSilenced;
+    } else if (this.badgeAlert === AutomationButtonBadgeAlert.Caution) {
+      return ObcAutomationBadgeType.Caution;
+    } else if (this.badgeAlert === AutomationButtonBadgeAlert.Warning) {
+      return ObcAutomationBadgeType.Warning;
+    } else if (this.badgeAlert === AutomationButtonBadgeAlert.Alarm) {
+      return ObcAutomationBadgeType.Alarm;
+    }
+    return null;
+  }
+
+  private getBadgeControlType(): ObcAutomationBadgeType | null {
+    if (this.badgeControl === AutomationButtonBadgeControl.Local) {
+      return ObcAutomationBadgeType.Local;
+    } else if (this.badgeControl === AutomationButtonBadgeControl.LocalOnly) {
+      return ObcAutomationBadgeType.LocalOnly;
+    } else if (this.badgeControl === AutomationButtonBadgeControl.Manual) {
+      return ObcAutomationBadgeType.Manual;
+    } else if (this.badgeControl === AutomationButtonBadgeControl.ManualOnly) {
+      return ObcAutomationBadgeType.ManualOnly;
+    } else if (this.badgeControl === AutomationButtonBadgeControl.Auto) {
+      return ObcAutomationBadgeType.Auto;
+    }
+    return null;
+  }
+
+  private getBadgeInterlockType(): ObcAutomationBadgeType | null {
+    if (this.badgeInterlock === AutomationButtonBadgeInterlock.Interlock) {
+      return ObcAutomationBadgeType.Interlock;
+    } else if (
+      this.badgeInterlock === AutomationButtonBadgeInterlock.InterlockInhibit
+    ) {
+      return ObcAutomationBadgeType.InterlockInhibit;
+    }
+    return null;
+  }
+
+  private getBadgeCommandLockedType(): ObcAutomationBadgeType | null {
+    if (
+      this.badgeCommandLocked ===
+      AutomationButtonBadgeCommandLocked.CommandLocked
+    ) {
+      return ObcAutomationBadgeType.CommandLocked;
+    }
+    return null;
+  }
+
   override render() {
     const readouts: AutomationButtonReadoutStack[] = [...this.extraReadouts];
     const tagValue: AutomationButtonReadoutStackTag | null = this.tag
       ? {value: this.parseTagToNumber(this.tag)}
       : null;
+    const badgeAlertType = this.getBadgeAlertType();
+    const badgeControlType = this.getBadgeControlType();
+    const badgeInterlockType = this.getBadgeInterlockType();
+    const badgeCommandLockedType = this.getBadgeCommandLockedType();
 
     return html`<obc-automation-button
       .state=${this._on
@@ -141,8 +235,10 @@ export class ObcAbstractAutomationButton extends LitElement {
         slot="badge-top-right"
         @slotchange=${this.handleBadgeSlotChange}
       >
-        ${this.badgeAlertOff
-          ? html`<obc-automation-badge type="alert-off"></obc-automation-badge>`
+        ${badgeAlertType
+          ? html`<obc-automation-badge
+              .type=${badgeAlertType}
+            ></obc-automation-badge>`
           : nothing}
       </slot>
       <slot
@@ -150,8 +246,10 @@ export class ObcAbstractAutomationButton extends LitElement {
         slot="badge-top-left"
         @slotchange=${this.handleBadgeSlotChange}
       >
-        ${this.badgeAuto
-          ? html`<obc-automation-badge type="auto"></obc-automation-badge>`
+        ${badgeControlType
+          ? html`<obc-automation-badge
+              .type=${badgeControlType}
+            ></obc-automation-badge>`
           : nothing}
       </slot>
       <slot
@@ -159,8 +257,10 @@ export class ObcAbstractAutomationButton extends LitElement {
         slot="badge-bottom-left"
         @slotchange=${this.handleBadgeSlotChange}
       >
-        ${this.badgeDuty
-          ? html`<obc-automation-badge type="duty"></obc-automation-badge>`
+        ${badgeInterlockType
+          ? html`<obc-automation-badge
+              .type=${badgeInterlockType}
+            ></obc-automation-badge>`
           : nothing}
       </slot>
       <slot
@@ -168,9 +268,9 @@ export class ObcAbstractAutomationButton extends LitElement {
         slot="badge-bottom-right"
         @slotchange=${this.handleBadgeSlotChange}
       >
-        ${this.badgeCommandLocked
+        ${badgeCommandLockedType
           ? html`<obc-automation-badge
-              type="command-locked"
+              .type=${badgeCommandLockedType}
             ></obc-automation-badge>`
           : nothing}
       </slot>
