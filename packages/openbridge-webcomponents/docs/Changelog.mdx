@@ -1,0 +1,13 @@
+import {Meta, Markdown} from '@storybook/addon-docs/blocks';
+import changelog from '../CHANGELOG.md?raw';
+
+<Meta title="Introduction/Changelog" />
+
+# Changelog
+
+This page is generated from the `CHANGELOG.md` shipped with this build of
+`@oicl/openbridge-webcomponents`. The Stable and Develop Storybook
+deployments each render their own branch's history, so the entries below
+match exactly what is published to npm for the channel you are viewing.
+
+<Markdown>{changelog}</Markdown>
