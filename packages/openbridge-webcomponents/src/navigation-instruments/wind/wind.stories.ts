@@ -100,5 +100,7 @@ export default meta;
 type Story = StoryObj<ObcWind>;
 
 export const Primary: Story = {
-  args: {},
+  args: {
+    currentWindFromDirection: 180,
+  },
 };
