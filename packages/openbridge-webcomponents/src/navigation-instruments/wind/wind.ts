@@ -50,7 +50,7 @@ export class ObcWind extends LitElement {
     const minRadius = 50; // Optional: minimum bar length for visibility
     const notchWidth = 60;
     const notchDepth = 35;
-    const notchThickness = 6;
+    const notchThickness = 2.5;
     const notchOutlineThickness = notchThickness + 2;
     const center = {x: 0, y: 0};
 
@@ -112,7 +112,7 @@ export class ObcWind extends LitElement {
       <svg width="100%" height="100%" viewBox="-200 -200 400 400">
         <defs>
           <clipPath id=${this._notchClipId}>
-            <circle cx="0" cy="0" r=${maxRadius + 0.26} />
+            <circle cx="0" cy="0" r=${maxRadius + 0.56} />
           </clipPath>
         </defs>
         <mask id=${this._histMaskId}>
@@ -158,7 +158,7 @@ export class ObcWind extends LitElement {
           <path
             d=${notchPath}
             fill="none"
-            stroke="var(--instrument-frame-secondary-color)"
+            stroke="var(--instrument-frame-primary-color)"
             stroke-width=${notchThickness}
             vector-effect="non-scaling-stroke"
           />
