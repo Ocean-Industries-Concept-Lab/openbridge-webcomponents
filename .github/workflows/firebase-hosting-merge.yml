@@ -44,10 +44,10 @@ jobs:
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_OPENBRIDGE_DEMO }}"
-          channelId: live
+          channelId: next
           projectId: openbridge-demo
           entrypoint: "packages/vue-demo"
-          target: develop
+          expires: 365d
   build_and_deploy_storybook:
     runs-on: ubuntu-latest
     permissions:
@@ -78,7 +78,8 @@ jobs:
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_OPENBRIDGE_DEMO }}"
-          channelId: live
+          channelId: next
           projectId: openbridge-demo
           entrypoint: "packages/openbridge-webcomponents"
-          target: develop
+          expires: 365d
+

@@ -4,40 +4,8 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": [{
-    "target": "stable",
     "public": "dist",
     "site": "openbridge-demo",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ],
-    "headers": [
-      {
-        "source": "**/*.html",
-        "headers": [
-          {
-            "key": "Content-Security-Policy",
-            "value": "frame-ancestors https://www.openbridge.no"
-          }
-        ]
-      },
-      {
-        "source": "**/*",
-        "headers": [
-          {
-            "key": "Access-Control-Allow-Origin",
-            "value": "*"
-          }
-        ]
-      }
-    ]
-  }, {
-    "target": "develop",
-    "public": "dist",
-    "site": "openbridge-next-demo",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {

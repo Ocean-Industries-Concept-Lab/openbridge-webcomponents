@@ -1,28 +1,13 @@
 {
-  "hosting": [
-    {
-      "target": "stable",
-      "site": "openbridge-storybook",
-      "public": "storybook-static",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-      "rewrites": [
-        {
-          "source": "**",
-          "destination": "/index.html"
-        }
-      ]
-    },
-    {
-      "target": "develop",
-      "site": "openbridge-next-storybook",
-      "public": "storybook-static",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-      "rewrites": [
-        {
-          "source": "**",
-          "destination": "/index.html"
-        }
-      ]
-    }
-  ]
+  "hosting": {
+    "site": "openbridge-storybook",
+    "public": "storybook-static",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
 }
