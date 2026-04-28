@@ -34,6 +34,7 @@
     width: auto;
     display: flex;
     height: var(--ui-components-button-visual-size);
+    box-sizing: border-box;
     padding: 0px var(--ui-components-button-padding-horizontal);
     justify-content: space-between;
     align-items: center;
