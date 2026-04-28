@@ -246,12 +246,6 @@ const readoutShowcaseStyle = `
     background: rgba(0, 0, 0, 0.03);
     position: relative;
     overflow: visible;
-    transition: transform 0.15s ease, background 0.15s ease;
-  }
-
-  .obc-readout-case-card:hover {
-    transform: translateY(-2px);
-    background: rgba(0, 0, 0, 0.04);
   }
 
   .obc-readout-case-title {
