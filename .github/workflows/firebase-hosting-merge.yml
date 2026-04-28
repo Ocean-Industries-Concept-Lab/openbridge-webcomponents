@@ -47,7 +47,7 @@ jobs:
           channelId: next
           projectId: openbridge-demo
           entrypoint: "packages/vue-demo"
-          expires: 365d
+          expires: 30d
   build_and_deploy_storybook:
     runs-on: ubuntu-latest
     permissions:
@@ -81,5 +81,5 @@ jobs:
           channelId: next
           projectId: openbridge-demo
           entrypoint: "packages/openbridge-webcomponents"
-          expires: 365d
+          expires: 30d
 
