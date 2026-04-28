@@ -1,0 +1,12 @@
+import {svg} from 'lit';
+
+export default svg`<svg width="283" height="280" viewBox="0 0 283 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M74.3073 135.867C76.5901 144.386 71.5341 153.144 63.0143 155.427C54.4946 157.709 45.7372 152.653 43.4543 144.134C41.1714 135.614 46.2276 126.857 54.7473 124.574C63.267 122.291 72.0244 127.347 74.3073 135.867Z" vector-effect="non-scaling-stroke" stroke="var(--instrument-tick-mark-secondary-color)"/>
+<path d="M64.2364 150.223C62.3273 151.134 60.2677 151.689 58.1592 151.86L5.58407 156.13C4.71066 156.201 3.91144 155.637 3.68447 154.791C3.45763 153.944 3.8678 153.056 4.65975 152.68L52.3259 130.09C54.2376 129.184 56.2986 128.635 58.4076 128.47C71.0639 127.479 75.6926 144.753 64.2364 150.223Z" fill="var(--instrument-frame-primary-color)" vector-effect="non-scaling-stroke" stroke="var(--instrument-tick-mark-secondary-color)"/>
+<circle cx="58.8807" cy="139.733" r="5.67647" transform="rotate(105 58.8807 139.733)" fill="var(--instrument-tick-mark-secondary-color)" vector-effect="non-scaling-stroke" stroke="var(--instrument-tick-mark-secondary-color)"/>
+<circle cx="16.4706" cy="16.4706" r="15.9706" transform="matrix(-0.258819 0.965926 0.965926 0.258819 211.938 119.828)" vector-effect="non-scaling-stroke" stroke="var(--instrument-tick-mark-secondary-color)"/>
+<path d="M218.232 150.223C220.141 151.134 222.201 151.689 224.31 151.86L276.885 156.13C277.758 156.201 278.557 155.637 278.784 154.791C279.011 153.944 278.601 153.056 277.809 152.68L230.143 130.09C228.231 129.184 226.17 128.635 224.061 128.47C211.405 127.479 206.776 144.753 218.232 150.223Z" fill="var(--instrument-frame-primary-color)" vector-effect="non-scaling-stroke" stroke="var(--instrument-tick-mark-secondary-color)"/>
+<circle cx="6.17647" cy="6.17647" r="5.67647" transform="matrix(0.965926 0.258819 0.258819 -0.965926 216.02 144.101)" fill="var(--instrument-tick-mark-secondary-color)" vector-effect="non-scaling-stroke" stroke="var(--instrument-tick-mark-secondary-color)"/>
+<path d="M77.4062 141.452V133.473C77.4062 128.915 79.8466 124.706 83.8023 122.441C119.378 102.071 163.082 102.071 198.657 122.441C202.613 124.706 205.053 128.915 205.053 133.473V141.452C205.053 145.01 201.869 147.722 198.357 147.155L195.56 146.704C159.573 140.9 122.887 140.9 86.8991 146.704L84.1027 147.155C80.5907 147.722 77.4062 145.01 77.4062 141.452Z" fill="var(--instrument-frame-primary-color)" vector-effect="non-scaling-stroke" stroke="var(--instrument-tick-mark-secondary-color)"/>
+</svg>
+`;
