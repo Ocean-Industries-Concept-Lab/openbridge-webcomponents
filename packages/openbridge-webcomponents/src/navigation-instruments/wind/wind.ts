@@ -50,9 +50,10 @@ export class ObcWind extends LitElement {
     const minRadius = 50; // Optional: minimum bar length for visibility
     const notchWidth = 60;
     const notchDepth = 35;
-    const notchThickness = 2.5;
+    const notchThickness = 7;
     const notchOutlineThickness = notchThickness + 2;
     const center = {x: 0, y: 0};
+    const borderWidth = 1;
 
     // Find the max occurrences for scaling
     const maxOccurrences = Math.max(
@@ -112,39 +113,39 @@ export class ObcWind extends LitElement {
       <svg width="100%" height="100%" viewBox="-200 -200 400 400">
         <defs>
           <clipPath id=${this._notchClipId}>
-            <circle cx="0" cy="0" r=${maxRadius + 0.56} />
+            <circle cx="0" cy="0" r=${maxRadius + 0.22} />
           </clipPath>
         </defs>
         <mask id=${this._histMaskId}>
-          <circle cx="0" cy="0" r="109" stroke-width="1" fill="white" />
+          <circle cx="0" cy="0" r=${maxRadius} stroke-width="1" fill="white" />
           <path d="M 0 ${-maxRadius} ${outerPathPoints}Z" fill="black" />
           <circle
             cx="0"
             cy="0"
-            r="109"
+            r=${maxRadius}
             vector-effect="non-scaling-stroke"
             stroke="white"
-            stroke-width="1"
+            stroke-width="0"
             fill="transparent"
           />
         </mask>
         <circle
           cx="0"
           cy="0"
-          r="109"
+          r=${maxRadius}
           vector-effect="non-scaling-stroke"
           stroke="var(--instrument-regular-tertiary-color)"
-          stroke-width="1"
+          stroke-width="0"
           fill="var(--instrument-regular-tertiary-color)"
           mask="url(#${this._histMaskId})"
         />
         <circle
           cx="0"
           cy="0"
-          r="109"
+          r=${maxRadius}
           vector-effect="non-scaling-stroke"
           stroke="var(--instrument-regular-tertiary-color)"
-          stroke-width="1"
+          stroke-width=${borderWidth}
           fill="none"
         />
         <g clip-path="url(#${this._notchClipId})">
