@@ -56,7 +56,7 @@ import {
   computeZoomToFitArcFrame,
   type ZoomToFitArcFrame,
 } from '../../svghelpers/arc-frame.js';
-export {VesselImage, VesselImageSize};
+export {VesselImage, VesselImageSize, vesselImages};
 
 export enum WatchCircleType {
   single = 'single',
