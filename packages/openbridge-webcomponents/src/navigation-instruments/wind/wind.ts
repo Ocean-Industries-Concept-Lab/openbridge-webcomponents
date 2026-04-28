@@ -14,6 +14,16 @@ export class ObcWind extends LitElement {
   private _histMaskId = `wind-hist-mask-${Math.random().toString(36).slice(2, 9)}`;
   private _notchClipId = `wind-notch-clip-${Math.random().toString(36).slice(2, 9)}`;
 
+  private static readonly HISTOGRAM_OUTER_RADIUS = 109;
+  private static readonly HISTOGRAM_MIN_RADIUS = 50;
+  private static readonly HISTOGRAM_BORDER_WIDTH = 1;
+  private static readonly NOTCH_WIDTH = 60;
+  private static readonly NOTCH_DEPTH = 35;
+  private static readonly NOTCH_THICKNESS = 7;
+  private static readonly NOTCH_OUTLINE_EXTRA = 2;
+  // Slight clip overscan keeps anti-aliased notch endpoints from being visibly cut.
+  private static readonly NOTCH_CLIP_OVERSCAN = 0.22;
+
   @property({type: Number}) currentWindFromDirection: number = 0;
   @property({type: Number}) currentWindSpeedBeaufort: number = 1;
   @property({type: Array, attribute: false})
@@ -46,14 +56,14 @@ export class ObcWind extends LitElement {
   }
 
   private renderWindHistogram() {
-    const maxRadius = 109; // Max bar length
-    const minRadius = 50; // Optional: minimum bar length for visibility
-    const notchWidth = 60;
-    const notchDepth = 35;
-    const notchThickness = 7;
-    const notchOutlineThickness = notchThickness + 2;
+    const maxRadius = ObcWind.HISTOGRAM_OUTER_RADIUS;
+    const minRadius = ObcWind.HISTOGRAM_MIN_RADIUS;
+    const notchWidth = ObcWind.NOTCH_WIDTH;
+    const notchDepth = ObcWind.NOTCH_DEPTH;
+    const notchThickness = ObcWind.NOTCH_THICKNESS;
+    const notchOutlineThickness = notchThickness + ObcWind.NOTCH_OUTLINE_EXTRA;
     const center = {x: 0, y: 0};
-    const borderWidth = 1;
+    const borderWidth = ObcWind.HISTOGRAM_BORDER_WIDTH;
 
     // Find the max occurrences for scaling
     const maxOccurrences = Math.max(
@@ -97,23 +107,24 @@ export class ObcWind extends LitElement {
       outerPathPoints += `L ${x2} ${y2} `;
     }
 
-    const notchAngle = ((this.currentWindFromDirection - 90) * Math.PI) / 180;
-    const notchTipRadius = maxRadius - notchDepth;
-    const baseX = center.x + maxRadius * Math.cos(notchAngle);
-    const baseY = center.y + maxRadius * Math.sin(notchAngle);
-    const leftX = baseX - (notchWidth / 2) * Math.sin(notchAngle);
-    const leftY = baseY + (notchWidth / 2) * Math.cos(notchAngle);
-    const rightX = baseX + (notchWidth / 2) * Math.sin(notchAngle);
-    const rightY = baseY - (notchWidth / 2) * Math.cos(notchAngle);
-    const tipX = center.x + notchTipRadius * Math.cos(notchAngle);
-    const tipY = center.y + notchTipRadius * Math.sin(notchAngle);
+    const notch = this.computeNotchGeometry({
+      directionDeg: this.currentWindFromDirection,
+      outerRadius: maxRadius,
+      width: notchWidth,
+      depth: notchDepth,
+    });
+    const {leftX, leftY, tipX, tipY, rightX, rightY} = notch;
     const notchPath = `M ${leftX} ${leftY} L ${tipX} ${tipY} L ${rightX} ${rightY}`;
 
     return html`
       <svg width="100%" height="100%" viewBox="-200 -200 400 400">
         <defs>
           <clipPath id=${this._notchClipId}>
-            <circle cx="0" cy="0" r=${maxRadius + 0.22} />
+            <circle
+              cx="0"
+              cy="0"
+              r=${maxRadius + ObcWind.NOTCH_CLIP_OVERSCAN}
+            />
           </clipPath>
         </defs>
         <mask id=${this._histMaskId}>
@@ -166,6 +177,30 @@ export class ObcWind extends LitElement {
         </g>
       </svg>
     `;
+  }
+
+  private computeNotchGeometry(options: {
+    directionDeg: number;
+    outerRadius: number;
+    width: number;
+    depth: number;
+  }) {
+    const {directionDeg, outerRadius, width, depth} = options;
+    const angle = ((directionDeg - 90) * Math.PI) / 180;
+    const tipRadius = outerRadius - depth;
+    const halfWidth = width / 2;
+
+    const baseX = outerRadius * Math.cos(angle);
+    const baseY = outerRadius * Math.sin(angle);
+
+    return {
+      leftX: baseX - halfWidth * Math.sin(angle),
+      leftY: baseY + halfWidth * Math.cos(angle),
+      rightX: baseX + halfWidth * Math.sin(angle),
+      rightY: baseY - halfWidth * Math.cos(angle),
+      tipX: tipRadius * Math.cos(angle),
+      tipY: tipRadius * Math.sin(angle),
+    };
   }
 
   static override styles = unsafeCSS(compentStyle);
