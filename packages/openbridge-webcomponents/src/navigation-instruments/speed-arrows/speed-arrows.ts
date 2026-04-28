@@ -1,8 +1,13 @@
 import {LitElement, html, nothing, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import compentStyle from './speed-arrows.css?inline';
-import '../instrument-field/instrument-field.js';
-import {InstrumentFieldSize} from '../instrument-field/instrument-field.js';
+import '../readout/readout.js';
+import {
+  ReadoutDirection,
+  ReadoutPriorityElement,
+  ReadoutVariant,
+} from '../readout/readout.js';
+import {Priority} from '../types.js';
 import {customElement} from '../../decorator.js';
 
 export enum Direction {
@@ -130,16 +135,20 @@ export class ObcSpeedArrows extends LitElement {
     return html`
       <div class="wrapper">
         ${this.readout
-          ? html`<obc-instrument-field
+          ? html`<obc-readout
               class="readout"
               .value=${this.speedKnots}
               unit="KN"
-              tag="Speed"
-              .size=${InstrumentFieldSize.enhanced}
+              label="Speed"
+              .variant=${ReadoutVariant.enhanced}
+              .direction=${ReadoutDirection.vertical}
               .fractionDigits=${this.fractionDigits}
               .maxDigits=${this.maxDigits}
-              .neutralColor=${this.activeColor === ActiveColor.Regular}
-            ></obc-instrument-field>`
+              .priority=${this.activeColor === ActiveColor.Regular
+                ? Priority.regular
+                : Priority.enhanced}
+              .priorityElements=${[ReadoutPriorityElement.value]}
+            ></obc-readout>`
           : nothing}
         <div class="arrow-container">
           <svg

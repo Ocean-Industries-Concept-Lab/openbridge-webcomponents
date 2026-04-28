@@ -4,11 +4,14 @@ import compentStyle from './azimuth-thruster-labeled.css?inline';
 import {CommandStatus} from '../badge-command/badge-command.js';
 import {classMap} from 'lit/directives/class-map.js';
 import '../badge-command/badge-command.js';
-import '../instrument-field/instrument-field.js';
 import '../azimuth-thruster/azimuth-thruster.js';
-import {InstrumentFieldSize} from '../instrument-field/instrument-field.js';
+import '../readout/readout.js';
+import {
+  ReadoutDirection,
+  ReadoutPriorityElement,
+  ReadoutVariant,
+} from '../readout/readout.js';
 import {InstrumentState, Priority} from '../types.js';
-import {ifDefined} from 'lit/directives/if-defined.js';
 import {AngleAdvice} from '../watch/advice.js';
 import {LinearAdvice} from '../thruster/advice.js';
 import {PropellerType} from '../thruster/propeller.js';
@@ -27,6 +30,8 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
   commandStatus: CommandStatus = CommandStatus.InCommand;
   @property({type: String}) size: AzimuthThrusterLabeledSize =
     AzimuthThrusterLabeledSize.medium;
+  @property({type: String}) readoutVariant: ReadoutVariant =
+    ReadoutVariant.enhanced;
   @property({type: Number}) angle = 0;
   @property({type: Number}) angleSetpoint: number | undefined;
   @property({type: Number}) newAngleSetpoint: number | undefined;
@@ -57,22 +62,24 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
   @property({type: String}) bottomPropeller: PropellerType = PropellerType.none;
 
   override render() {
-    const fieldSize =
-      this.size === AzimuthThrusterLabeledSize.large
-        ? InstrumentFieldSize.enhanced
-        : InstrumentFieldSize.regular;
     let state: InstrumentState = InstrumentState.active;
     let priority: Priority = Priority.enhanced;
-    if (
-      [
-        CommandStatus.NoCommand,
-        CommandStatus.Blocked,
-        CommandStatus.CommandAvailable,
-      ].includes(this.commandStatus)
-    ) {
+    const isNotInCommand = [
+      CommandStatus.NoCommand,
+      CommandStatus.Blocked,
+      CommandStatus.CommandAvailable,
+    ].includes(this.commandStatus);
+
+    if (isNotInCommand) {
       state = InstrumentState.active;
       priority = Priority.regular;
     }
+
+    const readoutPriority = Priority.enhanced;
+
+    const effectiveReadoutVariant = isNotInCommand
+      ? ReadoutVariant.regular
+      : this.readoutVariant;
 
     return html`
       <div class=${classMap({wrapper: true, [this.size]: true})}>
@@ -84,24 +91,70 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
           ></obc-badge-command>
           <div class="label-text">${this.label}</div>
         </div>
-        <obc-instrument-field
+        <obc-readout
           class="instrument-field-angle"
-          value=${this.angle}
-          setpoint=${ifDefined(this.angleSetpoint)}
-          tag="Angle"
+          .variant=${effectiveReadoutVariant}
+          .direction=${ReadoutDirection.vertical}
+          .hug=${false}
+          .hasInput=${true}
+          .inputValue=${this.angleSetpoint === undefined
+            ? '-'
+            : this.angleSetpoint.toFixed(0)}
+          .priority=${readoutPriority}
+          .priorityElements=${[
+            ReadoutPriorityElement.input,
+            ReadoutPriorityElement.value,
+          ]}
+          .value=${this.angle}
+          label="Angle"
           unit="DEG"
-          hasSetpoint
-          size=${fieldSize}
-        ></obc-instrument-field>
-        <obc-instrument-field
+        >
+          <svg
+            slot="input-icon"
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M4.66797 4.80263C4.66797 4.14363 5.45194 3.76746 6.0013 4.16286L10.4456 7.17243C11.0312 7.56899 11.0314 8.43154 10.4459 8.82828L6.0013 11.8401C5.45194 12.2355 4.66797 11.8593 4.66797 11.2003L4.66797 4.80263Z"
+              fill="var(--instrument-enhanced-primary-color)"
+            />
+          </svg>
+        </obc-readout>
+        <obc-readout
           class="instrument-field-power"
-          value=${this.thrust}
-          setpoint=${ifDefined(this.thrustSetpoint)}
-          tag="Power"
+          .variant=${effectiveReadoutVariant}
+          .direction=${ReadoutDirection.vertical}
+          .hug=${false}
+          .hasInput=${true}
+          .inputValue=${this.thrustSetpoint === undefined
+            ? '-'
+            : this.thrustSetpoint.toFixed(0)}
+          .priority=${readoutPriority}
+          .priorityElements=${[
+            ReadoutPriorityElement.input,
+            ReadoutPriorityElement.value,
+          ]}
+          .value=${this.thrust}
+          label="Power"
           unit="%"
-          hasSetpoint
-          size=${fieldSize}
-        ></obc-instrument-field>
+        >
+          <svg
+            slot="input-icon"
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M4.66797 4.80263C4.66797 4.14363 5.45194 3.76746 6.0013 4.16286L10.4456 7.17243C11.0312 7.56899 11.0314 8.43154 10.4459 8.82828L6.0013 11.8401C5.45194 12.2355 4.66797 11.8593 4.66797 11.2003L4.66797 4.80263Z"
+              fill="var(--instrument-enhanced-primary-color)"
+            />
+          </svg>
+        </obc-readout>
         <obc-azimuth-thruster
           class="azimuth-thruster"
           .hasLabelSpacer=${false}

@@ -1,0 +1,23 @@
+:host {
+  display: inline-flex;
+  width: 100%;
+}
+
+:host([hugcontent]) {
+  width: fit-content;
+}
+
+.readout-advice-root,
+.readout-advice-wrapper {
+  display: inline-flex;
+  width: 100%;
+}
+
+.readout-advice-root.state-amplified {
+  @mixin style style=amplified visibleWrapperClass=.readout-advice-wrapper;
+
+  .readout-advice-wrapper {
+    border-radius: var(--global-border-radius-border-radius-base);
+    overflow: hidden;
+  }
+}
