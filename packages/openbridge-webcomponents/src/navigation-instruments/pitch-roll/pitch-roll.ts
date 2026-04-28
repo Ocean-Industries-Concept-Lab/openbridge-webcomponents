@@ -61,8 +61,6 @@ export class ObcPitchRoll extends LitElement {
   }
 
   override render() {
-    const foreScale = this.normalizedScaleForeImage;
-
     return html`
       <div class="container">
         <svg viewBox="-200 -200 400 400">
@@ -155,7 +153,7 @@ export class ObcPitchRoll extends LitElement {
             {
               size: VesselImageSize.large,
               vesselImage: this.vesselImageFore,
-              transform: `rotate(${this.roll}deg) scale(${foreScale})`,
+              transform: `rotate(${this.roll}deg) scale(${this.normalizedScaleForeImage})`,
             },
           ]}
           .tickmarks=${[
