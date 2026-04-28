@@ -318,8 +318,8 @@ const renderVariant = (variant: Variant) => html`
 
 export const AllCombinations: Story = {
   render: () => {
-    const hugContentRows = variantRows.slice(0, 4);
-    const noHugContentRows = variantRows.slice(4);
+    const hugContentRows = variantRows.filter((row) => row[0]?.hugContent);
+    const noHugContentRows = variantRows.filter((row) => !row[0]?.hugContent);
 
     const renderRows = (rows: Variant[][]) =>
       rows.map(

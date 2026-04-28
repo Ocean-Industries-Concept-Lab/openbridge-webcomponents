@@ -314,6 +314,12 @@ export class ObcReadout extends LitElement {
       : ReadoutInputSize.medium;
   }
 
+  private get resolvedValueSize(): ReadoutInputSize {
+    return this.variant === ReadoutVariant.enhanced
+      ? ReadoutInputSize.large
+      : this.resolvedSegmentSize;
+  }
+
   /**
    * Container-level layout decision for nested input/advice segments.
    *
@@ -326,11 +332,7 @@ export class ObcReadout extends LitElement {
       return false;
     }
 
-    if (this.variant === ReadoutVariant.enhanced && this.isVertical) {
-      return false;
-    }
-
-    return true;
+    return this.hug;
   }
 
   private get resolvedSourceType(): ReadoutSourceType {
@@ -640,7 +642,7 @@ export class ObcReadout extends LitElement {
         .variant=${ReadoutInputVariant.value}
         .readoutStyle=${this.variant}
         .direction=${this.direction}
-        .size=${this.resolvedSegmentSize}
+        .size=${this.resolvedValueSize}
         .hugContent=${this.shouldHugNestedSegments}
         data-obc-value-typography=${elevateValueTypography ? 'medium' : nothing}
         ?data-obc-priority-scoped=${scopeValuePriority}
@@ -749,6 +751,7 @@ export class ObcReadout extends LitElement {
           [this.variant]: true,
           [this.direction]: true,
           'has-source': this.hasSrc,
+          'has-input': this.hasInput,
           'has-input-button':
             this.isHorizontal && this.inputFormat === ReadoutInputFormat.button,
           'no-hug': !this.hug,

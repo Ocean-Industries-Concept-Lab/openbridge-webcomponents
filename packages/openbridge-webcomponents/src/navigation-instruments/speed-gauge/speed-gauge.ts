@@ -3,9 +3,14 @@ import {property} from 'lit/decorators.js';
 import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
 import {WatchCircleType} from '../watch/watch.js';
 import {AdviceType, AngleAdviceRaw, AdviceState} from '../watch/advice.js';
-import {InstrumentFieldSize} from '../instrument-field/instrument-field.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {Priority} from '../types.js';
+import '../readout/readout.js';
+import {
+  ReadoutDirection,
+  ReadoutPriorityElement,
+  ReadoutVariant,
+} from '../readout/readout.js';
 import {customElement} from '../../decorator.js';
 
 export enum ObcSpeedGaugeNeedleType {
@@ -37,7 +42,7 @@ export interface SpeedAdvice {
  * - **Bipolar range support**: When `minSpeed < 0`, negative tickmarks are
  *   rendered with `main` tick style.
  * - **Optional readout**: Enable `showReadout` to display an
- *   `<obc-instrument-field>` with the current speed, unit (KN), and tag (STW).
+ *   `<obc-readout>` with the current speed, unit (KN), and label (STW).
  * - **Setpoint via mixin**: `setpoint`, `newSetpoint`, `touching`,
  *   `autoAtSetpointDeadband`, `setpointOverride`, and all other setpoint
  *   properties are provided by `SetpointMixin`; the setpoint angle and
@@ -120,7 +125,7 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
     const setpointAngle =
       this.setpoint !== undefined ? this.getAngle(this.setpoint) : undefined;
 
-    const maxDigits = this.maxSpeed.toFixed(1).length;
+    const maxDigits = 1;
 
     return html`
       <div class="container">
@@ -159,17 +164,23 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
         <svg class="rudder" viewBox="-224 -224 448 448">${this.needle}</svg>
         ${this.showReadout
           ? html`
-              <obc-instrument-field
+              <obc-readout
                 class="speed-gauge-value"
-                .size=${InstrumentFieldSize.enhanced}
-                .neutralColor=${this.priority !== Priority.enhanced}
+                .variant=${ReadoutVariant.stack}
+                .direction=${ReadoutDirection.horizontal}
+                .hasInput=${false}
+                .hasAdvice=${false}
+                .hasSrc=${false}
                 .value=${this.speed}
-                horizontal
+                .showZeroPadding=${false}
+                .valueHasHintedZeros=${false}
                 unit="KN"
-                tag="STW"
+                label="STW"
                 .fractionDigits=${1}
                 .maxDigits=${maxDigits}
-              ></obc-instrument-field>
+                .priority=${this.priority}
+                .priorityElements=${[ReadoutPriorityElement.value]}
+              ></obc-readout>
             `
           : nothing}
       </div>

@@ -284,9 +284,15 @@ function renderReadoutComponent(
     onSourceFlyoutClick?: (event: CustomEvent) => void;
   }
 ) {
+  const resolvedDirection = args.direction ?? defaultArgs.direction;
   const resolvedArgs = {
     ...defaultArgs,
     ...args,
+    hug:
+      args.hug ??
+      (resolvedDirection === ReadoutDirection.vertical
+        ? false
+        : defaultArgs.hug),
     hasInputDivider:
       args.hasInputDivider ??
       (args.direction === ReadoutDirection.horizontal
@@ -909,7 +915,7 @@ export const SegmentHugReadout: Story = {
         display: flex;
         flex-direction: column;
         gap: 16px;
-        width: 520px;
+        width: 440px;
         max-width: 100%;
         padding: 16px;
         border: 1px dashed rgba(0, 0, 0, 0.2);
@@ -917,10 +923,10 @@ export const SegmentHugReadout: Story = {
       "
     >
       ${[
-        {label: 'hugContent = true (fit-content)', hugContent: true},
-        {label: 'hugContent = false (width: 100%)', hugContent: false},
+        {label: 'readout.hug = true (compact)', hug: true},
+        {label: 'readout.hug = false (stretched)', hug: false},
       ].map(
-        ({label, hugContent}) => html`
+        ({label, hug}) => html`
           <div
             style="
               display: flex;
@@ -942,40 +948,26 @@ export const SegmentHugReadout: Story = {
             >
               ${label}
             </div>
-            <obc-readout
-              .variant=${ReadoutVariant.regular}
-              .direction=${ReadoutDirection.vertical}
-              .hug=${false}
-              .hasInput=${true}
-              .value=${123}
-              .label=${'HDG'}
-              .unit=${'DEG'}
-            >
-              <div
-                slot="input"
-                style="
-                  display: flex;
-                  width: 160px;
-                  max-width: 100%;
-                  justify-content: ${hugContent ? 'flex-end' : 'flex-start'};
-                "
+            <div style="display:flex; justify-content:flex-end; width:150px;">
+              <obc-readout
+                .variant=${ReadoutVariant.regular}
+                .direction=${ReadoutDirection.vertical}
+                .hug=${hug}
+                style=${hug ? '' : 'width:100%;'}
+                .hasInput=${true}
+                .inputValue=${'123'}
+                .priority=${Priority.enhanced}
+                .priorityElements=${[
+                  ReadoutPriorityElement.input,
+                  ReadoutPriorityElement.value,
+                ]}
+                .value=${123}
+                .label=${'HDG'}
+                .unit=${'DEG'}
               >
-                <obc-readout-input
-                  .variant=${ReadoutInputVariant.input}
-                  .readoutStyle=${ReadoutVariant.regular}
-                  .direction=${ReadoutDirection.vertical}
-                  .size=${ReadoutInputSize.regular}
-                  .format=${ReadoutInputFormat.regular}
-                  .mode=${ReadoutInputMode.display}
-                  .priority=${Priority.enhanced}
-                  .hugContent=${hugContent}
-                  style=${hugContent ? '' : 'width:100%;'}
-                  value="123"
-                >
-                  <obi-input-right slot="icon"></obi-input-right>
-                </obc-readout-input>
-              </div>
-            </obc-readout>
+                <obi-input-right slot="input-icon"></obi-input-right>
+              </obc-readout>
+            </div>
           </div>
         `
       )}

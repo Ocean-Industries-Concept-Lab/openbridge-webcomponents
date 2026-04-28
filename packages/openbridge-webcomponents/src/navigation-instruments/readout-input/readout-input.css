@@ -5,6 +5,12 @@
 :host {
   display: inline-flex;
   max-width: 100%;
+  --global-typography-instrument-value-regular-container-height: var(
+    --global-typography-instrument-value-regular-line-height
+  );
+  --global-typography-instrument-value-medium-container-height: var(
+    --global-typography-instrument-value-medium-line-height
+  );
 }
 
 :host([direction="horizontal"]) {
@@ -350,8 +356,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  inline-size: 20px;
-  block-size: 20px;
 
   > slot[name="icon"]::slotted(*),
   > obi-notification-advice {
@@ -366,18 +370,18 @@
   }
 
   &.regular {
-    inline-size: 16px;
-    block-size: 16px;
+    inline-size: var(--global-size-spacing-icon-icon-size-small);
+    block-size: var(--global-size-spacing-icon-icon-size-small);
   }
 
   &.medium {
-    inline-size: 20px;
-    block-size: 20px;
+    inline-size: var(--global-size-spacing-icon-icon-size-small);
+    block-size: var(--global-size-spacing-icon-icon-size-small);
   }
 
   &.large {
-    inline-size: 24px;
-    block-size: 24px;
+    inline-size: var(--global-size-spacing-icon-icon-size-regular);
+    block-size: var(--global-size-spacing-icon-icon-size-regular);
   }
 }
 
@@ -479,7 +483,7 @@ slot[name="value"] {
 
     .degree {
       grid-column: 2;
-      @mixin font-instrument-value-m-active;
+      font: inherit;
       display: block;
       text-align: center;
     }
