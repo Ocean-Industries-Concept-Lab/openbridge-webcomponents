@@ -22,7 +22,7 @@
     "storybook": "npm run analyze && storybook dev -p 6006 --no-open",
     "test-storybook": "vitest --project=storybook",
     "test-storybook:watch": "vitest --project=storybook --watch",
-    "test-storybook:docker": "docker run -it -v $(pwd):/app/packages/openbridge-webcomponents -w /app/packages/openbridge-webcomponents openbridge-webcomponents-storybook npm run test-storybook",
+    "test-storybook:docker": "mkdir -p /tmp/openbridge-webcomponents-vis-results && docker run -it --user $(id -u):$(id -g) -v $(pwd):/app/packages/openbridge-webcomponents -v /tmp/openbridge-webcomponents-vis-results:/app/packages/openbridge-webcomponents/__vis__/linux/__results__ -w /app/packages/openbridge-webcomponents openbridge-webcomponents-storybook npm run test-storybook",
     "update-snapshots": "rm -rf __vis__/linux/__baselines__ && mv __vis__/linux/__results__/ __vis__/linux/__baselines__/",
     "build-storybook": "storybook build",
     "storybook:server": "http-server -p 6006 storybook-static",
