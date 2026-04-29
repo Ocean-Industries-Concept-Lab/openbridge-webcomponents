@@ -46,9 +46,16 @@ This is enforced by the ESLint rule `openbridge/storybook-title-case` (auto-fixa
 
 ## 🧪 Testing
 
-Visual snapshot tests are run via [Vitest](https://vitest.dev/) + [storybook-addon-vis](https://github.com/nickelspy/storybook-addon-vis) + Playwright:
+Visual snapshot tests are run via [Vitest](https://vitest.dev/) + [storybook-addon-vis](https://github.com/nickelspy/storybook-addon-vis) + Playwright.
+
+### Local Testing
+
+To run tests locally, you need to have Playwright browsers installed:
 
 ```bash
+# Install Chromium (required for snapshot tests)
+npx playwright install --with-deps chromium
+
 # Run all snapshot tests
 npm run test-storybook
 
@@ -57,7 +64,53 @@ npm run test-storybook
 npm run update-snapshots
 ```
 
-Snapshot baselines are stored in `__vis__/linux/__baselines__/` (and `__vis__/darwin/__baselines__/` for macOS).
+Snapshot baselines are stored in `__vis__/linux/__baselines__/` (and `__vis__/darwin/__baselines__/` for macOS). Since snapshot results are highly dependent on the environment (OS, fonts, etc.), it is recommended to use Docker for generating canonical snapshots.
+
+### Docker Testing
+
+For a consistent testing environment, it is recommended to run tests using Docker. This ensures that snapshots are always generated on the same Linux environment as the CI.
+
+#### Requirements
+
+- Docker must be installed and running on your machine.
+- On Linux, your user should have permissions to run Docker commands without `sudo`.
+- Webcomponents are built (from repository root):```npm ci && cd package/openbridge-webcomponents && npm run build```
+
+#### 1. Build the Docker Image
+
+The Docker image is based on the Playwright Ubuntu image and contains all dependencies. Run the following command from the repository root:
+
+```bash
+npm run build:docker-for-storybook-testing
+```
+
+#### 2. Run Tests in Docker
+
+You can run the Storybook tests inside the container. This will mount your local files into the container, allowing it to write snapshot results back to your host machine.
+
+From `packages/openbridge-webcomponents`:
+
+```bash
+npm run test-storybook:docker
+```
+
+Note: The script uses `--user $(id -u):$(id -g)` to ensure that any files created by the container (like snapshot results) are owned by your host user. It uses a temporary directory for visual results (`/tmp/openbridge-webcomponents-vis-results`) to avoid permission conflicts.
+
+#### 3. Update Snapshots from Docker Results
+
+After running the tests in Docker, the results are stored in `/tmp/openbridge-webcomponents-vis-results` on your host. To update your local baselines with these results:
+
+```bash
+# From packages/openbridge-webcomponents
+# 1. Create results directory if it doesn't exist
+mkdir -p __vis__/linux/__results__
+
+# 2. Copy results from temp to package directory
+cp -r /tmp/openbridge-webcomponents-vis-results/* __vis__/linux/__results__/
+
+# 3. Run the update script (replaces baselines with results)
+npm run update-snapshots
+```
 
 ## 🎨 PostCSS
 
