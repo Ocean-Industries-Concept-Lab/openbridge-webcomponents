@@ -63,7 +63,7 @@ export const Primary: Story = {
 
 export const Rov: Story = {
   args: {
-    vesselImageSide: VesselImage.rovSide,
+    vesselImageSide: VesselImage.rovSideFaded,
     vesselImageFore: VesselImage.rovFront,
   },
 };
