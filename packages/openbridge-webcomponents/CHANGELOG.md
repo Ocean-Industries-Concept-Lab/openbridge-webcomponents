@@ -1,3 +1,15 @@
+## [2.0.0-next.13](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.12...v2.0.0-next.13) (2026-04-28)
+
+### Bug Fixes
+
+- align action components visual height ([#830](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/830)) ([ef5097d](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/ef5097d47c32f85c687f619fd9ebd864a74abe05))
+
+## [2.0.0-next.12](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.11...v2.0.0-next.12) (2026-04-28)
+
+### Bug Fixes
+
+- **alert-list-page-small:** add silence-click event ([#823](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/823)) ([c8f9526](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/c8f95265e3ab262d11c7e67b5fe996f5e4a1b4ce))
+
 ## [2.0.0-next.11](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.10...v2.0.0-next.11) (2026-04-27)
 
 ### Features
