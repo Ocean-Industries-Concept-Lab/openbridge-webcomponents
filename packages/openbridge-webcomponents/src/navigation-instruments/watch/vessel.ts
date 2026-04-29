@@ -15,7 +15,6 @@ import fishingVesselSide, {
   fishingVesselSideFaded,
 } from './vessels/fishing-vessel-side.js';
 import * as fishingVesselTop from './vessels/fishing-vessel-top.js';
-import * as foreFore from './vessels/fore-fore.js';
 import genericSide, {genericSideFaded} from './vessels/generic-side.js';
 import * as genericTop from './vessels/generic-top.js';
 import * as psvAft from './vessels/psv-aft.js';
@@ -72,7 +71,6 @@ export enum VesselImage {
   fishingVesselSide = 'fishing-vessel-side',
   fishingVesselSideFaded = 'fishing-vessel-side-faded',
   fishingVesselTop = 'fishing-vessel-top',
-  foreFore = 'fore-fore',
   genericSide = 'generic-side',
   genericSideFaded = 'generic-side-faded',
   genericTop = 'generic-top',
@@ -128,7 +126,6 @@ export const vesselImages: Record<VesselImage, SVGTemplateResult> = {
   [VesselImage.fishingVesselSide]: fishingVesselSide,
   [VesselImage.fishingVesselSideFaded]: fishingVesselSideFaded,
   [VesselImage.fishingVesselTop]: fishingVesselTop.default,
-  [VesselImage.foreFore]: foreFore.default,
   [VesselImage.genericSide]: genericSide,
   [VesselImage.genericSideFaded]: genericSideFaded,
   [VesselImage.genericTop]: genericTop.default,
