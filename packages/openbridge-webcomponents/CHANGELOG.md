@@ -1,3 +1,9 @@
+## [2.0.0-next.15](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.14...v2.0.0-next.15) (2026-04-29)
+
+### Features
+
+- **navigation:** add fore image scaling support for pitch-roll and roll component ([#833](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/833)) ([5c1ab7b](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/5c1ab7b266ce8b5e9641f7b1dbeb822b337356ca))
+
 ## [2.0.0-next.14](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.13...v2.0.0-next.14) (2026-04-29)
 
 ### ⚠ BREAKING CHANGES
