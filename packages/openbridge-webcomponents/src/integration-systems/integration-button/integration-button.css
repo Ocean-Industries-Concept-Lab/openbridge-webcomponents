@@ -268,3 +268,9 @@
   height: 1px;
   background: var(--integration-border-outline);
 }
+
+.divider-right {
+  width: 1px;
+  height: var(--integration-button-divider-height);
+  background-color: var(--integration-border-divider);
+}

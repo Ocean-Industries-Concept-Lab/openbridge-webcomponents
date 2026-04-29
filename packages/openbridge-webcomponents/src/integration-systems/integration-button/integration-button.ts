@@ -43,6 +43,7 @@ export enum IntegrationButtonType {
  * @property {boolean} activated - Applies active state styling while a selection is pending.
  * @property {boolean} selected - Applies selected state styling.
  * @property {boolean} dividerBottom - Shows a bottom divider under the button.
+ * @property {boolean} dividerRight - Shows a right divider to separate from adjacent buttons.
  * @property {IntegrationButtonVariant} variant - Visual variant (`normal` or `flat`).
  * @property {IntegrationButtonType} type - Layout type (`hug`, `regular`, or `rich`).
  */
@@ -58,6 +59,7 @@ export class ObcIntegrationButton extends LitElement {
   @property({type: Boolean}) activated = false;
   @property({type: Boolean}) selected = false;
   @property({type: Boolean}) dividerBottom = false;
+  @property({type: Boolean}) dividerRight = false;
   @property({type: String}) variant: IntegrationButtonVariant =
     IntegrationButtonVariant.normal;
   @property({type: String}) type: IntegrationButtonType =
@@ -122,6 +124,7 @@ export class ObcIntegrationButton extends LitElement {
             )}
           </div>
         </div>
+        ${this.dividerRight ? html`<div class="divider-right"></div>` : nothing}
       </button>
       ${this.dividerBottom ? html`<div class="divider-bottom"></div>` : nothing}
     `;
@@ -157,6 +160,7 @@ export class ObcIntegrationButton extends LitElement {
               </div>`
             : nothing}
         </div>
+        ${this.dividerRight ? html`<div class="divider-right"></div>` : nothing}
       </button>
       ${this.dividerBottom ? html`<div class="divider-bottom"></div>` : nothing}
     `;
@@ -189,6 +193,7 @@ export class ObcIntegrationButton extends LitElement {
               </div>`
             : nothing}
         </div>
+        ${this.dividerRight ? html`<div class="divider-right"></div>` : nothing}
       </button>
       ${this.dividerBottom ? html`<div class="divider-bottom"></div>` : nothing}
     `;
@@ -210,6 +215,20 @@ export class ObcIntegrationButton extends LitElement {
   }
 
   static override styles = unsafeCSS(compentStyle);
+
+  override updated() {
+    let dividerHeight = 40;
+    if (this.type === IntegrationButtonType.hug) {
+      dividerHeight = 32;
+    }
+    if (this.type === IntegrationButtonType.rich) {
+      dividerHeight = 64;
+    }
+    this.style.setProperty(
+      '--integration-button-divider-height',
+      `${dividerHeight}px`
+    );
+  }
 }
 
 declare global {

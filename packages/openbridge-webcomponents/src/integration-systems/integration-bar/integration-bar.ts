@@ -34,7 +34,7 @@ export enum IntegrationBarType {
  * and optional utility actions such as alerts, notifications, screen, system, dimming, user, and clock.
  *
  * @slot clock - Custom clock content, rendered when `showClock` is true
- * @slot vessel-integration-menu - Modal that will appear achored below the fleet/vessel button. Typically a obc-integration-vessel-menu
+ * @slot vessel-integration-menu - Modal that will appear achored below the fleet/vessel button. Typically an obc-integration-vessel-menu
  * @property {IntegrationBarType} type - Integration bar mode for fleet/vessel presentation
  * @property {boolean} hideHomeButton - Hides the home button when true
  * @property {boolean} showClock - Toggles rendering of the clock slot
@@ -307,7 +307,6 @@ export class ObcIntegrationBar extends LitElement {
           const isActivated =
             this.activeVesselValue !== '' &&
             this.activeVesselValue === vessel.value;
-          const shouldRenderSeparator = index < vesselItems.length - 1;
           return html`
             <obc-integration-button
               hasLeadingIcon
@@ -320,13 +319,11 @@ export class ObcIntegrationBar extends LitElement {
                 ? 'anchor-name: --integration-menu-anchor;'
                 : ''}
               @click=${() => this.onVesselButtonClick(vessel)}
+              dividerRight
             >
               <obi-ship slot="leading-icon"></obi-ship>
               <span slot="label">${vessel.label}</span>
             </obc-integration-button>
-            ${shouldRenderSeparator
-              ? html`<div class="separator"></div>`
-              : null}
           `;
         })}
       </div>
