@@ -88,6 +88,7 @@
   align-items: center;
   width: 100%;
   height: var(--ui-components-slide-button-visual-size);
+  box-sizing: border-box;
   border-radius: var(--global-border-radius-border-radius-base);
   isolation: isolate;
   z-index: 1;
@@ -116,7 +117,7 @@
   border-radius: var(--global-border-radius-border-radius-base);
   min-width: fit-content;
   width: 100%;
-  height: calc(var(--ui-components-slide-button-visual-size) + 2px);
+  height: var(--ui-components-slide-button-visual-size);
 }
 
 .slide-button-container.dragging .slide-button {
