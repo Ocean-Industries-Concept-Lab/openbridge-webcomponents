@@ -68,7 +68,7 @@ export const Rov: Story = {
   },
 };
 
-export const ScaleForeImage: Story = {
+export const ScaledForeImage: Story = {
   args: {
     vesselImageSide: VesselImage.carFerrySideFaded,
     vesselImageFore: VesselImage.carFerryFore,
