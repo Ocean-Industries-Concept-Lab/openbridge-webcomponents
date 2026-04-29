@@ -116,18 +116,16 @@ export class ObcAbstractAutomationButton extends LitElement {
     if (!this.showReadoutStack) {
       return false;
     }
+
     const topLeft =
-      this.badgeTopLeft.length > 0 ||
-      this.badgeControl !== AutomationButtonBadgeControl.None;
+      this.badgeTopLeft.length > 0 || this.getBadgeControlType() !== null;
     const topRight =
-      this.badgeTopRight.length > 0 ||
-      this.badgeAlert !== AutomationButtonBadgeAlert.None;
+      this.badgeTopRight.length > 0 || this.getBadgeAlertType() !== null;
     const bottomLeft =
-      this.badgeBottomLeft.length > 0 ||
-      this.badgeInterlock !== AutomationButtonBadgeInterlock.None;
+      this.badgeBottomLeft.length > 0 || this.getBadgeInterlockType() !== null;
     const bottomRight =
       this.badgeBottomRight.length > 0 ||
-      this.badgeCommandLocked !== AutomationButtonBadgeCommandLocked.None;
+      this.getBadgeCommandLockedType() !== null;
     if (this.readoutPosition === AutomationButtonReadoutPosition.top) {
       return topRight || topLeft;
     } else if (
