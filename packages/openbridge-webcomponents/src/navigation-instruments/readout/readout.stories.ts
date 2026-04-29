@@ -1035,20 +1035,6 @@ export const RegularCases: Story = {
               hug: false,
             },
           },
-          {
-            label: 'String fallback (input/advice not numeric)',
-            args: {
-              direction: ReadoutDirection.vertical,
-              hasInput: true,
-              hasAdvice: true,
-              value: '123',
-              inputValue: 'ABC',
-              adviceValue: 'ABC',
-              hasDegree: true,
-              fractionDigits: 1,
-              hug: false,
-            },
-          },
         ],
       },
       {

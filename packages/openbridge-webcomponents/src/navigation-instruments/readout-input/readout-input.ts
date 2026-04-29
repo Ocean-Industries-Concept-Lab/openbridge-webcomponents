@@ -111,7 +111,7 @@ export class ObcReadoutInput extends LitElement {
 
   @property({type: String}) priority?: Priority;
 
-  @property({type: Boolean}) hugContent = false;
+  @property({type: Boolean, reflect: true}) hugContent = false;
 
   @property({type: Boolean}) hasFixedLength = false;
 
@@ -319,7 +319,9 @@ export class ObcReadoutInput extends LitElement {
         this.direction === 'horizontal' &&
         (format === ReadoutInputFormat.description ||
           format === ReadoutInputFormat.range));
-    this.style.width = hugs ? 'fit-content' : '100%';
+
+    this.toggleAttribute('data-obc-hug-effective', hugs);
+    this.style.removeProperty('width');
   }
 
   private get toneAccent() {

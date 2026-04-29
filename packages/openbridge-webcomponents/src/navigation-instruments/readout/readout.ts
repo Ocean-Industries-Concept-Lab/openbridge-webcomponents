@@ -611,6 +611,9 @@ export class ObcReadout extends LitElement {
         .selectedValues=${this.src ? [this.src] : []}
         class="source-picker-content"
         @item-click=${this.handleSourcePickerItemClick}
+        @close=${() => {
+          this.sourcePickerContentVisible = false;
+        }}
       ></obc-context-menu-input>
     `;
   }

@@ -5,6 +5,7 @@
 :host {
   display: inline-flex;
   max-width: 100%;
+  width: 100%;
   --global-typography-instrument-value-regular-container-height: var(
     --global-typography-instrument-value-regular-line-height
   );
@@ -13,8 +14,9 @@
   );
 }
 
-:host([direction="horizontal"]) {
-  width: auto;
+:host([hugcontent]),
+:host([data-obc-hug-effective]) {
+  width: fit-content;
 }
 
 .readout-input-wrapper {
