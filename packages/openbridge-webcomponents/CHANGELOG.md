@@ -1,3 +1,22 @@
+## [2.0.0-next.15](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.14...v2.0.0-next.15) (2026-04-29)
+
+### Features
+
+- **navigation:** add fore image scaling support for pitch-roll and roll component ([#833](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/833)) ([5c1ab7b](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/5c1ab7b266ce8b5e9641f7b1dbeb822b337356ca))
+
+## [2.0.0-next.14](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.13...v2.0.0-next.14) (2026-04-29)
+
+### ⚠ BREAKING CHANGES
+
+- **automation-buttons:** Automation button has new api for badges, allowing more types
+- **automation-buttons:** Automation badge has new types, and new names for some types
+  duty -> interlock
+  AlertOff -> AlertSilenced
+
+### Features
+
+- **automation-buttons:** add new badge api ([#839](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/839)) ([4f08f1c](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/4f08f1c6d9970e6c0183ba90a9cb7e6af2edabbf))
+
 ## [2.0.0-next.13](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.12...v2.0.0-next.13) (2026-04-28)
 
 ### Bug Fixes

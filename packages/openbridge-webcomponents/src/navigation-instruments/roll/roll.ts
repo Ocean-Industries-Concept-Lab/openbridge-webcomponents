@@ -22,8 +22,16 @@ export class ObcRoll extends LitElement {
   @property({type: Number}) minAvgRoll = 0;
   @property({type: Number}) maxAvgRoll = 0;
   @property({type: String}) vesselImageFore: VesselImage = VesselImage.psvFore;
+  @property({type: Number}) scaleForeImage = 1;
   @property({type: Number}) maxRollAdvice: number | undefined = undefined;
   @property({type: Boolean}) triggerRollAdvice = false;
+
+  private get normalizedScaleForeImage(): number {
+    if (!Number.isFinite(this.scaleForeImage)) {
+      return 1;
+    }
+    return Math.max(0, Math.min(2, this.scaleForeImage));
+  }
 
   override render() {
     return html`
@@ -79,7 +87,7 @@ export class ObcRoll extends LitElement {
             {
               size: VesselImageSize.large,
               vesselImage: this.vesselImageFore,
-              transform: `rotate(${this.roll}deg)`,
+              transform: `rotate(${this.roll}deg) scale(${this.normalizedScaleForeImage})`,
             },
           ]}
           .tickmarks=${[
