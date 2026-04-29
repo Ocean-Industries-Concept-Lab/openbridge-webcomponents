@@ -10,11 +10,11 @@ ENV LANG=en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
 
 WORKDIR /app
-COPY package-lock.json .
-COPY package.json .
+COPY package-lock.json ./
+COPY package.json ./
 WORKDIR /app/packages/openbridge-webcomponents
-COPY packages/openbridge-webcomponents/package.json .
-COPY packages/openbridge-webcomponents/*.tgz .
+COPY packages/openbridge-webcomponents/package.json ./
+COPY packages/openbridge-webcomponents/*.tgz ./
 RUN npm ci --ignore-scripts
-COPY packages/openbridge-webcomponents .
+COPY packages/openbridge-webcomponents ./
 CMD ["npm", "run", "test-storybook"]
