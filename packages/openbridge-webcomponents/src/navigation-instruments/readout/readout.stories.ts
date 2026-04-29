@@ -42,8 +42,8 @@ type ReadoutStoryArgs = {
   leadingIcon: string;
   adviceIcon: string;
   inputIcon?: string;
-  adviceValue: string;
-  inputValue: string;
+  adviceValue: string | number;
+  inputValue: string | number;
   value: string;
   maxDigits: number;
   fractionDigits: number;
@@ -51,7 +51,7 @@ type ReadoutStoryArgs = {
   valueHasFixedLength: boolean;
   valueLength: string;
   valueHasHintedZeros: boolean;
-  valueHasDegree: boolean;
+  hasDegree: boolean;
   label: string;
   hasLabelFixedLength: boolean;
   labelLength: string;
@@ -72,7 +72,6 @@ type ReadoutStoryArgs = {
   adviceDescription: string;
   adviceValueLength: string;
   adviceHasHintedZeros: boolean;
-  adviceHasDegree: boolean;
   inputFormat: ReadoutInputFormat;
   inputInteractionMode?: ReadoutInputMode;
   inputPriority?: Priority;
@@ -81,7 +80,6 @@ type ReadoutStoryArgs = {
   inputDescription: string;
   inputValueLength: string;
   inputHasHintedZeros: boolean;
-  inputHasDegree: boolean;
   _lastAutoInputDividerSyncKey: string;
   _lastAutoSourceDividerSyncKey: string;
 };
@@ -165,7 +163,7 @@ const defaultArgs: ReadoutStoryArgs = {
   valueHasFixedLength: false,
   valueLength: '',
   valueHasHintedZeros: false,
-  valueHasDegree: false,
+  hasDegree: false,
   label: 'HDG',
   hasLabelFixedLength: false,
   labelLength: '',
@@ -185,7 +183,6 @@ const defaultArgs: ReadoutStoryArgs = {
   adviceDescription: 'SET',
   adviceValueLength: '000',
   adviceHasHintedZeros: false,
-  adviceHasDegree: false,
   inputFormat: ReadoutInputFormat.regular,
   inputInteractionMode: undefined,
   inputPriority: undefined,
@@ -194,7 +191,6 @@ const defaultArgs: ReadoutStoryArgs = {
   inputDescription: 'SET',
   inputValueLength: '000',
   inputHasHintedZeros: false,
-  inputHasDegree: false,
   _lastAutoInputDividerSyncKey: `${ReadoutDirection.vertical}:true`,
   _lastAutoSourceDividerSyncKey: `${ReadoutDirection.vertical}:false`,
 };
@@ -272,6 +268,20 @@ function resolveReadoutStoryValue(value: string) {
   return value;
 }
 
+function resolveReadoutStoryMaybeNumeric(
+  value: string | number | undefined
+): string | number | undefined {
+  if (typeof value === 'number') {
+    return value;
+  }
+
+  if (typeof value === 'string') {
+    return resolveReadoutStoryValue(value);
+  }
+
+  return value;
+}
+
 function renderReadoutComponent(
   args: Partial<ReadoutStoryArgs>,
   options?: {
@@ -282,11 +292,7 @@ function renderReadoutComponent(
   const resolvedArgs = {
     ...defaultArgs,
     ...args,
-    hug:
-      args.hug ??
-      (resolvedDirection === ReadoutDirection.vertical
-        ? false
-        : defaultArgs.hug),
+    hug: args.hug ?? defaultArgs.hug,
     hasInputDivider:
       args.hasInputDivider ??
       (args.direction === ReadoutDirection.horizontal
@@ -319,8 +325,8 @@ function renderReadoutComponent(
       .hasSrcPicker=${resolvedArgs.hasSrcPicker}
       .hasSourceDivider=${resolvedArgs.hasSourceDivider}
       .hasLeadingIcon=${resolvedArgs.hasLeadingIcon}
-      .adviceValue=${resolvedArgs.adviceValue}
-      .inputValue=${resolvedArgs.inputValue}
+      .adviceValue=${resolveReadoutStoryMaybeNumeric(resolvedArgs.adviceValue)}
+      .inputValue=${resolveReadoutStoryMaybeNumeric(resolvedArgs.inputValue)}
       .value=${resolveReadoutStoryValue(resolvedArgs.value)}
       .maxDigits=${resolvedArgs.maxDigits}
       .fractionDigits=${resolvedArgs.fractionDigits}
@@ -328,7 +334,7 @@ function renderReadoutComponent(
       .valueHasFixedLength=${resolvedArgs.valueHasFixedLength}
       .valueLength=${resolvedArgs.valueLength}
       .valueHasHintedZeros=${resolvedArgs.valueHasHintedZeros}
-      .valueHasDegree=${resolvedArgs.valueHasDegree}
+      .hasDegree=${resolvedArgs.hasDegree}
       .label=${resolvedArgs.label}
       .hasLabelFixedLength=${resolvedArgs.hasLabelFixedLength}
       .labelLength=${resolvedArgs.labelLength}
@@ -349,7 +355,6 @@ function renderReadoutComponent(
       .adviceDescription=${resolvedArgs.adviceDescription}
       .adviceValueLength=${resolvedArgs.adviceValueLength}
       .adviceHasHintedZeros=${resolvedArgs.adviceHasHintedZeros}
-      .adviceHasDegree=${resolvedArgs.adviceHasDegree}
       .inputFormat=${resolvedArgs.inputFormat}
       .inputInteractionMode=${resolvedArgs.inputInteractionMode}
       .inputPriority=${resolvedArgs.inputPriority}
@@ -358,7 +363,6 @@ function renderReadoutComponent(
       .inputDescription=${resolvedArgs.inputDescription}
       .inputValueLength=${resolvedArgs.inputValueLength}
       .inputHasHintedZeros=${resolvedArgs.inputHasHintedZeros}
-      .inputHasDegree=${resolvedArgs.inputHasDegree}
     >
       ${resolvedArgs.hasLeadingIcon
         ? iconIdToIconHtml(resolvedArgs.leadingIcon, {slot: 'leading-icon'})
@@ -703,12 +707,6 @@ const meta = {
       if: {arg: 'inputHasFixedLength', truthy: true},
       table: {category: 'Input'},
     },
-    inputHasDegree: {
-      name: 'Has Degree',
-      if: {arg: 'hasInput', truthy: true},
-      table: {category: 'Input'},
-      description: 'Renders a ° suffix when enabled.',
-    },
     adviceFormat: {
       name: 'Format',
       control: {type: 'select'},
@@ -777,10 +775,6 @@ const meta = {
       if: {arg: 'adviceHasFixedLength', truthy: true},
       table: {category: 'Advice'},
     },
-    adviceHasDegree: {
-      table: {disable: true},
-      control: false,
-    },
     value: {
       name: 'Value',
       control: {type: 'text'},
@@ -791,8 +785,9 @@ const meta = {
       control: false,
     },
     fractionDigits: {
-      table: {disable: true},
-      control: false,
+      name: 'Fraction Digits',
+      control: {type: 'number', min: 0, step: 1},
+      table: {category: 'Formatting'},
     },
     showZeroPadding: {
       table: {disable: true},
@@ -813,9 +808,12 @@ const meta = {
       if: {arg: 'valueHasFixedLength', truthy: true},
       table: {category: 'Value'},
     },
-    valueHasDegree: {
+    hasDegree: {
       name: 'Has Degree',
-      table: {category: 'Value'},
+      control: {type: 'boolean'},
+      table: {category: 'Formatting'},
+      description:
+        'Applies ° suffix to value, input, and advice (when those segments are present).',
     },
     label: {
       name: 'Label',
@@ -981,6 +979,7 @@ export const RegularCases: Story = {
             args: {
               direction: ReadoutDirection.vertical,
               hasInput: true,
+              hug: false,
             },
           },
           {
@@ -989,6 +988,7 @@ export const RegularCases: Story = {
               direction: ReadoutDirection.vertical,
               hasInput: true,
               hasLeadingIcon: true,
+              hug: false,
             },
           },
         ],
@@ -1005,15 +1005,48 @@ export const RegularCases: Story = {
               valueHasFixedLength: true,
               valueLength: '00000',
               valueHasHintedZeros: true,
+              hug: false,
             },
           },
           {
-            label: 'Value Numeric (fractionDigits=1)',
+            label: 'Value/Input/Advice Numeric (fractionDigits=1)',
             args: {
               direction: ReadoutDirection.vertical,
               hasInput: true,
+              hasAdvice: true,
               value: '12.3',
+              inputValue: 12.3,
+              adviceValue: 12.3,
               fractionDigits: 1,
+              hug: false,
+            },
+          },
+          {
+            label: 'Global Degree + fractionDigits=1 (numbers)',
+            args: {
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              hasAdvice: true,
+              value: '123',
+              inputValue: '123',
+              adviceValue: '123',
+              hasDegree: true,
+              fractionDigits: 1,
+              hug: false,
+            },
+          },
+          {
+            label: 'String fallback (input/advice not numeric)',
+            args: {
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              hasAdvice: true,
+              value: '123',
+              inputValue: 'ABC',
+              adviceValue: 'ABC',
+              hasDegree: true,
+              fractionDigits: 1,
+              hug: false,
             },
           },
         ],
@@ -1030,6 +1063,7 @@ export const RegularCases: Story = {
               inputHasFixedLength: true,
               inputValueLength: '000',
               inputHasHintedZeros: true,
+              hug: false,
             },
           },
           {
@@ -1042,14 +1076,15 @@ export const RegularCases: Story = {
               adviceHasFixedLength: true,
               adviceValueLength: '000',
               adviceHasHintedZeros: true,
+              hug: false,
             },
           },
           {
-            label: 'Advice Active + Degree',
+            label: 'Global Degree (advice active)',
             args: {
               direction: ReadoutDirection.vertical,
               hasAdvice: true,
-              adviceHasDegree: true,
+              hasDegree: true,
               adviceState: ReadoutAdviceState.active,
             },
           },
@@ -1059,6 +1094,7 @@ export const RegularCases: Story = {
               direction: ReadoutDirection.vertical,
               hasInput: true,
               inputFormat: ReadoutInputFormat.baseline,
+              hug: false,
             },
           },
           {
@@ -1067,6 +1103,7 @@ export const RegularCases: Story = {
               direction: ReadoutDirection.vertical,
               hasInput: true,
               inputFormat: ReadoutInputFormat.button,
+              hug: false,
             },
           },
           {
@@ -1076,6 +1113,7 @@ export const RegularCases: Story = {
               hasInput: true,
               inputFormat: ReadoutInputFormat.description,
               inputDescription: 'SET',
+              hug: false,
             },
           },
           {
@@ -1086,6 +1124,7 @@ export const RegularCases: Story = {
               inputFormat: ReadoutInputFormat.range,
               inputValue: '12',
               inputSecondaryValue: '34',
+              hug: false,
             },
           },
           {
@@ -1095,6 +1134,7 @@ export const RegularCases: Story = {
               hasInput: true,
               inputFormat: ReadoutInputFormat.verticalStack,
               inputDescription: 'SET',
+              hug: false,
             },
           },
         ],
@@ -1109,6 +1149,7 @@ export const RegularCases: Story = {
               hasInput: true,
               hasSrc: true,
               sourceType: ReadoutSourceType.small,
+              hug: false,
             },
           },
           {
@@ -1119,6 +1160,7 @@ export const RegularCases: Story = {
               hasSrc: true,
               sourceType: ReadoutSourceType.delta,
               sourceDeltaValue: '0,5',
+              hug: false,
             },
           },
         ],
@@ -1134,6 +1176,7 @@ export const RegularCases: Story = {
               hasSrc: true,
               sourceType: ReadoutSourceType.regular,
               hasSrcPicker: true,
+              hug: false,
             },
           },
           {
@@ -1143,6 +1186,7 @@ export const RegularCases: Story = {
               hasInput: true,
               hasSrc: true,
               sourceType: ReadoutSourceType.flyout,
+              hug: false,
             },
           },
         ],
@@ -1264,6 +1308,7 @@ export const EnhancedCases: Story = {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.vertical,
               hasInput: true,
+              hug: false,
             },
           },
           {
@@ -1273,6 +1318,7 @@ export const EnhancedCases: Story = {
               direction: ReadoutDirection.vertical,
               hasAdvice: true,
               hasInput: true,
+              hug: false,
             },
           },
           {
@@ -1282,6 +1328,7 @@ export const EnhancedCases: Story = {
               direction: ReadoutDirection.vertical,
               hasInput: true,
               hasLeadingIcon: true,
+              hug: false,
             },
           },
         ],
@@ -1297,6 +1344,7 @@ export const EnhancedCases: Story = {
               hasInput: true,
               inputFormat: ReadoutInputFormat.regular,
               inputPriority: Priority.enhanced,
+              hug: false,
             },
           },
           {
@@ -1306,26 +1354,29 @@ export const EnhancedCases: Story = {
               direction: ReadoutDirection.vertical,
               hasInput: true,
               inputFormat: ReadoutInputFormat.baseline,
+              hug: false,
             },
           },
           {
-            label: 'Input + Degree',
+            label: 'Global Degree (input)',
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.vertical,
               hasInput: true,
-              inputHasDegree: true,
+              hasDegree: true,
               inputInteractionMode: ReadoutInputMode.input,
+              hug: false,
             },
           },
           {
-            label: 'Input + Degree Temporary',
+            label: 'Global Degree (input, temporary)',
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.vertical,
               hasInput: true,
-              inputHasDegree: true,
+              hasDegree: true,
               inputInteractionMode: ReadoutInputMode.inputTemporary,
+              hug: false,
             },
           },
           {
@@ -1336,6 +1387,7 @@ export const EnhancedCases: Story = {
               hasInput: true,
               inputFormat: ReadoutInputFormat.description,
               inputDescription: 'SET',
+              hug: false,
             },
           },
         ],
@@ -1351,6 +1403,7 @@ export const EnhancedCases: Story = {
               hasInput: true,
               hasSrc: true,
               sourceType: ReadoutSourceType.small,
+              hug: false,
             },
           },
           {
@@ -1362,6 +1415,7 @@ export const EnhancedCases: Story = {
               hasSrc: true,
               sourceType: ReadoutSourceType.delta,
               sourceDeltaValue: '0,5',
+              hug: false,
             },
           },
           {
@@ -1372,6 +1426,7 @@ export const EnhancedCases: Story = {
               hasInput: true,
               hasSrc: true,
               sourceType: ReadoutSourceType.flyout,
+              hug: false,
             },
           },
         ],
@@ -1426,13 +1481,13 @@ export const EnhancedCases: Story = {
             },
           },
           {
-            label: 'Input + Degree',
+            label: 'Global Degree (input)',
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.horizontal,
               hasInput: true,
               hasInputDivider: true,
-              inputHasDegree: true,
+              hasDegree: true,
               inputInteractionMode: ReadoutInputMode.input,
             },
           },
@@ -1502,6 +1557,7 @@ export const StackCases: Story = {
               variant: ReadoutVariant.stack,
               direction: ReadoutDirection.vertical,
               hasInput: true,
+              hug: false,
             },
           },
           {
@@ -1511,6 +1567,7 @@ export const StackCases: Story = {
               direction: ReadoutDirection.vertical,
               hasAdvice: true,
               hasInput: true,
+              hug: false,
             },
           },
         ],
@@ -1526,6 +1583,7 @@ export const StackCases: Story = {
               hasInput: true,
               inputFormat: ReadoutInputFormat.verticalStack,
               inputDescription: 'SET',
+              hug: false,
             },
           },
           {
@@ -1538,6 +1596,7 @@ export const StackCases: Story = {
               inputHasFixedLength: true,
               inputValueLength: '000',
               inputHasHintedZeros: true,
+              hug: false,
             },
           },
         ],
@@ -1553,6 +1612,7 @@ export const StackCases: Story = {
               hasInput: true,
               hasSrc: true,
               sourceType: ReadoutSourceType.small,
+              hug: false,
             },
           },
           {
@@ -1564,6 +1624,7 @@ export const StackCases: Story = {
               hasSrc: true,
               sourceType: ReadoutSourceType.delta,
               sourceDeltaValue: '0,5',
+              hug: false,
             },
           },
         ],

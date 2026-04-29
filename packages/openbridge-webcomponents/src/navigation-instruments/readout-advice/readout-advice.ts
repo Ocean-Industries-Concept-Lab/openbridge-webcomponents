@@ -96,6 +96,8 @@ export class ObcReadoutAdvice extends LitElement {
 
   @property({type: Boolean}) hasHintedZeros = false;
 
+  @property({type: Number}) fractionDigits = 0;
+
   @property({type: Boolean}) hasDegree = false;
 
   private get resolvedFormat(): ReadoutAdviceFormat {
@@ -145,6 +147,7 @@ export class ObcReadoutAdvice extends LitElement {
             .description=${this.description}
             .valueLength=${this.valueLength}
             .hasHintedZeros=${this.hasHintedZeros}
+            .fractionDigits=${this.fractionDigits}
             .hasDegree=${this.hasDegree}
           >
             <slot name="icon" slot="icon">

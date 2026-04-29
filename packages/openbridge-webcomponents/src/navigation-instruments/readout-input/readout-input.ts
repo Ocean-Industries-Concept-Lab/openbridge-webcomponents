@@ -216,7 +216,7 @@ export class ObcReadoutInput extends LitElement {
       return '';
     }
 
-    return String(this.value);
+    return this.value.toFixed(this.fractionDigits);
   }
 
   private get inlineRenderedValueText(): string {

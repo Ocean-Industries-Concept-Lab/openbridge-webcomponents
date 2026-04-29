@@ -135,7 +135,7 @@ export class ObcReadout extends LitElement {
 
   @property({type: Boolean}) valueHasHintedZeros = false;
 
-  @property({type: Boolean}) valueHasDegree = false;
+  @property({type: Boolean}) hasDegree = false;
 
   @property({type: String}) unit = '';
 
@@ -149,9 +149,9 @@ export class ObcReadout extends LitElement {
 
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  @property({type: String}) adviceValue = '';
+  @property() adviceValue: number | string | undefined = '';
 
-  @property({type: String}) inputValue = '';
+  @property() inputValue: number | string | undefined = '';
 
   @property({type: String}) label = '';
 
@@ -189,8 +189,6 @@ export class ObcReadout extends LitElement {
 
   @property({type: Boolean}) adviceHasHintedZeros = false;
 
-  @property({type: Boolean}) adviceHasDegree = false;
-
   @property({type: String}) inputFormat: ReadoutInputFormat =
     ReadoutInputFormat.regular;
 
@@ -207,8 +205,6 @@ export class ObcReadout extends LitElement {
   @property({type: String}) inputValueLength = '';
 
   @property({type: Boolean}) inputHasHintedZeros = false;
-
-  @property({type: Boolean}) inputHasDegree = false;
 
   @state() private sourcePickerContentVisible = false;
 
@@ -476,7 +472,8 @@ export class ObcReadout extends LitElement {
             .description=${this.adviceDescription}
             .valueLength=${this.adviceValueLength}
             .hasHintedZeros=${this.adviceHasHintedZeros}
-            .hasDegree=${this.adviceHasDegree}
+            .fractionDigits=${this.fractionDigits}
+            .hasDegree=${this.hasDegree}
           >
             <slot name="advice-icon" slot="icon">
               <obi-placeholder slot="icon"></obi-placeholder>
@@ -513,7 +510,8 @@ export class ObcReadout extends LitElement {
             .description=${this.inputDescription}
             .valueLength=${this.inputValueLength}
             .hasHintedZeros=${this.inputHasHintedZeros}
-            .hasDegree=${this.inputHasDegree}
+            .fractionDigits=${this.fractionDigits}
+            .hasDegree=${this.hasDegree}
           >
             <slot name="input-icon" slot="icon">
               <obi-input-right slot="icon"></obi-input-right>
@@ -654,7 +652,7 @@ export class ObcReadout extends LitElement {
         .hasFixedLength=${this.valueHasFixedLength}
         .valueLength=${this.valueLength}
         .hasHintedZeros=${this.valueHasHintedZeros}
-        .hasDegree=${this.valueHasDegree}
+        .hasDegree=${this.hasDegree}
       >
         ${this.hasLeadingIcon
           ? html`
