@@ -4,7 +4,10 @@ import './pitch-roll.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {Priority} from '../types.js';
 import {VesselImage} from '../watch/vessel.js';
-import {sideVessels, foreVessels} from '../watch/vessels/storybook-helper.js';
+import {
+  foreVessels,
+  fadedSideVessels,
+} from '../watch/vessels/storybook-helper.js';
 
 const meta: Meta<typeof ObcPitchRoll> = {
   title: 'Instruments/Pitch Roll',
@@ -41,7 +44,7 @@ const meta: Meta<typeof ObcPitchRoll> = {
     },
     vesselImageSide: {
       control: 'select',
-      options: sideVessels,
+      options: fadedSideVessels,
     },
     vesselImageFore: {
       control: 'select',
@@ -62,5 +65,13 @@ export const Rov: Story = {
   args: {
     vesselImageSide: VesselImage.rovSide,
     vesselImageFore: VesselImage.rovFront,
+  },
+};
+
+export const ScaleForeImage: Story = {
+  args: {
+    vesselImageSide: VesselImage.carFerrySideFaded,
+    vesselImageFore: VesselImage.carFerryFore,
+    scaleForeImage: 1.6,
   },
 };
