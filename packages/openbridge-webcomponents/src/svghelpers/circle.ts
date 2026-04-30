@@ -1,6 +1,6 @@
 import {svg} from 'lit';
 
-interface CircleNotch {
+export interface CircleNotch {
   angle: number;
   width: number;
   depth: number;
