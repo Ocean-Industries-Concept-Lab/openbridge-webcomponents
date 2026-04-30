@@ -56,7 +56,7 @@
   }
 
   .button-label {
-    color: var(--ui-components-slide-button-disabled-color, #cacaca);
+    color: var(--on-normal-disabled-color);
   }
 
   .trailing-icon-area {
