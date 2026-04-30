@@ -242,6 +242,7 @@ export class ObcWatch extends LitElement {
   @property({type: Boolean}) zoomToFitArc: boolean = false;
   @property({attribute: false}) arcFrame: ZoomToFitArcFrame | undefined;
   @property({type: Number}) tickFadeAngle: number = 0;
+  @property({type: String}) innerRingFillColor: string = 'none';
 
   @property({type: String}) rotType: RotType | undefined;
   @property({type: String}) rotPosition: RotPosition = RotPosition.innerCircle;
@@ -340,7 +341,7 @@ export class ObcWatch extends LitElement {
           svg`
             <circle cx="0" cy="0" r=${r} stroke="var(--instrument-frame-secondary-color)" stroke-width=${strokeWidth} fill="none" />
             <circle cx="0" cy="0" r=${r1} stroke="var(--instrument-frame-secondary-color)" stroke-width="1" fill="none" vector-effect="non-scaling-stroke" />
-            <circle cx="0" cy="0" r=${r2} stroke="var(--instrument-frame-secondary-color)" stroke-width="1" fill="var(--instrument-frame-primary-color)" vector-effect="non-scaling-stroke" />
+            <circle cx="0" cy="0" r=${r2} stroke="var(--instrument-frame-secondary-color)" stroke-width="1" fill=${this.innerRingFillColor} vector-effect="non-scaling-stroke" />
         `
         );
       }

@@ -35,6 +35,7 @@ export class ObcWind extends LitElement {
       <div class="wrapper">
         <obc-watch
           .watchCircleType=${WatchCircleType.double}
+          innerRingFillColor="var(--instrument-frame-primary-color)"
           .windFromDirectionDeg=${this.currentWindFromDirection}
           .wind=${this.currentWindSpeedBeaufort}
           .windSymbolRadius=${118 / 0.8}
