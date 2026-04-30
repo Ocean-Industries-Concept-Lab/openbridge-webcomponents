@@ -192,7 +192,13 @@ export class ObcWindIndicator extends LitElement {
 
   @property({type: Number}) level = 0;
 
-  @property({type: Number}) heading = 0;
+  /**
+   * Rotation of the reference frame (course/heading) in degrees.
+   *
+   * Used in relative mode to compute the marker rotation as `windFromAngle - rotationAngle`.
+   * `0` means north-up.
+   */
+  @property({type: Number, attribute: 'rotation-angle'}) rotationAngle = 0;
 
   /**
    * Primary wind direction input (wind-from).
@@ -268,7 +274,7 @@ export class ObcWindIndicator extends LitElement {
       return this.windFromAngle;
     }
     return this.direction === WindIndicatorDirection.relative
-      ? this.windFromAngle - this.heading
+      ? this.windFromAngle - this.rotationAngle
       : this.windFromAngle;
   }
 
@@ -346,7 +352,7 @@ export class ObcWindIndicator extends LitElement {
 
     const baseRotation =
       this.direction === WindIndicatorDirection.relative
-        ? this.heading +
+        ? this.rotationAngle +
           (this.type === WindIndicatorType.shaft
             ? N_ARROW_BASE_ROTATION_DEG
             : 0)
@@ -435,7 +441,7 @@ export class ObcWindIndicator extends LitElement {
             transform="translate(${SHAFT_RELATIVE_EXPORT_OFFSET_X} ${SHAFT_RELATIVE_EXPORT_OFFSET_Y})"
           >
             <g
-              transform="rotate(${this.heading} ${SHAFT_RELATIVE_FIGMA_CX} ${SHAFT_RELATIVE_FIGMA_CY})"
+              transform="rotate(${this.rotationAngle} ${SHAFT_RELATIVE_FIGMA_CX} ${SHAFT_RELATIVE_FIGMA_CY})"
             >
             <rect
               x="${SHAFT_RELATIVE_HDG_BG_X}"

@@ -12,10 +12,11 @@ type WindIndicatorArgs = {
   direction: WindIndicatorDirection;
   priority: WindIndicatorPriority;
   level: number;
-  heading: number;
+  rotationAngle: number;
   windFromAngle: number;
   angle?: number;
   'wind-from-angle'?: number;
+  'rotation-angle'?: number;
   clampedLevel?: number;
   accentColor?: string;
   windIconCache?: unknown;
@@ -24,17 +25,7 @@ type WindIndicatorArgs = {
 const meta: Meta<WindIndicatorArgs> = {
   title: 'Indicators/Wind Indicator',
   tags: ['6.0'],
-  component: 'obc-wind-indicator',
   parameters: {
-    controls: {
-      exclude: [
-        'angle',
-        'wind-from-angle',
-        'clampedLevel',
-        'accentColor',
-        'windIconCache',
-      ],
-    },
     docs: {
       source: {
         excludeDecorators: true,
@@ -47,7 +38,7 @@ const meta: Meta<WindIndicatorArgs> = {
       .direction=${args.direction}
       .priority=${args.priority}
       .level=${args.level}
-      .heading=${args.heading}
+      .rotationAngle=${args.rotationAngle}
       .windFromAngle=${args.windFromAngle}
     ></obc-wind-indicator>
   `,
@@ -57,7 +48,7 @@ const meta: Meta<WindIndicatorArgs> = {
     type: WindIndicatorType.arrow,
     direction: WindIndicatorDirection.true,
     priority: WindIndicatorPriority.regular,
-    heading: 0,
+    rotationAngle: 0,
   },
   argTypes: {
     type: {
@@ -73,7 +64,10 @@ const meta: Meta<WindIndicatorArgs> = {
       description: 'Wind-from angle in degrees. 0/360 = wind from north.',
       control: {type: 'range', min: 0, max: 360, step: 1},
     },
-    heading: {
+    rotationAngle: {
+      name: 'Rotation Angle',
+      description:
+        'Rotation angle of the frame in degrees. Used in relative mode.',
       control: {type: 'range', min: 0, max: 360, step: 1},
     },
     priority: {
@@ -84,6 +78,7 @@ const meta: Meta<WindIndicatorArgs> = {
 
     angle: {table: {disable: true}, control: false},
     'wind-from-angle': {table: {disable: true}, control: false},
+    'rotation-angle': {table: {disable: true}, control: false},
     clampedLevel: {table: {disable: true}, control: false},
     accentColor: {table: {disable: true}, control: false},
     windIconCache: {table: {disable: true}, control: false},
