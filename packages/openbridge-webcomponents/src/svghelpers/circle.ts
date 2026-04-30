@@ -1,17 +1,11 @@
 import {svg} from 'lit';
 
 interface CircleNotch {
-  /** Angle in watch coordinates where 0 is 12 o'clock and values increase clockwise. */
   angle: number;
-  /** Visual width of the notch at the ring edge. */
   width: number;
-  /** How far the notch points inward from the ring edge. */
   depth: number;
-  /** Optional fill color for the notch body. Defaults to none. */
   fillColor?: string;
-  /** Optional stroke color for the notch outline. */
   strokeColor?: string;
-  /** Optional stroke width for the notch outline. */
   strokeWidth?: number;
 }
 
