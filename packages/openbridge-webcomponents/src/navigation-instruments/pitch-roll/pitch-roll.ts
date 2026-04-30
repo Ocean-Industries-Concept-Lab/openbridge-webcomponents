@@ -22,6 +22,7 @@ export class ObcPitchRoll extends LitElement {
   @property({type: Number}) maxAvgRoll = 0;
   @property({type: String}) vesselImageFore: VesselImage = VesselImage.psvFore;
   @property({type: String}) vesselImageSide: VesselImage = VesselImage.psvSide;
+  @property({type: Number}) scaleForeImage = 1;
   @property({type: Number}) maxPitchAdvice: number | undefined = undefined;
   @property({type: Number}) maxRollAdvice: number | undefined = undefined;
   @property({type: Boolean}) triggerPitchAdvice = false;
@@ -50,6 +51,13 @@ export class ObcPitchRoll extends LitElement {
     return this.priorityFor(element) === Priority.enhanced
       ? 'var(--instrument-enhanced-tertiary-color)'
       : 'var(--instrument-regular-tertiary-color)';
+  }
+
+  private get normalizedScaleForeImage(): number {
+    if (!Number.isFinite(this.scaleForeImage)) {
+      return 1;
+    }
+    return Math.max(0, Math.min(2, this.scaleForeImage));
   }
 
   override render() {
@@ -145,7 +153,7 @@ export class ObcPitchRoll extends LitElement {
             {
               size: VesselImageSize.large,
               vesselImage: this.vesselImageFore,
-              transform: `rotate(${this.roll}deg)`,
+              transform: `rotate(${this.roll}deg) scale(${this.normalizedScaleForeImage})`,
             },
           ]}
           .tickmarks=${[
