@@ -11,11 +11,13 @@ export enum PropulsionAzimuthIndicatorType {
 const VIEW_SIZE = 48;
 const CX = VIEW_SIZE / 2;
 const CY = VIEW_SIZE / 2;
+const DEG_TO_RAD = Math.PI / 180;
 
 const LUBBER_PATH =
   'M4.12242 0.209381L0.0940147 5.84915C-0.142367 6.18008 0.0941955 6.63977 0.500882 6.63977H8.55769C8.96438 6.63977 9.20094 6.18008 8.96456 5.84915L4.93615 0.209381C4.73674 -0.0697936 4.32183 -0.0697937 4.12242 0.209381Z';
 const LUBBER_X = 19.47068;
 const LUBBER_Y = 1.36035;
+const LUBBER_TOP_Y = LUBBER_Y + 0.209381;
 
 const TRACK_W = 8;
 const TRACK_H = 28;
@@ -41,6 +43,47 @@ const BAR_HALF_SPAN = (BAR_MAX_CY - BAR_MIN_CY) / 2;
 
 function normalizeAngle360(angle: number): number {
   return ((angle % 360) + 360) % 360;
+}
+
+function circlePoint(radius: number, angle: number): {x: number; y: number} {
+  const radians = (angle - 90) * DEG_TO_RAD;
+  return {
+    x: CX + radius * Math.cos(radians),
+    y: CY + radius * Math.sin(radians),
+  };
+}
+
+function arcSegmentPath(
+  radius: number,
+  startAngle: number,
+  endAngle: number
+): string {
+  const start = circlePoint(radius, startAngle);
+  const end = circlePoint(radius, endAngle);
+  const delta = (endAngle - startAngle + 360) % 360;
+  const largeArcFlag = delta > 180 ? 1 : 0;
+
+  return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${end.x} ${end.y}`;
+}
+
+function topCircleSideIntersection(
+  radius: number,
+  cutY: number,
+  cutHalfX: number,
+  slopeXPerY: number
+): {deltaX: number; y: number; angle: number} {
+  const lineXAtZero = cutHalfX - slopeXPerY * cutY;
+  const a = slopeXPerY * slopeXPerY + 1;
+  const b = 2 * slopeXPerY * lineXAtZero - 2 * CY;
+  const c = lineXAtZero * lineXAtZero + CY * CY - radius * radius;
+  const y = (-b - Math.sqrt(b * b - 4 * a * c)) / (2 * a);
+  const deltaX = lineXAtZero + slopeXPerY * y;
+
+  return {
+    deltaX,
+    y,
+    angle: Math.asin(deltaX / radius) / DEG_TO_RAD,
+  };
 }
 
 /**
@@ -109,22 +152,43 @@ export class ObcPropulsionAzimuthIndicator extends LitElement {
   }
 
   private renderSilhouette() {
-    if (!this.hasSilhouette) return null;
+    if (!this.hasSilhouette || this.isOffState) return null;
 
     const silhouetteStrokeWidth = 0.5;
-    const silhouetteCircleR = 19;
-    const lubberLeftX = 19.4;
-    const lubberLeftY = 7.1;
+    const silhouetteCircleR = 20;
     const lubberPeakX = 24;
     const lubberPeakY = 0.2;
-    const lubberRightX = 28.6;
-    const lubberRightY = 7.1;
+    const lubberSideSlope = 4.0284053 / 5.639769;
+    const lubberGap = (1 - lubberPeakY) * lubberSideSlope * 2;
+    const lubberCutY = LUBBER_TOP_Y - lubberGap;
+    const lubberCutHalfX = lubberGap;
+    const lubberBase = topCircleSideIntersection(
+      silhouetteCircleR,
+      lubberCutY,
+      lubberCutHalfX,
+      lubberSideSlope
+    );
+    const lubberLeftX = CX - lubberBase.deltaX;
+    const lubberLeftY = lubberBase.y;
+    const lubberRightX = CX + lubberBase.deltaX;
+    const lubberRightY = lubberLeftY;
+    const lubberCutLeftX = lubberPeakX - lubberCutHalfX;
+    const lubberCutRightX = lubberPeakX + lubberCutHalfX;
+    const gapHalfAngle = 6;
+    const silhouetteArcPath = [
+      arcSegmentPath(silhouetteCircleR, lubberBase.angle, 90 - gapHalfAngle),
+      arcSegmentPath(silhouetteCircleR, 90 + gapHalfAngle, 180 - gapHalfAngle),
+      arcSegmentPath(silhouetteCircleR, 180 + gapHalfAngle, 270 - gapHalfAngle),
+      arcSegmentPath(
+        silhouetteCircleR,
+        270 + gapHalfAngle,
+        360 - lubberBase.angle
+      ),
+    ].join(' ');
 
     return svg`
-      <circle
-        cx="${CX}"
-        cy="${CY}"
-        r="${silhouetteCircleR}"
+      <path
+        d="${silhouetteArcPath}"
         fill="none"
         stroke="var(--instrument-frame-tertiary-color)"
         stroke-width="${silhouetteStrokeWidth}"
@@ -133,7 +197,7 @@ export class ObcPropulsionAzimuthIndicator extends LitElement {
         stroke-linecap="round"
       />
       <path
-        d="M ${lubberLeftX} ${lubberLeftY} L ${lubberPeakX} ${lubberPeakY} L ${lubberRightX} ${lubberRightY}"
+        d="M ${lubberLeftX} ${lubberLeftY} L ${lubberCutLeftX} ${lubberCutY} L ${lubberCutRightX} ${lubberCutY} L ${lubberRightX} ${lubberRightY}"
         fill="none"
         stroke="var(--instrument-frame-tertiary-color)"
         stroke-width="${silhouetteStrokeWidth}"
