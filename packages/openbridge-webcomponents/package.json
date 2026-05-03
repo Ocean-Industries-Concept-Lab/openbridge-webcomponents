@@ -67,6 +67,7 @@
     "@eslint/js": "^10.0.1",
     "@figma/rest-api-spec": "^0.37.0",
     "@jackolope/ts-lit-plugin": "^3.1.6",
+    "@lit-labs/analyzer": "file:lit-labs-analyzer-a390c820df0083713bd8698b72ab30cc93211cde.tgz",
     "@lit-labs/cli": "file:lit-labs-cli-0.6.5.tgz",
     "@lit-labs/cli-localize": "^0.2.2",
     "@lit-labs/gen-wrapper-angular": "file:lit-labs-gen-wrapper-angular-8e42b93a.tgz",
