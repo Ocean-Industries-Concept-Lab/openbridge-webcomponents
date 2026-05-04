@@ -1,3 +1,33 @@
+## [2.0.0-next.18](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.17...v2.0.0-next.18) (2026-05-04)
+
+### Features
+
+- **navigation-instruments:** add zoomToFitArc to pitch, roll and pitch-roll ([#836](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/836)) ([7438fa9](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/7438fa9dfb1f859023d24041a58241ef005452ff)), closes [#835](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/835)
+
+## [2.0.0-next.17](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.16...v2.0.0-next.17) (2026-05-04)
+
+### ⚠ BREAKING CHANGES
+
+- **instruments:** `rotMaxValue` on `obc-compass`, `obc-compass-sector`,
+  and `obc-compass-flat` is now interpreted in **degrees per minute**
+  instead of rotations per minute. The default value was bumped from `10`
+  to `60` (per ES-TRIN 2025/1 Art. 3.02) to match the new unit. Consumers
+  that set `rotMaxValue` explicitly must convert their value: a previous
+  `rotMaxValue=10` (rpm) corresponds to `rotMaxValue=3600` (°/min), but
+  in practice the typical operating range is `30`–`90` °/min.
+
+Co-authored-by: Copilot <copilot@github.com>
+
+### Features
+
+- **instruments:** add rateOfTurnDegreesPerMinute API and deprecate rotationsPerMinute ([#818](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/818)) ([172943a](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/172943ad298b1740f6dbbe2649a8ef05fef11239)), closes [#802](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/802) [#802](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/802)
+
+## [2.0.0-next.16](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.15...v2.0.0-next.16) (2026-05-04)
+
+### Features
+
+- add wind propulsion radial instrument ([#778](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/778)) ([c0da8af](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/c0da8afb609da11fbb57e87d8a24f70cdf9ae46d)), closes [#745](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/745)
+
 ## [2.0.0-next.15](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.14...v2.0.0-next.15) (2026-04-29)
 
 ### Features
