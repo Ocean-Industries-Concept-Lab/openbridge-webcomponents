@@ -12,6 +12,14 @@ export type ObcIntegrationDropdownButtonChangeEvent = CustomEvent<{
   label: string;
 }>;
 
+type IntegrationDropdownOption = {
+  value: string;
+  label: string;
+  status?: string;
+  icon: HTMLTemplateResult;
+  disabled?: boolean;
+};
+
 /**
  * `obc-integration-dropdown-button` – A composite integration button with an attached select dropdown for choosing a single integration target or a dedicated fleet option.
  *
@@ -63,13 +71,7 @@ export class ObcIntegrationDropdownButton extends LitElement {
    *   { value: 'xc90', label: 'XC 90', icon: html`<obi-ship></obi-ship>` }
    * ]
    */
-  @property({type: Array}) options: {
-    value: string;
-    label: string;
-    status?: string;
-    icon: HTMLTemplateResult;
-    disabled?: boolean;
-  }[] = [];
+  @property({type: Array}) options: IntegrationDropdownOption[] = [];
 
   @property({type: Boolean}) hasFleet: boolean = false;
   @property({type: String}) fleetLabel: string = '';

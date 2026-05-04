@@ -115,6 +115,19 @@ export enum TimeDisplay {
   date = 'date',
 }
 
+type ChartLineDataItem = {
+  label: string;
+  value: number;
+};
+
+type ChartLineYAxisConfig = {
+  id?: string;
+  position?: 'left' | 'right';
+  min?: number;
+  max?: number;
+  grid?: boolean;
+};
+
 const LINE_GRAPH_WATCHED_PROP_NAMES = [
   'data',
   'datasets',
@@ -279,22 +292,22 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
  */
 export class ObcChartLineBase extends LitElement {
   /** Simple single-series data (array of {label, value}). */
-  @property({attribute: false})
-  data: {label: string; value: number}[] = [];
+  @property({type: Array, attribute: false})
+  data: ChartLineDataItem[] = [];
 
   /** Chart.js-style datasets for multi-series use. If provided, takes precedence over `data`. */
-  @property({attribute: false})
+  @property({type: Array, attribute: false})
   datasets?: ChartDataset<
     'line',
     (number | {x: string | number | Date; y: number})[]
   >[] = undefined;
 
   /** Optional explicit labels for the x-axis (category mode). If omitted labels are derived from `data` */
-  @property({attribute: false})
+  @property({type: Array, attribute: false})
   labels?: (string | number)[] = undefined;
 
   /** Custom color palette (CSS variable names or color strings). */
-  @property({attribute: false})
+  @property({type: Array, attribute: false})
   colors: string[] = [];
 
   /** Show HTML legend below chart with series labels and colors. */
@@ -340,14 +353,8 @@ export class ObcChartLineBase extends LitElement {
   yAxisPosition: YAxisPosition = YAxisPosition.left;
 
   /** Multiple y-axis definitions for complex multi-axis charts. */
-  @property({attribute: false})
-  yAxes?: Array<{
-    id?: string;
-    position?: 'left' | 'right';
-    min?: number;
-    max?: number;
-    grid?: boolean;
-  }> = undefined;
+  @property({type: Array, attribute: false})
+  yAxes?: ChartLineYAxisConfig[] = undefined;
 
   /** Show grid lines. */
   @property({type: Boolean})

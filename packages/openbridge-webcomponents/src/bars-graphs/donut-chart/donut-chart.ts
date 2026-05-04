@@ -67,6 +67,11 @@ const DONUT_WATCHED_PROP_NAMES = [
   'fixedHeight',
 ] as const;
 
+type DonutChartDataItem = {
+  label: string;
+  value: number;
+};
+
 /**
  * `<obc-donut-chart>` – A customizable donut chart component for visualizing proportional data with a center total readout.
  *
@@ -151,10 +156,10 @@ const DONUT_WATCHED_PROP_NAMES = [
  */
 @customElement('obc-donut-chart')
 export class ObcDonutChart extends LitElement {
-  @property({attribute: false})
-  data: {label: string; value: number}[] = [];
+  @property({type: Array, attribute: false})
+  data: DonutChartDataItem[] = [];
 
-  @property({attribute: false})
+  @property({type: Array, attribute: false})
   colors: string[] = [];
 
   @property({type: String})

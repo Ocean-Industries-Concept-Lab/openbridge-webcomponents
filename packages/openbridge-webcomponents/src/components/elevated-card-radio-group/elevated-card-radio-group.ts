@@ -10,6 +10,11 @@ export type ObcElevatedCardRadioGroupChangeEvent = CustomEvent<{
   value: string;
 }>;
 
+type ElevatedCardRadioGroupOption = {
+  label: string;
+  value: string;
+};
+
 /**
  * `<obc-elevated-card-radio-group>` – A group of radio buttons styled as elevated cards for single selection.
  *
@@ -90,7 +95,7 @@ export class ObcElevatedCardRadioGroup extends LitElement {
    *
    * Example: `[{label: 'Option 1', value: '1'}, {label: 'Option 2', value: '2'}]`
    */
-  @property({type: Array}) options: {label: string; value: string}[] = [];
+  @property({type: Array}) options: ElevatedCardRadioGroupOption[] = [];
 
   /**
    * Shared name for all radio inputs in the group. Ensures native radio group behavior and correct form submission.
