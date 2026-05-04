@@ -12,7 +12,7 @@ export type ObcIntegrationDropdownButtonChangeEvent = CustomEvent<{
   label: string;
 }>;
 
-type IntegrationDropdownOption = {
+export type IntegrationDropdownOption = {
   value: string;
   label: string;
   status?: string;

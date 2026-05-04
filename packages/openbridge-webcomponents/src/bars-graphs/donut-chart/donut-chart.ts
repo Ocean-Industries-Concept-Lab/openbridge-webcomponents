@@ -67,7 +67,7 @@ const DONUT_WATCHED_PROP_NAMES = [
   'fixedHeight',
 ] as const;
 
-type DonutChartDataItem = {
+export type DonutChartDataItem = {
   label: string;
   value: number;
 };

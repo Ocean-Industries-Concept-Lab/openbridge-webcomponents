@@ -10,7 +10,7 @@ export type ObcElevatedCardRadioGroupChangeEvent = CustomEvent<{
   value: string;
 }>;
 
-type ElevatedCardRadioGroupOption = {
+export type ElevatedCardRadioGroupOption = {
   label: string;
   value: string;
 };

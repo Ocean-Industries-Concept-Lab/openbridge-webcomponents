@@ -72,7 +72,7 @@ type PieChartChildDataItem = {
   value: number;
 };
 
-type PieChartDataItem = {
+export type PieChartDataItem = {
   label: string;
   value: number;
   children?: PieChartChildDataItem[];

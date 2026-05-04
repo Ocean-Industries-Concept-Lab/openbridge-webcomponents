@@ -115,12 +115,12 @@ export enum TimeDisplay {
   date = 'date',
 }
 
-type ChartLineDataItem = {
+export type ChartLineDataItem = {
   label: string;
   value: number;
 };
 
-type ChartLineYAxisConfig = {
+export type ChartLineYAxisConfig = {
   id?: string;
   position?: 'left' | 'right';
   min?: number;

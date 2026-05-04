@@ -75,7 +75,7 @@ const POLAR_WATCHED_PROP_NAMES = [
   'showUnit',
 ] as const;
 
-type PolarChartDataItem = {
+export type PolarChartDataItem = {
   label: string;
   value: number;
 };

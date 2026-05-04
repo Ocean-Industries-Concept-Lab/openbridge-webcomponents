@@ -17,7 +17,7 @@ export type ObcDropdownButtonChangeEvent = CustomEvent<{
   label: string;
 }>;
 
-type DropdownButtonOption = {
+export type DropdownButtonOption = {
   value: string;
   label: string;
   level?: number;
