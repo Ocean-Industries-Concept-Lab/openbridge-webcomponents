@@ -162,7 +162,8 @@
     height: var(--automation-components-button-new-visual-target);
   }
 
-  .variant-flat & {
+  .variant-flat &,
+  .variant-flat-forward & {
     background-color: transparent !important;
     border-color: transparent !important;
 

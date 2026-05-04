@@ -13,7 +13,7 @@ const meta: Meta<typeof ObcResistor> = {
   component: 'obc-resistor',
   decorators: [crossDecorator],
   args: {
-    tag: '0012',
+    tag: '#0012',
     readoutPosition: AutomationButtonReadoutPosition.bottom,
     readoutSize: AutomationButtonReadoutStackSize.regular,
     alert: false,

@@ -11,7 +11,6 @@ import {
 import {
   AutomationButtonReadoutStack,
   AutomationButtonReadoutStackSize,
-  AutomationButtonReadoutStackTag,
 } from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import {
   ObcAlertFrameStatus,
@@ -52,7 +51,6 @@ export enum AutomationButtonBadgeCommandLocked {
 
 export class ObcAbstractAutomationButton extends LitElement {
   @property({type: Boolean, attribute: false}) showReadoutStack: boolean = true;
-  @property({type: Boolean}) hasIdTag: boolean = false;
   @property({type: String}) readoutPosition: AutomationButtonReadoutPosition =
     AutomationButtonReadoutPosition.bottom;
   @property({type: String}) readoutSize: AutomationButtonReadoutStackSize =
@@ -73,7 +71,7 @@ export class ObcAbstractAutomationButton extends LitElement {
   @property({type: String}) progressMode: CircularProgressMode =
     CircularProgressMode.indeterminate;
   @property({type: Number}) progressValue: number = 0;
-  @property({type: String}) tag: string = '';
+  @property({type: String}) tag: string | null = null;
   @property({type: String}) direction: AutomationButtonDirection =
     AutomationButtonDirection.forward;
   @property({type: String}) badgeControl: AutomationButtonBadgeControl =
@@ -195,9 +193,6 @@ export class ObcAbstractAutomationButton extends LitElement {
 
   override render() {
     const readouts: AutomationButtonReadoutStack[] = [...this.extraReadouts];
-    const tagValue: AutomationButtonReadoutStackTag | null = this.tag
-      ? {value: this.parseTagToNumber(this.tag)}
-      : null;
     const badgeAlertType = this.getBadgeAlertType();
     const badgeControlType = this.getBadgeControlType();
     const badgeInterlockType = this.getBadgeInterlockType();
@@ -208,9 +203,8 @@ export class ObcAbstractAutomationButton extends LitElement {
         ? AutomationButtonState.open
         : AutomationButtonState.closed}
       .readouts=${readouts}
-      .tag=${tagValue}
+      .tag=${this.tag}
       .showReadoutStack=${this.showReadoutStack}
-      .hasIdTag=${this.hasIdTag}
       .readoutPosition=${this.readoutPosition}
       .readoutSize=${this.readoutSize}
       ?alert=${this.alert}
