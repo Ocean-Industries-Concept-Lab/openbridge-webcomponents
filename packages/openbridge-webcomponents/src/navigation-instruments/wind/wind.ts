@@ -92,12 +92,18 @@ export class ObcWind extends LitElement {
     return html`
       <svg width="100%" height="100%" viewBox="-200 -200 400 400">
         <mask id="mask">
-          <circle cx="0" cy="0" r="109" stroke-width="1" fill="white" />
+          <circle
+            cx="0"
+            cy="0"
+            r="${maxRadius}"
+            stroke-width="1"
+            fill="white"
+          />
           <path d="M 0 ${-maxRadius} ${outerPathPoints}Z" fill="black" />
           <circle
             cx="0"
             cy="0"
-            r="109"
+            r="${minRadius}"
             vector-effect="non-scaling-stroke"
             stroke="white"
             stroke-width="1"
@@ -107,7 +113,7 @@ export class ObcWind extends LitElement {
         <circle
           cx="0"
           cy="0"
-          r="109"
+          r="${maxRadius}"
           vector-effect="non-scaling-stroke"
           stroke="var(--instrument-regular-tertiary-color)"
           stroke-width="1"
