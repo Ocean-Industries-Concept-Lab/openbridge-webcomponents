@@ -75,3 +75,40 @@ export const ScaledForeImage: Story = {
     scaleForeImage: 1.6,
   },
 };
+
+export const ZoomedIn: Story = {
+  args: {
+    zoomToFitArc: true,
+  },
+};
+
+export const ZoomedInNarrow: Story = {
+  args: {
+    zoomToFitArc: true,
+    arcAngle: 10,
+    pitch: 4,
+    roll: 6,
+    minAvgPitch: -3,
+    maxAvgPitch: 5,
+    minAvgRoll: -4,
+    maxAvgRoll: 7,
+    maxPitchAdvice: 6,
+    maxRollAdvice: 8,
+  },
+};
+
+export const ZoomedInRectangular: Story = {
+  args: {
+    zoomToFitArc: true,
+    pitchArcAngle: 6,
+    rollArcAngle: 14,
+    pitch: 3,
+    roll: 8,
+    minAvgPitch: -2,
+    maxAvgPitch: 4,
+    minAvgRoll: -6,
+    maxAvgRoll: 10,
+    maxPitchAdvice: 4,
+    maxRollAdvice: 12,
+  },
+};
