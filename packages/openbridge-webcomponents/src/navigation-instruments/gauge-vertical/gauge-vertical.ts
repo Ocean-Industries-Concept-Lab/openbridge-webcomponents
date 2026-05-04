@@ -29,7 +29,7 @@ import {
   ExternalScaleSide,
 } from '../../building-blocks/external-scale/external-scale.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
-import {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
+import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
 
 // Re-export shared enums for convenience
 export {
