@@ -1,3 +1,9 @@
+## [2.0.0-next.16](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.15...v2.0.0-next.16) (2026-05-04)
+
+### Features
+
+- add wind propulsion radial instrument ([#778](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/778)) ([c0da8af](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/c0da8afb609da11fbb57e87d8a24f70cdf9ae46d)), closes [#745](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/745)
+
 ## [2.0.0-next.15](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.14...v2.0.0-next.15) (2026-04-29)
 
 ### Features
