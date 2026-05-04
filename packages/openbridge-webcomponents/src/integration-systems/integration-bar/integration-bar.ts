@@ -18,15 +18,6 @@ import '../../icons/icon-link.js';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 
-export enum IntegrationBarType {
-  vesselname = 'vessel-name',
-  rich = 'rich',
-  dropdown = 'dropdown',
-  inactive = 'inactive',
-  monitoring = 'monitoring',
-  novesselselection = 'no-vessel-selection',
-}
-
 /**
  * `<obc-integration-bar>` – A compact top-level integration header for vessel and system navigation controls.
  *
@@ -54,12 +45,12 @@ export enum IntegrationBarType {
  * @property {boolean} alertButtonActivated - Activated state of alert button
  * @property {boolean} fleetButtonSelected - Selected state of fleet button
  * @property {boolean} fleetButtonActivated - Active state of fleet button while selection is pending
+ * @property {boolean} hug - Shrinks all integration buttons in the vessel section to content width when true
  * @property {string} fleetButtonLabel - Label for the fleet button
  * @property {string} selectedVesselValue - Selected vessel value
  * @property {string} activeVesselValue - Active vessel value while selection is pending
  * @property {{value: string; label: string}[]} vesselSelectorOptions - Available vessel options
  * @fires fleet-button-click - Fired when the fleet button is clicked
- * @fires vessel-selected - Fired when a vessel is selected, detail contains {value, label}
  * @fires link-button-clicked - Fired when the link button is clicked
  * @fires alert-button-clicked - Fired when the alert button is clicked
  * @fires notification-button-clicked - Fired when the notification button is clicked
@@ -70,9 +61,8 @@ export enum IntegrationBarType {
  */
 @customElement('obc-integration-bar')
 export class ObcIntegrationBar extends LitElement {
-  @property({type: String}) type: IntegrationBarType =
-    IntegrationBarType.vesselname;
   @property({type: Boolean}) hideHomeButton = false;
+  @property({type: Boolean}) hug = false;
   @property({type: Boolean}) showClock = false;
   @property({type: Boolean}) showLinkButton = false;
   @property({type: Boolean}) linkButtonActivated = false;
@@ -91,26 +81,13 @@ export class ObcIntegrationBar extends LitElement {
   @property({type: Boolean}) fleetButtonSelected = false;
   @property({type: Boolean}) fleetButtonActivated = false;
   @property({type: String}) fleetButtonLabel = 'Fleet';
-  @property({type: String}) selectedVesselValue = '';
-  @property({type: String}) activeVesselValue = '';
-  @property({type: Array}) vesselSelectorOptions: {
-    value: string;
-    label: string;
-  }[] = [];
 
   private onFleetButtonClick() {
     this.dispatchEvent(new CustomEvent('fleet-button-click'));
   }
 
-  private onVesselButtonClick(vessel: {value: string; label: string}) {
-    this.dispatchEvent(
-      new CustomEvent('vessel-selected', {
-        detail: {value: vessel.value, label: vessel.label},
-      })
-    );
-  }
-
   override render() {
+    const isFleetButtonAnchored = this.fleetButtonActivated;
     return html`
       <nav class="wrapper">
         <div class="content-container">
@@ -134,8 +111,30 @@ export class ObcIntegrationBar extends LitElement {
                 <obi-link></obi-link>
               </obc-icon-button>`
             : null}
-          <div class="fleet-vessel-container">
-            ${this.renderFleetVesselContainerByType()}
+          <div
+            class=${classMap({
+              'fleet-vessel-container': true,
+              hug: this.hug,
+            })}
+          >
+            <obc-integration-button
+              class="fleet-button"
+              .variant=${IntegrationButtonVariant.normal}
+              ?selected=${this.fleetButtonSelected}
+              ?activated=${this.fleetButtonActivated}
+              style=${isFleetButtonAnchored
+                ? 'anchor-name: --integration-menu-anchor;'
+                : ''}
+              @click=${() => this.onFleetButtonClick()}
+            >
+              <span slot="label">${this.fleetButtonLabel}</span>
+            </obc-integration-button>
+            <div class="vessel-container">
+              <slot
+                class="integration-buttons-slot"
+                name="integration-buttons"
+              ></slot>
+            </div>
           </div>
         </div>
         <div class="right-content-container">
@@ -252,16 +251,10 @@ export class ObcIntegrationBar extends LitElement {
           ${this.showClock ? html`<slot name="clock"></slot>` : null}
         </div>
       </nav>
-      <div class="vessel-integration-menu-container">
-        <slot name="vessel-integration-menu"></slot>
-      </div>
-      <div class="right-side-system-menu-container">
-        <slot name="vessel-integration-menu"></slot>
-      </div>
     `;
   }
 
-  private renderFleetVesselContainerByType() {
+  /*   private renderFleetVesselContainerByType() {
     switch (this.type) {
       case IntegrationBarType.vesselname:
         return this.renderVesselNameContent();
@@ -283,22 +276,8 @@ export class ObcIntegrationBar extends LitElement {
       this.vesselSelectorOptions.length > 0
         ? this.vesselSelectorOptions
         : fallbackVessels;
-    const isFleetButtonAnchored = this.fleetButtonActivated;
 
     return html`
-      <obc-integration-button
-        class="fleet-button"
-        .variant=${IntegrationButtonVariant.normal}
-        ?selected=${this.fleetButtonSelected}
-        ?activated=${this.fleetButtonActivated}
-        style=${isFleetButtonAnchored
-          ? 'anchor-name: --integration-menu-anchor;'
-          : ''}
-        @click=${() => this.onFleetButtonClick()}
-      >
-        <span slot="label">${this.fleetButtonLabel}</span>
-      </obc-integration-button>
-
       <div class="vessel-container">
         ${vesselItems.map((vessel, index) => {
           const isSelected =
@@ -329,14 +308,7 @@ export class ObcIntegrationBar extends LitElement {
       </div>
     `;
   }
-
-  private renderRichContent() {
-    return html``;
-  }
-
-  private renderSelectorContent() {
-    return html``;
-  }
+    */
 
   static override styles = unsafeCSS(compentStyle);
 }

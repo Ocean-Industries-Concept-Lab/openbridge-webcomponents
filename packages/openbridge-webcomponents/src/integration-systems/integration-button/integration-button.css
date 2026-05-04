@@ -3,23 +3,19 @@
 }
 
 :host {
-  width: 100%;
-  display: block;
-  flex: 1 1 0;
-}
-
-:host(:has(.touch-target.type-hug)) {
-  width: auto;
-  flex: 0 0 auto;
+  display: flex;
 }
 
 .touch-target {
   display: flex;
-  width: auto;
-  min-height: var(--app-components-integration-system-button-touch-target);
-  padding: 4px 0;
   align-items: center;
-  gap: 14px;
+  gap: 4px;
+  flex: 1;
+  min-height: var(
+    --app-components-integration-system-navigation-item-horizontal-touch-target
+  );
+
+  padding: 4px 4px;
   border: none;
   background: transparent;
   appearance: none;
@@ -40,13 +36,29 @@
 
   .content-container {
     display: flex;
-    min-height: var(--app-components-integration-system-button-visual-target);
+    min-height: var(
+      --app-components-integration-system-navigation-item-horizontal-visual-target
+    );
     padding: 4px
-      var(--app-components-integration-system-button-padding-horizontal);
+      var(
+        --app-components-integration-system-navigation-item-horizontal-padding-horizontal
+      );
     align-items: center;
     gap: var(--app-components-integration-system-button-label-spacing);
-    flex: 1 0 0;
-    border-radius: 6px;
+    flex-grow: 1;
+    min-width: 0;
+    border-radius: var(
+        --app-components-integration-system-navigation-item-horizontal-border-radius-top-left
+      )
+      var(
+        --app-components-integration-system-navigation-item-horizontal-border-radius-top-right
+      )
+      var(
+        --app-components-integration-system-navigation-item-horizontal-border-radius-bottom-right
+      )
+      var(
+        --app-components-integration-system-navigation-item-horizontal-border-radius-bottom-left
+      );
     border: var(--app-components-integration-system-button-stroke-weight-bottom)
       solid var(--integration-beta-normal-enabled-border-color);
     background: var(--integration-beta-normal-enabled-background-color);
@@ -123,6 +135,7 @@
 
     .label {
       @mixin font-button;
+      white-space: nowrap;
     }
 
     .status {
@@ -135,8 +148,19 @@
   }
 
   .icon.leading {
-    width: var(--app-components-integration-system-button-iconsize);
-    height: var(--app-components-integration-system-button-iconsize);
+    width: var(
+      --app-components-integration-system-navigation-item-horizontal-icon-size
+    );
+    height: var(
+      --app-components-integration-system-navigation-item-horizontal-icon-size
+    );
+    min-width: var(
+      --app-components-integration-system-navigation-item-horizontal-icon-size
+    );
+    flex: 0 0
+      var(
+        --app-components-integration-system-navigation-item-horizontal-icon-size
+      );
   }
 
   .icon.trailing {

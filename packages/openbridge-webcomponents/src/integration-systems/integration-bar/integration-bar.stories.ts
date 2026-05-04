@@ -5,11 +5,15 @@ import {html} from 'lit';
 import '../../components/dropdown-button/dropdown-button.js';
 import '../../components/clock/clock.js';
 import '../integration-vessel-menu/integration-vessel-menu.js';
+import {IntegrationButtonVariant} from '../integration-button/integration-button.js';
 
 const meta: Meta<typeof ObcIntegrationBar> = {
   title: 'Integration Systems/Integration Bar',
   tags: ['6.0', 'WIP'],
   component: 'obc-integration-bar',
+  parameters: {
+    layout: 'fullscreen',
+  },
   args: {
     showClock: true,
     date: '2021-01-01T11:11:11.111Z',
@@ -18,6 +22,7 @@ const meta: Meta<typeof ObcIntegrationBar> = {
     showTimezone: false,
     timeZoneOffsetHours: 1,
     hideHomeButton: false,
+    hug: false,
     showLinkButton: false,
     linkButtonActivated: false,
     showUserButton: true,
@@ -37,18 +42,15 @@ const meta: Meta<typeof ObcIntegrationBar> = {
     fleetButtonSelected: false,
     fleetButtonActivated: false,
     fleetButtonLabel: 'Fleet',
-    activeVesselValue: '',
-    vesselSelectorOptions: [
-      {value: 'Vessel 1', label: 'Vessel Name 1'},
-      {value: 'Vessel 2', label: 'Vessel Name 2'},
-      {value: 'Vessel 3', label: 'Vessel Name 3'},
-    ],
   },
   argTypes: {
     showDate: {
       control: {type: 'boolean'},
     },
     showVesselIntegrationMenu: {
+      control: {type: 'boolean'},
+    },
+    hug: {
       control: {type: 'boolean'},
     },
   },
@@ -63,48 +65,19 @@ const meta: Meta<typeof ObcIntegrationBar> = {
     const onFleetButtonClick = (event: Event) => {
       const integrationBar = event.currentTarget as ObcIntegrationBar;
       integrationBar.fleetButtonActivated = true;
-      integrationBar.activeVesselValue = '';
     };
 
     const onVesselSelected = (event: Event) => {
       const integrationBar = event.currentTarget as ObcIntegrationBar;
       const vesselEvent = event as CustomEvent<{value: string; label: string}>;
       integrationBar.fleetButtonActivated = false;
-      integrationBar.activeVesselValue = vesselEvent.detail.value;
-    };
-
-    const onMenuConfirmClick = (event: Event) => {
-      const integrationBar = findIntegrationBar(event);
-      if (!integrationBar) {
-        return;
-      }
-
-      if (integrationBar.activeVesselValue !== '') {
-        integrationBar.selectedVesselValue = integrationBar.activeVesselValue;
-        integrationBar.fleetButtonSelected = false;
-      } else if (integrationBar.fleetButtonActivated) {
-        integrationBar.fleetButtonSelected = true;
-        integrationBar.selectedVesselValue = '';
-      }
-
-      integrationBar.activeVesselValue = '';
-      integrationBar.fleetButtonActivated = false;
-    };
-
-    const onMenuCancelClick = (event: Event) => {
-      const integrationBar = findIntegrationBar(event);
-      if (!integrationBar) {
-        return;
-      }
-
-      integrationBar.activeVesselValue = '';
-      integrationBar.fleetButtonActivated = false;
     };
 
     return html`<obc-integration-bar
+      style="width: 100%;"
       @fleet-button-click=${onFleetButtonClick}
-      @vessel-selected=${onVesselSelected}
       .hideHomeButton=${args.hideHomeButton}
+      .hug=${args.hug}
       .showLinkButton=${args.showLinkButton}
       .linkButtonActivated=${args.linkButtonActivated}
       .showClock=${args.showClock}
@@ -122,10 +95,7 @@ const meta: Meta<typeof ObcIntegrationBar> = {
       .notificationButtonActivated=${args.notificationButtonActivated}
       .fleetButtonSelected=${args.fleetButtonSelected}
       .fleetButtonActivated=${args.fleetButtonActivated}
-      .vesselSelectorOptions=${args.vesselSelectorOptions}
       .fleetButtonLabel=${args.fleetButtonLabel}
-      .activeVesselValue=${args.activeVesselValue}
-      .selectedVesselValue=${args.selectedVesselValue}
     >
       <obc-clock
         integrationBarMode
@@ -136,7 +106,7 @@ const meta: Meta<typeof ObcIntegrationBar> = {
         .timeZoneOffsetHours=${args.timeZoneOffsetHours}
         .blinkOnlyBreakpointPx=${args.clockMinimizeBreakpointPx}
       ></obc-clock>
-      ${args.showVesselIntegrationMenu
+      <!-- ${args.showVesselIntegrationMenu
         ? html`<obc-integration-vessel-menu
             slot="vessel-integration-menu"
             numberOfButtons="2"
@@ -145,7 +115,46 @@ const meta: Meta<typeof ObcIntegrationBar> = {
             ><div slot="button-1-label">Confirm</div>
             <div slot="button-2-label">Cancel</div></obc-integration-vessel-menu
           >`
-        : null}
+        : null} -->
+
+      <obc-integration-button
+        hasLeadingIcon
+        .variant=${IntegrationButtonVariant.flat}
+        ?selected=${false}
+        ?activated=${false}
+        @click=${() => this.onVesselButtonClick()}
+        dividerRight
+        slot="integration-buttons"
+      >
+        <obi-ship slot="leading-icon"></obi-ship>
+        <span slot="label">Boat</span>
+      </obc-integration-button>
+      <obc-integration-button
+        hasLeadingIcon
+        .variant=${IntegrationButtonVariant.flat}
+        ?selected=${true}
+        ?activated=${false}
+        style=""
+        @click=${() => this.onVesselButtonClick()}
+        dividerRight
+        slot="integration-buttons"
+      >
+        <obi-ship slot="leading-icon"></obi-ship>
+        <span slot="label">Space Ship</span>
+      </obc-integration-button>
+      <obc-integration-button
+        hasLeadingIcon
+        .variant=${IntegrationButtonVariant.flat}
+        ?selected=${false}
+        ?activated=${true}
+        style=""
+        @click=${() => this.onVesselButtonClick()}
+        dividerRight
+        slot="integration-buttons"
+      >
+        <obi-ship slot="leading-icon"></obi-ship>
+        <span slot="label">Vessel</span>
+      </obc-integration-button>
     </obc-integration-bar>`;
   },
 } satisfies Meta<ObcIntegrationBar>;
@@ -155,25 +164,4 @@ type Story = StoryObj<ObcIntegrationBar>;
 
 export const Primary: Story = {
   args: {},
-};
-
-export const FleetButtonSelected: Story = {
-  args: {
-    fleetButtonSelected: true,
-  },
-};
-
-export const WithVesselIntegrationMenu: Story = {
-  args: {
-    showVesselIntegrationMenu: true,
-    selectedVesselValue: 'Vessel 3',
-  },
-};
-
-export const PendingVesselSelection: Story = {
-  args: {
-    showVesselIntegrationMenu: true,
-    selectedVesselValue: 'Vessel 2',
-    activeVesselValue: 'Vessel 3',
-  },
 };

@@ -14,20 +14,29 @@
 
 .content-container {
   display: flex;
-  align-items: center;
+  flex: 1;
 }
 
 .fleet-vessel-container {
   display: flex;
   align-items: center;
+  flex: 1;
   gap: var(--app-components-integration-system-menu-spacing-horizontal);
+}
+
+.fleet-button {
+  flex: initial;
 }
 
 .vessel-container {
   display: flex;
-  align-items: center;
-  gap: 0px;
+  flex: 1;
 }
+
+.integration-buttons-slot::slotted(obc-integration-button) {
+  flex: 1;
+}
+
 .home-button {
   width: var(--app-components-integration-system-icon-button-touch-target);
   height: var(--app-components-integration-system-icon-button-touch-target);
@@ -35,14 +44,12 @@
   align-items: center;
   gap: 14px;
 }
-obc-icon-button::part(visible-wrapper) {
-  background-color: transparent;
-}
 
 .right-content-container {
   display: flex;
   align-self: stretch;
   align-items: center;
+  flex: initial;
   border-left: var(
       --app-components-integration-system-navigation-item-horizontal-stroke-weight-right,
       1px
@@ -52,13 +59,6 @@ obc-icon-button::part(visible-wrapper) {
       --integration-beta-flat-enabled-border-color,
       var(--integration-border-outline)
     );
-}
-
-.vessel-integration-menu-container {
-  position: absolute;
-  position-anchor: --integration-menu-anchor;
-  top: anchor(bottom);
-  justify-self: anchor-center;
 }
 
 .right-side-system-menu-container {
