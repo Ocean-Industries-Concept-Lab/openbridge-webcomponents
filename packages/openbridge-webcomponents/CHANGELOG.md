@@ -1,3 +1,21 @@
+## [2.0.0-next.17](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.16...v2.0.0-next.17) (2026-05-04)
+
+### ⚠ BREAKING CHANGES
+
+- **instruments:** `rotMaxValue` on `obc-compass`, `obc-compass-sector`,
+  and `obc-compass-flat` is now interpreted in **degrees per minute**
+  instead of rotations per minute. The default value was bumped from `10`
+  to `60` (per ES-TRIN 2025/1 Art. 3.02) to match the new unit. Consumers
+  that set `rotMaxValue` explicitly must convert their value: a previous
+  `rotMaxValue=10` (rpm) corresponds to `rotMaxValue=3600` (°/min), but
+  in practice the typical operating range is `30`–`90` °/min.
+
+Co-authored-by: Copilot <copilot@github.com>
+
+### Features
+
+- **instruments:** add rateOfTurnDegreesPerMinute API and deprecate rotationsPerMinute ([#818](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/818)) ([172943a](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/172943ad298b1740f6dbbe2649a8ef05fef11239)), closes [#802](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/802) [#802](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/802)
+
 ## [2.0.0-next.16](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.15...v2.0.0-next.16) (2026-05-04)
 
 ### Features
