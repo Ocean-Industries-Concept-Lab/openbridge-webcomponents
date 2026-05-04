@@ -1,3 +1,9 @@
+## [2.0.0-next.18](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.17...v2.0.0-next.18) (2026-05-04)
+
+### Features
+
+- **navigation-instruments:** add zoomToFitArc to pitch, roll and pitch-roll ([#836](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/836)) ([7438fa9](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/7438fa9dfb1f859023d24041a58241ef005452ff)), closes [#835](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/835)
+
 ## [2.0.0-next.17](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.16...v2.0.0-next.17) (2026-05-04)
 
 ### ⚠ BREAKING CHANGES
