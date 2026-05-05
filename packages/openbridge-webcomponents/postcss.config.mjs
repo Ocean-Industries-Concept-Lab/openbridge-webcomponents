@@ -50,7 +50,8 @@ function colors({
 }
 
 function parseParams(params) {
-  const paramsArray = params.split(' ');
+  const paramsNoNewLine = params.replaceAll('\n', '');
+  const paramsArray = paramsNoNewLine.split(' ');
   const paramsObject = {};
   paramsArray.forEach((param) => {
     const [key, value] = param.split('=');

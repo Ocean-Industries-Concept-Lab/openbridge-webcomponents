@@ -125,7 +125,7 @@
   }
 
   &.variant-integration {
-    @mixin style style=integration-normal visibleWrapperClass=.visible-wrapper;
+    @mixin style style=integration-flat visibleWrapperClass=.visible-wrapper;
     color: var(--integration-on-normal-neutral-color);
 
     .visible-wrapper {
