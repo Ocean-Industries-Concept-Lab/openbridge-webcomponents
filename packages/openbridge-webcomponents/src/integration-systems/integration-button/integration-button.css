@@ -7,6 +7,8 @@
 }
 
 .touch-target {
+  @mixin style style=integration-normal visibleWrapperClass=.content-container;
+  @mixin font-body;
   display: flex;
   align-items: center;
   gap: 4px;
