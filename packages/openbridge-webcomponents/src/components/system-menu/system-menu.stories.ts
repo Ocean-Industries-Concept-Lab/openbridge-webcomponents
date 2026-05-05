@@ -1,6 +1,10 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
-import {ObcSystemMenu, SystemSubMenu} from './system-menu.js';
+import {
+  ObcSystemMenu,
+  SystemMenuControlMode,
+  SystemSubMenu,
+} from './system-menu.js';
 import './system-menu.js';
 
 interface SystemMenuStoryArgs {
@@ -10,6 +14,8 @@ interface SystemMenuStoryArgs {
   batteryState?: ObcSystemMenu['batteryState'];
   condensed?: boolean;
   showSettingsButton?: boolean;
+  audioControlMode?: SystemMenuControlMode;
+  microphoneControlMode?: SystemMenuControlMode;
   activeSubMenu?: SystemSubMenu;
   externalControl?: boolean;
   smallScreen?: boolean;
@@ -23,6 +29,10 @@ function interactiveRender(args: SystemMenuStoryArgs) {
     .batteryState=${args.batteryState}
     .condensed=${args.condensed ?? false}
     .showSettingsButton=${args.showSettingsButton ?? false}
+    .audioControlMode=${args.audioControlMode ??
+    SystemMenuControlMode.muteButton}
+    .microphoneControlMode=${args.microphoneControlMode ??
+    SystemMenuControlMode.muteButton}
     .activeSubMenu=${args.activeSubMenu ?? SystemSubMenu.main}
     .externalControl=${args.externalControl ?? false}
     .smallScreen=${args.smallScreen ?? false}
@@ -80,10 +90,26 @@ function interactiveRender(args: SystemMenuStoryArgs) {
   ></obc-system-menu>`;
 }
 
-const meta: Meta<typeof ObcSystemMenu> = {
+const meta: Meta<ObcSystemMenu> = {
   title: 'Application Components/Menus/System Menu',
   tags: ['6.0'],
   component: 'obc-system-menu',
+  argTypes: {
+    condensed: {table: {category: 'Attributes'}},
+    showSettingsButton: {
+      table: {category: 'Attributes'},
+    },
+    audioControlMode: {
+      options: Object.values(SystemMenuControlMode),
+      table: {category: 'Attributes'},
+    },
+    microphoneControlMode: {
+      options: Object.values(SystemMenuControlMode),
+      table: {category: 'Attributes'},
+    },
+    externalControl: {table: {category: 'Attributes'}},
+    smallScreen: {table: {category: 'Attributes'}},
+  },
 } satisfies Meta<ObcSystemMenu>;
 
 export default meta;
@@ -92,6 +118,8 @@ type Story = StoryObj<ObcSystemMenu>;
 const defaultArgs: SystemMenuStoryArgs = {
   activeSubMenu: SystemSubMenu.main,
   condensed: false,
+  audioControlMode: SystemMenuControlMode.muteButton,
+  microphoneControlMode: SystemMenuControlMode.muteButton,
   wifiState: {
     enabled: true,
     connected: true,

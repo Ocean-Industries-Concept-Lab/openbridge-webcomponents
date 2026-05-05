@@ -114,6 +114,21 @@
       padding: 0 var(--app-components-system-menu-padding-horizontal);
     }
 
+    .action-container.control-hidden {
+      .content-item-value {
+        padding-left: 0;
+      }
+      .content-item-slider {
+        margin-left: calc(
+          -1 *
+            (
+              var(--app-components-system-menu-padding-vertical) +
+                var(--ui-components-icon-button-padding-vertical)
+            )
+        );
+      }
+    }
+
     .content-item-btn {
       min-height: var(--ui-components-icon-button-touch-target-size);
     }
@@ -123,6 +138,9 @@
       @mixin font-body-active;
       color: var(--element-active-color);
       flex-grow: 1;
+      min-height: var(--app-components-system-menu-touch-target-size);
+      display: flex;
+      align-items: center;
 
       &.disabled {
         color: var(--element-neutral-color);
@@ -339,6 +357,21 @@
   }
 }
 
+.content-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--instrument-enhanced-secondary-color);
+
+  > * {
+    color: inherit;
+  }
+}
+
+.content-item-icon.is-muted {
+  color: var(--element-neutral-color);
+}
+
 .sub-container {
   display: flex;
   padding: var(--app-components-system-menu-padding-vertical)
@@ -380,6 +413,14 @@
     obc-button {
       flex-grow: 1;
       flex-basis: 0;
+    }
+
+    &.no-mute-button {
+      padding: calc(
+          var(--app-components-system-menu-padding-vertical) +
+            var(--ui-components-icon-button-padding-vertical)
+        )
+        var(--app-components-system-menu-padding-horizontal);
     }
 
     &.wifi-container {
