@@ -69,7 +69,7 @@
     "@jackolope/ts-lit-plugin": "^3.1.6",
     "@lit-labs/cli": "file:lit-labs-cli-0.6.5.tgz",
     "@lit-labs/cli-localize": "^0.2.2",
-    "@lit-labs/gen-wrapper-angular": "file:lit-labs-gen-wrapper-angular-a2c88688.tgz",
+    "@lit-labs/gen-wrapper-angular": "file:lit-labs-gen-wrapper-angular-bbde8906.tgz",
     "@lit-labs/gen-wrapper-react": "^0.3.5",
     "@lit-labs/gen-wrapper-svelte": "file:lit-labs-gen-wrapper-svelte-397bf119.tgz",
     "@lit-labs/gen-wrapper-vue": "file:lit-labs-gen-wrapper-vue-0.4.1.tgz",
