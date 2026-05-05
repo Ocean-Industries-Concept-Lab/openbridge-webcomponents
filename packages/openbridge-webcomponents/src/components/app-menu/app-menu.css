@@ -13,5 +13,6 @@
     gap: 0 var(--app-components-app-menu-app-button-spacing);
     padding: var(--app-components-app-menu-padding-vertical)
       var(--app-components-app-menu-padding-horizontal);
+    justify-items: center;
   }
 }

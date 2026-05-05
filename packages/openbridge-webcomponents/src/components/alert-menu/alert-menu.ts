@@ -27,7 +27,7 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
  * Provides a compact, interactive menu for reviewing current alerts, grouped by status (e.g., unacknowledged, active, shelved). Users can acknowledge visible alerts, silence notifications, or navigate to a full alert list. Designed for quick triage and management of alert items in a sidebar or overlay context.
  *
  * ### Features
- * - **Tabbed organization:** Switch between "Unacked", "Active alerts", and (optionally) "Shelved" tabs for focused alert review.
+ * - **Tabbed organization:** Switch between "Unacked", "Active", and (optionally) "Shelved" tabs for focused alert review.
  * - **Alert filtering:** Each tab displays only relevant alerts (e.g., "Unacked" shows only unacknowledged, non-shelved items).
  * - **Bulk actions:** "ACK visible" button allows acknowledging all currently visible (filtered) alerts at once.
  * - **Silence and navigation:** Dedicated buttons to silence alerts or jump to the full alert list.
@@ -53,9 +53,9 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
  * | empty-unacked-title              | Unacked tab, when empty          | Custom title for empty unacknowledged alerts.                  |
  * | empty-unacked-description        | Unacked tab, when empty          | Custom description for empty unacknowledged alerts.            |
  * | empty-unacked-icon               | Unacked tab, when empty          | Custom icon for empty unacknowledged alerts.                   |
- * | empty-all-title                  | Active alerts tab, when empty    | Custom title for empty active alerts.                          |
- * | empty-all-description            | Active alerts tab, when empty    | Custom description for empty active alerts.                    |
- * | empty-all-icon                   | Active alerts tab, when empty    | Custom icon for empty active alerts.                           |
+ * | empty-all-title                  | Active tab, when empty    | Custom title for empty active alerts.                          |
+ * | empty-all-description            | Active tab, when empty    | Custom description for empty active alerts.                    |
+ * | empty-all-icon                   | Active tab, when empty    | Custom icon for empty active alerts.                           |
  * | empty-shelved-title              | Shelved tab, when empty          | Custom title for empty shelved alerts.                         |
  * | empty-shelved-description        | Shelved tab, when empty          | Custom description for empty shelved alerts.                   |
  * | empty-shelved-icon               | Shelved tab, when empty          | Custom icon for empty shelved alerts.                          |
@@ -63,6 +63,8 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
  * ### Properties
  * - `hasShelved` (boolean): If true, displays the "Shelved" tab and enables shelving support. Default: false.
  * - `canAckAll` (boolean): If true, enables the "ACK visible" button for bulk acknowledgment. Default: false.
+ * - `showSilenceButton` (boolean): If true, shows the "Silence" button. Default: true.
+ * - `showAlertListButton` (boolean): If true, shows the "Alerts" navigation button. Default: true.
  *
  * ### Events
  * - **ack-all-visible-click** – Fired when the "ACK visible" button is clicked. The event detail includes the list of visible alert elements and the current tab name.
@@ -93,9 +95,9 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
  * @slot empty-unacked-title - Custom title for empty unacknowledged alerts (Unacked tab)
  * @slot empty-unacked-description - Custom description for empty unacknowledged alerts (Unacked tab)
  * @slot empty-unacked-icon - Custom icon for empty unacknowledged alerts (Unacked tab)
- * @slot empty-all-title - Custom title for empty active alerts (Active alerts tab)
- * @slot empty-all-description - Custom description for empty active alerts (Active alerts tab)
- * @slot empty-all-icon - Custom icon for empty active alerts (Active alerts tab)
+ * @slot empty-all-title - Custom title for empty active alerts (Active tab)
+ * @slot empty-all-description - Custom description for empty active alerts (Active tab)
+ * @slot empty-all-icon - Custom icon for empty active alerts (Active tab)
  * @slot empty-shelved-title - Custom title for empty shelved alerts (Shelved tab)
  * @slot empty-shelved-description - Custom description for empty shelved alerts (Shelved tab)
  * @slot empty-shelved-icon - Custom icon for empty shelved alerts (Shelved tab)
@@ -122,6 +124,24 @@ export class ObcAlertMenu extends LitElement {
    * Default: false.
    */
   @property({type: Boolean}) canAckAll: boolean = false;
+
+  /**
+   * If true, shows the "Silence" button in the action bar.
+   * When hidden, the "ACK visible" button expands to fill the freed space.
+   *
+   * Default: true.
+   */
+  @property({type: Boolean, attribute: false}) showSilenceButton: boolean =
+    true;
+
+  /**
+   * If true, shows the "Alerts" navigation button in the action bar.
+   * When hidden, the "ACK visible" button expands to fill the freed space.
+   *
+   * Default: true.
+   */
+  @property({type: Boolean, attribute: false}) showAlertListButton: boolean =
+    true;
 
   @state() private _selectedTabIndex = 1;
 
@@ -205,7 +225,7 @@ export class ObcAlertMenu extends LitElement {
         @tab-change=${this.onTabChange}
       >
         <span slot="tab-title-0">${msg('Unacked')}</span>
-        <span slot="tab-title-1">${msg('Active alerts')}</span>
+        <span slot="tab-title-1">${msg('Active')}</span>
         ${this.hasShelved
           ? html`<span slot="tab-title-2">${msg('Shelved')}</span>`
           : nothing}
@@ -233,32 +253,38 @@ export class ObcAlertMenu extends LitElement {
             >
               ${msg('ACK visible')}
             </obc-button>
-            <obc-button
-              variant="normal"
-              fullWidth
-              class="btn"
-              showLeadingIcon
-              @click=${() =>
-                this.dispatchEvent(new CustomEvent('silence-click'))}
-            >
-              <obi-silence-iec slot="leading-icon"></obi-silence-iec>
-              ${msg('Silence')}
-            </obc-button>
-            <obc-button
-              variant="normal"
-              class="btn"
-              fullWidth
-              showLeadingIcon
-              showTrailingIcon
-              @click=${() =>
-                this.dispatchEvent(new CustomEvent('go-to-alert-list-click'))}
-            >
-              <obi-alert-list slot="leading-icon"></obi-alert-list>
-              <obi-chevron-right-google
-                slot="trailing-icon"
-              ></obi-chevron-right-google>
-              ${msg('Alerts')}
-            </obc-button>
+            ${this.showSilenceButton
+              ? html`<obc-button
+                  variant="normal"
+                  fullWidth
+                  class="btn"
+                  showLeadingIcon
+                  @click=${() =>
+                    this.dispatchEvent(new CustomEvent('silence-click'))}
+                >
+                  <obi-silence-iec slot="leading-icon"></obi-silence-iec>
+                  ${msg('Silence')}
+                </obc-button>`
+              : nothing}
+            ${this.showAlertListButton
+              ? html`<obc-button
+                  variant="normal"
+                  class="btn"
+                  fullWidth
+                  showLeadingIcon
+                  showTrailingIcon
+                  @click=${() =>
+                    this.dispatchEvent(
+                      new CustomEvent('go-to-alert-list-click')
+                    )}
+                >
+                  <obi-alert-list slot="leading-icon"></obi-alert-list>
+                  <obi-chevron-right-google
+                    slot="trailing-icon"
+                  ></obi-chevron-right-google>
+                  ${msg('Alerts')}
+                </obc-button>`
+              : nothing}
           </div>
         </div>
       </obc-tabbed-card>

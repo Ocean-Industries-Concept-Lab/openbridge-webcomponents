@@ -11,9 +11,9 @@
 ## 1. Repository Overview
 
 | Item              | Value                                                                                                                     |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| ----------------- |---------------------------------------------------------------------------------------------------------------------------|
 | Name              | **Openbridge Web Components**                                                                                             |
-| Repo              | `Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip`                                                               |
+| Repo              | `Ocean-Industries-Concept-Lab/openbridge-webcomponents`                                                                   |
 | License           | Apache-2.0                                                                                                                |
 | Runtime           | Lit 3 + TypeScript (web components)                                                                                       |
 | Package manager   | npm (workspaces)                                                                                                          |
@@ -47,7 +47,7 @@ All paths below are relative to `packages/openbridge-webcomponents/`.
 - **Styles:** PostCSS (`.css` files). One global palette in `src/palettes/variables.css`; all other CSS in component folders. Use `@mixin style` for elevation variants. Text: `@mixin font-body`, `@mixin font-label`, etc.
 - **No inline comments** unless the code is extremely unusual and impossible to understand without explanation.
 - **Only comment a property** if the name is not self-explanatory.
-- **Conventional Commits** for git messages (`feat:`, `fix:`, `docs:`, etc.).
+- **Conventional Commits** for git messages and **Pull Request titles** (`feat:`, `fix:`, `feat!:`, etc.). An automated linting process validates PR titles.
 - Ask for clarification (e.g. a list of questions) before implementing significant changes.
 
 ### Boolean property naming
@@ -157,6 +157,7 @@ Agents that support glob-scoped instructions should apply them automatically.
 | `setpoint.instructions.md`                 | `svghelpers/setpoint*.ts`, `building-blocks/setpoint/**`                                                                                                                       | Setpoint design layer, mixin/bundle, confirm animation    |
 | `automation-components.instructions.md`    | `automation/**`                                                                                                                                                                | Automation devices, valves, lines, tanks, badges          |
 | `ui-components.instructions.md`            | `components/**`                                                                                                                                                                | General UI components (buttons, cards, inputs, feedback)  |
+| `a11y.instructions.md`                     | `components/**`, `automation/**`                                                                                                                                               | Accessibility (WCAG 2.1 AA) — keyboard nav, ARIA, focus   |
 
 ---
 
@@ -265,25 +266,26 @@ Required modifications after pasting:
 1. **Read before writing.** Always read the relevant source, story, and instruction file before modifying a component.
 2. **Follow the three-pattern strategy** (§ 3) when writing or updating JSDoc.
 3. **Respect glob-scoped instructions** (§ 4) — read the matching `.instructions.md` file when touching files in its scope.
-4. **Do not edit auto-generated packages** (`-react`, `-vue`, `-ng`, `-svelte`). Run `npm run wrappers` instead.
-5. **Run `npm run analyze`** after adding or renaming a `@customElement` to keep `custom-elements.json` in sync.
-6. **Run `npm run lint`** after code changes to catch issues early.
-7. **Insert `TODO(designer)`** for any documentation detail whose purpose is unclear from code alone.
-8. **Keep stories tagged** with `['autodocs', '6.0']` for documented OB 6.0 components; `['alpha']` for in-development; `['skip-test']` to exclude from visual tests.
-9. **Do not run full builds or start Storybook automatically.** Avoid `npm run build`, `npm run storybook` unless the user explicitly requests it. These are expensive, long-running operations.
-10. **Run visual tests for a single component** instead of the full suite:
+4. **Accessibility is required for interactive components.** Every new or modified component in `src/components/**` or `src/automation/**` must support full keyboard navigation and meet WCAG 2.1 AA. Read [`.github/instructions/a11y.instructions.md`](.github/instructions/a11y.instructions.md) for the activation-key table, ARIA rules, focus handling, and testing checklist before writing or changing an interactive component.
+5. **Do not edit auto-generated packages** (`-react`, `-vue`, `-ng`, `-svelte`). Run `npm run wrappers` instead.
+6. **Run `npm run analyze`** after adding or renaming a `@customElement` to keep `custom-elements.json` in sync.
+7. **Run `npm run lint`** after code changes to catch issues early.
+8. **Insert `TODO(designer)`** for any documentation detail whose purpose is unclear from code alone.
+9. **Keep stories tagged** with `['autodocs', '6.0']` for documented OB 6.0 components; `['alpha']` for in-development; `['skip-test']` to exclude from visual tests.
+10. **Do not run full builds or start Storybook automatically.** Avoid `npm run build`, `npm run storybook` unless the user explicitly requests it. These are expensive, long-running operations.
+11. **Run visual tests for a single component** instead of the full suite:
     ```bash
     npx vitest run --project storybook 'component-name'
     ```
-11. **Update baselines for a single component:**
+12. **Update baselines for a single component:**
     ```bash
     npx vitest run --project storybook --update 'component-name'
     ```
-12. **Always verify after updating baselines** — re-run the test without `--update` to confirm the new baselines are stable:
+13. **Always verify after updating baselines** — re-run the test without `--update` to confirm the new baselines are stable:
     ```bash
     npx vitest run --project storybook 'component-name'
     ```
-13. **Keep the main context clean.** Delegate broad codebase exploration to subagents; only read files directly in the main thread when you are about to edit them or need a few specific lines.
+14. **Keep the main context clean.** Delegate broad codebase exploration to subagents; only read files directly in the main thread when you are about to edit them or need a few specific lines.
 
 ---
 

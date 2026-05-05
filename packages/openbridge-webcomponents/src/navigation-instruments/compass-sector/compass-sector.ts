@@ -18,6 +18,7 @@ import {
   computeZoomToFitArcFrame,
   type ZoomToFitArcFrame,
 } from '../../svghelpers/arc-frame.js';
+import {ROT_ZERO_DEADBAND_DEG} from '../rate-of-turn/rot-renderer.js';
 import {customElement} from '../../decorator.js';
 import {InstrumentState, Priority} from '../types.js';
 export {RotType, RotPosition};
@@ -33,6 +34,7 @@ const WATCH_TYPE = WatchCircleType.triple;
 const INNER_RADIUS = innerRingRadiusFor(WATCH_TYPE);
 /** Half of the fixed 120° arc on the watch face. */
 const ARC_HALF_EXTENT = 60;
+const SCALE_INNER_RADIUS = innerRingRadiusFor(WatchCircleType.single);
 
 interface TickDensity {
   mainInterval: number;
@@ -114,8 +116,36 @@ export class ObcCompassSector extends LitElement {
 
   @property({type: String}) rotType: RotType | undefined;
   @property({type: String}) rotPosition: RotPosition = RotPosition.innerCircle;
+  /**
+   * Measured rate of turn in degrees per minute (positive = starboard).
+   * Drives both the bar extent and (after multiplication by
+   * `rotDotAnimationFactor`) the spinning dot animation. When `undefined`,
+   * falls back to the deprecated `rotationsPerMinute`.
+   */
+  @property({type: Number}) rateOfTurnDegreesPerMinute: number | undefined;
+  /**
+   * Visual amplification applied only to the spinning dot animation
+   * (not to the bar extent). Default `18` keeps the legacy visual feel
+   * (≈1 rpm at 20°/min).
+   */
+  @property({type: Number}) rotDotAnimationFactor: number = 18;
+  /**
+   * @deprecated Use `rateOfTurnDegreesPerMinute` (and optionally
+   * `rotDotAnimationFactor`) instead. Takes effect only when
+   * `rateOfTurnDegreesPerMinute` is `undefined`.
+   */
   @property({type: Number}) rotationsPerMinute: number = 1;
-  @property({type: Number}) rotMaxValue: number = 10;
+  /**
+   * Bar-extent reference value in **degrees per minute**. The bar fills the
+   * full ±`ARC_HALF_EXTENT` arc when the measured ROT equals
+   * ±`rotMaxValue`. Default `60` aligns with ES-TRIN 2025/1 Art. 3.02.
+   *
+   * Note: the unit changed from rotations per minute to degrees per minute
+   * with the introduction of `rateOfTurnDegreesPerMinute`.
+   */
+  @property({type: Number}) rotMaxValue: number = 60;
+  @property({type: Boolean}) rotPortStarboard: boolean = false;
+  @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_DEG;
 
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
@@ -348,9 +378,14 @@ export class ObcCompassSector extends LitElement {
     });
   }
 
+  private get _effectiveRotDegPerMin(): number {
+    return this.rateOfTurnDegreesPerMinute ?? this.rotationsPerMinute;
+  }
+
   private get _rotEndAngle(): number {
     const maxVal = this.rotMaxValue || 1;
-    const barCompassDeg = (this.rotationsPerMinute / maxVal) * ARC_HALF_EXTENT;
+    const barCompassDeg =
+      (this._effectiveRotDegPerMin / maxVal) * ARC_HALF_EXTENT;
     return this._mapAngle(this.heading + barCompassDeg);
   }
 
@@ -409,10 +444,25 @@ export class ObcCompassSector extends LitElement {
           .rotStartAngle=${this.heading}
           .rotEndAngle=${this._rotEndAngle}
           .rotPriority=${this.priorityFor(CompassSectorPriorityElement.rot)}
+          .rotPortStarboard=${this.rotPortStarboard}
+          .rotAtZeroDeadband=${this.rotAtZeroDeadband}
+          .rateOfTurnDegreesPerMinute=${this.rateOfTurnDegreesPerMinute}
+          .rotDotAnimationFactor=${this.rotDotAnimationFactor}
           .rotationsPerMinute=${this.rotationsPerMinute}
         >
         </obc-watch>
         <svg viewBox="${viewBox}" transform="rotate(${rotation})">
+          <g transform="rotate(${this.heading})">
+            <line
+              x1="0"
+              y1="${-(SCALE_INNER_RADIUS + rOff)}"
+              x2="0"
+              y2="${-(INNER_RADIUS + rOff)}"
+              stroke="var(--instrument-frame-tertiary-color)"
+              stroke-width="1"
+              vector-effect="non-scaling-stroke"
+            />
+          </g>
           ${this._renderNorthArrow(rOff)}
           ${arrow(
             ArrowStyle.HDG,

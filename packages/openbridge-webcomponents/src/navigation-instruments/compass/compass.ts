@@ -13,6 +13,7 @@ import {
   RotPosition,
 } from '../watch/watch.js';
 import {SetpointBundle} from '../../svghelpers/setpoint-bundle.js';
+import {ROT_ZERO_DEADBAND_DEG} from '../rate-of-turn/rot-renderer.js';
 import {customElement} from '../../decorator.js';
 import {InstrumentState, Priority} from '../types.js';
 export {RotType};
@@ -53,10 +54,14 @@ export enum CompassPriorityElement {
  * - **Advice zones**: Pass `headingAdvices` to render caution/alert arcs;
  *   triggered state is derived from whether the current heading falls
  *   inside the advice range.
- * - **Rate of turn**: Animated ROT indicator driven by `rotationsPerMinute`.
- *   Supports spinning dots (`rotType="dots"`) and a banana-shaped arc bar
- *   (`rotType="bar"`) showing the HDG→COG span. Position on the outer
- *   scale ring or inner circle via `rotPosition`.
+ * - **Rate of turn**: Animated ROT indicator driven by
+ *   `rateOfTurnDegreesPerMinute` (deg/min, the maritime / AIS convention).
+ *   Supports spinning dots (`rotType="dots"`) — the dot animation is
+ *   amplified by `rotDotAnimationFactor` so small physical values still
+ *   read at a glance — and a banana-shaped arc bar (`rotType="bar"`)
+ *   showing the HDG→COG span. Bar extent is driven by the physical value
+ *   only (gain is not applied). Position on the outer scale ring or inner
+ *   circle via `rotPosition`.
  * - **Environmental overlays**: Wind speed/direction and current
  *   speed/direction indicators on the watch face.
  * - **Vessel image**: Configurable vessel silhouette centered on the
@@ -102,7 +107,9 @@ export enum CompassPriorityElement {
  * @property {number | null} currentSpeed - The current speed, number of arrows.
  * @property {number | null} currentFromDirection - The direction the current is coming from in degrees.
  * @property {VesselImage} vesselImage - The image of the vessel.
- * @property {number} rotationsPerMinute - The number of rotations per minute for the rate of turn controller.
+ * @property {number|undefined} rateOfTurnDegreesPerMinute - Measured rate of turn in degrees per minute (the AIS / ITU-R M.1371 convention). Sign controls direction (positive = starboard / clockwise). Drives both the bar extent and the dot animation.
+ * @property {number} rotDotAnimationFactor - Visual amplification for the dot animation only. Default `18` (≈1 rpm at 20°/min).
+ * @property {number} rotationsPerMinute - **Deprecated.** Use `rateOfTurnDegreesPerMinute` instead. Kept as a backward-compatible fallback when `rateOfTurnDegreesPerMinute` is `undefined`.
  * @property {RotType} rotType - ROT display mode: `'dots'` (spinning dots, default) or `'bar'` (arc bar from HDG to COG).
  * @property {RotPosition} rotPosition - ROT track position: `'innerCircle'` (default) or `'scale'` (on the outer ring).
  * @property {Priority} priority - Color priority: `Priority.enhanced` uses the blue/enhanced color palette, `Priority.regular` (default) uses the standard palette.
@@ -131,11 +138,40 @@ export class ObcCompass extends LitElement {
   @property({type: Number}) currentSpeed: number | null = null;
   @property({type: Number}) currentFromDirection: number | null = null;
   @property({type: String}) vesselImage: VesselImage = VesselImage.genericTop;
+  /**
+   * Measured rate of turn in degrees per minute (positive = starboard).
+   * Drives both the bar extent and (after multiplication by
+   * `rotDotAnimationFactor`) the spinning dot animation.
+   * When `undefined`, falls back to the deprecated `rotationsPerMinute`.
+   */
+  @property({type: Number}) rateOfTurnDegreesPerMinute: number | undefined;
+  /**
+   * Visual amplification applied only to the spinning dot animation
+   * (not to the bar extent). Default `18` keeps the legacy visual feel
+   * (≈1 rpm at 20°/min).
+   */
+  @property({type: Number}) rotDotAnimationFactor: number = 18;
+  /**
+   * @deprecated Use `rateOfTurnDegreesPerMinute` (and optionally
+   * `rotDotAnimationFactor`) instead. Takes effect only when
+   * `rateOfTurnDegreesPerMinute` is `undefined`.
+   */
   @property({type: Number}) rotationsPerMinute: number = 1;
   @property({type: String}) rotType: RotType = RotType.dots;
   @property({type: String}) rotPosition: RotPosition = RotPosition.innerCircle;
-  @property({type: Number}) rotMaxValue: number = 10;
+  /**
+   * Bar-extent reference value in **degrees per minute**. The bar fills the
+   * full ±`rotArcExtent` arc when the measured ROT equals ±`rotMaxValue`.
+   * Default `60` aligns with ES-TRIN 2025/1 Art. 3.02.
+   *
+   * Note: prior to the introduction of `rateOfTurnDegreesPerMinute` this
+   * property was interpreted in rotations per minute. The unit changed when
+   * the physical ROT API was introduced.
+   */
+  @property({type: Number}) rotMaxValue: number = 60;
   @property({type: Number}) rotArcExtent: number = 60;
+  @property({type: Boolean}) rotPortStarboard: boolean = false;
+  @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_DEG;
   @property({type: String}) direction: CompassDirection =
     CompassDirection.NorthUp;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
@@ -175,6 +211,16 @@ export class ObcCompass extends LitElement {
   // @ts-expect-error TS6133: The controller ensures that the render
   // function is called on resize of the element
   private _resizeController = new ResizeController(this, {});
+
+  /**
+   * Resolved rate of turn in degrees per minute, used to compute the bar
+   * extent. Prefers the new physical API; falls back to the deprecated
+   * `rotationsPerMinute` so existing consumers keep their visuals during
+   * the deprecation window.
+   */
+  private get _effectiveRotDegPerMin(): number {
+    return this.rateOfTurnDegreesPerMinute ?? this.rotationsPerMinute;
+  }
 
   private getPadding() {
     const size = Math.min(this.clientHeight, this.clientWidth);
@@ -276,10 +322,14 @@ export class ObcCompass extends LitElement {
           .rotPosition=${this.rotPosition}
           .rotStartAngle=${this.heading + (this.getRotation() ?? 0)}
           .rotEndAngle=${this.heading +
-          (this.rotationsPerMinute / (this.rotMaxValue || 1)) *
+          (this._effectiveRotDegPerMin / (this.rotMaxValue || 1)) *
             this.rotArcExtent +
           (this.getRotation() ?? 0)}
           .rotPriority=${this.priorityFor(CompassPriorityElement.rot)}
+          .rotPortStarboard=${this.rotPortStarboard}
+          .rotAtZeroDeadband=${this.rotAtZeroDeadband}
+          .rateOfTurnDegreesPerMinute=${this.rateOfTurnDegreesPerMinute}
+          .rotDotAnimationFactor=${this.rotDotAnimationFactor}
           .rotationsPerMinute=${this.rotationsPerMinute}
         >
         </obc-watch>

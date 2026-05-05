@@ -87,6 +87,33 @@ export interface GaugeRadialAdvice {
 export class ObcRotSector extends SetpointMixin(LitElement) {
   @property({type: Number}) value = 0;
   @property({type: Number}) maxValue = 100;
+
+  /**
+   * Measured rate of turn in degrees per minute (positive = starboard).
+   * Alias for `value` provided for cross-component consistency with
+   * `obc-compass`, `obc-compass-sector`, `obc-compass-flat`, and
+   * `obc-rate-of-turn`. Setting this updates `value`.
+   */
+  @property({type: Number})
+  set rateOfTurn(v: number) {
+    this.value = v;
+  }
+  get rateOfTurn(): number {
+    return this.value;
+  }
+
+  /**
+   * Maximum measured rate of turn in degrees per minute. Alias for
+   * `maxValue` provided for cross-component consistency. Setting this
+   * updates `maxValue`.
+   */
+  @property({type: Number})
+  set rateOfTurnMax(v: number) {
+    this.maxValue = v;
+  }
+  get rateOfTurnMax(): number {
+    return this.maxValue;
+  }
   @property({type: Boolean}) showLabels: boolean = false;
   /** Whether to render tickmarks inside the ring. */
   @property({type: Boolean}) tickmarksInside: boolean = false;
@@ -124,15 +151,17 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
   }
 
   private get _barColor(): string {
-    if (this.priority !== Priority.enhanced) {
-      return 'var(--instrument-regular-tertiary-color)';
-    }
-
     if (this.portStarboard) {
       if (this.value > 0) {
         return 'var(--instrument-starboard-secondary-color)';
       }
-      return 'var(--instrument-port-secondary-color)';
+      if (this.value < 0) {
+        return 'var(--instrument-port-secondary-color)';
+      }
+    }
+
+    if (this.priority !== Priority.enhanced) {
+      return 'var(--instrument-regular-tertiary-color)';
     }
 
     return 'var(--instrument-enhanced-tertiary-color)';
@@ -173,10 +202,6 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
   }
 
   private get _needleColor(): string {
-    if (this.priority !== Priority.enhanced) {
-      return 'var(--instrument-regular-secondary-color)';
-    }
-
     if (this.portStarboard) {
       if (this.value > 0) {
         return 'var(--instrument-starboard-primary-color)';
@@ -184,6 +209,10 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
       if (this.value < 0) {
         return 'var(--instrument-port-primary-color)';
       }
+      return 'var(--instrument-regular-secondary-color)';
+    }
+
+    if (this.priority !== Priority.enhanced) {
       return 'var(--instrument-regular-secondary-color)';
     }
 

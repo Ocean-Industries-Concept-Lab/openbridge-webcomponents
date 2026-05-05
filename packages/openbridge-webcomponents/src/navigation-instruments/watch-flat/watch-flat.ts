@@ -21,6 +21,9 @@ import {
   renderLinearRotBarStatic,
   renderLinearRotBarDots,
   LINEAR_DOT_ANGLE_SPACING,
+  renderLinearRotZeroPill,
+  BAR_HALF_THICKNESS,
+  ROT_ZERO_DEADBAND_PX,
 } from '../rate-of-turn/rot-renderer.js';
 import {
   RateOfTurnController,
@@ -61,20 +64,36 @@ export class ObcWatchFlat extends LitElement {
    */
   @property({type: Number}) rotDotSpacing: number = 0;
   @property({type: String}) rotPriority: Priority = Priority.regular;
+  @property({type: Boolean}) rotPortStarboard: boolean = false;
+  @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_PX;
 
+  @property({type: Number}) rateOfTurnDegreesPerMinute: number | undefined;
+  @property({type: Number}) rotDotAnimationFactor: number = 18;
+
+  /**
+   * @deprecated Use `rateOfTurnDegreesPerMinute` (and optionally
+   * `rotDotAnimationFactor`) instead. Takes effect only when
+   * `rateOfTurnDegreesPerMinute` is `undefined`.
+   */
   @property({type: Number})
   set rotationsPerMinute(value: number) {
-    this._rotationsPerMinute = value;
-    if (this._rotController) {
-      this._rotController.rotationsPerMinute = value;
-    }
+    this._legacyRotationsPerMinute = value;
   }
   get rotationsPerMinute() {
-    return this._rotationsPerMinute;
+    return this._legacyRotationsPerMinute;
   }
 
-  private _rotationsPerMinute = 0;
+  private _legacyRotationsPerMinute = 0;
   private _rotController?: RateOfTurnController;
+
+  private get _effectiveRpm(): number {
+    if (this.rateOfTurnDegreesPerMinute != null) {
+      return (
+        (this.rateOfTurnDegreesPerMinute / 360) * this.rotDotAnimationFactor
+      );
+    }
+    return this._legacyRotationsPerMinute;
+  }
 
   private get totalHeight(): number {
     return this.bottomBar ? this.height + this.ticksHeight : this.height;
@@ -202,19 +221,36 @@ export class ObcWatchFlat extends LitElement {
   private getRotColors(): {
     dotColor: string;
     barBgColor: string;
-    endDotFill: string;
-    endDotStroke: string;
   } {
     const isEnhanced = this.rotPriority === Priority.enhanced;
+
+    if (this.rotPortStarboard) {
+      // For bar type, derive direction from bar positions (visual direction);
+      // for dots, use spinner RPM.
+      const direction =
+        this.rotType === RotType.bar
+          ? this.rotEndX - this.rotStartX
+          : this._effectiveRpm;
+
+      if (direction > 0) {
+        return {
+          dotColor: 'var(--instrument-starboard-secondary-color)',
+          barBgColor: 'var(--instrument-starboard-primary-color)',
+        };
+      }
+      if (direction < 0) {
+        return {
+          dotColor: 'var(--instrument-port-secondary-color)',
+          barBgColor: 'var(--instrument-port-primary-color)',
+        };
+      }
+    }
+
     return {
       dotColor: isEnhanced
         ? 'var(--instrument-enhanced-tertiary-color)'
         : 'var(--instrument-regular-tertiary-color)',
       barBgColor: isEnhanced
-        ? 'var(--instrument-enhanced-secondary-color)'
-        : 'var(--instrument-regular-secondary-color)',
-      endDotFill: 'var(--border-silhouette-color)',
-      endDotStroke: isEnhanced
         ? 'var(--instrument-enhanced-secondary-color)'
         : 'var(--instrument-regular-secondary-color)',
     };
@@ -224,25 +260,29 @@ export class ObcWatchFlat extends LitElement {
     if (!this.rotType) return nothing;
 
     const trackY = this.getRotTrackY();
-    const {dotColor, barBgColor, endDotFill, endDotStroke} =
-      this.getRotColors();
+    const {dotColor, barBgColor} = this.getRotColors();
     const canAnimateDots = this.rotDotSpacing > 0;
 
     if (this.rotType === RotType.bar) {
-      const hasBar = Math.abs(this.rotEndX - this.rotStartX) >= 1;
+      const span = Math.abs(this.rotEndX - this.rotStartX);
+      const zeroDb = Number.isFinite(this.rotAtZeroDeadband)
+        ? this.rotAtZeroDeadband
+        : ROT_ZERO_DEADBAND_PX;
+
+      if (span < Math.max(zeroDb, BAR_HALF_THICKNESS)) {
+        return renderLinearRotZeroPill(barBgColor, this.rotStartX, trackY);
+      }
+
       return svg`
         ${renderLinearRotBarStatic({
           startX: this.rotStartX,
           endX: this.rotEndX,
-          color: dotColor,
           barColor: barBgColor,
           trackY,
-          endDotFill,
-          endDotStroke,
           maskId: 'rot-bar-mask-linear',
         })}
         ${
-          hasBar && canAnimateDots
+          canAnimateDots
             ? svg`<g clip-path="url(#rot-bar-mask-linear)">
               <g id="rot-spinner">
                 ${renderLinearRotBarDots(dotColor, trackY, this.rotDotSpacing, this.width)}
@@ -253,10 +293,18 @@ export class ObcWatchFlat extends LitElement {
       `;
     }
 
-    const dotsColor =
-      this.rotPriority === Priority.enhanced
-        ? 'var(--instrument-enhanced-secondary-color)'
-        : 'var(--instrument-regular-secondary-color)';
+    const isEnhanced = this.rotPriority === Priority.enhanced;
+    const neutralDotsColor = isEnhanced
+      ? 'var(--instrument-enhanced-secondary-color)'
+      : 'var(--instrument-regular-secondary-color)';
+    let dotsColor = neutralDotsColor;
+    if (this.rotPortStarboard) {
+      if (this._effectiveRpm > 0) {
+        dotsColor = 'var(--instrument-starboard-secondary-color)';
+      } else if (this._effectiveRpm < 0) {
+        dotsColor = 'var(--instrument-port-secondary-color)';
+      }
+    }
     return canAnimateDots
       ? svg`
           <g id="rot-spinner">
@@ -284,11 +332,19 @@ export class ObcWatchFlat extends LitElement {
       this._rotController = new RateOfTurnController(
         this,
         el,
-        this._rotationsPerMinute,
+        this._effectiveRpm,
         cyclePx
       );
     } else {
       this._rotController.cyclePx = cyclePx;
+    }
+
+    if (
+      changed.has('rateOfTurnDegreesPerMinute') ||
+      changed.has('rotDotAnimationFactor') ||
+      changed.has('rotationsPerMinute')
+    ) {
+      this._rotController.rotationsPerMinute = this._effectiveRpm;
     }
   }
 
@@ -331,6 +387,13 @@ export class ObcWatchFlat extends LitElement {
         ${this.FOVIndicator}
 
         <g clip-path="url(#frameClipPath)">${this.renderRot()}</g>
+        ${svg`<line
+          x1="0" y1="${-this.totalHeight / 2 + this.ticksHeight}"
+          x2="0" y2="${this.totalHeight / 2}"
+          stroke="var(--instrument-frame-tertiary-color)"
+          stroke-width="1"
+          vector-effect="non-scaling-stroke"
+        />`}
       </svg>
     `;
   }

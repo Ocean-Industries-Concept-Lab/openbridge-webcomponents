@@ -11,7 +11,6 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   test: {
-    retry: process.env.CI ? 2 : 0,
     projects: [
       {
         extends: true,
@@ -36,6 +35,7 @@ export default defineConfig({
         ],
         test: {
           name: 'storybook',
+          setupFiles: ['./.storybook/vitest.setup.ts'],
           // Enable browser mode
           browser: {
             enabled: true,
@@ -44,7 +44,6 @@ export default defineConfig({
             headless: true,
             instances: [{browser: 'chromium'}],
           },
-          setupFiles: ['./.storybook/vitest.setup.ts'],
         },
       },
     ],

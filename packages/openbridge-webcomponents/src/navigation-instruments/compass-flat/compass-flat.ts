@@ -8,6 +8,7 @@ import {Priority} from '../types.js';
 import {
   RotType,
   LINEAR_DOT_ANGLE_SPACING,
+  ROT_ZERO_DEADBAND_DEG,
 } from '../rate-of-turn/rot-renderer.js';
 
 export {RotType};
@@ -60,8 +61,10 @@ export interface Label {
  * @property {number} heading - Current heading in degrees.
  * @property {number} courseOverGround - Current COG in degrees.
  * @property {RotType|undefined} rotType - ROT display mode: `'dots'`, `'bar'`, or `undefined` (hidden).
- * @property {number} rotationsPerMinute - ROT spin speed; sign controls direction.
- * @property {number} rotMaxValue - Maximum ROT value for bar-extent mapping.
+ * @property {number|undefined} rateOfTurnDegreesPerMinute - Measured rate of turn in degrees per minute (positive = starboard). Drives the bar extent and (after `× rotDotAnimationFactor`) the dot animation.
+ * @property {number} rotDotAnimationFactor - Visual amplification for the dot animation only. Default `18` (≈1 rpm at 20°/min).
+ * @property {number} rotationsPerMinute - **Deprecated.** Use `rateOfTurnDegreesPerMinute` instead.
+ * @property {number} rotMaxValue - Bar-extent reference value in **degrees per minute**. Default `60` per ES-TRIN 2025/1 Art. 3.02.
  * @property {number} rotArcExtent - Degrees of bar arc per max-value ROT (default 60).
  *
  * @ignition-base-height: 170px
@@ -82,9 +85,27 @@ export class ObcCompassFlat extends LitElement {
     CompassFlatPriorityElement.hdg,
   ];
   @property({type: String}) rotType: RotType | undefined;
+  /**
+   * Measured rate of turn in degrees per minute (positive = starboard).
+   * When `undefined`, falls back to the deprecated `rotationsPerMinute`.
+   */
+  @property({type: Number}) rateOfTurnDegreesPerMinute: number | undefined;
+  /**
+   * Visual amplification applied only to the spinning dot animation.
+   */
+  @property({type: Number}) rotDotAnimationFactor: number = 18;
+  /**
+   * @deprecated Use `rateOfTurnDegreesPerMinute` instead.
+   */
   @property({type: Number}) rotationsPerMinute: number = 1;
-  @property({type: Number}) rotMaxValue: number = 10;
+  /**
+   * Bar-extent reference value in **degrees per minute**. Default `60`
+   * per ES-TRIN 2025/1 Art. 3.02.
+   */
+  @property({type: Number}) rotMaxValue: number = 60;
   @property({type: Number}) rotArcExtent: number = 60;
+  @property({type: Boolean}) rotPortStarboard: boolean = false;
+  @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_DEG;
 
   @state() private containerWidth = 0;
   @state() private maxContainerWidth = 0;
@@ -243,6 +264,10 @@ export class ObcCompassFlat extends LitElement {
     return selected.includes(element) ? this.priority : Priority.regular;
   }
 
+  private get _effectiveRotDegPerMin(): number {
+    return this.rateOfTurnDegreesPerMinute ?? this.rotationsPerMinute;
+  }
+
   private arrowColorFor(element: CompassFlatPriorityElement): string {
     return this.priorityFor(element) === Priority.enhanced
       ? 'var(--instrument-enhanced-secondary-color)'
@@ -302,12 +327,16 @@ export class ObcCompassFlat extends LitElement {
           .bottomBar=${!!this.rotType}
           .rotType=${this.rotType}
           .rotStartX=${0}
-          .rotEndX=${(this.rotationsPerMinute / (this.rotMaxValue || 1)) *
+          .rotEndX=${(this._effectiveRotDegPerMin / (this.rotMaxValue || 1)) *
           this.rotArcExtent *
           translationScale}
           .rotDotSpacing=${LINEAR_DOT_ANGLE_SPACING * translationScale}
+          .rateOfTurnDegreesPerMinute=${this.rateOfTurnDegreesPerMinute}
+          .rotDotAnimationFactor=${this.rotDotAnimationFactor}
           .rotationsPerMinute=${this.rotationsPerMinute}
           .rotPriority=${this.priorityFor(CompassFlatPriorityElement.rot)}
+          .rotPortStarboard=${this.rotPortStarboard}
+          .rotAtZeroDeadband=${this.rotAtZeroDeadband * translationScale}
         ></obc-watch-flat>
         <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg">
           ${this.HDGSvg}${this.COGSvg(translation)}

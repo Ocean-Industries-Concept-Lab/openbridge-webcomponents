@@ -5,19 +5,17 @@ import componentStyle from './poi-layer-stack.css?inline';
 
 import '../poi-layer/poi-layer.js';
 import '../poi-group/poi-group.js';
-import '../poi-data/poi-data.js';
+import '../poi/poi-data.js';
 import '../building-blocks/poi-header/poi-header.js';
 
 import type {ObcPoiLayer} from '../poi-layer/poi-layer.js';
 import type {ObcPoiGroup} from '../poi-group/poi-group.js';
+import {PoiDataValue} from '../poi/poi-data.js';
+import {Poi, isPoi, POI_ATTR} from '../poi/poi.js';
 import {
-  PoiDataValue,
-  PoiDataVisualRectPreference,
-} from '../poi-data/poi-data.js';
-import {Poi, isPoi, POI_ATTR} from '../building-blocks/poi/poi.js';
-
-const JUMP_DURATION_MS = 100;
-const JUMP_BEZIER = [0.2, 0, 0, 1] as const;
+  clearTargetGroupingAttributes,
+  clearTargetGroupingStyles,
+} from '../poi/poi-grouping-attrs.js';
 
 export enum PoiLayerSelectionMode {
   None = 'none',
@@ -38,7 +36,7 @@ export enum PoiLayerSelectionMode {
  * ### Example
  * ```html
  * <obc-poi-layer-stack selection-mode="single">
- *   <obc-poi-layer label="Radar" is-selected></obc-poi-layer>
+ *   <obc-poi-layer label="Radar" .isSelected=${true}></obc-poi-layer>
  *   <obc-poi-layer label="AIS"></obc-poi-layer>
  * </obc-poi-layer-stack>
  * ```
@@ -47,24 +45,39 @@ export enum PoiLayerSelectionMode {
  */
 @customElement('obc-poi-layer-stack')
 export class ObcPoiLayerStack extends LitElement {
+  private static readonly STACK_JUMP_DURATION_MS = 100;
+  private static readonly STACK_RETURNING_ATTR = 'data-stack-returning';
+
   @property({type: String, attribute: 'selection-mode'})
   selectionMode: PoiLayerSelectionMode = PoiLayerSelectionMode.None;
 
   private handleStackClick = (event: Event) => this.onStackClick(event);
   private handleSlotChange = () => this.schedulePlacement();
+  private handleTargetLayoutChange = () => this.schedulePlacement();
+  private handleLayerSelectionChanged = () => this.schedulePlacement();
   private selectionMap = new Map<
     Poi,
-    {originLayer: ObcPoiLayer; originLineLength: number}
+    {
+      originLayer: ObcPoiLayer;
+      previousAnimatePosition: boolean;
+      keepInSelectedLayer: boolean;
+    }
   >();
   private selectionCounter = 0;
-  private selectionIds = new WeakMap<Poi, string>();
-  private movingTargets = new Set<Poi>();
   private placementRaf = 0;
   private mutationObserver?: MutationObserver;
 
   override connectedCallback() {
     super.connectedCallback();
     this.addEventListener('click', this.handleStackClick);
+    this.addEventListener(
+      'obc-poi-data-layout-change',
+      this.handleTargetLayoutChange as EventListener
+    );
+    this.addEventListener(
+      'layer-selection-changed',
+      this.handleLayerSelectionChanged
+    );
   }
 
   override firstUpdated() {
@@ -81,6 +94,14 @@ export class ObcPoiLayerStack extends LitElement {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.removeEventListener('click', this.handleStackClick);
+    this.removeEventListener(
+      'obc-poi-data-layout-change',
+      this.handleTargetLayoutChange as EventListener
+    );
+    this.removeEventListener(
+      'layer-selection-changed',
+      this.handleLayerSelectionChanged
+    );
     const slot = this.shadowRoot?.querySelector('slot');
     slot?.removeEventListener('slotchange', this.handleSlotChange);
     this.mutationObserver?.disconnect();
@@ -89,16 +110,19 @@ export class ObcPoiLayerStack extends LitElement {
       cancelAnimationFrame(this.placementRaf);
       this.placementRaf = 0;
     }
+    this.selectionMap.forEach((_, target) => {
+      this.clearTargetProjectionStyles(target);
+      this.requestPoiRender(target);
+    });
     this.selectionMap.clear();
-    this.movingTargets.clear();
     this.selectionCounter = 0;
-    this.selectionIds = new WeakMap<Poi, string>();
   }
 
   private onStackClick(event: Event) {
     if (this.selectionMode === PoiLayerSelectionMode.None) return;
     const target = this.getPoiTargetFromEvent(event);
     if (!target) return;
+    if (target.hasAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR)) return;
 
     this.cleanupSelection();
     const originLayer = this.getTargetLayer(target);
@@ -109,20 +133,7 @@ export class ObcPoiLayerStack extends LitElement {
 
     const existing = this.selectionMap.get(target);
     if (existing) {
-      this.setSelectedTargetInteractivity(target, false);
-      this.clearTargetGroupingAttributes(target);
-      const currentLayer = this.getTargetLayer(target);
-      if (existing.originLayer !== currentLayer) {
-        this.clearTargetSelectedId(target);
-        this.moveTargetToLayer(target, existing.originLayer, () => {
-          this.animateTargetLineCompensation(target, 0, false);
-        });
-      } else {
-        this.animateTargetLineCompensation(target, 0, true);
-        this.clearTargetSelectedId(target);
-      }
-      this.selectionMap.delete(target);
-      this.schedulePlacement();
+      this.resetSelectionForTarget(target, existing);
       return;
     }
 
@@ -131,22 +142,15 @@ export class ObcPoiLayerStack extends LitElement {
       this.clearSelectionMapExcept(target);
     }
 
-    const originLineLength = Number.isFinite(target.y) ? target.y : 0;
-    this.selectionMap.set(target, {
-      originLayer,
-      originLineLength,
-    });
-    this.clearTargetGroupingAttributes(target);
-    this.setSelectedTargetInteractivity(target, true);
-    if (selectedLayer !== originLayer) {
-      this.moveTargetToLayer(target, selectedLayer, undefined, () => {
-        if (target.isConnected) {
-          this.setTargetSelectedId(target);
-        }
-      });
-    } else {
-      this.setTargetSelectedId(target);
-    }
+    const trackedOriginLayer =
+      originLayer === selectedLayer
+        ? this.inferBootstrapOriginLayer(target, selectedLayer)
+        : originLayer;
+
+    this.trackSelectionTarget(target, trackedOriginLayer, true);
+    const record = this.selectionMap.get(target);
+    if (!record) return;
+    this.activateTrackedTarget(target, record, selectedLayer);
     this.schedulePlacement();
   }
 
@@ -154,13 +158,16 @@ export class ObcPoiLayerStack extends LitElement {
     const path = event.composedPath?.() ?? [];
     for (const item of path) {
       if (item instanceof HTMLElement && isPoi(item)) {
-        return item;
+        return item as Poi;
       }
     }
     const direct = event.target instanceof HTMLElement ? event.target : null;
     if (!direct) return null;
     const closest = direct.closest(`[${POI_ATTR}]`);
-    return closest && isPoi(closest) ? closest : null;
+    if (closest && isPoi(closest)) {
+      return closest as Poi;
+    }
+    return null;
   }
 
   private getTargetLayer(target: Element): ObcPoiLayer | null {
@@ -178,15 +185,14 @@ export class ObcPoiLayerStack extends LitElement {
   }
 
   private isLayerSelected(layer: ObcPoiLayer): boolean {
-    return layer.isSelected === true || layer.hasAttribute('is-selected');
+    return layer.isSelected === true;
   }
 
   private cleanupSelection() {
     this.selectionMap.forEach((_, target) => {
-      if (!target.isConnected) this.selectionMap.delete(target);
-    });
-    this.movingTargets.forEach((target) => {
-      if (!target.isConnected) this.movingTargets.delete(target);
+      if (!target.isConnected) {
+        this.selectionMap.delete(target);
+      }
     });
   }
 
@@ -214,15 +220,37 @@ export class ObcPoiLayerStack extends LitElement {
     const topLayer = this.getLayer('top');
     const activeLayer = this.getLayer('selected') ?? topLayer;
     if (!activeLayer) return;
-    const fallbackLayer =
-      this.getLayer('default') ??
-      (activeLayer === topLayer ? this.getLayer('secondTop') : null);
     const topTargets = this.getLayerTargets(activeLayer);
     topTargets.forEach((other) => {
       if (other === target) return;
       const record = this.selectionMap.get(other);
-      this.resetSelectionForTarget(other, record, fallbackLayer);
+      this.resetSelectionForTarget(other, record);
     });
+  }
+
+  private getTargetTagName(target: Poi): string {
+    return target.tagName.toLowerCase();
+  }
+
+  private inferBootstrapOriginLayer(
+    target: Poi,
+    selectedLayer: ObcPoiLayer
+  ): ObcPoiLayer {
+    const targetTagName = this.getTargetTagName(target);
+    const nonSelectedLayers = this.getAllLayers().filter(
+      (layer) => layer !== selectedLayer
+    );
+
+    const typedOrigin = nonSelectedLayers.find((layer) =>
+      this.getLayerTargets(layer).some(
+        (candidate) => this.getTargetTagName(candidate) === targetTagName
+      )
+    );
+    if (typedOrigin) {
+      return typedOrigin;
+    }
+
+    return this.getLayer('default') ?? selectedLayer;
   }
 
   private collectPoiHeaders(target: Poi): HTMLElement[] {
@@ -268,10 +296,10 @@ export class ObcPoiLayerStack extends LitElement {
       return;
     }
 
-    const existing = this.selectionIds.get(target);
-    const selectedId = existing ?? String(++this.selectionCounter);
-    if (!existing) {
-      this.selectionIds.set(target, selectedId);
+    let selectedId = target.getAttribute('data-stack-selection-id');
+    if (!selectedId) {
+      selectedId = String(++this.selectionCounter);
+      target.setAttribute('data-stack-selection-id', selectedId);
     }
     if ('headerContent' in target) {
       target.headerContent = selectedId;
@@ -292,14 +320,367 @@ export class ObcPoiLayerStack extends LitElement {
     }
   }
 
-  private clearTargetGroupingAttributes(target: Poi) {
-    target.removeAttribute('data-grouped');
-    target.removeAttribute('data-pregrouped');
-    target.removeAttribute('data-behind');
-    target.removeAttribute('data-front');
-    target.removeAttribute('data-front-exit');
-    target.removeAttribute('data-exiting');
-    target.removeAttribute('data-exit-lock');
+  private async waitForPoiRender(target: Poi) {
+    const component = target as unknown as {updateComplete?: Promise<unknown>};
+    await component.updateComplete;
+    await new Promise<void>((resolve) =>
+      requestAnimationFrame(() => resolve())
+    );
+  }
+
+  private requestPoiRender(target: Poi) {
+    const component = target as unknown as {requestUpdate?: () => void};
+    component.requestUpdate?.();
+  }
+
+  private refreshTargetProjectionLayout(target: Poi, trackDurationMs = 0) {
+    target.refreshProjectionLayout?.(trackDurationMs);
+  }
+
+  private getTargetButtonProjectionOffset(target: Poi): number {
+    const raw = target.style.getPropertyValue('--obc-poi-button-projection-y');
+    const parsed = Number.parseFloat(raw);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
+  private getLayerProjectionOffset(
+    originLayer: ObcPoiLayer,
+    destinationLayer: ObcPoiLayer | null
+  ): number {
+    if (!destinationLayer || destinationLayer === originLayer) {
+      return 0;
+    }
+
+    const originRect = originLayer.getBoundingClientRect();
+    const destinationRect = destinationLayer.getBoundingClientRect();
+    return destinationRect.bottom - originRect.bottom;
+  }
+
+  private getTargetProjectionOffset(
+    originLayer: ObcPoiLayer,
+    selectedLayer: ObcPoiLayer | null
+  ): number {
+    if (!selectedLayer || selectedLayer === originLayer) {
+      return 0;
+    }
+
+    const originRect = originLayer.getBoundingClientRect();
+    const selectedRect = selectedLayer.getBoundingClientRect();
+    return originRect.bottom - selectedRect.bottom;
+  }
+
+  private detachTargetFromCurrentGroup(target: Poi): ObcPoiLayer | null {
+    const currentLayer = this.getTargetLayer(target);
+    const sourceGroup =
+      target.parentElement?.tagName.toLowerCase() === 'obc-poi-group'
+        ? (target.parentElement as ObcPoiGroup)
+        : null;
+
+    if (!sourceGroup) {
+      return currentLayer;
+    }
+
+    // Yank target out immediately — don't await group collapse.
+    // Clean up group-owned state (mirrors releaseTargetToParent in poi-group).
+    target.setRuntimeHorizontalOffsets?.(0, 0);
+    if (!target.setRuntimeHorizontalOffsets) {
+      target.buttonOffsetX = 0;
+      target.targetOffsetX = 0;
+    }
+    clearTargetGroupingStyles(target);
+
+    // Collapse the group independently — it handles its own cleanup.
+    // Set collapsing BEFORE expand=false so updateGrouping (which may
+    // fire via mutation observer before the group's updated() runs)
+    // sees collapsing=true and returns early instead of disbanding.
+    if (sourceGroup.expand) {
+      sourceGroup.collapsing = true;
+      sourceGroup.expand = false;
+    }
+
+    // Hide the wrapper immediately so it doesn't flash for one frame
+    // while updateGrouping catches up.
+    sourceGroup.removeAttribute('data-visible');
+
+    return currentLayer;
+  }
+
+  private applySelectedTargetProjectionState(target: Poi) {
+    // NOTE: do NOT set animatePosition = true here.
+    // That removes the no-motion class, enabling CSS transitions on the
+    // wrapper/button/line. The group's frame-by-frame expand/collapse
+    // animation conflicts with CSS transitions, causing X wiggle.
+    // The FLIP jump animation uses Web Animations API (fill:'forwards')
+    // which overrides CSS anyway — it doesn't need CSS transitions.
+    target.style.setProperty(
+      '--obc-poi-forced-target-transition-duration',
+      '0ms'
+    );
+    target.style.setProperty('--obc-poi-layer-inactive-opacity', '1');
+    target.style.setProperty('z-index', '3');
+  }
+
+  private clearTargetProjectionStyles(target: Poi) {
+    target.style.removeProperty('--obc-poi-button-projection-y');
+    target.style.removeProperty('--obc-poi-target-projection-y');
+    target.style.removeProperty('--obc-poi-forced-target-transition-duration');
+    target.style.removeProperty('--obc-poi-layer-inactive-opacity');
+    target.style.removeProperty('z-index');
+  }
+
+  /**
+   * Find the button and line elements inside the POI's shadow DOM.
+   */
+  private getAnimationElements(target: Poi): {
+    button: HTMLElement | null;
+    line: HTMLElement | null;
+  } {
+    const host = target as HTMLElement;
+    const innerPoi = host.shadowRoot?.querySelector('obc-poi');
+    const poiShadow = innerPoi?.shadowRoot;
+
+    // Button is slotted — find via slot.assignedElements
+    let button: HTMLElement | null = null;
+    const buttonSlot = poiShadow?.querySelector(
+      'slot[name="button"]'
+    ) as HTMLSlotElement | null;
+    if (buttonSlot) {
+      const assigned = buttonSlot.assignedElements({flatten: true});
+      button = (assigned[0] as HTMLElement) ?? null;
+    }
+
+    const line = poiShadow?.querySelector('.line') as HTMLElement | null;
+    return {button, line};
+  }
+
+  /**
+   * Animate a layer jump using Web Animations API.
+   * fill:'forwards' overrides ALL CSS/Lit styles during animation.
+   * After cancel(), Lit's final-state styles take over.
+   */
+  private async animateLayerJump(
+    target: Poi,
+    beforeButtonRect: DOMRect | null,
+    beforeLineRect: DOMRect | null
+  ): Promise<void> {
+    const {button, line} = this.getAnimationElements(target);
+
+    const afterButtonRect = button?.getBoundingClientRect();
+    const afterLineRect = line?.getBoundingClientRect();
+
+    const duration = ObcPoiLayerStack.STACK_JUMP_DURATION_MS;
+    const easing = 'ease-out';
+    const animations: Animation[] = [];
+
+    // Button: animate translateY from old position to new
+    if (button && beforeButtonRect && afterButtonRect) {
+      const deltaY = beforeButtonRect.top - afterButtonRect.top;
+      if (Math.abs(deltaY) >= 0.5) {
+        // Read the current (final) computed transform to use as end state
+        const finalTransform = getComputedStyle(button).transform;
+        const startTransform =
+          finalTransform === 'none'
+            ? `translateY(${deltaY}px)`
+            : `${finalTransform} translateY(${deltaY}px)`;
+
+        animations.push(
+          button.animate(
+            [{transform: startTransform}, {transform: finalTransform}],
+            {duration, easing, fill: 'forwards'}
+          )
+        );
+      }
+    }
+
+    // Line: animate both position (translateY matching button) and
+    // height (scaleY). Web Animations don't affect layout, so the line's
+    // CSS top:100% stays at the final position — we must translate it
+    // by the same delta as the button.
+    if (line && button && beforeButtonRect && afterButtonRect) {
+      const buttonDeltaY = beforeButtonRect.top - afterButtonRect.top;
+      // Line height: before vs after
+      const beforeH = beforeLineRect?.height ?? 0;
+      const afterH = afterLineRect?.height ?? (beforeH || 1);
+      const scaleRatio = afterH > 0 ? beforeH / afterH : 1;
+
+      if (Math.abs(buttonDeltaY) >= 0.5 || Math.abs(scaleRatio - 1) > 0.01) {
+        animations.push(
+          line.animate(
+            [
+              {
+                transform: `translateX(-50%) translateY(${buttonDeltaY}px) scaleY(${scaleRatio})`,
+                transformOrigin: 'top center',
+              },
+              {
+                transform: 'translateX(-50%) translateY(0px) scaleY(1)',
+                transformOrigin: 'top center',
+              },
+            ],
+            {duration, easing, fill: 'forwards'}
+          )
+        );
+      }
+    }
+
+    if (animations.length > 0) {
+      await Promise.all(animations.map((a) => a.finished));
+      animations.forEach((a) => a.cancel());
+    }
+  }
+
+  private async moveTargetIntoSelectedLayer(
+    target: Poi,
+    _originLayer: ObcPoiLayer,
+    selectedLayer: ObcPoiLayer,
+    animate = true
+  ) {
+    // BEFORE: measure button and line positions
+    const {button, line} = this.getAnimationElements(target);
+    const beforeButtonRect = button?.getBoundingClientRect() ?? null;
+    const beforeLineRect = line?.getBoundingClientRect() ?? null;
+
+    // Move to destination layer
+    if (this.getTargetLayer(target) !== selectedLayer) {
+      selectedLayer.appendChild(target);
+    }
+
+    // Render at final state (no projection variables needed)
+    this.requestPoiRender(target);
+    this.refreshTargetProjectionLayout(target);
+    await this.waitForPoiRender(target);
+
+    if (!animate) return;
+
+    // AFTER: animate from old positions to new
+    await this.animateLayerJump(target, beforeButtonRect, beforeLineRect);
+  }
+
+  private async moveTrackedTargetToSelectedLayer(
+    target: Poi,
+    record: {
+      originLayer: ObcPoiLayer;
+      previousAnimatePosition: boolean;
+      keepInSelectedLayer: boolean;
+    },
+    selectedLayer: ObcPoiLayer,
+    animateProjection: boolean
+  ) {
+    const currentLayer =
+      this.detachTargetFromCurrentGroup(target) ??
+      this.getTargetLayer(target) ??
+      record.originLayer;
+
+    clearTargetGroupingAttributes(target);
+    await this.moveTargetIntoSelectedLayer(
+      target,
+      record.originLayer,
+      selectedLayer,
+      animateProjection
+    );
+
+    if (currentLayer !== selectedLayer) {
+      currentLayer.requestGroupingUpdate();
+    }
+    selectedLayer.requestGroupingUpdate();
+  }
+
+  private async syncTargetProjection(
+    target: Poi,
+    originLayer: ObcPoiLayer,
+    selectedLayer: ObcPoiLayer | null,
+    animate = true
+  ) {
+    const nextProjectionOffset = this.getLayerProjectionOffset(
+      originLayer,
+      selectedLayer
+    );
+    const currentProjectionOffset =
+      this.getTargetButtonProjectionOffset(target);
+
+    if (Math.abs(nextProjectionOffset - currentProjectionOffset) < 0.5) {
+      if (Math.abs(nextProjectionOffset) < 0.5) {
+        target.style.removeProperty('--obc-poi-button-projection-y');
+      } else {
+        target.style.setProperty(
+          '--obc-poi-button-projection-y',
+          `${nextProjectionOffset}px`
+        );
+      }
+      this.requestPoiRender(target);
+      this.refreshTargetProjectionLayout(target);
+      return;
+    }
+
+    if (Math.abs(nextProjectionOffset) < 0.5) {
+      target.style.removeProperty('--obc-poi-button-projection-y');
+    } else {
+      target.style.setProperty(
+        '--obc-poi-button-projection-y',
+        `${nextProjectionOffset}px`
+      );
+    }
+    this.requestPoiRender(target);
+    if (animate) {
+      this.refreshTargetProjectionLayout(
+        target,
+        ObcPoiLayerStack.STACK_JUMP_DURATION_MS
+      );
+      await this.waitForPoiRender(target);
+      return;
+    }
+    this.refreshTargetProjectionLayout(target);
+  }
+
+  private async animateTargetReturnToOrigin(
+    target: Poi,
+    record: {
+      originLayer: ObcPoiLayer;
+      previousAnimatePosition: boolean;
+      keepInSelectedLayer: boolean;
+    }
+  ) {
+    target.setAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR, 'true');
+
+    try {
+      const currentLayer =
+        this.detachTargetFromCurrentGroup(target) ??
+        this.getTargetLayer(target);
+
+      // Clear grouping attributes immediately so the target doesn't
+      // arrive in the origin layer with data-grouped (which sets opacity:0).
+      clearTargetGroupingAttributes(target);
+
+      // BEFORE: measure button and line
+      const {button: beforeBtn, line: beforeLine} =
+        this.getAnimationElements(target);
+      const beforeButtonRect = beforeBtn?.getBoundingClientRect() ?? null;
+      const beforeLineRect = beforeLine?.getBoundingClientRect() ?? null;
+
+      // Clear projections, move to origin layer, render at final state
+      target.style.removeProperty('--obc-poi-target-projection-y');
+      target.style.removeProperty('--obc-poi-button-projection-y');
+      if (target.parentElement !== record.originLayer) {
+        record.originLayer.appendChild(target);
+      }
+      this.requestPoiRender(target);
+      this.refreshTargetProjectionLayout(target);
+      await this.waitForPoiRender(target);
+
+      // AFTER: animate from old positions to new
+      await this.animateLayerJump(target, beforeButtonRect, beforeLineRect);
+      this.setSelectedTargetInteractivity(target, false);
+      clearTargetGroupingAttributes(target);
+      this.clearTargetSelectedId(target);
+      this.clearTargetProjectionStyles(target);
+      this.requestPoiRender(target);
+      if (currentLayer && currentLayer !== record.originLayer) {
+        currentLayer.requestGroupingUpdate();
+      }
+      record.originLayer.requestGroupingUpdate();
+      this.schedulePlacement();
+    } finally {
+      target.removeAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR);
+    }
   }
 
   private setSelectedTargetInteractivity(target: Poi, selected: boolean) {
@@ -310,7 +691,7 @@ export class ObcPoiLayerStack extends LitElement {
     target.selected = selected;
     if (selected) {
       target.style.setProperty('--obc-poi-overlap-pointer-events', 'auto');
-      if (!isInAutoGroup) {
+      if (!isInAutoGroup && target.value !== PoiDataValue.Overlapped) {
         target.value = PoiDataValue.Checked;
         target.removeAttribute('data-behind');
         target.setAttribute('data-front', 'true');
@@ -322,36 +703,122 @@ export class ObcPoiLayerStack extends LitElement {
     }
   }
 
+  private trackSelectionTarget(
+    target: Poi,
+    originLayer: ObcPoiLayer,
+    keepInSelectedLayer = true
+  ) {
+    this.selectionMap.set(target, {
+      originLayer,
+      previousAnimatePosition: target.animatePosition ?? false,
+      keepInSelectedLayer,
+    });
+    target.removeAttribute('data-stack-selected');
+  }
+
+  private activateTrackedTarget(
+    target: Poi,
+    record: {
+      originLayer: ObcPoiLayer;
+      previousAnimatePosition: boolean;
+      keepInSelectedLayer: boolean;
+    },
+    selectedLayer: ObcPoiLayer,
+    animateProjection = true
+  ) {
+    if (record.keepInSelectedLayer) {
+      target.removeAttribute('data-stack-selected');
+      const needsMove = this.getTargetLayer(target) !== selectedLayer;
+      if (needsMove) {
+        void this.moveTrackedTargetToSelectedLayer(
+          target,
+          record,
+          selectedLayer,
+          animateProjection
+        );
+      } else {
+        const targetProjectionOffset = this.getTargetProjectionOffset(
+          record.originLayer,
+          selectedLayer
+        );
+        if (Math.abs(targetProjectionOffset) < 0.5) {
+          target.style.removeProperty('--obc-poi-target-projection-y');
+        } else {
+          target.style.setProperty(
+            '--obc-poi-target-projection-y',
+            `${targetProjectionOffset}px`
+          );
+        }
+        target.style.removeProperty('--obc-poi-button-projection-y');
+        this.requestPoiRender(target);
+        this.refreshTargetProjectionLayout(target);
+      }
+    } else {
+      clearTargetGroupingAttributes(target);
+      target.setAttribute('data-stack-selected', 'true');
+      void this.syncTargetProjection(
+        target,
+        record.originLayer,
+        selectedLayer,
+        animateProjection
+      );
+    }
+    this.setSelectedTargetInteractivity(target, true);
+    this.setTargetSelectedId(target);
+    this.applySelectedTargetProjectionState(target);
+  }
+
+  private seedSelectedLayerSelections(selectedLayer: ObcPoiLayer): Set<Poi> {
+    const seededTargets = new Set<Poi>();
+    if (this.selectionMode === PoiLayerSelectionMode.None) {
+      return seededTargets;
+    }
+
+    const selectedTargets = this.getLayerTargets(selectedLayer);
+    for (const target of selectedTargets) {
+      if (target.hasAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR)) {
+        continue;
+      }
+      if (this.selectionMap.has(target)) {
+        continue;
+      }
+      if (
+        this.selectionMode === PoiLayerSelectionMode.Single &&
+        this.selectionMap.size > 0
+      ) {
+        break;
+      }
+
+      const originLayer = this.inferBootstrapOriginLayer(target, selectedLayer);
+      this.selectionMap.set(target, {
+        originLayer,
+        previousAnimatePosition: target.animatePosition ?? false,
+        keepInSelectedLayer: true,
+      });
+      target.removeAttribute('data-stack-selected');
+      seededTargets.add(target);
+    }
+    return seededTargets;
+  }
+
   private resetSelectionForTarget(
     target: Poi,
     record?: {
       originLayer: ObcPoiLayer;
-      originLineLength: number;
-    },
-    fallbackLayer?: ObcPoiLayer | null
+      previousAnimatePosition: boolean;
+      keepInSelectedLayer: boolean;
+    }
   ) {
-    this.setSelectedTargetInteractivity(target, false);
-    this.clearTargetGroupingAttributes(target);
-    const currentLayer = this.getTargetLayer(target);
+    target.removeAttribute('data-stack-selected');
     if (record) {
-      if (record.originLayer !== currentLayer) {
-        this.clearTargetSelectedId(target);
-        this.moveTargetToLayer(target, record.originLayer, () => {
-          this.animateTargetLineCompensation(target, 0, false);
-        });
-      } else {
-        this.animateTargetLineCompensation(target, 0, true);
-        this.clearTargetSelectedId(target);
-      }
       this.selectionMap.delete(target);
+      void this.animateTargetReturnToOrigin(target, record);
       return;
     }
-    if (fallbackLayer && fallbackLayer !== currentLayer) {
-      this.clearTargetSelectedId(target);
-      this.moveTargetToLayer(target, fallbackLayer);
-      return;
-    }
+    this.setSelectedTargetInteractivity(target, false);
+    clearTargetGroupingAttributes(target);
     this.clearTargetSelectedId(target);
+    this.clearTargetProjectionStyles(target);
   }
 
   private clearSelectionMapExcept(target: Poi) {
@@ -370,10 +837,7 @@ export class ObcPoiLayerStack extends LitElement {
           mutation.type === 'attributes' &&
           mutation.target instanceof HTMLElement
         ) {
-          if (
-            mutation.target.tagName.toLowerCase() === 'obc-poi-layer' ||
-            mutation.attributeName === POI_ATTR
-          ) {
+          if (mutation.attributeName === POI_ATTR) {
             this.schedulePlacement();
             return;
           }
@@ -391,204 +855,8 @@ export class ObcPoiLayerStack extends LitElement {
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ['is-selected', POI_ATTR],
+      attributeFilter: [POI_ATTR],
     });
-  }
-
-  private moveTargetToLayer(
-    target: Poi,
-    nextLayer: ObcPoiLayer,
-    afterMove?: () => void,
-    beforeReveal?: () => void
-  ) {
-    const currentParent = target.parentElement;
-    if (!currentParent || currentParent === nextLayer) {
-      afterMove?.();
-      return;
-    }
-    this.movingTargets.add(target);
-    const finalizeMove = () => {
-      target.style.removeProperty('--obc-poi-moving-line-opacity');
-      target.style.removeProperty('--obc-poi-moving-pointer-opacity');
-      target.style.removeProperty('--obc-poi-moving-outside-arrow-opacity');
-      target.style.removeProperty('--obc-poi-position-transition-duration');
-      target.style.removeProperty('--obc-poi-transition-duration');
-      target.style.removeProperty('--obc-poi-opacity-transition-duration');
-      target.style.removeProperty('--obc-poi-size-transition-duration');
-      target.style.removeProperty('--obc-poi-color-transition-duration');
-      this.movingTargets.delete(target);
-      afterMove?.();
-    };
-    const reduceMotion =
-      typeof window !== 'undefined' &&
-      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    let beforeRevealCalled = false;
-    const runBeforeReveal = () => {
-      if (beforeRevealCalled) return;
-      beforeRevealCalled = true;
-      beforeReveal?.();
-    };
-    const wasInGroup = currentParent.tagName.toLowerCase() === 'obc-poi-group';
-    const firstVisualAnchor = this.getTargetVisualAnchor(target);
-    const firstTargetAnchor = this.getTargetPointAnchor(target);
-    const previousVisibility = target.style.visibility;
-    target.style.visibility = 'hidden';
-    target.style.setProperty('--obc-poi-moving-line-opacity', '1');
-    target.style.setProperty('--obc-poi-moving-pointer-opacity', '0');
-    target.style.setProperty('--obc-poi-moving-outside-arrow-opacity', '0');
-    target.style.setProperty('--obc-poi-position-transition-duration', '0s');
-    target.style.setProperty('--obc-poi-transition-duration', '0s');
-    target.style.setProperty('--obc-poi-opacity-transition-duration', '0s');
-    target.style.setProperty('--obc-poi-size-transition-duration', '0s');
-    target.style.setProperty('--obc-poi-color-transition-duration', '0s');
-    const restoreVisibility = () => {
-      if (previousVisibility) {
-        target.style.visibility = previousVisibility;
-      } else {
-        target.style.removeProperty('visibility');
-      }
-    };
-    nextLayer.appendChild(target);
-    if (wasInGroup) {
-      const group = currentParent as ObcPoiGroup;
-      const groupLayer = group.closest('obc-poi-layer');
-      if (groupLayer && groupLayer !== nextLayer) {
-        group.expand = false;
-      }
-      target.buttonOffsetX = 0;
-      target.targetOffsetX = 0;
-      target.style.removeProperty('position');
-      target.style.removeProperty('width');
-      target.style.removeProperty('min-width');
-      target.style.removeProperty('height');
-      target.style.removeProperty('transform');
-    }
-    const immediateTargetAnchor = this.getTargetPointAnchor(target);
-    const lineDy = firstTargetAnchor.y - immediateTargetAnchor.y;
-    const hasLineDelta = Number.isFinite(lineDy) && Math.abs(lineDy) >= 0.5;
-    if (hasLineDelta) {
-      this.adjustTargetLineLengthByOffset(target, lineDy, false);
-    }
-    nextLayer.requestGroupingUpdate();
-    const startSettledMove = (
-      lastVisualAnchor: {x: number; y: number},
-      hasVisualDelta: boolean
-    ) => {
-      if (reduceMotion) {
-        runBeforeReveal();
-        restoreVisibility();
-        nextLayer.requestGroupingUpdate();
-        finalizeMove();
-        return;
-      }
-
-      if (!hasVisualDelta && !hasLineDelta) {
-        runBeforeReveal();
-        restoreVisibility();
-        nextLayer.requestGroupingUpdate();
-        finalizeMove();
-        return;
-      }
-      if (!hasVisualDelta) {
-        runBeforeReveal();
-        restoreVisibility();
-        nextLayer.requestGroupingUpdate();
-        finalizeMove();
-        return;
-      }
-
-      const dx = firstVisualAnchor.x - lastVisualAnchor.x;
-      const dy = firstVisualAnchor.y - lastVisualAnchor.y;
-      const baseTransform = getComputedStyle(target).transform;
-      const startTransform =
-        baseTransform === 'none'
-          ? `translate(${dx}px, ${dy}px)`
-          : `translate(${dx}px, ${dy}px) ${baseTransform}`;
-      target.style.transform = startTransform;
-      target.style.willChange = 'transform';
-      runBeforeReveal();
-      restoreVisibility();
-
-      const duration = JUMP_DURATION_MS;
-      const [x1, y1, x2, y2] = JUMP_BEZIER;
-      const easing = `cubic-bezier(${x1}, ${y1}, ${x2}, ${y2})`;
-      const animation = target.animate(
-        [
-          {transform: startTransform},
-          {transform: baseTransform === 'none' ? 'none' : baseTransform},
-        ],
-        {duration, easing}
-      );
-      const completeMove = () => {
-        target.style.willChange = '';
-        target.style.removeProperty('transform');
-        nextLayer.requestGroupingUpdate();
-        finalizeMove();
-      };
-      animation.addEventListener('finish', completeMove, {once: true});
-      animation.addEventListener('cancel', completeMove, {once: true});
-    };
-
-    const waitForStableVisualAnchor = (
-      remainingFrames: number,
-      previousAnchor?: {x: number; y: number}
-    ) => {
-      requestAnimationFrame(() => {
-        if (!target.isConnected || this.getTargetLayer(target) !== nextLayer) {
-          restoreVisibility();
-          finalizeMove();
-          return;
-        }
-
-        const lastVisualAnchor = this.getTargetVisualAnchor(target);
-        const dx = firstVisualAnchor.x - lastVisualAnchor.x;
-        const dy = firstVisualAnchor.y - lastVisualAnchor.y;
-        const hasVisualDelta =
-          Number.isFinite(dx) &&
-          Number.isFinite(dy) &&
-          (Math.abs(dx) >= 0.5 || Math.abs(dy) >= 0.5);
-
-        if (
-          previousAnchor &&
-          Math.abs(lastVisualAnchor.x - previousAnchor.x) < 0.5 &&
-          Math.abs(lastVisualAnchor.y - previousAnchor.y) < 0.5
-        ) {
-          startSettledMove(lastVisualAnchor, hasVisualDelta);
-          return;
-        }
-
-        if (remainingFrames <= 0) {
-          startSettledMove(lastVisualAnchor, hasVisualDelta);
-          return;
-        }
-
-        waitForStableVisualAnchor(remainingFrames - 1, lastVisualAnchor);
-      });
-    };
-
-    requestAnimationFrame(() => {
-      waitForStableVisualAnchor(2);
-    });
-  }
-
-  private getRectBottomCenter(rect: DOMRect): {x: number; y: number} {
-    return {x: rect.left + rect.width / 2, y: rect.bottom};
-  }
-
-  private getTargetVisualAnchor(target: Poi): {
-    x: number;
-    y: number;
-  } {
-    const rect = target.getVisualRect(PoiDataVisualRectPreference.Anchor);
-    return this.getRectBottomCenter(rect);
-  }
-
-  private getTargetPointAnchor(target: Poi): {x: number; y: number} {
-    const pointer = target.getPointerElement();
-    if (pointer) {
-      return this.getRectBottomCenter(pointer.getBoundingClientRect());
-    }
-    return this.getTargetVisualAnchor(target);
   }
 
   private schedulePlacement() {
@@ -623,187 +891,37 @@ export class ObcPoiLayerStack extends LitElement {
 
   private syncSelectedLayerTargets() {
     const selectedLayer = this.getLayer('selected');
-    this.updateLayerInactiveState(selectedLayer);
-    const allTargets = this.getAllLayers().flatMap((layer) =>
-      this.getLayerTargets(layer)
-    );
 
     if (!selectedLayer) {
-      allTargets.forEach((target) => {
-        if (this.movingTargets.has(target)) {
-          return;
-        }
-        this.setSelectedTargetInteractivity(target, false);
-        this.clearTargetSelectedId(target);
-        this.selectionMap.delete(target);
+      this.selectionMap.forEach((record, target) => {
+        this.resetSelectionForTarget(target, record);
       });
       return;
     }
 
-    allTargets.forEach((target) => {
-      if (this.movingTargets.has(target)) {
-        return;
-      }
+    const seededTargets = this.seedSelectedLayerSelections(selectedLayer);
 
-      const currentLayer = this.getTargetLayer(target);
-      const isInSelectedLayer = currentLayer === selectedLayer;
-
-      if (!isInSelectedLayer) {
-        this.setSelectedTargetInteractivity(target, false);
-        this.clearTargetSelectedId(target);
+    this.selectionMap.forEach((record, target) => {
+      if (!target.isConnected) {
         this.selectionMap.delete(target);
         return;
       }
-
-      this.setTargetSelectedId(target);
-      this.setSelectedTargetInteractivity(target, true);
-
-      if (this.selectionMode === PoiLayerSelectionMode.None) {
+      if (target.hasAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR)) {
         return;
       }
-
-      if (this.selectionMap.has(target)) return;
       if (
-        this.selectionMode === PoiLayerSelectionMode.Single &&
-        this.selectionMap.size > 0
+        !record.keepInSelectedLayer &&
+        !target.hasAttribute('data-stack-selected')
       ) {
-        return;
+        target.setAttribute('data-stack-selected', 'true');
       }
-      const fallbackOrigin = this.getLayer('default');
-      const originLayer =
-        fallbackOrigin && fallbackOrigin !== selectedLayer
-          ? fallbackOrigin
-          : currentLayer;
-      if (!originLayer) return;
-      const originLineLength = Number.isFinite(target.y) ? target.y : 0;
-      this.selectionMap.set(target, {
-        originLayer,
-        originLineLength,
-      });
-      this.syncInitialSelectedTargetLineCompensation(
+      this.activateTrackedTarget(
         target,
-        originLayer,
-        selectedLayer
+        record,
+        selectedLayer,
+        !seededTargets.has(target)
       );
     });
-  }
-
-  private syncInitialSelectedTargetLineCompensation(
-    target: Poi,
-    originLayer: ObcPoiLayer,
-    selectedLayer: ObcPoiLayer
-  ) {
-    if (originLayer === selectedLayer) {
-      return;
-    }
-
-    const originRect = originLayer.getBoundingClientRect();
-    const selectedRect = selectedLayer.getBoundingClientRect();
-    const layerBottomDelta = originRect.bottom - selectedRect.bottom;
-    if (
-      !Number.isFinite(layerBottomDelta) ||
-      Math.abs(layerBottomDelta) < 0.5
-    ) {
-      return;
-    }
-
-    const expectedCompensation = target.fixedTarget
-      ? -layerBottomDelta
-      : layerBottomDelta;
-    const currentCompensation = this.getTargetLineCompensation(target);
-    if (Math.abs(expectedCompensation - currentCompensation) < 0.5) {
-      return;
-    }
-
-    this.animateTargetLineCompensation(target, expectedCompensation, false);
-  }
-
-  private getTargetLineCompensation(target: Poi): number {
-    const compensation = target.lineCompensationY;
-    return Number.isFinite(compensation) ? compensation : 0;
-  }
-
-  private animateTargetLineCompensation(
-    target: Poi,
-    targetCompensation: number,
-    animate: boolean,
-    startTimeOverride?: number
-  ) {
-    if (!animate) {
-      target.lineCompensationY = targetCompensation;
-      return;
-    }
-
-    const duration = JUMP_DURATION_MS;
-    const [x1, y1, x2, y2] = JUMP_BEZIER;
-    const startTime = startTimeOverride ?? performance.now();
-    const startCompensation = this.getTargetLineCompensation(target);
-
-    const animateLineLength = (now: number) => {
-      try {
-        const elapsed = now - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        const eased = this.evaluateCubicBezier(x1, y1, x2, y2, progress);
-        const nextCompensation =
-          startCompensation + (targetCompensation - startCompensation) * eased;
-        target.lineCompensationY = nextCompensation;
-
-        if (progress < 1) {
-          requestAnimationFrame(animateLineLength);
-        }
-      } catch (error) {
-        console.error(
-          '[poi-layer-stack] Error in line length animation:',
-          error
-        );
-      }
-    };
-
-    requestAnimationFrame(animateLineLength);
-  }
-
-  private adjustTargetLineLengthByOffset(
-    target: Poi,
-    offset: number,
-    animate = true,
-    startTimeOverride?: number
-  ) {
-    if (!Number.isFinite(offset) || Math.abs(offset) < 0.5) return;
-    const currentCompensation = this.getTargetLineCompensation(target);
-    const targetCompensation = target.fixedTarget
-      ? currentCompensation - offset
-      : currentCompensation + offset;
-    this.animateTargetLineCompensation(
-      target,
-      targetCompensation,
-      animate,
-      startTimeOverride
-    );
-  }
-
-  private evaluateCubicBezier(
-    x1: number,
-    y1: number,
-    x2: number,
-    y2: number,
-    t: number
-  ): number {
-    const cx = 3 * x1;
-    const bx = 3 * (x2 - x1) - cx;
-    const ax = 1 - cx - bx;
-
-    let tParam = t;
-    for (let i = 0; i < 4; i++) {
-      const x = ((ax * tParam + bx) * tParam + cx) * tParam;
-      const dx = (3 * ax * tParam + 2 * bx) * tParam + cx;
-      if (Math.abs(dx) < 1e-6) break;
-      tParam -= (x - t) / dx;
-    }
-
-    const cy = 3 * y1;
-    const by = 3 * (y2 - y1) - cy;
-    const ay = 1 - cy - by;
-    return ((ay * tParam + by) * tParam + cy) * tParam;
   }
 
   override render() {

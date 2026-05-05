@@ -1,10 +1,10 @@
 {
   "name": "@oicl/openbridge-webcomponents",
-  "version": "0.0.16",
+  "version": "2.0.0-next.18",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip.git",
+    "url": "git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents.git",
     "directory": "packages/openbridge-webcomponents"
   },
   "homepage": "https://www.openbridge.no",
@@ -22,6 +22,7 @@
     "storybook": "npm run analyze && storybook dev -p 6006 --no-open",
     "test-storybook": "vitest --project=storybook",
     "test-storybook:watch": "vitest --project=storybook --watch",
+    "test-storybook:docker": "docker run -it -v $(pwd):/app/packages/openbridge-webcomponents -w /app/packages/openbridge-webcomponents openbridge-webcomponents-storybook npm run test-storybook",
     "update-snapshots": "rm -rf __vis__/linux/__baselines__ && mv __vis__/linux/__results__/ __vis__/linux/__baselines__/",
     "build-storybook": "storybook build",
     "storybook:server": "http-server -p 6006 storybook-static",
@@ -46,8 +47,9 @@
     "wrappers:post-fix": "node fix-generated.cjs",
     "📜_SCRIPTS___________________________________________________": "echo _____",
     "download:icons": "tsx ./script/download-icons.ts",
-    "analyze": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\"",
+    "analyze": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\" && tsx ./script/sort-custom-element-manifest.ts",
     "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\" --watch",
+    "clean": "rm -rf node_modules dist bundle custom-elements.json",
     "言_TRANSLATIONS______________________________________________": "echo _____",
     "translations:extract": "lit localize extract"
   },
@@ -56,6 +58,7 @@
     "@lit/localize": "^0.12.2",
     "chart.js": "^4.5.1",
     "lit": "^3.3.2",
+    "semver": "^7.7.4",
     "uplot": "^1.6.32"
   },
   "devDependencies": {
@@ -72,6 +75,13 @@
     "@lit-labs/gen-wrapper-vue": "file:lit-labs-gen-wrapper-vue-0.4.1.tgz",
     "@open-wc/lit-helpers": "^0.7.0",
     "@playwright/test": "^1.58.2",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/exec": "^7.1.0",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "github:semantic-release/github",
+    "@semantic-release/npm": "^13.1.5",
+    "@semantic-release/release-notes-generator": "^14.1.0",
     "@storybook/addon-docs": "^10.2.17",
     "@storybook/addon-links": "^10.2.17",
     "@storybook/addon-themes": "^10.2.19",
@@ -83,6 +93,7 @@
     "@typescript-eslint/eslint-plugin": "^8.57.0",
     "@vitest/browser-playwright": "^4.0.18",
     "@vitest/coverage-v8": "^4.0.18",
+    "conventional-changelog-conventionalcommits": "^9.3.1",
     "dotenv": "^17.3.1",
     "eslint": "^10.0.3",
     "eslint-plugin-storybook": "^10.2.17",
@@ -104,6 +115,7 @@
     "postcss-nesting": "^14.0.0",
     "prettier": "^3.8.1",
     "rollup-plugin-postcss-lit": "^2.2.0",
+    "semantic-release": "^25.0.3",
     "storybook": "^10.2.17",
     "storybook-addon-tag-badges": "^3.0.6",
     "storybook-addon-vis": "3.0.1",
@@ -119,10 +131,6 @@
   },
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
-  "files": [
-    "./dist",
-    "README.md"
-  ],
   "publishConfig": {
     "access": "public"
   },

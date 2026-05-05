@@ -43,12 +43,12 @@ const config: StorybookConfig = {
     <style>
     @font-face {
     font-family: Noto Sans;
-    src: url(/assets/NotoSans.ttf);
+    src: url(./assets/NotoSans.ttf);
     }
 
      @font-face {
     font-family: 'noto-sans';
-    src: url(/assets/NotoSans.ttf);
+    src: url(./assets/NotoSans.ttf);
     }
 </style>
   `,

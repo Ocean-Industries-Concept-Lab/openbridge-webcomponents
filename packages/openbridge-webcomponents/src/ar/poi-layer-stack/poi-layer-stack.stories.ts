@@ -3,9 +3,9 @@ import {html} from 'lit';
 import {PoiLayerSelectionMode} from './poi-layer-stack.js';
 import './poi-layer-stack.js';
 import '../poi-layer/poi-layer.js';
-import '../poi-data/poi-data.js';
-import '../poi-aton/poi-aton.js';
-import '../poi-vessel/poi-vessel.js';
+import '../poi/poi-data.js';
+import '../poi/poi-aton.js';
+import '../poi/poi-vessel.js';
 import '../../icons/icon-placeholder.js';
 import '../../icons/icon-beacon-general-east.js';
 import '../../icons/icon-vessel-type-psv-outlined.js';
@@ -22,7 +22,7 @@ type PoiLayerStackArgs = {
 
 const meta: Meta<PoiLayerStackArgs> = {
   title: 'AR/POI Layer Stack',
-  tags: ['6.0'],
+  tags: ['6.1'],
   component: 'obc-poi-layer-stack',
   decorators: [
     (story) => html`
@@ -106,10 +106,10 @@ const renderTwoLayers = (args: PoiLayerStackArgs) => html`
     }
   </style>
   <obc-poi-layer-stack class="stack" selection-mode=${args.selectionMode}>
-    <obc-poi-layer label="Layer A" is-selected debug>
+    <obc-poi-layer label="Layer A" .isSelected=${true} .debug=${true}>
       <obc-poi-data .x=${220} .y=${90} .fixedTarget=${false}> </obc-poi-data>
     </obc-poi-layer>
-    <obc-poi-layer label="Layer B" debug>
+    <obc-poi-layer label="Layer B" .debug=${true}>
       <obc-poi-data .x=${120} .y=${110} .fixedTarget=${false}> </obc-poi-data>
       <obc-poi-data .x=${320} .y=${70} .fixedTarget=${false}> </obc-poi-data>
     </obc-poi-layer>
@@ -130,11 +130,11 @@ const renderThreeLayers = (args: PoiLayerStackArgs) => {
       }
     </style>
     <obc-poi-layer-stack class="stack" selection-mode=${args.selectionMode}>
-      <obc-poi-layer label="Layer A" is-selected debug>
+      <obc-poi-layer label="Layer A" .isSelected=${true} .debug=${true}>
         <obc-poi-data .x=${520} .y=${110} .fixedTarget=${false}> </obc-poi-data>
       </obc-poi-layer>
-      <obc-poi-layer label="Layer B" debug> </obc-poi-layer>
-      <obc-poi-layer label="Layer C" ?debug=${args.debug}>
+      <obc-poi-layer label="Layer B" .debug=${true}> </obc-poi-layer>
+      <obc-poi-layer label="Layer C" .debug=${args.debug}>
         <obc-poi-data .x=${80} .y=${120}> </obc-poi-data>
         <obc-poi-data .x=${260} .y=${80}> </obc-poi-data>
         <obc-poi-data .x=${180} .y=${100}> </obc-poi-data>
@@ -203,7 +203,7 @@ export const SelectionMultiAnimated: Story = {
         class="stack-animated"
         selection-mode=${args.selectionMode}
       >
-        <obc-poi-layer label="Layer A" is-selected debug>
+        <obc-poi-layer label="Layer A" .isSelected=${true} .debug=${true}>
           <obc-poi-data
             class="anim-poi p0"
             .x=${isVitestBrowser ? p0.x : 520}
@@ -213,8 +213,8 @@ export const SelectionMultiAnimated: Story = {
             .fixedTarget=${false}
           ></obc-poi-data>
         </obc-poi-layer>
-        <obc-poi-layer label="Layer B" debug> </obc-poi-layer>
-        <obc-poi-layer label="Layer C" ?debug=${args.debug}>
+        <obc-poi-layer label="Layer B" .debug=${true}> </obc-poi-layer>
+        <obc-poi-layer label="Layer C" .debug=${args.debug}>
           <obc-poi-data
             class="anim-poi p1"
             .x=${isVitestBrowser ? p1.x : 80}
@@ -335,7 +335,7 @@ const renderWithValues = (args: PoiLayerStackArgs) => html`
     class="stack-values"
     selection-mode=${args.selectionMode}
   >
-    <obc-poi-layer label="Layer A" is-selected debug>
+    <obc-poi-layer label="Layer A" .isSelected=${true} .debug=${true}>
       <obc-poi-data
         .x=${120}
         .y=${118}
@@ -346,7 +346,7 @@ const renderWithValues = (args: PoiLayerStackArgs) => html`
         ]}
       ></obc-poi-data>
     </obc-poi-layer>
-    <obc-poi-layer label="Layer B" debug>
+    <obc-poi-layer label="Layer B" .debug=${true}>
       <obc-poi-data
         .x=${300}
         .y=${92}
@@ -392,8 +392,12 @@ const renderMixedTypeLayers = (args: PoiLayerStackArgs) => html`
     }
   </style>
   <obc-poi-layer-stack class="stack-mixed" selection-mode=${args.selectionMode}>
-    <obc-poi-layer label="Selected" is-selected debug></obc-poi-layer>
-    <obc-poi-layer label="Buoys" debug>
+    <obc-poi-layer
+      label="Selected"
+      .isSelected=${true}
+      .debug=${true}
+    ></obc-poi-layer>
+    <obc-poi-layer label="Buoys" .debug=${true}>
       <obc-poi-aton .x=${200} aton-type="aton" aton-style="green">
         <obi-beacon-general-east></obi-beacon-general-east>
       </obc-poi-aton>
@@ -401,7 +405,7 @@ const renderMixedTypeLayers = (args: PoiLayerStackArgs) => html`
         <obi-beacon-general-east></obi-beacon-general-east>
       </obc-poi-aton>
     </obc-poi-layer>
-    <obc-poi-layer label="Vessels" debug>
+    <obc-poi-layer label="Vessels" .debug=${true}>
       <obc-poi-data .x=${120} .y=${110}></obc-poi-data>
       <obc-poi-vessel .x=${280} .y=${96}>
         <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>

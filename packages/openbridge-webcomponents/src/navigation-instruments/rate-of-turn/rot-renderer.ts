@@ -11,9 +11,8 @@
  *
  * - `renderRotDots(color, position)` — Five evenly-spaced filled dots on the
  *   track circle. Intended to be wrapped in a spinning `<g>` by the caller.
- * - `renderRotBarStatic(config)` — The static "banana" arc bar, end-dot, and
- *   `<clipPath>` definition. The clip region is angularly padded at the end
- *   side so spinning dots snap cleanly in/out.
+ * - `renderRotBarStatic(config)` — The static "banana" arc bar and
+ *   `<clipPath>` definition.
  * - `renderRotBarDots(color, position)` — Smaller dots sized to fit inside
  *   the bar, rendered inside the caller's clip-path group.
  * - `shortestAngularDeltaDeg(startAngle, endAngle)` — Wraparound-safe
@@ -59,11 +58,13 @@ const DOT_ANGLES = Array.from(
 const SCALE_RADIUS = 172;
 const INNER_CIRCLE_RADIUS = 100;
 
-const BAR_HALF_THICKNESS = 8;
+export const BAR_HALF_THICKNESS = 8;
 const DOT_RADIUS = BAR_HALF_THICKNESS;
-const BAR_DOT_RADIUS = BAR_HALF_THICKNESS * 0.75;
-const BAR_DOT_STROKE = BAR_HALF_THICKNESS * 0.5;
-const BAR_DOT_INNER_RADIUS = BAR_DOT_RADIUS - BAR_DOT_STROKE / 2;
+const BAR_DOT_INNER_RADIUS =
+  BAR_HALF_THICKNESS * 0.75 - BAR_HALF_THICKNESS * 0.25;
+
+export const ROT_ZERO_DEADBAND_DEG = 0.05;
+export const ROT_ZERO_DEADBAND_PX = 0.5;
 
 function getTrackRadius(position: RotPosition, radiusOffset = 0): number {
   const base =
@@ -129,7 +130,7 @@ function rotBarPath(
   return [
     `M ${outerStartX} ${outerStartY}`,
     `A ${R} ${R} 0 0 ${outerSweep} ${outerEndX} ${outerEndY}`,
-    `L ${innerEndX} ${innerEndY}`,
+    `A ${BAR_HALF_THICKNESS} ${BAR_HALF_THICKNESS} 0 0 ${outerSweep} ${innerEndX} ${innerEndY}`,
     `A ${r} ${r} 0 0 ${innerSweep} ${innerStartX} ${innerStartY}`,
     `Z`,
   ].join(' ');
@@ -143,14 +144,63 @@ export function shortestAngularDeltaDeg(
   return cw <= 180 ? cw : 360 - cw;
 }
 
+export function rotBarThresholdAngle(
+  position: RotPosition,
+  radiusOffset = 0
+): number {
+  const trackRadius = getTrackRadius(position, radiusOffset);
+  return (BAR_HALF_THICKNESS / trackRadius) * (180 / Math.PI);
+}
+
+export function renderRotZeroPill(
+  color: string,
+  angle: number,
+  position: RotPosition,
+  radiusOffset = 0
+): SVGTemplateResult {
+  const trackRadius = getTrackRadius(position, radiusOffset);
+  const w = BAR_HALF_THICKNESS;
+  const h = BAR_HALF_THICKNESS * 2;
+  const rx = BAR_HALF_THICKNESS / 2;
+  return svg`
+    <g transform="rotate(${angle})">
+      <rect
+        x="${-w / 2}"
+        y="${-trackRadius - h / 2}"
+        width="${w}"
+        height="${h}"
+        rx="${rx}"
+        fill="${color}"
+      />
+    </g>
+  `;
+}
+
+export function renderLinearRotZeroPill(
+  color: string,
+  x: number,
+  trackY: number
+): SVGTemplateResult {
+  const w = BAR_HALF_THICKNESS;
+  const h = BAR_HALF_THICKNESS * 2;
+  const rx = BAR_HALF_THICKNESS / 2;
+  return svg`
+    <rect
+      x="${x - w / 2}"
+      y="${trackY - h / 2}"
+      width="${w}"
+      height="${h}"
+      rx="${rx}"
+      fill="${color}"
+    />
+  `;
+}
+
 export interface RotBarConfig {
   startAngle: number;
   endAngle: number;
-  color: string;
   barColor: string;
   position: RotPosition;
-  endDotFill?: string;
-  endDotStroke?: string;
   maskId?: string;
   radiusOffset?: number;
 }
@@ -159,49 +209,29 @@ export function renderRotBarStatic(config: RotBarConfig): SVGTemplateResult {
   const {
     startAngle,
     endAngle,
-    color,
     barColor,
     position,
-    endDotFill = 'var(--instrument-frame-primary-color)',
-    endDotStroke = color,
     maskId = 'rot-bar-mask',
     radiusOffset = 0,
   } = config;
 
-  if (shortestAngularDeltaDeg(startAngle, endAngle) < 0.1) {
+  if (
+    shortestAngularDeltaDeg(startAngle, endAngle) <
+    rotBarThresholdAngle(position, radiusOffset)
+  ) {
     return svg``;
   }
 
   const trackRadius = getTrackRadius(position, radiusOffset);
   const arcPath = rotBarPath(startAngle, endAngle, trackRadius);
-  const {cx: endCx, cy: endCy} = dotOnTrack(endAngle, trackRadius);
-
-  // Expand the clip region angularly at the COG (end) side only so dots
-  // snap fully in/out near the end dot. The HDG (start) side is flat —
-  // dots should clip exactly at the bar edge with no extra padding.
-  const dotAngularPad =
-    (Math.asin(BAR_DOT_INNER_RADIUS / trackRadius) * 180) / Math.PI;
-  const cwSpan = (((endAngle - startAngle) % 360) + 360) % 360;
-  const isCW = cwSpan <= 180;
-  const clipPath = rotBarPath(
-    startAngle,
-    endAngle + (isCW ? dotAngularPad : -dotAngularPad),
-    trackRadius
-  );
 
   return svg`
     <defs>
       <clipPath id="${maskId}">
-        <path d="${clipPath}" />
+        <path d="${arcPath}" />
       </clipPath>
     </defs>
     <path d="${arcPath}" fill="${barColor}" />
-    <circle
-      cx="${endCx}" cy="${endCy}" r="${BAR_DOT_RADIUS}"
-      fill="${endDotFill}"
-      stroke="${endDotStroke}"
-      stroke-width="${BAR_DOT_STROKE}"
-    />
   `;
 }
 
@@ -287,22 +317,18 @@ export function renderLinearRotDots(
 export interface LinearRotBarConfig {
   startX: number;
   endX: number;
-  color: string;
   barColor: string;
   trackY: number;
-  endDotFill?: string;
-  endDotStroke?: string;
   maskId?: string;
 }
 
 /**
- * Render the static horizontal bar, end-dot, and `<clipPath>` for a linear
+ * Render the static horizontal bar and `<clipPath>` for a linear
  * ROT indicator. Analogous to `renderRotBarStatic` for radial instruments.
  *
  * The bar is a rounded capsule from `startX` to `endX` at vertical
- * position `trackY`. A ring-shaped end-dot sits at `endX`. The clip
- * region is padded at the end side so spinning bar-dots snap in/out
- * cleanly (same rationale as the angular padding in the radial version).
+ * position `trackY`. The clip region matches the bar shape so spinning
+ * bar-dots clip cleanly at the edges.
  *
  * Returns empty SVG when the bar span is less than 1 px.
  */
@@ -312,15 +338,12 @@ export function renderLinearRotBarStatic(
   const {
     startX,
     endX,
-    color,
     barColor,
     trackY,
-    endDotFill = 'var(--instrument-frame-primary-color)',
-    endDotStroke = color,
     maskId = 'rot-bar-mask-linear',
   } = config;
 
-  if (Math.abs(endX - startX) < 1) return svg``;
+  if (Math.abs(endX - startX) < BAR_HALF_THICKNESS) return svg``;
 
   const h = BAR_HALF_THICKNESS;
   const top = trackY - h;
@@ -342,10 +365,6 @@ export function renderLinearRotBarStatic(
       </clipPath>
     </defs>
     <path d="${barPath}" fill="${barColor}" />
-    <circle
-      cx="${endX}" cy="${trackY}" r="${BAR_DOT_RADIUS}"
-      fill="${endDotFill}" stroke="${endDotStroke}"
-      stroke-width="${BAR_DOT_STROKE}" />
   `;
 }
 

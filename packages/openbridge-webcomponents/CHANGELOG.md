@@ -1,259 +1,160 @@
+## [2.0.0-next.18](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.17...v2.0.0-next.18) (2026-05-04)
+
+### Features
+
+- **navigation-instruments:** add zoomToFitArc to pitch, roll and pitch-roll ([#836](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/836)) ([7438fa9](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/7438fa9dfb1f859023d24041a58241ef005452ff)), closes [#835](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/835)
+
+## [2.0.0-next.17](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.16...v2.0.0-next.17) (2026-05-04)
+
+### ⚠ BREAKING CHANGES
+
+- **instruments:** `rotMaxValue` on `obc-compass`, `obc-compass-sector`,
+  and `obc-compass-flat` is now interpreted in **degrees per minute**
+  instead of rotations per minute. The default value was bumped from `10`
+  to `60` (per ES-TRIN 2025/1 Art. 3.02) to match the new unit. Consumers
+  that set `rotMaxValue` explicitly must convert their value: a previous
+  `rotMaxValue=10` (rpm) corresponds to `rotMaxValue=3600` (°/min), but
+  in practice the typical operating range is `30`–`90` °/min.
+
+Co-authored-by: Copilot <copilot@github.com>
+
+### Features
+
+- **instruments:** add rateOfTurnDegreesPerMinute API and deprecate rotationsPerMinute ([#818](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/818)) ([172943a](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/172943ad298b1740f6dbbe2649a8ef05fef11239)), closes [#802](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/802) [#802](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/802)
+
+## [2.0.0-next.16](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.15...v2.0.0-next.16) (2026-05-04)
+
+### Features
+
+- add wind propulsion radial instrument ([#778](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/778)) ([c0da8af](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/c0da8afb609da11fbb57e87d8a24f70cdf9ae46d)), closes [#745](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/745)
+
+## [2.0.0-next.15](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.14...v2.0.0-next.15) (2026-04-29)
+
+### Features
+
+- **navigation:** add fore image scaling support for pitch-roll and roll component ([#833](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/833)) ([5c1ab7b](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/5c1ab7b266ce8b5e9641f7b1dbeb822b337356ca))
+
+## [2.0.0-next.14](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.13...v2.0.0-next.14) (2026-04-29)
+
+### ⚠ BREAKING CHANGES
+
+- **automation-buttons:** Automation button has new api for badges, allowing more types
+- **automation-buttons:** Automation badge has new types, and new names for some types
+  duty -> interlock
+  AlertOff -> AlertSilenced
+
+### Features
+
+- **automation-buttons:** add new badge api ([#839](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/839)) ([4f08f1c](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/4f08f1c6d9970e6c0183ba90a9cb7e6af2edabbf))
+
+## [2.0.0-next.13](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.12...v2.0.0-next.13) (2026-04-28)
+
+### Bug Fixes
+
+- align action components visual height ([#830](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/830)) ([ef5097d](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/ef5097d47c32f85c687f619fd9ebd864a74abe05))
+
+## [2.0.0-next.12](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.11...v2.0.0-next.12) (2026-04-28)
+
+### Bug Fixes
+
+- **alert-list-page-small:** add silence-click event ([#823](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/823)) ([c8f9526](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/c8f95265e3ab262d11c7e67b5fe996f5e4a1b4ce))
+
+## [2.0.0-next.11](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.10...v2.0.0-next.11) (2026-04-27)
+
+### Features
+
+- **slider-double:** make readouts optional and slottable ([#804](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/804)) ([#816](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/816)) ([501665e](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/501665efa03e0b697c4c96f9b9c2648bf707a03c)), closes [#744](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/744)
+
+## [2.0.0-next.10](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.9...v2.0.0-next.10) (2026-04-27)
+
+### Bug Fixes
+
+- **watch:** guard roundedArch to prevent NaN SVG paths ([#822](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/822)) ([ec3fd44](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/ec3fd444555b8a9a6394e247d5c3cb08513b0024)), closes [#819](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/819)
+
+## [2.0.0-next.9](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.8...v2.0.0-next.9) (2026-04-24)
+
+### Features
+
+- **alert-menu:** add props to toggle silence and alert list buttons ([#820](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/820)) ([ea5c320](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/ea5c3204d36554652e8d1fd41eb5b6b2837f0697))
+
+## [2.0.0-next.8](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.7...v2.0.0-next.8) (2026-04-23)
+
+### Bug Fixes
+
+- normalize radial gauge ranges and advice arc rendering ([f0121f8](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/f0121f87715f035d2cbb6f47eb279beee86f04f1)), closes [#808](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/808)
+
+## [2.0.0-next.7](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.6...v2.0.0-next.7) (2026-04-23)
+
+### Bug Fixes
+
+- improve keyboard accessibility for menu and split buttons ([#811](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/811)) ([6a0cfbc](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/6a0cfbcc837a2e748cd3e7bf93b12865a702cd88))
+
+## [2.0.0-next.6](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.5...v2.0.0-next.6) (2026-04-22)
+
+### Bug Fixes
+
+- **compass:** add missing center line to compass-sector and compass-flat ([#798](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/798)) ([858bdf7](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/858bdf70f4bbc551f93cc0bbab24bf269e46414b))
+
+## [2.0.0-next.5](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.4...v2.0.0-next.5) (2026-04-22)
+
+### Features
+
+- **vue-demo:** click-to-copy icon snippets with detail panel ([#790](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/790)) ([032dcad](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/032dcadbd2489fbe0637e18aa73783db29da2eba))
+
+## [2.0.0-next.4](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.3...v2.0.0-next.4) (2026-04-22)
+
+### ⚠ BREAKING CHANGES
+
+- **ar:** new poi position logic (#761)
+
+### Features
+
+- **ar:** new poi position logic ([#761](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/761)) ([61b4b17](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/61b4b177c37ea899cd0ac9d92bcf37fe88570264))
+
+## [2.0.0-next.3](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.2...v2.0.0-next.3) (2026-04-21)
+
+### Bug Fixes
+
+- update font asset paths in Storybook configuration ([#757](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/757)) ([c8f6653](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/c8f6653db8de1ac181da37e750e425e270cb3faf))
+
+## [2.0.0-next.2](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.1...v2.0.0-next.2) (2026-04-21)
+
+### Bug Fixes
+
+- **bundle:** remove spec file from bundle ([#801](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/801)) ([4e3e6c2](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/4e3e6c22d65a930dfa9da295c6b3d3a6defc5012))
+
+## [2.0.0-next.1](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.0...v2.0.0-next.1) (2026-04-20)
+
+### Bug Fixes
+
+- restore visual snapshot testing config ([#799](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/799)) ([a1ef835](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/a1ef8358f2252973b8981d0563357258cf5f6924)), closes [79da15b#diff-98da398d44d37a907da86a76d2cf1d1117ecd4b44096683bb63b349de6b9c303](https://github.com/Ocean-Industries-Concept-Lab/79da15b/issues/diff-98da398d44d37a907da86a76d2cf1d1117ecd4b44096683bb63b349de6b9c303)
+
+## [1.0.0-next.3](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v1.0.0-next.2...v1.0.0-next.3) (2026-04-20)
+
+### ⚠ BREAKING CHANGES
+
+- **ci:** update GitHub Actions to newer versions of checkout and setup-node steps (#800)
+
+### Features
+
+- **ci:** update GitHub Actions to newer versions of checkout and setup-node steps ([#800](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/800)) ([a85837f](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/a85837f0974cbf81af463c74c8ff9e3882afabdb))
+
+## [1.0.0-next.2](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v1.0.0-next.1...v1.0.0-next.2) (2026-04-20)
+
+### ⚠ BREAKING CHANGES
+
+- **changelog:** clean up changelog and set the basis as v1.0.0
+
+### Features
+
+- **changelog:** clean up changelog and set the basis as v1.0.0 ([71a4b16](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/71a4b16d03a86ec0540ff8d36a24c21d16ec9309))
+
 ### Changelog
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
 Generated by [`auto-changelog`](https://github.com/CookPete/auto-changelog).
 
-#### [v0.0.16](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v0.0.15...v0.0.16)
+## 1.0.0 (2026-04-20)
 
-- docs: change to discord server [`#493`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/493)
-- Chore/update-deps-250210 [`#491`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/491)
-- chore: update lit-gen-vue and vite [`#490`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/490)
-- build(deps): bump zod from 3.23.8 to 3.24.1 [`#489`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/489)
-- build(deps-dev): bump @storybook/test-runner from 0.20.1 to 0.21.0 in /packages/openbridge-webcomponents [`#463`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/463)
-- build(deps): bump pinia from 2.3.0 to 2.3.1 [`#488`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/488)
-- test: update button name in alert acknowledgment test [`#487`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/487)
-- build(deps-dev): bump @types/jsdom from 21.1.6 to 21.1.7 [`#456`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/456)
-- build(deps): bump vue-router from 4.3.0 to 4.5.0 [`#457`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/457)
-- build(deps-dev): bump prettier from 3.4.1 to 3.4.2 [`#458`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/458)
-- 6.0: alert-icon [`#478`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/478)
-- chore: add info about the JIP [`#485`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/485)
-- Update css to 6.0 and button to using css variables for scaling [`#484`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/484)
-- 6.0 icons [`#461`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/461)
-- chore: update storybook [`#450`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/450)
-- docs: improve readability and formatting in README.md [`#449`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/449)
-- build(deps): bump tough-cookie from 4.1.4 to 5.0.0 [`#445`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/445)
-- build(deps-dev): bump @vue/test-utils from 2.4.5 to 2.4.6 [`#444`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/444)
-- chore: update deps [`#448`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/448)
-- Chore/update deps 241204 [`#442`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/442)
-- Chore/update deps 241204 [`#441`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/441)
-- chore: update storybook [`#440`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/440)
-- build(deps): bump @vueuse/firebase from 10.9.0 to 12.0.0 [`#433`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/433)
-- build(deps-dev): bump @eslint/js from 9.15.0 to 9.16.0 [`#438`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/438)
-- build(deps): bump zod from 3.22.4 to 3.23.8 [`#431`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/431)
-- build(deps): bump the npm_and_yarn group with 3 updates [`#439`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/439)
-- Update dependabot.yml [`#435`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/435)
-- Fix/minor-fixes [`#418`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/418)
-- Localization through lit-localize [`#365`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/365)
-- chore: update react demo deps [`#416`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/416)
-- chore: update dev deps [`#413`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/413)
-- chore: update playwright and eslint [`#401`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/401)
-- start [`#400`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/400)
-- chore: update lit [`#399`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/399)
-- fix[compass-flat]: scaling when container is low and wide [`#388`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/388)
-- fix[compass]: padding wrong when vertically aligned [`#387`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/387)
-- fix[compass]: reactive scaling when vertically constrained [`#386`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/386)
-- feat: poi target [`#375`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/375)
-- feat[Brilliance menu]: hideBrightness option [`#366`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/366)
-- fix[compass-flat]: labels not rendered after change of heading [`#374`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/374)
-- fix: instrument field use enum [`#339`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/339)
-- feat: compass [`#308`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/308)
-- fix: deploy on PR [`#323`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/323)
-- fix: PR deploy demo [`#315`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/315)
-- build: fix pr deploy [`#311`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/311)
-- build: fix issue on PR deploy [`#310`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/310)
-- Build/other-users-can-publish [`#309`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/309)
-- Other contributors can publish storybook on PR [`#297`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/297)
-- chore: revert pull_request_target [`#296`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/296)
-- Update postCreateCommand for npm [`#252`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/252)
-- build: release on main [`#276`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/276)
-- build(deps): bump react and @types/react [`#175`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/175)
-- Chore/set control actions [`#240`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/240)
-- update storybook [`#238`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/238)
-- Release 0.0.15 [`#236`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/236)
-- fix: AR POI target [`25dd837`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/25dd83709cee8bc10b1545699cd9aa2ef8a746e7)
-- Feat: main engine [`23f42dd`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/23f42dd4a65e6b3cf416c76987b55fd1b30001e7)
-- chore: upgrade storybook to 8.4 [`52ab775`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/52ab7751d34eee347ff30e5c559f4f3ba5bdceca)
-
-#### [v0.0.15](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v0.0.14...v0.0.15)
-
-> 4 July 2024
-
-- Feat/thruster 6.0 [`#224`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/224)
-- feat: rename attributes to not using dash style [`#222`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/222)
-- feat: auto at setpoint for thrusters [`#210`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/210)
-- Release 0.0.14 [`#208`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/208)
-- add touching property [`d5d0ae0`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/d5d0ae03abe0df7bcd369ceca147ef4eea1bd97f)
-- Release 0.0.15 [`d5cc626`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/d5cc626c04b22dba65ccd8b4dfa212a14f7ae95b)
-- added to azimuth [`f46dc54`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/f46dc54f3f83fafed897a28a232178806f0d43a3)
-
-#### [v0.0.14](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v0.0.13...v0.0.14)
-
-> 5 June 2024
-
-- demo IAS view [`#189`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/189)
-- v0.0.13 [`#187`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/187)
-- add ias view [`0e080a1`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/0e080a12b39dcc3a6cff88710bd084e12f982881)
-- Release 0.0.14 [`33ecb5d`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/33ecb5d1f495827efdf8290166485734afb99bf1)
-- reposition all automation elements [`e8d3401`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/e8d3401a9b6b2796d9cb51c589fc7f9ce498cfe1)
-
-#### [v0.0.13](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v0.0.12...v0.0.13)
-
-> 8 May 2024
-
-- feat: tank [`#186`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/186)
-- feat: add input modal [`#185`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/185)
-- feat: readout [`#177`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/177)
-- feat: automation button [`#167`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/167)
-- feat: remaining lines [`#166`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/166)
-- Feat: azimuth label [`#162`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/162)
-- feat: instrument vertical label [`#161`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/161)
-- Release/0.0.12 [`#160`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/160)
-- Release 0.0.13 [`bc81690`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/bc816906417b57755ad05861044a04a6a4d83d2f)
-- generated wrappers [`7fd63db`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/7fd63db03611026a7fa559dcedda2dd190343049)
-
-#### [v0.0.12](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v0.0.10...v0.0.12)
-
-> 9 April 2024
-
-- react-demo: show usage of slots [`#158`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/158)
-- Demo: responsive alert list [`#147`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/147)
-- Release 0.0.10 [`#146`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/146)
-- updated generated files [`1f2bdea`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/1f2bdea4f0a5c632b71a8c8b9aedef5adbc0f61f)
-- Release 0.0.12 [`3f7ffb1`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/3f7ffb1ede16d59f253b895a3b38f1796325a5eb)
-
-#### [v0.0.10](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v0.0.9...v0.0.10)
-
-> 5 April 2024
-
-- feat: update colors [`#145`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/145)
-- feat: add lines [`#144`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/144)
-- feat[slider]: no input slider [`#142`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/142)
-- build(deps-dev): bump vite from 4.5.3 to 5.2.7 in /packages/openbridge-webcomponents [`#141`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/141)
-- build(deps-dev): bump @vue/tsconfig from 0.4.0 to 0.5.1 in /packages/vue-demo [`#130`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/130)
-- build(deps-dev): bump tsx from 3.14.0 to 4.7.1 in /packages/openbridge-webcomponents [`#129`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/129)
-- build(deps-dev): bump @vue/eslint-config-prettier from 8.0.0 to 9.0.0 in /packages/vue-demo [`#132`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/132)
-- build(deps-dev): bump @vue/test-utils from 2.4.4 to 2.4.5 [`#137`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/137)
-- build(deps-dev): bump @storybook/addon-interactions from 8.0.0 to 8.0.5 [`#140`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/140)
-- build(deps-dev): bump eslint-plugin-vue from 9.22.0 to 9.24.0 [`#133`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/133)
-- build(deps-dev): bump vue-tsc from 1.8.27 to 2.0.7 [`#134`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/134)
-- build(deps-dev): bump express from 4.18.3 to 4.19.2 [`#138`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/138)
-- build(deps-dev): bump @types/react-dom from 18.2.21 to 18.2.23 [`#139`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/139)
-- chore: add playwright test to vue demo [`#127`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/127)
-- chore: remove depricated svg export [`#126`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/126)
-- build(deps-dev): update deps [`#125`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/125)
-- build(deps-dev): bump @storybook/addon-essentials from 7.6.17 to 8.0.1 [`#120`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/120)
-- chore: upgrade storybook [`#124`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/124)
-- build(deps-dev): bump vite from 4.5.2 to 5.1.6 in /packages/vue-demo [`#117`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/117)
-- build(deps-dev): bump @types/node from 18.19.22 to 20.11.29 [`#122`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/122)
-- build(deps-dev): bump @vitejs/plugin-vue from 3.2.0 to 5.0.4 [`#121`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/121)
-- build(deps-dev): bump @typescript-eslint/parser in /packages/react-demo [`#116`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/116)
-- build(deps-dev): bump typescript in /packages/vue-demo [`#110`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/110)
-- build(deps-dev): bump postcss-mixins from 9.0.4 to 10.0.0 [`#119`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/119)
-- build(deps-dev): bump @typescript-eslint/eslint-plugin [`#123`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/123)
-- Create dependabot.yml [`#106`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/106)
-- build(deps-dev): bump the npm_and_yarn group across 1 directory with 1 update [`#105`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/105)
-- build(deps-dev): bump the npm_and_yarn group across 1 directory with 1 update [`#104`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/104)
-- build(deps-dev): bump follow-redirects from 1.15.5 to 1.15.6 [`#103`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/103)
-- demo: fix background color wrapper [`#102`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/102)
-- demo: minimize alert on no alert [`#101`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/101)
-- fix[topbar]: inactive padding [`#99`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/99)
-- fix: alarm blink on condensed top menu [`#98`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/98)
-- format [`#97`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/97)
-- Release 0.0.9 [`#96`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/96)
-- fix[topbar]: inactive padding (#99) [`#89`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/89)
-- Release 0.0.10 [`1ce788b`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/1ce788bfb21e644cda5998985ba6a0b2db251833)
-
-#### [v0.0.9](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v0.0.8...v0.0.9)
-
-> 14 March 2024
-
-- Chore/release it setup [`#95`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/95)
-- build/switch to npm [`#94`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/94)
-- feat[rich-button]: added info mode [`#93`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/93)
-- chore: add google analytics to storybook [`#92`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/92)
-- build: add pwa to vue demo [`#90`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/90)
-- Release 0.0.9 [`d9439ae`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/d9439ae7e12e618fa8eff9f93f5310f3800af8eb)
-
-#### [v0.0.8](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v0.0.7...v0.0.8)
-
-> 8 March 2024
-
-- chore: bump version [`#83`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/83)
-- chore: added code of conduct and similar documents [`#81`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/81)
-- feat: rich button [`#80`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/80)
-- feat: vendor button [`#79`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/79)
-- Fix/json config [`#78`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/78)
-- fix: switch page name in demo [`#77`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/77)
-- feat: blinking alert button [`#72`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/72)
-- chore: storybook with all icons [`#76`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/76)
-- readme.md: correct small typo in font file name [`#75`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/75)
-- fix: sizing of thruster [`d0fbc73`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/d0fbc737917c43b255c261d3e30ce5062ef061a4)
-
-#### [v0.0.7](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v0.0.5...v0.0.7)
-
-> 13 March 2024
-
-- chore: fix react path [`#74`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/74)
-
-#### [v0.0.5](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v0.0.3...v0.0.5)
-
-> 13 March 2024
-
-- Chore/release v 0.0.5 [`#71`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/71)
-- chore(main): release openbridge-webcomponents 0.1.0 [`#68`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/68)
-- chore: build on release only [`#69`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/69)
-- docs: add readme to subprojects [`#66`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/66)
-- chore: bootstrap releases for path: packages/openbridge-webcomponents [`#67`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/67)
-- rename from @tibnor to @oicl [`#61`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/61)
-- chore: add link to css [`#60`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/60)
-- fix: padding last button in toggle button [`#54`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/54)
-- fix: not-lazy loading of company logo [`#52`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/52)
-- fix: click outside menu closes menu [`#53`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/53)
-- Fix/minor errors demo [`#51`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/51)
-- Fix/minor errors demo [`#50`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/50)
-- chore: google analytics [`#49`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/49)
-
-#### v0.0.3
-
-> 13 March 2024
-
-- release: v0.0.3 [`#48`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/48)
-- Feat/azimuth thruster [`#33`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/33)
-- Chore/build css by vite [`#46`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/46)
-- fix: move search icon to the left [`#45`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/45)
-- Feat/browser tab color [`#44`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/44)
-- Update readme.md [`#43`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/43)
-- feat: add theme color to demo [`#42`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/42)
-- Feat/responsive topbar [`#41`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/41)
-- feat: add react wrapper and demo [`#40`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/40)
-- Doc/readme [`#39`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/39)
-- feat: slider buttons [`#37`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/37)
-- fix: minor [`#36`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/36)
-- Feat/deploy storybook [`#35`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/35)
-- fix: range [`#34`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/34)
-- fix: alert list not showing [`#32`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/32)
-- feat: reactive brightness [`#31`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/31)
-- fix [`#30`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/30)
-- fix [`#29`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/29)
-- Firebase deploy and shared session [`#28`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/28)
-- Chore/rename classes [`#27`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/27)
-- Feat/alert handling [`#26`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/26)
-- feat: add checked button variant [`#25`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/25)
-- fix: alert url [`#24`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/24)
-- fix: use web hash history [`#23`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/23)
-- feat: add alertlist [`#22`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/22)
-- fix: scrollbar after review [`#21`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/21)
-- Add table and scrollbar [`#20`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/20)
-- fix: made alert message text clickable [`#19`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/19)
-- Feat/ack alarms in demo [`#18`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/18)
-- Alert message in topbar [`#17`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/17)
-- Refacto [`#16`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/16)
-- fix: app menu [`#15`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/15)
-- Fix/refacto [`#14`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/14)
-- added cem [`#13`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/13)
-- alert menu full width button [`#11`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/11)
-- build: added linting [`#12`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/12)
-- fix: change prefix from ob- to obc- [`#10`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/10)
-- Fix/reorganize [`#9`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/9)
-- Feat/prepack [`#8`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/8)
-- feat: tooltip [`#7`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/7)
-- Feat/alert menu [`#6`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/6)
-- Feat/alarm-button [`#5`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/5)
-- feat: multi color icons [`#4`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/4)
-- chore: simplifiy style mixin [`#3`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/3)
-- feat: add breadcrumb and pixel perfect [`#2`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/2)
-- fix: update icons [`#1`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1)
-- made monorepo [`a867bbd`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/a867bbd7770e1feb8d00655c633f2cf0f78ba14d)
-- fix: build and update custom-elements [`c5f8d94`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/c5f8d94f9dfc2242b1757109abcc425fd9b07a2b)
-- bruker postcss [`2cc8588`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/2cc858824c5bc213b94ac9e42f9a4da0f5a2140b)
+### Initial 1.0.0 Release

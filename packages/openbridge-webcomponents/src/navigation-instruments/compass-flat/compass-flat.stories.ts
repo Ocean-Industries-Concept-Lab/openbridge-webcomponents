@@ -42,6 +42,17 @@ const meta: Meta<typeof ObcCompassFlat> = {
     },
     rotationsPerMinute: {
       control: {type: 'range', min: -10, max: 10, step: 0.5},
+      description: '**Deprecated.** Use `rateOfTurnDegreesPerMinute` instead.',
+    },
+    rateOfTurnDegreesPerMinute: {
+      control: {type: 'range', min: -180, max: 180, step: 1},
+      description:
+        'Measured rate of turn in degrees per minute (positive = starboard).',
+    },
+    rotDotAnimationFactor: {
+      control: {type: 'range', min: 1, max: 60, step: 1},
+      description:
+        'Visual amplification for the dot animation only (not bar extent).',
     },
     rotMaxValue: {control: {type: 'range', min: 1, max: 60, step: 1}},
     rotArcExtent: {control: {type: 'range', min: 10, max: 180, step: 5}},
@@ -96,5 +107,17 @@ export const WithRotBarWideFOV: Story = {
     heading: 0,
     courseOverGround: 150,
     minFOV: 90,
+  },
+};
+
+export const WithRateOfTurnDegreesPerMinute: Story = {
+  name: 'Rate of Turn Degrees Per Minute',
+  tags: ['skip-test'],
+  args: {
+    rotType: RotType.bar,
+    rateOfTurnDegreesPerMinute: 20,
+    rotDotAnimationFactor: 18,
+    rotMaxValue: 60,
+    courseOverGround: 80,
   },
 };

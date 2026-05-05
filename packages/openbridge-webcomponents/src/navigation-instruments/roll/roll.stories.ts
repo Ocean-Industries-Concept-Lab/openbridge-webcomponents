@@ -16,11 +16,12 @@ const meta: Meta<typeof ObcRoll> = {
     maxAvgRoll: 10,
     maxRollAdvice: 15,
     triggerRollAdvice: false,
+    scaleForeImage: 1,
   },
   argTypes: {
     width: {control: {type: 'range', min: 100, max: 1000, step: 1}},
-    pitch: {control: {type: 'range', min: -10, max: 10, step: 0.1}},
     roll: {control: {type: 'range', min: -10, max: 10, step: 0.1}},
+    scaleForeImage: {control: {type: 'range', min: 0, max: 2, step: 0.01}},
     vesselImageFore: {
       control: 'select',
       options: foreVessels,
@@ -39,5 +40,22 @@ export const Primary: Story = {
 export const Rov: Story = {
   args: {
     vesselImageFore: VesselImage.rovFront,
+  },
+};
+
+export const ZoomedIn: Story = {
+  args: {
+    zoomToFitArc: true,
+  },
+};
+
+export const ZoomedInNarrow: Story = {
+  args: {
+    zoomToFitArc: true,
+    arcAngle: 15,
+    roll: 6,
+    minAvgRoll: -4,
+    maxAvgRoll: 8,
+    maxRollAdvice: 10,
   },
 };

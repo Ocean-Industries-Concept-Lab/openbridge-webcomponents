@@ -68,13 +68,13 @@ export class ObcPoiHeader extends LitElement {
   @property({type: String}) content = '1';
   @property({type: String}) label = 'Data';
 
-  @property({type: String, reflect: true})
+  @property({type: String})
   size: ObcPoiHeaderSize = ObcPoiHeaderSize.Regular;
 
-  @property({type: String, reflect: true})
+  @property({type: String})
   state: ObcPoiHeaderState = ObcPoiHeaderState.Enabled;
 
-  @property({type: String, reflect: true})
+  @property({type: String})
   type: ObcPoiHeaderType = ObcPoiHeaderType.Id;
 
   @property({type: Boolean, attribute: 'has-indicator'})
