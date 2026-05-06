@@ -34,6 +34,15 @@ const config: StorybookConfig = {
     // full reload whenever a TypeScript, CSS (or HTML) file in /src changes
     viteConfig.plugins ??= [];
     viteConfig.plugins.push(FullReload(['src/**/*.{ts,css,html}']));
+
+    // Ensure process.env.VITE_STORYBOOK_BRANCH is replaced in the preview
+    viteConfig.define = {
+      ...viteConfig.define,
+      'process.env.VITE_STORYBOOK_BRANCH': JSON.stringify(
+        process.env.VITE_STORYBOOK_BRANCH || ''
+      ),
+    };
+
     return viteConfig;
   },
 
@@ -53,8 +62,11 @@ const config: StorybookConfig = {
 </style>
   `,
 
-  managerHead: (head, options) => `
+  managerHead: (head) => `
   ${head}
+  <script>
+    window.VITE_STORYBOOK_BRANCH = "${process.env.VITE_STORYBOOK_BRANCH || ''}";
+  </script>
   <style>
     /* OpenBridge Storybook UI Fixes */
 

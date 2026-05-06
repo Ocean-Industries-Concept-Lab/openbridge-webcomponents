@@ -1,3 +1,9 @@
+## [2.0.0-next.19](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.18...v2.0.0-next.19) (2026-05-06)
+
+### Features
+
+- **storybook:** add release channel link in storybook sidebar and intro page ([#821](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/821)) ([f5caf42](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/f5caf420a0c75d569264a187831749b09daf7c09))
+
 ## [2.0.0-next.18](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.17...v2.0.0-next.18) (2026-05-04)
 
 ### Features
