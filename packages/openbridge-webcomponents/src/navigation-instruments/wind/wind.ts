@@ -24,6 +24,9 @@ type ResolvedWindVariant =
 
 const WIND_SMALL_MAX_PX = 96;
 const WIND_MEDIUM_MAX_PX = 256;
+const WIND_HISTOGRAM_MAX_RADIUS_SINGLE_RING = 159;
+const WIND_HISTOGRAM_MAX_RADIUS_DOUBLE_RING = 109;
+const WIND_HISTOGRAM_MIN_RADIUS = 50;
 
 @customElement('obc-wind')
 export class ObcWind extends LitElement {
@@ -82,7 +85,7 @@ export class ObcWind extends LitElement {
           ];
     return html`
       <div class="wrapper variant-${variant}">
-        ${this.renderWindHistogram()}
+        ${this.renderWindHistogram(variant)}
         <obc-watch
           .watchCircleType=${watchCircleType}
           crosshairEnabled
@@ -110,9 +113,9 @@ export class ObcWind extends LitElement {
     `;
   }
 
-  private renderWindHistogram() {
-    const maxRadius = 159; // Max bar length
-    const minRadius = 50; // Optional: minimum bar length for visibility
+  private renderWindHistogram(variant: ResolvedWindVariant) {
+    const maxRadius = resolveHistogramMaxRadius(variant);
+    const minRadius = WIND_HISTOGRAM_MIN_RADIUS;
     const center = {x: 0, y: 0};
 
     // Find the max occurrences for scaling
@@ -199,6 +202,12 @@ function resolveAutoWindVariant(sizePx: number): ResolvedWindVariant {
   if (sizePx < WIND_SMALL_MAX_PX) return WindVariant.small;
   if (sizePx < WIND_MEDIUM_MAX_PX) return WindVariant.medium;
   return WindVariant.large;
+}
+
+function resolveHistogramMaxRadius(variant: ResolvedWindVariant): number {
+  return variant === WindVariant.large
+    ? WIND_HISTOGRAM_MAX_RADIUS_DOUBLE_RING
+    : WIND_HISTOGRAM_MAX_RADIUS_SINGLE_RING;
 }
 
 declare global {
