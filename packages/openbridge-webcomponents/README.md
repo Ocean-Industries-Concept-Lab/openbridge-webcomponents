@@ -34,8 +34,13 @@ For more information, please contact **Torstein A. Bø** at [torstein.bo@openstu
 
 ## 📚 Storybook & Demo
 
-- **[Storybook](https://openbridge-storybook.web.app)**: Browse components and view their different states.
-- **[Live Demo](https://openbridge-demo.web.app/)**: See the components in action.
+Storybook is the component reference: it shows each component in isolation with interactive controls, states, and variants.
+The Live Demo is an application showcase: it shows how components work together in realistic page flows.
+
+| Channel                                    | Storybook                                                                      | Live Demo                                                             |
+| ------------------------------------------ | ------------------------------------------------------------------------------ | --------------------------------------------------------------------- |
+| **Stable** (`stable` branch, npm `latest`) | [openbridge-storybook.web.app](https://openbridge-storybook.web.app)           | [openbridge-demo.web.app](https://openbridge-demo.web.app/)           |
+| **Develop** (`develop` branch, npm `next`) | [openbridge-next-storybook.web.app](https://openbridge-next-storybook.web.app) | [openbridge-next-demo.web.app](https://openbridge-next-demo.web.app/) |
 
 ## 💾 Installation
 
