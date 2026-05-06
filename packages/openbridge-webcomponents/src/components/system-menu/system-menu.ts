@@ -49,6 +49,7 @@ export interface AudioState {
     name: string;
   }[];
   selectedOutput?: string;
+  controlMode?: SystemMenuControlMode;
 }
 
 export interface MicrophoneState {
@@ -59,6 +60,7 @@ export interface MicrophoneState {
   }[];
   selectedInput?: string;
   pushToTalk?: boolean;
+  controlMode?: SystemMenuControlMode;
 }
 
 export interface BatteryState {
@@ -80,6 +82,12 @@ export enum SystemSubMenu {
   audio = 'audio',
   microphone = 'microphone',
   battery = 'battery',
+}
+
+export enum SystemMenuControlMode {
+  muteButton = 'mute-button',
+  iconOnly = 'icon-only',
+  hidden = 'hidden',
 }
 
 export type VolumeChangeEvent = CustomEvent<number>;
@@ -112,6 +120,88 @@ export class ObcSystemMenu extends LitElement {
   @property({type: String}) activeSubMenu: SystemSubMenu = SystemSubMenu.main;
   @property({type: Boolean}) externalControl: boolean = false;
   @property({type: Boolean}) smallScreen: boolean = false;
+  private get audioControlMode(): SystemMenuControlMode {
+    return this.audioState?.controlMode ?? SystemMenuControlMode.muteButton;
+  }
+
+  private get microphoneControlMode(): SystemMenuControlMode {
+    return (
+      this.microphoneState?.controlMode ?? SystemMenuControlMode.muteButton
+    );
+  }
+
+  private renderAudioControl() {
+    if (!this.audioState) {
+      return nothing;
+    }
+
+    if (this.audioControlMode === SystemMenuControlMode.hidden) {
+      return nothing;
+    }
+
+    if (this.audioControlMode === SystemMenuControlMode.iconOnly) {
+      return html`<div
+        class="content-item-icon ${this.audioState.muted ? 'is-muted' : ''}"
+        role="img"
+        aria-label=${this.audioState.muted
+          ? msg('Audio muted')
+          : msg('Audio on')}
+      >
+        ${this.audioState.muted
+          ? html`<obi-sound-muted></obi-sound-muted>`
+          : html`<obi-sound></obi-sound>`}
+      </div>`;
+    }
+
+    return html`<obc-icon-check-button
+      class="content-item-btn"
+      .checked=${!this.audioState.muted}
+      @icon-check-button-click=${this.handleAudioClick}
+    >
+      ${this.audioState.muted
+        ? html`<obi-sound-muted slot="icon"></obi-sound-muted>`
+        : html`<obi-sound slot="icon"></obi-sound>`}
+    </obc-icon-check-button>`;
+  }
+
+  private renderMicrophoneControl(options?: {externalControl?: boolean}) {
+    if (!this.microphoneState) {
+      return nothing;
+    }
+
+    if (this.microphoneControlMode === SystemMenuControlMode.hidden) {
+      return nothing;
+    }
+
+    if (this.microphoneControlMode === SystemMenuControlMode.iconOnly) {
+      return html`<div
+        class="content-item-icon ${this.microphoneState.muted
+          ? 'is-muted'
+          : ''}"
+        role="img"
+        aria-label=${this.microphoneState.muted
+          ? msg('Microphone muted')
+          : msg('Microphone on')}
+      >
+        ${this.microphoneState.muted
+          ? html`<obi-com-mic-muted-google></obi-com-mic-muted-google>`
+          : html`<obi-com-microphone></obi-com-microphone>`}
+      </div>`;
+    }
+
+    return html`<obc-icon-check-button
+      class="content-item-btn"
+      .checked=${!this.microphoneState.muted}
+      ?externalControl=${options?.externalControl ?? false}
+      @icon-check-button-click=${this.handleMicrophoneClick}
+    >
+      ${this.microphoneState.muted
+        ? html`<obi-com-mic-muted-google
+            slot="icon"
+          ></obi-com-mic-muted-google>`
+        : html`<obi-com-microphone slot="icon"></obi-com-microphone>`}
+    </obc-icon-check-button>`;
+  }
 
   private get effectiveSubMenu(): SystemSubMenu {
     if (this.smallScreen && this.activeSubMenu === SystemSubMenu.main) {
@@ -280,16 +370,13 @@ export class ObcSystemMenu extends LitElement {
     return html`<div class="group">
       ${this.condensed ? nothing : title}
       <div class="content-container">
-        <div class="action-container">
-          <obc-icon-check-button
-            class="content-item-btn"
-            .checked=${!this.audioState.muted}
-            @icon-check-button-click=${this.handleAudioClick}
-          >
-            ${this.audioState.muted
-              ? html`<obi-sound-muted slot="icon"></obi-sound-muted>`
-              : html`<obi-sound slot="icon"></obi-sound>`}
-          </obc-icon-check-button>
+        <div
+          class="action-container ${this.audioControlMode ===
+          SystemMenuControlMode.hidden
+            ? 'control-hidden'
+            : ''}"
+        >
+          ${this.renderAudioControl()}
           <obc-slider
             class="content-item-slider"
             .value=${this.audioState.volume}
@@ -333,18 +420,13 @@ export class ObcSystemMenu extends LitElement {
     return html`<div class="group">
       ${this.condensed ? nothing : title}
       <div class="content-container">
-        <div class="action-container">
-          <obc-icon-check-button
-            class="content-item-btn"
-            .checked=${!this.microphoneState.muted}
-            @icon-check-button-click=${this.handleMicrophoneClick}
-          >
-            ${this.microphoneState.muted
-              ? html`<obi-com-mic-muted-google
-                  slot="icon"
-                ></obi-com-mic-muted-google>`
-              : html`<obi-com-microphone slot="icon"></obi-com-microphone>`}
-          </obc-icon-check-button>
+        <div
+          class="action-container ${this.microphoneControlMode ===
+          SystemMenuControlMode.hidden
+            ? 'control-hidden'
+            : ''}"
+        >
+          ${this.renderMicrophoneControl()}
           <div class="content-item-value">
             <obc-audio-output
               .volume=${(this.microphoneState.currentLevel / 100) * 8}
@@ -489,14 +571,7 @@ export class ObcSystemMenu extends LitElement {
         </div>
       </div>
       <div class="row">
-        <obc-icon-check-button
-          .checked=${!this.audioState?.muted}
-          @icon-check-button-click=${this.handleAudioClick}
-        >
-          ${this.audioState?.muted
-            ? html`<obi-sound-muted slot="icon"></obi-sound-muted>`
-            : html`<obi-sound slot="icon"></obi-sound>`}
-        </obc-icon-check-button>
+        ${this.renderAudioControl()}
         <obc-slider
           class="content-item-slider"
           .value=${this.audioState?.volume ?? 0}
@@ -532,6 +607,9 @@ export class ObcSystemMenu extends LitElement {
   }
 
   private renderMicrophoneSubMenuHeader() {
+    const isNoMuteButton =
+      this.microphoneControlMode === SystemMenuControlMode.iconOnly ||
+      this.microphoneControlMode === SystemMenuControlMode.hidden;
     return html` <div class="sub-container">
       <div class="row">
         ${this.microphoneState?.muted
@@ -544,18 +622,8 @@ export class ObcSystemMenu extends LitElement {
           <div class="unit">dB</div>
         </div>
       </div>
-      <div class="row">
-        <obc-icon-check-button
-          .checked=${!this.microphoneState?.muted}
-          externalControl
-          @icon-check-button-click=${this.handleMicrophoneClick}
-        >
-          ${this.microphoneState?.muted
-            ? html`<obi-com-mic-muted-google
-                slot="icon"
-              ></obi-com-mic-muted-google>`
-            : html`<obi-com-microphone slot="icon"></obi-com-microphone>`}
-        </obc-icon-check-button>
+      <div class="row ${isNoMuteButton ? 'no-mute-button' : ''}">
+        ${this.renderMicrophoneControl({externalControl: true})}
         <obc-audio-output
           .volume=${((this.microphoneState?.currentLevel ?? 0) / 100) * 8}
         ></obc-audio-output>
@@ -811,14 +879,7 @@ export class ObcSystemMenu extends LitElement {
           <span>${msg('Audio')}</span>
         </div>
         <div class="small-screen-controls-row">
-          <obc-icon-check-button
-            .checked=${!this.audioState.muted}
-            @icon-check-button-click=${this.handleAudioClick}
-          >
-            ${this.audioState.muted
-              ? html`<obi-sound-muted slot="icon"></obi-sound-muted>`
-              : html`<obi-sound slot="icon"></obi-sound>`}
-          </obc-icon-check-button>
+          ${this.renderAudioControl()}
           <div class="small-screen-slider-container">
             <obc-slider
               class="small-screen-slider"
@@ -853,22 +914,20 @@ export class ObcSystemMenu extends LitElement {
     if (!this.microphoneState) {
       return nothing;
     }
+    const isNoMuteButton =
+      this.microphoneControlMode === SystemMenuControlMode.iconOnly ||
+      this.microphoneControlMode === SystemMenuControlMode.hidden;
     return html`
       <div class="small-screen-header">
         <div class="small-screen-title-row">
           <span>${msg('Microphone')}</span>
         </div>
-        <div class="small-screen-controls-row">
-          <obc-icon-check-button
-            .checked=${!this.microphoneState.muted}
-            @icon-check-button-click=${this.handleMicrophoneClick}
-          >
-            ${this.microphoneState.muted
-              ? html`<obi-com-mic-muted-google
-                  slot="icon"
-                ></obi-com-mic-muted-google>`
-              : html`<obi-com-microphone slot="icon"></obi-com-microphone>`}
-          </obc-icon-check-button>
+        <div
+          class="small-screen-controls-row ${isNoMuteButton
+            ? 'no-mute-button'
+            : ''}"
+        >
+          ${this.renderMicrophoneControl()}
           <obc-audio-output
             class="small-screen-audio-output"
             .volume=${(this.microphoneState.currentLevel / 100) * 8}
