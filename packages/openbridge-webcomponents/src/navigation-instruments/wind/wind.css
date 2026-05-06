@@ -59,7 +59,6 @@
   border-radius: 50%;
   top: calc(50% - var(--outer-pct) / 2);
   left: calc(50% - var(--outer-pct) / 2);
-  /* background: rgba(255, 0, 0, 0.25); */
 }
 
 .wrapper .wind-arrow-outer .wind-arrow-inner {
@@ -70,7 +69,6 @@
   width: calc(var(--inner-frac) * 100%);
   height: calc(var(--inner-frac) * 100%);
   border-radius: 50%;
-  /* background: rgba(0, 0, 255, 0.5); */
 }
 
 .wrapper .wind-arrow-outer .wind-arrow-inner .wind-arrow {

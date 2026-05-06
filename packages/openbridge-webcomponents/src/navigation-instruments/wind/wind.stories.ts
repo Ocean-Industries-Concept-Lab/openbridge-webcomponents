@@ -80,7 +80,7 @@ const meta: Meta<typeof ObcWind> = {
     windHistogramData: windHistogramData,
   },
   argTypes: {
-    width: {control: {type: 'range', min: 100, max: 1000, step: 1}},
+    width: {control: {type: 'range', min: 32, max: 1000, step: 1}},
     vesselHeadingDeg: {control: {type: 'range', min: 0, max: 360, step: 1}},
     currentWindFromDirection: {
       control: {type: 'range', min: 0, max: 360, step: 1},
