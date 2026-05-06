@@ -60,25 +60,18 @@ export type AutomationButtonReadoutStack =
   | AutomationButtonReadoutStackStateOff
   | AutomationButtonReadoutStackButton;
 
-export interface AutomationButtonReadoutStackTag {
-  value: number;
-}
-
 @customElement('obc-automation-button-readout-stack')
 export class ObcAutomationButtonReadoutStack extends LitElement {
   @property({attribute: false}) readouts: AutomationButtonReadoutStack[] = [];
-  @property({attribute: false}) tag: AutomationButtonReadoutStackTag | null =
-    null;
+  @property({type: String}) tag: string | null = null;
   @property() size: AutomationButtonReadoutStackSize =
     AutomationButtonReadoutStackSize.regular;
   @property() idTagOrientation: IdTagOrientation = IdTagOrientation.top;
-  @property({type: Boolean}) hasIdTag: boolean = false;
 
-  renderTag(): HTMLTemplateResult {
-    if (!this.hasIdTag || !this.tag) return html``;
+  renderTag(): typeof nothing | HTMLTemplateResult {
+    if (this.tag === null) return nothing;
 
-    const paddedValue = this.tag.value.toString().padStart(4, '0');
-    return html`<div class="tag">#${paddedValue}</div>`;
+    return html`<div class="tag">${this.tag}</div>`;
   }
 
   private renderValueContainer(
@@ -235,11 +228,11 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
     const elements: unknown[] = [];
 
     if (this.idTagOrientation === IdTagOrientation.top) {
-      if (this.hasIdTag) elements.push(tag);
+      elements.push(tag);
       elements.push(...renderedReadouts);
     } else {
       elements.push(...renderedReadouts);
-      if (this.hasIdTag) elements.push(tag);
+      elements.push(tag);
     }
 
     return html`<div class="readout-stack ${this.size}">${elements}</div>`;

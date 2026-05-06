@@ -8,7 +8,6 @@ import {
 import {
   AutomationButtonReadoutStack,
   AutomationButtonReadoutStackSize,
-  AutomationButtonReadoutStackTag,
 } from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import {AutomationButtonReadoutPosition} from './automation-button.js';
 import './automation-button.js';
@@ -85,7 +84,7 @@ const meta: Meta<typeof ObcAutomationButton> = {
   args: {
     showReadoutStack: true,
     showAlertCategoryIcon: true,
-    hasIdTag: true,
+    variant: AutomationButtonVariant.regular,
     readoutPosition: AutomationButtonReadoutPosition.bottom,
     readoutSize: AutomationButtonReadoutStackSize.regular,
     positioning: AutomationButtonPositioning.point,
@@ -103,11 +102,10 @@ type Story = StoryObj<ObcAutomationButton>;
 export const ValveOpen: Story = {
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [];
-    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
+    const tag: AutomationButtonReadoutStackTag | null = '#0000';
     return html`<obc-automation-button
       state="open"
       .showReadoutStack=${args.showReadoutStack}
-      .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       .variant=${args.variant}
@@ -169,11 +167,10 @@ export const ValveAlert: Story = {
   },
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [];
-    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
+    const tag: string | null = '#0000';
     return html` <obc-automation-button
       state="open"
       .showReadoutStack=${args.showReadoutStack}
-      .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       .alertFrameStatus=${args.alertFrameStatus}
@@ -202,11 +199,10 @@ export const ValveAlert: Story = {
 export const ValveBadges: Story = {
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [];
-    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
+    const tag: string | null = '#0000';
     return html` <obc-automation-button
       state="open"
       .showReadoutStack=${args.showReadoutStack}
-      .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       ?alert=${args.alert}
@@ -250,11 +246,10 @@ export const ValveProgress: Story = {
   },
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [];
-    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
+    const tag: string | null = '#0000';
     return html` <obc-automation-button
       state="open"
       .showReadoutStack=${args.showReadoutStack}
-      .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       ?alert=${args.alert}
@@ -281,11 +276,10 @@ export const ValveProgressDeterminate: Story = {
   },
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [];
-    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
+    const tag: string | null = '#0000';
     return html` <obc-automation-button
       state="open"
       .showReadoutStack=${args.showReadoutStack}
-      .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       ?alert=${args.alert}
@@ -312,11 +306,10 @@ export const ValveProgressProgressive: Story = {
   },
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [];
-    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
+    const tag: string | null = '#0000';
     return html` <obc-automation-button
       state="open"
       .showReadoutStack=${args.showReadoutStack}
-      .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       ?alert=${args.alert}
@@ -344,11 +337,10 @@ export const SquareProgressDeterminate: Story = {
   },
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [];
-    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
+    const tag: string | null = '#0000';
     return html` <obc-automation-button
       state="open"
       .showReadoutStack=${args.showReadoutStack}
-      .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       ?alert=${args.alert}
@@ -369,11 +361,10 @@ export const SquareProgressDeterminate: Story = {
 export const ValveClosed: Story = {
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [];
-    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
+    const tag: string | null = '#0000';
     return html` <obc-automation-button
       state="closed"
       .showReadoutStack=${args.showReadoutStack}
-      .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       .static=${args.static}
@@ -402,11 +393,10 @@ export const ValveClosedStatic: Story = {
 export const ValveNoLabels: Story = {
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [];
-    const tag: AutomationButtonReadoutStackTag | null = null;
+    const tag: string | null = null;
     return html` <obc-automation-button
       state="open"
       .showReadoutStack=${false}
-      .hasIdTag=${false}
       .readouts=${readouts}
       .tag=${tag}
       .variant=${args.variant}
@@ -435,12 +425,11 @@ export const SwitchOn: Story = {
     const readouts: AutomationButtonReadoutStack[] = [
       {type: 'state-on', value: 'On', hasIcon: true},
     ];
-    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
+    const tag: string | null = '#0000';
     return html` <obc-automation-button
       state="open"
       variant="square"
       .showReadoutStack=${args.showReadoutStack}
-      .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       ?alert=${args.alert}
@@ -463,12 +452,11 @@ export const SwitchOff: Story = {
     const readouts: AutomationButtonReadoutStack[] = [
       {type: 'state-off', value: 'Off', hasIcon: true},
     ];
-    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
+    const tag: string | null = '#0000';
     return html` <obc-automation-button
       state="closed"
       variant="square"
       .showReadoutStack=${args.showReadoutStack}
-      .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       ?alert=${args.alert}
@@ -491,12 +479,11 @@ export const DamperOn: Story = {
     const readouts: AutomationButtonReadoutStack[] = [
       {type: 'state-on', value: 'On', hasIcon: true},
     ];
-    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
+    const tag: string | null = '#0000';
     return html` <obc-automation-button
       state="open"
       variant="square"
       .showReadoutStack=${args.showReadoutStack}
-      .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       ?alert=${args.alert}
@@ -519,12 +506,11 @@ export const DamperOff: Story = {
     const readouts: AutomationButtonReadoutStack[] = [
       {type: 'state-off', value: 'Off', hasIcon: true},
     ];
-    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
+    const tag: string | null = '#0000';
     return html` <obc-automation-button
       state="closed"
       variant="square"
       .showReadoutStack=${args.showReadoutStack}
-      .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       ?alert=${args.alert}
@@ -547,12 +533,11 @@ export const DamperBadges: Story = {
     const readouts: AutomationButtonReadoutStack[] = [
       {type: 'state-on', value: 'On', hasIcon: true},
     ];
-    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
+    const tag: string | null = '#0000';
     return html` <obc-automation-button
       state="open"
       variant="square"
       .showReadoutStack=${args.showReadoutStack}
-      .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       ?alert=${args.alert}
@@ -590,13 +575,12 @@ export const MotorOn: Story = {
     const readouts: AutomationButtonReadoutStack[] = [
       {type: 'state-on', value: 'On', hasIcon: true},
     ];
-    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
+    const tag: string | null = '#0000';
     return html` <obc-automation-button
       state="open"
       variant="double"
       direction="forward"
       .showReadoutStack=${args.showReadoutStack}
-      .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       direction=${args.direction}
@@ -623,13 +607,12 @@ export const MotorOff: Story = {
     const readouts: AutomationButtonReadoutStack[] = [
       {type: 'state-off', value: 'Off', hasIcon: true},
     ];
-    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
+    const tag: string | null = '#0000';
     return html` <obc-automation-button
       state="closed"
       variant="double"
       direction="forward-stopped"
       .showReadoutStack=${args.showReadoutStack}
-      .hasIdTag=${args.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       .direction=${args.direction}
@@ -686,7 +669,7 @@ export const ThreeWayValveOpenRight: Story = {
         icon: 'arrow',
       },
     ];
-    const tag: AutomationButtonReadoutStackTag | null = {value: 0};
+    const tag: string | null = '#0000';
     return html` <obc-automation-button
       state="open"
       .showReadoutStack=${storyArgs.showReadoutStack}
