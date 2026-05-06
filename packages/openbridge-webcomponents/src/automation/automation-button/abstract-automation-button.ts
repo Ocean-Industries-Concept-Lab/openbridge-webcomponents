@@ -268,9 +268,4 @@ export class ObcAbstractAutomationButton extends LitElement {
       </slot>
     </obc-automation-button>`;
   }
-
-  private parseTagToNumber(tag: string): number {
-    const num = parseInt(tag.replace(/#/g, ''), 10);
-    return isNaN(num) ? 0 : num;
-  }
 }
