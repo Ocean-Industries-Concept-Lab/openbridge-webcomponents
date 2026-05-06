@@ -1,5 +1,11 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcAutomationTank, TankTrend, TankVariant} from './automation-tank.js';
+import {
+  ObcAutomationTank,
+  TankChartMode,
+  TankOrientation,
+  TankTrend,
+  TankType,
+} from './automation-tank.js';
 import './automation-tank.js';
 import '../../components/badge/badge.js';
 import '../../icons/icon-auto.js';
@@ -8,7 +14,73 @@ import {html} from 'lit';
 import {crossDecorator} from '../../storybook-util.js';
 import {BadgeType, BadgeSize} from '../../components/badge/badge.js';
 
-const meta: Meta<typeof ObcAutomationTank> = {
+// Story-only args. `showDefaultBadges` is not a component property — it's a Storybook
+// toggle that injects two default badges into the `badges` slot so consumers
+// can flip them on/off without writing custom render functions.
+type StoryArgs = ObcAutomationTank & {showDefaultBadges: boolean};
+
+// Sample time-series for the graph chart modes — values on the same scale
+// as the default `max` (10_000), oscillating around the current value.
+const SAMPLE_DATA = [
+  {label: '00', value: 5200},
+  {label: '01', value: 5600},
+  {label: '02', value: 6100},
+  {label: '03', value: 6800},
+  {label: '04', value: 7400},
+  {label: '05', value: 7900},
+  {label: '06', value: 8200},
+  {label: '07', value: 8600},
+  {label: '08', value: 8400},
+  {label: '09', value: 8100},
+  {label: '10', value: 8500},
+  {label: '11', value: 8900},
+  {label: '12', value: 9200},
+  {label: '13', value: 9000},
+  {label: '14', value: 8700},
+  {label: '15', value: 9000},
+];
+
+const defaultBadges = html`
+  <obc-badge
+    slot="badges"
+    .size=${BadgeSize.regular}
+    .showNumber=${false}
+    .type=${BadgeType.automation}
+    .showIcon=${true}
+  >
+    <obi-auto slot="badge-icon"></obi-auto>
+  </obc-badge>
+  <obc-badge
+    slot="badges"
+    .size=${BadgeSize.regular}
+    .showNumber=${false}
+    .type=${BadgeType.automation}
+    .showIcon=${true}
+  >
+    <obi-command-locked-f slot="badge-icon"></obi-command-locked-f>
+  </obc-badge>
+`;
+
+const renderTank = (args: StoryArgs) => html`
+  <obc-automation-tank
+    .value=${args.value}
+    .max=${args.max}
+    .trend=${args.trend}
+    .tag=${args.tag}
+    .type=${args.type}
+    .orientation=${args.orientation}
+    .compact=${args.compact}
+    .static=${args.static}
+    .chartMode=${args.chartMode}
+    .chartData=${args.chartData}
+    .advice=${args.advice}
+    .hasAdvice=${args.hasAdvice}
+  >
+    ${args.showDefaultBadges ? defaultBadges : null}
+  </obc-automation-tank>
+`;
+
+const meta: Meta<StoryArgs> = {
   title: 'Automation/Tanks/Tank',
   tags: ['autodocs'],
   component: 'obc-automation-tank',
@@ -17,64 +89,219 @@ const meta: Meta<typeof ObcAutomationTank> = {
     max: 10_000,
     trend: TankTrend.fastFalling,
     tag: '#0000',
+    type: TankType.generic,
+    orientation: TankOrientation.vertical,
+    compact: false,
+    static: false,
+    chartMode: TankChartMode.bar,
+    chartData: SAMPLE_DATA,
+    advice: [],
+    hasAdvice: false,
+    showDefaultBadges: false,
   },
   argTypes: {
     trend: {
       options: Object.values(TankTrend),
       control: {type: 'radio'},
     },
+    type: {
+      options: Object.values(TankType),
+      control: {type: 'radio'},
+    },
+    orientation: {
+      options: Object.values(TankOrientation),
+      control: {type: 'radio'},
+    },
+    chartMode: {
+      options: Object.values(TankChartMode),
+      control: {type: 'radio'},
+    },
     value: {
       control: {type: 'range', min: 0, max: 10_000},
     },
-    variant: {
-      options: Object.values(TankVariant),
-      control: {type: 'radio'},
+    compact: {
+      control: {type: 'boolean'},
+    },
+    static: {
+      control: {type: 'boolean'},
+    },
+    hasAdvice: {
+      control: {type: 'boolean'},
+    },
+    showDefaultBadges: {
+      control: {type: 'boolean'},
+      description:
+        'Storybook-only toggle for visual/layout testing — not part of the component API. Injects two default badges into the `badges` slot.',
     },
   },
   decorators: [crossDecorator],
-} satisfies Meta<ObcAutomationTank>;
+  render: renderTank,
+} satisfies Meta<StoryArgs>;
 
 export default meta;
-type Story = StoryObj<ObcAutomationTank>;
+type Story = StoryObj<StoryArgs>;
 
-export const Vertical: Story = {
-  args: {},
+export const Generic: Story = {
+  args: {type: TankType.generic},
 };
 
-export const VerticalWithBadges: Story = {
-  render(args) {
-    return html`
-      <obc-automation-tank
-        .value=${args.value}
-        .max=${args.max}
-        .trend=${args.trend}
-        .tag=${args.tag}
-      >
-        <obc-badge
-          slot="badges"
-          .size=${BadgeSize.regular}
-          .showNumber=${false}
-          .type=${BadgeType.automation}
-          .showIcon=${true}
-        >
-          <obi-auto slot="badge-icon"></obi-auto>
-        </obc-badge>
-        <obc-badge
-          slot="badges"
-          .size=${BadgeSize.regular}
-          .showNumber=${false}
-          .type=${BadgeType.automation}
-          .showIcon=${true}
-        >
-          <obi-command-locked-f slot="badge-icon"></obi-command-locked-f>
-        </obc-badge>
-      </obc-automation-tank>
-    `;
-  },
+export const Atmospheric: Story = {
+  args: {type: TankType.atmospheric},
+};
+
+export const Pressurized: Story = {
+  args: {type: TankType.pressurized},
+};
+
+export const Battery: Story = {
+  args: {type: TankType.battery},
+};
+
+export const AtmosphericWithBadges: Story = {
+  args: {type: TankType.atmospheric, showDefaultBadges: true},
 };
 
 export const Compact: Story = {
+  args: {compact: true},
+};
+
+export const CompactAtmospheric: Story = {
+  args: {compact: true, type: TankType.atmospheric},
+};
+
+export const HorizontalCompact: Story = {
+  args: {compact: true, orientation: TankOrientation.horizontal},
+};
+
+export const HorizontalCompactAtmospheric: Story = {
   args: {
-    variant: TankVariant.compact,
+    compact: true,
+    orientation: TankOrientation.horizontal,
+    type: TankType.atmospheric,
+  },
+};
+
+export const Static: Story = {
+  args: {static: true},
+};
+
+export const StaticAtmospheric: Story = {
+  args: {static: true, type: TankType.atmospheric},
+};
+
+export const StaticPressurized: Story = {
+  args: {static: true, type: TankType.pressurized},
+};
+
+export const StaticBattery: Story = {
+  args: {static: true, type: TankType.battery},
+};
+
+export const HorizontalStatic: Story = {
+  args: {static: true, orientation: TankOrientation.horizontal},
+};
+
+export const HorizontalStaticAtmospheric: Story = {
+  args: {
+    static: true,
+    orientation: TankOrientation.horizontal,
+    type: TankType.atmospheric,
+  },
+};
+
+export const StaticWithBadges: Story = {
+  args: {static: true, type: TankType.atmospheric, showDefaultBadges: true},
+};
+
+export const Horizontal: Story = {
+  args: {orientation: TankOrientation.horizontal},
+};
+
+export const HorizontalAtmospheric: Story = {
+  args: {
+    orientation: TankOrientation.horizontal,
+    type: TankType.atmospheric,
+  },
+};
+
+export const Graph: Story = {
+  args: {
+    type: TankType.atmospheric,
+    chartMode: TankChartMode.graph,
+  },
+};
+
+export const GraphAndBar: Story = {
+  args: {
+    type: TankType.atmospheric,
+    chartMode: TankChartMode.graphAndBar,
+  },
+};
+
+export const HorizontalGraph: Story = {
+  args: {
+    orientation: TankOrientation.horizontal,
+    type: TankType.atmospheric,
+    chartMode: TankChartMode.graph,
+  },
+};
+
+export const HorizontalGraphAndBar: Story = {
+  args: {
+    orientation: TankOrientation.horizontal,
+    type: TankType.atmospheric,
+    chartMode: TankChartMode.graphAndBar,
+  },
+};
+
+/**
+ * Demonstrates host-driven resizing: drag the corner of the dashed container
+ * to change its size — the tank fills the container's width and height, and
+ * any extra space flows into the chart cell (textual cells stay min-content).
+ * All controls (orientation, type, compact, static, etc.) remain functional.
+ *
+ * The tank host is placed at `left: 50%` of the container (the P&ID drop
+ * coordinate) so its centerline aligns with the container's center, matching
+ * the component's anchor-point convention. The host's `width` is sized to the
+ * full container minus the visual padding, so the visible tank extends
+ * symmetrically inward from both edges.
+ */
+export const Responsive: Story = {
+  args: {type: TankType.atmospheric},
+  decorators: [],
+  render(args) {
+    return html`
+      <div
+        style="
+          resize: both;
+          overflow: hidden;
+          width: 320px;
+          height: 480px;
+          min-width: 120px;
+          min-height: 120px;
+          border: 2px dashed var(--instrument-frame-tertiary-color);
+          box-sizing: border-box;
+          position: relative;
+        "
+      >
+        <obc-automation-tank
+          style="position: absolute; left: 50%; top: 16px; width: calc(100% - 32px); height: calc(100% - 32px);"
+          .value=${args.value}
+          .max=${args.max}
+          .trend=${args.trend}
+          .tag=${args.tag}
+          .type=${args.type}
+          .orientation=${args.orientation}
+          .compact=${args.compact}
+          .static=${args.static}
+          .chartMode=${args.chartMode}
+          .chartData=${args.chartData}
+          .advice=${args.advice}
+          .hasAdvice=${args.hasAdvice}
+        >
+          ${args.showDefaultBadges ? defaultBadges : null}
+        </obc-automation-tank>
+      </div>
+    `;
   },
 };
