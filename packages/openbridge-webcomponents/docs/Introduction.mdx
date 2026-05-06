@@ -1,8 +1,19 @@
 import {Meta} from '@storybook/addon-docs/blocks';
+import {isStable} from '../.storybook/channels.js';
 
 <Meta title="Introduction/Introduction" />
 
 # Introduction
+
+{isStable ? (
+  <div style={{padding: '16px', backgroundColor: 'rgba(2, 136, 209, 0.1)', border: '1px solid rgb(2, 136, 209)', borderRadius: '4px', marginBottom: '24px', color: 'inherit'}}>
+    <strong>Channel: Stable</strong> — You are viewing the production-ready build.
+  </div>
+) : (
+  <div style={{padding: '16px', backgroundColor: 'rgba(245, 124, 0, 0.1)', border: '1px solid rgb(245, 124, 0)', borderRadius: '4px', marginBottom: '24px', color: 'inherit'}}>
+    <strong>Channel: Develop</strong> — You are viewing the latest development build.
+  </div>
+)}
 
 OpenBridge Web Components is part of the OpenBridge Design System, an open-source framework for designing and implementing high-performance user interfaces for industrial and maritime workplaces. The system is based on modern UI principles, industry regulations, and human-centered design practices, and is developed in collaboration with leading industry and academic partners.
 
@@ -18,15 +29,15 @@ that ships with the npm tag you depend on.
 
 {/* URLs are mirrored from .storybook/channels.ts — keep in sync. */}
 
-- **[Stable Storybook](https://openbridge-storybook.web.app)** — built from the
+- **[Stable Storybook](https://openbridge-storybook.web.app)** {isStable && <em>(You are here)</em>} — built from the
   `stable` branch and published to the `latest` npm tag roughly once every
   quarter. Use this for production work; the API is frozen between releases.
-- **[Develop Storybook](https://openbridge-storybook-next.web.app)** — built
+- **[Develop Storybook](https://openbridge-storybook-next.web.app)** {!isStable && <em>(You are here)</em>} — built
   from the `develop` branch and published to the `next` npm tag on every merge.
   Includes upcoming features and fixes that have not yet shipped to `stable`,
   and may contain breaking changes.
 
-You can jump to the develop build at any time using the **View Develop Build**
+You can jump to the {isStable ? 'develop' : 'stable'} build at any time using the **View {isStable ? 'Develop' : 'Stable'} Build**
 link under the OpenBridge wordmark in the sidebar.
 
 When running Storybook locally with `npm run storybook`, the build reflects

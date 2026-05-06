@@ -1,5 +1,5 @@
 import {create} from 'storybook/theming/create';
-import {STORYBOOK_DEVELOP_URL} from './channels.js';
+import {STORYBOOK_STABLE_URL, STORYBOOK_DEVELOP_URL, isStable} from './channels.js';
 
 // OpenBridge Design System Colors
 const colors = {
@@ -74,18 +74,16 @@ const typography = {
 // `brandTitle` accepts raw HTML so we can stack the wordmark and a small
 // secondary link to the other release channel. Inline styles use
 // `currentColor` so the link inherits each theme's `barTextColor`.
-// TODO(devops): when runtime channel detection lands, swap the label/URL so
-// the develop build links to stable instead (see channels.ts).
 const brand = {
   brandTitle: `
     <span style="display: inline-flex; flex-direction: column; align-items: flex-start; line-height: 1.2;">
       <span style="font-weight: 700;">OpenBridge</span>
       <a
-        href="${STORYBOOK_DEVELOP_URL}"
+        href="${isStable ? STORYBOOK_DEVELOP_URL : STORYBOOK_STABLE_URL}"
         target="_blank"
-        rel="noopener"
+        rel="noopener noreferrer"
         style="font-size: 11px; opacity: 0.75; color: currentColor; text-decoration: underline; margin-top: 2px;"
-      >View Develop Build →</a>
+      >View ${isStable ? 'Develop' : 'Stable'} Build →</a>
     </span>
   `,
   brandUrl: 'https://www.openbridge.no/',
