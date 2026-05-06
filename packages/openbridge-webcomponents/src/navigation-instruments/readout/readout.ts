@@ -139,7 +139,8 @@ export class ObcReadout extends LitElement {
   /**
    * @deprecated Not supported by the public readout API. Use `readoutInputStyle` instead.
    */
-  @property({attribute: false}) priorityElements: ReadoutPriorityElement[] = [];
+  @property({type: Array, attribute: false})
+  priorityElements: ReadoutPriorityElement[] = [];
 
   @property({type: String}) readoutInputStyle: ReadoutInputStyle =
     ReadoutInputStyle.regular;

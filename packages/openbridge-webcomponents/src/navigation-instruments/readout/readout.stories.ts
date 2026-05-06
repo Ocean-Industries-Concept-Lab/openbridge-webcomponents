@@ -13,8 +13,6 @@ import {
 import {
   ReadoutInputMode,
   ReadoutInputFormat,
-  ReadoutInputVariant,
-  ReadoutInputSize,
 } from '../readout-input/readout-input.js';
 import {
   ReadoutDirection,
@@ -308,7 +306,6 @@ function renderReadoutComponent(
     onSourceFlyoutClick?: (event: CustomEvent) => void;
   }
 ) {
-  const resolvedDirection = args.direction ?? defaultArgs.direction;
   const resolvedArgs = {
     ...defaultArgs,
     ...args,
@@ -1155,7 +1152,6 @@ export const ApiMatrixHorizontalVariantInputStyleInteraction: Story = {
 };
 
 export const AlertStateShowcase: Story = {
-  name: 'Alert State Showcase',
   decorators: [longPageDecorator],
   render: () => {
     const alertStates = Object.values(ReadoutAlertState) as ReadoutAlertState[];
@@ -1182,105 +1178,6 @@ export const AlertStateShowcase: Story = {
       },
     ]);
   },
-};
-
-export const InputInteractionSetpointReached: Story = {
-  name: 'Input Interaction / Setpoint Reached',
-  decorators: [longPageDecorator],
-  render: () =>
-    renderReadoutSectionsShowcase([
-      {
-        title: 'Input Interaction / Setpoint Reached',
-        cases: [
-          {
-            label: 'pop-up / value != setpoint (input visible)',
-            args: {
-              variant: ReadoutVariant.regular,
-              direction: ReadoutDirection.vertical,
-              hug: false,
-              hasInput: true,
-              readoutInputStyle: ReadoutInputStyle.regular,
-              inputInteraction: ReadoutInputInteraction.popUp,
-              value: '123',
-              setpointValue: '100',
-              label: 'HDG',
-              unit: 'DEG',
-              hasAdvice: false,
-              hasSrc: false,
-            },
-          },
-          {
-            label: 'pop-up / value == setpoint (input hidden)',
-            args: {
-              variant: ReadoutVariant.regular,
-              direction: ReadoutDirection.vertical,
-              hug: false,
-              hasInput: true,
-              readoutInputStyle: ReadoutInputStyle.regular,
-              inputInteraction: ReadoutInputInteraction.popUp,
-              value: '100',
-              setpointValue: '100',
-              label: 'HDG',
-              unit: 'DEG',
-              hasAdvice: false,
-              hasSrc: false,
-            },
-          },
-          {
-            label:
-              'flip-flop / value != setpoint (input visible, value smaller)',
-            args: {
-              variant: ReadoutVariant.regular,
-              direction: ReadoutDirection.vertical,
-              hug: false,
-              hasInput: true,
-              readoutInputStyle: ReadoutInputStyle.regular,
-              inputInteraction: ReadoutInputInteraction.flipFlop,
-              value: '123',
-              setpointValue: '100',
-              label: 'HDG',
-              unit: 'DEG',
-              hasAdvice: false,
-              hasSrc: false,
-            },
-          },
-          {
-            label: 'flip-flop / value == setpoint (input hidden, value normal)',
-            args: {
-              variant: ReadoutVariant.regular,
-              direction: ReadoutDirection.vertical,
-              hug: false,
-              hasInput: true,
-              readoutInputStyle: ReadoutInputStyle.regular,
-              inputInteraction: ReadoutInputInteraction.flipFlop,
-              value: '100',
-              setpointValue: '100',
-              label: 'HDG',
-              unit: 'DEG',
-              hasAdvice: false,
-              hasSrc: false,
-            },
-          },
-          {
-            label: 'always-visible / value == setpoint (input still visible)',
-            args: {
-              variant: ReadoutVariant.regular,
-              direction: ReadoutDirection.vertical,
-              hug: false,
-              hasInput: true,
-              readoutInputStyle: ReadoutInputStyle.regular,
-              inputInteraction: ReadoutInputInteraction.alwaysVisible,
-              value: '100',
-              setpointValue: '100',
-              label: 'HDG',
-              unit: 'DEG',
-              hasAdvice: false,
-              hasSrc: false,
-            },
-          },
-        ],
-      },
-    ]),
 };
 
 export const RegularCases: Story = {
