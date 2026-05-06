@@ -143,7 +143,9 @@ export class ObcSystemMenu extends LitElement {
       return html`<div
         class="content-item-icon ${this.audioState.muted ? 'is-muted' : ''}"
         role="img"
-        aria-label=${this.audioState.muted ? 'Audio muted' : 'Audio on'}
+        aria-label=${this.audioState.muted
+          ? msg('Audio muted')
+          : msg('Audio on')}
       >
         ${this.audioState.muted
           ? html`<obi-sound-muted></obi-sound-muted>`
@@ -178,8 +180,8 @@ export class ObcSystemMenu extends LitElement {
           : ''}"
         role="img"
         aria-label=${this.microphoneState.muted
-          ? 'Microphone muted'
-          : 'Microphone on'}
+          ? msg('Microphone muted')
+          : msg('Microphone on')}
       >
         ${this.microphoneState.muted
           ? html`<obi-com-mic-muted-google></obi-com-mic-muted-google>`
