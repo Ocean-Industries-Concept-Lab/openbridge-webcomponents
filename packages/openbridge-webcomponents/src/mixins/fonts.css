@@ -252,6 +252,60 @@
     "ss04" on;
 }
 
+@define-mixin font-instrument-value-small-box {
+  display: flex;
+  align-items: flex-end;
+  block-size: var(--global-typography-instrument-value-small-container-height);
+  max-block-size: var(
+    --global-typography-instrument-value-small-container-height
+  );
+  padding-bottom: var(
+    --global-typography-instrument-value-small-padding-bottom
+  );
+  overflow: hidden;
+}
+
+@define-mixin font-instrument-value-regular-box {
+  display: flex;
+  align-items: flex-end;
+  block-size: var(
+    --global-typography-instrument-value-regular-container-height
+  );
+  max-block-size: var(
+    --global-typography-instrument-value-regular-container-height
+  );
+  padding-bottom: var(
+    --global-typography-instrument-value-regular-padding-bottom
+  );
+  overflow: hidden;
+}
+
+@define-mixin font-instrument-value-m-box {
+  display: flex;
+  align-items: flex-end;
+  block-size: var(--global-typography-instrument-value-medium-container-height);
+  max-block-size: var(
+    --global-typography-instrument-value-medium-container-height
+  );
+  padding-bottom: calc(
+    var(--global-typography-instrument-value-medium-padding-bottom) / 2
+  );
+  overflow: hidden;
+}
+
+@define-mixin font-instrument-value-enhanced-box {
+  display: flex;
+  align-items: flex-end;
+  block-size: var(--global-typography-instrument-value-large-container-height);
+  max-block-size: var(
+    --global-typography-instrument-value-large-container-height
+  );
+  padding-bottom: calc(
+    var(--global-typography-instrument-value-large-padding-bottom) / 2
+  );
+  overflow: hidden;
+}
+
 @define-mixin font-instrument-label {
   font-family: var(--global-typography-font-family);
   font-weight: var(--global-typography-instrument-label-font-weight);
@@ -272,6 +326,24 @@
     "liga" off,
     "clig" off,
     "ss04" on;
+}
+
+@define-mixin font-instrument-label-box {
+  display: flex;
+  align-items: flex-end;
+  block-size: var(--global-typography-instrument-label-container-height);
+  max-block-size: var(--global-typography-instrument-label-container-height);
+  padding-bottom: var(--global-typography-instrument-label-padding-bottom);
+  overflow: hidden;
+}
+
+@define-mixin font-instrument-unit-box {
+  display: flex;
+  align-items: flex-end;
+  block-size: var(--global-typography-instrument-unit-container-height);
+  max-block-size: var(--global-typography-instrument-unit-container-height);
+  padding-bottom: var(--global-typography-instrument-unit-padding-bottom);
+  overflow: hidden;
 }
 
 @define-mixin font-instrument-tick-mark {
