@@ -1,5 +1,9 @@
 import {create} from 'storybook/theming/create';
-import {STORYBOOK_STABLE_URL, STORYBOOK_DEVELOP_URL, isStable} from './channels.js';
+import {
+  STORYBOOK_STABLE_URL,
+  STORYBOOK_DEVELOP_URL,
+  isStable,
+} from './channels.js';
 
 // OpenBridge Design System Colors
 const colors = {
