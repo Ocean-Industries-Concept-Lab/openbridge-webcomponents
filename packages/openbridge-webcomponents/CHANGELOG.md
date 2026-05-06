@@ -1,3 +1,9 @@
+## [2.0.0-next.23](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.22...v2.0.0-next.23) (2026-05-06)
+
+### Bug Fixes
+
+- **card:** prevent hover overlay from covering content in bright theme ([#826](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/826)) ([cbef566](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/cbef5664e72c66562695c1852c127ff721dbc2b7)), closes [#805](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/805)
+
 ## [2.0.0-next.22](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.21...v2.0.0-next.22) (2026-05-06)
 
 ### Bug Fixes
