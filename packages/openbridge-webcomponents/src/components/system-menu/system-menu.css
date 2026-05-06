@@ -358,6 +358,7 @@
 }
 
 .content-item-icon {
+  min-width: var(--ui-components-icon-button-touch-target-size);
   display: flex;
   align-items: center;
   justify-content: center;

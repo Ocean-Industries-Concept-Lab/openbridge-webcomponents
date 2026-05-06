@@ -49,6 +49,7 @@ export interface AudioState {
     name: string;
   }[];
   selectedOutput?: string;
+  controlMode?: SystemMenuControlMode;
 }
 
 export interface MicrophoneState {
@@ -59,6 +60,7 @@ export interface MicrophoneState {
   }[];
   selectedInput?: string;
   pushToTalk?: boolean;
+  controlMode?: SystemMenuControlMode;
 }
 
 export interface BatteryState {
@@ -118,12 +120,15 @@ export class ObcSystemMenu extends LitElement {
   @property({type: String}) activeSubMenu: SystemSubMenu = SystemSubMenu.main;
   @property({type: Boolean}) externalControl: boolean = false;
   @property({type: Boolean}) smallScreen: boolean = false;
-  @property({type: String})
-  audioControlMode: SystemMenuControlMode = SystemMenuControlMode.muteButton;
+  private get audioControlMode(): SystemMenuControlMode {
+    return this.audioState?.controlMode ?? SystemMenuControlMode.muteButton;
+  }
 
-  @property({type: String})
-  microphoneControlMode: SystemMenuControlMode =
-    SystemMenuControlMode.muteButton;
+  private get microphoneControlMode(): SystemMenuControlMode {
+    return (
+      this.microphoneState?.controlMode ?? SystemMenuControlMode.muteButton
+    );
+  }
 
   private renderAudioControl() {
     if (!this.audioState) {
