@@ -8,53 +8,138 @@
   height: 24px;
 }
 
+/* P&ID anchor: outer top-left = placement coord; centered horizontally and shifted up
+ * so the tank-frame's badge area sits above the visible tank body — preserves the
+ * existing anchor model. */
 .outer {
   display: flex;
   width: fit-content;
   flex-direction: column;
-  /* This is a hack to make the badge appear above the content */
   position: relative;
   top: -20px;
   transform: translateX(-50%);
 }
 
-.badges {
-  display: flex;
-  justify-content: end;
-  padding-bottom: 4px;
-  min-height: 20px;
+/* Sizing context for the absolutely-positioned halo overlay. */
+.halo-area {
+  position: relative;
+  width: fit-content;
 }
 
-.wrapper {
-  @mixin style style=normal;
+/* The halo is a transparent button at rest. The flat mixin paints its border/bg
+ * only on hover/pressed/focus-visible/disabled, producing a ~5px halo around
+ * the tank. Sits BEHIND the tank visually (z-index: 0), but receives clicks
+ * because the tank-frame above sets pointer-events: none. */
+.halo {
+  position: absolute;
+  inset: -5px;
+  z-index: 0;
   appearance: none;
+  margin: 0;
+  padding: 0;
+  border-radius: 11px; /* tank radius (6) + halo padding (5) */
+  /* prettier-ignore */
+  @mixin style style=flat;
+}
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Tank-frame is the visible tank: 3 stacked sections (cap-start / middle / cap-end).
+ * The middle section holds EVERYTHING — badges, header, value, and bar. The caps
+ * draw only the rounded ends.
+ *
+ * Default dimensions are uniform across all 4 types (the middle uses flex:1 so
+ * type/cap differences don't change overall size). Halo extends 5px on every
+ * side, so total interactive area = tank-frame + 10px in each axis:
+ *   Vertical regular:   238×358  → halo+tank = 248×368
+ *   Vertical compact:   152×222  → halo+tank = 162×232
+ *   Horizontal regular: 358×238  → halo+tank = 368×248
+ *   Horizontal compact: 222×152  → halo+tank = 232×162
+ */
+.tank-frame {
+  position: relative;
+  z-index: 1;
+  pointer-events: none; /* let clicks fall through to the halo button */
   display: flex;
-  flex-direction: column-reverse;
-  width: fit-content;
+  flex-direction: column;
+  width: 238px;
+  height: 358px;
   color: var(--instrument-regular-secondary-color);
+}
 
-  border-radius: 6px;
-  border: 1px solid var(--instrument-frame-tertiary-color);
+.tank-frame.compact {
+  width: 152px;
+  height: 222px;
+}
+
+.tank-frame.orientation-horizontal {
+  width: 358px;
+  height: 238px;
+}
+
+.tank-frame.orientation-horizontal.compact {
+  width: 222px;
+  height: 152px;
+}
+
+/* Middle section: opaque background + side borders draw the tank body.
+ * Top/bottom edges are owned by the caps (or, for `generic`/`battery`, by the
+ * middle's full border). flex:1 makes it absorb whatever space the caps don't
+ * use, so all 4 types end up the same outer size.  */
+.middle {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
   background: var(--instrument-frame-primary-color);
-
+  border-left: 1px solid var(--instrument-frame-tertiary-color);
+  border-right: 1px solid var(--instrument-frame-tertiary-color);
   padding: 8px;
   gap: 8px;
 }
 
-.compact {
+.tank-frame.type-generic .middle {
+  border: 1px solid var(--instrument-frame-tertiary-color);
+  border-radius: 6px;
+}
+
+/* Battery: middle is a fully-bordered, fully-rounded rectangle. The terminal
+ * sits ABOVE it (and is narrower than the body), so the middle needs its top
+ * border visible to close the body shape on either side of the terminal. */
+.tank-frame.type-battery .middle {
+  border: 1px solid var(--instrument-frame-tertiary-color);
+  border-radius: 6px;
+}
+
+.badges {
+  display: flex;
+  justify-content: end;
+  min-height: 20px;
+}
+
+.tank-frame.compact {
   .content {
     display: none;
   }
+}
 
-  .bar-container {
-    width: 48px;
-    height: 96px;
-  }
+.content {
+  width: 100%;
+  flex-shrink: 0;
 }
 
 .header {
-  width: 150px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -92,9 +177,10 @@
 }
 
 .bar-container {
+  flex: 1 1 auto;
   width: 100%;
+  min-height: 0;
   position: relative;
-  height: 70px;
   border-radius: 2px;
   border: 1px solid var(--instrument-frame-tertiary-color);
   background: var(--instrument-frame-secondary-color);
@@ -111,11 +197,202 @@
   right: 1px;
 }
 
-.tag {
-  @mixin font-label;
-  color: var(--element-neutral-color);
-  height: 24px;
+/* ---------- Caps ---------- */
+
+.cap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* Atmospheric: 3-piece (fixed corners + stretchable middle arc) */
+.cap-atmospheric {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
+  height: 18px;
+  width: 100%;
+}
+
+.cap-atmospheric .cap-corner {
+  flex: 0 0 12px;
+  height: 18px;
+  display: block;
+}
+
+.cap-atmospheric .cap-mid {
+  flex: 1 1 auto;
+  height: 18px;
+  min-width: 0;
+  display: block;
+}
+
+.cap-fill {
+  fill: var(--instrument-frame-primary-color);
+}
+
+.cap-stroke {
+  stroke: var(--instrument-frame-tertiary-color);
+  stroke-width: 1;
+}
+
+/* End cap = start cap mirrored across the long axis. */
+.cap-atmospheric.cap-end {
+  transform: scaleY(-1);
+}
+
+/* Pressurized: single rectangle, rounded only at the outer end (top edge for
+ * cap-start, bottom edge for cap-end). The inner edge KEEPS its border so the
+ * cap visually reads as a separate sealed lid against the middle. Height
+ * matches atmospheric for visual consistency. */
+.cap-pressurized {
+  height: 18px;
+  width: 100%;
+  background: var(--instrument-frame-primary-color);
+  border: 1px solid var(--instrument-frame-tertiary-color);
+}
+.cap-pressurized.cap-start {
+  border-top-left-radius: 7px;
+  border-top-right-radius: 7px;
+}
+.cap-pressurized.cap-end {
+  border-bottom-left-radius: 7px;
+  border-bottom-right-radius: 7px;
+}
+
+/* Battery: narrow centered terminal sitting above the (fully-bordered) middle.
+ * Terminal is shorter than the middle's full width, so the middle's top border
+ * is exposed on either side of the terminal — that's why the battery middle
+ * keeps its full border. */
+.cap-battery {
+  height: 6px;
+  width: 50%;
+  margin: 0 auto;
+  background: var(--instrument-frame-primary-color);
+  border: 1px solid var(--instrument-frame-tertiary-color);
+  border-bottom: none;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
+
+/* ---------- Horizontal orientation ----------
+ * Only cap PLACEMENT and rounding axis change — inner content (badges, header,
+ * value, bar) is NOT rotated; it keeps its vertical layout inside the middle
+ * section, just sandwiched between left and right caps now.
+ *
+ * NOTE: atmospheric arcs are not yet rotated for horizontal — they currently
+ * render as the simple pressurized-style rounded end. Rotating the SVG paths
+ * is a follow-up.
+ */
+.tank-frame.orientation-horizontal {
+  flex-direction: row;
+  align-items: stretch;
+}
+
+/* Horizontal middle: temporary minimal layout — flex row so the inner content
+ * lays out left-to-right. Will be fine-tuned later. */
+.tank-frame.orientation-horizontal .middle {
+  flex-direction: row;
+  align-items: stretch;
+  border-left: none;
+  border-right: none;
+  border-top: 1px solid var(--instrument-frame-tertiary-color);
+  border-bottom: 1px solid var(--instrument-frame-tertiary-color);
+}
+
+/* Temporary fixed width for the bar in horizontal so it doesn't collapse in the
+ * row flex (the original `width: 100%` + `flex: 1 1 auto` from the vertical
+ * layout don't translate cleanly to row). Will be revisited during fine-tuning. */
+.tank-frame.orientation-horizontal .bar-container {
+  width: 200px;
+  flex: 0 0 200px;
+  order: -1; /* render bar first (left), then badges + content */
+}
+
+.tank-frame.orientation-horizontal.compact .bar-container {
+  width: 96px;
+  flex: 0 0 96px;
+}
+
+/* In row flex, the vertical-layout `.content { width: 100% }` would claim the
+ * whole row and push the bar out. Let it size to its natural width instead. */
+.tank-frame.orientation-horizontal .content {
+  width: auto;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.tank-frame.orientation-horizontal.type-generic .middle {
+  border: 1px solid var(--instrument-frame-tertiary-color);
+  border-radius: 6px;
+}
+
+.tank-frame.orientation-horizontal.type-battery .middle {
+  /* same fully-bordered rounded rect; horizontal terminal sits to the LEFT */
+  border: 1px solid var(--instrument-frame-tertiary-color);
+  border-radius: 6px;
+}
+
+/* Horizontal pressurized: rounded LEFT and RIGHT ends. Inner border stays so
+ * the cap reads as a sealed lid (border-right on cap-start, border-left on cap-end). */
+.tank-frame.orientation-horizontal .cap-pressurized {
+  width: 18px;
+  height: auto;
+  align-self: stretch;
+}
+.tank-frame.orientation-horizontal .cap-pressurized.cap-start {
+  border: 1px solid var(--instrument-frame-tertiary-color);
+  border-radius: 0;
+  border-top-left-radius: 7px;
+  border-bottom-left-radius: 7px;
+}
+.tank-frame.orientation-horizontal .cap-pressurized.cap-end {
+  border: 1px solid var(--instrument-frame-tertiary-color);
+  border-radius: 0;
+  border-top-right-radius: 7px;
+  border-bottom-right-radius: 7px;
+}
+
+/* Horizontal battery: terminal sticks out LEFT from the body. */
+.tank-frame.orientation-horizontal .cap-battery {
+  width: 6px;
+  height: 50%;
+  align-self: center;
+  margin: 0;
+  border: 1px solid var(--instrument-frame-tertiary-color);
+  border-right: none;
+  border-radius: 0;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+
+/* Horizontal atmospheric: same 3-piece SVGs but stacked in a column with the
+ * inner paths rotated -90° via SVG transform (see renderAtmosphericCap). The
+ * cap occupies an 18px column the full height of the middle. cap-end mirrors
+ * cap-start across the X axis. column-reverse swaps corner-start and
+ * corner-end vertical positions so the rotated arcs meet the middle correctly. */
+.tank-frame.orientation-horizontal .cap-atmospheric {
+  display: flex;
+  flex-direction: column-reverse;
+  width: 18px;
+  height: auto;
+  align-self: stretch;
+  background: transparent;
+  border: none;
+  transform: none;
+}
+.tank-frame.orientation-horizontal .cap-atmospheric > svg {
+  display: block;
+}
+.tank-frame.orientation-horizontal .cap-atmospheric .cap-corner {
+  flex: 0 0 12px;
+  width: 18px;
+  height: 12px;
+}
+.tank-frame.orientation-horizontal .cap-atmospheric .cap-mid {
+  flex: 1 1 auto;
+  width: 18px;
+  height: auto;
+  min-height: 0;
+}
+.tank-frame.orientation-horizontal .cap-atmospheric.cap-end {
+  transform: scaleX(-1);
 }
