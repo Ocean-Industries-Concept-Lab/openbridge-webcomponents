@@ -15,6 +15,16 @@ const meta: Meta<typeof ObcRotIndicator> = {
         max: 3,
         step: 0.1,
       },
+      description: '**Deprecated.** Use `rateOfTurnDegreesPerMinute` instead.',
+    },
+    rateOfTurnDegreesPerMinute: {
+      control: {type: 'range', min: -180, max: 180, step: 1},
+      description:
+        'Measured rate of turn in degrees per minute (positive = starboard).',
+    },
+    rotDotAnimationFactor: {
+      control: {type: 'range', min: 1, max: 60, step: 1},
+      description: 'Visual amplification for the spinning dot animation.',
     },
   },
 } satisfies Meta<ObcRotIndicator>;
@@ -24,4 +34,12 @@ type Story = StoryObj<ObcRotIndicator>;
 
 export const Primary: Story = {
   args: {},
+};
+
+export const RateOfTurnDegreesPerMinute: Story = {
+  tags: ['skip-test'],
+  args: {
+    rateOfTurnDegreesPerMinute: 20,
+    rotDotAnimationFactor: 18,
+  },
 };

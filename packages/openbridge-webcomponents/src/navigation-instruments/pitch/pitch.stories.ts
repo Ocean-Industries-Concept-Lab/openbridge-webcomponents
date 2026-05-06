@@ -33,3 +33,20 @@ type Story = StoryObj<ObcPitch>;
 export const Primary: Story = {
   args: {},
 };
+
+export const ZoomedIn: Story = {
+  args: {
+    zoomToFitArc: true,
+  },
+};
+
+export const ZoomedInNarrow: Story = {
+  args: {
+    zoomToFitArc: true,
+    arcAngle: 15,
+    pitch: 6,
+    minAvgPitch: -4,
+    maxAvgPitch: 8,
+    maxPitchAdvice: 10,
+  },
+};

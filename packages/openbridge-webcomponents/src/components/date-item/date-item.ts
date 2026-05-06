@@ -111,7 +111,7 @@ export class ObcDateItem extends LitElement {
    * In large size, displays event details using obc-event-item components.
    * @default []
    */
-  @property({attribute: false}) events: DateItemEvent[] = [];
+  @property({type: Array, attribute: false}) events: DateItemEvent[] = [];
 
   /**
    * Number of events to display from the events array. When 0, shows all events.

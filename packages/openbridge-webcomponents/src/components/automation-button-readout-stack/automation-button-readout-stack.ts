@@ -66,7 +66,8 @@ export interface AutomationButtonReadoutStackTag {
 
 @customElement('obc-automation-button-readout-stack')
 export class ObcAutomationButtonReadoutStack extends LitElement {
-  @property({attribute: false}) readouts: AutomationButtonReadoutStack[] = [];
+  @property({type: Array, attribute: false})
+  readouts: AutomationButtonReadoutStack[] = [];
   @property({attribute: false}) tag: AutomationButtonReadoutStackTag | null =
     null;
   @property() size: AutomationButtonReadoutStackSize =
