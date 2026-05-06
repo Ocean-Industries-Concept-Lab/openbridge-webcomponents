@@ -41,9 +41,36 @@ export enum ReadoutVariant {
   stack = 'stack',
 }
 
+export enum ReadoutInputStyle {
+  hidden = 'hidden',
+  regular = 'regular',
+  enhanced = 'enhanced',
+}
+
+export enum ReadoutAlertState {
+  none = 'none',
+  lowIntegrity = 'low-integrity',
+  invalid = 'invalid',
+  caution = 'caution',
+  warning = 'warning',
+  alarm = 'alarm',
+}
+
+export enum ReadoutInputInteraction {
+  alwaysVisible = 'always-visible',
+  flipFlop = 'flip-flop',
+  popUp = 'pop-up',
+}
+
 export enum ReadoutDirection {
   vertical = 'vertical',
   horizontal = 'horizontal',
+}
+
+export enum ReadoutStackVerticalAlignment {
+  left = 'left',
+  center = 'center',
+  vertical = 'vertical',
 }
 
 export enum ReadoutPriorityElement {
@@ -102,12 +129,33 @@ export {ReadoutSourceType};
 export class ObcReadout extends LitElement {
   @property({type: String}) variant: ReadoutVariant = ReadoutVariant.regular;
 
+  /**
+   * @deprecated Use `readoutInputStyle` for input emphasis instead of per-element priority selection.
+   */
   @property({type: String}) priority?: Priority;
 
+  @property({type: String}) valuePriority?: Priority;
+
+  /**
+   * @deprecated Not supported by the public readout API. Use `readoutInputStyle` instead.
+   */
   @property({attribute: false}) priorityElements: ReadoutPriorityElement[] = [];
+
+  @property({type: String}) readoutInputStyle: ReadoutInputStyle =
+    ReadoutInputStyle.regular;
+
+  @property({type: String}) alertState: ReadoutAlertState =
+    ReadoutAlertState.none;
+
+  @property({type: String}) inputInteraction: ReadoutInputInteraction =
+    ReadoutInputInteraction.alwaysVisible;
 
   @property({type: String}) direction: ReadoutDirection =
     ReadoutDirection.vertical;
+
+  @property({type: String})
+  alignment: ReadoutStackVerticalAlignment =
+    ReadoutStackVerticalAlignment.vertical;
 
   @property({type: Boolean}) hug = false;
 
@@ -151,7 +199,12 @@ export class ObcReadout extends LitElement {
 
   @property() adviceValue: number | string | undefined = '';
 
+  /**
+   * @deprecated Use `setpointValue` for the input/setpoint segment value.
+   */
   @property() inputValue: number | string | undefined = '';
+
+  @property() setpointValue: number | string | undefined = undefined;
 
   @property({type: String}) label = '';
 
@@ -192,9 +245,10 @@ export class ObcReadout extends LitElement {
   @property({type: String}) inputFormat: ReadoutInputFormat =
     ReadoutInputFormat.regular;
 
+  /**
+   * @deprecated Use `inputInteraction` where applicable.
+   */
   @property({type: String}) inputInteractionMode?: ReadoutInputMode;
-
-  @property({type: String}) inputPriority?: Priority;
 
   @property({type: Boolean}) inputHasFixedLength = false;
 
@@ -274,18 +328,178 @@ export class ObcReadout extends LitElement {
     return this.inputInteractionMode;
   }
 
-  private resolveInputPriority(): Priority | undefined {
-    if (this.inputPriority) {
-      return this.inputPriority;
+  private resolvedValueMode(): ReadoutInputMode | undefined {
+    if (!this.inputInteractionRendered) {
+      return undefined;
     }
 
-    return this.isPriorityEnhanced(ReadoutPriorityElement.input)
-      ? Priority.enhanced
-      : undefined;
+    if (!this.isHorizontal) {
+      return undefined;
+    }
+
+    if (this.interactionMode === ReadoutInputInteraction.alwaysVisible) {
+      return ReadoutInputMode.input;
+    }
+
+    if (this.interactionMode === ReadoutInputInteraction.popUp) {
+      return undefined;
+    }
+
+    return undefined;
+  }
+
+  private resolvedInputModeForInteraction(): ReadoutInputMode | undefined {
+    if (!this.inputInteractionRendered) {
+      return undefined;
+    }
+
+    if (this.isHorizontal) {
+      if (this.interactionMode === ReadoutInputInteraction.alwaysVisible) {
+        return undefined;
+      }
+
+      if (this.interactionMode === ReadoutInputInteraction.popUp) {
+        return ReadoutInputMode.input;
+      }
+    }
+
+    return this.resolveInputMode();
   }
 
   private resolveInputFormat(): ReadoutInputFormat | undefined {
     return this.inputFormat;
+  }
+
+  private get interactionMode(): ReadoutInputInteraction {
+    return this.inputInteraction ?? ReadoutInputInteraction.alwaysVisible;
+  }
+
+  private get effectiveSetpointValue(): number | string | undefined {
+    return this.setpointValue ?? this.inputValue;
+  }
+
+  private get isSetpointReached(): boolean {
+    return this.value === this.effectiveSetpointValue;
+  }
+
+  private get shouldHideInputForInteraction(): boolean {
+    if (!this.inputInteractionEnabled) {
+      return false;
+    }
+
+    if (this.interactionMode === ReadoutInputInteraction.alwaysVisible) {
+      return false;
+    }
+
+    if (
+      this.interactionMode === ReadoutInputInteraction.popUp ||
+      this.interactionMode === ReadoutInputInteraction.flipFlop
+    ) {
+      return this.isSetpointReached;
+    }
+
+    return false;
+  }
+
+  private resolvedInputVisible(): boolean {
+    if (!this.hasInput) {
+      return false;
+    }
+
+    if (this.readoutInputStyle === ReadoutInputStyle.hidden) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private get inputInteractionEnabled(): boolean {
+    return this.resolvedInputVisible();
+  }
+
+  private get inputRendered(): boolean {
+    return this.resolvedInputVisible() && !this.shouldHideInputForInteraction;
+  }
+
+  private get inputInteractionRendered(): boolean {
+    return this.inputInteractionEnabled && this.inputRendered;
+  }
+
+  private resolvedInputPriorityFromStyle(): Priority {
+    if (this.readoutInputStyle === ReadoutInputStyle.enhanced) {
+      return Priority.enhanced;
+    }
+
+    return Priority.regular;
+  }
+
+  private get baseSize(): ReadoutInputSize {
+    return this.variant === ReadoutVariant.regular
+      ? ReadoutInputSize.medium
+      : ReadoutInputSize.large;
+  }
+
+  private stepDownSize(size: ReadoutInputSize): ReadoutInputSize {
+    switch (size) {
+      case ReadoutInputSize.large:
+        return ReadoutInputSize.medium;
+      case ReadoutInputSize.medium:
+        return ReadoutInputSize.regular;
+      case ReadoutInputSize.regular:
+        return ReadoutInputSize.small;
+      default:
+        return ReadoutInputSize.small;
+    }
+  }
+
+  private get resolvedInputSegmentSize(): ReadoutInputSize {
+    return this.baseSize;
+  }
+
+  private get resolvedValueInputSize(): ReadoutInputSize {
+    if (!this.inputInteractionRendered) {
+      return this.baseSize;
+    }
+
+    if (this.interactionMode === ReadoutInputInteraction.flipFlop) {
+      if (this.variant === ReadoutVariant.regular) {
+        return ReadoutInputSize.small;
+      }
+
+      return this.stepDownSize(this.resolvedInputSegmentSize);
+    }
+
+    return this.baseSize;
+  }
+
+  private get resolvedValuePriority(): Priority | undefined {
+    if (this.valuePriority) {
+      return this.valuePriority;
+    }
+
+    if (!this.inputInteractionRendered) {
+      return this.variant === ReadoutVariant.enhanced
+        ? Priority.enhanced
+        : undefined;
+    }
+
+    if (this.interactionMode === ReadoutInputInteraction.alwaysVisible) {
+      return Priority.enhanced;
+    }
+
+    if (this.interactionMode === ReadoutInputInteraction.flipFlop) {
+      return Priority.enhanced;
+    }
+
+    if (this.interactionMode === ReadoutInputInteraction.popUp) {
+      return Priority.enhanced;
+    }
+
+    if (this.variant === ReadoutVariant.enhanced) {
+      return Priority.enhanced;
+    }
+
+    return undefined;
   }
 
   /**
@@ -308,12 +522,6 @@ export class ObcReadout extends LitElement {
     return this.variant === ReadoutVariant.regular
       ? ReadoutInputSize.regular
       : ReadoutInputSize.medium;
-  }
-
-  private get resolvedValueSize(): ReadoutInputSize {
-    return this.variant === ReadoutVariant.enhanced
-      ? ReadoutInputSize.large
-      : this.resolvedSegmentSize;
   }
 
   /**
@@ -448,6 +656,11 @@ export class ObcReadout extends LitElement {
       return nothing;
     }
 
+    const adviceSegmentSize =
+      this.variant === ReadoutVariant.regular && this.isHorizontal
+        ? this.resolvedInputSegmentSize
+        : this.resolvedSegmentSize;
+
     return html`
       <div class="readout-segment-wrapper readout-advice" part="advice-wrapper">
         <slot name="advice">
@@ -458,7 +671,7 @@ export class ObcReadout extends LitElement {
               : nothing}
             .readoutStyle=${this.variant}
             .direction=${this.direction}
-            .size=${this.resolvedSegmentSize}
+            .size=${adviceSegmentSize}
             .hugContent=${this.shouldHugNestedSegments}
             .priority=${this.advicePriority ??
             (this.isPriorityEnhanced(ReadoutPriorityElement.advice)
@@ -485,27 +698,43 @@ export class ObcReadout extends LitElement {
   }
 
   private renderInput() {
-    if (!this.hasInput) {
+    if (!this.inputRendered) {
       return nothing;
     }
 
+    const inputReadoutStyle =
+      this.isHorizontal &&
+      this.interactionMode === ReadoutInputInteraction.alwaysVisible
+        ? ReadoutVariant.regular
+        : this.variant;
+    const inputMode = this.resolvedInputModeForInteraction();
+
     return html`
-      <div class="readout-segment-wrapper readout-input" part="input-wrapper">
+      <div
+        class=${classMap({
+          'readout-segment-wrapper': true,
+          'readout-input': true,
+          'input-active':
+            this.inputInteractionRendered &&
+            this.interactionMode === ReadoutInputInteraction.popUp,
+        })}
+        part="input-wrapper"
+      >
         <slot name="input">
           <obc-readout-input
             data-obc-value-typography=${this.variant ===
               ReadoutVariant.regular && this.isVertical
               ? 'medium'
               : nothing}
-            .readoutStyle=${this.variant}
+            .readoutStyle=${inputReadoutStyle}
             .direction=${this.direction}
-            .size=${this.resolvedSegmentSize}
+            .size=${this.resolvedInputSegmentSize}
             .format=${this.resolveInputFormat()}
-            .mode=${this.resolveInputMode()}
-            .priority=${this.resolveInputPriority()}
+            .mode=${inputMode}
+            .priority=${this.resolvedInputPriorityFromStyle()}
             .hugContent=${this.shouldHugNestedSegments}
             .hasFixedLength=${this.inputHasFixedLength}
-            .value=${this.inputValue}
+            .value=${this.effectiveSetpointValue}
             .secondaryValue=${this.inputSecondaryValue}
             .description=${this.inputDescription}
             .valueLength=${this.inputValueLength}
@@ -552,6 +781,9 @@ export class ObcReadout extends LitElement {
         class=${classMap({
           'readout-segment-wrapper': true,
           'readout-value-wrapper': true,
+          'value-active':
+            this.inputInteractionRendered &&
+            this.interactionMode === ReadoutInputInteraction.alwaysVisible,
         })}
         part="value-wrapper"
       >
@@ -631,19 +863,25 @@ export class ObcReadout extends LitElement {
   private renderValueInput() {
     const elevateValueTypography =
       this.variant === ReadoutVariant.regular && this.isVertical;
-    const valuePriority = this.isPriorityEnhanced(ReadoutPriorityElement.value)
-      ? Priority.enhanced
-      : undefined;
-    const scopeValuePriority = Array.isArray(this.priorityElements)
-      ? this.priorityElements.includes(ReadoutPriorityElement.value)
-      : false;
+    const valuePriority = this.resolvedValuePriority;
+    const scopeValuePriority = valuePriority === Priority.enhanced;
+    const valueReadoutStyle =
+      (this.inputInteractionRendered &&
+        this.interactionMode === ReadoutInputInteraction.flipFlop) ||
+      (this.inputInteractionRendered &&
+        this.isHorizontal &&
+        this.interactionMode === ReadoutInputInteraction.popUp)
+        ? ReadoutVariant.regular
+        : this.variant;
+    const valueMode = this.resolvedValueMode();
 
     return html`
       <obc-readout-input
         .variant=${ReadoutInputVariant.value}
-        .readoutStyle=${this.variant}
+        .readoutStyle=${valueReadoutStyle}
         .direction=${this.direction}
-        .size=${this.resolvedValueSize}
+        .size=${this.resolvedValueInputSize}
+        .mode=${valueMode}
         .hugContent=${this.shouldHugNestedSegments}
         data-obc-value-typography=${elevateValueTypography ? 'medium' : nothing}
         ?data-obc-priority-scoped=${scopeValuePriority}
@@ -722,8 +960,7 @@ export class ObcReadout extends LitElement {
           ${!(this.isEnhanced && this.isHorizontal) && this.hasAdvice
             ? this.renderAdviceDivider()
             : nothing}
-          ${this.hasInput ? this.renderInput() : nothing}
-          ${this.renderInputDivider()}
+          ${this.renderInput()} ${this.renderInputDivider()}
           ${this.showUnitZone
             ? this.renderHorizontalValueUnitZone(true)
             : html`${this.renderValueInput()}`}
@@ -751,6 +988,25 @@ export class ObcReadout extends LitElement {
           readout: true,
           [this.variant]: true,
           [this.direction]: true,
+          'alignment-left': this.alignment === 'left',
+          'alignment-center': this.alignment === 'center',
+          'alignment-vertical': this.alignment === 'vertical',
+          'interaction-always-visible':
+            this.inputInteractionEnabled &&
+            this.interactionMode === ReadoutInputInteraction.alwaysVisible,
+          'interaction-flip-flop':
+            this.inputInteractionEnabled &&
+            this.interactionMode === ReadoutInputInteraction.flipFlop,
+          'interaction-pop-up':
+            this.inputInteractionEnabled &&
+            this.interactionMode === ReadoutInputInteraction.popUp,
+          'alert-none': this.alertState === ReadoutAlertState.none,
+          'alert-low-integrity':
+            this.alertState === ReadoutAlertState.lowIntegrity,
+          'alert-invalid': this.alertState === ReadoutAlertState.invalid,
+          'alert-caution': this.alertState === ReadoutAlertState.caution,
+          'alert-warning': this.alertState === ReadoutAlertState.warning,
+          'alert-alarm': this.alertState === ReadoutAlertState.alarm,
           'has-source': this.hasSrc,
           'has-input': this.hasInput,
           'has-input-button':

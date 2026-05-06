@@ -16,20 +16,28 @@ import {
   ReadoutInputVariant,
   ReadoutInputSize,
 } from '../readout-input/readout-input.js';
-import {Priority} from '../types.js';
 import {
   ReadoutDirection,
+  ReadoutInputInteraction,
+  ReadoutInputStyle,
+  ReadoutAlertState,
   ReadoutSourceType,
-  ReadoutPriorityElement,
   ReadoutVariant,
 } from './readout.js';
+import {Priority} from '../types.js';
 import './readout.js';
+
+enum ReadoutStackVerticalAlignment {
+  left = 'left',
+  center = 'center',
+  vertical = 'vertical',
+}
 
 type ReadoutStoryArgs = {
   variant?: ReadoutVariant;
-  priority?: Priority;
-  priorityElement?: ReadoutPriorityElement;
+  valuePriority?: Priority;
   direction: ReadoutDirection;
+  alignment: ReadoutStackVerticalAlignment;
   hug: boolean;
   labelOnly: boolean;
   hasAdvice: boolean;
@@ -44,7 +52,7 @@ type ReadoutStoryArgs = {
   inputIcon?: string;
   adviceValue: string | number;
   inputValue: string | number;
-  value: string;
+  value: string | number;
   maxDigits: number;
   fractionDigits: number;
   showZeroPadding: boolean;
@@ -65,7 +73,6 @@ type ReadoutStoryArgs = {
   hasSourceLeadingIcon: boolean;
   hasSourceTrailingIcon: boolean;
   adviceFormat: ReadoutAdviceFormat;
-  advicePriority?: Priority;
   adviceState: ReadoutAdviceState;
   adviceHasFixedLength: boolean;
   adviceSecondaryValue: string;
@@ -74,12 +81,15 @@ type ReadoutStoryArgs = {
   adviceHasHintedZeros: boolean;
   inputFormat: ReadoutInputFormat;
   inputInteractionMode?: ReadoutInputMode;
-  inputPriority?: Priority;
   inputHasFixedLength: boolean;
   inputSecondaryValue: string;
   inputDescription: string;
   inputValueLength: string;
   inputHasHintedZeros: boolean;
+  readoutInputStyle: ReadoutInputStyle;
+  alertState: ReadoutAlertState;
+  inputInteraction: ReadoutInputInteraction;
+  setpointValue: string | number;
   _lastAutoInputDividerSyncKey: string;
   _lastAutoSourceDividerSyncKey: string;
 };
@@ -139,10 +149,10 @@ const longPageDecorator = (story: () => unknown) => {
 
 const defaultArgs: ReadoutStoryArgs = {
   variant: ReadoutVariant.regular,
-  priority: Priority.enhanced,
-  priorityElement: ReadoutPriorityElement.value,
+  valuePriority: undefined,
   direction: ReadoutDirection.vertical,
-  hug: true,
+  alignment: ReadoutStackVerticalAlignment.vertical,
+  hug: false,
   labelOnly: false,
   hasAdvice: false,
   hasInput: true,
@@ -176,7 +186,6 @@ const defaultArgs: ReadoutStoryArgs = {
   hasSourceLeadingIcon: false,
   hasSourceTrailingIcon: true,
   adviceFormat: ReadoutAdviceFormat.regular,
-  advicePriority: undefined,
   adviceState: ReadoutAdviceState.enabled,
   adviceHasFixedLength: false,
   adviceSecondaryValue: '456',
@@ -185,12 +194,15 @@ const defaultArgs: ReadoutStoryArgs = {
   adviceHasHintedZeros: false,
   inputFormat: ReadoutInputFormat.regular,
   inputInteractionMode: undefined,
-  inputPriority: undefined,
   inputHasFixedLength: false,
   inputSecondaryValue: '456',
   inputDescription: 'SET',
   inputValueLength: '000',
   inputHasHintedZeros: false,
+  readoutInputStyle: ReadoutInputStyle.regular,
+  alertState: ReadoutAlertState.none,
+  inputInteraction: ReadoutInputInteraction.alwaysVisible,
+  setpointValue: '123',
   _lastAutoInputDividerSyncKey: `${ReadoutDirection.vertical}:true`,
   _lastAutoSourceDividerSyncKey: `${ReadoutDirection.vertical}:false`,
 };
@@ -259,10 +271,18 @@ function resolveReadoutStoryValue(value: string) {
     return value;
   }
 
-  const numericValue = Number(value);
+  const trimmed = value.trim();
 
-  if (!Number.isNaN(numericValue)) {
-    return numericValue;
+  if (/[.,]/.test(trimmed)) {
+    return value;
+  }
+
+  if (/^-?0\d+$/u.test(trimmed)) {
+    return value;
+  }
+
+  if (/^-?\d+$/u.test(trimmed)) {
+    return Number(trimmed);
   }
 
   return value;
@@ -307,15 +327,19 @@ function renderReadoutComponent(
 
   return html`
     <obc-readout
-      @source-flyout-click=${(event) => {
+      @source-flyout-click=${(event: CustomEvent) => {
         options?.onSourceFlyoutClick?.(event);
       }}
       .variant=${resolvedArgs.variant ?? ReadoutVariant.regular}
-      .priority=${resolvedArgs.priority}
-      .priorityElements=${resolvedArgs.priorityElement
-        ? [resolvedArgs.priorityElement]
-        : []}
+      .valuePriority=${resolvedArgs.valuePriority}
+      .readoutInputStyle=${resolvedArgs.readoutInputStyle}
+      .alertState=${resolvedArgs.alertState}
+      .inputInteraction=${resolvedArgs.inputInteraction}
+      .setpointValue=${resolveReadoutStoryMaybeNumeric(
+        resolvedArgs.setpointValue
+      )}
       .direction=${resolvedArgs.direction}
+      .alignment=${resolvedArgs.alignment}
       .hug=${resolvedArgs.hug}
       .labelOnly=${resolvedArgs.labelOnly}
       .hasAdvice=${resolvedArgs.hasAdvice}
@@ -348,7 +372,6 @@ function renderReadoutComponent(
       .hasSourceLeadingIcon=${resolvedArgs.hasSourceLeadingIcon}
       .hasSourceTrailingIcon=${resolvedArgs.hasSourceTrailingIcon}
       .adviceFormat=${resolvedArgs.adviceFormat}
-      .advicePriority=${resolvedArgs.advicePriority}
       .adviceState=${resolvedArgs.adviceState}
       .adviceHasFixedLength=${resolvedArgs.adviceHasFixedLength}
       .adviceSecondaryValue=${resolvedArgs.adviceSecondaryValue}
@@ -357,7 +380,6 @@ function renderReadoutComponent(
       .adviceHasHintedZeros=${resolvedArgs.adviceHasHintedZeros}
       .inputFormat=${resolvedArgs.inputFormat}
       .inputInteractionMode=${resolvedArgs.inputInteractionMode}
-      .inputPriority=${resolvedArgs.inputPriority}
       .inputHasFixedLength=${resolvedArgs.inputHasFixedLength}
       .inputSecondaryValue=${resolvedArgs.inputSecondaryValue}
       .inputDescription=${resolvedArgs.inputDescription}
@@ -554,6 +576,49 @@ const meta = {
   },
   args: defaultArgs,
   argTypes: {
+    valuePriority: {
+      name: 'Value Priority',
+      control: {type: 'select'},
+      options: [undefined, ...Object.values(Priority)],
+      table: {category: 'Readout'},
+      description: 'Overrides the main value segment priority/color.',
+    },
+    readoutInputStyle: {
+      name: 'Readout Input Style',
+      control: {type: 'select'},
+      options: Object.values(ReadoutInputStyle),
+      table: {category: 'Readout'},
+      description: 'Controls input/setpoint visibility and tone.',
+    },
+    alignment: {
+      name: 'Alignment',
+      control: {type: 'select'},
+      options: Object.values(ReadoutStackVerticalAlignment),
+      if: {arg: 'variant', eq: ReadoutVariant.stack},
+      table: {category: 'Readout'},
+      description:
+        'Controls stack vertical alignment. Only applies to stack variant.',
+    },
+    alertState: {
+      name: 'Alert State',
+      control: {type: 'select'},
+      options: Object.values(ReadoutAlertState),
+      table: {category: 'Readout'},
+      description: 'Validation/alarm state for the readout frame.',
+    },
+    inputInteraction: {
+      name: 'Input Interaction',
+      control: {type: 'select'},
+      options: Object.values(ReadoutInputInteraction),
+      table: {category: 'Readout'},
+      description: 'Input/setpoint visibility behavior.',
+    },
+    setpointValue: {
+      name: 'Setpoint Value',
+      control: {type: 'text'},
+      table: {category: 'Readout'},
+      description: 'Setpoint value shown in the input segment.',
+    },
     variant: {
       name: 'Variant',
       control: {
@@ -579,60 +644,46 @@ const meta = {
       options: Object.values(ReadoutDirection),
       table: {category: 'Readout'},
     },
-    priority: {
-      name: 'Priority',
-      control: {type: 'select'},
-      options: [undefined, ...Object.values(Priority)],
-      table: {category: 'Readout'},
-    },
-    priorityElements: {
-      table: {disable: true},
-      control: false,
-    },
-    priorityElement: {
-      name: 'Priority Element',
-      control: {type: 'select'},
-      options: [undefined, ...Object.values(ReadoutPriorityElement)],
-      table: {category: 'Readout'},
-    },
     hug: {
-      table: {disable: true},
+      name: 'Hug',
+      table: {category: 'Readout', disable: true},
       control: false,
     },
     labelOnly: {
-      table: {disable: true},
+      name: 'Label Only',
+      table: {category: 'Readout', disable: true},
       control: false,
     },
     hasAdvice: {
       name: 'Has Advice',
-      table: {category: 'Readout'},
+      table: {category: 'Segments'},
     },
     hasInput: {
       name: 'Has Input',
-      table: {category: 'Readout'},
+      table: {category: 'Segments'},
     },
     hasSrc: {
       name: 'Has Source',
-      table: {category: 'Readout'},
+      table: {category: 'Segments'},
     },
     hasLeadingIcon: {
       name: 'Has Leading Icon',
-      table: {category: 'Readout'},
+      table: {category: 'Segments'},
     },
     hasSrcPicker: {
-      name: 'has Source picker',
+      name: 'Has Source Picker',
       if: {arg: 'hasSrc', truthy: true},
-      table: {category: 'Readout'},
+      table: {category: 'Segments'},
     },
     hasInputDivider: {
       name: 'Has Input Divider',
       if: {arg: 'direction', eq: ReadoutDirection.horizontal},
-      table: {category: 'Readout'},
+      table: {category: 'Segments'},
     },
     hasSourceDivider: {
       name: 'Has Source Divider',
       if: {arg: 'direction', eq: ReadoutDirection.horizontal},
-      table: {category: 'Readout'},
+      table: {category: 'Segments'},
     },
     leadingIcon: {
       name: 'Leading icon',
@@ -641,7 +692,7 @@ const meta = {
       },
       options: iconIds,
       if: {arg: 'hasLeadingIcon', truthy: true},
-      table: {category: 'Readout'},
+      table: {category: 'Segments'},
     },
     inputFormat: {
       name: 'Format',
@@ -656,10 +707,6 @@ const meta = {
       options: [undefined, ...Object.values(ReadoutInputMode)],
       if: {arg: 'hasInput', truthy: true},
       table: {category: 'Input'},
-    },
-    inputPriority: {
-      table: {disable: true},
-      control: false,
     },
     inputValue: {
       name: 'Value',
@@ -720,10 +767,6 @@ const meta = {
       options: Object.values(ReadoutAdviceState),
       if: {arg: 'hasAdvice', truthy: true},
       table: {category: 'Advice'},
-    },
-    advicePriority: {
-      table: {disable: true},
-      control: false,
     },
     _lastAutoInputDividerSyncKey: {
       table: {disable: true},
@@ -948,11 +991,7 @@ export const SegmentHugReadout: Story = {
                 style=${hug ? '' : 'width:100%;'}
                 .hasInput=${true}
                 .inputValue=${'123'}
-                .priority=${Priority.enhanced}
-                .priorityElements=${[
-                  ReadoutPriorityElement.input,
-                  ReadoutPriorityElement.value,
-                ]}
+                .readoutInputStyle=${ReadoutInputStyle.enhanced}
                 .value=${123}
                 .label=${'HDG'}
                 .unit=${'DEG'}
@@ -965,6 +1004,283 @@ export const SegmentHugReadout: Story = {
       )}
     </div>
   `,
+};
+
+export const ApiMatrixVariantInputStyleInteraction: Story = {
+  name: 'API Matrix / Variant × Input Style × Interaction',
+  decorators: [longPageDecorator],
+  render: () => {
+    const inputStyles = Object.values(ReadoutInputStyle) as ReadoutInputStyle[];
+    const interactions = Object.values(
+      ReadoutInputInteraction
+    ) as ReadoutInputInteraction[];
+
+    const variants = [
+      ReadoutVariant.regular,
+      ReadoutVariant.enhanced,
+      ReadoutVariant.stack,
+    ] as const;
+
+    const baseArgs: Partial<ReadoutStoryArgs> = {
+      direction: ReadoutDirection.vertical,
+      hug: false,
+      hasAdvice: false,
+      hasSrc: false,
+      hasLeadingIcon: false,
+      value: '123',
+      setpointValue: '100',
+      label: 'HDG',
+      unit: 'DEG',
+      alertState: ReadoutAlertState.none,
+    };
+
+    const sections: ReadoutShowcaseSection[] = variants.map((variant) => {
+      const cases: ReadoutShowcaseCase[] = inputStyles.flatMap(
+        (readoutInputStyle): ReadoutShowcaseCase[] => {
+          if (readoutInputStyle === ReadoutInputStyle.hidden) {
+            return [
+              {
+                label: `${variant} / input=hidden`,
+                args: {
+                  ...baseArgs,
+                  variant,
+                  hasInput: false,
+                  readoutInputStyle,
+                  inputInteraction: ReadoutInputInteraction.alwaysVisible,
+                },
+              },
+            ];
+          }
+
+          return interactions.map((inputInteraction) => ({
+            label: `${variant} / input=${readoutInputStyle} / ${inputInteraction}`,
+            args: {
+              ...baseArgs,
+              variant,
+              hasInput: true,
+              readoutInputStyle,
+              inputInteraction,
+            },
+          }));
+        }
+      );
+
+      return {
+        title:
+          variant === ReadoutVariant.regular
+            ? 'Variant: Regular'
+            : variant === ReadoutVariant.enhanced
+              ? 'Variant: Enhanced'
+              : 'Variant: Stack',
+        cases,
+      };
+    });
+
+    return renderReadoutSectionsShowcase(sections);
+  },
+};
+
+export const ApiMatrixHorizontalVariantInputStyleInteraction: Story = {
+  name: 'API Matrix (Horizontal) / Variant × Input Style × Interaction',
+  decorators: [longPageDecorator],
+  render: () => {
+    const inputStyles = Object.values(ReadoutInputStyle) as ReadoutInputStyle[];
+    const interactions = Object.values(
+      ReadoutInputInteraction
+    ) as ReadoutInputInteraction[];
+
+    const variants = [
+      ReadoutVariant.regular,
+      ReadoutVariant.enhanced,
+      ReadoutVariant.stack,
+    ] as const;
+
+    const baseArgs: Partial<ReadoutStoryArgs> = {
+      direction: ReadoutDirection.horizontal,
+      hug: true,
+      hasAdvice: false,
+      hasSrc: false,
+      hasLeadingIcon: false,
+      value: '123',
+      setpointValue: '100',
+      label: 'HDG',
+      unit: 'DEG',
+      alertState: ReadoutAlertState.none,
+    };
+
+    const sections: ReadoutShowcaseSection[] = variants.map((variant) => {
+      const cases: ReadoutShowcaseCase[] = inputStyles.flatMap(
+        (readoutInputStyle): ReadoutShowcaseCase[] => {
+          if (readoutInputStyle === ReadoutInputStyle.hidden) {
+            return [
+              {
+                label: `${variant} / input=hidden`,
+                args: {
+                  ...baseArgs,
+                  variant,
+                  hasInput: false,
+                  readoutInputStyle,
+                  inputInteraction: ReadoutInputInteraction.alwaysVisible,
+                },
+              },
+            ];
+          }
+
+          return interactions.map((inputInteraction) => ({
+            label: `${variant} / input=${readoutInputStyle} / ${inputInteraction}`,
+            args: {
+              ...baseArgs,
+              variant,
+              hasInput: true,
+              readoutInputStyle,
+              inputInteraction,
+            },
+          }));
+        }
+      );
+
+      return {
+        title:
+          variant === ReadoutVariant.regular
+            ? 'Variant: Regular'
+            : variant === ReadoutVariant.enhanced
+              ? 'Variant: Enhanced'
+              : 'Variant: Stack',
+        cases,
+      };
+    });
+
+    return renderReadoutSectionsShowcase(sections);
+  },
+};
+
+export const AlertStateShowcase: Story = {
+  name: 'Alert State Showcase',
+  decorators: [longPageDecorator],
+  render: () => {
+    const alertStates = Object.values(ReadoutAlertState) as ReadoutAlertState[];
+
+    const cases: ReadoutShowcaseCase[] = alertStates.map((alertState) => ({
+      label: `alertState = ${alertState}`,
+      args: {
+        variant: ReadoutVariant.regular,
+        direction: ReadoutDirection.vertical,
+        hug: false,
+        hasInput: true,
+        readoutInputStyle: ReadoutInputStyle.regular,
+        inputInteraction: ReadoutInputInteraction.alwaysVisible,
+        alertState,
+        value: '100',
+        setpointValue: 123,
+      },
+    }));
+
+    return renderReadoutSectionsShowcase([
+      {
+        title: 'Alert State Showcase',
+        cases,
+      },
+    ]);
+  },
+};
+
+export const InputInteractionSetpointReached: Story = {
+  name: 'Input Interaction / Setpoint Reached',
+  decorators: [longPageDecorator],
+  render: () =>
+    renderReadoutSectionsShowcase([
+      {
+        title: 'Input Interaction / Setpoint Reached',
+        cases: [
+          {
+            label: 'pop-up / value != setpoint (input visible)',
+            args: {
+              variant: ReadoutVariant.regular,
+              direction: ReadoutDirection.vertical,
+              hug: false,
+              hasInput: true,
+              readoutInputStyle: ReadoutInputStyle.regular,
+              inputInteraction: ReadoutInputInteraction.popUp,
+              value: '123',
+              setpointValue: '100',
+              label: 'HDG',
+              unit: 'DEG',
+              hasAdvice: false,
+              hasSrc: false,
+            },
+          },
+          {
+            label: 'pop-up / value == setpoint (input hidden)',
+            args: {
+              variant: ReadoutVariant.regular,
+              direction: ReadoutDirection.vertical,
+              hug: false,
+              hasInput: true,
+              readoutInputStyle: ReadoutInputStyle.regular,
+              inputInteraction: ReadoutInputInteraction.popUp,
+              value: '100',
+              setpointValue: '100',
+              label: 'HDG',
+              unit: 'DEG',
+              hasAdvice: false,
+              hasSrc: false,
+            },
+          },
+          {
+            label:
+              'flip-flop / value != setpoint (input visible, value smaller)',
+            args: {
+              variant: ReadoutVariant.regular,
+              direction: ReadoutDirection.vertical,
+              hug: false,
+              hasInput: true,
+              readoutInputStyle: ReadoutInputStyle.regular,
+              inputInteraction: ReadoutInputInteraction.flipFlop,
+              value: '123',
+              setpointValue: '100',
+              label: 'HDG',
+              unit: 'DEG',
+              hasAdvice: false,
+              hasSrc: false,
+            },
+          },
+          {
+            label: 'flip-flop / value == setpoint (input hidden, value normal)',
+            args: {
+              variant: ReadoutVariant.regular,
+              direction: ReadoutDirection.vertical,
+              hug: false,
+              hasInput: true,
+              readoutInputStyle: ReadoutInputStyle.regular,
+              inputInteraction: ReadoutInputInteraction.flipFlop,
+              value: '100',
+              setpointValue: '100',
+              label: 'HDG',
+              unit: 'DEG',
+              hasAdvice: false,
+              hasSrc: false,
+            },
+          },
+          {
+            label: 'always-visible / value == setpoint (input still visible)',
+            args: {
+              variant: ReadoutVariant.regular,
+              direction: ReadoutDirection.vertical,
+              hug: false,
+              hasInput: true,
+              readoutInputStyle: ReadoutInputStyle.regular,
+              inputInteraction: ReadoutInputInteraction.alwaysVisible,
+              value: '100',
+              setpointValue: '100',
+              label: 'HDG',
+              unit: 'DEG',
+              hasAdvice: false,
+              hasSrc: false,
+            },
+          },
+        ],
+      },
+    ]),
 };
 
 export const RegularCases: Story = {
@@ -1323,13 +1639,13 @@ export const EnhancedCases: Story = {
         title: 'Enhanced / Vertical — Input Formats',
         cases: [
           {
-            label: 'Input Segment Priority (Enhanced)',
+            label: 'Readout Input Style: enhanced (planned)',
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.vertical,
               hasInput: true,
               inputFormat: ReadoutInputFormat.regular,
-              inputPriority: Priority.enhanced,
+              readoutInputStyle: ReadoutInputStyle.enhanced,
               hug: false,
             },
           },
@@ -1712,6 +2028,63 @@ export const StackCases: Story = {
     ]),
 };
 
+export const StackVerticalAlignment: Story = {
+  name: 'Stack Vertical / Alignment',
+  decorators: [longPageDecorator],
+  render: () => {
+    const baseArgs: Partial<ReadoutStoryArgs> = {
+      variant: ReadoutVariant.stack,
+      direction: ReadoutDirection.vertical,
+      readoutInputStyle: ReadoutInputStyle.regular,
+      inputInteraction: ReadoutInputInteraction.alwaysVisible,
+      hasInput: true,
+      value: '123',
+      setpointValue: '100',
+      label: 'HDG',
+      unit: 'DEG',
+      hasAdvice: false,
+      hasSrc: false,
+    };
+
+    const alignments = [
+      ReadoutStackVerticalAlignment.left,
+      ReadoutStackVerticalAlignment.center,
+      ReadoutStackVerticalAlignment.vertical,
+    ] as const;
+
+    const alwaysVisibleCases: ReadoutShowcaseCase[] = alignments.map(
+      (alignment) => ({
+        label: `stack / vertical / alignment=${alignment}`,
+        args: {
+          ...baseArgs,
+          alignment,
+          inputInteraction: ReadoutInputInteraction.alwaysVisible,
+        },
+      })
+    );
+
+    const popUpCases: ReadoutShowcaseCase[] = alignments.map((alignment) => ({
+      label: `stack / vertical / pop-up / alignment=${alignment}`,
+      args: {
+        ...baseArgs,
+        alignment,
+        inputInteraction: ReadoutInputInteraction.popUp,
+      },
+    }));
+
+    return renderReadoutSectionsShowcase([
+      {
+        title: 'Always Visible',
+        cases: alwaysVisibleCases,
+      },
+      {
+        title: 'Pop-up',
+        cases: popUpCases,
+      },
+    ]);
+  },
+};
+
 export const HorizontalCasesGrid: Story = {
   render: () =>
     renderReadoutGridShowcase([
@@ -1885,99 +2258,6 @@ export const HorizontalCasesGrid: Story = {
           hasSourceLeadingIcon: true,
           hasSourceTrailingIcon: true,
         },
-      },
-    ]),
-};
-
-export const SegmentTypes: Story = {
-  render: () =>
-    renderReadoutSectionsShowcase([
-      {
-        title: 'Input Formats',
-        cases: [
-          {
-            label: 'Input / Description',
-            args: {
-              variant: ReadoutVariant.regular,
-              direction: ReadoutDirection.vertical,
-              hasInput: true,
-              inputFormat: ReadoutInputFormat.description,
-              inputDescription: 'SET',
-            },
-          },
-          {
-            label: 'Input / Range',
-            args: {
-              variant: ReadoutVariant.regular,
-              direction: ReadoutDirection.vertical,
-              hasInput: true,
-              inputFormat: ReadoutInputFormat.range,
-              inputSecondaryValue: '456',
-            },
-          },
-          {
-            label: 'Input / Baseline (input segment only)',
-            args: {
-              variant: ReadoutVariant.enhanced,
-              direction: ReadoutDirection.horizontal,
-              hasInput: true,
-              inputFormat: ReadoutInputFormat.baseline,
-            },
-          },
-          {
-            label: 'Input / Button',
-            args: {
-              variant: ReadoutVariant.enhanced,
-              direction: ReadoutDirection.horizontal,
-              hasInput: true,
-              hasSrc: true,
-              inputFormat: ReadoutInputFormat.button,
-            },
-          },
-        ],
-      },
-      {
-        title: 'Advice Formats',
-        cases: [
-          {
-            label: 'Advice / Description',
-            args: {
-              direction: ReadoutDirection.vertical,
-              hasAdvice: true,
-              hasInput: true,
-              adviceFormat: ReadoutAdviceFormat.description,
-              adviceDescription: 'SET',
-            },
-          },
-          {
-            label: 'Advice / Range',
-            args: {
-              direction: ReadoutDirection.vertical,
-              hasAdvice: true,
-              hasInput: true,
-              adviceFormat: ReadoutAdviceFormat.range,
-              adviceSecondaryValue: '456',
-            },
-          },
-        ],
-      },
-      {
-        title: 'Stack Formats',
-        cases: [
-          {
-            label: 'Stack / Vertical Stack',
-            args: {
-              variant: ReadoutVariant.stack,
-              direction: ReadoutDirection.vertical,
-              hasInput: true,
-              inputFormat: ReadoutInputFormat.verticalStack,
-              inputHasFixedLength: true,
-              inputValue: '12',
-              inputValueLength: '000',
-              inputHasHintedZeros: true,
-            },
-          },
-        ],
       },
     ]),
 };

@@ -181,10 +181,7 @@ export class ObcReadoutInput extends LitElement {
   }
 
   private get resolvedValueVariantSize(): ReadoutInputSize {
-    if (
-      this.readoutStyle === 'enhanced' ||
-      (this.readoutStyle === 'stack' && this.direction === 'horizontal')
-    ) {
+    if (this.readoutStyle === 'enhanced' || this.readoutStyle === 'stack') {
       return ReadoutInputSize.large;
     }
 
@@ -325,18 +322,26 @@ export class ObcReadoutInput extends LitElement {
   }
 
   private get toneAccent() {
+    if (this.priority === Priority.enhanced) {
+      return true;
+    }
+
+    if (this.priority === Priority.regular) {
+      return false;
+    }
+
     if (this.variant === ReadoutInputVariant.value) {
       if (this.readoutStyle) {
         return (
           this.hasAttribute('data-obc-priority-scoped') &&
-          (this.priority ?? Priority.regular) === Priority.enhanced
+          this.priority === Priority.enhanced
         );
       }
 
       return true;
     }
 
-    return (this.priority ?? Priority.regular) === Priority.enhanced;
+    return this.priority === Priority.enhanced;
   }
 
   private get wrapperBaseClasses() {
@@ -433,11 +438,16 @@ export class ObcReadoutInput extends LitElement {
             [size]: true,
             'has-fixed-length': this.hasFixedLength,
           })}
+          part="variant-value-content"
           style=${this.hasFixedLength && valueModel.templateText.length > 0
             ? `--obc-readout-input-fixed-ch:${valueModel.templateText.length};`
             : ''}
         >
-          <slot name="value"> ${this.renderValueTextContent(valueModel)} </slot>
+          <span class="value-content-container" part="value-content-container">
+            <slot name="value">
+              ${this.renderValueTextContent(valueModel)}
+            </slot>
+          </span>
         </span>
       </div>
     `;

@@ -397,6 +397,10 @@ slot[name="value"] {
   }
 }
 
+.value-content-container {
+  display: flex;
+}
+
 .variant-value-content {
   &.has-fixed-length {
     min-inline-size: calc(var(--obc-readout-input-fixed-ch, 0) * 1ch);
