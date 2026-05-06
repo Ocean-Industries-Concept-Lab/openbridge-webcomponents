@@ -2,10 +2,20 @@
   box-sizing: border-box;
 }
 
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .wrapper {
   position: relative;
   width: 100%;
   height: 100%;
+  /* Establishes a size container so children can use `cqmin` units, which
+   * resolve against the smaller of the container's width and height — useful
+   * for circular instruments. */
+  container-type: size;
 }
 
 .wrapper > * {
@@ -14,4 +24,78 @@
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+.wrapper .wind-arrow-outer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /*
+   * --outer-pct: outer-circle diameter, as a fraction of the host's smaller
+   *   side (cqmin). The circle is centred on the host.
+   * --inner-frac: inner-circle diameter as a unitless fraction of
+   *   --outer-pct (e.g. 0.7 = 70%).
+   * --arrow-fill: how much of the radial gap between the two circles the
+   *   arrow occupies (0..1). 1 = arrow fills the gap exactly; values < 1
+   *   leave equal margin on both sides so the arrow stays radially
+   *   centred between the inner and outer circles.
+   *
+   * Layout: the inner div sits centred inside the outer; the arrow icon
+   * sits at the bottom-centre of the inner div and is pushed outward by
+   * its own height plus the inner margin, so its centre lands halfway
+   * between the inner and outer circle edges. Rotating the outer div
+   * spins the whole assembly around the host centre.
+   */
+  --outer-pct: 80cqmin; /* default, overridden by per-variant rules below */
+  --inner-frac: 0.7; /* default, overridden by per-variant rules below */
+  --arrow-fill: 0.8;
+  --arrow-gap: calc(var(--outer-pct) * (1 - var(--inner-frac)) / 2);
+  --arrow-size: calc(var(--arrow-gap) * var(--arrow-fill));
+  --arrow-margin: calc((var(--arrow-gap) - var(--arrow-size)) / 2);
+
+  width: var(--outer-pct);
+  height: var(--outer-pct);
+  border-radius: 50%;
+  top: calc(50% - var(--outer-pct) / 2);
+  left: calc(50% - var(--outer-pct) / 2);
+}
+
+.wrapper .wind-arrow-outer .wind-arrow-inner {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  width: calc(var(--inner-frac) * 100%);
+  height: calc(var(--inner-frac) * 100%);
+  border-radius: 50%;
+}
+
+.wrapper .wind-arrow-outer .wind-arrow-inner .wind-arrow {
+  width: var(--arrow-size);
+  height: var(--arrow-size);
+  /* The arrow paths have a stroke that extends just outside the 24x24
+   * viewBox; allow it to paint past the SVG's edge instead of being
+   * clipped. */
+  overflow: visible;
+  /* Push the SVG out of the inner circle by its own height (100%) plus
+   * the inward margin, so it sits centred in the gap when --arrow-fill
+   * < 1, or flush against the outer circle when --arrow-fill = 1. */
+  transform: translateY(calc(100% + var(--arrow-margin)));
+}
+
+/* Per-variant tuning */
+.wrapper.variant-small .wind-arrow-outer {
+  --outer-pct: 80cqmin;
+  --inner-frac: 0.1;
+}
+
+.wrapper.variant-medium .wind-arrow-outer {
+  --outer-pct: 80cqmin;
+  --inner-frac: 0.4;
+}
+
+.wrapper.variant-large .wind-arrow-outer {
+  --outer-pct: 80cqmin;
+  --inner-frac: 0.7;
 }

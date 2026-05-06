@@ -1,13 +1,32 @@
-import {LitElement, html, unsafeCSS} from 'lit';
-import {property} from 'lit/decorators.js';
+import {LitElement, html, svg, unsafeCSS} from 'lit';
+import {property, state} from 'lit/decorators.js';
 import compentStyle from './wind.css?inline';
 import {VesselImage, VesselImageSize, WatchCircleType} from '../watch/watch.js';
+import {environmentSvgs} from '../watch/environment.js';
 import {customElement} from '../../decorator.js';
 
 export interface WindHistogramData {
   direction: number;
   occurrences: number;
 }
+
+export enum WindVariant {
+  auto = 'auto',
+  small = 'small',
+  medium = 'medium',
+  large = 'large',
+}
+
+type ResolvedWindVariant =
+  | WindVariant.small
+  | WindVariant.medium
+  | WindVariant.large;
+
+const WIND_SMALL_MAX_PX = 96;
+const WIND_MEDIUM_MAX_PX = 200;
+const WIND_HISTOGRAM_MAX_RADIUS_SINGLE_RING = 159;
+const WIND_HISTOGRAM_MAX_RADIUS_DOUBLE_RING = 109;
+const WIND_HISTOGRAM_MIN_RADIUS = 50;
 
 @customElement('obc-wind')
 export class ObcWind extends LitElement {
@@ -17,34 +36,86 @@ export class ObcWind extends LitElement {
   windHistogramData: WindHistogramData[] = [];
   @property({type: String}) vesselImage: VesselImage = VesselImage.genericTop;
   @property({type: Number}) vesselHeadingDeg: number = 0;
+  @property({type: String}) variant: WindVariant = WindVariant.auto;
+
+  @state() private _autoVariant: ResolvedWindVariant = WindVariant.medium;
+
+  private _resizeObserver?: ResizeObserver;
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    this._resizeObserver = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) return;
+      const {width, height} = entry.contentRect;
+      const next = resolveAutoWindVariant(Math.min(width, height));
+      if (next !== this._autoVariant) {
+        this._autoVariant = next;
+      }
+    });
+    this._resizeObserver.observe(this);
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this._resizeObserver?.disconnect();
+    this._resizeObserver = undefined;
+  }
+
+  private get effectiveVariant(): ResolvedWindVariant {
+    if (this.variant === WindVariant.auto) return this._autoVariant;
+    return this.variant;
+  }
+
   override render() {
-    return html`
-      <div class="wrapper">
-        <obc-watch
-          .watchCircleType=${WatchCircleType.double}
-          .windFromDirectionDeg=${this.currentWindFromDirection}
-          .wind=${this.currentWindSpeedBeaufort}
-          .windSymbolRadius=${118 / 0.8}
-          crosshairEnabled
-          northArrow
-          tickmarksInside
-          .scaleWindIcon=${0.8}
-          .vessels=${[
+    const variant = this.effectiveVariant;
+    const watchCircleType =
+      variant === WindVariant.large
+        ? WatchCircleType.double
+        : WatchCircleType.single;
+    const vessels =
+      variant === WindVariant.small
+        ? []
+        : [
             {
               size: VesselImageSize.small,
               transform: `rotate(${this.vesselHeadingDeg}deg)`,
               vesselImage: this.vesselImage,
             },
-          ]}
+          ];
+    return html`
+      <div class="wrapper variant-${variant}">
+        ${this.renderWindHistogram(variant)}
+        <obc-watch
+          .watchCircleType=${watchCircleType}
+          crosshairEnabled
+          northArrow
+          tickmarksInside
+          .vessels=${vessels}
         ></obc-watch>
-        ${this.renderWindHistogram()}
+        ${this.renderWindArrow()}
       </div>
     `;
   }
 
-  private renderWindHistogram() {
-    const maxRadius = 109; // Max bar length
-    const minRadius = 50; // Optional: minimum bar length for visibility
+  private renderWindArrow() {
+    const beaufort = this.currentWindSpeedBeaufort;
+    const symbol = environmentSvgs[`wind-${beaufort + 1}.svg`];
+    if (!symbol) return null;
+    const dir = this.currentWindFromDirection;
+    const transform = `rotate(${180 + dir}deg)`;
+    return html`
+      <div class="wind-arrow-outer" style="transform: ${transform}">
+        <div class="wind-arrow-inner">
+          <svg class="wind-arrow" viewBox="0 0 24 24">${svg`${symbol}`}</svg>
+        </div>
+      </div>
+    `;
+  }
+
+  private renderWindHistogram(variant: ResolvedWindVariant) {
+    const maxRadius = resolveHistogramMaxRadius(variant);
+    const minRadius = WIND_HISTOGRAM_MIN_RADIUS;
     const center = {x: 0, y: 0};
 
     // Find the max occurrences for scaling
@@ -92,12 +163,18 @@ export class ObcWind extends LitElement {
     return html`
       <svg width="100%" height="100%" viewBox="-200 -200 400 400">
         <mask id="mask">
-          <circle cx="0" cy="0" r="109" stroke-width="1" fill="white" />
+          <circle
+            cx="0"
+            cy="0"
+            r="${maxRadius}"
+            stroke-width="1"
+            fill="white"
+          />
           <path d="M 0 ${-maxRadius} ${outerPathPoints}Z" fill="black" />
           <circle
             cx="0"
             cy="0"
-            r="109"
+            r="${minRadius}"
             vector-effect="non-scaling-stroke"
             stroke="white"
             stroke-width="1"
@@ -107,7 +184,7 @@ export class ObcWind extends LitElement {
         <circle
           cx="0"
           cy="0"
-          r="109"
+          r="${maxRadius}"
           vector-effect="non-scaling-stroke"
           stroke="var(--instrument-regular-tertiary-color)"
           stroke-width="1"
@@ -119,6 +196,18 @@ export class ObcWind extends LitElement {
   }
 
   static override styles = unsafeCSS(compentStyle);
+}
+
+function resolveAutoWindVariant(sizePx: number): ResolvedWindVariant {
+  if (sizePx < WIND_SMALL_MAX_PX) return WindVariant.small;
+  if (sizePx < WIND_MEDIUM_MAX_PX) return WindVariant.medium;
+  return WindVariant.large;
+}
+
+function resolveHistogramMaxRadius(variant: ResolvedWindVariant): number {
+  return variant === WindVariant.large
+    ? WIND_HISTOGRAM_MAX_RADIUS_DOUBLE_RING
+    : WIND_HISTOGRAM_MAX_RADIUS_SINGLE_RING;
 }
 
 declare global {
