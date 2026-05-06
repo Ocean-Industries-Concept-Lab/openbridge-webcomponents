@@ -20,7 +20,12 @@ export const STORYBOOK_DEVELOP_URL =
  * 3. Default to 'develop' (for local dev)
  */
 export const getBranch = (): 'stable' | 'develop' => {
-  const envBranch = import.meta.env.VITE_STORYBOOK_BRANCH;
+  // Use process.env and window globals instead of import.meta to avoid IIFE warnings in Storybook Manager.
+  // These are injected/defined in main.ts.
+  const envBranch =
+    (typeof process !== 'undefined' && process.env?.VITE_STORYBOOK_BRANCH) ||
+    (typeof window !== 'undefined' && (window as any).VITE_STORYBOOK_BRANCH);
+
   if (envBranch === 'stable' || envBranch === 'develop') {
     return envBranch as 'stable' | 'develop';
   }
