@@ -10,14 +10,17 @@ export interface WindHistogramData {
   occurrences: number;
 }
 
-export enum WindSize {
+export enum WindVariant {
   auto = 'auto',
   small = 'small',
   medium = 'medium',
   large = 'large',
 }
 
-type ResolvedWindSize = WindSize.small | WindSize.medium | WindSize.large;
+type ResolvedWindVariant =
+  | WindVariant.small
+  | WindVariant.medium
+  | WindVariant.large;
 
 const WIND_SMALL_MAX_PX = 96;
 const WIND_MEDIUM_MAX_PX = 256;
@@ -30,9 +33,9 @@ export class ObcWind extends LitElement {
   windHistogramData: WindHistogramData[] = [];
   @property({type: String}) vesselImage: VesselImage = VesselImage.genericTop;
   @property({type: Number}) vesselHeadingDeg: number = 0;
-  @property({type: String}) size: WindSize = WindSize.auto;
+  @property({type: String}) variant: WindVariant = WindVariant.auto;
 
-  @state() private _autoSize: ResolvedWindSize = WindSize.medium;
+  @state() private _autoVariant: ResolvedWindVariant = WindVariant.medium;
 
   private _resizeObserver?: ResizeObserver;
 
@@ -42,9 +45,9 @@ export class ObcWind extends LitElement {
       const entry = entries[0];
       if (!entry) return;
       const {width, height} = entry.contentRect;
-      const next = resolveAutoWindSize(Math.min(width, height));
-      if (next !== this._autoSize) {
-        this._autoSize = next;
+      const next = resolveAutoWindVariant(Math.min(width, height));
+      if (next !== this._autoVariant) {
+        this._autoVariant = next;
       }
     });
     this._resizeObserver.observe(this);
@@ -56,17 +59,19 @@ export class ObcWind extends LitElement {
     this._resizeObserver = undefined;
   }
 
-  private get effectiveSize(): ResolvedWindSize {
-    if (this.size === WindSize.auto) return this._autoSize;
-    return this.size;
+  private get effectiveVariant(): ResolvedWindVariant {
+    if (this.variant === WindVariant.auto) return this._autoVariant;
+    return this.variant;
   }
 
   override render() {
-    const size = this.effectiveSize;
+    const variant = this.effectiveVariant;
     const watchCircleType =
-      size === WindSize.large ? WatchCircleType.double : WatchCircleType.single;
+      variant === WindVariant.large
+        ? WatchCircleType.double
+        : WatchCircleType.single;
     const vessels =
-      size === WindSize.small
+      variant === WindVariant.small
         ? []
         : [
             {
@@ -76,7 +81,7 @@ export class ObcWind extends LitElement {
             },
           ];
     return html`
-      <div class="wrapper size-${size}">
+      <div class="wrapper variant-${variant}">
         ${this.renderWindHistogram()}
         <obc-watch
           .watchCircleType=${watchCircleType}
@@ -190,10 +195,10 @@ export class ObcWind extends LitElement {
   static override styles = unsafeCSS(compentStyle);
 }
 
-function resolveAutoWindSize(sizePx: number): ResolvedWindSize {
-  if (sizePx < WIND_SMALL_MAX_PX) return WindSize.small;
-  if (sizePx < WIND_MEDIUM_MAX_PX) return WindSize.medium;
-  return WindSize.large;
+function resolveAutoWindVariant(sizePx: number): ResolvedWindVariant {
+  if (sizePx < WIND_SMALL_MAX_PX) return WindVariant.small;
+  if (sizePx < WIND_MEDIUM_MAX_PX) return WindVariant.medium;
+  return WindVariant.large;
 }
 
 declare global {

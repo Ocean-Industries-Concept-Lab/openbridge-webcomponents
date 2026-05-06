@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcWind, WindHistogramData, WindSize} from './wind.js';
+import {ObcWind, WindHistogramData, WindVariant} from './wind.js';
 import './wind.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {topVessels} from '../watch/vessels/storybook-helper.js';
@@ -93,9 +93,14 @@ const meta: Meta<typeof ObcWind> = {
       control: 'select',
       options: topVessels,
     },
-    size: {
+    variant: {
       control: 'inline-radio',
-      options: [WindSize.auto, WindSize.small, WindSize.medium, WindSize.large],
+      options: [
+        WindVariant.auto,
+        WindVariant.small,
+        WindVariant.medium,
+        WindVariant.large,
+      ],
     },
   },
 } satisfies Meta<ObcWind>;
@@ -108,17 +113,17 @@ export const Primary: Story = {
 };
 
 export const Large: Story = {
-  args: {width: 400, size: WindSize.large},
+  args: {width: 400, variant: WindVariant.large},
 };
 
 export const Medium: Story = {
-  args: {width: 200, size: WindSize.medium},
+  args: {width: 200, variant: WindVariant.medium},
 };
 
 export const Small: Story = {
-  args: {width: 80, size: WindSize.small},
+  args: {width: 80, variant: WindVariant.small},
 };
 
 export const Auto: Story = {
-  args: {width: 300, size: WindSize.auto},
+  args: {width: 300, variant: WindVariant.auto},
 };

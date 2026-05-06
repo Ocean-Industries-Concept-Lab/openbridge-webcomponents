@@ -85,17 +85,17 @@
 }
 
 /* Per-variant tuning */
-.wrapper.size-small .wind-arrow-outer {
+.wrapper.variant-small .wind-arrow-outer {
   --outer-pct: 80cqmin;
   --inner-frac: 0.1;
 }
 
-.wrapper.size-medium .wind-arrow-outer {
+.wrapper.variant-medium .wind-arrow-outer {
   --outer-pct: 80cqmin;
   --inner-frac: 0.4;
 }
 
-.wrapper.size-large .wind-arrow-outer {
+.wrapper.variant-large .wind-arrow-outer {
   --outer-pct: 80cqmin;
   --inner-frac: 0.7;
 }
