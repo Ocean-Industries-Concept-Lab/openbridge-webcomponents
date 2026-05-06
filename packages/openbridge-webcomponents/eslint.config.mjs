@@ -404,6 +404,100 @@ const openbridgePlugin = {
         };
       },
     },
+    'prefer-array-property-type-and-item-interface': {
+      meta: {
+        type: 'problem',
+        docs: {
+          description:
+            'Require @property array fields to declare {type: Array} and avoid inline item object types',
+        },
+        schema: [],
+      },
+      create(context) {
+        function getPropertyDecorator(node) {
+          return (node.decorators ?? []).find((decorator) => {
+            const expr = decorator.expression;
+            return (
+              expr &&
+              expr.type === 'CallExpression' &&
+              expr.callee &&
+              expr.callee.type === 'Identifier' &&
+              expr.callee.name === 'property'
+            );
+          });
+        }
+
+        function getArrayElementType(typeNode) {
+          if (!typeNode) return null;
+          if (typeNode.type === 'TSArrayType') {
+            return typeNode.elementType;
+          }
+          if (
+            typeNode.type === 'TSTypeReference' &&
+            typeNode.typeName &&
+            typeNode.typeName.type === 'Identifier' &&
+            typeNode.typeName.name === 'Array'
+          ) {
+            return typeNode.typeArguments?.params?.[0] ?? null;
+          }
+          return null;
+        }
+
+        function hasTypeArrayOption(propertyDecorator) {
+          const options = propertyDecorator.expression.arguments?.[0];
+          if (!options || options.type !== 'ObjectExpression') return false;
+          return options.properties.some((prop) => {
+            if (!prop || prop.type !== 'Property') return false;
+            if (prop.key.type !== 'Identifier' || prop.key.name !== 'type')
+              return false;
+            return (
+              prop.value &&
+              prop.value.type === 'Identifier' &&
+              prop.value.name === 'Array'
+            );
+          });
+        }
+
+        function containsInlineObjectType(typeNode) {
+          if (!typeNode) return false;
+          if (typeNode.type === 'TSTypeLiteral') return true;
+          if (typeNode.type === 'TSUnionType') {
+            return typeNode.types.some((t) => containsInlineObjectType(t));
+          }
+          if (typeNode.type === 'TSIntersectionType') {
+            return typeNode.types.some((t) => containsInlineObjectType(t));
+          }
+          return false;
+        }
+
+        return {
+          PropertyDefinition(node) {
+            const propertyDecorator = getPropertyDecorator(node);
+            if (!propertyDecorator) return;
+
+            const typeAnnotation = node.typeAnnotation?.typeAnnotation;
+            const arrayElementType = getArrayElementType(typeAnnotation);
+            if (!arrayElementType) return;
+
+            if (!hasTypeArrayOption(propertyDecorator)) {
+              context.report({
+                node: propertyDecorator,
+                message:
+                  'Array properties decorated with @property must include {type: Array}.',
+              });
+            }
+
+            if (containsInlineObjectType(arrayElementType)) {
+              context.report({
+                node: arrayElementType,
+                message:
+                  'Array item type must be a named interface/type (avoid inline object types like Array<{...}>).',
+              });
+            }
+          },
+        };
+      },
+    },
   },
 };
 
@@ -449,6 +543,7 @@ export default [
       'custom-element/prefer-local-decorator': 'error',
       'openbridge/prefer-enum-over-string-literal-union': 'error',
       'openbridge/prefer-boolean-property-default-false': 'error',
+      'openbridge/prefer-array-property-type-and-item-interface': 'error',
       'openbridge/storybook-title-case': 'off',
       // Disabled because eslint-plugin-file-extension-in-import-ts is not yet
       // compatible with ESLint v10 (it still uses deprecated context methods).

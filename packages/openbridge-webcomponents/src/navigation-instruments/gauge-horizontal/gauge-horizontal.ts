@@ -10,7 +10,6 @@ import {
   BorderRadiusPosition,
   Priority,
 } from '../types.js';
-import type {AdviceType} from '../watch/advice.js';
 import type {
   ExternalScaleAdvice,
   ExternalScaleConfig,
@@ -30,6 +29,7 @@ import {
   ExternalScaleSide,
 } from '../../building-blocks/external-scale/external-scale.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
+import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
 
 // Re-export shared enums for convenience
 export {
@@ -197,7 +197,7 @@ export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
   private readonly labelThickness = 60;
 
   /** Array of values for main tickmarks. When undefined, no main tickmarks shown. When empty array [], defaults to [minValue, 0, maxValue]. */
-  @property({attribute: false}) mainTickmarks?: number[] = [];
+  @property({type: Array, attribute: false}) mainTickmarks?: number[] = [];
   /** Interval for primary (longest) tickmarks with labels */
   @property({type: Number}) primaryTickmarkInterval?: number = undefined;
   /** Interval for secondary (medium) tickmarks */
@@ -247,12 +247,7 @@ export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
 
   private readonly advicePosition: AdvicePosition = AdvicePosition.inner;
   /** Advice/alert overlays with min, max, type, and hinted state. When undefined or empty, no advice shown. */
-  @property({attribute: false}) advices?: Array<{
-    min: number;
-    max: number;
-    type: AdviceType;
-    hinted: boolean;
-  }> = [];
+  @property({type: Array, attribute: false}) advices?: LinearAdvice[] = [];
 
   /**
    * When true, displays a dot indicator at the current value position.

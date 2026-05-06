@@ -14,7 +14,7 @@ import {
   BarContainerStyle,
   ScaleType,
 } from '../../building-blocks/bar-vertical/bar-vertical.js';
-import type {AdviceType} from '../watch/advice.js';
+import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/bar-vertical/bar-vertical.js';
 
@@ -390,13 +390,8 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
   /**
    * Advice/alert overlays for the vertical scale.
    */
-  @property({attribute: false})
-  advice: Array<{
-    min: number;
-    max: number;
-    type: AdviceType;
-    hinted: boolean;
-  }> = [];
+  @property({type: Array, attribute: false})
+  advice: LinearAdvice[] = [];
 
   /**
    * Primary tick interval for the vertical scale (longest ticks with labels).
