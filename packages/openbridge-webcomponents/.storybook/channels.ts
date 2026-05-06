@@ -9,8 +9,7 @@
 // site is provisioned and a branch-based deploy workflow is in place.
 
 export const STORYBOOK_STABLE_URL = 'https://openbridge-storybook.web.app';
-export const STORYBOOK_DEVELOP_URL =
-  'https://openbridge-storybook-next.web.app';
+export const STORYBOOK_DEVELOP_URL = ' https://openbridge-next-storybook.web.app';
 
 /**
  * Detects the current Storybook branch/channel.
