@@ -1,3 +1,10 @@
+## [2.0.0-next.22](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.21...v2.0.0-next.22) (2026-05-06)
+
+### Bug Fixes
+
+- **changelog:** moved header of changelog to the top of the file ([#865](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/865)) ([23b381d](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/23b381d91a2a9e9874eee9d6f2056d4d706ee737))
+- **changelog:** reposition header to top of the file ([bf0e7e6](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/bf0e7e62f06c86cb2ad2e93f0139040b4205db60))
+
 # Changelog
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
