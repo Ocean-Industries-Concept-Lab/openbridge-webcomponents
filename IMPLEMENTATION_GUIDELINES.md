@@ -74,7 +74,7 @@ For a consistent testing environment, it is recommended to run tests using Docke
 
 - Docker must be installed and running on your machine.
 - On Linux, your user should have permissions to run Docker commands without `sudo`.
-- Webcomponents are built (from repository root):```npm ci && cd package/openbridge-webcomponents && npm run build```
+- Webcomponents are built (from repository root):```npm ci && cd packages/openbridge-webcomponents && npm run build```
 
 #### 1. Build the Docker Image
 
