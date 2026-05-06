@@ -2,63 +2,311 @@
   box-sizing: border-box;
 }
 
+/* ---------- Default host sizes ----------
+ *
+ *   Vertical regular:    256×368   (halo fills host; 5px padding)
+ *   Horizontal regular:  368×256   (halo fills host; 5px padding)
+ *   Vertical compact:    170 × auto (halo is 170×228; readout/tag below halo)
+ *   Horizontal compact:  228 × auto (halo is 228×170; readout/tag below halo)
+ *
+ * In compact mode the halo (visible bordered/clickable area) contains
+ * 4px padding + badges + 4px gap + tank-frame + 4px padding. Readout and
+ * tag render OUTSIDE the halo, BELOW it, growing the host height.
+ *
+ * Inside the tank-frame, all textual cells (tag, badges, readout) size to
+ * `min-content`; the chart cell takes `1fr` in both axes so any host resize
+ * flows entirely into the chart.
+ */
+:host {
+  display: inline-block;
+  width: 256px;
+  height: 368px;
+  /* P&ID anchor: top-center of host = drop coord; visual tank centers under it. */
+  position: relative;
+}
+:host([orientation="horizontal"]) {
+  width: 368px;
+  height: 256px;
+}
+:host([compact]) {
+  width: 170px;
+  height: auto;
+}
+:host([orientation="horizontal"][compact]) {
+  width: 228px;
+  height: auto;
+}
+:host([static]) {
+  width: 170px;
+  height: auto;
+}
+:host([orientation="horizontal"][static]) {
+  width: 228px;
+  height: auto;
+}
+
 .trend-icon {
   display: block;
   width: 24px;
   height: 24px;
 }
 
-.outer {
-  display: flex;
-  width: fit-content;
-  flex-direction: column;
-  /* This is a hack to make the badge appear above the content */
-  position: relative;
+/* ---------- Root + halo ----------
+ * The root <button> is the touch target; its visual styling is transparent.
+ * The visible interactive surround (border/bg on hover/pressed/focus-visible/
+ * disabled) is painted on `.halo` via the flat mixin's `visibleWrapperClass`
+ * parameter. The halo wraps the bordered area only:
+ *   - non-compact: just the tank-frame (5px padding)
+ *   - compact: badges + tank-frame (4px padding, fixed halo height)
+ * Readout and tag are siblings of the halo (compact only) and render below.
+ *
+ * P&ID anchor: `translateX(-50%)` shifts the root left by half its own width
+ * so the tank centerline aligns with the host's left edge (= drop coord).
+ * `top: -20px` keeps the original vertical offset that lifts the visual tank
+ * above the host's top-left placement origin. This matches the legacy
+ * `.outer` pattern from develop and the compact rule below.
+ */
+.root {
+  position: absolute;
   top: -20px;
+  left: 0;
   transform: translateX(-50%);
-}
-
-.badges {
-  display: flex;
-  justify-content: end;
-  padding-bottom: 4px;
-  min-height: 20px;
-}
-
-.wrapper {
-  @mixin style style=normal;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
   appearance: none;
-
   display: flex;
-  flex-direction: column-reverse;
-  width: fit-content;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+  /* prettier-ignore */
+  @mixin style style=flat visibleWrapperClass=.halo;
+}
+.root:focus {
+  outline: none;
+}
+
+/* In compact/static mode the host has auto height, so .root must sit in
+ * normal flow (absolute positioning would collapse the host). To preserve
+ * the P&ID anchor convention (placement coord = horizontal centerline of
+ * the tank), we keep `transform: translateX(-50%)` — transforms don't
+ * affect layout, so the host still sizes to content. The original
+ * `top: -20px` offset existed to skip an external badge area; in
+ * compact/static the badges live inside the halo, so there is nothing
+ * external to skip and the vertical offset is dropped. */
+:host([compact]) .root,
+:host([static]) .root {
+  position: static;
+  height: auto;
+  /* translateX(-50%) keeps horizontal anchor at host's left edge so the
+   * tank centerline aligns with the P&ID drop coordinate. */
+}
+
+/* Static is display-only: not focusable (rendered as <div>) and not
+ * interactive — disable :hover/:active visuals from the flat-mixin rules. */
+:host([static]) .root {
+  cursor: default;
+  pointer-events: none;
+}
+
+.halo {
+  padding: 5px;
+  border-radius: 11px;
+  box-sizing: border-box;
+}
+
+/* Non-compact (and not static): halo is the only child of root and fills the host. */
+:host(:not([compact]):not([static])) .halo {
+  width: 100%;
+  height: 100%;
+}
+:host(:not([compact]):not([static])) .halo > .tank-frame {
+  width: 100%;
+  height: 100%;
+}
+
+/* Compact: halo wraps badges + tank-frame with 4px padding and a fixed
+ * height. Width fills the host. */
+:host([compact]) .halo,
+:host([static]) .halo {
+  padding: 4px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+:host([compact]:not([orientation="horizontal"])) .halo,
+:host([static]:not([orientation="horizontal"])) .halo {
+  height: 228px;
+}
+:host([orientation="horizontal"][compact]) .halo,
+:host([orientation="horizontal"][static]) .halo {
+  height: 170px;
+}
+:host([compact]) .halo > .tank-frame,
+:host([static]) .halo > .tank-frame {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+}
+:host([compact]) .halo > .badges,
+:host([static]) .halo > .badges,
+:host([compact]) .root > .readout,
+:host([compact]) .root > .tag,
+:host([static]) .root > .tag {
+  flex: 0 0 auto;
+}
+
+/* ---------- Tank frame (3 sections: cap-start / middle / cap-end) ----------
+ * The frame is purely decorative (no pointer events) so the surrounding button
+ * receives the click on every pixel of the tank. */
+.tank-frame {
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
   color: var(--instrument-regular-secondary-color);
+}
+.tank-frame.orientation-horizontal {
+  flex-direction: row;
+  align-items: stretch;
+}
 
-  border-radius: 6px;
-  border: 1px solid var(--instrument-frame-tertiary-color);
+.middle {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
   background: var(--instrument-frame-primary-color);
-
+  border-left: 1px solid var(--instrument-frame-tertiary-color);
+  border-right: 1px solid var(--instrument-frame-tertiary-color);
   padding: 8px;
+}
+.tank-frame.orientation-horizontal .middle {
+  border-left: none;
+  border-right: none;
+  border-top: 1px solid var(--instrument-frame-tertiary-color);
+  border-bottom: 1px solid var(--instrument-frame-tertiary-color);
+}
+
+/* generic / battery: middle owns the full border + radius (no caps to draw it). */
+.tank-frame.type-generic .middle,
+.tank-frame.type-battery .middle {
+  border: 1px solid var(--instrument-frame-tertiary-color);
+  border-radius: 6px;
+}
+
+/* ---------- Inner grid (non-compact only) ----------
+ * Vertical: 3 rows × 2 cols.   Row 1 = tag | badges, Row 2 = readout, Row 3 = chart.
+ * Horizontal: 2 rows × 2 cols. Row 1 = tag | badges, Row 2 = chart | readout.
+ * Chart cell = 1fr × 1fr, textual cells = min-content. */
+.grid {
+  display: grid;
+  width: 100%;
+  height: 100%;
   gap: 8px;
 }
 
-.compact {
-  .content {
-    display: none;
-  }
+.tank-frame:not(.orientation-horizontal) .grid {
+  grid-template-columns: minmax(0, 1fr) min-content;
+  grid-template-rows: min-content min-content minmax(0, 1fr);
+}
+.tank-frame:not(.orientation-horizontal) .grid > .tag {
+  grid-row: 1;
+  grid-column: 1;
+  justify-self: start;
+  align-self: center;
+}
+.tank-frame:not(.orientation-horizontal) .grid > .badges {
+  grid-row: 1;
+  grid-column: 2;
+  justify-self: end;
+  align-self: center;
+}
+.tank-frame:not(.orientation-horizontal) .grid > .readout {
+  grid-row: 2;
+  grid-column: 1 / -1;
+}
+.tank-frame:not(.orientation-horizontal) .grid > .bar-container {
+  grid-row: 3;
+  grid-column: 1 / -1;
+}
 
-  .bar-container {
-    width: 48px;
-    height: 96px;
-  }
+.tank-frame.orientation-horizontal .grid {
+  grid-template-columns: minmax(0, 1fr) min-content;
+  grid-template-rows: min-content minmax(0, 1fr);
+}
+.tank-frame.orientation-horizontal .grid > .tag {
+  grid-row: 1;
+  grid-column: 1;
+  justify-self: start;
+  align-self: center;
+}
+.tank-frame.orientation-horizontal .grid > .badges {
+  grid-row: 1;
+  grid-column: 2;
+  justify-self: end;
+  align-self: center;
+}
+.tank-frame.orientation-horizontal .grid > .bar-container {
+  grid-row: 2;
+  grid-column: 1;
+}
+.tank-frame.orientation-horizontal .grid > .readout {
+  grid-row: 2;
+  grid-column: 2;
+  align-self: stretch;
+  padding-left: 8px;
+  min-width: 96px;
+}
+
+/* ---------- Cells ---------- */
+.badges {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  min-height: 24px;
+  pointer-events: auto;
+}
+
+.tag {
+  display: block;
+  pointer-events: auto;
+  @mixin font-instrument-label;
+  color: var(--instrument-regular-secondary-color);
+}
+
+.readout {
+  display: block;
+  pointer-events: auto;
+}
+
+/* Compact readout: single line — trend icon + percent only (per design spec). */
+.readout-compact {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  @mixin font-instrument-label;
+  color: var(--instrument-regular-secondary-color);
+}
+.readout-compact .percent-symbol {
+  margin-left: 1px;
 }
 
 .header {
-  width: 150px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: 4px;
   border-bottom: 1px solid var(--border-outline-color);
+  padding-bottom: 2px;
 
   .percent {
     @mixin font-instrument-value-enhanced-neutral;
@@ -93,8 +341,10 @@
 
 .bar-container {
   width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
   position: relative;
-  height: 70px;
   border-radius: 2px;
   border: 1px solid var(--instrument-frame-tertiary-color);
   background: var(--instrument-frame-secondary-color);
@@ -111,11 +361,238 @@
   right: 1px;
 }
 
-.tag {
-  @mixin font-label;
-  color: var(--element-neutral-color);
-  height: 24px;
+.bar-container.chart-cell {
+  /* Gauge-trend brings its own background, border-radius and frame, so the
+   * cell is just a sizing/clipping box. */
+  border: none;
+  background: transparent;
+  border-radius: 0;
+}
+
+.bar-container.chart-cell > obc-gauge-trend {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------- Caps ---------- */
+
+.cap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.cap-atmospheric {
+  display: flex;
+  align-items: stretch;
+  height: 14px;
+  width: 100%;
+}
+.cap-atmospheric .cap-corner {
+  flex: 0 0 12px;
+  height: 14px;
+  display: block;
+}
+.cap-atmospheric .cap-mid {
+  flex: 1 1 auto;
+  height: 14px;
+  min-width: 0;
+  display: block;
+}
+.cap-fill {
+  fill: var(--instrument-frame-primary-color);
+}
+.cap-stroke {
+  stroke: var(--instrument-frame-tertiary-color);
+  stroke-width: 1;
+}
+.cap-atmospheric.cap-end {
+  transform: scaleY(-1);
+}
+
+/* Compact atmospheric cap (vertical): 10px tall with 7px corners — derived
+ * from the 162-wide Figma reference (top cap), curve Y-values scaled so the
+ * corner curve closes cleanly inside the viewBox. */
+.tank-frame.compact .cap-atmospheric {
+  height: 10px;
+}
+.tank-frame.compact .cap-atmospheric .cap-corner {
+  flex: 0 0 7px;
+  height: 10px;
+}
+.tank-frame.compact .cap-atmospheric .cap-mid {
+  height: 10px;
+}
+
+.cap-pressurized {
+  height: 14px;
+  width: 100%;
+  background: var(--instrument-frame-primary-color);
+  border: 1px solid var(--instrument-frame-tertiary-color);
+}
+.cap-pressurized.cap-start {
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+.cap-pressurized.cap-end {
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+/* Compact pressurized (vertical): 10px tall, smaller corner radius, and the
+ * inner-edge border is dropped so the cap merges seamlessly into the middle
+ * section (the middle section's own top/bottom edge takes over). */
+.tank-frame.compact .cap-pressurized {
+  height: 10px;
+}
+.tank-frame.compact .cap-pressurized.cap-start {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-bottom: none;
+}
+.tank-frame.compact .cap-pressurized.cap-end {
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border-top: none;
+}
+
+/* Battery cap (vertical): same thickness as atmospheric/pressurized
+ * (14px regular, 10px compact). Width is ~35% of the tank inner width
+ * giving ~90px regular and ~58px compact. The bottom border is omitted
+ * so the cap blends into the middle section. */
+.cap-battery {
+  height: 14px;
+  width: 35%;
+  margin: 0 auto;
+  background: var(--instrument-frame-primary-color);
+  border: 1px solid var(--instrument-frame-tertiary-color);
+  border-bottom: none;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+.tank-frame.compact .cap-battery {
+  height: 10px;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+/* Horizontal cap variants */
+.tank-frame.orientation-horizontal .cap-pressurized {
+  width: 14px;
+  height: auto;
+  align-self: stretch;
+}
+.tank-frame.orientation-horizontal .cap-pressurized.cap-start {
+  border: 1px solid var(--instrument-frame-tertiary-color);
+  border-radius: 0;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+.tank-frame.orientation-horizontal .cap-pressurized.cap-end {
+  border: 1px solid var(--instrument-frame-tertiary-color);
+  border-radius: 0;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+/* Compact pressurized (horizontal): 10px wide, smaller corner radius, and
+ * inner edge merges into the middle section. */
+.tank-frame.orientation-horizontal.compact .cap-pressurized {
+  width: 10px;
+}
+.tank-frame.orientation-horizontal.compact .cap-pressurized.cap-start {
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  border-right: none;
+}
+.tank-frame.orientation-horizontal.compact .cap-pressurized.cap-end {
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border-left: none;
+}
+
+.tank-frame.orientation-horizontal .cap-battery {
+  width: 14px;
+  height: 35%;
+  align-self: center;
+  margin: 0;
+  border: 1px solid var(--instrument-frame-tertiary-color);
+  border-right: none;
+  border-radius: 0;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+.tank-frame.orientation-horizontal.compact .cap-battery {
+  width: 10px;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+/* Horizontal atmospheric: 3-piece column with rotated SVGs (see render). */
+.tank-frame.orientation-horizontal .cap-atmospheric {
+  display: flex;
+  flex-direction: column-reverse;
+  width: 14px;
+  height: auto;
+  align-self: stretch;
+  background: transparent;
+  border: none;
+  transform: none;
+}
+.tank-frame.orientation-horizontal .cap-atmospheric > svg {
+  display: block;
+}
+.tank-frame.orientation-horizontal .cap-atmospheric .cap-corner {
+  flex: 0 0 12px;
+  width: 14px;
+  height: 12px;
+}
+.tank-frame.orientation-horizontal .cap-atmospheric .cap-mid {
+  flex: 1 1 auto;
+  width: 14px;
+  height: auto;
+  min-height: 0;
+}
+.tank-frame.orientation-horizontal .cap-atmospheric.cap-end {
+  transform: scaleX(-1);
+}
+
+/* Compact atmospheric cap (horizontal): 10px wide with 7px corners. */
+.tank-frame.orientation-horizontal.compact .cap-atmospheric {
+  width: 10px;
+}
+.tank-frame.orientation-horizontal.compact .cap-atmospheric .cap-corner {
+  flex: 0 0 7px;
+  width: 10px;
+  height: 7px;
+}
+.tank-frame.orientation-horizontal.compact .cap-atmospheric .cap-mid {
+  width: 10px;
+}
+
+/* ---------- Static mode ----------
+ * Display-only: chart/bar is hidden, the bordered area is filled with
+ * --container-section-color, and the readout is centered inside the frame.
+ * Outer borders/strokes are kept as the regular outline color so the
+ * silhouette and dimensions stay identical to the compact variant. */
+.tank-frame.static .middle {
+  background: var(--container-section-color);
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.tank-frame.static .static-readout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+.tank-frame.static .cap-fill {
+  fill: var(--container-section-color);
+}
+.tank-frame.static .cap-pressurized,
+.tank-frame.static .cap-battery {
+  background: var(--container-section-color);
 }
