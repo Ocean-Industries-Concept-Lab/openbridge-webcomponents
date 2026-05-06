@@ -1,3 +1,9 @@
+## [2.0.0-next.21](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.20...v2.0.0-next.21) (2026-05-06)
+
+### Features
+
+- added audio/microphone mode controls ([#860](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/860)) ([69d79af](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/69d79af5392d191ccf766c39edfb20681fd247de))
+
 ## [2.0.0-next.20](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/compare/v2.0.0-next.19...v2.0.0-next.20) (2026-05-06)
 
 ### Bug Fixes
