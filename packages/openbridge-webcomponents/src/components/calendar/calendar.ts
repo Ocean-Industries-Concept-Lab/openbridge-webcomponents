@@ -94,7 +94,7 @@ export class ObcCalendar extends LitElement {
   @property({type: String}) type = CalendarType.Regular;
   @property({attribute: false}) date: Date = new Date();
   @property({attribute: false}) selectedDate: Date | null = null;
-  @property({attribute: false}) events: CalendarEvent[] = [];
+  @property({type: Array, attribute: false}) events: CalendarEvent[] = [];
   @property({type: Boolean, attribute: false}) hasEventList = true;
   @property({type: Boolean, attribute: false}) hasFooter = true;
   @property({type: String}) locale?: string;

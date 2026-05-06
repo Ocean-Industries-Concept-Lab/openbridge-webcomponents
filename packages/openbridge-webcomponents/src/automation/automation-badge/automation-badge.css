@@ -44,7 +44,7 @@
 
   &.regular {
     @mixin style style=normal noClick;
-    color: var(--element-inactive-color);
+    color: var(--element-neutral-color);
 
     .badge {
       width: var(--automation-components-badge-new-icon-size);

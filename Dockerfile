@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.53.0-noble
+FROM mcr.microsoft.com/playwright:v1.58.2-noble
 
 # Install and configure locales
 RUN apt-get update && apt-get install -y locales && \
@@ -15,6 +15,6 @@ COPY package.json .
 WORKDIR /app/packages/openbridge-webcomponents
 COPY packages/openbridge-webcomponents/package.json .
 COPY packages/openbridge-webcomponents/*.tgz .
-RUN npm install --ci
+RUN npm ci --ignore-scripts
 COPY packages/openbridge-webcomponents .
-CMD ["npm", "run", "test-storybook", "--", "--url", "http://host.docker.internal:6006"]
+CMD ["npm", "run", "test-storybook"]
