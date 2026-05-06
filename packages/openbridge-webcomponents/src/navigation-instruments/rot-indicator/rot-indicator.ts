@@ -6,16 +6,48 @@ import {customElement} from '../../decorator.js';
 
 @customElement('obc-rot-indicator')
 export class ObcRotIndicator extends LitElement {
+  /**
+   * Measured rate of turn in degrees per minute (positive = starboard).
+   *
+   * Drives the spinner animation via `(rateOfTurnDegreesPerMinute / 360) *
+   * rotDotAnimationFactor` rotations per minute. When `undefined` the legacy
+   * `rotationsPerMinute` value is used instead.
+   */
+  @property({type: Number}) rateOfTurnDegreesPerMinute: number | undefined;
+
+  /**
+   * Visual amplification applied to the spinning dot animation. Default `18`
+   * keeps the legacy visual feel (≈1 rpm at 20°/min). Has no effect when
+   * the legacy `rotationsPerMinute` API is used.
+   */
+  @property({type: Number}) rotDotAnimationFactor: number = 18;
+
+  /**
+   * @deprecated Use `rateOfTurnDegreesPerMinute` (and optionally
+   * `rotDotAnimationFactor`) instead. Takes effect only when
+   * `rateOfTurnDegreesPerMinute` is `undefined`.
+   */
   @property({type: Number})
   rotationsPerMinute = 0;
+
+  private get _effectiveRpm(): number {
+    if (this.rateOfTurnDegreesPerMinute != null) {
+      return (
+        (this.rateOfTurnDegreesPerMinute / 360) * this.rotDotAnimationFactor
+      );
+    }
+    return this.rotationsPerMinute;
+  }
 
   protected override updated(_changedProperties: PropertyValues): void {
     super.updated(_changedProperties);
     if (
-      _changedProperties.has('rotationsPerMinute') &&
+      (_changedProperties.has('rotationsPerMinute') ||
+        _changedProperties.has('rateOfTurnDegreesPerMinute') ||
+        _changedProperties.has('rotDotAnimationFactor')) &&
       this.rateOfTurnController
     ) {
-      this.rateOfTurnController.rotationsPerMinute = this.rotationsPerMinute;
+      this.rateOfTurnController.rotationsPerMinute = this._effectiveRpm;
     }
   }
 
@@ -28,7 +60,7 @@ export class ObcRotIndicator extends LitElement {
     this.rateOfTurnController = new RateOfTurnController(
       this,
       this.rot,
-      this.rotationsPerMinute
+      this._effectiveRpm
     );
   }
 

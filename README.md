@@ -8,7 +8,7 @@ This monorepo contains the OpenBridge design system implemented as web component
 
 ## 🌿 Branching Strategy
 
-We use two main branches to manage our development:
+We use two long-lived branches to manage our development:
 
 - **`develop`**: This is the active development branch. It contains the latest changes and features. Note that this branch may include breaking changes and is intended for contributors and early adopters. Releases based on this branch are tagged as `next` on [npm](https://www.npmjs.com/package/@oicl/openbridge-webcomponents).
 - **`stable`**: This branch contains the stable, production-ready version of the library. It is updated from the `develop` branch approximately once every quarter. Releases based on this branch are tagged as `latest` on [npm](https://www.npmjs.com/package/@oicl/openbridge-webcomponents).
@@ -79,8 +79,13 @@ This repository uses npm workspaces and is organized as follows:
 
 ## 📚 Storybook & Demo
 
-- **[Storybook](https://openbridge-storybook.web.app)**: Browse components, view states, and interact with them in isolation.
-- **[Live Demo](https://openbridge-demo.web.app/)**: See the components in action within a Vue.js application.
+Storybook is the component reference: it shows each component in isolation with interactive controls, states, and variants.
+The Live Demo is an application showcase: it shows how components work together in realistic page flows.
+
+| Channel                                    | Storybook                                                                      | Live Demo                                                             |
+|--------------------------------------------|--------------------------------------------------------------------------------|-----------------------------------------------------------------------|
+| **Stable** (`stable` branch, npm `latest`) | [openbridge-storybook.web.app](https://openbridge-storybook.web.app)           | [openbridge-demo.web.app](https://openbridge-demo.web.app/)           |
+| **Develop** (`develop` branch, npm `next`) | [openbridge-next-storybook.web.app](https://openbridge-next-storybook.web.app) | [openbridge-next-demo.web.app](https://openbridge-next-demo.web.app/) |
 
 ## 🚩 Getting Started Development
 

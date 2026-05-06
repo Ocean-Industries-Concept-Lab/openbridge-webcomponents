@@ -67,19 +67,33 @@ export class ObcWatchFlat extends LitElement {
   @property({type: Boolean}) rotPortStarboard: boolean = false;
   @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_PX;
 
+  @property({type: Number}) rateOfTurnDegreesPerMinute: number | undefined;
+  @property({type: Number}) rotDotAnimationFactor: number = 18;
+
+  /**
+   * @deprecated Use `rateOfTurnDegreesPerMinute` (and optionally
+   * `rotDotAnimationFactor`) instead. Takes effect only when
+   * `rateOfTurnDegreesPerMinute` is `undefined`.
+   */
   @property({type: Number})
   set rotationsPerMinute(value: number) {
-    this._rotationsPerMinute = value;
-    if (this._rotController) {
-      this._rotController.rotationsPerMinute = value;
-    }
+    this._legacyRotationsPerMinute = value;
   }
   get rotationsPerMinute() {
-    return this._rotationsPerMinute;
+    return this._legacyRotationsPerMinute;
   }
 
-  private _rotationsPerMinute = 0;
+  private _legacyRotationsPerMinute = 0;
   private _rotController?: RateOfTurnController;
+
+  private get _effectiveRpm(): number {
+    if (this.rateOfTurnDegreesPerMinute != null) {
+      return (
+        (this.rateOfTurnDegreesPerMinute / 360) * this.rotDotAnimationFactor
+      );
+    }
+    return this._legacyRotationsPerMinute;
+  }
 
   private get totalHeight(): number {
     return this.bottomBar ? this.height + this.ticksHeight : this.height;
@@ -216,7 +230,7 @@ export class ObcWatchFlat extends LitElement {
       const direction =
         this.rotType === RotType.bar
           ? this.rotEndX - this.rotStartX
-          : this._rotationsPerMinute;
+          : this._effectiveRpm;
 
       if (direction > 0) {
         return {
@@ -285,9 +299,9 @@ export class ObcWatchFlat extends LitElement {
       : 'var(--instrument-regular-secondary-color)';
     let dotsColor = neutralDotsColor;
     if (this.rotPortStarboard) {
-      if (this._rotationsPerMinute > 0) {
+      if (this._effectiveRpm > 0) {
         dotsColor = 'var(--instrument-starboard-secondary-color)';
-      } else if (this._rotationsPerMinute < 0) {
+      } else if (this._effectiveRpm < 0) {
         dotsColor = 'var(--instrument-port-secondary-color)';
       }
     }
@@ -318,11 +332,19 @@ export class ObcWatchFlat extends LitElement {
       this._rotController = new RateOfTurnController(
         this,
         el,
-        this._rotationsPerMinute,
+        this._effectiveRpm,
         cyclePx
       );
     } else {
       this._rotController.cyclePx = cyclePx;
+    }
+
+    if (
+      changed.has('rateOfTurnDegreesPerMinute') ||
+      changed.has('rotDotAnimationFactor') ||
+      changed.has('rotationsPerMinute')
+    ) {
+      this._rotController.rotationsPerMinute = this._effectiveRpm;
     }
   }
 
