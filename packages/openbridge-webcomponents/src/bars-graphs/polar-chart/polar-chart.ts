@@ -75,6 +75,11 @@ const POLAR_WATCHED_PROP_NAMES = [
   'showUnit',
 ] as const;
 
+export type PolarChartDataItem = {
+  label: string;
+  value: number;
+};
+
 /**
  * `<obc-polar-chart>` – A customizable polar area chart component for visualizing proportional data as sectors, with optional outer labels, angle display, and discrete color bands.
  *
@@ -170,10 +175,10 @@ const POLAR_WATCHED_PROP_NAMES = [
  */
 @customElement('obc-polar-chart')
 export class ObcPolarChart extends LitElement {
-  @property({attribute: false})
-  data: {label: string; value: number}[] = [];
+  @property({type: Array, attribute: false})
+  data: PolarChartDataItem[] = [];
 
-  @property({attribute: false}) colors: string[] = [];
+  @property({type: Array, attribute: false}) colors: string[] = [];
 
   /** @internal */
   private centerFirstSector = false; // When false, first sector is centered at 12 o'clock position

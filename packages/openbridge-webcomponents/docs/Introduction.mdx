@@ -1,11 +1,46 @@
 import {Meta} from '@storybook/addon-docs/blocks';
+import {
+    isStable,
+    STORYBOOK_STABLE_URL,
+    STORYBOOK_DEVELOP_URL,
+} from '../.storybook/channels.js';
 
 <Meta title="Introduction/Introduction" />
 
 # Introduction
+
+{isStable ? (
+  <div style={{padding: '16px', backgroundColor: 'rgba(2, 136, 209, 0.1)', border: '1px solid rgb(2, 136, 209)', borderRadius: '4px', marginBottom: '24px', color: 'inherit'}}>
+    <strong>Channel: Stable</strong> — You are viewing the production-ready build.
+  </div>
+) : (
+  <div style={{padding: '16px', backgroundColor: 'rgba(245, 124, 0, 0.1)', border: '1px solid rgb(245, 124, 0)', borderRadius: '4px', marginBottom: '24px', color: 'inherit'}}>
+    <strong>Channel: Develop</strong> — You are viewing the latest development build.
+  </div>
+)}
 
 OpenBridge Web Components is part of the OpenBridge Design System, an open-source framework for designing and implementing high-performance user interfaces for industrial and maritime workplaces. The system is based on modern UI principles, industry regulations, and human-centered design practices, and is developed in collaboration with leading industry and academic partners.
 
 The OpenBridge Design System provides a comprehensive set of guidelines, components, and tools to ensure consistency, usability, and safety in complex environments. Originally created for maritime use cases, it now supports a wide range of industrial applications.
 
 Learn more about the OpenBridge Design System at [openbridge.no](https://www.openbridge.no/).
+
+## Release channels
+
+OpenBridge Web Components is published in two parallel channels. Each channel
+has its own Storybook deployment so you can browse the exact set of components
+that ships with the npm tag you depend on.
+
+- **<a href={STORYBOOK_STABLE_URL}>Stable Storybook</a>** {isStable && <em>(You are here)</em>} — built from the
+  `stable` branch and published to the `latest` npm tag roughly once every
+  quarter. Use this for production work; the API is frozen between releases.
+- **<a href={STORYBOOK_DEVELOP_URL}>Develop Storybook</a>** {!isStable && <em>(You are here)</em>} — built
+  from the `develop` branch and published to the `next` npm tag on every merge.
+  Includes upcoming features and fixes that have not yet shipped to `stable`,
+  and may contain breaking changes.
+
+You can jump to the {isStable ? 'develop' : 'stable'} build at any time using the **View {isStable ? 'Develop' : 'Stable'} Build**
+link under the OpenBridge wordmark in the sidebar.
+
+When running Storybook locally with `npm run storybook`, the build reflects
+whichever branch is currently checked out — typically `develop`.
