@@ -200,7 +200,7 @@ const defaultArgs: ReadoutStoryArgs = {
   readoutInputStyle: ReadoutInputStyle.regular,
   alertState: ReadoutAlertState.none,
   inputInteraction: ReadoutInputInteraction.alwaysVisible,
-  setpointValue: '123',
+  setpointValue: '100',
   _lastAutoInputDividerSyncKey: `${ReadoutDirection.vertical}:true`,
   _lastAutoSourceDividerSyncKey: `${ReadoutDirection.vertical}:false`,
 };
