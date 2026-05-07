@@ -1,7 +1,12 @@
 import {LitElement, html, svg, unsafeCSS} from 'lit';
 import {property, state} from 'lit/decorators.js';
 import compentStyle from './wind.css?inline';
-import {VesselImage, VesselImageSize, WatchCircleType} from '../watch/watch.js';
+import {
+  VesselImage,
+  VesselImageSize,
+  WatchCircleType,
+  innerRingRadiusFor,
+} from '../watch/watch.js';
 import {environmentSvgs} from '../watch/environment.js';
 import {customElement} from '../../decorator.js';
 
@@ -24,8 +29,6 @@ type ResolvedWindVariant =
 
 const WIND_SMALL_MAX_PX_DEFAULT = 96;
 const WIND_MEDIUM_MAX_PX_DEFAULT = 200;
-const WIND_HISTOGRAM_MAX_RADIUS_SINGLE_RING = 159;
-const WIND_HISTOGRAM_MAX_RADIUS_DOUBLE_RING = 112;
 const WIND_HISTOGRAM_MIN_RADIUS = 50;
 
 @customElement('obc-wind')
@@ -260,8 +263,8 @@ function resolveAutoWindVariant(
 
 function resolveHistogramMaxRadius(variant: ResolvedWindVariant): number {
   return variant === WindVariant.large
-    ? WIND_HISTOGRAM_MAX_RADIUS_DOUBLE_RING
-    : WIND_HISTOGRAM_MAX_RADIUS_SINGLE_RING;
+    ? innerRingRadiusFor(WatchCircleType.double)
+    : innerRingRadiusFor(WatchCircleType.single);
 }
 
 function isResolvedWindVariant(
