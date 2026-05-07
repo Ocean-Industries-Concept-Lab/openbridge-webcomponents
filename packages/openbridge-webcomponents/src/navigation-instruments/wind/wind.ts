@@ -1,4 +1,4 @@
-import {LitElement, html, svg, unsafeCSS} from 'lit';
+import {LitElement, html, unsafeCSS} from 'lit';
 import {property, state} from 'lit/decorators.js';
 import compentStyle from './wind.css?inline';
 import {
@@ -7,7 +7,6 @@ import {
   WatchCircleType,
   innerRingRadiusFor,
 } from '../watch/watch.js';
-import {environmentSvgs} from '../watch/environment.js';
 import {customElement} from '../../decorator.js';
 
 export interface WindHistogramData {
@@ -134,32 +133,22 @@ export class ObcWind extends LitElement {
               vesselImage: this.vesselImage,
             },
           ];
+    const {windSymbolRadius, scaleWindIcon} =
+      resolveWindArrowPlacement(variant);
     return html`
       <div class="wrapper variant-${variant}">
         ${this.renderWindHistogram(variant)}
         <obc-watch
           .watchCircleType=${watchCircleType}
+          .wind=${this.currentWindSpeedBeaufort}
+          .windFromDirectionDeg=${this.currentWindFromDirection}
+          .windSymbolRadius=${windSymbolRadius}
+          .scaleWindIcon=${scaleWindIcon}
           crosshairEnabled
           northArrow
           tickmarksInside
           .vessels=${vessels}
         ></obc-watch>
-        ${this.renderWindArrow()}
-      </div>
-    `;
-  }
-
-  private renderWindArrow() {
-    const beaufort = this.currentWindSpeedBeaufort;
-    const symbol = environmentSvgs[`wind-${beaufort + 1}.svg`];
-    if (!symbol) return null;
-    const dir = this.currentWindFromDirection;
-    const transform = `rotate(${180 + dir}deg)`;
-    return html`
-      <div class="wind-arrow-outer" style="transform: ${transform}">
-        <div class="wind-arrow-inner">
-          <svg class="wind-arrow" viewBox="0 0 24 24">${svg`${symbol}`}</svg>
-        </div>
       </div>
     `;
   }
@@ -265,6 +254,32 @@ function resolveHistogramMaxRadius(variant: ResolvedWindVariant): number {
   return variant === WindVariant.large
     ? innerRingRadiusFor(WatchCircleType.double)
     : innerRingRadiusFor(WatchCircleType.single);
+}
+
+/**
+ * Per-variant placement of the wind arrow inside `<obc-watch>`.
+ *
+ * `windSymbolRadius` is the distance from the watch center where the arrow
+ * is placed (in watch SVG units, where the outer ring sits at 184).
+ * `scaleWindIcon` scales the arrow glyph (and its offset).
+ *
+ * These values are visual-tuning starting points; adjust as needed.
+ */
+function resolveWindArrowPlacement(variant: ResolvedWindVariant): {
+  windSymbolRadius: number;
+  scaleWindIcon: number;
+} {
+  switch (variant) {
+    case WindVariant.large:
+      // Sits inside the inner ring of the double layout (matches pre-variant behavior).
+      return {windSymbolRadius: 145, scaleWindIcon: 0.8};
+    case WindVariant.medium:
+      // Sits just inside the single outer ring.
+      return {windSymbolRadius: 60, scaleWindIcon: 1.4};
+    case WindVariant.small:
+      // Compact layout: arrow centered, slightly enlarged for legibility.
+      return {windSymbolRadius: 10, scaleWindIcon: 2.3};
+  }
 }
 
 function isResolvedWindVariant(
