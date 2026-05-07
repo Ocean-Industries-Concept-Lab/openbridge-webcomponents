@@ -9,13 +9,12 @@ export class ObcBearingIndicator extends LitElement {
   bearingDeg = 0;
 
   override render() {
-    const bearingDeg = Number.isFinite(this.bearingDeg) ? this.bearingDeg : 0;
     const r = 13;
-    const x = 25 + r * Math.sin((bearingDeg * Math.PI) / 180);
-    const y = 25 - r * Math.cos((bearingDeg * Math.PI) / 180);
+    const x = 25 + r * Math.sin((this.bearingDeg * Math.PI) / 180);
+    const y = 25 - r * Math.cos((this.bearingDeg * Math.PI) / 180);
     const R = 17.5;
-    const x2 = 25 + R * Math.sin((bearingDeg * Math.PI) / 180);
-    const y2 = 25 - R * Math.cos((bearingDeg * Math.PI) / 180);
+    const x2 = 25 + R * Math.sin((this.bearingDeg * Math.PI) / 180);
+    const y2 = 25 - R * Math.cos((this.bearingDeg * Math.PI) / 180);
     return html`
       <svg
         width="48"
