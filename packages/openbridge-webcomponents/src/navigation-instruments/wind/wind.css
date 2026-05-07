@@ -47,7 +47,7 @@
    * between the inner and outer circle edges. Rotating the outer div
    * spins the whole assembly around the host centre.
    */
-  --outer-pct: 80cqmin; /* default, overridden by per-variant rules below */
+  --outer-pct: 80cqmin;
   --inner-frac: 0.7; /* default, overridden by per-variant rules below */
   --arrow-fill: 0.8;
   --arrow-gap: calc(var(--outer-pct) * (1 - var(--inner-frac)) / 2);
@@ -86,16 +86,13 @@
 
 /* Per-variant tuning */
 .wrapper.variant-small .wind-arrow-outer {
-  --outer-pct: 80cqmin;
   --inner-frac: 0.1;
 }
 
 .wrapper.variant-medium .wind-arrow-outer {
-  --outer-pct: 80cqmin;
   --inner-frac: 0.4;
 }
 
 .wrapper.variant-large .wind-arrow-outer {
-  --outer-pct: 80cqmin;
   --inner-frac: 0.7;
 }
