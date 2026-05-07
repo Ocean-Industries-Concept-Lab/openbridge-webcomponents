@@ -134,9 +134,9 @@ export class ObcMainEngineIndicator extends LitElement {
     this.requestUpdate('speed', old);
   }
 
-  @property({type: String}) state: InstrumentState = InstrumentState.active;
+  @property({type: String}) state: string = InstrumentState.active;
 
-  @property({type: String}) priority: Priority = Priority.regular;
+  @property({type: String}) priority: string = Priority.regular;
 
   @property({type: Boolean}) hasSilhouette = false;
 

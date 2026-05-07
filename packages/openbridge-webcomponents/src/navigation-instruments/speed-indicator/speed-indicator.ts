@@ -46,7 +46,7 @@ const SHIP_PATH_D = 'M0.5 15.5V5Q0.5 2.95 3 0.5Q5.5 2.95 5.5 5V15.5H0.5Z';
 @customElement('obc-speed-indicator')
 export class ObcSpeedIndicator extends LitElement {
   @property({type: String})
-  type: SpeedIndicatorType = SpeedIndicatorType.Needle;
+  type: string = SpeedIndicatorType.Needle;
 
   @property({type: Number}) speed: number = 0;
 

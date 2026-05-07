@@ -64,8 +64,7 @@ let nextTrackClipId = 0;
  */
 @customElement('obc-roll-indicator')
 export class ObcRollIndicator extends LitElement {
-  @property({type: String}) type: RollIndicatorType =
-    RollIndicatorType.enhanced;
+  @property({type: String}) type: string = RollIndicatorType.enhanced;
 
   @property({type: Number}) value = 0;
 
@@ -125,7 +124,7 @@ export class ObcRollIndicator extends LitElement {
     return `M${CX} ${CY}L${baseX} ${baseY}L${edgeX} ${edgeY}Z`;
   }
 
-  private barColor(type: RollIndicatorType): string {
+  private barColor(type: string): string {
     return type === RollIndicatorType.enhanced
       ? 'var(--instrument-enhanced-secondary-color)'
       : 'var(--instrument-regular-secondary-color)';
@@ -291,7 +290,7 @@ export class ObcRollIndicator extends LitElement {
     `;
   }
 
-  private renderVesselGroup(type: RollIndicatorType) {
+  private renderVesselGroup(type: string) {
     const color = this.barColor(type);
     return svg`
       <g>

@@ -182,13 +182,11 @@ const LABELED_ARROW_TPL = svg`
  */
 @customElement('obc-wind-indicator')
 export class ObcWindIndicator extends LitElement {
-  @property({type: String}) type: WindIndicatorType = WindIndicatorType.arrow;
+  @property({type: String}) type: string = WindIndicatorType.arrow;
 
-  @property({type: String}) direction: WindIndicatorDirection =
-    WindIndicatorDirection.true;
+  @property({type: String}) direction: string = WindIndicatorDirection.true;
 
-  @property({type: String}) priority: WindIndicatorPriority =
-    WindIndicatorPriority.regular;
+  @property({type: String}) priority: string = WindIndicatorPriority.regular;
 
   @property({type: Number}) level = 0;
 
@@ -310,8 +308,8 @@ export class ObcWindIndicator extends LitElement {
   }
 
   private getWindIconTagName(
-    type: WindIndicatorType,
-    _direction: WindIndicatorDirection,
+    type: string,
+    _direction: string,
     level: number
   ): string {
     const index = Math.max(0, Math.min(12, Math.round(level))) + 1;
@@ -324,8 +322,8 @@ export class ObcWindIndicator extends LitElement {
   }
 
   private getWindIcon(
-    type: WindIndicatorType,
-    direction: WindIndicatorDirection,
+    type: string,
+    direction: string,
     level: number
   ): SVGTemplateResult | null {
     const tagName = this.getWindIconTagName(type, direction, level);

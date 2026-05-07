@@ -56,10 +56,10 @@ export class ObcCompassIndicator extends LitElement {
   angle = 0;
 
   @property({type: String})
-  type: CompassIndicatorType = CompassIndicatorType.Regular;
+  type: string = CompassIndicatorType.Regular;
 
   @property({type: String})
-  direction: CompassIndicatorDirection = CompassIndicatorDirection.Heading;
+  direction: string = CompassIndicatorDirection.Heading;
 
   private get normalizedAngle(): number {
     return normalizeAngle(this.angle);
@@ -78,7 +78,7 @@ export class ObcCompassIndicator extends LitElement {
   }
 
   private renderArrow(
-    direction: CompassIndicatorDirection,
+    direction: string,
     options?: {
       rotation?: number;
       translateY?: number;
@@ -175,7 +175,7 @@ export class ObcCompassIndicator extends LitElement {
   }
 
   private renderRoundIndicator(
-    direction: CompassIndicatorDirection,
+    direction: string,
     arrowRotation: number,
     faceRotation: number
   ) {
@@ -253,7 +253,7 @@ export class ObcCompassIndicator extends LitElement {
     `;
   }
 
-  private renderLabeledIndicator(direction: CompassIndicatorDirection) {
+  private renderLabeledIndicator(direction: string) {
     const label = this.cardinalLabelPrimary;
     const isHeading = direction === CompassIndicatorDirection.Heading;
 

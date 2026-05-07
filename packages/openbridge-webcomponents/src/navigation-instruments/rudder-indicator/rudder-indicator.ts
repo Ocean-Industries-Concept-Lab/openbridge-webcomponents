@@ -261,8 +261,7 @@ export class ObcRudderIndicator extends LitElement {
 
   @property({type: Number}) setpoint = 0;
 
-  @property({type: String}) state: RudderIndicatorState =
-    RudderIndicatorState.InCommand;
+  @property({type: String}) state: string = RudderIndicatorState.InCommand;
 
   @property({type: Boolean}) hasSilhouette = false;
 

@@ -82,7 +82,7 @@ function createFramePath() {
 @customElement('obc-gauge-trend-indicator')
 export class ObcGaugeTrendIndicator extends LitElement {
   @property({type: String})
-  type: ObcGaugeTrendIndicatorType = ObcGaugeTrendIndicatorType.Fill;
+  type: string = ObcGaugeTrendIndicatorType.Fill;
 
   @property({type: Array})
   data: number[] = [];

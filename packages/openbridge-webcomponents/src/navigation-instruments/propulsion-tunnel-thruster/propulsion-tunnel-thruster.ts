@@ -107,7 +107,7 @@ export class ObcTunnelThruster extends LitElement {
   }
 
   @property({type: String})
-  state: TunnelThrusterState = TunnelThrusterState.InCommand;
+  state: string = TunnelThrusterState.InCommand;
 
   @property({type: Boolean})
   hasSilhouette = false;

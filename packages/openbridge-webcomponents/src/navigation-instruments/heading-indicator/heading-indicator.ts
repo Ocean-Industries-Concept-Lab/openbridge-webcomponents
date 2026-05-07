@@ -48,7 +48,7 @@ export class ObcHeadingIndicator extends LitElement {
   private idBase = `heading-indicator-${Math.random().toString(36).slice(2, 9)}`;
 
   @property({type: String})
-  type: HeadingIndicatorType = HeadingIndicatorType.HDG;
+  type: string = HeadingIndicatorType.HDG;
 
   @property({type: Number})
   angle = 0;

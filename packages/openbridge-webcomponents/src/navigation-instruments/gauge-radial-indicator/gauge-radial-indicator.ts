@@ -131,7 +131,7 @@ export class ObcGaugeRadialIndicator extends LitElement {
 
   @property({type: Number, attribute: 'max-value'}) maxValue = 100;
 
-  @property({type: Number}) sector: GaugeRadialIndicatorSector = 270;
+  @property({type: Number}) sector: number = 270;
 
   @property({type: String, attribute: 'style-type'})
   styleType: GaugeRadialIndicatorStyle = GaugeRadialIndicatorStyle.Regular;

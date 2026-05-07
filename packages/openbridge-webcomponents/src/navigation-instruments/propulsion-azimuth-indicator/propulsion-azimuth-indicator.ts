@@ -103,7 +103,7 @@ function topCircleSideIntersection(
  */
 @customElement('obc-propulsion-azimuth-indicator')
 export class ObcPropulsionAzimuthIndicator extends LitElement {
-  @property({type: String}) type: PropulsionAzimuthIndicatorType =
+  @property({type: String}) type: string =
     PropulsionAzimuthIndicatorType.enhanced;
 
   @property({type: Boolean, attribute: 'has-silhouette'}) hasSilhouette = false;
@@ -112,7 +112,7 @@ export class ObcPropulsionAzimuthIndicator extends LitElement {
 
   @property({type: Number}) value = 0;
 
-  @property({type: String}) state: InstrumentState = InstrumentState.active;
+  @property({type: String}) state: string = InstrumentState.active;
 
   static override styles = css`
     :host {
