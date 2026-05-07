@@ -67,7 +67,9 @@ const windHistogramData: WindHistogramData[] = [
   })),
 ];
 
-const meta: Meta<typeof ObcWind> = {
+type WindStoryArgs = ObcWind & {width?: number; height?: number};
+
+const meta: Meta<WindStoryArgs> = {
   title: 'Instruments/Wind',
   tags: ['6.0'],
   component: 'obc-wind',
@@ -105,10 +107,10 @@ const meta: Meta<typeof ObcWind> = {
       ],
     },
   },
-} satisfies Meta<ObcWind>;
+} satisfies Meta<WindStoryArgs>;
 
 export default meta;
-type Story = StoryObj<ObcWind>;
+type Story = StoryObj<WindStoryArgs>;
 
 export const Primary: Story = {
   args: {},
