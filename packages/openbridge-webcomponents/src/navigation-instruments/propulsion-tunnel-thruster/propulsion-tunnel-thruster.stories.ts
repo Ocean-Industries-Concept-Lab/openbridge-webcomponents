@@ -41,17 +41,17 @@ function tunnelThrusterDecorator(story: () => unknown): HTMLTemplateResult {
 }
 
 function renderTunnelThruster(args: TunnelThrusterStoryArgs) {
-  return html`<obc-propulsion-tunnel-thruster
+  return html`<obc-tunnel-thruster
     .state=${labelToTunnelState(args.storyState)}
     .value=${args.value}
     .hasSilhouette=${args.hasSilhouette}
-  ></obc-propulsion-tunnel-thruster>`;
+  ></obc-tunnel-thruster>`;
 }
 
 const meta = {
-  title: 'Indicators/Propulsion Tunnel Thruster',
+  title: 'Indicators/Tunnel Thruster',
   tags: ['autodocs', '6.0'],
-  component: 'obc-propulsion-tunnel-thruster',
+  component: 'obc-tunnel-thruster',
   args: {
     storyState: TunnelStoryStateLabel.inCommand,
     value: -0.33,

@@ -49,7 +49,7 @@ const STROKE_OUTSET = STROKE_HALF;
 let nextClipId = 0;
 
 /**
- * `<obc-propulsion-tunnel-thruster>` – Compact bidirectional tunnel-thruster level indicator.
+ * `<obc-tunnel-thruster>` – Compact bidirectional tunnel-thruster level indicator.
  *
  * Renders a **36×12** rounded frame inside a **48×48** canvas with a central zero
  * line with rounded caps, extended downward by the full frame stroke width so it
@@ -76,9 +76,9 @@ let nextClipId = 0;
  * Use for a compact tunnel-thruster cue where the full tunnel-thruster watch
  * layout is not required.
  */
-@customElement('obc-propulsion-tunnel-thruster')
-export class ObcPropulsionTunnelThruster extends LitElement {
-  private readonly thrustClipId = `obc-propulsion-tunnel-thruster-thrust-${nextClipId++}`;
+@customElement('obc-tunnel-thruster')
+export class ObcTunnelThruster extends LitElement {
+  private readonly thrustClipId = `obc-tunnel-thruster-thrust-${nextClipId++}`;
 
   private internalValue = 0;
   private internalThrust = 0;
@@ -309,12 +309,8 @@ export class ObcPropulsionTunnelThruster extends LitElement {
   }
 }
 
-@customElement('obc-tunnel-thruster')
-export class ObcTunnelThruster extends ObcPropulsionTunnelThruster {}
-
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-propulsion-tunnel-thruster': ObcPropulsionTunnelThruster;
     'obc-tunnel-thruster': ObcTunnelThruster;
   }
 }

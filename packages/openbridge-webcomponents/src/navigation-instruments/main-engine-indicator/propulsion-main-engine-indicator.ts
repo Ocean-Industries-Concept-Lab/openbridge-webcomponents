@@ -73,7 +73,7 @@ const FRAME_MARKER_PATH =
 let nextFrameClipId = 0;
 
 /**
- * `<obc-propulsion-main-engine-indicator>` – Compact dual-track main engine indicator without setpoints.
+ * `<obc-main-engine-indicator>` – Compact dual-track main engine indicator without setpoints.
  *
  * ## Features
  *
@@ -86,9 +86,9 @@ let nextFrameClipId = 0;
  *
  * Use when the larger `obc-main-engine` is too dense and only a compact visual summary of speed and thrust is needed. Use `obc-main-engine` when setpoints or the larger scale treatment are required.
  */
-@customElement('obc-propulsion-main-engine-indicator')
-export class ObcPropulsionMainEngineIndicator extends LitElement {
-  private readonly frameClipId = `obc-propulsion-main-engine-indicator-frame-clip-${nextFrameClipId++}`;
+@customElement('obc-main-engine-indicator')
+export class ObcMainEngineIndicator extends LitElement {
+  private readonly frameClipId = `obc-main-engine-indicator-frame-clip-${nextFrameClipId++}`;
 
   private internalPitchValue = 0;
 
@@ -493,12 +493,8 @@ export class ObcPropulsionMainEngineIndicator extends LitElement {
   }
 }
 
-@customElement('obc-main-engine-indicator')
-export class ObcMainEngineIndicator extends ObcPropulsionMainEngineIndicator {}
-
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-propulsion-main-engine-indicator': ObcPropulsionMainEngineIndicator;
     'obc-main-engine-indicator': ObcMainEngineIndicator;
   }
 }

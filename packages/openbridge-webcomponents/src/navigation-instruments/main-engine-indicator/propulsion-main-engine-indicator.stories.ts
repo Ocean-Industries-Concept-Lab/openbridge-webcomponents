@@ -49,19 +49,19 @@ function mainEngineIndicatorDecorator(
 
 function renderMainEngine(args: MainEngineStoryArgs) {
   const {state, priority} = storyStateToProps(args.storyState);
-  return html`<obc-propulsion-main-engine-indicator
+  return html`<obc-main-engine-indicator
     .state=${state}
     .priority=${priority}
     .rpmValue=${args.rpmValue}
     .pitchValue=${args.pitchValue}
     .hasSilhouette=${args.hasSilhouette}
-  ></obc-propulsion-main-engine-indicator>`;
+  ></obc-main-engine-indicator>`;
 }
 
 const meta = {
-  title: 'Indicators/Propulsion Main Engine Indicator',
+  title: 'Indicators/Main Engine Indicator',
   tags: ['autodocs', '6.0'],
-  component: 'obc-propulsion-main-engine-indicator',
+  component: 'obc-main-engine-indicator',
   args: {
     storyState: MainEngineStoryState.inCommand,
     rpmValue: 0.34,
