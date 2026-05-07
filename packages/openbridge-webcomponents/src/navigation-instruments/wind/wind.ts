@@ -277,7 +277,7 @@ function resolveWindArrowPlacement(variant: ResolvedWindVariant): {
       // Sits just inside the single outer ring.
       return {windSymbolRadius: 60, scaleWindIcon: 1.4};
     case WindVariant.small:
-      // Compact layout: arrow centered, slightly enlarged for legibility.
+      // Compact layout: arrow tip close to centered, enlarged for best legibility.
       return {windSymbolRadius: 10, scaleWindIcon: 2.3};
   }
 }
