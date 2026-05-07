@@ -95,6 +95,8 @@ const meta: Meta<typeof ObcWind> = {
     },
     variant: {
       control: 'inline-radio',
+      description:
+        'auto uses host min(width, height): < 96px => small, < 200px => medium, otherwise large.',
       options: [
         WindVariant.auto,
         WindVariant.small,

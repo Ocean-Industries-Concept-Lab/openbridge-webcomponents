@@ -44,27 +44,60 @@ export class ObcWind extends LitElement {
 
   override connectedCallback(): void {
     super.connectedCallback();
-    this._resizeObserver = new ResizeObserver((entries) => {
-      const entry = entries[0];
-      if (!entry) return;
-      const {width, height} = entry.contentRect;
-      const next = resolveAutoWindVariant(Math.min(width, height));
-      if (next !== this._autoVariant) {
-        this._autoVariant = next;
-      }
-    });
-    this._resizeObserver.observe(this);
+    this.syncResizeObserver();
   }
 
   override disconnectedCallback(): void {
     super.disconnectedCallback();
+    this.stopResizeObserver();
+  }
+
+  protected override updated(changed: Map<string, unknown>): void {
+    if (changed.has('variant')) {
+      this.syncResizeObserver();
+    }
+  }
+
+  private syncResizeObserver(): void {
+    if (
+      this.variant !== WindVariant.auto ||
+      typeof ResizeObserver === 'undefined'
+    ) {
+      this.stopResizeObserver();
+      return;
+    }
+
+    if (!this._resizeObserver) {
+      this._resizeObserver = new ResizeObserver((entries) => {
+        const entry = entries[0];
+        if (!entry || this.variant !== WindVariant.auto) return;
+        const {width, height} = entry.contentRect;
+        this.setAutoVariant(width, height);
+      });
+    }
+
+    this._resizeObserver.disconnect();
+    this._resizeObserver.observe(this);
+    this.setAutoVariant(this.clientWidth, this.clientHeight);
+  }
+
+  private stopResizeObserver(): void {
     this._resizeObserver?.disconnect();
     this._resizeObserver = undefined;
   }
 
+  private setAutoVariant(width: number, height: number): void {
+    const next = resolveAutoWindVariant(Math.min(width, height));
+    if (next !== this._autoVariant) {
+      this._autoVariant = next;
+    }
+  }
+
   private get effectiveVariant(): ResolvedWindVariant {
     if (this.variant === WindVariant.auto) return this._autoVariant;
-    return this.variant;
+    return isResolvedWindVariant(this.variant)
+      ? this.variant
+      : this._autoVariant;
   }
 
   override render() {
@@ -122,6 +155,7 @@ export class ObcWind extends LitElement {
     const maxOccurrences = Math.max(
       ...this.windHistogramData.map((d) => d.occurrences)
     );
+    const hasValidScale = Number.isFinite(maxOccurrences) && maxOccurrences > 0;
 
     // Interpolate occurrences for each degree (0-359)
     const interpolated: number[] = new Array(360).fill(0);
@@ -153,8 +187,9 @@ export class ObcWind extends LitElement {
     for (let deg = 0; deg < 360; deg++) {
       const angle = ((deg - 90) * Math.PI) / 180;
       const occ = interpolated[deg];
-      const radius =
-        maxRadius - (occ / maxOccurrences) * (maxRadius - minRadius);
+      const radius = hasValidScale
+        ? maxRadius - (occ / maxOccurrences) * (maxRadius - minRadius)
+        : maxRadius;
       const x2 = center.x + radius * Math.cos(angle);
       const y2 = center.y + radius * Math.sin(angle);
       outerPathPoints += `L ${x2} ${y2} `;
@@ -208,6 +243,16 @@ function resolveHistogramMaxRadius(variant: ResolvedWindVariant): number {
   return variant === WindVariant.large
     ? WIND_HISTOGRAM_MAX_RADIUS_DOUBLE_RING
     : WIND_HISTOGRAM_MAX_RADIUS_SINGLE_RING;
+}
+
+function isResolvedWindVariant(
+  variant: string
+): variant is ResolvedWindVariant {
+  return (
+    variant === WindVariant.small ||
+    variant === WindVariant.medium ||
+    variant === WindVariant.large
+  );
 }
 
 declare global {
