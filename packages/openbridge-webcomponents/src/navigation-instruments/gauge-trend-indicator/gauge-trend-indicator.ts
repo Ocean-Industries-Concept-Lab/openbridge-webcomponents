@@ -161,7 +161,7 @@ export class ObcGaugeTrendIndicator extends LitElement {
       return this.lastDataValue;
     }
 
-    return this.minValue;
+    return Number.isFinite(this.minValue) ? this.minValue : this.valueRange.min;
   }
 
   private mapValueToY(

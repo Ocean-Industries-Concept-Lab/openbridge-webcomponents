@@ -202,7 +202,8 @@ export class ObcHeadingIndicator extends LitElement {
       XTD_ARROW_X_BASE - XTD_FRAME_X,
       XTD_FRAME_X + XTD_FRAME_INNER_WIDTH - XTD_ARROW_WIDTH - XTD_ARROW_X_BASE
     );
-    const clampedXtd = Math.max(-1, Math.min(1, this.xtd));
+    const xtd = Number.isFinite(this.xtd) ? this.xtd : 0;
+    const clampedXtd = Math.max(-1, Math.min(1, xtd));
     const offsetPx = clampedXtd * maxOffsetPx;
     const arrowX = XTD_ARROW_X_BASE + offsetPx;
     const arrowCenterX = arrowX + XTD_ARROW_WIDTH / 2;

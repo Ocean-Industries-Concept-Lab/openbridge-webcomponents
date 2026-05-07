@@ -276,7 +276,8 @@ export class ObcPropulsionAzimuthIndicator extends LitElement {
   }
 
   override render() {
-    const rotation = normalizeAngle360(this.azimuth);
+    const azimuth = Number.isFinite(this.azimuth) ? this.azimuth : 0;
+    const rotation = normalizeAngle360(azimuth);
     return html`
       <svg
         viewBox="0 0 ${VIEW_SIZE} ${VIEW_SIZE}"

@@ -64,6 +64,9 @@ export class ObcGaugeBarIndicator extends LitElement {
   }
 
   private get fillSize(): number {
+    if (this.clampedValue <= 0) {
+      return 0;
+    }
     return clamp(this.actualFillSize, MIN_VISIBLE_FILL_SIZE, TRACK_LENGTH);
   }
 

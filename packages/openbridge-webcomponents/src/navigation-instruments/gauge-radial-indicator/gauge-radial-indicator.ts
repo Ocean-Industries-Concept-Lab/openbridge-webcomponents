@@ -165,7 +165,10 @@ export class ObcGaugeRadialIndicator extends LitElement {
   }
 
   private get clampedValue(): number {
-    return clamp(this.value, this.boundedMinValue, this.boundedMaxValue);
+    const value = Number.isFinite(this.value)
+      ? this.value
+      : this.boundedMinValue;
+    return clamp(value, this.boundedMinValue, this.boundedMaxValue);
   }
 
   private get minAngle(): number {
