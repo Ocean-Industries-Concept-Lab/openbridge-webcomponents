@@ -1,7 +1,7 @@
 :host {
   display: inline-block;
-  width: var(--obc-depth-indicator-size, 48px);
-  height: var(--obc-depth-indicator-size, 48px);
+  width: var(--global-size-spacing-touch-target-min);
+  height: var(--global-size-spacing-touch-target-min);
 }
 
 .indicator {

@@ -175,13 +175,7 @@ export class ObcHeadingIndicator extends LitElement {
 
   private renderHdg() {
     return html`
-      <svg
-        width="48"
-        height="48"
-        viewBox="0 0 48 48"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
         ${this.renderCompassFace(0)}
         ${this.renderHdgArrow(this.normalizedAngle)}
       </svg>
@@ -210,13 +204,7 @@ export class ObcHeadingIndicator extends LitElement {
     const arrowCenterY = XTD_ARROW_Y + XTD_ARROW_HEIGHT / 2;
 
     return html`
-      <svg
-        width="48"
-        height="48"
-        viewBox="0 0 48 48"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path
           d="${XTD_FRAME_PATH}"
           transform="translate(7.5 7.5)"

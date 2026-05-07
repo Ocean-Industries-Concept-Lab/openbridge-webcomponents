@@ -4,8 +4,8 @@ import {customElement} from '../../decorator.js';
 
 const componentStyle = `:host {
   display: inline-block;
-  width: var(--instrument-size-48);
-  height: var(--instrument-size-48);
+  width: var(--global-size-spacing-touch-target-min);
+  height: var(--global-size-spacing-touch-target-min);
 }
 
 svg {
