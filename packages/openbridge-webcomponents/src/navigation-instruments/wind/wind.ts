@@ -251,8 +251,10 @@ function resolveAutoWindVariant(
   smallVariantMaxPx: number,
   mediumVariantMaxPx: number
 ): ResolvedWindVariant {
-  if (sizePx < smallVariantMaxPx) return WindVariant.small;
-  if (sizePx < mediumVariantMaxPx) return WindVariant.medium;
+  const minT = Math.min(smallVariantMaxPx, mediumVariantMaxPx);
+  const maxT = Math.max(smallVariantMaxPx, mediumVariantMaxPx);
+  if (sizePx < minT) return WindVariant.small;
+  if (sizePx < maxT) return WindVariant.medium;
   return WindVariant.large;
 }
 
