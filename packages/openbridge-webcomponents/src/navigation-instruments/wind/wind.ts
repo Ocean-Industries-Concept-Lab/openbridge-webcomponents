@@ -22,8 +22,8 @@ type ResolvedWindVariant =
   | WindVariant.medium
   | WindVariant.large;
 
-const WIND_SMALL_MAX_PX = 96;
-const WIND_MEDIUM_MAX_PX = 200;
+const WIND_SMALL_MAX_PX_DEFAULT = 96;
+const WIND_MEDIUM_MAX_PX_DEFAULT = 200;
 const WIND_HISTOGRAM_MAX_RADIUS_SINGLE_RING = 159;
 const WIND_HISTOGRAM_MAX_RADIUS_DOUBLE_RING = 112;
 const WIND_HISTOGRAM_MIN_RADIUS = 50;
@@ -37,6 +37,8 @@ export class ObcWind extends LitElement {
   @property({type: String}) vesselImage: VesselImage = VesselImage.genericTop;
   @property({type: Number}) vesselHeadingDeg: number = 0;
   @property({type: String}) variant: WindVariant = WindVariant.auto;
+  @property({type: Number}) smallVariantMaxPx = WIND_SMALL_MAX_PX_DEFAULT;
+  @property({type: Number}) mediumVariantMaxPx = WIND_MEDIUM_MAX_PX_DEFAULT;
 
   @state() private _autoVariant: ResolvedWindVariant = WindVariant.medium;
 
@@ -55,6 +57,10 @@ export class ObcWind extends LitElement {
   protected override updated(changed: Map<string, unknown>): void {
     if (changed.has('variant')) {
       this.syncResizeObserver();
+    }
+
+    if (changed.has('smallVariantMaxPx') || changed.has('mediumVariantMaxPx')) {
+      this.setAutoVariant(this.clientWidth, this.clientHeight);
     }
   }
 
@@ -87,7 +93,11 @@ export class ObcWind extends LitElement {
   }
 
   private setAutoVariant(width: number, height: number): void {
-    const next = resolveAutoWindVariant(Math.min(width, height));
+    const next = resolveAutoWindVariant(
+      Math.min(width, height),
+      this.smallVariantMaxPx,
+      this.mediumVariantMaxPx
+    );
     if (next !== this._autoVariant) {
       this._autoVariant = next;
     }
@@ -233,9 +243,13 @@ export class ObcWind extends LitElement {
   static override styles = unsafeCSS(compentStyle);
 }
 
-function resolveAutoWindVariant(sizePx: number): ResolvedWindVariant {
-  if (sizePx < WIND_SMALL_MAX_PX) return WindVariant.small;
-  if (sizePx < WIND_MEDIUM_MAX_PX) return WindVariant.medium;
+function resolveAutoWindVariant(
+  sizePx: number,
+  smallVariantMaxPx: number,
+  mediumVariantMaxPx: number
+): ResolvedWindVariant {
+  if (sizePx < smallVariantMaxPx) return WindVariant.small;
+  if (sizePx < mediumVariantMaxPx) return WindVariant.medium;
   return WindVariant.large;
 }
 
