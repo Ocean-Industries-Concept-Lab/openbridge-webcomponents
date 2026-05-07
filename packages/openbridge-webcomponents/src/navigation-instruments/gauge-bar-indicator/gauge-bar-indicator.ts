@@ -41,9 +41,9 @@ function clamp(value: number, min: number, max: number): number {
 export class ObcGaugeBarIndicator extends LitElement {
   @property({type: Number}) value = 50;
 
-  @property({type: String}) direction: GaugeBarIndicatorDirection = 'vertical';
+  @property({type: String}) direction: string = 'vertical';
 
-  @property({type: String}) type: GaugeBarIndicatorType = 'fill';
+  @property({type: String}) type: string = 'fill';
 
   static override styles = unsafeCSS(componentStyle);
 
