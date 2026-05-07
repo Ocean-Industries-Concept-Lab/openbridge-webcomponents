@@ -1,5 +1,9 @@
 import {Meta} from '@storybook/addon-docs/blocks';
-import {isStable} from '../.storybook/channels.js';
+import {
+    isStable,
+    STORYBOOK_STABLE_URL,
+    STORYBOOK_DEVELOP_URL,
+} from '../.storybook/channels.js';
 
 <Meta title="Introduction/Introduction" />
 
@@ -27,12 +31,10 @@ OpenBridge Web Components is published in two parallel channels. Each channel
 has its own Storybook deployment so you can browse the exact set of components
 that ships with the npm tag you depend on.
 
-{/* URLs are mirrored from .storybook/channels.ts — keep in sync. */}
-
-- **[Stable Storybook](https://openbridge-storybook.web.app)** {isStable && <em>(You are here)</em>} — built from the
+- **<a href={STORYBOOK_STABLE_URL}>Stable Storybook</a>** {isStable && <em>(You are here)</em>} — built from the
   `stable` branch and published to the `latest` npm tag roughly once every
   quarter. Use this for production work; the API is frozen between releases.
-- **[Develop Storybook](https://openbridge-storybook-next.web.app)** {!isStable && <em>(You are here)</em>} — built
+- **<a href={STORYBOOK_DEVELOP_URL}>Develop Storybook</a>** {!isStable && <em>(You are here)</em>} — built
   from the `develop` branch and published to the `next` npm tag on every merge.
   Includes upcoming features and fixes that have not yet shipped to `stable`,
   and may contain breaking changes.
