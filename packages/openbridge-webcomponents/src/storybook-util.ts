@@ -9,12 +9,6 @@ import './icons/icon-ship.js';
 import {HTMLTemplateResult, TemplateResult, html} from 'lit';
 import {spread} from '@open-wc/lit-helpers';
 
-type StoryFn = () => unknown;
-type StoryContext<TArgs extends object = object> = {
-  args: TArgs;
-  globals?: Record<string, unknown>;
-};
-
 export const iconIds = [
   'placeholder',
   'search',
@@ -56,12 +50,11 @@ export function iconIdToIconHtml(
   }
 }
 
-export const crossDecorator = (
-  story: StoryFn,
-  context: StoryContext
-): HTMLTemplateResult => {
-  const cross =
-    (context.globals as {cross?: boolean} | undefined)?.cross ?? false;
+export function crossDecorator(
+  story: () => unknown,
+  context: {globals?: {cross?: boolean} | Record<string, unknown>}
+): HTMLTemplateResult {
+  const cross = (context.globals as {cross?: boolean})?.cross ?? false;
   return html` <style>
       .wrapper {
         width: 100%;
@@ -99,19 +92,18 @@ export const crossDecorator = (
       }
     </style>
     <div class="wrapper ${cross ? 'cross' : ''}">${story()}</div>`;
-};
+}
 
-export const widthDecorator = <TArgs extends object>(
-  story: StoryFn,
-  context: StoryContext<TArgs>
-): HTMLTemplateResult => {
-  const args = context.args as TArgs & {width?: number; height?: number};
-  const width = args.width ?? 300;
-  const height = args.height ?? width;
+export function widthDecorator(
+  story: () => unknown,
+  context: {args: {width?: number; height?: number}}
+): HTMLTemplateResult {
+  const width = context.args.width ?? 300;
+  const height = context.args.height ?? width;
   return html` <div
     class="wrapper"
     style="width: ${width}px; height: ${height}px"
   >
     ${story()}
   </div>`;
-};
+}
