@@ -582,10 +582,10 @@ const meta = {
     },
     readoutInputStyle: {
       name: 'Readout Input Style',
-      control: {type: 'select'},
-      options: Object.values(ReadoutInputStyle),
-      table: {category: 'Readout'},
-      description: 'Controls input/setpoint visibility and tone.',
+      control: false,
+      table: {category: 'Deprecated', disable: true},
+      description:
+        'Deprecated. Input styling now follows the resolved value/readout state.',
     },
     alignment: {
       name: 'Alignment',
@@ -988,7 +988,6 @@ export const SegmentHugReadout: Story = {
                 style=${hug ? '' : 'width:100%;'}
                 .hasInput=${true}
                 .inputValue=${'123'}
-                .readoutInputStyle=${ReadoutInputStyle.enhanced}
                 .value=${123}
                 .label=${'HDG'}
                 .unit=${'DEG'}
@@ -1003,11 +1002,10 @@ export const SegmentHugReadout: Story = {
   `,
 };
 
-export const ApiMatrixVariantInputStyleInteraction: Story = {
-  name: 'API Matrix / Variant × Input Style × Interaction',
+export const ApiMatrixVariantInteraction: Story = {
+  name: 'API Matrix / Variant × Interaction',
   decorators: [longPageDecorator],
   render: () => {
-    const inputStyles = Object.values(ReadoutInputStyle) as ReadoutInputStyle[];
     const interactions = Object.values(
       ReadoutInputInteraction
     ) as ReadoutInputInteraction[];
@@ -1032,33 +1030,33 @@ export const ApiMatrixVariantInputStyleInteraction: Story = {
     };
 
     const sections: ReadoutShowcaseSection[] = variants.map((variant) => {
-      const cases: ReadoutShowcaseCase[] = inputStyles.flatMap(
-        (readoutInputStyle): ReadoutShowcaseCase[] => {
-          if (readoutInputStyle === ReadoutInputStyle.hidden) {
-            return [
-              {
-                label: `${variant} / input=hidden`,
-                args: {
-                  ...baseArgs,
-                  variant,
-                  hasInput: false,
-                  readoutInputStyle,
-                  inputInteraction: ReadoutInputInteraction.alwaysVisible,
-                },
-              },
-            ];
-          }
+      const cases: ReadoutShowcaseCase[] = interactions.flatMap(
+        (inputInteraction): ReadoutShowcaseCase[] => {
+          const baseCaseArgs: Partial<ReadoutStoryArgs> = {
+            ...baseArgs,
+            variant,
+            hasInput: true,
+            inputInteraction,
+          };
 
-          return interactions.map((inputInteraction) => ({
-            label: `${variant} / input=${readoutInputStyle} / ${inputInteraction}`,
-            args: {
-              ...baseArgs,
-              variant,
-              hasInput: true,
-              readoutInputStyle,
-              inputInteraction,
+          return [
+            {
+              label: `${variant} / ${inputInteraction} / value != setpoint`,
+              args: {
+                ...baseCaseArgs,
+                value: '123',
+                setpointValue: '100',
+              },
             },
-          }));
+            {
+              label: `${variant} / ${inputInteraction} / value == setpoint`,
+              args: {
+                ...baseCaseArgs,
+                value: '100',
+                setpointValue: '100',
+              },
+            },
+          ];
         }
       );
 
@@ -1077,11 +1075,10 @@ export const ApiMatrixVariantInputStyleInteraction: Story = {
   },
 };
 
-export const ApiMatrixHorizontalVariantInputStyleInteraction: Story = {
-  name: 'API Matrix (Horizontal) / Variant × Input Style × Interaction',
+export const ApiMatrixHorizontalVariantInteraction: Story = {
+  name: 'API Matrix (Horizontal) / Variant × Interaction',
   decorators: [longPageDecorator],
   render: () => {
-    const inputStyles = Object.values(ReadoutInputStyle) as ReadoutInputStyle[];
     const interactions = Object.values(
       ReadoutInputInteraction
     ) as ReadoutInputInteraction[];
@@ -1106,33 +1103,33 @@ export const ApiMatrixHorizontalVariantInputStyleInteraction: Story = {
     };
 
     const sections: ReadoutShowcaseSection[] = variants.map((variant) => {
-      const cases: ReadoutShowcaseCase[] = inputStyles.flatMap(
-        (readoutInputStyle): ReadoutShowcaseCase[] => {
-          if (readoutInputStyle === ReadoutInputStyle.hidden) {
-            return [
-              {
-                label: `${variant} / input=hidden`,
-                args: {
-                  ...baseArgs,
-                  variant,
-                  hasInput: false,
-                  readoutInputStyle,
-                  inputInteraction: ReadoutInputInteraction.alwaysVisible,
-                },
-              },
-            ];
-          }
+      const cases: ReadoutShowcaseCase[] = interactions.flatMap(
+        (inputInteraction): ReadoutShowcaseCase[] => {
+          const baseCaseArgs: Partial<ReadoutStoryArgs> = {
+            ...baseArgs,
+            variant,
+            hasInput: true,
+            inputInteraction,
+          };
 
-          return interactions.map((inputInteraction) => ({
-            label: `${variant} / input=${readoutInputStyle} / ${inputInteraction}`,
-            args: {
-              ...baseArgs,
-              variant,
-              hasInput: true,
-              readoutInputStyle,
-              inputInteraction,
+          return [
+            {
+              label: `${variant} / ${inputInteraction} / value != setpoint`,
+              args: {
+                ...baseCaseArgs,
+                value: '123',
+                setpointValue: '100',
+              },
             },
-          }));
+            {
+              label: `${variant} / ${inputInteraction} / value == setpoint`,
+              args: {
+                ...baseCaseArgs,
+                value: '100',
+                setpointValue: '100',
+              },
+            },
+          ];
         }
       );
 
@@ -1535,17 +1532,6 @@ export const EnhancedCases: Story = {
       {
         title: 'Enhanced / Vertical — Input Formats',
         cases: [
-          {
-            label: 'Readout Input Style: enhanced (planned)',
-            args: {
-              variant: ReadoutVariant.enhanced,
-              direction: ReadoutDirection.vertical,
-              hasInput: true,
-              inputFormat: ReadoutInputFormat.regular,
-              readoutInputStyle: ReadoutInputStyle.enhanced,
-              hug: false,
-            },
-          },
           {
             label: 'Input Baseline',
             args: {

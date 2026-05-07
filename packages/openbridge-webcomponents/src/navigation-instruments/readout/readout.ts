@@ -142,6 +142,10 @@ export class ObcReadout extends LitElement {
   @property({type: Array, attribute: false})
   priorityElements: ReadoutPriorityElement[] = [];
 
+  /**
+   * @deprecated `readoutInputStyle` no longer affects visibility or tone.
+   * Input styling now follows the resolved value/readout visual state.
+   */
   @property({type: String}) readoutInputStyle: ReadoutInputStyle =
     ReadoutInputStyle.regular;
 
@@ -407,10 +411,6 @@ export class ObcReadout extends LitElement {
       return false;
     }
 
-    if (this.readoutInputStyle === ReadoutInputStyle.hidden) {
-      return false;
-    }
-
     return true;
   }
 
@@ -426,12 +426,8 @@ export class ObcReadout extends LitElement {
     return this.inputInteractionEnabled && this.inputRendered;
   }
 
-  private resolvedInputPriorityFromStyle(): Priority {
-    if (this.readoutInputStyle === ReadoutInputStyle.enhanced) {
-      return Priority.enhanced;
-    }
-
-    return Priority.regular;
+  private get resolvedInputPriority(): Priority {
+    return this.resolvedValuePriority ?? Priority.regular;
   }
 
   private get baseSize(): ReadoutInputSize {
@@ -732,7 +728,7 @@ export class ObcReadout extends LitElement {
             .size=${this.resolvedInputSegmentSize}
             .format=${this.resolveInputFormat()}
             .mode=${inputMode}
-            .priority=${this.resolvedInputPriorityFromStyle()}
+            .priority=${this.resolvedInputPriority}
             .hugContent=${this.shouldHugNestedSegments}
             .hasFixedLength=${this.inputHasFixedLength}
             .value=${this.effectiveSetpointValue}
