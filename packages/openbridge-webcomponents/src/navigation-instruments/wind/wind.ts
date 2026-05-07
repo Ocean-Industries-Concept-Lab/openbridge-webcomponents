@@ -57,6 +57,13 @@ export class ObcWind extends LitElement {
     this.stopResizeObserver();
   }
 
+  override firstUpdated(): void {
+    // Defer initial sizing to firstUpdated when element has been painted
+    if (this.variant === WindVariant.auto) {
+      this.setAutoVariant(this.clientWidth, this.clientHeight);
+    }
+  }
+
   protected override updated(changed: Map<string, unknown>): void {
     if (changed.has('variant')) {
       this.syncResizeObserver();
@@ -89,7 +96,6 @@ export class ObcWind extends LitElement {
       this._resizeObserver.observe(this);
       this._isObservingResize = true;
     }
-    this.setAutoVariant(this.clientWidth, this.clientHeight);
   }
 
   private stopResizeObserver(): void {
