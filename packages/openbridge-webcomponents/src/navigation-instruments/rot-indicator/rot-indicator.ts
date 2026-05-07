@@ -172,7 +172,7 @@ export class ObcRotIndicator extends LitElement {
   }
 
   private getLinearDotCenterX(): number {
-    const clamped = this.clamp(this.rotationsPerMinute, -3, 3);
+    const clamped = this.clamp(this._effectiveRpm, -3, 3);
     const t = clamped / 3;
     const centerX = 24;
     const maxOffset = 15;
