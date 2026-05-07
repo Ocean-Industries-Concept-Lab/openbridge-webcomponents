@@ -1,7 +1,19 @@
 import {LitElement, html, nothing, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
-import componentStyle from './propulsion-tunnel-thruster.css?inline';
+
+const componentStyle = `:host {
+  display: inline-block;
+  width: var(--instrument-size-48);
+  height: var(--instrument-size-48);
+}
+
+svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+`;
 
 export enum TunnelThrusterState {
   InCommand = 'in-command',

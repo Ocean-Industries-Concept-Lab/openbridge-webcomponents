@@ -1,8 +1,31 @@
 import {LitElement, html, nothing, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
-import componentStyle from './propulsion-main-engine-indicator.css?inline';
 import {InstrumentState, Priority} from '../types.js';
+
+const componentStyle = `:host {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+
+  & > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+`;
 
 const VIEW_SIZE = 48;
 const FRAME_X = 8;
