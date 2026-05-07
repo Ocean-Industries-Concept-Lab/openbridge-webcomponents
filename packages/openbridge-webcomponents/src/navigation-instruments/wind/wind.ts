@@ -43,6 +43,7 @@ export class ObcWind extends LitElement {
   @state() private _autoVariant: ResolvedWindVariant = WindVariant.medium;
 
   private _resizeObserver?: ResizeObserver;
+  private _isObservingResize = false;
 
   override connectedCallback(): void {
     super.connectedCallback();
@@ -82,14 +83,18 @@ export class ObcWind extends LitElement {
       });
     }
 
-    this._resizeObserver.disconnect();
-    this._resizeObserver.observe(this);
+    if (!this._isObservingResize) {
+      this._resizeObserver.observe(this);
+      this._isObservingResize = true;
+    }
     this.setAutoVariant(this.clientWidth, this.clientHeight);
   }
 
   private stopResizeObserver(): void {
-    this._resizeObserver?.disconnect();
-    this._resizeObserver = undefined;
+    if (this._resizeObserver && this._isObservingResize) {
+      this._resizeObserver.disconnect();
+      this._isObservingResize = false;
+    }
   }
 
   private setAutoVariant(width: number, height: number): void {
