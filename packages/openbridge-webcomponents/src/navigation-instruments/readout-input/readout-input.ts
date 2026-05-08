@@ -45,6 +45,12 @@ export enum ReadoutInputMode {
   inputTemporary = 'input-temporary',
 }
 
+export enum ReadoutInputValueTypography {
+  regular = 'regular',
+  medium = 'medium',
+  large = 'large',
+}
+
 type ReadoutValueRenderModel = {
   hintedText: string;
   hintedVisible: boolean;
@@ -104,6 +110,13 @@ export class ObcReadoutInput extends LitElement {
   direction?: ReadoutInputDirection;
 
   @property({type: String}) size: ReadoutInputSize = ReadoutInputSize.small;
+
+  @property({
+    type: String,
+    attribute: 'value-typography',
+    reflect: true,
+  })
+  valueTypography?: ReadoutInputValueTypography;
 
   @property({type: String}) format?: ReadoutInputFormat;
 

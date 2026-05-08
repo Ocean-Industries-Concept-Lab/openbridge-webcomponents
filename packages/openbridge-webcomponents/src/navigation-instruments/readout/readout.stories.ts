@@ -304,6 +304,7 @@ function renderReadoutComponent(
   args: Partial<ReadoutStoryArgs>,
   options?: {
     onSourceFlyoutClick?: (event: CustomEvent) => void;
+    fillWidth?: boolean;
   }
 ) {
   const resolvedArgs = {
@@ -324,6 +325,7 @@ function renderReadoutComponent(
 
   return html`
     <obc-readout
+      style=${options?.fillWidth ? 'width: 100%;' : ''}
       @source-flyout-click=${(event: CustomEvent) => {
         options?.onSourceFlyoutClick?.(event);
       }}
@@ -567,7 +569,9 @@ const meta = {
 
     return html`
       <div style="display:flex; flex-direction:column; gap: 12px; width: 100%;">
-        ${renderReadoutComponent(args)}
+        <div style="width: 120px;">
+          ${renderReadoutComponent(args, {fillWidth: true})}
+        </div>
       </div>
     `;
   },

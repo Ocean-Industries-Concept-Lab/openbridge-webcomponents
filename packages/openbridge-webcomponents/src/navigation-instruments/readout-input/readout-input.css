@@ -748,7 +748,8 @@ slot[name="value"] {
   }
 }
 
-:host([data-obc-value-typography="medium"])
+:host([data-obc-value-typography="medium"]),
+:host([value-typography="medium"])
   .readout-input-wrapper:not(:is(.type-description, .type-range))
   .input-value.regular {
   font-size: var(--global-typography-instrument-value-medium-font-size);
