@@ -11,6 +11,7 @@ import {
   ContextMenuOption,
   ColumnGroup,
 } from '../context-menu-input/context-menu-input.js';
+import type {ObcContextMenuInput} from '../context-menu-input/context-menu-input.js';
 
 export type ObcSplitButtonChangeEvent = CustomEvent<{
   selectedValues: string[];
@@ -121,8 +122,8 @@ export type ObcMenuButtonItemClickEvent = CustomEvent<{
  * In this example, the button displays an icon and label, and opens a menu with two options (one with an icon).
  *
  * @slot icon - Icon displayed at the start of the button when `hasIcon` is true.
- * @fires change {CustomEvent<{selectedValues: string[], selectedOptions: Array<ContextMenuOption>}>} Fired when the menu selection changes.
- * @fires item-click {CustomEvent<{value: string, option: ContextMenuOption}>} Fired when a menu item is clicked.
+ * @fires change {ObcSplitButtonChangeEvent} Fired when the menu selection changes.
+ * @fires item-click {ObcMenuButtonItemClickEvent} Fired when a menu item is clicked.
  * @fires open {CustomEvent<void>} Fired when the menu is opened.
  * @fires close {CustomEvent<void>} Fired when the menu is closed.
  */
@@ -227,7 +228,13 @@ export class ObcMenuButton extends LitElement {
 
   @state() private isOpen = false;
 
-  @query('.positioned-menu') private menu?: HTMLElement;
+  private restoreFocusOnClose = false;
+
+  private menuFocusStrategy: 'first' | 'selected' | 'last' = 'selected';
+
+  @query('.positioned-menu') private menu?: HTMLElement & ObcContextMenuInput;
+
+  @query('button.wrapper') private triggerButton?: HTMLButtonElement;
 
   private get effectiveMultiSelect(): boolean {
     if (this.multiSelect !== undefined) return this.multiSelect;
@@ -256,6 +263,7 @@ export class ObcMenuButton extends LitElement {
   private handlePopoverToggle = (e: ToggleEvent) => {
     this.isOpen = e.newState === 'open';
     if (e.newState === 'open') {
+      void this.focusMenuAfterOpen();
       /**
        * Fired when the menu is opened.
        * @event open
@@ -264,6 +272,10 @@ export class ObcMenuButton extends LitElement {
       this.dispatchEvent(new CustomEvent('open'));
     }
     if (e.newState === 'closed') {
+      if (this.restoreFocusOnClose) {
+        this.restoreFocusOnClose = false;
+        this.triggerButton?.focus();
+      }
       /**
        * Fired when the menu is closed.
        * @event close
@@ -272,6 +284,50 @@ export class ObcMenuButton extends LitElement {
       this.dispatchEvent(new CustomEvent('close'));
     }
   };
+
+  private async focusMenuAfterOpen() {
+    await this.updateComplete;
+    if (this.menuFocusStrategy === 'last') {
+      this.menu?.focusLastItem();
+    } else if (this.menuFocusStrategy === 'first') {
+      this.menu?.focusFirstItem();
+    } else {
+      this.menu?.focusSelectedItem();
+    }
+    this.menuFocusStrategy = 'selected';
+  }
+
+  private openMenu(focusStrategy: 'first' | 'selected' | 'last' = 'selected') {
+    if (this.disabled) return;
+
+    this.menuFocusStrategy = focusStrategy;
+    this.menu?.showPopover();
+  }
+
+  private handleTriggerKeydown(event: KeyboardEvent) {
+    if (this.disabled) return;
+
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        this.openMenu('first');
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        this.openMenu('last');
+        break;
+      case 'Home':
+        event.preventDefault();
+        this.openMenu('first');
+        break;
+      case 'End':
+        event.preventDefault();
+        this.openMenu('last');
+        break;
+      default:
+        break;
+    }
+  }
 
   private handleMenuChange(
     e: CustomEvent<{
@@ -318,6 +374,7 @@ export class ObcMenuButton extends LitElement {
 
   private handleMenuClose() {
     if (this.menu === undefined) return;
+    this.restoreFocusOnClose = true;
     this.menu.hidePopover();
   }
 
@@ -350,6 +407,7 @@ export class ObcMenuButton extends LitElement {
         popovertarget="menu-popover"
         aria-expanded=${this.isOpen}
         aria-haspopup="menu"
+        @keydown=${this.handleTriggerKeydown}
       >
         <div class="visible-wrapper">
           <div class="content-container">

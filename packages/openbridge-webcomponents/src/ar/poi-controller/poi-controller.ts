@@ -4,75 +4,8 @@ import {customElement} from '../../decorator.js';
 import componentStyle from './poi-controller.css?inline';
 import '../poi-layer-stack/poi-layer-stack.js';
 import {ObcPoiLayer} from '../poi-layer/poi-layer.js';
-import {ObcPoiData} from '../poi-data/poi-data.js';
-import {
-  ObcPoiButtonType,
-  resolvePoiButtonTypeFromBoxSize,
-} from '../building-blocks/poi-button/poi-button.js';
-
-/**
- * `<obc-poi-controller>` - Detection-to-overlay controller that maps points to POI markers (pins/targets) over media.
- *
- * Coordinates media metrics, detection input, and layer output to keep marker placement in sync with the current frame.
- * Use this when you need runtime mapping from detection data to rendered POI targets.
- *
- * ### Overview
- * - Keywords: POI, point-of-interest, marker, pin, target, detection, overlay, tracker.
- * - Contrast:
- *   - `obc-poi-controller` handles data ingestion, projection, filtering, and target lifecycle.
- *   - `obc-poi-layer` handles overlap/group behavior for targets already placed in a layer.
- *   - `obc-poi-data` / `obc-poi` are target-level components and do not manage detection streams.
- *
- * ### Features/Variants
- * - Detection source selection:
- *   - `detections` (array) is used directly when provided.
- *   - `frames` + `frameIndex` supports frame/timestamp-driven playback when `detections` is not provided.
- * - Projection config:
- *   - `fit` (`contain` default, `cover` optional) controls scale mode from media space to rendered space.
- * - Target shaping:
- *   - Uses mapped `box_width`/`box_height` to resolve POI button type.
- * - Filtering:
- *   - `confidenceMin` and `classFilter` remove detections before render.
- * - Stable identity:
- *   - Key resolution order is `det.id`, then `keyFn(det, index)`, then index fallback.
- *
- * ### Usage Guidelines
- * - Required inputs:
- *   - Provide a media element in slot `media`.
- *   - Provide an `obc-poi-layer-stack` in slot `stack`.
- * - Data flow:
- *   - Use `detections` for direct, current-frame updates.
- *   - Use `frames` for timeline/video synchronization.
- *   - Use `frameIndex` to force a specific frame; default `null` selects by nearest video timestamp (or first frame for non-video media).
- * - Identity:
- *   - Provide stable `id` in detections or set `keyFn` to avoid marker churn when ordering changes.
- *
- * ### Slots/Content
- * - `media` (required): Video or image source used for measurement and timing.
- * - `stack` (required): `obc-poi-layer-stack` container where controller-managed targets are appended.
- *
- * ### Events
- * - None. This component does not emit custom events.
- *
- * ### Best Practices
- * - Keep detection arrays compact to reduce DOM churn.
- * - Prefer one selected layer in the stack and use `data-controller-layer="background"` when routing output to a specific layer.
- *
- * ### Example
- * ```html
- * <obc-poi-controller fit="contain">
- *   <video slot="media" src="media.mp4"></video>
- *   <obc-poi-layer-stack slot="stack" selection-mode="multi">
- *     <obc-poi-layer label="Selected" is-selected></obc-poi-layer>
- *     <obc-poi-layer label="Background" data-controller-layer="background">
- *     </obc-poi-layer>
- *   </obc-poi-layer-stack>
- * </obc-poi-controller>
- * ```
- *
- * @slot media - Required media element (video or image).
- * @slot stack - Required layer stack.
- */
+import {ObcPoiData} from '../poi/poi-data.js';
+import {resolvePoiButtonTypeFromBoxSize} from '../poi-button/poi-button.js';
 
 export type PoiDetection = {
   x: number;
@@ -83,6 +16,8 @@ export type PoiDetection = {
   confidence?: number;
   class?: string;
   class_id?: number;
+  heading?: number;
+  direction?: number;
 };
 
 export type PoiKeyFn = (det: PoiDetection, index: number) => string;
@@ -98,6 +33,108 @@ export enum PoiFitMode {
   Cover = 'cover',
 }
 
+/**
+ * `<obc-poi-controller>` — Maps detection data onto POI markers over a video or image.
+ *
+ * Takes detection coordinates in media pixel space (e.g. x,y in a 1920x1080 frame),
+ * projects them to screen space using the media's rendered size and fit mode, and
+ * creates/updates `obc-poi-data` targets inside a layer stack.
+ *
+ * ## Quick Start
+ *
+ * The media slot accepts a `<video>` (live stream, HLS, file) or `<img>` element.
+ *
+ * ```html
+ * <obc-poi-controller fit="cover">
+ *   <video slot="media" src="stream.mp4" autoplay muted></video>
+ *   <obc-poi-layer-stack slot="stack" selection-mode="multi">
+ *     <obc-poi-layer is-selected></obc-poi-layer>
+ *     <obc-poi-layer data-controller-layer="background"></obc-poi-layer>
+ *   </obc-poi-layer-stack>
+ * </obc-poi-controller>
+ * ```
+ *
+ * Then set detections from your data source (WebSocket, API, etc.):
+ *
+ * ```js
+ * const controller = document.querySelector('obc-poi-controller');
+ * controller.detections = [
+ *   { id: 'track-1', x: 400, y: 800, box_width: 50, box_height: 40, heading: -15 },
+ *   { id: 'track-2', x: 900, y: 750, box_width: 35, box_height: 30, heading: 45 },
+ * ];
+ * ```
+ *
+ * ## Framework Usage
+ *
+ * **Lit:**
+ * ```html
+ * <obc-poi-controller .detections=${detections} fit="cover">
+ * ```
+ *
+ * **Vue:**
+ * ```html
+ * <obc-poi-controller :detections="detections" fit="cover">
+ * ```
+ *
+ * **Svelte:**
+ * ```html
+ * <obc-poi-controller detections={detections} fit="cover">
+ * ```
+ *
+ * **React 18** (needs ref for array props):
+ * ```tsx
+ * const ref = useRef(null);
+ * useEffect(() => { ref.current.detections = detections; }, [detections]);
+ * <obc-poi-controller ref={ref} fit="cover">
+ * ```
+ *
+ * **React 19+** (native custom element support):
+ * ```tsx
+ * <obc-poi-controller detections={detections} fit="cover">
+ * ```
+ *
+ * ## Coordinate Model
+ *
+ * Detection `x` and `y` are in **media pixel space** (e.g. 0-1920 for a 1920x1080 video).
+ * The controller projects them to screen space using the `fit` mode (`contain` or `cover`)
+ * and the media element's rendered dimensions.
+ *
+ * The Y coordinate maps to the line length from the layer's top edge down to the
+ * detection point. The button sits at the top of the layer; the line extends downward.
+ *
+ * ## Detection Data
+ *
+ * Each detection can include:
+ * - `x`, `y` (required) — position in media pixel space
+ * - `id` — stable identity key (prevents marker churn when array order changes)
+ * - `box_width`, `box_height` — bounding box size; determines button type (regular vs enhanced)
+ * - `heading` or `direction` — rotation angle for the icon arrow (degrees)
+ * - `confidence` — filtered by `confidenceMin`
+ * - `class` — filtered by `classFilter`
+ *
+ * ## Layer Setup
+ *
+ * The stack needs at least two layers:
+ * 1. A **selected layer** (`is-selected`) — targets jump here when clicked
+ * 2. A **background layer** (`data-controller-layer="background"`) — where the controller places targets
+ *
+ * If no `data-controller-layer="background"` is set, the controller uses the first non-selected layer.
+ *
+ * ## Selection
+ *
+ * Clicking a target moves it to the selected layer with a FLIP animation.
+ * The controller does not interfere with selected targets — it only manages
+ * targets in the background layer. The layer-stack owns selection state.
+ *
+ * ## CSS Custom Properties
+ *
+ * - `--obc-poi-controller-stack-top` (default `15%`) — vertical position of the stack
+ * - `--obc-poi-controller-stack-height` (default `50%`) — height of the stack
+ * - `--obc-poi-controller-stack-gap` (default `8px`) — gap between layers
+ *
+ * @slot media - Video or image element. Sets the projection source dimensions.
+ * @slot stack - `obc-poi-layer-stack` containing the layers for target placement.
+ */
 @customElement('obc-poi-controller')
 export class ObcPoiController extends LitElement {
   @property({type: String}) fit: PoiFitMode = PoiFitMode.Contain;
@@ -120,10 +157,17 @@ export class ObcPoiController extends LitElement {
   private stackElements!: HTMLElement[];
 
   private resizeObserver?: ResizeObserver;
+  private layerResizeObserver?: ResizeObserver;
+  private syncRaf = 0;
   private handleMediaSlotChange = () => this.setupMediaObservers();
-  private handleStackSlotChange = () => this.requestUpdate();
+  private handleStackSlotChange = () => {
+    this.currentLayer = null;
+    this.setupLayerObserver();
+    this.scheduleSync();
+  };
   private controllerTargets = new Map<string, ObcPoiData>();
   private currentMedia: HTMLVideoElement | HTMLImageElement | null = null;
+  private currentLayer: ObcPoiLayer | null = null;
   private mediaHandlers = {
     loadedmetadata: () => {
       if (this.currentMedia) this.updateMediaMetrics(this.currentMedia);
@@ -143,20 +187,85 @@ export class ObcPoiController extends LitElement {
     stackSlot?.addEventListener('slotchange', this.handleStackSlotChange);
   }
 
-  override updated(_changed: PropertyValues) {
-    this.syncTargetsToCustomStack();
+  override updated(changed: PropertyValues) {
+    if (
+      changed.has('detections') ||
+      changed.has('frames') ||
+      changed.has('frameIndex') ||
+      changed.has('fit') ||
+      changed.has('confidenceMin') ||
+      changed.has('classFilter') ||
+      changed.has('mediaWidth') ||
+      changed.has('mediaHeight') ||
+      changed.has('renderWidth') ||
+      changed.has('renderHeight')
+    ) {
+      this.scheduleSync();
+    }
+  }
+
+  private scheduleSync() {
+    if (this.syncRaf) return;
+    this.syncRaf = requestAnimationFrame(() => {
+      this.syncRaf = 0;
+      this.syncTargetsToCustomStack();
+    });
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
+    if (this.syncRaf) {
+      cancelAnimationFrame(this.syncRaf);
+      this.syncRaf = 0;
+    }
     this.resizeObserver?.disconnect();
     this.resizeObserver = undefined;
+    this.layerResizeObserver?.disconnect();
+    this.layerResizeObserver = undefined;
+    this.currentLayer = null;
     this.detachMediaListeners();
     this.controllerTargets.clear();
     const slot = this.shadowRoot?.querySelector('slot[name="media"]');
     slot?.removeEventListener('slotchange', this.handleMediaSlotChange);
     const stackSlot = this.shadowRoot?.querySelector('slot[name="stack"]');
     stackSlot?.removeEventListener('slotchange', this.handleStackSlotChange);
+  }
+
+  private setupLayerObserver() {
+    const layer = this.resolveTargetLayer();
+    if (layer === this.currentLayer) return;
+
+    this.layerResizeObserver?.disconnect();
+    this.layerResizeObserver = undefined;
+    this.currentLayer = layer;
+
+    if (!layer) return;
+
+    this.layerResizeObserver = new ResizeObserver(() => {
+      this.scheduleSync();
+    });
+    this.layerResizeObserver.observe(layer);
+  }
+
+  private resolveTargetLayer(): ObcPoiLayer | null {
+    const stack = this.getStackElement();
+    if (!stack) return null;
+
+    const explicitLayer = stack.querySelector<ObcPoiLayer>(
+      'obc-poi-layer[data-controller-layer="background"]'
+    );
+    if (explicitLayer) return explicitLayer;
+
+    const layers = Array.from(
+      stack.querySelectorAll<ObcPoiLayer>('obc-poi-layer')
+    );
+    const isSelectedLayer = (candidate: ObcPoiLayer): boolean =>
+      candidate.isSelected === true;
+    return (
+      layers.find((candidate) => !isSelectedLayer(candidate)) ??
+      layers[layers.length - 1] ??
+      null
+    );
   }
 
   private setupMediaObservers() {
@@ -344,32 +453,18 @@ export class ObcPoiController extends LitElement {
       this.controllerTargets.clear();
     };
 
-    const stack = this.getStackElement();
-    if (!stack) {
-      clearTargets();
-      return;
+    if (!this.currentLayer || !this.currentLayer.isConnected) {
+      this.setupLayerObserver();
     }
-
-    const explicitLayer = stack.querySelector<ObcPoiLayer>(
-      'obc-poi-layer[data-controller-layer="background"]'
-    );
-    const layers = Array.from(
-      stack.querySelectorAll<ObcPoiLayer>('obc-poi-layer')
-    );
-    const isSelectedLayer = (candidate: ObcPoiLayer): boolean =>
-      candidate.isSelected === true || candidate.hasAttribute('is-selected');
-    const firstNonSelectedLayer = layers.find(
-      (candidate) => !isSelectedLayer(candidate)
-    );
-    const layer =
-      explicitLayer ??
-      firstNonSelectedLayer ??
-      layers[layers.length - 1] ??
-      null;
+    const layer = this.currentLayer;
     if (!layer) {
       clearTargets();
       return;
     }
+
+    const controllerRect = this.getBoundingClientRect();
+    const layerRect = layer.getBoundingClientRect();
+    const layerBottomInController = layerRect.bottom - controllerRect.top;
 
     const active = this.getActiveDetections();
     const activeKeys = new Set<string>();
@@ -386,18 +481,19 @@ export class ObcPoiController extends LitElement {
         target = document.createElement('obc-poi-data') as ObcPoiData;
         target.dataset.controller = '1';
         target.dataset.detectionIndex = String(index);
-        target.buttonType = ObcPoiButtonType.Button;
         target.fixedTarget = false;
         this.controllerTargets.set(key, target);
       }
 
-      if (!target.isConnected || target.parentElement !== layer) {
+      // Append to background layer unless layer-stack moved it elsewhere
+      if (!target.isConnected || target.parentElement === null) {
         layer.appendChild(target);
       }
 
       target.dataset.detectionIndex = String(index);
       target.x = mapped.x;
-      target.y = mapped.y;
+      target.y = Math.max(0, mapped.y - layerBottomInController);
+
       const boxWidth =
         typeof det.box_width === 'number' && Number.isFinite(det.box_width)
           ? det.box_width * mapped.scale
@@ -406,7 +502,14 @@ export class ObcPoiController extends LitElement {
         typeof det.box_height === 'number' && Number.isFinite(det.box_height)
           ? det.box_height * mapped.scale
           : null;
+      target.boxWidth = boxWidth;
+      target.boxHeight = boxHeight;
       target.buttonType = resolvePoiButtonTypeFromBoxSize(boxWidth, boxHeight);
+
+      const heading = det.heading ?? det.direction;
+      if (typeof heading === 'number' && Number.isFinite(heading)) {
+        target.relativeDirection = heading;
+      }
     });
 
     Array.from(this.controllerTargets.entries()).forEach(([key, target]) => {

@@ -41,6 +41,8 @@ export function adviceMask(
   const spanDeg = (((maxAngle - minAngle) % 360) + 360) % 360;
   const spanRad = (spanDeg * Math.PI) / 180;
   if (spanRad <= deltaAngle * 2) return nothing;
+  const trimmedSpanRad = spanRad - deltaAngle * 2;
+  const largeArcFlag = trimmedSpanRad > Math.PI ? 1 : 0;
 
   const radl = (minAngle * Math.PI) / 180 + deltaAngle;
   const radh = (maxAngle * Math.PI) / 180 - deltaAngle;
@@ -58,9 +60,9 @@ export function adviceMask(
   const y2h = -Math.cos(radh) * r2;
 
   const path = `M ${x1l} ${y1l} 
-                    A ${r1} ${r1} 0 0 1 ${x1h} ${y1h}
+                    A ${r1} ${r1} 0 ${largeArcFlag} 1 ${x1h} ${y1h}
                     A ${R} ${R} 0 0 0 ${x2h} ${y2h}
-                    A ${r2} ${r2} 0 0 0 ${x2l} ${y2l}
+                    A ${r2} ${r2} 0 ${largeArcFlag} 0 ${x2l} ${y2l}
                     A ${R} ${R} 0 0 0 ${x1l} ${y1l}
                     Z`;
   return svg`<path d=${path} fill=${fill} stroke=${stroke} stroke-width="1" vector-effect="non-scaling-stroke" />`;

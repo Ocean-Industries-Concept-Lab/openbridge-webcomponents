@@ -27,6 +27,7 @@
       var(--ui-components-button-border-radius-top-right)
       var(--ui-components-button-border-radius-bottom-right)
       var(--ui-components-button-border-radius-bottom-left);
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -134,6 +135,10 @@ option:checked {
 
 option::checkmark {
   display: none;
+}
+
+.wrapper.flat {
+  @mixin style style=flat visibleWrapperClass=.visible-wrapper;
 }
 
 .wrapper.integration {

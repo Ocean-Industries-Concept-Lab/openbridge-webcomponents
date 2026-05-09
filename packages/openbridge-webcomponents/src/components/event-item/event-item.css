@@ -117,7 +117,7 @@
 }
 
 .title {
-  @mixin font-label-active;
+  @mixin font-label;
   color: var(--on-flat-active-color);
   margin: 0;
   overflow: hidden;

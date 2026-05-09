@@ -3,10 +3,13 @@
 }
 
 :host {
+  --_thumb-size: 48px;
+  --_thumb-half: 24px;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 48px;
+  height: var(--_thumb-size);
 
   color: var(--element-neutral-color, #1a1a1a);
 }
@@ -18,7 +21,7 @@
 
 .wrapper {
   flex: 1;
-  height: 48px;
+  height: var(--_thumb-size);
   position: relative;
 
   &.disabled {
@@ -59,7 +62,7 @@
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 48px;
+  height: var(--_thumb-size);
   margin: 0;
   padding: 0;
   background: none;
@@ -81,12 +84,31 @@
   }
 }
 
-.container-hover {
+.slider::-moz-range-track {
   position: absolute;
-  left: anchor(right);
+  margin: auto 0;
   top: 0;
   bottom: 0;
-  position-anchor: --thumb;
+  left: 0;
+  right: 0;
+  height: 40px;
+  border-radius: 6px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+
+  .no-input & {
+    cursor: default;
+  }
+}
+
+.container-hover {
+  position: absolute;
+  left: calc(
+    var(--_ratio, 0) * (100% - var(--_thumb-size)) + var(--_thumb-size)
+  );
+  top: 0;
+  bottom: 0;
   right: 0;
   cursor: pointer;
 
@@ -154,8 +176,9 @@
   left: 0;
   top: 0;
   bottom: 0;
-  position-anchor: --thumb;
-  right: anchor(left);
+  right: calc(
+    (1 - var(--_ratio, 0)) * (100% - var(--_thumb-size)) + var(--_thumb-size)
+  );
   cursor: pointer;
 
   .no-input & {
@@ -170,8 +193,9 @@
   bottom: 0;
   height: 4px;
   border-radius: 6px;
-  right: anchor(center);
-  position-anchor: --thumb;
+  right: calc(
+    100% - var(--_ratio, 0) * (100% - var(--_thumb-size)) - var(--_thumb-half)
+  );
   margin-top: auto;
   margin-bottom: auto;
   background: var(--selected-enabled-background-color);
@@ -183,7 +207,7 @@
 
 .enhanced .interactive-track {
   height: 32px;
-  right: calc(anchor(center) - 6px);
+  right: calc(100% - var(--_ratio, 0) * (100% - var(--_thumb-size)) - 30px);
 }
 
 .interactive-track-hover:hover ~ .interactive-track,
@@ -204,15 +228,28 @@ input::-webkit-slider-thumb {
   appearance: none;
   margin: 0;
   padding: 0;
-  width: 48px;
-  height: 48px;
+  width: var(--_thumb-size);
+  height: var(--_thumb-size);
   background: transparent;
   cursor: grab;
+}
 
-  anchor-name: --thumb;
+input::-moz-range-thumb {
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  width: var(--_thumb-size);
+  height: var(--_thumb-size);
+  background: transparent;
+  border: none;
+  cursor: grab;
 }
 
 .no-input input::-webkit-slider-thumb {
+  cursor: default;
+}
+
+.no-input input::-moz-range-thumb {
   cursor: default;
 }
 
@@ -220,17 +257,24 @@ input:active::-webkit-slider-thumb {
   cursor: grabbing;
 }
 
+input:active::-moz-range-thumb {
+  cursor: grabbing;
+}
+
 .no-input input:active::-webkit-slider-thumb {
+  cursor: default;
+}
+
+.no-input input:active::-moz-range-thumb {
   cursor: default;
 }
 
 .thumb {
   position: absolute;
-  top: anchor(top);
-  left: anchor(left);
-  right: anchor(right);
-  bottom: anchor(bottom);
-  position-anchor: --thumb;
+  top: 0;
+  left: calc(var(--_ratio, 0) * (100% - var(--_thumb-size)));
+  right: calc((1 - var(--_ratio, 0)) * (100% - var(--_thumb-size)));
+  bottom: 0;
   border-radius: 6px;
   border-width: 2px;
   height: 28px;

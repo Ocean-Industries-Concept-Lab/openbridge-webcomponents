@@ -3,7 +3,8 @@
 }
 
 .wrapper {
-  overflow: auto;
+  overflow-x: var(--obc-scrollbar-overflow-x, auto);
+  overflow-y: auto;
   height: 100%;
   --offset: calc(
     (
@@ -17,7 +18,50 @@
 ::-webkit-scrollbar {
   width: var(--obc-scrollbar-touch-target-size);
   height: var(--obc-scrollbar-touch-target-size);
-  /*background-color: var(--container-background-color);*/
+}
+
+/* Transparent-track mode: native scrollbar hidden, custom overlay thumb shown */
+.transparent-track {
+  scrollbar-width: none;
+}
+
+.transparent-track::-webkit-scrollbar {
+  display: none;
+}
+
+:host {
+  position: relative;
+}
+
+.overlay-track {
+  --_pad: var(--menu-navigation-components-scroll-bar-padding, 4px);
+  --_radius: var(--menu-navigation-components-scroll-bar-border-radius, 1000px);
+
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: calc(var(--_pad) * 2 + 4px);
+  pointer-events: none;
+  padding: var(--_pad);
+  box-sizing: border-box;
+}
+
+.overlay-track::before {
+  content: "";
+  position: absolute;
+  inset: var(--_pad);
+  background: var(--border-outline-color, #ddd);
+  border-radius: var(--_radius);
+}
+
+.overlay-thumb {
+  position: absolute;
+  left: var(--_pad);
+  right: var(--_pad);
+  background: var(--element-symbol-color, #8e8e8e);
+  border-radius: var(--_radius);
+  min-height: 24px;
 }
 
 ::-webkit-scrollbar-track-piece {

@@ -3,18 +3,29 @@
 }
 
 .wrapper {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   min-height: var(--app-components-topbar-touch-target-size);
   padding: 0 var(--app-components-topbar-margin-global);
   background: var(--integration-container-background-color);
   box-shadow: var(--shadow-flat);
 
-  .left-side,
-  .center,
+  .left-side {
+    display: flex;
+    gap: var(--app-components-app-menu-app-button-spacing);
+    justify-self: start;
+  }
+
   .right-side {
     display: flex;
     gap: var(--app-components-app-menu-app-button-spacing);
+    justify-self: end;
+  }
+
+  .center {
+    display: flex;
+    gap: var(--app-components-app-menu-app-button-spacing);
+    justify-content: center;
   }
 }

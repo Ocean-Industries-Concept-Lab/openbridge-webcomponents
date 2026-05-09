@@ -22,21 +22,21 @@ const sim = useSim()
 
 const configStore = useDemoConfigStore()
 
-const rudderInstrumentAngle = computed(() => sim.propulsion.rudder.value * 2)
-const rudderInstrumentAngleSetpoint = computed(() => sim.propulsion.rudderSet.value * 2)
+const rudderInstrumentAngle = computed(() => sim.propulsion.rudder.value)
+const rudderInstrumentAngleSetpoint = computed(() => sim.propulsion.rudderSet.value)
 
 const rudderAdive = computed((): AngleAdvice[] => {
   if (sim.controllers.showAdvice.value) {
     return [
       {
-        minAngle: 20,
-        maxAngle: 60,
+        minAngle: 10,
+        maxAngle: 30,
         type: AdviceType.caution,
         hinted: true
       },
       {
-        minAngle: -60,
-        maxAngle: -20,
+        minAngle: -30,
+        maxAngle: -10,
         type: AdviceType.caution,
         hinted: true
       }
@@ -125,19 +125,21 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
     <ObcRudder
       class="rudder-1"
       :state="InstrumentState.active"
+      :zoom-to-fit-arc="true"
       :priority="configStore.hasCommand ? Priority.enhanced : Priority.regular"
       :angle="rudderInstrumentAngle"
       :setpoint="rudderInstrumentAngleSetpoint"
-      :max-angle="60"
+      :max-angle="30"
       :advices="rudderAdive"
     />
     <ObcRudder
       class="rudder-2"
       :state="InstrumentState.active"
+      :zoom-to-fit-arc="true"
       :priority="configStore.hasCommand ? Priority.enhanced : Priority.regular"
       :angle="rudderInstrumentAngle"
       :setpoint="rudderInstrumentAngleSetpoint"
-      :max-angle="60"
+      :max-angle="30"
       :advices="rudderAdive"
     />
     <div class="readout-grid">

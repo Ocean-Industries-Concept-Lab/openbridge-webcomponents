@@ -2,14 +2,17 @@
   @mixin card;
   display: flex;
   flex-direction: column;
-  padding: 8px 24px 8px;
+  padding: var(--app-components-app-menu-padding-vertical)
+    var(--app-components-app-menu-margin-horizontal);
   box-sizing: border-box;
-  max-width: 440px;
+  width: fit-content;
 
   .main-apps {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    padding: 24px 0;
+    gap: 0 var(--app-components-app-menu-app-button-spacing);
+    padding: var(--app-components-app-menu-padding-vertical)
+      var(--app-components-app-menu-padding-horizontal);
+    justify-items: center;
   }
 }

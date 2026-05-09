@@ -119,14 +119,18 @@
   }
 }
 
-.container-hover {
+.slider::-moz-range-track {
   position: absolute;
-  left: anchor(right);
+  margin: auto 0;
   top: 0;
   bottom: 0;
-  position-anchor: --thumb;
+  left: 0;
   right: 0;
+  height: 40px;
+  border-radius: 6px;
   cursor: pointer;
+  background: transparent;
+  border: none;
 
   .no-input & {
     cursor: default;
@@ -165,50 +169,32 @@
   border: 1px solid var(--indent-enabled-border-color);
 }
 
-.normal .track:has(~ .container-hover:hover)::after,
 .normal .track:has(~ input:hover)::after {
   background: var(--flat-hover-background-color);
 }
 
-.enhanced .track:has(~ .container-hover:hover)::after,
 .enhanced .track:has(~ input:hover)::after {
   background-color: var(--indent-hover-background-color);
   border-color: var(--indent-hover-border-color);
 }
 
-.normal .track:has(~ .container-hover:active)::after,
 .normal .track:has(~ input:active)::after {
   background: var(--flat-pressed-background-color);
 }
 
-.enhanced .track:has(~ .container-hover:active)::after,
 .enhanced .track:has(~ input:active)::after {
   background-color: var(--indent-pressed-background-color);
   border-color: var(--indent-pressed-border-color);
 }
 
-.interactive-track-hover {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  position-anchor: --thumb;
-  right: anchor(left);
-  cursor: pointer;
-
-  .no-input & {
-    cursor: default;
-  }
-}
-
 .interactive-track {
   position: absolute;
-  left: anchor(--thumb-min right);
+  left: calc(var(--_low-ratio, 0) * (100% - 96px) + 48px);
   top: 0;
   bottom: 0;
   height: 4px;
   border-radius: 6px;
-  right: anchor(--thumb-max left);
+  right: calc((1 - var(--_high-ratio, 0)) * (100% - 96px) + 48px);
 
   margin-top: auto;
   margin-bottom: auto;
@@ -221,17 +207,15 @@
 
 .enhanced .interactive-track {
   height: 32px;
-  right: calc(anchor(--thumb-max left) - 12px);
-  left: calc(anchor(--thumb-min right) - 12px);
+  left: calc(var(--_low-ratio, 0) * (100% - 96px) + 36px);
+  right: calc((1 - var(--_high-ratio, 0)) * (100% - 96px) + 36px);
 }
 
-.interactive-track-hover:hover ~ .interactive-track,
 input:hover ~ .interactive-track {
   background: var(--selected-hover-background-color);
   border-color: var(--selected-hover-background-color);
 }
 
-.interactive-track-hover:active ~ .interactive-track,
 input:active ~ .interactive-track {
   background: var(--selected-pressed-background-color);
   border-color: var(--selected-pressed-background-color);
@@ -242,6 +226,10 @@ input {
 }
 
 input::-webkit-slider-thumb {
+  pointer-events: auto;
+}
+
+input::-moz-range-thumb {
   pointer-events: auto;
 }
 
@@ -257,15 +245,22 @@ input::-webkit-slider-thumb {
   cursor: grab;
 }
 
-input.min::-webkit-slider-thumb {
-  anchor-name: --thumb-min;
-}
-
-input.max::-webkit-slider-thumb {
-  anchor-name: --thumb-max;
+input::-moz-range-thumb {
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  width: 48px;
+  height: 48px;
+  background: transparent;
+  border: none;
+  cursor: grab;
 }
 
 .no-input input::-webkit-slider-thumb {
+  cursor: default;
+}
+
+.no-input input::-moz-range-thumb {
   cursor: default;
 }
 
@@ -273,7 +268,15 @@ input:active::-webkit-slider-thumb {
   cursor: grabbing;
 }
 
+input:active::-moz-range-thumb {
+  cursor: grabbing;
+}
+
 .mouseDown input::-webkit-slider-thumb {
+  cursor: pointer;
+}
+
+.mouseDown input::-moz-range-thumb {
   cursor: pointer;
 }
 
@@ -281,19 +284,27 @@ input:active::-webkit-slider-thumb {
   cursor: grabbing;
 }
 
+.dragging input::-moz-range-thumb {
+  cursor: grabbing;
+}
+
 .no-input input:active::-webkit-slider-thumb {
+  cursor: default;
+}
+
+.no-input input:active::-moz-range-thumb {
   cursor: default;
 }
 
 .thumb {
   position: absolute;
-  top: anchor(top);
-  bottom: anchor(bottom);
+  top: 0;
+  bottom: 0;
   border-radius: 6px;
   border-width: 2px;
   height: 28px;
   width: 12px;
-  margin: auto;
+  margin: auto 0;
   border-style: solid;
   border-color: var(--container-background-color);
   background: var(--selected-enabled-background-color);
@@ -301,13 +312,11 @@ input:active::-webkit-slider-thumb {
 }
 
 .thumb.min {
-  position-anchor: --thumb-min;
-  right: anchor(right);
+  right: calc(100% - var(--_low-ratio, 0) * (100% - 96px) - 48px);
 }
 
 .thumb.max {
-  position-anchor: --thumb-max;
-  left: anchor(left);
+  left: calc(var(--_high-ratio, 0) * (100% - 96px) + 48px);
 }
 
 .no-input .thumb {

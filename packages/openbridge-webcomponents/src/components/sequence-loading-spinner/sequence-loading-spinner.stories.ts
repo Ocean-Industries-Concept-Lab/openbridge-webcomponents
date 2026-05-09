@@ -31,6 +31,9 @@ const meta = {
   tags: ['autodocs'],
   parameters: {
     layout: 'centered',
+    controls: {
+      disableSaveFromUI: true,
+    },
     docs: {
       page: () =>
         React.createElement(
@@ -57,6 +60,10 @@ const meta = {
     },
     rotationDurationMs: {
       control: {type: 'range', min: 100, max: 5000, step: 50},
+      if: {
+        arg: 'progression',
+        eq: SequenceLoadingSpinnerProgressionType.scanning,
+      },
     },
     progressPercent: {
       control: {type: 'range', min: 0, max: 100, step: 1},
@@ -70,7 +77,7 @@ const meta = {
     type: SequenceLoadingSpinnerType.indicator,
     progression: SequenceLoadingSpinnerProgressionType.determinate,
     rotationDurationMs: 1000,
-    progressPercent: 62.5,
+    progressPercent: 25,
   },
 } satisfies Meta;
 
@@ -80,22 +87,6 @@ type Story = StoryObj;
 
 export const Playground: Story = {
   parameters: {
-    docs: {
-      description: {
-        story: [
-          '`<obc-sequence-loading-spinner>` — circular loading indicator for sequence UI.',
-          '',
-          '```html',
-          '<obc-sequence-loading-spinner',
-          '  type="button"',
-          '  progression="determinate"',
-          '  progress-percent="62.5"',
-          '  rotation-duration-ms="1200"',
-          '></obc-sequence-loading-spinner>',
-          '```',
-        ].join('\n'),
-      },
-    },
     controls: {
       include: ['type', 'progression', 'rotationDurationMs', 'progressPercent'],
     },
@@ -105,17 +96,14 @@ export const Playground: Story = {
       .type=${args.type}
       .progression=${args.progression}
       .rotationDurationMs=${args.rotationDurationMs}
-      .progressPercent=${args.progression ===
-      SequenceLoadingSpinnerProgressionType.scanning
-        ? 62.5
-        : args.progressPercent}
+      .progressPercent=${args.progressPercent}
     ></obc-sequence-loading-spinner>
   `,
 };
 
 const renderTypes = (
   progression: SequenceLoadingSpinnerProgressionType,
-  progressPercent: number = 62.5,
+  progressPercent: number = 25,
   rotationDurationMs: number = 1000
 ) => html`
   <div
@@ -167,13 +155,14 @@ const renderTypes = (
 
 export const Determinate: Story = {
   parameters: {controls: {disable: true}},
-  render: () => renderTypes(SequenceLoadingSpinnerProgressionType.determinate),
+  render: () =>
+    renderTypes(SequenceLoadingSpinnerProgressionType.determinate, 25, 1000),
 };
 
 export const Scanning: Story = {
   parameters: {controls: {disable: true}},
   render: () =>
-    renderTypes(SequenceLoadingSpinnerProgressionType.scanning, 62.5, 1000),
+    renderTypes(SequenceLoadingSpinnerProgressionType.scanning, 25, 1000),
 };
 
 export const Types: Story = {
@@ -182,15 +171,15 @@ export const Types: Story = {
     <div style="display: grid; gap: 24px;">
       <div style="display: grid; gap: 12px;">
         <strong>Determinate</strong>
-        ${renderTypes(SequenceLoadingSpinnerProgressionType.determinate)}
+        ${renderTypes(
+          SequenceLoadingSpinnerProgressionType.determinate,
+          25,
+          1000
+        )}
       </div>
       <div style="display: grid; gap: 12px;">
         <strong>Scanning</strong>
-        ${renderTypes(
-          SequenceLoadingSpinnerProgressionType.scanning,
-          62.5,
-          1000
-        )}
+        ${renderTypes(SequenceLoadingSpinnerProgressionType.scanning, 25, 1000)}
       </div>
     </div>
   `,

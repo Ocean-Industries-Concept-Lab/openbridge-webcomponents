@@ -131,7 +131,7 @@ This could be `regular`, `medium`, `large`, or `xl`. It sets the component size 
 
 ## Load font
 
-Lastly Noto Sans needs to be added. You can download it from the [OpenBridge repo](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip/raw/refs/heads/main/packages/openbridge-webcomponents/public/NotoSans.ttf). Place the NotoSans.ttf file in the public folder.
+Lastly Noto Sans needs to be added. You can download it from the [OpenBridge repo](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/raw/refs/heads/stable/packages/openbridge-webcomponents/public/NotoSans.ttf). Place the NotoSans.ttf file in the public folder.
 
 Next this file must be loaded by the css. So add it to styles.css:
 
@@ -182,7 +182,7 @@ main {
 
 ## Add some input to the topbar
 
-We can now modify the topbar. Go to the [storybook](https://openbridge-jip-storybook.web.app/?path=/docs/application-topbar--docs) for details of attributes.
+We can now modify the topbar. Go to the [storybook](https://openbridge-storybook.web.app/?path=/docs/application-topbar--docs) for details of attributes.
 
 For instance add these properties:
 
@@ -276,7 +276,7 @@ And add the css to `app.css`
 ```
 
 We can now add a state to store if the dimming menu is open or not. Also add an handler when the dimming menu button is clicked.
-Find the event name under events in [storybook](https://openbridge-jip-storybook.web.app/?path=/docs/application-topbar--docs). Remember also to set the `dimmingButtonActivated` which marks the button grey when activated. Lastly we also change the palette when pressed.
+Find the event name under events in [storybook](https://openbridge-storybook.web.app/?path=/docs/application-topbar--docs). Remember also to set the `dimmingButtonActivated` which marks the button grey when activated. Lastly we also change the palette when pressed.
 
 ```ts
 import { Component } from "@angular/core";
@@ -429,7 +429,7 @@ export class AppComponent {
 
 # Add navigation menu
 
-We can now add a navigation menu. Start by looking it up in [storybook](https://openbridge-jip-storybook.web.app/?path=/docs/menu-navigation-menu--docs). Click on "Show code" to view the example code.
+We can now add a navigation menu. Start by looking it up in [storybook](https://openbridge-storybook.web.app/?path=/docs/menu-navigation-menu--docs). Click on "Show code" to view the example code.
 
 Start by making an new component. Run `ng generate component` in the command line. Give it NavMenu as name. Copy the example file into the new html file:
 
@@ -690,7 +690,7 @@ Try going to: http://localhost:4200/tunnel
 We can now use these path in the navigation menu:
 
 - set the href to the path in router
-- find some good labels and [icons](https://openbridge-jip-demo.web.app/icons)
+- find some good labels and [icons](https://openbridge-demo.web.app/icons)
 
 ```html
 <obc-navigation-menu>

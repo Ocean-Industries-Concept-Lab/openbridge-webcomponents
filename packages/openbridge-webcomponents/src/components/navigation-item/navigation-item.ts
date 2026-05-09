@@ -1,11 +1,16 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {property} from 'lit/decorators.js';
+import {property, query} from 'lit/decorators.js';
 import compentStyle from './navigation-item.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import '../../icons/icon-arrow-flyout-google.js';
 import {ObcNavigationMenuVariant} from '../navigation-menu/navigation-menu.js';
 import {customElement} from '../../decorator.js';
+
+enum NavigationItemRole {
+  Button = 'button',
+  MenuItem = 'menuitem',
+}
 
 /**
  * `<obc-navigation-item>` – A navigation menu item component for use in navigation bars, side menus, or toolbars.
@@ -86,6 +91,7 @@ import {customElement} from '../../decorator.js';
  * ```
  *
  * @slot icon - Leading icon slot (optional, shown if provided). Set `hasIcon` to `true` to show the icon.
+ * @slot trailing-icon - Trailing icon slot (optional, shown if provided). Set `hasTrailingIcon` to `true` to show.
  * @fires click {CustomEvent<void>} Fired when the navigation item is clicked.
  */
 
@@ -134,12 +140,51 @@ export class ObcNavigationItem extends LitElement {
    */
   @property({type: Boolean, reflect: true}) hasIcon = false;
 
+  @property({type: Boolean}) hasTrailingIcon = false;
+
+  @query('a') private anchorElement?: HTMLAnchorElement;
+
   /**
    * Fired when the navigation item is clicked (either as a link or button).
    * @fires click {CustomEvent<void>}
    */
   onClick() {
     dispatchEvent(new CustomEvent('click'));
+  }
+
+  private handleKeydown(event: KeyboardEvent) {
+    const isMenuItem =
+      this.getAttribute('role') === NavigationItemRole.MenuItem;
+    if (this.href !== undefined && !isMenuItem) return;
+    if (event.key !== 'Enter' && event.key !== ' ') {
+      return;
+    }
+
+    event.preventDefault();
+    this.anchorElement?.click();
+  }
+
+  public override focus(options?: FocusOptions): void {
+    this.anchorElement?.focus(options);
+  }
+
+  private getItemRole(): NavigationItemRole | undefined {
+    const hostRole = this.getAttribute('role');
+    if (hostRole === NavigationItemRole.MenuItem) {
+      return NavigationItemRole.MenuItem;
+    }
+
+    return this.href === undefined ? NavigationItemRole.Button : undefined;
+  }
+
+  private getItemTabIndex(): number | undefined {
+    const hostTabIndex = this.getAttribute('tabindex');
+    if (hostTabIndex !== null) {
+      const parsedTabIndex = Number(hostTabIndex);
+      return Number.isNaN(parsedTabIndex) ? undefined : parsedTabIndex;
+    }
+
+    return this.href === undefined ? 0 : undefined;
   }
 
   override render() {
@@ -158,6 +203,9 @@ export class ObcNavigationItem extends LitElement {
         })}"
         href=${ifDefined(this.href)}
         @click=${this.onClick}
+        @keydown=${this.handleKeydown}
+        tabindex=${ifDefined(this.getItemTabIndex())}
+        role=${ifDefined(this.getItemRole())}
       >
         <div class="visible-wrapper">
           ${this.hasIcon
@@ -187,6 +235,9 @@ export class ObcNavigationItem extends LitElement {
                   ></obi-arrow-flyout-google>
                 </div>
               `
+            : nothing}
+          ${this.hasTrailingIcon && !showFlyout
+            ? html`<slot name="trailing-icon" class="icon trailing"></slot>`
             : nothing}
         </div>
       </a>

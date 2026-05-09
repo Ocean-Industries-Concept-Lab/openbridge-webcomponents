@@ -42,5 +42,5 @@
 }
 
 .dropdown-button::part(visible-wrapper) {
-  box-sizing: initial;
+  box-sizing: border-box;
 }

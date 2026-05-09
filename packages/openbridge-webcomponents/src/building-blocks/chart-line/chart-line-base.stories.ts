@@ -323,6 +323,13 @@ type Story = StoryObj;
 
 export const SingleSeries: Story = {
   name: 'Single-Series Line Graph (category)',
+  play: async ({canvasElement}) => {
+    await document.fonts.ready;
+    const chart = canvasElement.querySelector('obc-area-graph') as
+      | (HTMLElement & {chart?: {update(): void}})
+      | null;
+    chart?.chart?.update();
+  },
 };
 
 export const WithPoints: Story = {

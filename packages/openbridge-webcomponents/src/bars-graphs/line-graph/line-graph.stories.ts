@@ -156,6 +156,13 @@ type Story = StoryObj;
 
 export const SingleSeries: Story = {
   name: 'Single-Series Line Graph (category)',
+  play: async ({canvasElement}) => {
+    await document.fonts.ready;
+    const chart = canvasElement.querySelector('obc-line-graph') as
+      | (HTMLElement & {chart?: {update(): void}})
+      | null;
+    chart?.chart?.update();
+  },
   render: (_args) => html`
     <obc-line-graph
       .data=${_args.data}

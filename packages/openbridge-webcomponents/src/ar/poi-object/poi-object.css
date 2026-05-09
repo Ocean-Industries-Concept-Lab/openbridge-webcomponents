@@ -1,0 +1,405 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.is-large {
+  width: var(--maneuvering-components-poi-button-large-touch-target, 64px);
+  height: var(--maneuvering-components-poi-button-large-touch-target, 64px);
+}
+
+.is-indicator.is-static .icon-container,
+.is-indicator.is-activated .icon-container,
+.is-indicator.is-overlapped .icon-container {
+  filter: none;
+}
+
+.wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  --obc-poi-touch-target: var(
+    --maneuvering-components-poi-button-touch-target,
+    48px
+  );
+  --obc-poi-frame-size: var(
+    --maneuvering-components-poi-button-visual-target-round
+  );
+  --obc-poi-bottom-offset: calc(
+    (var(--obc-poi-touch-target) - var(--obc-poi-frame-size)) / 2
+  );
+  --obc-poi-icon-size: var(--maneuvering-components-poi-button-icon-size);
+  --obc-poi-icon-size-overlap: var(
+    --maneuvering-components-poi-button-icon-size-overlap
+  );
+  --obc-poi-size-transition-duration: var(--obc-poi-transition-duration, 0.1s);
+  --obc-poi-color-transition-duration: var(--obc-poi-transition-duration, 0.1s);
+}
+
+.wrapper.interactive {
+  cursor: pointer;
+}
+
+.is-large {
+  --obc-poi-touch-target: var(
+    --maneuvering-components-poi-button-large-touch-target,
+    64px
+  );
+}
+
+.background-frame,
+.activated-frame {
+  position: absolute;
+  border-radius: var(--maneuvering-components-poi-button-border-radius-round);
+  bottom: var(--obc-poi-bottom-offset);
+  opacity: var(--obc-poi-object-frame-opacity, 1);
+  box-shadow: var(--obc-poi-object-shadow, none);
+  transition:
+    opacity var(--obc-poi-opacity-transition-duration, 0.1s) ease-out,
+    width var(--obc-poi-size-transition-duration, 0.1s) ease-out,
+    height var(--obc-poi-size-transition-duration, 0.1s) ease-out,
+    background-color var(--obc-poi-color-transition-duration, 0.1s) ease-out,
+    border-color var(--obc-poi-color-transition-duration, 0.1s) ease-out,
+    bottom var(--obc-poi-size-transition-duration, 0.1s) ease-out;
+}
+
+.background-frame {
+  overflow: hidden;
+}
+
+.activated-frame {
+  border: 4px solid var(--overlay-border-activated-color);
+}
+
+.is-square .background-frame,
+.is-square .activated-frame {
+  border-radius: var(--maneuvering-components-poi-button-border-radius-square);
+}
+
+/* Regular and Indicator types - standard sizes */
+.type-regular .background-frame,
+.type-indicator .background-frame,
+.type-regular .activated-frame,
+.type-indicator .activated-frame {
+  width: var(--maneuvering-components-poi-button-visual-target-round);
+  height: var(--maneuvering-components-poi-button-visual-target-round);
+}
+
+/* Large type */
+.type-large {
+  --obc-poi-frame-size: var(
+    --maneuvering-components-poi-button-large-visual-target-round
+  );
+  --obc-poi-icon-size: var(--maneuvering-components-poi-button-large-icon-size);
+  --obc-poi-icon-size-overlap: var(
+    --maneuvering-components-poi-button-large-icon-size-overlap
+  );
+}
+
+.type-large .background-frame,
+.type-large .activated-frame {
+  width: var(--maneuvering-components-poi-button-large-visual-target-round);
+  height: var(--maneuvering-components-poi-button-large-visual-target-round);
+}
+
+/* N-up type */
+.type-n-up {
+  --obc-poi-frame-size: var(
+    --maneuvering-components-poi-button-visual-target-square
+  );
+}
+
+.type-n-up .background-frame,
+.type-n-up .activated-frame {
+  width: var(--maneuvering-components-poi-button-visual-target-square);
+  height: var(--maneuvering-components-poi-button-visual-target-square);
+}
+
+/* N-up large type */
+.type-n-up-large {
+  --obc-poi-frame-size: var(
+    --maneuvering-components-poi-button-large-visual-target-square
+  );
+  --obc-poi-icon-size: var(--maneuvering-components-poi-button-large-icon-size);
+  --obc-poi-icon-size-overlap: var(
+    --maneuvering-components-poi-button-large-icon-size-overlap
+  );
+}
+
+.type-n-up-large .background-frame,
+.type-n-up-large .activated-frame {
+  width: var(--maneuvering-components-poi-button-large-visual-target-square);
+  height: var(--maneuvering-components-poi-button-large-visual-target-square);
+}
+
+/* Overlapped state - smaller background */
+.is-overlapped {
+  --obc-poi-bottom-offset: var(
+    --maneuvering-components-poi-button-overlap-offset-margin-round
+  );
+  --obc-poi-icon-scale: calc(
+    var(--obc-poi-icon-size-overlap) / var(--obc-poi-icon-size)
+  );
+}
+
+.is-overlapped .background-frame {
+  width: var(--maneuvering-components-poi-button-visual-target-round-overlap);
+  height: var(--maneuvering-components-poi-button-visual-target-round-overlap);
+}
+
+.is-large.is-overlapped .background-frame {
+  width: var(
+    --maneuvering-components-poi-button-large-visual-target-round-overlap
+  );
+  height: var(
+    --maneuvering-components-poi-button-large-visual-target-round-overlap
+  );
+}
+
+.is-square.is-overlapped .background-frame {
+  width: var(--maneuvering-components-poi-button-visual-target-square-overlap);
+  height: var(--maneuvering-components-poi-button-visual-target-square-overlap);
+}
+
+.is-square.is-large.is-overlapped .background-frame {
+  width: var(
+    --maneuvering-components-poi-button-large-visual-target-square-overlap
+  );
+  height: var(
+    --maneuvering-components-poi-button-large-visual-target-square-overlap
+  );
+}
+
+.is-indicator.is-overlapped .background-frame {
+  width: 24px;
+  height: 24px;
+}
+
+/* Regular style background */
+.style-regular .background-frame {
+  background-color: var(--overlay-container-background-color);
+  border: 1px solid var(--overlay-border-outline-color);
+}
+
+/* Categorical style background */
+.style-categorical .background-frame {
+  background-color: var(--base-blue-100);
+  border: 1px solid var(--base-blue-200);
+}
+
+.style-categorical.is-overlapped .background-frame {
+  border: 1px solid var(--base-blue-050);
+}
+
+/* Static and activated states use flat background */
+.style-regular.is-static .background-frame,
+.style-regular.is-activated .background-frame {
+  background-color: var(--normal-enabled-background-color);
+  border: 1px solid var(--normal-enabled-border-color);
+}
+
+/* Indicator activated state fills the frame */
+.is-indicator.is-activated .activated-frame {
+  background-color: var(--overlay-border-activated-color);
+}
+
+/* Icon container */
+.icon-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  transform: scale(var(--obc-poi-icon-scale, 1));
+  transform-origin: center;
+  transition:
+    opacity var(--obc-poi-opacity-transition-duration, 0.1s) ease-out,
+    transform var(--obc-poi-transition-duration, 0.1s) ease-out;
+}
+
+/* Standard icon sizes */
+.type-regular .icon-container,
+.type-indicator .icon-container,
+.type-n-up .icon-container {
+  width: var(--obc-poi-icon-size);
+  height: var(--obc-poi-icon-size);
+}
+
+.type-large .icon-container,
+.type-n-up-large .icon-container {
+  width: var(--obc-poi-icon-size);
+  height: var(--obc-poi-icon-size);
+}
+
+/* Slotted icon sizing */
+.icon-container ::slotted(*) {
+  width: 100%;
+  height: 100%;
+}
+
+/* Regular style icon colors */
+.wrapper.style-regular .icon-container ::slotted(*) {
+  color: var(--instrument-regular-secondary-color);
+  --element-active-color: var(--instrument-regular-secondary-color);
+}
+
+.wrapper.style-regular.is-indicator .icon-container ::slotted(*) {
+  color: var(--element-inactive-color);
+  --element-active-color: var(--element-inactive-color);
+}
+
+.wrapper.style-regular.is-checked .icon-container ::slotted(*),
+.wrapper.style-regular.is-activated .icon-container ::slotted(*) {
+  color: var(--element-neutral-color);
+  --element-active-color: var(--element-neutral-color);
+}
+
+.wrapper.style-regular.is-static .icon-container ::slotted(*) {
+  color: var(--element-inactive-color);
+  --element-active-color: var(--element-inactive-color);
+}
+
+.wrapper.style-regular.is-static.is-checked .icon-container ::slotted(*) {
+  color: var(--element-neutral-color);
+  --element-active-color: var(--element-neutral-color);
+}
+
+/* Regular and Enhanced alert state icon colors */
+.wrapper.style-regular.state-caution .icon-container ::slotted(*),
+.wrapper.style-regular.state-warning .icon-container ::slotted(*),
+.wrapper.style-regular.state-alarm .icon-container ::slotted(*),
+.wrapper.style-enhanced.state-caution .icon-container ::slotted(*),
+.wrapper.style-enhanced.state-warning .icon-container ::slotted(*),
+.wrapper.style-enhanced.state-alarm .icon-container ::slotted(*) {
+  color: var(--element-active-color);
+  --element-active-color: var(--element-active-color);
+}
+
+/* Enhanced style background — same as regular */
+.style-enhanced .background-frame {
+  background-color: var(--overlay-container-background-color);
+  border: 1px solid var(--overlay-border-outline-color);
+}
+
+/* Enhanced style static and activated states use flat background */
+.style-enhanced.is-static .background-frame,
+.style-enhanced.is-activated .background-frame {
+  background-color: var(--normal-enabled-background-color);
+  border: 1px solid var(--normal-enabled-border-color);
+}
+
+/* Enhanced style icon colors — uses the instrument enhanced secondary color */
+.wrapper.style-enhanced .icon-container ::slotted(*) {
+  color: var(--instrument-enhanced-secondary-color);
+  --element-active-color: var(--instrument-enhanced-secondary-color);
+}
+
+/* Categorical style icon colors */
+.wrapper.style-categorical .icon-container ::slotted(*) {
+  color: var(--base-blue-500);
+  --element-active-color: var(--base-blue-500);
+  --element-active-inverted-color: var(--base-blue-100);
+}
+
+/* Indicator type icon stroke outline */
+.is-indicator .icon-container ::slotted(*) {
+  stroke: var(--indicator-stroke-color, var(--overlay-element-active-color));
+  stroke-width: var(--indicator-stroke-width, 2px);
+  stroke-linejoin: round;
+  paint-order: stroke fill;
+  overflow: visible;
+  --element-active-inverted-color: var(
+    --indicator-stroke-color,
+    var(--overlay-element-active-color)
+  );
+}
+
+/* Static and overlapped indicators lose the stroke outline */
+.is-indicator.is-static .icon-container ::slotted(*),
+.is-indicator.is-overlapped .icon-container ::slotted(*) {
+  stroke: none;
+  stroke-width: 0;
+  paint-order: normal;
+  overflow: hidden;
+}
+
+.is-indicator.has-placeholder-icon .indicator-placeholder-fill {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.is-indicator.has-placeholder-icon .indicator-placeholder-fill path {
+  fill: var(--element-active-inverted-color);
+}
+
+.is-indicator.has-placeholder-icon .icon-container ::slotted(obi-placeholder) {
+  position: relative;
+  z-index: 1;
+}
+
+.is-indicator.style-categorical .icon-container ::slotted(*) {
+  stroke: var(--base-blue-100);
+}
+
+.is-indicator.style-categorical .icon-container {
+  --element-active-inverted-color: var(--base-blue-100);
+}
+
+/* Overlapped state hides icon */
+.is-overlapped .icon-container {
+  opacity: 0;
+}
+
+/* Interactive hover/active states on background-frame */
+.wrapper.interactive .background-frame {
+  transition:
+    background-color var(--obc-poi-color-transition-duration, 0.1s) ease,
+    border-color var(--obc-poi-color-transition-duration, 0.1s) ease;
+}
+
+/* Regular type (non-indicator) - uses flat styles */
+:host(:hover) .wrapper.interactive:not(.is-indicator) .background-frame {
+  background-color: var(--flat-hover-background-color);
+}
+
+:host(:active) .wrapper.interactive:not(.is-indicator) .background-frame {
+  background-color: var(--flat-pressed-background-color);
+}
+
+/* Indicator type interactive - transparent by default, shows overlay flat styles on hover */
+.wrapper.interactive.is-indicator .background-frame {
+  background-color: transparent;
+  border-color: transparent;
+}
+
+:host(:hover) .wrapper.interactive.is-indicator .background-frame {
+  background-color: var(--overlay-flat-hover-background-color);
+  border-color: var(--overlay-flat-hover-border-color);
+}
+
+:host(:active) .wrapper.interactive.is-indicator .background-frame {
+  background-color: var(--overlay-flat-active-background-color);
+  border-color: var(--overlay-flat-active-border-color);
+}
+
+/* Focus styles */
+.wrapper:focus {
+  outline: none;
+}
+
+.wrapper:focus-visible .background-frame {
+  outline: 2px solid var(--element-active-color);
+  outline-offset: 2px;
+}

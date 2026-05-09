@@ -10,7 +10,7 @@ import {
   BorderRadiusPosition,
   Priority,
 } from '../../navigation-instruments/types.js';
-import type {AdviceType} from '../../navigation-instruments/watch/advice.js';
+import type {LinearAdvice} from '../instrument-linear/advice.js';
 import type {
   ExternalScaleAdvice,
   ExternalScaleConfig,
@@ -77,10 +77,12 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
   @property({type: Number}) width = 320;
 
   /** Padding left of the drawing area */
-  @property({type: Number}) paddingLeft = CHART_DIMENSIONS.CANVAS_PADDING;
+  @property({type: Number}) paddingLeft: number =
+    CHART_DIMENSIONS.CANVAS_PADDING;
 
   /** Padding right of the drawing area */
-  @property({type: Number}) paddingRight = CHART_DIMENSIONS.CANVAS_PADDING;
+  @property({type: Number}) paddingRight: number =
+    CHART_DIMENSIONS.CANVAS_PADDING;
 
   /** Which side this scale lives on */
   @property({type: String}) side: ExternalScaleSide = ExternalScaleSide.bottom;
@@ -165,7 +167,7 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
    * Array of values for main tickmarks. When undefined, no main tickmarks shown.
    * When empty array [], defaults to [minValue, 0, maxValue].
    */
-  @property({attribute: false}) mainTickmarks?: number[] = [];
+  @property({type: Array, attribute: false}) mainTickmarks?: number[] = [];
   /**
    * Interval for primary (longest) tickmarks with labels (minimum 1).
    * When undefined, no primary tickmarks are shown.
@@ -244,12 +246,7 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
    * Advice/alert overlays with state and positioning.
    * When undefined or empty, no advice shown.
    */
-  @property({attribute: false}) advices?: Array<{
-    min: number;
-    max: number;
-    type: AdviceType;
-    hinted: boolean;
-  }> = [];
+  @property({type: Array, attribute: false}) advices?: LinearAdvice[] = [];
 
   /**
    * When true, displays a dot indicator at the current value position.

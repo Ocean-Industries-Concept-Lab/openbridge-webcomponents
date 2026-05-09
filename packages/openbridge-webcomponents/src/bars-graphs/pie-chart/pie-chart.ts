@@ -67,6 +67,17 @@ const PIE_WATCHED_PROP_NAMES = [
   'fixedHeight',
 ] as const;
 
+type PieChartChildDataItem = {
+  label: string;
+  value: number;
+};
+
+export type PieChartDataItem = {
+  label: string;
+  value: number;
+  children?: PieChartChildDataItem[];
+};
+
 /**
  * `<obc-pie-chart>` – A customizable pie chart component for visualizing proportional data as segments, with optional sunburst subsegments and outer labels.
  *
@@ -159,14 +170,10 @@ const PIE_WATCHED_PROP_NAMES = [
  */
 @customElement('obc-pie-chart')
 export class ObcPieChart extends LitElement {
-  @property({attribute: false})
-  data: {
-    label: string;
-    value: number;
-    children?: {label: string; value: number}[];
-  }[] = [];
+  @property({type: Array, attribute: false})
+  data: PieChartDataItem[] = [];
 
-  @property({attribute: false})
+  @property({type: Array, attribute: false})
   colors: string[] = [];
 
   @property({type: String})

@@ -1,6 +1,11 @@
 .offset-wrapper {
+  --obc-poi-line-transition-duration: 0s;
   transform: translateX(var(--poi-offset, 0));
   transition: transform var(--obc-poi-line-transition-duration, 0.1s) ease-out;
+}
+
+.offset-wrapper.animate-position {
+  --obc-poi-line-transition-duration: 0.1s;
 }
 
 .container {
@@ -17,33 +22,33 @@
   --obc-poi-line-current-dash-array: var(--obc-poi-line-dash-array);
 }
 
-:host([poi-style="selected"]),
-:host([poi-style="enhanced"]) {
+.offset-wrapper.poi-style-selected,
+.offset-wrapper.poi-style-enhanced {
   --obc-poi-line-line-color: var(--overlay-element-active-color);
   --obc-poi-line-outline-color: var(--element-active-color);
 }
 
-:host([poi-style="alarm"]) {
+.offset-wrapper.poi-style-alarm {
   --obc-poi-line-line-color: var(--alert-alarm-color);
   --obc-poi-line-outline-color: var(--on-alarm-color);
 }
 
-:host([poi-style="caution"]) {
+.offset-wrapper.poi-style-caution {
   --obc-poi-line-line-color: var(--alert-caution-color);
   --obc-poi-line-outline-color: var(--alert-caution-outline-color);
 }
 
-:host([poi-style="warning"]) {
+.offset-wrapper.poi-style-warning {
   --obc-poi-line-line-color: var(--alert-warning-color);
   --obc-poi-line-outline-color: var(--on-warning-color);
 }
 
-:host([poi-style="route"]) {
+.offset-wrapper.poi-style-route {
   --obc-poi-line-line-color: var(--instrument-enhanced-secondary-color);
   --obc-poi-line-outline-color: var(--overlay-element-active-color);
 }
 
-:host([line-type="dashed"][poi-style="route"]) {
+.offset-wrapper.line-type-dashed.poi-style-route {
   --obc-poi-line-line-color: var(--base-blue-500);
   --obc-poi-line-outline-color: var(--base-blue-050);
   --obc-poi-line-current-dash-array: var(--obc-poi-line-route-dash-array);

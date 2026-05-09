@@ -32,3 +32,4 @@ packages/openbridge-webcomponents/__vis__/darwin/
 CLAUDE.md
 **/screenshots/
 packages/openbridge-webcomponents/default-sizes.json
+/.env

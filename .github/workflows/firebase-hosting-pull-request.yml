@@ -21,6 +21,9 @@ jobs:
       - name: Build openbridge-webcomponents
         run: cd packages/openbridge-webcomponents && npm run build:full
 
+      - name: Install wrapper dependencies
+        run: npm install
+
       - name: Build openbridge-webcomponents-vue
         run: cd packages/openbridge-webcomponents-vue && npm run build
 

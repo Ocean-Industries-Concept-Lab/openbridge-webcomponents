@@ -53,23 +53,10 @@
     height: 100%;
     border-radius: 50%;
     overflow: hidden;
-    animation: loading-spin var(--spinner-rotation-duration, 1000ms) linear
-      infinite;
     --spinner-radius: calc(
       (var(--spinner-size) - var(--spinner-stroke-width)) / 2
     );
     --spinner-cap-size: var(--spinner-stroke-width);
-
-    .cap {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: var(--spinner-cap-size);
-      height: var(--spinner-cap-size);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 2;
-    }
 
     &::before,
     &::after {
@@ -92,75 +79,101 @@
         transparent calc(100% - var(--spinner-stroke-width)),
         black calc(100% - var(--spinner-stroke-width))
       );
+      mask: radial-gradient(
+        farthest-side,
+        transparent calc(100% - var(--spinner-stroke-width)),
+        black calc(100% - var(--spinner-stroke-width))
+      );
     }
 
-    .progression-determinate & {
-      &::after {
-        background: conic-gradient(
-          from -90deg,
-          var(--element-neutral-enhanced-color) 0deg,
-          var(--element-neutral-enhanced-color)
-            var(--spinner-progress-deg, 225deg),
-          transparent var(--spinner-progress-deg, 225deg),
-          transparent 360deg
-        );
-      }
+    .cap {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: var(--spinner-cap-size);
+      height: var(--spinner-cap-size);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 2;
+    }
+  }
 
-      .cap-start,
-      .cap-end {
-        background: var(--element-neutral-enhanced-color);
-      }
-
-      .cap-start {
-        transform: translate(-50%, -50%) rotate(-90deg)
-          translateY(calc(-1 * var(--spinner-radius)));
-      }
-
-      .cap-end {
-        transform: translate(-50%, -50%)
-          rotate(calc(-90deg + var(--spinner-progress-deg, 225deg)))
-          translateY(calc(-1 * var(--spinner-radius)));
-      }
+  &.progression-determinate .spinner {
+    &::after {
+      background: conic-gradient(
+        from 0deg,
+        var(--element-neutral-enhanced-color) 0deg,
+        var(--element-neutral-enhanced-color) var(--spinner-progress-deg),
+        transparent var(--spinner-progress-deg),
+        transparent 360deg
+      );
     }
 
-    .progression-scanning & {
-      &::after {
-        background: conic-gradient(
-          from 90deg,
-          var(--element-disabled-color) 0deg,
-          var(--element-disabled-color) 135deg,
-          var(--base-blue-500) 136deg,
-          color-mix(
-              in srgb,
-              var(--base-blue-500) 96%,
-              var(--element-disabled-color)
-            )
-            165deg,
-          color-mix(
-              in srgb,
-              var(--base-blue-500) 45%,
-              var(--element-disabled-color)
-            )
-            220deg,
-          color-mix(
-              in srgb,
-              var(--base-blue-500) 20%,
-              var(--element-disabled-color)
-            )
-            289deg,
-          var(--element-disabled-color) 360deg
-        );
-      }
-      --spinner-scanning-start-deg: 226deg;
-      .cap-start {
-        background: var(--base-blue-500);
-        transform: translate(-50%, -50%)
-          rotate(var(--spinner-scanning-start-deg))
-          translateY(calc(-1 * var(--spinner-radius)));
-      }
-      .cap-end {
-        opacity: 0;
-      }
+    .cap-start,
+    .cap-end {
+      background: var(--element-neutral-enhanced-color);
+    }
+
+    .cap-start {
+      transform: translate(-50%, -50%) rotate(0deg)
+        translateY(calc(-1 * var(--spinner-radius)));
+    }
+
+    .cap-end {
+      transform: translate(-50%, -50%) rotate(var(--spinner-progress-deg))
+        translateY(calc(-1 * var(--spinner-radius)));
+    }
+  }
+
+  &.progression-determinate:is(.progress-empty, .progress-full) .spinner {
+    .cap-start,
+    .cap-end {
+      opacity: 0;
+    }
+  }
+
+  &.progression-scanning .spinner {
+    animation: loading-spin var(--spinner-rotation-duration, 1000ms) linear
+      infinite;
+
+    &::after {
+      background: conic-gradient(
+        from 90deg,
+        var(--element-disabled-color) 0deg,
+        var(--element-disabled-color) 135deg,
+        var(--element-disabled-color) 136deg,
+        color-mix(
+            in srgb,
+            var(--base-blue-500) 20%,
+            var(--element-disabled-color)
+          )
+          207deg,
+        color-mix(
+            in srgb,
+            var(--base-blue-500) 45%,
+            var(--element-disabled-color)
+          )
+          276deg,
+        color-mix(
+            in srgb,
+            var(--base-blue-500) 96%,
+            var(--element-disabled-color)
+          )
+          331deg,
+        var(--base-blue-500) 360deg
+      );
+    }
+
+    --spinner-scanning-head-deg: 90deg;
+
+    .cap-start {
+      background: var(--base-blue-500);
+      transform: translate(-50%, -50%) rotate(var(--spinner-scanning-head-deg))
+        translateY(calc(-1 * var(--spinner-radius)));
+    }
+
+    .cap-end {
+      opacity: 0;
     }
   }
 }

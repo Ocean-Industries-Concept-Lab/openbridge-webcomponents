@@ -26,8 +26,15 @@ export function roundedArch({
   const y2 = -Math.cos(a2) * r;
   const roundRadius = 8;
 
+  // Guard against degenerate radii: corner rounding requires the ring
+  // radius to be at least `roundRadius`, otherwise Math.asin(roundRadius/r)
+  // returns NaN and produces an invalid SVG path. Fall back to a square cut
+  // in that case (notably when r === 0 for pie-slice clip paths).
+  const safeRoundOutsideCut = roundOutsideCut && R >= roundRadius;
+  const safeRoundInsideCut = roundInsideCut && r >= roundRadius;
+
   let svgPath = '';
-  if (roundOutsideCut) {
+  if (safeRoundOutsideCut) {
     const roundDeltaAngle = Math.asin(roundRadius / R);
     const largeArcFlag =
       a2 - roundDeltaAngle - (a1 + roundDeltaAngle) <= Math.PI ? 0 : 1;
@@ -50,7 +57,7 @@ export function roundedArch({
     svgPath += `M ${X1} ${Y1} A ${R} ${R} 1 ${largeArcFlag} 1 ${X2} ${Y2}`;
   }
 
-  if (roundInsideCut) {
+  if (safeRoundInsideCut) {
     const roundDeltaAngle = Math.asin(roundRadius / r);
     const largeArcFlag =
       a2 - roundDeltaAngle - (a1 + roundDeltaAngle) <= Math.PI ? 0 : 1;

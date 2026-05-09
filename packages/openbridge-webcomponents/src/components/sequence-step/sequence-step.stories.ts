@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {html, nothing} from 'lit';
+import {html, nothing, type LitElement} from 'lit';
 import './sequence-step.js';
 import {
   SequenceOrientation,
@@ -8,6 +8,24 @@ import {
   SequenceValue,
 } from './sequence-step.js';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
+
+/**
+ * Force all loading spinners inside sequence steps to their final state
+ * so visual snapshots are deterministic.
+ */
+const settleLoadingSpinners: Story['play'] = async ({canvasElement}) => {
+  const steps = canvasElement.querySelectorAll('obc-sequence-step');
+  for (const step of steps) {
+    await (step as LitElement).updateComplete;
+    const spinner = step.shadowRoot?.querySelector(
+      'obc-sequence-loading-spinner'
+    ) as (LitElement & {progressPercent: number}) | null;
+    if (spinner) {
+      spinner.progressPercent = 100;
+      await spinner.updateComplete;
+    }
+  }
+};
 
 const states: SequenceValue[] = [
   SequenceValue.notStarted,
@@ -209,6 +227,7 @@ export const SmallRegularStates: Story = {
       orientations: [SequenceOrientation.horizontal],
       includeIcon: false,
     }),
+  play: settleLoadingSpinners,
 };
 
 export const SmallPointStates: Story = {
@@ -220,6 +239,7 @@ export const SmallPointStates: Story = {
       orientations: [SequenceOrientation.horizontal],
       includeIcon: false,
     }),
+  play: settleLoadingSpinners,
 };
 
 export const MediumRegularStates: Story = {
@@ -233,6 +253,7 @@ export const MediumRegularStates: Story = {
         SequenceOrientation.vertical,
       ],
     }),
+  play: settleLoadingSpinners,
 };
 
 export const MediumPointStates: Story = {
@@ -248,6 +269,7 @@ export const MediumPointStates: Story = {
       includeIcon: false,
       labelText: '1',
     }),
+  play: settleLoadingSpinners,
 };
 
 export const LargeButtonStates: Story = {
@@ -261,6 +283,7 @@ export const LargeButtonStates: Story = {
         SequenceOrientation.vertical,
       ],
     }),
+  play: settleLoadingSpinners,
 };
 
 export const LargePointStates: Story = {
@@ -276,6 +299,7 @@ export const LargePointStates: Story = {
       includeIcon: false,
       labelText: '1',
     }),
+  play: settleLoadingSpinners,
 };
 
 export const ConnectorStyles: Story = {

@@ -1,9 +1,15 @@
 import {LitElement, html, unsafeCSS} from 'lit';
-import {property} from 'lit/decorators.js';
+import {property, state} from 'lit/decorators.js';
+import type {PropertyValues} from 'lit';
 import {classMap} from 'lit/directives/class-map.js';
 import {styleMap} from 'lit/directives/style-map.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './sequence-loading-spinner.css?inline';
+
+const DETERMINATE_MS_PER_PERCENT = 50;
+const DETERMINATE_MIN_DURATION_MS = 1200;
+const DETERMINATE_MAX_DURATION_MS = 9000;
+const DETERMINATE_START_DELAY_MS = 1000;
 
 export enum SequenceLoadingSpinnerType {
   indicator = 'indicator',
@@ -29,11 +35,14 @@ export enum SequenceLoadingSpinnerProgressionType {
  * - `type`: `indicator | indicator-point | tag | tag-point | button | button-point`.
  * - `progression`: `determinate | scanning`.
  * - `progress-percent`: number `0–100` (used when `progression="determinate"`).
+ * - Determinate progression uses a built-in fill animation from the current arc toward full completion.
  * - `rotation-duration-ms`: number in ms (controls spin speed).
  *
  * Usage Guidelines:
  * - Use `type` to match the surrounding element size.
- * - Use `progression="determinate"` when you have progress data.
+ * - With `progression="determinate"`, the arc starts at 12 o'clock on the ring and grows clockwise.
+ * - `progress-percent` is used as the starting offset for the determinate fill. After a short delay, the arc animates smoothly from that start value toward full completion.
+ * - Changing `progress-percent` during determinate progression restarts the fill from the new start value.
  *
  * Slots / Content:
  * - None.
@@ -50,12 +59,9 @@ export enum SequenceLoadingSpinnerProgressionType {
  * <obc-sequence-loading-spinner
  *   type="button"
  *   progression="determinate"
- *   progress-percent="62.5"
- *   rotation-duration-ms="1200"
+ *   progress-percent="25"
  * ></obc-sequence-loading-spinner>
  * ```
- *
- * Keywords: sequence, loading, spinner, progress, determinate, scanning.
  */
 @customElement('obc-sequence-loading-spinner')
 export class ObcSequenceLoadingSpinner extends LitElement {
@@ -66,16 +72,13 @@ export class ObcSequenceLoadingSpinner extends LitElement {
   @property({type: Number, attribute: 'rotation-duration-ms'})
   rotationDurationMs = 1000;
   @property({type: Number, attribute: 'progress-percent'})
-  progressPercent = 62.5;
+  progressPercent = 0;
 
-  private get wrapperClasses() {
-    return {
-      wrapper: true,
-      'sequence-loading-spinner': true,
-      [`type-${this.type}`]: true,
-      [`progression-${this.progression}`]: true,
-    };
-  }
+  @state() private determinateDisplayPercent = 0;
+
+  private fillAnimGeneration = 0;
+  private determinateFillFrame?: number;
+  private determinateStartDelayTimeout?: number;
 
   private get isButtonType(): boolean {
     return (
@@ -94,21 +97,139 @@ export class ObcSequenceLoadingSpinner extends LitElement {
   private get clampedProgressPercent(): number {
     const percent = Number.isFinite(this.progressPercent)
       ? this.progressPercent
-      : 62.5;
+      : 0;
     return Math.min(100, Math.max(0, percent));
   }
 
-  override render() {
-    const style = styleMap({
-      '--spinner-rotation-duration': `${this.clampedRotationDurationMs}ms`,
-      '--spinner-progress-deg': `${this.clampedProgressPercent * 3.6}deg`,
+  private get determinateRenderPercent(): number {
+    return this.hasUpdated
+      ? this.determinateDisplayPercent
+      : this.clampedProgressPercent;
+  }
+
+  private get rootClasses() {
+    const isDeterminate =
+      this.progression === SequenceLoadingSpinnerProgressionType.determinate;
+    const p = this.determinateRenderPercent;
+    return {
+      'sequence-loading-spinner': true,
+      [`type-${this.type}`]: true,
+      [`progression-${this.progression}`]: true,
+      'progress-empty': isDeterminate && p <= 0,
+      'progress-full': isDeterminate && p >= 100,
+    };
+  }
+
+  private get spinnerStyle() {
+    if (this.progression === SequenceLoadingSpinnerProgressionType.scanning) {
+      return styleMap({
+        '--spinner-rotation-duration': `${this.clampedRotationDurationMs}ms`,
+      });
+    }
+    const percent = this.determinateRenderPercent;
+    return styleMap({
+      '--spinner-progress-deg': `${percent * 3.6}deg`,
     });
+  }
+
+  override disconnectedCallback(): void {
+    this.clearFillAnimation();
+    super.disconnectedCallback();
+  }
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    if (!this.hasUpdated) return;
+    if (
+      this.progression !== SequenceLoadingSpinnerProgressionType.determinate
+    ) {
+      return;
+    }
+    if (this.clampedProgressPercent >= 100) {
+      return;
+    }
+    this.startDeterminateFillAnimation();
+  }
+
+  override updated(changed: PropertyValues): void {
+    super.updated(changed);
+    if (this.progression === SequenceLoadingSpinnerProgressionType.scanning) {
+      this.clearFillAnimation();
+      return;
+    }
+    if (
+      this.progression !== SequenceLoadingSpinnerProgressionType.determinate
+    ) {
+      return;
+    }
+    const rerun = ['progressPercent', 'progression'].some((k) =>
+      changed.has(k)
+    );
+    if (!rerun) {
+      return;
+    }
+    this.startDeterminateFillAnimation();
+  }
+
+  private clearFillAnimation(): void {
+    if (this.determinateFillFrame !== undefined) {
+      window.cancelAnimationFrame(this.determinateFillFrame);
+    }
+    this.determinateFillFrame = undefined;
+    window.clearTimeout(this.determinateStartDelayTimeout);
+    this.determinateStartDelayTimeout = undefined;
+    this.fillAnimGeneration++;
+  }
+
+  private startDeterminateFillAnimation(): void {
+    this.clearFillAnimation();
+    const generation = this.fillAnimGeneration;
+    const start = this.clampedProgressPercent;
+    const remaining = Math.max(0, 100 - start);
+    const duration = Math.min(
+      DETERMINATE_MAX_DURATION_MS,
+      Math.max(
+        DETERMINATE_MIN_DURATION_MS,
+        remaining * DETERMINATE_MS_PER_PERCENT
+      )
+    );
+
+    if (start >= 100) {
+      this.determinateDisplayPercent = 100;
+      return;
+    }
+
+    this.determinateDisplayPercent = start;
+
+    let startTime: number | undefined = undefined;
+    const tick = () => {
+      if (generation !== this.fillAnimGeneration) return;
+      const now = performance.now();
+      if (startTime === undefined) {
+        startTime = now;
+      }
+      const elapsed = now - startTime;
+      const t = Math.min(1, elapsed / Math.max(duration, 1));
+      this.determinateDisplayPercent = start + (100 - start) * t;
+      if (t < 1) {
+        this.determinateFillFrame = window.requestAnimationFrame(tick);
+      } else {
+        this.determinateFillFrame = undefined;
+        this.determinateDisplayPercent = 100;
+      }
+    };
+    this.determinateStartDelayTimeout = window.setTimeout(() => {
+      if (generation !== this.fillAnimGeneration) return;
+      this.determinateFillFrame = window.requestAnimationFrame(tick);
+    }, DETERMINATE_START_DELAY_MS);
+  }
+
+  override render() {
+    const style = this.spinnerStyle;
     const content = html`
       <span class="spinner" part="spinner" aria-hidden="true" style=${style}>
-        <span class="caps" aria-hidden="true">
-          <span class="cap cap-start" aria-hidden="true"></span>
-          <span class="cap cap-end" aria-hidden="true"></span>
-        </span>
+        <span class="cap cap-start" aria-hidden="true"></span>
+        <span class="cap cap-end" aria-hidden="true"></span>
       </span>
     `;
 
@@ -116,7 +237,7 @@ export class ObcSequenceLoadingSpinner extends LitElement {
       ? html`
           <button
             type="button"
-            class=${classMap(this.wrapperClasses)}
+            class=${classMap(this.rootClasses)}
             part="wrapper"
             aria-label="Loading"
             disabled
@@ -125,7 +246,7 @@ export class ObcSequenceLoadingSpinner extends LitElement {
           </button>
         `
       : html`
-          <span class=${classMap(this.wrapperClasses)} part="wrapper">
+          <span class=${classMap(this.rootClasses)} part="wrapper">
             ${content}
           </span>
         `;

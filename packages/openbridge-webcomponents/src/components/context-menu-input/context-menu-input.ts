@@ -147,7 +147,7 @@ export enum ContextMenuType {
  * ## Properties
  *
  * - `type` (`ContextMenuType`): Sets the menu variant. Defaults to `'regular'`.
- * - `options` (ContextMenuOption[]): Array of menu options. Each option can have `value`, `label`, optional `icon`, `level` (for nesting), and `children` (for flyout/nested).
+ * - `options` (`ContextMenuOption[]`): Array of menu options. Each option can have `value`, `label`, optional `icon`, `level` (for nesting), and `children` (for flyout/nested).
  * - `selectedValues` (string[]): Array of currently selected option values.
  * - `hasTitleBar` (boolean): If true, displays a title bar with close button.
  * - `title` (string): Text for the title bar (shown if `hasTitleBar` is true).
@@ -160,9 +160,9 @@ export enum ContextMenuType {
  * ## Events
  *
  * - `change` – Fired when the selection changes.
- *   Detail: `{ selectedValues: string[], selectedOptions: ContextMenuOption[] }`
+ *   Detail includes the selected values array and the selected option objects.
  * - `item-click` – Fired when a menu item is clicked (even if not changing selection).
- *   Detail: `{ value: string, option: ContextMenuOption }`
+ *   Detail includes the clicked value and its option object.
  * - `close` – Fired when the close button in the title bar is clicked.
  *
  * ## Best Practices and Constraints
@@ -202,9 +202,9 @@ export enum ContextMenuType {
  * In this example, a flyout menu is shown with a title bar, group icons, and a selected child option.
  *
  * @slot - Optionally used for custom icons in options (e.g., `<obi-placeholder slot="icon"></obi-placeholder>`)
- * @fires change {CustomEvent<{selectedValues: string[], selectedOptions: ContextMenuOption[]}>} When the selection changes.
- * @fires item-click {CustomEvent<{value: string, option: ContextMenuOption}>} When a menu item is clicked.
- * @fires close {CustomEvent<void>} When the close button is clicked.
+ * @fires change {ObcContextMenuInputChangeEvent} Fired when the selection changes.
+ * @fires item-click {ObcContextMenuInputItemClickEvent} Fired when a menu item is clicked.
+ * @fires close {CustomEvent<void>} Fired when the close button is clicked.
  */
 @customElement('obc-context-menu-input')
 export class ObcContextMenuInput extends LitElement {
@@ -279,6 +279,122 @@ export class ObcContextMenuInput extends LitElement {
    * When enabled, only one option can be selected in each group or column.
    */
   @property({type: Boolean, reflect: true}) selectPerGroup?: boolean;
+
+  private getMenuItems(): HTMLElement[] {
+    return Array.from(
+      this.renderRoot.querySelectorAll<HTMLElement>('[data-menu-item="true"]')
+    ).filter((item) => item.getClientRects().length > 0);
+  }
+
+  private getFocusedMenuItemIndex(): number {
+    const activeElement =
+      this.renderRoot instanceof ShadowRoot
+        ? this.renderRoot.activeElement
+        : document.activeElement;
+
+    if (!(activeElement instanceof HTMLElement)) {
+      return -1;
+    }
+
+    const items = this.getMenuItems();
+    let closestIndex = -1;
+    let closestDistance = Number.POSITIVE_INFINITY;
+
+    items.forEach((item, index) => {
+      if (item !== activeElement && !item.contains(activeElement)) {
+        return;
+      }
+
+      let distance = 0;
+      let currentElement: HTMLElement | null = activeElement;
+      while (currentElement !== null && currentElement !== item) {
+        currentElement = currentElement.parentElement;
+        distance += 1;
+      }
+
+      if (currentElement === item && distance < closestDistance) {
+        closestDistance = distance;
+        closestIndex = index;
+      }
+    });
+
+    return closestIndex;
+  }
+
+  private focusMenuItem(index: number) {
+    const items = this.getMenuItems();
+    if (items.length === 0) return;
+
+    const normalizedIndex = Math.max(0, Math.min(index, items.length - 1));
+    items[normalizedIndex].focus();
+    items[normalizedIndex].scrollIntoView({block: 'nearest'});
+  }
+
+  public focusFirstItem() {
+    this.focusMenuItem(0);
+  }
+
+  public focusLastItem() {
+    const items = this.getMenuItems();
+    if (items.length === 0) return;
+
+    this.focusMenuItem(items.length - 1);
+  }
+
+  public focusSelectedItem() {
+    const items = this.getMenuItems();
+    if (items.length === 0) return;
+
+    const selectedItem = this.selectedValues
+      .map((value) =>
+        items.find((item) => item.getAttribute('data-menu-value') === value)
+      )
+      .find((item): item is HTMLElement => item !== undefined);
+
+    if (selectedItem !== undefined) {
+      selectedItem.focus();
+      selectedItem.scrollIntoView({block: 'nearest'});
+      return;
+    }
+
+    this.focusFirstItem();
+  }
+
+  private handleKeydown(event: KeyboardEvent) {
+    const items = this.getMenuItems();
+    if (items.length === 0) return;
+
+    const currentIndex = this.getFocusedMenuItemIndex();
+
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        this.focusMenuItem(
+          currentIndex < 0 ? 0 : Math.min(currentIndex + 1, items.length - 1)
+        );
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        this.focusMenuItem(
+          currentIndex < 0 ? items.length - 1 : Math.max(currentIndex - 1, 0)
+        );
+        break;
+      case 'Home':
+        event.preventDefault();
+        this.focusFirstItem();
+        break;
+      case 'End':
+        event.preventDefault();
+        this.focusLastItem();
+        break;
+      case 'Escape':
+        event.preventDefault();
+        this.dispatchEvent(new CustomEvent('close'));
+        break;
+      default:
+        break;
+    }
+  }
 
   private get isMultiSelect(): boolean {
     if (this.multiSelect !== undefined) return this.multiSelect;
@@ -489,6 +605,8 @@ export class ObcContextMenuInput extends LitElement {
         style=${indent ? `padding-left:${indent}px` : ''}
       >
         <obc-checkbox-item
+          data-menu-item="true"
+          data-menu-value=${o.value}
           .label=${o.label}
           .status=${isSelected ? 'checked' : 'unchecked'}
           @change=${(e: Event) => this.handleCheckboxChange(o, e)}
@@ -505,6 +623,8 @@ export class ObcContextMenuInput extends LitElement {
       style=${indent ? `padding-left:${indent}px` : ''}
     >
       <obc-navigation-item
+        data-menu-item="true"
+        data-menu-value=${o.value}
         .label=${o.label}
         .checked=${isSelected}
         .variant=${ObcNavigationMenuVariant.Full}
@@ -525,6 +645,8 @@ export class ObcContextMenuInput extends LitElement {
         const isSelected = this.isOptionSelected(c.value);
         return html`<div class="menu-item checkbox-item-wrapper">
           <obc-checkbox-item
+            data-menu-item="true"
+            data-menu-value=${c.value}
             .label=${c.label}
             .status=${isSelected ? 'checked' : 'unchecked'}
             @change=${(e: Event) => this.handleCheckboxChange(c, e)}
@@ -535,6 +657,8 @@ export class ObcContextMenuInput extends LitElement {
     return children.map((c) => {
       const isSelected = this.isOptionSelected(c.value);
       return html`<obc-navigation-item
+        data-menu-item="true"
+        data-menu-value=${c.value}
         .label=${c.label}
         .checked=${isSelected}
         .variant=${ObcNavigationMenuVariant.Full}
@@ -566,6 +690,8 @@ export class ObcContextMenuInput extends LitElement {
       const isSelected = this.isOptionSelected(o.value);
       if (o.children?.length) {
         return html`<obc-navigation-item-group
+          data-menu-item="true"
+          data-menu-value=${o.value}
           .label=${o.label}
           .checked=${isSelected}
           .variant=${ObcNavigationMenuVariant.Full}
@@ -601,6 +727,8 @@ export class ObcContextMenuInput extends LitElement {
           const isSelected = this.isOptionSelected(o.value);
           return html`<div class="menu-item checkbox-item-wrapper">
             <obc-checkbox-item
+              data-menu-item="true"
+              data-menu-value=${o.value}
               .label=${o.label}
               .status=${isSelected ? 'checked' : 'unchecked'}
               @change=${(e: Event) => this.handleCheckboxChange(o, e)}
@@ -741,8 +869,10 @@ export class ObcContextMenuInput extends LitElement {
         [`type-${this.type}`]: true,
         'has-title': this.hasTitleBar,
       })}
+      tabindex="-1"
       role="menu"
       aria-label=${this.hasTitleBar ? this.title : 'Context menu'}
+      @keydown=${this.handleKeydown}
     >
       ${this.renderTitleBar()}
       <div class="menu-content">${this.renderMenuContent()}</div>

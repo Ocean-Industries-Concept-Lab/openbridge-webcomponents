@@ -1,5 +1,5 @@
-import {Poi} from '../building-blocks/poi/poi.js';
-import {getEffectivePoiX} from '../building-blocks/poi/poi-position.js';
+import {Poi} from '../poi/poi.js';
+import {getEffectivePoiX} from '../poi/poi-position.js';
 
 interface UpdateCrossingModeParams {
   targets: Poi[];

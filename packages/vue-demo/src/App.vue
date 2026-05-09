@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, computed, ref, watch } from 'vue'
-
+import { html } from 'lit'
 import TopBar from '@oicl/openbridge-webcomponents-vue/components/top-bar/ObcTopBar.vue'
 import ObcClock from '@oicl/openbridge-webcomponents-vue/components/clock/ObcClock.vue'
 import DemoNavigationMenu from './components/DemoNavigationMenu.vue'
@@ -10,7 +10,7 @@ import '@oicl/openbridge-webcomponents/dist/icons/icon-applications'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-speed-high'
 
 import BrillianceMenu from '@oicl/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu.vue'
-import ObcContextMenu from '@oicl/openbridge-webcomponents-vue/components/context-menu/ObcContextMenu.vue'
+import ObcContextMenuInput from '@oicl/openbridge-webcomponents-vue/components/context-menu-input/ObcContextMenuInput.vue'
 import ObcCommandButton from '@oicl/openbridge-webcomponents-vue/components/command-button/ObcCommandButton.vue'
 import AlertNotification from './components/AlertNotification.vue'
 import DemoAppMenu from './components/DemoAppMenu.vue'
@@ -33,6 +33,7 @@ import ObcIconButton from '@oicl/openbridge-webcomponents-vue/components/icon-bu
 import { IconButtonVariant } from '@oicl/openbridge-webcomponents/dist/components/icon-button/icon-button.js'
 import { useHotkeys } from './composables/useHotkeys'
 import router from './router'
+import type { ObcContextMenuInputChangeEvent } from '@oicl/openbridge-webcomponents/dist/components/context-menu-input/context-menu-input'
 
 if (import.meta.env.PROD) {
   import('@oicl/openbridge-webcomponents/dist/icons/index.js')
@@ -166,6 +167,25 @@ const onCommandChange = (event: CustomEvent) => {
 const goToPreviousPage = () => {
   router.go(-1)
 }
+
+const moreMenuOptions = computed(() => {
+  return [
+    {
+      label: 'Dimming',
+      icon: html`<obi-palette-dimming slot="icon"></obi-palette-dimming>`,
+      value: 'dimming'
+    },
+    { label: 'Apps', icon: html`<obi-applications slot="icon"></obi-applications>`, value: 'apps' }
+  ]
+})
+
+function onMoreMenuChange(event: ObcContextMenuInputChangeEvent) {
+  if (event.detail.selectedValues.includes('dimming')) {
+    toggleBrilliance()
+  } else if (event.detail.selectedValues.includes('apps')) {
+    toggleAppMenu()
+  }
+}
 </script>
 
 <!-- eslint-disable vue/no-deprecated-slot-attribute -->
@@ -270,14 +290,13 @@ const goToPreviousPage = () => {
       </BrillianceMenu>
       <DemoAppMenu :show-app-menu="showAppMenu" @hide-all="hideAll" />
       <DemoAlertMenu v-model="showAlertMenu" />
-      <ObcContextMenu v-if="showMoreMenu" class="more-menu">
-        <obc-navigation-item label="Dimming" @click="toggleBrilliance">
-          <obi-palette-dimming slot="icon"></obi-palette-dimming>
-        </obc-navigation-item>
-        <obc-navigation-item label="Apps" @click="toggleAppMenu">
-          <obi-application slot="icon"></obi-application>
-        </obc-navigation-item>
-      </ObcContextMenu>
+      <ObcContextMenuInput
+        v-if="showMoreMenu"
+        class="more-menu"
+        :options="moreMenuOptions"
+        @change="onMoreMenuChange"
+      >
+      </ObcContextMenuInput>
     </div>
   </main>
 </template>
@@ -341,6 +360,7 @@ header {
 }
 
 @position-try --small-screen-dimming-button {
+  position-anchor: --more-menu-button;
   right: 4px;
 }
 
@@ -372,14 +392,9 @@ header {
   position-anchor: --more-menu-button;
   top: calc(anchor(bottom) + 4px);
   right: calc(anchor(right) + 8px);
-  display: none;
 }
 
 @media screen and (max-width: 500px) {
-  .more-menu {
-    display: revert;
-  }
-
   .brilliance {
     top: calc(anchor(bottom) + 4px);
     right: calc(anchor(right) + 8px);

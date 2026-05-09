@@ -46,6 +46,7 @@ export type ObcRowClickEvent = CustomEvent<{
  * @fires ack-all-visible-click {ObcAlertListPageAckAllClickEvent} - Fired when the user clicks the "ACK visible" button.
  * @fires ack-click {ObcAckClickEvent} - Fired when the user clicks the "ACK" button.
  * @fires row-click {ObcRowClickEvent} - Fired when the user clicks a row.
+ * @fires silence-click {CustomEvent<void>} - Fired when the user clicks the "Silence" button.
  */
 @customElement('obc-alert-list-page-small')
 export class ObcAlertListPageSmall extends LitElement {

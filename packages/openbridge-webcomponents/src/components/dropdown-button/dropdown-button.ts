@@ -17,6 +17,12 @@ export type ObcDropdownButtonChangeEvent = CustomEvent<{
   label: string;
 }>;
 
+export type DropdownButtonOption = {
+  value: string;
+  label: string;
+  level?: number;
+};
+
 /**
  * `<obc-dropdown-button>` – A dropdown select component for choosing a single option from a list.
  *
@@ -83,11 +89,7 @@ export class ObcDropdownButton extends LitElement {
    *   { value: 'xc90', label: 'XC 90', level: 2 }
    * ]
    */
-  @property({type: Array}) options: {
-    value: string;
-    label: string;
-    level?: number;
-  }[] = [];
+  @property({type: Array}) options: DropdownButtonOption[] = [];
 
   /**
    * The value of the currently selected option. If not set, defaults to the first option in the list.
@@ -117,6 +119,8 @@ export class ObcDropdownButton extends LitElement {
    * If true, the select is integration style. Default is false, only for integration bar.
    */
   @property({type: Boolean}) integration = false;
+
+  @property({type: Boolean}) flat = false;
 
   @state() private selectedValue = '';
   @state() private selectedLabel = '';
@@ -152,6 +156,7 @@ export class ObcDropdownButton extends LitElement {
           'full-width': this.fullWidth,
           'open-top': this.openTop,
           integration: this.integration,
+          flat: this.flat && !this.integration,
           disabled: this.disabled,
         })}
       >

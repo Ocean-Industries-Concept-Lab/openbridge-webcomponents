@@ -14,7 +14,7 @@
   --obc-poi-layer-exit-lock-duration-ms: 500;
 }
 
-:host([debug]) {
+.wrapper.debug {
   background: var(--obc-poi-layer-debug-background, rgb(0 0 0 / 4%));
 }
 

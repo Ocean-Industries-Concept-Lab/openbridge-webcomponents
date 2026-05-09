@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {html, nothing} from 'lit';
+import {html, nothing, type LitElement} from 'lit';
 import './sequence-step.js';
 import '../sequence-item/sequence-item.js';
 import {
@@ -9,6 +9,26 @@ import {
 } from '../sequence-item/sequence-item.js';
 import {SequenceStyle, SequenceType, SequenceValue} from './sequence-step.js';
 import {iconIdToIconHtml} from '../../storybook-util.js';
+
+type Story = StoryObj<typeof meta>;
+
+/**
+ * Force all loading spinners inside sequence steps to their final state
+ * so visual snapshots are deterministic.
+ */
+const settleLoadingSpinners: Story['play'] = async ({canvasElement}) => {
+  const steps = canvasElement.querySelectorAll('obc-sequence-step');
+  for (const step of steps) {
+    await (step as LitElement).updateComplete;
+    const spinner = step.shadowRoot?.querySelector(
+      'obc-sequence-loading-spinner'
+    ) as (LitElement & {progressPercent: number}) | null;
+    if (spinner) {
+      spinner.progressPercent = 100;
+      await spinner.updateComplete;
+    }
+  }
+};
 
 type DiagramArgs = {
   steps: Array<{
@@ -99,8 +119,6 @@ const meta: Meta = {
 };
 
 export default meta;
-
-type Story = StoryObj<typeof meta>;
 
 export const SequenceItems: Story = {
   args: {
@@ -430,6 +448,7 @@ export const MediumButtonSequence: Story = {
       ${renderStepSequence(steps, SequenceType.medium, 'vertical')}
     </div>
   `,
+  play: settleLoadingSpinners,
 };
 
 export const LargeButtons: Story = {
@@ -503,6 +522,7 @@ export const LargeButtons: Story = {
       ${renderStepSequence(steps, SequenceType.large, 'vertical')}
     </div>
   `,
+  play: settleLoadingSpinners,
 };
 
 export const LargePointSequence: Story = {

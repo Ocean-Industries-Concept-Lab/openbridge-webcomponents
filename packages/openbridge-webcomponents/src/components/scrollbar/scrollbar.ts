@@ -1,5 +1,7 @@
 import {customElement} from '../../decorator.js';
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html, unsafeCSS, nothing} from 'lit';
+import {property, state} from 'lit/decorators.js';
+import {classMap} from 'lit/directives/class-map.js';
 import compentStyle from './scrollbar.css?inline';
 
 /**
@@ -37,24 +39,58 @@ import compentStyle from './scrollbar.css?inline';
  */
 @customElement('obc-scrollbar')
 export class ObcScrollbar extends LitElement {
+  @property({type: Boolean, attribute: 'transparent-track'})
+  transparentTrack = false;
+
+  @state() private _thumbTop = 0;
+  @state() private _thumbHeight = 0;
+  @state() private _showOverlayThumb = false;
+
   private _resizeObserver: ResizeObserver | null = null;
+  private _scrollHandler: (() => void) | null = null;
+  private _wrapper: Element | null = null;
 
   override render() {
     return html`
-      <div class="wrapper">
+      <div
+        class=${classMap({
+          wrapper: true,
+          'transparent-track': this.transparentTrack,
+        })}
+      >
         <slot></slot>
       </div>
+      ${this.transparentTrack && this._showOverlayThumb
+        ? html`<div class="overlay-track">
+            <div
+              class="overlay-thumb"
+              style="top:${this._thumbTop}%;height:${this._thumbHeight}%"
+            ></div>
+          </div>`
+        : nothing}
     `;
   }
 
   override firstUpdated() {
-    const wrapper = this.shadowRoot?.querySelector('.wrapper');
-    if (wrapper) {
-      this._resizeObserver = new ResizeObserver(() => this._checkOverflow());
-      this._resizeObserver.observe(wrapper);
-      // Also observe slotted children size changes
-      const slot = wrapper.querySelector('slot');
-      slot?.addEventListener('slotchange', () => this._checkOverflow());
+    this._wrapper = this.shadowRoot?.querySelector('.wrapper') ?? null;
+    if (this._wrapper) {
+      this._resizeObserver = new ResizeObserver(() => {
+        this._checkOverflow();
+        this._updateOverlayThumb();
+      });
+      this._resizeObserver.observe(this._wrapper);
+      const slot = this._wrapper.querySelector('slot');
+      slot?.addEventListener('slotchange', () => {
+        this._checkOverflow();
+        this._updateOverlayThumb();
+      });
+
+      if (this.transparentTrack) {
+        this._scrollHandler = () => this._updateOverlayThumb();
+        this._wrapper.addEventListener('scroll', this._scrollHandler, {
+          passive: true,
+        });
+      }
     }
   }
 
@@ -62,12 +98,40 @@ export class ObcScrollbar extends LitElement {
     super.disconnectedCallback();
     this._resizeObserver?.disconnect();
     this._resizeObserver = null;
+    if (this._scrollHandler && this._wrapper) {
+      this._wrapper.removeEventListener('scroll', this._scrollHandler);
+      this._scrollHandler = null;
+    }
+    this._wrapper = null;
+  }
+
+  private _updateOverlayThumb() {
+    if (!this.transparentTrack) return;
+    if (!this._wrapper) return;
+    const {scrollHeight, clientHeight, scrollTop} = this._wrapper;
+    if (scrollHeight <= clientHeight) {
+      this._showOverlayThumb = false;
+      return;
+    }
+    this._showOverlayThumb = true;
+    const trackHeight = clientHeight;
+    const pad =
+      parseFloat(
+        getComputedStyle(this._wrapper).getPropertyValue(
+          '--menu-navigation-components-scroll-bar-padding'
+        )
+      ) || 4;
+    const usable = trackHeight - pad * 2;
+    const thumbH = (clientHeight / scrollHeight) * usable;
+    const thumbY = pad + (scrollTop / scrollHeight) * usable;
+    this._thumbTop = (thumbY / trackHeight) * 100;
+    this._thumbHeight = (thumbH / trackHeight) * 100;
   }
 
   private _checkOverflow() {
-    const wrapper = this.shadowRoot?.querySelector('.wrapper');
-    if (!wrapper) return;
-    const isOverflowing = wrapper.scrollHeight > wrapper.clientHeight;
+    if (!this._wrapper) return;
+    const isOverflowing =
+      this._wrapper.scrollHeight > this._wrapper.clientHeight;
     this.toggleAttribute('overflowing', isOverflowing);
   }
 
@@ -79,11 +143,10 @@ export class ObcScrollbar extends LitElement {
    * Throws an error if the internal wrapper is not found (should not occur in normal usage).
    */
   scrollToBottom() {
-    const wrapper = this.shadowRoot?.querySelector('.wrapper');
-    if (!wrapper) {
+    if (!this._wrapper) {
       throw new Error('Wrapper not found');
     }
-    wrapper.scrollTop = wrapper.scrollHeight;
+    this._wrapper.scrollTop = this._wrapper.scrollHeight;
   }
 
   static override styles = unsafeCSS(compentStyle);
