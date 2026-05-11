@@ -1,11 +1,14 @@
 import { useState } from "react";
 import "@oicl/openbridge-webcomponents/dist/openbridge.css";
+import { installPointerModalityTracker } from "@oicl/openbridge-webcomponents";
 import { ObcTopBar } from "../../openbridge-webcomponents-react/components/top-bar/top-bar";
 import { ObcBrillianceMenu } from "../../openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
 import "./App.css";
 import { ObcClock } from "../../openbridge-webcomponents-react/components/clock/clock";
 import { ObcButton } from "../../openbridge-webcomponents-react/components/button/button";
 import { ReRenderingInput } from "./ReRenderingInput";
+
+installPointerModalityTracker();
 
 const handleBrillianceChange = (e: CustomEvent) => {
   document.documentElement.setAttribute("data-obc-theme", e.detail.value);

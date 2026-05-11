@@ -256,7 +256,7 @@ Required modifications after pasting:
 - **Size variants:** `.obc-component-size-regular` (default) / `-medium` / `-large` / `-xl` classes on an ancestor scale all `--ui-components-*` sizing tokens via CSS variable inheritance.
 - **Font mixins:** Three families — UI (`font-button`, `font-label`, `font-body`, etc.), Instrument (`font-instrument-value-*`, `font-instrument-label`, etc.), Automation (`font-automation-value-*`). Full list in `IMPLEMENTATION_GUIDELINES.md`.
 - **Alert mixins:** `alert-alarm`, `alert-critical`, `alert-caution` in `src/mixins/alert.css`. Alarm blink animation uses CSS `@property` registered `--alarm-blink-on/off` and `--warning-blink-on/off`.
-- **`--obc-can-hover`:** CSS variable kill-switch for hover feedback (defined in `src/main.css`, consumed by `@mixin style` via `color-mix()`).
+- **`--obc-can-hover` / `--obc-can-press`:** CSS variable kill-switches for hover and pressed feedback (defined in `src/main.css`, consumed by `@mixin style` via `color-mix()`). The hover branch is gated by `@media (hover:hover) and (pointer:fine)`. `bundle.ts` auto-installs a global `installPointerModalityTracker()`: for `mouse`/`pen` both stay at `1`; for `touch`, hover is suppressed for the whole gesture while press stays enabled during the finger-down phase and is briefly toggled off on `pointerup`/`pointercancel` to flush any retained `:active` paint. Module consumers can import the helper from `@oicl/openbridge-webcomponents` and call it from app bootstrap.
 - **Icon slots:** use `<obi-placeholder></obi-placeholder>` or other `<obi-*>` icons (1000+ available).
 
 ---

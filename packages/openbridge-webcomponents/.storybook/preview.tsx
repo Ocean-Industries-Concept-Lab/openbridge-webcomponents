@@ -1,6 +1,7 @@
 import PreviewTemplate from './PreviewTemplate.js';
 
 import '../src/main.css';
+import {installPointerModalityTracker} from '../src/utils/pointer-modality.js';
 import {
   Preview,
   setCustomElementsManifest,
@@ -10,6 +11,8 @@ import customElements from '../custom-elements.json';
 import {withActions} from './action-handler.js';
 
 setCustomElementsManifest(customElements);
+
+installPointerModalityTracker();
 
 import {withThemeByDataAttribute} from '@storybook/addon-themes';
 import {DecoratorFunction} from 'storybook/internal/types';
