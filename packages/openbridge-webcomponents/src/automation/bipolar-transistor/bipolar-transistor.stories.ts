@@ -22,7 +22,6 @@ const meta: Meta<typeof ObcBipolarTransistor> = {
     alert: false,
     progress: false,
     showReadoutStack: true,
-    hasIdTag: true,
   },
   argTypes: {
     alternativeIcon: {

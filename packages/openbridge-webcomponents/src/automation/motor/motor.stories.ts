@@ -23,7 +23,6 @@ const meta: Meta<typeof ObcMotor> = {
     alert: false,
     progress: false,
     showReadoutStack: true,
-    hasIdTag: true,
   },
   argTypes: {
     ...argTypesAbstractAutomationButtonMotorized,

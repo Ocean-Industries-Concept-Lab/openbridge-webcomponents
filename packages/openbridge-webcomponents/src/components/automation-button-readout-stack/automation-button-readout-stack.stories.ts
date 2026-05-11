@@ -51,6 +51,7 @@ const meta: Meta = {
     },
     tag: {
       control: {type: 'text'},
+      description: 'Set empty value to hide the tag (treated as null).',
       table: {category: '01 General'},
     },
     readouts: {
@@ -62,16 +63,20 @@ const meta: Meta = {
     type Controls = {
       size: AutomationButtonReadoutStackSize;
       idTagOrientation: IdTagOrientation;
-      tag: string;
+      tag: string | null;
       readouts: Readout[];
     };
     const a = args as unknown as Controls;
+    const normalizedTag =
+      a.tag === null || (typeof a.tag === 'string' && a.tag.trim() === '')
+        ? null
+        : a.tag;
 
     return html`
       <obc-automation-button-readout-stack
         .size=${a.size}
         .idTagOrientation=${a.idTagOrientation}
-        .tag=${a.tag}
+        .tag=${normalizedTag}
         .readouts=${a.readouts || []}
       ></obc-automation-button-readout-stack>
     `;
@@ -584,8 +589,7 @@ export const StateOnAndOff: Story = {
   args: {
     size: AutomationButtonReadoutStackSize.regular,
     idTagOrientation: IdTagOrientation.top,
-    hasIdTag: true,
-    tagValue: 0,
+    tag: '#0000',
     readouts: [
       {type: 'state-on', value: 'On', hasIcon: true},
       {type: 'state-off', value: 'Off', hasIcon: true},
@@ -653,8 +657,7 @@ export const AllTypes: Story = {
   args: {
     size: AutomationButtonReadoutStackSize.regular,
     idTagOrientation: IdTagOrientation.top,
-    hasIdTag: true,
-    tagValue: 0,
+    tag: '#0000',
     readouts: [
       {
         type: 'value',
@@ -673,8 +676,7 @@ export const ButtonType: Story = {
   args: {
     size: AutomationButtonReadoutStackSize.regular,
     idTagOrientation: IdTagOrientation.top,
-    hasIdTag: true,
-    tagValue: 0,
+    tag: '#0000',
     readouts: [{type: 'button', value: 25.5, hasIcon: true, unit: '°C'}],
   },
 };
@@ -684,8 +686,7 @@ export const WithIcons: Story = {
   args: {
     size: AutomationButtonReadoutStackSize.regular,
     idTagOrientation: IdTagOrientation.top,
-    hasIdTag: true,
-    tagValue: 0,
+    tag: '#0000',
     readouts: [
       {
         type: 'value',
@@ -711,8 +712,7 @@ export const WithoutIcons: Story = {
   args: {
     size: AutomationButtonReadoutStackSize.regular,
     idTagOrientation: IdTagOrientation.top,
-    hasIdTag: true,
-    tagValue: 0,
+    tag: '#0000',
     readouts: [
       {
         type: 'value',

@@ -23,7 +23,6 @@ import {customElement} from '../../decorator.js';
 import {
   AutomationButtonReadoutStack,
   AutomationButtonReadoutStackSize,
-  AutomationButtonReadoutStackTag,
   IdTagOrientation,
 } from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import '../../components/automation-button-readout-stack/automation-button-readout-stack.js';

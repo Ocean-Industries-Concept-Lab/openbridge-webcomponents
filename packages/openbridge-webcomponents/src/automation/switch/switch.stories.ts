@@ -20,7 +20,6 @@ const meta: Meta<typeof ObcSwitch> = {
     progress: false,
     vertical: false,
     showReadoutStack: true,
-    hasIdTag: true,
   },
   argTypes: {
     alternativeIcon: {

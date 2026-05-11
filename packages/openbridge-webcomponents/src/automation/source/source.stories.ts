@@ -19,7 +19,6 @@ const meta: Meta<typeof ObcSource> = {
     alert: false,
     progress: false,
     showReadoutStack: true,
-    hasIdTag: true,
   },
   argTypes: {
     alternativeIcon: {

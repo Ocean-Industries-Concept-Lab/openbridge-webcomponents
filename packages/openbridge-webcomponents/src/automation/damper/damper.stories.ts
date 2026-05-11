@@ -20,7 +20,6 @@ const meta: Meta<typeof ObcDamper> = {
     progress: false,
     vertical: false,
     showReadoutStack: true,
-    hasIdTag: true,
   },
   argTypes: {
     ...argTypesAbstractAutomationButtonPassiveSquare,

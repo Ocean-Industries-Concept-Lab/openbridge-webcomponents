@@ -102,7 +102,7 @@ type Story = StoryObj<ObcAutomationButton>;
 export const ValveOpen: Story = {
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [];
-    const tag: AutomationButtonReadoutStackTag | null = '#0000';
+    const tag: string | null = '#0000';
     return html`<obc-automation-button
       state="open"
       .showReadoutStack=${args.showReadoutStack}
@@ -649,7 +649,6 @@ export const ThreeWayValveOpenRight: Story = {
       progressMode: CircularProgressMode;
       progressValue: number;
       showReadoutStack: boolean;
-      hasIdTag: boolean;
     };
     const readouts: AutomationButtonReadoutStack[] = [
       {
@@ -673,7 +672,6 @@ export const ThreeWayValveOpenRight: Story = {
     return html` <obc-automation-button
       state="open"
       .showReadoutStack=${storyArgs.showReadoutStack}
-      .hasIdTag=${storyArgs.hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
       ?alert=${storyArgs.alert}

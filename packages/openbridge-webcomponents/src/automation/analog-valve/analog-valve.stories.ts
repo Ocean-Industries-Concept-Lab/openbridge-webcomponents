@@ -26,7 +26,6 @@ const meta: Meta<typeof ObcAnalogValve> = {
     progress: false,
     vertical: false,
     showReadoutStack: true,
-    hasIdTag: true,
   },
   argTypes: {
     ...argTypesAbstractAutomationButtonPassiveRound,

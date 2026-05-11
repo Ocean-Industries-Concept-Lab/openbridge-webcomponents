@@ -19,7 +19,6 @@ const meta: Meta<typeof ObcCapacitor> = {
     alert: false,
     progress: false,
     showReadoutStack: true,
-    hasIdTag: true,
   },
   argTypes: {
     alternativeIcon: {
