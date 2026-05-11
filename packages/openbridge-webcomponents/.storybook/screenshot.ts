@@ -23,6 +23,7 @@ export function makeScreenshot() {
       .elementLocator(wrapper)
       .screenshot({
         path: `${storybookMeta.relativePathToSrc}/screenshots/${storybookMeta.name}-${slug}.png`,
+        timeout: 3000,
       });
     document.body.removeChild(wrapper);
   });

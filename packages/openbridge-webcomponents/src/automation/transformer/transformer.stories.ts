@@ -1,6 +1,9 @@
 import type {Meta, StoryObj} from '@storybook/web-vite';
 import {ObcTransformer, TransformerAlternativeIcon} from './transformer.js';
-import {AutomationButtonReadoutPosition} from '../automation-button/automation-button.js';
+import {
+  AutomationButtonPositioning,
+  AutomationButtonReadoutPosition,
+} from '../automation-button/automation-button.js';
 import {AutomationButtonReadoutStackSize} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import './transformer.js';
 import {crossDecorator} from '../../storybook-util.js';
@@ -15,6 +18,7 @@ const meta: Meta<typeof ObcTransformer> = {
   args: {
     tag: '0012',
     readoutPosition: AutomationButtonReadoutPosition.bottom,
+    positioning: AutomationButtonPositioning.button,
     readoutSize: AutomationButtonReadoutStackSize.regular,
     alert: false,
     progress: false,

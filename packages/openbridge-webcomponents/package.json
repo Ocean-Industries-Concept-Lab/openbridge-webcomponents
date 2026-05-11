@@ -50,6 +50,7 @@
     "screenshots": "npm run screenshots:generate-default-sizes && npm run screenshots:run",
     "screenshots:generate-default-sizes": "tsx ./script/generate-default-sizes.ts",
     "screenshots:run": "VITE_STORYBOOK_TAKE_SCREENSHOT=true vitest --project=storybook",
+    "generate:element-meta": "tsx ./script/generate-element-meta.ts",
     "analyze": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\" && tsx ./script/sort-custom-element-manifest.ts",
     "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\" --watch",
     "clean": "rm -rf node_modules dist bundle custom-elements.json",

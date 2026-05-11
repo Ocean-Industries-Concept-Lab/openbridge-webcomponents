@@ -88,7 +88,7 @@ const meta: Meta<typeof ObcAutomationButton> = {
     hasIdTag: true,
     readoutPosition: AutomationButtonReadoutPosition.bottom,
     readoutSize: AutomationButtonReadoutStackSize.regular,
-    positioning: AutomationButtonPositioning.point,
+    positioning: AutomationButtonPositioning.button,
     showAlertIcon: true,
   },
   parameters: {
