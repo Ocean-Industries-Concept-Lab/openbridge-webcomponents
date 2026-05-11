@@ -3,6 +3,7 @@
 
 html {
   --obc-can-hover: 1;
+  --obc-can-press: 1;
 }
 
 .obc-wide-scrollbar {

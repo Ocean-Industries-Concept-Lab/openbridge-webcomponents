@@ -29,6 +29,14 @@ function colors({
         ...otherParameters,
       },
     };
+  } else if (state === 'pressed') {
+    return {
+      [selector]: {
+        'border-color': `color-mix(in srgb, var(--${style}-pressed-border-color) calc(var(--obc-can-press) * 100%), var(--base-border-color))`,
+        'background-color': `color-mix(in srgb, var(--${style}-pressed-background-color) calc(var(--obc-can-press) * 100%), var(--base-background-color))`,
+        ...otherParameters,
+      },
+    };
   } else {
     let extraParameters = {};
     if (['enabled', 'activated'].includes(state)) {
@@ -116,7 +124,7 @@ const styleMixin = (data) => {
       state: 'activated',
       className: 'activated',
     }),
-    '@media (hover:hover)': {
+    '@media (hover:hover) and (pointer:fine)': {
       ...colors({
         ...params,
         style: params.style,

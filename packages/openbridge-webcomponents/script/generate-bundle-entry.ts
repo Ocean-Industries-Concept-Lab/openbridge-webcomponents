@@ -66,6 +66,15 @@ export * from './src/types.js';
 
   fs.writeFileSync(BUNDLE_FILE, content, 'utf-8');
 
+  // Append side-effect that installs the global pointer-modality tracker so
+  // that `--obc-can-hover` / `--obc-can-press` flip per gesture on touch and
+  // hybrid devices. Bundle consumers get the fix automatically.
+  fs.appendFileSync(
+    BUNDLE_FILE,
+    `// Side effects\nimport {installPointerModalityTracker} from './src/utils/pointer-modality.js';\nexport {installPointerModalityTracker} from './src/utils/pointer-modality.js';\ninstallPointerModalityTracker();\n`,
+    'utf-8'
+  );
+
   console.log(`✓ Generated ${BUNDLE_FILE} with all component imports`);
 }
 
