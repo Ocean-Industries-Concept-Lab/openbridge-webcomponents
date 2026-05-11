@@ -1,4 +1,9 @@
 import {create} from 'storybook/theming/create';
+import {
+  STORYBOOK_STABLE_URL,
+  STORYBOOK_DEVELOP_URL,
+  isStable,
+} from './channels.js';
 
 // OpenBridge Design System Colors
 const colors = {
@@ -70,8 +75,21 @@ const typography = {
 };
 
 // Brand
+// `brandTitle` accepts raw HTML so we can stack the wordmark and a small
+// secondary link to the other release channel. Inline styles use
+// `currentColor` so the link inherits each theme's `barTextColor`.
 const brand = {
-  brandTitle: 'OpenBridge',
+  brandTitle: `
+    <span style="display: inline-flex; flex-direction: column; align-items: flex-start; line-height: 1.2;">
+      <span style="font-weight: 700;">OpenBridge</span>
+      <a
+        href="${isStable ? STORYBOOK_DEVELOP_URL : STORYBOOK_STABLE_URL}"
+        target="_blank"
+        rel="noopener noreferrer"
+        style="font-size: 11px; opacity: 0.75; color: currentColor; text-decoration: underline; margin-top: 2px;"
+      >View ${isStable ? 'Develop' : 'Stable'} Build →</a>
+    </span>
+  `,
   brandUrl: 'https://www.openbridge.no/',
   // brandImage: '/assets/openbridge-logo.svg', // Uncomment if you have a logo
 };

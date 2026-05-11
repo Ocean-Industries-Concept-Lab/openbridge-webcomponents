@@ -69,7 +69,7 @@ export class PoiBase extends LitElement implements Poi {
   buttonType = ObcPoiButtonType.Button;
   @property({type: Boolean, attribute: 'overlap-opaque'})
   overlapOpaque = false;
-  @property({attribute: false})
+  @property({type: Array, attribute: false})
   data: ObcPoiButtonDataItem[] = [];
   @property({type: Boolean, attribute: 'has-header'}) hasHeader = false;
   @property({type: String, attribute: 'header-content'}) headerContent = '';
