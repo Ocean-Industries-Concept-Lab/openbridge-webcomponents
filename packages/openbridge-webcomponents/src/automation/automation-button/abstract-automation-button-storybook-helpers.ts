@@ -18,6 +18,9 @@ import {
 } from './abstract-automation-button.js';
 
 export const argTypesAbstractAutomationButton = {
+  tag: {
+    control: {type: 'text'},
+  },
   readoutPosition: {
     options: ['top', 'bottom', 'left', 'right'],
     control: {type: 'radio'},

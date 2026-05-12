@@ -2,115 +2,34 @@
   <ObcCard>
     <div slot="title">Own ship data</div>
     <div class="side-panel-card">
-      <ObcCompassIndicator
-        class="indicator"
-        :angle="sim.vessel.headingDeg.value"
-        :arrow="CompassIndicatorArrow.Heading"
-        :show-labels="true"
-      >
+      <ObcCompassIndicator class="indicator" :angle="sim.vessel.headingDeg.value"
+        :direction="CompassIndicatorDirection.Heading">
       </ObcCompassIndicator>
-      <obc-readout
-        class="field"
-        :value.prop="mapTo360Degrees(sim.vessel.headingDeg.value)"
-        :maxDigits.prop="3"
-        :hasInput.prop="false"
-        :hasSrc.prop="true"
-        :hasSrcPicker.prop="false"
-        :src.prop="headingSrc"
-        variant="stack"
-        value-priority="enhanced"
-        unit="DEG"
-        label="HDG"
-        direction="horizontal"
-        :hasSourceDivider.prop="true"
-      />
-      <ObcCompassIndicator
-        class="indicator"
-        :angle="sim.vessel.courseOverGroundDeg.value"
-        :arrow="CompassIndicatorArrow.Course"
-        src="GPS1"
-      />
-      <obc-readout
-        class="field"
-        :value.prop="mapTo360Degrees(sim.vessel.courseOverGroundDeg.value)"
-        :maxDigits.prop="3"
-        :hasInput.prop="false"
-        :hasSrc.prop="true"
-        :hasSrcPicker.prop="false"
-        :src.prop="courseOverGroundSrc"
-        variant="stack"
-        value-priority="enhanced"
-        unit="DEG"
-        label="COG"
-        direction="horizontal"
-        :hasSourceDivider.prop="true"
-      />
-      <ObcRotIndicator
-        class="indicator"
-        :rotations-per-minute="sim.vessel.rotationDegPerMinute.value"
-      />
-      <obc-readout
-        class="field"
-        :value.prop="sim.vessel.rotationDegPerMinute.value"
-        :maxDigits.prop="3"
-        :hasInput.prop="false"
-        :hasSrc.prop="true"
-        :hasSrcPicker.prop="false"
-        :src.prop="rotationSrc"
-        variant="stack"
-        value-priority="enhanced"
-        unit="DEG/min"
-        label="ROT"
-        direction="horizontal"
-        :hasSourceDivider.prop="true"
-      />
+      <obc-readout class="field" :value.prop="mapTo360Degrees(sim.vessel.headingDeg.value)" :maxDigits.prop="3"
+        :hasInput.prop="false" :hasSrc.prop="true" :hasSrcPicker.prop="false" :src.prop="headingSrc" variant="stack"
+        value-priority="enhanced" unit="DEG" label="HDG" direction="horizontal" :hasSourceDivider.prop="true" />
+      <ObcCompassIndicator class="indicator" :angle="sim.vessel.courseOverGroundDeg.value"
+        :direction="CompassIndicatorDirection.Course" src="GPS1" />
+      <obc-readout class="field" :value.prop="mapTo360Degrees(sim.vessel.courseOverGroundDeg.value)" :maxDigits.prop="3"
+        :hasInput.prop="false" :hasSrc.prop="true" :hasSrcPicker.prop="false" :src.prop="courseOverGroundSrc"
+        variant="stack" value-priority="enhanced" unit="DEG" label="COG" direction="horizontal"
+        :hasSourceDivider.prop="true" />
+      <ObcRotIndicator class="indicator" :rotations-per-minute="sim.vessel.rotationDegPerMinute.value" />
+      <obc-readout class="field" :value.prop="sim.vessel.rotationDegPerMinute.value" :maxDigits.prop="3"
+        :hasInput.prop="false" :hasSrc.prop="true" :hasSrcPicker.prop="false" :src.prop="rotationSrc" variant="stack"
+        value-priority="enhanced" unit="DEG/min" label="ROT" direction="horizontal" :hasSourceDivider.prop="true" />
       <div class="divider"></div>
-      <ObcSpeedIndicator
-        class="indicator"
-        :speed="sim.vessel.speedForwardThroughWaterKnots.value"
-        :max-speed="20"
-      />
-      <obc-readout
-        class="field"
-        :value.prop="sim.vessel.speedForwardThroughWaterKnots.value"
-        :maxDigits.prop="3"
-        :hasInput.prop="false"
-        :hasSrc.prop="true"
-        :hasSrcPicker.prop="false"
-        :src.prop="speedSrc"
-        variant="stack"
-        value-priority="enhanced"
-        unit="KN"
-        label="STW"
-        direction="horizontal"
-        :hasSourceDivider.prop="true"
-      />
+      <ObcSpeedIndicator class="indicator" :speed="sim.vessel.speedForwardThroughWaterKnots.value" :max-speed="20" />
+      <obc-readout class="field" :value.prop="sim.vessel.speedForwardThroughWaterKnots.value" :maxDigits.prop="3"
+        :hasInput.prop="false" :hasSrc.prop="true" :hasSrcPicker.prop="false" :src.prop="speedSrc" variant="stack"
+        value-priority="enhanced" unit="KN" label="STW" direction="horizontal" :hasSourceDivider.prop="true" />
       <ObcGraphMini :data="depthDataLast30" class="indicator" :max-y="0" />
-      <obc-readout
-        class="field"
-        :value.prop="sim.depth.value"
-        :maxDigits.prop="3"
-        :hasInput.prop="false"
-        :hasSrc.prop="true"
-        :hasSrcPicker.prop="false"
-        :src.prop="depthSrc"
-        variant="stack"
-        value-priority="enhanced"
-        unit="m"
-        label="Depth"
-        direction="horizontal"
-        :hasSourceDivider.prop="true"
-      />
+      <obc-readout class="field" :value.prop="sim.depth.value" :maxDigits.prop="3" :hasInput.prop="false"
+        :hasSrc.prop="true" :hasSrcPicker.prop="false" :src.prop="depthSrc" variant="stack" value-priority="enhanced"
+        unit="m" label="Depth" direction="horizontal" :hasSourceDivider.prop="true" />
 
       <div class="divider"></div>
-      <svg
-        class="indicator"
-        width="48"
-        height="48"
-        viewBox="0 0 48 48"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg class="indicator" width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="24" cy="24" r="18" fill="var(--instrument-frame-primary-color)"
           stroke="var(--instrument-frame-tertiary-color)" />
         <path d="M42 24C42 28.9706 33.9411 33 24 33C14.0589 33 6 28.9706 6 24"
@@ -164,6 +83,9 @@ import { ref, computed } from 'vue'
 import { useSim } from '@/composables/useSim'
 import ObcCard from '@oicl/openbridge-webcomponents-vue/components/card/ObcCard.vue'
 import { CompassIndicatorArrow } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/compass-indicator/compass-indicator'
+import ObcInstrumentField from '@oicl/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
+import { InstrumentFieldSize } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
+import { CompassIndicatorDirection } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/compass-indicator/compass-indicator'
 import ObcCompassIndicator from '@oicl/openbridge-webcomponents-vue/navigation-instruments/compass-indicator/ObcCompassIndicator.vue'
 import ObcRotIndicator from '@oicl/openbridge-webcomponents-vue/navigation-instruments/rot-indicator/ObcRotIndicator.vue'
 import ObcSpeedIndicator from '@oicl/openbridge-webcomponents-vue/navigation-instruments/speed-indicator/ObcSpeedIndicator.vue'
@@ -289,7 +211,9 @@ const depthDataLast30 = computed(() => {
     font-size: var(--global-typography-ui-body-font-size);
     font-style: normal;
     font-weight: var(--global-typography-ui-body-font-weight);
-    line-height: var(--global-typography-ui-body-line-height) /* 150% */;
+    line-height: var(--global-typography-ui-body-line-height)
+      /* 150% */
+    ;
   }
 }
 </style>
