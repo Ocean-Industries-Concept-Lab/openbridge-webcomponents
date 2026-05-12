@@ -82,18 +82,14 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
     >
       <path
         d="M19.6106 14C18.5963 14 18.2264 12.6643 19.0961 12.1425L36.0002 2L52.9044 12.1425C53.7741 12.6643 53.4042 14 52.3899 14H19.6106Z"
-        fill="var(--element-inactive-color)" />
+        fill="var(--element-inactive-color)"
+      />
       <circle cx="4.00024" cy="10" r="4" fill="var(--base-red-300)" />
       <circle cx="68.0002" cy="10" r="4" fill="var(--base-mint-300)" />
     </svg>
 
     <div class="fore-instruments">
-      <ObcThruster
-        tunnel
-        single-sided
-        :setpoint="0"
-        :state="InstrumentState.off"
-      />
+      <ObcThruster tunnel single-sided :setpoint="0" :state="InstrumentState.off" />
     </div>
     <div class="center-instruments">
       <ObcAzimuthThruster
@@ -194,9 +190,7 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
       <div class="main-engine-index readout-container single">
         <div></div>
         <div class="label-wrapper">
-          <div class="index font-ui-label-active">3
-            <ObiLink class="icon" /> 4
-          </div>
+          <div class="index font-ui-label-active">3 <ObiLink class="icon" /> 4</div>
           <div class="title font-ui-label">ME</div>
         </div>
         <div></div>
@@ -229,9 +223,7 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
       <div class="rudder-index readout-container single">
         <div></div>
         <div class="label-wrapper">
-          <div class="index font-ui-label-active">5
-            <ObiLink class="icon" /> 6
-          </div>
+          <div class="index font-ui-label-active">5 <ObiLink class="icon" /> 6</div>
           <div class="title font-ui-label">Rudders</div>
         </div>
         <div></div>
