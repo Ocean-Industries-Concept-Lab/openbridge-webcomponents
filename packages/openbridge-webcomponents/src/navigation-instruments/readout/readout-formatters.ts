@@ -52,13 +52,22 @@ export function formatReadoutValue(
 export function getHintZeros(
   value: number | string | undefined,
   formattedValue: string,
-  {maxDigits}: ReadoutNumericFormatOptions
+  {showZeroPadding, maxDigits, fractionDigits}: ReadoutNumericFormatOptions
 ): string {
+  if (!showZeroPadding) {
+    return '';
+  }
+
   if (typeof value !== 'number' || value < 0) {
     return '';
   }
 
-  const hintedDigits = maxDigits - formattedValue.length;
+  const numericText = formattedValue.startsWith('-')
+    ? formattedValue.slice(1)
+    : formattedValue;
+  const [integerPart] = numericText.split('.');
+  const integerWidth = Math.max(maxDigits - fractionDigits, 1);
+  const hintedDigits = integerWidth - integerPart.length;
 
   if (hintedDigits > 0) {
     return '0'.repeat(hintedDigits);

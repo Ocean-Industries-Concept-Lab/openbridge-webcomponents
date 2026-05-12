@@ -411,20 +411,30 @@ export class ObcReadoutInput extends LitElement {
   private renderValueTextContent({
     hintedText,
     hintedVisible,
+    templateText,
     valueText,
   }: ReadoutValueRenderModel) {
+    const hasWidthTemplate = templateText.trim().length > 0;
+
     return html`
-      ${hintedText
-        ? html`<span
-            class=${classMap({
-              'hinted-zero': true,
-              'is-visible': hintedVisible,
-            })}
-            aria-hidden="true"
-            >${hintedText}</span
+      ${hasWidthTemplate
+        ? html`<span class="value-width-template" aria-hidden="true"
+            >${templateText}</span
           >`
         : nothing}
-      <span class="value">${valueText}</span>
+      <span class="value-layer">
+        ${hintedText
+          ? html`<span
+              class=${classMap({
+                'hinted-zero': true,
+                'is-visible': hintedVisible,
+              })}
+              aria-hidden="true"
+              >${hintedText}</span
+            >`
+          : nothing}
+        <span class="value">${valueText}</span>
+      </span>
     `;
   }
 

@@ -134,7 +134,8 @@ export class ObcReadout extends LitElement {
    */
   @property({type: String}) priority?: Priority;
 
-  @property({type: String}) valuePriority?: Priority;
+  @property({type: String, attribute: 'value-priority'})
+  valuePriority?: Priority;
 
   /**
    * @deprecated Not supported by the public readout API. Use `readoutInputStyle` instead.
@@ -265,6 +266,9 @@ export class ObcReadout extends LitElement {
 
   @property({type: Boolean}) inputHasHintedZeros = false;
 
+  @state()
+  private deferredInputHidePhase: 'none' | 'hiding' | 'hidden' = 'none';
+
   @state() private sourcePickerContentVisible = false;
 
   @state() private sourcePickerOptions: ContextMenuOption[] = [];
@@ -284,6 +288,10 @@ export class ObcReadout extends LitElement {
 
     this.sourcePickerContentVisible = false;
   };
+
+  private deferredInputHideTimer: number | undefined;
+
+  private hasCompletedFirstUpdate = false;
 
   private get isHorizontal() {
     return this.direction === ReadoutDirection.horizontal;
@@ -306,7 +314,11 @@ export class ObcReadout extends LitElement {
   }
 
   private get showInputDivider() {
-    return this.hasInputDivider && this.hasInput;
+    return (
+      this.hasInputDivider &&
+      this.hasInput &&
+      (this.inputRendered || this.inputLayoutReserved)
+    );
   }
 
   private get showSourceDivider() {
@@ -354,10 +366,6 @@ export class ObcReadout extends LitElement {
   }
 
   private resolvedInputModeForInteraction(): ReadoutInputMode | undefined {
-    if (!this.inputInteractionRendered) {
-      return undefined;
-    }
-
     if (this.isHorizontal) {
       if (this.interactionMode === ReadoutInputInteraction.alwaysVisible) {
         return undefined;
@@ -400,7 +408,7 @@ export class ObcReadout extends LitElement {
       this.interactionMode === ReadoutInputInteraction.popUp ||
       this.interactionMode === ReadoutInputInteraction.flipFlop
     ) {
-      return this.isSetpointReached;
+      return this.isSetpointReached && this.deferredInputHidePhase === 'hidden';
     }
 
     return false;
@@ -424,6 +432,36 @@ export class ObcReadout extends LitElement {
 
   private get inputInteractionRendered(): boolean {
     return this.inputInteractionEnabled && this.inputRendered;
+  }
+
+  private get inputLayoutReserved(): boolean {
+    if (
+      !this.inputInteractionEnabled ||
+      (this.interactionMode !== ReadoutInputInteraction.popUp &&
+        this.interactionMode !== ReadoutInputInteraction.flipFlop)
+    ) {
+      return false;
+    }
+
+    if (this.isHorizontal && this.deferredInputHidePhase === 'hidden') {
+      return false;
+    }
+
+    return true;
+  }
+
+  private get hasInteractiveInputContext(): boolean {
+    if (this.inputInteractionRendered || this.inputLayoutReserved) {
+      return true;
+    }
+
+    return (
+      this.inputInteractionEnabled &&
+      this.isHorizontal &&
+      (this.interactionMode === ReadoutInputInteraction.popUp ||
+        this.interactionMode === ReadoutInputInteraction.flipFlop) &&
+      this.deferredInputHidePhase === 'hidden'
+    );
   }
 
   private get resolvedInputPriority(): Priority {
@@ -450,22 +488,19 @@ export class ObcReadout extends LitElement {
   }
 
   private get resolvedInputSegmentSize(): ReadoutInputSize {
+    if (
+      this.inputLayoutReserved &&
+      this.interactionMode === ReadoutInputInteraction.flipFlop
+    ) {
+      return this.variant === ReadoutVariant.regular
+        ? ReadoutInputSize.small
+        : this.stepDownSize(this.baseSize);
+    }
+
     return this.baseSize;
   }
 
   private get resolvedValueInputSize(): ReadoutInputSize {
-    if (!this.inputInteractionRendered) {
-      return this.baseSize;
-    }
-
-    if (this.interactionMode === ReadoutInputInteraction.flipFlop) {
-      if (this.variant === ReadoutVariant.regular) {
-        return ReadoutInputSize.small;
-      }
-
-      return this.stepDownSize(this.resolvedInputSegmentSize);
-    }
-
     return this.baseSize;
   }
 
@@ -474,7 +509,7 @@ export class ObcReadout extends LitElement {
       return this.valuePriority;
     }
 
-    if (!this.inputInteractionRendered) {
+    if (!this.hasInteractiveInputContext) {
       return this.variant === ReadoutVariant.enhanced
         ? Priority.enhanced
         : undefined;
@@ -637,15 +672,68 @@ export class ObcReadout extends LitElement {
   override updated(changedProperties: Map<string, unknown>) {
     super.updated(changedProperties);
 
-    if (!changedProperties.has('sourcePickerContentVisible')) {
+    if (changedProperties.has('sourcePickerContentVisible')) {
+      if (this.sourcePickerContentVisible) {
+        window.addEventListener('pointerdown', this.onWindowPointerDown, true);
+      } else {
+        window.removeEventListener(
+          'pointerdown',
+          this.onWindowPointerDown,
+          true
+        );
+      }
+    }
+
+    if (
+      !(
+        changedProperties.has('value') ||
+        changedProperties.has('setpointValue') ||
+        changedProperties.has('inputValue') ||
+        changedProperties.has('hasInput') ||
+        changedProperties.has('inputInteraction')
+      )
+    ) {
       return;
     }
 
-    if (this.sourcePickerContentVisible) {
-      window.addEventListener('pointerdown', this.onWindowPointerDown, true);
-    } else {
-      window.removeEventListener('pointerdown', this.onWindowPointerDown, true);
+    if (
+      this.interactionMode !== ReadoutInputInteraction.popUp &&
+      this.interactionMode !== ReadoutInputInteraction.flipFlop
+    ) {
+      this.deferredInputHidePhase = 'none';
+      window.clearTimeout(this.deferredInputHideTimer);
+      this.deferredInputHideTimer = undefined;
+      return;
     }
+
+    const shouldHideInput = this.hasInput && this.isSetpointReached;
+
+    if (!this.hasCompletedFirstUpdate) {
+      this.deferredInputHidePhase = shouldHideInput ? 'hidden' : 'none';
+      return;
+    }
+
+    if (!shouldHideInput) {
+      this.deferredInputHidePhase = 'none';
+      window.clearTimeout(this.deferredInputHideTimer);
+      this.deferredInputHideTimer = undefined;
+      return;
+    }
+
+    if (this.deferredInputHidePhase !== 'none') {
+      return;
+    }
+
+    this.deferredInputHidePhase = 'hiding';
+    window.clearTimeout(this.deferredInputHideTimer);
+    this.deferredInputHideTimer = window.setTimeout(() => {
+      this.deferredInputHidePhase = 'hidden';
+      this.deferredInputHideTimer = undefined;
+    }, 160);
+  }
+
+  override firstUpdated() {
+    this.hasCompletedFirstUpdate = true;
   }
 
   private renderAdvice() {
@@ -695,7 +783,11 @@ export class ObcReadout extends LitElement {
   }
 
   private renderInput() {
-    if (!this.inputRendered) {
+    if (!this.hasInput) {
+      return nothing;
+    }
+
+    if (!this.inputRendered && !this.inputLayoutReserved) {
       return nothing;
     }
 
@@ -711,8 +803,10 @@ export class ObcReadout extends LitElement {
         class=${classMap({
           'readout-segment-wrapper': true,
           'readout-input': true,
+          'input-hiding': this.deferredInputHidePhase === 'hiding',
+          'input-hidden': this.deferredInputHidePhase === 'hidden',
           'input-active':
-            this.inputInteractionRendered &&
+            this.inputInteractionEnabled &&
             this.interactionMode === ReadoutInputInteraction.popUp,
         })}
         part="input-wrapper"
@@ -863,9 +957,9 @@ export class ObcReadout extends LitElement {
     const valuePriority = this.resolvedValuePriority;
     const scopeValuePriority = valuePriority === Priority.enhanced;
     const valueReadoutStyle =
-      (this.inputInteractionRendered &&
+      (this.hasInteractiveInputContext &&
         this.interactionMode === ReadoutInputInteraction.flipFlop) ||
-      (this.inputInteractionRendered &&
+      (this.hasInteractiveInputContext &&
         this.isHorizontal &&
         this.interactionMode === ReadoutInputInteraction.popUp)
         ? ReadoutVariant.regular
@@ -1044,6 +1138,7 @@ export class ObcReadout extends LitElement {
 
   override disconnectedCallback() {
     window.removeEventListener('pointerdown', this.onWindowPointerDown, true);
+    window.clearTimeout(this.deferredInputHideTimer);
     super.disconnectedCallback();
   }
 }

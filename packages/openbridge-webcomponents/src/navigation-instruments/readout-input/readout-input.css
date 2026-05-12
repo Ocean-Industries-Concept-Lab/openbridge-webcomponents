@@ -6,6 +6,7 @@
   display: inline-flex;
   max-width: 100%;
   width: 100%;
+  min-height: fit-content;
   --global-typography-instrument-value-regular-container-height: var(
     --global-typography-instrument-value-regular-line-height
   );
@@ -401,9 +402,34 @@ slot[name="value"] {
   display: flex;
 }
 
+.variant-value-content.has-fixed-length .value-content-container,
+.input-value.has-fixed-length .value-content-container {
+  display: inline-grid;
+  grid-template-columns: auto;
+  grid-template-rows: auto;
+}
+
+.value-width-template,
+.value-layer {
+  grid-area: 1 / 1;
+}
+
+.value-width-template {
+  visibility: hidden;
+  pointer-events: none;
+  white-space: pre;
+}
+
+.value-layer {
+  display: inline-flex;
+  align-items: baseline;
+  pointer-events: none;
+  min-inline-size: 0;
+}
+
 .variant-value-content {
   &.has-fixed-length {
-    min-inline-size: calc(var(--obc-readout-input-fixed-ch, 0) * 1ch);
+    min-inline-size: 0;
   }
 
   &.medium {
@@ -411,7 +437,7 @@ slot[name="value"] {
     line-height: 1;
     margin-left: auto;
 
-    :is(.value, .hinted-zero) {
+    :is(.value, .hinted-zero, .value-width-template) {
       @mixin font-instrument-value-m-box;
     }
   }

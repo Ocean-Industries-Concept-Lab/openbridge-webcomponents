@@ -87,6 +87,10 @@
       padding-inline: var(--obc-readout-padding-horizontal-safe);
     }
 
+    &.interaction-flip-flop .readout-input {
+      padding-inline: 0;
+    }
+
     .readout-value-wrapper {
       justify-content: flex-end;
       width: 100%;
@@ -266,6 +270,25 @@
         justify-self: end;
       }
 
+      .readout-meta-wrapper {
+        justify-self: end;
+        width: fit-content;
+      }
+
+      &:not(.no-hug):is(.interaction-flip-flop, .interaction-pop-up)
+        :is(.readout-value-wrapper, .readout-input) {
+        width: fit-content;
+        justify-self: end;
+      }
+
+      &:not(.no-hug):is(.interaction-flip-flop, .interaction-pop-up)
+        :is(
+          .readout-value-wrapper > obc-readout-input,
+          .readout-input > obc-readout-input
+        ) {
+        width: fit-content;
+      }
+
       &:not(.no-hug) :is(.readout-advice, .readout-input) {
         width: fit-content;
         justify-self: end;
@@ -439,7 +462,8 @@
   );
 }
 
-.readout.interaction-pop-up .readout-input.input-active obc-readout-input {
+.readout.interaction-flip-flop .readout-value-wrapper obc-readout-input,
+.readout.interaction-pop-up .readout-value-wrapper obc-readout-input {
   --global-typography-instrument-value-small-font-weight-regular: var(
     --global-typography-instrument-value-small-font-weight-active
   );
@@ -454,19 +478,49 @@
   );
 }
 
-.readout.interaction-pop-up .readout-value-wrapper obc-readout-input {
-  --global-typography-instrument-value-small-font-weight-active: var(
-    --global-typography-instrument-value-small-font-weight-regular
-  );
-  --global-typography-instrument-value-regular-font-weight-active: var(
-    --global-typography-instrument-value-regular-font-weight-regular
-  );
-  --global-typography-instrument-value-medium-font-weight-active: var(
-    --global-typography-instrument-value-medium-font-weight-regular
-  );
-  --global-typography-instrument-value-large-font-weight-active: var(
-    --global-typography-instrument-value-large-font-weight-regular
-  );
+.readout.interaction-flip-flop .readout-input {
+  transform: translateY(0);
+  transition:
+    opacity 160ms ease-out,
+    transform 160ms ease-out;
+}
+
+.readout.interaction-flip-flop .readout-input.input-hiding {
+  opacity: 0;
+  transform: translateY(2px);
+}
+
+.readout.interaction-flip-flop .readout-input.input-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(2px);
+}
+
+.readout.interaction-pop-up .readout-input {
+  transform-origin: top;
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+
+.readout.interaction-pop-up .readout-input.input-hiding {
+  opacity: 0;
+  transform: translateY(8px) scaleY(0.92);
+}
+
+.readout.interaction-pop-up .readout-input.input-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(8px) scaleY(0.92);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .readout.interaction-pop-up .readout-input,
+  .readout.interaction-flip-flop .readout-input {
+    transition: none;
+  }
 }
 
 .readout.vertical.no-hug.has-input {
@@ -481,6 +535,14 @@
 
 .readout.vertical.no-hug.has-input .readout-input > obc-readout-input {
   width: 100%;
+}
+
+.readout.vertical.no-hug.has-input:is(
+    .interaction-flip-flop,
+    .interaction-pop-up
+  ) {
+  width: fit-content;
+  justify-items: stretch;
 }
 
 .readout-meta-wrapper {
