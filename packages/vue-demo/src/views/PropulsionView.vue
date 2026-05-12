@@ -7,8 +7,6 @@ import {
 import ObcAzimuthThruster from '@oicl/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster.vue'
 import ObcMainEngine from '@oicl/openbridge-webcomponents-vue/navigation-instruments/main-engine/ObcMainEngine.vue'
 import ObcRudder from '@oicl/openbridge-webcomponents-vue/navigation-instruments/rudder/ObcRudder.vue'
-import ObcInstrumentField from '@oicl/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
-import { InstrumentFieldSize } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
 import ObiLink from '@oicl/openbridge-webcomponents-vue/icons/ObiLink.vue'
 import { useSim } from '../composables/useSim'
 import { computed } from 'vue'
@@ -84,14 +82,18 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
     >
       <path
         d="M19.6106 14C18.5963 14 18.2264 12.6643 19.0961 12.1425L36.0002 2L52.9044 12.1425C53.7741 12.6643 53.4042 14 52.3899 14H19.6106Z"
-        fill="var(--element-inactive-color)"
-      />
+        fill="var(--element-inactive-color)" />
       <circle cx="4.00024" cy="10" r="4" fill="var(--base-red-300)" />
       <circle cx="68.0002" cy="10" r="4" fill="var(--base-mint-300)" />
     </svg>
 
     <div class="fore-instruments">
-      <ObcThruster tunnel single-sided :setpoint="0" :state="InstrumentState.off" />
+      <ObcThruster
+        tunnel
+        single-sided
+        :setpoint="0"
+        :state="InstrumentState.off"
+      />
     </div>
     <div class="center-instruments">
       <ObcAzimuthThruster
@@ -144,110 +146,107 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
     />
     <div class="readout-grid">
       <div class="tunnel-index readout-container single">
-        <div class="index off font-ui-label-active">1</div>
-        <div class="title font-ui-label">BT</div>
-        <ObcInstrumentField :size="InstrumentFieldSize.enhanced" neutral-color off />
-        <ObcInstrumentField
-          class="field-unit"
+        <div></div>
+        <div class="label-wrapper">
+          <div class="index off font-ui-label-active">1</div>
+          <div class="title font-ui-label">BT</div>
+        </div>
+        <div></div>
+        <obc-readout
+          value="OFF"
           unit="%"
-          tag="Power"
-          off
-          label-only
-          horizontal
-          :size="InstrumentFieldSize.enhanced"
+          label="Power"
+          :hasInput.prop="false"
+          variant="stack"
+          direction="horizontal"
         />
       </div>
       <div class="azimuth-index readout-container single">
-        <div class="index off font-ui-label-active">2</div>
-        <div class="title font-ui-label">Azimuth</div>
-        <ObcInstrumentField
-          :value="0"
-          :max-digits="3"
-          off
-          :size="InstrumentFieldSize.enhanced"
-          neutral-color
-        >
-          <div slot="off-value">0</div>
-        </ObcInstrumentField>
-        <ObcInstrumentField
-          class="field-unit"
-          unit="DEG"
-          tag="Angle"
-          off
-          label-only
-          horizontal
-          :size="InstrumentFieldSize.enhanced"
-        />
-        <ObcInstrumentField off :size="InstrumentFieldSize.enhanced" />
-        <ObcInstrumentField
-          class="field-unit"
-          unit="%"
-          tag="Power"
-          off
-          label-only
-          horizontal
-          :size="InstrumentFieldSize.enhanced"
-        />
+        <div></div>
+        <div class="label-wrapper">
+          <div class="index off font-ui-label-active">2</div>
+          <div class="title font-ui-label">Azimuth</div>
+        </div>
+        <div></div>
+        <div class="readout-wrapper">
+          <obc-readout
+            :value="0"
+            :maxDigits.prop="3"
+            unit="DEG"
+            label="Angle"
+            :hasInput.prop="false"
+            variant="stack"
+            direction="horizontal"
+          />
+        </div>
+        <div></div>
+        <div class="readout-wrapper">
+          <obc-readout
+            value="OFF"
+            unit="%"
+            label="Power"
+            :hasInput.prop="false"
+            variant="stack"
+            direction="horizontal"
+          />
+        </div>
       </div>
       <div class="main-engine-index readout-container single">
-        <div class="index font-ui-label-active">3 <ObiLink class="icon" /> 4</div>
-        <div class="title font-ui-label">ME</div>
-        <ObcInstrumentField
-          :value="30"
-          :setpoint="30"
-          :max-digits="3"
-          auto-hide-setpoint
-          :auto-hide-deadband="1"
-          has-setpoint
-          :size="InstrumentFieldSize.enhanced"
-        />
-        <ObcInstrumentField
-          class="field-unit"
-          unit="%"
-          tag="Pitch"
-          label-only
-          horizontal
-          :size="InstrumentFieldSize.enhanced"
-        />
-        <ObcInstrumentField
-          :value="sim.propulsion.propeller.value"
-          :setpoint="sim.propulsion.propellerSet.value"
-          auto-hide-setpoint
-          :auto-hide-deadband="1"
-          has-setpoint
-          :max-digits="3"
-          :size="InstrumentFieldSize.enhanced"
-        />
-        <ObcInstrumentField
-          class="field-unit"
-          unit="RPM"
-          tag="Speed"
-          label-only
-          horizontal
-          :size="InstrumentFieldSize.enhanced"
-        />
+        <div></div>
+        <div class="label-wrapper">
+          <div class="index font-ui-label-active">3
+            <ObiLink class="icon" /> 4
+          </div>
+          <div class="title font-ui-label">ME</div>
+        </div>
+        <div></div>
+        <div class="readout-wrapper">
+          <obc-readout
+            :value="30"
+            value-priority="enhanced"
+            :maxDigits.prop="3"
+            unit="%"
+            label="Pitch"
+            :hasInput.prop="false"
+            variant="stack"
+            direction="horizontal"
+          />
+        </div>
+        <div></div>
+        <div class="readout-wrapper">
+          <obc-readout
+            value-priority="enhanced"
+            :value="sim.propulsion.propeller.value"
+            :maxDigits.prop="3"
+            unit="RPM"
+            label="Speed"
+            :hasInput.prop="false"
+            variant="stack"
+            direction="horizontal"
+          />
+        </div>
       </div>
       <div class="rudder-index readout-container single">
-        <div class="index font-ui-label-active">5 <ObiLink class="icon" /> 6</div>
-        <div class="title font-ui-label">Rudders</div>
-        <ObcInstrumentField
-          :value="sim.propulsion.rudder.value"
-          :setpoint="sim.propulsion.rudderSet.value"
-          has-setpoint
-          auto-hide-setpoint
-          :auto-hide-deadband="1"
-          :max-digits="0"
-          :size="InstrumentFieldSize.enhanced"
-        />
-
-        <ObcInstrumentField
-          class="field-unit"
-          unit="DEG"
-          tag="Angle"
-          label-only
-          horizontal
-          :size="InstrumentFieldSize.enhanced"
-        />
+        <div></div>
+        <div class="label-wrapper">
+          <div class="index font-ui-label-active">5
+            <ObiLink class="icon" /> 6
+          </div>
+          <div class="title font-ui-label">Rudders</div>
+        </div>
+        <div></div>
+        <div class="readout-wrapper">
+          <obc-readout
+            value-priority="enhanced"
+            :value="sim.propulsion.rudder.value"
+            :maxDigits.prop="0"
+            unit="DEG"
+            label="Angle"
+            :hasInput.prop="false"
+            variant="stack"
+            direction="horizontal"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -409,7 +408,21 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
   justify-self: start;
 }
 
-obc-instrument-field {
+.label-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-inline-start: 8px;
+  gap: 8px;
+}
+
+.readout-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+obc-readout {
   justify-self: end;
 }
 </style>

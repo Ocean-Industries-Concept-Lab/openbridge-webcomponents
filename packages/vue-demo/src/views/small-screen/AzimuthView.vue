@@ -2,13 +2,11 @@
 import { useSim } from '@/composables/useSim'
 import { useDemoConfigStore } from '@/stores/demoConfig'
 import ObcAzimuthThruster from '@oicl/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster.vue'
-import ObcInstrumentField from '@oicl/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
-import { InstrumentFieldSize } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field.js'
 import {
   AdviceType,
   type AngleAdvice
 } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js'
-import { computed } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import {
   InstrumentState,
   Priority
@@ -22,10 +20,25 @@ const props = defineProps<{
   details: boolean
 }>()
 
+function primeAzimuthDemoMotion() {
+  sim.propulsion.reset()
+  sim.controllers.x.value = 0.3
+  sim.controllers.y.value = 0
+}
+
+onMounted(primeAzimuthDemoMotion)
+watch(
+  () => props.details,
+  () => {
+    primeAzimuthDemoMotion()
+  }
+)
+
 const angle = computed(() => sim.propulsion.rudder.value)
 const angleSet = computed(() => sim.propulsion.rudderSet.value)
 const thrust = computed(() => sim.propulsion.propeller.value)
 const thrustSet = computed(() => sim.propulsion.propellerSet.value)
+
 const angleAdvice = computed<AngleAdvice[]>(() => {
   if (sim.controllers.showAdvice.value || props.details) {
     return [
@@ -50,25 +63,26 @@ const angleAdvice = computed<AngleAdvice[]>(() => {
 <template>
   <div class="wrapper">
     <div class="instruments">
-      <ObcInstrumentField
-        tag="Angle"
+      <obc-readout
+        label="Angle"
         unit="deg"
-        :value="angle"
-        :setpoint="angleSet"
-        has-setpoint
-        :size="InstrumentFieldSize.enhanced"
-        :auto-hide-setpoint="true"
-        :auto-hide-deadband="1"
+        :value.prop="angle"
+        :setpointValue.prop="angleSet"
+        :hasInput.prop="false"
+        variant="enhanced"
+        value-priority="enhanced"
       />
-      <ObcInstrumentField
-        tag="Thrust"
+      <obc-readout
+        label="Thrust"
         unit="%"
-        :value="thrust"
-        :setpoint="thrustSet"
-        has-setpoint
-        :size="InstrumentFieldSize.enhanced"
-        :auto-hide-setpoint="true"
-        :auto-hide-deadband="1"
+        :value.prop="Math.round(thrust)"
+        :setpointValue.prop="Math.round(thrustSet)"
+        :hasInput.prop="true"
+        :hug.prop="false"
+        variant="enhanced"
+        value-priority="enhanced"
+        :inputInteraction.prop="'pop-up'"
+        :maxDigits.prop="2"
       />
     </div>
     <ObcAzimuthThruster

@@ -4,8 +4,6 @@ import {
   Priority
 } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types'
 import ObcAzimuthThruster from '@oicl/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster.vue'
-import ObcInstrumentField from '@oicl/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
-import { InstrumentFieldSize } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
 import { useSim } from '../composables/useSim'
 import { computed } from 'vue'
 import { useDemoConfigStore } from '../stores/demoConfig'
@@ -80,8 +78,7 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
     >
       <path
         d="M19.6106 14C18.5963 14 18.2264 12.6643 19.0961 12.1425L36.0002 2L52.9044 12.1425C53.7741 12.6643 53.4042 14 52.3899 14H19.6106Z"
-        fill="var(--element-inactive-color)"
-      />
+        fill="var(--element-inactive-color)" />
       <circle cx="4.00024" cy="10" r="4" fill="var(--base-red-300)" />
       <circle cx="68.0002" cy="10" r="4" fill="var(--base-mint-300)" />
     </svg>
@@ -111,73 +108,64 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
     />
     <div class="readout-grid">
       <div class="fore-index readout-container single">
-        <div class="index off font-ui-label-active">1</div>
-        <div class="title font-ui-label">Fore</div>
-        <ObcInstrumentField
-          :value="0"
-          :max-digits="3"
-          off
-          :size="InstrumentFieldSize.enhanced"
-          neutral-color
-        >
-          <div slot="off-value">0</div>
-        </ObcInstrumentField>
-        <ObcInstrumentField
-          class="field-unit"
-          unit="DEG"
-          tag="Angle"
-          off
-          label-only
-          horizontal
-          :size="InstrumentFieldSize.enhanced"
-        />
-        <ObcInstrumentField off :size="InstrumentFieldSize.enhanced" />
-        <ObcInstrumentField
-          class="field-unit"
-          unit="%"
-          tag="Power"
-          off
-          label-only
-          horizontal
-          :size="InstrumentFieldSize.enhanced"
-        />
+        <div></div>
+        <div class="label-wrapper">
+          <div class="index off font-ui-label-active">1</div>
+          <div class="title font-ui-label">Fore</div>
+        </div>
+        <div></div>
+        <div class="readout-wrapper">
+          <obc-readout
+            :value="0"
+            :maxDigits.prop="3"
+            unit="DEG"
+            label="Angle"
+            :hasInput.prop="false"
+            variant="stack"
+            direction="horizontal"
+          />
+        </div>
+        <div></div>
+        <div class="readout-wrapper">
+          <obc-readout
+            value="OFF"
+            unit="%"
+            label="Power"
+            :hasInput.prop="false"
+            variant="stack"
+            direction="horizontal"
+          />
+        </div>
       </div>
       <div class="aft-index readout-container single">
-        <div class="index font-ui-label-active">2</div>
-        <div class="title font-ui-label">Aft</div>
-        <ObcInstrumentField
-          :value="angle"
-          :setpoint="angleSetpoint"
-          has-setpoint
-          auto-hide-setpoint
-          :auto-hide-deadband="1"
-          :max-digits="3"
-          :size="InstrumentFieldSize.enhanced"
-        />
-        <ObcInstrumentField
-          class="field-unit"
-          unit="DEG"
-          tag="Angle"
-          label-only
-          horizontal
-          :size="InstrumentFieldSize.enhanced"
-        />
-        <ObcInstrumentField
-          :value="sim.propulsion.propeller.value"
-          :setpoint="sim.propulsion.propellerSet.value"
-          has-setpoint
-          auto-hide-setpoint
-          :auto-hide-deadband="1"
-          :size="InstrumentFieldSize.enhanced"
-        />
-        <ObcInstrumentField
-          class="field-unit"
-          unit="%"
-          tag="Power"
-          label-only
-          horizontal
-          :size="InstrumentFieldSize.enhanced"
-        />
+        <div></div>
+        <div class="label-wrapper">
+          <div class="index font-ui-label-active">2</div>
+          <div class="title font-ui-label">Aft</div>
+        </div>
+        <div></div>
+        <div class="readout-wrapper">
+          <obc-readout
+            :value="angle"
+            :maxDigits.prop="3"
+            unit="DEG"
+            label="Angle"
+            :hasInput.prop="false"
+            variant="stack"
+            direction="horizontal"
+          />
+        </div>
+        <div></div>
+        <div class="readout-wrapper">
+          <obc-readout
+            :value="sim.propulsion.propeller.value"
+            unit="%"
+            label="Power"
+            :hasInput.prop="false"
+            variant="stack"
+            direction="horizontal"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -305,7 +293,15 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
   justify-self: start;
 }
 
-obc-instrument-field {
+obc-readout {
   justify-self: end;
+}
+
+.label-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-inline-start: 8px;
+  gap: 8px;
 }
 </style>
