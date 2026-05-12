@@ -38,15 +38,47 @@ function formatNumericValue(
   return value.toFixed(options.fractionDigits);
 }
 
+export function numericOrOriginalString(
+  value: number | string | undefined
+): number | string | undefined {
+  if (typeof value !== 'string') {
+    return value;
+  }
+
+  const trimmed = value.trim();
+  if (trimmed === '') {
+    return value;
+  }
+
+  const n = Number(trimmed);
+  if (!Number.isFinite(n)) {
+    return value;
+  }
+
+  return n;
+}
+
 export function formatReadoutValue(
   value: number | string | undefined,
   options: ReadoutNumericFormatOptions
 ): string {
-  if (typeof value === 'string') {
-    return value;
+  const resolved = numericOrOriginalString(value);
+  if (typeof resolved === 'string') {
+    return resolved;
   }
 
-  return formatNumericValue(value, options);
+  return formatNumericValue(resolved, options);
+}
+
+export function readoutFormattedInteger(valueText: string): number {
+  const t = valueText.trim();
+  if (!t) {
+    return 0;
+  }
+
+  const rest = t.startsWith('-') ? t.slice(1) : t;
+  const dot = rest.indexOf('.');
+  return dot === -1 ? rest.length : dot;
 }
 
 export function getHintZeros(
@@ -58,16 +90,14 @@ export function getHintZeros(
     return '';
   }
 
-  if (typeof value !== 'number' || value < 0) {
+  const resolved = numericOrOriginalString(value);
+  if (typeof resolved !== 'number' || resolved < 0) {
     return '';
   }
 
-  const numericText = formattedValue.startsWith('-')
-    ? formattedValue.slice(1)
-    : formattedValue;
-  const [integerPart] = numericText.split('.');
+  const integerCharCount = readoutFormattedInteger(formattedValue);
   const integerWidth = Math.max(maxDigits - fractionDigits, 1);
-  const hintedDigits = integerWidth - integerPart.length;
+  const hintedDigits = integerWidth - integerCharCount;
 
   if (hintedDigits > 0) {
     return '0'.repeat(hintedDigits);

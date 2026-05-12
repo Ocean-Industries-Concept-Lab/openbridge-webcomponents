@@ -1,4 +1,4 @@
-import {LitElement, html, nothing, unsafeCSS} from 'lit';
+import {LitElement, html, nothing, unsafeCSS, type PropertyValues} from 'lit';
 import {property, query, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import componentStyle from './readout-input.css?inline';
@@ -14,8 +14,30 @@ import {
   formatReadoutValue,
   formatTextSegment,
   getHintZeros,
+  numericOrOriginalString,
+  readoutFormattedInteger,
   type ReadoutNumericFormatOptions,
 } from '../readout/readout-formatters.js';
+
+function readoutInputValueFromAttribute(
+  value: string | null
+): number | string | undefined {
+  if (value === null) {
+    return undefined;
+  }
+
+  return numericOrOriginalString(value);
+}
+
+function readoutInputValueToAttribute(
+  value: number | string | undefined
+): string | null {
+  if (value === undefined) {
+    return null;
+  }
+
+  return String(value);
+}
 
 export enum ReadoutInputVariant {
   input = 'input',
@@ -128,7 +150,13 @@ export class ObcReadoutInput extends LitElement {
 
   @property({type: Boolean}) hasFixedLength = false;
 
-  @property() value: number | string | undefined = '';
+  @property({
+    converter: {
+      fromAttribute: readoutInputValueFromAttribute,
+      toAttribute: readoutInputValueToAttribute,
+    },
+  })
+  value: number | string | undefined = undefined;
 
   @property({type: String}) secondaryValue = '';
 
@@ -241,13 +269,14 @@ export class ObcReadoutInput extends LitElement {
   private get inlineValueRenderModel(): ReadoutValueRenderModel {
     const valueText = this.inlineRenderedValueText;
     const templateText = this.hasFixedLength ? this.valueLength.trim() : '';
+    const integerCharCount = readoutFormattedInteger(valueText);
     const hintedText =
       !this.hasFixedLength ||
       !this.hasHintedZeros ||
       templateText.length === 0 ||
-      templateText.length <= valueText.length
+      templateText.length <= integerCharCount
         ? ''
-        : '0'.repeat(templateText.length - valueText.length);
+        : '0'.repeat(templateText.length - integerCharCount);
 
     return {
       hintedText,
@@ -268,11 +297,12 @@ export class ObcReadoutInput extends LitElement {
     if (this.hasFixedLength) {
       const segment = formatTextSegment(formattedText, true, this.valueLength);
       const templateText = segment.widthTemplate;
+      const visibleIntegerChars = readoutFormattedInteger(segment.visibleValue);
       const hintedText =
         this.hasHintedZeros &&
         templateText.length > 0 &&
-        templateText.length > segment.visibleValue.length
-          ? '0'.repeat(templateText.length - segment.visibleValue.length)
+        templateText.length > visibleIntegerChars
+          ? '0'.repeat(templateText.length - visibleIntegerChars)
           : '';
 
       return {
@@ -318,6 +348,18 @@ export class ObcReadoutInput extends LitElement {
   override firstUpdated() {
     this.hasAssignedValueIcon =
       (this.iconSlot?.assignedElements({flatten: true}).length ?? 0) > 0;
+  }
+
+  override willUpdate(changed: PropertyValues<this>) {
+    super.willUpdate(changed);
+    if (!changed.has('value')) {
+      return;
+    }
+
+    const coerced = numericOrOriginalString(this.value);
+    if (coerced !== this.value) {
+      this.value = coerced;
+    }
   }
 
   override updated() {

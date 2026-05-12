@@ -417,7 +417,6 @@ function renderStackingMatrix({
 }
 
 export const TrailingUnit: Story = {
-  name: 'Trailing Unit',
   render: () =>
     renderStackingMatrix({
       stacking: ReadoutListItemStacking.trailingUnit,
@@ -427,7 +426,6 @@ export const TrailingUnit: Story = {
 };
 
 export const LeadingUnit: Story = {
-  name: 'Leading Unit',
   render: () =>
     renderStackingMatrix({
       stacking: ReadoutListItemStacking.leadingUnit,
@@ -437,7 +435,6 @@ export const LeadingUnit: Story = {
 };
 
 export const LeadingSrc: Story = {
-  name: 'Leading Src',
   render: () =>
     renderStackingMatrix({
       stacking: ReadoutListItemStacking.leadingSrc,
@@ -447,7 +444,6 @@ export const LeadingSrc: Story = {
 };
 
 export const AlertStates: Story = {
-  name: 'Alert States',
   render: () => {
     const alerts = Object.values(ReadoutListItemAlertState);
     const cases: ReadoutShowcaseCase[] = alerts.map((alertState) => ({
