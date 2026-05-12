@@ -16,28 +16,10 @@ import {
   getHintZeros,
   numericOrOriginalString,
   readoutFormattedInteger,
+  readoutValueFromAttribute,
+  readoutValueToAttribute,
   type ReadoutNumericFormatOptions,
 } from '../readout/readout-formatters.js';
-
-function readoutInputValueFromAttribute(
-  value: string | null
-): number | string | undefined {
-  if (value === null) {
-    return undefined;
-  }
-
-  return numericOrOriginalString(value);
-}
-
-function readoutInputValueToAttribute(
-  value: number | string | undefined
-): string | null {
-  if (value === undefined) {
-    return null;
-  }
-
-  return String(value);
-}
 
 export enum ReadoutInputVariant {
   input = 'input',
@@ -152,8 +134,8 @@ export class ObcReadoutInput extends LitElement {
 
   @property({
     converter: {
-      fromAttribute: readoutInputValueFromAttribute,
-      toAttribute: readoutInputValueToAttribute,
+      fromAttribute: readoutValueFromAttribute,
+      toAttribute: readoutValueToAttribute,
     },
   })
   value: number | string | undefined = undefined;
@@ -246,15 +228,16 @@ export class ObcReadoutInput extends LitElement {
   }
 
   private get valueText(): string {
-    if (typeof this.value === 'string') {
-      return this.value;
-    }
-
     if (this.value === undefined) {
       return '';
     }
 
-    return this.value.toFixed(this.fractionDigits);
+    const resolved = numericOrOriginalString(this.value);
+    if (typeof resolved === 'number') {
+      return resolved.toFixed(this.fractionDigits);
+    }
+
+    return resolved ?? '';
   }
 
   private get inlineRenderedValueText(): string {

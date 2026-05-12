@@ -58,6 +58,26 @@ export function numericOrOriginalString(
   return n;
 }
 
+export function readoutValueFromAttribute(
+  value: string | null
+): number | string | undefined {
+  if (value === null) {
+    return undefined;
+  }
+
+  return numericOrOriginalString(value);
+}
+
+export function readoutValueToAttribute(
+  value: number | string | undefined
+): string | null {
+  if (value === undefined) {
+    return null;
+  }
+
+  return String(value);
+}
+
 export function formatReadoutValue(
   value: number | string | undefined,
   options: ReadoutNumericFormatOptions

@@ -34,6 +34,10 @@ import {
   ReadoutInputSize,
 } from '../readout-input/readout-input.js';
 import '../readout-input/readout-input.js';
+import {
+  readoutValueFromAttribute,
+  readoutValueToAttribute,
+} from './readout-formatters.js';
 
 export enum ReadoutVariant {
   regular = 'regular',
@@ -175,7 +179,13 @@ export class ObcReadout extends LitElement {
 
   @property({type: Boolean}) hasSrc = false;
 
-  @property() value: number | string | undefined;
+  @property({
+    converter: {
+      fromAttribute: readoutValueFromAttribute,
+      toAttribute: readoutValueToAttribute,
+    },
+  })
+  value: number | string | undefined;
 
   @property({type: Number}) maxDigits = 1;
 
@@ -203,14 +213,32 @@ export class ObcReadout extends LitElement {
 
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  @property() adviceValue: number | string | undefined = '';
+  @property({
+    converter: {
+      fromAttribute: readoutValueFromAttribute,
+      toAttribute: readoutValueToAttribute,
+    },
+  })
+  adviceValue: number | string | undefined = '';
 
   /**
    * @deprecated Use `setpointValue` for the input/setpoint segment value.
    */
-  @property() inputValue: number | string | undefined = '';
+  @property({
+    converter: {
+      fromAttribute: readoutValueFromAttribute,
+      toAttribute: readoutValueToAttribute,
+    },
+  })
+  inputValue: number | string | undefined = '';
 
-  @property() setpointValue: number | string | undefined = undefined;
+  @property({
+    converter: {
+      fromAttribute: readoutValueFromAttribute,
+      toAttribute: readoutValueToAttribute,
+    },
+  })
+  setpointValue: number | string | undefined = undefined;
 
   @property({type: String}) label = '';
 

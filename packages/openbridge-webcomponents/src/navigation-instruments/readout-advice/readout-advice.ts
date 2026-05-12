@@ -16,6 +16,10 @@ import {
   ReadoutInputMode,
 } from '../readout-input/readout-input.js';
 import '../readout-input/readout-input.js';
+import {
+  readoutValueFromAttribute,
+  readoutValueToAttribute,
+} from '../readout/readout-formatters.js';
 
 export {ReadoutAdviceSize};
 
@@ -86,7 +90,13 @@ export class ObcReadoutAdvice extends LitElement {
 
   @property({type: Boolean}) hasFixedLength = false;
 
-  @property() value: number | string | undefined = '';
+  @property({
+    converter: {
+      fromAttribute: readoutValueFromAttribute,
+      toAttribute: readoutValueToAttribute,
+    },
+  })
+  value: number | string | undefined = '';
 
   @property({type: String}) secondaryValue = '';
 

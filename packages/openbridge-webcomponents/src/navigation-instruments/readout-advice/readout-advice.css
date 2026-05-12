@@ -14,7 +14,8 @@
 }
 
 .readout-advice-root.state-amplified {
-  @mixin style style=amplified visibleWrapperClass=.readout-advice-wrapper;
+  @mixin style style=amplified visibleWrapperClass=.readout-advice-wrapper
+    noClick;
 
   .readout-advice-wrapper {
     border-radius: var(--global-border-radius-border-radius-base);
