@@ -5,8 +5,7 @@
       <ObcCompassIndicator
         class="indicator"
         :angle="sim.vessel.headingDeg.value"
-        :arrow="CompassIndicatorArrow.Heading"
-        :show-labels="true"
+        :direction="CompassIndicatorDirection.Heading"
       >
       </ObcCompassIndicator>
       <ObcInstrumentField
@@ -40,7 +39,7 @@
       <ObcCompassIndicator
         class="indicator"
         :angle="sim.vessel.courseOverGroundDeg.value"
-        :arrow="CompassIndicatorArrow.Course"
+        :direction="CompassIndicatorDirection.Course"
         src="GPS1"
       />
       <ObcInstrumentField
@@ -265,7 +264,7 @@ import { useSim } from '@/composables/useSim'
 import ObcCard from '@oicl/openbridge-webcomponents-vue/components/card/ObcCard.vue'
 import ObcInstrumentField from '@oicl/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
 import { InstrumentFieldSize } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
-import { CompassIndicatorArrow } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/compass-indicator/compass-indicator'
+import { CompassIndicatorDirection } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/compass-indicator/compass-indicator'
 import ObcCompassIndicator from '@oicl/openbridge-webcomponents-vue/navigation-instruments/compass-indicator/ObcCompassIndicator.vue'
 import ObcRotIndicator from '@oicl/openbridge-webcomponents-vue/navigation-instruments/rot-indicator/ObcRotIndicator.vue'
 import ObcSpeedIndicator from '@oicl/openbridge-webcomponents-vue/navigation-instruments/speed-indicator/ObcSpeedIndicator.vue'

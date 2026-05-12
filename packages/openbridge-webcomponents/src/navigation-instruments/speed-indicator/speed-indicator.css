@@ -1,0 +1,60 @@
+:host {
+  display: inline-block;
+  vertical-align: middle;
+  overflow: visible;
+}
+
+.longlat {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  box-sizing: border-box;
+  overflow: visible;
+  direction: ltr;
+
+  & .longlat-ship {
+    position: absolute;
+    left: 24px;
+    top: 24px;
+    z-index: 0;
+    box-sizing: border-box;
+    width: 6px;
+    height: 16px;
+    margin-left: -3px;
+    margin-top: -8px;
+    display: block;
+    line-height: 0;
+    overflow: visible;
+
+    & svg {
+      display: block;
+    }
+  }
+
+  & .longlat-slot {
+    position: absolute;
+    z-index: 1;
+    width: 12px;
+    height: 12px;
+    margin-left: -6px;
+    margin-top: -6px;
+    display: block;
+    pointer-events: none;
+    overflow: visible;
+
+    & obc-speed-arrows {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      box-sizing: border-box;
+      display: block;
+      width: 96px;
+      height: 96px;
+      min-width: 96px;
+      max-width: 96px;
+      overflow: visible;
+      transform: translate(-50%, -50%) scale(0.125);
+      transform-origin: center center;
+    }
+  }
+}
