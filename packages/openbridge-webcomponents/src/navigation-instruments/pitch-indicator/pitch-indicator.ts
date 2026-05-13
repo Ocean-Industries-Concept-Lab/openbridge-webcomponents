@@ -68,7 +68,8 @@ const TRACK_D =
  */
 @customElement('obc-pitch-indicator')
 export class ObcPitchIndicator extends LitElement {
-  @property({type: String}) type: PitchIndicatorType = PitchIndicatorType.enhanced;
+  @property({type: String}) type: PitchIndicatorType =
+    PitchIndicatorType.enhanced;
 
   @property({type: Number}) value = 0;
 

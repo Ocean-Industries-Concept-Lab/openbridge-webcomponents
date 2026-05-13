@@ -64,7 +64,8 @@ let nextTrackClipId = 0;
  */
 @customElement('obc-roll-indicator')
 export class ObcRollIndicator extends LitElement {
-  @property({type: String}) type: RollIndicatorType = RollIndicatorType.enhanced;
+  @property({type: String}) type: RollIndicatorType =
+    RollIndicatorType.enhanced;
 
   @property({type: Number}) value = 0;
 
