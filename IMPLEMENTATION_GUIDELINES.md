@@ -205,8 +205,8 @@ For `@mixin style style=normal visibleWrapperClass=.visible-wrapper` the mixin e
 |-------|----------|-------------|
 | **Enabled** | `& .visible-wrapper` | `border-color: var(--normal-enabled-border-color)`, `background-color: var(--normal-enabled-background-color)`, `cursor: pointer` |
 | **Activated** | `&.activated .visible-wrapper` | `border-color: var(--normal-activated-border-color)`, … |
-| **Hover** | `@media (hover:hover) { &:hover .visible-wrapper }` | Uses `color-mix()` with `--obc-can-hover` for smooth hover control |
-| **Pressed** | `&:active .visible-wrapper` | `border-color: var(--normal-pressed-border-color)`, … |
+| **Hover** | `@media (hover:hover) and (pointer:fine) { &:hover .visible-wrapper }` | Uses `color-mix()` with `--obc-can-hover` for smooth hover control |
+| **Pressed** | `&:active .visible-wrapper` | Uses `color-mix()` with `--obc-can-press` to suppress the press flash on touch |
 | **Focus-visible** | `&:focus-visible .visible-wrapper` | `outline-color: var(--border-focus-color)`, `outline-width: var(--global-size-spacing-border-weight-focusframe)` |
 | **Disabled** | `&:disabled .visible-wrapper`, `&.disabled .visible-wrapper` | `cursor: not-allowed`, `color: var(--on-normal-disabled-color)` |
 
@@ -288,15 +288,18 @@ The mixin always generates an `.activated` rule. Toggle it programmatically via 
 
 ---
 
-### `--obc-can-hover` — Hover Kill-Switch
+### `--obc-can-hover` / `--obc-can-press` — Hover & Press Kill-Switches
 
 Defined in `src/main.css`:
 
 ```css
-html { --obc-can-hover: 1; }
+html {
+  --obc-can-hover: 1;
+  --obc-can-press: 1;
+}
 ```
 
-The `@mixin style` hover state uses `color-mix()` to blend hover colors based on this variable:
+The `@mixin style` hover and pressed states use `color-mix()` to blend their respective colors based on these variables:
 
 ```css
 background-color: color-mix(in srgb,
@@ -304,10 +307,31 @@ background-color: color-mix(in srgb,
   var(--base-background-color));
 ```
 
-- `1` → full hover feedback (default)
-- `0` → hover colors are invisible (100% base color)
+- `1` → full feedback (default)
+- `0` → state colors are invisible (100% base color)
 
-This is wrapped in `@media (hover:hover)`, so touch-only devices never see hover styles regardless of this value.
+The hover branch is additionally wrapped in `@media (hover: hover) and (pointer: fine)`, so coarse-pointer devices never see hover styles regardless of the variable. The `(pointer: fine)` qualifier filters out devices that incorrectly report `hover: hover` for touch input.
+
+#### `installPointerModalityTracker()`
+
+A document-level tracker drives the variables based on the active `PointerEvent.pointerType`:
+
+- `mouse` / `pen` → both stay at `1` so hover and press feedback render normally.
+- `touch`:
+  - `--obc-can-hover` is set to `0` for the entire gesture (hover is never meaningful on touch and is the primary source of "sticky" visuals after lift-off).
+  - `--obc-can-press` stays at `1` while the finger is down so the user gets the essential press confirmation, then is briefly flipped to `0` on `pointerup` / `pointercancel` (restored on the next animation frame) to force a repaint that flushes any retained `:active` paint state.
+
+It also blurs the active element after a touch `click` to prevent a `:focus-visible` ring from lingering.
+
+The tracker auto-installs from `bundle.ts`, so any consumer that imports the bundle gets the fix for free. Module consumers (custom subsets, framework wrappers) can opt in from their app bootstrap:
+
+```ts
+import {installPointerModalityTracker} from '@oicl/openbridge-webcomponents';
+
+installPointerModalityTracker();
+```
+
+The installer is idempotent — calling it multiple times only attaches listeners once.
 
 ---
 
