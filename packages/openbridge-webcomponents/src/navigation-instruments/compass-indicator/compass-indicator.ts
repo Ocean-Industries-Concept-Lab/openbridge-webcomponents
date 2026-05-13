@@ -56,10 +56,10 @@ export class ObcCompassIndicator extends LitElement {
   angle = 0;
 
   @property({type: String})
-  type: string = CompassIndicatorType.Regular;
+  type: CompassIndicatorType = CompassIndicatorType.Regular;
 
   @property({type: String})
-  direction: string = CompassIndicatorDirection.Heading;
+  direction: CompassIndicatorDirection = CompassIndicatorDirection.Heading;
 
   private get normalizedAngle(): number {
     return normalizeAngle(this.angle);

@@ -75,7 +75,7 @@ const TRAVEL_HALF_PX = Math.min(
  */
 @customElement('obc-heave-indicator')
 export class ObcHeaveIndicator extends LitElement {
-  @property({type: String}) type: string = HeaveIndicatorType.enhanced;
+  @property({type: String}) type: HeaveIndicatorType = HeaveIndicatorType.enhanced;
 
   @property({type: Number}) value = 0;
 

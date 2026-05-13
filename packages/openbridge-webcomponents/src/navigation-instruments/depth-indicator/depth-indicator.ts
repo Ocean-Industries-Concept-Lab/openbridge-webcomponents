@@ -23,7 +23,7 @@ const DOT_R = 3;
 @customElement('obc-depth-indicator')
 export class ObcDepthIndicator extends LitElement {
   @property({type: String})
-  variant: string = ObcDepthIndicatorVariant.outline;
+  variant: ObcDepthIndicatorVariant = ObcDepthIndicatorVariant.outline;
 
   @property({type: Array})
   values: number[] = [];

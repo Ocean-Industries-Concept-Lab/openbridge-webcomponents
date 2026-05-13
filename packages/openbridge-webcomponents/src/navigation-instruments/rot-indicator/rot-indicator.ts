@@ -12,7 +12,7 @@ export enum RotIndicatorType {
 @customElement('obc-rot-indicator')
 export class ObcRotIndicator extends LitElement {
   @property({type: String})
-  type: string = RotIndicatorType.radial;
+  type: RotIndicatorType = RotIndicatorType.radial;
 
   /**
    * Measured rate of turn in degrees per minute (positive = starboard).
