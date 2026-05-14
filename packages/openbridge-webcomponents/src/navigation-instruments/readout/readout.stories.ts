@@ -10,14 +10,10 @@ import {
   ReadoutAdviceState,
   ReadoutAdviceFormat,
 } from '../readout-advice/readout-advice.js';
-import {
-  ReadoutInputMode,
-  ReadoutInputFormat,
-} from '../readout-input/readout-input.js';
+import {ReadoutInputFormat} from '../readout-input/readout-input.js';
 import {
   ReadoutDirection,
   ReadoutInputInteraction,
-  ReadoutInputStyle,
   ReadoutAlertState,
   ReadoutSourceType,
   ReadoutVariant,
@@ -49,7 +45,6 @@ type ReadoutStoryArgs = {
   adviceIcon: string;
   inputIcon?: string;
   adviceValue: string | number;
-  inputValue: string | number;
   value: string | number;
   maxDigits: number;
   fractionDigits: number;
@@ -78,13 +73,11 @@ type ReadoutStoryArgs = {
   adviceValueLength: string;
   adviceHasHintedZeros: boolean;
   inputFormat: ReadoutInputFormat;
-  inputInteractionMode?: ReadoutInputMode;
   inputHasFixedLength: boolean;
   inputSecondaryValue: string;
   inputDescription: string;
   inputValueLength: string;
   inputHasHintedZeros: boolean;
-  readoutInputStyle: ReadoutInputStyle;
   alertState: ReadoutAlertState;
   inputInteraction: ReadoutInputInteraction;
   setpointValue: string | number;
@@ -147,7 +140,7 @@ const longPageDecorator = (story: () => unknown) => {
 
 const defaultArgs: ReadoutStoryArgs = {
   variant: ReadoutVariant.regular,
-  valuePriority: undefined,
+  valuePriority: Priority.regular,
   direction: ReadoutDirection.vertical,
   alignment: ReadoutStackVerticalAlignment.vertical,
   hug: false,
@@ -163,7 +156,6 @@ const defaultArgs: ReadoutStoryArgs = {
   adviceIcon: 'placeholder',
   inputIcon: undefined,
   adviceValue: '123',
-  inputValue: '123',
   value: '123',
   maxDigits: 1,
   fractionDigits: 0,
@@ -191,16 +183,14 @@ const defaultArgs: ReadoutStoryArgs = {
   adviceValueLength: '000',
   adviceHasHintedZeros: false,
   inputFormat: ReadoutInputFormat.regular,
-  inputInteractionMode: undefined,
   inputHasFixedLength: false,
   inputSecondaryValue: '456',
   inputDescription: 'SET',
   inputValueLength: '000',
   inputHasHintedZeros: false,
-  readoutInputStyle: ReadoutInputStyle.regular,
   alertState: ReadoutAlertState.none,
   inputInteraction: ReadoutInputInteraction.alwaysVisible,
-  setpointValue: '100',
+  setpointValue: '123',
   _lastAutoInputDividerSyncKey: `${ReadoutDirection.vertical}:true`,
   _lastAutoSourceDividerSyncKey: `${ReadoutDirection.vertical}:false`,
 };
@@ -331,7 +321,6 @@ function renderReadoutComponent(
       }}
       .variant=${resolvedArgs.variant ?? ReadoutVariant.regular}
       .valuePriority=${resolvedArgs.valuePriority}
-      .readoutInputStyle=${resolvedArgs.readoutInputStyle}
       .alertState=${resolvedArgs.alertState}
       .inputInteraction=${resolvedArgs.inputInteraction}
       .setpointValue=${resolveReadoutStoryMaybeNumeric(
@@ -349,7 +338,6 @@ function renderReadoutComponent(
       .hasSourceDivider=${resolvedArgs.hasSourceDivider}
       .hasLeadingIcon=${resolvedArgs.hasLeadingIcon}
       .adviceValue=${resolveReadoutStoryMaybeNumeric(resolvedArgs.adviceValue)}
-      .inputValue=${resolveReadoutStoryMaybeNumeric(resolvedArgs.inputValue)}
       .value=${resolveReadoutStoryValue(resolvedArgs.value)}
       .maxDigits=${resolvedArgs.maxDigits}
       .fractionDigits=${resolvedArgs.fractionDigits}
@@ -378,7 +366,6 @@ function renderReadoutComponent(
       .adviceValueLength=${resolvedArgs.adviceValueLength}
       .adviceHasHintedZeros=${resolvedArgs.adviceHasHintedZeros}
       .inputFormat=${resolvedArgs.inputFormat}
-      .inputInteractionMode=${resolvedArgs.inputInteractionMode}
       .inputHasFixedLength=${resolvedArgs.inputHasFixedLength}
       .inputSecondaryValue=${resolvedArgs.inputSecondaryValue}
       .inputDescription=${resolvedArgs.inputDescription}
@@ -584,13 +571,6 @@ const meta = {
       table: {category: 'Readout'},
       description: 'Overrides the main value segment priority/color.',
     },
-    readoutInputStyle: {
-      name: 'Readout Input Style',
-      control: false,
-      table: {category: 'Deprecated', disable: true},
-      description:
-        'Deprecated. Input styling now follows the resolved value/readout state.',
-    },
     alignment: {
       name: 'Alignment',
       control: {type: 'select'},
@@ -652,8 +632,7 @@ const meta = {
     },
     labelOnly: {
       name: 'Label Only',
-      table: {category: 'Readout', disable: true},
-      control: false,
+      table: {category: 'Readout'},
     },
     hasAdvice: {
       name: 'Has Advice',
@@ -699,19 +678,6 @@ const meta = {
       name: 'Format',
       control: {type: 'select'},
       options: Object.values(ReadoutInputFormat),
-      if: {arg: 'hasInput', truthy: true},
-      table: {category: 'Input'},
-    },
-    inputInteractionMode: {
-      name: 'Mode',
-      control: {type: 'select'},
-      options: [undefined, ...Object.values(ReadoutInputMode)],
-      if: {arg: 'hasInput', truthy: true},
-      table: {category: 'Input'},
-    },
-    inputValue: {
-      name: 'Value',
-      control: {type: 'text'},
       if: {arg: 'hasInput', truthy: true},
       table: {category: 'Input'},
     },
@@ -991,7 +957,7 @@ export const SegmentHugReadout: Story = {
                 .hug=${hug}
                 style=${hug ? '' : 'width:100%;'}
                 .hasInput=${true}
-                .inputValue=${'123'}
+                .setpointValue=${'123'}
                 .value=${123}
                 .label=${'HDG'}
                 .unit=${'DEG'}
@@ -1164,7 +1130,6 @@ export const AlertStateShowcase: Story = {
         direction: ReadoutDirection.vertical,
         hug: false,
         hasInput: true,
-        readoutInputStyle: ReadoutInputStyle.regular,
         inputInteraction: ReadoutInputInteraction.alwaysVisible,
         alertState,
         value: '100',
@@ -1211,6 +1176,50 @@ export const RegularCases: Story = {
         title: 'Regular / Vertical — Value Formatting',
         cases: [
           {
+            label: 'Fixed Length (123, len=3) — fixed OFF',
+            args: {
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              value: '123',
+              valueHasFixedLength: false,
+              valueLength: '000',
+              hug: false,
+            },
+          },
+          {
+            label: 'Fixed Length (123, len=3) — fixed ON (same layout)',
+            args: {
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              value: '123',
+              valueHasFixedLength: true,
+              valueLength: '000',
+              hug: false,
+            },
+          },
+          {
+            label: 'Fixed Length (12, len=3) — reserves width',
+            args: {
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              value: '12',
+              valueHasFixedLength: true,
+              valueLength: '000',
+              hug: false,
+            },
+          },
+          {
+            label: 'Fixed Length (1234, len=3) — no truncation, no reserve',
+            args: {
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              value: '1234',
+              valueHasFixedLength: true,
+              valueLength: '000',
+              hug: false,
+            },
+          },
+          {
             label: 'Value Hinted Zeros',
             args: {
               direction: ReadoutDirection.vertical,
@@ -1229,7 +1238,7 @@ export const RegularCases: Story = {
               hasInput: true,
               hasAdvice: true,
               value: '12.3',
-              inputValue: 12.3,
+              setpointValue: 12.3,
               adviceValue: 12.3,
               fractionDigits: 1,
               hug: false,
@@ -1242,7 +1251,7 @@ export const RegularCases: Story = {
               hasInput: true,
               hasAdvice: true,
               value: '123',
-              inputValue: '123',
+              setpointValue: '123',
               adviceValue: '123',
               hasDegree: true,
               fractionDigits: 1,
@@ -1259,7 +1268,7 @@ export const RegularCases: Story = {
             args: {
               direction: ReadoutDirection.vertical,
               hasInput: true,
-              inputValue: '12',
+              setpointValue: '12',
               inputHasFixedLength: true,
               inputValueLength: '000',
               inputHasHintedZeros: true,
@@ -1322,7 +1331,7 @@ export const RegularCases: Story = {
               direction: ReadoutDirection.vertical,
               hasInput: true,
               inputFormat: ReadoutInputFormat.range,
-              inputValue: '12',
+              setpointValue: '12',
               inputSecondaryValue: '34',
               hug: false,
             },
@@ -1553,7 +1562,6 @@ export const EnhancedCases: Story = {
               direction: ReadoutDirection.vertical,
               hasInput: true,
               hasDegree: true,
-              inputInteractionMode: ReadoutInputMode.input,
               hug: false,
             },
           },
@@ -1564,8 +1572,8 @@ export const EnhancedCases: Story = {
               direction: ReadoutDirection.vertical,
               hasInput: true,
               hasDegree: true,
-              inputInteractionMode: ReadoutInputMode.inputTemporary,
               hug: false,
+              inputInteraction: ReadoutInputInteraction.popUp,
             },
           },
           {
@@ -1677,7 +1685,6 @@ export const EnhancedCases: Story = {
               hasInput: true,
               hasInputDivider: true,
               hasDegree: true,
-              inputInteractionMode: ReadoutInputMode.input,
             },
           },
         ],
@@ -1781,7 +1788,7 @@ export const StackCases: Story = {
               variant: ReadoutVariant.stack,
               direction: ReadoutDirection.vertical,
               hasInput: true,
-              inputValue: '12',
+              setpointValue: '12',
               inputHasFixedLength: true,
               inputValueLength: '000',
               inputHasHintedZeros: true,
@@ -1876,7 +1883,7 @@ export const StackCases: Story = {
               hasInput: true,
               hasInputDivider: true,
               inputFormat: ReadoutInputFormat.range,
-              inputValue: '12',
+              setpointValue: '12',
               inputSecondaryValue: '34',
             },
           },
@@ -1922,7 +1929,6 @@ export const StackVerticalAlignment: Story = {
     const baseArgs: Partial<ReadoutStoryArgs> = {
       variant: ReadoutVariant.stack,
       direction: ReadoutDirection.vertical,
-      readoutInputStyle: ReadoutInputStyle.regular,
       inputInteraction: ReadoutInputInteraction.alwaysVisible,
       hasInput: true,
       value: '123',

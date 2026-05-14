@@ -6,11 +6,7 @@ import {classMap} from 'lit/directives/class-map.js';
 import '../badge-command/badge-command.js';
 import '../azimuth-thruster/azimuth-thruster.js';
 import '../readout/readout.js';
-import {
-  ReadoutDirection,
-  ReadoutPriorityElement,
-  ReadoutVariant,
-} from '../readout/readout.js';
+import {ReadoutDirection, ReadoutVariant} from '../readout/readout.js';
 import {InstrumentState, Priority} from '../types.js';
 import {AngleAdvice} from '../watch/advice.js';
 import {LinearAdvice} from '../thruster/advice.js';
@@ -75,7 +71,9 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
       priority = Priority.regular;
     }
 
-    const readoutPriority = Priority.enhanced;
+    const readoutPriority = isNotInCommand
+      ? Priority.regular
+      : Priority.enhanced;
 
     const effectiveReadoutVariant = isNotInCommand
       ? ReadoutVariant.regular
@@ -97,14 +95,10 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
           .direction=${ReadoutDirection.vertical}
           .hug=${false}
           .hasInput=${true}
-          .inputValue=${this.angleSetpoint === undefined
+          .setpointValue=${this.angleSetpoint === undefined
             ? '-'
             : this.angleSetpoint.toFixed(0)}
-          .priority=${readoutPriority}
-          .priorityElements=${[
-            ReadoutPriorityElement.input,
-            ReadoutPriorityElement.value,
-          ]}
+          .valuePriority=${readoutPriority}
           .value=${this.angle}
           label="Angle"
           unit="DEG"
@@ -129,14 +123,10 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
           .direction=${ReadoutDirection.vertical}
           .hug=${false}
           .hasInput=${true}
-          .inputValue=${this.thrustSetpoint === undefined
+          .setpointValue=${this.thrustSetpoint === undefined
             ? '-'
             : this.thrustSetpoint.toFixed(0)}
-          .priority=${readoutPriority}
-          .priorityElements=${[
-            ReadoutPriorityElement.input,
-            ReadoutPriorityElement.value,
-          ]}
+          .valuePriority=${readoutPriority}
           .value=${this.thrust}
           label="Power"
           unit="%"

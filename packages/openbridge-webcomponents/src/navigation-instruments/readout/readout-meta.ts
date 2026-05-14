@@ -1,4 +1,4 @@
-import {html} from 'lit';
+import {html, nothing} from 'lit';
 import type {TemplateResult} from 'lit';
 import {classMap} from 'lit/directives/class-map.js';
 import {formatTextSegment} from './readout-formatters.js';
@@ -104,12 +104,20 @@ export function renderReadoutMetaZone({
         class="instrument-label-unit-container"
         part="instrument-label-unit-container"
       >
-        ${renderReadoutLabelContainer(
-          labelValue,
-          hasLabelFixedLength,
-          labelLength
-        )}
-        ${renderReadoutUnitContainer(unitValue, hasUnitFixedLength, unitLength)}
+        ${labelValue || hasLabelFixedLength
+          ? renderReadoutLabelContainer(
+              labelValue,
+              hasLabelFixedLength,
+              labelLength
+            )
+          : nothing}
+        ${unitValue || hasUnitFixedLength
+          ? renderReadoutUnitContainer(
+              unitValue,
+              hasUnitFixedLength,
+              unitLength
+            )
+          : nothing}
       </div>
     </div>
   `;

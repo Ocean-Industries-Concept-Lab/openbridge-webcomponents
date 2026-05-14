@@ -428,6 +428,26 @@ slot[name="value"] {
 }
 
 .variant-value-content {
+  &:not(.with-degree) .degree {
+    display: none;
+  }
+
+  &.with-degree {
+    display: flex;
+    justify-items: end;
+    align-items: center;
+
+    .value-content-container {
+      display: flex;
+    }
+
+    .degree {
+      font: inherit;
+      display: block;
+      text-align: center;
+    }
+  }
+
   &.has-fixed-length {
     min-inline-size: 0;
   }

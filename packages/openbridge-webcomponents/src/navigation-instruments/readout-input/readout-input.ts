@@ -240,19 +240,14 @@ export class ObcReadoutInput extends LitElement {
     return resolved ?? '';
   }
 
-  private get inlineRenderedValueText(): string {
-    if (!this.hasFixedLength) {
-      return this.valueText;
-    }
-
-    return formatTextSegment(this.valueText, true, this.valueLength)
-      .visibleValue;
-  }
-
   private get inlineValueRenderModel(): ReadoutValueRenderModel {
-    const valueText = this.inlineRenderedValueText;
-    const templateText = this.hasFixedLength ? this.valueLength.trim() : '';
-    const integerCharCount = readoutFormattedInteger(valueText);
+    const segment = formatTextSegment(
+      this.valueText,
+      this.hasFixedLength,
+      this.valueLength
+    );
+    const templateText = segment.widthTemplate;
+    const integerCharCount = readoutFormattedInteger(segment.visibleValue);
     const hintedText =
       !this.hasFixedLength ||
       !this.hasHintedZeros ||
@@ -265,7 +260,7 @@ export class ObcReadoutInput extends LitElement {
       hintedText,
       hintedVisible: hintedText.length > 0,
       templateText,
-      valueText,
+      valueText: segment.visibleValue,
     };
   }
 
@@ -485,6 +480,7 @@ export class ObcReadoutInput extends LitElement {
             'variant-value-content': true,
             [size]: true,
             'has-fixed-length': this.hasFixedLength,
+            'with-degree': this.hasDegree,
           })}
           part="variant-value-content"
           style=${this.hasFixedLength && valueModel.templateText.length > 0
@@ -495,6 +491,7 @@ export class ObcReadoutInput extends LitElement {
             <slot name="value">
               ${this.renderValueTextContent(valueModel)}
             </slot>
+            ${this.hasDegree ? html`<span class="degree">°</span>` : nothing}
           </span>
         </span>
       </div>

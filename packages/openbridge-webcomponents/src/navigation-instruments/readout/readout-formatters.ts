@@ -156,16 +156,8 @@ export function formatTextSegment(
     };
   }
 
-  if (value.startsWith('-') && templateLength > 1) {
-    const digits = value.slice(1);
-    return {
-      visibleValue: `-${digits.slice(-(templateLength - 1))}`,
-      widthTemplate: trimmedLengthTemplate,
-    };
-  }
-
   return {
-    visibleValue: value.slice(-templateLength),
-    widthTemplate: trimmedLengthTemplate,
+    visibleValue: value,
+    widthTemplate: '',
   };
 }

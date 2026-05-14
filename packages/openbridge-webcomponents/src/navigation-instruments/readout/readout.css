@@ -345,6 +345,29 @@
   }
 }
 
+.readout.interaction-flip-flop :is(.readout-value-wrapper, .readout-input) {
+  min-inline-size: calc(var(--obc-readout-flipflop-min-ch, 0) * 1ch);
+  align-self: center;
+}
+
+.readout.regular.interaction-flip-flop {
+  grid-template-rows:
+    auto
+    var(--global-typography-instrument-value-regular-container-height)
+    var(--global-typography-instrument-value-regular-container-height)
+    auto
+    auto;
+}
+
+.readout:is(.enhanced, .stack).interaction-flip-flop {
+  grid-template-rows:
+    auto
+    var(--global-typography-instrument-value-large-container-height)
+    var(--global-typography-instrument-value-large-container-height)
+    auto
+    auto;
+}
+
 .readout.stack.vertical.alignment-left {
   justify-items: start;
 }
@@ -445,9 +468,7 @@
   grid-area: input;
 }
 
-.readout.interaction-always-visible
-  .readout-value-wrapper.value-active
-  obc-readout-input {
+.readout.interaction-always-visible .readout-value-wrapper obc-readout-input {
   --global-typography-instrument-value-small-font-weight-regular: var(
     --global-typography-instrument-value-small-font-weight-active
   );
@@ -462,7 +483,6 @@
   );
 }
 
-.readout.interaction-flip-flop .readout-value-wrapper obc-readout-input,
 .readout.interaction-pop-up .readout-value-wrapper obc-readout-input {
   --global-typography-instrument-value-small-font-weight-regular: var(
     --global-typography-instrument-value-small-font-weight-active
@@ -478,23 +498,22 @@
   );
 }
 
-.readout.interaction-flip-flop .readout-input {
-  transform: translateY(0);
-  transition:
-    opacity 160ms ease-out,
-    transform 160ms ease-out;
-}
-
-.readout.interaction-flip-flop .readout-input.input-hiding {
-  opacity: 0;
-  transform: translateY(2px);
-}
-
-.readout.interaction-flip-flop .readout-input.input-hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transform: translateY(2px);
+.readout.interaction-flip-flop.focus-value
+  .readout-value-wrapper
+  obc-readout-input,
+.readout.interaction-flip-flop.focus-input .readout-input obc-readout-input {
+  --global-typography-instrument-value-small-font-weight-regular: var(
+    --global-typography-instrument-value-small-font-weight-active
+  );
+  --global-typography-instrument-value-regular-font-weight-regular: var(
+    --global-typography-instrument-value-regular-font-weight-active
+  );
+  --global-typography-instrument-value-medium-font-weight-regular: var(
+    --global-typography-instrument-value-medium-font-weight-active
+  );
+  --global-typography-instrument-value-large-font-weight-regular: var(
+    --global-typography-instrument-value-large-font-weight-active
+  );
 }
 
 .readout.interaction-pop-up .readout-input {
@@ -523,8 +542,7 @@
   }
 }
 
-.readout.vertical.no-hug.has-input {
-  width: 100%;
+.readout.vertical.no-hug {
   justify-items: stretch;
 }
 
@@ -542,7 +560,6 @@
     .interaction-pop-up
   ) {
   width: fit-content;
-  justify-items: stretch;
 }
 
 .readout-meta-wrapper {
