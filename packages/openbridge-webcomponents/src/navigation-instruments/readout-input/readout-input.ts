@@ -259,7 +259,7 @@ export class ObcReadoutInput extends LitElement {
     return {
       hintedText,
       hintedVisible: hintedText.length > 0,
-      templateText,
+      templateText: hintedText.length > 0 ? '' : templateText,
       valueText: segment.visibleValue,
     };
   }
@@ -286,7 +286,7 @@ export class ObcReadoutInput extends LitElement {
       return {
         hintedText,
         hintedVisible: hintedText.length > 0,
-        templateText,
+        templateText: hintedText.length > 0 ? '' : templateText,
         valueText: segment.visibleValue,
       };
     }

@@ -140,7 +140,7 @@ const longPageDecorator = (story: () => unknown) => {
 
 const defaultArgs: ReadoutStoryArgs = {
   variant: ReadoutVariant.regular,
-  valuePriority: Priority.regular,
+  valuePriority: undefined,
   direction: ReadoutDirection.vertical,
   alignment: ReadoutStackVerticalAlignment.vertical,
   hug: false,

@@ -261,6 +261,27 @@
         align-self: center;
       }
     }
+
+    &.interaction-flip-flop {
+      &.regular :is(.readout-value-wrapper, .readout-input) {
+        min-block-size: var(
+          --global-typography-instrument-value-medium-container-height
+        );
+      }
+
+      &:is(.enhanced, .stack) {
+        :is(.readout-value-wrapper, .readout-input) {
+          min-block-size: var(
+            --global-typography-instrument-value-large-container-height
+          );
+          align-self: end;
+        }
+
+        .readout-inline-value-wrapper {
+          align-items: flex-end;
+        }
+      }
+    }
   }
 
   &.vertical {
@@ -342,30 +363,32 @@
         }
       }
     }
+
+    &.interaction-flip-flop {
+      :is(.readout-value-wrapper, .readout-input) {
+        min-inline-size: calc(var(--obc-readout-flipflop-min-ch, 0) * 1ch);
+        align-self: center;
+      }
+
+      &.regular {
+        grid-template-rows:
+          auto
+          var(--global-typography-instrument-value-regular-container-height)
+          var(--global-typography-instrument-value-regular-container-height)
+          auto
+          auto;
+      }
+
+      &:is(.enhanced, .stack) {
+        grid-template-rows:
+          auto
+          var(--global-typography-instrument-value-large-container-height)
+          var(--global-typography-instrument-value-large-container-height)
+          auto
+          auto;
+      }
+    }
   }
-}
-
-.readout.interaction-flip-flop :is(.readout-value-wrapper, .readout-input) {
-  min-inline-size: calc(var(--obc-readout-flipflop-min-ch, 0) * 1ch);
-  align-self: center;
-}
-
-.readout.regular.interaction-flip-flop {
-  grid-template-rows:
-    auto
-    var(--global-typography-instrument-value-regular-container-height)
-    var(--global-typography-instrument-value-regular-container-height)
-    auto
-    auto;
-}
-
-.readout:is(.enhanced, .stack).interaction-flip-flop {
-  grid-template-rows:
-    auto
-    var(--global-typography-instrument-value-large-container-height)
-    var(--global-typography-instrument-value-large-container-height)
-    auto
-    auto;
 }
 
 .readout.stack.vertical.alignment-left {
