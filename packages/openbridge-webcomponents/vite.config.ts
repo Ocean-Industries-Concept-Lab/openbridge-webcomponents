@@ -7,7 +7,15 @@ import postcssConfig from './postcss.config.mjs';
 import fs from 'fs';
 import path from 'path';
 
-const input = globbySync('src/**/*.ts', {ignore: ['src/**/*.stories.ts']});
+const input = globbySync('src/**/*.ts', {
+  ignore: [
+    'src/**/*.stories.ts',
+    'src/**/*.spec.ts',
+    'src/**/*.test.ts',
+    'src/storybook-util.ts',
+    'src/ar/_test-utils.ts',
+  ],
+});
 
 // https://vitejs.dev/config/
 export default defineConfig(({mode}) => {
@@ -62,6 +70,13 @@ export default defineConfig(({mode}) => {
       postcssLit(),
       dts({
         clearPureImport: false,
+        exclude: [
+          'src/**/*.stories.ts',
+          'src/**/*.spec.ts',
+          'src/**/*.test.ts',
+          'src/storybook-util.ts',
+          'src/ar/_test-utils.ts',
+        ],
       }),
       {
         name: 'custom-postcss',

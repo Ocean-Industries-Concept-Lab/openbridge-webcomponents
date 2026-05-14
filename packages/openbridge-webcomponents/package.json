@@ -131,6 +131,14 @@
   },
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "!dist/AR-test-image.png",
+    "!dist/companylogo-day.png",
+    "bundle/openbridge-webcomponents.bundle.js",
+    "bundle/openbridge-webcomponents.bundle.js.map",
+    "custom-elements.json"
+  ],
   "publishConfig": {
     "access": "public"
   },
