@@ -115,7 +115,7 @@ onUnmounted(() => {
       <obc-readout
         :value.prop="mapTo360Degrees(sim.vessel.headingDeg.value)"
         variant="enhanced"
-        value-priority="enhanced"
+        :valuePriority.prop="'enhanced'"
         direction="vertical"
         :hasInput.prop="false"
         :hasAdvice.prop="false"
@@ -128,7 +128,7 @@ onUnmounted(() => {
       <obc-readout
         :value.prop="mapTo360Degrees(sim.vessel.courseOverGroundDeg.value)"
         variant="enhanced"
-        value-priority="enhanced"
+        :valuePriority.prop="'enhanced'"
         direction="vertical"
         :hasInput.prop="false"
         :hasAdvice.prop="false"
@@ -141,7 +141,7 @@ onUnmounted(() => {
       <obc-readout
         :value.prop="degPerMinute"
         variant="enhanced"
-        value-priority="enhanced"
+        :valuePriority.prop="'enhanced'"
         direction="vertical"
         :hasInput.prop="false"
         :hasAdvice.prop="false"
@@ -184,19 +184,19 @@ onUnmounted(() => {
         :value="windSpeedKnots"
         variant="enhanced"
         direction="vertical"
-        :has-input="false"
+        :hasInput.prop="false"
         unit="KN"
         label="Speed"
         :fraction-digits="1"
         :max-digits="2"
-        value-priority="regular"
+        :valuePriority.prop="'regular'"
       />
       <obc-readout
         :value="weather.windDirection"
-        value-priority="regular"
+        :valuePriority.prop="'regular'"
         variant="enhanced"
         direction="vertical"
-        :has-input="false"
+        :hasInput.prop="false"
         unit="DEG"
         label="Direction"
         :max-digits="3"
@@ -206,10 +206,10 @@ onUnmounted(() => {
       <div class="title font-ui-label">Current</div>
       <obc-readout
         :value="sim.currentSpeedKnots"
-        value-priority="regular"
+        :valuePriority.prop="'regular'"
         variant="enhanced"
         direction="vertical"
-        :has-input="false"
+        :hasInput.prop="false"
         unit="KN"
         label="Speed"
         :fraction-digits="1"
@@ -217,10 +217,10 @@ onUnmounted(() => {
       />
       <obc-readout
         :value="sim.currentFromAngleDeg"
-        value-priority="regular"
+        :valuePriority.prop="'regular'"
         variant="enhanced"
         direction="vertical"
-        :has-input="false"
+        :hasInput.prop="false"
         unit="DEG"
         label="Direction"
         :max-digits="3"

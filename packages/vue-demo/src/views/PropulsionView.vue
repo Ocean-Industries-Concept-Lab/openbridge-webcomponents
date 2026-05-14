@@ -72,18 +72,11 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
 
 <template>
   <div class="propulsion-container">
-    <svg
-      width="72"
-      height="16"
-      viewBox="0 0 72 16"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      class="port-starboard-indicator"
-    >
+    <svg width="72" height="16" viewBox="0 0 72 16" fill="none" xmlns="http://www.w3.org/2000/svg"
+      class="port-starboard-indicator">
       <path
         d="M19.6106 14C18.5963 14 18.2264 12.6643 19.0961 12.1425L36.0002 2L52.9044 12.1425C53.7741 12.6643 53.4042 14 52.3899 14H19.6106Z"
-        fill="var(--element-inactive-color)"
-      />
+        fill="var(--element-inactive-color)" />
       <circle cx="4.00024" cy="10" r="4" fill="var(--base-red-300)" />
       <circle cx="68.0002" cy="10" r="4" fill="var(--base-mint-300)" />
     </svg>
@@ -92,153 +85,71 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
       <ObcThruster tunnel single-sided :setpoint="0" :state="InstrumentState.off" />
     </div>
     <div class="center-instruments">
-      <ObcAzimuthThruster
-        :state="InstrumentState.off"
-        :angle="0"
-        :angle-setpoint="0"
-        :thrust="0"
-        :thrust-setpoint="0"
-      />
+      <ObcAzimuthThruster :state="InstrumentState.off" :angle="0" :angle-setpoint="0" :thrust="0"
+        :thrust-setpoint="0" />
     </div>
-    <ObcMainEngine
-      class="main-engine-1"
-      :state="InstrumentState.active"
-      :priority="configStore.hasCommand ? Priority.enhanced : Priority.regular"
-      :thrust="sim.propulsion.propeller.value"
-      :thrust-setpoint="sim.propulsion.propellerSet.value"
-      :speed="49"
-      :speed-setpoint="49"
-      :thrust-advices="thrusterAdvice"
-    />
-    <ObcMainEngine
-      class="main-engine-2"
-      :state="InstrumentState.active"
-      :priority="configStore.hasCommand ? Priority.enhanced : Priority.regular"
-      :thrust="sim.propulsion.propeller.value"
-      :thrust-setpoint="sim.propulsion.propellerSet.value"
-      :speed="49"
-      :speed-setpoint="49"
-      :thrust-advices="thrusterAdvice"
-    />
-    <ObcRudder
-      class="rudder-1"
-      :state="InstrumentState.active"
-      :zoom-to-fit-arc="true"
-      :priority="configStore.hasCommand ? Priority.enhanced : Priority.regular"
-      :angle="rudderInstrumentAngle"
-      :setpoint="rudderInstrumentAngleSetpoint"
-      :max-angle="30"
-      :advices="rudderAdive"
-    />
-    <ObcRudder
-      class="rudder-2"
-      :state="InstrumentState.active"
-      :zoom-to-fit-arc="true"
-      :priority="configStore.hasCommand ? Priority.enhanced : Priority.regular"
-      :angle="rudderInstrumentAngle"
-      :setpoint="rudderInstrumentAngleSetpoint"
-      :max-angle="30"
-      :advices="rudderAdive"
-    />
+    <ObcMainEngine class="main-engine-1" :state="InstrumentState.active"
+      :priority="configStore.hasCommand ? Priority.enhanced : Priority.regular" :thrust="sim.propulsion.propeller.value"
+      :thrust-setpoint="sim.propulsion.propellerSet.value" :speed="49" :speed-setpoint="49"
+      :thrust-advices="thrusterAdvice" />
+    <ObcMainEngine class="main-engine-2" :state="InstrumentState.active"
+      :priority="configStore.hasCommand ? Priority.enhanced : Priority.regular" :thrust="sim.propulsion.propeller.value"
+      :thrust-setpoint="sim.propulsion.propellerSet.value" :speed="49" :speed-setpoint="49"
+      :thrust-advices="thrusterAdvice" />
+    <ObcRudder class="rudder-1" :state="InstrumentState.active" :zoom-to-fit-arc="true"
+      :priority="configStore.hasCommand ? Priority.enhanced : Priority.regular" :angle="rudderInstrumentAngle"
+      :setpoint="rudderInstrumentAngleSetpoint" :max-angle="30" :advices="rudderAdive" />
+    <ObcRudder class="rudder-2" :state="InstrumentState.active" :zoom-to-fit-arc="true"
+      :priority="configStore.hasCommand ? Priority.enhanced : Priority.regular" :angle="rudderInstrumentAngle"
+      :setpoint="rudderInstrumentAngleSetpoint" :max-angle="30" :advices="rudderAdive" />
     <div class="readout-grid">
       <div class="tunnel-index readout-container single">
-        <div></div>
-        <div class="label-wrapper">
+        <div class="section-header">
           <div class="index off font-ui-label-active">1</div>
           <div class="title font-ui-label">BT</div>
         </div>
-        <div></div>
-        <obc-readout
-          value="OFF"
-          unit="%"
-          label="Power"
-          :hasInput.prop="false"
-          variant="stack"
-          direction="horizontal"
-        />
+        <obc-readout class="value-readout" value="OFF" :hasInput.prop="false" variant="stack" direction="horizontal" />
+        <obc-readout class="label-readout" label="Power" unit="%" :labelOnly.prop="true" variant="stack" direction="horizontal" />
       </div>
       <div class="azimuth-index readout-container single">
-        <div></div>
-        <div class="label-wrapper">
+        <div class="section-header">
           <div class="index off font-ui-label-active">2</div>
           <div class="title font-ui-label">Azimuth</div>
         </div>
-        <div></div>
-        <div class="readout-wrapper">
-          <obc-readout
-            :value="0"
-            :maxDigits.prop="3"
-            unit="DEG"
-            label="Angle"
-            :hasInput.prop="false"
-            variant="stack"
-            direction="horizontal"
-          />
-        </div>
-        <div></div>
-        <div class="readout-wrapper">
-          <obc-readout
-            value="OFF"
-            unit="%"
-            label="Power"
-            :hasInput.prop="false"
-            variant="stack"
-            direction="horizontal"
-          />
-        </div>
+        <obc-readout class="value-readout" :value="0" :maxDigits.prop="3" :hasInput.prop="false" variant="stack" direction="horizontal" />
+        <obc-readout class="label-readout" label="Angle" unit="DEG" :labelOnly.prop="true" variant="stack" direction="horizontal" />
+        <obc-readout class="value-readout" value="OFF" :hasInput.prop="false" variant="stack" direction="horizontal" />
+        <obc-readout class="label-readout" label="Power" unit="%" :labelOnly.prop="true" variant="stack" direction="horizontal" />
       </div>
       <div class="main-engine-index readout-container single">
-        <div></div>
-        <div class="label-wrapper">
-          <div class="index font-ui-label-active">3 <ObiLink class="icon" /> 4</div>
+        <div class="section-header">
+          <div class="index font-ui-label-active">3
+            <ObiLink class="icon" /> 4
+          </div>
           <div class="title font-ui-label">ME</div>
         </div>
-        <div></div>
-        <div class="readout-wrapper">
-          <obc-readout
-            :value="30"
-            value-priority="enhanced"
-            :maxDigits.prop="3"
-            unit="%"
-            label="Pitch"
-            :hasInput.prop="false"
-            variant="stack"
-            direction="horizontal"
-          />
-        </div>
-        <div></div>
-        <div class="readout-wrapper">
-          <obc-readout
-            value-priority="enhanced"
-            :value="sim.propulsion.propeller.value"
-            :maxDigits.prop="3"
-            unit="RPM"
-            label="Speed"
-            :hasInput.prop="false"
-            variant="stack"
-            direction="horizontal"
-          />
-        </div>
+        <obc-readout class="value-readout" :value="30" :valuePriority.prop="'enhanced'" :maxDigits.prop="3" :hasInput.prop="true"
+          :setpointValue.prop="30" :inputInteraction.prop="'pop-up'" variant="stack" direction="vertical" />
+        <obc-readout class="label-readout" label="Pitch" unit="%" :valuePriority.prop="'enhanced'" :labelOnly.prop="true" variant="stack"
+          direction="horizontal" />
+        <obc-readout class="value-readout" :valuePriority.prop="'enhanced'" :value="Math.round(sim.propulsion.propeller.value)" :maxDigits.prop="3"
+          :hasInput.prop="true" :setpointValue.prop="Math.round(sim.propulsion.propellerSet.value)"
+          :inputInteraction.prop="'pop-up'" variant="stack" direction="vertical" />
+        <obc-readout class="label-readout" label="Speed" unit="RPM" :valuePriority.prop="'enhanced'" :labelOnly.prop="true" variant="stack"
+          direction="horizontal" />
       </div>
       <div class="rudder-index readout-container single">
-        <div></div>
-        <div class="label-wrapper">
-          <div class="index font-ui-label-active">5 <ObiLink class="icon" /> 6</div>
+        <div class="section-header">
+          <div class="index font-ui-label-active">5
+            <ObiLink class="icon" /> 6
+          </div>
           <div class="title font-ui-label">Rudders</div>
         </div>
-        <div></div>
-        <div class="readout-wrapper">
-          <obc-readout
-            value-priority="enhanced"
-            :value="sim.propulsion.rudder.value"
-            :maxDigits.prop="0"
-            unit="DEG"
-            label="Angle"
-            :hasInput.prop="false"
-            variant="stack"
-            direction="horizontal"
-          />
-        </div>
+        <obc-readout class="value-readout" :valuePriority.prop="'enhanced'" :value="Math.round(sim.propulsion.rudder.value)" :maxDigits.prop="0"
+          :hasInput.prop="true" :setpointValue.prop="Math.round(rudderInstrumentAngleSetpoint)"
+          :inputInteraction.prop="'pop-up'" variant="stack" direction="vertical" />
+        <obc-readout class="label-readout" label="Angle" unit="DEG" :valuePriority.prop="'enhanced'" :labelOnly.prop="true" variant="stack"
+          direction="horizontal" />
       </div>
     </div>
   </div>
@@ -332,18 +243,21 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
 }
 
 .readout-container {
-  justify-self: flex-end;
+  justify-self: end;
   display: grid;
-  grid-column: 1 / -1;
-  grid-template-columns: subgrid;
-  justify-content: space-between;
+  grid-template-columns: auto auto;
   align-items: center;
-  gap: 8px;
+  column-gap: 8px;
+  row-gap: 4px;
   padding-right: 16px;
 }
 
 .readout-container.single {
-  grid-column: 2 / -1;
+  grid-column: 1 / -1;
+}
+
+.section-header {
+  display: contents;
 }
 
 .tunnel-index {
@@ -364,6 +278,7 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
 
 .index {
   justify-self: end;
+  margin-inline-end: 8px;
   box-sizing: border-box;
   height: 18px;
   padding: 0 4px;
@@ -391,7 +306,9 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
 .title {
   color: var(--element-neutral-color);
   justify-self: start;
+  margin-inline-start: 8px;
   white-space: nowrap;
+  padding-block: 4px;
 }
 
 .field-unit {
@@ -400,21 +317,22 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
   justify-self: start;
 }
 
-.label-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding-inline-start: 8px;
-  gap: 8px;
-}
-
 .readout-wrapper {
   display: flex;
   align-items: center;
   justify-content: flex-start;
 }
 
-obc-readout {
+.value-readout {
   justify-self: end;
+}
+
+.label-readout {
+  align-self: end;
+  --obc-readout-padding-horizontal-safe: 3px;
+}
+
+obc-readout {
+  flex-shrink: 0;
 }
 </style>

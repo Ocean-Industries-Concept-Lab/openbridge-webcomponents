@@ -138,14 +138,14 @@ function formatSpeedValue(value: number) {
       :valueHasHintedZeros.prop="true"
       :hasInput.prop="false"
       variant="enhanced"
-      value-priority="regular"
+      :valuePriority.prop="'regular'"
       label="Bow"
       unit="kn"
     />
     <obc-readout
       class="speed-readout bow-sideways"
       variant="enhanced"
-      value-priority="regular"
+      :valuePriority.prop="'regular'"
       :value.prop="Number(formatSpeedValue(sim.vessel.speedSidewaysOverGroundKnotsAtBow.value))"
       :maxDigits.prop="2"
       :fractionDigits.prop="0"
@@ -159,7 +159,7 @@ function formatSpeedValue(value: number) {
     <obc-readout
       class="speed-readout stern-sideways"
       variant="enhanced"
-      value-priority="regular"
+      :valuePriority.prop="'regular'"
       :value.prop="Number(formatSpeedValue(sim.vessel.speedSidewaysOverGroundKnotsAtStern.value))"
       :maxDigits.prop="2"
       :fractionDigits.prop="0"
