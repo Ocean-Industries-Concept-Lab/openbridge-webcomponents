@@ -143,7 +143,7 @@ const defaultArgs: ReadoutStoryArgs = {
   valuePriority: undefined,
   direction: ReadoutDirection.vertical,
   alignment: ReadoutStackVerticalAlignment.vertical,
-  hug: false,
+  hug: true,
   labelOnly: false,
   hasAdvice: false,
   hasInput: true,
@@ -1183,7 +1183,6 @@ export const RegularCases: Story = {
               value: '123',
               valueHasFixedLength: false,
               valueLength: '000',
-              hug: false,
             },
           },
           {
@@ -1194,7 +1193,6 @@ export const RegularCases: Story = {
               value: '123',
               valueHasFixedLength: true,
               valueLength: '000',
-              hug: false,
             },
           },
           {
@@ -1205,7 +1203,6 @@ export const RegularCases: Story = {
               value: '12',
               valueHasFixedLength: true,
               valueLength: '000',
-              hug: false,
             },
           },
           {
@@ -1216,7 +1213,6 @@ export const RegularCases: Story = {
               value: '1234',
               valueHasFixedLength: true,
               valueLength: '000',
-              hug: false,
             },
           },
           {
@@ -1228,7 +1224,6 @@ export const RegularCases: Story = {
               valueHasFixedLength: true,
               valueLength: '00000',
               valueHasHintedZeros: true,
-              hug: false,
             },
           },
           {
@@ -1241,7 +1236,6 @@ export const RegularCases: Story = {
               setpointValue: 12.3,
               adviceValue: 12.3,
               fractionDigits: 1,
-              hug: false,
             },
           },
           {
@@ -1255,7 +1249,6 @@ export const RegularCases: Story = {
               adviceValue: '123',
               hasDegree: true,
               fractionDigits: 1,
-              hug: false,
             },
           },
         ],
@@ -1407,6 +1400,7 @@ export const RegularCases: Story = {
             label: 'Basic',
             args: {
               direction: ReadoutDirection.horizontal,
+              hug: false,
               hasInput: true,
               hasInputDivider: true,
             },
@@ -1415,6 +1409,7 @@ export const RegularCases: Story = {
             label: 'Advice + Input + Source',
             args: {
               direction: ReadoutDirection.horizontal,
+              hug: false,
               hasAdvice: true,
               hasInput: true,
               hasSrc: true,
@@ -1431,6 +1426,7 @@ export const RegularCases: Story = {
             label: 'Value Hinted Zeros',
             args: {
               direction: ReadoutDirection.horizontal,
+              hug: false,
               hasInput: true,
               hasInputDivider: true,
               value: '12',
@@ -1448,6 +1444,7 @@ export const RegularCases: Story = {
             label: 'Input Button',
             args: {
               direction: ReadoutDirection.horizontal,
+              hug: false,
               hasInput: true,
               hasInputDivider: true,
               inputFormat: ReadoutInputFormat.button,
@@ -1462,6 +1459,7 @@ export const RegularCases: Story = {
             label: 'Source Picker',
             args: {
               direction: ReadoutDirection.horizontal,
+              hug: false,
               hasInput: true,
               hasInputDivider: true,
               hasSrc: true,
@@ -1474,6 +1472,7 @@ export const RegularCases: Story = {
             label: 'Source Delta',
             args: {
               direction: ReadoutDirection.horizontal,
+              hug: false,
               hasInput: true,
               hasInputDivider: true,
               hasSrc: true,
@@ -1492,6 +1491,7 @@ export const RegularCases: Story = {
             args: {
               variant: ReadoutVariant.regular,
               direction: ReadoutDirection.horizontal,
+              hug: false,
               hasInput: true,
               hasInputDivider: true,
               hasSrc: true,
@@ -1636,6 +1636,7 @@ export const EnhancedCases: Story = {
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.horizontal,
+              hug: false,
               hasInput: true,
               hasInputDivider: true,
             },
@@ -1645,6 +1646,7 @@ export const EnhancedCases: Story = {
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.horizontal,
+              hug: false,
               hasAdvice: true,
               hasInput: true,
               hasSrc: true,
@@ -1657,6 +1659,7 @@ export const EnhancedCases: Story = {
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.horizontal,
+              hug: false,
               hasInput: true,
               hasInputDivider: true,
               hasLeadingIcon: true,
@@ -1672,6 +1675,7 @@ export const EnhancedCases: Story = {
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.horizontal,
+              hug: false,
               hasInput: true,
               hasInputDivider: true,
               inputFormat: ReadoutInputFormat.button,
@@ -1682,6 +1686,7 @@ export const EnhancedCases: Story = {
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.horizontal,
+              hug: false,
               hasInput: true,
               hasInputDivider: true,
               hasDegree: true,
@@ -1697,6 +1702,7 @@ export const EnhancedCases: Story = {
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.horizontal,
+              hug: false,
               hasInput: true,
               hasInputDivider: true,
               value: '12',
@@ -1715,6 +1721,7 @@ export const EnhancedCases: Story = {
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.horizontal,
+              hug: false,
               hasInput: true,
               hasInputDivider: true,
               hasSrc: true,
@@ -1728,6 +1735,7 @@ export const EnhancedCases: Story = {
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.horizontal,
+              hug: false,
               hasInput: true,
               hasInputDivider: true,
               hasSrc: true,
@@ -1833,6 +1841,7 @@ export const StackCases: Story = {
             args: {
               variant: ReadoutVariant.stack,
               direction: ReadoutDirection.horizontal,
+              hug: false,
               hasInput: true,
               hasInputDivider: true,
             },
@@ -1842,6 +1851,7 @@ export const StackCases: Story = {
             args: {
               variant: ReadoutVariant.stack,
               direction: ReadoutDirection.horizontal,
+              hug: false,
               hasAdvice: true,
               hasInput: true,
               hasSrc: true,
@@ -1859,6 +1869,7 @@ export const StackCases: Story = {
             args: {
               variant: ReadoutVariant.stack,
               direction: ReadoutDirection.horizontal,
+              hug: false,
               hasInput: true,
               hasInputDivider: true,
               inputFormat: ReadoutInputFormat.button,
@@ -1869,6 +1880,7 @@ export const StackCases: Story = {
             args: {
               variant: ReadoutVariant.stack,
               direction: ReadoutDirection.horizontal,
+              hug: false,
               hasInput: true,
               hasInputDivider: true,
               inputFormat: ReadoutInputFormat.description,
@@ -1880,6 +1892,7 @@ export const StackCases: Story = {
             args: {
               variant: ReadoutVariant.stack,
               direction: ReadoutDirection.horizontal,
+              hug: false,
               hasInput: true,
               hasInputDivider: true,
               inputFormat: ReadoutInputFormat.range,
@@ -1897,6 +1910,7 @@ export const StackCases: Story = {
             args: {
               variant: ReadoutVariant.stack,
               direction: ReadoutDirection.horizontal,
+              hug: false,
               hasInput: true,
               hasInputDivider: true,
               hasSrc: true,
@@ -1910,6 +1924,7 @@ export const StackCases: Story = {
             args: {
               variant: ReadoutVariant.stack,
               direction: ReadoutDirection.horizontal,
+              hug: false,
               hasInput: true,
               hasInputDivider: true,
               hasSrc: true,
@@ -1929,6 +1944,7 @@ export const StackVerticalAlignment: Story = {
     const baseArgs: Partial<ReadoutStoryArgs> = {
       variant: ReadoutVariant.stack,
       direction: ReadoutDirection.vertical,
+      hug: false,
       inputInteraction: ReadoutInputInteraction.alwaysVisible,
       hasInput: true,
       value: '123',
@@ -1986,6 +2002,7 @@ export const HorizontalCasesGrid: Story = {
         args: {
           variant: ReadoutVariant.regular,
           direction: ReadoutDirection.horizontal,
+          hug: false,
           hasInput: true,
           hasSrc: true,
           hasInputDivider: true,
@@ -1997,6 +2014,7 @@ export const HorizontalCasesGrid: Story = {
         args: {
           variant: ReadoutVariant.regular,
           direction: ReadoutDirection.horizontal,
+          hug: false,
           hasAdvice: true,
           hasInput: true,
           hasSrc: true,
@@ -2009,6 +2027,7 @@ export const HorizontalCasesGrid: Story = {
         args: {
           variant: ReadoutVariant.regular,
           direction: ReadoutDirection.horizontal,
+          hug: false,
           hasInput: true,
           hasSrc: true,
           hasSrcPicker: true,
@@ -2021,6 +2040,7 @@ export const HorizontalCasesGrid: Story = {
         args: {
           variant: ReadoutVariant.regular,
           direction: ReadoutDirection.horizontal,
+          hug: false,
           hasAdvice: true,
           hasInput: true,
           hasInputDivider: true,
@@ -2041,6 +2061,7 @@ export const HorizontalCasesGrid: Story = {
         args: {
           variant: ReadoutVariant.enhanced,
           direction: ReadoutDirection.horizontal,
+          hug: false,
           hasInput: true,
           hasInputDivider: true,
         },
@@ -2050,6 +2071,7 @@ export const HorizontalCasesGrid: Story = {
         args: {
           variant: ReadoutVariant.enhanced,
           direction: ReadoutDirection.horizontal,
+          hug: false,
           hasInput: true,
           hasSrc: true,
           hasLeadingIcon: true,
@@ -2062,6 +2084,7 @@ export const HorizontalCasesGrid: Story = {
         args: {
           variant: ReadoutVariant.enhanced,
           direction: ReadoutDirection.horizontal,
+          hug: false,
           hasInput: true,
           hasSrc: true,
           hasSrcPicker: true,
@@ -2074,6 +2097,7 @@ export const HorizontalCasesGrid: Story = {
         args: {
           variant: ReadoutVariant.enhanced,
           direction: ReadoutDirection.horizontal,
+          hug: false,
           hasAdvice: true,
           hasInput: true,
           hasInputDivider: true,
@@ -2094,6 +2118,7 @@ export const HorizontalCasesGrid: Story = {
         args: {
           variant: ReadoutVariant.stack,
           direction: ReadoutDirection.horizontal,
+          hug: false,
           hasInput: true,
           hasInputDivider: true,
         },
@@ -2103,6 +2128,7 @@ export const HorizontalCasesGrid: Story = {
         args: {
           variant: ReadoutVariant.stack,
           direction: ReadoutDirection.horizontal,
+          hug: false,
           hasAdvice: true,
           hasInput: true,
           hasInputDivider: true,
@@ -2113,6 +2139,7 @@ export const HorizontalCasesGrid: Story = {
         args: {
           variant: ReadoutVariant.stack,
           direction: ReadoutDirection.horizontal,
+          hug: false,
           hasInput: true,
           hasSrc: true,
           hasLeadingIcon: true,
@@ -2125,6 +2152,7 @@ export const HorizontalCasesGrid: Story = {
         args: {
           variant: ReadoutVariant.stack,
           direction: ReadoutDirection.horizontal,
+          hug: false,
           hasInput: true,
           hasSrc: true,
           hasSrcPicker: true,
@@ -2137,6 +2165,7 @@ export const HorizontalCasesGrid: Story = {
         args: {
           variant: ReadoutVariant.stack,
           direction: ReadoutDirection.horizontal,
+          hug: false,
           hasAdvice: true,
           hasInput: true,
           hasInputDivider: true,

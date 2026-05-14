@@ -362,8 +362,11 @@ export class ObcReadout extends LitElement {
     return this.value === this.effectiveSetpointValue;
   }
 
-  private get flipFlopReservedMinCh(): number {
-    if (this.interactionMode !== ReadoutInputInteraction.flipFlop) {
+  private get interactiveReservedMinCh(): number {
+    if (
+      this.interactionMode !== ReadoutInputInteraction.flipFlop &&
+      this.interactionMode !== ReadoutInputInteraction.popUp
+    ) {
       return 0;
     }
 
@@ -484,6 +487,13 @@ export class ObcReadout extends LitElement {
     }
   }
 
+  private get isMultiLineInputFormat(): boolean {
+    return (
+      this.inputFormat === ReadoutInputFormat.description ||
+      this.inputFormat === ReadoutInputFormat.range
+    );
+  }
+
   private get resolvedInputSegmentSize(): ReadoutInputSize {
     if (this.interactionMode === ReadoutInputInteraction.flipFlop) {
       const secondarySize =
@@ -491,6 +501,13 @@ export class ObcReadout extends LitElement {
           ? ReadoutInputSize.small
           : this.stepDownSize(this.baseSize);
       return this.flipFlopInputFocused ? this.baseSize : secondarySize;
+    }
+
+    if (
+      this.isMultiLineInputFormat &&
+      this.variant !== ReadoutVariant.regular
+    ) {
+      return this.stepDownSize(this.baseSize);
     }
 
     return this.baseSize;
@@ -563,12 +580,13 @@ export class ObcReadout extends LitElement {
   /**
    * Container-level layout decision for nested input/advice segments.
    *
-   * - Hugging keeps icon + value compact (avoids full-width stretching).
-   * - Non-hugging allows segments to participate in full-width compositions
-   *   where left/right alignment is intentional.
+   * - **Enhanced**: nested segments use full-width layout (`hugContent` off)
+   *   regardless of readout `hug` (icon at the left edge, value at the right).
+   * - **Regular / stack**: nested segments follow readout `hug` — compact when
+   *   `hug` is true, stretched when `hug` is false.
    */
   private get shouldHugNestedSegments(): boolean {
-    if (this.variant === ReadoutVariant.stack) {
+    if (this.variant === ReadoutVariant.enhanced) {
       return false;
     }
 
@@ -1052,12 +1070,8 @@ export class ObcReadout extends LitElement {
           class="readout-segment-wrapper readout-inline-value-wrapper"
           part="inline-value-wrapper"
         >
-          ${!(this.isEnhanced && this.isHorizontal) && this.hasAdvice
-            ? this.renderAdvice()
-            : nothing}
-          ${!(this.isEnhanced && this.isHorizontal) && this.hasAdvice
-            ? this.renderAdviceDivider()
-            : nothing}
+          ${this.hasAdvice ? this.renderAdvice() : nothing}
+          ${this.hasAdvice ? this.renderAdviceDivider() : nothing}
           ${this.renderInput()} ${this.renderInputDivider()}
           ${this.showUnitZone
             ? this.renderHorizontalValueUnitZone(true)
@@ -1117,8 +1131,9 @@ export class ObcReadout extends LitElement {
           'no-hug': !this.hug,
           'label-only': this.labelOnly,
         })}
-        style=${this.interactionMode === ReadoutInputInteraction.flipFlop
-          ? `--obc-readout-flipflop-min-ch:${this.flipFlopReservedMinCh};`
+        style=${this.interactionMode === ReadoutInputInteraction.flipFlop ||
+        this.interactionMode === ReadoutInputInteraction.popUp
+          ? `--obc-readout-interactive-min-ch:${this.interactiveReservedMinCh};`
           : ''}
       >
         ${!this.labelOnly && this.isVertical ? this.renderAdvice() : nothing}

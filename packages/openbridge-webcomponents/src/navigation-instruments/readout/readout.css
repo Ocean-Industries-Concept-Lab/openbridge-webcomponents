@@ -285,6 +285,10 @@
   }
 
   &.vertical {
+    &.no-hug .readout-advice > obc-readout-advice {
+      width: 100%;
+    }
+
     &.enhanced {
       .readout-value-wrapper {
         padding-block: var(--obc-readout-padding-vertical-safe);
@@ -297,22 +301,15 @@
       }
 
       &:not(.no-hug):is(.interaction-flip-flop, .interaction-pop-up)
-        :is(.readout-value-wrapper, .readout-input) {
+        .readout-value-wrapper {
         width: fit-content;
         justify-self: end;
       }
 
       &:not(.no-hug):is(.interaction-flip-flop, .interaction-pop-up)
-        :is(
-          .readout-value-wrapper > obc-readout-input,
-          .readout-input > obc-readout-input
-        ) {
+        .readout-value-wrapper
+        > obc-readout-input {
         width: fit-content;
-      }
-
-      &:not(.no-hug) :is(.readout-advice, .readout-input) {
-        width: fit-content;
-        justify-self: end;
       }
 
       &.no-hug :is(.readout-advice, .readout-input) {
@@ -327,6 +324,14 @@
       :is(.readout-meta-wrapper, .source-content) {
         justify-content: flex-end;
       }
+
+      :is(.readout-advice, .readout-input) {
+        width: 100%;
+      }
+
+      .readout-advice > obc-readout-advice {
+        width: 100%;
+      }
     }
 
     &.regular {
@@ -337,10 +342,6 @@
       &.no-hug :is(.readout-advice, .readout-input) {
         width: 100%;
         justify-self: stretch;
-      }
-
-      &.no-hug .readout-advice > obc-readout-advice {
-        width: 100%;
       }
 
       :is(
@@ -364,9 +365,13 @@
       }
     }
 
+    &:is(.interaction-flip-flop, .interaction-pop-up)
+      :is(.readout-value-wrapper, .readout-input) {
+      min-inline-size: calc(var(--obc-readout-interactive-min-ch, 0) * 1ch);
+    }
+
     &.interaction-flip-flop {
       :is(.readout-value-wrapper, .readout-input) {
-        min-inline-size: calc(var(--obc-readout-flipflop-min-ch, 0) * 1ch);
         align-self: center;
       }
 
@@ -743,7 +748,6 @@
   }
 
   &.source-type-delta .source-content {
-    color: var(--element-active-color);
     @mixin font-instrument-unit;
     @mixin font-instrument-unit-box;
     align-items: baseline;
