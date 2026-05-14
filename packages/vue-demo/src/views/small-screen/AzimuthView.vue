@@ -63,18 +63,42 @@ const angleAdvice = computed<AngleAdvice[]>(() => {
 <template>
   <div class="wrapper">
     <div class="instruments">
-      <obc-readout label="Angle" unit="deg" :value.prop="Math.round(angle)" :setpointValue.prop="Math.round(angleSet)" :hasInput.prop="true"
-        :hug.prop="false" variant="enhanced" :valuePriority.prop="'enhanced'" :inputInteraction.prop="'pop-up'"
-        :maxDigits.prop="2" />
-      <obc-readout label="Thrust" unit="%" :value.prop="Math.round(thrust)" :setpointValue.prop="Math.round(thrustSet)"
-        :hasInput.prop="true" :hug.prop="false" variant="enhanced" :valuePriority.prop="'enhanced'"
-        :inputInteraction.prop="'pop-up'" :maxDigits.prop="2" />
+      <obc-readout
+        label="Angle"
+        unit="deg"
+        :value.prop="Math.round(angle)"
+        :setpointValue.prop="Math.round(angleSet)"
+        :hasInput.prop="true"
+        :hug.prop="false"
+        variant="enhanced"
+        :valuePriority.prop="'enhanced'"
+        :inputInteraction.prop="'pop-up'"
+        :maxDigits.prop="2"
+      />
+      <obc-readout
+        label="Thrust"
+        unit="%"
+        :value.prop="Math.round(thrust)"
+        :setpointValue.prop="Math.round(thrustSet)"
+        :hasInput.prop="true"
+        :hug.prop="false"
+        variant="enhanced"
+        :valuePriority.prop="'enhanced'"
+        :inputInteraction.prop="'pop-up'"
+        :maxDigits.prop="2"
+      />
     </div>
-    <ObcAzimuthThruster :angle="angle" :angle-setpoint="angleSet" :thrust="thrust" :thrust-setpoint="thrustSet"
-      :angle-advices="angleAdvice" :state="InstrumentState.active"
+    <ObcAzimuthThruster
+      :angle="angle"
+      :angle-setpoint="angleSet"
+      :thrust="thrust"
+      :thrust-setpoint="thrustSet"
+      :angle-advices="angleAdvice"
+      :state="InstrumentState.active"
       :priority="demoConfig.hasCommand ? Priority.enhanced : Priority.regular"
       :top-propeller="details ? PropellerType.single : undefined"
-      :bottom-propeller="details ? PropellerType.single : undefined" />
+      :bottom-propeller="details ? PropellerType.single : undefined"
+    />
   </div>
 </template>
 
