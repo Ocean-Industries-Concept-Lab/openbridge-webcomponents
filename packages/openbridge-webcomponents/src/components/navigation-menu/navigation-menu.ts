@@ -4,6 +4,7 @@ import compentStyle from './navigation-menu.css?inline';
 import {ObcNavigationItemGroup} from '../navigation-item-group/navigation-item-group.js';
 import {ObcNavigationItem} from '../navigation-item/navigation-item.js';
 import {customElement} from '../../decorator.js';
+import {classMap} from 'lit/directives/class-map.js';
 
 /**
  * `ObcNavigationMenuVariant` – Enumerates the available visual and behavioral variants for `<obc-navigation-menu>`.
@@ -144,6 +145,8 @@ export class ObcNavigationMenu extends LitElement {
    * When `true`, adapts the layout for small screens (e.g., moves logo into the footer area and adjusts item layout).
    */
   @property({type: Boolean}) smallScreen = false;
+
+  @property({type: Boolean, attribute: false}) hasLogo = true;
 
   private slotObservers: MutationObserver[] = [];
   @state() private hasFooter = false;
@@ -362,20 +365,28 @@ export class ObcNavigationMenu extends LitElement {
             <slot name="main" @slotchange=${this.handleSlotChange}></slot>
           </ol>
         </nav>
-        <div class="footer ${this.hasFooter ? 'has-footer' : ''}">
+        <div
+          class=${classMap({
+            footer: true,
+            'has-footer': this.hasFooter,
+            'has-logo': this.hasLogo,
+          })}
+        >
           <nav>
             <ol>
               <slot name="footer" @slotchange=${this.handleSlotChange}></slot>
-              ${this.smallScreen ? html` <slot name="logo"></slot> ` : nothing}
+              ${this.smallScreen && this.hasLogo
+                ? html` <slot name="logo"></slot> `
+                : nothing}
             </ol>
           </nav>
-          ${this.smallScreen
-            ? nothing
-            : html`
+          ${!this.smallScreen && this.hasLogo
+            ? html`
                 <div class="logo">
                   <slot name="logo"></slot>
                 </div>
-              `}
+              `
+            : nothing}
         </div>
       </div>
     `;

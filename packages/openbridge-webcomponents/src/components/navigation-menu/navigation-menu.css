@@ -36,7 +36,6 @@
   & .footer {
     display: flex;
     flex-direction: column;
-    border-top: 1px solid var(--border-outline-color);
     flex: 0;
   }
 
@@ -47,8 +46,12 @@
   }
 }
 
-.full .footer.has-footer nav {
+.full .footer.has-logo nav {
   border-bottom: 1px solid var(--border-outline-color);
+}
+
+.footer.has-footer nav {
+  border-top: 1px solid var(--border-outline-color);
 }
 
 .full .logo {

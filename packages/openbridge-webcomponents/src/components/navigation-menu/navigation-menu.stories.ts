@@ -28,6 +28,7 @@ const meta: Meta<typeof ObcNavigationMenu> = {
         .variant=${args.variant}
         .flyoutVariant=${args.flyoutVariant}
         .smallScreen=${args.smallScreen}
+        .hasLogo=${args.hasLogo}
         style="position: fixed; top: 0; bottom: 0; left: 0;"
       >
         <obc-navigation-item-group slot="main" label="Apps" hasIcon>
@@ -93,6 +94,7 @@ const meta: Meta<typeof ObcNavigationMenu> = {
     variant: ObcNavigationMenuVariant.Full,
     flyoutVariant: ObcNavigationMenuFlyoutVariant.Full,
     smallScreen: false,
+    hasLogo: true,
   },
   argTypes: {
     variant: {
@@ -201,6 +203,28 @@ export const EmptyFooter: Story = {
           alt="logo"
           slot="logo"
         ></obc-vendor-button>
+      </obc-navigation-menu>
+    `;
+  },
+  args: {
+    variant: ObcNavigationMenuVariant.Full,
+  },
+};
+
+export const EmptyFooterNoLogo: Story = {
+  render: (args) => {
+    return html`
+      <obc-navigation-menu
+        .variant=${args.variant}
+        .hasLogo=${false}
+        style="position: fixed; top: 0; bottom: 0; left: 0;"
+      >
+        <obc-navigation-item-group slot="main" label="Apps" hasIcon>
+          <obi-applications slot="icon"></obi-applications>
+          <obc-navigation-item label="Sub item 1" hasIcon href="#">
+            <obi-placeholder slot="icon"></obi-placeholder>
+          </obc-navigation-item>
+        </obc-navigation-item-group>
       </obc-navigation-menu>
     `;
   },
