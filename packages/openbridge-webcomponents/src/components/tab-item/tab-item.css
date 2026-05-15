@@ -1,3 +1,7 @@
+:host {
+  display: contents;
+}
+
 .wrapper {
   @mixin style style=flat;
   user-select: none;
@@ -8,8 +12,8 @@
   height: var(--menu-navigation-components-tab-item-touch-target-size);
   user-select: none;
   box-sizing: border-box;
-  width: 240px;
-  max-width: 240px;
+  flex: 1 1 240px;
+  min-width: 0;
   border: none;
   padding-left: var(--menu-navigation-components-tab-item-padding-horizontal);
   padding-right: var(--menu-navigation-components-tab-item-padding-horizontal);
@@ -31,6 +35,7 @@
   }
 
   &.hug {
+    flex: none;
     width: fit-content;
     min-width: 140px;
   }
