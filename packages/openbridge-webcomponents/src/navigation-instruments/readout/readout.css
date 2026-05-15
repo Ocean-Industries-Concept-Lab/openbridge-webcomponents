@@ -312,10 +312,6 @@
         width: fit-content;
       }
 
-      &.no-hug :is(.readout-advice, .readout-input) {
-        width: 100%;
-      }
-
       .readout-source-wrapper {
         margin-left: auto;
         width: fit-content;

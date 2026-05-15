@@ -195,6 +195,14 @@ const defaultArgs: ReadoutStoryArgs = {
   _lastAutoSourceDividerSyncKey: `${ReadoutDirection.vertical}:false`,
 };
 
+function readoutCaseLabel(
+  label: string,
+  args: Partial<ReadoutStoryArgs> = {}
+): string {
+  const hug = args.hug ?? defaultArgs.hug;
+  return `${label} (hug: ${hug})`;
+}
+
 const readoutShowcaseStyle = `
   .obc-readout-sections {
     display: flex;
@@ -948,7 +956,7 @@ export const SegmentHugReadout: Story = {
                 text-align: center;
               "
             >
-              ${label}
+              ${readoutCaseLabel(label, {hug})}
             </div>
             <div style="display:flex; justify-content:flex-end; width:150px;">
               <obc-readout
@@ -999,47 +1007,66 @@ export const ApiMatrixVariantInteraction: Story = {
       alertState: ReadoutAlertState.none,
     };
 
-    const sections: ReadoutShowcaseSection[] = variants.map((variant) => {
-      const cases: ReadoutShowcaseCase[] = interactions.flatMap(
-        (inputInteraction): ReadoutShowcaseCase[] => {
-          const baseCaseArgs: Partial<ReadoutStoryArgs> = {
-            ...baseArgs,
-            variant,
-            hasInput: true,
-            inputInteraction,
-          };
+    const variantSectionLabel = (variant: ReadoutVariant) =>
+      variant === ReadoutVariant.regular
+        ? 'Regular'
+        : variant === ReadoutVariant.enhanced
+          ? 'Enhanced'
+          : 'Stack';
 
-          return [
-            {
-              label: `${variant} / ${inputInteraction} / value != setpoint`,
-              args: {
-                ...baseCaseArgs,
-                value: '123',
-                setpointValue: '100',
-              },
-            },
-            {
-              label: `${variant} / ${inputInteraction} / value == setpoint`,
-              args: {
-                ...baseCaseArgs,
-                value: '100',
-                setpointValue: '100',
-              },
-            },
-          ];
-        }
-      );
+    const sections: ReadoutShowcaseSection[] = variants.flatMap((variant) =>
+      ([false, true] as const).map((hasAdvice) => {
+        const cases: ReadoutShowcaseCase[] = interactions.flatMap(
+          (inputInteraction): ReadoutShowcaseCase[] => {
+            const baseCaseArgs: Partial<ReadoutStoryArgs> = {
+              ...baseArgs,
+              variant,
+              hasInput: true,
+              hasAdvice,
+              inputInteraction,
+            };
 
-      return {
-        title:
-          variant === ReadoutVariant.regular
-            ? 'Variant: Regular'
-            : variant === ReadoutVariant.enhanced
-              ? 'Variant: Enhanced'
-              : 'Variant: Stack',
-        cases,
-      };
-    });
+            const valueNotSetpointArgs: Partial<ReadoutStoryArgs> = {
+              ...baseCaseArgs,
+              value: '123',
+              setpointValue: '100',
+            };
+            const valueAtSetpointArgs: Partial<ReadoutStoryArgs> = {
+              ...baseCaseArgs,
+              value: '100',
+              setpointValue: '100',
+            };
+
+            return [
+              {
+                label: readoutCaseLabel(
+                  `${variant} / ${inputInteraction} / value != setpoint`,
+                  valueNotSetpointArgs
+                ),
+                args: valueNotSetpointArgs,
+              },
+              ...(hasAdvice &&
+              inputInteraction === ReadoutInputInteraction.popUp
+                ? []
+                : [
+                    {
+                      label: readoutCaseLabel(
+                        `${variant} / ${inputInteraction} / value == setpoint`,
+                        valueAtSetpointArgs
+                      ),
+                      args: valueAtSetpointArgs,
+                    },
+                  ]),
+            ];
+          }
+        );
+
+        return {
+          title: `Variant: ${variantSectionLabel(variant)} — ${hasAdvice ? 'with advice' : 'no advice'} (hug: false)`,
+          cases,
+        };
+      })
+    );
 
     return renderReadoutSectionsShowcase(sections);
   },
@@ -1072,47 +1099,118 @@ export const ApiMatrixHorizontalVariantInteraction: Story = {
       alertState: ReadoutAlertState.none,
     };
 
-    const sections: ReadoutShowcaseSection[] = variants.map((variant) => {
-      const cases: ReadoutShowcaseCase[] = interactions.flatMap(
-        (inputInteraction): ReadoutShowcaseCase[] => {
-          const baseCaseArgs: Partial<ReadoutStoryArgs> = {
+    const variantSectionLabel = (variant: ReadoutVariant) =>
+      variant === ReadoutVariant.regular
+        ? 'Regular'
+        : variant === ReadoutVariant.enhanced
+          ? 'Enhanced'
+          : 'Stack';
+
+    const sections: ReadoutShowcaseSection[] = variants.flatMap((variant) =>
+      ([false, true] as const).map((hasAdvice) => {
+        const cases: ReadoutShowcaseCase[] = interactions.flatMap(
+          (inputInteraction): ReadoutShowcaseCase[] => {
+            const baseCaseArgs: Partial<ReadoutStoryArgs> = {
+              ...baseArgs,
+              variant,
+              hasInput: true,
+              hasAdvice,
+              inputInteraction,
+            };
+
+            const valueNotSetpointArgs: Partial<ReadoutStoryArgs> = {
+              ...baseCaseArgs,
+              value: '123',
+              setpointValue: '100',
+            };
+            const valueAtSetpointArgs: Partial<ReadoutStoryArgs> = {
+              ...baseCaseArgs,
+              value: '100',
+              setpointValue: '100',
+            };
+
+            return [
+              {
+                label: readoutCaseLabel(
+                  `${variant} / ${inputInteraction} / value != setpoint`,
+                  valueNotSetpointArgs
+                ),
+                args: valueNotSetpointArgs,
+              },
+              {
+                label: readoutCaseLabel(
+                  `${variant} / ${inputInteraction} / value == setpoint`,
+                  valueAtSetpointArgs
+                ),
+                args: valueAtSetpointArgs,
+              },
+            ];
+          }
+        );
+
+        return {
+          title: `Variant: ${variantSectionLabel(variant)} — ${hasAdvice ? 'with advice' : 'no advice'} (hug: true)`,
+          cases,
+        };
+      })
+    );
+
+    return renderReadoutSectionsShowcase(sections);
+  },
+};
+
+export const ApiMatrixVariantHug: Story = {
+  name: 'API Matrix / Variant × Hug × Advice Presence',
+  decorators: [longPageDecorator],
+  render: () => {
+    const variants = [
+      ReadoutVariant.regular,
+      ReadoutVariant.enhanced,
+      ReadoutVariant.stack,
+    ] as const;
+
+    const hugValues = [true, false] as const;
+
+    const segmentCombos: {
+      hasInput: boolean;
+      hasAdvice: boolean;
+      label: string;
+    }[] = [
+      {hasInput: true, hasAdvice: false, label: 'input only'},
+      {hasInput: false, hasAdvice: true, label: 'advice only'},
+      {hasInput: true, hasAdvice: true, label: 'input + advice'},
+    ];
+
+    const baseArgs: Partial<ReadoutStoryArgs> = {
+      direction: ReadoutDirection.vertical,
+      hasSrc: false,
+      hasLeadingIcon: false,
+      value: '123',
+      setpointValue: '100',
+      label: 'HDG',
+      unit: 'DEG',
+      alertState: ReadoutAlertState.none,
+      inputInteraction: ReadoutInputInteraction.alwaysVisible,
+    };
+
+    const sections: ReadoutShowcaseSection[] = variants.flatMap((variant) =>
+      hugValues.map((hug) => ({
+        title: `${variant} — hug: ${hug}`,
+        cases: segmentCombos.map(({hasInput, hasAdvice, label}) => {
+          const caseArgs: Partial<ReadoutStoryArgs> = {
             ...baseArgs,
             variant,
-            hasInput: true,
-            inputInteraction,
+            hug,
+            hasInput,
+            hasAdvice,
           };
-
-          return [
-            {
-              label: `${variant} / ${inputInteraction} / value != setpoint`,
-              args: {
-                ...baseCaseArgs,
-                value: '123',
-                setpointValue: '100',
-              },
-            },
-            {
-              label: `${variant} / ${inputInteraction} / value == setpoint`,
-              args: {
-                ...baseCaseArgs,
-                value: '100',
-                setpointValue: '100',
-              },
-            },
-          ];
-        }
-      );
-
-      return {
-        title:
-          variant === ReadoutVariant.regular
-            ? 'Variant: Regular'
-            : variant === ReadoutVariant.enhanced
-              ? 'Variant: Enhanced'
-              : 'Variant: Stack',
-        cases,
-      };
-    });
+          return {
+            label: readoutCaseLabel(label, caseArgs),
+            args: caseArgs,
+          };
+        }),
+      }))
+    );
 
     return renderReadoutSectionsShowcase(sections);
   },
@@ -1123,9 +1221,8 @@ export const AlertStateShowcase: Story = {
   render: () => {
     const alertStates = Object.values(ReadoutAlertState) as ReadoutAlertState[];
 
-    const cases: ReadoutShowcaseCase[] = alertStates.map((alertState) => ({
-      label: `alertState = ${alertState}`,
-      args: {
+    const cases: ReadoutShowcaseCase[] = alertStates.map((alertState) => {
+      const caseArgs: Partial<ReadoutStoryArgs> = {
         variant: ReadoutVariant.regular,
         direction: ReadoutDirection.vertical,
         hug: false,
@@ -1134,12 +1231,16 @@ export const AlertStateShowcase: Story = {
         alertState,
         value: '100',
         setpointValue: 123,
-      },
-    }));
+      };
+      return {
+        label: readoutCaseLabel(`alertState = ${alertState}`, caseArgs),
+        args: caseArgs,
+      };
+    });
 
     return renderReadoutSectionsShowcase([
       {
-        title: 'Alert State Showcase',
+        title: 'Alert State Showcase (hug: false)',
         cases,
       },
     ]);
@@ -1151,10 +1252,14 @@ export const RegularCases: Story = {
   render: () =>
     renderReadoutSectionsShowcase([
       {
-        title: 'Regular / Vertical — Basic',
+        title: 'Regular / Vertical — Basic (hug: false)',
         cases: [
           {
-            label: 'Basic',
+            label: readoutCaseLabel('Basic', {
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              hug: false,
+            }),
             args: {
               direction: ReadoutDirection.vertical,
               hasInput: true,
@@ -1162,7 +1267,12 @@ export const RegularCases: Story = {
             },
           },
           {
-            label: 'Leading Icon',
+            label: readoutCaseLabel('Leading Icon', {
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              hasLeadingIcon: true,
+              hug: false,
+            }),
             args: {
               direction: ReadoutDirection.vertical,
               hasInput: true,
@@ -1173,10 +1283,16 @@ export const RegularCases: Story = {
         ],
       },
       {
-        title: 'Regular / Vertical — Value Formatting',
+        title: 'Regular / Vertical — Value Formatting (hug: true)',
         cases: [
           {
-            label: 'Fixed Length (123, len=3) — fixed OFF',
+            label: readoutCaseLabel('Fixed Length (123, len=3) — fixed OFF', {
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              value: '123',
+              valueHasFixedLength: false,
+              valueLength: '000',
+            }),
             args: {
               direction: ReadoutDirection.vertical,
               hasInput: true,
@@ -1186,7 +1302,16 @@ export const RegularCases: Story = {
             },
           },
           {
-            label: 'Fixed Length (123, len=3) — fixed ON (same layout)',
+            label: readoutCaseLabel(
+              'Fixed Length (123, len=3) — fixed ON (same layout)',
+              {
+                direction: ReadoutDirection.vertical,
+                hasInput: true,
+                value: '123',
+                valueHasFixedLength: true,
+                valueLength: '000',
+              }
+            ),
             args: {
               direction: ReadoutDirection.vertical,
               hasInput: true,
@@ -1196,7 +1321,16 @@ export const RegularCases: Story = {
             },
           },
           {
-            label: 'Fixed Length (12, len=3) — reserves width',
+            label: readoutCaseLabel(
+              'Fixed Length (12, len=3) — reserves width',
+              {
+                direction: ReadoutDirection.vertical,
+                hasInput: true,
+                value: '12',
+                valueHasFixedLength: true,
+                valueLength: '000',
+              }
+            ),
             args: {
               direction: ReadoutDirection.vertical,
               hasInput: true,
@@ -1206,7 +1340,16 @@ export const RegularCases: Story = {
             },
           },
           {
-            label: 'Fixed Length (1234, len=3) — no truncation, no reserve',
+            label: readoutCaseLabel(
+              'Fixed Length (1234, len=3) — no truncation, no reserve',
+              {
+                direction: ReadoutDirection.vertical,
+                hasInput: true,
+                value: '1234',
+                valueHasFixedLength: true,
+                valueLength: '000',
+              }
+            ),
             args: {
               direction: ReadoutDirection.vertical,
               hasInput: true,
@@ -1216,7 +1359,14 @@ export const RegularCases: Story = {
             },
           },
           {
-            label: 'Value Hinted Zeros',
+            label: readoutCaseLabel('Value Hinted Zeros', {
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              value: '12',
+              valueHasFixedLength: true,
+              valueLength: '00000',
+              valueHasHintedZeros: true,
+            }),
             args: {
               direction: ReadoutDirection.vertical,
               hasInput: true,
@@ -1227,7 +1377,18 @@ export const RegularCases: Story = {
             },
           },
           {
-            label: 'Value/Input/Advice Numeric (fractionDigits=1)',
+            label: readoutCaseLabel(
+              'Value/Input/Advice Numeric (fractionDigits=1)',
+              {
+                direction: ReadoutDirection.vertical,
+                hasInput: true,
+                hasAdvice: true,
+                value: '12.3',
+                setpointValue: 12.3,
+                adviceValue: 12.3,
+                fractionDigits: 1,
+              }
+            ),
             args: {
               direction: ReadoutDirection.vertical,
               hasInput: true,
@@ -1239,7 +1400,19 @@ export const RegularCases: Story = {
             },
           },
           {
-            label: 'Global Degree + fractionDigits=1 (numbers)',
+            label: readoutCaseLabel(
+              'Global Degree + fractionDigits=1 (numbers)',
+              {
+                direction: ReadoutDirection.vertical,
+                hasInput: true,
+                hasAdvice: true,
+                value: '123',
+                setpointValue: '123',
+                adviceValue: '123',
+                hasDegree: true,
+                fractionDigits: 1,
+              }
+            ),
             args: {
               direction: ReadoutDirection.vertical,
               hasInput: true,
@@ -1257,7 +1430,15 @@ export const RegularCases: Story = {
         title: 'Regular / Vertical — Input & Advice Formats',
         cases: [
           {
-            label: 'Input Fixed Length',
+            label: readoutCaseLabel('Input Fixed Length', {
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              setpointValue: '12',
+              inputHasFixedLength: true,
+              inputValueLength: '000',
+              inputHasHintedZeros: true,
+              hug: false,
+            }),
             args: {
               direction: ReadoutDirection.vertical,
               hasInput: true,
@@ -1269,7 +1450,16 @@ export const RegularCases: Story = {
             },
           },
           {
-            label: 'Advice Fixed Length',
+            label: readoutCaseLabel('Advice Fixed Length', {
+              direction: ReadoutDirection.vertical,
+              hasAdvice: true,
+              hasInput: true,
+              adviceValue: '12',
+              adviceHasFixedLength: true,
+              adviceValueLength: '000',
+              adviceHasHintedZeros: true,
+              hug: false,
+            }),
             args: {
               direction: ReadoutDirection.vertical,
               hasAdvice: true,
@@ -1282,7 +1472,12 @@ export const RegularCases: Story = {
             },
           },
           {
-            label: 'Global Degree (advice active)',
+            label: readoutCaseLabel('Global Degree (advice active)', {
+              direction: ReadoutDirection.vertical,
+              hasAdvice: true,
+              hasDegree: true,
+              adviceState: ReadoutAdviceState.active,
+            }),
             args: {
               direction: ReadoutDirection.vertical,
               hasAdvice: true,
@@ -1291,7 +1486,12 @@ export const RegularCases: Story = {
             },
           },
           {
-            label: 'Input Baseline',
+            label: readoutCaseLabel('Input Baseline', {
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              inputFormat: ReadoutInputFormat.baseline,
+              hug: false,
+            }),
             args: {
               direction: ReadoutDirection.vertical,
               hasInput: true,
@@ -1300,7 +1500,12 @@ export const RegularCases: Story = {
             },
           },
           {
-            label: 'Input Button',
+            label: readoutCaseLabel('Input Button', {
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              inputFormat: ReadoutInputFormat.button,
+              hug: false,
+            }),
             args: {
               direction: ReadoutDirection.vertical,
               hasInput: true,
@@ -1309,7 +1514,13 @@ export const RegularCases: Story = {
             },
           },
           {
-            label: 'Input Description',
+            label: readoutCaseLabel('Input Description', {
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              inputFormat: ReadoutInputFormat.description,
+              inputDescription: 'SET',
+              hug: false,
+            }),
             args: {
               direction: ReadoutDirection.vertical,
               hasInput: true,
@@ -1319,7 +1530,14 @@ export const RegularCases: Story = {
             },
           },
           {
-            label: 'Input Range',
+            label: readoutCaseLabel('Input Range', {
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              inputFormat: ReadoutInputFormat.range,
+              setpointValue: '12',
+              inputSecondaryValue: '34',
+              hug: false,
+            }),
             args: {
               direction: ReadoutDirection.vertical,
               hasInput: true,
@@ -1330,7 +1548,13 @@ export const RegularCases: Story = {
             },
           },
           {
-            label: 'Input Vertical Stack',
+            label: readoutCaseLabel('Input Vertical Stack', {
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              inputFormat: ReadoutInputFormat.verticalStack,
+              inputDescription: 'SET',
+              hug: false,
+            }),
             args: {
               direction: ReadoutDirection.vertical,
               hasInput: true,
@@ -1342,10 +1566,16 @@ export const RegularCases: Story = {
         ],
       },
       {
-        title: 'Regular / Vertical — Source Formats',
+        title: 'Regular / Vertical — Source Formats (hug: false)',
         cases: [
           {
-            label: 'Source Small',
+            label: readoutCaseLabel('Source Small', {
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              hasSrc: true,
+              sourceType: ReadoutSourceType.small,
+              hug: false,
+            }),
             args: {
               direction: ReadoutDirection.vertical,
               hasInput: true,
@@ -1355,7 +1585,14 @@ export const RegularCases: Story = {
             },
           },
           {
-            label: 'Source Delta',
+            label: readoutCaseLabel('Source Delta', {
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              hasSrc: true,
+              sourceType: ReadoutSourceType.delta,
+              sourceDeltaValue: '0,5',
+              hug: false,
+            }),
             args: {
               direction: ReadoutDirection.vertical,
               hasInput: true,
@@ -1368,10 +1605,17 @@ export const RegularCases: Story = {
         ],
       },
       {
-        title: 'Regular / Vertical — Picker & Flyout',
+        title: 'Regular / Vertical — Picker & Flyout (hug: false)',
         cases: [
           {
-            label: 'Source Picker',
+            label: readoutCaseLabel('Source Picker', {
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              hasSrc: true,
+              sourceType: ReadoutSourceType.regular,
+              hasSrcPicker: true,
+              hug: false,
+            }),
             args: {
               direction: ReadoutDirection.vertical,
               hasInput: true,
@@ -1382,7 +1626,13 @@ export const RegularCases: Story = {
             },
           },
           {
-            label: 'Source Flyout',
+            label: readoutCaseLabel('Source Flyout', {
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              hasSrc: true,
+              sourceType: ReadoutSourceType.flyout,
+              hug: false,
+            }),
             args: {
               direction: ReadoutDirection.vertical,
               hasInput: true,
@@ -1394,10 +1644,15 @@ export const RegularCases: Story = {
         ],
       },
       {
-        title: 'Regular / Horizontal — Basic',
+        title: 'Regular / Horizontal — Basic (hug: false)',
         cases: [
           {
-            label: 'Basic',
+            label: readoutCaseLabel('Basic', {
+              direction: ReadoutDirection.horizontal,
+              hug: false,
+              hasInput: true,
+              hasInputDivider: true,
+            }),
             args: {
               direction: ReadoutDirection.horizontal,
               hug: false,
@@ -1406,7 +1661,15 @@ export const RegularCases: Story = {
             },
           },
           {
-            label: 'Advice + Input + Source',
+            label: readoutCaseLabel('Advice + Input + Source', {
+              direction: ReadoutDirection.horizontal,
+              hug: false,
+              hasAdvice: true,
+              hasInput: true,
+              hasSrc: true,
+              hasInputDivider: true,
+              hasSourceDivider: true,
+            }),
             args: {
               direction: ReadoutDirection.horizontal,
               hug: false,
@@ -1420,10 +1683,19 @@ export const RegularCases: Story = {
         ],
       },
       {
-        title: 'Regular / Horizontal — Value Formatting',
+        title: 'Regular / Horizontal — Value Formatting (hug: false)',
         cases: [
           {
-            label: 'Value Hinted Zeros',
+            label: readoutCaseLabel('Value Hinted Zeros', {
+              direction: ReadoutDirection.horizontal,
+              hug: false,
+              hasInput: true,
+              hasInputDivider: true,
+              value: '12',
+              valueHasFixedLength: true,
+              valueLength: '00000',
+              valueHasHintedZeros: true,
+            }),
             args: {
               direction: ReadoutDirection.horizontal,
               hug: false,
@@ -1438,10 +1710,16 @@ export const RegularCases: Story = {
         ],
       },
       {
-        title: 'Regular / Horizontal — Input Formats',
+        title: 'Regular / Horizontal — Input Formats (hug: false)',
         cases: [
           {
-            label: 'Input Button',
+            label: readoutCaseLabel('Input Button', {
+              direction: ReadoutDirection.horizontal,
+              hug: false,
+              hasInput: true,
+              hasInputDivider: true,
+              inputFormat: ReadoutInputFormat.button,
+            }),
             args: {
               direction: ReadoutDirection.horizontal,
               hug: false,
@@ -1453,10 +1731,19 @@ export const RegularCases: Story = {
         ],
       },
       {
-        title: 'Regular / Horizontal — Source Formats',
+        title: 'Regular / Horizontal — Source Formats (hug: false)',
         cases: [
           {
-            label: 'Source Picker',
+            label: readoutCaseLabel('Source Picker', {
+              direction: ReadoutDirection.horizontal,
+              hug: false,
+              hasInput: true,
+              hasInputDivider: true,
+              hasSrc: true,
+              hasSrcPicker: true,
+              hasSourceDivider: true,
+              sourceType: ReadoutSourceType.regular,
+            }),
             args: {
               direction: ReadoutDirection.horizontal,
               hug: false,
@@ -1469,7 +1756,16 @@ export const RegularCases: Story = {
             },
           },
           {
-            label: 'Source Delta',
+            label: readoutCaseLabel('Source Delta', {
+              direction: ReadoutDirection.horizontal,
+              hug: false,
+              hasInput: true,
+              hasInputDivider: true,
+              hasSrc: true,
+              hasSourceDivider: true,
+              sourceType: ReadoutSourceType.delta,
+              sourceDeltaValue: '0,5',
+            }),
             args: {
               direction: ReadoutDirection.horizontal,
               hug: false,
@@ -1484,10 +1780,19 @@ export const RegularCases: Story = {
         ],
       },
       {
-        title: 'Regular / Horizontal — Picker & Flyout',
+        title: 'Regular / Horizontal — Picker & Flyout (hug: false)',
         cases: [
           {
-            label: 'Source Flyout',
+            label: readoutCaseLabel('Source Flyout', {
+              variant: ReadoutVariant.regular,
+              direction: ReadoutDirection.horizontal,
+              hug: false,
+              hasInput: true,
+              hasInputDivider: true,
+              hasSrc: true,
+              hasSourceDivider: true,
+              sourceType: ReadoutSourceType.flyout,
+            }),
             args: {
               variant: ReadoutVariant.regular,
               direction: ReadoutDirection.horizontal,
@@ -1509,10 +1814,15 @@ export const EnhancedCases: Story = {
   render: () =>
     renderReadoutSectionsShowcase([
       {
-        title: 'Enhanced / Vertical — Basic',
+        title: 'Enhanced / Vertical — Basic (hug: false)',
         cases: [
           {
-            label: 'Basic',
+            label: readoutCaseLabel('Basic', {
+              variant: ReadoutVariant.enhanced,
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              hug: false,
+            }),
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.vertical,
@@ -1521,7 +1831,13 @@ export const EnhancedCases: Story = {
             },
           },
           {
-            label: 'Advice + Input',
+            label: readoutCaseLabel('Advice + Input', {
+              variant: ReadoutVariant.enhanced,
+              direction: ReadoutDirection.vertical,
+              hasAdvice: true,
+              hasInput: true,
+              hug: false,
+            }),
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.vertical,
@@ -1531,7 +1847,13 @@ export const EnhancedCases: Story = {
             },
           },
           {
-            label: 'Leading Icon',
+            label: readoutCaseLabel('Leading Icon', {
+              variant: ReadoutVariant.enhanced,
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              hasLeadingIcon: true,
+              hug: false,
+            }),
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.vertical,
@@ -1543,10 +1865,16 @@ export const EnhancedCases: Story = {
         ],
       },
       {
-        title: 'Enhanced / Vertical — Input Formats',
+        title: 'Enhanced / Vertical — Input Formats (hug: false)',
         cases: [
           {
-            label: 'Input Baseline',
+            label: readoutCaseLabel('Input Baseline', {
+              variant: ReadoutVariant.enhanced,
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              inputFormat: ReadoutInputFormat.baseline,
+              hug: false,
+            }),
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.vertical,
@@ -1556,7 +1884,13 @@ export const EnhancedCases: Story = {
             },
           },
           {
-            label: 'Global Degree (input)',
+            label: readoutCaseLabel('Global Degree (input)', {
+              variant: ReadoutVariant.enhanced,
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              hasDegree: true,
+              hug: false,
+            }),
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.vertical,
@@ -1566,7 +1900,14 @@ export const EnhancedCases: Story = {
             },
           },
           {
-            label: 'Global Degree (input, temporary)',
+            label: readoutCaseLabel('Global Degree (input, temporary)', {
+              variant: ReadoutVariant.enhanced,
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              hasDegree: true,
+              hug: false,
+              inputInteraction: ReadoutInputInteraction.popUp,
+            }),
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.vertical,
@@ -1577,7 +1918,14 @@ export const EnhancedCases: Story = {
             },
           },
           {
-            label: 'Input Description',
+            label: readoutCaseLabel('Input Description', {
+              variant: ReadoutVariant.enhanced,
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              inputFormat: ReadoutInputFormat.description,
+              inputDescription: 'SET',
+              hug: false,
+            }),
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.vertical,
@@ -1590,10 +1938,17 @@ export const EnhancedCases: Story = {
         ],
       },
       {
-        title: 'Enhanced / Vertical — Source Formats',
+        title: 'Enhanced / Vertical — Source Formats (hug: false)',
         cases: [
           {
-            label: 'Source Small',
+            label: readoutCaseLabel('Source Small', {
+              variant: ReadoutVariant.enhanced,
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              hasSrc: true,
+              sourceType: ReadoutSourceType.small,
+              hug: false,
+            }),
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.vertical,
@@ -1604,7 +1959,15 @@ export const EnhancedCases: Story = {
             },
           },
           {
-            label: 'Source Delta',
+            label: readoutCaseLabel('Source Delta', {
+              variant: ReadoutVariant.enhanced,
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              hasSrc: true,
+              sourceType: ReadoutSourceType.delta,
+              sourceDeltaValue: '0,5',
+              hug: false,
+            }),
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.vertical,
@@ -1616,7 +1979,14 @@ export const EnhancedCases: Story = {
             },
           },
           {
-            label: 'Source Flyout',
+            label: readoutCaseLabel('Source Flyout', {
+              variant: ReadoutVariant.enhanced,
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              hasSrc: true,
+              sourceType: ReadoutSourceType.flyout,
+              hug: false,
+            }),
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.vertical,
@@ -1629,10 +1999,16 @@ export const EnhancedCases: Story = {
         ],
       },
       {
-        title: 'Enhanced / Horizontal — Basic',
+        title: 'Enhanced / Horizontal — Basic (hug: false)',
         cases: [
           {
-            label: 'Basic',
+            label: readoutCaseLabel('Basic', {
+              variant: ReadoutVariant.enhanced,
+              direction: ReadoutDirection.horizontal,
+              hug: false,
+              hasInput: true,
+              hasInputDivider: true,
+            }),
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.horizontal,
@@ -1642,7 +2018,16 @@ export const EnhancedCases: Story = {
             },
           },
           {
-            label: 'Advice + Input + Source',
+            label: readoutCaseLabel('Advice + Input + Source', {
+              variant: ReadoutVariant.enhanced,
+              direction: ReadoutDirection.horizontal,
+              hug: false,
+              hasAdvice: true,
+              hasInput: true,
+              hasSrc: true,
+              hasInputDivider: true,
+              hasSourceDivider: true,
+            }),
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.horizontal,
@@ -1655,7 +2040,14 @@ export const EnhancedCases: Story = {
             },
           },
           {
-            label: 'Leading Icon',
+            label: readoutCaseLabel('Leading Icon', {
+              variant: ReadoutVariant.enhanced,
+              direction: ReadoutDirection.horizontal,
+              hug: false,
+              hasInput: true,
+              hasInputDivider: true,
+              hasLeadingIcon: true,
+            }),
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.horizontal,
@@ -1668,10 +2060,17 @@ export const EnhancedCases: Story = {
         ],
       },
       {
-        title: 'Enhanced / Horizontal — Input Formats',
+        title: 'Enhanced / Horizontal — Input Formats (hug: false)',
         cases: [
           {
-            label: 'Input Button',
+            label: readoutCaseLabel('Input Button', {
+              variant: ReadoutVariant.enhanced,
+              direction: ReadoutDirection.horizontal,
+              hug: false,
+              hasInput: true,
+              hasInputDivider: true,
+              inputFormat: ReadoutInputFormat.button,
+            }),
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.horizontal,
@@ -1682,7 +2081,14 @@ export const EnhancedCases: Story = {
             },
           },
           {
-            label: 'Global Degree (input)',
+            label: readoutCaseLabel('Global Degree (input)', {
+              variant: ReadoutVariant.enhanced,
+              direction: ReadoutDirection.horizontal,
+              hug: false,
+              hasInput: true,
+              hasInputDivider: true,
+              hasDegree: true,
+            }),
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.horizontal,
@@ -1695,10 +2101,20 @@ export const EnhancedCases: Story = {
         ],
       },
       {
-        title: 'Enhanced / Horizontal — Value Formatting',
+        title: 'Enhanced / Horizontal — Value Formatting (hug: false)',
         cases: [
           {
-            label: 'Value Hinted Zeros',
+            label: readoutCaseLabel('Value Hinted Zeros', {
+              variant: ReadoutVariant.enhanced,
+              direction: ReadoutDirection.horizontal,
+              hug: false,
+              hasInput: true,
+              hasInputDivider: true,
+              value: '12',
+              valueHasFixedLength: true,
+              valueLength: '00000',
+              valueHasHintedZeros: true,
+            }),
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.horizontal,
@@ -1714,10 +2130,20 @@ export const EnhancedCases: Story = {
         ],
       },
       {
-        title: 'Enhanced / Horizontal — Picker & Flyout',
+        title: 'Enhanced / Horizontal — Picker & Flyout (hug: false)',
         cases: [
           {
-            label: 'Source Picker',
+            label: readoutCaseLabel('Source Picker', {
+              variant: ReadoutVariant.enhanced,
+              direction: ReadoutDirection.horizontal,
+              hug: false,
+              hasInput: true,
+              hasInputDivider: true,
+              hasSrc: true,
+              hasSrcPicker: true,
+              hasSourceDivider: true,
+              sourceType: ReadoutSourceType.regular,
+            }),
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.horizontal,
@@ -1731,7 +2157,16 @@ export const EnhancedCases: Story = {
             },
           },
           {
-            label: 'Source Flyout',
+            label: readoutCaseLabel('Source Flyout', {
+              variant: ReadoutVariant.enhanced,
+              direction: ReadoutDirection.horizontal,
+              hug: false,
+              hasInput: true,
+              hasInputDivider: true,
+              hasSrc: true,
+              hasSourceDivider: true,
+              sourceType: ReadoutSourceType.flyout,
+            }),
             args: {
               variant: ReadoutVariant.enhanced,
               direction: ReadoutDirection.horizontal,
@@ -1753,10 +2188,15 @@ export const StackCases: Story = {
   render: () =>
     renderReadoutSectionsShowcase([
       {
-        title: 'Stack / Vertical — Basic',
+        title: 'Stack / Vertical — Basic (hug: false)',
         cases: [
           {
-            label: 'Basic',
+            label: readoutCaseLabel('Basic', {
+              variant: ReadoutVariant.stack,
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              hug: false,
+            }),
             args: {
               variant: ReadoutVariant.stack,
               direction: ReadoutDirection.vertical,
@@ -1765,7 +2205,13 @@ export const StackCases: Story = {
             },
           },
           {
-            label: 'Advice + Input',
+            label: readoutCaseLabel('Advice + Input', {
+              variant: ReadoutVariant.stack,
+              direction: ReadoutDirection.vertical,
+              hasAdvice: true,
+              hasInput: true,
+              hug: false,
+            }),
             args: {
               variant: ReadoutVariant.stack,
               direction: ReadoutDirection.vertical,
@@ -1777,10 +2223,17 @@ export const StackCases: Story = {
         ],
       },
       {
-        title: 'Stack / Vertical — Input Formats',
+        title: 'Stack / Vertical — Input Formats (hug: false)',
         cases: [
           {
-            label: 'Input Vertical Stack',
+            label: readoutCaseLabel('Input Vertical Stack', {
+              variant: ReadoutVariant.stack,
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              inputFormat: ReadoutInputFormat.verticalStack,
+              inputDescription: 'SET',
+              hug: false,
+            }),
             args: {
               variant: ReadoutVariant.stack,
               direction: ReadoutDirection.vertical,
@@ -1791,7 +2244,16 @@ export const StackCases: Story = {
             },
           },
           {
-            label: 'Input Fixed Length',
+            label: readoutCaseLabel('Input Fixed Length', {
+              variant: ReadoutVariant.stack,
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              setpointValue: '12',
+              inputHasFixedLength: true,
+              inputValueLength: '000',
+              inputHasHintedZeros: true,
+              hug: false,
+            }),
             args: {
               variant: ReadoutVariant.stack,
               direction: ReadoutDirection.vertical,
@@ -1806,10 +2268,17 @@ export const StackCases: Story = {
         ],
       },
       {
-        title: 'Stack / Vertical — Source Formats',
+        title: 'Stack / Vertical — Source Formats (hug: false)',
         cases: [
           {
-            label: 'Source Small',
+            label: readoutCaseLabel('Source Small', {
+              variant: ReadoutVariant.stack,
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              hasSrc: true,
+              sourceType: ReadoutSourceType.small,
+              hug: false,
+            }),
             args: {
               variant: ReadoutVariant.stack,
               direction: ReadoutDirection.vertical,
@@ -1820,7 +2289,15 @@ export const StackCases: Story = {
             },
           },
           {
-            label: 'Source Delta',
+            label: readoutCaseLabel('Source Delta', {
+              variant: ReadoutVariant.stack,
+              direction: ReadoutDirection.vertical,
+              hasInput: true,
+              hasSrc: true,
+              sourceType: ReadoutSourceType.delta,
+              sourceDeltaValue: '0,5',
+              hug: false,
+            }),
             args: {
               variant: ReadoutVariant.stack,
               direction: ReadoutDirection.vertical,
@@ -1834,10 +2311,16 @@ export const StackCases: Story = {
         ],
       },
       {
-        title: 'Stack / Horizontal — Basic',
+        title: 'Stack / Horizontal — Basic (hug: false)',
         cases: [
           {
-            label: 'Basic',
+            label: readoutCaseLabel('Basic', {
+              variant: ReadoutVariant.stack,
+              direction: ReadoutDirection.horizontal,
+              hug: false,
+              hasInput: true,
+              hasInputDivider: true,
+            }),
             args: {
               variant: ReadoutVariant.stack,
               direction: ReadoutDirection.horizontal,
@@ -1847,7 +2330,16 @@ export const StackCases: Story = {
             },
           },
           {
-            label: 'Advice + Input + Source',
+            label: readoutCaseLabel('Advice + Input + Source', {
+              variant: ReadoutVariant.stack,
+              direction: ReadoutDirection.horizontal,
+              hug: false,
+              hasAdvice: true,
+              hasInput: true,
+              hasSrc: true,
+              hasInputDivider: true,
+              hasSourceDivider: true,
+            }),
             args: {
               variant: ReadoutVariant.stack,
               direction: ReadoutDirection.horizontal,
@@ -1862,10 +2354,17 @@ export const StackCases: Story = {
         ],
       },
       {
-        title: 'Stack / Horizontal — Input Formats',
+        title: 'Stack / Horizontal — Input Formats (hug: false)',
         cases: [
           {
-            label: 'Input Button',
+            label: readoutCaseLabel('Input Button', {
+              variant: ReadoutVariant.stack,
+              direction: ReadoutDirection.horizontal,
+              hug: false,
+              hasInput: true,
+              hasInputDivider: true,
+              inputFormat: ReadoutInputFormat.button,
+            }),
             args: {
               variant: ReadoutVariant.stack,
               direction: ReadoutDirection.horizontal,
@@ -1876,7 +2375,15 @@ export const StackCases: Story = {
             },
           },
           {
-            label: 'Input Description',
+            label: readoutCaseLabel('Input Description', {
+              variant: ReadoutVariant.stack,
+              direction: ReadoutDirection.horizontal,
+              hug: false,
+              hasInput: true,
+              hasInputDivider: true,
+              inputFormat: ReadoutInputFormat.description,
+              inputDescription: 'SET',
+            }),
             args: {
               variant: ReadoutVariant.stack,
               direction: ReadoutDirection.horizontal,
@@ -1888,7 +2395,16 @@ export const StackCases: Story = {
             },
           },
           {
-            label: 'Input Range',
+            label: readoutCaseLabel('Input Range', {
+              variant: ReadoutVariant.stack,
+              direction: ReadoutDirection.horizontal,
+              hug: false,
+              hasInput: true,
+              hasInputDivider: true,
+              inputFormat: ReadoutInputFormat.range,
+              setpointValue: '12',
+              inputSecondaryValue: '34',
+            }),
             args: {
               variant: ReadoutVariant.stack,
               direction: ReadoutDirection.horizontal,
@@ -1903,10 +2419,20 @@ export const StackCases: Story = {
         ],
       },
       {
-        title: 'Stack / Horizontal — Picker & Flyout',
+        title: 'Stack / Horizontal — Picker & Flyout (hug: false)',
         cases: [
           {
-            label: 'Source Picker',
+            label: readoutCaseLabel('Source Picker', {
+              variant: ReadoutVariant.stack,
+              direction: ReadoutDirection.horizontal,
+              hug: false,
+              hasInput: true,
+              hasInputDivider: true,
+              hasSrc: true,
+              hasSrcPicker: true,
+              hasSourceDivider: true,
+              sourceType: ReadoutSourceType.regular,
+            }),
             args: {
               variant: ReadoutVariant.stack,
               direction: ReadoutDirection.horizontal,
@@ -1920,7 +2446,16 @@ export const StackCases: Story = {
             },
           },
           {
-            label: 'Source Flyout',
+            label: readoutCaseLabel('Source Flyout', {
+              variant: ReadoutVariant.stack,
+              direction: ReadoutDirection.horizontal,
+              hug: false,
+              hasInput: true,
+              hasInputDivider: true,
+              hasSrc: true,
+              hasSourceDivider: true,
+              sourceType: ReadoutSourceType.flyout,
+            }),
             args: {
               variant: ReadoutVariant.stack,
               direction: ReadoutDirection.horizontal,
@@ -1963,7 +2498,11 @@ export const StackVerticalAlignment: Story = {
 
     const alwaysVisibleCases: ReadoutShowcaseCase[] = alignments.map(
       (alignment) => ({
-        label: `stack / vertical / alignment=${alignment}`,
+        label: readoutCaseLabel(`stack / vertical / alignment=${alignment}`, {
+          ...baseArgs,
+          alignment,
+          inputInteraction: ReadoutInputInteraction.alwaysVisible,
+        }),
         args: {
           ...baseArgs,
           alignment,
@@ -1972,22 +2511,28 @@ export const StackVerticalAlignment: Story = {
       })
     );
 
-    const popUpCases: ReadoutShowcaseCase[] = alignments.map((alignment) => ({
-      label: `stack / vertical / pop-up / alignment=${alignment}`,
-      args: {
+    const popUpCases: ReadoutShowcaseCase[] = alignments.map((alignment) => {
+      const caseArgs: Partial<ReadoutStoryArgs> = {
         ...baseArgs,
         alignment,
         inputInteraction: ReadoutInputInteraction.popUp,
-      },
-    }));
+      };
+      return {
+        label: readoutCaseLabel(
+          `stack / vertical / pop-up / alignment=${alignment}`,
+          caseArgs
+        ),
+        args: caseArgs,
+      };
+    });
 
     return renderReadoutSectionsShowcase([
       {
-        title: 'Always Visible',
+        title: 'Always Visible (hug: false)',
         cases: alwaysVisibleCases,
       },
       {
-        title: 'Pop-up',
+        title: 'Pop-up (hug: false)',
         cases: popUpCases,
       },
     ]);
@@ -1998,7 +2543,15 @@ export const HorizontalCasesGrid: Story = {
   render: () =>
     renderReadoutGridShowcase([
       {
-        label: 'Regular / Input + Source',
+        label: readoutCaseLabel('Regular / Input + Source', {
+          variant: ReadoutVariant.regular,
+          direction: ReadoutDirection.horizontal,
+          hug: false,
+          hasInput: true,
+          hasSrc: true,
+          hasInputDivider: true,
+          hasSourceDivider: true,
+        }),
         args: {
           variant: ReadoutVariant.regular,
           direction: ReadoutDirection.horizontal,
@@ -2010,7 +2563,16 @@ export const HorizontalCasesGrid: Story = {
         },
       },
       {
-        label: 'Regular / Advice + Input + Source',
+        label: readoutCaseLabel('Regular / Advice + Input + Source', {
+          variant: ReadoutVariant.regular,
+          direction: ReadoutDirection.horizontal,
+          hug: false,
+          hasAdvice: true,
+          hasInput: true,
+          hasSrc: true,
+          hasInputDivider: true,
+          hasSourceDivider: true,
+        }),
         args: {
           variant: ReadoutVariant.regular,
           direction: ReadoutDirection.horizontal,
@@ -2023,7 +2585,16 @@ export const HorizontalCasesGrid: Story = {
         },
       },
       {
-        label: 'Regular / Source Picker',
+        label: readoutCaseLabel('Regular / Source Picker', {
+          variant: ReadoutVariant.regular,
+          direction: ReadoutDirection.horizontal,
+          hug: false,
+          hasInput: true,
+          hasSrc: true,
+          hasSrcPicker: true,
+          hasInputDivider: true,
+          hasSourceDivider: true,
+        }),
         args: {
           variant: ReadoutVariant.regular,
           direction: ReadoutDirection.horizontal,
@@ -2036,7 +2607,24 @@ export const HorizontalCasesGrid: Story = {
         },
       },
       {
-        label: 'Regular / All On',
+        label: readoutCaseLabel('Regular / All On', {
+          variant: ReadoutVariant.regular,
+          direction: ReadoutDirection.horizontal,
+          hug: false,
+          hasAdvice: true,
+          hasInput: true,
+          hasInputDivider: true,
+          hasSrc: true,
+          hasSourceDivider: true,
+          hasSrcPicker: true,
+          hasLeadingIcon: true,
+          hasLabelFixedLength: true,
+          labelLength: 'HDG',
+          hasUnitFixedLength: true,
+          unitLength: 'DEG',
+          hasSourceLeadingIcon: true,
+          hasSourceTrailingIcon: true,
+        }),
         args: {
           variant: ReadoutVariant.regular,
           direction: ReadoutDirection.horizontal,
@@ -2057,7 +2645,13 @@ export const HorizontalCasesGrid: Story = {
         },
       },
       {
-        label: 'Enhanced / Basic',
+        label: readoutCaseLabel('Enhanced / Basic', {
+          variant: ReadoutVariant.enhanced,
+          direction: ReadoutDirection.horizontal,
+          hug: false,
+          hasInput: true,
+          hasInputDivider: true,
+        }),
         args: {
           variant: ReadoutVariant.enhanced,
           direction: ReadoutDirection.horizontal,
@@ -2067,7 +2661,16 @@ export const HorizontalCasesGrid: Story = {
         },
       },
       {
-        label: 'Enhanced / Input + Source',
+        label: readoutCaseLabel('Enhanced / Input + Source', {
+          variant: ReadoutVariant.enhanced,
+          direction: ReadoutDirection.horizontal,
+          hug: false,
+          hasInput: true,
+          hasSrc: true,
+          hasLeadingIcon: true,
+          hasInputDivider: true,
+          hasSourceDivider: true,
+        }),
         args: {
           variant: ReadoutVariant.enhanced,
           direction: ReadoutDirection.horizontal,
@@ -2080,7 +2683,16 @@ export const HorizontalCasesGrid: Story = {
         },
       },
       {
-        label: 'Enhanced / Source Picker',
+        label: readoutCaseLabel('Enhanced / Source Picker', {
+          variant: ReadoutVariant.enhanced,
+          direction: ReadoutDirection.horizontal,
+          hug: false,
+          hasInput: true,
+          hasSrc: true,
+          hasSrcPicker: true,
+          hasInputDivider: true,
+          hasSourceDivider: true,
+        }),
         args: {
           variant: ReadoutVariant.enhanced,
           direction: ReadoutDirection.horizontal,
@@ -2093,7 +2705,24 @@ export const HorizontalCasesGrid: Story = {
         },
       },
       {
-        label: 'Enhanced / All On',
+        label: readoutCaseLabel('Enhanced / All On', {
+          variant: ReadoutVariant.enhanced,
+          direction: ReadoutDirection.horizontal,
+          hug: false,
+          hasAdvice: true,
+          hasInput: true,
+          hasInputDivider: true,
+          hasSrc: true,
+          hasSourceDivider: true,
+          hasSrcPicker: true,
+          hasLeadingIcon: true,
+          hasLabelFixedLength: true,
+          labelLength: 'HDG',
+          hasUnitFixedLength: true,
+          unitLength: 'DEG',
+          hasSourceLeadingIcon: true,
+          hasSourceTrailingIcon: true,
+        }),
         args: {
           variant: ReadoutVariant.enhanced,
           direction: ReadoutDirection.horizontal,
@@ -2114,7 +2743,13 @@ export const HorizontalCasesGrid: Story = {
         },
       },
       {
-        label: 'Stack / Basic',
+        label: readoutCaseLabel('Stack / Basic', {
+          variant: ReadoutVariant.stack,
+          direction: ReadoutDirection.horizontal,
+          hug: false,
+          hasInput: true,
+          hasInputDivider: true,
+        }),
         args: {
           variant: ReadoutVariant.stack,
           direction: ReadoutDirection.horizontal,
@@ -2124,7 +2759,14 @@ export const HorizontalCasesGrid: Story = {
         },
       },
       {
-        label: 'Stack / Advice + Input',
+        label: readoutCaseLabel('Stack / Advice + Input', {
+          variant: ReadoutVariant.stack,
+          direction: ReadoutDirection.horizontal,
+          hug: false,
+          hasAdvice: true,
+          hasInput: true,
+          hasInputDivider: true,
+        }),
         args: {
           variant: ReadoutVariant.stack,
           direction: ReadoutDirection.horizontal,
@@ -2135,7 +2777,16 @@ export const HorizontalCasesGrid: Story = {
         },
       },
       {
-        label: 'Stack / With Source',
+        label: readoutCaseLabel('Stack / With Source', {
+          variant: ReadoutVariant.stack,
+          direction: ReadoutDirection.horizontal,
+          hug: false,
+          hasInput: true,
+          hasSrc: true,
+          hasLeadingIcon: true,
+          hasInputDivider: true,
+          hasSourceDivider: true,
+        }),
         args: {
           variant: ReadoutVariant.stack,
           direction: ReadoutDirection.horizontal,
@@ -2148,7 +2799,16 @@ export const HorizontalCasesGrid: Story = {
         },
       },
       {
-        label: 'Stack / Source Picker',
+        label: readoutCaseLabel('Stack / Source Picker', {
+          variant: ReadoutVariant.stack,
+          direction: ReadoutDirection.horizontal,
+          hug: false,
+          hasInput: true,
+          hasSrc: true,
+          hasSrcPicker: true,
+          hasInputDivider: true,
+          hasSourceDivider: true,
+        }),
         args: {
           variant: ReadoutVariant.stack,
           direction: ReadoutDirection.horizontal,
@@ -2161,7 +2821,24 @@ export const HorizontalCasesGrid: Story = {
         },
       },
       {
-        label: 'Stack / All On',
+        label: readoutCaseLabel('Stack / All On', {
+          variant: ReadoutVariant.stack,
+          direction: ReadoutDirection.horizontal,
+          hug: false,
+          hasAdvice: true,
+          hasInput: true,
+          hasInputDivider: true,
+          hasSrc: true,
+          hasSourceDivider: true,
+          hasSrcPicker: true,
+          hasLeadingIcon: true,
+          hasLabelFixedLength: true,
+          labelLength: 'HDG',
+          hasUnitFixedLength: true,
+          unitLength: 'DEG',
+          hasSourceLeadingIcon: true,
+          hasSourceTrailingIcon: true,
+        }),
         args: {
           variant: ReadoutVariant.stack,
           direction: ReadoutDirection.horizontal,
