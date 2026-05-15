@@ -46,9 +46,9 @@ import {customElement} from '../../decorator.js';
  * ### Properties
  * - `showTitle` (boolean): Controls whether the title header is rendered. (Default: true)
  * - `hasDialog` (boolean): Enables dialog mode. When true, the card acts as a button and opens a modal dialog on click. (Default: false)
- * - `dialogTimeOutSeconds` (number): Total time in milliseconds before the dialog auto-closes. (Default: 20000)
- * - `dialogVisibleTimerSeconds` (number): Duration in milliseconds for which the countdown indicator is shown before auto-dismiss. (Default: 10000)
- *   - The countdown indicator appears for the last `dialogVisibleTimerSeconds` milliseconds of the dialog's lifetime.
+ * - `dialogTimeOutSeconds` (number): Total time in seconds before the dialog auto-closes. Use `0` to disable auto-close. (Default: 20)
+ * - `dialogVisibleTimerSeconds` (number): Duration in seconds for which the countdown indicator is shown before auto-dismiss. (Default: 10)
+ *   - The countdown indicator appears for the last `dialogVisibleTimerSeconds` seconds of the dialog's lifetime.
  *   - User activity resets the dialog timer, preventing premature dismissal.
  *
  * ---
@@ -90,22 +90,22 @@ export class ObcCard extends LitElement {
   @property({type: Boolean}) hasDialog = false;
 
   /**
-   * Total time in milliseconds before the dialog auto-closes.
+   * Total time in seconds before the dialog auto-closes. Use `0` to disable auto-close.
    *
-   * When the dialog is open, it will automatically close after this duration unless reset by user activity. The countdown indicator appears for the last `dialogVisibleTimerSeconds` milliseconds.
+   * When greater than zero, the dialog closes after this duration unless reset by user activity. The countdown indicator appears for the last `dialogVisibleTimerSeconds` seconds.
    *
-   * @default 20000
+   * @default 20
    */
-  @property({type: Number}) dialogTimeOutSeconds = 20_000;
+  @property({type: Number}) dialogTimeOutSeconds = 20;
 
   /**
-   * Duration in milliseconds for which the countdown indicator is shown before auto-dismiss.
+   * Duration in seconds for which the countdown indicator is shown before auto-dismiss.
    *
-   * The countdown indicator is visible for the last `dialogVisibleTimerSeconds` milliseconds of the dialog's lifetime. User activity resets the timer.
+   * The countdown indicator is visible for the last `dialogVisibleTimerSeconds` seconds of the dialog's lifetime when auto-close is enabled. User activity resets the timer.
    *
-   * @default 10000
+   * @default 10
    */
-  @property({type: Number}) dialogVisibleTimerSeconds = 10_000;
+  @property({type: Number}) dialogVisibleTimerSeconds = 10;
 
   @query('dialog') dialog!: HTMLDialogElement;
 
@@ -184,33 +184,47 @@ export class ObcCard extends LitElement {
   openDialog() {
     if (!this.dialog) return;
     this.dialog.showModal();
-    this.startDialogTimer();
-    this.addUserActivityListeners();
+    if (this.dialogTimeOutSeconds > 0) {
+      this.startDialogTimer();
+      this.addUserActivityListeners();
+    }
+  }
+
+  private get dialogTimeOutMs(): number {
+    return this.dialogTimeOutSeconds * 1000;
+  }
+
+  private get dialogVisibleTimerMs(): number {
+    return this.dialogVisibleTimerSeconds * 1000;
   }
 
   private startDialogTimer() {
+    if (this.dialogTimeOutSeconds <= 0) return;
+
     this.clearAllTimers();
 
-    // Start countdown when dialogVisibleTimerSeconds is reached
-    const countdownStartTime =
-      this.dialogTimeOutSeconds - this.dialogVisibleTimerSeconds;
+    const countdownStartMs = Math.max(
+      0,
+      this.dialogTimeOutMs - this.dialogVisibleTimerMs
+    );
 
-    // Timer for when to start countdown
-    this.countdownStartTimer = window.setTimeout(() => {
-      this.startCountdown();
-    }, countdownStartTime);
+    if (this.dialogVisibleTimerSeconds > 0) {
+      this.countdownStartTimer = window.setTimeout(() => {
+        this.startCountdown();
+      }, countdownStartMs);
+    }
 
-    // Main timer for closing dialog
     this.dialogTimer = window.setTimeout(() => {
       this.dialog.close();
       this.clearAllTimers();
-    }, this.dialogTimeOutSeconds);
+      this.removeUserActivityListeners();
+    }, this.dialogTimeOutMs);
   }
 
   private startCountdown() {
     this.showCountdown = true;
     const startTime = performance.now();
-    const totalDuration = this.dialogVisibleTimerSeconds;
+    const totalDuration = this.dialogVisibleTimerMs;
 
     const updateCountdown = (currentTime: number) => {
       const elapsed = currentTime - startTime;
@@ -250,8 +264,9 @@ export class ObcCard extends LitElement {
   }
 
   private getProgressPercentage(): number {
-    const totalSeconds = this.dialogVisibleTimerSeconds / 1000;
-    const progress = (this.countdownSeconds / totalSeconds) * 100;
+    if (this.dialogVisibleTimerSeconds <= 0) return 0;
+    const progress =
+      (this.countdownSeconds / this.dialogVisibleTimerSeconds) * 100;
     return Math.max(0, progress);
   }
 
@@ -277,6 +292,7 @@ export class ObcCard extends LitElement {
   }
 
   private resetDialogTimer() {
+    if (this.dialogTimeOutSeconds <= 0) return;
     this.clearAllTimers();
     this.startDialogTimer();
   }
