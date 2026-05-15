@@ -125,6 +125,11 @@ const meta: Meta<typeof ObcTextareaField> = {
       ],
     },
   },
+  decorators: [
+    (story) => html`
+      <div style="width: 420px; max-width: 100%;">${story()}</div>
+    `,
+  ],
   render: (args) => html`
     <obc-textarea-field
       .type=${args.type ?? TextareaFieldType.Rich}
