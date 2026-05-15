@@ -1,6 +1,9 @@
 import {property} from 'lit/decorators.js';
 import {ObcAbstractAutomationButton} from '../automation-button/abstract-automation-button.js';
-import {AutomationButtonLabelDirection} from '../automation-button/automation-button.js';
+import {
+  AutomationButtonDirection,
+  AutomationButtonLabelDirection,
+} from '../automation-button/automation-button.js';
 import {AutomationButtonReadoutStack} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 
 export enum MotorizedVariant {
@@ -18,6 +21,8 @@ export class ObcAbstractAutomationButtonMotorized extends ObcAbstractAutomationB
     AutomationButtonLabelDirection.right;
   @property({type: String}) variant: MotorizedVariant =
     MotorizedVariant.regular;
+  @property({type: String}) direction: AutomationButtonDirection =
+    AutomationButtonDirection.forward;
 
   override get extraReadouts(): AutomationButtonReadoutStack[] {
     if (
