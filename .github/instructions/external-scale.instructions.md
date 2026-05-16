@@ -229,6 +229,24 @@ When adding new features or fixing bugs:
 
 The setpoint marker rendering (including confirm animation) is handled inside `external-scale.ts` via `renderSingleSetpoint()`. For the full setpoint architecture (mixin vs bundle, animation, property cascade), see **`setpoint.instructions.md`**.
 
+### Layout vs Rendering — Multiple Paths to Reason About
+
+The external-scale system has **several independent code paths** that compute "how much perpendicular space the scale needs". Forgetting any one of them produces clipped overlays, wrong chart insets, or whitespace gutters. When adding any property that affects the perpendicular footprint (bar, ticks, labels, advice, setpoint…), audit **all** of them:
+
+1. **`computeExternalScaleLayout()`** — produces `viewBoxThickness` for the SVG. Without space here, decorations get clipped at the SVG edge.
+2. **`computeScaleDimensionsForReport()`** — what each wrapper dispatches via `scale-dimensions-changed`; the parent chart uses this as `padding.right/left/top/bottom`. Without space here, the chart canvas overlaps the decoration.
+3. **Wrapper `reportDimensions()` triggers** — the `willUpdate` `layoutChanged` predicate in `bar-vertical.ts` / `bar-horizontal.ts`. If a new property affects layout but isn't in the predicate, the parent chart never re-insets when that property changes.
+4. **`chart-line-base.calculatePaddingFromScales()`** — fallback when no scale is slotted. Has its own constants (`CANVAS_PADDING`) independent of `computeExternalScaleLayout`. Must honor the same flags (e.g. `hasLabelPadding`).
+5. **`chart-line-base.updateScaleProperties()`** — pushes `showLabels` / padding down to the slotted bar based on chart-level toggles. New chart-level flags (e.g. `hasLabelPadding`) must cascade here too.
+6. **`getChartOptions()` / `buildScalesConfig()`** — Chart.js padding/tick options. Must honor the same flags so axis labels and grid hide consistently.
+7. **`renderExternalScale()` / `generateAdviceOverlays()` / `renderSingleSetpoint()`** — the actual SVG geometry. Decorations like advice pills have implicit perpendicular extents (e.g. pill = `offset + width` = 4+8 outside the bar) that must be reserved by (1) and (2).
+
+**Lesson from past bugs:**
+
+- Advice pills don't render inside `barSpace + scaleSpace + labelSpace`; they need a dedicated allowance. `computeAdviceBandThickness()` solves this for the `hasAdvice` case — apply the same pattern for any future overlay that lives outside the bar.
+- Hiding labels via a chart-level flag (`hasLabelPadding=false`) requires **three** coordinated changes: (a) cascade `showLabels=false` to the slotted bar in `updateScaleProperties`, (b) honor the flag in `calculatePaddingFromScales`'s fallback constant, (c) honor it in `getChartOptions`/`buildScalesConfig`. Touching only one produces clipped labels or right-side gutters.
+- Positive-default boolean properties (e.g. `hasLabelPadding = true`) must be declared with `attribute: false` (see AGENTS.md § 2) and added to the watched-property list for change detection.
+
 ### Feature Goes in `external-scale.ts` If:
 
 - It affects rendering (tickmarks, fills, markers, overlays)
@@ -247,10 +265,12 @@ The setpoint marker rendering (including confirm animation) is handled inside `e
 1. [ ] Read full file context before editing
 2. [ ] Implement in `external-scale.ts` if applicable
 3. [ ] Add config property to `ExternalScaleConfig` interface if needed
-4. [ ] Update both bar-vertical AND bar-horizontal wrappers
-5. [ ] Update both gauge-vertical AND gauge-horizontal if applicable
-6. [ ] Test all orientations (vertical/horizontal) and sides (left/right/top/bottom)
-7. [ ] Verify fixed aspect ratio mode works correctly
+4. [ ] If the property affects perpendicular footprint, also add it (optional) to `ExternalScaleLayoutConfig` and account for it in `computeExternalScaleLayout`
+5. [ ] Update both bar-vertical AND bar-horizontal wrappers (props + render config + `reportDimensions` payload + `willUpdate` `layoutChanged` predicate)
+6. [ ] Update both gauge-vertical AND gauge-horizontal if applicable
+7. [ ] Test all orientations (vertical/horizontal) and sides (left/right/top/bottom)
+8. [ ] Verify fixed aspect ratio mode works correctly
+9. [ ] Verify the parent chart still insets correctly (no clipped overlays, no whitespace gutters)
 
 ---
 

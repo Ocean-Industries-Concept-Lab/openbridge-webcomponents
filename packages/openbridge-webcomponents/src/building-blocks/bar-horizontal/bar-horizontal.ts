@@ -396,7 +396,9 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
       changed.has('labelThickness') ||
       changed.has('scaleType') ||
       changed.has('borderRadiusPosition') ||
-      changed.has('borderRadius');
+      changed.has('borderRadius') ||
+      changed.has('advices') ||
+      changed.has('advicePosition');
 
     if (!this.fixedAspectRatio || layoutChanged) {
       this.reportDimensions();
@@ -434,6 +436,8 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
       labelThickness: this.labelThickness,
       length: effectiveLength,
       scaleType: this.scaleType,
+      advicePosition: this.advicePosition,
+      hasAdvice: !!this.advices && this.advices.length > 0,
     });
 
     // When fixedAspectRatio=true, the SVG scales proportionally via preserveAspectRatio="meet".
