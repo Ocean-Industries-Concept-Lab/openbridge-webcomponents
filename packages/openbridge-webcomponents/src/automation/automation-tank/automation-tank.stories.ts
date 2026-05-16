@@ -13,6 +13,8 @@ import '../../icons/icon-command-locked-f.js';
 import {html} from 'lit';
 import {crossDecorator} from '../../storybook-util.js';
 import {BadgeType, BadgeSize} from '../../components/badge/badge.js';
+import {AdviceType} from '../../navigation-instruments/watch/advice.js';
+import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
 
 // Story-only args. `showDefaultBadges` is not a component property — it's a Storybook
 // toggle that injects two default badges into the `badges` slot so consumers
@@ -38,6 +40,14 @@ const SAMPLE_DATA = [
   {label: '13', value: 9000},
   {label: '14', value: 8700},
   {label: '15', value: 9000},
+];
+
+// Sample advice overlays for the graph chart modes — values use the same
+// scale as the tank's `max` (10_000). Defines a low-range caution band and a
+// high-range advice band so consumers can see both types at once.
+const SAMPLE_ADVICE: LinearAdvice[] = [
+  {min: 2500, max: 4500, type: AdviceType.caution, hinted: true},
+  {min: 7500, max: 9000, type: AdviceType.advice, hinted: false},
 ];
 
 const defaultBadges = html`
@@ -127,6 +137,11 @@ const meta: Meta<StoryArgs> = {
     },
     hasAdvice: {
       control: {type: 'boolean'},
+    },
+    advice: {
+      control: {type: 'object'},
+      description:
+        'Advice overlay bands. `min`/`max` are in the same units as `max`. Toggle visibility with `hasAdvice`. Works in all three `chartMode` variants — `bar` overlays advice pills on the static bar, `graph` and `graph-and-bar` forward them to the embedded `obc-gauge-trend`.',
     },
     showDefaultBadges: {
       control: {type: 'boolean'},
@@ -254,6 +269,53 @@ export const HorizontalGraphAndBar: Story = {
   },
 };
 
+export const GraphWithAdvice: Story = {
+  args: {
+    type: TankType.atmospheric,
+    chartMode: TankChartMode.graph,
+    hasAdvice: true,
+    advice: SAMPLE_ADVICE,
+  },
+};
+
+export const GraphAndBarWithAdvice: Story = {
+  args: {
+    type: TankType.atmospheric,
+    chartMode: TankChartMode.graphAndBar,
+    hasAdvice: true,
+    advice: SAMPLE_ADVICE,
+  },
+};
+
+export const HorizontalGraphWithAdvice: Story = {
+  args: {
+    orientation: TankOrientation.horizontal,
+    type: TankType.atmospheric,
+    chartMode: TankChartMode.graph,
+    hasAdvice: true,
+    advice: SAMPLE_ADVICE,
+  },
+};
+
+export const BarWithAdvice: Story = {
+  args: {
+    type: TankType.atmospheric,
+    chartMode: TankChartMode.bar,
+    hasAdvice: true,
+    advice: SAMPLE_ADVICE,
+  },
+};
+
+export const HorizontalBarWithAdvice: Story = {
+  args: {
+    orientation: TankOrientation.horizontal,
+    type: TankType.atmospheric,
+    chartMode: TankChartMode.bar,
+    hasAdvice: true,
+    advice: SAMPLE_ADVICE,
+  },
+};
+
 /**
  * Demonstrates host-driven resizing: drag the corner of the dashed container
  * to change its size — the tank fills the container's width and height, and
@@ -267,7 +329,13 @@ export const HorizontalGraphAndBar: Story = {
  * symmetrically inward from both edges.
  */
 export const Responsive: Story = {
-  args: {type: TankType.atmospheric},
+  args: {
+    type: TankType.atmospheric,
+    chartMode: TankChartMode.graphAndBar,
+    hasAdvice: true,
+    advice: SAMPLE_ADVICE,
+    showDefaultBadges: true,
+  },
   decorators: [],
   render(args) {
     return html`

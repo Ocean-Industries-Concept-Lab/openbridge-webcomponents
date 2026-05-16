@@ -9,8 +9,14 @@ import '../../icons/icon-chevron-double-down-google.js';
 import '../../icons/icon-chevron-down-google.js';
 import '../../icons/icon-off.js';
 import '../../navigation-instruments/gauge-trend/gauge-trend.js';
+import '../../building-blocks/bar-vertical/bar-vertical.js';
 import type {ChartLineDataItem} from '../../building-blocks/chart-line/chart-line-base.js';
 import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
+import {
+  AdvicePosition,
+  ExternalScaleSide,
+  FillMode,
+} from '../../building-blocks/external-scale/external-scale.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 
@@ -88,11 +94,15 @@ export class ObcAutomationTank extends LitElement {
   @property({type: Array, attribute: false})
   chartData: ChartLineDataItem[] = [];
 
-  /** Advice overlays forwarded to the embedded gauge-trend (graph modes only). */
+  /**
+   * Advice overlays. Forwarded to the embedded `obc-gauge-trend` in
+   * `graph` / `graph-and-bar` modes, or rendered as pills over the static
+   * bar in `bar` mode.
+   */
   @property({type: Array, attribute: false})
   advice: LinearAdvice[] = [];
 
-  /** Show advice overlays on the embedded gauge-trend (graph modes only). */
+  /** Show advice overlays (works in all `chartMode` variants). */
   @property({type: Boolean}) hasAdvice = false;
 
   @state() private _cellWidth = 0;
@@ -130,8 +140,11 @@ export class ObcAutomationTank extends LitElement {
   }
 
   private _syncChartResizeObserver(): void {
+    // Observe the bar-container in BOTH bar mode and graph modes — the bar
+    // mode now renders an SVG `obc-bar-vertical` / `-horizontal` that needs
+    // measured pixel dimensions for its viewBox and barThickness.
     const cell = this.renderRoot.querySelector('.bar-container');
-    if (!this._usesGaugeTrend || !cell) {
+    if (!cell) {
       if (this._chartResizeObserver) {
         this._chartResizeObserver.disconnect();
         this._observedCell = undefined;
@@ -415,6 +428,7 @@ export class ObcAutomationTank extends LitElement {
                 .value=${this.value}
                 .hasBar=${this.chartMode === TankChartMode.graphAndBar}
                 .hasScale=${false}
+                .hasLabelPadding=${false}
                 .chartFill=${true}
                 .hasAdvice=${this.hasAdvice}
                 .advice=${this.advice}
@@ -426,11 +440,69 @@ export class ObcAutomationTank extends LitElement {
         </div>
       `;
     } else {
-      // TODO(refactor): migrate the `bar` mode to also use obc-gauge-trend
-      // once it supports a bar-only layout (no chart-line area) at this size,
-      // so all three chart modes share a single implementation.
+      // Bar mode: render the shared SVG bar (`obc-bar-vertical` /
+      // `-horizontal`) — the same renderer used by gauge-trend's side bar —
+      // so advice overlays work the same way across all three chart modes.
+      //
+      // TODO(refactor): once `obc-gauge-trend` supports a bar-only layout at
+      // this size (no chart-line area), migrate this branch to gauge-trend
+      // too so all three chart modes share a single implementation.
+      //
+      // TODO(theming): the bar fill currently uses the standard instrument
+      // palette (`--instrument-regular-tertiary-color` for tint mode). The
+      // legacy CSS bar used per-medium colors (e.g. `--automation-medium-fuel`).
+      // Extend `external-scale.ts` (and the bar-vertical/-horizontal wrappers)
+      // to accept a medium / fuel color so the tank can restore its
+      // per-`medium` coloring through the shared renderer.
+      const hasSize = this._cellWidth > 0 && this._cellHeight > 0;
+      // The inner bar always renders vertically, regardless of the tank's
+      // outer `orientation`. Only the tank's outer wrapper flips; its inner
+      // chart cell stays portrait. This matches gauge-trend behavior.
+      //
+      // Match gauge-trend's proportional sizing so advice pills (and other
+      // fixed-pixel SVG primitives) render at the same on-screen size in
+      // every chart mode. We mirror gauge-trend's defaults exactly:
+      // `fixedAspectRatio=true` + `scaleReferenceSize=384`. The bar SVG is
+      // then built in a 384-unit-tall viewBox and shrunk into the cell via
+      // `xMidYMid meet`, giving on-screen scale = cellHeight / 384.
+      //
+      // Because the meet transform scales the viewBox uniformly, we must
+      // also size `barThickness` in viewBox units (not cell pixels) so the
+      // bar still fills the cell width after scaling. We pick the viewBox
+      // cross-axis size so width-fit and height-fit ratios match exactly
+      // (no horizontal gutters): viewBoxCross = cellWidth * 384 / cellHeight.
+      const SCALE_REFERENCE_SIZE = 384;
+      const adviceReserveVb = this.hasAdvice ? 16 : 0;
+      const safeCellHeight = Math.max(1, this._cellHeight);
+      const viewBoxCross =
+        (this._cellWidth * SCALE_REFERENCE_SIZE) / safeCellHeight;
+      const barThickness = Math.max(0, viewBoxCross - adviceReserveVb);
+      // `tint` is locked in for tank bar mode: it draws a fill from 0 to
+      // value plus a small marker at the value position, which mirrors the
+      // legacy CSS bar's "fill + top border at value" visual idiom.
+      const barWrapper = html`<obc-bar-vertical
+        .minValue=${0}
+        .maxValue=${safeMax}
+        .value=${this.value}
+        .height=${this._cellHeight}
+        .fixedAspectRatio=${true}
+        .scaleReferenceSize=${SCALE_REFERENCE_SIZE}
+        .paddingTop=${0}
+        .paddingBottom=${0}
+        .side=${ExternalScaleSide.right}
+        .hasBar=${true}
+        .hasScale=${false}
+        .showLabels=${false}
+        .barThickness=${barThickness}
+        .fillMode=${FillMode.tint}
+        .instrumentMode=${true}
+        .borderRadius=${2}
+        .advices=${this.hasAdvice ? this.advice : []}
+        .advicePosition=${AdvicePosition.inner}
+        style="width: 100%; height: 100%;"
+      ></obc-bar-vertical>`;
       chartCell = html`
-        <div class="bar-container"><div class="bar"></div></div>
+        <div class="bar-container bar-cell">${hasSize ? barWrapper : null}</div>
       `;
     }
 
