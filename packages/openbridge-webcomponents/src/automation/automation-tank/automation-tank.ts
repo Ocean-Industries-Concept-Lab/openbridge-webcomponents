@@ -8,6 +8,7 @@ import '../../icons/icon-chevron-up-google.js';
 import '../../icons/icon-chevron-double-down-google.js';
 import '../../icons/icon-chevron-down-google.js';
 import '../../icons/icon-off.js';
+import '../../icons/icon-tank.js';
 import '../../navigation-instruments/gauge-trend/gauge-trend.js';
 import '../../building-blocks/bar-vertical/bar-vertical.js';
 import type {ChartLineDataItem} from '../../building-blocks/chart-line/chart-line-base.js';
@@ -104,6 +105,23 @@ export class ObcAutomationTank extends LitElement {
 
   /** Show advice overlays (works in all `chartMode` variants). */
   @property({type: Boolean}) hasAdvice = false;
+
+  /**
+   * Overlay a 32×32 decorative icon (currently `<obi-tank>`) centered on the
+   * chart cell. Works in all three `chartMode` variants (bar, graph,
+   * graph-and-bar) and in both orientations. The icon is rendered above the
+   * bar/graph in a fixed CSS layer (does not scale with the SVG meet
+   * transform) and is silhouetted with a `--border-silhouette-color` halo so
+   * it stays legible on any underlying fill. The icon size scales with the
+   * ambient `obc-component-size-*` class on an ancestor (32 → 40 → 48 → 56
+   * for regular → medium → large → xl).
+   *
+   * TODO(future): replace the hard-coded `<obi-tank>` with a `slot="graph-icon"`
+   * so consumers can pass any `<obi-*>` icon. The current API ships the
+   * smallest viable surface; the slot can be added without breaking the
+   * boolean property.
+   */
+  @property({type: Boolean, attribute: false}) hasGraphIcon = false;
 
   @state() private _cellWidth = 0;
   @state() private _cellHeight = 0;
@@ -408,6 +426,19 @@ export class ObcAutomationTank extends LitElement {
             </slot>
           </div>
         `;
+    // Decorative icon overlay (centered on the chart cell). Two stacked
+    // `<obi-tank>` elements: the back layer paints an inherited SVG `stroke`
+    // halo (the icon's paths use `fill="currentColor"`, and SVG `stroke` is
+    // inherited across the icon's shadow DOM); the front layer paints the
+    // colored fill via the `color` property. This mirrors the established
+    // silhouette pattern used by `obc-automation-button` (back-layer slot
+    // with stroke, front-layer slot with fill).
+    const graphIconOverlay = html`
+      <div class="graph-icon" aria-hidden="true">
+        <obi-tank class="graph-icon-stroke"></obi-tank>
+        <obi-tank class="graph-icon-fill"></obi-tank>
+      </div>
+    `;
     let chartCell: HTMLTemplateResult;
     if (this._usesGaugeTrend) {
       // Forward the measured cell size as the gauge-trend's width/height,
@@ -437,6 +468,7 @@ export class ObcAutomationTank extends LitElement {
                 style="width: 100%; height: 100%;"
               ></obc-gauge-trend>`
             : null}
+          ${this.hasGraphIcon ? graphIconOverlay : null}
         </div>
       `;
     } else {
@@ -502,7 +534,10 @@ export class ObcAutomationTank extends LitElement {
         style="width: 100%; height: 100%;"
       ></obc-bar-vertical>`;
       chartCell = html`
-        <div class="bar-container bar-cell">${hasSize ? barWrapper : null}</div>
+        <div class="bar-container bar-cell">
+          ${hasSize ? barWrapper : null}
+          ${this.hasGraphIcon ? graphIconOverlay : null}
+        </div>
       `;
     }
 

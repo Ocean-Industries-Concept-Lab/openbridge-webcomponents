@@ -21,12 +21,22 @@
   display: inline-block;
   width: 256px;
   height: 368px;
+  /* Floor matches the compact-mode halo footprint so the host cannot be
+   * resized below a still-legible tank. */
+  min-width: 170px;
+  min-height: 228px;
+  /* Decorative chart-cell icon: defaults to 32px and scales with the
+   * ambient `.obc-component-size-*` class on an ancestor (regular 32,
+   * medium 40, large 48, xl 56). Consumers can override directly. */
+  --obc-automation-tank-graph-icon-size: 32px;
   /* P&ID anchor: top-center of host = drop coord; visual tank centers under it. */
   position: relative;
 }
 :host([orientation="horizontal"]) {
   width: 368px;
   height: 256px;
+  min-width: 228px;
+  min-height: 170px;
 }
 :host([compact]) {
   width: 170px;
@@ -388,6 +398,53 @@
   display: block;
   width: 100%;
   height: 100%;
+}
+
+/* ---------- Decorative chart-cell icon overlay (hasGraphIcon) ----------
+ * Centered on `.bar-container` in all chart modes (bar / graph / graph-and-bar)
+ * and both orientations. The icon lives in the host CSS layer (not inside the
+ * SVG meet transform), so it stays a constant size regardless of cell size.
+ *
+ * Stroke halo: the back `<obi-tank>` inherits `stroke` + `stroke-width`,
+ * which crosses the icon's shadow DOM via SVG inheritance and paints a 2px
+ * outline around the same shape painted by the front (fill) layer.
+ *
+ * Size ladder: scales with the ambient `.obc-component-size-*` class on an
+ * ancestor (regular 32 → medium 40 → large 48 → xl 56). The host-side
+ * defaults sit on `:host` so the cascade walks shadow boundaries correctly. */
+.graph-icon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  /* Lift above the gauge-trend's chart-fill area (graph / graph-and-bar
+   * modes) — without this the area-chart paint layer can occlude the icon
+   * even though the overlay is a later DOM sibling. */
+  z-index: 1;
+}
+.graph-icon > obi-tank {
+  position: absolute;
+  width: var(--obc-automation-tank-graph-icon-size);
+  height: var(--obc-automation-tank-graph-icon-size);
+}
+.graph-icon-fill {
+  color: var(--instrument-regular-secondary-color);
+}
+.graph-icon-stroke {
+  stroke: var(--border-silhouette-color);
+  stroke-width: 2;
+}
+
+:host-context(.obc-component-size-medium) {
+  --obc-automation-tank-graph-icon-size: 40px;
+}
+:host-context(.obc-component-size-large) {
+  --obc-automation-tank-graph-icon-size: 48px;
+}
+:host-context(.obc-component-size-xl) {
+  --obc-automation-tank-graph-icon-size: 56px;
 }
 
 /* ---------- Caps ---------- */
