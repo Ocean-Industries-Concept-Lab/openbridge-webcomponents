@@ -16,6 +16,7 @@ import {
   ObcAlertFrameStatus,
   ObcAlertFrameThickness,
   ObcAlertFrameType,
+  ObcAlertFrameMode,
 } from '../../components/alert-frame/alert-frame.js';
 import '../automation-badge/automation-badge.js';
 import {ObcAutomationBadgeType} from '../automation-badge/automation-badge.js';
@@ -64,6 +65,8 @@ export class ObcAbstractAutomationButton extends LitElement {
     ObcAlertFrameThickness.Small;
   @property({type: String}) alertFrameStatus: ObcAlertFrameStatus =
     ObcAlertFrameStatus.Alarm;
+  @property({type: String}) alertFrameMode: ObcAlertFrameMode =
+    ObcAlertFrameMode.ackedActive;
   @property({type: Boolean, attribute: false}) showAlertCategoryIcon: boolean =
     true;
   @property({type: Boolean}) showAlertIcon: boolean = false;
@@ -211,6 +214,7 @@ export class ObcAbstractAutomationButton extends LitElement {
       .alertFrameType=${this.alertFrameType}
       .alertFrameThickness=${this.alertFrameThickness}
       .alertFrameStatus=${this.alertFrameStatus}
+      .alertFrameMode=${this.alertFrameMode}
       .showAlertCategoryIcon=${this.showAlertCategoryIcon}
       .showAlertIcon=${this.showAlertIcon}
       ?progress=${this.progress}

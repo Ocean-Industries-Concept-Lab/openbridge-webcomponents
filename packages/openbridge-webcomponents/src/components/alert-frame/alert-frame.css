@@ -1,4 +1,4 @@
-:host {
+:host:not([wrapcontent]) {
   position: absolute;
   top: 0;
   left: 0;
@@ -9,6 +9,7 @@
 .wrapper {
   --bg-color: var(--alert-alarm-color);
   --thickness: var(--global-size-spacing-border-weight-alertframe);
+  --blink-on: var(--alarm-blink-on);
   color: var(--on-alarm-active-color);
   position: relative;
   width: 100%;
@@ -17,18 +18,33 @@
     var(--ui-components-button-border-radius) + var(--thickness) / 2
   );
   outline: var(--thickness) solid var(--bg-color);
-  outline-offset: calc(-1 * var(--thickness));
+  outline-offset: 0;
+  --blink-width: 2px;
   &.thickness-small {
     --thickness: 2px;
+    --blink-width: 1px;
+  }
+
+  &.wrap-content {
+    width: fit-content;
+    height: fit-content;
+  }
+
+  --blink-width-dynamic: calc(var(--blink-width) * var(--blink-on));
+
+  &.unacked-active {
+    outline-width: calc(var(--thickness) + var(--blink-width-dynamic));
   }
 
   &.warning {
     --bg-color: var(--alert-warning-color);
+    --blink-on: var(--warning-blink-on);
     color: var(--on-warning-active-color);
   }
 
   &.caution {
     --bg-color: var(--alert-caution-color);
+    --blink-on: 1;
     color: var(--on-caution-active-color);
   }
 
@@ -60,9 +76,9 @@
   gap: 2px;
 
   &.small {
-    top: 0;
+    top: calc(-1 * var(--thickness));
     right: calc(
-      -1 * var(--app-components-alert-frame-icon-size) + var(--thickness) / 2 -
+      -1 * var(--app-components-alert-frame-icon-size) - var(--thickness) / 2 -
         var(--app-components-badge-padding) * 2
     );
   }
@@ -74,9 +90,13 @@
     background-color: var(--bg-color);
 
     &.up {
-      width: calc(var(--ui-components-button-border-radius) + 1px);
+      width: calc(
+        var(--ui-components-button-border-radius) + var(--thickness) + 0.5px
+      );
       top: 0;
-      left: calc(-1 * var(--ui-components-button-border-radius));
+      left: calc(
+        -1 * var(--ui-components-button-border-radius) - var(--thickness)
+      );
       clip-path: polygon(
         0 0,
         100% 0,
@@ -84,12 +104,20 @@
         calc(100% - var(--thickness)) 50%,
         50% var(--thickness)
       );
+
+      .unacked-active & {
+        top: calc(-1 * var(--blink-width-dynamic));
+      }
     }
 
     &.down {
-      width: calc(var(--ui-components-button-border-radius) + 1px);
+      width: calc(
+        var(--ui-components-button-border-radius) + var(--thickness) + 0.5px
+      );
       bottom: 0;
-      left: calc(-1 * var(--ui-components-button-border-radius));
+      left: calc(
+        -1 * var(--ui-components-button-border-radius) - var(--thickness)
+      );
       clip-path: polygon(
         0 100%,
         100% 100%,
@@ -97,11 +125,19 @@
         50% calc(100% - var(--thickness)),
         calc(100% - var(--thickness)) 50%
       );
+
+      .unacked-active & {
+        bottom: calc(-1 * var(--blink-width-dynamic));
+      }
     }
 
     &.left {
-      height: calc(var(--ui-components-button-border-radius) + 1px);
-      top: calc(-1 * var(--ui-components-button-border-radius));
+      height: calc(
+        var(--ui-components-button-border-radius) + var(--thickness) + 0.5px
+      );
+      top: calc(
+        -1 * var(--ui-components-button-border-radius) - var(--thickness)
+      );
       left: 0;
       clip-path: polygon(
         0 0,
@@ -111,22 +147,32 @@
         var(--thickness) 50%
       );
 
+      .unacked-active & {
+        left: calc(-1 * var(--blink-width-dynamic));
+      }
+
       .top & {
         top: unset;
-        bottom: calc(-1 * var(--ui-components-button-border-radius));
+        bottom: calc(
+          -1 * var(--ui-components-button-border-radius) - var(--thickness)
+        );
         clip-path: polygon(
+          0 100%,
           0 0,
           100% 0,
-          var(--thickness) 50%,
           50% var(--thickness),
-          0 100%
+          var(--thickness) 50%
         );
       }
     }
 
     &.right {
-      height: calc(var(--ui-components-button-border-radius) + 1px);
-      top: calc(-1 * var(--ui-components-button-border-radius));
+      height: calc(
+        var(--ui-components-button-border-radius) + var(--thickness) + 0.5px
+      );
+      top: calc(
+        -1 * var(--ui-components-button-border-radius) - var(--thickness)
+      );
       right: 0;
       clip-path: polygon(
         100% 0,
@@ -138,24 +184,30 @@
 
       .top & {
         top: unset;
-        bottom: calc(-1 * var(--ui-components-button-border-radius));
+        bottom: calc(
+          -1 * var(--ui-components-button-border-radius) - var(--thickness)
+        );
         clip-path: polygon(
-          0 0,
-          100% 0,
           100% 100%,
+          100% 0,
+          0 0,
           50% var(--thickness),
           calc(100% - var(--thickness)) 50%
         );
+      }
+
+      .unacked-active & {
+        right: calc(-1 * var(--blink-width-dynamic));
       }
     }
   }
 
   &.large {
     flex-direction: column;
-    top: 0;
-    bottom: 0;
+    top: calc(-1 * var(--thickness));
+    bottom: calc(-1 * var(--thickness));
     right: calc(
-      -1 * var(--app-components-alert-frame-icon-size) + var(--thickness) / 2 -
+      -1 * var(--app-components-alert-frame-icon-size) - var(--thickness) / 2 -
         var(--app-components-badge-padding) * 2
     );
     border-radius: 0px
@@ -165,12 +217,13 @@
 
   &.bottom,
   &.top {
-    left: 0;
-    right: 0;
+    left: calc(-1 * var(--thickness));
+    right: calc(-1 * var(--thickness));
     padding: var(--app-components-alert-frame-large-flip-padding-vertical)
       var(--app-components-alert-frame-large-flip-4px-padding-horizontal);
     bottom: calc(
-      var(--thickness) / 2 - var(--global-typography-ui-label-line-height) -
+      -1 * var(--thickness) / 2 -
+        var(--global-typography-ui-label-line-height) -
         var(--app-components-alert-frame-large-flip-padding-vertical) * 2
     );
     border-radius: 0px 0px var(--button-border-radius-bottom-right)
@@ -200,7 +253,8 @@
   &.top {
     bottom: unset !important;
     top: calc(
-      var(--thickness) / 2 - var(--global-typography-ui-label-line-height) -
+      -1 * var(--thickness) / 2 -
+        var(--global-typography-ui-label-line-height) -
         var(--app-components-alert-frame-large-flip-padding-vertical) * 2
     );
     border-radius: var(--button-border-radius-bottom-right)
@@ -220,6 +274,10 @@
     white-space: nowrap;
     overflow: hidden;
   }
+}
+
+.unacked-active .flap {
+  outline: var(--bg-color) solid var(--blink-width-dynamic);
 }
 
 ::slotted([slot="label"]) {

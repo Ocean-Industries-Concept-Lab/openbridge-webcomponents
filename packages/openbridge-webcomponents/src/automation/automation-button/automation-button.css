@@ -7,6 +7,11 @@
   height: 0;
 }
 
+.button-wrapper {
+  width: fit-content;
+  height: fit-content;
+}
+
 .positioning-point {
   &.label-bottom {
     top: calc(var(--automation-components-button-touch-target-size) / -2);
@@ -230,8 +235,8 @@
 
 .alert-frame {
   position: absolute;
-  top: -1px;
-  right: -1px;
-  left: -1px;
-  bottom: -1px;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
 }
