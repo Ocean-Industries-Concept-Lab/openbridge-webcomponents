@@ -15,6 +15,11 @@ import {crossDecorator} from '../../storybook-util.js';
 import {BadgeType, BadgeSize} from '../../components/badge/badge.js';
 import {AdviceType} from '../../navigation-instruments/watch/advice.js';
 import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
+import {
+  ObcAlertFrameStatus,
+  ObcAlertFrameThickness,
+  ObcAlertFrameType,
+} from '../../components/alert-frame/alert-frame.js';
 
 // Story-only args. `showDefaultBadges` is not a component property — it's a Storybook
 // toggle that injects two default badges into the `badges` slot so consumers
@@ -86,6 +91,12 @@ const renderTank = (args: StoryArgs) => html`
     .advice=${args.advice}
     .hasAdvice=${args.hasAdvice}
     .hasGraphIcon=${args.hasGraphIcon}
+    ?alert=${args.alert}
+    .alertFrameType=${args.alertFrameType}
+    .alertFrameThickness=${args.alertFrameThickness}
+    .alertFrameStatus=${args.alertFrameStatus}
+    .showAlertCategoryIcon=${args.showAlertCategoryIcon}
+    .showAlertIcon=${args.showAlertIcon}
   >
     ${args.showDefaultBadges ? defaultBadges : null}
   </obc-automation-tank>
@@ -109,6 +120,12 @@ const meta: Meta<StoryArgs> = {
     advice: [],
     hasAdvice: false,
     hasGraphIcon: false,
+    alert: false,
+    alertFrameType: ObcAlertFrameType.SmallSideFlip,
+    alertFrameThickness: ObcAlertFrameThickness.Small,
+    alertFrameStatus: ObcAlertFrameStatus.Alarm,
+    showAlertCategoryIcon: true,
+    showAlertIcon: false,
     showDefaultBadges: false,
   },
   argTypes: {
@@ -155,6 +172,21 @@ const meta: Meta<StoryArgs> = {
       description:
         'Storybook-only toggle for visual/layout testing — not part of the component API. Injects two default badges into the `badges` slot.',
     },
+    alert: {control: {type: 'boolean'}},
+    alertFrameType: {
+      options: Object.values(ObcAlertFrameType),
+      control: {type: 'select'},
+    },
+    alertFrameThickness: {
+      options: Object.values(ObcAlertFrameThickness),
+      control: {type: 'select'},
+    },
+    alertFrameStatus: {
+      options: Object.values(ObcAlertFrameStatus),
+      control: {type: 'select'},
+    },
+    showAlertCategoryIcon: {control: {type: 'boolean'}},
+    showAlertIcon: {control: {type: 'boolean'}},
   },
   decorators: [crossDecorator],
   render: renderTank,
@@ -353,6 +385,88 @@ export const HorizontalGraphAndBarWithGraphIcon: Story = {
 };
 
 /**
+ * Battery tank with the decorative graph icon enabled — renders an
+ * `<obi-energy-battery>` instead of the default tank silhouette.
+ */
+export const BatteryWithGraphIcon: Story = {
+  args: {
+    type: TankType.battery,
+    chartMode: TankChartMode.graphAndBar,
+    hasGraphIcon: true,
+  },
+};
+
+/**
+ * Alarm-status alert frame on a vertical atmospheric tank. The ring overlays
+ * the halo (bordered tank area only); the readout and tag below it remain
+ * visually unaffected. The label is slotted via `alert-label`.
+ */
+export const WithAlertAlarm: Story = {
+  args: {
+    type: TankType.atmospheric,
+    alert: true,
+    alertFrameStatus: ObcAlertFrameStatus.Alarm,
+    alertFrameType: ObcAlertFrameType.SmallSideFlip,
+  },
+  render: (args) => html`
+    <obc-automation-tank
+      .value=${args.value}
+      .max=${args.max}
+      .trend=${args.trend}
+      .tag=${args.tag}
+      .type=${args.type}
+      .orientation=${args.orientation}
+      .compact=${args.compact}
+      .static=${args.static}
+      .chartMode=${args.chartMode}
+      .chartData=${args.chartData}
+      .advice=${args.advice}
+      .hasAdvice=${args.hasAdvice}
+      .hasGraphIcon=${args.hasGraphIcon}
+      ?alert=${args.alert}
+      .alertFrameType=${args.alertFrameType}
+      .alertFrameThickness=${args.alertFrameThickness}
+      .alertFrameStatus=${args.alertFrameStatus}
+      .showAlertCategoryIcon=${args.showAlertCategoryIcon}
+      .showAlertIcon=${args.showAlertIcon}
+    >
+      <span slot="alert-label">Fire alert</span>
+    </obc-automation-tank>
+  `,
+};
+
+/**
+ * Warning-status alert on a horizontal atmospheric tank — demonstrates the
+ * ring tracks the tank's host orientation correctly.
+ */
+export const WithAlertWarningHorizontal: Story = {
+  ...WithAlertAlarm,
+  args: {
+    orientation: TankOrientation.horizontal,
+    type: TankType.atmospheric,
+    alert: true,
+    alertFrameStatus: ObcAlertFrameStatus.Warning,
+    alertFrameType: ObcAlertFrameType.SmallSideFlip,
+  },
+};
+
+/**
+ * Caution-status alert on a compact tank — the ring includes the badges row
+ * because `.halo` wraps both badges and the tank-frame in compact mode.
+ */
+export const WithAlertCautionCompact: Story = {
+  ...WithAlertAlarm,
+  args: {
+    compact: true,
+    type: TankType.atmospheric,
+    showDefaultBadges: true,
+    alert: true,
+    alertFrameStatus: ObcAlertFrameStatus.Caution,
+    alertFrameType: ObcAlertFrameType.BottomFlip,
+  },
+};
+
+/**
  * Demonstrates host-driven resizing: drag the corner of the dashed container
  * to change its size — the tank fills the container's width and height, and
  * any extra space flows into the chart cell (textual cells stay min-content).
@@ -403,6 +517,12 @@ export const Responsive: Story = {
           .advice=${args.advice}
           .hasAdvice=${args.hasAdvice}
           .hasGraphIcon=${args.hasGraphIcon}
+          ?alert=${args.alert}
+          .alertFrameType=${args.alertFrameType}
+          .alertFrameThickness=${args.alertFrameThickness}
+          .alertFrameStatus=${args.alertFrameStatus}
+          .showAlertCategoryIcon=${args.showAlertCategoryIcon}
+          .showAlertIcon=${args.showAlertIcon}
         >
           ${args.showDefaultBadges ? defaultBadges : null}
         </obc-automation-tank>

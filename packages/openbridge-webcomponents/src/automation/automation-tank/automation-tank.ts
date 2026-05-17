@@ -9,8 +9,15 @@ import '../../icons/icon-chevron-double-down-google.js';
 import '../../icons/icon-chevron-down-google.js';
 import '../../icons/icon-off.js';
 import '../../icons/icon-tank.js';
+import '../../icons/icon-energy-battery.js';
 import '../../navigation-instruments/gauge-trend/gauge-trend.js';
 import '../../building-blocks/bar-vertical/bar-vertical.js';
+import '../../components/alert-frame/alert-frame.js';
+import {
+  ObcAlertFrameStatus,
+  ObcAlertFrameThickness,
+  ObcAlertFrameType,
+} from '../../components/alert-frame/alert-frame.js';
 import type {ChartLineDataItem} from '../../building-blocks/chart-line/chart-line-base.js';
 import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
 import {
@@ -123,8 +130,35 @@ export class ObcAutomationTank extends LitElement {
    */
   @property({type: Boolean, attribute: false}) hasGraphIcon = false;
 
+  /**
+   * Show an `<obc-alert-frame>` overlay around the bordered tank area (the
+   * `.halo` wrapper). Mirrors the API of `obc-automation-button`: same six
+   * properties, same three slots (`alert-icon`, `alert-label`, `alert-timer`).
+   * The ring overlays `.halo` only, so the tag and readout that sit outside
+   * the halo in compact / static layouts remain unaffected.
+   */
+  @property({type: Boolean}) alert: boolean = false;
+  @property({type: String}) alertFrameType: ObcAlertFrameType =
+    ObcAlertFrameType.SmallSideFlip;
+  @property({type: String}) alertFrameThickness: ObcAlertFrameThickness =
+    ObcAlertFrameThickness.Small;
+  @property({type: String}) alertFrameStatus: ObcAlertFrameStatus =
+    ObcAlertFrameStatus.Alarm;
+  @property({type: Boolean, attribute: false}) showAlertCategoryIcon: boolean =
+    true;
+  @property({type: Boolean}) showAlertIcon: boolean = false;
+
   @state() private _cellWidth = 0;
   @state() private _cellHeight = 0;
+  /**
+   * Tracks whether the `badges` and `tag` slots have assigned content. Used
+   * in compact/static mode to collapse empty cells to 0px so the tank-frame
+   * can absorb the freed space (per spec: "if there are no badges it would
+   * grow upward; if there are no readout or tags it would grow downward").
+   * Non-compact (regular) layout keeps its grid-based reserved rows.
+   */
+  @state() private _hasBadges = false;
+  @state() private _hasTagSlot = false;
   private _chartResizeObserver?: ResizeObserver;
   private _observedCell?: Element;
 
@@ -137,6 +171,28 @@ export class ObcAutomationTank extends LitElement {
       this.chartMode === TankChartMode.graph ||
       this.chartMode === TankChartMode.graphAndBar
     );
+  }
+
+  private _onBadgesSlotChange(e: Event): void {
+    const slot = e.target as HTMLSlotElement;
+    this._hasBadges = slot
+      .assignedNodes({flatten: true})
+      .some(
+        (n) =>
+          n.nodeType === Node.ELEMENT_NODE ||
+          (n.nodeType === Node.TEXT_NODE && !!n.textContent?.trim())
+      );
+  }
+
+  private _onTagSlotChange(e: Event): void {
+    const slot = e.target as HTMLSlotElement;
+    this._hasTagSlot = slot
+      .assignedNodes({flatten: true})
+      .some(
+        (n) =>
+          n.nodeType === Node.ELEMENT_NODE ||
+          (n.nodeType === Node.TEXT_NODE && !!n.textContent?.trim())
+      );
   }
 
   override disconnectedCallback(): void {
@@ -382,11 +438,24 @@ export class ObcAutomationTank extends LitElement {
     const percent = Math.max(0, Math.min(100, (this.value / safeMax) * 100));
     const isCompact = this.isCompact;
 
+    // In compact/static the `.halo` is a fixed-size column flex container
+    // that holds badges + tank-frame + (compact only) readout + tag. To let
+    // the tank-frame absorb the freed space when adjacent cells are empty,
+    // we collapse the empty cells with the `hidden` attribute (see CSS).
+    // In non-compact mode cells live inside the inner `.grid` and always
+    // reserve their min-content rows — unchanged from previous behavior.
+    const badgesHidden = isCompact && !this._hasBadges;
+    const tagHidden = isCompact && !this._hasTagSlot && !this.tag;
+
     const badgesCell = html`
-      <div class="badges"><slot name="badges"></slot></div>
+      <div class="badges" ?hidden=${badgesHidden}>
+        <slot name="badges" @slotchange=${this._onBadgesSlotChange}></slot>
+      </div>
     `;
     const tagCell = html`
-      <div class="tag"><slot name="tag">${this.tag}</slot></div>
+      <div class="tag" ?hidden=${tagHidden}>
+        <slot name="tag" @slotchange=${this._onTagSlotChange}>${this.tag}</slot>
+      </div>
     `;
     const readoutCell = isCompact
       ? html`
@@ -427,18 +496,50 @@ export class ObcAutomationTank extends LitElement {
           </div>
         `;
     // Decorative icon overlay (centered on the chart cell). Two stacked
-    // `<obi-tank>` elements: the back layer paints an inherited SVG `stroke`
-    // halo (the icon's paths use `fill="currentColor"`, and SVG `stroke` is
+    // icon elements: the back layer paints an inherited SVG `stroke` halo
+    // (the icon's paths use `fill="currentColor"`, and SVG `stroke` is
     // inherited across the icon's shadow DOM); the front layer paints the
     // colored fill via the `color` property. This mirrors the established
     // silhouette pattern used by `obc-automation-button` (back-layer slot
     // with stroke, front-layer slot with fill).
-    const graphIconOverlay = html`
-      <div class="graph-icon" aria-hidden="true">
-        <obi-tank class="graph-icon-stroke"></obi-tank>
-        <obi-tank class="graph-icon-fill"></obi-tank>
-      </div>
-    `;
+    //
+    // The icon variant follows `type`: battery tanks show an energy-battery
+    // icon, all other types show the generic tank icon.
+    const graphIconOverlay =
+      this.type === TankType.battery
+        ? html`
+            <div class="graph-icon" aria-hidden="true">
+              <obi-energy-battery
+                class="graph-icon-stroke"
+              ></obi-energy-battery>
+              <obi-energy-battery class="graph-icon-fill"></obi-energy-battery>
+            </div>
+          `
+        : html`
+            <div class="graph-icon" aria-hidden="true">
+              <obi-tank class="graph-icon-stroke"></obi-tank>
+              <obi-tank class="graph-icon-fill"></obi-tank>
+            </div>
+          `;
+    // Alert-frame overlay. Mirrors the `obc-automation-button` pattern
+    // exactly so consumer API is identical. Placed inside `.halo` so the
+    // ring hugs only the bordered tank area; `belowHalo` (tag / readout) is
+    // unaffected. `.halo` is `position: relative` (see CSS) to anchor the
+    // absolutely-positioned alert-frame.
+    const alertFrameOverlay = this.alert
+      ? html`<obc-alert-frame
+          class="alert-frame"
+          .type=${this.alertFrameType}
+          .thickness=${this.alertFrameThickness}
+          .status=${this.alertFrameStatus}
+          .showAlertCategoryIcon=${this.showAlertCategoryIcon}
+          .showIcon=${this.showAlertIcon}
+        >
+          <span slot="icon"><slot name="alert-icon"></slot></span>
+          <span slot="label"><slot name="alert-label"></slot></span>
+          <span slot="timer"><slot name="alert-timer"></slot></span>
+        </obc-alert-frame>`
+      : null;
     let chartCell: HTMLTemplateResult;
     if (this._usesGaugeTrend) {
       // Forward the measured cell size as the gauge-trend's width/height,
@@ -571,36 +672,56 @@ export class ObcAutomationTank extends LitElement {
 
     // Whole component is one interactive element. The halo (flat-mixin
     // border/background that appears on hover/pressed/focus) is painted on
-    // the inner `.halo` wrapper via `visibleWrapperClass`, so it surrounds
-    // only the bordered area:
-    //   - non-compact: just the tank-frame
-    //   - compact: badges + tank-frame (readout & tag fall OUTSIDE the halo,
-    //     below it, growing the host height)
+    // the inner `.halo` wrapper via `visibleWrapperClass`, so the surround
+    // hugs only the bordered area:
+    //   - non-compact: just the tank-frame (grid inside it carries badges,
+    //     readout, tag).
+    //   - compact: fixed-size column flex — badges, tank-frame (flex-grow),
+    //     readout, tag. Empty cells (badges/tag) collapse via `?hidden`
+    //     above so the tank-frame absorbs the freed space.
+    //   - static: same as compact but no separate readout cell (the readout
+    //     is centered INSIDE the tank-frame via `static-readout`).
+    //
+    // The alert-frame overlay is the last child of `.halo` so the ring
+    // overlays every cell (and any cell-collapse mechanics work uniformly).
+    let haloContents: HTMLTemplateResult;
+    if (this.static) {
+      haloContents = html`${badgesCell}${tankFrame}${tagCell}`;
+    } else if (this.compact) {
+      haloContents = html`${badgesCell}${tankFrame}${readoutCell}${tagCell}`;
+    } else {
+      haloContents = tankFrame;
+    }
     const halo = html`
-      <div class="halo">
-        ${isCompact ? html`${badgesCell}${tankFrame}` : tankFrame}
-      </div>
+      <div class="halo">${haloContents}${alertFrameOverlay}</div>
     `;
 
-    let belowHalo: HTMLTemplateResult | null = null;
-    if (this.static) {
-      // Static: readout is centered inside the frame; only the tag goes below.
-      belowHalo = tagCell;
-    } else if (this.compact) {
-      belowHalo = html`${readoutCell}${tagCell}`;
-    }
-
+    // `aria-live="polite"` + `aria-atomic="true"` on the root so the
+    // slotted alert label (and any state change of the alert frame) is
+    // announced once when `alert` flips on. Always present — an empty live
+    // region is harmless and avoids screen-reader re-registration races.
+    // TODO(a11y): the rest of the automation component family still lacks
+    // this live-region announcement; consolidate when alert support is
+    // factored into a shared mixin.
     return html`
       ${this.static
-        ? html`<div class="root" role="img" aria-label=${this.tag || 'Tank'}>
-            ${halo}${belowHalo}
+        ? html`<div
+            class="root"
+            role="img"
+            aria-label=${this.tag || 'Tank'}
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            ${halo}
           </div>`
         : html`<button
             class="root"
             type="button"
             aria-label=${this.tag || 'Tank'}
+            aria-live="polite"
+            aria-atomic="true"
           >
-            ${halo}${belowHalo}
+            ${halo}
           </button>`}
     `;
   }
