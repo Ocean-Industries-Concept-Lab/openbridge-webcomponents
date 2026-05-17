@@ -85,6 +85,7 @@ const renderTank = (args: StoryArgs) => html`
     .chartData=${args.chartData}
     .advice=${args.advice}
     .hasAdvice=${args.hasAdvice}
+    .hasGraphIcon=${args.hasGraphIcon}
   >
     ${args.showDefaultBadges ? defaultBadges : null}
   </obc-automation-tank>
@@ -107,6 +108,7 @@ const meta: Meta<StoryArgs> = {
     chartData: SAMPLE_DATA,
     advice: [],
     hasAdvice: false,
+    hasGraphIcon: false,
     showDefaultBadges: false,
   },
   argTypes: {
@@ -137,6 +139,11 @@ const meta: Meta<StoryArgs> = {
     },
     hasAdvice: {
       control: {type: 'boolean'},
+    },
+    hasGraphIcon: {
+      control: {type: 'boolean'},
+      description:
+        'Overlay a 32×32 decorative `<obi-tank>` centered on the chart cell. Scales with the ambient `obc-component-size-*` class (32 → 40 → 48 → 56). Works in all `chartMode` variants and both orientations.',
     },
     advice: {
       control: {type: 'object'},
@@ -316,6 +323,35 @@ export const HorizontalBarWithAdvice: Story = {
   },
 };
 
+export const BarWithGraphIcon: Story = {
+  args: {
+    type: TankType.atmospheric,
+    chartMode: TankChartMode.bar,
+    hasGraphIcon: true,
+  },
+};
+
+export const GraphAndBarWithGraphIcon: Story = {
+  args: {
+    type: TankType.atmospheric,
+    chartMode: TankChartMode.graphAndBar,
+    hasAdvice: true,
+    advice: SAMPLE_ADVICE,
+    hasGraphIcon: true,
+  },
+};
+
+export const HorizontalGraphAndBarWithGraphIcon: Story = {
+  args: {
+    orientation: TankOrientation.horizontal,
+    type: TankType.atmospheric,
+    chartMode: TankChartMode.graphAndBar,
+    hasAdvice: true,
+    advice: SAMPLE_ADVICE,
+    hasGraphIcon: true,
+  },
+};
+
 /**
  * Demonstrates host-driven resizing: drag the corner of the dashed container
  * to change its size — the tank fills the container's width and height, and
@@ -366,6 +402,7 @@ export const Responsive: Story = {
           .chartData=${args.chartData}
           .advice=${args.advice}
           .hasAdvice=${args.hasAdvice}
+          .hasGraphIcon=${args.hasGraphIcon}
         >
           ${args.showDefaultBadges ? defaultBadges : null}
         </obc-automation-tank>
