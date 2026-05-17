@@ -6,12 +6,16 @@
  *
  *   Vertical regular:    256×368   (halo fills host; 5px padding)
  *   Horizontal regular:  368×256   (halo fills host; 5px padding)
- *   Vertical compact:    170 × auto (halo is 170×228; readout/tag below halo)
- *   Horizontal compact:  228 × auto (halo is 228×170; readout/tag below halo)
+ *   Vertical compact:    170×228   (fixed; halo fills host)
+ *   Horizontal compact:  228×170   (fixed; halo fills host)
  *
- * In compact mode the halo (visible bordered/clickable area) contains
- * 4px padding + badges + 4px gap + tank-frame + 4px padding. Readout and
- * tag render OUTSIDE the halo, BELOW it, growing the host height.
+ * In compact/static mode the halo is a fixed-size column flex container
+ * holding: 4px padding + badges + 4px gap + tank-frame + 4px gap + readout
+ * (compact only) + 4px gap + tag + 4px padding. The tank-frame uses
+ * `flex: 1 1 auto; min-height: 0` so it absorbs whatever space the other
+ * cells don't use. Empty `.badges` / `.tag` cells collapse to 0 via the
+ * `hidden` attribute set by the component (slotchange-driven), allowing
+ * the tank-frame to grow into the freed space.
  *
  * Inside the tank-frame, all textual cells (tag, badges, readout) size to
  * `min-content`; the chart cell takes `1fr` in both axes so any host resize
@@ -40,19 +44,19 @@
 }
 :host([compact]) {
   width: 170px;
-  height: auto;
+  height: 228px;
 }
 :host([orientation="horizontal"][compact]) {
   width: 228px;
-  height: auto;
+  height: 170px;
 }
 :host([static]) {
   width: 170px;
-  height: auto;
+  height: 228px;
 }
 :host([orientation="horizontal"][static]) {
   width: 228px;
-  height: auto;
+  height: 170px;
 }
 
 .trend-icon {
@@ -67,8 +71,9 @@
  * disabled) is painted on `.halo` via the flat mixin's `visibleWrapperClass`
  * parameter. The halo wraps the bordered area only:
  *   - non-compact: just the tank-frame (5px padding)
- *   - compact: badges + tank-frame (4px padding, fixed halo height)
- * Readout and tag are siblings of the halo (compact only) and render below.
+ *   - compact: badges + tank-frame + readout + tag (4px padding, fixed
+ *     halo height; empty cells collapse so tank-frame absorbs the space)
+ *   - static:  badges + tank-frame + tag (readout is INSIDE the frame)
  *
  * P&ID anchor: `translateX(-50%)` shifts the root left by half its own width
  * so the tank centerline aligns with the host's left edge (= drop coord).
@@ -99,20 +104,18 @@
   outline: none;
 }
 
-/* In compact/static mode the host has auto height, so .root must sit in
- * normal flow (absolute positioning would collapse the host). To preserve
- * the P&ID anchor convention (placement coord = horizontal centerline of
- * the tank), we keep `transform: translateX(-50%)` — transforms don't
- * affect layout, so the host still sizes to content. The original
- * `top: -20px` offset existed to skip an external badge area; in
- * compact/static the badges live inside the halo, so there is nothing
- * external to skip and the vertical offset is dropped. */
+/* Compact/static now have a fixed host height (matching the halo), so the
+ * root can fill the host like the non-compact case. We still drop the
+ * `top: -20px` offset that lifts non-compact tanks above their placement
+ * origin (in compact/static the visible content starts at the host's top
+ * edge so there's nothing external to skip). `position: static` keeps the
+ * root in normal flow; `translateX(-50%)` preserves the P&ID horizontal
+ * anchor convention (centerline aligned with host left edge). */
 :host([compact]) .root,
 :host([static]) .root {
   position: static;
-  height: auto;
-  /* translateX(-50%) keeps horizontal anchor at host's left edge so the
-   * tank centerline aligns with the P&ID drop coordinate. */
+  height: 100%;
+  top: auto;
 }
 
 /* Static is display-only: not focusable (rendered as <div>) and not
@@ -126,6 +129,15 @@
   padding: 5px;
   border-radius: 11px;
   box-sizing: border-box;
+  /* Positioned ancestor for the alert-frame overlay. */
+  position: relative;
+}
+
+/* Alert-frame overlay mirrors `obc-automation-button`: -1px inset so the
+ * ring sits on the halo's outer edge without clipping. */
+.alert-frame {
+  position: absolute;
+  inset: -1px;
 }
 
 /* Non-compact (and not static): halo is the only child of root and fills the host. */
@@ -138,8 +150,8 @@
   height: 100%;
 }
 
-/* Compact: halo wraps badges + tank-frame with 4px padding and a fixed
- * height. Width fills the host. */
+/* Compact/static: halo is a fixed-size column flex container holding all
+ * cells. It fills the host (host is fixed-size in these modes). */
 :host([compact]) .halo,
 :host([static]) .halo {
   padding: 4px;
@@ -148,14 +160,7 @@
   flex-direction: column;
   gap: 4px;
   width: 100%;
-}
-:host([compact]:not([orientation="horizontal"])) .halo,
-:host([static]:not([orientation="horizontal"])) .halo {
-  height: 228px;
-}
-:host([orientation="horizontal"][compact]) .halo,
-:host([orientation="horizontal"][static]) .halo {
-  height: 170px;
+  height: 100%;
 }
 :host([compact]) .halo > .tank-frame,
 :host([static]) .halo > .tank-frame {
@@ -163,12 +168,30 @@
   min-height: 0;
   min-width: 0;
 }
+/* Badges / readout / tag are fixed-size cells inside the halo column. */
 :host([compact]) .halo > .badges,
 :host([static]) .halo > .badges,
-:host([compact]) .root > .readout,
-:host([compact]) .root > .tag,
-:host([static]) .root > .tag {
+:host([compact]) .halo > .readout,
+:host([compact]) .halo > .tag,
+:host([static]) .halo > .tag {
   flex: 0 0 auto;
+}
+/* Override the global `min-height: 24px` on `.badges` so empty badge rows
+ * don't reserve space in compact/static — the spec says "if there are no
+ * badges it would grow upward". The slot-driven `?hidden` attribute on
+ * empty cells makes them `display: none` (see below). */
+:host([compact]) .halo > .badges,
+:host([static]) .halo > .badges {
+  min-height: 0;
+}
+/* `hidden` attribute support: needed because the cells set an explicit
+ * display value (`flex` / `block`), which would otherwise override
+ * `hidden`'s default `display: none`. Removing the cell from the flex
+ * layout entirely lets the tank-frame absorb the freed space AND removes
+ * the column gap that would remain for an empty-but-displayed child. */
+.badges[hidden],
+.tag[hidden] {
+  display: none !important;
 }
 
 /* ---------- Tank frame (3 sections: cap-start / middle / cap-end) ----------
@@ -424,7 +447,8 @@
    * even though the overlay is a later DOM sibling. */
   z-index: 1;
 }
-.graph-icon > obi-tank {
+.graph-icon > obi-tank,
+.graph-icon > obi-energy-battery {
   position: absolute;
   width: var(--obc-automation-tank-graph-icon-size);
   height: var(--obc-automation-tank-graph-icon-size);
