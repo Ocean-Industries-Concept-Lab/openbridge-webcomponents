@@ -4,8 +4,6 @@ import {
   Priority
 } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types'
 import ObcAzimuthThruster from '@oicl/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster.vue'
-import ObcInstrumentField from '@oicl/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
-import { InstrumentFieldSize } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
 import { useSim } from '../composables/useSim'
 import { computed } from 'vue'
 import { useDemoConfigStore } from '../stores/demoConfig'
@@ -111,72 +109,81 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
     />
     <div class="readout-grid">
       <div class="fore-index readout-container single">
-        <div class="index off font-ui-label-active">1</div>
-        <div class="title font-ui-label">Fore</div>
-        <ObcInstrumentField
+        <div class="section-header">
+          <div class="index off font-ui-label-active">1</div>
+          <div class="title font-ui-label">Fore</div>
+        </div>
+        <obc-readout
+          class="value-readout"
           :value="0"
-          :max-digits="3"
-          off
-          :size="InstrumentFieldSize.enhanced"
-          neutral-color
-        >
-          <div slot="off-value">0</div>
-        </ObcInstrumentField>
-        <ObcInstrumentField
-          class="field-unit"
-          unit="DEG"
-          tag="Angle"
-          off
-          label-only
-          horizontal
-          :size="InstrumentFieldSize.enhanced"
+          :maxDigits.prop="3"
+          :hasInput.prop="false"
+          variant="stack"
+          direction="horizontal"
         />
-        <ObcInstrumentField off :size="InstrumentFieldSize.enhanced" />
-        <ObcInstrumentField
-          class="field-unit"
+        <obc-readout
+          class="label-readout"
+          label="Angle"
+          unit="DEG"
+          :labelOnly.prop="true"
+          variant="stack"
+          direction="horizontal"
+        />
+        <obc-readout
+          class="value-readout"
+          value="OFF"
+          :hasInput.prop="false"
+          variant="stack"
+          direction="horizontal"
+        />
+        <obc-readout
+          class="label-readout"
+          label="Power"
           unit="%"
-          tag="Power"
-          off
-          label-only
-          horizontal
-          :size="InstrumentFieldSize.enhanced"
+          :labelOnly.prop="true"
+          variant="stack"
+          direction="horizontal"
         />
       </div>
       <div class="aft-index readout-container single">
-        <div class="index font-ui-label-active">2</div>
-        <div class="title font-ui-label">Aft</div>
-        <ObcInstrumentField
-          :value="angle"
-          :setpoint="angleSetpoint"
-          has-setpoint
-          auto-hide-setpoint
-          :auto-hide-deadband="1"
-          :max-digits="3"
-          :size="InstrumentFieldSize.enhanced"
+        <div class="section-header">
+          <div class="index font-ui-label-active">2</div>
+          <div class="title font-ui-label">Aft</div>
+        </div>
+        <obc-readout
+          class="value-readout"
+          :value="Math.round(angle)"
+          :maxDigits.prop="3"
+          :hasInput.prop="true"
+          :setpointValue.prop="Math.round(angleSetpoint)"
+          :inputInteraction.prop="'pop-up'"
+          variant="stack"
+          direction="vertical"
         />
-        <ObcInstrumentField
-          class="field-unit"
+        <obc-readout
+          class="label-readout"
+          label="Angle"
           unit="DEG"
-          tag="Angle"
-          label-only
-          horizontal
-          :size="InstrumentFieldSize.enhanced"
+          :labelOnly.prop="true"
+          variant="stack"
+          direction="horizontal"
         />
-        <ObcInstrumentField
-          :value="sim.propulsion.propeller.value"
-          :setpoint="sim.propulsion.propellerSet.value"
-          has-setpoint
-          auto-hide-setpoint
-          :auto-hide-deadband="1"
-          :size="InstrumentFieldSize.enhanced"
+        <obc-readout
+          class="value-readout"
+          :value="Math.round(sim.propulsion.propeller.value)"
+          :hasInput.prop="true"
+          :setpointValue.prop="Math.round(sim.propulsion.propellerSet.value)"
+          :inputInteraction.prop="'pop-up'"
+          variant="stack"
+          direction="vertical"
         />
-        <ObcInstrumentField
-          class="field-unit"
+        <obc-readout
+          class="label-readout"
+          label="Power"
           unit="%"
-          tag="Power"
-          label-only
-          horizontal
-          :size="InstrumentFieldSize.enhanced"
+          :labelOnly.prop="true"
+          variant="stack"
+          direction="horizontal"
         />
       </div>
     </div>
@@ -245,18 +252,21 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
 }
 
 .readout-container {
-  justify-self: flex-end;
+  justify-self: end;
   display: grid;
-  grid-column: 1 / -1;
-  grid-template-columns: subgrid;
-  justify-content: space-between;
+  grid-template-columns: auto auto;
   align-items: center;
-  gap: 8px;
+  column-gap: 8px;
+  row-gap: 4px;
   padding-right: 16px;
 }
 
 .readout-container.single {
-  grid-column: 2 / -1;
+  grid-column: 1 / -1;
+}
+
+.section-header {
+  display: contents;
 }
 
 .fore-index {
@@ -269,6 +279,7 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
 
 .index {
   justify-self: end;
+  margin-inline-end: 8px;
   box-sizing: border-box;
   height: 18px;
   padding: 0 4px;
@@ -296,6 +307,8 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
 .title {
   color: var(--element-neutral-color);
   justify-self: start;
+  margin-inline-start: 8px;
+  padding-block: 4px;
   white-space: nowrap;
 }
 
@@ -305,7 +318,16 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
   justify-self: start;
 }
 
-obc-instrument-field {
+.value-readout {
   justify-self: end;
+}
+
+.label-readout {
+  align-self: end;
+  --obc-readout-padding-horizontal-safe: 3px;
+}
+
+obc-readout {
+  flex-shrink: 0;
 }
 </style>
