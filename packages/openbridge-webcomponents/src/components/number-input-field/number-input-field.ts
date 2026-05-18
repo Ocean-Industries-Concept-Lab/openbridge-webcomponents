@@ -11,6 +11,14 @@ import {ifDefined} from 'lit/directives/if-defined.js';
 import componentStyle from './number-input-field.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
+import {
+  formatNumberForDisplay,
+  parseNumberInput,
+  valuesEqual,
+} from './number-input-format.js';
+
+export type ObcNumberInputFieldInputEvent = CustomEvent<{value: number}>;
+export type ObcNumberInputFieldChangeEvent = CustomEvent<{value: number}>;
 
 export enum ObcNumberInputFieldTextAlign {
   Center = 'center',
@@ -35,11 +43,12 @@ export enum ObcNumberInputFieldPlacement {
  * @slot leading-icon - Icon displayed before the input value (when `hasLeadingIcon` is true)
  * @slot label-icon - Icon displayed before the label text (when `hasLabelIcon` is true)
  * @slot helper-icon - Icon displayed before helper or error text (when `hasHelperIcon` is true)
- * @fires input - Standard input event on value change
+ * @fires input {CustomEvent<{value: number}>} When the numeric value changes during editing
+ * @fires change {CustomEvent<{value: number}>} When the value is committed on blur
  */
 @customElement('obc-number-input-field')
 export class ObcNumberInputField extends LitElement {
-  @property({type: String}) value = '';
+  @property({type: Number}) value = NaN;
   @property({type: String}) unit = '';
   @property({type: String}) placeholder = '';
   @property({type: String}) textAlign: ObcNumberInputFieldTextAlign =
@@ -87,15 +96,33 @@ export class ObcNumberInputField extends LitElement {
   /** Internal property for squared corners, used when input is used in stepper-box */
   @property({type: Boolean}) squared = false;
 
+  /**
+   * Optional display text override for controlled consumers (e.g. keyboard-numeric)
+   * that manage formatted strings while the committed value may be NaN.
+   */
+  @property({type: String, attribute: false}) displayOverride = '';
+
   @state() private hasFocus = false;
-  @state() private previousValue = '';
-  @state() private previousInputElementValue = '';
+  @state() private displayText = '';
+  @state() private previousValue = NaN;
+  @state() private previousDisplayText = '';
+  @state() private lastCommittedValue = NaN;
 
   @query('.value-input') private inputElement?: HTMLInputElement;
 
+  get displayValue(): string {
+    return this.displayText;
+  }
+
   private onInput(e: Event) {
-    this.value = (e.target as HTMLInputElement).value;
-    this.previousInputElementValue = this.value;
+    e.stopPropagation();
+    const raw = (e.target as HTMLInputElement).value;
+    this.displayText = raw;
+    this.displayOverride = '';
+    const parsed = parseNumberInput(raw);
+    this.value = parsed;
+    this.previousDisplayText = raw;
+    this.dispatchInput();
   }
 
   private onFocus() {
@@ -104,32 +131,102 @@ export class ObcNumberInputField extends LitElement {
 
   private onBlur() {
     this.hasFocus = false;
+    this.commitDisplay();
+    if (!valuesEqual(this.value, this.lastCommittedValue)) {
+      this.lastCommittedValue = this.value;
+      this.dispatchChange();
+    }
+  }
+
+  private commitDisplay() {
+    const trimmed = this.displayText.trim();
+    if (trimmed === '') {
+      this.value = NaN;
+      this.displayText = '';
+      this.displayOverride = '';
+      return;
+    }
+
+    const forCommit = trimmed.replace(/[.,]$/, '');
+    const parsed = parseNumberInput(forCommit);
+
+    if (Number.isFinite(parsed)) {
+      this.value = parsed;
+      this.displayText = formatNumberForDisplay(parsed);
+    } else {
+      this.value = NaN;
+    }
+    this.displayOverride = '';
+  }
+
+  private dispatchInput() {
+    this.dispatchEvent(
+      new CustomEvent('input', {
+        detail: {value: this.value},
+      })
+    );
+  }
+
+  private dispatchChange() {
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        detail: {value: this.value},
+      })
+    );
   }
 
   private get shouldUpdateValue(): boolean {
     if (this.rejectUpdates) return false;
     if (this.rejectUpdatesOnFocus && this.hasFocus) return false;
-    if (this.rejectDuplicateUpdates && this.value === this.previousValue) {
+    if (
+      this.rejectDuplicateUpdates &&
+      valuesEqual(this.value, this.previousValue)
+    ) {
       return false;
     }
     return true;
   }
 
+  private getEffectiveDisplay(): string {
+    if (this.displayOverride) {
+      return this.displayOverride;
+    }
+    if (!this.shouldUpdateValue && this.inputElement) {
+      return this.inputElement.value;
+    }
+    return this.displayText;
+  }
+
+  override firstUpdated() {
+    if (!this.displayText && !this.displayOverride) {
+      this.displayText = formatNumberForDisplay(this.value);
+    }
+    this.lastCommittedValue = this.value;
+  }
+
   override willUpdate(changedProperties: PropertyValues) {
+    if (changedProperties.has('value') && this.shouldUpdateValue) {
+      if (!this.hasFocus) {
+        this.displayText = formatNumberForDisplay(this.value);
+        this.displayOverride = '';
+        this.lastCommittedValue = this.value;
+      }
+    }
+
     if (
       changedProperties.has('value') &&
       !this.shouldUpdateValue &&
       this.inputElement
     ) {
-      this.value = this.inputElement.value;
+      this.value = parseNumberInput(this.inputElement.value);
     }
   }
 
   override updated() {
     if (
       this.rejectDuplicateUpdates &&
-      this.value !== this.previousValue &&
-      (this.previousInputElementValue !== this.value || !this.hasFocus)
+      !valuesEqual(this.value, this.previousValue) &&
+      (this.previousDisplayText !== this.displayText || !this.hasFocus)
     ) {
       this.previousValue = this.value;
     }
@@ -164,11 +261,7 @@ export class ObcNumberInputField extends LitElement {
       this.unit &&
       this.textAlign === ObcNumberInputFieldTextAlign.RightUnitOutside;
 
-    let value = this.value;
-
-    if (!this.shouldUpdateValue && this.inputElement) {
-      value = this.inputElement.value;
-    }
+    const display = this.getEffectiveDisplay();
 
     return html`
       <label
@@ -214,7 +307,7 @@ export class ObcNumberInputField extends LitElement {
                 type="text"
                 inputmode="decimal"
                 class="value-input"
-                .value=${value}
+                .value=${display}
                 @focus=${this.onFocus}
                 @blur=${this.onBlur}
                 .placeholder=${this.placeholder}

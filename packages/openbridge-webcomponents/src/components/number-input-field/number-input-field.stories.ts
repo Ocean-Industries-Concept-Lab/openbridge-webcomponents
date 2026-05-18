@@ -17,7 +17,7 @@ const meta: Meta<typeof ObcNumberInputField> = {
   args: {},
   argTypes: {
     value: {
-      control: {type: 'text'},
+      control: {type: 'number'},
       description: 'The current numerical value displayed in the input',
     },
     unit: {
@@ -99,7 +99,7 @@ const meta: Meta<typeof ObcNumberInputField> = {
     return html`
       <div style="width: 260px;">
         <obc-number-input-field
-          .value=${args.value ?? ''}
+          .value=${args.value ?? NaN}
           .unit=${args.unit ?? ''}
           .placeholder=${args.placeholder ?? ''}
           .textAlign=${args.textAlign ?? ObcNumberInputFieldTextAlign.Right}
@@ -144,14 +144,14 @@ type Story = StoryObj<ObcNumberInputField>;
 
 export const Default: Story = {
   args: {
-    value: '123.45',
+    value: 123.45,
     unit: 'bar',
   },
 };
 
 export const WithPlaceholder: Story = {
   args: {
-    value: '',
+    value: NaN,
     unit: 'kg',
     placeholder: '0.0',
   },
@@ -159,7 +159,7 @@ export const WithPlaceholder: Story = {
 
 export const WithLeadingIcon: Story = {
   args: {
-    value: '18.5',
+    value: 18.5,
     unit: 'knots',
     hasLeadingIcon: true,
   },
@@ -171,7 +171,7 @@ export const WithLeadingIcon: Story = {
 
 export const AlignRight: Story = {
   args: {
-    value: '456.78',
+    value: 456.78,
     unit: 'bar',
     textAlign: ObcNumberInputFieldTextAlign.Right,
   },
@@ -179,7 +179,7 @@ export const AlignRight: Story = {
 
 export const AlignCenter: Story = {
   args: {
-    value: '22.5',
+    value: 22.5,
     unit: '°C',
     textAlign: ObcNumberInputFieldTextAlign.Center,
   },
@@ -187,7 +187,7 @@ export const AlignCenter: Story = {
 
 export const AlignRightUnitOutside: Story = {
   args: {
-    value: '1500',
+    value: 1500,
     unit: 'RPM',
     textAlign: ObcNumberInputFieldTextAlign.RightUnitOutside,
   },
@@ -199,7 +199,7 @@ export const AlignRightUnitOutside: Story = {
 
 export const SizeRegular: Story = {
   args: {
-    value: '123.45',
+    value: 123.45,
     unit: 'bar',
     size: ObcNumberInputFieldSize.Regular,
   },
@@ -207,7 +207,7 @@ export const SizeRegular: Story = {
 
 export const SizeLarge: Story = {
   args: {
-    value: '123.45',
+    value: 123.45,
     unit: 'bar',
     size: ObcNumberInputFieldSize.Large,
   },
@@ -219,7 +219,7 @@ export const SizeLarge: Story = {
 
 export const WithLabel: Story = {
   args: {
-    value: '75',
+    value: 75,
     unit: '%',
     label: 'Engine Load',
   },
@@ -227,7 +227,7 @@ export const WithLabel: Story = {
 
 export const WithLabelRequired: Story = {
   args: {
-    value: '',
+    value: NaN,
     unit: 'bar',
     label: 'Oil Pressure',
     required: true,
@@ -236,7 +236,7 @@ export const WithLabelRequired: Story = {
 
 export const WithLabelIcon: Story = {
   args: {
-    value: '25.5',
+    value: 25.5,
     unit: '°C',
     label: 'Temperature',
     hasLabelIcon: true,
@@ -245,7 +245,7 @@ export const WithLabelIcon: Story = {
 
 export const LabelPlacementLeft: Story = {
   args: {
-    value: '42',
+    value: 42,
     unit: 'kg',
     label: 'Weight',
     labelPlacement: ObcNumberInputFieldPlacement.Left,
@@ -254,7 +254,7 @@ export const LabelPlacementLeft: Story = {
 
 export const LabelPlacementCenter: Story = {
   args: {
-    value: '50',
+    value: 50,
     unit: '%',
     label: 'Progress',
     labelPlacement: ObcNumberInputFieldPlacement.Center,
@@ -264,7 +264,7 @@ export const LabelPlacementCenter: Story = {
 
 export const LabelPlacementRight: Story = {
   args: {
-    value: '42',
+    value: 42,
     unit: 'kg',
     label: 'Weight',
     labelPlacement: ObcNumberInputFieldPlacement.Right,
@@ -277,7 +277,7 @@ export const LabelPlacementRight: Story = {
 
 export const WithHelperText: Story = {
   args: {
-    value: '3.5',
+    value: 3.5,
     unit: 'bar',
     helperText: 'Normal range: 3.0 - 4.5 bar',
   },
@@ -285,7 +285,7 @@ export const WithHelperText: Story = {
 
 export const WithHelperTextIcon: Story = {
   args: {
-    value: '25',
+    value: 25,
     unit: '°C',
     helperText: 'Optimal temperature',
     hasHelperIcon: true,
@@ -294,7 +294,7 @@ export const WithHelperTextIcon: Story = {
 
 export const HelperPlacementLeft: Story = {
   args: {
-    value: '180',
+    value: 180,
     unit: 'cm',
     helperText: 'Height measurement',
     helperPlacement: ObcNumberInputFieldPlacement.Left,
@@ -303,7 +303,7 @@ export const HelperPlacementLeft: Story = {
 
 export const HelperPlacementCenter: Story = {
   args: {
-    value: '100',
+    value: 100,
     unit: '%',
     helperText: 'Progress complete',
     helperPlacement: ObcNumberInputFieldPlacement.Center,
@@ -313,7 +313,7 @@ export const HelperPlacementCenter: Story = {
 
 export const HelperPlacementRight: Story = {
   args: {
-    value: '180',
+    value: 180,
     unit: 'cm',
     helperText: 'Height measurement',
     helperPlacement: ObcNumberInputFieldPlacement.Right,
@@ -326,7 +326,7 @@ export const HelperPlacementRight: Story = {
 
 export const Disabled: Story = {
   args: {
-    value: '50',
+    value: 50,
     unit: '%',
     label: 'Throttle Position',
     disabled: true,
@@ -335,7 +335,7 @@ export const Disabled: Story = {
 
 export const Error: Story = {
   args: {
-    value: '999',
+    value: 999,
     unit: 'kPa',
     error: true,
     errorText: 'Value exceeds maximum limit',
@@ -344,7 +344,7 @@ export const Error: Story = {
 
 export const ErrorWithLabel: Story = {
   args: {
-    value: '',
+    value: NaN,
     unit: 'kg',
     label: 'Weight',
     required: true,
@@ -355,7 +355,7 @@ export const ErrorWithLabel: Story = {
 
 export const ErrorWithIcon: Story = {
   args: {
-    value: '999',
+    value: 999,
     unit: 'kPa',
     error: true,
     errorText: 'Value exceeds maximum limit',
@@ -369,7 +369,7 @@ export const ErrorWithIcon: Story = {
 
 export const Complete: Story = {
   args: {
-    value: '85.5',
+    value: 85.5,
     unit: 'kW',
     label: 'Power Output',
     required: true,
@@ -380,7 +380,7 @@ export const Complete: Story = {
 
 export const CompleteCenter: Story = {
   args: {
-    value: '42',
+    value: 42,
     unit: 'Hz',
     label: 'Frequency',
     required: true,
@@ -394,7 +394,7 @@ export const CompleteCenter: Story = {
 
 export const CompleteDisabled: Story = {
   args: {
-    value: '100',
+    value: 100,
     unit: '%',
     label: 'System Load',
     hasLeadingIcon: true,
@@ -405,7 +405,7 @@ export const CompleteDisabled: Story = {
 
 export const CompleteError: Story = {
   args: {
-    value: '150',
+    value: 150,
     unit: 'bar',
     label: 'Pressure Alert',
     required: true,
