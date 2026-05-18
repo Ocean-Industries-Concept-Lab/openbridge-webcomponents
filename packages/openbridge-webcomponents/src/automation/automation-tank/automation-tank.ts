@@ -148,6 +148,16 @@ export class ObcAutomationTank extends LitElement {
     true;
   @property({type: Boolean}) showAlertIcon: boolean = false;
 
+  /**
+   * Show the trend chevron / off icon next to the percent readout. Default
+   * `true` preserves existing behavior. Set to `false` to hide the trend
+   * indicator entirely in both compact/static and non-compact readouts —
+   * useful when the trend is not meaningful for a given tank, or when the
+   * consumer wants to keep the readout compact. `attribute: false` per the
+   * repo's positive-default-true boolean convention.
+   */
+  @property({type: Boolean, attribute: false}) showTrendSymbol: boolean = true;
+
   @state() private _cellWidth = 0;
   @state() private _cellHeight = 0;
   /**
@@ -461,7 +471,7 @@ export class ObcAutomationTank extends LitElement {
       ? html`
           <div class="readout readout-compact">
             <slot name="readout">
-              ${this.trendIcon()}
+              ${this.showTrendSymbol ? this.trendIcon() : null}
               <span class="percent"
                 >${percent.toFixed(0)}<span class="percent-symbol"
                   >%</span
@@ -474,7 +484,7 @@ export class ObcAutomationTank extends LitElement {
           <div class="readout">
             <slot name="readout">
               <div class="header">
-                ${this.trendIcon()}
+                ${this.showTrendSymbol ? this.trendIcon() : null}
                 <div class="percent">
                   ${percent.toFixed(0)}<span class="percent-symbol">%</span>
                 </div>

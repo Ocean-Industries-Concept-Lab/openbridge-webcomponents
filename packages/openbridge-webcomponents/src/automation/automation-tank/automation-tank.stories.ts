@@ -91,6 +91,7 @@ const renderTank = (args: StoryArgs) => html`
     .advice=${args.advice}
     .hasAdvice=${args.hasAdvice}
     .hasGraphIcon=${args.hasGraphIcon}
+    .showTrendSymbol=${args.showTrendSymbol}
     ?alert=${args.alert}
     .alertFrameType=${args.alertFrameType}
     .alertFrameThickness=${args.alertFrameThickness}
@@ -120,6 +121,7 @@ const meta: Meta<StoryArgs> = {
     advice: [],
     hasAdvice: false,
     hasGraphIcon: false,
+    showTrendSymbol: true,
     alert: false,
     alertFrameType: ObcAlertFrameType.SmallSideFlip,
     alertFrameThickness: ObcAlertFrameThickness.Small,
@@ -161,6 +163,11 @@ const meta: Meta<StoryArgs> = {
       control: {type: 'boolean'},
       description:
         'Overlay a 32×32 decorative `<obi-tank>` centered on the chart cell. Scales with the ambient `obc-component-size-*` class (32 → 40 → 48 → 56). Works in all `chartMode` variants and both orientations.',
+    },
+    showTrendSymbol: {
+      control: {type: 'boolean'},
+      description:
+        'Show the trend chevron / off icon next to the percent readout. Default `true`. Set to `false` to hide the trend indicator in both compact/static and non-compact layouts.',
     },
     advice: {
       control: {type: 'object'},
@@ -393,6 +400,72 @@ export const BatteryWithGraphIcon: Story = {
     type: TankType.battery,
     chartMode: TankChartMode.graphAndBar,
     hasGraphIcon: true,
+  },
+};
+
+/**
+ * Demonstrates fractional value/max display in the non-compact readout by
+ * slotting the `current-value` and `max-value` slots with pre-formatted
+ * numbers. The component's default rendering uses `.toFixed(0)`; consumers
+ * that need decimals format the number themselves and pass it through the
+ * slot. A custom `unit` slot is used here too (litres instead of m³).
+ *
+ * The compact / static layouts only show the percent (no absolute value),
+ * so fraction-digit control only applies to the non-compact layout.
+ */
+export const WithFractionDigits: Story = {
+  args: {
+    type: TankType.atmospheric,
+    value: 1.25,
+    max: 5,
+    trend: TankTrend.rising,
+    tag: 'FUEL',
+  },
+  render: (args) => html`
+    <obc-automation-tank
+      .value=${args.value}
+      .max=${args.max}
+      .trend=${args.trend}
+      .tag=${args.tag}
+      .type=${args.type}
+      .orientation=${args.orientation}
+      .compact=${args.compact}
+      .static=${args.static}
+      .chartMode=${args.chartMode}
+      .chartData=${args.chartData}
+      .advice=${args.advice}
+      .hasAdvice=${args.hasAdvice}
+      .hasGraphIcon=${args.hasGraphIcon}
+      .showTrendSymbol=${args.showTrendSymbol}
+    >
+      <span slot="current-value">${args.value.toFixed(2)}</span>
+      <span slot="max-value">${args.max.toFixed(2)}</span>
+      <span slot="unit">L</span>
+    </obc-automation-tank>
+  `,
+};
+
+/**
+ * Trend symbol hidden via `showTrendSymbol={false}`. The percent value
+ * shifts left to fill the freed space. Works in both compact/static and
+ * non-compact layouts — use compact stories to verify the same in compact.
+ */
+export const WithoutTrendSymbol: Story = {
+  args: {
+    type: TankType.atmospheric,
+    showTrendSymbol: false,
+  },
+};
+
+/**
+ * Compact tank with the trend symbol hidden — the percent value occupies
+ * the readout row alone.
+ */
+export const CompactWithoutTrendSymbol: Story = {
+  args: {
+    compact: true,
+    type: TankType.atmospheric,
+    showTrendSymbol: false,
   },
 };
 
