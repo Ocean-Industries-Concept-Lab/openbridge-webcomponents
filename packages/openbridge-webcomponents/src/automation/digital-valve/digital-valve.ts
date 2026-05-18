@@ -12,8 +12,8 @@ export enum DigitalValveVariant {
 }
 
 /**
- * @ignition-base-height: 82px
- * @ignition-base-width: 66px
+ * @snapshot-base-height 82px
+ * @snapshot-base-width 66px
  * @ignition-center
  */
 @customElement('obc-digital-valve')

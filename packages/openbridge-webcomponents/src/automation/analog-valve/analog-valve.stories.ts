@@ -1,6 +1,9 @@
 import type {Meta, StoryObj} from '@storybook/web-vite';
 import {ObcAnalogValve} from './analog-valve.js';
-import {AutomationButtonReadoutPosition} from '../automation-button/automation-button.js';
+import {
+  AutomationButtonPositioning,
+  AutomationButtonReadoutPosition,
+} from '../automation-button/automation-button.js';
 import {AutomationButtonReadoutStackSize} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import './analog-valve.js';
 import {crossDecorator} from '../../storybook-util.js';
@@ -21,6 +24,7 @@ const meta: Meta<typeof ObcAnalogValve> = {
   args: {
     tag: '#0012',
     readoutPosition: AutomationButtonReadoutPosition.bottom,
+    positioning: AutomationButtonPositioning.button,
     readoutSize: AutomationButtonReadoutStackSize.regular,
     alert: false,
     progress: false,

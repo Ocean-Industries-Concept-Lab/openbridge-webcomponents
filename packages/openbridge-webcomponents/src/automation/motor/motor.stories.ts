@@ -5,6 +5,7 @@ import {crossDecorator} from '../../storybook-util.js';
 import {
   AutomationButtonDirection,
   AutomationButtonLabelDirection,
+  AutomationButtonPositioning,
   AutomationButtonReadoutPosition,
   AutomationButtonVariant,
 } from '../automation-button/automation-button.js';
@@ -19,6 +20,7 @@ const meta: Meta<typeof ObcMotor> = {
   args: {
     tag: '#0012',
     readoutPosition: AutomationButtonReadoutPosition.bottom,
+    positioning: AutomationButtonPositioning.button,
     readoutSize: AutomationButtonReadoutStackSize.regular,
     alert: false,
     progress: false,

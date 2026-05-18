@@ -123,7 +123,7 @@ const preview: Preview = {
   tags: ['autodocs', 'snapshot'],
   initialGlobals: {
     componentSize: 'obc-component-size-regular',
-  },
+  }
 };
 
 export default preview;

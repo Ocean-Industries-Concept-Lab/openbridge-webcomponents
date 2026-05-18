@@ -40,7 +40,14 @@ export default defineConfig({
           browser: {
             enabled: true,
             // Make sure to install Playwright
-            provider: playwright({}),
+            provider: playwright({
+              contextOptions: {
+                deviceScaleFactor:
+                  process.env.VITE_STORYBOOK_TAKE_SCREENSHOT === 'true'
+                    ? 2
+                    : undefined,
+              },
+            }),
             headless: true,
             instances: [{browser: 'chromium'}],
           },
