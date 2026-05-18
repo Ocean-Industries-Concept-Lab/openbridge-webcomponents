@@ -4,10 +4,10 @@
 
 /* ---------- Default host sizes ----------
  *
- *   Vertical regular:    256×368   (halo fills host; 5px padding)
- *   Horizontal regular:  368×256   (halo fills host; 5px padding)
- *   Vertical compact:    170×228   (fixed; halo fills host)
- *   Horizontal compact:  228×170   (fixed; halo fills host)
+ *   Vertical regular:    256×376   (halo fills host; 4px padding)
+ *   Horizontal regular:  420×256   (halo fills host; 4px padding)
+ *   Vertical compact:    170×282   (fixed; halo fills host; 4px padding)
+ *   Horizontal compact:  244×208   (fixed; halo fills host; 4px padding)
  *
  * In compact/static mode the halo is a fixed-size column flex container
  * holding: 4px padding + badges + 4px gap + tank-frame + 4px gap + readout
@@ -24,11 +24,11 @@
 :host {
   display: inline-block;
   width: 256px;
-  height: 368px;
+  height: 376px;
   /* Floor matches the compact-mode halo footprint so the host cannot be
    * resized below a still-legible tank. */
   min-width: 170px;
-  min-height: 228px;
+  min-height: 282px;
   /* Decorative chart-cell icon: defaults to 32px and scales with the
    * ambient `.obc-component-size-*` class on an ancestor (regular 32,
    * medium 40, large 48, xl 56). Consumers can override directly. */
@@ -37,26 +37,26 @@
   position: relative;
 }
 :host([orientation="horizontal"]) {
-  width: 368px;
+  width: 420px;
   height: 256px;
-  min-width: 228px;
-  min-height: 170px;
+  min-width: 244px;
+  min-height: 208px;
 }
 :host([compact]) {
   width: 170px;
-  height: 228px;
+  height: 282px;
 }
 :host([orientation="horizontal"][compact]) {
-  width: 228px;
-  height: 170px;
+  width: 244px;
+  height: 208px;
 }
 :host([static]) {
   width: 170px;
-  height: 228px;
+  height: 282px;
 }
 :host([orientation="horizontal"][static]) {
-  width: 228px;
-  height: 170px;
+  width: 244px;
+  height: 208px;
 }
 
 .trend-icon {
@@ -70,7 +70,7 @@
  * The visible interactive surround (border/bg on hover/pressed/focus-visible/
  * disabled) is painted on `.halo` via the flat mixin's `visibleWrapperClass`
  * parameter. The halo wraps the bordered area only:
- *   - non-compact: just the tank-frame (5px padding)
+ *   - non-compact: just the tank-frame (4px padding)
  *   - compact: badges + tank-frame + readout + tag (4px padding, fixed
  *     halo height; empty cells collapse so tank-frame absorbs the space)
  *   - static:  badges + tank-frame + tag (readout is INSIDE the frame)
@@ -126,8 +126,8 @@
 }
 
 .halo {
-  padding: 5px;
-  border-radius: 11px;
+  padding: 4px;
+  border-radius: 10px;
   box-sizing: border-box;
   /* Positioned ancestor for the alert-frame overlay. */
   position: relative;
@@ -154,8 +154,6 @@
  * cells. It fills the host (host is fixed-size in these modes). */
 :host([compact]) .halo,
 :host([static]) .halo {
-  padding: 4px;
-  border-radius: 10px;
   display: flex;
   flex-direction: column;
   gap: 4px;
