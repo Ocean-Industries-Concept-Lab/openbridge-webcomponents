@@ -16,6 +16,7 @@ import {
   ObcAlertFrameThickness,
   ObcAlertFrameType,
 } from '../../components/alert-frame/alert-frame.js';
+import {Priority} from '../../navigation-instruments/types.js';
 import {
   AutomationButtonBadgeAlert,
   AutomationButtonBadgeCommandLocked,
@@ -80,6 +81,7 @@ const renderTank = (args: StoryArgs) => html`
     .badgeAlert=${args.badgeAlert}
     .badgeInterlock=${args.badgeInterlock}
     .badgeCommandLocked=${args.badgeCommandLocked}
+    .priority=${args.priority}
   >
   </obc-automation-tank>
 `;
@@ -113,6 +115,7 @@ const meta: Meta<StoryArgs> = {
     badgeAlert: AutomationButtonBadgeAlert.None,
     badgeInterlock: AutomationButtonBadgeInterlock.None,
     badgeCommandLocked: AutomationButtonBadgeCommandLocked.None,
+    priority: Priority.regular,
   },
   argTypes: {
     trend: {
@@ -172,6 +175,10 @@ const meta: Meta<StoryArgs> = {
     },
     badgeCommandLocked: {
       options: Object.values(AutomationButtonBadgeCommandLocked),
+      control: {type: 'select'},
+    },
+    priority: {
+      options: Object.values(Priority),
       control: {type: 'select'},
     },
     alert: {control: {type: 'boolean'}},
@@ -366,6 +373,7 @@ export const WithFractionDigits: Story = {
       .hasAdvice=${args.hasAdvice}
       .hasGraphIcon=${args.hasGraphIcon}
       .showTrendSymbol=${args.showTrendSymbol}
+      .priority=${args.priority}
     >
       <span slot="current-value">${args.value.toFixed(2)}</span>
       <span slot="max-value">${args.max.toFixed(2)}</span>
@@ -407,6 +415,7 @@ export const WithAlertAlarm: Story = {
       .alertFrameStatus=${args.alertFrameStatus}
       .showAlertCategoryIcon=${args.showAlertCategoryIcon}
       .showAlertIcon=${args.showAlertIcon}
+      .priority=${args.priority}
     >
       <span slot="alert-label">Fire alert</span>
     </obc-automation-tank>
@@ -507,6 +516,7 @@ export const Responsive: Story = {
           .badgeAlert=${args.badgeAlert}
           .badgeInterlock=${args.badgeInterlock}
           .badgeCommandLocked=${args.badgeCommandLocked}
+          .priority=${args.priority}
         >
         </obc-automation-tank>
       </div>
