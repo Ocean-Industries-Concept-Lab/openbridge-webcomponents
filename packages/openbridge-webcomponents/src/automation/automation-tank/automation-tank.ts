@@ -28,6 +28,7 @@ import '../../icons/icon-energy-battery.js';
 import '../../navigation-instruments/gauge-trend/gauge-trend.js';
 import '../../building-blocks/bar-vertical/bar-vertical.js';
 import '../../components/alert-frame/alert-frame.js';
+import {Priority} from '../../navigation-instruments/types.js';
 import {
   ObcAlertFrameStatus,
   ObcAlertFrameThickness,
@@ -116,6 +117,9 @@ export class ObcAutomationTank extends LitElement {
   /** Time-series data points for the embedded gauge-trend (graph modes only). */
   @property({type: Array, attribute: false})
   chartData: ChartLineDataItem[] = [];
+
+  /** Priority hint forwarded to child charts (regular | enhanced). */
+  @property({type: String}) priority: Priority = Priority.regular;
 
   /**
    * Advice overlays. Forwarded to the embedded `obc-gauge-trend` in
@@ -306,6 +310,10 @@ export class ObcAutomationTank extends LitElement {
     changed: Map<string | number | symbol, unknown>
   ): void {
     super.updated(changed);
+    // No imperative forwarding here — child components receive `priority`
+    // via template property bindings (`.priority=${this.priority}`). Rely on
+    // their reactive `updated()` logic (e.g. `ObcGaugeTrend._updateBarVerticalProperties()`)
+    // to propagate palette changes internally.
     // The chart cell DOM element is recreated when chartMode toggles between
     // bar and graph modes (different class/contents), and may also appear/
     // disappear with static/compact. Re-attach the observer to the current
@@ -698,6 +706,7 @@ export class ObcAutomationTank extends LitElement {
                 .width=${this._cellWidth}
                 .height=${this._cellHeight}
                 style="width: 100%; height: 100%;"
+                .priority=${this.priority}
               ></obc-gauge-trend>`
             : null}
           ${this.hasGraphIcon ? graphIconOverlay : null}
@@ -764,6 +773,7 @@ export class ObcAutomationTank extends LitElement {
         .advices=${this.hasAdvice ? this.advice : []}
         .advicePosition=${AdvicePosition.inner}
         style="width: 100%; height: 100%;"
+        .priority=${this.priority}
       ></obc-bar-vertical>`;
       chartCell = html`
         <div class="bar-container bar-cell">
