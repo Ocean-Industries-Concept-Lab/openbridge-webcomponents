@@ -234,8 +234,15 @@ export class ObcCard extends LitElement {
     return this.dialogTimeOutSeconds * 1000;
   }
 
-  private get dialogVisibleTimerMs(): number {
-    return this.dialogVisibleTimerSeconds * 1000;
+  private get effectiveVisibleTimerSeconds(): number {
+    if (this.dialogVisibleTimerSeconds <= 0 || this.dialogTimeOutSeconds <= 0) {
+      return 0;
+    }
+    return Math.min(this.dialogVisibleTimerSeconds, this.dialogTimeOutSeconds);
+  }
+
+  private get effectiveVisibleTimerMs(): number {
+    return this.effectiveVisibleTimerSeconds * 1000;
   }
 
   private startDialogTimer() {
@@ -245,10 +252,10 @@ export class ObcCard extends LitElement {
 
     const countdownStartMs = Math.max(
       0,
-      this.dialogTimeOutMs - this.dialogVisibleTimerMs
+      this.dialogTimeOutMs - this.effectiveVisibleTimerMs
     );
 
-    if (this.dialogVisibleTimerSeconds > 0) {
+    if (this.effectiveVisibleTimerSeconds > 0) {
       this.countdownStartTimer = window.setTimeout(() => {
         this.startCountdown();
       }, countdownStartMs);
@@ -264,7 +271,7 @@ export class ObcCard extends LitElement {
   private startCountdown() {
     this.showCountdown = true;
     const startTime = performance.now();
-    const totalDuration = this.dialogVisibleTimerMs;
+    const totalDuration = this.effectiveVisibleTimerMs;
 
     const updateCountdown = (currentTime: number) => {
       const elapsed = currentTime - startTime;
@@ -304,9 +311,9 @@ export class ObcCard extends LitElement {
   }
 
   private getProgressPercentage(): number {
-    if (this.dialogVisibleTimerSeconds <= 0) return 0;
+    if (this.effectiveVisibleTimerSeconds <= 0) return 0;
     const progress =
-      (this.countdownSeconds / this.dialogVisibleTimerSeconds) * 100;
+      (this.countdownSeconds / this.effectiveVisibleTimerSeconds) * 100;
     return Math.max(0, progress);
   }
 
