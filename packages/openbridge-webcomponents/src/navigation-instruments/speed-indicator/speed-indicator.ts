@@ -1,22 +1,100 @@
-import {LitElement, html} from 'lit';
+import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
+import componentStyle from './speed-indicator.css?inline';
+import '../speed-arrows/speed-arrows.js';
+import {ActiveColor, Direction} from '../speed-arrows/speed-arrows.js';
 
+export enum SpeedIndicatorType {
+  Needle = 'Needle',
+  LongLat = 'LongLat',
+}
+
+export const DEFAULT_LONG_LAT_LEVELS = [2, 1, 0, 0, 2, 0] as const;
+
+const LONG_LAT_SLOT_CENTERS_PX = [
+  {x: 24, y: 9},
+  {x: 34, y: 19},
+  {x: 34, y: 29},
+  {x: 24, y: 39},
+  {x: 14, y: 29},
+  {x: 14, y: 19},
+] as const;
+
+const LONG_LAT_DIRECTIONS: Direction[] = [
+  Direction.forward,
+  Direction.right,
+  Direction.right,
+  Direction.backward,
+  Direction.left,
+  Direction.left,
+];
+
+const SHIP_PATH_D = 'M0.5 15.5V5Q0.5 2.95 3 0.5Q5.5 2.95 5.5 5V15.5H0.5Z';
+
+/**
+ * `<obc-speed-indicator>` – A compact speed indicator with two display variants.
+ *
+ * ## Features
+ *
+ * - **Needle**: Shows a dial with a filled sector and a rotating needle driven by `speed` and `maxSpeed`.
+ * - **LongLat**: Shows an own-ship marker with directional chevrons. `longLatLevels` is a 6-item list
+ *   of per-slot levels (0–3), where `0` hides the chevrons for that slot.
+ *
+ * This component is display-only; callers are expected to derive the LongLat slot values from upstream data.
+ */
 @customElement('obc-speed-indicator')
 export class ObcSpeedIndicator extends LitElement {
+  @property({type: String})
+  type: SpeedIndicatorType = SpeedIndicatorType.Needle;
+
   @property({type: Number}) speed: number = 0;
+
   @property({type: Number}) maxSpeed: number = 100;
 
+  @property({type: Array, attribute: false})
+  longLatLevels?: number[];
+
+  static override styles = unsafeCSS(componentStyle);
+
+  private getLongLatSlots(): number[] {
+    const src = this.longLatLevels ?? DEFAULT_LONG_LAT_LEVELS;
+    return Array.from({length: LONG_LAT_DIRECTIONS.length}, (_, i) => {
+      const v = src[i];
+      if (typeof v !== 'number' || !Number.isFinite(v)) {
+        return 0;
+      }
+      return Math.max(0, Math.min(3, Math.floor(v)));
+    });
+  }
+
   override render() {
-    const speed = this.speed / this.maxSpeed;
-    const speedAngle = speed * 225 - 90;
+    if (this.type === SpeedIndicatorType.LongLat) {
+      return this.renderLongLat();
+    }
+    return this.renderNeedle();
+  }
+
+  private renderNeedle() {
+    const maxSpeed =
+      typeof this.maxSpeed === 'number' && Number.isFinite(this.maxSpeed)
+        ? this.maxSpeed
+        : 0;
+    const rawSpeed =
+      typeof this.speed === 'number' && Number.isFinite(this.speed)
+        ? this.speed
+        : 0;
+
+    const progress =
+      maxSpeed > 0 ? Math.max(0, Math.min(1, rawSpeed / maxSpeed)) : 0;
+    const speedAngle = progress * 225 - 90;
 
     const r = 20;
     const x = 34 + r * Math.sin((speedAngle * Math.PI) / 180);
     const y = 34 - r * Math.cos((speedAngle * Math.PI) / 180);
 
     const largeArc = speedAngle > 90 ? 1 : 0;
-    const sweep = speed > 0 ? 1 : 0;
+    const sweep = progress > 0 ? 1 : 0;
 
     const speedPath = `M34 34 L 14 34 A ${r} ${r} 0 ${largeArc} ${sweep} ${x} ${y} Z`;
 
@@ -52,6 +130,46 @@ export class ObcSpeedIndicator extends LitElement {
           stroke-linecap="square"
         />
       </svg>
+    `;
+  }
+
+  private renderLongLat() {
+    const levels = this.getLongLatSlots();
+
+    return html`
+      <div class="longlat">
+        <div class="longlat-ship" aria-hidden="true">
+          <svg
+            width="6"
+            height="16"
+            viewBox="0 0 6 16"
+            overflow="visible"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="${SHIP_PATH_D}"
+              fill="var(--instrument-frame-primary-color)"
+              stroke="var(--element-inactive-color)"
+              stroke-width="var(--instrument-components-output-pointer-stroke-width)"
+              vector-effect="non-scaling-stroke"
+            />
+          </svg>
+        </div>
+        ${levels.map((n, i) => {
+          const {x, y} = LONG_LAT_SLOT_CENTERS_PX[i];
+          return html`
+            <div class="longlat-slot" style="left: ${x}px; top: ${y}px;">
+              <obc-speed-arrows
+                .direction=${LONG_LAT_DIRECTIONS[i]}
+                .nActiveArrows=${n}
+                .activeColor=${ActiveColor.Enhanced}
+                .readout=${false}
+              ></obc-speed-arrows>
+            </div>
+          `;
+        })}
+      </div>
     `;
   }
 }

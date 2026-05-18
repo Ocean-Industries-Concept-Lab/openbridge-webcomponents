@@ -1,0 +1,52 @@
+:host {
+  --gauge-radial-indicator-icon-size: 16px;
+
+  display: inline-block;
+  width: var(--global-size-spacing-touch-target-min);
+  height: var(--global-size-spacing-touch-target-min);
+}
+
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.gauge-radial-indicator-icon {
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  display: flex;
+  width: var(--gauge-radial-indicator-icon-size);
+  height: var(--gauge-radial-indicator-icon-size);
+  align-items: center;
+  justify-content: center;
+  transform: translateX(-50%);
+  color: var(--element-neutral-color);
+
+  > * {
+    display: block;
+    width: inherit;
+    height: inherit;
+    color: inherit;
+  }
+
+  obi-icon {
+    width: inherit;
+    height: inherit;
+    color: inherit;
+  }
+}
+
+::slotted([slot="icon"]) {
+  display: block;
+  width: inherit;
+  height: inherit;
+  color: var(--element-neutral-color);
+}
