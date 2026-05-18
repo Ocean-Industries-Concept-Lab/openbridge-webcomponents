@@ -206,8 +206,8 @@ export const Generic: Story = {
   args: {type: TankType.generic},
 };
 
-export const Atmospheric: Story = {
-  args: {type: TankType.atmospheric},
+export const AtmosphericWithBadges: Story = {
+  args: {type: TankType.atmospheric, showDefaultBadges: true},
 };
 
 export const Pressurized: Story = {
@@ -218,20 +218,8 @@ export const Battery: Story = {
   args: {type: TankType.battery},
 };
 
-export const AtmosphericWithBadges: Story = {
-  args: {type: TankType.atmospheric, showDefaultBadges: true},
-};
-
-export const Compact: Story = {
-  args: {compact: true},
-};
-
 export const CompactAtmospheric: Story = {
   args: {compact: true, type: TankType.atmospheric},
-};
-
-export const HorizontalCompact: Story = {
-  args: {compact: true, orientation: TankOrientation.horizontal},
 };
 
 export const HorizontalCompactAtmospheric: Story = {
@@ -242,24 +230,12 @@ export const HorizontalCompactAtmospheric: Story = {
   },
 };
 
-export const Static: Story = {
-  args: {static: true},
-};
-
-export const StaticAtmospheric: Story = {
-  args: {static: true, type: TankType.atmospheric},
-};
-
-export const StaticPressurized: Story = {
-  args: {static: true, type: TankType.pressurized},
+export const StaticAtmosphericWithBadges: Story = {
+  args: {static: true, type: TankType.atmospheric, showDefaultBadges: true},
 };
 
 export const StaticBattery: Story = {
   args: {static: true, type: TankType.battery},
-};
-
-export const HorizontalStatic: Story = {
-  args: {static: true, orientation: TankOrientation.horizontal},
 };
 
 export const HorizontalStaticAtmospheric: Story = {
@@ -268,14 +244,6 @@ export const HorizontalStaticAtmospheric: Story = {
     orientation: TankOrientation.horizontal,
     type: TankType.atmospheric,
   },
-};
-
-export const StaticWithBadges: Story = {
-  args: {static: true, type: TankType.atmospheric, showDefaultBadges: true},
-};
-
-export const Horizontal: Story = {
-  args: {orientation: TankOrientation.horizontal},
 };
 
 export const HorizontalAtmospheric: Story = {
@@ -299,14 +267,6 @@ export const GraphAndBar: Story = {
   },
 };
 
-export const HorizontalGraph: Story = {
-  args: {
-    orientation: TankOrientation.horizontal,
-    type: TankType.atmospheric,
-    chartMode: TankChartMode.graph,
-  },
-};
-
 export const HorizontalGraphAndBar: Story = {
   args: {
     orientation: TankOrientation.horizontal,
@@ -324,37 +284,8 @@ export const GraphWithAdvice: Story = {
   },
 };
 
-export const GraphAndBarWithAdvice: Story = {
-  args: {
-    type: TankType.atmospheric,
-    chartMode: TankChartMode.graphAndBar,
-    hasAdvice: true,
-    advice: SAMPLE_ADVICE,
-  },
-};
-
-export const HorizontalGraphWithAdvice: Story = {
-  args: {
-    orientation: TankOrientation.horizontal,
-    type: TankType.atmospheric,
-    chartMode: TankChartMode.graph,
-    hasAdvice: true,
-    advice: SAMPLE_ADVICE,
-  },
-};
-
 export const BarWithAdvice: Story = {
   args: {
-    type: TankType.atmospheric,
-    chartMode: TankChartMode.bar,
-    hasAdvice: true,
-    advice: SAMPLE_ADVICE,
-  },
-};
-
-export const HorizontalBarWithAdvice: Story = {
-  args: {
-    orientation: TankOrientation.horizontal,
     type: TankType.atmospheric,
     chartMode: TankChartMode.bar,
     hasAdvice: true,
@@ -366,16 +297,6 @@ export const BarWithGraphIcon: Story = {
   args: {
     type: TankType.atmospheric,
     chartMode: TankChartMode.bar,
-    hasGraphIcon: true,
-  },
-};
-
-export const GraphAndBarWithGraphIcon: Story = {
-  args: {
-    type: TankType.atmospheric,
-    chartMode: TankChartMode.graphAndBar,
-    hasAdvice: true,
-    advice: SAMPLE_ADVICE,
     hasGraphIcon: true,
   },
 };
@@ -443,30 +364,6 @@ export const WithFractionDigits: Story = {
       <span slot="unit">L</span>
     </obc-automation-tank>
   `,
-};
-
-/**
- * Trend symbol hidden via `showTrendSymbol={false}`. The percent value
- * shifts left to fill the freed space. Works in both compact/static and
- * non-compact layouts — use compact stories to verify the same in compact.
- */
-export const WithoutTrendSymbol: Story = {
-  args: {
-    type: TankType.atmospheric,
-    showTrendSymbol: false,
-  },
-};
-
-/**
- * Compact tank with the trend symbol hidden — the percent value occupies
- * the readout row alone.
- */
-export const CompactWithoutTrendSymbol: Story = {
-  args: {
-    compact: true,
-    type: TankType.atmospheric,
-    showTrendSymbol: false,
-  },
 };
 
 /**
