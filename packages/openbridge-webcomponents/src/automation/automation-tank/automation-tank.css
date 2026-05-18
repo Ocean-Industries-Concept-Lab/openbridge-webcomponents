@@ -313,6 +313,9 @@
   pointer-events: auto;
   @mixin font-instrument-label;
   color: var(--instrument-regular-secondary-color);
+  /* Tag text must never break across lines — it is a fixed identifier
+   * (e.g. `FUEL`, `#0000`) that loses meaning if hyphenated or wrapped. */
+  white-space: nowrap;
 }
 
 .readout {
@@ -326,6 +329,9 @@
   justify-content: center;
   align-items: center;
   gap: 4px;
+  /* Keep `90%` together — the parent flex prevents flex-item wrapping but
+   * not text wrapping inside `.percent` (number + `<span>%</span>`). */
+  white-space: nowrap;
   @mixin font-instrument-label;
   color: var(--instrument-regular-secondary-color);
 }
@@ -343,6 +349,8 @@
 
   .percent {
     @mixin font-instrument-value-enhanced-neutral;
+    /* Keep the number and the trailing `%` symbol on one line. */
+    white-space: nowrap;
   }
 
   .percent-symbol {
@@ -355,6 +363,10 @@
   align-items: baseline;
   justify-content: flex-end;
   padding-top: 4px;
+  /* Keep `<current> / <max> <unit>` together — in horizontal layout the
+   * readout cell is min-content + 96px floor, and very narrow hosts can
+   * still squeeze it. The numbers and unit must stay on a single line. */
+  white-space: nowrap;
 
   @mixin font-instrument-unit;
 
