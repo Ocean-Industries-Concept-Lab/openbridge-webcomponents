@@ -93,7 +93,7 @@ export class ObcTabItem extends LitElement {
    *
    * Default: false
    */
-  @property({type: Boolean}) hug = false;
+  @property({type: Boolean, reflect: true}) hug = false;
 
   /**
    * Centers the content (icon, title, badge) horizontally within the tab.
