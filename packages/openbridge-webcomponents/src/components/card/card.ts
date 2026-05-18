@@ -152,15 +152,17 @@ export class ObcCard extends LitElement {
                     <slot name="dialog-title"></slot>
                   </div>
                   <div class="actions">
-                    <obc-icon-button
-                      @click=${this.closeDialog}
-                      variant="flat"
-                      .progress=${this.showCountdown
-                        ? this.getProgressPercentage()
-                        : undefined}
-                    >
-                      <obi-close-google></obi-close-google>
-                    </obc-icon-button>
+                    <div class="close-action">
+                      ${this.showCountdown
+                        ? this.dialogTimerIndicator
+                        : nothing}
+                      <obc-icon-button
+                        @click=${this.closeDialog}
+                        variant="flat"
+                      >
+                        <obi-close-google></obi-close-google>
+                      </obc-icon-button>
+                    </div>
                   </div>
                 </div>
 
@@ -171,6 +173,43 @@ export class ObcCard extends LitElement {
             `
           : ''
       }
+    `;
+  }
+
+  private get dialogTimerIndicator() {
+    const progressDash = this.getProgressDashPercentage();
+
+    return html`
+      <svg
+        class="dialog-timer"
+        width="40"
+        height="40"
+        viewBox="0 0 40 40"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <circle
+          cx="20"
+          cy="20"
+          r="18"
+          stroke="var(--container-backdrop-color)"
+          stroke-width="4"
+          fill="none"
+        />
+        <circle
+          cx="20"
+          cy="20"
+          r="18"
+          stroke="var(--instrument-enhanced-secondary-color)"
+          stroke-width="4"
+          stroke-linecap="round"
+          stroke-dasharray="${progressDash} 100"
+          pathLength="100"
+          transform="rotate(-90 20 20)"
+          fill="none"
+        />
+      </svg>
     `;
   }
 
@@ -270,22 +309,23 @@ export class ObcCard extends LitElement {
     return Math.max(0, progress);
   }
 
+  private getProgressDashPercentage(): number {
+    const progress = Math.min(this.getProgressPercentage(), 100);
+    return progress === 100 ? 100 : progress * 0.95;
+  }
+
   private addUserActivityListeners() {
     this.userActivityHandler = () => {
       this.resetDialogTimer();
     };
 
-    window.addEventListener('mousemove', this.userActivityHandler);
-    window.addEventListener('touchstart', this.userActivityHandler);
-    window.addEventListener('touchmove', this.userActivityHandler);
+    window.addEventListener('pointerdown', this.userActivityHandler);
     window.addEventListener('keydown', this.userActivityHandler);
   }
 
   private removeUserActivityListeners() {
     if (this.userActivityHandler) {
-      window.removeEventListener('mousemove', this.userActivityHandler);
-      window.removeEventListener('touchstart', this.userActivityHandler);
-      window.removeEventListener('touchmove', this.userActivityHandler);
+      window.removeEventListener('pointerdown', this.userActivityHandler);
       window.removeEventListener('keydown', this.userActivityHandler);
       this.userActivityHandler = undefined;
     }
