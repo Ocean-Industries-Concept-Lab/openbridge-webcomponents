@@ -7,12 +7,8 @@ import {
   TankType,
 } from './automation-tank.js';
 import './automation-tank.js';
-import '../../components/badge/badge.js';
-import '../../icons/icon-auto.js';
-import '../../icons/icon-command-locked-f.js';
 import {html} from 'lit';
 import {crossDecorator} from '../../storybook-util.js';
-import {BadgeType, BadgeSize} from '../../components/badge/badge.js';
 import {AdviceType} from '../../navigation-instruments/watch/advice.js';
 import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
 import {
@@ -20,11 +16,14 @@ import {
   ObcAlertFrameThickness,
   ObcAlertFrameType,
 } from '../../components/alert-frame/alert-frame.js';
+import {
+  AutomationButtonBadgeAlert,
+  AutomationButtonBadgeCommandLocked,
+  AutomationButtonBadgeControl,
+  AutomationButtonBadgeInterlock,
+} from '../automation-button/abstract-automation-button.js';
 
-// Story-only args. `showDefaultBadges` is not a component property — it's a Storybook
-// toggle that injects two default badges into the `badges` slot so consumers
-// can flip them on/off without writing custom render functions.
-type StoryArgs = ObcAutomationTank & {showDefaultBadges: boolean};
+type StoryArgs = ObcAutomationTank;
 
 // Sample time-series for the graph chart modes — values on the same scale
 // as the default `max` (10_000), oscillating around the current value.
@@ -55,27 +54,6 @@ const SAMPLE_ADVICE: LinearAdvice[] = [
   {min: 7500, max: 9000, type: AdviceType.advice, hinted: false},
 ];
 
-const defaultBadges = html`
-  <obc-badge
-    slot="badges"
-    .size=${BadgeSize.regular}
-    .showNumber=${false}
-    .type=${BadgeType.automation}
-    .showIcon=${true}
-  >
-    <obi-auto slot="badge-icon"></obi-auto>
-  </obc-badge>
-  <obc-badge
-    slot="badges"
-    .size=${BadgeSize.regular}
-    .showNumber=${false}
-    .type=${BadgeType.automation}
-    .showIcon=${true}
-  >
-    <obi-command-locked-f slot="badge-icon"></obi-command-locked-f>
-  </obc-badge>
-`;
-
 const renderTank = (args: StoryArgs) => html`
   <obc-automation-tank
     .value=${args.value}
@@ -98,8 +76,11 @@ const renderTank = (args: StoryArgs) => html`
     .alertFrameStatus=${args.alertFrameStatus}
     .showAlertCategoryIcon=${args.showAlertCategoryIcon}
     .showAlertIcon=${args.showAlertIcon}
+    .badgeControl=${args.badgeControl}
+    .badgeAlert=${args.badgeAlert}
+    .badgeInterlock=${args.badgeInterlock}
+    .badgeCommandLocked=${args.badgeCommandLocked}
   >
-    ${args.showDefaultBadges ? defaultBadges : null}
   </obc-automation-tank>
 `;
 
@@ -128,7 +109,10 @@ const meta: Meta<StoryArgs> = {
     alertFrameStatus: ObcAlertFrameStatus.Alarm,
     showAlertCategoryIcon: true,
     showAlertIcon: false,
-    showDefaultBadges: false,
+    badgeControl: AutomationButtonBadgeControl.None,
+    badgeAlert: AutomationButtonBadgeAlert.None,
+    badgeInterlock: AutomationButtonBadgeInterlock.None,
+    badgeCommandLocked: AutomationButtonBadgeCommandLocked.None,
   },
   argTypes: {
     trend: {
@@ -174,10 +158,21 @@ const meta: Meta<StoryArgs> = {
       description:
         'Advice overlay bands. `min`/`max` are in the same units as `max`. Toggle visibility with `hasAdvice`. Works in all three `chartMode` variants — `bar` overlays advice pills on the static bar, `graph` and `graph-and-bar` forward them to the embedded `obc-gauge-trend`.',
     },
-    showDefaultBadges: {
-      control: {type: 'boolean'},
-      description:
-        'Storybook-only toggle for visual/layout testing — not part of the component API. Injects two default badges into the `badges` slot.',
+    badgeControl: {
+      options: Object.values(AutomationButtonBadgeControl),
+      control: {type: 'select'},
+    },
+    badgeAlert: {
+      options: Object.values(AutomationButtonBadgeAlert),
+      control: {type: 'select'},
+    },
+    badgeInterlock: {
+      options: Object.values(AutomationButtonBadgeInterlock),
+      control: {type: 'select'},
+    },
+    badgeCommandLocked: {
+      options: Object.values(AutomationButtonBadgeCommandLocked),
+      control: {type: 'select'},
     },
     alert: {control: {type: 'boolean'}},
     alertFrameType: {
@@ -207,7 +202,13 @@ export const Generic: Story = {
 };
 
 export const AtmosphericWithBadges: Story = {
-  args: {type: TankType.atmospheric, showDefaultBadges: true},
+  args: {
+    type: TankType.atmospheric,
+    badgeControl: AutomationButtonBadgeControl.Auto,
+    badgeAlert: AutomationButtonBadgeAlert.Silence,
+    badgeInterlock: AutomationButtonBadgeInterlock.Interlock,
+    badgeCommandLocked: AutomationButtonBadgeCommandLocked.CommandLocked,
+  },
 };
 
 export const Pressurized: Story = {
@@ -231,7 +232,14 @@ export const HorizontalCompactAtmospheric: Story = {
 };
 
 export const StaticAtmosphericWithBadges: Story = {
-  args: {static: true, type: TankType.atmospheric, showDefaultBadges: true},
+  args: {
+    static: true,
+    type: TankType.atmospheric,
+    badgeControl: AutomationButtonBadgeControl.Auto,
+    badgeAlert: AutomationButtonBadgeAlert.Silence,
+    badgeInterlock: AutomationButtonBadgeInterlock.Interlock,
+    badgeCommandLocked: AutomationButtonBadgeCommandLocked.CommandLocked,
+  },
 };
 
 export const StaticBattery: Story = {
@@ -429,7 +437,8 @@ export const WithAlertCautionCompact: Story = {
   args: {
     compact: true,
     type: TankType.atmospheric,
-    showDefaultBadges: true,
+    badgeControl: AutomationButtonBadgeControl.Auto,
+    badgeCommandLocked: AutomationButtonBadgeCommandLocked.CommandLocked,
     alert: true,
     alertFrameStatus: ObcAlertFrameStatus.Caution,
     alertFrameType: ObcAlertFrameType.BottomFlip,
@@ -454,7 +463,8 @@ export const Responsive: Story = {
     chartMode: TankChartMode.graphAndBar,
     hasAdvice: true,
     advice: SAMPLE_ADVICE,
-    showDefaultBadges: true,
+    badgeControl: AutomationButtonBadgeControl.Auto,
+    badgeCommandLocked: AutomationButtonBadgeCommandLocked.CommandLocked,
   },
   decorators: [],
   render(args) {
@@ -493,8 +503,11 @@ export const Responsive: Story = {
           .alertFrameStatus=${args.alertFrameStatus}
           .showAlertCategoryIcon=${args.showAlertCategoryIcon}
           .showAlertIcon=${args.showAlertIcon}
+          .badgeControl=${args.badgeControl}
+          .badgeAlert=${args.badgeAlert}
+          .badgeInterlock=${args.badgeInterlock}
+          .badgeCommandLocked=${args.badgeCommandLocked}
         >
-          ${args.showDefaultBadges ? defaultBadges : null}
         </obc-automation-tank>
       </div>
     `;

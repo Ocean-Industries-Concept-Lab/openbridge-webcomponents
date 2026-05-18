@@ -1,7 +1,22 @@
-import {HTMLTemplateResult, LitElement, html, svg, unsafeCSS} from 'lit';
+import {
+  HTMLTemplateResult,
+  LitElement,
+  html,
+  nothing,
+  svg,
+  unsafeCSS,
+} from 'lit';
 import {property, state} from 'lit/decorators.js';
 import compentStyle from './automation-tank.css?inline';
 import {LineMedium} from '../index.js';
+import '../automation-badge/automation-badge.js';
+import {ObcAutomationBadgeType} from '../automation-badge/automation-badge.js';
+import {
+  AutomationButtonBadgeAlert,
+  AutomationButtonBadgeCommandLocked,
+  AutomationButtonBadgeControl,
+  AutomationButtonBadgeInterlock,
+} from '../automation-button/abstract-automation-button.js';
 
 import '../../icons/icon-chevron-double-up-google.js';
 import '../../icons/icon-chevron-up-google.js';
@@ -158,6 +173,28 @@ export class ObcAutomationTank extends LitElement {
    */
   @property({type: Boolean, attribute: false}) showTrendSymbol: boolean = true;
 
+  /**
+   * Enum-driven badges rendered inside the `badges` cell. Mirrors the API
+   * introduced for `ObcAbstractAutomationButton` in PR #839 (#829). When set
+   * to a non-`None` value, an `<obc-automation-badge>` of the corresponding
+   * type is rendered as fallback content for the `badges` slot. Any content
+   * the consumer slots into `badges` overrides these defaults, preserving
+   * backward compatibility with the existing slot-based API.
+   *
+   * Render order (left → right): control, alert, interlock, commandLocked —
+   * matching the positional convention used by `ObcAbstractAutomationButton`
+   * (top-left, top-right, bottom-left, bottom-right) read row-by-row.
+   */
+  @property({type: String}) badgeControl: AutomationButtonBadgeControl =
+    AutomationButtonBadgeControl.None;
+  @property({type: String}) badgeAlert: AutomationButtonBadgeAlert =
+    AutomationButtonBadgeAlert.None;
+  @property({type: String}) badgeInterlock: AutomationButtonBadgeInterlock =
+    AutomationButtonBadgeInterlock.None;
+  @property({type: String})
+  badgeCommandLocked: AutomationButtonBadgeCommandLocked =
+    AutomationButtonBadgeCommandLocked.None;
+
   @state() private _cellWidth = 0;
   @state() private _cellHeight = 0;
   /**
@@ -174,6 +211,59 @@ export class ObcAutomationTank extends LitElement {
 
   private get isCompact(): boolean {
     return this.compact || this.static;
+  }
+
+  private _badgeAlertType(): ObcAutomationBadgeType | null {
+    switch (this.badgeAlert) {
+      case AutomationButtonBadgeAlert.Silence:
+        return ObcAutomationBadgeType.AlertSilenced;
+      case AutomationButtonBadgeAlert.Caution:
+        return ObcAutomationBadgeType.Caution;
+      case AutomationButtonBadgeAlert.Warning:
+        return ObcAutomationBadgeType.Warning;
+      case AutomationButtonBadgeAlert.Alarm:
+        return ObcAutomationBadgeType.Alarm;
+      default:
+        return null;
+    }
+  }
+
+  private _badgeControlType(): ObcAutomationBadgeType | null {
+    switch (this.badgeControl) {
+      case AutomationButtonBadgeControl.Local:
+        return ObcAutomationBadgeType.Local;
+      case AutomationButtonBadgeControl.LocalOnly:
+        return ObcAutomationBadgeType.LocalOnly;
+      case AutomationButtonBadgeControl.Manual:
+        return ObcAutomationBadgeType.Manual;
+      case AutomationButtonBadgeControl.ManualOnly:
+        return ObcAutomationBadgeType.ManualOnly;
+      case AutomationButtonBadgeControl.Auto:
+        return ObcAutomationBadgeType.Auto;
+      default:
+        return null;
+    }
+  }
+
+  private _badgeInterlockType(): ObcAutomationBadgeType | null {
+    switch (this.badgeInterlock) {
+      case AutomationButtonBadgeInterlock.Interlock:
+        return ObcAutomationBadgeType.Interlock;
+      case AutomationButtonBadgeInterlock.InterlockInhibit:
+        return ObcAutomationBadgeType.InterlockInhibit;
+      default:
+        return null;
+    }
+  }
+
+  private _badgeCommandLockedType(): ObcAutomationBadgeType | null {
+    if (
+      this.badgeCommandLocked ===
+      AutomationButtonBadgeCommandLocked.CommandLocked
+    ) {
+      return ObcAutomationBadgeType.CommandLocked;
+    }
+    return null;
   }
 
   private get _usesGaugeTrend(): boolean {
@@ -454,12 +544,43 @@ export class ObcAutomationTank extends LitElement {
     // we collapse the empty cells with the `hidden` attribute (see CSS).
     // In non-compact mode cells live inside the inner `.grid` and always
     // reserve their min-content rows — unchanged from previous behavior.
-    const badgesHidden = isCompact && !this._hasBadges;
+    const controlBadge = this._badgeControlType();
+    const alertBadge = this._badgeAlertType();
+    const interlockBadge = this._badgeInterlockType();
+    const commandLockedBadge = this._badgeCommandLockedType();
+    const hasEnumBadges =
+      controlBadge !== null ||
+      alertBadge !== null ||
+      interlockBadge !== null ||
+      commandLockedBadge !== null;
+
+    const badgesHidden = isCompact && !this._hasBadges && !hasEnumBadges;
     const tagHidden = isCompact && !this._hasTagSlot && !this.tag;
 
     const badgesCell = html`
       <div class="badges" ?hidden=${badgesHidden}>
-        <slot name="badges" @slotchange=${this._onBadgesSlotChange}></slot>
+        <slot name="badges" @slotchange=${this._onBadgesSlotChange}>
+          ${controlBadge
+            ? html`<obc-automation-badge
+                .type=${controlBadge}
+              ></obc-automation-badge>`
+            : nothing}
+          ${alertBadge
+            ? html`<obc-automation-badge
+                .type=${alertBadge}
+              ></obc-automation-badge>`
+            : nothing}
+          ${interlockBadge
+            ? html`<obc-automation-badge
+                .type=${interlockBadge}
+              ></obc-automation-badge>`
+            : nothing}
+          ${commandLockedBadge
+            ? html`<obc-automation-badge
+                .type=${commandLockedBadge}
+              ></obc-automation-badge>`
+            : nothing}
+        </slot>
       </div>
     `;
     const tagCell = html`
