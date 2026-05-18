@@ -117,6 +117,10 @@ const meta: Meta<typeof ObcNumberInputField> = {
           ?hasLabelIcon=${args.hasLabelIcon}
           .labelPlacement=${args.labelPlacement ??
           ObcNumberInputFieldPlacement.Left}
+          .decimalSeparator=${args.decimalSeparator ?? '.'}
+          .groupSeparator=${args.groupSeparator ?? ','}
+          .minFractionDigits=${args.minFractionDigits ?? 0}
+          .maxFractionDigits=${args.maxFractionDigits ?? undefined}
           @input=${console.log}
           @change=${console.log}
         >

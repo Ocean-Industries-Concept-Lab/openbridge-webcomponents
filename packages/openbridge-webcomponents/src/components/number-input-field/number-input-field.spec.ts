@@ -55,6 +55,19 @@ describe('obc-number-input-field', () => {
 
       expect(input.value).toBe('10.');
     });
+
+    it('preserves decimals on blur when maxFractionDigits is undefined', async () => {
+      input.focus();
+      input.value = '123.4512';
+      input.dispatchEvent(new InputEvent('input', {bubbles: true}));
+      await el.updateComplete;
+
+      input.blur();
+      await el.updateComplete;
+
+      expect(el.value).toBe(123.4512);
+      expect(input.value).toBe('123.4512');
+    });
   });
 
   describe('input event', () => {
@@ -133,6 +146,57 @@ describe('obc-number-input-field', () => {
       await el.updateComplete;
 
       expect(input.value).toBe('99.9');
+    });
+  });
+
+  describe('number formatting', () => {
+    beforeEach(async () => {
+      el.decimalSeparator = ',';
+      el.groupSeparator = ' ';
+      el.minFractionDigits = 2;
+      el.maxFractionDigits = 2;
+      el.value = 1234.5;
+      await el.updateComplete;
+    });
+
+    it('formats display when not focused', () => {
+      expect(input.value).toBe('1 234,50');
+    });
+
+    it('removes grouping on focus', async () => {
+      input.focus();
+      await el.updateComplete;
+
+      expect(input.value).toBe('1234,50');
+    });
+
+    it('shows raw input while focused', async () => {
+      input.focus();
+      input.value = '10.';
+      input.dispatchEvent(new InputEvent('input', {bubbles: true}));
+      await el.updateComplete;
+
+      expect(input.value).toBe('10.');
+    });
+
+    it('formats on blur after editing', async () => {
+      input.focus();
+      input.value = '99,9';
+      input.dispatchEvent(new InputEvent('input', {bubbles: true}));
+      await el.updateComplete;
+
+      input.blur();
+      await el.updateComplete;
+
+      expect(input.value).toBe('99,90');
+      expect(el.value).toBe(99.9);
+    });
+
+    it('reformats when format properties change without focus', async () => {
+      el.groupSeparator = "'";
+      await el.updateComplete;
+
+      expect(input.value).toBe("1'234,50");
     });
   });
 

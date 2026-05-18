@@ -13,7 +13,9 @@ import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 import {
   formatNumberForDisplay,
+  NumberInputFormatOptions,
   parseNumberInput,
+  removeGroupingFromDisplay,
   valuesEqual,
 } from './number-input-format.js';
 
@@ -102,6 +104,11 @@ export class ObcNumberInputField extends LitElement {
    */
   @property({type: String, attribute: false}) displayOverride = '';
 
+  @property({type: String}) decimalSeparator?: string;
+  @property({type: String}) groupSeparator?: string;
+  @property({type: Number}) minFractionDigits = 0;
+  @property({type: Number}) maxFractionDigits?: number | undefined;
+
   @state() private hasFocus = false;
   @state() private displayText = '';
   @state() private previousValue = NaN;
@@ -112,6 +119,19 @@ export class ObcNumberInputField extends LitElement {
 
   get displayValue(): string {
     return this.displayText;
+  }
+
+  private getFormatOptions(): NumberInputFormatOptions {
+    return {
+      decimalSeparator: this.decimalSeparator,
+      groupSeparator: this.groupSeparator,
+      minFractionDigits: this.minFractionDigits,
+      maxFractionDigits: this.maxFractionDigits,
+    };
+  }
+
+  private formatValueForDisplay(value: number): string {
+    return formatNumberForDisplay(value, this.getFormatOptions());
   }
 
   private onInput(e: Event) {
@@ -127,6 +147,12 @@ export class ObcNumberInputField extends LitElement {
 
   private onFocus() {
     this.hasFocus = true;
+    const source = this.displayOverride || this.displayText;
+    this.displayText = removeGroupingFromDisplay(
+      source,
+      this.getFormatOptions()
+    );
+    this.displayOverride = '';
   }
 
   private onBlur() {
@@ -152,7 +178,7 @@ export class ObcNumberInputField extends LitElement {
 
     if (Number.isFinite(parsed)) {
       this.value = parsed;
-      this.displayText = formatNumberForDisplay(parsed);
+      this.displayText = this.formatValueForDisplay(parsed);
     } else {
       this.value = NaN;
     }
@@ -199,18 +225,27 @@ export class ObcNumberInputField extends LitElement {
 
   override firstUpdated() {
     if (!this.displayText && !this.displayOverride) {
-      this.displayText = formatNumberForDisplay(this.value);
+      this.displayText = this.formatValueForDisplay(this.value);
     }
     this.lastCommittedValue = this.value;
   }
 
   override willUpdate(changedProperties: PropertyValues) {
+    const formatPropsChanged =
+      changedProperties.has('decimalSeparator') ||
+      changedProperties.has('groupSeparator') ||
+      changedProperties.has('minFractionDigits') ||
+      changedProperties.has('maxFractionDigits');
+
     if (changedProperties.has('value') && this.shouldUpdateValue) {
       if (!this.hasFocus) {
-        this.displayText = formatNumberForDisplay(this.value);
+        this.displayText = this.formatValueForDisplay(this.value);
         this.displayOverride = '';
         this.lastCommittedValue = this.value;
       }
+    } else if (formatPropsChanged && !this.hasFocus && this.shouldUpdateValue) {
+      this.displayText = this.formatValueForDisplay(this.value);
+      this.displayOverride = '';
     }
 
     if (
