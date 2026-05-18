@@ -159,6 +159,7 @@ export class ObcCard extends LitElement {
                       <obc-icon-button
                         @click=${this.closeDialog}
                         variant="flat"
+                        aria-label="Close"
                       >
                         <obi-close-google></obi-close-google>
                       </obc-icon-button>
