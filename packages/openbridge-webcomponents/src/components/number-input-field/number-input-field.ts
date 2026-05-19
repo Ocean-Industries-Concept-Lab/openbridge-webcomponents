@@ -115,6 +115,14 @@ export class ObcNumberInputField extends LitElement {
     return true;
   }
 
+  private get isEmpty(): boolean {
+    const currentValue =
+      !this.shouldUpdateValue && this.inputElement
+        ? this.inputElement.value
+        : this.value;
+    return currentValue.trim().length === 0;
+  }
+
   override willUpdate(changedProperties: PropertyValues) {
     if (
       changedProperties.has('value') &&
@@ -178,6 +186,7 @@ export class ObcNumberInputField extends LitElement {
           [`size-${this.size}`]: true,
           error: this.error,
           disabled: this.disabled,
+          empty: this.isEmpty,
           helpertext: hasHelperOrError,
           haslabel: Boolean(this.label),
           squared: this.squared,
