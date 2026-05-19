@@ -136,6 +136,7 @@
   },
   "customElements": "custom-elements.json",
   "overrides": {
-    "storybook": "$storybook"
+    "storybook": "$storybook",
+    "lit-labs-analyzer": "$lit-labs-analyzer"
   }
 }

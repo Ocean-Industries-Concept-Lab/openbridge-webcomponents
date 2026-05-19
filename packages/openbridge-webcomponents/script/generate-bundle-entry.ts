@@ -3,7 +3,7 @@ import * as path from 'path';
 import {globSync} from 'glob';
 
 const BUNDLE_FILE = 'bundle.ts';
-
+const isWindows = process.platform === 'win32';
 function findComponentFiles(
   directory: string,
   excludeFiles: string[] = []
@@ -27,9 +27,14 @@ function findComponentFiles(
       !excludeFiles.includes(item)
     ) {
       const filename = item.replace('.ts', '');
-      const relativePath = filename.replace(rootPath, '');
+      const relativePath = filename.replace(rootPath, '').replace(/\\/g, '/');
 
-      components.push(relativePath);
+      if (isWindows) {
+        components.push( '/' + relativePath.replace(/\\/g, '/'));
+      } else {
+        components.push( relativePath);
+      }
+      
     }
   }
 
