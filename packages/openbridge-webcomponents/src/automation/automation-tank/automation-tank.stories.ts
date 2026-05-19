@@ -88,7 +88,7 @@ const renderTank = (args: StoryArgs) => html`
 
 const meta: Meta<StoryArgs> = {
   title: 'Automation/Tanks/Tank',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-automation-tank',
   args: {
     value: 9_000,
@@ -409,6 +409,7 @@ export const WithAlertAlarm: Story = {
       .advice=${args.advice}
       .hasAdvice=${args.hasAdvice}
       .hasGraphIcon=${args.hasGraphIcon}
+      .showTrendSymbol=${args.showTrendSymbol}
       ?alert=${args.alert}
       .alertFrameType=${args.alertFrameType}
       .alertFrameThickness=${args.alertFrameThickness}
@@ -506,6 +507,7 @@ export const Responsive: Story = {
           .advice=${args.advice}
           .hasAdvice=${args.hasAdvice}
           .hasGraphIcon=${args.hasGraphIcon}
+          .showTrendSymbol=${args.showTrendSymbol}
           ?alert=${args.alert}
           .alertFrameType=${args.alertFrameType}
           .alertFrameThickness=${args.alertFrameThickness}

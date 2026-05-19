@@ -139,7 +139,8 @@ export class ObcAutomationTank extends LitElement {
    * bar/graph in a fixed CSS layer (does not scale with the SVG meet
    * transform) and is silhouetted with a `--border-silhouette-color` halo so
    * it stays legible on any underlying fill. The icon size scales with the
-   * ambient `obc-component-size-*` class on an ancestor (32 → 40 → 48 → 56
+   * ambient `obc-component-size-*` class on an ancestor via the design token
+   * `--automation-components-tanks-graphs-graph-icon-size` (32 → 48 → 64 → 64
    * for regular → medium → large → xl).
    *
    * TODO(future): replace the hard-coded `<obi-tank>` with a `slot="graph-icon"`
