@@ -29,10 +29,6 @@
    * resized below a still-legible tank. */
   min-width: 170px;
   min-height: 282px;
-  /* Decorative chart-cell icon: defaults to 32px and scales with the
-   * ambient `.obc-component-size-*` class on an ancestor (regular 32,
-   * medium 40, large 48, xl 56). Consumers can override directly. */
-  --obc-automation-tank-graph-icon-size: 32px;
   /* P&ID anchor: top-center of host = drop coord; visual tank centers under it. */
   position: relative;
 }
@@ -442,9 +438,10 @@
  * which crosses the icon's shadow DOM via SVG inheritance and paints a 2px
  * outline around the same shape painted by the front (fill) layer.
  *
- * Size ladder: scales with the ambient `.obc-component-size-*` class on an
- * ancestor (regular 32 → medium 40 → large 48 → xl 56). The host-side
- * defaults sit on `:host` so the cascade walks shadow boundaries correctly. */
+ * Size ladder: scales via the design token
+ * `--automation-components-tanks-graphs-graph-icon-size`, which is set per
+ * `.obc-component-size-*` class on `:root` in palettes/variables.css and
+ * inherits across shadow boundaries through the normal cascade. */
 .graph-icon {
   position: absolute;
   inset: 0;
@@ -460,8 +457,8 @@
 .graph-icon > obi-tank,
 .graph-icon > obi-energy-battery {
   position: absolute;
-  width: var(--obc-automation-tank-graph-icon-size);
-  height: var(--obc-automation-tank-graph-icon-size);
+  width: var(--automation-components-tanks-graphs-graph-icon-size);
+  height: var(--automation-components-tanks-graphs-graph-icon-size);
 }
 .graph-icon-fill {
   color: var(--instrument-regular-secondary-color);
@@ -469,16 +466,6 @@
 .graph-icon-stroke {
   stroke: var(--border-silhouette-color);
   stroke-width: 2;
-}
-
-:host-context(.obc-component-size-medium) {
-  --obc-automation-tank-graph-icon-size: 40px;
-}
-:host-context(.obc-component-size-large) {
-  --obc-automation-tank-graph-icon-size: 48px;
-}
-:host-context(.obc-component-size-xl) {
-  --obc-automation-tank-graph-icon-size: 56px;
 }
 
 /* ---------- Caps ---------- */
