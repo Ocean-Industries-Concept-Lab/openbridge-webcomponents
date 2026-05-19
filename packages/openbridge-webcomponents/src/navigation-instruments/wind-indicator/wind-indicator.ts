@@ -76,14 +76,14 @@ const SHAFT_RELATIVE_WIND_ICON_ROTATE_DEG = -157;
 const SHAFT_RELATIVE_WIND_ICON_TX = 32.0346;
 const SHAFT_RELATIVE_WIND_ICON_TY = 18.4132;
 const SHAFT_RELATIVE_WIND_ICON_AXIS_SCALE = 0.4914435;
-const SHAFT_RELATIVE_WIND_ROTATION_OFFSET_DEG = 129.2663;
+const SHAFT_RELATIVE_WIND_ROTATION_OFFSET_DEG = 309.2663;
 const SHAFT_RELATIVE_HDG_BG_X = 28.4395;
 const SHAFT_RELATIVE_HDG_BG_Y = 28.4404;
 const SHAFT_RELATIVE_HDG_BG_SIZE = 11;
 const SHAFT_RELATIVE_HDG_TRIANGLE_D =
   'M33.7061 28.5957C33.7904 28.3887 34.0885 28.3887 34.1728 28.5957L37.9016 37.7605C38.0812 38.2018 37.5854 38.6136 37.1728 38.3657L33.9395 36.4404L30.7061 38.3657C30.2935 38.6136 29.7977 38.2018 29.9773 37.7605L33.7061 28.5957Z';
 
-const SHAFT_ARROW_OFFSET_DEG = 118;
+const SHAFT_ARROW_OFFSET_DEG = 298;
 const SHAFT_TRUE_ARROW_OFFSET_DEG = SHAFT_ARROW_OFFSET_DEG;
 
 const LABELED_TICK_MARKS_TPL = svg`
@@ -139,7 +139,7 @@ const LABELED_ARROW_FRAME_R = 17.5;
 const LABELED_ARROW_SCALE = FRAME_R / LABELED_ARROW_FRAME_R;
 const LABELED_ARROW_CX = 32.7881;
 const LABELED_ARROW_CY = 32.7852;
-const LABELED_ARROW_OFFSET_DEG = 29.7225;
+const LABELED_ARROW_OFFSET_DEG = 209.7225;
 const LABELED_ARROW_TPL = svg`
   <circle
     cx="22.7845"
@@ -182,11 +182,13 @@ const LABELED_ARROW_TPL = svg`
  */
 @customElement('obc-wind-indicator')
 export class ObcWindIndicator extends LitElement {
-  @property({type: String}) type: string = WindIndicatorType.arrow;
+  @property({type: String}) type: WindIndicatorType = WindIndicatorType.arrow;
 
-  @property({type: String}) direction: string = WindIndicatorDirection.true;
+  @property({type: String}) direction: WindIndicatorDirection =
+    WindIndicatorDirection.true;
 
-  @property({type: String}) priority: string = WindIndicatorPriority.regular;
+  @property({type: String}) priority: WindIndicatorPriority =
+    WindIndicatorPriority.regular;
 
   @property({type: Number}) level = 0;
 

@@ -1,25 +1,33 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import './modal-window.js';
-import {ObcModalWindow, ObcModalWindowSize} from './modal-window.js';
+import {ObcModalWindowSize} from './modal-window.js';
 import '../../icons/icon-placeholder.js';
 
-const meta: Meta<ObcModalWindow> = {
+interface ModalWindowArgs {
+  size: ObcModalWindowSize;
+  hasOptionalAction: boolean;
+  hasLeadingIcon: boolean;
+  hasCancelAction: boolean;
+  hasCloseAction: boolean;
+}
+
+const meta = {
   title: 'Application Components/Containers/Modal Window',
   component: 'obc-modal-window',
-  tags: ['6.0'],
+  tags: ['autodocs', '6.0'],
   argTypes: {
     size: {
       control: 'select',
       options: Object.values(ObcModalWindowSize),
     },
-    hasOptionalAction: {control: 'boolean'},
-    hasLeadingIcon: {control: 'boolean'},
   },
   args: {
     size: ObcModalWindowSize.Large,
     hasOptionalAction: true,
     hasLeadingIcon: true,
+    hasCancelAction: true,
+    hasCloseAction: true,
   },
   parameters: {
     layout: 'centered',
@@ -29,16 +37,10 @@ const meta: Meta<ObcModalWindow> = {
       <div style="width: 600px; height: 400px; display: flex;">${story()}</div>
     `,
   ],
-};
+} satisfies Meta<ModalWindowArgs>;
 
 export default meta;
-type Story = StoryObj<ObcModalWindow>;
-
-interface ModalWindowArgs {
-  size: ObcModalWindowSize;
-  hasOptionalAction: boolean;
-  hasLeadingIcon: boolean;
-}
+type Story = StoryObj<ModalWindowArgs>;
 
 type ModalWindowTemplate = (args: ModalWindowArgs) => ReturnType<typeof html>;
 
@@ -47,6 +49,8 @@ const template: ModalWindowTemplate = (args) => html`
     .size=${args.size}
     .hasOptionalAction=${args.hasOptionalAction}
     .hasLeadingIcon=${args.hasLeadingIcon}
+    .hasCancelAction=${args.hasCancelAction}
+    .hasCloseAction=${args.hasCloseAction}
     @close-click=${() => console.log('Close clicked')}
     @cancel-click=${() => console.log('Cancel clicked')}
     @done-click=${() => console.log('Done clicked')}
@@ -115,5 +119,29 @@ export const WithoutLeadingIcon: Story = {
   render: template,
   args: {
     hasLeadingIcon: false,
+  },
+};
+
+export const WithoutCancel: Story = {
+  render: template,
+  args: {
+    hasCancelAction: false,
+    hasOptionalAction: false,
+  },
+};
+
+export const WithoutClose: Story = {
+  render: template,
+  args: {
+    hasCloseAction: false,
+  },
+};
+
+export const WithoutCancelAndClose: Story = {
+  render: template,
+  args: {
+    hasCancelAction: false,
+    hasCloseAction: false,
+    hasOptionalAction: false,
   },
 };

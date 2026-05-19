@@ -1,3 +1,10 @@
+:host {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
 /* Wrapper layout */
 .wrapper {
   box-sizing: border-box;
@@ -9,7 +16,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--ui-components-input-fields-rich-input-field-vertical-spacer, 4px);
-  width: 420px;
+  width: 100%;
   height: 100%;
 }
 
