@@ -1,0 +1,288 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: inline-flex;
+  min-width: 160px;
+  width: max-content;
+  max-width: none;
+}
+
+.root {
+  display: inline-flex;
+  align-items: flex-end;
+  border-radius: var(--global-border-radius-border-radius-base);
+  max-width: none;
+  width: 100%;
+
+  .content {
+    display: inline-flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: none;
+    width: 100%;
+  }
+
+  .label-container {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: var(--global-size-spacing-target-padding);
+    flex: none;
+  }
+
+  .leading-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--element-neutral-color);
+  }
+
+  .label-stack {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+  }
+
+  .label-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--global-size-spacing-target-padding);
+  }
+
+  .label {
+    @mixin font-instrument-label;
+    @mixin font-instrument-label-box;
+    font-size: var(--global-typography-instrument-label-font-size);
+    line-height: var(--global-typography-instrument-label-line-height);
+    color: var(--element-inactive-color);
+  }
+
+  .unit,
+  .source {
+    @mixin font-instrument-unit;
+    @mixin font-instrument-unit-box;
+    font-size: var(--global-typography-instrument-unit-font-size);
+    line-height: var(--global-typography-instrument-unit-line-height);
+  }
+
+  .unit {
+    color: var(--element-inactive-color);
+  }
+
+  .source {
+    color: var(--element-neutral-color);
+  }
+
+  .value-container {
+    display: inline-flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .value-wrap {
+    display: inline-flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+  }
+
+  .value-cluster {
+    display: inline-flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    gap: var(
+      --instrument-components-readout-new-list-item-medium-value-container-gap
+    );
+  }
+
+  .value-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+  }
+
+  .divider {
+    flex: none;
+    inline-size: 1px;
+    background-color: var(--border-outline-color);
+    align-self: stretch;
+  }
+
+  .unit-trailing {
+    display: inline-flex;
+    align-items: flex-end;
+  }
+
+  .source-trailing {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-inline: calc(var(--global-size-spacing-target-padding) / 2);
+  }
+
+  &.size-base {
+    padding-inline: var(
+      --instrument-components-readout-new-list-item-regular-container-padding-horizontal
+    );
+    padding-block: 0;
+
+    .content {
+      gap: var(
+        --instrument-components-readout-new-list-item-regular-content-container-gap
+      );
+    }
+
+    .value-cluster {
+      gap: var(
+        --instrument-components-readout-new-list-item-regular-value-container-gap
+      );
+    }
+
+    &.stacking-leading-src .content {
+      gap: var(--global-size-spacing-target-padding);
+    }
+
+    .divider {
+      block-size: var(
+        --global-typography-instrument-value-regular-container-height
+      );
+    }
+  }
+
+  &.size-priority {
+    padding-inline: var(
+      --instrument-components-readout-new-list-item-medium-container-padding-horizontal
+    );
+    padding-block: var(
+      --instrument-components-readout-new-list-item-medium-container-padding-vertical
+    );
+
+    .content {
+      gap: var(
+        --instrument-components-readout-new-list-item-medium-content-container-gap
+      );
+    }
+
+    .divider {
+      block-size: var(
+        --global-typography-instrument-value-medium-container-height
+      );
+    }
+  }
+
+  &.size-enhanced {
+    padding-inline: var(
+      --instrument-components-readout-new-list-item-large-container-padding-horizontal
+    );
+    padding-block: var(
+      --instrument-components-readout-new-list-item-large-container-padding-vertical
+    );
+
+    .content {
+      gap: var(--instrument-components-readout-new-list-item-large-content-gap);
+    }
+
+    .value-cluster {
+      gap: var(--instrument-components-readout-new-list-item-large-value-gap);
+    }
+
+    .divider {
+      block-size: var(
+        --global-typography-instrument-value-large-container-height
+      );
+    }
+  }
+
+  &.size-enhanced.stacking-leading-unit {
+    .label-container {
+      align-items: center;
+    }
+
+    .label-stack {
+      justify-content: flex-end;
+    }
+
+    .unit-leading {
+      margin-top: 0;
+    }
+  }
+
+  &.stacking-leading-unit {
+    .unit-trailing {
+      display: none;
+    }
+  }
+
+  &.stacking-leading-src {
+    .source-inline {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    :is(.divider, .source-trailing) {
+      display: none;
+    }
+  }
+
+  &:is(
+    .alert-low-integrity,
+    .alert-invalid,
+    .alert-caution,
+    .alert-warning,
+    .alert-alarm
+  ) {
+    background: var(--_obc-readout-list-item-alert-background);
+    border: 1px solid var(--_obc-readout-list-item-alert-border);
+    border-radius: 4px;
+  }
+
+  &.alert-low-integrity {
+    --_obc-readout-list-item-alert-background: var(
+      --alert-low-integrity-background-color
+    );
+    --_obc-readout-list-item-alert-border: var(
+      --alert-low-integrity-border-color
+    );
+  }
+
+  &.alert-invalid {
+    --_obc-readout-list-item-alert-background: var(
+      --alert-invalid-background-color
+    );
+    --_obc-readout-list-item-alert-border: var(--alert-invalid-border-color);
+  }
+
+  &.alert-caution {
+    --_obc-readout-list-item-alert-background: var(
+      --alert-caution-container-background-color
+    );
+    --_obc-readout-list-item-alert-border: var(
+      --alert-caution-container-border-color
+    );
+  }
+
+  &.alert-warning {
+    --_obc-readout-list-item-alert-background: var(
+      --alert-warning-container-background-color
+    );
+    --_obc-readout-list-item-alert-border: var(
+      --alert-warning-container-border-color
+    );
+  }
+
+  &.alert-alarm {
+    --_obc-readout-list-item-alert-background: var(
+      --alert-alarm-container-background-color
+    );
+    --_obc-readout-list-item-alert-border: var(
+      --alert-alarm-container-border-color
+    );
+  }
+}

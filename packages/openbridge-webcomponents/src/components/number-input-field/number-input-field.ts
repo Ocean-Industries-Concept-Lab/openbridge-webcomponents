@@ -230,6 +230,11 @@ export class ObcNumberInputField extends LitElement {
     this.lastCommittedValue = this.value;
   }
 
+  private get isEmpty(): boolean {
+    const currentValue = (this.inputElement?.value ?? '').trim();
+    return currentValue.length === 0;
+  }
+
   override willUpdate(changedProperties: PropertyValues) {
     const formatPropsChanged =
       changedProperties.has('decimalSeparator') ||
@@ -306,6 +311,7 @@ export class ObcNumberInputField extends LitElement {
           [`size-${this.size}`]: true,
           error: this.error,
           disabled: this.disabled,
+          empty: this.isEmpty,
           helpertext: hasHelperOrError,
           haslabel: Boolean(this.label),
           squared: this.squared,
