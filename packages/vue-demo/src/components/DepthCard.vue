@@ -14,15 +14,15 @@ const rangeValue = ref(100)
 const depthValue = ref(0)
 const depthAlertValue = ref(5)
 
-function onRangeChange(event: CustomEvent<{value: number}>) {
+function onRangeChange(event: CustomEvent<{ value: number }>) {
   rangeValue.value = event.detail.value
 }
 
-function onDepthChange(event: CustomEvent<{value: number}>) {
+function onDepthChange(event: CustomEvent<{ value: number }>) {
   depthValue.value = event.detail.value
 }
 
-function onDepthAlertChange(event: CustomEvent<{value: number}>) {
+function onDepthAlertChange(event: CustomEvent<{ value: number }>) {
   depthAlertValue.value = event.detail.value
 }
 </script>

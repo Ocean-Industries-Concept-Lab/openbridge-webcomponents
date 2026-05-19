@@ -64,7 +64,9 @@ export enum ObcStepperBoxType {
  *
  * **Example:**
  * ```
- * <obc-stepper-box type="up-down" .value=${5} unit="kg" helperText="Set weight"></obc-stepper-box>
+ * <obc-stepper-box type="up-down" .value=${5} helperText="Set weight">
+ *   <div slot="unit">kg</div>
+ * </obc-stepper-box>
  * ```
  *
  * @slot unit - Unit label (e.g., "km", "%")

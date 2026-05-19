@@ -5,6 +5,7 @@
 :host {
   display: inline-flex;
   width: fit-content;
+  --obc-stepper-field-max-width: 100px;
 }
 
 .wrapper {
@@ -19,7 +20,7 @@
   & .field-wrapper {
     display: flex;
     min-width: 0;
-    max-width: var(--obc-stepper-field-max-width, 100px);
+    max-width: var(--obc-stepper-field-max-width);
 
     & obc-number-input-field {
       display: block;
