@@ -1,41 +1,76 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcStepperBox, ObcStepperBoxType} from './stepper-box.js';
+import {ObcStepperBoxType} from './stepper-box.js';
 import './stepper-box.js';
 import {html} from 'lit';
-const meta: Meta<typeof ObcStepperBox> = {
+
+type StepperBoxArgs = {
+  type: ObcStepperBoxType;
+  value: number;
+  unit: string;
+  min?: number;
+  max?: number;
+  stepUp: number;
+  stepDown: number;
+  disabled: boolean;
+  helperText: string;
+  placeholder: string;
+  readonly: boolean;
+};
+
+const meta = {
   title: 'UI Components/Input Controls/Stepper Box',
-  tags: ['6.0'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-stepper-box',
-  args: {},
+  args: {
+    type: ObcStepperBoxType.plusMinus,
+    value: 100,
+    unit: 'km',
+    min: 0,
+    max: 1000,
+    stepUp: 1,
+    stepDown: 1,
+    disabled: false,
+    helperText: '',
+    placeholder: '',
+    readonly: false,
+  },
   argTypes: {
     type: {
       control: 'select',
       options: Object.values(ObcStepperBoxType),
     },
-    hasHelperText: {
-      control: 'boolean',
-    },
-    disabled: {
-      control: 'boolean',
-    },
+    value: {control: 'number'},
+    unit: {control: 'text'},
+    min: {control: 'number'},
+    max: {control: 'number'},
+    stepUp: {control: 'number'},
+    stepDown: {control: 'number'},
+    disabled: {control: 'boolean'},
+    helperText: {control: 'text'},
+    placeholder: {control: 'text'},
+    readonly: {control: 'boolean'},
   },
-  render: (args) => {
-    return html`
+  render: (args) => html`
+    <div style="width: 240px;">
       <obc-stepper-box
         type=${args.type}
-        .hasHelperText=${args.hasHelperText}
+        .value=${args.value}
+        .unit=${args.unit}
+        .min=${args.min}
+        .max=${args.max}
+        .stepUp=${args.stepUp}
+        .stepDown=${args.stepDown}
         .disabled=${args.disabled}
-      >
-        <div>100</div>
-        <div slot="unit">km</div>
-        <div slot="helper-text">Helper text</div>
-      </obc-stepper-box>
-    `;
-  },
-} satisfies Meta<ObcStepperBox>;
+        .helperText=${args.helperText}
+        .placeholder=${args.placeholder}
+        .readonly=${args.readonly}
+      ></obc-stepper-box>
+    </div>
+  `,
+} satisfies Meta<StepperBoxArgs>;
 
 export default meta;
-type Story = StoryObj<ObcStepperBox>;
+type Story = StoryObj<StepperBoxArgs>;
 
 export const PlusMinus: Story = {};
 
@@ -48,9 +83,9 @@ export const LeftRight: Story = {
 };
 
 export const WithHelperText: Story = {
-  args: {type: ObcStepperBoxType.plusMinus, hasHelperText: true},
+  args: {helperText: 'Helper text'},
 };
 
 export const Disabled: Story = {
-  args: {disabled: true, hasHelperText: true},
+  args: {disabled: true, helperText: 'Helper text'},
 };

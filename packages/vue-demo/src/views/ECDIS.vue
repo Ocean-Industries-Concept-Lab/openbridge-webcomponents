@@ -10,10 +10,13 @@
     <div ref="map" class="map"></div>
 
     <div class="toolbar">
-      <ObcStepperBox @up="zoomIn" @down="zoomOut">
-        <div>{{ scale.toFixed(2) }}</div>
-        <div slot="unit">NM</div>
-      </ObcStepperBox>
+      <ObcStepperBox
+        :value="Number(scale.toFixed(2))"
+        unit="NM"
+        readonly
+        @up="zoomIn"
+        @down="zoomOut"
+      />
       <ObcToggleButtonGroup
         :value="mapDirection"
         class="direction-button-group"

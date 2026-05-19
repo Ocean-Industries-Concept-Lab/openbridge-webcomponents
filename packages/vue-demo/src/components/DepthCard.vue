@@ -10,6 +10,21 @@ import { ObcStepperBoxType } from '@oicl/openbridge-webcomponents/dist/component
 
 const selectedType = ref('echogram')
 const selector = ref<InstanceType<typeof ObcToggleButtonGroup> | null>(null)
+const rangeValue = ref(100)
+const depthValue = ref(0)
+const depthAlertValue = ref(5)
+
+function onRangeChange(event: CustomEvent<{value: number}>) {
+  rangeValue.value = event.detail.value
+}
+
+function onDepthChange(event: CustomEvent<{value: number}>) {
+  depthValue.value = event.detail.value
+}
+
+function onDepthAlertChange(event: CustomEvent<{value: number}>) {
+  depthAlertValue.value = event.detail.value
+}
 </script>
 
 <template>
@@ -36,21 +51,28 @@ const selector = ref<InstanceType<typeof ObcToggleButtonGroup> | null>(null)
         >
       </ObcToggleButtonGroup>
       <div class="settings">
-        <ObcStepperBox :type="ObcStepperBoxType.leftRight" has-helper-text>
-          100
-          <div slot="unit">m</div>
-          <div slot="helper-text">Range</div>
-        </ObcStepperBox>
-        <ObcStepperBox :type="ObcStepperBoxType.upDown" has-helper-text>
-          auto
-          <div slot="unit"></div>
-          <div slot="helper-text">Depth</div>
-        </ObcStepperBox>
-        <ObcStepperBox :type="ObcStepperBoxType.plusMinus" has-helper-text>
-          5
-          <div slot="unit">m</div>
-          <div slot="helper-text">Depth alert</div>
-        </ObcStepperBox>
+        <ObcStepperBox
+          :type="ObcStepperBoxType.leftRight"
+          :value="rangeValue"
+          unit="m"
+          helper-text="Range"
+          @change="onRangeChange"
+        />
+        <ObcStepperBox
+          :type="ObcStepperBoxType.upDown"
+          :value="depthValue"
+          placeholder="auto"
+          readonly
+          helper-text="Depth"
+          @change="onDepthChange"
+        />
+        <ObcStepperBox
+          :type="ObcStepperBoxType.plusMinus"
+          :value="depthAlertValue"
+          unit="m"
+          helper-text="Depth alert"
+          @change="onDepthAlertChange"
+        />
       </div>
     </div>
     <div slot="title">Depth</div>
