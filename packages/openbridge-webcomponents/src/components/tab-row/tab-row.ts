@@ -12,6 +12,8 @@ import {BadgeType, BadgeSize} from '../badge/badge.js';
 export interface TabData {
   id: string;
   title: string;
+  subtitle?: string;
+  showSubtitle?: boolean;
   hasLeadingIcon?: boolean;
   hasBadge?: boolean;
   badgeCount?: number;
@@ -25,7 +27,7 @@ export interface TabData {
 /**
  * `<obc-tab-row>` – A horizontal tab navigation bar for switching between multiple content sections.
  *
- * Displays a row of interactive tabs, each representing a distinct view or section. Supports badges, icons, close buttons, and an optional "add new tab" action. Designed for use cases where users need to quickly switch between related content areas, such as dashboards, settings, or document editors.
+ * Displays a row of interactive tabs, each representing a distinct view or section. Supports subtitles, badges, icons, close buttons, and an optional "add new tab" action. Designed for use cases where users need to quickly switch between related content areas, such as dashboards, settings, or document editors.
  *
  * ---
  *
@@ -33,6 +35,7 @@ export interface TabData {
  * - **Tab Selection:** Only one tab can be selected at a time; selection is managed via the `selectedTabId` property.
  * - **Closeable Tabs:** Optionally display a close button on each tab (`hasClose`), allowing users to remove tabs dynamically.
  * - **Add New Tab:** Optionally show an "add new tab" button at the end of the row (`hasAddNewTab`), emitting an event when clicked.
+ * - **Subtitles:** Optionally show secondary contextual text below each tab title (`showSubtitle` and `subtitle`).
  * - **Badges:** Tabs can display badges with counts and types (e.g., notification, alarm, enhance), supporting different badge sizes and optional hiding of the number.
  * - **Icons:** Each tab can show a leading icon (customizable via slot), and optionally a badge icon.
  * - **Disabled Tabs:** Individual tabs can be disabled to prevent user interaction.
@@ -57,11 +60,12 @@ export interface TabData {
  * ```html
  * <obc-tab-row
  *   .tabs=${[
- *     {id: 'tab1', title: 'Inbox', hasBadge: true, badgeCount: 5, badgeType: 'notification'},
+ *     {id: 'tab1', title: 'Inbox', subtitle: 'Monitoring', hasBadge: true, badgeCount: 5, badgeType: 'notification'},
  *     {id: 'tab2', title: 'Updates'},
  *     {id: 'tab3', title: 'Settings', hasLeadingIcon: true}
  *   ]}
  *   selectedTabId="tab1"
+ *   show-subtitle
  *   hasClose
  *   hasAddNewTab
  * >
@@ -104,10 +108,12 @@ export interface TabData {
 @customElement('obc-tab-row')
 export class ObcTabRow extends LitElement {
   /**
-   * The list of tabs to display. Each tab is defined by an object with properties such as `id`, `title`, `hasLeadingIcon`, `hasBadge`, `badgeCount`, `badgeType`, `badgeSize`, `badgeShowNumber`, `showLeadingBadgeIcon`, and `disabled`.
+   * The list of tabs to display. Each tab is defined by an object with properties such as `id`, `title`, `subtitle`, `showSubtitle`, `hasLeadingIcon`, `hasBadge`, `badgeCount`, `badgeType`, `badgeSize`, `badgeShowNumber`, `showLeadingBadgeIcon`, and `disabled`.
    *
    * - `id` (string): Unique identifier for the tab.
    * - `title` (string): Display label for the tab.
+   * - `subtitle` (string): Contextual text shown below the title when subtitle display is enabled.
+   * - `showSubtitle` (boolean): Optional per-tab override for displaying the subtitle.
    * - `hasLeadingIcon` (boolean): Whether to show a leading icon (default: true).
    * - `hasBadge` (boolean): Whether to show a badge on the tab.
    * - `badgeCount` (number): Number to display in the badge.
@@ -139,6 +145,13 @@ export class ObcTabRow extends LitElement {
    * Default: `false`.
    */
   @property({type: Boolean}) hug = false;
+
+  /**
+   * Whether to display subtitle text for each tab. Individual tabs can override this with `tab.showSubtitle`.
+   *
+   * Default: `false`.
+   */
+  @property({type: Boolean, attribute: 'show-subtitle'}) showSubtitle = false;
 
   /**
    * Whether to display an "add new tab" button at the end of the tab row. When clicked, emits the `add-new-tab` event.
@@ -191,9 +204,12 @@ export class ObcTabRow extends LitElement {
   private renderTab(tab: TabData, index: number) {
     const isFirst = index === 0;
     const isChecked = tab.id === this.selectedTabId;
+    const showSubtitle = tab.showSubtitle ?? this.showSubtitle;
     return html`
       <obc-tab-item
         .title=${tab.title}
+        .subtitle=${tab.subtitle ?? ''}
+        .showSubtitle=${showSubtitle}
         .checked=${isChecked}
         .hasClose=${this.hasClose}
         .hasLeadingIcon=${tab.hasLeadingIcon ?? true}

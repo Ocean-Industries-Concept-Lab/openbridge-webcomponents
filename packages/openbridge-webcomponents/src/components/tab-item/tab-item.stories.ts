@@ -5,7 +5,7 @@ import './tab-item.js';
 import '../../icons/icon-placeholder.js';
 import {BadgeType, BadgeSize} from '../badge/badge.js';
 
-const meta: Meta<typeof ObcTabItem> = {
+const meta: Meta<ObcTabItem> = {
   title: 'UI Components/Menus and Navigation/Tab Item',
   tags: ['autodocs', '6.0'],
   component: 'obc-tab-item',
@@ -19,6 +19,8 @@ const meta: Meta<typeof ObcTabItem> = {
       ?has-badge=${args.hasBadge}
       .disabled=${args.disabled}
       title=${args.title}
+      .subtitle=${args.subtitle}
+      .showSubtitle=${args.showSubtitle}
       .checked=${args.checked}
       badgeCount=${args.badgeCount}
       badgeType=${args.badgeType}
@@ -45,6 +47,8 @@ const meta: Meta<typeof ObcTabItem> = {
     hasBadge: false,
     icon: 'placeholder',
     title: 'Tab',
+    subtitle: '61.482 3.104',
+    showSubtitle: false,
     badgeCount: 0,
     disabled: false,
     badgeType: BadgeType.regular,
@@ -53,7 +57,7 @@ const meta: Meta<typeof ObcTabItem> = {
     showLeadingBadgeIcon: false,
     centerContent: false,
   },
-};
+} satisfies Meta<ObcTabItem>;
 
 export default meta;
 
@@ -75,6 +79,19 @@ export const DefaultHug = {
     hasClose: false,
     centerContent: false,
     title: 'Tab',
+  },
+};
+
+export const Subtitle = {
+  args: {
+    hug: false,
+    hasLeadingIcon: true,
+    hasBadge: false,
+    hasClose: false,
+    centerContent: false,
+    title: 'Coastal Alpha',
+    subtitle: '61.482 3.104',
+    showSubtitle: true,
   },
 };
 
