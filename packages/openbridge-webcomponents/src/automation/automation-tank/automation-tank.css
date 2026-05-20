@@ -259,7 +259,8 @@
   grid-row: 1;
   grid-column: 1;
   justify-self: start;
-  align-self: center;
+  align-self: start;
+  line-height: 1;
 }
 .tank-frame:not(.orientation-horizontal) .grid > .badges {
   grid-row: 1;
@@ -284,7 +285,8 @@
   grid-row: 1;
   grid-column: 1;
   justify-self: start;
-  align-self: center;
+  align-self: start;
+  line-height: 1;
 }
 .tank-frame.orientation-horizontal .grid > .badges {
   grid-row: 1;
@@ -441,6 +443,9 @@
 }
 .graph-icon-fill {
   color: var(--instrument-regular-secondary-color);
+}
+.graph-icon.priority-enhanced .graph-icon-fill {
+  color: var(--instrument-enhanced-secondary-color);
 }
 .graph-icon-stroke {
   stroke: var(--border-silhouette-color);
