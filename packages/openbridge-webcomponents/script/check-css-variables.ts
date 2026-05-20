@@ -1,3 +1,45 @@
+/**
+ * @module CSSVariableAudit
+ * @description
+ * This script audits CSS variables within the project's source directory. It scans all CSS files
+ * to identify variable definitions (both standard `--var: value;` and `@property` rules)
+ * and their usages via the `var()` function.
+ *
+ * Features:
+ * - Scans all CSS files under the src directory (using glob src/\*\* / *.css).
+ * - Identifies unique variable definitions and their locations.
+ * - Identifies unique variable usages and their locations (including fallback detection).
+ * - Detects duplicate variable definitions (warning).
+ * - Detects usages of undefined variables (error), excluding a predefined set of allowed undefined variables.
+ * - Skips `src/palettes/variables.css` for usage checks as it is considered a definition-only file.
+ * - Exits with code 1 if any undefined variable usages (without fallbacks) are found.
+ *
+ * Usage Examples:
+ * ```bash
+ * # Run via npm script
+ * npm run lint:variables
+ *
+ * # Run directly using tsx
+ * tsx script/check-css-variables.ts
+ * ```
+ *
+ * Expected Output:
+ * ```
+ * CSS variable audit report
+ * Scanned 195 CSS files under src/
+ * Found 2755 unique variable definitions and 1103 unique variable usages
+ *
+ * Defined variables
+ *   - --ob-color-primary (1) => src/palettes/variables.css:10
+ *   ...
+ *
+ * ✅ CSS variable audit passed: no undefined variable usages found.
+ * ```
+ *
+ * Note: This module is intended to be run as a standalone script. It does not export any public utilities.
+ * It utilizes internal functions to process file content using fs, path, and globby.
+ */
+
 import fs from 'fs';
 import path from 'path';
 import {globby} from 'globby';

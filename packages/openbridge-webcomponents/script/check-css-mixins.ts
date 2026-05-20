@@ -1,3 +1,44 @@
+/**
+ * @module CSSMixinAudit
+ * @description
+ * This script audits CSS mixins within the project's source directory. It performs a comprehensive
+ * scan of all CSS files to match mixin definitions (@define-mixin) against their usages (@mixin).
+ *
+ * Features:
+ * - Scans all CSS files under the src directory (using glob src/\*\* / *.css).
+ * - Identifies unique mixin definitions and their locations.
+ * - Identifies unique mixin usages and their locations.
+ * - Detects duplicate definitions (warning).
+ * - Detects usages of undefined mixins (error).
+ * - Detects unused mixin definitions (warning).
+ * - Exits with code 1 if any undefined mixin usages are found, suitable for CI pipelines.
+ *
+ * Usage Examples:
+ * ```bash
+ * # Run via npm script
+ * npm run lint:mixins
+ *
+ * # Run directly using tsx
+ * tsx script/check-css-mixins.ts
+ * ```
+ *
+ * Expected Output:
+ * ```
+ * CSS mixin audit report
+ * Scanned 73 CSS files under src/
+ * Found 73 unique mixin definitions and 41 unique mixin usages
+ *
+ * Defined mixins
+ *   - font-label (1) => src/mixins/fonts.css:1
+ *   ...
+ *
+ * ✅ CSS mixin audit passed: no undefined mixin usages found.
+ * ```
+ *
+ * Note: This module is intended to be run as a standalone script. It does not export any public utilities.
+ * It utilizes internal functions to process file content using fs, path, and globby.
+ */
+
 import fs from 'fs';
 import path from 'path';
 import {globby} from 'globby';
