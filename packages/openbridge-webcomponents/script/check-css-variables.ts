@@ -155,16 +155,43 @@ async function run(): Promise<void> {
       continue;
     }
 
-    const usageRegex = /var\(\s*(\-\-[A-Za-z0-9_-]+)\s*([^)]*)\)/g;
-    for (const match of content.matchAll(usageRegex)) {
-      const name = match[1];
-      const hasFallback = match[2].includes(',');
-      const index = match.index;
-      if (index == null) {
-        continue;
+    let start = 0;
+    while ((start = content.indexOf('var(', start)) !== -1) {
+      let openParens = 1;
+      let end = start + 4;
+      let commaIndex = -1;
+      while (openParens > 0 && end < content.length) {
+        if (content[end] === '(') {
+          openParens++;
+        } else if (content[end] === ')') {
+          openParens--;
+        } else if (content[end] === ',' && openParens === 1) {
+          if (commaIndex === -1) {
+            commaIndex = end;
+          }
+        }
+        end++;
       }
-      const location = {file, line: getLineNumber(content, index), hasFallback};
-      usages.set(name, [...(usages.get(name) ?? []), location]);
+
+      if (openParens === 0) {
+        const firstArg =
+          commaIndex !== -1
+            ? content.slice(start + 4, commaIndex)
+            : content.slice(start + 4, end - 1);
+
+        const nameMatch = firstArg.trim().match(/^--[A-Za-z0-9_-]+/);
+        if (nameMatch) {
+          const name = nameMatch[0];
+          const hasFallback = commaIndex !== -1;
+          const location = {
+            file,
+            line: getLineNumber(content, start),
+            hasFallback,
+          };
+          usages.set(name, [...(usages.get(name) ?? []), location]);
+        }
+      }
+      start += 4; // Move past 'var(' to find next occurrence (including nested ones)
     }
   }
 
