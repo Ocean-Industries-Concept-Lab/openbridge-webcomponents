@@ -805,7 +805,7 @@ export class ObcAutomationTank extends LitElement {
     }
 
     const tankFrame = html`
-      <div class=${frameClasses} style="--percent: ${percent / 100}">
+      <div class=${frameClasses}>
         ${this.renderCap('start')}
         <div class="middle">${middleContents}</div>
         ${this.renderCap('end')}

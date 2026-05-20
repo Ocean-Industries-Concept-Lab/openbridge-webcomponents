@@ -190,14 +190,25 @@
 
 /* ---------- Tank frame (3 sections: cap-start / middle / cap-end) ----------
  * The frame is purely decorative (no pointer events) so the surrounding button
- * receives the click on every pixel of the tank. */
+ * receives the click on every pixel of the tank.
+ *
+ * Cap dimensions are exposed as custom properties so the compact variant only
+ * needs to override the numeric values (see `.tank-frame.compact` below). */
 .tank-frame {
+  --cap-thickness: 14px;
+  --cap-corner-w: 12px;
+  --cap-radius: 5px;
   pointer-events: none;
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
   color: var(--instrument-regular-secondary-color);
+}
+.tank-frame.compact {
+  --cap-thickness: 10px;
+  --cap-corner-w: 7px;
+  --cap-radius: 4px;
 }
 .tank-frame.orientation-horizontal {
   flex-direction: row;
@@ -378,52 +389,20 @@
   }
 }
 
+/* The chart cell is a plain sizing/clipping box. Both child renderers —
+ * `obc-gauge-trend` (graph / graph-and-bar modes) and `obc-bar-vertical`
+ * (bar mode) — paint their own background, border and border-radius. */
 .bar-container {
   width: 100%;
   height: 100%;
   min-width: 0;
   min-height: 0;
   position: relative;
-  border-radius: 2px;
-  border: 1px solid var(--instrument-frame-tertiary-color);
-  background: var(--instrument-frame-secondary-color);
   overflow: hidden;
 }
 
-.bar {
-  position: absolute;
-  border-top: var(--element-inactive-color) 2px solid;
-  background-color: var(--automation-medium-fuel);
-  top: calc((1 - var(--percent)) * (100% - 2px) + 1px);
-  bottom: 1px;
-  left: 1px;
-  right: 1px;
-}
-
-.bar-container.chart-cell {
-  /* Gauge-trend brings its own background, border-radius and frame, so the
-   * cell is just a sizing/clipping box. */
-  border: none;
-  background: transparent;
-  border-radius: 0;
-}
-
-.bar-container.chart-cell > obc-gauge-trend {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-/* Bar mode now renders obc-bar-vertical / obc-bar-horizontal, which draw
- * their own bordered, rounded container — so the wrapping cell becomes a
- * plain sizing/clipping box (same approach as `.chart-cell` above). */
-.bar-container.bar-cell {
-  border: none;
-  background: transparent;
-  border-radius: 0;
-}
-
-.bar-container.bar-cell > obc-bar-vertical {
+.bar-container > obc-gauge-trend,
+.bar-container > obc-bar-vertical {
   display: block;
   width: 100%;
   height: 100%;
@@ -475,20 +454,23 @@
   flex-shrink: 0;
 }
 
+/* Vertical atmospheric cap: 3-piece row (corner-start / stretchable middle
+ * arc / corner-end). Compact variant only changes the numeric values via the
+ * `--cap-*` custom properties on `.tank-frame.compact`. */
 .cap-atmospheric {
   display: flex;
   align-items: stretch;
-  height: 14px;
+  height: var(--cap-thickness);
   width: 100%;
 }
 .cap-atmospheric .cap-corner {
-  flex: 0 0 12px;
-  height: 14px;
+  flex: 0 0 var(--cap-corner-w);
+  height: var(--cap-thickness);
   display: block;
 }
 .cap-atmospheric .cap-mid {
   flex: 1 1 auto;
-  height: 14px;
+  height: var(--cap-thickness);
   min-width: 0;
   display: block;
 }
@@ -503,129 +485,88 @@
   transform: scaleY(-1);
 }
 
-/* Compact atmospheric cap (vertical): 10px tall with 7px corners — derived
- * from the 162-wide Figma reference (top cap), curve Y-values scaled so the
- * corner curve closes cleanly inside the viewBox. */
-.tank-frame.compact .cap-atmospheric {
-  height: 10px;
-}
-.tank-frame.compact .cap-atmospheric .cap-corner {
-  flex: 0 0 7px;
-  height: 10px;
-}
-.tank-frame.compact .cap-atmospheric .cap-mid {
-  height: 10px;
-}
-
+/* Pressurized cap (vertical). */
 .cap-pressurized {
-  height: 14px;
+  height: var(--cap-thickness);
   width: 100%;
   background: var(--instrument-frame-primary-color);
   border: 1px solid var(--instrument-frame-tertiary-color);
 }
 .cap-pressurized.cap-start {
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
+  border-top-left-radius: var(--cap-radius);
+  border-top-right-radius: var(--cap-radius);
 }
 .cap-pressurized.cap-end {
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: var(--cap-radius);
+  border-bottom-right-radius: var(--cap-radius);
 }
 
-/* Compact pressurized (vertical): 10px tall, smaller corner radius, and the
- * inner-edge border is dropped so the cap merges seamlessly into the middle
- * section (the middle section's own top/bottom edge takes over). */
-.tank-frame.compact .cap-pressurized {
-  height: 10px;
-}
+/* Compact pressurized (vertical): inner-edge border is dropped so the cap
+ * merges seamlessly into the middle section (the middle section's own
+ * top/bottom edge takes over). */
 .tank-frame.compact .cap-pressurized.cap-start {
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
   border-bottom: none;
 }
 .tank-frame.compact .cap-pressurized.cap-end {
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
   border-top: none;
 }
 
-/* Battery cap (vertical): same thickness as atmospheric/pressurized
- * (14px regular, 10px compact). Width is ~35% of the tank inner width
- * giving ~90px regular and ~58px compact. The bottom border is omitted
- * so the cap blends into the middle section. */
+/* Battery cap (vertical). Width is ~35% of the tank inner width giving
+ * ~90px regular and ~58px compact. The bottom border is omitted so the cap
+ * blends into the middle section. */
 .cap-battery {
-  height: 14px;
+  height: var(--cap-thickness);
   width: 35%;
   margin: 0 auto;
   background: var(--instrument-frame-primary-color);
   border: 1px solid var(--instrument-frame-tertiary-color);
   border-bottom: none;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
-}
-.tank-frame.compact .cap-battery {
-  height: 10px;
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
+  border-top-left-radius: var(--cap-radius);
+  border-top-right-radius: var(--cap-radius);
 }
 
 /* Horizontal cap variants */
 .tank-frame.orientation-horizontal .cap-pressurized {
-  width: 14px;
+  width: var(--cap-thickness);
   height: auto;
   align-self: stretch;
 }
 .tank-frame.orientation-horizontal .cap-pressurized.cap-start {
-  border: 1px solid var(--instrument-frame-tertiary-color);
   border-radius: 0;
-  border-top-left-radius: 5px;
-  border-bottom-left-radius: 5px;
+  border-top-left-radius: var(--cap-radius);
+  border-bottom-left-radius: var(--cap-radius);
 }
 .tank-frame.orientation-horizontal .cap-pressurized.cap-end {
-  border: 1px solid var(--instrument-frame-tertiary-color);
   border-radius: 0;
-  border-top-right-radius: 5px;
-  border-bottom-right-radius: 5px;
+  border-top-right-radius: var(--cap-radius);
+  border-bottom-right-radius: var(--cap-radius);
 }
 
-/* Compact pressurized (horizontal): 10px wide, smaller corner radius, and
- * inner edge merges into the middle section. */
-.tank-frame.orientation-horizontal.compact .cap-pressurized {
-  width: 10px;
-}
+/* Compact pressurized (horizontal): inner edge merges into the middle section. */
 .tank-frame.orientation-horizontal.compact .cap-pressurized.cap-start {
-  border-top-left-radius: 4px;
-  border-bottom-left-radius: 4px;
   border-right: none;
 }
 .tank-frame.orientation-horizontal.compact .cap-pressurized.cap-end {
-  border-top-right-radius: 4px;
-  border-bottom-right-radius: 4px;
   border-left: none;
 }
 
 .tank-frame.orientation-horizontal .cap-battery {
-  width: 14px;
+  width: var(--cap-thickness);
   height: 35%;
   align-self: center;
   margin: 0;
   border: 1px solid var(--instrument-frame-tertiary-color);
   border-right: none;
   border-radius: 0;
-  border-top-left-radius: 5px;
-  border-bottom-left-radius: 5px;
-}
-.tank-frame.orientation-horizontal.compact .cap-battery {
-  width: 10px;
-  border-top-left-radius: 4px;
-  border-bottom-left-radius: 4px;
+  border-top-left-radius: var(--cap-radius);
+  border-bottom-left-radius: var(--cap-radius);
 }
 
 /* Horizontal atmospheric: 3-piece column with rotated SVGs (see render). */
 .tank-frame.orientation-horizontal .cap-atmospheric {
   display: flex;
   flex-direction: column-reverse;
-  width: 14px;
+  width: var(--cap-thickness);
   height: auto;
   align-self: stretch;
   background: transparent;
@@ -636,31 +577,18 @@
   display: block;
 }
 .tank-frame.orientation-horizontal .cap-atmospheric .cap-corner {
-  flex: 0 0 12px;
-  width: 14px;
-  height: 12px;
+  flex: 0 0 var(--cap-corner-w);
+  width: var(--cap-thickness);
+  height: var(--cap-corner-w);
 }
 .tank-frame.orientation-horizontal .cap-atmospheric .cap-mid {
   flex: 1 1 auto;
-  width: 14px;
+  width: var(--cap-thickness);
   height: auto;
   min-height: 0;
 }
 .tank-frame.orientation-horizontal .cap-atmospheric.cap-end {
   transform: scaleX(-1);
-}
-
-/* Compact atmospheric cap (horizontal): 10px wide with 7px corners. */
-.tank-frame.orientation-horizontal.compact .cap-atmospheric {
-  width: 10px;
-}
-.tank-frame.orientation-horizontal.compact .cap-atmospheric .cap-corner {
-  flex: 0 0 7px;
-  width: 10px;
-  height: 7px;
-}
-.tank-frame.orientation-horizontal.compact .cap-atmospheric .cap-mid {
-  width: 10px;
 }
 
 /* ---------- Static mode ----------
