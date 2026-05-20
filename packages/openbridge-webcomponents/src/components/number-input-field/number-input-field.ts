@@ -212,7 +212,7 @@ export class ObcNumberInputField extends LitElement {
           : nothing}
 
         <div class="horizontal-container">
-          <div class="input-field-container">
+          <div class="input-field-container" part="input-field-container">
             ${this.hasLeadingIcon
               ? html`<div class="leading-icon">
                   <slot name="leading-icon"></slot>

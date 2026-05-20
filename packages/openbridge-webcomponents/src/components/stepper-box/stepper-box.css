@@ -4,14 +4,11 @@
 
 :host {
   display: inline-flex;
-  width: fit-content;
-  --obc-stepper-field-max-width: 100px;
 }
 
 .wrapper {
   display: flex;
   flex-direction: column;
-  width: 100%;
 
   & .display {
     display: flex;
@@ -20,23 +17,26 @@
   & .field-wrapper {
     display: flex;
     min-width: 0;
-    max-width: var(--obc-stepper-field-max-width);
+    width: 100px;
+    max-width: 100%;
 
     & obc-number-input-field {
       display: block;
-      width: auto;
       min-width: 0;
       margin-left: -1px;
       margin-right: -1px;
     }
 
     &.has-unit-slot {
+      & obc-number-input-field::part(input-field-container) {
+        border-right: none;
+      }
+
       & .unit-slot {
         display: flex;
         align-items: center;
         align-self: center;
         flex: 0 0 auto;
-        box-sizing: border-box;
         height: var(
           --ui-components-input-fields-number-input-field-visual-size
         );
@@ -59,23 +59,20 @@
 
   & .helper-text {
     @mixin font-label;
-    width: 100%;
     text-align: center;
     margin-top: calc(
       -1 * var(--ui-components-input-fields-text-input-field-label-spacing)
     );
     color: var(--element-neutral-color);
   }
+}
 
-  &.disabled {
-    & .helper-text {
-      color: var(--element-disabled-color);
-    }
+:host([disabled]) .helper-text {
+  color: var(--element-disabled-color);
+}
 
-    & .field-wrapper.has-unit-slot .unit-slot {
-      color: var(--on-normal-disabled-color);
-      border-color: var(--normal-disabled-border-color);
-      background: var(--normal-disabled-background-color);
-    }
-  }
+:host([disabled]) .field-wrapper.has-unit-slot .unit-slot {
+  color: var(--on-normal-disabled-color);
+  border-color: var(--normal-disabled-border-color);
+  background: var(--normal-disabled-background-color);
 }

@@ -91,7 +91,7 @@ export class ObcStepperBox extends LitElement {
   /**
    * If true, the stepper box is disabled and the buttons are not clickable.
    */
-  @property({type: Boolean}) disabled = false;
+  @property({type: Boolean, reflect: true}) disabled = false;
 
   /**
    * The current numeric value displayed in the field.
@@ -156,19 +156,35 @@ export class ObcStepperBox extends LitElement {
   }
 
   private get fieldTextAlign(): ObcNumberInputFieldTextAlign {
-    return this.hasUnitSlotContent
-      ? ObcNumberInputFieldTextAlign.RightUnitOutside
-      : ObcNumberInputFieldTextAlign.Right;
+    if (this.hasUnitSlotContent) {
+      return ObcNumberInputFieldTextAlign.RightUnitOutside;
+    }
+    if (this.unit) {
+      return ObcNumberInputFieldTextAlign.Right;
+    }
+    return ObcNumberInputFieldTextAlign.Center;
   }
 
   override connectedCallback() {
     super.connectedCallback();
     this.lastRawInput = String(this.value);
+    this.syncDisabledAccessibility();
   }
 
   override updated(changedProperties: PropertyValues) {
     if (changedProperties.has('value')) {
       this.lastRawInput = String(this.value);
+    }
+    if (changedProperties.has('disabled')) {
+      this.syncDisabledAccessibility();
+    }
+  }
+
+  private syncDisabledAccessibility() {
+    if (this.disabled) {
+      this.setAttribute('aria-disabled', 'true');
+    } else {
+      this.removeAttribute('aria-disabled');
     }
   }
 
@@ -177,6 +193,17 @@ export class ObcStepperBox extends LitElement {
       Math.max(value, this.min ?? -Infinity),
       this.max ?? Infinity
     );
+  }
+
+  private onUnitSlotChange = () => {
+    this.requestUpdate();
+  };
+
+  private normalizedStep(step: number): number {
+    if (!Number.isFinite(step) || step <= 0) {
+      return 1;
+    }
+    return step;
   }
 
   private get leftIcon() {
@@ -200,11 +227,6 @@ export class ObcStepperBox extends LitElement {
   }
 
   override render() {
-    const wrapperClasses = {
-      wrapper: true,
-      disabled: this.disabled,
-    };
-
     const fieldWrapperClasses = {
       'field-wrapper': true,
       'has-unit-slot': this.hasUnitSlotContent,
@@ -213,7 +235,7 @@ export class ObcStepperBox extends LitElement {
     const showHelper = Boolean(this.helperText);
 
     return html`
-      <div class=${classMap(wrapperClasses)} aria-disabled=${this.disabled}>
+      <div class="wrapper">
         <div class="display">
           <obc-icon-button
             cornerleft
@@ -235,8 +257,14 @@ export class ObcStepperBox extends LitElement {
               @focusout=${this.onNumberFieldBlur}
             ></obc-number-input-field>
             ${this.hasUnitSlotContent
-              ? html`<div class="unit-slot"><slot name="unit"></slot></div>`
-              : html`<slot name="unit" hidden></slot>`}
+              ? html`<div class="unit-slot">
+                  <slot name="unit" @slotchange=${this.onUnitSlotChange}></slot>
+                </div>`
+              : html`<slot
+                  name="unit"
+                  hidden
+                  @slotchange=${this.onUnitSlotChange}
+                ></slot>`}
           </div>
           <obc-icon-button
             cornerright
@@ -287,12 +315,20 @@ export class ObcStepperBox extends LitElement {
       return;
     }
 
+    const raw = this.lastRawInput.trim();
     const parsed = Number(this.lastRawInput);
-    const clamped = this.clamp(Number.isFinite(parsed) ? parsed : this.value);
-    if (clamped !== this.value) {
-      this.value = clamped;
-      this.lastRawInput = String(this.value);
+    const isValidInput = raw !== '' && Number.isFinite(parsed);
+    const nextValue = this.clamp(isValidInput ? parsed : this.value);
+
+    if (nextValue !== this.value) {
+      this.value = nextValue;
       this.dispatchChange(this.value);
+    }
+
+    const normalizedDisplay = String(this.value);
+    if (this.lastRawInput !== normalizedDisplay) {
+      this.lastRawInput = normalizedDisplay;
+      this.requestUpdate();
     }
   }
 
@@ -314,9 +350,8 @@ export class ObcStepperBox extends LitElement {
     if (this.downDisabled) {
       return;
     }
-    const newValue = Math.max(
-      this.value - this.stepDown,
-      this.min ?? -Infinity
+    const newValue = this.clamp(
+      this.value - this.normalizedStep(this.stepDown)
     );
     this.value = newValue;
     this.dispatchEvent(
@@ -337,7 +372,7 @@ export class ObcStepperBox extends LitElement {
     if (this.upDisabled) {
       return;
     }
-    const newValue = Math.min(this.value + this.stepUp, this.max ?? Infinity);
+    const newValue = this.clamp(this.value + this.normalizedStep(this.stepUp));
     this.value = newValue;
     this.dispatchEvent(
       new CustomEvent('up', {
