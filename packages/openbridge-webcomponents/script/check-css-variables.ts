@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { globby } from 'globby';
+import {globby} from 'globby';
 
 const allowedUndefinedVariables = new Set([
   '--alert-components-badge-label-spacing',
@@ -56,7 +56,7 @@ function getLineNumber(text: string, index: number): number {
   return text.slice(0, index).split('\n').length;
 }
 
-function formatLocation(location: { file: string; line: number }): string {
+function formatLocation(location: {file: string; line: number}): string {
   return `${path.relative(process.cwd(), location.file)}:${location.line}`;
 }
 
@@ -83,7 +83,9 @@ async function run(): Promise<void> {
 
   for (const file of cssFiles) {
     const content = fs.readFileSync(file, 'utf8');
-    const isPaletteFile = file.endsWith(`${path.sep}src${path.sep}palettes${path.sep}variables.css`);
+    const isPaletteFile = file.endsWith(
+      `${path.sep}src${path.sep}palettes${path.sep}variables.css`
+    );
 
     const definitionRegex = /(^|[;{\s])(\-\-[A-Za-z0-9_-]+)\s*:/gm;
     for (const match of content.matchAll(definitionRegex)) {
@@ -92,7 +94,7 @@ async function run(): Promise<void> {
       if (index == null) {
         continue;
       }
-      const location = { file, line: getLineNumber(content, index) };
+      const location = {file, line: getLineNumber(content, index)};
       definitions.set(name, [...(definitions.get(name) ?? []), location]);
     }
 
@@ -103,7 +105,7 @@ async function run(): Promise<void> {
       if (index == null) {
         continue;
       }
-      const location = { file, line: getLineNumber(content, index) };
+      const location = {file, line: getLineNumber(content, index)};
       definitions.set(name, [...(definitions.get(name) ?? []), location]);
     }
 
@@ -119,7 +121,7 @@ async function run(): Promise<void> {
       if (index == null) {
         continue;
       }
-      const location = { file, line: getLineNumber(content, index), hasFallback };
+      const location = {file, line: getLineNumber(content, index), hasFallback};
       usages.set(name, [...(usages.get(name) ?? []), location]);
     }
   }
@@ -193,11 +195,15 @@ async function run(): Promise<void> {
     return;
   }
 
-  console.log('\n✅ CSS variable audit passed: no undefined variable usages found.');
+  console.log(
+    '\n✅ CSS variable audit passed: no undefined variable usages found.'
+  );
 }
 
 run().catch((error: unknown) => {
   const message = error instanceof Error ? error.message : String(error);
-  console.error(`❌ CSS variable audit failed with an unexpected error: ${message}`);
+  console.error(
+    `❌ CSS variable audit failed with an unexpected error: ${message}`
+  );
   process.exitCode = 1;
 });

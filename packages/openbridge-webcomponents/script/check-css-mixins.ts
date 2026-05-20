@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { globby } from 'globby';
+import {globby} from 'globby';
 
 interface MixinDefinitionLocation {
   file: string;
@@ -18,7 +18,7 @@ function getLineNumber(text: string, index: number): number {
   return text.slice(0, index).split('\n').length;
 }
 
-function formatLocation(location: { file: string; line: number }): string {
+function formatLocation(location: {file: string; line: number}): string {
   return `${path.relative(process.cwd(), location.file)}:${location.line}`;
 }
 
@@ -53,7 +53,7 @@ async function run(): Promise<void> {
       if (index == null) {
         continue;
       }
-      const location = { file, line: getLineNumber(content, index) };
+      const location = {file, line: getLineNumber(content, index)};
       definitions.set(name, [...(definitions.get(name) ?? []), location]);
     }
 
@@ -64,7 +64,7 @@ async function run(): Promise<void> {
       if (index == null) {
         continue;
       }
-      const location = { file, line: getLineNumber(content, index) };
+      const location = {file, line: getLineNumber(content, index)};
       usages.set(name, [...(usages.get(name) ?? []), location]);
     }
   }
@@ -123,7 +123,10 @@ async function run(): Promise<void> {
 
   printSection('Defined mixins', definitionLines);
   printSection('Used mixins', usageLines);
-  printSection('Duplicate mixin definitions (warning)', duplicateDefinitionLines);
+  printSection(
+    'Duplicate mixin definitions (warning)',
+    duplicateDefinitionLines
+  );
   printSection('Used but undefined mixins (error)', undefinedUsageLines);
   printSection('Defined but unused mixins (warning)', unusedDefinitionLines);
 
@@ -140,6 +143,8 @@ async function run(): Promise<void> {
 
 run().catch((error: unknown) => {
   const message = error instanceof Error ? error.message : String(error);
-  console.error(`❌ CSS mixin audit failed with an unexpected error: ${message}`);
+  console.error(
+    `❌ CSS mixin audit failed with an unexpected error: ${message}`
+  );
   process.exitCode = 1;
 });
