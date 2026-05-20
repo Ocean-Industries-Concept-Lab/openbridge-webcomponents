@@ -430,16 +430,19 @@ export class ObcAutomationTank extends LitElement {
       midW = 224;
       cornerStartFill =
         'M 12 6.5837 C 6.346 6.7737, 5.176 6.8744, 4.168 7.2537 C 2.6445 7.8272, 1.418 8.8983, 0.8613 10.1415 C 0.493 10.9641, 0.5 11.9099, 0.5 13.6111 L 0.5 14 L 12 14 Z';
+      // Stroke closes along the inner edge (y = capH) so the seam with .middle
+      // gets a 1px border — matching what pressurized caps achieve via their
+      // plain CSS border. The corner extends from (0.5, capH) out to (cornerW, capH).
       cornerStartStroke =
-        'M 12 6.5837 C 6.346 6.7737, 5.176 6.8744, 4.168 7.2537 C 2.6445 7.8272, 1.418 8.8983, 0.8613 10.1415 C 0.493 10.9641, 0.5 11.9099, 0.5 13.6111 L 0.5 14';
+        'M 12 6.5837 C 6.346 6.7737, 5.176 6.8744, 4.168 7.2537 C 2.6445 7.8272, 1.418 8.8983, 0.8613 10.1415 C 0.493 10.9641, 0.5 11.9099, 0.5 13.6111 L 0.5 14 L 12 14';
       midFill =
         'M 0 6.5837 C 16 5.1124, 56 1.9444, 112 1.9444 C 168 1.9444, 208 5.1124, 224 6.5837 L 224 14 L 0 14 Z';
       midStroke =
-        'M 0 6.5837 C 16 5.1124, 56 1.9444, 112 1.9444 C 168 1.9444, 208 5.1124, 224 6.5837';
+        'M 0 6.5837 C 16 5.1124, 56 1.9444, 112 1.9444 C 168 1.9444, 208 5.1124, 224 6.5837 M 0 14 L 224 14';
       cornerEndFill =
         'M 0 6.5837 C 5.654 6.7737, 6.824 6.8744, 7.832 7.2537 C 9.3555 7.8272, 10.582 8.8983, 11.1387 10.1415 C 11.507 10.9641, 11.5 11.9099, 11.5 13.6111 L 11.5 14 L 0 14 Z';
       cornerEndStroke =
-        'M 0 6.5837 C 5.654 6.7737, 6.824 6.8744, 7.832 7.2537 C 9.3555 7.8272, 10.582 8.8983, 11.1387 10.1415 C 11.507 10.9641, 11.5 11.9099, 11.5 13.6111 L 11.5 14';
+        'M 0 6.5837 C 5.654 6.7737, 6.824 6.8744, 7.832 7.2537 C 9.3555 7.8272, 10.582 8.8983, 11.1387 10.1415 C 11.507 10.9641, 11.5 11.9099, 11.5 13.6111 L 11.5 14 L 0 14';
     }
 
     if (isHorizontal) {
@@ -645,10 +648,14 @@ export class ObcAutomationTank extends LitElement {
     //
     // The icon variant follows `type`: battery tanks show an energy-battery
     // icon, all other types show the generic tank icon.
+    const graphIconClasses = classMap({
+      'graph-icon': true,
+      'priority-enhanced': this.priority === Priority.enhanced,
+    });
     const graphIconOverlay =
       this.type === TankType.battery
         ? html`
-            <div class="graph-icon" aria-hidden="true">
+            <div class=${graphIconClasses} aria-hidden="true">
               <obi-energy-battery
                 class="graph-icon-stroke"
               ></obi-energy-battery>
@@ -656,7 +663,7 @@ export class ObcAutomationTank extends LitElement {
             </div>
           `
         : html`
-            <div class="graph-icon" aria-hidden="true">
+            <div class=${graphIconClasses} aria-hidden="true">
               <obi-tank class="graph-icon-stroke"></obi-tank>
               <obi-tank class="graph-icon-fill"></obi-tank>
             </div>
