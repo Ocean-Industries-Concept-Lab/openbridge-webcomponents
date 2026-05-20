@@ -17,7 +17,9 @@ import {
   ObcNumberInputField,
   ObcNumberInputFieldTextAlign,
   ObcNumberInputFieldSize,
+  ObcNumberInputFieldInputEvent,
 } from '../number-input-field/number-input-field.js';
+import {parseNumberInput} from '../number-input-field/number-input-format.js';
 
 export enum ObcKeyboardNumericType {
   Floating = 'floating',
@@ -248,20 +250,20 @@ export class ObcKeyboardNumeric extends LitElement {
     );
   }
 
-  private handleInputChange(e: Event) {
+  private handleInput(e: ObcNumberInputFieldInputEvent) {
     const input = e.target as ObcNumberInputField;
-    const newValue = input.value;
+    const newValue = input.displayValue;
 
     if (this.validationPattern && newValue) {
       const regex = new RegExp(this.validationPattern);
       if (!regex.test(newValue)) {
-        input.value = this.value;
+        input.displayOverride = this.value;
         return;
       }
     }
 
     if (newValue && !this.isValidValue(newValue)) {
-      input.value = this.value;
+      input.displayOverride = this.value;
       return;
     }
 
@@ -351,14 +353,15 @@ export class ObcKeyboardNumeric extends LitElement {
     return html`
       <obc-number-input-field
         class="input-field"
-        .value=${this.value}
+        .value=${parseNumberInput(this.value)}
+        .displayOverride=${this.value}
         .unit=${this.unit}
         .textAlign=${this.inputFieldTextAlign}
         .size=${ObcNumberInputFieldSize.Large}
         .helperText=${this.helperText}
         ?hasLeadingIcon=${this.hasLeadingIcon}
         placeholder="00.0"
-        @input=${this.handleInputChange}
+        @input=${this.handleInput}
         @keydown=${this.handleInputKeydown}
       >
         <slot name="leading-icon" slot="leading-icon"></slot>
