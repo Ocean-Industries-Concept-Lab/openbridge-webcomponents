@@ -14,16 +14,22 @@ const rangeValue = ref(100)
 const depthValue = ref<number | null>(null)
 const depthAlertValue = ref(5)
 
-function onRangeChange(event: CustomEvent<{ value: number }>) {
-  rangeValue.value = event.detail.value
+function onRangeChange(event: CustomEvent<{ value: number | null }>) {
+  const v = event.detail.value
+  if (v != null) {
+    rangeValue.value = v
+  }
 }
 
 function onDepthChange(event: CustomEvent<{ value: number | null }>) {
   depthValue.value = event.detail.value
 }
 
-function onDepthAlertChange(event: CustomEvent<{ value: number }>) {
-  depthAlertValue.value = event.detail.value
+function onDepthAlertChange(event: CustomEvent<{ value: number | null }>) {
+  const v = event.detail.value
+  if (v != null) {
+    depthAlertValue.value = v
+  }
 }
 </script>
 
@@ -56,6 +62,7 @@ function onDepthAlertChange(event: CustomEvent<{ value: number }>) {
           :value="rangeValue"
           unit="m"
           helper-text="Range"
+          readonly
           @change="onRangeChange"
         />
         <ObcStepperBox
@@ -71,6 +78,7 @@ function onDepthAlertChange(event: CustomEvent<{ value: number }>) {
           :value="depthAlertValue"
           unit="m"
           helper-text="Depth alert"
+          readonly
           @change="onDepthAlertChange"
         />
       </div>
