@@ -11,14 +11,14 @@ import { ObcStepperBoxType } from '@oicl/openbridge-webcomponents/dist/component
 const selectedType = ref('echogram')
 const selector = ref<InstanceType<typeof ObcToggleButtonGroup> | null>(null)
 const rangeValue = ref(100)
-const depthValue = ref(0)
+const depthValue = ref<number | null>(null)
 const depthAlertValue = ref(5)
 
 function onRangeChange(event: CustomEvent<{ value: number }>) {
   rangeValue.value = event.detail.value
 }
 
-function onDepthChange(event: CustomEvent<{ value: number }>) {
+function onDepthChange(event: CustomEvent<{ value: number | null }>) {
   depthValue.value = event.detail.value
 }
 
