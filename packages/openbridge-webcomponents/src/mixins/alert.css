@@ -85,35 +85,6 @@
   }
 }
 
-@define-mixin alert-critical $wrapperClass {
-  &:focus {
-    outline: none;
-  }
-
-  & $(wrapperClass) {
-    border: 1px solid var(--critical-enabled-border-color);
-    background: var(--critical-enabled-background-color);
-  }
-
-  &:hover $(wrapperClass) {
-    border-color: var(--critical-hover-border-color);
-    background-color: var(--critical-hover-background-color);
-  }
-
-  &:active $(wrapperClass) {
-    border-color: var(--critical-pressed-border-color);
-    background-color: var(--critical-pressed-background-color);
-  }
-
-  &:focus-visible $(wrapperClass) {
-    background-color: var(--critical-focused-background-color);
-    border-color: var(--critical-focused-border-color);
-    outline-color: var(--border-outline-color);
-    outline-width: 4px;
-    outline-style: solid;
-  }
-}
-
 @define-mixin alert-warning $wrapperClass {
   &:focus {
     outline: none;
