@@ -5,6 +5,7 @@ import {
   ObcAlertFrameType,
   ObcAlertFrameStatus,
   AlertFrameTextSize,
+  ObcAlertFrameMode,
 } from './alert-frame.js';
 import './alert-frame.js';
 import '../../icons/icon-placeholder.js';
@@ -25,6 +26,12 @@ const meta: Meta<typeof ObcAlertFrame> = {
   argTypes: {
     type: {
       options: Object.values(ObcAlertFrameType),
+      control: {
+        type: 'select',
+      },
+    },
+    mode: {
+      options: Object.values(ObcAlertFrameMode),
       control: {
         type: 'select',
       },
@@ -58,6 +65,7 @@ const meta: Meta<typeof ObcAlertFrame> = {
       <obc-alert-frame
         .type=${args.type}
         .thickness=${args.thickness}
+        .mode=${args.mode}
         .status=${args.status}
         .textSize=${args.textSize}
         .showIcon=${args.showIcon}
@@ -84,6 +92,14 @@ export const AlarmThick: Story = {
 export const AlarmThinn: Story = {
   args: {
     thickness: ObcAlertFrameThickness.Small,
+    type: ObcAlertFrameType.Regular,
+  },
+};
+
+export const UnackedActiveThick: Story = {
+  args: {
+    mode: ObcAlertFrameMode.unackedActive,
+    thickness: ObcAlertFrameThickness.Large,
     type: ObcAlertFrameType.Regular,
   },
 };
