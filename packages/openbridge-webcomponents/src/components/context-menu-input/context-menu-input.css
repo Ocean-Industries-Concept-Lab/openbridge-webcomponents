@@ -17,6 +17,10 @@
   position: anchor;
 }
 
+:host(.match-anchor-width) .context-menu {
+  width: 100%;
+}
+
 .title-container {
   display: flex;
   align-items: center;

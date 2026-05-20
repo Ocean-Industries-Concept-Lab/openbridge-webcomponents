@@ -10,6 +10,7 @@
   transition: height 200ms;
   text-decoration: none;
   user-select: none;
+  --obc-navigation-item-checked-color: var(--on-amplified-active-color);
 
   @mixin outline-inward;
   @mixin style style=flat visibleWrapperClass=.visible-wrapper;
@@ -142,6 +143,7 @@
   &.checked {
     @mixin style style=amplified visibleWrapperClass=.visible-wrapper;
     @mixin font-body-active;
+    color: var(--obc-navigation-item-checked-color);
 
     & .icon.leading {
       color: var(--instrument-enhanced-secondary-color);
@@ -183,5 +185,40 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     min-width: 0;
+    color: inherit;
+  }
+}
+
+.wrapper.has-description.full {
+  &:not(.checked) {
+    color: var(--on-flat-neutral-color);
+  }
+
+  .label-block {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .label {
+    @mixin font-instrument-value-regular-neutral;
+    color: var(--element-active-color);
+  }
+
+  .description {
+    @mixin font-instrument-unit;
+    color: var(--element-neutral-color);
+  }
+
+  &.checked {
+    .label {
+      @mixin font-instrument-value-regular-active;
+      color: var(--instrument-enhanced-secondary-color);
+    }
+
+    .description {
+      color: var(--instrument-enhanced-secondary-color);
+    }
   }
 }
