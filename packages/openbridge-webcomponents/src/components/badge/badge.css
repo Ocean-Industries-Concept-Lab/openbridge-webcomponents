@@ -5,7 +5,7 @@
   justify-content: center;
   border-style: solid;
   border-radius: var(--app-components-badge-border-radius);
-  padding: calc(var(--app-components-badge-padding) - 1px);
+  padding: calc(var(--ui-components-badge-padding) - 1px);
   border: 1px solid var(--alert-alarm-outline-color);
   background: var(--alert-alarm-color);
   width: fit-content;
@@ -46,7 +46,7 @@
     min-width: var(--app-components-badge-min-size-large);
     min-height: var(--app-components-badge-min-size-large);
 
-    padding: calc(var(--app-components-badge-padding) - 1px);
+    padding: calc(var(--ui-components-badge-padding) - 1px);
     justify-content: center;
     align-items: center;
     background: var(--alert-alarm-color);
