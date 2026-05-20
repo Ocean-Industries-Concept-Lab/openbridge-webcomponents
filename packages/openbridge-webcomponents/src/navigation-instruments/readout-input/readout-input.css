@@ -7,11 +7,17 @@
   max-width: 100%;
   width: 100%;
   min-height: fit-content;
+  --global-typography-instrument-value-small-container-height: var(
+    --global-typography-instrument-value-small-line-height
+  );
   --global-typography-instrument-value-regular-container-height: var(
     --global-typography-instrument-value-regular-line-height
   );
   --global-typography-instrument-value-medium-container-height: var(
     --global-typography-instrument-value-medium-line-height
+  );
+  --global-typography-instrument-value-large-container-height: var(
+    --global-typography-instrument-value-large-line-height
   );
 }
 

@@ -10,7 +10,10 @@ import {
   ReadoutAdviceState,
   ReadoutAdviceFormat,
 } from '../readout-advice/readout-advice.js';
-import {ReadoutInputFormat} from '../readout-input/readout-input.js';
+import {
+  ReadoutInputFormat,
+  ReadoutInputSize,
+} from '../readout-input/readout-input.js';
 import {
   ReadoutDirection,
   ReadoutInputInteraction,
@@ -80,6 +83,7 @@ type ReadoutStoryArgs = {
   inputHasHintedZeros: boolean;
   alertState: ReadoutAlertState;
   inputInteraction: ReadoutInputInteraction;
+  inputSize?: ReadoutInputSize;
   setpointValue: string | number;
   _lastAutoInputDividerSyncKey: string;
   _lastAutoSourceDividerSyncKey: string;
@@ -335,6 +339,7 @@ function renderReadoutComponent(
         resolvedArgs.setpointValue
       )}
       .direction=${resolvedArgs.direction}
+      .inputSize=${resolvedArgs.inputSize}
       .alignment=${resolvedArgs.alignment}
       .hug=${resolvedArgs.hug}
       .labelOnly=${resolvedArgs.labelOnly}
@@ -631,6 +636,14 @@ const meta = {
         },
       },
       options: Object.values(ReadoutDirection),
+      table: {category: 'Readout'},
+    },
+    inputSize: {
+      name: 'Input Size (override)',
+      control: {type: 'select'},
+      options: [undefined, ...Object.values(ReadoutInputSize)],
+      description:
+        'Override input segment size. When unset, derived from variant.',
       table: {category: 'Readout'},
     },
     hug: {
@@ -2859,4 +2872,99 @@ export const HorizontalCasesGrid: Story = {
         },
       },
     ]),
+};
+
+const inputInteractionsForMatrix: ReadoutInputInteraction[] = [
+  ReadoutInputInteraction.alwaysVisible,
+  ReadoutInputInteraction.flipFlop,
+  ReadoutInputInteraction.popUp,
+];
+
+const inputSizesForMatrix: ReadoutInputSize[] = [
+  ReadoutInputSize.small,
+  ReadoutInputSize.regular,
+  ReadoutInputSize.medium,
+  ReadoutInputSize.large,
+];
+
+export const InputInteractionSizeMatrix: Story = {
+  name: 'Input Interaction × Input Size Matrix',
+  parameters: {
+    layout: 'padded',
+  },
+  render: () => html`
+    <div
+      style="
+        display: grid;
+        grid-template-columns: 140px repeat(${inputSizesForMatrix.length}, minmax(180px, 1fr));
+        gap: 24px 32px;
+        align-items: end;
+        padding: 24px;
+        background: var(--container-backdrop-color, #fafafa);
+      "
+    >
+      <div></div>
+      ${inputSizesForMatrix.map(
+        (size) => html`
+          <div
+            style="
+              font: 12px/1.2 var(--global-typography-ui-label-font-family, inherit);
+              text-transform: uppercase;
+              letter-spacing: 0.06em;
+              color: var(--element-neutral-color, #555);
+              text-align: center;
+            "
+          >
+            inputSize: ${size}
+          </div>
+        `
+      )}
+      ${inputInteractionsForMatrix.map(
+        (interaction) => html`
+          <div
+            style="
+              font: 12px/1.2 var(--global-typography-ui-label-font-family, inherit);
+              text-transform: uppercase;
+              letter-spacing: 0.06em;
+              color: var(--element-neutral-color, #555);
+              align-self: center;
+            "
+          >
+            ${interaction}
+          </div>
+          ${inputSizesForMatrix.map(
+            (size) => html`
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  padding: 12px;
+                  background: var(--container-section-color, #fff);
+                  border: 1px solid var(--border-divider-color, rgba(0,0,0,0.08));
+                  min-height: 96px;
+                "
+              >
+                <obc-readout
+                  .variant=${ReadoutVariant.regular}
+                  .direction=${ReadoutDirection.vertical}
+                  .inputInteraction=${interaction}
+                  .hasInput=${true}
+                  .value=${interaction === ReadoutInputInteraction.flipFlop
+                    ? 120
+                    : 123}
+                  .setpointValue=${120}
+                  .inputSize=${size}
+                  .label=${'HDG DEG'}
+                  .hasSrc=${true}
+                  .src=${'SRC'}
+                  title=${`${interaction} / inputSize=${size}`}
+                ></obc-readout>
+              </div>
+            `
+          )}
+        `
+      )}
+    </div>
+  `,
 };

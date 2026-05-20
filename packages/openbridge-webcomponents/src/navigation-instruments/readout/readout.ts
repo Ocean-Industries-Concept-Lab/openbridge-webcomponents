@@ -130,6 +130,21 @@ export class ObcReadout extends LitElement {
   @property({type: String}) direction: ReadoutDirection =
     ReadoutDirection.vertical;
 
+  /**
+   * Override the size of the input segment (when `hasInput` is true).
+   *
+   * - In `alwaysVisible` and `popUp` interaction modes: any size value applies.
+   * - In `flipFlop` mode: the override is honored only when strictly smaller
+   *   than the variant's base size (medium for `regular`, large for
+   *   `enhanced`/`stack`). Larger overrides are ignored, falling back to the
+   *   default secondary size to preserve the flip-flop visual effect and
+   *   prevent input/value overlap.
+   *
+   * When unset, the input size is derived from `variant` (and adjusted for
+   * multi-line formats).
+   */
+  @property({type: String}) inputSize?: ReadoutInputSize;
+
   @property({type: String})
   alignment: ReadoutStackVerticalAlignment =
     ReadoutStackVerticalAlignment.vertical;
@@ -487,6 +502,17 @@ export class ObcReadout extends LitElement {
     }
   }
 
+  private static readonly READOUT_INPUT_SIZE_ORDER: ReadoutInputSize[] = [
+    ReadoutInputSize.small,
+    ReadoutInputSize.regular,
+    ReadoutInputSize.medium,
+    ReadoutInputSize.large,
+  ];
+
+  private sizeRank(size: ReadoutInputSize): number {
+    return ObcReadout.READOUT_INPUT_SIZE_ORDER.indexOf(size);
+  }
+
   private get isMultiLineInputFormat(): boolean {
     return (
       this.inputFormat === ReadoutInputFormat.description ||
@@ -496,11 +522,27 @@ export class ObcReadout extends LitElement {
 
   private get resolvedInputSegmentSize(): ReadoutInputSize {
     if (this.interactionMode === ReadoutInputInteraction.flipFlop) {
+      if (this.flipFlopInputFocused) {
+        return this.baseSize;
+      }
+
       const secondarySize =
         this.variant === ReadoutVariant.regular
           ? ReadoutInputSize.small
           : this.stepDownSize(this.baseSize);
-      return this.flipFlopInputFocused ? this.baseSize : secondarySize;
+
+      if (
+        this.inputSize &&
+        this.sizeRank(this.inputSize) < this.sizeRank(this.baseSize)
+      ) {
+        return this.inputSize;
+      }
+
+      return secondarySize;
+    }
+
+    if (this.inputSize) {
+      return this.inputSize;
     }
 
     if (
@@ -833,7 +875,9 @@ export class ObcReadout extends LitElement {
         <slot name="input">
           <obc-readout-input
             data-obc-value-typography=${this.variant ===
-              ReadoutVariant.regular && this.isVertical
+              ReadoutVariant.regular &&
+            this.isVertical &&
+            this.resolvedInputSegmentSize === ReadoutInputSize.medium
               ? 'medium'
               : nothing}
             ?data-obc-tabular-nums=${this.interactionMode ===
