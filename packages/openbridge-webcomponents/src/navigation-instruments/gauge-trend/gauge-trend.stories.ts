@@ -157,6 +157,11 @@ const meta: Meta = {
     chartFill: {
       control: 'boolean',
     },
+    hasLabelPadding: {
+      control: 'boolean',
+      description:
+        'When false, the chart canvas renders edge-to-edge on sides without an external scale (no reserved space for axis tick labels). Slotted scales/bars remain fully visible because their reported thickness is preserved.',
+    },
     touching: {
       control: 'boolean',
     },
@@ -177,6 +182,7 @@ const meta: Meta = {
     fillMin: 0,
     // Note: fillMax intentionally omitted - in 'fill' mode it auto-derives from value
     chartFill: true,
+    hasLabelPadding: true,
     touching: false,
   },
   render: (args) => html`
@@ -198,6 +204,7 @@ const meta: Meta = {
       .fillMode=${args.fillMode}
       .fillMin=${args.fillMin}
       .fillMax=${args.fillMax ?? undefined}
+      .hasLabelPadding=${args.hasLabelPadding}
       .advice=${[
         {min: 25, max: 45, type: AdviceType.caution, hinted: true},
         {min: 55, max: 75, type: AdviceType.advice, hinted: false},
@@ -469,6 +476,45 @@ export const ScaleReferenceSizeComparison: StoryObj = {
       </div>
     `;
   },
+};
+
+export const GaugeTrendEdgeToEdge: Story = {
+  name: 'Edge to Edge (hasLabelPadding=false)',
+  play: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 600));
+  },
+  args: {
+    hasLabelPadding: false,
+    hasScale: false,
+    hasAdvice: false,
+    chartFill: true,
+    browserContainerWidth: 256,
+    width: 256,
+    height: 256,
+    scaleReferenceSize: 384,
+  },
+  render: (_args) => html`
+    <obc-gauge-trend
+      .data=${SAMPLE_DATA}
+      .width=${_args.width}
+      .height=${_args.height}
+      .priority=${_args.priority}
+      .chartFill=${_args.chartFill}
+      .minValue=${_args.minValue ?? 0}
+      .maxValue=${_args.maxValue ?? 100}
+      .value=${_args.value}
+      .hasBar=${_args.hasBar}
+      .hasScale=${_args.hasScale}
+      .hasAdvice=${_args.hasAdvice}
+      .fillMode=${_args.fillMode}
+      .fillMin=${_args.fillMin}
+      .fillMax=${_args.fillMax}
+      .hasLabelPadding=${_args.hasLabelPadding}
+      .primaryTickmarkInterval=${100}
+      .scaleReferenceSize=${_args.scaleReferenceSize}
+    >
+    </obc-gauge-trend>
+  `,
 };
 
 export const GaugeTrendWithoutScale: Story = {

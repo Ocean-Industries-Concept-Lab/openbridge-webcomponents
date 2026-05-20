@@ -198,6 +198,22 @@ When adding new features or fixing bugs:
 
 - It's about SVG scale rendering (see external-scale.instructions.md)
 
+### Padding & Label-Visibility Cascade (read before adding chart-level layout flags)
+
+Chart padding has **multiple independent code paths** that must stay in sync. When adding a chart-level toggle that affects padding/label visibility (e.g. `hasLabelPadding`, future "compact mode" flags), audit all of them:
+
+1. **`calculatePaddingFromScales()`** — fallback constants when no scale is slotted (e.g. `CANVAS_PADDING = 32`). Has its own defaults independent of `computeExternalScaleLayout`. Must honor the flag, or you get a phantom gutter on sides with no slotted scale.
+2. **`updateScaleProperties(padding)`** — pushes derived state (`showLabels`, padding offsets) down to slotted bar children. Cascade flags here so the bar renders the matching geometry (e.g. `showLabels=false` collapses the bar's `labelThickness` band).
+3. **`getChartOptions()` / `buildScalesConfig()`** — Chart.js axis tick/label visibility and padding. Must honor the flag so Chart.js doesn't draw labels into space the layout doesn't reserve.
+4. **Watched-properties list** (`LINE_GRAPH_WATCHED_PROP_NAMES` / `LINE_GRAPH_RECREATE_PROP_NAMES`) — add the new property so changes trigger re-evaluation.
+5. **Slotted bar `reportDimensions` predicate** — see `external-scale.instructions.md`; if the cascaded property changes the bar's reported thickness, the bar must dispatch a fresh `scale-dimensions-changed` event.
+
+**Lesson from past bugs:**
+
+- A chart-level `hasLabelPadding=false` flag that only updates `getChartOptions` produces clipped labels (Chart.js still draws them, the scale band is collapsed). It must cascade `showLabels=false` to the slotted bar AND update `calculatePaddingFromScales`'s fallback.
+- Advice/setpoint overlays drawn by slotted bars live **outside** the bar band. If you collapse the scale/label band, the bar must reserve a separate advice/setpoint allowance (see `computeAdviceBandThickness` in `external-scale.ts`) — otherwise overlays clip at the SVG edge AND the chart canvas overlaps them because `reportDimensions` returned a thickness too small.
+- Positive-default boolean properties (e.g. `hasLabelPadding = true`, see AGENTS.md § 2) must be declared with `attribute: false`. Pure JS property; framework wrappers handle it transparently.
+
 ### Checklist for Changes:
 
 1. [ ] Read full `chart-line-base.ts` context before editing
