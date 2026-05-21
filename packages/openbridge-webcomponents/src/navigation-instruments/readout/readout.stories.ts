@@ -10,7 +10,10 @@ import {
   ReadoutAdviceState,
   ReadoutAdviceFormat,
 } from '../readout-advice/readout-advice.js';
-import {ReadoutInputFormat} from '../readout-input/readout-input.js';
+import {
+  ReadoutInputFormat,
+  ReadoutInputSize,
+} from '../readout-input/readout-input.js';
 import {
   ReadoutDirection,
   ReadoutInputInteraction,
@@ -80,6 +83,7 @@ type ReadoutStoryArgs = {
   inputHasHintedZeros: boolean;
   alertState: ReadoutAlertState;
   inputInteraction: ReadoutInputInteraction;
+  inputSize?: ReadoutInputSize;
   setpointValue: string | number;
   _lastAutoInputDividerSyncKey: string;
   _lastAutoSourceDividerSyncKey: string;
@@ -335,6 +339,7 @@ function renderReadoutComponent(
         resolvedArgs.setpointValue
       )}
       .direction=${resolvedArgs.direction}
+      .inputSize=${resolvedArgs.inputSize}
       .alignment=${resolvedArgs.alignment}
       .hug=${resolvedArgs.hug}
       .labelOnly=${resolvedArgs.labelOnly}
@@ -631,6 +636,14 @@ const meta = {
         },
       },
       options: Object.values(ReadoutDirection),
+      table: {category: 'Readout'},
+    },
+    inputSize: {
+      name: 'Input Size (override)',
+      control: {type: 'select'},
+      options: [undefined, ...Object.values(ReadoutInputSize)],
+      description:
+        'Override input segment size. When unset, derived from variant.',
       table: {category: 'Readout'},
     },
     hug: {
