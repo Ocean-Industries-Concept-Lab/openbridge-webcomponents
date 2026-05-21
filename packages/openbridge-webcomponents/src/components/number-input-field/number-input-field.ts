@@ -264,8 +264,10 @@ export class ObcNumberInputField extends LitElement {
   }
 
   private get isEmpty(): boolean {
-    const currentValue = (this.inputElement?.value ?? '').trim();
-    return currentValue.length === 0;
+    if (this.inputElement) {
+      return this.inputElement.value.trim().length === 0;
+    }
+    return isNaN(this.value);
   }
 
   override willUpdate(changedProperties: PropertyValues) {
