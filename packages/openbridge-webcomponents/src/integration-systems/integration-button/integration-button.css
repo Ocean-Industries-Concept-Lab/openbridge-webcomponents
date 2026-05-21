@@ -6,6 +6,12 @@
   display: flex;
 }
 
+.button-vertical-divider-container {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
 .touch-target {
   @mixin style style=integration-normal visibleWrapperClass=.content-container;
   @mixin font-body;
