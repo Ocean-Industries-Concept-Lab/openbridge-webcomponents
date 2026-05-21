@@ -37,6 +37,10 @@
   flex: 1;
 }
 
+.hug-buttons-slot::slotted(obc-integration-button) {
+  flex: 0 1 auto;
+}
+
 .home-button {
   width: var(--app-components-integration-system-icon-button-touch-target);
   height: var(--app-components-integration-system-icon-button-touch-target);

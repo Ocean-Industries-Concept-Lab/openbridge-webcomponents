@@ -12,13 +12,17 @@
   flex: 1;
 }
 
+.button-vertical-divider-container:has(.touch-target.type-hug) {
+  flex: 0 1 0;
+}
+
 .touch-target {
   @mixin style style=integration-normal visibleWrapperClass=.content-container;
   @mixin font-body;
   display: flex;
   align-items: center;
   gap: 4px;
-  flex: 1;
+  flex: 0 1 0;
   min-height: var(
     --app-components-integration-system-navigation-item-horizontal-touch-target
   );
@@ -69,24 +73,6 @@
       );
     border: var(--app-components-integration-system-button-stroke-weight-bottom)
       solid var(--integration-beta-normal-enabled-border-color);
-    background: var(--integration-beta-normal-enabled-background-color);
-  }
-
-  &.type-hug .content-container {
-    display: flex;
-    min-height: var(--app-components-integration-system-button-visual-target);
-    padding: 4px
-      var(--app-components-integration-system-button-padding-horizontal);
-    align-items: center;
-    gap: var(--app-components-integration-system-button-label-spacing);
-    border-radius: 6px;
-    border-top: 1px solid var(--integration-beta-normal-enabled-border-color);
-    border-right: var(
-        --app-components-integration-system-button-stroke-weight-bottom
-      )
-      solid var(--integration-beta-normal-enabled-border-color);
-    border-bottom: 1px solid var(--integration-beta-normal-enabled-border-color);
-    border-left: 1px solid var(--integration-beta-normal-enabled-border-color);
     background: var(--integration-beta-normal-enabled-background-color);
   }
 
@@ -280,10 +266,6 @@
       color: var(--integration-on-selected-neutral-color);
     }
   }
-}
-
-.type-hug.touch-target {
-  display: inline-flex;
 }
 
 .type-rich.touch-target {

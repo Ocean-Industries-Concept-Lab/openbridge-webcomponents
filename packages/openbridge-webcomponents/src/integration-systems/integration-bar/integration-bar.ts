@@ -3,7 +3,10 @@ import {customElement} from '../../decorator.js';
 import compentStyle from './integration-bar.css?inline';
 import '../integration-tabs/integration-tabs.js';
 import '../integration-button/integration-button.js';
-import {IntegrationButtonVariant} from '../integration-button/integration-button.js';
+import {
+  IntegrationButtonType,
+  IntegrationButtonVariant,
+} from '../integration-button/integration-button.js';
 import '../../components/clock/clock.js';
 import '../../components/icon-button/icon-button.js';
 import '../../icons/icon-palette-day-night-iec.js';
@@ -25,6 +28,8 @@ import {classMap} from 'lit/directives/class-map.js';
  * and optional utility actions such as alerts, notifications, screen, system, dimming, user, and clock.
  *
  * @slot clock - Custom clock content, rendered when `showClock` is true
+ * @slot integration-buttons - Regular vessel integration buttons
+ * @slot hug-buttons - Compact vessel integration buttons; slotted integration buttons are forced to hug type
  * @slot vessel-integration-menu - Modal that will appear achored below the fleet/vessel button. Typically an obc-integration-vessel-menu
  * @property {IntegrationBarType} type - Integration bar mode for fleet/vessel presentation
  * @property {boolean} hideHomeButton - Hides the home button when true
@@ -45,7 +50,6 @@ import {classMap} from 'lit/directives/class-map.js';
  * @property {boolean} alertButtonActivated - Activated state of alert button
  * @property {boolean} fleetButtonSelected - Selected state of fleet button
  * @property {boolean} fleetButtonActivated - Active state of fleet button while selection is pending
- * @property {boolean} hug - Shrinks all integration buttons in the vessel section to content width when true
  * @property {string} fleetButtonLabel - Label for the fleet button
  * @property {string} selectedVesselValue - Selected vessel value
  * @property {string} activeVesselValue - Active vessel value while selection is pending
@@ -62,7 +66,6 @@ import {classMap} from 'lit/directives/class-map.js';
 @customElement('obc-integration-bar')
 export class ObcIntegrationBar extends LitElement {
   @property({type: Boolean}) hideHomeButton = false;
-  @property({type: Boolean}) hug = false;
   @property({type: Boolean}) showClock = false;
   @property({type: Boolean}) showLinkButton = false;
   @property({type: Boolean}) linkButtonActivated = false;
@@ -84,6 +87,20 @@ export class ObcIntegrationBar extends LitElement {
 
   private onFleetButtonClick() {
     this.dispatchEvent(new CustomEvent('fleet-button-click'));
+  }
+
+  private onHugButtonsSlotChange(event: Event) {
+    const slot = event.currentTarget as HTMLSlotElement;
+    const assignedElements = slot.assignedElements({flatten: true});
+
+    assignedElements.forEach((element) => {
+      if (element.tagName === 'OBC-INTEGRATION-BUTTON') {
+        const integrationButton = element as unknown as HTMLElement & {
+          type: IntegrationButtonType;
+        };
+        integrationButton.type = IntegrationButtonType.hug;
+      }
+    });
   }
 
   override render() {
@@ -111,12 +128,7 @@ export class ObcIntegrationBar extends LitElement {
                 <obi-link></obi-link>
               </obc-icon-button>`
             : null}
-          <div
-            class=${classMap({
-              'fleet-vessel-container': true,
-              hug: this.hug,
-            })}
-          >
+          <div class=${classMap({'fleet-vessel-container': true})}>
             <obc-integration-button
               class="fleet-button"
               .variant=${IntegrationButtonVariant.normal}
@@ -130,6 +142,11 @@ export class ObcIntegrationBar extends LitElement {
               <span slot="label">${this.fleetButtonLabel}</span>
             </obc-integration-button>
             <div class="vessel-container">
+              <slot
+                class="hug-buttons-slot"
+                name="hug-buttons"
+                @slotchange=${this.onHugButtonsSlotChange}
+              ></slot>
               <slot
                 class="integration-buttons-slot"
                 name="integration-buttons"

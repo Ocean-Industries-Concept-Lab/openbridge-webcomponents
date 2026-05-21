@@ -21,18 +21,24 @@ type IntegrationBarStoryArgs = ObcIntegrationBar & {
   timeZoneOffsetHours: number;
   clockMinimizeBreakpointPx: number;
   showVesselIntegrationMenu: boolean;
+  hug: boolean;
   makeLabelNamesShort: boolean;
+  containerWidthPx: number;
 };
 
 function renderIntegrationButtons({
   onIntegrationButtonClick,
   shortNames,
+  hug,
   shouldShowDividerRight,
 }: {
   onIntegrationButtonClick: (event: Event, buttonIndex: number) => void;
   shortNames: boolean;
+  hug: boolean;
   shouldShowDividerRight: (buttonIndex: number) => boolean;
 }) {
+  const slotName = hug ? 'hug-buttons' : 'integration-buttons';
+
   return html`
     <obc-integration-button
       hasLeadingIcon
@@ -41,7 +47,7 @@ function renderIntegrationButtons({
       ?activated=${false}
       ?dividerRight=${shouldShowDividerRight(0)}
       @click=${(e: Event) => onIntegrationButtonClick(e, 0)}
-      slot="integration-buttons"
+      slot=${slotName}
     >
       <obi-ship slot="leading-icon"></obi-ship>
       <span slot="label"
@@ -55,7 +61,7 @@ function renderIntegrationButtons({
       ?activated=${false}
       ?dividerRight=${shouldShowDividerRight(1)}
       @click=${(e: Event) => onIntegrationButtonClick(e, 1)}
-      slot="integration-buttons"
+      slot=${slotName}
     >
       <obi-ship slot="leading-icon"></obi-ship>
       <span slot="label"
@@ -69,7 +75,7 @@ function renderIntegrationButtons({
       ?activated=${true}
       ?dividerRight=${shouldShowDividerRight(2)}
       @click=${(e: Event) => onIntegrationButtonClick(e, 2)}
-      slot="integration-buttons"
+      slot=${slotName}
     >
       <obi-ship slot="leading-icon"></obi-ship>
       <span slot="label"
@@ -83,7 +89,7 @@ function renderIntegrationButtons({
       ?activated=${false}
       ?dividerRight=${shouldShowDividerRight(3)}
       @click=${(e: Event) => onIntegrationButtonClick(e, 3)}
-      slot="integration-buttons"
+      slot=${slotName}
     >
       <obi-ship slot="leading-icon"></obi-ship>
       <span slot="label"
@@ -97,10 +103,15 @@ const meta: Meta<IntegrationBarStoryArgs> = {
   title: 'Integration Systems/Integration Bar',
   tags: ['6.0', 'WIP'],
   component: 'obc-integration-bar',
+  globals: {
+    // 👇 Set viewport for all component stories
+    viewport: {value: 'desktop'},
+  },
   parameters: {
     layout: 'fullscreen',
   },
   args: {
+    containerWidthPx: 1200,
     showClock: true,
     date: '2021-01-01T11:11:11.111Z',
     clockMinimizeBreakpointPx: 600,
@@ -131,6 +142,9 @@ const meta: Meta<IntegrationBarStoryArgs> = {
     makeLabelNamesShort: false,
   },
   argTypes: {
+    containerWidthPx: {
+      control: {type: 'number'},
+    },
     showDate: {
       control: {type: 'boolean'},
     },
@@ -184,7 +198,7 @@ const meta: Meta<IntegrationBarStoryArgs> = {
 
       const integrationButtons = Array.from(
         integrationBar.querySelectorAll<IntegrationButtonElement>(
-          'obc-integration-button[slot="integration-buttons"]'
+          'obc-integration-button[slot="integration-buttons"], obc-integration-button[slot="hug-buttons"]'
         )
       );
 
@@ -215,47 +229,49 @@ const meta: Meta<IntegrationBarStoryArgs> = {
       integrationBar.fleetButtonActivated = true;
     };
 
-    return html`<obc-integration-bar
-      style="width: 100%;"
-      @fleet-button-click=${onFleetButtonClick}
-      .hideHomeButton=${args.hideHomeButton}
-      .hug=${args.hug}
-      .showLinkButton=${args.showLinkButton}
-      .linkButtonActivated=${args.linkButtonActivated}
-      .showClock=${args.showClock}
-      .showUserButton=${args.showUserButton}
-      .userButtonActivated=${args.userButtonActivated}
-      .showDimmingButton=${args.showDimmingButton}
-      .dimmingButtonActivated=${args.dimmingButtonActivated}
-      .showSystemButton=${args.showSystemButton}
-      .systemButtonActivated=${args.systemButtonActivated}
-      .showAlertButton=${args.showAlertButton}
-      .alertButtonActivated=${args.alertButtonActivated}
-      .showScreenButton=${args.showScreenButton}
-      .screenButtonActivated=${args.screenButtonActivated}
-      .showNotificationButton=${args.showNotificationButton}
-      .notificationButtonActivated=${args.notificationButtonActivated}
-      .fleetButtonSelected=${args.fleetButtonSelected}
-      .fleetButtonActivated=${args.fleetButtonActivated}
-      .fleetButtonLabel=${args.fleetButtonLabel}
-    >
-      <obc-clock
-        integrationBarMode
-        .date=${args.date}
-        .showDate=${args.showDate}
-        slot="clock"
-        .showTimezone=${args.showTimezone}
-        .timeZoneOffsetHours=${args.timeZoneOffsetHours}
-        .blinkOnlyBreakpointPx=${args.clockMinimizeBreakpointPx}
-      ></obc-clock>
-      <!-- TODO: Re-enable vessel integration menu story variant with proper handlers. -->
+    return html`<div style=${`width: min(100%, ${args.containerWidthPx}px);`}>
+      <obc-integration-bar
+        style="width: 100%;"
+        @fleet-button-click=${onFleetButtonClick}
+        .hideHomeButton=${args.hideHomeButton}
+        .showLinkButton=${args.showLinkButton}
+        .linkButtonActivated=${args.linkButtonActivated}
+        .showClock=${args.showClock}
+        .showUserButton=${args.showUserButton}
+        .userButtonActivated=${args.userButtonActivated}
+        .showDimmingButton=${args.showDimmingButton}
+        .dimmingButtonActivated=${args.dimmingButtonActivated}
+        .showSystemButton=${args.showSystemButton}
+        .systemButtonActivated=${args.systemButtonActivated}
+        .showAlertButton=${args.showAlertButton}
+        .alertButtonActivated=${args.alertButtonActivated}
+        .showScreenButton=${args.showScreenButton}
+        .screenButtonActivated=${args.screenButtonActivated}
+        .showNotificationButton=${args.showNotificationButton}
+        .notificationButtonActivated=${args.notificationButtonActivated}
+        .fleetButtonSelected=${args.fleetButtonSelected}
+        .fleetButtonActivated=${args.fleetButtonActivated}
+        .fleetButtonLabel=${args.fleetButtonLabel}
+      >
+        <obc-clock
+          integrationBarMode
+          .date=${args.date}
+          .showDate=${args.showDate}
+          slot="clock"
+          .showTimezone=${args.showTimezone}
+          .timeZoneOffsetHours=${args.timeZoneOffsetHours}
+          .blinkOnlyBreakpointPx=${args.clockMinimizeBreakpointPx}
+        ></obc-clock>
+        <!-- TODO: Re-enable vessel integration menu story variant with proper handlers. -->
 
-      ${renderIntegrationButtons({
-        onIntegrationButtonClick,
-        shortNames: args.makeLabelNamesShort,
-        shouldShowDividerRight,
-      })}
-    </obc-integration-bar>`;
+        ${renderIntegrationButtons({
+          onIntegrationButtonClick,
+          shortNames: args.makeLabelNamesShort,
+          hug: args.hug,
+          shouldShowDividerRight,
+        })}
+      </obc-integration-bar>
+    </div>`;
   },
 } satisfies Meta<IntegrationBarStoryArgs>;
 
@@ -266,8 +282,21 @@ export const Primary: Story = {
   args: {},
 };
 
-export const ShortNames: Story = {
+export const Hug: Story = {
   args: {
+    hug: true,
     makeLabelNamesShort: true,
+  },
+};
+
+export const WideSpace: Story = {
+  args: {
+    containerWidthPx: 1800,
+  },
+};
+
+export const TightSpace: Story = {
+  args: {
+    containerWidthPx: 520,
   },
 };
