@@ -50,6 +50,8 @@ export enum ObcNumberInputFieldPlacement {
  */
 @customElement('obc-number-input-field')
 export class ObcNumberInputField extends LitElement {
+  private static readonly centerAlignInputMinWidth = 10;
+
   @property({type: Number}) value = NaN;
   @property({type: String}) unit = '';
   @property({type: String}) placeholder = '';
@@ -116,6 +118,7 @@ export class ObcNumberInputField extends LitElement {
   @state() private lastCommittedValue = NaN;
 
   @query('.value-input') private inputElement?: HTMLInputElement;
+  private readonly inputMeasureCanvas = document.createElement('canvas');
 
   get displayValue(): string {
     return this.displayText;
@@ -142,6 +145,7 @@ export class ObcNumberInputField extends LitElement {
     const parsed = parseNumberInput(raw);
     this.value = parsed;
     this.previousDisplayText = raw;
+    this.updateCenterAlignedInputWidth(raw);
     this.dispatchInput();
   }
 
@@ -223,11 +227,40 @@ export class ObcNumberInputField extends LitElement {
     return this.displayText;
   }
 
+  private updateCenterAlignedInputWidth(value: string) {
+    if (this.textAlign !== ObcNumberInputFieldTextAlign.Center) {
+      this.style.removeProperty('--obc-number-input-center-width');
+      return;
+    }
+
+    const input = this.inputElement;
+    const context = this.inputMeasureCanvas.getContext('2d');
+    if (!input || !context) return;
+
+    const styles = window.getComputedStyle(input);
+    const font =
+      styles.font ||
+      `${styles.fontStyle} ${styles.fontVariant} ${styles.fontWeight} ${styles.fontSize}/${styles.lineHeight} ${styles.fontFamily}`;
+    context.font = font;
+
+    const sampleText = value || this.placeholder || '0';
+    const measuredText = context.measureText(sampleText).width;
+
+    const measuredWidth = Math.ceil(measuredText + 10);
+    const width = Math.max(
+      measuredWidth,
+      ObcNumberInputField.centerAlignInputMinWidth
+    );
+
+    this.style.setProperty('--obc-number-input-center-width', `${width}px`);
+  }
+
   override firstUpdated() {
     if (!this.displayText && !this.displayOverride) {
       this.displayText = this.formatValueForDisplay(this.value);
     }
     this.lastCommittedValue = this.value;
+    this.updateCenterAlignedInputWidth(this.getEffectiveDisplay());
   }
 
   private get isEmpty(): boolean {
@@ -270,6 +303,8 @@ export class ObcNumberInputField extends LitElement {
     ) {
       this.previousValue = this.value;
     }
+
+    this.updateCenterAlignedInputWidth(this.getEffectiveDisplay());
   }
 
   private renderFooterText(
