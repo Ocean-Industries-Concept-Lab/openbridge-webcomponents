@@ -18,6 +18,7 @@ import {
   removeGroupingFromDisplay,
   valuesEqual,
 } from './number-input-format.js';
+import {getCssVariableValue} from '../../charthelpers/colors.js';
 
 export type ObcNumberInputFieldInputEvent = CustomEvent<{value: number}>;
 export type ObcNumberInputFieldChangeEvent = CustomEvent<{value: number}>;
@@ -39,6 +40,9 @@ export enum ObcNumberInputFieldPlacement {
   Right = 'right',
 }
 
+const characterWidth = 9.15199279785156;
+const symbolWidth = 4.287994384765653;
+const baseFontSize = 16;
 /**
  * `<obc-number-input-field>` – A specialized input field for numerical values with optional unit display.
  *
@@ -118,7 +122,6 @@ export class ObcNumberInputField extends LitElement {
   @state() private lastCommittedValue = NaN;
 
   @query('.value-input') private inputElement?: HTMLInputElement;
-  private readonly inputMeasureCanvas = document.createElement('canvas');
 
   get displayValue(): string {
     return this.displayText;
@@ -233,26 +236,27 @@ export class ObcNumberInputField extends LitElement {
       return;
     }
 
-    const input = this.inputElement;
-    const context = this.inputMeasureCanvas.getContext('2d');
-    if (!input || !context) return;
-
-    const styles = window.getComputedStyle(input);
-    const font =
-      styles.font ||
-      `${styles.fontStyle} ${styles.fontVariant} ${styles.fontWeight} ${styles.fontSize}/${styles.lineHeight} ${styles.fontFamily}`;
-    context.font = font;
-
-    const sampleText = value || this.placeholder || '0';
-    const measuredText = context.measureText(sampleText).width;
-
-    const measuredWidth = Math.ceil(measuredText + 10);
-    const width = Math.max(
-      measuredWidth,
-      ObcNumberInputField.centerAlignInputMinWidth
+    const fontSize = Number.parseFloat(
+      getCssVariableValue(
+        this,
+        '--global-typography-instrument-value-regular-font-size'
+      )
     );
 
-    this.style.setProperty('--obc-number-input-center-width', `${width}px`);
+    const characters = value.replaceAll(/[.,]/g, '');
+    const symbols = value.length - characters.length;
+    // These values are based on the font size of 16px
+
+    const calculatedWidth =
+      characters.length * characterWidth + symbols * symbolWidth;
+
+    const measuredWidth = Math.ceil(
+      (calculatedWidth * fontSize) / baseFontSize
+    );
+    this.style.setProperty(
+      '--obc-number-input-center-width',
+      `${measuredWidth}px`
+    );
   }
 
   override firstUpdated() {
@@ -328,6 +332,47 @@ export class ObcNumberInputField extends LitElement {
     </div>`;
   }
 
+  private onPointerDown(e: PointerEvent) {
+    if (this.disabled) return;
+    if (this.readonly) return;
+    if (this.inputElement) {
+      e.stopPropagation();
+      e.preventDefault();
+      this.inputElement.focus();
+      const inputBox = this.inputElement.getBoundingClientRect();
+      let selectionStart: number | undefined;
+      if (e.clientX < inputBox.left) {
+        // set marker at the left edge of the input
+        selectionStart = 0;
+      } else if (e.clientX > inputBox.right) {
+        // set marker at the right edge of the input
+        selectionStart = this.inputElement.value.length;
+      } else {
+        // set marker at the mouse position
+        // Start from the right side of the input and move left until the mouse position is found
+        // This is done to set the marker also at label touch.
+        // Starts from the right since the label is right aligned.
+        const mouseX = e.clientX;
+        let inputX = inputBox.right;
+        const text = this.inputElement.value;
+        for (let i = text.length - 1; i >= 0; i--) {
+          const char = text[i];
+          const isSymbol = char.match(/[.,]/);
+          const width = isSymbol ? symbolWidth : characterWidth;
+          if (mouseX > inputX - width / 2) {
+            selectionStart = i + 1;
+            break;
+          }
+          inputX -= width;
+        }
+        if (selectionStart === undefined) {
+          selectionStart = 0;
+        }
+      }
+      this.inputElement.setSelectionRange(selectionStart, selectionStart);
+    }
+  }
+
   override render() {
     const hasHelperOrError =
       Boolean(this.helperText) || Boolean(this.error && this.errorText);
@@ -353,6 +398,7 @@ export class ObcNumberInputField extends LitElement {
           haslabel: Boolean(this.label),
           squared: this.squared,
         })}
+        @pointerdown=${this.onPointerDown}
       >
         ${this.label
           ? html`<div
