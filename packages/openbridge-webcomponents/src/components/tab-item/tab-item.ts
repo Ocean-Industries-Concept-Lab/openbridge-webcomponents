@@ -11,14 +11,15 @@ import {BadgeSize, BadgeType} from '../badge/badge.js';
 /**
  * `<obc-tab-item>` – A selectable tab component for navigation menus and tabbed interfaces.
  *
- * Represents a single tab within a tab bar or navigation group, supporting optional icons, badges, close actions, and various layout modes. Designed for use in horizontal or vertical tab sets, allowing users to switch between different views or content panels.
+ * Represents a single tab within a tab bar or navigation group, supporting optional icons, subtitles, badges, close actions, and various layout modes. Designed for use in horizontal or vertical tab sets, allowing users to switch between different views or content panels.
  *
- * Appears as a button-like element that can display a leading icon, a title, a badge (for counts or status), and an optional close button. Supports both fixed-width and "hug" (fit-content) layouts, and can be styled as checked (active/selected) or disabled.
+ * Appears as a button-like element that can display a leading icon, a title, an optional subtitle, a badge (for counts or status), and an optional close button. Supports both fixed-width and "hug" (fit-content) layouts, and can be styled as checked (active/selected) or disabled.
  *
  * ### Features
  * - **Selectable State:** Indicates active/selected tab via the `checked` property.
  * - **Leading Icon:** Optionally displays a leading icon via the `leading-icon` slot.
  * - **Title:** Supports a title label, either via property or slot.
+ * - **Subtitle:** Optionally displays secondary contextual text below the title.
  * - **Badge Support:** Can show a badge (count/status) with configurable type, size, and icon.
  * - **Close Button:** Optional close action via a trailing icon button.
  * - **Layout Modes:**
@@ -33,9 +34,10 @@ import {BadgeSize, BadgeType} from '../badge/badge.js';
  * - **Badge Sizes:** Regular and large badge sizes.
  * - **Badge Number Toggle:** Optionally hide the badge number via `badgeShowNumber` for status-only badges.
  * - **Show Leading Badge Icon:** Optionally display an icon within the badge.
+ * - **Subtitle Toggle:** Optionally display a subtitle line using `showSubtitle`.
  *
  * ### Usage Guidelines
- * Use `obc-tab-item` within a tab bar or navigation group to represent a single selectable view or section. Ideal for switching between content panels, dashboards, or grouped settings. Use the `checked` property to indicate the active tab, and `disabled` to prevent selection. The close button is suitable for user-removable tabs (e.g., in dynamic tab sets).
+ * Use `obc-tab-item` within a tab bar or navigation group to represent a single selectable view or section. Ideal for switching between content panels, dashboards, or grouped settings. Use the `checked` property to indicate the active tab, and `disabled` to prevent selection. Use `subtitle` for short contextual information that helps distinguish similarly named tabs. The close button is suitable for user-removable tabs (e.g., in dynamic tab sets).
  *
  * - Use the badge for counts (e.g., notifications, alarms) or status indicators.
  * - Use the leading icon for visual context or to reinforce the tab's purpose.
@@ -68,6 +70,8 @@ import {BadgeSize, BadgeType} from '../badge/badge.js';
  *   checked
  *   has-leading-icon
  *   has-title
+ *   show-subtitle
+ *   subtitle="Context"
  *   has-badge
  *   badgeCount="3"
  *   badgeType="alarm"
@@ -169,6 +173,20 @@ export class ObcTabItem extends LitElement {
   @property({type: String}) override title = 'Tab title';
 
   /**
+   * Shows contextual text below the tab title.
+   *
+   * Default: false
+   */
+  @property({type: Boolean, attribute: 'show-subtitle'}) showSubtitle = false;
+
+  /**
+   * Contextual text shown below the tab title when `showSubtitle` is true.
+   *
+   * Default: ''
+   */
+  @property({type: String}) subtitle = '';
+
+  /**
    * Disables the tab, preventing user interaction and applying disabled styles.
    *
    * Default: false
@@ -252,6 +270,7 @@ export class ObcTabItem extends LitElement {
       'has-title': this.hasTitle,
       'has-divider': this.hasDivider && !this.checked,
       'has-badge': this.hasBadge,
+      'has-subtitle': this.showSubtitle,
       disabled: this.disabled,
       'center-content': this.centerContent,
     };
@@ -274,8 +293,13 @@ export class ObcTabItem extends LitElement {
             : nothing}
           ${this.hasTitle
             ? html`
-                <div class="title">
-                  <slot name="title">${this.title}</slot>
+                <div class="text-content">
+                  <div class="title">
+                    <slot name="title">${this.title}</slot>
+                  </div>
+                  ${this.showSubtitle && this.subtitle
+                    ? html`<div class="subtitle">${this.subtitle}</div>`
+                    : nothing}
                 </div>
               `
             : nothing}
