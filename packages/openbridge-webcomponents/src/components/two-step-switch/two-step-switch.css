@@ -1,5 +1,6 @@
 :host {
   display: inline-flex;
+  --obc-two-step-switch-drag-x: 0px;
 }
 
 .obc-two-step-switch {
