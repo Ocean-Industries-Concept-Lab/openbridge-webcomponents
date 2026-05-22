@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcStepperBoxType} from './stepper-box.js';
 import './stepper-box.js';
-import {html, nothing} from 'lit';
+import {html} from 'lit';
 
 type StepperBoxArgs = {
   type: ObcStepperBoxType;
@@ -63,9 +63,8 @@ const meta = {
         .helperText=${args.helperText}
         .placeholder=${args.placeholder}
         .readonly=${args.readonly}
-      >
-        ${args.unit ? html`<div slot="unit">${args.unit}</div>` : nothing}
-      </obc-stepper-box>
+        .unit=${args.unit}
+      ></obc-stepper-box>
     </div>
   `,
 } satisfies Meta<StepperBoxArgs>;

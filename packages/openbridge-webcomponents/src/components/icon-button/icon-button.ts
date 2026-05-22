@@ -135,6 +135,9 @@ export class ObcIconButton extends LitElement {
    */
   @property({type: Boolean}) hasLabel: boolean = false;
 
+  /** If false, and cornerLeft or cornerRight is true, the divider is not shown. */
+  @property({type: Boolean, attribute: false}) showDivider = true;
+
   get progressSpinner() {
     if (this.progress === undefined) {
       return nothing;
@@ -202,6 +205,7 @@ export class ObcIconButton extends LitElement {
           'has-label': this.hasLabel,
           wide: this.wide,
           progress: this.progress !== undefined,
+          'hide-divider': !this.showDivider,
         })}
         ?disabled=${this.disabled}
         part="wrapper"

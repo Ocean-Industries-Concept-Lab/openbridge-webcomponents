@@ -1,5 +1,5 @@
 import {LitElement, html, nothing, unsafeCSS, PropertyValues} from 'lit';
-import {property, queryAssignedElements} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import compentStyle from './stepper-box.css?inline';
 import '../../icons/icon-down-iec.js';
 import '../icon-button/icon-button.js';
@@ -9,7 +9,6 @@ import '../../icons/icon-chevron-down-google.js';
 import '../../icons/icon-chevron-right-google.js';
 import '../../icons/icon-chevron-left-google.js';
 import {customElement} from '../../decorator.js';
-import {classMap} from 'lit/directives/class-map.js';
 import '../number-input-field/number-input-field.js';
 import {ObcNumberInputFieldTextAlign} from '../number-input-field/number-input-field.js';
 
@@ -139,15 +138,6 @@ export class ObcStepperBox extends LitElement {
    */
   @property({type: Boolean}) readonly = false;
 
-  @queryAssignedElements({slot: 'unit'})
-  private unitSlotElements!: Element[];
-
-  private lastRawInput = '';
-
-  private get hasUnitSlotContent(): boolean {
-    return this.unitSlotElements.length > 0;
-  }
-
   private get downDisabled(): boolean {
     return (
       this.disabled ||
@@ -166,26 +156,12 @@ export class ObcStepperBox extends LitElement {
     );
   }
 
-  private get fieldTextAlign(): ObcNumberInputFieldTextAlign {
-    if (this.hasUnitSlotContent) {
-      return ObcNumberInputFieldTextAlign.RightUnitOutside;
-    }
-    if (this.unit) {
-      return ObcNumberInputFieldTextAlign.Right;
-    }
-    return ObcNumberInputFieldTextAlign.Center;
-  }
-
   override connectedCallback() {
     super.connectedCallback();
-    this.lastRawInput = this.value == null ? '' : String(this.value);
     this.syncDisabledAccessibility();
   }
 
   override updated(changedProperties: PropertyValues) {
-    if (changedProperties.has('value')) {
-      this.lastRawInput = this.value == null ? '' : String(this.value);
-    }
     if (changedProperties.has('disabled')) {
       this.syncDisabledAccessibility();
     }
@@ -205,10 +181,6 @@ export class ObcStepperBox extends LitElement {
       this.max ?? Infinity
     );
   }
-
-  private onUnitSlotChange = () => {
-    this.requestUpdate();
-  };
 
   private normalizedStep(step: number): number {
     if (!Number.isFinite(step) || step <= 0) {
@@ -238,11 +210,6 @@ export class ObcStepperBox extends LitElement {
   }
 
   override render() {
-    const fieldWrapperClasses = {
-      'field-wrapper': true,
-      'has-unit-slot': this.hasUnitSlotContent,
-    };
-
     const showHelper = Boolean(this.helperText);
 
     return html`
@@ -250,35 +217,27 @@ export class ObcStepperBox extends LitElement {
         <div class="display">
           <obc-icon-button
             cornerleft
+            .showDivider=${false}
             ?disabled=${this.downDisabled}
             @click=${() => this.down()}
           >
             ${this.leftIcon}
           </obc-icon-button>
-          <div class=${classMap(fieldWrapperClasses)}>
+          <div class="field-wrapper">
             <obc-number-input-field
               squared
-              .value=${this.value == null ? '' : String(this.value)}
-              .unit=${this.hasUnitSlotContent ? '' : this.unit}
+              .value=${this.value == null ? NaN : Number(this.value)}
+              .unit=${this.unit}
               .placeholder=${this.placeholder}
-              .textAlign=${this.fieldTextAlign}
+              .textAlign=${ObcNumberInputFieldTextAlign.Center}
               ?disabled=${this.disabled}
               ?readonly=${this.readonly}
               @input=${this.onNumberFieldInput}
-              @focusout=${this.onNumberFieldBlur}
             ></obc-number-input-field>
-            ${this.hasUnitSlotContent
-              ? html`<div class="unit-slot">
-                  <slot name="unit" @slotchange=${this.onUnitSlotChange}></slot>
-                </div>`
-              : html`<slot
-                  name="unit"
-                  hidden
-                  @slotchange=${this.onUnitSlotChange}
-                ></slot>`}
           </div>
           <obc-icon-button
             cornerright
+            .showDivider=${false}
             ?disabled=${this.upDisabled}
             @click=${() => this.up()}
           >
@@ -295,7 +254,6 @@ export class ObcStepperBox extends LitElement {
   private onNumberFieldInput(e: Event) {
     const input = e.target as HTMLInputElement;
     const raw = input.value;
-    this.lastRawInput = raw;
     this.dispatchEvent(
       new CustomEvent('input', {
         detail: {value: raw},
@@ -317,33 +275,6 @@ export class ObcStepperBox extends LitElement {
     this.value = parsed;
     if (previous !== this.value) {
       this.dispatchChange(this.value);
-    }
-  }
-
-  private onNumberFieldBlur(e: FocusEvent) {
-    const next = e.relatedTarget;
-    if (next instanceof Node && this.contains(next)) {
-      return;
-    }
-
-    const raw = this.lastRawInput.trim();
-    const parsed = Number(this.lastRawInput);
-    const isValidInput = raw !== '' && Number.isFinite(parsed);
-    const nextValue = isValidInput
-      ? this.clamp(parsed)
-      : this.value == null
-        ? null
-        : this.clamp(this.value);
-
-    if (nextValue !== this.value) {
-      this.value = nextValue;
-      this.dispatchChange(this.value);
-    }
-
-    const normalizedDisplay = this.value == null ? '' : String(this.value);
-    if (this.lastRawInput !== normalizedDisplay) {
-      this.lastRawInput = normalizedDisplay;
-      this.requestUpdate();
     }
   }
 
