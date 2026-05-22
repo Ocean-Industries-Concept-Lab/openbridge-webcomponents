@@ -65,6 +65,26 @@ export enum TankOrientation {
   horizontal = 'horizontal',
 }
 
+/**
+ * Host positioning model.
+ *
+ * - `point` (default): the host has fixed default dimensions (per
+ *   orientation and compact / static variant) and a P&ID anchor — the
+ *   visual content is shifted with `translateX(-50%)` and (in non-compact)
+ *   `top: -20px` so the tank's top-center aligns with the host's top-left
+ *   placement coordinate. Use this when dropping the tank onto a P&ID
+ *   canvas at a pipe-grid coordinate.
+ * - `button`: the host fills its parent container (100% × 100%) with no
+ *   anchor offset. Use this when embedding the tank inside a sized layout
+ *   slot — the parent controls the footprint and the tank renders
+ *   responsively inside it, just like a regular button. Compact / static
+ *   inner layout still applies; only the host box is changed.
+ */
+export enum TankPositioning {
+  point = 'point',
+  button = 'button',
+}
+
 export enum TankChartMode {
   /** Static fill bar driven by `value` / `max` (default, backward compatible). */
   bar = 'bar',
@@ -91,6 +111,14 @@ export class ObcAutomationTank extends LitElement {
   @property({type: String, reflect: true}) orientation: TankOrientation =
     TankOrientation.vertical;
   @property({type: Boolean, reflect: true}) compact: boolean = false;
+  /**
+   * Host positioning model — see `TankPositioning` for details. Defaults to
+   * `point` for backward compatibility (fixed default dimensions + P&ID
+   * top-center anchor). Set to `button` to make the host fill its parent
+   * container (100% × 100%) with no anchor offset.
+   */
+  @property({type: String, reflect: true}) positioning: TankPositioning =
+    TankPositioning.point;
   /**
    * Static (display-only) variant. Always rendered at the compact size; the
    * inner chart/bar is hidden, the bordered area is filled with

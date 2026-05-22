@@ -55,6 +55,35 @@
   height: 208px;
 }
 
+/* ---------- positioning="button" ----------
+ * Host fills its parent (100% × 100%) with no P&ID anchor offset. The
+ * parent container is responsible for placement and sizing; the tank
+ * renders responsively inside it. Overrides all the fixed default
+ * dimensions above (regular / compact / static, both orientations) and
+ * also drops the min-width / min-height floors so the tank can shrink to
+ * whatever the parent allows. Inner layout (compact / static / chart
+ * mode / orientation) is unaffected — only the host box and the .root
+ * anchor transform change.
+ */
+:host([positioning="button"]),
+:host([positioning="button"][orientation="horizontal"]),
+:host([positioning="button"][compact]),
+:host([positioning="button"][orientation="horizontal"][compact]),
+:host([positioning="button"][static]),
+:host([positioning="button"][orientation="horizontal"][static]) {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+:host([positioning="button"]) .root {
+  position: static;
+  top: auto;
+  left: auto;
+  transform: none;
+}
+
 .trend-icon {
   display: block;
   width: 24px;

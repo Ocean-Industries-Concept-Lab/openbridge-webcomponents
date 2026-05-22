@@ -3,6 +3,7 @@ import {
   ObcAutomationTank,
   TankChartMode,
   TankOrientation,
+  TankPositioning,
   TankTrend,
   TankType,
 } from './automation-tank.js';
@@ -65,6 +66,7 @@ const renderTank = (args: StoryArgs) => html`
     .orientation=${args.orientation}
     .compact=${args.compact}
     .static=${args.static}
+    .positioning=${args.positioning}
     .chartMode=${args.chartMode}
     .chartData=${args.chartData}
     .advice=${args.advice}
@@ -100,6 +102,7 @@ const meta: Meta<StoryArgs> = {
     orientation: TankOrientation.vertical,
     compact: false,
     static: false,
+    positioning: TankPositioning.point,
     chartMode: TankChartMode.bar,
     chartData: SAMPLE_DATA,
     advice: [],
@@ -135,6 +138,12 @@ const meta: Meta<StoryArgs> = {
     chartMode: {
       options: Object.values(TankChartMode),
       control: {type: 'radio'},
+    },
+    positioning: {
+      options: Object.values(TankPositioning),
+      control: {type: 'radio'},
+      description:
+        'Host positioning model. `point` (default) gives the host fixed default dimensions and a P&ID top-center anchor. `button` makes the host fill its parent container (100% × 100%) with no anchor offset — use this when embedding the tank inside a sized layout slot.',
     },
     value: {
       control: {type: 'range', min: 0, max: 10_000},
@@ -378,6 +387,7 @@ export const WithFractionDigits: Story = {
       .orientation=${args.orientation}
       .compact=${args.compact}
       .static=${args.static}
+      .positioning=${args.positioning}
       .chartMode=${args.chartMode}
       .chartData=${args.chartData}
       .advice=${args.advice}
@@ -416,6 +426,7 @@ export const WithAlertAlarm: Story = {
       .orientation=${args.orientation}
       .compact=${args.compact}
       .static=${args.static}
+      .positioning=${args.positioning}
       .chartMode=${args.chartMode}
       .chartData=${args.chartData}
       .advice=${args.advice}
@@ -469,16 +480,17 @@ export const WithAlertCautionCompact: Story = {
 };
 
 /**
- * Demonstrates host-driven resizing: drag the corner of the dashed container
- * to change its size — the tank fills the container's width and height, and
- * any extra space flows into the chart cell (textual cells stay min-content).
- * All controls (orientation, type, compact, static, etc.) remain functional.
+ * Demonstrates `positioning="button"`: the tank host fills its parent
+ * container (100% × 100%) with no P&ID anchor offset, so it behaves like a
+ * regular button placed inside a sized layout slot. Drag the corner of the
+ * dashed container to resize it — the tank fills the new footprint, and any
+ * extra space flows into the chart cell (textual cells stay min-content).
+ * All controls (orientation, type, compact, static, chart mode, etc.)
+ * remain functional.
  *
- * The tank host is placed at `left: 50%` of the container (the P&ID drop
- * coordinate) so its centerline aligns with the container's center, matching
- * the component's anchor-point convention. The host's `width` is sized to the
- * full container minus the visual padding, so the visible tank extends
- * symmetrically inward from both edges.
+ * Contrast with the default `positioning="point"` used by every other
+ * story, which gives the host fixed default dimensions and a P&ID
+ * top-center anchor for placement on a pipe-grid coordinate.
  */
 export const Responsive: Story = {
   args: {
@@ -488,6 +500,7 @@ export const Responsive: Story = {
     advice: SAMPLE_ADVICE,
     badgeControl: AutomationButtonBadgeControl.Auto,
     badgeCommandLocked: AutomationButtonBadgeCommandLocked.CommandLocked,
+    positioning: TankPositioning.button,
   },
   decorators: [],
   render(args) {
@@ -502,11 +515,9 @@ export const Responsive: Story = {
           min-height: 120px;
           border: 2px dashed var(--instrument-frame-tertiary-color);
           box-sizing: border-box;
-          position: relative;
         "
       >
         <obc-automation-tank
-          style="position: absolute; left: 50%; top: 16px; width: calc(100% - 32px); height: calc(100% - 32px);"
           .value=${args.value}
           .max=${args.max}
           .trend=${args.trend}
@@ -515,6 +526,7 @@ export const Responsive: Story = {
           .orientation=${args.orientation}
           .compact=${args.compact}
           .static=${args.static}
+          .positioning=${args.positioning}
           .chartMode=${args.chartMode}
           .chartData=${args.chartData}
           .advice=${args.advice}
