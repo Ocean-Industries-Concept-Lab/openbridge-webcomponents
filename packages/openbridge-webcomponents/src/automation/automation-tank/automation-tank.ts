@@ -50,6 +50,7 @@ export enum TankTrend {
   stable = 'stable',
   falling = 'falling',
   fastFalling = 'fast-falling',
+  closed = 'closed',
 }
 
 export enum TankType {
@@ -352,7 +353,7 @@ export class ObcAutomationTank extends LitElement {
     this._observedCell = cell;
   }
 
-  trendIcon(): HTMLTemplateResult {
+  trendIcon(): HTMLTemplateResult | typeof nothing {
     if (this.trend === TankTrend.fastRising) {
       return html`<obi-chevron-double-up-google
         class="trend-icon"
@@ -369,8 +370,11 @@ export class ObcAutomationTank extends LitElement {
       return html`<obi-chevron-down-google
         class="trend-icon"
       ></obi-chevron-down-google>`;
-    } else {
+    } else if (this.trend === TankTrend.closed) {
       return html`<obi-off class="trend-icon"></obi-off>`;
+    } else {
+      // stable: render no icon
+      return nothing;
     }
   }
 
