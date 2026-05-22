@@ -351,7 +351,8 @@
   align-items: center;
   justify-content: flex-end;
   gap: 4px;
-  border-bottom: 1px solid var(--border-outline-color);
+  /* TODO: we will need such divider in the future for the 'rich' option */
+  /* border-bottom: 1px solid var(--border-outline-color); */
   padding-bottom: 2px;
 
   .percent {
