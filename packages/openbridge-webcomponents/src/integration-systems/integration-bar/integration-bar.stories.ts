@@ -5,7 +5,10 @@ import {html} from 'lit';
 import '../../components/dropdown-button/dropdown-button.js';
 import '../../components/clock/clock.js';
 import '../integration-vessel-menu/integration-vessel-menu.js';
-import {IntegrationButtonVariant} from '../integration-button/integration-button.js';
+import {
+  IntegrationButtonType,
+  IntegrationButtonVariant,
+} from '../integration-button/integration-button.js';
 
 function makeStringShorter(str: string, maxLength: number): string {
   if (str.length <= maxLength) {
@@ -13,6 +16,21 @@ function makeStringShorter(str: string, maxLength: number): string {
   }
   return str.slice(0, maxLength);
 }
+
+function getIntegrationnButtonType(hug: boolean, rich: boolean) {
+  if (hug) {
+    return IntegrationButtonType.hug;
+  } else if (rich) {
+    return IntegrationButtonType.rich;
+  } else {
+    return IntegrationButtonType.regular;
+  }
+}
+
+const readouts = [
+  {label: 'Readout 1', value: 'Value 1', unit: 'Unit 1'},
+  {label: 'Readout 2', value: 'Value 2', unit: 'Unit 2'},
+];
 
 type IntegrationBarStoryArgs = ObcIntegrationBar & {
   date: string;
@@ -22,41 +40,58 @@ type IntegrationBarStoryArgs = ObcIntegrationBar & {
   clockMinimizeBreakpointPx: number;
   showVesselIntegrationMenu: boolean;
   hug: boolean;
+  rich: boolean;
   makeLabelNamesShort: boolean;
   containerWidthPx: number;
+  showStatus: boolean;
 };
 
 function renderIntegrationButtons({
   onIntegrationButtonClick,
   shortNames,
   hug,
+  rich,
   shouldShowDividerRight,
+  showStatus,
 }: {
   onIntegrationButtonClick: (event: Event, buttonIndex: number) => void;
   shortNames: boolean;
   hug: boolean;
+  rich: boolean;
   shouldShowDividerRight: (buttonIndex: number) => boolean;
+  showStatus: boolean;
 }) {
   const slotName = hug ? 'hug-buttons' : 'integration-buttons';
+  const buttonType = getIntegrationnButtonType(hug, rich);
 
   return html`
     <obc-integration-button
       hasLeadingIcon
       .variant=${IntegrationButtonVariant.flat}
+      .type=${buttonType}
+      .readouts=${readouts}
+      .hasStatus=${showStatus}
       ?selected=${false}
       ?activated=${false}
       ?dividerRight=${shouldShowDividerRight(0)}
       @click=${(e: Event) => onIntegrationButtonClick(e, 0)}
       slot=${slotName}
+      .
     >
       <obi-ship slot="leading-icon"></obi-ship>
       <span slot="label"
         >${shortNames ? makeStringShorter('Boat', 2) : 'Boat'}</span
       >
+      <div slot="info-label">Info Label</div>
+      <div slot="info-status">Info Status</div>
+      <div slot="status">Status</div>
     </obc-integration-button>
     <obc-integration-button
       hasLeadingIcon
       .variant=${IntegrationButtonVariant.flat}
+      .type=${buttonType}
+      .readouts=${readouts}
+      .hasStatus=${showStatus}
       ?selected=${false}
       ?activated=${false}
       ?dividerRight=${shouldShowDividerRight(1)}
@@ -67,10 +102,16 @@ function renderIntegrationButtons({
       <span slot="label"
         >${shortNames ? makeStringShorter('Space Ship', 2) : 'Space Ship'}</span
       >
+      <div slot="info-label">Info Label</div>
+      <div slot="info-status">Info Status</div>
+      <div slot="status">Status</div>
     </obc-integration-button>
     <obc-integration-button
       hasLeadingIcon
       .variant=${IntegrationButtonVariant.flat}
+      .type=${buttonType}
+      .readouts=${readouts}
+      .hasStatus=${showStatus}
       ?selected=${false}
       ?activated=${true}
       ?dividerRight=${shouldShowDividerRight(2)}
@@ -81,10 +122,16 @@ function renderIntegrationButtons({
       <span slot="label"
         >${shortNames ? makeStringShorter('Vessel', 2) : 'Vessel'}</span
       >
+      <div slot="info-label">Info Label</div>
+      <div slot="info-status">Info Status</div>
+      <div slot="status">Status</div>
     </obc-integration-button>
     <obc-integration-button
       hasLeadingIcon
       .variant=${IntegrationButtonVariant.flat}
+      .type=${buttonType}
+      .readouts=${readouts}
+      .hasStatus=${showStatus}
       ?selected=${true}
       ?activated=${false}
       ?dividerRight=${shouldShowDividerRight(3)}
@@ -95,6 +142,9 @@ function renderIntegrationButtons({
       <span slot="label"
         >${shortNames ? makeStringShorter('Last', 2) : 'Last'}</span
       >
+      <div slot="info-label">Info Label</div>
+      <div slot="info-status">Info Status</div>
+      <div slot="status">Status</div>
     </obc-integration-button>
   `;
 }
@@ -120,6 +170,7 @@ const meta: Meta<IntegrationBarStoryArgs> = {
     timeZoneOffsetHours: 1,
     hideHomeButton: false,
     hug: false,
+    rich: false,
     showLinkButton: false,
     linkButtonActivated: false,
     showUserButton: true,
@@ -135,7 +186,7 @@ const meta: Meta<IntegrationBarStoryArgs> = {
     showAlertButton: true,
     alertButtonActivated: false,
     showVesselIntegrationMenu: false,
-
+    showStatus: false,
     fleetButtonSelected: false,
     fleetButtonActivated: false,
     fleetButtonLabel: 'Fleet',
@@ -152,6 +203,9 @@ const meta: Meta<IntegrationBarStoryArgs> = {
       control: {type: 'boolean'},
     },
     hug: {
+      control: {type: 'boolean'},
+    },
+    rich: {
       control: {type: 'boolean'},
     },
   },
@@ -269,7 +323,9 @@ const meta: Meta<IntegrationBarStoryArgs> = {
             onIntegrationButtonClick,
             shortNames: args.makeLabelNamesShort,
             hug: args.hug,
+            rich: args.rich,
             shouldShowDividerRight,
+            showStatus: args.showStatus,
           })}
         </obc-integration-bar>
       </div>
@@ -284,6 +340,12 @@ export const Primary: Story = {
   args: {},
 };
 
+export const WithStatus: Story = {
+  args: {
+    showStatus: true,
+  },
+};
+
 export const Hug: Story = {
   args: {
     hug: true,
@@ -291,14 +353,10 @@ export const Hug: Story = {
   },
 };
 
-export const WideSpace: Story = {
+export const Rich: Story = {
   args: {
-    containerWidthPx: 1800,
-  },
-};
-
-export const TightSpace: Story = {
-  args: {
-    containerWidthPx: 520,
+    makeLabelNamesShort: false,
+    rich: true,
+    containerWidthPx: 1920,
   },
 };

@@ -19,7 +19,7 @@
 
 .fleet-vessel-container {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   flex: 1;
   gap: var(--app-components-integration-system-menu-spacing-horizontal);
 }
