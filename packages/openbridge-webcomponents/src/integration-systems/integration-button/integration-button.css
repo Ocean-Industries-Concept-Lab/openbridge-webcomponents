@@ -27,7 +27,10 @@
     --app-components-integration-system-navigation-item-horizontal-touch-target
   );
 
-  padding: 4px 4px;
+  padding: 4px
+    var(
+      --app-components-integration-system-navigation-item-horizontal-margin-horizontal
+    );
   border: none;
   background: transparent;
   appearance: none;
@@ -99,12 +102,23 @@
     flex-direction: column;
     align-items: flex-start;
     align-self: stretch;
+    padding: 0;
   }
 
   .main-container {
     display: flex;
-    padding: var(--app-components-integration-system-button-padding-vertical)
-      var(--app-components-integration-system-button-padding-horizontal-large);
+    padding: var(
+        --app-components-integration-system-navigation-item-horizontal-padding-vertical
+      )
+      var(
+        --app-components-integration-system-navigation-item-horizontal-padding-horizontal
+      )
+      var(
+        --app-components-integration-system-navigation-item-horizontal-padding-vertical
+      )
+      var(
+        --app-components-integration-system-navigation-item-horizontal-padding-horizontal-large
+      );
     align-items: center;
     gap: var(--app-components-integration-system-button-label-spacing);
     align-self: stretch;
@@ -166,16 +180,15 @@
     display: flex;
     padding: 0
       var(
-        --app-components-integration-system-navigation-item-horizontal-padding-horizontal
+        --app-components-integration-system-navigation-item-horizontal-padding-horizontal-large
       )
       var(
         --app-components-integration-system-navigation-item-horizontal-padding-vertical
       )
       var(
-        --app-components-integration-system-navigation-item-horizontal-padding-horizontal
+        --app-components-integration-system-navigation-item-horizontal-padding-horizontal-large
       );
     align-items: center;
-    justify-content: flex-start;
     gap: var(
       --app-components-integration-system-navigation-item-horizontal-label-spacing
     );
@@ -273,6 +286,10 @@
 
 .type-rich.touch-target {
   align-items: flex-start;
+  padding: 0
+    var(
+      --app-components-integration-system-navigation-item-horizontal-margin-horizontal
+    );
 }
 
 .divider-bottom {
