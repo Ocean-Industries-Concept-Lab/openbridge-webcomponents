@@ -1,0 +1,81 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+:host([sector="90-left"]),
+:host([sector="90-right"]) {
+  width: 200px;
+  height: 200px;
+}
+
+.gauge-radial-root {
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+  .gauge-readout-value {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+  }
+
+  .gauge-readout-meta {
+    position: absolute;
+    left: 50%;
+    top: 72%;
+    transform: translateX(-50%);
+    z-index: 1;
+  }
+
+  &.type-needle .gauge-readout-meta {
+    top: 63%;
+  }
+
+  &.sector-180 .gauge-readout-meta {
+    top: 60%;
+  }
+
+  &.sector-90-left {
+    .gauge-readout-meta {
+      left: auto;
+      right: 0;
+      bottom: 0;
+      top: auto;
+      transform: none;
+    }
+
+    obc-readout.gauge-readout-meta::part(value-icon-container) {
+      display: none;
+    }
+  }
+
+  &.sector-90-right {
+    .gauge-readout-meta {
+      left: 0;
+      right: auto;
+      bottom: 0;
+      top: auto;
+      transform: none;
+    }
+
+    obc-readout.gauge-readout-meta {
+      &::part(value-wrapper),
+      &::part(meta-wrapper) {
+        justify-self: start;
+      }
+
+      &::part(instrument-label-unit-container) {
+        margin-left: 0;
+        margin-right: auto;
+      }
+
+      &::part(value-icon-container) {
+        display: none;
+      }
+    }
+  }
+}

@@ -1033,6 +1033,7 @@ export class ObcReadout extends LitElement {
 
     return html`
       <obc-readout-input
+        exportparts="icon-container: value-icon-container"
         .variant=${ReadoutInputVariant.value}
         .readoutStyle=${valueReadoutStyle}
         .direction=${this.direction}
