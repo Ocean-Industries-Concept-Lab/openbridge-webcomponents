@@ -229,48 +229,50 @@ const meta: Meta<IntegrationBarStoryArgs> = {
       integrationBar.fleetButtonActivated = true;
     };
 
-    return html`<div style=${`width: min(100%, ${args.containerWidthPx}px);`}>
-      <obc-integration-bar
-        style="width: 100%;"
-        @fleet-button-click=${onFleetButtonClick}
-        .hideHomeButton=${args.hideHomeButton}
-        .showLinkButton=${args.showLinkButton}
-        .linkButtonActivated=${args.linkButtonActivated}
-        .showClock=${args.showClock}
-        .showUserButton=${args.showUserButton}
-        .userButtonActivated=${args.userButtonActivated}
-        .showDimmingButton=${args.showDimmingButton}
-        .dimmingButtonActivated=${args.dimmingButtonActivated}
-        .showSystemButton=${args.showSystemButton}
-        .systemButtonActivated=${args.systemButtonActivated}
-        .showAlertButton=${args.showAlertButton}
-        .alertButtonActivated=${args.alertButtonActivated}
-        .showScreenButton=${args.showScreenButton}
-        .screenButtonActivated=${args.screenButtonActivated}
-        .showNotificationButton=${args.showNotificationButton}
-        .notificationButtonActivated=${args.notificationButtonActivated}
-        .fleetButtonSelected=${args.fleetButtonSelected}
-        .fleetButtonActivated=${args.fleetButtonActivated}
-        .fleetButtonLabel=${args.fleetButtonLabel}
-      >
-        <obc-clock
-          integrationBarMode
-          .date=${args.date}
-          .showDate=${args.showDate}
-          slot="clock"
-          .showTimezone=${args.showTimezone}
-          .timeZoneOffsetHours=${args.timeZoneOffsetHours}
-          .blinkOnlyBreakpointPx=${args.clockMinimizeBreakpointPx}
-        ></obc-clock>
-        <!-- TODO: Re-enable vessel integration menu story variant with proper handlers. -->
+    return html`<div style="width: 100%; overflow-x: auto;">
+      <div style=${`width: ${args.containerWidthPx}px;`}>
+        <obc-integration-bar
+          style="width: 100%;"
+          @fleet-button-click=${onFleetButtonClick}
+          .hideHomeButton=${args.hideHomeButton}
+          .showLinkButton=${args.showLinkButton}
+          .linkButtonActivated=${args.linkButtonActivated}
+          .showClock=${args.showClock}
+          .showUserButton=${args.showUserButton}
+          .userButtonActivated=${args.userButtonActivated}
+          .showDimmingButton=${args.showDimmingButton}
+          .dimmingButtonActivated=${args.dimmingButtonActivated}
+          .showSystemButton=${args.showSystemButton}
+          .systemButtonActivated=${args.systemButtonActivated}
+          .showAlertButton=${args.showAlertButton}
+          .alertButtonActivated=${args.alertButtonActivated}
+          .showScreenButton=${args.showScreenButton}
+          .screenButtonActivated=${args.screenButtonActivated}
+          .showNotificationButton=${args.showNotificationButton}
+          .notificationButtonActivated=${args.notificationButtonActivated}
+          .fleetButtonSelected=${args.fleetButtonSelected}
+          .fleetButtonActivated=${args.fleetButtonActivated}
+          .fleetButtonLabel=${args.fleetButtonLabel}
+        >
+          <obc-clock
+            integrationBarMode
+            .date=${args.date}
+            .showDate=${args.showDate}
+            slot="clock"
+            .showTimezone=${args.showTimezone}
+            .timeZoneOffsetHours=${args.timeZoneOffsetHours}
+            .blinkOnlyBreakpointPx=${args.clockMinimizeBreakpointPx}
+          ></obc-clock>
+          <!-- TODO: Re-enable vessel integration menu story variant with proper handlers. -->
 
-        ${renderIntegrationButtons({
-          onIntegrationButtonClick,
-          shortNames: args.makeLabelNamesShort,
-          hug: args.hug,
-          shouldShowDividerRight,
-        })}
-      </obc-integration-bar>
+          ${renderIntegrationButtons({
+            onIntegrationButtonClick,
+            shortNames: args.makeLabelNamesShort,
+            hug: args.hug,
+            shouldShowDividerRight,
+          })}
+        </obc-integration-bar>
+      </div>
     </div>`;
   },
 } satisfies Meta<IntegrationBarStoryArgs>;
