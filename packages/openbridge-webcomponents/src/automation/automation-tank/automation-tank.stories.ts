@@ -71,6 +71,7 @@ const renderTank = (args: StoryArgs) => html`
     .hasAdvice=${args.hasAdvice}
     .hasGraphIcon=${args.hasGraphIcon}
     .showTrendSymbol=${args.showTrendSymbol}
+    .percentFractionDigits=${args.percentFractionDigits}
     ?alert=${args.alert}
     .alertFrameType=${args.alertFrameType}
     .alertFrameThickness=${args.alertFrameThickness}
@@ -105,6 +106,7 @@ const meta: Meta<StoryArgs> = {
     hasAdvice: false,
     hasGraphIcon: false,
     showTrendSymbol: true,
+    percentFractionDigits: 0,
     alert: false,
     alertFrameType: ObcAlertFrameType.SmallSideFlip,
     alertFrameThickness: ObcAlertFrameThickness.Small,
@@ -155,6 +157,11 @@ const meta: Meta<StoryArgs> = {
       control: {type: 'boolean'},
       description:
         'Show the trend chevron / off icon next to the percent readout. Default `true`. Set to `false` to hide the trend indicator in both compact/static and non-compact layouts.',
+    },
+    percentFractionDigits: {
+      control: {type: 'number', min: 0, max: 4, step: 1},
+      description:
+        'Number of fraction digits used to format the percent readout in the non-compact layout. Default `0` (integer percent). The compact / static layout always renders integer percent. Volume readouts (`value` / `max`) are formatted by the consumer through the `current-value` / `max-value` slots (see the `WithFractionDigits` story).',
     },
     advice: {
       control: {type: 'object'},
@@ -340,14 +347,17 @@ export const BatteryWithGraphIcon: Story = {
 };
 
 /**
- * Demonstrates fractional value/max display in the non-compact readout by
- * slotting the `current-value` and `max-value` slots with pre-formatted
- * numbers. The component's default rendering uses `.toFixed(0)`; consumers
- * that need decimals format the number themselves and pass it through the
- * slot. A custom `unit` slot is used here too (litres instead of m³).
+ * Demonstrates fractional precision in the non-compact readout. The percent
+ * readout is controlled by the `percentFractionDigits` property (here `1`,
+ * yielding e.g. `25.0%`). The absolute value / max readouts are formatted
+ * by the consumer through the `current-value` and `max-value` slots — the
+ * component's default rendering uses `.toFixed(0)`, so any decimals must be
+ * supplied by the slotted markup. A custom `unit` slot is used too (litres
+ * instead of m³).
  *
- * The compact / static layouts only show the percent (no absolute value),
- * so fraction-digit control only applies to the non-compact layout.
+ * The compact / static layouts only show the percent (no absolute value)
+ * and always render it as an integer to keep their fixed-width footprint
+ * stable, so fraction-digit control only applies to the non-compact layout.
  */
 export const WithFractionDigits: Story = {
   args: {
@@ -356,6 +366,7 @@ export const WithFractionDigits: Story = {
     max: 5,
     trend: TankTrend.rising,
     tag: 'FUEL',
+    percentFractionDigits: 1,
   },
   render: (args) => html`
     <obc-automation-tank
@@ -374,6 +385,7 @@ export const WithFractionDigits: Story = {
       .hasGraphIcon=${args.hasGraphIcon}
       .showTrendSymbol=${args.showTrendSymbol}
       .priority=${args.priority}
+      .percentFractionDigits=${args.percentFractionDigits}
     >
       <span slot="current-value">${args.value.toFixed(2)}</span>
       <span slot="max-value">${args.max.toFixed(2)}</span>
@@ -410,6 +422,7 @@ export const WithAlertAlarm: Story = {
       .hasAdvice=${args.hasAdvice}
       .hasGraphIcon=${args.hasGraphIcon}
       .showTrendSymbol=${args.showTrendSymbol}
+      .percentFractionDigits=${args.percentFractionDigits}
       ?alert=${args.alert}
       .alertFrameType=${args.alertFrameType}
       .alertFrameThickness=${args.alertFrameThickness}
@@ -508,6 +521,7 @@ export const Responsive: Story = {
           .hasAdvice=${args.hasAdvice}
           .hasGraphIcon=${args.hasGraphIcon}
           .showTrendSymbol=${args.showTrendSymbol}
+          .percentFractionDigits=${args.percentFractionDigits}
           ?alert=${args.alert}
           .alertFrameType=${args.alertFrameType}
           .alertFrameThickness=${args.alertFrameThickness}

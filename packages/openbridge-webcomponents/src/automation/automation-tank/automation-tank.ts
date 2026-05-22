@@ -180,6 +180,17 @@ export class ObcAutomationTank extends LitElement {
   @property({type: Boolean, attribute: false}) showTrendSymbol: boolean = true;
 
   /**
+   * Number of fraction digits used to format the percent readout in the
+   * non-compact (regular) layout. Defaults to `0` (integer percent). The
+   * compact / static layout always renders integer percent to keep its
+   * fixed-width footprint stable. Volume readouts (`value` / `max`) are
+   * formatted by the consumer through the `current-value` / `max-value`
+   * slots when fractional precision is needed (see the `WithFractionDigits`
+   * story).
+   */
+  @property({type: Number}) percentFractionDigits: number = 0;
+
+  /**
    * Enum-driven badges rendered inside the `badges` cell. Mirrors the API
    * introduced for `ObcAbstractAutomationButton` in PR #839 (#829). When set
    * to a non-`None` value, an `<obc-automation-badge>` of the corresponding
@@ -623,7 +634,10 @@ export class ObcAutomationTank extends LitElement {
               <div class="header">
                 ${this.showTrendSymbol ? this.trendIcon() : null}
                 <div class="percent">
-                  ${percent.toFixed(0)}<span class="percent-symbol">%</span>
+                  ${percent.toFixed(this.percentFractionDigits)}<span
+                    class="percent-symbol"
+                    >%</span
+                  >
                 </div>
               </div>
               <div class="value">
