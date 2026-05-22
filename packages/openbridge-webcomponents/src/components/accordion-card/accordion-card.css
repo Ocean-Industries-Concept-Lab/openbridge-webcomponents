@@ -2,13 +2,16 @@
   box-sizing: border-box;
 }
 
+:host {
+  display: block;
+}
+
 .wrapper {
   display: flex;
-  user-select: none;
-  width: auto;
   flex-direction: column;
   align-items: center;
-  width: 320px;
+  width: 100%;
+  user-select: none;
 
   .card-container {
     display: flex;
