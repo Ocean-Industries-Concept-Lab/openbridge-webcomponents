@@ -6,6 +6,12 @@ import './analog-valve.js';
 import {crossDecorator} from '../../storybook-util.js';
 import '../automation-badge/automation-badge.js';
 import {argTypesAbstractAutomationButtonPassiveRound} from '../automation-button/abstract-automation-button-storybook-helpers.js';
+import {
+  AutomationButtonBadgeAlert,
+  AutomationButtonBadgeCommandLocked,
+  AutomationButtonBadgeControl,
+  AutomationButtonBadgeInterlock,
+} from '../automation-button/abstract-automation-button.js';
 
 const meta: Meta<typeof ObcAnalogValve> = {
   title: 'Automation/Automation Devices/Analog Valve',
@@ -13,14 +19,13 @@ const meta: Meta<typeof ObcAnalogValve> = {
   component: 'obc-analog-valve',
   decorators: [crossDecorator],
   args: {
-    tag: '0012',
+    tag: '#0012',
     readoutPosition: AutomationButtonReadoutPosition.bottom,
     readoutSize: AutomationButtonReadoutStackSize.regular,
     alert: false,
     progress: false,
     vertical: false,
     showReadoutStack: true,
-    hasIdTag: true,
   },
   argTypes: {
     ...argTypesAbstractAutomationButtonPassiveRound,
@@ -49,9 +54,9 @@ export const WithBadges: Story = {
   args: {
     open: true,
     value: 20,
-    badgeAlertOff: true,
-    badgeAuto: true,
-    badgeDuty: true,
-    badgeCommandLocked: true,
+    badgeAlert: AutomationButtonBadgeAlert.Silence,
+    badgeControl: AutomationButtonBadgeControl.Auto,
+    badgeInterlock: AutomationButtonBadgeInterlock.Interlock,
+    badgeCommandLocked: AutomationButtonBadgeCommandLocked.CommandLocked,
   },
 };

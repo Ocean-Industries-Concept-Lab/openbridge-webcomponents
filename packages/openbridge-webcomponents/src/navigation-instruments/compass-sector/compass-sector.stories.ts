@@ -39,6 +39,17 @@ const meta: Meta<typeof ObcCompassSector> = {
     minFOV: {control: {type: 'range', min: 5, max: 180, step: 5}},
     rotationsPerMinute: {
       control: {type: 'range', min: -10, max: 10, step: 0.1},
+      description: '**Deprecated.** Use `rateOfTurnDegreesPerMinute` instead.',
+    },
+    rateOfTurnDegreesPerMinute: {
+      control: {type: 'range', min: -180, max: 180, step: 1},
+      description:
+        'Measured rate of turn in degrees per minute (positive = starboard).',
+    },
+    rotDotAnimationFactor: {
+      control: {type: 'range', min: 1, max: 60, step: 1},
+      description:
+        'Visual amplification for the dot animation only (not bar extent).',
     },
     rotMaxValue: {control: {type: 'range', min: 1, max: 60, step: 1}},
     rotType: {
@@ -155,6 +166,21 @@ export const WithRotBarEnhanced: Story = {
     headingSetpoint: 311,
     rotType: RotType.bar,
     rotationsPerMinute: 5,
+    priorityElements: [
+      CompassSectorPriorityElement.hdg,
+      CompassSectorPriorityElement.rot,
+    ],
+  },
+};
+
+export const WithRateOfTurnDegreesPerMinute: Story = {
+  tags: ['skip-test'],
+  args: {
+    headingSetpoint: 311,
+    rotType: RotType.bar,
+    rateOfTurnDegreesPerMinute: 20,
+    rotDotAnimationFactor: 18,
+    rotMaxValue: 60,
     priorityElements: [
       CompassSectorPriorityElement.hdg,
       CompassSectorPriorityElement.rot,

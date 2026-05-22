@@ -1,6 +1,10 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
-import {ObcSystemMenu, SystemSubMenu} from './system-menu.js';
+import {
+  ObcSystemMenu,
+  SystemMenuControlMode,
+  SystemSubMenu,
+} from './system-menu.js';
 import './system-menu.js';
 
 interface SystemMenuStoryArgs {
@@ -10,6 +14,8 @@ interface SystemMenuStoryArgs {
   batteryState?: ObcSystemMenu['batteryState'];
   condensed?: boolean;
   showSettingsButton?: boolean;
+  audioControlMode?: SystemMenuControlMode;
+  microphoneControlMode?: SystemMenuControlMode;
   activeSubMenu?: SystemSubMenu;
   externalControl?: boolean;
   smallScreen?: boolean;
@@ -18,8 +24,22 @@ interface SystemMenuStoryArgs {
 function interactiveRender(args: SystemMenuStoryArgs) {
   return html`<obc-system-menu
     .wifiState=${args.wifiState}
-    .audioState=${args.audioState}
-    .microphoneState=${args.microphoneState}
+    .audioState=${args.audioState
+      ? {
+          ...args.audioState,
+          ...(args.audioControlMode !== undefined
+            ? {controlMode: args.audioControlMode}
+            : {}),
+        }
+      : undefined}
+    .microphoneState=${args.microphoneState
+      ? {
+          ...args.microphoneState,
+          ...(args.microphoneControlMode !== undefined
+            ? {controlMode: args.microphoneControlMode}
+            : {}),
+        }
+      : undefined}
     .batteryState=${args.batteryState}
     .condensed=${args.condensed ?? false}
     .showSettingsButton=${args.showSettingsButton ?? false}
@@ -80,18 +100,38 @@ function interactiveRender(args: SystemMenuStoryArgs) {
   ></obc-system-menu>`;
 }
 
-const meta: Meta<typeof ObcSystemMenu> = {
+const meta: Meta<SystemMenuStoryArgs> = {
   title: 'Application Components/Menus/System Menu',
   tags: ['6.0'],
   component: 'obc-system-menu',
-} satisfies Meta<ObcSystemMenu>;
+  argTypes: {
+    condensed: {table: {category: 'Attributes'}},
+    showSettingsButton: {
+      table: {category: 'Attributes'},
+    },
+    audioControlMode: {
+      options: Object.values(SystemMenuControlMode),
+      control: {type: 'select'},
+      table: {category: 'Attributes'},
+    },
+    microphoneControlMode: {
+      options: Object.values(SystemMenuControlMode),
+      control: {type: 'select'},
+      table: {category: 'Attributes'},
+    },
+    externalControl: {table: {category: 'Attributes'}},
+    smallScreen: {table: {category: 'Attributes'}},
+  },
+} satisfies Meta<SystemMenuStoryArgs>;
 
 export default meta;
-type Story = StoryObj<ObcSystemMenu>;
+type Story = StoryObj<SystemMenuStoryArgs>;
 
 const defaultArgs: SystemMenuStoryArgs = {
   activeSubMenu: SystemSubMenu.main,
   condensed: false,
+  audioControlMode: SystemMenuControlMode.muteButton,
+  microphoneControlMode: SystemMenuControlMode.muteButton,
   wifiState: {
     enabled: true,
     connected: true,

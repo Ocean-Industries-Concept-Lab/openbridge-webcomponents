@@ -19,6 +19,8 @@ const meta: Meta<typeof ObcInstrumentRadial> = {
     priority: {control: 'select', options: Object.values(Priority)},
     tickmarksInside: {control: 'boolean'},
     showLabels: {control: 'boolean'},
+    minAngle: {control: false, table: {disable: true}},
+    maxAngle: {control: false, table: {disable: true}},
   },
 } satisfies Meta<ObcInstrumentRadial>;
 

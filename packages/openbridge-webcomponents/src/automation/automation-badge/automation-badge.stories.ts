@@ -14,7 +14,7 @@ const meta: Meta<typeof ObcAutomationBadge> = {
   component: 'obc-automation-badge',
   args: {
     mode: ObcAutomationBadgeMode.Flat,
-    type: ObcAutomationBadgeType.CommandLocked,
+    type: ObcAutomationBadgeType.Auto,
   },
   argTypes: {
     mode: {
@@ -38,6 +38,27 @@ type Story = StoryObj<ObcAutomationBadge>;
 export const Flat: Story = {
   args: {
     mode: ObcAutomationBadgeMode.Flat,
+  },
+};
+
+export const AllVariants: Story = {
+  render() {
+    return html`
+      <div
+        style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;"
+      >
+        ${Object.values(ObcAutomationBadgeType).map((type) =>
+          Object.values(ObcAutomationBadgeMode).map(
+            (mode) => html`
+              <obc-automation-badge
+                .mode=${mode}
+                .type=${type}
+              ></obc-automation-badge>
+            `
+          )
+        )}
+      </div>
+    `;
   },
 };
 
@@ -65,15 +86,15 @@ export const CommandLocked: Story = {
   },
 };
 
-export const Duty: Story = {
+export const Interlock: Story = {
   args: {
-    type: ObcAutomationBadgeType.Duty,
+    type: ObcAutomationBadgeType.Interlock,
   },
 };
 
-export const AlertOff: Story = {
+export const InterlockInhibit: Story = {
   args: {
-    type: ObcAutomationBadgeType.AlertOff,
+    type: ObcAutomationBadgeType.InterlockInhibit,
   },
 };
 

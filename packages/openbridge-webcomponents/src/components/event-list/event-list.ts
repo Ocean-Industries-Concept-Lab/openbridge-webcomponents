@@ -60,7 +60,7 @@ export class ObcEventList extends LitElement {
   /**
    * Array of events to display in the list.
    */
-  @property({attribute: false}) events: DateItemEvent[] = [];
+  @property({type: Array, attribute: false}) events: DateItemEvent[] = [];
 
   /**
    * Locale for date formatting. Uses browser default if not specified.

@@ -34,8 +34,8 @@ export interface GaugeRadialAdvice {
  *
  * - **Three display types**: `filled` (solid arc), `bar` (thinner arc), and
  *   `needle` (pointer indicator) via the `type` property.
- * - **Bipolar range support**: When `minValue < 0` the gauge switches to a
- *   ±135° layout centered at 12 o'clock; otherwise it uses a 270° sweep.
+ * - **Full-range mapping**: The configured `minValue..maxValue` always spans
+ *   the full 270° sweep. Symmetric ranges still place `0` at 12 o'clock.
  * - **Setpoint via mixin**: `setpoint`, `newSetpoint`, `touching`,
  *   `autoAtSetpointDeadband`, `setpointOverride`, and all other setpoint
  *   properties are provided by `SetpointMixin` and forwarded to the inner
@@ -101,12 +101,12 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
 
   getAngle(v: number): number {
-    const hasNegative = this.minValue < 0;
-    if (hasNegative) {
-      return (v / this.maxValue) * 135;
-    } else {
-      return (v / this.maxValue) * 270 - 135;
+    const span = this.maxValue - this.minValue;
+    if (!Number.isFinite(span) || span <= 0) {
+      return -135;
     }
+
+    return ((v - this.minValue) / span) * 270 - 135;
   }
 
   override render() {

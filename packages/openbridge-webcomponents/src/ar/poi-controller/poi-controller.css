@@ -40,4 +40,5 @@
   height: var(--obc-poi-controller-stack-height, 50%);
   max-height: 100%;
   pointer-events: none;
+  gap: var(--obc-poi-controller-stack-gap, 8px);
 }

@@ -20,6 +20,7 @@
     position: relative;
     height: var(--ui-components-icon-button-visual-target-size);
     width: var(--ui-components-icon-button-visual-target-size);
+    box-sizing: border-box;
     border-radius: var(--ui-components-button-border-radius-top-left)
       var(--ui-components-button-border-radius-top-right)
       var(--ui-components-button-border-radius-bottom-right)

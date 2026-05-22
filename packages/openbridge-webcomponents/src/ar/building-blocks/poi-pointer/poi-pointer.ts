@@ -463,6 +463,7 @@ export class ObcPoiPointer extends LitElement {
         ${this.renderSquareSelectionFrame()}
         ${this.renderCameraSelectionFrame()} ${this.renderPoint()}
         ${this.renderButton()} ${this.renderCamera()}
+        <div class="anchor-point" aria-hidden="true"></div>
       </div>
     `;
   }

@@ -69,7 +69,7 @@ Once you've made your changes, add them to the branch. Use [Conventional Commits
 
 ```
 git add .
-git commit -m "feat: Add some feature"
+git commit -m "feat: add some feature"
 ```
 
 #### Push to Your Fork
@@ -88,7 +88,7 @@ Go to the repository on GitHub, and you'll see a prompt to submit a pull request
 We enforce [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for Pull Request titles. An automated check will validate your PR title. If it doesn't follow the rules, the check will fail.
 
 Examples:
-- `feat: Add new button component`
+- `feat: add new button component`
 - `fix: resolve gauge alignment issue`
 - `feat!: breaking change in the component API` (use `!` for breaking changes)
 
@@ -119,6 +119,10 @@ Please ensure your title is clear and follows the syntax.
 
 ## Getting Help
 
-If you have any question start by contacting us on our discord. [Join here.](https://discord.gg/wSCPxPH3RJ)
+If you have any questions, start by joining our **Slack** community.
+
+[![Slack, join chat](https://img.shields.io/badge/Slack-4A154B?style=flat&logo=slack&logoColor=white)](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ)
+
+[Join here](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ) to get the latest updates and to ask questions.
 
 Thank you for contributing to OpenBridge webcomponents!

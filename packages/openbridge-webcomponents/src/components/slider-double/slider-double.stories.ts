@@ -18,6 +18,8 @@ const meta: Meta<typeof ObcSliderDouble> = {
     labelDecimals: 0,
     labelWidth: '3ch',
     variant: ObcSliderDoubleVariant.Normal,
+    showLeftReadout: true,
+    showRightReadout: true,
   },
   argTypes: {
     low: {
@@ -39,6 +41,12 @@ const meta: Meta<typeof ObcSliderDouble> = {
     disabled: {
       control: {type: 'boolean'},
     },
+    showLeftReadout: {
+      control: {type: 'boolean'},
+    },
+    showRightReadout: {
+      control: {type: 'boolean'},
+    },
   },
   render: (args) => html`
     <obc-slider-double
@@ -51,8 +59,11 @@ const meta: Meta<typeof ObcSliderDouble> = {
       .labelDecimals=${args.labelDecimals}
       .labelWidth=${args.labelWidth}
       .variant=${args.variant}
+      ?hugcontainer=${args.hugContainer}
       ?allowSeeking=${args.allowSeeking}
       .disabled=${args.disabled}
+      .showLeftReadout=${args.showLeftReadout}
+      .showRightReadout=${args.showRightReadout}
     ></obc-slider-double>
   `,
 } satisfies Meta<typeof ObcSliderDouble>;
@@ -112,4 +123,38 @@ export const Disabled: Story = {
     high: 80,
     disabled: true,
   },
+};
+
+export const NoReadouts: Story = {
+  args: {
+    showLeftReadout: false,
+    showRightReadout: false,
+  },
+};
+
+export const SlottedReadouts: Story = {
+  args: {
+    labelWidth: '6ch',
+  },
+  render: (args) => html`
+    <obc-slider-double
+      .low=${args.low}
+      .high=${args.high}
+      .min=${args.min}
+      .max=${args.max}
+      .step=${args.step}
+      .labelUnit=${args.labelUnit}
+      .labelDecimals=${args.labelDecimals}
+      .labelWidth=${args.labelWidth}
+      .variant=${args.variant}
+      ?hugcontainer=${args.hugContainer}
+      .showLeftReadout=${args.showLeftReadout}
+      .showRightReadout=${args.showRightReadout}
+      ?allowSeeking=${args.allowSeeking}
+      .disabled=${args.disabled}
+    >
+      <span slot="left-readout">Min</span>
+      <span slot="right-readout">Max</span>
+    </obc-slider-double>
+  `,
 };

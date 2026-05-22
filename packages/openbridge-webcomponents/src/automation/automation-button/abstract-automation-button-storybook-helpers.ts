@@ -10,8 +10,17 @@ import {
   AutomationButtonPositioning,
 } from './automation-button.js';
 import {CircularProgressMode} from '../../building-blocks/circular-progress/circular-progress.js';
+import {
+  AutomationButtonBadgeAlert,
+  AutomationButtonBadgeCommandLocked,
+  AutomationButtonBadgeControl,
+  AutomationButtonBadgeInterlock,
+} from './abstract-automation-button.js';
 
 export const argTypesAbstractAutomationButton = {
+  tag: {
+    control: {type: 'text'},
+  },
   readoutPosition: {
     options: ['top', 'bottom', 'left', 'right'],
     control: {type: 'radio'},
@@ -36,17 +45,21 @@ export const argTypesAbstractAutomationButton = {
     options: Object.values(AutomationButtonPositioning),
     control: {type: 'select'},
   },
-  badgeAuto: {
-    control: {type: 'boolean'},
+  badgeControl: {
+    options: Object.values(AutomationButtonBadgeControl),
+    control: {type: 'select'},
   },
   badgeCommandLocked: {
-    control: {type: 'boolean'},
+    options: Object.values(AutomationButtonBadgeCommandLocked),
+    control: {type: 'select'},
   },
-  badgeDuty: {
-    control: {type: 'boolean'},
+  badgeInterlock: {
+    options: Object.values(AutomationButtonBadgeInterlock),
+    control: {type: 'select'},
   },
-  badgeAlertOff: {
-    control: {type: 'boolean'},
+  badgeAlert: {
+    options: Object.values(AutomationButtonBadgeAlert),
+    control: {type: 'select'},
   },
   progressMode: {
     options: Object.values(CircularProgressMode),

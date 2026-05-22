@@ -35,7 +35,7 @@
 import 'video.js/dist/video-js.css'
 
 import { onMounted, ref, onBeforeUnmount, computed } from 'vue'
-import ObcPoiData from '@oicl/openbridge-webcomponents-vue/ar/poi-data/ObcPoiData.vue'
+import ObcPoiData from '@oicl/openbridge-webcomponents-vue/ar/poi/ObcPoiData.vue'
 import Hls from 'hls.js'
 
 const arVideo = ref<HTMLVideoElement | null>(null)

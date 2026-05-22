@@ -5,7 +5,7 @@ import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 import '../../components/icon-button/icon-button.js';
 import '../../icons/icon-close-google.js';
-import '../poi-object-vessel/poi-object-vessel.js';
+import '../poi-object/poi-object-vessel.js';
 
 /**
  * Layout variants for POI Card Header.
