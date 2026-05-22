@@ -28,7 +28,7 @@ export enum IntegrationButtonType {
  * @slot trailing-icon - Icon after label (shown when `hasTrailingIcon` is true)
  * @slot trailing-icon2 - Icon after label (shown when `hasTrailingIcon2` is true)
  * @slot label - Label text
- * @slot status - Status/description text (shown when `hasDescription` is true and type is not hug)
+ * @slot status - Status/description text (shown when `hasDescription` is true)
  * @slot info-label - Info label text
  * @slot info-status - Info status text
  *
@@ -37,7 +37,7 @@ export enum IntegrationButtonType {
  * @property {boolean} hasTrailingIcon - Shows the `trailing-icon` slot.
  * @property {boolean} hasTrailingIcon2 - Shows the `trailing-icon2` slot.
  * @property {boolean} hasLeadingIcon - Shows the `leading-icon` slot.
- * @property {boolean} hasDescription - Shows the `status` slot for non-hug types.
+ * @property {boolean} hasstatus - Shows the `status` slot.
  * @property {IntegrationButtonReadout[]} readouts - List of readout items shown in the rich type.
  * @property {boolean} disabled - Disables the internal button.
  * @property {boolean} activated - Applies active state styling while a selection is pending.
@@ -52,7 +52,7 @@ export class ObcIntegrationButton extends LitElement {
   @property({type: Boolean}) hasTrailingIcon = false;
   @property({type: Boolean}) hasTrailingIcon2 = false;
   @property({type: Boolean}) hasLeadingIcon = false;
-  @property({type: Boolean}) hasDescription = false;
+  @property({type: Boolean}) hasStatus = false;
   @property({type: Array, attribute: false})
   readouts: IntegrationButtonReadout[] = [];
   @property({type: Boolean}) disabled = false;
@@ -71,7 +71,7 @@ export class ObcIntegrationButton extends LitElement {
       selected: this.selected,
       activated: this.activated,
       disabled: this.disabled,
-      'has-description': this.hasDescription,
+      'has-description': this.hasStatus,
       ['variant-' + this.variant]: true,
       ['type-' + this.type]: true,
     };
@@ -96,7 +96,7 @@ export class ObcIntegrationButton extends LitElement {
               <div class="text-container">
                 <div class="label"><slot name="label"></slot></div>
                 ${
-                  this.hasDescription
+                  this.hasStatus
                     ? html`<div class="status">
                         <slot name="status"></slot>
                       </div>`
@@ -170,7 +170,7 @@ export class ObcIntegrationButton extends LitElement {
             <div class="text-container">
               <div class="label"><slot name="label"></slot></div>
               ${
-                this.hasDescription
+                this.hasStatus
                   ? html`<div class="status"><slot name="status"></slot></div>`
                   : nothing
               }
@@ -223,6 +223,9 @@ export class ObcIntegrationButton extends LitElement {
               : nothing}
             <div class="text-container">
               <div class="label"><slot name="label"></slot></div>
+              ${this.hasStatus
+                ? html`<div class="status"><slot name="status"></slot></div>`
+                : nothing}
             </div>
             ${this.hasTrailingIcon
               ? html`<div class="icon-container">

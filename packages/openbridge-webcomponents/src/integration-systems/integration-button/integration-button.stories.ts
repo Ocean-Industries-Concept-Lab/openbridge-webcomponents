@@ -17,6 +17,7 @@ const meta: Meta<ObcIntegrationButton> = {
     hasLeadingIcon: true,
     hasTrailingIcon: true,
     hasTrailingIcon2: true,
+    hasStatus: false,
     readouts: [
       {label: 'Readout 1', value: 'Value 1', unit: 'Unit 1'},
       {label: 'Readout 2', value: 'Value 2', unit: 'Unit 2'},
@@ -36,6 +37,7 @@ const meta: Meta<ObcIntegrationButton> = {
       .hasLeadingIcon=${args.hasLeadingIcon}
       .hasTrailingIcon=${args.hasTrailingIcon}
       .hasTrailingIcon2=${args.hasTrailingIcon2}
+      .hasStatus=${args.hasStatus}
       .readouts=${args.readouts}
       .selected=${args.selected}
       .disabled=${args.disabled}
@@ -56,9 +58,9 @@ export default meta;
 
 export const Primary: StoryObj<ObcIntegrationButton> = {};
 
-export const WithDescription: StoryObj<ObcIntegrationButton> = {
+export const WithStatus: StoryObj<ObcIntegrationButton> = {
   args: {
-    hasDescription: true,
+    hasStatus: true,
   },
   render: (args) => html`
     <obc-integration-button
@@ -71,13 +73,13 @@ export const WithDescription: StoryObj<ObcIntegrationButton> = {
       .disabled=${args.disabled}
       .variant=${args.variant}
       .type=${args.type}
-      .hasDescription=${args.hasDescription}
+      .hasStatus=${args.hasStatus}
     >
       <obi-placeholder slot="leading-icon"></obi-placeholder>
       <obi-placeholder slot="trailing-icon"></obi-placeholder>
       <obi-placeholder slot="trailing-icon2"></obi-placeholder>
       <div slot="label">Label</div>
-      <div slot="status">A description</div>
+      <div slot="status">Status</div>
       <div slot="info-label">Info Label</div>
       <div slot="info-status">Info Status</div>
     </obc-integration-button>
