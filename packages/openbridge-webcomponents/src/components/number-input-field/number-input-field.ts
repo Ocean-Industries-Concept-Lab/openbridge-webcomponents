@@ -54,8 +54,6 @@ const baseFontSize = 16;
  */
 @customElement('obc-number-input-field')
 export class ObcNumberInputField extends LitElement {
-  private static readonly centerAlignInputMinWidth = 10;
-
   @property({type: Number}) value = NaN;
   @property({type: String}) unit = '';
   @property({type: String}) placeholder = '';
