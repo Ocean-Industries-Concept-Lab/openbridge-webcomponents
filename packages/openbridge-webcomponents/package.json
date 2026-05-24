@@ -67,12 +67,12 @@
     "@eslint/js": "^10.0.1",
     "@figma/rest-api-spec": "^0.37.0",
     "@jackolope/ts-lit-plugin": "^3.1.6",
-    "@lit-labs/cli": "file:lit-labs-cli-0.6.5.tgz",
     "@lit-labs/cli-localize": "^0.2.2",
-    "@lit-labs/gen-wrapper-angular": "file:lit-labs-gen-wrapper-angular-bbde8906.tgz",
-    "@lit-labs/gen-wrapper-react": "^0.3.5",
-    "@lit-labs/gen-wrapper-svelte": "file:lit-labs-gen-wrapper-svelte-397bf119.tgz",
-    "@lit-labs/gen-wrapper-vue": "file:lit-labs-gen-wrapper-vue-0.4.1.tgz",
+    "@oicl-lit/cli": "^0.6.6",
+    "@oicl-lit/gen-wrapper-angular": "^0.1.5",
+    "@oicl-lit/gen-wrapper-react": "^0.3.5",
+    "@oicl-lit/gen-wrapper-svelte": "^0.0.2",
+    "@oicl-lit/gen-wrapper-vue": "^0.4.2",
     "@open-wc/lit-helpers": "^0.7.0",
     "@playwright/test": "^1.58.2",
     "@semantic-release/changelog": "^6.0.3",
@@ -136,7 +136,6 @@
   },
   "customElements": "custom-elements.json",
   "overrides": {
-    "storybook": "$storybook",
-    "lit-labs-analyzer": "$lit-labs-analyzer"
+    "storybook": "$storybook"
   }
 }
