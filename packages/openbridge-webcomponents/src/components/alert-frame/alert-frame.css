@@ -54,7 +54,7 @@
   background-color: var(--bg-color);
   border-radius: 0px var(--app-components-alert-frame-small-flip-border-radius)
     var(--app-components-alert-frame-small-flip-border-radius) 0px;
-  padding: var(--app-components-badge-padding);
+  padding: var(--ui-components-badge-padding);
 
   display: flex;
   gap: 2px;
@@ -63,7 +63,7 @@
     top: 0;
     right: calc(
       -1 * var(--app-components-alert-frame-icon-size) + var(--thickness) / 2 -
-        var(--app-components-badge-padding) * 2
+        var(--ui-components-badge-padding) * 2
     );
   }
 
@@ -156,7 +156,7 @@
     bottom: 0;
     right: calc(
       -1 * var(--app-components-alert-frame-icon-size) + var(--thickness) / 2 -
-        var(--app-components-badge-padding) * 2
+        var(--ui-components-badge-padding) * 2
     );
     border-radius: 0px
       var(--app-components-alert-frame-large-flip-border-radius)

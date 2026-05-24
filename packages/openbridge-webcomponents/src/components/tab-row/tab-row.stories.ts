@@ -14,13 +14,11 @@ const meta: Meta<typeof ObcTabRow> = {
   argTypes: {
     tabs: {control: 'object'},
     selectedTabId: {control: 'text'},
-    hasClose: {control: 'boolean'},
-    hug: {control: 'boolean'},
-    hasAddNewTab: {control: 'boolean'},
   },
   args: {
     hasClose: true,
     hug: false,
+    showSubtitle: false,
     hasAddNewTab: true,
     selectedTabId: 'tab2',
   },
@@ -29,11 +27,11 @@ export default meta;
 type Story = StoryObj<ObcTabRow>;
 
 const defaultTabs: TabData[] = [
-  {id: 'tab1', title: 'Tab 1'},
-  {id: 'tab2', title: 'Tab 2'},
-  {id: 'tab3', title: 'Tab 3'},
-  {id: 'tab4', title: 'Tab 4'},
-  {id: 'tab5', title: 'Tab 5'},
+  {id: 'tab1', title: 'Tab 1', subtitle: '61.482 3.104'},
+  {id: 'tab2', title: 'Tab 2', subtitle: '58.923 5.730'},
+  {id: 'tab3', title: 'Tab 3', subtitle: '60.118 4.202'},
+  {id: 'tab4', title: 'Tab 4', subtitle: '55.000 4.900'},
+  {id: 'tab5', title: 'Tab 5', subtitle: '56.000 5.100'},
 ];
 
 interface TabRowStoryArgs {
@@ -41,6 +39,7 @@ interface TabRowStoryArgs {
   selectedTabId?: string;
   hasClose?: boolean;
   hug?: boolean;
+  showSubtitle?: boolean;
   hasAddNewTab?: boolean;
 }
 
@@ -57,6 +56,7 @@ function InteractiveTabRow(args: TabRowStoryArgs) {
   tabRow.selectedTabId = args.selectedTabId || '';
   tabRow.hasClose = args.hasClose ?? true;
   tabRow.hug = args.hug ?? false;
+  tabRow.showSubtitle = args.showSubtitle ?? false;
   tabRow.hasAddNewTab = args.hasAddNewTab ?? true;
 
   tabRow.addEventListener('tab-selected', (e: Event) => {
@@ -91,6 +91,7 @@ export const Primary: Story = {
     tabs: defaultTabs,
     hasClose: true,
     hug: false,
+    showSubtitle: false,
     hasAddNewTab: true,
     selectedTabId: 'tab2',
   },
@@ -172,6 +173,43 @@ export const WithBadges: Story = {
     hasAddNewTab: true,
     hasClose: true,
     hug: false,
+  },
+  render: InteractiveTabRow,
+};
+
+export const WithSubtitles: Story = {
+  args: {
+    tabs: [
+      {
+        id: 'tab1',
+        title: 'Coastal Alpha',
+        subtitle: '61.482 3.104',
+        hasLeadingIcon: false,
+      },
+      {
+        id: 'tab2',
+        title: 'Northern Passage',
+        subtitle: '58.923 5.730',
+        hasLeadingIcon: false,
+      },
+      {
+        id: 'tab3',
+        title: 'Transit Midpoint',
+        subtitle: '60.118 4.202',
+        hasLeadingIcon: false,
+      },
+      {
+        id: 'tab4',
+        title: 'Survey Vessel at 55N',
+        subtitle: '55.000 4.900',
+        hasLeadingIcon: false,
+      },
+    ],
+    selectedTabId: 'tab1',
+    hasAddNewTab: false,
+    hasClose: false,
+    hug: false,
+    showSubtitle: true,
   },
   render: InteractiveTabRow,
 };
