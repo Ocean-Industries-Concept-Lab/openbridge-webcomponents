@@ -200,9 +200,12 @@ export class ObcAutomationTank extends LitElement {
   /**
    * Show the trend chevron / off icon next to the percent readout. Default
    * `true` preserves existing behavior. Set to `false` to hide the trend
-   * indicator entirely in both compact/static and non-compact readouts —
-   * useful when the trend is not meaningful for a given tank, or when the
-   * consumer wants to keep the readout compact. `attribute: false` per the
+   * indicator in both compact and non-compact readouts — useful when the
+   * trend is not meaningful for a given tank, or when the consumer wants
+   * to keep the readout compact. Has no effect in `static` mode, which
+   * renders the tank's capacity (`max` + `unit`) instead of a percent and
+   * intentionally omits the trend indicator (a static tank represents
+   * "device present, current state unknown"). `attribute: false` per the
    * repo's positive-default-true boolean convention.
    */
   @property({type: Boolean, attribute: false}) showTrendSymbol: boolean = true;
@@ -210,11 +213,11 @@ export class ObcAutomationTank extends LitElement {
   /**
    * Number of fraction digits used to format the percent readout in the
    * non-compact (regular) layout. Defaults to `0` (integer percent). The
-   * compact / static layout always renders integer percent to keep its
-   * fixed-width footprint stable. Volume readouts (`value` / `max`) are
-   * formatted by the consumer through the `current-value` / `max-value`
-   * slots when fractional precision is needed (see the `WithFractionDigits`
-   * story).
+   * compact layout always renders integer percent to keep its fixed-width
+   * footprint stable. The static layout renders capacity (`max` + `unit`)
+   * rather than percent, so this property has no effect there — pass a
+   * pre-formatted value through the `max-value` slot if fractional
+   * precision is needed (see the `WithFractionDigits` story).
    */
   @property({type: Number}) percentFractionDigits: number = 0;
 
@@ -473,19 +476,22 @@ export class ObcAutomationTank extends LitElement {
       midW = 224;
       cornerStartFill =
         'M 12 6.5837 C 6.346 6.7737, 5.176 6.8744, 4.168 7.2537 C 2.6445 7.8272, 1.418 8.8983, 0.8613 10.1415 C 0.493 10.9641, 0.5 11.9099, 0.5 13.6111 L 0.5 14 L 12 14 Z';
-      // Stroke closes along the inner edge (y = capH) so the seam with .middle
-      // gets a 1px border — matching what pressurized caps achieve via their
-      // plain CSS border. The corner extends from (0.5, capH) out to (cornerW, capH).
+      // Stroke draws the curve + outer vertical edge only. The seam with
+      // `.middle` (y = capH) is painted by a 1px CSS `border-top` on
+      // `.tank-frame.type-atmospheric:not(.compact) .middle` so it pixel-
+      // snaps identically to the pressurized cap's CSS border. Drawing it
+      // as an SVG stroke here would render thinner / blurrier due to
+      // sub-pixel anti-aliasing.
       cornerStartStroke =
-        'M 12 6.5837 C 6.346 6.7737, 5.176 6.8744, 4.168 7.2537 C 2.6445 7.8272, 1.418 8.8983, 0.8613 10.1415 C 0.493 10.9641, 0.5 11.9099, 0.5 13.6111 L 0.5 14 L 12 14';
+        'M 12 6.5837 C 6.346 6.7737, 5.176 6.8744, 4.168 7.2537 C 2.6445 7.8272, 1.418 8.8983, 0.8613 10.1415 C 0.493 10.9641, 0.5 11.9099, 0.5 13.6111 L 0.5 14';
       midFill =
         'M 0 6.5837 C 16 5.1124, 56 1.9444, 112 1.9444 C 168 1.9444, 208 5.1124, 224 6.5837 L 224 14 L 0 14 Z';
       midStroke =
-        'M 0 6.5837 C 16 5.1124, 56 1.9444, 112 1.9444 C 168 1.9444, 208 5.1124, 224 6.5837 M 0 14 L 224 14';
+        'M 0 6.5837 C 16 5.1124, 56 1.9444, 112 1.9444 C 168 1.9444, 208 5.1124, 224 6.5837';
       cornerEndFill =
         'M 0 6.5837 C 5.654 6.7737, 6.824 6.8744, 7.832 7.2537 C 9.3555 7.8272, 10.582 8.8983, 11.1387 10.1415 C 11.507 10.9641, 11.5 11.9099, 11.5 13.6111 L 11.5 14 L 0 14 Z';
       cornerEndStroke =
-        'M 0 6.5837 C 5.654 6.7737, 6.824 6.8744, 7.832 7.2537 C 9.3555 7.8272, 10.582 8.8983, 11.1387 10.1415 C 11.507 10.9641, 11.5 11.9099, 11.5 13.6111 L 11.5 14 L 0 14';
+        'M 0 6.5837 C 5.654 6.7737, 6.824 6.8744, 7.832 7.2537 C 9.3555 7.8272, 10.582 8.8983, 11.1387 10.1415 C 11.507 10.9641, 11.5 11.9099, 11.5 13.6111 L 11.5 14';
     }
 
     if (isHorizontal) {
@@ -643,47 +649,63 @@ export class ObcAutomationTank extends LitElement {
         <slot name="tag" @slotchange=${this._onTagSlotChange}>${this.tag}</slot>
       </div>
     `;
-    const readoutCell = isCompact
+    // Static mode intentionally renders the tank's capacity (max + unit)
+    // instead of a percent reading: a static tank represents "device is
+    // present, current state unknown", so a percent value would be
+    // misleading. The trend icon is omitted for the same reason. Consumers
+    // who need a custom label can still override the whole cell via the
+    // `readout` slot, or supply formatted text through the existing
+    // `max-value` / `unit` slots (no new API).
+    const readoutCell = this.static
       ? html`
-          <div class="readout readout-compact">
+          <div class="readout readout-compact readout-static">
             <slot name="readout">
-              ${this.showTrendSymbol ? this.trendIcon() : null}
-              <span class="percent"
-                >${percent.toFixed(0)}<span class="percent-symbol"
-                  >%</span
-                ></span
-              >
+              <slot name="max-value">${this.max.toFixed(0)}</slot>
+              <slot name="unit">m<sup>3</sup></slot>
             </slot>
           </div>
         `
-      : html`
-          <div class="readout">
-            <slot name="readout">
-              <div class="header">
+      : isCompact
+        ? html`
+            <div class="readout readout-compact">
+              <slot name="readout">
                 ${this.showTrendSymbol ? this.trendIcon() : null}
-                <div class="percent">
-                  ${percent.toFixed(this.percentFractionDigits)}<span
-                    class="percent-symbol"
+                <span class="percent"
+                  >${percent.toFixed(0)}<span class="percent-symbol"
                     >%</span
-                  >
+                  ></span
+                >
+              </slot>
+            </div>
+          `
+        : html`
+            <div class="readout">
+              <slot name="readout">
+                <div class="header">
+                  ${this.showTrendSymbol ? this.trendIcon() : null}
+                  <div class="percent">
+                    ${percent.toFixed(this.percentFractionDigits)}<span
+                      class="percent-symbol"
+                      >%</span
+                    >
+                  </div>
                 </div>
-              </div>
-              <div class="value">
-                <div class="current">
-                  <slot name="current-value" class="current-value"
-                    >${this.value.toFixed(0)}</slot
-                  ><span class="divider">/</span>
+                <div class="value">
+                  <div class="current">
+                    <slot name="current-value" class="current-value"
+                      >${this.value.toFixed(0)}</slot
+                    ><span class="divider">/</span>
+                  </div>
+                  <div class="max">
+                    <slot class="max-value" name="max-value"
+                      >${this.max.toFixed(0)}</slot
+                    >
+                    <slot class="unit" name="unit">m<sup>3</sup></slot>
+                  </div>
                 </div>
-                <div class="max">
-                  <slot class="max-value" name="max-value"
-                    >${this.max.toFixed(0)}</slot
-                  >
-                  <slot class="unit" name="unit">m<sup>3</sup></slot>
-                </div>
-              </div>
-            </slot>
-          </div>
-        `;
+              </slot>
+            </div>
+          `;
     // Decorative icon overlay (centered on the chart cell). Two stacked
     // icon elements: the back layer paints an inherited SVG `stroke` halo
     // (the icon's paths use `fill="currentColor"`, and SVG `stroke` is

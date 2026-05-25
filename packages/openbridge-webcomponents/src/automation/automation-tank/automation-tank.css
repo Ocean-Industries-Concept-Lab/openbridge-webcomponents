@@ -84,10 +84,23 @@
   transform: none;
 }
 
+/* Trend icon sizing follows the design-token icon-size ladders so it scales
+ * with `obc-component-size-*` (set on an ancestor; tokens cross the shadow
+ * boundary via CSS variable inheritance):
+ *   - Non-compact (default): `regular` ladder → 24 / 32 / 40 / 48
+ *     across regular → medium → large → xl.
+ *   - Compact (and the compact readout in `.halo`, outside `.tank-frame`,
+ *     so we scope via the reflected host attribute): `small` ladder →
+ *     16 / 20 / 24 / 32. Static mode renders capacity (no trend icon) so
+ *     it's unaffected. */
 .trend-icon {
   display: block;
-  width: 24px;
-  height: 24px;
+  width: var(--global-size-spacing-icon-icon-size-regular);
+  height: var(--global-size-spacing-icon-icon-size-regular);
+}
+:host([compact]) .trend-icon {
+  width: var(--global-size-spacing-icon-icon-size-small);
+  height: var(--global-size-spacing-icon-icon-size-small);
 }
 
 /* ---------- Root + halo ----------
@@ -262,11 +275,34 @@
   border-bottom: 1px solid var(--instrument-frame-tertiary-color);
 }
 
+/* Compact tightens the inner padding from 8px to 4px to give the chart /
+ * bar cell more breathing room inside the smaller fixed footprint. */
+.tank-frame.compact .middle {
+  padding: 4px;
+}
+
 /* generic / battery: middle owns the full border + radius (no caps to draw it). */
 .tank-frame.type-generic .middle,
 .tank-frame.type-battery .middle {
   border: 1px solid var(--instrument-frame-tertiary-color);
   border-radius: 6px;
+}
+
+/* Atmospheric (non-compact): the seam between the cap and the middle is
+ * drawn by a 1px CSS border on `.middle` rather than an SVG stroke on the
+ * cap. CSS `border: 1px` pixel-snaps consistently with the pressurized
+ * cap's border, while SVG `stroke-width: 1` renders thinner / blurrier
+ * because of sub-pixel anti-aliasing. Compact atmospheric intentionally
+ * omits this border so the cap merges into the middle, matching the
+ * compact-pressurized behavior. */
+.tank-frame.type-atmospheric:not(.compact):not(.orientation-horizontal)
+  .middle {
+  border-top: 1px solid var(--instrument-frame-tertiary-color);
+  border-bottom: 1px solid var(--instrument-frame-tertiary-color);
+}
+.tank-frame.type-atmospheric:not(.compact).orientation-horizontal .middle {
+  border-left: 1px solid var(--instrument-frame-tertiary-color);
+  border-right: 1px solid var(--instrument-frame-tertiary-color);
 }
 
 /* ---------- Inner grid (non-compact only) ----------
@@ -339,7 +375,6 @@
 .badges {
   display: flex;
   justify-content: end;
-  align-items: center;
   min-height: 24px;
   pointer-events: auto;
 }
@@ -538,11 +573,15 @@
 
 /* Compact pressurized (vertical): inner-edge border is dropped so the cap
  * merges seamlessly into the middle section (the middle section's own
- * top/bottom edge takes over). */
-.tank-frame.compact .cap-pressurized.cap-start {
+ * top/bottom edge takes over). Scoped to vertical only — in horizontal
+ * orientation the inner edge is left/right, handled by the rules further
+ * down. Without the `:not(.orientation-horizontal)` guard these would
+ * also fire in horizontal mode and erroneously strip the outer
+ * bottom/top edges of the left/right caps. */
+.tank-frame.compact:not(.orientation-horizontal) .cap-pressurized.cap-start {
   border-bottom: none;
 }
-.tank-frame.compact .cap-pressurized.cap-end {
+.tank-frame.compact:not(.orientation-horizontal) .cap-pressurized.cap-end {
   border-top: none;
 }
 
@@ -644,6 +683,32 @@
   justify-content: center;
   width: 100%;
   height: 100%;
+}
+/* Match the compact readout layout: in compact the `.readout.readout-compact`
+ * is a direct child of `.halo` (column flex with default `align-items: stretch`)
+ * so it spans the full width and its own `justify-content: center` centers
+ * the trend icon + percent. In static the same div is wrapped in
+ * `.static-readout` — without an explicit `width: 100%` it would shrink to
+ * content width, so its internal centering would be relative to a smaller
+ * box rather than the full middle. */
+.tank-frame.static .static-readout > .readout-compact {
+  width: 100%;
+}
+/* `<slot>` defaults to `display: contents`, which makes the slot's fallback
+ * children become direct children of the `.readout-compact` flex container
+ * and pick up its `gap: 4px` — producing an unwanted gap inside `m³` (between
+ * the `m` text node and the `<sup>3</sup>` element). Restoring an explicit
+ * inline-block box on the slot keeps the slot itself as a single flex item
+ * so its inline children render tight. Scoped to the static readout to
+ * avoid disturbing the compact layout. */
+.tank-frame.static .readout-static > slot {
+  display: inline-block;
+}
+/* In static mode the tag sits in its own halo cell and should read as a
+ * centered label under the device (matching the centered capacity readout
+ * above it). The compact tag layout intentionally stays as-is. */
+:host([static]) .halo > .tag {
+  text-align: center;
 }
 .tank-frame.static .cap-fill {
   fill: var(--container-section-color);
