@@ -1,4 +1,5 @@
 import {LitElement, html, unsafeCSS, type PropertyValues} from 'lit';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import {property, query, state} from 'lit/decorators.js';
 import componentStyle from './critical-action.css?inline';
 import {customElement} from '../../decorator.js';
@@ -6,21 +7,30 @@ import '../button/button.js';
 
 const CRITICAL_POPUP_CLOSE_FALLBACK_MS = 360;
 const CRITICAL_COLLAPSE_MIN_INLINE_PX = 89;
-const CRITICAL_DEFAULT_CANCEL_LABEL = 'cancel';
-const CRITICAL_DEFAULT_AUTO_COLLAPSE_DELAY_MS = 2700;
+
+export type ObcCriticalActionConfirmClickEvent = CustomEvent<void>;
 
 /**
  * `<obc-critical-action>` – A guarded critical-action control that expands into a confirm popup and collapses back into a compact trigger.
  *
  * ## Features
  * - **Two-step confirmation**: The trigger expands into a popup that contains a confirm control plus an optional description.
- * - **Auto-collapse**: The popup can automatically collapse after `criticalAutoCollapseDelay`.
+ * - **Auto-collapse**: The popup collapses automatically after `criticalAutoCollapseDelay` milliseconds (set to `0` to disable).
  * - **Collapse animation**: When closing, the popup collapses into the trigger footprint to avoid layout jumps.
+ * - **Copy via properties or slots**: `label`, `cancelLabel`, and `criticalDescription`, or matching named slots (slot text overrides the property).
+ * - **Accessible naming**: `ariaLabel` names the trigger when set; otherwise the visible `label` is used.
+ *
+ * ## Slots
+ *
+ * | Slot Name | Purpose |
+ * |-----------|---------|
+ * | `cancel` | Cancel button label (plain text only). |
  *
  * ## Usage Guidelines
  * Use this control for actions that require deliberate confirmation and should provide a clear opportunity to cancel. If you only need a two-step guarded activation without a popup, use `<obc-two-step-action>`.
  *
- * @fires confirm-click {CustomEvent<void>} When the confirm control is activated.
+ * @slot cancel - Cancel button label.
+ * @fires confirm-click {ObcCriticalActionConfirmClickEvent} When the confirm control is activated.
  */
 @customElement('obc-critical-action')
 export class ObcCriticalAction extends LitElement {
@@ -28,8 +38,16 @@ export class ObcCriticalAction extends LitElement {
 
   @property({type: String, reflect: false}) label = '';
 
+  @property({type: String, attribute: 'cancel-label'}) cancelLabel = '';
+
   @property({type: String, attribute: 'critical-description'})
   criticalDescription = '';
+
+  @property({type: Number, attribute: 'critical-auto-collapse-delay'})
+  criticalAutoCollapseDelay = 2700;
+
+  @property({type: String, attribute: 'aria-label'})
+  override ariaLabel = '';
 
   @state() private criticalExpanded = false;
   @state() private criticalPopupVisible = false;
@@ -51,6 +69,10 @@ export class ObcCriticalAction extends LitElement {
   private criticalAutoCollapseTimeout?: number;
   private criticalPopupAnimationTimeout?: number;
   private criticalPopupCloseDetach?: () => void;
+
+  private readonly handleSlotChange = () => {
+    this.requestUpdate();
+  };
 
   private clearTimeoutId(id: number | undefined) {
     if (id !== undefined) {
@@ -248,12 +270,39 @@ export class ObcCriticalAction extends LitElement {
   private onCriticalConfirmClick = () => {
     if (this.disabled || !this.criticalExpanded) return;
     this.dispatchEvent(
-      new CustomEvent('confirm-click', {
+      new CustomEvent<void>('confirm-click', {
         bubbles: true,
         composed: true,
       })
     );
   };
+
+  private getSlottedText(slotName: string) {
+    const nodes = this.querySelectorAll(`:scope > [slot="${slotName}"]`);
+    if (nodes.length === 0) return '';
+    return Array.from(nodes)
+      .map((node) => node.textContent?.trim() ?? '')
+      .join(' ')
+      .trim();
+  }
+
+  private resolveLabel(slotName: string, propertyValue: string) {
+    const slotted = this.getSlottedText(slotName);
+    if (slotted) return slotted;
+    return propertyValue.trim();
+  }
+
+  private resolveCancelLabel() {
+    return this.resolveLabel('cancel', this.cancelLabel);
+  }
+
+  private resolveTriggerAriaLabel() {
+    const explicit = this.ariaLabel.trim();
+    if (explicit) return explicit;
+    const visible = this.label.trim();
+    if (visible) return visible;
+    return undefined;
+  }
 
   private onCriticalCancelClick = () => {
     this.collapseCriticalAsCancel();
@@ -282,12 +331,13 @@ export class ObcCriticalAction extends LitElement {
 
   private renderCriticalTriggerButton(label: string) {
     const showPopup = this.criticalExpanded || this.criticalPopupVisible;
+    const triggerAriaLabel = this.resolveTriggerAriaLabel();
     return html`
       <obc-button
         class="critical-trigger-button critical-red-button"
         variant="raised"
         ?disabled=${this.disabled}
-        aria-label=${label}
+        aria-label=${ifDefined(triggerAriaLabel)}
         aria-expanded=${showPopup ? 'true' : 'false'}
         @click=${this.onCriticalTriggerClick}
         part="critical-button"
@@ -298,16 +348,18 @@ export class ObcCriticalAction extends LitElement {
   }
 
   private renderCriticalCancelButton() {
+    const cancelText = this.resolveCancelLabel();
+    const cancelAriaLabel = cancelText || undefined;
     return html`
       <obc-button
         class="critical-cancel-button"
         variant="normal"
         ?disabled=${this.disabled}
-        aria-label=${CRITICAL_DEFAULT_CANCEL_LABEL}
+        aria-label=${ifDefined(cancelAriaLabel)}
         @click=${this.onCriticalCancelClick}
         part="critical-cancel-button"
       >
-        ${CRITICAL_DEFAULT_CANCEL_LABEL}
+        ${cancelText}
       </obc-button>
     `;
   }
@@ -343,7 +395,7 @@ export class ObcCriticalAction extends LitElement {
           <div
             class="critical-popup-bar-fill"
             part="critical-popup-bar-fill"
-            style=${`animation-duration: ${CRITICAL_DEFAULT_AUTO_COLLAPSE_DELAY_MS}ms;`}
+            style=${`animation-duration: ${this.criticalAutoCollapseDelay}ms;`}
           ></div>
         </div>
       </div>
@@ -364,8 +416,20 @@ export class ObcCriticalAction extends LitElement {
         ${showCancel
           ? this.renderCriticalCancelButton()
           : this.renderCriticalTriggerButton(label)}
+        <div hidden aria-hidden="true">
+          <slot name="cancel"></slot>
+        </div>
       </div>
     `;
+  }
+
+  override firstUpdated(changedProperties: PropertyValues) {
+    super.firstUpdated(changedProperties);
+    this.renderRoot
+      .querySelectorAll('slot')
+      .forEach((slot) =>
+        slot.addEventListener('slotchange', this.handleSlotChange)
+      );
   }
 
   override updated(changedProperties: PropertyValues<this>) {
@@ -400,12 +464,12 @@ export class ObcCriticalAction extends LitElement {
     if (
       !this.disabled &&
       this.criticalExpanded &&
-      CRITICAL_DEFAULT_AUTO_COLLAPSE_DELAY_MS > 0
+      this.criticalAutoCollapseDelay > 0
     ) {
       if (this.criticalAutoCollapseTimeout === undefined) {
         this.criticalAutoCollapseTimeout = window.setTimeout(() => {
           this.collapseCriticalAsCancel();
-        }, CRITICAL_DEFAULT_AUTO_COLLAPSE_DELAY_MS);
+        }, this.criticalAutoCollapseDelay);
       }
     }
   }
@@ -415,6 +479,11 @@ export class ObcCriticalAction extends LitElement {
   }
 
   override disconnectedCallback() {
+    this.renderRoot
+      .querySelectorAll('slot')
+      .forEach((slot) =>
+        slot.removeEventListener('slotchange', this.handleSlotChange)
+      );
     super.disconnectedCallback();
     this.clearCriticalAutoCollapseTimer();
     this.clearCriticalPopupAnimationHandles();

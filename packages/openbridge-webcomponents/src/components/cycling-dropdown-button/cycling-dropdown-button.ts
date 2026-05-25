@@ -1,4 +1,5 @@
 import {LitElement, html, unsafeCSS, type PropertyValues} from 'lit';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import {property, query, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
@@ -24,7 +25,11 @@ const CLOSE_ANIMATION_MS = 140;
  *
  * Presents a full-width dropdown button with an optional leading icon. Options can include icons in the menu. When the menu is open, clicking the button advances selection to the next option (wrapping around) without closing the menu.
  *
+ * ## Accessible naming
+ * `ariaLabel` names the trigger when set; otherwise the selected option label is used.
+ *
  * @slot icon - Icon displayed at the start of the button.
+ * @slot trailing-icon - Icon at the end of the button (default unfold-more icon).
  * @fires change {ObcCyclingDropdownButtonChangeEvent} When the selected value changes.
  */
 @customElement('obc-cycling-dropdown-button')
@@ -35,6 +40,9 @@ export class ObcCyclingDropdownButton extends LitElement {
   @property({type: Boolean}) fullWidth = false;
   @property({type: Boolean}) openTop = false;
   @property({type: Number}) autoCloseDelayMs = AUTO_CLOSE_DELAY_MS;
+
+  @property({type: String, attribute: 'aria-label'})
+  override ariaLabel = '';
 
   @state() private isOpen = false;
   @state() private isClosing = false;
@@ -90,11 +98,23 @@ export class ObcCyclingDropdownButton extends LitElement {
     );
   }
 
+  private resolveTriggerAriaLabel() {
+    const explicit = this.ariaLabel.trim();
+    if (explicit) return explicit;
+    const visible = this.selectedLabel.trim();
+    if (visible) return visible;
+    return undefined;
+  }
+
   private emitChange(value: string) {
     const label = this.options.find((o) => o.value === value)?.label ?? '';
     const detail = {value, label};
     this.dispatchEvent(
-      new CustomEvent('change', {detail}) as ObcCyclingDropdownButtonChangeEvent
+      new CustomEvent<ObcCyclingDropdownButtonChangeEvent['detail']>('change', {
+        detail,
+        bubbles: true,
+        composed: true,
+      })
     );
   }
 
@@ -216,6 +236,7 @@ export class ObcCyclingDropdownButton extends LitElement {
 
   override render() {
     const selectedValues = this.selectedValue ? [this.selectedValue] : [];
+    const triggerAriaLabel = this.resolveTriggerAriaLabel();
     return html`
       <div
         class=${classMap({
@@ -233,6 +254,7 @@ export class ObcCyclingDropdownButton extends LitElement {
           class="cycling-dd-wrapper"
           ?disabled=${this.disabled}
           @click=${this.handleButtonClick}
+          aria-label=${ifDefined(triggerAriaLabel)}
           aria-expanded=${this.isOpen ? 'true' : 'false'}
           aria-haspopup="menu"
         >

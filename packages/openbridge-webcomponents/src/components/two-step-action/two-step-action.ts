@@ -1,4 +1,5 @@
 import {LitElement, html, unsafeCSS, type PropertyValues} from 'lit';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import {property, state} from 'lit/decorators.js';
 import {classMap, type ClassInfo} from 'lit/directives/class-map.js';
 import componentStyle from './two-step-action.css?inline';
@@ -33,6 +34,7 @@ const THUMB_DRAG_MIN_SCALE_X = 0.01;
  * - **Two-step confirmation**: Requires an intermediate `armed` state to reduce accidental triggers.
  * - **Swipe support**: Dragging the thumb can arm and then activate the action after a short hold.
  * - **Auto reset**: The `active` state returns to `enabled` after a short delay.
+ * - **Accessible naming**: `ariaLabel` names the control when set; otherwise the visible `label` text is used.
  *
  * ## Usage Guidelines
  * Use this control for actions that should be deliberate but still quick to complete. Prefer a standard button for routine actions that do not need guarding.
@@ -44,6 +46,9 @@ export class ObcTwoStepAction extends LitElement {
   @property({type: Boolean, reflect: true}) disabled = false;
 
   @property({type: String, reflect: false}) label = '';
+
+  @property({type: String, attribute: 'aria-label'})
+  override ariaLabel = '';
 
   @state() private state: ObcTwoStepActionState = ObcTwoStepActionState.enabled;
 
@@ -78,6 +83,14 @@ export class ObcTwoStepAction extends LitElement {
 
   private getActionLabelText() {
     return this.label.trim();
+  }
+
+  private resolveAriaLabel() {
+    const explicit = this.ariaLabel.trim();
+    if (explicit) return explicit;
+    const visible = this.getActionLabelText();
+    if (visible) return visible;
+    return undefined;
   }
 
   private queryVisibleWrapper(): HTMLElement | null {
@@ -478,7 +491,7 @@ export class ObcTwoStepAction extends LitElement {
     const isArmed = this.state === ObcTwoStepActionState.armed;
     const isActive = this.state === ObcTwoStepActionState.active;
     const actionLabel = this.getActionLabelText();
-    const ariaLabel = actionLabel || 'Action';
+    const buttonAriaLabel = this.resolveAriaLabel();
 
     return html`
       <obc-button
@@ -489,7 +502,7 @@ export class ObcTwoStepAction extends LitElement {
         ?disabled=${this.disabled}
         @click=${this.handleClick}
         part="wrapper"
-        aria-label=${ariaLabel}
+        aria-label=${ifDefined(buttonAriaLabel)}
         aria-pressed=${isActive ? 'true' : 'false'}
       >
         <div class="visible-wrapper" part="visible-wrapper">
