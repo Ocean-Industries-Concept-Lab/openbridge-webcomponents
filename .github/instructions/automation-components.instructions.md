@@ -91,7 +91,20 @@ Analog valves render inline dynamic SVG (not icon swapping):
 
 ## Badge Positioning
 
-Badges (`badgeAuto`, `badgeCommandLocked`, `badgeDuty`, `badgeAlertOff`) render in corner slots. Badge spacer logic is computed based on readout position and which badges are present. Do not hard-code spacer visibility.
+The abstract base exposes four **enum-driven** badge properties (defined in `abstract-automation-button.ts`) that render an `<obc-automation-badge>` in a fixed corner slot. Each defaults to `None` (no badge); a non-`None` value resolves to a specific `ObcAutomationBadgeType`. The legacy `badge-top-*` / `badge-bottom-*` slots still work and override the enum default for backward compatibility.
+
+| Property | Enum | Values | Corner |
+|----------|------|--------|--------|
+| `badgeControl` | `AutomationButtonBadgeControl` | `none`, `local`, `local-only`, `manual`, `manual-only`, `auto` | top-left |
+| `badgeAlert` | `AutomationButtonBadgeAlert` | `none`, `silence`, `caution`, `warning`, `alarm` | top-right |
+| `badgeInterlock` | `AutomationButtonBadgeInterlock` | `none`, `interlock`, `interlock-inhibit` | bottom-left |
+| `badgeCommandLocked` | `AutomationButtonBadgeCommandLocked` | `none`, `command-locked` | bottom-right |
+
+Badge spacer logic is computed from readout position and which badges are present (enum-resolved or slotted). Do not hard-code spacer visibility.
+
+`obc-automation-tank` mirrors the same four properties and the same enum imports, but rendering happens inside its own `.badges` cell — the corner-slot model does not apply there. When adding a new button-based device, spread `argTypesAbstractAutomationButton` (or one of its variant-specific re-exports) into the story meta so the four select controls are exposed in Storybook (see `analog-valve.stories.ts` for the canonical pattern).
+
+**Exception — the `obc-automation-button` primitive.** The badge enum API lives only on `ObcAbstractAutomationButton`. The underlying `obc-automation-button` element (`class ObcAutomationButton extends LitElement`) exposes only the four named slots (`badge-top-right`, `badge-top-left`, `badge-bottom-left`, `badge-bottom-right`) and has no `badgeControl`/`badgeAlert`/`badgeInterlock`/`badgeCommandLocked` properties. Do **not** spread `argTypesAbstractAutomationButton*` into `automation-button.stories.ts` — the toggles would be inert because the primitive cannot resolve enums to badges. Use the slot API directly there (see `ValveBadges` / `DamperBadges` for the pattern). The wrapper does the enum-to-badge resolution and projects `<obc-automation-badge>` into the primitive's slots.
 
 ## P&ID Anchor Point Model
 
