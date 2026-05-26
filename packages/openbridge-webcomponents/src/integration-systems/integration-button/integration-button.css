@@ -314,7 +314,8 @@
   visibility: hidden;
   position: absolute;
   position-anchor: --touch-target;
-  position-area: bottom center;
+  top: anchor(bottom);
+  justify-self: anchor-right;
 }
 
 .integration-vessel-menu-container.show {

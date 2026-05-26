@@ -350,7 +350,15 @@ const meta: Meta<IntegrationBarStoryArgs> = {
 
     const onFleetButtonClick = (event: Event) => {
       const integrationBar = event.currentTarget as ObcIntegrationBar;
-      integrationBar.fleetButtonActivated = true;
+      if (integrationBar.fleetButtonActivated == true) {
+        integrationBar.fleetButtonActivated = false;
+        integrationBar.fleetButtonSelected = true;
+      } else if (integrationBar.fleetButtonSelected == true) {
+        integrationBar.fleetButtonSelected = false;
+        integrationBar.fleetButtonActivated = false;
+      } else {
+        integrationBar.fleetButtonActivated = true;
+      }
     };
 
     return html`<div style="width: 100%; overflow-x: auto;">
