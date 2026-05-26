@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcIntegrationBar} from './integration-bar.js';
 import './integration-bar.js';
-import {html} from 'lit';
+import {html, nothing} from 'lit';
 import '../../components/dropdown-button/dropdown-button.js';
 import '../../components/clock/clock.js';
 import '../integration-vessel-menu/integration-vessel-menu.js';
@@ -44,6 +44,7 @@ type IntegrationBarStoryArgs = ObcIntegrationBar & {
   makeLabelNamesShort: boolean;
   containerWidthPx: number;
   showStatus: boolean;
+  showIntegrationMenu: boolean;
 };
 
 function renderIntegrationButtons({
@@ -53,6 +54,7 @@ function renderIntegrationButtons({
   rich,
   shouldShowDividerRight,
   showStatus,
+  showIntegrationMenu,
 }: {
   onIntegrationButtonClick: (event: Event, buttonIndex: number) => void;
   shortNames: boolean;
@@ -60,6 +62,7 @@ function renderIntegrationButtons({
   rich: boolean;
   shouldShowDividerRight: (buttonIndex: number) => boolean;
   showStatus: boolean;
+  showIntegrationMenu: boolean;
 }) {
   const slotName = hug ? 'hug-buttons' : 'integration-buttons';
   const buttonType = getIntegrationnButtonType(hug, rich);
@@ -76,7 +79,6 @@ function renderIntegrationButtons({
       ?dividerRight=${shouldShowDividerRight(0)}
       @click=${(e: Event) => onIntegrationButtonClick(e, 0)}
       slot=${slotName}
-      .
     >
       <obi-ship slot="leading-icon"></obi-ship>
       <span slot="label"
@@ -85,6 +87,22 @@ function renderIntegrationButtons({
       <div slot="info-label">Info Label</div>
       <div slot="info-status">Info Status</div>
       <div slot="status">Status</div>
+      ${showIntegrationMenu
+        ? html`<obc-integration-vessel-menu
+            slot="integration-vessel-menu"
+            numberOfButtons="2"
+            @button1-click=${() => console.log('Boat Button 1 clicked')}
+            @button2-click=${() => console.log('Boat Button 2 clicked')}
+            ><span slot="title">Boat</span
+            ><obi-placeholder slot="button-1-leading-icon"></obi-placeholder>
+            <div slot="button-1-label">Select</div>
+            <obi-placeholder slot="button-2-leading-icon"></obi-placeholder>
+            <div slot="button-2-label">Dismiss</div>
+            <div slot="content" style="padding: 24px;">
+              <p>Boat is working just fine.</p>
+            </div></obc-integration-vessel-menu
+          >`
+        : nothing}
     </obc-integration-button>
     <obc-integration-button
       hasLeadingIcon
@@ -105,6 +123,22 @@ function renderIntegrationButtons({
       <div slot="info-label">Info Label</div>
       <div slot="info-status">Info Status</div>
       <div slot="status">Status</div>
+      ${showIntegrationMenu
+        ? html`<obc-integration-vessel-menu
+            slot="integration-vessel-menu"
+            numberOfButtons="2"
+            @button1-click=${() => console.log('Space Ship Button 1 clicked')}
+            @button2-click=${() => console.log('Space Ship Button 2 clicked')}
+            ><span slot="title">Space Ship</span
+            ><obi-placeholder slot="button-1-leading-icon"></obi-placeholder>
+            <div slot="button-1-label">Select</div>
+            <obi-placeholder slot="button-2-leading-icon"></obi-placeholder>
+            <div slot="button-2-label">Dismiss</div>
+            <div slot="content" style="padding: 24px;">
+              <p>Space Ship is working just fine.</p>
+            </div></obc-integration-vessel-menu
+          >`
+        : nothing}
     </obc-integration-button>
     <obc-integration-button
       hasLeadingIcon
@@ -125,6 +159,22 @@ function renderIntegrationButtons({
       <div slot="info-label">Info Label</div>
       <div slot="info-status">Info Status</div>
       <div slot="status">Status</div>
+      ${showIntegrationMenu
+        ? html`<obc-integration-vessel-menu
+            slot="integration-vessel-menu"
+            numberOfButtons="2"
+            @button1-click=${() => console.log('Vessel Button 1 clicked')}
+            @button2-click=${() => console.log('Vessel Button 2 clicked')}
+            ><span slot="title">Vessel</span
+            ><obi-placeholder slot="button-1-leading-icon"></obi-placeholder>
+            <div slot="button-1-label">Select</div>
+            <obi-placeholder slot="button-2-leading-icon"></obi-placeholder>
+            <div slot="button-2-label">Dismiss</div>
+            <div slot="content" style="padding: 24px;">
+              <p>Vessel is working just fine.</p>
+            </div></obc-integration-vessel-menu
+          >`
+        : nothing}
     </obc-integration-button>
     <obc-integration-button
       hasLeadingIcon
@@ -145,6 +195,22 @@ function renderIntegrationButtons({
       <div slot="info-label">Info Label</div>
       <div slot="info-status">Info Status</div>
       <div slot="status">Status</div>
+      ${showIntegrationMenu
+        ? html`<obc-integration-vessel-menu
+            slot="integration-vessel-menu"
+            numberOfButtons="2"
+            @button1-click=${() => console.log('Last Button 1 clicked')}
+            @button2-click=${() => console.log('Last Button 2 clicked')}
+            ><span slot="title">Last</span
+            ><obi-placeholder slot="button-1-leading-icon"></obi-placeholder>
+            <div slot="button-1-label">Select</div>
+            <obi-placeholder slot="button-2-leading-icon"></obi-placeholder>
+            <div slot="button-2-label">Dismiss</div>
+            <div slot="content" style="padding: 24px;">
+              <p>Last is working just fine.</p>
+            </div></obc-integration-vessel-menu
+          >`
+        : nothing}
     </obc-integration-button>
   `;
 }
@@ -191,6 +257,7 @@ const meta: Meta<IntegrationBarStoryArgs> = {
     fleetButtonActivated: false,
     fleetButtonLabel: 'Fleet',
     makeLabelNamesShort: false,
+    showIntegrationMenu: false,
   },
   argTypes: {
     containerWidthPx: {
@@ -206,6 +273,9 @@ const meta: Meta<IntegrationBarStoryArgs> = {
       control: {type: 'boolean'},
     },
     rich: {
+      control: {type: 'boolean'},
+    },
+    showIntegrationMenu: {
       control: {type: 'boolean'},
     },
   },
@@ -326,6 +396,7 @@ const meta: Meta<IntegrationBarStoryArgs> = {
             rich: args.rich,
             shouldShowDividerRight,
             showStatus: args.showStatus,
+            showIntegrationMenu: args.showIntegrationMenu,
           })}
         </obc-integration-bar>
       </div>
@@ -358,5 +429,11 @@ export const Rich: Story = {
     makeLabelNamesShort: false,
     rich: true,
     containerWidthPx: 1920,
+  },
+};
+
+export const WithIntegrationMenu: Story = {
+  args: {
+    showIntegrationMenu: true,
   },
 };

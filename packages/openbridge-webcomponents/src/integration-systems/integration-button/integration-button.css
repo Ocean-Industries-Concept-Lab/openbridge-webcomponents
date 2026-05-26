@@ -19,6 +19,7 @@
 .touch-target {
   @mixin style style=integration-normal visibleWrapperClass=.content-container;
   @mixin font-body;
+  anchor-name: --touch-target;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -307,4 +308,15 @@
   width: 1px;
   height: var(--integration-button-divider-height);
   background-color: var(--integration-border-divider);
+}
+
+.integration-vessel-menu-container {
+  visibility: hidden;
+  position: absolute;
+  position-anchor: --touch-target;
+  position-area: bottom center;
+}
+
+.integration-vessel-menu-container.show {
+  visibility: visible;
 }

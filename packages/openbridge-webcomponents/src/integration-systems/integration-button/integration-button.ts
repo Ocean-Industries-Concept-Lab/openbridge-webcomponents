@@ -31,6 +31,7 @@ export enum IntegrationButtonType {
  * @slot status - Status/description text (shown when `hasDescription` is true)
  * @slot info-label - Info label text
  * @slot info-status - Info status text
+ * @slot integration-vessel-menu - Integration vessel menu to be shown when button is in activated state
  *
  * @fires click - Fired when the internal button is activated.
  *
@@ -75,6 +76,10 @@ export class ObcIntegrationButton extends LitElement {
       ['variant-' + this.variant]: true,
       ['type-' + this.type]: true,
     };
+  }
+
+  private onIntegrationVesselMenuClick(event: Event) {
+    event.stopPropagation();
   }
 
   renderRich() {
@@ -149,6 +154,15 @@ export class ObcIntegrationButton extends LitElement {
             : nothing
         }
       </div>
+      <div
+        class=${classMap({
+          'integration-vessel-menu-container': true,
+          show: this.activated,
+        })}
+        @click=${this.onIntegrationVesselMenuClick}
+      >
+        <slot name="integration-vessel-menu"></slot>
+      </div>
     `;
   }
 
@@ -205,6 +219,15 @@ export class ObcIntegrationButton extends LitElement {
             : nothing
         }
       </div>
+      <div
+        class=${classMap({
+          'integration-vessel-menu-container': true,
+          show: this.activated,
+        })}
+        @click=${this.onIntegrationVesselMenuClick}
+      >
+        <slot name="integration-vessel-menu"></slot>
+      </div>
     `;
   }
 
@@ -245,6 +268,15 @@ export class ObcIntegrationButton extends LitElement {
           : html`<div class="divider-right" style="visibility: hidden;"></div>`}
       </div>
       ${this.dividerBottom ? html`<div class="divider-bottom"></div>` : nothing}
+      <div
+        class=${classMap({
+          'integration-vessel-menu-container': true,
+          show: this.activated,
+        })}
+        @click=${this.onIntegrationVesselMenuClick}
+      >
+        <slot name="integration-vessel-menu"></slot>
+      </div>
     `;
   }
 

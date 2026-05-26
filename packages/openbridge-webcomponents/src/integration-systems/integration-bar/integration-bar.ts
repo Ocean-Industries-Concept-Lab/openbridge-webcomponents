@@ -271,62 +271,6 @@ export class ObcIntegrationBar extends LitElement {
     `;
   }
 
-  /*   private renderFleetVesselContainerByType() {
-    switch (this.type) {
-      case IntegrationBarType.vesselname:
-        return this.renderVesselNameContent();
-      case IntegrationBarType.rich:
-        return this.renderRichContent();
-      case IntegrationBarType.dropdown:
-      case IntegrationBarType.inactive:
-      case IntegrationBarType.monitoring:
-      case IntegrationBarType.novesselselection:
-        return this.renderSelectorContent();
-      default:
-        return null;
-    }
-  }
-
-  private renderVesselNameContent() {
-    const fallbackVessels = [{value: 'default-vessel', label: 'Vessel name'}];
-    const vesselItems =
-      this.vesselSelectorOptions.length > 0
-        ? this.vesselSelectorOptions
-        : fallbackVessels;
-
-    return html`
-      <div class="vessel-container">
-        ${vesselItems.map((vessel, index) => {
-          const isSelected =
-            this.selectedVesselValue !== '' &&
-            this.selectedVesselValue === vessel.value;
-          const isActivated =
-            this.activeVesselValue !== '' &&
-            this.activeVesselValue === vessel.value;
-          return html`
-            <obc-integration-button
-              hasLeadingIcon
-              .variant=${isSelected
-                ? IntegrationButtonVariant.normal
-                : IntegrationButtonVariant.flat}
-              ?selected=${isSelected}
-              ?activated=${isActivated}
-              style=${isActivated
-                ? 'anchor-name: --integration-menu-anchor;'
-                : ''}
-              @click=${() => this.onVesselButtonClick(vessel)}
-              dividerRight
-            >
-              <obi-ship slot="leading-icon"></obi-ship>
-              <span slot="label">${vessel.label}</span>
-            </obc-integration-button>
-          `;
-        })}
-      </div>
-    `;
-  }
-    */
-
   static override styles = unsafeCSS(compentStyle);
 }
 
