@@ -10,16 +10,12 @@ import type {
 } from '../readout/readout.js';
 import {Priority} from '../types.js';
 import {
-  ReadoutInputSize as ReadoutAdviceSize,
-  ReadoutInputVariant,
-  ReadoutInputFormat,
-  ReadoutInputMode,
-} from '../readout-input/readout-input.js';
-import '../readout-input/readout-input.js';
-import {
-  readoutValueFromAttribute,
-  readoutValueToAttribute,
-} from '../readout/readout-formatters.js';
+  ReadoutSetpointSize as ReadoutAdviceSize,
+  ReadoutSetpointVariant,
+  ReadoutSetpointFormat,
+  ReadoutSetpointMode,
+} from '../readout-setpoint/readout-setpoint.js';
+import '../readout-setpoint/readout-setpoint.js';
 
 export {ReadoutAdviceSize};
 
@@ -41,19 +37,19 @@ export enum ReadoutAdviceState {
 /**
  * `<obc-readout-advice>` - A readout advice segment for displaying advisory values with an advice marker icon.
  *
- * Reuses `<obc-readout-input>` and keeps the same value rendering behavior, including fixed-width rendering, hinted zero padding, and the optional degree suffix. Use it when an advice value should be displayed as a separate segment inside a larger readout.
+ * Reuses `<obc-readout-setpoint>` and keeps the same value rendering behavior, including fixed-width rendering, hinted zero padding, and the optional degree suffix. Use it when an advice value should be displayed as a separate segment inside a larger readout.
  *
  * ## Features
  * - Sizes: Supports `small`, `regular`, `medium`, and `large`.
  * - Formats: Supports `regular`, `description`, `range`, `vertical-stack`, `baseline`, and `button`. Format selects the structural subtype; size is controlled independently via the `size` property.
  * - State axis: Supports `enabled`, `active`, and `amplified`. State controls behavior/typography (e.g. `active` uses active value typography).
  * - Priority axis: Uses `priority` (`regular`/`enhanced`) for color emphasis. `active`/`amplified` default to `Priority.enhanced` when `priority` is not provided.
- * - Value rendering: Inherits `hasFixedLength`, `valueLength`, `hasHintedZeros`, and `hasDegree` behavior from `<obc-readout-input>`.
+ * - Value rendering: Inherits `hasFixedLength`, `valueLength`, `hasHintedZeros`, and `hasDegree` behavior from `<obc-readout-setpoint>`.
  * - Additional lines: `type="description"` can render a secondary label by using `description`, and `type="range"` can render a second numeric line by using `secondaryValue`.
  * - Advice icon: Uses `notification-advice` by default and allows overriding the icon through a slot.
  *
  * ## Usage Guidelines
- * Use this component when the value should be presented as advice rather than as an input segment. Prefer `<obc-readout-input>` for input-like segments, and use a larger readout container when the advice must be composed with label, unit, or source content.
+ * Use this component when the value should be presented as advice rather than as a setpoint segment. Prefer `<obc-readout-setpoint>` for setpoint-like segments, and use a larger readout container when the advice must be composed with label, unit, or source content.
  *
  * ## Slots
  *
@@ -88,21 +84,13 @@ export class ObcReadoutAdvice extends LitElement {
 
   @property({type: Boolean, reflect: true}) hugContent = false;
 
-  @property({type: Boolean}) hasFixedLength = false;
+  @property({type: Number}) value: number | undefined = undefined;
 
-  @property({
-    converter: {
-      fromAttribute: readoutValueFromAttribute,
-      toAttribute: readoutValueToAttribute,
-    },
-  })
-  value: number | string | undefined = '';
-
-  @property({type: String}) secondaryValue = '';
+  @property({type: Number}) secondaryValue: number | undefined = undefined;
 
   @property({type: String}) description = '';
 
-  @property({type: String}) valueLength = '';
+  @property({type: Number}) minValueLength = 0;
 
   @property({type: Boolean}) hasHintedZeros = false;
 
@@ -121,11 +109,11 @@ export class ObcReadoutAdvice extends LitElement {
     return this.priority;
   }
 
-  private get resolvedMode(): ReadoutInputMode {
+  private get resolvedMode(): ReadoutSetpointMode {
     if (this.state === ReadoutAdviceState.active) {
-      return ReadoutInputMode.input;
+      return ReadoutSetpointMode.setpoint;
     }
-    return ReadoutInputMode.display;
+    return ReadoutSetpointMode.display;
   }
 
   override render() {
@@ -141,21 +129,20 @@ export class ObcReadoutAdvice extends LitElement {
         })}
       >
         <div class="readout-advice-wrapper">
-          <obc-readout-input
+          <obc-readout-setpoint
             data-obc-value-typography=${valueTypographyOverride ?? nothing}
             .readoutStyle=${this.readoutStyle}
             .direction=${this.direction}
-            .variant=${ReadoutInputVariant.advice}
-            .format=${this.resolvedFormat as unknown as ReadoutInputFormat}
+            .variant=${ReadoutSetpointVariant.advice}
+            .format=${this.resolvedFormat as unknown as ReadoutSetpointFormat}
             .size=${this.size}
             .mode=${this.resolvedMode}
             .priority=${this.resolvedPriority}
             .hugContent=${this.hugContent}
-            .hasFixedLength=${this.hasFixedLength}
+            .minValueLength=${this.minValueLength}
             .value=${this.value}
             .secondaryValue=${this.secondaryValue}
             .description=${this.description}
-            .valueLength=${this.valueLength}
             .hasHintedZeros=${this.hasHintedZeros}
             .fractionDigits=${this.fractionDigits}
             .hasDegree=${this.hasDegree}
@@ -163,7 +150,7 @@ export class ObcReadoutAdvice extends LitElement {
             <slot name="icon" slot="icon">
               <obi-notification-advice class="icon"></obi-notification-advice>
             </slot>
-          </obc-readout-input>
+          </obc-readout-setpoint>
         </div>
       </div>
     `;

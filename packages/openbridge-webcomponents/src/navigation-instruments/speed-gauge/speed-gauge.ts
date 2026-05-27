@@ -164,7 +164,7 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
                 class="speed-gauge-value"
                 .variant=${ReadoutVariant.stack}
                 .direction=${ReadoutDirection.horizontal}
-                .hasInput=${false}
+                .hasSetpoint=${false}
                 .hasAdvice=${false}
                 .hasSrc=${false}
                 .value=${this.speed}

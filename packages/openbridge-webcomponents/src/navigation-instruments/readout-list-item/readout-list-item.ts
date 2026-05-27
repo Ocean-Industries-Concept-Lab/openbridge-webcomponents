@@ -3,12 +3,12 @@ import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import componentStyle from './readout-list-item.css?inline';
 import {customElement} from '../../decorator.js';
-import {ReadoutInputSize} from '../readout-input/readout-input.js';
-import {ReadoutInputValueTypography} from '../readout-input/readout-input.js';
+import {ReadoutSetpointSize} from '../readout-setpoint/readout-setpoint.js';
+import {ReadoutSetpointValueTypography} from '../readout-setpoint/readout-setpoint.js';
 import {Priority} from '../types.js';
-import '../readout-input/readout-input.js';
+import '../readout-setpoint/readout-setpoint.js';
 import '../../icons/icon-input-right.js';
-import {ReadoutInputMode} from '../readout-input/readout-input.js';
+import {ReadoutSetpointMode} from '../readout-setpoint/readout-setpoint.js';
 
 export enum ReadoutListItemAlertState {
   none = 'none',
@@ -34,8 +34,8 @@ export enum ReadoutListItemStacking {
 export enum ReadoutListItemPriority {
   regular = 'regular',
   enhanced = 'enhanced',
-  input = 'input',
-  inputFlipFlop = 'input-flip-flop',
+  setpoint = 'setpoint',
+  setpointFlipFlop = 'setpoint-flip-flop',
 }
 
 /**
@@ -46,12 +46,12 @@ export enum ReadoutListItemPriority {
  * ### Features
  * - **Sizes:** `base`, `priority`, and `enhanced` typography/padding scales.
  * - **Stacking modes:** `trailing-unit`, `leading-unit`, and `leading-src` control where unit/source appear relative to the label/value.
- * - **Priority styling:** `priority` controls emphasis and input presentation (`regular`, `enhanced`, `input`, `input-flip-flop`).
+ * - **Priority styling:** `priority` controls emphasis and setpoint presentation (`regular`, `enhanced`, `setpoint`, `setpoint-flip-flop`).
  * - **Alert states:** Supports `alertState` styling for integrity/invalid and attention states (`caution`, `warning`, `alarm`).
  * - **Formatting:** Supports numeric formatting, fixed-length width templates, hinted zeros, and optional degree suffix (`°`).
  *
  * ### Usage Guidelines
- * Use this component for dense readouts in list contexts. Prefer `<obc-readout>` when you need multi-segment advice/input/source composition, rich layouts, or source picker/flyout behavior.
+ * Use this component for dense readouts in list contexts. Prefer `<obc-readout>` when you need multi-segment advice/setpoint/source composition, rich layouts, or source picker/flyout behavior.
  *
  * ### Slots
  * | Slot Name     | Renders When             | Purpose |
@@ -78,9 +78,9 @@ export class ObcReadoutListItem extends LitElement {
   @property({type: String}) src = '';
 
   @property() value: number | string | undefined = undefined;
-  @property() inputValue: number | string | undefined = undefined;
+  @property() setpointValue: number | string | undefined = undefined;
 
-  @property({type: Boolean}) hasInput = false;
+  @property({type: Boolean}) hasSetpoint = false;
 
   @property({type: Boolean}) hasDegree = false;
   @property({type: Boolean}) hasUnit = false;
@@ -97,79 +97,80 @@ export class ObcReadoutListItem extends LitElement {
   @property({type: String}) valueLength = '';
   @property({type: Boolean}) hasHintedZeros = false;
 
-  private get resolvedMainValueSize(): ReadoutInputSize {
+  private get resolvedMainValueSize(): ReadoutSetpointSize {
     return this.size === ReadoutListItemSize.enhanced
-      ? ReadoutInputSize.large
+      ? ReadoutSetpointSize.large
       : this.size === ReadoutListItemSize.priority
-        ? ReadoutInputSize.medium
-        : ReadoutInputSize.regular;
+        ? ReadoutSetpointSize.medium
+        : ReadoutSetpointSize.regular;
   }
 
-  private get resolvedValueSize(): ReadoutInputSize {
-    if (this.priority === ReadoutListItemPriority.inputFlipFlop) {
+  private get resolvedValueSize(): ReadoutSetpointSize {
+    if (this.priority === ReadoutListItemPriority.setpointFlipFlop) {
       if (this.size === ReadoutListItemSize.priority) {
-        return ReadoutInputSize.small;
+        return ReadoutSetpointSize.small;
       }
 
       if (this.size === ReadoutListItemSize.enhanced) {
-        return ReadoutInputSize.regular;
+        return ReadoutSetpointSize.regular;
       }
     }
 
     if (this.size === ReadoutListItemSize.enhanced) {
-      return ReadoutInputSize.large;
+      return ReadoutSetpointSize.large;
     }
-    return ReadoutInputSize.regular;
+    return ReadoutSetpointSize.regular;
   }
 
   private get resolvedValueTypography():
-    | ReadoutInputValueTypography
+    | ReadoutSetpointValueTypography
     | undefined {
     if (
-      this.priority === ReadoutListItemPriority.inputFlipFlop &&
-      this.resolvedValueSize === ReadoutInputSize.small
+      this.priority === ReadoutListItemPriority.setpointFlipFlop &&
+      this.resolvedValueSize === ReadoutSetpointSize.small
     ) {
       return undefined;
     }
 
     if (
-      this.priority === ReadoutListItemPriority.inputFlipFlop &&
+      this.priority === ReadoutListItemPriority.setpointFlipFlop &&
       this.size === ReadoutListItemSize.enhanced
     ) {
-      return ReadoutInputValueTypography.regular;
+      return ReadoutSetpointValueTypography.regular;
     }
 
     switch (this.size) {
       case ReadoutListItemSize.enhanced:
-        return ReadoutInputValueTypography.large;
+        return ReadoutSetpointValueTypography.large;
       case ReadoutListItemSize.priority:
-        return ReadoutInputValueTypography.medium;
+        return ReadoutSetpointValueTypography.medium;
       case ReadoutListItemSize.base:
       default:
-        return ReadoutInputValueTypography.regular;
+        return ReadoutSetpointValueTypography.regular;
     }
   }
 
-  private get resolvedInputSize(): ReadoutInputSize {
-    if (!this.hasInput) {
-      return ReadoutInputSize.small;
+  private get resolvedSetpointSize(): ReadoutSetpointSize {
+    if (!this.hasSetpoint) {
+      return ReadoutSetpointSize.small;
     }
 
     if (
-      this.priority === ReadoutListItemPriority.input ||
-      this.priority === ReadoutListItemPriority.inputFlipFlop
+      this.priority === ReadoutListItemPriority.setpoint ||
+      this.priority === ReadoutListItemPriority.setpointFlipFlop
     ) {
       return this.resolvedMainValueSize;
     }
 
-    return ReadoutInputSize.small;
+    return ReadoutSetpointSize.small;
   }
 
   private get resolvedActualPriority(): Priority {
     if (
       this.priority === ReadoutListItemPriority.enhanced ||
-      (this.priority === ReadoutListItemPriority.input && !this.hasInput) ||
-      this.priority === ReadoutListItemPriority.inputFlipFlop
+      (this.priority === ReadoutListItemPriority.setpoint &&
+        !this.hasSetpoint) ||
+      this.priority === ReadoutListItemPriority.setpointFlipFlop
     ) {
       return Priority.enhanced;
     }
@@ -177,25 +178,31 @@ export class ObcReadoutListItem extends LitElement {
     return Priority.regular;
   }
 
-  private get resolvedActualMode(): ReadoutInputMode {
+  private get resolvedActualMode(): ReadoutSetpointMode {
     return this.priority === ReadoutListItemPriority.enhanced
-      ? ReadoutInputMode.input
-      : ReadoutInputMode.display;
+      ? ReadoutSetpointMode.setpoint
+      : ReadoutSetpointMode.display;
   }
 
-  private get resolvedInputPriority(): Priority {
-    if (!this.hasInput || this.priority === ReadoutListItemPriority.regular) {
+  private get resolvedSetpointPriority(): Priority {
+    if (
+      !this.hasSetpoint ||
+      this.priority === ReadoutListItemPriority.regular
+    ) {
       return Priority.regular;
     }
 
     return Priority.enhanced;
   }
 
-  private get resolvedInputMode(): ReadoutInputMode {
-    if (this.hasInput && this.priority === ReadoutListItemPriority.input) {
-      return ReadoutInputMode.input;
+  private get resolvedSetpointMode(): ReadoutSetpointMode {
+    if (
+      this.hasSetpoint &&
+      this.priority === ReadoutListItemPriority.setpoint
+    ) {
+      return ReadoutSetpointMode.setpoint;
     }
-    return ReadoutInputMode.display;
+    return ReadoutSetpointMode.display;
   }
 
   private get showsTrailingSource(): boolean {
@@ -274,21 +281,21 @@ export class ObcReadoutListItem extends LitElement {
     </span>`;
   }
 
-  private renderInput() {
-    if (!this.hasInput) {
+  private renderSetpoint() {
+    if (!this.hasSetpoint) {
       return nothing;
     }
 
     return html`
-      <obc-readout-input
-        .variant=${'input'}
+      <obc-readout-setpoint
+        .variant=${'setpoint'}
         .readoutStyle=${'regular'}
         .direction=${'horizontal'}
-        .size=${this.resolvedInputSize}
-        .priority=${this.resolvedInputPriority}
-        .mode=${this.resolvedInputMode}
+        .size=${this.resolvedSetpointSize}
+        .priority=${this.resolvedSetpointPriority}
+        .mode=${this.resolvedSetpointMode}
         .hugContent=${true}
-        .value=${this.inputValue}
+        .value=${this.setpointValue}
         .showZeroPadding=${this.showZeroPadding}
         .maxDigits=${this.maxDigits}
         .fractionDigits=${this.fractionDigits}
@@ -298,13 +305,13 @@ export class ObcReadoutListItem extends LitElement {
         .hasDegree=${this.hasDegree}
       >
         <obi-input-right slot="icon"></obi-input-right>
-      </obc-readout-input>
+      </obc-readout-setpoint>
     `;
   }
 
   private renderActualValue() {
     return html`
-      <obc-readout-input
+      <obc-readout-setpoint
         .variant=${'value'}
         .readoutStyle=${'regular'}
         .direction=${'horizontal'}
@@ -323,16 +330,16 @@ export class ObcReadoutListItem extends LitElement {
         .hasDegree=${this.hasDegree}
       >
         ${this.renderValueIconSlot()}
-      </obc-readout-input>
+      </obc-readout-setpoint>
     `;
   }
 
   private renderValue() {
     return html`
       <div class="value-wrap" part="value-wrap">
-        ${this.hasInput
+        ${this.hasSetpoint
           ? html`<div class="value-cluster" part="value-cluster">
-              ${this.renderInput()} ${this.renderActualValue()}
+              ${this.renderSetpoint()} ${this.renderActualValue()}
             </div>`
           : this.renderActualValue()}
       </div>
@@ -374,9 +381,10 @@ export class ObcReadoutListItem extends LitElement {
           [`stacking-${this.stacking}`]: true,
           'priority-enhanced':
             this.priority === ReadoutListItemPriority.enhanced,
-          'priority-input': this.priority === ReadoutListItemPriority.input,
-          'priority-input-flip-flop':
-            this.priority === ReadoutListItemPriority.inputFlipFlop,
+          'priority-setpoint':
+            this.priority === ReadoutListItemPriority.setpoint,
+          'priority-setpoint-flip-flop':
+            this.priority === ReadoutListItemPriority.setpointFlipFlop,
           [`alert-${this.alertState}`]: true,
           'has-leading-icon': this.hasLeadingIcon,
           'has-value-icon': this.hasValueIcon,

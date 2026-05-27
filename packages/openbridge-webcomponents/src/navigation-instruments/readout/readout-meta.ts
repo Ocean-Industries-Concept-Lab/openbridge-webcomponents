@@ -1,24 +1,17 @@
 import {html, nothing} from 'lit';
 import type {TemplateResult} from 'lit';
 import {classMap} from 'lit/directives/class-map.js';
-import {formatTextSegment} from './readout-formatters.js';
 
 type ReadoutTextContainerRenderOptions = {
   value: string;
   className: 'label' | 'unit';
   slotName: 'label' | 'unit';
   partName: 'label-container' | 'unit-container';
-  hasFixedLength: boolean;
-  lengthTemplate: string;
 };
 
 type ReadoutMetaZoneRenderOptions = {
-  labelValue: string;
-  unitValue: string;
-  hasLabelFixedLength: boolean;
-  labelLength: string;
-  hasUnitFixedLength: boolean;
-  unitLength: string;
+  labelValue: string | undefined;
+  unitValue: string | undefined;
   priorityEnhanced?: boolean;
 };
 
@@ -27,68 +20,43 @@ function renderTextContainer({
   className,
   slotName,
   partName,
-  hasFixedLength,
-  lengthTemplate,
 }: ReadoutTextContainerRenderOptions): TemplateResult {
-  const textSegment = formatTextSegment(value, hasFixedLength, lengthTemplate);
-  const templateLength = textSegment.widthTemplate.length;
-
   return html`
     <div class="${className}-container" part=${partName}>
       <slot name=${slotName}>
         <span
           class=${classMap({
             [className]: true,
-            'fixed-length': hasFixedLength,
           })}
-          style=${templateLength > 0
-            ? `--obc-readout-text-fixed-ch:${templateLength};`
-            : ''}
         >
-          ${textSegment.visibleValue}
+          ${value}
         </span>
       </slot>
     </div>
   `;
 }
 
-function renderReadoutLabelContainer(
-  value: string,
-  hasFixedLength: boolean,
-  lengthTemplate: string
-): TemplateResult {
+function renderReadoutLabelContainer(value: string): TemplateResult {
   return renderTextContainer({
     value,
     className: 'label',
     slotName: 'label',
     partName: 'label-container',
-    hasFixedLength,
-    lengthTemplate,
   });
 }
 
-function renderReadoutUnitContainer(
-  value: string,
-  hasFixedLength: boolean,
-  lengthTemplate: string
-): TemplateResult {
+function renderReadoutUnitContainer(value: string): TemplateResult {
   return renderTextContainer({
     value,
     className: 'unit',
     slotName: 'unit',
     partName: 'unit-container',
-    hasFixedLength,
-    lengthTemplate,
   });
 }
 
 export function renderReadoutMetaZone({
   labelValue,
   unitValue,
-  hasLabelFixedLength,
-  labelLength,
-  hasUnitFixedLength,
-  unitLength,
   priorityEnhanced,
 }: ReadoutMetaZoneRenderOptions): TemplateResult {
   return html`
@@ -104,51 +72,35 @@ export function renderReadoutMetaZone({
         class="instrument-label-unit-container"
         part="instrument-label-unit-container"
       >
-        ${labelValue || hasLabelFixedLength
-          ? renderReadoutLabelContainer(
-              labelValue,
-              hasLabelFixedLength,
-              labelLength
-            )
+        ${labelValue !== undefined
+          ? renderReadoutLabelContainer(labelValue)
           : nothing}
-        ${unitValue || hasUnitFixedLength
-          ? renderReadoutUnitContainer(
-              unitValue,
-              hasUnitFixedLength,
-              unitLength
-            )
+        ${unitValue !== undefined
+          ? renderReadoutUnitContainer(unitValue)
           : nothing}
       </div>
     </div>
   `;
 }
 
-export function renderReadoutLabelZone(
-  value: string,
-  hasFixedLength: boolean,
-  lengthTemplate: string
-): TemplateResult {
+export function renderReadoutLabelZone(value: string): TemplateResult {
   return html`
     <div
       class="readout-segment-wrapper readout-label-wrapper"
       part="label-wrapper"
     >
-      ${renderReadoutLabelContainer(value, hasFixedLength, lengthTemplate)}
+      ${renderReadoutLabelContainer(value)}
     </div>
   `;
 }
 
-export function renderReadoutUnitZone(
-  value: string,
-  hasFixedLength: boolean,
-  lengthTemplate: string
-): TemplateResult {
+export function renderReadoutUnitZone(value: string): TemplateResult {
   return html`
     <div
       class="readout-segment-wrapper readout-unit-wrapper"
       part="unit-wrapper"
     >
-      ${renderReadoutUnitContainer(value, hasFixedLength, lengthTemplate)}
+      ${renderReadoutUnitContainer(value)}
     </div>
   `;
 }

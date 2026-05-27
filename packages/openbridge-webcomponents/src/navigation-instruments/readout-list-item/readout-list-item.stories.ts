@@ -15,8 +15,8 @@ type ReadoutListItemStoryArgs = {
   stacking: ReadoutListItemStacking;
   priority: ReadoutListItemPriority;
   alertState: ReadoutListItemAlertState;
-  hasInput: boolean;
-  inputValue: string;
+  hasSetpoint: boolean;
+  setpointValue: string;
   hasLabel: boolean;
   hasDegree: boolean;
   hasUnit: boolean;
@@ -134,8 +134,8 @@ const defaultArgs: ReadoutListItemStoryArgs = {
   stacking: ReadoutListItemStacking.trailingUnit,
   priority: ReadoutListItemPriority.regular,
   alertState: ReadoutListItemAlertState.none,
-  hasInput: false,
-  inputValue: '123',
+  hasSetpoint: false,
+  setpointValue: '123',
   hasDegree: true,
   hasUnit: true,
   hasSource: false,
@@ -162,8 +162,8 @@ function renderReadoutListItem(args: Partial<ReadoutListItemStoryArgs>) {
       .stacking=${resolved.stacking}
       .priority=${resolved.priority}
       .alertState=${resolved.alertState}
-      .hasInput=${resolved.hasInput}
-      .inputValue=${resolved.inputValue}
+      .hasSetpoint=${resolved.hasSetpoint}
+      .setpointValue=${resolved.setpointValue}
       .hasLabel=${resolved.hasLabel}
       .hasDegree=${resolved.hasDegree}
       .hasUnit=${resolved.hasUnit}
@@ -270,15 +270,15 @@ const meta = {
       options: Object.values(ReadoutListItemAlertState),
       table: {category: 'Readout'},
     },
-    hasInput: {
-      name: 'Has Input',
+    hasSetpoint: {
+      name: 'Has Setpoint',
       table: {category: 'Readout'},
     },
-    inputValue: {
-      name: 'Input Value',
+    setpointValue: {
+      name: 'Setpoint Value',
       control: {type: 'text'},
       if: {
-        arg: 'hasInput',
+        arg: 'hasSetpoint',
         truthy: true,
       },
       table: {category: 'Value'},
@@ -383,28 +383,28 @@ function renderStackingMatrix({
   const priorities = [
     ReadoutListItemPriority.regular,
     ReadoutListItemPriority.enhanced,
-    ReadoutListItemPriority.input,
-    ReadoutListItemPriority.inputFlipFlop,
+    ReadoutListItemPriority.setpoint,
+    ReadoutListItemPriority.setpointFlipFlop,
   ] as const;
-  const hasInputs = [false, true] as const;
+  const hasSetpoints = [false, true] as const;
 
   const cases: ReadoutShowcaseCase[] = [];
 
   for (const size of sizes) {
     for (const priority of priorities) {
-      for (const hasInput of hasInputs) {
+      for (const hasSetpoint of hasSetpoints) {
         cases.push({
-          label: `${size} / ${priority} / hasInput=${hasInput}`,
+          label: `${size} / ${priority} / hasSetpoint=${hasSetpoint}`,
           args: {
             size,
             stacking,
             priority,
-            hasInput,
+            hasSetpoint,
             alertState: ReadoutListItemAlertState.none,
             hasUnit,
             hasSource,
             value: '123',
-            inputValue: '123',
+            setpointValue: '123',
             hasDegree: true,
             hasLabel: true,
           },
