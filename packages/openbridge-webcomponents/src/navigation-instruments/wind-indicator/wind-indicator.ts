@@ -169,19 +169,20 @@ const LABELED_ARROW_TPL = svg`
 /**
  * `<obc-wind-indicator>` – A compact wind indicator with a fixed frame and a rotating wind marker.
  *
- * Visualizes a wind speed (in knots) using a compact icon plus optional mode layers.
+ * Visualizes a wind speed on the Beaufort scale using a compact barb icon
+ * plus optional mode layers.
  *
  * ## Features
  *
  * - **Variants:** `type` (`arrow` | `shaft` | `labeled`), `direction` (`true` | `relative`), `priority` (`regular` | `enhanced`).
- * - **Speed input:** `speedKnots` is the wind speed in knots; the indicator
- *   picks the matching barb icon following the standard meteorological
- *   convention (one half-barb per 5 kn, one full barb per 10 kn).
+ * - **Speed input:** `currentWindSpeedBeaufort` is the wind force on the
+ *   Beaufort scale (`0`–`13`); each step picks the next barb icon.
  *
  * ## Usage Guidelines
  *
  * Use when you need a small wind cue next to other compact indicators.
- * Pass `speedKnots` as the measured wind speed in knots.
+ * Pass the wind force on the Beaufort scale through
+ * `currentWindSpeedBeaufort`, matching the convention used by `<obc-wind>`.
  */
 @customElement('obc-wind-indicator')
 export class ObcWindIndicator extends LitElement {
@@ -194,15 +195,14 @@ export class ObcWindIndicator extends LitElement {
     WindIndicatorPriority.regular;
 
   /**
-   * Wind speed in knots used to pick the barb icon.
+   * Wind force on the Beaufort scale (`0`–`13`) used to pick the barb icon.
    *
-   * Mapping follows the standard meteorological convention (half-barb = 5 kn,
-   * full barb = 10 kn). The icon for a given speed covers the 5 kn range
-   * ending at that value, e.g. `[5, 10) kn` shows the 10 kn icon (one full
-   * barb). Speeds at or above 70 kn are capped to the heaviest available
-   * icon (70 kn).
+   * Matches the convention used by `<obc-wind>` so the same input value can
+   * drive both components. Values are clamped to the available icon set;
+   * non-finite or negative values fall back to `0` (calm).
    */
-  @property({type: Number, attribute: 'speed-knots'}) speedKnots = 0;
+  @property({type: Number, attribute: 'current-wind-speed-beaufort'})
+  currentWindSpeedBeaufort = 0;
 
   /**
    * Rotation of the reference frame (course/heading) in degrees.
@@ -265,17 +265,17 @@ export class ObcWindIndicator extends LitElement {
   `;
 
   /**
-   * Icon index in the range `1..14`, where each step corresponds to 5 kn:
-   * `1` = 5 kn (half-barb), `2` = 10 kn (one full barb), ..., `14` = 70 kn.
-   * Speeds at or above 70 kn are capped to `14`; non-finite or negative
-   * speeds fall back to `1`.
+   * Icon index in the range `1..14`, derived from `currentWindSpeedBeaufort`
+   * as `beaufort + 1` (mirroring the mapping in `renderWind` /
+   * `environment.ts`). Values outside the available icon range are clamped;
+   * non-finite inputs fall back to `1`.
    */
   private get iconIndex(): number {
-    const value = this.speedKnots;
-    if (!Number.isFinite(value) || value < 0) {
+    const value = this.currentWindSpeedBeaufort;
+    if (!Number.isFinite(value)) {
       return 1;
     }
-    return Math.max(1, Math.min(14, Math.floor(value / 5) + 1));
+    return Math.max(1, Math.min(14, Math.round(value) + 1));
   }
 
   private get accentColor(): string {
@@ -485,7 +485,7 @@ export class ObcWindIndicator extends LitElement {
           ${
             this.iconIndex === 8
               ? SHAFT_TRUE_WIND_BARB_TPL
-              : svg`<path d=${SHAFT_TRUE_WIND_BARB_D_BY_LEVEL[this.iconIndex - 1]} fill="currentColor" />`
+              : svg`<path d=${SHAFT_TRUE_WIND_BARB_D_BY_LEVEL[Math.min(this.iconIndex - 1, SHAFT_TRUE_WIND_BARB_D_BY_LEVEL.length - 1)]} fill="currentColor" />`
           }
           ${SHAFT_TRUE_CIRCLE_TPL}
         </g>
@@ -514,8 +514,8 @@ export class ObcWindIndicator extends LitElement {
       return null;
     }
 
-    const value = Number.isFinite(this.speedKnots)
-      ? Math.max(0, Math.round(this.speedKnots))
+    const value = Number.isFinite(this.currentWindSpeedBeaufort)
+      ? Math.max(0, Math.round(this.currentWindSpeedBeaufort))
       : 0;
 
     return svg`

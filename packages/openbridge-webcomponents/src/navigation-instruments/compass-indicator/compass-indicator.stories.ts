@@ -1,4 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import {html} from 'lit';
 import {
   CompassIndicatorDirection,
   CompassIndicatorType,
@@ -6,13 +7,21 @@ import {
 } from './compass-indicator.js';
 import './compass-indicator.js';
 
-const meta: Meta<typeof ObcCompassIndicator> = {
+const meta: Meta<ObcCompassIndicator> = {
   title: 'Indicators/Compass Indicator',
   tags: ['autodocs', '6.0'],
   component: 'obc-compass-indicator',
   parameters: {
     layout: 'centered',
   },
+  render: (args) => html`
+    <obc-compass-indicator
+      .angle=${args.angle}
+      .type=${args.type}
+      .direction=${args.direction}
+      .northUp=${args.northUp}
+    ></obc-compass-indicator>
+  `,
   args: {
     angle: 315,
     type: CompassIndicatorType.Regular,

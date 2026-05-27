@@ -11,13 +11,13 @@ type WindIndicatorArgs = {
   type: WindIndicatorType;
   direction: WindIndicatorDirection;
   priority: WindIndicatorPriority;
-  speedKnots: number;
+  currentWindSpeedBeaufort: number;
   rotationAngle: number;
   windFromAngle: number;
   angle?: number;
   'wind-from-angle'?: number;
   'rotation-angle'?: number;
-  'speed-knots'?: number;
+  'current-wind-speed-beaufort'?: number;
   iconIndex?: number;
   accentColor?: string;
   windIconCache?: unknown;
@@ -38,14 +38,14 @@ const meta: Meta<WindIndicatorArgs> = {
       .type=${args.type}
       .direction=${args.direction}
       .priority=${args.priority}
-      .speedKnots=${args.speedKnots}
+      .currentWindSpeedBeaufort=${args.currentWindSpeedBeaufort}
       .rotationAngle=${args.rotationAngle}
       .windFromAngle=${args.windFromAngle}
     ></obc-wind-indicator>
   `,
   args: {
     windFromAngle: 0,
-    speedKnots: 35,
+    currentWindSpeedBeaufort: 7,
     type: WindIndicatorType.arrow,
     direction: WindIndicatorDirection.true,
     priority: WindIndicatorPriority.regular,
@@ -75,17 +75,17 @@ const meta: Meta<WindIndicatorArgs> = {
       control: {type: 'select'},
       options: Object.values(WindIndicatorPriority),
     },
-    speedKnots: {
-      name: 'Speed (knots)',
+    currentWindSpeedBeaufort: {
+      name: 'Wind Speed (Beaufort)',
       description:
-        'Wind speed in knots. Mapped to barb icons in 5 kn steps (half-barb = 5 kn, full barb = 10 kn). Capped at 70 kn.',
-      control: {type: 'range', min: 0, max: 80, step: 1},
+        'Wind force on the Beaufort scale. Matches the convention used by <obc-wind>.',
+      control: {type: 'range', min: 0, max: 13, step: 1},
     },
 
     angle: {table: {disable: true}, control: false},
     'wind-from-angle': {table: {disable: true}, control: false},
     'rotation-angle': {table: {disable: true}, control: false},
-    'speed-knots': {table: {disable: true}, control: false},
+    'current-wind-speed-beaufort': {table: {disable: true}, control: false},
     iconIndex: {table: {disable: true}, control: false},
     accentColor: {table: {disable: true}, control: false},
     windIconCache: {table: {disable: true}, control: false},
@@ -128,6 +128,6 @@ export const Labeled: Story = {
     type: WindIndicatorType.labeled,
     direction: WindIndicatorDirection.true,
     priority: WindIndicatorPriority.regular,
-    speedKnots: 60,
+    currentWindSpeedBeaufort: 12,
   },
 };
