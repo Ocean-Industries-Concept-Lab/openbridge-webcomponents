@@ -17,6 +17,7 @@ const meta: Meta<typeof ObcCompassIndicator> = {
     angle: 315,
     type: CompassIndicatorType.Regular,
     direction: CompassIndicatorDirection.Heading,
+    northUp: true,
   },
   argTypes: {
     angle: {
@@ -29,6 +30,11 @@ const meta: Meta<typeof ObcCompassIndicator> = {
     direction: {
       control: 'select',
       options: Object.values(CompassIndicatorDirection),
+    },
+    northUp: {
+      control: 'boolean',
+      description:
+        'When true the compass face stays north-up and the arrow rotates; when false the arrow stays vertical and the face rotates (heading-up / course-up).',
     },
   },
 } satisfies Meta<ObcCompassIndicator>;
@@ -85,5 +91,23 @@ export const LabeledNorth: Story = {
     type: CompassIndicatorType.Labeled,
     direction: CompassIndicatorDirection.North,
     angle: 315,
+  },
+};
+
+export const RegularHeadingHeadingUp: Story = {
+  args: {
+    type: CompassIndicatorType.Regular,
+    direction: CompassIndicatorDirection.Heading,
+    angle: 45,
+    northUp: false,
+  },
+};
+
+export const RegularCourseCourseUp: Story = {
+  args: {
+    type: CompassIndicatorType.Regular,
+    direction: CompassIndicatorDirection.Course,
+    angle: 45,
+    northUp: false,
   },
 };
