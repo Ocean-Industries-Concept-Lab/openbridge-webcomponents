@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - develop
+      - fix/restrict-published-package
   workflow_dispatch:
 
 permissions:
