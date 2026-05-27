@@ -3,12 +3,274 @@
 }
 
 :host {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  --thumb-drag-x: 0px;
+  --obc-two-step-track-width: 0px;
+  --obc-two-step-armed-slide-duration: 880ms;
+  --obc-two-step-thumb-spring-duration: 520ms;
+  --obc-two-step-thumb-spring-easing: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:host([width="hug"]) {
   display: inline-flex;
+  width: auto;
+  max-width: 100%;
+  --global-size-spacing-icon-icon-size-regular: var(
+    --global-size-spacing-icon-icon-size-small
+  );
+}
+
+.control-root {
+  display: inline-flex;
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+}
+
+.status-announcer {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.slot-targets {
+  display: none;
+}
+
+:host([width="fluid"]) .control-root {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+}
+
+:host([width="hug"]) .control-root {
+  display: inline-block;
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+  vertical-align: top;
+}
+
+:host([width="hug"]) {
+  .width-guarantor {
+    display: block;
+    visibility: hidden;
+    pointer-events: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .width-guarantor-surface {
+    display: inline-grid;
+    grid-template-columns: max-content;
+    grid-template-rows: var(--ui-components-button-touch-target-size);
+    box-sizing: border-box;
+  }
+
+  .width-guarantor-line {
+    grid-column: 1;
+    grid-row: 1;
+    display: inline-flex;
+    align-items: center;
+    align-self: center;
+    white-space: nowrap;
+  }
+
+  .width-guarantor-line--segments {
+    gap: 0;
+  }
+
+  .width-guarantor-thumb-preview,
+  .width-guarantor-thumb {
+    flex: 0 0 auto;
+    width: var(--global-size-spacing-touch-target-min);
+    height: var(--ui-components-button-visual-size);
+  }
+
+  .width-guarantor-label-stack {
+    display: inline-grid;
+    flex: 0 1 auto;
+
+    & > .width-guarantor-label {
+      grid-area: 1 / 1;
+      white-space: nowrap;
+    }
+  }
+
+  .width-guarantor-state-area {
+    display: inline-flex;
+    flex: 0 1 auto;
+    min-width: 0;
+    padding: 0 var(--ui-components-button-label-spacing);
+  }
+
+  .width-guarantor-label--body {
+    @mixin font-body;
+    padding-inline-start: var(--ui-components-button-label-spacing);
+  }
+
+  .width-guarantor-label--button {
+    @mixin font-button;
+  }
+
+  .width-guarantor-line--processing {
+    gap: var(--ui-components-button-label-spacing);
+    padding-inline: var(--ui-components-button-padding-horizontal);
+  }
+
+  .width-guarantor-spinner {
+    flex: 0 0 auto;
+    width: var(--global-size-spacing-icon-icon-size-regular);
+    height: var(--global-size-spacing-icon-icon-size-regular);
+  }
+
+  .width-guarantor-line--success {
+    gap: 0;
+    padding-inline-start: calc(
+      var(--ui-components-button-padding-horizontal) +
+        var(--ui-components-button-label-spacing)
+    );
+    padding-inline-end: calc(
+      var(--ui-components-button-icon-size) +
+        var(
+          --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+        ) +
+        var(--ui-components-button-label-spacing)
+    );
+  }
+
+  .width-guarantor-check {
+    flex: 0 0 auto;
+    width: var(--ui-components-button-icon-size);
+    height: var(--ui-components-button-icon-size);
+  }
+}
+
+obc-button.cancel-button {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  z-index: 10;
+  height: var(--ui-components-button-touch-target-size);
+  width: var(--global-size-spacing-touch-target-min);
+  padding: 0;
+  margin: 0;
+  pointer-events: auto;
+
+  &::part(wrapper) {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  &::part(visible-wrapper) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--ui-components-button-visual-size);
+    height: var(--ui-components-button-visual-size);
+    min-width: var(--ui-components-button-visual-size);
+    padding: 0;
+  }
+
+  &::part(label) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    line-height: 0;
+    width: var(--ui-components-button-visual-size);
+    height: var(--ui-components-button-visual-size);
+  }
+
+  .cancel-icon-layer {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    min-width: 0;
+    pointer-events: none;
+    transition: opacity 140ms ease;
+  }
+
+  .cancel-icon-layer--close {
+    opacity: 1;
+  }
+
+  .cancel-icon-layer--chevron {
+    opacity: 0;
+  }
+
+  .icon {
+    width: var(--ui-components-button-icon-size);
+    height: var(--ui-components-button-icon-size);
+    color: var(--on-normal-neutral-color);
+  }
+
+  &.cancel-returning {
+    transition: transform var(--obc-two-step-armed-slide-duration)
+      var(--obc-two-step-thumb-spring-easing);
+    transform: translateX(
+      calc(
+        -1 *
+          (
+            var(--obc-two-step-track-width) -
+              var(--global-size-spacing-touch-target-min)
+          )
+      )
+    );
+    pointer-events: none;
+
+    &::part(visible-wrapper) {
+      width: var(--global-size-spacing-touch-target-min);
+      min-width: var(--global-size-spacing-touch-target-min);
+      background: var(--normal-enabled-background-color);
+      border: var(--ui-components-button-stroke-weight) solid
+        var(--normal-enabled-border-color);
+      border-radius: var(--ui-components-button-border-radius);
+      box-shadow: none;
+    }
+
+    &::part(label) {
+      width: var(--global-size-spacing-touch-target-min);
+      height: var(--ui-components-button-visual-size);
+    }
+
+    .cancel-icon-layer--close {
+      opacity: 0;
+    }
+
+    .cancel-icon-layer--chevron {
+      opacity: 1;
+    }
+  }
 }
 
 obc-button.wrapper {
+  width: 100%;
+  max-width: 100%;
+
   &::part(wrapper) {
     max-width: 100%;
+    cursor: default;
+    --obc-can-hover: 0;
+
+    &:hover,
+    &:active {
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+    }
   }
   &::part(visible-wrapper),
   &::part(label) {
@@ -16,20 +278,87 @@ obc-button.wrapper {
   }
 }
 
+:host([width="hug"]) obc-button.wrapper {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  margin: 0;
+
+  &::part(wrapper) {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+  }
+
+  &::part(visible-wrapper) {
+    width: 100%;
+    height: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    padding-inline: 0;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+  }
+
+  &::part(label) {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    flex: 1 1 auto;
+    padding: 0;
+    box-sizing: border-box;
+  }
+}
+
+:host([width="fluid"]) obc-button.wrapper::part(wrapper) {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+:host([data-thumb-drag-edge-ready])
+  obc-button.wrapper.state-enabled.thumb-dragging
+  .visible-wrapper {
+  background-color: var(--amplified-enabled-background-color);
+}
+
+:host([data-thumb-drag-edge-ready])
+  obc-button.wrapper.state-enabled.thumb-dragging
+  .visible-wrapper::before {
+  border-color: var(--amplified-enabled-border-color);
+  border-width: var(--ui-components-button-stroke-weight);
+}
+
 .wrapper {
   --armed-hint-duration: 1600ms;
-  --thumb-drag-x: 0px;
-  --obc-two-step-thumb-drag-growth-factor: 0.4146;
+  --obc-two-step-thumb-grow-cap: calc(0.8 * var(--obc-two-step-track-width));
+  --obc-two-step-state-width: calc(
+    var(--obc-two-step-track-width) -
+      var(--global-size-spacing-touch-target-min)
+  );
   height: var(--ui-components-button-touch-target-size);
-  width: 130px;
-  max-width: 130px;
+  width: 100%;
+  max-width: 100%;
   padding: 0;
   background: transparent;
   border: none;
 
   &.state-enabled .thumb-container,
   &.state-armed .thumb-container {
-    @mixin style style=normal visibleWrapperClass=.thumb-visible;
+    @mixin style style=normal visibleWrapperClass=.thumb-visible noClick;
+    cursor: pointer;
   }
 
   &[disabled] {
@@ -74,6 +403,8 @@ obc-button.wrapper {
     display: flex;
     align-items: center;
     position: relative;
+    width: 100%;
+    max-width: 100%;
     height: var(--ui-components-button-visual-size);
     border-radius: var(--ui-components-button-border-radius);
     overflow: hidden;
@@ -92,7 +423,6 @@ obc-button.wrapper {
     }
 
     .active-layer {
-      @mixin style style=raised noClick;
       position: absolute;
       inset: 0;
       border-radius: inherit;
@@ -102,7 +432,8 @@ obc-button.wrapper {
       pointer-events: none;
       z-index: 5;
       transition:
-        transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
+        transform var(--obc-two-step-thumb-spring-duration)
+          var(--obc-two-step-thumb-spring-easing),
         opacity 320ms ease-out;
     }
 
@@ -110,6 +441,7 @@ obc-button.wrapper {
       flex: 0 0 auto;
       display: flex;
       align-items: center;
+      max-width: 100%;
       height: var(--ui-components-button-visual-size);
       transform: translateX(
         calc(-1 * var(--global-size-spacing-touch-target-min))
@@ -227,42 +559,12 @@ obc-button.wrapper {
         &.thumb-dragging {
           transition: none;
         }
-
-        &.thumb-dragging + .state-container {
-          transition: none;
-          margin-inline-start: calc(
-            min(
-                calc(var(--thumb-drag-x) * 0.9),
-                calc(
-                  (130px - var(--global-size-spacing-touch-target-min)) * 0.65
-                )
-              ) *
-              -1
-          );
-          padding-inline-end: calc(
-            var(--ui-components-button-label-spacing) -
-              (var(--thumb-drag-x) * 0.05)
-          );
-
-          .state-container-label {
-            transition: none;
-            clip-path: inset(
-              0 calc(var(--ui-components-button-stroke-weight) + 1px) 0 0
-            );
-            transform: translateX(
-              min(
-                calc(var(--thumb-drag-x) * 0.1),
-                calc(var(--ui-components-button-label-spacing) / 2)
-              )
-            );
-          }
-        }
       }
 
       .state-container {
-        flex: 0 0 calc(130px - var(--global-size-spacing-touch-target-min));
+        flex: 0 0 var(--obc-two-step-state-width);
         min-width: 0;
-        width: calc(130px - var(--global-size-spacing-touch-target-min));
+        width: var(--obc-two-step-state-width);
         height: var(--ui-components-button-visual-size);
         padding: 0 var(--ui-components-button-label-spacing);
         overflow: hidden;
@@ -281,14 +583,15 @@ obc-button.wrapper {
         .state-container-label {
           @mixin font-body;
           display: inline-flex;
-          width: 100%;
-          padding-inline-start: var(--ui-components-button-label-spacing);
+          max-width: 100%;
+          white-space: nowrap;
+          overflow: hidden;
           transition: color 260ms ease-out;
         }
       }
     }
 
-    .active-label {
+    .processing-label {
       @mixin font-button;
       position: absolute;
       inset-block: 0;
@@ -296,19 +599,10 @@ obc-button.wrapper {
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      gap: var(--ui-components-button-label-spacing);
       min-width: 0;
-      padding-inline-start: calc(
-        var(--ui-components-button-padding-horizontal) +
-          var(--ui-components-button-label-spacing)
-      );
-      padding-inline-end: calc(
-        var(--ui-components-button-icon-size) +
-          var(
-            --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
-          ) +
-          var(--ui-components-button-label-spacing)
-      );
-      color: var(--on-raised-active-color);
+      padding-inline: var(--ui-components-button-padding-horizontal);
+      color: var(--on-amplified-active-color);
       white-space: nowrap;
       overflow: hidden;
       pointer-events: none;
@@ -319,26 +613,41 @@ obc-button.wrapper {
       z-index: 9;
     }
 
-    .state-segment {
-      flex: 0 0 auto;
-      display: flex;
+    .processing-label-text {
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .active-label {
+      @mixin font-button;
+      position: absolute;
+      inset-block: 0;
+      inset-inline: 0;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      position: relative;
-      z-index: 7;
-      border-radius: var(--ui-components-button-border-radius);
+      gap: var(--ui-components-button-label-spacing);
+      min-width: 0;
+      padding-inline: var(--ui-components-button-padding-horizontal);
+      color: var(--on-selected-active-color);
+      white-space: nowrap;
       overflow: hidden;
-      height: var(--ui-components-button-visual-size);
-      transition:
-        opacity 200ms cubic-bezier(0, 0, 0, 0.99),
-        margin 200ms cubic-bezier(0, 0, 0, 0.99),
-        transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
-      width: 0;
+      pointer-events: none;
       opacity: 0;
       transform: translateX(
         calc(-1 * var(--ui-components-button-label-spacing))
       );
-      color: var(--on-raised-active-color);
+      z-index: 9;
+
+      .icon {
+        flex: 0 0 auto;
+        color: var(--on-selected-active-color);
+      }
+    }
+
+    .active-label-text {
+      min-width: 0;
+      overflow: hidden;
     }
 
     .icon {
@@ -363,19 +672,12 @@ obc-button.wrapper {
 
   &.state-armed .visible-wrapper::before {
     border-color: var(--amplified-enabled-border-color);
-    clip-path: inset(
-      0 calc(100% - var(--global-size-spacing-touch-target-min) - 3.5px) 0 0
-    );
   }
 
+  &.state-processing,
   &.state-active {
     .visible-wrapper {
       border-color: transparent;
-
-      .active-layer {
-        transform: scaleX(1);
-        opacity: 1;
-      }
 
       .segments-track {
         .thumb-preview {
@@ -403,22 +705,19 @@ obc-button.wrapper {
           }
         }
       }
+    }
+  }
 
-      .state-segment {
-        width: var(--ui-components-button-icon-size);
-        margin-inline-end: var(
-          --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
-        );
+  &.state-processing {
+    .visible-wrapper {
+      .active-layer {
+        @mixin style style=amplified noClick;
+        transform: scaleX(1);
         opacity: 1;
-        transform: translateX(0);
-
-        .icon {
-          animation: two-step-content-in-from-left 220ms
-            cubic-bezier(0.22, 1, 0.36, 1) both;
-        }
+        transition: opacity 320ms ease-out;
       }
 
-      .active-label {
+      .processing-label {
         opacity: 1;
         transform: translateX(0);
         animation: two-step-content-in-from-left 220ms
@@ -427,19 +726,156 @@ obc-button.wrapper {
     }
   }
 
+  &.variant-cancellable.state-processing .visible-wrapper .processing-label {
+    padding-inline-end: calc(
+      var(--global-size-spacing-touch-target-min) -
+        var(--ui-components-button-icon-size)
+    );
+  }
+
+  &.cancel-returning.state-processing .visible-wrapper {
+    @mixin style style=indent noClick;
+    border-width: 0;
+    border-color: transparent;
+    box-shadow: none;
+
+    &::before {
+      border-width: var(--ui-components-button-stroke-weight);
+    }
+
+    .active-layer {
+      transform: scaleX(0);
+      opacity: 0;
+      transition:
+        transform var(--obc-two-step-armed-slide-duration)
+          var(--obc-two-step-thumb-spring-easing),
+        opacity var(--obc-two-step-armed-slide-duration)
+          var(--obc-two-step-thumb-spring-easing);
+    }
+
+    .processing-label {
+      opacity: 0;
+      animation: none;
+      transition: opacity var(--obc-two-step-armed-slide-duration)
+        var(--obc-two-step-thumb-spring-easing);
+    }
+
+    .segments-track {
+      transform: translateX(
+        calc(-1 * var(--global-size-spacing-touch-target-min))
+      );
+      transition: none;
+
+      .thumb-preview {
+        width: var(--global-size-spacing-touch-target-min);
+        opacity: 0;
+        border-width: 0;
+        transition: none;
+      }
+
+      .thumb-container {
+        width: var(--global-size-spacing-touch-target-min);
+        opacity: 0;
+        margin: 0;
+        transition: none;
+      }
+
+      .state-container {
+        padding: 0 var(--ui-components-button-label-spacing);
+        margin-inline-start: 0;
+        transition: none;
+
+        .state-container-label {
+          opacity: 1;
+          animation: none;
+          transition: none;
+        }
+      }
+    }
+  }
+
+  &.state-enabled.cancel-handoff .visible-wrapper .segments-track {
+    transition: none;
+
+    .thumb-preview {
+      transition: none;
+    }
+
+    .thumb-container {
+      opacity: 1;
+      transition: none;
+
+      .thumb-visible {
+        transition: none;
+      }
+    }
+
+    .state-container {
+      padding: 0 var(--ui-components-button-label-spacing);
+      margin-inline-start: 0;
+      transition: none;
+
+      .state-container-label {
+        transition: none;
+      }
+    }
+  }
+
+  &.state-active {
+    .visible-wrapper {
+      .active-layer {
+        @mixin style style=selected noClick;
+        transform: scaleX(1);
+        opacity: 1;
+      }
+
+      .active-label {
+        opacity: 1;
+        transform: translateX(0);
+        animation: two-step-content-in-from-left 220ms
+          cubic-bezier(0.22, 1, 0.36, 1) both;
+
+        .icon {
+          animation: two-step-content-in-from-left 220ms
+            cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+      }
+    }
+  }
+
   &.state-armed .visible-wrapper .segments-track,
+  &.state-processing .visible-wrapper .segments-track,
   &.state-active .visible-wrapper .segments-track {
     transform: translateX(0);
   }
 
   &.state-enabled {
+    &.thumb-dragging:not(.swipe-armed-phase) .visible-wrapper {
+      overflow: visible;
+    }
+
     &.thumb-dragging .visible-wrapper .segments-track {
       transform: translateX(
-        calc(var(--thumb-drag-x) - var(--global-size-spacing-touch-target-min))
+        calc(
+          -1 * var(--global-size-spacing-touch-target-min) +
+            max(
+              0px,
+              calc(
+                var(--thumb-drag-x) -
+                  (
+                    var(--obc-two-step-thumb-grow-cap) -
+                      var(--global-size-spacing-touch-target-min)
+                  )
+              )
+            )
+        )
       );
     }
 
-    &.thumb-dragging .visible-wrapper .segments-track .thumb-preview {
+    &.thumb-dragging:not(.swipe-armed-phase)
+      .visible-wrapper
+      .segments-track
+      .thumb-preview {
       opacity: 0;
       transition: none;
     }
@@ -452,17 +888,77 @@ obc-button.wrapper {
       background: var(--normal-enabled-background-color);
       border-color: var(--normal-enabled-border-color);
       box-shadow: none;
+      transition: none;
       width: clamp(
         var(--global-size-spacing-touch-target-min),
+        calc(var(--global-size-spacing-touch-target-min) + var(--thumb-drag-x)),
+        var(--obc-two-step-thumb-grow-cap)
+      );
+    }
+
+    &.thumb-dragging .visible-wrapper .segments-track .state-container {
+      animation: none;
+      transition: none;
+      transform: translateX(calc(-1 * var(--thumb-drag-x)));
+    }
+
+    &.thumb-drag-spring-back .visible-wrapper .segments-track,
+    &.thumb-drag-commit .visible-wrapper .segments-track {
+      transition: transform var(--obc-two-step-thumb-spring-duration)
+        var(--obc-two-step-thumb-spring-easing);
+      transform: translateX(
         calc(
-          var(--global-size-spacing-touch-target-min) +
-            (var(--thumb-drag-x) * var(--obc-two-step-thumb-drag-growth-factor))
-        ),
-        calc(
-          130px - var(--thumb-drag-x) -
-            var(--ui-components-button-stroke-weight)
+          -1 * var(--global-size-spacing-touch-target-min) +
+            max(
+              0px,
+              calc(
+                var(--thumb-drag-x) -
+                  (
+                    var(--obc-two-step-thumb-grow-cap) -
+                      var(--global-size-spacing-touch-target-min)
+                  )
+              )
+            )
         )
       );
+    }
+
+    &.thumb-drag-spring-back .visible-wrapper .segments-track .thumb-container {
+      transition: width var(--obc-two-step-thumb-spring-duration)
+        var(--obc-two-step-thumb-spring-easing);
+      width: clamp(
+        var(--global-size-spacing-touch-target-min),
+        calc(var(--global-size-spacing-touch-target-min) + var(--thumb-drag-x)),
+        var(--obc-two-step-thumb-grow-cap)
+      );
+    }
+
+    &.thumb-drag-spring-back .visible-wrapper .segments-track .state-container,
+    &.thumb-drag-commit .visible-wrapper .segments-track .state-container {
+      animation: none;
+      transition: transform var(--obc-two-step-thumb-spring-duration)
+        var(--obc-two-step-thumb-spring-easing);
+      transform: translateX(calc(-1 * var(--thumb-drag-x)));
+    }
+
+    &.swipe-armed-phase.thumb-dragging .visible-wrapper .segments-track {
+      .thumb-preview {
+        opacity: 1;
+        background: transparent;
+        border-color: transparent;
+        border-width: 0;
+        box-shadow: none;
+
+        &::after {
+          display: none;
+        }
+
+        justify-content: center;
+
+        .thumb-visible {
+          color: var(--on-amplified-neutral-color);
+        }
+      }
     }
 
     &.label-bounce {
@@ -478,6 +974,14 @@ obc-button.wrapper {
   }
 
   &.state-armed {
+    .visible-wrapper .segments-track .thumb-preview {
+      pointer-events: auto;
+      cursor: pointer;
+      border-block-color: transparent;
+      border-inline-start-color: transparent;
+      box-shadow: none;
+    }
+
     .visible-wrapper .segments-track .thumb-preview::after {
       opacity: 0;
     }
@@ -488,7 +992,7 @@ obc-button.wrapper {
     }
 
     .visible-wrapper .segments-track .thumb-container {
-      width: calc(130px - var(--global-size-spacing-touch-target-min));
+      width: var(--obc-two-step-state-width);
       opacity: 1;
     }
 
@@ -501,8 +1005,8 @@ obc-button.wrapper {
       .segments-track
       .thumb-container
       .thumb-visible {
-      background-color: var(--base-cyan-100);
-      border-color: var(--base-cyan-200);
+      background-color: var(--amplified-enabled-background-color);
+      border-color: var(--amplified-enabled-border-color);
       border-width: var(--ui-components-button-stroke-weight);
       box-shadow: none;
       animation: armed-hint-fade var(--armed-hint-duration) ease-out both;
@@ -518,13 +1022,15 @@ obc-button.wrapper {
   }
 
   &.state-armed .visible-wrapper .segments-track .state-container,
+  &.state-processing .visible-wrapper .segments-track .state-container,
   &.state-active .visible-wrapper .segments-track .state-container {
     padding: 0 var(--ui-components-button-padding-horizontal);
   }
 
   &.state-enabled.disarm-slide .visible-wrapper .segments-track,
   &.state-armed.armed-slide .visible-wrapper .segments-track {
-    transition: transform 880ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform var(--obc-two-step-armed-slide-duration)
+      var(--obc-two-step-thumb-spring-easing);
   }
 
   &.state-enabled.disarm-slide
@@ -533,8 +1039,10 @@ obc-button.wrapper {
     .thumb-container,
   &.state-armed.armed-slide .visible-wrapper .segments-track .thumb-container {
     transition:
-      width 880ms cubic-bezier(0.22, 1, 0.36, 1),
-      opacity 880ms cubic-bezier(0.22, 1, 0.36, 1),
+      width var(--obc-two-step-armed-slide-duration)
+        var(--obc-two-step-thumb-spring-easing),
+      opacity var(--obc-two-step-armed-slide-duration)
+        var(--obc-two-step-thumb-spring-easing),
       transform 150ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
@@ -559,7 +1067,10 @@ obc-button.wrapper {
           opacity: 1;
           @mixin style style=amplified noClick;
           border-width: var(--ui-components-button-stroke-weight);
+          border-block-color: transparent;
+          border-inline-start-color: transparent;
           border-inline-end-width: 0;
+          box-shadow: none;
           animation: two-step-content-in-from-left 780ms
             cubic-bezier(0.22, 1, 0.36, 1) 140ms both;
         }
@@ -568,7 +1079,7 @@ obc-button.wrapper {
           background: var(--normal-enabled-background-color);
           border-color: var(--normal-enabled-border-color);
           box-shadow: none;
-          width: calc(130px - var(--global-size-spacing-touch-target-min));
+          width: var(--obc-two-step-state-width);
           opacity: 1;
 
           .thumb-visible {
@@ -676,5 +1187,45 @@ obc-button.wrapper {
 
   100% {
     opacity: 1;
+  }
+}
+
+:host([width="fluid"]) .wrapper {
+  width: 100%;
+  max-width: 100%;
+
+  .visible-wrapper {
+    width: 100%;
+    max-width: 100%;
+
+    .segments-track {
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+}
+
+:host([width="hug"]) .wrapper {
+  width: 100%;
+  max-width: 100%;
+
+  .visible-wrapper {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .processing-spinner {
+    flex: 0 0 auto;
+    width: var(--global-size-spacing-icon-icon-size-regular);
+    height: var(--global-size-spacing-icon-icon-size-regular);
+    --spinner-size: var(--global-size-spacing-icon-icon-size-regular);
+
+    &::part(wrapper) {
+      width: 100%;
+      height: 100%;
+      min-width: 0;
+      min-height: 0;
+      box-sizing: border-box;
+    }
   }
 }
