@@ -69,7 +69,7 @@ export type ObcTwoStepActionChangeEvent = CustomEvent<{
   previousState: ObcTwoStepActionState;
 }>;
 
-const ARMED_SLIDE_DURATION_MS = 880;
+const ARMED_SLIDE_DURATION_MS = 450;
 const CANCEL_RETURN_SETTLE_MS = ARMED_SLIDE_DURATION_MS + 40;
 const ARMED_HINT_DURATION_MS = 1600;
 const LABEL_BOUNCE_DURATION_MS = 220;
@@ -184,14 +184,6 @@ export class ObcTwoStepAction extends LitElement {
   /** Read-only interaction phase (`enabled`, `armed`, `processing`, `active`). */
   get state(): ObcTwoStepActionState {
     return this.interactionState;
-  }
-
-  private getButtonStrokeWidthPx() {
-    const raw = getComputedStyle(this).getPropertyValue(
-      '--ui-components-button-stroke-weight'
-    );
-    const parsed = Number.parseFloat(raw);
-    return Number.isFinite(parsed) ? parsed : 0;
   }
 
   private getSlottedText(slotName: string) {
@@ -945,11 +937,7 @@ export class ObcTwoStepAction extends LitElement {
     this.dragPointerId = event.pointerId;
     this.dragStartX = event.clientX;
     const thumbWidth = thumb.offsetWidth;
-    const buttonStrokeWidth = this.getButtonStrokeWidthPx();
-    const dragSpace = Math.max(
-      0,
-      visibleWidth - thumbWidth - buttonStrokeWidth
-    );
+    const dragSpace = Math.max(0, visibleWidth - thumbWidth);
     this.dragMaxX = dragSpace;
     this.dragDetachX = Math.max(
       0,
@@ -1070,6 +1058,27 @@ export class ObcTwoStepAction extends LitElement {
     }
 
     this.springBackSwipeDrag();
+    this.suppressNextClick = true;
+  }
+
+  private handleThumbLostPointerCapture() {
+    if (this.dragPointerId === undefined) {
+      return;
+    }
+
+    const dragX = this.dragCurrentX;
+    this.dragPointerId = undefined;
+
+    if (this.dragPhase !== DragPhase.dragging) {
+      this.resetDragMetrics();
+      return;
+    }
+
+    if (dragX >= this.getDragEdgeCommitX()) {
+      this.commitSwipeDragOnRelease();
+    } else {
+      this.springBackSwipeDrag();
+    }
     this.suppressNextClick = true;
   }
 
@@ -1341,11 +1350,12 @@ export class ObcTwoStepAction extends LitElement {
                 @pointermove=${this.handleThumbPointerMove}
                 @pointerup=${this.handleThumbPointerUp}
                 @pointercancel=${this.handleThumbPointerCancel}
+                @lostpointercapture=${this.handleThumbLostPointerCapture}
               >
                 <div
                   class=${classMap({
                     'thumb-visible': true,
-                    'show-label': isArmed,
+                    'show-label': isArmed || this.swipeArmed,
                   })}
                   part="thumb-visible"
                 >

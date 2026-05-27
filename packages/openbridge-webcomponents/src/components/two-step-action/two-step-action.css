@@ -8,7 +8,7 @@
   max-width: 100%;
   --thumb-drag-x: 0px;
   --obc-two-step-track-width: 0px;
-  --obc-two-step-armed-slide-duration: 880ms;
+  --obc-two-step-armed-slide-duration: 450ms;
   --obc-two-step-thumb-spring-duration: 520ms;
   --obc-two-step-thumb-spring-easing: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -253,6 +253,34 @@ obc-button.cancel-button {
     .cancel-icon-layer--chevron {
       opacity: 1;
     }
+  }
+}
+
+obc-button.cancel-button:not(.cancel-returning) {
+  animation: two-step-cancel-enter-collapse
+    var(--obc-two-step-armed-slide-duration)
+    var(--obc-two-step-thumb-spring-easing) both;
+
+  &::part(visible-wrapper) {
+    width: 100%;
+    background: var(--normal-enabled-background-color);
+    border: var(--ui-components-button-stroke-weight) solid
+      var(--normal-enabled-border-color);
+    border-radius: var(--ui-components-button-border-radius);
+    box-shadow: none;
+  }
+
+  .cancel-icon-layer--close {
+    animation: two-step-cancel-enter-x-in
+      var(--obc-two-step-armed-slide-duration)
+      var(--obc-two-step-thumb-spring-easing) both;
+  }
+
+  .cancel-icon-layer--chevron {
+    opacity: 1;
+    animation: two-step-cancel-enter-chevron-out
+      var(--obc-two-step-armed-slide-duration)
+      var(--obc-two-step-thumb-spring-easing) both;
   }
 }
 
@@ -957,6 +985,23 @@ obc-button.wrapper {
 
         .thumb-visible {
           color: var(--on-amplified-neutral-color);
+          transform: translateX(
+            calc(
+              (
+                  var(--global-size-spacing-touch-target-min) -
+                    max(
+                      0px,
+                      var(--thumb-drag-x) -
+                        (
+                          var(--obc-two-step-thumb-grow-cap) -
+                            var(--global-size-spacing-touch-target-min)
+                        )
+                    )
+                ) /
+                2
+            )
+          );
+          transition: none;
         }
       }
     }
@@ -1187,6 +1232,33 @@ obc-button.wrapper {
 
   100% {
     opacity: 1;
+  }
+}
+
+@keyframes two-step-cancel-enter-collapse {
+  from {
+    width: var(--obc-two-step-track-width);
+  }
+  to {
+    width: var(--global-size-spacing-touch-target-min);
+  }
+}
+
+@keyframes two-step-cancel-enter-x-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes two-step-cancel-enter-chevron-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
   }
 }
 
