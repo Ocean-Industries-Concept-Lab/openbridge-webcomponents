@@ -61,6 +61,9 @@ export class ObcCompassIndicator extends LitElement {
   @property({type: String})
   direction: CompassIndicatorDirection = CompassIndicatorDirection.Heading;
 
+  @property({type: Boolean, attribute: false})
+  northUp: boolean = true;
+
   private get normalizedAngle(): number {
     return normalizeAngle(this.angle);
   }
@@ -381,7 +384,11 @@ export class ObcCompassIndicator extends LitElement {
       return this.renderLabeledIndicator(this.direction);
     }
 
-    return this.renderRoundIndicator(this.direction, 0, -this.normalizedAngle);
+    return this.renderRoundIndicator(
+      this.direction,
+      this.northUp ? this.normalizedAngle : 0,
+      this.northUp ? 0 : -this.normalizedAngle
+    );
   }
 
   static override styles = unsafeCSS(componentStyle);

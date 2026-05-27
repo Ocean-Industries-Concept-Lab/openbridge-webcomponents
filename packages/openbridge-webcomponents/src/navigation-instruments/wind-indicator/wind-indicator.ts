@@ -195,7 +195,7 @@ export class ObcWindIndicator extends LitElement {
   /**
    * Rotation of the reference frame (course/heading) in degrees.
    *
-   * Used in relative mode to compute the marker rotation as `windFromAngle - rotationAngle`.
+   * This could be the heading or the course of the vessel.
    * `0` means north-up.
    */
   @property({type: Number, attribute: 'rotation-angle'}) rotationAngle = 0;
@@ -274,7 +274,7 @@ export class ObcWindIndicator extends LitElement {
       return this.windFromAngle;
     }
     return this.direction === WindIndicatorDirection.relative
-      ? this.windFromAngle - this.rotationAngle
+      ? this.windFromAngle + this.rotationAngle
       : this.windFromAngle;
   }
 
