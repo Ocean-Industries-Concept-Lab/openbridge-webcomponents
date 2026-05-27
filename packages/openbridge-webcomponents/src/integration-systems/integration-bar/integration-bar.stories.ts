@@ -27,6 +27,10 @@ function getIntegrationnButtonType(hug: boolean, rich: boolean) {
   }
 }
 
+function getColorForButton(color: string): string {
+  return `--integration-on-selected-active-color: var(--base-${color}-600); --integration-on-selected-neutral-color: var(--base-${color}-500); --integration-selected-enabled-background-color: var(--base-${color}-100); --integration-selected-enabled-border-color: var(--base-${color}-100); --integration-selected-hover-background-color: var(--base-${color}-100); --integration-selected-hover-border-color: var(--base-${color}-100);`;
+}
+
 const readouts = [
   {label: 'Readout 1', value: 'Value 1', unit: 'Unit 1'},
   {label: 'Readout 2', value: 'Value 2', unit: 'Unit 2'},
@@ -45,6 +49,7 @@ type IntegrationBarStoryArgs = ObcIntegrationBar & {
   containerWidthPx: number;
   showStatus: boolean;
   showIntegrationMenu: boolean;
+  customSelectedColors: boolean;
 };
 
 function renderIntegrationButtons({
@@ -55,6 +60,7 @@ function renderIntegrationButtons({
   shouldShowDividerRight,
   showStatus,
   showIntegrationMenu,
+  customSelectedColors,
 }: {
   onIntegrationButtonClick: (event: Event, buttonIndex: number) => void;
   shortNames: boolean;
@@ -63,13 +69,23 @@ function renderIntegrationButtons({
   shouldShowDividerRight: (buttonIndex: number) => boolean;
   showStatus: boolean;
   showIntegrationMenu: boolean;
+  customSelectedColors: boolean;
 }) {
   const slotName = hug ? 'hug-buttons' : 'integration-buttons';
   const buttonType = getIntegrationnButtonType(hug, rich);
+  const button1styling = customSelectedColors ? getColorForButton('cyan') : '';
+  const button2styling = customSelectedColors
+    ? getColorForButton('indigo')
+    : '';
+  const button3styling = customSelectedColors ? getColorForButton('teal') : '';
+  const button4styling = customSelectedColors
+    ? getColorForButton('purple')
+    : '';
 
   return html`
     <obc-integration-button
       hasLeadingIcon
+      style=${button1styling}
       .variant=${IntegrationButtonVariant.flat}
       .type=${buttonType}
       .readouts=${readouts}
@@ -106,6 +122,7 @@ function renderIntegrationButtons({
     </obc-integration-button>
     <obc-integration-button
       hasLeadingIcon
+      style=${button2styling}
       .variant=${IntegrationButtonVariant.flat}
       .type=${buttonType}
       .readouts=${readouts}
@@ -142,6 +159,7 @@ function renderIntegrationButtons({
     </obc-integration-button>
     <obc-integration-button
       hasLeadingIcon
+      style=${button3styling}
       .variant=${IntegrationButtonVariant.flat}
       .type=${buttonType}
       .readouts=${readouts}
@@ -178,6 +196,7 @@ function renderIntegrationButtons({
     </obc-integration-button>
     <obc-integration-button
       hasLeadingIcon
+      style=${button4styling}
       .variant=${IntegrationButtonVariant.flat}
       .type=${buttonType}
       .readouts=${readouts}
@@ -258,6 +277,7 @@ const meta: Meta<IntegrationBarStoryArgs> = {
     fleetButtonLabel: 'Fleet',
     makeLabelNamesShort: false,
     showIntegrationMenu: false,
+    customSelectedColors: false,
   },
   argTypes: {
     containerWidthPx: {
@@ -276,6 +296,9 @@ const meta: Meta<IntegrationBarStoryArgs> = {
       control: {type: 'boolean'},
     },
     showIntegrationMenu: {
+      control: {type: 'boolean'},
+    },
+    customSelectedColors: {
       control: {type: 'boolean'},
     },
   },
@@ -405,6 +428,7 @@ const meta: Meta<IntegrationBarStoryArgs> = {
             shouldShowDividerRight,
             showStatus: args.showStatus,
             showIntegrationMenu: args.showIntegrationMenu,
+            customSelectedColors: args.customSelectedColors,
           })}
         </obc-integration-bar>
       </div>
@@ -443,5 +467,11 @@ export const Rich: Story = {
 export const WithIntegrationMenu: Story = {
   args: {
     showIntegrationMenu: true,
+  },
+};
+
+export const CustomSelectedColors: Story = {
+  args: {
+    customSelectedColors: true,
   },
 };
