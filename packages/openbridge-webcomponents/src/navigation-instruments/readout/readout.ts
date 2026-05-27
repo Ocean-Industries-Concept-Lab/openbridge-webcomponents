@@ -86,9 +86,12 @@ export {ReadoutSourceType};
  * ### Slots
  * | Slot Name           | Purpose                                                                    |
  * |---------------------|----------------------------------------------------------------------------|
+ * | advice              | Replaces the fallback advice segment when `hasAdvice` is true.             |
  * | advice-icon         | Replaces the fallback advice icon when `hasAdvice` is true.                |
- * | setpoint-icon       | Replaces the fallback setpoint icon when `hasSetpoint` is true.               |
+ * | setpoint            | Replaces the fallback setpoint segment when `hasSetpoint` is true.         |
+ * | setpoint-icon       | Replaces the fallback setpoint icon when `hasSetpoint` is true.            |
  * | leading-icon        | Replaces the fallback leading icon beside the main value.                  |
+ * | value               | Replaces the formatted main value content.                                 |
  * | label               | Replaces the label content.                                                |
  * | unit                | Replaces the unit content.                                                 |
  * | source              | Replaces the source row content.                                           |
@@ -980,7 +983,7 @@ export class ObcReadout extends LitElement {
         part="value-unit-wrapper"
       >
         ${this.renderValueInput()}
-        ${hasUnit ? renderReadoutUnitZone(this.unit!) : nothing}
+        ${hasUnit && this.unit ? renderReadoutUnitZone(this.unit) : nothing}
       </div>
     `;
   }

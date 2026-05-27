@@ -77,8 +77,8 @@ export class ObcReadoutListItem extends LitElement {
   @property({type: String}) unit = '';
   @property({type: String}) src = '';
 
-  @property() value: number | string | undefined = undefined;
-  @property() setpointValue: number | string | undefined = undefined;
+  @property({type: Number}) value: number | undefined = undefined;
+  @property({type: Number}) setpointValue: number | undefined = undefined;
 
   @property({type: Boolean}) hasSetpoint = false;
 
@@ -89,12 +89,10 @@ export class ObcReadoutListItem extends LitElement {
   @property({type: Boolean}) hasLeadingIcon = false;
   @property({type: Boolean}) hasValueIcon = false;
 
-  @property({type: Number}) maxDigits = 1;
   @property({type: Number}) fractionDigits = 0;
   @property({type: Boolean}) showZeroPadding = false;
 
-  @property({type: Boolean}) hasFixedLength = false;
-  @property({type: String}) valueLength = '';
+  @property({type: Number}) minValueLength = 0;
   @property({type: Boolean}) hasHintedZeros = false;
 
   private get resolvedMainValueSize(): ReadoutSetpointSize {
@@ -297,10 +295,8 @@ export class ObcReadoutListItem extends LitElement {
         .hugContent=${true}
         .value=${this.setpointValue}
         .showZeroPadding=${this.showZeroPadding}
-        .maxDigits=${this.maxDigits}
         .fractionDigits=${this.fractionDigits}
-        .hasFixedLength=${this.hasFixedLength}
-        .valueLength=${this.valueLength}
+        .minValueLength=${this.minValueLength}
         .hasHintedZeros=${this.hasHintedZeros}
         .hasDegree=${this.hasDegree}
       >
@@ -322,10 +318,8 @@ export class ObcReadoutListItem extends LitElement {
         .hugContent=${true}
         .value=${this.value}
         .showZeroPadding=${this.showZeroPadding}
-        .maxDigits=${this.maxDigits}
         .fractionDigits=${this.fractionDigits}
-        .hasFixedLength=${this.hasFixedLength}
-        .valueLength=${this.valueLength}
+        .minValueLength=${this.minValueLength}
         .hasHintedZeros=${this.hasHintedZeros}
         .hasDegree=${this.hasDegree}
       >

@@ -66,8 +66,8 @@ type ReadoutValueRenderModel = {
  * - Formats: Supports `regular`, `description`, `range`, `vertical-stack`, `baseline`, and `button`. Format selects the structural subtype; size is controlled independently via the `size` property.
  * - Mode axis: `mode` controls behavior/typography (`display`, `setpoint`, `setpointTemporary`).
  * - Priority axis: `priority` controls color emphasis (`regular`/`enhanced`).
- * - Width control: When `hasFixedLength` is enabled, `valueLength` defines the minimum visible string width. Longer values expand the segment width beyond the template, and empty or whitespace-only `valueLength` hides the rendered value.
- * - Hinted zeros: `hasHintedZeros` adds muted leading zeroes when `hasFixedLength` is enabled and the visible value is shorter than `valueLength`.
+ * - Width control: `minValueLength` defines the minimum digit count reserved for the formatted numeric value. Longer values expand the segment width naturally.
+ * - Hinted zeros: `hasHintedZeros` renders muted leading zeroes that fill the remaining `minValueLength` slots when the formatted value is shorter than the minimum.
  * - Degree suffix: `hasDegree` renders a trailing degree symbol (`°`).
  * - Description line: `type="description"` can render a secondary label below the value by using the `description` property.
  * - Range line: `type="range"` can render a second numeric line below the value by using the `secondaryValue` property.
@@ -77,7 +77,7 @@ type ReadoutValueRenderModel = {
  * ## Usage Guidelines
  * Use this component when one value segment needs to be rendered inside a larger readout composition. Prefer a higher-level readout container when label, unit, advice, or source content must be arranged together.
  *
- * For fixed-width layouts, pass a `valueLength` string that represents the minimum reserved width. Enable `hasHintedZeros` when leading positions should remain visible; empty values keep the reserved width and show hinted zeroes only when that option is enabled.
+ * For fixed-width layouts, set `minValueLength` to the minimum digit count the segment should reserve. Enable `hasHintedZeros` when the reserved leading positions should remain visible as muted zeroes; otherwise the space is preserved without a visible glyph.
  *
  * ## Slots
  *

@@ -72,12 +72,8 @@ export function renderReadoutMetaZone({
         class="instrument-label-unit-container"
         part="instrument-label-unit-container"
       >
-        ${labelValue !== undefined
-          ? renderReadoutLabelContainer(labelValue)
-          : nothing}
-        ${unitValue !== undefined
-          ? renderReadoutUnitContainer(unitValue)
-          : nothing}
+        ${labelValue ? renderReadoutLabelContainer(labelValue) : nothing}
+        ${unitValue ? renderReadoutUnitContainer(unitValue) : nothing}
       </div>
     </div>
   `;

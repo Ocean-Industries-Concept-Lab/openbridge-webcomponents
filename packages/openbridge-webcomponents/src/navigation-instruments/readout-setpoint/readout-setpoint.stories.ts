@@ -17,11 +17,10 @@ type ReadoutSetpointStoryArgs = {
   priority?: Priority;
   hugText: boolean;
   iconId?: string;
-  hasFixedLength: boolean;
-  value: string;
-  secondaryValue: string;
+  value: number;
+  secondaryValue: number;
   description: string;
-  valueLength: string;
+  minValueLength: number;
   hasHintedZeros: boolean;
   hasDegree: boolean;
 };
@@ -56,11 +55,10 @@ const meta = {
         .mode=${args.mode}
         .priority=${args.priority}
         .hugContent=${args.hugText}
-        .hasFixedLength=${args.hasFixedLength}
         .value=${args.value}
         .secondaryValue=${args.secondaryValue}
         .description=${args.description}
-        .valueLength=${args.valueLength}
+        .minValueLength=${args.minValueLength}
         .hasHintedZeros=${args.hasHintedZeros}
         .hasDegree=${args.hasDegree}
       >
@@ -77,11 +75,10 @@ const meta = {
     priority: undefined,
     hugText: true,
     iconId: undefined,
-    hasFixedLength: true,
-    value: '123',
-    secondaryValue: '123',
+    value: 123,
+    secondaryValue: 123,
     description: 'SET',
-    valueLength: '123',
+    minValueLength: 3,
     hasHintedZeros: false,
     hasDegree: false,
   },
@@ -136,12 +133,12 @@ const meta = {
     hugContent: {table: {disable: true}, control: false},
     value: {
       name: 'Value',
-      control: 'text',
+      control: {type: 'number'},
       table: {category: 'Setpoint Value'},
     },
     secondaryValue: {
       name: 'Secondary Value',
-      control: 'text',
+      control: {type: 'number'},
       if: {arg: 'format', eq: ReadoutSetpointFormat.range},
       table: {category: 'Setpoint Value'},
     },
@@ -157,15 +154,14 @@ const meta = {
       },
       table: {category: 'Setpoint Value'},
     },
-    valueLength: {
-      name: 'Value Length',
-      control: 'text',
-      if: {arg: 'hasFixedLength', truthy: true},
+    minValueLength: {
+      name: 'Min Value Length',
+      control: {type: 'number', min: 0, step: 1},
       table: {category: 'Setpoint Value'},
     },
     hasHintedZeros: {
       name: 'Has Hinted Zeros',
-      if: {arg: 'hasFixedLength', truthy: true},
+      if: {arg: 'minValueLength', gt: 1},
       table: {category: 'Setpoint Value'},
     },
     hasDegree: {
@@ -222,7 +218,7 @@ export const SegmentHugVsFullWidth: Story = {
           .mode=${ReadoutSetpointMode.display}
           .priority=${Priority.enhanced}
           .hugContent=${true}
-          value="123"
+          .value=${123}
           title="hugContent=true"
         >
           <obi-input-right slot="icon"></obi-input-right>
@@ -255,7 +251,7 @@ export const SegmentHugVsFullWidth: Story = {
           .mode=${ReadoutSetpointMode.display}
           .priority=${Priority.enhanced}
           .hugContent=${false}
-          value="123"
+          .value=${123}
           title="hugContent=false"
         >
           <obi-input-right slot="icon"></obi-input-right>
@@ -286,9 +282,8 @@ export const HintedZerosBySize: Story = {
             .mode=${ReadoutSetpointMode.display}
             .priority=${Priority.enhanced}
             .hugContent=${true}
-            .hasFixedLength=${true}
-            value="12"
-            valueLength="00000"
+            .value=${12}
+            .minValueLength=${5}
             .hasHintedZeros=${true}
             title=${`Size=${size}`}
           >
@@ -384,9 +379,8 @@ const renderVariant = (variant: Variant) => html`
     .mode=${variant.mode}
     .priority=${variant.priority}
     .hugContent=${variant.hugContent}
-    .hasFixedLength=${usesFixedLength(variant.size)}
-    .value=${'123'}
-    .valueLength=${'123'}
+    .value=${123}
+    .minValueLength=${usesFixedLength(variant.size) ? 3 : 0}
     .hasHintedZeros=${false}
     .hasDegree=${variant.hasDegree}
     title=${`Size=${variant.size}, Mode=${variant.mode}, Priority=${variant.priority}, Hug content=${variant.hugContent}, Degree=${variant.hasDegree}`}

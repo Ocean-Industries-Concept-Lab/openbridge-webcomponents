@@ -5,7 +5,7 @@
 :host {
   display: inline-flex;
   max-width: 100%;
-  width: 100%;
+  width: fit-content;
   min-height: fit-content;
   --global-typography-instrument-value-small-container-height: var(
     --global-typography-instrument-value-small-line-height
@@ -21,8 +21,12 @@
   );
 }
 
-.readout-setpoint-wrapper {
+:host(:not([hugcontent])) {
   width: 100%;
+}
+
+.readout-setpoint-wrapper {
+  width: fit-content;
   display: inline-flex;
   padding-inline: 2px;
   padding-block: 0;
@@ -30,6 +34,10 @@
   justify-content: space-between;
   gap: var(--instrument-components-readout-new-general-regular-icon-gap);
   color: var(--element-neutral-color);
+
+  &.no-hug-content {
+    width: 100%;
+  }
 
   &.large {
     padding-block: 0;

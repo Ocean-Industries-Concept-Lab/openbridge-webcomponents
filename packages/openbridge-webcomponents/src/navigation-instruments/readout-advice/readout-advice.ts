@@ -44,7 +44,7 @@ export enum ReadoutAdviceState {
  * - Formats: Supports `regular`, `description`, `range`, `vertical-stack`, `baseline`, and `button`. Format selects the structural subtype; size is controlled independently via the `size` property.
  * - State axis: Supports `enabled`, `active`, and `amplified`. State controls behavior/typography (e.g. `active` uses active value typography).
  * - Priority axis: Uses `priority` (`regular`/`enhanced`) for color emphasis. `active`/`amplified` default to `Priority.enhanced` when `priority` is not provided.
- * - Value rendering: Inherits `hasFixedLength`, `valueLength`, `hasHintedZeros`, and `hasDegree` behavior from `<obc-readout-setpoint>`.
+ * - Value rendering: Inherits `minValueLength`, `hasHintedZeros`, and `hasDegree` behavior from `<obc-readout-setpoint>`.
  * - Additional lines: `type="description"` can render a secondary label by using `description`, and `type="range"` can render a second numeric line by using `secondaryValue`.
  * - Advice icon: Uses `notification-advice` by default and allows overriding the icon through a slot.
  *

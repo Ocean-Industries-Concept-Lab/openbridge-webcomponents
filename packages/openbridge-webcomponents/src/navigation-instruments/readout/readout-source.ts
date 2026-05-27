@@ -116,7 +116,7 @@ function renderSourceText(
 ) {
   if (sourceType === ReadoutSourceType.delta) {
     return html`
-      ${sourceDeltaValue
+      ${Number.isFinite(sourceDeltaValue)
         ? html`<span class="source-delta-value"
             >${sourceDeltaValue.toFixed(fractionDigits)}</span
           >`
