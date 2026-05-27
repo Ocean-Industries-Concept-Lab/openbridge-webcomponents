@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - develop
-      - fix/restrict-published-package
+      - 910-reduce-bundle-size-of-openbridge-webcomponents-and-create-a-full-version-of-it-as-well
   workflow_dispatch:
 
 permissions:
