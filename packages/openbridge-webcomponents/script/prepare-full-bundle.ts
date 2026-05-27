@@ -10,7 +10,9 @@ const fullBundlePackageRoot = path.join(packageRoot, '.full-bundle-publish');
 const releaseVersion = process.argv[2];
 
 if (!releaseVersion) {
-  throw new Error('Missing release version argument. Usage: tsx script/prepare-full-bundle.ts <version>');
+  throw new Error(
+    'Missing release version argument. Usage: tsx script/prepare-full-bundle.ts <version>'
+  );
 }
 
 const sourcePackage = JSON.parse(fs.readFileSync(sourcePackagePath, 'utf-8'));
@@ -27,17 +29,21 @@ const fullBundlePackage = {
     'bundle/openbridge-webcomponents.bundle.js.map',
     'custom-elements.json',
     'src',
-    'docs'
-  ]
+    'docs',
+  ],
 };
 
-fs.rmSync(fullBundlePackageRoot, { recursive: true, force: true });
-fs.mkdirSync(fullBundlePackageRoot, { recursive: true });
+fs.rmSync(fullBundlePackageRoot, {recursive: true, force: true});
+fs.mkdirSync(fullBundlePackageRoot, {recursive: true});
 
 for (const dirName of ['dist', 'bundle', 'src', 'docs']) {
-  fs.cpSync(path.join(packageRoot, dirName), path.join(fullBundlePackageRoot, dirName), {
-    recursive: true
-  });
+  fs.cpSync(
+    path.join(packageRoot, dirName),
+    path.join(fullBundlePackageRoot, dirName),
+    {
+      recursive: true,
+    }
+  );
 }
 
 fs.copyFileSync(
@@ -50,4 +56,6 @@ fs.writeFileSync(
   JSON.stringify(fullBundlePackage, null, 2) + '\n'
 );
 
-console.log(`✓ Prepared full-bundle publish directory: ${fullBundlePackageRoot}`);
+console.log(
+  `✓ Prepared full-bundle publish directory: ${fullBundlePackageRoot}`
+);
