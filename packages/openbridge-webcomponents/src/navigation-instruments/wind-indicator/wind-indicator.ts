@@ -169,16 +169,19 @@ const LABELED_ARROW_TPL = svg`
 /**
  * `<obc-wind-indicator>` – A compact wind indicator with a fixed frame and a rotating wind marker.
  *
- * Visualizes a discrete wind `level` using a compact icon plus optional mode layers.
+ * Visualizes a wind speed (in knots) using a compact icon plus optional mode layers.
  *
  * ## Features
  *
  * - **Variants:** `type` (`arrow` | `shaft` | `labeled`), `direction` (`true` | `relative`), `priority` (`regular` | `enhanced`).
- * - **Discrete input:** `level` selects the icon state; mapping from real wind to `level` happens outside.
+ * - **Speed input:** `speedKnots` is the wind speed in knots; the indicator
+ *   picks the matching barb icon following the standard meteorological
+ *   convention (one half-barb per 5 kn, one full barb per 10 kn).
  *
  * ## Usage Guidelines
  *
  * Use when you need a small wind cue next to other compact indicators.
+ * Pass `speedKnots` as the measured wind speed in knots.
  */
 @customElement('obc-wind-indicator')
 export class ObcWindIndicator extends LitElement {
@@ -190,7 +193,16 @@ export class ObcWindIndicator extends LitElement {
   @property({type: String}) priority: WindIndicatorPriority =
     WindIndicatorPriority.regular;
 
-  @property({type: Number}) level = 0;
+  /**
+   * Wind speed in knots used to pick the barb icon.
+   *
+   * Mapping follows the standard meteorological convention (half-barb = 5 kn,
+   * full barb = 10 kn). The icon for a given speed covers the 5 kn range
+   * ending at that value, e.g. `[5, 10) kn` shows the 10 kn icon (one full
+   * barb). Speeds at or above 70 kn are capped to the heaviest available
+   * icon (70 kn).
+   */
+  @property({type: Number, attribute: 'speed-knots'}) speedKnots = 0;
 
   /**
    * Rotation of the reference frame (course/heading) in degrees.
@@ -252,15 +264,18 @@ export class ObcWindIndicator extends LitElement {
     }
   `;
 
-  private clampLevel(value: number): number {
-    if (!Number.isFinite(value)) {
-      return 0;
+  /**
+   * Icon index in the range `1..14`, where each step corresponds to 5 kn:
+   * `1` = 5 kn (half-barb), `2` = 10 kn (one full barb), ..., `14` = 70 kn.
+   * Speeds at or above 70 kn are capped to `14`; non-finite or negative
+   * speeds fall back to `1`.
+   */
+  private get iconIndex(): number {
+    const value = this.speedKnots;
+    if (!Number.isFinite(value) || value < 0) {
+      return 1;
     }
-    return Math.max(0, Math.min(12, Math.round(value)));
-  }
-
-  private get clampedLevel(): number {
-    return this.clampLevel(this.level);
+    return Math.max(1, Math.min(14, Math.floor(value / 5) + 1));
   }
 
   private get accentColor(): string {
@@ -309,12 +324,8 @@ export class ObcWindIndicator extends LitElement {
     return tpl;
   }
 
-  private getWindIconTagName(
-    type: string,
-    _direction: string,
-    level: number
-  ): string {
-    const index = Math.max(0, Math.min(12, Math.round(level))) + 1;
+  private getWindIconTagName(type: string, _direction: string): string {
+    const index = this.iconIndex;
 
     if (type === WindIndicatorType.shaft) {
       return `obi-wind-shaft-${index}`;
@@ -325,10 +336,9 @@ export class ObcWindIndicator extends LitElement {
 
   private getWindIcon(
     type: string,
-    direction: string,
-    level: number
+    direction: string
   ): SVGTemplateResult | null {
-    const tagName = this.getWindIconTagName(type, direction, level);
+    const tagName = this.getWindIconTagName(type, direction);
     return this.getWindIconSvg(tagName);
   }
 
@@ -412,8 +422,7 @@ export class ObcWindIndicator extends LitElement {
       const windStyles = {color: this.accentColor};
       const windIcon = this.getWindIcon(
         WindIndicatorType.shaft,
-        this.direction,
-        this.clampedLevel
+        this.direction
       );
 
       const windMarker = svg`
@@ -474,16 +483,16 @@ export class ObcWindIndicator extends LitElement {
           data-name="hdg"
         >
           ${
-            this.clampedLevel === 7
+            this.iconIndex === 8
               ? SHAFT_TRUE_WIND_BARB_TPL
-              : svg`<path d=${SHAFT_TRUE_WIND_BARB_D_BY_LEVEL[this.clampedLevel]} fill="currentColor" />`
+              : svg`<path d=${SHAFT_TRUE_WIND_BARB_D_BY_LEVEL[this.iconIndex - 1]} fill="currentColor" />`
           }
           ${SHAFT_TRUE_CIRCLE_TPL}
         </g>
       `;
     }
 
-    const icon = this.getWindIcon(this.type, this.direction, this.clampedLevel);
+    const icon = this.getWindIcon(this.type, this.direction);
     if (!icon) {
       return null;
     }
@@ -505,6 +514,10 @@ export class ObcWindIndicator extends LitElement {
       return null;
     }
 
+    const value = Number.isFinite(this.speedKnots)
+      ? Math.max(0, Math.round(this.speedKnots))
+      : 0;
+
     return svg`
       <text
         x="${CX}"
@@ -516,7 +529,7 @@ export class ObcWindIndicator extends LitElement {
         font-weight="var(--global-typography-ui-label-active-font-weight)"
         line-height="var(--global-typography-ui-label-active-line-height)"
       >
-        ${this.clampedLevel}
+        ${value}
       </text>
     `;
   }
