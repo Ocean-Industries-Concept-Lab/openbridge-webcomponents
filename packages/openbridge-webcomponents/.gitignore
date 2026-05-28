@@ -54,3 +54,4 @@ bundle.ts
 /bundle
 
 /tmp
+/.full-bundle-publish/
