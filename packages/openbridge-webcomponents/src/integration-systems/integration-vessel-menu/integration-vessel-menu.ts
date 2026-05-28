@@ -24,7 +24,6 @@ import '../../building-blocks/alert-list/alert-list.js';
  * @slot content - Main content shown in the content area.
  * @slot alarms - Alarm items rendered inside the alert list.
  *
- * @property {boolean} hideHeader - Hides the header section when true.
  * @property {number} numberOfButtons - Number of buttons to render (up to 3).
  *
  * @fires button1-click - Fired when the first button is clicked.
@@ -34,7 +33,6 @@ import '../../building-blocks/alert-list/alert-list.js';
 
 @customElement('obc-integration-vessel-menu')
 export class ObcIntegrationVesselMenu extends LitElement {
-  @property({type: Boolean}) hideHeader = false;
   @property({type: Number}) numberOfButtons = 3;
 
   private renderButtons() {
@@ -82,20 +80,6 @@ export class ObcIntegrationVesselMenu extends LitElement {
           wrapper: true,
         })}
       >
-        <div class="header-container">
-          <div class="title-container">
-            ${!this.hideHeader
-              ? html`<div class="leading-icon">
-                    <slot name="leading-icon"
-                      ><obi-placeholder></obi-placeholder
-                    ></slot>
-                  </div>
-                  <div class="container-title">
-                    <slot name="title">Title</slot>
-                  </div>`
-              : null}
-          </div>
-        </div>
         <div class="footer-container">${this.renderButtons()}</div>
         <div class="content-area">
           <slot name="content"></slot>

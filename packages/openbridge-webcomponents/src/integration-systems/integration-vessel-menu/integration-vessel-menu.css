@@ -13,33 +13,10 @@
   border-radius: var(
     --app-components-integration-system-dropdown-menu-border-radius
   );
-  border: 2px solid var(--integration-beta-border-menu-outline-color);
+  border: 2px solid var(--integration-border-menu-outline-color);
   box-shadow: var(--shadow-floating-x) var(--shadow-floating-y)
     var(--shadow-floating-blur) var(--shadow-raised-spread)
     var(--shadow-floating-color);
-}
-
-.header-container {
-  display: flex;
-  align-items: stretch;
-  align-self: stretch;
-  width: 100%;
-  padding: 8px var(--ui-components-card-padding-horizontal);
-  border-bottom: 1px solid var(--integration-beta-border-menu-outline-color);
-  background: var(--integration-container-global-color);
-}
-
-.title-container {
-  display: flex;
-  align-items: center;
-}
-
-.container-title {
-  @mixin font-overline;
-  display: flex;
-  padding: 0 var(--ui-components-card-label-spacing);
-  justify-content: center;
-  align-items: center;
 }
 
 .footer-container {

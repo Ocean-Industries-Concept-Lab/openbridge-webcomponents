@@ -62,7 +62,9 @@
       var(
         --app-components-integration-system-navigation-item-horizontal-padding-horizontal
       );
-    gap: var(--app-components-integration-system-button-label-spacing);
+    gap: var(
+      --app-components-integration-system-navigation-item-horizontal-label-spacing
+    );
 
     border-radius: var(
         --app-components-integration-system-navigation-item-horizontal-border-radius-top-left
@@ -306,7 +308,7 @@
 
 .divider-right {
   width: 1px;
-  height: var(--integration-button-divider-height);
+  height: calc(100% - 16px);
   background-color: var(--integration-border-divider);
 }
 
