@@ -71,7 +71,7 @@ Source of truth: \`packages/openbridge-webcomponents/src/navigation-instruments/
     areas: {control: {type: 'object'}},
     padding: {control: {type: 'range', min: 0, max: 100, step: 1}},
     vessels: {control: {type: 'object'}},
-    wind: {control: {type: 'range', min: 0, max: 12, step: 1}},
+    windKnots: {control: {type: 'range', min: 0, max: 70, step: 1}},
     windFromDirectionDeg: {control: {type: 'range', min: 0, max: 360, step: 1}},
     windSymbolRadius: {control: {type: 'range', min: 0, max: 360, step: 1}},
     current: {control: {type: 'range', min: 0, max: 4, step: 1}},
@@ -194,7 +194,7 @@ export const WithStarboardPortIndicator: Story = {
 
 export const WithWind: Story = {
   args: {
-    wind: 10,
+    windKnots: 50,
     windFromDirectionDeg: 116,
     padding: 70,
     windSymbolRadius: 190,

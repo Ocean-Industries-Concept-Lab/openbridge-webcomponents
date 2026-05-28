@@ -33,7 +33,7 @@ const WIND_HISTOGRAM_MIN_RADIUS = 50;
 @customElement('obc-wind')
 export class ObcWind extends LitElement {
   @property({type: Number}) currentWindFromDirection: number = 0;
-  @property({type: Number}) currentWindSpeedBeaufort: number = 1;
+  @property({type: Number}) currentWindSpeedKnots: number = 25;
   @property({type: Array, attribute: false})
   windHistogramData: WindHistogramData[] = [];
   @property({type: String}) vesselImage: VesselImage = VesselImage.genericTop;
@@ -146,7 +146,7 @@ export class ObcWind extends LitElement {
         ${this.renderWindHistogram(variant)}
         <obc-watch
           .watchCircleType=${watchCircleType}
-          .wind=${this.currentWindSpeedBeaufort}
+          .windKnots=${this.currentWindSpeedKnots}
           .windFromDirectionDeg=${this.currentWindFromDirection}
           .windSymbolRadius=${windSymbolRadius}
           .scaleWindIcon=${scaleWindIcon}
