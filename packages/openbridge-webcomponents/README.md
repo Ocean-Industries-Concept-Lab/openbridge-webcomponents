@@ -129,6 +129,35 @@ For the best experience in your framework of choice, use our auto-generated wrap
 - [`@oicl/openbridge-webcomponents-ng`](https://www.npmjs.com/package/@oicl/openbridge-webcomponents-ng)
 - [`@oicl/openbridge-webcomponents-svelte`](https://www.npmjs.com/package/@oicl/openbridge-webcomponents-svelte)
 
+Install it with:
+
+```bash
+npm install @oicl/openbridge-webcomponents-<framework>
+```
+
+where `<framework>` is the framework you are using (e.g., `vue`, `react`, `ng`, `svelte`).
+
+## 📦 Full-Bundle Package
+
+If you need a package that includes the prebuilt bundle together with source and documentation files, use:
+
+- [`@oicl/openbridge-webcomponents-full-bundle`](https://www.npmjs.com/package/@oicl/openbridge-webcomponents-full-bundle)
+
+Install it with:
+
+```bash
+npm install @oicl/openbridge-webcomponents-full-bundle
+```
+
+Then import the bundled file:
+
+```html
+<script
+  type="module"
+  src="node_modules/@oicl/openbridge-webcomponents-full-bundle/bundle/openbridge-webcomponents.bundle.js"
+></script>
+```
+
 ## 💬 Slack
 
 [![Slack, join chat](https://img.shields.io/badge/Slack-4A154B?style=flat&logo=slack&logoColor=white)](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ)
