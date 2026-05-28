@@ -9,9 +9,10 @@ const sourcePackagePath = path.join(packageRoot, 'package.json');
 const fullBundlePackageRoot = path.join(packageRoot, '.full-bundle-publish');
 const sourcePackage = JSON.parse(fs.readFileSync(sourcePackagePath, 'utf-8'));
 const releaseVersion = process.argv[2] ?? sourcePackage.version;
+const {scripts: _sourceScripts, ...sourcePackageWithoutScripts} = sourcePackage;
 
 const fullBundlePackage = {
-  ...sourcePackage,
+  ...sourcePackageWithoutScripts,
   name: '@oicl/openbridge-webcomponents-full-bundle',
   version: releaseVersion,
   files: [
