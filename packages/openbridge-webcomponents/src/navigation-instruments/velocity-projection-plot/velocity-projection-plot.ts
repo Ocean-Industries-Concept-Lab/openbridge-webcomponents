@@ -36,6 +36,10 @@ export class ObcVelocityProjectionPlot extends LitElement {
   override render() {
     const width = 320;
     const viewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
+    const currentLevel =
+      this.currentSpeedKnots == null
+        ? null
+        : Math.max(0, Math.min(4, Math.round(this.currentSpeedKnots)));
 
     return html`
       <div class="container">
@@ -52,7 +56,7 @@ export class ObcVelocityProjectionPlot extends LitElement {
           .windFromDirectionDeg=${this.currentWindFromDirection}
           .windKnots=${this.currentWindSpeedKnots}
           .currentFromDirectionDeg=${this.currentFromDirection}
-          .current=${this.currentSpeedKnots}
+          .current=${currentLevel}
           .padding=${70}
         >
         </obc-watch>

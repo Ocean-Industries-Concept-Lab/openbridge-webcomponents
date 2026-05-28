@@ -2,7 +2,34 @@ import {LitElement, css, html, svg, type SVGTemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {styleMap} from 'lit/directives/style-map.js';
-import '../../icons/index.js';
+import '../../icons/icon-wind-true-1.js';
+import '../../icons/icon-wind-true-2.js';
+import '../../icons/icon-wind-true-3.js';
+import '../../icons/icon-wind-true-4.js';
+import '../../icons/icon-wind-true-5.js';
+import '../../icons/icon-wind-true-6.js';
+import '../../icons/icon-wind-true-7.js';
+import '../../icons/icon-wind-true-8.js';
+import '../../icons/icon-wind-true-9.js';
+import '../../icons/icon-wind-true-10.js';
+import '../../icons/icon-wind-true-11.js';
+import '../../icons/icon-wind-true-12.js';
+import '../../icons/icon-wind-true-13.js';
+import '../../icons/icon-wind-true-14.js';
+import '../../icons/icon-wind-shaft-1.js';
+import '../../icons/icon-wind-shaft-2.js';
+import '../../icons/icon-wind-shaft-3.js';
+import '../../icons/icon-wind-shaft-4.js';
+import '../../icons/icon-wind-shaft-5.js';
+import '../../icons/icon-wind-shaft-6.js';
+import '../../icons/icon-wind-shaft-7.js';
+import '../../icons/icon-wind-shaft-8.js';
+import '../../icons/icon-wind-shaft-9.js';
+import '../../icons/icon-wind-shaft-10.js';
+import '../../icons/icon-wind-shaft-11.js';
+import '../../icons/icon-wind-shaft-12.js';
+import '../../icons/icon-wind-shaft-13.js';
+import '../../icons/icon-wind-shaft-14.js';
 import {windKnotsToIconIndex} from '../watch/environment.js';
 
 export enum WindIndicatorType {
@@ -195,11 +222,13 @@ export class ObcWindIndicator extends LitElement {
   /**
    * Wind speed in **knots**, used to pick the wind-barb icon.
    *
-   * Maps to the icon set in 5-kn steps following the standard
-   * meteorological wind-barb convention (half-barb = 5 kn, full barb =
-   * 10 kn, pennant = 50 kn). 0–65 kn reaches the full 14-icon range;
-   * higher values clamp to the heaviest icon. Non-finite or negative
-   * values fall back to calm (icon 1).
+   * Maps to the icon set using the designer-confirmed "Option C"
+   * ranges: `[0, 0.5)` kn renders calm, `[0.5, 2.5)` kn renders a
+   * shaft only, then 5-kn nearest-neighbour buckets up to 45 kn
+   * (half-barb steps), `[47.5, 55)` kn renders the 50-kn pennant, and
+   * `[55, 65)` / `[65, ∞)` kn add one and two full barbs above the
+   * pennant respectively. Non-finite or negative values fall back to
+   * calm.
    */
   @property({type: Number, attribute: 'current-wind-speed-knots'})
   currentWindSpeedKnots = 0;
