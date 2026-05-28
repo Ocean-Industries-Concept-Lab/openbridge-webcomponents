@@ -9,7 +9,7 @@ const sourcePackagePath = path.join(packageRoot, 'package.json');
 const fullBundlePackageRoot = path.join(packageRoot, '.full-bundle-publish');
 const sourcePackage = JSON.parse(fs.readFileSync(sourcePackagePath, 'utf-8'));
 const releaseVersion = process.argv[2] ?? sourcePackage.version;
-const {scripts: _sourceScripts, ...sourcePackageWithoutScripts} = sourcePackage;
+const {...sourcePackageWithoutScripts} = sourcePackage;
 
 const fullBundlePackage = {
   ...sourcePackageWithoutScripts,
@@ -22,6 +22,7 @@ const fullBundlePackage = {
     'bundle/openbridge-webcomponents.bundle.js',
     'bundle/openbridge-webcomponents.bundle.js.map',
     'custom-elements.json',
+    'tsconfig.json',
     'src',
     'docs',
   ],
@@ -40,10 +41,12 @@ for (const dirName of ['dist', 'bundle', 'src', 'docs']) {
   );
 }
 
-fs.copyFileSync(
-  path.join(packageRoot, 'custom-elements.json'),
-  path.join(fullBundlePackageRoot, 'custom-elements.json')
-);
+for (const file of ['custom-elements.json', 'tsconfig.json']) {
+  fs.copyFileSync(
+    path.join(packageRoot, file),
+    path.join(fullBundlePackageRoot, file)
+  );
+}
 
 fs.writeFileSync(
   path.join(fullBundlePackageRoot, 'package.json'),
