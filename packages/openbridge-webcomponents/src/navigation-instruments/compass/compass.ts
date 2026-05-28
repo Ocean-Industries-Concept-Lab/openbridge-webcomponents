@@ -78,7 +78,7 @@ export enum CompassPriorityElement {
  * - Use `headingSetpoint` to show a target heading marker.
  * - Pass `headingAdvices` as an array of `AngleAdvice` objects for
  *   caution/alert zones.
- * - Set `windSpeed` / `windFromDirection` and `currentSpeed` /
+ * - Set `currentWindSpeedKnots` / `windFromDirection` and `currentSpeed` /
  *   `currentFromDirection` to display environmental indicators.
  *
  * ## Example
@@ -102,7 +102,7 @@ export enum CompassPriorityElement {
  * @property {number} autoAtHeadingSetpointDeadband - The deadband for the heading set point in degrees.
  * @property {boolean} touching - Indicates if the compass is being touched.
  * @property {Array<AngleAdvice>} headingAdvices - An array of angle advices for the compass.
- * @property {number | null} windSpeed - The wind speed in beaufort scale number.
+ * @property {number | null} currentWindSpeedKnots - The wind speed in knots.
  * @property {number | null} windFromDirection - The direction the wind is coming from in degrees.
  * @property {number | null} currentSpeed - The current speed, number of arrows.
  * @property {number | null} currentFromDirection - The direction the current is coming from in degrees.
@@ -133,7 +133,7 @@ export class ObcCompass extends LitElement {
   @property({type: Boolean}) animateSetpoint: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
-  @property({type: Number}) windSpeed: number | null = null;
+  @property({type: Number}) currentWindSpeedKnots: number | null = null;
   @property({type: Number}) windFromDirection: number | null = null;
   @property({type: Number}) currentSpeed: number | null = null;
   @property({type: Number}) currentFromDirection: number | null = null;
@@ -311,7 +311,7 @@ export class ObcCompass extends LitElement {
               transform: `rotate(${this.heading}deg)`,
             },
           ]}
-          .wind=${this.windSpeed}
+          .windKnots=${this.currentWindSpeedKnots}
           .windFromDirectionDeg=${this.windFromDirection}
           .windColor=${this.colorFor(CompassPriorityElement.wind)}
           .current=${this.currentSpeed}

@@ -91,7 +91,7 @@ export class ObcWindPropulsion extends LitElement {
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
 
-  @property({type: Number}) currentWindSpeedBeaufort: number | null = null;
+  @property({type: Number}) currentWindSpeedKnots: number | null = null;
   @property({type: Number}) currentWindFromDirection: number | null = null;
 
   @property({type: Array, attribute: false}) sailAngleAdvices: AngleAdvice[] =
@@ -139,7 +139,7 @@ export class ObcWindPropulsion extends LitElement {
 
   private getPadding(): number {
     if (
-      this.currentWindSpeedBeaufort != null &&
+      this.currentWindSpeedKnots != null &&
       this.currentWindFromDirection != null
     ) {
       return 72;
@@ -259,7 +259,7 @@ export class ObcWindPropulsion extends LitElement {
           .tickmarkStyle=${this.tickmarkStyle}
           .watchCircleType=${WatchCircleType.single}
           .advices=${this.angleAdviceRaw}
-          .wind=${this.currentWindSpeedBeaufort}
+          .windKnots=${this.currentWindSpeedKnots}
           .windFromDirectionDeg=${this.currentWindFromDirection}
           .windColor=${this.colorFor(WindPropulsionPriorityElement.wind)}
         ></obc-watch>
