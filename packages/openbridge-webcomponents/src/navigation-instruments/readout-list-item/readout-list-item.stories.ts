@@ -15,24 +15,22 @@ type ReadoutListItemStoryArgs = {
   stacking: ReadoutListItemStacking;
   priority: ReadoutListItemPriority;
   alertState: ReadoutListItemAlertState;
-  hasInput: boolean;
-  inputValue: string;
+  hasSetpoint: boolean;
+  setpointValue: number;
   hasLabel: boolean;
   hasDegree: boolean;
   hasUnit: boolean;
   hasSource: boolean;
   hasLeadingIcon: boolean;
   hasValueIcon: boolean;
-  hasFixedLength: boolean;
-  valueLength: string;
+  minValueLength: number;
   hasHintedZeros: boolean;
   label: string;
   unit: string;
   src: string;
-  value: string;
+  value: number;
   fractionDigits: number;
   showZeroPadding: boolean;
-  maxDigits: number;
 };
 
 type ReadoutShowcaseCase = {
@@ -134,24 +132,22 @@ const defaultArgs: ReadoutListItemStoryArgs = {
   stacking: ReadoutListItemStacking.trailingUnit,
   priority: ReadoutListItemPriority.regular,
   alertState: ReadoutListItemAlertState.none,
-  hasInput: false,
-  inputValue: '123',
+  hasSetpoint: false,
+  setpointValue: 123,
   hasDegree: true,
   hasUnit: true,
   hasSource: false,
   hasLeadingIcon: false,
   hasValueIcon: false,
-  hasFixedLength: false,
-  valueLength: '000',
+  minValueLength: 0,
   hasHintedZeros: false,
   hasLabel: true,
   label: 'Label',
   unit: 'Unit',
   src: 'SRC',
-  value: '123',
+  value: 123,
   fractionDigits: 0,
   showZeroPadding: false,
-  maxDigits: 3,
 };
 
 function renderReadoutListItem(args: Partial<ReadoutListItemStoryArgs>) {
@@ -162,16 +158,15 @@ function renderReadoutListItem(args: Partial<ReadoutListItemStoryArgs>) {
       .stacking=${resolved.stacking}
       .priority=${resolved.priority}
       .alertState=${resolved.alertState}
-      .hasInput=${resolved.hasInput}
-      .inputValue=${resolved.inputValue}
+      .hasSetpoint=${resolved.hasSetpoint}
+      .setpointValue=${resolved.setpointValue}
       .hasLabel=${resolved.hasLabel}
       .hasDegree=${resolved.hasDegree}
       .hasUnit=${resolved.hasUnit}
       .hasSource=${resolved.hasSource}
       .hasLeadingIcon=${resolved.hasLeadingIcon}
       .hasValueIcon=${resolved.hasValueIcon}
-      .hasFixedLength=${resolved.hasFixedLength}
-      .valueLength=${resolved.valueLength}
+      .minValueLength=${resolved.minValueLength}
       .hasHintedZeros=${resolved.hasHintedZeros}
       .label=${resolved.label}
       .unit=${resolved.unit}
@@ -179,7 +174,6 @@ function renderReadoutListItem(args: Partial<ReadoutListItemStoryArgs>) {
       .value=${resolved.value}
       .fractionDigits=${resolved.fractionDigits}
       .showZeroPadding=${resolved.showZeroPadding}
-      .maxDigits=${resolved.maxDigits}
     >
       ${resolved.hasLeadingIcon
         ? html`<span
@@ -237,7 +231,7 @@ const meta = {
   decorators: [centeredCanvasDecorator],
   render: (args) => {
     const [, updateArgs] = useArgs<ReadoutListItemStoryArgs>();
-    if (args.hasFixedLength === false && args.hasHintedZeros) {
+    if (args.minValueLength <= 1 && args.hasHintedZeros) {
       updateArgs({hasHintedZeros: false});
     }
     return html`<div style="display:flex; justify-content:center; width:100%;">
@@ -270,15 +264,15 @@ const meta = {
       options: Object.values(ReadoutListItemAlertState),
       table: {category: 'Readout'},
     },
-    hasInput: {
-      name: 'Has Input',
+    hasSetpoint: {
+      name: 'Has Setpoint',
       table: {category: 'Readout'},
     },
-    inputValue: {
-      name: 'Input Value',
-      control: {type: 'text'},
+    setpointValue: {
+      name: 'Setpoint Value',
+      control: {type: 'number'},
       if: {
-        arg: 'hasInput',
+        arg: 'hasSetpoint',
         truthy: true,
       },
       table: {category: 'Value'},
@@ -326,7 +320,7 @@ const meta = {
     },
     value: {
       name: 'Value',
-      control: {type: 'text'},
+      control: {type: 'number'},
       table: {category: 'Value'},
     },
     fractionDigits: {
@@ -334,28 +328,18 @@ const meta = {
       control: {type: 'number', min: 0, step: 1},
       table: {category: 'Formatting'},
     },
-    maxDigits: {
-      name: 'Max Digits',
-      control: {type: 'number', min: 1, step: 1},
-      table: {category: 'Formatting'},
-    },
     showZeroPadding: {
       name: 'Show Zero Padding',
       table: {category: 'Formatting'},
     },
-    hasFixedLength: {
-      name: 'Has Fixed Length',
-      table: {category: 'Formatting'},
-    },
-    valueLength: {
-      name: 'Value Length',
-      control: {type: 'text'},
-      if: {arg: 'hasFixedLength', truthy: true},
+    minValueLength: {
+      name: 'Min Value Length',
+      control: {type: 'number', min: 0, step: 1},
       table: {category: 'Formatting'},
     },
     hasHintedZeros: {
       name: 'Has Hinted Zeros',
-      if: {arg: 'hasFixedLength', truthy: true},
+      if: {arg: 'minValueLength', gt: 1},
       table: {category: 'Formatting'},
     },
   },
@@ -383,28 +367,28 @@ function renderStackingMatrix({
   const priorities = [
     ReadoutListItemPriority.regular,
     ReadoutListItemPriority.enhanced,
-    ReadoutListItemPriority.input,
-    ReadoutListItemPriority.inputFlipFlop,
+    ReadoutListItemPriority.setpoint,
+    ReadoutListItemPriority.setpointFlipFlop,
   ] as const;
-  const hasInputs = [false, true] as const;
+  const hasSetpoints = [false, true] as const;
 
   const cases: ReadoutShowcaseCase[] = [];
 
   for (const size of sizes) {
     for (const priority of priorities) {
-      for (const hasInput of hasInputs) {
+      for (const hasSetpoint of hasSetpoints) {
         cases.push({
-          label: `${size} / ${priority} / hasInput=${hasInput}`,
+          label: `${size} / ${priority} / hasSetpoint=${hasSetpoint}`,
           args: {
             size,
             stacking,
             priority,
-            hasInput,
+            hasSetpoint,
             alertState: ReadoutListItemAlertState.none,
             hasUnit,
             hasSource,
-            value: '123',
-            inputValue: '123',
+            value: 123,
+            setpointValue: 123,
             hasDegree: true,
             hasLabel: true,
           },
@@ -453,7 +437,7 @@ export const AlertStates: Story = {
         stacking: ReadoutListItemStacking.trailingUnit,
         priority: ReadoutListItemPriority.regular,
         alertState,
-        value: '123',
+        value: 123,
       },
     }));
 

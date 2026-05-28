@@ -16,11 +16,10 @@ type ReadoutAdviceStoryArgs = {
   priority?: Priority;
   hugText: boolean;
   iconId?: string;
-  hasFixedLength: boolean;
-  value: string;
-  secondaryValue: string;
+  value: number;
+  secondaryValue: number;
   description: string;
-  valueLength: string;
+  minValueLength: number;
   hasHintedZeros: boolean;
   hasDegree: boolean;
 };
@@ -55,11 +54,10 @@ const meta = {
         .format=${args.format}
         .priority=${args.priority}
         .hugContent=${args.hugText}
-        .hasFixedLength=${args.hasFixedLength}
         .value=${args.value}
         .secondaryValue=${args.secondaryValue}
         .description=${args.description}
-        .valueLength=${args.valueLength}
+        .minValueLength=${args.minValueLength}
         .hasHintedZeros=${args.hasHintedZeros}
         .hasDegree=${args.hasDegree}
       >
@@ -74,11 +72,10 @@ const meta = {
     priority: undefined,
     hugText: true,
     iconId: undefined,
-    hasFixedLength: true,
-    value: '123',
-    secondaryValue: '123',
+    value: 123,
+    secondaryValue: 123,
     description: 'SET',
-    valueLength: '123',
+    minValueLength: 3,
     hasHintedZeros: false,
     hasDegree: false,
   },
@@ -138,12 +135,12 @@ const meta = {
     },
     value: {
       name: 'Value',
-      control: 'text',
+      control: {type: 'number'},
       table: {category: 'Advice Value'},
     },
     secondaryValue: {
       name: 'Secondary Value',
-      control: 'text',
+      control: {type: 'number'},
       if: {arg: 'format', eq: ReadoutAdviceFormat.range},
       table: {category: 'Advice Value'},
     },
@@ -153,15 +150,14 @@ const meta = {
       if: {arg: 'format', eq: ReadoutAdviceFormat.description},
       table: {category: 'Advice Value'},
     },
-    valueLength: {
-      name: 'Value Length',
-      control: 'text',
-      if: {arg: 'hasFixedLength', truthy: true},
+    minValueLength: {
+      name: 'Min Value Length',
+      control: {type: 'number', min: 0, step: 1},
       table: {category: 'Advice Value'},
     },
     hasHintedZeros: {
       name: 'Has Hinted Zeros',
-      if: {arg: 'hasFixedLength', truthy: true},
+      if: {arg: 'minValueLength', gt: 1},
       table: {category: 'Advice Value'},
     },
     hasDegree: {
@@ -241,9 +237,8 @@ export const StatePriorityMatrix: Story = {
                 .state=${c.state}
                 .priority=${c.priority}
                 .hugContent=${true}
-                .hasFixedLength=${true}
-                .value=${'123'}
-                .valueLength=${'000'}
+                .value=${123}
+                .minValueLength=${3}
                 .hasHintedZeros=${true}
               ></obc-readout-advice>
             </div>
@@ -308,9 +303,8 @@ const renderVariant = (variant: Variant) => html`
     .size=${variant.size}
     .state=${variant.state}
     .hugContent=${variant.hugContent}
-    .hasFixedLength=${usesFixedLength(variant.size)}
-    value="123"
-    valueLength="123"
+    .value=${123}
+    .minValueLength=${usesFixedLength(variant.size) ? 3 : 0}
     .hasHintedZeros=${false}
     title=${`Size=${variant.size}, State=${variant.state}, Hug content=${variant.hugContent}`}
   ></obc-readout-advice>

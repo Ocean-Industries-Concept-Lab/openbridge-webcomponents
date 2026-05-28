@@ -1,6 +1,6 @@
 {
   "name": "@oicl/openbridge-webcomponents",
-  "version": "2.0.0-next.42",
+  "version": "2.0.0-next.43",
   "type": "module",
   "repository": {
     "type": "git",
@@ -133,6 +133,14 @@
   },
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "!dist/AR-test-image.png",
+    "!dist/companylogo-day.png",
+    "bundle/openbridge-webcomponents.bundle.js",
+    "bundle/openbridge-webcomponents.bundle.js.map",
+    "custom-elements.json"
+  ],
   "publishConfig": {
     "access": "public"
   },

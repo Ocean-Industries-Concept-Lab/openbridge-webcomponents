@@ -29,7 +29,7 @@ export type ReadoutSourceRenderOptions = {
   hasSrc: boolean;
   hasSrcPicker: boolean;
   src: string;
-  sourceDeltaValue: string;
+  sourceDeltaValue: number;
   sourceType: ReadoutSourceType;
   readoutType: ReadoutPresentationType;
   readoutDirection: ReadoutPresentationDirection;
@@ -37,6 +37,7 @@ export type ReadoutSourceRenderOptions = {
   hasSourceLeadingIcon: boolean;
   hasSourceTrailingIcon: boolean;
   priorityEnhanced?: boolean;
+  fractionDigits: number;
   onTogglePicker: () => void;
   onFlyoutClick: () => void;
 };
@@ -110,12 +111,15 @@ function renderSourceTrailingIconSlot(
 function renderSourceText(
   sourceType: ReadoutSourceType,
   src: string,
-  sourceDeltaValue: string
+  sourceDeltaValue: number,
+  fractionDigits: number
 ) {
   if (sourceType === ReadoutSourceType.delta) {
     return html`
-      ${sourceDeltaValue
-        ? html`<span class="source-delta-value">${sourceDeltaValue}</span>`
+      ${Number.isFinite(sourceDeltaValue)
+        ? html`<span class="source-delta-value"
+            >${sourceDeltaValue.toFixed(fractionDigits)}</span
+          >`
         : nothing}
       <span class="source">${src}</span>
     `;
@@ -136,6 +140,7 @@ export function renderReadoutSource({
   hasSourceLeadingIcon,
   hasSourceTrailingIcon,
   priorityEnhanced,
+  fractionDigits,
   onTogglePicker,
   onFlyoutClick,
 }: ReadoutSourceRenderOptions): TemplateResult | typeof nothing {
@@ -198,7 +203,12 @@ export function renderReadoutSource({
               @click=${onTogglePicker}
             >
               ${renderSourceLeadingIconSlot(sourceType, showLeadingIcon)}
-              ${renderSourceText(sourceType, src, sourceDeltaValue)}
+              ${renderSourceText(
+                sourceType,
+                src,
+                sourceDeltaValue,
+                fractionDigits
+              )}
               ${renderSourceTrailingIconSlot(sourceType, showTrailingIcon)}
             </obc-button>
           </slot>
@@ -221,7 +231,12 @@ export function renderReadoutSource({
               @click=${onFlyoutClick}
             >
               ${renderSourceLeadingIconSlot(sourceType, showLeadingIcon)}
-              ${renderSourceText(sourceType, src, sourceDeltaValue)}
+              ${renderSourceText(
+                sourceType,
+                src,
+                sourceDeltaValue,
+                fractionDigits
+              )}
               ${renderSourceTrailingIconSlot(sourceType, showTrailingIcon)}
             </obc-button>
           </slot>
@@ -236,7 +251,12 @@ export function renderReadoutSource({
         <slot name="source">
           <span class=${classMap(sourceContentClasses)}>
             ${renderSourceLeadingIcon(sourceType, showLeadingIcon)}
-            ${renderSourceText(sourceType, src, sourceDeltaValue)}
+            ${renderSourceText(
+              sourceType,
+              src,
+              sourceDeltaValue,
+              fractionDigits
+            )}
             ${renderSourceTrailingIcon(sourceType, showTrailingIcon)}
           </span>
         </slot>

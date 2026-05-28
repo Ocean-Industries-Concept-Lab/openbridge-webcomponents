@@ -51,5 +51,21 @@ addons.setConfig({
         toolbar: true,
       },
     },
+    {
+      tags: 'wip',
+      badge: {
+        text: 'WIP',
+        style: {
+          backgroundColor: 'rgb(255, 219, 55)',
+          color: '#000',
+        },
+        tooltip:
+          'Work in progress components are still under development and may change.',
+      },
+      display: {
+        sidebar: ['component'],
+        toolbar: true,
+      },
+    },
   ],
 });
