@@ -106,9 +106,8 @@ const meta: Meta<ObcIntegrationVesselMenu> = {
   title: 'Integration Systems/Integration Vessel Menu',
   component: 'obc-integration-vessel-menu',
   tags: ['6.1'],
-  args: {hideHeader: false, numberOfButtons: 3},
+  args: {numberOfButtons: 3},
   argTypes: {
-    hideHeader: {control: 'boolean'},
     numberOfButtons: {
       control: 'number',
       min: 0,
@@ -130,7 +129,6 @@ export default meta;
 type Story = StoryObj<ObcIntegrationVesselMenu>;
 
 interface IntegrationVesselMenuArgs {
-  hideHeader: boolean;
   numberOfButtons: number;
 }
 
@@ -140,7 +138,6 @@ type IntegrationVesselMenuTemplate = (
 
 const template: IntegrationVesselMenuTemplate = (args) => html`
   <obc-integration-vessel-menu
-    .hideHeader=${args.hideHeader}
     .numberOfButtons=${args.numberOfButtons}
     @button-1-click=${() => console.log('Button 1 clicked')}
     @button-2-click=${() => console.log('Button 2 clicked')}
@@ -163,7 +160,6 @@ const template: IntegrationVesselMenuTemplate = (args) => html`
 
 const templateWithoutAlarms: IntegrationVesselMenuTemplate = (args) => html`
   <obc-integration-vessel-menu
-    .hideHeader=${args.hideHeader}
     .numberOfButtons=${args.numberOfButtons}
     @button-1-click=${() => console.log('Button 1 clicked')}
     @button-2-click=${() => console.log('Button 2 clicked')}
