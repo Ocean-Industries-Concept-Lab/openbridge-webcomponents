@@ -16,6 +16,7 @@
   & .visible-wrapper {
     display: flex;
     height: var(--ui-components-check-button-visual-size);
+    box-sizing: border-box;
     padding: 0px var(--ui-components-check-button-padding-horizontal);
     justify-content: center;
     align-items: center;

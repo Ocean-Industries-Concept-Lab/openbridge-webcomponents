@@ -13,6 +13,25 @@ export interface ZoomToFitArcFrame extends ArcViewBox {
 }
 
 /**
+ * Normalize a user-supplied watch-arc half-extent (in degrees) to a finite
+ * value clamped into a sane range. Guards against `NaN`/`Infinity` produced
+ * by Lit's Number attribute converter for invalid string attributes
+ * (e.g. `<obc-pitch arc-angle="abc">`), which would otherwise propagate
+ * through trig and `viewBox` math and produce invalid SVG output.
+ *
+ * @param value     Raw arc half-extent in degrees.
+ * @param fallback  Value to use when `value` is non-finite.
+ * @returns A finite number in `[2, 180]`.
+ */
+export function normalizeArcAngle(
+  value: number | undefined,
+  fallback: number
+): number {
+  const v = Number.isFinite(value) ? (value as number) : fallback;
+  return Math.min(180, Math.max(2, v));
+}
+
+/**
  * Compute the optimal radius enlargement and square viewBox so that a
  * partial-arc watch face fills its container instead of leaving empty space.
  *
@@ -33,6 +52,12 @@ export interface ZoomToFitArcFrame extends ArcViewBox {
  * @param options.extension   Extra radial room beyond outer for tickmarks/labels.
  * @param options.targetSize  Default SVG viewport side length, e.g. `(176 + padding) * 2`.
  * @param options.margin      Fraction of computed extent used as padding (default 0.06).
+ * @param options.includeBox  Optional bounding box in SVG coordinates that must remain
+ *                            inside the FINAL viewBox. Use this to keep a fixed central
+ *                            element (e.g. a vessel image at the origin) visible after
+ *                            the arc has been enlarged. Does NOT constrain how large
+ *                            the arc can grow — it only widens/tallens the final
+ *                            viewBox to include the requested region.
  */
 export function computeZoomToFitArcFrame(options: {
   areas: WatchArea[];
@@ -41,6 +66,7 @@ export function computeZoomToFitArcFrame(options: {
   extension: number;
   targetSize: number;
   margin?: number;
+  includeBox?: {xMin: number; yMin: number; xMax: number; yMax: number};
 }): ZoomToFitArcFrame {
   const {
     areas,
@@ -49,6 +75,7 @@ export function computeZoomToFitArcFrame(options: {
     extension,
     targetSize,
     margin = 0.06,
+    includeBox,
   } = options;
 
   if (areas.length === 0) {
@@ -65,6 +92,12 @@ export function computeZoomToFitArcFrame(options: {
 
   const available = targetSize * (1 - 2 * margin);
 
+  // The binary search uses the arc-only bbox. `includeBox` is intentionally
+  // NOT applied here: forcing a fixed central region into the measured size
+  // would cap how large the arc can grow for narrow `arcAngle` values
+  // (the origin-to-arc distance would dominate). `includeBox` is applied
+  // only to the FINAL viewBox so the arc grows freely while the central
+  // element remains inside the visible viewport.
   const measureSize = (radiusOffset: number) => {
     const bbox = computeAnnularArcBBox(
       areas,
@@ -95,11 +128,14 @@ export function computeZoomToFitArcFrame(options: {
   const radiusOffset = Math.max(0, lo);
 
   // Final bbox at the computed offset
-  const bbox = computeAnnularArcBBox(
-    areas,
-    outerRadius + radiusOffset,
-    innerRadius + radiusOffset,
-    extension
+  const bbox = expandBBoxToIncludeBox(
+    computeAnnularArcBBox(
+      areas,
+      outerRadius + radiusOffset,
+      innerRadius + radiusOffset,
+      extension
+    ),
+    includeBox
   );
   const rawW = bbox.xMax - bbox.xMin;
   const rawH = bbox.yMax - bbox.yMin;
@@ -178,6 +214,70 @@ function computeAnnularArcBBox(
   }
 
   return {xMin, xMax, yMin, yMax};
+}
+
+function expandBBoxToIncludeBox(
+  bbox: {xMin: number; xMax: number; yMin: number; yMax: number},
+  box: {xMin: number; yMin: number; xMax: number; yMax: number} | undefined
+): {xMin: number; xMax: number; yMin: number; yMax: number} {
+  if (!box) return bbox;
+  return {
+    xMin: Math.min(bbox.xMin, box.xMin),
+    xMax: Math.max(bbox.xMax, box.xMax),
+    yMin: Math.min(bbox.yMin, box.yMin),
+    yMax: Math.max(bbox.yMax, box.yMax),
+  };
+}
+
+/**
+ * Shift an arc viewBox so the arc's outer-edge midpoint coincides with the
+ * outer edge of a co-located reference frame (e.g. the central vessel layer
+ * with viewBox `-centreHalf -centreHalf 2*centreHalf 2*centreHalf`).
+ *
+ * The direction is taken from the arc bbox-center, so single-side arcs
+ * (pitch on the left, roll on top, rudder on the bottom) are pushed
+ * outward to that side. Four-way symmetric arcs (pitch-roll) keep their
+ * origin-centred bbox and the function becomes a no-op.
+ *
+ * The arc's pixel size is preserved; only `x`, `y` and `viewBox` change.
+ *
+ * @param frame              The arc frame returned by `computeZoomToFitArcFrame`.
+ * @param arcOuterRadius     Outer radius of the arc band INCLUDING `radiusOffset`
+ *                           (i.e. `outerRadius + frame.radiusOffset`). Extension
+ *                           padding is intentionally excluded — the visible band
+ *                           edge is what should align with the reference frame.
+ * @param referenceRadius    Distance from origin to the reference frame's outer
+ *                           edge, in the reference frame's SVG units. Typically
+ *                           `OUTER_RING_RADIUS` for the original instrument
+ *                           outer ring, or `centreHalf` to align with the
+ *                           container edge directly.
+ * @param centreHalf         Half-side of the reference frame's square viewBox in
+ *                           SVG units. The arc's outer-edge midpoint is placed
+ *                           on `referenceRadius` in the same direction.
+ */
+export function shiftArcFrameToOuterEdge(
+  frame: ZoomToFitArcFrame,
+  arcOuterRadius: number,
+  referenceRadius: number,
+  centreHalf: number
+): ZoomToFitArcFrame {
+  const cx = frame.x + frame.width / 2;
+  const cy = frame.y + frame.height / 2;
+  const dist = Math.hypot(cx, cy);
+  if (dist < 0.001) return frame;
+  const ux = cx / dist;
+  const uy = cy / dist;
+  const r = referenceRadius / centreHalf;
+  const outerX = arcOuterRadius * ux;
+  const outerY = arcOuterRadius * uy;
+  const newX = round4(outerX - (frame.width * (r * ux + 1)) / 2);
+  const newY = round4(outerY - (frame.height * (r * uy + 1)) / 2);
+  return {
+    ...frame,
+    x: newX,
+    y: newY,
+    viewBox: `${newX} ${newY} ${frame.width} ${frame.height}`,
+  };
 }
 
 function arcContainsAngle(

@@ -115,6 +115,19 @@ export enum TimeDisplay {
   date = 'date',
 }
 
+export type ChartLineDataItem = {
+  label: string;
+  value: number;
+};
+
+export type ChartLineYAxisConfig = {
+  id?: string;
+  position?: 'left' | 'right';
+  min?: number;
+  max?: number;
+  grid?: boolean;
+};
+
 const LINE_GRAPH_WATCHED_PROP_NAMES = [
   'data',
   'datasets',
@@ -142,6 +155,7 @@ const LINE_GRAPH_WATCHED_PROP_NAMES = [
   'width',
   'height',
   'fixedAspectRatioScaling', // Triggers responsive mode change
+  'hasLabelPadding', // Toggles edge-to-edge rendering and label visibility
 ] as const;
 
 const LINE_GRAPH_RECREATE_PROP_NAMES = [
@@ -279,22 +293,22 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
  */
 export class ObcChartLineBase extends LitElement {
   /** Simple single-series data (array of {label, value}). */
-  @property({attribute: false})
-  data: {label: string; value: number}[] = [];
+  @property({type: Array, attribute: false})
+  data: ChartLineDataItem[] = [];
 
   /** Chart.js-style datasets for multi-series use. If provided, takes precedence over `data`. */
-  @property({attribute: false})
+  @property({type: Array, attribute: false})
   datasets?: ChartDataset<
     'line',
     (number | {x: string | number | Date; y: number})[]
   >[] = undefined;
 
   /** Optional explicit labels for the x-axis (category mode). If omitted labels are derived from `data` */
-  @property({attribute: false})
+  @property({type: Array, attribute: false})
   labels?: (string | number)[] = undefined;
 
   /** Custom color palette (CSS variable names or color strings). */
-  @property({attribute: false})
+  @property({type: Array, attribute: false})
   colors: string[] = [];
 
   /** Show HTML legend below chart with series labels and colors. */
@@ -340,14 +354,8 @@ export class ObcChartLineBase extends LitElement {
   yAxisPosition: YAxisPosition = YAxisPosition.left;
 
   /** Multiple y-axis definitions for complex multi-axis charts. */
-  @property({attribute: false})
-  yAxes?: Array<{
-    id?: string;
-    position?: 'left' | 'right';
-    min?: number;
-    max?: number;
-    grid?: boolean;
-  }> = undefined;
+  @property({type: Array, attribute: false})
+  yAxes?: ChartLineYAxisConfig[] = undefined;
 
   /** Show grid lines. */
   @property({type: Boolean})
@@ -364,6 +372,26 @@ export class ObcChartLineBase extends LitElement {
   /** Show axis tick marks and labels. */
   @property({type: Boolean})
   showTickMarks = false;
+
+  /**
+   * Reserve canvas padding for axis tick labels on sides without an external scale.
+   *
+   * When `true` (default), the chart leaves room for tick labels and renders them
+   * (subject to `showTickMarks` and the 192px auto-compact threshold).
+   *
+   * When `false`, the chart renders edge-to-edge on sides without a slotted external
+   * scale AND axis tick labels are force-hidden so they cannot be clipped. This also
+   * suppresses the automatic edge-to-edge switch that normally happens below the
+   * 192px threshold, eliminating the visible padding "jump" when crossing it.
+   *
+   * Useful when embedding the chart inside another component that owns framing
+   * and never wants to show axis labels (e.g. `obc-automation-tank`).
+   *
+   * Defaults to `true` to preserve existing behavior. Declared with `attribute: false`
+   * because a `true`-default boolean cannot work as an HTML boolean attribute.
+   */
+  @property({type: Boolean, attribute: false})
+  hasLabelPadding = true;
 
   // Internal default tension used when `lineMode` is 'smooth'. Not exposed as a property.
   private readonly DEFAULT_TENSION = 0.4;
@@ -1214,10 +1242,19 @@ export class ObcChartLineBase extends LitElement {
   }
 
   /**
-   * Calculate chart padding from external scale dimensions
+   * Calculate chart padding from external scale dimensions.
+   *
+   * For sides without an external scale, falls back to `CHART_DIMENSIONS.CANVAS_PADDING`
+   * (the chart's own padding to reserve room for axis tick labels). When
+   * `hasLabelPadding=false` that fallback is 0 so the chart renders edge-to-edge,
+   * and this same value is cascaded to slotted scales via `updateScaleProperties()`
+   * — so the bar's main-axis padding (`paddingTop`/`paddingBottom` for vertical bars)
+   * collapses with the chart's perpendicular padding and they stay visually aligned.
    */
   private calculatePaddingFromScales() {
-    const defaultPadding = CHART_DIMENSIONS.CANVAS_PADDING;
+    const defaultPadding = this.hasLabelPadding
+      ? CHART_DIMENSIONS.CANVAS_PADDING
+      : 0;
 
     const padding = {
       top: this.externalScaleDimensions.get('top') ?? defaultPadding,
@@ -1255,8 +1292,14 @@ export class ObcChartLineBase extends LitElement {
     const effectiveWidth = this.getEffectiveWidth();
     const effectiveHeight = this.getEffectiveHeight();
 
-    // Determine if we should show labels (above threshold)
+    // Determine if we should show labels (above threshold).
+    // When `hasLabelPadding=false` the chart reserves no room for axis labels,
+    // so slotted scales must also hide their labels — otherwise their
+    // `labelThickness` band stays in the reported thickness and the chart
+    // gets re-padded inward (leaving whitespace on the scale's side), and any
+    // visible labels would be clipped against the canvas edge.
     const showLabels =
+      this.hasLabelPadding &&
       effectiveWidth >= RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS &&
       effectiveHeight >= RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
 
@@ -1547,6 +1590,17 @@ export class ObcChartLineBase extends LitElement {
 
     // Only update if watched properties changed
     if (!this.hasAnyChanged(changed, LINE_GRAPH_WATCHED_PROP_NAMES)) {
+      return;
+    }
+
+    // `hasLabelPadding` cascades into slotted scales via `updateScaleProperties()`
+    // (toggles `showLabels`, which collapses/expands the bar's label band and
+    // changes its reported thickness). That path only runs through
+    // `syncScalesAndChart()`, so when only `hasLabelPadding` changes we must
+    // route through there — otherwise slotted scales stay stale until the
+    // next slot/resize event and the chart re-pads on stale thickness.
+    if (changed.has('hasLabelPadding') && this.hasExternalScales()) {
+      this.syncScalesAndChart();
       return;
     }
 
@@ -1962,16 +2016,21 @@ export class ObcChartLineBase extends LitElement {
     // For sides without external scales, we apply the chart's scaleFactor to default padding.
     let padding: {top: number; right: number; bottom: number; left: number};
 
-    if (isTooSmall) {
+    // When hasLabelPadding=false the chart never reserves space for axis tick
+    // labels on sides without an external scale (renders edge-to-edge there).
+    // External-scale sides still receive their reported visual thickness so
+    // slotted scales/bars remain fully visible.
+    const defaultPaddingScaled = !this.hasLabelPadding
+      ? 0
+      : this.fixedAspectRatioScaling
+        ? Math.round(CHART_DIMENSIONS.CANVAS_PADDING * scaleFactor)
+        : CHART_DIMENSIONS.CANVAS_PADDING;
+
+    if (isTooSmall && this.hasLabelPadding) {
       padding = {top: 0, right: 0, bottom: 0, left: 0};
     } else if (this.hasExternalScales()) {
       // External scales report their visual dimensions (already scaled when fixedAspectRatio=true)
       const scalePadding = this.calculatePaddingFromScales();
-      // For sides with external scales, use their reported dimensions directly
-      // For sides without external scales, apply chart's scaleFactor to default padding
-      const defaultPaddingScaled = this.fixedAspectRatioScaling
-        ? Math.round(CHART_DIMENSIONS.CANVAS_PADDING * scaleFactor)
-        : CHART_DIMENSIONS.CANVAS_PADDING;
       padding = {
         top: this.externalScaleDimensions.has('top')
           ? scalePadding.top
@@ -1988,9 +2047,6 @@ export class ObcChartLineBase extends LitElement {
       };
     } else {
       // No external scales - apply scaleFactor to all default padding
-      const defaultPaddingScaled = this.fixedAspectRatioScaling
-        ? Math.round(CHART_DIMENSIONS.CANVAS_PADDING * scaleFactor)
-        : CHART_DIMENSIONS.CANVAS_PADDING;
       padding = {
         top: defaultPaddingScaled,
         right: defaultPaddingScaled,
@@ -2153,9 +2209,11 @@ export class ObcChartLineBase extends LitElement {
       LINE_GRAPH_LABEL_CONFIG.fontColorVar
     );
 
-    // Extract common values used for both x and y axes
-    const showLabels = showTickMarks && !isTooSmall;
-    const showTicks = showTickMarks && !isTooSmall;
+    // Extract common values used for both x and y axes.
+    // When hasLabelPadding=false the chart renders edge-to-edge, so labels are
+    // force-hidden to prevent clipping.
+    const showLabels = showTickMarks && !isTooSmall && this.hasLabelPadding;
+    const showTicks = showTickMarks && !isTooSmall && this.hasLabelPadding;
     const fontConfig = {family: fontFamily, size: fontSize, weight: fontWeight};
 
     const x = {

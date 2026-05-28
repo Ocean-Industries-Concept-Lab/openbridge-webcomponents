@@ -161,13 +161,13 @@ export class ObcUserMenu extends LitElement {
   /**
    * Recent users for the "Recently signed in" section.
    */
-  @property({attribute: false})
+  @property({type: Array, attribute: false})
   recentUsers: ObcUserMenuUser[] = [];
 
   /**
    * Actions shown in the signed-in navigation list.
    */
-  @property({attribute: false})
+  @property({type: Array, attribute: false})
   signedInActions: ObcUserMenuSignedInAction[] = [];
 
   private get defaultSignedInActions() {

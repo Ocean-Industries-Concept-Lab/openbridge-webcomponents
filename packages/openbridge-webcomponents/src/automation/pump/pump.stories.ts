@@ -17,12 +17,11 @@ const meta: Meta<typeof ObcPump> = {
   component: 'obc-pump',
   decorators: [crossDecorator],
   args: {
-    tag: '007',
+    tag: '#0007',
     readoutPosition: AutomationButtonReadoutPosition.bottom,
     readoutSize: AutomationButtonReadoutStackSize.regular,
     alert: false,
     progress: false,
-    hasIdTag: true,
   },
   argTypes: {
     ...argTypesAbstractAutomationButtonMotorized,

@@ -6,7 +6,9 @@ import {AutomationButtonReadoutStack} from '../../components/automation-button-r
 export enum MotorizedVariant {
   regular = 'regular',
   double = 'double',
+  forward = 'forward',
   flat = 'flat',
+  flatForward = 'flat-forward',
 }
 
 export class ObcAbstractAutomationButtonMotorized extends ObcAbstractAutomationButton {

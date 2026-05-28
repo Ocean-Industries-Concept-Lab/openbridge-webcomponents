@@ -33,6 +33,28 @@ export interface GaugeRadialAdvice {
   type: AdviceType;
   hinted: boolean;
 }
+
+function rangeIncludesZero(minValue: number, maxValue: number): boolean {
+  return minValue <= 0 && maxValue >= 0;
+}
+
+function strongerTickmarkType(
+  existing: TickmarkType,
+  candidate: TickmarkType
+): TickmarkType {
+  const priority: Record<TickmarkType, number> = {
+    [TickmarkType.zeroLineThick]: 6,
+    [TickmarkType.zeroLine]: 5,
+    [TickmarkType.main]: 4,
+    [TickmarkType.primary]: 3,
+    [TickmarkType.secondary]: 2,
+    [TickmarkType.tertiary]: 1,
+    [TickmarkType.textOnly]: 0,
+  };
+
+  return priority[candidate] > priority[existing] ? candidate : existing;
+}
+
 @customElement('obc-instrument-radial')
 export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   // setpoint, newSetpoint, atSetpoint, touching, autoAtSetpoint,
@@ -80,11 +102,17 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   private _radiusOffset = 0;
   private _arcFrame: ZoomToFitArcFrame | undefined;
 
-  get minAngle(): number {
+  private get clampedValue(): number {
+    const lowerBound = Math.min(this.minValue, this.maxValue);
+    const upperBound = Math.max(this.minValue, this.maxValue);
+    return Math.max(lowerBound, Math.min(this.value, upperBound));
+  }
+
+  private get minAngle(): number {
     return this.getAngle(this.minValue);
   }
 
-  get maxAngle(): number {
+  private get maxAngle(): number {
     return this.getAngle(this.maxValue);
   }
 
@@ -119,6 +147,8 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
 
   override render() {
     const barColor = this.barColor ?? this._derivedBarColor;
+    const barStartValue = Math.max(this.minValue, Math.min(0, this.maxValue));
+    const value = this.clampedValue;
     const setpointAngle =
       this.setpoint !== undefined ? this.getAngle(this.setpoint) : undefined;
     const newSetpointAngle =
@@ -131,8 +161,8 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
         ? []
         : [
             {
-              startAngle: this.getAngle(0),
-              endAngle: this.getAngle(this.value),
+              startAngle: this.getAngle(barStartValue),
+              endAngle: this.getAngle(value),
               fillColor: barColor,
             },
           ];
@@ -181,7 +211,7 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
           .priority=${this.priority}
           .angleSetpoint=${setpointAngle}
           .newAngleSetpoint=${newSetpointAngle}
-          .atAngleSetpoint=${this.computeAtSetpoint(this.value)}
+          .atAngleSetpoint=${this.computeAtSetpoint(value)}
           .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
           .setpointOverride=${this.setpointOverride}
           .animateSetpoint=${this.animateSetpoint}
@@ -209,15 +239,16 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
     }
     const needleColor = this.needleColor ?? this._derivedNeedleColor;
     const rOff = this._radiusOffset;
+    const value = this.clampedValue;
     if (this.type === ObcGaugeRadialType.needle) {
-      return svg`<g transform="rotate(${this.getAngle(this.value)}) translate(-256, -256)">
+      return svg`<g transform="rotate(${this.getAngle(value)}) translate(-256, -256)">
       <circle cx="256" cy="256" r="14" fill=${needleColor}/>
       <rect x="250" y="${96 - rOff}" width="12" height="${192 + rOff}" rx="6" fill=${needleColor}/>
       <rect x="252" y="${98 - rOff}" width="8" height="${188 + rOff}" rx="4" stroke=${needleColor} fill=${needleColor} stroke-width="4"/>
       </g>
 `;
     } else {
-      return svg`<g transform="rotate(${this.getAngle(this.value)}) translate(-256, -256)">
+      return svg`<g transform="rotate(${this.getAngle(value)}) translate(-256, -256)">
 <rect x="252" y="${96 - rOff}" width="8" height="48" rx="4" fill=${needleColor} stroke="var(--border-silhouette-color)"/>
 </g>
       `;
@@ -225,143 +256,124 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   }
 
   get tickmarks(): Tickmark[] {
-    const tickmarks: Tickmark[] = [];
+    const tickmarksByValue = new Map<number, Tickmark>();
+    const normalizeValue = (value: number) =>
+      Math.abs(value) < 1e-9 ? 0 : Number(value.toFixed(6));
 
-    // Primary tickmarks — skip when undefined or <= 0 to prevent infinite loops
-    const primaryInterval = this.primaryTickmarkInterval;
-    if (
-      primaryInterval !== undefined &&
-      primaryInterval > 0 &&
-      Number.isFinite(primaryInterval)
-    ) {
-      for (let i = primaryInterval; i < this.maxValue; i += primaryInterval) {
-        tickmarks.push({
-          angle: this.getAngle(i),
-          type: TickmarkType.primary,
-          text: this.showLabels ? i.toString() : undefined,
-        });
-      }
-
-      if (this.showLabels && this.maxValue % primaryInterval === 0) {
-        tickmarks.push({
-          angle: this.getAngle(this.maxValue),
-          type: TickmarkType.textOnly,
-          text: this.showLabels ? this.maxValue.toString() : undefined,
-        });
-      }
-
-      for (let i = -primaryInterval; i > this.minValue; i -= primaryInterval) {
-        tickmarks.push({
-          angle: this.getAngle(i),
-          type: TickmarkType.primary,
-          text: this.showLabels ? i.toString() : undefined,
-        });
-      }
-
-      if (this.showLabels && this.minValue % primaryInterval === 0) {
-        tickmarks.push({
-          angle: this.getAngle(this.minValue),
-          type: TickmarkType.textOnly,
-          text: this.showLabels ? this.minValue.toString() : undefined,
-        });
-      }
-    }
-
-    // Secondary tickmarks — skip when undefined or <= 0 to prevent infinite loops
-    const secondaryInterval = this.secondaryTickmarkInterval;
-    if (
-      secondaryInterval !== undefined &&
-      secondaryInterval > 0 &&
-      Number.isFinite(secondaryInterval)
-    ) {
-      const existingTickmarks = tickmarks.map((t) => t.angle);
-
-      for (
-        let i = secondaryInterval;
-        i < this.maxValue;
-        i += secondaryInterval
+    const upsertTickmark = (
+      value: number,
+      type: TickmarkType,
+      text?: string
+    ) => {
+      if (
+        !Number.isFinite(value) ||
+        value < this.minValue ||
+        value > this.maxValue
       ) {
-        if (existingTickmarks.includes(this.getAngle(i))) {
-          continue;
-        }
-        tickmarks.push({
-          angle: this.getAngle(i),
-          type: TickmarkType.secondary,
-        });
+        return;
       }
 
-      for (
-        let i = -secondaryInterval;
-        i > this.minValue;
-        i -= secondaryInterval
-      ) {
-        if (existingTickmarks.includes(this.getAngle(i))) {
-          continue;
+      const normalizedValue = normalizeValue(value);
+      const existing = tickmarksByValue.get(normalizedValue);
+      if (existing) {
+        existing.type = strongerTickmarkType(existing.type, type);
+        if (text !== undefined) {
+          existing.text = text;
         }
-        tickmarks.push({
-          angle: this.getAngle(i),
-          type: TickmarkType.secondary,
-        });
-      }
-    }
-
-    // Tertiary tickmarks — skip when undefined or <= 0 to prevent infinite loops
-    const tertiaryInterval = this.tertiaryTickmarkInterval;
-    if (
-      tertiaryInterval !== undefined &&
-      tertiaryInterval > 0 &&
-      Number.isFinite(tertiaryInterval)
-    ) {
-      const existingTickmarks = tickmarks.map((t) => t.angle);
-
-      for (let i = tertiaryInterval; i < this.maxValue; i += tertiaryInterval) {
-        if (existingTickmarks.includes(this.getAngle(i))) {
-          continue;
-        }
-        tickmarks.push({
-          angle: this.getAngle(i),
-          type: TickmarkType.tertiary,
-        });
+        return;
       }
 
-      for (
-        let i = -tertiaryInterval;
-        i > this.minValue;
-        i -= tertiaryInterval
-      ) {
-        if (existingTickmarks.includes(this.getAngle(i))) {
-          continue;
-        }
-        tickmarks.push({
-          angle: this.getAngle(i),
-          type: TickmarkType.tertiary,
-        });
-      }
-    }
-
-    // Add the zero tickmark
-
-    const zeroTickmark = tickmarks.find((t) => t.angle === this.getAngle(0));
-    if (zeroTickmark) {
-      zeroTickmark.type =
-        this.minValue < 0 ? TickmarkType.main : TickmarkType.textOnly;
-    } else {
-      tickmarks.push({
-        angle: this.getAngle(0),
-        type: this.minValue < 0 ? TickmarkType.main : TickmarkType.textOnly,
-        text: this.showLabels ? '0' : undefined,
+      tickmarksByValue.set(normalizedValue, {
+        angle: this.getAngle(normalizedValue),
+        type,
+        text,
       });
+    };
+
+    const addTickmarksAtInterval = (
+      interval: number | undefined,
+      type: TickmarkType,
+      withLabels = false
+    ) => {
+      if (
+        interval === undefined ||
+        interval <= 0 ||
+        !Number.isFinite(interval)
+      ) {
+        return;
+      }
+
+      const epsilon = Math.abs(interval) * 1e-6;
+      const startValue =
+        Math.ceil((this.minValue - epsilon) / interval) * interval;
+
+      for (
+        let value = startValue;
+        value < this.maxValue - epsilon;
+        value += interval
+      ) {
+        const normalizedValue = normalizeValue(value);
+        if (
+          normalizedValue <= this.minValue + epsilon ||
+          normalizedValue >= this.maxValue - epsilon
+        ) {
+          continue;
+        }
+
+        upsertTickmark(
+          normalizedValue,
+          type,
+          withLabels && this.showLabels ? normalizedValue.toString() : undefined
+        );
+      }
+    };
+
+    addTickmarksAtInterval(
+      this.primaryTickmarkInterval,
+      TickmarkType.primary,
+      true
+    );
+    addTickmarksAtInterval(
+      this.secondaryTickmarkInterval,
+      TickmarkType.secondary
+    );
+    addTickmarksAtInterval(
+      this.tertiaryTickmarkInterval,
+      TickmarkType.tertiary
+    );
+
+    if (rangeIncludesZero(this.minValue, this.maxValue)) {
+      upsertTickmark(
+        0,
+        this.minValue < 0 ? TickmarkType.main : TickmarkType.textOnly,
+        this.showLabels ? '0' : undefined
+      );
     }
 
-    return tickmarks;
+    if (this.showLabels) {
+      upsertTickmark(
+        this.minValue,
+        TickmarkType.textOnly,
+        this.minValue.toString()
+      );
+      upsertTickmark(
+        this.maxValue,
+        TickmarkType.textOnly,
+        this.maxValue.toString()
+      );
+    }
+
+    return [...tickmarksByValue.values()].sort((a, b) => a.angle - b.angle);
   }
 
   private get _advices(): AngleAdviceRaw[] {
+    const value = this.clampedValue;
+
     return this.advices.map((advice) => {
       const minAngle = this.getAngle(advice.minValue);
       const maxAngle = this.getAngle(advice.maxValue);
       let state = advice.hinted ? AdviceState.hinted : AdviceState.regular;
-      if (this.value >= advice.minValue && this.value <= advice.maxValue) {
+      if (value >= advice.minValue && value <= advice.maxValue) {
         state = AdviceState.triggered;
       }
 

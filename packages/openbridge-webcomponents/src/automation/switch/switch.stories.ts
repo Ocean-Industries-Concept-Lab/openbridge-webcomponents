@@ -13,14 +13,13 @@ const meta: Meta<typeof ObcSwitch> = {
   component: 'obc-switch',
   decorators: [crossDecorator],
   args: {
-    tag: '0012',
+    tag: '#0012',
     readoutPosition: AutomationButtonReadoutPosition.bottom,
     readoutSize: AutomationButtonReadoutStackSize.regular,
     alert: false,
     progress: false,
     vertical: false,
     showReadoutStack: true,
-    hasIdTag: true,
   },
   argTypes: {
     alternativeIcon: {

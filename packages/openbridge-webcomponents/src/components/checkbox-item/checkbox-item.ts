@@ -140,6 +140,10 @@ export class ObcCheckboxItem extends LitElement {
     );
   }
 
+  public override focus(options?: FocusOptions): void {
+    this.checkboxElement?.focus(options);
+  }
+
   override render() {
     const isDisabled =
       this.disabled || this.state === ObcCheckboxItemState.disabled;
