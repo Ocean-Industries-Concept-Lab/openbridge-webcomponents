@@ -24,13 +24,13 @@ export class ObcVelocityProjectionPlot extends LitElement {
   @property({type: Array, attribute: false})
   dataPoints: VelocityProjectionDatapoint[] = [];
   @property({type: Number})
-  instantWindDirectionDeg: number | null = null;
+  currentWindFromDirection: number | null = null;
   @property({type: Number})
-  instantWindSpeedNumber: number | null = null;
+  currentWindSpeedKnots: number | null = null;
   @property({type: Number})
-  instantCurrentDirectionDeg: number | null = null;
+  currentFromDirection: number | null = null;
   @property({type: Number})
-  instantCurrentSpeedNumber: number | null = null;
+  currentSpeedKnots: number | null = null;
   @property({type: String})
   vesselImage: VesselImage = VesselImage.cargoWindTop;
   override render() {
@@ -49,10 +49,10 @@ export class ObcVelocityProjectionPlot extends LitElement {
               transform: '',
             },
           ]}
-          .windFromDirectionDeg=${this.instantWindDirectionDeg}
-          .wind=${this.instantWindSpeedNumber}
-          .currentFromDirectionDeg=${this.instantCurrentDirectionDeg}
-          .current=${this.instantCurrentSpeedNumber}
+          .windFromDirectionDeg=${this.currentWindFromDirection}
+          .windKnots=${this.currentWindSpeedKnots}
+          .currentFromDirectionDeg=${this.currentFromDirection}
+          .current=${this.currentSpeedKnots}
           .padding=${70}
         >
         </obc-watch>
@@ -62,10 +62,10 @@ export class ObcVelocityProjectionPlot extends LitElement {
   }
 
   private isSelected(dp: VelocityProjectionDatapoint): boolean {
-    if (this.instantWindDirectionDeg != null) {
+    if (this.currentWindFromDirection != null) {
       return (
-        dp.startAngleDeg <= this.instantWindDirectionDeg &&
-        dp.endAngleDeg >= this.instantWindDirectionDeg
+        dp.startAngleDeg <= this.currentWindFromDirection &&
+        dp.endAngleDeg >= this.currentWindFromDirection
       );
     }
     return true;

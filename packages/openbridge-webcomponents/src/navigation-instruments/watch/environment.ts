@@ -1,14 +1,39 @@
 import {svg, SVGTemplateResult} from 'lit';
 import {styleMap} from 'lit/directives/style-map.js';
 
+/**
+ * Number of wind barb icons available (`wind-1.svg` … `wind-14.svg`).
+ *
+ * The icons follow the standard meteorological wind-barb convention:
+ * one half-barb per 5 kn (icon 2 = 5 kn, icon 3 = 10 kn, …, icon 11 =
+ * 50 kn = one pennant). Icon 1 is calm.
+ */
+const WIND_ICON_COUNT = 14;
+
+/**
+ * Maps a wind speed in **knots** to a wind-barb icon index in `[1, 14]`.
+ *
+ * Uses 5-knot steps with nearest-neighbour rounding so 0–2 kn → icon 1
+ * (calm), 3–7 kn → icon 2 (one half-barb at 5 kn), etc. Speeds at or
+ * above 60 kn clamp to the heaviest available icon. Non-finite / null /
+ * undefined inputs fall back to icon 1 (calm).
+ */
+export function windKnotsToIconIndex(knots: number | null | undefined): number {
+  if (knots == null || !Number.isFinite(knots)) {
+    return 1;
+  }
+  const step = Math.round(knots / 5) + 1;
+  return Math.max(1, Math.min(WIND_ICON_COUNT, step));
+}
+
 export function renderWind(options: {
-  wind: number;
+  windKnots: number;
   fromDirectionDeg: number;
   radius: number;
   color?: string;
 }): SVGTemplateResult {
   return renderEnvironment({
-    filename: `wind-${options.wind + 1}.svg`,
+    filename: `wind-${windKnotsToIconIndex(options.windKnots)}.svg`,
     fromDirectionDeg: options.fromDirectionDeg,
     radius: options.radius,
     color: options.color,
@@ -141,13 +166,27 @@ export const environmentSvgs: Record<string, SVGTemplateResult> = {
 <path d="M5 18L5 16H12V18H5Z" fill="var(--instrument-regular-secondary-color)"/>
 <path d="M5 15L5 13H12V15H5Z" fill="var(--instrument-regular-secondary-color)"/>
 <path d="M8 12L8 10H12V12H8Z" fill="var(--instrument-regular-secondary-color)"/>`,
-  'wind-11.svg': svg`<path d="M5 22L13 24L13 7H15L12 0L9 7H11L11 20L5 22Z" stroke="var(--border-silhouette-color)" stroke-width="2"/>
+  'wind-11.svg': svg`<path d="M11 24H13L13 7H15L12 0L9 7H11L11 24Z" stroke="var(--border-silhouette-color)" stroke-width="2"/>
+<path d="M5 24L5 22H12V24H5Z" stroke="var(--border-silhouette-color)" stroke-width="2"/>
+<path d="M5 21L5 19H12V21H5Z" stroke="var(--border-silhouette-color)" stroke-width="2"/>
+<path d="M5 18L5 16H12V18H5Z" stroke="var(--border-silhouette-color)" stroke-width="2"/>
+<path d="M5 15L5 13H12V15H5Z" stroke="var(--border-silhouette-color)" stroke-width="2"/>
+<path d="M8 12L8 10H12V12H8Z" stroke="var(--border-silhouette-color)" stroke-width="2"/>
+<path d="M9 9L9 7H12V9H9Z" stroke="var(--border-silhouette-color)" stroke-width="2"/>
+<path d="M11 24H13L13 7H15L12 0L9 7H11L11 24Z" fill="var(--instrument-regular-secondary-color)"/>
+<path d="M5 24L5 22H12V24H5Z" fill="var(--instrument-regular-secondary-color)"/>
+<path d="M5 21L5 19H12V21H5Z" fill="var(--instrument-regular-secondary-color)"/>
+<path d="M5 18L5 16H12V18H5Z" fill="var(--instrument-regular-secondary-color)"/>
+<path d="M5 15L5 13H12V15H5Z" fill="var(--instrument-regular-secondary-color)"/>
+<path d="M8 12L8 10H12V12H8Z" fill="var(--instrument-regular-secondary-color)"/>
+<path d="M9 9L9 7H12V9H9Z" fill="var(--instrument-regular-secondary-color)"/>`,
+  'wind-12.svg': svg`<path d="M5 22L13 24L13 7H15L12 0L9 7H11L11 20L5 22Z" stroke="var(--border-silhouette-color)" stroke-width="2"/>
 <path d="M5 22L13 24L13 7H15L12 0L9 7H11L11 20L5 22Z" fill="var(--instrument-regular-secondary-color)"/>`,
-  'wind-12.svg': svg`<path d="M5 22L13 24L13 7H15L12 0L9 7H11L11 19L5 22Z" stroke="var(--border-silhouette-color)" stroke-width="2"/>
+  'wind-13.svg': svg`<path d="M5 22L13 24L13 7H15L12 0L9 7H11L11 19L5 22Z" stroke="var(--border-silhouette-color)" stroke-width="2"/>
 <path d="M5 18L5 16H12V18H5Z" stroke="var(--border-silhouette-color)" stroke-width="2"/>
 <path d="M5 22L13 24L13 7H15L12 0L9 7H11L11 19L5 22Z" fill="var(--instrument-regular-secondary-color)"/>
 <path d="M5 18L5 16H12V18H5Z" fill="var(--instrument-regular-secondary-color)"/>`,
-  'wind-13.svg': svg`<path d="M5 22L13 24L13 7H15L12 0L9 7H11L11 19L5 22Z" stroke="var(--border-silhouette-color)" stroke-width="2"/>
+  'wind-14.svg': svg`<path d="M5 22L13 24L13 7H15L12 0L9 7H11L11 19L5 22Z" stroke="var(--border-silhouette-color)" stroke-width="2"/>
 <path d="M5 18L5 16H12V18H5Z" stroke="var(--border-silhouette-color)" stroke-width="2"/>
 <path d="M5 15L5 13H12V15H5Z" stroke="var(--border-silhouette-color)" stroke-width="2"/>
 <path d="M5 22L13 24L13 7H15L12 0L9 7H11L11 19L5 22Z" fill="var(--instrument-regular-secondary-color)"/>

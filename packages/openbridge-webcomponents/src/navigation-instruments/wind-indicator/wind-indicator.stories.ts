@@ -11,16 +11,18 @@ type WindIndicatorArgs = {
   type: WindIndicatorType;
   direction: WindIndicatorDirection;
   priority: WindIndicatorPriority;
-  currentWindSpeedBeaufort: number;
+  currentWindSpeedKnots: number;
   rotationAngle: number;
-  windFromAngle: number;
+  currentWindFromDirection: number;
   angle?: number;
   'wind-from-angle'?: number;
+  'current-wind-from-direction'?: number;
   'rotation-angle'?: number;
-  'current-wind-speed-beaufort'?: number;
+  'current-wind-speed-knots'?: number;
   iconIndex?: number;
   accentColor?: string;
   windIconCache?: unknown;
+  windFromAngle?: number;
 };
 
 const meta: Meta<WindIndicatorArgs> = {
@@ -38,14 +40,14 @@ const meta: Meta<WindIndicatorArgs> = {
       .type=${args.type}
       .direction=${args.direction}
       .priority=${args.priority}
-      .currentWindSpeedBeaufort=${args.currentWindSpeedBeaufort}
+      .currentWindSpeedKnots=${args.currentWindSpeedKnots}
       .rotationAngle=${args.rotationAngle}
-      .windFromAngle=${args.windFromAngle}
+      .currentWindFromDirection=${args.currentWindFromDirection}
     ></obc-wind-indicator>
   `,
   args: {
-    windFromAngle: 0,
-    currentWindSpeedBeaufort: 7,
+    currentWindFromDirection: 0,
+    currentWindSpeedKnots: 35,
     type: WindIndicatorType.arrow,
     direction: WindIndicatorDirection.true,
     priority: WindIndicatorPriority.regular,
@@ -60,8 +62,8 @@ const meta: Meta<WindIndicatorArgs> = {
       control: {type: 'select'},
       options: Object.values(WindIndicatorDirection),
     },
-    windFromAngle: {
-      name: 'Wind From Angle',
+    currentWindFromDirection: {
+      name: 'Current Wind From Direction',
       description: 'Wind-from angle in degrees. 0/360 = wind from north.',
       control: {type: 'range', min: 0, max: 360, step: 1},
     },
@@ -75,17 +77,18 @@ const meta: Meta<WindIndicatorArgs> = {
       control: {type: 'select'},
       options: Object.values(WindIndicatorPriority),
     },
-    currentWindSpeedBeaufort: {
-      name: 'Wind Speed (Beaufort)',
+    currentWindSpeedKnots: {
       description:
-        'Wind force on the Beaufort scale. Matches the convention used by <obc-wind>.',
-      control: {type: 'range', min: 0, max: 13, step: 1},
+        'Wind speed in knots. Mapped to barb icons in 5-kn steps (standard meteorological wind-barb convention).',
+      control: {type: 'range', min: 0, max: 75, step: 1},
     },
 
     angle: {table: {disable: true}, control: false},
+    windFromAngle: {table: {disable: true}, control: false},
     'wind-from-angle': {table: {disable: true}, control: false},
+    'current-wind-from-direction': {table: {disable: true}, control: false},
     'rotation-angle': {table: {disable: true}, control: false},
-    'current-wind-speed-beaufort': {table: {disable: true}, control: false},
+    'current-wind-speed-knots': {table: {disable: true}, control: false},
     iconIndex: {table: {disable: true}, control: false},
     accentColor: {table: {disable: true}, control: false},
     windIconCache: {table: {disable: true}, control: false},
@@ -128,6 +131,6 @@ export const Labeled: Story = {
     type: WindIndicatorType.labeled,
     direction: WindIndicatorDirection.true,
     priority: WindIndicatorPriority.regular,
-    currentWindSpeedBeaufort: 12,
+    currentWindSpeedKnots: 60,
   },
 };
