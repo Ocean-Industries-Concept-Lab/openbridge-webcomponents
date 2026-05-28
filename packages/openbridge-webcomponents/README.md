@@ -132,10 +132,10 @@ For the best experience in your framework of choice, use our auto-generated wrap
 Install it with:
 
 ```bash
-npm install @oicl/openbridge-webcomponents-*
+npm install @oicl/openbridge-webcomponents-<framework>
 ```
 
-where `*` is the framework you are using (e.g., Vue, React, Angular, Svelte).
+where `<framework>` is the framework you are using (e.g., Vue, React, Angular, Svelte).
 
 ## 📦 Full-Bundle Package
 
