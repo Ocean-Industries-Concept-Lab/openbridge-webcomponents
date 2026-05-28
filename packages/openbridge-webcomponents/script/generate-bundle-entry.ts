@@ -19,7 +19,7 @@ function findComponentFiles(
     ignore: [
       '**/*.stories.ts',
       '**/*.spec.ts',
-      '*.test.ts',
+      '**/*.test.ts',
       '**/_test-utils.ts',
     ],
   });
