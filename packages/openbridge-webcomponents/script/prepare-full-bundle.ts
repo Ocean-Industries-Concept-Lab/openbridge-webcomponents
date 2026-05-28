@@ -41,10 +41,12 @@ for (const dirName of ['dist', 'bundle', 'src', 'docs']) {
   );
 }
 
-fs.copyFileSync(
-  path.join(packageRoot, 'custom-elements.json'),
-  path.join(fullBundlePackageRoot, 'custom-elements.json')
-);
+for (const file of ['custom-elements.json', 'tsconfig.json']) {
+  fs.copyFileSync(
+    path.join(packageRoot, file),
+    path.join(fullBundlePackageRoot, file)
+  );
+}
 
 fs.writeFileSync(
   path.join(fullBundlePackageRoot, 'package.json'),
