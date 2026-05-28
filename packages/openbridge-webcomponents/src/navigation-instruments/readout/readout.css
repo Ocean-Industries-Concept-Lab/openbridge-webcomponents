@@ -4,7 +4,6 @@
 
 :host {
   display: inline-flex;
-  max-width: 100%;
   --global-typography-instrument-label-padding-bottom: var(
     --global-typography-instrument-unit-padding-bottom
   );
@@ -21,23 +20,18 @@
 .readout {
   display: inline-grid;
   width: fit-content;
-  max-width: 100%;
   padding: var(--obc-readout-padding-vertical-safe)
     var(--obc-readout-padding-horizontal-safe);
   grid-template-columns: auto;
   grid-template-areas:
     "advice"
-    "input"
+    "setpoint"
     "value"
     "meta"
     "source";
 
   &.label-only {
     grid-template-areas: "meta";
-  }
-
-  &.no-hug {
-    width: 100%;
   }
 
   &:is(
@@ -83,11 +77,11 @@
         var(--obc-readout-padding-vertical-safe)
     );
 
-    .readout-input {
+    .readout-setpoint {
       padding-inline: var(--obc-readout-padding-horizontal-safe);
     }
 
-    &.interaction-flip-flop .readout-input {
+    &.interaction-flip-flop .readout-setpoint {
       padding-inline: 0;
     }
 
@@ -149,7 +143,7 @@
     &.stack {
       padding-block: calc(var(--obc-readout-padding-horizontal-safe) * 2);
 
-      :is(.advice-divider, .input-divider, .source-divider) {
+      :is(.advice-divider, .setpoint-divider, .source-divider) {
         block-size: var(--instrument-components-readout-divider-height-regular);
         max-block-size: var(
           --instrument-components-readout-divider-height-regular
@@ -263,14 +257,14 @@
     }
 
     &.interaction-flip-flop {
-      &.regular :is(.readout-value-wrapper, .readout-input) {
+      &.regular :is(.readout-value-wrapper, .readout-setpoint) {
         min-block-size: var(
           --global-typography-instrument-value-medium-container-height
         );
       }
 
       &:is(.enhanced, .stack) {
-        :is(.readout-value-wrapper, .readout-input) {
+        :is(.readout-value-wrapper, .readout-setpoint) {
           min-block-size: var(
             --global-typography-instrument-value-large-container-height
           );
@@ -285,10 +279,6 @@
   }
 
   &.vertical {
-    &.no-hug .readout-advice > obc-readout-advice {
-      width: 100%;
-    }
-
     &.enhanced {
       .readout-value-wrapper {
         padding-block: var(--obc-readout-padding-vertical-safe);
@@ -297,18 +287,6 @@
 
       .readout-meta-wrapper {
         justify-self: end;
-        width: fit-content;
-      }
-
-      &:not(.no-hug):is(.interaction-flip-flop, .interaction-pop-up)
-        .readout-value-wrapper {
-        width: fit-content;
-        justify-self: end;
-      }
-
-      &:not(.no-hug):is(.interaction-flip-flop, .interaction-pop-up)
-        .readout-value-wrapper
-        > obc-readout-input {
         width: fit-content;
       }
 
@@ -321,7 +299,7 @@
         justify-content: flex-end;
       }
 
-      :is(.readout-advice, .readout-input) {
+      :is(.readout-advice, .readout-setpoint) {
         width: 100%;
       }
 
@@ -335,14 +313,9 @@
         padding-bottom: var(--obc-readout-padding-horizontal-safe);
       }
 
-      &.no-hug :is(.readout-advice, .readout-input) {
-        width: 100%;
-        justify-self: stretch;
-      }
-
       :is(
         .readout-advice,
-        .readout-input,
+        .readout-setpoint,
         .readout-value-wrapper,
         .readout-source-wrapper
       ) {
@@ -362,12 +335,12 @@
     }
 
     &:is(.interaction-flip-flop, .interaction-pop-up)
-      :is(.readout-value-wrapper, .readout-input) {
+      :is(.readout-value-wrapper, .readout-setpoint) {
       min-inline-size: calc(var(--obc-readout-interactive-min-ch, 0) * 1ch);
     }
 
     &.interaction-flip-flop {
-      :is(.readout-value-wrapper, .readout-input) {
+      :is(.readout-value-wrapper, .readout-setpoint) {
         align-self: center;
       }
 
@@ -399,7 +372,7 @@
 .readout.stack.vertical.alignment-left
   :is(
     .readout-value-wrapper,
-    .readout-input,
+    .readout-setpoint,
     .readout-meta-wrapper,
     .readout-source-wrapper
   ) {
@@ -416,7 +389,7 @@
 
 .readout.stack.vertical.alignment-left
   .readout-value-wrapper
-  obc-readout-input::part(variant-value-content) {
+  obc-readout-setpoint::part(variant-value-content) {
   margin-right: auto;
   margin-left: 0;
 }
@@ -427,7 +400,7 @@
 
 .readout.stack.vertical.alignment-center
   .readout-value-wrapper
-  obc-readout-input::part(variant-value-content) {
+  obc-readout-setpoint::part(variant-value-content) {
   margin-left: auto;
   margin-right: auto;
 }
@@ -435,7 +408,7 @@
 .readout.stack.vertical.alignment-center
   :is(
     .readout-value-wrapper,
-    .readout-input,
+    .readout-setpoint,
     .readout-meta-wrapper,
     .readout-source-wrapper
   ) {
@@ -453,7 +426,7 @@
 .readout.stack.vertical.alignment-vertical
   :is(
     .readout-value-wrapper,
-    .readout-input,
+    .readout-setpoint,
     .readout-meta-wrapper,
     .readout-source-wrapper
   ) {
@@ -488,11 +461,13 @@
   grid-area: label;
 }
 
-.readout-input {
-  grid-area: input;
+.readout-setpoint {
+  grid-area: setpoint;
 }
 
-.readout.interaction-always-visible .readout-value-wrapper obc-readout-input {
+.readout.interaction-always-visible
+  .readout-value-wrapper
+  obc-readout-setpoint {
   --global-typography-instrument-value-small-font-weight-regular: var(
     --global-typography-instrument-value-small-font-weight-active
   );
@@ -507,7 +482,7 @@
   );
 }
 
-.readout.interaction-pop-up .readout-value-wrapper obc-readout-input {
+.readout.interaction-pop-up .readout-value-wrapper obc-readout-setpoint {
   --global-typography-instrument-value-small-font-weight-regular: var(
     --global-typography-instrument-value-small-font-weight-active
   );
@@ -524,8 +499,10 @@
 
 .readout.interaction-flip-flop.focus-value
   .readout-value-wrapper
-  obc-readout-input,
-.readout.interaction-flip-flop.focus-input .readout-input obc-readout-input {
+  obc-readout-setpoint,
+.readout.interaction-flip-flop.focus-setpoint
+  .readout-setpoint
+  obc-readout-setpoint {
   --global-typography-instrument-value-small-font-weight-regular: var(
     --global-typography-instrument-value-small-font-weight-active
   );
@@ -540,19 +517,19 @@
   );
 }
 
-.readout.interaction-pop-up .readout-input {
+.readout.interaction-pop-up .readout-setpoint {
   transform-origin: top;
   transition:
     opacity 160ms ease,
     transform 160ms ease;
 }
 
-.readout.interaction-pop-up .readout-input.input-hiding {
+.readout.interaction-pop-up .readout-setpoint.setpoint-hiding {
   opacity: 0;
   transform: translateY(8px) scaleY(0.92);
 }
 
-.readout.interaction-pop-up .readout-input.input-hidden {
+.readout.interaction-pop-up .readout-setpoint.setpoint-hidden {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -560,30 +537,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .readout.interaction-pop-up .readout-input,
-  .readout.interaction-flip-flop .readout-input {
+  .readout.interaction-pop-up .readout-setpoint,
+  .readout.interaction-flip-flop .readout-setpoint {
     transition: none;
   }
-}
-
-.readout.vertical.no-hug {
-  justify-items: stretch;
-}
-
-.readout.vertical.no-hug.has-input .readout-input {
-  width: 100%;
-  justify-self: stretch;
-}
-
-.readout.vertical.no-hug.has-input .readout-input > obc-readout-input {
-  width: 100%;
-}
-
-.readout.vertical.no-hug.has-input:is(
-    .interaction-flip-flop,
-    .interaction-pop-up
-  ) {
-  width: fit-content;
 }
 
 .readout-meta-wrapper {
@@ -600,7 +557,7 @@
 }
 
 .advice-divider,
-.input-divider,
+.setpoint-divider,
 .source-divider {
   box-sizing: content-box;
   flex: none;
@@ -613,7 +570,7 @@
   max-block-size: var(--instrument-components-readout-divider-height-small);
 }
 
-.readout.horizontal :is(.advice-divider, .input-divider, .source-divider) {
+.readout.horizontal :is(.advice-divider, .setpoint-divider, .source-divider) {
   align-self: center;
 }
 
@@ -685,12 +642,12 @@
     align-self: flex-end;
   }
 
-  .readout-input {
+  .readout-setpoint {
     align-self: center;
   }
 }
 
-.readout.horizontal.enhanced.has-input-button:not(.stack) {
+.readout.horizontal.enhanced.has-setpoint-button:not(.stack) {
   :is(
     .readout-label-wrapper,
     .readout-meta-wrapper,
@@ -774,11 +731,6 @@
   }
 
   .source-picker {
-    &:not(.no-hug)::part(label) {
-      padding-left: 0;
-      padding-right: var(--obc-readout-padding-horizontal-safe);
-    }
-
     &.source-enhanced.source-horizontal::part(visible-wrapper) {
       justify-content: flex-start;
     }
@@ -790,10 +742,6 @@
 
       &::part(visible-wrapper) {
         gap: var(--obc-readout-padding-horizontal-safe);
-      }
-
-      &.no-hug::part(visible-wrapper) {
-        gap: calc(var(--obc-readout-padding-vertical-safe) / 2);
       }
 
       &::part(icon) {

@@ -1,4 +1,3 @@
-import {Priority} from '../types.js';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {
@@ -117,8 +116,6 @@ export {FillMode, ScaleType};
  */
 @customElement('obc-gauge-trend')
 export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
-  /** Color priority: enhanced uses blue instrument colors for bar fill and setpoint */
-  @property({type: String}) override priority: Priority = Priority.regular;
   private _barVerticalElement?: HTMLElement;
   private _isFirstUpdate = false;
 
