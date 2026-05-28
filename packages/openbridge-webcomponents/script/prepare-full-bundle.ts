@@ -7,15 +7,8 @@ const scriptDirectory = path.dirname(scriptPath);
 const packageRoot = path.resolve(scriptDirectory, '..');
 const sourcePackagePath = path.join(packageRoot, 'package.json');
 const fullBundlePackageRoot = path.join(packageRoot, '.full-bundle-publish');
-const releaseVersion = process.argv[2];
-
-if (!releaseVersion) {
-  throw new Error(
-    'Missing release version argument. Usage: tsx script/prepare-full-bundle.ts <version>'
-  );
-}
-
 const sourcePackage = JSON.parse(fs.readFileSync(sourcePackagePath, 'utf-8'));
+const releaseVersion = process.argv[2] ?? sourcePackage.version;
 
 const fullBundlePackage = {
   ...sourcePackage,
