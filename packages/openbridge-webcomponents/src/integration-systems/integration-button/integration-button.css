@@ -123,7 +123,9 @@
         --app-components-integration-system-navigation-item-horizontal-padding-horizontal-large
       );
     align-items: center;
-    gap: var(--app-components-integration-system-button-label-spacing);
+    gap: var(
+      --app-components-integration-system-navigation-item-horizontal-label-spacing
+    );
     align-self: stretch;
   }
 
