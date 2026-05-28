@@ -135,7 +135,7 @@ Install it with:
 npm install @oicl/openbridge-webcomponents-<framework>
 ```
 
-where `<framework>` is the framework you are using (e.g., Vue, React, Angular, Svelte).
+where `<framework>` is the framework you are using (e.g., `vue`, `react`, `ng`, `svelte`).
 
 ## 📦 Full-Bundle Package
 
