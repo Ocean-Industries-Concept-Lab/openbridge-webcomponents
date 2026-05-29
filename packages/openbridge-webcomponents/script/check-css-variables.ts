@@ -45,44 +45,6 @@ import path from 'path';
 import {globby} from 'globby';
 
 const allowedUndefinedVariables = new Set([
-  '--alert-components-badge-label-spacing',
-  '--app-components-alert-components-general-notification-item-icon-size-large',
-  '--app-components-badge-border-radius',
-  '--app-components-badge-icon-size',
-  '--app-components-badge-icon-size-flat',
-  '--app-components-badge-icon-size-large',
-  '--app-components-badge-label-spacing',
-  '--app-components-badge-min-size-large',
-  '--app-components-badge-padding',
-  '--app-components-global-alert-item-counter-spacing',
-  '--color-container-background-color',
-  '--course',
-  '--critical-enabled-background-color',
-  '--critical-enabled-border-color',
-  '--critical-focused-background-color',
-  '--critical-focused-border-color',
-  '--critical-hover-background-color',
-  '--critical-hover-border-color',
-  '--critical-pressed-background-color',
-  '--critical-pressed-border-color',
-  '--custom-width',
-  '--enabled-background-color',
-  '--global-size-spacing-list-item-menu-padding-horizonal-list-item',
-  '--grid-columns',
-  '--grid-columns-rest',
-  '--heading',
-  '--image-size',
-  '--menu-navigation-components-date-item-padding-vertical',
-  '--menu-navigation-components-tab-item-divider-height',
-  '--obc-instrument-field-source-width',
-  '--obc-instrument-field-tag-width',
-  '--on-container-active-color',
-  '--percent',
-  '--scale',
-  '--spinner-progress-deg',
-  '--ui-components-icon-toggle-button-horizontal-item-touch-target-size',
-  '--ui-components-keyboard-nummeric-component-height-min',
-  '--ui-components-keyboard-nummeric-touch-target-size',
 ]);
 
 interface VariableDefinitionLocation {
@@ -131,7 +93,7 @@ async function run(): Promise<void> {
       `${path.sep}src${path.sep}palettes${path.sep}variables.css`
     );
 
-    const definitionRegex = /(^|[;{\s])(\-\-[A-Za-z0-9_-]+)\s*:/gm;
+    const definitionRegex = /(^|[;{\s])(--[A-Za-z0-9_-]+)\s*:/gm;
     for (const match of content.matchAll(definitionRegex)) {
       const name = match[2];
       const index = match.index;
@@ -142,7 +104,7 @@ async function run(): Promise<void> {
       definitions.set(name, [...(definitions.get(name) ?? []), location]);
     }
 
-    const propertyDefinitionRegex = /@property\s+(\-\-[A-Za-z0-9_-]+)/g;
+    const propertyDefinitionRegex = /@property\s+(--[A-Za-z0-9_-]+)/g;
     for (const match of content.matchAll(propertyDefinitionRegex)) {
       const name = match[1];
       const index = match.index;
