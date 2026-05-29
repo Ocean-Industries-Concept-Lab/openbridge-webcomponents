@@ -6,6 +6,13 @@
   display: flex;
 }
 
+.button-horizontal-divider-container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  flex: 1;
+}
+
 .button-vertical-divider-container {
   display: flex;
   align-items: center;

@@ -10,14 +10,22 @@
   background: var(--integration-container-global-color);
   height: 100%;
   width: 100%;
+}
 
-  .fleet-wrapper,
-  .vessel-wrapper {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: stretch;
-    padding: 4px;
-  }
+.wrapper .fleet-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 4px 0;
+}
+
+.wrapper .vessel-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 0px 4px;
 }
