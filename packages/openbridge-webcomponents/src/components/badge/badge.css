@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   border-style: solid;
-  border-radius: var(--app-components-badge-border-radius);
+  border-radius: var(--ui-components-badge-border-radius);
   padding: calc(var(--ui-components-badge-padding) - 1px);
   border: 1px solid var(--alert-alarm-outline-color);
   background: var(--alert-alarm-color);
@@ -18,8 +18,8 @@
   }
 
   .icon {
-    width: var(--app-components-badge-icon-size);
-    height: var(--app-components-badge-icon-size);
+    width: var(--ui-components-badge-icon-size);
+    height: var(--ui-components-badge-icon-size);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -33,18 +33,18 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 0 var(--app-components-badge-label-spacing) 1px
-      var(--app-components-badge-label-spacing);
-    height: var(--app-components-badge-icon-size);
-    min-width: var(--app-components-badge-icon-size);
+    padding: 0 var(--ui-components-badge-label-spacing) 1px
+      var(--ui-components-badge-label-spacing);
+    height: var(--ui-components-badge-icon-size);
+    min-width: var(--ui-components-badge-icon-size);
   }
 
   &.size-large {
     display: inline-flex;
     width: fit-content;
     height: 24px;
-    min-width: var(--app-components-badge-min-size-large);
-    min-height: var(--app-components-badge-min-size-large);
+    min-width: var(--ui-components-badge-min-size-large);
+    min-height: var(--ui-components-badge-min-size-large);
 
     padding: calc(var(--ui-components-badge-padding) - 1px);
     justify-content: center;
@@ -60,8 +60,8 @@
     }
 
     & .icon {
-      width: var(--app-components-badge-icon-size-large);
-      height: var(--app-components-badge-icon-size-large);
+      width: var(--ui-components-badge-icon-size-large);
+      height: var(--ui-components-badge-icon-size-large);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -132,8 +132,8 @@
     border-color: var(--flat-enabled-background-color);
 
     .icon {
-      min-width: var(--app-components-badge-icon-size);
-      min-height: var(--app-components-badge-icon-size);
+      min-width: var(--ui-components-badge-icon-size);
+      min-height: var(--ui-components-badge-icon-size);
     }
 
     .icon.type-alarm {
@@ -187,8 +187,8 @@
     }
 
     & .icon.type-outline {
-      width: var(--app-components-badge-icon-size-flat);
-      height: var(--app-components-badge-icon-size-flat);
+      width: var(--ui-components-badge-icon-size-flat);
+      height: var(--ui-components-badge-icon-size-flat);
     }
 
     .icon.type-outline + .number {
