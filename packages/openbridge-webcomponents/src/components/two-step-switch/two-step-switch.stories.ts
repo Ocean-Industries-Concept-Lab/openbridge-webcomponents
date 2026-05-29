@@ -1,17 +1,72 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html, nothing} from 'lit';
 import './two-step-switch.js';
+import {
+  ObcTwoStepSwitchVariant,
+  ObcTwoStepSwitchWidth,
+} from './two-step-switch.js';
 
 type TwoStepSwitchStoryArgs = {
   activeStateLabel: string;
   ariaLabel: string;
+  cancelAriaLabel: string;
   confirmLabel: string;
   disabled: boolean;
   idleActionLabel: string;
   idleStateLabel: string;
   activeActionLabel: string;
+  processingLabel: string;
   useSlots: boolean;
+  variant: ObcTwoStepSwitchVariant;
+  width: ObcTwoStepSwitchWidth;
 };
+
+function renderTwoStepSwitch(args: TwoStepSwitchStoryArgs, shell?: unknown) {
+  const component = html`
+    <obc-two-step-switch
+      ?disabled=${args.disabled}
+      .ariaLabel=${args.ariaLabel}
+      .cancelAriaLabel=${args.cancelAriaLabel}
+      .confirmLabel=${args.useSlots ? '' : args.confirmLabel}
+      .idleActionLabel=${args.useSlots ? '' : args.idleActionLabel}
+      .idleStateLabel=${args.useSlots ? '' : args.idleStateLabel}
+      .activeActionLabel=${args.useSlots ? '' : args.activeActionLabel}
+      .activeStateLabel=${args.useSlots ? '' : args.activeStateLabel}
+      .processingLabel=${args.useSlots ? '' : args.processingLabel}
+      .variant=${args.variant}
+      .width=${args.width}
+    >
+      ${args.useSlots
+        ? html`
+            <span slot="idle-action">${args.idleActionLabel}</span>
+            <span slot="active-action">${args.activeActionLabel}</span>
+            <span slot="idle-state">${args.idleStateLabel}</span>
+            <span slot="active-state">${args.activeStateLabel}</span>
+            <span slot="confirm">${args.confirmLabel}</span>
+            <span slot="processing">${args.processingLabel}</span>
+          `
+        : nothing}
+    </obc-two-step-switch>
+  `;
+  const centeredComponent =
+    args.width === ObcTwoStepSwitchWidth.fluid
+      ? html`
+          <div
+            style="width: min(100%, 20rem); max-width: 100%; padding: 0 var(--ui-components-button-padding-horizontal, 8px);"
+          >
+            ${component}
+          </div>
+        `
+      : component;
+
+  return html`
+    <div
+      style="display: grid; place-items: center; width: 100%; min-height: 100vh;"
+    >
+      ${shell ?? centeredComponent}
+    </div>
+  `;
+}
 
 const meta = {
   title: 'UI Components/Buttons/Two Step Action/Two Step Switch',
@@ -20,15 +75,29 @@ const meta = {
   args: {
     activeStateLabel: 'IN CMD',
     ariaLabel: 'Command switch',
+    cancelAriaLabel: '',
     confirmLabel: 'Confirm',
     disabled: false,
     idleActionLabel: 'Take',
     idleStateLabel: 'NO CMD',
     activeActionLabel: 'Release',
+    processingLabel: 'Starting...',
     useSlots: false,
+    variant: ObcTwoStepSwitchVariant.standard,
+    width: ObcTwoStepSwitchWidth.fluid,
   },
   argTypes: {
-    disabled: {control: {type: 'boolean'}},
+    variant: {
+      control: {type: 'select'},
+      options: [
+        ObcTwoStepSwitchVariant.standard,
+        ObcTwoStepSwitchVariant.cancellable,
+      ],
+    },
+    width: {
+      control: {type: 'select'},
+      options: [ObcTwoStepSwitchWidth.fluid, ObcTwoStepSwitchWidth.hug],
+    },
     useSlots: {
       control: {type: 'boolean'},
       table: {category: 'Content'},
@@ -38,6 +107,10 @@ const meta = {
       table: {category: 'Accessibility'},
     },
     confirmLabel: {
+      control: {type: 'text'},
+      table: {category: 'Switch copy'},
+    },
+    processingLabel: {
       control: {type: 'text'},
       table: {category: 'Switch copy'},
     },
@@ -54,6 +127,10 @@ const meta = {
       control: {type: 'text'},
       table: {category: 'Switch copy'},
     },
+    cancelAriaLabel: {
+      control: {type: 'text'},
+      table: {category: 'Accessibility'},
+    },
   },
   parameters: {
     layout: 'fullscreen',
@@ -63,6 +140,8 @@ const meta = {
         'confirm-open',
         'confirm-close',
         'confirm-timeout',
+        'confirm-click',
+        'cancel-click',
       ],
     },
     docs: {
@@ -72,31 +151,7 @@ const meta = {
       },
     },
   },
-  render: (args) => html`
-    <div
-      style="display: flex; justify-content: center; align-items: center; width: 100%; min-height: 100vh;"
-    >
-      <obc-two-step-switch
-        ?disabled=${args.disabled}
-        .ariaLabel=${args.ariaLabel}
-        .confirmLabel=${args.useSlots ? '' : args.confirmLabel}
-        .idleActionLabel=${args.useSlots ? '' : args.idleActionLabel}
-        .idleStateLabel=${args.useSlots ? '' : args.idleStateLabel}
-        .activeActionLabel=${args.useSlots ? '' : args.activeActionLabel}
-        .activeStateLabel=${args.useSlots ? '' : args.activeStateLabel}
-      >
-        ${args.useSlots
-          ? html`
-              <span slot="idle-action">${args.idleActionLabel}</span>
-              <span slot="active-action">${args.activeActionLabel}</span>
-              <span slot="idle-state">${args.idleStateLabel}</span>
-              <span slot="active-state">${args.activeStateLabel}</span>
-              <span slot="confirm">${args.confirmLabel}</span>
-            `
-          : nothing}
-      </obc-two-step-switch>
-    </div>
-  `,
+  render: (args) => renderTwoStepSwitch(args),
 } satisfies Meta<TwoStepSwitchStoryArgs>;
 
 export default meta;
@@ -106,33 +161,20 @@ export const Default: Story = {
   args: {},
 };
 
-export const WithSlots: Story = {
+export const Fluid: Story = {
   args: {
-    useSlots: true,
+    width: ObcTwoStepSwitchWidth.fluid,
   },
 };
 
-export const Disabled: Story = {
+export const Hug: Story = {
   args: {
-    disabled: true,
+    width: ObcTwoStepSwitchWidth.hug,
   },
 };
 
-export const EmptyLabels: Story = {
+export const Cancellable: Story = {
   args: {
-    ariaLabel: 'Command switch',
-    confirmLabel: '',
-    idleActionLabel: '',
-    idleStateLabel: '',
-    activeActionLabel: '',
-    activeStateLabel: '',
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Demonstrates empty copy; set `aria-label` and action labels for usable confirm naming.',
-      },
-    },
+    variant: ObcTwoStepSwitchVariant.cancellable,
   },
 };
