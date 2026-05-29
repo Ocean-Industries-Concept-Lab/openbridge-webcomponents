@@ -31,7 +31,7 @@ const fullBundlePackage = {
 fs.rmSync(fullBundlePackageRoot, {recursive: true, force: true});
 fs.mkdirSync(fullBundlePackageRoot, {recursive: true});
 
-for (const dirName of ['dist', 'bundle', 'src', 'docs']) {
+for (const dirName of ['dist', 'bundle', 'src', 'docs', 'xliff']) {
   fs.cpSync(
     path.join(packageRoot, dirName),
     path.join(fullBundlePackageRoot, dirName),
@@ -41,7 +41,11 @@ for (const dirName of ['dist', 'bundle', 'src', 'docs']) {
   );
 }
 
-for (const file of ['custom-elements.json', 'tsconfig.json']) {
+for (const file of [
+  'custom-elements.json',
+  'tsconfig.json',
+  'lit-localize.json',
+]) {
   fs.copyFileSync(
     path.join(packageRoot, file),
     path.join(fullBundlePackageRoot, file)
