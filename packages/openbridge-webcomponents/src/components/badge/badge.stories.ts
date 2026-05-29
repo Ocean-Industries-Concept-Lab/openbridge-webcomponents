@@ -106,6 +106,7 @@ export const NoNumber: Story = {
   render(args) {
     return html`<obc-badge
       .showNumber=${args.showNumber}
+      .showIcon=${args.showIcon}
       size=${args.size}
       type=${args.type}
       variant=${args.variant}
@@ -126,6 +127,7 @@ export const NoNumberLarge: Story = {
   render(args) {
     return html`<obc-badge
       .showNumber=${args.showNumber}
+      .showIcon=${args.showIcon}
       size=${args.size}
       type=${args.type}
       variant=${args.variant}
