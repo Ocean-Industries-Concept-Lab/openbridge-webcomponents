@@ -74,6 +74,8 @@ const allowedUndefinedVariables = new Set([
   '--image-size',
   '--menu-navigation-components-date-item-padding-vertical',
   '--menu-navigation-components-tab-item-divider-height',
+  '--obc-instrument-field-source-width',
+  '--obc-instrument-field-tag-width',
   '--on-container-active-color',
   '--percent',
   '--scale',

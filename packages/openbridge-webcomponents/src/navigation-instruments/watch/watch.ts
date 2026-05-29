@@ -222,7 +222,7 @@ export class ObcWatch extends LitElement {
   @property({type: Boolean}) crosshairEnabled: boolean = false;
   @property({type: Boolean}) showLabels: boolean = false;
   @property({type: Array, attribute: false}) vessels: WatchVessel[] = [];
-  @property({type: Number}) wind: number | null = null;
+  @property({type: Number}) windKnots: number | null = null;
   @property({type: Number}) windFromDirectionDeg: number | null = null;
   @property({type: Number}) windSymbolRadius: number | null = null;
   @property({type: String}) windColor: string | undefined;
@@ -766,9 +766,9 @@ export class ObcWatch extends LitElement {
         })
       : nothing;
     const wind =
-      this.wind != null && this.windFromDirectionDeg != null
+      this.windKnots != null && this.windFromDirectionDeg != null
         ? svg`<g transform="scale(${this.scaleWindIcon})">${renderWind({
-            wind: this.wind,
+            windKnots: this.windKnots,
             fromDirectionDeg: this.windFromDirectionDeg,
             radius: this.windSymbolRadius ?? 192,
             color: this.windColor,
