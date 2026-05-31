@@ -415,8 +415,6 @@
   align-items: center;
   justify-content: flex-end;
   gap: 4px;
-  /* TODO: we will need such divider in the future for the 'rich' option */
-  /* border-bottom: 1px solid var(--border-outline-color); */
   padding-bottom: 2px;
 
   .percent {
@@ -454,6 +452,66 @@
   .max-value {
     @mixin font-instrument-value-regular-neutral;
   }
+}
+
+.rich-divider {
+  border-top: 1px solid var(--border-divider-color);
+  margin-top: 8px;
+}
+
+.rich {
+  display: grid;
+  /* label takes remaining space; value (right-aligned) and suffix
+   * (left-aligned) form fixed content columns so digit right edges and
+   * suffix left edges align vertically across all rows. */
+  grid-template-columns: 1fr auto auto;
+  align-items: baseline;
+  row-gap: 0;
+  padding-top: 8px;
+  white-space: nowrap;
+  @mixin font-instrument-unit;
+}
+
+.rich-row {
+  display: contents;
+}
+
+.rich-label {
+  @mixin font-instrument-label;
+  color: var(--instrument-regular-secondary-color);
+  padding-right: 8px;
+  text-align: left;
+}
+
+.rich-value {
+  @mixin font-instrument-value-regular-active;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.rich-suffix {
+  display: inline-flex;
+  align-items: baseline;
+  /* Default 2px gap between value and unit when there is no degree/percent
+   * glyph. When a glyph is present it sits flush against the value and the
+   * unit follows flush after the glyph (see `.rich-glyph + .rich-unit`). */
+  padding-left: 2px;
+}
+
+.rich-suffix:has(.rich-glyph) {
+  padding-left: 0;
+}
+
+.rich-glyph {
+  @mixin font-instrument-value-regular-active;
+}
+
+.rich-unit {
+  color: var(--instrument-regular-secondary-color);
+}
+
+.rich-glyph + .rich-unit {
+  padding-left: 0;
 }
 
 /* The chart cell is a plain sizing/clipping box. Both child renderers —
