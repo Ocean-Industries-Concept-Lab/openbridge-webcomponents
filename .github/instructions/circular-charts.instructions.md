@@ -127,6 +127,7 @@ When working with chart helper utilities:
    - Chart dimensions are typically defined in `CHART_DIMENSIONS` constant object
    - Consider `as const` for type safety and immutability
    - Computed properties can use getters for derived values
+   - **Default palette references raw primitives**: `CHART_SECTOR_DEFAULT_COLORS` points at `--base-gray-*` and `CHART_SECTOR_ENHANCED_COLORS` points at `--base-blue-*` (resolved at render-time by `getCssVariableValue()`). Consumers re-skinning the accent color via semantic tokens alone (e.g. `--instrument-enhanced-primary-color`) **will not** recolor these charts — primitives must be overridden too, or the constant list re-pointed at new tokens. See AGENTS.md § 7 "Two-layer color model".
 
 6. **Formatting Helpers**:
 
