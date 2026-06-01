@@ -187,6 +187,11 @@
   }
 }
 
+slot[name="fleet"] {
+  display: flex;
+  flex: 1;
+}
+
 .wrapper option.fleet-option {
   display: flex;
   align-items: center;

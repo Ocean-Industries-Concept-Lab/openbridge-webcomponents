@@ -4,6 +4,7 @@
 
 :host {
   display: flex;
+  flex: 1;
 }
 
 .button-horizontal-divider-container {
