@@ -5,6 +5,7 @@ import {html} from 'lit';
 import '../integration-dropdown-button/integration-dropdown-button.js';
 import '../../components/clock/clock.js';
 import '../../icons/icon-placeholder.js';
+import {IntegrationButtonType} from '../integration-button/integration-button.js';
 
 const meta: Meta<typeof ObcIntegrationBarDropdown> = {
   title: 'Integration Systems/Integration Bar Dropdown',
@@ -63,6 +64,7 @@ const meta: Meta<typeof ObcIntegrationBarDropdown> = {
         <obc-integration-button
           slot="fleet"
           .readouts=${[{label: 'Label', value: 'Value', unit: 'Unit'}]}
+          type=${IntegrationButtonType.rich}
         >
           <div slot="label">Fleet name</div>
           <div slot="info-label">Label</div>
