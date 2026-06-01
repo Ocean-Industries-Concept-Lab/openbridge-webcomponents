@@ -1,13 +1,14 @@
-﻿# 📄 OpenBridge Doc-Generator
+# OpenBridge Doc-Generator
 
-A tiny CLI that injects rich JSDoc comments into any OpenBridge web-component source file.  
-It reads the component’s `.ts` plus sibling `.stories.ts` / `.css` (if present),  
-feeds them to GPT-4o using a shared prompt, and writes a  
+A tiny CLI that injects rich JSDoc comments into any OpenBridge source file.
+It reads the `.ts` plus sibling `.stories.ts` / `.css` (if present),
+auto-detects the code pattern (concrete component, pure function module, or abstract base class),
+feeds everything to GPT using a shared prompt, and writes a
 `*.generated.ts` review copy next to the original.
 
 ---
 
-## 1 · Install dev-dependencies
+## 1 - Install dev-dependencies
 
 ```bash
 npm i -D tsx typescript dotenv openai globby
@@ -15,7 +16,7 @@ npm i -D tsx typescript dotenv openai globby
 
 ---
 
-## 2 · Create `.env` in the repo root (git-ignored)
+## 2 - Create `.env` in the repo root (git-ignored)
 
 ```env
 OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -24,53 +25,64 @@ OPENAI_MODEL=gpt-4.1      (or whichever you prefer)
 
 ---
 
-## 3 · Run
+## 3 - Run
 
-### A single component file
+### A single source file
 
 ```bash
 npx tsx script/docgen/docs-gen.ts \
-  src/components/button/button.ts
+  src/building-blocks/external-scale/external-scale.ts
 ```
 
 ### Every `*.ts` in one folder (non-recursive) (easiest to use)
 
 ```bash
 npx tsx script/docgen/docs-gen.ts \
-  src/components/button
+  src/building-blocks/external-scale
 ```
 
-### The whole component tree (recursive)
+### The whole source tree (recursive)
 
 ```bash
 npx tsx script/docgen/docs-gen.ts --all
 ```
 
-Each run produces `<name>.generated.ts`.  
+Each run produces `<name>.generated.ts` next to the original.
 Inspect the diff, then rename or copy the new JSDoc into the real file.
 
 ---
 
-## ✅ What gets added
+## Code pattern detection
 
-- Component-level doc block (Overview → Features → Usage → Slots …)
-- Inline `/** … */` for each `@property`
+The script auto-detects three patterns and tailors the GPT prompt accordingly:
+
+| Pattern                  | Detection heuristic                                        | Prompt behavior                                                           |
+| ------------------------ | ---------------------------------------------------------- | ------------------------------------------------------------------------- |
+| **Concrete component**   | Has `@customElement(...)` decorator                        | JSDoc on class + properties; `@slot`/`@fires` tags                        |
+| **Pure function module** | No class or no LitElement - only exported functions        | Module-level JSDoc at top of file; short JSDoc per exported function/type |
+| **Abstract base class**  | Has `class ... extends LitElement` but no `@customElement` | JSDoc on class + properties; `@ignore` tag; documents concrete subclasses |
+
+---
+
+## What gets added
+
+- Component/module-level doc block (Overview, Features, Usage, Slots, etc.)
+- Inline `/** ... */` for each `@property`
 - Final tag block with `@slot` and `@fires` so `custom-elements.json` stays complete
-- _(No extra `@property` tags — the inline comments cover those)_
+- _(No extra `@property` tags - the inline comments cover those)_
 - Executable code is **never** modified.
 
 ---
 
-## 🛠 Extras
+## Extras
 
-| Need               | One-liner                                                 |
-| ------------------ | --------------------------------------------------------- |
-| VS Code task       | `"command": "npx tsx script/docgen/docs-gen.ts \${file}"` |
-| Interactive picker | `node script/docgen/agent.ts` (prompts for file)          |
+| Need         | One-liner                                                |
+| ------------ | -------------------------------------------------------- |
+| VS Code task | `"command": "npx tsx script/docgen/docs-gen.ts ${file}"` |
 
 ---
 
-## 🐞 Troubleshooting
+## Troubleshooting
 
 | Error                              | Fix                                     |
 | ---------------------------------- | --------------------------------------- |

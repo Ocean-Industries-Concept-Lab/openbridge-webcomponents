@@ -5,6 +5,10 @@ import '../icon-button/icon-button.js';
 import componentStyle from './toggle-switch.css?inline';
 import {customElement} from '../../decorator.js';
 
+export type ObcToggleSwitchInputEvent = CustomEvent<{
+  checked: boolean;
+}>;
+
 /**
  * `<obc-toggle-switch>` – A toggle switch component for binary on/off selection (also known as a switch, toggle, or enable/disable control).
  *
@@ -80,7 +84,7 @@ import {customElement} from '../../decorator.js';
  * In this example, the toggle switch displays a label, an icon, and a description, and is in the checked state.
  *
  * @slot icon - Leading icon slot (shown when `hasIcon` is true)
- * @fires input - Dispatched when the value of the input changes
+ * @fires input - {ObcToggleSwitchInputEvent} Dispatched when the value of the input changes
  */
 @customElement('obc-toggle-switch')
 export class ObcToggleSwitch extends LitElement {
@@ -124,6 +128,12 @@ export class ObcToggleSwitch extends LitElement {
   @property({type: Boolean}) hasIcon = false;
 
   /**
+   * If true, the toggle is controlled externally.
+   * Use to control the toggle state from outside the component.
+   */
+  @property({type: Boolean}) externalControl = false;
+
+  /**
    * Handles input events to change the toggle state.
    * Prevents changes if the toggle is disabled.
    * @param e {InputEvent}
@@ -134,7 +144,21 @@ export class ObcToggleSwitch extends LitElement {
       e.preventDefault();
       return;
     }
-    this.checked = (e.target as HTMLInputElement).checked;
+
+    const nextChecked = !this.checked;
+    if (!this.externalControl) {
+      this.checked = nextChecked;
+    }
+    e.stopPropagation();
+    this.dispatchEvent(
+      new CustomEvent('input', {
+        detail: {checked: nextChecked},
+      })
+    );
+
+    if (this.externalControl) {
+      (e.target as HTMLInputElement).checked = this.checked;
+    }
   }
 
   override render() {
@@ -162,7 +186,7 @@ export class ObcToggleSwitch extends LitElement {
             <div class="knob"></div>
             <input
               type="checkbox"
-              ?checked=${this.checked}
+              .checked=${this.checked}
               ?disabled=${this.disabled}
               @input=${this._tryChange}
             />

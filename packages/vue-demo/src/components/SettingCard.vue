@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import ObcElevatedCardRadioGroup from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/elevated-card-radio-group/ObcElevatedCardRadioGroup.vue'
+import ObcElevatedCardRadioGroup from '@oicl/openbridge-webcomponents-vue/components/elevated-card-radio-group/ObcElevatedCardRadioGroup.vue'
 import {
   ObcElevatedCardPosition,
   ObcElevatedCardSize
-} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/elevated-card/elevated-card'
-import ObcElevatedCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/elevated-card/ObcElevatedCard.vue'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-chevron-up-google'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-chevron-right-google'
+} from '@oicl/openbridge-webcomponents/dist/components/elevated-card/elevated-card'
+import ObcElevatedCard from '@oicl/openbridge-webcomponents-vue/components/elevated-card/ObcElevatedCard.vue'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-chevron-up-google'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-chevron-right-google'
 
 import { computed, ref } from 'vue'
 

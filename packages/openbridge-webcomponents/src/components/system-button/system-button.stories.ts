@@ -12,11 +12,11 @@ const meta: Meta<typeof ObcSystemButton> = {
   args: {
     variant: SystemButtonVariant.actions,
     systemState: {
-      wifi: {enabled: true, connected: true, strength: 3},
-      audio: {enabled: true, muted: false, volume: 65},
-      microphone: {enabled: true, muted: false, sensitivity: 80},
-      battery: {enabled: true, level: 78, charging: false},
-      gps: {enabled: true, connected: true, quality: 'medium'},
+      wifi: {connected: true, strength: 3, enabled: true},
+      audio: {muted: false, volume: 65, enabled: true},
+      microphone: {muted: false, sensitivity: 80, enabled: true},
+      battery: {level: 78, charging: false, enabled: true},
+      gps: {connected: true, quality: 'medium', enabled: true},
     },
   },
   argTypes: {
@@ -97,50 +97,61 @@ const meta: Meta<typeof ObcSystemButton> = {
   render: (args) => {
     // Reconstruct the systemState object from the flattened args
     const systemState = {
-      wifi: {
-        enabled:
-          args['systemState.wifi.enabled'] ?? args.systemState.wifi.enabled,
-        connected:
-          args['systemState.wifi.connected'] ?? args.systemState.wifi.connected,
-        strength:
-          args['systemState.wifi.strength'] ?? args.systemState.wifi.strength,
-      },
-      audio: {
-        enabled:
-          args['systemState.audio.enabled'] ?? args.systemState.audio.enabled,
-        muted: args['systemState.audio.muted'] ?? args.systemState.audio.muted,
-        volume:
-          args['systemState.audio.volume'] ?? args.systemState.audio.volume,
-      },
-      microphone: {
-        enabled:
-          args['systemState.microphone.enabled'] ??
-          args.systemState.microphone.enabled,
-        muted:
-          args['systemState.microphone.muted'] ??
-          args.systemState.microphone.muted,
-        sensitivity:
-          args['systemState.microphone.sensitivity'] ??
-          args.systemState.microphone.sensitivity,
-      },
-      battery: {
-        enabled:
-          args['systemState.battery.enabled'] ??
-          args.systemState.battery.enabled,
-        level:
-          args['systemState.battery.level'] ?? args.systemState.battery.level,
-        charging:
-          args['systemState.battery.charging'] ??
-          args.systemState.battery.charging,
-      },
-      gps: {
-        enabled:
-          args['systemState.gps.enabled'] ?? args.systemState.gps.enabled,
-        connected:
-          args['systemState.gps.connected'] ?? args.systemState.gps.connected,
-        quality:
-          args['systemState.gps.quality'] ?? args.systemState.gps.quality,
-      },
+      wifi:
+        (args['systemState.wifi.enabled'] ?? args.systemState.wifi.enabled)
+          ? {
+              connected:
+                args['systemState.wifi.connected'] ??
+                args.systemState.wifi.connected,
+              strength:
+                args['systemState.wifi.strength'] ??
+                args.systemState.wifi.strength,
+            }
+          : undefined,
+      audio:
+        (args['systemState.audio.enabled'] ?? args.systemState.audio.enabled)
+          ? {
+              muted:
+                args['systemState.audio.muted'] ?? args.systemState.audio.muted,
+              volume:
+                args['systemState.audio.volume'] ??
+                args.systemState.audio.volume,
+            }
+          : undefined,
+      microphone:
+        (args['systemState.microphone.enabled'] ??
+        args.systemState.microphone.enabled)
+          ? {
+              muted:
+                args['systemState.microphone.muted'] ??
+                args.systemState.microphone.muted,
+              sensitivity:
+                args['systemState.microphone.sensitivity'] ??
+                args.systemState.microphone.sensitivity,
+            }
+          : undefined,
+      battery:
+        (args['systemState.battery.enabled'] ??
+        args.systemState.battery.enabled)
+          ? {
+              level:
+                args['systemState.battery.level'] ??
+                args.systemState.battery.level,
+              charging:
+                args['systemState.battery.charging'] ??
+                args.systemState.battery.charging,
+            }
+          : undefined,
+      gps:
+        (args['systemState.gps.enabled'] ?? args.systemState.gps.enabled)
+          ? {
+              connected:
+                args['systemState.gps.connected'] ??
+                args.systemState.gps.connected,
+              quality:
+                args['systemState.gps.quality'] ?? args.systemState.gps.quality,
+            }
+          : undefined,
     };
 
     return html`<obc-system-button

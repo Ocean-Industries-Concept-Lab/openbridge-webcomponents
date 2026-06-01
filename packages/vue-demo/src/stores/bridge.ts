@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { db } from '@/plugin/firestore'
 import { doc, onSnapshot, setDoc } from 'firebase/firestore'
-import { ObcPalette } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu'
+import { ObcPalette } from '@oicl/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu'
 import { useRouter, type Router } from 'vue-router'
 
 export interface ScreenPage {
@@ -171,7 +171,7 @@ export const useBridgeStore = defineStore('bridge', {
       this.bridgeData.screens![index] = screen
 
       // Hvis dette er den nåværende skjermen og path har endret seg, oppdater routeren
-      if (screen.name === this.screenName && oldScreen.page.path !== screen.page.path && router) {
+      if (screen.name === this.screenName && oldScreen?.page.path !== screen.page.path && router) {
         router.push(screen.page.path)
       }
 

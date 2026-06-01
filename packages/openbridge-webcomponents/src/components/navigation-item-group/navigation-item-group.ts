@@ -1,5 +1,5 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {property, state} from 'lit/decorators.js';
+import {property, query, state} from 'lit/decorators.js';
 import compentStyle from './navigation-item-group.css?inline';
 import {ObcNavigationMenuVariant} from '../navigation-menu/navigation-menu.js';
 import {classMap} from 'lit/directives/class-map.js';
@@ -92,6 +92,8 @@ export class ObcNavigationItemGroup extends LitElement {
 
   @state() private openContainer = false;
 
+  @query('obc-navigation-item') private groupItem?: HTMLElement;
+
   private onClickGroup() {
     if (this.openContainer) {
       this.close();
@@ -114,6 +116,10 @@ export class ObcNavigationItemGroup extends LitElement {
     this.querySelectorAll('obc-navigation-item-group').forEach((item) => {
       item.close();
     });
+  }
+
+  public override focus(options?: FocusOptions): void {
+    this.groupItem?.focus(options);
   }
 
   override render() {

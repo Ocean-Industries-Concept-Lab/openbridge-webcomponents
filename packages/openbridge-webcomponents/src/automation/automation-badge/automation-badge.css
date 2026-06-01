@@ -1,45 +1,64 @@
+* {
+  box-sizing: border-box;
+}
+
 .wrapper {
-    padding: var(--automation-components-badge-padding);
-    width: min-content;
-}
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--automation-components-badge-new-size);
+  height: var(--automation-components-badge-new-size);
+  border-radius: var(--automation-components-badge-new-border-radius);
 
-.badge {
-    width: min-content;
-    border-radius: var(--automation-components-badge-border-radius);
-    margin: -1px;
+  .badge {
+    position: relative;
+  }
 
-    &.flat {
-        @mixin style style=flat noClick;
-        color: var(--element-inactive-color);
+  ::slotted([slot="icon-silhouette"]),
+  .icon.siluette {
+    stroke-width: 2px;
+    stroke: var(--border-silhouette-color);
+    /* TODO: replace the typo 'siluette' with 'silhouette', probably in Figma as well */
+  }
 
-        &.on {
-            color: var(--on-normal-neutral-color);
-        }
+  &:not(.flat) ::slotted([slot="icon-silhouette"]),
+  &:not(.flat) .icon.siluette {
+    display: none;
+    /* TODO: replace the typo 'siluette' with 'silhouette', probably in Figma as well */
+  }
+
+  ::slotted(*),
+  .icon {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  &.flat .badge {
+    width: var(--automation-components-badge-new-icon-size-flat);
+    height: var(--automation-components-badge-new-icon-size-flat);
+    color: var(--element-neutral-color);
+  }
+
+  &.regular {
+    @mixin style style=normal noClick;
+    color: var(--element-neutral-color);
+
+    .badge {
+      width: var(--automation-components-badge-new-icon-size);
+      height: var(--automation-components-badge-new-icon-size);
     }
+  }
 
-    &.regular {
-        @mixin style style=normal noClick;
-        color: var(--element-inactive-color);
+  &.enhanced {
+    @mixin style style=raised noClick;
+    color: var(--element-active-inverted-color);
 
-        &.on {
-            color: var(--on-normal-neutral-color);
-        }
+    .badge {
+      width: var(--automation-components-badge-new-icon-size);
+      height: var(--automation-components-badge-new-icon-size);
     }
-
-    &.enhanced {
-        background: var(--element-inactive-color);
-        border: 1px solid var(--element-inactive-color);
-        color: var(--element-active-inverted-color);
-
-        &.on {
-            background: var(--element-neutral-color);
-            border-color: var(--element-neutral-color);
-        }
-        
-    }
-}
-
-.icon {
-    width: var(--automation-components-badge-icon-size);
-    height: var(--automation-components-badge-icon-size);    
+  }
 }

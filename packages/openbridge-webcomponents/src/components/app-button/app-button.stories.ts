@@ -5,13 +5,14 @@ import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcAppButton> = {
-  title: 'UI Components/Buttons/App button',
+  title: 'UI Components/Buttons/App Button',
   tags: ['autodocs', '6.0'],
   component: 'obc-app-button',
   args: {
     size: AppButtonSize.Normal,
     icon: 'ship',
     label: 'Button',
+    showLabel: true,
   },
   argTypes: {
     icon: {
@@ -28,6 +29,9 @@ const meta: Meta<typeof ObcAppButton> = {
     checked: {
       control: {type: 'boolean'},
     },
+    disabled: {
+      control: {type: 'boolean'},
+    },
   },
   render: (args) => {
     const icon = args.icon
@@ -37,6 +41,9 @@ const meta: Meta<typeof ObcAppButton> = {
       .size=${args.size}
       ?checked=${args.checked}
       .label=${args.label}
+      .showLabel=${args.showLabel}
+      ?integration=${args.integration}
+      ?disabled=${args.disabled}
       >${icon}</obc-app-button
     >`;
   },
@@ -58,5 +65,25 @@ export const Checked: Story = {
 export const Small: Story = {
   args: {
     size: 'small',
+  },
+};
+
+export const SmallHideLabel: Story = {
+  args: {
+    size: 'small',
+    showLabel: false,
+  },
+};
+
+export const Integration: Story = {
+  args: {
+    integration: true,
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    label: 'Disabled',
+    disabled: true,
   },
 };

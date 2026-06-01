@@ -14,9 +14,6 @@ const renderWithIcon = (args: StoryObj<ObcSplitButton>['args']) => html`
     .menuType=${args?.menuType || ContextMenuType.Regular}
     .multiSelect=${args?.multiSelect}
     .selectPerGroup=${args?.selectPerGroup || false}
-    .persistSelection=${args?.persistSelection !== undefined
-      ? args.persistSelection
-      : true}
     .itemsPerColumn=${args?.itemsPerColumn || 5}
     .hasTitleBar=${args?.hasTitleBar || false}
     .menuTitle=${args?.menuTitle || ''}
@@ -73,11 +70,6 @@ const meta: Meta<ObcSplitButton> = {
     openTop: {
       control: 'boolean',
       description: 'Open the dropdown above the button',
-    },
-    persistSelection: {
-      control: 'boolean',
-      description:
-        'Show checked state for single-selection (persist selected visual)',
     },
     selectPerGroup: {
       control: 'boolean',

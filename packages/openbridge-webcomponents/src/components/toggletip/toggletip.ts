@@ -147,51 +147,38 @@ export class ObcToggletip extends LitElement {
 
   /**
    * Title text displayed in the header.
-   * Only shown if `hasTitleContainer` is true.
    */
-  @property({type: String}) override title = 'Title';
+  @property({type: String}) override title: string = '';
 
   /**
    * Description text shown in the content area.
-   * Only shown if `hasDescription` is true.
    */
-  @property({type: String}) description =
-    'Short text to tell what the note is about';
-
-  /**
-   * If true, shows the title container/header.
-   */
-  @property({type: Boolean}) hasTitleContainer = true;
-
-  /**
-   * If true, shows the description text.
-   */
-  @property({type: Boolean}) hasDescription = true;
+  @property({type: String}) description: string | undefined;
 
   /**
    * If true, shows the content slot area.
    * Use the `content` slot to provide custom content.
    */
-  @property({type: Boolean}) hasContent = true;
+  @property({type: Boolean}) hasContent = false;
 
   /**
    * If true, shows the action buttons container.
    * Both primary and secondary buttons are shown if labels are provided.
    * TODO(designer): Should both buttons always be shown, or is one preferred as primary?
    */
-  @property({type: Boolean}) hasActions = true;
+  @property({type: Boolean}) hasActions = false;
 
   /**
    * If true, shows the leading icon in the header.
    * The icon adapts to the current `variant` by default, or can be overridden via the `leading-icon` slot.
    */
-  @property({type: Boolean}) hasLeadingIcon = true;
+  @property({type: Boolean}) hasLeadingIcon = false;
 
   /**
    * If true, shows the trailing icon in the header.
    * Use the `trailing-icon` slot to provide a custom icon.
    */
-  @property({type: Boolean}) hasTrailingIcon = true;
+  @property({type: Boolean}) hasTrailingIcon = false;
 
   /**
    * Sets a custom width for the toggletip in pixels.
@@ -298,7 +285,7 @@ export class ObcToggletip extends LitElement {
         style=${style}
       >
         <div class="container">
-          ${this.hasTitleContainer
+          ${this.title.length > 0
             ? html`
                 <div class="container-header">
                   <div class="title-container">
@@ -325,9 +312,9 @@ export class ObcToggletip extends LitElement {
             : nothing}
 
           <div class="content-container">
-            ${this.hasDescription
+            ${this.description !== undefined
               ? html` <div class="description">${this.description}</div> `
-              : ''}
+              : nothing}
             ${this.hasContent
               ? html`
                   <div class="content">

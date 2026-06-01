@@ -1,44 +1,42 @@
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+:host {
+  display: block;
+}
+
+.alert-list {
+  height: 100%;
+}
+
+.empty-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: var(--app-components-alert-menu-button-spacing);
+
+  .icon {
+    height: 96px;
+    width: 96px;
   }
 
-  :host {
-    display: block;
+  .empty-title {
+    color: var(--element-active-color);
+    @mixin font-body-active;
   }
 
-  
-  .alert-list {
-    height: 100%;
+  .empty-description {
+    color: var(--element-neutral-color);
+    @mixin font-body;
+    max-width: 344px;
+    text-align: center;
   }
-  
-  .empty-list {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    gap: var(--app-components-alert-menu-button-spacing);
-  
-    .icon {
-      height: 96px;
-      width: 96px;
-    }
-  
-    .empty-title {
-      color: var(--element-active-color);
-      @mixin font-body-active;
-    }
-  
-    .empty-description {
-      color: var(--element-neutral-color);
-      @mixin font-body;
-      max-width: 344px;
-      text-align: center;
-    }
-  }
-  
-  ::slotted(*) {
-    display: block;
-    will-change: transform;
-  }
-  
+}
+
+::slotted(*) {
+  display: block;
+  will-change: transform;
+}

@@ -5,8 +5,11 @@
   align-items: flex-start;
   background: var(--container-global-color);
   border-radius: var(--ui-components-context-menu-border-radius);
-  box-shadow: var(--shadow-floating-x) var(--shadow-floating-y) var(--shadow-floating-blur) var(--shadow-raised-spread) var(--shadow-floating-color);
-  padding: var(--ui-components-context-menu-margin-vertical) var(--ui-components-context-menu-margin-horizontal);
+  box-shadow: var(--shadow-floating-x) var(--shadow-floating-y)
+    var(--shadow-floating-blur) var(--shadow-raised-spread)
+    var(--shadow-floating-color);
+  padding: var(--ui-components-context-menu-margin-vertical)
+    var(--ui-components-context-menu-margin-horizontal);
   overflow-y: auto;
   min-width: 160px;
   width: fit-content;
@@ -92,7 +95,8 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: var(--ui-components-context-menu-margin-vertical) var(--ui-components-context-menu-margin-horizontal);
+  padding: var(--ui-components-context-menu-margin-vertical)
+    var(--ui-components-context-menu-margin-horizontal);
   min-width: 240px;
   width: fit-content;
 }
@@ -144,7 +148,9 @@
 
 /* Remove border from the first column header and spacer */
 .type-multi-with-subtitles .column-with-header:first-child .column-header,
-.type-multi-with-subtitles .column-with-header:first-child .column-header-spacer {
+.type-multi-with-subtitles
+  .column-with-header:first-child
+  .column-header-spacer {
   border-left: none;
 }
 
@@ -155,7 +161,8 @@
   box-sizing: border-box;
   width: fit-content;
   min-width: 240px;
-  padding: var(--ui-components-context-menu-margin-vertical) var(--ui-components-context-menu-margin-horizontal);
+  padding: var(--ui-components-context-menu-margin-vertical)
+    var(--ui-components-context-menu-margin-horizontal);
   box-shadow: inset 1px 0 0 0 var(--border-divider-color);
 }
 

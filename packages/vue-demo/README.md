@@ -4,16 +4,16 @@ The demo showcases the project's functionality using Vue.js. It provides a live 
 
 To access the demo, click [here](https://openbridge-demo.web.app/).
 
-See also the [OpenBridge WebComponents Vue](https://www.npmjs.com/package/@ocean-industries-concept-lab/openbridge-webcomponents-vue) package for more information.
+See also the [OpenBridge WebComponents Vue](https://www.npmjs.com/package/@oicl/openbridge-webcomponents-vue) package for more information.
 
 ## Project Setup
 
 ```sh
-yarn install
+npm install
 ```
 
 ### Run the demo
 
 ```sh
-yarn dev
+npm run dev
 ```

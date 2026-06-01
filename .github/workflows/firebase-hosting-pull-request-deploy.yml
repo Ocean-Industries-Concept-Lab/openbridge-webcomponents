@@ -16,12 +16,12 @@ jobs:
       actions: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: "Download pr artifact"
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
@@ -40,9 +40,11 @@ jobs:
             });
             var fs = require('fs');
             fs.writeFileSync('${{github.workspace}}/pr.zip', Buffer.from(download.data));
+
       - run: unzip pr.zip
+
       - name: "Store github pr number and title"
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         id: store_pr_number_and_title
         with:
           script: |
@@ -56,8 +58,9 @@ jobs:
             var prTitle = pr.data.title;
             core.setOutput('prNumber', prNumber);
             core.setOutput('prTitle', prTitle);
+
       - name: "Download artifact"
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             let allArtifacts = await github.rest.actions.listWorkflowRunArtifacts({
@@ -88,8 +91,9 @@ jobs:
           projectId: openbridge-demo
           entrypoint: "packages/openbridge-webcomponents"
           channelId: "${{ steps.store_pr_number_and_title.outputs.prNumber }}-${{ steps.store_pr_number_and_title.outputs.prTitle }}"
+
       - name: "Comment on PR"
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -117,6 +121,7 @@ jobs:
                 body: 'The storybook can be viewed at ${{ steps.firebase.outputs.details_url }}'
               });
             }
+
   deploy_demo_to_firebase:
     runs-on: ubuntu-latest
     permissions:
@@ -126,11 +131,12 @@ jobs:
       actions: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: "Download pr artifact"
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
@@ -149,9 +155,11 @@ jobs:
             });
             var fs = require('fs');
             fs.writeFileSync('${{github.workspace}}/pr.zip', Buffer.from(download.data));
+
       - run: unzip pr.zip
+
       - name: "Store github pr number and title"
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         id: store_pr_number_and_title
         with:
           script: |
@@ -165,8 +173,9 @@ jobs:
             var prTitle = pr.data.title;
             core.setOutput('prNumber', prNumber);
             core.setOutput('prTitle', prTitle);
+
       - name: "Download artifact"
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             let allArtifacts = await github.rest.actions.listWorkflowRunArtifacts({
@@ -197,8 +206,9 @@ jobs:
           projectId: openbridge-demo
           entrypoint: "packages/vue-demo"
           channelId: "${{ steps.store_pr_number_and_title.outputs.prNumber }}-${{ steps.store_pr_number_and_title.outputs.prTitle }}"
+
       - name: "Comment on PR"
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |

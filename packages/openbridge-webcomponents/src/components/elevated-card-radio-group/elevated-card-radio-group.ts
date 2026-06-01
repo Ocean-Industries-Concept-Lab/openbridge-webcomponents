@@ -4,6 +4,16 @@ import compentStyle from './elevated-card-radio-group.css?inline';
 import {ObcElevatedCardPosition} from '../elevated-card/elevated-card.js';
 import '../elevated-card-radio/elevated-card-radio.js';
 import {customElement} from '../../decorator.js';
+import {classMap} from 'lit/directives/class-map.js';
+
+export type ObcElevatedCardRadioGroupChangeEvent = CustomEvent<{
+  value: string;
+}>;
+
+export type ElevatedCardRadioGroupOption = {
+  label: string;
+  value: string;
+};
 
 /**
  * `<obc-elevated-card-radio-group>` – A group of radio buttons styled as elevated cards for single selection.
@@ -76,7 +86,7 @@ import {customElement} from '../../decorator.js';
  * In this example, "Option B" is pre-selected, and the group is required.
  *
  * @slot - No named slots. All content is provided via the `options` property.
- * @fires change - Dispatched when the value changes. Event detail: `{ value: string }`
+ * @fires change {ObcElevatedCardRadioGroupChangeEvent} - Dispatched when the value changes
  */
 @customElement('obc-elevated-card-radio-group')
 export class ObcElevatedCardRadioGroup extends LitElement {
@@ -85,7 +95,7 @@ export class ObcElevatedCardRadioGroup extends LitElement {
    *
    * Example: `[{label: 'Option 1', value: '1'}, {label: 'Option 2', value: '2'}]`
    */
-  @property({type: Array}) options: {label: string; value: string}[] = [];
+  @property({type: Array}) options: ElevatedCardRadioGroupOption[] = [];
 
   /**
    * Shared name for all radio inputs in the group. Ensures native radio group behavior and correct form submission.
@@ -117,11 +127,20 @@ export class ObcElevatedCardRadioGroup extends LitElement {
   private _handleValueChange(params: InputEvent) {
     const value = (params.target as HTMLInputElement).value;
     this.value = value;
-    this.dispatchEvent(new CustomEvent('change', {detail: {value}}));
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        detail: {value},
+      }) satisfies ObcElevatedCardRadioGroupChangeEvent
+    );
   }
 
   override render() {
-    return html`<div class="wrapper">
+    const wrapperClasses = {
+      wrapper: true,
+      disabled: this.disabled,
+    };
+
+    return html`<div class=${classMap(wrapperClasses)}>
       ${this.options.map((option, i) => {
         let position: ObcElevatedCardPosition = ObcElevatedCardPosition.Center;
         if (i === 0 && this.top) {

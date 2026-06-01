@@ -1,5 +1,5 @@
 import Zod from 'zod'
-import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item.js'
+import { ObcAlertMenuItemStatus } from '@oicl/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item.js'
 export const PalettUrlZod = Zod.object({
   brightUrl: Zod.string().url(),
   dayUrl: Zod.string().url(),

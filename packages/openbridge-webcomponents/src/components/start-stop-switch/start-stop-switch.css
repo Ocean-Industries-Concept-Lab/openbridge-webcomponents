@@ -7,10 +7,44 @@
   display: block;
 }
 
+.outer-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: var(--ui-components-start-stop-switch-touch-target-size);
+  justify-content: center;
+}
+
+.wrapper {
+  position: relative;
+  width: 100%;
+
+  /* Focus styling on the wrapper */
+  &:focus-visible {
+    outline-width: var(--global-size-spacing-border-weight-focusframe, 2px);
+    outline-color: var(--border-focus-color);
+    outline-style: solid;
+    outline-offset: 1px;
+    border-radius: var(--ui-components-start-stop-switch-border-radius);
+
+    .button-track-checked {
+      border: none;
+    }
+  }
+}
+
+/* Size variants - button track heights */
+.wrapper.size-regular .button-track {
+  height: var(--ui-components-start-stop-switch-visual-target-size);
+}
+
+.wrapper.size-large .button-track {
+  height: var(--ui-components-start-stop-switch-touch-target-size);
+}
+
 .button-track {
   position: relative;
   width: 100%;
-  height: var(--ui-components-start-stop-switch-touch-target-size);
   flex-shrink: 0;
   border-radius: var(--ui-components-start-stop-switch-border-radius);
 
@@ -20,29 +54,55 @@
     position-anchor: --thumb;
     box-sizing: border-box;
     position: absolute;
-    left: -1px;
+    left: -1px; /* Compensate for border to align flush with track edge */
     right: anchor(center);
-    top: -1px;
-    bottom: -1px;
+    top: 0;
+    bottom: 0;
     border-radius: var(--ui-components-start-stop-switch-border-radius);
     @mixin style style=selected noClick;
   }
 }
 
+/* Variant: running - green overlay */
+.wrapper.variant-running .button-track .button-track-checked {
+  background: var(--running-enabled-background-color);
+  border-color: var(--running-enabled-border-color);
+}
+
+.wrapper.variant-running .state.checked {
+  color: var(--on-running-active-color);
+}
+
+/* Variant: loading - light blue overlay */
+.wrapper.variant-loading .button-track .button-track-checked {
+  background: var(--amplified-enabled-background-color);
+  border-color: var(--amplified-enabled-border-color);
+}
+
+.wrapper.variant-loading .state.checked {
+  color: var(--on-amplified-neutral-color);
+}
+
 .state {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position-anchor: --thumb;
-    width: calc(100% - anchor-size(width));
-    top: 0;
-    bottom: 0;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position-anchor: --thumb;
+  width: calc(100% - anchor-size(width));
+  top: 0;
+  bottom: 0;
 }
 
 .state-label {
-    padding: 0px var(--ui-components-start-stop-switch-label-spacing);
+  padding: 0px var(--ui-components-start-stop-switch-label-spacing);
+  white-space: nowrap;
+}
 
+/* State icon slots - only target direct slotted children of .state, not those inside .state-label */
+.state > ::slotted(*) {
+  width: var(--ui-components-start-stop-switch-icon-size);
+  height: var(--ui-components-start-stop-switch-icon-size);
 }
 
 .checked.state {
@@ -53,71 +113,209 @@
 
 .unchecked:not(.tmp-checked) .state.checked,
 .tmp-unchecked .state.checked {
-    display: none;
+  display: none;
 }
 
 .checked:not(.tmp-unchecked) .state.unchecked,
 .tmp-checked .state.unchecked {
-    display: none;
+  display: none;
 }
 
 .unchecked.state {
   right: 0;
   @mixin font-body;
-  color: var(--on-thumb-active-color);
+  color: var(--on-indent-active-color);
 }
 
 .button {
-  @mixin style style=thumb;
-  @mixin font-button;
+  @mixin style style=thumb visibleWrapperClass=.button-visible;
   z-index: 1;
-  anchor-name: --thumb;
-  height: calc(100% + 2px);
+  height: var(--ui-components-start-stop-switch-touch-target-size);
   position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   width: fit-content;
   justify-content: center;
   align-items: center;
-  margin: -1px;
-  
+
+  padding: 0;
+  background: transparent;
+  border: none;
   min-width: var(--ui-components-start-stop-switch-touch-target-size);
-    padding: 0px var(--ui-components-start-stop-switch-padding-horizontal);
-    color: var(--on-thumb-active-color);
-    border-radius: var(--ui-components-state-toggle-border-radius);
-    cursor: grab;
+  cursor: grab;
 
-    transition: left 0.1s ease-in-out,
-                right 0.1s ease-in-out,
-                width 0.2s ease-in-out;
-}
+  transition:
+    left 0.1s ease-in-out,
+    right 0.1s ease-in-out,
+    width 0.2s ease-in-out;
 
-.dragging .button{
-  transition: none;
-}
+  /* Remove focus styling from button - focus is shown on wrapper instead */
+  &:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
 
-.button:active {
+  /* Prevent any visual changes on active/pressed state */
+  &:active {
     cursor: grabbing;
+  }
 }
 
+/* Button position: -1px compensates for border to align flush with track edge */
 .unchecked .button {
-    left: 0;
-    flex-direction: row-reverse;
+  left: -1px;
 }
 
 .checked .button {
-    right: 0;
-    flex-direction: row;
+  right: -1px;
+}
+
+.button-visible {
+  anchor-name: --thumb;
+  display: flex;
+  align-items: center;
+  padding: 0px var(--ui-components-start-stop-switch-padding-horizontal);
+  border-radius: var(--ui-components-state-toggle-border-radius);
+  @mixin font-button;
+  color: var(--on-thumb-active-color);
+}
+
+/* Size variants for button-visible height */
+.wrapper.size-regular .button-visible {
+  height: var(--ui-components-start-stop-switch-visual-target-size);
+}
+
+.wrapper.size-large .button-visible {
+  height: var(--ui-components-start-stop-switch-touch-target-size);
+}
+
+.unchecked .button-visible {
+  flex-direction: row-reverse;
+}
+
+.checked .button-visible {
+  flex-direction: row;
 }
 
 .button-icon {
-    width: var(--ui-components-start-stop-switch-icon-size);
-    height: var(--ui-components-start-stop-switch-icon-size);
+  width: var(--ui-components-start-stop-switch-icon-size);
+  height: var(--ui-components-start-stop-switch-icon-size);
 }
 
 .checked .button-icon {
-    transform: rotate(180deg);
+  transform: rotate(180deg);
 }
 
 .button-label {
-    padding: 0px var(--ui-components-start-stop-switch-label-spacing);
+  padding: 0px var(--ui-components-start-stop-switch-label-spacing);
+}
+
+/* Disabled state - base (off) */
+.wrapper.disabled .button-track {
+  @mixin style style=indent noClick;
+  background: var(--indent-disabled-background-color);
+  border-color: var(--indent-disabled-border-color);
+}
+
+/* Hide the button visually when disabled, but keep it in DOM for accessibility */
+.wrapper.disabled .button {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.wrapper.disabled .state {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  left: auto;
+  right: auto;
+  @mixin font-body;
+  color: var(--on-indent-disabled-color);
+}
+
+.wrapper.disabled .state.unchecked {
+  display: flex;
+  justify-content: center;
+}
+
+.wrapper.disabled .state.checked {
+  display: none;
+}
+
+.wrapper.disabled.checked .state.checked {
+  display: flex;
+  justify-content: center;
+}
+
+.wrapper.disabled.checked .state.unchecked {
+  display: none;
+}
+
+/* Disabled + checked + normal variant: gray filled background */
+.wrapper.disabled.checked.variant-normal .button-track {
+  background: var(--selected-disabled-background-color);
+  border-color: var(--selected-disabled-border-color);
+}
+
+.wrapper.disabled.checked.variant-normal .state.checked {
+  @mixin font-body-active;
+  color: var(--on-selected-disabled-color);
+}
+
+/* Disabled + checked + running variant: green filled background */
+.wrapper.disabled.checked.variant-running .button-track {
+  background: var(--running-disabled-background-color);
+  border-color: var(--running-disabled-border-color);
+}
+
+.wrapper.disabled.checked.variant-running .state.checked {
+  @mixin font-body-active;
+  color: var(--on-running-disabled-color);
+}
+
+/* Disabled + checked + loading variant: gray filled background with neutral text */
+.wrapper.disabled.checked.variant-loading .button-track {
+  background: var(--selected-disabled-background-color);
+  border-color: var(--selected-disabled-border-color);
+}
+
+.wrapper.disabled.checked.variant-loading .state.checked {
+  @mixin font-body-active;
+  color: var(--on-indent-neutral-color);
+}
+
+/* Alert frame */
+.alert-frame {
+  position: absolute;
+  inset: -1px;
+  z-index: 10;
+  border: var(--global-size-and-spacing-border-weight-alertframe, 4px) solid
+    var(--alert-alarm-color);
+  border-radius: var(--app-components-alert-frame-border-radius-top-left, 6px)
+    var(--app-components-alert-frame-border-radius-top-right, 6px)
+    var(--app-components-alert-frame-border-radius-bottom-right, 6px)
+    var(--app-components-alert-frame-border-radius-bottom-left, 6px);
+  pointer-events: none;
+}
+
+/* Description */
+.description {
+  @mixin font-label;
+  width: 100%;
+  color: var(--element-neutral-color);
+  padding-top: var(--ui-components-start-stop-switch-description-spacing);
+  text-align: center;
+}
+
+.wrapper.disabled ~ .description {
+  color: var(--element-disabled-color);
 }

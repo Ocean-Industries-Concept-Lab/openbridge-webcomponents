@@ -1,24 +1,62 @@
 import {
   LitElement,
+  PropertyValues,
   SVGTemplateResult,
   html,
   nothing,
   svg,
   unsafeCSS,
 } from 'lit';
-import {property} from 'lit/decorators.js';
+import {property, state} from 'lit/decorators.js';
 import {circle} from '../../svghelpers/index.js';
 import {roundedArch} from '../../svghelpers/roundedArch.js';
-import {InstrumentState} from '../types.js';
+import {
+  cssSafeAngle,
+  deriveRadialSetpointConfig,
+  drawSetpointMarker,
+  getSetpointAnimationDurationMs,
+  getSetpointOutwardOffset,
+  RADIAL_SETPOINT_RADIUS,
+  SetpointVisualState,
+  SETPOINT_ANIMATION_CSS_VAR,
+  SETPOINT_ANIMATION_DURATION_DEFAULT,
+} from '../../svghelpers/setpoint.js';
+import {InstrumentState, Priority} from '../types.js';
 import compentStyle from './watch.css?inline';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {adviceMask, AngleAdviceRaw, renderAdvice} from './advice.js';
 import {Tickmark, TickmarkStyle, tickmark} from './tickmark.js';
-import {renderLabels} from './label.js';
+export {TickmarkStyle};
+import {
+  RotType,
+  RotPosition,
+  renderRotDots,
+  renderRotBarStatic,
+  renderRotBarDots,
+  shortestAngularDeltaDeg,
+  renderRotZeroPill,
+  rotBarThresholdAngle,
+  ROT_ZERO_DEADBAND_DEG,
+} from '../rate-of-turn/rot-renderer.js';
+export {RotType, RotPosition};
+import {
+  RateOfTurnController,
+  disposeRotController,
+} from '../rate-of-turn/rate-of-turn.controller.js';
+import {
+  renderLabels,
+  renderNorthArrow,
+  getLabelPositions,
+  LabelPosition,
+} from './label.js';
 import {VesselImage, VesselImageSize, vesselImages} from './vessel.js';
 import {renderCurrent, renderWind} from './environment.js';
 import {customElement} from '../../decorator.js';
-export {VesselImage, VesselImageSize};
+import {
+  computeZoomToFitArcFrame,
+  type ZoomToFitArcFrame,
+} from '../../svghelpers/arc-frame.js';
+export {VesselImage, VesselImageSize, vesselImages};
 
 export enum WatchCircleType {
   single = 'single',
@@ -58,52 +96,251 @@ const RING3_RADIUS = 224 / 2;
 const RING3B_RADIUS = 272 / 2;
 const RING4_RADIUS = 176 / 2;
 
+export function innerRingRadiusFor(type: WatchCircleType): number {
+  switch (type) {
+    case WatchCircleType.single:
+      return RING2_RADIUS;
+    case WatchCircleType.double:
+      return RING3_RADIUS;
+    case WatchCircleType.doubleThin:
+      return RING3B_RADIUS;
+    case WatchCircleType.triple:
+      return RING4_RADIUS;
+    default:
+      throw new Error(`Unknown WatchCircleType: ${type as string}`);
+  }
+}
+
+const RADIAL_SETPOINT_INWARD_ADJUST = 4;
+
+/**
+ * `<obc-watch>` - Core SVG renderer for circular/radial watch-based instruments.
+ *
+ * This component renders all circular instrument elements including rings, tickmarks,
+ * bar areas, needles, advices, setpoints, vessel images, and environmental indicators
+ * (wind/current). It serves as the foundation for compass, heading, rudder, speed-gauge,
+ * and other radial navigation instruments.
+ *
+ * ## Setpoint Behavior
+ *
+ * The setpoint marker visual state is derived from the combination of `atAngleSetpoint`,
+ * `angleSetpoint`, and `angleSetpointAtZeroDeadband` properties:
+ *
+ * - **notEqual**: Value differs from setpoint (triangular marker, offset outward)
+ * - **equal**: Value matches setpoint (line marker, sits on ring)
+ * - **equalZero**: Value matches setpoint at zero angle (double-line marker, offset outward)
+ * - **focus**: User is actively adjusting via `newAngleSetpoint` - shows focus visual state
+ *
+ * ## newAngleSetpoint Pattern
+ *
+ * When `newAngleSetpoint` is defined, TWO setpoint markers are rendered:
+ * 1. Original marker at `angleSetpoint` - dimmed (0.75 opacity)
+ * 2. New marker at `newAngleSetpoint` - focus visual state, full opacity
+ *
+ * This enables the "adjustment preview" UX where users can see both the current
+ * and proposed setpoint positions simultaneously.
+ *
+ * The `RADIAL_SETPOINT_INWARD_ADJUST` constant (4px) fine-tunes radial setpoint positioning
+ * to match Figma designs, applied on top of visual state offsets from setpoint.ts.
+ *
+ * The `colorMode` property allows overriding the derived color mode (enhanced for enhanced priority,
+ * regular for other states).
+ *
+ * ## Setpoint Animation (`animateSetpoint`)
+ *
+ * When `animateSetpoint` is true and a confirm occurs (`newAngleSetpoint` → `undefined`):
+ * - The original setpoint slides to the new position via CSS transition
+ * - The departing new-setpoint marker fades out
+ * - Angular transitions always take the shortest path via accumulated
+ *   CSS-safe angles (`cssSafeAngle()`), so even 350° → 10° animates +20°
+ *
+ * Duration: `var(--setpoint-animation-duration, 300ms)`
+ *
+ * Internally, `_departingNewAngleSetpoint` captures the departing angle during confirm
+ * fade-out and `_animationTimer` auto-clears it after the animation duration.
+ * `_setpointCssAngle` tracks the accumulated CSS angle to avoid long-way-around
+ * transitions across the 0°/360° boundary.
+ *
+ * @property {InstrumentState} state - Instrument state (active, loading, off)
+ * @property {Priority} priority - Color priority (enhanced = blue palette, regular = gray palette)
+ * @property {number|undefined} angleSetpoint - Setpoint angle in degrees (0° = 12 o'clock)
+ * @property {number|undefined} newAngleSetpoint - New setpoint being adjusted (focus mode)
+ * @property {boolean} atAngleSetpoint - Whether value matches setpoint (within deadband)
+ * @property {number} angleSetpointAtZeroDeadband - Deadband for zero detection (default 0.5°)
+ * @property {boolean} setpointOverride - Override to derive setpoint color from priority regardless of state
+ * @property {RotType|undefined} rotType - ROT visualization type: `'dots'` (spinning dots) or `'bar'` (arc bar with clipped dots). Undefined hides the ROT layer.
+ * @property {RotPosition} rotPosition - Track on which ROT elements are placed: `'scale'` (on the outer ring) or `'innerCircle'` (default, inside the inner ring)
+ * @property {number} rotStartAngle - Start angle of the ROT bar arc in degrees (0° = 12 o'clock, clockwise). Only used when `rotType` is `'bar'`.
+ * @property {number} rotEndAngle - End angle of the ROT bar arc in degrees. The bar is hidden when the difference from `rotStartAngle` is less than 0.1°.
+ * @property {Priority|undefined} rotPriority - Override priority for ROT color derivation. When set, ROT colors use this instead of the main `priority`. Useful when the ROT element has independent priority (e.g. compass per-element priority).
+ * @property {number|undefined} rateOfTurnDegreesPerMinute - Measured rate of turn in degrees per minute (the maritime/AIS convention, see ES-TRIN 2025/1 Art. 3.02 and ITU-R M.1371). Sign controls direction (positive = starboard/clockwise). When defined, this drives both the dot animation (multiplied by `rotDotAnimationFactor`) and the port/starboard direction sign.
+ * @property {number} rotDotAnimationFactor - Visual amplification factor applied only to the spinning-dot animation (not to bar extent). Default `18` keeps the legacy visual feel (≈1 rpm at 20°/min).
+ * @property {number} rotationsPerMinute - **Deprecated.** Spin speed of the ROT dot ring in rotations per minute. Sign controls direction (positive = clockwise). Use `rateOfTurnDegreesPerMinute` instead.
+ * @property {ZoomToFitArcFrame|undefined} arcFrame - Pre-computed zoom-to-fit arc frame. When set, the watch skips its own `computeZoomToFitArcFrame()` call and uses these values directly. Consumer instruments (e.g. rudder, instrument-radial) should compute the frame once and pass it here to avoid redundant computation.
+ */
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {
-  @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
+  private _setpointId = `watch-setpoint-${Math.random().toString(36).slice(2, 9)}`;
+  private _newSetpointId = `watch-new-setpoint-${Math.random().toString(36).slice(2, 9)}`;
+
+  @property({type: String}) state: InstrumentState = InstrumentState.active;
+  @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) watchCircleType: WatchCircleType =
     WatchCircleType.single;
   @property({type: Boolean}) northArrow: boolean = false;
+  @property({type: Boolean}) northArrowInside: boolean | undefined;
   @property({type: Number}) angleSetpoint: number | undefined;
+  @property({type: Number}) newAngleSetpoint: number | undefined;
   @property({type: Boolean}) atAngleSetpoint: boolean = false;
+  @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
+  @property({type: Boolean}) setpointOverride: boolean = false;
+  @property({type: Boolean}) touching: boolean = false;
+
+  @property({type: Boolean}) animateSetpoint: boolean = false;
+
+  @state() private _departingNewAngleSetpoint: number | undefined;
+  private _animationTimer?: ReturnType<typeof setTimeout>;
+
+  /**
+   * Accumulated CSS-safe angle for the original setpoint marker.
+   * Ensures CSS rotate() transitions always take the shortest path,
+   * even across the 0°/360° boundary.
+   */
+  private _setpointCssAngle: number = 0;
+
+  /** Whether the setpoint CSS angle has been initialised (to skip transition on first render). */
+  private _setpointCssAngleInit = false;
   @property({type: Number}) padding: number | undefined;
   @property({type: Array, attribute: false}) areas: WatchArea[] = [];
   @property({type: Array, attribute: false}) barAreas: WatchBarArea[] = [];
   @property({type: Array, attribute: false}) needles: WatchNeedle[] = [];
   @property({type: Array, attribute: false}) tickmarks: Tickmark[] = [];
   @property({type: Boolean}) tickmarksInside: boolean = false;
+  @property({type: String}) tickmarkStyle: TickmarkStyle =
+    TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: AngleAdviceRaw[] = [];
   @property({type: Boolean}) crosshairEnabled: boolean = false;
-  @property({type: Boolean}) labelFrameEnabled: boolean = false;
+  @property({type: Boolean}) showLabels: boolean = false;
   @property({type: Array, attribute: false}) vessels: WatchVessel[] = [];
-  @property({type: Number}) wind: number | null = null;
+  @property({type: Number}) windKnots: number | null = null;
   @property({type: Number}) windFromDirectionDeg: number | null = null;
   @property({type: Number}) windSymbolRadius: number | null = null;
+  @property({type: String}) windColor: string | undefined;
   @property({type: Number}) current: number | null = null;
   @property({type: Number}) currentFromDirectionDeg: number | null = null;
   @property({type: Number}) currentSymbolRadius: number | null = null;
+  @property({type: String}) currentColor: string | undefined;
   @property({type: Boolean}) starboardPortIndicator: boolean = false;
   @property({type: Number}) clipTop: number = 0; // in percent of height
   @property({type: Number}) clipBottom: number = 0; // in percent of height
   @property({type: Number}) scaleWindIcon: number = 1;
   @property({type: Number}) rotation: number | undefined;
+  @property({type: Boolean}) zoomToFitArc: boolean = false;
+  @property({attribute: false}) arcFrame: ZoomToFitArcFrame | undefined;
+  @property({type: Number}) tickFadeAngle: number = 0;
+
+  @property({type: String}) rotType: RotType | undefined;
+  @property({type: String}) rotPosition: RotPosition = RotPosition.innerCircle;
+  @property({type: Number}) rotStartAngle: number = 0;
+  @property({type: Number}) rotEndAngle: number = 0;
+  @property({type: String}) rotPriority: Priority | undefined;
+  @property({type: Boolean}) rotPortStarboard: boolean = false;
+  @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_DEG;
+  @property({type: Number}) rateOfTurnDegreesPerMinute: number | undefined;
+  @property({type: Number}) rotDotAnimationFactor: number = 18;
+  /**
+   * @deprecated Use `rateOfTurnDegreesPerMinute` (and optionally `rotDotAnimationFactor`) instead.
+   * Kept as a backward-compatible alias; takes effect only when
+   * `rateOfTurnDegreesPerMinute` is `undefined`.
+   */
+  @property({type: Number})
+  set rotationsPerMinute(value: number) {
+    this._legacyRotationsPerMinute = value;
+  }
+  get rotationsPerMinute() {
+    return this._legacyRotationsPerMinute;
+  }
+  private _legacyRotationsPerMinute = 0;
+  private _rotController?: RateOfTurnController;
+
+  /**
+   * Effective rotations-per-minute for the spinning dot animation and
+   * port/starboard direction sign. Resolves to:
+   *   • `(rateOfTurnDegreesPerMinute / 360) * rotDotAnimationFactor` when the
+   *     new physical API is in use, OR
+   *   • the legacy `rotationsPerMinute` value otherwise.
+   */
+  private get _effectiveRpm(): number {
+    if (this.rateOfTurnDegreesPerMinute != null) {
+      return (
+        (this.rateOfTurnDegreesPerMinute / 360) * this.rotDotAnimationFactor
+      );
+    }
+    return this._legacyRotationsPerMinute;
+  }
 
   // @ts-expect-error TS6133: The controller ensures that the render
   // function is called on resize of the element
   private _resizeController = new ResizeController(this, {});
 
-  private get innerRingRadius(): number {
-    if (this.watchCircleType === WatchCircleType.single) {
-      return RING2_RADIUS;
-    } else if (this.watchCircleType === WatchCircleType.double) {
-      return RING3_RADIUS;
-    } else if (this.watchCircleType === WatchCircleType.doubleThin) {
-      return RING3B_RADIUS;
-    } else if (this.watchCircleType === WatchCircleType.triple) {
-      return RING4_RADIUS;
+  override willUpdate(changed: PropertyValues): void {
+    super.willUpdate(changed);
+
+    // Push the resolved effective RPM into the live controller whenever any
+    // of the inputs that compose it change.
+    if (
+      this._rotController &&
+      (changed.has('rateOfTurnDegreesPerMinute') ||
+        changed.has('rotDotAnimationFactor') ||
+        changed.has('rotationsPerMinute'))
+    ) {
+      this._rotController.rotationsPerMinute = this._effectiveRpm;
     }
-    throw new Error(`Invalid watch circle type: ${this.watchCircleType}`);
+
+    // Detect confirm: newAngleSetpoint was defined, now undefined
+    if (changed.has('newAngleSetpoint') && this.animateSetpoint) {
+      const prev = changed.get('newAngleSetpoint') as number | undefined;
+      if (prev !== undefined && this.newAngleSetpoint === undefined) {
+        this._departingNewAngleSetpoint = prev;
+        clearTimeout(this._animationTimer);
+        const duration = getSetpointAnimationDurationMs(this);
+        this._animationTimer = setTimeout(() => {
+          this._departingNewAngleSetpoint = undefined;
+        }, duration);
+      }
+    }
   }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    clearTimeout(this._animationTimer);
+    this._rotController = disposeRotController(this, this._rotController);
+  }
+
+  override updated(changed: PropertyValues): void {
+    super.updated(changed);
+    const el = this.rotType
+      ? this.renderRoot.querySelector('#rot-spinner')
+      : null;
+    if (!el) {
+      this._rotController = disposeRotController(this, this._rotController);
+      return;
+    }
+    if (!this._rotController || this._rotController.el !== el) {
+      this._rotController = disposeRotController(this, this._rotController);
+      this._rotController = new RateOfTurnController(
+        this,
+        el,
+        this._effectiveRpm
+      );
+    }
+  }
+
+  private get innerRingRadius(): number {
+    return innerRingRadiusFor(this.watchCircleType);
+  }
+
+  private _rOff = 0;
 
   private watchCircle(): SVGTemplateResult | SVGTemplateResult[] {
     const rings = [];
@@ -112,18 +349,18 @@ export class ObcWatch extends LitElement {
         <circle
           cx="0"
           cy="0"
-          r="172"
+          r="${172 + this._rOff}"
           stroke="var(--instrument-frame-primary-color)"
           fill="none"
           stroke-width="24"
         />`);
 
       if (this.watchCircleType !== WatchCircleType.single) {
-        const r1 = RING2_RADIUS;
+        const r1 = RING2_RADIUS + this._rOff;
         const r2 =
-          this.watchCircleType === WatchCircleType.doubleThin
+          (this.watchCircleType === WatchCircleType.doubleThin
             ? RING3B_RADIUS
-            : RING3_RADIUS;
+            : RING3_RADIUS) + this._rOff;
         const r = (r1 + r2) / 2;
         const strokeWidth = r1 - r2;
         rings.push(
@@ -135,8 +372,8 @@ export class ObcWatch extends LitElement {
         );
       }
       if (this.watchCircleType === WatchCircleType.triple) {
-        const r1 = RING3_RADIUS;
-        const r2 = RING4_RADIUS;
+        const r1 = RING3_RADIUS + this._rOff;
+        const r2 = RING4_RADIUS + this._rOff;
         const r = (r1 + r2) / 2;
         const strokeWidth = r1 - r2;
         rings.push(
@@ -145,24 +382,37 @@ export class ObcWatch extends LitElement {
       }
     }
 
+    const maskSize = Math.max(200, OUTER_RING_RADIUS + this._rOff + 50);
     let result = rings;
     if (this.areas.length > 0) {
       const areas = this.areas.map((area) => {
         const svgPath = roundedArch({
           startAngle: area.startAngle,
           endAngle: area.endAngle,
-          R: OUTER_RING_RADIUS,
-          r: this.innerRingRadius,
+          R: OUTER_RING_RADIUS + this._rOff,
+          r: this.innerRingRadius + this._rOff,
           roundOutsideCut: area.roundOutsideCut,
           roundInsideCut: area.roundInsideCut,
         });
         return svgPath;
       });
       const mask = svg`<mask id="cutMask">
-        <rect x="-200" y="-200" width="400" height="400" fill="black" />
+        <rect x="${-maskSize}" y="${-maskSize}" width="${maskSize * 2}" height="${maskSize * 2}" fill="black" />
         ${areas.map((area) => svg`<path d=${area} fill="white" vector-effect="non-scaling-stroke" stroke="white" stroke-width="1"/>`)}
       </mask>`;
-      result = [mask, svg`<g mask="url(#cutMask)">${rings}</g>`];
+      // clipPath for ROT uses r=0 so dots at any track radius stay visible
+      const rotClip = svg`<clipPath id="rot-arc-clip">${this.areas.map(
+        (area) =>
+          svg`<path d=${roundedArch({
+            startAngle: area.startAngle,
+            endAngle: area.endAngle,
+            R: OUTER_RING_RADIUS + this._rOff + 20,
+            r: 0,
+            roundOutsideCut: area.roundOutsideCut,
+            roundInsideCut: area.roundInsideCut,
+          })} />`
+      )}</clipPath>`;
+      result = [mask, rotClip, svg`<g mask="url(#cutMask)">${rings}</g>`];
       areas.forEach((area) => {
         result.push(
           svg`<path d=${area} fill="none" stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>`
@@ -172,7 +422,7 @@ export class ObcWatch extends LitElement {
       if (this.state !== InstrumentState.off) {
         result.push(
           circle('outerRing', {
-            radius: 368 / 2,
+            radius: OUTER_RING_RADIUS + this._rOff,
             strokeWidth: 1,
             strokeColor: 'var(--instrument-frame-tertiary-color)',
             strokePosition: 'center',
@@ -182,7 +432,7 @@ export class ObcWatch extends LitElement {
 
         result.push(svg`
           ${circle('innerRing', {
-            radius: this.innerRingRadius,
+            radius: this.innerRingRadius + this._rOff,
             strokeWidth: 1,
             strokeColor: 'var(--instrument-frame-tertiary-color)',
             strokePosition: 'center',
@@ -192,7 +442,7 @@ export class ObcWatch extends LitElement {
       } else {
         result.push(svg`
           ${circle('innerRing', {
-            radius: OUTER_RING_RADIUS,
+            radius: OUTER_RING_RADIUS + this._rOff,
             strokeWidth: 1,
             strokeColor: 'var(--instrument-frame-tertiary-color)',
             strokePosition: 'center',
@@ -204,26 +454,135 @@ export class ObcWatch extends LitElement {
     return result;
   }
 
-  private renderCrosshair(radius: number): SVGTemplateResult {
+  private _renderTickFadeDefs(): SVGTemplateResult | typeof nothing {
+    if (this.tickFadeAngle <= 0 || this.areas.length === 0) return nothing;
+    const area = this.areas[0];
+    const arcSpan = area.endAngle - area.startAngle;
+    const fade = Math.min(this.tickFadeAngle, arcSpan / 4);
+    if (fade < 0.5) return nothing;
+
+    const {startAngle, endAngle} = area;
+    const R = OUTER_RING_RADIUS + this._rOff + 200;
+    const toRad = (deg: number) => (deg * Math.PI) / 180;
+    const px = (deg: number) => R * Math.sin(toRad(deg));
+    const py = (deg: number) => -R * Math.cos(toRad(deg));
+
+    const pieSlice = (a: number, b: number): string => {
+      const x1 = px(a),
+        y1 = py(a);
+      const x2 = px(b),
+        y2 = py(b);
+      const largeArc = b - a > 180 ? 1 : 0;
+      return `M 0 0 L ${x1} ${y1} A ${R} ${R} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+    };
+
+    const Rm = (OUTER_RING_RADIUS + this.innerRingRadius) / 2 + this._rOff;
+    const gx = (deg: number) => Rm * Math.sin(toRad(deg));
+    const gy = (deg: number) => -Rm * Math.cos(toRad(deg));
+
     return svg`
-      <line
-        x1="-${radius}"
-        y1="0"
-        x2="${radius}"
-        y2="0"
-        stroke="var(--instrument-frame-tertiary-color)"
-        stroke-width="1"
-        vector-effect="non-scaling-stroke"
-      />
-      <line
-        x1="0"
-        y1="-${radius}"
-        x2="0"
-        y2="${radius}"
-        stroke="var(--instrument-frame-tertiary-color)"
-        stroke-width="1"
-        vector-effect="non-scaling-stroke"
-      />
+      <defs>
+        <linearGradient id="tickFadeL" gradientUnits="userSpaceOnUse"
+          x1="${gx(startAngle)}" y1="${gy(startAngle)}"
+          x2="${gx(startAngle + fade)}" y2="${gy(startAngle + fade)}">
+          <stop offset="0" stop-color="black" />
+          <stop offset="1" stop-color="white" />
+        </linearGradient>
+        <linearGradient id="tickFadeR" gradientUnits="userSpaceOnUse"
+          x1="${gx(endAngle - fade)}" y1="${gy(endAngle - fade)}"
+          x2="${gx(endAngle)}" y2="${gy(endAngle)}">
+          <stop offset="0" stop-color="white" />
+          <stop offset="1" stop-color="black" />
+        </linearGradient>
+        <mask id="tickFadeMask" maskUnits="userSpaceOnUse"
+          x="${-R}" y="${-R}" width="${R * 2}" height="${R * 2}">
+          <path d="${pieSlice(startAngle + fade, endAngle - fade)}" fill="white" />
+          <path d="${pieSlice(startAngle, startAngle + fade)}" fill="url(#tickFadeL)" />
+          <path d="${pieSlice(endAngle - fade, endAngle)}" fill="url(#tickFadeR)" />
+        </mask>
+      </defs>
+    `;
+  }
+
+  private renderCrosshair(
+    radius: number,
+    labelKnockouts?: {
+      positions: LabelPosition[];
+      rotation: number | undefined;
+      scale: number;
+      /** Inner ring radius – crosshair is hidden between labelRadius and this value. */
+      innerRingRadius: number;
+    }
+  ): SVGTemplateResult {
+    const hasMask = labelKnockouts && labelKnockouts.positions.length > 0;
+
+    // Radius at which labels sit (distance from centre).
+    // Any position is equally valid — they're all at the same radial distance.
+    const labelRadius = hasMask
+      ? Math.max(
+          ...labelKnockouts!.positions.map((l) =>
+            Math.abs(l.x !== 0 ? l.x : l.y)
+          )
+        )
+      : 0;
+    // Small extra padding so the crosshair doesn't start/end right at the
+    // label edge — use the same visual pad as the letter knockouts.
+    const ringGapPad = hasMask ? 3 / labelKnockouts!.scale : 0;
+
+    return svg`
+      ${
+        hasMask
+          ? svg`
+        <defs>
+          <mask
+            id="crosshair-label-mask"
+            maskUnits="userSpaceOnUse"
+            x="-${radius}" y="-${radius}"
+            width="${radius * 2}" height="${radius * 2}"
+          >
+            <rect x="-${radius}" y="-${radius}" width="${radius * 2}" height="${radius * 2}" fill="white"/>
+            <!-- Annular ring knockout: hide crosshair between labels and inner ring -->
+            <circle cx="0" cy="0" r="${labelKnockouts!.innerRingRadius}" fill="black"/>
+            <circle cx="0" cy="0" r="${labelRadius - ringGapPad}" fill="white"/>
+            <!-- Per-label rectangular knockouts -->
+            ${labelKnockouts!.positions.map((l) => {
+              const fontSize = 12 / labelKnockouts!.scale;
+              const pad = 3 / labelKnockouts!.scale;
+              const size = fontSize + pad * 2;
+              return svg`
+                <rect
+                  x="${l.x - size / 2}" y="${l.y - size / 2}"
+                  width="${size}" height="${size}"
+                  fill="black"
+                  transform="rotate(${-(labelKnockouts!.rotation ?? 0)})"
+                  transform-origin="${l.x} ${l.y}"
+                />
+              `;
+            })}
+          </mask>
+        </defs>`
+          : nothing
+      }
+      <g mask=${hasMask ? 'url(#crosshair-label-mask)' : nothing}>
+        <line
+          x1="-${radius}"
+          y1="0"
+          x2="${radius}"
+          y2="0"
+          stroke="var(--instrument-frame-tertiary-color)"
+          stroke-width="1"
+          vector-effect="non-scaling-stroke"
+        />
+        <line
+          x1="0"
+          y1="-${radius}"
+          x2="0"
+          y2="${radius}"
+          stroke="var(--instrument-frame-tertiary-color)"
+          stroke-width="1"
+          vector-effect="non-scaling-stroke"
+        />
+      </g>
     `;
   }
 
@@ -235,19 +594,20 @@ export class ObcWatch extends LitElement {
       const startAngle = Math.min(bar.startAngle, bar.endAngle);
       const endAngle = Math.max(bar.startAngle, bar.endAngle);
       const arc = roundedArch({
-        r: RING3_RADIUS,
-        R: RING2_RADIUS,
+        r: RING3_RADIUS + this._rOff,
+        R: RING2_RADIUS + this._rOff,
         startAngle: startAngle,
         endAngle: endAngle,
         roundInsideCut: false,
         roundOutsideCut: false,
       });
+      const barMaskR = RING2_RADIUS + this._rOff + 40;
       // The mask is a sector to cut out the stroke on the start and end of the bar
       const mask = svg`<mask id="barMask-${index}">
-        <rect x="-200" y="-200" width="400" height="400" fill="black" />
+        <rect x="${-barMaskR}" y="${-barMaskR}" width="${barMaskR * 2}" height="${barMaskR * 2}" fill="black" />
         <path d=${roundedArch({
           r: 1,
-          R: 200,
+          R: barMaskR,
           startAngle: startAngle,
           endAngle: endAngle,
           roundInsideCut: false,
@@ -278,7 +638,7 @@ export class ObcWatch extends LitElement {
       return svg`
         <rect 
           transform="rotate(${needle.angle})" 
-          x="-4" y="-160" width="8" height="48" rx="4" 
+          x="-4" y="${-(RING2_RADIUS + this._rOff)}" width="8" height="48" rx="4" 
           fill=${needle.fillColor} 
           stroke=${needle.strokeColor}
           stroke-width="1"
@@ -300,8 +660,8 @@ export class ObcWatch extends LitElement {
       }
     }
     const scale = Math.min(clientWidth / width, clientHeight / height);
-    if (scale === Infinity || scale <= 0) {
-      throw new Error('Scale is not valid');
+    if (scale === Infinity || scale < 0) {
+      throw new Error('Watch scale is not valid');
     }
     return scale;
   }
@@ -320,43 +680,98 @@ export class ObcWatch extends LitElement {
   }
 
   override render() {
-    const width = (176 + this.getPadding()) * 2;
-    const height = width * (1 - this.clipTop / 100 - this.clipBottom / 100);
-    const top = -width / 2 + (width * this.clipTop) / 100;
+    let width: number;
+    let height: number;
+    let viewBox: string;
+
+    if (this.arcFrame) {
+      this._rOff = this.arcFrame.radiusOffset;
+      width = this.arcFrame.width;
+      height = this.arcFrame.height;
+      viewBox = this.arcFrame.viewBox;
+    } else if (this.zoomToFitArc && this.areas.length > 0) {
+      const ext = this.getPadding();
+      const targetSize = (176 + ext) * 2;
+      const frame = computeZoomToFitArcFrame({
+        areas: this.areas,
+        outerRadius: OUTER_RING_RADIUS,
+        innerRadius: this.innerRingRadius,
+        extension: ext,
+        targetSize,
+      });
+      this._rOff = frame.radiusOffset;
+      width = frame.width;
+      height = frame.height;
+      viewBox = frame.viewBox;
+    } else {
+      this._rOff = 0;
+      width = (176 + this.getPadding()) * 2;
+      height = width * (1 - this.clipTop / 100 - this.clipBottom / 100);
+      const top = -width / 2 + (width * this.clipTop) / 100;
+      viewBox = `-${width / 2} ${top} ${width} ${height}`;
+    }
+
+    const rOff = this._rOff;
     const scale = this.getScale({width, height});
-    const viewBox = `-${width / 2} ${top} ${width} ${height}`;
     const angleSetpoint = this.renderSetpoint();
-    const textRadius = this.tickmarksInside
-      ? this.innerRingRadius
-      : OUTER_RING_RADIUS;
+    const textRadius =
+      (this.tickmarksInside ? this.innerRingRadius : OUTER_RING_RADIUS) + rOff;
     const maxDigits = Math.max(
       ...this.tickmarks.map((t) => t.text?.length ?? 0)
     );
     const tickmarks = this.tickmarks.map((t) =>
       tickmark(t.angle, {
         size: t.type,
-        style: TickmarkStyle.hinted,
+        style: this.tickmarkStyle,
         scale,
-        text: t.text,
+        text: this.showLabels ? undefined : t.text,
         inside: this.tickmarksInside,
         textRadius,
         rotation: this.rotation,
         maxDigits,
         color: t.color,
+        radiusOffset: rOff,
       })
     );
     const advices = this.advices
-      ? this.advices.map((a) => renderAdvice(a))
+      ? this.advices.map((a) => renderAdvice(a, rOff))
       : nothing;
-    const labels = this.labelFrameEnabled
-      ? renderLabels(scale, this.rotation)
+
+    // Compute label positions once – used for both rendering and crosshair knockout.
+    const insideLabels = this.tickmarksInside && this.showLabels;
+    const includeNorth = !this.northArrow;
+    const labelPositions = this.showLabels
+      ? getLabelPositions({
+          scale,
+          inside: this.tickmarksInside,
+          innerRadius: this.innerRingRadius + rOff,
+          includeNorth,
+        })
+      : undefined;
+
+    const labels = labelPositions
+      ? renderLabels({
+          scale,
+          rotation: this.rotation,
+          inside: this.tickmarksInside,
+          innerRadius: this.innerRingRadius + rOff,
+          includeNorth,
+        })
+      : nothing;
+    const northArrowEl = this.northArrow
+      ? renderNorthArrow({
+          scale,
+          rotation: this.rotation,
+          inside: this.northArrowInside ?? this.tickmarksInside,
+        })
       : nothing;
     const wind =
-      this.wind != null && this.windFromDirectionDeg != null
+      this.windKnots != null && this.windFromDirectionDeg != null
         ? svg`<g transform="scale(${this.scaleWindIcon})">${renderWind({
-            wind: this.wind,
+            windKnots: this.windKnots,
             fromDirectionDeg: this.windFromDirectionDeg,
             radius: this.windSymbolRadius ?? 192,
+            color: this.windColor,
           })}</g>`
         : nothing;
     const current =
@@ -365,6 +780,7 @@ export class ObcWatch extends LitElement {
             current: this.current,
             fromDirectionDeg: this.currentFromDirectionDeg,
             radius: this.currentSymbolRadius ?? 192,
+            color: this.currentColor,
           })
         : nothing;
     return html`
@@ -376,72 +792,246 @@ export class ObcWatch extends LitElement {
         transform="rotate(${this.rotation ?? 0})"
       >
         ${this.watchCircle()} ${this.renderBars()}
-        ${this.crosshairEnabled ? this.renderCrosshair(184) : nothing}
-        ${this.renderNorthArrow()} ${this.renderStarboardPortIndicator()}
-        ${current} ${wind} ${tickmarks} ${advices} ${angleSetpoint} ${labels}
+        ${this.crosshairEnabled
+          ? this.renderCrosshair(
+              OUTER_RING_RADIUS + rOff,
+              insideLabels && labelPositions
+                ? {
+                    positions: labelPositions,
+                    rotation: this.rotation,
+                    scale,
+                    innerRingRadius: this.innerRingRadius + rOff,
+                  }
+                : undefined
+            )
+          : nothing}
+        ${northArrowEl} ${this.renderStarboardPortIndicator()} ${current}
+        ${this._renderTickFadeDefs()} ${wind}
+        ${this.tickFadeAngle > 0 && this.areas.length > 0
+          ? svg`<g mask="url(#tickFadeMask)">${tickmarks}</g>`
+          : tickmarks}
+        ${this.areas.length > 0
+          ? svg`<g clip-path="url(#rot-arc-clip)">${this.renderRot()}</g>`
+          : this.renderRot()}
+        ${advices} ${angleSetpoint}
+        ${this.tickFadeAngle > 0 && this.areas.length > 0
+          ? svg`<g mask="url(#tickFadeMask)">${labels}</g>`
+          : labels}
         ${this.renderVesselImage()} ${this.renderNeedles()}
       </svg>
     `;
   }
 
-  private renderSetpoint(): SVGTemplateResult | typeof nothing {
-    let setPointColor = 'var(--instrument-enhanced-primary-color)';
-    if (this.atAngleSetpoint) {
-      setPointColor = 'var(--instrument-enhanced-secondary-color)';
-    }
-    if (this.state === InstrumentState.active) {
-      setPointColor = 'var(--instrument-regular-primary-color)';
-      if (this.atAngleSetpoint) {
-        setPointColor = 'var(--instrument-regular-secondary-color)';
+  private getRotColors(): {
+    dotColor: string;
+    barBgColor: string;
+  } {
+    const p = this.rotPriority ?? this.priority;
+    const isEnhanced = p === Priority.enhanced;
+
+    if (this.rotPortStarboard) {
+      // For bar type, derive direction from bar angles (visual direction);
+      // for dots, use spinner RPM.
+      let direction: number;
+      if (this.rotType === RotType.bar) {
+        const cwSpan =
+          (((this.rotEndAngle - this.rotStartAngle) % 360) + 360) % 360;
+        direction = cwSpan <= 180 ? cwSpan : cwSpan - 360;
+      } else {
+        direction = this._effectiveRpm;
       }
-    } else if (this.state === InstrumentState.loading) {
-      setPointColor = 'var(--instrument-frame-tertiary-color)';
-    } else if (this.state === InstrumentState.off) {
-      setPointColor = 'var(--instrument-frame-tertiary-color)';
+
+      if (direction > 0) {
+        return {
+          dotColor: 'var(--instrument-starboard-secondary-color)',
+          barBgColor: 'var(--instrument-starboard-primary-color)',
+        };
+      }
+      if (direction < 0) {
+        return {
+          dotColor: 'var(--instrument-port-secondary-color)',
+          barBgColor: 'var(--instrument-port-primary-color)',
+        };
+      }
     }
 
+    return {
+      dotColor: isEnhanced
+        ? 'var(--instrument-enhanced-tertiary-color)'
+        : 'var(--instrument-regular-tertiary-color)',
+      barBgColor: isEnhanced
+        ? 'var(--instrument-enhanced-secondary-color)'
+        : 'var(--instrument-regular-secondary-color)',
+    };
+  }
+
+  private renderRot(): SVGTemplateResult | typeof nothing {
+    if (!this.rotType) return nothing;
+
+    const {dotColor, barBgColor} = this.getRotColors();
+    const rOff = this._rOff;
+
+    if (this.rotType === RotType.bar) {
+      const angularDelta = shortestAngularDeltaDeg(
+        this.rotStartAngle,
+        this.rotEndAngle
+      );
+      const threshold = rotBarThresholdAngle(this.rotPosition, rOff);
+      const zeroDb = Number.isFinite(this.rotAtZeroDeadband)
+        ? this.rotAtZeroDeadband
+        : ROT_ZERO_DEADBAND_DEG;
+
+      if (angularDelta < Math.max(zeroDb, threshold)) {
+        return renderRotZeroPill(
+          barBgColor,
+          this.rotStartAngle,
+          this.rotPosition,
+          rOff
+        );
+      }
+
+      return svg`
+        ${renderRotBarStatic({
+          startAngle: this.rotStartAngle,
+          endAngle: this.rotEndAngle,
+          barColor: barBgColor,
+          position: this.rotPosition,
+          maskId: 'rot-bar-mask',
+          radiusOffset: rOff,
+        })}
+        ${svg`<g clip-path="url(#rot-bar-mask)">
+            <g id="rot-spinner">
+              ${renderRotBarDots(dotColor, this.rotPosition, rOff)}
+            </g>
+          </g>`}
+      `;
+    }
+
+    const p = this.rotPriority ?? this.priority;
+    const isEnhanced = p === Priority.enhanced;
+    let dotsColor: string = isEnhanced
+      ? 'var(--instrument-enhanced-secondary-color)'
+      : 'var(--instrument-regular-secondary-color)';
+    if (this.rotPortStarboard) {
+      if (this._effectiveRpm > 0) {
+        dotsColor = 'var(--instrument-starboard-secondary-color)';
+      } else if (this._effectiveRpm < 0) {
+        dotsColor = 'var(--instrument-port-secondary-color)';
+      }
+    }
+    return svg`
+      <g id="rot-spinner">
+        ${renderRotDots(dotsColor, this.rotPosition, rOff)}
+      </g>
+    `;
+  }
+
+  private renderSetpoint(): SVGTemplateResult | typeof nothing {
     if (this.angleSetpoint === undefined) {
       return nothing;
+    }
+
+    const derived = deriveRadialSetpointConfig({
+      state: this.state,
+      priority: this.priority,
+      atSetpoint: this.atAngleSetpoint,
+      angleSetpoint: this.angleSetpoint,
+      setpointAtZeroDeadband: this.angleSetpointAtZeroDeadband,
+      newAngleSetpoint: this.newAngleSetpoint,
+      touching: this.touching,
+      setpointOverride: this.setpointOverride,
+    });
+
+    const {visualState, colorMode, disabled, hasNewSetpoint} = derived;
+
+    const outwardOffset = getSetpointOutwardOffset(visualState);
+    const radius =
+      RADIAL_SETPOINT_RADIUS +
+      this._rOff +
+      outwardOffset -
+      RADIAL_SETPOINT_INWARD_ADJUST;
+
+    // Render original setpoint marker (dimmed when newAngleSetpoint is active)
+    const opacity = hasNewSetpoint ? 0.75 : 1;
+    const originalMarker = drawSetpointMarker({
+      visualState,
+      colorMode,
+      disabled,
+      id: this._setpointId,
+    });
+
+    const animate = this.animateSetpoint;
+    const hasDeparting = this._departingNewAngleSetpoint !== undefined;
+
+    // Compute CSS-safe accumulated angle so transitions always take the short path
+    const rawAngle = this.angleSetpoint + 90;
+    if (!this._setpointCssAngleInit) {
+      // First render: set angle without transition
+      this._setpointCssAngle = rawAngle;
+      this._setpointCssAngleInit = true;
     } else {
-      let path;
-      if (
-        this.state === InstrumentState.inCommand ||
-        this.state === InstrumentState.off ||
-        this.state === InstrumentState.loading
-      ) {
-        path =
-          'M23.5119 8C24.6981 6.35191 23.5696 4 21.5926 4L2.39959 4C0.422598 4 -0.705911 6.35191 0.480283 8L11.9961 24L23.5119 8Z';
-      } else {
-        path =
-          'M18.5836 8L5.4086 8L11.9961 17.1526L18.5836 8ZM23.5119 8C24.6981 6.35191 23.5696 4 21.5926 4L2.39959 4C0.422598 4 -0.705911 6.35191 0.480283 8L11.9961 24L23.5119 8Z';
-      }
-      return svg`
-        <defs>
-          <g id="setpoint">
-            <path fill-rule="evenodd" clip-rule="evenodd" transform="translate(-24 12) rotate(-90)" d=${path} vector-effect="non-scaling-stroke"/>
+      this._setpointCssAngle = cssSafeAngle(this._setpointCssAngle, rawAngle);
+    }
+
+    // Use CSS style transform when animating for smooth transition
+    const originalSetpoint = animate
+      ? svg`
+        <g style="transform: rotate(${this._setpointCssAngle}deg) translateX(${-radius}px) rotate(270deg); opacity: ${opacity}; transition: transform var(${SETPOINT_ANIMATION_CSS_VAR}, ${SETPOINT_ANIMATION_DURATION_DEFAULT}) ease-out, opacity var(${SETPOINT_ANIMATION_CSS_VAR}, ${SETPOINT_ANIMATION_DURATION_DEFAULT}) ease-out;">
+          ${originalMarker}
+        </g>
+      `
+      : svg`
+        <g transform="rotate(${this.angleSetpoint + 90}) translate(${-radius}, 0) rotate(270)" opacity="${opacity}">
+          ${originalMarker}
+        </g>
+      `;
+
+    // Render newAngleSetpoint in focus state (always on top)
+    // OR render departing newAngleSetpoint during confirm fade-out
+    if (hasNewSetpoint || hasDeparting) {
+      const isActive = hasNewSetpoint;
+      const newAngle = isActive
+        ? this.newAngleSetpoint!
+        : this._departingNewAngleSetpoint!;
+      const targetOpacity = isActive ? 1 : 0;
+
+      const focusOutwardOffset = getSetpointOutwardOffset(
+        SetpointVisualState.focus
+      );
+      const focusRadius =
+        RADIAL_SETPOINT_RADIUS +
+        this._rOff +
+        focusOutwardOffset -
+        RADIAL_SETPOINT_INWARD_ADJUST;
+
+      const newMarker = drawSetpointMarker({
+        visualState: SetpointVisualState.focus,
+        colorMode,
+        disabled: false, // newSetpoint is never disabled
+        id: this._newSetpointId,
+      });
+
+      if (animate) {
+        const duration = `var(${SETPOINT_ANIMATION_CSS_VAR}, ${SETPOINT_ANIMATION_DURATION_DEFAULT})`;
+        return svg`
+          ${originalSetpoint}
+          <g style="transform: rotate(${newAngle + 90}deg) translateX(${-focusRadius}px) rotate(270deg); opacity: ${targetOpacity}; transition: opacity ${duration} ease-out;">
+            ${newMarker}
           </g>
-          <mask id="setpointMask">
-            <rect x="-20" y="-20" width="50" height="50" fill="white" />
-            <use href="#setpoint" fill="black" />
-          </mask>
-        </defs>
-        <g transform="rotate(${this.angleSetpoint + 90}) translate(-168 0) ">
-          <use href="#setpoint" fill=${setPointColor} stroke-width="0" />
-          
-          <use href="#setpoint" vector-effect="non-scaling-stroke" fill="none" stroke="var(--border-silhouette-color)" stroke-width="2" stroke-linejoin="round" mask="url(#setpointMask)" />
+        `;
+      }
+
+      return svg`
+        ${originalSetpoint}
+        <g transform="rotate(${newAngle + 90}) translate(${-focusRadius}, 0) rotate(270)" opacity="${targetOpacity}">
+          ${newMarker}
         </g>
       `;
     }
+
+    return originalSetpoint;
   }
 
-  private renderNorthArrow(): SVGTemplateResult | typeof nothing {
-    if (!this.northArrow) {
-      return nothing;
-    }
-    return svg`
-<path transform="translate(-256, -256)" fill-rule="evenodd" clip-rule="evenodd" d="M238.152 96.9842L255.998 72L273.844 96.9839C267.985 96.3338 262.031 96 256 96C249.967 96 244.012 96.3339 238.152 96.9842Z" fill="var(--instrument-frame-tertiary-color)"/>
-    `;
-  }
   private renderVesselImage(): SVGTemplateResult[] | typeof nothing {
     if (this.vessels.length === 0) {
       return nothing;
@@ -482,7 +1072,7 @@ export class ObcWatch extends LitElement {
         'var(--instrument-port-secondary-color)',
         'var(--instrument-port-secondary-color)'
       ),
-    ];
+    ] as SVGTemplateResult[];
   }
 
   static override styles = unsafeCSS(compentStyle);

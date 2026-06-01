@@ -73,12 +73,6 @@ export class ObcAccordionItem extends LitElement {
   @property({type: Boolean}) disabled = false;
 
   /**
-   * Controls whether the expanded content area is rendered.
-   * Set to `false` to hide the content area entirely (even when open).
-   */
-  @property({type: Boolean}) showContent = true;
-
-  /**
    * Displays a divider line below the item for visual separation.
    * Useful when stacking multiple items in a list.
    */
@@ -115,7 +109,7 @@ export class ObcAccordionItem extends LitElement {
   }
 
   private renderExpandedContent() {
-    if (!this.open || !this.showContent) return '';
+    if (!this.open) return '';
 
     return html`
       <div class="content-container">

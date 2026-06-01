@@ -1,61 +1,66 @@
-import {LitElement, html} from 'lit';
+import {html} from 'lit';
 import {property} from 'lit/decorators.js';
-import {
-  AutomationBottonLabelStyle,
-  AutomationButtonLabelPosition,
-  AutomationButtonLabelSize,
-  AutomationButtonState,
-  AutomationButtonTagLabel,
-} from '../automation-button/automation-button.js';
 import '../valve-analoge-two-way-icon/valve-analog-two-way-icon.js';
 import {customElement} from '../../decorator.js';
+import {ObcAbstractAutomationButton} from '../automation-button/abstract-automation-button.js';
+import {AutomationButtonLabelDirection} from '../automation-button/automation-button.js';
+import {AutomationButtonReadoutStack} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 
-/**
- * @ignition-base-height: 82px
- * @ignition-base-width: 66px
- * @ignition-center
- */
+export enum AnalogValveVariant {
+  regular = 'regular',
+  flat = 'flat',
+}
+
 @customElement('obc-analog-valve')
-export class ObcAnalogValve extends LitElement {
-  @property({type: String}) labelPosition: AutomationButtonLabelPosition =
-    AutomationButtonLabelPosition.bottom;
-  @property({type: String}) labelSize: AutomationButtonLabelSize =
-    AutomationButtonLabelSize.regular;
-  @property({type: String}) labelStyle: AutomationBottonLabelStyle =
-    AutomationBottonLabelStyle.regular;
-  @property({type: Boolean}) alert: boolean = false;
-  @property({type: Boolean}) progress: boolean = false;
+export class ObcAnalogValve extends ObcAbstractAutomationButton {
   @property({type: Boolean}) open: boolean = false;
   @property({type: Number}) value: number = 0;
-  @property({type: String}) tag: string = '';
   @property({type: Boolean}) vertical: boolean = false;
+  @property({type: String}) labelDirection: AutomationButtonLabelDirection =
+    AutomationButtonLabelDirection.right;
+  @property({type: String}) variant: AnalogValveVariant =
+    AnalogValveVariant.regular;
 
-  override render() {
-    const labels = [
-      {
-        type: 'tag',
-        text: this.tag,
-        showHash: false,
-      } as AutomationButtonTagLabel,
-    ];
-    return html`<obc-automation-button
-      .state=${this.open
-        ? AutomationButtonState.open
-        : AutomationButtonState.closed}
-      .labels=${labels}
-      .labelPosition=${this.labelPosition}
-      .labelSize=${this.labelSize}
-      .labelStyle=${this.labelStyle}
-      ?alert=${this.alert}
-      ?progress=${this.progress}
-    >
-      <obc-valve-analog-two-way-icon
+  override get extraReadouts(): AutomationButtonReadoutStack[] {
+    if (this.open) {
+      return [
+        {
+          type: 'value',
+          icon: 'arrow',
+          value: this.value,
+          nDigits: 3,
+          unit: '%',
+          direction: this.labelDirection,
+        },
+      ];
+    } else {
+      return [
+        {
+          type: 'state-off',
+          value: 'Off',
+          hasIcon: true,
+        },
+      ];
+    }
+  }
+
+  override get _on(): boolean {
+    return this.open;
+  }
+
+  override get icon() {
+    return html`<obc-valve-analog-two-way-icon
         .value=${this.value}
         .closed=${!this.open}
         .vertical=${this.vertical}
         slot="icon"
       ></obc-valve-analog-two-way-icon>
-    </obc-automation-button>`;
+      <obc-valve-analog-two-way-icon
+        .value=${this.value}
+        .closed=${!this.open}
+        .vertical=${this.vertical}
+        slot="icon-silhouette"
+      ></obc-valve-analog-two-way-icon> `;
   }
 }
 

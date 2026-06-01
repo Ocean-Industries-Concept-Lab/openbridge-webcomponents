@@ -7,6 +7,7 @@ import {
 } from '@storybook/web-components-vite';
 
 import customElements from '../custom-elements.json';
+import {withActions} from './action-handler.js';
 
 setCustomElementsManifest(customElements);
 
@@ -31,6 +32,7 @@ export const decorators: DecoratorFunction[] = [
       context.globals.componentSize || 'obc-component-size-regular';
     return html`<div class="${sizeClass}">${story()}</div>`;
   },
+  withActions,
 ];
 
 const preview: Preview = {
@@ -74,8 +76,10 @@ const preview: Preview = {
           'UI Components',
           'Bars and Graphs',
           'Instruments',
+          'Indicators',
           'Automation',
           'AR',
+          'Integration',
           'Pages',
           '*',
           'Building Blocks',
@@ -104,6 +108,10 @@ const preview: Preview = {
           name: 'container-background-color',
           value: 'var(--container-background-color)',
         },
+        'integration-container-global-color': {
+          name: 'integration-container-global-color',
+          value: 'var(--integration-container-global-color)',
+        },
       },
     },
 
@@ -112,7 +120,7 @@ const preview: Preview = {
       codePanel: true,
     },
   },
-  tags: ['autodocs'],
+  tags: ['autodocs', 'snapshot'],
   initialGlobals: {
     componentSize: 'obc-component-size-regular',
   },

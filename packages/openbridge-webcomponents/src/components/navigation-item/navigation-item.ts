@@ -1,11 +1,16 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {property} from 'lit/decorators.js';
+import {property, query} from 'lit/decorators.js';
 import compentStyle from './navigation-item.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import '../../icons/icon-arrow-flyout-google.js';
 import {ObcNavigationMenuVariant} from '../navigation-menu/navigation-menu.js';
 import {customElement} from '../../decorator.js';
+
+enum NavigationItemRole {
+  Button = 'button',
+  MenuItem = 'menuitem',
+}
 
 /**
  * `<obc-navigation-item>` – A navigation menu item component for use in navigation bars, side menus, or toolbars.
@@ -44,6 +49,7 @@ import {customElement} from '../../decorator.js';
  * - Use `group` and `groupSelected` to indicate grouped navigation and selection within groups.
  * - Provide an icon via the `icon` slot for visual context (e.g., `<obi-placeholder slot="icon"></obi-placeholder>).
  * - Use `href` to make the item a link; omit for button-like behavior.
+ * - Use `::part(label)` CSS pseudo-element to style the label.
  *
  * **TODO(designer):** Clarify if there are recommended icon choices or label length constraints for each variant.
  *
@@ -60,7 +66,7 @@ import {customElement} from '../../decorator.js';
  * - `variant` (string): Controls the visual style. One of `Full`, `IconOnly`, `IconOnlyLarge`, or `Compact`.
  * - `group` (boolean): Enables group mode, showing a flyout indicator and supporting group selection.
  * - `groupSelected` (boolean): Highlights the item as selected within a group.
- * - `hasIcon` (boolean): Reflects whether an icon is present in the `icon` slot (auto-detected).
+ * - `hasIcon` (boolean): Whether the item has a leading icon.
  *
  * ## Events
  * - `click` – Fired when the navigation item is clicked (either as a link or button).
@@ -84,7 +90,8 @@ import {customElement} from '../../decorator.js';
  * </obc-navigation-item>
  * ```
  *
- * @slot icon - Leading icon slot (optional, shown if provided)
+ * @slot icon - Leading icon slot (optional, shown if provided). Set `hasIcon` to `true` to show the icon.
+ * @slot trailing-icon - Trailing icon slot (optional, shown if provided). Set `hasTrailingIcon` to `true` to show.
  * @fires click {CustomEvent<void>} Fired when the navigation item is clicked.
  */
 
@@ -129,34 +136,13 @@ export class ObcNavigationItem extends LitElement {
   @property({type: Boolean}) groupSelected = false;
 
   /**
-   * Reflects whether an icon is present in the `icon` slot.
-   * Automatically detected; do not set manually.
+   * Whether the item has a leading icon.
    */
   @property({type: Boolean, reflect: true}) hasIcon = false;
 
-  override firstUpdated() {
-    this.updateIconState();
-  }
+  @property({type: Boolean}) hasTrailingIcon = false;
 
-  override updated(changedProperties: Map<string, unknown>) {
-    super.updated(changedProperties);
-    this.updateIconState();
-  }
-
-  private checkIconPresence() {
-    const iconSlot = this.shadowRoot?.querySelector(
-      'slot[name="icon"]'
-    ) as HTMLSlotElement | null;
-    this.hasIcon = !!iconSlot && iconSlot.assignedElements().length > 0;
-  }
-
-  private updateIconState() {
-    this.checkIconPresence();
-  }
-
-  private onSlotChange() {
-    this.checkIconPresence();
-  }
+  @query('a') private anchorElement?: HTMLAnchorElement;
 
   /**
    * Fired when the navigation item is clicked (either as a link or button).
@@ -164,6 +150,41 @@ export class ObcNavigationItem extends LitElement {
    */
   onClick() {
     dispatchEvent(new CustomEvent('click'));
+  }
+
+  private handleKeydown(event: KeyboardEvent) {
+    const isMenuItem =
+      this.getAttribute('role') === NavigationItemRole.MenuItem;
+    if (this.href !== undefined && !isMenuItem) return;
+    if (event.key !== 'Enter' && event.key !== ' ') {
+      return;
+    }
+
+    event.preventDefault();
+    this.anchorElement?.click();
+  }
+
+  public override focus(options?: FocusOptions): void {
+    this.anchorElement?.focus(options);
+  }
+
+  private getItemRole(): NavigationItemRole | undefined {
+    const hostRole = this.getAttribute('role');
+    if (hostRole === NavigationItemRole.MenuItem) {
+      return NavigationItemRole.MenuItem;
+    }
+
+    return this.href === undefined ? NavigationItemRole.Button : undefined;
+  }
+
+  private getItemTabIndex(): number | undefined {
+    const hostTabIndex = this.getAttribute('tabindex');
+    if (hostTabIndex !== null) {
+      const parsedTabIndex = Number(hostTabIndex);
+      return Number.isNaN(parsedTabIndex) ? undefined : parsedTabIndex;
+    }
+
+    return this.href === undefined ? 0 : undefined;
   }
 
   override render() {
@@ -180,16 +201,15 @@ export class ObcNavigationItem extends LitElement {
           'has-icon': this.hasIcon,
           [this.variant]: true,
         })}"
-        href="${ifDefined(this.href)}"
+        href=${ifDefined(this.href)}
         @click=${this.onClick}
+        @keydown=${this.handleKeydown}
+        tabindex=${ifDefined(this.getItemTabIndex())}
+        role=${ifDefined(this.getItemRole())}
       >
         <div class="visible-wrapper">
           ${this.hasIcon
-            ? html`<slot
-                name="icon"
-                class="icon leading"
-                @slotchange=${this.onSlotChange}
-              ></slot>`
+            ? html`<slot name="icon" class="icon leading"></slot>`
             : nothing}
           ${![
             ObcNavigationMenuVariant.IconOnly,
@@ -197,6 +217,7 @@ export class ObcNavigationItem extends LitElement {
           ].includes(this.variant)
             ? html`
                 <span
+                  part="label"
                   class=${classMap({
                     label: true,
                     'label-flyout': showFlyout && !isCompact,
@@ -214,6 +235,9 @@ export class ObcNavigationItem extends LitElement {
                   ></obi-arrow-flyout-google>
                 </div>
               `
+            : nothing}
+          ${this.hasTrailingIcon && !showFlyout
+            ? html`<slot name="trailing-icon" class="icon trailing"></slot>`
             : nothing}
         </div>
       </a>

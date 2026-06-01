@@ -180,7 +180,7 @@ export class ObcAlertButton extends LitElement {
    */
   @property({type: Number}) silenceButtonMinBreakpointPx = 0;
 
-  @state() width = window.innerWidth;
+  @state() private width = window.innerWidth;
 
   private resizeListener = () => {
     this.width = window.innerWidth;
@@ -220,6 +220,30 @@ export class ObcAlertButton extends LitElement {
         ></obi-alerts-caution-twotone>`;
         //     }
       }
+    }
+  }
+
+  private alertIconNegative() {
+    const useIdle =
+      this.nAlerts === 0 || this.type !== ObcAlertButtonType.Enhanced;
+    if (useIdle) {
+      return html`<obi-alerts class="icon"></obi-alerts>`;
+    } else if (this.alertType === AlertType.Alarm) {
+      return html`<obi-alerts-alarm-twotone
+        useCssColor
+        class="icon"
+      ></obi-alerts-alarm-twotone>`;
+    } else if (this.alertType === AlertType.Warning) {
+      return html`<obi-alerts-warning-twotone
+        useCssColor
+        class="icon"
+      ></obi-alerts-warning-twotone>`;
+    } else {
+      return html`<obi-alerts-caution-twotone
+        useCssColor
+        class="icon"
+      ></obi-alerts-caution-twotone>`;
+      //     }
     }
   }
 
@@ -265,7 +289,7 @@ export class ObcAlertButton extends LitElement {
         >
           ${showBlinking
             ? html` <div class="blink">
-                <obi-alerts class="icon"></obi-alerts>
+                ${this.alertIconNegative()}
                 ${showCounter
                   ? html`<div class="badge">${this.nAlerts}</div>`
                   : null}

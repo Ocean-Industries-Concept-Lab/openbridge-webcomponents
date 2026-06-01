@@ -91,7 +91,7 @@
 }
 
 .alert-list.unacked {
-  ::slotted(:not([status='unacknowledged'])),
+  ::slotted(:not([status="unacknowledged"])),
   ::slotted([shelved]) {
     display: none;
   }

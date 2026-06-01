@@ -14,7 +14,7 @@ import {
 
 const meta: Meta<typeof ObcToggleButtonVerticalGroup> = {
   title:
-    'UI Components/Selection controls and switches/Toggle button - Vertical',
+    'UI Components/Selection Controls and Switches/Toggle Button - Vertical',
   tags: ['autodocs', '6.0'],
   component: 'obc-toggle-button-vertical-group',
 
@@ -305,6 +305,10 @@ export const InlineMixedRegular: Story = {
     type: ObcToggleButtonVerticalOptionType.regular,
   },
   render: LabelUnderMixedRegular.render,
+};
+
+export const Normal: Story = {
+  args: {type: ObcToggleButtonVerticalOptionType.normal},
 };
 
 export const SelectionBehavior: Story = {

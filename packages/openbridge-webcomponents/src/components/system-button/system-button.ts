@@ -13,26 +13,23 @@ import '../../icons/icon-sensor-gps-bad.js';
 import '../../icons/icon-sensor-gps-low.js';
 import '../../icons/icon-sensor-gps-medium.js';
 import '../../icons/icon-sensor-gps-full.js';
-import '../../icons/icon-battery-horizontal-100.js';
-import '../../icons/icon-battery-horizontal-75.js';
-import '../../icons/icon-battery-horizontal-50.js';
-import '../../icons/icon-battery-horizontal-25.js';
-import '../../icons/icon-battery-horizontal-low.js';
-import '../../icons/icon-battery-horizontal-empty.js';
-import '../../icons/icon-battery-horizontal-charging-100.js';
-import '../../icons/icon-battery-horizontal-charging-50.js';
-import '../../icons/icon-battery-horizontal-charging-25.js';
-import '../../icons/icon-battery-horizontal-charging-empty.js';
 import '../../icons/icon-sound-muted.js';
 import '../../icons/icon-sound-no.js';
 import '../../icons/icon-sound-low.js';
 import '../../icons/icon-sound.js';
 import '../button/button.js';
+import '../battery-icon/battery-icon.js';
 
 export enum SystemButtonVariant {
   condensed = 'condensed',
   expanded = 'expanded',
   actions = 'actions',
+}
+
+export enum ActivePanel {
+  microphone = 'microphone',
+  volume = 'volume',
+  systemIcons = 'system-icons',
 }
 
 /**
@@ -45,29 +42,26 @@ export enum SystemButtonVariant {
  * - `gps`: GPS status (enabled, connected, quality)
  */
 export interface SystemState {
-  wifi: {
-    enabled: boolean;
+  wifi?: {
     connected: boolean;
     networkName?: string;
     strength: 0 | 1 | 2 | 3 | 4; // Maps directly to icon variants
   };
-  audio: {
-    enabled: boolean;
+  audio?: {
     muted: boolean;
     volume: number; // 0-100
   };
-  microphone: {
-    enabled: boolean;
+  microphone?: {
     muted: boolean;
     sensitivity: number; // 0-100
   };
-  battery: {
-    enabled: boolean;
+  battery?: {
     level: number; // 0-100
     charging: boolean;
+    poweredNotCharging?: boolean;
+    notification?: boolean;
   };
-  gps: {
-    enabled: boolean;
+  gps?: {
     connected: boolean;
     quality: 'bad' | 'low' | 'medium' | 'full'; // Maps to GPS icon variants
   };
@@ -179,11 +173,11 @@ export class ObcSystemButton extends LitElement {
    * Default: all indicators disabled except WiFi (connected), audio (volume 65), microphone (sensitivity 80), battery (level 78), GPS (quality medium).
    */
   @property({type: Object}) systemState: SystemState = {
-    wifi: {enabled: false, connected: true, strength: 3},
-    audio: {enabled: false, muted: false, volume: 65},
-    microphone: {enabled: false, muted: false, sensitivity: 80},
-    battery: {enabled: false, level: 78, charging: false},
-    gps: {enabled: false, connected: false, quality: 'medium'},
+    wifi: {connected: true, strength: 3},
+    audio: {muted: false, volume: 65},
+    microphone: {muted: false, sensitivity: 80},
+    battery: {level: 78, charging: false},
+    gps: {connected: false, quality: 'medium'},
   };
 
   /**
@@ -195,11 +189,7 @@ export class ObcSystemButton extends LitElement {
    * Indicates which panel (if any) is currently active.
    * One of: `'microphone'`, `'volume'`, `'system-icons'`, or `null`.
    */
-  @property({type: String}) activePanel:
-    | 'microphone'
-    | 'volume'
-    | 'system-icons'
-    | null = null;
+  @property({type: String}) activePanel: ActivePanel | null = null;
 
   private _handleExpandedTypeClick() {
     this.menuOpen = !this.menuOpen;
@@ -242,7 +232,7 @@ export class ObcSystemButton extends LitElement {
   }
 
   private _handleMicrophoneActionClick = () => {
-    this.activePanel = 'microphone';
+    this.activePanel = ActivePanel.microphone;
     this.menuOpen = true;
     /**
      * Fired when the microphone action segment is activated.
@@ -254,7 +244,7 @@ export class ObcSystemButton extends LitElement {
   };
 
   private _handleVolumeActionClick = () => {
-    this.activePanel = 'volume';
+    this.activePanel = ActivePanel.volume;
     this.menuOpen = true;
     /**
      * Fired when the volume action segment is activated.
@@ -266,7 +256,7 @@ export class ObcSystemButton extends LitElement {
   };
 
   private _handleSystemIconsActionClick = () => {
-    this.activePanel = 'system-icons';
+    this.activePanel = ActivePanel.systemIcons;
     this.menuOpen = true;
     /**
      * Fired when the system icons action segment is activated.
@@ -282,15 +272,15 @@ export class ObcSystemButton extends LitElement {
     let buttonCount = 0;
 
     // Count enabled buttons first to determine segment positions
-    if (this.systemState.microphone.enabled) buttonCount++;
-    if (this.systemState.audio.enabled) buttonCount++;
+    if (this.systemState.microphone !== undefined) buttonCount++;
+    if (this.systemState.audio !== undefined) buttonCount++;
     // Always show system icons button
     buttonCount++;
 
     let currentIndex = 0;
 
     // Microphone button
-    if (this.systemState.microphone.enabled) {
+    if (this.systemState.microphone !== undefined) {
       const segmentPosition =
         buttonCount === 1
           ? 'single'
@@ -316,7 +306,7 @@ export class ObcSystemButton extends LitElement {
     }
 
     // Volume button
-    if (this.systemState.audio.enabled) {
+    if (this.systemState.audio !== undefined) {
       const segmentPosition =
         buttonCount === 1
           ? 'single'
@@ -364,7 +354,7 @@ export class ObcSystemButton extends LitElement {
   }
 
   private _renderMicrophoneIcon() {
-    if (!this.systemState.microphone.enabled) return nothing;
+    if (this.systemState.microphone === undefined) return nothing;
 
     if (this.systemState.microphone.muted) {
       return html`<obi-com-mic-muted-google></obi-com-mic-muted-google>`;
@@ -374,7 +364,7 @@ export class ObcSystemButton extends LitElement {
   }
 
   private _renderVolumeIcon() {
-    if (!this.systemState.audio.enabled) return nothing;
+    if (this.systemState.audio === undefined) return nothing;
 
     const volume = this.systemState.audio.volume;
     const muted = this.systemState.audio.muted;
@@ -394,7 +384,7 @@ export class ObcSystemButton extends LitElement {
   }
 
   private _renderWifiIcon() {
-    if (!this.systemState.wifi.enabled) return nothing;
+    if (this.systemState.wifi === undefined) return nothing;
 
     if (!this.systemState.wifi.connected) {
       return html`<obi-wifi2-off-google></obi-wifi2-off-google>`;
@@ -418,7 +408,7 @@ export class ObcSystemButton extends LitElement {
   }
 
   private _renderGpsIcon() {
-    if (!this.systemState.gps.enabled) return nothing;
+    if (this.systemState.gps === undefined) return nothing;
 
     if (!this.systemState.gps.connected) {
       return html`<obi-sensor-gps-bad></obi-sensor-gps-bad>`;
@@ -440,34 +430,21 @@ export class ObcSystemButton extends LitElement {
   }
 
   private _renderBatteryIcon() {
-    if (!this.systemState.battery.enabled) return nothing;
+    if (this.systemState.battery === undefined) return nothing;
 
     const level = this.systemState.battery.level;
     const charging = this.systemState.battery.charging;
-
-    if (charging) {
-      // Charging icons
-      if (level >= 100)
-        return html`<obi-battery-horizontal-charging-100></obi-battery-horizontal-charging-100>`;
-      if (level >= 50)
-        return html`<obi-battery-horizontal-charging-50></obi-battery-horizontal-charging-50>`;
-      if (level >= 25)
-        return html`<obi-battery-horizontal-charging-25></obi-battery-horizontal-charging-25>`;
-      return html`<obi-battery-horizontal-charging-empty></obi-battery-horizontal-charging-empty>`;
-    } else {
-      // Regular battery icons
-      if (level >= 100)
-        return html`<obi-battery-horizontal-100></obi-battery-horizontal-100>`;
-      if (level >= 75)
-        return html`<obi-battery-horizontal-75></obi-battery-horizontal-75>`;
-      if (level >= 50)
-        return html`<obi-battery-horizontal-50></obi-battery-horizontal-50>`;
-      if (level >= 25)
-        return html`<obi-battery-horizontal-25></obi-battery-horizontal-25>`;
-      if (level > 0)
-        return html`<obi-battery-horizontal-low></obi-battery-horizontal-low>`;
-      return html`<obi-battery-horizontal-empty></obi-battery-horizontal-empty>`;
-    }
+    const poweredNotCharging =
+      this.systemState.battery.poweredNotCharging ?? false;
+    const notification = this.systemState.battery.notification ?? false;
+    return html`<obc-battery-icon
+      class="icon"
+      .level=${level}
+      .charging=${charging}
+      .poweredNotCharging=${poweredNotCharging}
+      .notification=${notification}
+      horizontal
+    ></obc-battery-icon>`;
   }
 
   override render() {

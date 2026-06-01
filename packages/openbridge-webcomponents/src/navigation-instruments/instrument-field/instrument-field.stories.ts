@@ -8,7 +8,10 @@ const meta: Meta<typeof ObcInstrumentField> = {
   title: 'Instruments/Instrument Field',
   tags: ['autodocs', '6.0'],
   component: 'obc-instrument-field',
-  args: {},
+  args: {
+    setpoint: 0,
+    value: 0,
+  },
   argTypes: {
     size: {
       control: 'select',
@@ -25,6 +28,16 @@ export const Primary: Story = {
     setpoint: 123,
     hasSetpoint: true,
     value: 123,
+    tag: 'HDG',
+    unit: 'DEG',
+  },
+};
+
+export const UndefinedSetpoint: Story = {
+  args: {
+    setpoint: undefined,
+    hasSetpoint: true,
+    value: undefined,
     tag: 'HDG',
     unit: 'DEG',
   },
@@ -132,44 +145,6 @@ export const VerticalCenter: Story = {
     neutralColor: true,
     tag: 'Speed',
     unit: 'kn',
-  },
-};
-
-export const HorizontalWithSrcPicker: Story = {
-  args: {
-    horizontal: true,
-    size: InstrumentFieldSize.enhanced,
-    hasSetpoint: true,
-    hasSrc: true,
-    setpoint: 123,
-    value: 63,
-    tag: 'Speed',
-    unit: 'KN',
-    src: 'GPS',
-    hasSrcPicker: true,
-  },
-  render: (args) => {
-    return html`
-      <obc-instrument-field
-        .size=${args.size}
-        .hasSetpoint=${args.hasSetpoint}
-        .hasSrc=${args.hasSrc}
-        .setpoint=${args.setpoint}
-        .value=${args.value}
-        .tag=${args.tag}
-        .unit=${args.unit}
-        .src=${args.src}
-        .hasSrcPicker=${args.hasSrcPicker}
-        .horizontal=${args.horizontal}
-      >
-        <div slot="src-picker-content">
-          <obc-navigation-item label="GPS"></obc-navigation-item>
-          <obc-navigation-item label="GLONASS"></obc-navigation-item>
-          <obc-navigation-item label="BEIDOU"></obc-navigation-item>
-          <obc-navigation-item label="GALILEO"></obc-navigation-item>
-        </div>
-      </obc-instrument-field>
-    `;
   },
 };
 

@@ -7,7 +7,7 @@ import '../../icons/icon-command-in.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcSlideButton> = {
-  title: 'UI Components/Buttons/Slide button',
+  title: 'UI Components/Buttons/Slide Button',
   tags: ['6.0'],
   component: 'obc-slide-button',
   args: {},

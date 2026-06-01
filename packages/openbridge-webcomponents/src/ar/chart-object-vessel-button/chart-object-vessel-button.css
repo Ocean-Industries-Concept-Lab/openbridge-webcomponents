@@ -1,0 +1,331 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  width: fit-content;
+  display: block;
+}
+
+.wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--maneuvering-components-poi-button-touch-target);
+  height: var(--maneuvering-components-poi-button-touch-target);
+  appearance: none;
+  border: none;
+  background: transparent;
+
+  color: var(--on-flat-active-color);
+
+  flex-shrink: 0;
+  --label-y-offset: 16px;
+  --label-x-offset: 12px;
+
+  &:has(.selection-frame) {
+    --label-y-offset: 8px;
+    --label-x-offset: 8px;
+  }
+
+  .visible-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    flex-direction: column;
+    border: 1px solid transparent;
+  }
+
+  &.type-flat {
+    .visible-wrapper {
+      width: 36px;
+      height: 36px;
+    }
+
+    &.has-alert {
+      --label-y-offset: 4px;
+      --label-x-offset: 4px;
+
+      .selection-frame {
+        width: 44px;
+        height: 44px;
+      }
+    }
+  }
+
+  &.type-flat-large,
+  &.type-large,
+  &.type-flat-speed-rot,
+  &.type-button-speed-rot {
+    width: 64px;
+    height: 64px;
+
+    .icon-wrapper {
+      width: 36px;
+      height: 36px;
+    }
+
+    .selection-frame {
+      width: 43px;
+      height: 43px;
+    }
+
+    .visible-wrapper {
+      width: 52px;
+      height: 52px;
+      border-radius: 100%;
+    }
+
+    &.has-alert {
+      --label-y-offset: 4px;
+      --label-x-offset: 4px;
+
+      .selection-frame {
+        width: 60px;
+        height: 60px;
+      }
+    }
+  }
+
+  &.type-flat-speed-rot,
+  &.type-button-speed-rot {
+    .icon-wrapper {
+      width: 24px;
+      height: 24px;
+    }
+
+    .selection-frame {
+      width: 55px;
+      height: 55px;
+    }
+
+    &:has(.selection-frame) {
+      --label-y-offset: 4px;
+      --label-x-offset: 4px;
+    }
+
+    &.has-alert {
+      .selection-frame {
+        width: 60px;
+        height: 60px;
+      }
+    }
+  }
+
+  &.type-large,
+  &.type-button-speed-rot {
+    --label-y-offset: 8px;
+    --label-x-offset: 8px;
+
+    .selection-frame {
+      width: 56px;
+      height: 56px;
+    }
+
+    &:has(.selection-frame) {
+      --label-y-offset: 4px;
+      --label-x-offset: 4px;
+    }
+  }
+
+  &.type-button,
+  &.type-large,
+  &.type-button-speed-rot {
+    @mixin style style=normal visibleWrapperClass=.visible-wrapper;
+  }
+
+  &.type-button {
+    .visible-wrapper {
+      width: var(--maneuvering-components-poi-button-visual-target-round);
+      height: var(--maneuvering-components-poi-button-visual-target-round);
+      border-radius: 100%;
+    }
+
+    --label-y-offset: 8px;
+    --label-x-offset: 8px;
+
+    &:has(.selection-frame) {
+      --label-y-offset: 4px;
+      --label-x-offset: 4px;
+
+      .selection-frame {
+        width: 40px;
+        height: 40px;
+      }
+    }
+
+    &.has-alert {
+      --label-y-offset: 4px;
+      --label-x-offset: 4px;
+      .selection-frame {
+        width: 44px;
+        height: 44px;
+      }
+    }
+  }
+}
+
+.icon-wrapper {
+  width: 24px;
+  height: 24px;
+  position: relative;
+
+  .icon-silhouette,
+  .icon-primary {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .icon-silhouette {
+    stroke: var(--border-silhouette-color);
+    stroke-width: 2;
+    z-index: -1;
+  }
+
+  .icon-primary {
+    --element-active-color: var(--on-flat-active-color);
+  }
+}
+
+.state-alarm {
+  .icon-primary {
+    --element-active-color: var(--alert-alarm-outline-color);
+  }
+  color: var(--alert-alarm-outline-color);
+}
+
+.alert-ring {
+  position: absolute;
+  top: -3.5px;
+  left: -3.5px;
+  right: -3.5px;
+  bottom: -3.5px;
+  border-radius: 100%;
+  border: 5px solid var(--alert-alarm-outline-color);
+  outline: 4px solid var(--alert-alarm-color);
+  outline-offset: -4.5px;
+}
+
+.state-caution {
+  .alert-ring {
+    outline-color: var(--alert-caution-color);
+    border-color: var(--alert-caution-outline-color);
+  }
+}
+
+.state-warning {
+  .alert-ring {
+    outline-color: var(--alert-warning-color);
+    border-color: var(--alert-warning-outline-color);
+  }
+}
+
+.number-wrapper,
+.name-wrapper {
+  position: absolute;
+  top: calc(100% - var(--label-y-offset));
+  @mixin font-instrument-value-small-neutral;
+  color: var(--element-active-color);
+  text-wrap: nowrap;
+  transition:
+    top 100ms ease,
+    left 100ms ease,
+    right 100ms ease;
+}
+
+.number-wrapper {
+  right: calc(100% - var(--label-x-offset));
+}
+
+.name-wrapper {
+  left: calc(100% - var(--label-x-offset));
+}
+
+.state-active,
+.wrapper:has(.selection-frame),
+.state-warning,
+.state-caution,
+.state-alarm {
+  .number-wrapper,
+  .name-wrapper {
+    @mixin font-instrument-value-small-active;
+  }
+}
+
+.selection-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: auto;
+  bottom: 0;
+  right: 0;
+  width: 31px;
+  height: 31px;
+  border-radius: 4px;
+  transition:
+    width 100ms ease,
+    height 100ms ease;
+
+  border: 1.5px solid var(--element-active-color);
+  clip-path: polygon(
+    /* top left */ 8px 0,
+    0 0,
+    0 8px,
+    8px 8px,
+    /* top right */ calc(100% - 8px) 8px,
+    calc(100% - 8px) 0,
+    100% 0,
+    100% 8px,
+    calc(100% - 8px) 8px,
+    /* bottom right */ calc(100% - 8px) calc(100% - 8px),
+    calc(100% - 8px) 100%,
+    100% 100%,
+    100% calc(100% - 8px),
+    calc(100% - 8px) calc(100% - 8px),
+    /* bottom left */ 8px calc(100% - 8px),
+    0 calc(100% - 8px),
+    0 100%,
+    8px 100%,
+    8px calc(100% - 8px)
+  );
+}
+
+.course-arrow {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(calc(var(--course)));
+  transform-origin: center bottom;
+}
+
+.cross-line {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(calc(var(--heading)));
+  transform-origin: center center;
+}
+
+.vessel-image-wrapper {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(calc(var(--heading)));
+  transform-origin: center center;
+
+  & > slot {
+    width: var(--image-size);
+    height: var(--image-size);
+  }
+
+  & > svg {
+    width: calc(var(--image-size) * 160 / 136.87);
+    height: calc(var(--image-size) * 160 / 136.87);
+  }
+}

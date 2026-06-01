@@ -64,7 +64,7 @@
   color: var(--element-active-color);
 
   .status {
-    @mixin font-instrument-value-large;
+    @mixin font-instrument-value-enhanced-active;
   }
 
   .description {

@@ -1,0 +1,56 @@
+:host {
+  display: inline-flex;
+  isolation: isolate;
+}
+
+obc-toggle-button-group {
+  width: fit-content;
+}
+
+obc-toggle-button-option {
+  &::part(icon) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &.success {
+    --selected-enabled-background-color: var(--alert-success-color);
+    --selected-enabled-border-color: var(--alert-success-outline-color);
+    --selected-hover-background-color: var(--alert-success-color);
+    --selected-hover-border-color: var(--alert-success-outline-color);
+    --selected-pressed-background-color: var(--alert-success-color);
+    --selected-pressed-border-color: var(--alert-success-outline-color);
+    --selected-focused-background-color: var(--alert-success-color);
+    --selected-focused-border-color: var(--alert-success-outline-color);
+  }
+
+  &.error {
+    --selected-enabled-background-color: var(--alert-error-color);
+    --selected-enabled-border-color: var(--alert-error-outline-color);
+    --selected-hover-background-color: var(--alert-error-color);
+    --selected-hover-border-color: var(--alert-error-outline-color);
+    --selected-pressed-background-color: var(--alert-error-color);
+    --selected-pressed-border-color: var(--alert-error-outline-color);
+    --selected-focused-background-color: var(--alert-error-color);
+    --selected-focused-border-color: var(--alert-error-outline-color);
+  }
+
+  &.neutral {
+    --selected-enabled-background-color: var(--element-active-inverted-color);
+    --selected-enabled-border-color: var(--normal-enabled-border-color);
+    --selected-hover-background-color: var(--element-active-inverted-color);
+    --selected-hover-border-color: var(--normal-enabled-border-color);
+    --selected-pressed-background-color: var(--element-active-inverted-color);
+    --selected-pressed-border-color: var(--normal-enabled-border-color);
+    --selected-focused-background-color: var(--element-active-inverted-color);
+    --selected-focused-border-color: var(--normal-enabled-border-color);
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--on-normal-neutral-color);
+  }
+}

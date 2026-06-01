@@ -1,8 +1,13 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {CompassDirection, ObcHeading} from './heading.js';
+import {
+  CompassDirection,
+  HeadingPriorityElement,
+  ObcHeading,
+} from './heading.js';
 import './heading.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
+import {Priority} from '../types.js';
 
 const meta: Meta<typeof ObcHeading> = {
   title: 'Instruments/Heading',
@@ -12,6 +17,7 @@ const meta: Meta<typeof ObcHeading> = {
     width: 512,
     heading: 311,
     courseOverGround: 338,
+    showLabels: true,
     headingAdvices: [
       {
         minAngle: 20,
@@ -20,17 +26,27 @@ const meta: Meta<typeof ObcHeading> = {
         hinted: false,
       },
     ],
-    headingSetPoint: 311,
+    headingSetpoint: 311,
     direction: CompassDirection.NorthUp,
+    touching: false,
+    priorityElements: [HeadingPriorityElement.hdg],
   },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
     heading: {control: {type: 'range', min: 0, max: 360, step: 1}},
     courseOverGround: {control: {type: 'range', min: 0, max: 360, step: 1}},
-    headingSetPoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
+    headingSetpoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
     direction: {
       control: {type: 'select'},
       options: Object.values(CompassDirection),
+    },
+    touching: {control: 'boolean'},
+    showLabels: {control: 'boolean'},
+    tickmarksInside: {control: 'boolean'},
+    priority: {control: 'select', options: Object.values(Priority)},
+    priorityElements: {
+      control: 'multi-select',
+      options: Object.values(HeadingPriorityElement),
     },
   },
   decorators: [widthDecorator],
@@ -41,13 +57,13 @@ type Story = StoryObj<ObcHeading>;
 
 export const Primary: Story = {
   args: {
-    headingSetPoint: undefined,
+    headingSetpoint: undefined,
   },
 };
 
 export const Enhanced: Story = {
   args: {
-    enhanced: true,
-    headingSetPoint: 311,
+    priority: Priority.enhanced,
+    headingSetpoint: 311,
   },
 };

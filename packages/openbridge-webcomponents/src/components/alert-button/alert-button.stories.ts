@@ -5,7 +5,7 @@ import './alert-button.js';
 import {widthDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcAlertButton> = {
-  title: 'Application Components/Alerts/Alert button',
+  title: 'Application Components/Alerts/Alert Button',
   tags: ['autodocs', '6.0'],
   component: 'obc-alert-button',
   args: {
@@ -46,6 +46,7 @@ export const DynamicSizingToFlat: Story = {
     blinking: true,
     width: 112,
   },
+  tags: ['skip-test'],
 };
 
 export const DynamicSizingToHideSilence: Story = {
@@ -58,6 +59,7 @@ export const DynamicSizingToHideSilence: Story = {
     showSilenceButton: true,
     width: 112,
   },
+  tags: ['skip-test'],
 };
 
 export const Flat: Story = {

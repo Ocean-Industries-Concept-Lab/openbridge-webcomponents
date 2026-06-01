@@ -3,12 +3,21 @@ import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './advice-message-item.css?inline';
 import '../topbar-message-item/topbar-message-item.js';
-import {
-  ObcTopbarMessageItemType,
-  ObcTopbarMessageItemSize,
-} from '../topbar-message-item/topbar-message-item.js';
+import {ObcTopbarMessageItemType} from '../topbar-message-item/topbar-message-item.js';
 import '../../icons/icon-notification-advice-active.js';
 import '../../icons/icon-close-google.js';
+
+export enum ObcAdviceMessageItemType {
+  Simple = 'simple',
+  WithButton = 'with-button',
+  WithIconButton = 'with-icon-button',
+  Inactive = 'inactive',
+}
+
+export enum ObcAdviceMessageItemSize {
+  Regular = 'regular',
+  Tall = 'tall',
+}
 
 /**
  * `<obc-advice-message-item>` – A compact, actionable message component for displaying system advice, recommendations, or notifications.
@@ -148,11 +157,8 @@ export class ObcAdviceMessageItem extends LitElement {
    *
    * Default: `simple`
    */
-  @property({type: String}) type:
-    | 'simple'
-    | 'with-button'
-    | 'with-icon-button'
-    | 'inactive' = 'simple';
+  @property({type: String}) type: ObcAdviceMessageItemType =
+    ObcAdviceMessageItemType.Simple;
 
   /**
    * Size variant of the advice message.
@@ -161,25 +167,26 @@ export class ObcAdviceMessageItem extends LitElement {
    *
    * Default: `regular`
    */
-  @property({type: String}) size: 'regular' | 'tall' = 'regular';
+  @property({type: String}) size: ObcAdviceMessageItemSize =
+    ObcAdviceMessageItemSize.Regular;
 
   /**
    * Whether to show the title.
    * If false, the title is hidden even if set.
    */
-  @property({type: Boolean}) hasTitle = true;
+  @property({type: Boolean, attribute: false}) showTitle: boolean = true;
 
   /**
    * Whether to show the description.
    * If false, the description is hidden even if set.
    */
-  @property({type: Boolean}) hasDescription = true;
+  @property({type: Boolean, attribute: false}) showDescription: boolean = true;
 
   /**
    * Whether to show the primary timestamp.
    * If false, the `time` slot is not rendered.
    */
-  @property({type: Boolean}) hasTimestamp = true;
+  @property({type: Boolean, attribute: false}) showTimestamp: boolean = true;
 
   /**
    * Whether to show the secondary timestamp.
@@ -194,47 +201,26 @@ export class ObcAdviceMessageItem extends LitElement {
   @property({type: Boolean}) hasSecondaryIcon = false;
 
   /**
-   * **DEPRECATED:** Use `size="tall"` instead.
-   * If true, renders the tall layout variant.
-   */
-  @property({type: Boolean}) large = false;
-
-  /**
-   * **DEPRECATED:** Use `type="inactive"` instead.
-   * If true, renders the empty/inactive state.
-   */
-  @property({type: Boolean}) empty = false;
-
-  /**
    * Text to display in the empty/inactive state.
    * Shown in the `empty` slot when `type="inactive"` or `empty` is true.
    */
   @property({type: String}) emptyText = 'No active advice';
 
   private get mappedType(): ObcTopbarMessageItemType {
-    if (this.empty || this.type === 'inactive') {
+    if (this.type === ObcAdviceMessageItemType.Inactive) {
       return ObcTopbarMessageItemType.Inactive;
     }
 
     switch (this.type) {
-      case 'with-button':
+      case ObcAdviceMessageItemType.WithButton:
         return ObcTopbarMessageItemType.WithButton;
-      case 'with-icon-button':
+      case ObcAdviceMessageItemType.WithIconButton:
         return ObcTopbarMessageItemType.WithIconButton;
-      case 'simple':
+      case ObcAdviceMessageItemType.Simple:
         return ObcTopbarMessageItemType.Simple;
       default:
         return ObcTopbarMessageItemType.Simple;
     }
-  }
-
-  private get mappedSize(): ObcTopbarMessageItemSize {
-    if (this.large) {
-      return ObcTopbarMessageItemSize.Tall;
-    }
-    return this.size === 'tall'
-      ? ObcTopbarMessageItemSize.Tall
-      : ObcTopbarMessageItemSize.Regular;
   }
 
   /**
@@ -257,14 +243,12 @@ export class ObcAdviceMessageItem extends LitElement {
     return html`
       <obc-topbar-message-item
         .type=${this.mappedType}
-        .size=${this.mappedSize}
-        .hasTitle=${this.hasTitle}
-        .hasDescription=${this.hasDescription}
-        .hasTimestamp=${this.hasTimestamp}
+        .size=${this.size}
+        .showTitle=${this.showTitle}
+        .showDescription=${this.showDescription}
+        .showTimestamp=${this.showTimestamp}
         .hasTimestamp2=${this.hasTimestamp2}
         .hasSecondaryIcon=${this.hasSecondaryIcon}
-        .large=${this.large}
-        .empty=${this.empty}
         @message-click=${this.handleMessageClick}
         @action-click=${this.handleActionClick}
       >
@@ -275,21 +259,21 @@ export class ObcAdviceMessageItem extends LitElement {
         ${this.hasSecondaryIcon
           ? html`<slot name="secondary-icon" slot="secondary-icon"></slot>`
           : nothing}
-        ${this.title && this.hasTitle
+        ${this.title && this.showTitle
           ? html`<span slot="title">${this.title}</span>`
           : nothing}
-        ${this.description && this.hasDescription
+        ${this.description && this.showDescription
           ? html`<span slot="description">${this.description}</span>`
           : nothing}
-        ${this.time && this.hasTimestamp
+        ${this.time && this.showTimestamp
           ? html`<span slot="time">${this.time}</span>`
           : nothing}
         ${this.timeSecondary && this.hasTimestamp2
           ? html`<span slot="time-secondary">${this.timeSecondary}</span>`
           : nothing}
-        ${this.type === 'with-button'
+        ${this.type === ObcAdviceMessageItemType.WithButton
           ? html`<span slot="action-text">${this.actionLabel}</span>`
-          : this.type === 'with-icon-button'
+          : this.type === ObcAdviceMessageItemType.WithIconButton
             ? html`<obi-close-google slot="action-icon"></obi-close-google>`
             : nothing}
 

@@ -64,7 +64,7 @@ export enum ObcElevatedCardTag {
  *   - `multi-line`: Label + multi-line description.
  * - **Interactive or static:**
  *   - Clickable by default (renders as `<button>` or `<a>` if `href` is set).
- *   - Set `notClickable` for a static card (renders as `<article>`).
+ *   - Set `isClickable` to false for a static card (renders as `<article>`).
  *   - Use `overrideTag` to force a specific HTML tag.
  * - **Icons and graphics:**
  *   - Leading icon (`leading-icon` slot).
@@ -85,7 +85,7 @@ export enum ObcElevatedCardTag {
  * - Ideal for presenting summaries, selectable items, or actionable content.
  * - Use the `action` slot for a primary card action (e.g., "View", "Edit").
  * - Use `position` to visually group cards in a stack (e.g., top/middle/bottom).
- * - For non-interactive cards (purely informational), set `notClickable` or use `overrideTag="article"`.
+ * - For non-interactive cards (purely informational), set `isClickable` to false or use `overrideTag="article"`.
  * - For navigation, set `href` to make the card a link.
  * - Use `graphic` for prominent illustrations or icons at the top of the card.
  * - For simple labels or navigation, use `single-line` or `double-line` size.
@@ -112,8 +112,8 @@ export enum ObcElevatedCardTag {
  * - Only use one primary action per card to keep interactions clear.
  * - For stacked layouts, use `position` and `border` to visually group cards.
  * - Use `graphic` for cards that need a strong visual or illustration.
- * - Use `notClickable` for informational cards that should not be interactive.
- * - If both `hasAction` and `notClickable` are set, the card is rendered as static with an action button.
+ * - Set `isClickable` to false for informational cards that should not be interactive.
+ * - If both `hasAction` and `isClickable` is false, the card is rendered as static with an action button.
  * - When using as a link, set both `href` and `target` as needed.
  * - The `overrideTag` property allows advanced control over the rendered HTML element.
  *
@@ -165,7 +165,7 @@ export class ObcElevatedCard extends LitElement {
    * - `a`: Renders as an <a> anchor (when `href` is set).
    * - `article`: Renders as an <article> (for non-interactive or action cards).
    * - `div`: Renders as a <div> (generic container).
-   * If not set, the tag is determined automatically based on `href` and `notClickable`.
+   * If not set, the tag is determined automatically based on `href` and `isClickable`.
    */
   @property({type: String}) overrideTag: ObcElevatedCardTag | undefined;
 
@@ -174,7 +174,7 @@ export class ObcElevatedCard extends LitElement {
    * When set, the card uses `<article>` as its tag unless overridden.
    * Useful for informational or status cards that should not be interactive.
    */
-  @property({type: Boolean}) notClickable = false;
+  @property({type: Boolean, attribute: false}) isClickable: boolean = true;
 
   /**
    * Applies an informational style to the card.
@@ -197,7 +197,7 @@ export class ObcElevatedCard extends LitElement {
   /**
    * If true, displays an action button in the card.
    * The button's content is provided via the `action` slot.
-   * When set, the card is rendered as static (`notClickable` is forced true).
+   * When set, the card is rendered as static (`isClickable` is forced false).
    */
   @property({type: Boolean}) hasAction = false;
 
@@ -242,7 +242,7 @@ export class ObcElevatedCard extends LitElement {
 
   override render() {
     let tag = this.href ? literal`a` : literal`button`;
-    tag = this.notClickable ? literal`article` : tag;
+    tag = !this.isClickable ? literal`article` : tag;
     if (this.overrideTag !== undefined) {
       switch (this.overrideTag) {
         case ObcElevatedCardTag.Anchor:
@@ -263,7 +263,7 @@ export class ObcElevatedCard extends LitElement {
     }
     if (this.hasAction) {
       tag = literal`article`;
-      this.notClickable = true;
+      this.isClickable = false;
     }
     return html`
     <div class="wrapper ${this.position}">
@@ -278,7 +278,7 @@ export class ObcElevatedCard extends LitElement {
           'has-trailing-icon': this.hasTrailingIcon,
           'has-graphic': this.hasGraphic,
           'has-status': this.hasStatus,
-          'not-clickable': this.notClickable,
+          'not-clickable': !this.isClickable,
           'has-action': this.hasAction,
           compact: this.compact,
           'direct-action': this.directAction,

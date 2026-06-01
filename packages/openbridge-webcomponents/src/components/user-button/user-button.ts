@@ -167,7 +167,7 @@ export class ObcUserButton extends LitElement {
 
     const label =
       this.label && !this.static
-        ? html`<span class="user-label">${this.label}</span>`
+        ? html`<span class="user-label" part="label">${this.label}</span>`
         : nothing;
 
     return html`
@@ -176,7 +176,7 @@ export class ObcUserButton extends LitElement {
           ?disabled=${this.disabled}
           aria-label=${this.initials || 'User button'}
         >
-        <div class="content-container">
+        <div class="content-container" part="content-container">
           <div class="user-button-circle">
             ${
               this.shouldShowIcon

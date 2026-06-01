@@ -1,0 +1,71 @@
+* {
+  box-sizing: border-box;
+  user-select: text;
+}
+
+.wrapper {
+  @mixin base-input-field-wrapper;
+  @mixin base-input-field-sizes;
+
+  &.error .unit-text {
+    color: var(--element-neutral-color);
+  }
+}
+
+/* Shared base styles */
+@mixin base-input-field-all;
+
+.wrapper.align-center .label-container,
+.wrapper.wrapper.align-right .label-container {
+  align-items: baseline;
+}
+
+/* Number input specific: text alignment */
+.value-input {
+  text-align: right;
+}
+
+.squared .input-field-container {
+  border-radius: 0;
+}
+
+/* Unit */
+.unit-text {
+  @mixin font-instrument-unit;
+  color: var(--element-inactive-color);
+  white-space: nowrap;
+  height: var(--global-typography-instrument-unit-line-height);
+  user-select: none;
+
+  &.external {
+    padding-left: var(
+      --ui-components-input-fields-number-input-field-unit-container-padding-left
+    );
+  }
+}
+
+.wrapper.align-center .label-container:focus-within .unit-text {
+  color: var(--element-neutral-color);
+}
+
+/* Alignment variants */
+.wrapper.align-center .label-container {
+  justify-content: center;
+}
+
+.wrapper .value-input {
+  text-align: right;
+  padding: 0;
+}
+
+.wrapper.align-center .value-input {
+  width: var(--obc-number-input-center-width, auto);
+  min-width: var(--obc-number-input-center-width, 40px);
+  text-align: right;
+  flex: 0 0 auto;
+}
+
+.wrapper.align-right .label-container,
+.wrapper.align-right-unit-outside .label-container {
+  justify-content: flex-end;
+}

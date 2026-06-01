@@ -5,7 +5,7 @@ import './input-chip.js';
 import '../../icons/icon-placeholder.js';
 
 const meta: Meta<ObcInputChip> = {
-  title: 'UI Components/Selection controls and switches/Input Chip',
+  title: 'UI Components/Selection Controls and Switches/Input Chip',
   tags: ['6.0'],
   component: 'obc-input-chip',
   argTypes: {

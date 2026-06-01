@@ -3,6 +3,7 @@ import {live} from 'lit/directives/live.js';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import radioStyles from './radio.css?inline';
+import {classMap} from 'lit/directives/class-map.js';
 
 /**
  * `<obc-radio>` – A single radio button component for selecting one option from a set.
@@ -47,7 +48,7 @@ import radioStyles from './radio.css?inline';
  * <obc-radio label="Option B" name="group1" value="B" inputId="radioB"></obc-radio>
  * ```
  * In this example, only one radio can be selected at a time within the "group1" group.
- *
+ * @fires change - Fired when the radio is changed.
  * @slot - No named slots; content is provided via properties.
  */
 @customElement('obc-radio')
@@ -182,15 +183,33 @@ export class ObcRadio extends LitElement {
   }
 
   onClick() {
+    if (this.disabled) {
+      return;
+    }
     this.renderRoot.querySelector('input')?.click();
+  }
+
+  onChange(event: Event) {
+    event.stopPropagation();
+    const target = event.target as HTMLInputElement;
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        detail: {value: target.value, checked: target.checked},
+      })
+    );
   }
 
   override render() {
     if (this.label !== undefined) {
+      const labelClasses = {
+        'has-label': true,
+        'obc-radio-button': true,
+        disabled: this.disabled,
+      };
       return html`
         <label
           for=${this.inputId}
-          class="has-label obc-radio-button"
+          class=${classMap(labelClasses)}
           @click=${this.onClick}
         >
           <input
@@ -201,6 +220,7 @@ export class ObcRadio extends LitElement {
             ?checked=${live(this.checked)}
             ?disabled=${this.disabled}
             ?required=${this.required}
+            @change=${this.onChange}
           />
           <span class="label">${this.label}</span>
         </label>
@@ -216,6 +236,7 @@ export class ObcRadio extends LitElement {
           ?checked=${live(this.checked)}
           ?disabled=${this.disabled}
           ?required=${this.required}
+          @change=${this.onChange}
         />
       `;
     }

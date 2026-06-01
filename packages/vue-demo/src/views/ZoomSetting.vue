@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import SettingCard from '@/components/SettingCard.vue'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-resize-corner'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-resize-corner'
 import { ref } from 'vue'
 import { useDemoConfigStore } from '@/stores/demoConfig'
 

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import ObcTopbarMessageItem from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/topbar-message-item/ObcTopbarMessageItem.vue'
-import ObcAlertButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-button/ObcAlertButton.vue'
+import ObcTopbarMessageItem from '@oicl/openbridge-webcomponents-vue/components/topbar-message-item/ObcTopbarMessageItem.vue'
+import ObcAlertButton from '@oicl/openbridge-webcomponents-vue/components/alert-button/ObcAlertButton.vue'
 import AlertIcon from './AlertIcon.vue'
-import { ObcTopbarMessageItemType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/topbar-message-item/topbar-message-item'
-import { ObcAlertButtonType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-button/alert-button'
-import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item'
-import { AlertType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/types'
+import { ObcTopbarMessageItemType } from '@oicl/openbridge-webcomponents/dist/components/topbar-message-item/topbar-message-item'
+import { ObcAlertButtonType } from '@oicl/openbridge-webcomponents/dist/components/alert-button/alert-button'
+import { ObcAlertMenuItemStatus } from '@oicl/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item'
+import { AlertType } from '@oicl/openbridge-webcomponents/dist/types'
 import { useAlertStore } from '../stores/alert'
 
 const alertStore = useAlertStore()
@@ -57,9 +57,9 @@ const onMuteAlert = () => {
         ? ObcTopbarMessageItemType.WithButton
         : ObcTopbarMessageItemType.WithIconButton
     "
-    has-description
-    has-title
-    has-timestamp
+    show-description
+    show-title
+    show-timestamp
     :empty="visibleAlert === null"
     @action-click="onAckAlert"
     @message-click="onToggleAlertMenu"

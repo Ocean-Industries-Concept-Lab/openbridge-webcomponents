@@ -26,34 +26,34 @@ This will start a development server, typically accessible at `http://localhost:
 
 ## Install OpenBridge web components angular wrapper
 
-To use the components in your project, you can install the package from github package repo.
+To use the components in your project, you can install the package from GitHub package repo.
 
-Start by creating a classic personal access token in github
-Go to [github settings](https://github.com/settings/tokens/new) to make a classic token. Give the token the `read:packages` permission. Click "Generate token" and copy the token.
+Start by creating a classic personal access token in GitHub
+Go to [GitHub settings](https://github.com/settings/tokens/new) to make a classic token. Give the token the `read:packages` permission. Click "Generate token" and copy the token.
 
-Login into github package repo:
+Login into GitHub package repo:
 
 ```bash
-npm login --registry https://npm.pkg.github.com/ --scope=ocean-industries-concept-lab
+npm login --registry https://npm.pkg.github.com/ --scope=@oicl
 ```
 
-Use our github username as username and past in the generated token as password.
+Use our GitHub username as username and past in the generated token as password.
 
 You can now install the package:
 
 ```bash
-npm install @obc-ng
+npm install @oicl/openbridge-webcomponents-ng
 ```
 
 ## Include the wrapper in the tsconfig
 
-The angular wrapper requires that the project builds the wrapper components. Open `tsconfig.app.json` and add `"./node_modules/@obc-ng/src/**/*.ts"` to the `include` array.
+The angular wrapper requires that the project builds the wrapper components. Open `tsconfig.app.json` and add `"./node_modules/@oicl/openbridge-webcomponents-ng/src/**/*.ts"` to the `include` array.
 
-To make it easier to import the components you can also add a path mapping. Open `tsconfig.app.json`, in the `compilerOptions` add:
+To make it easier to import the components you can also add a path mapping. In the same file, in the `compilerOptions` add:
 
 ```json
     "paths": {
-      "@obc/*": ["./node_modules/@obc-ng/src/*"],
+      "@obc/*": ["./node_modules/@oicl/openbridge-webcomponents-ng/src/*"],
     }
 ```
 
@@ -61,9 +61,9 @@ To make it easier to import the components you can also add a path mapping. Open
 
 ### Clean up the generated project
 
-Remove content in app.component.html
+Remove content in app.html
 
-app.component.html:
+app.html:
 
 ```html
 <router-outlet />
@@ -71,7 +71,7 @@ app.component.html:
 
 ### Add topbar
 
-Import the topbar to the `app.component.ts`
+Import the topbar to the `app.ts`
 
 ```ts {1,8-10}
 import { Component } from "@angular/core";
@@ -81,15 +81,15 @@ import { ObcTopBar } from "@obc/components/top-bar/top-bar";
 @Component({
   selector: "app-root",
   imports: [RouterOutlet, ObcTopBar],
-  templateUrl: "./app.component.html",
-  styleUrl: "./app.component.css",
+  templateUrl: "./app.html",
+  styleUrl: "./app.css",
 })
 export class AppComponent {
   title = "OpenBridge-angular";
 }
 ```
 
-Add the topbar to the `app.component.html`:
+Add the topbar to the `app.html`:
 
 ```html
 <obc-top-bar></obc-top-bar> <router-outlet />
@@ -106,7 +106,7 @@ We need to add the standard css and set some properties.
 Import the css file by adding it to `main.ts`
 
 ```ts
-import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/openbridge.css";
+import "@oicl/openbridge-webcomponents/dist/openbridge.css";
 ```
 
 ## Set palette
@@ -117,7 +117,7 @@ Then set palette by modifying the `html` tag in `index.html`
 <html lang="en" data-obc-theme="day"></html>
 ```
 
-The `data-obc-theme` can be bright, day, dusk or night. Changeing it will set the palette.
+The `data-obc-theme` can be bright, day, dusk or night. Changing it will set the palette.
 
 ## Set component sizing
 
@@ -127,11 +127,11 @@ We need to set the component sizing. Again modify `index.html`. But this time ad
 <body class="obc-component-size-regular"></body>
 ```
 
-This could be regular, normal, large or xl. It sets the component size of all decendent components.
+This could be `regular`, `medium`, `large`, or `xl`. It sets the component size of all descendant components.
 
 ## Load font
 
-Lastly Noto Sans needs to be added. You can download it from the [OpenBridge repo](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip/raw/refs/heads/main/packages/openbridge-webcomponents/public/NotoSans.ttf). Place the NotoSans.ttf file in the public folder.
+Lastly Noto Sans needs to be added. You can download it from the [OpenBridge repo](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/raw/refs/heads/stable/packages/openbridge-webcomponents/public/NotoSans.ttf). Place the NotoSans.ttf file in the public folder.
 
 Next this file must be loaded by the css. So add it to styles.css:
 
@@ -146,7 +146,7 @@ You should now have a working top bar. Styled with OpenBridge styles.
 
 ## Place topbar correctly
 
-We need to position the top bar correctly. Start by organizing the html `app.component.html`
+We need to position the top bar correctly. Start by organizing the html `app.html`
 
 ```html
 <header>
@@ -158,7 +158,7 @@ We need to position the top bar correctly. Start by organizing the html `app.com
 </main>
 ```
 
-Then add the css to `app.component.css`:
+Then add the css to `app.css`:
 
 ```css
 header {
@@ -182,7 +182,7 @@ main {
 
 ## Add some input to the topbar
 
-We can now modify the topbar. Go to the [storybook](https://openbridge-jip-storybook.web.app/?path=/docs/application-topbar--docs) for details of attributes.
+We can now modify the topbar. Go to the [storybook](https://openbridge-storybook.web.app/?path=/docs/application-topbar--docs) for details of attributes.
 
 For instance add these properties:
 
@@ -194,7 +194,7 @@ Where title is a variable of the component.
 
 ## Add background
 
-Try changeing the palette to night:
+Try changing the palette to night:
 
 ```html
 <html lang="en" data-obc-theme="night"></html>
@@ -213,10 +213,10 @@ body {
 }
 ```
 
-Note how the color is set by the `css custom property` `--container-backdrop-color`. Using it the background will change when changeing the palette attribute (or the palette colors are updated by the designers).
+Note how the color is set by the `css custom property` `--container-backdrop-color`. Using it the background will change when changing the palette attribute (or the palette colors are updated by the designers).
 
 The entire page should now be dark. Go back to day palette
-Try changeing the palette to day:
+Try changing the palette to day:
 
 ```html
 <html lang="en" data-obc-theme="day"></html>
@@ -226,7 +226,7 @@ Try changeing the palette to day:
 
 We can now add the brilliance menu and the dimming button to the top bar
 
-`app.component.ts`
+`app.ts`
 
 ```ts
 import { Component } from "@angular/core";
@@ -237,15 +237,15 @@ import { ObcBrillianceMenu } from "@obc/components/brilliance-menu/brilliance-me
 @Component({
   selector: "app-root",
   imports: [RouterOutlet, ObcTopBar, ObcBrillianceMenu],
-  templateUrl: "./app.component.html",
-  styleUrl: "./app.component.css",
+  templateUrl: "./app.html",
+  styleUrl: "./app.css",
 })
 export class AppComponent {
   title = "OpenBridge-angular";
 }
 ```
 
-`app.component.html`
+`app.html`
 
 ```html
 <header>
@@ -264,7 +264,7 @@ export class AppComponent {
 
 It's location is a bit of.
 
-And add the css to `app.component.css`
+And add the css to `app.css`
 
 ```css
 .brilliance {
@@ -276,7 +276,7 @@ And add the css to `app.component.css`
 ```
 
 We can now add a state to store if the dimming menu is open or not. Also add an handler when the dimming menu button is clicked.
-Find the event name under events in [storybook](https://openbridge-jip-storybook.web.app/?path=/docs/application-topbar--docs). Remember also to set the `dimmingButtonActivated` which marks the button grey when activated. Lastly we also change the pallet when pressed.
+Find the event name under events in [storybook](https://openbridge-storybook.web.app/?path=/docs/application-topbar--docs). Remember also to set the `dimmingButtonActivated` which marks the button grey when activated. Lastly we also change the palette when pressed.
 
 ```ts
 import { Component } from "@angular/core";
@@ -290,8 +290,8 @@ import {
 @Component({
   selector: "app-root",
   imports: [RouterOutlet, ObcTopBar, ObcBrillianceMenu],
-  templateUrl: "./app.component.html",
-  styleUrl: "./app.component.css",
+  templateUrl: "./app.html",
+  styleUrl: "./app.css",
 })
 export class AppComponent {
   title = "OpenBridge-angular";
@@ -379,8 +379,8 @@ import { DateService } from "./core/services/date.service";
 @Component({
   selector: "app-root",
   imports: [RouterOutlet, ObcTopBar, ObcBrillianceMenu],
-  templateUrl: "./app.component.html",
-  styleUrl: "./app.component.css",
+  templateUrl: "./app.html",
+  styleUrl: "./app.css",
 })
 export class AppComponent {
   title = "OpenBridge-angular";
@@ -429,7 +429,7 @@ export class AppComponent {
 
 # Add navigation menu
 
-We can now add a navigation menu. Start by looking it up in [storybook](https://openbridge-jip-storybook.web.app/?path=/docs/menu-navigation-menu--docs). Click on "Show code" to view the example code.
+We can now add a navigation menu. Start by looking it up in [storybook](https://openbridge-storybook.web.app/?path=/docs/menu-navigation-menu--docs). Click on "Show code" to view the example code.
 
 Start by making an new component. Run `ng generate component` in the command line. Give it NavMenu as name. Copy the example file into the new html file:
 
@@ -490,7 +490,7 @@ import { ObiAlertList } from "@obc/icons/icon-alert-list";
 export class NavMenuComponent {}
 ```
 
-Add this component to the `app.component.ts` include logic for toggeling the menu. Notice that clicking the navigation menu should close the brilliance menu and vica versa.
+Add this component to the `app.ts` include logic for toggeling the menu. Notice that clicking the navigation menu should close the brilliance menu and vica versa.
 
 ```ts
 import { Component } from "@angular/core";
@@ -506,8 +506,8 @@ import { NavMenuComponent } from "./nav-menu/nav-menu.component";
 @Component({
   selector: "app-root",
   imports: [RouterOutlet, ObcTopBar, ObcBrillianceMenu, NavMenuComponent],
-  templateUrl: "./app.component.html",
-  styleUrl: "./app.component.css",
+  templateUrl: "./app.html",
+  styleUrl: "./app.css",
 })
 export class AppComponent {
   title = "OpenBridge-angular";
@@ -539,7 +539,7 @@ export class AppComponent {
 }
 ```
 
-Update `app.component.html`
+Update `app.html`
 
 ```html
 <header>
@@ -567,7 +567,7 @@ Update `app.component.html`
 ```
 
 We need to position the navigation menu. In this case we will do it from the NavigationMenu component.
-Add app.component.css:
+Add app.css:
 
 ```css
 .navigation-menu {
@@ -621,7 +621,7 @@ export const routes: Routes = [{ path: "", component: AzumuthDemoComponent }];
 
 Play with the input parameters of the azimuth.
 
-Try opening the navigation menu. Notice that the component is rendered above the navigation menu. Therefore move the `<router-outlet />` above the menus in the `app.component.html`
+Try opening the navigation menu. Notice that the component is rendered above the navigation menu. Therefore move the `<router-outlet />` above the menus in the `app.html`
 
 ```html
 <header>
@@ -690,7 +690,7 @@ Try going to: http://localhost:4200/tunnel
 We can now use these path in the navigation menu:
 
 - set the href to the path in router
-- find some good labels and [icons](https://openbridge-jip-demo.web.app/icons)
+- find some good labels and [icons](https://openbridge-demo.web.app/icons)
 
 ```html
 <obc-navigation-menu>
@@ -756,7 +756,7 @@ Try to use the navigation menu.
 You may notice two problems:
 
 - The active page in nav menu is not updating
-- When changeing page, the entire page is reloaded.
+- When changing page, the entire page is reloaded.
 
 ## Use Angular routerLink directive
 

@@ -3,7 +3,7 @@ import {ObcValveAnalogThreeWayIcon} from './valve-analog-three-way-icon.js';
 import './valve-analog-three-way-icon.js';
 
 const meta: Meta<typeof ObcValveAnalogThreeWayIcon> = {
-  title: 'Automation/Icon/Valve analog three way',
+  title: 'Automation/Icon/Valve Analog Three Way',
   tags: ['autodocs'],
   component: 'obc-valve-analog-three-way-icon',
   args: {

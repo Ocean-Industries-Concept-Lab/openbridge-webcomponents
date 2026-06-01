@@ -1,5 +1,5 @@
 import {LitElement, PropertyValues, html, nothing, unsafeCSS} from 'lit';
-import {property} from 'lit/decorators.js';
+import {property, state} from 'lit/decorators.js';
 import compentStyle from './navigation-menu.css?inline';
 import {ObcNavigationItemGroup} from '../navigation-item-group/navigation-item-group.js';
 import {ObcNavigationItem} from '../navigation-item/navigation-item.js';
@@ -19,6 +19,19 @@ export enum ObcNavigationMenuVariant {
   Full = 'full',
   IconOnly = 'icon-only', // Should only be used when no flyouts are present in the navigation menu
   IconOnlyLarge = 'icon-only-large', // Should be used when flyouts are present in the navigation menu
+  Compact = 'compact',
+}
+
+/**
+ * `ObcNavigationMenuFlyoutVariant` – Enumerates the available visual and behavioral variants for the flyout.
+ *
+ * - `Full`: Standard navigation flyout that takes the full height.
+ * - `Compact`: Space-saving menu with reduced padding and layout.
+ *
+ * Use these variants to adapt the flyout menu to different layouts or device sizes.
+ */
+export enum ObcNavigationMenuFlyoutVariant {
+  Full = 'full',
   Compact = 'compact',
 }
 
@@ -121,11 +134,19 @@ export class ObcNavigationMenu extends LitElement {
     ObcNavigationMenuVariant.Full;
 
   /**
+   * Visual variant of the flyout.
+   * One of `Full` (default) or `Compact`.
+   */
+  @property({type: String}) flyoutVariant: ObcNavigationMenuFlyoutVariant =
+    ObcNavigationMenuFlyoutVariant.Full;
+
+  /**
    * When `true`, adapts the layout for small screens (e.g., moves logo into the footer area and adjusts item layout).
    */
   @property({type: Boolean}) smallScreen = false;
 
   private slotObservers: MutationObserver[] = [];
+  @state() private hasFooter = false;
 
   findAllElements<T extends Element>(
     el: Element,
@@ -217,6 +238,8 @@ export class ObcNavigationMenu extends LitElement {
       'slot[name="footer"]'
     ) as HTMLSlotElement;
 
+    this.hasFooter = footerSlot?.assignedElements().length > 0;
+
     [mainSlot, footerSlot].forEach((slot) => {
       if (slot) {
         const slottedElements = slot.assignedElements();
@@ -244,7 +267,10 @@ export class ObcNavigationMenu extends LitElement {
 
   protected override updated(_changedProperties: PropertyValues): void {
     super.updated(_changedProperties);
-    if (_changedProperties.has('variant')) {
+    if (
+      _changedProperties.has('variant') ||
+      _changedProperties.has('flyoutVariant')
+    ) {
       this.setupItems();
     }
   }
@@ -278,7 +304,9 @@ export class ObcNavigationMenu extends LitElement {
   }
 
   private setupItems() {
-    const hug = this.variant !== ObcNavigationMenuVariant.Full;
+    const hug =
+      this.variant !== ObcNavigationMenuVariant.Full ||
+      this.flyoutVariant === ObcNavigationMenuFlyoutVariant.Compact;
     this.setHugToGroups(this, hug);
 
     // Set variant to all groups (top-level)
@@ -334,7 +362,7 @@ export class ObcNavigationMenu extends LitElement {
             <slot name="main" @slotchange=${this.handleSlotChange}></slot>
           </ol>
         </nav>
-        <div class="footer">
+        <div class="footer ${this.hasFooter ? 'has-footer' : ''}">
           <nav>
             <ol>
               <slot name="footer" @slotchange=${this.handleSlotChange}></slot>

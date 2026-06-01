@@ -1,165 +1,169 @@
 .wrapper {
-    display: inline-flex;
-    position: relative;
-    height: var(--ui-components-tooltip-size);
-    padding: 0 var(--ui-components-tooltip-padding-vertical);
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0;
-    border-radius: var(--ui-components-tooltip-border-radius);
-    background: var(--container-background-color);
-    box-shadow: var(--shadow-floating-x) var(--shadow-floating-y) var(--shadow-floating-blur) var(--shadow-raised-spread) var(--shadow-floating-color);
+  display: inline-flex;
+  position: relative;
+  height: var(--ui-components-tooltip-size);
+  padding: 0 var(--ui-components-tooltip-padding-vertical);
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  border-radius: var(--ui-components-tooltip-border-radius);
+  background: var(--container-background-color);
+  box-shadow: var(--shadow-floating-x) var(--shadow-floating-y)
+    var(--shadow-floating-blur) var(--shadow-raised-spread)
+    var(--shadow-floating-color);
 }
 
 .icon-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--ui-components-tooltip-icon-size);
-    height: var(--ui-components-tooltip-icon-size);
-    color: var(--on-normal-neutral-color);
-    flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ui-components-tooltip-icon-size);
+  height: var(--ui-components-tooltip-icon-size);
+  color: var(--on-normal-neutral-color);
+  flex-shrink: 0;
 }
 
 ::slotted([slot="icon"]) {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 }
 
 .label-container {
-    display: flex;
-    padding: 0 var(--ui-components-tooltip-label-spacing);
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  padding: 0 var(--ui-components-tooltip-label-spacing);
+  justify-content: center;
+  align-items: center;
 }
 
 .label-text {
-    @mixin font-button;
-    color: var(--on-normal-active-color);
-    white-space: nowrap;
+  @mixin font-button;
+  color: var(--on-normal-active-color);
+  white-space: nowrap;
 }
 
 .wrapper.icon {
-    display: flex;
-    width: var(--ui-components-tooltip-size);
-    height: var(--ui-components-tooltip-size);
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0;
-    border-radius: var(--ui-components-tooltip-border-radius);
-    background: var(--container-background-color);
-    box-shadow: var(--shadow-floating-x) var(--shadow-floating-y) var(--shadow-floating-blur) var(--shadow-raised-spread) var(--shadow-floating-color);
-    padding: 0;
+  display: flex;
+  width: var(--ui-components-tooltip-size);
+  height: var(--ui-components-tooltip-size);
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  border-radius: var(--ui-components-tooltip-border-radius);
+  background: var(--container-background-color);
+  box-shadow: var(--shadow-floating-x) var(--shadow-floating-y)
+    var(--shadow-floating-blur) var(--shadow-raised-spread)
+    var(--shadow-floating-color);
+  padding: 0;
 }
 
 .wrapper.normal {
-    background: var(--container-background-color);
+  background: var(--container-background-color);
 }
 
 .wrapper.enhanced {
-    background: var(--instrument-enhanced-secondary-color);
+  background: var(--instrument-enhanced-secondary-color);
 }
 
 .wrapper.eco {
-    background: var(--instrument-starboard-primary-color);
+  background: var(--instrument-starboard-primary-color);
 }
 
 .wrapper.raised {
-    background: var(--raised-enabled-background-color);
+  background: var(--raised-enabled-background-color);
 }
 
 .wrapper.caution {
-    background: var(--alert-caution-color);
+  background: var(--alert-caution-color);
 }
 
 .wrapper.warning {
-    background: var(--alert-warning-color);
+  background: var(--alert-warning-color);
 }
 
 .wrapper.alarm {
-    background: var(--alert-alarm-color);
+  background: var(--alert-alarm-color);
 }
 
 .wrapper.normal .icon-container {
-    color: var(--on-normal-neutral-color);
+  color: var(--on-normal-neutral-color);
 }
 
 .wrapper.normal .label-text {
-    color: var(--on-normal-active-color);
+  color: var(--on-normal-active-color);
 }
 
 .wrapper.enhanced .icon-container,
 .wrapper.enhanced .label-text {
-    color: var(--on-selected-active-color);
+  color: var(--on-selected-active-color);
 }
 
 .wrapper.eco .icon-container,
 .wrapper.eco .label-text {
-    color: var(--on-selected-active-color);
+  color: var(--on-selected-active-color);
 }
 
 .wrapper.raised .icon-container {
-    color: var(--on-raised-neutral-color);
+  color: var(--on-raised-neutral-color);
 }
 
 .wrapper.raised .label-text {
-    color: var(--on-raised-active-color);
+  color: var(--on-raised-active-color);
 }
 
 .wrapper.caution .icon-container,
 .wrapper.caution .label-text {
-    color: var(--on-caution-color);
+  color: var(--on-caution-color);
 }
 
 .wrapper.warning .icon-container,
 .wrapper.warning .label-text {
-    color: var(--on-warning-color);
+  color: var(--on-warning-color);
 }
 
 .wrapper.alarm .icon-container,
 .wrapper.alarm .label-text {
-    color: var(--on-alarm-color);
+  color: var(--on-alarm-color);
 }
 
 .bottom-arrow {
-    position: absolute;
-    bottom: -5px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 10px;
-    height: 6px;
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 6px;
 }
 
 .bottom-arrow svg {
-    display: block;
-    width: 100%;
-    height: 100%;
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .wrapper.normal .bottom-arrow svg path {
-    fill: var(--container-background-color);
+  fill: var(--container-background-color);
 }
 
 .wrapper.enhanced .bottom-arrow svg path {
-    fill: var(--instrument-enhanced-secondary-color);
+  fill: var(--instrument-enhanced-secondary-color);
 }
 
 .wrapper.eco .bottom-arrow svg path {
-    fill: var(--instrument-starboard-primary-color);
+  fill: var(--instrument-starboard-primary-color);
 }
 
 .wrapper.raised .bottom-arrow svg path {
-    fill: var(--raised-enabled-background-color);
+  fill: var(--raised-enabled-background-color);
 }
 
 .wrapper.caution .bottom-arrow svg path {
-    fill: var(--alert-caution-color);
+  fill: var(--alert-caution-color);
 }
 
 .wrapper.warning .bottom-arrow svg path {
-    fill: var(--alert-warning-color);
+  fill: var(--alert-warning-color);
 }
 
 .wrapper.alarm .bottom-arrow svg path {
-    fill: var(--alert-alarm-color);
+  fill: var(--alert-alarm-color);
 }

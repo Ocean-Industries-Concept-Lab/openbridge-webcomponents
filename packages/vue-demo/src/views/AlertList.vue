@@ -22,17 +22,17 @@
 </template>
 
 <script setup lang="ts">
-import { ButtonVariant } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/button/button.js'
-import ObcButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/button/ObcButton.vue'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-silence-iec'
+import { ButtonVariant } from '@oicl/openbridge-webcomponents/dist/components/button/button.js'
+import ObcButton from '@oicl/openbridge-webcomponents-vue/components/button/ObcButton.vue'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-silence-iec'
 import ObcAlertListDetails, {
   type Alert,
   type ObcAckClickEvent
-} from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-list-details/ObcAlertListDetails.vue'
+} from '@oicl/openbridge-webcomponents-vue/components/alert-list-details/ObcAlertListDetails.vue'
 import { useAlertStore } from '@/stores/alert'
 import { computed, ref } from 'vue'
-import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item.js'
-import { AlertType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/types.js'
+import { ObcAlertMenuItemStatus } from '@oicl/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item.js'
+import { AlertType } from '@oicl/openbridge-webcomponents/dist/types.js'
 
 const alertStore = useAlertStore()
 const alertListDetails = ref<InstanceType<typeof ObcAlertListDetails>>()

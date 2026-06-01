@@ -1,4 +1,4 @@
-import {LitElement, html, nothing, unsafeCSS} from 'lit';
+import {HTMLTemplateResult, LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import componentStyle from './brilliance-menu.css?inline';
 import '../button/button.js';
@@ -17,7 +17,7 @@ import '../../icons/icon-chevron-double-right-google.js';
 import '../../icons/icon-chevron-double-left-google.js';
 import '../../icons/icon-chevron-left-google.js';
 import '../../icons/icon-chevron-right-google.js';
-import '../../icons/icon-screens.js';
+import '../../icons/icon-screen-desk.js';
 
 import {localized, msg} from '@lit/localize';
 import {customElement} from '../../decorator.js';
@@ -83,7 +83,7 @@ export type ObcLinkBrightnessChangeEvent = CustomEvent<{value: boolean}>;
  * ### Variants
  * - **Palette:** Four options—`night`, `dusk`, `day`, `bright`. Each is visually distinct and selectable via toggle button group.
  * - **Auto Toggles:** `showAutoBrightness` and `showAutoPalette` properties control the presence of auto mode switches.
- * - **Hide Brightness:** The `hideBrightness` property removes the brightness slider and auto brightness toggle from the menu.
+ * - **Show Brightness:** The `showBrightness` property controls whether the brightness slider and auto brightness toggle are visible.
  *
  * ### Usage Guidelines
  * Use `obc-brilliance-menu` in settings panels or overlays where users need to quickly adjust display appearance. Ideal for scenarios requiring rapid adaptation to changing lighting conditions or user preferences.
@@ -94,7 +94,7 @@ export type ObcLinkBrightnessChangeEvent = CustomEvent<{value: boolean}>;
  * - `brightness` (`number`): Current brightness value (0–100). Defaults to `50`.
  * - `showAutoBrightness` (`boolean`): If true, displays the auto brightness toggle.
  * - `showAutoPalette` (`boolean`): If true, displays the auto palette toggle.
- * - `hideBrightness` (`boolean`): If true, hides the brightness slider and auto brightness toggle.
+ * - `showBrightness` (`boolean`): If true, shows the brightness slider and auto brightness toggle.
  *
  * ### Events
  * - `palette-changed` – Fired when the user selects a new palette. Event detail: `{ value: ObcPalette }`
@@ -143,14 +143,19 @@ export class ObcBrillianceMenu extends LitElement {
   @property({type: Boolean}) showLinkPalette = false;
 
   /**
-   * If true, hides the brightness slider and auto brightness toggle from the menu.
+   * If true, shows the brightness slider and auto brightness toggle in the menu.
    */
-  @property({type: Boolean}) hideBrightness = false;
+  @property({type: Boolean, attribute: false}) showBrightness = true;
 
   /**
-   * If true, hides the palette selector and link palette toggle from the menu.
+   * If true, shows the palette selector and link palette toggle in the menu.
    */
-  @property({type: Boolean}) hidePalette = false;
+  @property({type: Boolean, attribute: false}) showPalette = true;
+
+  @property({type: Boolean, attribute: false}) showNightPalette = true;
+  @property({type: Boolean, attribute: false}) showDuskPalette = true;
+  @property({type: Boolean, attribute: false}) showDayPalette = true;
+  @property({type: Boolean, attribute: false}) showBrightPalette = true;
 
   /**
    * The variant of the menu. Possible values: `'normal'`, `'compact'`.
@@ -188,6 +193,20 @@ export class ObcBrillianceMenu extends LitElement {
    * If true, displays the screen control link.
    */
   @property({type: Boolean}) showScreenControlLink = false;
+
+  override willUpdate(_changed: Map<string, unknown>) {
+    if (this.showPalette) {
+      const available = this.availablePalettes;
+      if (available.length > 0 && !available.includes(this.palette)) {
+        this.palette = available[0];
+        this.dispatchEvent(
+          new CustomEvent('palette-changed', {
+            detail: {value: this.palette},
+          })
+        );
+      }
+    }
+  }
 
   /**
    * Handles palette selection changes and emits `palette-changed`.
@@ -263,19 +282,32 @@ export class ObcBrillianceMenu extends LitElement {
     );
   }
 
+  get availablePalettes(): ObcPalette[] {
+    const palettes: ObcPalette[] = [];
+    if (this.showNightPalette) palettes.push(ObcPalette.night);
+    if (this.showDuskPalette) palettes.push(ObcPalette.dusk);
+    if (this.showDayPalette) palettes.push(ObcPalette.day);
+    if (this.showBrightPalette) palettes.push(ObcPalette.bright);
+    return palettes;
+  }
+
   get canIncreasePalette() {
-    return this.palette !== ObcPalette.bright;
+    const palettes = this.availablePalettes;
+    const idx = palettes.indexOf(this.palette);
+    return idx >= 0 && idx < palettes.length - 1;
   }
 
   get canDecreasePalette() {
-    return this.palette !== ObcPalette.night;
+    const palettes = this.availablePalettes;
+    const idx = palettes.indexOf(this.palette);
+    return idx > 0;
   }
 
   nextPalette() {
     if (this.canIncreasePalette) {
-      this.palette = Object.keys(ObcPalette)[
-        Object.keys(ObcPalette).indexOf(this.palette) + 1
-      ] as ObcPalette;
+      const palettes = this.availablePalettes;
+      const idx = palettes.indexOf(this.palette);
+      this.palette = palettes[idx + 1];
       this.dispatchEvent(
         new CustomEvent('palette-changed', {
           detail: {value: this.palette},
@@ -286,9 +318,9 @@ export class ObcBrillianceMenu extends LitElement {
 
   previousPalette() {
     if (this.canDecreasePalette) {
-      this.palette = Object.keys(ObcPalette)[
-        Object.keys(ObcPalette).indexOf(this.palette) - 1
-      ] as ObcPalette;
+      const palettes = this.availablePalettes;
+      const idx = palettes.indexOf(this.palette);
+      this.palette = palettes[idx - 1];
       this.dispatchEvent(
         new CustomEvent('palette-changed', {
           detail: {value: this.palette},
@@ -427,14 +459,19 @@ export class ObcBrillianceMenu extends LitElement {
       </div>`;
   }
 
+  get effectivePalette() {
+    const palettes = this.availablePalettes;
+    return palettes.includes(this.palette) ? this.palette : palettes[0];
+  }
+
   get paletteIcon() {
-    if (this.palette === ObcPalette.night) {
+    if (this.effectivePalette === ObcPalette.night) {
       return html`<obi-palette-night class="icon"></obi-palette-night>`;
-    } else if (this.palette === ObcPalette.dusk) {
+    } else if (this.effectivePalette === ObcPalette.dusk) {
       return html`<obi-palette-dusk class="icon"></obi-palette-dusk>`;
-    } else if (this.palette === ObcPalette.day) {
+    } else if (this.effectivePalette === ObcPalette.day) {
       return html`<obi-palette-day class="icon"></obi-palette-day>`;
-    } else if (this.palette === ObcPalette.bright) {
+    } else if (this.effectivePalette === ObcPalette.bright) {
       return html`<obi-palette-day-bright
         class="icon"
       ></obi-palette-day-bright>`;
@@ -443,22 +480,53 @@ export class ObcBrillianceMenu extends LitElement {
     }
   }
 
+  private paletteOptions(): HTMLTemplateResult[] {
+    const out = [];
+    if (this.showNightPalette)
+      out.push(
+        html`<obc-toggle-button-option value="night" type="icon">
+          <obi-palette-night slot="icon"></obi-palette-night>
+        </obc-toggle-button-option>`
+      );
+    if (this.showDuskPalette)
+      out.push(
+        html`<obc-toggle-button-option value="dusk" type="icon">
+          <obi-palette-dusk slot="icon"></obi-palette-dusk>
+        </obc-toggle-button-option>`
+      );
+    if (this.showDayPalette)
+      out.push(
+        html`<obc-toggle-button-option value="day" type="icon">
+          <obi-palette-day slot="icon"></obi-palette-day>
+        </obc-toggle-button-option>`
+      );
+    if (this.showBrightPalette)
+      out.push(
+        html`<obc-toggle-button-option value="bright" type="icon">
+          <obi-palette-day-bright slot="icon"></obi-palette-day-bright>
+        </obc-toggle-button-option>`
+      );
+    return out;
+  }
+
   renderPalette() {
-    const paletteNames = {
+    const palettes = this.availablePalettes;
+    if (palettes.length === 0) return nothing;
+
+    const paletteNames: Record<ObcPalette, string> = {
       [ObcPalette.night]: msg('Night'),
       [ObcPalette.dusk]: msg('Dusk'),
       [ObcPalette.day]: msg('Day'),
       [ObcPalette.bright]: msg('Bright'),
     };
-    const currentPaletteName = paletteNames[this.palette];
+    const currentPaletteName = paletteNames[this.effectivePalette];
     const valueLength = currentPaletteName.length;
-    const index = Object.keys(paletteNames).indexOf(this.palette);
-    const nextIndex = Math.min(index + 1, 3);
+    const index = palettes.indexOf(this.effectivePalette);
+    const nextIndex = Math.min(index + 1, palettes.length - 1);
     const previousIndex = Math.max(index - 1, 0);
-    const nextPalette =
-      paletteNames[Object.keys(paletteNames)[nextIndex] as ObcPalette];
-    const previousPalette =
-      paletteNames[Object.keys(paletteNames)[previousIndex] as ObcPalette];
+    const nextPalette = paletteNames[palettes[nextIndex]];
+    const previousPalette = paletteNames[palettes[previousIndex]];
+
     return html`
       ${this.variant === ObcBrillianceMenuVariant.tabbed
         ? nothing
@@ -474,23 +542,12 @@ export class ObcBrillianceMenu extends LitElement {
       >
         ${this.variant === ObcBrillianceMenuVariant.compact
           ? html` <obc-toggle-button-group
-              value=${this.palette}
+              value=${this.effectivePalette}
               @value=${this.onPaletteChanged}
               variant=${ObcToggleButtonOptionVariant.regular}
               type=${ObcToggleButtonOptionType.icon}
             >
-              <obc-toggle-button-option value="night" type="icon">
-                <obi-palette-night slot="icon"></obi-palette-night>
-              </obc-toggle-button-option>
-              <obc-toggle-button-option value="dusk" type="icon">
-                <obi-palette-dusk slot="icon"></obi-palette-dusk>
-              </obc-toggle-button-option>
-              <obc-toggle-button-option value="day" type="icon">
-                <obi-palette-day slot="icon"></obi-palette-day>
-              </obc-toggle-button-option>
-              <obc-toggle-button-option value="bright" type="icon">
-                <obi-palette-day-bright slot="icon"></obi-palette-day-bright>
-              </obc-toggle-button-option>
+              ${this.paletteOptions()}
             </obc-toggle-button-group>`
           : html`
               <div class="value-container">
@@ -501,7 +558,7 @@ export class ObcBrillianceMenu extends LitElement {
                   </div>
                 </div>
                 <obc-progress-indicator-dots
-                  .totalSteps=${4}
+                  .totalSteps=${palettes.length}
                   .currentStep=${index + 1}
                 ></obc-progress-indicator-dots>
               </div>
@@ -560,7 +617,7 @@ export class ObcBrillianceMenu extends LitElement {
           hasicon
         >
           <obc-user-button slot="icon" static variant="icon" styleType="normal">
-            <obi-screens slot="icon"></obi-screens>
+            <obi-screen-desk slot="icon"></obi-screen-desk>
           </obc-user-button>
         </obc-navigation-item>
       </div>
@@ -588,11 +645,11 @@ export class ObcBrillianceMenu extends LitElement {
     } else {
       return html`
         <div class="card ${this.variant}">
-          ${this.hideBrightness ? nothing : this.renderBrightness()}
-          ${!this.hideBrightness && !this.hidePalette
+          ${this.showBrightness ? this.renderBrightness() : nothing}
+          ${this.showBrightness && this.showPalette
             ? html`<div class="divider"></div>`
             : nothing}
-          ${this.hidePalette ? nothing : this.renderPalette()}
+          ${this.showPalette ? this.renderPalette() : nothing}
           ${this.renderScreenControlLink()}
         </div>
       `;

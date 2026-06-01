@@ -4,21 +4,36 @@ import './motor.js';
 import {crossDecorator} from '../../storybook-util.js';
 import {
   AutomationButtonDirection,
+  AutomationButtonLabelDirection,
+  AutomationButtonReadoutPosition,
   AutomationButtonVariant,
 } from '../automation-button/automation-button.js';
+import {AutomationButtonReadoutStackSize} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
+import {argTypesAbstractAutomationButtonMotorized} from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 const meta: Meta<typeof ObcMotor> = {
-  title: 'Automation/Automation devices/Motor',
+  title: 'Automation/Automation Devices/Motor',
   tags: ['autodocs', '6.0'],
   component: 'obc-motor',
   decorators: [crossDecorator],
   args: {
-    tag: '0012',
+    tag: '#0012',
+    readoutPosition: AutomationButtonReadoutPosition.bottom,
+    readoutSize: AutomationButtonReadoutStackSize.regular,
+    alert: false,
+    progress: false,
+    showReadoutStack: true,
+  },
+  argTypes: {
+    ...argTypesAbstractAutomationButtonMotorized,
+    vertical: {
+      control: {type: 'boolean'},
+    },
   },
   globals: {
     componentSize: 'obc-component-size-regular',
   },
-} satisfies Meta<ObcMotor>;
+} as Meta<typeof ObcMotor>;
 
 export default meta;
 type Story = StoryObj<ObcMotor>;
@@ -28,7 +43,7 @@ export const OnVertical: Story = {
     on: true,
     vertical: true,
     direction: AutomationButtonDirection.forward,
-    labelDirection: 'up',
+    labelDirection: AutomationButtonLabelDirection.up,
   },
 };
 
@@ -37,7 +52,7 @@ export const OnHorizontal: Story = {
     on: true,
     vertical: false,
     direction: AutomationButtonDirection.backwardFast,
-    labelDirection: 'left',
+    labelDirection: AutomationButtonLabelDirection.left,
   },
 };
 
@@ -46,7 +61,7 @@ export const OffVertical: Story = {
     on: false,
     vertical: true,
     direction: AutomationButtonDirection.standby,
-    labelDirection: 'up',
+    labelDirection: AutomationButtonLabelDirection.up,
   },
 };
 
@@ -55,7 +70,7 @@ export const OffHorizontal: Story = {
     on: false,
     vertical: false,
     direction: AutomationButtonDirection.backwardStopped,
-    labelDirection: 'right',
+    labelDirection: AutomationButtonLabelDirection.right,
   },
 };
 
@@ -64,7 +79,7 @@ export const VariantDoubleSizeLarge: Story = {
     on: true,
     vertical: true,
     direction: AutomationButtonDirection.forward,
-    labelDirection: 'up',
+    labelDirection: AutomationButtonLabelDirection.up,
     variant: AutomationButtonVariant.double,
   },
   globals: {

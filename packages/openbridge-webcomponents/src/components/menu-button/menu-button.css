@@ -6,6 +6,7 @@
   height: var(--ui-components-button-touch-target-size);
   min-width: var(--ui-components-button-touch-target-size);
   appearance: none;
+  text-align: start;
   border: none;
   display: flex;
   align-items: center;
@@ -14,10 +15,10 @@
   overflow: visible;
   z-index: 1;
   @mixin style style=normal visibleWrapperClass=.visible-wrapper;
-  
+
   /* Anchor name for positioning the context menu */
   anchor-name: --context-menu-trigger;
-  
+
   &.full-width {
     width: 100%;
 
@@ -33,15 +34,23 @@
     width: auto;
     display: flex;
     height: var(--ui-components-button-visual-size);
+    box-sizing: border-box;
     padding: 0px var(--ui-components-button-padding-horizontal);
     justify-content: space-between;
     align-items: center;
     flex: 1 0 0;
-    border-radius: var(--ui-components-button-border-radius-top-left) var(--ui-components-button-border-radius-top-right) var(--ui-components-button-border-radius-bottom-right) var(--ui-components-button-border-radius-bottom-left);
-    border-top: var(--ui-components-button-stroke-weight-top) solid var(--normal-enabled-border-color);
-    border-right: var(--ui-components-button-stroke-weight-right) solid var(--normal-enabled-border-color);
-    border-bottom: var(--ui-components-button-stroke-weight-bottom) solid var(--normal-enabled-border-color);
-    border-left: var(--ui-components-button-stroke-weight-left) solid var(--normal-enabled-border-color);
+    border-radius: var(--ui-components-button-border-radius-top-left)
+      var(--ui-components-button-border-radius-top-right)
+      var(--ui-components-button-border-radius-bottom-right)
+      var(--ui-components-button-border-radius-bottom-left);
+    border-top: var(--ui-components-button-stroke-weight-top) solid
+      var(--normal-enabled-border-color);
+    border-right: var(--ui-components-button-stroke-weight-right) solid
+      var(--normal-enabled-border-color);
+    border-bottom: var(--ui-components-button-stroke-weight-bottom) solid
+      var(--normal-enabled-border-color);
+    border-left: var(--ui-components-button-stroke-weight-left) solid
+      var(--normal-enabled-border-color);
     background: var(--normal-enabled-background-color);
     cursor: pointer;
   }
@@ -56,9 +65,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-
-  & .icon {
     width: var(--ui-components-button-icon-size);
     height: var(--ui-components-button-icon-size);
     color: var(--on-normal-neutral-color);
@@ -82,7 +88,7 @@
     color: var(--on-normal-neutral-color);
   }
 
-  &:disabled .icon {
+  &:disabled .icon-container {
     color: var(--on-normal-disabled-color);
   }
 
@@ -108,9 +114,14 @@
   position-anchor: --context-menu-trigger;
   left: calc(anchor(right) + 8px);
   top: anchor(top);
+  margin: unset;
+  padding: 0;
+  border: none;
+  background: none;
+  overflow: visible;
 }
 
 .wrapper.disabled .label-container,
-.wrapper.disabled .arrow-flyout-container{
+.wrapper.disabled .arrow-flyout-container {
   color: var(--on-normal-disabled-color);
 }

@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import { useSim } from '@/composables/useSim'
 import { useDemoConfigStore } from '@/stores/demoConfig'
-import ObcAzimuthThruster from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster.vue'
-import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
-import { InstrumentFieldSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field.js'
+import ObcAzimuthThruster from '@oicl/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster.vue'
 import {
   AdviceType,
   type AngleAdvice
-} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js'
-import { computed } from 'vue'
-import { InstrumentState } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types.js'
-import { PropellerType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/thruster/propeller.js'
+} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js'
+import { computed, onMounted, watch } from 'vue'
+import {
+  InstrumentState,
+  Priority
+} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types.js'
+import { PropellerType } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/thruster/propeller.js'
 
 const sim = useSim()
 const demoConfig = useDemoConfigStore()
@@ -19,10 +20,25 @@ const props = defineProps<{
   details: boolean
 }>()
 
+function primeAzimuthDemoMotion() {
+  sim.propulsion.reset()
+  sim.controllers.x.value = 0.3
+  sim.controllers.y.value = 0
+}
+
+onMounted(primeAzimuthDemoMotion)
+watch(
+  () => props.details,
+  () => {
+    primeAzimuthDemoMotion()
+  }
+)
+
 const angle = computed(() => sim.propulsion.rudder.value)
 const angleSet = computed(() => sim.propulsion.rudderSet.value)
 const thrust = computed(() => sim.propulsion.propeller.value)
 const thrustSet = computed(() => sim.propulsion.propellerSet.value)
+
 const angleAdvice = computed<AngleAdvice[]>(() => {
   if (sim.controllers.showAdvice.value || props.details) {
     return [
@@ -47,25 +63,29 @@ const angleAdvice = computed<AngleAdvice[]>(() => {
 <template>
   <div class="wrapper">
     <div class="instruments">
-      <ObcInstrumentField
-        tag="Angle"
+      <obc-readout
+        label="Angle"
         unit="deg"
-        :value="angle"
-        :setpoint="angleSet"
-        has-setpoint
-        :size="InstrumentFieldSize.enhanced"
-        :auto-hide-setpoint="true"
-        :auto-hide-deadband="1"
+        :value.prop="Math.round(angle)"
+        :setpointValue.prop="Math.round(angleSet)"
+        :hasInput.prop="true"
+        :hug.prop="false"
+        variant="enhanced"
+        :valuePriority.prop="'enhanced'"
+        :inputInteraction.prop="'pop-up'"
+        :maxDigits.prop="2"
       />
-      <ObcInstrumentField
-        tag="Thrust"
+      <obc-readout
+        label="Thrust"
         unit="%"
-        :value="thrust"
-        :setpoint="thrustSet"
-        has-setpoint
-        :size="InstrumentFieldSize.enhanced"
-        :auto-hide-setpoint="true"
-        :auto-hide-deadband="1"
+        :value.prop="Math.round(thrust)"
+        :setpointValue.prop="Math.round(thrustSet)"
+        :hasInput.prop="true"
+        :hug.prop="false"
+        variant="enhanced"
+        :valuePriority.prop="'enhanced'"
+        :inputInteraction.prop="'pop-up'"
+        :maxDigits.prop="2"
       />
     </div>
     <ObcAzimuthThruster
@@ -74,7 +94,8 @@ const angleAdvice = computed<AngleAdvice[]>(() => {
       :thrust="thrust"
       :thrust-setpoint="thrustSet"
       :angle-advices="angleAdvice"
-      :state="demoConfig.hasCommand ? InstrumentState.inCommand : InstrumentState.active"
+      :state="InstrumentState.active"
+      :priority="demoConfig.hasCommand ? Priority.enhanced : Priority.regular"
       :top-propeller="details ? PropellerType.single : undefined"
       :bottom-propeller="details ? PropellerType.single : undefined"
     />
@@ -95,5 +116,6 @@ const angleAdvice = computed<AngleAdvice[]>(() => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 8px;
 }
 </style>

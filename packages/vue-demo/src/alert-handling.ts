@@ -1,13 +1,13 @@
 import { computed } from 'vue'
 import { useAlertStore } from './stores/alert'
 import type { Alert } from './business/model'
-import { AlertType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/types'
-import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item'
+import { AlertType } from '@oicl/openbridge-webcomponents/dist/types'
+import { ObcAlertMenuItemStatus } from '@oicl/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item'
 
 export const useAlertHandling = () => {
   const alertStore = useAlertStore()
   const visibleAlert = computed<null | Alert>(() => {
-    return alertStore.latestHighestAlert
+    return alertStore.latestHighestAlert ?? null
   })
 
   const visibleAlertType = computed<AlertType>(() => {

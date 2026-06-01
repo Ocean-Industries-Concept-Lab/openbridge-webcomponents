@@ -8,7 +8,7 @@ import '../../icons/icon-user.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcPivotItem> = {
-  title: 'UI Components/Menus and navigation/Pivot item',
+  title: 'UI Components/Menus and Navigation/Pivot Item',
   tags: ['autodocs', '6.0'],
   component: 'obc-pivot-item-group',
   args: {

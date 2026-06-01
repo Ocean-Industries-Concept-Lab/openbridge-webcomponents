@@ -57,7 +57,7 @@
 
   /* Divider between tabs */
   &.has-divider::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     bottom: 0;
@@ -69,7 +69,7 @@
     z-index: 0;
   }
 
-  &[aria-selected='true'] {
+  &[aria-selected="true"] {
     @mixin font-body-active;
     @mixin style style=normal;
     border-width: 0;
@@ -105,7 +105,7 @@
   min-height: 0;
 }
 
-div[role='tabpanel'] {
+div[role="tabpanel"] {
   width: 100%;
   height: 100%;
   border-bottom-left-radius: var(--app-components-alert-menu-border-radius);

@@ -1,0 +1,56 @@
+:host {
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.circular-progress-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.circular-progress-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.circular-background {
+  stroke: var(--container-backdrop-color);
+}
+
+.circular-progress {
+  stroke: var(--instrument-enhanced-secondary-color);
+  transition: stroke-dashoffset 0.3s ease-in-out;
+}
+
+.circular-progress.determinate {
+  stroke-linecap: round;
+}
+
+.circular-progress.indeterminate {
+  stroke-linecap: round;
+  animation: circular-rotate 1.5s linear infinite;
+}
+
+.circular-progress.progressive-indeterminate {
+  stroke-linecap: round;
+  animation: circular-rotate 1.5s linear infinite;
+  transition: stroke-dasharray 0s ease-in-out;
+}
+
+@keyframes circular-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

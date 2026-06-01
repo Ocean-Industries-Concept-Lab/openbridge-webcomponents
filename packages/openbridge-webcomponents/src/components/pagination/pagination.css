@@ -1,15 +1,23 @@
-:host { display:block; }
+:host {
+  display: block;
+}
 
 .navigation-wrapper {
-  display:flex;
-  align-items:center;
-  width:100%;
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  &.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.6;
+  }
 }
 
 :host([full-width]) .navigation-wrapper > obc-toggle-button-group,
 :host([full-width]) .navigation-wrapper > obc-progress-indicator-dots {
-  flex:1 1 0;
-  min-width:0;
-  display:flex;
-  justify-content:center;
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
 }

@@ -28,15 +28,15 @@ export function useJoystickControl(): JoystickControl {
       isActivated.value = true
       const gp = gamepads[0]
       if (gp && gp.axes.length >= 4) {
-        x.value = clamp(x.value - gp.axes[1] * GAMEPAD_STEP, AXIS_MIN, AXIS_MAX)
-        y.value = clamp(y.value + gp.axes[2] * GAMEPAD_STEP, AXIS_MIN, AXIS_MAX)
+        x.value = clamp(x.value - gp.axes[1]! * GAMEPAD_STEP, AXIS_MIN, AXIS_MAX)
+        y.value = clamp(y.value + gp.axes[2]! * GAMEPAD_STEP, AXIS_MIN, AXIS_MAX)
         gamepadConnected.value = true
       }
       if (gp.buttons.length >= 1) {
-        if (gp.buttons[0].pressed) {
+        if (gp.buttons[0]!.pressed) {
           y.value = 0
         }
-        showAdvice.value = gp.buttons[1].pressed
+        showAdvice.value = gp.buttons[1]!.pressed
       }
     } else {
       gamepadConnected.value = false

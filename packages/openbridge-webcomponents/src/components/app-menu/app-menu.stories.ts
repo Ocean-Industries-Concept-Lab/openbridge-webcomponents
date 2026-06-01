@@ -6,8 +6,8 @@ import {html} from 'lit';
 import '../../icons/icon-ship.js';
 
 const meta: Meta<typeof ObcAppMenu> = {
-  title: 'Application Components/Menus/App menu',
-  tags: ['autodocs', '5.0'],
+  title: 'Application Components/Menus/App Menu',
+  tags: ['autodocs'],
   component: 'obc-app-menu',
 } satisfies Meta<ObcAppMenu>;
 

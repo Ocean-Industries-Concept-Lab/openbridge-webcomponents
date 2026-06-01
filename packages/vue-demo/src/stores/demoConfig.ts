@@ -1,4 +1,4 @@
-import { AutomationButtonVariant } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/automation-button/automation-button.js'
+import { AutomationButtonVariant } from '@oicl/openbridge-webcomponents/dist/automation/automation-button/automation-button.js'
 import { defineStore } from 'pinia'
 import { useStorage } from '@vueuse/core'
 

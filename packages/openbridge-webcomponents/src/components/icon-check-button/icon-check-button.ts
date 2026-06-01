@@ -91,22 +91,31 @@ export class ObcIconCheckButton extends LitElement {
    */
   @property({type: Boolean}) hasAlert = false;
 
+  /**
+   * If true, the button is controlled externally.
+   *
+   * Use to control the button state from outside the component.
+   */
+  @property({type: Boolean}) externalControl = false;
+
   private handleClick() {
     if (this.disabled) {
       return;
     }
 
-    this.checked = !this.checked;
-
     this.dispatchEvent(
       new CustomEvent('icon-check-button-click', {
         detail: {
-          checked: this.checked,
+          checked: !this.checked,
         },
         bubbles: true,
         composed: true,
       })
     );
+
+    if (!this.externalControl) {
+      this.checked = !this.checked;
+    }
   }
 
   override render() {

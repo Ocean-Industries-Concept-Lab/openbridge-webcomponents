@@ -3,7 +3,7 @@ import {ObcElevatedCardRadioGroup} from './elevated-card-radio-group.js';
 import './elevated-card-radio-group.js';
 
 const meta: Meta<typeof ObcElevatedCardRadioGroup> = {
-  title: 'UI Components/Sections/Elevated card radio button group',
+  title: 'UI Components/Sections/Elevated Card Radio Button Group',
   tags: ['autodocs', '6.0'],
   component: 'obc-elevated-card-radio-group',
   args: {},
@@ -19,7 +19,6 @@ export const NoneSelected: Story = {
       {label: 'Value 2', value: '2'},
       {label: 'Value 3', value: '3'},
     ],
-    name: 'test',
   },
 };
 
@@ -31,6 +30,16 @@ export const PreSelected: Story = {
       {label: 'Value 3', value: '3'},
     ],
     value: '2',
-    name: 'test',
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    options: [
+      {label: 'Value 1', value: '1'},
+      {label: 'Value 2', value: '2'},
+      {label: 'Value 3', value: '3'},
+    ],
+    disabled: true,
   },
 };

@@ -1,9 +1,10 @@
-import {LitElement, html, nothing, unsafeCSS, svg} from 'lit';
+import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {styleMap} from 'lit/directives/style-map.js';
 import componentStyle from './progress-bar.css?inline';
 import {customElement} from '../../decorator.js';
 import '../../icons/icon-placeholder.js';
+import {CircularProgressMode} from '../../building-blocks/circular-progress/circular-progress.js';
 
 export enum ProgressBarType {
   linear = 'linear',
@@ -29,7 +30,7 @@ export class ObcProgressBar extends LitElement {
     CircularProgressState.determinate;
   @property({type: Number}) value = 0;
   @property({type: Boolean}) showValue = false;
-  @property({type: Boolean}) showUnit = true;
+  @property({type: Boolean}) showUnit = false;
   @property({type: Boolean}) hasDescription = false;
   @property({type: String}) description = 'Description text';
   @property({type: Boolean}) showState = false;
@@ -44,93 +45,31 @@ export class ObcProgressBar extends LitElement {
     return this.renderLinearProgress();
   }
 
+  private getCircularProgressMode(): CircularProgressMode {
+    if (this.progressiveIndeterminate) {
+      return CircularProgressMode.progressiveIndeterminate;
+    }
+    if (this.circularState === CircularProgressState.icon) {
+      return CircularProgressMode.determinate;
+    }
+    if (this.circularState === CircularProgressState.indeterminate) {
+      return CircularProgressMode.indeterminate;
+    }
+    return CircularProgressMode.determinate;
+  }
+
   private renderCircularProgress() {
-    const clampedValue = Math.max(0, Math.min(100, this.value));
-    const size = 48;
-    const strokeWidth = 4;
-    const radius = (size - strokeWidth) / 2;
-    const circumference = 2 * Math.PI * radius;
-
-    const strokeDashoffset =
-      circumference - (clampedValue / 100) * circumference;
-
-    const minArc = circumference * 0.02;
-    const progressiveArcLength = Math.max(
-      minArc,
-      (clampedValue / 100) * circumference
-    );
-    const progressiveGapLength = circumference - progressiveArcLength;
+    const progressValue =
+      this.circularState === CircularProgressState.icon ? 100 : this.value;
 
     return html`
       <div class="circular-wrapper">
-        <svg
-          class="circular-svg"
-          width="${size}"
-          height="${size}"
-          viewBox="0 0 ${size} ${size}"
-        >
-          <circle
-            class="circular-background"
-            cx="${size / 2}"
-            cy="${size / 2}"
-            r="${radius}"
-            stroke-width="${strokeWidth}"
-            fill="none"
-          />
-
-          ${this.progressiveIndeterminate
-            ? svg`
-                <circle
-                  class="circular-progress progressive-indeterminate"
-                  cx="${size / 2}"
-                  cy="${size / 2}"
-                  r="${radius}"
-                  stroke-width="${strokeWidth}"
-                  fill="none"
-                  stroke-dasharray="${progressiveArcLength} ${progressiveGapLength}"
-                  transform-origin="${size / 2} ${size / 2}"
-                />
-              `
-            : this.circularState === CircularProgressState.determinate
-              ? svg`
-                <circle
-                  class="circular-progress determinate"
-                  cx="${size / 2}"
-                  cy="${size / 2}"
-                  r="${radius}"
-                  stroke-width="${strokeWidth}"
-                  fill="none"
-                  stroke-dasharray="${circumference}"
-                  stroke-dashoffset="${strokeDashoffset}"
-                  transform="rotate(-90 ${size / 2} ${size / 2})"
-                />
-              `
-              : this.circularState === CircularProgressState.indeterminate
-                ? svg`
-                <circle
-                  class="circular-progress indeterminate"
-                  cx="${size / 2}"
-                  cy="${size / 2}"
-                  r="${radius}"
-                  stroke-width="${strokeWidth}"
-                  fill="none"
-                  stroke-dasharray="${circumference * 0.25} ${circumference * 0.75}"
-                  transform-origin="${size / 2} ${size / 2}"
-                />
-              `
-                : this.circularState === CircularProgressState.icon
-                  ? svg`
-                <circle
-                  class="circular-progress complete"
-                  cx="${size / 2}"
-                  cy="${size / 2}"
-                  r="${radius}"
-                  stroke-width="${strokeWidth}"
-                  fill="none"
-                />
-              `
-                  : ''}
-        </svg>
+        <obc-circular-progress
+          .mode=${this.getCircularProgressMode()}
+          .value=${progressValue}
+          .viewBoxSize=${48}
+          .strokeWidth=${4}
+        ></obc-circular-progress>
 
         <div class="circular-content">${this.renderCircularContent()}</div>
       </div>
@@ -161,7 +100,9 @@ export class ObcProgressBar extends LitElement {
     } else if (this.circularState === CircularProgressState.indeterminate) {
       return html`
         <div class="circular-label-container">
-          <span class="circular-value">...</span>
+          <span class="circular-value">
+            <slot name="icon">...</slot>
+          </span>
         </div>
       `;
     } else {

@@ -165,8 +165,8 @@
     );
   }
 
-  ::slotted([slot='icon']),
-  ::slotted([slot='trailing-icon']) {
+  ::slotted([slot="icon"]),
+  ::slotted([slot="trailing-icon"]) {
     display: block;
     width: var(--menu-navigation-components-navigation-item-icon-size);
     height: var(--menu-navigation-components-navigation-item-icon-size);

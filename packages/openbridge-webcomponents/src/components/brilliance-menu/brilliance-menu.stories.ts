@@ -58,3 +58,16 @@ export const Compact: Story = {
     variant: ObcBrillianceMenuVariant.compact,
   },
 };
+
+export const NoNightPalette: Story = {
+  args: {
+    showNightPalette: false,
+  },
+};
+
+export const NoDuskPaletteCompact: Story = {
+  args: {
+    variant: ObcBrillianceMenuVariant.compact,
+    showDuskPalette: false,
+  },
+};

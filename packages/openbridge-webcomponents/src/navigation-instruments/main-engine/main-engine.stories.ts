@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcMainEngine} from './main-engine.js';
 import './main-engine.js';
 import {widthDecorator} from '../../storybook-util.js';
-import {InstrumentState} from '../types.js';
+import {InstrumentState, Priority} from '../types.js';
 
 const meta: Meta<typeof ObcMainEngine> = {
   title: 'Instruments/Main Engine',
@@ -19,11 +19,14 @@ const meta: Meta<typeof ObcMainEngine> = {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
     thrust: {control: {type: 'range', min: -100, max: 100, step: 1}},
     thrustSetpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
+    thrustTouching: {control: 'boolean'},
     speed: {control: {type: 'range', min: 0, max: 100, step: 1}},
     speedSetpoint: {control: {type: 'range', min: 0, max: 100, step: 1}},
+    speedTouching: {control: 'boolean'},
     state: {
       options: Object.values(InstrumentState),
     },
+    priority: {control: 'select', options: Object.values(Priority)},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcMainEngine>;
@@ -33,13 +36,15 @@ type Story = StoryObj<ObcMainEngine>;
 
 export const InCommand: Story = {
   args: {
-    state: InstrumentState.inCommand,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
   },
 };
 
-export const Active: Story = {
+export const NotInCommand: Story = {
   args: {
     state: InstrumentState.active,
+    priority: Priority.regular,
   },
 };
 

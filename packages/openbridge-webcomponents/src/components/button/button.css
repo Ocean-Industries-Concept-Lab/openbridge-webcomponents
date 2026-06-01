@@ -10,8 +10,8 @@
   align-items: center;
   justify-content: center;
   font-feature-settings:
-    'liga' off,
-    'clig' off;
+    "liga" off,
+    "clig" off;
   font-family: var(--font-family-main);
   font-size: var(--global-typography-ui-button-font-size);
   font-style: normal;
@@ -32,6 +32,7 @@
       var(--ui-components-button-border-radius-top-right)
       var(--ui-components-button-border-radius-bottom-right)
       var(--ui-components-button-border-radius-bottom-left);
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;

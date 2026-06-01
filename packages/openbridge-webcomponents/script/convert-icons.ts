@@ -1,4 +1,4 @@
-import * as Figma from 'figma-api';
+import type {Node, RGBA, Style} from '@figma/rest-api-spec';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -92,8 +92,8 @@ export function kebabToUpperCamelCase(kebabCase: string): string {
 }
 
 export function getStylesForNode(
-  node: Figma.Node,
-  styles: {[styleId: string]: Figma.Style}
+  node: Node,
+  styles: {[styleId: string]: Style}
 ): {[colorCode: string]: {cssClass: string}} {
   let out = {};
 
@@ -183,7 +183,7 @@ function decimalToHex(d: number): string {
   return v.length === 1 ? `0${v}` : v;
 }
 
-function rgbaToHexOrColorName(rgba: Figma.Color): string {
+function rgbaToHexOrColorName(rgba: RGBA): string {
   const isBlack = rgba.r === 0 && rgba.g === 0 && rgba.b === 0 && rgba.a === 1;
   const isWhite = rgba.r === 1 && rgba.g === 1 && rgba.b === 1 && rgba.a === 1;
   if (isBlack) {
@@ -197,6 +197,6 @@ function rgbaToHexOrColorName(rgba: Figma.Color): string {
   }
 }
 
-function styleToCssClass(style: Figma.Style): string {
+function styleToCssClass(style: Style): string {
   return style.name.replace(/[\/ ]/g, '-').toLocaleLowerCase();
 }

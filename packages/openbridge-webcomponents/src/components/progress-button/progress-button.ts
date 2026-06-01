@@ -1,9 +1,10 @@
-﻿import {LitElement, html, nothing, unsafeCSS, svg} from 'lit';
+﻿import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {styleMap} from 'lit/directives/style-map.js';
 import componentStyle from './progress-button.css?inline';
 import {customElement} from '../../decorator.js';
+import {CircularProgressMode} from '../../building-blocks/circular-progress/circular-progress.js';
 
 export enum ProgressButtonType {
   Linear = 'linear',
@@ -135,18 +136,17 @@ export class ObcProgressButton extends LitElement {
         @click="${this.handleClick}"
         aria-label="${this.label}"
         aria-busy="${this.showProgress &&
-        (this.mode === ProgressMode.Indeterminate ||
-          this.progressiveIndeterminate)}"
+        this.getCircularProgressMode() !== CircularProgressMode.determinate}"
         aria-valuenow="${this.showProgress &&
-        this.mode === ProgressMode.Determinate
+        this.getCircularProgressMode() === CircularProgressMode.determinate
           ? this.value
           : nothing}"
         aria-valuemin="${this.showProgress &&
-        this.mode === ProgressMode.Determinate
+        this.getCircularProgressMode() === CircularProgressMode.determinate
           ? 0
           : nothing}"
         aria-valuemax="${this.showProgress &&
-        this.mode === ProgressMode.Determinate
+        this.getCircularProgressMode() === CircularProgressMode.determinate
           ? 100
           : nothing}"
         role="button"
@@ -166,110 +166,42 @@ export class ObcProgressButton extends LitElement {
     `;
   }
 
-  private renderCircularProgress() {
-    const viewBoxSize = 42;
-    const strokeWidth = 4;
-    const alertStrokeWidth = 2;
-    const center = viewBoxSize / 2;
-    const radius = (viewBoxSize - strokeWidth - alertStrokeWidth) / 2;
-    const alertRadius = (viewBoxSize - alertStrokeWidth) / 2;
-    const circumference = 2 * Math.PI * radius;
-    const clampedValue = Math.max(0, Math.min(100, this.value));
-
-    let progressElement;
-
+  private getCircularProgressMode(): CircularProgressMode {
     if (this.progressiveIndeterminate) {
-      const minArc = circumference * 0.02;
-
-      let progressiveArcLength;
-      if (clampedValue >= 100) {
-        progressiveArcLength = circumference;
-      } else {
-        progressiveArcLength = Math.max(
-          minArc,
-          (clampedValue / 100) * circumference * 0.97
-        );
-      }
-
-      const progressiveGapLength = circumference - progressiveArcLength;
-
-      progressElement = svg`
-        <circle
-          class="circular-progress progressive-indeterminate"
-          cx="${center}"
-          cy="${center}"
-          r="${radius}"
-          stroke-width="${strokeWidth}"
-          fill="none"
-          stroke-dasharray="${progressiveArcLength} ${progressiveGapLength}"
-          transform-origin="${center} ${center}"
-        />
-      `;
-    } else if (this.mode === ProgressMode.Determinate) {
-      const adjustedValue = clampedValue >= 100 ? 100 : clampedValue * 0.97;
-
-      const strokeDashoffset =
-        circumference - (adjustedValue / 100) * circumference;
-
-      progressElement = svg`
-        <circle
-          class="circular-progress determinate"
-          cx="${center}"
-          cy="${center}"
-          r="${radius}"
-          stroke-width="${strokeWidth}"
-          fill="none"
-          stroke-dasharray="${circumference}"
-          stroke-dashoffset="${strokeDashoffset}"
-          transform="rotate(-90 ${center} ${center})"
-        />
-      `;
-    } else {
-      progressElement = svg`
-        <circle
-          class="circular-progress indeterminate"
-          cx="${center}"
-          cy="${center}"
-          r="${radius}"
-          stroke-width="${strokeWidth}"
-          fill="none"
-          stroke-dasharray="${circumference * 0.25} ${circumference * 0.75}"
-          transform-origin="${center} ${center}"
-        />
-      `;
+      return CircularProgressMode.progressiveIndeterminate;
     }
+    if (this.mode === ProgressMode.Determinate) {
+      return CircularProgressMode.determinate;
+    }
+    return CircularProgressMode.indeterminate;
+  }
 
-    const alertRing = this.hasAlert
-      ? svg`
-      <circle
-        class="circular-alert-ring"
-        cx="${center}"
-        cy="${center}"
-        r="${alertRadius}"
-        stroke-width="${alertStrokeWidth}"
-        fill="none"
-      />
-    `
-      : nothing;
-
+  private renderCircularProgress() {
     return html`
       <div class="circular-progress-svg-container">
-        <svg
-          class="circular-progress-svg"
-          viewBox="0 0 ${viewBoxSize} ${viewBoxSize}"
-          preserveAspectRatio="xMidYMid meet"
-        >
-          ${alertRing}
-          <circle
-            class="circular-background"
-            cx="${center}"
-            cy="${center}"
-            r="${radius}"
-            stroke-width="${strokeWidth}"
-            fill="none"
-          />
-          ${progressElement}
-        </svg>
+        ${this.hasAlert
+          ? html`<svg
+              class="circular-alert-svg"
+              viewBox="0 0 42 42"
+              preserveAspectRatio="xMidYMid meet"
+            >
+              <circle
+                class="circular-alert-ring"
+                cx="21"
+                cy="21"
+                r="20"
+                stroke-width="2"
+                fill="none"
+              />
+            </svg>`
+          : nothing}
+        <obc-circular-progress
+          .mode=${this.getCircularProgressMode()}
+          .value=${this.value}
+          .viewBoxSize=${42}
+          .strokeWidth=${4}
+          .padding=${1}
+        ></obc-circular-progress>
       </div>
     `;
   }

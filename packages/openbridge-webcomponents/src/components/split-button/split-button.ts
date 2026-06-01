@@ -1,5 +1,5 @@
 import {LitElement, html, unsafeCSS, nothing} from 'lit';
-import {property, state} from 'lit/decorators.js';
+import {property, query, state} from 'lit/decorators.js';
 import compentStyle from './split-button.css?inline';
 import {customElement} from '../../decorator.js';
 import {classMap} from 'lit/directives/class-map.js';
@@ -13,6 +13,7 @@ import {
   ContextMenuOption,
   ColumnGroup,
 } from '../context-menu-input/context-menu-input.js';
+import type {ObcContextMenuInput} from '../context-menu-input/context-menu-input.js';
 
 export type ObcSplitButtonClickEvent = CustomEvent<{
   action: 'primary' | 'dropdown';
@@ -94,8 +95,8 @@ export type ObcSplitButtonChangeEvent = CustomEvent<{
  * In this example, the split button shows a "Save" action with a leading icon, and a dropdown menu with "Save As..." and "Export" options.
  *
  * @slot icon - Leading icon for the primary button (shown when `hasIcon` is true)
- * @fires click {CustomEvent<{action: 'primary' | 'dropdown', value?: string, option?: ContextMenuOption}>} Fired when the primary or dropdown button is clicked.
- * @fires change {CustomEvent<{selectedValues: string[], selectedOptions: Array<ContextMenuOption>}>} Fired when the dropdown menu selection changes.
+ * @fires click {ObcSplitButtonClickEvent} Fired when the primary or dropdown button is clicked.
+ * @fires change {ObcSplitButtonChangeEvent} Fired when the dropdown menu selection changes.
  */
 @customElement('obc-split-button')
 export class ObcSplitButton extends LitElement {
@@ -183,13 +184,15 @@ export class ObcSplitButton extends LitElement {
    */
   @property({type: Array}) columnGroups: ColumnGroup[] = [];
 
-  /**
-   * Whether to persist the selected state visually in the menu.
-   * When true, the menu shows the checked/selected state after selection.
-   */
-  @property({type: Boolean}) persistSelection = true;
-
   @state() private isDropdownOpen = false;
+
+  private restoreFocusOnClose = false;
+
+  private menuFocusStrategy: 'first' | 'selected' | 'last' = 'selected';
+
+  @query('obc-context-menu-input') private menu?: ObcContextMenuInput;
+
+  @query('.dropdown-button') private dropdownButton?: HTMLElement;
 
   private handlePrimaryClick = (e: Event) => {
     e.stopPropagation();
@@ -210,6 +213,77 @@ export class ObcSplitButton extends LitElement {
     );
     if (this.isDropdownOpen) {
       window.addEventListener('pointerdown', this.closeOnOutside);
+      void this.focusMenuAfterOpen();
+    } else {
+      window.removeEventListener('pointerdown', this.closeOnOutside);
+    }
+  };
+
+  private async focusMenuAfterOpen() {
+    await this.updateComplete;
+    if (!this.isDropdownOpen) return;
+
+    if (this.menuFocusStrategy === 'last') {
+      this.menu?.focusLastItem();
+    } else if (this.menuFocusStrategy === 'first') {
+      this.menu?.focusFirstItem();
+    } else {
+      this.menu?.focusSelectedItem();
+    }
+
+    this.menuFocusStrategy = 'selected';
+  }
+
+  private handleDropdownKeydown = (event: KeyboardEvent) => {
+    if (this.disabled) return;
+
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        this.menuFocusStrategy = 'first';
+        if (!this.isDropdownOpen) {
+          this.isDropdownOpen = true;
+          window.addEventListener('pointerdown', this.closeOnOutside);
+          void this.focusMenuAfterOpen();
+        } else {
+          this.menu?.focusFirstItem();
+        }
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        this.menuFocusStrategy = 'last';
+        if (!this.isDropdownOpen) {
+          this.isDropdownOpen = true;
+          window.addEventListener('pointerdown', this.closeOnOutside);
+          void this.focusMenuAfterOpen();
+        } else {
+          this.menu?.focusLastItem();
+        }
+        break;
+      case 'Home':
+        event.preventDefault();
+        this.menuFocusStrategy = 'first';
+        if (!this.isDropdownOpen) {
+          this.isDropdownOpen = true;
+          window.addEventListener('pointerdown', this.closeOnOutside);
+          void this.focusMenuAfterOpen();
+        } else {
+          this.menu?.focusFirstItem();
+        }
+        break;
+      case 'End':
+        event.preventDefault();
+        this.menuFocusStrategy = 'last';
+        if (!this.isDropdownOpen) {
+          this.isDropdownOpen = true;
+          window.addEventListener('pointerdown', this.closeOnOutside);
+          void this.focusMenuAfterOpen();
+        } else {
+          this.menu?.focusLastItem();
+        }
+        break;
+      default:
+        break;
     }
   };
 
@@ -250,33 +324,27 @@ export class ObcSplitButton extends LitElement {
       selectedOptions: ContextMenuOption[];
     }>
   ) {
-    // Only update selection if persisting, or in multi-select
-    if (this.persistSelection || this.isMultiSelect) {
-      this.selectedValues = e.detail.selectedValues;
-    }
+    this.selectedValues = e.detail.selectedValues;
 
     this.dispatchEvent(new CustomEvent('change', {detail: e.detail}));
     this.handleMenuClose();
   }
 
   private handleMenuClose = () => {
+    this.restoreFocusOnClose = true;
     this.isDropdownOpen = false;
     window.removeEventListener('pointerdown', this.closeOnOutside);
+    queueMicrotask(() => {
+      if (this.restoreFocusOnClose) {
+        this.restoreFocusOnClose = false;
+        this.dropdownButton?.focus();
+      }
+    });
   };
 
   override disconnectedCallback() {
     window.removeEventListener('pointerdown', this.closeOnOutside);
     super.disconnectedCallback();
-  }
-
-  private get effectiveSelectPerGroup(): boolean {
-    return (
-      !this.isMultiSelect && !!this.selectPerGroup && !!this.persistSelection
-    );
-  }
-
-  private get effectivePersistSelection(): boolean {
-    return this.isMultiSelect ? true : !!this.persistSelection;
   }
 
   override render() {
@@ -311,6 +379,7 @@ export class ObcSplitButton extends LitElement {
           .disabled=${this.disabled}
           .activated=${this.isDropdownOpen}
           @click=${this.handleDropdownClick}
+          @keydown=${this.handleDropdownKeydown}
           aria-expanded=${this.isDropdownOpen}
           aria-haspopup="menu"
         >
@@ -326,8 +395,7 @@ export class ObcSplitButton extends LitElement {
               .selectedValues=${this.selectedValues}
               .type=${this.menuType}
               .multiSelect=${this.isMultiSelect}
-              .selectPerGroup=${this.effectiveSelectPerGroup}
-              .persistSelection=${this.effectivePersistSelection}
+              .selectPerGroup=${true}
               .hasTitleBar=${this.hasTitleBar}
               .title=${this.menuTitle}
               .columnGroups=${this.columnGroups}

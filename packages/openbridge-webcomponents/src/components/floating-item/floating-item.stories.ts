@@ -11,7 +11,7 @@ import '../../icons/icon-placeholder.js';
 import '../../icons/icon-ship.js';
 
 const meta: Meta<ObcFloatingItem> = {
-  title: 'UI Components/Message and alerts/Floating Item',
+  title: 'UI Components/Message and Alerts/Floating Item',
   component: 'obc-floating-item',
   tags: ['6.0'],
   argTypes: {

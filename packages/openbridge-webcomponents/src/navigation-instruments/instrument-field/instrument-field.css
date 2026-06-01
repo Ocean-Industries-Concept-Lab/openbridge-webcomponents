@@ -32,7 +32,7 @@
 
   & .setpoint {
     color: var(--instrument-enhanced-secondary-color);
-    @mixin font-instrument-value-regular;
+    @mixin font-instrument-value-regular-neutral;
     transition: opacity 10ms ease-in-out;
   }
 
@@ -44,11 +44,11 @@
   }
 
   &.horizontal.enhanced .setpoint {
-    @mixin font-instrument-value-large;
+    @mixin font-instrument-value-enhanced-neutral;
   }
 
   & .value {
-    @mixin font-instrument-value-regular;
+    @mixin font-instrument-value-regular-active;
     padding: 0px var(--instrument-components-readout-padding-horizontal);
     justify-content: end;
 
@@ -139,7 +139,7 @@
 
   &.enhanced {
     .value {
-      @mixin font-instrument-value-large;
+      @mixin font-instrument-value-enhanced-active;
     }
   }
 

@@ -34,12 +34,12 @@
 </template>
 
 <script setup lang="ts">
-import ObcToggleButtonGroup from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/toggle-button-group/ObcToggleButtonGroup.vue'
-import ObcToggleButtonOption from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/toggle-button-option/ObcToggleButtonOption.vue'
-import { ObcToggleButtonOptionType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/toggle-button-option/toggle-button-option.js'
+import ObcToggleButtonGroup from '@oicl/openbridge-webcomponents-vue/components/toggle-button-group/ObcToggleButtonGroup.vue'
+import ObcToggleButtonOption from '@oicl/openbridge-webcomponents-vue/components/toggle-button-option/ObcToggleButtonOption.vue'
+import { ObcToggleButtonOptionType } from '@oicl/openbridge-webcomponents/dist/components/toggle-button-option/toggle-button-option.js'
 import { useBridgeStore } from '@/stores/bridge'
-import type { ObcToggleButtonGroupValueChangeEvent } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/toggle-button-group/toggle-button-group.js'
-import type { ObcPalette } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu'
+import type { ObcToggleButtonGroupValueChangeEvent } from '@oicl/openbridge-webcomponents/dist/components/toggle-button-group/toggle-button-group.js'
+import type { ObcPalette } from '@oicl/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu'
 import { computed } from 'vue'
 import ScreenComponent from './ScreenComponent.vue'
 

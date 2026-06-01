@@ -1,0 +1,27 @@
+.wrapper {
+  display: flex;
+  padding: 0px 8px;
+  gap: var(--ui-components-audio-output-spacing);
+}
+
+.item {
+  width: var(--ui-components-audio-output-width);
+  height: var(--ui-components-audio-output-height);
+  border-radius: 16px;
+  background: var(--indent-enabled-background-color);
+  box-sizing: border-box;
+
+  &.active {
+    background: var(--selected-enabled-background-color);
+  }
+
+  &:not(.active) {
+    .wrapper:not(.disabled) & {
+      border: 1px solid var(--indent-enabled-border-color);
+    }
+  }
+}
+
+.disabled .item {
+  background: var(--element-disabled-color);
+}

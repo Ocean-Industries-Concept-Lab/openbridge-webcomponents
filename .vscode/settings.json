@@ -7,5 +7,15 @@
     "editor.defaultFormatter": "Vue.volar"
   },
   "svg.preview.background": "transparent",
-  "lit-plugin.strict": true
+  "lit-plugin.strict": true,
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/.cache/**": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.cache": true
+  }
 }

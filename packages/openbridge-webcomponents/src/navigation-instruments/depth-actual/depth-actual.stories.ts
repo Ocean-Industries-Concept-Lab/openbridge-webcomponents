@@ -3,7 +3,9 @@ import {ObcDepthActual} from './depth-actual.js';
 import './depth-actual.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {VesselImage} from '../watch/watch.js';
+import {foreVessels} from '../watch/vessels/storybook-helper.js';
 import {AdviceType} from '../watch/advice.js';
+import {Priority} from '../types.js';
 
 const meta: Meta<typeof ObcDepthActual> = {
   title: 'Instruments/Depth Actual',
@@ -15,10 +17,10 @@ const meta: Meta<typeof ObcDepthActual> = {
     draft: 2,
     vesselScale: 1,
     instrumentRange: 50,
-    primaryTickbarsInterval: 25,
-    secondaryTickbarsInterval: 5,
+    primaryTickmarkInterval: 25,
+    secondaryTickmarkInterval: 5,
     vesselImage: VesselImage.psvFore,
-    enhanced: false,
+    priority: Priority.regular,
   },
   argTypes: {
     width: {control: {type: 'range', min: 100, max: 1000, step: 1}},
@@ -26,13 +28,12 @@ const meta: Meta<typeof ObcDepthActual> = {
     draft: {control: {type: 'range', min: 0, max: 10, step: 0.1}},
     vesselScale: {control: {type: 'range', min: 0.5, max: 2, step: 0.1}},
     vesselImage: {
-      control: {type: 'select'},
-      options: Object.values(VesselImage),
+      control: 'select',
+      options: foreVessels,
     },
-    enhanced: {
-      control: {
-        type: 'boolean',
-      },
+    priority: {
+      control: 'select',
+      options: Object.values(Priority),
     },
   },
   decorators: [widthDecorator],
@@ -47,7 +48,7 @@ export const Regular: Story = {
 
 export const Enhanced: Story = {
   args: {
-    enhanced: true,
+    priority: Priority.enhanced,
   },
 };
 

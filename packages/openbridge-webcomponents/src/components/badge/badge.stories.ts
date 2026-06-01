@@ -7,12 +7,12 @@ import '../../icons/icon-warning-badge.js';
 import '../../icons/icon-alarm-badge.js';
 
 const meta: Meta<typeof ObcBadge> = {
-  title: 'UI Components/Message and alerts/Badge',
+  title: 'UI Components/Message and Alerts/Badge',
   tags: ['autodocs'],
   component: 'obc-badge',
   args: {
     number: 9,
-    hideNumber: false,
+    showNumber: true,
     size: BadgeSize.regular,
     type: BadgeType.regular,
     variant: BadgeVariant.default,
@@ -23,9 +23,9 @@ const meta: Meta<typeof ObcBadge> = {
       control: {type: 'number', min: 0},
       description: 'The number to display in the badge',
     },
-    hideNumber: {
+    showNumber: {
       control: {type: 'boolean'},
-      description: 'Hides the number in the badge',
+      description: 'Whether to show the number in the badge',
     },
     size: {
       control: {type: 'select'},
@@ -57,7 +57,7 @@ export const Regular: Story = {
     size: BadgeSize.regular,
     variant: BadgeVariant.default,
     type: BadgeType.regular,
-    hideNumber: false,
+    showNumber: true,
     showIcon: true,
   },
   render(args) {
@@ -66,7 +66,7 @@ export const Regular: Story = {
       size=${args.size}
       type=${args.type}
       variant=${args.variant}
-      ?hideNumber=${args.hideNumber}
+      .showNumber=${args.showNumber}
       ?showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
@@ -79,7 +79,7 @@ export const Large: Story = {
     size: BadgeSize.large,
     variant: BadgeVariant.default,
     type: BadgeType.regular,
-    hideNumber: false,
+    showNumber: true,
     showIcon: true,
   },
   render(args) {
@@ -88,7 +88,7 @@ export const Large: Story = {
       size=${args.size}
       type=${args.type}
       variant=${args.variant}
-      ?hideNumber=${args.hideNumber}
+      .showNumber=${args.showNumber}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
     </obc-badge>`;
@@ -98,14 +98,15 @@ export const Large: Story = {
 export const NoNumber: Story = {
   args: {
     size: BadgeSize.regular,
-    hideNumber: true,
+    showNumber: false,
     variant: BadgeVariant.default,
     type: BadgeType.regular,
     showIcon: true,
   },
   render(args) {
     return html`<obc-badge
-      hideNumber
+      .showNumber=${args.showNumber}
+      .showIcon=${args.showIcon}
       size=${args.size}
       type=${args.type}
       variant=${args.variant}
@@ -118,14 +119,15 @@ export const NoNumber: Story = {
 export const NoNumberLarge: Story = {
   args: {
     size: BadgeSize.large,
-    hideNumber: true,
+    showNumber: false,
     variant: BadgeVariant.default,
     type: BadgeType.regular,
     showIcon: true,
   },
   render(args) {
     return html`<obc-badge
-      hideNumber
+      .showNumber=${args.showNumber}
+      .showIcon=${args.showIcon}
       size=${args.size}
       type=${args.type}
       variant=${args.variant}
@@ -145,8 +147,8 @@ export const Alarm: Story = {
       size=${args.size}
       type=${args.type}
       variant=${args.variant}
-      ?hideNumber=${args.hideNumber}
-      .showIcon=${args.showIcon}
+      .showNumber=${args.showNumber}
+      ?showIcon=${args.showIcon}
     >
     </obc-badge>`;
   },
@@ -160,8 +162,8 @@ export const AlarmLarge: Story = {
       size=${args.size}
       type=${args.type}
       variant=${args.variant}
-      ?hideNumber=${args.hideNumber}
-      .showIcon=${args.showIcon}
+      .showNumber=${args.showNumber}
+      ?showIcon=${args.showIcon}
     >
     </obc-badge>`;
   },
@@ -175,8 +177,8 @@ export const Warning: Story = {
       size=${args.size}
       type=${args.type}
       variant=${args.variant}
-      ?hideNumber=${args.hideNumber}
-      .showIcon=${args.showIcon}
+      .showNumber=${args.showNumber}
+      ?showIcon=${args.showIcon}
     >
     </obc-badge>`;
   },
@@ -190,8 +192,8 @@ export const Caution: Story = {
       size=${args.size}
       type=${args.type}
       variant=${args.variant}
-      ?hideNumber=${args.hideNumber}
-      showIcon=${args.showIcon}
+      .showNumber=${args.showNumber}
+      ?showIcon=${args.showIcon}
     >
     </obc-badge>`;
   },
@@ -205,8 +207,8 @@ export const Running: Story = {
       size=${args.size}
       type=${args.type}
       variant=${args.variant}
-      ?hideNumber=${args.hideNumber}
-      showIcon=${args.showIcon}
+      .showNumber=${args.showNumber}
+      ?showIcon=${args.showIcon}
     >
     </obc-badge>`;
   },
@@ -220,8 +222,8 @@ export const Notification: Story = {
       size=${args.size}
       type=${args.type}
       variant=${args.variant}
-      ?hideNumber=${args.hideNumber}
-      showIcon=${args.showIcon}
+      .showNumber=${args.showNumber}
+      ?showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
     </obc-badge>`;
@@ -236,8 +238,8 @@ export const Enhance: Story = {
       size=${args.size}
       type=${args.type}
       variant=${args.variant}
-      ?hideNumber=${args.hideNumber}
-      showIcon=${args.showIcon}
+      .showNumber=${args.showNumber}
+      ?showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
     </obc-badge>`;
@@ -251,8 +253,8 @@ export const Automation: Story = {
       size=${args.size}
       type=${args.type}
       variant=${args.variant}
-      ?hideNumber=${args.hideNumber}
-      showIcon=${args.showIcon}
+      .showNumber=${args.showNumber}
+      ?showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
     </obc-badge>`;
@@ -276,8 +278,8 @@ export const FlatRegular: Story = {
       size=${args.size}
       type=${args.type}
       variant="flat"
-      ?hideNumber=${args.hideNumber}
-      showIcon=${args.showIcon}
+      .showNumber=${args.showNumber}
+      ?showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
     </obc-badge>`;
@@ -292,8 +294,8 @@ export const FlatLarge: Story = {
       size=${args.size}
       type=${args.type}
       variant="flat"
-      ?hideNumber=${args.hideNumber}
-      showIcon=${args.showIcon}
+      .showNumber=${args.showNumber}
+      ?showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
     </obc-badge>`;
@@ -301,14 +303,14 @@ export const FlatLarge: Story = {
 };
 
 export const FlatHideNumber: Story = {
-  args: {variant: BadgeVariant.flat, hideNumber: true, showIcon: true},
+  args: {variant: BadgeVariant.flat, showNumber: false, showIcon: true},
   render(args) {
     return html`<obc-badge
       size=${args.size}
       type=${args.type}
       variant="flat"
-      hideNumber
-      showIcon=${args.showIcon}
+      .showNumber=${args.showNumber}
+      ?showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
     </obc-badge>`;
@@ -323,8 +325,8 @@ export const FlatAlarm: Story = {
       size=${args.size}
       type="alarm"
       variant="flat"
-      ?hideNumber=${args.hideNumber}
-      showIcon=${args.showIcon}
+      .showNumber=${args.showNumber}
+      ?showIcon=${args.showIcon}
     >
     </obc-badge>`;
   },
@@ -348,8 +350,8 @@ export const FlatWarning: Story = {
       size=${args.size}
       type="warning"
       variant="flat"
-      ?hideNumber=${args.hideNumber}
-      showIcon=${args.showIcon}
+      .showNumber=${args.showNumber}
+      ?showIcon=${args.showIcon}
     >
     </obc-badge>`;
   },
@@ -373,8 +375,8 @@ export const FlatCaution: Story = {
       size=${args.size}
       type="caution"
       variant="flat"
-      ?hideNumber=${args.hideNumber}
-      showIcon=${args.showIcon}
+      .showNumber=${args.showNumber}
+      ?showIcon=${args.showIcon}
     >
     </obc-badge>`;
   },
@@ -398,7 +400,7 @@ export const FlatRunning: Story = {
       size=${args.size}
       type="running"
       variant="flat"
-      ?hideNumber=${args.hideNumber}
+      .showNumber=${args.showNumber}
       ?showIcon=${args.showIcon}
     >
     </obc-badge>`;
@@ -427,7 +429,7 @@ export const FlatNotification: Story = {
       size=${args.size}
       type="notification"
       variant="flat"
-      ?hideNumber=${args.hideNumber}
+      .showNumber=${args.showNumber}
       ?showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
@@ -474,7 +476,7 @@ export const FlatAutomation: Story = {
   args: {
     type: BadgeType.automation,
     variant: BadgeVariant.flat,
-    hideNumber: true,
+    showNumber: false,
     showIcon: true,
   },
   render(args) {
@@ -503,7 +505,7 @@ export const FlatOutline: Story = {
   args: {
     type: BadgeType.outline,
     variant: BadgeVariant.flat,
-    hideNumber: true,
+    showNumber: false,
     showIcon: true,
   },
   render(args) {

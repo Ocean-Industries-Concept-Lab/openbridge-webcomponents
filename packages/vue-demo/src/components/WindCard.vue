@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import ObcWind from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/wind/ObcWind.vue'
-import { VesselImage } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/vessel'
-import { type WindHistogramData } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/wind/wind'
+import ObcWind from '@oicl/openbridge-webcomponents-vue/navigation-instruments/wind/ObcWind.vue'
+import { VesselImage } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/vessel'
+import { type WindHistogramData } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/wind/wind'
 import type { WeatherData } from '@/business/getWeather'
 
 interface Props {
@@ -80,7 +80,7 @@ const windHistogramData: WindHistogramData[] = [
     class="wind-instrument"
     :wind-histogram-data="windHistogramData"
     :current-wind-from-direction="weather.windDirection"
-    :current-wind-speed-beaufort="weather.windSpeedBeaufort"
+    :current-wind-speed-knots="weather.windSpeed * 1.94384"
     :vessel-heading-deg="vesselHeadingDeg"
     :vessel-image="vessel === 'psv' ? VesselImage.psvTop : VesselImage.carFerryTop"
   />

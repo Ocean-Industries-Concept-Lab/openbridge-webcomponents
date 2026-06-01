@@ -1,0 +1,40 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: block;
+  width: 557px;
+  max-width: 557px;
+}
+
+.sequence-modal {
+  width: 100%;
+  height: 506px;
+}
+
+.type-regular obc-sequence-card::part(title-text) {
+  @mixin font-instrument-value-m-neutral;
+  color: var(--element-active-color);
+}
+
+obc-sequence-card::part(action-container) {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.sequence-modal-header-actions {
+  display: flex;
+  align-items: center;
+}
+
+.sequence-modal-divider {
+  width: 1px;
+  height: 24px;
+  background-color: var(--border-divider-color);
+}
+
+obc-sequence-card::part(title-container) {
+  gap: var(--ui-components-card-padding);
+  padding-left: var(--ui-components-card-padding);
+}

@@ -18,9 +18,9 @@
   position: relative;
   width: 100%;
   border-radius: 6px;
-  outline: 1px solid var(--indent-enabled-border-color, rgba(0,0,0,0.05));
+  outline: 1px solid var(--indent-enabled-border-color, rgba(0, 0, 0, 0.05));
   outline-offset: -1px;
-  background: var(--indent-enabled-background-color, rgba(0,0,0,0.05));
+  background: var(--indent-enabled-background-color, rgba(0, 0, 0, 0.05));
 }
 
 .outer-wrapper.flat .wrapper {

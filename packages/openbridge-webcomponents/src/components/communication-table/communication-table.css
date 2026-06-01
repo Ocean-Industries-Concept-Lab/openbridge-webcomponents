@@ -26,7 +26,7 @@ obc-table {
   }
 
   &::part(leading-icon icon unread)::after {
-    content: '';
+    content: "";
     display: block;
     width: var(--ui-components-communication-item-notification-dot-size, 6px);
     height: var(--ui-components-communication-item-notification-dot-size, 6px);
@@ -45,7 +45,7 @@ obc-table {
       var(--ui-components-communication-item-label-spacing, 8px) / 2
     );
     grid-template-columns: auto 1fr;
-    grid-template-areas: 'title title' 'icon text';
+    grid-template-areas: "title title" "icon text";
     column-gap: var(
       --ui-components-communication-item-label-spacing-description,
       4px
@@ -59,7 +59,7 @@ obc-table {
   }
 
   &::part(message cell no-icon) {
-    grid-template-areas: 'title title' 'text text';
+    grid-template-areas: "title title" "text text";
   }
 
   &::part(message title) {

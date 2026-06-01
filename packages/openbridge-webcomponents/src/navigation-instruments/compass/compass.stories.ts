@@ -1,9 +1,17 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {CompassDirection, ObcCompass} from './compass.js';
+import {
+  CompassDirection,
+  CompassPriorityElement,
+  ObcCompass,
+  RotType,
+} from './compass.js';
 import './compass.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
 import {VesselImage} from '../watch/watch.js';
+import {topVessels} from '../watch/vessels/storybook-helper.js';
+import {InstrumentState, Priority} from '../types.js';
+import {RotPosition} from '../rate-of-turn/rot-renderer.js';
 
 const meta: Meta<typeof ObcCompass> = {
   title: 'Instruments/Compass',
@@ -21,38 +29,78 @@ const meta: Meta<typeof ObcCompass> = {
         hinted: false,
       },
     ],
-    headingSetPoint: 311,
-    windSpeed: 4,
+    headingSetpoint: 311,
+    currentWindSpeedKnots: 20,
     windFromDirection: 45,
     currentSpeed: 3,
     currentFromDirection: 60,
     rotationsPerMinute: 1,
+    rotType: RotType.dots,
+    rotPosition: RotPosition.innerCircle,
+    rotMaxValue: 10,
     vesselImage: VesselImage.psvTop,
     direction: CompassDirection.NorthUp,
+    touching: false,
+    priority: Priority.enhanced,
+    showLabels: true,
+    tickmarksInside: false,
+    priorityElements: [CompassPriorityElement.hdg],
   },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
     heading: {control: {type: 'range', min: 0, max: 360, step: 1}},
     courseOverGround: {control: {type: 'range', min: 0, max: 360, step: 1}},
-    headingSetPoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
-    windSpeed: {control: {type: 'range', min: 0, max: 14, step: 1}},
+    headingSetpoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
+    currentWindSpeedKnots: {
+      control: {type: 'range', min: 0, max: 75, step: 1},
+      description: 'Wind speed in knots.',
+    },
     windFromDirection: {control: {type: 'range', min: 0, max: 360, step: 1}},
     currentSpeed: {control: {type: 'range', min: 0, max: 4, step: 1}},
     currentFromDirection: {control: {type: 'range', min: 0, max: 360, step: 1}},
     rotationsPerMinute: {
-      control: {type: 'range', min: -2, max: 10, step: 0.1},
+      control: {type: 'range', min: -10, max: 10, step: 0.1},
       description:
-        'Rotations per minute. NB: storybook recreates the component on change, which resets the animation.',
+        '**Deprecated.** Use `rateOfTurnDegreesPerMinute` instead. NB: storybook recreates the component on change, which resets the animation.',
+    },
+    rateOfTurnDegreesPerMinute: {
+      control: {type: 'range', min: -180, max: 180, step: 1},
+      description:
+        'Measured rate of turn in degrees per minute (positive = starboard). Drives both the bar extent and (after multiplication by `rotDotAnimationFactor`) the dot animation.',
+    },
+    rotDotAnimationFactor: {
+      control: {type: 'range', min: 1, max: 60, step: 1},
+      description:
+        'Visual amplification applied only to the spinning dot animation (not bar extent). Default `18` (≈1 rpm at 20°/min).',
+    },
+    rotType: {
+      control: 'select',
+      options: Object.values(RotType),
+      description:
+        'Rate-of-turn display mode: rotating dots or banana-shaped bar (HDG→COG).',
+    },
+    rotPosition: {
+      control: 'select',
+      options: Object.values(RotPosition),
+      description:
+        'Rate-of-turn track position: on the outer scale ring or inner circle.',
     },
     vesselImage: {
-      control: {type: 'select'},
-      options: Object.values(VesselImage).filter((image) =>
-        image.includes('top')
-      ),
+      control: 'select',
+      options: topVessels,
     },
     direction: {
       control: {type: 'select'},
       options: Object.values(CompassDirection),
+    },
+    touching: {control: 'boolean'},
+    showLabels: {control: 'boolean'},
+    tickmarksInside: {control: 'boolean'},
+    state: {control: 'select', options: Object.values(InstrumentState)},
+    priority: {control: 'select', options: Object.values(Priority)},
+    priorityElements: {
+      control: 'multi-select',
+      options: Object.values(CompassPriorityElement),
     },
   },
   decorators: [widthDecorator],
@@ -61,18 +109,65 @@ const meta: Meta<typeof ObcCompass> = {
 export default meta;
 type Story = StoryObj<ObcCompass>;
 
-export const NorthUp: Story = {
+export const NorthUpInCommand: Story = {
   args: {},
 };
 
-export const HeadingUp: Story = {
+export const NorthUpNotInCommand: Story = {
+  args: {
+    state: InstrumentState.active,
+    priority: Priority.regular,
+  },
+};
+
+export const HeadingUpInCommand: Story = {
   args: {
     direction: CompassDirection.HeadingUp,
   },
 };
 
-export const CourseUp: Story = {
+export const CourseUpInCommand: Story = {
   args: {
     direction: CompassDirection.CourseUp,
+  },
+};
+
+export const WithLabelsOutside: Story = {
+  args: {
+    showLabels: true,
+    tickmarksInside: false,
+  },
+};
+
+export const WithLabelsInside: Story = {
+  args: {
+    showLabels: true,
+    tickmarksInside: true,
+  },
+};
+
+export const WithRotBar: Story = {
+  args: {
+    rotType: RotType.bar,
+    rotationsPerMinute: 5,
+  },
+};
+
+export const WithRotBarEnhanced: Story = {
+  args: {
+    rotType: RotType.bar,
+    rotationsPerMinute: 5,
+    priorityElements: [CompassPriorityElement.hdg, CompassPriorityElement.rot],
+  },
+};
+
+export const WithRateOfTurnDegreesPerMinute: Story = {
+  tags: ['skip-test'],
+  args: {
+    rotType: RotType.bar,
+    rateOfTurnDegreesPerMinute: 20,
+    rotDotAnimationFactor: 18,
+    rotMaxValue: 60,
+    priorityElements: [CompassPriorityElement.hdg, CompassPriorityElement.rot],
   },
 };

@@ -6,7 +6,7 @@
   @mixin font-body;
   font-size: calc(12px / var(--scale));
   fill: var(--element-neutral-color);
-  alignment-baseline: central;
+  dominant-baseline: central;
   text-anchor: middle;
 
   &.left {
@@ -19,7 +19,6 @@
 }
 
 .label.inside {
-
   &.left {
     text-anchor: start;
   }

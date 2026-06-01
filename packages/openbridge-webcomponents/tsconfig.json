@@ -24,7 +24,7 @@
     "skipLibCheck": true,
     "plugins": [
       {
-        "name": "ts-lit-plugin",
+        "name": "@jackolope/ts-lit-plugin",
         "strict": true,
         "rules": {
           "no-invalid-css": "off"

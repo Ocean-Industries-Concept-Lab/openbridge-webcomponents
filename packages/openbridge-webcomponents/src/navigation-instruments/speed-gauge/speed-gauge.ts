@@ -1,9 +1,12 @@
 import {LitElement, css, html, nothing, svg} from 'lit';
 import {property} from 'lit/decorators.js';
-import {Tickmark, TickmarkType} from '../watch/tickmark.js';
+import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
 import {WatchCircleType} from '../watch/watch.js';
 import {AdviceType, AngleAdviceRaw, AdviceState} from '../watch/advice.js';
-import {InstrumentFieldSize} from '../instrument-field/instrument-field.js';
+import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
+import {Priority} from '../types.js';
+import '../readout/readout.js';
+import {ReadoutDirection, ReadoutVariant} from '../readout/readout.js';
 import {customElement} from '../../decorator.js';
 
 export enum ObcSpeedGaugeNeedleType {
@@ -18,38 +21,87 @@ export interface SpeedAdvice {
   hinted: boolean;
 }
 
+/**
+ * `<obc-speed-gauge>` — Radial speed gauge with needle and optional readout.
+ *
+ * `ObcSpeedGauge` renders a 225° arc gauge (−90° to +135°) that displays
+ * the current speed with a configurable full-length or bar needle. It layers
+ * an `<obc-watch>` base with a needle SVG overlay and an optional numeric
+ * readout field. It inherits a full setpoint property bundle from
+ * {@link SetpointMixin}, including auto at-setpoint detection, dual-marker
+ * adjustment preview, and deadband tuning.
+ *
+ * ## Features
+ *
+ * - **Two needle types**: `full` (pointer with center dot) and `bar`
+ *   (short indicator bar) via `needleType`.
+ * - **Bipolar range support**: When `minSpeed < 0`, negative tickmarks are
+ *   rendered with `main` tick style.
+ * - **Optional readout**: Enable `showReadout` to display an
+ *   `<obc-readout>` with the current speed, unit (KN), and label (STW).
+ * - **Setpoint via mixin**: `setpoint`, `newSetpoint`, `touching`,
+ *   `autoAtSetpointDeadband`, `setpointOverride`, and all other setpoint
+ *   properties are provided by `SetpointMixin`; the setpoint angle and
+ *   at-setpoint state are computed and forwarded to `<obc-watch>`.
+ * - **Speed advice zones**: Pass an array of {@link SpeedAdvice} objects to
+ *   render caution/alert arcs; triggered state is derived from whether the
+ *   current speed falls inside the advice range.
+ *
+ * ## Usage Guidelines
+ *
+ * - Set `maxSpeed` (and optionally `minSpeed`) to define the gauge range.
+ * - Use `priority` to switch between regular and enhanced color palettes
+ *   (default: `Priority.regular`).
+ * - Provide `tickmarkInterval` to control tickmark spacing.
+ * - Enable `showLabels` to show numeric labels at primary tickmarks.
+ * - Enable `tickmarksInside` to render tickmarks inside the ring.
+ * - Enable `showReadout` to display the numeric value below the gauge.
+ *
+ * ## Best Practices
+ *
+ * - Prefer `SetpointMixin` properties (`setpoint`, `touching`, etc.) over
+ *   any legacy aliases — the mixin is the single source of truth.
+ * - The needle overlay SVG uses viewBox `−224 −224 448 448` to align with
+ *   the `<obc-watch>` layer.
+ *
+ * ## Example
+ *
+ * ```html
+ * <obc-speed-gauge
+ *   speed="12.5"
+ *   maxSpeed="25"
+ *   needleType="full"
+ *   enhanced
+ *   showLabels
+ *   showReadout
+ *   tickmarkInterval="5"
+ *   setpoint="15"
+ * ></obc-speed-gauge>
+ * ```
+ *
+ * @element obc-speed-gauge
+ * @typedef {import('./speed-gauge.js').SpeedAdvice} SpeedAdvice
+ */
 @customElement('obc-speed-gauge')
-export class ObcSpeedGauge extends LitElement {
+export class ObcSpeedGauge extends SetpointMixin(LitElement) {
   @property({type: Number}) speed = 0;
-  @property({type: Number}) setpoint: number | undefined;
-  @property({type: Boolean}) atSetpoint: boolean = false;
-  @property({type: Boolean}) touching: boolean = false;
-  @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
-  @property({type: Number}) autoAtSetpointDeadband: number = 2;
   @property({type: Number}) maxSpeed = 100;
   @property({type: Number}) minSpeed = 0;
-  @property({type: Boolean}) labels: boolean = false;
-  @property({type: Number}) tickmarkInterval = 20;
-  @property({type: Boolean}) enhanced: boolean = false;
+  @property({type: Boolean}) showLabels: boolean = false;
+  /** Whether to render tickmarks inside the ring. */
+  @property({type: Boolean}) tickmarksInside: boolean = false;
+  /**
+   * Interval for tickmarks in speed units.
+   * When undefined or <= 0, no tickmarks are shown (only the zero mark).
+   */
+  @property({type: Number}) tickmarkInterval: number | undefined = 20;
+  @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) needleType: ObcSpeedGaugeNeedleType =
     ObcSpeedGaugeNeedleType.full;
   @property({type: Array, attribute: false}) speedAdvices: SpeedAdvice[] = [];
+  @property({type: String}) tickmarkStyle: TickmarkStyle =
+    TickmarkStyle.regular;
   @property({type: Boolean}) showReadout: boolean = false;
-
-  atSetpointCalc(): boolean {
-    if (this.setpoint === undefined) {
-      return false;
-    }
-
-    if (this.touching) {
-      return false;
-    }
-
-    if (!this.disableAutoAtSetpoint) {
-      return Math.abs(this.speed - this.setpoint) < this.autoAtSetpointDeadband;
-    }
-    return this.atSetpoint;
-  }
 
   getAngle(v: number): number {
     return (v / this.maxSpeed) * (180 + 45) - 90;
@@ -62,21 +114,31 @@ export class ObcSpeedGauge extends LitElement {
   maxAngle = 180 - 45;
 
   override render() {
-    const barColor = this.enhanced
-      ? 'var(--instrument-enhanced-tertiary-color)'
-      : 'var(--instrument-regular-tertiary-color)';
+    const barColor =
+      this.priority === Priority.enhanced
+        ? 'var(--instrument-enhanced-tertiary-color)'
+        : 'var(--instrument-regular-tertiary-color)';
     const setpointAngle =
       this.setpoint !== undefined ? this.getAngle(this.setpoint) : undefined;
 
-    const maxDigits = this.maxSpeed.toFixed(1).length;
+    const maxDigits = 1;
 
     return html`
       <div class="container">
         <obc-watch
+          .touching=${this.touching}
           .angleSetpoint=${setpointAngle}
-          .atAngleSetpoint=${this.atSetpointCalc()}
+          .newAngleSetpoint=${this.newSetpoint !== undefined
+            ? this.getAngle(this.newSetpoint)
+            : undefined}
+          .atAngleSetpoint=${this.computeAtSetpoint(this.speed)}
+          .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
+          .setpointOverride=${this.setpointOverride}
+          .animateSetpoint=${this.animateSetpoint}
           .padding=${48}
           .tickmarks=${this.tickmarks}
+          .tickmarksInside=${this.tickmarksInside}
+          .tickmarkStyle=${this.tickmarkStyle}
           .advices=${this._advices}
           .areas=${[
             {
@@ -98,17 +160,21 @@ export class ObcSpeedGauge extends LitElement {
         <svg class="rudder" viewBox="-224 -224 448 448">${this.needle}</svg>
         ${this.showReadout
           ? html`
-              <obc-instrument-field
+              <obc-readout
                 class="speed-gauge-value"
-                .size=${InstrumentFieldSize.enhanced}
-                .neutralColor=${!this.enhanced}
+                .variant=${ReadoutVariant.stack}
+                .direction=${ReadoutDirection.horizontal}
+                .hasSetpoint=${false}
+                .hasAdvice=${false}
                 .value=${this.speed}
-                horizontal
+                .showZeroPadding=${false}
+                .valueHasHintedZeros=${false}
                 unit="KN"
-                tag="STW"
+                label="STW"
                 .fractionDigits=${1}
-                .maxDigits=${maxDigits}
-              ></obc-instrument-field>
+                .minValueLength=${maxDigits}
+                .valuePriority=${this.priority}
+              ></obc-readout>
             `
           : nothing}
       </div>
@@ -116,9 +182,10 @@ export class ObcSpeedGauge extends LitElement {
   }
 
   get needle() {
-    const needleColor = this.enhanced
-      ? 'var(--instrument-enhanced-secondary-color)'
-      : 'var(--instrument-regular-secondary-color)';
+    const needleColor =
+      this.priority === Priority.enhanced
+        ? 'var(--instrument-enhanced-secondary-color)'
+        : 'var(--instrument-regular-secondary-color)';
     if (this.needleType === ObcSpeedGaugeNeedleType.full) {
       return svg`<g transform="rotate(${this.getAngle(this.speed)}) translate(-256, -256)">
       <circle cx="256" cy="256" r="14" fill=${needleColor}/>
@@ -136,50 +203,48 @@ export class ObcSpeedGauge extends LitElement {
 
   get tickmarks(): Tickmark[] {
     const tickmarks: Tickmark[] = [];
-    for (
-      let i = this.tickmarkInterval;
-      i < this.maxSpeed;
-      i += this.tickmarkInterval
-    ) {
-      tickmarks.push({
-        angle: this.getAngle(i),
-        type: TickmarkType.primary,
-        text: this.labels ? i.toString() : undefined,
-      });
+
+    // Tickmarks — skip when undefined or <= 0 to prevent infinite loops
+    const interval = this.tickmarkInterval;
+    if (interval !== undefined && interval > 0 && Number.isFinite(interval)) {
+      for (let i = interval; i < this.maxSpeed; i += interval) {
+        tickmarks.push({
+          angle: this.getAngle(i),
+          type: TickmarkType.primary,
+          text: this.showLabels ? i.toString() : undefined,
+        });
+      }
+
+      if (this.showLabels && this.maxSpeed % interval === 0) {
+        tickmarks.push({
+          angle: this.getAngle(this.maxSpeed),
+          type: TickmarkType.textOnly,
+          text: this.showLabels ? this.maxSpeed.toString() : undefined,
+        });
+      }
+
+      for (let i = -interval; i > this.minSpeed; i -= interval) {
+        tickmarks.push({
+          angle: this.getAngle(i),
+          type: TickmarkType.main,
+          text: this.showLabels ? i.toString() : undefined,
+        });
+      }
+
+      if (this.showLabels && this.minSpeed % interval === 0) {
+        tickmarks.push({
+          angle: this.getAngle(this.minSpeed),
+          type: TickmarkType.textOnly,
+          text: this.showLabels ? this.minSpeed.toString() : undefined,
+        });
+      }
     }
 
-    if (this.labels && this.maxSpeed % this.tickmarkInterval === 0) {
-      tickmarks.push({
-        angle: this.getAngle(this.maxSpeed),
-        type: TickmarkType.textOnly,
-        text: this.labels ? this.maxSpeed.toString() : undefined,
-      });
-    }
-
-    for (
-      let i = -this.tickmarkInterval;
-      i > this.minSpeed;
-      i -= this.tickmarkInterval
-    ) {
-      tickmarks.push({
-        angle: this.getAngle(i),
-        type: TickmarkType.main,
-        text: this.labels ? i.toString() : undefined,
-      });
-    }
-
-    if (this.labels && this.minSpeed % this.tickmarkInterval === 0) {
-      tickmarks.push({
-        angle: this.getAngle(this.minSpeed),
-        type: TickmarkType.textOnly,
-        text: this.labels ? this.minSpeed.toString() : undefined,
-      });
-    }
-
+    // Zero tickmark
     tickmarks.push({
       angle: this.getAngle(0),
       type: this.minSpeed < 0 ? TickmarkType.main : TickmarkType.textOnly,
-      text: this.labels ? '0' : undefined,
+      text: this.showLabels ? '0' : undefined,
     });
 
     return tickmarks;

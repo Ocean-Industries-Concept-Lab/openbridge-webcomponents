@@ -4,11 +4,11 @@ import '../../icons/icon-pump-off-horizontal.js';
 import '../../icons/icon-pump-on-horizontal.js';
 import '../../icons/icon-pump-off-vertical.js';
 import '../../icons/icon-pump-on-vertical.js';
-import {ObcAbstractAutomationButton} from '../automation-button/abstract-automation-button.js';
+import {ObcAbstractAutomationButtonMotorized} from '../automation-button/abstract-automation-button-motorized.js';
 import {customElement} from '../../decorator.js';
 
 @customElement('obc-pump')
-export class ObcPump extends ObcAbstractAutomationButton {
+export class ObcPump extends ObcAbstractAutomationButtonMotorized {
   @property({type: Boolean}) vertical: boolean = false;
 
   override get icon() {
@@ -20,7 +20,7 @@ export class ObcPump extends ObcAbstractAutomationButton {
           ></obi-pump-on-vertical>
           <obi-pump-on-vertical
             usecsscolor
-            slot="icon-siluette"
+            slot="icon-silhouette"
           ></obi-pump-on-vertical>`;
       } else {
         return html`<obi-pump-off-vertical
@@ -29,7 +29,7 @@ export class ObcPump extends ObcAbstractAutomationButton {
           ></obi-pump-off-vertical>
           <obi-pump-off-vertical
             usecsscolor
-            slot="icon-siluette"
+            slot="icon-silhouette"
           ></obi-pump-off-vertical>`;
       }
     } else {
@@ -40,7 +40,7 @@ export class ObcPump extends ObcAbstractAutomationButton {
           ></obi-pump-on-horizontal>
           <obi-pump-on-horizontal
             usecsscolor
-            slot="icon-siluette"
+            slot="icon-silhouette"
           ></obi-pump-on-horizontal>`;
       } else {
         return html`<obi-pump-off-horizontal
@@ -49,7 +49,7 @@ export class ObcPump extends ObcAbstractAutomationButton {
           ></obi-pump-off-horizontal>
           <obi-pump-off-horizontal
             usecsscolor
-            slot="icon-siluette"
+            slot="icon-silhouette"
           ></obi-pump-off-horizontal>`;
       }
     }

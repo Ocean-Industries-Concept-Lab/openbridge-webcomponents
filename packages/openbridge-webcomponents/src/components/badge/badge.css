@@ -4,23 +4,22 @@
   align-items: center;
   justify-content: center;
   border-style: solid;
-  border-radius: var(--app-components-badge-border-radius);
-  padding: calc(var(--app-components-badge-padding) - 1px);
+  border-radius: var(--ui-components-badge-border-radius);
+  padding: calc(var(--ui-components-badge-padding) - 1px);
   border: 1px solid var(--alert-alarm-outline-color);
   background: var(--alert-alarm-color);
   width: fit-content;
   height: 16px;
   box-sizing: border-box;
 
-  
   .badge-icon {
     width: 100%;
     height: 100%;
   }
 
   .icon {
-    width: var(--app-components-badge-icon-size);
-    height: var(--app-components-badge-icon-size);
+    width: var(--ui-components-badge-icon-size);
+    height: var(--ui-components-badge-icon-size);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -34,19 +33,20 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 0 var(--app-components-badge-label-spacing) 1px var(--app-components-badge-label-spacing);
-    height: var(--app-components-badge-icon-size);
-    min-width: var(--app-components-badge-icon-size);
+    padding: 0 var(--ui-components-badge-label-spacing) 1px
+      var(--ui-components-badge-label-spacing);
+    height: var(--ui-components-badge-icon-size);
+    min-width: var(--ui-components-badge-icon-size);
   }
 
   &.size-large {
     display: inline-flex;
     width: fit-content;
     height: 24px;
-    min-width: var(--app-components-badge-min-size-large);
-    min-height: var(--app-components-badge-min-size-large);
-    
-    padding: calc(var(--app-components-badge-padding) - 1px);
+    min-width: var(--ui-components-badge-min-size-large);
+    min-height: var(--ui-components-badge-min-size-large);
+
+    padding: calc(var(--ui-components-badge-padding) - 1px);
     justify-content: center;
     align-items: center;
     background: var(--alert-alarm-color);
@@ -60,16 +60,16 @@
     }
 
     & .icon {
-      width: var(--app-components-badge-icon-size-large);
-      height: var(--app-components-badge-icon-size-large);
+      width: var(--ui-components-badge-icon-size-large);
+      height: var(--ui-components-badge-icon-size-large);
       display: flex;
-			align-items: center;
-			justify-content: center;
+      align-items: center;
+      justify-content: center;
     }
 
     &.type-empty {
       min-width: 38px;
-      height: 24px; 
+      height: 24px;
     }
   }
 
@@ -86,21 +86,21 @@
   }
 
   &.type-warning {
-      background-color: var(--alert-warning-color);
-      border-color: var(--alert-warning-outline-color);
-      color: var(--on-warning-color);
+    background-color: var(--alert-warning-color);
+    border-color: var(--alert-warning-outline-color);
+    color: var(--on-warning-color);
   }
 
   &.type-caution {
-      background-color: var(--alert-caution-color);
-      border-color: var(--alert-caution-outline-color);
-      color: var(--on-caution-color);
+    background-color: var(--alert-caution-color);
+    border-color: var(--alert-caution-outline-color);
+    color: var(--on-caution-color);
   }
 
   &.type-running {
-      background-color: var(--alert-running-color);
-      border-color: var(--alert-running-color);
-      color: var(--on-running-color);
+    background-color: var(--alert-running-color);
+    border-color: var(--alert-running-color);
+    color: var(--on-running-color);
   }
 
   &.type-notification {
@@ -132,8 +132,8 @@
     border-color: var(--flat-enabled-background-color);
 
     .icon {
-      min-width: var(--app-components-badge-icon-size);
-      min-height: var(--app-components-badge-icon-size);
+      min-width: var(--ui-components-badge-icon-size);
+      min-height: var(--ui-components-badge-icon-size);
     }
 
     .icon.type-alarm {
@@ -161,7 +161,10 @@
 
     .icon.type-notification {
       color: var(--instrument-enhanced-primary-color);
-      border-color: var(--instrument-enhanced-primary-outline-color, transparent);
+      border-color: var(
+        --instrument-enhanced-primary-outline-color,
+        transparent
+      );
       background: none;
     }
 
@@ -184,8 +187,8 @@
     }
 
     & .icon.type-outline {
-      width: var(--app-components-badge-icon-size-flat);
-      height: var(--app-components-badge-icon-size-flat);
+      width: var(--ui-components-badge-icon-size-flat);
+      height: var(--ui-components-badge-icon-size-flat);
     }
 
     .icon.type-outline + .number {
