@@ -100,6 +100,56 @@ export type ObcTwoStepSwitchConfirmClickEvent =
 export type ObcTwoStepSwitchCancelClickEvent =
   CustomEvent<ObcTwoStepSwitchConfirmEventDetail>;
 
+type PendingTransition = {
+  committed: ObcTwoStepSwitchCommittedState;
+  step: ObcTwoStepSwitchInteractionStep;
+  flowDirection: FlowDirection;
+  stepDuringTransition: ObcTwoStepSwitchInteractionStep;
+  showEndpointSuccess: boolean;
+  isTimeoutReturn: boolean;
+  isBackwardReleaseCommit: boolean;
+};
+
+type ConfirmHint = {
+  pulse: 0 | 1;
+};
+
+enum TimerName {
+  Confirm = 'confirm',
+  ProcessingStep = 'processingStep',
+  Phase = 'phase',
+  ConfirmHint = 'confirmHint',
+  Fallback = 'fallback',
+}
+
+class TimerSet {
+  private ids = new Map<TimerName, number>();
+
+  set(name: TimerName, callback: () => void, durationMs: number): void {
+    this.clear(name);
+    const id = window.setTimeout(() => {
+      this.ids.delete(name);
+      callback();
+    }, durationMs);
+    this.ids.set(name, id);
+  }
+
+  clear(name: TimerName): void {
+    const id = this.ids.get(name);
+    if (id !== undefined) {
+      window.clearTimeout(id);
+      this.ids.delete(name);
+    }
+  }
+
+  clearAll(): void {
+    for (const id of this.ids.values()) {
+      window.clearTimeout(id);
+    }
+    this.ids.clear();
+  }
+}
+
 /**
  * `<obc-two-step-switch>` – A two-step confirm switch for guarded activation (confirm switch).
  *
@@ -209,46 +259,36 @@ export class ObcTwoStepSwitch extends LitElement {
   @property({type: Number, attribute: 'processing-duration'})
   processingDuration = 3000;
 
-  @state() private _flowDirection: FlowDirection = FlowDirection.Forward;
-
-  get flowDirection(): FlowDirection {
-    return this._flowDirection;
-  }
-
   @state() private committed: ObcTwoStepSwitchCommittedState =
     ObcTwoStepSwitchCommittedState.Idle;
   @state() private step: ObcTwoStepSwitchInteractionStep =
     ObcTwoStepSwitchInteractionStep.Idle;
+  @state() private _flowDirection: FlowDirection = FlowDirection.Forward;
   @state() private phase: Phase = Phase.None;
-
-  @state() private transitionPending = false;
-  @state() private isTimeoutReturn = false;
-  @state() private isBackwardReleaseCommit = false;
-  @state() private showEndpointSuccess = false;
+  @state() private pendingTransition: PendingTransition | null = null;
+  @state() private confirmHint: ConfirmHint | null = null;
   @state() private dragAtEdge = false;
 
+  get flowDirection(): FlowDirection {
+    return this._flowDirection;
+  }
   get committedState(): ObcTwoStepSwitchCommittedState {
     return this.committed;
   }
-
   get interactionStep(): ObcTwoStepSwitchInteractionStep {
     return this.step;
   }
-
   get isInConfirmStep(): boolean {
     return this.step === ObcTwoStepSwitchInteractionStep.Confirm;
   }
-
   get isTransitionPending(): boolean {
     return this.transitionPending;
   }
+  private get transitionPending(): boolean {
+    return this.pendingTransition !== null;
+  }
 
-  private confirmTimeoutId?: number;
-  private processingStepTimeoutId?: number;
-  private phaseTimeoutId?: number;
-  private confirmHintTimeoutId?: number;
-  private fallbackTimerId?: number;
-  private cancelMotionAwait?: () => void;
+  private readonly timers = new TimerSet();
   private phaseGeneration = 0;
 
   private dragPointerId?: number;
@@ -259,38 +299,25 @@ export class ObcTwoStepSwitch extends LitElement {
   private dragMaxX = 0;
   private dragPendingX?: number;
   private dragRafId?: number;
-  private suppressNextPrimaryClick = false;
-  private suppressNextSecondaryActionClick = false;
-  private confirmHintQueued = false;
-
-  private readonly handleSlotChange = () => {
-    this.requestUpdate();
-    this.scheduleTrackWidthMeasure();
-  };
-
-  private pendingCommitted?: ObcTwoStepSwitchCommittedState;
-  private pendingFlowDirection?: FlowDirection;
-  private pendingStep?: ObcTwoStepSwitchInteractionStep;
-  private pendingStepDuringTransition?: ObcTwoStepSwitchInteractionStep;
-
-  @state() private confirmHintActive = false;
-  @state() private confirmHintPulse: 0 | 1 = 0;
-
-  private trackResizeObserver?: ResizeObserver;
   private dragFrozenTrackWidthPx?: number;
 
+  private suppressNextPrimaryClick = false;
+  private suppressNextSecondaryActionClick = false;
+
+  private confirmHintQueued = false;
+
+  private trackResizeObserver?: ResizeObserver;
   private motionDurationsMs = {
     slide: SWITCH_DUR_SLIDE_MS_DEFAULT,
     bounce: SWITCH_DUR_BOUNCE_MS_DEFAULT,
     nudge: SWITCH_DUR_NUDGE_MS_DEFAULT,
   };
+  private cancelMotionAwait?: () => void;
 
-  private clearTimer(id: number | undefined) {
-    if (id !== undefined) {
-      window.clearTimeout(id);
-    }
-    return undefined;
-  }
+  private readonly handleSlotChange = () => {
+    this.requestUpdate();
+    this.scheduleTrackWidthMeasure();
+  };
 
   private dispatchConfirmPhaseEvent(
     eventName: 'confirm-open' | 'confirm-close' | 'confirm-timeout'
@@ -453,19 +480,13 @@ export class ObcTwoStepSwitch extends LitElement {
   }
 
   private clearAllTimers() {
-    this.confirmTimeoutId = this.clearTimer(this.confirmTimeoutId);
-    this.processingStepTimeoutId = this.clearTimer(
-      this.processingStepTimeoutId
-    );
-    this.phaseTimeoutId = this.clearTimer(this.phaseTimeoutId);
-    this.confirmHintTimeoutId = this.clearTimer(this.confirmHintTimeoutId);
-    this.fallbackTimerId = this.clearTimer(this.fallbackTimerId);
+    this.timers.clearAll();
     this.cancelMotionAwait?.();
     this.cancelMotionAwait = undefined;
     this.cancelDragRaf();
   }
 
-  private awaitMotion(leadMs: number): Promise<void> {
+  private awaitMotion(expectedDurationMs: number): Promise<void> {
     this.cancelMotionAwait?.();
     return new Promise<void>((resolve) => {
       const track = this.renderRoot.querySelector('.track');
@@ -474,7 +495,7 @@ export class ObcTwoStepSwitch extends LitElement {
         if (done) return;
         done = true;
         track?.removeEventListener('transitionend', onEnd);
-        this.fallbackTimerId = this.clearTimer(this.fallbackTimerId);
+        this.timers.clear(TimerName.Fallback);
         this.cancelMotionAwait = undefined;
         resolve();
       };
@@ -483,35 +504,42 @@ export class ObcTwoStepSwitch extends LitElement {
         if (p === 'transform' || p === 'clip-path') settle();
       };
       track?.addEventListener('transitionend', onEnd);
-      this.fallbackTimerId = window.setTimeout(settle, leadMs + 80);
+      const FALLBACK_SLACK_MS = 80;
+      this.timers.set(
+        TimerName.Fallback,
+        settle,
+        expectedDurationMs + FALLBACK_SLACK_MS
+      );
       this.cancelMotionAwait = settle;
     });
   }
 
   private awaitProcessingStep(): Promise<void> {
-    this.processingStepTimeoutId = this.clearTimer(
-      this.processingStepTimeoutId
-    );
+    this.timers.clear(TimerName.ProcessingStep);
     return new Promise<void>((resolve) => {
-      this.processingStepTimeoutId = window.setTimeout(() => {
-        this.processingStepTimeoutId = undefined;
-        resolve();
-      }, this.processingDuration);
+      this.timers.set(
+        TimerName.ProcessingStep,
+        () => resolve(),
+        this.processingDuration
+      );
     });
   }
 
   private setPhase(next: Phase, durationMs?: number, onDone?: () => void) {
     const generation = ++this.phaseGeneration;
     this.phase = next;
-    this.phaseTimeoutId = this.clearTimer(this.phaseTimeoutId);
+    this.timers.clear(TimerName.Phase);
     if (durationMs && durationMs > 0) {
-      this.phaseTimeoutId = window.setTimeout(() => {
-        this.phaseTimeoutId = undefined;
-        if (generation !== this.phaseGeneration) {
-          return;
-        }
-        onDone?.();
-      }, durationMs);
+      this.timers.set(
+        TimerName.Phase,
+        () => {
+          if (generation !== this.phaseGeneration) {
+            return;
+          }
+          onDone?.();
+        },
+        durationMs
+      );
     }
   }
 
@@ -528,13 +556,14 @@ export class ObcTwoStepSwitch extends LitElement {
   }
 
   private startConfirmTimeout() {
-    this.confirmTimeoutId = this.clearTimer(this.confirmTimeoutId);
+    this.timers.clear(TimerName.Confirm);
     if (this.disabled || this.step !== ObcTwoStepSwitchInteractionStep.Confirm)
       return;
-    this.confirmTimeoutId = window.setTimeout(() => {
-      this.confirmTimeoutId = undefined;
-      this.handleConfirmTimeout();
-    }, CONFIRM_TIMEOUT_MS);
+    this.timers.set(
+      TimerName.Confirm,
+      () => this.handleConfirmTimeout(),
+      CONFIRM_TIMEOUT_MS
+    );
   }
 
   private async enterConfirm() {
@@ -561,7 +590,7 @@ export class ObcTwoStepSwitch extends LitElement {
 
   private async exitConfirmTo(stepTarget: ObcTwoStepSwitchInteractionStep) {
     if (this.step !== ObcTwoStepSwitchInteractionStep.Confirm) return;
-    this.confirmTimeoutId = this.clearTimer(this.confirmTimeoutId);
+    this.timers.clear(TimerName.Confirm);
     const gen = ++this.phaseGeneration;
     if (
       this.committed === ObcTwoStepSwitchCommittedState.Active &&
@@ -580,7 +609,7 @@ export class ObcTwoStepSwitch extends LitElement {
   }
 
   private async completeEndpointTransition(gen: number) {
-    const stepDuringTransition = this.pendingStepDuringTransition;
+    const stepDuringTransition = this.pendingTransition?.stepDuringTransition;
     if (!stepDuringTransition) return;
 
     this.step = stepDuringTransition;
@@ -593,10 +622,11 @@ export class ObcTwoStepSwitch extends LitElement {
     if (gen !== this.phaseGeneration) return;
 
     const previousCommitted = this.committed;
-    if (this.pendingCommitted) this.committed = this.pendingCommitted;
-    if (this.pendingStep) this.step = this.pendingStep;
-    if (this.pendingFlowDirection)
-      this._flowDirection = this.pendingFlowDirection;
+    if (this.pendingTransition) {
+      this.committed = this.pendingTransition.committed;
+      this.step = this.pendingTransition.step;
+      this._flowDirection = this.pendingTransition.flowDirection;
+    }
     const nextCommittedState = this.committed;
     if (nextCommittedState !== previousCommitted) {
       const state = nextCommittedState;
@@ -620,14 +650,7 @@ export class ObcTwoStepSwitch extends LitElement {
         )
       );
     }
-    this.transitionPending = false;
-    this.isTimeoutReturn = false;
-    this.isBackwardReleaseCommit = false;
-    this.pendingCommitted = undefined;
-    this.pendingStep = undefined;
-    this.pendingFlowDirection = undefined;
-    this.pendingStepDuringTransition = undefined;
-    this.showEndpointSuccess = false;
+    this.pendingTransition = null;
     this.phase = Phase.None;
   }
 
@@ -636,17 +659,30 @@ export class ObcTwoStepSwitch extends LitElement {
     nextStep: ObcTwoStepSwitchInteractionStep,
     nextFlowDirection: FlowDirection,
     stepDuringTransition: ObcTwoStepSwitchInteractionStep,
-    options: {showProcessing?: boolean; showSuccess?: boolean} = {}
+    options: {
+      showProcessing?: boolean;
+      showSuccess?: boolean;
+      isTimeoutReturn?: boolean;
+      isBackwardReleaseCommit?: boolean;
+    } = {}
   ) {
-    const showProcessing = options.showProcessing ?? true;
+    const {
+      showProcessing = true,
+      showSuccess = true,
+      isTimeoutReturn = false,
+      isBackwardReleaseCommit = false,
+    } = options;
     const gen = ++this.phaseGeneration;
-    this.transitionPending = true;
-    this.showEndpointSuccess = options.showSuccess ?? true;
+    this.pendingTransition = {
+      committed: nextCommitted,
+      step: nextStep,
+      flowDirection: nextFlowDirection,
+      stepDuringTransition,
+      showEndpointSuccess: showSuccess,
+      isTimeoutReturn,
+      isBackwardReleaseCommit,
+    };
     this.confirmHintQueued = false;
-    this.pendingCommitted = nextCommitted;
-    this.pendingStep = nextStep;
-    this.pendingFlowDirection = nextFlowDirection;
-    this.pendingStepDuringTransition = stepDuringTransition;
 
     if (showProcessing) {
       this.step = ObcTwoStepSwitchInteractionStep.Processing;
@@ -661,7 +697,7 @@ export class ObcTwoStepSwitch extends LitElement {
   }
 
   private commitActiveFromConfirm() {
-    this.confirmTimeoutId = this.clearTimer(this.confirmTimeoutId);
+    this.timers.clear(TimerName.Confirm);
     this.confirmHintQueued = false;
     this.dispatchConfirmPhaseEvent('confirm-close');
     this.beginEndpointTransition(
@@ -673,15 +709,15 @@ export class ObcTwoStepSwitch extends LitElement {
   }
 
   private commitIdleFromConfirmBackward() {
-    this.confirmTimeoutId = this.clearTimer(this.confirmTimeoutId);
+    this.timers.clear(TimerName.Confirm);
     this.confirmHintQueued = false;
     this.dispatchConfirmPhaseEvent('confirm-close');
-    this.isBackwardReleaseCommit = true;
     this.beginEndpointTransition(
       ObcTwoStepSwitchCommittedState.Idle,
       ObcTwoStepSwitchInteractionStep.Idle,
       FlowDirection.Forward,
-      ObcTwoStepSwitchInteractionStep.Active
+      ObcTwoStepSwitchInteractionStep.Active,
+      {isBackwardReleaseCommit: true}
     );
   }
 
@@ -699,40 +735,25 @@ export class ObcTwoStepSwitch extends LitElement {
 
   private cancelEndpointTransition() {
     ++this.phaseGeneration;
-    this.confirmTimeoutId = this.clearTimer(this.confirmTimeoutId);
-    this.processingStepTimeoutId = this.clearTimer(
-      this.processingStepTimeoutId
-    );
-    this.phaseTimeoutId = this.clearTimer(this.phaseTimeoutId);
-    this.fallbackTimerId = this.clearTimer(this.fallbackTimerId);
+    this.timers.clear(TimerName.Confirm);
+    this.timers.clear(TimerName.ProcessingStep);
+    this.timers.clear(TimerName.Phase);
+    this.timers.clear(TimerName.Fallback);
     this.cancelMotionAwait?.();
     this.cancelMotionAwait = undefined;
 
-    this.transitionPending = false;
-    this.isTimeoutReturn = false;
-    this.isBackwardReleaseCommit = false;
-    this.showEndpointSuccess = false;
-    this.pendingCommitted = undefined;
-    this.pendingStep = undefined;
-    this.pendingFlowDirection = undefined;
-    this.pendingStepDuringTransition = undefined;
+    this.pendingTransition = null;
     this.confirmHintQueued = false;
-    this.confirmHintActive = false;
+    this.confirmHint = null;
     this.step = this.getRestingStepForCommitted();
     this._flowDirection = this.getRestingFlowDirectionForCommitted();
     this.phase = Phase.None;
   }
 
-  /**
-   * Suppress `.fill` transitions for one paint so the backward cancel snap to
-   * active-resting happens instantly. Restores transitions afterward. Only
-   * invoked for backward cancel; forward cancel fades out via opacity.
-   */
   private suppressFillTransitionForCancelSnap() {
     const fill = this.renderRoot?.querySelector('.fill') as HTMLElement | null;
     if (!fill) return;
     fill.style.transition = 'none';
-    // Double rAF: snap paints with `transition: none`, then restore on the next frame.
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         fill.style.transition = '';
@@ -773,14 +794,13 @@ export class ObcTwoStepSwitch extends LitElement {
       this.flowDirection === FlowDirection.Backward
     ) {
       this._flowDirection = FlowDirection.Forward;
-      this.isTimeoutReturn = true;
       this.dispatchConfirmPhaseEvent('confirm-close');
       this.beginEndpointTransition(
         ObcTwoStepSwitchCommittedState.Active,
         ObcTwoStepSwitchInteractionStep.Active,
         FlowDirection.Backward,
         ObcTwoStepSwitchInteractionStep.Active,
-        {showProcessing: false, showSuccess: false}
+        {showProcessing: false, showSuccess: false, isTimeoutReturn: true}
       );
       return;
     }
@@ -795,13 +815,16 @@ export class ObcTwoStepSwitch extends LitElement {
   private triggerConfirmHint() {
     if (this.disabled || this.step !== ObcTwoStepSwitchInteractionStep.Confirm)
       return;
-    this.confirmHintActive = true;
-    this.confirmHintPulse = this.confirmHintPulse === 0 ? 1 : 0;
-    this.confirmHintTimeoutId = this.clearTimer(this.confirmHintTimeoutId);
-    this.confirmHintTimeoutId = window.setTimeout(() => {
-      this.confirmHintTimeoutId = undefined;
-      this.confirmHintActive = false;
-    }, CONFIRM_HINT_MS);
+    const nextPulse: 0 | 1 = this.confirmHint?.pulse === 0 ? 1 : 0;
+    this.confirmHint = {pulse: nextPulse};
+    this.timers.clear(TimerName.ConfirmHint);
+    this.timers.set(
+      TimerName.ConfirmHint,
+      () => {
+        this.confirmHint = null;
+      },
+      CONFIRM_HINT_MS
+    );
   }
 
   private triggerNudge() {
@@ -894,9 +917,6 @@ export class ObcTwoStepSwitch extends LitElement {
   }
 
   private exitConfirmToCommittedRestingStep() {
-    if (this.disabled) return;
-    if (this.transitionPending) return;
-    if (this.step !== ObcTwoStepSwitchInteractionStep.Confirm) return;
     this.confirmHintQueued = false;
     const target =
       this.committed === ObcTwoStepSwitchCommittedState.Idle
@@ -977,8 +997,8 @@ export class ObcTwoStepSwitch extends LitElement {
   private setPointerCaptureSafe(target: HTMLElement, pointerId: number) {
     try {
       target.setPointerCapture(pointerId);
-    } catch (error) {
-      void error;
+    } catch {
+      // setPointerCapture can throw on detached elements; safe to ignore
     }
   }
 
@@ -987,8 +1007,8 @@ export class ObcTwoStepSwitch extends LitElement {
       if (target.hasPointerCapture(pointerId)) {
         target.releasePointerCapture(pointerId);
       }
-    } catch (error) {
-      void error;
+    } catch {
+      // releasePointerCapture can throw on detached elements; safe to ignore
     }
   }
 
@@ -1226,7 +1246,7 @@ export class ObcTwoStepSwitch extends LitElement {
   }
 
   private buildRootClasses(): ClassInfo {
-    const showConfirmHint = this.confirmHintActive;
+    const showConfirmHint = this.confirmHint !== null;
     return {
       'obc-two-step-switch': true,
       'is-disabled': this.disabled,
@@ -1238,16 +1258,19 @@ export class ObcTwoStepSwitch extends LitElement {
       [`step-${this.step}`]: true,
       ...(this.phase === Phase.None ? {} : {[`phase-${this.phase}`]: true}),
       'confirm-hint-primary': showConfirmHint,
-      ...(showConfirmHint
-        ? {[`confirm-hint-pulse-${this.confirmHintPulse}`]: true}
+      ...(showConfirmHint && this.confirmHint
+        ? {[`confirm-hint-pulse-${this.confirmHint.pulse}`]: true}
         : {}),
-      ...(this.pendingCommitted
-        ? {[`pending-${this.pendingCommitted}`]: true}
+      ...(this.pendingTransition
+        ? {[`pending-${this.pendingTransition.committed}`]: true}
         : {}),
-      'show-endpoint-success': this.showEndpointSuccess,
+      'show-endpoint-success':
+        this.pendingTransition?.showEndpointSuccess ?? false,
       'transition-pending': this.transitionPending,
-      'timeout-return-transition': this.isTimeoutReturn,
-      'backward-release-commit-transition': this.isBackwardReleaseCommit,
+      'timeout-return-transition':
+        this.pendingTransition?.isTimeoutReturn ?? false,
+      'backward-release-commit-transition':
+        this.pendingTransition?.isBackwardReleaseCommit ?? false,
       'is-drag-at-edge': this.dragAtEdge,
     };
   }
@@ -1324,7 +1347,8 @@ export class ObcTwoStepSwitch extends LitElement {
         (this.step === ObcTwoStepSwitchInteractionStep.Confirm ||
           (this.step === ObcTwoStepSwitchInteractionStep.Active &&
             isBackwardTransitionPhase))) ||
-      (this.pendingCommitted === ObcTwoStepSwitchCommittedState.Idle &&
+      (this.pendingTransition?.committed ===
+        ObcTwoStepSwitchCommittedState.Idle &&
         isBackwardTransitionPhase)
     );
   }
