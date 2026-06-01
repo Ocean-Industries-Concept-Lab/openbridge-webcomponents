@@ -34,6 +34,12 @@ export interface GaugeRadialAdvice {
   hinted: boolean;
 }
 
+const NEEDLE_TIP_RADIUS = 160;
+const NEEDLE_TIP_GAP = 5; // tip stops this far short of the scale
+const NEEDLE_WIDTH = 8;
+const NEEDLE_HUB_RADIUS = 16;
+const NEEDLE_HUB_VIEWBOX_MARGIN = 4; // breathing room so the hub never clips
+
 function rangeIncludesZero(minValue: number, maxValue: number): boolean {
   return minValue <= 0 && maxValue >= 0;
 }
@@ -98,6 +104,7 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   @property({type: Number}) clipTop: number = 0; // in percent of height
   @property({type: Number}) clipBottom: number = 0; // in percent of height
   @property({type: Boolean}) zoomToFitArc: boolean = false;
+  @property({type: Boolean}) preserveBandProportion: boolean = false;
 
   private _radiusOffset = 0;
   private _arcFrame: ZoomToFitArcFrame | undefined;
@@ -185,15 +192,32 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
     if (this.zoomToFitArc) {
       const ext = 48;
       const targetSize = (176 + ext) * 2;
-      const frame = computeZoomToFitArcFrame({
+      const frameArgs = {
         areas,
         outerRadius: OUTER_RING_RADIUS,
         innerRadius: innerRingRadiusFor(watchCircleType),
         extension: ext,
         targetSize,
-      });
-      viewBox = frame.viewBox;
+      };
+      let frame = computeZoomToFitArcFrame(frameArgs);
       this._radiusOffset = frame.radiusOffset;
+
+      // Proportional sectors enlarge the center hub; the arc-only frame would
+      // clip it at the corner, so widen the frame to keep the hub in view.
+      if (this.type === ObcGaugeRadialType.needle && this._isProportionalZoom) {
+        const hubExtent =
+          NEEDLE_HUB_RADIUS * this._needleScale + NEEDLE_HUB_VIEWBOX_MARGIN;
+        frame = computeZoomToFitArcFrame({
+          ...frameArgs,
+          includeBox: {
+            xMin: -hubExtent,
+            yMin: -hubExtent,
+            xMax: hubExtent,
+            yMax: hubExtent,
+          },
+        });
+      }
+      viewBox = frame.viewBox;
       this._arcFrame = frame;
     } else {
       this._radiusOffset = 0;
@@ -226,11 +250,24 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
           .clipTop=${this.zoomToFitArc ? 0 : this.clipTop}
           .clipBottom=${this.zoomToFitArc ? 0 : this.clipBottom}
           .zoomToFitArc=${this.zoomToFitArc}
+          .preserveBandProportion=${this.preserveBandProportion}
           .arcFrame=${this._arcFrame}
         ></obc-watch>
         <svg class="gauge-radial" viewBox=${viewBox}>${this._needle}</svg>
       </div>
     `;
+  }
+
+  /** Zoomed sectors that scale the needle and band proportionally (90° gauge). */
+  private get _isProportionalZoom(): boolean {
+    return this.preserveBandProportion && this._radiusOffset > 0;
+  }
+
+  /** Uniform needle scale for proportional sectors; 1 otherwise. */
+  private get _needleScale(): number {
+    return this._isProportionalZoom
+      ? (OUTER_RING_RADIUS + this._radiusOffset) / OUTER_RING_RADIUS
+      : 1;
   }
 
   private get _needle() {
@@ -241,10 +278,18 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
     const rOff = this._radiusOffset;
     const value = this.clampedValue;
     if (this.type === ObcGaugeRadialType.needle) {
+      // Rod runs from the value tip down to the center hub and grows outward
+      // from it. Proportional sectors scale the whole needle so it keeps the
+      // 270° thickness; other sectors keep a constant width and shift additively.
+      const k = this._needleScale;
+      const tipRadius = NEEDLE_TIP_RADIUS - NEEDLE_TIP_GAP;
+      const tipY = this._isProportionalZoom
+        ? 256 - tipRadius * k
+        : 256 - tipRadius - rOff;
+      const width = NEEDLE_WIDTH * k;
       return svg`<g transform="rotate(${this.getAngle(value)}) translate(-256, -256)">
-      <circle cx="256" cy="256" r="14" fill=${needleColor}/>
-      <rect x="250" y="${96 - rOff}" width="12" height="${192 + rOff}" rx="6" fill=${needleColor}/>
-      <rect x="252" y="${98 - rOff}" width="8" height="${188 + rOff}" rx="4" stroke=${needleColor} fill=${needleColor} stroke-width="4"/>
+      <rect x="${256 - width / 2}" y="${tipY}" width="${width}" height="${256 - tipY}" rx="${(NEEDLE_WIDTH / 2) * k}" fill=${needleColor} stroke=${needleColor}/>
+      <circle cx="256" cy="256" r="${NEEDLE_HUB_RADIUS * k}" fill=${needleColor}/>
       </g>
 `;
     } else {

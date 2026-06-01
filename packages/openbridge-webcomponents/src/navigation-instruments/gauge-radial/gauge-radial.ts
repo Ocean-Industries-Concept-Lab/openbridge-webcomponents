@@ -152,12 +152,12 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
     return ((v - this.minValue) / span) * sweep + start;
   };
 
-  private renderCornerRegularReadout(): TemplateResult {
+  private renderCornerReadout(): TemplateResult {
     return html`
       <obc-readout
         class="gauge-readout-meta"
         direction="vertical"
-        .variant=${ReadoutVariant.regular}
+        .variant=${ReadoutVariant.enhanced}
         .valuePriority=${this.priority}
         .value=${this.value}
         .minValueLength=${this.maxDigits}
@@ -238,7 +238,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
     }
 
     if (is90) {
-      return this.renderCornerRegularReadout();
+      return this.renderCornerReadout();
     }
 
     if (isNeedle || is180) {
@@ -251,6 +251,9 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   }
 
   override render() {
+    const is90Sector =
+      this.sector === GaugeRadialSector.deg90Left ||
+      this.sector === GaugeRadialSector.deg90Right;
     return html`
       <div
         class=${classMap({
@@ -286,6 +289,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
           .tickmarkStyle=${this.tickmarkStyle}
           .advices=${this.advices}
           .zoomToFitArc=${this.sector !== GaugeRadialSector.deg270}
+          .preserveBandProportion=${is90Sector}
         >
         </obc-instrument-radial>
         ${this.renderReadouts()}
