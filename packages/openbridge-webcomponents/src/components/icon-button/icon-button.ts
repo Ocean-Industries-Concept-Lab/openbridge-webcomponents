@@ -58,6 +58,9 @@ export enum IconButtonVariant {
  * | (default) | Always              | The icon to display (e.g., `<obi-search>`)   |
  * | label     | If `hasLabel` is set | Optional label text below the icon           |
  *
+ * ## Events
+ * - Emits a standard `click` event (`onClick` handler in framework wrappers) when activated.
+ *
  * ## Best Practices
  * - Ensure icons are clear and universally recognizable.
  * - For accessibility, provide an `aria-label` or descriptive label for the button's action.
@@ -77,6 +80,7 @@ export enum IconButtonVariant {
  *
  * @slot - Icon slot (default): Place an icon such as <obi-search> here.
  * @slot label - Optional label shown below the icon when `hasLabel` is true.
+ * @fires click - Fired when the button is clicked (if not disabled).
  */
 @customElement('obc-icon-button')
 export class ObcIconButton extends LitElement {
