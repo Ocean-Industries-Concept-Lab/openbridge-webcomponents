@@ -111,3 +111,10 @@ export const Rich: StoryObj<ObcIntegrationButton> = {
     type: IntegrationButtonType.rich,
   },
 };
+
+export const Disabled: StoryObj<ObcIntegrationButton> = {
+  args: {
+    type: IntegrationButtonType.rich,
+    disabled: true,
+  },
+};

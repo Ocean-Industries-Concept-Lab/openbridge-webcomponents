@@ -157,6 +157,7 @@
     .label {
       @mixin font-button;
       white-space: nowrap;
+      height: 24px;
     }
 
     .status {
@@ -206,6 +207,7 @@
       --app-components-integration-system-navigation-item-horizontal-label-spacing
     );
     align-self: stretch;
+    font-weight: var(--font-weight-regular);
 
     .info-item {
       display: flex;
@@ -220,6 +222,7 @@
 
       .info-status {
         @mixin font-label-active;
+        font-weight: var(--global-typography-ui-label-active-font-weight);
       }
     }
   }
@@ -243,6 +246,7 @@
     .info-item-value {
       grid-area: value;
       @mixin font-label-active;
+      font-weight: var(--global-typography-ui-label-active-font-weight);
     }
 
     .info-item-unit {
@@ -332,4 +336,25 @@
 
 .integration-vessel-menu-container.show {
   visibility: visible;
+}
+
+.touch-target:not(.selected):not(.disabled) {
+  & .info-item-value {
+    color: var(--integration-on-flat-active-color);
+  }
+  & .info-readout-item {
+    color: var(--integration-on-flat-neutral-color);
+  }
+  & .info-status {
+    color: var(--integration-on-flat-active-color);
+  }
+  & .info-label {
+    color: var(--integration-on-flat-neutral-color);
+  }
+  & .label {
+    color: var(--integration-on-normal-active-color);
+  }
+  & .main-container {
+    color: var(--integration-on-normal-neutral-color);
+  }
 }
