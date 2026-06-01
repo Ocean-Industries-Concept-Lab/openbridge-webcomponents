@@ -36,41 +36,22 @@ export class ObcIntegrationVesselMenu extends LitElement {
   @property({type: Number}) numberOfButtons = 3;
 
   private renderButtons() {
-    let but = null;
-    if (this.numberOfButtons >= 1) {
-      but = html`<obc-button
-        @click=${() => this.dispatchEvent(new CustomEvent('button1-click'))}
+    return html`${Array.from({length: this.numberOfButtons}, (_, i) => {
+      const buttonNum = i + 1;
+      return html`<obc-button
+        @click=${() =>
+          this.dispatchEvent(new CustomEvent(`button${buttonNum}-click`))}
         ?showLeadingIcon=${true}
         ?fullWidth=${true}
         class="button"
       >
-        <slot name="button-1-leading-icon" slot="leading-icon"></slot>
-        <slot name="button-1-label"></slot>
+        <slot
+          name="button-${buttonNum}-leading-icon"
+          slot="leading-icon"
+        ></slot>
+        <slot name="button-${buttonNum}-label"></slot>
       </obc-button>`;
-    }
-    if (this.numberOfButtons >= 2) {
-      but = html`${but}<obc-button
-          @click=${() => this.dispatchEvent(new CustomEvent('button2-click'))}
-          ?showLeadingIcon=${true}
-          ?fullWidth=${true}
-          class="button"
-        >
-          <slot name="button-2-leading-icon" slot="leading-icon"></slot>
-          <slot name="button-2-label"></slot>
-        </obc-button>`;
-    }
-    if (this.numberOfButtons >= 3) {
-      but = html`${but}<obc-button
-          @click=${() => this.dispatchEvent(new CustomEvent('button3-click'))}
-          ?showLeadingIcon=${true}
-          ?fullWidth=${true}
-          class="button"
-        >
-          <slot name="button-3-leading-icon" slot="leading-icon"></slot>
-          <slot name="button-3-label"></slot>
-        </obc-button>`;
-    }
-    return but;
+    })}`;
   }
 
   protected override render() {
