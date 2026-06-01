@@ -49,8 +49,9 @@ export interface GaugeRadialAdvice {
  * - **Three display types**: `filled` (solid arc), `bar` (thinner arc), and
  *   `needle` (pointer indicator) via the `type` property.
  * - **Sector sweep**: `sector` selects the arc span (`270`, `180`, `90-left`, or `90-right`).
- *   The configured `minValue..maxValue` always spans the full sector. Symmetric
- *   ranges still place `0` at 12 o'clock.
+ *   The configured `minValue..maxValue` always spans the full sector. For the
+ *   centered sectors (`270`, `180`) a symmetric range places `0` at 12 o'clock;
+ *   for `90-left`/`90-right` the range midpoint sits at the middle of the quadrant.
  * - **Setpoint via mixin**: `setpoint`, `newSetpoint`, `touching`,
  *   `autoAtSetpointDeadband`, `setpointOverride`, and all other setpoint
  *   properties are provided by `SetpointMixin` and forwarded to the inner
@@ -251,9 +252,9 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   }
 
   override render() {
-    const is90Sector =
-      this.sector === GaugeRadialSector.deg90Left ||
-      this.sector === GaugeRadialSector.deg90Right;
+    const {sweep} = this.sectorAngles;
+    const isFullSweep = sweep === 270;
+    const is90Sector = sweep === 90;
     return html`
       <div
         class=${classMap({
@@ -288,7 +289,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
           .tickmarksInside=${this.tickmarksInside}
           .tickmarkStyle=${this.tickmarkStyle}
           .advices=${this.advices}
-          .zoomToFitArc=${this.sector !== GaugeRadialSector.deg270}
+          .zoomToFitArc=${!isFullSweep}
           .preserveBandProportion=${is90Sector}
         >
         </obc-instrument-radial>

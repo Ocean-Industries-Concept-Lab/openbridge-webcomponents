@@ -17,7 +17,7 @@ type GaugeRadialStoryArgs = Partial<ObcGaugeRadial> & {
 
 const meta = {
   title: 'Instruments/Gauge Radial',
-  tags: ['6.0'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-gauge-radial',
   decorators: [widthDecorator],
   args: {
