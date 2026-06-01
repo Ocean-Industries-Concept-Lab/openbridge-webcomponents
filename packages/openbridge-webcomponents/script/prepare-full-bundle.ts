@@ -18,6 +18,7 @@ const nonWorkingScripts = new Set([
   'wrappers:build',
   'wrappers:generate',
   'wrappers:post-fix',
+  'test-storybook:docker',
 ]);
 
 const scripts = Object.fromEntries(
