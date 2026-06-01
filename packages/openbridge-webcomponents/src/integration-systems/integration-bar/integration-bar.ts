@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html, unsafeCSS, nothing} from 'lit';
 import {customElement} from '../../decorator.js';
 import compentStyle from './integration-bar.css?inline';
 import '../integration-tabs/integration-tabs.js';
@@ -18,7 +18,7 @@ import '../../icons/icon-ship.js';
 import '../../icons/icon-screen-desk.js';
 import '../../icons/icon-alerts.js';
 import '../../icons/icon-link.js';
-import {property} from 'lit/decorators.js';
+import {property, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 
 /**
@@ -48,6 +48,7 @@ import {classMap} from 'lit/directives/class-map.js';
  * @property {boolean} notificationButtonActivated - Activated state of notification button
  * @property {boolean} showAlertButton - Toggles visibility of alert button
  * @property {boolean} alertButtonActivated - Activated state of alert button
+ * @property {boolean} showFleetButton - Toggles visibility of fleet button
  * @property {boolean} fleetButtonSelected - Selected state of fleet button
  * @property {boolean} fleetButtonActivated - Active state of fleet button while selection is pending
  * @property {string} fleetButtonLabel - Label for the fleet button
@@ -81,9 +82,12 @@ export class ObcIntegrationBar extends LitElement {
   @property({type: Boolean}) notificationButtonActivated = false;
   @property({type: Boolean}) showAlertButton = false;
   @property({type: Boolean}) alertButtonActivated = false;
+  @property({type: Boolean}) showFleetButton = false;
   @property({type: Boolean}) fleetButtonSelected = false;
   @property({type: Boolean}) fleetButtonActivated = false;
   @property({type: String}) fleetButtonLabel = 'Fleet';
+
+  @state() private buttonsOnBar = false;
 
   private onFleetButtonClick() {
     this.dispatchEvent(new CustomEvent('fleet-button-click'));
@@ -101,6 +105,11 @@ export class ObcIntegrationBar extends LitElement {
         integrationButton.type = IntegrationButtonType.hug;
       }
     });
+    this.buttonsOnBar = true;
+  }
+
+  private onButtonsSlotChange(event: Event) {
+    this.buttonsOnBar = true;
   }
 
   override render() {
@@ -129,19 +138,24 @@ export class ObcIntegrationBar extends LitElement {
               </obc-icon-button>`
             : null}
           <div class=${classMap({'fleet-vessel-container': true})}>
-            <obc-integration-button
-              class="fleet-button"
-              .variant=${IntegrationButtonVariant.normal}
-              ?selected=${this.fleetButtonSelected}
-              ?activated=${this.fleetButtonActivated}
-              style=${isFleetButtonAnchored
-                ? 'anchor-name: --integration-menu-anchor;'
-                : ''}
-              @click=${() => this.onFleetButtonClick()}
-            >
-              <span slot="label">${this.fleetButtonLabel}</span>
-            </obc-integration-button>
+            ${this.showFleetButton
+              ? html`<obc-integration-button
+                  class="fleet-button"
+                  .variant=${IntegrationButtonVariant.normal}
+                  ?selected=${this.fleetButtonSelected}
+                  ?activated=${this.fleetButtonActivated}
+                  style=${isFleetButtonAnchored
+                    ? 'anchor-name: --integration-menu-anchor;'
+                    : ''}
+                  @click=${() => this.onFleetButtonClick()}
+                >
+                  <span slot="label">${this.fleetButtonLabel}</span>
+                </obc-integration-button>`
+              : nothing}
             <div class="vessel-container">
+              ${this.buttonsOnBar
+                ? nothing
+                : html`<div class="vessel-button-placeholder"></div>`}
               <slot
                 class="hug-buttons-slot"
                 name="hug-buttons"
@@ -150,11 +164,17 @@ export class ObcIntegrationBar extends LitElement {
               <slot
                 class="integration-buttons-slot"
                 name="integration-buttons"
+                @slotchange=${this.onButtonsSlotChange}
               ></slot>
             </div>
           </div>
         </div>
-        <div class="right-content-container">
+        <div
+          class=${classMap({
+            'buttons-on-bar': this.buttonsOnBar,
+            'right-content-container': true,
+          })}
+        >
           ${this.showAlertButton
             ? html`<obc-icon-button
                 class=${classMap({

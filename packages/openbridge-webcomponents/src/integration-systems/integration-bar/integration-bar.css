@@ -2,6 +2,11 @@
   box-sizing: border-box;
 }
 
+:host {
+  display: block;
+  width: 100%;
+}
+
 .wrapper {
   display: flex;
   padding: 0 var(--app-components-integration-system-topbar-margin-global);
@@ -20,7 +25,7 @@
 .fleet-vessel-container {
   display: flex;
   align-items: flex-start;
-  flex: 1;
+  flex: 1 1 auto;
 }
 
 .fleet-button {
@@ -29,7 +34,7 @@
 
 .vessel-container {
   display: flex;
-  flex: 1;
+  flex: 1 1 auto;
 }
 
 .integration-buttons-slot::slotted(obc-integration-button) {
@@ -40,12 +45,14 @@
   flex: 0 1 auto;
 }
 
-.home-button {
+.home-button,
+.link-button {
   width: var(--app-components-integration-system-icon-button-touch-target);
   height: var(--app-components-integration-system-icon-button-touch-target);
   justify-content: center;
   align-items: center;
   gap: 14px;
+  flex: initial;
 }
 
 .right-content-container {
@@ -53,6 +60,9 @@
   align-self: stretch;
   align-items: center;
   flex: initial;
+}
+
+.right-content-container.buttons-on-bar {
   border-left: var(
       --app-components-integration-system-navigation-item-horizontal-stroke-weight-right,
       1px
@@ -69,4 +79,8 @@
   position-anchor: --settings-menu-anchor;
   top: anchor(bottom);
   justify-self: anchor-center;
+}
+
+.vessel-button-placeholder {
+  flex: 1 1 auto;
 }

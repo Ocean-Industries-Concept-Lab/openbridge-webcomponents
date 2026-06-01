@@ -29,3 +29,8 @@
   justify-content: stretch;
   padding: 0px 4px;
 }
+
+.wrapper .topbar-wrapper {
+  display: flex;
+  width: 100%;
+}

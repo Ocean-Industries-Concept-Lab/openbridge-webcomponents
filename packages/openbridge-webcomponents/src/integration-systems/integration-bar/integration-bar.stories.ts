@@ -387,6 +387,7 @@ const meta: Meta<IntegrationBarStoryArgs> = {
     return html`<div style="width: 100%; overflow-x: auto;">
       <div style=${`width: ${args.containerWidthPx}px;`}>
         <obc-integration-bar
+          showFleetButton=${true}
           style="width: 100%;"
           @fleet-button-click=${onFleetButtonClick}
           .hideHomeButton=${args.hideHomeButton}
@@ -418,7 +419,6 @@ const meta: Meta<IntegrationBarStoryArgs> = {
             .timeZoneOffsetHours=${args.timeZoneOffsetHours}
             .blinkOnlyBreakpointPx=${args.clockMinimizeBreakpointPx}
           ></obc-clock>
-          <!-- TODO: Re-enable vessel integration menu story variant with proper handlers. -->
 
           ${renderIntegrationButtons({
             onIntegrationButtonClick,
