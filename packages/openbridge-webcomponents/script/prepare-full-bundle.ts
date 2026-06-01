@@ -41,10 +41,7 @@ for (const dirName of ['dist', 'bundle', 'src', 'docs']) {
   );
 }
 
-for (const file of [
-  'custom-elements.json',
-  'tsconfig.json',
-]) {
+for (const file of ['custom-elements.json', 'tsconfig.json']) {
   fs.copyFileSync(
     path.join(packageRoot, file),
     path.join(fullBundlePackageRoot, file)
