@@ -58,7 +58,15 @@ const fullBundlePackage = {
 fs.rmSync(fullBundlePackageRoot, {recursive: true, force: true});
 fs.mkdirSync(fullBundlePackageRoot, {recursive: true});
 
-for (const dirName of ['dist', 'bundle', 'src', 'docs', 'xliff', 'script', '.storybook']) {
+for (const dirName of [
+  'dist',
+  'bundle',
+  'src',
+  'docs',
+  'xliff',
+  'script',
+  '.storybook',
+]) {
   fs.cpSync(
     path.join(packageRoot, dirName),
     path.join(fullBundlePackageRoot, dirName),
