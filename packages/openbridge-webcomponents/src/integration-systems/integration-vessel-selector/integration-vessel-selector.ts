@@ -8,6 +8,7 @@ import {property} from 'lit/decorators.js';
  *
  * @slot - The vessel to select.
  * @slot fleet - The fleet of vessels.
+ * @slot topbar - The top bar, displayed when `hasTopbar` is true.
  */
 @customElement('obc-integration-vessel-selector')
 export class ObcIntegrationVesselSelector extends LitElement {
