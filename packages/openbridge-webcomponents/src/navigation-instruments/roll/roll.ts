@@ -8,7 +8,11 @@ import {
   WatchCircleType,
   innerRingRadiusFor,
   vesselImages,
+  type WatchArea,
 } from '../watch/watch.js';
+import '../readout/readout.js';
+import {ReadoutDirection, ReadoutVariant} from '../readout/readout.js';
+import {Priority} from '../types.js';
 import {TickmarkType} from '../watch/tickmark.js';
 import {AdviceState, AdviceType, AngleAdviceRaw} from '../watch/advice.js';
 import {customElement} from '../../decorator.js';
@@ -23,6 +27,23 @@ const watchRadius = OUTER_RING_RADIUS;
 /** Half-side of the centre overlay viewBox in SVG units. */
 const CENTRE_HALF = 200;
 
+export enum ObcRollType {
+  /** Single arc scale at the bottom (default). */
+  singleScale = 'single-scale',
+  /** Bottom scale duplicated to the top as well. */
+  dualScale = 'dual-scale',
+}
+
+/**
+ * `<obc-roll>` — Roll (heel) indicator with a bottom arc scale.
+ *
+ * Shows `roll` against a watch arc centred at the bottom, with an average-roll
+ * band and a rotating indicator. Supports an optional top scale (`dual-scale`),
+ * a centre readout (`hasReadout`), and a `regular`/`enhanced` palette. See the
+ * individual properties for details.
+ *
+ * @element obc-roll
+ */
 @customElement('obc-roll')
 export class ObcRoll extends LitElement {
   @property({type: Number}) roll = 0;
@@ -33,6 +54,22 @@ export class ObcRoll extends LitElement {
   @property({type: Number}) maxRollAdvice: number | undefined = undefined;
   @property({type: Boolean}) triggerRollAdvice = false;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
+  /**
+   * When `true`, the centre shows an `<obc-readout>` with the roll value
+   * (label `Roll`, unit `DEG`) instead of the horizon line, rotating indicator
+   * and vessel. Default `false`.
+   */
+  @property({type: Boolean}) hasReadout: boolean = false;
+  /**
+   * `single-scale` shows one arc at the bottom (default); `dual-scale` also
+   * shows the scale on the top arc (the indicator's opposite end).
+   */
+  @property({type: String}) type: ObcRollType = ObcRollType.singleScale;
+  /**
+   * Colour palette for the scale fill / indicator and the readout value:
+   * `regular` (default) or `enhanced`.
+   */
+  @property({type: String}) priority: Priority = Priority.regular;
   /**
    * Half-extent of the watch arc in degrees. The arc spans `180° ± arcAngle`
    * and roll values are placed at their true position within it. Default
@@ -55,6 +92,18 @@ export class ObcRoll extends LitElement {
     return Math.max(0, Math.min(2, this.scaleForeImage));
   }
 
+  private get scaleFillColor(): string {
+    return this.priority === Priority.enhanced
+      ? 'var(--instrument-enhanced-tertiary-color)'
+      : 'var(--instrument-regular-tertiary-color)';
+  }
+
+  private get indicatorColor(): string {
+    return this.priority === Priority.enhanced
+      ? 'var(--instrument-enhanced-secondary-color)'
+      : 'var(--instrument-regular-secondary-color)';
+  }
+
   override render() {
     const arcAngle = normalizeArcAngle(this.arcAngle, 45);
     // Outer thin-ring complement endpoints. The arc band is centred at
@@ -63,7 +112,7 @@ export class ObcRoll extends LitElement {
     const x = watchRadius * Math.sin((arcAngle * Math.PI) / 180);
     const y = watchRadius * Math.cos((arcAngle * Math.PI) / 180);
 
-    const areas = [
+    const areas: WatchArea[] = [
       {
         startAngle: 180 - arcAngle,
         endAngle: 180 + arcAngle,
@@ -106,108 +155,132 @@ export class ObcRoll extends LitElement {
     return html`
       <div class="container">
         <svg viewBox="${centreViewBox}">
-          ${svg`
-            <line
-              x1="-${watchRadius}"
-              y1="0"
-              x2="${watchRadius}"
-              y2="0"
-              stroke="var(--instrument-frame-tertiary-color)"
-            />
-            <line
-              x1="0"
-              y1="0"
-              y2="${watchRadius - 10}"
-              x2="0"
-              stroke="var(--instrument-enhanced-secondary-color)"
-              transform="${needleTransform}"
-            />
-            <g
-              style="transform: rotate(${this.roll}deg) scale(${vesselScale * this.normalizedScaleForeImage}) translate(-80px, -80px);"
-            >
-              ${this.zoomToFitArc ? vesselImages[this.vesselImageFore] : nothing}
-            </g>
-            ${
-              this.zoomToFitArc
-                ? nothing
-                : svg`
-                    <path
-                      d="M ${-x} ${y} A ${watchRadius} ${watchRadius} 0 1 1 ${x} ${y}"
-                      fill="none"
-                      stroke="var(--instrument-frame-tertiary-color)"
-                    />
-                  `
-            }
-          `}
+          ${this.hasReadout
+            ? nothing
+            : svg`
+                <line
+                  x1="-${watchRadius}"
+                  y1="0"
+                  x2="${watchRadius}"
+                  y2="0"
+                  stroke="var(--instrument-frame-tertiary-color)"
+                />
+                <line
+                  x1="0"
+                  y1="0"
+                  y2="${watchRadius - 10}"
+                  x2="0"
+                  stroke="${this.indicatorColor}"
+                  transform="${needleTransform}"
+                />
+                <g
+                  style="transform: rotate(${this.roll}deg) scale(${vesselScale * this.normalizedScaleForeImage}) translate(-80px, -80px);"
+                >
+                  ${this.zoomToFitArc ? vesselImages[this.vesselImageFore] : nothing}
+                </g>
+              `}
+          ${this.zoomToFitArc
+            ? nothing
+            : svg`
+                <path
+                  d="M ${-x} ${y} A ${watchRadius} ${watchRadius} 0 1 1 ${x} ${y}"
+                  fill="none"
+                  stroke="var(--instrument-frame-tertiary-color)"
+                />
+              `}
         </svg>
-        <obc-watch
-          .watchCircleType=${WatchCircleType.double}
-          .zoomToFitArc=${this.zoomToFitArc}
-          .arcFrame=${this._arcFrame}
-          tickmarksInside
-          .areas=${areas}
-          .barAreas=${[
-            {
-              startAngle: 180 + this.minAvgRoll,
-              endAngle: 180 + this.maxAvgRoll,
-              fillColor: 'var(--instrument-enhanced-tertiary-color)',
-            },
-          ]}
-          .needles=${[
-            {
-              angle: 180 + this.roll,
-              fillColor: 'var(--instrument-enhanced-secondary-color)',
-              strokeColor: 'var(--border-silhouette-color)',
-            },
-          ]}
-          .vessels=${this.zoomToFitArc
-            ? []
-            : [
-                {
-                  size: VesselImageSize.large,
-                  vesselImage: this.vesselImageFore,
-                  transform: `rotate(${this.roll}deg) scale(${this.normalizedScaleForeImage})`,
-                },
-              ]}
-          .tickmarks=${[
-            {
-              angle: 180,
-              type: TickmarkType.main,
-            },
-          ]}
-          .advices=${this.advices}
-        ></obc-watch>
+        ${this.renderScale(areas, false)}
+        ${this.type === ObcRollType.dualScale
+          ? this.renderScale(areas, true)
+          : nothing}
+        ${this.hasReadout
+          ? html`<div class="readout">
+              <obc-readout
+                .variant=${ReadoutVariant.enhanced}
+                .direction=${ReadoutDirection.vertical}
+                .hasSetpoint=${false}
+                .hasAdvice=${false}
+                .value=${this.roll}
+                .fractionDigits=${0}
+                .valuePriority=${this.priority}
+                label="Roll"
+                unit="DEG"
+              ></obc-readout>
+            </div>`
+          : nothing}
       </div>
     `;
   }
 
+  // `top` rotates a second watch 180° onto the top arc for dual-scale — a
+  // rotation (opposite end of the indicator), not a mirror. A separate watch
+  // keeps the zoomed `arcFrame` correct.
+  private renderScale(areas: WatchArea[], top: boolean) {
+    return html`
+      <obc-watch
+        class=${top ? 'scale-top' : nothing}
+        .watchCircleType=${WatchCircleType.double}
+        .zoomToFitArc=${this.zoomToFitArc}
+        .arcFrame=${this._arcFrame}
+        tickmarksInside
+        .areas=${areas}
+        .barAreas=${[
+          {
+            startAngle: 180 + this.minAvgRoll,
+            endAngle: 180 + this.maxAvgRoll,
+            fillColor: this.scaleFillColor,
+          },
+        ]}
+        .needles=${[
+          {
+            angle: 180 + this.roll,
+            fillColor: this.indicatorColor,
+            strokeColor: 'var(--border-silhouette-color)',
+          },
+        ]}
+        .vessels=${top || this.zoomToFitArc || this.hasReadout
+          ? []
+          : [
+              {
+                size: VesselImageSize.large,
+                vesselImage: this.vesselImageFore,
+                transform: `rotate(${this.roll}deg) scale(${this.normalizedScaleForeImage})`,
+              },
+            ]}
+        .tickmarks=${[{angle: 180, type: TickmarkType.main}]}
+        .advices=${this.advices}
+      ></obc-watch>
+    `;
+  }
+
   private get advices(): AngleAdviceRaw[] {
-    const advices = [];
-    if (this.maxRollAdvice !== undefined) {
-      const arcAngle = normalizeArcAngle(this.arcAngle, 45);
-      // Caution band fills the remainder of the arc out to a default 45°
-      // caution range (clamped to the arc edge).
-      const outer = Math.min(arcAngle, 45);
-      const inner = Math.min(this.maxRollAdvice, outer);
-      const state = this.triggerRollAdvice
-        ? AdviceState.triggered
-        : AdviceState.regular;
-      advices.push({
+    if (this.maxRollAdvice === undefined) {
+      return [];
+    }
+    const arcAngle = normalizeArcAngle(this.arcAngle, 45);
+    // Caution band fills the remainder of the arc out to a default 45° caution
+    // range (clamped to the arc edge).
+    const outer = Math.min(arcAngle, 45);
+    const inner = Math.min(this.maxRollAdvice, outer);
+    const state = this.triggerRollAdvice
+      ? AdviceState.triggered
+      : AdviceState.regular;
+    return [
+      {
         minAngle: 180 - outer,
         maxAngle: 180 - inner,
         type: AdviceType.caution,
         state: state,
         hideMinTickmark: true,
-      });
-      advices.push({
+      },
+      {
         minAngle: 180 + inner,
         maxAngle: 180 + outer,
         type: AdviceType.caution,
         state: state,
         hideMaxTickmark: true,
-      });
-    }
-    return advices;
+      },
+    ];
   }
 
   static override styles = css`
@@ -227,6 +300,16 @@ export class ObcRoll extends LitElement {
       left: 0;
       width: 100%;
       height: 100%;
+    }
+
+    .readout {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .scale-top {
+      transform: rotate(180deg);
     }
   `;
 }
