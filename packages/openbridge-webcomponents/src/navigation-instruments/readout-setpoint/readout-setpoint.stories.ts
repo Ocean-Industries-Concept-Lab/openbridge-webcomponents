@@ -3,25 +3,24 @@ import {html} from 'lit';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import '../../icons/icon-input-right.js';
 import {
-  ReadoutInputMode,
-  ReadoutInputFormat,
-  ReadoutInputSize,
-} from './readout-input.js';
-import './readout-input.js';
+  ReadoutSetpointMode,
+  ReadoutSetpointFormat,
+  ReadoutSetpointSize,
+} from './readout-setpoint.js';
+import './readout-setpoint.js';
 import {Priority} from '../types.js';
 
-type ReadoutInputStoryArgs = {
-  size: ReadoutInputSize;
-  format?: ReadoutInputFormat;
-  mode: ReadoutInputMode;
+type ReadoutSetpointStoryArgs = {
+  size: ReadoutSetpointSize;
+  format?: ReadoutSetpointFormat;
+  mode: ReadoutSetpointMode;
   priority?: Priority;
   hugText: boolean;
   iconId?: string;
-  hasFixedLength: boolean;
-  value: string;
-  secondaryValue: string;
+  value: number;
+  secondaryValue: number;
   description: string;
-  valueLength: string;
+  minValueLength: number;
   hasHintedZeros: boolean;
   hasDegree: boolean;
 };
@@ -44,44 +43,42 @@ const centeredCanvasDecorator = (story: () => unknown) => {
 };
 
 const meta = {
-  title: 'Instruments/Readout Input',
+  title: 'Instruments/Readout Setpoint',
   tags: ['autodocs', '6.0'],
-  component: 'obc-readout-input',
+  component: 'obc-readout-setpoint',
   decorators: [centeredCanvasDecorator],
   render: (args) => {
     return html`
-      <obc-readout-input
+      <obc-readout-setpoint
         .size=${args.size}
         .format=${args.format}
         .mode=${args.mode}
         .priority=${args.priority}
         .hugContent=${args.hugText}
-        .hasFixedLength=${args.hasFixedLength}
         .value=${args.value}
         .secondaryValue=${args.secondaryValue}
         .description=${args.description}
-        .valueLength=${args.valueLength}
+        .minValueLength=${args.minValueLength}
         .hasHintedZeros=${args.hasHintedZeros}
         .hasDegree=${args.hasDegree}
       >
         ${args.iconId
           ? iconIdToIconHtml(args.iconId, {slot: 'icon'})
           : html`<obi-input-right slot="icon"></obi-input-right>`}
-      </obc-readout-input>
+      </obc-readout-setpoint>
     `;
   },
   args: {
-    size: ReadoutInputSize.small,
+    size: ReadoutSetpointSize.small,
     format: undefined,
-    mode: ReadoutInputMode.display,
+    mode: ReadoutSetpointMode.display,
     priority: undefined,
     hugText: true,
     iconId: undefined,
-    hasFixedLength: true,
-    value: '123',
-    secondaryValue: '123',
+    value: 123,
+    secondaryValue: 123,
     description: 'SET',
-    valueLength: '123',
+    minValueLength: 3,
     hasHintedZeros: false,
     hasDegree: false,
   },
@@ -91,24 +88,24 @@ const meta = {
       control: {
         type: 'select',
         labels: {
-          [ReadoutInputSize.small]: 'Small',
-          [ReadoutInputSize.regular]: 'Regular',
-          [ReadoutInputSize.medium]: 'Medium',
-          [ReadoutInputSize.large]: 'Large',
+          [ReadoutSetpointSize.small]: 'Small',
+          [ReadoutSetpointSize.regular]: 'Regular',
+          [ReadoutSetpointSize.medium]: 'Medium',
+          [ReadoutSetpointSize.large]: 'Large',
         },
       },
-      options: Object.values(ReadoutInputSize),
+      options: Object.values(ReadoutSetpointSize),
     },
     format: {
       name: 'Format',
       control: {type: 'select'},
-      options: [undefined, ...Object.values(ReadoutInputFormat)],
+      options: [undefined, ...Object.values(ReadoutSetpointFormat)],
       description: 'Structural subtype axis.',
     },
     mode: {
       name: 'Mode',
       control: {type: 'select'},
-      options: Object.values(ReadoutInputMode),
+      options: Object.values(ReadoutSetpointMode),
       description: 'Interaction axis.',
     },
     priority: {
@@ -136,45 +133,47 @@ const meta = {
     hugContent: {table: {disable: true}, control: false},
     value: {
       name: 'Value',
-      control: 'text',
-      table: {category: 'Input Value'},
+      control: {type: 'number'},
+      table: {category: 'Setpoint Value'},
     },
     secondaryValue: {
       name: 'Secondary Value',
-      control: 'text',
-      if: {arg: 'format', eq: ReadoutInputFormat.range},
-      table: {category: 'Input Value'},
+      control: {type: 'number'},
+      if: {arg: 'format', eq: ReadoutSetpointFormat.range},
+      table: {category: 'Setpoint Value'},
     },
     description: {
       name: 'Description / Stack Label',
       control: 'text',
       if: {
         arg: 'format',
-        in: [ReadoutInputFormat.description, ReadoutInputFormat.verticalStack],
+        in: [
+          ReadoutSetpointFormat.description,
+          ReadoutSetpointFormat.verticalStack,
+        ],
       },
-      table: {category: 'Input Value'},
+      table: {category: 'Setpoint Value'},
     },
-    valueLength: {
-      name: 'Value Length',
-      control: 'text',
-      if: {arg: 'hasFixedLength', truthy: true},
-      table: {category: 'Input Value'},
+    minValueLength: {
+      name: 'Min Value Length',
+      control: {type: 'number', min: 0, step: 1},
+      table: {category: 'Setpoint Value'},
     },
     hasHintedZeros: {
       name: 'Has Hinted Zeros',
-      if: {arg: 'hasFixedLength', truthy: true},
-      table: {category: 'Input Value'},
+      if: {arg: 'minValueLength', gt: 1},
+      table: {category: 'Setpoint Value'},
     },
     hasDegree: {
       name: 'Has Degree',
-      table: {category: 'Input Value'},
+      table: {category: 'Setpoint Value'},
       description: 'Renders a ° suffix when enabled.',
     },
   },
-} satisfies Meta<ReadoutInputStoryArgs>;
+} satisfies Meta<ReadoutSetpointStoryArgs>;
 
 export default meta;
-type Story = StoryObj<ReadoutInputStoryArgs>;
+type Story = StoryObj<ReadoutSetpointStoryArgs>;
 
 export const Primary: Story = {};
 
@@ -213,17 +212,17 @@ export const SegmentHugVsFullWidth: Story = {
         >
           hugContent = true (fit-content)
         </div>
-        <obc-readout-input
-          .size=${ReadoutInputSize.regular}
-          .format=${ReadoutInputFormat.regular}
-          .mode=${ReadoutInputMode.display}
+        <obc-readout-setpoint
+          .size=${ReadoutSetpointSize.regular}
+          .format=${ReadoutSetpointFormat.regular}
+          .mode=${ReadoutSetpointMode.display}
           .priority=${Priority.enhanced}
           .hugContent=${true}
-          value="123"
+          .value=${123}
           title="hugContent=true"
         >
           <obi-input-right slot="icon"></obi-input-right>
-        </obc-readout-input>
+        </obc-readout-setpoint>
       </div>
 
       <div
@@ -246,17 +245,17 @@ export const SegmentHugVsFullWidth: Story = {
         >
           hugContent = false (width: 100%)
         </div>
-        <obc-readout-input
-          .size=${ReadoutInputSize.regular}
-          .format=${ReadoutInputFormat.regular}
-          .mode=${ReadoutInputMode.display}
+        <obc-readout-setpoint
+          .size=${ReadoutSetpointSize.regular}
+          .format=${ReadoutSetpointFormat.regular}
+          .mode=${ReadoutSetpointMode.display}
           .priority=${Priority.enhanced}
           .hugContent=${false}
-          value="123"
+          .value=${123}
           title="hugContent=false"
         >
           <obi-input-right slot="icon"></obi-input-right>
-        </obc-readout-input>
+        </obc-readout-setpoint>
       </div>
     </div>
   `,
@@ -272,25 +271,24 @@ export const HintedZerosBySize: Story = {
       "
     >
       ${[
-        ReadoutInputSize.small,
-        ReadoutInputSize.regular,
-        ReadoutInputSize.medium,
-        ReadoutInputSize.large,
+        ReadoutSetpointSize.small,
+        ReadoutSetpointSize.regular,
+        ReadoutSetpointSize.medium,
+        ReadoutSetpointSize.large,
       ].map(
         (size) => html`
-          <obc-readout-input
+          <obc-readout-setpoint
             .size=${size}
-            .mode=${ReadoutInputMode.display}
+            .mode=${ReadoutSetpointMode.display}
             .priority=${Priority.enhanced}
             .hugContent=${true}
-            .hasFixedLength=${true}
-            value="12"
-            valueLength="00000"
+            .value=${12}
+            .minValueLength=${5}
             .hasHintedZeros=${true}
             title=${`Size=${size}`}
           >
             <obi-input-right slot="icon"></obi-input-right>
-          </obc-readout-input>
+          </obc-readout-setpoint>
         `
       )}
     </div>
@@ -298,98 +296,97 @@ export const HintedZerosBySize: Story = {
 };
 
 type Variant = {
-  size: ReadoutInputSize;
-  mode: ReadoutInputMode;
+  size: ReadoutSetpointSize;
+  mode: ReadoutSetpointMode;
   priority?: Priority;
   hugContent: boolean;
   hasDegree: boolean;
 };
 
-const sizes: ReadoutInputSize[] = [
-  ReadoutInputSize.small,
-  ReadoutInputSize.regular,
-  ReadoutInputSize.medium,
-  ReadoutInputSize.large,
+const sizes: ReadoutSetpointSize[] = [
+  ReadoutSetpointSize.small,
+  ReadoutSetpointSize.regular,
+  ReadoutSetpointSize.medium,
+  ReadoutSetpointSize.large,
 ];
 
 const variantRows: Variant[][] = [
   sizes.map((size) => ({
     size,
-    mode: ReadoutInputMode.display,
+    mode: ReadoutSetpointMode.display,
     priority: undefined,
     hugContent: true,
     hasDegree: false,
   })),
   sizes.map((size) => ({
     size,
-    mode: ReadoutInputMode.display,
+    mode: ReadoutSetpointMode.display,
     priority: Priority.enhanced,
     hugContent: true,
     hasDegree: false,
   })),
   sizes.map((size) => ({
     size,
-    mode: ReadoutInputMode.input,
+    mode: ReadoutSetpointMode.setpoint,
     priority: undefined,
     hugContent: true,
     hasDegree: false,
   })),
   sizes.map((size) => ({
     size,
-    mode: ReadoutInputMode.inputTemporary,
+    mode: ReadoutSetpointMode.setpointTemporary,
     priority: undefined,
     hugContent: true,
     hasDegree: false,
   })),
   sizes.map((size) => ({
     size,
-    mode: ReadoutInputMode.display,
+    mode: ReadoutSetpointMode.display,
     priority: undefined,
     hugContent: false,
     hasDegree: false,
   })),
   sizes.map((size) => ({
     size,
-    mode: ReadoutInputMode.display,
+    mode: ReadoutSetpointMode.display,
     priority: Priority.enhanced,
     hugContent: false,
     hasDegree: false,
   })),
   sizes.map((size) => ({
     size,
-    mode: ReadoutInputMode.input,
+    mode: ReadoutSetpointMode.setpoint,
     priority: undefined,
     hugContent: false,
     hasDegree: false,
   })),
   sizes.map((size) => ({
     size,
-    mode: ReadoutInputMode.inputTemporary,
+    mode: ReadoutSetpointMode.setpointTemporary,
     priority: undefined,
     hugContent: false,
     hasDegree: false,
   })),
 ];
 
-const usesFixedLength = (size: ReadoutInputSize): boolean =>
-  size === ReadoutInputSize.small || size === ReadoutInputSize.large;
+const usesFixedLength = (size: ReadoutSetpointSize): boolean =>
+  size === ReadoutSetpointSize.small || size === ReadoutSetpointSize.large;
 
 const renderVariant = (variant: Variant) => html`
-  <obc-readout-input
+  <obc-readout-setpoint
     .size=${variant.size}
-    .format=${ReadoutInputFormat.regular}
+    .format=${ReadoutSetpointFormat.regular}
     .mode=${variant.mode}
     .priority=${variant.priority}
     .hugContent=${variant.hugContent}
-    .hasFixedLength=${usesFixedLength(variant.size)}
-    .value=${'123'}
-    .valueLength=${'123'}
+    .value=${123}
+    .minValueLength=${usesFixedLength(variant.size) ? 3 : 0}
     .hasHintedZeros=${false}
     .hasDegree=${variant.hasDegree}
     title=${`Size=${variant.size}, Mode=${variant.mode}, Priority=${variant.priority}, Hug content=${variant.hugContent}, Degree=${variant.hasDegree}`}
   >
     <obi-input-right slot="icon"></obi-input-right>
-  </obc-readout-input>
+  </obc-readout-setpoint>
 `;
 
 export const AllCombinations: Story = {

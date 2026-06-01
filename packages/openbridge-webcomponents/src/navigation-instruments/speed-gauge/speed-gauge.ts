@@ -164,16 +164,15 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
                 class="speed-gauge-value"
                 .variant=${ReadoutVariant.stack}
                 .direction=${ReadoutDirection.horizontal}
-                .hasInput=${false}
+                .hasSetpoint=${false}
                 .hasAdvice=${false}
-                .hasSrc=${false}
                 .value=${this.speed}
                 .showZeroPadding=${false}
                 .valueHasHintedZeros=${false}
                 unit="KN"
                 label="STW"
                 .fractionDigits=${1}
-                .maxDigits=${maxDigits}
+                .minValueLength=${maxDigits}
                 .valuePriority=${this.priority}
               ></obc-readout>
             `

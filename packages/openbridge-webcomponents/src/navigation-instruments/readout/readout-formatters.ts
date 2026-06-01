@@ -1,20 +1,15 @@
 export type ReadoutNumericFormatOptions = {
   showZeroPadding: boolean;
-  maxDigits: number;
+  minValueLength: number;
   fractionDigits: number;
-};
-
-export type ReadoutTextSegment = {
-  visibleValue: string;
-  widthTemplate: string;
 };
 
 function dashedGenerator({
   showZeroPadding,
-  maxDigits,
+  minValueLength,
   fractionDigits,
 }: ReadoutNumericFormatOptions): string {
-  const visibleDigits = showZeroPadding ? Math.max(maxDigits, 1) : 1;
+  const visibleDigits = showZeroPadding ? Math.max(minValueLength, 1) : 1;
 
   if (fractionDigits < 1) {
     return '-'.repeat(visibleDigits);
@@ -27,7 +22,7 @@ function dashedGenerator({
   );
 }
 
-function formatNumericValue(
+export function formatNumericValue(
   value: number | undefined,
   options: ReadoutNumericFormatOptions
 ): string {
@@ -36,58 +31,6 @@ function formatNumericValue(
   }
 
   return value.toFixed(options.fractionDigits);
-}
-
-export function numericOrOriginalString(
-  value: number | string | undefined
-): number | string | undefined {
-  if (typeof value !== 'string') {
-    return value;
-  }
-
-  const trimmed = value.trim();
-  if (trimmed === '') {
-    return value;
-  }
-
-  const n = Number(trimmed);
-  if (!Number.isFinite(n)) {
-    return value;
-  }
-
-  return n;
-}
-
-export function readoutValueFromAttribute(
-  value: string | null
-): number | string | undefined {
-  if (value === null) {
-    return undefined;
-  }
-
-  return numericOrOriginalString(value);
-}
-
-export function readoutValueToAttribute(
-  value: number | string | undefined
-): string | null {
-  if (value === undefined) {
-    return null;
-  }
-
-  return String(value);
-}
-
-export function formatReadoutValue(
-  value: number | string | undefined,
-  options: ReadoutNumericFormatOptions
-): string {
-  const resolved = numericOrOriginalString(value);
-  if (typeof resolved === 'string') {
-    return resolved;
-  }
-
-  return formatNumericValue(resolved, options);
 }
 
 export function readoutFormattedInteger(valueText: string): number {
@@ -102,62 +45,21 @@ export function readoutFormattedInteger(valueText: string): number {
 }
 
 export function getHintZeros(
-  value: number | string | undefined,
-  formattedValue: string,
-  {showZeroPadding, maxDigits, fractionDigits}: ReadoutNumericFormatOptions
+  value: number | undefined,
+  {showZeroPadding, minValueLength, fractionDigits}: ReadoutNumericFormatOptions
 ): string {
-  if (!showZeroPadding) {
-    return '';
-  }
-
-  const resolved = numericOrOriginalString(value);
-  if (typeof resolved !== 'number' || resolved < 0) {
-    return '';
-  }
-
-  const integerCharCount = readoutFormattedInteger(formattedValue);
-  const integerWidth = Math.max(maxDigits - fractionDigits, 1);
-  const hintedDigits = integerWidth - integerCharCount;
+  const formattedValue = formatNumericValue(value, {
+    showZeroPadding,
+    minValueLength,
+    fractionDigits,
+  });
+  const dotLength = fractionDigits > 0 ? 1 : 0;
+  const integerLength = formattedValue.length - dotLength;
+  const hintedDigits = Math.max(minValueLength - integerLength, 0);
 
   if (hintedDigits > 0) {
     return '0'.repeat(hintedDigits);
   }
 
   return '';
-}
-
-export function formatTextSegment(
-  value: string,
-  hasFixedLength: boolean,
-  lengthTemplate: string
-): ReadoutTextSegment {
-  if (!hasFixedLength) {
-    return {
-      visibleValue: value,
-      widthTemplate: '',
-    };
-  }
-
-  const trimmedLengthTemplate = lengthTemplate.trim();
-
-  if (!trimmedLengthTemplate) {
-    return {
-      visibleValue: '',
-      widthTemplate: '',
-    };
-  }
-
-  const templateLength = trimmedLengthTemplate.length;
-
-  if (value.length <= templateLength) {
-    return {
-      visibleValue: value,
-      widthTemplate: trimmedLengthTemplate,
-    };
-  }
-
-  return {
-    visibleValue: value,
-    widthTemplate: '',
-  };
 }
