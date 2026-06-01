@@ -108,7 +108,7 @@ export class ObcIntegrationBar extends LitElement {
     this.buttonsOnBar = true;
   }
 
-  private onButtonsSlotChange(event: Event) {
+  private onButtonsSlotChange() {
     this.buttonsOnBar = true;
   }
 
