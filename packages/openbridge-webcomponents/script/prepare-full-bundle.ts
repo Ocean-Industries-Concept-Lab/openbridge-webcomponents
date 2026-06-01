@@ -50,6 +50,7 @@ const fullBundlePackage = {
     'fix-imports.mjs',
     'fix-js-extensions.mjs',
     'vitest.browser.config.ts',
+    'vitest.config.ts',
   ],
 };
 
@@ -77,6 +78,7 @@ for (const file of [
   'fix-imports.mjs',
   'fix-js-extensions.mjs',
   'vitest.browser.config.ts',
+  'vitest.config.ts',
 ]) {
   fs.copyFileSync(
     path.join(packageRoot, file),
