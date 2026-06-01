@@ -160,7 +160,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
         .variant=${ReadoutVariant.regular}
         .valuePriority=${this.priority}
         .value=${this.value}
-        .maxDigits=${this.maxDigits}
+        .minValueLength=${this.maxDigits}
         .fractionDigits=${this.fractionDigits}
         .showZeroPadding=${this.showZeroPadding}
         .label=${this.label}
@@ -180,7 +180,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
         .alignment=${alignment}
         .valuePriority=${this.priority}
         .value=${this.value}
-        .maxDigits=${this.maxDigits}
+        .minValueLength=${this.maxDigits}
         .fractionDigits=${this.fractionDigits}
         .showZeroPadding=${this.showZeroPadding}
         .label=${this.label}
@@ -197,7 +197,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
         .variant=${ReadoutVariant.enhanced}
         .valuePriority=${this.priority}
         .value=${this.value}
-        .maxDigits=${this.maxDigits}
+        .minValueLength=${this.maxDigits}
         .fractionDigits=${this.fractionDigits}
         .showZeroPadding=${this.showZeroPadding}
       ></obc-readout>
