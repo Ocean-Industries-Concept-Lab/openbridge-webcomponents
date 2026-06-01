@@ -35,12 +35,14 @@ const fullBundlePackage = {
     '!dist/companylogo-day.png',
     'bundle/openbridge-webcomponents.bundle.js',
     'bundle/openbridge-webcomponents.bundle.js.map',
+    '.storybook',
     'script',
     'xliff',
     'src',
     'docs',
     'custom-elements.json',
     'tsconfig.json',
+    'eslint.config.mjs',
     'vite.config.ts',
     'postcss.config.mjs',
     'lit-localize.json',
@@ -54,7 +56,7 @@ const fullBundlePackage = {
 fs.rmSync(fullBundlePackageRoot, {recursive: true, force: true});
 fs.mkdirSync(fullBundlePackageRoot, {recursive: true});
 
-for (const dirName of ['dist', 'bundle', 'src', 'docs', 'xliff', 'script']) {
+for (const dirName of ['dist', 'bundle', 'src', 'docs', 'xliff', 'script', '.storybook']) {
   fs.cpSync(
     path.join(packageRoot, dirName),
     path.join(fullBundlePackageRoot, dirName),
@@ -68,6 +70,7 @@ for (const file of [
   'custom-elements.json',
   'tsconfig.json',
   'vite.config.ts',
+  'eslint.config.mjs',
   'postcss.config.mjs',
   'lit-localize.json',
   'new-component.ts',
