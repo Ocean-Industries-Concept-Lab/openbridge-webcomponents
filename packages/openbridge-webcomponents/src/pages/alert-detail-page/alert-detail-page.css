@@ -5,7 +5,7 @@
 .wrapper {
   display: flex;
   flex-direction: column;
-  background: var(--color-container-background-color);
+  background: var(--container-background-color);
   height: 100%;
 
   --padding-horizontal: var(--app-components-modal-margin-vertical);

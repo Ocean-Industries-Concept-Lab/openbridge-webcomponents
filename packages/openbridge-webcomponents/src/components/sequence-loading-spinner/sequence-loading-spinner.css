@@ -103,8 +103,8 @@
       background: conic-gradient(
         from 0deg,
         var(--element-neutral-enhanced-color) 0deg,
-        var(--element-neutral-enhanced-color) var(--spinner-progress-deg),
-        transparent var(--spinner-progress-deg),
+        var(--element-neutral-enhanced-color) var(--spinner-progress-deg, 0deg),
+        transparent var(--spinner-progress-deg, 0deg),
         transparent 360deg
       );
     }
@@ -120,7 +120,7 @@
     }
 
     .cap-end {
-      transform: translate(-50%, -50%) rotate(var(--spinner-progress-deg))
+      transform: translate(-50%, -50%) rotate(var(--spinner-progress-deg, 0deg))
         translateY(calc(-1 * var(--spinner-radius)));
     }
   }

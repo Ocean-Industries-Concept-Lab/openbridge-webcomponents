@@ -118,6 +118,43 @@ The CSS files are post-processed by [PostCSS](https://postcss.org/).
 There is one global CSS file for the palettes, `variables.css`, which contains the color palettes for the components.
 All other CSS code should be kept in the `*.css` files in the component folders.
 
+> **⚠️ `src/palettes/variables.css` is generated, not authored.**
+> The file is produced by the [OpenBridge devtools Figma plugin](https://github.com/Ocean-Industries-Concept-Lab/obc-figma-plugin)
+> (published as [Figma community plugin `1448419213272098259`](https://www.figma.com/community/plugin/1448419213272098259)).
+> The plugin's `cssvariables` codegen emits the entire file in one go: the
+> four `.obc-component-size-*` blocks (from the `Component-size` collection),
+> the `* { … }` block (`typography-primitives` + `Set-component-corners` +
+> `component-primitives` + shadow composites), the four
+> `:root[data-obc-theme="…"]` blocks (from the `Palette` collection, with
+> variable alias chains flattened to literal `rgb(…)` values per theme), and
+> the `@property` / `@keyframes warning-blink` machinery at the bottom.
+>
+> **Do not hand-edit `variables.css`.** Any local change will be silently
+> overwritten the next time someone pastes new plugin output. To add,
+> rename, or change a token, the workflow is:
+>
+> 1. Change the variable in Figma (or, for name normalisation only, in the
+>    plugin's `rename()` function in `code.ts`).
+> 2. Re-run the plugin (Figma → Dev Mode → Inspect → "css variables export").
+> 3. Replace `variables.css` wholesale with the plugin output and commit.
+>
+> The same plugin also produces:
+>
+> - **`script/figmavariables.json`** (via its `variables` codegen) — a
+>   `VariableID → token-name` lookup consumed by `script/convert-icons.ts`
+>   to rewrite hex colors back into `var(--…)` references in downloaded icons.
+> - **`src/mixins/fonts.css`** is seeded by the plugin's `font-exports`
+>   codegen, but currently contains light hand-curation
+>   (e.g. a uniform `--font-family-main` instead of per-style font-family
+>   bindings). Treat large diffs there as suspicious and reconcile with the
+>   plugin output rather than editing freely.
+>
+> The audit at `script/check-css-variables.ts` will catch consumer CSS that
+> references tokens missing from `variables.css`, but it cannot catch tokens
+> that are missing from Figma itself — those need a designer round-trip.
+
+
+
 Most mixins are defined in `src/mixins/` and auto-loaded via `postcss-mixins` (configured in `postcss.config.mjs`); the `style` mixin used for elevation variants is defined inline in `postcss.config.mjs`. All mixins are available globally in component CSS — no `@import` is needed.
 
 ---
