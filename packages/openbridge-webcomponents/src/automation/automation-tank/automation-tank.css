@@ -212,14 +212,6 @@
 :host([static]) .halo > .tag {
   flex: 0 0 auto;
 }
-/* Override the global `min-height: 24px` on `.badges` so empty badge rows
- * don't reserve space in compact/static — the spec says "if there are no
- * badges it would grow upward". The slot-driven `?hidden` attribute on
- * empty cells makes them `display: none` (see below). */
-:host([compact]) .halo > .badges,
-:host([static]) .halo > .badges {
-  min-height: 0;
-}
 /* `hidden` attribute support: needed because the cells set an explicit
  * display value (`flex` / `block`), which would otherwise override
  * `hidden`'s default `display: none`. Removing the cell from the flex
@@ -331,7 +323,7 @@
   grid-row: 1;
   grid-column: 2;
   justify-self: end;
-  align-self: center;
+  align-self: start;
 }
 .tank-frame:not(.orientation-horizontal) .grid > .readout {
   grid-row: 2;
@@ -357,7 +349,7 @@
   grid-row: 1;
   grid-column: 2;
   justify-self: end;
-  align-self: center;
+  align-self: start;
 }
 .tank-frame.orientation-horizontal .grid > .bar-container {
   grid-row: 2;
@@ -367,7 +359,6 @@
   grid-row: 2;
   grid-column: 2;
   align-self: stretch;
-  padding-left: 8px;
   min-width: 96px;
 }
 
@@ -375,7 +366,7 @@
 .badges {
   display: flex;
   justify-content: end;
-  min-height: 24px;
+  gap: 4px;
   pointer-events: auto;
 }
 
@@ -383,7 +374,7 @@
   display: block;
   pointer-events: auto;
   @mixin font-instrument-label;
-  color: var(--instrument-regular-secondary-color);
+  color: var(--element-neutral-color);
   /* Tag text must never break across lines — it is a fixed identifier
    * (e.g. `FUEL`, `#0000`) that loses meaning if hyphenated or wrapped. */
   white-space: nowrap;
@@ -403,11 +394,31 @@
   /* Keep `90%` together — the parent flex prevents flex-item wrapping but
    * not text wrapping inside `.percent` (number + `<span>%</span>`). */
   white-space: nowrap;
-  @mixin font-instrument-label;
-  color: var(--instrument-regular-secondary-color);
+  color: var(--element-neutral-color);
+
+  .percent {
+    @mixin font-instrument-value-regular-neutral;
+  }
+
+  .percent-symbol {
+    @mixin font-instrument-unit;
+    margin-left: 1px;
+  }
 }
-.readout-compact .percent-symbol {
-  margin-left: 1px;
+
+/* Static readout: max-value + unit (no percent, no trend icon). Tighter
+ * 2px gap and small-neutral value sizing per design spec. Color is
+ * inherited from `.readout-compact`. */
+.readout-static {
+  gap: 2px;
+
+  slot[name="max-value"] {
+    @mixin font-instrument-value-small-neutral;
+  }
+
+  slot[name="unit"] {
+    @mixin font-instrument-unit;
+  }
 }
 
 .header {
@@ -415,18 +426,23 @@
   align-items: center;
   justify-content: flex-end;
   gap: 4px;
-  /* TODO: we will need such divider in the future for the 'rich' option */
-  /* border-bottom: 1px solid var(--border-outline-color); */
-  padding-bottom: 2px;
 
   .percent {
     @mixin font-instrument-value-enhanced-neutral;
+    color: var(--element-neutral-color);
+    padding-bottom: var(
+      --global-typography-instrument-value-large-padding-bottom
+    );
     /* Keep the number and the trailing `%` symbol on one line. */
     white-space: nowrap;
   }
 
   .percent-symbol {
-    @mixin font-body;
+    @mixin font-instrument-unit;
+    /* `inline-block` so `padding-bottom` actually applies (ignored on
+     * plain inline text). */
+    display: inline-block;
+    padding-bottom: var(--global-typography-instrument-unit-padding-bottom);
   }
 }
 
@@ -444,16 +460,98 @@
 
   .current-value {
     @mixin font-instrument-value-regular-active;
+    padding-bottom: var(
+      --global-typography-instrument-value-regular-padding-bottom
+    );
   }
 
   .divider {
     padding-left: 4px;
     padding-right: 4px;
+    padding-bottom: var(--global-typography-instrument-unit-padding-bottom);
   }
 
   .max-value {
     @mixin font-instrument-value-regular-neutral;
+    padding-bottom: var(
+      --global-typography-instrument-value-regular-padding-bottom
+    );
   }
+
+  .unit {
+    padding-bottom: var(--global-typography-instrument-unit-padding-bottom);
+  }
+}
+
+.rich-divider {
+  border-top: 1px solid var(--border-divider-color);
+  margin-top: 8px;
+}
+
+.rich {
+  display: grid;
+  /* label takes remaining space; value (right-aligned) and suffix
+   * (left-aligned) form fixed content columns so digit right edges and
+   * suffix left edges align vertically across all rows. */
+  grid-template-columns: 1fr auto auto;
+  align-items: baseline;
+  row-gap: 4px;
+  padding-top: 8px;
+  white-space: nowrap;
+  @mixin font-instrument-unit;
+}
+
+.rich-row {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
+  align-items: baseline;
+  padding-left: var(
+    --instrument-components-readout-new-list-item-regular-container-padding-horizontal
+  );
+  padding-right: var(
+    --instrument-components-readout-new-list-item-regular-container-padding-horizontal
+  );
+}
+
+.rich-label {
+  @mixin font-instrument-label;
+  color: var(--element-inactive-color);
+  padding-right: 8px;
+  text-align: left;
+}
+
+.rich-value {
+  @mixin font-instrument-value-regular-neutral;
+  color: var(--element-neutral-color);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.rich-suffix {
+  display: inline-flex;
+  align-items: baseline;
+  /* Default 2px gap between value and unit when there is no degree/percent
+   * glyph. When a glyph is present it sits flush against the value and the
+   * unit follows flush after the glyph (see `.rich-glyph + .rich-unit`). */
+  padding-left: 2px;
+}
+
+.rich-suffix:has(.rich-glyph) {
+  padding-left: 0;
+}
+
+.rich-glyph {
+  @mixin font-instrument-value-regular-neutral;
+  color: var(--element-neutral-color);
+}
+
+.rich-unit {
+  color: var(--element-inactive-color);
+}
+
+.rich-glyph + .rich-unit {
+  padding-left: 0;
 }
 
 /* The chart cell is a plain sizing/clipping box. Both child renderers —
