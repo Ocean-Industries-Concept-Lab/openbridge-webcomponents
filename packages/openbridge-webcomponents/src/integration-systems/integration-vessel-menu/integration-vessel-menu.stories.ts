@@ -105,7 +105,7 @@ const renderAlarms = () => html`
 const meta: Meta<ObcIntegrationVesselMenu> = {
   title: 'Integration Systems/Integration Vessel Menu',
   component: 'obc-integration-vessel-menu',
-  tags: ['autodocs'],
+  tags: ['alpha'],
   args: {numberOfButtons: 3},
   argTypes: {
     numberOfButtons: {

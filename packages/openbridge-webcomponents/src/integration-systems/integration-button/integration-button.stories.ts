@@ -10,7 +10,7 @@ import '../../icons/icon-placeholder.js';
 
 const meta: Meta<ObcIntegrationButton> = {
   title: 'Integration Systems/Integration Button',
-  tags: ['autodocs'],
+  tags: ['alpha'],
   component: 'obc-integration-button',
   args: {
     hasLeadingIcon: true,

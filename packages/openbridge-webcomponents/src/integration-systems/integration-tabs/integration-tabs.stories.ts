@@ -5,7 +5,7 @@ import {html} from 'lit';
 
 const meta: Meta<typeof ObcIntegrationTabs> = {
   title: 'Integration Systems/Building Blocks/Integration Tabs',
-  tags: ['autodocs'],
+  tags: ['alpha'],
   component: 'obc-integration-tabs',
   args: {},
   globals: {
