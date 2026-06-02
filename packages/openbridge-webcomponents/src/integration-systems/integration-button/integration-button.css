@@ -258,10 +258,6 @@
   &.variant-normal {
     @mixin style style=integration-normal visibleWrapperClass=.content-container;
 
-    & .icon {
-      color: var(--integration-on-normal-neutral-color);
-    }
-
     &:disabled {
       color: var(--integration-on-normal-disabled-color);
     }
@@ -273,11 +269,6 @@
 
   &.variant-flat {
     @mixin style style=integration-flat visibleWrapperClass=.content-container;
-    color: var(--integration-on-flat-active-color);
-
-    & .icon {
-      color: var(--integration-on-flat-neutral-color);
-    }
 
     &:disabled {
       color: var(--integration-on-flat-disabled-color);
@@ -339,10 +330,13 @@
 }
 
 .touch-target:not(.selected):not(.disabled) {
+  & .info-item-label {
+    color: var(--integration-on-flat-neutral-color);
+  }
   & .info-item-value {
     color: var(--integration-on-flat-active-color);
   }
-  & .info-readout-item {
+  & .info-item-unit {
     color: var(--integration-on-flat-neutral-color);
   }
   & .info-status {
@@ -354,7 +348,10 @@
   & .label {
     color: var(--integration-on-normal-active-color);
   }
-  & .main-container {
+  & .icon {
     color: var(--integration-on-normal-neutral-color);
+  }
+  & .status {
+    color: var(--integration-on-flat-neutral-color);
   }
 }
