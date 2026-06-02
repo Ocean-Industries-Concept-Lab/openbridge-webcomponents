@@ -98,7 +98,7 @@
   border-radius: 12px;
   background: var(--integration-container-global-color);
   box-shadow: var(--shadow-floating);
-  padding: 4px;
+  padding: 4px 0;
 
   overflow-y: auto;
 }
@@ -111,6 +111,7 @@
   min-height: var(
     --menu-navigation-components-navigation-item-touch-target-size
   );
+  margin: 0 4px;
   padding: 0px
     var(--menu-navigation-components-navigation-item-padding-horizontal);
   border-radius: var(
@@ -185,6 +186,11 @@
   &::checkmark {
     display: none;
   }
+}
+
+slot[name="fleet"] {
+  display: flex;
+  flex: 1;
 }
 
 .wrapper option.fleet-option {
