@@ -7,7 +7,6 @@ import {
 import './integration-button.js';
 import {html} from 'lit';
 import '../../icons/icon-placeholder.js';
-import {ButtonVariant} from '../../components/button/button.js';
 
 const meta: Meta<ObcIntegrationButton> = {
   title: 'Integration Systems/Integration Button',

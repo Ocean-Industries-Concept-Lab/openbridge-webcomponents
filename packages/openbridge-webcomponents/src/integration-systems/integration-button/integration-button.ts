@@ -28,7 +28,7 @@ export enum IntegrationButtonType {
  * @slot trailing-icon - Icon after label (shown when `hasTrailingIcon` is true)
  * @slot trailing-icon2 - Icon after label (shown when `hasTrailingIcon2` is true)
  * @slot label - Label text
- * @slot status - Status/description text (shown when `hasDescription` is true)
+ * @slot status - Status/description text (shown when `hasStatus` is true)
  * @slot info-label - Info label text
  * @slot info-status - Info status text
  * @slot integration-vessel-menu - Integration vessel menu to be shown when button is in activated state

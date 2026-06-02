@@ -239,7 +239,6 @@ const meta: Meta<IntegrationBarStoryArgs> = {
   tags: ['autodocs'],
   component: 'obc-integration-bar',
   globals: {
-    // 👇 Set viewport for all component stories
     viewport: {value: 'desktop'},
   },
   parameters: {
@@ -362,7 +361,6 @@ const meta: Meta<IntegrationBarStoryArgs> = {
       phase = (phase + 1) % 3;
       buttonStates.set(buttonIndex, phase);
 
-      // Apply state based on phase
       const isActivated = phase === 1;
       const isSelected = phase === 2;
 
