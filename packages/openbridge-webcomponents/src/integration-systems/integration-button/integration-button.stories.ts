@@ -11,7 +11,7 @@ import {ButtonVariant} from '../../components/button/button.js';
 
 const meta: Meta<ObcIntegrationButton> = {
   title: 'Integration Systems/Integration Button',
-  tags: ['6.0'],
+  tags: ['autodocs'],
   component: 'obc-integration-button',
   args: {
     hasLeadingIcon: true,

@@ -6,7 +6,6 @@ import componentStyle from './integration-vessel-menu.css?inline';
 
 import '../../components/button/button.js';
 import '../../components/icon-button/icon-button.js';
-import '../../components/icon-button/icon-button.js';
 import '../../icons/icon-placeholder.js';
 import '../../building-blocks/alert-list/alert-list.js';
 

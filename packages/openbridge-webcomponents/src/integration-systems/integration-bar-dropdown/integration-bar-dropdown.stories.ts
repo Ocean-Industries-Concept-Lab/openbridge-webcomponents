@@ -9,7 +9,7 @@ import {IntegrationButtonType} from '../integration-button/integration-button.js
 
 const meta: Meta<typeof ObcIntegrationBarDropdown> = {
   title: 'Integration Systems/Integration Bar Dropdown',
-  tags: ['6.0', 'WIP'],
+  tags: ['autodocs'],
   component: 'obc-integration-bar-dropdown',
   args: {
     showClock: true,

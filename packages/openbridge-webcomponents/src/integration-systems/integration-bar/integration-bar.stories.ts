@@ -236,7 +236,7 @@ function renderIntegrationButtons({
 
 const meta: Meta<IntegrationBarStoryArgs> = {
   title: 'Integration Systems/Integration Bar',
-  tags: ['6.0', 'WIP'],
+  tags: ['autodocs'],
   component: 'obc-integration-bar',
   globals: {
     // 👇 Set viewport for all component stories
