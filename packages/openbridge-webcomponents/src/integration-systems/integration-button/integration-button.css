@@ -322,7 +322,6 @@
   position: absolute;
   position-anchor: --touch-target;
   top: anchor(bottom);
-  justify-self: anchor-right;
 }
 
 .integration-vessel-menu-container.show {
