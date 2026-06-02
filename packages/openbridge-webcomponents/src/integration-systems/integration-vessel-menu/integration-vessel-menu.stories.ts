@@ -8,7 +8,7 @@ import '../../components/alert-menu-item/alert-menu-item.js';
 import '../../icons/icon-caution-color-iec.js';
 
 const handleAck = (event: Event) => {
-  const alertItem = event.target as HTMLElement;
+  const alertItem = event.currentTarget as HTMLElement;
   const alertParent = alertItem.parentElement;
   if (alertParent) {
     alertParent.removeChild(alertItem);
