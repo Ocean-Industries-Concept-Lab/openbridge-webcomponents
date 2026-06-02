@@ -6,7 +6,7 @@ import '../../icons/icon-placeholder.js';
 
 const meta: Meta<typeof ObcIntegrationFleetButton> = {
   title: 'Integration Systems/Fleet Button',
-  tags: ['6.0'],
+  tags: ['alpha'],
   component: 'obc-integration-fleet-button',
   args: {
     fleetName: 'Fleet Name',
