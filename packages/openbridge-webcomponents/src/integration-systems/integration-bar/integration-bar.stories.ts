@@ -384,7 +384,11 @@ const meta: Meta<IntegrationBarStoryArgs> = {
       }
     };
 
-    return html`<div style="width: 100%; overflow-x: auto;">
+    const wrapperStyle = args.showIntegrationMenu
+      ? 'width: 100%; min-height: 400px; overflow-x: auto; overflow-y: visible;'
+      : 'width: 100%; overflow-x: auto;';
+
+    return html` <div style=${wrapperStyle}>
       <div style=${`width: ${args.containerWidthPx}px;`}>
         <obc-integration-bar
           showFleetButton=${true}
