@@ -118,6 +118,81 @@ The CSS files are post-processed by [PostCSS](https://postcss.org/).
 There is one global CSS file for the palettes, `variables.css`, which contains the color palettes for the components.
 All other CSS code should be kept in the `*.css` files in the component folders.
 
+> **⚠️ `src/palettes/variables.css` is generated, not authored.**
+> The file is produced by the [OpenBridge devtools Figma plugin](https://github.com/Ocean-Industries-Concept-Lab/obc-figma-plugin)
+> (published as [Figma community plugin `1448419213272098259`](https://www.figma.com/community/plugin/1448419213272098259)).
+> The plugin's `cssvariables` codegen emits the entire file in one go: the
+> four `.obc-component-size-*` blocks (from the `Component-size` collection),
+> the `* { … }` block (`typography-primitives` + `Set-component-corners` +
+> `component-primitives` + shadow composites), the four
+> `:root[data-obc-theme="…"]` blocks (from the `Palette` collection, with
+> variable alias chains flattened to literal `rgb(…)` values per theme), and
+> the `@property` / `@keyframes warning-blink` machinery at the bottom.
+>
+> **Do not hand-edit `variables.css`.** Any local change will be silently
+> overwritten the next time someone pastes new plugin output. To add,
+> rename, or change a token, the workflow is:
+>
+> 1. Change the variable in Figma (or, for name normalisation only, in the
+>    plugin's `rename()` function in `code.ts`).
+> 2. Re-run the plugin (Figma → Dev Mode → Inspect → "css variables export").
+> 3. Replace `variables.css` wholesale with the plugin output and commit.
+>
+> The same plugin also produces:
+>
+> - **`script/figmavariables.json`** (via its `variables` codegen) — a
+>   `VariableID → token-name` lookup consumed by `script/convert-icons.ts`
+>   to rewrite hex colors back into `var(--…)` references in downloaded icons.
+> - **`src/mixins/fonts.css`** is regenerated wholesale by the plugin's
+>   `font-exports` codegen — replace the entire file on each regeneration.
+>   Hand-curated font mixins that the plugin does **not** produce live in a
+>   sibling file, **`src/mixins/font-extras.css`** (currently
+>   `font-overlay-outline-shadow` and the `font-instrument-*-box` family
+>   used by `readout`, `readout-list-item`, `readout-setpoint`, and
+>   `ar/poi-header`). PostCSS auto-loads every file in `src/mixins/`
+>   (see `postcss.config.mjs` → `mixinsDir`), so adding new mixins to
+>   `font-extras.css` requires no other wiring. Always run
+>   `npm run lint:mixins` after regenerating `fonts.css` — a dropped
+>   definition produces an undefined-mixin error rather than silent
+>   breakage (`@mixin missing;` expands to nothing).
+>
+> The audit at `script/check-css-variables.ts` will catch consumer CSS that
+> references tokens missing from `variables.css`, but it cannot catch tokens
+> that are missing from Figma itself — those need a designer round-trip.
+>
+> **How to run the plugin (browser Figma):**
+>
+> The plugin is a **codegen plugin** (`"capabilities": ["codegen"]`,
+> `"editorType": ["dev"]` in its manifest), so it does **not** open as a
+> regular plugin window from the Plugins tab. Its output appears inside
+> Dev Mode's Inspect panel.
+>
+> 1. Open the canonical OpenBridge Figma file in **Dev Mode** (URL ends with
+>    `m=dev`). Dev Mode requires a Professional / Organization / Enterprise
+>    seat — a free seat will not show the codegen UI. If you only have view
+>    access, ask the design lead which file is canonical rather than working
+>    from a personal duplicate (variables in a duplicate drift the moment the
+>    original is edited).
+> 2. From the [community plugin page](https://www.figma.com/community/plugin/1448419213272098259)
+>    click **Open in…** and pick the file (only needed the first time).
+> 3. Select **any node** in the canvas — the codegen panel only renders when
+>    something is selected, but for `cssvariables` / `font-exports` /
+>    `variables` the output comes from the file's local variables and text
+>    styles, not from the selected node.
+> 4. In the right sidebar's **Inspect** tab, scroll to the bottom. The
+>    **"Codegen Plugin"** section is the plugin's output area.
+> 5. In that section's header there is a small language dropdown (defaults to
+>    `css`). Switch it to the codegen you need:
+>    - `css variables export` → replaces `src/palettes/variables.css`
+>    - `Font exports` → replaces `src/mixins/fonts.css` wholesale
+>      (hand-curated companion mixins live in `src/mixins/font-extras.css`)
+>    - `variables map` → replaces `script/figmavariables.json`
+>    - `css` → per-node CSS, not used for repo regeneration
+> 6. Click the copy icon at the top-right of the Codegen Plugin section and
+>    paste into the corresponding repo file. Diff carefully before committing.
+
+
+
 Most mixins are defined in `src/mixins/` and auto-loaded via `postcss-mixins` (configured in `postcss.config.mjs`); the `style` mixin used for elevation variants is defined inline in `postcss.config.mjs`. All mixins are available globally in component CSS — no `@import` is needed.
 
 ---
@@ -415,7 +490,7 @@ For automation readouts and state labels:
 
 | Mixin | Purpose |
 |-------|---------|
-| `@mixin font-overlay-outline-shadow` | Text shadow for legibility on map/video overlays |
+| `@mixin font-overlay-outline-shadow` | Text shadow for legibility on map/video overlays (defined in `src/mixins/font-extras.css`) |
 
 ---
 

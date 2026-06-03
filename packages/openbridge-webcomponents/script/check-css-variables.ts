@@ -44,43 +44,22 @@ import fs from 'fs';
 import path from 'path';
 import {globby} from 'globby';
 
+// Bucket B from issue #916 — undefined CSS variables that still need a design
+// decision (token value, rename target, or removal). Tracked for follow-up.
+// See https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/916
 const allowedUndefinedVariables = new Set([
-  '--alert-components-badge-label-spacing',
+  // B-1: notification icon size (alert-menu-item.css, message-menu-item.css)
   '--app-components-alert-components-general-notification-item-icon-size-large',
-  '--app-components-badge-border-radius',
-  '--app-components-badge-icon-size',
-  '--app-components-badge-icon-size-flat',
-  '--app-components-badge-icon-size-large',
-  '--app-components-badge-label-spacing',
-  '--app-components-badge-min-size-large',
-  '--app-components-badge-padding',
+  // B-2: alert counter spacing (alert-button.css)
   '--app-components-global-alert-item-counter-spacing',
-  '--color-container-background-color',
-  '--course',
-  '--critical-enabled-background-color',
-  '--critical-enabled-border-color',
-  '--critical-focused-background-color',
-  '--critical-focused-border-color',
-  '--critical-hover-background-color',
-  '--critical-hover-border-color',
-  '--critical-pressed-background-color',
-  '--critical-pressed-border-color',
-  '--custom-width',
+  // B-3: likely typo for --normal-enabled-background-color (sequence-toolbar.css)
   '--enabled-background-color',
-  '--global-size-spacing-list-item-menu-padding-horizonal-list-item',
-  '--grid-columns',
-  '--grid-columns-rest',
-  '--heading',
-  '--image-size',
+  // B-4: date-item vertical padding (date-item.css) — sibling tokens exist
   '--menu-navigation-components-date-item-padding-vertical',
-  '--menu-navigation-components-tab-item-divider-height',
+  // B-5/B-6: instrument-field internal widths — unusual --obc- prefix
   '--obc-instrument-field-source-width',
   '--obc-instrument-field-tag-width',
-  '--on-container-active-color',
-  '--percent',
-  '--scale',
-  '--spinner-progress-deg',
-  '--ui-components-icon-toggle-button-horizontal-item-touch-target-size',
+  // B-7: keyboard "nummeric" tokens missing from the (misspelled) family
   '--ui-components-keyboard-nummeric-component-height-min',
   '--ui-components-keyboard-nummeric-touch-target-size',
 ]);
