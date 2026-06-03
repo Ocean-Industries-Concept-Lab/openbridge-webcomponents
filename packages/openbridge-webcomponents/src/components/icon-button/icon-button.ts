@@ -9,6 +9,7 @@ import {customElement} from '../../decorator.js';
  * - `normal`: Standard appearance for most use cases.
  * - `raised`: Adds elevation/shadow for prominence.
  * - `flat`: Minimal, backgroundless style for subtle actions.
+ * - `integration`: For use in Integration Bar components
  */
 export enum IconButtonVariant {
   normal = 'normal',
@@ -29,6 +30,7 @@ export enum IconButtonVariant {
  *   - `normal` (default): Standard appearance for most use cases.
  *   - `raised`: Adds elevation/shadow for prominence.
  *   - `flat`: Minimal, backgroundless style for subtle actions.
+ *   - `integration`: For use in Integration Bar components
  * - **Progress Indicator:**
  *   - Shows a circular progress spinner overlay when the `progress` property is set (0–100). Useful for indicating loading or ongoing actions.
  * - **Label Support:**
