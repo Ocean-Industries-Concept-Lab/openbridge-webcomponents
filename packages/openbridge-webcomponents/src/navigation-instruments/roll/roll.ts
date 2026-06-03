@@ -219,6 +219,7 @@ export class ObcRoll extends LitElement {
     return html`
       <obc-watch
         class=${top ? 'scale-top' : nothing}
+        .priority=${this.priority}
         .watchCircleType=${WatchCircleType.double}
         .zoomToFitArc=${this.zoomToFitArc}
         .arcFrame=${this._arcFrame}

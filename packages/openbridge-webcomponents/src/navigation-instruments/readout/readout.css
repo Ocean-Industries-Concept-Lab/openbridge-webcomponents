@@ -663,7 +663,6 @@
   @mixin font-instrument-label-box;
   color: var(--element-neutral-color);
   @mixin font-instrument-label;
-  font-weight: var(--global-typography-instrument-label-font-weight);
   font-size: var(--global-typography-instrument-unit-font-size);
   line-height: var(--global-typography-instrument-unit-line-height);
 }
