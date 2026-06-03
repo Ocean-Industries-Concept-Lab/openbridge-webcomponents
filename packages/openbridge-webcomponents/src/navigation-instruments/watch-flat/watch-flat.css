@@ -4,7 +4,7 @@
 
 .label {
   @mixin font-body;
-  font-size: calc(16px / var(--scale));
+  font-size: calc(16px / var(--scale, 1));
   fill: var(--element-neutral-color);
   alignment-baseline: middle;
   text-anchor: middle;
