@@ -5,11 +5,12 @@ import {html} from 'lit';
 import '../integration-dropdown-button/integration-dropdown-button.js';
 import '../../components/clock/clock.js';
 import '../../icons/icon-placeholder.js';
+import {IntegrationButtonType} from '../integration-button/integration-button.js';
 
 const meta: Meta<typeof ObcIntegrationBarDropdown> = {
-  title: 'Integration Systems/Integration Bar',
-  tags: ['6.0', 'WIP'],
-  component: 'obc-integration-bar',
+  title: 'Integration Systems/Integration Bar Dropdown',
+  tags: ['alpha'],
+  component: 'obc-integration-bar-dropdown',
   args: {
     showClock: true,
     date: '2021-01-01T11:11:11.111Z',
@@ -63,6 +64,7 @@ const meta: Meta<typeof ObcIntegrationBarDropdown> = {
         <obc-integration-button
           slot="fleet"
           .readouts=${[{label: 'Label', value: 'Value', unit: 'Unit'}]}
+          type=${IntegrationButtonType.rich}
         >
           <div slot="label">Fleet name</div>
           <div slot="info-label">Label</div>
