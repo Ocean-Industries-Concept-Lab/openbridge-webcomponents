@@ -7,7 +7,7 @@ import {html} from 'lit';
 
 const meta: Meta<typeof ObcIntegrationAppBar> = {
   title: 'Integration Systems/App Bar',
-  tags: ['6.0'],
+  tags: ['alpha'],
   component: 'obc-integration-app-bar',
   args: {},
   render: () => html`
