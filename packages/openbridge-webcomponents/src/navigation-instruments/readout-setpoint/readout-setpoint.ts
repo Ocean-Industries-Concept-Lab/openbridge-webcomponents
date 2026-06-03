@@ -290,7 +290,6 @@ export class ObcReadoutSetpoint extends LitElement {
           'icon-container': true,
           hidden: !this.hasAssignedValueIcon,
         })}
-        part="icon-container"
         aria-hidden="true"
       >
         <div
@@ -400,12 +399,7 @@ export class ObcReadoutSetpoint extends LitElement {
         : 'display:none;';
 
     return html`
-      <div
-        class="icon-container"
-        part="icon-container"
-        aria-hidden="true"
-        style=${hideStyle}
-      >
+      <div class="icon-container" aria-hidden="true" style=${hideStyle}>
         <div
           class=${classMap({
             'setpoint-linear': true,

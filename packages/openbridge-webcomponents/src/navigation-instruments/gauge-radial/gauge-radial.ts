@@ -57,7 +57,8 @@ export interface GaugeRadialAdvice {
  *   properties are provided by `SetpointMixin` and forwarded to the inner
  *   `<obc-instrument-radial>`.
  * - **Advice zones**: Pass an array of {@link GaugeRadialAdvice} objects to
- *   render caution/alert arcs on the gauge.
+ *   render caution/alert arcs on the gauge. Not shown on the `90-left` /
+ *   `90-right` sectors.
  *
  * ## Usage Guidelines
  *
@@ -67,10 +68,10 @@ export interface GaugeRadialAdvice {
  *   control tickmark density.
  * - Enable `showLabels` to show numeric labels at primary tickmarks.
  * - Enable `showReadout` with optional `label` and `unit`. Layout depends on `sector`
- *   and `type`: **270** filled/bar — centered value plus bottom label/unit row;
- *   **270** needle — bottom stack; **180** filled/bar — bottom stack; **180** needle —
- *   no readout; **90-left** / **90-right** filled/bar — corner regular readout in a
- *   fixed 200×200 host; **90** needle — no readout.
+ *   and `type`: **270** / **180** filled/bar — centered value plus bottom
+ *   label/unit row; **270** needle — bottom stack; **180** needle — no readout;
+ *   **90-left** / **90-right** filled/bar — corner readout in a square host;
+ *   **90** needle — no readout.
  *
  * ## Best Practices
  *
@@ -125,9 +126,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   @property({type: Boolean}) showReadout = false;
   @property({type: String}) label = '';
   @property({type: String}) unit = '';
-  @property({type: Number}) maxDigits = 1;
   @property({type: Number}) fractionDigits = 0;
-  @property({type: Boolean}) showZeroPadding = false;
 
   private get sectorAngles(): {sweep: number; start: number} {
     switch (this.sector) {
@@ -143,6 +142,38 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
     }
   }
 
+  /**
+   * Per-edge crop (%) of the shared, origin-centered 448 SVG box each sector
+   * shows. All sectors render at the same natural scale, so the dial stays the
+   * same size; the sector only windows a different part (270 whole, 180 wide,
+   * 90 a quadrant).
+   */
+  private get sectorClips(): {
+    top: number;
+    bottom: number;
+    left: number;
+    right: number;
+  } {
+    switch (this.sector) {
+      case GaugeRadialSector.deg180:
+        return {top: 0, bottom: 44, left: 0, right: 0};
+      case GaugeRadialSector.deg90Left:
+        return {top: 0, bottom: 45, left: 0, right: 45};
+      case GaugeRadialSector.deg90Right:
+        return {top: 0, bottom: 45, left: 45, right: 0};
+      case GaugeRadialSector.deg270:
+      default:
+        return {top: 0, bottom: 0, left: 0, right: 0};
+    }
+  }
+
+  private get isSector90(): boolean {
+    return (
+      this.sector === GaugeRadialSector.deg90Left ||
+      this.sector === GaugeRadialSector.deg90Right
+    );
+  }
+
   getAngle = (v: number): number => {
     const {sweep, start} = this.sectorAngles;
     const span = this.maxValue - this.minValue;
@@ -153,72 +184,34 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
     return ((v - this.minValue) / span) * sweep + start;
   };
 
-  private renderCornerReadout(): TemplateResult {
+  /** Renders one gauge readout; `withValue`/`withMeta`/`labelOnly` pick parts. */
+  private renderReadout({
+    className,
+    variant,
+    alignment = ReadoutStackVerticalAlignment.vertical,
+    withValue = true,
+    withMeta = true,
+    labelOnly = false,
+  }: {
+    className: string;
+    variant: ReadoutVariant;
+    alignment?: ReadoutStackVerticalAlignment;
+    withValue?: boolean;
+    withMeta?: boolean;
+    labelOnly?: boolean;
+  }): TemplateResult {
     return html`
       <obc-readout
-        class="gauge-readout-meta"
+        class=${className}
         direction="vertical"
-        .variant=${ReadoutVariant.enhanced}
-        .valuePriority=${this.priority}
-        .value=${this.value}
-        .minValueLength=${this.maxDigits}
-        .fractionDigits=${this.fractionDigits}
-        .showZeroPadding=${this.showZeroPadding}
-        .label=${this.label}
-        .unit=${this.unit}
-      ></obc-readout>
-    `;
-  }
-
-  private renderBottomStackReadout(
-    alignment: ReadoutStackVerticalAlignment = ReadoutStackVerticalAlignment.center
-  ): TemplateResult {
-    return html`
-      <obc-readout
-        class="gauge-readout-meta"
-        direction="vertical"
-        .variant=${ReadoutVariant.stack}
+        ?labelOnly=${labelOnly}
+        .variant=${variant}
         .alignment=${alignment}
-        .valuePriority=${this.priority}
-        .value=${this.value}
-        .minValueLength=${this.maxDigits}
+        .valuePriority=${withValue ? this.priority : undefined}
+        .value=${withValue ? this.value : undefined}
         .fractionDigits=${this.fractionDigits}
-        .showZeroPadding=${this.showZeroPadding}
-        .label=${this.label}
-        .unit=${this.unit}
-      ></obc-readout>
-    `;
-  }
-
-  private renderCenterValueReadout(): TemplateResult {
-    return html`
-      <obc-readout
-        class="gauge-readout-value"
-        direction="vertical"
-        .variant=${ReadoutVariant.enhanced}
-        .valuePriority=${this.priority}
-        .value=${this.value}
-        .minValueLength=${this.maxDigits}
-        .fractionDigits=${this.fractionDigits}
-        .showZeroPadding=${this.showZeroPadding}
-      ></obc-readout>
-    `;
-  }
-
-  private renderLabelOnlyMetaReadout(): TemplateResult | typeof nothing {
-    if (!this.label && !this.unit) {
-      return nothing;
-    }
-
-    return html`
-      <obc-readout
-        class="gauge-readout-meta"
-        direction="vertical"
-        labelOnly
-        .variant=${ReadoutVariant.stack}
-        .alignment=${ReadoutStackVerticalAlignment.center}
-        .label=${this.label}
-        .unit=${this.unit}
+        .label=${withMeta ? this.label : ''}
+        .unit=${withMeta ? this.unit : ''}
       ></obc-readout>
     `;
   }
@@ -229,32 +222,52 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
     }
 
     const isNeedle = this.type === ObcGaugeRadialType.needle;
-    const is90 =
-      this.sector === GaugeRadialSector.deg90Left ||
-      this.sector === GaugeRadialSector.deg90Right;
+    const is90 = this.isSector90;
     const is180 = this.sector === GaugeRadialSector.deg180;
 
     if (isNeedle && (is180 || is90)) {
       return nothing;
     }
 
+    // 90 filled/bar: enhanced corner readout (bold value + label/unit).
     if (is90) {
-      return this.renderCornerReadout();
+      return this.renderReadout({
+        className: 'gauge-readout-meta',
+        variant: ReadoutVariant.enhanced,
+      });
     }
 
+    // 270 needle and 180 filled/bar: centered stack (value weight follows `priority`).
     if (isNeedle || is180) {
-      return this.renderBottomStackReadout();
+      return this.renderReadout({
+        className: 'gauge-readout-meta',
+        variant: ReadoutVariant.stack,
+        alignment: ReadoutStackVerticalAlignment.center,
+      });
     }
 
+    // 270 filled/bar: the value sits at the circle center and the label/unit row
+    // lower in the bottom gap, so they are two separately-positioned readouts.
     return html`
-      ${this.renderCenterValueReadout()} ${this.renderLabelOnlyMetaReadout()}
+      ${this.renderReadout({
+        className: 'gauge-readout-value',
+        variant: ReadoutVariant.enhanced,
+        withMeta: false,
+      })}
+      ${this.label || this.unit
+        ? this.renderReadout({
+            className: 'gauge-readout-meta',
+            variant: ReadoutVariant.stack,
+            alignment: ReadoutStackVerticalAlignment.center,
+            withValue: false,
+            labelOnly: true,
+          })
+        : nothing}
     `;
   }
 
   override render() {
-    const {sweep} = this.sectorAngles;
-    const isFullSweep = sweep === 270;
-    const is90Sector = sweep === 90;
+    const clips = this.sectorClips;
     return html`
       <div
         class=${classMap({
@@ -288,9 +301,12 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
           .needleType=${this.type}
           .tickmarksInside=${this.tickmarksInside}
           .tickmarkStyle=${this.tickmarkStyle}
-          .advices=${this.advices}
-          .zoomToFitArc=${!isFullSweep}
-          .preserveBandProportion=${is90Sector}
+          .advices=${this.isSector90 ? [] : this.advices}
+          .clipTop=${clips.top}
+          .clipBottom=${clips.bottom}
+          .clipLeft=${clips.left}
+          .clipRight=${clips.right}
+          .endLabelsBelow=${this.sector === GaugeRadialSector.deg180}
         >
         </obc-instrument-radial>
         ${this.renderReadouts()}

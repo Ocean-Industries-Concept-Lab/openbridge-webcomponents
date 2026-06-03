@@ -4,13 +4,30 @@
   height: 100%;
 }
 
+/* Host takes each sector's crop aspect (see `sectorClips`): 270/90 square, 180
+   wide — so the dial is the same size at any width. */
+:host([sector="270"]),
 :host([sector="90-left"]),
 :host([sector="90-right"]) {
-  width: 200px;
-  height: 200px;
+  height: auto;
+  aspect-ratio: 1;
+}
+
+/* 448 / 251 = the 180° crop's aspect (448 wide × 448·(1 − 44%) tall); keep in
+   sync with `sectorClips` bottom=44 in gauge-radial.ts. */
+:host([sector="180"]) {
+  height: auto;
+  aspect-ratio: 448 / 251;
 }
 
 .gauge-radial-root {
+  /* Readout vertical placement per layout (% of the cropped host), tuned to the
+     watch geometry — re-check if the ring radii or the 448 box change. Which
+     layout uses which is in renderReadouts(). */
+  --readout-meta-top: 72%;
+  --readout-meta-top-needle: 63%;
+  --readout-meta-top-180: 60%;
+
   position: relative;
   width: 100%;
   height: 100%;
@@ -26,56 +43,43 @@
   .gauge-readout-meta {
     position: absolute;
     left: 50%;
-    top: 72%;
+    top: var(--readout-meta-top);
     transform: translateX(-50%);
     z-index: 1;
   }
 
   &.type-needle .gauge-readout-meta {
-    top: 63%;
+    top: var(--readout-meta-top-needle);
   }
 
   &.sector-180 .gauge-readout-meta {
-    top: 60%;
+    top: var(--readout-meta-top-180);
   }
 
-  &.sector-90-left {
-    .gauge-readout-meta {
-      left: auto;
-      right: 0;
-      bottom: 0;
-      top: auto;
-      transform: none;
-    }
-
-    obc-readout.gauge-readout-meta::part(value-icon-container) {
-      display: none;
-    }
+  /* Nudge the corner readout inward (up + toward center) so it sits inside the
+     open quadrant rather than hugging the box corner. Symmetric for both
+     orientations — only the horizontal edge differs. */
+  &.sector-90-left .gauge-readout-meta,
+  &.sector-90-right .gauge-readout-meta {
+    --readout-90-inset: 6%;
+    bottom: var(--readout-90-inset);
+    top: auto;
+    transform: none;
   }
 
-  &.sector-90-right {
-    .gauge-readout-meta {
-      left: 0;
-      right: auto;
-      bottom: 0;
-      top: auto;
-      transform: none;
-    }
+  &.sector-90-left .gauge-readout-meta {
+    left: auto;
+    right: var(--readout-90-inset);
+  }
 
-    obc-readout.gauge-readout-meta {
-      &::part(value-wrapper),
-      &::part(meta-wrapper) {
-        justify-self: start;
-      }
+  &.sector-90-right .gauge-readout-meta {
+    left: var(--readout-90-inset);
+    right: auto;
+  }
 
-      &::part(instrument-label-unit-container) {
-        margin-left: 0;
-        margin-right: auto;
-      }
-
-      &::part(value-icon-container) {
-        display: none;
-      }
-    }
+  /* 90-right readout sits in the bottom-left corner, so left-align the value
+     under the label (enhanced readouts right-align the value by default). */
+  &.sector-90-right .gauge-readout-meta::part(value-wrapper) {
+    justify-self: start;
   }
 }

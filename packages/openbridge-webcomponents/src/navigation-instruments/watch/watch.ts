@@ -233,16 +233,16 @@ export class ObcWatch extends LitElement {
   @property({type: Boolean}) starboardPortIndicator: boolean = false;
   @property({type: Number}) clipTop: number = 0; // in percent of height
   @property({type: Number}) clipBottom: number = 0; // in percent of height
+  @property({type: Number}) clipLeft: number = 0; // in percent of width
+  @property({type: Number}) clipRight: number = 0; // in percent of width
+  /**
+   * Place labels at the horizontal ends (±90°) below the tick (centered) instead
+   * of beside it — for bottom-opening sectors like the 180° gauge.
+   */
+  @property({type: Boolean}) endLabelsBelow: boolean = false;
   @property({type: Number}) scaleWindIcon: number = 1;
   @property({type: Number}) rotation: number | undefined;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
-  /**
-   * When zoomed, scale dial-band radii proportionally instead of additively, so
-   * the band keeps its un-zoomed thickness on narrow arcs (e.g. 90° gauge
-   * sectors). Default `false` keeps the additive behavior used elsewhere.
-   * See {@link _bandRadius}.
-   */
-  @property({type: Boolean}) preserveBandProportion: boolean = false;
   @property({attribute: false}) arcFrame: ZoomToFitArcFrame | undefined;
   @property({type: Number}) tickFadeAngle: number = 0;
 
@@ -350,20 +350,13 @@ export class ObcWatch extends LitElement {
   private _rOff = 0;
 
   /**
-   * Radius for a dial-band edge under zoom. Additive by default (`base + _rOff`),
-   * which keeps band thickness constant in SVG units and so thins it on narrow
-   * arcs. With `preserveBandProportion`, radii scale by the outer-ring factor so
-   * the band keeps its proportions; the outer extent is unchanged, so the arc
-   * framing stays put and only the inner edges move in.
-   *
-   * Tickmark and mask radii stay additive on purpose, so proportional scaling
-   * assumes outside tickmarks — `tickmarksInside` would misalign with the band.
+   * Radius for a dial-band edge under zoom: additive (`base + _rOff`), which
+   * keeps band thickness constant in SVG units. Used for every band edge (rings,
+   * value arc, bars, needles) and the inside label `textRadius`; tick lines
+   * anchor at the outer ring (= this for OUTER), so they stay coherent.
    */
   private _bandRadius(base: number): number {
-    if (!this.preserveBandProportion || this._rOff <= 0) {
-      return base + this._rOff;
-    }
-    return base * ((OUTER_RING_RADIUS + this._rOff) / OUTER_RING_RADIUS);
+    return base + this._rOff;
   }
 
   private watchCircle(): SVGTemplateResult | SVGTemplateResult[] {
@@ -733,17 +726,22 @@ export class ObcWatch extends LitElement {
       viewBox = frame.viewBox;
     } else {
       this._rOff = 0;
-      width = (176 + this.getPadding()) * 2;
-      height = width * (1 - this.clipTop / 100 - this.clipBottom / 100);
-      const top = -width / 2 + (width * this.clipTop) / 100;
-      viewBox = `-${width / 2} ${top} ${width} ${height}`;
+      const full = (176 + this.getPadding()) * 2;
+      width = full * (1 - this.clipLeft / 100 - this.clipRight / 100);
+      height = full * (1 - this.clipTop / 100 - this.clipBottom / 100);
+      const left = -full / 2 + (full * this.clipLeft) / 100;
+      const top = -full / 2 + (full * this.clipTop) / 100;
+      viewBox = `${left} ${top} ${width} ${height}`;
     }
 
     const rOff = this._rOff;
     const scale = this.getScale({width, height});
     const angleSetpoint = this.renderSetpoint();
-    const textRadius =
-      (this.tickmarksInside ? this.innerRingRadius : OUTER_RING_RADIUS) + rOff;
+    // Route through _bandRadius so inside labels track the inner band edge
+    // (shifted by the zoom offset) instead of drifting onto the band.
+    const textRadius = this.tickmarksInside
+      ? this._bandRadius(this.innerRingRadius)
+      : this._bandRadius(OUTER_RING_RADIUS);
     const maxDigits = Math.max(
       ...this.tickmarks.map((t) => t.text?.length ?? 0)
     );
@@ -759,6 +757,7 @@ export class ObcWatch extends LitElement {
         maxDigits,
         color: t.color,
         radiusOffset: rOff,
+        endLabelsBelow: this.endLabelsBelow,
       })
     );
     const advices = this.advices

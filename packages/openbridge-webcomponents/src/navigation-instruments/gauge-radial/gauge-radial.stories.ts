@@ -37,14 +37,12 @@ const meta = {
     showLabels: {control: 'boolean'},
     tickmarksInside: {control: 'boolean'},
     showReadout: {control: 'boolean'},
-    showZeroPadding: {control: 'boolean'},
     value: {control: 'number'},
     minValue: {control: 'number'},
     maxValue: {control: 'number'},
     primaryTickmarkInterval: {control: 'number'},
     secondaryTickmarkInterval: {control: 'number'},
     tertiaryTickmarkInterval: {control: 'number'},
-    maxDigits: {control: 'number'},
     fractionDigits: {control: 'number'},
     label: {control: 'text'},
     unit: {control: 'text'},
@@ -183,7 +181,6 @@ export const Sector180WithReadout: Story = {
     showReadout: true,
     label: 'Label',
     unit: 'unit',
-    maxDigits: 3,
     value: 123,
   },
 };
@@ -192,6 +189,7 @@ export const Sector90Left: Story = {
   args: {
     ...sectorStoryArgs,
     sector: GaugeRadialSector.deg90Left,
+    width: 200,
   },
 };
 
@@ -199,6 +197,7 @@ export const Sector90Right: Story = {
   args: {
     ...sectorStoryArgs,
     sector: GaugeRadialSector.deg90Right,
+    width: 200,
   },
 };
 
@@ -209,8 +208,8 @@ export const Sector90LeftWithReadout: Story = {
     showReadout: true,
     label: 'Label',
     unit: 'unit',
-    maxDigits: 3,
     value: 123,
+    width: 200,
   },
 };
 
@@ -221,8 +220,8 @@ export const Sector90RightWithReadout: Story = {
     showReadout: true,
     label: 'Label',
     unit: 'unit',
-    maxDigits: 3,
     value: 123,
+    width: 200,
   },
 };
 
@@ -235,7 +234,6 @@ const readoutStoryArgs = {
   showReadout: true,
   label: 'Label',
   unit: 'unit',
-  maxDigits: 3,
 } as const;
 
 export const WithReadout: Story = {
