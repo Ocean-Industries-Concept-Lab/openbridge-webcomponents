@@ -143,17 +143,18 @@ All other CSS code should be kept in the `*.css` files in the component folders.
 > - **`script/figmavariables.json`** (via its `variables` codegen) — a
 >   `VariableID → token-name` lookup consumed by `script/convert-icons.ts`
 >   to rewrite hex colors back into `var(--…)` references in downloaded icons.
-> - **`src/mixins/fonts.css`** is seeded by the plugin's `font-exports`
->   codegen, but the file also contains a **hand-curated section at the
->   top** with mixins that the plugin does **not** produce (currently
+> - **`src/mixins/fonts.css`** is regenerated wholesale by the plugin's
+>   `font-exports` codegen — replace the entire file on each regeneration.
+>   Hand-curated font mixins that the plugin does **not** produce live in a
+>   sibling file, **`src/mixins/font-extras.css`** (currently
 >   `font-overlay-outline-shadow` and the `font-instrument-*-box` family
 >   used by `readout`, `readout-list-item`, `readout-setpoint`, and
->   `ar/poi-header`). The two regions are separated by clearly-marked
->   banner comments. When regenerating, replace **only** the generated
->   region below the second banner — leave the hand-curated region at
->   the top untouched. Always run `npm run lint:mixins` afterwards: a
->   dropped definition produces an undefined-mixin error rather than
->   silent breakage (`@mixin missing;` expands to nothing).
+>   `ar/poi-header`). PostCSS auto-loads every file in `src/mixins/`
+>   (see `postcss.config.mjs` → `mixinsDir`), so adding new mixins to
+>   `font-extras.css` requires no other wiring. Always run
+>   `npm run lint:mixins` after regenerating `fonts.css` — a dropped
+>   definition produces an undefined-mixin error rather than silent
+>   breakage (`@mixin missing;` expands to nothing).
 >
 > The audit at `script/check-css-variables.ts` will catch consumer CSS that
 > references tokens missing from `variables.css`, but it cannot catch tokens
@@ -183,8 +184,8 @@ All other CSS code should be kept in the `*.css` files in the component folders.
 > 5. In that section's header there is a small language dropdown (defaults to
 >    `css`). Switch it to the codegen you need:
 >    - `css variables export` → replaces `src/palettes/variables.css`
->    - `Font exports` → seeds `src/mixins/fonts.css` (reconcile with the
->      file's existing hand-curation — see the note above)
+>    - `Font exports` → replaces `src/mixins/fonts.css` wholesale
+>      (hand-curated companion mixins live in `src/mixins/font-extras.css`)
 >    - `variables map` → replaces `script/figmavariables.json`
 >    - `css` → per-node CSS, not used for repo regeneration
 > 6. Click the copy icon at the top-right of the Codegen Plugin section and
@@ -489,7 +490,7 @@ For automation readouts and state labels:
 
 | Mixin | Purpose |
 |-------|---------|
-| `@mixin font-overlay-outline-shadow` | Text shadow for legibility on map/video overlays |
+| `@mixin font-overlay-outline-shadow` | Text shadow for legibility on map/video overlays (defined in `src/mixins/font-extras.css`) |
 
 ---
 
