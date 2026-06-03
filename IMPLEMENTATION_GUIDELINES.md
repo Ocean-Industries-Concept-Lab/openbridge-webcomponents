@@ -144,14 +144,51 @@ All other CSS code should be kept in the `*.css` files in the component folders.
 >   `VariableID → token-name` lookup consumed by `script/convert-icons.ts`
 >   to rewrite hex colors back into `var(--…)` references in downloaded icons.
 > - **`src/mixins/fonts.css`** is seeded by the plugin's `font-exports`
->   codegen, but currently contains light hand-curation
->   (e.g. a uniform `--font-family-main` instead of per-style font-family
->   bindings). Treat large diffs there as suspicious and reconcile with the
->   plugin output rather than editing freely.
+>   codegen, but the file also contains a **hand-curated section at the
+>   top** with mixins that the plugin does **not** produce (currently
+>   `font-overlay-outline-shadow` and the `font-instrument-*-box` family
+>   used by `readout`, `readout-list-item`, `readout-setpoint`, and
+>   `ar/poi-header`). The two regions are separated by clearly-marked
+>   banner comments. When regenerating, replace **only** the generated
+>   region below the second banner — leave the hand-curated region at
+>   the top untouched. Always run `npm run lint:mixins` afterwards: a
+>   dropped definition produces an undefined-mixin error rather than
+>   silent breakage (`@mixin missing;` expands to nothing).
 >
 > The audit at `script/check-css-variables.ts` will catch consumer CSS that
 > references tokens missing from `variables.css`, but it cannot catch tokens
 > that are missing from Figma itself — those need a designer round-trip.
+>
+> **How to run the plugin (browser Figma):**
+>
+> The plugin is a **codegen plugin** (`"capabilities": ["codegen"]`,
+> `"editorType": ["dev"]` in its manifest), so it does **not** open as a
+> regular plugin window from the Plugins tab. Its output appears inside
+> Dev Mode's Inspect panel.
+>
+> 1. Open the canonical OpenBridge Figma file in **Dev Mode** (URL ends with
+>    `m=dev`). Dev Mode requires a Professional / Organization / Enterprise
+>    seat — a free seat will not show the codegen UI. If you only have view
+>    access, ask the design lead which file is canonical rather than working
+>    from a personal duplicate (variables in a duplicate drift the moment the
+>    original is edited).
+> 2. From the [community plugin page](https://www.figma.com/community/plugin/1448419213272098259)
+>    click **Open in…** and pick the file (only needed the first time).
+> 3. Select **any node** in the canvas — the codegen panel only renders when
+>    something is selected, but for `cssvariables` / `font-exports` /
+>    `variables` the output comes from the file's local variables and text
+>    styles, not from the selected node.
+> 4. In the right sidebar's **Inspect** tab, scroll to the bottom. The
+>    **"Codegen Plugin"** section is the plugin's output area.
+> 5. In that section's header there is a small language dropdown (defaults to
+>    `css`). Switch it to the codegen you need:
+>    - `css variables export` → replaces `src/palettes/variables.css`
+>    - `Font exports` → seeds `src/mixins/fonts.css` (reconcile with the
+>      file's existing hand-curation — see the note above)
+>    - `variables map` → replaces `script/figmavariables.json`
+>    - `css` → per-node CSS, not used for repo regeneration
+> 6. Click the copy icon at the top-right of the Codegen Plugin section and
+>    paste into the corresponding repo file. Diff carefully before committing.
 
 
 
