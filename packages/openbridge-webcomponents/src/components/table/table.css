@@ -10,7 +10,7 @@
 .grid-container {
   display: grid;
   height: 100%;
-  grid-template-columns: repeat(var(--grid-columns), auto);
+  grid-template-columns: repeat(var(--grid-columns, 1), auto);
   align-content: start;
   grid-template-rows: min-content min-content 1fr;
 
@@ -20,7 +20,7 @@
         --selection-column-width,
         var(--menu-navigation-components-table-item-touch-target-size)
       )
-      repeat(var(--grid-columns-rest), minmax(0, 1fr));
+      repeat(var(--grid-columns-rest, 1), minmax(0, 1fr));
   }
 
   .grid-header {
