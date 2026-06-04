@@ -176,7 +176,7 @@ const RADIAL_SETPOINT_INWARD_ADJUST = 4;
  * @property {number|undefined} rateOfTurnDegreesPerMinute - Measured rate of turn in degrees per minute (the maritime/AIS convention, see ES-TRIN 2025/1 Art. 3.02 and ITU-R M.1371). Sign controls direction (positive = starboard/clockwise). When defined, this drives both the dot animation (multiplied by `rotDotAnimationFactor`) and the port/starboard direction sign.
  * @property {number} rotDotAnimationFactor - Visual amplification factor applied only to the spinning-dot animation (not to bar extent). Default `18` keeps the legacy visual feel (≈1 rpm at 20°/min).
  * @property {number} rotationsPerMinute - **Deprecated.** Spin speed of the ROT dot ring in rotations per minute. Sign controls direction (positive = clockwise). Use `rateOfTurnDegreesPerMinute` instead.
- * @property {ZoomToFitArcFrame|undefined} arcFrame - Pre-computed zoom-to-fit arc frame. When set, the watch skips its own `computeZoomToFitArcFrame()` call and uses these values directly. Consumer instruments (e.g. rudder, instrument-radial) should compute the frame once and pass it here to avoid redundant computation.
+ * @property {ZoomToFitArcFrame|undefined} arcFrame - Pre-computed zoom-to-fit arc frame. When set, the watch skips its own `computeZoomToFitArcFrame()` call and uses these values directly. Consumer instruments (e.g. rudder, instrument-radial) should compute the frame once and pass it here to avoid redundant computation. If you pass `arcFrame`, you own keeping it in sync with `areas` / `watchCircleType` — obc-watch will NOT recompute it, so a stale frame renders stale geometry.
  */
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {
@@ -231,15 +231,21 @@ export class ObcWatch extends LitElement {
   @property({type: Number}) currentSymbolRadius: number | null = null;
   @property({type: String}) currentColor: string | undefined;
   @property({type: Boolean}) starboardPortIndicator: boolean = false;
-  @property({type: Number}) clipTop: number = 0; // in percent of height
-  @property({type: Number}) clipBottom: number = 0; // in percent of height
-  @property({type: Number}) clipLeft: number = 0; // in percent of width
-  @property({type: Number}) clipRight: number = 0; // in percent of width
+  /** Top clip, % of height. Ignored when `zoomToFitArc` is true. */
+  @property({type: Number}) clipTop: number = 0;
+  /** Bottom clip, % of height. Ignored when `zoomToFitArc` is true. */
+  @property({type: Number}) clipBottom: number = 0;
+  /** Left clip, % of width — horizontal counterpart of clipTop/bottom (90° sectors). Ignored when `zoomToFitArc`. */
+  @property({type: Number}) clipLeft: number = 0;
+  /** Right clip, % of width — horizontal counterpart of clipTop/bottom (90° sectors). Ignored when `zoomToFitArc`. */
+  @property({type: Number}) clipRight: number = 0;
   /**
-   * Place labels at the horizontal ends (±90°) below the tick (centered) instead
-   * of beside it — for bottom-opening sectors like the 180° gauge.
+   * Place the horizontal end labels (±90°, e.g. min/max) below the tick instead
+   * of beside it. This is the "Max-min" label placement from the radial label
+   * model (External / Internal / Max-min) — see PR #903 / design discussion.
+   * Currently only used by the 180° sector of `obc-gauge-radial`.
    */
-  @property({type: Boolean}) endLabelsBelow: boolean = false;
+  @property({type: Boolean}) endLabelsMaxMin: boolean = false;
   @property({type: Number}) scaleWindIcon: number = 1;
   @property({type: Number}) rotation: number | undefined;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
@@ -350,10 +356,12 @@ export class ObcWatch extends LitElement {
   private _rOff = 0;
 
   /**
-   * Radius for a dial-band edge under zoom: additive (`base + _rOff`), which
-   * keeps band thickness constant in SVG units. Used for every band edge (rings,
-   * value arc, bars, needles) and the inside label `textRadius`; tick lines
-   * anchor at the outer ring (= this for OUTER), so they stay coherent.
+   * Radius for a dial-band edge under zoom: additive (`base + _rOff`), keeping
+   * band thickness constant in SVG units. INVARIANT: every band-edge radius
+   * (rings, value arc, bars, needles, inside-label `textRadius`) must go through
+   * this — mixing additive and multiplicative offsets misaligns ticks, labels,
+   * advice masks and arcs. The proportional experiments were removed for this
+   * reason (PR #903).
    */
   private _bandRadius(base: number): number {
     return base + this._rOff;
@@ -737,8 +745,8 @@ export class ObcWatch extends LitElement {
     const rOff = this._rOff;
     const scale = this.getScale({width, height});
     const angleSetpoint = this.renderSetpoint();
-    // Route through _bandRadius so inside labels track the inner band edge
-    // (shifted by the zoom offset) instead of drifting onto the band.
+    // Route through _bandRadius so inside labels track the (zoom-shifted) inner
+    // band edge; the coupling is intentional (see _bandRadius INVARIANT).
     const textRadius = this.tickmarksInside
       ? this._bandRadius(this.innerRingRadius)
       : this._bandRadius(OUTER_RING_RADIUS);
@@ -757,7 +765,7 @@ export class ObcWatch extends LitElement {
         maxDigits,
         color: t.color,
         radiusOffset: rOff,
-        endLabelsBelow: this.endLabelsBelow,
+        endLabelsMaxMin: this.endLabelsMaxMin,
       })
     );
     const advices = this.advices

@@ -185,6 +185,22 @@ export const Sector180WithReadout: Story = {
   },
 };
 
+// Regression for the width-derived "Max-min" end-label inset: wide labels on
+// both ends (-250 / 1000). The old per-side literals (11/6) broke for these;
+// min/max are interval multiples so the end labels sit on the primary grid.
+export const Sector180WideEndLabels: Story = {
+  args: {
+    ...sectorStoryArgs,
+    sector: GaugeRadialSector.deg180,
+    tickmarksInside: true,
+    minValue: -250,
+    maxValue: 1000,
+    value: 500,
+    primaryTickmarkInterval: 250,
+    secondaryTickmarkInterval: 50,
+  },
+};
+
 export const Sector90Left: Story = {
   args: {
     ...sectorStoryArgs,

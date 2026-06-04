@@ -21,6 +21,10 @@ import {
   type ZoomToFitArcFrame,
 } from '../../svghelpers/arc-frame.js';
 
+// Must match obc-watch's un-zoomed viewBox `(176 + getPadding()) * 2`
+// (default padding 48 → 448); instrument-radial overlays obc-watch 1:1.
+const WATCH_DEFAULT_VIEWBOX = 448;
+
 export enum ObcGaugeRadialType {
   filled = 'filled',
   bar = 'bar',
@@ -104,7 +108,12 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   @property({type: Number}) clipBottom: number = 0; // in percent of height
   @property({type: Number}) clipLeft: number = 0; // in percent of width
   @property({type: Number}) clipRight: number = 0; // in percent of width
-  @property({type: Boolean}) endLabelsBelow: boolean = false;
+  /**
+   * Place the horizontal end labels (±90°, e.g. min/max) below the tick instead
+   * of beside it — the "Max-min" placement from the radial label model
+   * (External / Internal / Max-min). See PR #903 / design discussion.
+   */
+  @property({type: Boolean}) endLabelsMaxMin: boolean = false;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
 
   private _radiusOffset = 0;
@@ -206,7 +215,7 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
     } else {
       this._radiusOffset = 0;
       this._arcFrame = undefined;
-      const full = 448;
+      const full = WATCH_DEFAULT_VIEWBOX;
       const w = full * (1 - this.clipLeft / 100 - this.clipRight / 100);
       const h = full * (1 - this.clipTop / 100 - this.clipBottom / 100);
       const left = -full / 2 + (full * this.clipLeft) / 100;
@@ -237,7 +246,7 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
           .clipBottom=${this.zoomToFitArc ? 0 : this.clipBottom}
           .clipLeft=${this.zoomToFitArc ? 0 : this.clipLeft}
           .clipRight=${this.zoomToFitArc ? 0 : this.clipRight}
-          .endLabelsBelow=${this.endLabelsBelow}
+          .endLabelsMaxMin=${this.endLabelsMaxMin}
           .zoomToFitArc=${this.zoomToFitArc}
           .arcFrame=${this._arcFrame}
         ></obc-watch>

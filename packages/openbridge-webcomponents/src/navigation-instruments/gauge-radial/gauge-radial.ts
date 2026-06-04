@@ -68,10 +68,11 @@ export interface GaugeRadialAdvice {
  *   control tickmark density.
  * - Enable `showLabels` to show numeric labels at primary tickmarks.
  * - Enable `showReadout` with optional `label` and `unit`. Layout depends on `sector`
- *   and `type`: **270** / **180** filled/bar — centered value plus bottom
- *   label/unit row; **270** needle — bottom stack; **180** needle — no readout;
- *   **90-left** / **90-right** filled/bar — corner readout in a square host;
- *   **90** needle — no readout.
+ *   and `type`: **270** filled/bar — value at center + a label-only `meta` row in
+ *   the bottom gap (two separate readouts); **180** filled/bar — a single centered
+ *   stack (value + label/unit) at the bottom; **270** needle — bottom stack;
+ *   **180** needle — no readout; **90-left** / **90-right** filled/bar — corner
+ *   readout in a square host; **90** needle — no readout.
  *
  * ## Best Practices
  *
@@ -120,6 +121,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
+  /** Caution/alert arcs. Ignored on `sector: 90-left` / `90-right`. */
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
   @property({type: String, reflect: true}) sector: GaugeRadialSector =
     GaugeRadialSector.deg270;
@@ -174,6 +176,8 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
     );
   }
 
+  // Arrow form so `this` binds when passed as `.getAngle=${this.getAngle}`
+  // to <obc-instrument-radial>. Do not convert to a method.
   getAngle = (v: number): number => {
     const {sweep, start} = this.sectorAngles;
     const span = this.maxValue - this.minValue;
@@ -184,22 +188,22 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
     return ((v - this.minValue) / span) * sweep + start;
   };
 
-  /** Renders one gauge readout; `withValue`/`withMeta`/`labelOnly` pick parts. */
+  /** Renders one gauge readout; `withMeta`/`labelOnly` pick parts. */
   private renderReadout({
     className,
     variant,
     alignment = ReadoutStackVerticalAlignment.vertical,
-    withValue = true,
     withMeta = true,
     labelOnly = false,
   }: {
     className: string;
     variant: ReadoutVariant;
     alignment?: ReadoutStackVerticalAlignment;
-    withValue?: boolean;
     withMeta?: boolean;
     labelOnly?: boolean;
   }): TemplateResult {
+    // `labelOnly` already means "no value", so derive it instead of passing both.
+    const withValue = !labelOnly;
     return html`
       <obc-readout
         class=${className}
@@ -259,7 +263,6 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
             className: 'gauge-readout-meta',
             variant: ReadoutVariant.stack,
             alignment: ReadoutStackVerticalAlignment.center,
-            withValue: false,
             labelOnly: true,
           })
         : nothing}
@@ -306,7 +309,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
           .clipBottom=${clips.bottom}
           .clipLeft=${clips.left}
           .clipRight=${clips.right}
-          .endLabelsBelow=${this.sector === GaugeRadialSector.deg180}
+          .endLabelsMaxMin=${this.sector === GaugeRadialSector.deg180}
         >
         </obc-instrument-radial>
         ${this.renderReadouts()}
