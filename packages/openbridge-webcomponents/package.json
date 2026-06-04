@@ -73,7 +73,7 @@
     "@lit-labs/cli-localize": "^0.2.2",
     "@lit-labs/gen-wrapper-angular": "file:lit-labs-gen-wrapper-angular-bbde8906.tgz",
     "@lit-labs/gen-wrapper-react": "^0.3.5",
-    "@lit-labs/gen-wrapper-svelte": "file:lit-labs-gen-wrapper-svelte-397bf119.tgz",
+    "@lit-labs/gen-wrapper-svelte": "file:lit-labs-gen-wrapper-svelte-33aedb52.tgz",
     "@lit-labs/gen-wrapper-vue": "file:lit-labs-gen-wrapper-vue-0.4.1.tgz",
     "@open-wc/lit-helpers": "^0.7.0",
     "@playwright/test": "1.60.0",
