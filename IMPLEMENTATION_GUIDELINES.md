@@ -567,8 +567,182 @@ Slotted icons are constrained to the component's icon-size token:
 
 ## 🎴 Icons
 
-The icons are exported to webcomponents in the `packages/openbridge-webcomponents/src/icons` directory.
-They are exported from figma by running: `npm run download:icons`.
+All icon components live in `packages/openbridge-webcomponents/src/icons` and are
+**fully generated** from Figma — never hand-edit them. The pipeline is:
+
+1. `script/download-icons.ts` (`npm run download:icons`) fetches every node tagged
+   as an icon from the OpenBridge Figma file via the [`figma-api`](https://www.npmjs.com/package/figma-api)
+   package, rasterises each node's vector data to an SVG payload, and writes the
+   raw SVGs to `script/.cache/icons/*.svg` (gitignored).
+2. `script/convert-icons.ts` walks the cache and emits one Lit element per icon
+   (`src/icons/icon-<kebab-name>.ts`, registered as `<obi-<kebab-name>>`), plus
+   the barrel `src/icons/index.ts` and the runtime registry `src/icons/names.ts`.
+3. For each fill/stroke color the converter looks up the Figma `VariableID` in
+   `script/figmavariables.json` and rewrites the literal hex into
+   `var(--<token>)` so themed icons follow the active palette. Unknown IDs fall
+   back to the literal hex color (see "Unknown variable fallback" below).
+
+### Inputs
+
+| File / env                                        | Tracked? | Notes                                                                                  |
+| ------------------------------------------------- | -------- | -------------------------------------------------------------------------------------- |
+| `packages/openbridge-webcomponents/.env`          | No       | Must set `FIGMA_TOKEN=<personal access token>` (read-only scope is sufficient).        |
+| `script/figmavariables.json`                      | Yes      | `VariableID → token-name` map emitted by the [obc-figma-plugin](#-postcss) `variables` codegen. |
+| `script/.cache/icons/*.svg`                       | No       | Per-icon SVG payloads. Cleared on each run.                                            |
+| `script/.cache-figma.json`                        | No       | ~30 MB raw Figma API response cache, reused across runs to avoid re-downloading.       |
+
+### Step-by-step refresh
+
+Run everything from `packages/openbridge-webcomponents/`.
+
+1. **Branch.** `git switch -c chore/refresh-figma-icons` off `develop`.
+2. **Token.** Ensure `.env` contains a valid `FIGMA_TOKEN`.
+3. **Variable map.** If the design lead has updated the OpenBridge color tokens,
+   regenerate `script/figmavariables.json` first via the
+   [obc-figma-plugin](#-postcss) `variables` codegen (Dev Mode → Inspect →
+   Codegen Plugin → `variables map`).
+4. **Backup.** `cp -r src/icons /tmp/icons-backup-prev` — gives you a diff target
+   if you need to recover variable mappings that the new run dropped.
+5. **Download + generate.**
+   ```bash
+   npm run download:icons
+   ```
+   Expect 2000+ icons to be written. Warnings such as
+   `Duplicate icon name <name>` indicate Figma-side duplicates that get
+   deduplicated by overwrite — flag them with the design lead. A trailing
+   `done` line means generation succeeded.
+6. **Check for unresolved tokens.**
+   ```bash
+   grep -rlE 'var\(--undefined\)' src/icons/ | wc -l
+   ```
+   Must be `0`. If not, see "Unknown variable fallback" below.
+7. **Typecheck & lint.**
+   ```bash
+   npx tsc --noEmit
+   npm run lint
+   ```
+8. **Refresh visual baselines** (see "Visual snapshots" below).
+9. **Verify bundle stays under the PWA cap.** `vue-demo`'s service worker is
+   capped at 7 MB per file (`workbox.maximumFileSizeToCacheInBytes`).
+   ```bash
+   npm run build --workspace=vue-demo
+   ```
+   Inspect the largest emitted chunk.
+10. **Commit.** Squash all the regenerated noise into a single
+    `chore: refresh icons from Figma` (or `feat:` if you also changed the
+    consuming components). Keep `script/figmavariables.json` and any
+    `script/convert-icons.ts` changes in the same commit.
+
+### Unknown variable fallback
+
+When `convert-icons.ts` encounters a `VariableID` that is not in
+`figmavariables.json`, it falls back to the literal hex color
+(`fill="#XXXXXX"` / `stroke="#XXXXXX"`) rather than emitting
+`var(--undefined)`. This keeps the regen unblocked when designers add brand-new
+palette tokens that have not been re-exported yet, but it means the resulting
+icon will not follow theme switches until the token is added.
+
+Two recovery paths, depending on the cause:
+
+- **Token exists in Figma, just missing from the JSON** — re-run the
+  obc-figma-plugin `variables` codegen and overwrite `script/figmavariables.json`,
+  then re-run `npm run download:icons`. Hex fallbacks should disappear.
+- **Token does not yet exist in the palette** — accept the hex fallback for
+  this PR, file a follow-up with the design lead to add the missing token, then
+  do a second regen pass once the palette ships.
+
+The `script/.cache/unknown-variables.json` diagnostic file (written when the
+converter has its diagnostic logger enabled) lists every unresolved
+`VariableID` and the hex colors it appeared with — useful when filing the
+designer follow-up.
+
+### Touching the consuming components (worked example: wind)
+
+Icon family renames or bucket changes (e.g. the wind family migrating from
+`wind-true-1` through `wind-true-14` to bucket-named
+`wind-true-{0,1,5,10,15,…,100}` and `wind-shaft-{0,1,5,…,100}`) require code
+changes in any component that imports specific icons. The wind indicator is the
+canonical worked example because it is the only component that snaps a numeric
+sensor value to a discrete icon glyph.
+
+Files to update when an icon family changes:
+
+1. **The wind icon mapper** —
+   `src/navigation-instruments/watch/environment.ts`.
+   - Re-import every bucket from the new family with an **explicit per-icon
+     import** (not via `icons/index.js`) so the PWA can tree-shake — the wind
+     consumers must stay under the 7 MB Workbox cap.
+   - Export the bucket list as a `readonly` array (e.g. `WIND_TRUE_BUCKETS`,
+     `WIND_SHAFT_BUCKETS`).
+   - Provide a snap helper such as
+     `windKnotsToBucket(knots, buckets)` that returns the nearest bucket by
+     absolute distance (ties resolve to the lower bucket). Wrap it in
+     family-specific helpers (`windKnotsToWindTrueBucket`,
+     `windKnotsToWindShaftBucket`) so consumers do not import the bucket arrays
+     themselves.
+   - Keep any legacy index-based helper that downstream code still needs (the
+     wind indicator's inline barb glyphs are indexed 1..14, fed by a renamed
+     `windKnotsToShaftTrueLevel`).
+2. **The wind indicator** —
+   `src/navigation-instruments/wind-indicator/wind-indicator.ts`.
+   - Import the explicit `obi-wind-true-*` / `obi-wind-shaft-*` set.
+   - Use the bucket helpers from `environment.ts` to build the tag name
+     (`obi-wind-true-${windKnotsToWindTrueBucket(...)}`).
+   - Prefer the CSS-color variant of each icon (`instance.iconCss ?? instance.icon`)
+     so theme tokens drive the color; the `var(--currentColor)` path is the
+     fallback.
+   - Rename any public/private surface (`iconIndex` → `iconLevel`, etc.) and
+     update the matching `*.stories.ts` `argTypes` so Storybook controls match.
+3. **Wrappers around the indicator** (`wind/wind.ts`,
+   `wind-propulsion/wind-propulsion.ts`) usually need no changes — they re-export
+   the indicator's API.
+
+A handful of other components reference specific icons directly
+(`automation/**`, `building-blocks/**`, etc.). Run a workspace grep for the old
+icon names before assuming the wind change is isolated:
+
+```bash
+grep -rE "obi-<old-family>-|icon-<old-family>-" src/
+```
+
+### Visual snapshots
+
+A broad icon refresh almost always disturbs snapshot baselines because dozens
+of components render icons inside their stories. The strategy:
+
+1. **First pass — find the drift.** Run the full suite without `--update`:
+   ```bash
+   npx vitest run --project storybook
+   ```
+   Expect failures concentrated in components that render icons. Each failure
+   reports the pixel-distance from the baseline.
+2. **Inspect a representative diff** under
+   `__vis__/linux/__diffs__/<path>/<story>.png` and confirm the change is
+   "just" an icon-color or icon-shape update (not a layout regression).
+3. **Update scoped first** — for the targeted family (e.g. wind), refresh only
+   the affected stories so the diff stays reviewable:
+   ```bash
+   npx vitest run --project storybook --update src/navigation-instruments/wind-indicator
+   ```
+4. **Update everything else** that drifted from the icon library churn:
+   ```bash
+   npx vitest run --project storybook --update src/integration-systems/integration-bar
+   ```
+   (Repeat per failing path.)
+5. **Verify stable.** Re-run the full suite once more without `--update` and
+   confirm zero icon-related failures. Pre-existing chart flakes (e.g.
+   `polar-chart` Chart.js layout timing) are unrelated to icon work and should
+   be triaged separately, not papered over by a baseline refresh.
+6. **Linux-only baselines.** The repo only ships `__vis__/linux/__baselines__/`.
+   On macOS, the `darwin` directory is populated locally but **not committed**;
+   regenerate Linux baselines inside the Docker container described in
+   [§ Testing](#docker-testing) if you cannot rely on a Linux dev box.
+
+> **PR size warning:** A full icon refresh routinely touches 1500–2000 files in
+> `src/icons/` plus 100–500 baseline PNGs. Reviewers should focus on
+> `script/convert-icons.ts`, `script/figmavariables.json`, the consuming
+> component(s) (e.g. wind), and a sampling of diff images — not the per-icon
+> noise.
 
 ## 📄 Create a new component
 
