@@ -111,7 +111,7 @@
 
   .divider {
     width: 1px;
-    height: var(--menu-navigation-components-tab-item-divider-height);
+    height: var(--menu-navigation-components-tab-action-button-divider-height);
     flex-shrink: 0;
     color: var(--border-divider-color);
     fill: var(--border-divider-color);
@@ -124,7 +124,7 @@
     position: absolute;
     left: 0;
     width: 1px;
-    height: var(--menu-navigation-components-tab-item-divider-height);
+    height: var(--menu-navigation-components-tab-action-button-divider-height);
     background: var(--border-divider-color);
   }
 
