@@ -37,12 +37,19 @@
   flex: 1 1 auto;
 }
 
-.integration-buttons-slot::slotted(obc-integration-button) {
+.integration-buttons-slot::slotted(*) {
+  display: flex;
   flex: 1;
 }
 
-.hug-buttons-slot::slotted(obc-integration-button) {
+.hug-buttons-slot::slotted(*) {
+  display: flex;
   flex: 0 1 auto;
+}
+
+.hug-buttons-slot,
+.integration-buttons-slot {
+  display: contents;
 }
 
 .home-button,
