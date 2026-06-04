@@ -95,6 +95,8 @@ export class ObcReadoutListItem extends LitElement {
   @property({type: Number}) minValueLength = 0;
   @property({type: Boolean}) hasHintedZeros = false;
 
+  @property({type: Boolean}) labelOnly = false;
+
   private get resolvedMainValueSize(): ReadoutSetpointSize {
     return this.size === ReadoutListItemSize.enhanced
       ? ReadoutSetpointSize.large
@@ -395,11 +397,16 @@ export class ObcReadoutListItem extends LitElement {
             ${this.renderLabelContainer()}
           </div>
 
-          <div class="value-container" part="value-container">
-            ${this.renderValue()} ${this.renderTrailingUnit()}
-          </div>
+          ${this.labelOnly
+            ? nothing
+            : html`
+                <div class="value-container" part="value-container">
+                  ${this.renderValue()} ${this.renderTrailingUnit()}
+                </div>
 
-          ${this.renderTrailingSource()}
+                ${this.renderTrailingSource()}
+              </div>
+            `}
         </div>
       </div>
     `;
