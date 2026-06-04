@@ -105,7 +105,7 @@ export const MaxMinEndLabels: Story = {
     minValue: 0,
     type: ObcGaugeRadialType.filled,
     showLabels: true,
-    getAngle: (v: number) => 90 + (v / 100) * 180,
+    getAngle: (v: number) => (v / 100) * 180 - 90, // top 180° arc: 0 left, 100 right
     endLabelsMaxMin: true,
   },
   argTypes: {
