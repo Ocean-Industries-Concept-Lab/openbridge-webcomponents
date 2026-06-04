@@ -1,30 +1,62 @@
 import {svg, SVGTemplateResult} from 'lit';
 import {styleMap} from 'lit/directives/style-map.js';
+import '../../icons/icon-wind-true-0.js';
 import '../../icons/icon-wind-true-1.js';
-import '../../icons/icon-wind-true-2.js';
-import '../../icons/icon-wind-true-3.js';
-import '../../icons/icon-wind-true-4.js';
 import '../../icons/icon-wind-true-5.js';
-import '../../icons/icon-wind-true-6.js';
-import '../../icons/icon-wind-true-7.js';
-import '../../icons/icon-wind-true-8.js';
-import '../../icons/icon-wind-true-9.js';
 import '../../icons/icon-wind-true-10.js';
-import '../../icons/icon-wind-true-11.js';
-import '../../icons/icon-wind-true-12.js';
-import '../../icons/icon-wind-true-13.js';
-import '../../icons/icon-wind-true-14.js';
+import '../../icons/icon-wind-true-15.js';
+import '../../icons/icon-wind-true-20.js';
+import '../../icons/icon-wind-true-25.js';
+import '../../icons/icon-wind-true-30.js';
+import '../../icons/icon-wind-true-35.js';
+import '../../icons/icon-wind-true-45.js';
+import '../../icons/icon-wind-true-50.js';
+import '../../icons/icon-wind-true-55.js';
+import '../../icons/icon-wind-true-60.js';
+import '../../icons/icon-wind-true-65.js';
+import '../../icons/icon-wind-true-70.js';
+import '../../icons/icon-wind-true-100.js';
+import '../../icons/icon-wind-shaft-0.js';
+import '../../icons/icon-wind-shaft-1.js';
+import '../../icons/icon-wind-shaft-5.js';
+import '../../icons/icon-wind-shaft-10.js';
+import '../../icons/icon-wind-shaft-15.js';
+import '../../icons/icon-wind-shaft-20.js';
+import '../../icons/icon-wind-shaft-25.js';
+import '../../icons/icon-wind-shaft-30.js';
+import '../../icons/icon-wind-shaft-35.js';
+import '../../icons/icon-wind-shaft-40.js';
+import '../../icons/icon-wind-shaft-45.js';
+import '../../icons/icon-wind-shaft-50.js';
+import '../../icons/icon-wind-shaft-55.js';
+import '../../icons/icon-wind-shaft-60.js';
+import '../../icons/icon-wind-shaft-65.js';
+import '../../icons/icon-wind-shaft-70.js';
+import '../../icons/icon-wind-shaft-75.js';
+import '../../icons/icon-wind-shaft-80.js';
+import '../../icons/icon-wind-shaft-85.js';
+import '../../icons/icon-wind-shaft-90.js';
+import '../../icons/icon-wind-shaft-95.js';
+import '../../icons/icon-wind-shaft-100.js';
 
 /**
- * Number of wind barb icons available (`<obi-wind-true-1>` …
- * `<obi-wind-true-14>`).
- *
- * The set follows the standard meteorological wind-barb convention:
- * icon 1 is calm, icon 2 is shaft-only (1 kn bucket), icons 3–11 add
- * one half-barb per 5 kn (5, 10, 15, …, 45 kn), icon 12 is one pennant
- * (50 kn), icons 13–14 add full barbs above the pennant (60 / 70 kn).
+ * Knots buckets available as `<obi-wind-true-N>` icons. The Figma source
+ * uses speed-valued names; 40 / 75 / 80 / 85 / 90 / 95 are not authored
+ * for the true variant and snap to the nearest available bucket.
  */
-const WIND_ICON_COUNT = 14;
+export const WIND_TRUE_BUCKETS = [
+  0, 1, 5, 10, 15, 20, 25, 30, 35, 45, 50, 55, 60, 65, 70, 100,
+] as const;
+
+/**
+ * Knots buckets available as `<obi-wind-shaft-N>` icons. The shaft
+ * family is authored at full 5-knot granularity from 0 to 100 kn (plus
+ * a sub-1 calm icon).
+ */
+export const WIND_SHAFT_BUCKETS = [
+  0, 1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90,
+  95, 100,
+] as const;
 
 /** Render scale applied to the 24×24 icon so it matches the historic 48×48 visual footprint on the watch dial. */
 const WIND_ICON_SCALE = 2;
@@ -40,8 +72,8 @@ const WIND_ICON_TIP_Y = 22.4453;
 
 const windIconCache = new Map<string, SVGTemplateResult>();
 
-function getWindIconSvg(index: number): SVGTemplateResult | null {
-  const tagName = `obi-wind-true-${index}`;
+function getWindIconSvg(bucket: number): SVGTemplateResult | null {
+  const tagName = `obi-wind-true-${bucket}`;
   const cached = windIconCache.get(tagName);
   if (cached) {
     return cached;
@@ -62,29 +94,71 @@ function getWindIconSvg(index: number): SVGTemplateResult | null {
 }
 
 /**
- * Maps a wind speed in **knots** to a wind-barb icon index in `[1, 14]`.
+ * Snap a wind speed in **knots** to the nearest available icon bucket.
  *
- * Implements the designer-confirmed "Option C" mapping: speeds round to
- * the nearest 5-knot bucket (with two sub-pennant buckets for calm and
- * near-calm conditions):
- *
- * | Knots range | Icon | Glyph                |
- * | ----------- | ---- | -------------------- |
- * | `[0, 0.5)`  | 1    | calm                 |
- * | `[0.5, 2.5)`| 2    | shaft only           |
- * | `[2.5, 7.5)`| 3    | shaft + ½ barb       |
- * | `[7.5, 12.5)`| 4   | shaft + 1 full barb  |
- * | …5-kn steps…| …    | …                    |
- * | `[42.5, 47.5)`| 11 | shaft + 4 full + ½   |
- * | `[47.5, 55)`| 12   | pennant (50 kn)      |
- * | `[55, 65)`  | 13   | pennant + 1 full barb |
- * | `[65, ∞)`   | 14   | pennant + 2 full barbs |
- *
- * The 55 / 65 / 100-knot buckets currently collapse to the nearest
- * available icon; dedicated glyphs are tracked for a follow-up icon
- * refresh. Non-finite / null / undefined inputs fall back to icon 1.
+ * Non-finite / null / undefined / sub-zero inputs snap to bucket `0`
+ * (calm). Otherwise the input is matched to the closest authored bucket
+ * by absolute distance, with ties broken toward the lower bucket.
  */
-export function windKnotsToIconIndex(knots: number | null | undefined): number {
+export function windKnotsToBucket(
+  knots: number | null | undefined,
+  buckets: readonly number[]
+): number {
+  if (knots == null || !Number.isFinite(knots) || knots <= 0) {
+    return buckets[0];
+  }
+  let best = buckets[0];
+  let bestDist = Math.abs(knots - best);
+  for (let i = 1; i < buckets.length; i++) {
+    const d = Math.abs(knots - buckets[i]);
+    if (d < bestDist) {
+      best = buckets[i];
+      bestDist = d;
+    }
+  }
+  return best;
+}
+
+/**
+ * Snap a wind speed in knots to the nearest `<obi-wind-true-N>` bucket.
+ * Shorthand for `windKnotsToBucket(knots, WIND_TRUE_BUCKETS)`.
+ */
+export function windKnotsToWindTrueBucket(
+  knots: number | null | undefined
+): number {
+  return windKnotsToBucket(knots, WIND_TRUE_BUCKETS);
+}
+
+/**
+ * Snap a wind speed in knots to the nearest `<obi-wind-shaft-N>` bucket.
+ * Shorthand for `windKnotsToBucket(knots, WIND_SHAFT_BUCKETS)`.
+ */
+export function windKnotsToWindShaftBucket(
+  knots: number | null | undefined
+): number {
+  return windKnotsToBucket(knots, WIND_SHAFT_BUCKETS);
+}
+
+/**
+ * Legacy positional level `1..14` for the hardcoded
+ * `SHAFT_TRUE_WIND_BARB_D_BY_LEVEL` inline barb glyphs used by the
+ * shaft+true `obc-wind-indicator` variant. Implements the
+ * designer-confirmed "Option C" mapping (one half-barb per 5 kn with
+ * sub-pennant calm and shaft-only buckets).
+ *
+ * | Knots range  | Level | Glyph                  |
+ * | ------------ | ----- | ---------------------- |
+ * | `[0, 0.5)`   | 1     | calm                   |
+ * | `[0.5, 2.5)` | 2     | shaft only             |
+ * | `[2.5, 7.5)` | 3     | shaft + ½ barb         |
+ * | `[7.5, 47.5)`| 4..11 | 5-kn nearest neighbour |
+ * | `[47.5, 55)` | 12    | pennant (50 kn)        |
+ * | `[55, 65)`   | 13    | pennant + 1 full barb  |
+ * | `[65, ∞)`    | 14    | pennant + 2 full barbs |
+ */
+export function windKnotsToShaftTrueLevel(
+  knots: number | null | undefined
+): number {
   if (knots == null || !Number.isFinite(knots) || knots < 0.5) {
     return 1;
   }
@@ -100,7 +174,7 @@ export function windKnotsToIconIndex(knots: number | null | undefined): number {
   if (knots < 65) {
     return 13;
   }
-  return WIND_ICON_COUNT;
+  return 14;
 }
 
 export function renderWind(options: {
@@ -110,8 +184,8 @@ export function renderWind(options: {
   color?: string;
 }): SVGTemplateResult {
   const {windKnots, fromDirectionDeg, radius, color} = options;
-  const index = windKnotsToIconIndex(windKnots);
-  const icon = getWindIconSvg(index);
+  const bucket = windKnotsToWindTrueBucket(windKnots);
+  const icon = getWindIconSvg(bucket);
   if (!icon) {
     return svg``;
   }
