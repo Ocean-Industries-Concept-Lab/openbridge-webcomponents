@@ -24,9 +24,10 @@ function resolveFigmaVariable(variableId: string): string | undefined {
 /**
  * Persist the `unresolvedFigmaVariables` set to disk so designers and CI can
  * see which Figma variable IDs were referenced by icons but missing from
- * `figmavariables.json`. Called by the download scripts after a run.
+ * `figmavariables.json`. Called by the download scripts after a run. Returns
+ * the number of unresolved IDs so the caller can fail the build.
  */
-export function writeUnresolvedFigmaVariablesReport(filePath: string): void {
+export function writeUnresolvedFigmaVariablesReport(filePath: string): number {
   const ids = [...unresolvedFigmaVariables].sort();
   const dir = path.dirname(filePath);
   fs.mkdirSync(dir, {recursive: true});
@@ -36,6 +37,7 @@ export function writeUnresolvedFigmaVariablesReport(filePath: string): void {
       `[convert-icons] ${ids.length} unresolved Figma variable id(s) — see ${filePath}`
     );
   }
+  return ids.length;
 }
 
 dotenv.config();
@@ -44,7 +46,7 @@ export interface IconRef {
   name: string;
   id: string;
   javascriptName: string;
-  styles: {[colorCode: string]: {cssClass: string}};
+  styles: {[colorCode: string]: {cssClass: string | undefined}};
 }
 
 export function getSingleColorIcon(imageData: string, icon: IconRef): string {
@@ -122,18 +124,25 @@ export function getCssColorIcon(imageData: string, icon: IconRef): string {
 
   // Merge sibling `style="…"` attributes on the same element. The fill and
   // stroke passes each emit their own `style="…"` independently, so an
-  // element with both attributes ends up with two `style` attributes — the
-  // second one is silently ignored by browsers. Combine them into one.
-  const dupeStyleRegex = /style="([^"]+)"(\s+)style="([^"]+)"/g;
-  let previous: string;
-  do {
-    previous = imageData;
-    imageData = imageData.replace(dupeStyleRegex, (_m, a, _ws, b) => {
-      const left = a.trim().replace(/;$/, '');
-      const right = b.trim().replace(/;$/, '');
-      return `style="${left}; ${right}"`;
+  // element with both attributes ends up with two `style` attributes — only
+  // the first is honored by browsers. Combine them into one per opening tag,
+  // regardless of whether the two `style` attributes are adjacent or have
+  // other attributes between them.
+  const tagRegex = /<[a-zA-Z][^>]*>/g;
+  const styleAttrRegex = /\s+style="([^"]*)"/g;
+  imageData = imageData.replace(tagRegex, (tag) => {
+    const styles: string[] = [];
+    const stripped = tag.replace(styleAttrRegex, (_m, decls) => {
+      const trimmed = decls.trim().replace(/;$/, '');
+      if (trimmed) styles.push(trimmed);
+      return '';
     });
-  } while (imageData !== previous);
+    if (styles.length <= 1) return tag;
+    // Re-insert a single merged style attribute just before the closing `>`
+    // (or `/>`), preserving the rest of the tag's structure.
+    const merged = ` style="${styles.join('; ')}"`;
+    return stripped.replace(/\s*\/?>$/, (end) => merged + end);
+  });
 
   return imageData;
 }
@@ -149,8 +158,8 @@ export function kebabToUpperCamelCase(kebabCase: string): string {
 export function getStylesForNode(
   node: Node,
   styles: {[styleId: string]: Style}
-): {[colorCode: string]: {cssClass: string}} {
-  let out = {};
+): {[colorCode: string]: {cssClass: string | undefined}} {
+  let out: {[colorCode: string]: {cssClass: string | undefined}} = {};
 
   if ('children' in node) {
     for (const child of node.children) {

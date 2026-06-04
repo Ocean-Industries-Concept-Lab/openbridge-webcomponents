@@ -188,10 +188,19 @@ export const ${icon.javascriptName} = svg\`${cssColorIcon}\`;
 
   fileImport.sort();
   console.log(fileImport.join('\n'));
-  writeUnresolvedFigmaVariablesReport(
+  const unresolvedCount = writeUnresolvedFigmaVariablesReport(
     './script/.cache/unknown-variables-alert.json'
   );
   console.log('done');
+  if (unresolvedCount > 0 && process.env.OBC_ALLOW_UNRESOLVED_VARS !== '1') {
+    console.error(
+      `[download-alert-icons] ${unresolvedCount} Figma variable id(s) could not be resolved.\n` +
+        '            Add the missing mapping(s) to script/figmavariables.json,\n' +
+        '            or set OBC_ALLOW_UNRESOLVED_VARS=1 to bypass.\n' +
+        '            See script/.cache/unknown-variables-alert.json.'
+    );
+    process.exit(1);
+  }
 }
 
 main();
