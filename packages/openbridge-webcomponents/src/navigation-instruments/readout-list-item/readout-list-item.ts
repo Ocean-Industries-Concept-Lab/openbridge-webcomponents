@@ -405,8 +405,7 @@ export class ObcReadoutListItem extends LitElement {
                 </div>
 
                 ${this.renderTrailingSource()}
-              </div>
-            `}
+              `}
         </div>
       </div>
     `;
