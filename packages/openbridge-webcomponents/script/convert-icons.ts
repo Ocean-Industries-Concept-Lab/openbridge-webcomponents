@@ -6,6 +6,38 @@ const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const figmaVariablesPath = path.join(__dirname, 'figmavariables.json');
 const figmaVariables = JSON.parse(fs.readFileSync(figmaVariablesPath, 'utf8'));
 
+/**
+ * Figma variable IDs encountered on bound fills/strokes that are not present
+ * in `figmavariables.json`. These cause the converter to fall back to a
+ * literal hex color, which silently defeats the `var(--undefined)` grep gate.
+ * Downloaders should serialize this set after a run so designers can extend
+ * `figmavariables.json` to cover the missing tokens.
+ */
+export const unresolvedFigmaVariables = new Set<string>();
+
+function resolveFigmaVariable(variableId: string): string | undefined {
+  const token = figmaVariables[variableId];
+  if (token === undefined) unresolvedFigmaVariables.add(variableId);
+  return token;
+}
+
+/**
+ * Persist the `unresolvedFigmaVariables` set to disk so designers and CI can
+ * see which Figma variable IDs were referenced by icons but missing from
+ * `figmavariables.json`. Called by the download scripts after a run.
+ */
+export function writeUnresolvedFigmaVariablesReport(filePath: string): void {
+  const ids = [...unresolvedFigmaVariables].sort();
+  const dir = path.dirname(filePath);
+  fs.mkdirSync(dir, {recursive: true});
+  fs.writeFileSync(filePath, JSON.stringify(ids, null, 2) + '\n');
+  if (ids.length > 0) {
+    console.warn(
+      `[convert-icons] ${ids.length} unresolved Figma variable id(s) — see ${filePath}`
+    );
+  }
+}
+
 dotenv.config();
 
 export interface IconRef {
@@ -88,6 +120,21 @@ export function getCssColorIcon(imageData: string, icon: IconRef): string {
   const strokeOpacityRegex = /stroke-opacity="[^"]+"/g;
   imageData = imageData.replace(strokeOpacityRegex, '');
 
+  // Merge sibling `style="…"` attributes on the same element. The fill and
+  // stroke passes each emit their own `style="…"` independently, so an
+  // element with both attributes ends up with two `style` attributes — the
+  // second one is silently ignored by browsers. Combine them into one.
+  const dupeStyleRegex = /style="([^"]+)"(\s+)style="([^"]+)"/g;
+  let previous: string;
+  do {
+    previous = imageData;
+    imageData = imageData.replace(dupeStyleRegex, (_m, a, _ws, b) => {
+      const left = a.trim().replace(/;$/, '');
+      const right = b.trim().replace(/;$/, '');
+      return `style="${left}; ${right}"`;
+    });
+  } while (imageData !== previous);
+
   return imageData;
 }
 
@@ -122,7 +169,7 @@ export function getStylesForNode(
             fils = rgbaToHexOrColorName(fill.color!);
             if ('boundVariables' in fill) {
               const variableId = fill.boundVariables.color.id;
-              out[fils] = {cssClass: figmaVariables[variableId]};
+              out[fils] = {cssClass: resolveFigmaVariable(variableId)};
             }
           }
         });
@@ -147,7 +194,7 @@ export function getStylesForNode(
             strokes = rgbaToHexOrColorName(stroke.color!);
             if ('boundVariables' in stroke) {
               const variableId = stroke.boundVariables.color.id;
-              out[strokes] = {cssClass: figmaVariables[variableId]};
+              out[strokes] = {cssClass: resolveFigmaVariable(variableId)};
             }
           }
         });
@@ -167,7 +214,7 @@ export function getStylesForNode(
                 const color = rgbaToHexOrColorName(f.color!);
                 if ('boundVariables' in f) {
                   const variableId = f.boundVariables.color.id;
-                  out[color] = {cssClass: figmaVariables[variableId]};
+                  out[color] = {cssClass: resolveFigmaVariable(variableId)};
                 }
               }
             }

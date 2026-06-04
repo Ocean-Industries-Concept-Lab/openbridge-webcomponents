@@ -13,6 +13,7 @@ import {
   getCssColorIcon,
   getStylesForNode,
   kebabToUpperCamelCase,
+  writeUnresolvedFigmaVariablesReport,
 } from './convert-icons.js';
 
 dotenv.config();
@@ -187,6 +188,9 @@ export const ${icon.javascriptName} = svg\`${cssColorIcon}\`;
 
   fileImport.sort();
   console.log(fileImport.join('\n'));
+  writeUnresolvedFigmaVariablesReport(
+    './script/.cache/unknown-variables-alert.json'
+  );
   console.log('done');
 }
 

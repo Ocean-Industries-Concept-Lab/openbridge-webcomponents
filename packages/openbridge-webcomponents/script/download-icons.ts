@@ -15,6 +15,7 @@ import {
   getSingleColorIcon,
   getStylesForNode,
   kebabToUpperCamelCase,
+  writeUnresolvedFigmaVariablesReport,
 } from './convert-icons.js';
 
 dotenv.config();
@@ -28,7 +29,11 @@ interface IconRef {
 }
 const documentId = 'IkDwOtza6OdjLbIdWA7mI7';
 
-const useCache = false;
+// Opt-in: set OBC_USE_CACHE=1 to reuse the on-disk Figma file cache and the
+// per-icon SVG cache instead of re-fetching from the Figma API. Useful when
+// iterating on the converter (`convert-icons.ts`) or refreshing
+// `figmavariables.json` without burning API quota.
+const useCache = process.env.OBC_USE_CACHE === '1';
 
 function recursiveFindNodeByPath(
   node: CanvasNode | FrameNode,
@@ -160,6 +165,11 @@ export async function main() {
     fs.statSync(cachepath).mtime.getTime() < Date.now() - 1000 * 60 * 60;
   if (cacheExists && useCache && !cacheIsOld) {
     file = JSON.parse(fs.readFileSync(cachepath, 'utf8'));
+  } else if (cacheExists && useCache) {
+    console.log(
+      `[download-icons] OBC_USE_CACHE=1: using stale Figma cache (${cachepath})`
+    );
+    file = JSON.parse(fs.readFileSync(cachepath, 'utf8'));
   } else {
     file = await api.getFile({file_key: documentId});
     // save to cache
@@ -290,6 +300,7 @@ declare global {
   fileImport.sort();
   fileImport.push('export { ObiIcon } from "./icon.js";');
   fs.writeFileSync('./src/icons/index.ts', fileImport.join('\n'));
+  writeUnresolvedFigmaVariablesReport('./script/.cache/unknown-variables.json');
   console.log('done');
 }
 

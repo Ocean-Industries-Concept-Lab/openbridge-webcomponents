@@ -2707,8 +2707,10 @@
   --pui-components-border-radius-button: 6px;
   --pui-components-border-radius-cutout: 7px;
   --pui-components-line-thickness-min: 1px;
-  --pui-components-button-container-height: 56px;
+  --pui-components-button-button-size-min: 48px;
   --pui-components-indicator-container-height: 24px;
+  --pui-components-button-button-size: 52px;
+  --pui-components-indicator-container-padding-vertical: 4px;
 }
 .obc-component-size-medium {
   --global-size-spacing-touch-target-min: 56px;
@@ -5340,8 +5342,10 @@
   --pui-components-border-radius-button: 8px;
   --pui-components-border-radius-cutout: 10px;
   --pui-components-line-thickness-min: 2px;
-  --pui-components-button-container-height: 56px;
+  --pui-components-button-button-size-min: 56px;
   --pui-components-indicator-container-height: 32px;
+  --pui-components-button-button-size: 56px;
+  --pui-components-indicator-container-padding-vertical: 4px;
 }
 .obc-component-size-large {
   --global-size-spacing-touch-target-min: 72px;
@@ -7963,8 +7967,10 @@
   --pui-components-border-radius-button: 12px;
   --pui-components-border-radius-cutout: 14px;
   --pui-components-line-thickness-min: 2px;
-  --pui-components-button-container-height: 72px;
+  --pui-components-button-button-size-min: 72px;
   --pui-components-indicator-container-height: 32px;
+  --pui-components-button-button-size: 72px;
+  --pui-components-indicator-container-padding-vertical: 32px;
 }
 .obc-component-size-xl {
   --global-size-spacing-touch-target-min: 96px;
@@ -10604,58 +10610,12 @@
   --pui-components-border-radius-button: 16px;
   --pui-components-border-radius-cutout: 18px;
   --pui-components-line-thickness-min: 2px;
-  --pui-components-button-container-height: 96px;
+  --pui-components-button-button-size-min: 96px;
   --pui-components-indicator-container-height: 48px;
+  --pui-components-button-button-size: 96px;
+  --pui-components-indicator-container-padding-vertical: 48px;
 }
 * {
-  --typography-primitives-font-family-main: "Noto Sans";
-  --typography-primitives-font-size-071: 11.5px;
-  --typography-primitives-font-size-100: 16px;
-  --typography-primitives-font-size-150: 23px;
-  --typography-primitives-font-size-200: 34px;
-  --typography-primitives-font-size-250: 39px;
-  --typography-primitives-font-size-300: 45px;
-  --typography-primitives-font-size-350: 57px;
-  --typography-primitives-font-size-400: 68px;
-  --typography-primitives-font-size-450: 73px;
-  --typography-primitives-font-size-500: 78px;
-  --typography-primitives-line-height-071: 16px;
-  --typography-primitives-line-height-100: 20px;
-  --typography-primitives-line-height-150: 24px;
-  --typography-primitives-line-height-200: 32px;
-  --typography-primitives-line-height-250: 36px;
-  --typography-primitives-line-height-300: 48px;
-  --typography-primitives-line-height-350: 36px;
-  --typography-primitives-line-height-400: 64px;
-  --typography-primitives-line-height-450: 68px;
-  --typography-primitives-line-height-500: 72px;
-  --typography-primitives-font-weight-300: 370;
-  --typography-primitives-font-weight-500: 570;
-  --typography-primitives-font-weight-600: 670;
-  --typography-primitives-font-weight-200: 270;
-  --typography-primitives-font-weight-400: 470;
-  --typography-primitives-baseline-offset-071: 0px;
-  --typography-primitives-baseline-offset-100: 0px;
-  --typography-primitives-baseline-offset-150: 2px;
-  --typography-primitives-baseline-offset-200: 2px;
-  --typography-primitives-baseline-offset-250: 2px;
-  --typography-primitives-baseline-offset-300: 2px;
-  --typography-primitives-baseline-offset-350: 4px;
-  --typography-primitives-baseline-offset-400: 4px;
-  --typography-primitives-baseline-offset-450: 4px;
-  --typography-primitives-baseline-offset-500: 4px;
-  --typography-primitives-letter-spacing-071: 0px;
-  --typography-primitives-letter-spacing-100: 0px;
-  --typography-primitives-letter-spacing-150: 0px;
-  --typography-primitives-letter-spacing-200: 0.0024999999441206455px;
-  --typography-primitives-letter-spacing-250: -0.5px;
-  --typography-primitives-letter-spacing-300: -0.5px;
-  --typography-primitives-letter-spacing-350: -0.5px;
-  --typography-primitives-letter-spacing-400: -1px;
-  --typography-primitives-letter-spacing-450: -1px;
-  --typography-primitives-letter-spacing-500: -1px;
-  --weight-demo: "470";
-  --weight-demo-2: 470px;
   --font-size-075: 12px;
   --font-size-100: 16px;
   --font-size-150: 24px;
@@ -11761,7 +11721,7 @@
   --alert-caution-tint-color: rgb(251, 219, 1, 0.15000000596046448);
   --alert-running-tint-color: rgb(22, 155, 13, 0.11999999731779099);
   --integration-container-container: rgb(30, 30, 30);
-  --pui-beta-normal-background-color: rgb(31, 31, 31);
+  --pui-beta-opaque-cap-regular-background-color: rgb(31, 31, 31);
   --pui-beta-effect-button-highlight-color: rgb(
     255,
     255,
@@ -11769,10 +11729,10 @@
     0.10000000149011612
   );
   --pui-beta-effect-button-edge-color: rgb(255, 255, 255, 0.03999999910593033);
-  --pui-beta-normal-content-color: rgb(217, 217, 217);
-  --pui-beta-emergency-background-color: rgb(56, 21, 21);
+  --pui-beta-opaque-backlight-active-color: rgb(240, 240, 240);
+  --pui-beta-opaque-cap-emergency-background-color: rgb(56, 21, 21);
   --pui-beta-emergency-content-color: rgb(180, 180, 180);
-  --pui-beta-element-neutral-color: rgb(149, 149, 149);
+  --pui-beta-element-neutral-color: rgb(163, 163, 163);
   --pui-beta-element-active-color: rgb(217, 217, 217);
   --pui-beta-element-inactive-color: rgb(117, 117, 117);
   --pui-beta-element-symbol-color: rgb(89, 89, 89);
@@ -11811,6 +11771,46 @@
   --base-automation-enhanced-500: rgb(45, 84, 139);
   --base-automation-enhanced-600: rgb(29, 60, 103);
   --base-automation-enhanced-050-tint: rgb(10, 100, 237, 0.10999999940395355);
+  --pui-beta-translucent-backlight-regular-color: rgb(117, 117, 117);
+  --pui-beta-translucent-content-regular-color: rgb(31, 31, 31);
+  --pui-beta-translucent-backlight-alarm-color: rgb(255, 77, 71);
+  --pui-beta-opaque-backlight-alarm-color: rgb(255, 77, 71);
+  --pui-beta-translucent-content-color-enhanced: rgb(217, 217, 217);
+  --pui-beta-opaque-backlight-enhanced-color: rgb(124, 169, 233);
+  --pui-beta-opaque-backlight-running-color: rgb(57, 162, 52);
+  --pui-beta-opaque-backlight-warning-color: rgb(255, 135, 42);
+  --pui-beta-opaque-backlight-caution-color: rgb(232, 179, 0);
+  --pui-beta-opaque-backlight-neutral-color: rgb(180, 180, 180);
+  --pui-beta-translucent-backlight-warning-color: rgb(233, 103, 0);
+  --pui-beta-translucent-backlight-caution-color: rgb(232, 179, 0);
+  --pui-beta-translucent-backlight-enhanced-color: rgb(93, 143, 213);
+  --pui-beta-translucent-backlight-running-color: rgb(57, 162, 52);
+  --pui-beta-translucent-backlight-active-color: rgb(180, 180, 180);
+  --pui-beta-translucent-cap-regular-background-color: rgb(
+    255,
+    255,
+    255,
+    0.10000000149011612
+  );
+  --pui-beta-translucent-cap-regular-border-color: rgb(
+    255,
+    255,
+    255,
+    0.20000000298023224
+  );
+  --pui-beta-alert-running-color: rgb(57, 162, 52);
+  --pui-beta-alert-running-outline-color: rgb(57, 162, 52);
+  --pui-beta-alert-caution-color: rgb(232, 179, 0);
+  --pui-beta-alert-warning-color: rgb(233, 103, 0);
+  --pui-beta-alert-enhanced-color: rgb(93, 143, 213);
+  --pui-beta-element-enhanced-active-color: rgb(156, 193, 245);
+  --pui-beta-element-enhanced-neutral-color: rgb(93, 143, 213);
+  --pui-beta-border-indicator-edge-color: rgb(
+    255,
+    255,
+    255,
+    0.20999999344348907
+  );
 }
 :root[data-obc-theme="dusk"] {
   --icon-02-chevron-up: url('data:image/svg+xml,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 14.0002L7.41 15.4102L12 10.8302L16.59 15.4102L18 14.0002L12 8.00016L6 14.0002Z" fill="rgba(255, 255, 255, .550)"/></svg>');
@@ -12696,11 +12696,11 @@
   --alert-caution-tint-color: rgb(239, 185, 0, 0.10000000149011612);
   --alert-running-tint-color: rgb(25, 129, 0, 0.11999999731779099);
   --integration-container-container: rgb(0, 0, 0);
-  --pui-beta-normal-background-color: rgb(255, 255, 255);
+  --pui-beta-opaque-cap-regular-background-color: rgb(255, 255, 255);
   --pui-beta-effect-button-highlight-color: rgb(255, 255, 255);
   --pui-beta-effect-button-edge-color: rgb(255, 255, 255);
-  --pui-beta-normal-content-color: rgb(255, 255, 255);
-  --pui-beta-emergency-background-color: rgb(255, 255, 255);
+  --pui-beta-opaque-backlight-active-color: rgb(255, 255, 255);
+  --pui-beta-opaque-cap-emergency-background-color: rgb(255, 255, 255);
   --pui-beta-emergency-content-color: rgb(255, 255, 255);
   --pui-beta-element-neutral-color: rgb(255, 255, 255);
   --pui-beta-element-active-color: rgb(255, 255, 255);
@@ -12741,6 +12741,31 @@
   --base-automation-enhanced-500: rgb(43, 56, 73);
   --base-automation-enhanced-600: rgb(35, 46, 60);
   --base-automation-enhanced-050-tint: rgb(62, 146, 254, 0.12999999523162842);
+  --pui-beta-translucent-backlight-regular-color: rgb(255, 255, 255);
+  --pui-beta-translucent-content-regular-color: rgb(255, 255, 255);
+  --pui-beta-translucent-backlight-alarm-color: rgb(255, 255, 255);
+  --pui-beta-opaque-backlight-alarm-color: rgb(255, 255, 255);
+  --pui-beta-translucent-content-color-enhanced: rgb(255, 255, 255);
+  --pui-beta-opaque-backlight-enhanced-color: rgb(255, 255, 255);
+  --pui-beta-opaque-backlight-running-color: rgb(255, 255, 255);
+  --pui-beta-opaque-backlight-warning-color: rgb(255, 255, 255);
+  --pui-beta-opaque-backlight-caution-color: rgb(255, 255, 255);
+  --pui-beta-opaque-backlight-neutral-color: rgb(255, 255, 255);
+  --pui-beta-translucent-backlight-warning-color: rgb(255, 255, 255);
+  --pui-beta-translucent-backlight-caution-color: rgb(255, 255, 255);
+  --pui-beta-translucent-backlight-enhanced-color: rgb(255, 255, 255);
+  --pui-beta-translucent-backlight-running-color: rgb(255, 255, 255);
+  --pui-beta-translucent-backlight-active-color: rgb(255, 255, 255);
+  --pui-beta-translucent-cap-regular-background-color: rgb(255, 255, 255);
+  --pui-beta-translucent-cap-regular-border-color: rgb(255, 255, 255);
+  --pui-beta-alert-running-color: rgb(255, 255, 255);
+  --pui-beta-alert-running-outline-color: rgb(255, 255, 255);
+  --pui-beta-alert-caution-color: rgb(255, 255, 255);
+  --pui-beta-alert-warning-color: rgb(255, 255, 255);
+  --pui-beta-alert-enhanced-color: rgb(255, 255, 255);
+  --pui-beta-element-enhanced-active-color: rgb(255, 255, 255);
+  --pui-beta-element-enhanced-neutral-color: rgb(255, 255, 255);
+  --pui-beta-border-indicator-edge-color: rgb(255, 255, 255);
 }
 :root[data-obc-theme="night"] {
   --icon-02-chevron-up: url('data:image/svg+xml,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 14.0002L7.41 15.4102L12 10.8302L16.59 15.4102L18 14.0002L12 8.00016L6 14.0002Z" fill="rgb(51, 51, 0)"/></svg>');
@@ -13571,11 +13596,11 @@
   --alert-caution-tint-color: rgb(37, 29, 0);
   --alert-running-tint-color: rgb(0, 24, 0);
   --integration-container-container: rgb(0, 0, 0);
-  --pui-beta-normal-background-color: rgb(255, 255, 255);
+  --pui-beta-opaque-cap-regular-background-color: rgb(255, 255, 255);
   --pui-beta-effect-button-highlight-color: rgb(255, 255, 255);
   --pui-beta-effect-button-edge-color: rgb(255, 255, 255);
-  --pui-beta-normal-content-color: rgb(255, 255, 255);
-  --pui-beta-emergency-background-color: rgb(255, 255, 255);
+  --pui-beta-opaque-backlight-active-color: rgb(255, 255, 255);
+  --pui-beta-opaque-cap-emergency-background-color: rgb(255, 255, 255);
   --pui-beta-emergency-content-color: rgb(255, 255, 255);
   --pui-beta-element-neutral-color: rgb(255, 255, 255);
   --pui-beta-element-active-color: rgb(255, 255, 255);
@@ -13616,6 +13641,31 @@
   --base-automation-enhanced-500: rgb(23, 30, 42);
   --base-automation-enhanced-600: rgb(14, 19, 28);
   --base-automation-enhanced-050-tint: rgb(14, 19, 28);
+  --pui-beta-translucent-backlight-regular-color: rgb(255, 255, 255);
+  --pui-beta-translucent-content-regular-color: rgb(255, 255, 255);
+  --pui-beta-translucent-backlight-alarm-color: rgb(255, 255, 255);
+  --pui-beta-opaque-backlight-alarm-color: rgb(255, 255, 255);
+  --pui-beta-translucent-content-color-enhanced: rgb(255, 255, 255);
+  --pui-beta-opaque-backlight-enhanced-color: rgb(255, 255, 255);
+  --pui-beta-opaque-backlight-running-color: rgb(255, 255, 255);
+  --pui-beta-opaque-backlight-warning-color: rgb(255, 255, 255);
+  --pui-beta-opaque-backlight-caution-color: rgb(255, 255, 255);
+  --pui-beta-opaque-backlight-neutral-color: rgb(255, 255, 255);
+  --pui-beta-translucent-backlight-warning-color: rgb(255, 255, 255);
+  --pui-beta-translucent-backlight-caution-color: rgb(255, 255, 255);
+  --pui-beta-translucent-backlight-enhanced-color: rgb(255, 255, 255);
+  --pui-beta-translucent-backlight-running-color: rgb(255, 255, 255);
+  --pui-beta-translucent-backlight-active-color: rgb(255, 255, 255);
+  --pui-beta-translucent-cap-regular-background-color: rgb(255, 255, 255);
+  --pui-beta-translucent-cap-regular-border-color: rgb(255, 255, 255);
+  --pui-beta-alert-running-color: rgb(255, 255, 255);
+  --pui-beta-alert-running-outline-color: rgb(255, 255, 255);
+  --pui-beta-alert-caution-color: rgb(255, 255, 255);
+  --pui-beta-alert-warning-color: rgb(255, 255, 255);
+  --pui-beta-alert-enhanced-color: rgb(255, 255, 255);
+  --pui-beta-element-enhanced-active-color: rgb(255, 255, 255);
+  --pui-beta-element-enhanced-neutral-color: rgb(255, 255, 255);
+  --pui-beta-border-indicator-edge-color: rgb(255, 255, 255);
 }
 :root[data-obc-theme="bright"] {
   --icon-02-chevron-up: url('data:image/svg+xml,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 14.0002L7.41 15.4102L12 10.8302L16.59 15.4102L18 14.0002L12 8.00016L6 14.0002Z" fill="rgba(0, 0, 0, .650)"/></svg>');
@@ -14461,11 +14511,11 @@
   --alert-caution-tint-color: rgb(253, 242, 165);
   --alert-running-tint-color: rgb(6, 131, 6);
   --integration-container-container: rgb(0, 0, 0);
-  --pui-beta-normal-background-color: rgb(255, 255, 255);
+  --pui-beta-opaque-cap-regular-background-color: rgb(255, 255, 255);
   --pui-beta-effect-button-highlight-color: rgb(255, 255, 255);
   --pui-beta-effect-button-edge-color: rgb(255, 255, 255);
-  --pui-beta-normal-content-color: rgb(255, 255, 255);
-  --pui-beta-emergency-background-color: rgb(255, 255, 255);
+  --pui-beta-opaque-backlight-active-color: rgb(255, 255, 255);
+  --pui-beta-opaque-cap-emergency-background-color: rgb(255, 255, 255);
   --pui-beta-emergency-content-color: rgb(255, 255, 255);
   --pui-beta-element-neutral-color: rgb(255, 255, 255);
   --pui-beta-element-active-color: rgb(255, 255, 255);
@@ -14506,6 +14556,31 @@
   --base-automation-enhanced-500: rgb(45, 84, 139);
   --base-automation-enhanced-600: rgb(29, 60, 103);
   --base-automation-enhanced-050-tint: rgb(228, 238, 253);
+  --pui-beta-translucent-backlight-regular-color: rgb(255, 255, 255);
+  --pui-beta-translucent-content-regular-color: rgb(255, 255, 255);
+  --pui-beta-translucent-backlight-alarm-color: rgb(255, 255, 255);
+  --pui-beta-opaque-backlight-alarm-color: rgb(255, 255, 255);
+  --pui-beta-translucent-content-color-enhanced: rgb(255, 255, 255);
+  --pui-beta-opaque-backlight-enhanced-color: rgb(255, 255, 255);
+  --pui-beta-opaque-backlight-running-color: rgb(255, 255, 255);
+  --pui-beta-opaque-backlight-warning-color: rgb(255, 255, 255);
+  --pui-beta-opaque-backlight-caution-color: rgb(255, 255, 255);
+  --pui-beta-opaque-backlight-neutral-color: rgb(255, 255, 255);
+  --pui-beta-translucent-backlight-warning-color: rgb(255, 255, 255);
+  --pui-beta-translucent-backlight-caution-color: rgb(255, 255, 255);
+  --pui-beta-translucent-backlight-enhanced-color: rgb(255, 255, 255);
+  --pui-beta-translucent-backlight-running-color: rgb(255, 255, 255);
+  --pui-beta-translucent-backlight-active-color: rgb(255, 255, 255);
+  --pui-beta-translucent-cap-regular-background-color: rgb(255, 255, 255);
+  --pui-beta-translucent-cap-regular-border-color: rgb(255, 255, 255);
+  --pui-beta-alert-running-color: rgb(255, 255, 255);
+  --pui-beta-alert-running-outline-color: rgb(255, 255, 255);
+  --pui-beta-alert-caution-color: rgb(255, 255, 255);
+  --pui-beta-alert-warning-color: rgb(255, 255, 255);
+  --pui-beta-alert-enhanced-color: rgb(255, 255, 255);
+  --pui-beta-element-enhanced-active-color: rgb(255, 255, 255);
+  --pui-beta-element-enhanced-neutral-color: rgb(255, 255, 255);
+  --pui-beta-border-indicator-edge-color: rgb(255, 255, 255);
 }
 
 @property --alarm-blink-on {
