@@ -173,13 +173,26 @@ export class ObcPitch extends LitElement {
               `}
           ${this.zoomToFitArc
             ? nothing
-            : svg`
-                <path
-                  d="M ${x} ${y} A ${watchRadius} ${watchRadius} 0 1 1 ${x} ${-y}"
-                  fill="none"
-                  stroke="var(--instrument-frame-tertiary-color)"
-                />
-              `}
+            : this.type === ObcPitchType.dualScale
+              ? svg`
+                  <path
+                    d="M ${x} ${-y} A ${watchRadius} ${watchRadius} 0 0 0 ${-x} ${-y}"
+                    fill="none"
+                    stroke="var(--instrument-frame-tertiary-color)"
+                  />
+                  <path
+                    d="M ${x} ${y} A ${watchRadius} ${watchRadius} 0 0 1 ${-x} ${y}"
+                    fill="none"
+                    stroke="var(--instrument-frame-tertiary-color)"
+                  />
+                `
+              : svg`
+                  <path
+                    d="M ${x} ${y} A ${watchRadius} ${watchRadius} 0 1 1 ${x} ${-y}"
+                    fill="none"
+                    stroke="var(--instrument-frame-tertiary-color)"
+                  />
+                `}
         </svg>
         ${this.renderScale(areas, false)}
         ${this.type === ObcPitchType.dualScale
