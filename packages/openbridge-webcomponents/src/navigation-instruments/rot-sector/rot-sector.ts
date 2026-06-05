@@ -1,10 +1,12 @@
-import {LitElement, html} from 'lit';
+import {LitElement, html, css, nothing} from 'lit';
 import {customElement} from '../../decorator.js';
 import {property} from 'lit/decorators.js';
 import {AdviceType} from '../watch/advice.js';
 import {Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/instrument-radial/instrument-radial.js';
+import '../readout/readout.js';
+import {ReadoutDirection, ReadoutVariant} from '../readout/readout.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 
 export enum ObcGaugeRadialType {
@@ -140,6 +142,11 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
   @property({type: Boolean}) zoomToFitArc: boolean = false;
   @property({type: Number}) rotArcExtent: number = 60;
+  /**
+   * When `true`, shows a centered `<obc-readout>` (label `ROT`, unit `DEG/min`)
+   * under the arc with the current rate-of-turn value. Default `false`.
+   */
+  @property({type: Boolean}) hasReadout: boolean = false;
 
   getAngle = (v: number): number => {
     if (!this.maxValue) return 0;
@@ -198,6 +205,21 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
         .zoomToFitArc=${this.zoomToFitArc}
       >
       </obc-instrument-radial>
+      ${this.hasReadout
+        ? html`<div class="readout">
+            <obc-readout
+              .variant=${ReadoutVariant.enhanced}
+              .direction=${ReadoutDirection.vertical}
+              .hasSetpoint=${false}
+              .hasAdvice=${false}
+              .value=${this.value}
+              .fractionDigits=${0}
+              .valuePriority=${this.priority}
+              label="ROT"
+              unit="DEG/min"
+            ></obc-readout>
+          </div>`
+        : nothing}
     `;
   }
 
@@ -218,6 +240,24 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
 
     return 'var(--instrument-enhanced-secondary-color)';
   }
+
+  static override styles = css`
+    :host {
+      position: relative;
+    }
+
+    .readout {
+      position: absolute;
+      left: 50%;
+      top: 60%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* Center the value over the label/unit row instead of right-aligning it. */
+    obc-readout::part(value-wrapper) {
+      justify-self: center;
+    }
+  `;
 }
 
 declare global {
