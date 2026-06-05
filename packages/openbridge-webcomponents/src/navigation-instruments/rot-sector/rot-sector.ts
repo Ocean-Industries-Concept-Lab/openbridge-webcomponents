@@ -174,6 +174,23 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
     return 'var(--instrument-enhanced-tertiary-color)';
   }
 
+  /**
+   * Vertical position of the readout, in % of the host. In the zoomed view the
+   * arc's lower edge shifts with `rotArcExtent`, so the position is interpolated
+   * between the narrow- and wide-arc anchors to keep a roughly constant gap
+   * between the arc and the readout. The static (unzoomed) arc uses a fixed
+   * position.
+   */
+  private get _readoutTopPercent(): number {
+    if (!this.zoomToFitArc) {
+      return 60;
+    }
+    const narrowTop = 70; // rotArcExtent ~10
+    const wideTop = 66; // rotArcExtent ~60
+    const extent = Math.min(60, Math.max(10, this.rotArcExtent));
+    return narrowTop + ((wideTop - narrowTop) * (extent - 10)) / (60 - 10);
+  }
+
   override render() {
     const barColor = this._barColor;
 
@@ -206,7 +223,7 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
       >
       </obc-instrument-radial>
       ${this.hasReadout
-        ? html`<div class="readout">
+        ? html`<div class="readout" style="top: ${this._readoutTopPercent}%">
             <obc-readout
               .variant=${ReadoutVariant.enhanced}
               .direction=${ReadoutDirection.vertical}
@@ -244,12 +261,13 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
   static override styles = css`
     :host {
       position: relative;
+      display: block;
+      height: 100%;
     }
 
     .readout {
       position: absolute;
       left: 50%;
-      top: 60%;
       transform: translate(-50%, -50%);
     }
 
