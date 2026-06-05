@@ -3,17 +3,14 @@
 }
 
 :host {
-  display: inline-flex;
-  min-width: 160px;
-  width: max-content;
-  max-width: none;
+  display: block;
+  width: 100%;
 }
 
 .root {
   display: inline-flex;
   align-items: flex-end;
   border-radius: var(--global-border-radius-border-radius-base);
-  max-width: none;
   width: 100%;
 
   .content {

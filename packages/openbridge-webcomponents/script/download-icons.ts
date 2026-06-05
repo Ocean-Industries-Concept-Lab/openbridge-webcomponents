@@ -140,6 +140,9 @@ export async function main() {
     fs.mkdirSync(iconDir);
   }
 
+  // ensure SVG cache dir exists (download step writes here)
+  fs.mkdirSync('./script/.cache/icons', {recursive: true});
+
   const api_token = process.env.FIGMA_TOKEN;
   if (!api_token) {
     throw new Error('FIGMA_TOKEN is not set, please set it in the .env file');

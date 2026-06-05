@@ -95,7 +95,37 @@ export enum TankChartMode {
 }
 
 /**
+ * A single detail row rendered in the tank's `readout` rich list (below the
+ * main percent / value block, separated by a divider). Each row is rendered
+ * as `<label>` on the left and `<value><degree?><percent?><unit>` on the
+ * right, all on a single line.
+ */
+export interface TankReadoutItem {
+  /** Left-aligned label text (e.g. `Temperature`). */
+  label: string;
+  /** Numeric value, formatted with the tank's `percentFractionDigits`. */
+  value: number;
+  /** Append a `°` glyph directly after the value with no gap. */
+  hasDegree?: boolean;
+  /** Append a `%` glyph directly after the value with no gap. */
+  hasPercentage?: boolean;
+  /** Unit text (e.g. `C`, `Pa`, `m/s`). Rendered after the value/glyph. */
+  unit: string;
+}
+
+/**
  *
+ *
+ * @slot badges - Custom badges to be displayed in the badge area.
+ * @slot tag - Text or element for the tank's tag/label.
+ * @slot readout - Replaces the entire readout content block.
+ * @slot max-value - Content for the capacity value.
+ * @slot unit - Content for the unit of measurement.
+ * @slot current-value - Content for the current level value.
+ * @slot rich - Content for additional detail rows.
+ * @slot alert-icon - Custom icon for the alert frame.
+ * @slot alert-label - Label for the alert frame.
+ * @slot alert-timer - Timer for the alert frame.
  *
  * @ignition-base-height: 173px
  * @ignition-base-width: 168px
@@ -220,6 +250,21 @@ export class ObcAutomationTank extends LitElement {
    * precision is needed (see the `WithFractionDigits` story).
    */
   @property({type: Number}) percentFractionDigits: number = 0;
+
+  /**
+   * Rich detail rows shown below the main percent/value block in the regular
+   * (non-compact, non-static) layout, separated by a divider. When empty (the
+   * default), nothing is rendered — neither the divider nor the list. In
+   * vertical orientation the chart cell shrinks to make room; in horizontal
+   * orientation the readout column already has reserved whitespace so the
+   * chart is unaffected.
+   *
+   * Values are formatted using `percentFractionDigits`. Consumers that need
+   * full control over the markup can replace the entire fallback by slotting
+   * arbitrary content into `slot="rich"` (note: this is a different name from
+   * the existing `slot="readout"` which replaces the whole readout block).
+   */
+  @property({type: Array, attribute: false}) readout: TankReadoutItem[] = [];
 
   /**
    * Enum-driven badges rendered inside the `badges` cell. Mirrors the API
@@ -703,6 +748,36 @@ export class ObcAutomationTank extends LitElement {
                     <slot class="unit" name="unit">m<sup>3</sup></slot>
                   </div>
                 </div>
+                <slot name="rich">
+                  ${this.readout.length > 0
+                    ? html`
+                        <div class="rich-divider"></div>
+                        <div class="rich">
+                          ${this.readout.map(
+                            (row) => html`
+                              <div class="rich-row">
+                                <span class="rich-label">${row.label}</span>
+                                <span class="rich-value"
+                                  >${row.value.toFixed(
+                                    this.percentFractionDigits
+                                  )}</span
+                                >
+                                <span class="rich-suffix"
+                                  >${row.hasDegree
+                                    ? html`<span class="rich-glyph">°</span>`
+                                    : nothing}${row.hasPercentage
+                                    ? html`<span class="rich-glyph">%</span>`
+                                    : nothing}<span class="rich-unit"
+                                    >${row.unit}</span
+                                  ></span
+                                >
+                              </div>
+                            `
+                          )}
+                        </div>
+                      `
+                    : nothing}
+                </slot>
               </slot>
             </div>
           `;
