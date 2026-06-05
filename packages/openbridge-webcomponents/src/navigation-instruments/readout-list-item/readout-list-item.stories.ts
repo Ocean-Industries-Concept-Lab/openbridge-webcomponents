@@ -31,6 +31,7 @@ type ReadoutListItemStoryArgs = {
   value: number;
   fractionDigits: number;
   showZeroPadding: boolean;
+  labelOnly: boolean;
 };
 
 type ReadoutShowcaseCase = {
@@ -174,6 +175,7 @@ function renderReadoutListItem(args: Partial<ReadoutListItemStoryArgs>) {
       .value=${resolved.value}
       .fractionDigits=${resolved.fractionDigits}
       .showZeroPadding=${resolved.showZeroPadding}
+      .labelOnly=${resolved.labelOnly}
     >
       ${resolved.hasLeadingIcon
         ? html`<span

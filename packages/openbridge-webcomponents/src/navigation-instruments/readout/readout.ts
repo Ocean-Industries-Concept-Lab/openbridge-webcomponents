@@ -779,6 +779,8 @@ export class ObcReadout extends LitElement {
       >
         <slot name="setpoint">
           <obc-readout-setpoint
+            .reserveSpaceForIcon=${this.alignment !==
+            ReadoutStackVerticalAlignment.center}
             data-obc-value-typography=${this.variant ===
               ReadoutVariant.regular &&
             this.isVertical &&
