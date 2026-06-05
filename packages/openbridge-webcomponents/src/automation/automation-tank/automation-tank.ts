@@ -116,6 +116,17 @@ export interface TankReadoutItem {
 /**
  *
  *
+ * @slot badges - Custom badges to be displayed in the badge area.
+ * @slot tag - Text or element for the tank's tag/label.
+ * @slot readout - Replaces the entire readout content block.
+ * @slot max-value - Content for the capacity value.
+ * @slot unit - Content for the unit of measurement.
+ * @slot current-value - Content for the current level value.
+ * @slot rich - Content for additional detail rows.
+ * @slot alert-icon - Custom icon for the alert frame.
+ * @slot alert-label - Label for the alert frame.
+ * @slot alert-timer - Timer for the alert frame.
+ *
  * @ignition-base-height: 173px
  * @ignition-base-width: 168px
  * @ignition-center-horizontal
