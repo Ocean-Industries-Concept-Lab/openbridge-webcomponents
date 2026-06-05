@@ -44,7 +44,7 @@ const meta: Meta<typeof ObcWindPropulsion> = {
     },
     touching: {control: 'boolean'},
     currentWindSpeedKnots: {
-      control: {type: 'range', min: 0, max: 75, step: 1},
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
     currentWindFromDirection: {
       control: {type: 'range', min: 0, max: 360, step: 1},

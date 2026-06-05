@@ -40,6 +40,11 @@ const meta: Meta<ObcReadout> = {
     direction: ReadoutDirection.vertical,
   },
   argTypes: {
+    value: {
+      control: {
+        type: 'number',
+      },
+    },
     variant: {
       control: {
         type: 'select',
@@ -224,5 +229,26 @@ export const Off: Story = {
     off: true,
     hasSetpoint: false,
   },
+  render: (args) => renderComponent(args as ObcReadout),
+};
+
+export const Center: Story = {
+  args: {
+    value: 100,
+    hasDegree: false,
+    hasSetpoint: true,
+    setpointValue: 12,
+    setpointSecondaryValue: 14,
+    adviceValue: 16,
+    adviceSecondaryValue: 18,
+    label: 'SOG',
+    unit: 'kn',
+    minValueLength: 0,
+    variant: 'regular',
+    valuePriority: 'regular',
+    direction: 'vertical',
+    alignment: 'center',
+  },
+
   render: (args) => renderComponent(args as ObcReadout),
 };

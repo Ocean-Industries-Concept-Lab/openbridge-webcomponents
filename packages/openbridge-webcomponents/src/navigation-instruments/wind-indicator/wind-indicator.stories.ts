@@ -19,7 +19,7 @@ type WindIndicatorArgs = {
   'current-wind-from-direction'?: number;
   'rotation-angle'?: number;
   'current-wind-speed-knots'?: number;
-  iconIndex?: number;
+  iconLevel?: number;
   accentColor?: string;
   windIconCache?: unknown;
   windFromAngle?: number;
@@ -79,8 +79,8 @@ const meta: Meta<WindIndicatorArgs> = {
     },
     currentWindSpeedKnots: {
       description:
-        'Wind speed in knots. Mapped to barb icons in 5-kn steps (standard meteorological wind-barb convention).',
-      control: {type: 'range', min: 0, max: 75, step: 1},
+        'Wind speed in knots. Snapped to the nearest icon bucket (0, 1, 5, 10, 15, ..., 95, 100) following the meteorological wind-barb convention.',
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
 
     angle: {table: {disable: true}, control: false},
@@ -89,7 +89,7 @@ const meta: Meta<WindIndicatorArgs> = {
     'current-wind-from-direction': {table: {disable: true}, control: false},
     'rotation-angle': {table: {disable: true}, control: false},
     'current-wind-speed-knots': {table: {disable: true}, control: false},
-    iconIndex: {table: {disable: true}, control: false},
+    iconLevel: {table: {disable: true}, control: false},
     accentColor: {table: {disable: true}, control: false},
     windIconCache: {table: {disable: true}, control: false},
   },

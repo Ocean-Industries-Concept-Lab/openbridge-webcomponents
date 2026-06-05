@@ -205,6 +205,13 @@ npm run new:component
 npm run download:icons
 ```
 
+> **Refreshing icons from Figma is a multi-step pipeline** (Figma token,
+> `figmavariables.json` map, hex-fallback handling, dependent component
+> updates, snapshot refresh, PWA bundle-size check). Follow the step-by-step
+> playbook in [IMPLEMENTATION_GUIDELINES.md § Icons](IMPLEMENTATION_GUIDELINES.md#-icons)
+> — it walks through the wind component as the worked example for a
+> family-rename change.
+
 Snapshot baselines: `__vis__/linux/__baselines__/` (CI) and `__vis__/darwin/__baselines__/` (macOS).
 
 ### Pre-commit Hooks
