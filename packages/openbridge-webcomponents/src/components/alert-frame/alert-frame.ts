@@ -5,6 +5,8 @@ import {classMap} from 'lit/directives/class-map.js';
 import '../../icons/icon-alarm-badge.js';
 import '../../icons/icon-warning-badge.js';
 import '../../icons/icon-caution-badge.js';
+import './critical-badge.js';
+import './diagnostic-badge.js';
 import {customElement} from '../../decorator.js';
 
 /**
@@ -43,6 +45,11 @@ export enum ObcAlertFrameStatus {
   Alarm = 'alarm',
   Warning = 'warning',
   Caution = 'caution',
+  IsaCritical = 'isa-critical',
+  IsaHigh = 'isa-high',
+  IsaMedium = 'isa-medium',
+  IsaLow = 'isa-low',
+  IsaDiagnostic = 'isa-diagnostic',
 }
 
 /**
@@ -216,10 +223,22 @@ export class ObcAlertFrame extends LitElement {
     ></obi-alarm-badge>`;
     if (!this.showAlertCategoryIcon) {
       icon = nothing;
-    } else if (this.status === ObcAlertFrameStatus.Warning) {
+    } else if (
+      this.status === ObcAlertFrameStatus.Warning ||
+      this.status === ObcAlertFrameStatus.IsaMedium
+    ) {
       icon = html`<obi-warning-badge class="icon badge"></obi-warning-badge>`;
-    } else if (this.status === ObcAlertFrameStatus.Caution) {
+    } else if (
+      this.status === ObcAlertFrameStatus.Caution ||
+      this.status === ObcAlertFrameStatus.IsaLow
+    ) {
       icon = html`<obi-caution-badge class="icon badge"></obi-caution-badge>`;
+    } else if (this.status === ObcAlertFrameStatus.IsaCritical) {
+      icon = html`<obi-critical-badge class="icon badge"></obi-critical-badge>`;
+    } else if (this.status === ObcAlertFrameStatus.IsaDiagnostic) {
+      icon = html`<obi-diagnostic-badge
+        class="icon badge"
+      ></obi-diagnostic-badge>`;
     }
 
     if (this.type === ObcAlertFrameType.SmallSideFlip) {

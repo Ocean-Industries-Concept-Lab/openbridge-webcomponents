@@ -22,14 +22,26 @@
     --thickness: 2px;
   }
 
-  &.warning {
+  &.warning,
+  &.isa-medium {
     --bg-color: var(--alert-warning-color);
     color: var(--on-warning-active-color);
   }
 
-  &.caution {
+  &.caution,
+  &.isa-low {
     --bg-color: var(--alert-caution-color);
     color: var(--on-caution-active-color);
+  }
+
+  &.isa-critical {
+    --bg-color: var(--critical-enabled-background-color);
+    color: var(--on-critical-active-color);
+  }
+
+  &.isa-diagnostic {
+    --bg-color: var(--notification-enabled-background-color);
+    color: var(--on-notification-active-color);
   }
 
   &.sharp-edge-top-left {

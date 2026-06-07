@@ -201,3 +201,33 @@ export const AlarmThickTopFlipNoIcons: Story = {
   },
   render: AlarmThickTopFlip.render,
 };
+
+export const IsaCritical: Story = {
+  args: {
+    status: ObcAlertFrameStatus.IsaCritical,
+  },
+};
+
+export const IsaHigh: Story = {
+  args: {
+    status: ObcAlertFrameStatus.IsaHigh,
+  },
+};
+
+export const IsaMedium: Story = {
+  args: {
+    status: ObcAlertFrameStatus.IsaMedium,
+  },
+};
+
+export const IsaLow: Story = {
+  args: {
+    status: ObcAlertFrameStatus.IsaLow,
+  },
+};
+
+export const IsaDiagnostic: Story = {
+  args: {
+    status: ObcAlertFrameStatus.IsaDiagnostic,
+  },
+};
