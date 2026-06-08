@@ -106,13 +106,16 @@ const meta: Meta<ObcIntegrationVesselMenu> = {
   title: 'Integration Systems/Integration Vessel Menu',
   component: 'obc-integration-vessel-menu',
   tags: ['alpha'],
-  args: {numberOfButtons: 3},
+  args: {numberOfButtons: 3, hideAlarmList: false},
   argTypes: {
     numberOfButtons: {
       control: 'number',
       min: 0,
       max: 3,
       step: 1,
+    },
+    hideAlarmList: {
+      control: 'boolean',
     },
   },
   parameters: {
@@ -130,6 +133,7 @@ type Story = StoryObj<ObcIntegrationVesselMenu>;
 
 interface IntegrationVesselMenuArgs {
   numberOfButtons: number;
+  hideAlarmList: boolean;
 }
 
 type IntegrationVesselMenuTemplate = (
@@ -139,6 +143,7 @@ type IntegrationVesselMenuTemplate = (
 const template: IntegrationVesselMenuTemplate = (args) => html`
   <obc-integration-vessel-menu
     .numberOfButtons=${args.numberOfButtons}
+    .hideAlarmList=${args.hideAlarmList}
     @button-1-click=${() => console.log('Button 1 clicked')}
     @button-2-click=${() => console.log('Button 2 clicked')}
     @button-3-click=${() => console.log('Button 3 clicked')}
@@ -161,10 +166,14 @@ const template: IntegrationVesselMenuTemplate = (args) => html`
 const templateWithoutAlarms: IntegrationVesselMenuTemplate = (args) => html`
   <obc-integration-vessel-menu
     .numberOfButtons=${args.numberOfButtons}
+    .hideAlarmList=${args.hideAlarmList}
     @button-1-click=${() => console.log('Button 1 clicked')}
     @button-2-click=${() => console.log('Button 2 clicked')}
     @button-3-click=${() => console.log('Button 3 clicked')}
   >
+    <div slot="button-1-label">Action 1</div>
+    <div slot="button-2-label">Action 2</div>
+    <div slot="button-3-label">Action 3</div>
     <div slot="content" style="padding: 24px;">
       <p>Add content here</p>
     </div>
@@ -177,4 +186,9 @@ export const Default: Story = {
 
 export const WithoutAlarms: Story = {
   render: templateWithoutAlarms,
+};
+
+export const WithoutAlarmsHideEmptyAlarmList: Story = {
+  render: templateWithoutAlarms,
+  args: {hideAlarmList: true},
 };

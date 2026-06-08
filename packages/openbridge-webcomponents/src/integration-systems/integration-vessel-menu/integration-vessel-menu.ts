@@ -24,6 +24,7 @@ import '../../building-blocks/alert-list/alert-list.js';
  * @slot alarms - Alarm items rendered inside the alert list.
  *
  * @property {number} numberOfButtons - Number of buttons to render (up to 3).
+ * @property {boolean} hideAlarmList - Hide the alarm list, ensure it doesn't take space (display=none).
  *
  * @fires button1-click - Fired when the first button is clicked.
  * @fires button2-click - Fired when the second button is clicked.
@@ -33,6 +34,7 @@ import '../../building-blocks/alert-list/alert-list.js';
 @customElement('obc-integration-vessel-menu')
 export class ObcIntegrationVesselMenu extends LitElement {
   @property({type: Number}) numberOfButtons = 3;
+  @property({type: Boolean}) hideAlarmList = false;
 
   private renderButtons() {
     return html`${Array.from({length: this.numberOfButtons}, (_, i) => {
@@ -64,9 +66,14 @@ export class ObcIntegrationVesselMenu extends LitElement {
         <div class="content-area">
           <slot name="content"></slot>
         </div>
-        <div class="content-container">
-          <obc-alert-list class="alert-list"
-            ><slot name="alarms"> </slot>
+        <div
+          class=${classMap({
+            'content-container': true,
+            hidealarmlist: this.hideAlarmList,
+          })}
+        >
+          <obc-alert-list class="alertlist"
+            ><slot name="alarms"></slot>
           </obc-alert-list>
         </div>
       </div>

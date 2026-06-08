@@ -6,8 +6,6 @@
   @mixin style style=integration-normal noClick=true;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  min-width: 788px;
   align-items: center;
   background: var(--container-global-color);
   border-radius: var(
@@ -22,14 +20,26 @@
 .footer-container {
   width: 100%;
   display: flex;
+  align-items: center;
+  align-self: stretch;
   height: var(
     --app-components-integration-system-dropdown-menu-action-container-height
   );
-  padding: 0
-    var(--app-components-integration-system-dropdown-menu-padding-horizontal);
-  gap: var(--app-components-alert-menu-button-spacing);
+  padding: var(--app-components-integration-system-menu-padding-vertical)
+    var(--app-components-integration-system-menu-padding-horizontal);
+  gap: var(--app-components-integration-system-menu-action-spacing);
   border-top: 1px solid var(--border-divider-color);
   background: var(--container-global-color);
+  border-radius: 12px;
+}
+
+.content-area {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  align-self: stretch;
+  border-radius: 8px;
 }
 
 .footer-container obc-button {
@@ -40,13 +50,17 @@
 .content-container {
   display: flex;
   justify-content: center;
-  align-items: stretch;
+  align-items: flex-start;
   align-self: stretch;
   min-height: 0;
   flex: 1;
+  border-radius: 8px;
+  &.hidealarmlist {
+    display: none;
+  }
 }
 
-.alert-list {
+.alertlist {
   width: 100%;
 }
 
