@@ -34,18 +34,18 @@
     grid-template-areas: "meta";
   }
 
-  &:is(.alert-low-integrity, .alert-invalid) {
+  &:is(.data-low-integrity, .data-invalid) {
     border-width: 1px;
     border-style: solid;
     border-radius: var(--global-border-radius-border-radius-base);
   }
 
-  &.alert-low-integrity {
+  &.data-low-integrity {
     background: var(--alert-low-integrity-background-color);
     border-color: var(--alert-low-integrity-border-color);
   }
 
-  &.alert-invalid {
+  &.data-invalid {
     background: var(--alert-invalid-background-color);
     border-color: var(--alert-invalid-border-color);
   }

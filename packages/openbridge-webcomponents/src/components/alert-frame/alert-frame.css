@@ -236,11 +236,8 @@
     top: calc(-1 * var(--thickness));
     bottom: calc(-1 * var(--thickness));
     right: calc(
-      <<<<<<< HEAD -1 * var(--app-components-alert-frame-icon-size) +
-        var(--thickness) / 2 - var(--ui-components-badge-padding) * 2
-        ======= -1 * var(--app-components-alert-frame-icon-size) -
-        var(--thickness) / 2 - var(--app-components-badge-padding) * 2 >>>>>>>
-        feat/alert-frame-blink
+      -1 * var(--app-components-alert-frame-icon-size) + var(--thickness) / 2 -
+        var(--ui-components-badge-padding) * 2
     );
     border-radius: 0px
       var(--app-components-alert-frame-large-flip-border-radius)

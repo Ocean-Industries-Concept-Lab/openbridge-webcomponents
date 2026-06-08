@@ -69,6 +69,7 @@ export interface AlertFrameConfig {
   type?: ObcAlertFrameType;
   thickness?: ObcAlertFrameThickness;
   status?: AlertType;
+  mode?: ObcAlertFrameMode;
   textSize?: AlertFrameTextSize;
   showIcon?: boolean;
   showAlertCategoryIcon?: boolean;
@@ -251,9 +252,7 @@ export class ObcAlertFrame extends LitElement {
       return nothing;
     }
 
-    let icon: TemplateResult | typeof nothing = html`<obi-alarm-badge
-      class="icon badge"
-    ></obi-alarm-badge>`;
+    let icon: TemplateResult | typeof nothing;
     if (!this.showAlertCategoryIcon) {
       icon = nothing;
     } else {
@@ -323,27 +322,19 @@ export class ObcAlertFrame extends LitElement {
 }
 
 export function wrapWithAlertFrame(
-  options: {
-    showFrame: boolean;
-    type: ObcAlertFrameType;
-    thickness: ObcAlertFrameThickness;
-    status: ObcAlertFrameStatus;
-    mode: ObcAlertFrameMode;
-    showIcon: boolean;
-    showAlertCategoryIcon: boolean;
-  },
+  options: AlertFrameConfig | false | undefined,
   content: HTMLTemplateResult
 ): HTMLTemplateResult {
-  if (!options.showFrame) {
+  if (options === false || options === undefined) {
     return content;
   }
   return html`<obc-alert-frame
-    .type=${options.type}
-    .thickness=${options.thickness}
-    .status=${options.status}
-    .mode=${options.mode}
-    .showIcon=${options.showIcon}
-    .showAlertCategoryIcon=${options.showAlertCategoryIcon}
+    .type=${options.type ?? ObcAlertFrameType.SmallSideFlip}
+    .thickness=${options.thickness ?? ObcAlertFrameThickness.Small}
+    .status=${options.status ?? AlertType.Alarm}
+    .mode=${options.mode ?? ObcAlertFrameMode.ackedActive}
+    .showIcon=${options.showIcon ?? false}
+    .showAlertCategoryIcon=${options.showAlertCategoryIcon ?? true}
     .wrapContent=${true}
     >${content}</obc-alert-frame
   >`;

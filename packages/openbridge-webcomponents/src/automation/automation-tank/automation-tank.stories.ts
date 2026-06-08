@@ -533,7 +533,7 @@ export const WithAlertIsaDiagnostic: Story = {
     type: TankType.atmospheric,
     alert: true,
     alertFrameStatus: ObcAlertFrameStatus.IsaDiagnostic,
-    alertFrameType: ObcAlertFrameType.BottomFlip,
+    alertFrameType: ObcAlertFrameType.Regular,
     badgeAlert: AutomationButtonBadgeAlert.IsaDiagnostic,
   },
 };
