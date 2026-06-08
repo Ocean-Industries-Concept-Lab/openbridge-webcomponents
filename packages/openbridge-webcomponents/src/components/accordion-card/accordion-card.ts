@@ -304,7 +304,7 @@ export class ObcAccordionCard extends LitElement {
         ${this.hasAlert
           ? html`
               <obc-alert-frame
-                class="alert"
+                class="alert alert-${this.alertFrameStatus}"
                 .sharpEdgeTopLeft=${this.isShartEdgeTop()}
                 .sharpEdgeTopRight=${this.isShartEdgeTop()}
                 .sharpEdgeBottomLeft=${this.isShartEdgeBottom()}

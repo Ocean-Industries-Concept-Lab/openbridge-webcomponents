@@ -1,4 +1,11 @@
-import {LitElement, html, unsafeCSS, nothing, TemplateResult} from 'lit';
+import {
+  LitElement,
+  html,
+  unsafeCSS,
+  nothing,
+  TemplateResult,
+  HTMLTemplateResult,
+} from 'lit';
 import {property} from 'lit/decorators.js';
 import compentStyle from './alert-frame.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
@@ -40,6 +47,12 @@ export enum ObcAlertFrameType {
 export enum ObcAlertFrameThickness {
   Small = 'small',
   Large = 'large',
+}
+
+export enum ObcAlertFrameMode {
+  ackedActive = 'acked-active',
+  unackedActive = 'unacked-active',
+  unackedRectified = 'unacked-rectified',
 }
 
 /**
@@ -163,6 +176,11 @@ export class ObcAlertFrame extends LitElement {
    */
   @property({type: String}) status: AlertType = AlertType.Alarm;
 
+  @property({type: String}) mode: ObcAlertFrameMode =
+    ObcAlertFrameMode.ackedActive;
+
+  @property({type: Boolean, reflect: true}) wrapContent: boolean = false;
+
   /**
    * If true, the top-left corner will be sharp (not rounded).
    */
@@ -195,6 +213,7 @@ export class ObcAlertFrame extends LitElement {
       <div
         class=${classMap({
           wrapper: true,
+          'wrap-content': this.wrapContent,
           ['thickness-' + this.thickness]: true,
           [this.type]: true,
           [this.status]: true,
@@ -203,6 +222,7 @@ export class ObcAlertFrame extends LitElement {
           'sharp-edge-top-right': this.sharpEdgeTopRight,
           'sharp-edge-bottom-left': this.sharpEdgeBottomLeft,
           'sharp-edge-bottom-right': this.sharpEdgeBottomRight,
+          [this.mode]: true,
         })}
       >
         <slot></slot>
@@ -216,7 +236,24 @@ export class ObcAlertFrame extends LitElement {
       return nothing;
     }
 
-    let icon: TemplateResult | typeof nothing;
+    if (
+      this.type === ObcAlertFrameType.SmallSideFlip &&
+      !this.showAlertCategoryIcon
+    ) {
+      return nothing;
+    }
+
+    if (
+      this.type === ObcAlertFrameType.LargeSideFlip &&
+      !this.showIcon &&
+      !this.showAlertCategoryIcon
+    ) {
+      return nothing;
+    }
+
+    let icon: TemplateResult | typeof nothing = html`<obi-alarm-badge
+      class="icon badge"
+    ></obi-alarm-badge>`;
     if (!this.showAlertCategoryIcon) {
       icon = nothing;
     } else {
@@ -283,6 +320,33 @@ export class ObcAlertFrame extends LitElement {
   }
 
   static override styles = unsafeCSS(compentStyle);
+}
+
+export function wrapWithAlertFrame(
+  options: {
+    showFrame: boolean;
+    type: ObcAlertFrameType;
+    thickness: ObcAlertFrameThickness;
+    status: ObcAlertFrameStatus;
+    mode: ObcAlertFrameMode;
+    showIcon: boolean;
+    showAlertCategoryIcon: boolean;
+  },
+  content: HTMLTemplateResult
+): HTMLTemplateResult {
+  if (!options.showFrame) {
+    return content;
+  }
+  return html`<obc-alert-frame
+    .type=${options.type}
+    .thickness=${options.thickness}
+    .status=${options.status}
+    .mode=${options.mode}
+    .showIcon=${options.showIcon}
+    .showAlertCategoryIcon=${options.showAlertCategoryIcon}
+    .wrapContent=${true}
+    >${content}</obc-alert-frame
+  >`;
 }
 
 declare global {

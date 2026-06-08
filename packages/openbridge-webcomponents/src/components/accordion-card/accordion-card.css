@@ -205,4 +205,16 @@
 
 .alert {
   pointer-events: none;
+
+  &.alert-alarm {
+    z-index: 3;
+  }
+
+  &.alert-warning {
+    z-index: 2;
+  }
+
+  &.alert-caution {
+    z-index: 1;
+  }
 }

@@ -5,6 +5,7 @@ import {
   ObcAlertFrameType,
   ObcAlertFrameStatus,
   AlertFrameTextSize,
+  ObcAlertFrameMode,
 } from './alert-frame.js';
 import './alert-frame.js';
 import '../../icons/icon-placeholder.js';
@@ -25,6 +26,12 @@ const meta: Meta<typeof ObcAlertFrame> = {
   argTypes: {
     type: {
       options: Object.values(ObcAlertFrameType),
+      control: {
+        type: 'select',
+      },
+    },
+    mode: {
+      options: Object.values(ObcAlertFrameMode),
       control: {
         type: 'select',
       },
@@ -52,17 +59,19 @@ const meta: Meta<typeof ObcAlertFrame> = {
   },
   render(args) {
     return html` <div style="width: fit-content; position: relative;">
-      <div
-        style="width: ${args.demoWidth}px; height: 150px; background-color: #999"
-      ></div>
       <obc-alert-frame
         .type=${args.type}
         .thickness=${args.thickness}
+        .mode=${args.mode}
         .status=${args.status}
         .textSize=${args.textSize}
         .showIcon=${args.showIcon}
         .showAlertCategoryIcon=${args.showAlertCategoryIcon}
+        .wrapContent=${true}
       >
+        <div
+          style="width: ${args.demoWidth}px; height: 150px; background-color: #999"
+        ></div>
         <obi-placeholder slot="icon"></obi-placeholder>
         <div slot="label">Label</div>
         <div slot="timer">00:00</div>
@@ -84,6 +93,14 @@ export const AlarmThick: Story = {
 export const AlarmThinn: Story = {
   args: {
     thickness: ObcAlertFrameThickness.Small,
+    type: ObcAlertFrameType.Regular,
+  },
+};
+
+export const UnackedActiveThick: Story = {
+  args: {
+    mode: ObcAlertFrameMode.unackedActive,
+    thickness: ObcAlertFrameThickness.Large,
     type: ObcAlertFrameType.Regular,
   },
 };
@@ -229,5 +246,17 @@ export const IsaLow: Story = {
 export const IsaDiagnostic: Story = {
   args: {
     status: ObcAlertFrameStatus.IsaDiagnostic,
+  },
+};
+
+export const RectifiedUnactive: Story = {
+  args: {
+    type: ObcAlertFrameType.Regular,
+    thickness: ObcAlertFrameThickness.Large,
+    status: ObcAlertFrameStatus.Alarm,
+    demoWidth: 200,
+    showIcon: true,
+    showAlertCategoryIcon: true,
+    mode: ObcAlertFrameMode.unackedRectified,
   },
 };
