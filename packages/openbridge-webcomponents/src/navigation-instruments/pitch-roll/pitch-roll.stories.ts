@@ -61,6 +61,19 @@ export const Primary: Story = {
   args: {},
 };
 
+export const WithReadout: Story = {
+  args: {
+    hasReadout: true,
+  },
+};
+
+export const ZoomedInWithReadout: Story = {
+  args: {
+    zoomToFitArc: true,
+    hasReadout: true,
+  },
+};
+
 export const Rov: Story = {
   args: {
     vesselImageSide: VesselImage.rovSideFaded,

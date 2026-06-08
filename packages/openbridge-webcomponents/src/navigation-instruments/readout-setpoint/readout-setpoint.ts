@@ -114,6 +114,7 @@ export class ObcReadoutSetpoint extends LitElement {
   @property({type: Boolean}) hasDegree = false;
   @property({type: Boolean}) showZeroPadding = false;
   @property({type: Number}) fractionDigits = 0;
+  @property({type: Boolean, attribute: false}) reserveSpaceForIcon = false;
 
   @state() private hasAssignedValueIcon = false;
 
@@ -392,6 +393,9 @@ export class ObcReadoutSetpoint extends LitElement {
   }
 
   private renderRegularValueInlineIcon(size: ReadoutSetpointSize) {
+    if (!this.reserveSpaceForIcon) {
+      return nothing;
+    }
     const hideStyle = this.hasAssignedValueIcon
       ? ''
       : this.direction === 'vertical'

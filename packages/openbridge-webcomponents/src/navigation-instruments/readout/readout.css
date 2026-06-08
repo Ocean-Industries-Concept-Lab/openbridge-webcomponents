@@ -394,8 +394,12 @@
   margin-left: 0;
 }
 
-.readout.stack.vertical.alignment-center {
+.readout.vertical.alignment-center {
   justify-items: center;
+
+  > * {
+    justify-self: center !important;
+  }
 }
 
 .readout.stack.vertical.alignment-center

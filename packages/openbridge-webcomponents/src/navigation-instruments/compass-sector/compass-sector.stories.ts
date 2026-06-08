@@ -133,6 +133,13 @@ export const WithSetpoint: Story = {
   },
 };
 
+export const WithReadout: Story = {
+  args: {
+    headingSetpoint: 311,
+    hasReadout: true,
+  },
+};
+
 export const TickmarksInside: Story = {
   args: {
     headingSetpoint: 311,
