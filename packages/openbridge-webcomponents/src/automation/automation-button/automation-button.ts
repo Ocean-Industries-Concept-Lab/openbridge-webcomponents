@@ -193,15 +193,16 @@ export class ObcAutomationButton extends LitElement {
       return html`<div class="point-wrapper">${content}</div>`;
     }
     const innerContent = wrapWithAlertFrame(
-      {
-        showFrame: this.alert,
-        type: this.alertFrameType,
-        thickness: this.alertFrameThickness,
-        status: this.alertFrameStatus,
-        mode: this.alertFrameMode,
-        showIcon: this.showAlertIcon,
-        showAlertCategoryIcon: this.showAlertCategoryIcon,
-      },
+      this.alert
+        ? {
+            type: this.alertFrameType,
+            thickness: this.alertFrameThickness,
+            status: this.alertFrameStatus,
+            mode: this.alertFrameMode,
+            showIcon: this.showAlertIcon,
+            showAlertCategoryIcon: this.showAlertCategoryIcon,
+          }
+        : false,
       content
     );
     if (this.positioning === AutomationButtonPositioning.symbol) {

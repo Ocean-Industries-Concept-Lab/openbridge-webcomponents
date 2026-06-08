@@ -347,7 +347,8 @@
   border-color: var(--alert-alarm-outline-color);
 }
 
-.wrapper.value-overlapped.alert-isa-critical .poi-object::part(background-frame) {
+.wrapper.value-overlapped.alert-isa-critical
+  .poi-object::part(background-frame) {
   background-color: var(--critical-enabled-background-color);
   border-color: var(--critical-enabled-border-color);
 }

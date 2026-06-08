@@ -76,20 +76,20 @@ Night bruker `Night-config/Styles/OnCriticalAlarm/*` (samme mønster som On-alar
 
 Speiler `Color/Alert/Alarm-container-*` og `Color/Alert/Caution-container-*`, men med Critical-alarm/Notification-primitiver.
 
-| Token | Day | Dusk BETA | Night BETA | Bright BETA |
-| --- | --- | --- | --- | --- |
-| alert-critical-container-background | Critical-alarm/100 | Critical-alarm/050 | Critical/100 | Critical-alarm/150 |
-| alert-critical-container-border | Critical-alarm/200 | Critical-alarm/100 | Critical/100 | Critical-alarm/150 |
-| alert-notification-container-background | Notification/050 | Notification/050 | Enhanced/100 | Notification/050 |
-| alert-notification-container-border | Notification/100 | Notification/100 | Enhanced/100 | Notification/050 |
+| Token                                   | Day                | Dusk BETA          | Night BETA   | Bright BETA        |
+| --------------------------------------- | ------------------ | ------------------ | ------------ | ------------------ |
+| alert-critical-container-background     | Critical-alarm/100 | Critical-alarm/050 | Critical/100 | Critical-alarm/150 |
+| alert-critical-container-border         | Critical-alarm/200 | Critical-alarm/100 | Critical/100 | Critical-alarm/150 |
+| alert-notification-container-background | Notification/050   | Notification/050   | Enhanced/100 | Notification/050   |
+| alert-notification-container-border     | Notification/100   | Notification/100   | Enhanced/100 | Notification/050   |
 
 Night har ingen `Primitives-night/Notification/*` — notification-container bruker `Primitives-night/Enhanced/100`.
 
-| Token |
-| --- |
-| `--alert-critical-container-background-color` |
-| `--alert-critical-container-border-color` |
+| Token                                             |
+| ------------------------------------------------- |
+| `--alert-critical-container-background-color`     |
+| `--alert-critical-container-border-color`         |
 | `--alert-notification-container-background-color` |
-| `--alert-notification-container-border-color` |
+| `--alert-notification-container-border-color`     |
 
 Bruk med `@mixin style style=critical` (PostCSS) eller `@mixin alert-critical` (alert-mixin).

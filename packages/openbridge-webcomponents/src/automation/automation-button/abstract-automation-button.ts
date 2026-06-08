@@ -159,9 +159,7 @@ export class ObcAbstractAutomationButton extends LitElement {
       return ObcAutomationBadgeType.Warning;
     } else if (this.badgeAlert === AutomationButtonBadgeAlert.Alarm) {
       return ObcAutomationBadgeType.Alarm;
-    } else if (
-      this.badgeAlert === AutomationButtonBadgeAlert.IsaCritical
-    ) {
+    } else if (this.badgeAlert === AutomationButtonBadgeAlert.IsaCritical) {
       return ObcAutomationBadgeType.IsaCritical;
     } else if (this.badgeAlert === AutomationButtonBadgeAlert.IsaHigh) {
       return ObcAutomationBadgeType.IsaHigh;
@@ -169,9 +167,7 @@ export class ObcAbstractAutomationButton extends LitElement {
       return ObcAutomationBadgeType.IsaMedium;
     } else if (this.badgeAlert === AutomationButtonBadgeAlert.IsaLow) {
       return ObcAutomationBadgeType.IsaLow;
-    } else if (
-      this.badgeAlert === AutomationButtonBadgeAlert.IsaDiagnostic
-    ) {
+    } else if (this.badgeAlert === AutomationButtonBadgeAlert.IsaDiagnostic) {
       return ObcAutomationBadgeType.IsaDiagnostic;
     }
     return null;

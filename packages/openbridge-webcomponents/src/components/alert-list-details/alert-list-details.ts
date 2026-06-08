@@ -263,9 +263,7 @@ export class ObcAlertListDetails extends LitElement {
         if (alert.noAck) {
           const icon = usesAlarmNoAckIcon(alert.type)
             ? html`<obi-alarm-noack-iec usecsscolor></obi-alarm-noack-iec>`
-            : html`<obi-warning-noack-iec
-                usecsscolor
-              ></obi-warning-noack-iec>`;
+            : html`<obi-warning-noack-iec usecsscolor></obi-warning-noack-iec>`;
           action = {
             type: ObcTableCellType.Regular,
             largeIcon: true,
