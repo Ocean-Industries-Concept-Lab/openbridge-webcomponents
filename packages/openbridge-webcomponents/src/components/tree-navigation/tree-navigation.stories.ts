@@ -97,9 +97,13 @@ export const Default: Story = {};
  * `<tree-navigation-selection-demo>` – Wraps the tree to track which leaf is
  * selected. Selection is purely consumer state: it sets `checked` on the chosen
  * item; the container still owns all guide-line logic.
+ *
+ * Not exported: Storybook treats every module export as a story, so the demo
+ * element is kept file-local and registered only via the `@customElement` side
+ * effect.
  */
 @customElement('tree-navigation-selection-demo')
-export class TreeNavigationSelectionDemo extends LitElement {
+class TreeNavigationSelectionDemo extends LitElement {
   @state() private selectedLabel = 'Main engine';
 
   override createRenderRoot() {
