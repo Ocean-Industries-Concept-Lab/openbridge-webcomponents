@@ -13,6 +13,14 @@
   --on-critical-active-color: rgb(255, 255, 255);
   --on-critical-neutral-color: rgb(254, 232, 250);
   --on-critical-disabled-color: rgb(248, 155, 235);
+  --alert-critical-color: var(--critical-enabled-background-color);
+  --alert-critical-outline-color: var(--critical-enabled-border-color);
+  --alert-critical-container-background-color: rgb(254, 207, 246);
+  --alert-critical-container-border-color: rgb(248, 155, 235);
+  --alert-diagnostic-color: var(--notification-enabled-background-color);
+  --alert-diagnostic-outline-color: var(--notification-enabled-border-color);
+  --alert-notification-container-background-color: rgb(226, 240, 255);
+  --alert-notification-container-border-color: rgb(195, 223, 255);
 }
 
 :root[data-obc-theme="dusk"] {
@@ -30,6 +38,14 @@
   --on-critical-active-color: rgb(255, 255, 255);
   --on-critical-neutral-color: rgb(255, 255, 255);
   --on-critical-disabled-color: rgb(38, 38, 38);
+  --alert-critical-color: var(--critical-enabled-background-color);
+  --alert-critical-outline-color: var(--critical-enabled-border-color);
+  --alert-critical-container-background-color: rgb(85, 0, 86);
+  --alert-critical-container-border-color: rgb(102, 0, 104);
+  --alert-diagnostic-color: var(--notification-enabled-background-color);
+  --alert-diagnostic-outline-color: var(--notification-enabled-border-color);
+  --alert-notification-container-background-color: rgb(0, 35, 123);
+  --alert-notification-container-border-color: rgb(0, 44, 144);
 }
 
 :root[data-obc-theme="night"] {
@@ -47,6 +63,14 @@
   --on-critical-active-color: rgb(0, 0, 0);
   --on-critical-neutral-color: rgb(0, 0, 0, 0.699999988079071);
   --on-critical-disabled-color: rgb(0, 0, 0, 0.30000001192092896);
+  --alert-critical-color: var(--critical-enabled-background-color);
+  --alert-critical-outline-color: var(--critical-enabled-border-color);
+  --alert-critical-container-background-color: rgb(59, 0, 60);
+  --alert-critical-container-border-color: rgb(59, 0, 60);
+  --alert-diagnostic-color: var(--notification-enabled-background-color);
+  --alert-diagnostic-outline-color: var(--notification-enabled-border-color);
+  --alert-notification-container-background-color: rgb(16, 33, 26);
+  --alert-notification-container-border-color: rgb(16, 33, 26);
 }
 
 :root[data-obc-theme="bright"] {
@@ -64,4 +88,78 @@
   --on-critical-active-color: rgb(255, 255, 255);
   --on-critical-neutral-color: rgb(255, 255, 255);
   --on-critical-disabled-color: rgb(248, 155, 235);
+  --alert-critical-color: var(--critical-enabled-background-color);
+  --alert-critical-outline-color: var(--critical-enabled-border-color);
+  --alert-critical-container-background-color: rgb(252, 184, 242);
+  --alert-critical-container-border-color: rgb(252, 184, 242);
+  --alert-diagnostic-color: var(--notification-enabled-background-color);
+  --alert-diagnostic-outline-color: var(--notification-enabled-border-color);
+  --alert-notification-container-background-color: rgb(226, 240, 255);
+  --alert-notification-container-border-color: rgb(226, 240, 255);
+}
+
+@property --critical-blink-on {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --critical-blink-off {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --low-blink-on {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --low-blink-off {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@keyframes critical-blink {
+  0% {
+    --critical-blink-on: 1;
+    --critical-blink-off: 0;
+  }
+
+  50% {
+    --critical-blink-on: 0;
+    --critical-blink-off: 1;
+  }
+
+  100% {
+    --critical-blink-on: 1;
+    --critical-blink-off: 0;
+  }
+}
+
+@keyframes low-blink {
+  0% {
+    --low-blink-on: 1;
+    --low-blink-off: 0;
+  }
+
+  50% {
+    --low-blink-on: 0;
+    --low-blink-off: 1;
+  }
+
+  100% {
+    --low-blink-on: 1;
+    --low-blink-off: 0;
+  }
+}
+
+:root {
+  animation:
+    warning-blink 4s infinite,
+    critical-blink 1s infinite,
+    low-blink 8s infinite;
+  animation-timing-function: steps(1);
 }

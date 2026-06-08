@@ -22,6 +22,12 @@
     --thickness: 2px;
   }
 
+  &.alarm,
+  &.isa-high {
+    --bg-color: var(--alert-alarm-color);
+    color: var(--on-alarm-active-color);
+  }
+
   &.warning,
   &.isa-medium {
     --bg-color: var(--alert-warning-color);

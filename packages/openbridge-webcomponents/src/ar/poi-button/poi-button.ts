@@ -34,6 +34,11 @@ export enum ObcPoiButtonState {
   Caution = 'caution',
   Warning = 'warning',
   Alarm = 'alarm',
+  IsaCritical = 'isa-critical',
+  IsaHigh = 'isa-high',
+  IsaMedium = 'isa-medium',
+  IsaLow = 'isa-low',
+  IsaDiagnostic = 'isa-diagnostic',
 }
 
 export enum PoiButtonVisualState {
@@ -207,6 +212,16 @@ export class ObcPoiButton extends LitElement {
         return ObcPoiHeaderState.Warning;
       case ObcPoiButtonState.Alarm:
         return ObcPoiHeaderState.Alarm;
+      case ObcPoiButtonState.IsaCritical:
+        return ObcPoiHeaderState.IsaCritical;
+      case ObcPoiButtonState.IsaHigh:
+        return ObcPoiHeaderState.IsaHigh;
+      case ObcPoiButtonState.IsaMedium:
+        return ObcPoiHeaderState.IsaMedium;
+      case ObcPoiButtonState.IsaLow:
+        return ObcPoiHeaderState.IsaLow;
+      case ObcPoiButtonState.IsaDiagnostic:
+        return ObcPoiHeaderState.IsaDiagnostic;
       case ObcPoiButtonState.Enabled:
       default:
         return ObcPoiHeaderState.Selected;

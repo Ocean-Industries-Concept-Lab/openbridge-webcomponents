@@ -8,6 +8,10 @@ import '../../icons/icon-caution-badge.js';
 import './critical-badge.js';
 import './diagnostic-badge.js';
 import {customElement} from '../../decorator.js';
+import {AlertType} from '../../types.js';
+import {getAlertBadgeComponent, AlertBadgeComponent} from '../../alert-severity.js';
+
+export {AlertType as ObcAlertFrameStatus} from '../../types.js';
 
 /**
  * Enum representing the available frame styles for an alert component.
@@ -33,23 +37,6 @@ export enum ObcAlertFrameType {
 export enum ObcAlertFrameThickness {
   Small = 'small',
   Large = 'large',
-}
-
-/**
- * Status options for the alert frame, controlling color and icon.
- * - `alarm`: Highest severity (default).
- * - `warning`: Medium severity.
- * - `caution`: Lower severity.
- */
-export enum ObcAlertFrameStatus {
-  Alarm = 'alarm',
-  Warning = 'warning',
-  Caution = 'caution',
-  IsaCritical = 'isa-critical',
-  IsaHigh = 'isa-high',
-  IsaMedium = 'isa-medium',
-  IsaLow = 'isa-low',
-  IsaDiagnostic = 'isa-diagnostic',
 }
 
 /**
@@ -162,8 +149,7 @@ export class ObcAlertFrame extends LitElement {
    * - `warning`: Medium severity.
    * - `caution`: Lower severity.
    */
-  @property({type: String}) status: ObcAlertFrameStatus =
-    ObcAlertFrameStatus.Alarm;
+  @property({type: String}) status: AlertType = AlertType.Alarm;
 
   /**
    * If true, the top-left corner will be sharp (not rounded).
@@ -218,27 +204,11 @@ export class ObcAlertFrame extends LitElement {
       return nothing;
     }
 
-    let icon: TemplateResult | typeof nothing = html`<obi-alarm-badge
-      class="icon badge"
-    ></obi-alarm-badge>`;
+    let icon: TemplateResult | typeof nothing;
     if (!this.showAlertCategoryIcon) {
       icon = nothing;
-    } else if (
-      this.status === ObcAlertFrameStatus.Warning ||
-      this.status === ObcAlertFrameStatus.IsaMedium
-    ) {
-      icon = html`<obi-warning-badge class="icon badge"></obi-warning-badge>`;
-    } else if (
-      this.status === ObcAlertFrameStatus.Caution ||
-      this.status === ObcAlertFrameStatus.IsaLow
-    ) {
-      icon = html`<obi-caution-badge class="icon badge"></obi-caution-badge>`;
-    } else if (this.status === ObcAlertFrameStatus.IsaCritical) {
-      icon = html`<obi-critical-badge class="icon badge"></obi-critical-badge>`;
-    } else if (this.status === ObcAlertFrameStatus.IsaDiagnostic) {
-      icon = html`<obi-diagnostic-badge
-        class="icon badge"
-      ></obi-diagnostic-badge>`;
+    } else {
+      icon = this.renderBadgeIcon();
     }
 
     if (this.type === ObcAlertFrameType.SmallSideFlip) {
@@ -279,6 +249,23 @@ export class ObcAlertFrame extends LitElement {
     }
     console.error('Unknown type of alert frame:', this.type);
     return nothing;
+  }
+
+  private renderBadgeIcon(): TemplateResult {
+    switch (getAlertBadgeComponent(this.status)) {
+      case AlertBadgeComponent.Critical:
+        return html`<obi-critical-badge class="icon badge"></obi-critical-badge>`;
+      case AlertBadgeComponent.Warning:
+        return html`<obi-warning-badge class="icon badge"></obi-warning-badge>`;
+      case AlertBadgeComponent.Caution:
+        return html`<obi-caution-badge class="icon badge"></obi-caution-badge>`;
+      case AlertBadgeComponent.Diagnostic:
+        return html`<obi-diagnostic-badge
+          class="icon badge"
+        ></obi-diagnostic-badge>`;
+      default:
+        return html`<obi-alarm-badge class="icon badge"></obi-alarm-badge>`;
+    }
   }
 
   static override styles = unsafeCSS(compentStyle);

@@ -207,3 +207,46 @@ export const EnhancedCaution: Story = {
     nAlerts: 3,
   },
 };
+
+export const EnhancedIsaCritical: Story = {
+  args: {
+    alertType: AlertType.IsaCritical,
+    type: ObcAlertButtonType.Enhanced,
+    nAlerts: 3,
+    blinking: true,
+  },
+};
+
+export const NormalIsaHigh: Story = {
+  args: {
+    alertType: AlertType.IsaHigh,
+    type: ObcAlertButtonType.Normal,
+    nAlerts: 2,
+    blinking: true,
+  },
+};
+
+export const NormalIsaMedium: Story = {
+  args: {
+    alertType: AlertType.IsaMedium,
+    type: ObcAlertButtonType.Normal,
+    nAlerts: 1,
+    blinking: true,
+  },
+};
+
+export const FlatIsaLow: Story = {
+  args: {
+    alertType: AlertType.IsaLow,
+    type: ObcAlertButtonType.Flat,
+    nAlerts: 1,
+  },
+};
+
+export const NormalIsaDiagnostic: Story = {
+  args: {
+    alertType: AlertType.IsaDiagnostic,
+    type: ObcAlertButtonType.Normal,
+    nAlerts: 1,
+  },
+};

@@ -13,9 +13,18 @@ import {warningUnackA, warningUnackB} from './icons/icon-warning-unack.js';
 import '../../icons/icon-caution-color-iec.js';
 import {customElement} from '../../decorator.js';
 import {AlertType} from '../../types.js';
+import {
+  getAlertBadgeComponent,
+  AlertBadgeComponent,
+  getAlertBlinkMode,
+  getLegacyAlertTypeForBlinking,
+  supportsBlinking,
+} from '../../alert-severity.js';
 import '../../icons/icon-alarm-badge-outline.js';
 import '../../icons/icon-warning-badge-outline.js';
 import '../../icons/icon-caution-badge-outline.js';
+import '../alert-frame/critical-badge.js';
+import '../alert-frame/diagnostic-badge.js';
 
 enum AlertIconName {
   AlarmSilenced = 'alarm-silenced',
@@ -92,8 +101,12 @@ export class ObcAlertIcon extends LitElement {
   @property({type: Boolean}) active!: boolean;
   @property({type: Boolean}) outline!: boolean;
 
+  private get legacyType(): AlertType {
+    return getLegacyAlertTypeForBlinking(this.type);
+  }
+
   get icon() {
-    if (this.type === AlertType.Alarm) {
+    if (this.legacyType === AlertType.Alarm) {
       if (this.active === false) {
         return mapping[AlertIconName.AlarmRectified];
       } else if (this.acknowledged) {
@@ -101,7 +114,7 @@ export class ObcAlertIcon extends LitElement {
       } else {
         return mapping[AlertIconName.AlarmUnack];
       }
-    } else {
+    } else if (this.legacyType === AlertType.Warning) {
       if (this.active === false) {
         return mapping[AlertIconName.WarningRectified];
       } else if (this.acknowledged) {
@@ -110,45 +123,68 @@ export class ObcAlertIcon extends LitElement {
         return mapping[AlertIconName.WarningUnack];
       }
     }
+    return null;
+  }
+
+  private renderOutlineIcon(): TemplateResult {
+    switch (getAlertBadgeComponent(this.type)) {
+      case AlertBadgeComponent.Critical:
+        return html`<obi-critical-badge></obi-critical-badge>`;
+      case AlertBadgeComponent.Warning:
+        return html`<obi-warning-badge-outline></obi-warning-badge-outline>`;
+      case AlertBadgeComponent.Caution:
+        return html`<obi-caution-badge-outline></obi-caution-badge-outline>`;
+      case AlertBadgeComponent.Diagnostic:
+        return html`<obi-diagnostic-badge></obi-diagnostic-badge>`;
+      default:
+        return html`<obi-alarm-badge-outline></obi-alarm-badge-outline>`;
+    }
+  }
+
+  private renderStaticIcon(): TemplateResult {
+    if (
+      this.type === AlertType.Caution ||
+      this.type === AlertType.IsaLow
+    ) {
+      return html`<obi-caution-color-iec usecsscolor></obi-caution-color-iec>`;
+    }
+    if (this.type === AlertType.IsaDiagnostic) {
+      return html`<obi-diagnostic-badge></obi-diagnostic-badge>`;
+    }
+    if (this.type === AlertType.IsaCritical) {
+      return html`<obi-critical-badge></obi-critical-badge>`;
+    }
+    return html`<div>No alarm</div>`;
   }
 
   override render() {
     if (!this.type) {
       return html`<div>No alarm</div>`;
     }
-    let icon: TemplateResult | undefined;
     if (this.outline) {
-      switch (this.type) {
-        case AlertType.Alarm:
-          icon = html`<obi-alarm-badge-outline></obi-alarm-badge-outline>`;
-          break;
-        case AlertType.Warning:
-          icon = html`<obi-warning-badge-outline></obi-warning-badge-outline>`;
-          break;
-        case AlertType.Caution:
-          icon = html`<obi-caution-badge-outline></obi-caution-badge-outline>`;
-          break;
-      }
-    } else if (this.type === AlertType.Caution) {
-      icon = html`<obi-caution-color-iec usecsscolor></obi-caution-color-iec>`;
-    } else if ([AlertType.Alarm, AlertType.Warning].includes(this.type)) {
+      return html`<div class="wrapper">${this.renderOutlineIcon()}</div>`;
+    }
+    if (supportsBlinking(this.type)) {
       const icons = this.icon;
-      const isWarning = this.type === AlertType.Warning;
+      if (!icons) {
+        return html`<div>No alarm</div>`;
+      }
+      const isWarning = this.legacyType === AlertType.Warning;
+      const blinkMode = getAlertBlinkMode(this.type);
       return html`
         <div
           class=${classMap({
             wrapper: true,
             warning: isWarning,
+            [`blink-${blinkMode}`]: true,
           })}
         >
           <span class="a">${icons.a}</span>
           <span class="b">${icons.b}</span>
         </div>
       `;
-    } else {
-      return html`<div>No alarm</div>`;
     }
-    return html`<div class="wrapper">${icon}</div>`;
+    return html`<div class="wrapper">${this.renderStaticIcon()}</div>`;
   }
 
   static override styles = css`
@@ -156,32 +192,49 @@ export class ObcAlertIcon extends LitElement {
       height: 100%;
       width: 100%;
       position: relative;
-    }
-    .wrapper svg {
-      height: 100%;
-      width: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
 
-    :not(.warning) {
-      .a {
-        opacity: var(--alarm-blink-on);
+      svg {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
       }
 
-      .b {
-        opacity: var(--alarm-blink-off);
-      }
-    }
+      &:not(.warning) {
+        &.blink-alarm .a {
+          opacity: var(--alarm-blink-on);
+        }
 
-    .warning {
-      .a {
-        opacity: var(--warning-blink-on);
+        &.blink-alarm .b {
+          opacity: var(--alarm-blink-off);
+        }
+
+        &.blink-critical .a {
+          opacity: var(--critical-blink-on);
+        }
+
+        &.blink-critical .b {
+          opacity: var(--critical-blink-off);
+        }
       }
 
-      .b {
-        opacity: var(--warning-blink-off);
+      &.warning {
+        &.blink-warning .a {
+          opacity: var(--warning-blink-on);
+        }
+
+        &.blink-warning .b {
+          opacity: var(--warning-blink-off);
+        }
+      }
+
+      &.blink-low .a {
+        opacity: var(--low-blink-on);
+      }
+
+      &.blink-low .b {
+        opacity: var(--low-blink-off);
       }
     }
   `;
