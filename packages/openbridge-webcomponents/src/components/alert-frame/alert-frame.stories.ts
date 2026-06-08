@@ -59,9 +59,6 @@ const meta: Meta<typeof ObcAlertFrame> = {
   },
   render(args) {
     return html` <div style="width: fit-content; position: relative;">
-      <div
-        style="width: ${args.demoWidth}px; height: 150px; background-color: #999"
-      ></div>
       <obc-alert-frame
         .type=${args.type}
         .thickness=${args.thickness}
@@ -70,7 +67,11 @@ const meta: Meta<typeof ObcAlertFrame> = {
         .textSize=${args.textSize}
         .showIcon=${args.showIcon}
         .showAlertCategoryIcon=${args.showAlertCategoryIcon}
+        .wrapContent=${true}
       >
+        <div
+          style="width: ${args.demoWidth}px; height: 150px; background-color: #999"
+        ></div>
         <obi-placeholder slot="icon"></obi-placeholder>
         <div slot="label">Label</div>
         <div slot="timer">00:00</div>
@@ -216,4 +217,16 @@ export const AlarmThickTopFlipNoIcons: Story = {
     showAlertCategoryIcon: false,
   },
   render: AlarmThickTopFlip.render,
+};
+
+export const RectifiedUnactive: Story = {
+  args: {
+    type: 'regular',
+    thickness: 'large',
+    status: 'alarm',
+    demoWidth: 200,
+    showIcon: true,
+    showAlertCategoryIcon: true,
+    mode: 'unacked-rectified',
+  },
 };

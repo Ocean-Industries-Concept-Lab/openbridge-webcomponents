@@ -1,9 +1,12 @@
-:host:not([wrapcontent]) {
+:host {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
+}
+
+:host([wrapcontent]) {
+  position: unset;
+  width: fit-content;
+  height: fit-content;
 }
 
 .wrapper {
@@ -34,6 +37,10 @@
 
   &.unacked-active {
     outline-width: calc(var(--thickness) + var(--blink-width-dynamic));
+  }
+
+  &.unacked-rectified {
+    outline-style: dashed;
   }
 
   &.warning {

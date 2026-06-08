@@ -223,7 +223,7 @@ export const Multiple: Story = {
         .size="${AccordionSize.SingleLine}"
         .position="${Position.top}"
         .hasAlert=${true}
-        .alertFrameStatus="${ObcAlertFrameStatus.Warning}"
+        .alertFrameStatus="${ObcAlertFrameStatus.Alarm}"
       >
         <div slot="expanded-content">Placeholder text</div>
       </obc-accordion-card>
@@ -235,6 +235,7 @@ export const Multiple: Story = {
         .hasDescription=${true}
         .position="${Position.center}"
         .hasAlert=${true}
+        .alertFrameStatus="${ObcAlertFrameStatus.Warning}"
       >
         <div slot="expanded-content">Placeholder text</div>
       </obc-accordion-card>
