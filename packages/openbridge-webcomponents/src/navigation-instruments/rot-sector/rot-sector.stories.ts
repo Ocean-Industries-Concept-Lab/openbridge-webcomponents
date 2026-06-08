@@ -49,6 +49,21 @@ export const Regular: Story = {
   },
 };
 
+export const WithReadout: Story = {
+  args: {
+    value: 50,
+    hasReadout: true,
+  },
+};
+
+export const EnhancedWithReadout: Story = {
+  args: {
+    value: 50,
+    priority: Priority.enhanced,
+    hasReadout: true,
+  },
+};
+
 export const Enhanced: Story = {
   args: {
     value: -50,
