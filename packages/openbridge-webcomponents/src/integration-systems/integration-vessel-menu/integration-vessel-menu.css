@@ -42,7 +42,7 @@
   border-radius: 8px;
 }
 
-.footer-container obc-button {
+.footer-container ::slotted(obc-button) {
   flex-grow: 1;
   white-space: nowrap;
 }

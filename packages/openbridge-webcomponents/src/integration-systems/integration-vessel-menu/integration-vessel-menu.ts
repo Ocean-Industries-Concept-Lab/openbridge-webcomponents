@@ -14,46 +14,16 @@ import '../../building-blocks/alert-list/alert-list.js';
  *
  * @slot leading-icon - Icon shown in the header.
  * @slot title - Header title text.
- * @slot button-1-leading-icon - Leading icon for the first button.
- * @slot button-1-label - Label for the first button.
- * @slot button-2-leading-icon - Leading icon for the second button.
- * @slot button-2-label - Label for the second button.
- * @slot button-3-leading-icon - Leading icon for the third button.
- * @slot button-3-label - Label for the third button.
+ * @slot buttons - Buttons shown in the footer.
  * @slot content - Main content shown in the content area.
  * @slot alarms - Alarm items rendered inside the alert list.
  *
- * @property {number} numberOfButtons - Number of buttons to render (up to 3).
  * @property {boolean} hideAlarmList - Hide the alarm list, ensure it doesn't take space (display=none).
- *
- * @fires button1-click - Fired when the first button is clicked.
- * @fires button2-click - Fired when the second button is clicked.
- * @fires button3-click - Fired when the third button is clicked.
  */
 
 @customElement('obc-integration-vessel-menu')
 export class ObcIntegrationVesselMenu extends LitElement {
-  @property({type: Number}) numberOfButtons = 3;
   @property({type: Boolean}) hideAlarmList = false;
-
-  private renderButtons() {
-    return html`${Array.from({length: this.numberOfButtons}, (_, i) => {
-      const buttonNum = i + 1;
-      return html`<obc-button
-        @click=${() =>
-          this.dispatchEvent(new CustomEvent(`button${buttonNum}-click`))}
-        ?showLeadingIcon=${true}
-        ?fullWidth=${true}
-        class="button"
-      >
-        <slot
-          name="button-${buttonNum}-leading-icon"
-          slot="leading-icon"
-        ></slot>
-        <slot name="button-${buttonNum}-label"></slot>
-      </obc-button>`;
-    })}`;
-  }
 
   protected override render() {
     return html`
@@ -62,7 +32,7 @@ export class ObcIntegrationVesselMenu extends LitElement {
           wrapper: true,
         })}
       >
-        <div class="footer-container">${this.renderButtons()}</div>
+        <div class="footer-container"><slot name="buttons"></slot></div>
         <div class="content-area">
           <slot name="content"></slot>
         </div>
