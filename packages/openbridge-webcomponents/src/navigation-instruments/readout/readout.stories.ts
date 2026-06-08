@@ -253,52 +253,22 @@ export const Center: Story = {
   render: (args) => renderComponent(args as ObcReadout),
 };
 
-export const AlertIsaCritical: Story = {
+export const AlertLowIntegrity: Story = {
   args: {
     value: 42,
     label: 'RPM',
     unit: 'rpm',
-    alertState: ReadoutAlertState.isaCritical,
+    alertState: ReadoutAlertState.lowIntegrity,
   },
   render: (args) => renderComponent(args as ObcReadout),
 };
 
-export const AlertIsaHigh: Story = {
+export const AlertInvalid: Story = {
   args: {
     value: 42,
     label: 'RPM',
     unit: 'rpm',
-    alertState: ReadoutAlertState.isaHigh,
-  },
-  render: (args) => renderComponent(args as ObcReadout),
-};
-
-export const AlertIsaMedium: Story = {
-  args: {
-    value: 42,
-    label: 'RPM',
-    unit: 'rpm',
-    alertState: ReadoutAlertState.isaMedium,
-  },
-  render: (args) => renderComponent(args as ObcReadout),
-};
-
-export const AlertIsaLow: Story = {
-  args: {
-    value: 42,
-    label: 'RPM',
-    unit: 'rpm',
-    alertState: ReadoutAlertState.isaLow,
-  },
-  render: (args) => renderComponent(args as ObcReadout),
-};
-
-export const AlertIsaDiagnostic: Story = {
-  args: {
-    value: 42,
-    label: 'RPM',
-    unit: 'rpm',
-    alertState: ReadoutAlertState.isaDiagnostic,
+    alertState: ReadoutAlertState.invalid,
   },
   render: (args) => renderComponent(args as ObcReadout),
 };

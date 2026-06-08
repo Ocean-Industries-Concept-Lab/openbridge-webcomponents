@@ -9,7 +9,10 @@ import './critical-badge.js';
 import './diagnostic-badge.js';
 import {customElement} from '../../decorator.js';
 import {AlertType} from '../../types.js';
-import {getAlertBadgeComponent, AlertBadgeComponent} from '../../alert-severity.js';
+import {
+  getAlertBadgeComponent,
+  AlertBadgeComponent,
+} from '../../alert-severity.js';
 
 export {AlertType as ObcAlertFrameStatus} from '../../types.js';
 
@@ -47,6 +50,15 @@ export enum ObcAlertFrameThickness {
 export enum AlertFrameTextSize {
   Regular = 'regular',
   Large = 'large',
+}
+
+export interface AlertFrameConfig {
+  type?: ObcAlertFrameType;
+  thickness?: ObcAlertFrameThickness;
+  status?: AlertType;
+  textSize?: AlertFrameTextSize;
+  showIcon?: boolean;
+  showAlertCategoryIcon?: boolean;
 }
 
 /**
@@ -254,7 +266,9 @@ export class ObcAlertFrame extends LitElement {
   private renderBadgeIcon(): TemplateResult {
     switch (getAlertBadgeComponent(this.status)) {
       case AlertBadgeComponent.Critical:
-        return html`<obi-critical-badge class="icon badge"></obi-critical-badge>`;
+        return html`<obi-critical-badge
+          class="icon badge"
+        ></obi-critical-badge>`;
       case AlertBadgeComponent.Warning:
         return html`<obi-warning-badge class="icon badge"></obi-warning-badge>`;
       case AlertBadgeComponent.Caution:

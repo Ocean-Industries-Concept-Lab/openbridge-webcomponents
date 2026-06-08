@@ -65,9 +65,7 @@ export class ObcAutomationBadge extends LitElement {
     }
   }
 
-  private isAlertType(
-    ...types: ObcAutomationBadgeType[]
-  ): boolean {
+  private isAlertType(...types: ObcAutomationBadgeType[]): boolean {
     return !!this.type && types.includes(this.type);
   }
 

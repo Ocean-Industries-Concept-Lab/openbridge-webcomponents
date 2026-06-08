@@ -33,6 +33,7 @@ export function supportsBlinking(type: AlertType): boolean {
     AlertType.IsaCritical,
     AlertType.IsaHigh,
     AlertType.IsaMedium,
+    AlertType.IsaLow,
   ].includes(type);
 }
 
@@ -106,7 +107,9 @@ export enum AlertTwotoneComponent {
   Diagnostic = 'obi-alerts-diagnostic-twotone',
 }
 
-export function getAlertTwotoneComponent(type: AlertType): AlertTwotoneComponent {
+export function getAlertTwotoneComponent(
+  type: AlertType
+): AlertTwotoneComponent {
   switch (type) {
     case AlertType.IsaCritical:
       return AlertTwotoneComponent.Critical;
@@ -149,7 +152,7 @@ export function getAlertBlinkMode(type: AlertType): AlertBlinkMode {
   }
 }
 
-export function getLegacyAlertTypeForBlinking(type: AlertType): AlertType {
+export function getBamAlertTypeForBlinking(type: AlertType): AlertType {
   switch (type) {
     case AlertType.IsaCritical:
     case AlertType.IsaHigh:

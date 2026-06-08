@@ -128,7 +128,6 @@ export const IsaLow: Story = {
     type: AlertType.IsaLow,
     acknowledged: false,
     active: true,
-    outline: true,
   },
 };
 
@@ -137,6 +136,5 @@ export const IsaDiagnostic: Story = {
     type: AlertType.IsaDiagnostic,
     acknowledged: false,
     active: true,
-    outline: true,
   },
 };

@@ -1,4 +1,4 @@
-import {LitElement, html, css, TemplateResult} from 'lit';
+import {LitElement, html, css, TemplateResult, nothing} from 'lit';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {alarmRectifiedA} from './icons/icon-alarm-rectified.js';
@@ -17,7 +17,7 @@ import {
   getAlertBadgeComponent,
   AlertBadgeComponent,
   getAlertBlinkMode,
-  getLegacyAlertTypeForBlinking,
+  getBamAlertTypeForBlinking,
   supportsBlinking,
 } from '../../alert-severity.js';
 import '../../icons/icon-alarm-badge-outline.js';
@@ -25,6 +25,7 @@ import '../../icons/icon-warning-badge-outline.js';
 import '../../icons/icon-caution-badge-outline.js';
 import '../alert-frame/critical-badge.js';
 import '../alert-frame/diagnostic-badge.js';
+import {criticalA, criticalB} from './icons/icon-critical.js';
 
 enum AlertIconName {
   AlarmSilenced = 'alarm-silenced',
@@ -33,6 +34,7 @@ enum AlertIconName {
   WarningUnack = 'warning-unack',
   WarningRectified = 'warning-rectified',
   WarningSilenced = 'warning-silenced',
+  Critical = 'critical',
 }
 
 const mapping = {
@@ -59,6 +61,10 @@ const mapping = {
   [AlertIconName.WarningSilenced]: {
     a: warningSilencedA,
     b: warningSilencedB,
+  },
+  [AlertIconName.Critical]: {
+    a: criticalA,
+    b: criticalB,
   },
 };
 /**
@@ -101,12 +107,14 @@ export class ObcAlertIcon extends LitElement {
   @property({type: Boolean}) active!: boolean;
   @property({type: Boolean}) outline!: boolean;
 
-  private get legacyType(): AlertType {
-    return getLegacyAlertTypeForBlinking(this.type);
+  private get bamType(): AlertType {
+    return getBamAlertTypeForBlinking(this.type);
   }
 
   get icon() {
-    if (this.legacyType === AlertType.Alarm) {
+    if (this.type === AlertType.IsaCritical) {
+      return mapping[AlertIconName.Critical];
+    } else if (this.bamType === AlertType.Alarm) {
       if (this.active === false) {
         return mapping[AlertIconName.AlarmRectified];
       } else if (this.acknowledged) {
@@ -114,7 +122,7 @@ export class ObcAlertIcon extends LitElement {
       } else {
         return mapping[AlertIconName.AlarmUnack];
       }
-    } else if (this.legacyType === AlertType.Warning) {
+    } else if (this.bamType === AlertType.Warning) {
       if (this.active === false) {
         return mapping[AlertIconName.WarningRectified];
       } else if (this.acknowledged) {
@@ -123,6 +131,7 @@ export class ObcAlertIcon extends LitElement {
         return mapping[AlertIconName.WarningUnack];
       }
     }
+
     return null;
   }
 
@@ -135,26 +144,24 @@ export class ObcAlertIcon extends LitElement {
       case AlertBadgeComponent.Caution:
         return html`<obi-caution-badge-outline></obi-caution-badge-outline>`;
       case AlertBadgeComponent.Diagnostic:
-        return html`<obi-diagnostic-badge></obi-diagnostic-badge>`;
+        return html`<obi-diagnostic-badge
+          style="color: var(--alert-diagnostic-color);"
+        ></obi-diagnostic-badge>`;
       default:
         return html`<obi-alarm-badge-outline></obi-alarm-badge-outline>`;
     }
   }
 
-  private renderStaticIcon(): TemplateResult {
-    if (
-      this.type === AlertType.Caution ||
-      this.type === AlertType.IsaLow
-    ) {
+  private renderStaticIcon(): TemplateResult | typeof nothing {
+    if (this.type === AlertType.Caution || this.type === AlertType.IsaLow) {
       return html`<obi-caution-color-iec usecsscolor></obi-caution-color-iec>`;
     }
     if (this.type === AlertType.IsaDiagnostic) {
-      return html`<obi-diagnostic-badge></obi-diagnostic-badge>`;
+      return html`<obi-diagnostic-badge
+        style="color: var(--alert-diagnostic-color);"
+      ></obi-diagnostic-badge>`;
     }
-    if (this.type === AlertType.IsaCritical) {
-      return html`<obi-critical-badge></obi-critical-badge>`;
-    }
-    return html`<div>No alarm</div>`;
+    return nothing;
   }
 
   override render() {
@@ -164,18 +171,16 @@ export class ObcAlertIcon extends LitElement {
     if (this.outline) {
       return html`<div class="wrapper">${this.renderOutlineIcon()}</div>`;
     }
-    if (supportsBlinking(this.type)) {
+    if (supportsBlinking(this.type) && !(this.type === AlertType.IsaLow)) {
       const icons = this.icon;
       if (!icons) {
-        return html`<div>No alarm</div>`;
+        throw new Error('No icon found');
       }
-      const isWarning = this.legacyType === AlertType.Warning;
       const blinkMode = getAlertBlinkMode(this.type);
       return html`
         <div
           class=${classMap({
             wrapper: true,
-            warning: isWarning,
             [`blink-${blinkMode}`]: true,
           })}
         >
@@ -200,33 +205,28 @@ export class ObcAlertIcon extends LitElement {
         top: 0;
         left: 0;
       }
-
-      &:not(.warning) {
-        &.blink-alarm .a {
-          opacity: var(--alarm-blink-on);
-        }
-
-        &.blink-alarm .b {
-          opacity: var(--alarm-blink-off);
-        }
-
-        &.blink-critical .a {
-          opacity: var(--critical-blink-on);
-        }
-
-        &.blink-critical .b {
-          opacity: var(--critical-blink-off);
-        }
+      &.blink-alarm .a {
+        opacity: var(--alarm-blink-on);
       }
 
-      &.warning {
-        &.blink-warning .a {
-          opacity: var(--warning-blink-on);
-        }
+      &.blink-alarm .b {
+        opacity: var(--alarm-blink-off);
+      }
 
-        &.blink-warning .b {
-          opacity: var(--warning-blink-off);
-        }
+      &.blink-critical .a {
+        opacity: var(--critical-blink-on);
+      }
+
+      &.blink-critical .b {
+        opacity: var(--critical-blink-off);
+      }
+
+      &.blink-warning .a {
+        opacity: var(--warning-blink-on);
+      }
+
+      &.blink-warning .b {
+        opacity: var(--warning-blink-off);
       }
 
       &.blink-low .a {

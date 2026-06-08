@@ -45,14 +45,6 @@ export enum ReadoutAlertState {
   none = 'none',
   lowIntegrity = 'low-integrity',
   invalid = 'invalid',
-  caution = 'caution',
-  warning = 'warning',
-  alarm = 'alarm',
-  isaCritical = 'isa-critical',
-  isaHigh = 'isa-high',
-  isaMedium = 'isa-medium',
-  isaLow = 'isa-low',
-  isaDiagnostic = 'isa-diagnostic',
 }
 
 export enum ReadoutSetpointInteraction {
@@ -1063,16 +1055,6 @@ export class ObcReadout extends LitElement {
           'alert-low-integrity':
             this.alertState === ReadoutAlertState.lowIntegrity,
           'alert-invalid': this.alertState === ReadoutAlertState.invalid,
-          'alert-caution': this.alertState === ReadoutAlertState.caution,
-          'alert-warning': this.alertState === ReadoutAlertState.warning,
-          'alert-alarm': this.alertState === ReadoutAlertState.alarm,
-          'alert-isa-critical':
-            this.alertState === ReadoutAlertState.isaCritical,
-          'alert-isa-high': this.alertState === ReadoutAlertState.isaHigh,
-          'alert-isa-medium': this.alertState === ReadoutAlertState.isaMedium,
-          'alert-isa-low': this.alertState === ReadoutAlertState.isaLow,
-          'alert-isa-diagnostic':
-            this.alertState === ReadoutAlertState.isaDiagnostic,
           'has-source': this.hasSrc,
           'has-setpoint': this.hasSetpoint,
           'has-setpoint-button':
