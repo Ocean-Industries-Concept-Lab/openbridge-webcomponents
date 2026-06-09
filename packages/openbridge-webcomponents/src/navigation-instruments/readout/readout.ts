@@ -35,7 +35,7 @@ import {
 } from '../readout-setpoint/readout-setpoint.js';
 import '../readout-setpoint/readout-setpoint.js';
 import {
-  AlertFrameConfig,
+  type AlertFrameConfig,
   wrapWithAlertFrame,
 } from '../../components/alert-frame/alert-frame.js';
 
@@ -161,7 +161,7 @@ export class ObcReadout extends LitElement {
   @property({type: String}) sourceType?: ReadoutSourceType;
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  @property({type: Object}) alert: AlertFrameConfig | false = false;
+  @property({type: Object}) alert: AlertFrameConfig | boolean = false;
 
   @property({type: Boolean, attribute: false}) sourceHug = true;
   @property({type: Boolean}) hasSourceLeadingIcon = false;

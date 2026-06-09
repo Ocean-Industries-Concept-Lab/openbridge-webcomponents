@@ -13,11 +13,11 @@ import {
   AutomationButtonReadoutStackSize,
 } from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import {
-  ObcAlertFrameStatus,
   ObcAlertFrameThickness,
   ObcAlertFrameType,
   ObcAlertFrameMode,
 } from '../../components/alert-frame/alert-frame.js';
+import {AlertType} from '../../types.js';
 import '../automation-badge/automation-badge.js';
 import {ObcAutomationBadgeType} from '../automation-badge/automation-badge.js';
 import {CircularProgressMode} from '../../building-blocks/circular-progress/circular-progress.js';
@@ -68,8 +68,7 @@ export class ObcAbstractAutomationButton extends LitElement {
     ObcAlertFrameType.SmallSideFlip;
   @property({type: String}) alertFrameThickness: ObcAlertFrameThickness =
     ObcAlertFrameThickness.Small;
-  @property({type: String}) alertFrameStatus: ObcAlertFrameStatus =
-    ObcAlertFrameStatus.Alarm;
+  @property({type: String}) alertFrameStatus: AlertType = AlertType.Alarm;
   @property({type: String}) alertFrameMode: ObcAlertFrameMode =
     ObcAlertFrameMode.ackedActive;
   @property({type: Boolean, attribute: false}) showAlertCategoryIcon: boolean =

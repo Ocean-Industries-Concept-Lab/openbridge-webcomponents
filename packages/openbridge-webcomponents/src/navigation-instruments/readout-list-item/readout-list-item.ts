@@ -10,7 +10,7 @@ import '../readout-setpoint/readout-setpoint.js';
 import '../../icons/icon-input-right.js';
 import {ReadoutSetpointMode} from '../readout-setpoint/readout-setpoint.js';
 import {
-  AlertFrameConfig,
+  type AlertFrameConfig,
   wrapWithAlertFrame,
 } from '../../components/alert-frame/alert-frame.js';
 
@@ -75,7 +75,7 @@ export class ObcReadoutListItem extends LitElement {
   @property({type: String})
   dataState: ReadoutListItemDataState = ReadoutListItemDataState.none;
 
-  @property({type: Object}) alert: AlertFrameConfig | false = false;
+  @property({type: Object}) alert: AlertFrameConfig | boolean = false;
 
   @property({type: String}) label = '';
   @property({type: String}) unit = '';

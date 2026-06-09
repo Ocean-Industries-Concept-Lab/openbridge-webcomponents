@@ -15,12 +15,12 @@ import '../../icons/icon-arrow-left-google.js';
 import '../../icons/icon-arrow-right-google.js';
 import '../../components/alert-frame/alert-frame.js';
 import {
-  ObcAlertFrameStatus,
   ObcAlertFrameThickness,
   ObcAlertFrameType,
   ObcAlertFrameMode,
   wrapWithAlertFrame,
 } from '../../components/alert-frame/alert-frame.js';
+import {AlertType} from '../../types.js';
 import {customElement} from '../../decorator.js';
 import {
   AutomationButtonReadoutStack,
@@ -104,8 +104,7 @@ export class ObcAutomationButton extends LitElement {
     ObcAlertFrameType.SmallSideFlip;
   @property({type: String}) alertFrameThickness: ObcAlertFrameThickness =
     ObcAlertFrameThickness.Small;
-  @property({type: String}) alertFrameStatus: ObcAlertFrameStatus =
-    ObcAlertFrameStatus.Alarm;
+  @property({type: String}) alertFrameStatus: AlertType = AlertType.Alarm;
   @property({type: String}) alertFrameMode: ObcAlertFrameMode =
     ObcAlertFrameMode.ackedActive;
   @property({type: Boolean, attribute: false}) showAlertCategoryIcon: boolean =

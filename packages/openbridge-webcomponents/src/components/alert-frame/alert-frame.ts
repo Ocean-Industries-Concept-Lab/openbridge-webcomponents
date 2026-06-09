@@ -338,10 +338,10 @@ export class ObcAlertFrame extends LitElement {
 }
 
 export function wrapWithAlertFrame(
-  options: AlertFrameConfig | false | undefined,
+  options: AlertFrameConfig | boolean | undefined,
   content: HTMLTemplateResult
 ): HTMLTemplateResult {
-  if (options === false || options === undefined) {
+  if (typeof options !== 'object' || options === null) {
     return content;
   }
   return html`<obc-alert-frame
