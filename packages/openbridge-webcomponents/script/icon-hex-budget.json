@@ -1,6 +1,0 @@
-{
-  "description": "Budget for literal hex fill/stroke attributes in generated icons (src/icons/*.ts). Each hex value indicates a Figma color that is NOT bound to a variable in script/figmavariables.json, so the icon will not respond to theme changes. The check is enforced by `npm run lint:icons`. Lowering the budget locks in progress; raising it requires justification in the PR description (e.g. new alarm/IEC icons that intentionally use hard-coded standard colors).",
-  "maxHexAttributes": 27,
-  "baselineDate": "2026-06-04",
-  "baselineNotes": "Established in PR #934 follow-up after merging new Figma variable mappings (border-divider-color, base-categorical-100/600, on-normal-active-color, normal-enabled-background/border-color, element-inactive-color, navigation-light-danger-color, alert-warning-text-color). Remaining hex values are predominantly stroke colors on IEC alarm icons (#1A1A1A, #1F1F1F, #3D3D3D, #8E8E8E, #BEBEBE) and standard-spec colors on warning/caution variants (#AB0000, #B38700, #E96700) that intentionally bypass theming."
-}

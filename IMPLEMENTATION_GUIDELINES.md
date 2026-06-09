@@ -663,7 +663,6 @@ All icon components live in `packages/openbridge-webcomponents/src/icons` and ar
 | ---------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `packages/openbridge-webcomponents/.env` | No       | Must set `FIGMA_TOKEN=<personal access token>` (read-only scope is sufficient).                                                                                                                                                                 |
 | `script/figmavariables.json`             | Yes      | `VariableID → token-name` map emitted by the [obc-figma-plugin](#-postcss) `variables` codegen. Must be exported from the **icons file** (not the main design file), because the converter matches the binding's per-node-id key.               |
-| `script/icon-hex-budget.json`            | Yes      | Maximum allowed count of literal `fill="#…"` / `stroke="#…"` attributes across `src/icons/*.ts`. Enforced by `npm run lint:icons` (runs inside `npm run lint`). Lowering this number locks in progress; raising it requires PR justification.   |
 | `script/.cache/icons/*.svg`              | No       | Per-icon SVG payloads. Cleared on each run.                                                                                                                                                                                                     |
 | `script/.cache-figma.json`               | No       | ~30 MB raw Figma API response cache, reused across runs to avoid re-downloading.                                                                                                                                                                |
 | `script/.cache/unknown-variables.json`   | No       | Written after every `npm run download:icons` run. Lists `VariableID`s referenced by icons but missing from `script/figmavariables.json` (empty array when fully resolved).                                                                      |
@@ -700,12 +699,12 @@ Run everything from `packages/openbridge-webcomponents/`.
    ```bash
    grep -rlE 'var\(--undefined\)' src/icons/ | wc -l   # must be 0
    cat script/.cache/unknown-variables.json            # must be []
-   npm run lint:icons                                   # hex count must be ≤ budget
+   npm run lint:icons                                   # must report 0 hex leaks
    ```
    If any of these tripwires fires, see "Unknown variable fallback" below. The
    `var(--undefined)` grep alone is **not sufficient** — the converter falls
    back to literal hex rather than emitting `var(--undefined)`, so silent
-   regressions only show up via `unknown-variables.json` and the hex budget.
+   regressions only show up via `unknown-variables.json` and `lint:icons`.
 7. **Typecheck & lint.**
    ```bash
    npx tsc --noEmit
@@ -743,12 +742,14 @@ Two recovery paths, depending on the cause:
 
 The `script/.cache/unknown-variables.json` diagnostic file (written on every
 `npm run download:icons` run) lists every unresolved `VariableID`. The
-parallel `npm run lint:icons` check enforces a budget on remaining literal
-hex `fill`/`stroke` attributes (`script/icon-hex-budget.json`) — without
-the budget, an unbound color in Figma would silently regress to a non-themed
-icon. When you intentionally accept a new hex fallback, raise the budget in
-the same PR and justify it (e.g. an IEC-spec alarm color that must not
-follow the theme).
+parallel `npm run lint:icons` check (`script/check-icon-hex-leaks.ts`)
+zero-tolerance-fails on any remaining literal hex `fill`/`stroke` attribute
+in `src/icons/*.ts`, printing the offending `file → attr` pairs. Together
+the two tripwires force every unbound or fallback color to be acknowledged
+in a PR instead of silently producing a non-themed icon. If a future
+legitimate exception arises (e.g. a regulatory color that must not follow
+the theme), prefer adding an explicit allowlist to
+`script/check-icon-hex-leaks.ts` over reintroducing a sliding budget.
 
 ### Touching the consuming components (worked example: wind)
 

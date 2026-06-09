@@ -52,12 +52,27 @@ export interface IconRef {
 export function getSingleColorIcon(imageData: string, icon: IconRef): string {
   // replace fill color with currentColor
   const fillRegex = /fill="[^"]+"/g;
-  const replace = 'fill="currentColor"';
-  let imageDataNew = imageData.replace(fillRegex, replace);
+  let imageDataNew = imageData.replace(fillRegex, 'fill="currentColor"');
 
   // remove fillOpacity
   const fillOpacityRegex = /fill-opacity="[^"]+"/g;
   imageDataNew = imageDataNew.replace(fillOpacityRegex, '');
+
+  // replace stroke color with currentColor (mirror the fill handling so the
+  // single-color variant inherits the host color for both paint operations;
+  // otherwise raw Figma hex strokes leak through and the icon ignores theme
+  // changes / `currentColor`).
+  const strokeRegex = /stroke="[^"]+"/g;
+  imageDataNew = imageDataNew.replace(strokeRegex, (match) => {
+    // Preserve `stroke="none"` so shapes that explicitly disable stroking
+    // (common in Figma exports of filled-only paths) stay unstroked.
+    if (match === 'stroke="none"') return match;
+    return 'stroke="currentColor"';
+  });
+
+  // remove strokeOpacity
+  const strokeOpacityRegex = /stroke-opacity="[^"]+"/g;
+  imageDataNew = imageDataNew.replace(strokeOpacityRegex, '');
 
   return imageDataNew;
 }
