@@ -298,6 +298,12 @@ Clipped viewBox:  "-224 -44.8 448 268.8"
 
 The overlay SVG must use the **same clipped viewBox** to align correctly.
 
+**Note:** `clip{Top,Bottom,Left,Right}` are mutually exclusive with `zoomToFitArc`.
+When zoom is on, the viewBox is derived from `computeZoomToFitArcFrame()` and all
+four clips are ignored (both `obc-watch` and `obc-instrument-radial` zero them).
+`clipLeft` / `clipRight` are the horizontal counterparts of `clipTop` / `clipBottom`,
+used for quadrant (90°) sectors.
+
 ---
 
 ## Where to Make Common Changes
@@ -471,6 +477,37 @@ The offset flows through the rendering pipeline:
 2. Forward it to `obc-watch` (or `instrument-radial`) via template binding
 3. If the instrument has an overlay needle/element, read `_radiusOffset` and adjust positioning
 4. Add `ZoomedIn` / `ZoomedInNarrow` stories with representative `arcExtent` values
+
+---
+
+## Geometry Inputs Cheat-Sheet
+
+`obc-watch` exposes several partially-overlapping geometry inputs. Use this as the
+quick reference for which knob does what. Combinations not listed under "validated"
+below are undefined — verify them before relying on a specific pairing.
+
+| Property                                            | Affects                                                                                                                                                                                |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `padding`                                           | Base viewBox size in the **un-zoomed** path (`(176 + padding) * 2`).                                                                                                                  |
+| `clipTop` / `clipBottom` / `clipLeft` / `clipRight` | viewBox window in the **un-zoomed** path. Ignored under zoom (when `zoomToFitArc` is on or an `arcFrame` is supplied).                                                                                                          |
+| `zoomToFitArc`                                      | Swaps to the `computeZoomToFitArcFrame()` path (unless an `arcFrame` is already supplied); every band radius gets the additive `_rOff` (see the `_bandRadius` INVARIANT in `watch.ts`).                                           |
+| `arcFrame`                                          | Externally pre-computed zoom frame. Takes precedence when set (the `if (this.arcFrame)` branch runs first) — used directly even when `zoomToFitArc` is false, and `obc-watch` does not recompute it. If you pass it, keep it in sync with `areas` / `watchCircleType`. |
+| `endLabelsMaxMin`                                   | "Max-min" label placement: horizontal end labels (±90°) sit off the dead-center tick instead of beside it.                                                                            |
+| `tickmarksInside`                                   | Moves labels inside the ring; their `textRadius` is routed through `_bandRadius`.                                                                                                      |
+| `tickFadeAngle`                                     | (pre-existing) Tickmark fade-out near arc edges.                                                                                                                                        |
+
+### Radial label model (design language)
+
+Labels follow the design model with three placements:
+
+- **External** — labels around the outside of the watch face (default).
+- **Internal** — labels inside the ring (`tickmarksInside`).
+- **Max-min** — labels at the arc ends (`endLabelsMaxMin`), e.g. the 180° gauge.
+
+> **Validated combinations:** pitch/roll use `zoomToFitArc` + `shiftArcFrameToOuterEdge`;
+> `gauge-radial` uses per-sector `clip*` and `endLabelsMaxMin` on the 180° sector.
+> Pairings like `clip*` + `zoomToFitArc` or `endLabelsMaxMin` + `zoomToFitArc` are not
+> currently validated.
 
 ---
 

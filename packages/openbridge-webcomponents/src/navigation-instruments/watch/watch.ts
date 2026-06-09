@@ -176,7 +176,7 @@ const RADIAL_SETPOINT_INWARD_ADJUST = 4;
  * @property {number|undefined} rateOfTurnDegreesPerMinute - Measured rate of turn in degrees per minute (the maritime/AIS convention, see ES-TRIN 2025/1 Art. 3.02 and ITU-R M.1371). Sign controls direction (positive = starboard/clockwise). When defined, this drives both the dot animation (multiplied by `rotDotAnimationFactor`) and the port/starboard direction sign.
  * @property {number} rotDotAnimationFactor - Visual amplification factor applied only to the spinning-dot animation (not to bar extent). Default `18` keeps the legacy visual feel (≈1 rpm at 20°/min).
  * @property {number} rotationsPerMinute - **Deprecated.** Spin speed of the ROT dot ring in rotations per minute. Sign controls direction (positive = clockwise). Use `rateOfTurnDegreesPerMinute` instead.
- * @property {ZoomToFitArcFrame|undefined} arcFrame - Pre-computed zoom-to-fit arc frame. When set, the watch skips its own `computeZoomToFitArcFrame()` call and uses these values directly. Consumer instruments (e.g. rudder, instrument-radial) should compute the frame once and pass it here to avoid redundant computation.
+ * @property {ZoomToFitArcFrame|undefined} arcFrame - Pre-computed zoom-to-fit arc frame. When set, the watch skips its own `computeZoomToFitArcFrame()` call and uses these values directly. Consumer instruments (e.g. rudder, instrument-radial) should compute the frame once and pass it here to avoid redundant computation. If you pass `arcFrame`, you own keeping it in sync with `areas` / `watchCircleType` — obc-watch will NOT recompute it, so a stale frame renders stale geometry.
  */
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {
@@ -231,8 +231,21 @@ export class ObcWatch extends LitElement {
   @property({type: Number}) currentSymbolRadius: number | null = null;
   @property({type: String}) currentColor: string | undefined;
   @property({type: Boolean}) starboardPortIndicator: boolean = false;
-  @property({type: Number}) clipTop: number = 0; // in percent of height
-  @property({type: Number}) clipBottom: number = 0; // in percent of height
+  /** Top clip, % of height. Ignored when `zoomToFitArc` is true. */
+  @property({type: Number}) clipTop: number = 0;
+  /** Bottom clip, % of height. Ignored when `zoomToFitArc` is true. */
+  @property({type: Number}) clipBottom: number = 0;
+  /** Left clip, % of width — horizontal counterpart of clipTop/bottom (90° sectors). Ignored when `zoomToFitArc`. */
+  @property({type: Number}) clipLeft: number = 0;
+  /** Right clip, % of width — horizontal counterpart of clipTop/bottom (90° sectors). Ignored when `zoomToFitArc`. */
+  @property({type: Number}) clipRight: number = 0;
+  /**
+   * Place the horizontal end labels (±90°, e.g. min/max) below the tick instead
+   * of beside it. This is the "Max-min" label placement from the radial label
+   * model (External / Internal / Max-min) — see PR #903 / design discussion.
+   * Currently only used by the 180° sector of `obc-gauge-radial`.
+   */
+  @property({type: Boolean}) endLabelsMaxMin: boolean = false;
   @property({type: Number}) scaleWindIcon: number = 1;
   @property({type: Number}) rotation: number | undefined;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
@@ -342,6 +355,18 @@ export class ObcWatch extends LitElement {
 
   private _rOff = 0;
 
+  /**
+   * Radius for a dial-band edge under zoom: additive (`base + _rOff`), keeping
+   * band thickness constant in SVG units. INVARIANT: every band-edge radius
+   * (rings, value arc, bars, needles, inside-label `textRadius`) must go through
+   * this — mixing additive and multiplicative offsets misaligns ticks, labels,
+   * advice masks and arcs. The proportional experiments were removed for this
+   * reason (PR #903).
+   */
+  private _bandRadius(base: number): number {
+    return base + this._rOff;
+  }
+
   private watchCircle(): SVGTemplateResult | SVGTemplateResult[] {
     const rings = [];
     if (this.state !== InstrumentState.off) {
@@ -349,18 +374,19 @@ export class ObcWatch extends LitElement {
         <circle
           cx="0"
           cy="0"
-          r="${172 + this._rOff}"
+          r="${this._bandRadius(172)}"
           stroke="var(--instrument-frame-primary-color)"
           fill="none"
           stroke-width="24"
         />`);
 
       if (this.watchCircleType !== WatchCircleType.single) {
-        const r1 = RING2_RADIUS + this._rOff;
-        const r2 =
-          (this.watchCircleType === WatchCircleType.doubleThin
+        const r1 = this._bandRadius(RING2_RADIUS);
+        const r2 = this._bandRadius(
+          this.watchCircleType === WatchCircleType.doubleThin
             ? RING3B_RADIUS
-            : RING3_RADIUS) + this._rOff;
+            : RING3_RADIUS
+        );
         const r = (r1 + r2) / 2;
         const strokeWidth = r1 - r2;
         rings.push(
@@ -372,8 +398,8 @@ export class ObcWatch extends LitElement {
         );
       }
       if (this.watchCircleType === WatchCircleType.triple) {
-        const r1 = RING3_RADIUS + this._rOff;
-        const r2 = RING4_RADIUS + this._rOff;
+        const r1 = this._bandRadius(RING3_RADIUS);
+        const r2 = this._bandRadius(RING4_RADIUS);
         const r = (r1 + r2) / 2;
         const strokeWidth = r1 - r2;
         rings.push(
@@ -389,8 +415,8 @@ export class ObcWatch extends LitElement {
         const svgPath = roundedArch({
           startAngle: area.startAngle,
           endAngle: area.endAngle,
-          R: OUTER_RING_RADIUS + this._rOff,
-          r: this.innerRingRadius + this._rOff,
+          R: this._bandRadius(OUTER_RING_RADIUS),
+          r: this._bandRadius(this.innerRingRadius),
           roundOutsideCut: area.roundOutsideCut,
           roundInsideCut: area.roundInsideCut,
         });
@@ -422,7 +448,7 @@ export class ObcWatch extends LitElement {
       if (this.state !== InstrumentState.off) {
         result.push(
           circle('outerRing', {
-            radius: OUTER_RING_RADIUS + this._rOff,
+            radius: this._bandRadius(OUTER_RING_RADIUS),
             strokeWidth: 1,
             strokeColor: 'var(--instrument-frame-tertiary-color)',
             strokePosition: 'center',
@@ -432,7 +458,7 @@ export class ObcWatch extends LitElement {
 
         result.push(svg`
           ${circle('innerRing', {
-            radius: this.innerRingRadius + this._rOff,
+            radius: this._bandRadius(this.innerRingRadius),
             strokeWidth: 1,
             strokeColor: 'var(--instrument-frame-tertiary-color)',
             strokePosition: 'center',
@@ -442,7 +468,7 @@ export class ObcWatch extends LitElement {
       } else {
         result.push(svg`
           ${circle('innerRing', {
-            radius: OUTER_RING_RADIUS + this._rOff,
+            radius: this._bandRadius(OUTER_RING_RADIUS),
             strokeWidth: 1,
             strokeColor: 'var(--instrument-frame-tertiary-color)',
             strokePosition: 'center',
@@ -476,7 +502,10 @@ export class ObcWatch extends LitElement {
       return `M 0 0 L ${x1} ${y1} A ${R} ${R} 0 ${largeArc} 1 ${x2} ${y2} Z`;
     };
 
-    const Rm = (OUTER_RING_RADIUS + this.innerRingRadius) / 2 + this._rOff;
+    const Rm =
+      (this._bandRadius(OUTER_RING_RADIUS) +
+        this._bandRadius(this.innerRingRadius)) /
+      2;
     const gx = (deg: number) => Rm * Math.sin(toRad(deg));
     const gy = (deg: number) => -Rm * Math.cos(toRad(deg));
 
@@ -594,8 +623,8 @@ export class ObcWatch extends LitElement {
       const startAngle = Math.min(bar.startAngle, bar.endAngle);
       const endAngle = Math.max(bar.startAngle, bar.endAngle);
       const arc = roundedArch({
-        r: RING3_RADIUS + this._rOff,
-        R: RING2_RADIUS + this._rOff,
+        r: this._bandRadius(RING3_RADIUS),
+        R: this._bandRadius(RING2_RADIUS),
         startAngle: startAngle,
         endAngle: endAngle,
         roundInsideCut: false,
@@ -638,7 +667,7 @@ export class ObcWatch extends LitElement {
       return svg`
         <rect 
           transform="rotate(${needle.angle})" 
-          x="-4" y="${-(RING2_RADIUS + this._rOff)}" width="8" height="48" rx="4" 
+          x="-4" y="${-this._bandRadius(RING2_RADIUS)}" width="8" height="48" rx="4"
           fill=${needle.fillColor} 
           stroke=${needle.strokeColor}
           stroke-width="1"
@@ -705,17 +734,22 @@ export class ObcWatch extends LitElement {
       viewBox = frame.viewBox;
     } else {
       this._rOff = 0;
-      width = (176 + this.getPadding()) * 2;
-      height = width * (1 - this.clipTop / 100 - this.clipBottom / 100);
-      const top = -width / 2 + (width * this.clipTop) / 100;
-      viewBox = `-${width / 2} ${top} ${width} ${height}`;
+      const full = (176 + this.getPadding()) * 2;
+      width = full * (1 - this.clipLeft / 100 - this.clipRight / 100);
+      height = full * (1 - this.clipTop / 100 - this.clipBottom / 100);
+      const left = -full / 2 + (full * this.clipLeft) / 100;
+      const top = -full / 2 + (full * this.clipTop) / 100;
+      viewBox = `${left} ${top} ${width} ${height}`;
     }
 
     const rOff = this._rOff;
     const scale = this.getScale({width, height});
     const angleSetpoint = this.renderSetpoint();
-    const textRadius =
-      (this.tickmarksInside ? this.innerRingRadius : OUTER_RING_RADIUS) + rOff;
+    // Route through _bandRadius so inside labels track the (zoom-shifted) inner
+    // band edge; the coupling is intentional (see _bandRadius INVARIANT).
+    const textRadius = this.tickmarksInside
+      ? this._bandRadius(this.innerRingRadius)
+      : this._bandRadius(OUTER_RING_RADIUS);
     const maxDigits = Math.max(
       ...this.tickmarks.map((t) => t.text?.length ?? 0)
     );
@@ -731,6 +765,7 @@ export class ObcWatch extends LitElement {
         maxDigits,
         color: t.color,
         radiusOffset: rOff,
+        endLabelsMaxMin: this.endLabelsMaxMin,
       })
     );
     const advices = this.advices
