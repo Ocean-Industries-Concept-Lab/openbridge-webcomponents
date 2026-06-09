@@ -95,7 +95,7 @@ export interface ObcPoiButtonDataItem {
  * - `layout` (default `anchored`): `anchored` or `inline`.
  * - `value` (default `unchecked`): `unchecked`, `checked`, `activated`, `overlapped`.
  * - `overlapOpaque` (default `false`): controls overlapped opacity mode (`false` = translucent, `true` = opaque).
- * - `state` (default `enabled`): `enabled`, `caution`, `warning`, `alarm`.
+ * - `state` (default `enabled`): `enabled`, `caution`, `warning`, `alarm`, `isa-critical`, `isa-high`, `isa-medium`, `isa-low`, `isa-diagnostic`.
  * - `selected` (default `false`): shows selection frame in anchored layout.
  * - `relativeDirection` (default `0`): rotates default-slot icon content in degrees.
  * - `data` (default `[]`): when non-empty, renders value/label/unit rows.

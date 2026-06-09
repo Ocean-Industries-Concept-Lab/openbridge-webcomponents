@@ -2,6 +2,22 @@ import {LitElement, html, css, svg} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../decorator.js';
 
+/**
+ * `<obi-alerts-diagnostic-twotone>` – Two-tone bell icon for the ISA "diagnostic" alert severity.
+ *
+ * Renders the alert (bell) glyph as a layered two-tone shape so the silhouette and
+ * fill can be tinted independently. Used wherever a diagnostic-severity alert needs an
+ * icon representation (badges, frames, lists).
+ *
+ * ### Features
+ * - **Color modes:** Set `useCssColor` to render with the diagnostic design tokens
+ *   (`--alert-diagnostic-color` / `--alert-diagnostic-outline-color`); leave it `false`
+ *   (default) to render with `currentColor` so the icon inherits its parent's color.
+ *
+ * ### Properties and Attributes
+ * - `useCssColor` (boolean): When true, fills the two tones with the diagnostic color
+ *   tokens instead of `currentColor`. Defaults to `false`.
+ */
 @customElement('obi-alerts-diagnostic-twotone')
 export class ObiAlertsDiagnosticTwotone extends LitElement {
   @property({type: Boolean}) useCssColor = false;

@@ -87,7 +87,9 @@ export interface AlertFrameConfig {
  *   - `large-side-flip`: Adds a larger, vertical side flap with a status icon and optional custom icon.
  *   - `bottom-flip`: Adds a bottom flap with a status icon, label, and timer slots.
  * - **Thickness options:** Choose between `small` (thin border) and `large` (thick border) for visual emphasis.
- * - **Status indication:** Displays different color schemes and icons for `alarm`, `warning`, or `caution` states.
+ * - **Status indication:** Displays different color schemes and icons for the legacy statuses (`alarm`, `warning`, `caution`) and the ISA statuses (`isa-critical`, `isa-high`, `isa-medium`, `isa-low`, `isa-diagnostic`).
+ * - **Acknowledgement mode:** The `mode` property reflects the alert lifecycle state — `acked-active` (default), `unacked-active`, and `unacked-rectified` — driving the blinking/animation treatment of the frame.
+ * - **Content wrapping:** When `wrapContent` is true, the frame wraps and sizes itself to its slotted content rather than overlaying a fixed region.
  * - **Customizable corners:** Each corner can be set to a sharp (non-rounded) edge for integration with other UI elements.
  * - **Slot-based content:** Supports custom icons, labels, and timers in flap variants via named slots.
  *
@@ -103,7 +105,8 @@ export interface AlertFrameConfig {
  *   - `large-side-flip`: Large vertical right-side flap with status icon and optional custom icon.
  *   - `bottom-flip`: Bottom flap with status icon, label, and timer.
  * - **Thickness:** `small` (default) or `large` for border width.
- * - **Status:** `alarm`, `warning`, or `caution`—affects color and icon.
+ * - **Status:** `alarm`, `warning`, `caution`, or the ISA severities (`isa-critical`, `isa-high`, `isa-medium`, `isa-low`, `isa-diagnostic`)—affects color and icon.
+ * - **Mode:** `acked-active` (default), `unacked-active`, or `unacked-rectified`—affects blinking/animation.
  * - **Corner Customization:** Each corner can be made sharp (not rounded) via boolean properties.
  *
  * ### Slots and Content Structure
@@ -118,7 +121,9 @@ export interface AlertFrameConfig {
  * ### Properties and Attributes
  * - `type`: Selects the visual variant/flap style. Default is `small-side-flip`.
  * - `thickness`: Controls border thickness (`small` or `large`). Default is `small`.
- * - `status`: Sets the alert status and color/icon (`alarm`, `warning`, `caution`). Default is `alarm`.
+ * - `status`: Sets the alert status and color/icon (`alarm`, `warning`, `caution`, or the `isa-*` severities). Default is `alarm`.
+ * - `mode`: Acknowledgement lifecycle state (`acked-active`, `unacked-active`, `unacked-rectified`) controlling blinking/animation. Default is `acked-active`.
+ * - `wrapContent`: When true, the frame wraps and sizes to its slotted content instead of overlaying a fixed region. Default is `false`.
  * - `sharpEdgeTopLeft`, `sharpEdgeTopRight`, `sharpEdgeBottomLeft`, `sharpEdgeBottomRight`: Boolean flags to make each corner sharp instead of rounded.
  *
  * ### Best Practices and Constraints
@@ -174,12 +179,23 @@ export class ObcAlertFrame extends LitElement {
    * - `alarm`: Highest severity (default).
    * - `warning`: Medium severity.
    * - `caution`: Lower severity.
+   * - `isa-critical`, `isa-high`, `isa-medium`, `isa-low`, `isa-diagnostic`: ISA severity levels, styled to match their legacy equivalents.
    */
   @property({type: String}) status: AlertType = AlertType.Alarm;
 
+  /**
+   * Acknowledgement lifecycle state, controlling the frame's blinking/animation.
+   * - `acked-active`: Active and acknowledged (default); no blinking.
+   * - `unacked-active`: Active and not yet acknowledged; blinks.
+   * - `unacked-rectified`: Condition cleared but not yet acknowledged.
+   */
   @property({type: String}) mode: ObcAlertFrameMode =
     ObcAlertFrameMode.ackedActive;
 
+  /**
+   * When true, the frame wraps and sizes itself to its slotted content instead
+   * of overlaying a fixed region. Reflected to an attribute for CSS styling.
+   */
   @property({type: Boolean, reflect: true}) wrapContent: boolean = false;
 
   /**

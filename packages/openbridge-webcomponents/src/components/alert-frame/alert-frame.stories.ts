@@ -19,6 +19,7 @@ const meta: Meta<typeof ObcAlertFrame> = {
     type: ObcAlertFrameType.SmallSideFlip,
     thickness: ObcAlertFrameThickness.Small,
     status: ObcAlertFrameStatus.Alarm,
+    mode: ObcAlertFrameMode.ackedActive,
     demoWidth: 200,
     showIcon: true,
     showAlertCategoryIcon: true,

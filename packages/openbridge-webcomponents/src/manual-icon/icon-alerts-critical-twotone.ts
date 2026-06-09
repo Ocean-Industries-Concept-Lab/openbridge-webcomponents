@@ -2,6 +2,22 @@ import {LitElement, html, css, svg} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../decorator.js';
 
+/**
+ * `<obi-alerts-critical-twotone>` – Two-tone bell icon for the ISA "critical" alert severity.
+ *
+ * Renders the alert (bell) glyph as a layered two-tone shape so the silhouette and
+ * fill can be tinted independently. Used wherever a critical-severity alert needs an
+ * icon representation (badges, frames, lists).
+ *
+ * ### Features
+ * - **Color modes:** Set `useCssColor` to render with the critical design tokens
+ *   (`--alert-critical-color` / `--alert-critical-outline-color`); leave it `false`
+ *   (default) to render with `currentColor` so the icon inherits its parent's color.
+ *
+ * ### Properties and Attributes
+ * - `useCssColor` (boolean): When true, fills the two tones with the critical color
+ *   tokens instead of `currentColor`. Defaults to `false`.
+ */
 @customElement('obi-alerts-critical-twotone')
 export class ObiAlertsCriticalTwotone extends LitElement {
   @property({type: Boolean}) useCssColor = false;

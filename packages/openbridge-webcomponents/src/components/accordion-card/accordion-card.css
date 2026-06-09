@@ -206,15 +206,36 @@
 .alert {
   pointer-events: none;
 
+  /* z-index follows ALERT_SEVERITY_PRIORITY: more severe statuses stack on top. */
+  &.alert-isa-critical {
+    z-index: 8;
+  }
+
   &.alert-alarm {
-    z-index: 3;
+    z-index: 7;
+  }
+
+  &.alert-isa-high {
+    z-index: 6;
   }
 
   &.alert-warning {
-    z-index: 2;
+    z-index: 5;
+  }
+
+  &.alert-isa-medium {
+    z-index: 4;
   }
 
   &.alert-caution {
+    z-index: 3;
+  }
+
+  &.alert-isa-low {
+    z-index: 2;
+  }
+
+  &.alert-isa-diagnostic {
     z-index: 1;
   }
 }

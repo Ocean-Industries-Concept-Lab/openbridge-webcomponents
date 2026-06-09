@@ -25,6 +25,11 @@ export enum BadgeSize {
  * - `alarm`: Indicates a critical or urgent state.
  * - `warning`: Indicates a warning or cautionary state.
  * - `caution`: Indicates a less severe caution.
+ * - `isa-critical`: ISA highest-severity state (critical).
+ * - `isa-high`: ISA high-severity state (alarm-equivalent styling).
+ * - `isa-medium`: ISA medium-severity state (warning-equivalent styling).
+ * - `isa-low`: ISA low-severity state (caution-equivalent styling).
+ * - `isa-diagnostic`: ISA diagnostic/notification state.
  * - `running`: Indicates an active or running state.
  * - `notification`: Used for general notifications.
  * - `enhance`: Used for enhanced or secondary notifications.
@@ -75,6 +80,7 @@ export enum BadgeVariant {
  *   - `alarm`: Highlights critical or urgent states.
  *   - `warning`: Indicates caution or warning.
  *   - `caution`: Used for less severe caution.
+ *   - `isa-critical`, `isa-high`, `isa-medium`, `isa-low`, `isa-diagnostic`: ISA severity levels, styled to match their legacy equivalents (critical, alarm, warning, caution, notification).
  *   - `running`: Represents active or running states.
  *   - `notification`: For general notifications.
  *   - `enhance`: For secondary notifications or emphasis.
@@ -164,7 +170,7 @@ export class ObcBadge extends LitElement {
   /**
    * Visual style/type of the badge.
    *
-   * Possible values: `regular`, `alarm`, `warning`, `caution`, `running`, `notification`, `enhance`, `automation`, `outline`, `empty`.
+   * Possible values: `regular`, `alarm`, `warning`, `caution`, `isa-critical`, `isa-high`, `isa-medium`, `isa-low`, `isa-diagnostic`, `running`, `notification`, `enhance`, `automation`, `outline`, `empty`.
    *
    * Defaults to `regular`.
    */
@@ -188,7 +194,7 @@ export class ObcBadge extends LitElement {
   /**
    * Whether to show an icon in the badge.
    *
-   * For built-in types (`alarm`, `warning`, `caution`, `running`), a contextual icon is shown automatically.
+   * For built-in types (`alarm`, `warning`, `caution`, the `isa-*` severities, and `running`), a contextual icon is shown automatically.
    * For other types, provide a custom icon in the `badge-icon` slot.
    */
   @property({type: Boolean}) showIcon = false;

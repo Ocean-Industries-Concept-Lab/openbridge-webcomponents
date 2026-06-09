@@ -1,3 +1,50 @@
+/**
+ * `alert-severity` – Pure helper module mapping alert severities to their
+ * visual, behavioral, and acknowledgement semantics.
+ *
+ * Centralizes the per-`AlertType` decisions shared across alert-rendering
+ * components (badges, twotone icons, frames, lists) so that severity behavior
+ * stays consistent everywhere. Supports both the legacy severities
+ * (`alarm`, `warning`, `caution`) and the ISA severities
+ * (`isa-critical`, `isa-high`, `isa-medium`, `isa-low`, `isa-diagnostic`),
+ * collapsing the ISA set onto the legacy visual/blink treatments where they
+ * share styling.
+ *
+ * Features:
+ * - Color tokens: `getAlertColorTokens` returns background/border/on-active
+ *   CSS custom properties per severity.
+ * - Component selectors: `getAlertBadgeComponent` and
+ *   `getAlertTwotoneComponent` resolve the badge/icon element tag for a
+ *   severity.
+ * - Blinking: `supportsBlinking` reports whether a severity blinks,
+ *   `getAlertBlinkMode` resolves its blink mode, and
+ *   `getBamAlertTypeForBlinking` maps ISA severities onto the legacy type used
+ *   by the bridge alert management (BAM) blink machinery.
+ * - Acknowledgement & filtering: `requiresAcknowledgement` reports whether a
+ *   severity needs an ACK action, `excludedFromUnackedFilter` reports whether
+ *   it is hidden from the "unacked" view, and `usesAlarmNoAckIcon` selects the
+ *   alarm-style no-ack icon.
+ * - Priority: re-exports `ALERT_SEVERITY_PRIORITY`, the ordered severity list
+ *   (most → least severe) used to sort alerts.
+ *
+ * Usage:
+ * ```ts
+ * import {
+ *   getAlertColorTokens,
+ *   requiresAcknowledgement,
+ *   ALERT_SEVERITY_PRIORITY,
+ * } from './alert-severity.js';
+ * import {AlertType} from './types.js';
+ *
+ * const tokens = getAlertColorTokens(AlertType.IsaHigh);
+ * const needsAck = requiresAcknowledgement(AlertType.IsaLow); // true
+ * alerts.sort(
+ *   (a, b) =>
+ *     ALERT_SEVERITY_PRIORITY.indexOf(a.type) -
+ *     ALERT_SEVERITY_PRIORITY.indexOf(b.type)
+ * );
+ * ```
+ */
 import {AlertType, ALERT_SEVERITY_PRIORITY} from './types.js';
 
 export {ALERT_SEVERITY_PRIORITY};
@@ -23,6 +70,7 @@ export function requiresAcknowledgement(type: AlertType): boolean {
     AlertType.IsaCritical,
     AlertType.IsaHigh,
     AlertType.IsaMedium,
+    AlertType.IsaLow,
   ].includes(type);
 }
 

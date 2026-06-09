@@ -168,7 +168,7 @@ export class ObcAutomationBadge extends LitElement {
         ><obi-alert-off-filled class="icon"></obi-alert-off-filled>`;
     } else if (this.type === ObcAutomationBadgeType.IsaCritical) {
       return this.renderIsaCriticalIcon(
-        this.mode === ObcAutomationBadgeMode.Flat
+        this.effectiveMode === ObcAutomationBadgeMode.Flat
       );
     } else if (this.type === ObcAutomationBadgeType.IsaDiagnostic) {
       return this.renderIsaDiagnosticIcon();
@@ -177,7 +177,7 @@ export class ObcAutomationBadge extends LitElement {
         ObcAutomationBadgeType.Caution,
         ObcAutomationBadgeType.IsaLow
       ) &&
-      this.mode === ObcAutomationBadgeMode.Flat
+      this.effectiveMode === ObcAutomationBadgeMode.Flat
     ) {
       return html`<svg
         width="16"
@@ -255,7 +255,7 @@ export class ObcAutomationBadge extends LitElement {
         ObcAutomationBadgeType.Warning,
         ObcAutomationBadgeType.IsaMedium
       ) &&
-      this.mode === ObcAutomationBadgeMode.Flat
+      this.effectiveMode === ObcAutomationBadgeMode.Flat
     ) {
       return html`
         <svg
@@ -340,7 +340,7 @@ export class ObcAutomationBadge extends LitElement {
         ObcAutomationBadgeType.Alarm,
         ObcAutomationBadgeType.IsaHigh
       ) &&
-      this.mode === ObcAutomationBadgeMode.Flat
+      this.effectiveMode === ObcAutomationBadgeMode.Flat
     ) {
       return html`<svg
         width="16"
