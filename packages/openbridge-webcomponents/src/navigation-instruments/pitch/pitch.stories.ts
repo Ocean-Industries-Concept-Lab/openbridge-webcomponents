@@ -26,6 +26,12 @@ const meta: Meta<typeof ObcPitch> = {
     },
     type: {control: 'select', options: Object.values(ObcPitchType)},
     priority: {control: 'select', options: Object.values(Priority)},
+    hasReadout: {control: 'boolean'},
+    label: {control: 'text'},
+    unit: {control: 'text'},
+    fractionDigits: {control: 'number'},
+    zoomToFitArc: {control: 'boolean'},
+    arcAngle: {control: {type: 'range', min: 5, max: 45, step: 1}},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcPitch>;

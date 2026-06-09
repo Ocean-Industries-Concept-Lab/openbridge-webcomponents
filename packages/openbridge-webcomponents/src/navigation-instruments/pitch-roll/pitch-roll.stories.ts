@@ -50,6 +50,13 @@ const meta: Meta<typeof ObcPitchRoll> = {
       control: 'select',
       options: foreVessels,
     },
+    hasReadout: {control: 'boolean'},
+    pitchLabel: {control: 'text'},
+    rollLabel: {control: 'text'},
+    unit: {control: 'text'},
+    fractionDigits: {control: 'number'},
+    zoomToFitArc: {control: 'boolean'},
+    arcAngle: {control: {type: 'range', min: 5, max: 45, step: 1}},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcPitchRoll>;
