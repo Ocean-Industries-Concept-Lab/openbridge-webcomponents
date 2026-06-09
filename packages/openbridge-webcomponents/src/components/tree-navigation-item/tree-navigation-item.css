@@ -177,7 +177,7 @@
   width: var(--menu-navigation-components-tree-navigation-item-icon-size);
   height: var(--menu-navigation-components-tree-navigation-item-icon-size);
   color: var(--element-neutral-color);
-  transition: transform 200ms ease-in-out;
+  transition: transform 100ms ease-in-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
