@@ -70,8 +70,10 @@ export enum TreeTerminalType {
  *   `hasAlertBadge` and configured via `alertCount` and `alertType`.
  * - **Checked state:** `checked` highlights the current selection using the
  *   amplified elevation style. A checked row is the current item and is not
- *   re-selectable — it shows no hover/pressed feedback and does not fire
- *   `click`/`expand-toggle`, though it stays keyboard-focusable.
+ *   re-selectable — it shows no hover/pressed feedback and fires no `click` or
+ *   navigation. An expandable checked row still toggles (fires `expand-toggle`),
+ *   so a group that is the current selection can be opened and closed. It stays
+ *   keyboard-focusable.
  * - **Link or button:** Set `href` to render the row as a link; otherwise it acts
  *   as a button.
  *
@@ -114,8 +116,9 @@ export class ObcTreeNavigationItem extends LitElement {
 
   /**
    * Whether the row is the current selection. Applies the amplified style and
-   * makes the row inert to re-selection (no hover/pressed feedback, no
-   * activation events); it remains keyboard-focusable.
+   * makes the row inert to re-selection (no hover/pressed feedback, no `click`
+   * or navigation); it remains keyboard-focusable. An expandable checked row
+   * still fires `expand-toggle` so a selected group can open and close.
    */
   @property({type: Boolean, reflect: true}) checked = false;
 
@@ -153,14 +156,29 @@ export class ObcTreeNavigationItem extends LitElement {
     return this.branches.length === 0;
   }
 
+  /**
+   * All ancestor columns are blank spacers — the row is indented but draws no
+   * guide lines, so the terminal connector and dropdown are suppressed too.
+   */
+  private get isBlankAncestry(): boolean {
+    return (
+      this.branches.length > 0 &&
+      this.branches.every((b) => b === TreeBranchType.blank)
+    );
+  }
+
   private activate() {
-    if (this.disabled || this.checked) return;
-    this.dispatchEvent(new CustomEvent('click'));
+    if (this.disabled) return;
+    // An expandable row always toggles, even when checked — a group that is the
+    // current selection must still open and close. A checked leaf, however, is
+    // the current selection and is inert (no re-selection click or navigation).
     if (this.expandable) {
       this.dispatchEvent(
         new CustomEvent<boolean>('expand-toggle', {detail: !this.expanded})
       );
     }
+    if (this.checked) return;
+    this.dispatchEvent(new CustomEvent('click'));
     if (this.href !== undefined) {
       window.location.href = this.href;
     }
@@ -226,10 +244,13 @@ export class ObcTreeNavigationItem extends LitElement {
           <div class="tree-node-row">
             ${this.branches.map((branch) => this.renderBranch(branch))}
             <div class="terminal">
-              ${this.isRoot
+              ${this.isRoot || this.isBlankAncestry
                 ? nothing
                 : html`<div class="terminal-connector"></div>`}
-              ${!this.isRoot && this.expandable && this.expanded
+              ${!this.isRoot &&
+              !this.isBlankAncestry &&
+              this.expandable &&
+              this.expanded
                 ? html`<div class="terminal-dropdown"></div>`
                 : nothing}
               ${this.expandable

@@ -4,6 +4,12 @@ import compentStyle from './navigation-item-group.css?inline';
 import {ObcNavigationMenuVariant} from '../navigation-menu/navigation-menu.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
+import '../tree-navigation-item/tree-navigation-item.js';
+import {
+  TreeBranchType,
+  TreeTerminalType,
+} from '../tree-navigation-item/tree-navigation-item.js';
+import {BadgeType} from '../badge/badge.js';
 
 /**
  * `<obc-navigation-item-group>` – A collapsible navigation group component for organizing related navigation items under a single expandable label.
@@ -90,9 +96,39 @@ export class ObcNavigationItemGroup extends LitElement {
 
   @property({type: Boolean}) hasIcon = false;
 
+  /** Set by `obc-navigation-menu` in its Tree variant — renders the group as a tree row. */
+  @property({type: Boolean}) treeMode = false;
+
+  /** Indentation columns for tree mode, assigned by `obc-navigation-menu`. */
+  @property({type: Array}) treeBranches: TreeBranchType[] = [];
+
+  /**
+   * Terminal type for the group header in the Tree variant — one of `regular`
+   * (default), `aggregated-header`, or `group-header`. No effect in flat variants.
+   */
+  @property({type: String}) terminalType: string = TreeTerminalType.regular;
+
+  /** Whether a trailing alert counter badge is shown on the header (Tree variant only). */
+  @property({type: Boolean}) hasAlertBadge = false;
+
+  /** The number shown in the header's alert badge when `hasAlertBadge` is true (Tree variant only). */
+  @property({type: Number}) alertCount = 0;
+
+  /** The severity/type of the header's alert badge — one of the `obc-badge` types (Tree variant only). */
+  @property({type: String}) alertType: string = BadgeType.alarm;
+
+  /** Whether the group starts expanded. Useful for trees that open by default. */
+  @property({type: Boolean}) defaultOpen = false;
+
   @state() private openContainer = false;
 
   @query('obc-navigation-item') private groupItem?: HTMLElement;
+
+  override firstUpdated() {
+    if (this.defaultOpen) {
+      this.openContainer = true;
+    }
+  }
 
   private onClickGroup() {
     if (this.openContainer) {
@@ -123,6 +159,32 @@ export class ObcNavigationItemGroup extends LitElement {
   }
 
   override render() {
+    if (this.treeMode) {
+      return html`
+        <obc-tree-navigation-item
+          part="header"
+          .label=${this.label}
+          .branches=${this.treeBranches}
+          expandable
+          ?expanded=${this.openContainer}
+          ?checked=${this.checked}
+          .hasLeadingIcon=${this.hasIcon}
+          .terminalType=${this.terminalType}
+          ?hasAlertBadge=${this.hasAlertBadge}
+          .alertCount=${this.alertCount}
+          .alertType=${this.alertType}
+          @expand-toggle=${this.onClickGroup}
+        >
+          ${this.hasIcon
+            ? html`<slot name="icon" slot="icon"></slot>`
+            : nothing}
+        </obc-tree-navigation-item>
+        <div part="children" role="group" ?hidden=${!this.openContainer}>
+          <slot></slot>
+        </div>
+      `;
+    }
+
     return html`
       <obc-navigation-item
         @click=${this.onClickGroup}

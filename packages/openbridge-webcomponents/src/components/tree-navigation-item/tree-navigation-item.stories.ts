@@ -102,6 +102,10 @@ export const Root: Story = {
   args: {branches: []},
 };
 
+export const IndentedNoConnectors: Story = {
+  args: {branches: [TreeBranchType.blank, TreeBranchType.blank]},
+};
+
 export const WithAlertBadge: Story = {
   args: {hasAlertBadge: true, alertCount: 9},
 };

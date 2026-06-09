@@ -4,6 +4,7 @@ import compentStyle from './navigation-menu.css?inline';
 import {ObcNavigationItemGroup} from '../navigation-item-group/navigation-item-group.js';
 import {ObcNavigationItem} from '../navigation-item/navigation-item.js';
 import {customElement} from '../../decorator.js';
+import {TreeBranchType} from '../tree-navigation-item/tree-navigation-item.js';
 
 /**
  * `ObcNavigationMenuVariant` – Enumerates the available visual and behavioral variants for `<obc-navigation-menu>`.
@@ -12,6 +13,7 @@ import {customElement} from '../../decorator.js';
  * - `IconOnly`: Compact menu showing only icons (should only be used when no flyouts/submenus are present).
  * - `IconOnlyLarge`: Icon-only menu variant designed for use when flyouts/submenus are present.
  * - `Compact`: Space-saving menu with reduced padding and layout.
+ * - `Tree`: Hierarchical tree — groups expand inline and rows are indented by depth.
  *
  * Use these variants to adapt the navigation menu to different layouts or device sizes.
  */
@@ -20,6 +22,7 @@ export enum ObcNavigationMenuVariant {
   IconOnly = 'icon-only', // Should only be used when no flyouts are present in the navigation menu
   IconOnlyLarge = 'icon-only-large', // Should be used when flyouts are present in the navigation menu
   Compact = 'compact',
+  Tree = 'tree',
 }
 
 /**
@@ -49,6 +52,11 @@ export enum ObcNavigationMenuFlyoutVariant {
  *   - **IconOnly:** Shows only icons for a compact appearance. *Should only be used when no navigation items have sub-items or flyouts.*
  *   - **IconOnlyLarge:** Icon-only mode that supports flyouts/submenus. Use when navigation contains groups or nested items.
  *   - **Compact:** Reduces padding and overall width for a space-saving layout.
+ *   - **Tree:** Renders the same `obc-navigation-item` / `obc-navigation-item-group`
+ *     markup as a hierarchical tree. Groups expand inline (instead of as flyouts),
+ *     rows are indented by depth, multiple branches can stay open at once, and the
+ *     tree-row presentation (alert badge, terminal marker) is available via the
+ *     items' `hasAlertBadge`/`alertCount`/`alertType`/`terminalType` properties.
  * - **Responsive Layout:**
  *   - `smallScreen` property adapts the footer and logo layout for smaller viewports.
  * - **Slot-based Content:**
@@ -71,6 +79,10 @@ export enum ObcNavigationMenuFlyoutVariant {
  * - Use the `Full` variant for standard navigation with both icons and labels.
  * - Use `IconOnly` only when there are no nested groups or flyouts; otherwise, use `IconOnlyLarge` for icon-only navigation with flyout support.
  * - The `Compact` variant is suitable for layouts with limited space or when a minimal navigation appearance is desired.
+ * - Use the `Tree` variant for hierarchical navigation (file trees, nested
+ *   sections). The existing item/group markup is reused unchanged — only the
+ *   `variant` changes. Footer and logo slots remain flat. Mark a group with
+ *   `defaultOpen` to have it start expanded.
  * - Set `smallScreen` to `true` to optimize the layout for smaller devices or responsive breakpoints.
  *
  * **TODO(designer):** Provide additional guidance on when to use each variant and recommended slot content for best usability.
@@ -129,6 +141,7 @@ export class ObcNavigationMenu extends LitElement {
    * - `icon-only`: Compact, icon-only menu (use only when no flyouts/groups are present).
    * - `icon-only-large`: Icon-only menu supporting flyouts/groups.
    * - `compact`: Minimal, space-saving menu.
+   * - `tree`: Hierarchical tree — groups expand inline and rows are indented by depth.
    */
   @property({type: String}) variant: ObcNavigationMenuVariant =
     ObcNavigationMenuVariant.Full;
@@ -212,6 +225,7 @@ export class ObcNavigationMenu extends LitElement {
   registerGroup(groups: ObcNavigationItemGroup[]) {
     groups.forEach((group) => {
       group.addEventListener('open', () => {
+        if (this.variant === ObcNavigationMenuVariant.Tree) return;
         groups.forEach((g) => {
           if (g !== group) {
             g.close();
@@ -303,7 +317,65 @@ export class ObcNavigationMenu extends LitElement {
     this.setupSlotObservers();
   }
 
+  private assignTreeBranches(el: Element, depth: number): void {
+    for (const child of el.children) {
+      const tag = child.tagName.toLowerCase();
+      const isItem = tag === 'obc-navigation-item';
+      const isGroup = tag === 'obc-navigation-item-group';
+      if (!isItem && !isGroup) continue;
+      // Top-level rows are slotted; only treeify the main slot. Nested rows have
+      // no slot attribute and always belong to their group's tree.
+      if (depth === 0) {
+        const slot = child.getAttribute('slot');
+        if (slot !== null && slot !== 'main') continue;
+      }
+      const branches: TreeBranchType[] = Array.from(
+        {length: depth},
+        () => TreeBranchType.blank
+      );
+      const row = child as ObcNavigationItem | ObcNavigationItemGroup;
+      row.treeMode = true;
+      row.treeBranches = branches;
+      if (isGroup) {
+        this.assignTreeBranches(child, depth + 1);
+      }
+    }
+  }
+
+  // Reset tree mode on every descendant item/group so switching away from the
+  // Tree variant restores the flat rendering.
+  private clearTreeMode(el: Element): void {
+    for (const child of el.children) {
+      const tag = child.tagName.toLowerCase();
+      const isItem = tag === 'obc-navigation-item';
+      const isGroup = tag === 'obc-navigation-item-group';
+      if (!isItem && !isGroup) continue;
+      const row = child as ObcNavigationItem | ObcNavigationItemGroup;
+      row.treeMode = false;
+      row.treeBranches = [];
+      if (isGroup) {
+        this.clearTreeMode(child);
+      }
+    }
+  }
+
   private setupItems() {
+    if (this.variant === ObcNavigationMenuVariant.Tree) {
+      this.assignTreeBranches(this, 0);
+      // Footer and logo are not part of the tree — keep them as flat full-variant
+      // items (and clear any tree mode left over from the main slot's walk).
+      (['footer', 'logo'] as const).forEach((slot) => {
+        this.findAllItems(this, slot).forEach((item) => {
+          item.treeMode = false;
+          item.treeBranches = [];
+          item.variant = ObcNavigationMenuVariant.Full;
+        });
+      });
+      return;
+    }
+
+    this.clearTreeMode(this);
+
     const hug =
       this.variant !== ObcNavigationMenuVariant.Full ||
       this.flyoutVariant === ObcNavigationMenuFlyoutVariant.Compact;
