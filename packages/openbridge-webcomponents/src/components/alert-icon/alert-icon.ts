@@ -198,6 +198,16 @@ export class ObcAlertIcon extends LitElement {
       width: 100%;
       position: relative;
 
+      obi-diagnostic-badge,
+      obi-critical-badge {
+        display: block;
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
       svg {
         height: 100%;
         width: 100%;
