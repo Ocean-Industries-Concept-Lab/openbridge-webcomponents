@@ -12,7 +12,7 @@ import {ReadoutSetpointMode} from '../readout-setpoint/readout-setpoint.js';
 import {
   AlertFrameConfig,
   wrapWithAlertFrame,
-} from '../../components/alert-frame/alert-frame';
+} from '../../components/alert-frame/alert-frame.js';
 
 export enum ReadoutListItemDataState {
   none = 'none',
