@@ -31,26 +31,44 @@
   border: 1px solid var(--overlay-border-outline-color);
 }
 
-.wrapper.type-id.state-caution {
+.wrapper.type-id.state-caution,
+.wrapper.type-id.state-isa-low {
   background: var(--alert-caution-color);
   border: 1px solid var(--alert-caution-outline-color);
 }
 
-.wrapper.type-id.state-warning {
+.wrapper.type-id.state-warning,
+.wrapper.type-id.state-isa-medium {
   background: var(--alert-warning-color);
   border: 1px solid var(--alert-warning-outline-color);
 }
 
-.wrapper.type-id.state-alarm {
+.wrapper.type-id.state-alarm,
+.wrapper.type-id.state-isa-high {
   background: var(--alert-alarm-color);
   border: 1px solid var(--alert-alarm-outline-color);
+}
+
+.wrapper.type-id.state-isa-critical {
+  background: var(--critical-enabled-background-color);
+  border: 1px solid var(--critical-enabled-border-color);
+}
+
+.wrapper.type-id.state-isa-diagnostic {
+  background: var(--notification-enabled-background-color);
+  border: 1px solid var(--notification-enabled-border-color);
 }
 
 .wrapper.type-data:is(
     .state-selected,
     .state-caution,
     .state-warning,
-    .state-alarm
+    .state-alarm,
+    .state-isa-critical,
+    .state-isa-high,
+    .state-isa-medium,
+    .state-isa-low,
+    .state-isa-diagnostic
   ) {
   background: var(--overlay-container-background-color);
   border: 1px solid var(--overlay-border-outline-color);
@@ -104,19 +122,32 @@
   border: 1px solid var(--overlay-border-outline-color);
 }
 
-.wrapper.type-data.state-caution .id-pill {
+.wrapper.type-data.state-caution .id-pill,
+.wrapper.type-data.state-isa-low .id-pill {
   background: var(--alert-caution-color);
   border: 1px solid var(--alert-caution-outline-color);
 }
 
-.wrapper.type-data.state-warning .id-pill {
+.wrapper.type-data.state-warning .id-pill,
+.wrapper.type-data.state-isa-medium .id-pill {
   background: var(--alert-warning-color);
   border: 1px solid var(--alert-warning-outline-color);
 }
 
-.wrapper.type-data.state-alarm .id-pill {
+.wrapper.type-data.state-alarm .id-pill,
+.wrapper.type-data.state-isa-high .id-pill {
   background: var(--alert-alarm-color);
   border: 1px solid var(--alert-alarm-outline-color);
+}
+
+.wrapper.type-data.state-isa-critical .id-pill {
+  background: var(--critical-enabled-background-color);
+  border: 1px solid var(--critical-enabled-border-color);
+}
+
+.wrapper.type-data.state-isa-diagnostic .id-pill {
+  background: var(--notification-enabled-background-color);
+  border: 1px solid var(--notification-enabled-border-color);
 }
 
 .id-text {

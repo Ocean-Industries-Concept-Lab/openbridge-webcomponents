@@ -34,6 +34,10 @@ import {
   ReadoutSetpointSize,
 } from '../readout-setpoint/readout-setpoint.js';
 import '../readout-setpoint/readout-setpoint.js';
+import {
+  type AlertFrameConfig,
+  wrapWithAlertFrame,
+} from '../../components/alert-frame/alert-frame.js';
 
 export enum ReadoutVariant {
   regular = 'regular',
@@ -41,13 +45,10 @@ export enum ReadoutVariant {
   stack = 'stack',
 }
 
-export enum ReadoutAlertState {
+export enum ReadoutDataState {
   none = 'none',
   lowIntegrity = 'low-integrity',
   invalid = 'invalid',
-  caution = 'caution',
-  warning = 'warning',
-  alarm = 'alarm',
 }
 
 export enum ReadoutSetpointInteraction {
@@ -123,8 +124,7 @@ export class ObcReadout extends LitElement {
   @property({type: String}) src?: string;
   @property({type: Boolean}) off = false;
   @property({type: String}) valuePriority?: Priority;
-  @property({type: String}) alertState: ReadoutAlertState =
-    ReadoutAlertState.none;
+  @property({type: String}) dataState: ReadoutDataState = ReadoutDataState.none;
   @property({type: String}) setpointInteraction: ReadoutSetpointInteraction =
     ReadoutSetpointInteraction.alwaysVisible;
   @property({type: String}) direction: ReadoutDirection =
@@ -160,6 +160,8 @@ export class ObcReadout extends LitElement {
   @property({type: Number}) sourceDeltaValue = 0;
   @property({type: String}) sourceType?: ReadoutSourceType;
   @property({type: Boolean}) hasLeadingIcon = false;
+
+  @property({type: Object}) alert: AlertFrameConfig | boolean = false;
 
   @property({type: Boolean, attribute: false}) sourceHug = true;
   @property({type: Boolean}) hasSourceLeadingIcon = false;
@@ -1033,63 +1035,67 @@ export class ObcReadout extends LitElement {
   }
 
   override render() {
-    return html`
-      <div
-        class=${classMap({
-          readout: true,
-          [this.variant]: true,
-          [this.direction]: true,
-          'alignment-left': this.alignment === 'left',
-          'alignment-center': this.alignment === 'center',
-          'alignment-vertical': this.alignment === 'vertical',
-          'interaction-always-visible':
-            this.interactionMode === ReadoutSetpointInteraction.alwaysVisible,
-          'interaction-flip-flop':
-            this.setpointInteractionEnabled &&
-            this.interactionMode === ReadoutSetpointInteraction.flipFlop,
-          'interaction-pop-up':
-            this.setpointInteractionEnabled &&
-            this.interactionMode === ReadoutSetpointInteraction.popUp,
-          'focus-setpoint':
-            this.setpointInteractionEnabled && this.flipFlopSetpointFocused,
-          'focus-value':
-            this.setpointInteractionEnabled && this.flipFlopValueFocused,
-          'alert-none': this.alertState === ReadoutAlertState.none,
-          'alert-low-integrity':
-            this.alertState === ReadoutAlertState.lowIntegrity,
-          'alert-invalid': this.alertState === ReadoutAlertState.invalid,
-          'alert-caution': this.alertState === ReadoutAlertState.caution,
-          'alert-warning': this.alertState === ReadoutAlertState.warning,
-          'alert-alarm': this.alertState === ReadoutAlertState.alarm,
-          'has-source': this.hasSrc,
-          'has-setpoint': this.hasSetpoint,
-          'has-setpoint-button':
-            this.isHorizontal &&
-            this.setpointFormat === ReadoutSetpointFormat.button,
-          'no-hug': !this.hug,
-          'label-only': this.labelOnly,
-        })}
-      >
-        ${!this.labelOnly && this.isVertical ? this.renderAdvice() : nothing}
-        ${!this.labelOnly && this.isVertical ? this.renderSetpoint() : nothing}
-        ${!this.labelOnly && this.isVertical ? this.renderValueZone() : nothing}
-        ${(this.labelOnly || this.isVertical) &&
-        this.shouldRenderReadoutMetaZone
-          ? renderReadoutMetaZone({
-              labelValue: this.label,
-              unitValue: this.unit,
-            })
-          : nothing}
-        ${!this.labelOnly && this.hasSrc && this.isVertical
-          ? this.renderSource()
-          : nothing}
-        ${!this.labelOnly && this.isHorizontal
-          ? this.renderHorizontalLayout()
-          : nothing}
-        ${this.renderSourcePickerSlot()}
-      </div>
-      ${this.renderSourcePickerContent()}
-    `;
+    return wrapWithAlertFrame(
+      this.alert,
+      html`
+        <div
+          class=${classMap({
+            readout: true,
+            [this.variant]: true,
+            [this.direction]: true,
+            'alignment-left': this.alignment === 'left',
+            'alignment-center': this.alignment === 'center',
+            'alignment-vertical': this.alignment === 'vertical',
+            'interaction-always-visible':
+              this.interactionMode === ReadoutSetpointInteraction.alwaysVisible,
+            'interaction-flip-flop':
+              this.setpointInteractionEnabled &&
+              this.interactionMode === ReadoutSetpointInteraction.flipFlop,
+            'interaction-pop-up':
+              this.setpointInteractionEnabled &&
+              this.interactionMode === ReadoutSetpointInteraction.popUp,
+            'focus-setpoint':
+              this.setpointInteractionEnabled && this.flipFlopSetpointFocused,
+            'focus-value':
+              this.setpointInteractionEnabled && this.flipFlopValueFocused,
+            'data-none': this.dataState === ReadoutDataState.none,
+            'data-low-integrity':
+              this.dataState === ReadoutDataState.lowIntegrity,
+            'data-invalid': this.dataState === ReadoutDataState.invalid,
+            'has-source': this.hasSrc,
+            'has-setpoint': this.hasSetpoint,
+            'has-setpoint-button':
+              this.isHorizontal &&
+              this.setpointFormat === ReadoutSetpointFormat.button,
+            'no-hug': !this.hug,
+            'label-only': this.labelOnly,
+          })}
+        >
+          ${!this.labelOnly && this.isVertical ? this.renderAdvice() : nothing}
+          ${!this.labelOnly && this.isVertical
+            ? this.renderSetpoint()
+            : nothing}
+          ${!this.labelOnly && this.isVertical
+            ? this.renderValueZone()
+            : nothing}
+          ${(this.labelOnly || this.isVertical) &&
+          this.shouldRenderReadoutMetaZone
+            ? renderReadoutMetaZone({
+                labelValue: this.label,
+                unitValue: this.unit,
+              })
+            : nothing}
+          ${!this.labelOnly && this.hasSrc && this.isVertical
+            ? this.renderSource()
+            : nothing}
+          ${!this.labelOnly && this.isHorizontal
+            ? this.renderHorizontalLayout()
+            : nothing}
+          ${this.renderSourcePickerSlot()}
+        </div>
+        ${this.renderSourcePickerContent()}
+      `
+    );
   }
 
   static override styles = unsafeCSS(componentStyle);

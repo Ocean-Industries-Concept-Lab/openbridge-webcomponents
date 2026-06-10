@@ -13,10 +13,11 @@ import {
   AutomationButtonReadoutStackSize,
 } from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import {
-  ObcAlertFrameStatus,
   ObcAlertFrameThickness,
   ObcAlertFrameType,
+  ObcAlertFrameMode,
 } from '../../components/alert-frame/alert-frame.js';
+import {AlertType} from '../../types.js';
 import '../automation-badge/automation-badge.js';
 import {ObcAutomationBadgeType} from '../automation-badge/automation-badge.js';
 import {CircularProgressMode} from '../../building-blocks/circular-progress/circular-progress.js';
@@ -27,6 +28,11 @@ export enum AutomationButtonBadgeAlert {
   Caution = 'caution',
   Warning = 'warning',
   Alarm = 'alarm',
+  IsaCritical = 'isa-critical',
+  IsaHigh = 'isa-high',
+  IsaMedium = 'isa-medium',
+  IsaLow = 'isa-low',
+  IsaDiagnostic = 'isa-diagnostic',
 }
 
 export enum AutomationButtonBadgeInterlock {
@@ -62,8 +68,9 @@ export class ObcAbstractAutomationButton extends LitElement {
     ObcAlertFrameType.SmallSideFlip;
   @property({type: String}) alertFrameThickness: ObcAlertFrameThickness =
     ObcAlertFrameThickness.Small;
-  @property({type: String}) alertFrameStatus: ObcAlertFrameStatus =
-    ObcAlertFrameStatus.Alarm;
+  @property({type: String}) alertFrameStatus: AlertType = AlertType.Alarm;
+  @property({type: String}) alertFrameMode: ObcAlertFrameMode =
+    ObcAlertFrameMode.ackedActive;
   @property({type: Boolean, attribute: false}) showAlertCategoryIcon: boolean =
     true;
   @property({type: Boolean}) showAlertIcon: boolean = false;
@@ -151,6 +158,16 @@ export class ObcAbstractAutomationButton extends LitElement {
       return ObcAutomationBadgeType.Warning;
     } else if (this.badgeAlert === AutomationButtonBadgeAlert.Alarm) {
       return ObcAutomationBadgeType.Alarm;
+    } else if (this.badgeAlert === AutomationButtonBadgeAlert.IsaCritical) {
+      return ObcAutomationBadgeType.IsaCritical;
+    } else if (this.badgeAlert === AutomationButtonBadgeAlert.IsaHigh) {
+      return ObcAutomationBadgeType.IsaHigh;
+    } else if (this.badgeAlert === AutomationButtonBadgeAlert.IsaMedium) {
+      return ObcAutomationBadgeType.IsaMedium;
+    } else if (this.badgeAlert === AutomationButtonBadgeAlert.IsaLow) {
+      return ObcAutomationBadgeType.IsaLow;
+    } else if (this.badgeAlert === AutomationButtonBadgeAlert.IsaDiagnostic) {
+      return ObcAutomationBadgeType.IsaDiagnostic;
     }
     return null;
   }
@@ -211,6 +228,7 @@ export class ObcAbstractAutomationButton extends LitElement {
       .alertFrameType=${this.alertFrameType}
       .alertFrameThickness=${this.alertFrameThickness}
       .alertFrameStatus=${this.alertFrameStatus}
+      .alertFrameMode=${this.alertFrameMode}
       .showAlertCategoryIcon=${this.showAlertCategoryIcon}
       .showAlertIcon=${this.showAlertIcon}
       ?progress=${this.progress}
