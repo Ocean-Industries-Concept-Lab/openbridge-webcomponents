@@ -6,6 +6,12 @@ import {ifDefined} from 'lit/directives/if-defined.js';
 import '../../icons/icon-arrow-flyout-google.js';
 import {ObcNavigationMenuVariant} from '../navigation-menu/navigation-menu.js';
 import {customElement} from '../../decorator.js';
+import '../tree-navigation-item/tree-navigation-item.js';
+import {
+  TreeBranchType,
+  TreeTerminalType,
+} from '../tree-navigation-item/tree-navigation-item.js';
+import {BadgeType} from '../badge/badge.js';
 
 enum NavigationItemRole {
   Button = 'button',
@@ -142,7 +148,31 @@ export class ObcNavigationItem extends LitElement {
 
   @property({type: Boolean}) hasTrailingIcon = false;
 
+  /** Set by `obc-navigation-menu` in its Tree variant — renders the row as a tree item. */
+  @property({type: Boolean}) treeMode = false;
+
+  /** Indentation columns for tree mode, assigned by `obc-navigation-menu`. */
+  @property({type: Array}) treeBranches: TreeBranchType[] = [];
+
+  /**
+   * Terminal type for the row in the Tree variant — one of `regular` (default),
+   * `aggregated-header`, or `group-header`. Has no effect in the flat variants.
+   */
+  @property({type: String}) terminalType: string = TreeTerminalType.regular;
+
+  /** Whether a trailing alert counter badge is shown (Tree variant only). */
+  @property({type: Boolean}) hasAlertBadge = false;
+
+  /** The number shown in the alert badge when `hasAlertBadge` is true (Tree variant only). */
+  @property({type: Number}) alertCount = 0;
+
+  /** The severity/type of the alert badge — one of the `obc-badge` types (Tree variant only). */
+  @property({type: String}) alertType: string = BadgeType.alarm;
+
   @query('a') private anchorElement?: HTMLAnchorElement;
+
+  // In tree mode the row renders an `obc-tree-navigation-item` instead of an `<a>`.
+  @query('obc-tree-navigation-item') private treeItemElement?: HTMLElement;
 
   /**
    * Fired when the navigation item is clicked (either as a link or button).
@@ -165,7 +195,7 @@ export class ObcNavigationItem extends LitElement {
   }
 
   public override focus(options?: FocusOptions): void {
-    this.anchorElement?.focus(options);
+    (this.treeItemElement ?? this.anchorElement)?.focus(options);
   }
 
   private getItemRole(): NavigationItemRole | undefined {
@@ -188,6 +218,31 @@ export class ObcNavigationItem extends LitElement {
   }
 
   override render() {
+    if (this.treeMode) {
+      // Delegate the whole row to the tree item: it owns focus, keyboard
+      // activation, the checked-inert behavior, and href navigation. Forward its
+      // activation as this item's own `click` so selection wiring is unchanged.
+      return html`
+        <obc-tree-navigation-item
+          class="tree"
+          .label=${this.label}
+          .branches=${this.treeBranches}
+          ?checked=${this.checked}
+          .hasLeadingIcon=${this.hasIcon}
+          .href=${this.href}
+          .terminalType=${this.terminalType}
+          ?hasAlertBadge=${this.hasAlertBadge}
+          .alertCount=${this.alertCount}
+          .alertType=${this.alertType}
+          @click=${this.onClick}
+        >
+          ${this.hasIcon
+            ? html`<slot name="icon" slot="icon"></slot>`
+            : nothing}
+        </obc-tree-navigation-item>
+      `;
+    }
+
     const showFlyout =
       this.group && this.variant !== ObcNavigationMenuVariant.IconOnly;
     const isCompact = this.variant === ObcNavigationMenuVariant.Compact;
