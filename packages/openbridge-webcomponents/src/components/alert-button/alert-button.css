@@ -89,6 +89,46 @@ button {
     }
   }
 
+  .type-enhanced.alert-type-isa-critical & {
+    @mixin style style=normal visibleWrapperClass=.blink;
+    @mixin style style=critical visibleWrapperClass=.visible-wrapper;
+    & .visible-wrapper {
+      color: var(--on-critical-active-color);
+    }
+  }
+
+  .type-enhanced.alert-type-isa-high & {
+    @mixin style style=normal visibleWrapperClass=.blink;
+    @mixin style style=alarm visibleWrapperClass=.visible-wrapper;
+    & .visible-wrapper {
+      color: var(--on-alarm-active-color);
+    }
+  }
+
+  .type-enhanced.alert-type-isa-medium & {
+    @mixin style style=normal visibleWrapperClass=.blink;
+    @mixin style style=warning visibleWrapperClass=.visible-wrapper;
+    & .visible-wrapper {
+      color: var(--on-warning-active-color);
+    }
+  }
+
+  .type-enhanced.alert-type-isa-low & {
+    @mixin style style=normal visibleWrapperClass=.blink;
+    @mixin style style=caution visibleWrapperClass=.visible-wrapper;
+    & .visible-wrapper {
+      color: var(--on-caution-active-color);
+    }
+  }
+
+  .type-enhanced.alert-type-isa-diagnostic & {
+    @mixin style style=normal visibleWrapperClass=.blink;
+    @mixin style style=notification visibleWrapperClass=.visible-wrapper;
+    & .visible-wrapper {
+      color: var(--on-notification-active-color);
+    }
+  }
+
   & .visible-wrapper,
   & .blink {
     border-radius: var(--ui-components-button-border-radius-top-left)
@@ -127,7 +167,29 @@ button {
   }
 }
 
-.blinking.alert-type-alarm .alert-button {
+.blinking.alert-type-warning .alert-button,
+.blinking.alert-type-isa-medium .alert-button {
+  .visible-wrapper {
+    opacity: var(--warning-blink-on);
+  }
+
+  .blink {
+    opacity: var(--warning-blink-off);
+  }
+}
+
+.blinking.alert-type-isa-critical .alert-button {
+  .visible-wrapper {
+    opacity: var(--critical-blink-on);
+  }
+
+  .blink {
+    opacity: var(--critical-blink-off);
+  }
+}
+
+.blinking.alert-type-alarm .alert-button,
+.blinking.alert-type-isa-high .alert-button {
   .visible-wrapper {
     opacity: var(--alarm-blink-on);
   }
@@ -137,13 +199,14 @@ button {
   }
 }
 
-.blinking.alert-type-warning .alert-button {
+.blinking.alert-type-caution .alert-button,
+.blinking.alert-type-isa-low .alert-button {
   .visible-wrapper {
-    opacity: var(--warning-blink-on);
+    opacity: var(--low-blink-on);
   }
 
   .blink {
-    opacity: var(--warning-blink-off);
+    opacity: var(--low-blink-off);
   }
 }
 
@@ -163,9 +226,30 @@ button {
   --icon-stroke: var(--warning-pressed-border-color);
 }
 
-.alert-type-caution {
+.alert-type-caution,
+.alert-type-isa-low {
   --icon-fill: var(--caution-enabled-background-color);
   --icon-stroke: var(--caution-pressed-border-color);
+}
+
+.alert-type-isa-critical {
+  --icon-fill: var(--alert-critical-color);
+  --icon-stroke: var(--alert-critical-outline-color);
+}
+
+.alert-type-isa-high {
+  --icon-fill: var(--alarm-enabled-background-color);
+  --icon-stroke: var(--alarm-pressed-border-color);
+}
+
+.alert-type-isa-medium {
+  --icon-fill: var(--warning-enabled-background-color);
+  --icon-stroke: var(--warning-pressed-border-color);
+}
+
+.alert-type-isa-diagnostic {
+  --icon-fill: var(--alert-diagnostic-color);
+  --icon-stroke: var(--alert-diagnostic-outline-color);
 }
 
 .silence-button {

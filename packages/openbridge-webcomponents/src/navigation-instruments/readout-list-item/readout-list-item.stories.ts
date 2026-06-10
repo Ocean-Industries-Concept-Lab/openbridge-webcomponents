@@ -4,9 +4,15 @@ import {useArgs} from 'storybook/preview-api';
 import {
   ReadoutListItemSize,
   ReadoutListItemStacking,
-  ReadoutListItemAlertState,
+  ReadoutListItemDataState,
   ReadoutListItemPriority,
 } from './readout-list-item.js';
+import type {AlertFrameConfig} from '../../components/alert-frame/alert-frame.js';
+import {
+  ObcAlertFrameMode,
+  ObcAlertFrameType,
+} from '../../components/alert-frame/alert-frame.js';
+import {AlertType} from '../../types.js';
 import './readout-list-item.js';
 import '../../icons/icon-placeholder.js';
 
@@ -14,7 +20,8 @@ type ReadoutListItemStoryArgs = {
   size: ReadoutListItemSize;
   stacking: ReadoutListItemStacking;
   priority: ReadoutListItemPriority;
-  alertState: ReadoutListItemAlertState;
+  dataState: ReadoutListItemDataState;
+  alert: AlertFrameConfig | false;
   hasSetpoint: boolean;
   setpointValue: number;
   hasLabel: boolean;
@@ -132,7 +139,8 @@ const defaultArgs: ReadoutListItemStoryArgs = {
   size: ReadoutListItemSize.base,
   stacking: ReadoutListItemStacking.trailingUnit,
   priority: ReadoutListItemPriority.regular,
-  alertState: ReadoutListItemAlertState.none,
+  dataState: ReadoutListItemDataState.none,
+  alert: false,
   hasSetpoint: false,
   setpointValue: 123,
   hasDegree: true,
@@ -149,6 +157,7 @@ const defaultArgs: ReadoutListItemStoryArgs = {
   value: 123,
   fractionDigits: 0,
   showZeroPadding: false,
+  labelOnly: false,
 };
 
 function renderReadoutListItem(args: Partial<ReadoutListItemStoryArgs>) {
@@ -158,7 +167,8 @@ function renderReadoutListItem(args: Partial<ReadoutListItemStoryArgs>) {
       .size=${resolved.size}
       .stacking=${resolved.stacking}
       .priority=${resolved.priority}
-      .alertState=${resolved.alertState}
+      .dataState=${resolved.dataState}
+      .alert=${resolved.alert}
       .hasSetpoint=${resolved.hasSetpoint}
       .setpointValue=${resolved.setpointValue}
       .hasLabel=${resolved.hasLabel}
@@ -260,10 +270,10 @@ const meta = {
       options: Object.values(ReadoutListItemPriority),
       table: {category: 'Readout'},
     },
-    alertState: {
-      name: 'Alert State',
+    dataState: {
+      name: 'Data State',
       control: {type: 'select'},
-      options: Object.values(ReadoutListItemAlertState),
+      options: Object.values(ReadoutListItemDataState),
       table: {category: 'Readout'},
     },
     hasSetpoint: {
@@ -386,7 +396,7 @@ function renderStackingMatrix({
             stacking,
             priority,
             hasSetpoint,
-            alertState: ReadoutListItemAlertState.none,
+            dataState: ReadoutListItemDataState.none,
             hasUnit,
             hasSource,
             value: 123,
@@ -429,20 +439,53 @@ export const LeadingSrc: Story = {
     }),
 };
 
-export const AlertStates: Story = {
+export const DataStates: Story = {
   render: () => {
-    const alerts = Object.values(ReadoutListItemAlertState);
-    const cases: ReadoutShowcaseCase[] = alerts.map((alertState) => ({
-      label: `${alertState}`,
+    const dataStates = Object.values(ReadoutListItemDataState);
+    const cases: ReadoutShowcaseCase[] = dataStates.map((dataState) => ({
+      label: `${dataState}`,
       args: {
         size: ReadoutListItemSize.base,
         stacking: ReadoutListItemStacking.trailingUnit,
         priority: ReadoutListItemPriority.regular,
-        alertState,
+        dataState,
         value: 123,
       },
     }));
 
-    return renderShowcaseSections([{title: 'Alert States', cases}]);
+    return renderShowcaseSections([{title: 'Data States', cases}]);
+  },
+};
+
+export const Alarm: Story = {
+  args: {
+    value: 123,
+    alert: {
+      status: AlertType.Alarm,
+      mode: ObcAlertFrameMode.ackedActive,
+      type: ObcAlertFrameType.Regular,
+    },
+  },
+};
+
+export const IsaCritical: Story = {
+  args: {
+    value: 123,
+    alert: {
+      status: AlertType.IsaCritical,
+      mode: ObcAlertFrameMode.unackedActive,
+      type: ObcAlertFrameType.Regular,
+    },
+  },
+};
+
+export const IsaLowUnackedRectified: Story = {
+  args: {
+    value: 123,
+    alert: {
+      status: AlertType.IsaLow,
+      mode: ObcAlertFrameMode.unackedRectified,
+      type: ObcAlertFrameType.Regular,
+    },
   },
 };

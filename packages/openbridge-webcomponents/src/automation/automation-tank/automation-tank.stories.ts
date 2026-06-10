@@ -516,6 +516,28 @@ export const WithAlertCautionCompact: Story = {
   },
 };
 
+export const WithAlertIsaCritical: Story = {
+  ...WithAlertAlarm,
+  args: {
+    type: TankType.atmospheric,
+    alert: true,
+    alertFrameStatus: ObcAlertFrameStatus.IsaCritical,
+    alertFrameType: ObcAlertFrameType.SmallSideFlip,
+    badgeAlert: AutomationButtonBadgeAlert.IsaCritical,
+  },
+};
+
+export const WithAlertIsaDiagnostic: Story = {
+  ...WithAlertAlarm,
+  args: {
+    type: TankType.atmospheric,
+    alert: true,
+    alertFrameStatus: ObcAlertFrameStatus.IsaDiagnostic,
+    alertFrameType: ObcAlertFrameType.Regular,
+    badgeAlert: AutomationButtonBadgeAlert.IsaDiagnostic,
+  },
+};
+
 /**
  * Demonstrates `positioning="button"`: the tank host fills its parent
  * container (100% × 100%) with no P&ID anchor offset, so it behaves like a

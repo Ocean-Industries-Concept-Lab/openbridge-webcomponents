@@ -1,0 +1,165 @@
+:root[data-obc-theme="day"] {
+  --critical-enabled-background-color: rgb(196, 36, 183);
+  --critical-enabled-border-color: rgb(153, 0, 143);
+  --critical-hover-background-color: rgb(173, 5, 162);
+  --critical-hover-border-color: rgb(153, 0, 143);
+  --critical-pressed-background-color: rgb(153, 0, 143);
+  --critical-pressed-border-color: rgb(153, 0, 143);
+  --critical-focused-background-color: rgb(196, 36, 183);
+  --critical-focused-border-color: rgb(153, 0, 143);
+  --critical-disabled-background-color: rgb(196, 36, 183);
+  --critical-disabled-border-color: rgb(196, 36, 183);
+  --on-critical-color: rgb(255, 255, 255);
+  --on-critical-active-color: rgb(255, 255, 255);
+  --on-critical-neutral-color: rgb(254, 232, 250);
+  --on-critical-disabled-color: rgb(248, 155, 235);
+  --alert-critical-color: var(--critical-enabled-background-color);
+  --alert-critical-outline-color: var(--critical-enabled-border-color);
+  --alert-critical-container-background-color: rgb(254, 207, 246);
+  --alert-critical-container-border-color: rgb(248, 155, 235);
+  --alert-diagnostic-color: var(--notification-enabled-background-color);
+  --alert-diagnostic-outline-color: var(--notification-enabled-border-color);
+  --alert-notification-container-background-color: rgb(226, 240, 255);
+  --alert-notification-container-border-color: rgb(195, 223, 255);
+}
+
+:root[data-obc-theme="dusk"] {
+  --critical-enabled-background-color: rgb(189, 40, 190);
+  --critical-enabled-border-color: rgb(206, 65, 207);
+  --critical-hover-background-color: rgb(206, 65, 207);
+  --critical-hover-border-color: rgb(206, 65, 207);
+  --critical-pressed-background-color: rgb(218, 85, 218);
+  --critical-pressed-border-color: rgb(206, 65, 207);
+  --critical-focused-background-color: rgb(189, 40, 190);
+  --critical-focused-border-color: rgb(132, 179, 239);
+  --critical-disabled-background-color: rgb(189, 40, 190);
+  --critical-disabled-border-color: rgb(189, 40, 190);
+  --on-critical-color: rgb(255, 255, 255);
+  --on-critical-active-color: rgb(255, 255, 255);
+  --on-critical-neutral-color: rgb(255, 255, 255);
+  --on-critical-disabled-color: rgb(38, 38, 38);
+  --alert-critical-color: var(--critical-enabled-background-color);
+  --alert-critical-outline-color: var(--critical-enabled-border-color);
+  --alert-critical-container-background-color: rgb(85, 0, 86);
+  --alert-critical-container-border-color: rgb(102, 0, 104);
+  --alert-diagnostic-color: var(--notification-enabled-background-color);
+  --alert-diagnostic-outline-color: var(--notification-enabled-border-color);
+  --alert-notification-container-background-color: rgb(0, 35, 123);
+  --alert-notification-container-border-color: rgb(0, 44, 144);
+}
+
+:root[data-obc-theme="night"] {
+  --critical-enabled-background-color: rgb(195, 48, 196);
+  --critical-enabled-border-color: rgb(195, 48, 196);
+  --critical-hover-background-color: rgb(195, 48, 196);
+  --critical-hover-border-color: rgb(224, 100, 224);
+  --critical-pressed-background-color: rgb(181, 30, 182);
+  --critical-pressed-border-color: rgb(224, 100, 224);
+  --critical-focused-background-color: rgb(195, 48, 196);
+  --critical-focused-border-color: rgb(44, 131, 102);
+  --critical-disabled-background-color: rgb(161, 6, 163);
+  --critical-disabled-border-color: rgb(161, 6, 163);
+  --on-critical-color: rgb(0, 0, 0);
+  --on-critical-active-color: rgb(0, 0, 0);
+  --on-critical-neutral-color: rgb(0, 0, 0, 0.699999988079071);
+  --on-critical-disabled-color: rgb(0, 0, 0, 0.30000001192092896);
+  --alert-critical-color: var(--critical-enabled-background-color);
+  --alert-critical-outline-color: var(--critical-enabled-border-color);
+  --alert-critical-container-background-color: rgb(59, 0, 60);
+  --alert-critical-container-border-color: rgb(59, 0, 60);
+  --alert-diagnostic-color: var(--notification-enabled-background-color);
+  --alert-diagnostic-outline-color: var(--notification-enabled-border-color);
+  --alert-notification-container-background-color: rgb(16, 33, 26);
+  --alert-notification-container-border-color: rgb(16, 33, 26);
+}
+
+:root[data-obc-theme="bright"] {
+  --critical-enabled-background-color: rgb(196, 36, 183);
+  --critical-enabled-border-color: rgb(112, 0, 104);
+  --critical-hover-background-color: rgb(153, 0, 143);
+  --critical-hover-border-color: rgb(112, 0, 104);
+  --critical-pressed-background-color: rgb(112, 0, 104);
+  --critical-pressed-border-color: rgb(112, 0, 104);
+  --critical-focused-background-color: rgb(153, 0, 143);
+  --critical-focused-border-color: rgb(93, 143, 213);
+  --critical-disabled-background-color: rgb(196, 36, 183);
+  --critical-disabled-border-color: rgb(196, 36, 183);
+  --on-critical-color: rgb(255, 255, 255);
+  --on-critical-active-color: rgb(255, 255, 255);
+  --on-critical-neutral-color: rgb(255, 255, 255);
+  --on-critical-disabled-color: rgb(248, 155, 235);
+  --alert-critical-color: var(--critical-enabled-background-color);
+  --alert-critical-outline-color: var(--critical-enabled-border-color);
+  --alert-critical-container-background-color: rgb(252, 184, 242);
+  --alert-critical-container-border-color: rgb(252, 184, 242);
+  --alert-diagnostic-color: var(--notification-enabled-background-color);
+  --alert-diagnostic-outline-color: var(--notification-enabled-border-color);
+  --alert-notification-container-background-color: rgb(226, 240, 255);
+  --alert-notification-container-border-color: rgb(226, 240, 255);
+}
+
+@property --critical-blink-on {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --critical-blink-off {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --low-blink-on {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --low-blink-off {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@keyframes critical-blink {
+  0% {
+    --critical-blink-on: 1;
+    --critical-blink-off: 0;
+  }
+
+  50% {
+    --critical-blink-on: 0;
+    --critical-blink-off: 1;
+  }
+
+  100% {
+    --critical-blink-on: 1;
+    --critical-blink-off: 0;
+  }
+}
+
+@keyframes low-blink {
+  0% {
+    --low-blink-on: 1;
+    --low-blink-off: 0;
+  }
+
+  50% {
+    --low-blink-on: 0;
+    --low-blink-off: 1;
+  }
+
+  100% {
+    --low-blink-on: 1;
+    --low-blink-off: 0;
+  }
+}
+
+:root {
+  animation:
+    warning-blink 4s infinite,
+    critical-blink 1s infinite,
+    low-blink 8s infinite;
+  animation-timing-function: steps(1);
+}
