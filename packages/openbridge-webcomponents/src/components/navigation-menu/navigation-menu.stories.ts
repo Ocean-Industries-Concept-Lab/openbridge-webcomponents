@@ -252,3 +252,57 @@ export const TestDynamicElementsInSpan: Story = {
     await expect(newItem.variant).toBe(ObcNavigationMenuVariant.Compact);
   },
 };
+
+export const Tree: Story = {
+  args: {
+    variant: ObcNavigationMenuVariant.Tree,
+  },
+  render: (args) => {
+    return html`
+      <obc-navigation-menu
+        .variant=${args.variant}
+        style="position: fixed; top: 0; bottom: 0; left: 0;"
+      >
+        <obc-navigation-item-group
+          slot="main"
+          label="Vessel"
+          hasIcon
+          defaultOpen
+        >
+          <obi-placeholder slot="icon"></obi-placeholder>
+          <obc-navigation-item-group
+            label="Engine room"
+            hasIcon
+            defaultOpen
+            terminalType="aggregated-header"
+          >
+            <obi-placeholder slot="icon"></obi-placeholder>
+            <obc-navigation-item label="Main engine" hasIcon checked>
+              <obi-placeholder slot="icon"></obi-placeholder>
+            </obc-navigation-item>
+            <obc-navigation-item
+              label="Cooling system"
+              hasIcon
+              hasAlertBadge
+              .alertCount=${3}
+            >
+              <obi-placeholder slot="icon"></obi-placeholder>
+            </obc-navigation-item>
+          </obc-navigation-item-group>
+          <obc-navigation-item-group label="Bridge" hasIcon>
+            <obi-placeholder slot="icon"></obi-placeholder>
+            <obc-navigation-item label="Radar" hasIcon>
+              <obi-placeholder slot="icon"></obi-placeholder>
+            </obc-navigation-item>
+            <obc-navigation-item label="Autopilot" hasIcon>
+              <obi-placeholder slot="icon"></obi-placeholder>
+            </obc-navigation-item>
+          </obc-navigation-item-group>
+          <obc-navigation-item label="Deck" hasIcon>
+            <obi-placeholder slot="icon"></obi-placeholder>
+          </obc-navigation-item>
+        </obc-navigation-item-group>
+      </obc-navigation-menu>
+    `;
+  },
+};
