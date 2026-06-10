@@ -122,12 +122,20 @@ export class ObcNavigationItemGroup extends LitElement {
 
   @state() private openContainer = false;
 
-  @query('obc-navigation-item') private groupItem?: HTMLElement;
+  // Flat mode renders an `obc-navigation-item` header; tree mode renders an
+  // `obc-tree-navigation-item`. Match whichever is present so `focus()` works in both.
+  @query('obc-navigation-item, obc-tree-navigation-item')
+  private groupItem?: HTMLElement;
 
   override firstUpdated() {
     if (this.defaultOpen) {
       this.openContainer = true;
     }
+  }
+
+  /** Whether the group is currently open (its children are disclosed). */
+  public get expanded(): boolean {
+    return this.openContainer;
   }
 
   private onClickGroup() {

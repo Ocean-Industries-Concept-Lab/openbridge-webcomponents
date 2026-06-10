@@ -7,6 +7,10 @@ import {
 } from '../tree-navigation-item/tree-navigation-item.js';
 import {ObcTreeNavigationGroup} from '../tree-navigation-group/tree-navigation-group.js';
 import '../tree-navigation-group/tree-navigation-group.js';
+import {
+  TreeRovingNavigator,
+  TreeRovingAdapter,
+} from '../../internal/tree-roving-navigator.js';
 
 /** A tree row is either a leaf item or an expandable group. */
 type TreeRow = ObcTreeNavigationItem | ObcTreeNavigationGroup;
@@ -63,8 +67,24 @@ function isRow(el: Element): el is TreeRow {
 export class ObcTreeNavigation extends LitElement {
   private mutationObserver?: MutationObserver;
 
-  /** The row that currently holds the single tab stop (roving tabindex). */
-  private activeRow?: TreeRow;
+  /** The focusable header item for a row: a leaf is itself; a group's is its shadow header. */
+  private innerItem(row: TreeRow): ObcTreeNavigationItem | null {
+    return isGroup(row)
+      ? (row.shadowRoot?.querySelector<ObcTreeNavigationItem>(ITEM_TAG) ?? null)
+      : row;
+  }
+
+  private readonly navigator = new TreeRovingNavigator<TreeRow>(this, {
+    getRows: () => this.childRows(this),
+    childRows: (row) => this.childRows(row),
+    isGroup: (row) => isGroup(row),
+    isExpanded: (row) => isGroup(row) && row.hasAttribute('expanded'),
+    setExpanded: (row, expanded) => {
+      if (isGroup(row)) row.expanded = expanded;
+    },
+    innerItem: (row) => this.innerItem(row),
+    isDisabled: (row) => this.innerItem(row)?.hasAttribute('disabled') ?? false,
+  } satisfies TreeRovingAdapter<TreeRow>);
 
   override connectedCallback(): void {
     super.connectedCallback();
@@ -80,6 +100,10 @@ export class ObcTreeNavigation extends LitElement {
     this.addEventListener('expand-toggle', this.onExpandToggle);
     this.addEventListener('keydown', this.onKeydown);
   }
+
+  private onKeydown = (event: KeyboardEvent): void => {
+    if (this.navigator.handleKeydown(event)) event.preventDefault();
+  };
 
   override disconnectedCallback(): void {
     super.disconnectedCallback();
@@ -144,189 +168,8 @@ export class ObcTreeNavigation extends LitElement {
 
   private updateBranches(): void {
     this.assignBranches(this.childRows(this), [], 0);
-    this.refreshRoving();
-  }
-
-  // --- Roving tabindex + keyboard navigation (WAI-ARIA tree pattern) ---------
-
-  /** The `obc-tree-navigation-item` for a row: a leaf is itself; a group's is its header. */
-  private innerItem(row: TreeRow): ObcTreeNavigationItem | null {
-    return isGroup(row)
-      ? (row.shadowRoot?.querySelector<ObcTreeNavigationItem>(ITEM_TAG) ?? null)
-      : row;
-  }
-
-  private isExpanded(row: TreeRow): boolean {
-    // A group reflects `expanded` on its own host; a leaf is never expanded.
-    return isGroup(row) && row.hasAttribute('expanded');
-  }
-
-  private isDisabled(row: TreeRow): boolean {
-    return this.innerItem(row)?.hasAttribute('disabled') ?? false;
-  }
-
-  /**
-   * Depth-first list of every visible row: descend into a group only when it is
-   * expanded. Disabled rows are included so {@link refreshRoving} can re-point to
-   * a visible ancestor; arrow navigation filters them out via {@link navigableRows}.
-   */
-  private visibleRows(): TreeRow[] {
-    const out: TreeRow[] = [];
-    const walk = (rows: TreeRow[]) => {
-      for (const row of rows) {
-        out.push(row);
-        if (isGroup(row) && this.isExpanded(row)) {
-          walk(this.childRows(row));
-        }
-      }
-    };
-    walk(this.childRows(this));
-    return out;
-  }
-
-  /** Visible rows that arrow navigation can land on (enabled rows). */
-  private navigableRows(): TreeRow[] {
-    return this.visibleRows().filter((row) => !this.isDisabled(row));
-  }
-
-  /** The parent row of a row within this tree, or undefined for a top-level row. */
-  private parentRow(row: TreeRow): TreeRow | undefined {
-    const parent = row.parentElement;
-    return parent && parent !== this && isRow(parent) ? parent : undefined;
-  }
-
-  /**
-   * Rebuild the roving tabindex: exactly one navigable row is `focusable`. Keeps
-   * the active row if still navigable; else falls back to its nearest navigable
-   * ancestor, else the first navigable row. Never moves focus.
-   */
-  private refreshRoving(): void {
-    const navigable = this.navigableRows();
-    if (navigable.length === 0) {
-      this.activeRow = undefined;
-      return;
-    }
-
-    let next: TreeRow | undefined;
-    if (this.activeRow && navigable.includes(this.activeRow)) {
-      next = this.activeRow;
-    } else if (this.activeRow) {
-      let ancestor = this.parentRow(this.activeRow);
-      while (ancestor && !navigable.includes(ancestor)) {
-        ancestor = this.parentRow(ancestor);
-      }
-      next = ancestor ?? navigable[0];
-    } else {
-      next = navigable[0];
-    }
-
-    this.setActiveRow(next, false);
-  }
-
-  private setActiveRow(row: TreeRow, moveFocus: boolean): void {
-    this.activeRow = row;
-    for (const candidate of this.visibleRows()) {
-      const item = this.innerItem(candidate);
-      if (item) item.focusable = candidate === row;
-    }
-    if (moveFocus) this.innerItem(row)?.focus();
-  }
-
-  /**
-   * The originating tree row for a keydown. The composed path runs innermost →
-   * outermost; a group's header is an `obc-tree-navigation-item` in the group's
-   * own shadow root (excluded by the root check below), while the group itself
-   * lives in the container's light DOM. Return the *innermost* such light-DOM
-   * row so a header resolves to its own group — not the inner item, and not an
-   * enclosing ancestor group.
-   */
-  private rowFromEvent(event: KeyboardEvent): TreeRow | undefined {
-    const root = this.getRootNode();
-    for (const target of event.composedPath()) {
-      if (
-        target instanceof HTMLElement &&
-        isRow(target) &&
-        target.getRootNode() === root
-      ) {
-        return target;
-      }
-    }
-    return undefined;
-  }
-
-  private onKeydown = (event: KeyboardEvent): void => {
-    const row = this.rowFromEvent(event);
-    if (!row) return;
-
-    switch (event.key) {
-      case 'ArrowDown':
-        event.preventDefault();
-        this.moveByOffset(row, 1);
-        break;
-      case 'ArrowUp':
-        event.preventDefault();
-        this.moveByOffset(row, -1);
-        break;
-      case 'ArrowRight':
-        event.preventDefault();
-        this.onArrowRight(row);
-        break;
-      case 'ArrowLeft':
-        event.preventDefault();
-        this.onArrowLeft(row);
-        break;
-      case 'Home':
-        event.preventDefault();
-        this.moveToEdge(true);
-        break;
-      case 'End':
-        event.preventDefault();
-        this.moveToEdge(false);
-        break;
-    }
-  };
-
-  private moveByOffset(row: TreeRow, offset: number): void {
-    const rows = this.navigableRows();
-    const index = rows.indexOf(row);
-    if (index === -1) return;
-    const target = rows[index + offset];
-    if (target) this.setActiveRow(target, true);
-  }
-
-  private moveToEdge(first: boolean): void {
-    const rows = this.navigableRows();
-    if (rows.length === 0) return;
-    this.setActiveRow(first ? rows[0] : rows[rows.length - 1], true);
-  }
-
-  private onArrowRight(row: TreeRow): void {
-    if (!isGroup(row)) return;
-    if (!this.isExpanded(row)) {
-      this.toggle(row);
-      return;
-    }
-    const child = this.childRows(row).find((c) => !this.isDisabled(c));
-    if (child) this.setActiveRow(child, true);
-  }
-
-  private onArrowLeft(row: TreeRow): void {
-    if (isGroup(row) && this.isExpanded(row)) {
-      this.toggle(row);
-      return;
-    }
-    const parent = this.parentRow(row);
-    if (parent) this.setActiveRow(parent, true);
-  }
-
-  /**
-   * Toggle a group's disclosure. Set `expanded` on the group host directly — the
-   * container's MutationObserver on `expanded` recomputes guides and the roving
-   * tabindex. (Clicking the shadow header would not trigger its internal handler.)
-   */
-  private toggle(row: TreeRow): void {
-    if (!isGroup(row)) return;
-    row.expanded = !row.expanded;
+    // Keep the roving tabindex in lockstep with the visible structure.
+    this.navigator.refresh();
   }
 
   override render() {

@@ -171,6 +171,9 @@ export class ObcNavigationItem extends LitElement {
 
   @query('a') private anchorElement?: HTMLAnchorElement;
 
+  // In tree mode the row renders an `obc-tree-navigation-item` instead of an `<a>`.
+  @query('obc-tree-navigation-item') private treeItemElement?: HTMLElement;
+
   /**
    * Fired when the navigation item is clicked (either as a link or button).
    * @fires click {CustomEvent<void>}
@@ -192,7 +195,7 @@ export class ObcNavigationItem extends LitElement {
   }
 
   public override focus(options?: FocusOptions): void {
-    this.anchorElement?.focus(options);
+    (this.treeItemElement ?? this.anchorElement)?.focus(options);
   }
 
   private getItemRole(): NavigationItemRole | undefined {

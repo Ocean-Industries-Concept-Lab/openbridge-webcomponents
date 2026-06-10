@@ -4,7 +4,29 @@ import compentStyle from './navigation-menu.css?inline';
 import {ObcNavigationItemGroup} from '../navigation-item-group/navigation-item-group.js';
 import {ObcNavigationItem} from '../navigation-item/navigation-item.js';
 import {customElement} from '../../decorator.js';
-import {TreeBranchType} from '../tree-navigation-item/tree-navigation-item.js';
+import {
+  ObcTreeNavigationItem,
+  TreeBranchType,
+} from '../tree-navigation-item/tree-navigation-item.js';
+import {
+  TreeRovingNavigator,
+  TreeRovingAdapter,
+} from '../../internal/tree-roving-navigator.js';
+
+/** A nav-menu tree row is either a navigation item or a navigation item group. */
+type NavTreeRow = ObcNavigationItem | ObcNavigationItemGroup;
+
+const NAV_ITEM_TAG = 'obc-navigation-item';
+const NAV_GROUP_TAG = 'obc-navigation-item-group';
+
+function isNavGroup(el: Element): el is ObcNavigationItemGroup {
+  return el.tagName.toLowerCase() === NAV_GROUP_TAG;
+}
+
+function isNavRow(el: Element): el is NavTreeRow {
+  const tag = el.tagName.toLowerCase();
+  return tag === NAV_ITEM_TAG || tag === NAV_GROUP_TAG;
+}
 
 /**
  * `ObcNavigationMenuVariant` – Enumerates the available visual and behavioral variants for `<obc-navigation-menu>`.
@@ -161,6 +183,59 @@ export class ObcNavigationMenu extends LitElement {
   private slotObservers: MutationObserver[] = [];
   @state() private hasFooter = false;
 
+  /**
+   * Roving-tabindex + arrow-key navigation for the Tree variant, sharing the
+   * navigator that drives `obc-tree-navigation`. Engaged only while
+   * `variant === Tree` (see `onTreeKeydown`).
+   */
+  private readonly treeNavigator = new TreeRovingNavigator<NavTreeRow>(this, {
+    getRows: () => this.treeRootRows(),
+    childRows: (row) => this.treeChildRows(row),
+    isGroup: (row) => isNavGroup(row),
+    // Read the group's own synchronous open state, not the shadow header's
+    // attribute (which lags a render tick behind a keyboard expand/collapse).
+    isExpanded: (row) => isNavGroup(row) && row.expanded,
+    setExpanded: (row, expanded) => {
+      if (!isNavGroup(row)) return;
+      if (expanded) row.open();
+      else row.close();
+    },
+    innerItem: (row) => this.treeInnerItem(row),
+  } satisfies TreeRovingAdapter<NavTreeRow>);
+
+  /** Top-level tree rows of the main slot (mirrors `assignTreeBranches`'s filter). */
+  private treeRootRows(): NavTreeRow[] {
+    return Array.from(this.children).filter((child): child is NavTreeRow => {
+      if (!isNavRow(child)) return false;
+      const slot = child.getAttribute('slot');
+      return slot === null || slot === 'main';
+    });
+  }
+
+  /** Direct tree-row children of a row, in document order. */
+  private treeChildRows(row: NavTreeRow): NavTreeRow[] {
+    return Array.from(row.children).filter(isNavRow);
+  }
+
+  /** The inline `obc-tree-navigation-item` a tree-mode row renders in its shadow root. */
+  private treeInnerItem(row: NavTreeRow): ObcTreeNavigationItem | null {
+    return (
+      row.shadowRoot?.querySelector<ObcTreeNavigationItem>(
+        'obc-tree-navigation-item'
+      ) ?? null
+    );
+  }
+
+  private onTreeKeydown = (event: KeyboardEvent): void => {
+    if (this.variant !== ObcNavigationMenuVariant.Tree) return;
+    if (this.treeNavigator.handleKeydown(event)) event.preventDefault();
+  };
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    this.addEventListener('keydown', this.onTreeKeydown);
+  }
+
   findAllElements<T extends Element>(
     el: Element,
     tag: string,
@@ -310,6 +385,7 @@ export class ObcNavigationMenu extends LitElement {
   override disconnectedCallback(): void {
     super.disconnectedCallback();
     this.cleanupSlotObservers();
+    this.removeEventListener('keydown', this.onTreeKeydown);
   }
 
   private handleSlotChange() {
@@ -371,6 +447,9 @@ export class ObcNavigationMenu extends LitElement {
           item.variant = ObcNavigationMenuVariant.Full;
         });
       });
+      // Defer so the rows' inline tree-item headers exist before the roving
+      // tabindex is assigned to them.
+      queueMicrotask(() => this.treeNavigator.refresh());
       return;
     }
 

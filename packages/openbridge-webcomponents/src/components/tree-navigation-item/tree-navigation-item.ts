@@ -125,6 +125,10 @@ export class ObcTreeNavigationItem extends LitElement {
   /** Disables the row, removing it from the tab order and dimming its appearance. */
   @property({type: Boolean, reflect: true}) disabled = false;
 
+  /**
+   * Whether the row is in the tab order. A tree container manages this as a
+   * roving tabindex (one row focusable at a time); standalone rows stay tabbable.
+   */
   @property({type: Boolean, attribute: false}) focusable = true;
 
   /**
