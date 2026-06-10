@@ -14,6 +14,11 @@ export enum ObcPoiHeaderState {
   Caution = 'caution',
   Warning = 'warning',
   Alarm = 'alarm',
+  IsaCritical = 'isa-critical',
+  IsaHigh = 'isa-high',
+  IsaMedium = 'isa-medium',
+  IsaLow = 'isa-low',
+  IsaDiagnostic = 'isa-diagnostic',
 }
 
 export enum ObcPoiHeaderType {
@@ -32,7 +37,7 @@ export enum ObcPoiHeaderType {
  * - `type` (default `id`):
  *   - `id`: shows identifier content only.
  *   - `data`: shows identifier plus secondary label.
- * - `state` (default `enabled`): `enabled`, `selected`, `caution`, `warning`, `alarm`.
+ * - `state` (default `enabled`): `enabled`, `selected`, `caution`, `warning`, `alarm`, `isa-critical`, `isa-high`, `isa-medium`, `isa-low`, `isa-diagnostic`.
  * - `content` (default `"1"`): primary identifier text.
  * - `label` (default `"Data"`): secondary text used by `type="data"`.
  * - `hasIndicator` (default `false`): appends indicator area.

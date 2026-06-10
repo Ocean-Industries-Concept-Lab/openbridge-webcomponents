@@ -34,6 +34,11 @@ export enum ObcPoiButtonState {
   Caution = 'caution',
   Warning = 'warning',
   Alarm = 'alarm',
+  IsaCritical = 'isa-critical',
+  IsaHigh = 'isa-high',
+  IsaMedium = 'isa-medium',
+  IsaLow = 'isa-low',
+  IsaDiagnostic = 'isa-diagnostic',
 }
 
 export enum PoiButtonVisualState {
@@ -90,7 +95,7 @@ export interface ObcPoiButtonDataItem {
  * - `layout` (default `anchored`): `anchored` or `inline`.
  * - `value` (default `unchecked`): `unchecked`, `checked`, `activated`, `overlapped`.
  * - `overlapOpaque` (default `false`): controls overlapped opacity mode (`false` = translucent, `true` = opaque).
- * - `state` (default `enabled`): `enabled`, `caution`, `warning`, `alarm`.
+ * - `state` (default `enabled`): `enabled`, `caution`, `warning`, `alarm`, `isa-critical`, `isa-high`, `isa-medium`, `isa-low`, `isa-diagnostic`.
  * - `selected` (default `false`): shows selection frame in anchored layout.
  * - `relativeDirection` (default `0`): rotates default-slot icon content in degrees.
  * - `data` (default `[]`): when non-empty, renders value/label/unit rows.
@@ -207,6 +212,16 @@ export class ObcPoiButton extends LitElement {
         return ObcPoiHeaderState.Warning;
       case ObcPoiButtonState.Alarm:
         return ObcPoiHeaderState.Alarm;
+      case ObcPoiButtonState.IsaCritical:
+        return ObcPoiHeaderState.IsaCritical;
+      case ObcPoiButtonState.IsaHigh:
+        return ObcPoiHeaderState.IsaHigh;
+      case ObcPoiButtonState.IsaMedium:
+        return ObcPoiHeaderState.IsaMedium;
+      case ObcPoiButtonState.IsaLow:
+        return ObcPoiHeaderState.IsaLow;
+      case ObcPoiButtonState.IsaDiagnostic:
+        return ObcPoiHeaderState.IsaDiagnostic;
       case ObcPoiButtonState.Enabled:
       default:
         return ObcPoiHeaderState.Selected;
