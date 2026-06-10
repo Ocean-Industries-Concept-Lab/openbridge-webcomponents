@@ -1,5 +1,5 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {property} from 'lit/decorators.js';
+import {property, query} from 'lit/decorators.js';
 import componentStyle from './tree-navigation-item.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
@@ -125,6 +125,8 @@ export class ObcTreeNavigationItem extends LitElement {
   /** Disables the row, removing it from the tab order and dimming its appearance. */
   @property({type: Boolean, reflect: true}) disabled = false;
 
+  @property({type: Boolean, attribute: false}) focusable = true;
+
   /**
    * Whether the row shows a leading icon (provided via the `icon` slot).
    */
@@ -150,6 +152,13 @@ export class ObcTreeNavigationItem extends LitElement {
    * a link; otherwise it acts as a button.
    */
   @property({type: String}) href: string | undefined;
+
+  @query('.wrapper') private wrapperElement?: HTMLElement;
+
+  /** Focuses the row's interactive wrapper (the host itself is not focusable). */
+  public override focus(options?: FocusOptions): void {
+    this.wrapperElement?.focus(options);
+  }
 
   /** A root-level row has no ancestor columns, so it draws no connector lines. */
   private get isRoot(): boolean {
@@ -235,8 +244,9 @@ export class ObcTreeNavigationItem extends LitElement {
         role="treeitem"
         aria-expanded=${ifDefined(this.expandable ? this.expanded : undefined)}
         aria-current=${ifDefined(this.checked ? 'page' : undefined)}
+        aria-selected=${ifDefined(this.checked ? 'true' : undefined)}
         aria-disabled=${ifDefined(this.disabled ? 'true' : undefined)}
-        tabindex=${this.disabled ? -1 : 0}
+        tabindex=${this.disabled ? -1 : this.focusable ? 0 : -1}
         @click=${this.activate}
         @keydown=${this.handleKeydown}
       >
