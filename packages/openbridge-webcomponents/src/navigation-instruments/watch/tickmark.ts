@@ -49,6 +49,7 @@ export function tickmark(
     maxDigits,
     color,
     radiusOffset = 0,
+    endLabelsMaxMin = false,
   }: {
     size: TickmarkType;
     style: TickmarkStyle;
@@ -60,6 +61,7 @@ export function tickmark(
     maxDigits: number;
     color?: string;
     radiusOffset?: number;
+    endLabelsMaxMin?: boolean;
   }
 ): SVGTemplateResult | SVGTemplateResult[] {
   // check if scale is not infinite
@@ -87,7 +89,9 @@ export function tickmark(
     innerRadius = 328 / 2 + rOff;
     outerRadius = 336 / 2 + rOff;
   } else {
-    return [textSvg(text ?? '', angle, inside, scale, textRadius)];
+    return [
+      textSvg(text ?? '', {angle, inside, scale, textRadius, endLabelsMaxMin}),
+    ];
   }
 
   // When inside, anchor ticks at the outer ring edge and grow inward,
@@ -115,7 +119,10 @@ export function tickmark(
   const tick = svg`<line x1=${x1} y1=${y1} x2=${x2} y2=${y2} stroke=${colorName} stroke-width=${strokeWidth} vector-effect="non-scaling-stroke"/>`;
   if (text) {
     if (rotation === undefined) {
-      return [tick, textSvg(text, angle, inside, scale, textRadius)];
+      return [
+        tick,
+        textSvg(text, {angle, inside, scale, textRadius, endLabelsMaxMin}),
+      ];
     } else {
       const newRadius =
         textRadius + ((4 / scale + 5) * (inside ? -1 : 1) * maxDigits) / 2;
@@ -132,11 +139,31 @@ export function tickmark(
 
 function textSvg(
   text: string,
-  angle: number,
-  inside: boolean,
-  scale: number,
-  textRadius: number
+  {
+    angle,
+    inside,
+    scale,
+    textRadius,
+    endLabelsMaxMin = false,
+  }: {
+    angle: number;
+    inside: boolean;
+    scale: number;
+    textRadius: number;
+    endLabelsMaxMin?: boolean;
+  }
 ) {
+  const radHoriz = (angle * Math.PI) / 180;
+  // "Max-min" placement: horizontal end labels (±90°) sit off the dead-center
+  // tick (below outside / lifted inside), inset inward by label width.
+  if (endLabelsMaxMin && Math.abs(Math.cos(radHoriz)) < 1e-6) {
+    const sin = Math.sin(radHoriz);
+    const inward = inside ? (6 + (text.length - 1) * 2.5) / scale : 14 / scale;
+    const x = sin * (textRadius - inward);
+    const y = inside ? -(6 / scale) : 12 / scale;
+    return svg`<text x=${x} y=${y} class="label bottom ${inside ? 'inside' : ''}">${text}</text>`;
+  }
+
   let positionClass;
   if (angle === 0) {
     positionClass = 'top';
