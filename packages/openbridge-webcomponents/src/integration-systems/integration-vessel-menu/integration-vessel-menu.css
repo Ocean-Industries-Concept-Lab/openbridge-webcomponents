@@ -42,9 +42,19 @@
   border-radius: 8px;
 }
 
-.footer-container ::slotted(obc-button) {
-  flex-grow: 1;
+.footer-container slot[name="buttons"]::slotted(:not(obc-button)) {
+  display: contents !important;
+}
+
+.footer-container slot[name="buttons"]::slotted(*) {
+  display: flex;
+  flex: 1 1 0px;
+  width: 100%;
   white-space: nowrap;
+}
+
+.buttons-slot {
+  display: contents;
 }
 
 .content-container {

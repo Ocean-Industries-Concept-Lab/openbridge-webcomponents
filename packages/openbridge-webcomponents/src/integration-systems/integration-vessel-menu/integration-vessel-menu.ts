@@ -32,7 +32,9 @@ export class ObcIntegrationVesselMenu extends LitElement {
           wrapper: true,
         })}
       >
-        <div class="footer-container"><slot name="buttons"></slot></div>
+        <div class="footer-container">
+          <slot name="buttons" class="buttons-slot"></slot>
+        </div>
         <div class="content-area">
           <slot name="content"></slot>
         </div>
