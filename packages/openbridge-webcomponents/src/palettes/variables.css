@@ -10640,54 +10640,6 @@
   --font-weight-semibold: 570;
   --font-weight-bold: 670;
   --line-height-050: 12px;
-  --typography-primitives-font-family-main: "Noto Sans";
-  --typography-primitives-font-size-071: 11.5px;
-  --typography-primitives-font-size-100: 16px;
-  --typography-primitives-font-size-150: 23px;
-  --typography-primitives-font-size-200: 34px;
-  --typography-primitives-font-size-250: 39px;
-  --typography-primitives-font-size-300: 45px;
-  --typography-primitives-font-size-350: 57px;
-  --typography-primitives-font-size-400: 68px;
-  --typography-primitives-font-size-450: 73px;
-  --typography-primitives-font-size-500: 78px;
-  --typography-primitives-line-height-071: 16px;
-  --typography-primitives-line-height-100: 20px;
-  --typography-primitives-line-height-150: 24px;
-  --typography-primitives-line-height-200: 32px;
-  --typography-primitives-line-height-250: 36px;
-  --typography-primitives-line-height-300: 48px;
-  --typography-primitives-line-height-350: 36px;
-  --typography-primitives-line-height-400: 64px;
-  --typography-primitives-line-height-450: 68px;
-  --typography-primitives-line-height-500: 72px;
-  --typography-primitives-font-weight-300: 370;
-  --typography-primitives-font-weight-500: 570;
-  --typography-primitives-font-weight-600: 670;
-  --typography-primitives-font-weight-200: 270;
-  --typography-primitives-font-weight-400: 470;
-  --typography-primitives-baseline-offset-071: 0px;
-  --typography-primitives-baseline-offset-100: 0px;
-  --typography-primitives-baseline-offset-150: 2px;
-  --typography-primitives-baseline-offset-200: 2px;
-  --typography-primitives-baseline-offset-250: 2px;
-  --typography-primitives-baseline-offset-300: 2px;
-  --typography-primitives-baseline-offset-350: 4px;
-  --typography-primitives-baseline-offset-400: 4px;
-  --typography-primitives-baseline-offset-450: 4px;
-  --typography-primitives-baseline-offset-500: 4px;
-  --typography-primitives-letter-spacing-071: 0px;
-  --typography-primitives-letter-spacing-100: 0px;
-  --typography-primitives-letter-spacing-150: 0px;
-  --typography-primitives-letter-spacing-200: 0.0024999999441206455px;
-  --typography-primitives-letter-spacing-250: -0.5px;
-  --typography-primitives-letter-spacing-300: -0.5px;
-  --typography-primitives-letter-spacing-350: -0.5px;
-  --typography-primitives-letter-spacing-400: -1px;
-  --typography-primitives-letter-spacing-450: -1px;
-  --typography-primitives-letter-spacing-500: -1px;
-  --weight-demo: "470";
-  --weight-demo-2: 470px;
   --button-border-radius-top-left: var(--ui-components-button-border-radius);
   --button-border-radius-top-right: var(--ui-components-button-border-radius);
   --button-border-radius-bottom-right: var(
@@ -10906,6 +10858,103 @@
   --border-radius-br-12: 12px;
   --border-radius-br-16: 16px;
   --border-radius-br-24: 24px;
+  --advice-indicator-padding: var(
+    --instrument-components-advice-indicator-padding-indicator-padding-regular
+  );
+  --watchface-label-container-width: var(
+    --instrument-components-watchface-label-container-size-1
+  );
+  --scale-margin: var(--instrument-components-watchface-scale-margin-regular);
+  --scale-padding: var(--instrument-components-watchface-scale-padding-regular);
+  --scale-size: var(--instrument-components-watchface-scale-size-regular);
+  --tick-mark-main: var(
+    --instrument-components-watchface-tick-marks-length-main-regular
+  );
+  --tick-mark-primary: var(
+    --instrument-components-watchface-tick-marks-length-primary-regular
+  );
+  --tick-mark-secondary: var(
+    --instrument-components-watchface-tick-marks-length-secondary-regular
+  );
+  --tick-mark-tertiary: var(
+    --instrument-components-watchface-tick-marks-length-tertiary-regular
+  );
+  --frame-thickness: var(
+    --instrument-components-watchface-frame-regular-thickness
+  );
+  --frame-outer-margin: var(
+    --instrument-components-watchface-frame-regular-outer-margin
+  );
+  --frame-border-radius: var(
+    --instrument-components-watchface-frame-regular-border-radius
+  );
+  --frame-double-thickness: var(
+    --instrument-components-watchface-frame-regular-double-thickness
+  );
+  --frame-track-size: var(
+    --instrument-components-watchface-frame-regular-track-size
+  );
+  --typography-font-weight-regular: var(--day-typography-font-weight-regular);
+  --watchface-label-margin-size: var(
+    --instrument-components-watchface-label-margin-size-1
+  );
+  --tick-mark-main-visibility: var(
+    --instrument-components-watchface-tick-marks-visibility-main-regular
+  );
+  --tick-mark-primary-visibility: var(
+    --instrument-components-watchface-tick-marks-visibility-primary-regular
+  );
+  --tick-mark-secondary-visibility: var(
+    --instrument-components-watchface-tick-marks-visibility-secondary-regular
+  );
+  --tick-mark-tertiary-visibility: var(
+    --instrument-components-watchface-tick-marks-visibility-tertiary-regular
+  );
+  --advice-indicator-visibility: var(
+    --instrument-components-advice-indicator-visibility-indicator-visibility-regular
+  );
+  --scale-framed-size: var(
+    --instrument-components-watchface-scale-size-framed-regular
+  );
+  --advice-indicator-offset: var(
+    --instrument-components-advice-indicator-offset-offset-regular
+  );
+  --advice-indicator-container-size: var(
+    --instrument-components-advice-indicator-container-size-size-regular
+  );
+  --frame-track-margin: var(
+    --instrument-components-watchface-frame-regular-track-margin
+  );
+  --typography-font-weight-semibold: var(--day-typography-font-weight-semibold);
+  --typography-primitives-font-size-071: 11.5px;
+  --typography-primitives-font-weight-300: 370;
+  --typography-primitives-line-height-071: 16px;
+  --typography-primitives-baseline-offset-071: 0px;
+  --typography-primitives-letter-spacing-071: 0px;
+  --typography-primitives-font-weight-500: 570;
+  --typography-primitives-font-weight-600: 670;
+  --typography-primitives-font-size-100: 16.5px;
+  --typography-primitives-line-height-100: 20px;
+  --typography-primitives-baseline-offset-100: 0px;
+  --typography-primitives-letter-spacing-100: 0px;
+  --typography-primitives-font-size-150: 23px;
+  --typography-primitives-line-height-150: 24px;
+  --typography-primitives-baseline-offset-150: 2px;
+  --typography-primitives-letter-spacing-150: 0px;
+  --typography-primitives-font-size-200: 34px;
+  --typography-primitives-line-height-200: 32px;
+  --typography-primitives-baseline-offset-200: 2px;
+  --typography-primitives-letter-spacing-200: 0.0024999999441206455px;
+  --typography-primitives-font-size-300: 45px;
+  --typography-primitives-line-height-300: 40px;
+  --typography-primitives-baseline-offset-300: 2px;
+  --typography-primitives-letter-spacing-300: -0.5px;
+  --typography-primitives-font-size-400: 68px;
+  --typography-primitives-line-height-400: 64px;
+  --typography-primitives-baseline-offset-400: 4px;
+  --typography-primitives-letter-spacing-400: -1px;
+  --day-typography-font-weight-regular: 370;
+  --day-typography-font-weight-semibold: 570;
   --shadow-flat: var(--shadow-flat-x) var(--shadow-flat-y)
     var(--shadow-flat-blur) var(--shadow-flat-spread) var(--shadow-flat-color);
   --shadow-raised: var(--shadow-raised-x) var(--shadow-raised-y)
