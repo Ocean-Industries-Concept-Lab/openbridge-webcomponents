@@ -36,21 +36,14 @@ export enum ObcStepperBoxType {
  *   - `up-down`: Uses up and down chevron icons for vertical adjustment.
  *   - `left-right`: Uses left and right chevron icons for horizontal adjustment.
  * - **Value Display:**
- *   - Optional unit label via the `unit` slot.
+ *   - Optional unit label via the `unit` property.
  * - **Helper Text:**
  *   - When `helperText` is set, displays additional helper or status text below the control.
  * - **Icon Buttons:**
  *   - Both increment and decrement actions are triggered by icon buttons, with icons adapting to the selected type.
- * - **Customizable Layout:**
- *   - Supports flexible content via the `unit` slot.
  *
  * ### Usage Guidelines
  * Use `obc-stepper-box` for scenarios where users need to adjust a value in discrete steps, such as quantity pickers, setting numeric parameters, or cycling through options. It is ideal when you want to prevent invalid input and provide a clear, touch-friendly interface for value changes.
- *
- * ### Slots
- * | Slot Name      | Renders When...           | Purpose                                 |
- * |--------------- |--------------------------|-----------------------------------------|
- * | unit           | If provided               | Unit label (e.g., "km", "%").           |
  *
  * ### Events
  * - `down` – Fired when the decrement (left or down) button is clicked.
@@ -63,12 +56,9 @@ export enum ObcStepperBoxType {
  *
  * **Example:**
  * ```
- * <obc-stepper-box type="up-down" .value=${5} helperText="Set weight">
- *   <div slot="unit">kg</div>
- * </obc-stepper-box>
+ * <obc-stepper-box type="up-down" .value=${5} unit="kg" helperText="Set weight"></obc-stepper-box>
  * ```
  *
- * @slot unit - Unit label (e.g., "km", "%")
  * @fires down {CustomEvent<{value: number}>} Fired when the decrement (left or down) button is clicked
  * @fires up {CustomEvent<{value: number}>} Fired when the increment (right or up) button is clicked
  * @fires input {CustomEvent<{value: string}>} Fired when the user types in the number input field
