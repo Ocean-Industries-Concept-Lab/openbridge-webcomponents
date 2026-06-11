@@ -36,7 +36,7 @@ const meta = {
     },
     showLabels: {control: 'boolean'},
     tickmarksInside: {control: 'boolean'},
-    showReadout: {control: 'boolean'},
+    hasReadout: {control: 'boolean'},
     value: {control: 'number'},
     minValue: {control: 'number'},
     maxValue: {control: 'number'},
@@ -178,7 +178,7 @@ export const Sector180WithReadout: Story = {
   args: {
     ...sectorStoryArgs,
     sector: GaugeRadialSector.deg180,
-    showReadout: true,
+    hasReadout: true,
     label: 'Label',
     unit: 'unit',
     value: 123,
@@ -221,7 +221,7 @@ export const Sector90LeftWithReadout: Story = {
   args: {
     ...sectorStoryArgs,
     sector: GaugeRadialSector.deg90Left,
-    showReadout: true,
+    hasReadout: true,
     label: 'Label',
     unit: 'unit',
     value: 123,
@@ -233,7 +233,7 @@ export const Sector90RightWithReadout: Story = {
   args: {
     ...sectorStoryArgs,
     sector: GaugeRadialSector.deg90Right,
-    showReadout: true,
+    hasReadout: true,
     label: 'Label',
     unit: 'unit',
     value: 123,
@@ -247,7 +247,7 @@ const readoutStoryArgs = {
   maxValue: 100,
   type: ObcGaugeRadialType.filled,
   sector: GaugeRadialSector.deg270,
-  showReadout: true,
+  hasReadout: true,
   label: 'Label',
   unit: 'unit',
 } as const;
