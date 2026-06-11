@@ -9,14 +9,15 @@ import {Priority} from '../types.js';
 import '../readout-setpoint/readout-setpoint.js';
 import '../../icons/icon-input-right.js';
 import {ReadoutSetpointMode} from '../readout-setpoint/readout-setpoint.js';
+import {
+  type AlertFrameConfig,
+  wrapWithAlertFrame,
+} from '../../components/alert-frame/alert-frame.js';
 
-export enum ReadoutListItemAlertState {
+export enum ReadoutListItemDataState {
   none = 'none',
   lowIntegrity = 'low-integrity',
   invalid = 'invalid',
-  caution = 'caution',
-  warning = 'warning',
-  alarm = 'alarm',
 }
 
 export enum ReadoutListItemSize {
@@ -47,7 +48,8 @@ export enum ReadoutListItemPriority {
  * - **Sizes:** `base`, `priority`, and `enhanced` typography/padding scales.
  * - **Stacking modes:** `trailing-unit`, `leading-unit`, and `leading-src` control where unit/source appear relative to the label/value.
  * - **Priority styling:** `priority` controls emphasis and setpoint presentation (`regular`, `enhanced`, `setpoint`, `setpoint-flip-flop`).
- * - **Alert states:** Supports `alertState` styling for integrity/invalid and attention states (`caution`, `warning`, `alarm`).
+ * - **Data states:** Supports `dataState` styling for `low-integrity` and `invalid` data quality.
+ * - **Alert frame:** Optional `alert` wrapper for caution, warning, alarm, and other alert-frame statuses.
  * - **Formatting:** Supports numeric formatting, fixed-length width templates, hinted zeros, and optional degree suffix (`°`).
  *
  * ### Usage Guidelines
@@ -71,7 +73,9 @@ export class ObcReadoutListItem extends LitElement {
   @property({type: String})
   priority: ReadoutListItemPriority = ReadoutListItemPriority.regular;
   @property({type: String})
-  alertState: ReadoutListItemAlertState = ReadoutListItemAlertState.none;
+  dataState: ReadoutListItemDataState = ReadoutListItemDataState.none;
+
+  @property({type: Object}) alert: AlertFrameConfig | boolean = false;
 
   @property({type: String}) label = '';
   @property({type: String}) unit = '';
@@ -94,6 +98,8 @@ export class ObcReadoutListItem extends LitElement {
 
   @property({type: Number}) minValueLength = 0;
   @property({type: Boolean}) hasHintedZeros = false;
+
+  @property({type: Boolean}) labelOnly = false;
 
   private get resolvedMainValueSize(): ReadoutSetpointSize {
     return this.size === ReadoutListItemSize.enhanced
@@ -367,42 +373,52 @@ export class ObcReadoutListItem extends LitElement {
   }
 
   override render() {
-    return html`
-      <div
-        class=${classMap({
-          root: true,
-          [`size-${this.size}`]: true,
-          [`stacking-${this.stacking}`]: true,
-          'priority-enhanced':
-            this.priority === ReadoutListItemPriority.enhanced,
-          'priority-setpoint':
-            this.priority === ReadoutListItemPriority.setpoint,
-          'priority-setpoint-flip-flop':
-            this.priority === ReadoutListItemPriority.setpointFlipFlop,
-          [`alert-${this.alertState}`]: true,
-          'has-leading-icon': this.hasLeadingIcon,
-          'has-value-icon': this.hasValueIcon,
-        })}
-        part="root"
-      >
-        <div class="content" part="content">
-          <div class="label-container" part="label-container">
-            ${this.hasLeadingIcon
-              ? html`<span class="leading-icon" aria-hidden="true"
-                  ><slot name="leading-icon"></slot
-                ></span>`
-              : nothing}
-            ${this.renderLabelContainer()}
-          </div>
+    return wrapWithAlertFrame(
+      this.alert,
+      html`
+        <div
+          class=${classMap({
+            root: true,
+            [`size-${this.size}`]: true,
+            [`stacking-${this.stacking}`]: true,
+            'priority-enhanced':
+              this.priority === ReadoutListItemPriority.enhanced,
+            'priority-setpoint':
+              this.priority === ReadoutListItemPriority.setpoint,
+            'priority-setpoint-flip-flop':
+              this.priority === ReadoutListItemPriority.setpointFlipFlop,
+            'data-none': this.dataState === ReadoutListItemDataState.none,
+            'data-low-integrity':
+              this.dataState === ReadoutListItemDataState.lowIntegrity,
+            'data-invalid': this.dataState === ReadoutListItemDataState.invalid,
+            'has-leading-icon': this.hasLeadingIcon,
+            'has-value-icon': this.hasValueIcon,
+          })}
+          part="root"
+        >
+          <div class="content" part="content">
+            <div class="label-container" part="label-container">
+              ${this.hasLeadingIcon
+                ? html`<span class="leading-icon" aria-hidden="true"
+                    ><slot name="leading-icon"></slot
+                  ></span>`
+                : nothing}
+              ${this.renderLabelContainer()}
+            </div>
 
-          <div class="value-container" part="value-container">
-            ${this.renderValue()} ${this.renderTrailingUnit()}
-          </div>
+            ${this.labelOnly
+              ? nothing
+              : html`
+                  <div class="value-container" part="value-container">
+                    ${this.renderValue()} ${this.renderTrailingUnit()}
+                  </div>
 
-          ${this.renderTrailingSource()}
+                  ${this.renderTrailingSource()}
+                `}
+          </div>
         </div>
-      </div>
-    `;
+      `
+    );
   }
 
   static override styles = unsafeCSS(componentStyle);

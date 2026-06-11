@@ -48,6 +48,11 @@ export function getCssColorIcon(imageData: string, icon: IconRef): string {
       );
       return 'fill="currentColor"';
     }
+    if (cssClass.cssClass === undefined) {
+      // Variable is bound in Figma but missing from figmavariables.json;
+      // fall back to the literal color so we never emit `var(--undefined)`.
+      return `fill="${color}"`;
+    }
     return `style="fill: var(--${cssClass.cssClass})"`;
   };
   imageData = imageData.replace(fillRegex, replace);
@@ -71,6 +76,9 @@ export function getCssColorIcon(imageData: string, icon: IconRef): string {
         Object.keys(icon.styles)
       );
       return 'stroke="currentColor"';
+    }
+    if (cssClass.cssClass === undefined) {
+      return `stroke="${color}"`;
     }
     return `style="stroke: var(--${cssClass.cssClass})"`;
   };

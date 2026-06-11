@@ -2,35 +2,49 @@ import {LitElement, css, html, svg, type SVGTemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {styleMap} from 'lit/directives/style-map.js';
+import '../../icons/icon-wind-true-0.js';
 import '../../icons/icon-wind-true-1.js';
-import '../../icons/icon-wind-true-2.js';
-import '../../icons/icon-wind-true-3.js';
-import '../../icons/icon-wind-true-4.js';
 import '../../icons/icon-wind-true-5.js';
-import '../../icons/icon-wind-true-6.js';
-import '../../icons/icon-wind-true-7.js';
-import '../../icons/icon-wind-true-8.js';
-import '../../icons/icon-wind-true-9.js';
 import '../../icons/icon-wind-true-10.js';
-import '../../icons/icon-wind-true-11.js';
-import '../../icons/icon-wind-true-12.js';
-import '../../icons/icon-wind-true-13.js';
-import '../../icons/icon-wind-true-14.js';
+import '../../icons/icon-wind-true-15.js';
+import '../../icons/icon-wind-true-20.js';
+import '../../icons/icon-wind-true-25.js';
+import '../../icons/icon-wind-true-30.js';
+import '../../icons/icon-wind-true-35.js';
+import '../../icons/icon-wind-true-45.js';
+import '../../icons/icon-wind-true-50.js';
+import '../../icons/icon-wind-true-55.js';
+import '../../icons/icon-wind-true-60.js';
+import '../../icons/icon-wind-true-65.js';
+import '../../icons/icon-wind-true-70.js';
+import '../../icons/icon-wind-true-100.js';
+import '../../icons/icon-wind-shaft-0.js';
 import '../../icons/icon-wind-shaft-1.js';
-import '../../icons/icon-wind-shaft-2.js';
-import '../../icons/icon-wind-shaft-3.js';
-import '../../icons/icon-wind-shaft-4.js';
 import '../../icons/icon-wind-shaft-5.js';
-import '../../icons/icon-wind-shaft-6.js';
-import '../../icons/icon-wind-shaft-7.js';
-import '../../icons/icon-wind-shaft-8.js';
-import '../../icons/icon-wind-shaft-9.js';
 import '../../icons/icon-wind-shaft-10.js';
-import '../../icons/icon-wind-shaft-11.js';
-import '../../icons/icon-wind-shaft-12.js';
-import '../../icons/icon-wind-shaft-13.js';
-import '../../icons/icon-wind-shaft-14.js';
-import {windKnotsToIconIndex} from '../watch/environment.js';
+import '../../icons/icon-wind-shaft-15.js';
+import '../../icons/icon-wind-shaft-20.js';
+import '../../icons/icon-wind-shaft-25.js';
+import '../../icons/icon-wind-shaft-30.js';
+import '../../icons/icon-wind-shaft-35.js';
+import '../../icons/icon-wind-shaft-40.js';
+import '../../icons/icon-wind-shaft-45.js';
+import '../../icons/icon-wind-shaft-50.js';
+import '../../icons/icon-wind-shaft-55.js';
+import '../../icons/icon-wind-shaft-60.js';
+import '../../icons/icon-wind-shaft-65.js';
+import '../../icons/icon-wind-shaft-70.js';
+import '../../icons/icon-wind-shaft-75.js';
+import '../../icons/icon-wind-shaft-80.js';
+import '../../icons/icon-wind-shaft-85.js';
+import '../../icons/icon-wind-shaft-90.js';
+import '../../icons/icon-wind-shaft-95.js';
+import '../../icons/icon-wind-shaft-100.js';
+import {
+  windKnotsToShaftTrueLevel,
+  windKnotsToWindShaftBucket,
+  windKnotsToWindTrueBucket,
+} from '../watch/environment.js';
 
 export enum WindIndicatorType {
   arrow = 'arrow',
@@ -198,9 +212,11 @@ const LABELED_ARROW_TPL = svg`
  *
  * - **Variants:** `type` (`arrow` | `shaft` | `labeled`), `direction` (`true` | `relative`), `priority` (`regular` | `enhanced`).
  * - **Speed input:** `currentWindSpeedKnots` is the wind speed in knots.
- *   The barb icon follows the standard meteorological convention (one
- *   half-barb per 5 kn). 0–65 kn covers all 14 icons; higher values clamp
- *   to the heaviest icon.
+ *   The barb icon follows the standard meteorological wind-barb
+ *   convention. The icon's knots value is the nearest available bucket
+ *   in the Figma `wind-true` / `wind-shaft` icon set (5-kn granularity,
+ *   with sub-buckets for calm and shaft-only conditions); values beyond
+ *   the heaviest authored bucket snap to that bucket.
  *
  * ## Usage Guidelines
  *
@@ -222,12 +238,13 @@ export class ObcWindIndicator extends LitElement {
   /**
    * Wind speed in **knots**, used to pick the wind-barb icon.
    *
-   * Maps to the icon set using the designer-confirmed "Option C"
-   * ranges: `[0, 0.5)` kn renders calm, `[0.5, 2.5)` kn renders a
-   * shaft only, then 5-kn nearest-neighbour buckets up to 45 kn
-   * (half-barb steps), `[47.5, 55)` kn renders the 50-kn pennant, and
-   * `[55, 65)` / `[65, ∞)` kn add one and two full barbs above the
-   * pennant respectively. Non-finite or negative values fall back to
+   * The value is snapped to the nearest authored knots bucket in the
+   * Figma icon set: `<obi-wind-true-N>` for the arrow / labeled
+   * variants and the higher-granularity `<obi-wind-shaft-N>` family
+   * for the shaft variant. Sub-pennant calm (`0`) and shaft-only (`1`)
+   * buckets cover the lowest two ranges; thereafter the buckets follow
+   * 5-knot steps up to the heaviest authored icon, with values beyond
+   * that snapping to it. Non-finite or negative values fall back to
    * calm.
    */
   @property({type: Number, attribute: 'current-wind-speed-knots'})
@@ -306,12 +323,13 @@ export class ObcWindIndicator extends LitElement {
   `;
 
   /**
-   * Icon index in the range `1..14`, derived from `currentWindSpeedKnots`
-   * via the shared `windKnotsToIconIndex` helper (standard meteorological
-   * wind-barb convention; one half-barb per 5 kn).
+   * Legacy positional level `1..14` used to index the hardcoded
+   * `SHAFT_TRUE_WIND_BARB_D_BY_LEVEL` inline glyphs (shaft + true
+   * variant only). All other variants pick an icon component by knots
+   * bucket via `getWindIconTagName`.
    */
-  private get iconIndex(): number {
-    return windKnotsToIconIndex(this.currentWindSpeedKnots);
+  private get iconLevel(): number {
+    return windKnotsToShaftTrueLevel(this.currentWindSpeedKnots);
   }
 
   private get accentColor(): string {
@@ -361,13 +379,13 @@ export class ObcWindIndicator extends LitElement {
   }
 
   private getWindIconTagName(type: string, _direction: string): string {
-    const index = this.iconIndex;
-
     if (type === WindIndicatorType.shaft) {
-      return `obi-wind-shaft-${index}`;
+      const bucket = windKnotsToWindShaftBucket(this.currentWindSpeedKnots);
+      return `obi-wind-shaft-${bucket}`;
     }
 
-    return `obi-wind-true-${index}`;
+    const bucket = windKnotsToWindTrueBucket(this.currentWindSpeedKnots);
+    return `obi-wind-true-${bucket}`;
   }
 
   private getWindIcon(
@@ -518,7 +536,7 @@ export class ObcWindIndicator extends LitElement {
           transform="rotate(${this.getWindRotation(SHAFT_TRUE_ARROW_OFFSET_DEG)} ${CX} ${CY})"
           data-name="hdg"
         >
-          ${svg`<path d=${SHAFT_TRUE_WIND_BARB_D_BY_LEVEL[this.iconIndex - 1]} fill="currentColor" />`}
+          ${svg`<path d=${SHAFT_TRUE_WIND_BARB_D_BY_LEVEL[this.iconLevel - 1]} fill="currentColor" />`}
           ${SHAFT_TRUE_CIRCLE_TPL}
         </g>
       `;

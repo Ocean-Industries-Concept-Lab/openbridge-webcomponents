@@ -69,6 +69,10 @@ const meta: Meta<typeof ObcCompassSector> = {
       control: 'multi-select',
       options: Object.values(CompassSectorPriorityElement),
     },
+    hasReadout: {control: 'boolean'},
+    label: {control: 'text'},
+    unit: {control: 'text'},
+    fractionDigits: {control: 'number'},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcCompassSector>;
@@ -130,6 +134,13 @@ export const WithSetpoint: Story = {
   args: {
     headingSetpoint: 320,
     animateSetpoint: true,
+  },
+};
+
+export const WithReadout: Story = {
+  args: {
+    headingSetpoint: 311,
+    hasReadout: true,
   },
 };
 

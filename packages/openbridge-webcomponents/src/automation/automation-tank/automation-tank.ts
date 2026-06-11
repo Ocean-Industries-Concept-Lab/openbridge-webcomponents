@@ -30,10 +30,10 @@ import '../../building-blocks/bar-vertical/bar-vertical.js';
 import '../../components/alert-frame/alert-frame.js';
 import {Priority} from '../../navigation-instruments/types.js';
 import {
-  ObcAlertFrameStatus,
   ObcAlertFrameThickness,
   ObcAlertFrameType,
 } from '../../components/alert-frame/alert-frame.js';
+import {AlertType} from '../../types.js';
 import type {ChartLineDataItem} from '../../building-blocks/chart-line/chart-line-base.js';
 import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
 import {
@@ -115,6 +115,17 @@ export interface TankReadoutItem {
 
 /**
  *
+ *
+ * @slot badges - Custom badges to be displayed in the badge area.
+ * @slot tag - Text or element for the tank's tag/label.
+ * @slot readout - Replaces the entire readout content block.
+ * @slot max-value - Content for the capacity value.
+ * @slot unit - Content for the unit of measurement.
+ * @slot current-value - Content for the current level value.
+ * @slot rich - Content for additional detail rows.
+ * @slot alert-icon - Custom icon for the alert frame.
+ * @slot alert-label - Label for the alert frame.
+ * @slot alert-timer - Timer for the alert frame.
  *
  * @ignition-base-height: 173px
  * @ignition-base-width: 168px
@@ -210,8 +221,7 @@ export class ObcAutomationTank extends LitElement {
     ObcAlertFrameType.SmallSideFlip;
   @property({type: String}) alertFrameThickness: ObcAlertFrameThickness =
     ObcAlertFrameThickness.Small;
-  @property({type: String}) alertFrameStatus: ObcAlertFrameStatus =
-    ObcAlertFrameStatus.Alarm;
+  @property({type: String}) alertFrameStatus: AlertType = AlertType.Alarm;
   @property({type: Boolean, attribute: false}) showAlertCategoryIcon: boolean =
     true;
   @property({type: Boolean}) showAlertIcon: boolean = false;
@@ -305,6 +315,16 @@ export class ObcAutomationTank extends LitElement {
         return ObcAutomationBadgeType.Warning;
       case AutomationButtonBadgeAlert.Alarm:
         return ObcAutomationBadgeType.Alarm;
+      case AutomationButtonBadgeAlert.IsaCritical:
+        return ObcAutomationBadgeType.IsaCritical;
+      case AutomationButtonBadgeAlert.IsaHigh:
+        return ObcAutomationBadgeType.IsaHigh;
+      case AutomationButtonBadgeAlert.IsaMedium:
+        return ObcAutomationBadgeType.IsaMedium;
+      case AutomationButtonBadgeAlert.IsaLow:
+        return ObcAutomationBadgeType.IsaLow;
+      case AutomationButtonBadgeAlert.IsaDiagnostic:
+        return ObcAutomationBadgeType.IsaDiagnostic;
       default:
         return null;
     }

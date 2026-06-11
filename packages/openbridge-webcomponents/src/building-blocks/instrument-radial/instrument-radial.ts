@@ -21,6 +21,10 @@ import {
   type ZoomToFitArcFrame,
 } from '../../svghelpers/arc-frame.js';
 
+// Must match obc-watch's un-zoomed viewBox `(176 + getPadding()) * 2`
+// (default padding 48 → 448); instrument-radial overlays obc-watch 1:1.
+const WATCH_DEFAULT_VIEWBOX = 448;
+
 export enum ObcGaugeRadialType {
   filled = 'filled',
   bar = 'bar',
@@ -33,6 +37,11 @@ export interface GaugeRadialAdvice {
   type: AdviceType;
   hinted: boolean;
 }
+
+const NEEDLE_TIP_RADIUS = 160;
+const NEEDLE_TIP_GAP = 5; // tip stops this far short of the scale
+const NEEDLE_WIDTH = 8;
+const NEEDLE_HUB_RADIUS = 16;
 
 function rangeIncludesZero(minValue: number, maxValue: number): boolean {
   return minValue <= 0 && maxValue >= 0;
@@ -53,6 +62,56 @@ function strongerTickmarkType(
   };
 
   return priority[candidate] > priority[existing] ? candidate : existing;
+}
+
+interface Clips {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+}
+
+/** Clamp a clip percentage to [0, 100]; non-finite returns 0. */
+function clampClipPercent(n: number): number {
+  return Number.isFinite(n) ? Math.min(Math.max(n, 0), 100) : 0;
+}
+
+/**
+ * Clamp the four clips to [0, 100] and drop any opposite pair that would
+ * collapse the viewBox (sum >= 100), so a bad clip can't produce a zero- or
+ * negative-size box. Valid clips pass through unchanged.
+ */
+function normalizeClips(clips: Clips): Clips {
+  let top = clampClipPercent(clips.top);
+  let bottom = clampClipPercent(clips.bottom);
+  let left = clampClipPercent(clips.left);
+  let right = clampClipPercent(clips.right);
+  if (top + bottom >= 100) {
+    top = 0;
+    bottom = 0;
+  }
+  if (left + right >= 100) {
+    left = 0;
+    right = 0;
+  }
+  return {top, bottom, left, right};
+}
+
+/**
+ * Fallback value-to-angle mapping when no `getAngle` is supplied: linear over
+ * the historical 270° sweep (-135 to 135). Returns -135 for a non-positive or
+ * non-finite span.
+ */
+function defaultGaugeAngle(
+  value: number,
+  minValue: number,
+  maxValue: number
+): number {
+  const span = maxValue - minValue;
+  if (!Number.isFinite(span) || span <= 0) {
+    return -135;
+  }
+  return ((value - minValue) / span) * 270 - 135;
 }
 
 @customElement('obc-instrument-radial')
@@ -97,6 +156,14 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
   @property({type: Number}) clipTop: number = 0; // in percent of height
   @property({type: Number}) clipBottom: number = 0; // in percent of height
+  @property({type: Number}) clipLeft: number = 0; // in percent of width
+  @property({type: Number}) clipRight: number = 0; // in percent of width
+  /**
+   * Place the horizontal end labels (±90°, e.g. min/max) below the tick instead
+   * of beside it — the "Max-min" placement from the radial label model
+   * (External / Internal / Max-min). See PR #903 / design discussion.
+   */
+  @property({type: Boolean}) endLabelsMaxMin: boolean = false;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
 
   private _radiusOffset = 0;
@@ -109,11 +176,33 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   }
 
   private get minAngle(): number {
-    return this.getAngle(this.minValue);
+    return this.mapAngle(this.minValue);
   }
 
   private get maxAngle(): number {
-    return this.getAngle(this.maxValue);
+    return this.mapAngle(this.maxValue);
+  }
+
+  // Map a value to an angle via the consumer's `getAngle`, guarding a missing
+  // or non-finite mapping so a misconfigured consumer can't emit NaN geometry.
+  private mapAngle(value: number): number {
+    const fn = this.getAngle;
+    const angle =
+      typeof fn === 'function'
+        ? fn(value)
+        : defaultGaugeAngle(value, this.minValue, this.maxValue);
+    return Number.isFinite(angle) ? angle : 0;
+  }
+
+  // Clamped clips, reused for the overlay viewBox and the clips forwarded to
+  // obc-watch.
+  private get safeClips(): Clips {
+    return normalizeClips({
+      top: this.clipTop,
+      bottom: this.clipBottom,
+      left: this.clipLeft,
+      right: this.clipRight,
+    });
   }
 
   private get _derivedNeedleColor(): string {
@@ -150,10 +239,10 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
     const barStartValue = Math.max(this.minValue, Math.min(0, this.maxValue));
     const value = this.clampedValue;
     const setpointAngle =
-      this.setpoint !== undefined ? this.getAngle(this.setpoint) : undefined;
+      this.setpoint !== undefined ? this.mapAngle(this.setpoint) : undefined;
     const newSetpointAngle =
       this.newSetpoint !== undefined
-        ? this.getAngle(this.newSetpoint)
+        ? this.mapAngle(this.newSetpoint)
         : undefined;
 
     const barAreas =
@@ -161,8 +250,8 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
         ? []
         : [
             {
-              startAngle: this.getAngle(barStartValue),
-              endAngle: this.getAngle(value),
+              startAngle: this.mapAngle(barStartValue),
+              endAngle: this.mapAngle(value),
               fillColor: barColor,
             },
           ];
@@ -181,6 +270,7 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
         ? WatchCircleType.single
         : WatchCircleType.double;
 
+    const clips = this.safeClips;
     let viewBox: string;
     if (this.zoomToFitArc) {
       const ext = 48;
@@ -192,16 +282,18 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
         extension: ext,
         targetSize,
       });
-      viewBox = frame.viewBox;
       this._radiusOffset = frame.radiusOffset;
+      viewBox = frame.viewBox;
       this._arcFrame = frame;
     } else {
       this._radiusOffset = 0;
       this._arcFrame = undefined;
-      const width = 448;
-      const height = width * (1 - this.clipTop / 100 - this.clipBottom / 100);
-      const top = -width / 2 + (width * this.clipTop) / 100;
-      viewBox = `${-width / 2} ${top} ${width} ${height}`;
+      const full = WATCH_DEFAULT_VIEWBOX;
+      const w = full * (1 - clips.left / 100 - clips.right / 100);
+      const h = full * (1 - clips.top / 100 - clips.bottom / 100);
+      const left = -full / 2 + (full * clips.left) / 100;
+      const top = -full / 2 + (full * clips.top) / 100;
+      viewBox = `${left} ${top} ${w} ${h}`;
     }
 
     return html`
@@ -223,8 +315,11 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
           .areas=${areas}
           .watchCircleType=${watchCircleType}
           .barAreas=${barAreas}
-          .clipTop=${this.zoomToFitArc ? 0 : this.clipTop}
-          .clipBottom=${this.zoomToFitArc ? 0 : this.clipBottom}
+          .clipTop=${this.zoomToFitArc ? 0 : clips.top}
+          .clipBottom=${this.zoomToFitArc ? 0 : clips.bottom}
+          .clipLeft=${this.zoomToFitArc ? 0 : clips.left}
+          .clipRight=${this.zoomToFitArc ? 0 : clips.right}
+          .endLabelsMaxMin=${this.endLabelsMaxMin}
           .zoomToFitArc=${this.zoomToFitArc}
           .arcFrame=${this._arcFrame}
         ></obc-watch>
@@ -241,14 +336,16 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
     const rOff = this._radiusOffset;
     const value = this.clampedValue;
     if (this.type === ObcGaugeRadialType.needle) {
-      return svg`<g transform="rotate(${this.getAngle(value)}) translate(-256, -256)">
-      <circle cx="256" cy="256" r="14" fill=${needleColor}/>
-      <rect x="250" y="${96 - rOff}" width="12" height="${192 + rOff}" rx="6" fill=${needleColor}/>
-      <rect x="252" y="${98 - rOff}" width="8" height="${188 + rOff}" rx="4" stroke=${needleColor} fill=${needleColor} stroke-width="4"/>
+      // Rod runs from the value tip down to the center hub. Width is constant;
+      // the tip shifts outward additively under zoom.
+      const tipY = 256 - (NEEDLE_TIP_RADIUS - NEEDLE_TIP_GAP) - rOff;
+      return svg`<g transform="rotate(${this.mapAngle(value)}) translate(-256, -256)">
+      <rect x="${256 - NEEDLE_WIDTH / 2}" y="${tipY}" width="${NEEDLE_WIDTH}" height="${256 - tipY}" rx="${NEEDLE_WIDTH / 2}" fill=${needleColor} stroke=${needleColor}/>
+      <circle cx="256" cy="256" r="${NEEDLE_HUB_RADIUS}" fill=${needleColor}/>
       </g>
 `;
     } else {
-      return svg`<g transform="rotate(${this.getAngle(value)}) translate(-256, -256)">
+      return svg`<g transform="rotate(${this.mapAngle(value)}) translate(-256, -256)">
 <rect x="252" y="${96 - rOff}" width="8" height="48" rx="4" fill=${needleColor} stroke="var(--border-silhouette-color)"/>
 </g>
       `;
@@ -284,7 +381,7 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
       }
 
       tickmarksByValue.set(normalizedValue, {
-        angle: this.getAngle(normalizedValue),
+        angle: this.mapAngle(normalizedValue),
         type,
         text,
       });
@@ -370,8 +467,8 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
     const value = this.clampedValue;
 
     return this.advices.map((advice) => {
-      const minAngle = this.getAngle(advice.minValue);
-      const maxAngle = this.getAngle(advice.maxValue);
+      const minAngle = this.mapAngle(advice.minValue);
+      const maxAngle = this.mapAngle(advice.maxValue);
       let state = advice.hinted ? AdviceState.hinted : AdviceState.regular;
       if (value >= advice.minValue && value <= advice.maxValue) {
         state = AdviceState.triggered;

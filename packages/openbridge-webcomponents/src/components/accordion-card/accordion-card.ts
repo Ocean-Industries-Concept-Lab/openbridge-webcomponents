@@ -7,10 +7,10 @@ import '../../icons/icon-chevron-up-google.js';
 import '../../icons/icon-chevron-down-google.js';
 import '../alert-frame/alert-frame.js';
 import {
-  ObcAlertFrameStatus,
   ObcAlertFrameThickness,
   ObcAlertFrameType,
 } from '../alert-frame/alert-frame.js';
+import {AlertType} from '../../types.js';
 
 export enum AccordionSize {
   SingleLine = 'single-line',
@@ -188,8 +188,7 @@ export class ObcAccordionCard extends LitElement {
    * Status of the alert frame overlay (used when `hasAlert` is true).
    * See `obc-alert-frame` for available statuses.
    */
-  @property({type: String}) alertFrameStatus: ObcAlertFrameStatus =
-    ObcAlertFrameStatus.Alarm;
+  @property({type: String}) alertFrameStatus: AlertType = AlertType.Alarm;
 
   private get shouldShowDescription() {
     return (
@@ -304,7 +303,7 @@ export class ObcAccordionCard extends LitElement {
         ${this.hasAlert
           ? html`
               <obc-alert-frame
-                class="alert"
+                class="alert alert-${this.alertFrameStatus}"
                 .sharpEdgeTopLeft=${this.isShartEdgeTop()}
                 .sharpEdgeTopRight=${this.isShartEdgeTop()}
                 .sharpEdgeBottomLeft=${this.isShartEdgeBottom()}

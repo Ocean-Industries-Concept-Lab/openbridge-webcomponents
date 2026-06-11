@@ -15,10 +15,12 @@ import '../../icons/icon-arrow-left-google.js';
 import '../../icons/icon-arrow-right-google.js';
 import '../../components/alert-frame/alert-frame.js';
 import {
-  ObcAlertFrameStatus,
   ObcAlertFrameThickness,
   ObcAlertFrameType,
+  ObcAlertFrameMode,
+  wrapWithAlertFrame,
 } from '../../components/alert-frame/alert-frame.js';
+import {AlertType} from '../../types.js';
 import {customElement} from '../../decorator.js';
 import {
   AutomationButtonReadoutStack,
@@ -102,8 +104,9 @@ export class ObcAutomationButton extends LitElement {
     ObcAlertFrameType.SmallSideFlip;
   @property({type: String}) alertFrameThickness: ObcAlertFrameThickness =
     ObcAlertFrameThickness.Small;
-  @property({type: String}) alertFrameStatus: ObcAlertFrameStatus =
-    ObcAlertFrameStatus.Alarm;
+  @property({type: String}) alertFrameStatus: AlertType = AlertType.Alarm;
+  @property({type: String}) alertFrameMode: ObcAlertFrameMode =
+    ObcAlertFrameMode.ackedActive;
   @property({type: Boolean, attribute: false}) showAlertCategoryIcon: boolean =
     true;
   @property({type: Boolean}) showAlertIcon: boolean = false;
@@ -165,12 +168,13 @@ export class ObcAutomationButton extends LitElement {
               ></obc-automation-button-readout-stack>
             `
           : nothing}
-        ${this.alert
+        ${this.alert && this.positioning === AutomationButtonPositioning.point
           ? html` <obc-alert-frame
               class="alert-frame"
               .type=${this.alertFrameType}
               .thickness=${this.alertFrameThickness}
               .status=${this.alertFrameStatus}
+              .mode=${this.alertFrameMode}
               .showAlertCategoryIcon=${this.showAlertCategoryIcon}
               .showIcon=${this.showAlertIcon}
             >
@@ -186,17 +190,31 @@ export class ObcAutomationButton extends LitElement {
   private wrapContent(content: HTMLTemplateResult): HTMLTemplateResult {
     if (this.positioning === AutomationButtonPositioning.point) {
       return html`<div class="point-wrapper">${content}</div>`;
-    } else if (this.positioning === AutomationButtonPositioning.symbol) {
+    }
+    const innerContent = wrapWithAlertFrame(
+      this.alert
+        ? {
+            type: this.alertFrameType,
+            thickness: this.alertFrameThickness,
+            status: this.alertFrameStatus,
+            mode: this.alertFrameMode,
+            showIcon: this.showAlertIcon,
+            showAlertCategoryIcon: this.showAlertCategoryIcon,
+          }
+        : false,
+      content
+    );
+    if (this.positioning === AutomationButtonPositioning.symbol) {
       return html`<div
         class=${classMap({
           'symbol-wrapper': true,
           ['label-' + this.readoutPosition]: true,
         })}
       >
-        ${content}
+        ${innerContent}
       </div> `;
     }
-    return content;
+    return innerContent;
   }
 
   static override styles = unsafeCSS(compentStyle);
