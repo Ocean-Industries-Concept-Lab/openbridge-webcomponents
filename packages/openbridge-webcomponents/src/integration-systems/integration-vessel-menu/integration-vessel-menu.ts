@@ -12,17 +12,14 @@ import '../../building-blocks/alert-list/alert-list.js';
 /**
  * `<obc-integration-vessel-menu>` – A menu to be shown when selecting a obc-integration-button from a obc-integration-bar.
  *
- * @slot leading-icon - Icon shown in the header.
- * @slot title - Header title text.
  * @slot buttons - Buttons shown in the footer.
  * @slot content - Main content shown in the content area.
  * @slot alarms - Alarm items rendered inside the alert list.
- *
- * @property {boolean} hideAlarmList - Hide the alarm list, ensure it doesn't take space (display=none).
  */
 
 @customElement('obc-integration-vessel-menu')
 export class ObcIntegrationVesselMenu extends LitElement {
+  /** Hide the alarm list, ensuring it doesn't take space (display: none). */
   @property({type: Boolean}) hideAlarmList = false;
 
   protected override render() {

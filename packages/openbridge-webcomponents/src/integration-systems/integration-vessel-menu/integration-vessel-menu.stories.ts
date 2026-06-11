@@ -126,7 +126,6 @@ export default meta;
 type Story = StoryObj<ObcIntegrationVesselMenu>;
 
 interface IntegrationVesselMenuArgs {
-  numberOfButtons: number;
   hideAlarmList: boolean;
 }
 

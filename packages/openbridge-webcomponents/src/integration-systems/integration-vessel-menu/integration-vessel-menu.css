@@ -43,7 +43,7 @@
 }
 
 .footer-container slot[name="buttons"]::slotted(:not(obc-button)) {
-  display: contents !important;
+  display: contents;
 }
 
 .footer-container slot[name="buttons"]::slotted(*) {
