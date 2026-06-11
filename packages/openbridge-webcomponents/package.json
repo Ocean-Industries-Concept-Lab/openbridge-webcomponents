@@ -1,6 +1,6 @@
 {
   "name": "@oicl/openbridge-webcomponents",
-  "version": "2.0.0-next.60",
+  "version": "2.0.0-next.61",
   "type": "module",
   "repository": {
     "type": "git",
@@ -34,9 +34,10 @@
     "typecheck": "tsc --noEmit",
     "format": "prettier \"**/*.{cjs,html,js,json,md,ts,css}\"  --write",
     "format:check": "prettier \"**/*.{cjs,html,js,json,md,ts,css}\"  --check",
-    "lint": "npm run lint:mixins && npm run lint:variables && npm run lint:lit-analyzer && npm run lint:eslint",
+    "lint": "npm run lint:mixins && npm run lint:variables && npm run lint:icons && npm run lint:lit-analyzer && npm run lint:eslint",
     "lint:mixins": "tsx ./script/check-css-mixins.ts",
     "lint:variables": "tsx ./script/check-css-variables.ts",
+    "lint:icons": "tsx ./script/check-icon-hex-leaks.ts",
     "lint:eslint": "eslint 'src/**/*.ts'",
     "lint:lit-analyzer": "lit-analyzer --strict --maxWarnings 0",
     "fix-imports": "node fix-imports.mjs",
