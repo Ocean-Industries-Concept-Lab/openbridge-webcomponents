@@ -36,6 +36,10 @@ const meta: Meta<typeof ObcRotSector> = {
     rotArcExtent: {
       control: {type: 'range', min: 10, max: 60, step: 5},
     },
+    hasReadout: {control: 'boolean'},
+    label: {control: 'text'},
+    unit: {control: 'text'},
+    fractionDigits: {control: 'number'},
   },
 } satisfies Meta<ObcRotSector>;
 

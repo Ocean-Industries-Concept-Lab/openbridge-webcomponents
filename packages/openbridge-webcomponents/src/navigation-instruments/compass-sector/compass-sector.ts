@@ -2,8 +2,8 @@ import {LitElement, PropertyValues, html, svg, unsafeCSS, nothing} from 'lit';
 import {property} from 'lit/decorators.js';
 import componentStyle from './compass-sector.css?inline';
 import '../watch/watch.js';
-import '../readout/readout.js';
-import {ReadoutDirection, ReadoutVariant} from '../readout/readout.js';
+import {renderInstrumentReadout} from '../readout/instrument-readout.js';
+import instrumentReadoutStyle from '../readout/instrument-readout.css?inline';
 import {Tickmark, TickmarkType, TickmarkStyle} from '../watch/tickmark.js';
 import {arrow, ArrowStyle} from '../compass/arrow.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
@@ -163,6 +163,12 @@ export class ObcCompassSector extends LitElement {
    * `priorityElements`, matching the HDG arrow.
    */
   @property({type: Boolean}) hasReadout: boolean = false;
+  /** Readout label. Default `HDG`. */
+  @property({type: String}) label = 'HDG';
+  /** Readout unit. Default `DEG`. */
+  @property({type: String}) unit = 'DEG';
+  /** Number of fraction digits shown in the readout. Default `0`. */
+  @property({type: Number}) fractionDigits = 0;
 
   private _headingSp = new SetpointBundle({
     angularWraparound: true,
@@ -514,26 +520,27 @@ export class ObcCompassSector extends LitElement {
         </svg>
         ${this.hasReadout
           ? html`<div class="readout" style="top: ${this._readoutTopPercent}%">
-              <obc-readout
-                .variant=${ReadoutVariant.enhanced}
-                .direction=${ReadoutDirection.vertical}
-                .hasSetpoint=${false}
-                .hasAdvice=${false}
-                .value=${this.heading}
-                .fractionDigits=${0}
-                .valuePriority=${this.priorityFor(
+              ${renderInstrumentReadout({
+                value: this.heading,
+                valuePriority: this.priorityFor(
                   CompassSectorPriorityElement.hdg
-                )}
-                label="HDG"
-                unit="DEG"
-              ></obc-readout>
+                ),
+                label: this.label,
+                unit: this.unit,
+                fractionDigits: this.fractionDigits,
+                centerValue: true,
+                centerMeta: true,
+              })}
             </div>`
           : nothing}
       </div>
     `;
   }
 
-  static override styles = unsafeCSS(componentStyle);
+  static override styles = [
+    unsafeCSS(instrumentReadoutStyle),
+    unsafeCSS(componentStyle),
+  ];
 }
 
 declare global {

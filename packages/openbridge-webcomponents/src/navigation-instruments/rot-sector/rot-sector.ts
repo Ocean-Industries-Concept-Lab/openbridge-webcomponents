@@ -1,12 +1,12 @@
-import {LitElement, html, css, nothing} from 'lit';
+import {LitElement, html, css, nothing, unsafeCSS} from 'lit';
 import {customElement} from '../../decorator.js';
 import {property} from 'lit/decorators.js';
 import {AdviceType} from '../watch/advice.js';
 import {Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/instrument-radial/instrument-radial.js';
-import '../readout/readout.js';
-import {ReadoutDirection, ReadoutVariant} from '../readout/readout.js';
+import {renderInstrumentReadout} from '../readout/instrument-readout.js';
+import instrumentReadoutStyle from '../readout/instrument-readout.css?inline';
 import {TickmarkStyle} from '../watch/tickmark.js';
 
 export enum ObcGaugeRadialType {
@@ -147,6 +147,12 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
    * under the arc with the current rate-of-turn value. Default `false`.
    */
   @property({type: Boolean}) hasReadout: boolean = false;
+  /** Readout label. Default `ROT`. */
+  @property({type: String}) label = 'ROT';
+  /** Readout unit. Default `DEG/min`. */
+  @property({type: String}) unit = 'DEG/min';
+  /** Number of fraction digits shown in the readout. Default `0`. */
+  @property({type: Number}) fractionDigits = 0;
 
   getAngle = (v: number): number => {
     if (!this.maxValue) return 0;
@@ -224,17 +230,14 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
       </obc-instrument-radial>
       ${this.hasReadout
         ? html`<div class="readout" style="top: ${this._readoutTopPercent}%">
-            <obc-readout
-              .variant=${ReadoutVariant.enhanced}
-              .direction=${ReadoutDirection.vertical}
-              .hasSetpoint=${false}
-              .hasAdvice=${false}
-              .value=${this.value}
-              .fractionDigits=${0}
-              .valuePriority=${this.priority}
-              label="ROT"
-              unit="DEG/min"
-            ></obc-readout>
+            ${renderInstrumentReadout({
+              value: this.value,
+              valuePriority: this.priority,
+              label: this.label,
+              unit: this.unit,
+              fractionDigits: this.fractionDigits,
+              centerValue: true,
+            })}
           </div>`
         : nothing}
     `;
@@ -258,24 +261,22 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
     return 'var(--instrument-enhanced-secondary-color)';
   }
 
-  static override styles = css`
-    :host {
-      position: relative;
-      display: block;
-      height: 100%;
-    }
+  static override styles = [
+    unsafeCSS(instrumentReadoutStyle),
+    css`
+      :host {
+        position: relative;
+        display: block;
+        height: 100%;
+      }
 
-    .readout {
-      position: absolute;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    /* Center the value over the label/unit row instead of right-aligning it. */
-    obc-readout::part(value-wrapper) {
-      justify-self: center;
-    }
-  `;
+      .readout {
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    `,
+  ];
 }
 
 declare global {

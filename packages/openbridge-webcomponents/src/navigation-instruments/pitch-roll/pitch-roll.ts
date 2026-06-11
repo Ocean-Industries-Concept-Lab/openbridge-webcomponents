@@ -14,8 +14,7 @@ import {TickmarkType} from '../watch/tickmark.js';
 import {AdviceState, AdviceType, AngleAdviceRaw} from '../watch/advice.js';
 import {customElement} from '../../decorator.js';
 import {Priority} from '../types.js';
-import '../readout/readout.js';
-import {ReadoutDirection, ReadoutVariant} from '../readout/readout.js';
+import {renderInstrumentReadout} from '../readout/instrument-readout.js';
 import {
   computeZoomToFitArcFrame,
   normalizeArcAngle,
@@ -72,6 +71,14 @@ export class ObcPitchRoll extends LitElement {
    * roll) instead of the vessel images. Default `false`.
    */
   @property({type: Boolean}) hasReadout: boolean = false;
+  /** Label for the pitch readout. Default `Pitch`. */
+  @property({type: String}) pitchLabel = 'Pitch';
+  /** Label for the roll readout. Default `Roll`. */
+  @property({type: String}) rollLabel = 'Roll';
+  /** Unit shown in both readouts. Default `DEG`. */
+  @property({type: String}) unit = 'DEG';
+  /** Number of fraction digits shown in both readouts. Default `0`. */
+  @property({type: Number}) fractionDigits = 0;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
   /**
    * Half-extent of each of the four watch arcs in degrees, measured from the
@@ -193,13 +200,13 @@ export class ObcPitchRoll extends LitElement {
               <div class="readout-group">
                 ${this.renderReadout(
                   this.pitch,
-                  'Pitch',
+                  this.pitchLabel,
                   PitchRollPriorityElement.pitch
                 )}
                 <div class="readout-divider"></div>
                 ${this.renderReadout(
                   this.roll,
-                  'Roll',
+                  this.rollLabel,
                   PitchRollPriorityElement.roll
                 )}
               </div>
@@ -215,17 +222,13 @@ export class ObcPitchRoll extends LitElement {
     element: PitchRollPriorityElement
   ) {
     return html`
-      <obc-readout
-        .variant=${ReadoutVariant.enhanced}
-        .direction=${ReadoutDirection.vertical}
-        .hasSetpoint=${false}
-        .hasAdvice=${false}
-        .value=${value}
-        .fractionDigits=${0}
-        .valuePriority=${this.priorityFor(element)}
-        label=${label}
-        unit="DEG"
-      ></obc-readout>
+      ${renderInstrumentReadout({
+        value,
+        valuePriority: this.priorityFor(element),
+        label,
+        unit: this.unit,
+        fractionDigits: this.fractionDigits,
+      })}
     `;
   }
 
