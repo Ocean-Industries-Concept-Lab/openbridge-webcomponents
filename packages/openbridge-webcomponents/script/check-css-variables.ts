@@ -11,7 +11,7 @@
  * - Identifies unique variable usages and their locations (including fallback detection).
  * - Detects duplicate variable definitions (warning).
  * - Detects usages of undefined variables (error), excluding a predefined set of allowed undefined variables.
- * - Skips `src/palettes/variables.css` for usage checks as it is considered a definition-only file.
+ * - Scans `src/palettes/variables.css` for `var(...)` usages too: its semantic tokens reference primitives in the same file, so a missing primitive (e.g. a token dropped from the Figma export) would otherwise go undetected.
  * - Exits with code 1 if any undefined variable usages (without fallbacks) are found.
  *
  * Usage Examples:
@@ -106,9 +106,6 @@ async function run(): Promise<void> {
 
   for (const file of cssFiles) {
     const content = fs.readFileSync(file, 'utf8');
-    const isPaletteFile = file.endsWith(
-      `${path.sep}src${path.sep}palettes${path.sep}variables.css`
-    );
 
     const definitionRegex = /(^|[;{\s])(\-\-[A-Za-z0-9_-]+)\s*:/gm;
     for (const match of content.matchAll(definitionRegex)) {
@@ -130,10 +127,6 @@ async function run(): Promise<void> {
       }
       const location = {file, line: getLineNumber(content, index)};
       definitions.set(name, [...(definitions.get(name) ?? []), location]);
-    }
-
-    if (isPaletteFile) {
-      continue;
     }
 
     let start = 0;
