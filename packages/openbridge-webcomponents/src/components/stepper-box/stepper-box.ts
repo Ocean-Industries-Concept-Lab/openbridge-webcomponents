@@ -56,7 +56,7 @@ export enum ObcStepperBoxType {
  *
  * **Example:**
  * ```
- * <obc-stepper-box type="up-down" .value=${5} unit="kg" helperText="Set weight"></obc-stepper-box>
+ * <obc-stepper-box type="up-down" value="5" unit="kg" helperText="Set weight"></obc-stepper-box>
  * ```
  *
  * @fires down {CustomEvent<{value: number}>} Fired when the decrement (left or down) button is clicked
@@ -109,7 +109,7 @@ export class ObcStepperBox extends LitElement {
   @property({type: Number}) stepDown = 1;
 
   /**
-   * Unit text displayed inside the field. Overridden by the `unit` slot if assigned.
+   * Unit text displayed inside the field.
    */
   @property({type: String}) unit = '';
 
