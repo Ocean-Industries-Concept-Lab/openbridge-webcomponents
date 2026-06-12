@@ -44,35 +44,35 @@
   }
 
   &.alarm,
-  &.isa-high {
+  &.level-high {
     --bg-color: var(--alert-alarm-color);
     color: var(--on-alarm-active-color);
   }
 
   &.warning,
-  &.isa-medium {
+  &.level-medium {
     --bg-color: var(--alert-warning-color);
     --blink-on: var(--warning-blink-on);
     color: var(--on-warning-active-color);
   }
 
   &.caution,
-  &.isa-low {
+  &.level-low {
     --bg-color: var(--alert-caution-color);
     --blink-on: 1;
     color: var(--on-caution-active-color);
   }
 
-  &.isa-low {
+  &.level-low {
     --blink-on: var(--low-blink-on);
   }
 
-  &.isa-critical {
+  &.level-critical {
     --bg-color: var(--critical-enabled-background-color);
     color: var(--on-critical-active-color);
   }
 
-  &.isa-diagnostic {
+  &.level-diagnostic {
     --bg-color: var(--notification-enabled-background-color);
     color: var(--on-notification-active-color);
   }
