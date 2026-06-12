@@ -10,8 +10,8 @@ import '../tree-navigation-item/tree-navigation-item.js';
 import {
   TreeBranchType,
   TreeTerminalType,
+  type TreeNavigationItemAlerts,
 } from '../tree-navigation-item/tree-navigation-item.js';
-import {BadgeType} from '../badge/badge.js';
 
 enum NavigationItemRole {
   Button = 'button',
@@ -160,14 +160,12 @@ export class ObcNavigationItem extends LitElement {
    */
   @property({type: String}) terminalType: string = TreeTerminalType.regular;
 
-  /** Whether a trailing alert counter badge is shown (Tree variant only). */
-  @property({type: Boolean}) hasAlertBadge = false;
-
-  /** The number shown in the alert badge when `hasAlertBadge` is true (Tree variant only). */
-  @property({type: Number}) alertCount = 0;
-
-  /** The severity/type of the alert badge — one of the `obc-badge` types (Tree variant only). */
-  @property({type: String}) alertType: string = BadgeType.alarm;
+  /**
+   * Per-severity alert counts shown as trailing badge(s) (Tree variant only).
+   * Forwarded to the underlying `obc-tree-navigation-item`. See
+   * {@link TreeNavigationItemAlerts}.
+   */
+  @property({type: Object}) alerts?: TreeNavigationItemAlerts;
 
   @query('a') private anchorElement?: HTMLAnchorElement;
 
@@ -231,9 +229,7 @@ export class ObcNavigationItem extends LitElement {
           .hasLeadingIcon=${this.hasIcon}
           .href=${this.href}
           .terminalType=${this.terminalType}
-          ?hasAlertBadge=${this.hasAlertBadge}
-          .alertCount=${this.alertCount}
-          .alertType=${this.alertType}
+          .alerts=${this.alerts}
           @click=${this.onClick}
         >
           ${this.hasIcon
