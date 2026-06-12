@@ -121,7 +121,7 @@ export interface AlertFrameConfig {
  * ### Properties and Attributes
  * - `type`: Selects the visual variant/flap style. Default is `small-side-flip`.
  * - `thickness`: Controls border thickness (`small` or `large`). Default is `small`.
- * - `status`: Sets the alert status and color/icon (`alarm`, `warning`, `caution`, or the `isa-*` severities). Default is `alarm`.
+ * - `status`: Sets the alert status and color/icon (`alarm`, `warning`, `caution`, or the `level-*` severities). Default is `alarm`.
  * - `mode`: Acknowledgement lifecycle state (`acked-active`, `unacked-active`, `unacked-rectified`) controlling blinking/animation. Default is `acked-active`.
  * - `wrapContent`: When true, the frame wraps and sizes to its slotted content instead of overlaying a fixed region. Default is `false`.
  * - `sharpEdgeTopLeft`, `sharpEdgeTopRight`, `sharpEdgeBottomLeft`, `sharpEdgeBottomRight`: Boolean flags to make each corner sharp instead of rounded.

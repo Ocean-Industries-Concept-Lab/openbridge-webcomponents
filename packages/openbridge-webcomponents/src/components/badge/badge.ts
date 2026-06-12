@@ -194,7 +194,7 @@ export class ObcBadge extends LitElement {
   /**
    * Whether to show an icon in the badge.
    *
-   * For built-in types (`alarm`, `warning`, `caution`, the `isa-*` severities, and `running`), a contextual icon is shown automatically.
+   * For built-in types (`alarm`, `warning`, `caution`, the `level-*` severities, and `running`), a contextual icon is shown automatically.
    * For other types, provide a custom icon in the `badge-icon` slot.
    */
   @property({type: Boolean}) showIcon = false;

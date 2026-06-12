@@ -192,7 +192,7 @@ export const LevelCategories: Story = {
   args: {
     alerts: [
       {
-        id: 'isa-1',
+        id: 'level-1',
         tagId: 'CRIT-01',
         source: 'PCS',
         text: 'Emergency shutdown condition detected',
@@ -202,7 +202,7 @@ export const LevelCategories: Story = {
         time: new Date('2024-01-15T14:32:15Z'),
       },
       {
-        id: 'isa-2',
+        id: 'level-2',
         tagId: 'HIGH-02',
         source: 'ME 1',
         text: 'Main engine overspeed',
@@ -212,7 +212,7 @@ export const LevelCategories: Story = {
         time: new Date('2024-01-15T14:30:00Z'),
       },
       {
-        id: 'isa-3',
+        id: 'level-3',
         tagId: 'MED-03',
         source: 'Tank 1',
         text: 'Tank level approaching high limit',
@@ -222,7 +222,7 @@ export const LevelCategories: Story = {
         time: new Date('2024-01-15T14:28:00Z'),
       },
       {
-        id: 'isa-4',
+        id: 'level-4',
         tagId: 'LOW-04',
         source: 'HVAC',
         text: 'Filter maintenance due',
@@ -232,7 +232,7 @@ export const LevelCategories: Story = {
         time: new Date('2024-01-15T14:25:00Z'),
       },
       {
-        id: 'isa-5',
+        id: 'level-5',
         tagId: 'DIAG-05',
         source: 'Network',
         text: 'Redundant link diagnostic message',
