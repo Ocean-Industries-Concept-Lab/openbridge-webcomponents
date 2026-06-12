@@ -106,13 +106,10 @@ const meta: Meta<ObcIntegrationVesselMenu> = {
   title: 'Integration Systems/Integration Vessel Menu',
   component: 'obc-integration-vessel-menu',
   tags: ['alpha'],
-  args: {numberOfButtons: 3},
+  args: {hideAlarmList: false},
   argTypes: {
-    numberOfButtons: {
-      control: 'number',
-      min: 0,
-      max: 3,
-      step: 1,
+    hideAlarmList: {
+      control: 'boolean',
     },
   },
   parameters: {
@@ -129,7 +126,7 @@ export default meta;
 type Story = StoryObj<ObcIntegrationVesselMenu>;
 
 interface IntegrationVesselMenuArgs {
-  numberOfButtons: number;
+  hideAlarmList: boolean;
 }
 
 type IntegrationVesselMenuTemplate = (
@@ -137,34 +134,61 @@ type IntegrationVesselMenuTemplate = (
 ) => ReturnType<typeof html>;
 
 const template: IntegrationVesselMenuTemplate = (args) => html`
-  <obc-integration-vessel-menu
-    .numberOfButtons=${args.numberOfButtons}
-    @button-1-click=${() => console.log('Button 1 clicked')}
-    @button-2-click=${() => console.log('Button 2 clicked')}
-    @button-3-click=${() => console.log('Button 3 clicked')}
-  >
+  <obc-integration-vessel-menu .hideAlarmList=${args.hideAlarmList}>
     <div slot="content" style="padding: 24px;">
       <div style="width: 496px; height: 256;">
         <p>Content area</p>
       </div>
     </div>
-    <obi-placeholder slot="button-1-leading-icon"></obi-placeholder>
-    <div slot="button-1-label">Action 1</div>
-    <obi-placeholder slot="button-2-leading-icon"></obi-placeholder>
-    <div slot="button-2-label">Ac. 2</div>
-    <obi-placeholder slot="button-3-leading-icon"></obi-placeholder>
-    <div slot="button-3-label">Action number 3</div>
+    <obc-button
+      slot="buttons"
+      @click=${() => console.log('Button 1 clicked')}
+      ?fullWidth=${true}
+    >
+      <div>Action 1</div>
+    </obc-button>
+    <obc-button
+      slot="buttons"
+      @click=${() => console.log('Button 2 clicked')}
+      ?fullWidth=${true}
+    >
+      Ac. 2
+    </obc-button>
+    <obc-button
+      slot="buttons"
+      @click=${() => console.log('Button 3 clicked')}
+      ?fullWidth=${true}
+    >
+      Action number 3
+    </obc-button>
+
     ${renderAlarms()}
   </obc-integration-vessel-menu>
 `;
 
 const templateWithoutAlarms: IntegrationVesselMenuTemplate = (args) => html`
-  <obc-integration-vessel-menu
-    .numberOfButtons=${args.numberOfButtons}
-    @button-1-click=${() => console.log('Button 1 clicked')}
-    @button-2-click=${() => console.log('Button 2 clicked')}
-    @button-3-click=${() => console.log('Button 3 clicked')}
-  >
+  <obc-integration-vessel-menu .hideAlarmList=${args.hideAlarmList}>
+    <obc-button
+      slot="buttons"
+      @click=${() => console.log('Button 1 clicked')}
+      ?fullWidth=${true}
+    >
+      Action 1
+    </obc-button>
+    <obc-button
+      slot="buttons"
+      @click=${() => console.log('Button 2 clicked')}
+      ?fullWidth=${true}
+    >
+      Ac. 2
+    </obc-button>
+    <obc-button
+      slot="buttons"
+      @click=${() => console.log('Button 3 clicked')}
+      ?fullWidth=${true}
+    >
+      Action number 3
+    </obc-button>
     <div slot="content" style="padding: 24px;">
       <p>Add content here</p>
     </div>
@@ -177,4 +201,9 @@ export const Default: Story = {
 
 export const WithoutAlarms: Story = {
   render: templateWithoutAlarms,
+};
+
+export const WithoutAlarmsHideEmptyAlarmList: Story = {
+  render: templateWithoutAlarms,
+  args: {hideAlarmList: true},
 };
