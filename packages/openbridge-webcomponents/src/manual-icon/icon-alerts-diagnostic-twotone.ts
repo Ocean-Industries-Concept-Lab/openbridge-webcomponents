@@ -3,7 +3,7 @@ import {property} from 'lit/decorators.js';
 import {customElement} from '../decorator.js';
 
 /**
- * `<obi-alerts-diagnostic-twotone>` – Two-tone bell icon for the ISA "diagnostic" alert severity.
+ * `<obi-alerts-diagnostic-twotone>` – Two-tone bell icon for the level "diagnostic" alert severity.
  *
  * Renders the alert (bell) glyph as a layered two-tone shape so the silhouette and
  * fill can be tinted independently. Used wherever a diagnostic-severity alert needs an

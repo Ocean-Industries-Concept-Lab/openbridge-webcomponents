@@ -188,7 +188,7 @@ export const OneItem: Story = {
   },
 };
 
-export const IsaCategories: Story = {
+export const LevelCategories: Story = {
   args: {
     alerts: [
       {
@@ -198,7 +198,7 @@ export const IsaCategories: Story = {
         text: 'Emergency shutdown condition detected',
         acknowledged: false,
         active: true,
-        type: AlertType.IsaCritical,
+        type: AlertType.LevelCritical,
         time: new Date('2024-01-15T14:32:15Z'),
       },
       {
@@ -208,7 +208,7 @@ export const IsaCategories: Story = {
         text: 'Main engine overspeed',
         acknowledged: false,
         active: true,
-        type: AlertType.IsaHigh,
+        type: AlertType.LevelHigh,
         time: new Date('2024-01-15T14:30:00Z'),
       },
       {
@@ -218,7 +218,7 @@ export const IsaCategories: Story = {
         text: 'Tank level approaching high limit',
         acknowledged: false,
         active: true,
-        type: AlertType.IsaMedium,
+        type: AlertType.LevelMedium,
         time: new Date('2024-01-15T14:28:00Z'),
       },
       {
@@ -228,7 +228,7 @@ export const IsaCategories: Story = {
         text: 'Filter maintenance due',
         acknowledged: false,
         active: true,
-        type: AlertType.IsaLow,
+        type: AlertType.LevelLow,
         time: new Date('2024-01-15T14:25:00Z'),
       },
       {
@@ -238,7 +238,7 @@ export const IsaCategories: Story = {
         text: 'Redundant link diagnostic message',
         acknowledged: false,
         active: true,
-        type: AlertType.IsaDiagnostic,
+        type: AlertType.LevelDiagnostic,
         time: new Date('2024-01-15T14:20:00Z'),
       },
     ],
