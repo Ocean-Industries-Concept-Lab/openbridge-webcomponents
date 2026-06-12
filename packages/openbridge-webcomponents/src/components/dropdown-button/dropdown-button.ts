@@ -49,6 +49,8 @@ export type DropdownButtonOption = {
  * - `options` (Array): List of selectable options, each with a `value` (string), `label` (string), and optional `level` (number) for indentation.
  * - `value` (string): The currently selected option's value. If not set, defaults to the first option.
  * - `fullWidth` (boolean): Expands the component to fill its container when true. Default is false.
+ * - `allowEmptySelection` (boolean): When true, a `value` that does not match any option leaves the button with no option selected, showing `placeholder` instead of defaulting to the first option. Default is false.
+ * - `placeholder` (string): Text shown when nothing is selected and `allowEmptySelection` is true. Default is an empty string.
  *
  * ### Events
  * - `dropdown-change` – Fired when the user selects a different option. The event detail includes `{ value, label }` of the selected option.
@@ -103,6 +105,17 @@ export class ObcDropdownButton extends LitElement {
   @property({type: Boolean}) fullWidth = false;
 
   /**
+   * If true, a `value` that does not match any option leaves the button with no option selected,
+   * showing `placeholder` instead of defaulting to the first option. Default is false.
+   */
+  @property({type: Boolean}) allowEmptySelection = false;
+
+  /**
+   * Text shown when nothing is selected and `allowEmptySelection` is true. Default is an empty string.
+   */
+  @property({type: String}) placeholder = '';
+
+  /**
    * Controls the button's display type.
    * - `label`: Text label only (default)
    * - `icon`: Icon only, no label
@@ -142,10 +155,21 @@ export class ObcDropdownButton extends LitElement {
       this.selectedLabel = '';
       return;
     }
-    this.selectedValue = this.value || this.options[0].value;
-    this.selectedLabel = this.value
-      ? this.options.find((item) => item.value === this.value)?.label || ''
-      : this.options[0].label;
+    const match = this.value
+      ? this.options.find((item) => item.value === this.value)
+      : undefined;
+    if (match) {
+      this.selectedValue = match.value;
+      this.selectedLabel = match.label;
+      return;
+    }
+    if (this.allowEmptySelection) {
+      this.selectedValue = '';
+      this.selectedLabel = this.placeholder;
+      return;
+    }
+    this.selectedValue = this.options[0].value;
+    this.selectedLabel = this.options[0].label;
   }
 
   override render() {
@@ -172,6 +196,11 @@ export class ObcDropdownButton extends LitElement {
           </div>
         </div>
         <select @change=${this.changeHandler} ?disabled=${this.disabled}>
+          ${this.allowEmptySelection && this.selectedValue === ''
+            ? html`<option value="" disabled selected hidden>
+                ${this.placeholder}
+              </option>`
+            : nothing}
           ${this.options.map((item) => {
             const indent = item.level ? (item.level - 1) * 2 : 0;
             const indentText = [];
