@@ -311,16 +311,16 @@ export class ObcAutomationTank extends LitElement {
         return ObcAutomationBadgeType.Warning;
       case AutomationButtonBadgeAlert.Alarm:
         return ObcAutomationBadgeType.Alarm;
-      case AutomationButtonBadgeAlert.IsaCritical:
-        return ObcAutomationBadgeType.IsaCritical;
-      case AutomationButtonBadgeAlert.IsaHigh:
-        return ObcAutomationBadgeType.IsaHigh;
-      case AutomationButtonBadgeAlert.IsaMedium:
-        return ObcAutomationBadgeType.IsaMedium;
-      case AutomationButtonBadgeAlert.IsaLow:
-        return ObcAutomationBadgeType.IsaLow;
-      case AutomationButtonBadgeAlert.IsaDiagnostic:
-        return ObcAutomationBadgeType.IsaDiagnostic;
+      case AutomationButtonBadgeAlert.LevelCritical:
+        return ObcAutomationBadgeType.LevelCritical;
+      case AutomationButtonBadgeAlert.LevelHigh:
+        return ObcAutomationBadgeType.LevelHigh;
+      case AutomationButtonBadgeAlert.LevelMedium:
+        return ObcAutomationBadgeType.LevelMedium;
+      case AutomationButtonBadgeAlert.LevelLow:
+        return ObcAutomationBadgeType.LevelLow;
+      case AutomationButtonBadgeAlert.LevelDiagnostic:
+        return ObcAutomationBadgeType.LevelDiagnostic;
       default:
         return null;
     }

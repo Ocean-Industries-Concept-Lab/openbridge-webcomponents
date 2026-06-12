@@ -28,11 +28,11 @@ export enum AutomationButtonBadgeAlert {
   Caution = 'caution',
   Warning = 'warning',
   Alarm = 'alarm',
-  IsaCritical = 'isa-critical',
-  IsaHigh = 'isa-high',
-  IsaMedium = 'isa-medium',
-  IsaLow = 'isa-low',
-  IsaDiagnostic = 'isa-diagnostic',
+  LevelCritical = 'level-critical',
+  LevelHigh = 'level-high',
+  LevelMedium = 'level-medium',
+  LevelLow = 'level-low',
+  LevelDiagnostic = 'level-diagnostic',
 }
 
 export enum AutomationButtonBadgeInterlock {
@@ -158,16 +158,16 @@ export class ObcAbstractAutomationButton extends LitElement {
       return ObcAutomationBadgeType.Warning;
     } else if (this.badgeAlert === AutomationButtonBadgeAlert.Alarm) {
       return ObcAutomationBadgeType.Alarm;
-    } else if (this.badgeAlert === AutomationButtonBadgeAlert.IsaCritical) {
-      return ObcAutomationBadgeType.IsaCritical;
-    } else if (this.badgeAlert === AutomationButtonBadgeAlert.IsaHigh) {
-      return ObcAutomationBadgeType.IsaHigh;
-    } else if (this.badgeAlert === AutomationButtonBadgeAlert.IsaMedium) {
-      return ObcAutomationBadgeType.IsaMedium;
-    } else if (this.badgeAlert === AutomationButtonBadgeAlert.IsaLow) {
-      return ObcAutomationBadgeType.IsaLow;
-    } else if (this.badgeAlert === AutomationButtonBadgeAlert.IsaDiagnostic) {
-      return ObcAutomationBadgeType.IsaDiagnostic;
+    } else if (this.badgeAlert === AutomationButtonBadgeAlert.LevelCritical) {
+      return ObcAutomationBadgeType.LevelCritical;
+    } else if (this.badgeAlert === AutomationButtonBadgeAlert.LevelHigh) {
+      return ObcAutomationBadgeType.LevelHigh;
+    } else if (this.badgeAlert === AutomationButtonBadgeAlert.LevelMedium) {
+      return ObcAutomationBadgeType.LevelMedium;
+    } else if (this.badgeAlert === AutomationButtonBadgeAlert.LevelLow) {
+      return ObcAutomationBadgeType.LevelLow;
+    } else if (this.badgeAlert === AutomationButtonBadgeAlert.LevelDiagnostic) {
+      return ObcAutomationBadgeType.LevelDiagnostic;
     }
     return null;
   }

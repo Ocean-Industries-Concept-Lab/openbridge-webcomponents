@@ -98,42 +98,42 @@ export const AlarmOutline: Story = {
   },
 };
 
-export const IsaCritical: Story = {
+export const LevelCritical: Story = {
   args: {
-    type: AlertType.IsaCritical,
+    type: AlertType.LevelCritical,
     acknowledged: false,
     active: true,
     outline: true,
   },
 };
 
-export const IsaHigh: Story = {
+export const LevelHigh: Story = {
   args: {
-    type: AlertType.IsaHigh,
+    type: AlertType.LevelHigh,
     acknowledged: false,
     active: true,
   },
 };
 
-export const IsaMedium: Story = {
+export const LevelMedium: Story = {
   args: {
-    type: AlertType.IsaMedium,
+    type: AlertType.LevelMedium,
     acknowledged: false,
     active: true,
   },
 };
 
-export const IsaLow: Story = {
+export const LevelLow: Story = {
   args: {
-    type: AlertType.IsaLow,
+    type: AlertType.LevelLow,
     acknowledged: false,
     active: true,
   },
 };
 
-export const IsaDiagnostic: Story = {
+export const LevelDiagnostic: Story = {
   args: {
-    type: AlertType.IsaDiagnostic,
+    type: AlertType.LevelDiagnostic,
     acknowledged: false,
     active: true,
   },

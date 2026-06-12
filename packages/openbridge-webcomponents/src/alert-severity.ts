@@ -5,9 +5,9 @@
  * Centralizes the per-`AlertType` decisions shared across alert-rendering
  * components (badges, twotone icons, frames, lists) so that severity behavior
  * stays consistent everywhere. Supports both the legacy severities
- * (`alarm`, `warning`, `caution`) and the ISA severities
- * (`isa-critical`, `isa-high`, `isa-medium`, `isa-low`, `isa-diagnostic`),
- * collapsing the ISA set onto the legacy visual/blink treatments where they
+ * (`alarm`, `warning`, `caution`) and the level severities
+ * (`level-critical`, `level-high`, `level-medium`, `level-low`, `level-diagnostic`),
+ * collapsing the level set onto the legacy visual/blink treatments where they
  * share styling.
  *
  * Features:
@@ -18,7 +18,7 @@
  *   severity.
  * - Blinking: `supportsBlinking` reports whether a severity blinks,
  *   `getAlertBlinkMode` resolves its blink mode, and
- *   `getBamAlertTypeForBlinking` maps ISA severities onto the legacy type used
+ *   `getBamAlertTypeForBlinking` maps level severities onto the legacy type used
  *   by the bridge alert management (BAM) blink machinery.
  * - Acknowledgement & filtering: `requiresAcknowledgement` reports whether a
  *   severity needs an ACK action, `excludedFromUnackedFilter` reports whether
@@ -36,8 +36,8 @@
  * } from './alert-severity.js';
  * import {AlertType} from './types.js';
  *
- * const tokens = getAlertColorTokens(AlertType.IsaHigh);
- * const needsAck = requiresAcknowledgement(AlertType.IsaLow); // true
+ * const tokens = getAlertColorTokens(AlertType.LevelHigh);
+ * const needsAck = requiresAcknowledgement(AlertType.LevelLow); // true
  * alerts.sort(
  *   (a, b) =>
  *     ALERT_SEVERITY_PRIORITY.indexOf(a.type) -
@@ -67,10 +67,10 @@ export function requiresAcknowledgement(type: AlertType): boolean {
   return [
     AlertType.Alarm,
     AlertType.Warning,
-    AlertType.IsaCritical,
-    AlertType.IsaHigh,
-    AlertType.IsaMedium,
-    AlertType.IsaLow,
+    AlertType.LevelCritical,
+    AlertType.LevelHigh,
+    AlertType.LevelMedium,
+    AlertType.LevelLow,
   ].includes(type);
 }
 
@@ -78,10 +78,10 @@ export function supportsBlinking(type: AlertType): boolean {
   return [
     AlertType.Alarm,
     AlertType.Warning,
-    AlertType.IsaCritical,
-    AlertType.IsaHigh,
-    AlertType.IsaMedium,
-    AlertType.IsaLow,
+    AlertType.LevelCritical,
+    AlertType.LevelHigh,
+    AlertType.LevelMedium,
+    AlertType.LevelLow,
   ].includes(type);
 }
 
@@ -91,34 +91,34 @@ export function getAlertSeverityCssClass(type: AlertType): string {
 
 export function getAlertColorTokens(type: AlertType): AlertColorTokens {
   switch (type) {
-    case AlertType.IsaCritical:
+    case AlertType.LevelCritical:
       return {
         bg: 'var(--critical-enabled-background-color)',
         border: 'var(--critical-enabled-border-color)',
         onActive: 'var(--on-critical-active-color)',
       };
     case AlertType.Warning:
-    case AlertType.IsaMedium:
+    case AlertType.LevelMedium:
       return {
         bg: 'var(--alert-warning-color)',
         border: 'var(--alert-warning-outline-color)',
         onActive: 'var(--on-warning-active-color)',
       };
     case AlertType.Caution:
-    case AlertType.IsaLow:
+    case AlertType.LevelLow:
       return {
         bg: 'var(--alert-caution-color)',
         border: 'var(--alert-caution-outline-color)',
         onActive: 'var(--on-caution-active-color)',
       };
-    case AlertType.IsaDiagnostic:
+    case AlertType.LevelDiagnostic:
       return {
         bg: 'var(--notification-enabled-background-color)',
         border: 'var(--notification-enabled-border-color)',
         onActive: 'var(--on-notification-active-color)',
       };
     case AlertType.Alarm:
-    case AlertType.IsaHigh:
+    case AlertType.LevelHigh:
     default:
       return {
         bg: 'var(--alert-alarm-color)',
@@ -130,18 +130,18 @@ export function getAlertColorTokens(type: AlertType): AlertColorTokens {
 
 export function getAlertBadgeComponent(type: AlertType): AlertBadgeComponent {
   switch (type) {
-    case AlertType.IsaCritical:
+    case AlertType.LevelCritical:
       return AlertBadgeComponent.Critical;
     case AlertType.Warning:
-    case AlertType.IsaMedium:
+    case AlertType.LevelMedium:
       return AlertBadgeComponent.Warning;
     case AlertType.Caution:
-    case AlertType.IsaLow:
+    case AlertType.LevelLow:
       return AlertBadgeComponent.Caution;
-    case AlertType.IsaDiagnostic:
+    case AlertType.LevelDiagnostic:
       return AlertBadgeComponent.Diagnostic;
     case AlertType.Alarm:
-    case AlertType.IsaHigh:
+    case AlertType.LevelHigh:
     default:
       return AlertBadgeComponent.Alarm;
   }
@@ -159,18 +159,18 @@ export function getAlertTwotoneComponent(
   type: AlertType
 ): AlertTwotoneComponent {
   switch (type) {
-    case AlertType.IsaCritical:
+    case AlertType.LevelCritical:
       return AlertTwotoneComponent.Critical;
-    case AlertType.IsaDiagnostic:
+    case AlertType.LevelDiagnostic:
       return AlertTwotoneComponent.Diagnostic;
     case AlertType.Warning:
-    case AlertType.IsaMedium:
+    case AlertType.LevelMedium:
       return AlertTwotoneComponent.Warning;
     case AlertType.Caution:
-    case AlertType.IsaLow:
+    case AlertType.LevelLow:
       return AlertTwotoneComponent.Caution;
     case AlertType.Alarm:
-    case AlertType.IsaHigh:
+    case AlertType.LevelHigh:
     default:
       return AlertTwotoneComponent.Alarm;
   }
@@ -185,16 +185,16 @@ export enum AlertBlinkMode {
 
 export function getAlertBlinkMode(type: AlertType): AlertBlinkMode {
   switch (type) {
-    case AlertType.IsaCritical:
+    case AlertType.LevelCritical:
       return AlertBlinkMode.Critical;
     case AlertType.Warning:
-    case AlertType.IsaMedium:
+    case AlertType.LevelMedium:
       return AlertBlinkMode.Warning;
     case AlertType.Caution:
-    case AlertType.IsaLow:
+    case AlertType.LevelLow:
       return AlertBlinkMode.Low;
     case AlertType.Alarm:
-    case AlertType.IsaHigh:
+    case AlertType.LevelHigh:
     default:
       return AlertBlinkMode.Alarm;
   }
@@ -202,12 +202,12 @@ export function getAlertBlinkMode(type: AlertType): AlertBlinkMode {
 
 export function getBamAlertTypeForBlinking(type: AlertType): AlertType {
   switch (type) {
-    case AlertType.IsaCritical:
-    case AlertType.IsaHigh:
+    case AlertType.LevelCritical:
+    case AlertType.LevelHigh:
       return AlertType.Alarm;
-    case AlertType.IsaMedium:
+    case AlertType.LevelMedium:
       return AlertType.Warning;
-    case AlertType.IsaLow:
+    case AlertType.LevelLow:
       return AlertType.Caution;
     default:
       return type;
@@ -215,11 +215,13 @@ export function getBamAlertTypeForBlinking(type: AlertType): AlertType {
 }
 
 export function excludedFromUnackedFilter(type: AlertType): boolean {
-  return [AlertType.Caution, AlertType.IsaDiagnostic].includes(type);
+  return [AlertType.Caution, AlertType.LevelDiagnostic].includes(type);
 }
 
 export function usesAlarmNoAckIcon(type: AlertType): boolean {
-  return [AlertType.Alarm, AlertType.IsaCritical, AlertType.IsaHigh].includes(
-    type
-  );
+  return [
+    AlertType.Alarm,
+    AlertType.LevelCritical,
+    AlertType.LevelHigh,
+  ].includes(type);
 }

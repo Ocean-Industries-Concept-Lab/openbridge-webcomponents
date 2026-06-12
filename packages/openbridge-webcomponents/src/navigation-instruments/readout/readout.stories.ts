@@ -293,13 +293,13 @@ export const Alarm: Story = {
   render: (args) => renderComponent(args as ObcReadout),
 };
 
-export const IsaCritical: Story = {
+export const LevelCritical: Story = {
   args: {
     value: 42,
     label: 'RPM',
     unit: 'rpm',
     alert: {
-      status: 'isa-critical',
+      status: 'level-critical',
       mode: 'unacked-active',
     },
   },

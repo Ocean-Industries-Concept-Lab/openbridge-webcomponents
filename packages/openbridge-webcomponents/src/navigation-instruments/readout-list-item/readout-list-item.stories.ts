@@ -468,22 +468,22 @@ export const Alarm: Story = {
   },
 };
 
-export const IsaCritical: Story = {
+export const LevelCritical: Story = {
   args: {
     value: 123,
     alert: {
-      status: AlertType.IsaCritical,
+      status: AlertType.LevelCritical,
       mode: ObcAlertFrameMode.unackedActive,
       type: ObcAlertFrameType.Regular,
     },
   },
 };
 
-export const IsaLowUnackedRectified: Story = {
+export const LevelLowUnackedRectified: Story = {
   args: {
     value: 123,
     alert: {
-      status: AlertType.IsaLow,
+      status: AlertType.LevelLow,
       mode: ObcAlertFrameMode.unackedRectified,
       type: ObcAlertFrameType.Regular,
     },
