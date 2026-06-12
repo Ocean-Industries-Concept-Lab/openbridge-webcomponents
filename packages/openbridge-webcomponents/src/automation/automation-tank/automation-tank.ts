@@ -126,10 +126,6 @@ export interface TankReadoutItem {
  * @slot alert-icon - Custom icon for the alert frame.
  * @slot alert-label - Label for the alert frame.
  * @slot alert-timer - Timer for the alert frame.
- *
- * @ignition-base-height: 173px
- * @ignition-base-width: 168px
- * @ignition-center-horizontal
  */
 @customElement('obc-automation-tank')
 export class ObcAutomationTank extends LitElement {
@@ -143,12 +139,12 @@ export class ObcAutomationTank extends LitElement {
   @property({type: Boolean, reflect: true}) compact: boolean = false;
   /**
    * Host positioning model — see `TankPositioning` for details. Defaults to
-   * `point` for backward compatibility (fixed default dimensions + P&ID
-   * top-center anchor). Set to `button` to make the host fill its parent
-   * container (100% × 100%) with no anchor offset.
+   * `button` (host fills parent container, 100% × 100%, no anchor offset).
+   * Set to `point` for the legacy P&ID canvas mode (fixed default dimensions
+   * + top-center anchor offset).
    */
   @property({type: String, reflect: true}) positioning: TankPositioning =
-    TankPositioning.point;
+    TankPositioning.button;
   /**
    * Static (display-only) variant. Always rendered at the compact size; the
    * inner chart/bar is hidden, the bordered area is filled with
