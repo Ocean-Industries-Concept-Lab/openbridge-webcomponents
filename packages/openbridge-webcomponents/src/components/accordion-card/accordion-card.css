@@ -207,7 +207,7 @@
   pointer-events: none;
 
   /* z-index follows ALERT_SEVERITY_PRIORITY: more severe statuses stack on top. */
-  &.alert-isa-critical {
+  &.alert-level-critical {
     z-index: 8;
   }
 
@@ -215,7 +215,7 @@
     z-index: 7;
   }
 
-  &.alert-isa-high {
+  &.alert-level-high {
     z-index: 6;
   }
 
@@ -223,7 +223,7 @@
     z-index: 5;
   }
 
-  &.alert-isa-medium {
+  &.alert-level-medium {
     z-index: 4;
   }
 
@@ -231,11 +231,11 @@
     z-index: 3;
   }
 
-  &.alert-isa-low {
+  &.alert-level-low {
     z-index: 2;
   }
 
-  &.alert-isa-diagnostic {
+  &.alert-level-diagnostic {
     z-index: 1;
   }
 }

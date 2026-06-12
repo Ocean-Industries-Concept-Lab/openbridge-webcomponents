@@ -253,6 +253,18 @@
   min-width: 0;
 }
 
+/*
+ * Trailing badge area. A row can carry more than one alert badge (e.g. a
+ * critical count beside a warning count); they sit in a flex row spaced by the
+ * shared alert-counter spacing token.
+ */
+.alert-badges {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--app-components-alert-counter-item-badge-spacing);
+}
+
 .alert-badge {
   flex-shrink: 0;
 }

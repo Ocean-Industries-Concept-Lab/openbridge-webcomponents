@@ -516,25 +516,25 @@ export const WithAlertCautionCompact: Story = {
   },
 };
 
-export const WithAlertIsaCritical: Story = {
+export const WithAlertLevelCritical: Story = {
   ...WithAlertAlarm,
   args: {
     type: TankType.atmospheric,
     alert: true,
-    alertFrameStatus: ObcAlertFrameStatus.IsaCritical,
+    alertFrameStatus: ObcAlertFrameStatus.LevelCritical,
     alertFrameType: ObcAlertFrameType.SmallSideFlip,
-    badgeAlert: AutomationButtonBadgeAlert.IsaCritical,
+    badgeAlert: AutomationButtonBadgeAlert.LevelCritical,
   },
 };
 
-export const WithAlertIsaDiagnostic: Story = {
+export const WithAlertLevelDiagnostic: Story = {
   ...WithAlertAlarm,
   args: {
     type: TankType.atmospheric,
     alert: true,
-    alertFrameStatus: ObcAlertFrameStatus.IsaDiagnostic,
+    alertFrameStatus: ObcAlertFrameStatus.LevelDiagnostic,
     alertFrameType: ObcAlertFrameType.Regular,
-    badgeAlert: AutomationButtonBadgeAlert.IsaDiagnostic,
+    badgeAlert: AutomationButtonBadgeAlert.LevelDiagnostic,
   },
 };
 

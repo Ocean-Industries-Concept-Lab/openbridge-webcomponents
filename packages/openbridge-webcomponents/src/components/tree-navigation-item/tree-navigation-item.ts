@@ -8,7 +8,7 @@ import '../../icons/icon-chevron-right-google.js';
 import '../../icons/icon-alert-header-aggregated-iec.js';
 import '../../icons/icon-alert-header-group-iec.js';
 import '../badge/badge.js';
-import {BadgeType} from '../badge/badge.js';
+import {AlertType, ALERT_SEVERITY_PRIORITY} from '../../types.js';
 
 /**
  * Guide line drawn for one indentation column. Normally computed by
@@ -43,6 +43,39 @@ export enum TreeTerminalType {
 }
 
 /**
+ * Per-severity alert counts for a tree row's trailing badge(s). Each `count*`
+ * is the number of active alerts of that severity at or beneath the row — the
+ * level severities `level-critical`, `level-high`, `level-medium`, `level-low`,
+ * and `level-diagnostic`, plus the IEC severities `alarm`, `warning`, and
+ * `caution`. Badges are ordered and aggregated by the shared
+ * `ALERT_SEVERITY_PRIORITY` ranking, most to least severe.
+ *
+ * Set `aggregate` to collapse the counts into a single badge showing the total,
+ * styled as the highest category present; otherwise one badge is rendered per
+ * non-zero count.
+ */
+export interface TreeNavigationItemAlerts {
+  /** Collapse all counts into one badge: total count, highest-severity style. */
+  aggregate?: boolean;
+  /** Number of level-critical alerts. */
+  countLevelCritical?: number;
+  /** Number of alarm alerts. */
+  countAlarm?: number;
+  /** Number of level-high alerts. */
+  countLevelHigh?: number;
+  /** Number of warning alerts. */
+  countWarning?: number;
+  /** Number of level-medium alerts. */
+  countLevelMedium?: number;
+  /** Number of caution alerts. */
+  countCaution?: number;
+  /** Number of level-low alerts. */
+  countLevelLow?: number;
+  /** Number of level-diagnostic alerts. */
+  countLevelDiagnostic?: number;
+}
+
+/**
  * `<obc-tree-navigation-item>` – A single row in a tree- or file-explorer-style
  * navigation list, with indentation guide lines, an optional expand/collapse
  * chevron, a leading icon, a label, and an optional alert badge.
@@ -66,8 +99,12 @@ export enum TreeTerminalType {
  *   aggregated or grouped alerts.
  * - **Leading icon:** Provide an icon via the `icon` slot (shown when
  *   `hasLeadingIcon`).
- * - **Alert badge:** A trailing counter badge (e.g. an alarm count), toggled with
- *   `hasAlertBadge` and configured via `alertCount` and `alertType`.
+ * - **Alert badges:** Trailing counter badges driven by the `alerts` object — a
+ *   per-severity count map with one field per level severity (critical, high,
+ *   medium, low, diagnostic). By default each non-zero count renders its own
+ *   badge, ordered most to least severe by `ALERT_SEVERITY_PRIORITY`; set
+ *   `alerts.aggregate` to instead show a single badge with the combined total,
+ *   styled as the highest category present.
  * - **Checked state:** `checked` highlights the current selection using the
  *   amplified elevation style. A checked row is the current item and is not
  *   re-selectable — it shows no hover/pressed feedback and fires no `click` or
@@ -142,14 +179,17 @@ export class ObcTreeNavigationItem extends LitElement {
    */
   @property({type: String}) terminalType: string = TreeTerminalType.regular;
 
-  /** Whether a trailing alert counter badge is shown. */
-  @property({type: Boolean}) hasAlertBadge = false;
-
-  /** The number shown in the alert badge when `hasAlertBadge` is true. */
-  @property({type: Number}) alertCount = 0;
-
-  /** The severity/type of the alert badge. One of the `obc-badge` types (default `alarm`). */
-  @property({type: String}) alertType: string = BadgeType.alarm;
+  /**
+   * Per-severity alert counts for the row's trailing badge(s). Omit (or leave
+   * every count at 0) for a row with no alerts. See {@link TreeNavigationItemAlerts}.
+   *
+   * - When `aggregate` is true, a single badge is shown: its number is the sum
+   *   of all counts and its severity is the highest category present
+   *   (critical → alarm → warning → caution).
+   * - Otherwise one badge is shown per count greater than 0, ordered most to
+   *   least severe and spaced by the alert-counter spacing token.
+   */
+  @property({type: Object}) alerts?: TreeNavigationItemAlerts;
 
   /**
    * The URL to navigate to when the row is activated. If set, the row renders as
@@ -162,6 +202,42 @@ export class ObcTreeNavigationItem extends LitElement {
   /** Focuses the row's interactive wrapper (the host itself is not focusable). */
   public override focus(options?: FocusOptions): void {
     this.wrapperElement?.focus(options);
+  }
+
+  /**
+   * The badge(s) to render from `alerts`, as `{type, count}` pairs already in
+   * severity order, ranked by `ALERT_SEVERITY_PRIORITY`.
+   *
+   * - No `alerts`, or every count 0 → no badges.
+   * - `aggregate` → a single pair: the summed count typed as the highest
+   *   category that has any alerts.
+   * - Otherwise → one pair per count greater than 0.
+   */
+  private get alertBadges(): {type: AlertType; count: number}[] {
+    const alerts = this.alerts;
+    if (!alerts) return [];
+    const countByType: Partial<Record<AlertType, number>> = {
+      [AlertType.LevelCritical]: alerts.countLevelCritical ?? 0,
+      [AlertType.Alarm]: alerts.countAlarm ?? 0,
+      [AlertType.LevelHigh]: alerts.countLevelHigh ?? 0,
+      [AlertType.Warning]: alerts.countWarning ?? 0,
+      [AlertType.LevelMedium]: alerts.countLevelMedium ?? 0,
+      [AlertType.Caution]: alerts.countCaution ?? 0,
+      [AlertType.LevelLow]: alerts.countLevelLow ?? 0,
+      [AlertType.LevelDiagnostic]: alerts.countLevelDiagnostic ?? 0,
+    };
+    // Order (and, when aggregating, rank) by the shared severity priority,
+    // keeping only the severities this component exposes.
+    const ranked = ALERT_SEVERITY_PRIORITY.filter(
+      (type) => type in countByType
+    ).map((type) => ({type, count: countByType[type] ?? 0}));
+    if (alerts.aggregate) {
+      const total = ranked.reduce((sum, b) => sum + b.count, 0);
+      const highest = ranked.find((b) => b.count > 0);
+      if (!highest) return [];
+      return [{type: highest.type, count: total}];
+    }
+    return ranked.filter((b) => b.count > 0);
   }
 
   /** A root-level row has no ancestor columns, so it draws no connector lines. */
@@ -283,12 +359,17 @@ export class ObcTreeNavigationItem extends LitElement {
               : nothing}
             <span part="label" class="label">${this.label}</span>
           </div>
-          ${this.hasAlertBadge
-            ? html`<obc-badge
-                class="alert-badge"
-                .type=${this.alertType}
-                .number=${this.alertCount}
-              ></obc-badge>`
+          ${this.alertBadges.length > 0
+            ? html`<div class="alert-badges">
+                ${this.alertBadges.map(
+                  (badge) =>
+                    html`<obc-badge
+                      class="alert-badge"
+                      .type=${badge.type}
+                      .number=${badge.count}
+                    ></obc-badge>`
+                )}
+              </div>`
             : nothing}
         </div>
       </div>

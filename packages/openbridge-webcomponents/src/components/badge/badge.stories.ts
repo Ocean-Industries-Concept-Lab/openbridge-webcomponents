@@ -199,8 +199,8 @@ export const Caution: Story = {
   },
 };
 
-export const IsaCritical: Story = {
-  args: {type: BadgeType.isaCritical, showIcon: true},
+export const LevelCritical: Story = {
+  args: {type: BadgeType.levelCritical, showIcon: true},
   render(args) {
     return html`<obc-badge
       number=${args.number}
@@ -214,8 +214,8 @@ export const IsaCritical: Story = {
   },
 };
 
-export const IsaHigh: Story = {
-  args: {type: BadgeType.isaHigh, showIcon: true},
+export const LevelHigh: Story = {
+  args: {type: BadgeType.levelHigh, showIcon: true},
   render(args) {
     return html`<obc-badge
       number=${args.number}
@@ -229,8 +229,8 @@ export const IsaHigh: Story = {
   },
 };
 
-export const IsaMedium: Story = {
-  args: {type: BadgeType.isaMedium, showIcon: true},
+export const LevelMedium: Story = {
+  args: {type: BadgeType.levelMedium, showIcon: true},
   render(args) {
     return html`<obc-badge
       number=${args.number}
@@ -244,8 +244,8 @@ export const IsaMedium: Story = {
   },
 };
 
-export const IsaLow: Story = {
-  args: {type: BadgeType.isaLow, showIcon: true},
+export const LevelLow: Story = {
+  args: {type: BadgeType.levelLow, showIcon: true},
   render(args) {
     return html`<obc-badge
       number=${args.number}
@@ -259,8 +259,8 @@ export const IsaLow: Story = {
   },
 };
 
-export const IsaDiagnostic: Story = {
-  args: {type: BadgeType.isaDiagnostic, showIcon: true},
+export const LevelDiagnostic: Story = {
+  args: {type: BadgeType.levelDiagnostic, showIcon: true},
   render(args) {
     return html`<obc-badge
       number=${args.number}
