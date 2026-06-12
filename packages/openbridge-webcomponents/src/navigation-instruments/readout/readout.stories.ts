@@ -19,12 +19,6 @@ import {
   ReadoutAdviceFormat,
   ReadoutAdviceState,
 } from '../readout-advice/readout-advice.js';
-import {AlertType} from '../../types.js';
-import {
-  ObcAlertFrameMode,
-  ObcAlertFrameThickness,
-  ObcAlertFrameType,
-} from '../../components/alert-frame/alert-frame.js';
 
 const meta: Meta<ObcReadout> = {
   title: 'Instruments/Readout',
