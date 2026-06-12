@@ -218,4 +218,138 @@ describe('obc-number-input-field', () => {
       expect(input.value).toBe('10.');
     });
   });
+
+  describe('beforeinput filtering', () => {
+    function dispatchBeforeInput(
+      target: HTMLInputElement,
+      data: string | null,
+      inputType = 'insertText'
+    ): InputEvent {
+      const event = new InputEvent('beforeinput', {
+        data,
+        inputType,
+        cancelable: true,
+        bubbles: true,
+      });
+      target.dispatchEvent(event);
+      return event;
+    }
+
+    beforeEach(async () => {
+      el.decimalSeparator = '.';
+      el.groupSeparator = ',';
+      input.focus();
+      input.value = '';
+      await el.updateComplete;
+    });
+
+    it('blocks letters', () => {
+      const event = dispatchBeforeInput(input, 'a');
+      expect(event.defaultPrevented).toBe(true);
+    });
+
+    it('blocks scientific notation', () => {
+      input.value = '1';
+      input.setSelectionRange(1, 1);
+      const event = dispatchBeforeInput(input, 'e');
+      expect(event.defaultPrevented).toBe(true);
+    });
+
+    it('blocks symbols', () => {
+      const event = dispatchBeforeInput(input, '!');
+      expect(event.defaultPrevented).toBe(true);
+    });
+
+    it('allows digits', () => {
+      const event = dispatchBeforeInput(input, '1');
+      expect(event.defaultPrevented).toBe(false);
+    });
+
+    it('allows decimal separator', () => {
+      const event = dispatchBeforeInput(input, '.');
+      expect(event.defaultPrevented).toBe(false);
+    });
+
+    it('allows comma when locale uses it', () => {
+      const event = dispatchBeforeInput(input, ',');
+      expect(event.defaultPrevented).toBe(false);
+    });
+
+    it('allows leading sign', () => {
+      const event = dispatchBeforeInput(input, '-');
+      expect(event.defaultPrevented).toBe(false);
+    });
+
+    it('allows deletions (null data)', () => {
+      input.value = '12';
+      input.setSelectionRange(2, 2);
+      const event = dispatchBeforeInput(input, null, 'deleteContentBackward');
+      expect(event.defaultPrevented).toBe(false);
+    });
+
+    it('blocks paste containing letters', () => {
+      const event = new InputEvent('beforeinput', {
+        data: null,
+        inputType: 'insertFromPaste',
+        cancelable: true,
+        bubbles: true,
+      });
+      const dt = new DataTransfer();
+      dt.setData('text/plain', '12abc34');
+      Object.defineProperty(event, 'dataTransfer', {value: dt});
+      input.dispatchEvent(event);
+      expect(event.defaultPrevented).toBe(true);
+    });
+
+    it('allows paste of numeric string with separators', () => {
+      const event = new InputEvent('beforeinput', {
+        data: null,
+        inputType: 'insertFromPaste',
+        cancelable: true,
+        bubbles: true,
+      });
+      const dt = new DataTransfer();
+      dt.setData('text/plain', '1,234.5');
+      Object.defineProperty(event, 'dataTransfer', {value: dt});
+      input.dispatchEvent(event);
+      expect(event.defaultPrevented).toBe(false);
+    });
+
+    it('honours custom decimalSeparator', async () => {
+      el.decimalSeparator = ',';
+      el.groupSeparator = ' ';
+      await el.updateComplete;
+
+      const dot = dispatchBeforeInput(input, '.');
+      expect(dot.defaultPrevented).toBe(true);
+
+      const comma = dispatchBeforeInput(input, ',');
+      expect(comma.defaultPrevented).toBe(false);
+    });
+
+    it('honours custom validationPattern', async () => {
+      el.validationPattern = '^[0-9]*$';
+      await el.updateComplete;
+
+      const minus = dispatchBeforeInput(input, '-');
+      expect(minus.defaultPrevented).toBe(true);
+
+      const digit = dispatchBeforeInput(input, '1');
+      expect(digit.defaultPrevented).toBe(false);
+    });
+
+    it('does not block when disabled', async () => {
+      el.disabled = true;
+      await el.updateComplete;
+      const event = dispatchBeforeInput(input, 'a');
+      expect(event.defaultPrevented).toBe(false);
+    });
+
+    it('does not block when readonly', async () => {
+      el.readonly = true;
+      await el.updateComplete;
+      const event = dispatchBeforeInput(input, 'a');
+      expect(event.defaultPrevented).toBe(false);
+    });
+  });
 });

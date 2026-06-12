@@ -79,6 +79,10 @@ const ALLOWED_CHARS = [
 
 const OPERATORS = ['+', '-', '–', '×', '÷', '*', '/'];
 
+const ALLOWED_CHARS_PATTERN = `^[${ALLOWED_CHARS.map((c) =>
+  c.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&')
+).join('')}]*$`;
+
 @customElement('obc-keyboard-numeric')
 export class ObcKeyboardNumeric extends LitElement {
   @property({type: String}) type: ObcKeyboardNumericType =
@@ -118,6 +122,13 @@ export class ObcKeyboardNumeric extends LitElement {
   @state() private content: ObcKeyboardNumericContent =
     ObcKeyboardNumericContent.Numbers;
 
+  private get effectiveValidationPattern(): string {
+    if (!this.validationPattern) {
+      return ALLOWED_CHARS_PATTERN;
+    }
+    return `^(?=${ALLOWED_CHARS_PATTERN})(?=${this.validationPattern}).*$`;
+  }
+
   /** Validates if a character can be added to the current value */
   private canAddCharacter(char: string): boolean {
     const potentialValue = this.value + char;
@@ -148,11 +159,6 @@ export class ObcKeyboardNumeric extends LitElement {
     }
 
     return true;
-  }
-
-  /** Validates that all characters in a value are allowed */
-  private isValidValue(value: string): boolean {
-    return [...value].every((char) => ALLOWED_CHARS.includes(char));
   }
 
   private handleCloseClick() {
@@ -254,19 +260,6 @@ export class ObcKeyboardNumeric extends LitElement {
     const input = e.target as ObcNumberInputField;
     const newValue = input.displayValue;
 
-    if (this.validationPattern && newValue) {
-      const regex = new RegExp(this.validationPattern);
-      if (!regex.test(newValue)) {
-        input.displayOverride = this.value;
-        return;
-      }
-    }
-
-    if (newValue && !this.isValidValue(newValue)) {
-      input.displayOverride = this.value;
-      return;
-    }
-
     this.value = newValue;
     this.dispatchValueChange();
   }
@@ -359,6 +352,7 @@ export class ObcKeyboardNumeric extends LitElement {
         .textAlign=${this.inputFieldTextAlign}
         .size=${ObcNumberInputFieldSize.Large}
         .helperText=${this.helperText}
+        .validationPattern=${this.effectiveValidationPattern}
         ?hasLeadingIcon=${this.hasLeadingIcon}
         placeholder="00.0"
         @input=${this.handleInput}
