@@ -93,8 +93,10 @@ export class ObcAutomationButton extends LitElement {
   readouts: AutomationButtonReadoutStack[] = [];
   @property({type: String})
   tag: string | null = null;
+  /** @availableWhen showReadoutStack==true */
   @property({type: String}) readoutPosition: AutomationButtonReadoutPosition =
     AutomationButtonReadoutPosition.bottom;
+  /** @availableWhen showReadoutStack==true */
   @property({type: String}) readoutSize: AutomationButtonReadoutStackSize =
     AutomationButtonReadoutStackSize.regular;
   @property({type: Boolean}) alert: boolean = false;
@@ -104,16 +106,21 @@ export class ObcAutomationButton extends LitElement {
   /** @availableWhen alert==true */
   @property({type: String}) alertFrameThickness: ObcAlertFrameThickness =
     ObcAlertFrameThickness.Small;
+  /** @availableWhen alert==true */
   @property({type: String}) alertFrameStatus: ObcAlertFrameStatus =
     ObcAlertFrameStatus.Alarm;
   /** @availableWhen alert==true && alertFrameType in [LargeSideFlip, BottomFlip, TopFlip] */
   @property({type: Boolean, attribute: false}) showAlertCategoryIcon: boolean =
     true;
+  /** @availableWhen alert==true */
   @property({type: Boolean}) showAlertIcon: boolean = false;
   @property({type: Boolean}) progress: boolean = false;
+  /** @availableWhen progress==true */
   @property({type: String}) progressMode: CircularProgressMode =
     CircularProgressMode.indeterminate;
+  /** @availableWhen progress==true && progressMode in [determinate, progressive-indeterminate] */
   @property({type: Number}) progressValue: number = 0;
+  /** @availableWhen variant in [double, forward, flatForward] */
   @property({type: String}) direction: AutomationButtonDirection =
     AutomationButtonDirection.forward;
   @property({type: String}) positioning: AutomationButtonPositioning =
