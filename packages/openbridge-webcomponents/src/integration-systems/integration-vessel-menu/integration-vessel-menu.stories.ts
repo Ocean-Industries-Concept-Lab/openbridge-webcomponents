@@ -195,6 +195,25 @@ const templateWithoutAlarms: IntegrationVesselMenuTemplate = (args) => html`
   </obc-integration-vessel-menu>
 `;
 
+const templateWrappedButtons: IntegrationVesselMenuTemplate = (args) => html`
+  <obc-integration-vessel-menu .hideAlarmList=${args.hideAlarmList}>
+    <div slot="buttons">
+      <div style="display: contents;">
+        <obc-button ?fullWidth=${true}>Open</obc-button>
+      </div>
+      <div style="display: contents;">
+        <obc-button ?fullWidth=${true}>Alerts</obc-button>
+      </div>
+    </div>
+    <div slot="content" style="padding: 24px;">
+      <div style="width: 320px;">
+        <p>Content area</p>
+      </div>
+    </div>
+    ${renderAlarms()}
+  </obc-integration-vessel-menu>
+`;
+
 export const Default: Story = {
   render: template,
 };
@@ -206,4 +225,8 @@ export const WithoutAlarms: Story = {
 export const WithoutAlarmsHideEmptyAlarmList: Story = {
   render: templateWithoutAlarms,
   args: {hideAlarmList: true},
+};
+
+export const WithButtonsWrappedInDivWithoutStyling: Story = {
+  render: templateWrappedButtons,
 };
