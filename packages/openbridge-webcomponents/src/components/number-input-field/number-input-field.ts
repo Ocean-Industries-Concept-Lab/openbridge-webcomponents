@@ -13,6 +13,7 @@ import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 import {
   formatNumberForDisplay,
+  isAllowedIntermediateInput,
   NumberInputFormatOptions,
   parseNumberInput,
   removeGroupingFromDisplay,
@@ -113,6 +114,14 @@ export class ObcNumberInputField extends LitElement {
   @property({type: Number}) minFractionDigits = 0;
   @property({type: Number}) maxFractionDigits?: number | undefined;
 
+  /**
+   * Optional regex pattern. When set, any keystroke or paste whose resulting
+   * value does not match this pattern is blocked at the `beforeinput` stage.
+   * When unset, a permissive numeric filter (digits, sign, active separators,
+   * whitespace) is applied instead.
+   */
+  @property({type: String}) validationPattern = '';
+
   @state() private hasFocus = false;
   @state() private displayText = '';
   @state() private previousValue = NaN;
@@ -148,6 +157,43 @@ export class ObcNumberInputField extends LitElement {
     this.previousDisplayText = raw;
     this.updateCenterAlignedInputWidth(raw);
     this.dispatchInput();
+  }
+
+  private isProjectedValueAllowed(projected: string): boolean {
+    if (this.validationPattern) {
+      let regex: RegExp;
+      try {
+        // Anchor the consumer pattern so it must match the whole projected
+        // value rather than any substring (e.g. `[0-9]` must not pass `a1`).
+        regex = new RegExp(`^(?:${this.validationPattern})$`);
+      } catch {
+        // Invalid pattern: fall back to the numeric filter instead of
+        // allowing arbitrary input.
+        return isAllowedIntermediateInput(projected, this.getFormatOptions());
+      }
+      return regex.test(projected);
+    }
+    return isAllowedIntermediateInput(projected, this.getFormatOptions());
+  }
+
+  private onBeforeInput(e: InputEvent) {
+    if (this.disabled || this.readonly) return;
+    const input = e.target as HTMLInputElement;
+
+    const incoming = e.data ?? e.dataTransfer?.getData('text/plain') ?? null;
+    // Deletions, history, and formatting (`insertLineBreak`, `historyUndo`,
+    // `deleteContentBackward`, etc.) have `data === null` and no transferable
+    // text — always allow them.
+    if (incoming === null) return;
+
+    const start = input.selectionStart ?? input.value.length;
+    const end = input.selectionEnd ?? input.value.length;
+    const projected =
+      input.value.slice(0, start) + incoming + input.value.slice(end);
+
+    if (!this.isProjectedValueAllowed(projected)) {
+      e.preventDefault();
+    }
   }
 
   private onFocus() {
@@ -444,6 +490,7 @@ export class ObcNumberInputField extends LitElement {
                   hasHelperOrError ? 'helper-text' : undefined
                 )}
                 autocomplete="off"
+                @beforeinput=${this.onBeforeInput}
                 @input=${this.onInput}
               />
               ${unitInside
