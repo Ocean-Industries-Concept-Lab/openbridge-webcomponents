@@ -8,7 +8,7 @@ import './indicator-graph.js';
 import {widthDecorator} from '../../storybook-util.js';
 const meta: Meta<typeof ObcIndicatorGraph> = {
   title: 'Bars and Graphs/Indicator Graph',
-  tags: ['6.0'],
+  tags: ['6.0', 'autodocs'],
   component: 'obc-indicator-graph',
   decorators: [widthDecorator],
   args: {
@@ -98,7 +98,11 @@ export const Realtime: Story = {
     }
 
     let i = graph.data[0].length;
-    setInterval(() => {
+    const intervalId = setInterval(() => {
+      if (!graph.isConnected) {
+        clearInterval(intervalId);
+        return;
+      }
       const data = graph.data;
       const x = [...data[0], i];
       const y = [...data[1], 2 + Math.sin((i / 60 / 5) * 2 * Math.PI)];

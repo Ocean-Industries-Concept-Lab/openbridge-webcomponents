@@ -91,6 +91,8 @@ export class ObcIndicatorGraph extends LitElement {
     super.disconnectedCallback();
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
+    this.uplot?.destroy();
+    this.uplot = null;
   }
 
   private updateSize() {
@@ -152,8 +154,12 @@ export class ObcIndicatorGraph extends LitElement {
       return;
     }
     const stroke = this._getStrokeColor();
-    // @ts-expect-error - stroke is not a property of the Series interface
-    this.uplot.setSeries(1, {stroke: stroke, width: 2, points: {show: false}});
+    this.uplot.setSeries(1, {
+      // @ts-expect-error - stroke is not a property of the Series interface
+      stroke: stroke,
+      width: this._getStrokeWidth(),
+      points: {show: false},
+    });
   }
 
   private updateY() {

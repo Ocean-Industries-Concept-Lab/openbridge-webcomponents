@@ -83,7 +83,7 @@ export class ObcGraphMini extends LitElement {
     }
     const stroke = this.getCssColor('--element-neutral-color');
     // @ts-expect-error - stroke is not a property of the Series interface
-    this.uplot.setSeries(1, {stroke: stroke, width: 2, points: {show: false}});
+    this.uplot.setSeries(1, {stroke: stroke, width: 1, points: {show: false}});
   }
 
   private updateY() {
