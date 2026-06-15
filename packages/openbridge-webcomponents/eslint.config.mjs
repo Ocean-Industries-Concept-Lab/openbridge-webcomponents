@@ -305,8 +305,7 @@ const openbridgePlugin = {
               return;
             }
             let message =
-              'Prefer boolean property default values of false or set Attribute: false on the property decorator';
-
+              'Prefer boolean property default values of false or set attribute: false on the property decorator';
             context.report({
               node,
               message,
