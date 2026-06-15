@@ -52,6 +52,9 @@ const meta: Meta<typeof ObcToggleButtonGroup> = {
     large: {
       control: {type: 'boolean'},
     },
+    allowEmptySelection: {
+      control: {type: 'boolean'},
+    },
   },
   render: (args) =>
     html` <div
@@ -479,6 +482,34 @@ export const ExternalControlActivatedDemo: Story = {
           >Option 3
           <obi-placeholder slot="icon"></obi-placeholder>
         </obc-toggle-button-option>
+      </obc-toggle-button-group>
+    </div>
+  `,
+};
+
+export const EmptySelectionWhenUnmatched: Story = {
+  args: {
+    type: ObcToggleButtonOptionType.text,
+    variant: ObcToggleButtonOptionVariant.regular,
+    value: 'none',
+    allowEmptySelection: true,
+  },
+  render: (args) => html`
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <p>
+        With <code>allowEmptySelection</code> enabled, a value that does not
+        match any option (here <code>"none"</code>) leaves the group with no
+        option selected instead of defaulting to the first option.
+      </p>
+      <obc-toggle-button-group
+        value="${args.value}"
+        variant="${args.variant}"
+        type="${args.type}"
+        .allowEmptySelection="${args.allowEmptySelection}"
+      >
+        <obc-toggle-button-option value="1">Option 1</obc-toggle-button-option>
+        <obc-toggle-button-option value="2">Option 2</obc-toggle-button-option>
+        <obc-toggle-button-option value="3">Option 3</obc-toggle-button-option>
       </obc-toggle-button-group>
     </div>
   `,
