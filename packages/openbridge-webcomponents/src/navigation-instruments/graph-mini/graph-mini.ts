@@ -36,8 +36,8 @@ export class ObcGraphMini extends LitElement {
 
   override firstUpdated() {
     const opts = {
-      width: 48,
-      height: 48,
+      width: 32,
+      height: 32,
       scales: {
         x: {time: false, show: false},
         y: {
@@ -61,7 +61,7 @@ export class ObcGraphMini extends LitElement {
         {},
         {
           stroke: this.getCssColor('--element-neutral-color'),
-          width: 2,
+          width: 1,
           points: {show: false},
         },
       ],
@@ -107,7 +107,9 @@ export class ObcGraphMini extends LitElement {
   override render() {
     return html`
       <div class="chart-container">
-        <div id="chart"><div id="dot" style="bottom: ${this.y}px; "></div></div>
+        <div id="chart">
+          <div id="dot" style="transform: translateY(${-this.y}px);"></div>
+        </div>
       </div>
     `;
   }
