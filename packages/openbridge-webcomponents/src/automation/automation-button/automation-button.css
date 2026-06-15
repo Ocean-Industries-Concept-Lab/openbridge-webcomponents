@@ -219,18 +219,18 @@
 }
 
 .state-closed .icon-holder {
-  border-color: var(--automation-pipe-tertiary-inverted-color);
-  background: var(--automation-pipe-primary-inverted-color);
-
-  .static & {
-    border-color: var(--automation-pipe-secondary-color);
-    background: var(--automation-pipe-primary-inverted-color);
-  }
+  border-color: var(--automation-button-off-border-color);
+  background: var(--automation-button-off-background-color);
 }
 
 .state-open .icon-holder {
-  border-color: var(--automation-pipe-tertiary-color);
-  background: var(--automation-pipe-primary-color);
+  border-color: var(--on-border-color);
+  background: var(--on-background-color);
+}
+
+.static .icon-holder {
+  border-color: var(--automation-button-static-broder-color);
+  background: var(--automation-button-static-background-color);
 }
 
 .alert-frame {
