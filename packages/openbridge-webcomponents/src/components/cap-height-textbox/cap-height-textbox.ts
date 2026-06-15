@@ -18,14 +18,6 @@ export enum ObcCapHeightTextboxSize {
   xl = 'xl',
 }
 
-type sizeType = ObcCapHeightTextboxSize | keyof typeof ObcCapHeightTextboxSize;
-type fontWeightType =
-  | ObcCapHeightTextboxFontWeight
-  | keyof typeof ObcCapHeightTextboxFontWeight;
-type alignmentType =
-  | ObcCapHeightTextboxAlignment
-  | keyof typeof ObcCapHeightTextboxAlignment;
-
 export enum ObcCapHeightTextboxFontWeight {
   regular = 'regular',
   semibold = 'semibold',
@@ -78,10 +70,11 @@ export enum ObcCapHeightTextboxFontWeight {
  */
 @customElement('obc-cap-height-textbox')
 export class ObcCapHeightTextbox extends LitElement {
-  @property({type: String}) alignment: alignmentType =
+  @property({type: String}) alignment: ObcCapHeightTextboxAlignment =
     ObcCapHeightTextboxAlignment.Right;
-  @property({type: String}) size: sizeType = ObcCapHeightTextboxSize.m;
-  @property({type: String}) fontWeight: fontWeightType =
+  @property({type: String}) size: ObcCapHeightTextboxSize =
+    ObcCapHeightTextboxSize.m;
+  @property({type: String}) fontWeight: ObcCapHeightTextboxFontWeight =
     ObcCapHeightTextboxFontWeight.regular;
 
   /**
