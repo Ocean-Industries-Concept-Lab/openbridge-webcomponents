@@ -301,16 +301,12 @@ const openbridgePlugin = {
                   p.key.type === 'Identifier' &&
                   p.key.name === 'attribute'
               );
-            const isBuildingBlock =
-              typeof context.filename === 'string' &&
-              context.filename.includes('building-blocks');
             if (property?.value?.value === false) {
               return;
             }
-            let message = 'Prefer boolean property default values of false';
-            if (isBuildingBlock) {
-              message += ' or set Attribute: false on the property decorator';
-            }
+            let message =
+              'Prefer boolean property default values of false or set Attribute: false on the property decorator';
+
             context.report({
               node,
               message,

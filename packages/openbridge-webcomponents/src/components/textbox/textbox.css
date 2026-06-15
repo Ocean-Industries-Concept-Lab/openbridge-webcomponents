@@ -1,0 +1,78 @@
+:host {
+  display: inline-block;
+  line-height: 0;
+}
+
+.wrapper {
+  box-sizing: border-box;
+  display: inline-flex;
+  flex-direction: column;
+  width: fit-content;
+  --height: 24px;
+  --padding: 4px;
+  padding: var(--padding) 0;
+  overflow: hidden;
+  font-family: var(--font-family-main);
+  letter-spacing: var(--global-typography-generic-l-letter-spacing);
+
+  .content {
+    font-size: calc(var(--height) - 2 * var(--padding));
+    text-box-trim: trim-both;
+    text-box-edge: cap alphabetic;
+    font-size-adjust: cap-height 1;
+  }
+}
+
+.wrapper.size-xs {
+  --height: 16px;
+}
+
+.wrapper.size-s {
+  --height: 20px;
+}
+
+.wrapper.size-m {
+  --height: 24px;
+}
+
+.wrapper.size-l {
+  --height: 32px;
+}
+
+.wrapper.size-xl {
+  --height: 40px;
+}
+
+.wrapper.font-weight-regular {
+  font-weight: var(--global-typography-generic-l-font-weight-regular);
+}
+
+.wrapper.font-weight-semibold {
+  font-weight: var(--global-typography-generic-l-font-weight-medium);
+}
+
+.wrapper.font-weight-bold {
+  font-weight: var(--global-typography-generic-l-font-weight-bold);
+}
+
+.alignment-left {
+  align-items: flex-start;
+}
+
+.alignment-center {
+  align-items: center;
+}
+
+.alignment-right {
+  align-items: flex-end;
+}
+
+/* Spacer is used to reserve space for the content and spacer slots
+  @Tamás: Do you know of a better way to do this?
+*/
+.spacer {
+  height: 0;
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+}
