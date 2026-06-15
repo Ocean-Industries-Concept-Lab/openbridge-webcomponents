@@ -30,6 +30,14 @@ type Story = StoryObj<ObcIndicatorGraph>;
 
 export const Primary: Story = {};
 
+export const NoZeroLine: Story = {
+  args: {
+    layout: {
+      y: {showZeroLine: false},
+    },
+  },
+};
+
 export const WithRange: Story = {
   args: {
     layout: {
@@ -112,5 +120,17 @@ export const Realtime: Story = {
       graph.data = newData;
       i++;
     }, 1000 / 60);
+  },
+};
+
+export const BelowZero: Story = {
+  args: {
+    data: [
+      Array.from({length: 30}, (_, i) => i),
+      Array.from({length: 30}, (_, i) => -2 - Math.sin((i / 30) * 2 * Math.PI)),
+    ],
+    layout: {
+      y: {min: -10, max: 0},
+    },
   },
 };
