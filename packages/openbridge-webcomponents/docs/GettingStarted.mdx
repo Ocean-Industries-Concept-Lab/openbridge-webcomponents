@@ -12,15 +12,9 @@ marking our first stable milestone.
 
 ## Installation
 
-To use the components in your project, you need access to the private package repository. Once you have access:
+The package is publicly available on [npm](https://www.npmjs.com/package/@oicl/openbridge-webcomponents) — no authentication required.
 
-1. **Create a GitHub personal access token** with `read:packages` permission. [Create token here.](https://github.com/settings/tokens/new)
-2. **Login to the GitHub package registry:**
-   ```bash
-   npm login --registry https://npm.pkg.github.com/ --scope=@oicl
-   ```
-   Use your GitHub username and the generated token as password.
-3. **Install the package:**
+1. **Install the package:**
    ```bash
    npm install @oicl/openbridge-webcomponents
    ```
@@ -28,6 +22,11 @@ To use the components in your project, you need access to the private package re
    ```bash
    npm install @oicl/openbridge-webcomponents-vue
    ```
+   React, Angular, and Svelte wrappers are published as `@oicl/openbridge-webcomponents-react`, `-ng`, and `-svelte`.
+
+2. **Choose a release channel:**
+   - The `latest` tag tracks the stable, production-ready releases (updated from the `stable` branch).
+   - The `next` tag tracks the active development releases (from the `develop` branch) and may include breaking changes. Install it with `npm install @oicl/openbridge-webcomponents@next`.
 
 ## Usage
 
@@ -73,4 +72,4 @@ To use the components in your project, you need access to the private package re
    <ObcTopBar></ObcTopBar>
    ```
 
-For more details, see the [README](../../readme.md) or visit the [OpenBridge Design System website](https://www.openbridge.no/).
+For more details visit the [OpenBridge Design System website](https://www.openbridge.no/).
