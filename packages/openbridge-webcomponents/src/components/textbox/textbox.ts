@@ -1,16 +1,16 @@
-import {LitElement, html, unsafeCSS, type PropertyValues} from 'lit';
+import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement} from '../../decorator.js';
-import componentStyle from './cap-height-textbox.css?inline';
+import componentStyle from './textbox.css?inline';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 
-export enum ObcCapHeightTextboxAlignment {
+export enum ObcTextboxAlignment {
   Left = 'left',
   Center = 'center',
   Right = 'right',
 }
 
-export enum ObcCapHeightTextboxSize {
+export enum ObcTextboxSize {
   xs = 'xs',
   s = 's',
   m = 'm',
@@ -18,14 +18,14 @@ export enum ObcCapHeightTextboxSize {
   xl = 'xl',
 }
 
-export enum ObcCapHeightTextboxFontWeight {
+export enum ObcTextboxFontWeight {
   regular = 'regular',
   semibold = 'semibold',
   bold = 'bold',
 }
 
 /**
- * `<obc-cap-height-textbox>` – A text container that renders inline text at a
+ * `<obc-textbox>` – A text container that renders inline text at a
  * precise, cap-height-trimmed size with configurable alignment and reservable
  * width.
  *
@@ -36,26 +36,21 @@ export enum ObcCapHeightTextboxFontWeight {
  * box, label box.
  *
  * ## Features / Variants
- * - **Size:** `xs`, `s`, `m` (default), `l`, `xl` – each maps to a fixed cap
- *   height (16 / 20 / 24 / 32 / 40 px) so text aligns to a predictable grid.
+ * - **Size:** `xs`, `s`, `m` (default), `l`, `xl` – each maps to a fixed box
+ *   height (16 / 20 / 24 / 32 / 40 px) with 4px padding above and below, giving
+ *   cap heights of 8 / 12 / 16 / 24 / 32 px so text aligns to a predictable
+ *   grid.
  * - **Font weight:** `regular` (default), `semibold`, `bold`.
  * - **Alignment:** `left`, `center`, `right` (default) – positions the text
- *   within the box's width.
- * - **Hug vs. length:** `hug` (default `true`) sizes the box to its content and
- *   keeps it fully visible. Set `hug` to `false` for length mode, which fixes
- *   the box to the reserved `length` width and crops overflowing content on the
- *   side opposite `alignment` (e.g. left-aligned text is cropped at its right
- *   end).
- * - **Reserved width:** content placed in the `length` slot reserves width
- *   invisibly – a minimum width in hug mode, and the fixed, cropping width in
- *   length mode – so the box does not resize as the visible text changes.
+ *   within the box's width when the box is wider than the content.
+ * - **Reserved width:** content placed in the `length` slot reserves a minimum
+ *   width invisibly, so the box does not resize as the visible text changes.
+ *   The box always shows all content – it never crops.
  *
  * ## Usage Guidelines
  * - Pass the longest expected string to the `length` slot (e.g. `"888.8"` or
  *   `"Wind speed"`) so the box reserves space and does not jump in width as the
  *   visible value updates.
- * - Keep `hug` enabled for compact, content-sized placement; disable it (length
- *   mode) when the box must stay a fixed width and clip longer text.
  * - This is a display primitive for static text – use an input component for
  *   editable values.
  *
@@ -68,28 +63,13 @@ export enum ObcCapHeightTextboxFontWeight {
  * @slot - The visible text content.
  * @slot length - Reserves a minimum width based on its content width.
  */
-@customElement('obc-cap-height-textbox')
-export class ObcCapHeightTextbox extends LitElement {
-  @property({type: String}) alignment: ObcCapHeightTextboxAlignment =
-    ObcCapHeightTextboxAlignment.Right;
-  @property({type: String}) size: ObcCapHeightTextboxSize =
-    ObcCapHeightTextboxSize.m;
-  @property({type: String}) fontWeight: ObcCapHeightTextboxFontWeight =
-    ObcCapHeightTextboxFontWeight.regular;
-
-  /**
-   * When true (default), the box hugs its content and stays fully visible (the
-   * `length` slot acts as a minimum width). When false (length mode), the box
-   * is fixed to the `length` width and content exceeding it is cropped on the
-   * side opposite `alignment`.
-   */
-  @property({type: Boolean, attribute: false}) hug = true;
-
-  override willUpdate(changed: PropertyValues<this>) {
-    if (changed.has('hug')) {
-      this.toggleAttribute('crop', !this.hug);
-    }
-  }
+@customElement('obc-textbox')
+export class ObcTextbox extends LitElement {
+  @property({type: String}) alignment: ObcTextboxAlignment =
+    ObcTextboxAlignment.Right;
+  @property({type: String}) size: ObcTextboxSize = ObcTextboxSize.m;
+  @property({type: String}) fontWeight: ObcTextboxFontWeight =
+    ObcTextboxFontWeight.regular;
 
   override render() {
     return html`
@@ -101,8 +81,10 @@ export class ObcCapHeightTextbox extends LitElement {
           [`font-weight-${this.fontWeight}`]: true,
         })}
       >
-        <div class="content">
-          <slot></slot>
+        <div class="inner-wrapper">
+          <div class="content">
+            <slot></slot>
+          </div>
         </div>
         <div class="length-spacer" aria-hidden="true">
           <slot name="length"></slot>
@@ -116,6 +98,6 @@ export class ObcCapHeightTextbox extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-cap-height-textbox': ObcCapHeightTextbox;
+    'obc-textbox': ObcTextbox;
   }
 }
