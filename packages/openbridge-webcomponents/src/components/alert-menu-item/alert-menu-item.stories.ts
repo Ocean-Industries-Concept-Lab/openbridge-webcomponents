@@ -3,7 +3,11 @@ import {html, nothing} from 'lit';
 import './alert-menu-item.js';
 import '../../icons/icon-engine.js';
 import '../alert-icon/alert-icon.js';
-import {ObcAlertMenuItem, ObcAlertMenuItemStatus} from './alert-menu-item.js';
+import {
+  ObcAlertMenuItem,
+  ObcAlertMenuItemActionState,
+  ObcAlertMenuItemStatus,
+} from './alert-menu-item.js';
 
 const meta: Meta<ObcAlertMenuItem> = {
   title: 'Application Components/Alerts/Alert Menu Item',
@@ -17,6 +21,9 @@ const meta: Meta<ObcAlertMenuItem> = {
     status: ObcAlertMenuItemStatus.Unacknowledged,
     hasIcon: false,
     shelved: false,
+    secondaryActionLabel: '',
+    primaryActionState: ObcAlertMenuItemActionState.Enabled,
+    secondaryActionState: ObcAlertMenuItemActionState.Enabled,
   },
   render: (args) => html`
     <obc-alert-menu-item
@@ -27,6 +34,9 @@ const meta: Meta<ObcAlertMenuItem> = {
       .shelved=${args.shelved}
       .hasIcon=${args.hasIcon}
       .status=${args.status}
+      .secondaryActionLabel=${args.secondaryActionLabel}
+      .primaryActionState=${args.primaryActionState}
+      .secondaryActionState=${args.secondaryActionState}
     >
       <obc-alert-icon slot="alert-icon" type="alarm" active></obc-alert-icon>
       ${args.hasIcon ? html`<obi-engine slot="icon"></obi-engine>` : nothing}
@@ -43,6 +53,15 @@ const meta: Meta<ObcAlertMenuItem> = {
     },
     hasIcon: {control: 'boolean'},
     shelved: {control: 'boolean'},
+    secondaryActionLabel: {control: 'text'},
+    primaryActionState: {
+      control: 'select',
+      options: Object.values(ObcAlertMenuItemActionState),
+    },
+    secondaryActionState: {
+      control: 'select',
+      options: Object.values(ObcAlertMenuItemActionState),
+    },
   },
 };
 
@@ -81,5 +100,25 @@ export const NoAckAlarm: Story = {
 export const NoAckWarning: Story = {
   args: {
     status: ObcAlertMenuItemStatus.NoAckWarning,
+  },
+};
+
+export const WithSecondaryAction: Story = {
+  args: {
+    secondaryActionLabel: 'Mute',
+  },
+};
+
+export const SecondaryActionDisabled: Story = {
+  args: {
+    secondaryActionLabel: 'Mute',
+    secondaryActionState: ObcAlertMenuItemActionState.Disabled,
+  },
+};
+
+export const PrimaryActionHidden: Story = {
+  args: {
+    secondaryActionLabel: 'Mute',
+    primaryActionState: ObcAlertMenuItemActionState.Hidden,
   },
 };
