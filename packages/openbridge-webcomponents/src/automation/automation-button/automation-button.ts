@@ -89,8 +89,10 @@ export class ObcAutomationButton extends LitElement {
     AutomationButtonState.open;
   @property({type: Boolean}) static: boolean = false;
   @property({type: Boolean, attribute: false}) showReadoutStack: boolean = true;
+  /** @availableWhen showReadoutStack==true */
   @property({type: Array, attribute: false})
   readouts: AutomationButtonReadoutStack[] = [];
+  /** @availableWhen showReadoutStack==true */
   @property({type: String})
   tag: string | null = null;
   /** @availableWhen showReadoutStack==true */

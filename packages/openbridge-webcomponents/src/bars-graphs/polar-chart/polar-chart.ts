@@ -186,6 +186,7 @@ export class ObcPolarChart extends LitElement {
   @property({type: String})
   priority: Priority = Priority.regular;
 
+  /** @availableWhen discreteColorStops==false */
   @property({type: Boolean}) monochrome = false;
   @property({type: Boolean})
   discreteColorStops = false;
@@ -197,6 +198,7 @@ export class ObcPolarChart extends LitElement {
   showOuterLabels = false;
   @property({type: String})
   outerLabelUnit = '°';
+  /** @availableWhen showOuterLabels==true */
   @property({type: Number})
   outerLabelMaxLength = 0;
   @property({type: Number})

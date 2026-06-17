@@ -360,11 +360,17 @@ export class ObcChartLineBase extends LitElement {
   @property({type: Boolean})
   showGrid = false;
 
-  /** Show vertical grid lines (x-axis). Default: false. */
+  /**
+   * Show vertical grid lines (x-axis). Default: false.
+   * @availableWhen showGrid==true
+   */
   @property({type: Boolean})
   showGridX = false;
 
-  /** Show horizontal grid lines (y-axis). Default: false. */
+  /**
+   * Show horizontal grid lines (y-axis). Default: false.
+   * @availableWhen showGrid==true
+   */
   @property({type: Boolean})
   showGridY = false;
 
@@ -390,7 +396,10 @@ export class ObcChartLineBase extends LitElement {
   @property({type: String})
   unit = '';
 
-  /** Time axis label format: 'date' (full date/time) or 'minutes' (relative). */
+  /**
+   * Time axis label format: 'date' (full date/time) or 'minutes' (relative).
+   * @availableWhen xAxisType==time
+   */
   @property({type: String})
   timeDisplay: TimeDisplay = TimeDisplay.date;
 
@@ -444,6 +453,7 @@ export class ObcChartLineBase extends LitElement {
    * Explicit border radius value in pixels.
    * When instrumentMode=true, this value is used directly (defaults to 8px).
    * When instrumentMode=false, this is ignored and border radius is read from CSS variable.
+   * @availableWhen instrumentMode==true
    */
   @property({type: Number})
   borderRadius?: number = undefined;

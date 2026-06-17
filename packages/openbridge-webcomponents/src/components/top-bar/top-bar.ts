@@ -166,12 +166,14 @@ export class ObcTopBar extends LitElement {
    */
   @property({type: String}) pageName = 'Page';
 
+  /** @availableWhen settings==false && inactive==false */
   @property({type: String}) menuButtonIcon = ObcTopBarMenuButtonIcon.Menu;
 
   /**
    * Highlights the menu button as active.
    * @type {boolean}
    * @default false
+   * @availableWhen settings==false && inactive==false
    */
   @property({type: Boolean})
   menuButtonActivated = false;
@@ -180,6 +182,7 @@ export class ObcTopBar extends LitElement {
    * Highlights the dimming (day/night) button as active.
    * @type {boolean}
    * @default false
+   * @availableWhen showDimmingButton==true && inactive==false
    */
   @property({type: Boolean})
   dimmingButtonActivated = false;
@@ -188,6 +191,7 @@ export class ObcTopBar extends LitElement {
    * Highlights the apps button as active.
    * @type {boolean}
    * @default false
+   * @availableWhen showAppsButton==true && inactive==false
    */
   @property({type: Boolean})
   appsButtonActivated = false;
@@ -196,6 +200,7 @@ export class ObcTopBar extends LitElement {
    * Highlights the left more button as active.
    * @type {boolean}
    * @default false
+   * @availableWhen inactive==false
    */
   @property({type: Boolean})
   leftMoreButtonActivated = false;
@@ -204,6 +209,7 @@ export class ObcTopBar extends LitElement {
    * Highlights the user/profile button as active.
    * @type {boolean}
    * @default false
+   * @availableWhen showUserButton==true && inactive==false
    */
   @property({type: Boolean})
   userButtonActivated = false;

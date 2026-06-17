@@ -146,6 +146,8 @@ export class ObcBadge extends LitElement {
    * The number to display in the badge. Set to 0 for no count.
    *
    * If `showNumber` is false, the number is hidden.
+   *
+   * @availableWhen showNumber==true
    */
   @property({type: Number}) number = 0;
 

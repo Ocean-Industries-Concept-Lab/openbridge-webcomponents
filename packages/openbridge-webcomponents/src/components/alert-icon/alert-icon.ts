@@ -88,7 +88,9 @@ const mapping = {
 @customElement('obc-alert-icon')
 export class ObcAlertIcon extends LitElement {
   @property({type: String}) type!: AlertType;
+  /** @availableWhen outline==false && type in [Alarm, Warning] */
   @property({type: Boolean}) acknowledged!: boolean;
+  /** @availableWhen outline==false && type in [Alarm, Warning] */
   @property({type: Boolean}) active!: boolean;
   @property({type: Boolean}) outline!: boolean;
 

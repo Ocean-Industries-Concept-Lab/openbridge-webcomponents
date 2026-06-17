@@ -68,7 +68,9 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   @property({type: Number}) maxValue = 100;
   @property({type: Number}) minValue = 0;
   @property({attribute: false}) getAngle!: (v: number) => number;
+  /** @availableWhen type!=filled */
   @property({type: String}) needleColor: string | undefined;
+  /** @availableWhen type!=needle */
   @property({type: String}) barColor: string | undefined;
   @property({type: Boolean}) showLabels: boolean = false;
   /**
@@ -95,7 +97,9 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
+  /** @availableWhen zoomToFitArc==false */
   @property({type: Number}) clipTop: number = 0; // in percent of height
+  /** @availableWhen zoomToFitArc==false */
   @property({type: Number}) clipBottom: number = 0; // in percent of height
   @property({type: Boolean}) zoomToFitArc: boolean = false;
 

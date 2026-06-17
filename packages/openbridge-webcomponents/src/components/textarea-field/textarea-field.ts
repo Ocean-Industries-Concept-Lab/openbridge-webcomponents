@@ -240,6 +240,7 @@ export class ObcTextareaField extends LitElement {
 
   /**
    * Error text displayed below the field when `error` is true.
+   * @availableWhen error==true
    */
   @property({type: String}) errorText = '';
 
@@ -292,6 +293,7 @@ export class ObcTextareaField extends LitElement {
 
   /**
    * Current recording duration in seconds.
+   * @availableWhen recording==true
    */
   @property({type: Number}) recordingDuration = 0;
 

@@ -141,6 +141,7 @@ export class ObcTabItem extends LitElement {
    * Useful for visually separating tabs.
    *
    * Default: false
+   * @availableWhen checked==false
    */
   @property({type: Boolean, attribute: 'has-divider'}) hasDivider = false;
 
@@ -180,6 +181,7 @@ export class ObcTabItem extends LitElement {
    * See `BadgeType` enum for available options.
    *
    * Default: 'regular'
+   * @availableWhen hasBadge==true
    */
   @property({type: String}) badgeType: string = BadgeType.regular;
 
@@ -188,6 +190,7 @@ export class ObcTabItem extends LitElement {
    * See `BadgeSize` enum for available options.
    *
    * Default: 'regular'
+   * @availableWhen hasBadge==true
    */
   @property({type: String}) badgeSize: string = BadgeSize.regular;
 
@@ -195,6 +198,7 @@ export class ObcTabItem extends LitElement {
    * Shows the badge's numeric value. When false, only the badge background is rendered (for status-only badges).
    *
    * Default: true
+   * @availableWhen hasBadge==true
    */
   @property({type: Boolean, attribute: false}) badgeShowNumber: boolean = true;
 
@@ -202,6 +206,7 @@ export class ObcTabItem extends LitElement {
    * The numeric value to display in the badge (e.g., count of notifications).
    *
    * Default: 0
+   * @availableWhen hasBadge==true
    */
   @property({type: Number}) badgeCount = 0;
 
@@ -210,6 +215,7 @@ export class ObcTabItem extends LitElement {
    * Supply icon content via the `badge-icon` slot.
    *
    * Default: false
+   * @availableWhen hasBadge==true
    */
   @property({type: Boolean}) showLeadingBadgeIcon = false;
 

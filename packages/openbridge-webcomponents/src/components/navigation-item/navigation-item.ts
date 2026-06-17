@@ -100,6 +100,7 @@ export class ObcNavigationItem extends LitElement {
   /**
    * The text label displayed for the navigation item.
    * Hidden in icon-only variants.
+   * @availableWhen variant in [Full, Compact]
    */
   @property({type: String}) label = 'Label';
 
@@ -132,6 +133,7 @@ export class ObcNavigationItem extends LitElement {
   /**
    * Highlights the item as selected within a group.
    * Only relevant when `group` is true.
+   * @availableWhen group==true
    */
   @property({type: Boolean}) groupSelected = false;
 
@@ -140,6 +142,7 @@ export class ObcNavigationItem extends LitElement {
    */
   @property({type: Boolean, reflect: true}) hasIcon = false;
 
+  /** @availableWhen group==false || variant==IconOnly */
   @property({type: Boolean}) hasTrailingIcon = false;
 
   @query('a') private anchorElement?: HTMLAnchorElement;

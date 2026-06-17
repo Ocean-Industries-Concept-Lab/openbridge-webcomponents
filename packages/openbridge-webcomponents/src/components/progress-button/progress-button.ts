@@ -30,16 +30,22 @@ export interface ProgressButtonClickEvent {
 export class ObcProgressButton extends LitElement {
   @property({type: String}) type: ProgressButtonType =
     ProgressButtonType.Linear;
+  /** @availableWhen type==Linear */
   @property({type: String}) buttonStyle: ButtonStyle = ButtonStyle.Regular;
+  /** @availableWhen showProgress==true */
   @property({type: String}) mode: ProgressMode = ProgressMode.Determinate;
   @property({type: Number}) value = 0;
   @property({type: String}) label = '';
   @property({type: Boolean}) disabled = false;
   @property({type: Boolean}) showProgress = false;
+  /** @availableWhen type==Linear */
   @property({type: Boolean}) hasLeadingIcon = false;
+  /** @availableWhen type==Linear */
   @property({type: Boolean}) hasTrailingIcon = false;
   @property({type: Boolean}) hasAlert = false;
+  /** @availableWhen type==Circular && showProgress==true */
   @property({type: Boolean}) progressiveIndeterminate = false;
+  /** @availableWhen type==Circular */
   @property({type: Boolean}) showLabel = false;
 
   override render() {

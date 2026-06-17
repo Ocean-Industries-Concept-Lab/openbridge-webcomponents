@@ -95,6 +95,7 @@ export class ObcCard extends LitElement {
    * When the dialog is open, it will automatically close after this duration unless reset by user activity. The countdown indicator appears for the last `dialogVisibleTimerSeconds` milliseconds.
    *
    * @default 20000
+   * @availableWhen hasDialog==true
    */
   @property({type: Number}) dialogTimeOutSeconds = 20_000;
 
@@ -104,6 +105,7 @@ export class ObcCard extends LitElement {
    * The countdown indicator is visible for the last `dialogVisibleTimerSeconds` milliseconds of the dialog's lifetime. User activity resets the timer.
    *
    * @default 10000
+   * @availableWhen hasDialog==true
    */
   @property({type: Number}) dialogVisibleTimerSeconds = 10_000;
 
