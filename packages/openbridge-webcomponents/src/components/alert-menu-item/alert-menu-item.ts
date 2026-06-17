@@ -184,7 +184,7 @@ export class ObcAlertMenuItem extends LitElement {
    * See {@link ObcAlertMenuItemActionState} for the available states.
    */
   @property({type: String}) secondaryActionState: ObcAlertMenuItemActionState =
-    ObcAlertMenuItemActionState.Enabled;
+    ObcAlertMenuItemActionState.None;
 
   private get primaryActionLabel() {
     if (this.primaryActionState === ObcAlertMenuItemActionState.None) {
