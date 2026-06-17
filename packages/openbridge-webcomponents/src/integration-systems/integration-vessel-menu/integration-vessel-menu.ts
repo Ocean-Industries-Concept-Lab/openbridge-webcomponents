@@ -19,26 +19,38 @@ import '../../building-blocks/alert-list/alert-list.js';
 
 @customElement('obc-integration-vessel-menu')
 export class ObcIntegrationVesselMenu extends LitElement {
-  /** Hide the alarm list, ensuring it doesn't take space (display: none). */
-  @property({type: Boolean}) hideAlarmList = false;
+  /** Show the action buttons footer. When false it is removed and takes no space. */
+  @property({type: Boolean, attribute: false}) hasActions = true;
+
+  /** Show the alert list. When false it is removed and takes no space. */
+  @property({type: Boolean, attribute: false}) hasAlertList = true;
+
+  /** Show the main content area. When false it is removed and takes no space. */
+  @property({type: Boolean, attribute: false}) hasContent = true;
 
   protected override render() {
     return html`
-      <div
-        class=${classMap({
-          wrapper: true,
-        })}
-      >
-        <div class="footer-container">
+      <div class="wrapper">
+        <div
+          class=${classMap({
+            'footer-container': true,
+            hidden: !this.hasActions,
+          })}
+        >
           <slot name="buttons" class="buttons-slot"></slot>
         </div>
-        <div class="content-area">
+        <div
+          class=${classMap({
+            'content-area': true,
+            hidden: !this.hasContent,
+          })}
+        >
           <slot name="content"></slot>
         </div>
         <div
           class=${classMap({
             'content-container': true,
-            hidealarmlist: this.hideAlarmList,
+            hidden: !this.hasAlertList,
           })}
         >
           <obc-alert-list class="alertlist"
