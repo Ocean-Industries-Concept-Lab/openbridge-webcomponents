@@ -179,11 +179,20 @@ export class ObcCompassSector extends LitElement {
    * `priorityElements`, matching the HDG arrow.
    */
   @property({type: Boolean}) hasReadout: boolean = false;
-  /** Readout label. Default `HDG`. */
+  /**
+   * Readout label. Default `HDG`.
+   * @availableWhen hasReadout==true
+   */
   @property({type: String}) label = 'HDG';
-  /** Readout unit. Default `DEG`. */
+  /**
+   * Readout unit. Default `DEG`.
+   * @availableWhen hasReadout==true
+   */
   @property({type: String}) unit = 'DEG';
-  /** Number of fraction digits shown in the readout. Default `0`. */
+  /**
+   * Number of fraction digits shown in the readout. Default `0`.
+   * @availableWhen hasReadout==true
+   */
   @property({type: Number}) fractionDigits = 0;
 
   private _headingSp = new SetpointBundle({

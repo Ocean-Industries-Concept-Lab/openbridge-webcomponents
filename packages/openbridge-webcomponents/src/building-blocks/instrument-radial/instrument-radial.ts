@@ -160,7 +160,9 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   @property({type: Number}) clipTop: number = 0; // in percent of height
   /** @availableWhen zoomToFitArc==false */
   @property({type: Number}) clipBottom: number = 0; // in percent of height
+  /** @availableWhen zoomToFitArc==false */
   @property({type: Number}) clipLeft: number = 0; // in percent of width
+  /** @availableWhen zoomToFitArc==false */
   @property({type: Number}) clipRight: number = 0; // in percent of width
   /**
    * Place the horizontal end labels (±90°, e.g. min/max) below the tick instead

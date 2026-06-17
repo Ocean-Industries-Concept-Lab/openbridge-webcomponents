@@ -99,7 +99,9 @@ export class ObcNumberInputField extends LitElement {
   @property({type: String}) labelPlacement: ObcNumberInputFieldPlacement =
     ObcNumberInputFieldPlacement.Left;
 
+  /** @availableWhen helperText!='' || (error==true && errorText!='') */
   @property({type: Boolean}) hasHelperIcon = false;
+  /** @availableWhen helperText!='' || (error==true && errorText!='') */
   @property({type: String}) helperPlacement: ObcNumberInputFieldPlacement =
     ObcNumberInputFieldPlacement.Left;
 

@@ -73,13 +73,25 @@ export class ObcPitchRoll extends LitElement {
    * roll) instead of the vessel images. Default `false`.
    */
   @property({type: Boolean}) hasReadout: boolean = false;
-  /** Label for the pitch readout. Default `Pitch`. */
+  /**
+   * Label for the pitch readout. Default `Pitch`.
+   * @availableWhen hasReadout==true
+   */
   @property({type: String}) pitchLabel = 'Pitch';
-  /** Label for the roll readout. Default `Roll`. */
+  /**
+   * Label for the roll readout. Default `Roll`.
+   * @availableWhen hasReadout==true
+   */
   @property({type: String}) rollLabel = 'Roll';
-  /** Unit shown in both readouts. Default `DEG`. */
+  /**
+   * Unit shown in both readouts. Default `DEG`.
+   * @availableWhen hasReadout==true
+   */
   @property({type: String}) unit = 'DEG';
-  /** Number of fraction digits shown in both readouts. Default `0`. */
+  /**
+   * Number of fraction digits shown in both readouts. Default `0`.
+   * @availableWhen hasReadout==true
+   */
   @property({type: Number}) fractionDigits = 0;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
   /**
