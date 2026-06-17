@@ -24,12 +24,12 @@ export enum ObcAlertMenuItemStatus {
  * Appearance of an alert menu item action.
  * - `enabled`: Action is shown and interactive (default).
  * - `disabled`: Action is shown but cannot be triggered.
- * - `hidden`: Action is removed and takes no space.
+ * - `none`: Action is removed and takes no space.
  */
 export enum ObcAlertMenuItemActionState {
   Enabled = 'enabled',
   Disabled = 'disabled',
-  Hidden = 'hidden',
+  None = 'none',
 }
 
 /**
@@ -46,7 +46,7 @@ export enum ObcAlertMenuItemActionState {
  * - **Time and Day Display:** Optionally shows day and/or time for the alert occurrence.
  * - **Expandable:** Can be toggled open/closed for additional details (via click).
  * - **Action Buttons:** Displays an "ACK" button for unacknowledged alerts and an optional secondary action (label set via `secondaryActionLabel`); each triggers an event when clicked.
- *   - Each action's appearance is controlled independently via `primaryActionState` / `secondaryActionState` (`enabled`, `disabled`, or `hidden`).
+ *   - Each action's appearance is controlled independently via `primaryActionState` / `secondaryActionState` (`enabled`, `disabled`, or `none`).
  * - **Animated Intro:** Optional animation when the item appears.
  * - **Size Options:** Supports single-line or multi-line layouts (see `size` property).
  *
@@ -58,7 +58,7 @@ export enum ObcAlertMenuItemActionState {
  * - Use the `icon` slot for a source/system icon if needed.
  * - Only show the "ACK" action for alerts that require acknowledgment.
  * - Provide `secondaryActionLabel` to add a second action alongside ACK.
- * - Use `primaryActionState` / `secondaryActionState` to temporarily disable an action (`disabled`) or remove it without leaving a gap (`hidden`).
+ * - Use `primaryActionState` / `secondaryActionState` to temporarily disable an action (`disabled`) or remove it without leaving a gap (`none`).
  * - Use the `shelved` property to indicate alerts that are temporarily deferred.
  *
  * ### Slots
@@ -168,7 +168,7 @@ export class ObcAlertMenuItem extends LitElement {
    * Unlike the primary (ACK) action, the secondary label is not derived from
    * `status`; it must be provided explicitly. The secondary action is only
    * shown when a non-empty label is set and `secondaryActionState` is not
-   * `hidden`.
+   * `none`.
    */
   @property({type: String}) secondaryActionLabel = '';
 
@@ -187,14 +187,14 @@ export class ObcAlertMenuItem extends LitElement {
     ObcAlertMenuItemActionState.Enabled;
 
   private get primaryActionLabel() {
-    if (this.primaryActionState === ObcAlertMenuItemActionState.Hidden) {
+    if (this.primaryActionState === ObcAlertMenuItemActionState.None) {
       return '';
     }
     return this.status === ObcAlertMenuItemStatus.Unacknowledged ? 'ACK' : '';
   }
 
   private get secondaryActionLabelToShow() {
-    if (this.secondaryActionState === ObcAlertMenuItemActionState.Hidden) {
+    if (this.secondaryActionState === ObcAlertMenuItemActionState.None) {
       return '';
     }
     return this.secondaryActionLabel;

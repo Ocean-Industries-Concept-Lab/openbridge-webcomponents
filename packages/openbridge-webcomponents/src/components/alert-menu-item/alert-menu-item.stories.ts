@@ -116,9 +116,9 @@ export const SecondaryActionDisabled: Story = {
   },
 };
 
-export const PrimaryActionHidden: Story = {
+export const PrimaryActionNone: Story = {
   args: {
     secondaryActionLabel: 'Mute',
-    primaryActionState: ObcAlertMenuItemActionState.Hidden,
+    primaryActionState: ObcAlertMenuItemActionState.None,
   },
 };
