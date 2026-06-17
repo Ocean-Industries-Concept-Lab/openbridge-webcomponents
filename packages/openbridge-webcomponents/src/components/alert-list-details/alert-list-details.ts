@@ -115,6 +115,7 @@ export class ObcAlertListDetails extends LitElement {
   @property({type: String}) selectedMode: AlertListMode = AlertListMode.ALL;
   @property({type: Array}) alerts: Alert[] = [];
   @property({type: Boolean}) showTime: boolean = false;
+  /** @availableWhen showTime==true */
   @property({attribute: false}) timeFormatter: (time: Date) => string = (
     time: Date
   ) => time.toLocaleTimeString(undefined, {hour12: false});

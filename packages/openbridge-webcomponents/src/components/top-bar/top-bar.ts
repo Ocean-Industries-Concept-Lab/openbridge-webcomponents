@@ -163,6 +163,7 @@ export class ObcTopBar extends LitElement {
    * Sets the current page or section name displayed in the top bar.
    * @type {string}
    * @default "Page"
+   * @availableWhen settings==false
    */
   @property({type: String}) pageName = 'Page';
 
@@ -218,6 +219,7 @@ export class ObcTopBar extends LitElement {
    * Disables the user/profile button.
    * @type {boolean}
    * @default false
+   * @availableWhen showUserButton==true && inactive==false
    */
   @property({type: Boolean})
   userButtonDisabled = false;
@@ -233,6 +235,7 @@ export class ObcTopBar extends LitElement {
    * Expands the menu button for wide-rail layouts.
    * @type {boolean}
    * @default false
+   * @availableWhen settings==false && inactive==false
    */
   @property({type: Boolean}) wideMenuButton = false;
 
@@ -337,6 +340,7 @@ export class ObcTopBar extends LitElement {
    * Array of breadcrumb items for navigation (used in settings mode).
    * @type {BreadcrumbItem[]}
    * @default []
+   * @availableWhen settings==true
    */
   @property({type: Array})
   breadcrumbItems: BreadcrumbItem[] = [];

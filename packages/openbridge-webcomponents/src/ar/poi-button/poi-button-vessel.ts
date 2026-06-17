@@ -40,6 +40,7 @@ export class ObcPoiButtonVessel extends ObcPoiButton {
   @property({type: String, attribute: 'vessel-state'})
   vesselState: ObcPoiObjectVesselState | null = null;
 
+  /** @availableWhen vesselState!=overlapped && (vesselState!=null || value!=overlapped) */
   @property({type: Boolean, attribute: 'vessel-interactive'})
   vesselInteractive = false;
 

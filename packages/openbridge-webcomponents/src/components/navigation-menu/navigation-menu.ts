@@ -136,6 +136,7 @@ export class ObcNavigationMenu extends LitElement {
   /**
    * Visual variant of the flyout.
    * One of `Full` (default) or `Compact`.
+   * @availableWhen variant==Full
    */
   @property({type: String}) flyoutVariant: ObcNavigationMenuFlyoutVariant =
     ObcNavigationMenuFlyoutVariant.Full;

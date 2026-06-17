@@ -145,6 +145,7 @@ export class ObcSplitButton extends LitElement {
   /**
    * Number of items per column in multi-column layouts.
    * Used when `menuType` is 'multi' or 'multiWithSubtitles'.
+   * @availableWhen menuType in [Multi, MultiWithSubtitles]
    */
   @property({type: Number}) itemsPerColumn: number = 5;
 
@@ -157,6 +158,7 @@ export class ObcSplitButton extends LitElement {
   /**
    * Title text for the dropdown menu.
    * Displayed in the title bar when `hasTitleBar` is true.
+   * @availableWhen hasTitleBar==true
    */
   @property({type: String}) menuTitle = '';
 
@@ -181,6 +183,7 @@ export class ObcSplitButton extends LitElement {
   /**
    * Array of column group definitions for multi-column/grouped menus.
    * Use instead of `options` for grouped or subtitle layouts.
+   * @availableWhen menuType==MultiWithSubtitles
    */
   @property({type: Array}) columnGroups: ColumnGroup[] = [];
 

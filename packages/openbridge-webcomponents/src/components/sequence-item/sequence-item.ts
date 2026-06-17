@@ -43,21 +43,29 @@ export class ObcSequenceItem extends LitElement {
     SequenceItemState.enabled;
   @property({type: String}) override title = '';
   @property({type: Boolean}) hasSubtitle = false;
+  /** @availableWhen hasSubtitle==true */
   @property({type: String}) subtitle = '';
   @property({type: Boolean}) hasDescription = false;
+  /** @availableWhen hasDescription==true */
   @property({type: String}) description = '';
   /**
    * Enables the meta stamp container. Without this, timestamp/distance values are
    * ignored even if their booleans are true.
    */
   @property({type: Boolean}) hasStamp = false;
-  /** Shows a timestamp inside the stamp container when `hasStamp` is true. */
+  /**
+   * Shows a timestamp inside the stamp container when `hasStamp` is true.
+   * @availableWhen hasStamp==true
+   */
   @property({type: Boolean}) hasTimeStamp = false;
+  /** @availableWhen hasStamp==true && hasTimeStamp==true */
   @property({type: String}) timeStamp = '';
   /**
    * Shows a distance stamp alongside the timestamp. Requires `hasStamp` to be true.
+   * @availableWhen hasStamp==true
    */
   @property({type: Boolean}) hasDistanceStamp = false;
+  /** @availableWhen hasStamp==true && hasDistanceStamp==true */
   @property({type: String}) distanceStamp = '';
   /**
    * Optional text used inside the auto-generated step. Defaults to `title` when

@@ -34,6 +34,7 @@ export class ObcPoiButtonAton extends ObcPoiButton {
   @property({type: String, attribute: 'aton-state'})
   atonState: ObcPoiObjectState | null = null;
 
+  /** @availableWhen atonState!=overlapped && (atonState!=null || value!=overlapped) */
   @property({type: Boolean, attribute: 'aton-interactive'})
   atonInteractive = false;
 
