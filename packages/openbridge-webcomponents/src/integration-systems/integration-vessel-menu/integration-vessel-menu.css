@@ -52,15 +52,18 @@
   }
 }
 
-.footer-container slot[name="buttons"]::slotted(:not(obc-button)) {
-  display: contents;
-}
-
 .footer-container slot[name="buttons"]::slotted(*) {
   display: flex;
   flex: 1 1 0px;
   width: 100%;
   white-space: nowrap;
+}
+
+.footer-container slot[name="buttons"]::slotted(:not(obc-button)) {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(auto, 1fr);
+  gap: var(--app-components-integration-system-menu-action-spacing);
 }
 
 .buttons-slot {
