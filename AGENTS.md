@@ -101,6 +101,37 @@ Key points:
 6. **No `@property` tags** in the JSDoc block — properties are documented inline above their field declarations.
 7. **Tone:** Do NOT mention "maritime", "industrial", "bridge", or domain qualifiers; keep text domain-agnostic.
 8. If purpose is unclear, insert `**TODO(designer)**` instead of guessing.
+9. **`@availableWhen` for conditional properties** — see below.
+
+### Conditional properties (`@availableWhen`)
+
+A property whose value only has an observable effect when **another** property is set a certain way is a _conditional property_. Document the dependency with an `@availableWhen` tag in the property's inline JSDoc, directly above its `@property` declaration:
+
+```ts
+@property({type: Boolean}) alert = false;
+/** @availableWhen alert==true */
+@property({type: String}) alertFrameStatus: AlertType = AlertType.Alarm;
+/** @availableWhen alert==true && alertFrameType in [LargeSideFlip, BottomFlip, TopFlip] */
+@property({type: Boolean, attribute: false}) showAlertCategoryIcon = true;
+```
+
+Syntax:
+
+- **Boolean:** `@availableWhen showFoo==true` or `@availableWhen showFoo==false`.
+- **Enum / string equality:** `@availableWhen type==label` — use the declared value, **no quotes**.
+- **Enum / string inequality:** `@availableWhen state!=overlapped` — handy for "all values except one".
+- **Set membership:** `@availableWhen type in [LargeSideFlip, BottomFlip, TopFlip]` — use the **enum member identifier names**, not the string values.
+- **Non-empty string:** `@availableWhen label!=''` — for `string` props (default `''`) that gate another prop by being non-empty.
+- **Defined / non-null:** `@availableWhen courseArrowPx!=undefined` (for `X | undefined`) or `@availableWhen headingSetpoint!=null` (for `X | null`).
+- **Combine:** join with `&&` (all required) or `||` (any sufficient). Always use `==`/`!=` (never a single `=`).
+
+Rules:
+
+- **Never annotate the gate itself** — only the dependent property. In the example, `alert` is the gate and stays unannotated.
+- **Self-gated props are not conditional** — a prop that does nothing when its _own_ value is `0`/`''`/`undefined` is not `@availableWhen` (that dependency is on itself, not another property).
+- **Multi-path props are not conditional** — if a prop still has an observable effect via some always-on path (e.g. it is also emitted in an event or applied as a CSS class regardless of the gate), do not annotate it.
+- The condition must hold against the **actual render/behavior logic** (trace into helpers, getters, and child components the prop is forwarded to), not just the prop's name.
+- For properties added by `SetpointMixin`, the `@availableWhen` tags live in `svghelpers/setpoint-mixin.ts`; components that consume the mixin inherit them and must not re-annotate.
 
 ### Documentation by code pattern
 
