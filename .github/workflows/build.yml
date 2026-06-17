@@ -24,6 +24,7 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
       - name: Build translations
         run: cd packages/openbridge-webcomponents && npm run build:translations
 
@@ -33,8 +34,14 @@ jobs:
       - name: Typecheck openbridge-webcomponents
         run: cd packages/openbridge-webcomponents && npm run typecheck
 
+      - name: Lint CSS mixins openbridge-webcomponents
+        run: cd packages/openbridge-webcomponents && npm run lint:mixins
+
+      - name: Lint CSS variables openbridge-webcomponents
+        run: cd packages/openbridge-webcomponents && npm run lint:variables
+
       - name: Lint openbridge-webcomponents
-        run: cd packages/openbridge-webcomponents && npm run lint
+        run: cd packages/openbridge-webcomponents && npm run lint:lit-analyzer && npm run lint:eslint
 
       - name: Check formatting openbridge-webcomponents
         run: cd packages/openbridge-webcomponents && npm run format:check
@@ -47,7 +54,7 @@ jobs:
 
   test-browser:
     container:
-      image: mcr.microsoft.com/playwright:v1.58.0-noble
+      image: mcr.microsoft.com/playwright:v1.60.0-noble
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -83,14 +90,13 @@ jobs:
 
       # During the npm release phase we update the version number.
       # This can give dependencies issues as the wrapper package are dependent on the core package.
-      # Earlier the npm release action failed during "npm install" as the core package had a 
+      # Earlier the npm release action failed during "npm install" as the core package had a
       # different version number than what was in package-lock.json.
       - name: Append timestamp to version, to simulate a new release
         working-directory: ./packages/openbridge-webcomponents
         run: |
           TIMESTAMP=$(date +"%Y%m%d%H%M%S")
           jq --arg TIMESTAMP "$TIMESTAMP" '.version = "0.0." + $TIMESTAMP' package.json > package.tmp.json && mv package.tmp.json package.json
-
 
       - name: Build openbridge-webcomponents
         working-directory: ./packages/openbridge-webcomponents

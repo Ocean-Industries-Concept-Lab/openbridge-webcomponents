@@ -2,6 +2,7 @@ import {
   ObcAlertFrameStatus,
   ObcAlertFrameThickness,
   ObcAlertFrameType,
+  ObcAlertFrameMode,
 } from '../../components/alert-frame/alert-frame.js';
 import {MotorizedVariant} from './abstract-automation-button-motorized.js';
 import {
@@ -31,6 +32,10 @@ export const argTypesAbstractAutomationButton = {
   },
   alertFrameType: {
     options: Object.values(ObcAlertFrameType),
+    control: {type: 'radio'},
+  },
+  alertFrameMode: {
+    options: Object.values(ObcAlertFrameMode),
     control: {type: 'radio'},
   },
   alertFrameThickness: {

@@ -2,7 +2,49 @@ import {LitElement, css, html, svg, type SVGTemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {styleMap} from 'lit/directives/style-map.js';
-import '../../icons/index.js';
+import '../../icons/icon-wind-true-0.js';
+import '../../icons/icon-wind-true-1.js';
+import '../../icons/icon-wind-true-5.js';
+import '../../icons/icon-wind-true-10.js';
+import '../../icons/icon-wind-true-15.js';
+import '../../icons/icon-wind-true-20.js';
+import '../../icons/icon-wind-true-25.js';
+import '../../icons/icon-wind-true-30.js';
+import '../../icons/icon-wind-true-35.js';
+import '../../icons/icon-wind-true-45.js';
+import '../../icons/icon-wind-true-50.js';
+import '../../icons/icon-wind-true-55.js';
+import '../../icons/icon-wind-true-60.js';
+import '../../icons/icon-wind-true-65.js';
+import '../../icons/icon-wind-true-70.js';
+import '../../icons/icon-wind-true-100.js';
+import '../../icons/icon-wind-shaft-0.js';
+import '../../icons/icon-wind-shaft-1.js';
+import '../../icons/icon-wind-shaft-5.js';
+import '../../icons/icon-wind-shaft-10.js';
+import '../../icons/icon-wind-shaft-15.js';
+import '../../icons/icon-wind-shaft-20.js';
+import '../../icons/icon-wind-shaft-25.js';
+import '../../icons/icon-wind-shaft-30.js';
+import '../../icons/icon-wind-shaft-35.js';
+import '../../icons/icon-wind-shaft-40.js';
+import '../../icons/icon-wind-shaft-45.js';
+import '../../icons/icon-wind-shaft-50.js';
+import '../../icons/icon-wind-shaft-55.js';
+import '../../icons/icon-wind-shaft-60.js';
+import '../../icons/icon-wind-shaft-65.js';
+import '../../icons/icon-wind-shaft-70.js';
+import '../../icons/icon-wind-shaft-75.js';
+import '../../icons/icon-wind-shaft-80.js';
+import '../../icons/icon-wind-shaft-85.js';
+import '../../icons/icon-wind-shaft-90.js';
+import '../../icons/icon-wind-shaft-95.js';
+import '../../icons/icon-wind-shaft-100.js';
+import {
+  windKnotsToShaftTrueLevel,
+  windKnotsToWindShaftBucket,
+  windKnotsToWindTrueBucket,
+} from '../watch/environment.js';
 
 export enum WindIndicatorType {
   arrow = 'arrow',
@@ -43,13 +85,6 @@ const SHAFT_TRUE_CIRCLE_TPL = svg`
   />
 `;
 
-const SHAFT_TRUE_WIND_BARB_TPL = svg`
-  <path
-    d="M39.613 20.3747C39.7971 20.6935 39.6878 21.1013 39.3689 21.2853C39.0501 21.4694 38.6424 21.3602 38.4583 21.0413L36.4583 17.5772L35.3036 18.2439L37.3036 21.708C37.4876 22.0269 37.3784 22.4346 37.0595 22.6187C36.7407 22.8028 36.3329 22.6935 36.1489 22.3747L34.1489 18.9106L32.9942 19.5772L33.9942 21.3093C34.1782 21.6281 34.069 22.0359 33.7501 22.22C33.4313 22.4041 33.0235 22.2948 32.8395 21.9759L31.8395 20.2439L24.3339 24.5772L23.6672 23.4225L36.3114 16.1224C36.6621 15.9201 37.1103 16.0402 37.3128 16.3907L39.613 20.3747Z"
-    fill="currentColor"
-  />
-`;
-
 const SHAFT_TRUE_WIND_BARB_D_BY_LEVEL: string[] = [
   'M33.0954 23.7527C35.1680 22.5560 35.8782 19.9058 34.6816 17.8332C33.4850 15.7606 30.8347 15.0504 28.7621 16.2471C26.6895 17.4437 25.9794 20.0939 27.1760 22.1665L26.3099 22.6665C24.8372 20.1156 25.7112 16.8538 28.2621 15.3810C30.8130 13.9083 34.0748 14.7823 35.5476 17.3332C37.0204 19.8841 36.1463 23.1459 33.5954 24.6187C31.0445 26.0914 27.7827 25.2174 26.3099 22.6665L27.1760 22.1665C28.3726 24.2392 31.0228 24.9493 33.0954 23.7527L33.0954 23.7527',
   'M37.2797 16.3332C37.4638 16.6521 37.3545 17.0598 37.0356 17.2439L24.3339 24.5772L23.6672 23.4225L36.3690 16.0892C36.6878 15.9051 37.0956 16.0143 37.2797 16.3332L37.2797 16.3332',
@@ -64,6 +99,7 @@ const SHAFT_TRUE_WIND_BARB_D_BY_LEVEL: string[] = [
   'M39.6130 20.3747C39.7971 20.6936 39.6878 21.1013 39.3690 21.2854C39.0501 21.4695 38.6424 21.3602 38.4583 21.0413L36.4583 17.5772L35.3036 18.2439L37.3036 21.7080C37.4877 22.0269 37.3784 22.4346 37.0595 22.6187C36.7407 22.8028 36.3330 22.6935 36.1489 22.3747L34.1489 18.9106L32.9942 19.5772L34.9941 23.0413C35.1782 23.3602 35.0690 23.7679 34.7501 23.9520C34.4313 24.1361 34.0235 24.0269 33.8394 23.7080L31.8395 20.2439L30.6847 20.9105L32.6847 24.3747C32.8688 24.6935 32.7596 25.1012 32.4407 25.2853C32.1218 25.4694 31.7141 25.3602 31.5300 25.0413L29.5300 21.5772L28.3753 22.2439L29.3753 23.9759C29.5594 24.2948 29.4502 24.7025 29.1313 24.8866C28.8124 25.0707 28.4047 24.9615 28.2206 24.6426L27.2206 22.9105L24.3339 24.5772L23.6672 23.4225L36.3115 16.1224C36.6621 15.9201 37.1103 16.0402 37.3129 16.3907L39.6130 20.3747L39.6130 20.3747',
   'M37.3380 16.4822L37.3672 16.5654L38.7821 21.5122C38.9920 22.2462 38.0802 22.7726 37.5496 22.2238L34.2758 18.8373L24.3339 24.5772L23.6672 23.4224L36.2952 16.1318C36.6825 15.9082 37.1705 16.0816 37.3380 16.4822L37.3380 16.4822',
   'M37.3380 16.4822L37.3672 16.5654L38.7821 21.5122C38.9920 22.2462 38.0802 22.7726 37.5496 22.2238L34.2758 18.8373L32.9942 19.5772L34.9942 23.0413C35.1783 23.3602 35.0690 23.7679 34.7502 23.9520C34.4313 24.1361 34.0236 24.0268 33.8395 23.7080L31.8395 20.2438L24.3339 24.5772L23.6672 23.4224L36.2952 16.1318C36.6825 15.9082 37.1705 16.0816 37.3380 16.4822L37.3380 16.4822',
+  'M37.3380 16.4822L37.3672 16.5654L38.7821 21.5122C38.9920 22.2462 38.0802 22.7726 37.5496 22.2238L34.2758 18.8373L32.9942 19.5772L34.9942 23.0413C35.1783 23.3602 35.0690 23.7679 34.7502 23.9520C34.4313 24.1361 34.0236 24.0268 33.8395 23.7080L31.8395 20.2438L30.6847 20.9105L32.6847 24.3747C32.8688 24.6935 32.7596 25.1012 32.4407 25.2853C32.1218 25.4694 31.7141 25.3602 31.5300 25.0413L29.5300 21.5772L24.3339 24.5772L23.6672 23.4224L36.2952 16.1318C36.6825 15.9082 37.1705 16.0816 37.3380 16.4822L37.3380 16.4822',
 ];
 
 const SHAFT_RELATIVE_EXPORT_OFFSET_X = -9.9395;
@@ -76,14 +112,14 @@ const SHAFT_RELATIVE_WIND_ICON_ROTATE_DEG = -157;
 const SHAFT_RELATIVE_WIND_ICON_TX = 32.0346;
 const SHAFT_RELATIVE_WIND_ICON_TY = 18.4132;
 const SHAFT_RELATIVE_WIND_ICON_AXIS_SCALE = 0.4914435;
-const SHAFT_RELATIVE_WIND_ROTATION_OFFSET_DEG = 129.2663;
+const SHAFT_RELATIVE_WIND_ROTATION_OFFSET_DEG = 309.2663;
 const SHAFT_RELATIVE_HDG_BG_X = 28.4395;
 const SHAFT_RELATIVE_HDG_BG_Y = 28.4404;
 const SHAFT_RELATIVE_HDG_BG_SIZE = 11;
 const SHAFT_RELATIVE_HDG_TRIANGLE_D =
   'M33.7061 28.5957C33.7904 28.3887 34.0885 28.3887 34.1728 28.5957L37.9016 37.7605C38.0812 38.2018 37.5854 38.6136 37.1728 38.3657L33.9395 36.4404L30.7061 38.3657C30.2935 38.6136 29.7977 38.2018 29.9773 37.7605L33.7061 28.5957Z';
 
-const SHAFT_ARROW_OFFSET_DEG = 118;
+const SHAFT_ARROW_OFFSET_DEG = 298;
 const SHAFT_TRUE_ARROW_OFFSET_DEG = SHAFT_ARROW_OFFSET_DEG;
 
 const LABELED_TICK_MARKS_TPL = svg`
@@ -139,7 +175,7 @@ const LABELED_ARROW_FRAME_R = 17.5;
 const LABELED_ARROW_SCALE = FRAME_R / LABELED_ARROW_FRAME_R;
 const LABELED_ARROW_CX = 32.7881;
 const LABELED_ARROW_CY = 32.7852;
-const LABELED_ARROW_OFFSET_DEG = 29.7225;
+const LABELED_ARROW_OFFSET_DEG = 209.7225;
 const LABELED_ARROW_TPL = svg`
   <circle
     cx="22.7845"
@@ -169,16 +205,25 @@ const LABELED_ARROW_TPL = svg`
 /**
  * `<obc-wind-indicator>` – A compact wind indicator with a fixed frame and a rotating wind marker.
  *
- * Visualizes a discrete wind `level` using a compact icon plus optional mode layers.
+ * Visualizes a wind speed in knots using a compact wind-barb icon plus
+ * optional mode layers.
  *
  * ## Features
  *
  * - **Variants:** `type` (`arrow` | `shaft` | `labeled`), `direction` (`true` | `relative`), `priority` (`regular` | `enhanced`).
- * - **Discrete input:** `level` selects the icon state; mapping from real wind to `level` happens outside.
+ * - **Speed input:** `currentWindSpeedKnots` is the wind speed in knots.
+ *   The barb icon follows the standard meteorological wind-barb
+ *   convention. The icon's knots value is the nearest available bucket
+ *   in the Figma `wind-true` / `wind-shaft` icon set (5-kn granularity,
+ *   with sub-buckets for calm and shaft-only conditions); values beyond
+ *   the heaviest authored bucket snap to that bucket.
  *
  * ## Usage Guidelines
  *
  * Use when you need a small wind cue next to other compact indicators.
+ * Pass the wind speed in knots through `currentWindSpeedKnots`, matching
+ * the convention used by `<obc-wind>`, `<obc-wind-propulsion>` and
+ * `<obc-compass>`.
  */
 @customElement('obc-wind-indicator')
 export class ObcWindIndicator extends LitElement {
@@ -190,12 +235,25 @@ export class ObcWindIndicator extends LitElement {
   @property({type: String}) priority: WindIndicatorPriority =
     WindIndicatorPriority.regular;
 
-  @property({type: Number}) level = 0;
+  /**
+   * Wind speed in **knots**, used to pick the wind-barb icon.
+   *
+   * The value is snapped to the nearest authored knots bucket in the
+   * Figma icon set: `<obi-wind-true-N>` for the arrow / labeled
+   * variants and the higher-granularity `<obi-wind-shaft-N>` family
+   * for the shaft variant. Sub-pennant calm (`0`) and shaft-only (`1`)
+   * buckets cover the lowest two ranges; thereafter the buckets follow
+   * 5-knot steps up to the heaviest authored icon, with values beyond
+   * that snapping to it. Non-finite or negative values fall back to
+   * calm.
+   */
+  @property({type: Number, attribute: 'current-wind-speed-knots'})
+  currentWindSpeedKnots = 0;
 
   /**
    * Rotation of the reference frame (course/heading) in degrees.
    *
-   * Used in relative mode to compute the marker rotation as `windFromAngle - rotationAngle`.
+   * This could be the heading or the course of the vessel.
    * `0` means north-up.
    */
   @property({type: Number, attribute: 'rotation-angle'}) rotationAngle = 0;
@@ -207,17 +265,29 @@ export class ObcWindIndicator extends LitElement {
    * - `0` / `360`: wind from north → marker points south (down)
    * - `180`: wind from south → marker points north (up)
    */
-  @property({type: Number, attribute: 'wind-from-angle'}) windFromAngle = 0;
+  @property({type: Number, attribute: 'current-wind-from-direction'})
+  currentWindFromDirection = 0;
 
   /**
-   * @deprecated Use `windFromAngle` instead.
+   * @deprecated Use `currentWindFromDirection` instead.
+   */
+  @property({type: Number})
+  get windFromAngle() {
+    return this.currentWindFromDirection;
+  }
+  set windFromAngle(value: number) {
+    this.currentWindFromDirection = value;
+  }
+
+  /**
+   * @deprecated Use `currentWindFromDirection` instead.
    */
   @property({type: Number})
   get angle() {
-    return this.windFromAngle;
+    return this.currentWindFromDirection;
   }
   set angle(value: number) {
-    this.windFromAngle = value;
+    this.currentWindFromDirection = value;
   }
 
   static override styles = css`
@@ -252,15 +322,14 @@ export class ObcWindIndicator extends LitElement {
     }
   `;
 
-  private clampLevel(value: number): number {
-    if (!Number.isFinite(value)) {
-      return 0;
-    }
-    return Math.max(0, Math.min(12, Math.round(value)));
-  }
-
-  private get clampedLevel(): number {
-    return this.clampLevel(this.level);
+  /**
+   * Legacy positional level `1..14` used to index the hardcoded
+   * `SHAFT_TRUE_WIND_BARB_D_BY_LEVEL` inline glyphs (shaft + true
+   * variant only). All other variants pick an icon component by knots
+   * bucket via `getWindIconTagName`.
+   */
+  private get iconLevel(): number {
+    return windKnotsToShaftTrueLevel(this.currentWindSpeedKnots);
   }
 
   private get accentColor(): string {
@@ -271,11 +340,11 @@ export class ObcWindIndicator extends LitElement {
 
   private getWindBaseAngle(): number {
     if (this.type === WindIndicatorType.labeled) {
-      return this.windFromAngle;
+      return this.currentWindFromDirection;
     }
     return this.direction === WindIndicatorDirection.relative
-      ? this.windFromAngle - this.rotationAngle
-      : this.windFromAngle;
+      ? this.currentWindFromDirection + this.rotationAngle
+      : this.currentWindFromDirection;
   }
 
   private getWindRotation(offsetDeg = 0): number {
@@ -309,26 +378,21 @@ export class ObcWindIndicator extends LitElement {
     return tpl;
   }
 
-  private getWindIconTagName(
-    type: string,
-    _direction: string,
-    level: number
-  ): string {
-    const index = Math.max(0, Math.min(12, Math.round(level))) + 1;
-
+  private getWindIconTagName(type: string, _direction: string): string {
     if (type === WindIndicatorType.shaft) {
-      return `obi-wind-shaft-${index}`;
+      const bucket = windKnotsToWindShaftBucket(this.currentWindSpeedKnots);
+      return `obi-wind-shaft-${bucket}`;
     }
 
-    return `obi-wind-true-${index}`;
+    const bucket = windKnotsToWindTrueBucket(this.currentWindSpeedKnots);
+    return `obi-wind-true-${bucket}`;
   }
 
   private getWindIcon(
     type: string,
-    direction: string,
-    level: number
+    direction: string
   ): SVGTemplateResult | null {
-    const tagName = this.getWindIconTagName(type, direction, level);
+    const tagName = this.getWindIconTagName(type, direction);
     return this.getWindIconSvg(tagName);
   }
 
@@ -412,8 +476,7 @@ export class ObcWindIndicator extends LitElement {
       const windStyles = {color: this.accentColor};
       const windIcon = this.getWindIcon(
         WindIndicatorType.shaft,
-        this.direction,
-        this.clampedLevel
+        this.direction
       );
 
       const windMarker = svg`
@@ -473,17 +536,13 @@ export class ObcWindIndicator extends LitElement {
           transform="rotate(${this.getWindRotation(SHAFT_TRUE_ARROW_OFFSET_DEG)} ${CX} ${CY})"
           data-name="hdg"
         >
-          ${
-            this.clampedLevel === 7
-              ? SHAFT_TRUE_WIND_BARB_TPL
-              : svg`<path d=${SHAFT_TRUE_WIND_BARB_D_BY_LEVEL[this.clampedLevel]} fill="currentColor" />`
-          }
+          ${svg`<path d=${SHAFT_TRUE_WIND_BARB_D_BY_LEVEL[this.iconLevel - 1]} fill="currentColor" />`}
           ${SHAFT_TRUE_CIRCLE_TPL}
         </g>
       `;
     }
 
-    const icon = this.getWindIcon(this.type, this.direction, this.clampedLevel);
+    const icon = this.getWindIcon(this.type, this.direction);
     if (!icon) {
       return null;
     }
@@ -505,6 +564,10 @@ export class ObcWindIndicator extends LitElement {
       return null;
     }
 
+    const value = Number.isFinite(this.currentWindSpeedKnots)
+      ? Math.max(0, Math.round(this.currentWindSpeedKnots))
+      : 0;
+
     return svg`
       <text
         x="${CX}"
@@ -516,7 +579,7 @@ export class ObcWindIndicator extends LitElement {
         font-weight="var(--global-typography-ui-label-active-font-weight)"
         line-height="var(--global-typography-ui-label-active-line-height)"
       >
-        ${this.clampedLevel}
+        ${value}
       </text>
     `;
   }

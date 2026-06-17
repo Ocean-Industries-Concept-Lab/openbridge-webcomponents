@@ -42,6 +42,10 @@
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;
     }
+
+    &.hide-divider .visible-wrapper {
+      border-right: none;
+    }
   }
 
   &.corner-right {
@@ -55,6 +59,10 @@
       );
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
+    }
+
+    &.hide-divider .visible-wrapper {
+      border-left: none;
     }
   }
 
@@ -125,7 +133,7 @@
   }
 
   &.variant-integration {
-    @mixin style style=integration-normal visibleWrapperClass=.visible-wrapper;
+    @mixin style style=integration-flat visibleWrapperClass=.visible-wrapper;
     color: var(--integration-on-normal-neutral-color);
 
     .visible-wrapper {

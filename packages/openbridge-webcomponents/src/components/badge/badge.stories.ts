@@ -106,6 +106,7 @@ export const NoNumber: Story = {
   render(args) {
     return html`<obc-badge
       .showNumber=${args.showNumber}
+      .showIcon=${args.showIcon}
       size=${args.size}
       type=${args.type}
       variant=${args.variant}
@@ -126,6 +127,7 @@ export const NoNumberLarge: Story = {
   render(args) {
     return html`<obc-badge
       .showNumber=${args.showNumber}
+      .showIcon=${args.showIcon}
       size=${args.size}
       type=${args.type}
       variant=${args.variant}
@@ -184,6 +186,81 @@ export const Warning: Story = {
 
 export const Caution: Story = {
   args: {type: BadgeType.caution, showIcon: true},
+  render(args) {
+    return html`<obc-badge
+      number=${args.number}
+      size=${args.size}
+      type=${args.type}
+      variant=${args.variant}
+      .showNumber=${args.showNumber}
+      ?showIcon=${args.showIcon}
+    >
+    </obc-badge>`;
+  },
+};
+
+export const LevelCritical: Story = {
+  args: {type: BadgeType.levelCritical, showIcon: true},
+  render(args) {
+    return html`<obc-badge
+      number=${args.number}
+      size=${args.size}
+      type=${args.type}
+      variant=${args.variant}
+      .showNumber=${args.showNumber}
+      ?showIcon=${args.showIcon}
+    >
+    </obc-badge>`;
+  },
+};
+
+export const LevelHigh: Story = {
+  args: {type: BadgeType.levelHigh, showIcon: true},
+  render(args) {
+    return html`<obc-badge
+      number=${args.number}
+      size=${args.size}
+      type=${args.type}
+      variant=${args.variant}
+      .showNumber=${args.showNumber}
+      ?showIcon=${args.showIcon}
+    >
+    </obc-badge>`;
+  },
+};
+
+export const LevelMedium: Story = {
+  args: {type: BadgeType.levelMedium, showIcon: true},
+  render(args) {
+    return html`<obc-badge
+      number=${args.number}
+      size=${args.size}
+      type=${args.type}
+      variant=${args.variant}
+      .showNumber=${args.showNumber}
+      ?showIcon=${args.showIcon}
+    >
+    </obc-badge>`;
+  },
+};
+
+export const LevelLow: Story = {
+  args: {type: BadgeType.levelLow, showIcon: true},
+  render(args) {
+    return html`<obc-badge
+      number=${args.number}
+      size=${args.size}
+      type=${args.type}
+      variant=${args.variant}
+      .showNumber=${args.showNumber}
+      ?showIcon=${args.showIcon}
+    >
+    </obc-badge>`;
+  },
+};
+
+export const LevelDiagnostic: Story = {
+  args: {type: BadgeType.levelDiagnostic, showIcon: true},
   render(args) {
     return html`<obc-badge
       number=${args.number}

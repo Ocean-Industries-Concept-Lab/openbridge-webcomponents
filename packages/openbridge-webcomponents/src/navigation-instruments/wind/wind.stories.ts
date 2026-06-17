@@ -76,7 +76,7 @@ const meta: Meta<typeof ObcWind> = {
     width: 400,
     vesselHeadingDeg: 60,
     currentWindFromDirection: 100,
-    currentWindSpeedBeaufort: 5,
+    currentWindSpeedKnots: 25,
     windHistogramData: windHistogramData,
   },
   argTypes: {
@@ -85,8 +85,9 @@ const meta: Meta<typeof ObcWind> = {
     currentWindFromDirection: {
       control: {type: 'range', min: 0, max: 360, step: 1},
     },
-    currentWindSpeedBeaufort: {
-      control: {type: 'range', min: 0, max: 12, step: 1},
+    currentWindSpeedKnots: {
+      control: {type: 'range', min: 0, max: 100, step: 1},
+      description: 'Wind speed in knots.',
     },
     windHistogramData: {control: 'object'},
     vesselImage: {

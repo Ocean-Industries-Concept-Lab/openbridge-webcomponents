@@ -26,6 +26,10 @@
   align-self: stretch;
   min-height: var(--global-size-spacing-touch-target-min);
   flex-shrink: 0;
+
+  &.without-close {
+    padding-right: var(--app-components-modal-margin-vertical);
+  }
 }
 
 .title-content {
@@ -93,6 +97,15 @@
     flex-direction: column;
     gap: 10px;
     align-self: stretch;
+  }
+
+  .primary-action-container.without-cancel {
+    width: auto;
+
+    obc-button {
+      flex: none;
+      width: auto;
+    }
   }
 }
 

@@ -39,6 +39,7 @@ export enum CompassIndicatorDirection {
  * - **Types**: `regular` shows the circular compass indicator; `labeled` shows a framed indicator with a single cardinal label.
  * - **Directions**: `heading`, `course`, and `north` each use their own visual symbol.
  * - **Angle-driven output**: `angle` rotates the active symbol and drives the derived label in labeled mode.
+ * - **Orientation**: `northUp` keeps the compass face fixed north-up and rotates the arrow; when `false` the face rotates and the arrow stays pointing up (heading-up / course-up).
  *
  * ## Usage Guidelines
  *
@@ -47,6 +48,8 @@ export enum CompassIndicatorDirection {
  * - Use `direction="north"` for the north marker / bearing-style indicator.
  * - Switch `type` to `labeled` when the indicator should also communicate the
  *   nearest cardinal direction as text.
+ * - Set `northUp` to `false` to render a heading-up / course-up presentation
+ *   where the arrow stays vertical and the compass face rotates instead.
  */
 @customElement('obc-compass-indicator')
 export class ObcCompassIndicator extends LitElement {
@@ -60,6 +63,17 @@ export class ObcCompassIndicator extends LitElement {
 
   @property({type: String})
   direction: CompassIndicatorDirection = CompassIndicatorDirection.Heading;
+
+  /**
+   * When `true` (default) the compass face stays north-up and the arrow
+   * rotates by `angle`. When `false` the arrow stays pointing up and the
+   * compass face rotates instead (heading-up / course-up presentation).
+   *
+   * Declared with `attribute: false` because the default is `true`; set it
+   * via the JavaScript property (or framework binding) to opt out.
+   */
+  @property({type: Boolean, attribute: false})
+  northUp: boolean = true;
 
   private get normalizedAngle(): number {
     return normalizeAngle(this.angle);
@@ -381,7 +395,11 @@ export class ObcCompassIndicator extends LitElement {
       return this.renderLabeledIndicator(this.direction);
     }
 
-    return this.renderRoundIndicator(this.direction, 0, -this.normalizedAngle);
+    return this.renderRoundIndicator(
+      this.direction,
+      this.northUp ? this.normalizedAngle : 0,
+      this.northUp ? 0 : -this.normalizedAngle
+    );
   }
 
   static override styles = unsafeCSS(componentStyle);

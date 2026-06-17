@@ -1,0 +1,100 @@
+:host {
+  display: inline-block;
+  line-height: 0;
+}
+
+.wrapper {
+  display: inline-flex;
+  flex-direction: column;
+  width: fit-content;
+  --height: 24px;
+  --padding: 4px;
+  font-family: var(--font-family-main);
+  letter-spacing: var(--global-typography-generic-l-letter-spacing);
+}
+
+/* The inner-wrapper is the box: its height (--height) is the full textbox
+   height, padding included. The content is sized to the cap height and
+   vertically centered, which leaves the padding as equal space above and
+   below. In engines that support text-box-trim the content box collapses to
+   the cap height exactly; in Firefox (no text-box-trim) the content keeps its
+   natural line box, so align-items:center + overflow:hidden crops it to the
+   same height instead. No padding here – the centering provides it.
+   (A small top padding could be added later to nudge the text up in Firefox.) */
+.inner-wrapper {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: var(--alignment-justify, flex-end);
+  height: var(--height);
+  overflow: hidden;
+}
+
+/* The spacer must share the content's exact font metrics so the width it
+   reserves equals the rendered content width. font-size-adjust scales the
+   font, so it has to match too. */
+.content,
+.length-spacer {
+  font-size: calc(var(--height) - 2 * var(--padding));
+  font-size-adjust: cap-height 1;
+  white-space: nowrap;
+}
+
+.content {
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
+}
+
+.wrapper.size-xs .inner-wrapper {
+  --height: 16px;
+}
+
+.wrapper.size-s .inner-wrapper {
+  --height: 20px;
+}
+
+.wrapper.size-m .inner-wrapper {
+  --height: 24px;
+}
+
+.wrapper.size-l .inner-wrapper {
+  --height: 32px;
+}
+
+.wrapper.size-xl .inner-wrapper {
+  --height: 40px;
+}
+
+.wrapper.font-weight-regular {
+  font-weight: var(--global-typography-generic-l-font-weight-regular);
+}
+
+.wrapper.font-weight-semibold {
+  font-weight: var(--global-typography-generic-l-font-weight-medium);
+}
+
+.wrapper.font-weight-bold {
+  font-weight: var(--global-typography-generic-l-font-weight-bold);
+}
+
+.wrapper.alignment-left {
+  --alignment-justify: flex-start;
+}
+
+.wrapper.alignment-center {
+  --alignment-justify: center;
+}
+
+.wrapper.alignment-right {
+  --alignment-justify: flex-end;
+}
+
+/* Reserves the box width from the `length` slot without occupying vertical
+   space. Acts as a minimum width so the box does not resize as visible
+   text changes. */
+.length-spacer {
+  height: 0;
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+}

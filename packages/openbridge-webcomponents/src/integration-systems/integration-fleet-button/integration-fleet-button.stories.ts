@@ -6,7 +6,7 @@ import '../../icons/icon-placeholder.js';
 
 const meta: Meta<typeof ObcIntegrationFleetButton> = {
   title: 'Integration Systems/Fleet Button',
-  tags: ['6.0'],
+  tags: ['alpha'],
   component: 'obc-integration-fleet-button',
   args: {
     fleetName: 'Fleet Name',
@@ -17,6 +17,7 @@ const meta: Meta<typeof ObcIntegrationFleetButton> = {
     ],
     alertTopic: 'Navigation alert',
     alerts: {alarm: 1, warning: 5, caution: 2},
+    showAlerts: true,
   },
   parameters: {
     backgrounds: {
@@ -32,6 +33,7 @@ const meta: Meta<typeof ObcIntegrationFleetButton> = {
       .alertTopic=${args.alertTopic}
       .alerts=${args.alerts}
       .selected=${args.selected}
+      .showAlerts=${args.showAlerts}
     >
       <obi-placeholder slot="alert-topic-icon"></obi-placeholder>
     </obc-integration-fleet-button>
@@ -64,5 +66,12 @@ export const SelectedNoAlerts: Story = {
   args: {
     selected: true,
     alerts: {alarm: 0, warning: 0, caution: 0},
+  },
+};
+
+export const HideAlerts: Story = {
+  args: {
+    selected: false,
+    showAlerts: false,
   },
 };

@@ -15,6 +15,11 @@
 /* Shared base styles */
 @mixin base-input-field-all;
 
+.wrapper.align-center .label-container,
+.wrapper.wrapper.align-right .label-container {
+  align-items: baseline;
+}
+
 /* Number input specific: text alignment */
 .value-input {
   text-align: right;
@@ -48,11 +53,15 @@
   justify-content: center;
 }
 
+.wrapper .value-input {
+  text-align: right;
+  padding: 0;
+}
+
 .wrapper.align-center .value-input {
-  width: auto;
-  /* Fallback min-width for empty input - not defined in Figma design tokens */
-  min-width: 40px;
-  text-align: center;
+  width: var(--obc-number-input-center-width, auto);
+  min-width: var(--obc-number-input-center-width, 40px);
+  text-align: right;
   flex: 0 0 auto;
 }
 

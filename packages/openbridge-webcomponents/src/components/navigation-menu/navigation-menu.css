@@ -1,7 +1,7 @@
 .wrapper {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   height: 100%;
   width: 320px;
   background: var(--container-global-color, #fcfcfc);
@@ -30,14 +30,16 @@
   }
 
   & .main {
-    flex: 1;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
   }
 
   & .footer {
     display: flex;
     flex-direction: column;
     border-top: 1px solid var(--border-outline-color);
-    flex: 0;
+    flex: 0 0 auto;
   }
 
   &.small-screen .footer nav ol {

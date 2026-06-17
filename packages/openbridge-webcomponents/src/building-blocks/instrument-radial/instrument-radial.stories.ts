@@ -21,6 +21,9 @@ const meta: Meta<typeof ObcInstrumentRadial> = {
     showLabels: {control: 'boolean'},
     minAngle: {control: false, table: {disable: true}},
     maxAngle: {control: false, table: {disable: true}},
+    // Only acts on labels at the horizontal ends (±90°), i.e. a 180° sweep.
+    // Hidden by default; the MaxMinEndLabels story re-enables it.
+    endLabelsMaxMin: {table: {disable: true}},
   },
 } satisfies Meta<ObcInstrumentRadial>;
 
@@ -89,6 +92,24 @@ export const WithLabels: Story = {
     minValue: 0,
     type: ObcGaugeRadialType.filled,
     showLabels: true,
+  },
+};
+
+// `endLabelsMaxMin` only repositions labels at the horizontal ends (±90°). This
+// 180° sweep puts the min/max labels there, so toggling `endLabelsMaxMin` (and
+// `tickmarksInside`) visibly moves them below/centered.
+export const MaxMinEndLabels: Story = {
+  args: {
+    value: 50,
+    maxValue: 100,
+    minValue: 0,
+    type: ObcGaugeRadialType.filled,
+    showLabels: true,
+    getAngle: (v: number) => (v / 100) * 180 - 90, // top 180° arc: 0 left, 100 right
+    endLabelsMaxMin: true,
+  },
+  argTypes: {
+    endLabelsMaxMin: {control: 'boolean', table: {disable: false}},
   },
 };
 

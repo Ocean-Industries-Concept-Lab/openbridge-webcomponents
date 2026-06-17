@@ -4,14 +4,20 @@ import compentStyle from './alert-button.css?inline';
 import '../../icons/icon-alerts.js';
 import '../../icons/icon-alerts-active.js';
 import '../../icons/icon-notification.js';
-import '../../icons/icon-notification-filled.js';
 import '../../icons/icon-notification-advice.js';
 import '../../icons/icon-notification-advice-active.js';
 import '../../icons/icon-silence-iec.js';
 import '../../icons/icon-alerts-alarm-twotone.js';
 import '../../icons/icon-alerts-warning-twotone.js';
 import '../../icons/icon-alerts-caution-twotone.js';
+import '../../manual-icon/icon-alerts-critical-twotone.js';
+import '../../manual-icon/icon-alerts-diagnostic-twotone.js';
 import {AlertType} from '../../types.js';
+import {
+  getAlertTwotoneComponent,
+  AlertTwotoneComponent,
+  supportsBlinking,
+} from '../../alert-severity.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 
@@ -202,31 +208,48 @@ export class ObcAlertButton extends LitElement {
     super.disconnectedCallback();
   }
 
-  private alertIcon() {
-    const isIdle = this.nAlerts === 0;
-    if (isIdle) {
-      return html`<obi-alerts class="icon"></obi-alerts>`;
-    } else {
-      if (this.type === ObcAlertButtonType.Enhanced) {
-        return html`<obi-alerts-active class="icon"></obi-alerts-active>`;
-      } else if (this.alertType === AlertType.Alarm) {
-        return html`<obi-alerts-alarm-twotone
+  private renderAlertTwotoneIcon() {
+    const twotone = this.alertType
+      ? getAlertTwotoneComponent(this.alertType)
+      : AlertTwotoneComponent.Caution;
+    switch (twotone) {
+      case AlertTwotoneComponent.Critical:
+        return html`<obi-alerts-critical-twotone
           useCssColor
           class="icon"
-        ></obi-alerts-alarm-twotone>`;
-      } else if (this.alertType === AlertType.Warning) {
+        ></obi-alerts-critical-twotone>`;
+      case AlertTwotoneComponent.Diagnostic:
+        return html`<obi-alerts-diagnostic-twotone
+          useCssColor
+          class="icon"
+        ></obi-alerts-diagnostic-twotone>`;
+      case AlertTwotoneComponent.Warning:
         return html`<obi-alerts-warning-twotone
           useCssColor
           class="icon"
         ></obi-alerts-warning-twotone>`;
-      } else {
+      case AlertTwotoneComponent.Caution:
         return html`<obi-alerts-caution-twotone
           useCssColor
           class="icon"
         ></obi-alerts-caution-twotone>`;
-        //     }
-      }
+      default:
+        return html`<obi-alerts-alarm-twotone
+          useCssColor
+          class="icon"
+        ></obi-alerts-alarm-twotone>`;
     }
+  }
+
+  private alertIcon() {
+    const isIdle = this.nAlerts === 0;
+    if (isIdle) {
+      return html`<obi-alerts class="icon"></obi-alerts>`;
+    }
+    if (this.type === ObcAlertButtonType.Enhanced) {
+      return html`<obi-alerts-active class="icon"></obi-alerts-active>`;
+    }
+    return this.renderAlertTwotoneIcon();
   }
 
   private alertIconNegative() {
@@ -234,23 +257,8 @@ export class ObcAlertButton extends LitElement {
       this.nAlerts === 0 || this.type !== ObcAlertButtonType.Enhanced;
     if (useIdle) {
       return html`<obi-alerts class="icon"></obi-alerts>`;
-    } else if (this.alertType === AlertType.Alarm) {
-      return html`<obi-alerts-alarm-twotone
-        useCssColor
-        class="icon"
-      ></obi-alerts-alarm-twotone>`;
-    } else if (this.alertType === AlertType.Warning) {
-      return html`<obi-alerts-warning-twotone
-        useCssColor
-        class="icon"
-      ></obi-alerts-warning-twotone>`;
-    } else {
-      return html`<obi-alerts-caution-twotone
-        useCssColor
-        class="icon"
-      ></obi-alerts-caution-twotone>`;
-      //     }
     }
+    return this.renderAlertTwotoneIcon();
   }
 
   private get activeType(): ObcAlertButtonType {
@@ -276,7 +284,10 @@ export class ObcAlertButton extends LitElement {
     const showCounter =
       this.counter && hasAlerts && this.activeType !== ObcAlertButtonType.Flat;
     const showBlinking =
-      this.blinking && hasAlerts && this.alertType !== AlertType.Caution;
+      this.blinking &&
+      hasAlerts &&
+      this.alertType !== undefined &&
+      supportsBlinking(this.alertType);
     return html`
       <div
         class=${classMap({

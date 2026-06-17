@@ -1,225 +1,145 @@
-import {LitElement, css, html, nothing, svg} from 'lit';
+import {nothing, svg, type SVGTemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
-import '../watch/watch.js';
 import {
   VesselImage,
   VesselImageSize,
-  WatchCircleType,
-  OUTER_RING_RADIUS,
-  innerRingRadiusFor,
   vesselImages,
+  type WatchVessel,
 } from '../watch/watch.js';
-import {TickmarkType} from '../watch/tickmark.js';
-import {AdviceState, AdviceType, AngleAdviceRaw} from '../watch/advice.js';
 import {customElement} from '../../decorator.js';
 import {
-  computeZoomToFitArcFrame,
-  normalizeArcAngle,
-  shiftArcFrameToOuterEdge,
-  type ZoomToFitArcFrame,
-} from '../../svghelpers/arc-frame.js';
+  SingleAxisInclinometer,
+  INCLINOMETER_WATCH_RADIUS,
+} from '../../building-blocks/single-axis-inclinometer/single-axis-inclinometer.js';
 
-const watchRadius = OUTER_RING_RADIUS;
-/** Half-side of the centre overlay viewBox in SVG units. */
-const CENTRE_HALF = 200;
+const watchRadius = INCLINOMETER_WATCH_RADIUS;
 
+export enum ObcPitchType {
+  /** Single arc scale on the right (default). */
+  singleScale = 'single-scale',
+  /** Right scale duplicated to the opposite (left) arc as well. */
+  dualScale = 'dual-scale',
+}
+
+/**
+ * `<obc-pitch>` — Pitch (trim) indicator with a side arc scale.
+ *
+ * Shows `pitch` against a watch arc centred on the right, with an average-pitch
+ * band and a rotating indicator. Supports an optional opposite-side scale
+ * (`dual-scale`), a centre readout (`hasReadout`), and a `regular`/`enhanced`
+ * palette.
+ *
+ * @element obc-pitch
+ */
 @customElement('obc-pitch')
-export class ObcPitch extends LitElement {
+export class ObcPitch extends SingleAxisInclinometer {
   @property({type: Number}) pitch = 0;
   @property({type: Number}) minAvgPitch = 0;
   @property({type: Number}) maxAvgPitch = 0;
   @property({type: String}) vesselImageSide: VesselImage = VesselImage.psvSide;
   @property({type: Number}) maxPitchAdvice: number | undefined = undefined;
   @property({type: Boolean}) triggerPitchAdvice = false;
-  @property({type: Boolean}) zoomToFitArc: boolean = false;
+  /** Readout label. Default `Pitch`. */
+  @property({type: String}) override label = 'Pitch';
+  /** Readout unit. Default `DEG`. */
+  @property({type: String}) override unit = 'DEG';
+  /** Number of fraction digits shown in the readout. Default `0`. */
+  @property({type: Number}) override fractionDigits = 0;
   /**
-   * Half-extent of the watch arc in degrees. The arc spans `90° ± arcAngle`
-   * and pitch values are placed at their true position within it. Default
-   * `45` reproduces the historical 90°-wide arc.
-   *
-   * Smaller values render a narrower arc. Combined with `zoomToFitArc`, the
-   * narrower arc is enlarged (its radius grows) on its own layer, while the
-   * vessel image and the rotating indicator line stay at their natural size
-   * and position on a separate central layer. The two layers are
-   * intentionally visually disconnected.
+   * `single-scale` shows one arc on the right (default); `dual-scale` also
+   * shows the scale on the opposite (left) arc (the indicator's opposite end).
    */
-  @property({type: Number}) arcAngle: number = 45;
+  @property({type: String}) type: ObcPitchType = ObcPitchType.singleScale;
 
-  private _arcFrame: ZoomToFitArcFrame | undefined;
-
-  override render() {
-    const arcAngle = normalizeArcAngle(this.arcAngle, 45);
-    // Outer thin-ring complement endpoints. The arc band is centred at
-    // watch angle 90° (right side) and spans 90° ± arcAngle, so its edges
-    // sit at SVG coords (R·cos(arcAngle), ±R·sin(arcAngle)).
-    const x = watchRadius * Math.cos((arcAngle * Math.PI) / 180);
-    const y = watchRadius * Math.sin((arcAngle * Math.PI) / 180);
-
-    const areas = [
+  protected override get centerAngle(): number {
+    return 90;
+  }
+  protected override get value(): number {
+    return this.pitch;
+  }
+  protected override get avgMin(): number {
+    return this.minAvgPitch;
+  }
+  protected override get avgMax(): number {
+    return this.maxAvgPitch;
+  }
+  protected override get maxAdvice(): number | undefined {
+    return this.maxPitchAdvice;
+  }
+  protected override get triggerAdvice(): boolean {
+    return this.triggerPitchAdvice;
+  }
+  protected override get defaultAdviceOuter(): number {
+    return 30;
+  }
+  protected override get isDualScale(): boolean {
+    return this.type === ObcPitchType.dualScale;
+  }
+  protected override get scaleVessels(): WatchVessel[] {
+    return [
       {
-        startAngle: 90 - arcAngle,
-        endAngle: 90 + arcAngle,
-        roundOutsideCut: true,
-        roundInsideCut: true,
+        size: VesselImageSize.large,
+        vesselImage: this.vesselImageSide,
+        transform: `rotate(${this.pitch}deg)`,
       },
     ];
+  }
 
-    if (this.zoomToFitArc) {
-      const ext = 48;
-      const targetSize = (176 + ext) * 2;
-      // Pure arc-only fit (compass-sector style). The viewBox is centred on
-      // the enlarged arc bbox, so the origin (centre of the instrument) is
-      // typically OUTSIDE this viewBox. The vessel and central elements
-      // therefore need their own normal-scale layer.
-      const baseFrame = computeZoomToFitArcFrame({
-        areas,
-        outerRadius: OUTER_RING_RADIUS,
-        innerRadius: innerRingRadiusFor(WatchCircleType.double),
-        extension: ext,
-        targetSize,
-      });
-      // Push the enlarged arc to the side so its outer edge aligns with the
-      // central layer's outer ring. Direction is derived from the arc bbox
-      // centre so left/right/top/bottom is handled automatically.
-      this._arcFrame = shiftArcFrameToOuterEdge(
-        baseFrame,
-        OUTER_RING_RADIUS + baseFrame.radiusOffset,
-        OUTER_RING_RADIUS,
-        CENTRE_HALF
-      );
-    } else {
-      this._arcFrame = undefined;
-    }
-
-    const needleTransform = `rotate(${this.pitch} 0 0)`;
-    const centreViewBox = `-${CENTRE_HALF} -${CENTRE_HALF} ${CENTRE_HALF * 2} ${CENTRE_HALF * 2}`;
-    const vesselScale = 224 / 160;
-
-    return html`
-      <div class="container">
-        <svg viewBox="${centreViewBox}">
-          ${svg`
-            <line
-              x1="-${watchRadius}"
-              y1="0"
-              x2="${watchRadius}"
-              y2="0"
-              stroke="var(--instrument-frame-tertiary-color)"
-            />
-            <line
-              x1="0"
-              y1="0"
-              x2="${watchRadius - 10}"
-              y2="0"
-              stroke="var(--instrument-enhanced-secondary-color)"
-              transform="${needleTransform}"
-            />
-            <g
-              style="transform: rotate(${this.pitch}deg) scale(${vesselScale}) translate(-80px, -80px);"
-            >
-              ${vesselImages[this.vesselImageSide]}
-            </g>
-            ${
-              this.zoomToFitArc
-                ? nothing
-                : svg`
-                    <path
-                      d="M ${x} ${y} A ${watchRadius} ${watchRadius} 0 1 1 ${x} ${-y}"
-                      fill="none"
-                      stroke="var(--instrument-frame-tertiary-color)"
-                    />
-                  `
-            }
-          `}
-        </svg>
-        <obc-watch
-          .watchCircleType=${WatchCircleType.double}
-          .zoomToFitArc=${this.zoomToFitArc}
-          .arcFrame=${this._arcFrame}
-          .areas=${areas}
-          .barAreas=${[
-            {
-              startAngle: 90 + this.minAvgPitch,
-              endAngle: 90 + this.maxAvgPitch,
-              fillColor: 'var(--instrument-enhanced-tertiary-color)',
-            },
-          ]}
-          .needles=${[
-            {
-              angle: 90 + this.pitch,
-              fillColor: 'var(--instrument-enhanced-secondary-color)',
-              strokeColor: 'var(--border-silhouette-color)',
-            },
-          ]}
-          .vessels=${this.zoomToFitArc
-            ? []
-            : [
-                {
-                  size: VesselImageSize.large,
-                  vesselImage: this.vesselImageSide,
-                  transform: `rotate(${this.pitch}deg)`,
-                },
-              ]}
-          .tickmarks=${[
-            {
-              angle: 90,
-              type: TickmarkType.main,
-            },
-          ]}
-          .advices=${this.advices}
-        ></obc-watch>
-      </div>
+  protected override renderIndicator(
+    needleTransform: string
+  ): SVGTemplateResult {
+    return svg`
+      <line
+        x1="0"
+        y1="0"
+        x2="${watchRadius - 10}"
+        y2="0"
+        stroke="${this.indicatorColor}"
+        transform="${needleTransform}"
+      />
     `;
   }
 
-  private get advices(): AngleAdviceRaw[] {
-    const advices = [];
-    if (this.maxPitchAdvice !== undefined) {
-      const arcAngle = normalizeArcAngle(this.arcAngle, 45);
-      // Caution band fills the remainder of the arc out to a default 30°
-      // caution range (clamped to the arc edge).
-      const outer = Math.min(arcAngle, 30);
-      const inner = Math.min(this.maxPitchAdvice, outer);
-      const state = this.triggerPitchAdvice
-        ? AdviceState.triggered
-        : AdviceState.regular;
-      advices.push({
-        minAngle: 90 - outer,
-        maxAngle: 90 - inner,
-        type: AdviceType.caution,
-        state: state,
-        hideMinTickmark: true,
-      });
-      advices.push({
-        minAngle: 90 + inner,
-        maxAngle: 90 + outer,
-        type: AdviceType.caution,
-        state: state,
-        hideMaxTickmark: true,
-      });
-    }
-    return advices;
+  protected override renderVesselOverlay(
+    vesselScale: number
+  ): SVGTemplateResult {
+    return svg`
+      <g
+        style="transform: rotate(${this.pitch}deg) scale(${vesselScale}) translate(-80px, -80px);"
+      >
+        ${this.zoomToFitArc ? vesselImages[this.vesselImageSide] : nothing}
+      </g>
+    `;
   }
 
-  static override styles = css`
-    * {
-      box-sizing: border-box;
+  protected override renderComplement(arcAngle: number): SVGTemplateResult {
+    // Outer thin-ring complement endpoints. The arc band is centred at watch
+    // angle 90° (right side) and spans 90° ± arcAngle, so its edges sit at SVG
+    // coords (R·cos(arcAngle), ±R·sin(arcAngle)).
+    const x = watchRadius * Math.cos((arcAngle * Math.PI) / 180);
+    const y = watchRadius * Math.sin((arcAngle * Math.PI) / 180);
+    if (this.type === ObcPitchType.dualScale) {
+      return svg`
+        <path
+          d="M ${x} ${-y} A ${watchRadius} ${watchRadius} 0 0 0 ${-x} ${-y}"
+          fill="none"
+          stroke="var(--instrument-frame-tertiary-color)"
+        />
+        <path
+          d="M ${x} ${y} A ${watchRadius} ${watchRadius} 0 0 1 ${-x} ${y}"
+          fill="none"
+          stroke="var(--instrument-frame-tertiary-color)"
+        />
+      `;
     }
-
-    .container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-
-    .container > * {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-  `;
+    return svg`
+      <path
+        d="M ${x} ${y} A ${watchRadius} ${watchRadius} 0 1 1 ${x} ${-y}"
+        fill="none"
+        stroke="var(--instrument-frame-tertiary-color)"
+      />
+    `;
+  }
 }
 
 declare global {

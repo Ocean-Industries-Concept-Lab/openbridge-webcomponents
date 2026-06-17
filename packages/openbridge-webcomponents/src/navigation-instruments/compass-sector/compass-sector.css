@@ -16,6 +16,13 @@
   height: 100%;
 }
 
+.container > .readout {
+  left: 50%;
+  width: auto;
+  height: auto;
+  transform: translate(-50%, -50%);
+}
+
 :host {
   display: block;
   width: 100%;

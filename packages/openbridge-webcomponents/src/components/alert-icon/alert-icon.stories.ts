@@ -97,3 +97,44 @@ export const AlarmOutline: Story = {
     outline: true,
   },
 };
+
+export const LevelCritical: Story = {
+  args: {
+    type: AlertType.LevelCritical,
+    acknowledged: false,
+    active: true,
+    outline: true,
+  },
+};
+
+export const LevelHigh: Story = {
+  args: {
+    type: AlertType.LevelHigh,
+    acknowledged: false,
+    active: true,
+  },
+};
+
+export const LevelMedium: Story = {
+  args: {
+    type: AlertType.LevelMedium,
+    acknowledged: false,
+    active: true,
+  },
+};
+
+export const LevelLow: Story = {
+  args: {
+    type: AlertType.LevelLow,
+    acknowledged: false,
+    active: true,
+  },
+};
+
+export const LevelDiagnostic: Story = {
+  args: {
+    type: AlertType.LevelDiagnostic,
+    acknowledged: false,
+    active: true,
+  },
+};
