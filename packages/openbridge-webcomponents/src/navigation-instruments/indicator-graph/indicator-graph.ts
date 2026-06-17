@@ -154,13 +154,12 @@ export class ObcIndicatorGraph extends LitElement {
     if (!this.uplot) {
       return;
     }
-    const stroke = this._getStrokeColor();
-    this.uplot.setSeries(1, {
-      // @ts-expect-error - stroke is not a property of the Series interface
-      stroke: stroke,
-      width: this._getStrokeWidth(),
-      points: {show: false},
-    });
+    const series = this.uplot.series[1];
+    // setSeries only applies `show`/`focus`, so stroke and width are mutated
+    // directly on the series and applied with a redraw.
+    series.stroke = () => this._getStrokeColor();
+    series.width = this._getStrokeWidth();
+    this.uplot.redraw();
   }
 
   private updateY() {
