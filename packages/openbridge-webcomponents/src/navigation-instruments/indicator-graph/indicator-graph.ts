@@ -15,10 +15,11 @@ export enum ObcIndicatorGraphPriority {
   enhanced = 'enhanced',
 }
 
+// showZeroLine is defaulted to true
 export interface ObcIndicatorGraphLayout {
   size?: ObcIndicatorGraphSize;
   priority?: ObcIndicatorGraphPriority;
-  y?: {min?: number; max?: number};
+  y?: {min?: number; max?: number; showZeroLine?: boolean};
 }
 
 /**
@@ -39,10 +40,10 @@ export class ObcIndicatorGraph extends LitElement {
   private chart!: HTMLDivElement;
 
   @state()
-  private y: number = 24;
+  private y: number | undefined = undefined;
 
   @state()
-  private zeroLineY: number = 0;
+  private zeroLineY: number | undefined = undefined;
 
   private uplot: uPlot | null = null;
   private resizeObserver: ResizeObserver | null = null;
@@ -115,7 +116,7 @@ export class ObcIndicatorGraph extends LitElement {
     const {min: minY, max: maxY} = this.layout.y ?? {};
     const range = maxY ?? initMax - (minY ?? initMin);
     let min = minY ?? initMin - range * 0.1;
-    if (minY === undefined) {
+    if (minY === undefined && this.layout.y?.showZeroLine !== false) {
       min = Math.min(0, min);
     }
     return [min, maxY ?? initMax + range * 0.1] as [number, number];
@@ -169,7 +170,11 @@ export class ObcIndicatorGraph extends LitElement {
     const lastY = this.data[1][this.data[1].length - 1];
     // @ts-expect-error - valToPct is not a property of the Scale interface
     const yRatio = this.uplot.scales.y.valToPct(lastY);
-    this.y = yRatio * this.chart.clientHeight;
+    if (yRatio < 0 || yRatio > 1) {
+      this.y = undefined;
+    } else {
+      this.y = yRatio * this.chart.clientHeight;
+    }
     this.updateZeroLine();
   }
 
@@ -179,6 +184,10 @@ export class ObcIndicatorGraph extends LitElement {
     }
     // @ts-expect-error - valToPct is not a property of the Scale interface
     const yRatio = this.uplot.scales.y.valToPct(0);
+    if (yRatio < 0 || yRatio > 1) {
+      this.zeroLineY = undefined;
+      return;
+    }
     this.zeroLineY = yRatio * this.chart.clientHeight;
   }
 
@@ -198,15 +207,15 @@ export class ObcIndicatorGraph extends LitElement {
       >
         <div
           id="zero-line"
-          style="transform: translateY(${-this.zeroLineY}px);
-          display: ${this.zeroLineY > -0.5 ? 'block' : 'none'};
+          style="transform: translateY(${-(this.zeroLineY ?? 0)}px);
+          display: ${this.zeroLineY !== undefined ? 'block' : 'none'};
           "
         ></div>
         <div
           id="dot"
-          style="transform: translateY(${-this.y}px);
-        display: ${this.y > -0.5 ? 'block' : 'none'};
-        "
+          style="transform: translateY(${-(this.y ?? 0)}px);
+          display: ${this.y !== undefined ? 'block' : 'none'};
+          "
         ></div>
       </div>
     `;
