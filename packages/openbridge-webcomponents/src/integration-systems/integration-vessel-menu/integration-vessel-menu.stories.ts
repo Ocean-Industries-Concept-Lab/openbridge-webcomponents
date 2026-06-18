@@ -148,7 +148,6 @@ type IntegrationVesselMenuTemplate = (
   args: IntegrationVesselMenuArgs
 ) => ReturnType<typeof html>;
 
-// The menu sizes to its content; section visibility is driven by the has* args.
 const template: IntegrationVesselMenuTemplate = (args) => html`
   <obc-integration-vessel-menu
     style="width: 400px;"
