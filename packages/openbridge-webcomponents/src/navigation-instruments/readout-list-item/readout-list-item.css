@@ -7,246 +7,499 @@
   width: 100%;
 }
 
+/* ---------- Root / surface ----------
+ * `.root` is the touch target (a <button> when clickable, otherwise a <div>).
+ * `.surface` is the visible box that carries padding, corner radius, the
+ * data-quality background/border, and — when clickable — the flat interaction
+ * states. */
 .root {
+  display: block;
+  inline-size: 100%;
+  margin: 0;
+  /* Neutralise the native <button> chrome (default padding + appearance) when
+     `.root` is the clickable touch target, so clickable rows don't inset their
+     `.surface` and misalign with non-clickable `<div>` rows. */
+  padding: 0;
+  border: none;
+  background: none;
+  appearance: none;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+}
+
+.root.clickable {
+  cursor: pointer;
+  /* prettier-ignore */
+  @mixin style style=flat visibleWrapperClass=.surface;
+}
+
+.root.clickable:focus {
+  outline: none;
+}
+
+/* Flip-flop: animate the value↔setpoint cap-height swap by forwarding obc-textbox's
+   opt-in size-transition var. 300ms matches the instrument setpoint marker
+   (svghelpers/setpoint.ts). Override via `--obc-readout-list-item-flip-flop-duration`. */
+.root.flip-flop {
+  --obc-textbox-size-transition: var(
+    --obc-readout-list-item-flip-flop-duration,
+    300ms
+  );
+}
+
+.surface {
+  display: block;
+  inline-size: 100%;
+  border-radius: var(--global-border-radius-border-radius-base);
+}
+
+/* Clickable corner variants. The `.clickable` qualifier is redundant for
+   matching (a `border-*` class is only ever set alongside `.clickable`) but
+   raises specificity to (0,4,0) so the interactive corner shape wins over the
+   data-quality rules below — which also target `.surface` at (0,3,0) — when a
+   row is both clickable and low-integrity/invalid. Standalone data-quality rows
+   keep their own radius. */
+.root.clickable.border-squared .surface {
+  border-radius: 0;
+}
+.root.clickable.border-round-corners .surface {
+  border-radius: var(--global-border-radius-border-radius-floating);
+}
+.root.clickable.border-round .surface {
+  border-radius: var(--global-border-radius-border-radius-round);
+}
+
+/* ---------- Content row ----------
+ * Label on the left, value/unit cluster on the right, optional source after a
+ * trailing divider. All segments bottom-align so cap heights sit on a shared
+ * baseline. */
+.content {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+
+/* Reserve the value cap-height per tier so the row height and the bottom
+   baseline stay constant regardless of which parts (label / value / unit / src /
+   setpoint / advice / icons) are present. */
+.size-small .content {
+  min-block-size: var(
+    --global-typography-instrument-value-regular-container-height
+  );
+}
+.size-medium .content {
+  min-block-size: var(
+    --global-typography-instrument-value-medium-container-height
+  );
+}
+.size-large .content {
+  min-block-size: var(
+    --global-typography-instrument-value-large-container-height
+  );
+}
+
+.label-container {
   display: inline-flex;
   align-items: flex-end;
-  border-radius: var(--global-border-radius-border-radius-base);
-  width: 100%;
+  gap: var(--global-size-spacing-target-padding);
+  flex: none;
+  min-inline-size: 0;
+}
 
-  .content {
-    display: inline-flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    flex: 1 1 auto;
-    min-width: 0;
-    max-width: none;
-    width: 100%;
-  }
+.label-stack {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  min-inline-size: 0;
+}
 
-  .label-container {
-    display: inline-flex;
-    align-items: flex-end;
-    gap: var(--global-size-spacing-target-padding);
-    flex: none;
-  }
+.value-area {
+  display: inline-flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
 
-  .leading-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--element-neutral-color);
-  }
+.value-cluster {
+  display: inline-flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
 
-  .label-stack {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-end;
-  }
+.unit-area {
+  display: inline-flex;
+  align-items: flex-end;
+}
 
-  .label-inline {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--global-size-spacing-target-padding);
-  }
+/* ---------- Readout building block (advice / setpoint / value) ---------- */
+.block {
+  display: inline-flex;
+  align-items: flex-end;
+}
 
-  .label {
-    @mixin font-instrument-label;
-    @mixin font-instrument-label-box;
-    font-size: var(--global-typography-instrument-label-font-size);
-    line-height: var(--global-typography-instrument-label-line-height);
-    color: var(--element-inactive-color);
-  }
+/* Number + its (setpoint/advice) degree glyph, hugging with no gap — the
+   `.block` gap only separates the icon from this group. */
+.block-content {
+  display: inline-flex;
+  align-items: flex-end;
+}
 
-  .unit,
-  .source {
-    @mixin font-instrument-unit;
-    @mixin font-instrument-unit-box;
-    font-size: var(--global-typography-instrument-unit-font-size);
-    line-height: var(--global-typography-instrument-unit-line-height);
-  }
+.block-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  color: inherit;
+  /* Centre the icon against the block's text rather than bottom-aligning it (the
+     block is flex-end). Matters for the value block, whose text is taller than
+     the icon, so the value icon lines up with the number like the smaller
+     setpoint/advice icons do. */
+  align-self: center;
+}
 
-  .unit {
-    color: var(--element-inactive-color);
-  }
+.block-icon obi-input-right,
+.block-icon obi-notification-advice,
+.block-icon ::slotted(*) {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
 
-  .source {
-    color: var(--element-neutral-color);
-  }
+.hinted-zero {
+  color: var(
+    --obc-readout-list-item-hinted-color,
+    var(--element-inactive-color)
+  );
+}
 
-  .value-container {
-    display: inline-flex;
-    align-items: flex-end;
-    justify-content: flex-end;
-    flex: 1 1 auto;
-    min-width: 0;
-  }
+/* ---------- Text colours (overridable via custom properties) ----------
+ * obc-textbox does not set its own colour, so it inherits these. */
+.block-value {
+  color: var(--obc-readout-list-item-value-color, var(--element-neutral-color));
+}
+.block-value.tone-enhanced {
+  color: var(
+    --obc-readout-list-item-value-enhanced-color,
+    var(--element-neutral-enhanced-color)
+  );
+}
+.block-setpoint {
+  color: var(
+    --obc-readout-list-item-setpoint-color,
+    var(--instrument-enhanced-secondary-color)
+  );
+  /* Flip-flop emphasis + pop-up fade animate at 100ms. */
+  transition:
+    opacity 100ms ease,
+    color 100ms ease;
+}
+/* Pop-up: fade the setpoint out once value === setpoint, keeping its space so
+   the value stays column-aligned. */
+.block-setpoint.is-hiding {
+  opacity: 0;
+}
+.block-setpoint.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+/* Touch / focus state: the setpoint triangle takes the marker's focus look — a
+   pale fill (--base-blue-100) with a dark 1px edge (--element-neutral-enhanced),
+   mirroring `svghelpers/setpoint.ts` focus (fill base-blue-100 + 2px stroke).
+   The glyph icon is `fill: currentColor` and can't take a CSS `stroke`, so the
+   edge is layered drop-shadows. The setpoint number keeps its normal, readable
+   colour. */
+.block-setpoint.touch {
+  --_touch-outline: var(
+    --obc-readout-list-item-setpoint-touch-outline-color,
+    var(--element-neutral-enhanced-color)
+  );
+}
+.block-setpoint.touch .block-icon {
+  color: var(
+    --obc-readout-list-item-setpoint-touch-color,
+    var(--base-blue-100)
+  );
+  filter: drop-shadow(1px 0 0 var(--_touch-outline))
+    drop-shadow(-1px 0 0 var(--_touch-outline))
+    drop-shadow(0 1px 0 var(--_touch-outline))
+    drop-shadow(0 -1px 0 var(--_touch-outline));
+}
+.block-advice {
+  color: var(
+    --obc-readout-list-item-advice-color,
+    var(--element-neutral-color)
+  );
+}
 
-  .value-wrap {
-    display: inline-flex;
-    align-items: flex-end;
-    justify-content: flex-end;
-  }
+.label {
+  color: var(
+    --obc-readout-list-item-label-color,
+    var(--element-inactive-color)
+  );
+}
+.unit {
+  color: var(--obc-readout-list-item-unit-color, var(--element-inactive-color));
+}
+.source {
+  color: var(
+    --obc-readout-list-item-source-color,
+    var(--element-neutral-color)
+  );
+}
 
-  .value-cluster {
-    display: inline-flex;
-    align-items: flex-end;
-    justify-content: flex-end;
-    gap: var(
-      --instrument-components-readout-new-list-item-medium-value-container-gap
-    );
-  }
+/* ---------- Per-block data quality ----------
+ * Independent of (and nests inside) the row-level data-quality frame. Uses
+ * `outline` (not `border`) so the chip never shifts the block's width — the
+ * value stays column-aligned across rows. */
+.block.data-low-integrity,
+.block.data-invalid,
+.source.data-low-integrity,
+.source.data-invalid {
+  outline: 1px solid;
+  border-radius: var(--global-border-radius-border-radius-check);
+}
+.block.data-low-integrity,
+.source.data-low-integrity {
+  background: var(--alert-low-integrity-background-color);
+  outline-color: var(--alert-low-integrity-border-color);
+}
+.block.data-invalid,
+.source.data-invalid {
+  background: var(--alert-invalid-background-color);
+  outline-color: var(--alert-invalid-border-color);
+}
 
-  .value-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: inherit;
-  }
+.leading-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  color: var(--element-neutral-color);
+}
+.leading-icon ::slotted(*) {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
 
-  .divider {
-    flex: none;
-    inline-size: 1px;
-    background-color: var(--border-outline-color);
-    align-self: stretch;
-  }
+.divider {
+  flex: none;
+  inline-size: 1px;
+  background-color: var(--border-outline-color);
+  align-self: stretch;
+}
 
-  .unit-trailing {
-    display: inline-flex;
-    align-items: flex-end;
-  }
+/* ---------- Value↔unit gap & degree column ----------
+ * Default 2px between the value digits and the unit. A degree (or a
+ * hasDegreeSpacer reserve) replaces the 2px with a cap-height degree column
+ * whose width scales with the value size, so value digits + units align across
+ * degree / no-degree rows of the same value size. */
+.value-unit-gap {
+  flex: none;
+  inline-size: var(
+    --instrument-components-readout-new-general-horizontal-trim-padding
+  );
+}
 
-  .source-trailing {
-    display: inline-flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding-inline: calc(var(--global-size-spacing-target-padding) / 2);
-  }
+.degree-column {
+  flex: none;
+  display: inline-flex;
+  align-items: flex-end;
+  justify-content: center;
+  inline-size: var(--_obc-readout-list-item-degree-width, 0);
+  overflow: clip;
+  color: var(--obc-readout-list-item-value-color, var(--element-neutral-color));
+}
+.degree-column.tone-enhanced {
+  color: var(
+    --obc-readout-list-item-value-enhanced-color,
+    var(--element-neutral-enhanced-color)
+  );
+}
+/* Setpoint/advice degree glyphs inherit their block's colour. */
+.degree-column.degree-inherit {
+  color: inherit;
+}
+.degree-column.degree-xs {
+  --_obc-readout-list-item-degree-width: var(
+    --global-typography-instrument-value-small-degree-unit-width
+  );
+}
+.degree-column.degree-s {
+  --_obc-readout-list-item-degree-width: var(
+    --global-typography-instrument-value-regular-degree-unit-width
+  );
+}
+.degree-column.degree-m {
+  --_obc-readout-list-item-degree-width: var(
+    --global-typography-instrument-value-medium-degree-unit-width
+  );
+}
+.degree-column.degree-l,
+.degree-column.degree-xl {
+  --_obc-readout-list-item-degree-width: var(
+    --global-typography-instrument-value-large-degree-unit-width
+  );
+}
 
-  &.size-base {
-    padding-inline: var(
-      --instrument-components-readout-new-list-item-regular-container-padding-horizontal
-    );
-    padding-block: 0;
+/* Degree spacer: rendered AFTER the unit on a non-degree row that sets
+   hasDegreeSpacer. Its width (degree-compensation-padding = degree-column width
+   minus the 2px value↔unit gap) shifts the unit left so the row's value digits
+   stay aligned with degree rows in the same column. */
+.degree-spacer {
+  flex: none;
+  align-self: stretch;
+  inline-size: var(--_obc-readout-list-item-degree-spacer-width, 0);
+}
+.size-small .degree-spacer {
+  --_obc-readout-list-item-degree-spacer-width: var(
+    --instrument-components-readout-new-list-item-regular-degree-compensation-padding
+  );
+}
+.size-medium .degree-spacer {
+  --_obc-readout-list-item-degree-spacer-width: var(
+    --instrument-components-readout-new-list-item-medium-degree-compensation-padding
+  );
+}
+.size-large .degree-spacer {
+  --_obc-readout-list-item-degree-spacer-width: var(
+    --instrument-components-readout-new-list-item-large-degree-compensation-padding
+  );
+}
 
-    .content {
-      gap: var(
-        --instrument-components-readout-new-list-item-regular-content-container-gap
-      );
-    }
+/* ---------- Size tiers ----------
+ * Public small/medium/large map to the design token regular/medium/large
+ * tiers. */
+.size-small .surface {
+  padding-inline: var(
+    --instrument-components-readout-new-list-item-regular-container-padding-horizontal
+  );
+  padding-block: var(
+    --instrument-components-readout-new-list-item-regular-container-padding-vertical
+  );
+}
+.size-small .content {
+  gap: var(
+    --instrument-components-readout-new-list-item-regular-content-container-gap
+  );
+}
+.size-small .value-cluster {
+  gap: var(
+    --instrument-components-readout-new-list-item-regular-value-container-gap
+  );
+}
+.size-small .block {
+  gap: var(--instrument-components-readout-new-general-regular-icon-gap);
+}
+.size-small .block-icon,
+.size-small .leading-icon {
+  inline-size: var(
+    --instrument-components-readout-new-general-regular-icon-size
+  );
+  block-size: var(
+    --instrument-components-readout-new-general-regular-icon-size
+  );
+}
+.size-small .divider {
+  block-size: var(
+    --global-typography-instrument-value-regular-container-height
+  );
+}
 
-    .value-cluster {
-      gap: var(
-        --instrument-components-readout-new-list-item-regular-value-container-gap
-      );
-    }
+.size-medium .surface {
+  padding-inline: var(
+    --instrument-components-readout-new-list-item-medium-container-padding-horizontal
+  );
+  padding-block: var(
+    --instrument-components-readout-new-list-item-medium-container-padding-vertical
+  );
+}
+.size-medium .content {
+  gap: var(
+    --instrument-components-readout-new-list-item-medium-content-container-gap
+  );
+}
+.size-medium .value-cluster {
+  gap: var(
+    --instrument-components-readout-new-list-item-medium-value-container-gap
+  );
+}
+.size-medium .block {
+  gap: var(--instrument-components-readout-new-general-medium-icon-gap);
+}
+.size-medium .block-icon,
+.size-medium .leading-icon {
+  inline-size: var(
+    --instrument-components-readout-new-general-medium-icon-size
+  );
+  block-size: var(--instrument-components-readout-new-general-medium-icon-size);
+}
+.size-medium .divider {
+  block-size: var(--global-typography-instrument-value-medium-container-height);
+}
 
-    &.stacking-leading-src .content {
-      gap: var(--global-size-spacing-target-padding);
-    }
+.size-large .surface {
+  padding-inline: var(
+    --instrument-components-readout-new-list-item-large-container-padding-horizontal
+  );
+  padding-block: var(
+    --instrument-components-readout-new-list-item-large-container-padding-vertical
+  );
+  min-block-size: var(
+    --instrument-components-readout-new-list-item-large-min-height
+  );
+}
+.size-large .content {
+  gap: var(--instrument-components-readout-new-list-item-large-content-gap);
+}
+.size-large .value-cluster {
+  gap: var(--instrument-components-readout-new-list-item-large-value-gap);
+}
+.size-large .block {
+  gap: var(--instrument-components-readout-new-general-large-icon-gap);
+}
+.size-large .block-icon,
+.size-large .leading-icon {
+  inline-size: var(--instrument-components-readout-new-general-large-icon-size);
+  block-size: var(--instrument-components-readout-new-general-large-icon-size);
+}
+.size-large .divider {
+  block-size: var(--global-typography-instrument-value-large-container-height);
+}
 
-    .divider {
-      block-size: var(
-        --global-typography-instrument-value-regular-container-height
-      );
-    }
-  }
+/* ---------- Stacking ----------
+ * leading-unit / leading-src move the unit / source up beside the label and
+ * suppress the trailing variant. (Handled in markup; these rules tighten the
+ * label-stack gap.) */
+.stacking-leading-src .content {
+  gap: var(--global-size-spacing-target-padding);
+}
 
-  &.size-priority {
-    padding-inline: var(
-      --instrument-components-readout-new-list-item-medium-container-padding-horizontal
-    );
-    padding-block: var(
-      --instrument-components-readout-new-list-item-medium-container-padding-vertical
-    );
-
-    .content {
-      gap: var(
-        --instrument-components-readout-new-list-item-medium-content-container-gap
-      );
-    }
-
-    .divider {
-      block-size: var(
-        --global-typography-instrument-value-medium-container-height
-      );
-    }
-  }
-
-  &.size-enhanced {
-    padding-inline: var(
-      --instrument-components-readout-new-list-item-large-container-padding-horizontal
-    );
-    padding-block: var(
-      --instrument-components-readout-new-list-item-large-container-padding-vertical
-    );
-
-    .content {
-      gap: var(--instrument-components-readout-new-list-item-large-content-gap);
-    }
-
-    .value-cluster {
-      gap: var(--instrument-components-readout-new-list-item-large-value-gap);
-    }
-
-    .divider {
-      block-size: var(
-        --global-typography-instrument-value-large-container-height
-      );
-    }
-  }
-
-  &.size-enhanced.stacking-leading-unit {
-    .label-container {
-      align-items: center;
-    }
-
-    .label-stack {
-      justify-content: flex-end;
-    }
-
-    .unit-leading {
-      margin-top: 0;
-    }
-  }
-
-  &.stacking-leading-unit {
-    .unit-trailing {
-      display: none;
-    }
-  }
-
-  &.stacking-leading-src {
-    .source-inline {
-      display: inline-flex;
-      align-items: center;
-      justify-content: flex-end;
-    }
-
-    :is(.divider, .source-trailing) {
-      display: none;
-    }
-  }
-
-  &:is(.data-low-integrity, .data-invalid) {
-    background: var(--_obc-readout-list-item-data-background);
-    border: 1px solid var(--_obc-readout-list-item-data-border);
-    border-radius: 4px;
-  }
-
-  &.data-low-integrity {
-    --_obc-readout-list-item-data-background: var(
-      --alert-low-integrity-background-color
-    );
-    --_obc-readout-list-item-data-border: var(
-      --alert-low-integrity-border-color
-    );
-  }
-
-  &.data-invalid {
-    --_obc-readout-list-item-data-background: var(
-      --alert-invalid-background-color
-    );
-    --_obc-readout-list-item-data-border: var(--alert-invalid-border-color);
-  }
+/* ---------- Data quality ----------
+ * Orthogonal to the alert frame — both can apply at once. */
+.root.data-low-integrity .surface,
+.root.data-invalid .surface {
+  /* `outline` (not `border`) so the data-quality frame does not inset the
+     content by 1px — keeps the row's value column-aligned with unframed rows.
+     Matches the per-block data-quality rules. */
+  outline: 1px solid var(--_obc-readout-list-item-data-border);
+  background: var(--_obc-readout-list-item-data-background);
+  border-radius: var(--global-border-radius-border-radius-check);
+}
+.root.data-low-integrity {
+  --_obc-readout-list-item-data-background: var(
+    --alert-low-integrity-background-color
+  );
+  --_obc-readout-list-item-data-border: var(--alert-low-integrity-border-color);
+}
+.root.data-invalid {
+  --_obc-readout-list-item-data-background: var(
+    --alert-invalid-background-color
+  );
+  --_obc-readout-list-item-data-border: var(--alert-invalid-border-color);
 }

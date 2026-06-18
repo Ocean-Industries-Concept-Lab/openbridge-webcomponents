@@ -1,11 +1,16 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html, nothing} from 'lit';
-import {useArgs} from 'storybook/preview-api';
+import {userEvent} from 'storybook/test';
+import {gsap} from 'gsap';
 import {
   ReadoutListItemSize,
   ReadoutListItemStacking,
-  ReadoutListItemDataState,
   ReadoutListItemPriority,
+  ReadoutListItemDataQuality,
+  ReadoutListItemBorder,
+  ReadoutListItemSetpointInteraction,
+  ReadoutValueWeight,
+  type ReadoutListItemOptions,
 } from './readout-list-item.js';
 import type {AlertFrameConfig} from '../../components/alert-frame/alert-frame.js';
 import {
@@ -15,216 +20,168 @@ import {
 import {AlertType} from '../../types.js';
 import './readout-list-item.js';
 import '../../icons/icon-placeholder.js';
+import '../azimuth-thruster/azimuth-thruster.js';
+import {InstrumentState, Priority} from '../types.js';
+
+const NONE = 'none';
 
 type ReadoutListItemStoryArgs = {
-  size: ReadoutListItemSize;
-  stacking: ReadoutListItemStacking;
-  priority: ReadoutListItemPriority;
-  dataState: ReadoutListItemDataState;
-  alert: AlertFrameConfig | false;
-  hasSetpoint: boolean;
-  setpointValue: number;
-  hasLabel: boolean;
-  hasDegree: boolean;
-  hasUnit: boolean;
-  hasSource: boolean;
-  hasLeadingIcon: boolean;
-  hasValueIcon: boolean;
-  minValueLength: number;
-  hasHintedZeros: boolean;
+  // Primitives
   label: string;
   unit: string;
   src: string;
+  hasValue: boolean;
   value: number;
-  fractionDigits: number;
-  showZeroPadding: boolean;
-  labelOnly: boolean;
+  off: boolean;
+  hasSetpoint: boolean;
+  setpoint: number;
+  hasAdvice: boolean;
+  advice: number;
+  // Flattened options
+  'options.size': ReadoutListItemSize;
+  'options.priority': ReadoutListItemPriority;
+  'options.stacking': ReadoutListItemStacking;
+  'options.clickable': boolean;
+  'options.clickable.border': ReadoutListItemBorder;
+  'options.hasLeadingIcon': boolean;
+  'options.hasDegree': boolean;
+  'options.hasDegreeSpacer': boolean;
+  'options.fractionDigits': number;
+  'options.maxDigits': number;
+  'options.dataQuality': ReadoutListItemDataQuality | typeof NONE;
+  'options.value.weight': ReadoutValueWeight;
+  'options.value.hasIcon': boolean;
+  'options.value.hintedZeros': boolean;
+  'options.setpoint.interaction': ReadoutListItemSetpointInteraction;
+  'options.setpoint.touch': boolean;
+  'options.unit.spaceReserver': string;
 };
 
-type ReadoutShowcaseCase = {
-  label: string;
-  args: Partial<ReadoutListItemStoryArgs>;
+type ReadoutItemConfig = {
+  label?: string;
+  unit?: string;
+  src?: string;
+  hasValue?: boolean;
+  value?: number | null;
+  off?: boolean;
+  hasSetpoint?: boolean;
+  setpoint?: number;
+  hasAdvice?: boolean;
+  advice?: number;
+  options?: ReadoutListItemOptions;
+  hasLeadingIcon?: boolean;
+  hasValueIcon?: boolean;
 };
 
-type ReadoutShowcaseSection = {
+type ShowcaseCase = {label: string; config: ReadoutItemConfig};
+// `columns` pins the grid to a fixed column count so cases group logically
+// (e.g. one row per size, columns = the state variants) instead of `auto-fit`
+// packing different sizes onto the same line. Omit for a free-flowing grid.
+type ShowcaseSection = {
   title: string;
-  cases: ReadoutShowcaseCase[];
+  cases: ShowcaseCase[];
+  columns?: number;
 };
 
-const centeredCanvasDecorator = (story: () => unknown) => {
-  return html`
+const centeredCanvasDecorator = (story: () => unknown) => html`
+  <div
+    style="min-height: 100vh; width: 100%; display: flex; align-items: center; padding: 24px;"
+  >
     <div
-      style="
-        min-height: 100vh;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 24px;
-      "
+      data-obc-theme="day"
+      style="background: var(--container-background-color); padding: 24px; width: 100%; box-sizing: border-box;"
     >
-      <div
-        data-obc-theme="day"
-        style="
-          background: var(--container-background-color);
-          padding: 24px;
-          width: 100%;
-          max-width: none;
-          display: block;
-          box-sizing: border-box;
-        "
-      >
-        ${story()}
-      </div>
+      ${story()}
     </div>
-  `;
-};
+  </div>
+`;
 
-const readoutShowcaseStyle = `
-  .obc-readout-list-item-sections {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 32px;
-    width: 100%;
+const showcaseStyle = `
+  .rli-sections { display: flex; flex-direction: column; gap: 32px; width: 100%; }
+  .rli-section { display: flex; flex-direction: column; gap: 16px; width: 100%; }
+  .rli-section-title {
+    margin: 0; font: 12px/1.2 var(--global-typography-ui-label-font-family, inherit);
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--element-neutral-color, #777);
   }
-
-  .obc-readout-list-item-section {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 16px;
-    width: 100%;
+  .rli-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, max-content));
+    gap: 20px; width: 100%; align-items: start; justify-items: stretch;
   }
-
-  .obc-readout-list-item-section-title {
-    margin: 0;
-    font: 12px/1.2 var(--global-typography-ui-label-font-family, inherit);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--element-neutral-color, #777);
+  .rli-card {
+    display: flex; flex-direction: column; gap: 10px; padding: 12px;
+    border-radius: 8px; background: rgba(0, 0, 0, 0.03);
   }
-
-  .obc-readout-list-item-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, max-content));
-    gap: 20px;
-    width: 100%;
-    align-items: start;
-    justify-content: center;
-    justify-items: center;
-  }
-
-  .obc-readout-list-item-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    width: 240px;
-    padding: 12px;
-    border-radius: 8px;
-    background: rgba(0, 0, 0, 0.03);
-  }
-
-  .obc-readout-list-item-title {
+  .rli-card-title {
     font: 10px/1.2 var(--global-typography-ui-label-font-family, inherit);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--element-neutral-color, #777);
-    text-align: center;
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--element-neutral-color, #777);
   }
 `;
 
-const defaultArgs: ReadoutListItemStoryArgs = {
-  size: ReadoutListItemSize.base,
-  stacking: ReadoutListItemStacking.trailingUnit,
-  priority: ReadoutListItemPriority.regular,
-  dataState: ReadoutListItemDataState.none,
-  alert: false,
-  hasSetpoint: false,
-  setpointValue: 123,
-  hasDegree: true,
-  hasUnit: true,
-  hasSource: false,
-  hasLeadingIcon: false,
-  hasValueIcon: false,
-  minValueLength: 0,
-  hasHintedZeros: false,
-  hasLabel: true,
-  label: 'Label',
-  unit: 'Unit',
-  src: 'SRC',
-  value: 123,
-  fractionDigits: 0,
-  showZeroPadding: false,
-  labelOnly: false,
-};
-
-function renderReadoutListItem(args: Partial<ReadoutListItemStoryArgs>) {
-  const resolved = {...defaultArgs, ...args};
+// Faithful render: data primitives pass through as-is, so an emptied Storybook
+// control (undefined) shows the nil state — value/setpoint/advice render a dash,
+// label/unit/src are omitted (and the row keeps its height). Used by the
+// Playground and the alignment column.
+function renderItem(config: ReadoutItemConfig) {
   return html`
     <obc-readout-list-item
-      .size=${resolved.size}
-      .stacking=${resolved.stacking}
-      .priority=${resolved.priority}
-      .dataState=${resolved.dataState}
-      .alert=${resolved.alert}
-      .hasSetpoint=${resolved.hasSetpoint}
-      .setpointValue=${resolved.setpointValue}
-      .hasLabel=${resolved.hasLabel}
-      .hasDegree=${resolved.hasDegree}
-      .hasUnit=${resolved.hasUnit}
-      .hasSource=${resolved.hasSource}
-      .hasLeadingIcon=${resolved.hasLeadingIcon}
-      .hasValueIcon=${resolved.hasValueIcon}
-      .minValueLength=${resolved.minValueLength}
-      .hasHintedZeros=${resolved.hasHintedZeros}
-      .label=${resolved.label}
-      .unit=${resolved.unit}
-      .src=${resolved.src}
-      .value=${resolved.value}
-      .fractionDigits=${resolved.fractionDigits}
-      .showZeroPadding=${resolved.showZeroPadding}
-      .labelOnly=${resolved.labelOnly}
+      .label=${config.label}
+      .unit=${config.unit}
+      .src=${config.src}
+      .hasValue=${config.hasValue ?? true}
+      .value=${config.value ?? null}
+      .off=${config.off ?? false}
+      .hasSetpoint=${config.hasSetpoint ?? false}
+      .setpoint=${config.setpoint}
+      .hasAdvice=${config.hasAdvice ?? false}
+      .advice=${config.advice}
+      .options=${config.options ?? {}}
     >
-      ${resolved.hasLeadingIcon
-        ? html`<span
-            slot="leading-icon"
-            style="display:block; width:100%; height:100%;"
-          >
-            <obi-placeholder></obi-placeholder>
-          </span>`
+      ${config.hasLeadingIcon
+        ? html`<obi-placeholder slot="leading-icon"></obi-placeholder>`
         : nothing}
-      ${resolved.hasValueIcon
-        ? html`<span
-            slot="value-icon"
-            style="display:block; width:100%; height:100%;"
-          >
-            <obi-placeholder></obi-placeholder>
-          </span>`
+      ${config.hasValueIcon
+        ? html`<obi-placeholder slot="value-icon"></obi-placeholder>`
         : nothing}
     </obc-readout-list-item>
   `;
 }
 
-function renderShowcaseSections(sections: ReadoutShowcaseSection[]) {
+// Showcase render: fills demo defaults (Label / Unit / SRC / 123 / 120 / 118)
+// for the static preset cards that omit those fields. The Playground uses
+// renderItem directly so emptying a control surfaces the nil state.
+function showcaseItem(config: ReadoutItemConfig) {
+  return renderItem({
+    ...config,
+    label: config.label ?? 'Label',
+    unit: config.unit ?? 'Unit',
+    src: config.src ?? 'SRC',
+    value: config.value === undefined ? 123 : config.value,
+    setpoint: config.setpoint ?? 120,
+    advice: config.advice ?? 118,
+  });
+}
+
+function renderShowcase(sections: ShowcaseSection[]) {
   return html`
     <style>
-      ${readoutShowcaseStyle}
+      ${showcaseStyle}
     </style>
-    <div class="obc-readout-list-item-sections">
+    <div class="rli-sections">
       ${sections.map(
         (section) => html`
-          <section class="obc-readout-list-item-section">
-            <h3 class="obc-readout-list-item-section-title">
-              ${section.title}
-            </h3>
-            <div class="obc-readout-list-item-grid">
+          <section class="rli-section">
+            <h3 class="rli-section-title">${section.title}</h3>
+            <div
+              class="rli-grid"
+              style=${section.columns
+                ? `grid-template-columns: repeat(${section.columns}, max-content);`
+                : nothing}
+            >
               ${section.cases.map(
                 (item) => html`
-                  <div class="obc-readout-list-item-card">
-                    <div class="obc-readout-list-item-title">${item.label}</div>
-                    ${renderReadoutListItem(item.args)}
+                  <div class="rli-card">
+                    <div class="rli-card-title">${item.label}</div>
+                    ${showcaseItem(item.config)}
                   </div>
                 `
               )}
@@ -236,123 +193,198 @@ function renderShowcaseSections(sections: ReadoutShowcaseSection[]) {
   `;
 }
 
+const defaultArgs: ReadoutListItemStoryArgs = {
+  label: 'Label',
+  unit: 'Unit',
+  src: 'SRC',
+  hasValue: true,
+  value: 123,
+  off: false,
+  hasSetpoint: false,
+  setpoint: 120,
+  hasAdvice: false,
+  advice: 118,
+  'options.size': ReadoutListItemSize.small,
+  'options.priority': ReadoutListItemPriority.regular,
+  'options.stacking': ReadoutListItemStacking.trailingUnit,
+  'options.clickable': false,
+  'options.clickable.border': ReadoutListItemBorder.squared,
+  'options.hasLeadingIcon': false,
+  'options.hasDegree': true,
+  'options.hasDegreeSpacer': false,
+  'options.fractionDigits': 0,
+  'options.maxDigits': 0,
+  'options.dataQuality': NONE,
+  'options.value.weight': ReadoutValueWeight.regular,
+  'options.value.hasIcon': false,
+  'options.value.hintedZeros': false,
+  'options.setpoint.interaction':
+    ReadoutListItemSetpointInteraction.alwaysVisible,
+  'options.setpoint.touch': false,
+  'options.unit.spaceReserver': '',
+};
+
+function argsToOptions(args: ReadoutListItemStoryArgs): ReadoutListItemOptions {
+  return {
+    size: args['options.size'],
+    priority: args['options.priority'],
+    stacking: args['options.stacking'],
+    clickable: args['options.clickable']
+      ? {border: args['options.clickable.border']}
+      : false,
+    hasLeadingIcon: args['options.hasLeadingIcon'],
+    hasDegree: args['options.hasDegree'],
+    hasDegreeSpacer: args['options.hasDegreeSpacer'],
+    fractionDigits: args['options.fractionDigits'],
+    maxDigits: args['options.maxDigits'],
+    dataQuality:
+      args['options.dataQuality'] === NONE
+        ? undefined
+        : args['options.dataQuality'],
+    value: {
+      weight: args['options.value.weight'],
+      hasIcon: args['options.value.hasIcon'],
+      hintedZeros: args['options.value.hintedZeros'],
+    },
+    setpoint: {
+      interaction: args['options.setpoint.interaction'],
+      touch: args['options.setpoint.touch'],
+    },
+    unit: {spaceReserver: args['options.unit.spaceReserver'] || undefined},
+  };
+}
+
 const meta = {
   title: 'Instruments/Readout List Item',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'wip'],
   component: 'obc-readout-list-item',
   decorators: [centeredCanvasDecorator],
-  render: (args) => {
-    const [, updateArgs] = useArgs<ReadoutListItemStoryArgs>();
-    if (args.minValueLength <= 1 && args.hasHintedZeros) {
-      updateArgs({hasHintedZeros: false});
-    }
-    return html`<div style="display:flex; justify-content:center; width:100%;">
-      ${renderReadoutListItem(args)}
-    </div>`;
-  },
+  render: (args) =>
+    html`<div style="display:flex; width:100%;">
+      ${renderItem({
+        label: args.label,
+        unit: args.unit,
+        src: args.src,
+        hasValue: args.hasValue,
+        value: args.value,
+        off: args.off,
+        hasSetpoint: args.hasSetpoint,
+        setpoint: args.setpoint,
+        hasAdvice: args.hasAdvice,
+        advice: args.advice,
+        options: argsToOptions(args),
+        hasLeadingIcon: args['options.hasLeadingIcon'],
+        hasValueIcon: args['options.value.hasIcon'],
+      })}
+    </div>`,
   args: defaultArgs,
   argTypes: {
-    size: {
-      name: 'Size',
-      control: {type: 'select'},
-      options: Object.values(ReadoutListItemSize),
-      table: {category: 'Readout'},
-    },
-    stacking: {
-      name: 'Stacking',
-      control: {type: 'select'},
-      options: Object.values(ReadoutListItemStacking),
-      table: {category: 'Readout'},
-    },
-    priority: {
-      name: 'Priority',
-      control: {type: 'select'},
-      options: Object.values(ReadoutListItemPriority),
-      table: {category: 'Readout'},
-    },
-    dataState: {
-      name: 'Data State',
-      control: {type: 'select'},
-      options: Object.values(ReadoutListItemDataState),
-      table: {category: 'Readout'},
-    },
-    hasSetpoint: {
-      name: 'Has Setpoint',
-      table: {category: 'Readout'},
-    },
-    setpointValue: {
-      name: 'Setpoint Value',
-      control: {type: 'number'},
-      if: {
-        arg: 'hasSetpoint',
-        truthy: true,
-      },
-      table: {category: 'Value'},
-    },
-    hasDegree: {
-      name: 'Has Degree',
-      table: {category: 'Content'},
-    },
-    hasLabel: {
-      name: 'Has Label',
-      table: {category: 'Content'},
-    },
-    hasUnit: {
-      name: 'Has Unit',
-      table: {category: 'Content'},
-    },
-    hasSource: {
-      name: 'Has Source',
-      table: {category: 'Content'},
-    },
-    hasLeadingIcon: {
-      name: 'Has Leading Icon',
-      table: {category: 'Slots'},
-    },
-    hasValueIcon: {
-      name: 'Has Value Icon',
-      table: {category: 'Slots'},
-    },
-    label: {
-      name: 'Label',
-      control: {type: 'text'},
-      table: {category: 'Content'},
-    },
-    unit: {
-      name: 'Unit',
-      control: {type: 'text'},
-      if: {arg: 'hasUnit', truthy: true},
-      table: {category: 'Content'},
-    },
-    src: {
-      name: 'Source',
-      control: {type: 'text'},
-      if: {arg: 'hasSource', truthy: true},
-      table: {category: 'Content'},
-    },
+    label: {name: 'Label', control: {type: 'text'}, table: {category: 'Data'}},
+    unit: {name: 'Unit', control: {type: 'text'}, table: {category: 'Data'}},
+    src: {name: 'Source', control: {type: 'text'}, table: {category: 'Data'}},
+    hasValue: {name: 'Has Value', table: {category: 'Data'}},
     value: {
       name: 'Value',
       control: {type: 'number'},
-      table: {category: 'Value'},
+      table: {category: 'Data'},
     },
-    fractionDigits: {
+    off: {name: 'Off', table: {category: 'Data'}},
+    hasSetpoint: {name: 'Has Setpoint', table: {category: 'Data'}},
+    setpoint: {
+      name: 'Setpoint',
+      control: {type: 'number'},
+      if: {arg: 'hasSetpoint', truthy: true},
+      table: {category: 'Data'},
+    },
+    hasAdvice: {name: 'Has Advice', table: {category: 'Data'}},
+    advice: {
+      name: 'Advice',
+      control: {type: 'number'},
+      if: {arg: 'hasAdvice', truthy: true},
+      table: {category: 'Data'},
+    },
+    'options.size': {
+      name: 'Size',
+      control: {type: 'select'},
+      options: Object.values(ReadoutListItemSize),
+      table: {category: 'Layout'},
+    },
+    'options.priority': {
+      name: 'Priority',
+      control: {type: 'select'},
+      options: Object.values(ReadoutListItemPriority),
+      table: {category: 'Layout'},
+    },
+    'options.stacking': {
+      name: 'Stacking',
+      control: {type: 'select'},
+      options: Object.values(ReadoutListItemStacking),
+      table: {category: 'Layout'},
+    },
+    'options.clickable': {name: 'Clickable', table: {category: 'Layout'}},
+    'options.clickable.border': {
+      name: 'Clickable Border',
+      control: {type: 'select'},
+      options: Object.values(ReadoutListItemBorder),
+      if: {arg: 'options.clickable', truthy: true},
+      table: {category: 'Layout'},
+    },
+    'options.hasLeadingIcon': {
+      name: 'Has Leading Icon',
+      table: {category: 'Layout'},
+    },
+    'options.hasDegree': {name: 'Has Degree', table: {category: 'Format'}},
+    'options.hasDegreeSpacer': {
+      name: 'Has Degree Spacer',
+      table: {category: 'Format'},
+    },
+    'options.fractionDigits': {
       name: 'Fraction Digits',
       control: {type: 'number', min: 0, step: 1},
-      table: {category: 'Formatting'},
+      table: {category: 'Format'},
     },
-    showZeroPadding: {
-      name: 'Show Zero Padding',
-      table: {category: 'Formatting'},
-    },
-    minValueLength: {
-      name: 'Min Value Length',
+    'options.maxDigits': {
+      name: 'Max Digits',
       control: {type: 'number', min: 0, step: 1},
-      table: {category: 'Formatting'},
+      table: {category: 'Format'},
     },
-    hasHintedZeros: {
-      name: 'Has Hinted Zeros',
-      if: {arg: 'minValueLength', gt: 1},
-      table: {category: 'Formatting'},
+    'options.dataQuality': {
+      name: 'Data Quality',
+      control: {type: 'select'},
+      options: [NONE, ...Object.values(ReadoutListItemDataQuality)],
+      table: {category: 'State'},
+    },
+    'options.value.weight': {
+      name: 'Value Weight',
+      control: {type: 'select'},
+      options: Object.values(ReadoutValueWeight),
+      table: {category: 'Value'},
+    },
+    'options.value.hasIcon': {
+      name: 'Value Has Icon',
+      table: {category: 'Value'},
+    },
+    'options.value.hintedZeros': {
+      name: 'Value Hinted Zeros',
+      if: {arg: 'options.maxDigits', truthy: true},
+      table: {category: 'Value'},
+    },
+    'options.setpoint.interaction': {
+      name: 'Setpoint Interaction',
+      control: {type: 'select'},
+      options: Object.values(ReadoutListItemSetpointInteraction),
+      if: {arg: 'hasSetpoint', truthy: true},
+      table: {category: 'Setpoint'},
+    },
+    'options.setpoint.touch': {
+      name: 'Setpoint Touch',
+      if: {arg: 'hasSetpoint', truthy: true},
+      table: {category: 'Setpoint'},
+    },
+    'options.unit.spaceReserver': {
+      name: 'Unit Space Reserver',
+      control: {type: 'text'},
+      table: {category: 'Format'},
     },
   },
 } satisfies Meta<ReadoutListItemStoryArgs>;
@@ -362,130 +394,1252 @@ type Story = StoryObj<ReadoutListItemStoryArgs>;
 
 export const Playground: Story = {};
 
-function renderStackingMatrix({
-  stacking,
-  hasUnit,
-  hasSource,
-}: {
-  stacking: ReadoutListItemStacking;
-  hasUnit: boolean;
-  hasSource: boolean;
-}) {
-  const sizes = [
-    ReadoutListItemSize.base,
-    ReadoutListItemSize.priority,
-    ReadoutListItemSize.enhanced,
-  ] as const;
-  const priorities = [
-    ReadoutListItemPriority.regular,
-    ReadoutListItemPriority.enhanced,
-    ReadoutListItemPriority.setpoint,
-    ReadoutListItemPriority.setpointFlipFlop,
-  ] as const;
-  const hasSetpoints = [false, true] as const;
-
-  const cases: ReadoutShowcaseCase[] = [];
-
-  for (const size of sizes) {
-    for (const priority of priorities) {
-      for (const hasSetpoint of hasSetpoints) {
-        cases.push({
-          label: `${size} / ${priority} / hasSetpoint=${hasSetpoint}`,
-          args: {
-            size,
-            stacking,
-            priority,
-            hasSetpoint,
-            dataState: ReadoutListItemDataState.none,
-            hasUnit,
-            hasSource,
-            value: 123,
-            setpointValue: 123,
-            hasDegree: true,
-            hasLabel: true,
+export const Off: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'Off (value only, setpoint and advice remain)',
+        columns: 3,
+        cases: [
+          {label: 'value off', config: {off: true}},
+          {
+            label: 'value off + setpoint',
+            config: {off: true, hasSetpoint: true, setpoint: 120},
           },
-        });
-      }
-    }
-  }
+          {
+            label: 'value off + advice',
+            config: {off: true, hasAdvice: true, advice: 118},
+          },
+        ],
+      },
+    ]),
+};
 
-  return renderShowcaseSections([{title: `Stacking: ${stacking}`, cases}]);
+const SIZES = [
+  ReadoutListItemSize.small,
+  ReadoutListItemSize.medium,
+  ReadoutListItemSize.large,
+] as const;
+
+export const Sizes: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'Sizes × Priority',
+        columns: 2,
+        cases: SIZES.flatMap((size) =>
+          [
+            ReadoutListItemPriority.regular,
+            ReadoutListItemPriority.enhanced,
+          ].map((priority) => ({
+            label: `${size} / ${priority}`,
+            config: {options: {size, priority, hasDegree: true}},
+          }))
+        ),
+      },
+    ]),
+};
+
+function stackingCases(stacking: ReadoutListItemStacking): ShowcaseCase[] {
+  return SIZES.flatMap((size) => [
+    {
+      label: `${size} / value`,
+      config: {options: {size, stacking, hasDegree: true}},
+    },
+    {
+      label: `${size} / value + setpoint`,
+      config: {
+        hasSetpoint: true,
+        setpoint: 120,
+        options: {size, stacking, hasDegree: true},
+      },
+    },
+    {
+      label: `${size} / value + advice + setpoint`,
+      config: {
+        hasAdvice: true,
+        advice: 118,
+        hasSetpoint: true,
+        setpoint: 120,
+        options: {size, stacking, hasDegree: true},
+      },
+    },
+  ]);
 }
 
 export const TrailingUnit: Story = {
   render: () =>
-    renderStackingMatrix({
-      stacking: ReadoutListItemStacking.trailingUnit,
-      hasUnit: true,
-      hasSource: false,
-    }),
+    renderShowcase([
+      {
+        title: 'Stacking: trailing-unit',
+        columns: 3,
+        cases: stackingCases(ReadoutListItemStacking.trailingUnit),
+      },
+    ]),
 };
 
 export const LeadingUnit: Story = {
   render: () =>
-    renderStackingMatrix({
-      stacking: ReadoutListItemStacking.leadingUnit,
-      hasUnit: true,
-      hasSource: false,
-    }),
+    renderShowcase([
+      {
+        title: 'Stacking: leading-unit',
+        columns: 3,
+        cases: stackingCases(ReadoutListItemStacking.leadingUnit),
+      },
+    ]),
 };
 
 export const LeadingSrc: Story = {
   render: () =>
-    renderStackingMatrix({
-      stacking: ReadoutListItemStacking.leadingSrc,
-      hasUnit: true,
-      hasSource: true,
+    renderShowcase([
+      {
+        title: 'Stacking: leading-src',
+        columns: 3,
+        cases: stackingCases(ReadoutListItemStacking.leadingSrc),
+      },
+    ]),
+};
+
+export const SetpointFlipFlop: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'Setpoint flip-flop (value vs. setpoint focus)',
+        columns: 2,
+        cases: SIZES.flatMap((size) => [
+          {
+            label: `${size} / not at setpoint`,
+            config: {
+              value: 123,
+              hasSetpoint: true,
+              setpoint: 120,
+              options: {
+                size,
+                setpoint: {
+                  interaction: ReadoutListItemSetpointInteraction.flipFlop,
+                },
+                hasDegree: true,
+              },
+            },
+          },
+          {
+            label: `${size} / at setpoint`,
+            config: {
+              value: 120,
+              hasSetpoint: true,
+              setpoint: 120,
+              options: {
+                size,
+                setpoint: {
+                  interaction: ReadoutListItemSetpointInteraction.flipFlop,
+                },
+                hasDegree: true,
+              },
+            },
+          },
+        ]),
+      },
+    ]),
+};
+
+// `flip-flop` (value/setpoint swap) and `pop-up` (setpoint fades out once
+// reached) only read clearly in motion, and they need `value === setpoint`
+// transitions rather than a single control — so each gets a focused static
+// story plus a GSAP-driven animated one below.
+
+export const SetpointPopUp: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'Pop-up — setpoint shown only until the value reaches it',
+        columns: 2,
+        cases: [
+          {
+            label: 'value ≠ setpoint → shown',
+            config: {
+              value: 123,
+              hasSetpoint: true,
+              setpoint: 120,
+              options: {
+                setpoint: {
+                  interaction: ReadoutListItemSetpointInteraction.popUp,
+                },
+              },
+            },
+          },
+          {
+            label: 'value = setpoint → fades out (space kept)',
+            config: {
+              value: 120,
+              hasSetpoint: true,
+              setpoint: 120,
+              options: {
+                setpoint: {
+                  interaction: ReadoutListItemSetpointInteraction.popUp,
+                },
+              },
+            },
+          },
+        ],
+      },
+    ]),
+};
+
+export const SetpointTouch: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title:
+          'Touch (focus) — the setpoint triangle is highlighted while adjusting',
+        columns: 2,
+        cases: [
+          {
+            label: 'normal',
+            config: {
+              value: 123,
+              hasSetpoint: true,
+              setpoint: 120,
+              options: {setpoint: {}},
+            },
+          },
+          {
+            label: 'touch (focus)',
+            config: {
+              value: 123,
+              hasSetpoint: true,
+              setpoint: 120,
+              options: {setpoint: {touch: true}},
+            },
+          },
+        ],
+      },
+    ]),
+};
+
+// Shared scaffold for the GSAP-driven interaction demos: a single readout whose
+// `value` is swept toward / away from the setpoint so the flip-flop swap and the
+// pop-up show/hide can be seen in motion. Tagged `skip-test` (the animation makes
+// snapshots flaky).
+function animatedInteractionStory(config: {
+  name: string;
+  interaction: ReadoutListItemSetpointInteraction;
+  intro: string;
+  awayLabel: string;
+  reachLabel: string;
+}): Story {
+  const SETPOINT = 120;
+  const AWAY = 124;
+  return {
+    name: config.name,
+    render: () => html`
+      <div
+        style="display:flex; flex-direction:column; gap:16px; width:360px; padding:24px;"
+      >
+        <div style="font-size:14px; color:var(--element-neutral-color, #888);">
+          ${config.intro}
+        </div>
+        <div
+          style="padding:8px; border:1px dashed var(--border-divider-color, #ccc); border-radius:8px;"
+        >
+          <obc-readout-list-item
+            id="anim-demo"
+            .label=${'Heading'}
+            .value=${AWAY}
+            .hasSetpoint=${true}
+            .setpoint=${SETPOINT}
+            .options=${{
+              size: ReadoutListItemSize.medium,
+              hasDegree: true,
+              setpoint: {interaction: config.interaction},
+            }}
+          ></obc-readout-list-item>
+        </div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <button id="btn-away" style="padding:8px 16px; cursor:pointer;">
+            ${config.awayLabel}
+          </button>
+          <button id="btn-reach" style="padding:8px 16px; cursor:pointer;">
+            ${config.reachLabel}
+          </button>
+        </div>
+        <div
+          id="anim-status"
+          style="font:12px/1.4 monospace; color:var(--element-neutral-color, #666);"
+        >
+          value=${AWAY}, setpoint=${SETPOINT}
+        </div>
+      </div>
+    `,
+    play: async ({canvasElement}) => {
+      await new Promise((r) => setTimeout(r, 300));
+      const el = canvasElement.querySelector('#anim-demo') as
+        | (HTMLElement & {value: number})
+        | null;
+      const status = canvasElement.querySelector(
+        '#anim-status'
+      ) as HTMLElement | null;
+      const btnAway = canvasElement.querySelector(
+        '#btn-away'
+      ) as HTMLButtonElement | null;
+      const btnReach = canvasElement.querySelector(
+        '#btn-reach'
+      ) as HTMLButtonElement | null;
+      if (!el || !status || !btnAway || !btnReach) return;
+
+      const anim = {value: AWAY};
+      const setVal = (v: number) => {
+        el.value = v;
+        status.textContent = `value=${Math.round(v)}, setpoint=${SETPOINT}`;
+      };
+      // Snap to the exact target on complete so `value === setpoint` holds (the
+      // flip-flop swap and pop-up hide both key off strict equality).
+      const tweenTo = (target: number) => {
+        gsap.killTweensOf(anim);
+        gsap.to(anim, {
+          value: target,
+          duration: 0.8,
+          ease: 'power2.inOut',
+          onUpdate: () => setVal(anim.value),
+          onComplete: () => setVal(target),
+        });
+      };
+      btnAway.onclick = () => tweenTo(AWAY);
+      btnReach.onclick = () => tweenTo(SETPOINT);
+
+      // Auto-play a couple of cycles for the "Play" button.
+      for (let i = 0; i < 2; i++) {
+        await userEvent.click(btnReach);
+        await new Promise((r) => setTimeout(r, 1500));
+        await userEvent.click(btnAway);
+        await new Promise((r) => setTimeout(r, 1500));
+      }
+    },
+  };
+}
+
+// `tags: ['skip-test']` must sit on the export literal (not inside the helper) —
+// Storybook's CSF indexer reads tags statically, so a tag returned from a
+// function call would not exclude the story from the visual snapshot run.
+export const SetpointFlipFlopAnimated: Story = {
+  ...animatedInteractionStory({
+    name: 'Flip-Flop (Animated)',
+    interaction: ReadoutListItemSetpointInteraction.flipFlop,
+    intro:
+      'Flip-flop: as the value reaches the setpoint (120) the emphasis swaps from the setpoint to the value (100ms). Press Play, or use the buttons.',
+    awayLabel: 'Away (124)',
+    reachLabel: 'Reach setpoint (120)',
+  }),
+  tags: ['skip-test'],
+};
+
+export const SetpointPopUpAnimated: Story = {
+  ...animatedInteractionStory({
+    name: 'Pop-Up (Animated)',
+    interaction: ReadoutListItemSetpointInteraction.popUp,
+    intro:
+      'Pop-up: the setpoint shows while the value differs, then fades out (100ms) once the value reaches it. Press Play, or use the buttons.',
+    awayLabel: 'Leave setpoint (124)',
+    reachLabel: 'Reach setpoint (120)',
+  }),
+  tags: ['skip-test'],
+};
+
+// Demo durations (s) for the synced azimuth-thruster flow below — the vessel
+// response after "confirm": thrust catches up faster than the heavier angle.
+const SYNC_THRUST_DURATION = 2;
+const SYNC_ANGLE_DURATION = 10;
+
+// Reserve integer-digit width so the value / setpoint don't shift left↔right as
+// they cross the 2↔3 digit boundary during the sweep (angle 30↔120, up to 360°;
+// power up to 100%). `maxDigits` reserves the width for the value AND the
+// setpoint block at once, without printing leading zeros.
+const SYNC_MAX_DIGITS = 3;
+
+// Single source of the readouts' options so the initial render and the
+// `setReadoutTouch` rebuild stay identical — otherwise toggling touch would drop
+// `maxDigits` and the reservation, reintroducing the shift.
+function syncReadoutOptions(opts: {
+  hasDegree?: boolean;
+  touch?: boolean;
+}): ReadoutListItemOptions {
+  return {
+    size: ReadoutListItemSize.medium,
+    hasDegree: opts.hasDegree ?? false,
+    maxDigits: SYNC_MAX_DIGITS,
+    setpoint: {
+      interaction: ReadoutListItemSetpointInteraction.flipFlop,
+      touch: opts.touch ?? false,
+    },
+  };
+}
+
+/**
+ * **Synced with an instrument (Azimuth Thruster)** — replays the exact setpoint
+ * adjustment flow from `Building Blocks/Setpoint → Setpoint Azimuth Thruster
+ * Flow`, with two `obc-readout-list-item`s wired to the same demo state below the
+ * instrument.
+ *
+ * These are **two independent components driven by one shared animation** (synced
+ * manually, for this demo only): the `obc-azimuth-thruster` instrument and the
+ * `obc-readout-list-item` rows. `obc-azimuth-thruster-labeled` pairs the thruster
+ * with the older `obc-readout`; this shows the new readout list item mirroring the
+ * same angle/thrust adjustment — the setpoint triangle is highlighted while
+ * touching, the setpoint value slides during "move", and the value catches up
+ * (with the flip-flop emphasis swap) on "confirm".
+ *
+ * Press "Play", or use the buttons, to run reset → initiate → move → confirm on
+ * both at once.
+ */
+export const SyncedWithAzimuthThruster: Story = {
+  name: 'Synced With Azimuth Thruster (Interactive)',
+  tags: ['skip-test'],
+  render: () => html`
+    <div
+      style="display:flex; flex-direction:column; gap:24px; width:360px; padding:24px;"
+    >
+      <div style="font-size:14px; color:var(--element-neutral-color, #888);">
+        Two independent components driven by one shared demo state (synced
+        manually for this demo): the azimuth-thruster instrument and two
+        <code>obc-readout-list-item</code> rows below it. Press "Play", or use
+        the buttons, to run the reset → initiate → move → confirm setpoint
+        adjustment on both at once.
+      </div>
+
+      <div style="width:280px; height:280px; align-self:center;">
+        <obc-azimuth-thruster
+          id="azimuth-demo"
+          .angle=${30}
+          .angleSetpoint=${30}
+          .thrustSetpoint=${25}
+          .thrust=${25}
+          .state=${InstrumentState.active}
+          .priority=${Priority.enhanced}
+          .animateSetpoint=${true}
+          .primaryTickmarkInterval=${45}
+          .secondaryTickmarkInterval=${5}
+          .tertiaryTickmarkInterval=${1}
+          .showLabels=${true}
+          .tickmarksInside=${true}
+        ></obc-azimuth-thruster>
+      </div>
+
+      <div
+        style="display:flex; flex-direction:column; gap:8px; padding:8px; border:1px dashed var(--border-divider-color, #ccc); border-radius:8px;"
+      >
+        <obc-readout-list-item
+          id="rli-angle"
+          .label=${'Angle'}
+          .unit=${'DEG'}
+          .value=${30}
+          .hasSetpoint=${true}
+          .setpoint=${30}
+          .options=${syncReadoutOptions({hasDegree: true})}
+        ></obc-readout-list-item>
+        <obc-readout-list-item
+          id="rli-power"
+          .label=${'Power'}
+          .unit=${'%'}
+          .value=${25}
+          .hasSetpoint=${true}
+          .setpoint=${25}
+          .options=${syncReadoutOptions({})}
+        ></obc-readout-list-item>
+      </div>
+
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <button id="btn-at-reset" style="padding:8px 16px; cursor:pointer;">
+          Reset (t=0)
+        </button>
+        <button id="btn-at-initiate" style="padding:8px 16px; cursor:pointer;">
+          Initiate (t=1)
+        </button>
+        <button id="btn-at-move" style="padding:8px 16px; cursor:pointer;">
+          Move (t=2)
+        </button>
+        <button id="btn-at-confirm" style="padding:8px 16px; cursor:pointer;">
+          Confirm (t=3)
+        </button>
+      </div>
+
+      <div
+        id="at-status"
+        style="font:12px/1.4 monospace; color:var(--element-neutral-color, #666);"
+      >
+        State: t=0 (at setpoint) | angle=30°, angleSP=30°, thrust=25%,
+        thrustSP=25%
+      </div>
+    </div>
+  `,
+  play: async ({canvasElement}) => {
+    await new Promise((r) => setTimeout(r, 500));
+
+    const at = canvasElement.querySelector('#azimuth-demo') as
+      | (HTMLElement & {
+          angle: number;
+          angleSetpoint: number | undefined;
+          newAngleSetpoint: number | undefined;
+          thrust: number;
+          thrustSetpoint: number | undefined;
+          touching: boolean;
+        })
+      | null;
+    const status = canvasElement.querySelector(
+      '#at-status'
+    ) as HTMLElement | null;
+    const angleReadout = canvasElement.querySelector('#rli-angle') as
+      | (HTMLElement & {
+          value: number;
+          setpoint: number;
+          options: ReadoutListItemOptions;
+        })
+      | null;
+    const powerReadout = canvasElement.querySelector('#rli-power') as
+      | (HTMLElement & {
+          value: number;
+          setpoint: number;
+          options: ReadoutListItemOptions;
+        })
+      | null;
+    const btnReset = canvasElement.querySelector(
+      '#btn-at-reset'
+    ) as HTMLButtonElement | null;
+    const btnInitiate = canvasElement.querySelector(
+      '#btn-at-initiate'
+    ) as HTMLButtonElement | null;
+    const btnMove = canvasElement.querySelector(
+      '#btn-at-move'
+    ) as HTMLButtonElement | null;
+    const btnConfirm = canvasElement.querySelector(
+      '#btn-at-confirm'
+    ) as HTMLButtonElement | null;
+
+    if (
+      !at ||
+      !status ||
+      !angleReadout ||
+      !powerReadout ||
+      !btnReset ||
+      !btnInitiate ||
+      !btnMove ||
+      !btnConfirm
+    ) {
+      return;
+    }
+
+    const ANGLE_FROM = 30;
+    const ANGLE_TO = 120;
+    const THRUST_FROM = 25;
+    const THRUST_TO = 70;
+
+    const anim = {
+      angle: ANGLE_FROM,
+      thrust: THRUST_FROM,
+      newAngle: ANGLE_FROM,
+      newThrust: THRUST_FROM,
+    };
+
+    // Re-point the readouts' flip-flop emphasis + touch focus together. Lit only
+    // re-renders on a fresh `options` reference, so rebuild it (the value /
+    // setpoint primitives below update on their own).
+    const setReadoutTouch = (touch: boolean) => {
+      angleReadout.options = syncReadoutOptions({hasDegree: true, touch});
+      powerReadout.options = syncReadoutOptions({touch});
+    };
+
+    const updateStatus = (state: string) => {
+      const nAngle = at.newAngleSetpoint;
+      status.textContent = `State: ${state} | angle=${Math.round(anim.angle)}°, angleSP=${Math.round(at.angleSetpoint ?? 0)}°, newAngleSP=${nAngle !== undefined ? Math.round(nAngle) + '°' : 'n/a'}, thrust=${Math.round(anim.thrust)}%, thrustSP=${Math.round(at.thrustSetpoint ?? 0)}%`;
+    };
+
+    const killAll = () => gsap.killTweensOf(anim);
+
+    // t=0 — vessel at setpoint, no adjustment in progress.
+    btnReset.onclick = () => {
+      killAll();
+      anim.angle = ANGLE_FROM;
+      anim.thrust = THRUST_FROM;
+      anim.newAngle = ANGLE_FROM;
+      anim.newThrust = THRUST_FROM;
+      at.angle = ANGLE_FROM;
+      at.angleSetpoint = ANGLE_FROM;
+      at.newAngleSetpoint = undefined;
+      at.thrust = THRUST_FROM;
+      at.thrustSetpoint = THRUST_FROM;
+      (at as unknown as {newThrustSetpoint?: number}).newThrustSetpoint =
+        undefined;
+      at.touching = false;
+      setReadoutTouch(false);
+      angleReadout.value = ANGLE_FROM;
+      angleReadout.setpoint = ANGLE_FROM;
+      powerReadout.value = THRUST_FROM;
+      powerReadout.setpoint = THRUST_FROM;
+      updateStatus('t=0 (at setpoint)');
+    };
+
+    // t=1 — start adjusting: new setpoint appears at the current position, the
+    // readouts enter the touch (focus) state.
+    btnInitiate.onclick = () => {
+      killAll();
+      anim.newAngle = at.angleSetpoint ?? ANGLE_FROM;
+      anim.newThrust = at.thrustSetpoint ?? THRUST_FROM;
+      at.newAngleSetpoint = anim.newAngle;
+      (at as unknown as {newThrustSetpoint?: number}).newThrustSetpoint =
+        anim.newThrust;
+      at.touching = true;
+      setReadoutTouch(true);
+      updateStatus('t=1 (initiate)');
+    };
+
+    // t=2 — slide the new setpoint; the readouts' setpoint value follows while
+    // the value (vessel) stays put, so flip-flop emphasises the setpoint.
+    btnMove.onclick = () => {
+      killAll();
+      if (at.newAngleSetpoint === undefined) {
+        at.newAngleSetpoint = at.angleSetpoint ?? ANGLE_FROM;
+        anim.newAngle = at.newAngleSetpoint;
+        (at as unknown as {newThrustSetpoint?: number}).newThrustSetpoint =
+          at.thrustSetpoint ?? THRUST_FROM;
+        anim.newThrust = at.thrustSetpoint ?? THRUST_FROM;
+        at.touching = true;
+        setReadoutTouch(true);
+      }
+      gsap.to(anim, {
+        newAngle: ANGLE_TO,
+        newThrust: THRUST_TO,
+        duration: 1.5,
+        ease: 'power2.inOut',
+        onUpdate: () => {
+          at.newAngleSetpoint = anim.newAngle;
+          (at as unknown as {newThrustSetpoint?: number}).newThrustSetpoint =
+            anim.newThrust;
+          angleReadout.setpoint = Math.round(anim.newAngle);
+          powerReadout.setpoint = Math.round(anim.newThrust);
+          updateStatus('t=2 (move)');
+        },
+      });
+    };
+
+    // t=3 — confirm: setpoint commits, focus clears, the value catches up
+    // (thrust faster than the heavier angle); flip-flop swaps back to the value.
+    btnConfirm.onclick = () => {
+      killAll();
+      const targetAngle = Math.round(at.newAngleSetpoint ?? ANGLE_TO);
+      const targetThrust = Math.round(anim.newThrust);
+
+      at.angleSetpoint = targetAngle;
+      at.newAngleSetpoint = undefined;
+      at.thrustSetpoint = targetThrust;
+      (at as unknown as {newThrustSetpoint?: number}).newThrustSetpoint =
+        undefined;
+      at.touching = false;
+
+      anim.angle = at.angle;
+      anim.thrust = at.thrust;
+
+      setReadoutTouch(false);
+      angleReadout.setpoint = targetAngle;
+      powerReadout.setpoint = targetThrust;
+
+      gsap.to(anim, {
+        thrust: targetThrust,
+        duration: SYNC_THRUST_DURATION,
+        ease: 'sine.inOut',
+        onUpdate: () => {
+          at.thrust = anim.thrust;
+          powerReadout.value = Math.round(anim.thrust);
+          updateStatus('t=3 (confirm)');
+        },
+      });
+
+      gsap.to(anim, {
+        angle: targetAngle,
+        duration: SYNC_ANGLE_DURATION,
+        ease: 'sine.inOut',
+        onUpdate: () => {
+          at.angle = anim.angle;
+          angleReadout.value = Math.round(anim.angle);
+          updateStatus('t=3 (confirm)');
+        },
+      });
+    };
+
+    // ── Auto-play sequence ──
+    await userEvent.click(btnReset);
+    await new Promise((r) => setTimeout(r, 1000));
+    await userEvent.click(btnInitiate);
+    await new Promise((r) => setTimeout(r, 1200));
+    await userEvent.click(btnMove);
+    await new Promise((r) => setTimeout(r, 3000));
+    await userEvent.click(btnConfirm);
+    await new Promise((r) => setTimeout(r, SYNC_ANGLE_DURATION * 1000 + 1000));
+  },
+};
+
+export const DataQuality: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'Data quality',
+        columns: 4,
+        cases: [
+          {label: 'nominal', config: {options: {}}},
+          {
+            label: 'low-integrity',
+            config: {
+              options: {dataQuality: ReadoutListItemDataQuality.lowIntegrity},
+            },
+          },
+          {
+            label: 'invalid',
+            config: {
+              options: {dataQuality: ReadoutListItemDataQuality.invalid},
+            },
+          },
+          {
+            label: 'null value (dash)',
+            config: {value: null, options: {}},
+          },
+        ],
+      },
+    ]),
+};
+
+export const PerBlockState: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'Per-block data quality (independent of the row)',
+        cases: [
+          {
+            label: 'value low-integrity',
+            config: {
+              hasSetpoint: true,
+              hasAdvice: true,
+              options: {
+                value: {dataQuality: ReadoutListItemDataQuality.lowIntegrity},
+              },
+            },
+          },
+          {
+            label: 'setpoint invalid',
+            config: {
+              hasSetpoint: true,
+              options: {
+                setpoint: {dataQuality: ReadoutListItemDataQuality.invalid},
+              },
+            },
+          },
+          {
+            label: 'advice low-integrity',
+            config: {
+              hasAdvice: true,
+              options: {
+                advice: {dataQuality: ReadoutListItemDataQuality.lowIntegrity},
+              },
+            },
+          },
+          {
+            label: 'src invalid',
+            config: {
+              options: {src: {dataQuality: ReadoutListItemDataQuality.invalid}},
+            },
+          },
+          {
+            label: 'row invalid + value low-integrity (nested)',
+            config: {
+              options: {
+                dataQuality: ReadoutListItemDataQuality.invalid,
+                value: {dataQuality: ReadoutListItemDataQuality.lowIntegrity},
+              },
+            },
+          },
+        ],
+      },
+      {
+        title: 'Per-block alert frames (nest inside the row)',
+        columns: 3,
+        cases: [
+          {
+            label: 'value alert',
+            config: {
+              options: {
+                value: {
+                  alert: {
+                    status: AlertType.Warning,
+                    mode: ObcAlertFrameMode.unackedActive,
+                    type: ObcAlertFrameType.Regular,
+                  },
+                },
+              },
+            },
+          },
+          {
+            label: 'setpoint alert',
+            config: {
+              hasSetpoint: true,
+              options: {
+                setpoint: {
+                  alert: {
+                    status: AlertType.Caution,
+                    mode: ObcAlertFrameMode.ackedActive,
+                    type: ObcAlertFrameType.Regular,
+                  },
+                },
+              },
+            },
+          },
+          {
+            label: 'row alarm + value warning (nested)',
+            config: {
+              options: {
+                alert: {
+                  status: AlertType.Alarm,
+                  mode: ObcAlertFrameMode.ackedActive,
+                  type: ObcAlertFrameType.Regular,
+                },
+                value: {
+                  alert: {
+                    status: AlertType.Warning,
+                    mode: ObcAlertFrameMode.unackedActive,
+                    type: ObcAlertFrameType.Regular,
+                  },
+                },
+              },
+            },
+          },
+        ],
+      },
+      {
+        // `dataQuality` (the surface bg + outline) is orthogonal to `alert` (the
+        // surrounding frame), so they stack: the low-integrity / invalid styling
+        // sits INSIDE the alert frame. A side-flip frame type shows the alert
+        // category badge in the flap for extra emphasis.
+        title: 'Data quality inside an alert frame (combined)',
+        columns: 2,
+        cases: [
+          {
+            label: 'low-integrity + warning frame (badge flap)',
+            config: {
+              hasSetpoint: true,
+              setpoint: 120,
+              options: {
+                dataQuality: ReadoutListItemDataQuality.lowIntegrity,
+                alert: {
+                  status: AlertType.Warning,
+                  mode: ObcAlertFrameMode.unackedActive,
+                  type: ObcAlertFrameType.SmallSideFlip,
+                  showAlertCategoryIcon: true,
+                },
+              },
+            },
+          },
+          {
+            label: 'invalid + alarm frame (large badge flap)',
+            config: {
+              value: null,
+              options: {
+                dataQuality: ReadoutListItemDataQuality.invalid,
+                alert: {
+                  status: AlertType.Alarm,
+                  mode: ObcAlertFrameMode.unackedActive,
+                  type: ObcAlertFrameType.LargeSideFlip,
+                  showAlertCategoryIcon: true,
+                },
+              },
+            },
+          },
+        ],
+      },
+    ]),
+};
+
+export const Clickable: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'Clickable borders',
+        columns: 3,
+        cases: [
+          {
+            label: 'squared',
+            config: {
+              options: {clickable: {border: ReadoutListItemBorder.squared}},
+            },
+          },
+          {
+            label: 'round-corners',
+            config: {
+              options: {
+                clickable: {border: ReadoutListItemBorder.roundCorners},
+              },
+            },
+          },
+          {
+            label: 'round',
+            config: {
+              options: {clickable: {border: ReadoutListItemBorder.round}},
+            },
+          },
+        ],
+      },
+    ]),
+};
+
+const alertConfig = (alert: AlertFrameConfig): ReadoutListItemOptions => ({
+  alert,
+});
+
+export const Alarm: Story = {
+  render: () =>
+    showcaseItem({
+      options: alertConfig({
+        status: AlertType.Alarm,
+        mode: ObcAlertFrameMode.ackedActive,
+        type: ObcAlertFrameType.Regular,
+      }),
     }),
 };
 
-export const DataStates: Story = {
-  render: () => {
-    const dataStates = Object.values(ReadoutListItemDataState);
-    const cases: ReadoutShowcaseCase[] = dataStates.map((dataState) => ({
-      label: `${dataState}`,
-      args: {
-        size: ReadoutListItemSize.base,
-        stacking: ReadoutListItemStacking.trailingUnit,
-        priority: ReadoutListItemPriority.regular,
-        dataState,
-        value: 123,
-      },
-    }));
-
-    return renderShowcaseSections([{title: 'Data States', cases}]);
+// Each row drops a different part; the per-row outline makes it obvious that the
+// row height and the bottom baseline stay constant regardless of what's missing.
+const MISSING_PARTS_ROWS: {title: string; config: ReadoutItemConfig}[] = [
+  {
+    title: 'all parts',
+    config: {label: 'Heading', value: 123, unit: 'kn', src: 'GPS'},
   },
+  {title: 'no label', config: {value: 123, unit: 'kn', src: 'GPS'}},
+  {
+    title: 'no value (hasValue false)',
+    config: {label: 'Heading', hasValue: false, unit: 'kn', src: 'GPS'},
+  },
+  {
+    title: 'null value (dash)',
+    config: {label: 'Heading', value: null, unit: 'kn', src: 'GPS'},
+  },
+  {title: 'no unit', config: {label: 'Heading', value: 123, src: 'GPS'}},
+  {title: 'no src', config: {label: 'Heading', value: 123, unit: 'kn'}},
+  {title: 'label only', config: {label: 'Heading', hasValue: false}},
+  {title: 'value only', config: {value: 123}},
+  {
+    title: 'off',
+    config: {label: 'Heading', off: true, unit: 'kn', src: 'GPS'},
+  },
+];
+
+export const MissingParts: Story = {
+  render: () => html`
+    <style>
+      .rli-mp {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        width: 380px;
+      }
+      .rli-mp-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .rli-mp-tag {
+        width: 150px;
+        flex: none;
+        font: 10px/1.2 var(--global-typography-ui-label-font-family, sans-serif);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--element-neutral-color, #777);
+      }
+      .rli-mp-item {
+        flex: 1;
+        outline: 1px solid rgba(0, 0, 0, 0.12);
+      }
+    </style>
+    <div class="rli-mp">
+      ${MISSING_PARTS_ROWS.map(
+        (row) => html`
+          <div class="rli-mp-row">
+            <div class="rli-mp-tag">${row.title}</div>
+            <div class="rli-mp-item">
+              ${renderItem({
+                ...row.config,
+                options: {
+                  ...row.config.options,
+                  size: ReadoutListItemSize.medium,
+                },
+              })}
+            </div>
+          </div>
+        `
+      )}
+    </div>
+  `,
 };
 
-export const Alarm: Story = {
-  args: {
-    value: 123,
-    alert: {
-      status: AlertType.Alarm,
-      mode: ObcAlertFrameMode.ackedActive,
-      type: ObcAlertFrameType.Regular,
-    },
-  },
+/**
+ * Layout / alignment stress test — many rows stacked in a fixed-width column,
+ * deliberately combining as much of the API as can coexist in one aligned
+ * column: degree / no-degree, short and long units (`C`, `Pa`, `m/s`, `miles`),
+ * large/small/negative numbers, fractional values, a `null` (dash) value,
+ * hinted zeros, `low-integrity` and `invalid` data quality, an `enhanced`
+ * priority and an `active` weight, and a "kitchen-sink" row (Depth) with a
+ * setpoint, advice and both leading + value icons.
+ *
+ * Each `obc-readout-list-item` is its own custom element, so cross-row column
+ * alignment is **not** automatic — it is driven per-row by the width reservers.
+ * The first column sets none, so the unit column and value right edge drift.
+ * The second column gives every row the same reservers — the longest value
+ * (`"0000.0"` via `options.value/setpoint/advice.spaceReserver`) and the longest
+ * unit (`"miles"` via `options.unit.spaceReserver`) — plus reserves the degree
+ * column (`hasDegreeSpacer`) on non-degree rows. So every block reserves the
+ * same width regardless of each row's own value length / `fractionDigits`, and
+ * the columns line up.
+ *
+ * (Source/stacking variations are exercised in the `LeadingSrc` / `LeadingUnit`
+ * stories; mixing them here would move the unit out of the rightmost column.)
+ *
+ * The last two rows use `size=medium` / `size=large`. Their value digit edges do
+ * NOT fully align with the small rows (~8px stagger): the `°` column scales with
+ * the value size (6 / 8 / 12px), so a degree row's value edge sits `degree-width`
+ * to the left of the unit. This is a genuine cross-size trade-off (#7) — for
+ * degree rows of different sizes you can align the unit column (as here) OR the
+ * value digit edges, not both. Aligning the value edges would need either a
+ * constant degree reserve (which widens the smaller rows' `°` — visually
+ * undesirable) or pinning the value edge and letting the unit column stagger;
+ * left for the designer. Two rows also carry per-block (nested) state — a value
+ * `invalid` chip and a value alert frame — to confirm per-block state does not
+ * shift the value edge.
+ */
+type AlignmentRow = {
+  label: string;
+  value: number | null;
+  unit: string;
+  size?: ReadoutListItemSize;
+  hasDegree?: boolean;
+  fractionDigits?: number;
+  priority?: ReadoutListItemPriority;
+  weight?: ReadoutValueWeight;
+  hintedZeros?: boolean;
+  dataQuality?: ReadoutListItemDataQuality;
+  hasSetpoint?: boolean;
+  setpoint?: number;
+  hasAdvice?: boolean;
+  advice?: number;
+  hasLeadingIcon?: boolean;
+  hasValueIcon?: boolean;
+  valueDataQuality?: ReadoutListItemDataQuality;
+  valueAlert?: AlertFrameConfig;
 };
 
-export const LevelCritical: Story = {
-  args: {
-    value: 123,
-    alert: {
-      status: AlertType.LevelCritical,
+const ALIGNMENT_ROWS: AlignmentRow[] = [
+  // degree + enhanced priority (accent value)
+  {
+    label: 'Temperature',
+    value: 45,
+    unit: 'C',
+    hasDegree: true,
+    priority: ReadoutListItemPriority.enhanced,
+  },
+  // degree + hinted zeros (small value padded to maxDigits in the aligned column)
+  {label: 'Heading', value: 8, unit: 'T', hasDegree: true, hintedZeros: true},
+  // advice + setpoint (no icons) — to check that advice/setpoint also
+  // column-align across rows (they should: the value block is width-reserved,
+  // so the blocks left of it sit at fixed offsets)
+  {
+    label: 'Pressure',
+    value: 1013,
+    unit: 'Pa',
+    fractionDigits: 1,
+    hasSetpoint: true,
+    setpoint: 1015,
+    hasAdvice: true,
+    advice: 1008,
+  },
+  // negative value + fraction + low-integrity data quality
+  {
+    label: 'Flow speed',
+    value: -12.5,
+    unit: 'm/s',
+    fractionDigits: 1,
+    dataQuality: ReadoutListItemDataQuality.lowIntegrity,
+  },
+  // long unit + advice + setpoint (the "miles" row)
+  {
+    label: 'Distance',
+    value: 4.2,
+    unit: 'miles',
+    fractionDigits: 1,
+    hasSetpoint: true,
+    setpoint: 4.5,
+    hasAdvice: true,
+    advice: 4,
+  },
+  // kitchen sink: value + setpoint + advice + leading icon + value icon
+  {
+    label: 'Depth',
+    value: 1013.7,
+    unit: 'm',
+    fractionDigits: 1,
+    hasSetpoint: true,
+    setpoint: 1015,
+    hasAdvice: true,
+    advice: 1010,
+    hasLeadingIcon: true,
+    hasValueIcon: true,
+  },
+  // active value weight (accent without enhanced priority)
+  {
+    label: 'Speed',
+    value: 18,
+    unit: 'kn',
+    fractionDigits: 1,
+    weight: ReadoutValueWeight.active,
+  },
+  // null (dash) + invalid data quality
+  {
+    label: 'Wind',
+    value: null,
+    unit: 'kn',
+    dataQuality: ReadoutListItemDataQuality.invalid,
+  },
+  // per-block (nested) value invalid — the chip uses outline, so the value edge
+  // must stay aligned with the other rows
+  {
+    label: 'Battery',
+    value: 11.8,
+    unit: 'V',
+    fractionDigits: 1,
+    valueDataQuality: ReadoutListItemDataQuality.invalid,
+  },
+  // per-block (nested) value alert frame — must not shift the value edge
+  {
+    label: 'Fuel',
+    value: 42,
+    unit: '%',
+    valueAlert: {
+      status: AlertType.Warning,
       mode: ObcAlertFrameMode.unackedActive,
       type: ObcAlertFrameType.Regular,
     },
   },
-};
+  // size variants — value digit edges do NOT fully align cross-size (the degree
+  // column scales 6/8/12px with the value size); see the ColumnAlignment doc.
 
-export const LevelLowUnackedRectified: Story = {
-  args: {
-    value: 123,
-    alert: {
-      status: AlertType.LevelLow,
-      mode: ObcAlertFrameMode.unackedRectified,
-      type: ObcAlertFrameType.Regular,
-    },
+  {
+    label: 'Course',
+    value: 287,
+    unit: 'T',
+    hasDegree: true,
+    size: ReadoutListItemSize.medium,
   },
+  {
+    label: 'COG',
+    value: 92,
+    unit: 'T',
+    hasDegree: true,
+    size: ReadoutListItemSize.large,
+  },
+];
+
+const LONGEST_UNIT = 'miles';
+const MAX_INTEGER_DIGITS = 4;
+// Longest value string in the column (4 integer digits + 1 fraction). Passed to
+// every row's value/setpoint/advice spaceReserver so they all reserve the same
+// width regardless of each row's own fractionDigits — like LONGEST_UNIT does for
+// the unit column.
+const VALUE_RESERVER = `${'0'.repeat(MAX_INTEGER_DIGITS)}.0`;
+
+const alignmentStyle = `
+  .rli-align-wrap { display: flex; flex-direction: column; gap: 24px; width: 100%; }
+  .rli-align-section { display: flex; flex-direction: column; gap: 8px; }
+  .rli-align-section-title {
+    margin: 0; font: 12px/1.2 var(--global-typography-ui-label-font-family, inherit);
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--element-neutral-color, #777);
+  }
+  .rli-align-col {
+    display: flex; flex-direction: column; gap: 2px; width: 480px;
+    padding: 8px; border: 1px dashed var(--border-divider-color, #ccc); border-radius: 8px;
+  }
+  /* Debug aid (temporary): outline each readout building block (red) and the
+     degree column (blue) so reserver widths / alignment are visible. Scoped to
+     this story only via .rli-align-wrap — safe to delete when no longer needed. */
+  .rli-align-wrap obc-readout-list-item::part(block) {
+    outline: 1px solid rgba(220, 0, 0, 0.7); outline-offset: -1px;
+  }
+  .rli-align-wrap obc-readout-list-item::part(degree) {
+    outline: 1px solid rgba(0, 0, 220, 0.7); outline-offset: -1px;
+  }
+  .rli-align-wrap obc-readout-list-item::part(degree-spacer) {
+    outline: 1px solid rgba(0, 160, 0, 0.8); outline-offset: -1px;
+  }
+`;
+
+function renderAlignmentColumn(aligned: boolean) {
+  return html`
+    <div class="rli-align-col">
+      ${ALIGNMENT_ROWS.map((row) =>
+        renderItem({
+          label: row.label,
+          unit: row.unit,
+          src: '',
+          value: row.value,
+          hasSetpoint: row.hasSetpoint,
+          setpoint: row.setpoint,
+          hasAdvice: row.hasAdvice,
+          advice: row.advice,
+          hasLeadingIcon: row.hasLeadingIcon,
+          hasValueIcon: row.hasValueIcon,
+          options: {
+            size: row.size ?? ReadoutListItemSize.small,
+            hasDegree: row.hasDegree ?? false,
+            fractionDigits: row.fractionDigits ?? 0,
+            priority: row.priority,
+            dataQuality: row.dataQuality,
+            hasLeadingIcon: row.hasLeadingIcon,
+            value: {
+              hasIcon: row.hasValueIcon,
+              weight: row.weight,
+              hintedZeros: row.hintedZeros,
+              dataQuality: row.valueDataQuality,
+              alert: row.valueAlert,
+              // Same value reserver on every row -> uniform value-block width,
+              // independent of each row's own fractionDigits.
+              ...(aligned ? {spaceReserver: VALUE_RESERVER} : {}),
+            },
+            ...(aligned
+              ? {
+                  // Non-degree rows reserve the degree column so their digits
+                  // and units line up with the degree rows.
+                  hasDegreeSpacer: !(row.hasDegree ?? false),
+                  maxDigits: MAX_INTEGER_DIGITS,
+                  unit: {spaceReserver: LONGEST_UNIT},
+                  setpoint: {spaceReserver: VALUE_RESERVER},
+                  advice: {spaceReserver: VALUE_RESERVER},
+                }
+              : {}),
+          },
+        })
+      )}
+    </div>
+  `;
+}
+
+export const ColumnAlignment: Story = {
+  render: () => html`
+    <style>
+      ${alignmentStyle}
+    </style>
+    <div class="rli-align-wrap">
+      <section class="rli-align-section">
+        <h3 class="rli-align-section-title">
+          Without reservers — columns drift
+        </h3>
+        ${renderAlignmentColumn(false)}
+      </section>
+      <section class="rli-align-section">
+        <h3 class="rli-align-section-title">
+          With shared reservers — unit column &amp; value right edge aligned
+        </h3>
+        ${renderAlignmentColumn(true)}
+      </section>
+    </div>
+  `,
 };

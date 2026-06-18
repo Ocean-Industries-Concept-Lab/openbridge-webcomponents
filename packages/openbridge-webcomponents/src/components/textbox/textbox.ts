@@ -41,6 +41,10 @@ export enum ObcTextboxFontWeight {
  *   cap heights of 8 / 12 / 16 / 24 / 32 px so text aligns to a predictable
  *   grid.
  * - **Font weight:** `regular` (default), `semibold`, `bold`.
+ * - **Tabular numbers:** `tabularNums` (default off) renders digits as
+ *   fixed-width, lining numerals (`tabular-nums lining-nums` + the `ss04`/`tnum`/
+ *   `lnum` features) so numeric values stay column-aligned and stable in width
+ *   as they update – use it for readouts and other live numeric displays.
  * - **Alignment:** `left`, `center`, `right` (default) – positions the text
  *   within the box's width when the box is wider than the content.
  * - **Reserved width:** content placed in the `length` slot reserves a minimum
@@ -70,6 +74,7 @@ export class ObcTextbox extends LitElement {
   @property({type: String}) size: ObcTextboxSize = ObcTextboxSize.m;
   @property({type: String}) fontWeight: ObcTextboxFontWeight =
     ObcTextboxFontWeight.regular;
+  @property({type: Boolean}) tabularNums = false;
 
   override render() {
     return html`
@@ -79,6 +84,7 @@ export class ObcTextbox extends LitElement {
           [`alignment-${this.alignment}`]: true,
           [`size-${this.size}`]: true,
           [`font-weight-${this.fontWeight}`]: true,
+          'tabular-nums': this.tabularNums,
         })}
       >
         <div class="inner-wrapper">
