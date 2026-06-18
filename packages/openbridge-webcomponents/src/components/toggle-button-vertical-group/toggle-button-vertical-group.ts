@@ -37,6 +37,10 @@ export type ObcToggleButtonVerticalGroupValueChangeEvent = CustomEvent<{
  * - **Layout behavior:**
  *   - By default, the group stretches to fill available container width, with options stacked vertically.
  *   - When `hugWidth` is true, the group shrinks to fit its content width instead of expanding.
+ * - **Empty selection mode:** When `allowEmptySelection` is true, a `value` that does not match any enabled
+ *   option leaves the group with no option selected, instead of defaulting to the first enabled option. Use
+ *   this when a selection may legitimately be absent (e.g. unset, loading, or error states) so the UI does not
+ *   imply a choice the user has not made.
  * - **Disabled state:** Setting `disabled` on the group disables all contained options at once. Individual
  *   options can also be disabled independently while the group remains enabled.
  * - **Divider management:** Automatically shows visual dividers between options and hides the divider after
@@ -129,6 +133,17 @@ export class ObcToggleButtonVerticalGroup extends LitElement {
   @property({type: Boolean}) hugWidth = false;
 
   /**
+   * If true, a `value` that does not match any enabled option leaves the group with no option selected
+   * instead of defaulting to the first enabled option.
+   *
+   * This also applies when the currently selected option becomes disabled: the group clears its selection
+   * rather than falling back to another option.
+   *
+   * Defaults to false (the first enabled option is selected when the value does not match).
+   */
+  @property({type: Boolean}) allowEmptySelection = false;
+
+  /**
    * Disables the entire group and all contained options.
    *
    * When set to true, all options become non-interactive, regardless of their individual disabled state.
@@ -186,8 +201,12 @@ export class ObcToggleButtonVerticalGroup extends LitElement {
         this.updateDividers();
         return;
       }
-      const fallback = this.getFirstSelectableOption();
-      newValue = fallback?.value || '';
+      if (this.allowEmptySelection) {
+        newValue = '';
+      } else {
+        const fallback = this.getFirstSelectableOption();
+        newValue = fallback?.value || '';
+      }
     }
 
     this.value = newValue;
@@ -253,9 +272,13 @@ export class ObcToggleButtonVerticalGroup extends LitElement {
     });
 
     if (!this.value || !this.getOptionByValue(this.value)) {
-      const firstSelectable = this.getFirstSelectableOption();
-      if (firstSelectable) {
-        this.updateSelection(firstSelectable.value, false);
+      if (this.allowEmptySelection) {
+        this.updateSelection('', false);
+      } else {
+        const firstSelectable = this.getFirstSelectableOption();
+        if (firstSelectable) {
+          this.updateSelection(firstSelectable.value, false);
+        }
       }
     } else {
       this.updateSelection(this.value, false);
@@ -265,6 +288,10 @@ export class ObcToggleButtonVerticalGroup extends LitElement {
   private handleOptionDisabledChange() {
     const currentOption = this.getOptionByValue(this.value);
     if (currentOption?.disabled && this.hasAnyEnabledOption()) {
+      if (this.allowEmptySelection) {
+        this.updateSelection('');
+        return;
+      }
       const firstSelectable = this.getFirstSelectableOption();
       if (firstSelectable) {
         this.updateSelection(firstSelectable.value);
@@ -303,6 +330,10 @@ export class ObcToggleButtonVerticalGroup extends LitElement {
 
     const currentOption = this.getOptionByValue(this.value);
     if (currentOption?.disabled && this.hasAnyEnabledOption()) {
+      if (this.allowEmptySelection) {
+        this.updateSelection('');
+        return;
+      }
       const firstSelectable = this.getFirstSelectableOption();
       if (firstSelectable) {
         this.updateSelection(firstSelectable.value);
