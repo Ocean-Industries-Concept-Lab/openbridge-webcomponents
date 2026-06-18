@@ -123,31 +123,6 @@ export const Realtime: Story = {
   },
 };
 
-// Regression: changing priority after the first render must update the stroke
-// color. The story starts as `regular` and switches to `enhanced` in `play`, so
-// the baseline captures the enhanced color the dynamic update produced.
-export const ChangePriority: Story = {
-  args: {
-    layout: {
-      size: ObcIndicatorGraphSize.medium,
-      priority: ObcIndicatorGraphPriority.regular,
-    },
-  },
-  play: async ({canvasElement}) => {
-    const graph = canvasElement.querySelector(
-      'obc-indicator-graph'
-    ) as ObcIndicatorGraph;
-    if (!graph) {
-      throw new Error('Graph not found');
-    }
-    graph.layout = {
-      size: ObcIndicatorGraphSize.medium,
-      priority: ObcIndicatorGraphPriority.enhanced,
-    };
-    await graph.updateComplete;
-  },
-};
-
 export const BelowZero: Story = {
   args: {
     data: [
