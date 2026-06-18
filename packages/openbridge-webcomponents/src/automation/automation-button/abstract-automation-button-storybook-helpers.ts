@@ -97,6 +97,16 @@ export const argTypesAbstractAutomationButtonMotorized = {
   ...argTypesAbstractAutomationButton,
   speedInPercent: {
     control: {type: 'range', min: 0, max: 100, step: 1},
+    description: 'Deprecated, use `speed` together with `speedUnit` instead.',
+  },
+  speed: {
+    control: {type: 'number'},
+  },
+  speedUnit: {
+    control: {type: 'text'},
+  },
+  speedMaxDigits: {
+    control: {type: 'number'},
   },
   labelDirection: {
     options: Object.values(AutomationButtonLabelDirection),
