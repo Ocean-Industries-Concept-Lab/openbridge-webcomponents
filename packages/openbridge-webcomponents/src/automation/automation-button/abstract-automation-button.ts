@@ -3,6 +3,7 @@ import {property, queryAssignedElements} from 'lit/decorators.js';
 import '../automation-button/automation-button.js';
 import {
   AutomationButtonDirection,
+  AutomationButtonOrientation,
   AutomationButtonPositioning,
   AutomationButtonReadoutPosition,
   AutomationButtonState,
@@ -102,6 +103,10 @@ export class ObcAbstractAutomationButton extends LitElement {
   get _variant(): AutomationButtonVariant {
     // @ts-expect-error - property should be defined in subclass
     return this.variant as AutomationButtonVariant;
+  }
+
+  get _orientation(): AutomationButtonOrientation {
+    return AutomationButtonOrientation.horizontal;
   }
 
   get extraReadouts(): AutomationButtonReadoutStack[] {
@@ -236,6 +241,7 @@ export class ObcAbstractAutomationButton extends LitElement {
       .progressValue=${this.progressValue}
       .variant=${this._variant}
       .direction=${this.direction}
+      .orientation=${this._orientation}
       .hasBadgeSpacer=${this.getBadgeSpacer()}
       .positioning=${this.positioning}
     >
