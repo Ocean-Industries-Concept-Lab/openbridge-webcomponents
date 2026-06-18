@@ -155,8 +155,6 @@ export class ObcIndicatorGraph extends LitElement {
       return;
     }
     const series = this.uplot.series[1];
-    // setSeries only applies `show`/`focus`, so stroke and width are mutated
-    // directly on the series and applied with a redraw.
     series.stroke = () => this._getStrokeColor();
     series.width = this._getStrokeWidth();
     this.uplot.redraw();
