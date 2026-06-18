@@ -161,7 +161,12 @@ const template: IntegrationVesselMenuTemplate = (args) => html`
 `;
 
 const templateWrappedButtons: IntegrationVesselMenuTemplate = (args) => html`
-  <obc-integration-vessel-menu .hideAlarmList=${args.hideAlarmList}>
+  <obc-integration-vessel-menu
+    style="width: 600px; height: 400px;"
+    .hasActions=${args.hasActions}
+    .hasAlertList=${args.hasAlertList}
+    .hasContent=${args.hasContent}
+  >
     <div slot="buttons">
       <div style="display: contents;">
         <obc-button ?fullWidth=${true}>Open</obc-button>
@@ -198,23 +203,17 @@ export const NoAlertList: Story = {
   args: {hasAlertList: false},
 };
 
+// Recommended bounded usage: the consumer caps the menu by setting a height on
+// the host element. The menu fills that height and the alert list scrolls within
+// the remaining space automatically — no per-slot sizing required.
 const templateConstrained: IntegrationVesselMenuTemplate = (args) => html`
   <obc-integration-vessel-menu
-    style="width: 400px;"
+    style="width: 400px; height: 500px;"
     .hasActions=${args.hasActions}
     .hasAlertList=${args.hasAlertList}
     .hasContent=${args.hasContent}
   >
-    ${renderButtons()}
-    <div slot="content" style="width: 100%; height: 400px; padding: 16px;">
-      <p style="margin: 0;">Content area (fixed 400px)</p>
-    </div>
-    <div
-      slot="alarms"
-      style="display: block; max-height: 400px; overflow-y: auto;"
-    >
-      ${renderAlarms()}
-    </div>
+    ${renderButtons()} ${renderContent()} ${renderAlarms()}
   </obc-integration-vessel-menu>
 `;
 
@@ -246,4 +245,19 @@ export const LongContentOverflow: Story = {
 
 export const WithButtonsWrappedInDivWithoutStyling: Story = {
   render: templateWrappedButtons,
+};
+
+const templateNoAlerts: IntegrationVesselMenuTemplate = (args) => html`
+  <obc-integration-vessel-menu
+    style="width: 400px;"
+    .hasActions=${args.hasActions}
+    .hasAlertList=${args.hasAlertList}
+    .hasContent=${args.hasContent}
+  >
+    ${renderButtons()} ${renderContent()}
+  </obc-integration-vessel-menu>
+`;
+
+export const NoAlerts: Story = {
+  render: templateNoAlerts,
 };
