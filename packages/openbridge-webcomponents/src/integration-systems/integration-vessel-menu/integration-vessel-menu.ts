@@ -39,13 +39,8 @@ import '../../building-blocks/alert-list/alert-list.js';
 
 @customElement('obc-integration-vessel-menu')
 export class ObcIntegrationVesselMenu extends LitElement {
-  /** Show the action buttons footer. When false it is removed and takes no space. */
   @property({type: Boolean, attribute: false}) hasActions = true;
-
-  /** Show the alert list. When false it is removed and takes no space. */
   @property({type: Boolean, attribute: false}) hasAlertList = true;
-
-  /** Show the main content area. When false it is removed and takes no space. */
   @property({type: Boolean, attribute: false}) hasContent = true;
 
   protected override render() {
