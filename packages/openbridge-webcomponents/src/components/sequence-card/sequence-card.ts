@@ -117,22 +117,30 @@ export class ObcSequenceCard extends LitElement {
 
   @property({type: Boolean}) hasLeadingIcon = false;
   @property({type: String}) cardTitle = 'Title';
+  /** @availableWhen titleType!=Single */
   @property({type: String}) subtitle = 'Subtitle';
 
   @property({type: Boolean}) hasTimeStamp = false;
+  /** @availableWhen hasTimeStamp==true */
   @property({type: String}) timeLabel = 'TWOL';
+  /** @availableWhen hasTimeStamp==true */
   @property({type: String}) time = '00:00:00';
 
   @property({type: Boolean}) hasContent = false;
   @property({type: Boolean}) hasActions = false;
 
+  /** @availableWhen progressType==Centered && (titleType!=Single || indicatorTypeOverride!=undefined) */
   @property({type: String}) progressLabel = '1';
+  /** @availableWhen (showConnector==true && progressType==Centered && horizontal==false) || (showConnector==true && horizontal==true && progressType!=LeftSide) */
   @property({type: String}) progressValue: SequenceValue =
     SequenceValue.regular;
 
+  /** @availableWhen progressType==LeftSide && horizontal==false && hasTimeStamp==true */
   @property({type: String}) leftTime = '00:00';
 
+  /** @availableWhen progressType==Centered */
   @property({type: String}) indicatorTypeOverride?: SequenceType;
+  /** @availableWhen progressType==Centered */
   @property({type: String}) indicatorStyleOverride?: SequenceStyle;
 
   private get showSubtitle() {

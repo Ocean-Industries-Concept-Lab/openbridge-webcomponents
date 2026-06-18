@@ -99,7 +99,9 @@ export class ObcCalendar extends LitElement {
   @property({type: Boolean, attribute: false}) hasFooter = true;
   @property({type: String}) locale?: string;
   @property({type: Number}) firstDayOfWeek = 1;
+  /** @availableWhen hasFooter==true && type!=XLarge */
   @property({type: String}) footerLabel = 'Calendar';
+  /** @availableWhen hasFooter==true && type!=XLarge */
   @property({type: String}) footerHref?: string;
 
   @state() private _displayMonth: Date = new Date();

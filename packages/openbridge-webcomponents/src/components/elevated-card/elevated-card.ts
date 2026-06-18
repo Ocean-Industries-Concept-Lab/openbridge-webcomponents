@@ -185,12 +185,14 @@ export class ObcElevatedCard extends LitElement {
   /**
    * If true, adds a border below the graphic area (when present).
    * Used to visually separate the graphic from the card content.
+   * @availableWhen hasGraphic==true
    */
   @property({type: Boolean}) graphicBorder = false;
 
   /**
    * If true, adds a border to the card (top or bottom, depending on position).
    * Useful for visually separating cards in a stack.
+   * @availableWhen position!=regular
    */
   @property({type: Boolean}) border = false;
 

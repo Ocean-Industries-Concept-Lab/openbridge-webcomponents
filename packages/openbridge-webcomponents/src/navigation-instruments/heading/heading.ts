@@ -27,19 +27,28 @@ export class ObcHeading extends LitElement {
   @property({type: Number}) courseOverGround = 0;
 
   @property({type: Number}) headingSetpoint: number | null = null;
+  /** @availableWhen headingSetpoint!=null */
   @property({type: Number}) newHeadingSetpoint: number | undefined;
+  /** @availableWhen headingSetpoint!=null && autoAtHeadingSetpoint==false */
   @property({type: Boolean}) atHeadingSetpoint: boolean = false;
+  /** @availableWhen headingSetpoint!=null */
   @property({type: Number}) headingSetpointAtZeroDeadband: number = 0.5;
+  /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean}) headingSetpointOverride: boolean = false;
+  /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean, attribute: false}) autoAtHeadingSetpoint: boolean =
     true;
+  /** @availableWhen headingSetpoint!=null && autoAtHeadingSetpoint==true */
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
+  /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean}) animateSetpoint: boolean = false;
+  /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
   @property({type: String}) direction: CompassDirection =
     CompassDirection.NorthUp;
   @property({type: String}) priority: Priority = Priority.regular;
+  /** @availableWhen priority==enhanced */
   @property({type: Array, attribute: false})
   priorityElements: HeadingPriorityElement[] = [HeadingPriorityElement.hdg];
   /** Show compass NSEW labels. */

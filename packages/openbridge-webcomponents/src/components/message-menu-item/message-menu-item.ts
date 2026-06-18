@@ -134,6 +134,7 @@ export class ObcMessageMenuItem extends LitElement {
   @property({type: String}) description = '';
   @property({type: String}) day = '';
   @property({type: String}) time = '';
+  /** @availableWhen hasActionLabelSlot==false */
   @property({type: String}) primaryActionLabel = '';
   @property({type: String}) secondaryActionLabel = '';
   @property({type: Boolean, attribute: false}) enablePrimaryAction = true;
@@ -142,6 +143,7 @@ export class ObcMessageMenuItem extends LitElement {
   // Visibility properties for icons (slots)
   @property({type: Boolean}) hasPrimaryIcon = false;
   @property({type: Boolean}) hasSecondaryIcon = false;
+  /** @availableWhen stackVertical==false */
   @property({type: Boolean}) hasTrailingIcon = false;
   @property({type: Boolean}) isShelved = false;
 

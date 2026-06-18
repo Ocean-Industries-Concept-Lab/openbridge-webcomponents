@@ -191,6 +191,7 @@ export class ObcPieChart extends LitElement {
   @property({type: String})
   outerLabelUnit = '%';
 
+  /** @availableWhen showOuterLabels==true */
   @property({
     type: Number,
   })

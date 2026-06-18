@@ -88,10 +88,16 @@ export class ObcKeyboardNumeric extends LitElement {
   @property({type: String}) type: ObcKeyboardNumericType =
     ObcKeyboardNumericType.Floating;
 
-  /** Shows the top bar with label and close button (only applicable for floating type) */
+  /**
+   * Shows the top bar with label and close button (only applicable for floating type)
+   * @availableWhen type==Floating
+   */
   @property({type: Boolean}) hasTitleBar = false;
 
-  /** Label displayed in the top bar */
+  /**
+   * Label displayed in the top bar
+   * @availableWhen hasTitleBar==true && type==Floating
+   */
   @property({type: String}) label = 'Parameter name';
 
   /** Current input value */

@@ -145,6 +145,8 @@ export class ObcTooltip extends LitElement {
    * Text content displayed in the tooltip (only used when `type="label"`).
    *
    * Default: `'Label'`
+   *
+   * @availableWhen type==label
    */
   @property({type: String}) label = 'Label';
 
@@ -153,6 +155,8 @@ export class ObcTooltip extends LitElement {
    * Has no effect when `type="icon"`.
    *
    * Default: `false`
+   *
+   * @availableWhen type==label
    */
   @property({type: Boolean}) showIcon = false;
 
