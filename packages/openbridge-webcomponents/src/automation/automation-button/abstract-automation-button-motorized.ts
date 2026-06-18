@@ -21,6 +21,7 @@ export class ObcAbstractAutomationButtonMotorized extends ObcAbstractAutomationB
     AutomationButtonLabelDirection.right;
   @property({type: String}) variant: MotorizedVariant =
     MotorizedVariant.regular;
+  /** @availableWhen variant in [double, forward, flatForward] */
   @property({type: String}) direction: AutomationButtonDirection =
     AutomationButtonDirection.forward;
 

@@ -81,7 +81,7 @@ export interface DateItemEvent {
 @customElement('obc-event-item')
 export class ObcEventItem extends LitElement {
   @property({type: String}) override title = '';
-  /** @availableWhen eventItemType==doubleLine */
+  /** @availableWhen eventItemType==DoubleLine */
   @property({type: String}) description = '';
   @property({type: String}) startTime = '';
   @property({type: String}) endTime = '';
@@ -90,7 +90,7 @@ export class ObcEventItem extends LitElement {
   @property({type: Boolean}) hasTime = false;
   /** @availableWhen hasTime==true */
   @property({type: Boolean}) hasEndTime = false;
-  /** @availableWhen eventItemType==aggregated */
+  /** @availableWhen eventItemType==Aggregated */
   @property({type: Number}) aggregatedCount = 0;
   @property({type: Boolean}) colorCoded = false;
   @property({type: Boolean}) disabled = false;

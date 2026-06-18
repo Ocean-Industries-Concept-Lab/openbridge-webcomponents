@@ -87,7 +87,7 @@ export class ObcAbstractAutomationButton extends LitElement {
   /** @availableWhen progress==true */
   @property({type: String}) progressMode: CircularProgressMode =
     CircularProgressMode.indeterminate;
-  /** @availableWhen progress==true && progressMode in [determinate, progressive-indeterminate] */
+  /** @availableWhen progress==true && progressMode in [determinate, progressiveIndeterminate] */
   @property({type: Number}) progressValue: number = 0;
   @property({type: String}) tag: string | null = null;
   @property({type: String}) badgeControl: AutomationButtonBadgeControl =
