@@ -67,7 +67,8 @@
   gap: var(--app-components-integration-system-menu-action-spacing);
 }
 
-.buttons-slot {
+.buttons-slot,
+.content-slot {
   display: contents;
 }
 

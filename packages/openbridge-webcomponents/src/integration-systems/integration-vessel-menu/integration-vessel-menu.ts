@@ -65,7 +65,7 @@ export class ObcIntegrationVesselMenu extends LitElement {
             hidden: !this.hasContent,
           })}
         >
-          <slot name="content"></slot>
+          <slot name="content" class="content-slot"></slot>
         </div>
         <div
           class=${classMap({
