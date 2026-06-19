@@ -33,6 +33,7 @@ export class ObcPoiButtonData extends ObcPoiButton {
   @property({type: String, attribute: 'data-state'})
   dataState: ObcPoiObjectState | null = null;
 
+  /** @availableWhen dataState!=overlapped && (dataState!=null || value!=overlapped) */
   @property({type: Boolean, attribute: 'data-interactive'})
   dataInteractive = false;
 

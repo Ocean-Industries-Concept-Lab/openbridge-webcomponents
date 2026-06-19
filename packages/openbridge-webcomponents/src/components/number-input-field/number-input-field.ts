@@ -64,6 +64,7 @@ export class ObcNumberInputField extends LitElement {
   @property({type: Boolean, reflect: true}) disabled = false;
   @property({type: Boolean, reflect: true}) readonly = false;
   @property({type: Boolean, reflect: true}) error = false;
+  /** @availableWhen error==true */
   @property({type: String}) errorText = '';
   /** If true, the input field will not update its value on focus */
   @property({type: Boolean}) rejectUpdatesOnFocus = false;
@@ -92,11 +93,15 @@ export class ObcNumberInputField extends LitElement {
 
   @property({type: String}) label = '';
   @property({type: Boolean}) required = false;
+  /** @availableWhen label!='' */
   @property({type: Boolean}) hasLabelIcon = false;
+  /** @availableWhen label!='' */
   @property({type: String}) labelPlacement: ObcNumberInputFieldPlacement =
     ObcNumberInputFieldPlacement.Left;
 
+  /** @availableWhen helperText!='' || (error==true && errorText!='') */
   @property({type: Boolean}) hasHelperIcon = false;
+  /** @availableWhen helperText!='' || (error==true && errorText!='') */
   @property({type: String}) helperPlacement: ObcNumberInputFieldPlacement =
     ObcNumberInputFieldPlacement.Left;
 

@@ -240,6 +240,7 @@ export class ObcTextareaField extends LitElement {
 
   /**
    * Error text displayed below the field when `error` is true.
+   * @availableWhen error==true
    */
   @property({type: String}) errorText = '';
 
@@ -292,12 +293,14 @@ export class ObcTextareaField extends LitElement {
 
   /**
    * Current recording duration in seconds.
+   * @availableWhen recording==true
    */
   @property({type: Number}) recordingDuration = 0;
 
   /**
    * Array of audio level values (0-1) for waveform visualization.
    * New values should be added to the end (right side) and old values shift left.
+   * @availableWhen recording==true
    */
   @property({type: Array}) audioLevels: number[] = [];
 
@@ -306,6 +309,7 @@ export class ObcTextareaField extends LitElement {
    * Use 'recording' during active recording, and 'playback' when paused
    * to allow the user to preview the recorded audio with a slider.
    * Automatically reset to 'recording' when `recording` becomes false.
+   * @availableWhen recording==true
    */
   @property({type: String}) recordingStatus: AudioRecordingStatus =
     AudioRecordingStatus.Recording;
@@ -313,6 +317,7 @@ export class ObcTextareaField extends LitElement {
   /**
    * Current playback position (0-1) for playback mode.
    * Only relevant when recordingStatus is 'playback'.
+   * @availableWhen recording==true
    */
   @property({type: Number}) playbackPosition = 0;
 

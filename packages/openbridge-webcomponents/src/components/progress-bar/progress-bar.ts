@@ -25,16 +25,25 @@ export enum CircularProgressState {
 @customElement('obc-progress-bar')
 export class ObcProgressBar extends LitElement {
   @property({type: String}) type: ProgressBarType = ProgressBarType.linear;
+  /** @availableWhen type==linear */
   @property({type: String}) mode: ProgressBarMode = ProgressBarMode.determinate;
+  /** @availableWhen type==circular */
   @property({type: String}) circularState: CircularProgressState =
     CircularProgressState.determinate;
   @property({type: Number}) value = 0;
+  /** @availableWhen type==linear */
   @property({type: Boolean}) showValue = false;
+  /** @availableWhen type==circular && (progressiveIndeterminate==true || circularState==determinate) */
   @property({type: Boolean}) showUnit = false;
+  /** @availableWhen type==linear */
   @property({type: Boolean}) hasDescription = false;
+  /** @availableWhen type==linear && hasDescription==true */
   @property({type: String}) description = 'Description text';
+  /** @availableWhen type==linear && showValue==true && mode==determinate */
   @property({type: Boolean}) showState = false;
+  /** @availableWhen type==linear && showValue==true && mode==determinate && showState==true */
   @property({type: String}) stateLabel = 'Open';
+  /** @availableWhen type==circular */
   @property({type: Boolean}) progressiveIndeterminate = false;
 
   override render() {

@@ -28,15 +28,23 @@ export class ObcAzimuthThruster extends LitElement {
 
   @property({type: Number}) angle = 0;
   @property({type: Number}) angleSetpoint: number | undefined;
+  /** @availableWhen angleSetpoint!=undefined */
   @property({type: Number}) newAngleSetpoint: number | undefined;
+  /** @availableWhen angleSetpoint!=undefined && autoAtAngleSetpoint==false */
   @property({type: Boolean})
   atAngleSetpoint: boolean = false;
+  /** @availableWhen angleSetpoint!=undefined */
   @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
+  /** @availableWhen angleSetpoint!=undefined */
   @property({type: Boolean}) angleSetpointOverride: boolean = false;
+  /** @availableWhen angleSetpoint!=undefined || thrustSetpoint!=undefined */
   @property({type: Boolean}) touching: boolean = false;
+  /** @availableWhen angleSetpoint!=undefined */
   @property({type: Boolean, attribute: false}) autoAtAngleSetpoint: boolean =
     true;
+  /** @availableWhen angleSetpoint!=undefined && autoAtAngleSetpoint==true */
   @property({type: Number}) autoAtAngleSetpointDeadband: number = 2;
+  /** @availableWhen angleSetpoint!=undefined || thrustSetpoint!=undefined */
   @property({type: Boolean}) animateSetpoint: boolean = false;
   /**
    * Interval (in degrees) for primary tickmarks.
@@ -60,13 +68,19 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: Number}) thrust = 0;
   @property({type: Number}) thrustSetpoint: number | undefined;
+  /** @availableWhen thrustSetpoint!=undefined */
   @property({type: Number}) newThrustSetpoint: number | undefined;
+  /** @availableWhen thrustSetpoint!=undefined && autoAtThrustSetpoint==false */
   @property({type: Boolean})
   atThrustSetpoint: boolean = false;
+  /** @availableWhen thrustSetpoint!=undefined */
   @property({type: Number}) thrustSetpointAtZeroDeadband: number = 0.1;
+  /** @availableWhen thrustSetpoint!=undefined */
   @property({type: Boolean}) thrustSetpointOverride: boolean = false;
+  /** @availableWhen thrustSetpoint!=undefined */
   @property({type: Boolean, attribute: false}) autoAtThrustSetpoint: boolean =
     true;
+  /** @availableWhen thrustSetpoint!=undefined && autoAtThrustSetpoint==true */
   @property({type: Number}) autoAtThrustSetpointDeadband: number = 1;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;

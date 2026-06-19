@@ -157,6 +157,7 @@ export class ObcSlider extends LitElement {
    * The amount to increment or decrement the value when clicking the left/right icon buttons.
    *
    * Default is 10.
+   * @availableWhen hasLeftIcon==true || hasRightIcon==true
    */
   @property({type: Number}) stepClick = 10;
 
@@ -189,14 +190,16 @@ export class ObcSlider extends LitElement {
    * Enables animated seeking: clicking or dragging along the track will set the value to the clicked position, animating smoothly.
    *
    * Default is false.
+   * @availableWhen variant!=no-input && disabled==false
    */
   @property({type: Boolean}) allowSeeking = false;
 
   /**
-   * The speed of animated seeking (when `allowSeeking` is true).
+   * The speed of the smooth animation that moves the value to the clicked position (used when `allowSeeking` is false).
    *
    * Expressed as the inverse of seconds to go from min to max (e.g., 1/3 means 3 seconds for full range).
    * Default is 1/3.
+   * @availableWhen allowSeeking==false && variant!=no-input && disabled==false
    */
   @property({type: Number}) seekingSpeed = 1 / 3;
 

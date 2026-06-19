@@ -58,7 +58,9 @@ export class ObcPitchRoll extends LitElement {
   @property({type: Number}) scaleForeImage = 1;
   @property({type: Number}) maxPitchAdvice: number | undefined = undefined;
   @property({type: Number}) maxRollAdvice: number | undefined = undefined;
+  /** @availableWhen maxPitchAdvice!=undefined */
   @property({type: Boolean}) triggerPitchAdvice = false;
+  /** @availableWhen maxRollAdvice!=undefined */
   @property({type: Boolean}) triggerRollAdvice = false;
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: Array, attribute: false})
@@ -71,13 +73,25 @@ export class ObcPitchRoll extends LitElement {
    * roll) instead of the vessel images. Default `false`.
    */
   @property({type: Boolean}) hasReadout: boolean = false;
-  /** Label for the pitch readout. Default `Pitch`. */
+  /**
+   * Label for the pitch readout. Default `Pitch`.
+   * @availableWhen hasReadout==true
+   */
   @property({type: String}) pitchLabel = 'Pitch';
-  /** Label for the roll readout. Default `Roll`. */
+  /**
+   * Label for the roll readout. Default `Roll`.
+   * @availableWhen hasReadout==true
+   */
   @property({type: String}) rollLabel = 'Roll';
-  /** Unit shown in both readouts. Default `DEG`. */
+  /**
+   * Unit shown in both readouts. Default `DEG`.
+   * @availableWhen hasReadout==true
+   */
   @property({type: String}) unit = 'DEG';
-  /** Number of fraction digits shown in both readouts. Default `0`. */
+  /**
+   * Number of fraction digits shown in both readouts. Default `0`.
+   * @availableWhen hasReadout==true
+   */
   @property({type: Number}) fractionDigits = 0;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
   /**

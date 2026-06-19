@@ -153,6 +153,8 @@ export class ObcAlertButton extends LitElement {
 
   /**
    * Disables the silence button when true.
+   *
+   * @availableWhen showSilenceButton==true
    */
   @property({type: Boolean}) silenceButtonDisabled = false;
 
@@ -175,6 +177,8 @@ export class ObcAlertButton extends LitElement {
    *
    * If the available width is less than this value, the button switches to flat mode.
    * Only applies when `type` is set to `normal` or `enhanced`.
+   *
+   * @availableWhen type!=flat
    */
   @property({type: Number}) flatMaxBreakpointPx = 0;
 
@@ -183,6 +187,8 @@ export class ObcAlertButton extends LitElement {
    *
    * If the available width is less than this value, the silence button is hidden.
    * Only applies when `showSilenceButton` is true.
+   *
+   * @availableWhen showSilenceButton==true
    */
   @property({type: Number}) silenceButtonMinBreakpointPx = 0;
 

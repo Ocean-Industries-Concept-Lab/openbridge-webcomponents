@@ -51,6 +51,7 @@ export enum IntegrationButtonType {
 @customElement('obc-integration-button')
 export class ObcIntegrationButton extends LitElement {
   @property({type: Boolean}) hasTrailingIcon = false;
+  /** @availableWhen hasTrailingIcon==true */
   @property({type: Boolean}) hasTrailingIcon2 = false;
   @property({type: Boolean}) hasLeadingIcon = false;
   @property({type: Boolean}) hasStatus = false;

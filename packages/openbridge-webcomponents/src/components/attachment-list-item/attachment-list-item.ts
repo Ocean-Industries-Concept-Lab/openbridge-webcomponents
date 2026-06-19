@@ -60,7 +60,10 @@ export class ObcAttachmentListItem extends LitElement {
   /** The file name or label text displayed in the item. */
   @property({type: String}) label = 'File name';
 
-  /** Optional index text displayed before the icon (e.g., "01"). */
+  /**
+   * Optional index text displayed before the icon (e.g., "01").
+   * @availableWhen hasIndex==true
+   */
   @property({type: String}) index = '';
 
   /** Whether to show the index. */
@@ -75,10 +78,16 @@ export class ObcAttachmentListItem extends LitElement {
   /** Whether to show the date and time. */
   @property({type: Boolean}) hasTimeDate = false;
 
-  /** The date string to display (e.g., "09 May 2025"). */
+  /**
+   * The date string to display (e.g., "09 May 2025").
+   * @availableWhen hasTimeDate==true
+   */
   @property({type: String}) date = '';
 
-  /** The time string to display (e.g., "10:41:32"). */
+  /**
+   * The time string to display (e.g., "10:41:32").
+   * @availableWhen hasTimeDate==true
+   */
   @property({type: String}) time = '';
 
   /** Whether to show the trailing action slot. */

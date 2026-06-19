@@ -194,14 +194,18 @@ export class ObcPoi extends LitElement {
   @property({type: String}) state: ObcPoiState = ObcPoiState.Enabled;
   @property({type: Boolean}) selected = false;
   @property({type: String}) buttonType = ObcPoiButtonType.Button;
+  /** @availableWhen value==overlapped */
   @property({type: Boolean, attribute: 'overlap-opaque'})
   overlapOpaque = false;
   @property({type: Array, attribute: false}) data: ObcPoiButtonDataItem[] = [];
   @property({type: Boolean, attribute: 'has-header'}) hasHeader = false;
+  /** @availableWhen hasHeader==true */
   @property({type: String, attribute: 'header-content'}) headerContent = '';
   @property({type: Boolean}) hasPointer = false;
+  /** @availableWhen hasPointer==true && type in [Line, Offset, Point] && value!=checked && value!=activated && state!=enabled */
   @property({type: String, attribute: 'pointer-type'})
   pointerType: ObcPoiPointerType | null = null;
+  /** @availableWhen hasPointer==true && type in [Line, Offset, Point] && value!=checked && value!=activated */
   @property({type: String, attribute: 'pointer-state'})
   pointerState: ObcPoiPointerState | null = null;
   @property({type: Number}) relativeDirection = 0;
@@ -210,11 +214,13 @@ export class ObcPoi extends LitElement {
   @property({type: Number, attribute: 'button-y'}) buttonY: number | null = 0;
   @property({type: Boolean, attribute: 'fixed-target'}) fixedTarget = false;
   @property({type: Number, attribute: 'button-offset-x'}) buttonOffsetX = 0;
+  /** @availableWhen type in [Line, Offset] */
   @property({type: Number, attribute: 'target-offset-x'}) targetOffsetX = 0;
   @property({type: Number, attribute: 'box-width'}) boxWidth: number | null =
     null;
   @property({type: Number, attribute: 'box-height'}) boxHeight: number | null =
     null;
+  /** @availableWhen type==outside && hasPointer==true */
   @property({type: Number, attribute: 'outside-angle'}) outsideAngle = 315;
   @property({type: Boolean, attribute: 'animate-position'})
   animatePosition = false;

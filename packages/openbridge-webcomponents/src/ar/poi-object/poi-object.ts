@@ -107,6 +107,7 @@ export class ObcPoiObject extends LitElement {
   @property({type: String}) state: ObcPoiObjectState =
     ObcPoiObjectState.Unchecked;
 
+  /** @availableWhen state!=overlapped */
   @property({type: Boolean}) interactive = false;
 
   @state() private hasPlaceholderIcon = false;

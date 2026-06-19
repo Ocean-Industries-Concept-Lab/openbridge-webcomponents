@@ -58,30 +58,39 @@ export enum AutomationButtonBadgeCommandLocked {
 
 export class ObcAbstractAutomationButton extends LitElement {
   @property({type: Boolean, attribute: false}) showReadoutStack: boolean = true;
+  /** @availableWhen showReadoutStack==true */
   @property({type: String}) readoutPosition: AutomationButtonReadoutPosition =
     AutomationButtonReadoutPosition.bottom;
+  /** @availableWhen showReadoutStack==true */
   @property({type: String}) readoutSize: AutomationButtonReadoutStackSize =
     AutomationButtonReadoutStackSize.regular;
   @property({type: String}) positioning: AutomationButtonPositioning =
     AutomationButtonPositioning.point;
   @property({type: Boolean}) alert: boolean = false;
+  /** @availableWhen alert==true */
   @property({type: String}) alertFrameType: ObcAlertFrameType =
     ObcAlertFrameType.SmallSideFlip;
+  /** @availableWhen alert==true */
   @property({type: String}) alertFrameThickness: ObcAlertFrameThickness =
     ObcAlertFrameThickness.Small;
+  /** @availableWhen alert==true */
   @property({type: String}) alertFrameStatus: AlertType = AlertType.Alarm;
+  /** @availableWhen alert==true */
   @property({type: String}) alertFrameMode: ObcAlertFrameMode =
     ObcAlertFrameMode.ackedActive;
+  /** @availableWhen alert==true */
   @property({type: Boolean, attribute: false}) showAlertCategoryIcon: boolean =
     true;
+  /** @availableWhen alert==true */
   @property({type: Boolean}) showAlertIcon: boolean = false;
+  /** Shows a progress indicator, used to indicate that an user action is in progress */
   @property({type: Boolean}) progress: boolean = false;
+  /** @availableWhen progress==true */
   @property({type: String}) progressMode: CircularProgressMode =
     CircularProgressMode.indeterminate;
+  /** @availableWhen progress==true && progressMode in [determinate, progressiveIndeterminate] */
   @property({type: Number}) progressValue: number = 0;
   @property({type: String}) tag: string | null = null;
-  @property({type: String}) direction: AutomationButtonDirection =
-    AutomationButtonDirection.forward;
   @property({type: String}) badgeControl: AutomationButtonBadgeControl =
     AutomationButtonBadgeControl.None;
   @property({type: String})
@@ -107,6 +116,13 @@ export class ObcAbstractAutomationButton extends LitElement {
 
   get _orientation(): AutomationButtonOrientation {
     return AutomationButtonOrientation.horizontal;
+  }
+    
+  get _direction(): AutomationButtonDirection {
+    if ('direction' in this) {
+      return this.direction as AutomationButtonDirection;
+    }
+    return AutomationButtonDirection.forward;
   }
 
   get extraReadouts(): AutomationButtonReadoutStack[] {
