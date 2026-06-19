@@ -59,9 +59,9 @@ const allowedUndefinedVariables = new Set([
   // B-5/B-6: instrument-field internal widths — unusual --obc- prefix
   '--obc-instrument-field-source-width',
   '--obc-instrument-field-tag-width',
-  // B-7: keyboard "nummeric" tokens missing from the (misspelled) family
-  '--ui-components-keyboard-nummeric-component-height-min',
-  '--ui-components-keyboard-nummeric-touch-target-size',
+  // B-7: keyboard "numeric" tokens missing from the (misspelled) family
+  '--ui-components-keyboard-numeric-component-height-min',
+  '--ui-components-keyboard-numeric-touch-target-size',
 ]);
 
 interface VariableDefinitionLocation {
