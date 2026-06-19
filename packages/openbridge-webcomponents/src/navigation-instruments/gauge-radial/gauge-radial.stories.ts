@@ -241,6 +241,30 @@ export const Sector90RightWithReadout: Story = {
   },
 };
 
+// Regression for #992: in a container that is much shorter than it is wide
+// (e.g. a flex row), the dial must shrink to fit the available height instead
+// of growing to its width and overflowing. The square 270 sector is the case
+// reported in the issue.
+export const ShortWideContainer: Story = {
+  args: {
+    ...sectorStoryArgs,
+    sector: GaugeRadialSector.deg270,
+    width: 600,
+    height: 160,
+  },
+};
+
+// Same regression for the 180 sector, whose intrinsic aspect ratio is wider
+// than tall: it must still cap to the container height rather than overflow.
+export const ShortWideContainer180: Story = {
+  args: {
+    ...sectorStoryArgs,
+    sector: GaugeRadialSector.deg180,
+    width: 600,
+    height: 120,
+  },
+};
+
 const readoutStoryArgs = {
   value: 123,
   minValue: 0,
