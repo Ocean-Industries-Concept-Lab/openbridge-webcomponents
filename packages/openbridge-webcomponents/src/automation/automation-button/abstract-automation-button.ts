@@ -117,7 +117,7 @@ export class ObcAbstractAutomationButton extends LitElement {
   get _orientation(): AutomationButtonOrientation {
     return AutomationButtonOrientation.horizontal;
   }
-    
+
   get _direction(): AutomationButtonDirection {
     if ('direction' in this) {
       return this.direction as AutomationButtonDirection;
@@ -256,7 +256,7 @@ export class ObcAbstractAutomationButton extends LitElement {
       .progressMode=${this.progressMode}
       .progressValue=${this.progressValue}
       .variant=${this._variant}
-      .direction=${this.direction}
+      .direction=${this._direction}
       .orientation=${this._orientation}
       .hasBadgeSpacer=${this.getBadgeSpacer()}
       .positioning=${this.positioning}
