@@ -24,14 +24,14 @@ const meta: Meta<typeof ObcTreeNavigation> = {
     <obc-tree-navigation>
       <obc-tree-navigation-group
         label="Vessel"
-        .alerts=${{aggregate: true, countLevelHigh: 3}}
+        .alerts=${{combine: true, countLevelHigh: 3}}
         expanded
       >
         ${iconIdToIconHtml('placeholder', {slot: 'icon'})}
         <obc-tree-navigation-group
           label="Engine room"
           expanded
-          .alerts=${{aggregate: true, countLevelHigh: 3}}
+          .alerts=${{combine: true, countLevelHigh: 3}}
           .terminalType=${TreeTerminalType.aggregatedHeader}
         >
           ${iconIdToIconHtml('placeholder', {slot: 'icon'})}
@@ -45,7 +45,7 @@ const meta: Meta<typeof ObcTreeNavigation> = {
           <obc-tree-navigation-group
             label="Auxiliary engine"
             expanded
-            .alerts=${{aggregate: true, countLevelHigh: 1}}
+            .alerts=${{combine: true, countLevelHigh: 1}}
           >
             ${iconIdToIconHtml('placeholder', {slot: 'icon'})}
             <obc-tree-navigation-item label="Fuel pump">
@@ -64,7 +64,7 @@ const meta: Meta<typeof ObcTreeNavigation> = {
           <obc-tree-navigation-group
             label="Cooling system"
             expanded
-            .alerts=${{aggregate: true, countLevelHigh: 1}}
+            .alerts=${{combine: true, countLevelHigh: 1}}
           >
             ${iconIdToIconHtml('placeholder', {slot: 'icon'})}
             <obc-tree-navigation-item
@@ -254,24 +254,24 @@ function sumAlerts(node: AlertNode): TreeNavigationItemAlerts {
 }
 
 /**
- * Render a node with every row using the given `aggregate` setting. Group rows
+ * Render a node with every row using the given `combine` setting. Group rows
  * carry the summed counts of their whole subtree; leaf rows carry their own
- * counts. With `aggregate` true each row collapses to a single total badge;
+ * counts. With `combine` true each row collapses to a single total badge;
  * with it false each row shows one badge per non-zero severity.
  */
-function renderAlertNode(node: AlertNode, aggregate: boolean): TemplateResult {
+function renderAlertNode(node: AlertNode, combine: boolean): TemplateResult {
   if (node.children) {
-    const alerts: TreeNavigationItemAlerts = {aggregate, ...sumAlerts(node)};
+    const alerts: TreeNavigationItemAlerts = {combine, ...sumAlerts(node)};
     return html`<obc-tree-navigation-group
       label=${node.label}
       expanded
       .alerts=${alerts}
     >
       ${iconIdToIconHtml('placeholder', {slot: 'icon'})}
-      ${node.children.map((child) => renderAlertNode(child, aggregate))}
+      ${node.children.map((child) => renderAlertNode(child, combine))}
     </obc-tree-navigation-group>`;
   }
-  const alerts = node.alerts ? {aggregate, ...node.alerts} : undefined;
+  const alerts = node.alerts ? {combine, ...node.alerts} : undefined;
   return html`<obc-tree-navigation-item label=${node.label} .alerts=${alerts}>
     ${iconIdToIconHtml('placeholder', {slot: 'icon'})}
   </obc-tree-navigation-item>`;
@@ -279,7 +279,7 @@ function renderAlertNode(node: AlertNode, aggregate: boolean): TemplateResult {
 
 /**
  * Alerts spread across leaves at several depths, every row with
- * `aggregate: true`. Each group header carries a single badge whose number is
+ * `combine: true`. Each group header carries a single badge whose number is
  * the sum of all alerts beneath it (child groups roll up into their parent in
  * turn), styled as the most severe category present — e.g. "Auxiliary engine"
  * totals 9 (1 critical + 6 medium + 2 low) and shows as critical, and "Vessel"
@@ -294,7 +294,7 @@ export const AggregatedAlertCounts: Story = {
 
 /**
  * The same tree and the same rolled-up totals, but every row with
- * `aggregate: false`: each row renders one badge per non-zero severity instead
+ * `combine: false`: each row renders one badge per non-zero severity instead
  * of a single combined badge. Group headers still sum their whole subtree —
  * e.g. "Auxiliary engine" shows separate critical (1), medium (6), and
  * low (2) badges.

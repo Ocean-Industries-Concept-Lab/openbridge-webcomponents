@@ -50,13 +50,13 @@ export enum TreeTerminalType {
  * `caution`. Badges are ordered and aggregated by the shared
  * `ALERT_SEVERITY_PRIORITY` ranking, most to least severe.
  *
- * Set `aggregate` to collapse the counts into a single badge showing the total,
+ * Set `combine` to collapse the counts into a single badge showing the total,
  * styled as the highest category present; otherwise one badge is rendered per
  * non-zero count.
  */
 export interface TreeNavigationItemAlerts {
   /** Collapse all counts into one badge: total count, highest-severity style. */
-  aggregate?: boolean;
+  combine?: boolean;
   /** Number of level-critical alerts. */
   countLevelCritical?: number;
   /** Number of alarm alerts. */
@@ -103,7 +103,7 @@ export interface TreeNavigationItemAlerts {
  *   per-severity count map with one field per level severity (critical, high,
  *   medium, low, diagnostic). By default each non-zero count renders its own
  *   badge, ordered most to least severe by `ALERT_SEVERITY_PRIORITY`; set
- *   `alerts.aggregate` to instead show a single badge with the combined total,
+ *   `alerts.combine` to instead show a single badge with the combined total,
  *   styled as the highest category present.
  * - **Checked state:** `checked` highlights the current selection using the
  *   amplified elevation style. A checked row is the current item and is not
@@ -183,7 +183,7 @@ export class ObcTreeNavigationItem extends LitElement {
    * Per-severity alert counts for the row's trailing badge(s). Omit (or leave
    * every count at 0) for a row with no alerts. See {@link TreeNavigationItemAlerts}.
    *
-   * - When `aggregate` is true, a single badge is shown: its number is the sum
+   * - When `combine` is true, a single badge is shown: its number is the sum
    *   of all counts and its severity is the highest category present
    *   (critical → alarm → warning → caution).
    * - Otherwise one badge is shown per count greater than 0, ordered most to
@@ -209,7 +209,7 @@ export class ObcTreeNavigationItem extends LitElement {
    * severity order, ranked by `ALERT_SEVERITY_PRIORITY`.
    *
    * - No `alerts`, or every count 0 → no badges.
-   * - `aggregate` → a single pair: the summed count typed as the highest
+   * - `combine` → a single pair: the summed count typed as the highest
    *   category that has any alerts.
    * - Otherwise → one pair per count greater than 0.
    */
@@ -226,12 +226,12 @@ export class ObcTreeNavigationItem extends LitElement {
       [AlertType.LevelLow]: alerts.countLevelLow ?? 0,
       [AlertType.LevelDiagnostic]: alerts.countLevelDiagnostic ?? 0,
     };
-    // Order (and, when aggregating, rank) by the shared severity priority,
+    // Order (and, when combining, rank) by the shared severity priority,
     // keeping only the severities this component exposes.
     const ranked = ALERT_SEVERITY_PRIORITY.filter(
       (type) => type in countByType
     ).map((type) => ({type, count: countByType[type] ?? 0}));
-    if (alerts.aggregate) {
+    if (alerts.combine) {
       const total = ranked.reduce((sum, b) => sum + b.count, 0);
       const highest = ranked.find((b) => b.count > 0);
       if (!highest) return [];
