@@ -72,6 +72,18 @@ export enum AutomationButtonLabelDirection {
 }
 
 /**
+ * The orientation of the inner icon/symbol.
+ * - `horizontal`: The icon is shown in its default horizontal orientation.
+ * - `verticalRight`: The icon is rotated 90° clockwise.
+ * - `verticalLeft`: The icon is rotated 90° counter-clockwise.
+ */
+export enum AutomationButtonOrientation {
+  horizontal = 'horizontal',
+  verticalRight = 'verticalRight',
+  verticalLeft = 'verticalLeft',
+}
+
+/**
  * The positioning of the automation button.
  * - `point`: The button is wrapped in a 0x0 px div, where the center of the symbol is the center of the div.
  * - `symbol`: The button is wrapped in a div containing the symbol but not the readout stack
@@ -131,6 +143,8 @@ export class ObcAutomationButton extends LitElement {
     AutomationButtonDirection.forward;
   @property({type: String}) positioning: AutomationButtonPositioning =
     AutomationButtonPositioning.point;
+  @property({type: String}) orientation: AutomationButtonOrientation =
+    AutomationButtonOrientation.horizontal;
   /** Badge spacer should be set to true if there is a badge on the same side as the label */
   @property({type: Boolean}) hasBadgeSpacer: boolean = false;
 
@@ -242,14 +256,18 @@ export class ObcAutomationButton extends LitElement {
   private renderIconHolder(): HTMLTemplateResult {
     const effectiveVariant = this.effectiveVariant;
     const progressRing = this.getProgressRing();
+    const iconHolderClasses = classMap({
+      'icon-holder': true,
+      ['orientation-' + this.orientation]: true,
+    });
     if (this.variant === AutomationButtonVariant.flatForward) {
-      return html`<div class="icon-holder">
+      return html`<div class=${iconHolderClasses}>
         ${this.getDirectionIcon(effectiveVariant, 'icon-primary')}
         ${this.getDirectionIcon(effectiveVariant, 'icon-silhouette')}
         ${progressRing}
       </div>`;
     } else if (this.variant === AutomationButtonVariant.forward) {
-      return html`<div class="icon-holder">
+      return html`<div class=${iconHolderClasses}>
         ${this.getDirectionIcon(effectiveVariant, 'icon-primary')}
         ${progressRing}
       </div>`;
@@ -262,7 +280,7 @@ export class ObcAutomationButton extends LitElement {
       AutomationButtonVariant.flat,
       AutomationButtonVariant.square,
     ].includes(effectiveVariant);
-    return html`<div class="icon-holder">
+    return html`<div class=${iconHolderClasses}>
       ${direction}
       ${showIcon
         ? html`<div class="icon-primary">
