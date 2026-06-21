@@ -10,6 +10,8 @@ import {
 } from './automation-tank.js';
 import './automation-tank.js';
 import {html} from 'lit';
+import '../../icons/icon-tank.js';
+import '../../icons/icon-timer-google.js';
 import {crossDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../../navigation-instruments/watch/advice.js';
 import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
@@ -480,6 +482,55 @@ export const WithAlertAlarm: Story = {
       .priority=${args.priority}
     >
       <span slot="alert-label">Fire alert</span>
+    </obc-automation-tank>
+  `,
+};
+
+/**
+ * Alarm alert frame on a vertical atmospheric tank using the `bottom-flip`
+ * frame type. The tank is large enough to give the bottom flap room for all
+ * three slots, so it shows a custom icon (here a tank icon, suited to a tank
+ * alarm) via `alert-icon`, a label via `alert-label` and a clock via
+ * `alert-timer`. Smaller devices should fall back to a side-flip frame.
+ */
+export const WithAlertBottomFlip: Story = {
+  args: {
+    type: TankType.atmospheric,
+    alert: true,
+    alertFrameStatus: ObcAlertFrameStatus.Alarm,
+    alertFrameType: ObcAlertFrameType.BottomFlip,
+    showAlertIcon: true,
+  },
+  render: (args) => html`
+    <obc-automation-tank
+      .value=${args.value}
+      .max=${args.max}
+      .trend=${args.trend}
+      .tag=${args.tag}
+      .type=${args.type}
+      .orientation=${args.orientation}
+      .compact=${args.compact}
+      .static=${args.static}
+      .positioning=${args.positioning}
+      .chartMode=${args.chartMode}
+      .chartData=${args.chartData}
+      .advice=${args.advice}
+      .hasAdvice=${args.hasAdvice}
+      .hasGraphIcon=${args.hasGraphIcon}
+      .showTrendSymbol=${args.showTrendSymbol}
+      .percentFractionDigits=${args.percentFractionDigits}
+      .readout=${args.readout}
+      ?alert=${args.alert}
+      .alertFrameType=${args.alertFrameType}
+      .alertFrameThickness=${args.alertFrameThickness}
+      .alertFrameStatus=${args.alertFrameStatus}
+      .showAlertCategoryIcon=${args.showAlertCategoryIcon}
+      .showAlertIcon=${args.showAlertIcon}
+      .priority=${args.priority}
+    >
+      <obi-tank slot="alert-icon"></obi-tank>
+      <span slot="alert-label">Level alarm</span>
+      <obi-timer-google slot="alert-timer"></obi-timer-google>
     </obc-automation-tank>
   `,
 };

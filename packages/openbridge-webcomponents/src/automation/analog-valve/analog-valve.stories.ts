@@ -6,8 +6,7 @@ import {AutomationButtonReadoutStackSize} from '../../components/automation-butt
 import './analog-valve.js';
 import {crossDecorator} from '../../storybook-util.js';
 import '../automation-badge/automation-badge.js';
-import '../../icons/icon-placeholder.js';
-import '../../icons/icon-timer-google.js';
+import '../../icons/icon-pressure.js';
 import {argTypesAbstractAutomationButtonPassiveRound} from '../automation-button/abstract-automation-button-storybook-helpers.js';
 import {
   AutomationButtonBadgeAlert,
@@ -66,17 +65,19 @@ export const WithBadges: Story = {
 };
 
 /**
- * The analog valve forwards the `alert-frame-icon`, `alert-frame-label` and
- * `alert-frame-timer` slots down to the alert frame. With the `bottom-flip`
- * frame type the flap shows a custom icon together with a label and a clock.
- * See `ObcAbstractAutomationButton` for the documentation of these slots.
+ * The analog valve forwards the `alert-frame-icon` slot down to the alert
+ * frame. The valve symbol is small, so the `large-side-flip` frame type is
+ * used: its vertical flap has room for a custom icon (here a pressure icon,
+ * suited to a valve alarm) next to the alert category icon, but not for a
+ * label or clock. See `ObcAbstractAutomationButton` for the documentation of
+ * these slots.
  */
-export const AlertFrameWithIconLabelAndClock: Story = {
+export const AlertFrameWithIcon: Story = {
   args: {
     open: true,
     value: 20,
     alert: true,
-    alertFrameType: ObcAlertFrameType.BottomFlip,
+    alertFrameType: ObcAlertFrameType.LargeSideFlip,
     showAlertIcon: true,
   },
   render: (args) => html`
@@ -91,9 +92,7 @@ export const AlertFrameWithIconLabelAndClock: Story = {
       .alertFrameType=${args.alertFrameType}
       .showAlertIcon=${args.showAlertIcon}
     >
-      <obi-placeholder slot="alert-frame-icon"></obi-placeholder>
-      <span slot="alert-frame-label">Alert</span>
-      <obi-timer-google slot="alert-frame-timer"></obi-timer-google>
+      <obi-pressure slot="alert-frame-icon"></obi-pressure>
     </obc-analog-valve>
   `,
 };
