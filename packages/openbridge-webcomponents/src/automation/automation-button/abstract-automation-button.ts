@@ -56,6 +56,37 @@ export enum AutomationButtonBadgeCommandLocked {
   CommandLocked = 'command-locked',
 }
 
+/**
+ * Abstract base class for automation device buttons (e.g. valves, pumps,
+ * tanks). Subclasses provide the device symbol through the `icon` getter and
+ * its on/off state through `_on`, while this class renders the underlying
+ * `<obc-automation-button>` and forwards the shared slots and properties.
+ *
+ * ### Alert frame slots
+ *
+ * When `alert` is enabled the button is wrapped in an `<obc-alert-frame>`. The
+ * alert frame can show a custom icon, label and timer, depending on the
+ * selected `alertFrameType`. These are exposed as slots that are forwarded all
+ * the way down to the alert frame:
+ *
+ * | Slot Name          | Renders When...                                              | Purpose                                                                 |
+ * |--------------------|--------------------------------------------------------------|-------------------------------------------------------------------------|
+ * | alert-frame-icon   | `alert` and `showAlertIcon` and `alertFrameType` in [`large-side-flip`, `bottom-flip`, `top-flip`] | Custom icon shown in the alert frame flap, in addition to the alert category icon. |
+ * | alert-frame-label  | `alert` and `alertFrameType` in [`bottom-flip`, `top-flip`]  | Label text shown in the alert frame flap.                               |
+ * | alert-frame-timer  | `alert` and `alertFrameType` in [`bottom-flip`, `top-flip`]  | Timer / clock shown in the alert frame flap.                            |
+ *
+ * The slot content is remapped on its way down: `alert-frame-icon` ->
+ * `alert-icon` (`obc-automation-button`) -> `icon` (`obc-alert-frame`), and
+ * likewise for the label and timer slots.
+ *
+ * @slot alert-frame-icon - Custom icon shown in the alert frame flap (requires `showAlertIcon` and a flap variant that supports an icon).
+ * @slot alert-frame-label - Label text shown in the alert frame flap (`bottom-flip`/`top-flip`).
+ * @slot alert-frame-timer - Timer / clock shown in the alert frame flap (`bottom-flip`/`top-flip`).
+ * @slot badge-top-right - Custom badge in the top-right corner (overrides `badgeAlert`).
+ * @slot badge-top-left - Custom badge in the top-left corner (overrides `badgeControl`).
+ * @slot badge-bottom-left - Custom badge in the bottom-left corner (overrides `badgeInterlock`).
+ * @slot badge-bottom-right - Custom badge in the bottom-right corner (overrides `badgeCommandLocked`).
+ */
 export class ObcAbstractAutomationButton extends LitElement {
   @property({type: Boolean, attribute: false}) showReadoutStack: boolean = true;
   /** @availableWhen showReadoutStack==true */
@@ -262,6 +293,9 @@ export class ObcAbstractAutomationButton extends LitElement {
       .positioning=${this.positioning}
     >
       ${this.icon}
+      <slot name="alert-frame-icon" slot="alert-icon"></slot>
+      <slot name="alert-frame-label" slot="alert-label"></slot>
+      <slot name="alert-frame-timer" slot="alert-timer"></slot>
       <slot
         name="badge-top-right"
         slot="badge-top-right"
