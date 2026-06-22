@@ -69,6 +69,7 @@ export enum AutomationButtonLabelDirection {
   down = 'down',
   left = 'left',
   right = 'right',
+  none = 'none',
 }
 
 /**
