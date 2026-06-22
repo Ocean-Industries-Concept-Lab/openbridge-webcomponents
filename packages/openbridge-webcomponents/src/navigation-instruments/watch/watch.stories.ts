@@ -461,6 +461,7 @@ export const MultiCut: Story = {
 
 export const TickmarksTest: Story = {
   args: {
+    width: 480,
     tickmarks: [
       // every 15 degrees
       ...Array.from({length: 24}, (_, i) => ({
@@ -510,6 +511,7 @@ export const TickmarksTest: Story = {
 
 export const TickmarksInsideTest: Story = {
   args: {
+    width: 480,
     tickmarks: [
       // every 15 degrees
       ...Array.from({length: 24}, (_, i) => ({
@@ -577,6 +579,7 @@ export const TickmarksInsideTest: Story = {
 
 export const TickmarksTestRotation: Story = {
   args: {
+    width: 480,
     tickmarks: [
       // every 15 degrees
       ...Array.from({length: 24}, (_, i) => ({
@@ -650,6 +653,7 @@ export const TickmarksTestRotation: Story = {
 
 export const TickmarksTestInsideRotation: Story = {
   args: {
+    width: 480,
     tickmarks: [
       // every 15 degrees
       ...Array.from({length: 24}, (_, i) => ({
@@ -732,29 +736,28 @@ export const TickmarksTestInsideRotation: Story = {
  * gauge-vertical/horizontal components, but for radial (watch-based) instruments.
  */
 export const StateComparison: Story = {
+  args: {
+    width: 600,
+  },
   render: () => html`
-    <div style="display: flex; flex-direction: column; gap: 24px;">
-      <!-- Header row -->
-      <div
-        style="display: grid; grid-template-columns: 80px repeat(2, 1fr); gap: 16px; align-items: center;"
+   <div
+        style="display: grid; grid-template-columns: 80px repeat(2, 1fr); gap: 16px; align-items: center; justify-items: center;"
       >
-        <div></div>
+      <!-- Header row -->
+       <div></div>
         <div
-          style="text-align: center; font-weight: bold; font-size: 12px; color: #ccc;"
+          style="font-weight: bold; font-size: 12px; color: #ccc;"
         >
           regular
         </div>
         <div
-          style="text-align: center; font-weight: bold; font-size: 12px; color: #ccc;"
+          style="font-weight: bold; font-size: 12px; color: #ccc;"
         >
           enhanced
         </div>
-      </div>
 
       <!-- active row -->
-      <div
-        style="display: grid; grid-template-columns: 80px repeat(2, 1fr); gap: 16px; align-items: center;"
-      >
+      
         <div style="font-size: 12px; color: #888;">active</div>
         <div style="width: 160px; height: 160px;">
           <obc-watch
@@ -804,12 +807,8 @@ export const StateComparison: Story = {
             ]}
           ></obc-watch>
         </div>
-      </div>
 
       <!-- loading row -->
-      <div
-        style="display: grid; grid-template-columns: 80px repeat(2, 1fr); gap: 16px; align-items: center;"
-      >
         <div style="font-size: 12px; color: #888;">loading</div>
         <div style="width: 160px; height: 160px;">
           <obc-watch
@@ -859,12 +858,8 @@ export const StateComparison: Story = {
             ]}
           ></obc-watch>
         </div>
-      </div>
 
       <!-- off row -->
-      <div
-        style="display: grid; grid-template-columns: 80px repeat(2, 1fr); gap: 16px; align-items: center;"
-      >
         <div style="font-size: 12px; color: #888;">off</div>
         <div style="width: 160px; height: 160px;">
           <obc-watch
