@@ -64,14 +64,6 @@ export const WithBadges: Story = {
   },
 };
 
-/**
- * The analog valve forwards the `alert-frame-icon` slot down to the alert
- * frame. The valve symbol is small, so the `large-side-flip` frame type is
- * used: its vertical flap has room for a custom icon (here a pressure icon,
- * suited to a valve alarm) next to the alert category icon, but not for a
- * label or clock. See `ObcAbstractAutomationButton` for the documentation of
- * these slots.
- */
 export const AlertFrameWithIcon: Story = {
   args: {
     open: true,

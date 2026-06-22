@@ -486,13 +486,6 @@ export const WithAlertAlarm: Story = {
   `,
 };
 
-/**
- * Alarm alert frame on a vertical atmospheric tank using the `bottom-flip`
- * frame type. The tank is large enough to give the bottom flap room for all
- * three slots, so it shows a custom icon (here a tank icon, suited to a tank
- * alarm) via `alert-icon`, a label via `alert-label` and a clock via
- * `alert-timer`. Smaller devices should fall back to a side-flip frame.
- */
 export const WithAlertBottomFlip: Story = {
   args: {
     type: TankType.atmospheric,
