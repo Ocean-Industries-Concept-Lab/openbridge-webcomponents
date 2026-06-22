@@ -196,6 +196,54 @@ export const ValveAlert: Story = {
   },
 };
 
+export const ValveAlertButtonPositioning: Story = {
+  argTypes: {
+    alertFrameType: {
+      options: Object.values(ObcAlertFrameType),
+      control: {
+        type: 'select',
+      },
+    },
+    alertFrameStatus: {
+      options: Object.values(ObcAlertFrameStatus),
+      control: {
+        type: 'select',
+      },
+    },
+  },
+  args: {
+    alert: true,
+    alertFrameType: ObcAlertFrameType.BottomFlip,
+    alertFrameStatus: ObcAlertFrameStatus.Alarm,
+    positioning: AutomationButtonPositioning.button,
+  },
+  render(args) {
+    const readouts: AutomationButtonReadoutStack[] = [];
+    const tag: string | null = '#0000';
+    return html` <obc-automation-button
+      state="open"
+      .showReadoutStack=${args.showReadoutStack}
+      .readouts=${readouts}
+      .tag=${tag}
+      .alertFrameStatus=${args.alertFrameStatus}
+      .alertFrameType=${args.alertFrameType}
+      .showAlertCategoryIcon=${args.showAlertCategoryIcon}
+      .showAlertIcon=${args.showAlertIcon}
+      .positioning=${args.positioning}
+      ?alert=${args.alert}
+    >
+      <obi-twoway-digital-open
+        usecsscolor
+        slot="icon"
+        style="display: block; transform: rotate(90deg); line-height: 0;"
+      ></obi-twoway-digital-open>
+      <obi-placeholder slot="alert-icon"></obi-placeholder>
+      <div slot="alert-label">Label</div>
+      <div slot="alert-timer">00:45</div>
+    </obc-automation-button>`;
+  },
+};
+
 export const ValveBadges: Story = {
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [];

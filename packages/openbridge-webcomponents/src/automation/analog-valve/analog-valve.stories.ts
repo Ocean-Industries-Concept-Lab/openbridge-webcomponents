@@ -84,7 +84,7 @@ export const AlertFrameWithIcon: Story = {
       .alertFrameType=${args.alertFrameType}
       .showAlertIcon=${args.showAlertIcon}
     >
-      <obi-pressure slot="alert-frame-icon"></obi-pressure>
+      <obi-pressure slot="alert-icon"></obi-pressure>
     </obc-analog-valve>
   `,
 };

@@ -18,7 +18,6 @@ import {
   ObcAlertFrameThickness,
   ObcAlertFrameType,
   ObcAlertFrameMode,
-  wrapWithAlertFrame,
 } from '../../components/alert-frame/alert-frame.js';
 import {AlertType} from '../../types.js';
 import {customElement} from '../../decorator.js';
@@ -196,19 +195,7 @@ export class ObcAutomationButton extends LitElement {
             `
           : nothing}
         ${this.alert && this.positioning === AutomationButtonPositioning.point
-          ? html` <obc-alert-frame
-              class="alert-frame"
-              .type=${this.alertFrameType}
-              .thickness=${this.alertFrameThickness}
-              .status=${this.alertFrameStatus}
-              .mode=${this.alertFrameMode}
-              .showAlertCategoryIcon=${this.showAlertCategoryIcon}
-              .showIcon=${this.showAlertIcon}
-            >
-              <span slot="icon"><slot name="alert-icon"></slot></span>
-              <span slot="label"><slot name="alert-label"></slot></span>
-              <span slot="timer"><slot name="alert-timer"></slot></span>
-            </obc-alert-frame>`
+          ? this.renderAlertFrame(nothing, true)
           : nothing}
       </button>
     `);
@@ -218,19 +205,9 @@ export class ObcAutomationButton extends LitElement {
     if (this.positioning === AutomationButtonPositioning.point) {
       return html`<div class="point-wrapper">${content}</div>`;
     }
-    const innerContent = wrapWithAlertFrame(
-      this.alert
-        ? {
-            type: this.alertFrameType,
-            thickness: this.alertFrameThickness,
-            status: this.alertFrameStatus,
-            mode: this.alertFrameMode,
-            showIcon: this.showAlertIcon,
-            showAlertCategoryIcon: this.showAlertCategoryIcon,
-          }
-        : false,
-      content
-    );
+    const innerContent = this.alert
+      ? this.renderAlertFrame(content, false)
+      : content;
     if (this.positioning === AutomationButtonPositioning.symbol) {
       return html`<div
         class=${classMap({
@@ -242,6 +219,35 @@ export class ObcAutomationButton extends LitElement {
       </div> `;
     }
     return innerContent;
+  }
+
+  /**
+   * Renders the `<obc-alert-frame>` together with the `alert-icon`,
+   * `alert-label` and `alert-timer` slots so that slotted content reaches the
+   * frame regardless of the `positioning`. When `overlay` is true the frame is
+   * an absolutely-positioned overlay (used by `point` positioning) and
+   * `content` is empty; otherwise the frame wraps `content` (used by `symbol`
+   * and `button` positioning).
+   */
+  private renderAlertFrame(
+    content: HTMLTemplateResult | typeof nothing,
+    overlay: boolean
+  ): HTMLTemplateResult {
+    return html`<obc-alert-frame
+      class=${overlay ? 'alert-frame' : nothing}
+      .type=${this.alertFrameType}
+      .thickness=${this.alertFrameThickness}
+      .status=${this.alertFrameStatus}
+      .mode=${this.alertFrameMode}
+      .showAlertCategoryIcon=${this.showAlertCategoryIcon}
+      .showIcon=${this.showAlertIcon}
+      .wrapContent=${!overlay}
+    >
+      <span slot="icon"><slot name="alert-icon"></slot></span>
+      <span slot="label"><slot name="alert-label"></slot></span>
+      <span slot="timer"><slot name="alert-timer"></slot></span>
+      ${content}
+    </obc-alert-frame>`;
   }
 
   static override styles = unsafeCSS(compentStyle);
