@@ -909,7 +909,6 @@ export const StateComparison: Story = {
             ]}
           ></obc-watch>
         </div>
-      </div>
     </div>
   `,
 };
