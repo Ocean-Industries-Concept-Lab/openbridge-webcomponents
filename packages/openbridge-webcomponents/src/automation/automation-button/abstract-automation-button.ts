@@ -3,6 +3,7 @@ import {property, queryAssignedElements} from 'lit/decorators.js';
 import '../automation-button/automation-button.js';
 import {
   AutomationButtonDirection,
+  AutomationButtonDirectionArrow,
   AutomationButtonOrientation,
   AutomationButtonPositioning,
   AutomationButtonReadoutPosition,
@@ -100,6 +101,9 @@ export class ObcAbstractAutomationButton extends LitElement {
     AutomationButtonBadgeInterlock.None;
   @property({type: String}) badgeAlert: AutomationButtonBadgeAlert =
     AutomationButtonBadgeAlert.None;
+  /** A small arrow indicating flow direction. Use `none` to hide it. */
+  @property({type: String}) directionArrow: AutomationButtonDirectionArrow =
+    AutomationButtonDirectionArrow.none;
 
   get icon(): TemplateResult {
     throw new Error('Method "icon" must be implemented in subclass');
@@ -260,6 +264,7 @@ export class ObcAbstractAutomationButton extends LitElement {
       .orientation=${this._orientation}
       .hasBadgeSpacer=${this.getBadgeSpacer()}
       .positioning=${this.positioning}
+      .directionArrow=${this.directionArrow}
     >
       ${this.icon}
       <slot

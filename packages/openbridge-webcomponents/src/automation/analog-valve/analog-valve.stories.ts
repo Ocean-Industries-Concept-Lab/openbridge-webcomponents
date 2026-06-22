@@ -12,6 +12,7 @@ import {
   AutomationButtonBadgeControl,
   AutomationButtonBadgeInterlock,
 } from '../automation-button/abstract-automation-button.js';
+import {AutomationButtonDirectionArrow} from '../automation-button/automation-button.js';
 
 const meta: Meta<typeof ObcAnalogValve> = {
   title: 'Automation/Automation Devices/Analog Valve',
@@ -47,6 +48,14 @@ export const Closed: Story = {
   args: {
     open: false,
     value: 0,
+  },
+};
+
+export const WithDirectionArrow: Story = {
+  args: {
+    open: true,
+    value: 60,
+    directionArrow: AutomationButtonDirectionArrow.right,
   },
 };
 

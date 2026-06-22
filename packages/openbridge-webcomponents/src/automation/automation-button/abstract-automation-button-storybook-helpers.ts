@@ -7,6 +7,7 @@ import {
 import {MotorizedVariant} from './abstract-automation-button-motorized.js';
 import {
   AutomationButtonDirection,
+  AutomationButtonDirectionArrow,
   AutomationButtonLabelDirection,
   AutomationButtonOrientation,
   AutomationButtonPositioning,
@@ -50,6 +51,10 @@ export const argTypesAbstractAutomationButton = {
   positioning: {
     options: Object.values(AutomationButtonPositioning),
     control: {type: 'select'},
+  },
+  directionArrow: {
+    options: Object.values(AutomationButtonDirectionArrow),
+    control: {type: 'radio'},
   },
   badgeControl: {
     options: Object.values(AutomationButtonBadgeControl),

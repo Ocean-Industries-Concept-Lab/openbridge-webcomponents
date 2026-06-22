@@ -5,6 +5,7 @@ import {AutomationButtonReadoutStackSize} from '../../components/automation-butt
 import './digital-valve.js';
 import {crossDecorator} from '../../storybook-util.js';
 import {argTypesAbstractAutomationButtonPassiveRound} from '../automation-button/abstract-automation-button-storybook-helpers.js';
+import {AutomationButtonDirectionArrow} from '../automation-button/automation-button.js';
 
 const meta: Meta<typeof ObcDigitalValve> = {
   title: 'Automation/Automation Devices/Digital Valve',
@@ -37,5 +38,12 @@ export const Open: Story = {
 export const Closed: Story = {
   args: {
     open: false,
+  },
+};
+
+export const WithDirectionArrow: Story = {
+  args: {
+    open: true,
+    directionArrow: AutomationButtonDirectionArrow.right,
   },
 };

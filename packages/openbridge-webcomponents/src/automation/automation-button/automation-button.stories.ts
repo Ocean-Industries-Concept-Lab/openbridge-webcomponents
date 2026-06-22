@@ -1,6 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
   AutomationButtonDirection,
+  AutomationButtonDirectionArrow,
   AutomationButtonPositioning,
   AutomationButtonVariant,
   ObcAutomationButton,
@@ -71,6 +72,10 @@ const meta: Meta<typeof ObcAutomationButton> = {
       ],
       control: {type: 'radio'},
     },
+    directionArrow: {
+      options: Object.values(AutomationButtonDirectionArrow),
+      control: {type: 'radio'},
+    },
     progressMode: {
       options: Object.values(CircularProgressMode),
       control: {type: 'select'},
@@ -110,6 +115,7 @@ export const ValveOpen: Story = {
       .tag=${tag}
       .variant=${args.variant}
       .positioning=${args.positioning}
+      .directionArrow=${args.directionArrow}
       .showAlertCategoryIcon=${args.showAlertCategoryIcon}
       .showAlertIcon=${args.showAlertIcon}
       ?alert=${args.alert}
@@ -135,6 +141,13 @@ export const ValveFlat: Story = {
   ...ValveOpen,
   args: {
     variant: AutomationButtonVariant.flat,
+  },
+};
+
+export const ValveDirectionArrow: Story = {
+  ...ValveOpen,
+  args: {
+    directionArrow: AutomationButtonDirectionArrow.right,
   },
 };
 

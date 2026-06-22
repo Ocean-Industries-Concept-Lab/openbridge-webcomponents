@@ -202,6 +202,46 @@
   }
 }
 
+.direction-arrow {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--automation-components-button-icon-size) / 2);
+  height: calc(var(--automation-components-button-icon-size) / 2);
+  pointer-events: none;
+  z-index: 1;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  &.direction-arrow-right {
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+  }
+
+  &.direction-arrow-left {
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%) rotate(180deg);
+  }
+
+  &.direction-arrow-up {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) rotate(-90deg);
+  }
+
+  &.direction-arrow-down {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%) rotate(90deg);
+  }
+}
+
 .badge-top-right {
   top: 0;
   right: 0;

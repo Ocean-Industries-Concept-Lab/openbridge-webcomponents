@@ -72,6 +72,18 @@ export enum AutomationButtonLabelDirection {
 }
 
 /**
+ * A small arrow rendered next to the symbol to indicate flow direction.
+ * Use `none` to hide the arrow.
+ */
+export enum AutomationButtonDirectionArrow {
+  none = 'none',
+  up = 'up',
+  down = 'down',
+  left = 'left',
+  right = 'right',
+}
+
+/**
  * The orientation of the inner icon/symbol.
  * - `horizontal`: The icon is shown in its default horizontal orientation.
  * - `verticalRight`: The icon is rotated 90° clockwise.
@@ -147,6 +159,9 @@ export class ObcAutomationButton extends LitElement {
     AutomationButtonOrientation.horizontal;
   /** Badge spacer should be set to true if there is a badge on the same side as the label */
   @property({type: Boolean}) hasBadgeSpacer: boolean = false;
+  /** A small arrow indicating flow direction. Use `none` to hide it. */
+  @property({type: String}) directionArrow: AutomationButtonDirectionArrow =
+    AutomationButtonDirectionArrow.none;
 
   override render() {
     const effectiveVariant = this.effectiveVariant;
@@ -170,7 +185,7 @@ export class ObcAutomationButton extends LitElement {
         })}
       >
         <div class="icon-touch-target">
-          ${this.renderIconHolder()}
+          ${this.renderIconHolder()} ${this.renderDirectionArrow()}
           <div class="badge-top-right">
             <slot name="badge-top-right"></slot>
           </div>
@@ -293,6 +308,34 @@ export class ObcAutomationButton extends LitElement {
               : nothing} `
         : nothing}
       ${progressRing}
+    </div>`;
+  }
+
+  private renderDirectionArrow(): typeof nothing | HTMLTemplateResult {
+    if (this.directionArrow === AutomationButtonDirectionArrow.none) {
+      return nothing;
+    }
+    return html`<div
+      class=${classMap({
+        'direction-arrow': true,
+        ['direction-arrow-' + this.directionArrow]: true,
+      })}
+    >
+      <svg
+        width="12"
+        height="12"
+        viewBox="0 0 12 12"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M3 1.5 L9.5 6 L3 10.5 Z"
+          fill="var(--automation-device-primary-color)"
+          stroke="var(--automation-device-tertiary-color)"
+          stroke-linejoin="round"
+          vector-effect="non-scaling-stroke"
+        />
+      </svg>
     </div>`;
   }
 
