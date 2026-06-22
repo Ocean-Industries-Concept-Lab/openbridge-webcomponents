@@ -312,7 +312,13 @@ export class ObcAutomationButton extends LitElement {
   }
 
   private renderDirectionArrow(): typeof nothing | HTMLTemplateResult {
-    if (this.directionArrow === AutomationButtonDirectionArrow.none) {
+    const directions: AutomationButtonDirectionArrow[] = [
+      AutomationButtonDirectionArrow.up,
+      AutomationButtonDirectionArrow.down,
+      AutomationButtonDirectionArrow.left,
+      AutomationButtonDirectionArrow.right,
+    ];
+    if (!directions.includes(this.directionArrow)) {
       return nothing;
     }
     return html`<div
