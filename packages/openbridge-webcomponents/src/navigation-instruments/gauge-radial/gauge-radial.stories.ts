@@ -241,6 +241,24 @@ export const Sector90RightWithReadout: Story = {
   },
 };
 
+export const ShortWideContainer: Story = {
+  args: {
+    ...sectorStoryArgs,
+    sector: GaugeRadialSector.deg270,
+    width: 600,
+    height: 160,
+  },
+};
+
+export const ShortWideContainer180: Story = {
+  args: {
+    ...sectorStoryArgs,
+    sector: GaugeRadialSector.deg180,
+    width: 600,
+    height: 120,
+  },
+};
+
 const readoutStoryArgs = {
   value: 123,
   minValue: 0,

@@ -5,18 +5,30 @@
 }
 
 /* Host takes each sector's crop aspect (see `sectorClips`): 270/90 square, 180
-   wide — so the dial is the same size at any width. */
+   wide — so the dial is the same size at any width.
+
+   `width`/`height: auto` + `max-width`/`max-height: 100%` makes the host the
+   largest box of the sector's aspect ratio that fits inside *both* the
+   available width and height. Using `height: auto` alone only honours the
+   width, so in a short, wide (e.g. flex) container the square would grow as
+   tall as it is wide and overflow — see issue #992. */
 :host([sector="270"]),
 :host([sector="90-left"]),
 :host([sector="90-right"]) {
+  width: auto;
   height: auto;
+  max-width: 100%;
+  max-height: 100%;
   aspect-ratio: 1;
 }
 
 /* 448 / 251 = the 180° crop's aspect (448 wide × 448·(1 − 44%) tall); keep in
    sync with `sectorClips` bottom=44 in gauge-radial.ts. */
 :host([sector="180"]) {
+  width: auto;
   height: auto;
+  max-width: 100%;
+  max-height: 100%;
   aspect-ratio: 448 / 251;
 }
 
