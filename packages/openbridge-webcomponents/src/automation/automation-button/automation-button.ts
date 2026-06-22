@@ -71,10 +71,6 @@ export enum AutomationButtonLabelDirection {
   right = 'right',
 }
 
-/**
- * A small arrow rendered next to the symbol to indicate flow direction.
- * Use `none` to hide the arrow.
- */
 export enum AutomationButtonDirectionArrow {
   none = 'none',
   up = 'up',
@@ -159,7 +155,6 @@ export class ObcAutomationButton extends LitElement {
     AutomationButtonOrientation.horizontal;
   /** Badge spacer should be set to true if there is a badge on the same side as the label */
   @property({type: Boolean}) hasBadgeSpacer: boolean = false;
-  /** A small arrow indicating flow direction. Use `none` to hide it. */
   @property({type: String}) directionArrow: AutomationButtonDirectionArrow =
     AutomationButtonDirectionArrow.none;
 
