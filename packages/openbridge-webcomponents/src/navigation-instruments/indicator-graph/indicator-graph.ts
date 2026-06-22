@@ -36,7 +36,7 @@ export class ObcIndicatorGraph extends LitElement {
   @property({type: Object})
   layout: ObcIndicatorGraphLayout = {};
 
-  @query('.chart-container')
+  @query('#chart')
   private chart!: HTMLDivElement;
 
   @state()
@@ -202,6 +202,7 @@ export class ObcIndicatorGraph extends LitElement {
         class="chart-container ${this._effectivePriority} ${this
           ._effectiveSize}"
       >
+        <div id="chart"></div>
         <div
           id="zero-line"
           style="transform: translateY(${-(this.zeroLineY ?? 0)}px);
