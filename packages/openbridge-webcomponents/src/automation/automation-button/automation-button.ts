@@ -69,6 +69,8 @@ export enum AutomationButtonLabelDirection {
   down = 'down',
   left = 'left',
   right = 'right',
+  /** Hides the direction arrow/chevron in the readout. */
+  none = 'none',
 }
 
 /**

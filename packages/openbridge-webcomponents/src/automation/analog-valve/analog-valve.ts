@@ -27,7 +27,10 @@ export class ObcAnalogValve extends ObcAbstractAutomationButton {
       return [
         {
           type: 'value',
-          icon: 'arrow',
+          icon:
+            this.labelDirection === AutomationButtonLabelDirection.none
+              ? 'none'
+              : 'arrow',
           value: this.value,
           nDigits: 3,
           unit: '%',
