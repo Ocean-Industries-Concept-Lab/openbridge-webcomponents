@@ -1,141 +1,145 @@
-import {LitElement, css, html} from 'lit';
+import {nothing, svg, type SVGTemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
-import '../watch/watch.js';
 import {
   VesselImage,
   VesselImageSize,
-  WatchCircleType,
-  OUTER_RING_RADIUS,
+  vesselImages,
+  type WatchVessel,
 } from '../watch/watch.js';
-import {TickmarkType} from '../watch/tickmark.js';
-import {AdviceState, AdviceType, AngleAdviceRaw} from '../watch/advice.js';
 import {customElement} from '../../decorator.js';
+import {
+  SingleAxisInclinometer,
+  INCLINOMETER_WATCH_RADIUS,
+} from '../../building-blocks/single-axis-inclinometer/single-axis-inclinometer.js';
 
-const cutAngle = 45;
-const watchRadius = OUTER_RING_RADIUS;
-const x = watchRadius * Math.cos((cutAngle * Math.PI) / 180);
-const y = watchRadius * Math.sin((cutAngle * Math.PI) / 180);
+const watchRadius = INCLINOMETER_WATCH_RADIUS;
 
+export enum ObcPitchType {
+  /** Single arc scale on the right (default). */
+  singleScale = 'single-scale',
+  /** Right scale duplicated to the opposite (left) arc as well. */
+  dualScale = 'dual-scale',
+}
+
+/**
+ * `<obc-pitch>` — Pitch (trim) indicator with a side arc scale.
+ *
+ * Shows `pitch` against a watch arc centred on the right, with an average-pitch
+ * band and a rotating indicator. Supports an optional opposite-side scale
+ * (`dual-scale`), a centre readout (`hasReadout`), and a `regular`/`enhanced`
+ * palette.
+ *
+ * @element obc-pitch
+ */
 @customElement('obc-pitch')
-export class ObcPitch extends LitElement {
+export class ObcPitch extends SingleAxisInclinometer {
   @property({type: Number}) pitch = 0;
   @property({type: Number}) minAvgPitch = 0;
   @property({type: Number}) maxAvgPitch = 0;
   @property({type: String}) vesselImageSide: VesselImage = VesselImage.psvSide;
   @property({type: Number}) maxPitchAdvice: number | undefined = undefined;
   @property({type: Boolean}) triggerPitchAdvice = false;
+  /** Readout label. Default `Pitch`. */
+  @property({type: String}) override label = 'Pitch';
+  /** Readout unit. Default `DEG`. */
+  @property({type: String}) override unit = 'DEG';
+  /** Number of fraction digits shown in the readout. Default `0`. */
+  @property({type: Number}) override fractionDigits = 0;
+  /**
+   * `single-scale` shows one arc on the right (default); `dual-scale` also
+   * shows the scale on the opposite (left) arc (the indicator's opposite end).
+   */
+  @property({type: String}) type: ObcPitchType = ObcPitchType.singleScale;
 
-  override render() {
-    return html`
-      <div class="container">
-        <svg viewBox="-200 -200 400 400">
-          <line
-            x1="-${watchRadius}"
-            y1="0"
-            x2="${watchRadius}"
-            y2="0"
-            stroke="var(--instrument-frame-tertiary-color)"
-          />
-          <line
-            x1="0"
-            y1="0"
-            x2="${watchRadius - 10}"
-            y2="0"
-            stroke="var(--instrument-enhanced-secondary-color)"
-            transform="rotate(${this.pitch} 0 0)"
-          />
-          <path
-            d="M ${x} ${y} A ${watchRadius} ${watchRadius} 0 1 1 ${x} ${-y}"
-            fill="none"
-            stroke="var(--instrument-frame-tertiary-color)"
-          />
-        </svg>
-        <obc-watch
-          .watchCircleType=${WatchCircleType.double}
-          .areas=${[
-            {
-              startAngle: cutAngle,
-              endAngle: 180 - cutAngle,
-              roundOutsideCut: true,
-              roundInsideCut: true,
-            },
-          ]}
-          .barAreas=${[
-            {
-              startAngle: 90 + this.minAvgPitch,
-              endAngle: 90 + this.maxAvgPitch,
-              fillColor: 'var(--instrument-enhanced-tertiary-color)',
-            },
-          ]}
-          .needles=${[
-            {
-              angle: 90 + this.pitch,
-              fillColor: 'var(--instrument-enhanced-secondary-color)',
-              strokeColor: 'var(--border-silhouette-color)',
-            },
-          ]}
-          .vessels=${[
-            {
-              size: VesselImageSize.large,
-              vesselImage: this.vesselImageSide,
-              transform: `rotate(${this.pitch}deg)`,
-            },
-          ]}
-          .tickmarks=${[
-            {
-              angle: 90,
-              type: TickmarkType.main,
-            },
-          ]}
-          .advices=${this.advices}
-        ></obc-watch>
-      </div>
+  protected override get centerAngle(): number {
+    return 90;
+  }
+  protected override get value(): number {
+    return this.pitch;
+  }
+  protected override get avgMin(): number {
+    return this.minAvgPitch;
+  }
+  protected override get avgMax(): number {
+    return this.maxAvgPitch;
+  }
+  protected override get maxAdvice(): number | undefined {
+    return this.maxPitchAdvice;
+  }
+  protected override get triggerAdvice(): boolean {
+    return this.triggerPitchAdvice;
+  }
+  protected override get defaultAdviceOuter(): number {
+    return 30;
+  }
+  protected override get isDualScale(): boolean {
+    return this.type === ObcPitchType.dualScale;
+  }
+  protected override get scaleVessels(): WatchVessel[] {
+    return [
+      {
+        size: VesselImageSize.large,
+        vesselImage: this.vesselImageSide,
+        transform: `rotate(${this.pitch}deg)`,
+      },
+    ];
+  }
+
+  protected override renderIndicator(
+    needleTransform: string
+  ): SVGTemplateResult {
+    return svg`
+      <line
+        x1="0"
+        y1="0"
+        x2="${watchRadius - 10}"
+        y2="0"
+        stroke="${this.indicatorColor}"
+        transform="${needleTransform}"
+      />
     `;
   }
 
-  private get advices(): AngleAdviceRaw[] {
-    const advices = [];
-    if (this.maxPitchAdvice !== undefined) {
-      const state = this.triggerPitchAdvice
-        ? AdviceState.triggered
-        : AdviceState.regular;
-      advices.push({
-        minAngle: 60,
-        maxAngle: 90 - this.maxPitchAdvice,
-        type: AdviceType.caution,
-        state: state,
-        hideMinTickmark: true,
-      });
-      advices.push({
-        minAngle: 90 + this.maxPitchAdvice,
-        maxAngle: 120,
-        type: AdviceType.caution,
-        state: state,
-        hideMaxTickmark: true,
-      });
-    }
-    return advices;
+  protected override renderVesselOverlay(
+    vesselScale: number
+  ): SVGTemplateResult {
+    return svg`
+      <g
+        style="transform: rotate(${this.pitch}deg) scale(${vesselScale}) translate(-80px, -80px);"
+      >
+        ${this.zoomToFitArc ? vesselImages[this.vesselImageSide] : nothing}
+      </g>
+    `;
   }
 
-  static override styles = css`
-    * {
-      box-sizing: border-box;
+  protected override renderComplement(arcAngle: number): SVGTemplateResult {
+    // Outer thin-ring complement endpoints. The arc band is centred at watch
+    // angle 90° (right side) and spans 90° ± arcAngle, so its edges sit at SVG
+    // coords (R·cos(arcAngle), ±R·sin(arcAngle)).
+    const x = watchRadius * Math.cos((arcAngle * Math.PI) / 180);
+    const y = watchRadius * Math.sin((arcAngle * Math.PI) / 180);
+    if (this.type === ObcPitchType.dualScale) {
+      return svg`
+        <path
+          d="M ${x} ${-y} A ${watchRadius} ${watchRadius} 0 0 0 ${-x} ${-y}"
+          fill="none"
+          stroke="var(--instrument-frame-tertiary-color)"
+        />
+        <path
+          d="M ${x} ${y} A ${watchRadius} ${watchRadius} 0 0 1 ${-x} ${y}"
+          fill="none"
+          stroke="var(--instrument-frame-tertiary-color)"
+        />
+      `;
     }
-
-    .container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-
-    .container > * {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-  `;
+    return svg`
+      <path
+        d="M ${x} ${y} A ${watchRadius} ${watchRadius} 0 1 1 ${x} ${-y}"
+        fill="none"
+        stroke="var(--instrument-frame-tertiary-color)"
+      />
+    `;
+  }
 }
 
 declare global {

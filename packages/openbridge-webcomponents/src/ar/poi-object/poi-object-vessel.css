@@ -1,0 +1,39 @@
+.speed-rot-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 48px;
+}
+
+.turn-indicator,
+.vessel-icon,
+.speed-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.turn-indicator {
+  width: 24px;
+  height: 12px;
+}
+
+.vessel-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.speed-indicator {
+  width: 16px;
+  height: 12px;
+}
+
+.turn-indicator ::slotted(*),
+.vessel-icon ::slotted(*),
+.speed-indicator ::slotted(*) {
+  width: 100%;
+  height: 100%;
+  color: inherit;
+}

@@ -31,3 +31,22 @@ export const Multiple: Story = {
       <obc-radio label="Radio 2" inputId="radio2" name="dummy"></obc-radio>
       <obc-radio label="Radio 3" inputId="radio3" name="dummy"></obc-radio>`,
 };
+
+export const DisabledCheckedWithLabel: Story = {
+  render: () =>
+    html`<obc-radio
+      label="Radio 1"
+      inputId="radio1"
+      checked
+      disabled
+    ></obc-radio>`,
+};
+
+export const DisabledWithLabel: Story = {
+  render: () =>
+    html`<obc-radio label="Radio 1" inputId="radio1" disabled></obc-radio>`,
+};
+
+export const DisabledWithoutLabel: Story = {
+  render: () => html`<obc-radio disabled></obc-radio>`,
+};

@@ -1,11 +1,20 @@
 import type {Meta, StoryObj} from '@storybook/web-vite';
 import {ObcAnalogValve} from './analog-valve.js';
-import {AutomationButtonReadoutPosition} from '../automation-button/automation-button.js';
+import {
+  AutomationButtonLabelDirection,
+  AutomationButtonReadoutPosition,
+} from '../automation-button/automation-button.js';
 import {AutomationButtonReadoutStackSize} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import './analog-valve.js';
 import {crossDecorator} from '../../storybook-util.js';
 import '../automation-badge/automation-badge.js';
 import {argTypesAbstractAutomationButtonPassiveRound} from '../automation-button/abstract-automation-button-storybook-helpers.js';
+import {
+  AutomationButtonBadgeAlert,
+  AutomationButtonBadgeCommandLocked,
+  AutomationButtonBadgeControl,
+  AutomationButtonBadgeInterlock,
+} from '../automation-button/abstract-automation-button.js';
 
 const meta: Meta<typeof ObcAnalogValve> = {
   title: 'Automation/Automation Devices/Analog Valve',
@@ -13,17 +22,21 @@ const meta: Meta<typeof ObcAnalogValve> = {
   component: 'obc-analog-valve',
   decorators: [crossDecorator],
   args: {
-    tag: '0012',
+    tag: '#0012',
     readoutPosition: AutomationButtonReadoutPosition.bottom,
     readoutSize: AutomationButtonReadoutStackSize.regular,
+    labelDirection: AutomationButtonLabelDirection.right,
     alert: false,
     progress: false,
     vertical: false,
-    hideReadoutStack: false,
-    hasIdTag: true,
+    showReadoutStack: true,
   },
   argTypes: {
     ...argTypesAbstractAutomationButtonPassiveRound,
+    labelDirection: {
+      options: Object.values(AutomationButtonLabelDirection),
+      control: {type: 'radio'},
+    },
     value: {control: {type: 'range', min: 0, max: 100, step: 1}},
   },
 } as Meta<typeof ObcAnalogValve>;
@@ -45,13 +58,21 @@ export const Closed: Story = {
   },
 };
 
+export const WithoutLabelDirection: Story = {
+  args: {
+    open: true,
+    value: 20,
+    labelDirection: AutomationButtonLabelDirection.none,
+  },
+};
+
 export const WithBadges: Story = {
   args: {
     open: true,
     value: 20,
-    badgeAlertOff: true,
-    badgeAuto: true,
-    badgeDuty: true,
-    badgeCommandLocked: true,
+    badgeAlert: AutomationButtonBadgeAlert.Silence,
+    badgeControl: AutomationButtonBadgeControl.Auto,
+    badgeInterlock: AutomationButtonBadgeInterlock.Interlock,
+    badgeCommandLocked: AutomationButtonBadgeCommandLocked.CommandLocked,
   },
 };

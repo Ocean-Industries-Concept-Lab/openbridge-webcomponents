@@ -1,11 +1,12 @@
 import {LitElement, css, html, nothing, svg} from 'lit';
 import {property} from 'lit/decorators.js';
-import {Tickmark, TickmarkType} from '../watch/tickmark.js';
+import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
 import {WatchCircleType} from '../watch/watch.js';
 import {AdviceType, AngleAdviceRaw, AdviceState} from '../watch/advice.js';
-import {InstrumentFieldSize} from '../instrument-field/instrument-field.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {Priority} from '../types.js';
+import {renderInstrumentReadout} from '../readout/instrument-readout.js';
+import {ReadoutDirection, ReadoutVariant} from '../readout/readout.js';
 import {customElement} from '../../decorator.js';
 
 export enum ObcSpeedGaugeNeedleType {
@@ -36,8 +37,8 @@ export interface SpeedAdvice {
  *   (short indicator bar) via `needleType`.
  * - **Bipolar range support**: When `minSpeed < 0`, negative tickmarks are
  *   rendered with `main` tick style.
- * - **Optional readout**: Enable `showReadout` to display an
- *   `<obc-instrument-field>` with the current speed, unit (KN), and tag (STW).
+ * - **Optional readout**: Enable `hasReadout` to display an
+ *   `<obc-readout>` with the current speed, unit (KN), and label (STW).
  * - **Setpoint via mixin**: `setpoint`, `newSetpoint`, `touching`,
  *   `autoAtSetpointDeadband`, `setpointOverride`, and all other setpoint
  *   properties are provided by `SetpointMixin`; the setpoint angle and
@@ -52,8 +53,9 @@ export interface SpeedAdvice {
  * - Use `priority` to switch between regular and enhanced color palettes
  *   (default: `Priority.regular`).
  * - Provide `tickmarkInterval` to control tickmark spacing.
- * - Enable `labels` to show numeric labels at primary tickmarks.
- * - Enable `showReadout` to display the numeric value below the gauge.
+ * - Enable `showLabels` to show numeric labels at primary tickmarks.
+ * - Enable `tickmarksInside` to render tickmarks inside the ring.
+ * - Enable `hasReadout` to display the numeric value below the gauge.
  *
  * ## Best Practices
  *
@@ -70,8 +72,8 @@ export interface SpeedAdvice {
  *   maxSpeed="25"
  *   needleType="full"
  *   enhanced
- *   labels
- *   showReadout
+ *   showLabels
+ *   hasReadout
  *   tickmarkInterval="5"
  *   setpoint="15"
  * ></obc-speed-gauge>
@@ -85,13 +87,31 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
   @property({type: Number}) speed = 0;
   @property({type: Number}) maxSpeed = 100;
   @property({type: Number}) minSpeed = 0;
-  @property({type: Boolean}) labels: boolean = false;
-  @property({type: Number}) tickmarkInterval = 20;
+  @property({type: Boolean}) showLabels: boolean = false;
+  /** Whether to render tickmarks inside the ring. */
+  @property({type: Boolean}) tickmarksInside: boolean = false;
+  /**
+   * Interval for tickmarks in speed units.
+   * When undefined or <= 0, no tickmarks are shown (only the zero mark).
+   */
+  @property({type: Number}) tickmarkInterval: number | undefined = 20;
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) needleType: ObcSpeedGaugeNeedleType =
     ObcSpeedGaugeNeedleType.full;
   @property({type: Array, attribute: false}) speedAdvices: SpeedAdvice[] = [];
-  @property({type: Boolean}) showReadout: boolean = false;
+  @property({type: String}) tickmarkStyle: TickmarkStyle =
+    TickmarkStyle.regular;
+  /**
+   * When `true`, shows a centered `<obc-readout>` (label `STW`, unit `KN`)
+   * below the gauge with the current speed. Default `false`.
+   */
+  @property({type: Boolean}) hasReadout: boolean = false;
+  /** Readout label. Default `STW`. */
+  @property({type: String}) label = 'STW';
+  /** Readout unit. Default `KN`. */
+  @property({type: String}) unit = 'KN';
+  /** Number of fraction digits shown in the readout. Default `1`. */
+  @property({type: Number}) fractionDigits = 1;
 
   getAngle(v: number): number {
     return (v / this.maxSpeed) * (180 + 45) - 90;
@@ -111,7 +131,7 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
     const setpointAngle =
       this.setpoint !== undefined ? this.getAngle(this.setpoint) : undefined;
 
-    const maxDigits = this.maxSpeed.toFixed(1).length;
+    const maxDigits = 1;
 
     return html`
       <div class="container">
@@ -127,6 +147,8 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
           .animateSetpoint=${this.animateSetpoint}
           .padding=${48}
           .tickmarks=${this.tickmarks}
+          .tickmarksInside=${this.tickmarksInside}
+          .tickmarkStyle=${this.tickmarkStyle}
           .advices=${this._advices}
           .areas=${[
             {
@@ -146,19 +168,19 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
           ]}
         ></obc-watch>
         <svg class="rudder" viewBox="-224 -224 448 448">${this.needle}</svg>
-        ${this.showReadout
+        ${this.hasReadout
           ? html`
-              <obc-instrument-field
-                class="speed-gauge-value"
-                .size=${InstrumentFieldSize.enhanced}
-                .neutralColor=${this.priority !== Priority.enhanced}
-                .value=${this.speed}
-                horizontal
-                unit="KN"
-                tag="STW"
-                .fractionDigits=${1}
-                .maxDigits=${maxDigits}
-              ></obc-instrument-field>
+              ${renderInstrumentReadout({
+                className: 'speed-gauge-value',
+                variant: ReadoutVariant.stack,
+                direction: ReadoutDirection.horizontal,
+                value: this.speed,
+                label: this.label,
+                unit: this.unit,
+                fractionDigits: this.fractionDigits,
+                minValueLength: maxDigits,
+                valuePriority: this.priority,
+              })}
             `
           : nothing}
       </div>
@@ -187,50 +209,48 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
 
   get tickmarks(): Tickmark[] {
     const tickmarks: Tickmark[] = [];
-    for (
-      let i = this.tickmarkInterval;
-      i < this.maxSpeed;
-      i += this.tickmarkInterval
-    ) {
-      tickmarks.push({
-        angle: this.getAngle(i),
-        type: TickmarkType.primary,
-        text: this.labels ? i.toString() : undefined,
-      });
+
+    // Tickmarks — skip when undefined or <= 0 to prevent infinite loops
+    const interval = this.tickmarkInterval;
+    if (interval !== undefined && interval > 0 && Number.isFinite(interval)) {
+      for (let i = interval; i < this.maxSpeed; i += interval) {
+        tickmarks.push({
+          angle: this.getAngle(i),
+          type: TickmarkType.primary,
+          text: this.showLabels ? i.toString() : undefined,
+        });
+      }
+
+      if (this.showLabels && this.maxSpeed % interval === 0) {
+        tickmarks.push({
+          angle: this.getAngle(this.maxSpeed),
+          type: TickmarkType.textOnly,
+          text: this.showLabels ? this.maxSpeed.toString() : undefined,
+        });
+      }
+
+      for (let i = -interval; i > this.minSpeed; i -= interval) {
+        tickmarks.push({
+          angle: this.getAngle(i),
+          type: TickmarkType.main,
+          text: this.showLabels ? i.toString() : undefined,
+        });
+      }
+
+      if (this.showLabels && this.minSpeed % interval === 0) {
+        tickmarks.push({
+          angle: this.getAngle(this.minSpeed),
+          type: TickmarkType.textOnly,
+          text: this.showLabels ? this.minSpeed.toString() : undefined,
+        });
+      }
     }
 
-    if (this.labels && this.maxSpeed % this.tickmarkInterval === 0) {
-      tickmarks.push({
-        angle: this.getAngle(this.maxSpeed),
-        type: TickmarkType.textOnly,
-        text: this.labels ? this.maxSpeed.toString() : undefined,
-      });
-    }
-
-    for (
-      let i = -this.tickmarkInterval;
-      i > this.minSpeed;
-      i -= this.tickmarkInterval
-    ) {
-      tickmarks.push({
-        angle: this.getAngle(i),
-        type: TickmarkType.main,
-        text: this.labels ? i.toString() : undefined,
-      });
-    }
-
-    if (this.labels && this.minSpeed % this.tickmarkInterval === 0) {
-      tickmarks.push({
-        angle: this.getAngle(this.minSpeed),
-        type: TickmarkType.textOnly,
-        text: this.labels ? this.minSpeed.toString() : undefined,
-      });
-    }
-
+    // Zero tickmark
     tickmarks.push({
       angle: this.getAngle(0),
       type: this.minSpeed < 0 ? TickmarkType.main : TickmarkType.textOnly,
-      text: this.labels ? '0' : undefined,
+      text: this.showLabels ? '0' : undefined,
     });
 
     return tickmarks;

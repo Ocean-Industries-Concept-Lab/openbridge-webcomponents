@@ -16,6 +16,7 @@ export class ObcAnalogValve extends ObcAbstractAutomationButton {
   @property({type: Boolean}) open: boolean = false;
   @property({type: Number}) value: number = 0;
   @property({type: Boolean}) vertical: boolean = false;
+  /** @availableWhen open==true */
   @property({type: String}) labelDirection: AutomationButtonLabelDirection =
     AutomationButtonLabelDirection.right;
   @property({type: String}) variant: AnalogValveVariant =
@@ -26,7 +27,10 @@ export class ObcAnalogValve extends ObcAbstractAutomationButton {
       return [
         {
           type: 'value',
-          icon: 'arrow',
+          icon:
+            this.labelDirection === AutomationButtonLabelDirection.none
+              ? 'none'
+              : 'arrow',
           value: this.value,
           nDigits: 3,
           unit: '%',
@@ -59,7 +63,7 @@ export class ObcAnalogValve extends ObcAbstractAutomationButton {
         .value=${this.value}
         .closed=${!this.open}
         .vertical=${this.vertical}
-        slot="icon-siluette"
+        slot="icon-silhouette"
       ></obc-valve-analog-two-way-icon> `;
   }
 }

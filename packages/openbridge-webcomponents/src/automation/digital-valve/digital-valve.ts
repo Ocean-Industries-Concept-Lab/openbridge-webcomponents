@@ -58,7 +58,7 @@ export class ObcDigitalValve extends ObcAbstractAutomationButton {
         ></obi-twoway-digital-open>
         <obi-twoway-digital-open
           usecsscolor
-          slot="icon-siluette"
+          slot="icon-silhouette"
           style="display: block; ${transform} line-height: 0;"
         ></obi-twoway-digital-open>`;
     } else {
@@ -69,7 +69,7 @@ export class ObcDigitalValve extends ObcAbstractAutomationButton {
         ></obi-twoway-digital-closed>
         <obi-twoway-digital-closed
           usecsscolor
-          slot="icon-siluette"
+          slot="icon-silhouette"
           style="display: block; ${transform} line-height: 0;"
         ></obi-twoway-digital-closed>`;
     }

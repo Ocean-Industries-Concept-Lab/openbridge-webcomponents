@@ -1,6 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcSliderDouble, ObcSliderDoubleVariant} from './slider-double.js';
 import './slider-double.js';
+import {html} from 'lit';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcSliderDouble> = {
@@ -17,6 +18,8 @@ const meta: Meta<typeof ObcSliderDouble> = {
     labelDecimals: 0,
     labelWidth: '3ch',
     variant: ObcSliderDoubleVariant.Normal,
+    showLeftReadout: true,
+    showRightReadout: true,
   },
   argTypes: {
     low: {
@@ -32,13 +35,37 @@ const meta: Meta<typeof ObcSliderDouble> = {
       options: Object.values(ObcSliderDoubleVariant),
       control: {type: 'select'},
     },
-    hugContainer: {
-      control: {type: 'boolean'},
-    },
     allowSeeking: {
       control: {type: 'boolean'},
     },
+    disabled: {
+      control: {type: 'boolean'},
+    },
+    showLeftReadout: {
+      control: {type: 'boolean'},
+    },
+    showRightReadout: {
+      control: {type: 'boolean'},
+    },
   },
+  render: (args) => html`
+    <obc-slider-double
+      .low=${args.low}
+      .high=${args.high}
+      .min=${args.min}
+      .max=${args.max}
+      .step=${args.step}
+      .labelUnit=${args.labelUnit}
+      .labelDecimals=${args.labelDecimals}
+      .labelWidth=${args.labelWidth}
+      .variant=${args.variant}
+      ?hugcontainer=${args.hugContainer}
+      ?allowSeeking=${args.allowSeeking}
+      .disabled=${args.disabled}
+      .showLeftReadout=${args.showLeftReadout}
+      .showRightReadout=${args.showRightReadout}
+    ></obc-slider-double>
+  `,
 } satisfies Meta<typeof ObcSliderDouble>;
 
 export default meta;
@@ -88,4 +115,46 @@ export const AllowSeeking: Story = {
   args: {
     allowSeeking: true,
   },
+};
+
+export const Disabled: Story = {
+  args: {
+    low: 20,
+    high: 80,
+    disabled: true,
+  },
+};
+
+export const NoReadouts: Story = {
+  args: {
+    showLeftReadout: false,
+    showRightReadout: false,
+  },
+};
+
+export const SlottedReadouts: Story = {
+  args: {
+    labelWidth: '6ch',
+  },
+  render: (args) => html`
+    <obc-slider-double
+      .low=${args.low}
+      .high=${args.high}
+      .min=${args.min}
+      .max=${args.max}
+      .step=${args.step}
+      .labelUnit=${args.labelUnit}
+      .labelDecimals=${args.labelDecimals}
+      .labelWidth=${args.labelWidth}
+      .variant=${args.variant}
+      ?hugcontainer=${args.hugContainer}
+      .showLeftReadout=${args.showLeftReadout}
+      .showRightReadout=${args.showRightReadout}
+      ?allowSeeking=${args.allowSeeking}
+      .disabled=${args.disabled}
+    >
+      <span slot="left-readout">Min</span>
+      <span slot="right-readout">Max</span>
+    </obc-slider-double>
+  `,
 };

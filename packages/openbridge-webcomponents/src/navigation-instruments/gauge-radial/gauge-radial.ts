@@ -1,15 +1,30 @@
-import {LitElement, html} from 'lit';
+import {LitElement, html, nothing, unsafeCSS, type TemplateResult} from 'lit';
+import {classMap} from 'lit/directives/class-map.js';
+import componentStyle from './gauge-radial.css?inline';
 import {customElement} from '../../decorator.js';
 import {property} from 'lit/decorators.js';
 import {AdviceType} from '../watch/advice.js';
-import {Priority} from '../types.js';
+import {InstrumentState, Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/instrument-radial/instrument-radial.js';
+import {TickmarkStyle} from '../watch/tickmark.js';
+import {renderInstrumentReadout} from '../readout/instrument-readout.js';
+import {
+  ReadoutStackVerticalAlignment,
+  ReadoutVariant,
+} from '../readout/readout.js';
 
 export enum ObcGaugeRadialType {
   filled = 'filled',
   bar = 'bar',
   needle = 'needle',
+}
+
+export enum GaugeRadialSector {
+  deg270 = '270',
+  deg180 = '180',
+  deg90Left = '90-left',
+  deg90Right = '90-right',
 }
 
 export interface GaugeRadialAdvice {
@@ -33,14 +48,17 @@ export interface GaugeRadialAdvice {
  *
  * - **Three display types**: `filled` (solid arc), `bar` (thinner arc), and
  *   `needle` (pointer indicator) via the `type` property.
- * - **Bipolar range support**: When `minValue < 0` the gauge switches to a
- *   ±135° layout centered at 12 o'clock; otherwise it uses a 270° sweep.
+ * - **Sector sweep**: `sector` selects the arc span (`270`, `180`, `90-left`, or `90-right`).
+ *   The configured `minValue..maxValue` always spans the full sector. For the
+ *   centered sectors (`270`, `180`) a symmetric range places `0` at 12 o'clock;
+ *   for `90-left`/`90-right` the range midpoint sits at the middle of the quadrant.
  * - **Setpoint via mixin**: `setpoint`, `newSetpoint`, `touching`,
  *   `autoAtSetpointDeadband`, `setpointOverride`, and all other setpoint
  *   properties are provided by `SetpointMixin` and forwarded to the inner
  *   `<obc-instrument-radial>`.
  * - **Advice zones**: Pass an array of {@link GaugeRadialAdvice} objects to
- *   render caution/alert arcs on the gauge.
+ *   render caution/alert arcs on the gauge. Not shown on the `90-left` /
+ *   `90-right` sectors.
  *
  * ## Usage Guidelines
  *
@@ -48,7 +66,13 @@ export interface GaugeRadialAdvice {
  * - Use `priority` to switch between regular and enhanced color palettes.
  * - Provide `primaryTickmarkInterval` and `secondaryTickmarkInterval` to
  *   control tickmark density.
- * - Enable `labels` to show numeric labels at primary tickmarks.
+ * - Enable `showLabels` to show numeric labels at primary tickmarks.
+ * - Enable `hasReadout` with optional `label` and `unit`. Layout depends on `sector`
+ *   and `type`: **270** filled/bar — value at center + a label-only `meta` row in
+ *   the bottom gap (two separate readouts); **180** filled/bar — a single centered
+ *   stack (value + label/unit) at the bottom; **270** needle — bottom stack;
+ *   **180** needle — no readout; **90-left** / **90-right** filled/bar — corner
+ *   readout in a square host; **90** needle — no readout.
  *
  * ## Best Practices
  *
@@ -65,8 +89,8 @@ export interface GaugeRadialAdvice {
  *   minValue="0"
  *   maxValue="100"
  *   type="filled"
- *   enhanced
- *   labels
+ *   priority="enhanced"
+ *   showLabels
  *   primaryTickmarkInterval="25"
  *   secondaryTickmarkInterval="5"
  *   setpoint="60"
@@ -81,67 +105,221 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   @property({type: Number}) value = 0;
   @property({type: Number}) maxValue = 100;
   @property({type: Number}) minValue = 0;
-  @property({type: Boolean}) labels: boolean = false;
+  @property({type: Boolean}) showLabels: boolean = false;
   @property({type: Number}) primaryTickmarkInterval = 50;
   @property({type: Number}) secondaryTickmarkInterval = 10;
+  /**
+   * Interval for tertiary tickmarks in value units.
+   * When undefined or <= 0, no tertiary tickmarks are shown.
+   */
+  @property({type: Number}) tertiaryTickmarkInterval: number | undefined =
+    undefined;
+  @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) type: ObcGaugeRadialType =
     ObcGaugeRadialType.filled;
+  @property({type: Boolean}) tickmarksInside: boolean = false;
+  @property({type: String}) tickmarkStyle: TickmarkStyle =
+    TickmarkStyle.regular;
+  /** Caution/alert arcs. Ignored on `sector: 90-left` / `90-right`. */
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
+  @property({type: String, reflect: true}) sector: GaugeRadialSector =
+    GaugeRadialSector.deg270;
+  /**
+   * When `true`, shows the centre `<obc-readout>`(s) with the current value
+   * (and optional `label`/`unit`). Layout depends on `sector` and `type`.
+   * Default `false`.
+   */
+  @property({type: Boolean}) hasReadout = false;
+  @property({type: String}) label = '';
+  @property({type: String}) unit = '';
+  @property({type: Number}) fractionDigits = 0;
 
-  getAngle(v: number): number {
-    const hasNegative = this.minValue < 0;
-    if (hasNegative) {
-      return (v / this.maxValue) * 135;
-    } else {
-      return (v / this.maxValue) * 270 - 135;
+  private get sectorAngles(): {sweep: number; start: number} {
+    switch (this.sector) {
+      case GaugeRadialSector.deg180:
+        return {sweep: 180, start: -90};
+      case GaugeRadialSector.deg90Left:
+        return {sweep: 90, start: -90};
+      case GaugeRadialSector.deg90Right:
+        return {sweep: 90, start: 0};
+      case GaugeRadialSector.deg270:
+      default:
+        return {sweep: 270, start: -135};
     }
   }
 
-  private get _barColor(): string {
-    if (this.type === ObcGaugeRadialType.filled) {
-      return this._needleColor;
+  /**
+   * Per-edge crop (%) of the shared, origin-centered 448 SVG box each sector
+   * shows. All sectors render at the same natural scale, so the dial stays the
+   * same size; the sector only windows a different part (270 whole, 180 wide,
+   * 90 a quadrant).
+   */
+  private get sectorClips(): {
+    top: number;
+    bottom: number;
+    left: number;
+    right: number;
+  } {
+    switch (this.sector) {
+      case GaugeRadialSector.deg180:
+        return {top: 0, bottom: 44, left: 0, right: 0};
+      case GaugeRadialSector.deg90Left:
+        return {top: 0, bottom: 45, left: 0, right: 45};
+      case GaugeRadialSector.deg90Right:
+        return {top: 0, bottom: 45, left: 45, right: 0};
+      case GaugeRadialSector.deg270:
+      default:
+        return {top: 0, bottom: 0, left: 0, right: 0};
     }
-    return this.priority === Priority.enhanced
-      ? 'var(--instrument-enhanced-tertiary-color)'
-      : 'var(--instrument-regular-tertiary-color)';
   }
 
-  override render() {
-    const barColor = this._barColor;
+  private get isSector90(): boolean {
+    return (
+      this.sector === GaugeRadialSector.deg90Left ||
+      this.sector === GaugeRadialSector.deg90Right
+    );
+  }
 
+  // Arrow form so `this` binds when passed as `.getAngle=${this.getAngle}`
+  // to <obc-instrument-radial>. Do not convert to a method.
+  getAngle = (v: number): number => {
+    const {sweep, start} = this.sectorAngles;
+    const span = this.maxValue - this.minValue;
+    if (!Number.isFinite(span) || span <= 0) {
+      return start;
+    }
+
+    return ((v - this.minValue) / span) * sweep + start;
+  };
+
+  /** Renders one gauge readout; `withMeta`/`labelOnly` pick parts. */
+  private renderReadout({
+    className,
+    variant,
+    alignment = ReadoutStackVerticalAlignment.vertical,
+    withMeta = true,
+    labelOnly = false,
+  }: {
+    className: string;
+    variant: ReadoutVariant;
+    alignment?: ReadoutStackVerticalAlignment;
+    withMeta?: boolean;
+    labelOnly?: boolean;
+  }): TemplateResult {
+    // `labelOnly` already means "no value", so derive it instead of passing both.
+    const withValue = !labelOnly;
+    return renderInstrumentReadout({
+      className,
+      variant,
+      alignment,
+      labelOnly,
+      value: withValue ? this.value : undefined,
+      valuePriority: withValue ? this.priority : undefined,
+      fractionDigits: this.fractionDigits,
+      label: withMeta ? this.label : '',
+      unit: withMeta ? this.unit : '',
+    });
+  }
+
+  private renderReadouts() {
+    if (!this.hasReadout) {
+      return nothing;
+    }
+
+    const isNeedle = this.type === ObcGaugeRadialType.needle;
+    const is90 = this.isSector90;
+    const is180 = this.sector === GaugeRadialSector.deg180;
+
+    if (isNeedle && (is180 || is90)) {
+      return nothing;
+    }
+
+    // 90 filled/bar: enhanced corner readout (bold value + label/unit).
+    if (is90) {
+      return this.renderReadout({
+        className: 'gauge-readout-meta',
+        variant: ReadoutVariant.enhanced,
+      });
+    }
+
+    // 270 needle and 180 filled/bar: centered stack (value weight follows `priority`).
+    if (isNeedle || is180) {
+      return this.renderReadout({
+        className: 'gauge-readout-meta',
+        variant: ReadoutVariant.stack,
+        alignment: ReadoutStackVerticalAlignment.center,
+      });
+    }
+
+    // 270 filled/bar: the value sits at the circle center and the label/unit row
+    // lower in the bottom gap, so they are two separately-positioned readouts.
     return html`
-      <obc-instrument-radial
-        .value=${this.value}
-        .setpoint=${this.setpoint}
-        .newSetpoint=${this.newSetpoint}
-        .setpointAtZeroDeadband=${this.setpointAtZeroDeadband}
-        .setpointOverride=${this.setpointOverride}
-        .touching=${this.touching}
-        .disableAutoAtSetpoint=${this.disableAutoAtSetpoint}
-        .autoAtSetpointDeadband=${this.autoAtSetpointDeadband}
-        .animateSetpoint=${this.animateSetpoint}
-        .maxValue=${this.maxValue}
-        .minValue=${this.minValue}
-        .getAngle=${this.getAngle}
-        .needleColor=${this._needleColor}
-        .barColor=${barColor}
-        .labels=${this.labels}
-        .primaryTickmarkInterval=${this.primaryTickmarkInterval}
-        .secondaryTickmarkInterval=${this.secondaryTickmarkInterval}
-        .type=${this.type}
-        .needleType=${this.type}
-        .advices=${this.advices}
-      >
-      </obc-instrument-radial>
+      ${this.renderReadout({
+        className: 'gauge-readout-value',
+        variant: ReadoutVariant.enhanced,
+        withMeta: false,
+      })}
+      ${this.label || this.unit
+        ? this.renderReadout({
+            className: 'gauge-readout-meta',
+            variant: ReadoutVariant.stack,
+            alignment: ReadoutStackVerticalAlignment.center,
+            labelOnly: true,
+          })
+        : nothing}
     `;
   }
 
-  private get _needleColor(): string {
-    return this.priority === Priority.enhanced
-      ? 'var(--instrument-enhanced-secondary-color)'
-      : 'var(--instrument-regular-secondary-color)';
+  override render() {
+    const clips = this.sectorClips;
+    return html`
+      <div
+        class=${classMap({
+          'gauge-radial-root': true,
+          'type-needle': this.type === ObcGaugeRadialType.needle,
+          'sector-180': this.sector === GaugeRadialSector.deg180,
+          'sector-90-left': this.sector === GaugeRadialSector.deg90Left,
+          'sector-90-right': this.sector === GaugeRadialSector.deg90Right,
+        })}
+      >
+        <obc-instrument-radial
+          .value=${this.value}
+          .state=${this.state}
+          .priority=${this.priority}
+          .setpoint=${this.setpoint}
+          .newSetpoint=${this.newSetpoint}
+          .setpointAtZeroDeadband=${this.setpointAtZeroDeadband}
+          .setpointOverride=${this.setpointOverride}
+          .touching=${this.touching}
+          .autoAtSetpoint=${this.autoAtSetpoint}
+          .autoAtSetpointDeadband=${this.autoAtSetpointDeadband}
+          .animateSetpoint=${this.animateSetpoint}
+          .maxValue=${this.maxValue}
+          .minValue=${this.minValue}
+          .getAngle=${this.getAngle}
+          .showLabels=${this.showLabels}
+          .primaryTickmarkInterval=${this.primaryTickmarkInterval}
+          .secondaryTickmarkInterval=${this.secondaryTickmarkInterval}
+          .tertiaryTickmarkInterval=${this.tertiaryTickmarkInterval}
+          .type=${this.type}
+          .needleType=${this.type}
+          .tickmarksInside=${this.tickmarksInside}
+          .tickmarkStyle=${this.tickmarkStyle}
+          .advices=${this.isSector90 ? [] : this.advices}
+          .clipTop=${clips.top}
+          .clipBottom=${clips.bottom}
+          .clipLeft=${clips.left}
+          .clipRight=${clips.right}
+          .endLabelsMaxMin=${this.sector === GaugeRadialSector.deg180}
+        >
+        </obc-instrument-radial>
+        ${this.renderReadouts()}
+      </div>
+    `;
   }
+
+  static override styles = unsafeCSS(componentStyle);
 }
 
 declare global {

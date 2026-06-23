@@ -33,14 +33,14 @@ export type ObcCommunicationTableRowClickEvent = CustomEvent<{
 @customElement('obc-communication-table')
 export class ObcCommunicationTable extends LitElement {
   @property({type: Array}) data: ObcCommunicationTableRow[] = [];
-  @property({type: Boolean}) noLeadingIcon = false;
-  @property({type: Boolean}) noLabel = false;
-  @property({type: Boolean}) noActionIcon = false;
+  @property({type: Boolean, attribute: false}) showLeadingIcon: boolean = true;
+  @property({type: Boolean, attribute: false}) showLabel: boolean = true;
+  @property({type: Boolean, attribute: false}) showActionIcon: boolean = true;
   @property({type: Boolean}) largeLeadingIcon = false;
 
   override render() {
     const columns: ObcTableColumn[] = [];
-    if (!this.noLeadingIcon) {
+    if (this.showLeadingIcon) {
       columns.push({
         label: '',
         key: 'leadingIcon',
@@ -50,13 +50,13 @@ export class ObcCommunicationTable extends LitElement {
       label: 'Title',
       key: 'title',
     });
-    if (!this.noLabel) {
+    if (this.showLabel) {
       columns.push({
         label: 'Label',
         key: 'label',
       });
     }
-    if (!this.noActionIcon) {
+    if (this.showActionIcon) {
       columns.push({
         label: 'Action',
         key: 'actionIcon',
@@ -105,7 +105,7 @@ export class ObcCommunicationTable extends LitElement {
     return html`<obc-table
       .data=${data}
       .columns=${columns}
-      noHeader
+      .showHeader=${false}
       rowDivider
       @row-click=${this._handleRowClick}
     ></obc-table>`;

@@ -15,24 +15,31 @@ import '../../icons/icon-arrow-left-google.js';
 import '../../icons/icon-arrow-right-google.js';
 import '../../components/alert-frame/alert-frame.js';
 import {
-  ObcAlertFrameStatus,
   ObcAlertFrameThickness,
   ObcAlertFrameType,
+  ObcAlertFrameMode,
+  wrapWithAlertFrame,
 } from '../../components/alert-frame/alert-frame.js';
+import {AlertType} from '../../types.js';
 import {customElement} from '../../decorator.js';
 import {
   AutomationButtonReadoutStack,
   AutomationButtonReadoutStackSize,
-  AutomationButtonReadoutStackTag,
   IdTagOrientation,
 } from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
+import '../../building-blocks/circular-progress/circular-progress.js';
+import {CircularProgressMode} from '../../building-blocks/circular-progress/circular-progress.js';
+
+export {CircularProgressMode};
 
 export enum AutomationButtonVariant {
   regular = 'regular',
   double = 'double',
+  forward = 'forward',
   square = 'square',
   flat = 'flat',
+  flatForward = 'flat-forward',
 }
 
 export enum AutomationButtonState {
@@ -62,6 +69,19 @@ export enum AutomationButtonLabelDirection {
   down = 'down',
   left = 'left',
   right = 'right',
+  none = 'none',
+}
+
+/**
+ * The orientation of the inner icon/symbol.
+ * - `horizontal`: The icon is shown in its default horizontal orientation.
+ * - `verticalRight`: The icon is rotated 90° clockwise.
+ * - `verticalLeft`: The icon is rotated 90° counter-clockwise.
+ */
+export enum AutomationButtonOrientation {
+  horizontal = 'horizontal',
+  verticalRight = 'verticalRight',
+  verticalLeft = 'verticalLeft',
 }
 
 /**
@@ -83,48 +103,64 @@ export class ObcAutomationButton extends LitElement {
   @property({type: String}) state: AutomationButtonState =
     AutomationButtonState.open;
   @property({type: Boolean}) static: boolean = false;
-  @property({type: Boolean}) hideReadoutStack: boolean = false;
+  @property({type: Boolean, attribute: false}) showReadoutStack: boolean = true;
+  /** @availableWhen showReadoutStack==true */
   @property({type: Array, attribute: false})
   readouts: AutomationButtonReadoutStack[] = [];
-  @property({attribute: false})
-  tag: AutomationButtonReadoutStackTag | null = null;
-  @property({type: Boolean}) hasIdTag: boolean = false;
+  /** @availableWhen showReadoutStack==true */
+  @property({type: String})
+  tag: string | null = null;
+  /** @availableWhen showReadoutStack==true */
   @property({type: String}) readoutPosition: AutomationButtonReadoutPosition =
     AutomationButtonReadoutPosition.bottom;
+  /** @availableWhen showReadoutStack==true */
   @property({type: String}) readoutSize: AutomationButtonReadoutStackSize =
     AutomationButtonReadoutStackSize.regular;
   @property({type: Boolean}) alert: boolean = false;
+  /** @availableWhen alert==true */
   @property({type: String}) alertFrameType: ObcAlertFrameType =
     ObcAlertFrameType.SmallSideFlip;
+  /** @availableWhen alert==true */
   @property({type: String}) alertFrameThickness: ObcAlertFrameThickness =
     ObcAlertFrameThickness.Small;
-  @property({type: String}) alertFrameStatus: ObcAlertFrameStatus =
-    ObcAlertFrameStatus.Alarm;
-  @property({type: Boolean}) hideAlertCategoryIcon: boolean = false;
+  /** @availableWhen alert==true */
+  @property({type: String}) alertFrameStatus: AlertType = AlertType.Alarm;
+  /** @availableWhen alert==true */
+  @property({type: String}) alertFrameMode: ObcAlertFrameMode =
+    ObcAlertFrameMode.ackedActive;
+  /** @availableWhen alert==true && alertFrameType in [LargeSideFlip, BottomFlip, TopFlip] */
+  @property({type: Boolean, attribute: false}) showAlertCategoryIcon: boolean =
+    true;
+  /** @availableWhen alert==true */
   @property({type: Boolean}) showAlertIcon: boolean = false;
   @property({type: Boolean}) progress: boolean = false;
+  /** @availableWhen progress==true */
+  @property({type: String}) progressMode: CircularProgressMode =
+    CircularProgressMode.indeterminate;
+  /** @availableWhen progress==true && progressMode in [determinate, progressive-indeterminate] */
+  @property({type: Number}) progressValue: number = 0;
+  /** @availableWhen variant in [double, forward, flatForward] */
   @property({type: String}) direction: AutomationButtonDirection =
     AutomationButtonDirection.forward;
   @property({type: String}) positioning: AutomationButtonPositioning =
     AutomationButtonPositioning.point;
+  @property({type: String}) orientation: AutomationButtonOrientation =
+    AutomationButtonOrientation.horizontal;
   /** Badge spacer should be set to true if there is a badge on the same side as the label */
   @property({type: Boolean}) hasBadgeSpacer: boolean = false;
 
   override render() {
-    const progressSpinner = this.getProgressSpinner();
-    const direction = this.getDirectionIcon();
-    const resolvedTag: AutomationButtonReadoutStackTag | null = this.hasIdTag
-      ? (this.tag ?? {value: 0})
-      : null;
+    const effectiveVariant = this.effectiveVariant;
+
     const hasLabelContent =
-      !this.hideReadoutStack && (this.readouts.length > 0 || this.hasIdTag);
+      this.showReadoutStack && (this.readouts.length > 0 || this.tag !== null);
 
     return this.wrapContent(html`
       <button
         class=${classMap({
           wrapper: true,
           ['positioning-' + this.positioning]: true,
-          ['variant-' + this.variant]: true,
+          ['variant-' + effectiveVariant]: true,
           ['state-' + this.state]: true,
           'label-empty': !hasLabelContent,
           ['label-' + this.readoutPosition]: true,
@@ -135,18 +171,7 @@ export class ObcAutomationButton extends LitElement {
         })}
       >
         <div class="icon-touch-target">
-          <div class="icon-holder">
-            ${direction}
-            <div class="icon-primary">
-              <slot name="icon"></slot>
-            </div>
-            ${this.variant === AutomationButtonVariant.flat
-              ? html` <div class="icon-siluette">
-                  <slot name="icon-siluette"></slot>
-                </div>`
-              : nothing}
-            ${progressSpinner}
-          </div>
+          ${this.renderIconHolder()}
           <div class="badge-top-right">
             <slot name="badge-top-right"></slot>
           </div>
@@ -160,25 +185,25 @@ export class ObcAutomationButton extends LitElement {
             <slot name="badge-bottom-right"></slot>
           </div>
         </div>
-        ${this.hideReadoutStack
-          ? nothing
-          : html`
+        ${this.showReadoutStack
+          ? html`
               <div class="badge-spacer"></div>
               <obc-automation-button-readout-stack
                 .readouts=${this.readouts}
-                .tag=${resolvedTag}
-                .hasIdTag=${this.hasIdTag}
+                .tag=${this.tag}
                 .size=${this.readoutSize}
                 .idTagOrientation=${this.getIdTagOrientation()}
               ></obc-automation-button-readout-stack>
-            `}
-        ${this.alert
+            `
+          : nothing}
+        ${this.alert && this.positioning === AutomationButtonPositioning.point
           ? html` <obc-alert-frame
               class="alert-frame"
               .type=${this.alertFrameType}
               .thickness=${this.alertFrameThickness}
               .status=${this.alertFrameStatus}
-              .hideAlertCategoryIcon=${this.hideAlertCategoryIcon}
+              .mode=${this.alertFrameMode}
+              .showAlertCategoryIcon=${this.showAlertCategoryIcon}
               .showIcon=${this.showAlertIcon}
             >
               <span slot="icon"><slot name="alert-icon"></slot></span>
@@ -193,63 +218,112 @@ export class ObcAutomationButton extends LitElement {
   private wrapContent(content: HTMLTemplateResult): HTMLTemplateResult {
     if (this.positioning === AutomationButtonPositioning.point) {
       return html`<div class="point-wrapper">${content}</div>`;
-    } else if (this.positioning === AutomationButtonPositioning.symbol) {
+    }
+    const innerContent = wrapWithAlertFrame(
+      this.alert
+        ? {
+            type: this.alertFrameType,
+            thickness: this.alertFrameThickness,
+            status: this.alertFrameStatus,
+            mode: this.alertFrameMode,
+            showIcon: this.showAlertIcon,
+            showAlertCategoryIcon: this.showAlertCategoryIcon,
+          }
+        : false,
+      content
+    );
+    if (this.positioning === AutomationButtonPositioning.symbol) {
       return html`<div
         class=${classMap({
           'symbol-wrapper': true,
           ['label-' + this.readoutPosition]: true,
         })}
       >
-        ${content}
+        ${innerContent}
       </div> `;
     }
-    return content;
+    return innerContent;
   }
 
   static override styles = unsafeCSS(compentStyle);
 
-  private getProgressSpinner(): null | HTMLTemplateResult {
+  private get effectiveVariant(): AutomationButtonVariant {
+    if (this.progress) {
+      return AutomationButtonVariant.regular;
+    }
+    return this.variant;
+  }
+
+  private renderIconHolder(): HTMLTemplateResult {
+    const effectiveVariant = this.effectiveVariant;
+    const progressRing = this.getProgressRing();
+    const iconHolderClasses = classMap({
+      'icon-holder': true,
+      ['orientation-' + this.orientation]: true,
+    });
+    if (this.variant === AutomationButtonVariant.flatForward) {
+      return html`<div class=${iconHolderClasses}>
+        ${this.getDirectionIcon(effectiveVariant, 'icon-primary')}
+        ${this.getDirectionIcon(effectiveVariant, 'icon-silhouette')}
+        ${progressRing}
+      </div>`;
+    } else if (this.variant === AutomationButtonVariant.forward) {
+      return html`<div class=${iconHolderClasses}>
+        ${this.getDirectionIcon(effectiveVariant, 'icon-primary')}
+        ${progressRing}
+      </div>`;
+    }
+
+    const direction = this.getDirectionIcon(effectiveVariant);
+    const showIcon = [
+      AutomationButtonVariant.regular,
+      AutomationButtonVariant.double,
+      AutomationButtonVariant.flat,
+      AutomationButtonVariant.square,
+    ].includes(effectiveVariant);
+    return html`<div class=${iconHolderClasses}>
+      ${direction}
+      ${showIcon
+        ? html`<div class="icon-primary">
+              <slot name="icon"></slot>
+            </div>
+            ${effectiveVariant === AutomationButtonVariant.flat
+              ? html` <div class="icon-silhouette">
+                  <slot name="icon-silhouette"></slot>
+                </div>`
+              : nothing} `
+        : nothing}
+      ${progressRing}
+    </div>`;
+  }
+
+  private getProgressRing(): null | HTMLTemplateResult {
     if (!this.progress) {
       return null;
     }
 
-    const spinnerWidth = parseFloat(
-      getComputedStyle(this).getPropertyValue(
-        '--automation-components-button-device-visual-target'
-      )
-    );
-    const strokeWidth = parseFloat(
-      getComputedStyle(this).getPropertyValue(
-        '--automation-components-button-device-progress-bar-stroke'
-      )
-    );
-    const progressSpinner = html`<svg
-      width="${spinnerWidth}"
-      height="${spinnerWidth}"
-      viewBox="0 0 ${spinnerWidth} ${spinnerWidth}"
-      fill="none"
-      class="progress-spinner"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M${strokeWidth / 2} ${spinnerWidth / 2} A ${(spinnerWidth -
-          strokeWidth) /
-        2} ${(spinnerWidth - strokeWidth) / 2} 0 0 1 ${spinnerWidth /
-        2} ${strokeWidth / 2}"
-        stroke="var(--instrument-enhanced-secondary-color)"
-        stroke-width=${strokeWidth}
-        stroke-linecap="round"
-      />
-    </svg> `;
-    return progressSpinner;
+    return html`<obc-circular-progress
+      class="progress-ring"
+      .mode=${this.progressMode}
+      .value=${this.progressValue}
+    ></obc-circular-progress>`;
   }
 
-  private getDirectionIcon(): null | HTMLTemplateResult {
-    if (this.variant !== AutomationButtonVariant.double) {
-      return null;
+  private getDirectionIcon(
+    variant: AutomationButtonVariant,
+    className: string = 'icon-direction'
+  ): typeof nothing | HTMLTemplateResult {
+    if (
+      ![
+        AutomationButtonVariant.double,
+        AutomationButtonVariant.forward,
+        AutomationButtonVariant.flatForward,
+      ].includes(variant)
+    ) {
+      return nothing;
     } else if (this.direction === AutomationButtonDirection.forward) {
       return html`<svg
-        class="icon-direction"
+        class="${className}"
         width="24"
         height="24"
         viewBox="0 0 24 24"
@@ -265,7 +339,7 @@ export class ObcAutomationButton extends LitElement {
       </svg> `;
     } else if (this.direction === AutomationButtonDirection.forwardFast) {
       return html`<svg
-        class="icon-direction"
+        class="${className}"
         width="24"
         height="24"
         viewBox="0 0 24 24"
@@ -281,7 +355,7 @@ export class ObcAutomationButton extends LitElement {
       </svg> `;
     } else if (this.direction === AutomationButtonDirection.forwardStopped) {
       return html`<svg
-        class="icon-direction"
+        class="${className}"
         width="24"
         height="24"
         viewBox="0 0 24 24"
@@ -297,7 +371,7 @@ export class ObcAutomationButton extends LitElement {
       </svg> `;
     } else if (this.direction === AutomationButtonDirection.backward) {
       return html`<svg
-        class="icon-direction"
+        class="${className}"
         width="24"
         height="24"
         viewBox="0 0 24 24"
@@ -313,7 +387,7 @@ export class ObcAutomationButton extends LitElement {
       </svg>`;
     } else if (this.direction === AutomationButtonDirection.backwardFast) {
       return html`<svg
-        class="icon-direction"
+        class="${className}"
         width="24"
         height="24"
         viewBox="0 0 24 24"
@@ -329,7 +403,7 @@ export class ObcAutomationButton extends LitElement {
       </svg>`;
     } else if (this.direction === AutomationButtonDirection.backwardStopped) {
       return html`<svg
-        class="icon-direction"
+        class="${className}"
         width="24"
         height="24"
         viewBox="0 0 24 24"
@@ -344,10 +418,7 @@ export class ObcAutomationButton extends LitElement {
         />
       </svg> `;
     } else if (this.direction === AutomationButtonDirection.standby) {
-      return html`<obi-standby
-        class="icon-direction"
-        usecsscolor
-      ></obi-standby>`;
+      return html`<obi-standby class="${className}" usecsscolor></obi-standby>`;
     }
     throw new Error('Invalid direction');
   }

@@ -22,7 +22,7 @@ export type ObcCommandMenuChangeEvent = CustomEvent<{inCommand: boolean}>;
  * - **Icon Support:** Accepts custom icons for command state via slots.
  * - **Customizable Labels:** All action and state labels for the toggle can be customized via slots.
  * - **Visual Feedback:** The component visually distinguishes between "in command" and "no command" states, including color and icon changes.
- * - **Location Support:** Optionally displays the location of the command if `hasLocation` is true.
+ * - **Location Support:** Optionally displays the location of the command if `showLocation` is true.
  *
  * ---
  *
@@ -39,7 +39,7 @@ export type ObcCommandMenuChangeEvent = CustomEvent<{inCommand: boolean}>;
  * | `command-icon`                        | Always                        | Main icon representing the current command state.               |
  * | `command-status`                      | Always                        | Status label (e.g., "Joystick", "NO CMD").                      |
  * | `command-description`                 | Always                        | Description of the command state (e.g., "DP", "CMD at DP").     |
- * | `command-location`                    | `hasLocation` is true         | Location label for the command (e.g., "Aft Bridge").            |
+ * | `command-location`                    | `showLocation` is true        | Location label for the command (e.g., "Aft Bridge").            |
  * | `toogle-action-to-in-command-label`   | Always                        | Label for the action to take command (toggle to "in command").  |
  * | `toogle-action-to-no-command-label`   | Always                        | Label for the action to release command (toggle to "no command").|
  * | `toogle-state-in-command-label`       | Always                        | Status label when in "in command" state.                        |
@@ -50,7 +50,7 @@ export type ObcCommandMenuChangeEvent = CustomEvent<{inCommand: boolean}>;
  *
  * ### Properties and Attributes
  * - **`inCommand`** (`boolean`): Whether the menu is in the "in command" state. Controls the toggle and visual state. (Default: `false`)
- * - **`hasLocation`** (`boolean`): Whether to display the location slot. If `false`, the location is omitted. (Default: `true`)
+ * - **`showLocation`** (`boolean`): Whether to display the location slot. If `false`, the location is omitted. (Default: `true`)
  *
  * ---
  *
@@ -85,7 +85,7 @@ export type ObcCommandMenuChangeEvent = CustomEvent<{inCommand: boolean}>;
  * @slot command-icon - Main icon representing the current command state.
  * @slot command-status - Status label (e.g., "Joystick", "NO CMD").
  * @slot command-description - Description of the command state.
- * @slot command-location - Location label for the command (shown if `hasLocation` is true).
+ * @slot command-location - Location label for the command (shown if `showLocation` is true).
  * @slot toogle-action-to-in-command-label - Label for the action to take command.
  * @slot toogle-action-to-no-command-label - Label for the action to release command.
  * @slot toogle-state-in-command-label - Status label when in "in command" state.
@@ -105,9 +105,9 @@ export class ObcCommandMenu extends LitElement {
 
   /**
    * Whether to display the location slot.
-   * If true, the location is omitted from the menu.
+   * If false, the location is omitted from the menu.
    */
-  @property({type: Boolean}) hideLocation = false;
+  @property({type: Boolean, attribute: false}) showLocation: boolean = true;
 
   override render() {
     return html`
@@ -116,7 +116,7 @@ export class ObcCommandMenu extends LitElement {
           card: true,
           'in-command': this.inCommand,
           'no-command': !this.inCommand,
-          'has-location': !this.hideLocation,
+          'has-location': this.showLocation,
         })}
       >
         <div class="title-container">Command</div>
@@ -133,7 +133,7 @@ export class ObcCommandMenu extends LitElement {
                 <div class="command-description">
                   <slot name="command-description"></slot>
                 </div>
-                ${!this.hideLocation
+                ${this.showLocation
                   ? html` <div class="divider"></div>
                       <div class="command-location">
                         <slot name="command-location"></slot>

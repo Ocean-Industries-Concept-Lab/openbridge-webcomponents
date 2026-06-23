@@ -153,6 +153,8 @@ export class ObcPagination extends LitElement {
   @property({type: Boolean, attribute: 'full-width', reflect: true}) fullWidth =
     false;
 
+  @property({type: Boolean}) disabled = false;
+
   private get isCondensed() {
     return this.variant === PaginationVariant.condensed;
   }
@@ -172,19 +174,25 @@ export class ObcPagination extends LitElement {
   }
 
   private get canNavigatePrevious() {
-    return this.validatedCurrentPage > 1;
+    return !this.disabled && this.validatedCurrentPage > 1;
   }
 
   private get canNavigateNext() {
-    return this.validatedCurrentPage < this.validatedPages;
+    console.log(
+      'canNavigateNext',
+      this.disabled,
+      this.validatedCurrentPage,
+      this.validatedPages
+    );
+    return !this.disabled && this.validatedCurrentPage < this.validatedPages;
   }
 
   private get canNavigateFirst() {
-    return this.canNavigatePrevious;
+    return !this.disabled && this.canNavigatePrevious;
   }
 
   private get canNavigateLast() {
-    return this.canNavigateNext;
+    return !this.disabled && this.canNavigateNext;
   }
 
   private get pageNumbers() {
@@ -282,11 +290,15 @@ export class ObcPagination extends LitElement {
 
   private renderNavigation() {
     return html`
-      <div class="navigation-wrapper" role="navigation" aria-label="Pagination">
+      <div
+        class=${classMap({'navigation-wrapper': true, disabled: this.disabled})}
+        role="navigation"
+        aria-label="Pagination"
+      >
         <obc-icon-button
           variant="flat"
           aria-label="First page"
-          aria-disabled=${!this.canNavigateFirst}
+          aria-disabled=${this.canNavigateFirst}
           ?disabled=${!this.canNavigateFirst}
           @click=${this.handleFirstClick}
         >
@@ -296,7 +308,7 @@ export class ObcPagination extends LitElement {
         <obc-icon-button
           variant="flat"
           aria-label="Previous page"
-          aria-disabled=${!this.canNavigatePrevious}
+          aria-disabled=${this.canNavigatePrevious}
           ?disabled=${!this.canNavigatePrevious}
           @click=${this.handlePreviousClick}
         >
@@ -308,6 +320,7 @@ export class ObcPagination extends LitElement {
           : html`<obc-toggle-button-group
               .value=${this.validatedCurrentPage.toString()}
               .variant=${this.toggleButtonVariant}
+              ?disabled=${this.disabled}
               @value=${this.handlePageChange}
             >
               ${this.renderToggleButtons()}
@@ -316,7 +329,7 @@ export class ObcPagination extends LitElement {
         <obc-icon-button
           variant="flat"
           aria-label="Next page"
-          aria-disabled=${!this.canNavigateNext}
+          aria-disabled=${this.canNavigateNext}
           ?disabled=${!this.canNavigateNext}
           @click=${this.handleNextClick}
         >
@@ -326,7 +339,7 @@ export class ObcPagination extends LitElement {
         <obc-icon-button
           variant="flat"
           aria-label="Last page"
-          aria-disabled=${!this.canNavigateLast}
+          aria-disabled=${this.canNavigateLast}
           ?disabled=${!this.canNavigateLast}
           @click=${this.handleLastClick}
         >
@@ -344,6 +357,7 @@ export class ObcPagination extends LitElement {
           'type-regular': this.variant === PaginationVariant.regular,
           'type-flat': this.variant === PaginationVariant.flat,
           'type-condensed': this.variant === PaginationVariant.condensed,
+          disabled: this.disabled,
         })}
       >
         <div class="content-container">${this.renderNavigation()}</div>

@@ -73,9 +73,17 @@
 /* Trailing icon button - positioned absolutely inside input-field-container */
 .trailing-icon-button {
   position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  right: calc(
+    (
+        var(--ui-components-icon-button-visual-target-size) -
+          var(--ui-components-icon-button-touch-target-size)
+      ) /
+      2
+  );
+  top: 0%;
+  bottom: 0;
+  margin-top: auto;
+  margin-bottom: auto;
   display: flex;
   align-items: center;
   justify-content: center;

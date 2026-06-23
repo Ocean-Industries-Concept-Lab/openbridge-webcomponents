@@ -174,12 +174,12 @@ export default meta;
 type Story = StoryObj;
 
 export const Semitransparent: Story = {
-  name: 'Semitransparent area graph (default)',
+  name: 'Semitransparent Area Graph (default)',
 };
 
 export const SemitransparentExternalScales: Story = {
-  name: 'Semitransparent area graph (with external scales)',
-  tags: ['!snapshot'],
+  name: 'Semitransparent Area Graph (with external scales)',
+  tags: ['skip-test'],
   argTypes: {
     priority: {
       control: 'select',
@@ -188,9 +188,9 @@ export const SemitransparentExternalScales: Story = {
     },
     // External scale controls (vertical/left)
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
-    vScaleHideLabels: {
+    vScaleShowLabels: {
       control: 'boolean',
-      description: 'Vertical scale: hide labels',
+      description: 'Vertical scale: show labels',
     },
     vScaleAdvices: {
       control: 'boolean',
@@ -227,9 +227,9 @@ export const SemitransparentExternalScales: Story = {
       control: 'boolean',
       description: 'Horizontal scale: show bar',
     },
-    hScaleHideLabels: {
+    hScaleShowLabels: {
       control: 'boolean',
-      description: 'Horizontal scale: hide labels',
+      description: 'Horizontal scale: show labels',
     },
     hScaleAdvices: {
       control: 'boolean',
@@ -270,7 +270,7 @@ export const SemitransparentExternalScales: Story = {
     priority: Priority.enhanced,
     // Vertical scale defaults
     vScaleHasBar: false,
-    vScaleHideLabels: false,
+    vScaleShowLabels: true,
     vScaleAdvices: true,
     vScaleFillMode: 'fill',
     vScaleAdvicePosition: 'inner',
@@ -280,7 +280,7 @@ export const SemitransparentExternalScales: Story = {
     vScaleFillMax: 5,
     // Horizontal scale defaults
     hScaleHasBar: false,
-    hScaleHideLabels: false,
+    hScaleShowLabels: true,
     hScaleAdvices: true,
     hScaleFillMode: 'tint',
     hScaleAdvicePosition: 'inner',
@@ -309,7 +309,7 @@ export const SemitransparentExternalScales: Story = {
         .height=${_args.height}
         .side=${'left'}
         .hasScale=${true}
-        .hideLabels=${_args.vScaleHideLabels}
+        .showLabels=${_args.vScaleShowLabels}
         .hasBar=${_args.vScaleHasBar}
         .fillMode=${_args.vScaleFillMode === 'fill'
           ? FillMode.fill
@@ -341,7 +341,7 @@ export const SemitransparentExternalScales: Story = {
         .width=${_args.width}
         .side=${'bottom'}
         .hasScale=${true}
-        .hideLabels=${_args.hScaleHideLabels}
+        .showLabels=${_args.hScaleShowLabels}
         .hasBar=${_args.hScaleHasBar}
         .fillMode=${_args.hScaleFillMode === 'fill'
           ? FillMode.fill
@@ -371,42 +371,42 @@ export const SemitransparentExternalScales: Story = {
 };
 
 export const WithPoints: Story = {
-  name: 'With points area graph',
+  name: 'With Points Area Graph',
   args: {
     showPoints: true,
   },
 };
 
 export const StraightLine: Story = {
-  name: 'Straight area graph',
+  name: 'Straight Area Graph',
   args: {
     lineMode: 'straight',
   },
 };
 
 export const SteppedLine: Story = {
-  name: 'Stepped area graph',
+  name: 'Stepped Area Graph',
   args: {
     lineMode: 'stepped',
   },
 };
 
 export const Solid: Story = {
-  name: 'Solid area graph',
+  name: 'Solid Area Graph',
   args: {
     fillMode: 'solid',
   },
 };
 
 export const Threshold: Story = {
-  name: 'Threshold area graph',
+  name: 'Threshold Area Graph',
   args: {
     fillMode: 'threshold',
   },
 };
 
 export const Stacked: Story = {
-  name: 'Stacked area graph',
+  name: 'Stacked Area Graph',
   args: {
     showGridY: false,
     fillMode: 'solid',
@@ -417,7 +417,7 @@ export const Stacked: Story = {
 };
 
 export const MultiSeriesTime: Story = {
-  name: 'Multi-series area graph',
+  name: 'Multi-Series Area Graph',
   args: {
     showGridY: false,
     datasets: SAMPLE_MULTI_DATASETS,
@@ -426,7 +426,7 @@ export const MultiSeriesTime: Story = {
 };
 
 export const MinHeight: Story = {
-  name: 'Minimal height area graph (48px)',
+  name: 'Minimal Height Area Graph (48px)',
   args: {
     width: 72,
     height: 48,
@@ -434,7 +434,7 @@ export const MinHeight: Story = {
 };
 
 export const ThresholdHeightSize: Story = {
-  name: 'Threshold height area graph (192px, where labels appear)',
+  name: 'Threshold Height Area Graph (192px, where labels appear)',
   args: {
     width: 288,
     height: 192,
@@ -442,7 +442,7 @@ export const ThresholdHeightSize: Story = {
 };
 
 export const NoLabelsNoTicks: Story = {
-  name: 'No labels/ticks area graph (but yes 32px padding for optional points)',
+  name: 'No Labels/ticks Area Graph (but yes 32px padding for optional points)',
   args: {
     showTickMarks: false,
     width: 288,
@@ -453,14 +453,14 @@ export const NoLabelsNoTicks: Story = {
 };
 
 export const WithLegend: Story = {
-  name: 'With legend area graph',
+  name: 'With Legend Area Graph',
   args: {
     legend: true,
   },
 };
 
 export const MultiAxis: Story = {
-  name: 'Multi-axis area graph (left and right y-axes)',
+  name: 'Multi-Axis Area Graph (left and right y-axes)',
   render: (_args) => {
     const multiAxisDatasets: NonNullable<ObcAreaGraph['datasets']> = [
       {
@@ -534,7 +534,7 @@ export const CustomColors: Story = {
 
 export const RealtimeSqueezing: Story = {
   name: 'Realtime (squeezing)',
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   render: (_args) => {
     const chart = document.createElement('obc-area-graph');
     chart.data = JSON.parse(JSON.stringify(SAMPLE_DATA));
@@ -567,7 +567,7 @@ export const RealtimeSqueezing: Story = {
 
 export const RealtimeShifting: Story = {
   name: 'Realtime (shifting)',
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   render: (_args) => {
     const chart = document.createElement('obc-area-graph');
     chart.showDebugOverlay = _args.showDebugOverlay;

@@ -298,6 +298,12 @@ Clipped viewBox:  "-224 -44.8 448 268.8"
 
 The overlay SVG must use the **same clipped viewBox** to align correctly.
 
+**Note:** `clip{Top,Bottom,Left,Right}` are mutually exclusive with `zoomToFitArc`.
+When zoom is on, the viewBox is derived from `computeZoomToFitArcFrame()` and all
+four clips are ignored (both `obc-watch` and `obc-instrument-radial` zero them).
+`clipLeft` / `clipRight` are the horizontal counterparts of `clipTop` / `clipBottom`,
+used for quadrant (90°) sectors.
+
 ---
 
 ## Where to Make Common Changes
@@ -425,6 +431,83 @@ Common instrument CSS variables used in `watch.ts` and helpers:
 | `gauge-radial`      | `instrument-radial`   | Thin wrapper adding `enhanced` prop                     |
 | `rot-sector`        | `instrument-radial`   | Rate of turn sector gauge                               |
 | `azimuth-thruster`  | `obc-watch` + overlay | Thruster with angle setpoint and thrust bar             |
+
+---
+
+## Zoom-to-Fit Arc (`zoomToFitArc`)
+
+When an instrument displays a narrow arc (e.g. ±20° instead of a full circle), `zoomToFitArc` enlarges the rings to fill the available space rather than leaving large empty areas around a small arc.
+
+### Approach: Radius Enlargement (not vector scaling)
+
+The zoom works by adding a **radius offset** (`_rOff` / `_radiusOffset`) to all ring radii, tickmark positions, advice bands, and needle positions. The viewBox is recalculated via `computeZoomToFitArcFrame()` so the enlarged arc fills the component bounds.
+
+### File roles
+
+| File                   | Role                                                                                                                                                                                                                                                                      |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `arc-frame.ts`         | Pure geometry: `computeZoomToFitArcFrame()` binary-searches for the `radiusOffset` that makes the arc's bounding box fill the available space. Also exports `computeAnnularArcBBox()`.                                                                                    |
+| `watch.ts`             | Owns `zoomToFitArc` property and `_rOff` field. Applies offset to ALL radius references (rings, tickmarks, labels, advices, bars, setpoint, needles). Recalculates viewBox.                                                                                               |
+| `instrument-radial.ts` | Forwards `zoomToFitArc` to `obc-watch`. Tracks `_radiusOffset` for needle position adjustments.                                                                                                                                                                           |
+| `rudder.ts`            | Has `_needleTransform` getter that translates the needle outward by `rOff` so the tip reaches the enlarged ring. Uses `translate(0, -rOff)` — an intentional visual compromise that preserves needle proportions at the cost of a slight mismatch at extreme zoom levels. |
+| `rot-sector.ts`        | Exposes `rotArcExtent` (default 60°) and forwards `zoomToFitArc` to `instrument-radial`.                                                                                                                                                                                  |
+| `compass-sector.ts`    | Has its own zoom logic: when `zoomToFitArc` is true and the FOV is small, renders a 1:1-scale arc cropped to content; otherwise uses FOV compression capped at 120°.                                                                                                      |
+
+### `radiusOffset` propagation
+
+The offset flows through the rendering pipeline:
+
+1. `watch.ts` computes `_rOff` via `computeZoomToFitArcFrame()`
+2. All `watch.ts` render methods add `_rOff` to radius constants (e.g. `OUTER_RING_RADIUS + this._rOff`)
+3. Helper functions (`tickmark()`, `renderAdvice()`, `adviceMask()`) accept an optional `radiusOffset` parameter
+4. Consumer instruments read back `_radiusOffset` for overlay adjustments (needle translation)
+
+### Advice hatch pattern: two code paths
+
+`advice.ts` uses two different hatch-pattern strategies depending on `radiusOffset`:
+
+- **`radiusOffset === 0`** (original): Pre-baked tile approach — works at design radius only.
+- **`radiusOffset > 0`** (zoom): Direct `<line>` segments with dynamic line count to maintain consistent arc spacing at any enlarged radius. The mask also switches to `maskUnits="userSpaceOnUse"` with dynamic extent.
+
+> **⚠️ Do not unify** the two code paths. The non-zoom path must produce output identical to `main` to avoid regenerating snapshots for all advice-using instruments.
+
+### Adding `zoomToFitArc` to a new instrument
+
+1. Add `@property({type: Boolean}) zoomToFitArc = false` to the instrument
+2. Forward it to `obc-watch` (or `instrument-radial`) via template binding
+3. If the instrument has an overlay needle/element, read `_radiusOffset` and adjust positioning
+4. Add `ZoomedIn` / `ZoomedInNarrow` stories with representative `arcExtent` values
+
+---
+
+## Geometry Inputs Cheat-Sheet
+
+`obc-watch` exposes several partially-overlapping geometry inputs. Use this as the
+quick reference for which knob does what. Combinations not listed under "validated"
+below are undefined — verify them before relying on a specific pairing.
+
+| Property                                            | Affects                                                                                                                                                                                |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `padding`                                           | Base viewBox size in the **un-zoomed** path (`(176 + padding) * 2`).                                                                                                                  |
+| `clipTop` / `clipBottom` / `clipLeft` / `clipRight` | viewBox window in the **un-zoomed** path. Ignored under zoom (when `zoomToFitArc` is on or an `arcFrame` is supplied).                                                                                                          |
+| `zoomToFitArc`                                      | Swaps to the `computeZoomToFitArcFrame()` path (unless an `arcFrame` is already supplied); every band radius gets the additive `_rOff` (see the `_bandRadius` INVARIANT in `watch.ts`).                                           |
+| `arcFrame`                                          | Externally pre-computed zoom frame. Takes precedence when set (the `if (this.arcFrame)` branch runs first) — used directly even when `zoomToFitArc` is false, and `obc-watch` does not recompute it. If you pass it, keep it in sync with `areas` / `watchCircleType`. |
+| `endLabelsMaxMin`                                   | "Max-min" label placement: horizontal end labels (±90°) sit off the dead-center tick instead of beside it.                                                                            |
+| `tickmarksInside`                                   | Moves labels inside the ring; their `textRadius` is routed through `_bandRadius`.                                                                                                      |
+| `tickFadeAngle`                                     | (pre-existing) Tickmark fade-out near arc edges.                                                                                                                                        |
+
+### Radial label model (design language)
+
+Labels follow the design model with three placements:
+
+- **External** — labels around the outside of the watch face (default).
+- **Internal** — labels inside the ring (`tickmarksInside`).
+- **Max-min** — labels at the arc ends (`endLabelsMaxMin`), e.g. the 180° gauge.
+
+> **Validated combinations:** pitch/roll use `zoomToFitArc` + `shiftArcFrameToOuterEdge`;
+> `gauge-radial` uses per-sector `clip*` and `endLabelsMaxMin` on the 180° sector.
+> Pairings like `clip*` + `zoomToFitArc` or `endLabelsMaxMin` + `zoomToFitArc` are not
+> currently validated.
 
 ---
 

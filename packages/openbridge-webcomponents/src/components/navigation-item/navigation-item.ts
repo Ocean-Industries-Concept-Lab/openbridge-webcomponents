@@ -1,11 +1,22 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {property} from 'lit/decorators.js';
+import {property, query} from 'lit/decorators.js';
 import compentStyle from './navigation-item.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import '../../icons/icon-arrow-flyout-google.js';
 import {ObcNavigationMenuVariant} from '../navigation-menu/navigation-menu.js';
 import {customElement} from '../../decorator.js';
+import '../tree-navigation-item/tree-navigation-item.js';
+import {
+  TreeBranchType,
+  TreeTerminalType,
+  type TreeNavigationItemAlerts,
+} from '../tree-navigation-item/tree-navigation-item.js';
+
+enum NavigationItemRole {
+  Button = 'button',
+  MenuItem = 'menuitem',
+}
 
 /**
  * `<obc-navigation-item>` – A navigation menu item component for use in navigation bars, side menus, or toolbars.
@@ -86,6 +97,7 @@ import {customElement} from '../../decorator.js';
  * ```
  *
  * @slot icon - Leading icon slot (optional, shown if provided). Set `hasIcon` to `true` to show the icon.
+ * @slot trailing-icon - Trailing icon slot (optional, shown if provided). Set `hasTrailingIcon` to `true` to show.
  * @fires click {CustomEvent<void>} Fired when the navigation item is clicked.
  */
 
@@ -94,6 +106,7 @@ export class ObcNavigationItem extends LitElement {
   /**
    * The text label displayed for the navigation item.
    * Hidden in icon-only variants.
+   * @availableWhen variant in [Full, Compact]
    */
   @property({type: String}) label = 'Label';
 
@@ -126,6 +139,7 @@ export class ObcNavigationItem extends LitElement {
   /**
    * Highlights the item as selected within a group.
    * Only relevant when `group` is true.
+   * @availableWhen group==true
    */
   @property({type: Boolean}) groupSelected = false;
 
@@ -133,6 +147,33 @@ export class ObcNavigationItem extends LitElement {
    * Whether the item has a leading icon.
    */
   @property({type: Boolean, reflect: true}) hasIcon = false;
+
+  /** @availableWhen group==false || variant==IconOnly */
+  @property({type: Boolean}) hasTrailingIcon = false;
+
+  /** Set by `obc-navigation-menu` in its Tree variant — renders the row as a tree item. */
+  @property({type: Boolean}) treeMode = false;
+
+  /** Indentation columns for tree mode, assigned by `obc-navigation-menu`. */
+  @property({type: Array}) treeBranches: TreeBranchType[] = [];
+
+  /**
+   * Terminal type for the row in the Tree variant — one of `regular` (default),
+   * `aggregated-header`, or `group-header`. Has no effect in the flat variants.
+   */
+  @property({type: String}) terminalType: string = TreeTerminalType.regular;
+
+  /**
+   * Per-severity alert counts shown as trailing badge(s) (Tree variant only).
+   * Forwarded to the underlying `obc-tree-navigation-item`. See
+   * {@link TreeNavigationItemAlerts}.
+   */
+  @property({type: Object}) alerts?: TreeNavigationItemAlerts;
+
+  @query('a') private anchorElement?: HTMLAnchorElement;
+
+  // In tree mode the row renders an `obc-tree-navigation-item` instead of an `<a>`.
+  @query('obc-tree-navigation-item') private treeItemElement?: HTMLElement;
 
   /**
    * Fired when the navigation item is clicked (either as a link or button).
@@ -142,7 +183,65 @@ export class ObcNavigationItem extends LitElement {
     dispatchEvent(new CustomEvent('click'));
   }
 
+  private handleKeydown(event: KeyboardEvent) {
+    const isMenuItem =
+      this.getAttribute('role') === NavigationItemRole.MenuItem;
+    if (this.href !== undefined && !isMenuItem) return;
+    if (event.key !== 'Enter' && event.key !== ' ') {
+      return;
+    }
+
+    event.preventDefault();
+    this.anchorElement?.click();
+  }
+
+  public override focus(options?: FocusOptions): void {
+    (this.treeItemElement ?? this.anchorElement)?.focus(options);
+  }
+
+  private getItemRole(): NavigationItemRole | undefined {
+    const hostRole = this.getAttribute('role');
+    if (hostRole === NavigationItemRole.MenuItem) {
+      return NavigationItemRole.MenuItem;
+    }
+
+    return this.href === undefined ? NavigationItemRole.Button : undefined;
+  }
+
+  private getItemTabIndex(): number | undefined {
+    const hostTabIndex = this.getAttribute('tabindex');
+    if (hostTabIndex !== null) {
+      const parsedTabIndex = Number(hostTabIndex);
+      return Number.isNaN(parsedTabIndex) ? undefined : parsedTabIndex;
+    }
+
+    return this.href === undefined ? 0 : undefined;
+  }
+
   override render() {
+    if (this.treeMode) {
+      // Delegate the whole row to the tree item: it owns focus, keyboard
+      // activation, the checked-inert behavior, and href navigation. Forward its
+      // activation as this item's own `click` so selection wiring is unchanged.
+      return html`
+        <obc-tree-navigation-item
+          class="tree"
+          .label=${this.label}
+          .branches=${this.treeBranches}
+          ?checked=${this.checked}
+          .hasLeadingIcon=${this.hasIcon}
+          .href=${this.href}
+          .terminalType=${this.terminalType}
+          .alerts=${this.alerts}
+          @click=${this.onClick}
+        >
+          ${this.hasIcon
+            ? html`<slot name="icon" slot="icon"></slot>`
+            : nothing}
+        </obc-tree-navigation-item>
+      `;
+    }
+
     const showFlyout =
       this.group && this.variant !== ObcNavigationMenuVariant.IconOnly;
     const isCompact = this.variant === ObcNavigationMenuVariant.Compact;
@@ -158,6 +257,9 @@ export class ObcNavigationItem extends LitElement {
         })}"
         href=${ifDefined(this.href)}
         @click=${this.onClick}
+        @keydown=${this.handleKeydown}
+        tabindex=${ifDefined(this.getItemTabIndex())}
+        role=${ifDefined(this.getItemRole())}
       >
         <div class="visible-wrapper">
           ${this.hasIcon
@@ -187,6 +289,9 @@ export class ObcNavigationItem extends LitElement {
                   ></obi-arrow-flyout-google>
                 </div>
               `
+            : nothing}
+          ${this.hasTrailingIcon && !showFlyout
+            ? html`<slot name="trailing-icon" class="icon trailing"></slot>`
             : nothing}
         </div>
       </a>

@@ -9,7 +9,8 @@ export enum ArrowStyle {
 export function arrow(
   style: ArrowStyle,
   angle: number,
-  priority: Priority = Priority.regular
+  priority: Priority = Priority.regular,
+  radiusOffset = 0
 ): SVGTemplateResult | SVGTemplateResult[] {
   const colorName =
     priority === Priority.enhanced
@@ -18,7 +19,7 @@ export function arrow(
 
   if (style === ArrowStyle.HDG) {
     return svg`
-      <g transform="rotate(${angle}) translate(-256, -256)">
+      <g transform="rotate(${angle}) translate(-256, ${-256 - radiusOffset})">
 
 <path d="M254.654 100.32C255.219 99.1903 256.906 99.2277 257.396 100.433L272.312 137.092L272.388 137.301C273.067 139.455 270.647 141.314 268.676 140.13V140.129L256 132.582L243.323 140.129L243.324 140.13C241.289 141.352 238.777 139.332 239.688 137.092L254.604 100.433L254.654 100.32Z"
  fill=${colorName} stroke="var(--border-silhouette-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>
@@ -26,7 +27,7 @@ export function arrow(
     `;
   } else if (style === ArrowStyle.COG) {
     return svg`
-      <g transform="rotate(${angle}) translate(-256, -256)">
+      <g transform="rotate(${angle}) translate(-256, ${-256 - radiusOffset})">
 <mask id="path-1-outside-1_133_32856" maskUnits="userSpaceOnUse" x="238" y="99" width="36" height="42" fill="black">
 <rect fill="white" x="238" y="99" width="36" height="42"/>
 <path fill-rule="evenodd" clip-rule="evenodd" vector-effect="non-scaling-stroke" d="M256 127.334L265.867 133.192L256 108.941L246.133 133.192L256 127.334ZM255.067 100.621C255.404 99.7929 256.596 99.7929 256.933 100.621L271.849 137.28C272.567 139.046 270.584 140.693 268.933 139.701L256 132L243.067 139.701C241.416 140.693 239.433 139.046 240.151 137.28L255.067 100.621Z"/>

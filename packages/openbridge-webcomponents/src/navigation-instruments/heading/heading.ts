@@ -16,24 +16,45 @@ export enum CompassDirection {
   CourseUp = 'courseUp',
 }
 
+export enum HeadingPriorityElement {
+  hdg = 'hdg',
+  cog = 'cog',
+}
+
 @customElement('obc-heading')
 export class ObcHeading extends LitElement {
   @property({type: Number}) heading = 0;
   @property({type: Number}) courseOverGround = 0;
 
   @property({type: Number}) headingSetpoint: number | null = null;
+  /** @availableWhen headingSetpoint!=null */
   @property({type: Number}) newHeadingSetpoint: number | undefined;
+  /** @availableWhen headingSetpoint!=null && autoAtHeadingSetpoint==false */
   @property({type: Boolean}) atHeadingSetpoint: boolean = false;
+  /** @availableWhen headingSetpoint!=null */
   @property({type: Number}) headingSetpointAtZeroDeadband: number = 0.5;
+  /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean}) headingSetpointOverride: boolean = false;
-  @property({type: Boolean}) disableAutoAtHeadingSetpoint: boolean = false;
+  /** @availableWhen headingSetpoint!=null */
+  @property({type: Boolean, attribute: false}) autoAtHeadingSetpoint: boolean =
+    true;
+  /** @availableWhen headingSetpoint!=null && autoAtHeadingSetpoint==true */
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
+  /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean}) animateSetpoint: boolean = false;
+  /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
   @property({type: String}) direction: CompassDirection =
     CompassDirection.NorthUp;
   @property({type: String}) priority: Priority = Priority.regular;
+  /** @availableWhen priority==enhanced */
+  @property({type: Array, attribute: false})
+  priorityElements: HeadingPriorityElement[] = [HeadingPriorityElement.hdg];
+  /** Show compass NSEW labels. */
+  @property({type: Boolean}) showLabels: boolean = false;
+  /** When true, labels and north arrow are placed inside the outer ring. */
+  @property({type: Boolean}) tickmarksInside: boolean = false;
 
   private _headingSp = new SetpointBundle({
     angularWraparound: true,
@@ -47,7 +68,7 @@ export class ObcHeading extends LitElement {
       newSetpoint: this.newHeadingSetpoint,
       atSetpoint: this.atHeadingSetpoint,
       touching: this.touching,
-      disableAutoAtSetpoint: this.disableAutoAtHeadingSetpoint,
+      autoAtSetpoint: this.autoAtHeadingSetpoint,
       autoAtSetpointDeadband: this.autoAtHeadingSetpointDeadband,
       setpointAtZeroDeadband: this.headingSetpointAtZeroDeadband,
       setpointOverride: this.headingSetpointOverride,
@@ -68,7 +89,7 @@ export class ObcHeading extends LitElement {
     const size = Math.min(this.clientHeight, this.clientWidth);
     const deltaWidth = 512 - size;
     const steps = deltaWidth / 128;
-    let deltaPadding = 0;
+    let deltaPadding;
     if (deltaWidth > 0) {
       deltaPadding = steps * 48;
     } else {
@@ -88,6 +109,13 @@ export class ObcHeading extends LitElement {
             : AdviceState.regular;
       return {minAngle, maxAngle, type, state};
     });
+  }
+
+  private priorityFor(element: HeadingPriorityElement): Priority {
+    const selected = Array.isArray(this.priorityElements)
+      ? this.priorityElements
+      : [];
+    return selected.includes(element) ? this.priority : Priority.regular;
   }
 
   private getRotation(): number | undefined {
@@ -121,8 +149,10 @@ export class ObcHeading extends LitElement {
           .advices=${this.angleAdviceRaw}
           .tickmarks=${tickmarks}
           .watchCircleType=${WatchCircleType.single}
-          .labelFrameEnabled=${true}
+          .showLabels=${this.showLabels}
+          .tickmarksInside=${this.tickmarksInside}
           .crosshairEnabled=${true}
+          .northArrow=${true}
           .angleSetpoint=${this.headingSetpoint ?? undefined}
           .newAngleSetpoint=${this.newHeadingSetpoint}
           .atAngleSetpoint=${this._headingSp.computeAtSetpoint(this.heading)}
@@ -137,12 +167,12 @@ export class ObcHeading extends LitElement {
           ${arrow(
             ArrowStyle.HDG,
             this.heading + (this.getRotation() ?? 0),
-            this.priority
+            this.priorityFor(HeadingPriorityElement.hdg)
           )}
           ${arrow(
             ArrowStyle.COG,
             this.courseOverGround + (this.getRotation() ?? 0),
-            Priority.regular
+            this.priorityFor(HeadingPriorityElement.cog)
           )}
         </svg>
       </div>

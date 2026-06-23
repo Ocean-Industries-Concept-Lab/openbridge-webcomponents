@@ -9,52 +9,33 @@
       <div class="screen-item-text font-ui-button">{{ screen.page.name }}</div>
     </button>
     <div class="screen-name font-ui-label">Screen {{ screen.name }}</div>
-    <ObcContextMenu
+    <ObcContextMenuInput
       v-if="showContextMenu"
+      :type="ContextMenuType.Flyout"
       class="screen-context-menu"
       :style="{ 'position-anchor': `--screen-anchor-${screen.name}` } as any"
-    >
-      <template v-for="app in screenPages" :key="app.app">
-        <ObcNavigationItemGroup
-          v-if="app.pages.length > 1"
-          ref="navigationGroupRefs"
-          :key="app.app"
-          :label="app.app"
-          hug
-          @open="() => onNavigationGroupOpen(app.app)"
-        >
-          <ObcNavigationItem
-            v-for="page in app.pages"
-            :key="page.name"
-            :label="page.name"
-            @click="onPageChange(page)"
-          >
-            <ObiIcon :icon="page.icon" class="screen-icon" />
-          </ObcNavigationItem>
-        </ObcNavigationItemGroup>
-        <ObcNavigationItem
-          v-else-if="app.pages[0]"
-          :label="app.pages[0].name"
-          @click="onPageChange(app.pages[0] as ScreenPage)"
-        >
-          <ObiIcon :icon="app.pages[0].icon" class="screen-icon" />
-        </ObcNavigationItem>
-      </template>
-    </ObcContextMenu>
+      :options="contextMenuOptions"
+      :selected-values="selectedMenuValues"
+      @change="onContextMenuChange"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import ObiIcon from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/icons/ObiIcon.vue'
-import ObcContextMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/context-menu/ObcContextMenu.vue'
-import ObcNavigationItemGroup from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/navigation-item-group/ObcNavigationItemGroup.vue'
-import ObcNavigationItem from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/navigation-item/ObcNavigationItem.vue'
-import { ref, useTemplateRef } from 'vue'
+import { html } from 'lit'
+import ObiIcon from '@oicl/openbridge-webcomponents-vue/icons/ObiIcon.vue'
+import ObcContextMenuInput from '@oicl/openbridge-webcomponents-vue/components/context-menu-input/ObcContextMenuInput.vue'
+import { computed, ref } from 'vue'
 import { useBridgeStore, type Screen, type ScreenPage } from '@/stores/bridge'
 import { screenPages } from '@/router'
+import '@oicl/openbridge-webcomponents/dist/icons/icon.js'
+import {
+  ContextMenuType,
+  type ContextMenuOption,
+  type ObcContextMenuInputChangeEvent
+} from '@oicl/openbridge-webcomponents/dist/components/context-menu-input/context-menu-input'
 
 const showContextMenu = ref(false)
-const navigationGroupRefs = useTemplateRef<(typeof ObcNavigationItemGroup)[]>('navigationGroupRefs')
 
 const bridgeStore = useBridgeStore()
 
@@ -62,19 +43,47 @@ const props = defineProps<{
   screen: Screen
 }>()
 
-const onNavigationGroupOpen = (openedIndex: string) => {
-  if (!navigationGroupRefs.value) return
-  // Close all other navigation groups
-  navigationGroupRefs.value.forEach((groupRef) => {
-    if (groupRef && groupRef.label !== openedIndex) {
-      groupRef.$el.close()
+const contextMenuOptions = computed((): ContextMenuOption[] => {
+  return screenPages.map((app) => {
+    if (app.pages.length > 1) {
+      return {
+        value: `app-group-${app.app}`,
+        label: app.app,
+        children: app.pages.map((page) => ({
+          value: page.path,
+          label: page.name
+        }))
+      }
+    }
+    const page = app.pages[0]!
+    return {
+      value: page.path,
+      label: page.name
     }
   })
+})
+
+const selectedMenuValues = computed(() => [props.screen.page.path])
+
+function findPageByPath(path: string): ScreenPage | null {
+  for (const app of screenPages) {
+    for (const page of app.pages) {
+      if (page.path === path) {
+        return { name: page.name, icon: page.icon, path: page.path }
+      }
+    }
+  }
+  return null
 }
 
-const onPageChange = (page: ScreenPage) => {
-  bridgeStore.updateScreen({ ...props.screen, page: page })
-  showContextMenu.value = false
+const onContextMenuChange = (event: ObcContextMenuInputChangeEvent) => {
+  if (!event.detail.selectedValues.length) return
+  const path = event.detail.selectedValues[0]
+  const page = findPageByPath(path)
+  if (page) {
+    bridgeStore.updateScreen({ ...props.screen, page })
+    showContextMenu.value = false
+  }
 }
 </script>
 

@@ -113,7 +113,7 @@ export const Top: Story = {
 export const RegularWithStatusAndNotClickable: Story = {
   args: {
     size: ObcElevatedCardSize.DoubleLine,
-    notClickable: true,
+    isClickable: false,
     hasLeadingIcon: true,
     hasStatus: true,
   },

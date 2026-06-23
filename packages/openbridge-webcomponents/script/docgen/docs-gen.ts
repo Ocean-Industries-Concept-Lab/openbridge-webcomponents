@@ -1,8 +1,14 @@
 ﻿/*─────────────────────────────────────────────────────────────────────────*\
-│ docs-gen.ts – generate JSDoc comments for an OpenBridge web component.  │
+│ docs-gen.ts – generate JSDoc comments for OpenBridge source files.      │
 │                                                                         │
-│ Usage examples (run from repo root):                                    │
+│ Supports three code patterns:                                           │
+│   a) Concrete web components  (class with @customElement)               │
+│   b) Pure function modules    (no class, only exported functions)       │
+│   c) Abstract base classes    (class without @customElement)            │
+│                                                                         │
+│ Usage examples (run from packages/openbridge-webcomponents/):           │
 │   npx tsx script/docgen/docs-gen.ts src/components/radio/radio.ts       │
+│   npx tsx script/docgen/docs-gen.ts src/building-blocks/external-scale  │
 │   npx tsx script/docgen/docs-gen.ts --all                               │
 \*─────────────────────────────────────────────────────────────────────────*/
 
@@ -15,7 +21,7 @@ import OpenAI from 'openai';
 import {globby} from 'globby';
 import {statSync} from 'node:fs';
 
-/* ▲2  __dirname shim because we’re in ESM land  */
+/* ▲2  __dirname shim because we're in ESM land  */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -40,9 +46,61 @@ async function readIf(file: string) {
   }
 }
 
+/* ▲5b  Detect which code pattern the file uses  */
+enum CodePattern {
+  concreteComponent = 'concrete-component',
+  pureFunctionModule = 'pure-function-module',
+  abstractBaseClass = 'abstract-base-class',
+}
+
+function detectCodePattern(tsCode: string): CodePattern {
+  const hasCustomElement = /@customElement\s*\(/.test(tsCode);
+  // Match named classes (`class Foo`) and anonymous class expressions (`class extends`)
+  const hasClassDecl = /\bclass\s+(\w+\s+)?extends\b/.test(tsCode);
+  const hasAbstract = /\babstract\s+class\b/.test(tsCode);
+
+  if (hasCustomElement) return CodePattern.concreteComponent;
+  if (hasAbstract || hasClassDecl) {
+    return CodePattern.abstractBaseClass;
+  }
+  return CodePattern.pureFunctionModule;
+}
+
+function patternInstructions(pattern: CodePattern): string {
+  switch (pattern) {
+    case CodePattern.concreteComponent:
+      return [
+        'This file is a CONCRETE WEB COMPONENT (has @customElement decorator).',
+        'Insert JSDoc for the class and every public property/event.',
+        "The JSDoc should go right before @customElement('name').",
+        'Use @slot and @fires tags at the end of the class JSDoc.',
+        'Do NOT include @property tags in the tag block.',
+      ].join('\n');
+
+    case CodePattern.pureFunctionModule:
+      return [
+        'This file is a PURE FUNCTION MODULE (no component class - only exported functions).',
+        'Place a comprehensive JSDoc block comment at the TOP of the module (above the first export).',
+        'Document the module purpose, what it renders/computes, layout model, and usage examples.',
+        'Also add short JSDoc to each exported function, interface, enum, and type.',
+        'There is no @customElement - do NOT invent one.',
+      ].join('\n');
+
+    case CodePattern.abstractBaseClass:
+      return [
+        'This file is an ABSTRACT BASE CLASS (not registered as a custom element).',
+        'Insert JSDoc for the class and every public property/event.',
+        'At the end of the class JSDoc tag block, include @ignore to signal this is not a standalone API.',
+        'Document which concrete subclasses use this base (if visible from imports/comments).',
+        'Include @slot and @fires tags as usual.',
+      ].join('\n');
+  }
+}
+
 /*─────────────────────────────────────────────────────────────────────────*\
 |  ▲6  Core routine: generateDocsFor                                     |
 |       • Loads component TS, story, CSS                                 |
+|       • Detects code pattern (concrete / pure-fn / abstract)           |
 |       • Builds GPT prompt                                              |
 |       • Calls OpenAI                                                   |
 |       • Writes <name>.generated.ts next to original                    |
@@ -50,36 +108,49 @@ async function readIf(file: string) {
 async function generateDocsFor(tsPath: string) {
   // 6a. Pull in main file + optional siblings
   const tsCode = await fs.readFile(tsPath, 'utf8');
-  const story = await readIf(tsPath.replace(/\.ts$/, '.stories.ts'));
-  const css = await readIf(tsPath.replace(/\.ts$/, '.css'));
+  const {dir, name, ext} = path.parse(tsPath);
+  const basePath = path.join(dir, name);
+  const story = await readIf(`${basePath}.stories.ts`);
+  const css = await readIf(`${basePath}.css`);
 
-  // 6b. At the moment we don’t do live web guideline fetch → keep blank
+  // 6b. Detect code pattern to tailor the prompt
+  const pattern = detectCodePattern(tsCode);
+  console.log('  📂 %s  →  pattern: %s', tsPath, pattern);
+
+  // 6c. At the moment we don't do live web guideline fetch → keep blank
   const guidelines = '';
 
-  // 6c. Compose the per-file USER prompt (system prompt is separate)
-  const userPrompt = `
-  <---CODE--->
-  ${tsCode}
+  // 6d. Compose the per-file USER prompt (system prompt is separate)
+  const userPrompt = [
+    '<---CODE--->',
+    tsCode,
+    '',
+    '<---STORY--->',
+    story,
+    '',
+    '<---CSS--->',
+    css,
+    '',
+    '<---GUIDELINE--->',
+    guidelines,
+    '',
+    '<---PATTERN--->',
+    patternInstructions(pattern),
+    '',
+    '<---END--->',
+    patternInstructions(pattern),
+    '',
+    'Do NOT modify code, ONLY add documentation. This includes imports and enums.',
+    "DON'T change or remove any code. It is very IMPORTANT that you don't remove anything.",
+    'You can modify comments and documentation, but ONLY that.',
+    'Remember that comments in code is not good code. Only docs.',
+    'If usage guidance is missing, add a TODO(designer) note.',
+    '',
+    'Return ONLY the full .ts file with JSDoc comments inserted - also document enums.',
+    'DO NOT wrap in Markdown (no triple backticks).',
+  ].join('\n');
 
-  <---STORY--->
-  ${story}
-
-  <---CSS--->
-  ${css}
-
-  <---GUIDELINE--->
-  ${guidelines}
-
-  <---END--->
-  Insert JSDoc for the class and every public property/event.
-  Do NOT modify code, ONLY add documentation. This includes imports, and enums, DON't change or remove any code. It's very IMPORTANT that you don't remove anything. You can modify comments and documentation, but ONLY that. Remember that comments in code is not good code. Only docs. 
-  If usage guidance is missing, add a TODO(designer) note.
-
-  Return ONLY the full .ts file with JSDoc comments inserted — remember that if there are enums, are docs to these as well, and make sure the docs comes right before @customElement('name').
-  DO NOT wrap in Markdown (no triple backticks).
-  `;
-
-  // 6d. One OpenAI chat completion
+  // 6e. One OpenAI chat completion
   const openai = new OpenAI({apiKey});
   const chat = await openai.chat.completions.create({
     model: MODEL,
@@ -90,17 +161,18 @@ async function generateDocsFor(tsPath: string) {
     ],
   });
 
-  // 6e. Write output next to source (<name>.generated.ts)
+  // 6f. Write output next to source (<name>.generated.ts)
   const newCode = chat.choices[0].message!.content!;
-  await fs.writeFile(tsPath, newCode);
-  console.log('✅  Overwrote', tsPath);
+  const generatedPath = `${basePath}.generated${ext}`;
+  await fs.writeFile(generatedPath, newCode);
+  console.log('  ✅ Wrote', generatedPath);
 }
 
 /*─────────────────────────────────────────────────────────────────────────*\
 |  ▲7  CLI dispatcher                                                     |
 |       • <folder> → every *.ts in that folder (ignores stories/tests)    |
 |       • <file.ts> → exactly that file                                   |
-|       • --all     → whole component tree  (optional)                    |
+|       • --all     → whole source tree                                   |
 \*─────────────────────────────────────────────────────────────────────────*/
 
 const IGNORE = [
@@ -120,10 +192,23 @@ if (!arg) {
 }
 
 if (arg === '--all') {
-  const files = await globby('src/components/**/*.{ts,tsx}', {
-    gitignore: true,
-    ignore: IGNORE,
-  });
+  const files = await globby(
+    [
+      'src/building-blocks/**/*.{ts,tsx}',
+      'src/navigation-instruments/**/*.{ts,tsx}',
+      'src/bars-graphs/**/*.{ts,tsx}',
+      'src/components/**/*.{ts,tsx}',
+      'src/automation/**/*.{ts,tsx}',
+      'src/integration-systems/**/*.{ts,tsx}',
+      'src/pages/**/*.{ts,tsx}',
+      'src/svghelpers/**/*.{ts,tsx}',
+      'src/charthelpers/**/*.{ts,tsx}',
+    ],
+    {
+      gitignore: true,
+      ignore: IGNORE,
+    }
+  );
   for (const f of files) await generateDocsFor(f);
 } else if (statSync(arg).isDirectory()) {
   // process every .ts/.tsx directly inside that folder

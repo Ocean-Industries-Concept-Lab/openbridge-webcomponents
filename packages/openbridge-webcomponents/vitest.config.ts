@@ -11,7 +11,6 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   test: {
-    // Use `workspace` field in Vitest < 3.2
     projects: [
       {
         extends: true,
@@ -22,6 +21,9 @@ export default defineConfig({
             // This should match your package.json script to run Storybook
             // The --no-open flag will skip the automatic opening of a browser
             storybookScript: 'npm run storybook --no-open',
+            tags: {
+              exclude: ['skip-test'],
+            },
           }),
           storybookVis({
             comparisonMethod: 'pixel',
@@ -33,6 +35,7 @@ export default defineConfig({
         ],
         test: {
           name: 'storybook',
+          setupFiles: ['./.storybook/vitest.setup.ts'],
           // Enable browser mode
           browser: {
             enabled: true,
@@ -41,7 +44,6 @@ export default defineConfig({
             headless: true,
             instances: [{browser: 'chromium'}],
           },
-          setupFiles: ['./.storybook/vitest.setup.ts'],
         },
       },
     ],

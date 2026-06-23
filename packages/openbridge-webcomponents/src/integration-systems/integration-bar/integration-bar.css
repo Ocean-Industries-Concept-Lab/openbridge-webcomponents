@@ -2,21 +2,92 @@
   box-sizing: border-box;
 }
 
+:host {
+  display: block;
+  width: 100%;
+}
+
 .wrapper {
   display: flex;
+  padding: 0 var(--app-components-integration-system-topbar-margin-global);
   justify-content: space-between;
   align-items: center;
-  height: var(--app-components-topbar-touch-target-size);
-  padding: 0 var(--app-components-topbar-margin-global);
-  background: var(--integration-container-background-color);
-  box-shadow: var(--shadow-flat);
+  background: var(--integration-container-global-color);
+  box-shadow: var(--shadow-flat-x) var(--shadow-flat-y) var(--shadow-flat-blur)
+    var(--shadow-flat-spread) var(--shadow-flat-color);
+}
 
-  .left-side,
-  .right-side {
-    display: flex;
-  }
+.content-container {
+  display: flex;
+  flex: 1;
+}
 
-  .fleet-btn {
-    margin-right: 8px;
-  }
+.fleet-vessel-container {
+  display: flex;
+  align-items: flex-start;
+  flex: 1 1 auto;
+}
+
+.fleet-button {
+  flex: initial;
+}
+
+.vessel-container {
+  display: flex;
+  flex: 1 1 auto;
+}
+
+.integration-buttons-slot::slotted(*) {
+  display: flex;
+  flex: 1;
+}
+
+.hug-buttons-slot::slotted(*) {
+  display: flex;
+  flex: 0 1 auto;
+}
+
+.hug-buttons-slot,
+.integration-buttons-slot {
+  display: contents;
+}
+
+.home-button,
+.link-button {
+  width: var(--app-components-integration-system-icon-button-touch-target);
+  height: var(--app-components-integration-system-icon-button-touch-target);
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  flex: initial;
+}
+
+.right-content-container {
+  display: flex;
+  align-self: stretch;
+  align-items: center;
+  flex: initial;
+}
+
+.right-content-container.buttons-on-bar {
+  border-left: var(
+      --app-components-integration-system-navigation-item-horizontal-stroke-weight-right,
+      1px
+    )
+    solid
+    var(
+      --integration-beta-flat-enabled-border-color,
+      var(--integration-border-outline)
+    );
+}
+
+.right-side-system-menu-container {
+  position: absolute;
+  position-anchor: --settings-menu-anchor;
+  top: anchor(bottom);
+  justify-self: anchor-center;
+}
+
+.vessel-button-placeholder {
+  flex: 1 1 auto;
 }

@@ -18,17 +18,20 @@ export enum TickmarkType {
 }
 
 export enum TickmarkStyle {
-  hinted = 'hinted',
   regular = 'regular',
   enhanced = 'enhanced',
 }
 
-export function tickmarkColor(style: TickmarkStyle): string {
-  if (style === TickmarkStyle.hinted) {
-    return 'var(--instrument-frame-tertiary-color)';
-  } else if (style === TickmarkStyle.regular) {
+export function tickmarkColor(
+  style: TickmarkStyle,
+  tickmarkType?: TickmarkType
+): string {
+  if (style === TickmarkStyle.regular) {
     return 'var(--instrument-tick-mark-tertiary-color)';
   } else {
+    if (tickmarkType === TickmarkType.tertiary) {
+      return 'var(--instrument-tick-mark-secondary-color)';
+    }
     return 'var(--instrument-tick-mark-primary-color)';
   }
 }
@@ -45,6 +48,8 @@ export function tickmark(
     rotation,
     maxDigits,
     color,
+    radiusOffset = 0,
+    endLabelsMaxMin = false,
   }: {
     size: TickmarkType;
     style: TickmarkStyle;
@@ -55,35 +60,53 @@ export function tickmark(
     rotation?: number;
     maxDigits: number;
     color?: string;
+    radiusOffset?: number;
+    endLabelsMaxMin?: boolean;
   }
 ): SVGTemplateResult | SVGTemplateResult[] {
   // check if scale is not infinite
   if (scale === Infinity || scale < 0) {
     throw new Error('Tick scale is not valid');
   }
+  const rOff = radiusOffset;
   let innerRadius: number;
   let outerRadius: number;
   textRadius = textRadius + (3 / scale + 3) * (inside ? -1 : 1);
   const rad = (angle * Math.PI) / 180;
   if (size === TickmarkType.primary) {
-    innerRadius = 328 / 2;
-    outerRadius = 368 / 2;
+    innerRadius = 328 / 2 + rOff;
+    outerRadius = 368 / 2 + rOff;
   } else if (size === TickmarkType.secondary) {
-    innerRadius = 328 / 2;
-    outerRadius = 344 / 2;
+    innerRadius = 328 / 2 + rOff;
+    outerRadius = 344 / 2 + rOff;
   } else if (size === TickmarkType.main || size === TickmarkType.zeroLine) {
-    innerRadius = 320 / 2;
-    outerRadius = 368 / 2;
+    innerRadius = 320 / 2 + rOff;
+    outerRadius = 368 / 2 + rOff;
   } else if (size === TickmarkType.zeroLineThick) {
-    innerRadius = 224 / 2;
-    outerRadius = 368 / 2;
+    innerRadius = 224 / 2 + rOff;
+    outerRadius = 368 / 2 + rOff;
   } else if (size === TickmarkType.tertiary) {
-    innerRadius = 328 / 2;
-    outerRadius = 336 / 2;
+    innerRadius = 328 / 2 + rOff;
+    outerRadius = 336 / 2 + rOff;
   } else {
-    return [textSvg(text ?? '', angle, inside, scale, textRadius)];
+    return [
+      textSvg(text ?? '', {angle, inside, scale, textRadius, endLabelsMaxMin}),
+    ];
   }
-  const colorName = color ?? tickmarkColor(style);
+
+  // When inside, anchor ticks at the outer ring edge and grow inward,
+  // preserving the same gap from the ring edge as the outside case.
+  // Outside: gap = innerRadius - RING2 (320/2). E.g. secondary: 164 - 160 = 4px gap.
+  // Inside: mirror that gap from the outer ring (368/2).
+  if (inside) {
+    const outerRingRadius = 368 / 2 + rOff;
+    const ring2Radius = 320 / 2 + rOff;
+    const tickLength = outerRadius - innerRadius;
+    const gapFromRingEdge = Math.max(0, innerRadius - ring2Radius);
+    outerRadius = outerRingRadius - gapFromRingEdge;
+    innerRadius = outerRadius - tickLength;
+  }
+  const colorName = color ?? tickmarkColor(style, size);
 
   const x1 = Math.sin(rad) * innerRadius;
   const y1 = -Math.cos(rad) * innerRadius;
@@ -96,7 +119,10 @@ export function tickmark(
   const tick = svg`<line x1=${x1} y1=${y1} x2=${x2} y2=${y2} stroke=${colorName} stroke-width=${strokeWidth} vector-effect="non-scaling-stroke"/>`;
   if (text) {
     if (rotation === undefined) {
-      return [tick, textSvg(text, angle, inside, scale, textRadius)];
+      return [
+        tick,
+        textSvg(text, {angle, inside, scale, textRadius, endLabelsMaxMin}),
+      ];
     } else {
       const newRadius =
         textRadius + ((4 / scale + 5) * (inside ? -1 : 1) * maxDigits) / 2;
@@ -113,12 +139,32 @@ export function tickmark(
 
 function textSvg(
   text: string,
-  angle: number,
-  inside: boolean,
-  scale: number,
-  textRadius: number
+  {
+    angle,
+    inside,
+    scale,
+    textRadius,
+    endLabelsMaxMin = false,
+  }: {
+    angle: number;
+    inside: boolean;
+    scale: number;
+    textRadius: number;
+    endLabelsMaxMin?: boolean;
+  }
 ) {
-  let positionClass = 'top';
+  const radHoriz = (angle * Math.PI) / 180;
+  // "Max-min" placement: horizontal end labels (±90°) sit off the dead-center
+  // tick (below outside / lifted inside), inset inward by label width.
+  if (endLabelsMaxMin && Math.abs(Math.cos(radHoriz)) < 1e-6) {
+    const sin = Math.sin(radHoriz);
+    const inward = inside ? (6 + (text.length - 1) * 2.5) / scale : 14 / scale;
+    const x = sin * (textRadius - inward);
+    const y = inside ? -(6 / scale) : 12 / scale;
+    return svg`<text x=${x} y=${y} class="label bottom ${inside ? 'inside' : ''}">${text}</text>`;
+  }
+
+  let positionClass;
   if (angle === 0) {
     positionClass = 'top';
   } else if (angle < 180 && angle > 0) {

@@ -1,12 +1,21 @@
-import * as Figma from 'figma-api';
+import {Api} from 'figma-api';
+import type {
+  CanvasNode,
+  ComponentNode,
+  FrameNode,
+  GetFileResponse,
+  Style,
+  SubcanvasNode,
+  TextNode,
+} from '@figma/rest-api-spec';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
-import {GetFileResult} from 'figma-api/lib/api-types';
 import {
   getCssColorIcon,
   getSingleColorIcon,
   getStylesForNode,
   kebabToUpperCamelCase,
+  writeUnresolvedFigmaVariablesReport,
 } from './convert-icons.js';
 
 dotenv.config();
@@ -15,37 +24,37 @@ interface IconRef {
   name: string;
   id: string;
   javascriptName: string;
-  styles: {[colorCode: string]: {cssClass: string}};
+  styles: {[colorCode: string]: {cssClass: string | undefined}};
   categories: string[];
 }
 const documentId = 'IkDwOtza6OdjLbIdWA7mI7';
 
-const useCache = true;
+// Opt-in: set OBC_USE_CACHE=1 to reuse the on-disk Figma file cache and the
+// per-icon SVG cache instead of re-fetching from the Figma API. Useful when
+// iterating on the converter (`convert-icons.ts`) or refreshing
+// `figmavariables.json` without burning API quota.
+const useCache = process.env.OBC_USE_CACHE === '1';
 
 function recursiveFindNodeByPath(
-  node: Figma.Node<'FRAME'>,
+  node: CanvasNode | FrameNode,
   path: string[]
-): Figma.Node | null {
-  // pop the first element of the path
+): SubcanvasNode | null {
   const oldPath = [...path];
   const name = path.shift();
   for (const child of node.children) {
     if (child.name === name) {
       if (path.length === 0) {
         return child;
-      } else {
-        return recursiveFindNodeByPath(child as Figma.Node<'FRAME'>, path);
       }
+      if (child.type === 'FRAME') {
+        return recursiveFindNodeByPath(child, path);
+      }
+      return null;
     }
   }
-  // if we reach here, we didn't find the node
-  // search for the node in the children of the node
   for (const child of node.children) {
     if (child.type === 'FRAME') {
-      const found = recursiveFindNodeByPath(
-        child as Figma.Node<'FRAME'>,
-        oldPath
-      );
+      const found = recursiveFindNodeByPath(child, oldPath);
       if (found) {
         return found;
       }
@@ -55,8 +64,8 @@ function recursiveFindNodeByPath(
 }
 
 function findIconsInPage(
-  node: Figma.Node<'FRAME'>,
-  styles: {[styleName: string]: Figma.Style}
+  node: CanvasNode,
+  styles: {[styleName: string]: Style}
 ): IconRef[] {
   const icons: IconRef[] = [];
   const pageName = node.name.substring(3); // remove id from name
@@ -76,24 +85,20 @@ function findIconsInPage(
       // Scip "Intro cards"
       continue;
     }
-    const sectionTitle = recursiveFindNodeByPath(card as Figma.Node<'FRAME'>, [
+    const sectionTitle = recursiveFindNodeByPath(card, [
       'Icon section title',
       'Text container',
       'Title',
-    ]) as Figma.Node<'FRAME'>;
+    ]) as FrameNode | null;
     if (!sectionTitle) {
       console.error(
         'No section title found. Page: ' + pageName + ' Card: ' + card.name
       );
       continue;
     }
-    const sectionTitleText = sectionTitle.children[1] as Figma.Node<'TEXT'>;
+    const sectionTitleText = sectionTitle.children[1] as TextNode;
     const title = sectionTitleText.characters;
-    const newIcons = recursiveFindIcons(
-      card as Figma.Node<'FRAME'>,
-      [pageName, title],
-      styles
-    );
+    const newIcons = recursiveFindIcons(card, [pageName, title], styles);
     console.log(
       'Found ' +
         newIcons.map((icon) => icon.name).join(', ') +
@@ -108,22 +113,22 @@ function findIconsInPage(
 }
 
 function recursiveFindIcons(
-  node: Figma.Node<'FRAME'>,
+  node: FrameNode,
   categories: string[],
-  styles: {[styleName: string]: Figma.Style}
+  styles: {[styleName: string]: Style}
 ): IconRef[] {
-  const icons = (
-    node.children.filter(
-      (child) =>
+  const icons = node.children
+    .filter(
+      (child): child is ComponentNode =>
         child.type === 'COMPONENT' &&
         !['01-illustration', '0-illustration'].includes(child.name)
-    ) as Figma.Node<'COMPONENT'>[]
-  ).map((icon) => createIconRef(icon, styles, categories));
-  const frames = node.children.filter((child) => child.type === 'FRAME');
+    )
+    .map((icon) => createIconRef(icon, styles, categories));
+  const frames = node.children.filter(
+    (child): child is FrameNode => child.type === 'FRAME'
+  );
   for (const frame of frames) {
-    icons.push(
-      ...recursiveFindIcons(frame as Figma.Node<'FRAME'>, categories, styles)
-    );
+    icons.push(...recursiveFindIcons(frame, categories, styles));
   }
   return icons;
 }
@@ -140,20 +145,50 @@ export async function main() {
     fs.mkdirSync(iconDir);
   }
 
-  const api = new Figma.Api({
-    personalAccessToken: process.env.FIGMA_TOKEN as string,
-  });
+  // ensure SVG cache dir exists (download step writes here)
+  fs.mkdirSync('./script/.cache/icons', {recursive: true});
 
   const cachepath = './script/.cache-figma.json';
-  let file: GetFileResult;
+  let file: GetFileResponse;
   const cacheExists = fs.existsSync(cachepath);
   const cacheIsOld =
     cacheExists &&
     fs.statSync(cachepath).mtime.getTime() < Date.now() - 1000 * 60 * 60;
-  if (cacheExists && useCache && !cacheIsOld) {
+  const willUseCachedFile = cacheExists && useCache;
+
+  // FIGMA_TOKEN is only required when we'll actually call the Figma API.
+  // With OBC_USE_CACHE=1 and a fully populated cache, the run is offline.
+  const api_token = process.env.FIGMA_TOKEN;
+  if (!api_token && !willUseCachedFile) {
+    throw new Error('FIGMA_TOKEN is not set, please set it in the .env file');
+  }
+  // Lazily build the API client only when a network call is actually needed.
+  // `getApi()` throws if a call is required but FIGMA_TOKEN was not provided,
+  // which can happen with OBC_USE_CACHE=1 when the per-icon SVG cache is
+  // incomplete (cache hit on the document, miss on individual icons).
+  let _api: Api | null = null;
+  const getApi = (): Api => {
+    if (_api) return _api;
+    if (!api_token) {
+      throw new Error(
+        'FIGMA_TOKEN is required: OBC_USE_CACHE=1 was set but the cache is\n' +
+          '            incomplete and a Figma API call is needed. Either provide\n' +
+          '            FIGMA_TOKEN in .env or pre-populate ./script/.cache/icons/.'
+      );
+    }
+    _api = new Api({personalAccessToken: api_token});
+    return _api;
+  };
+
+  if (willUseCachedFile && !cacheIsOld) {
+    file = JSON.parse(fs.readFileSync(cachepath, 'utf8'));
+  } else if (willUseCachedFile) {
+    console.log(
+      `[download-icons] OBC_USE_CACHE=1: using stale Figma cache (${cachepath})`
+    );
     file = JSON.parse(fs.readFileSync(cachepath, 'utf8'));
   } else {
-    file = await api.getFile(documentId);
+    file = await getApi().getFile({file_key: documentId});
     // save to cache
     fs.writeFileSync(cachepath, JSON.stringify(file));
   }
@@ -166,7 +201,7 @@ export async function main() {
   let icons: IconRef[] = [];
 
   for (const page of pages) {
-    icons.push(...findIconsInPage(page as Figma.Node<'FRAME'>, styles));
+    icons.push(...findIconsInPage(page as CanvasNode, styles));
   }
 
   // remove duplicate icon names
@@ -192,11 +227,14 @@ export async function main() {
   for (let i = 0; i < iconsToDownload.length; i += split) {
     console.log('Got images', i);
     const iconChunks = iconsToDownload.slice(i, i + split);
-    const images = await api.getImage(documentId, {
-      ids: iconChunks.map((icon) => icon.id).join(','),
-      scale: 1,
-      format: 'svg',
-    });
+    const images = await getApi().getImages(
+      {file_key: documentId},
+      {
+        ids: iconChunks.map((icon) => icon.id).join(','),
+        scale: 1,
+        format: 'svg',
+      }
+    );
 
     // write icons to disk
     await Promise.all(
@@ -279,17 +317,32 @@ declare global {
   fileImport.sort();
   fileImport.push('export { ObiIcon } from "./icon.js";');
   fs.writeFileSync('./src/icons/index.ts', fileImport.join('\n'));
+  const unresolvedCount = writeUnresolvedFigmaVariablesReport(
+    './script/.cache/unknown-variables.json'
+  );
   console.log('done');
+  if (unresolvedCount > 0 && process.env.OBC_ALLOW_UNRESOLVED_VARS !== '1') {
+    console.error(
+      `[download-icons] ${unresolvedCount} Figma variable id(s) could not be resolved.\n` +
+        '            Add the missing mapping(s) to script/figmavariables.json,\n' +
+        '            or set OBC_ALLOW_UNRESOLVED_VARS=1 to bypass (e.g. for a\n' +
+        '            one-off iteration). See script/.cache/unknown-variables.json.'
+    );
+    process.exit(1);
+  }
 }
 
 main();
 function createIconRef(
-  child: Figma.Node<keyof Figma.NodeTypes>,
-  styles: {[styleName: string]: Figma.Style},
+  child: ComponentNode,
+  styles: {[styleName: string]: Style},
   categories: string[] = []
 ): IconRef {
   const name = child.name
     .toLocaleLowerCase()
+    .replace(/æ/g, 'ae')
+    .replace(/ø/g, 'oe')
+    .replace(/å/g, 'aa')
     .replace(/ /g, '')
     .replace(/%/g, '');
   const javascriptName = 'svg' + name.replace(/[^a-zA-Z0-9]/g, '');

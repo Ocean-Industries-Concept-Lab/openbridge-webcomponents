@@ -3,7 +3,7 @@ import {ObcInstrumentRadial, ObcGaugeRadialType} from './instrument-radial.js';
 import './instrument-radial.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../../navigation-instruments/watch/advice.js';
-import {Priority} from '../../navigation-instruments/types.js';
+import {InstrumentState, Priority} from '../../navigation-instruments/types.js';
 
 const meta: Meta<typeof ObcInstrumentRadial> = {
   title: 'Building Blocks/Instrument Radial',
@@ -13,11 +13,17 @@ const meta: Meta<typeof ObcInstrumentRadial> = {
   args: {
     width: 400,
     getAngle: (v: number) => (v / 100) * 270 - 135,
-    needleColor: 'var(--instrument-regular-secondary-color)',
-    barColor: 'var(--instrument-regular-tertiary-color)',
   },
   argTypes: {
+    state: {control: 'select', options: Object.values(InstrumentState)},
     priority: {control: 'select', options: Object.values(Priority)},
+    tickmarksInside: {control: 'boolean'},
+    showLabels: {control: 'boolean'},
+    minAngle: {control: false, table: {disable: true}},
+    maxAngle: {control: false, table: {disable: true}},
+    // Only acts on labels at the horizontal ends (±90°), i.e. a 180° sweep.
+    // Hidden by default; the MaxMinEndLabels story re-enables it.
+    endLabelsMaxMin: {table: {disable: true}},
   },
 } satisfies Meta<ObcInstrumentRadial>;
 
@@ -49,6 +55,7 @@ export const EnhancedFilled: Story = {
     maxValue: 100,
     minValue: 0,
     type: ObcGaugeRadialType.filled,
+    state: InstrumentState.active,
     priority: Priority.enhanced,
     setpoint: 75,
   },
@@ -60,6 +67,7 @@ export const EnhancedBar: Story = {
     maxValue: 100,
     minValue: 0,
     type: ObcGaugeRadialType.bar,
+    state: InstrumentState.active,
     priority: Priority.enhanced,
     setpoint: 75,
   },
@@ -71,6 +79,7 @@ export const EnhancedNeedle: Story = {
     maxValue: 100,
     minValue: 0,
     type: ObcGaugeRadialType.needle,
+    state: InstrumentState.active,
     priority: Priority.enhanced,
     setpoint: 75,
   },
@@ -82,7 +91,25 @@ export const WithLabels: Story = {
     maxValue: 100,
     minValue: 0,
     type: ObcGaugeRadialType.filled,
-    labels: true,
+    showLabels: true,
+  },
+};
+
+// `endLabelsMaxMin` only repositions labels at the horizontal ends (±90°). This
+// 180° sweep puts the min/max labels there, so toggling `endLabelsMaxMin` (and
+// `tickmarksInside`) visibly moves them below/centered.
+export const MaxMinEndLabels: Story = {
+  args: {
+    value: 50,
+    maxValue: 100,
+    minValue: 0,
+    type: ObcGaugeRadialType.filled,
+    showLabels: true,
+    getAngle: (v: number) => (v / 100) * 180 - 90, // top 180° arc: 0 left, 100 right
+    endLabelsMaxMin: true,
+  },
+  argTypes: {
+    endLabelsMaxMin: {control: 'boolean', table: {disable: false}},
   },
 };
 

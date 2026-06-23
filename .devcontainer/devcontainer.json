@@ -6,7 +6,7 @@
 	"image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu-24.04",
 	"features": {
 		"ghcr.io/devcontainers/features/node:1": {
-			"version": "22"
+			"version": "24"
 		},
 		"ghcr.io/devcontainers/features/git:1": {}
 	},
@@ -15,7 +15,7 @@
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "npm install && npm run build:lib && cd packages/openbridge-webcomponents && npx playwright install --with-deps",
+	"postCreateCommand": "npm install && npm run build:lib && cd packages/openbridge-webcomponents && npx playwright install --with-deps chromium",
 	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {

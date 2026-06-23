@@ -14,6 +14,11 @@ export enum ObcPoiHeaderState {
   Caution = 'caution',
   Warning = 'warning',
   Alarm = 'alarm',
+  LevelCritical = 'level-critical',
+  LevelHigh = 'level-high',
+  LevelMedium = 'level-medium',
+  LevelLow = 'level-low',
+  LevelDiagnostic = 'level-diagnostic',
 }
 
 export enum ObcPoiHeaderType {
@@ -32,7 +37,7 @@ export enum ObcPoiHeaderType {
  * - `type` (default `id`):
  *   - `id`: shows identifier content only.
  *   - `data`: shows identifier plus secondary label.
- * - `state` (default `enabled`): `enabled`, `selected`, `caution`, `warning`, `alarm`.
+ * - `state` (default `enabled`): `enabled`, `selected`, `caution`, `warning`, `alarm`, `level-critical`, `level-high`, `level-medium`, `level-low`, `level-diagnostic`.
  * - `content` (default `"1"`): primary identifier text.
  * - `label` (default `"Data"`): secondary text used by `type="data"`.
  * - `hasIndicator` (default `false`): appends indicator area.
@@ -68,13 +73,13 @@ export class ObcPoiHeader extends LitElement {
   @property({type: String}) content = '1';
   @property({type: String}) label = 'Data';
 
-  @property({type: String, reflect: true})
+  @property({type: String})
   size: ObcPoiHeaderSize = ObcPoiHeaderSize.Regular;
 
-  @property({type: String, reflect: true})
+  @property({type: String})
   state: ObcPoiHeaderState = ObcPoiHeaderState.Enabled;
 
-  @property({type: String, reflect: true})
+  @property({type: String})
   type: ObcPoiHeaderType = ObcPoiHeaderType.Id;
 
   @property({type: Boolean, attribute: 'has-indicator'})

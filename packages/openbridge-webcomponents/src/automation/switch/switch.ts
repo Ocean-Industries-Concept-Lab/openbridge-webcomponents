@@ -33,7 +33,7 @@ export class ObcSwitch extends ObcAbstractAutomationButtonSquared {
             ></obi-switch-01-on>
             <obi-switch-01-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-switch-01-on>`;
         } else {
           return html`<obi-switch-01-off
@@ -42,7 +42,7 @@ export class ObcSwitch extends ObcAbstractAutomationButtonSquared {
             ></obi-switch-01-off>
             <obi-switch-01-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-switch-01-off>`;
         }
       case SwitchAlternativeIcon.s2:
@@ -53,7 +53,7 @@ export class ObcSwitch extends ObcAbstractAutomationButtonSquared {
             ></obi-switch-02-on>
             <obi-switch-02-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-switch-02-on>`;
         } else {
           return html`<obi-switch-02-off
@@ -62,7 +62,7 @@ export class ObcSwitch extends ObcAbstractAutomationButtonSquared {
             ></obi-switch-02-off>
             <obi-switch-02-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-switch-02-off>`;
         }
       case SwitchAlternativeIcon.s3:
@@ -73,7 +73,7 @@ export class ObcSwitch extends ObcAbstractAutomationButtonSquared {
             ></obi-switch-03-on>
             <obi-switch-03-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-switch-03-on>`;
         } else {
           return html`<obi-switch-03-off
@@ -82,7 +82,7 @@ export class ObcSwitch extends ObcAbstractAutomationButtonSquared {
             ></obi-switch-03-off>
             <obi-switch-03-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-switch-03-off>`;
         }
       default:
@@ -93,7 +93,7 @@ export class ObcSwitch extends ObcAbstractAutomationButtonSquared {
             ></obi-switch-horizontal-on>
             <obi-switch-horizontal-on
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-switch-horizontal-on>`;
         } else {
           return html`<obi-switch-horizontal-off
@@ -102,7 +102,7 @@ export class ObcSwitch extends ObcAbstractAutomationButtonSquared {
             ></obi-switch-horizontal-off>
             <obi-switch-horizontal-off
               usecsscolor
-              slot="icon-siluette"
+              slot="icon-silhouette"
             ></obi-switch-horizontal-off>`;
         }
     }

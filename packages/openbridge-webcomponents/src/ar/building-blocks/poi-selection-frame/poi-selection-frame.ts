@@ -1,4 +1,4 @@
-import {html, LitElement, nothing, unsafeCSS} from 'lit';
+import {html, LitElement, nothing, PropertyValues, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../../decorator.js';
 import componentStyle from './poi-selection-frame.css?inline';
@@ -66,13 +66,13 @@ enum ObcPoiSelectionCornerPosition {
  */
 @customElement('obc-poi-selection-frame')
 export class ObcPoiSelectionFrame extends LitElement {
-  @property({type: String, reflect: true})
+  @property({type: String})
   type: ObcPoiSelectionFrameType = ObcPoiSelectionFrameType.Indicator;
 
-  @property({type: String, reflect: true})
+  @property({type: String})
   state: ObcPoiSelectionFrameState = ObcPoiSelectionFrameState.Regular;
 
-  @property({type: Boolean, reflect: true, attribute: 'custom-mode'})
+  @property({type: Boolean})
   customMode = false;
 
   @property({type: Number, attribute: 'box-width'})
@@ -80,6 +80,36 @@ export class ObcPoiSelectionFrame extends LitElement {
 
   @property({type: Number, attribute: 'box-height'})
   boxHeight: number | null = null;
+
+  private applyHostSize() {
+    let size: number;
+    if (this.type === ObcPoiSelectionFrameType.Button) {
+      if (this.state === ObcPoiSelectionFrameState.Flat) size = 31;
+      else if (this.state === ObcPoiSelectionFrameState.Alert) size = 43;
+      else size = 39;
+    } else if (this.type === ObcPoiSelectionFrameType.Enhanced) {
+      if (this.state === ObcPoiSelectionFrameState.Flat) size = 43;
+      else if (this.state === ObcPoiSelectionFrameState.Alert) size = 59;
+      else size = 55;
+    } else {
+      // Indicator
+      if (this.state === ObcPoiSelectionFrameState.Alert) size = 35;
+      else size = 31;
+    }
+    this.style.width = `${size}px`;
+    this.style.height = `${size}px`;
+  }
+
+  protected override updated(changedProperties: PropertyValues): void {
+    if (changedProperties.has('type') || changedProperties.has('state')) {
+      this.applyHostSize();
+    }
+  }
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    this.applyHostSize();
+  }
 
   private get resolvedCustomBoxWidthPx(): number {
     const width = Number(this.boxWidth);
@@ -131,7 +161,12 @@ export class ObcPoiSelectionFrame extends LitElement {
   }
 
   override render() {
-    return html`<span class="frame" part="frame" aria-hidden="true"
+    return html`<span
+      class="frame type-${this.type} state-${this.state}${this.customMode
+        ? ' custom-mode'
+        : ''}"
+      part="frame"
+      aria-hidden="true"
       >${this.renderFrame()}</span
     >`;
   }

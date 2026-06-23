@@ -1,31 +1,26 @@
-import * as Figma from 'figma-api';
+import {Api} from 'figma-api';
+import type {
+  CanvasNode,
+  FrameNode,
+  GetFileResponse,
+  Style,
+  SubcanvasNode,
+} from '@figma/rest-api-spec';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
-import {GetFileResult} from 'figma-api/lib/api-types';
 import {
   IconRef,
   getCssColorIcon,
   getStylesForNode,
   kebabToUpperCamelCase,
-} from './convert-icons';
+  writeUnresolvedFigmaVariablesReport,
+} from './convert-icons.js';
 
 dotenv.config();
 
 const documentId = 'TPoHGyeEtlcpnNekOa4lY3';
 
 const useCache = false;
-
-const names = [
-  'alarm-rectified-iec',
-  'alarm-silenced-iec',
-  'alarm-unacknowledged-iec',
-  'warning-rectified-iec',
-  'warning-silenced-iec',
-  'warning-unacknowledged-iec',
-];
-
-const url =
-  'https://www.figma.com/design/IkDwOtza6OdjLbIdWA7mI7/OpenBridge-Icons?node-id=3526-4224&t=0L1sgcfINns6SlCK-4';
 
 const iconMapUrl: {url: string; name: string; typeA: boolean}[] = [
   {
@@ -70,6 +65,7 @@ const iconMap: {id: string; name: string; typeA: boolean}[] = iconMapUrl.map(
 );
 
 const iconDir = './src/components/alert-icon/icons';
+const cacheDir = './script/.cache/alert-icons';
 
 export async function main() {
   // delete all icons
@@ -83,27 +79,36 @@ export async function main() {
     fs.mkdirSync(iconDir);
   }
 
-  const api = new Figma.Api({
-    personalAccessToken: process.env.FIGMA_TOKEN as string,
+  if (!fs.existsSync(cacheDir)) {
+    fs.mkdirSync(cacheDir, {recursive: true});
+  }
+
+  const api_token = process.env.FIGMA_TOKEN;
+  if (!api_token) {
+    throw new Error('FIGMA_TOKEN is not set, please set it in the .env file');
+  }
+
+  const api = new Api({
+    personalAccessToken: api_token,
   });
 
   const cachepath = './script/.cache-figma-alert.json';
-  let file: GetFileResult;
+  let file: GetFileResponse;
   if (fs.existsSync(cachepath) && useCache) {
     file = JSON.parse(fs.readFileSync(cachepath, 'utf8'));
   } else {
-    file = await api.getFile(documentId, {ids: ['850:47441']});
+    file = await api.getFile({file_key: documentId}, {ids: '850:47441'});
     // save to cache
     fs.writeFileSync(cachepath, JSON.stringify(file, null, 2));
   }
   console.log('Got page');
   const page = file.document.children.find(
     (p) => p.name === 'Icons'
-  ) as Figma.Node<'CANVAS'>;
+  ) as CanvasNode;
   const frames = page.children.filter(
     (child) => child.name === 'Frame 3'
-  ) as Figma.Node<'FRAME'>[];
-  const styles = file.styles;
+  ) as FrameNode[];
+  const styles: {[styleId: string]: Style} = file.styles;
 
   const knownIds = iconMap.map((icon) => icon.id);
   let icons = frames.flatMap((frame): IconRef[] => {
@@ -117,7 +122,7 @@ export async function main() {
           name: name,
           id: child.id,
           javascriptName: javascriptName,
-          styles: getStylesForNode(child, styles),
+          styles: getStylesForNode(child as SubcanvasNode, styles),
         };
       });
   });
@@ -139,11 +144,14 @@ export async function main() {
     for (let i = 0; i < icons.length; i += split) {
       console.log('Got images', i);
       const iconChunks = icons.slice(i, i + split);
-      const images = await api.getImage(documentId, {
-        ids: iconChunks.map((icon) => icon.id).join(','),
-        scale: 1,
-        format: 'svg',
-      });
+      const images = await api.getImages(
+        {file_key: documentId},
+        {
+          ids: iconChunks.map((icon) => icon.id).join(','),
+          scale: 1,
+          format: 'svg',
+        }
+      );
 
       // write icons to disk
       await Promise.all(
@@ -154,10 +162,7 @@ export async function main() {
             // download icons
             const request = await fetch(imageUrl);
             const imageData = await request.text();
-            fs.writeFileSync(
-              `./script/.cache/alert-icons/${icon.name}.svg`,
-              imageData
-            );
+            fs.writeFileSync(`${cacheDir}/${icon.name}.svg`, imageData);
           }
         })
       );
@@ -166,10 +171,7 @@ export async function main() {
 
   const fileImport: string[] = [];
   for (const icon of icons) {
-    const imageData = fs.readFileSync(
-      `./script/.cache/alert-icons/${icon.name}.svg`,
-      'utf8'
-    );
+    const imageData = fs.readFileSync(`${cacheDir}/${icon.name}.svg`, 'utf8');
     const cssColorIcon = getCssColorIcon(imageData, icon);
 
     // convert icon.name from kebab case to upper cammel case
@@ -186,7 +188,19 @@ export const ${icon.javascriptName} = svg\`${cssColorIcon}\`;
 
   fileImport.sort();
   console.log(fileImport.join('\n'));
+  const unresolvedCount = writeUnresolvedFigmaVariablesReport(
+    './script/.cache/unknown-variables-alert.json'
+  );
   console.log('done');
+  if (unresolvedCount > 0 && process.env.OBC_ALLOW_UNRESOLVED_VARS !== '1') {
+    console.error(
+      `[download-alert-icons] ${unresolvedCount} Figma variable id(s) could not be resolved.\n` +
+        '            Add the missing mapping(s) to script/figmavariables.json,\n' +
+        '            or set OBC_ALLOW_UNRESOLVED_VARS=1 to bypass.\n' +
+        '            See script/.cache/unknown-variables-alert.json.'
+    );
+    process.exit(1);
+  }
 }
 
 main();

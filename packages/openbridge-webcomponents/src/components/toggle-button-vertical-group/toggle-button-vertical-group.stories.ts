@@ -14,7 +14,7 @@ import {
 
 const meta: Meta<typeof ObcToggleButtonVerticalGroup> = {
   title:
-    'UI Components/Selection controls and switches/Toggle button - Vertical',
+    'UI Components/Selection Controls and Switches/Toggle Button - Vertical',
   tags: ['autodocs', '6.0'],
   component: 'obc-toggle-button-vertical-group',
 
@@ -45,6 +45,7 @@ const meta: Meta<typeof ObcToggleButtonVerticalGroup> = {
     hasIcon: {control: 'boolean'},
     disabled: {control: 'boolean'},
     hugWidth: {control: 'boolean'},
+    allowEmptySelection: {control: 'boolean'},
   },
 
   render: (args) => {
@@ -413,6 +414,61 @@ export const MixedDisabledStates: Story = {
             value="opt-d"
             label="Option D (disabled)"
             disabled
+            .labelPlacement=${args.labelPlacement}
+            .hasIcon=${args.hasIcon}
+          >
+            <obi-placeholder slot="icon"></obi-placeholder>
+          </obc-toggle-button-vertical-option>
+        </obc-toggle-button-vertical-group>
+      </div>
+    </div>
+  `,
+};
+
+export const EmptySelectionWhenUnmatched: Story = {
+  args: {
+    type: ObcToggleButtonVerticalOptionType.regular,
+    value: 'none',
+    labelPlacement: ObcToggleButtonLabelPlacement.inline,
+    hasIcon: false,
+    disabled: false,
+    hugWidth: false,
+    allowEmptySelection: true,
+  },
+  render: (args) => html`
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <p>
+        With <code>allowEmptySelection</code> enabled, a value that does not
+        match any option (here <code>"none"</code>) leaves the group with no
+        option selected instead of defaulting to the first option.
+      </p>
+      <div style="width: 300px;">
+        <obc-toggle-button-vertical-group
+          .value=${args.value}
+          .type=${args.type}
+          .disabled=${args.disabled}
+          .hugWidth=${args.hugWidth}
+          .allowEmptySelection=${args.allowEmptySelection}
+        >
+          <obc-toggle-button-vertical-option
+            value="opt-a"
+            label="Option A"
+            .labelPlacement=${args.labelPlacement}
+            .hasIcon=${args.hasIcon}
+          >
+            <obi-placeholder slot="icon"></obi-placeholder>
+          </obc-toggle-button-vertical-option>
+          <obc-toggle-button-vertical-option
+            value="opt-b"
+            label="Option B"
+            .labelPlacement=${args.labelPlacement}
+            .hasIcon=${args.hasIcon}
+          >
+            <obi-placeholder slot="icon"></obi-placeholder>
+          </obc-toggle-button-vertical-option>
+          <obc-toggle-button-vertical-option
+            value="opt-c"
+            label="Option C"
             .labelPlacement=${args.labelPlacement}
             .hasIcon=${args.hasIcon}
           >

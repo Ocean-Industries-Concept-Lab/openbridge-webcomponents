@@ -897,17 +897,17 @@ export interface ComputeAtSetpointConfig {
   touching: boolean;
 
   /**
-   * When true, skips auto-calculation and uses the manual `atSetpointManual` boolean.
-   * When false (default), auto-detects at-setpoint via deadband comparison.
+   * When true (default), auto-detects at-setpoint via deadband comparison.
+   * When false, uses the manual `atSetpointManual` boolean instead.
    */
-  disableAuto: boolean;
+  auto: boolean;
 
   /** Tolerance for auto at-setpoint detection */
   deadband: number;
 
   /**
    * Manual at-setpoint override.
-   * Only used when `disableAuto` is true.
+   * Only used when `auto` is false.
    */
   atSetpointManual: boolean;
 
@@ -944,13 +944,13 @@ export interface ComputeAtSetpointConfig {
  * // Simple linear instrument
  * computeAtSetpoint({
  *   value: 42, setpoint: 40, touching: false,
- *   disableAuto: false, deadband: 2, atSetpointManual: false,
+ *   auto: true, deadband: 2, atSetpointManual: false,
  * }); // → true (|42-40| = 2 <= 2)
  *
  * // Compass with wraparound
  * computeAtSetpoint({
  *   value: 359, setpoint: 1, touching: false,
- *   disableAuto: false, deadband: 3, atSetpointManual: false,
+ *   auto: true, deadband: 3, atSetpointManual: false,
  *   angularWraparound: true,
  * }); // → true (angular distance = 2 <= 3)
  * ```
@@ -960,7 +960,7 @@ export function computeAtSetpoint(config: ComputeAtSetpointConfig): boolean {
     value,
     setpoint,
     touching,
-    disableAuto,
+    auto,
     deadband,
     atSetpointManual,
     angularWraparound = false,
@@ -969,7 +969,7 @@ export function computeAtSetpoint(config: ComputeAtSetpointConfig): boolean {
   if (value === undefined || setpoint === undefined) return false;
   if (touching) return false;
 
-  if (!disableAuto) {
+  if (auto) {
     let distance = Math.abs(value - setpoint);
     if (angularWraparound && distance > 180) {
       distance = 360 - distance;

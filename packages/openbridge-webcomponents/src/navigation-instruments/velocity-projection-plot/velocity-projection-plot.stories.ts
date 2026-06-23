@@ -6,6 +6,8 @@ import {
 import './velocity-projection-plot.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {html} from 'lit';
+import {topVessels} from '../watch/vessels/storybook-helper.js';
+import {VesselImage} from '../watch/vessel.js';
 
 function scaleGeneratedDataPoints(dataPoints: VelocityProjectionDatapoint[]) {
   const sum = dataPoints.reduce((acc, curr) => acc + curr.ratioTotalEnergy, 0);
@@ -24,6 +26,7 @@ const meta: Meta<typeof ObcVelocityProjectionPlot> = {
     width: 256,
     peakEnergyDirection: 90,
     steps: 180,
+    vesselImage: VesselImage.cargoWindTop,
   },
   argTypes: {
     width: {
@@ -35,17 +38,21 @@ const meta: Meta<typeof ObcVelocityProjectionPlot> = {
     steps: {
       control: {type: 'range', min: 1, max: 360, step: 1},
     },
-    instantWindDirectionDeg: {
+    currentWindFromDirection: {
       control: {type: 'range', min: 0, max: 360, step: 1},
     },
-    instantWindSpeedNumber: {
-      control: {type: 'range', min: 0, max: 12, step: 1},
+    currentWindSpeedKnots: {
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
-    instantCurrentDirectionDeg: {
+    currentFromDirection: {
       control: {type: 'range', min: 0, max: 360, step: 1},
     },
-    instantCurrentSpeedNumber: {
+    currentSpeedKnots: {
       control: {type: 'range', min: 0, max: 4, step: 1},
+    },
+    vesselImage: {
+      control: 'select',
+      options: topVessels,
     },
   },
   render: (args) => {
@@ -56,10 +63,11 @@ const meta: Meta<typeof ObcVelocityProjectionPlot> = {
     console.log(dataPoints);
     return html`<obc-velocity-projection-plot
       .dataPoints=${dataPoints}
-      .instantWindDirectionDeg=${args.instantWindDirectionDeg}
-      .instantWindSpeedNumber=${args.instantWindSpeedNumber}
-      .instantCurrentDirectionDeg=${args.instantCurrentDirectionDeg}
-      .instantCurrentSpeedNumber=${args.instantCurrentSpeedNumber}
+      .currentWindFromDirection=${args.currentWindFromDirection}
+      .currentWindSpeedKnots=${args.currentWindSpeedKnots}
+      .currentFromDirection=${args.currentFromDirection}
+      .currentSpeedKnots=${args.currentSpeedKnots}
+      .vesselImage=${args.vesselImage}
     ></obc-velocity-projection-plot>`;
   },
 };
@@ -73,10 +81,10 @@ export const Average: Story = {
 
 export const Instantaneous: Story = {
   args: {
-    instantWindDirectionDeg: 90,
-    instantWindSpeedNumber: 3,
-    instantCurrentDirectionDeg: 0,
-    instantCurrentSpeedNumber: 1,
+    currentWindFromDirection: 90,
+    currentWindSpeedKnots: 3,
+    currentFromDirection: 0,
+    currentSpeedKnots: 1,
   },
 };
 function generateDataPoints(

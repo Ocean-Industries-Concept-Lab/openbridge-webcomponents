@@ -2,8 +2,8 @@
 import SettingCard from '@/components/SettingCard.vue'
 import { ref } from 'vue'
 import { useDemoConfigStore } from '@/stores/demoConfig'
-import { AutomationButtonVariant } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/automation-button/automation-button'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-ias'
+import { AutomationButtonVariant } from '@oicl/openbridge-webcomponents/dist/automation/automation-button/automation-button'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-ias'
 
 const demoConfigStore = useDemoConfigStore()
 const variant = ref(demoConfigStore.iasVariants)

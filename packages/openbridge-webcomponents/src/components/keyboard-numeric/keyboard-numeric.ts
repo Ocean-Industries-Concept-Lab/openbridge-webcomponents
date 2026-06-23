@@ -17,7 +17,9 @@ import {
   ObcNumberInputField,
   ObcNumberInputFieldTextAlign,
   ObcNumberInputFieldSize,
+  ObcNumberInputFieldInputEvent,
 } from '../number-input-field/number-input-field.js';
+import {parseNumberInput} from '../number-input-field/number-input-format.js';
 
 export enum ObcKeyboardNumericType {
   Floating = 'floating',
@@ -77,15 +79,25 @@ const ALLOWED_CHARS = [
 
 const OPERATORS = ['+', '-', '–', '×', '÷', '*', '/'];
 
+const ALLOWED_CHARS_PATTERN = `^[${ALLOWED_CHARS.map((c) =>
+  c.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&')
+).join('')}]*$`;
+
 @customElement('obc-keyboard-numeric')
 export class ObcKeyboardNumeric extends LitElement {
   @property({type: String}) type: ObcKeyboardNumericType =
     ObcKeyboardNumericType.Floating;
 
-  /** Shows the top bar with label and close button (only applicable for floating type) */
+  /**
+   * Shows the top bar with label and close button (only applicable for floating type)
+   * @availableWhen type==Floating
+   */
   @property({type: Boolean}) hasTitleBar = false;
 
-  /** Label displayed in the top bar */
+  /**
+   * Label displayed in the top bar
+   * @availableWhen hasTitleBar==true && type==Floating
+   */
   @property({type: String}) label = 'Parameter name';
 
   /** Current input value */
@@ -115,6 +127,13 @@ export class ObcKeyboardNumeric extends LitElement {
 
   @state() private content: ObcKeyboardNumericContent =
     ObcKeyboardNumericContent.Numbers;
+
+  private get effectiveValidationPattern(): string {
+    if (!this.validationPattern) {
+      return ALLOWED_CHARS_PATTERN;
+    }
+    return `^(?=${ALLOWED_CHARS_PATTERN})(?=${this.validationPattern}).*$`;
+  }
 
   /** Validates if a character can be added to the current value */
   private canAddCharacter(char: string): boolean {
@@ -146,11 +165,6 @@ export class ObcKeyboardNumeric extends LitElement {
     }
 
     return true;
-  }
-
-  /** Validates that all characters in a value are allowed */
-  private isValidValue(value: string): boolean {
-    return [...value].every((char) => ALLOWED_CHARS.includes(char));
   }
 
   private handleCloseClick() {
@@ -248,22 +262,9 @@ export class ObcKeyboardNumeric extends LitElement {
     );
   }
 
-  private handleInputChange(e: Event) {
+  private handleInput(e: ObcNumberInputFieldInputEvent) {
     const input = e.target as ObcNumberInputField;
-    const newValue = input.value;
-
-    if (this.validationPattern && newValue) {
-      const regex = new RegExp(this.validationPattern);
-      if (!regex.test(newValue)) {
-        input.value = this.value;
-        return;
-      }
-    }
-
-    if (newValue && !this.isValidValue(newValue)) {
-      input.value = this.value;
-      return;
-    }
+    const newValue = input.displayValue;
 
     this.value = newValue;
     this.dispatchValueChange();
@@ -351,14 +352,16 @@ export class ObcKeyboardNumeric extends LitElement {
     return html`
       <obc-number-input-field
         class="input-field"
-        .value=${this.value}
+        .value=${parseNumberInput(this.value)}
+        .displayOverride=${this.value}
         .unit=${this.unit}
         .textAlign=${this.inputFieldTextAlign}
         .size=${ObcNumberInputFieldSize.Large}
         .helperText=${this.helperText}
+        .validationPattern=${this.effectiveValidationPattern}
         ?hasLeadingIcon=${this.hasLeadingIcon}
         placeholder="00.0"
-        @input=${this.handleInputChange}
+        @input=${this.handleInput}
         @keydown=${this.handleInputKeydown}
       >
         <slot name="leading-icon" slot="leading-icon"></slot>

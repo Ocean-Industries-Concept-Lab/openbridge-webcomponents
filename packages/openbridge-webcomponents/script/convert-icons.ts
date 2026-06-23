@@ -1,4 +1,4 @@
-import * as Figma from 'figma-api';
+import type {Node, RGBA, Style} from '@figma/rest-api-spec';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -6,24 +6,73 @@ const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const figmaVariablesPath = path.join(__dirname, 'figmavariables.json');
 const figmaVariables = JSON.parse(fs.readFileSync(figmaVariablesPath, 'utf8'));
 
+/**
+ * Figma variable IDs encountered on bound fills/strokes that are not present
+ * in `figmavariables.json`. These cause the converter to fall back to a
+ * literal hex color, which silently defeats the `var(--undefined)` grep gate.
+ * Downloaders should serialize this set after a run so designers can extend
+ * `figmavariables.json` to cover the missing tokens.
+ */
+export const unresolvedFigmaVariables = new Set<string>();
+
+function resolveFigmaVariable(variableId: string): string | undefined {
+  const token = figmaVariables[variableId];
+  if (token === undefined) unresolvedFigmaVariables.add(variableId);
+  return token;
+}
+
+/**
+ * Persist the `unresolvedFigmaVariables` set to disk so designers and CI can
+ * see which Figma variable IDs were referenced by icons but missing from
+ * `figmavariables.json`. Called by the download scripts after a run. Returns
+ * the number of unresolved IDs so the caller can fail the build.
+ */
+export function writeUnresolvedFigmaVariablesReport(filePath: string): number {
+  const ids = [...unresolvedFigmaVariables].sort();
+  const dir = path.dirname(filePath);
+  fs.mkdirSync(dir, {recursive: true});
+  fs.writeFileSync(filePath, JSON.stringify(ids, null, 2) + '\n');
+  if (ids.length > 0) {
+    console.warn(
+      `[convert-icons] ${ids.length} unresolved Figma variable id(s) — see ${filePath}`
+    );
+  }
+  return ids.length;
+}
+
 dotenv.config();
 
 export interface IconRef {
   name: string;
   id: string;
   javascriptName: string;
-  styles: {[colorCode: string]: {cssClass: string}};
+  styles: {[colorCode: string]: {cssClass: string | undefined}};
 }
 
 export function getSingleColorIcon(imageData: string, icon: IconRef): string {
   // replace fill color with currentColor
   const fillRegex = /fill="[^"]+"/g;
-  const replace = 'fill="currentColor"';
-  let imageDataNew = imageData.replace(fillRegex, replace);
+  let imageDataNew = imageData.replace(fillRegex, 'fill="currentColor"');
 
   // remove fillOpacity
   const fillOpacityRegex = /fill-opacity="[^"]+"/g;
   imageDataNew = imageDataNew.replace(fillOpacityRegex, '');
+
+  // replace stroke color with currentColor (mirror the fill handling so the
+  // single-color variant inherits the host color for both paint operations;
+  // otherwise raw Figma hex strokes leak through and the icon ignores theme
+  // changes / `currentColor`).
+  const strokeRegex = /stroke="[^"]+"/g;
+  imageDataNew = imageDataNew.replace(strokeRegex, (match) => {
+    // Preserve `stroke="none"` so shapes that explicitly disable stroking
+    // (common in Figma exports of filled-only paths) stay unstroked.
+    if (match === 'stroke="none"') return match;
+    return 'stroke="currentColor"';
+  });
+
+  // remove strokeOpacity
+  const strokeOpacityRegex = /stroke-opacity="[^"]+"/g;
+  imageDataNew = imageDataNew.replace(strokeOpacityRegex, '');
 
   return imageDataNew;
 }
@@ -47,6 +96,11 @@ export function getCssColorIcon(imageData: string, icon: IconRef): string {
         Object.keys(icon.styles)
       );
       return 'fill="currentColor"';
+    }
+    if (cssClass.cssClass === undefined) {
+      // Variable is bound in Figma but missing from figmavariables.json;
+      // fall back to the literal color so we never emit `var(--undefined)`.
+      return `fill="${color}"`;
     }
     return `style="fill: var(--${cssClass.cssClass})"`;
   };
@@ -72,6 +126,9 @@ export function getCssColorIcon(imageData: string, icon: IconRef): string {
       );
       return 'stroke="currentColor"';
     }
+    if (cssClass.cssClass === undefined) {
+      return `stroke="${color}"`;
+    }
     return `style="stroke: var(--${cssClass.cssClass})"`;
   };
   imageData = imageData.replace(strokeRegex, replaceStroke);
@@ -79,6 +136,28 @@ export function getCssColorIcon(imageData: string, icon: IconRef): string {
   // remove strokeOpacity
   const strokeOpacityRegex = /stroke-opacity="[^"]+"/g;
   imageData = imageData.replace(strokeOpacityRegex, '');
+
+  // Merge sibling `style="…"` attributes on the same element. The fill and
+  // stroke passes each emit their own `style="…"` independently, so an
+  // element with both attributes ends up with two `style` attributes — only
+  // the first is honored by browsers. Combine them into one per opening tag,
+  // regardless of whether the two `style` attributes are adjacent or have
+  // other attributes between them.
+  const tagRegex = /<[a-zA-Z][^>]*>/g;
+  const styleAttrRegex = /\s+style="([^"]*)"/g;
+  imageData = imageData.replace(tagRegex, (tag) => {
+    const styles: string[] = [];
+    const stripped = tag.replace(styleAttrRegex, (_m, decls) => {
+      const trimmed = decls.trim().replace(/;$/, '');
+      if (trimmed) styles.push(trimmed);
+      return '';
+    });
+    if (styles.length <= 1) return tag;
+    // Re-insert a single merged style attribute just before the closing `>`
+    // (or `/>`), preserving the rest of the tag's structure.
+    const merged = ` style="${styles.join('; ')}"`;
+    return stripped.replace(/\s*\/?>$/, (end) => merged + end);
+  });
 
   return imageData;
 }
@@ -92,10 +171,10 @@ export function kebabToUpperCamelCase(kebabCase: string): string {
 }
 
 export function getStylesForNode(
-  node: Figma.Node,
-  styles: {[styleId: string]: Figma.Style}
-): {[colorCode: string]: {cssClass: string}} {
-  let out = {};
+  node: Node,
+  styles: {[styleId: string]: Style}
+): {[colorCode: string]: {cssClass: string | undefined}} {
+  let out: {[colorCode: string]: {cssClass: string | undefined}} = {};
 
   if ('children' in node) {
     for (const child of node.children) {
@@ -114,7 +193,7 @@ export function getStylesForNode(
             fils = rgbaToHexOrColorName(fill.color!);
             if ('boundVariables' in fill) {
               const variableId = fill.boundVariables.color.id;
-              out[fils] = {cssClass: figmaVariables[variableId]};
+              out[fils] = {cssClass: resolveFigmaVariable(variableId)};
             }
           }
         });
@@ -139,7 +218,7 @@ export function getStylesForNode(
             strokes = rgbaToHexOrColorName(stroke.color!);
             if ('boundVariables' in stroke) {
               const variableId = stroke.boundVariables.color.id;
-              out[strokes] = {cssClass: figmaVariables[variableId]};
+              out[strokes] = {cssClass: resolveFigmaVariable(variableId)};
             }
           }
         });
@@ -159,7 +238,7 @@ export function getStylesForNode(
                 const color = rgbaToHexOrColorName(f.color!);
                 if ('boundVariables' in f) {
                   const variableId = f.boundVariables.color.id;
-                  out[color] = {cssClass: figmaVariables[variableId]};
+                  out[color] = {cssClass: resolveFigmaVariable(variableId)};
                 }
               }
             }
@@ -183,7 +262,7 @@ function decimalToHex(d: number): string {
   return v.length === 1 ? `0${v}` : v;
 }
 
-function rgbaToHexOrColorName(rgba: Figma.Color): string {
+function rgbaToHexOrColorName(rgba: RGBA): string {
   const isBlack = rgba.r === 0 && rgba.g === 0 && rgba.b === 0 && rgba.a === 1;
   const isWhite = rgba.r === 1 && rgba.g === 1 && rgba.b === 1 && rgba.a === 1;
   if (isBlack) {
@@ -197,6 +276,6 @@ function rgbaToHexOrColorName(rgba: Figma.Color): string {
   }
 }
 
-function styleToCssClass(style: Figma.Style): string {
+function styleToCssClass(style: Style): string {
   return style.name.replace(/[\/ ]/g, '-').toLocaleLowerCase();
 }

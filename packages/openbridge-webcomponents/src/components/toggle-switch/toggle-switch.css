@@ -8,7 +8,7 @@ label {
   padding: 0px var(--ui-components-toggle-switch-item-padding-horizontal);
   flex: 1 0 0;
 
-  color: var(--element-active-color, #1a1a1a);
+  color: var(--element-active-color);
   cursor: pointer;
   user-select: none;
 
@@ -168,6 +168,7 @@ input {
   left: -1px;
   opacity: 0;
   margin: auto;
+  cursor: pointer;
 }
 
 .knob {

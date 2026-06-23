@@ -72,7 +72,6 @@ export default meta;
 type Story = StoryObj;
 
 export const FullDonut: Story = {
-  name: 'Full donut',
   render: (args) => html`
     <obc-donut-chart
       .data=${args.data}
@@ -96,14 +95,13 @@ export const FullDonut: Story = {
 };
 
 export const HalfDonut: Story = {
-  name: 'Half donut',
   args: {
     half: true,
   },
 };
 
 export const HalfDonutWithoutRemaining: Story = {
-  name: 'Half donut without remaining segment',
+  name: 'Half Donut Without Remaining Segment',
   args: {
     half: true,
     max: 50,
@@ -111,7 +109,7 @@ export const HalfDonutWithoutRemaining: Story = {
 };
 
 export const LongUnit: Story = {
-  name: 'Long label unit donut',
+  name: 'Long Label Unit Donut',
   args: {
     showOuterLabels: true,
     outerLabelUnit: ' km/h-unbelievably-long',
@@ -120,7 +118,7 @@ export const LongUnit: Story = {
 };
 
 export const TrimLabels: Story = {
-  name: 'Trim label length donut',
+  name: 'Trim Label Length Donut',
   args: {
     showOuterLabels: true,
     outerLabelUnit: ' km/h-unbelievably-long',
@@ -129,7 +127,7 @@ export const TrimLabels: Story = {
 };
 
 export const WithDecimals: Story = {
-  name: 'Decimal places donut',
+  name: 'Decimal Places Donut',
   args: {
     showOuterLabels: true,
     outerLabelDecimalPlaces: 2,
@@ -137,21 +135,21 @@ export const WithDecimals: Story = {
 };
 
 export const MinHeight: Story = {
-  name: 'Minimal height donut (48px)',
+  name: 'Minimal Height Donut (48px)',
   args: {
     fixedHeight: 48,
   },
 };
 
 export const ThresholdHeight: Story = {
-  name: 'Threshold height donut (192px, where labels appear)',
+  name: 'Threshold Height Donut (192px, where labels appear)',
   args: {
     fixedHeight: 192,
   },
 };
 
 export const WithLegend: Story = {
-  name: 'With legend donut',
+  name: 'With Legend Donut',
   args: {
     legend: true,
   },
@@ -165,7 +163,7 @@ export const CustomColors: Story = {
 };
 
 export const Realtime: Story = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   render: (args) => {
     const chart = document.createElement('obc-donut-chart');
     chart.data = JSON.parse(JSON.stringify(SAMPLE_DATA));

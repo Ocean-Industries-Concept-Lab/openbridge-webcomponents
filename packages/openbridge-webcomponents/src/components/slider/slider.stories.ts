@@ -38,6 +38,9 @@ const meta: Meta<typeof ObcSlider> = {
     allowSeeking: {
       control: {type: 'boolean'},
     },
+    disabled: {
+      control: {type: 'boolean'},
+    },
   },
   render: (args) => {
     return html` <obc-slider
@@ -50,6 +53,7 @@ const meta: Meta<typeof ObcSlider> = {
       ?hasrighticon=${args.iconRight ? true : false}
       ?allowseeking=${args.allowSeeking}
       .variant=${args.variant}
+      .disabled=${args.disabled}
     >
       ${args.iconLeft
         ? iconIdToIconHtml(args.iconLeft as unknown as string, {
@@ -119,5 +123,14 @@ export const AllowSeeking: Story = {
   args: {
     value: 20,
     allowSeeking: true,
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    value: 40,
+    iconLeft: 'display-brilliance-low',
+    iconRight: 'display-brilliance-proposal',
+    disabled: true,
   },
 };

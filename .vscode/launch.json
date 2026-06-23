@@ -9,35 +9,25 @@
             "type": "node",
             "request": "launch",
             "cwd": "${workspaceFolder}/packages/openbridge-webcomponents",
-            "runtimeExecutable": "yarn",
+            "runtimeExecutable": "npm",
             "runtimeArgs": [
                 "run",
                 "storybook"
             ],
         },
         {
-            "name": "Generate icons",
+            "name": "Download icons",
             "type": "node",
             "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "runtimeExecutable": "yarn",
+            "cwd": "${workspaceFolder}/packages/openbridge-webcomponents",
+            "runtimeExecutable": "npm",
             "runtimeArgs": [
                 "run",
                 "download:icons"
             ],
-        },
-        {
-            "name": "Download icons",
-            "request": "launch",
-            "runtimeArgs": [
-                "run",
-                "download:icons"
-            ],
-            "runtimeExecutable": "yarn",
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "type": "node"
         },
     ]
 }

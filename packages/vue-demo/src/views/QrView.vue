@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import QrCode from '@/components/QrCode.vue'
 import OpenBridgeLogo from '@/components/OpenBridgeLogo.vue'
-import ObiApplicationOpenGoogle from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/icons/ObiApplicationOpenGoogle.vue'
-import ObcElevatedCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/elevated-card/ObcElevatedCard.vue'
-import { ObcElevatedCardSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/elevated-card/elevated-card'
+import ObiApplicationOpenGoogle from '@oicl/openbridge-webcomponents-vue/icons/ObiApplicationOpenGoogle.vue'
+import ObcElevatedCard from '@oicl/openbridge-webcomponents-vue/components/elevated-card/ObcElevatedCard.vue'
+import { ObcElevatedCardSize } from '@oicl/openbridge-webcomponents/dist/components/elevated-card/elevated-card'
 </script>
 
 <template>

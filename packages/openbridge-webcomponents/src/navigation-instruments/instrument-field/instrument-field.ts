@@ -1,43 +1,107 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {property, state} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import compentStyle from './instrument-field.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import '../../components/button/button.js';
 import '../../icons/icon-drop-down-google.js';
-import '../../components/context-menu/context-menu.js';
 import '../../components/navigation-item/navigation-item.js';
 import {customElement} from '../../decorator.js';
 
+/**
+ * Enum for instrument field sizes.
+ * - `regular`: Standard size for navigation instrument data fields.
+ * - `enhanced`: Larger size with increased visual prominence.
+ */
 export enum InstrumentFieldSize {
   regular = 'regular',
   enhanced = 'enhanced',
 }
 
+/**
+ * `<obc-instrument-field>` – A component for displaying navigation instrument data.
+ *
+ * This component is used to show a primary value, an optional setpoint, units, and a source (e.g., GPS, Gyro).
+ * It supports different sizes, horizontal/vertical layouts, and configurable numeric formatting.
+ *
+ * ### Features
+ * - **Sizes:** Supports `regular` and `enhanced` sizes.
+ * - **Setpoint:** Optional setpoint display with an arrow indicator.
+ * - **Source Picker:** Optional source selection with a dropdown and context menu.
+ * - **Formatting:** Customizable integer and fraction digits, with optional zero padding.
+ * - **Status Indicators:** Supports an "OFF" state and neutral color mode.
+ * - **Layouts:** Can be oriented horizontally or vertically, with various alignment options.
+ *
+ * ### Slots
+ * | Slot Name           | Purpose                                                                 |
+ * |---------------------|-------------------------------------------------------------------------|
+ * | off-value           | Content to display when the `off` property is true (defaults to "OFF"). |
+ *
+ * @slot off-value - Content to display when the `off` property is true (defaults to "OFF").
+ *
+ * @csspart label - The container for the tag and unit.
+ * @csspart tag - The tag text element.
+ */
 @customElement('obc-instrument-field')
 export class ObcInstrumentField extends LitElement {
+  /** The size of the instrument field. */
   @property({type: String}) size: InstrumentFieldSize =
     InstrumentFieldSize.regular;
+
+  /** The setpoint value to display. */
   @property({type: Number}) setpoint: number | undefined;
+
+  /** Whether to show the setpoint. */
   @property({type: Boolean}) hasSetpoint = false;
+
+  /** Whether to show the source (src) field. */
   @property({type: Boolean}) hasSrc = false;
+
+  /** The primary value to display. */
   @property({type: Number}) value: number | undefined;
+
+  /** The maximum number of integer digits to show (for zero padding). */
   @property({type: Number}) maxDigits = 1;
+
+  /** Whether to show leading zeros up to `maxDigits`. */
   @property({type: Boolean}) showZeroPadding = false;
+
+  /** The number of decimal places to display. */
   @property({type: Number}) fractionDigits = 0;
+
+  /** The tag or label for the data (e.g., "HDG", "SPD"). */
   @property({type: String}) tag = '';
+
+  /** The unit of measurement (e.g., "DEG", "KN"). */
   @property({type: String}) unit = '';
+
+  /** The current source name (e.g., "GPS 1"). */
   @property({type: String}) src = '';
+
+  /** If true, uses a neutral color scheme instead of the default instrument color. */
   @property({type: Boolean}) neutralColor = false;
+
+  /** If true, uses a horizontal layout. */
   @property({type: Boolean}) horizontal = false;
+
+  /** If true, centers the content. */
   @property({type: Boolean}) center = false;
+
+  /** If true, only the label (tag and unit) is displayed. */
   @property({type: Boolean}) labelOnly = false;
+
+  /** If true, displays the "off" state (e.g., showing "OFF" instead of value). */
   @property({type: Boolean}) off = false;
-  @property({type: Boolean}) hasSrcPicker = false;
+
+  /** If true, automatically hides the setpoint when the value is close to it. */
   @property({type: Boolean}) autoHideSetpoint = false;
+
+  /** The deadband within which the setpoint is hidden if `autoHideSetpoint` is true. */
   @property({type: Number}) autoHideDeadband = 0;
 
-  @state() private srcPickerContentVisible = false;
-
+  /**
+   * Generates a dashed string representation for undefined values.
+   * @returns A string of dashes formatted according to the current numeric settings.
+   */
   dashedGenerator(): string {
     const n = this.showZeroPadding ? Math.max(this.maxDigits, 1) : 1;
     if (this.fractionDigits < 1) {
@@ -96,10 +160,10 @@ export class ObcInstrumentField extends LitElement {
               </svg>
               <div class="setpoint-value">${this.setpointValueBlueNumbers}</div>
             </div>`
-          : null}
+          : nothing}
         ${this.horizontal && !this.labelOnly && this.hasSetpoint
           ? html`<div class="divider"></div>`
-          : null}
+          : nothing}
         ${!this.labelOnly
           ? html` <div class="value">
               ${this.off
@@ -109,7 +173,7 @@ export class ObcInstrumentField extends LitElement {
                 : html` <div class="value-hint-zero">${this.hintZeros}</div>
                     <div class="value-blue">${this.valueBlueNumbers}</div>`}
             </div>`
-          : null}
+          : nothing}
         <div class="label" part="label">
           ${this.horizontal && this.size === InstrumentFieldSize.regular
             ? nothing
@@ -118,39 +182,16 @@ export class ObcInstrumentField extends LitElement {
         </div>
         ${this.hasSrc && this.horizontal
           ? html`<div class="divider src-divider"></div>`
-          : null}
-        ${this.hasSrc
-          ? this.hasSrcPicker
-            ? html`<div class="src">
-                <obc-button
-                  variant="flat"
-                  showTrailingIcon
-                  class="src-picker"
-                  @click=${() =>
-                    (this.srcPickerContentVisible =
-                      !this.srcPickerContentVisible)}
-                  showTrailingIcon
-                >
-                  ${this.src}
-                  <obi-drop-down-google
-                    slot="trailing-icon"
-                  ></obi-drop-down-google>
-                </obc-button>
-              </div>`
-            : html`<div class="src">${this.src}</div>`
-          : null}
+          : nothing}
+        ${this.hasSrc ? html`<div class="src">${this.src}</div>` : nothing}
       </div>
-      ${this.hasSrcPicker && this.srcPickerContentVisible
-        ? html`<obc-context-menu
-            class="src-picker-content"
-            @click=${() => (this.srcPickerContentVisible = false)}
-          >
-            <slot name="src-picker-content"></slot>
-          </obc-context-menu>`
-        : nothing}
     `;
   }
 
+  /**
+   * Returns the formatted setpoint value as a string.
+   * If the setpoint is undefined, it returns a dashed string.
+   */
   get setpointValueBlueNumbers(): string {
     if (this.setpoint === undefined) {
       return this.dashedGenerator();
@@ -159,6 +200,10 @@ export class ObcInstrumentField extends LitElement {
     return this.setpoint.toFixed(this.fractionDigits);
   }
 
+  /**
+   * Returns the formatted primary value as a string.
+   * If the value is undefined, it returns a dashed string.
+   */
   get valueBlueNumbers(): string {
     if (this.value === undefined) {
       return this.dashedGenerator();
@@ -167,6 +212,10 @@ export class ObcInstrumentField extends LitElement {
     return this.value.toFixed(this.fractionDigits);
   }
 
+  /**
+   * Generates a string of hint zeros for alignment when `showZeroPadding` is false.
+   * These zeros are typically displayed with lower opacity.
+   */
   get hintZeros(): string {
     if (this.value === undefined || this.value < 0) {
       return '';

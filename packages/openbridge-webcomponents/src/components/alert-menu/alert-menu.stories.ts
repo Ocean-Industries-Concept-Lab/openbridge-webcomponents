@@ -89,6 +89,8 @@ const meta: Meta<typeof ObcAlertMenu> = {
   args: {
     hasShelved: true,
     canAckAll: true,
+    showSilenceButton: true,
+    showAlertListButton: true,
   },
   argTypes: {},
   render: (args) => {
@@ -96,6 +98,8 @@ const meta: Meta<typeof ObcAlertMenu> = {
       data-testid="alert-menu"
       .hasShelved=${args.hasShelved}
       .canAckAll=${args.canAckAll}
+      .showSilenceButton=${args.showSilenceButton}
+      .showAlertListButton=${args.showAlertListButton}
       @ack-all-visible-click=${handleAckAllVisible}
       @silence-click=${handleSilence}
     >
@@ -257,8 +261,27 @@ export const NoShelf: Story = {
   },
 };
 
+export const NoSilenceButton: Story = {
+  args: {
+    showSilenceButton: false,
+  },
+};
+
+export const NoAlertListButton: Story = {
+  args: {
+    showAlertListButton: false,
+  },
+};
+
+export const OnlyAckButton: Story = {
+  args: {
+    showSilenceButton: false,
+    showAlertListButton: false,
+  },
+};
+
 export const AcknowledgmentTest: Story = {
-  tags: ['skip-snapshot'],
+  tags: ['skip-test'],
   args: {
     canAckAll: true,
     hasShelved: true,
@@ -297,7 +320,7 @@ export const AcknowledgmentTest: Story = {
 };
 
 export const AckAllTest: Story = {
-  tags: ['skip-snapshot'],
+  tags: ['skip-test'],
   args: {},
   play: async ({canvasElement}) => {
     const canvas = within(canvasElement);
@@ -333,7 +356,7 @@ export const AckAllAfterScrollTest: Story = {
     canAckAll: true,
     hasShelved: true,
   },
-  tags: ['skip-snapshot'],
+  tags: ['skip-test'],
   play: async ({canvasElement}) => {
     const canvas = within(canvasElement);
     // Find the alert items by ID
@@ -381,7 +404,7 @@ export const AckAllAfterScrollTest: Story = {
 };
 
 export const AddAlertTest: Story = {
-  tags: ['skip-snapshot'],
+  tags: ['skip-test'],
   play: async ({canvasElement}) => {
     const canvas = within(canvasElement);
 
@@ -405,7 +428,7 @@ export const AddAlertTest: Story = {
 };
 
 export const MakeEmptyTest: Story = {
-  tags: ['skip-snapshot'],
+  tags: ['skip-test'],
   render: () => {
     return html` <obc-alert-menu
       @ack-all-visible-click=${handleAckAllVisible}

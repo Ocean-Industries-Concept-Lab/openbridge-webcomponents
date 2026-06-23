@@ -9,7 +9,21 @@ import {
 import {WatchCircleType} from '../../navigation-instruments/watch/watch.js';
 import {Tickmark} from '../../navigation-instruments/watch/tickmark.js';
 import {TickmarkType} from '../../navigation-instruments/watch/tickmark.js';
+import {TickmarkStyle} from '../../navigation-instruments/watch/tickmark.js';
+import {InstrumentState, Priority} from '../../navigation-instruments/types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
+import {
+  OUTER_RING_RADIUS,
+  innerRingRadiusFor,
+} from '../../navigation-instruments/watch/watch.js';
+import {
+  computeZoomToFitArcFrame,
+  type ZoomToFitArcFrame,
+} from '../../svghelpers/arc-frame.js';
+
+// Must match obc-watch's un-zoomed viewBox `(176 + getPadding()) * 2`
+// (default padding 48 → 448); instrument-radial overlays obc-watch 1:1.
+const WATCH_DEFAULT_VIEWBOX = 448;
 
 export enum ObcGaugeRadialType {
   filled = 'filled',
@@ -23,44 +37,218 @@ export interface GaugeRadialAdvice {
   type: AdviceType;
   hinted: boolean;
 }
+
+const NEEDLE_TIP_RADIUS = 160;
+const NEEDLE_TIP_GAP = 5; // tip stops this far short of the scale
+const NEEDLE_WIDTH = 8;
+const NEEDLE_HUB_RADIUS = 16;
+
+function rangeIncludesZero(minValue: number, maxValue: number): boolean {
+  return minValue <= 0 && maxValue >= 0;
+}
+
+function strongerTickmarkType(
+  existing: TickmarkType,
+  candidate: TickmarkType
+): TickmarkType {
+  const priority: Record<TickmarkType, number> = {
+    [TickmarkType.zeroLineThick]: 6,
+    [TickmarkType.zeroLine]: 5,
+    [TickmarkType.main]: 4,
+    [TickmarkType.primary]: 3,
+    [TickmarkType.secondary]: 2,
+    [TickmarkType.tertiary]: 1,
+    [TickmarkType.textOnly]: 0,
+  };
+
+  return priority[candidate] > priority[existing] ? candidate : existing;
+}
+
+interface Clips {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+}
+
+/** Clamp a clip percentage to [0, 100]; non-finite returns 0. */
+function clampClipPercent(n: number): number {
+  return Number.isFinite(n) ? Math.min(Math.max(n, 0), 100) : 0;
+}
+
+/**
+ * Clamp the four clips to [0, 100] and drop any opposite pair that would
+ * collapse the viewBox (sum >= 100), so a bad clip can't produce a zero- or
+ * negative-size box. Valid clips pass through unchanged.
+ */
+function normalizeClips(clips: Clips): Clips {
+  let top = clampClipPercent(clips.top);
+  let bottom = clampClipPercent(clips.bottom);
+  let left = clampClipPercent(clips.left);
+  let right = clampClipPercent(clips.right);
+  if (top + bottom >= 100) {
+    top = 0;
+    bottom = 0;
+  }
+  if (left + right >= 100) {
+    left = 0;
+    right = 0;
+  }
+  return {top, bottom, left, right};
+}
+
+/**
+ * Fallback value-to-angle mapping when no `getAngle` is supplied: linear over
+ * the historical 270° sweep (-135 to 135). Returns -135 for a non-positive or
+ * non-finite span.
+ */
+function defaultGaugeAngle(
+  value: number,
+  minValue: number,
+  maxValue: number
+): number {
+  const span = maxValue - minValue;
+  if (!Number.isFinite(span) || span <= 0) {
+    return -135;
+  }
+  return ((value - minValue) / span) * 270 - 135;
+}
+
 @customElement('obc-instrument-radial')
 export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
-  // setpoint, newSetpoint, atSetpoint, touching, disableAutoAtSetpoint,
+  // setpoint, newSetpoint, atSetpoint, touching, autoAtSetpoint,
   // autoAtSetpointDeadband, setpointAtZeroDeadband, setpointOverride
   // — all inherited from SetpointMixin
+
+  @property({type: String}) state: InstrumentState = InstrumentState.active;
+  @property({type: String}) priority: Priority = Priority.regular;
 
   @property({type: Number}) value = 0;
   @property({type: Number}) maxValue = 100;
   @property({type: Number}) minValue = 0;
   @property({attribute: false}) getAngle!: (v: number) => number;
-  @property({type: String}) needleColor!: string;
-  @property({type: String}) barColor!: string;
-  @property({type: Boolean}) labels: boolean = false;
-  @property({type: Number}) primaryTickmarkInterval = 50;
-  @property({type: Number}) secondaryTickmarkInterval = 10;
+  /** @availableWhen type!=filled */
+  @property({type: String}) needleColor: string | undefined;
+  /** @availableWhen type!=needle */
+  @property({type: String}) barColor: string | undefined;
+  @property({type: Boolean}) showLabels: boolean = false;
+  /**
+   * Interval for primary tickmarks in value units.
+   * When undefined or <= 0, no primary tickmarks are shown.
+   */
+  @property({type: Number}) primaryTickmarkInterval: number | undefined = 50;
+  /**
+   * Interval for secondary tickmarks in value units.
+   * When undefined or <= 0, no secondary tickmarks are shown.
+   */
+  @property({type: Number}) secondaryTickmarkInterval: number | undefined = 10;
+  /**
+   * Interval for tertiary tickmarks in value units.
+   * When undefined or <= 0, no tertiary tickmarks are shown.
+   */
+  @property({type: Number}) tertiaryTickmarkInterval: number | undefined =
+    undefined;
   @property({type: String}) type: ObcGaugeRadialType =
     ObcGaugeRadialType.filled;
   @property({type: String}) needleType: ObcGaugeRadialType =
     ObcGaugeRadialType.filled;
+  @property({type: Boolean}) tickmarksInside: boolean = false;
+  @property({type: String}) tickmarkStyle: TickmarkStyle =
+    TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
+  /** @availableWhen zoomToFitArc==false */
   @property({type: Number}) clipTop: number = 0; // in percent of height
+  /** @availableWhen zoomToFitArc==false */
   @property({type: Number}) clipBottom: number = 0; // in percent of height
+  /** @availableWhen zoomToFitArc==false */
+  @property({type: Number}) clipLeft: number = 0; // in percent of width
+  /** @availableWhen zoomToFitArc==false */
+  @property({type: Number}) clipRight: number = 0; // in percent of width
+  /**
+   * Place the horizontal end labels (±90°, e.g. min/max) below the tick instead
+   * of beside it — the "Max-min" placement from the radial label model
+   * (External / Internal / Max-min). See PR #903 / design discussion.
+   */
+  @property({type: Boolean}) endLabelsMaxMin: boolean = false;
+  @property({type: Boolean}) zoomToFitArc: boolean = false;
 
-  get minAngle(): number {
-    return this.getAngle(this.minValue);
+  private _radiusOffset = 0;
+  private _arcFrame: ZoomToFitArcFrame | undefined;
+
+  private get clampedValue(): number {
+    const lowerBound = Math.min(this.minValue, this.maxValue);
+    const upperBound = Math.max(this.minValue, this.maxValue);
+    return Math.max(lowerBound, Math.min(this.value, upperBound));
   }
 
-  get maxAngle(): number {
-    return this.getAngle(this.maxValue);
+  private get minAngle(): number {
+    return this.mapAngle(this.minValue);
+  }
+
+  private get maxAngle(): number {
+    return this.mapAngle(this.maxValue);
+  }
+
+  // Map a value to an angle via the consumer's `getAngle`, guarding a missing
+  // or non-finite mapping so a misconfigured consumer can't emit NaN geometry.
+  private mapAngle(value: number): number {
+    const fn = this.getAngle;
+    const angle =
+      typeof fn === 'function'
+        ? fn(value)
+        : defaultGaugeAngle(value, this.minValue, this.maxValue);
+    return Number.isFinite(angle) ? angle : 0;
+  }
+
+  // Clamped clips, reused for the overlay viewBox and the clips forwarded to
+  // obc-watch.
+  private get safeClips(): Clips {
+    return normalizeClips({
+      top: this.clipTop,
+      bottom: this.clipBottom,
+      left: this.clipLeft,
+      right: this.clipRight,
+    });
+  }
+
+  private get _derivedNeedleColor(): string {
+    if (
+      this.state === InstrumentState.loading ||
+      this.state === InstrumentState.off
+    ) {
+      return 'transparent';
+    }
+    return this.priority === Priority.enhanced
+      ? 'var(--instrument-enhanced-secondary-color)'
+      : 'var(--instrument-regular-secondary-color)';
+  }
+
+  private get _derivedBarColor(): string {
+    if (
+      this.state === InstrumentState.loading ||
+      this.state === InstrumentState.off
+    ) {
+      return 'transparent';
+    }
+    if (this.type === ObcGaugeRadialType.filled) {
+      return this.priority === Priority.enhanced
+        ? 'var(--instrument-enhanced-secondary-color)'
+        : 'var(--instrument-regular-secondary-color)';
+    }
+    return this.priority === Priority.enhanced
+      ? 'var(--instrument-enhanced-tertiary-color)'
+      : 'var(--instrument-regular-tertiary-color)';
   }
 
   override render() {
-    const barColor = this.barColor;
+    const barColor = this.barColor ?? this._derivedBarColor;
+    const barStartValue = Math.max(this.minValue, Math.min(0, this.maxValue));
+    const value = this.clampedValue;
     const setpointAngle =
-      this.setpoint !== undefined ? this.getAngle(this.setpoint) : undefined;
+      this.setpoint !== undefined ? this.mapAngle(this.setpoint) : undefined;
     const newSetpointAngle =
       this.newSetpoint !== undefined
-        ? this.getAngle(this.newSetpoint)
+        ? this.mapAngle(this.newSetpoint)
         : undefined;
 
     const barAreas =
@@ -68,43 +256,78 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
         ? []
         : [
             {
-              startAngle: this.getAngle(0),
-              endAngle: this.getAngle(this.value),
+              startAngle: this.mapAngle(barStartValue),
+              endAngle: this.mapAngle(value),
               fillColor: barColor,
             },
           ];
 
-    const width = 448;
-    const height = width * (1 - this.clipTop / 100 - this.clipBottom / 100);
-    const top = -width / 2 + (width * this.clipTop) / 100;
-    const viewBox = `-${width / 2} ${top} ${width} ${height}`;
+    const areas = [
+      {
+        startAngle: this.minAngle,
+        endAngle: this.maxAngle,
+        roundInsideCut: true,
+        roundOutsideCut: true,
+      },
+    ];
+
+    const watchCircleType =
+      this.type === ObcGaugeRadialType.needle
+        ? WatchCircleType.single
+        : WatchCircleType.double;
+
+    const clips = this.safeClips;
+    let viewBox: string;
+    if (this.zoomToFitArc) {
+      const ext = 48;
+      const targetSize = (176 + ext) * 2;
+      const frame = computeZoomToFitArcFrame({
+        areas,
+        outerRadius: OUTER_RING_RADIUS,
+        innerRadius: innerRingRadiusFor(watchCircleType),
+        extension: ext,
+        targetSize,
+      });
+      this._radiusOffset = frame.radiusOffset;
+      viewBox = frame.viewBox;
+      this._arcFrame = frame;
+    } else {
+      this._radiusOffset = 0;
+      this._arcFrame = undefined;
+      const full = WATCH_DEFAULT_VIEWBOX;
+      const w = full * (1 - clips.left / 100 - clips.right / 100);
+      const h = full * (1 - clips.top / 100 - clips.bottom / 100);
+      const left = -full / 2 + (full * clips.left) / 100;
+      const top = -full / 2 + (full * clips.top) / 100;
+      viewBox = `${left} ${top} ${w} ${h}`;
+    }
 
     return html`
       <div class="container">
         <obc-watch
+          .state=${this.state}
+          .priority=${this.priority}
           .angleSetpoint=${setpointAngle}
           .newAngleSetpoint=${newSetpointAngle}
-          .atAngleSetpoint=${this.computeAtSetpoint(this.value)}
+          .atAngleSetpoint=${this.computeAtSetpoint(value)}
           .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
           .setpointOverride=${this.setpointOverride}
           .animateSetpoint=${this.animateSetpoint}
           .padding=${48}
           .tickmarks=${this.tickmarks}
+          .tickmarksInside=${this.tickmarksInside}
+          .tickmarkStyle=${this.tickmarkStyle}
           .advices=${this._advices}
-          .areas=${[
-            {
-              startAngle: this.minAngle,
-              endAngle: this.maxAngle,
-              roundInsideCut: true,
-              roundOutsideCut: true,
-            },
-          ]}
-          .watchCircleType=${this.type === ObcGaugeRadialType.needle
-            ? WatchCircleType.single
-            : WatchCircleType.double}
+          .areas=${areas}
+          .watchCircleType=${watchCircleType}
           .barAreas=${barAreas}
-          .clipTop=${this.clipTop}
-          .clipBottom=${this.clipBottom}
+          .clipTop=${this.zoomToFitArc ? 0 : clips.top}
+          .clipBottom=${this.zoomToFitArc ? 0 : clips.bottom}
+          .clipLeft=${this.zoomToFitArc ? 0 : clips.left}
+          .clipRight=${this.zoomToFitArc ? 0 : clips.right}
+          .endLabelsMaxMin=${this.endLabelsMaxMin}
+          .zoomToFitArc=${this.zoomToFitArc}
+          .arcFrame=${this._arcFrame}
         ></obc-watch>
         <svg class="gauge-radial" viewBox=${viewBox}>${this._needle}</svg>
       </div>
@@ -115,117 +338,145 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
     if (this.type === ObcGaugeRadialType.filled) {
       return nothing;
     }
-    const needleColor = this.needleColor;
+    const needleColor = this.needleColor ?? this._derivedNeedleColor;
+    const rOff = this._radiusOffset;
+    const value = this.clampedValue;
     if (this.type === ObcGaugeRadialType.needle) {
-      return svg`<g transform="rotate(${this.getAngle(this.value)}) translate(-256, -256)">
-      <circle cx="256" cy="256" r="14" fill=${needleColor}/>
-      <rect x="250" y="96" width="12" height="192" rx="6" fill=${needleColor}/>
-      <rect x="252" y="98" width="8" height="188" rx="4" stroke=${needleColor} fill=${needleColor} stroke-width="4"/>
-      </svg> 
+      // Rod runs from the value tip down to the center hub. Width is constant;
+      // the tip shifts outward additively under zoom.
+      const tipY = 256 - (NEEDLE_TIP_RADIUS - NEEDLE_TIP_GAP) - rOff;
+      return svg`<g transform="rotate(${this.mapAngle(value)}) translate(-256, -256)">
+      <rect x="${256 - NEEDLE_WIDTH / 2}" y="${tipY}" width="${NEEDLE_WIDTH}" height="${256 - tipY}" rx="${NEEDLE_WIDTH / 2}" fill=${needleColor} stroke=${needleColor}/>
+      <circle cx="256" cy="256" r="${NEEDLE_HUB_RADIUS}" fill=${needleColor}/>
+      </g>
 `;
     } else {
-      return svg`<g transform="rotate(${this.getAngle(this.value)}) translate(-256, -256)">
-<rect x="252" y="96" width="8" height="48" rx="4" fill=${needleColor} stroke="var(--border-silhouette-color)"/>
-</svg>
+      return svg`<g transform="rotate(${this.mapAngle(value)}) translate(-256, -256)">
+<rect x="252" y="${96 - rOff}" width="8" height="48" rx="4" fill=${needleColor} stroke="var(--border-silhouette-color)"/>
+</g>
       `;
     }
   }
 
   get tickmarks(): Tickmark[] {
-    const tickmarks: Tickmark[] = [];
-    for (
-      let i = this.primaryTickmarkInterval;
-      i < this.maxValue;
-      i += this.primaryTickmarkInterval
-    ) {
-      tickmarks.push({
-        angle: this.getAngle(i),
-        type: TickmarkType.primary,
-        text: this.labels ? i.toString() : undefined,
-      });
-    }
+    const tickmarksByValue = new Map<number, Tickmark>();
+    const normalizeValue = (value: number) =>
+      Math.abs(value) < 1e-9 ? 0 : Number(value.toFixed(6));
 
-    if (this.labels && this.maxValue % this.primaryTickmarkInterval === 0) {
-      tickmarks.push({
-        angle: this.getAngle(this.maxValue),
-        type: TickmarkType.textOnly,
-        text: this.labels ? this.maxValue.toString() : undefined,
-      });
-    }
-
-    for (
-      let i = -this.primaryTickmarkInterval;
-      i > this.minValue;
-      i -= this.primaryTickmarkInterval
-    ) {
-      tickmarks.push({
-        angle: this.getAngle(i),
-        type: TickmarkType.primary,
-        text: this.labels ? i.toString() : undefined,
-      });
-    }
-
-    if (this.labels && this.minValue % this.primaryTickmarkInterval === 0) {
-      tickmarks.push({
-        angle: this.getAngle(this.minValue),
-        type: TickmarkType.textOnly,
-        text: this.labels ? this.minValue.toString() : undefined,
-      });
-    }
-
-    const existingTickmarks = tickmarks.map((t) => t.angle);
-
-    for (
-      let i = this.secondaryTickmarkInterval;
-      i < this.maxValue;
-      i += this.secondaryTickmarkInterval
-    ) {
-      if (existingTickmarks.includes(this.getAngle(i))) {
-        continue;
+    const upsertTickmark = (
+      value: number,
+      type: TickmarkType,
+      text?: string
+    ) => {
+      if (
+        !Number.isFinite(value) ||
+        value < this.minValue ||
+        value > this.maxValue
+      ) {
+        return;
       }
-      tickmarks.push({
-        angle: this.getAngle(i),
-        type: TickmarkType.secondary,
-      });
-    }
 
-    for (
-      let i = -this.secondaryTickmarkInterval;
-      i > this.minValue;
-      i -= this.secondaryTickmarkInterval
-    ) {
-      if (existingTickmarks.includes(this.getAngle(i))) {
-        continue;
+      const normalizedValue = normalizeValue(value);
+      const existing = tickmarksByValue.get(normalizedValue);
+      if (existing) {
+        existing.type = strongerTickmarkType(existing.type, type);
+        if (text !== undefined) {
+          existing.text = text;
+        }
+        return;
       }
-      tickmarks.push({
-        angle: this.getAngle(i),
-        type: TickmarkType.secondary,
+
+      tickmarksByValue.set(normalizedValue, {
+        angle: this.mapAngle(normalizedValue),
+        type,
+        text,
       });
+    };
+
+    const addTickmarksAtInterval = (
+      interval: number | undefined,
+      type: TickmarkType,
+      withLabels = false
+    ) => {
+      if (
+        interval === undefined ||
+        interval <= 0 ||
+        !Number.isFinite(interval)
+      ) {
+        return;
+      }
+
+      const epsilon = Math.abs(interval) * 1e-6;
+      const startValue =
+        Math.ceil((this.minValue - epsilon) / interval) * interval;
+
+      for (
+        let value = startValue;
+        value < this.maxValue - epsilon;
+        value += interval
+      ) {
+        const normalizedValue = normalizeValue(value);
+        if (
+          normalizedValue <= this.minValue + epsilon ||
+          normalizedValue >= this.maxValue - epsilon
+        ) {
+          continue;
+        }
+
+        upsertTickmark(
+          normalizedValue,
+          type,
+          withLabels && this.showLabels ? normalizedValue.toString() : undefined
+        );
+      }
+    };
+
+    addTickmarksAtInterval(
+      this.primaryTickmarkInterval,
+      TickmarkType.primary,
+      true
+    );
+    addTickmarksAtInterval(
+      this.secondaryTickmarkInterval,
+      TickmarkType.secondary
+    );
+    addTickmarksAtInterval(
+      this.tertiaryTickmarkInterval,
+      TickmarkType.tertiary
+    );
+
+    if (rangeIncludesZero(this.minValue, this.maxValue)) {
+      upsertTickmark(
+        0,
+        this.minValue < 0 ? TickmarkType.main : TickmarkType.textOnly,
+        this.showLabels ? '0' : undefined
+      );
     }
 
-    // Add the zero tickmark
-
-    const zeroTickmark = tickmarks.find((t) => t.angle === this.getAngle(0));
-    if (zeroTickmark) {
-      zeroTickmark.type =
-        this.minValue < 0 ? TickmarkType.main : TickmarkType.textOnly;
-    } else {
-      tickmarks.push({
-        angle: this.getAngle(0),
-        type: this.minValue < 0 ? TickmarkType.main : TickmarkType.textOnly,
-        text: this.labels ? '0' : undefined,
-      });
+    if (this.showLabels) {
+      upsertTickmark(
+        this.minValue,
+        TickmarkType.textOnly,
+        this.minValue.toString()
+      );
+      upsertTickmark(
+        this.maxValue,
+        TickmarkType.textOnly,
+        this.maxValue.toString()
+      );
     }
 
-    return tickmarks;
+    return [...tickmarksByValue.values()].sort((a, b) => a.angle - b.angle);
   }
 
   private get _advices(): AngleAdviceRaw[] {
+    const value = this.clampedValue;
+
     return this.advices.map((advice) => {
-      const minAngle = this.getAngle(advice.minValue);
-      const maxAngle = this.getAngle(advice.maxValue);
+      const minAngle = this.mapAngle(advice.minValue);
+      const maxAngle = this.mapAngle(advice.maxValue);
       let state = advice.hinted ? AdviceState.hinted : AdviceState.regular;
-      if (this.value >= advice.minValue && this.value <= advice.maxValue) {
+      if (value >= advice.minValue && value <= advice.maxValue) {
         state = AdviceState.triggered;
       }
 

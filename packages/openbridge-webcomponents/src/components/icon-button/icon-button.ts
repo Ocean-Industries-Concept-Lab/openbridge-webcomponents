@@ -9,6 +9,7 @@ import {customElement} from '../../decorator.js';
  * - `normal`: Standard appearance for most use cases.
  * - `raised`: Adds elevation/shadow for prominence.
  * - `flat`: Minimal, backgroundless style for subtle actions.
+ * - `integration`: For use in Integration Bar components
  */
 export enum IconButtonVariant {
   normal = 'normal',
@@ -29,6 +30,7 @@ export enum IconButtonVariant {
  *   - `normal` (default): Standard appearance for most use cases.
  *   - `raised`: Adds elevation/shadow for prominence.
  *   - `flat`: Minimal, backgroundless style for subtle actions.
+ *   - `integration`: For use in Integration Bar components
  * - **Progress Indicator:**
  *   - Shows a circular progress spinner overlay when the `progress` property is set (0–100). Useful for indicating loading or ongoing actions.
  * - **Label Support:**
@@ -58,6 +60,9 @@ export enum IconButtonVariant {
  * | (default) | Always              | The icon to display (e.g., `<obi-search>`)   |
  * | label     | If `hasLabel` is set | Optional label text below the icon           |
  *
+ * ## Events
+ * - Emits a standard `click` event (`onClick` handler in framework wrappers) when activated.
+ *
  * ## Best Practices
  * - Ensure icons are clear and universally recognizable.
  * - For accessibility, provide an `aria-label` or descriptive label for the button's action.
@@ -77,6 +82,7 @@ export enum IconButtonVariant {
  *
  * @slot - Icon slot (default): Place an icon such as <obi-search> here.
  * @slot label - Optional label shown below the icon when `hasLabel` is true.
+ * @fires click - Fired when the button is clicked (if not disabled).
  */
 @customElement('obc-icon-button')
 export class ObcIconButton extends LitElement {
@@ -134,6 +140,9 @@ export class ObcIconButton extends LitElement {
    * If true, displays a label below the icon using the `label` slot.
    */
   @property({type: Boolean}) hasLabel: boolean = false;
+
+  /** If false, and cornerLeft or cornerRight is true, the divider is not shown. */
+  @property({type: Boolean, attribute: false}) showDivider = true;
 
   get progressSpinner() {
     if (this.progress === undefined) {
@@ -202,6 +211,7 @@ export class ObcIconButton extends LitElement {
           'has-label': this.hasLabel,
           wide: this.wide,
           progress: this.progress !== undefined,
+          'hide-divider': !this.showDivider,
         })}
         ?disabled=${this.disabled}
         part="wrapper"

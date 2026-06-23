@@ -1,6 +1,8 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcDropdownButton} from './dropdown-button.js';
+import {ObcDropdownButton, DropdownButtonType} from './dropdown-button.js';
 import './dropdown-button.js';
+import {html} from 'lit';
+import '../../icons/icon-placeholder.js';
 
 const meta: Meta<ObcDropdownButton> = {
   title: 'UI Components/Buttons/Dropdown Button',
@@ -15,6 +17,19 @@ const meta: Meta<ObcDropdownButton> = {
     },
     fullWidth: {
       control: 'boolean',
+    },
+    type: {
+      control: 'select',
+      options: Object.values(DropdownButtonType),
+    },
+    openTop: {
+      control: 'boolean',
+    },
+    allowEmptySelection: {
+      control: 'boolean',
+    },
+    placeholder: {
+      control: 'text',
     },
   },
   args: {
@@ -38,18 +53,100 @@ const meta: Meta<ObcDropdownButton> = {
       },
     ],
     value: 'volvo',
+    type: DropdownButtonType.label,
   },
 } satisfies Meta<ObcDropdownButton>;
 
 export default meta;
 type Story = StoryObj<ObcDropdownButton>;
 
-export const Primary: Story = {};
+export const Label: Story = {};
+
+export const LabelIcon: Story = {
+  args: {
+    type: DropdownButtonType.labelIcon,
+  },
+  render: (args) => html`
+    <obc-dropdown-button
+      .options=${args.options}
+      .value=${args.value}
+      .type=${args.type}
+    >
+      <obi-placeholder slot="icon"></obi-placeholder>
+    </obc-dropdown-button>
+  `,
+};
+
+export const Icon: Story = {
+  args: {
+    type: DropdownButtonType.icon,
+  },
+  render: (args) => html`
+    <obc-dropdown-button
+      .options=${args.options}
+      .value=${args.value}
+      .type=${args.type}
+    >
+      <obi-placeholder slot="icon"></obi-placeholder>
+    </obc-dropdown-button>
+  `,
+};
 
 export const FullWidth: Story = {
   args: {
     fullWidth: true,
   },
+  render: (args) => html`
+    <div style="width: 200px;">
+      <obc-dropdown-button
+        .options=${args.options}
+        .value=${args.value}
+        .fullWidth=${args.fullWidth}
+      ></obc-dropdown-button>
+    </div>
+  `,
+};
+
+export const FullWidthWithIcon: Story = {
+  args: {
+    fullWidth: true,
+    type: DropdownButtonType.labelIcon,
+  },
+  render: (args) => html`
+    <div style="width: 200px;">
+      <obc-dropdown-button
+        .options=${args.options}
+        .value=${args.value}
+        .fullWidth=${args.fullWidth}
+        .type=${args.type}
+      >
+        <obi-placeholder slot="icon"></obi-placeholder>
+      </obc-dropdown-button>
+    </div>
+  `,
+};
+
+export const OpenTop: Story = {
+  args: {
+    openTop: true,
+  },
+};
+
+export const OpenTopWithIcon: Story = {
+  args: {
+    openTop: true,
+    type: DropdownButtonType.labelIcon,
+  },
+  render: (args) => html`
+    <obc-dropdown-button
+      .options=${args.options}
+      .value=${args.value}
+      .openTop=${args.openTop}
+      .type=${args.type}
+    >
+      <obi-placeholder slot="icon"></obi-placeholder>
+    </obc-dropdown-button>
+  `,
 };
 
 export const PreSelected: Story = {
@@ -62,4 +159,37 @@ export const Disabled: Story = {
   args: {
     disabled: true,
   },
+};
+
+export const DisabledWithIcon: Story = {
+  args: {
+    disabled: true,
+    type: DropdownButtonType.labelIcon,
+  },
+  render: (args) => html`
+    <obc-dropdown-button
+      .options=${args.options}
+      .value=${args.value}
+      .disabled=${args.disabled}
+      .type=${args.type}
+    >
+      <obi-placeholder slot="icon"></obi-placeholder>
+    </obc-dropdown-button>
+  `,
+};
+
+export const EmptySelection: Story = {
+  args: {
+    value: 'none',
+    allowEmptySelection: true,
+    placeholder: 'Select a brand',
+  },
+  render: (args) => html`
+    <obc-dropdown-button
+      .options=${args.options}
+      .value=${args.value}
+      .allowEmptySelection=${args.allowEmptySelection}
+      .placeholder=${args.placeholder}
+    ></obc-dropdown-button>
+  `,
 };

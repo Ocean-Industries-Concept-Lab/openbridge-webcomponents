@@ -15,7 +15,14 @@ function findComponentFiles(
     return components;
   }
 
-  const items = globSync(`${fullPath}/**/*.ts`, {ignore: ['**/*.stories.ts']});
+  const items = globSync(`${fullPath}/**/*.ts`, {
+    ignore: [
+      '**/*.stories.ts',
+      '**/*.spec.ts',
+      '**/*.test.ts',
+      '**/_test-utils.ts',
+    ],
+  });
   const rootPath = path.join(process.cwd());
 
   for (const item of items) {

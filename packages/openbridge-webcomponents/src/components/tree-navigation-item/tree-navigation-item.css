@@ -1,0 +1,270 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: block;
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: var(--menu-navigation-components-tree-navigation-item-touch-target);
+  user-select: none;
+
+  @mixin outline-inward;
+  @mixin style style=flat visibleWrapperClass=.visible-wrapper;
+  @mixin font-body;
+  color: var(--on-flat-active-color);
+
+  .visible-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--global-border-radius-border-radius-base);
+    padding: 0
+      var(--menu-navigation-components-tree-navigation-item-padding-horizontal);
+  }
+
+  /*
+   * A checked row is not re-selectable, so it stays on the amplified enabled
+   * style with no hover/pressed feedback.
+   */
+  &.checked {
+    @mixin style style=amplified visibleWrapperClass=.visible-wrapper;
+    cursor: default;
+
+    & .visible-wrapper,
+    &:hover .visible-wrapper,
+    &:active .visible-wrapper {
+      background-color: var(--amplified-enabled-background-color);
+      border-color: var(--amplified-enabled-border-color);
+    }
+
+    & .label {
+      @mixin font-body-active;
+      color: var(--on-flat-active-color);
+    }
+
+    & .leading-icon {
+      color: var(--on-amplified-active-color);
+    }
+  }
+
+  /* Guide lines are tree structure, not row state, so they do not dim here. */
+  &.disabled {
+    color: var(--on-flat-disabled-color);
+
+    & .leading-icon {
+      color: var(--on-flat-disabled-color);
+    }
+  }
+}
+
+.tree-node-row {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  flex-shrink: 0;
+}
+
+.branch {
+  position: relative;
+  height: 100%;
+  width: var(--menu-navigation-components-branch-width);
+  flex-shrink: 0;
+}
+
+/*
+ * Guide lines all run on a rail at 75% of each 32px column and share the faint
+ * outline color. Verticals and the dropdown bleed 1px past the row edges so they
+ * cross the visible-wrapper's 1px transparent flat border and meet the adjacent
+ * row's line with no seam gap.
+ */
+.branch-vertical {
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  left: 75%;
+  width: 1px;
+  transform: translateX(-0.5px);
+  background: var(--border-outline-color);
+}
+
+.branch-horizontal {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-0.5px);
+  left: 75%;
+  right: 0;
+  height: 1px;
+  background: var(--border-outline-color);
+}
+
+/*
+ * Corner (└, last child): a single bordered box replaces the straight rects so
+ * the bend can be rounded. The box bleeds 1px past the column's right edge so its
+ * bottom border overlaps the terminal connector with no break, and translateY
+ * drops it 0.5px so that border lands on the connector's pixel row (else the join
+ * reads as a `---___` step). The radius stays tight — the stub is only 8px, so a
+ * larger fillet would consume the whole flat run.
+ */
+.branch-corner .branch-vertical,
+.branch-corner .branch-horizontal {
+  display: none;
+}
+
+.branch-corner .branch-elbow {
+  position: absolute;
+  top: -1px;
+  bottom: 50%;
+  left: 75%;
+  right: -1px;
+  transform: translate(-0.5px, 0.5px);
+  border-left: 1px solid var(--border-outline-color);
+  border-bottom: 1px solid var(--border-outline-color);
+  border-bottom-left-radius: var(
+    --menu-navigation-components-branch-corner-radius,
+    2px
+  );
+}
+
+.terminal {
+  position: relative;
+  height: 100%;
+  width: var(--global-size-spacing-touch-target-min);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Stub entering the terminal, continuing the guide line up to the chevron gap. */
+.terminal-connector {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-0.5px);
+  left: 0;
+  width: 25%;
+  height: 1px;
+  background: var(--border-outline-color);
+}
+
+/* On a leaf (no chevron) the stub runs further, stopping ~13px before the icon. */
+.terminal:not(:has(.chevron)) .terminal-connector {
+  width: calc(100% - 13px);
+}
+
+/* Descends from below the chevron to connect an expanded node to its children. */
+.terminal-dropdown {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-0.5px);
+  top: 75%;
+  bottom: -1px;
+  width: 1px;
+  background: var(--border-outline-color);
+}
+
+/* Visual expand/collapse indicator only — not a separate control. */
+.chevron {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--menu-navigation-components-tree-navigation-item-icon-size);
+  height: var(--menu-navigation-components-tree-navigation-item-icon-size);
+  color: var(--element-neutral-color);
+  transition: transform 100ms ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chevron {
+    transition: none;
+  }
+}
+
+.wrapper.disabled .chevron {
+  color: var(--on-flat-disabled-color);
+}
+
+:host([expanded]) .chevron {
+  transform: rotate(90deg);
+}
+
+/* Alert-header marker for non-regular terminal types, at the terminal's top-right. */
+.terminal-header {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: var(--menu-navigation-components-terminal-padding-aggregated-icon);
+  color: var(--element-neutral-color);
+  pointer-events: none;
+}
+
+.terminal-header > * {
+  width: var(--menu-navigation-components-tree-navigation-item-icon-size);
+  height: var(--menu-navigation-components-tree-navigation-item-icon-size);
+}
+
+.wrapper.disabled .terminal-header {
+  color: var(--on-flat-disabled-color);
+}
+
+.label-container {
+  display: flex;
+  flex: 1;
+  gap: var(
+    --menu-navigation-components-tree-navigation-item-padding-horizontal
+  );
+  align-items: center;
+  min-width: 0;
+  padding-right: var(
+    --menu-navigation-components-tree-navigation-item-padding-horizontal
+  );
+}
+
+.leading-icon {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--menu-navigation-components-tree-navigation-item-icon-size);
+  height: var(--menu-navigation-components-tree-navigation-item-icon-size);
+  color: var(--on-flat-neutral-color);
+}
+
+::slotted([slot="icon"]) {
+  display: block;
+  width: var(--menu-navigation-components-tree-navigation-item-icon-size);
+  height: var(--menu-navigation-components-tree-navigation-item-icon-size);
+}
+
+.label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+/*
+ * Trailing badge area. A row can carry more than one alert badge (e.g. a
+ * critical count beside a warning count); they sit in a flex row spaced by the
+ * shared alert-counter spacing token.
+ */
+.alert-badges {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--app-components-alert-counter-item-badge-spacing);
+}
+
+.alert-badge {
+  flex-shrink: 0;
+}

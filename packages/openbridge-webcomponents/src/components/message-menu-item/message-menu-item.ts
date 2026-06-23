@@ -37,6 +37,7 @@ export enum ObcMessageMenuItemSize {
  *
  * - **Actions:**
  *   - Supports up to two action buttons via `primaryActionLabel` and `secondaryActionLabel`.
+ *   - Each action can be independently disabled by setting `enablePrimaryAction` or `enableSecondaryAction` to `false`.
  *   - In vertical layout, action buttons expand to full width.
  *
  * - **Timestamp:**
@@ -52,6 +53,7 @@ export enum ObcMessageMenuItemSize {
  * - Use `stackVertical=true` when actions need more prominence or when space is narrow.
  * - Enable `enhancedIcon` to highlight important or priority messages.
  * - Use `isShelved` to indicate messages that have been temporarily set aside.
+ * - Set `enablePrimaryAction` / `enableSecondaryAction` to `false` when an action is temporarily unavailable (e.g. awaiting a precondition) rather than removing the button.
  *
  * ## Slots
  *
@@ -132,12 +134,16 @@ export class ObcMessageMenuItem extends LitElement {
   @property({type: String}) description = '';
   @property({type: String}) day = '';
   @property({type: String}) time = '';
+  /** @availableWhen hasActionLabelSlot==false */
   @property({type: String}) primaryActionLabel = '';
   @property({type: String}) secondaryActionLabel = '';
+  @property({type: Boolean, attribute: false}) enablePrimaryAction = true;
+  @property({type: Boolean, attribute: false}) enableSecondaryAction = true;
 
   // Visibility properties for icons (slots)
   @property({type: Boolean}) hasPrimaryIcon = false;
   @property({type: Boolean}) hasSecondaryIcon = false;
+  /** @availableWhen stackVertical==false */
   @property({type: Boolean}) hasTrailingIcon = false;
   @property({type: Boolean}) isShelved = false;
 
@@ -281,6 +287,7 @@ export class ObcMessageMenuItem extends LitElement {
                     variant="normal"
                     .fullWidth=${this.isVertical}
                     @click=${this.handleSecondaryActionClick}
+                    ?disabled=${!this.enableSecondaryAction}
                   >
                     ${this.secondaryActionLabel}
                   </obc-button>`
@@ -290,6 +297,7 @@ export class ObcMessageMenuItem extends LitElement {
                     variant="normal"
                     .fullWidth=${this.isVertical}
                     @click=${this.handlePrimaryActionClick}
+                    ?disabled=${!this.enablePrimaryAction}
                   >
                     ${this.hasActionLabelSlot
                       ? html`<slot name="action-label"></slot>`

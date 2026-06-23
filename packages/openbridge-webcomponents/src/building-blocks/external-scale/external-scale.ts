@@ -122,7 +122,7 @@ import {
  *   value: 40,
  *   setpoint: 50,
  *   atSetpoint: false,
- *   disableAutoAtSetpoint: false,
+ *   autoAtSetpoint: true,
  *   autoAtSetpointDeadband: 1,
  *   setpointAtZeroDeadband: 0.5,
  *   state: InstrumentState.active,
@@ -541,10 +541,10 @@ export interface ExternalScaleConfig {
    * and proposed setpoint positions simultaneously.
    */
   newSetpoint?: number;
-  /** Manual override used when disableAutoAtSetpoint=true. */
+  /** Manual override used when autoAtSetpoint=false. */
   atSetpoint: boolean;
-  /** When false, at-setpoint is derived from value/setpoint and deadband. */
-  disableAutoAtSetpoint: boolean;
+  /** When true, at-setpoint is derived from value/setpoint and deadband. */
+  autoAtSetpoint: boolean;
   /** Deadband used for automatic at-setpoint detection. */
   autoAtSetpointDeadband: number;
   /** Deadband around 0 where the setpoint indicator snaps to exactly 0. */
@@ -657,7 +657,24 @@ export type ExternalScaleLayoutConfig = Pick<
   | 'labelThickness'
   | 'length'
   | 'scaleType'
->;
+> & {
+  /**
+   * Position of advice overlay pills relative to the bar band. Only used when
+   * `hasAdvice` is true; defaults to `AdvicePosition.inner` if omitted.
+   */
+  advicePosition?: AdvicePosition;
+  /**
+   * Whether any advice overlays are present.
+   *
+   * Advice pills render in perpendicular space outside the bar band
+   * (8px wide, plus a 4px offset from the bar edge or tick base). When the
+   * scale/label bands don't already provide enough room, the layout reserves
+   * an extra band so the pill is not clipped by the viewBox. This also makes
+   * the reported scale thickness include the advice band, so parent charts
+   * inset correctly to keep the pill visible inside the cell.
+   */
+  hasAdvice?: boolean;
+};
 
 export interface ExternalScaleViewBox {
   x: number;
@@ -681,6 +698,8 @@ export function toExternalScaleLayoutConfig(
     labelThickness: config.labelThickness,
     length: config.length,
     scaleType: config.scaleType,
+    advicePosition: config.advicePosition,
+    hasAdvice: !!config.advices && config.advices.length > 0,
   };
 }
 
@@ -807,7 +826,15 @@ export function computeExternalScaleLayout(
     computeExternalScaleEffectiveTickThickness(config);
   const scaleSpace = config.hasScale ? effectiveTickThickness : 0;
   const labelSpace = config.labels ? config.labelThickness : 0;
-  const thickness = barSpace + scaleSpace + labelSpace;
+
+  // Advice pills render outside the bar band. When the scale/label bands
+  // collapse (e.g. hasLabelPadding=false on the parent chart, or hasScale=false),
+  // reserve a minimum perpendicular band so the pill is not clipped. The pill
+  // is 8px wide with a 4px offset from its anchor edge, plus a small visual
+  // buffer so the pill doesn't touch the viewBox edge.
+  const adviceSpace = computeAdviceBandThickness(config);
+  const outsideBarSpace = Math.max(scaleSpace + labelSpace, adviceSpace);
+  const thickness = barSpace + outsideBarSpace;
 
   const isOutwardPositive =
     (config.orientation === 'vertical' && config.side === 'right') ||
@@ -821,6 +848,38 @@ export function computeExternalScaleLayout(
     viewBoxLength: config.length,
     viewBoxThickness: thickness,
   };
+}
+
+/**
+ * Compute the minimum perpendicular band thickness required to render advice
+ * pills without clipping. Returns 0 when no advices are present.
+ *
+ * Pill geometry (see `advicePill` / `renderAdvice`):
+ * - `inner` (default when no bar): pill at `tickBase + 4` to `tickBase + 12`
+ *   from the bar edge → needs 12px + 4px buffer = 16px outside the bar.
+ * - `outer`: pill at `barThickness + 10 + 4` to `barThickness + 10 + 12`
+ *   → needs 22px + 2px buffer = 24px outside the bar.
+ * - `center`: pill straddles the bar band; no extra perpendicular space needed.
+ *
+ * NOTE: `renderAdvice()` coerces `advicePosition` to `inner` when `hasBar=false`
+ * (no bar area to straddle/sit-outside). Mirror that coercion here so the
+ * reserved space matches the rendered geometry — otherwise `hasBar=false +
+ * advicePosition='center'` would reserve 0 while the pill renders at inner
+ * geometry and clips.
+ */
+function computeAdviceBandThickness(
+  config: Pick<
+    ExternalScaleLayoutConfig,
+    'hasAdvice' | 'advicePosition' | 'hasBar'
+  >
+): number {
+  if (!config.hasAdvice) return 0;
+  const position = config.hasBar
+    ? (config.advicePosition ?? AdvicePosition.inner)
+    : AdvicePosition.inner;
+  if (position === AdvicePosition.center) return 0;
+  if (position === AdvicePosition.outer) return 24;
+  return 16;
 }
 
 function isVertical(config: ExternalScaleConfig): boolean {
@@ -844,7 +903,7 @@ function calculateAtSetpoint(config: ExternalScaleConfig): boolean {
     value: config.value,
     setpoint: config.setpoint,
     touching: isTouching,
-    disableAuto: config.disableAutoAtSetpoint,
+    auto: config.autoAtSetpoint,
     deadband: config.autoAtSetpointDeadband,
     atSetpointManual: config.atSetpoint,
   });
@@ -961,6 +1020,15 @@ function colors(config: ExternalScaleConfig): {
   markerStrokeColor: string;
   setpointColor: string;
 } {
+  // TODO(theming): extend the color resolution to support domain-specific
+  // palettes (e.g. automation medium / fuel colors used by `obc-automation-tank`'s
+  // legacy CSS bar — `--automation-medium-fuel`, `--automation-fresh-water`,
+  // etc.). Today the bar fill is locked to the instrument regular/enhanced
+  // palette; tanks rendered through this renderer therefore lose their
+  // per-`medium` coloring. A new optional `colorVariant` (or similar) on
+  // `ExternalScaleConfig`, plumbed through `obc-bar-vertical` /
+  // `obc-bar-horizontal`, would let the tank pass its medium token and
+  // restore the legacy look without forking the renderer.
   const isEnhanced = config.priority === Priority.enhanced;
   // Fill mode uses secondary color, tint mode uses tertiary color
   let barFillColor =
@@ -1458,7 +1526,7 @@ function generateBarContainer(
         const isRight = config.side === 'right';
 
         // Stroke path excludes the edge touching the scale
-        let strokePath = '';
+        let strokePath: string;
         if (isRight) {
           // Exclude right edge (touching scale on right side)
           strokePath = `M ${rectX} ${rectY + (noCornersRounded ? 0 : r)} L ${rectX} ${rectY + rectHeight - (noCornersRounded ? 0 : r)}`; // Left edge
@@ -1537,7 +1605,7 @@ function generateBarContainer(
       const isRight = config.side === 'right';
 
       // Stroke path excludes the edge touching the scale
-      let strokePath = '';
+      let strokePath: string;
       if (isRight) {
         // Exclude right edge
         strokePath = `M ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
@@ -1637,7 +1705,7 @@ function generateBarContainer(
       const isBottom = config.side === 'bottom';
 
       // Stroke path excludes the edge touching the scale
-      let strokePath = '';
+      let strokePath: string;
       if (isBottom) {
         // Exclude bottom edge (touching scale on bottom side)
         strokePath = `M ${rectX + (noCornersRounded ? 0 : r)} ${rectY}`; // Top edge start
@@ -1717,7 +1785,7 @@ function generateBarContainer(
     const isBottom = config.side === 'bottom';
 
     // Stroke path excludes the edge touching the scale
-    let strokePath = '';
+    let strokePath: string;
     if (isBottom) {
       // Exclude bottom edge
       strokePath = `M ${x + (shouldRoundTopLeft ? r : 0)} ${y}`;
@@ -2683,7 +2751,7 @@ function renderAdvice(
 
     const maskId = `externalScaleAdviceMask-${advice.min}-${advice.max}-${Math.random().toString(36).slice(2)}`;
 
-    let tickmarkStyle = TickmarkStyle.hinted;
+    let tickmarkStyle = TickmarkStyle.regular;
     if (advice.state === AdviceState.regular)
       tickmarkStyle = TickmarkStyle.regular;
     else if (advice.state === AdviceState.triggered)
@@ -2718,7 +2786,7 @@ function renderAdvice(
   if (advice.state === AdviceState.hinted) {
     strokeColor = 'var(--instrument-frame-tertiary-color)';
     fillColor = 'var(--instrument-frame-primary-color)';
-    tickmarkStyle = TickmarkStyle.hinted;
+    tickmarkStyle = TickmarkStyle.regular;
   } else if (advice.state === AdviceState.regular) {
     strokeColor = 'var(--instrument-regular-secondary-color)';
     fillColor = 'var(--instrument-frame-primary-color)';

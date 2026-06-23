@@ -1,19 +1,17 @@
 <script setup lang="ts">
-import ObcCompass from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/compass/ObcCompass.vue'
+import ObcCompass from '@oicl/openbridge-webcomponents-vue/navigation-instruments/compass/ObcCompass.vue'
 import { useSim } from '../composables/useSim'
 import { useWeather } from '@/business/getWeather'
-import { VesselImage } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/vessel'
+import { VesselImage } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/vessel'
 import { computed, ref, onMounted, onUnmounted } from 'vue'
-import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
-import { InstrumentFieldSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
 import {
   type AngleAdvice,
   AdviceType
-} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js'
+} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js'
 import {
   InstrumentState,
   Priority
-} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types'
+} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types'
 import { useDemoConfigStore } from '../stores/demoConfig'
 
 const sim = useSim()
@@ -57,7 +55,8 @@ const east = computed(() => {
 
 const windSpeedKnots = computed(() => {
   // Convert from m/s to knots
-  return weather.value.windSpeed * 1.94384
+  const knots = weather.value.windSpeed * 1.94384
+  return Math.round(knots * 10) / 10
 })
 
 const headingAdvice = computed((): AngleAdvice[] => {
@@ -113,26 +112,44 @@ onUnmounted(() => {
 <template>
   <div class="container-own-ship">
     <div class="readout left">
-      <ObcInstrumentField
-        :value="mapTo360Degrees(sim.vessel.headingDeg.value)"
-        :size="InstrumentFieldSize.enhanced"
+      <obc-readout
+        :value.prop="mapTo360Degrees(sim.vessel.headingDeg.value)"
+        variant="enhanced"
+        :valuePriority.prop="'enhanced'"
+        direction="vertical"
+        :hasInput.prop="false"
+        :hasAdvice.prop="false"
+        :hasSrc.prop="false"
+        :hasLeadingIcon.prop="false"
         unit="DEG"
-        tag="HDG"
-        :max-digits="0"
+        label="HDG"
+        :maxDigits.prop="0"
       />
-      <ObcInstrumentField
-        :value="mapTo360Degrees(sim.vessel.courseOverGroundDeg.value)"
-        :size="InstrumentFieldSize.enhanced"
+      <obc-readout
+        :value.prop="mapTo360Degrees(sim.vessel.courseOverGroundDeg.value)"
+        variant="enhanced"
+        :valuePriority.prop="'enhanced'"
+        direction="vertical"
+        :hasInput.prop="false"
+        :hasAdvice.prop="false"
+        :hasSrc.prop="false"
+        :hasLeadingIcon.prop="false"
         unit="DEG"
-        tag="COG"
-        :max-digits="0"
+        label="COG"
+        :maxDigits.prop="0"
       />
-      <ObcInstrumentField
-        :value="degPerMinute"
-        :size="InstrumentFieldSize.enhanced"
+      <obc-readout
+        :value.prop="degPerMinute"
+        variant="enhanced"
+        :valuePriority.prop="'enhanced'"
+        direction="vertical"
+        :hasInput.prop="false"
+        :hasAdvice.prop="false"
+        :hasSrc.prop="false"
+        :hasLeadingIcon.prop="false"
         unit="DEG/min"
-        tag="ROT"
-        :max-digits="0"
+        label="ROT"
+        :maxDigits.prop="0"
       />
       <div class="divider"></div>
       <div class="position">
@@ -155,7 +172,7 @@ onUnmounted(() => {
       :vessel-image="vessel === 'psv' ? VesselImage.psvTop : VesselImage.carFerryTop"
       :current-from-direction="sim.currentFromAngleDeg"
       :current-speed="sim.currentSpeedKnots"
-      :wind-speed="weather.windSpeedBeaufort"
+      :current-wind-speed-knots="windSpeedKnots"
       :wind-from-direction="weather.windDirection"
       :heading-advices="headingAdvice"
       :state="InstrumentState.active"
@@ -163,41 +180,51 @@ onUnmounted(() => {
     />
     <div class="readout right">
       <div class="title font-ui-label">Wind</div>
-      <ObcInstrumentField
+      <obc-readout
         :value="windSpeedKnots"
-        :size="InstrumentFieldSize.enhanced"
+        variant="enhanced"
+        direction="vertical"
+        :hasInput.prop="false"
         unit="KN"
-        tag="Speed"
-        neutral-color
+        label="Speed"
         :fraction-digits="1"
-        :max-digits="0"
+        :max-digits="2"
+        :valuePriority.prop="'regular'"
       />
-      <ObcInstrumentField
+      <obc-readout
         :value="weather.windDirection"
-        :size="InstrumentFieldSize.enhanced"
+        :valuePriority.prop="'regular'"
+        variant="enhanced"
+        direction="vertical"
+        :hasInput.prop="false"
         unit="DEG"
-        tag="Direction"
-        neutral-color
-        :max-digits="0"
+        label="Direction"
+        :max-digits="3"
+        :fraction-digits="0"
       />
       <div class="divider"></div>
       <div class="title font-ui-label">Current</div>
-      <ObcInstrumentField
+      <obc-readout
         :value="sim.currentSpeedKnots"
-        :size="InstrumentFieldSize.enhanced"
+        :valuePriority.prop="'regular'"
+        variant="enhanced"
+        direction="vertical"
+        :hasInput.prop="false"
         unit="KN"
-        tag="Speed"
-        neutral-color
+        label="Speed"
         :fraction-digits="1"
-        :max-digits="0"
+        :max-digits="2"
       />
-      <ObcInstrumentField
+      <obc-readout
         :value="sim.currentFromAngleDeg"
-        :size="InstrumentFieldSize.enhanced"
+        :valuePriority.prop="'regular'"
+        variant="enhanced"
+        direction="vertical"
+        :hasInput.prop="false"
         unit="DEG"
-        tag="Direction"
-        neutral-color
-        :max-digits="0"
+        label="Direction"
+        :max-digits="3"
+        :fraction-digits="0"
       />
     </div>
   </div>

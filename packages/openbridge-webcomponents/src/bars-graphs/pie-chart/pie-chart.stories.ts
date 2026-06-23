@@ -92,7 +92,7 @@ export default meta;
 type Story = StoryObj;
 
 export const Default: Story = {
-  name: 'Default pie',
+  name: 'Default Pie',
   render: (args) => html`
     <obc-pie-chart
       .data=${args.data}
@@ -112,7 +112,7 @@ export const Default: Story = {
 };
 
 export const Sunburst: Story = {
-  name: 'Sunburst subsegments pie (click interaction)',
+  name: 'Sunburst Subsegments Pie (click interaction)',
   args: {
     sunburst: true,
     data: SUNBURST_DATA,
@@ -120,7 +120,7 @@ export const Sunburst: Story = {
 };
 
 export const LongUnit: Story = {
-  name: 'Long label unit pie',
+  name: 'Long Label Unit Pie',
   args: {
     showOuterLabels: true,
     outerLabelUnit: ' km/h-unbelievably-long',
@@ -129,7 +129,7 @@ export const LongUnit: Story = {
 };
 
 export const TrimLabels: Story = {
-  name: 'Trim label length pie',
+  name: 'Trim Label Length Pie',
   args: {
     showOuterLabels: true,
     outerLabelUnit: ' km/h-unbelievably-long',
@@ -138,7 +138,7 @@ export const TrimLabels: Story = {
 };
 
 export const WithDecimals: Story = {
-  name: 'Decimal places pie',
+  name: 'Decimal Places Pie',
   args: {
     showOuterLabels: true,
     outerLabelDecimalPlaces: 2,
@@ -146,21 +146,21 @@ export const WithDecimals: Story = {
 };
 
 export const MinHeight: Story = {
-  name: 'Minimal height pie (48px)',
+  name: 'Minimal Height Pie (48px)',
   args: {
     fixedHeight: 48,
   },
 };
 
 export const ThresholdHeight: Story = {
-  name: 'Threshold height pie (192px, where labels appear)',
+  name: 'Threshold Height Pie (192px, where labels appear)',
   args: {
     fixedHeight: 192,
   },
 };
 
 export const WithLegend: Story = {
-  name: 'With legend pie',
+  name: 'With Legend Pie',
   args: {
     legend: true,
   },
@@ -174,7 +174,7 @@ export const CustomColors: Story = {
 };
 
 export const Realtime: Story = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   render: (args) => {
     const chart = document.createElement('obc-pie-chart');
     chart.data = JSON.parse(JSON.stringify(SUNBURST_DATA));

@@ -1,10 +1,13 @@
-import {LitElement, html} from 'lit';
+import {LitElement, html, css, nothing, unsafeCSS} from 'lit';
 import {customElement} from '../../decorator.js';
 import {property} from 'lit/decorators.js';
 import {AdviceType} from '../watch/advice.js';
 import {Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/instrument-radial/instrument-radial.js';
+import {renderInstrumentReadout} from '../readout/instrument-readout.js';
+import instrumentReadoutStyle from '../readout/instrument-readout.css?inline';
+import {TickmarkStyle} from '../watch/tickmark.js';
 
 export enum ObcGaugeRadialType {
   filled = 'filled',
@@ -23,8 +26,12 @@ export interface GaugeRadialAdvice {
  * `<obc-rot-sector>` — Rate-of-turn sector gauge for rotational velocity.
  *
  * `ObcRotSector` is a thin wrapper around `<obc-instrument-radial>` that
- * displays a bipolar ±60° sector gauge showing rate of turn. The bottom
- * 50% of the circle is clipped, producing a compact sector arc. It inherits
+ * displays a bipolar sector gauge showing rate of turn. The arc extent is
+ * configurable via `rotArcExtent` (default 60°), mapping the value range
+ * (−maxValue to +maxValue) to ±rotArcExtent degrees. The bottom 50% of the
+ * circle is clipped, producing a compact sector arc. When `zoomToFitArc`
+ * is enabled, clipping is bypassed and the arc is enlarged to fill the
+ * available space. It inherits
  * a full setpoint property bundle from {@link SetpointMixin}, including
  * auto at-setpoint detection, dual-marker adjustment preview, and deadband
  * tuning.
@@ -32,7 +39,7 @@ export interface GaugeRadialAdvice {
  * ## Features
  *
  * - **Bipolar sector**: Value range is symmetric around zero (−maxValue to
- *   +maxValue), mapped to a ±60° arc.
+ *   +maxValue), mapped to a ±`rotArcExtent`° arc (default 60°).
  * - **Port/starboard coloring**: When `portStarboard` is true, positive
  *   values render in starboard (green) and negative in port (red).
  * - **Bar display**: Always renders as a `bar` type — no needle or filled
@@ -51,7 +58,7 @@ export interface GaugeRadialAdvice {
  * - Enable `portStarboard` to show directional coloring.
  * - Provide `primaryTickmarkInterval` and `secondaryTickmarkInterval` to
  *   control tickmark density.
- * - Enable `labels` to show numeric labels at primary tickmarks.
+ * - Enable `showLabels` to show numeric labels at primary tickmarks.
  *
  * ## Best Practices
  *
@@ -68,7 +75,7 @@ export interface GaugeRadialAdvice {
  *   maxValue="60"
  *   enhanced
  *   portStarboard
- *   labels
+ *   showLabels
  *   primaryTickmarkInterval="20"
  *   secondaryTickmarkInterval="10"
  *   setpoint="30"
@@ -82,34 +89,112 @@ export interface GaugeRadialAdvice {
 export class ObcRotSector extends SetpointMixin(LitElement) {
   @property({type: Number}) value = 0;
   @property({type: Number}) maxValue = 100;
-  @property({type: Boolean}) labels: boolean = false;
-  @property({type: Number}) primaryTickmarkInterval = 50;
-  @property({type: Number}) secondaryTickmarkInterval = 10;
+
+  /**
+   * Measured rate of turn in degrees per minute (positive = starboard).
+   * Alias for `value` provided for cross-component consistency with
+   * `obc-compass`, `obc-compass-sector`, `obc-compass-flat`, and
+   * `obc-rate-of-turn`. Setting this updates `value`.
+   */
+  @property({type: Number})
+  set rateOfTurn(v: number) {
+    this.value = v;
+  }
+  get rateOfTurn(): number {
+    return this.value;
+  }
+
+  /**
+   * Maximum measured rate of turn in degrees per minute. Alias for
+   * `maxValue` provided for cross-component consistency. Setting this
+   * updates `maxValue`.
+   */
+  @property({type: Number})
+  set rateOfTurnMax(v: number) {
+    this.maxValue = v;
+  }
+  get rateOfTurnMax(): number {
+    return this.maxValue;
+  }
+  @property({type: Boolean}) showLabels: boolean = false;
+  /** Whether to render tickmarks inside the ring. */
+  @property({type: Boolean}) tickmarksInside: boolean = false;
+  /**
+   * Interval for primary tickmarks in value units.
+   * When undefined or <= 0, no primary tickmarks are shown.
+   */
+  @property({type: Number}) primaryTickmarkInterval: number | undefined = 50;
+  /**
+   * Interval for secondary tickmarks in value units.
+   * When undefined or <= 0, no secondary tickmarks are shown.
+   */
+  @property({type: Number}) secondaryTickmarkInterval: number | undefined = 10;
+  /**
+   * Interval for tertiary tickmarks in value units.
+   * When undefined or <= 0, no tertiary tickmarks are shown.
+   */
+  @property({type: Number}) tertiaryTickmarkInterval: number | undefined =
+    undefined;
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: Boolean}) portStarboard: boolean = false;
+  @property({type: String}) tickmarkStyle: TickmarkStyle =
+    TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
+  @property({type: Boolean}) zoomToFitArc: boolean = false;
+  @property({type: Number}) rotArcExtent: number = 60;
+  /**
+   * When `true`, shows a centered `<obc-readout>` (label `ROT`, unit `DEG/min`)
+   * under the arc with the current rate-of-turn value. Default `false`.
+   */
+  @property({type: Boolean}) hasReadout: boolean = false;
+  /** Readout label. Default `ROT`. */
+  @property({type: String}) label = 'ROT';
+  /** Readout unit. Default `DEG/min`. */
+  @property({type: String}) unit = 'DEG/min';
+  /** Number of fraction digits shown in the readout. Default `0`. */
+  @property({type: Number}) fractionDigits = 0;
 
-  getAngle(v: number): number {
-    return (v / this.maxValue) * 60;
-  }
+  getAngle = (v: number): number => {
+    if (!this.maxValue) return 0;
+    return (v / this.maxValue) * this.rotArcExtent;
+  };
 
   get _type(): ObcGaugeRadialType {
     return ObcGaugeRadialType.bar;
   }
 
   private get _barColor(): string {
-    if (this.priority !== Priority.enhanced) {
-      return 'var(--instrument-regular-tertiary-color)';
-    }
-
     if (this.portStarboard) {
       if (this.value > 0) {
         return 'var(--instrument-starboard-secondary-color)';
       }
-      return 'var(--instrument-port-secondary-color)';
+      if (this.value < 0) {
+        return 'var(--instrument-port-secondary-color)';
+      }
+    }
+
+    if (this.priority !== Priority.enhanced) {
+      return 'var(--instrument-regular-tertiary-color)';
     }
 
     return 'var(--instrument-enhanced-tertiary-color)';
+  }
+
+  /**
+   * Vertical position of the readout, in % of the host. In the zoomed view the
+   * arc's lower edge shifts with `rotArcExtent`, so the position is interpolated
+   * between the narrow- and wide-arc anchors to keep a roughly constant gap
+   * between the arc and the readout. The static (unzoomed) arc uses a fixed
+   * position.
+   */
+  private get _readoutTopPercent(): number {
+    if (!this.zoomToFitArc) {
+      return 60;
+    }
+    const narrowTop = 70; // rotArcExtent ~10
+    const wideTop = 66; // rotArcExtent ~60
+    const extent = Math.min(60, Math.max(10, this.rotArcExtent));
+    return narrowTop + ((wideTop - narrowTop) * (extent - 10)) / (60 - 10);
   }
 
   override render() {
@@ -123,30 +208,42 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
         .setpointAtZeroDeadband=${this.setpointAtZeroDeadband}
         .setpointOverride=${this.setpointOverride}
         .touching=${this.touching}
-        .disableAutoAtSetpoint=${this.disableAutoAtSetpoint}
+        .autoAtSetpoint=${this.autoAtSetpoint}
         .autoAtSetpointDeadband=${this.autoAtSetpointDeadband}
         .maxValue=${this.maxValue}
         .minValue=${-this.maxValue}
         .getAngle=${this.getAngle}
         .needleColor=${this._needleColor}
         .barColor=${barColor}
-        .labels=${this.labels}
+        .showLabels=${this.showLabels}
+        .tickmarksInside=${this.tickmarksInside}
+        .tickmarkStyle=${this.tickmarkStyle}
         .primaryTickmarkInterval=${this.primaryTickmarkInterval}
         .secondaryTickmarkInterval=${this.secondaryTickmarkInterval}
+        .tertiaryTickmarkInterval=${this.tertiaryTickmarkInterval}
         .type=${this._type}
         .needleType=${this._type}
         .advices=${this.advices}
         .clipBottom=${50}
+        .zoomToFitArc=${this.zoomToFitArc}
       >
       </obc-instrument-radial>
+      ${this.hasReadout
+        ? html`<div class="readout" style="top: ${this._readoutTopPercent}%">
+            ${renderInstrumentReadout({
+              value: this.value,
+              valuePriority: this.priority,
+              label: this.label,
+              unit: this.unit,
+              fractionDigits: this.fractionDigits,
+              centerValue: true,
+            })}
+          </div>`
+        : nothing}
     `;
   }
 
   private get _needleColor(): string {
-    if (this.priority !== Priority.enhanced) {
-      return 'var(--instrument-regular-secondary-color)';
-    }
-
     if (this.portStarboard) {
       if (this.value > 0) {
         return 'var(--instrument-starboard-primary-color)';
@@ -157,8 +254,29 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
       return 'var(--instrument-regular-secondary-color)';
     }
 
+    if (this.priority !== Priority.enhanced) {
+      return 'var(--instrument-regular-secondary-color)';
+    }
+
     return 'var(--instrument-enhanced-secondary-color)';
   }
+
+  static override styles = [
+    unsafeCSS(instrumentReadoutStyle),
+    css`
+      :host {
+        position: relative;
+        display: block;
+        height: 100%;
+      }
+
+      .readout {
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    `,
+  ];
 }
 
 declare global {

@@ -46,7 +46,7 @@ export enum ObcRulerPointerType {
  */
 @customElement('obc-ruler-pointer')
 export class ObcRulerPointer extends LitElement {
-  @property({type: String, reflect: true})
+  @property({type: String})
   type: ObcRulerPointerType = ObcRulerPointerType.Default;
 
   override render() {

@@ -9,7 +9,7 @@ export function atSetpoint(
   setpoint: number | undefined,
   options: {
     autoAtSetpoint: boolean;
-    autoSetpointDeadband: number;
+    autoAtSetpointDeadband: number;
     touching: boolean;
     atSetpoint: boolean;
   }
@@ -19,7 +19,7 @@ export function atSetpoint(
   }
 
   if (options.autoAtSetpoint && setpoint !== undefined) {
-    return Math.abs(thrust - setpoint) < options.autoSetpointDeadband;
+    return Math.abs(thrust - setpoint) < options.autoAtSetpointDeadband;
   }
 
   return options.atSetpoint;
@@ -122,7 +122,11 @@ export function watchfaceLinear(
 
   const tickmarksX = width / 2 - scaleWidth + 4;
 
-  if (tickmarks.primaryTickmarkInterval !== undefined) {
+  if (
+    tickmarks.primaryTickmarkInterval !== undefined &&
+    tickmarks.primaryTickmarkInterval > 0 &&
+    Number.isFinite(tickmarks.primaryTickmarkInterval)
+  ) {
     const {svgs, values} = generateTickmarks({
       height,
       interval: tickmarks.primaryTickmarkInterval,
@@ -136,7 +140,11 @@ export function watchfaceLinear(
     skipValues.push(...values);
   }
 
-  if (tickmarks.secondaryTickmarkInterval !== undefined) {
+  if (
+    tickmarks.secondaryTickmarkInterval !== undefined &&
+    tickmarks.secondaryTickmarkInterval > 0 &&
+    Number.isFinite(tickmarks.secondaryTickmarkInterval)
+  ) {
     const {svgs, values} = generateTickmarks({
       height,
       interval: tickmarks.secondaryTickmarkInterval,

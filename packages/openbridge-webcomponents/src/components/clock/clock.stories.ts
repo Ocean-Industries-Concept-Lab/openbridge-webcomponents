@@ -21,7 +21,7 @@ export const Normal: Story = {
 
 export const NoClick: Story = {
   args: {
-    noClick: true,
+    isClickable: false,
   },
 };
 
@@ -114,7 +114,7 @@ export const LiveClock: Story = {
     locale: 'en-GB',
     showSeconds: true,
   },
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   render: (args) => {
     const clock = document.createElement('obc-clock');
     clock.date = args.date;

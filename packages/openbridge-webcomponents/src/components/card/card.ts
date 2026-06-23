@@ -36,7 +36,7 @@ import {customElement} from '../../decorator.js';
  * ### Slots
  * | Slot Name        | Renders When...          | Purpose                                            |
  * |------------------|-------------------------|----------------------------------------------------|
- * | `title`          | Always                   | Main card header/title.                            |
+ * | `title`          | `showTitle` is true      | Main card header/title.                            |
  * | (default)        | Always                   | Main card content area.                            |
  * | `dialog-title`   | `hasDialog` is true      | Title/header for the dialog overlay.               |
  * | `dialog-content` | `hasDialog` is true      | Content area for the dialog overlay.               |
@@ -44,10 +44,11 @@ import {customElement} from '../../decorator.js';
  * ---
  *
  * ### Properties
+ * - `showTitle` (boolean): Controls whether the title header is rendered. (Default: true)
  * - `hasDialog` (boolean): Enables dialog mode. When true, the card acts as a button and opens a modal dialog on click. (Default: false)
- * - `dialogTimeOutSeconds` (number): Total time in milliseconds before the dialog auto-closes. (Default: 20000)
- * - `dialogVisibleTimerSeconds` (number): Duration in milliseconds for which the countdown indicator is shown before auto-dismiss. (Default: 10000)
- *   - The countdown indicator appears for the last `dialogVisibleTimerSeconds` milliseconds of the dialog's lifetime.
+ * - `dialogTimeOutSeconds` (number): Total time in seconds before the dialog auto-closes. Use `0` to disable auto-close. (Default: 20)
+ * - `dialogVisibleTimerSeconds` (number): Duration in seconds for which the countdown indicator is shown before auto-dismiss. (Default: 10)
+ *   - The countdown indicator appears for the last `dialogVisibleTimerSeconds` seconds of the dialog's lifetime.
  *   - User activity resets the dialog timer, preventing premature dismissal.
  *
  * ---
@@ -78,7 +79,7 @@ import {customElement} from '../../decorator.js';
  */
 @customElement('obc-card')
 export class ObcCard extends LitElement {
-  @property({type: Boolean}) noTitle = false;
+  @property({type: Boolean, attribute: false}) showTitle: boolean = true;
   /**
    * Enables dialog mode. When true, the card acts as a button and opens a modal dialog on click.
    *
@@ -89,22 +90,24 @@ export class ObcCard extends LitElement {
   @property({type: Boolean}) hasDialog = false;
 
   /**
-   * Total time in milliseconds before the dialog auto-closes.
+   * Total time in seconds before the dialog auto-closes. Use `0` to disable auto-close.
    *
-   * When the dialog is open, it will automatically close after this duration unless reset by user activity. The countdown indicator appears for the last `dialogVisibleTimerSeconds` milliseconds.
+   * When greater than zero, the dialog closes after this duration unless reset by user activity. The countdown indicator appears for the last `dialogVisibleTimerSeconds` seconds.
    *
-   * @default 20000
+   * @default 20
+   * @availableWhen hasDialog==true
    */
-  @property({type: Number}) dialogTimeOutSeconds = 20_000;
+  @property({type: Number}) dialogTimeOutSeconds = 20;
 
   /**
-   * Duration in milliseconds for which the countdown indicator is shown before auto-dismiss.
+   * Duration in seconds for which the countdown indicator is shown before auto-dismiss.
    *
-   * The countdown indicator is visible for the last `dialogVisibleTimerSeconds` milliseconds of the dialog's lifetime. User activity resets the timer.
+   * The countdown indicator is visible for the last `dialogVisibleTimerSeconds` seconds of the dialog's lifetime when auto-close is enabled. User activity resets the timer.
    *
-   * @default 10000
+   * @default 10
+   * @availableWhen hasDialog==true
    */
-  @property({type: Number}) dialogVisibleTimerSeconds = 10_000;
+  @property({type: Number}) dialogVisibleTimerSeconds = 10;
 
   @query('dialog') dialog!: HTMLDialogElement;
 
@@ -121,7 +124,7 @@ export class ObcCard extends LitElement {
     return html`
       <${wrapperTag} class=${classMap({wrapper: true, 'has-dialog': this.hasDialog})} @click=${this.openDialog}>
         ${
-          this.noTitle
+          !this.showTitle
             ? nothing
             : html`<div class="header">
                 <div></div>
@@ -151,15 +154,18 @@ export class ObcCard extends LitElement {
                     <slot name="dialog-title"></slot>
                   </div>
                   <div class="actions">
-                    <obc-icon-button
-                      @click=${this.closeDialog}
-                      variant="flat"
-                      .progress=${this.showCountdown
-                        ? this.getProgressPercentage()
-                        : undefined}
-                    >
-                      <obi-close-google></obi-close-google>
-                    </obc-icon-button>
+                    <div class="close-action">
+                      ${this.showCountdown
+                        ? this.dialogTimerIndicator
+                        : nothing}
+                      <obc-icon-button
+                        @click=${this.closeDialog}
+                        variant="flat"
+                        aria-label="Close"
+                      >
+                        <obi-close-google></obi-close-google>
+                      </obc-icon-button>
+                    </div>
                   </div>
                 </div>
 
@@ -173,6 +179,43 @@ export class ObcCard extends LitElement {
     `;
   }
 
+  private get dialogTimerIndicator() {
+    const progressDash = this.getProgressDashPercentage();
+
+    return html`
+      <svg
+        class="dialog-timer"
+        width="40"
+        height="40"
+        viewBox="0 0 40 40"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <circle
+          cx="20"
+          cy="20"
+          r="18"
+          stroke="var(--container-backdrop-color)"
+          stroke-width="4"
+          fill="none"
+        />
+        <circle
+          cx="20"
+          cy="20"
+          r="18"
+          stroke="var(--instrument-enhanced-secondary-color)"
+          stroke-width="4"
+          stroke-linecap="round"
+          stroke-dasharray="${progressDash} 100"
+          pathLength="100"
+          transform="rotate(-90 20 20)"
+          fill="none"
+        />
+      </svg>
+    `;
+  }
+
   closeDialog(e: Event) {
     e.stopPropagation();
     this.clearAllTimers();
@@ -183,33 +226,54 @@ export class ObcCard extends LitElement {
   openDialog() {
     if (!this.dialog) return;
     this.dialog.showModal();
-    this.startDialogTimer();
-    this.addUserActivityListeners();
+    if (this.dialogTimeOutSeconds > 0) {
+      this.startDialogTimer();
+      this.addUserActivityListeners();
+    }
+  }
+
+  private get dialogTimeOutMs(): number {
+    return this.dialogTimeOutSeconds * 1000;
+  }
+
+  private get effectiveVisibleTimerSeconds(): number {
+    if (this.dialogVisibleTimerSeconds <= 0 || this.dialogTimeOutSeconds <= 0) {
+      return 0;
+    }
+    return Math.min(this.dialogVisibleTimerSeconds, this.dialogTimeOutSeconds);
+  }
+
+  private get effectiveVisibleTimerMs(): number {
+    return this.effectiveVisibleTimerSeconds * 1000;
   }
 
   private startDialogTimer() {
+    if (this.dialogTimeOutSeconds <= 0) return;
+
     this.clearAllTimers();
 
-    // Start countdown when dialogVisibleTimerSeconds is reached
-    const countdownStartTime =
-      this.dialogTimeOutSeconds - this.dialogVisibleTimerSeconds;
+    const countdownStartMs = Math.max(
+      0,
+      this.dialogTimeOutMs - this.effectiveVisibleTimerMs
+    );
 
-    // Timer for when to start countdown
-    this.countdownStartTimer = window.setTimeout(() => {
-      this.startCountdown();
-    }, countdownStartTime);
+    if (this.effectiveVisibleTimerSeconds > 0) {
+      this.countdownStartTimer = window.setTimeout(() => {
+        this.startCountdown();
+      }, countdownStartMs);
+    }
 
-    // Main timer for closing dialog
     this.dialogTimer = window.setTimeout(() => {
       this.dialog.close();
       this.clearAllTimers();
-    }, this.dialogTimeOutSeconds);
+      this.removeUserActivityListeners();
+    }, this.dialogTimeOutMs);
   }
 
   private startCountdown() {
     this.showCountdown = true;
     const startTime = performance.now();
-    const totalDuration = this.dialogVisibleTimerSeconds;
+    const totalDuration = this.effectiveVisibleTimerMs;
 
     const updateCountdown = (currentTime: number) => {
       const elapsed = currentTime - startTime;
@@ -249,9 +313,15 @@ export class ObcCard extends LitElement {
   }
 
   private getProgressPercentage(): number {
-    const totalSeconds = this.dialogVisibleTimerSeconds / 1000;
-    const progress = (this.countdownSeconds / totalSeconds) * 100;
+    if (this.effectiveVisibleTimerSeconds <= 0) return 0;
+    const progress =
+      (this.countdownSeconds / this.effectiveVisibleTimerSeconds) * 100;
     return Math.max(0, progress);
+  }
+
+  private getProgressDashPercentage(): number {
+    const progress = Math.min(this.getProgressPercentage(), 100);
+    return progress === 100 ? 100 : progress * 0.95;
   }
 
   private addUserActivityListeners() {
@@ -259,23 +329,20 @@ export class ObcCard extends LitElement {
       this.resetDialogTimer();
     };
 
-    window.addEventListener('mousemove', this.userActivityHandler);
-    window.addEventListener('touchstart', this.userActivityHandler);
-    window.addEventListener('touchmove', this.userActivityHandler);
+    window.addEventListener('pointerdown', this.userActivityHandler);
     window.addEventListener('keydown', this.userActivityHandler);
   }
 
   private removeUserActivityListeners() {
     if (this.userActivityHandler) {
-      window.removeEventListener('mousemove', this.userActivityHandler);
-      window.removeEventListener('touchstart', this.userActivityHandler);
-      window.removeEventListener('touchmove', this.userActivityHandler);
+      window.removeEventListener('pointerdown', this.userActivityHandler);
       window.removeEventListener('keydown', this.userActivityHandler);
       this.userActivityHandler = undefined;
     }
   }
 
   private resetDialogTimer() {
+    if (this.dialogTimeOutSeconds <= 0) return;
     this.clearAllTimers();
     this.startDialogTimer();
   }

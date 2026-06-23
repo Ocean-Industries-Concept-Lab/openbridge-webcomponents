@@ -1,0 +1,7 @@
+import {svg} from 'lit';
+
+export default svg`<svg width="280" height="280" viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M146.678 3.27637C228.267 36.7054 274.181 123.791 255.667 209.997C255.274 211.829 253.358 212.895 251.594 212.266L140.168 172.471L139.999 172.41L139.831 172.471L28.4052 212.266C26.6409 212.896 24.7244 211.829 24.331 209.997C5.81684 123.791 51.731 36.7063 133.32 3.27734L136.994 1.77149C138.92 0.982591 141.078 0.982691 143.004 1.77149L146.678 3.27637Z" fill="var(--instrument-frame-primary-color)" vector-effect="non-scaling-stroke" stroke="var(--instrument-tick-mark-secondary-color)"/>
+<path d="M143.545 18.1031C167.001 44.3718 177.289 79.8554 171.522 114.597L144.83 275.405C144.438 277.768 142.394 279.5 139.999 279.5C137.604 279.499 135.56 277.768 135.168 275.405L108.476 114.597C102.709 79.8554 112.998 44.3716 136.454 18.1031C138.344 15.9868 141.655 15.9868 143.545 18.1031Z" fill="var(--instrument-frame-primary-color)" vector-effect="non-scaling-stroke" stroke="var(--instrument-tick-mark-secondary-color)"/>
+</svg>
+`;

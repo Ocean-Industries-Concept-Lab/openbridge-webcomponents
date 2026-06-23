@@ -202,9 +202,9 @@ const meta: Meta = {
         {min: 25, max: 45, type: AdviceType.caution, hinted: true},
         {min: 55, max: 75, type: AdviceType.advice, hinted: false},
       ]}
-      .primaryInterval=${10}
-      .secondaryInterval=${5}
-      .tertiaryInterval=${1}
+      .primaryTickmarkInterval=${10}
+      .secondaryTickmarkInterval=${5}
+      .tertiaryTickmarkInterval=${1}
     >
     </obc-gauge-trend>
   `,
@@ -214,7 +214,7 @@ export default meta;
 type Story = StoryObj;
 
 export const GaugeTrend: Story = {
-  name: 'Gauge trend (default, scaleReferenceSize=384)',
+  name: 'Gauge Trend (default, scaleReferenceSize=384)',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -245,8 +245,8 @@ export const GaugeTrend: Story = {
         {min: 25, max: 45, type: AdviceType.caution, hinted: true},
         {min: 55, max: 75, type: AdviceType.advice, hinted: false},
       ]}
-      .primaryInterval=${50}
-      .secondaryInterval=${5}
+      .primaryTickmarkInterval=${50}
+      .secondaryTickmarkInterval=${5}
       .scaleReferenceSize=${_args.scaleReferenceSize}
     >
     </obc-gauge-trend>
@@ -254,7 +254,7 @@ export const GaugeTrend: Story = {
 };
 
 export const GaugeTrendScaleReferenceSize: Story = {
-  name: 'Using scaleReferenceSize=240',
+  name: 'Using ScaleReferenceSize=240',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -285,9 +285,9 @@ export const GaugeTrendScaleReferenceSize: Story = {
         {min: 25, max: 45, type: AdviceType.caution, hinted: true},
         {min: 55, max: 75, type: AdviceType.advice, hinted: false},
       ]}
-      .primaryInterval=${10}
-      .secondaryInterval=${5}
-      .tertiaryInterval=${1}
+      .primaryTickmarkInterval=${10}
+      .secondaryTickmarkInterval=${5}
+      .tertiaryTickmarkInterval=${1}
       .scaleReferenceSize=${_args.scaleReferenceSize}
     >
     </obc-gauge-trend>
@@ -306,8 +306,7 @@ export const GaugeTrendScaleReferenceSize: Story = {
  * Figma 1:1, while the center panel shows the same 240px design scaled up to fit 384px.
  */
 export const ScaleReferenceSizeComparison: StoryObj = {
-  name: 'Scale reference size comparison',
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   decorators: [(story) => story()],
   args: {
     browserContainerWidth: 1200,
@@ -406,7 +405,7 @@ export const ScaleReferenceSizeComparison: StoryObj = {
               .setpoint=${args.setpoint}
               .hasBar=${true}
               .hasScale=${true}
-              .secondaryInterval=${5}
+              .secondaryTickmarkInterval=${5}
             ></obc-gauge-trend>
           </div>
           <div class="scale-comparison-sublabel">Scale factor: 1.0</div>
@@ -434,7 +433,7 @@ export const ScaleReferenceSizeComparison: StoryObj = {
               .setpoint=${args.setpoint}
               .hasBar=${true}
               .hasScale=${true}
-              .secondaryInterval=${5}
+              .secondaryTickmarkInterval=${5}
             ></obc-gauge-trend>
           </div>
           <div class="scale-comparison-sublabel">Scale factor: 1.6</div>
@@ -462,7 +461,7 @@ export const ScaleReferenceSizeComparison: StoryObj = {
               .setpoint=${args.setpoint}
               .hasBar=${true}
               .hasScale=${true}
-              .secondaryInterval=${5}
+              .secondaryTickmarkInterval=${5}
             ></obc-gauge-trend>
           </div>
           <div class="scale-comparison-sublabel">Scale factor: 1.0</div>
@@ -473,14 +472,14 @@ export const ScaleReferenceSizeComparison: StoryObj = {
 };
 
 export const GaugeTrendWithoutScale: Story = {
-  name: 'Without scale',
+  name: 'Without Scale',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
   },
   args: {
     hasScale: false,
-    primaryInterval: 100,
+    primaryTickmarkInterval: 100,
     scaleReferenceSize: 384,
   },
   render: (_args) => html`
@@ -503,9 +502,9 @@ export const GaugeTrendWithoutScale: Story = {
         {min: 25, max: 45, type: AdviceType.caution, hinted: true},
         {min: 55, max: 75, type: AdviceType.advice, hinted: false},
       ]}
-      .primaryInterval=${100}
-      .secondaryInterval=${5}
-      .tertiaryInterval=${1}
+      .primaryTickmarkInterval=${100}
+      .secondaryTickmarkInterval=${5}
+      .tertiaryTickmarkInterval=${1}
       .scaleReferenceSize=${_args.scaleReferenceSize}
     >
     </obc-gauge-trend>
@@ -513,7 +512,7 @@ export const GaugeTrendWithoutScale: Story = {
 };
 
 export const GaugeTrendWithoutBar: Story = {
-  name: 'Without bar (scale only)',
+  name: 'Without Bar (scale only)',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -521,7 +520,7 @@ export const GaugeTrendWithoutBar: Story = {
   args: {
     hasBar: false,
     chartFill: false,
-    primaryInterval: 50,
+    primaryTickmarkInterval: 50,
     scaleReferenceSize: 384,
   },
   render: (_args) => html`
@@ -547,8 +546,8 @@ export const GaugeTrendWithoutBar: Story = {
         {min: 25, max: 45, type: AdviceType.caution, hinted: true},
         {min: 55, max: 75, type: AdviceType.advice, hinted: false},
       ]}
-      .primaryInterval=${50}
-      .secondaryInterval=${5}
+      .primaryTickmarkInterval=${50}
+      .secondaryTickmarkInterval=${5}
       .scaleReferenceSize=${_args.scaleReferenceSize}
     >
       <!-- Note: highlightCurrentValue is auto-derived (true when hasBar=false) -->
@@ -557,16 +556,16 @@ export const GaugeTrendWithoutBar: Story = {
 };
 
 export const GaugeTrendWithAdvice: Story = {
-  name: 'With advice overlays',
+  name: 'With Advice Overlays',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
   },
   args: {
     hasAdvice: true,
-    primaryInterval: 20,
-    secondaryInterval: 10,
-    tertiaryInterval: 2,
+    primaryTickmarkInterval: 20,
+    secondaryTickmarkInterval: 10,
+    tertiaryTickmarkInterval: 2,
     scaleReferenceSize: 384,
   },
   render: (_args) => html`
@@ -592,9 +591,9 @@ export const GaugeTrendWithAdvice: Story = {
         {min: 70, max: 90, type: AdviceType.caution, hinted: true},
         {min: 10, max: 30, type: AdviceType.advice, hinted: false},
       ]}
-      .primaryInterval=${20}
-      .secondaryInterval=${10}
-      .tertiaryInterval=${2}
+      .primaryTickmarkInterval=${20}
+      .secondaryTickmarkInterval=${10}
+      .tertiaryTickmarkInterval=${2}
       .scaleReferenceSize=${_args.scaleReferenceSize}
     >
     </obc-gauge-trend>
@@ -614,7 +613,7 @@ export const GaugeTrendWithAdvice: Story = {
  * how gauge-trend can be configured for domain-specific measurements.
  */
 export const GaugeTrendCustomScaleRange: Story = {
-  name: 'Custom scale range (25-75)',
+  name: 'Custom Scale Range (25-75)',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -683,9 +682,9 @@ export const GaugeTrendCustomScaleRange: Story = {
         {min: 60, max: 70, type: AdviceType.caution, hinted: true},
         {min: 30, max: 40, type: AdviceType.advice, hinted: false},
       ]}
-      .primaryInterval=${10}
-      .secondaryInterval=${5}
-      .tertiaryInterval=${1}
+      .primaryTickmarkInterval=${10}
+      .secondaryTickmarkInterval=${5}
+      .tertiaryTickmarkInterval=${1}
       .scaleReferenceSize=${_args.scaleReferenceSize}
     >
     </obc-gauge-trend>
@@ -693,7 +692,7 @@ export const GaugeTrendCustomScaleRange: Story = {
 };
 
 export const GaugeTrendLabelsOnly: Story = {
-  name: 'Labels only (no bar, condensed scale)',
+  name: 'Labels Only (no bar, condensed scale)',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -701,8 +700,8 @@ export const GaugeTrendLabelsOnly: Story = {
   args: {
     hasBar: false,
     chartFill: false,
-    primaryInterval: 100,
-    secondaryInterval: 100,
+    primaryTickmarkInterval: 100,
+    secondaryTickmarkInterval: 100,
     scaleReferenceSize: 384,
   },
   render: (_args) => html`
@@ -725,8 +724,8 @@ export const GaugeTrendLabelsOnly: Story = {
         {min: 25, max: 45, type: AdviceType.caution, hinted: true},
         {min: 55, max: 75, type: AdviceType.advice, hinted: false},
       ]}
-      .primaryInterval=${100}
-      .secondaryInterval=${100}
+      .primaryTickmarkInterval=${100}
+      .secondaryTickmarkInterval=${100}
       .scaleReferenceSize=${_args.scaleReferenceSize}
       .scaleType=${ScaleType.condensed}
     >
@@ -745,8 +744,7 @@ export const GaugeTrendLabelsOnly: Story = {
  * - Right: Chart fills container width, scale proportionally adjusts based on reference size
  */
 export const FixedAspectRatioScalingComparison: StoryObj = {
-  name: 'Fixed aspect ratio scaling comparison',
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   decorators: [],
   args: {
     width: 384,
@@ -895,9 +893,9 @@ export const FixedAspectRatioScalingComparison: StoryObj = {
             .touching=${args.touching}
             .hasBar=${true}
             .hasScale=${true}
-            .primaryInterval=${10}
-            .secondaryInterval=${5}
-            .tertiaryInterval=${1}
+            .primaryTickmarkInterval=${10}
+            .secondaryTickmarkInterval=${5}
+            .tertiaryTickmarkInterval=${1}
           ></obc-gauge-trend>
         </div>
       </div>
@@ -915,7 +913,7 @@ export const FixedAspectRatioScalingComparison: StoryObj = {
  */
 export const RealtimeShifting: Story = {
   name: 'Realtime (shifting)',
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   render: (_args) => {
     // Create wrapper container
     const wrapper = document.createElement('div');
@@ -997,8 +995,8 @@ export const RealtimeShifting: Story = {
     g1.fillMode = 'tint';
     g1.fillMin = 0;
     g1.fillMax = 50;
-    g1.primaryInterval = 50;
-    g1.secondaryInterval = 10;
+    g1.primaryTickmarkInterval = 50;
+    g1.secondaryTickmarkInterval = 10;
 
     // Gauge 2: Without bar (scale only) - from GaugeTrendWithoutBar
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1017,8 +1015,8 @@ export const RealtimeShifting: Story = {
     g2.fillMode = 'fill';
     g2.fillMin = 0;
     g2.fillMax = 50;
-    g2.primaryInterval = 50;
-    g2.secondaryInterval = 5;
+    g2.primaryTickmarkInterval = 50;
+    g2.secondaryTickmarkInterval = 5;
     // Note: highlightCurrentValue is auto-derived (true when hasBar=false)
 
     // Gauge 3: Condensed scale (labels only) - from GaugeTrendLabelsOnly
@@ -1038,8 +1036,8 @@ export const RealtimeShifting: Story = {
     g3.fillMode = 'fill';
     g3.fillMin = 0;
     g3.fillMax = 50;
-    g3.primaryInterval = 100;
-    g3.secondaryInterval = 100;
+    g3.primaryTickmarkInterval = 100;
+    g3.secondaryTickmarkInterval = 100;
     g3.scaleType = ScaleType.condensed;
     // Note: highlightCurrentValue is auto-derived (true when hasBar=false)
 

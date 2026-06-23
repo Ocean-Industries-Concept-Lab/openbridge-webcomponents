@@ -4,6 +4,29 @@
   display: flex;
   flex-direction: column;
 
+  &.full-width {
+    width: 100%;
+    max-width: 100%;
+    min-width: 320px;
+  }
+
+  &.full-height,
+  &.full-height .card-container,
+  &.full-height .card-row,
+  &.full-height .card,
+  &.full-height .content-container-placeholder ::slotted(*) {
+    height: 100%;
+  }
+
+  .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0 var(--ui-components-card-padding);
+    box-sizing: border-box;
+  }
+
   &.progress-left-side {
     flex-direction: row;
     gap: var(--ui-components-card-padding);
@@ -73,7 +96,6 @@
     align-self: stretch;
     gap: var(--ui-components-card-padding);
     min-height: 48px;
-    padding-left: var(--ui-components-card-padding);
     border-radius: 12px 12px 0 0;
 
     .title-two-line & {
@@ -82,6 +104,7 @@
 
     .title-description & {
       min-height: 64px;
+      padding-left: var(--ui-components-card-padding); /*check*/
     }
 
     .size-regular.progress-centered.title-two-line &,
@@ -121,6 +144,7 @@
     gap: var(--ui-components-card-padding);
     padding: 0;
     width: 100%;
+    height: 100%;
     border-bottom-left-radius: 12px;
     border-bottom-right-radius: 12px;
     overflow: hidden;
@@ -160,7 +184,6 @@
     display: flex;
     gap: var(--ui-components-card-padding);
     padding-right: var(--ui-components-card-padding);
-    flex: 1 1 auto;
     justify-content: flex-end;
     align-items: flex-end;
 
@@ -169,6 +192,12 @@
       flex-direction: column-reverse;
       align-items: flex-end;
     }
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
 
   .text-container {
@@ -267,7 +296,6 @@
       }
 
       obc-sequence-step::part(output) {
-        flex: 1 1 auto;
         height: 100%;
       }
     }

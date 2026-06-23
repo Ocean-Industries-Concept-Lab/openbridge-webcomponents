@@ -16,13 +16,17 @@ import '../../icons/icon-warning-noack-iec.js';
 import '../alert-icon/alert-icon.js';
 import {
   Alert,
-  AlertType,
   comparePriorityAlerts,
   isActive,
   isAcknowledged,
   isBlocked,
   isShelved,
 } from '../../types.js';
+import {
+  excludedFromUnackedFilter,
+  requiresAcknowledgement,
+  usesAlarmNoAckIcon,
+} from '../../alert-severity.js';
 import {
   ObcTable,
   ObcTableCellClickEvent,
@@ -68,7 +72,7 @@ export function getAlertListModeData(selectedMode: AlertListMode) {
       filter: (alert: Alert) =>
         !isAcknowledged(alert) &&
         isActive(alert) &&
-        alert.type !== AlertType.Caution &&
+        !excludedFromUnackedFilter(alert.type) &&
         !isShelved(alert),
     };
   else if (selectedMode === AlertListMode.SHELVED)
@@ -102,7 +106,7 @@ export function canAckFilter(filter: (alert: Alert) => boolean) {
   return (alert: Alert) =>
     !isAcknowledged(alert) &&
     !alert.noAck &&
-    alert.type !== AlertType.Caution &&
+    !excludedFromUnackedFilter(alert.type) &&
     filter(alert);
 }
 
@@ -115,6 +119,7 @@ export class ObcAlertListDetails extends LitElement {
   @property({type: String}) selectedMode: AlertListMode = AlertListMode.ALL;
   @property({type: Array}) alerts: Alert[] = [];
   @property({type: Boolean}) showTime: boolean = false;
+  /** @availableWhen showTime==true */
   @property({attribute: false}) timeFormatter: (time: Date) => string = (
     time: Date
   ) => time.toLocaleTimeString(undefined, {hour12: false});
@@ -225,7 +230,11 @@ export class ObcAlertListDetails extends LitElement {
         key: 'tagId',
         sortable: true,
         compareFunction: (a, b) => {
-          return (a.text as string).localeCompare(b.text as string);
+          const aText =
+            a?.type === ObcTableCellType.Regular ? String(a.text ?? '') : '';
+          const bText =
+            b?.type === ObcTableCellType.Regular ? String(b.text ?? '') : '';
+          return aText.localeCompare(bText);
         },
       });
       return columns;
@@ -250,15 +259,12 @@ export class ObcAlertListDetails extends LitElement {
       if (
         !isAcknowledged(alert) &&
         isActive(alert) &&
-        [AlertType.Alarm, AlertType.Warning].includes(alert.type)
+        requiresAcknowledgement(alert.type)
       ) {
         if (alert.noAck) {
-          const icon =
-            alert.type === AlertType.Alarm
-              ? html`<obi-alarm-noack-iec usecsscolor></obi-alarm-noack-iec>`
-              : html`<obi-warning-noack-iec
-                  usecsscolor
-                ></obi-warning-noack-iec>`;
+          const icon = usesAlarmNoAckIcon(alert.type)
+            ? html`<obi-alarm-noack-iec usecsscolor></obi-alarm-noack-iec>`
+            : html`<obi-warning-noack-iec usecsscolor></obi-warning-noack-iec>`;
           action = {
             type: ObcTableCellType.Regular,
             largeIcon: true,
@@ -319,7 +325,7 @@ export class ObcAlertListDetails extends LitElement {
                 .data=${data}
                 .columns=${this.columns}
                 .striped=${true}
-                .noHeader=${this.small}
+                .showHeader=${!this.small}
                 @row-click=${this.onRowClick}
                 @cell-button-click=${this.onCellButtonClick}
               ></obc-table>

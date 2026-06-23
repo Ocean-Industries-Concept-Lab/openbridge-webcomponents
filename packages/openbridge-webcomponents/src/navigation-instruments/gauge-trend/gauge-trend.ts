@@ -14,7 +14,7 @@ import {
   BarContainerStyle,
   ScaleType,
 } from '../../building-blocks/bar-vertical/bar-vertical.js';
-import type {AdviceType} from '../watch/advice.js';
+import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/bar-vertical/bar-vertical.js';
 
@@ -110,7 +110,7 @@ export {FillMode, ScaleType};
  *
  * Setpoint properties are inherited from {@link SetpointMixin}.
  * These are forwarded to the internal `obc-bar-vertical` scale:
- * `setpoint`, `newSetpoint`, `touching`, `atSetpoint`, `disableAutoAtSetpoint`,
+ * `setpoint`, `newSetpoint`, `touching`, `atSetpoint`, `autoAtSetpoint`,
  * `autoAtSetpointDeadband`, `setpointAtZeroDeadband`, `setpointOverride`.
  * See {@link SetpointMixinInterface} for full documentation.
  */
@@ -236,7 +236,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
     barVertical.newSetpoint = this.newSetpoint;
     barVertical.touching = this.touching;
     barVertical.atSetpoint = this.atSetpoint;
-    barVertical.disableAutoAtSetpoint = this.disableAutoAtSetpoint;
+    barVertical.autoAtSetpoint = this.autoAtSetpoint;
     barVertical.autoAtSetpointDeadband = this.autoAtSetpointDeadband;
     barVertical.setpointAtZeroDeadband = this.setpointAtZeroDeadband;
     barVertical.animateSetpoint = this.animateSetpoint;
@@ -245,9 +245,9 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
     barVertical.advicePosition = AdvicePosition.inner;
     // obc-bar-vertical uses 'advices' (plural), not 'advice' or 'hasAdvice'
     barVertical.advices = this.hasAdvice ? this.advice : [];
-    barVertical.primaryTickmarkInterval = this.primaryInterval;
-    barVertical.secondaryTickmarkInterval = this.secondaryInterval;
-    barVertical.tertiaryTickmarkInterval = this.tertiaryInterval;
+    barVertical.primaryTickmarkInterval = this.primaryTickmarkInterval;
+    barVertical.secondaryTickmarkInterval = this.secondaryTickmarkInterval;
+    barVertical.tertiaryTickmarkInterval = this.tertiaryTickmarkInterval;
     barVertical.scaleBackground = this.hasScale;
     // When hasScale=false, use gray (secondary) background for the bar container
     barVertical.barContainerStyle = this.hasScale
@@ -258,8 +258,10 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
     // Pass scaleReferenceSize from parent (inherited from ObcChartLineBase)
     barVertical.scaleReferenceSize = this.scaleReferenceSize;
     // Derive tickmark visibility from whether intervals are defined
-    barVertical.hasPrimaryTickmarks = this.primaryInterval !== undefined;
-    barVertical.hasTertiaryTickmarks = this.tertiaryInterval !== undefined;
+    barVertical.hasPrimaryTickmarks =
+      this.primaryTickmarkInterval !== undefined;
+    barVertical.hasTertiaryTickmarks =
+      this.tertiaryTickmarkInterval !== undefined;
     barVertical.priority = this.priority;
     // Scale state inherits from parent 'state' property automatically
     barVertical.state = this.state;
@@ -288,6 +290,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
    * - `'condensed'`: Shorter tick lengths for compact display
    *
    * Hidden from Storybook controls via argTypes configuration.
+   * @availableWhen hasScale==true
    */
   @property({type: String})
   scaleType: ScaleType = ScaleType.regular;
@@ -329,6 +332,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
    * - The `fillMax` value (when `fillMax` is not explicitly set)
    *
    * In typical usage, you only need to set this property to update the gauge.
+   * @availableWhen hasBar==true || hasScale==true
    */
   @property({type: Number})
   value?: number = undefined;
@@ -362,6 +366,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
    *   Use this when you want to show a fixed range independent of the current value.
    *
    * In both modes, `fillMin` is the origin point (e.g., 0 in a -100..100 scale).
+   * @availableWhen hasBar==true && value!=undefined
    */
   @property({type: String})
   fillMode: FillMode = FillMode.fill;
@@ -370,6 +375,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
    * Fill origin value - the starting point for the bar fill.
    * In both fill modes, the bar fills from this value toward the current value.
    * For scales like -100..100, set this to 0 to have the bar fill up or down from zero.
+   * @availableWhen hasBar==true && value!=undefined
    */
   @property({type: Number})
   fillMin = 0;
@@ -381,43 +387,42 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
    *
    * In `'tint'` mode, this defines the upper bound of the highlighted range.
    * When `undefined`, defaults to `value`.
+   * @availableWhen hasBar==true && value!=undefined && fillMode==tint
    */
   @property({type: Number})
   fillMax?: number = undefined;
 
   /**
    * Advice/alert overlays for the vertical scale.
+   * @availableWhen hasAdvice==true
    */
-  @property({attribute: false})
-  advice: Array<{
-    min: number;
-    max: number;
-    type: AdviceType;
-    hinted: boolean;
-  }> = [];
+  @property({type: Array, attribute: false})
+  advice: LinearAdvice[] = [];
 
   /**
    * Primary tick interval for the vertical scale (longest ticks with labels).
    */
   @property({type: Number})
-  primaryInterval?: number = undefined;
+  primaryTickmarkInterval?: number = undefined;
 
   // Setpoint properties (setpoint, newSetpoint, touching, atSetpoint,
-  // disableAutoAtSetpoint, autoAtSetpointDeadband, setpointAtZeroDeadband,
+  // autoAtSetpoint, autoAtSetpointDeadband, setpointAtZeroDeadband,
   // setpointOverride, computeAtSetpoint()) are provided by SetpointMixin.
   // See setpoint-mixin.ts for full docs.
 
   /**
    * Secondary tick interval for the vertical scale (medium ticks).
+   * @availableWhen hasScale==true
    */
   @property({type: Number})
-  secondaryInterval = 0.5;
+  secondaryTickmarkInterval = 0.5;
 
   /**
    * Tertiary tick interval for the vertical scale (shortest ticks).
+   * @availableWhen hasScale==true
    */
   @property({type: Number})
-  tertiaryInterval?: number = undefined;
+  tertiaryTickmarkInterval?: number = undefined;
 
   /**
    * Enable chart area fill.
@@ -507,7 +512,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
       changed.has('newSetpoint') ||
       changed.has('touching') ||
       changed.has('atSetpoint') ||
-      changed.has('disableAutoAtSetpoint') ||
+      changed.has('autoAtSetpoint') ||
       changed.has('autoAtSetpointDeadband') ||
       changed.has('setpointAtZeroDeadband') ||
       changed.has('setpointOverride') ||
@@ -518,9 +523,9 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
       changed.has('fillMin') ||
       changed.has('fillMax') ||
       changed.has('advice') ||
-      changed.has('primaryInterval') ||
-      changed.has('secondaryInterval') ||
-      changed.has('tertiaryInterval') ||
+      changed.has('primaryTickmarkInterval') ||
+      changed.has('secondaryTickmarkInterval') ||
+      changed.has('tertiaryTickmarkInterval') ||
       changed.has('scaleType') ||
       changed.has('state') || // Scale state inherits from parent 'state'
       changed.has('priority') ||

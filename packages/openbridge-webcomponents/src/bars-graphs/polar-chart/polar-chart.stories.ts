@@ -83,7 +83,7 @@ export default meta;
 type Story = StoryObj<ObcPolarChart>;
 
 export const Default: Story = {
-  name: 'Default polar',
+  name: 'Default Polar',
   render: (args) => html`
     <obc-polar-chart
       .data=${args.data}
@@ -105,35 +105,35 @@ export const Default: Story = {
 };
 
 export const Monochrome: Story = {
-  name: 'Monochrome polar',
+  name: 'Monochrome Polar',
   args: {
     monochrome: true,
   },
 };
 
 export const DiscreteColorStops: Story = {
-  name: 'Discrete color stops polar',
+  name: 'Discrete Color Stops Polar',
   args: {
     discreteColorStops: true,
   },
 };
 
 export const MinHeight: Story = {
-  name: 'Minimal height polar (48px)',
+  name: 'Minimal Height Polar (48px)',
   args: {
     fixedHeight: 48,
   },
 };
 
 export const ThresholdHeight: Story = {
-  name: 'Threshold height polar (192px, where labels appear)',
+  name: 'Threshold Height Polar (192px, where labels appear)',
   args: {
     fixedHeight: 192,
   },
 };
 
 export const WithAnglesAndDegreeSymbol: Story = {
-  name: 'With angles and degree symbol polar',
+  name: 'With Angles and Degree Symbol Polar',
   args: {
     showSectorLabels: false,
     showOuterLabels: true,
@@ -144,7 +144,7 @@ export const WithAnglesAndDegreeSymbol: Story = {
 };
 
 export const WithSectorLabels: Story = {
-  name: 'With sector labels polar (no angles)',
+  name: 'With Sector Labels Polar (no angles)',
   args: {
     showSectorLabels: true,
     showOuterLabels: true,
@@ -153,7 +153,7 @@ export const WithSectorLabels: Story = {
 };
 
 export const WithLegend: Story = {
-  name: 'With legend polar',
+  name: 'With Legend Polar',
   args: {
     legend: true,
   },
@@ -167,7 +167,7 @@ export const CustomColors: Story = {
 };
 
 export const Realtime: Story = {
-  tags: ['!snapshot'],
+  tags: ['skip-test'],
   args: {
     fixedHeight: 320,
   },

@@ -49,7 +49,7 @@
 
   .other & {
     background-color: var(--amplified-enabled-background-color);
-    color: var(--base-blue-600);
+    color: var(--on-amplified-active-color);
     border-top-left-radius: 0;
   }
 

@@ -19,7 +19,6 @@ export const NoneSelected: Story = {
       {label: 'Value 2', value: '2'},
       {label: 'Value 3', value: '3'},
     ],
-    name: 'test',
   },
 };
 
@@ -31,6 +30,16 @@ export const PreSelected: Story = {
       {label: 'Value 3', value: '3'},
     ],
     value: '2',
-    name: 'test',
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    options: [
+      {label: 'Value 1', value: '1'},
+      {label: 'Value 2', value: '2'},
+      {label: 'Value 3', value: '3'},
+    ],
+    disabled: true,
   },
 };

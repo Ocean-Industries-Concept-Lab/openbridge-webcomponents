@@ -219,53 +219,40 @@
   justify-content: center;
 }
 
-.circular-progress-svg {
+obc-circular-progress {
   position: absolute;
-  width: 42px;
-  height: 42px;
+  width: calc(
+    var(--ui-components-icon-button-visual-target-size) +
+      var(--ui-components-progressbars-progress-button--circular-bar-weight) *
+      2 + 2px
+  );
+  height: calc(
+    var(--ui-components-icon-button-visual-target-size) +
+      var(--ui-components-progressbars-progress-button--circular-bar-weight) *
+      2 + 2px
+  );
   pointer-events: none;
   z-index: 1;
 }
 
-.circular-background {
-  stroke: var(--container-backdrop-color);
+.circular-alert-svg {
+  position: absolute;
+  width: calc(
+    var(--ui-components-icon-button-visual-target-size) +
+      var(--ui-components-progressbars-progress-button--circular-bar-weight) *
+      2 + 2px
+  );
+  height: calc(
+    var(--ui-components-icon-button-visual-target-size) +
+      var(--ui-components-progressbars-progress-button--circular-bar-weight) *
+      2 + 2px
+  );
+  pointer-events: none;
+  z-index: 1;
 }
 
 .circular-alert-ring {
   stroke: var(--alert-alarm-color);
-}
-
-.circular-progress {
-  stroke: var(--instrument-enhanced-secondary-color);
-  transition: stroke-dashoffset 0.3s ease-in-out;
-}
-
-.circular-progress {
-  stroke: var(--instrument-enhanced-secondary-color);
-  transition: stroke-dashoffset 0.3s ease-in-out;
-}
-
-.circular-progress.determinate {
-  stroke-linecap: round;
-}
-
-.circular-progress.indeterminate {
-  stroke-linecap: round;
-  animation: circular-rotate 1.5s linear infinite;
-}
-
-.circular-progress.progressive-indeterminate {
-  stroke-linecap: round;
-  animation: circular-rotate 1.5s linear infinite;
-}
-
-@keyframes circular-rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 .circular-visible-wrapper ::slotted([slot="icon"]) {

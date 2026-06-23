@@ -3,7 +3,7 @@ import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './user-menu.css?inline';
-import '../input/input.js';
+import '../text-input-field/text-input-field.js';
 import '../button/button.js';
 import '../user-button/user-button.js';
 import '../progress-bar/progress-bar.js';
@@ -12,7 +12,10 @@ import '../../icons/icon-calendar-google.js';
 import '../../icons/icon-log-open-google.js';
 import '../../icons/icon-settings-iec.js';
 import '../../icons/icon-user.js';
-import {HTMLInputTypeAttribute, ObcInputTextAlign} from '../input/input.js';
+import {
+  HTMLInputTypeAttribute,
+  ObcTextInputFieldTextAlign,
+} from '../text-input-field/text-input-field.js';
 import {ButtonVariant} from '../button/button.js';
 import {
   ProgressBarMode,
@@ -121,50 +124,58 @@ export class ObcUserMenu extends LitElement {
 
   /**
    * Toggles the "Recently signed in" section visibility.
+   * @availableWhen type in [signIn, userSignIn]
    */
   @property({type: Boolean})
   hasRecentlySignedIn = false;
 
   /**
    * Current username value for sign-in layouts.
+   * @availableWhen type==signIn
    */
   @property({type: String}) username = '';
 
   /**
    * Current password value for sign-in layouts.
+   * @availableWhen type in [signIn, userSignIn]
    */
   @property({type: String}) password = '';
 
   /**
    * Error message for the username field.
+   * @availableWhen type==signIn
    */
   @property({type: String}) usernameError = '';
 
   /**
    * Error message for the password field.
+   * @availableWhen type in [signIn, userSignIn]
    */
   @property({type: String}) passwordError = '';
 
   /**
    * Initials for the primary user profile.
+   * @availableWhen type!=signIn
    */
   @property({type: String}) userInitials?: string;
 
   /**
    * Label for the primary user profile.
+   * @availableWhen type!=signIn
    */
   @property({type: String}) userLabel?: string;
 
   /**
    * Recent users for the "Recently signed in" section.
    */
-  @property({attribute: false})
+  @property({type: Array, attribute: false})
   recentUsers: ObcUserMenuUser[] = [];
 
   /**
    * Actions shown in the signed-in navigation list.
+   * @availableWhen type==signedIn
    */
-  @property({attribute: false})
+  @property({type: Array, attribute: false})
   signedInActions: ObcUserMenuSignedInAction[] = [];
 
   private get defaultSignedInActions() {
@@ -192,26 +203,20 @@ export class ObcUserMenu extends LitElement {
     onInput?: (event: Event) => void,
     errorText = ''
   ) {
-    const showPasswordToggle = type === HTMLInputTypeAttribute.Password;
+    const isPassword = type === HTMLInputTypeAttribute.Password;
     return html`
-      <obc-input
-        class=${classMap({
-          'text-input': true,
-          'password-input': showPasswordToggle,
-        })}
-        placeholder=${placeholder}
+      <obc-text-input-field
+        .placeholder=${placeholder}
         .type=${type}
-        .textAlign=${ObcInputTextAlign.Left}
-        .passwordToggle=${showPasswordToggle}
+        .textAlign=${ObcTextInputFieldTextAlign.Left}
         .value=${value}
         .error=${Boolean(errorText)}
+        .errorText=${errorText}
         .required=${true}
+        .hasClearButton=${!isPassword}
         @input=${onInput}
       >
-        ${errorText
-          ? html`<div slot="helper-text">${errorText}</div>`
-          : nothing}
-      </obc-input>
+      </obc-text-input-field>
     `;
   }
 

@@ -60,13 +60,19 @@ export class ObcSequenceStep extends LitElement {
   @property({type: String}) styleType: SequenceStyle = SequenceStyle.regular;
   @property({type: String}) value: SequenceValue = SequenceValue.regular;
   @property({type: String, reflect: true}) variant?: SequenceVariant;
-  /** Displays the built-in state icon for medium/large regular steps. */
+  /**
+   * Displays the built-in state icon for medium/large regular steps.
+   * @availableWhen styleType==regular && type in [medium, large]
+   */
   @property({type: Boolean}) hasIcon = false;
-  @property({type: Boolean}) hideStepInputConnector = false;
-  @property({type: Boolean}) hideStepOutputConnector = false;
+  @property({type: Boolean, attribute: false}) showStepInputConnector: boolean =
+    true;
+  @property({type: Boolean, attribute: false})
+  showStepOutputConnector: boolean = true;
   /**
    * Extends the input connector to match the height/width of multi-line content.
    * Applies only when `hasInputConnector` is true.
+   * @availableWhen showStepInputConnector==true
    */
   @property({type: Boolean}) inputConnectorExtended = false;
 
@@ -75,11 +81,11 @@ export class ObcSequenceStep extends LitElement {
   }
 
   private get showInputConnector() {
-    return !this.hideStepInputConnector;
+    return this.showStepInputConnector;
   }
 
   private get showOutputConnector() {
-    return !this.hideStepOutputConnector;
+    return this.showStepOutputConnector;
   }
 
   private get isMediumPoint() {

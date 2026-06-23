@@ -5,6 +5,7 @@ import {
   ObcAlertFrameType,
   ObcAlertFrameStatus,
   AlertFrameTextSize,
+  ObcAlertFrameMode,
 } from './alert-frame.js';
 import './alert-frame.js';
 import '../../icons/icon-placeholder.js';
@@ -18,13 +19,20 @@ const meta: Meta<typeof ObcAlertFrame> = {
     type: ObcAlertFrameType.SmallSideFlip,
     thickness: ObcAlertFrameThickness.Small,
     status: ObcAlertFrameStatus.Alarm,
+    mode: ObcAlertFrameMode.ackedActive,
     demoWidth: 200,
     showIcon: true,
-    hideAlertCategoryIcon: false,
+    showAlertCategoryIcon: true,
   },
   argTypes: {
     type: {
       options: Object.values(ObcAlertFrameType),
+      control: {
+        type: 'select',
+      },
+    },
+    mode: {
+      options: Object.values(ObcAlertFrameMode),
       control: {
         type: 'select',
       },
@@ -52,17 +60,19 @@ const meta: Meta<typeof ObcAlertFrame> = {
   },
   render(args) {
     return html` <div style="width: fit-content; position: relative;">
-      <div
-        style="width: ${args.demoWidth}px; height: 150px; background-color: #999"
-      ></div>
       <obc-alert-frame
         .type=${args.type}
         .thickness=${args.thickness}
+        .mode=${args.mode}
         .status=${args.status}
         .textSize=${args.textSize}
         .showIcon=${args.showIcon}
-        .hideAlertCategoryIcon=${args.hideAlertCategoryIcon}
+        .showAlertCategoryIcon=${args.showAlertCategoryIcon}
+        .wrapContent=${true}
       >
+        <div
+          style="width: ${args.demoWidth}px; height: 150px; background-color: #999"
+        ></div>
         <obi-placeholder slot="icon"></obi-placeholder>
         <div slot="label">Label</div>
         <div slot="timer">00:00</div>
@@ -84,6 +94,14 @@ export const AlarmThick: Story = {
 export const AlarmThinn: Story = {
   args: {
     thickness: ObcAlertFrameThickness.Small,
+    type: ObcAlertFrameType.Regular,
+  },
+};
+
+export const UnackedActiveThick: Story = {
+  args: {
+    mode: ObcAlertFrameMode.unackedActive,
+    thickness: ObcAlertFrameThickness.Large,
     type: ObcAlertFrameType.Regular,
   },
 };
@@ -165,7 +183,7 @@ export const AlarmThickTopFlip: Story = {
         .sharpEdgeTopLeft=${args.sharpEdgeTopLeft}
         .textSize=${args.textSize}
         .showIcon=${args.showIcon}
-        .hideAlertCategoryIcon=${args.hideAlertCategoryIcon}
+        .showAlertCategoryIcon=${args.showAlertCategoryIcon}
       >
         <obi-placeholder slot="icon"></obi-placeholder>
         <div slot="label">Label</div>
@@ -197,7 +215,49 @@ export const AlarmThickTopFlipNoIcons: Story = {
     thickness: ObcAlertFrameThickness.Large,
     type: ObcAlertFrameType.TopFlip,
     showIcon: false,
-    hideAlertCategoryIcon: true,
+    showAlertCategoryIcon: false,
   },
   render: AlarmThickTopFlip.render,
+};
+
+export const LevelCritical: Story = {
+  args: {
+    status: ObcAlertFrameStatus.LevelCritical,
+  },
+};
+
+export const LevelHigh: Story = {
+  args: {
+    status: ObcAlertFrameStatus.LevelHigh,
+  },
+};
+
+export const LevelMedium: Story = {
+  args: {
+    status: ObcAlertFrameStatus.LevelMedium,
+  },
+};
+
+export const LevelLow: Story = {
+  args: {
+    status: ObcAlertFrameStatus.LevelLow,
+  },
+};
+
+export const LevelDiagnostic: Story = {
+  args: {
+    status: ObcAlertFrameStatus.LevelDiagnostic,
+  },
+};
+
+export const RectifiedUnactive: Story = {
+  args: {
+    type: ObcAlertFrameType.Regular,
+    thickness: ObcAlertFrameThickness.Large,
+    status: ObcAlertFrameStatus.Alarm,
+    demoWidth: 200,
+    showIcon: true,
+    showAlertCategoryIcon: true,
+    mode: ObcAlertFrameMode.unackedRectified,
+  },
 };

@@ -46,7 +46,8 @@ const renderToggleSwitch = (args) => {
   return html`<div style="width: 350px;">
     <obc-toggle-switch
       label="${args.label}"
-      ?checked=${args.checked}
+      .checked=${args.checked}
+      .externalControl=${args.externalControl}
       ?disabled=${args.disabled}
       ?hasDescription=${args.hasDescription}
       description="${args.description}"

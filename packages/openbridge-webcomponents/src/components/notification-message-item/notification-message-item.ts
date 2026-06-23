@@ -98,29 +98,34 @@ export class ObcNotificationMessageItem extends LitElement {
   /**
    * Title or heading for the notification.
    * Shown in the title slot if `hasTitle` is true.
+   * @availableWhen showTitle==true && type!=Inactive && empty==false
    */
   @property({type: String}) override title = '';
 
   /**
    * Detailed message text for the notification.
    * Shown in the description slot if `hasDescription` is true.
+   * @availableWhen showDescription==true && type!=Inactive && empty==false
    */
   @property({type: String}) description = '';
 
   /**
    * Primary timestamp to display (e.g., "09:12:46").
    * Shown in the time slot if `hasTimestamp` is true.
+   * @availableWhen showTimestamp==true && type!=Inactive && empty==false
    */
   @property({type: String}) time = '';
 
   /**
    * Secondary timestamp (e.g., relative time like "2m ago").
    * Shown in the time-secondary slot if `hasTimestamp2` is true.
+   * @availableWhen hasTimestamp2==true && type!=Inactive && empty==false
    */
   @property({type: String}) timeSecondary = '';
 
   /**
    * Label for the action button (used when `actionType` is "button").
+   * @availableWhen type==WithButton
    */
   @property({type: String}) actionLabel = 'View';
 
@@ -144,29 +149,34 @@ export class ObcNotificationMessageItem extends LitElement {
 
   /**
    * Whether to show the title.
+   * @availableWhen type!=Inactive && empty==false
    */
-  @property({type: Boolean}) hideTitle = false;
+  @property({type: Boolean, attribute: false}) showTitle: boolean = true;
 
   /**
    * Whether to show the description.
    * If false, the description slot is omitted.
+   * @availableWhen type!=Inactive && empty==false
    */
-  @property({type: Boolean}) hideDescription = false;
+  @property({type: Boolean, attribute: false}) showDescription: boolean = true;
 
   /**
-   * Whether to hide the primary timestamp.
+   * Whether to show the primary timestamp.
+   * @availableWhen type!=Inactive && empty==false
    */
-  @property({type: Boolean}) hideTimestamp = false;
+  @property({type: Boolean, attribute: false}) showTimestamp: boolean = true;
 
   /**
    * Whether to show the secondary timestamp.
    * If false, the time-secondary slot is omitted.
+   * @availableWhen type!=Inactive && empty==false
    */
   @property({type: Boolean}) hasTimestamp2 = false;
 
   /**
    * Whether to show the secondary icon overlay.
    * If true, renders the `secondary-icon` slot.
+   * @availableWhen type!=Inactive && empty==false
    */
   @property({type: Boolean}) hasSecondaryIcon = false;
 
@@ -185,6 +195,7 @@ export class ObcNotificationMessageItem extends LitElement {
   /**
    * Text to show in the empty/inactive state.
    * Used in the `empty` slot when `type="inactive"` or `empty` is true.
+   * @availableWhen type==Inactive || empty==true
    */
   @property({type: String}) emptyText = 'No active notification';
 
@@ -238,9 +249,9 @@ export class ObcNotificationMessageItem extends LitElement {
       <obc-topbar-message-item
         .type=${this.mappedType}
         .size=${this.mappedSize}
-        .hideTitle=${this.hideTitle}
-        .hideDescription=${this.hideDescription}
-        .hideTimestamp=${this.hideTimestamp}
+        .showTitle=${this.showTitle}
+        .showDescription=${this.showDescription}
+        .showTimestamp=${this.showTimestamp}
         .hasTimestamp2=${this.hasTimestamp2}
         .hasSecondaryIcon=${this.hasSecondaryIcon}
         @message-click=${this.handleMessageClick}
@@ -251,13 +262,13 @@ export class ObcNotificationMessageItem extends LitElement {
         ${this.hasSecondaryIcon
           ? html`<slot name="secondary-icon" slot="secondary-icon"></slot>`
           : nothing}
-        ${!this.hideTitle
+        ${this.title && this.showTitle
           ? html`<span slot="title">${this.title}</span>`
           : nothing}
-        ${!this.hideDescription
+        ${this.description && this.showDescription
           ? html`<span slot="description">${this.description}</span>`
           : nothing}
-        ${!this.hideTimestamp
+        ${this.time && this.showTimestamp
           ? html`<span slot="time">${this.time}</span>`
           : nothing}
         ${this.timeSecondary && this.hasTimestamp2

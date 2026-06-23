@@ -50,7 +50,8 @@ function colors({
 }
 
 function parseParams(params) {
-  const paramsArray = params.split(' ');
+  const paramsNoNewLine = params.replaceAll('\n', '');
+  const paramsArray = paramsNoNewLine.split(' ');
   const paramsObject = {};
   paramsArray.forEach((param) => {
     const [key, value] = param.split('=');
@@ -84,6 +85,13 @@ const styleMixin = (data) => {
   let focusVisibleWrapper = '&:focus-visible';
   if (params.visibleWrapperClass) {
     focusVisibleWrapper = `${focusVisibleWrapper} ${params.visibleWrapperClass}`;
+  }
+
+  const isIntegration = params.style.startsWith('integration-');
+  let disabledColor = `var(--on-${params.style}-disabled-color)`;
+  if (isIntegration) {
+    const styleWithoutIntegration = params.style.replace('integration-', '');
+    disabledColor = `var(--integration-on-${styleWithoutIntegration}-disabled-color)`;
   }
 
   const out = {
@@ -137,7 +145,7 @@ const styleMixin = (data) => {
       psudoClass: 'disabled',
       otherParameters: {
         cursor: 'not-allowed',
-        color: `var(--on-${params.style}-disabled-color)`,
+        color: disabledColor + ' !important',
       },
     }),
     ...colors({
@@ -147,7 +155,7 @@ const styleMixin = (data) => {
       className: 'disabled',
       otherParameters: {
         cursor: 'not-allowed',
-        color: `var(--on-${params.style}-disabled-color)`,
+        color: disabledColor + ' !important',
       },
     }),
   };

@@ -21,6 +21,8 @@ type SequenceCardStoryArgs = {
   titleType: ObcSequenceCardTitleType;
   progressType: ObcSequenceCardProgressType;
   state: ObcSequenceCardState;
+  fullWidth: boolean;
+  fullHeight: boolean;
   horizontal: boolean;
   hasLeadingIcon: boolean;
   cardTitle: string;
@@ -111,6 +113,8 @@ const renderSequenceCard = (args: SequenceCardStoryArgs) => html`
       .titleType=${args.titleType}
       .progressType=${args.progressType}
       .state=${args.state}
+      .fullWidth=${args.fullWidth}
+      .fullHeight=${args.fullHeight}
       .horizontal=${args.horizontal}
       .hasLeadingIcon=${args.hasLeadingIcon}
       .cardTitle=${args.cardTitle}
@@ -263,6 +267,8 @@ const meta: Meta<ObcSequenceCard> = {
     titleType: ObcSequenceCardTitleType.Single,
     progressType: ObcSequenceCardProgressType.Centered,
     state: ObcSequenceCardState.Active,
+    fullWidth: false,
+    fullHeight: false,
     horizontal: false,
     hasLeadingIcon: true,
     cardTitle: 'Title',

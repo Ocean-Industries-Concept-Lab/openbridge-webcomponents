@@ -24,7 +24,7 @@ const meta: Meta = {
     primaryTickmarkInterval: {control: {type: 'number', min: 1}},
     secondaryTickmarkInterval: {control: {type: 'number', min: 1}},
     tertiaryTickmarkInterval: {control: {type: 'number', min: 1}},
-    hideLabels: {control: {type: 'boolean'}},
+    showLabels: {control: {type: 'boolean'}},
     borderRadiusPosition: {
       control: {type: 'select'},
       options: Object.values(BorderRadiusPosition),
@@ -37,7 +37,7 @@ const meta: Meta = {
     setpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
     newSetpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
     atSetpoint: {control: {type: 'boolean'}},
-    disableAutoAtSetpoint: {control: {type: 'boolean'}},
+    autoAtSetpoint: {control: {type: 'boolean'}},
     autoAtSetpointDeadband: {
       control: {type: 'number', min: 0, max: 10, step: 0.5},
     },
@@ -55,7 +55,7 @@ const meta: Meta = {
     primaryTickmarkInterval: 20,
     secondaryTickmarkInterval: 10,
     tertiaryTickmarkInterval: undefined,
-    hideLabels: false,
+    showLabels: true,
     borderRadiusPosition: BorderRadiusPosition.innerFirstChild,
     priority: Priority.regular,
     fillMode: FillMode.fill,
@@ -65,7 +65,7 @@ const meta: Meta = {
     setpoint: undefined,
     newSetpoint: undefined,
     atSetpoint: false,
-    disableAutoAtSetpoint: false,
+    autoAtSetpoint: true,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
     state: 'active',
@@ -80,7 +80,7 @@ const meta: Meta = {
       .primaryTickmarkInterval=${args.primaryTickmarkInterval}
       .secondaryTickmarkInterval=${args.secondaryTickmarkInterval}
       .tertiaryTickmarkInterval=${args.tertiaryTickmarkInterval}
-      .hideLabels=${args.hideLabels}
+      .showLabels=${args.showLabels}
       .borderRadiusPosition=${args.borderRadiusPosition}
       .priority=${args.priority}
       .fillMode=${args.fillMode}
@@ -90,7 +90,7 @@ const meta: Meta = {
       .setpoint=${args.setpoint}
       .newSetpoint=${args.newSetpoint}
       .atSetpoint=${args.atSetpoint}
-      .disableAutoAtSetpoint=${args.disableAutoAtSetpoint}
+      .autoAtSetpoint=${args.autoAtSetpoint}
       .autoAtSetpointDeadband=${args.autoAtSetpointDeadband}
       .setpointAtZeroDeadband=${args.setpointAtZeroDeadband}
       .state=${args.state}
@@ -118,7 +118,7 @@ export const DefaultBottom: Story = {
 };
 
 export const ComponentSizeComparison: Story = {
-  name: 'Component size comparison (regular/medium/large/xl)',
+  name: 'Component Size Comparison (regular/medium/large/xl)',
 
   render: () => html`
     <div
@@ -217,7 +217,7 @@ export const DefaultTop: Story = {
 };
 
 export const NegativeRange: Story = {
-  name: 'Negative range (-100 to 100)',
+  name: 'Negative Range (-100 to 100)',
 
   args: {
     minValue: -100,
@@ -228,7 +228,7 @@ export const NegativeRange: Story = {
 };
 
 export const SmallRange: Story = {
-  name: 'Small range (0 to 10)',
+  name: 'Small Range (0 to 10)',
 
   args: {
     minValue: 0,
@@ -239,7 +239,7 @@ export const SmallRange: Story = {
 };
 
 export const WithBarFillBottom: Story = {
-  name: 'With bar fill (bottom side, enhanced)',
+  name: 'With Bar Fill (bottom side, enhanced)',
 
   args: {
     minValue: 0,
@@ -253,7 +253,7 @@ export const WithBarFillBottom: Story = {
 };
 
 export const WithBarFillTop: Story = {
-  name: 'With bar fill (top side)',
+  name: 'With Bar Fill (top side)',
 
   args: {
     minValue: -100,
@@ -268,7 +268,7 @@ export const WithBarFillTop: Story = {
 };
 
 export const FillModeComparison: Story = {
-  name: 'Fill mode comparison, enhanced (fill vs tint)',
+  name: 'Fill Mode Comparison, Enhanced (fill vs tint)',
 
   render: () => html`
     <div
@@ -328,7 +328,7 @@ export const FillModeComparison: Story = {
 };
 
 export const TintModeWithAdvice: Story = {
-  name: 'Tint mode with advice overlays',
+  name: 'Tint Mode With Advice Overlays',
 
   args: {
     minValue: -100,
@@ -350,7 +350,7 @@ export const TintModeWithAdvice: Story = {
 };
 
 export const WithAdvice: Story = {
-  name: 'With advice overlays',
+  name: 'With Advice Overlays',
 
   args: {
     minValue: -100,
@@ -373,7 +373,7 @@ export const WithAdvice: Story = {
 };
 
 export const WithSetpointAtValue: Story = {
-  name: 'With setpoint (value at setpoint)',
+  name: 'With Setpoint (value at setpoint)',
 
   args: {
     minValue: -100,
@@ -389,7 +389,7 @@ export const WithSetpointAtValue: Story = {
 };
 
 export const WithSetpointAwayFromValue: Story = {
-  name: 'With setpoint (value away from setpoint)',
+  name: 'With Setpoint (value away from setpoint)',
 
   args: {
     minValue: -100,
@@ -404,8 +404,6 @@ export const WithSetpointAwayFromValue: Story = {
 };
 
 export const StateComparison: Story = {
-  name: 'State comparison',
-
   render: () => html`
     <div style="display: flex; flex-direction: column; gap: 24px;">
       <!-- Header row -->

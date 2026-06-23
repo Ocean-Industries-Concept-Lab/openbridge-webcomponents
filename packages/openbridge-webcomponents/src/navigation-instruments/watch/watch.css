@@ -2,11 +2,15 @@
   box-sizing: border-box;
 }
 
+:host {
+  overflow: hidden;
+}
+
 .label {
   @mixin font-body;
-  font-size: calc(12px / var(--scale));
+  font-size: calc(12px / var(--scale, 1));
   fill: var(--element-neutral-color);
-  alignment-baseline: central;
+  dominant-baseline: central;
   text-anchor: middle;
 
   &.left {

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { type StartAlert, type SimulatedAlert, type Alert } from '@/business/model'
-import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item'
+import { ObcAlertMenuItemStatus } from '@oicl/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item'
 import { reactive } from 'vue'
 
 const alertPriority = ['alarm', 'warning', 'caution']

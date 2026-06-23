@@ -9,10 +9,10 @@ export class ObcFan extends ObcAbstractAutomationButtonMotorized {
   override get icon() {
     if (this.on) {
       return html`<obi-fan-on usecsscolor slot="icon"></obi-fan-on>
-        <obi-fan-on usecsscolor slot="icon-siluette"></obi-fan-on>`;
+        <obi-fan-on usecsscolor slot="icon-silhouette"></obi-fan-on>`;
     } else {
       return html`<obi-fan-off usecsscolor slot="icon"></obi-fan-off>
-        <obi-fan-off usecsscolor slot="icon-siluette"></obi-fan-off>`;
+        <obi-fan-off usecsscolor slot="icon-silhouette"></obi-fan-off>`;
     }
   }
 }

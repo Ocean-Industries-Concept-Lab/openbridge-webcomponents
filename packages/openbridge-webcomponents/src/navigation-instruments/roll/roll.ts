@@ -1,141 +1,139 @@
-import {LitElement, css, html} from 'lit';
+import {nothing, svg, type SVGTemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
-import '../watch/watch.js';
 import {
-  OUTER_RING_RADIUS,
   VesselImage,
   VesselImageSize,
-  WatchCircleType,
+  vesselImages,
+  type WatchVessel,
 } from '../watch/watch.js';
-import {TickmarkType} from '../watch/tickmark.js';
-import {AdviceState, AdviceType, AngleAdviceRaw} from '../watch/advice.js';
 import {customElement} from '../../decorator.js';
+import {
+  SingleAxisInclinometer,
+  INCLINOMETER_WATCH_RADIUS,
+} from '../../building-blocks/single-axis-inclinometer/single-axis-inclinometer.js';
 
-const cutAngle = 180 - 45;
-const watchRadius = OUTER_RING_RADIUS;
-const x = watchRadius * Math.cos((cutAngle * Math.PI) / 180);
-const y = watchRadius * Math.sin((cutAngle * Math.PI) / 180);
+const watchRadius = INCLINOMETER_WATCH_RADIUS;
 
+export enum ObcRollType {
+  /** Single arc scale at the bottom (default). */
+  singleScale = 'single-scale',
+  /** Bottom scale duplicated to the top as well. */
+  dualScale = 'dual-scale',
+}
+
+/**
+ * `<obc-roll>` — Roll (heel) indicator with a bottom arc scale.
+ *
+ * Shows `roll` against a watch arc centred at the bottom, with an average-roll
+ * band and a rotating indicator. Supports an optional top scale (`dual-scale`),
+ * a centre readout (`hasReadout`), and a `regular`/`enhanced` palette. See the
+ * individual properties for details.
+ *
+ * @element obc-roll
+ */
 @customElement('obc-roll')
-export class ObcRoll extends LitElement {
+export class ObcRoll extends SingleAxisInclinometer {
   @property({type: Number}) roll = 0;
   @property({type: Number}) minAvgRoll = 0;
   @property({type: Number}) maxAvgRoll = 0;
   @property({type: String}) vesselImageFore: VesselImage = VesselImage.psvFore;
+  @property({type: Number}) scaleForeImage = 1;
   @property({type: Number}) maxRollAdvice: number | undefined = undefined;
   @property({type: Boolean}) triggerRollAdvice = false;
+  /** Readout label. Default `Roll`. */
+  @property({type: String}) override label = 'Roll';
+  /** Readout unit. Default `DEG`. */
+  @property({type: String}) override unit = 'DEG';
+  /** Number of fraction digits shown in the readout. Default `0`. */
+  @property({type: Number}) override fractionDigits = 0;
+  /**
+   * `single-scale` shows one arc at the bottom (default); `dual-scale` also
+   * shows the scale on the top arc (the indicator's opposite end).
+   */
+  @property({type: String}) type: ObcRollType = ObcRollType.singleScale;
 
-  override render() {
-    return html`
-      <div class="container">
-        <svg viewBox="-200 -200 400 400">
-          <line
-            x1="-${watchRadius}"
-            y1="0"
-            x2="${watchRadius}"
-            y2="0"
-            stroke="var(--instrument-frame-tertiary-color)"
-          />
-          <line
-            x1="0"
-            y1="0"
-            y2="${watchRadius - 10}"
-            x2="0"
-            stroke="var(--instrument-enhanced-secondary-color)"
-            transform="rotate(${this.roll} 0 0)"
-          />
-          <path
-            d="M ${x} ${y} A ${watchRadius} ${watchRadius} 0 1 1 ${-x} ${y}"
-            fill="none"
-            stroke="var(--instrument-frame-tertiary-color)"
-          />
-        </svg>
-        <obc-watch
-          .watchCircleType=${WatchCircleType.double}
-          .areas=${[
-            {
-              startAngle: 135,
-              endAngle: 225,
-              roundOutsideCut: true,
-              roundInsideCut: true,
-            },
-          ]}
-          .barAreas=${[
-            {
-              startAngle: 180 + this.minAvgRoll,
-              endAngle: 180 + this.maxAvgRoll,
-              fillColor: 'var(--instrument-enhanced-tertiary-color)',
-            },
-          ]}
-          .needles=${[
-            {
-              angle: 180 + this.roll,
-              fillColor: 'var(--instrument-enhanced-secondary-color)',
-              strokeColor: 'var(--border-silhouette-color)',
-            },
-          ]}
-          .vessels=${[
-            {
-              size: VesselImageSize.large,
-              vesselImage: this.vesselImageFore,
-              transform: `rotate(${this.roll}deg)`,
-            },
-          ]}
-          .tickmarks=${[
-            {
-              angle: 180,
-              type: TickmarkType.main,
-            },
-          ]}
-          .advices=${this.advices}
-        ></obc-watch>
-      </div>
+  private get normalizedScaleForeImage(): number {
+    if (!Number.isFinite(this.scaleForeImage)) {
+      return 1;
+    }
+    return Math.max(0, Math.min(2, this.scaleForeImage));
+  }
+
+  protected override get centerAngle(): number {
+    return 180;
+  }
+  protected override get value(): number {
+    return this.roll;
+  }
+  protected override get avgMin(): number {
+    return this.minAvgRoll;
+  }
+  protected override get avgMax(): number {
+    return this.maxAvgRoll;
+  }
+  protected override get maxAdvice(): number | undefined {
+    return this.maxRollAdvice;
+  }
+  protected override get triggerAdvice(): boolean {
+    return this.triggerRollAdvice;
+  }
+  protected override get defaultAdviceOuter(): number {
+    return 45;
+  }
+  protected override get isDualScale(): boolean {
+    return this.type === ObcRollType.dualScale;
+  }
+  protected override get scaleVessels(): WatchVessel[] {
+    return [
+      {
+        size: VesselImageSize.large,
+        vesselImage: this.vesselImageFore,
+        transform: `rotate(${this.roll}deg) scale(${this.normalizedScaleForeImage})`,
+      },
+    ];
+  }
+
+  protected override renderIndicator(
+    needleTransform: string
+  ): SVGTemplateResult {
+    return svg`
+      <line
+        x1="0"
+        y1="0"
+        y2="${watchRadius - 10}"
+        x2="0"
+        stroke="${this.indicatorColor}"
+        transform="${needleTransform}"
+      />
     `;
   }
 
-  private get advices(): AngleAdviceRaw[] {
-    const advices = [];
-    if (this.maxRollAdvice !== undefined) {
-      const state = this.triggerRollAdvice
-        ? AdviceState.triggered
-        : AdviceState.regular;
-      advices.push({
-        minAngle: 135,
-        maxAngle: 180 - this.maxRollAdvice,
-        type: AdviceType.caution,
-        state: state,
-        hideMinTickmark: true,
-      });
-      advices.push({
-        minAngle: 180 + this.maxRollAdvice,
-        maxAngle: 225,
-        type: AdviceType.caution,
-        state: state,
-        hideMaxTickmark: true,
-      });
-    }
-    return advices;
+  protected override renderVesselOverlay(
+    vesselScale: number
+  ): SVGTemplateResult {
+    return svg`
+      <g
+        style="transform: rotate(${this.roll}deg) scale(${vesselScale * this.normalizedScaleForeImage}) translate(-80px, -80px);"
+      >
+        ${this.zoomToFitArc ? vesselImages[this.vesselImageFore] : nothing}
+      </g>
+    `;
   }
 
-  static override styles = css`
-    * {
-      box-sizing: border-box;
-    }
-
-    .container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-
-    .container > * {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-  `;
+  protected override renderComplement(arcAngle: number): SVGTemplateResult {
+    // Outer thin-ring complement endpoints. The arc band is centred at watch
+    // angle 180° (bottom) and spans 180° ± arcAngle, so its edges sit at SVG
+    // coords (±R·sin(arcAngle), R·cos(arcAngle)).
+    const x = watchRadius * Math.sin((arcAngle * Math.PI) / 180);
+    const y = watchRadius * Math.cos((arcAngle * Math.PI) / 180);
+    return svg`
+      <path
+        d="M ${-x} ${y} A ${watchRadius} ${watchRadius} 0 1 1 ${x} ${y}"
+        fill="none"
+        stroke="var(--instrument-frame-tertiary-color)"
+      />
+    `;
+  }
 }
 
 declare global {

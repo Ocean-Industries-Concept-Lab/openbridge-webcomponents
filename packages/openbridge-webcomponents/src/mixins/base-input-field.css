@@ -46,6 +46,20 @@
     align-items: flex-start;
     flex: 1 0 0;
   }
+
+  &.empty:not(.disabled) .input-field-container {
+    background: var(--container-background-color);
+  }
+
+  &.empty:not(.disabled):focus-within .input-field-container {
+    background: var(--normal-enabled-background-color);
+  }
+
+  @media (hover: hover) {
+    &.empty:not(.disabled):hover:not(:focus-within) .input-field-container {
+      background: var(--container-background-color);
+    }
+  }
 }
 
 /* Label section */

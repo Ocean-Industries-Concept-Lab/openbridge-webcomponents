@@ -10,7 +10,7 @@ import {
   BorderRadiusPosition,
   Priority,
 } from '../../navigation-instruments/types.js';
-import type {AdviceType} from '../../navigation-instruments/watch/advice.js';
+import type {LinearAdvice} from '../instrument-linear/advice.js';
 import type {
   ExternalScaleAdvice,
   ExternalScaleConfig,
@@ -75,10 +75,12 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
   @property({type: Number}) height = 320;
 
   /** Padding above the drawing area */
-  @property({type: Number}) paddingTop = CHART_DIMENSIONS.CANVAS_PADDING;
+  @property({type: Number}) paddingTop: number =
+    CHART_DIMENSIONS.CANVAS_PADDING;
 
   /** Padding below the drawing area */
-  @property({type: Number}) paddingBottom = CHART_DIMENSIONS.CANVAS_PADDING;
+  @property({type: Number}) paddingBottom: number =
+    CHART_DIMENSIONS.CANVAS_PADDING;
 
   /** Which side this scale lives on */
   @property({type: String}) side: ExternalScaleSide = ExternalScaleSide.right;
@@ -96,6 +98,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
    * At this height, the scale renders at native 1:1 (matches Figma design).
    * Above this height, the scale grows proportionally; below, it shrinks.
    * @default 384
+   * @availableWhen fixedAspectRatio==true
    */
   @property({type: Number})
   scaleReferenceSize = 384;
@@ -138,8 +141,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
   // Bands (thickness)
   /** Show scale tickmarks */
   @property({type: Boolean, attribute: false}) hasScale = true;
-  /** Hide numerical value labels at primary tickmarks */
-  @property({type: Boolean}) hideLabels = false;
+  @property({type: Boolean, attribute: false}) showLabels = true;
   /** Show bar */
   @property({type: Boolean}) hasBar = false;
   /** Show background behind the scale tickmarks. */
@@ -149,6 +151,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
    * Bar container background style.
    * When undefined, defaults based on scaleBackground.
    * Set explicitly to override: 'primary' (lighter) or 'secondary' (gray).
+   * @availableWhen hasBar==true
    */
   @property({type: String})
   barContainerStyle?: BarContainerStyle = undefined;
@@ -164,7 +167,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
    * Array of values for main tickmarks. When undefined, no main tickmarks shown.
    * When empty array [], defaults to [minValue, 0, maxValue].
    */
-  @property({attribute: false}) mainTickmarks?: number[] = [];
+  @property({type: Array, attribute: false}) mainTickmarks?: number[] = [];
   /**
    * Interval for primary (longest) tickmarks with labels (minimum 1).
    * When undefined, no primary tickmarks are shown.
@@ -184,7 +187,10 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
   @property({type: String}) scaleType: ScaleType = ScaleType.regular;
   /** Frame style: regular (4px gap for all), flat (main tickmarks touch edge), framed, or instrument */
   @property({type: String}) frameStyle: FrameStyle = FrameStyle.regular;
-  /** Border radius position based on component layout */
+  /**
+   * Border radius position based on component layout
+   * @availableWhen hasBar==true
+   */
   @property({type: String})
   borderRadiusPosition?: BorderRadiusPosition = undefined;
 
@@ -201,6 +207,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
    * Explicit border radius value in pixels.
    * When instrumentMode=true, this value is used directly (defaults to 8px for regular, 4px for condensed).
    * When instrumentMode=false, this is ignored and border radius is read from CSS variable.
+   * @availableWhen instrumentMode==true
    */
   @property({type: Number})
   borderRadius?: number = undefined;
@@ -223,11 +230,20 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
   // Values
   /** Color priority: enhanced uses blue instrument colors for bar fill and setpoint */
   @property({type: String}) priority: Priority = Priority.regular;
-  /** Fill visualization mode: fill or tint */
+  /**
+   * Fill visualization mode: fill or tint
+   * @availableWhen hasBar==true && value!=undefined
+   */
   @property({type: String}) fillMode: FillMode = FillMode.fill;
-  /** Minimum fill value for tint mode (defaults to 0) */
+  /**
+   * Minimum fill value for tint mode (defaults to 0)
+   * @availableWhen hasBar==true && value!=undefined
+   */
   @property({type: Number}) fillMin?: number = undefined;
-  /** Maximum fill value for tint mode (defaults to value) */
+  /**
+   * Maximum fill value for tint mode (defaults to value)
+   * @availableWhen hasBar==true && value!=undefined
+   */
   @property({type: Number}) fillMax?: number = undefined;
   /** Current value (bar fill level) */
   @property({type: Number}) value?: number = undefined;
@@ -236,19 +252,17 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
   @property({type: String}) state: InstrumentState = InstrumentState.active;
 
   // Advice
-  /** Advice overlay positioning: center (in bar), inner (covers minor ticks), outer (no overlap) */
+  /**
+   * Advice overlay positioning: center (in bar), inner (covers minor ticks), outer (no overlap)
+   * @availableWhen hasBar==true
+   */
   @property({type: String}) advicePosition: AdvicePosition =
     AdvicePosition.inner;
   /**
    * Advice/alert overlays with state and positioning.
    * When undefined or empty, no advice shown.
    */
-  @property({attribute: false}) advices?: Array<{
-    min: number;
-    max: number;
-    type: AdviceType;
-    hinted: boolean;
-  }> = [];
+  @property({type: Array, attribute: false}) advices?: LinearAdvice[] = [];
 
   /**
    * When true, displays a dot indicator at the current value position.
@@ -291,7 +305,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
       minValue: this.minValue,
       maxValue: this.maxValue,
       hasScale: this.hasScale,
-      labels: !this.hideLabels,
+      labels: this.showLabels,
       hasBar: this.hasBar,
       scaleBackground: this.scaleBackground,
       barContainerStyle: this.barContainerStyle,
@@ -315,7 +329,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
       setpoint: this.setpoint,
       newSetpoint: this.newSetpoint,
       atSetpoint: this.atSetpoint,
-      disableAutoAtSetpoint: this.disableAutoAtSetpoint,
+      autoAtSetpoint: this.autoAtSetpoint,
       autoAtSetpointDeadband: this.autoAtSetpointDeadband,
       setpointAtZeroDeadband: this.setpointAtZeroDeadband,
       animateSetpoint: this.animateSetpoint,
@@ -390,7 +404,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
     // even in fixedAspectRatio mode to keep chart padding accurate.
     const layoutChanged =
       changed.has('side') ||
-      changed.has('hideLabels') ||
+      changed.has('showLabels') ||
       changed.has('hasScale') ||
       changed.has('hasBar') ||
       changed.has('barThickness') ||
@@ -398,7 +412,9 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
       changed.has('labelThickness') ||
       changed.has('scaleType') ||
       changed.has('borderRadiusPosition') ||
-      changed.has('borderRadius');
+      changed.has('borderRadius') ||
+      changed.has('advices') ||
+      changed.has('advicePosition');
 
     if (!this.fixedAspectRatio || layoutChanged) {
       this.reportDimensions();
@@ -430,12 +446,14 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
       side: this.side,
       hasBar: this.hasBar,
       hasScale: this.hasScale,
-      labels: !this.hideLabels,
+      labels: this.showLabels,
       barThickness: effectiveBarThickness,
       tickThickness: this.tickThickness,
       labelThickness: this.labelThickness,
       length: effectiveLength,
       scaleType: this.scaleType,
+      advicePosition: this.advicePosition,
+      hasAdvice: !!this.advices && this.advices.length > 0,
     });
 
     // When fixedAspectRatio=true, the SVG scales proportionally via preserveAspectRatio="meet".
@@ -458,7 +476,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
     //   effectiveLength,
     //   hasBar: this.hasBar,
     //   hasScale: this.hasScale,
-    //   hideLabels: this.hideLabels,
+    //   showLabels: this.showLabels,
     //   barThickness: this.barThickness,
     //   tickThickness: this.tickThickness,
     //   labelThickness: this.labelThickness,

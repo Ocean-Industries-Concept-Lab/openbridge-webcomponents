@@ -3,9 +3,9 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
-  "hosting": {
+  "hosting": [{
     "public": "dist",
-    "site": "openbridge-jip-demo",
+    "site": "openbridge-next-demo",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
@@ -33,5 +33,5 @@
         ]
       }
     ]
-  }
+  }]
 }

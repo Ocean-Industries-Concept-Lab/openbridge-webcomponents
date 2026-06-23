@@ -81,6 +81,7 @@ export enum SequenceToolbarType {
 export class ObcSequenceToolbar extends LitElement {
   @property({type: String, reflect: true}) type: SequenceToolbarType =
     SequenceToolbarType.unordered;
+  /** @availableWhen type!=sequential */
   @property({type: Boolean}) hasAdd = false;
 
   static override styles = unsafeCSS(style);
@@ -109,8 +110,8 @@ export class ObcSequenceToolbar extends LitElement {
         .type=${SequenceType.large}
         .styleType=${SequenceStyle.point}
         .value=${SequenceValue.notStarted}
-        .hideStepInputConnector=${true}
-        .hideStepOutputConnector=${true}
+        .showStepInputConnector=${false}
+        .showStepOutputConnector=${false}
         .hasIcon=${false}
         @click=${this.onAddClick}
       >
@@ -128,8 +129,8 @@ export class ObcSequenceToolbar extends LitElement {
           .type=${SequenceType.large}
           .styleType=${SequenceStyle.regular}
           .value=${SequenceValue.notStarted}
-          .hideStepInputConnector=${true}
-          .hideStepOutputConnector=${true}
+          .showStepInputConnector=${false}
+          .showStepOutputConnector=${false}
           .hasIcon=${false}
           @click=${this.onPrevClick}
         >
@@ -145,8 +146,8 @@ export class ObcSequenceToolbar extends LitElement {
           .type=${SequenceType.large}
           .styleType=${SequenceStyle.point}
           .value=${SequenceValue.completed}
-          .hideStepInputConnector=${true}
-          .hideStepOutputConnector=${true}
+          .showStepInputConnector=${false}
+          .showStepOutputConnector=${false}
           .hasIcon=${false}
           @click=${this.onNextClick}
         >
@@ -164,8 +165,8 @@ export class ObcSequenceToolbar extends LitElement {
           .type=${SequenceType.large}
           .styleType=${SequenceStyle.regular}
           .value=${SequenceValue.notStarted}
-          .hideStepInputConnector=${true}
-          .hideStepOutputConnector=${true}
+          .showStepInputConnector=${false}
+          .showStepOutputConnector=${false}
           .hasIcon=${false}
           @click=${this.onPrevClick}
         >
@@ -182,8 +183,8 @@ export class ObcSequenceToolbar extends LitElement {
           .type=${SequenceType.large}
           .styleType=${SequenceStyle.point}
           .value=${SequenceValue.notStarted}
-          .hideStepInputConnector=${true}
-          .hideStepOutputConnector=${true}
+          .showStepInputConnector=${false}
+          .showStepOutputConnector=${false}
           .hasIcon=${false}
           @click=${this.onNextClick}
         >
@@ -202,8 +203,8 @@ export class ObcSequenceToolbar extends LitElement {
           .type=${SequenceType.large}
           .styleType=${SequenceStyle.point}
           .value=${SequenceValue.notStarted}
-          .hideStepInputConnector=${true}
-          .hideStepOutputConnector=${true}
+          .showStepInputConnector=${false}
+          .showStepOutputConnector=${false}
           .hasIcon=${false}
           aria-label="Previous"
           @click=${this.onPrevClick}
@@ -216,8 +217,8 @@ export class ObcSequenceToolbar extends LitElement {
         .type=${SequenceType.large}
         .styleType=${SequenceStyle.regular}
         .value=${SequenceValue.notStarted}
-        .hideStepInputConnector=${true}
-        .hideStepOutputConnector=${true}
+        .showStepInputConnector=${false}
+        .showStepOutputConnector=${false}
         .hasIcon=${false}
       >
         <span class="condensed-label__current">
@@ -236,8 +237,8 @@ export class ObcSequenceToolbar extends LitElement {
           .type=${SequenceType.large}
           .styleType=${SequenceStyle.point}
           .value=${SequenceValue.notStarted}
-          .hideStepInputConnector=${true}
-          .hideStepOutputConnector=${true}
+          .showStepInputConnector=${false}
+          .showStepOutputConnector=${false}
           .hasIcon=${false}
           aria-label="Next"
           @click=${this.onNextClick}

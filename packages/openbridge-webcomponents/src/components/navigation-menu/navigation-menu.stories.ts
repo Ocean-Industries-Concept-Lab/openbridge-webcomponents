@@ -183,6 +183,32 @@ export const SmallScreen: Story = {
   },
 };
 
+export const EmptyFooter: Story = {
+  render: (args) => {
+    return html`
+      <obc-navigation-menu
+        .variant=${args.variant}
+        style="position: fixed; top: 0; bottom: 0; left: 0;"
+      >
+        <obc-navigation-item-group slot="main" label="Apps" hasIcon>
+          <obi-applications slot="icon"></obi-applications>
+          <obc-navigation-item label="Sub item 1" hasIcon href="#">
+            <obi-placeholder slot="icon"></obi-placeholder>
+          </obc-navigation-item>
+        </obc-navigation-item-group>
+        <obc-vendor-button
+          imageSrc="/companylogo-day.png"
+          alt="logo"
+          slot="logo"
+        ></obc-vendor-button>
+      </obc-navigation-menu>
+    `;
+  },
+  args: {
+    variant: ObcNavigationMenuVariant.Full,
+  },
+};
+
 export const TestDynamicElements: Story = {
   args: {
     variant: ObcNavigationMenuVariant.Compact,
@@ -224,5 +250,87 @@ export const TestDynamicElementsInSpan: Story = {
     await expect(newItem).toBeInTheDocument();
     await new Promise((resolve) => requestAnimationFrame(resolve));
     await expect(newItem.variant).toBe(ObcNavigationMenuVariant.Compact);
+  },
+};
+
+export const Tree: Story = {
+  args: {
+    variant: ObcNavigationMenuVariant.Tree,
+  },
+  render: (args) => {
+    return html`
+      <obc-navigation-menu
+        .variant=${args.variant}
+        style="position: fixed; top: 0; bottom: 0; left: 0;"
+      >
+        <obc-navigation-item-group
+          slot="main"
+          label="Vessel"
+          hasIcon
+          defaultOpen
+          .alerts=${{
+            combine: true,
+            countLevelCritical: 1,
+            countLevelHigh: 1,
+            countLevelMedium: 2,
+            countLevelLow: 1,
+          }}
+        >
+          <obi-placeholder slot="icon"></obi-placeholder>
+          <obc-navigation-item-group
+            label="Engine room"
+            hasIcon
+            defaultOpen
+            terminalType="aggregated-header"
+            .alerts=${{
+              combine: true,
+              countLevelCritical: 1,
+              countLevelHigh: 1,
+            }}
+          >
+            <obi-placeholder slot="icon"></obi-placeholder>
+            <obc-navigation-item
+              label="Main engine"
+              hasIcon
+              checked
+              .alerts=${{countLevelHigh: 1}}
+            >
+              <obi-placeholder slot="icon"></obi-placeholder>
+            </obc-navigation-item>
+            <obc-navigation-item
+              label="Cooling system"
+              hasIcon
+              .alerts=${{countLevelCritical: 1}}
+            >
+              <obi-placeholder slot="icon"></obi-placeholder>
+            </obc-navigation-item>
+          </obc-navigation-item-group>
+          <obc-navigation-item-group
+            label="Bridge"
+            hasIcon
+            .alerts=${{combine: true, countLevelMedium: 2, countLevelLow: 1}}
+          >
+            <obi-placeholder slot="icon"></obi-placeholder>
+            <obc-navigation-item
+              label="Radar"
+              hasIcon
+              .alerts=${{countLevelMedium: 2}}
+            >
+              <obi-placeholder slot="icon"></obi-placeholder>
+            </obc-navigation-item>
+            <obc-navigation-item
+              label="Autopilot"
+              hasIcon
+              .alerts=${{countLevelLow: 1}}
+            >
+              <obi-placeholder slot="icon"></obi-placeholder>
+            </obc-navigation-item>
+          </obc-navigation-item-group>
+          <obc-navigation-item label="Deck" hasIcon>
+            <obi-placeholder slot="icon"></obi-placeholder>
+          </obc-navigation-item>
+        </obc-navigation-item-group>
+      </obc-navigation-menu>
+    `;
   },
 };

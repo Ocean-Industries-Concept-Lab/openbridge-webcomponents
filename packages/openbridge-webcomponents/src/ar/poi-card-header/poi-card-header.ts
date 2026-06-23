@@ -5,7 +5,7 @@ import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 import '../../components/icon-button/icon-button.js';
 import '../../icons/icon-close-google.js';
-import '../poi-object-vessel/poi-object-vessel.js';
+import '../poi-object/poi-object-vessel.js';
 
 /**
  * Layout variants for POI Card Header.
@@ -81,21 +81,37 @@ export class ObcPoiCardHeader extends LitElement {
 
   @property({type: String}) index = '1';
 
+  /** @availableWhen variant in [Condensed, Regular, Detailed] */
   @property({type: String}) cardTitle = '';
 
-  /** Shown only in detailed variant. */
+  /**
+   * Shown only in detailed variant.
+   * @availableWhen variant==detailed
+   */
   @property({type: String}) description = '';
 
-  /** Source badge text (e.g., "AIS", "RADAR"). Hidden when empty. */
+  /**
+   * Source badge text (e.g., "AIS", "RADAR"). Hidden when empty.
+   * @availableWhen variant in [Condensed, Regular, Detailed]
+   */
   @property({type: String}) source = '';
 
-  /** Shown only in detailed variant. */
+  /**
+   * Shown only in detailed variant.
+   * @availableWhen variant==detailed
+   */
   @property({type: String}) timestamp = '';
 
-  /** Enables the leading-icon slot (regular variant only). */
+  /**
+   * Enables the leading-icon slot (regular variant only).
+   * @availableWhen variant==regular
+   */
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  /** Enables the close button (detailed variant only). */
+  /**
+   * Enables the close button (detailed variant only).
+   * @availableWhen variant==detailed
+   */
   @property({type: Boolean}) hasCloseButton = false;
 
   private get hasSource() {

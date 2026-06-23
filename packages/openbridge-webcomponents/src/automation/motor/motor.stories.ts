@@ -17,13 +17,12 @@ const meta: Meta<typeof ObcMotor> = {
   component: 'obc-motor',
   decorators: [crossDecorator],
   args: {
-    tag: '0012',
+    tag: '#0012',
     readoutPosition: AutomationButtonReadoutPosition.bottom,
     readoutSize: AutomationButtonReadoutStackSize.regular,
     alert: false,
     progress: false,
-    hideReadoutStack: false,
-    hasIdTag: true,
+    showReadoutStack: true,
   },
   argTypes: {
     ...argTypesAbstractAutomationButtonMotorized,
@@ -72,6 +71,18 @@ export const OffHorizontal: Story = {
     vertical: false,
     direction: AutomationButtonDirection.backwardStopped,
     labelDirection: AutomationButtonLabelDirection.right,
+  },
+};
+
+export const OnVerticalRpm: Story = {
+  args: {
+    on: true,
+    vertical: true,
+    direction: AutomationButtonDirection.forward,
+    labelDirection: AutomationButtonLabelDirection.up,
+    speed: 254,
+    speedUnit: 'rpm',
+    speedMaxDigits: 4,
   },
 };
 

@@ -2,15 +2,27 @@ import {
   ObcAlertFrameStatus,
   ObcAlertFrameThickness,
   ObcAlertFrameType,
+  ObcAlertFrameMode,
 } from '../../components/alert-frame/alert-frame.js';
 import {MotorizedVariant} from './abstract-automation-button-motorized.js';
 import {
   AutomationButtonDirection,
   AutomationButtonLabelDirection,
+  AutomationButtonOrientation,
   AutomationButtonPositioning,
 } from './automation-button.js';
+import {CircularProgressMode} from '../../building-blocks/circular-progress/circular-progress.js';
+import {
+  AutomationButtonBadgeAlert,
+  AutomationButtonBadgeCommandLocked,
+  AutomationButtonBadgeControl,
+  AutomationButtonBadgeInterlock,
+} from './abstract-automation-button.js';
 
 export const argTypesAbstractAutomationButton = {
+  tag: {
+    control: {type: 'text'},
+  },
   readoutPosition: {
     options: ['top', 'bottom', 'left', 'right'],
     control: {type: 'radio'},
@@ -21,6 +33,10 @@ export const argTypesAbstractAutomationButton = {
   },
   alertFrameType: {
     options: Object.values(ObcAlertFrameType),
+    control: {type: 'radio'},
+  },
+  alertFrameMode: {
+    options: Object.values(ObcAlertFrameMode),
     control: {type: 'radio'},
   },
   alertFrameThickness: {
@@ -35,17 +51,30 @@ export const argTypesAbstractAutomationButton = {
     options: Object.values(AutomationButtonPositioning),
     control: {type: 'select'},
   },
-  badgeAuto: {
-    control: {type: 'boolean'},
+  badgeControl: {
+    options: Object.values(AutomationButtonBadgeControl),
+    control: {type: 'select'},
   },
   badgeCommandLocked: {
-    control: {type: 'boolean'},
+    options: Object.values(AutomationButtonBadgeCommandLocked),
+    control: {type: 'select'},
   },
-  badgeDuty: {
-    control: {type: 'boolean'},
+  badgeInterlock: {
+    options: Object.values(AutomationButtonBadgeInterlock),
+    control: {type: 'select'},
   },
-  badgeAlertOff: {
-    control: {type: 'boolean'},
+  badgeAlert: {
+    options: Object.values(AutomationButtonBadgeAlert),
+    control: {type: 'select'},
+  },
+  progressMode: {
+    options: Object.values(CircularProgressMode),
+    control: {type: 'select'},
+    if: {arg: 'progress'},
+  },
+  progressValue: {
+    control: {type: 'range', min: 0, max: 100, step: 1},
+    if: {arg: 'progress'},
   },
 };
 
@@ -63,12 +92,26 @@ export const argTypesAbstractAutomationButtonPassiveSquare = {
     options: ['square', 'flat'],
     control: {type: 'radio'},
   },
+  orientation: {
+    options: Object.values(AutomationButtonOrientation),
+    control: {type: 'radio'},
+  },
 };
 
 export const argTypesAbstractAutomationButtonMotorized = {
   ...argTypesAbstractAutomationButton,
   speedInPercent: {
     control: {type: 'range', min: 0, max: 100, step: 1},
+    description: 'Deprecated, use `speed` together with `speedUnit` instead.',
+  },
+  speed: {
+    control: {type: 'number'},
+  },
+  speedUnit: {
+    control: {type: 'text'},
+  },
+  speedMaxDigits: {
+    control: {type: 'number'},
   },
   labelDirection: {
     options: Object.values(AutomationButtonLabelDirection),

@@ -71,9 +71,12 @@ export class ObcClock extends LitElement {
    */
   @property({type: Number}) timeZoneOffsetHours = 0;
 
-  @property({type: Boolean}) noClick = false;
+  @property({type: Boolean, attribute: false}) isClickable: boolean = true;
+  /** @availableWhen showDate==true */
   @property({type: Boolean}) showYear = false;
+  /** @availableWhen showDate==true */
   @property({type: Boolean}) showWeekday = false;
+  /** @availableWhen showDate==true */
   @property({type: String}) locale = 'en-GB';
   @property({type: Boolean}) hour12 = false;
   @property({type: Boolean}) selected = false;
@@ -136,7 +139,7 @@ export class ObcClock extends LitElement {
 
     const dateString = this._dateString(date);
 
-    const wrapperTag = this.noClick ? literal`div` : literal`button`;
+    const wrapperTag = !this.isClickable ? literal`div` : literal`button`;
     const ticks = html`<div class="ticks ${this.showSeconds ? '' : 'animate'}">
       <span class="tick"></span><span class="tick"></span>
     </div>`;
@@ -167,7 +170,7 @@ export class ObcClock extends LitElement {
       <${wrapperTag} 
         class=${classMap({
           wrapper: true,
-          'no-click': this.noClick,
+          'no-click': !this.isClickable,
           selected: this.selected,
           double: this.double,
           'integration-bar-mode': this.integrationBarMode,
