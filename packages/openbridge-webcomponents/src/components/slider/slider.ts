@@ -248,7 +248,7 @@ export class ObcSlider extends LitElement {
    */
   private fireChangeEvent() {
     this.dispatchEvent(
-      new CustomEvent('change', {detail: {value: this.value}})
+      new CustomEvent('change', {detail: this.value}) as ObcSliderChangeEvent
     );
   }
 
