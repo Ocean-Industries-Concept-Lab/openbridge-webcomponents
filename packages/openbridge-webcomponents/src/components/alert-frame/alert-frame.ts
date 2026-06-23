@@ -228,6 +228,7 @@ export class ObcAlertFrame extends LitElement {
   override render() {
     return html`
       <div
+        part="wrapper"
         class=${classMap({
           wrapper: true,
           'wrap-content': this.wrapContent,
