@@ -85,6 +85,7 @@ export type ObcToggleSwitchInputEvent = CustomEvent<{
  *
  * @slot icon - Leading icon slot (shown when `hasIcon` is true)
  * @fires input - {ObcToggleSwitchInputEvent} Dispatched when the value of the input changes
+ * @fires change - Dispatched when the value of the input changes by user interaction
  */
 @customElement('obc-toggle-switch')
 export class ObcToggleSwitch extends LitElement {
@@ -162,6 +163,14 @@ export class ObcToggleSwitch extends LitElement {
     }
   }
 
+  private _fireChangeEvent(e: Event) {
+    if (this.disabled) {
+      e.preventDefault();
+      return;
+    }
+    this.dispatchEvent(new CustomEvent('change'));
+  }
+
   override render() {
     return html`
       <label
@@ -190,6 +199,7 @@ export class ObcToggleSwitch extends LitElement {
               .checked=${this.checked}
               ?disabled=${this.disabled}
               @input=${this._tryChange}
+              @change=${this._fireChangeEvent}
             />
           </div>
         </div>
