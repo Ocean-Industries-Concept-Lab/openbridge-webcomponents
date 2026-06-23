@@ -298,7 +298,11 @@ export class ObcSliderDouble extends LitElement {
    * @fires change
    */
   private fireChangeEvent() {
-    this.dispatchEvent(new CustomEvent('change'));
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        detail: {low: this.low, high: this.high},
+      }) as ObcSliderDoubleChangeEvent
+    );
   }
 
   private THUMB_WIDTH = 48;
