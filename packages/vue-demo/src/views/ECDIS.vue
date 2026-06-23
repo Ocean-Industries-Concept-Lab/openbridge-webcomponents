@@ -387,8 +387,8 @@ onMounted(async () => {
         zoom.value = maplibreglMap.getZoom()
       }
     })
-    
-    maplibreglMap.on('moveend', updateAisTargetsInView);
+
+    maplibreglMap.on('moveend', updateAisTargetsInView)
   }
 })
 
