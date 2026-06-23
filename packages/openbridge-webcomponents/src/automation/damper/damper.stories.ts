@@ -1,6 +1,9 @@
 import type {Meta, StoryObj} from '@storybook/web-vite';
 import {ObcDamper} from './damper.js';
-import {AutomationButtonReadoutPosition} from '../automation-button/automation-button.js';
+import {
+  AutomationButtonOrientation,
+  AutomationButtonReadoutPosition,
+} from '../automation-button/automation-button.js';
 import {AutomationButtonReadoutStackSize} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import './damper.js';
 import {crossDecorator} from '../../storybook-util.js';
@@ -18,7 +21,7 @@ const meta: Meta<typeof ObcDamper> = {
     readoutSize: AutomationButtonReadoutStackSize.regular,
     alert: false,
     progress: false,
-    vertical: false,
+    orientation: AutomationButtonOrientation.horizontal,
     showReadoutStack: true,
   },
   argTypes: {

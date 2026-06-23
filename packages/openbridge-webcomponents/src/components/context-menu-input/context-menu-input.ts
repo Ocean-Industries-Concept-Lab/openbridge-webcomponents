@@ -249,6 +249,8 @@ export class ObcContextMenuInput extends LitElement {
 
   /**
    * Title text displayed in the title bar (if `hasTitleBar` is true).
+   *
+   * @availableWhen hasTitleBar==true
    */
   @property({type: String}) override title = '';
 
@@ -256,6 +258,8 @@ export class ObcContextMenuInput extends LitElement {
    * Array of column groups for the `multi-with-subtitles` layout.
    *
    * Each group defines a `title`, `columns` (number of columns in the group), and `options` (array of options for that group).
+   *
+   * @availableWhen type==MultiWithSubtitles
    */
   @property({type: Array}) columnGroups: ColumnGroup[] = [];
 
@@ -263,6 +267,8 @@ export class ObcContextMenuInput extends LitElement {
    * Number of items per column in multi-column layouts.
    *
    * Used in `multi` and `multi-with-subtitles` variants to control column splitting.
+   *
+   * @availableWhen type in [Multi, MultiWithSubtitles]
    */
   @property({type: Number}) itemsPerColumn = 5;
 

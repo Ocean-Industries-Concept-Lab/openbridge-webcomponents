@@ -3,6 +3,7 @@ import {property, queryAssignedElements} from 'lit/decorators.js';
 import '../automation-button/automation-button.js';
 import {
   AutomationButtonDirection,
+  AutomationButtonOrientation,
   AutomationButtonPositioning,
   AutomationButtonReadoutPosition,
   AutomationButtonState,
@@ -28,11 +29,11 @@ export enum AutomationButtonBadgeAlert {
   Caution = 'caution',
   Warning = 'warning',
   Alarm = 'alarm',
-  IsaCritical = 'isa-critical',
-  IsaHigh = 'isa-high',
-  IsaMedium = 'isa-medium',
-  IsaLow = 'isa-low',
-  IsaDiagnostic = 'isa-diagnostic',
+  LevelCritical = 'level-critical',
+  LevelHigh = 'level-high',
+  LevelMedium = 'level-medium',
+  LevelLow = 'level-low',
+  LevelDiagnostic = 'level-diagnostic',
 }
 
 export enum AutomationButtonBadgeInterlock {
@@ -57,30 +58,39 @@ export enum AutomationButtonBadgeCommandLocked {
 
 export class ObcAbstractAutomationButton extends LitElement {
   @property({type: Boolean, attribute: false}) showReadoutStack: boolean = true;
+  /** @availableWhen showReadoutStack==true */
   @property({type: String}) readoutPosition: AutomationButtonReadoutPosition =
     AutomationButtonReadoutPosition.bottom;
+  /** @availableWhen showReadoutStack==true */
   @property({type: String}) readoutSize: AutomationButtonReadoutStackSize =
     AutomationButtonReadoutStackSize.regular;
   @property({type: String}) positioning: AutomationButtonPositioning =
     AutomationButtonPositioning.point;
   @property({type: Boolean}) alert: boolean = false;
+  /** @availableWhen alert==true */
   @property({type: String}) alertFrameType: ObcAlertFrameType =
     ObcAlertFrameType.SmallSideFlip;
+  /** @availableWhen alert==true */
   @property({type: String}) alertFrameThickness: ObcAlertFrameThickness =
     ObcAlertFrameThickness.Small;
+  /** @availableWhen alert==true */
   @property({type: String}) alertFrameStatus: AlertType = AlertType.Alarm;
+  /** @availableWhen alert==true */
   @property({type: String}) alertFrameMode: ObcAlertFrameMode =
     ObcAlertFrameMode.ackedActive;
+  /** @availableWhen alert==true */
   @property({type: Boolean, attribute: false}) showAlertCategoryIcon: boolean =
     true;
+  /** @availableWhen alert==true */
   @property({type: Boolean}) showAlertIcon: boolean = false;
+  /** Shows a progress indicator, used to indicate that an user action is in progress */
   @property({type: Boolean}) progress: boolean = false;
+  /** @availableWhen progress==true */
   @property({type: String}) progressMode: CircularProgressMode =
     CircularProgressMode.indeterminate;
+  /** @availableWhen progress==true && progressMode in [determinate, progressiveIndeterminate] */
   @property({type: Number}) progressValue: number = 0;
   @property({type: String}) tag: string | null = null;
-  @property({type: String}) direction: AutomationButtonDirection =
-    AutomationButtonDirection.forward;
   @property({type: String}) badgeControl: AutomationButtonBadgeControl =
     AutomationButtonBadgeControl.None;
   @property({type: String})
@@ -102,6 +112,17 @@ export class ObcAbstractAutomationButton extends LitElement {
   get _variant(): AutomationButtonVariant {
     // @ts-expect-error - property should be defined in subclass
     return this.variant as AutomationButtonVariant;
+  }
+
+  get _orientation(): AutomationButtonOrientation {
+    return AutomationButtonOrientation.horizontal;
+  }
+
+  get _direction(): AutomationButtonDirection {
+    if ('direction' in this) {
+      return this.direction as AutomationButtonDirection;
+    }
+    return AutomationButtonDirection.forward;
   }
 
   get extraReadouts(): AutomationButtonReadoutStack[] {
@@ -158,16 +179,16 @@ export class ObcAbstractAutomationButton extends LitElement {
       return ObcAutomationBadgeType.Warning;
     } else if (this.badgeAlert === AutomationButtonBadgeAlert.Alarm) {
       return ObcAutomationBadgeType.Alarm;
-    } else if (this.badgeAlert === AutomationButtonBadgeAlert.IsaCritical) {
-      return ObcAutomationBadgeType.IsaCritical;
-    } else if (this.badgeAlert === AutomationButtonBadgeAlert.IsaHigh) {
-      return ObcAutomationBadgeType.IsaHigh;
-    } else if (this.badgeAlert === AutomationButtonBadgeAlert.IsaMedium) {
-      return ObcAutomationBadgeType.IsaMedium;
-    } else if (this.badgeAlert === AutomationButtonBadgeAlert.IsaLow) {
-      return ObcAutomationBadgeType.IsaLow;
-    } else if (this.badgeAlert === AutomationButtonBadgeAlert.IsaDiagnostic) {
-      return ObcAutomationBadgeType.IsaDiagnostic;
+    } else if (this.badgeAlert === AutomationButtonBadgeAlert.LevelCritical) {
+      return ObcAutomationBadgeType.LevelCritical;
+    } else if (this.badgeAlert === AutomationButtonBadgeAlert.LevelHigh) {
+      return ObcAutomationBadgeType.LevelHigh;
+    } else if (this.badgeAlert === AutomationButtonBadgeAlert.LevelMedium) {
+      return ObcAutomationBadgeType.LevelMedium;
+    } else if (this.badgeAlert === AutomationButtonBadgeAlert.LevelLow) {
+      return ObcAutomationBadgeType.LevelLow;
+    } else if (this.badgeAlert === AutomationButtonBadgeAlert.LevelDiagnostic) {
+      return ObcAutomationBadgeType.LevelDiagnostic;
     }
     return null;
   }
@@ -235,7 +256,8 @@ export class ObcAbstractAutomationButton extends LitElement {
       .progressMode=${this.progressMode}
       .progressValue=${this.progressValue}
       .variant=${this._variant}
-      .direction=${this.direction}
+      .direction=${this._direction}
+      .orientation=${this._orientation}
       .hasBadgeSpacer=${this.getBadgeSpacer()}
       .positioning=${this.positioning}
     >

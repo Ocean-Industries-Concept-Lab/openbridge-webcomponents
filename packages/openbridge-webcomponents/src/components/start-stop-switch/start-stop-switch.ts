@@ -182,6 +182,8 @@ export class ObcStartStopSwitch extends LitElement {
    * Use this to provide additional context about the switch's purpose or current state.
    *
    * Defaults to `'Action description'`.
+   *
+   * @availableWhen hasDescription==true
    */
   @property({type: String}) description = 'Action description';
 

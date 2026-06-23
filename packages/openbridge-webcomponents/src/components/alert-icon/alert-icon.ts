@@ -103,7 +103,9 @@ const mapping = {
 @customElement('obc-alert-icon')
 export class ObcAlertIcon extends LitElement {
   @property({type: String}) type!: AlertType;
+  /** @availableWhen outline==false && type in [Alarm, Warning, LevelHigh, LevelMedium] */
   @property({type: Boolean}) acknowledged!: boolean;
+  /** @availableWhen outline==false && type in [Alarm, Warning, LevelHigh, LevelMedium] */
   @property({type: Boolean}) active!: boolean;
   @property({type: Boolean}) outline!: boolean;
 
@@ -112,7 +114,7 @@ export class ObcAlertIcon extends LitElement {
   }
 
   get icon() {
-    if (this.type === AlertType.IsaCritical) {
+    if (this.type === AlertType.LevelCritical) {
       return mapping[AlertIconName.Critical];
     } else if (this.bamType === AlertType.Alarm) {
       if (this.active === false) {
@@ -153,10 +155,10 @@ export class ObcAlertIcon extends LitElement {
   }
 
   private renderStaticIcon(): TemplateResult | typeof nothing {
-    if (this.type === AlertType.Caution || this.type === AlertType.IsaLow) {
+    if (this.type === AlertType.Caution || this.type === AlertType.LevelLow) {
       return html`<obi-caution-color-iec usecsscolor></obi-caution-color-iec>`;
     }
-    if (this.type === AlertType.IsaDiagnostic) {
+    if (this.type === AlertType.LevelDiagnostic) {
       return html`<obi-diagnostic-badge
         style="color: var(--alert-diagnostic-color);"
       ></obi-diagnostic-badge>`;
@@ -171,7 +173,7 @@ export class ObcAlertIcon extends LitElement {
     if (this.outline) {
       return html`<div class="wrapper">${this.renderOutlineIcon()}</div>`;
     }
-    if (supportsBlinking(this.type) && !(this.type === AlertType.IsaLow)) {
+    if (supportsBlinking(this.type) && !(this.type === AlertType.LevelLow)) {
       const icons = this.icon;
       if (!icons) {
         throw new Error('No icon found');

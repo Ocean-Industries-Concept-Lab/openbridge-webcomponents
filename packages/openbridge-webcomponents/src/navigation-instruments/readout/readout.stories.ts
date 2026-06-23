@@ -19,12 +19,6 @@ import {
   ReadoutAdviceFormat,
   ReadoutAdviceState,
 } from '../readout-advice/readout-advice.js';
-import {AlertType} from '../../types.js';
-import {
-  ObcAlertFrameMode,
-  ObcAlertFrameThickness,
-  ObcAlertFrameType,
-} from '../../components/alert-frame/alert-frame.js';
 
 const meta: Meta<ObcReadout> = {
   title: 'Instruments/Readout',
@@ -293,13 +287,13 @@ export const Alarm: Story = {
   render: (args) => renderComponent(args as ObcReadout),
 };
 
-export const IsaCritical: Story = {
+export const LevelCritical: Story = {
   args: {
     value: 42,
     label: 'RPM',
     unit: 'rpm',
     alert: {
-      status: 'isa-critical',
+      status: 'level-critical',
       mode: 'unacked-active',
     },
   },

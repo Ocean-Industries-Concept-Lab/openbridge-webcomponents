@@ -73,6 +73,8 @@ export class ObcPivotItemGroup extends LitElement {
   /**
    * If true, allows the user to deselect the currently selected item by clicking it again (resulting in no selection).
    * If false (default), one item is always selected unless `selectedValue` is empty.
+   *
+   * @availableWhen selectedValue!=''
    */
   @property({type: Boolean}) allowDeselect = false;
 

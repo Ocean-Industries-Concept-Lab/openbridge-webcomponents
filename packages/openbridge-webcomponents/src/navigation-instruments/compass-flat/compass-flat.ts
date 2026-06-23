@@ -88,23 +88,30 @@ export class ObcCompassFlat extends LitElement {
   /**
    * Measured rate of turn in degrees per minute (positive = starboard).
    * When `undefined`, falls back to the deprecated `rotationsPerMinute`.
+   * @availableWhen rotType!=undefined
    */
   @property({type: Number}) rateOfTurnDegreesPerMinute: number | undefined;
   /**
    * Visual amplification applied only to the spinning dot animation.
+   * @availableWhen rotType!=undefined
    */
   @property({type: Number}) rotDotAnimationFactor: number = 18;
   /**
    * @deprecated Use `rateOfTurnDegreesPerMinute` instead.
+   * @availableWhen rotType!=undefined
    */
   @property({type: Number}) rotationsPerMinute: number = 1;
   /**
    * Bar-extent reference value in **degrees per minute**. Default `60`
    * per ES-TRIN 2025/1 Art. 3.02.
+   * @availableWhen rotType!=undefined
    */
   @property({type: Number}) rotMaxValue: number = 60;
+  /** @availableWhen rotType!=undefined */
   @property({type: Number}) rotArcExtent: number = 60;
+  /** @availableWhen rotType!=undefined */
   @property({type: Boolean}) rotPortStarboard: boolean = false;
+  /** @availableWhen rotType!=undefined */
   @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_DEG;
 
   @state() private containerWidth = 0;

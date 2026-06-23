@@ -23,11 +23,6 @@
   transform: translate(-50%, -50%);
 }
 
-obc-readout::part(value-wrapper),
-obc-readout::part(meta-wrapper) {
-  justify-self: center;
-}
-
 :host {
   display: block;
   width: 100%;

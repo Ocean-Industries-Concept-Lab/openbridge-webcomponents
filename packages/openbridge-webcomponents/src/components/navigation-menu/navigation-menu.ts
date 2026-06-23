@@ -77,8 +77,8 @@ export enum ObcNavigationMenuFlyoutVariant {
  *   - **Tree:** Renders the same `obc-navigation-item` / `obc-navigation-item-group`
  *     markup as a hierarchical tree. Groups expand inline (instead of as flyouts),
  *     rows are indented by depth, multiple branches can stay open at once, and the
- *     tree-row presentation (alert badge, terminal marker) is available via the
- *     items' `hasAlertBadge`/`alertCount`/`alertType`/`terminalType` properties.
+ *     tree-row presentation (alert badges, terminal marker) is available via the
+ *     items' `alerts`/`terminalType` properties.
  * - **Responsive Layout:**
  *   - `smallScreen` property adapts the footer and logo layout for smaller viewports.
  * - **Slot-based Content:**
@@ -171,6 +171,7 @@ export class ObcNavigationMenu extends LitElement {
   /**
    * Visual variant of the flyout.
    * One of `Full` (default) or `Compact`.
+   * @availableWhen variant==Full
    */
   @property({type: String}) flyoutVariant: ObcNavigationMenuFlyoutVariant =
     ObcNavigationMenuFlyoutVariant.Full;

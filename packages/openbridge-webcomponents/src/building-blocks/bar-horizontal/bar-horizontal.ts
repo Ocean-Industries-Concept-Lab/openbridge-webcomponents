@@ -73,7 +73,10 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
   /** Maximum scale value (manual mode) */
   @property({type: Number}) maxValue = 100;
 
-  /** Total width in pixels (including padding bands) */
+  /**
+   * Total width in pixels (including padding bands)
+   * @availableWhen fixedAspectRatio==false
+   */
   @property({type: Number}) width = 320;
 
   /** Padding left of the drawing area */
@@ -100,6 +103,7 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
    * At this width, the scale renders at native 1:1 (matches Figma design).
    * Above this width, the scale grows proportionally; below, it shrinks.
    * @default 384
+   * @availableWhen fixedAspectRatio==true
    */
   @property({type: Number})
   scaleReferenceSize = 384;
@@ -152,42 +156,62 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
    * Bar container background style.
    * When undefined, defaults based on scaleBackground.
    * Set explicitly to override: 'primary' (lighter) or 'secondary' (gray).
+   * @availableWhen hasBar==true
    */
   @property({type: String})
   barContainerStyle?: BarContainerStyle = undefined;
-  /** Bar/fill thickness in pixels */
+  /**
+   * Bar/fill thickness in pixels
+   * @availableWhen hasBar==true
+   */
   @property({type: Number}) barThickness = 24;
-  /** Tickmark band thickness in pixels. */
+  /**
+   * Tickmark band thickness in pixels.
+   * @availableWhen hasScale==true
+   */
   @property({type: Number}) tickThickness = 24;
-  /** Label band thickness in pixels. */
+  /**
+   * Label band thickness in pixels.
+   * @availableWhen showLabels==true
+   */
   @property({type: Number}) labelThickness = 60;
 
   // Tick configuration
   /**
    * Array of values for main tickmarks. When undefined, no main tickmarks shown.
    * When empty array [], defaults to [minValue, 0, maxValue].
+   * @availableWhen hasScale==true
    */
   @property({type: Array, attribute: false}) mainTickmarks?: number[] = [];
   /**
    * Interval for primary (longest) tickmarks with labels (minimum 1).
    * When undefined, no primary tickmarks are shown.
+   * @availableWhen hasScale==true || showLabels==true
    */
   @property({type: Number}) primaryTickmarkInterval?: number = undefined;
   /**
    * Interval for secondary (medium) tickmarks (minimum 1).
    * When undefined, no secondary tickmarks are shown.
+   * @availableWhen hasScale==true
    */
   @property({type: Number}) secondaryTickmarkInterval?: number = undefined;
   /**
    * Interval for tertiary (shortest) tickmarks (minimum 1).
    * When undefined, no tertiary tickmarks are shown.
+   * @availableWhen hasScale==true
    */
   @property({type: Number}) tertiaryTickmarkInterval?: number = undefined;
   /** Scale display mode: regular or condensed (shorter ticks) */
   @property({type: String}) scaleType: ScaleType = ScaleType.regular;
-  /** Frame style: regular (4px gap for all), flat (main tickmarks touch edge), framed, or instrument */
+  /**
+   * Frame style: regular (4px gap for all), flat (main tickmarks touch edge), framed, or instrument
+   * @availableWhen hasScale==true && mainTickmarks!=undefined
+   */
   @property({type: String}) frameStyle: FrameStyle = FrameStyle.regular;
-  /** Border radius position based on component layout */
+  /**
+   * Border radius position based on component layout
+   * @availableWhen hasBar==true
+   */
   @property({type: String})
   borderRadiusPosition?: BorderRadiusPosition = undefined;
 
@@ -204,6 +228,7 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
    * Explicit border radius value in pixels.
    * When instrumentMode=true, this value is used directly (defaults to 8px for regular, 4px for condensed).
    * When instrumentMode=false, this is ignored and border radius is read from CSS variable.
+   * @availableWhen instrumentMode==true
    */
   @property({type: Number})
   borderRadius?: number = undefined;
@@ -226,11 +251,20 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
   // Values
   /** Color priority: enhanced uses blue instrument colors for bar fill and setpoint */
   @property({type: String}) priority: Priority = Priority.regular;
-  /** Fill visualization mode: fill or tint */
+  /**
+   * Fill visualization mode: fill or tint
+   * @availableWhen hasBar==true && value!=undefined
+   */
   @property({type: String}) fillMode: FillMode = FillMode.fill;
-  /** Minimum fill value for tint mode (defaults to 0) */
+  /**
+   * Minimum fill value for tint mode (defaults to 0)
+   * @availableWhen hasBar==true && value!=undefined
+   */
   @property({type: Number}) fillMin?: number = undefined;
-  /** Maximum fill value for tint mode (defaults to value) */
+  /**
+   * Maximum fill value for tint mode (defaults to value)
+   * @availableWhen hasBar==true && value!=undefined
+   */
   @property({type: Number}) fillMax?: number = undefined;
   /** Current value (bar fill level) */
   @property({type: Number}) value?: number = undefined;
@@ -239,7 +273,10 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
   @property({type: String}) state: InstrumentState = InstrumentState.active;
 
   // Advice
-  /** Advice overlay positioning: center (in bar), inner (covers minor ticks), outer (no overlap) */
+  /**
+   * Advice overlay positioning: center (in bar), inner (covers minor ticks), outer (no overlap)
+   * @availableWhen hasBar==true && advices!=undefined
+   */
   @property({type: String}) advicePosition: AdvicePosition =
     AdvicePosition.inner;
   /**

@@ -7,66 +7,76 @@ import componentStyle from './integration-vessel-menu.css?inline';
 import '../../components/button/button.js';
 import '../../components/icon-button/icon-button.js';
 import '../../icons/icon-placeholder.js';
+import '../../icons/icon-unacknowledged.js';
 import '../../building-blocks/alert-list/alert-list.js';
 
 /**
  * `<obc-integration-vessel-menu>` – A menu to be shown when selecting a obc-integration-button from a obc-integration-bar.
  *
- * @slot leading-icon - Icon shown in the header.
- * @slot title - Header title text.
- * @slot button-1-leading-icon - Leading icon for the first button.
- * @slot button-1-label - Label for the first button.
- * @slot button-2-leading-icon - Leading icon for the second button.
- * @slot button-2-label - Label for the second button.
- * @slot button-3-leading-icon - Leading icon for the third button.
- * @slot button-3-label - Label for the third button.
+ * ## Sizing
+ *
+ * The menu hugs its content and never reserves more space than its slotted
+ * sections need; it deliberately does not impose a height of its own. Sizing is
+ * owned by the consumer, since only the consumer knows how large the menu may
+ * grow in a given layout.
+ *
+ * From a web components perspective, drive the size from the host element and
+ * the slotted light-DOM nodes — not from component properties:
+ *
+ * - **Bound the whole menu** by giving the host element a definite `height`. The
+ *   menu fills that height and the alert list scrolls within the remaining space
+ *   while the footer and content keep their size. This is the recommended
+ *   approach. (A `max-height` alone will not bound the list — the internal
+ *   scroll needs a definite height to resolve against.)
+ * - **Size sections independently** (advanced) by sizing the slotted nodes
+ *   directly — e.g. a fixed-height `content` element, or a capped, scrollable
+ *   wrapper around the `alarms` items.
+ * - **Leave it unbounded** to let the menu grow with its content.
+ *
+ * @slot buttons - Buttons shown in the footer.
  * @slot content - Main content shown in the content area.
  * @slot alarms - Alarm items rendered inside the alert list.
- *
- * @property {number} numberOfButtons - Number of buttons to render (up to 3).
- *
- * @fires button1-click - Fired when the first button is clicked.
- * @fires button2-click - Fired when the second button is clicked.
- * @fires button3-click - Fired when the third button is clicked.
  */
 
 @customElement('obc-integration-vessel-menu')
 export class ObcIntegrationVesselMenu extends LitElement {
-  @property({type: Number}) numberOfButtons = 3;
-
-  private renderButtons() {
-    return html`${Array.from({length: this.numberOfButtons}, (_, i) => {
-      const buttonNum = i + 1;
-      return html`<obc-button
-        @click=${() =>
-          this.dispatchEvent(new CustomEvent(`button${buttonNum}-click`))}
-        ?showLeadingIcon=${true}
-        ?fullWidth=${true}
-        class="button"
-      >
-        <slot
-          name="button-${buttonNum}-leading-icon"
-          slot="leading-icon"
-        ></slot>
-        <slot name="button-${buttonNum}-label"></slot>
-      </obc-button>`;
-    })}`;
-  }
+  @property({type: Boolean, attribute: false}) hasActions = true;
+  @property({type: Boolean, attribute: false}) hasAlertList = true;
+  @property({type: Boolean, attribute: false}) hasContent = true;
 
   protected override render() {
     return html`
-      <div
-        class=${classMap({
-          wrapper: true,
-        })}
-      >
-        <div class="footer-container">${this.renderButtons()}</div>
-        <div class="content-area">
-          <slot name="content"></slot>
+      <div class="wrapper">
+        <div
+          class=${classMap({
+            'footer-container': true,
+            hidden: !this.hasActions,
+          })}
+        >
+          <slot name="buttons" class="buttons-slot"></slot>
         </div>
-        <div class="content-container">
-          <obc-alert-list class="alert-list"
-            ><slot name="alarms"> </slot>
+        <div
+          class=${classMap({
+            'content-area': true,
+            hidden: !this.hasContent,
+          })}
+        >
+          <slot name="content" class="content-slot"></slot>
+        </div>
+        <div
+          class=${classMap({
+            'content-container': true,
+            hidden: !this.hasAlertList,
+          })}
+        >
+          <obc-alert-list class="alertlist"
+            ><slot name="alarms"></slot>
+            <div slot="empty-icon">
+              <obi-unacknowledged></obi-unacknowledged>
+            </div>
+            <div slot="empty-title">
+              <span>No alerts</span>
+            </div>
           </obc-alert-list>
         </div>
       </div>

@@ -8,8 +8,8 @@ import '../tree-navigation-item/tree-navigation-item.js';
 import {
   TreeBranchType,
   TreeTerminalType,
+  type TreeNavigationItemAlerts,
 } from '../tree-navigation-item/tree-navigation-item.js';
-import {BadgeType} from '../badge/badge.js';
 
 /**
  * `<obc-navigation-item-group>` – A collapsible navigation group component for organizing related navigation items under a single expandable label.
@@ -108,14 +108,13 @@ export class ObcNavigationItemGroup extends LitElement {
    */
   @property({type: String}) terminalType: string = TreeTerminalType.regular;
 
-  /** Whether a trailing alert counter badge is shown on the header (Tree variant only). */
-  @property({type: Boolean}) hasAlertBadge = false;
-
-  /** The number shown in the header's alert badge when `hasAlertBadge` is true (Tree variant only). */
-  @property({type: Number}) alertCount = 0;
-
-  /** The severity/type of the header's alert badge — one of the `obc-badge` types (Tree variant only). */
-  @property({type: String}) alertType: string = BadgeType.alarm;
+  /**
+   * Per-severity alert counts shown as trailing badge(s) on the group header
+   * (Tree variant only). Forwarded to the underlying `obc-tree-navigation-item`;
+   * typically `{combine: true, ...}` so the header totals the rows beneath it.
+   * See {@link TreeNavigationItemAlerts}.
+   */
+  @property({type: Object}) alerts?: TreeNavigationItemAlerts;
 
   /** Whether the group starts expanded. Useful for trees that open by default. */
   @property({type: Boolean}) defaultOpen = false;
@@ -178,9 +177,7 @@ export class ObcNavigationItemGroup extends LitElement {
           ?checked=${this.checked}
           .hasLeadingIcon=${this.hasIcon}
           .terminalType=${this.terminalType}
-          ?hasAlertBadge=${this.hasAlertBadge}
-          .alertCount=${this.alertCount}
-          .alertType=${this.alertType}
+          .alerts=${this.expanded ? undefined : this.alerts}
           @expand-toggle=${this.onClickGroup}
         >
           ${this.hasIcon

@@ -81,6 +81,7 @@ export enum SequenceToolbarType {
 export class ObcSequenceToolbar extends LitElement {
   @property({type: String, reflect: true}) type: SequenceToolbarType =
     SequenceToolbarType.unordered;
+  /** @availableWhen type!=sequential */
   @property({type: Boolean}) hasAdd = false;
 
   static override styles = unsafeCSS(style);

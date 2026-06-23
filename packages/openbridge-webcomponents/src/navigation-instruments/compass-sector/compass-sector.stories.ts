@@ -69,6 +69,10 @@ const meta: Meta<typeof ObcCompassSector> = {
       control: 'multi-select',
       options: Object.values(CompassSectorPriorityElement),
     },
+    hasReadout: {control: 'boolean'},
+    label: {control: 'text'},
+    unit: {control: 'text'},
+    fractionDigits: {control: 'number'},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcCompassSector>;

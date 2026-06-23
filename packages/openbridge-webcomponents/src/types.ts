@@ -9,22 +9,22 @@ export enum AlertType {
   Alarm = 'alarm',
   Warning = 'warning',
   Caution = 'caution',
-  IsaCritical = 'isa-critical',
-  IsaHigh = 'isa-high',
-  IsaMedium = 'isa-medium',
-  IsaLow = 'isa-low',
-  IsaDiagnostic = 'isa-diagnostic',
+  LevelCritical = 'level-critical',
+  LevelHigh = 'level-high',
+  LevelMedium = 'level-medium',
+  LevelLow = 'level-low',
+  LevelDiagnostic = 'level-diagnostic',
 }
 
 export const ALERT_SEVERITY_PRIORITY = [
-  AlertType.IsaCritical,
+  AlertType.LevelCritical,
   AlertType.Alarm,
-  AlertType.IsaHigh,
+  AlertType.LevelHigh,
   AlertType.Warning,
-  AlertType.IsaMedium,
+  AlertType.LevelMedium,
   AlertType.Caution,
-  AlertType.IsaLow,
-  AlertType.IsaDiagnostic,
+  AlertType.LevelLow,
+  AlertType.LevelDiagnostic,
 ];
 
 export enum AlertCategory {

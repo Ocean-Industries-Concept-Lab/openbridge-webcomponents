@@ -25,11 +25,11 @@ export enum BadgeSize {
  * - `alarm`: Indicates a critical or urgent state.
  * - `warning`: Indicates a warning or cautionary state.
  * - `caution`: Indicates a less severe caution.
- * - `isa-critical`: ISA highest-severity state (critical).
- * - `isa-high`: ISA high-severity state (alarm-equivalent styling).
- * - `isa-medium`: ISA medium-severity state (warning-equivalent styling).
- * - `isa-low`: ISA low-severity state (caution-equivalent styling).
- * - `isa-diagnostic`: ISA diagnostic/notification state.
+ * - `level-critical`: level highest-severity state (critical).
+ * - `level-high`: level high-severity state (alarm-equivalent styling).
+ * - `level-medium`: level medium-severity state (warning-equivalent styling).
+ * - `level-low`: level low-severity state (caution-equivalent styling).
+ * - `level-diagnostic`: level diagnostic/notification state.
  * - `running`: Indicates an active or running state.
  * - `notification`: Used for general notifications.
  * - `enhance`: Used for enhanced or secondary notifications.
@@ -42,11 +42,11 @@ export enum BadgeType {
   alarm = 'alarm',
   warning = 'warning',
   caution = 'caution',
-  isaCritical = 'isa-critical',
-  isaHigh = 'isa-high',
-  isaMedium = 'isa-medium',
-  isaLow = 'isa-low',
-  isaDiagnostic = 'isa-diagnostic',
+  levelCritical = 'level-critical',
+  levelHigh = 'level-high',
+  levelMedium = 'level-medium',
+  levelLow = 'level-low',
+  levelDiagnostic = 'level-diagnostic',
   running = 'running',
   notification = 'notification',
   enhance = 'enhance',
@@ -80,7 +80,7 @@ export enum BadgeVariant {
  *   - `alarm`: Highlights critical or urgent states.
  *   - `warning`: Indicates caution or warning.
  *   - `caution`: Used for less severe caution.
- *   - `isa-critical`, `isa-high`, `isa-medium`, `isa-low`, `isa-diagnostic`: ISA severity levels, styled to match their legacy equivalents (critical, alarm, warning, caution, notification).
+ *   - `level-critical`, `level-high`, `level-medium`, `level-low`, `level-diagnostic`: level severity levels, styled to match their legacy equivalents (critical, alarm, warning, caution, notification).
  *   - `running`: Represents active or running states.
  *   - `notification`: For general notifications.
  *   - `enhance`: For secondary notifications or emphasis.
@@ -157,6 +157,8 @@ export class ObcBadge extends LitElement {
    * The number to display in the badge. Set to 0 for no count.
    *
    * If `showNumber` is false, the number is hidden.
+   *
+   * @availableWhen showNumber==true
    */
   @property({type: Number}) number = 0;
 
@@ -170,7 +172,7 @@ export class ObcBadge extends LitElement {
   /**
    * Visual style/type of the badge.
    *
-   * Possible values: `regular`, `alarm`, `warning`, `caution`, `isa-critical`, `isa-high`, `isa-medium`, `isa-low`, `isa-diagnostic`, `running`, `notification`, `enhance`, `automation`, `outline`, `empty`.
+   * Possible values: `regular`, `alarm`, `warning`, `caution`, `level-critical`, `level-high`, `level-medium`, `level-low`, `level-diagnostic`, `running`, `notification`, `enhance`, `automation`, `outline`, `empty`.
    *
    * Defaults to `regular`.
    */
@@ -194,7 +196,7 @@ export class ObcBadge extends LitElement {
   /**
    * Whether to show an icon in the badge.
    *
-   * For built-in types (`alarm`, `warning`, `caution`, the `isa-*` severities, and `running`), a contextual icon is shown automatically.
+   * For built-in types (`alarm`, `warning`, `caution`, the `level-*` severities, and `running`), a contextual icon is shown automatically.
    * For other types, provide a custom icon in the `badge-icon` slot.
    */
   @property({type: Boolean}) showIcon = false;
@@ -244,7 +246,7 @@ export class ObcBadge extends LitElement {
             />
           </svg>
         `;
-      case BadgeType.isaHigh:
+      case BadgeType.levelHigh:
         return html`
           <svg width="100%" height="100%" viewBox="0 0 12 12" fill="none">
             <path
@@ -253,7 +255,7 @@ export class ObcBadge extends LitElement {
             />
           </svg>
         `;
-      case BadgeType.isaMedium:
+      case BadgeType.levelMedium:
         return html`
           <svg width="100%" height="100%" viewBox="0 0 12 12" fill="none">
             <circle
@@ -267,7 +269,7 @@ export class ObcBadge extends LitElement {
             />
           </svg>
         `;
-      case BadgeType.isaLow:
+      case BadgeType.levelLow:
         return html`
           <svg width="100%" height="100%" viewBox="0 0 12 12" fill="none">
             <path
@@ -279,7 +281,7 @@ export class ObcBadge extends LitElement {
             />
           </svg>
         `;
-      case BadgeType.isaCritical:
+      case BadgeType.levelCritical:
         return html`
           <svg width="100%" height="100%" viewBox="0 0 12 12" fill="none">
             <path
@@ -290,7 +292,7 @@ export class ObcBadge extends LitElement {
             />
           </svg>
         `;
-      case BadgeType.isaDiagnostic:
+      case BadgeType.levelDiagnostic:
         return html`
           <svg width="100%" height="100%" viewBox="0 0 12 12" fill="none">
             <path

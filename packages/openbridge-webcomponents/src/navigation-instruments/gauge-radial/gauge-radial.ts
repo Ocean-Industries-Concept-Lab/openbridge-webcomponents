@@ -8,7 +8,7 @@ import {InstrumentState, Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/instrument-radial/instrument-radial.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
-import '../readout/readout.js';
+import {renderInstrumentReadout} from '../readout/instrument-readout.js';
 import {
   ReadoutStackVerticalAlignment,
   ReadoutVariant,
@@ -67,7 +67,7 @@ export interface GaugeRadialAdvice {
  * - Provide `primaryTickmarkInterval` and `secondaryTickmarkInterval` to
  *   control tickmark density.
  * - Enable `showLabels` to show numeric labels at primary tickmarks.
- * - Enable `showReadout` with optional `label` and `unit`. Layout depends on `sector`
+ * - Enable `hasReadout` with optional `label` and `unit`. Layout depends on `sector`
  *   and `type`: **270** filled/bar — value at center + a label-only `meta` row in
  *   the bottom gap (two separate readouts); **180** filled/bar — a single centered
  *   stack (value + label/unit) at the bottom; **270** needle — bottom stack;
@@ -125,7 +125,12 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
   @property({type: String, reflect: true}) sector: GaugeRadialSector =
     GaugeRadialSector.deg270;
-  @property({type: Boolean}) showReadout = false;
+  /**
+   * When `true`, shows the centre `<obc-readout>`(s) with the current value
+   * (and optional `label`/`unit`). Layout depends on `sector` and `type`.
+   * Default `false`.
+   */
+  @property({type: Boolean}) hasReadout = false;
   @property({type: String}) label = '';
   @property({type: String}) unit = '';
   @property({type: Number}) fractionDigits = 0;
@@ -204,24 +209,21 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   }): TemplateResult {
     // `labelOnly` already means "no value", so derive it instead of passing both.
     const withValue = !labelOnly;
-    return html`
-      <obc-readout
-        class=${className}
-        direction="vertical"
-        ?labelOnly=${labelOnly}
-        .variant=${variant}
-        .alignment=${alignment}
-        .valuePriority=${withValue ? this.priority : undefined}
-        .value=${withValue ? this.value : undefined}
-        .fractionDigits=${this.fractionDigits}
-        .label=${withMeta ? this.label : ''}
-        .unit=${withMeta ? this.unit : ''}
-      ></obc-readout>
-    `;
+    return renderInstrumentReadout({
+      className,
+      variant,
+      alignment,
+      labelOnly,
+      value: withValue ? this.value : undefined,
+      valuePriority: withValue ? this.priority : undefined,
+      fractionDigits: this.fractionDigits,
+      label: withMeta ? this.label : '',
+      unit: withMeta ? this.unit : '',
+    });
   }
 
   private renderReadouts() {
-    if (!this.showReadout) {
+    if (!this.hasReadout) {
       return nothing;
     }
 

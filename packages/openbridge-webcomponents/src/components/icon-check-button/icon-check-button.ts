@@ -81,6 +81,7 @@ export class ObcIconCheckButton extends LitElement {
    * Text to display below the icon (when `hasLabel` is true).
    *
    * Used to describe the toggle action or state for clarity and accessibility.
+   * @availableWhen hasLabel==true
    */
   @property({type: String}) label = '';
 

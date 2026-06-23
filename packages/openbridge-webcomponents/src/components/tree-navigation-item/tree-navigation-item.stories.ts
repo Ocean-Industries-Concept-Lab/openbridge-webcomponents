@@ -7,7 +7,6 @@ import {
 import './tree-navigation-item.js';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {html} from 'lit';
-import {BadgeType} from '../badge/badge.js';
 
 const meta: Meta<typeof ObcTreeNavigationItem> = {
   title: 'UI Components/Menus and Navigation/Tree Navigation Item',
@@ -23,9 +22,7 @@ const meta: Meta<typeof ObcTreeNavigationItem> = {
     disabled: false,
     hasLeadingIcon: true,
     terminalType: TreeTerminalType.regular,
-    hasAlertBadge: false,
-    alertCount: 9,
-    alertType: BadgeType.alarm,
+    alerts: undefined,
   },
   argTypes: {
     icon: {
@@ -43,13 +40,7 @@ const meta: Meta<typeof ObcTreeNavigationItem> = {
       control: {type: 'select'},
       options: Object.values(TreeTerminalType),
     },
-    hasAlertBadge: {control: {type: 'boolean'}},
-    alertCount: {control: {type: 'number'}},
-    alertType: {
-      control: {type: 'select'},
-      options: Object.values(BadgeType),
-      if: {arg: 'hasAlertBadge'},
-    },
+    alerts: {control: {type: 'object'}},
   },
   render: (args) => {
     return html`<obc-tree-navigation-item
@@ -61,9 +52,7 @@ const meta: Meta<typeof ObcTreeNavigationItem> = {
       ?disabled=${args.disabled}
       .hasLeadingIcon=${args.hasLeadingIcon}
       .terminalType=${args.terminalType}
-      .hasAlertBadge=${args.hasAlertBadge}
-      .alertCount=${args.alertCount}
-      .alertType=${args.alertType}
+      .alerts=${args.alerts}
       @expand-toggle=${(e: CustomEvent<boolean>) => {
         (e.currentTarget as ObcTreeNavigationItem).expanded = e.detail;
       }}
@@ -106,8 +95,42 @@ export const IndentedNoConnectors: Story = {
   args: {branches: [TreeBranchType.blank, TreeBranchType.blank]},
 };
 
+/** A single alert badge from one non-zero count in the `alerts` map. */
 export const WithAlertBadge: Story = {
-  args: {hasAlertBadge: true, alertCount: 9},
+  args: {alerts: {countLevelHigh: 9}},
+};
+
+/**
+ * Several severities at once. With `combine` unset, each non-zero count
+ * renders its own badge, ordered most to least severe and spaced by
+ * `var(--app-components-alert-counter-item-badge-spacing)`.
+ */
+export const MultipleAlertBadges: Story = {
+  args: {
+    alerts: {
+      countLevelCritical: 1,
+      countLevelHigh: 3,
+      countLevelMedium: 12,
+      countLevelLow: 2,
+    },
+  },
+};
+
+/**
+ * The same counts as `MultipleAlertBadges`, but `combine: true` collapses them
+ * into one badge: the number is the combined total (18) and the style is the
+ * highest category present (level-critical).
+ */
+export const AggregatedAlertBadge: Story = {
+  args: {
+    alerts: {
+      combine: true,
+      countLevelCritical: 1,
+      countLevelHigh: 3,
+      countLevelMedium: 12,
+      countLevelLow: 2,
+    },
+  },
 };
 
 export const AggregatedHeader: Story = {

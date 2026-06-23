@@ -102,6 +102,7 @@ export class ObcAdviceButton extends LitElement {
    * - `enhanced`: Most prominent, accent background/border when active (`isActive` must be true for effect).
    *
    * @default AdviceButtonStyle.Flat
+   * @availableWhen isActive==true
    */
   @property({type: String}) buttonStyle: AdviceButtonStyle =
     AdviceButtonStyle.Flat;
@@ -119,6 +120,7 @@ export class ObcAdviceButton extends LitElement {
    * If false, the count is hidden even if `count` is set.
    *
    * @default false
+   * @availableWhen isActive==true && buttonStyle in [Normal, Enhanced]
    */
   @property({type: Boolean}) showCount = false;
 
