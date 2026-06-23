@@ -133,6 +133,7 @@ export class ObcFloatingItem extends LitElement {
    * Shows a day chip (slot `day`) next to the timestamp when `true`.
    * Only applied when `hasTimestamp` is also `true`.
    * Use to provide additional context for the timestamp.
+   * @availableWhen hasTimestamp==true
    */
   @property({type: Boolean}) hasDay = false;
 
@@ -146,6 +147,7 @@ export class ObcFloatingItem extends LitElement {
    * Enables a secondary action button (slot `action2`).
    * Only applied when `action` is also `true`.
    * Use sparingly for secondary actions (e.g., "Undo").
+   * @availableWhen action==true
    */
   @property({type: Boolean}) action2 = false;
 

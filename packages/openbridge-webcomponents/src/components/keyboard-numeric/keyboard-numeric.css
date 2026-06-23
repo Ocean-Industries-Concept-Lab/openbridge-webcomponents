@@ -2,11 +2,11 @@
   display: flex;
   width: fit-content;
   height: fit-content;
-  min-width: var(--ui-components-keyboard-nummeric-component-width-min);
-  min-height: var(--ui-components-keyboard-nummeric-component-height-min);
+  min-width: var(--ui-components-keyboard-numeric-component-width-min);
+  min-height: var(--ui-components-keyboard-numeric-component-height-min);
   flex-direction: column;
   align-items: flex-start;
-  border-radius: var(--ui-components-keyboard-nummeric-border-radius);
+  border-radius: var(--ui-components-keyboard-numeric-border-radius);
   background: var(--container-background-color);
   box-shadow: var(--shadow-floating-x) var(--shadow-floating-y)
     var(--shadow-floating-blur) var(--shadow-raised-spread)
@@ -22,8 +22,8 @@
 
 .top-bar {
   display: flex;
-  height: var(--ui-components-keyboard-nummeric-top-bar-height);
-  padding-left: var(--ui-components-keyboard-nummeric-section-spacing);
+  height: var(--ui-components-keyboard-numeric-top-bar-height);
+  padding-left: var(--ui-components-keyboard-numeric-section-spacing);
   justify-content: space-between;
   align-items: center;
   flex-shrink: 0;
@@ -38,10 +38,10 @@
 
 .container-content {
   display: flex;
-  padding: var(--ui-components-keyboard-nummeric-section-spacing);
+  padding: var(--ui-components-keyboard-numeric-section-spacing);
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--ui-components-keyboard-nummeric-section-spacing);
+  gap: var(--ui-components-keyboard-numeric-section-spacing);
   flex: 1 0 0;
   align-self: stretch;
 }
@@ -55,7 +55,7 @@
 .key-container {
   display: flex;
   flex-direction: column;
-  gap: var(--ui-components-keyboard-nummeric-button-spacing);
+  gap: var(--ui-components-keyboard-numeric-button-spacing);
   align-items: flex-start;
   width: 100%;
 }
@@ -63,7 +63,7 @@
 /* Calculation Row */
 .calculation-container {
   display: flex;
-  gap: var(--ui-components-keyboard-nummeric-button-spacing);
+  gap: var(--ui-components-keyboard-numeric-button-spacing);
   align-items: center;
   width: 100%;
 }
@@ -86,7 +86,7 @@ obc-icon-button.calculation-button::part(visible-wrapper) {
 /* Input Container (keyboard + actions) */
 .input-container {
   display: flex;
-  gap: var(--ui-components-keyboard-nummeric-button-spacing);
+  gap: var(--ui-components-keyboard-numeric-button-spacing);
   align-items: center;
   width: 100%;
 }
@@ -100,31 +100,31 @@ obc-icon-button.calculation-button::part(visible-wrapper) {
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-start;
-  gap: var(--ui-components-keyboard-nummeric-button-spacing);
+  gap: var(--ui-components-keyboard-numeric-button-spacing);
   align-self: stretch;
 }
 
 .row {
   display: flex;
   align-items: center;
-  gap: var(--ui-components-keyboard-nummeric-button-spacing);
-  height: var(--ui-components-keyboard-nummeric-button-size-min);
+  gap: var(--ui-components-keyboard-numeric-button-spacing);
+  height: var(--ui-components-keyboard-numeric-button-size-min);
   width: 100%;
 }
 
 .key-button {
   flex: 1 0 0;
-  min-width: var(--ui-components-keyboard-nummeric-touch-target-size);
-  min-height: var(--ui-components-keyboard-nummeric-button-size-min);
-  height: var(--ui-components-keyboard-nummeric-button-size-min);
+  min-width: var(--ui-components-keyboard-numeric-touch-target-size);
+  min-height: var(--ui-components-keyboard-numeric-button-size-min);
+  height: var(--ui-components-keyboard-numeric-button-size-min);
 }
 
 obc-button.key-button::part(visible-wrapper) {
   box-sizing: border-box;
   display: flex;
   flex: 1 0 0;
-  min-width: var(--ui-components-keyboard-nummeric-touch-target-size);
-  min-height: var(--ui-components-keyboard-nummeric-button-size-min);
+  min-width: var(--ui-components-keyboard-numeric-touch-target-size);
+  min-height: var(--ui-components-keyboard-numeric-button-size-min);
   height: 100%;
   align-items: center;
   justify-content: center;
@@ -143,22 +143,22 @@ obc-button.key-button::part(visible-wrapper) {
 .function-buttons-container {
   display: flex;
   flex-direction: column;
-  gap: var(--ui-components-keyboard-nummeric-button-spacing);
+  gap: var(--ui-components-keyboard-numeric-button-spacing);
   align-items: flex-start;
 }
 
 .action-button {
-  width: var(--ui-components-keyboard-nummeric-action-button-width);
+  width: var(--ui-components-keyboard-numeric-action-button-width);
   min-width: var(--ui-components-button-touch-target-size);
-  min-height: var(--ui-components-keyboard-nummeric-button-size-min);
+  min-height: var(--ui-components-keyboard-numeric-button-size-min);
 }
 
 obc-button.action-button::part(visible-wrapper) {
   box-sizing: border-box;
-  width: var(--ui-components-keyboard-nummeric-action-button-width);
+  width: var(--ui-components-keyboard-numeric-action-button-width);
   min-width: var(--ui-components-button-touch-target-size);
-  min-height: var(--ui-components-keyboard-nummeric-button-size-min);
-  height: var(--ui-components-keyboard-nummeric-button-size-min);
+  min-height: var(--ui-components-keyboard-numeric-button-size-min);
+  height: var(--ui-components-keyboard-numeric-button-size-min);
 }
 
 obc-icon-button::part(visible-wrapper) {

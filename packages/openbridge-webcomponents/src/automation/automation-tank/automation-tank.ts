@@ -30,10 +30,10 @@ import '../../building-blocks/bar-vertical/bar-vertical.js';
 import '../../components/alert-frame/alert-frame.js';
 import {Priority} from '../../navigation-instruments/types.js';
 import {
-  ObcAlertFrameStatus,
   ObcAlertFrameThickness,
   ObcAlertFrameType,
 } from '../../components/alert-frame/alert-frame.js';
+import {AlertType} from '../../types.js';
 import type {ChartLineDataItem} from '../../building-blocks/chart-line/chart-line-base.js';
 import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
 import {
@@ -95,11 +95,37 @@ export enum TankChartMode {
 }
 
 /**
+ * A single detail row rendered in the tank's `readout` rich list (below the
+ * main percent / value block, separated by a divider). Each row is rendered
+ * as `<label>` on the left and `<value><degree?><percent?><unit>` on the
+ * right, all on a single line.
+ */
+export interface TankReadoutItem {
+  /** Left-aligned label text (e.g. `Temperature`). */
+  label: string;
+  /** Numeric value, formatted with the tank's `percentFractionDigits`. */
+  value: number;
+  /** Append a `°` glyph directly after the value with no gap. */
+  hasDegree?: boolean;
+  /** Append a `%` glyph directly after the value with no gap. */
+  hasPercentage?: boolean;
+  /** Unit text (e.g. `C`, `Pa`, `m/s`). Rendered after the value/glyph. */
+  unit: string;
+}
+
+/**
  *
  *
- * @ignition-base-height: 173px
- * @ignition-base-width: 168px
- * @ignition-center-horizontal
+ * @slot badges - Custom badges to be displayed in the badge area.
+ * @slot tag - Text or element for the tank's tag/label.
+ * @slot readout - Replaces the entire readout content block.
+ * @slot max-value - Content for the capacity value.
+ * @slot unit - Content for the unit of measurement.
+ * @slot current-value - Content for the current level value.
+ * @slot rich - Content for additional detail rows.
+ * @slot alert-icon - Custom icon for the alert frame.
+ * @slot alert-label - Label for the alert frame.
+ * @slot alert-timer - Timer for the alert frame.
  */
 @customElement('obc-automation-tank')
 export class ObcAutomationTank extends LitElement {
@@ -113,12 +139,12 @@ export class ObcAutomationTank extends LitElement {
   @property({type: Boolean, reflect: true}) compact: boolean = false;
   /**
    * Host positioning model — see `TankPositioning` for details. Defaults to
-   * `point` for backward compatibility (fixed default dimensions + P&ID
-   * top-center anchor). Set to `button` to make the host fill its parent
-   * container (100% × 100%) with no anchor offset.
+   * `button` (host fills parent container, 100% × 100%, no anchor offset).
+   * Set to `point` for the legacy P&ID canvas mode (fixed default dimensions
+   * + top-center anchor offset).
    */
   @property({type: String, reflect: true}) positioning: TankPositioning =
-    TankPositioning.point;
+    TankPositioning.button;
   /**
    * Static (display-only) variant. Always rendered at the compact size; the
    * inner chart/bar is hidden, the bordered area is filled with
@@ -191,8 +217,7 @@ export class ObcAutomationTank extends LitElement {
     ObcAlertFrameType.SmallSideFlip;
   @property({type: String}) alertFrameThickness: ObcAlertFrameThickness =
     ObcAlertFrameThickness.Small;
-  @property({type: String}) alertFrameStatus: ObcAlertFrameStatus =
-    ObcAlertFrameStatus.Alarm;
+  @property({type: String}) alertFrameStatus: AlertType = AlertType.Alarm;
   @property({type: Boolean, attribute: false}) showAlertCategoryIcon: boolean =
     true;
   @property({type: Boolean}) showAlertIcon: boolean = false;
@@ -220,6 +245,21 @@ export class ObcAutomationTank extends LitElement {
    * precision is needed (see the `WithFractionDigits` story).
    */
   @property({type: Number}) percentFractionDigits: number = 0;
+
+  /**
+   * Rich detail rows shown below the main percent/value block in the regular
+   * (non-compact, non-static) layout, separated by a divider. When empty (the
+   * default), nothing is rendered — neither the divider nor the list. In
+   * vertical orientation the chart cell shrinks to make room; in horizontal
+   * orientation the readout column already has reserved whitespace so the
+   * chart is unaffected.
+   *
+   * Values are formatted using `percentFractionDigits`. Consumers that need
+   * full control over the markup can replace the entire fallback by slotting
+   * arbitrary content into `slot="rich"` (note: this is a different name from
+   * the existing `slot="readout"` which replaces the whole readout block).
+   */
+  @property({type: Array, attribute: false}) readout: TankReadoutItem[] = [];
 
   /**
    * Enum-driven badges rendered inside the `badges` cell. Mirrors the API
@@ -271,6 +311,16 @@ export class ObcAutomationTank extends LitElement {
         return ObcAutomationBadgeType.Warning;
       case AutomationButtonBadgeAlert.Alarm:
         return ObcAutomationBadgeType.Alarm;
+      case AutomationButtonBadgeAlert.LevelCritical:
+        return ObcAutomationBadgeType.LevelCritical;
+      case AutomationButtonBadgeAlert.LevelHigh:
+        return ObcAutomationBadgeType.LevelHigh;
+      case AutomationButtonBadgeAlert.LevelMedium:
+        return ObcAutomationBadgeType.LevelMedium;
+      case AutomationButtonBadgeAlert.LevelLow:
+        return ObcAutomationBadgeType.LevelLow;
+      case AutomationButtonBadgeAlert.LevelDiagnostic:
+        return ObcAutomationBadgeType.LevelDiagnostic;
       default:
         return null;
     }
@@ -703,6 +753,36 @@ export class ObcAutomationTank extends LitElement {
                     <slot class="unit" name="unit">m<sup>3</sup></slot>
                   </div>
                 </div>
+                <slot name="rich">
+                  ${this.readout.length > 0
+                    ? html`
+                        <div class="rich-divider"></div>
+                        <div class="rich">
+                          ${this.readout.map(
+                            (row) => html`
+                              <div class="rich-row">
+                                <span class="rich-label">${row.label}</span>
+                                <span class="rich-value"
+                                  >${row.value.toFixed(
+                                    this.percentFractionDigits
+                                  )}</span
+                                >
+                                <span class="rich-suffix"
+                                  >${row.hasDegree
+                                    ? html`<span class="rich-glyph">°</span>`
+                                    : nothing}${row.hasPercentage
+                                    ? html`<span class="rich-glyph">%</span>`
+                                    : nothing}<span class="rich-unit"
+                                    >${row.unit}</span
+                                  ></span
+                                >
+                              </div>
+                            `
+                          )}
+                        </div>
+                      `
+                    : nothing}
+                </slot>
               </slot>
             </div>
           `;

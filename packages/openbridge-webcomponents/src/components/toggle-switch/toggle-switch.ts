@@ -112,6 +112,7 @@ export class ObcToggleSwitch extends LitElement {
   /**
    * Supplementary description text shown when `hasDescription` is true.
    * Use to clarify the effect or details of the toggle.
+   * @availableWhen hasDescription==true
    */
   @property({type: String}) description = '';
 

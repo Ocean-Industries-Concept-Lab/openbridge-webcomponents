@@ -26,10 +26,67 @@ export function parseNumberInput(display: string): number {
     return NaN;
   }
 
-  const normalized = trimmed.replace(',', '.');
+  // Drop whitespace and apostrophe grouping that may appear in pasted or
+  // locale-formatted numbers (e.g. `1 234`, `1'234`).
+  let normalized = trimmed.replace(/[\s']/g, '');
+
+  const commaCount = (normalized.match(/,/g) ?? []).length;
+  const dotCount = (normalized.match(/\./g) ?? []).length;
+
+  if (commaCount > 0 && dotCount > 0) {
+    // Both separators present: the right-most one is the decimal separator,
+    // the other is a grouping separator.
+    const decimalSeparator =
+      normalized.lastIndexOf(',') > normalized.lastIndexOf('.') ? ',' : '.';
+    const groupSeparator = decimalSeparator === ',' ? '.' : ',';
+    normalized = normalized.split(groupSeparator).join('');
+    normalized = normalized.replace(decimalSeparator, '.');
+  } else if (commaCount > 1) {
+    // Multiple commas without a dot can only be grouping separators.
+    normalized = normalized.split(',').join('');
+  } else if (commaCount === 1) {
+    // A single comma is treated as the decimal separator.
+    normalized = normalized.replace(',', '.');
+  } else if (dotCount > 1) {
+    // Multiple dots without a comma can only be grouping separators.
+    normalized = normalized.split('.').join('');
+  }
 
   const n = Number(normalized);
   return Number.isFinite(n) ? n : NaN;
+}
+
+function escapeRegex(value: string): string {
+  return value.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Permissive per-keystroke validator used to reject non-numeric characters
+ * before they reach the input. Allows half-typed states like `10.`, `-`, `,5`,
+ * `1,234.`; final correctness is enforced by `parseNumberInput` at commit.
+ *
+ * Accepts: optional leading sign, digits, the active decimal separator,
+ * the active group separator, and whitespace.
+ */
+export function isAllowedIntermediateInput(
+  value: string,
+  options: NumberInputFormatOptions = {}
+): boolean {
+  if (value === '') return true;
+
+  const localeSeparators = getLocaleNumberSeparators();
+  const decimalSeparator =
+    options.decimalSeparator ?? localeSeparators.decimalSeparator;
+  const groupSeparator =
+    options.groupSeparator ?? localeSeparators.groupSeparator;
+
+  const allowedChars = new Set<string>([decimalSeparator]);
+  if (groupSeparator) {
+    allowedChars.add(groupSeparator);
+  }
+  const allowedClass = [...allowedChars].map(escapeRegex).join('') + '0-9 \\t';
+  const pattern = new RegExp(`^[+\\-]?[${allowedClass}]*$`);
+  return pattern.test(value);
 }
 
 function clampFractionDigits(
@@ -110,7 +167,7 @@ export function removeGroupingFromDisplay(
     return display;
   }
 
-  const escaped = groupSeparator.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const escaped = escapeRegex(groupSeparator);
   return display.replace(new RegExp(escaped, 'g'), '');
 }
 

@@ -1,6 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcRoll} from './roll.js';
+import {ObcRoll, ObcRollType} from './roll.js';
 import './roll.js';
+import {Priority} from '../types.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {VesselImage} from '../watch/vessel.js';
 import {foreVessels} from '../watch/vessels/storybook-helper.js';
@@ -26,6 +27,14 @@ const meta: Meta<typeof ObcRoll> = {
       control: 'select',
       options: foreVessels,
     },
+    type: {control: 'select', options: Object.values(ObcRollType)},
+    priority: {control: 'select', options: Object.values(Priority)},
+    hasReadout: {control: 'boolean'},
+    label: {control: 'text'},
+    unit: {control: 'text'},
+    fractionDigits: {control: 'number'},
+    zoomToFitArc: {control: 'boolean'},
+    arcAngle: {control: {type: 'range', min: 5, max: 45, step: 1}},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcRoll>;
@@ -57,5 +66,24 @@ export const ZoomedInNarrow: Story = {
     minAvgRoll: -4,
     maxAvgRoll: 8,
     maxRollAdvice: 10,
+  },
+};
+
+export const WithReadout: Story = {
+  args: {
+    hasReadout: true,
+  },
+};
+
+export const DualScale: Story = {
+  args: {
+    type: ObcRollType.dualScale,
+    hasReadout: true,
+  },
+};
+
+export const Enhanced: Story = {
+  args: {
+    priority: Priority.enhanced,
   },
 };

@@ -25,6 +25,7 @@ export class ObcTableHeaderItem extends LitElement {
     ObcTableHeaderItemType.Regular;
   @property({type: Boolean}) disabled = false;
   @property({type: Boolean}) hasLeadingIcon = false;
+  /** @availableWhen sortable==true */
   @property({type: String}) sortDirection: ObcTableHeaderItemSortDirection =
     ObcTableHeaderItemSortDirection.None;
   @property({type: Boolean}) showDivider = false;

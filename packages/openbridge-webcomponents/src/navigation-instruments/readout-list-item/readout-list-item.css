@@ -3,17 +3,14 @@
 }
 
 :host {
-  display: inline-flex;
-  min-width: 160px;
-  width: max-content;
-  max-width: none;
+  display: block;
+  width: 100%;
 }
 
 .root {
   display: inline-flex;
   align-items: flex-end;
   border-radius: var(--global-border-radius-border-radius-base);
-  max-width: none;
   width: 100%;
 
   .content {
@@ -231,58 +228,25 @@
     }
   }
 
-  &:is(
-    .alert-low-integrity,
-    .alert-invalid,
-    .alert-caution,
-    .alert-warning,
-    .alert-alarm
-  ) {
-    background: var(--_obc-readout-list-item-alert-background);
-    border: 1px solid var(--_obc-readout-list-item-alert-border);
+  &:is(.data-low-integrity, .data-invalid) {
+    background: var(--_obc-readout-list-item-data-background);
+    border: 1px solid var(--_obc-readout-list-item-data-border);
     border-radius: 4px;
   }
 
-  &.alert-low-integrity {
-    --_obc-readout-list-item-alert-background: var(
+  &.data-low-integrity {
+    --_obc-readout-list-item-data-background: var(
       --alert-low-integrity-background-color
     );
-    --_obc-readout-list-item-alert-border: var(
+    --_obc-readout-list-item-data-border: var(
       --alert-low-integrity-border-color
     );
   }
 
-  &.alert-invalid {
-    --_obc-readout-list-item-alert-background: var(
+  &.data-invalid {
+    --_obc-readout-list-item-data-background: var(
       --alert-invalid-background-color
     );
-    --_obc-readout-list-item-alert-border: var(--alert-invalid-border-color);
-  }
-
-  &.alert-caution {
-    --_obc-readout-list-item-alert-background: var(
-      --alert-caution-container-background-color
-    );
-    --_obc-readout-list-item-alert-border: var(
-      --alert-caution-container-border-color
-    );
-  }
-
-  &.alert-warning {
-    --_obc-readout-list-item-alert-background: var(
-      --alert-warning-container-background-color
-    );
-    --_obc-readout-list-item-alert-border: var(
-      --alert-warning-container-border-color
-    );
-  }
-
-  &.alert-alarm {
-    --_obc-readout-list-item-alert-background: var(
-      --alert-alarm-container-background-color
-    );
-    --_obc-readout-list-item-alert-border: var(
-      --alert-alarm-container-border-color
-    );
+    --_obc-readout-list-item-data-border: var(--alert-invalid-border-color);
   }
 }

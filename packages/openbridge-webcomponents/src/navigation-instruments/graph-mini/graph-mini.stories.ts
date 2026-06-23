@@ -19,13 +19,22 @@ type Story = StoryObj<ObcGraphMini>;
 
 export const Primary: Story = {};
 
+export const WithRange: Story = {
+  args: {
+    minY: -10,
+    maxY: 10,
+  },
+};
+
 export const Realtime: Story = {
   tags: ['skip-test'],
   args: {
     data: [
       Array.from({length: 60}, (_, i) => i),
-      Array.from({length: 60}, (_, i) => Math.sin((i / 60) * 2 * Math.PI)),
+      Array.from({length: 60}, (_, i) => Math.sin((i / 60 / 5) * 2 * Math.PI)),
     ],
+    minY: -1.1,
+    maxY: 1.1,
   },
   play: async ({canvasElement}) => {
     const graph = canvasElement.querySelector('obc-graph-mini') as ObcGraphMini;
@@ -35,10 +44,9 @@ export const Realtime: Story = {
 
     let i = graph.data[0].length;
     setInterval(() => {
-      console.log('updating', i);
       const data = graph.data;
       const x = [...data[0], i];
-      const y = [...data[1], Math.sin((i / 60) * 2 * Math.PI)];
+      const y = [...data[1], Math.sin((i / 60 / 5) * 2 * Math.PI)];
       x.shift();
       y.shift();
       const newData: [number[], number[]] = [x, y];

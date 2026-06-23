@@ -171,12 +171,14 @@ export class ObcToggletip extends LitElement {
   /**
    * If true, shows the leading icon in the header.
    * The icon adapts to the current `variant` by default, or can be overridden via the `leading-icon` slot.
+   * @availableWhen title!=''
    */
   @property({type: Boolean}) hasLeadingIcon = false;
 
   /**
    * If true, shows the trailing icon in the header.
    * Use the `trailing-icon` slot to provide a custom icon.
+   * @availableWhen title!=''
    */
   @property({type: Boolean}) hasTrailingIcon = false;
 
@@ -189,12 +191,14 @@ export class ObcToggletip extends LitElement {
   /**
    * Label for the primary action button.
    * Only shown if `hasActions` is true.
+   * @availableWhen hasActions==true
    */
   @property({type: String}) primaryButtonLabel = 'Label';
 
   /**
    * Label for the secondary action button.
    * Only shown if `hasActions` is true.
+   * @availableWhen hasActions==true
    */
   @property({type: String}) secondaryButtonLabel = 'Label';
 

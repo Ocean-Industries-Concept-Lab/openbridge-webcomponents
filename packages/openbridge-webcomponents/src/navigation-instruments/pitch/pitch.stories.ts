@@ -1,6 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcPitch} from './pitch.js';
+import {ObcPitch, ObcPitchType} from './pitch.js';
 import './pitch.js';
+import {Priority} from '../types.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {sideVessels} from '../watch/vessels/storybook-helper.js';
 
@@ -23,6 +24,14 @@ const meta: Meta<typeof ObcPitch> = {
       control: 'select',
       options: sideVessels,
     },
+    type: {control: 'select', options: Object.values(ObcPitchType)},
+    priority: {control: 'select', options: Object.values(Priority)},
+    hasReadout: {control: 'boolean'},
+    label: {control: 'text'},
+    unit: {control: 'text'},
+    fractionDigits: {control: 'number'},
+    zoomToFitArc: {control: 'boolean'},
+    arcAngle: {control: {type: 'range', min: 5, max: 45, step: 1}},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcPitch>;
@@ -48,5 +57,24 @@ export const ZoomedInNarrow: Story = {
     minAvgPitch: -4,
     maxAvgPitch: 8,
     maxPitchAdvice: 10,
+  },
+};
+
+export const WithReadout: Story = {
+  args: {
+    hasReadout: true,
+  },
+};
+
+export const DualScale: Story = {
+  args: {
+    type: ObcPitchType.dualScale,
+    hasReadout: true,
+  },
+};
+
+export const Enhanced: Story = {
+  args: {
+    priority: Priority.enhanced,
   },
 };

@@ -45,7 +45,7 @@
   flex: 1 1 0;
   min-width: 0;
   @mixin font-body;
-  color: var(--on-container-active-color);
+  color: var(--on-flat-active-color);
 }
 
 .month-label {

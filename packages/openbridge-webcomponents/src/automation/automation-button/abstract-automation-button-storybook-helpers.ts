@@ -2,11 +2,13 @@ import {
   ObcAlertFrameStatus,
   ObcAlertFrameThickness,
   ObcAlertFrameType,
+  ObcAlertFrameMode,
 } from '../../components/alert-frame/alert-frame.js';
 import {MotorizedVariant} from './abstract-automation-button-motorized.js';
 import {
   AutomationButtonDirection,
   AutomationButtonLabelDirection,
+  AutomationButtonOrientation,
   AutomationButtonPositioning,
 } from './automation-button.js';
 import {CircularProgressMode} from '../../building-blocks/circular-progress/circular-progress.js';
@@ -31,6 +33,10 @@ export const argTypesAbstractAutomationButton = {
   },
   alertFrameType: {
     options: Object.values(ObcAlertFrameType),
+    control: {type: 'radio'},
+  },
+  alertFrameMode: {
+    options: Object.values(ObcAlertFrameMode),
     control: {type: 'radio'},
   },
   alertFrameThickness: {
@@ -86,12 +92,26 @@ export const argTypesAbstractAutomationButtonPassiveSquare = {
     options: ['square', 'flat'],
     control: {type: 'radio'},
   },
+  orientation: {
+    options: Object.values(AutomationButtonOrientation),
+    control: {type: 'radio'},
+  },
 };
 
 export const argTypesAbstractAutomationButtonMotorized = {
   ...argTypesAbstractAutomationButton,
   speedInPercent: {
     control: {type: 'range', min: 0, max: 100, step: 1},
+    description: 'Deprecated, use `speed` together with `speedUnit` instead.',
+  },
+  speed: {
+    control: {type: 'number'},
+  },
+  speedUnit: {
+    control: {type: 'text'},
+  },
+  speedMaxDigits: {
+    control: {type: 'number'},
   },
   labelDirection: {
     options: Object.values(AutomationButtonLabelDirection),

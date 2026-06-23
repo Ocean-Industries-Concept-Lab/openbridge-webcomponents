@@ -9,7 +9,7 @@ import {
 import {
   ReadoutDirection,
   ReadoutSetpointInteraction,
-  ReadoutAlertState,
+  ReadoutDataState,
   ReadoutVariant,
   ReadoutStackVerticalAlignment,
 } from './readout.js';
@@ -40,6 +40,11 @@ const meta: Meta<ObcReadout> = {
     direction: ReadoutDirection.vertical,
   },
   argTypes: {
+    value: {
+      control: {
+        type: 'number',
+      },
+    },
     variant: {
       control: {
         type: 'select',
@@ -52,11 +57,11 @@ const meta: Meta<ObcReadout> = {
       },
       options: Object.values(Priority),
     },
-    alertState: {
+    dataState: {
       control: {
         type: 'select',
       },
-      options: Object.values(ReadoutAlertState),
+      options: Object.values(ReadoutDataState),
     },
     setpointInteraction: {
       control: {
@@ -188,7 +193,7 @@ function renderComponent(args: ObcReadout): TemplateResult {
     <obc-readout
       .variant=${args.variant}
       .valuePriority=${args.valuePriority}
-      .alertState=${args.alertState}
+      .dataState=${args.dataState}
       .direction=${args.direction}
       .setpointInteraction=${args.setpointInteraction}
       .setpointSize=${args.setpointSize}
@@ -214,6 +219,7 @@ function renderComponent(args: ObcReadout): TemplateResult {
       .fractionDigits=${args.fractionDigits}
       .alignment=${args.alignment}
       .off=${args.off}
+      .alert=${args.alert}
     >
     </obc-readout>
   `;
@@ -223,6 +229,73 @@ export const Off: Story = {
   args: {
     off: true,
     hasSetpoint: false,
+  },
+  render: (args) => renderComponent(args as ObcReadout),
+};
+
+export const Center: Story = {
+  args: {
+    value: 100,
+    hasDegree: false,
+    hasSetpoint: true,
+    setpointValue: 12,
+    setpointSecondaryValue: 14,
+    adviceValue: 16,
+    adviceSecondaryValue: 18,
+    label: 'SOG',
+    unit: 'kn',
+    minValueLength: 0,
+    variant: 'regular',
+    valuePriority: 'regular',
+    direction: 'vertical',
+    alignment: 'center',
+  },
+
+  render: (args) => renderComponent(args as ObcReadout),
+};
+
+export const DataLowIntegrity: Story = {
+  args: {
+    value: 42,
+    label: 'RPM',
+    unit: 'rpm',
+    dataState: ReadoutDataState.lowIntegrity,
+  },
+  render: (args) => renderComponent(args as ObcReadout),
+};
+
+export const DataInvalid: Story = {
+  args: {
+    value: 42,
+    label: 'RPM',
+    unit: 'rpm',
+    dataState: ReadoutDataState.invalid,
+  },
+  render: (args) => renderComponent(args as ObcReadout),
+};
+
+export const Alarm: Story = {
+  args: {
+    value: 42,
+    label: 'RPM',
+    unit: 'rpm',
+    alert: {
+      status: 'alarm',
+      mode: 'acked-active',
+    },
+  },
+  render: (args) => renderComponent(args as ObcReadout),
+};
+
+export const LevelCritical: Story = {
+  args: {
+    value: 42,
+    label: 'RPM',
+    unit: 'rpm',
+    alert: {
+      status: 'level-critical',
+      mode: 'unacked-active',
+    },
   },
   render: (args) => renderComponent(args as ObcReadout),
 };

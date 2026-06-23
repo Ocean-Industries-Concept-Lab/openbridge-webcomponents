@@ -199,6 +199,81 @@ export const Caution: Story = {
   },
 };
 
+export const LevelCritical: Story = {
+  args: {type: BadgeType.levelCritical, showIcon: true},
+  render(args) {
+    return html`<obc-badge
+      number=${args.number}
+      size=${args.size}
+      type=${args.type}
+      variant=${args.variant}
+      .showNumber=${args.showNumber}
+      ?showIcon=${args.showIcon}
+    >
+    </obc-badge>`;
+  },
+};
+
+export const LevelHigh: Story = {
+  args: {type: BadgeType.levelHigh, showIcon: true},
+  render(args) {
+    return html`<obc-badge
+      number=${args.number}
+      size=${args.size}
+      type=${args.type}
+      variant=${args.variant}
+      .showNumber=${args.showNumber}
+      ?showIcon=${args.showIcon}
+    >
+    </obc-badge>`;
+  },
+};
+
+export const LevelMedium: Story = {
+  args: {type: BadgeType.levelMedium, showIcon: true},
+  render(args) {
+    return html`<obc-badge
+      number=${args.number}
+      size=${args.size}
+      type=${args.type}
+      variant=${args.variant}
+      .showNumber=${args.showNumber}
+      ?showIcon=${args.showIcon}
+    >
+    </obc-badge>`;
+  },
+};
+
+export const LevelLow: Story = {
+  args: {type: BadgeType.levelLow, showIcon: true},
+  render(args) {
+    return html`<obc-badge
+      number=${args.number}
+      size=${args.size}
+      type=${args.type}
+      variant=${args.variant}
+      .showNumber=${args.showNumber}
+      ?showIcon=${args.showIcon}
+    >
+    </obc-badge>`;
+  },
+};
+
+export const LevelDiagnostic: Story = {
+  args: {type: BadgeType.levelDiagnostic, showIcon: true},
+  render(args) {
+    return html`<obc-badge
+      number=${args.number}
+      size=${args.size}
+      type=${args.type}
+      variant=${args.variant}
+      .showNumber=${args.showNumber}
+      ?showIcon=${args.showIcon}
+    >
+    </obc-badge>`;
+  },
+};
+
 export const Running: Story = {
   args: {type: BadgeType.running, showIcon: true},
   render(args) {
