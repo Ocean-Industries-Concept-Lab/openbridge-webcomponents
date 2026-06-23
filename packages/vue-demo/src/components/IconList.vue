@@ -206,6 +206,12 @@ const groups = {
     'Command and users',
     'Chart targets'
   ],
+  'Devices & sensors': [
+    'Connectivity icons',
+    'Battery icons',
+    'Communication & sound',
+    'Sensors'
+  ],
   'Weather & Environment icons': ['Forecast', 'General'],
   'Automation icons': [
     'Automation system',
