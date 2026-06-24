@@ -10,7 +10,12 @@ import {
   ReadoutListItemBorder,
   ReadoutListItemSetpointInteraction,
   ReadoutValueWeight,
-  type ReadoutListItemOptions,
+  type ReadoutListItemClickable,
+  type ReadoutValueOptions,
+  type ReadoutSetpointOptions,
+  type ReadoutAdviceOptions,
+  type ReadoutReserverOptions,
+  type ReadoutSrcOptions,
 } from './readout-list-item.js';
 import type {AlertFrameConfig} from '../../components/alert-frame/alert-frame.js';
 import {
@@ -53,8 +58,31 @@ type ReadoutListItemStoryArgs = {
   'options.value.hasIcon': boolean;
   'options.value.hintedZeros': boolean;
   'options.setpoint.interaction': ReadoutListItemSetpointInteraction;
-  'options.setpoint.touch': boolean;
+  'options.setpoint.touching': boolean;
   'options.unit.spaceReserver': string;
+};
+
+// Authoring convenience for the stories only: the component's API is flat
+// (global props + per-block `*Options`), but grouping them under one `options`
+// object keeps the showcase cases compact. `renderItem` spreads this onto the
+// element's real props.
+type StoryOptions = {
+  size?: ReadoutListItemSize;
+  priority?: ReadoutListItemPriority;
+  stacking?: ReadoutListItemStacking;
+  clickable?: boolean | ReadoutListItemClickable;
+  hasLeadingIcon?: boolean;
+  hasDegree?: boolean;
+  hasDegreeSpacer?: boolean;
+  fractionDigits?: number;
+  maxDigits?: number;
+  dataQuality?: ReadoutListItemDataQuality;
+  alert?: false | AlertFrameConfig;
+  value?: ReadoutValueOptions;
+  setpoint?: ReadoutSetpointOptions;
+  advice?: ReadoutAdviceOptions;
+  unit?: ReadoutReserverOptions;
+  src?: ReadoutSrcOptions;
 };
 
 type ReadoutItemConfig = {
@@ -68,7 +96,7 @@ type ReadoutItemConfig = {
   setpoint?: number;
   hasAdvice?: boolean;
   advice?: number;
-  options?: ReadoutListItemOptions;
+  options?: StoryOptions;
   hasLeadingIcon?: boolean;
   hasValueIcon?: boolean;
 };
@@ -122,6 +150,7 @@ const showcaseStyle = `
 // label/unit/src are omitted (and the row keeps its height). Used by the
 // Playground and the alignment column.
 function renderItem(config: ReadoutItemConfig) {
+  const o = config.options ?? {};
   return html`
     <obc-readout-list-item
       .label=${config.label}
@@ -134,7 +163,22 @@ function renderItem(config: ReadoutItemConfig) {
       .setpoint=${config.setpoint}
       .hasAdvice=${config.hasAdvice ?? false}
       .advice=${config.advice}
-      .options=${config.options ?? {}}
+      .size=${o.size}
+      .priority=${o.priority}
+      .stacking=${o.stacking}
+      .clickable=${o.clickable ?? false}
+      .hasLeadingIcon=${o.hasLeadingIcon ?? false}
+      .hasDegree=${o.hasDegree ?? false}
+      .hasDegreeSpacer=${o.hasDegreeSpacer ?? false}
+      .fractionDigits=${o.fractionDigits ?? 0}
+      .maxDigits=${o.maxDigits ?? 0}
+      .dataQuality=${o.dataQuality}
+      .alert=${o.alert ?? false}
+      .valueOptions=${o.value}
+      .setpointOptions=${o.setpoint}
+      .adviceOptions=${o.advice}
+      .unitOptions=${o.unit}
+      .srcOptions=${o.src}
     >
       ${config.hasLeadingIcon
         ? html`<obi-placeholder slot="leading-icon"></obi-placeholder>`
@@ -220,11 +264,11 @@ const defaultArgs: ReadoutListItemStoryArgs = {
   'options.value.hintedZeros': false,
   'options.setpoint.interaction':
     ReadoutListItemSetpointInteraction.alwaysVisible,
-  'options.setpoint.touch': false,
+  'options.setpoint.touching': false,
   'options.unit.spaceReserver': '',
 };
 
-function argsToOptions(args: ReadoutListItemStoryArgs): ReadoutListItemOptions {
+function argsToOptions(args: ReadoutListItemStoryArgs): StoryOptions {
   return {
     size: args['options.size'],
     priority: args['options.priority'],
@@ -248,7 +292,7 @@ function argsToOptions(args: ReadoutListItemStoryArgs): ReadoutListItemOptions {
     },
     setpoint: {
       interaction: args['options.setpoint.interaction'],
-      touch: args['options.setpoint.touch'],
+      touching: args['options.setpoint.touching'],
     },
     unit: {spaceReserver: args['options.unit.spaceReserver'] || undefined},
   };
@@ -376,8 +420,8 @@ const meta = {
       if: {arg: 'hasSetpoint', truthy: true},
       table: {category: 'Setpoint'},
     },
-    'options.setpoint.touch': {
-      name: 'Setpoint Touch',
+    'options.setpoint.touching': {
+      name: 'Setpoint Touching',
       if: {arg: 'hasSetpoint', truthy: true},
       table: {category: 'Setpoint'},
     },
@@ -542,6 +586,50 @@ export const SetpointFlipFlop: Story = {
     ]),
 };
 
+// The four Figma "states" (sandbox file g9gUFzN6MzzvNudv4XOqMT), each with a
+// setpoint, mapped onto the component API. Value 123 ≠ setpoint 120 so the
+// flip-flop emphasises the setpoint. Locks the both-gray/both-blue colour rule
+// and the setpoint emphasis (SemiBold only when emphasised; value stays Regular).
+const STATE_VARIANTS: {label: string; options: StoryOptions}[] = [
+  {label: 'regular', options: {priority: ReadoutListItemPriority.regular}},
+  {label: 'enhanced', options: {priority: ReadoutListItemPriority.enhanced}},
+  {
+    label: 'input (adjusting)',
+    options: {
+      priority: ReadoutListItemPriority.enhanced,
+      setpoint: {touching: true},
+    },
+  },
+  {
+    label: 'input flip-flop',
+    options: {
+      priority: ReadoutListItemPriority.enhanced,
+      setpoint: {interaction: ReadoutListItemSetpointInteraction.flipFlop},
+    },
+  },
+];
+
+export const States: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'States (value + setpoint) — both neutral or both enhanced',
+        columns: 4,
+        cases: SIZES.flatMap((size) =>
+          STATE_VARIANTS.map((variant) => ({
+            label: `${size} / ${variant.label}`,
+            config: {
+              value: 123,
+              hasSetpoint: true,
+              setpoint: 120,
+              options: {size, hasDegree: true, ...variant.options},
+            },
+          }))
+        ),
+      },
+    ]),
+};
+
 // `flip-flop` (value/setpoint swap) and `pop-up` (setpoint fades out once
 // reached) only read clearly in motion, and they need `value === setpoint`
 // transitions rather than a single control — so each gets a focused static
@@ -603,12 +691,12 @@ export const SetpointTouch: Story = {
             },
           },
           {
-            label: 'touch (focus)',
+            label: 'touching (focus)',
             config: {
               value: 123,
               hasSetpoint: true,
               setpoint: 120,
-              options: {setpoint: {touch: true}},
+              options: {setpoint: {touching: true}},
             },
           },
         ],
@@ -647,11 +735,9 @@ function animatedInteractionStory(config: {
             .value=${AWAY}
             .hasSetpoint=${true}
             .setpoint=${SETPOINT}
-            .options=${{
-              size: ReadoutListItemSize.medium,
-              hasDegree: true,
-              setpoint: {interaction: config.interaction},
-            }}
+            .size=${ReadoutListItemSize.medium}
+            .hasDegree=${true}
+            .setpointOptions=${{interaction: config.interaction}}
           ></obc-readout-list-item>
         </div>
         <div style="display:flex; gap:12px; flex-wrap:wrap;">
@@ -673,7 +759,10 @@ function animatedInteractionStory(config: {
     play: async ({canvasElement}) => {
       await new Promise((r) => setTimeout(r, 300));
       const el = canvasElement.querySelector('#anim-demo') as
-        | (HTMLElement & {value: number})
+        | (HTMLElement & {
+            value: number;
+            setpointOptions: ReadoutSetpointOptions;
+          })
         | null;
       const status = canvasElement.querySelector(
         '#anim-status'
@@ -687,6 +776,11 @@ function animatedInteractionStory(config: {
       if (!el || !status || !btnAway || !btnReach) return;
 
       const anim = {value: AWAY};
+      // Focus/touch state — on while actively adjusting (sweeping toward the
+      // setpoint), off once settled. Rebuild the object so Lit re-renders.
+      const setTouch = (on: boolean) => {
+        el.setpointOptions = {interaction: config.interaction, touching: on};
+      };
       const setVal = (v: number) => {
         el.value = v;
         status.textContent = `value=${Math.round(v)}, setpoint=${SETPOINT}`;
@@ -695,12 +789,16 @@ function animatedInteractionStory(config: {
       // flip-flop swap and pop-up hide both key off strict equality).
       const tweenTo = (target: number) => {
         gsap.killTweensOf(anim);
+        setTouch(true);
         gsap.to(anim, {
           value: target,
           duration: 0.8,
           ease: 'power2.inOut',
           onUpdate: () => setVal(anim.value),
-          onComplete: () => setVal(target),
+          onComplete: () => {
+            setVal(target);
+            setTouch(false);
+          },
         });
       };
       btnAway.onclick = () => tweenTo(AWAY);
@@ -755,21 +853,12 @@ const SYNC_ANGLE_DURATION = 10;
 // setpoint block at once, without printing leading zeros.
 const SYNC_MAX_DIGITS = 3;
 
-// Single source of the readouts' options so the initial render and the
-// `setReadoutTouch` rebuild stay identical — otherwise toggling touch would drop
-// `maxDigits` and the reservation, reintroducing the shift.
-function syncReadoutOptions(opts: {
-  hasDegree?: boolean;
-  touch?: boolean;
-}): ReadoutListItemOptions {
+// The readouts' flip-flop setpoint options; only `touch` changes during the flow
+// (size/maxDigits are static flat props on the elements).
+function syncSetpointOptions(touching: boolean): ReadoutSetpointOptions {
   return {
-    size: ReadoutListItemSize.medium,
-    hasDegree: opts.hasDegree ?? false,
-    maxDigits: SYNC_MAX_DIGITS,
-    setpoint: {
-      interaction: ReadoutListItemSetpointInteraction.flipFlop,
-      touch: opts.touch ?? false,
-    },
+    interaction: ReadoutListItemSetpointInteraction.flipFlop,
+    touching,
   };
 }
 
@@ -833,7 +922,10 @@ export const SyncedWithAzimuthThruster: Story = {
           .value=${30}
           .hasSetpoint=${true}
           .setpoint=${30}
-          .options=${syncReadoutOptions({hasDegree: true})}
+          .size=${ReadoutListItemSize.medium}
+          .hasDegree=${true}
+          .maxDigits=${SYNC_MAX_DIGITS}
+          .setpointOptions=${syncSetpointOptions(false)}
         ></obc-readout-list-item>
         <obc-readout-list-item
           id="rli-power"
@@ -842,7 +934,9 @@ export const SyncedWithAzimuthThruster: Story = {
           .value=${25}
           .hasSetpoint=${true}
           .setpoint=${25}
-          .options=${syncReadoutOptions({})}
+          .size=${ReadoutListItemSize.medium}
+          .maxDigits=${SYNC_MAX_DIGITS}
+          .setpointOptions=${syncSetpointOptions(false)}
         ></obc-readout-list-item>
       </div>
 
@@ -890,14 +984,14 @@ export const SyncedWithAzimuthThruster: Story = {
       | (HTMLElement & {
           value: number;
           setpoint: number;
-          options: ReadoutListItemOptions;
+          setpointOptions: ReadoutSetpointOptions;
         })
       | null;
     const powerReadout = canvasElement.querySelector('#rli-power') as
       | (HTMLElement & {
           value: number;
           setpoint: number;
-          options: ReadoutListItemOptions;
+          setpointOptions: ReadoutSetpointOptions;
         })
       | null;
     const btnReset = canvasElement.querySelector(
@@ -938,12 +1032,12 @@ export const SyncedWithAzimuthThruster: Story = {
       newThrust: THRUST_FROM,
     };
 
-    // Re-point the readouts' flip-flop emphasis + touch focus together. Lit only
-    // re-renders on a fresh `options` reference, so rebuild it (the value /
-    // setpoint primitives below update on their own).
+    // Toggle the readouts' touch (focus) state together. Lit re-renders on a
+    // fresh `setpointOptions` reference (the value / setpoint primitives and the
+    // static size/maxDigits props update independently).
     const setReadoutTouch = (touch: boolean) => {
-      angleReadout.options = syncReadoutOptions({hasDegree: true, touch});
-      powerReadout.options = syncReadoutOptions({touch});
+      angleReadout.setpointOptions = syncSetpointOptions(touch);
+      powerReadout.setpointOptions = syncSetpointOptions(touch);
     };
 
     const updateStatus = (state: string) => {
@@ -1285,7 +1379,7 @@ export const Clickable: Story = {
     ]),
 };
 
-const alertConfig = (alert: AlertFrameConfig): ReadoutListItemOptions => ({
+const alertConfig = (alert: AlertFrameConfig): StoryOptions => ({
   alert,
 });
 

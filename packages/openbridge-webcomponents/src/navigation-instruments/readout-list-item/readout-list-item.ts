@@ -55,7 +55,7 @@ export enum ReadoutListItemPriority {
 }
 
 /**
- * Measurement quality of the value. Orthogonal to {@link ReadoutListItemOptions.alert}
+ * Measurement quality of the value. Orthogonal to the row-level `alert`
  * – a low-integrity or invalid value can also sit inside an alert frame.
  */
 export enum ReadoutListItemDataQuality {
@@ -91,8 +91,8 @@ export enum ReadoutValueWeight {
 
 /**
  * Per-block state shared by value / setpoint / advice / src. Each is independent
- * of (and nests inside) the row-level {@link ReadoutListItemOptions.dataQuality}
- * / {@link ReadoutListItemOptions.alert}. All combinations are allowed.
+ * of (and nests inside) the row-level `dataQuality` / `alert` props. All
+ * combinations are allowed.
  */
 export interface ReadoutBlockState {
   /** Per-block measurement quality (low-integrity / invalid). */
@@ -137,10 +137,12 @@ export interface ReadoutSetpointOptions extends ReadoutBlockState {
   /** How the setpoint behaves relative to the value (default `always-visible`). */
   interaction?: ReadoutListItemSetpointInteraction;
   /**
-   * Force the setpoint into the focus ("user is adjusting") state — keeps it
-   * visible and recolours it to the lighter-blue focus palette.
+   * The user is physically interacting with (adjusting) the setpoint — the
+   * "focus" visual state. Same convention as `touching` on the instrument
+   * setpoint marker (`SetpointMixin` / `svghelpers/setpoint.ts`): keeps the
+   * setpoint visible and shows the lighter-blue focus triangle.
    */
-  touch?: boolean;
+  touching?: boolean;
   /** Longest value string to reserve width for; see {@link ReadoutValueOptions.spaceReserver}. */
   spaceReserver?: string;
 }
@@ -161,35 +163,6 @@ export interface ReadoutSrcOptions extends ReadoutBlockState {
   spaceReserver?: string;
 }
 
-/**
- * Static configuration for {@link ObcReadoutListItem}. Dynamic data (value,
- * setpoint, advice, label, unit, src) is passed as top-level primitives; this
- * object groups everything else.
- */
-export interface ReadoutListItemOptions {
-  // Global layout
-  size?: ReadoutListItemSize;
-  priority?: ReadoutListItemPriority;
-  stacking?: ReadoutListItemStacking;
-  clickable?: boolean | ReadoutListItemClickable;
-  hasLeadingIcon?: boolean;
-
-  // Global options
-  hasDegree?: boolean;
-  hasDegreeSpacer?: boolean;
-  fractionDigits?: number;
-  maxDigits?: number;
-  dataQuality?: ReadoutListItemDataQuality;
-  alert?: false | AlertFrameConfig;
-
-  // Per-block options
-  value?: ReadoutValueOptions;
-  setpoint?: ReadoutSetpointOptions;
-  advice?: ReadoutAdviceOptions;
-  unit?: ReadoutReserverOptions;
-  src?: ReadoutSrcOptions;
-}
-
 enum BlockRole {
   value = 'value',
   setpoint = 'setpoint',
@@ -202,8 +175,11 @@ enum BlockRole {
  * Renders a label, an optional source, an optional unit, and up to three
  * cap-height "readout building blocks" – advice, setpoint, and value – each a
  * fixed-width-reservable numeric segment. Dynamic data is passed as top-level
- * primitives (`value`, `setpoint`, `advice`, `label`, `unit`, `src`); all other
- * configuration is grouped under the single `options` object.
+ * primitives (`value`, `setpoint`, `advice`, `label`, `unit`, `src`). Global
+ * layout/format is configured via top-level props (`size`, `priority`,
+ * `stacking`, `hasDegree`, `dataQuality`, `alert`, …) and per-block tweaks via one
+ * object per block (`valueOptions`, `setpointOptions`, `adviceOptions`,
+ * `unitOptions`, `srcOptions`).
  *
  * ### Features
  * - **Building blocks:** value, optional setpoint, and optional advice segments,
@@ -224,14 +200,14 @@ enum BlockRole {
  * Use for dense readout rows in lists/tables. Prefer `<obc-readout>` for rich
  * multi-segment instrument layouts, source pickers, or flyout behaviour.
  *
- * @experimental This component is the pilot for the new primitives + `options`
- * Readout API; its API may change in a future release.
+ * @experimental This component is the pilot for the new primitives + per-block
+ * options Readout API; its API may change in a future release.
  *
  * ### Slots
  * | Slot Name     | Renders When                  | Purpose                                  |
  * |---------------|-------------------------------|------------------------------------------|
- * | leading-icon  | `options.hasLeadingIcon`      | Icon before the label.                   |
- * | value-icon    | `options.value.hasIcon`       | Icon before the value.                   |
+ * | leading-icon  | `hasLeadingIcon`              | Icon before the label.                   |
+ * | value-icon    | `valueOptions.hasIcon`        | Icon before the value.                   |
  * | setpoint-icon | `hasSetpoint`                 | Overrides the default setpoint icon.     |
  * | advice-icon   | `hasAdvice`                   | Overrides the default advice icon.       |
  *
@@ -260,7 +236,30 @@ export class ObcReadoutListItem extends LitElement {
   /** @availableWhen hasAdvice==true */
   @property({type: Number}) advice?: number;
 
-  @property({type: Object}) options: ReadoutListItemOptions = {};
+  // Global layout/format (each defaults via its `resolved*` getter where useful).
+  @property({type: String}) size?: ReadoutListItemSize;
+  @property({type: String}) priority?: ReadoutListItemPriority;
+  @property({type: String}) stacking?: ReadoutListItemStacking;
+  @property({type: Object}) clickable: boolean | ReadoutListItemClickable =
+    false;
+  @property({type: Boolean}) hasLeadingIcon = false;
+  @property({type: Boolean}) hasDegree = false;
+  @property({type: Boolean}) hasDegreeSpacer = false;
+  @property({type: Number}) fractionDigits = 0;
+  @property({type: Number}) maxDigits = 0;
+  @property({type: String}) dataQuality?: ReadoutListItemDataQuality;
+  // `boolean | …` (not `false | …`): the generated Angular wrapper widens a
+  // literal-`false` union to `boolean`, which then won't assign back to a
+  // `false`-typed element property. `wrapWithAlertFrame` treats any non-object
+  // (incl. `true`) as "no frame", so accepting `boolean` is harmless.
+  @property({type: Object}) alert: boolean | AlertFrameConfig = false;
+
+  // Per-block configuration — one object per block (see the Readout*Options types).
+  @property({type: Object}) valueOptions?: ReadoutValueOptions;
+  @property({type: Object}) setpointOptions?: ReadoutSetpointOptions;
+  @property({type: Object}) adviceOptions?: ReadoutAdviceOptions;
+  @property({type: Object}) unitOptions?: ReadoutReserverOptions;
+  @property({type: Object}) srcOptions?: ReadoutSrcOptions;
 
   /** Pop-up deferred-hide phase for the setpoint (see {@link updated}). */
   @state() private deferredSetpointHidePhase: 'none' | 'hiding' | 'hidden' =
@@ -269,27 +268,27 @@ export class ObcReadoutListItem extends LitElement {
   private hasCompletedFirstUpdate = false;
 
   private get resolvedSize(): ReadoutListItemSize {
-    return this.options.size ?? ReadoutListItemSize.small;
+    return this.size ?? ReadoutListItemSize.small;
   }
 
   private get resolvedStacking(): ReadoutListItemStacking {
-    return this.options.stacking ?? ReadoutListItemStacking.trailingUnit;
+    return this.stacking ?? ReadoutListItemStacking.trailingUnit;
   }
 
   private get resolvedPriority(): ReadoutListItemPriority {
-    return this.options.priority ?? ReadoutListItemPriority.regular;
+    return this.priority ?? ReadoutListItemPriority.regular;
   }
 
   private get resolvedFractionDigits(): number {
-    return this.options.fractionDigits ?? 0;
+    return this.fractionDigits ?? 0;
   }
 
   private get resolvedMaxDigits(): number {
-    return this.options.maxDigits ?? 0;
+    return this.maxDigits ?? 0;
   }
 
   private get resolvedClickable(): false | Required<ReadoutListItemClickable> {
-    const clickable = this.options.clickable;
+    const clickable = this.clickable;
     if (!clickable) {
       return false;
     }
@@ -300,14 +299,25 @@ export class ObcReadoutListItem extends LitElement {
   }
 
   private get isAtSetpoint(): boolean {
+    if (
+      !this.hasSetpoint ||
+      this.value === null ||
+      this.setpoint === undefined
+    ) {
+      return false;
+    }
+    // Compare what is DISPLAYED (rounded to fractionDigits), not the raw values,
+    // so e.g. 29.999 and 30 at fractionDigits=0 both read "30" → at setpoint.
+    const formatOptions = this.numericFormatOptions(this.resolvedMaxDigits);
     return (
-      this.hasSetpoint && this.value !== null && this.value === this.setpoint
+      formatNumericValue(this.value, formatOptions) ===
+      formatNumericValue(this.setpoint, formatOptions)
     );
   }
 
   private get resolvedSetpointInteraction(): ReadoutListItemSetpointInteraction {
     return (
-      this.options.setpoint?.interaction ??
+      this.setpointOptions?.interaction ??
       ReadoutListItemSetpointInteraction.alwaysVisible
     );
   }
@@ -326,8 +336,37 @@ export class ObcReadoutListItem extends LitElement {
     );
   }
 
-  private get setpointTouch(): boolean {
-    return this.options.setpoint?.touch ?? false;
+  private get setpointTouching(): boolean {
+    return this.setpointOptions?.touching ?? false;
+  }
+
+  /**
+   * The setpoint is rendered "emphasised" (primary size + SemiBold weight) when
+   * it is the focus of attention: while actively adjusting (`touching`), or while
+   * a flip-flop has the value away from the setpoint. Otherwise it is a secondary
+   * (smaller, regular-weight) reference next to the value.
+   */
+  private get isSetpointEmphasized(): boolean {
+    if (!this.hasSetpoint) {
+      return false;
+    }
+    if (this.setpointTouching) {
+      return true;
+    }
+    return this.isFlipFlop && !this.isAtSetpoint;
+  }
+
+  /**
+   * The row's enhanced (in-command) colour state, applied uniformly to BOTH the
+   * value and the setpoint — they are always either both neutral or both enhanced
+   * (never a blue setpoint next to a grey value). Enhanced when the priority is
+   * enhanced or the value carries the `active` weight.
+   */
+  private get rowEnhanced(): boolean {
+    return (
+      this.resolvedPriority === ReadoutListItemPriority.enhanced ||
+      this.valueOptions?.weight === ReadoutValueWeight.active
+    );
   }
 
   /** Primary value-typography size for the current density tier. */
@@ -355,24 +394,33 @@ export class ObcReadoutListItem extends LitElement {
   }
 
   private get valueSize(): ObcTextboxSize {
-    if (this.hasSetpoint && this.isFlipFlop) {
-      return this.isAtSetpoint ? this.primarySize : this.secondarySize;
+    // The value de-emphasises (secondary size) whenever the setpoint is the
+    // focus — while actively adjusting (`touching`) or while a flip-flop holds
+    // the value away from the setpoint. So "grab the setpoint" shrinks the value for
+    // the whole adjustment (initiate + move read the same: setpoint big, value
+    // small), mirroring the flip-flop convention.
+    if (this.isSetpointEmphasized) {
+      return this.secondarySize;
     }
     return this.primarySize;
   }
 
   private get setpointSize(): ObcTextboxSize {
-    if (this.isFlipFlop) {
-      return this.isAtSetpoint ? this.secondarySize : this.primarySize;
-    }
-    return this.secondarySize;
+    return this.isSetpointEmphasized ? this.primarySize : this.secondarySize;
   }
 
-  private get valueEnhanced(): boolean {
-    return (
-      this.resolvedPriority === ReadoutListItemPriority.enhanced ||
-      this.options.value?.weight === ReadoutValueWeight.active
-    );
+  /** Value weight follows the `active` option only; the enhanced colour is separate. */
+  private get valueWeight(): ObcTextboxFontWeight {
+    return this.valueOptions?.weight === ReadoutValueWeight.active
+      ? ObcTextboxFontWeight.semibold
+      : ObcTextboxFontWeight.regular;
+  }
+
+  /** Setpoint is SemiBold only while emphasised, otherwise regular weight. */
+  private get setpointWeight(): ObcTextboxFontWeight {
+    return this.isSetpointEmphasized
+      ? ObcTextboxFontWeight.semibold
+      : ObcTextboxFontWeight.regular;
   }
 
   private numericFormatOptions(maxDigits: number): ReadoutNumericFormatOptions {
@@ -426,7 +474,7 @@ export class ObcReadoutListItem extends LitElement {
 
   private renderIcon(role: BlockRole): TemplateResult | typeof nothing {
     if (role === BlockRole.value) {
-      if (!this.options.value?.hasIcon) {
+      if (!this.valueOptions?.hasIcon) {
         return nothing;
       }
       return html`<span class="block-icon" aria-hidden="true"
@@ -464,10 +512,18 @@ export class ObcReadoutListItem extends LitElement {
     const text = config.off
       ? 'OFF'
       : formatNumericValue(valueForFormat, formatOptions);
+    // `maxDigits` reserves INTEGER digits only (see `reserverText`), but
+    // getHintZeros measures total digits (it subtracts just the decimal point),
+    // so pad its target by `fractionDigits` to hint the right number of integer
+    // zeros (e.g. value 1.2, maxDigits 3, fractionDigits 1 → "001.2", not "01.2").
     const hinted =
       config.off || !config.hintedZeros
         ? ''
-        : getHintZeros(valueForFormat, formatOptions);
+        : getHintZeros(valueForFormat, {
+            ...formatOptions,
+            minValueLength:
+              formatOptions.minValueLength + formatOptions.fractionDigits,
+          });
     const reserver = this.widerReserver(
       config.spaceReserver,
       this.reserverText
@@ -565,9 +621,9 @@ export class ObcReadoutListItem extends LitElement {
       Boolean(this.unit) &&
       this.resolvedStacking !== ReadoutListItemStacking.leadingUnit;
 
-    if ((this.options.hasDegree ?? false) && !this.off) {
+    if ((this.hasDegree ?? false) && !this.off) {
       return this.renderDegreeGlyph(this.valueSize, {
-        enhanced: this.valueEnhanced,
+        enhanced: this.rowEnhanced,
       });
     }
     if (hasTrailingUnit) {
@@ -584,8 +640,8 @@ export class ObcReadoutListItem extends LitElement {
    * {@link renderValueUnitGap}.
    */
   private renderDegreeSpacer(): TemplateResult | typeof nothing {
-    const hasDegree = this.options.hasDegree ?? false;
-    const hasDegreeSpacer = this.options.hasDegreeSpacer ?? false;
+    const hasDegree = this.hasDegree ?? false;
+    const hasDegreeSpacer = this.hasDegreeSpacer ?? false;
     if (hasDegree || !hasDegreeSpacer) {
       return nothing;
     }
@@ -626,13 +682,13 @@ export class ObcReadoutListItem extends LitElement {
 
   private renderValueCluster(): TemplateResult {
     const popUpAtSetpoint =
-      this.isPopUp && this.isAtSetpoint && !this.setpointTouch;
+      this.isPopUp && this.isAtSetpoint && !this.setpointTouching;
     const setpointExtraClasses = {
       'is-hiding':
         popUpAtSetpoint && this.deferredSetpointHidePhase === 'hiding',
       'is-hidden':
         popUpAtSetpoint && this.deferredSetpointHidePhase === 'hidden',
-      touch: this.setpointTouch,
+      touching: this.setpointTouching,
     };
     return html`
       <div class="value-cluster" part="value-cluster">
@@ -643,11 +699,11 @@ export class ObcReadoutListItem extends LitElement {
               size: this.secondarySize,
               enhanced: false,
               weight: ObcTextboxFontWeight.regular,
-              hintedZeros: this.options.advice?.hintedZeros ?? false,
-              spaceReserver: this.options.advice?.spaceReserver,
-              hasDegree: this.options.hasDegree ?? false,
-              dataQuality: this.options.advice?.dataQuality,
-              alert: this.options.advice?.alert,
+              hintedZeros: this.adviceOptions?.hintedZeros ?? false,
+              spaceReserver: this.adviceOptions?.spaceReserver,
+              hasDegree: this.hasDegree ?? false,
+              dataQuality: this.adviceOptions?.dataQuality,
+              alert: this.adviceOptions?.alert,
             })
           : nothing}
         ${this.hasSetpoint
@@ -655,14 +711,16 @@ export class ObcReadoutListItem extends LitElement {
               role: BlockRole.setpoint,
               value: this.setpoint,
               size: this.setpointSize,
-              enhanced: true,
-              weight: ObcTextboxFontWeight.semibold,
-              hintedZeros: this.options.setpoint?.hintedZeros ?? false,
-              spaceReserver: this.options.setpoint?.spaceReserver,
-              hasDegree: this.options.hasDegree ?? false,
+              // Value and setpoint share the enhanced colour state (both neutral
+              // or both enhanced); the setpoint is bold only while emphasised.
+              enhanced: this.rowEnhanced,
+              weight: this.setpointWeight,
+              hintedZeros: this.setpointOptions?.hintedZeros ?? false,
+              spaceReserver: this.setpointOptions?.spaceReserver,
+              hasDegree: this.hasDegree ?? false,
               extraClasses: setpointExtraClasses,
-              dataQuality: this.options.setpoint?.dataQuality,
-              alert: this.options.setpoint?.alert,
+              dataQuality: this.setpointOptions?.dataQuality,
+              alert: this.setpointOptions?.alert,
             })
           : nothing}
         ${this.hasValue
@@ -670,15 +728,13 @@ export class ObcReadoutListItem extends LitElement {
               role: BlockRole.value,
               value: this.value,
               size: this.valueSize,
-              enhanced: this.valueEnhanced,
-              weight: this.valueEnhanced
-                ? ObcTextboxFontWeight.semibold
-                : ObcTextboxFontWeight.regular,
-              hintedZeros: this.options.value?.hintedZeros ?? false,
-              spaceReserver: this.options.value?.spaceReserver,
+              enhanced: this.rowEnhanced,
+              weight: this.valueWeight,
+              hintedZeros: this.valueOptions?.hintedZeros ?? false,
+              spaceReserver: this.valueOptions?.spaceReserver,
               off: this.off,
-              dataQuality: this.options.value?.dataQuality,
-              alert: this.options.value?.alert,
+              dataQuality: this.valueOptions?.dataQuality,
+              alert: this.valueOptions?.alert,
             })
           : nothing}
       </div>
@@ -694,7 +750,7 @@ export class ObcReadoutListItem extends LitElement {
 
     return html`
       <div class="label-container" part="label-container">
-        ${this.options.hasLeadingIcon
+        ${this.hasLeadingIcon
           ? html`<span class="leading-icon" aria-hidden="true"
               ><slot name="leading-icon"></slot
             ></span>`
@@ -705,15 +761,15 @@ export class ObcReadoutListItem extends LitElement {
             ? this.renderTextbox(
                 'unit',
                 this.unit ?? '',
-                this.options.unit?.spaceReserver
+                this.unitOptions?.spaceReserver
               )
             : nothing}
           ${showLeadingSrc
             ? this.renderTextbox(
                 'source',
                 this.src ?? '',
-                this.options.src?.spaceReserver,
-                this.options.src
+                this.srcOptions?.spaceReserver,
+                this.srcOptions
               )
             : nothing}
         </div>
@@ -731,7 +787,7 @@ export class ObcReadoutListItem extends LitElement {
     return this.renderTextbox(
       'unit',
       this.unit,
-      this.options.unit?.spaceReserver
+      this.unitOptions?.spaceReserver
     );
   }
 
@@ -747,8 +803,8 @@ export class ObcReadoutListItem extends LitElement {
       ${this.renderTextbox(
         'source',
         this.src,
-        this.options.src?.spaceReserver,
-        this.options.src
+        this.srcOptions?.spaceReserver,
+        this.srcOptions
       )}
     `;
   }
@@ -774,9 +830,9 @@ export class ObcReadoutListItem extends LitElement {
     const firstUpdate = !this.hasCompletedFirstUpdate;
     this.hasCompletedFirstUpdate = true;
 
-    // Pop-up: hide the setpoint shortly after the value reaches it. `touch` and
-    // the non-pop-up modes keep the setpoint visible.
-    if (!this.isPopUp || this.setpointTouch) {
+    // Pop-up: hide the setpoint shortly after the value reaches it. `touching`
+    // and the non-pop-up modes keep the setpoint visible.
+    if (!this.isPopUp || this.setpointTouching) {
       this.clearDeferredSetpointHide();
       return;
     }
@@ -816,12 +872,19 @@ export class ObcReadoutListItem extends LitElement {
 
   override disconnectedCallback(): void {
     window.clearTimeout(this.deferredSetpointHideTimer);
+    this.deferredSetpointHideTimer = undefined;
+    // Settle a mid-flight hide to its end state. Without this, disconnecting
+    // during the 100ms window leaves the phase stuck at 'hiding' (the timer that
+    // would advance it to 'hidden' is gone), so a later reconnect never resolves.
+    if (this.deferredSetpointHidePhase === 'hiding') {
+      this.deferredSetpointHidePhase = 'hidden';
+    }
     super.disconnectedCallback();
   }
 
   override render() {
     const clickable = this.resolvedClickable;
-    const dataQuality = this.options.dataQuality;
+    const dataQuality = this.dataQuality;
     const classes = classMap({
       root: true,
       [`size-${this.resolvedSize}`]: true,
@@ -840,21 +903,25 @@ export class ObcReadoutListItem extends LitElement {
       ${this.renderContent()}
     </div>`;
 
+    // No `aria-label` here: it would override the button's accessible name and
+    // hide the dynamic readout text (value / unit / source) from screen readers.
+    // The visible content (label + value + unit + source) already forms a
+    // complete accessible name; icons/reservers are aria-hidden / visibility-clipped.
     const root = clickable
-      ? html`<button
-          class=${classes}
-          part="root"
-          type="button"
-          aria-label=${this.label ?? nothing}
-        >
+      ? html`<button class=${classes} part="root" type="button">
           ${surface}
         </button>`
       : html`<div class=${classes} part="root">${surface}</div>`;
 
+    // `alert` accepts `boolean` (so the generated Angular wrapper's widened
+    // `boolean` type assigns cleanly), but `wrapWithAlertFrame` ignores non-object
+    // truthy values. Normalise `true` → a default frame `{}` (like `clickable:
+    // true`) so it isn't a silent no-op; `false`/object pass through.
     // fullWidth=true: the row-level alert frame stretches to the readout's full
     // width (PR #1001) rather than hugging it. Per-block / src alert frames keep
     // the default (hug) so they stay inline.
-    return wrapWithAlertFrame(this.options.alert ?? false, root, true);
+    const alert = this.alert === true ? {} : this.alert;
+    return wrapWithAlertFrame(alert, root, true);
   }
 
   static override styles = unsafeCSS(componentStyle);

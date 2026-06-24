@@ -101,12 +101,16 @@
   );
 }
 
+/* The value is the primary data, so under width pressure the label side yields
+   first: the label-container shrinks (and clips a too-long label) while
+   `.value-area` keeps its intrinsic width. */
 .label-container {
   display: inline-flex;
   align-items: flex-end;
   gap: var(--global-size-spacing-target-padding);
-  flex: none;
+  flex: 1 1 auto;
   min-inline-size: 0;
+  overflow: hidden;
 }
 
 .label-stack {
@@ -121,7 +125,7 @@
   display: inline-flex;
   align-items: flex-end;
   justify-content: flex-end;
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   min-inline-size: 0;
 }
 
@@ -188,15 +192,25 @@
     var(--element-neutral-enhanced-color)
   );
 }
+/* The setpoint shares the value's colour state: neutral by default, enhanced
+   (blue) only when the row is enhanced — never a blue setpoint next to a grey
+   value. `--instrument-enhanced-secondary-color` is the same #2d548b as the
+   value's `--element-neutral-enhanced-color`. */
 .block-setpoint {
   color: var(
     --obc-readout-list-item-setpoint-color,
-    var(--instrument-enhanced-secondary-color)
+    var(--element-neutral-color)
   );
   /* Flip-flop emphasis + pop-up fade animate at 100ms. */
   transition:
     opacity 100ms ease,
     color 100ms ease;
+}
+.block-setpoint.tone-enhanced {
+  color: var(
+    --obc-readout-list-item-setpoint-enhanced-color,
+    var(--instrument-enhanced-secondary-color)
+  );
 }
 /* Pop-up: fade the setpoint out once value === setpoint, keeping its space so
    the value stays column-aligned. */
@@ -207,27 +221,27 @@
   opacity: 0;
   visibility: hidden;
 }
-/* Touch / focus state: the setpoint triangle takes the marker's focus look — a
+/* Touching / focus state: the setpoint triangle takes the marker's focus look — a
    pale fill (--base-blue-100) with a dark 1px edge (--element-neutral-enhanced),
    mirroring `svghelpers/setpoint.ts` focus (fill base-blue-100 + 2px stroke).
    The glyph icon is `fill: currentColor` and can't take a CSS `stroke`, so the
    edge is layered drop-shadows. The setpoint number keeps its normal, readable
    colour. */
-.block-setpoint.touch {
-  --_touch-outline: var(
-    --obc-readout-list-item-setpoint-touch-outline-color,
+.block-setpoint.touching {
+  --_touching-outline: var(
+    --obc-readout-list-item-setpoint-touching-outline-color,
     var(--element-neutral-enhanced-color)
   );
 }
-.block-setpoint.touch .block-icon {
+.block-setpoint.touching .block-icon {
   color: var(
-    --obc-readout-list-item-setpoint-touch-color,
+    --obc-readout-list-item-setpoint-touching-color,
     var(--base-blue-100)
   );
-  filter: drop-shadow(1px 0 0 var(--_touch-outline))
-    drop-shadow(-1px 0 0 var(--_touch-outline))
-    drop-shadow(0 1px 0 var(--_touch-outline))
-    drop-shadow(0 -1px 0 var(--_touch-outline));
+  filter: drop-shadow(1px 0 0 var(--_touching-outline))
+    drop-shadow(-1px 0 0 var(--_touching-outline))
+    drop-shadow(0 1px 0 var(--_touching-outline))
+    drop-shadow(0 -1px 0 var(--_touching-outline));
 }
 .block-advice {
   color: var(
