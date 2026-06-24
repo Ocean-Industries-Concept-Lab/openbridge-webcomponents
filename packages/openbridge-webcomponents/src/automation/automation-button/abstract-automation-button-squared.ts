@@ -1,6 +1,7 @@
 import {property} from 'lit/decorators.js';
 import {ObcAbstractAutomationButton} from './abstract-automation-button.js';
 import {AutomationButtonReadoutStack} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
+import {AutomationButtonOrientation} from './automation-button.js';
 
 export enum SquaredVariant {
   square = 'square',
@@ -10,6 +11,12 @@ export enum SquaredVariant {
 export class ObcAbstractAutomationButtonSquared extends ObcAbstractAutomationButton {
   @property({type: Boolean}) on: boolean = false;
   @property({type: String}) variant: SquaredVariant = SquaredVariant.square;
+  @property({type: String}) orientation: AutomationButtonOrientation =
+    AutomationButtonOrientation.horizontal;
+
+  override get _orientation(): AutomationButtonOrientation {
+    return this.orientation;
+  }
 
   override get extraReadouts(): AutomationButtonReadoutStack[] {
     if (this.on) {

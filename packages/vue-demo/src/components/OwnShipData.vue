@@ -172,7 +172,7 @@ onUnmounted(() => {
       :vessel-image="vessel === 'psv' ? VesselImage.psvTop : VesselImage.carFerryTop"
       :current-from-direction="sim.currentFromAngleDeg"
       :current-speed="sim.currentSpeedKnots"
-      :wind-speed="weather.windSpeedBeaufort"
+      :current-wind-speed-knots="windSpeedKnots"
       :wind-from-direction="weather.windDirection"
       :heading-advices="headingAdvice"
       :state="InstrumentState.active"

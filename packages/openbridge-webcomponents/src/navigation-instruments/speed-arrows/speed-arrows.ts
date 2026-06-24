@@ -21,15 +21,18 @@ export enum ActiveColor {
 
 @customElement('obc-speed-arrows')
 export class ObcSpeedArrows extends LitElement {
+  /** @availableWhen readout==true */
   @property({type: Number})
   speedKnots = 0;
 
   @property({type: Boolean})
   readout = false;
 
+  /** @availableWhen readout==true */
   @property({type: Number})
   maxDigits = 2;
 
+  /** @availableWhen readout==true */
   @property({type: Number})
   fractionDigits = 0;
   @property({type: Number})
@@ -139,7 +142,7 @@ export class ObcSpeedArrows extends LitElement {
               .variant=${ReadoutVariant.enhanced}
               .direction=${ReadoutDirection.vertical}
               .fractionDigits=${this.fractionDigits}
-              .maxDigits=${this.maxDigits}
+              .minValueLength=${this.maxDigits}
               .valuePriority=${this.activeColor === ActiveColor.Regular
                 ? Priority.regular
                 : Priority.enhanced}

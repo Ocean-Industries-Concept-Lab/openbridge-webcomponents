@@ -74,6 +74,18 @@ export const OffHorizontal: Story = {
   },
 };
 
+export const OnVerticalRpm: Story = {
+  args: {
+    on: true,
+    vertical: true,
+    direction: AutomationButtonDirection.forward,
+    labelDirection: AutomationButtonLabelDirection.up,
+    speed: 254,
+    speedUnit: 'rpm',
+    speedMaxDigits: 4,
+  },
+};
+
 export const VariantDoubleSizeLarge: Story = {
   args: {
     on: true,

@@ -4,9 +4,15 @@ import {useArgs} from 'storybook/preview-api';
 import {
   ReadoutListItemSize,
   ReadoutListItemStacking,
-  ReadoutListItemAlertState,
+  ReadoutListItemDataState,
   ReadoutListItemPriority,
 } from './readout-list-item.js';
+import type {AlertFrameConfig} from '../../components/alert-frame/alert-frame.js';
+import {
+  ObcAlertFrameMode,
+  ObcAlertFrameType,
+} from '../../components/alert-frame/alert-frame.js';
+import {AlertType} from '../../types.js';
 import './readout-list-item.js';
 import '../../icons/icon-placeholder.js';
 
@@ -14,25 +20,25 @@ type ReadoutListItemStoryArgs = {
   size: ReadoutListItemSize;
   stacking: ReadoutListItemStacking;
   priority: ReadoutListItemPriority;
-  alertState: ReadoutListItemAlertState;
-  hasInput: boolean;
-  inputValue: string;
+  dataState: ReadoutListItemDataState;
+  alert: AlertFrameConfig | false;
+  hasSetpoint: boolean;
+  setpointValue: number;
   hasLabel: boolean;
   hasDegree: boolean;
   hasUnit: boolean;
   hasSource: boolean;
   hasLeadingIcon: boolean;
   hasValueIcon: boolean;
-  hasFixedLength: boolean;
-  valueLength: string;
+  minValueLength: number;
   hasHintedZeros: boolean;
   label: string;
   unit: string;
   src: string;
-  value: string;
+  value: number;
   fractionDigits: number;
   showZeroPadding: boolean;
-  maxDigits: number;
+  labelOnly: boolean;
 };
 
 type ReadoutShowcaseCase = {
@@ -133,25 +139,25 @@ const defaultArgs: ReadoutListItemStoryArgs = {
   size: ReadoutListItemSize.base,
   stacking: ReadoutListItemStacking.trailingUnit,
   priority: ReadoutListItemPriority.regular,
-  alertState: ReadoutListItemAlertState.none,
-  hasInput: false,
-  inputValue: '123',
+  dataState: ReadoutListItemDataState.none,
+  alert: false,
+  hasSetpoint: false,
+  setpointValue: 123,
   hasDegree: true,
   hasUnit: true,
   hasSource: false,
   hasLeadingIcon: false,
   hasValueIcon: false,
-  hasFixedLength: false,
-  valueLength: '000',
+  minValueLength: 0,
   hasHintedZeros: false,
   hasLabel: true,
   label: 'Label',
   unit: 'Unit',
   src: 'SRC',
-  value: '123',
+  value: 123,
   fractionDigits: 0,
   showZeroPadding: false,
-  maxDigits: 3,
+  labelOnly: false,
 };
 
 function renderReadoutListItem(args: Partial<ReadoutListItemStoryArgs>) {
@@ -161,17 +167,17 @@ function renderReadoutListItem(args: Partial<ReadoutListItemStoryArgs>) {
       .size=${resolved.size}
       .stacking=${resolved.stacking}
       .priority=${resolved.priority}
-      .alertState=${resolved.alertState}
-      .hasInput=${resolved.hasInput}
-      .inputValue=${resolved.inputValue}
+      .dataState=${resolved.dataState}
+      .alert=${resolved.alert}
+      .hasSetpoint=${resolved.hasSetpoint}
+      .setpointValue=${resolved.setpointValue}
       .hasLabel=${resolved.hasLabel}
       .hasDegree=${resolved.hasDegree}
       .hasUnit=${resolved.hasUnit}
       .hasSource=${resolved.hasSource}
       .hasLeadingIcon=${resolved.hasLeadingIcon}
       .hasValueIcon=${resolved.hasValueIcon}
-      .hasFixedLength=${resolved.hasFixedLength}
-      .valueLength=${resolved.valueLength}
+      .minValueLength=${resolved.minValueLength}
       .hasHintedZeros=${resolved.hasHintedZeros}
       .label=${resolved.label}
       .unit=${resolved.unit}
@@ -179,7 +185,7 @@ function renderReadoutListItem(args: Partial<ReadoutListItemStoryArgs>) {
       .value=${resolved.value}
       .fractionDigits=${resolved.fractionDigits}
       .showZeroPadding=${resolved.showZeroPadding}
-      .maxDigits=${resolved.maxDigits}
+      .labelOnly=${resolved.labelOnly}
     >
       ${resolved.hasLeadingIcon
         ? html`<span
@@ -237,7 +243,7 @@ const meta = {
   decorators: [centeredCanvasDecorator],
   render: (args) => {
     const [, updateArgs] = useArgs<ReadoutListItemStoryArgs>();
-    if (args.hasFixedLength === false && args.hasHintedZeros) {
+    if (args.minValueLength <= 1 && args.hasHintedZeros) {
       updateArgs({hasHintedZeros: false});
     }
     return html`<div style="display:flex; justify-content:center; width:100%;">
@@ -264,21 +270,21 @@ const meta = {
       options: Object.values(ReadoutListItemPriority),
       table: {category: 'Readout'},
     },
-    alertState: {
-      name: 'Alert State',
+    dataState: {
+      name: 'Data State',
       control: {type: 'select'},
-      options: Object.values(ReadoutListItemAlertState),
+      options: Object.values(ReadoutListItemDataState),
       table: {category: 'Readout'},
     },
-    hasInput: {
-      name: 'Has Input',
+    hasSetpoint: {
+      name: 'Has Setpoint',
       table: {category: 'Readout'},
     },
-    inputValue: {
-      name: 'Input Value',
-      control: {type: 'text'},
+    setpointValue: {
+      name: 'Setpoint Value',
+      control: {type: 'number'},
       if: {
-        arg: 'hasInput',
+        arg: 'hasSetpoint',
         truthy: true,
       },
       table: {category: 'Value'},
@@ -326,7 +332,7 @@ const meta = {
     },
     value: {
       name: 'Value',
-      control: {type: 'text'},
+      control: {type: 'number'},
       table: {category: 'Value'},
     },
     fractionDigits: {
@@ -334,28 +340,18 @@ const meta = {
       control: {type: 'number', min: 0, step: 1},
       table: {category: 'Formatting'},
     },
-    maxDigits: {
-      name: 'Max Digits',
-      control: {type: 'number', min: 1, step: 1},
-      table: {category: 'Formatting'},
-    },
     showZeroPadding: {
       name: 'Show Zero Padding',
       table: {category: 'Formatting'},
     },
-    hasFixedLength: {
-      name: 'Has Fixed Length',
-      table: {category: 'Formatting'},
-    },
-    valueLength: {
-      name: 'Value Length',
-      control: {type: 'text'},
-      if: {arg: 'hasFixedLength', truthy: true},
+    minValueLength: {
+      name: 'Min Value Length',
+      control: {type: 'number', min: 0, step: 1},
       table: {category: 'Formatting'},
     },
     hasHintedZeros: {
       name: 'Has Hinted Zeros',
-      if: {arg: 'hasFixedLength', truthy: true},
+      if: {arg: 'minValueLength', gt: 1},
       table: {category: 'Formatting'},
     },
   },
@@ -383,28 +379,28 @@ function renderStackingMatrix({
   const priorities = [
     ReadoutListItemPriority.regular,
     ReadoutListItemPriority.enhanced,
-    ReadoutListItemPriority.input,
-    ReadoutListItemPriority.inputFlipFlop,
+    ReadoutListItemPriority.setpoint,
+    ReadoutListItemPriority.setpointFlipFlop,
   ] as const;
-  const hasInputs = [false, true] as const;
+  const hasSetpoints = [false, true] as const;
 
   const cases: ReadoutShowcaseCase[] = [];
 
   for (const size of sizes) {
     for (const priority of priorities) {
-      for (const hasInput of hasInputs) {
+      for (const hasSetpoint of hasSetpoints) {
         cases.push({
-          label: `${size} / ${priority} / hasInput=${hasInput}`,
+          label: `${size} / ${priority} / hasSetpoint=${hasSetpoint}`,
           args: {
             size,
             stacking,
             priority,
-            hasInput,
-            alertState: ReadoutListItemAlertState.none,
+            hasSetpoint,
+            dataState: ReadoutListItemDataState.none,
             hasUnit,
             hasSource,
-            value: '123',
-            inputValue: '123',
+            value: 123,
+            setpointValue: 123,
             hasDegree: true,
             hasLabel: true,
           },
@@ -443,20 +439,53 @@ export const LeadingSrc: Story = {
     }),
 };
 
-export const AlertStates: Story = {
+export const DataStates: Story = {
   render: () => {
-    const alerts = Object.values(ReadoutListItemAlertState);
-    const cases: ReadoutShowcaseCase[] = alerts.map((alertState) => ({
-      label: `${alertState}`,
+    const dataStates = Object.values(ReadoutListItemDataState);
+    const cases: ReadoutShowcaseCase[] = dataStates.map((dataState) => ({
+      label: `${dataState}`,
       args: {
         size: ReadoutListItemSize.base,
         stacking: ReadoutListItemStacking.trailingUnit,
         priority: ReadoutListItemPriority.regular,
-        alertState,
-        value: '123',
+        dataState,
+        value: 123,
       },
     }));
 
-    return renderShowcaseSections([{title: 'Alert States', cases}]);
+    return renderShowcaseSections([{title: 'Data States', cases}]);
+  },
+};
+
+export const Alarm: Story = {
+  args: {
+    value: 123,
+    alert: {
+      status: AlertType.Alarm,
+      mode: ObcAlertFrameMode.ackedActive,
+      type: ObcAlertFrameType.Regular,
+    },
+  },
+};
+
+export const LevelCritical: Story = {
+  args: {
+    value: 123,
+    alert: {
+      status: AlertType.LevelCritical,
+      mode: ObcAlertFrameMode.unackedActive,
+      type: ObcAlertFrameType.Regular,
+    },
+  },
+};
+
+export const LevelLowUnackedRectified: Story = {
+  args: {
+    value: 123,
+    alert: {
+      status: AlertType.LevelLow,
+      mode: ObcAlertFrameMode.unackedRectified,
+      type: ObcAlertFrameType.Regular,
+    },
   },
 };

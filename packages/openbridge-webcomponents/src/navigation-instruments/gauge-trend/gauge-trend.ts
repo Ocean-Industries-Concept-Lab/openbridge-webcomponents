@@ -1,4 +1,3 @@
-import {Priority} from '../types.js';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {
@@ -117,8 +116,6 @@ export {FillMode, ScaleType};
  */
 @customElement('obc-gauge-trend')
 export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
-  /** Color priority: enhanced uses blue instrument colors for bar fill and setpoint */
-  @property({type: String}) override priority: Priority = Priority.regular;
   private _barVerticalElement?: HTMLElement;
   private _isFirstUpdate = false;
 
@@ -293,6 +290,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
    * - `'condensed'`: Shorter tick lengths for compact display
    *
    * Hidden from Storybook controls via argTypes configuration.
+   * @availableWhen hasScale==true
    */
   @property({type: String})
   scaleType: ScaleType = ScaleType.regular;
@@ -334,6 +332,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
    * - The `fillMax` value (when `fillMax` is not explicitly set)
    *
    * In typical usage, you only need to set this property to update the gauge.
+   * @availableWhen hasBar==true || hasScale==true
    */
   @property({type: Number})
   value?: number = undefined;
@@ -367,6 +366,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
    *   Use this when you want to show a fixed range independent of the current value.
    *
    * In both modes, `fillMin` is the origin point (e.g., 0 in a -100..100 scale).
+   * @availableWhen hasBar==true && value!=undefined
    */
   @property({type: String})
   fillMode: FillMode = FillMode.fill;
@@ -375,6 +375,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
    * Fill origin value - the starting point for the bar fill.
    * In both fill modes, the bar fills from this value toward the current value.
    * For scales like -100..100, set this to 0 to have the bar fill up or down from zero.
+   * @availableWhen hasBar==true && value!=undefined
    */
   @property({type: Number})
   fillMin = 0;
@@ -386,12 +387,14 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
    *
    * In `'tint'` mode, this defines the upper bound of the highlighted range.
    * When `undefined`, defaults to `value`.
+   * @availableWhen hasBar==true && value!=undefined && fillMode==tint
    */
   @property({type: Number})
   fillMax?: number = undefined;
 
   /**
    * Advice/alert overlays for the vertical scale.
+   * @availableWhen hasAdvice==true
    */
   @property({type: Array, attribute: false})
   advice: LinearAdvice[] = [];
@@ -409,12 +412,14 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
 
   /**
    * Secondary tick interval for the vertical scale (medium ticks).
+   * @availableWhen hasScale==true
    */
   @property({type: Number})
   secondaryTickmarkInterval = 0.5;
 
   /**
    * Tertiary tick interval for the vertical scale (shortest ticks).
+   * @availableWhen hasScale==true
    */
   @property({type: Number})
   tertiaryTickmarkInterval?: number = undefined;

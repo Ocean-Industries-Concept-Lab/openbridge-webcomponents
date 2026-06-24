@@ -78,7 +78,7 @@ export enum CompassPriorityElement {
  * - Use `headingSetpoint` to show a target heading marker.
  * - Pass `headingAdvices` as an array of `AngleAdvice` objects for
  *   caution/alert zones.
- * - Set `windSpeed` / `windFromDirection` and `currentSpeed` /
+ * - Set `currentWindSpeedKnots` / `windFromDirection` and `currentSpeed` /
  *   `currentFromDirection` to display environmental indicators.
  *
  * ## Example
@@ -102,7 +102,7 @@ export enum CompassPriorityElement {
  * @property {number} autoAtHeadingSetpointDeadband - The deadband for the heading set point in degrees.
  * @property {boolean} touching - Indicates if the compass is being touched.
  * @property {Array<AngleAdvice>} headingAdvices - An array of angle advices for the compass.
- * @property {number | null} windSpeed - The wind speed in beaufort scale number.
+ * @property {number | null} currentWindSpeedKnots - The wind speed in knots.
  * @property {number | null} windFromDirection - The direction the wind is coming from in degrees.
  * @property {number | null} currentSpeed - The current speed, number of arrows.
  * @property {number | null} currentFromDirection - The direction the current is coming from in degrees.
@@ -123,19 +123,31 @@ export class ObcCompass extends LitElement {
   @property({type: Number}) courseOverGround = 0;
 
   @property({type: Number}) headingSetpoint: number | null = null;
+  /** @availableWhen headingSetpoint!=null */
   @property({type: Number}) newHeadingSetpoint: number | undefined;
+  /** @availableWhen headingSetpoint!=null && autoAtHeadingSetpoint==false */
   @property({type: Boolean}) atHeadingSetpoint: boolean = false;
+  /** @availableWhen headingSetpoint!=null */
   @property({type: Number}) headingSetpointAtZeroDeadband: number = 0.5;
+  /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean}) headingSetpointOverride: boolean = false;
+  /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean, attribute: false}) autoAtHeadingSetpoint: boolean =
     true;
+  /** @availableWhen headingSetpoint!=null && autoAtHeadingSetpoint==true */
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
+  /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean}) animateSetpoint: boolean = false;
+  /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
-  @property({type: Number}) windSpeed: number | null = null;
+  /** @availableWhen windFromDirection!=null */
+  @property({type: Number}) currentWindSpeedKnots: number | null = null;
+  /** @availableWhen currentWindSpeedKnots!=null */
   @property({type: Number}) windFromDirection: number | null = null;
+  /** @availableWhen currentFromDirection!=null */
   @property({type: Number}) currentSpeed: number | null = null;
+  /** @availableWhen currentSpeed!=null */
   @property({type: Number}) currentFromDirection: number | null = null;
   @property({type: String}) vesselImage: VesselImage = VesselImage.genericTop;
   /**
@@ -149,6 +161,7 @@ export class ObcCompass extends LitElement {
    * Visual amplification applied only to the spinning dot animation
    * (not to the bar extent). Default `18` keeps the legacy visual feel
    * (≈1 rpm at 20°/min).
+   * @availableWhen rotType==dots
    */
   @property({type: Number}) rotDotAnimationFactor: number = 18;
   /**
@@ -167,15 +180,19 @@ export class ObcCompass extends LitElement {
    * Note: prior to the introduction of `rateOfTurnDegreesPerMinute` this
    * property was interpreted in rotations per minute. The unit changed when
    * the physical ROT API was introduced.
+   * @availableWhen rotType==bar
    */
   @property({type: Number}) rotMaxValue: number = 60;
+  /** @availableWhen rotType==bar */
   @property({type: Number}) rotArcExtent: number = 60;
   @property({type: Boolean}) rotPortStarboard: boolean = false;
+  /** @availableWhen rotType==bar */
   @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_DEG;
   @property({type: String}) direction: CompassDirection =
     CompassDirection.NorthUp;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
+  /** @availableWhen priority==enhanced */
   @property({type: Array, attribute: false})
   priorityElements: CompassPriorityElement[] = [CompassPriorityElement.hdg];
   /** Show compass NSEW labels and north arrow. */
@@ -311,7 +328,7 @@ export class ObcCompass extends LitElement {
               transform: `rotate(${this.heading}deg)`,
             },
           ]}
-          .wind=${this.windSpeed}
+          .windKnots=${this.currentWindSpeedKnots}
           .windFromDirectionDeg=${this.windFromDirection}
           .windColor=${this.colorFor(CompassPriorityElement.wind)}
           .current=${this.currentSpeed}

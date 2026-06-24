@@ -102,7 +102,7 @@ export function widthDecorator(
   const height = context.args.height ?? width;
   return html` <div
     class="wrapper"
-    style="width: ${width}px; height: ${height}px"
+    style="width: ${width}px; height: ${height}px; overflow: auto;"
   >
     ${story()}
   </div>`;

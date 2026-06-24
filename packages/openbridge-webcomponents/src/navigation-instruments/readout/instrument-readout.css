@@ -1,0 +1,15 @@
+/* Shared obc-readout part overrides for readouts embedded inside radial
+   navigation instruments. Imported via `?inline` into each consuming
+   component's `static styles`, and applied by the class names that
+   `renderInstrumentReadout` adds (see instrument-readout.ts).
+
+   Positioning of the readout stays local to each instrument (top%, CSS
+   variables, anchors); only these part-centering overrides are shared. */
+
+.instrument-readout-center-value::part(value-wrapper) {
+  justify-self: center;
+}
+
+.instrument-readout-center-meta::part(meta-wrapper) {
+  justify-self: center;
+}

@@ -29,25 +29,37 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
   @property({type: String}) readoutVariant: ReadoutVariant =
     ReadoutVariant.enhanced;
   @property({type: Number}) angle = 0;
-  @property({type: Number}) angleSetpoint: number | undefined;
+  @property({type: Number}) angleSetpoint?: number;
+  /** @availableWhen angleSetpoint!=undefined */
   @property({type: Number}) newAngleSetpoint: number | undefined;
+  /** @availableWhen angleSetpoint!=undefined && autoAtAngleSetpoint==false */
   @property({type: Boolean})
   atAngleSetpoint: boolean = false;
+  /** @availableWhen angleSetpoint!=undefined */
   @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
+  /** @availableWhen angleSetpoint!=undefined */
   @property({type: Boolean}) angleSetpointOverride: boolean = false;
+  /** @availableWhen angleSetpoint!=undefined */
   @property({type: Boolean, attribute: false}) autoAtAngleSetpoint: boolean =
     true;
+  /** @availableWhen angleSetpoint!=undefined && autoAtAngleSetpoint==true */
   @property({type: Number}) autoAtAngleSetpointDeadband: number = 2;
+  /** @availableWhen angleSetpoint!=undefined || thrustSetpoint!=undefined */
   @property({type: Boolean}) touching: boolean = false;
 
   @property({type: Number}) thrust = 0;
-  @property({type: Number}) thrustSetpoint: number | undefined;
+  @property({type: Number}) thrustSetpoint?: number;
+  /** @availableWhen thrustSetpoint!=undefined && autoAtThrustSetpoint==false */
   @property({type: Boolean})
   atThrustSetpoint: boolean = false;
+  /** @availableWhen thrustSetpoint!=undefined */
   @property({type: Boolean, attribute: false}) autoAtThrustSetpoint: boolean =
     true;
+  /** @availableWhen thrustSetpoint!=undefined && autoAtThrustSetpoint==true */
   @property({type: Number}) autoAtThrustSetpointDeadband: number = 1;
+  /** @availableWhen thrustSetpoint!=undefined */
   @property({type: Number}) thrustSetpointAtZeroDeadband: number = 0.1;
+  /** @availableWhen thrustSetpoint!=undefined */
   @property({type: Boolean}) thrustSetpointOverride: boolean = false;
   @property({type: Array, attribute: false}) angleAdvices: AngleAdvice[] = [];
   @property({type: Array, attribute: false}) thrustAdvices: LinearAdvice[] = [];
@@ -94,17 +106,15 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
           .variant=${effectiveReadoutVariant}
           .direction=${ReadoutDirection.vertical}
           .hug=${false}
-          .hasInput=${true}
-          .setpointValue=${this.angleSetpoint === undefined
-            ? '-'
-            : this.angleSetpoint.toFixed(0)}
+          .hasSetpoint=${true}
+          .setpointValue=${this.angleSetpoint}
           .valuePriority=${readoutPriority}
           .value=${this.angle}
           label="Angle"
           unit="DEG"
         >
           <svg
-            slot="input-icon"
+            slot="setpoint-icon"
             width="16"
             height="16"
             viewBox="0 0 16 16"
@@ -122,17 +132,15 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
           .variant=${effectiveReadoutVariant}
           .direction=${ReadoutDirection.vertical}
           .hug=${false}
-          .hasInput=${true}
-          .setpointValue=${this.thrustSetpoint === undefined
-            ? '-'
-            : this.thrustSetpoint.toFixed(0)}
+          .hasSetpoint=${true}
+          .setpointValue=${this.thrustSetpoint}
           .valuePriority=${readoutPriority}
           .value=${this.thrust}
           label="Power"
           unit="%"
         >
           <svg
-            slot="input-icon"
+            slot="setpoint-icon"
             width="16"
             height="16"
             viewBox="0 0 16 16"

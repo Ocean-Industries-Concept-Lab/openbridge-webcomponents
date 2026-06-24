@@ -15,10 +15,12 @@ import '../../icons/icon-arrow-left-google.js';
 import '../../icons/icon-arrow-right-google.js';
 import '../../components/alert-frame/alert-frame.js';
 import {
-  ObcAlertFrameStatus,
   ObcAlertFrameThickness,
   ObcAlertFrameType,
+  ObcAlertFrameMode,
+  wrapWithAlertFrame,
 } from '../../components/alert-frame/alert-frame.js';
+import {AlertType} from '../../types.js';
 import {customElement} from '../../decorator.js';
 import {
   AutomationButtonReadoutStack,
@@ -67,6 +69,19 @@ export enum AutomationButtonLabelDirection {
   down = 'down',
   left = 'left',
   right = 'right',
+  none = 'none',
+}
+
+/**
+ * The orientation of the inner icon/symbol.
+ * - `horizontal`: The icon is shown in its default horizontal orientation.
+ * - `verticalRight`: The icon is rotated 90° clockwise.
+ * - `verticalLeft`: The icon is rotated 90° counter-clockwise.
+ */
+export enum AutomationButtonOrientation {
+  horizontal = 'horizontal',
+  verticalRight = 'verticalRight',
+  verticalLeft = 'verticalLeft',
 }
 
 /**
@@ -89,32 +104,48 @@ export class ObcAutomationButton extends LitElement {
     AutomationButtonState.open;
   @property({type: Boolean}) static: boolean = false;
   @property({type: Boolean, attribute: false}) showReadoutStack: boolean = true;
+  /** @availableWhen showReadoutStack==true */
   @property({type: Array, attribute: false})
   readouts: AutomationButtonReadoutStack[] = [];
+  /** @availableWhen showReadoutStack==true */
   @property({type: String})
   tag: string | null = null;
+  /** @availableWhen showReadoutStack==true */
   @property({type: String}) readoutPosition: AutomationButtonReadoutPosition =
     AutomationButtonReadoutPosition.bottom;
+  /** @availableWhen showReadoutStack==true */
   @property({type: String}) readoutSize: AutomationButtonReadoutStackSize =
     AutomationButtonReadoutStackSize.regular;
   @property({type: Boolean}) alert: boolean = false;
+  /** @availableWhen alert==true */
   @property({type: String}) alertFrameType: ObcAlertFrameType =
     ObcAlertFrameType.SmallSideFlip;
+  /** @availableWhen alert==true */
   @property({type: String}) alertFrameThickness: ObcAlertFrameThickness =
     ObcAlertFrameThickness.Small;
-  @property({type: String}) alertFrameStatus: ObcAlertFrameStatus =
-    ObcAlertFrameStatus.Alarm;
+  /** @availableWhen alert==true */
+  @property({type: String}) alertFrameStatus: AlertType = AlertType.Alarm;
+  /** @availableWhen alert==true */
+  @property({type: String}) alertFrameMode: ObcAlertFrameMode =
+    ObcAlertFrameMode.ackedActive;
+  /** @availableWhen alert==true && alertFrameType in [LargeSideFlip, BottomFlip, TopFlip] */
   @property({type: Boolean, attribute: false}) showAlertCategoryIcon: boolean =
     true;
+  /** @availableWhen alert==true */
   @property({type: Boolean}) showAlertIcon: boolean = false;
   @property({type: Boolean}) progress: boolean = false;
+  /** @availableWhen progress==true */
   @property({type: String}) progressMode: CircularProgressMode =
     CircularProgressMode.indeterminate;
+  /** @availableWhen progress==true && progressMode in [determinate, progressive-indeterminate] */
   @property({type: Number}) progressValue: number = 0;
+  /** @availableWhen variant in [double, forward, flatForward] */
   @property({type: String}) direction: AutomationButtonDirection =
     AutomationButtonDirection.forward;
   @property({type: String}) positioning: AutomationButtonPositioning =
     AutomationButtonPositioning.point;
+  @property({type: String}) orientation: AutomationButtonOrientation =
+    AutomationButtonOrientation.horizontal;
   /** Badge spacer should be set to true if there is a badge on the same side as the label */
   @property({type: Boolean}) hasBadgeSpacer: boolean = false;
 
@@ -165,12 +196,13 @@ export class ObcAutomationButton extends LitElement {
               ></obc-automation-button-readout-stack>
             `
           : nothing}
-        ${this.alert
+        ${this.alert && this.positioning === AutomationButtonPositioning.point
           ? html` <obc-alert-frame
               class="alert-frame"
               .type=${this.alertFrameType}
               .thickness=${this.alertFrameThickness}
               .status=${this.alertFrameStatus}
+              .mode=${this.alertFrameMode}
               .showAlertCategoryIcon=${this.showAlertCategoryIcon}
               .showIcon=${this.showAlertIcon}
             >
@@ -186,17 +218,31 @@ export class ObcAutomationButton extends LitElement {
   private wrapContent(content: HTMLTemplateResult): HTMLTemplateResult {
     if (this.positioning === AutomationButtonPositioning.point) {
       return html`<div class="point-wrapper">${content}</div>`;
-    } else if (this.positioning === AutomationButtonPositioning.symbol) {
+    }
+    const innerContent = wrapWithAlertFrame(
+      this.alert
+        ? {
+            type: this.alertFrameType,
+            thickness: this.alertFrameThickness,
+            status: this.alertFrameStatus,
+            mode: this.alertFrameMode,
+            showIcon: this.showAlertIcon,
+            showAlertCategoryIcon: this.showAlertCategoryIcon,
+          }
+        : false,
+      content
+    );
+    if (this.positioning === AutomationButtonPositioning.symbol) {
       return html`<div
         class=${classMap({
           'symbol-wrapper': true,
           ['label-' + this.readoutPosition]: true,
         })}
       >
-        ${content}
+        ${innerContent}
       </div> `;
     }
-    return content;
+    return innerContent;
   }
 
   static override styles = unsafeCSS(compentStyle);
@@ -211,14 +257,18 @@ export class ObcAutomationButton extends LitElement {
   private renderIconHolder(): HTMLTemplateResult {
     const effectiveVariant = this.effectiveVariant;
     const progressRing = this.getProgressRing();
+    const iconHolderClasses = classMap({
+      'icon-holder': true,
+      ['orientation-' + this.orientation]: true,
+    });
     if (this.variant === AutomationButtonVariant.flatForward) {
-      return html`<div class="icon-holder">
+      return html`<div class=${iconHolderClasses}>
         ${this.getDirectionIcon(effectiveVariant, 'icon-primary')}
         ${this.getDirectionIcon(effectiveVariant, 'icon-silhouette')}
         ${progressRing}
       </div>`;
     } else if (this.variant === AutomationButtonVariant.forward) {
-      return html`<div class="icon-holder">
+      return html`<div class=${iconHolderClasses}>
         ${this.getDirectionIcon(effectiveVariant, 'icon-primary')}
         ${progressRing}
       </div>`;
@@ -231,7 +281,7 @@ export class ObcAutomationButton extends LitElement {
       AutomationButtonVariant.flat,
       AutomationButtonVariant.square,
     ].includes(effectiveVariant);
-    return html`<div class="icon-holder">
+    return html`<div class=${iconHolderClasses}>
       ${direction}
       ${showIcon
         ? html`<div class="icon-primary">

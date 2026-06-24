@@ -134,12 +134,15 @@ export class ObcCheckButton extends LitElement {
    * Only applies when `fullWidth` is true.
    *
    * @default ''
+   * @availableWhen fullWidth==true
    */
   @property({type: String}) width = '';
 
   /**
    * Whether to show the icon in regular mode (icon slot).
    * Ignored in checkbox mode.
+   *
+   * @availableWhen type==regular
    */
   @property({type: Boolean}) showIcon = false;
 
@@ -148,6 +151,7 @@ export class ObcCheckButton extends LitElement {
    * Otherwise, uses the default checked icon.
    *
    * @default false
+   * @availableWhen type==checkbox
    */
   @property({type: Boolean}) hasCheckedIcon = false;
 
@@ -156,6 +160,7 @@ export class ObcCheckButton extends LitElement {
    * Otherwise, uses the default unchecked icon.
    *
    * @default false
+   * @availableWhen type==checkbox
    */
   @property({type: Boolean}) hasUncheckedIcon = false;
 
@@ -164,6 +169,7 @@ export class ObcCheckButton extends LitElement {
    * Keep `default` for existing behavior. Use `updated` for the new checkbox visuals.
    *
    * @default 'default'
+   * @availableWhen type==checkbox
    */
   @property({type: String, attribute: 'checkbox-appearance'})
   checkboxAppearance: CheckButtonCheckboxAppearance =

@@ -163,15 +163,18 @@ export class ObcTopBar extends LitElement {
    * Sets the current page or section name displayed in the top bar.
    * @type {string}
    * @default "Page"
+   * @availableWhen settings==false
    */
   @property({type: String}) pageName = 'Page';
 
+  /** @availableWhen settings==false && inactive==false */
   @property({type: String}) menuButtonIcon = ObcTopBarMenuButtonIcon.Menu;
 
   /**
    * Highlights the menu button as active.
    * @type {boolean}
    * @default false
+   * @availableWhen settings==false && inactive==false
    */
   @property({type: Boolean})
   menuButtonActivated = false;
@@ -180,6 +183,7 @@ export class ObcTopBar extends LitElement {
    * Highlights the dimming (day/night) button as active.
    * @type {boolean}
    * @default false
+   * @availableWhen showDimmingButton==true && inactive==false
    */
   @property({type: Boolean})
   dimmingButtonActivated = false;
@@ -188,6 +192,7 @@ export class ObcTopBar extends LitElement {
    * Highlights the apps button as active.
    * @type {boolean}
    * @default false
+   * @availableWhen showAppsButton==true && inactive==false
    */
   @property({type: Boolean})
   appsButtonActivated = false;
@@ -196,6 +201,7 @@ export class ObcTopBar extends LitElement {
    * Highlights the left more button as active.
    * @type {boolean}
    * @default false
+   * @availableWhen inactive==false
    */
   @property({type: Boolean})
   leftMoreButtonActivated = false;
@@ -204,6 +210,7 @@ export class ObcTopBar extends LitElement {
    * Highlights the user/profile button as active.
    * @type {boolean}
    * @default false
+   * @availableWhen showUserButton==true && inactive==false
    */
   @property({type: Boolean})
   userButtonActivated = false;
@@ -212,6 +219,7 @@ export class ObcTopBar extends LitElement {
    * Disables the user/profile button.
    * @type {boolean}
    * @default false
+   * @availableWhen showUserButton==true && inactive==false
    */
   @property({type: Boolean})
   userButtonDisabled = false;
@@ -227,6 +235,7 @@ export class ObcTopBar extends LitElement {
    * Expands the menu button for wide-rail layouts.
    * @type {boolean}
    * @default false
+   * @availableWhen settings==false && inactive==false
    */
   @property({type: Boolean}) wideMenuButton = false;
 
@@ -331,6 +340,7 @@ export class ObcTopBar extends LitElement {
    * Array of breadcrumb items for navigation (used in settings mode).
    * @type {BreadcrumbItem[]}
    * @default []
+   * @availableWhen settings==true
    */
   @property({type: Array})
   breadcrumbItems: BreadcrumbItem[] = [];

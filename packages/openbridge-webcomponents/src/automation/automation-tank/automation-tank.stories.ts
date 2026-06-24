@@ -6,6 +6,7 @@ import {
   TankPositioning,
   TankTrend,
   TankType,
+  type TankReadoutItem,
 } from './automation-tank.js';
 import './automation-tank.js';
 import {html} from 'lit';
@@ -56,6 +57,12 @@ const SAMPLE_ADVICE: LinearAdvice[] = [
   {min: 7500, max: 9000, type: AdviceType.advice, hinted: false},
 ];
 
+const SAMPLE_READOUT: TankReadoutItem[] = [
+  {label: 'Temperature', value: 45, hasDegree: true, unit: 'C'},
+  {label: 'Pressure', value: 45, unit: 'Pa'},
+  {label: 'Flow speed', value: 45, unit: 'm/s'},
+];
+
 const renderTank = (args: StoryArgs) => html`
   <obc-automation-tank
     .value=${args.value}
@@ -74,6 +81,7 @@ const renderTank = (args: StoryArgs) => html`
     .hasGraphIcon=${args.hasGraphIcon}
     .showTrendSymbol=${args.showTrendSymbol}
     .percentFractionDigits=${args.percentFractionDigits}
+    .readout=${args.readout}
     ?alert=${args.alert}
     .alertFrameType=${args.alertFrameType}
     .alertFrameThickness=${args.alertFrameThickness}
@@ -110,6 +118,7 @@ const meta: Meta<StoryArgs> = {
     hasGraphIcon: false,
     showTrendSymbol: true,
     percentFractionDigits: 0,
+    readout: [],
     alert: false,
     alertFrameType: ObcAlertFrameType.SmallSideFlip,
     alertFrameThickness: ObcAlertFrameThickness.Small,
@@ -176,6 +185,11 @@ const meta: Meta<StoryArgs> = {
       control: {type: 'object'},
       description:
         'Advice overlay bands. `min`/`max` are in the same units as `max`. Toggle visibility with `hasAdvice`. Works in all three `chartMode` variants — `bar` overlays advice pills on the static bar, `graph` and `graph-and-bar` forward them to the embedded `obc-gauge-trend`.',
+    },
+    readout: {
+      control: {type: 'object'},
+      description:
+        'Rich detail rows shown below the main percent/value block in the regular (non-compact, non-static) layout, separated by a divider. Each row: `{label, value, hasDegree?, hasPercentage?, unit}`. Empty array — nothing is rendered. Values use `percentFractionDigits` for formatting. Override the whole block via `slot="rich"`.',
     },
     badgeControl: {
       options: Object.values(AutomationButtonBadgeControl),
@@ -355,6 +369,23 @@ export const BatteryWithGraphIcon: Story = {
   },
 };
 
+export const Rich: Story = {
+  args: {
+    type: TankType.atmospheric,
+    chartMode: TankChartMode.graphAndBar,
+    readout: SAMPLE_READOUT,
+  },
+};
+
+export const HorizontalRich: Story = {
+  args: {
+    type: TankType.atmospheric,
+    orientation: TankOrientation.horizontal,
+    chartMode: TankChartMode.graphAndBar,
+    readout: SAMPLE_READOUT,
+  },
+};
+
 /**
  * Demonstrates fractional precision in the non-compact readout. The percent
  * readout is controlled by the `percentFractionDigits` property (here `1`,
@@ -367,6 +398,10 @@ export const BatteryWithGraphIcon: Story = {
  * The compact / static layouts only show the percent (no absolute value)
  * and always render it as an integer to keep their fixed-width footprint
  * stable, so fraction-digit control only applies to the non-compact layout.
+ *
+ * `percentFractionDigits` is also applied uniformly to every row of the
+ * `readout` rich list (see the `Rich` story) — all rows share one digit
+ * count so the right-aligned numeric column stays visually consistent.
  */
 export const WithFractionDigits: Story = {
   args: {
@@ -396,6 +431,7 @@ export const WithFractionDigits: Story = {
       .showTrendSymbol=${args.showTrendSymbol}
       .priority=${args.priority}
       .percentFractionDigits=${args.percentFractionDigits}
+      .readout=${args.readout}
     >
       <span slot="current-value">${args.value.toFixed(2)}</span>
       <span slot="max-value">${args.max.toFixed(2)}</span>
@@ -434,6 +470,7 @@ export const WithAlertAlarm: Story = {
       .hasGraphIcon=${args.hasGraphIcon}
       .showTrendSymbol=${args.showTrendSymbol}
       .percentFractionDigits=${args.percentFractionDigits}
+      .readout=${args.readout}
       ?alert=${args.alert}
       .alertFrameType=${args.alertFrameType}
       .alertFrameThickness=${args.alertFrameThickness}
@@ -476,6 +513,28 @@ export const WithAlertCautionCompact: Story = {
     alert: true,
     alertFrameStatus: ObcAlertFrameStatus.Caution,
     alertFrameType: ObcAlertFrameType.BottomFlip,
+  },
+};
+
+export const WithAlertLevelCritical: Story = {
+  ...WithAlertAlarm,
+  args: {
+    type: TankType.atmospheric,
+    alert: true,
+    alertFrameStatus: ObcAlertFrameStatus.LevelCritical,
+    alertFrameType: ObcAlertFrameType.SmallSideFlip,
+    badgeAlert: AutomationButtonBadgeAlert.LevelCritical,
+  },
+};
+
+export const WithAlertLevelDiagnostic: Story = {
+  ...WithAlertAlarm,
+  args: {
+    type: TankType.atmospheric,
+    alert: true,
+    alertFrameStatus: ObcAlertFrameStatus.LevelDiagnostic,
+    alertFrameType: ObcAlertFrameType.Regular,
+    badgeAlert: AutomationButtonBadgeAlert.LevelDiagnostic,
   },
 };
 
@@ -534,6 +593,7 @@ export const Responsive: Story = {
           .hasGraphIcon=${args.hasGraphIcon}
           .showTrendSymbol=${args.showTrendSymbol}
           .percentFractionDigits=${args.percentFractionDigits}
+          .readout=${args.readout}
           ?alert=${args.alert}
           .alertFrameType=${args.alertFrameType}
           .alertFrameThickness=${args.alertFrameThickness}

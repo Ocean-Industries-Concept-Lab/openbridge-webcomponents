@@ -80,7 +80,7 @@ const windHistogramData: WindHistogramData[] = [
     class="wind-instrument"
     :wind-histogram-data="windHistogramData"
     :current-wind-from-direction="weather.windDirection"
-    :current-wind-speed-beaufort="weather.windSpeedBeaufort"
+    :current-wind-speed-knots="weather.windSpeed * 1.94384"
     :vessel-heading-deg="vesselHeadingDeg"
     :vessel-image="vessel === 'psv' ? VesselImage.psvTop : VesselImage.carFerryTop"
   />

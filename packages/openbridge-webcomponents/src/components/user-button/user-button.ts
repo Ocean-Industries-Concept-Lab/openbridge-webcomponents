@@ -110,6 +110,7 @@ export class ObcUserButton extends LitElement {
 
   /**
    * Disables the button, preventing user interaction and applying a disabled style.
+   * @availableWhen static==false
    */
   @property({type: Boolean}) disabled: boolean = false;
 
@@ -122,6 +123,7 @@ export class ObcUserButton extends LitElement {
 
   /**
    * Optional label text to display next to the button (not shown in static mode).
+   * @availableWhen static==false
    */
   @property({type: String}) label?: string;
 

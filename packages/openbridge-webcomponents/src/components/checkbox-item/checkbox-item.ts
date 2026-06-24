@@ -87,8 +87,10 @@ export class ObcCheckboxItem extends LitElement {
 
   @property({type: Boolean, reflect: true}) isNested = false;
 
+  /** @availableWhen isNested==true || hoverStyle==visual-target */
   @property({type: Boolean, reflect: true}) isLevel1 = false;
 
+  /** @availableWhen isNested==true || hoverStyle==visual-target */
   @property({type: Boolean, reflect: true}) isLevel2 = false;
 
   @property({type: String}) hoverStyle: ObcCheckboxItemHoverStyle =

@@ -14,6 +14,7 @@ import {TickmarkType} from '../watch/tickmark.js';
 import {AdviceState, AdviceType, AngleAdviceRaw} from '../watch/advice.js';
 import {customElement} from '../../decorator.js';
 import {Priority} from '../types.js';
+import {renderInstrumentReadout} from '../readout/instrument-readout.js';
 import {
   computeZoomToFitArcFrame,
   normalizeArcAngle,
@@ -57,7 +58,9 @@ export class ObcPitchRoll extends LitElement {
   @property({type: Number}) scaleForeImage = 1;
   @property({type: Number}) maxPitchAdvice: number | undefined = undefined;
   @property({type: Number}) maxRollAdvice: number | undefined = undefined;
+  /** @availableWhen maxPitchAdvice!=undefined */
   @property({type: Boolean}) triggerPitchAdvice = false;
+  /** @availableWhen maxRollAdvice!=undefined */
   @property({type: Boolean}) triggerRollAdvice = false;
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: Array, attribute: false})
@@ -65,6 +68,31 @@ export class ObcPitchRoll extends LitElement {
     PitchRollPriorityElement.pitch,
     PitchRollPriorityElement.roll,
   ];
+  /**
+   * When `true`, the centre shows two stacked `<obc-readout>`s (pitch above
+   * roll) instead of the vessel images. Default `false`.
+   */
+  @property({type: Boolean}) hasReadout: boolean = false;
+  /**
+   * Label for the pitch readout. Default `Pitch`.
+   * @availableWhen hasReadout==true
+   */
+  @property({type: String}) pitchLabel = 'Pitch';
+  /**
+   * Label for the roll readout. Default `Roll`.
+   * @availableWhen hasReadout==true
+   */
+  @property({type: String}) rollLabel = 'Roll';
+  /**
+   * Unit shown in both readouts. Default `DEG`.
+   * @availableWhen hasReadout==true
+   */
+  @property({type: String}) unit = 'DEG';
+  /**
+   * Number of fraction digits shown in both readouts. Default `0`.
+   * @availableWhen hasReadout==true
+   */
+  @property({type: Number}) fractionDigits = 0;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
   /**
    * Half-extent of each of the four watch arcs in degrees, measured from the
@@ -156,7 +184,9 @@ export class ObcPitchRoll extends LitElement {
     return html`
       <div class="container">
         <svg viewBox="${overlayViewBox}">
-          ${svg`
+          ${this.hasReadout
+            ? nothing
+            : svg`
             <line
               x1="-150"
               y1="0"
@@ -179,7 +209,40 @@ export class ObcPitchRoll extends LitElement {
         ${this.zoomToFitArc
           ? this.renderZoomedArcs(pitchReq, rollReq)
           : this.renderFullWatch(areas)}
+        ${this.hasReadout
+          ? html`<div class="readout">
+              <div class="readout-group">
+                ${this.renderReadout(
+                  this.pitch,
+                  this.pitchLabel,
+                  PitchRollPriorityElement.pitch
+                )}
+                <div class="readout-divider"></div>
+                ${this.renderReadout(
+                  this.roll,
+                  this.rollLabel,
+                  PitchRollPriorityElement.roll
+                )}
+              </div>
+            </div>`
+          : nothing}
       </div>
+    `;
+  }
+
+  private renderReadout(
+    value: number,
+    label: string,
+    element: PitchRollPriorityElement
+  ) {
+    return html`
+      ${renderInstrumentReadout({
+        value,
+        valuePriority: this.priorityFor(element),
+        label,
+        unit: this.unit,
+        fractionDigits: this.fractionDigits,
+      })}
     `;
   }
 
@@ -579,18 +642,20 @@ export class ObcPitchRoll extends LitElement {
             strokeColor: 'var(--border-silhouette-color)',
           },
         ]}
-        .vessels=${[
-          {
-            size: VesselImageSize.large,
-            vesselImage: this.vesselImageSide,
-            transform: `rotate(${this.pitch}deg)`,
-          },
-          {
-            size: VesselImageSize.large,
-            vesselImage: this.vesselImageFore,
-            transform: `rotate(${this.roll}deg) scale(${this.normalizedScaleForeImage})`,
-          },
-        ]}
+        .vessels=${this.hasReadout
+          ? []
+          : [
+              {
+                size: VesselImageSize.large,
+                vesselImage: this.vesselImageSide,
+                transform: `rotate(${this.pitch}deg)`,
+              },
+              {
+                size: VesselImageSize.large,
+                vesselImage: this.vesselImageFore,
+                transform: `rotate(${this.roll}deg) scale(${this.normalizedScaleForeImage})`,
+              },
+            ]}
         .tickmarks=${[
           {angle: 0, type: TickmarkType.main},
           {angle: 90, type: TickmarkType.main},
@@ -696,6 +761,25 @@ export class ObcPitchRoll extends LitElement {
       left: 0;
       width: 100%;
       height: 100%;
+    }
+
+    .readout {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .readout-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: fit-content;
+    }
+
+    .readout-divider {
+      align-self: stretch;
+      height: 1px;
+      background: var(--border-divider-color);
     }
   `;
 }

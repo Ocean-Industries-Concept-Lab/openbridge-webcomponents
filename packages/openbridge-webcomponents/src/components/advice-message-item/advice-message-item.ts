@@ -121,30 +121,35 @@ export class ObcAdviceMessageItem extends LitElement {
   /**
    * Title or heading of the advice message.
    * Shown in the `title` slot if `hasTitle` is true.
+   * @availableWhen showTitle==true && type!=Inactive
    */
   @property({type: String}) override title = '';
 
   /**
    * Detailed message text for the advice.
    * Shown in the `description` slot if `hasDescription` is true.
+   * @availableWhen showDescription==true && type!=Inactive
    */
   @property({type: String}) description = '';
 
   /**
    * Primary timestamp to display (e.g., time of advice).
    * Shown in the `time` slot if `hasTimestamp` is true.
+   * @availableWhen showTimestamp==true && type!=Inactive
    */
   @property({type: String}) time = '';
 
   /**
    * Secondary timestamp (e.g., duration, relative time).
    * Shown in the `time-secondary` slot if `hasTimestamp2` is true.
+   * @availableWhen hasTimestamp2==true && type!=Inactive
    */
   @property({type: String}) timeSecondary = '';
 
   /**
    * Label for the action button (when `type` is "with-button").
    * Shown in the `action-text` slot.
+   * @availableWhen type==WithButton
    */
   @property({type: String}) actionLabel = 'View';
 
@@ -173,36 +178,42 @@ export class ObcAdviceMessageItem extends LitElement {
   /**
    * Whether to show the title.
    * If false, the title is hidden even if set.
+   * @availableWhen type!=Inactive
    */
   @property({type: Boolean, attribute: false}) showTitle: boolean = true;
 
   /**
    * Whether to show the description.
    * If false, the description is hidden even if set.
+   * @availableWhen type!=Inactive
    */
   @property({type: Boolean, attribute: false}) showDescription: boolean = true;
 
   /**
    * Whether to show the primary timestamp.
    * If false, the `time` slot is not rendered.
+   * @availableWhen type!=Inactive
    */
   @property({type: Boolean, attribute: false}) showTimestamp: boolean = true;
 
   /**
    * Whether to show the secondary timestamp.
    * If true, the `time-secondary` slot is rendered.
+   * @availableWhen type!=Inactive
    */
   @property({type: Boolean}) hasTimestamp2 = false;
 
   /**
    * Whether to show the secondary icon overlay.
    * If true, the `secondary-icon` slot is rendered.
+   * @availableWhen type!=Inactive
    */
   @property({type: Boolean}) hasSecondaryIcon = false;
 
   /**
    * Text to display in the empty/inactive state.
    * Shown in the `empty` slot when `type="inactive"` or `empty` is true.
+   * @availableWhen type==Inactive
    */
   @property({type: String}) emptyText = 'No active advice';
 

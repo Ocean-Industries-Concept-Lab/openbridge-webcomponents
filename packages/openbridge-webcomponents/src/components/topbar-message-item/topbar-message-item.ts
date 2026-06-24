@@ -159,26 +159,31 @@ export class ObcTopbarMessageItem extends LitElement {
 
   /**
    * Whether to show the title slot.
+   * @availableWhen type!=Inactive
    */
   @property({type: Boolean, attribute: false}) showTitle: boolean = true;
 
   /**
    * Whether to show the description slot.
+   * @availableWhen type!=Inactive
    */
   @property({type: Boolean, attribute: false}) showDescription: boolean = true;
 
   /**
    * Whether to show the primary timestamp slot.
+   * @availableWhen type!=Inactive
    */
   @property({type: Boolean, attribute: false}) showTimestamp: boolean = true;
 
   /**
    * Whether to display the secondary timestamp slot.
+   * @availableWhen type!=Inactive
    */
   @property({type: Boolean}) hasTimestamp2 = false;
 
   /**
    * Whether to display the secondary icon slot.
+   * @availableWhen type!=Inactive
    */
   @property({type: Boolean}) hasSecondaryIcon = false;
 

@@ -64,6 +64,7 @@ export class ObcAppButton extends LitElement {
   /**
    * Sets the button's text label.
    * @default "Button"
+   * @availableWhen showLabel==true
    */
   @property({type: String}) label = 'Button';
 

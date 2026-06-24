@@ -32,6 +32,10 @@ const meta: Meta<typeof ObcSpeedGauge> = {
       control: 'select',
       options: Object.values(TickmarkStyle),
     },
+    hasReadout: {control: 'boolean'},
+    label: {control: 'text'},
+    unit: {control: 'text'},
+    fractionDigits: {control: 'number'},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcSpeedGauge>;
@@ -66,6 +70,6 @@ export const Advices: Story = {
 
 export const Readout: Story = {
   args: {
-    showReadout: true,
+    hasReadout: true,
   },
 };

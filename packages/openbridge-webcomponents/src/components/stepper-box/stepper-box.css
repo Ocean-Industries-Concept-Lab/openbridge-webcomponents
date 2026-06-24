@@ -41,9 +41,3 @@
 :host([disabled]) .helper-text {
   color: var(--element-disabled-color);
 }
-
-:host([disabled]) .field-wrapper.has-unit-slot .unit-slot {
-  color: var(--on-normal-disabled-color);
-  border-color: var(--normal-disabled-border-color);
-  background: var(--normal-disabled-background-color);
-}

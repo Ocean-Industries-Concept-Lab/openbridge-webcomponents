@@ -5,7 +5,7 @@ import {WatchCircleType} from '../watch/watch.js';
 import {AdviceType, AngleAdviceRaw, AdviceState} from '../watch/advice.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {Priority} from '../types.js';
-import '../readout/readout.js';
+import {renderInstrumentReadout} from '../readout/instrument-readout.js';
 import {ReadoutDirection, ReadoutVariant} from '../readout/readout.js';
 import {customElement} from '../../decorator.js';
 
@@ -37,7 +37,7 @@ export interface SpeedAdvice {
  *   (short indicator bar) via `needleType`.
  * - **Bipolar range support**: When `minSpeed < 0`, negative tickmarks are
  *   rendered with `main` tick style.
- * - **Optional readout**: Enable `showReadout` to display an
+ * - **Optional readout**: Enable `hasReadout` to display an
  *   `<obc-readout>` with the current speed, unit (KN), and label (STW).
  * - **Setpoint via mixin**: `setpoint`, `newSetpoint`, `touching`,
  *   `autoAtSetpointDeadband`, `setpointOverride`, and all other setpoint
@@ -55,7 +55,7 @@ export interface SpeedAdvice {
  * - Provide `tickmarkInterval` to control tickmark spacing.
  * - Enable `showLabels` to show numeric labels at primary tickmarks.
  * - Enable `tickmarksInside` to render tickmarks inside the ring.
- * - Enable `showReadout` to display the numeric value below the gauge.
+ * - Enable `hasReadout` to display the numeric value below the gauge.
  *
  * ## Best Practices
  *
@@ -73,7 +73,7 @@ export interface SpeedAdvice {
  *   needleType="full"
  *   enhanced
  *   showLabels
- *   showReadout
+ *   hasReadout
  *   tickmarkInterval="5"
  *   setpoint="15"
  * ></obc-speed-gauge>
@@ -101,7 +101,17 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
   @property({type: Array, attribute: false}) speedAdvices: SpeedAdvice[] = [];
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
-  @property({type: Boolean}) showReadout: boolean = false;
+  /**
+   * When `true`, shows a centered `<obc-readout>` (label `STW`, unit `KN`)
+   * below the gauge with the current speed. Default `false`.
+   */
+  @property({type: Boolean}) hasReadout: boolean = false;
+  /** Readout label. Default `STW`. */
+  @property({type: String}) label = 'STW';
+  /** Readout unit. Default `KN`. */
+  @property({type: String}) unit = 'KN';
+  /** Number of fraction digits shown in the readout. Default `1`. */
+  @property({type: Number}) fractionDigits = 1;
 
   getAngle(v: number): number {
     return (v / this.maxSpeed) * (180 + 45) - 90;
@@ -158,24 +168,19 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
           ]}
         ></obc-watch>
         <svg class="rudder" viewBox="-224 -224 448 448">${this.needle}</svg>
-        ${this.showReadout
+        ${this.hasReadout
           ? html`
-              <obc-readout
-                class="speed-gauge-value"
-                .variant=${ReadoutVariant.stack}
-                .direction=${ReadoutDirection.horizontal}
-                .hasInput=${false}
-                .hasAdvice=${false}
-                .hasSrc=${false}
-                .value=${this.speed}
-                .showZeroPadding=${false}
-                .valueHasHintedZeros=${false}
-                unit="KN"
-                label="STW"
-                .fractionDigits=${1}
-                .maxDigits=${maxDigits}
-                .valuePriority=${this.priority}
-              ></obc-readout>
+              ${renderInstrumentReadout({
+                className: 'speed-gauge-value',
+                variant: ReadoutVariant.stack,
+                direction: ReadoutDirection.horizontal,
+                value: this.speed,
+                label: this.label,
+                unit: this.unit,
+                fractionDigits: this.fractionDigits,
+                minValueLength: maxDigits,
+                valuePriority: this.priority,
+              })}
             `
           : nothing}
       </div>

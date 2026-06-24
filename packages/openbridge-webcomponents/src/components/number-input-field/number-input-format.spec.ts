@@ -2,6 +2,7 @@ import {describe, it, expect} from 'vitest';
 import {
   formatNumberForDisplay,
   getLocaleNumberSeparators,
+  isAllowedIntermediateInput,
   parseNumberInput,
   removeGroupingFromDisplay,
   valuesEqual,
@@ -20,6 +21,17 @@ describe('parseNumberInput', () => {
   it('parses trailing decimal separator as the numeric value', () => {
     expect(parseNumberInput('10.')).toBe(10);
     expect(parseNumberInput('10,')).toBe(10);
+  });
+
+  it('parses grouped numbers with mixed separators', () => {
+    expect(parseNumberInput('1,234.5')).toBe(1234.5);
+    expect(parseNumberInput('1.234,5')).toBe(1234.5);
+    expect(parseNumberInput('1 234,5')).toBe(1234.5);
+    expect(parseNumberInput("1'234.5")).toBe(1234.5);
+  });
+
+  it('parses grouped integers', () => {
+    expect(parseNumberInput('1,234,567')).toBe(1234567);
   });
 
   it('returns NaN for sign-only input', () => {
@@ -151,5 +163,55 @@ describe('valuesEqual', () => {
   it('compares finite numbers', () => {
     expect(valuesEqual(1, 1)).toBe(true);
     expect(valuesEqual(1, 2)).toBe(false);
+  });
+});
+
+describe('isAllowedIntermediateInput', () => {
+  const enUsOptions = {decimalSeparator: '.', groupSeparator: ','};
+
+  it('allows empty string', () => {
+    expect(isAllowedIntermediateInput('', enUsOptions)).toBe(true);
+  });
+
+  it('allows digits', () => {
+    expect(isAllowedIntermediateInput('123', enUsOptions)).toBe(true);
+  });
+
+  it('allows leading sign', () => {
+    expect(isAllowedIntermediateInput('-', enUsOptions)).toBe(true);
+    expect(isAllowedIntermediateInput('+12.5', enUsOptions)).toBe(true);
+  });
+
+  it('allows trailing decimal separator', () => {
+    expect(isAllowedIntermediateInput('10.', enUsOptions)).toBe(true);
+    expect(isAllowedIntermediateInput(',5', enUsOptions)).toBe(true);
+  });
+
+  it('allows grouped numbers with default separators', () => {
+    expect(isAllowedIntermediateInput('1,234.5', enUsOptions)).toBe(true);
+  });
+
+  it('rejects letters', () => {
+    expect(isAllowedIntermediateInput('12a')).toBe(false);
+    expect(isAllowedIntermediateInput('e')).toBe(false);
+  });
+
+  it('rejects symbols outside the allowed set', () => {
+    expect(isAllowedIntermediateInput('12!')).toBe(false);
+    expect(isAllowedIntermediateInput('12$')).toBe(false);
+  });
+
+  it('rejects sign in non-leading position', () => {
+    expect(isAllowedIntermediateInput('1-2')).toBe(false);
+  });
+
+  it('honours custom decimal separator', () => {
+    const opts = {decimalSeparator: ',', groupSeparator: ' '};
+    expect(isAllowedIntermediateInput('1 234,5', opts)).toBe(true);
+    expect(isAllowedIntermediateInput('1,234.5', opts)).toBe(false);
+  });
+
+  it('allows whitespace', () => {
+    expect(isAllowedIntermediateInput(' 12 ')).toBe(true);
   });
 });
