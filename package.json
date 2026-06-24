@@ -2,7 +2,6 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "build:lib": "npm run build --workspaces --if-present",
     "clean": "npm run clean --workspaces --if-present && rm -rf node_modules",
     "clean:full": "npm run clean && rm -rf packages/openbridge-webcomponents/.full-bundle-publish && find packages/openbridge-webcomponents-ng packages/openbridge-webcomponents-react packages/openbridge-webcomponents-svelte packages/openbridge-webcomponents-vue -mindepth 1 ! -name 'README.md' -exec rm -rf {} + || true",
     "format:all": "npm run format --workspaces --if-present",
