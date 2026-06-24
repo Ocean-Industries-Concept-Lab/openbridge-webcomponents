@@ -12,6 +12,7 @@ const input = globbySync('src/**/*.ts', {
     'src/**/*.stories.ts',
     'src/**/*.spec.ts',
     'src/**/*.test.ts',
+    'src/**/*.d.ts',
     'src/storybook-util.ts',
     'src/ar/_test-utils.ts',
   ],
@@ -24,6 +25,7 @@ export default defineConfig(({mode}) => {
   return {
     build: {
       minify: false,
+      sourcemap: true,
       lib: {
         entry: 'src/index.ts',
         name: 'openbridge-webcomponents',
@@ -49,7 +51,6 @@ export default defineConfig(({mode}) => {
               format: 'es',
               entryFileNames: 'openbridge-webcomponents.bundle.js',
               dir: 'bundle',
-              sourcemap: true,
               preserveModules: false,
               inlineDynamicImports: true,
             }
@@ -59,7 +60,6 @@ export default defineConfig(({mode}) => {
               entryFileNames: (opt) => {
                 return `${opt.name}.js`;
               },
-              sourcemap: true,
               preserveModules: true,
               preserveModulesRoot: 'src',
               inlineDynamicImports: false,
