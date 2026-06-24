@@ -7,22 +7,6 @@
   width: 100%;
 }
 
-/*
- * When the readout list item is wrapped in an alert frame it should still fill
- * the entire width of its container, matching the non-alert layout. The alert
- * frame defaults to hugging its content (`wrapContent`), so stretch both the
- * frame host and its inner wrapper back to full width without otherwise
- * altering the content.
- */
-obc-alert-frame {
-  display: block;
-  width: 100%;
-}
-
-obc-alert-frame::part(wrapper) {
-  width: 100%;
-}
-
 .root {
   display: inline-flex;
   align-items: flex-end;
