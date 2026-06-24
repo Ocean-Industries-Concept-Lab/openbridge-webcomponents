@@ -199,6 +199,12 @@ export class ObcAlertFrame extends LitElement {
   @property({type: Boolean, reflect: true}) wrapContent: boolean = false;
 
   /**
+   * When true, the frame stretches to fill the full width of its container
+   * instead of hugging its content. Reflected to an attribute for CSS styling.
+   */
+  @property({type: Boolean, reflect: true}) fullWidth: boolean = false;
+
+  /**
    * If true, the top-left corner will be sharp (not rounded).
    */
   @property({type: Boolean}) sharpEdgeTopLeft: boolean = false;
@@ -231,6 +237,7 @@ export class ObcAlertFrame extends LitElement {
         class=${classMap({
           wrapper: true,
           'wrap-content': this.wrapContent,
+          'full-width': this.fullWidth,
           ['thickness-' + this.thickness]: true,
           [this.type]: true,
           [this.status]: true,
@@ -339,7 +346,8 @@ export class ObcAlertFrame extends LitElement {
 
 export function wrapWithAlertFrame(
   options: AlertFrameConfig | boolean | undefined,
-  content: HTMLTemplateResult
+  content: HTMLTemplateResult,
+  fullWidth: boolean = false
 ): HTMLTemplateResult {
   if (typeof options !== 'object' || options === null) {
     return content;
@@ -352,6 +360,7 @@ export function wrapWithAlertFrame(
     .showIcon=${options.showIcon ?? false}
     .showAlertCategoryIcon=${options.showAlertCategoryIcon ?? true}
     .wrapContent=${true}
+    .fullWidth=${fullWidth}
     >${content}</obc-alert-frame
   >`;
 }
