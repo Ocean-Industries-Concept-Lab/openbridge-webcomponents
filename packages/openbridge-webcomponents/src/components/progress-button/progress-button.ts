@@ -107,7 +107,7 @@ export class ObcProgressButton extends LitElement {
     ProgressButtonType.Linear;
   /**
    * Elevation style of the button surface.
-   * @availableWhen type==Linear
+   * @availableWhen type==linear
    */
   @property({type: String}) buttonStyle: ButtonStyle = ButtonStyle.Regular;
   /**
@@ -125,24 +125,24 @@ export class ObcProgressButton extends LitElement {
   @property({type: Boolean}) showProgress = false;
   /**
    * Renders the `leading-icon` slot.
-   * @availableWhen type==Linear
+   * @availableWhen type==linear
    */
   @property({type: Boolean}) hasLeadingIcon = false;
   /**
    * Renders the `trailing-icon` slot.
-   * @availableWhen type==Linear
+   * @availableWhen type==linear
    */
   @property({type: Boolean}) hasTrailingIcon = false;
   /** Shows an alert (error) ring/border around the button. */
   @property({type: Boolean}) hasAlert = false;
   /**
    * Uses a progressive indeterminate ring that animates while advancing toward `value`.
-   * @availableWhen type==Circular && showProgress==true
+   * @availableWhen type==circular && showProgress==true
    */
   @property({type: Boolean}) progressiveIndeterminate = false;
   /**
    * Shows the `label` below the circular button.
-   * @availableWhen type==Circular
+   * @availableWhen type==circular
    */
   @property({type: Boolean}) showLabel = false;
 
