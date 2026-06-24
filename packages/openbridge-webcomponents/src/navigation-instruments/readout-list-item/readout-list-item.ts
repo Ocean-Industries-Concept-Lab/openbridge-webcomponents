@@ -417,7 +417,8 @@ export class ObcReadoutListItem extends LitElement {
                 `}
           </div>
         </div>
-      `
+      `,
+      true
     );
   }
 
