@@ -299,3 +299,16 @@ export const LevelCritical: Story = {
   },
   render: (args) => renderComponent(args as ObcReadout),
 };
+
+export const LevelLowUnackedRectified: Story = {
+  args: {
+    value: 42,
+    label: 'RPM',
+    unit: 'rpm',
+    alert: {
+      status: 'level-low',
+      mode: 'unacked-rectified',
+    },
+  },
+  render: (args) => renderComponent(args as ObcReadout),
+};
