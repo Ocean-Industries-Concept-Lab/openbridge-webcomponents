@@ -112,6 +112,34 @@ def last_prop_commit(relpath):
     git_cache[relpath] = out
     return out
 
+prop_git_cache = {}
+def last_change_for_prop(relpath, prop):
+    """Newest commit that changed the `@property ... <prop>` declaration line
+    in relpath. Returns 'date|hash|subject' or ''."""
+    key = (relpath, prop)
+    if key in prop_git_cache:
+        return prop_git_cache[key]
+    # BRE matching the declaration line: `@property(...) [modifiers] <prop><sep>`
+    pattern = r'@property.*[^A-Za-z0-9_]' + re.escape(prop) + r'[^A-Za-z0-9_]'
+    try:
+        out = subprocess.check_output(
+            ["git", "-C", ROOT, "log", "-G", pattern, "-1",
+             "--format=%ad|%h|%s", "--date=short", "--", relpath],
+            stderr=subprocess.DEVNULL).decode().strip()
+    except subprocess.CalledProcessError:
+        out = ""
+    prop_git_cache[key] = out
+    return out
+
+def fmt_prop(prop, relpath, source=None):
+    c = last_change_for_prop(relpath, prop)
+    label = prop if source is None else f"{prop} <- {source}"
+    if not c:
+        return f"{label} [no history]"
+    date, h, _ = c.split("|", 2)
+    tail = "import" if h == ROOT_COMMIT else h
+    return f"{label} [{date} {tail}]"
+
 # ---- Build rows ----
 rows = []
 for tag, sinfo in sorted(stories.items()):
@@ -120,31 +148,46 @@ for tag, sinfo in sorted(stories.items()):
         rows.append({
             "tag": tag, "class": "(not found)", "file": "",
             "story_title": sinfo["title"], "story_file": sinfo["file"],
-            "superclass_chain": "", "own_props": "", "own_count": 0,
-            "inherited_props": "", "inherited_count": 0, "all_count": 0,
-            "last_prop_commit_date": "", "last_prop_commit": "",
-            "last_prop_commit_source": "", "prop_changed_since_import": "unknown",
+            "superclass_chain": "", "own_count": 0, "own_props": "",
+            "own_props_last_changed": "", "inherited_count": 0,
+            "inherited_props": "", "inherited_props_last_changed": "",
+            "all_count": 0, "newest_prop_change_date": "",
+            "newest_prop_change_commit": "",
+            "any_prop_changed_since_import": "unknown",
         })
         continue
     info = registry[cname]
     own = info["props"]
     chain = resolve_chain(cname)
-    inherited = []  # (prop, source class)
-    files_to_check = [info["file"]]
+
+    # own properties, each annotated with its last-change commit
+    own_hist = [fmt_prop(p, info["file"]) for p in own]
+
+    # inherited properties, annotated with source class + last-change commit
+    inh_hist, inh_plain = [], []
+    changes = []  # collect 'date|hash|subject' for every property
+    for p in own:
+        c = last_change_for_prop(info["file"], p)
+        if c:
+            changes.append(c)
     for anc in chain:
         ainfo = lookup(anc) or {}
+        afile = ainfo.get("file")
         for p in ainfo.get("props", []):
-            inherited.append(f"{p} <- {anc}")
-        if ainfo.get("file") and ainfo["file"] not in files_to_check:
-            files_to_check.append(ainfo["file"])
-    # last prop commit across own + ancestor files, pick newest
-    best = None
-    for fp in files_to_check:
-        c = last_prop_commit(fp)
-        if c:
-            date = c.split("|")[0]
-            if best is None or date > best[0]:
-                best = (date, c, fp)
+            inh_plain.append(f"{p} <- {anc}")
+            if afile:
+                inh_hist.append(fmt_prop(p, afile, source=anc))
+                c = last_change_for_prop(afile, p)
+                if c:
+                    changes.append(c)
+            else:
+                inh_hist.append(f"{p} <- {anc} [no file]")
+    newest = None  # (date, hash) of the most recently changed property
+    for c in changes:
+        d, h = c.split("|")[0], c.split("|")[1]
+        if newest is None or d > newest[0]:
+            newest = (d, h)
+
     rows.append({
         "tag": tag,
         "class": cname,
@@ -152,24 +195,26 @@ for tag, sinfo in sorted(stories.items()):
         "story_title": sinfo["title"],
         "story_file": sinfo["file"],
         "superclass_chain": " -> ".join(chain) if chain else "LitElement",
-        "own_props": ", ".join(own),
         "own_count": len(own),
-        "inherited_props": ", ".join(inherited),
-        "inherited_count": len(inherited),
-        "all_count": len(own) + len(inherited),
-        "last_prop_commit_date": best[0] if best else "",
-        "last_prop_commit": best[1].split("|",1)[1] if best else "",
-        "last_prop_commit_source": os.path.basename(best[2]) if best else "",
-        "prop_changed_since_import":
-            "no (unchanged since import)" if best and best[1].split("|")[1] == ROOT_COMMIT
-            else ("yes" if best else "unknown"),
+        "own_props": ", ".join(own),
+        "own_props_last_changed": "; ".join(own_hist),
+        "inherited_count": len(inh_plain),
+        "inherited_props": ", ".join(inh_plain),
+        "inherited_props_last_changed": "; ".join(inh_hist),
+        "all_count": len(own) + len(inh_plain),
+        "newest_prop_change_date": newest[0] if newest else "",
+        "newest_prop_change_commit": newest[1] if newest else "",
+        "any_prop_changed_since_import":
+            "no (unchanged since import)" if newest and newest[1] == ROOT_COMMIT
+            else ("yes" if newest else "unknown"),
     })
 
 # write CSV
 cols = ["tag","class","file","story_title","story_file","superclass_chain",
-        "own_count","own_props","inherited_count","inherited_props","all_count",
-        "last_prop_commit_date","last_prop_commit","last_prop_commit_source",
-        "prop_changed_since_import"]
+        "own_count","own_props","own_props_last_changed",
+        "inherited_count","inherited_props","inherited_props_last_changed",
+        "all_count","newest_prop_change_date","newest_prop_change_commit",
+        "any_prop_changed_since_import"]
 outcsv = os.path.join(ROOT, "docs", "component-stories-inventory.csv")
 os.makedirs(os.path.dirname(outcsv), exist_ok=True)
 with open(outcsv, "w", newline="") as f:
