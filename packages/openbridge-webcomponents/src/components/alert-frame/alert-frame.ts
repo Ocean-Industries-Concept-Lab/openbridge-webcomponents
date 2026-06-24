@@ -73,7 +73,6 @@ export interface AlertFrameConfig {
   textSize?: AlertFrameTextSize;
   showIcon?: boolean;
   showAlertCategoryIcon?: boolean;
-  fullWidth?: boolean;
 }
 
 /**
@@ -201,9 +200,7 @@ export class ObcAlertFrame extends LitElement {
 
   /**
    * When true, the frame stretches to fill the full width of its container
-   * instead of hugging its content. Useful when the wrapped element is itself a
-   * full-width block (e.g. a list row). Reflected to an attribute for CSS
-   * styling. Default: `false`.
+   * instead of hugging its content. Reflected to an attribute for CSS styling.
    */
   @property({type: Boolean, reflect: true}) fullWidth: boolean = false;
 
@@ -349,7 +346,8 @@ export class ObcAlertFrame extends LitElement {
 
 export function wrapWithAlertFrame(
   options: AlertFrameConfig | boolean | undefined,
-  content: HTMLTemplateResult
+  content: HTMLTemplateResult,
+  fullWidth: boolean = false
 ): HTMLTemplateResult {
   if (typeof options !== 'object' || options === null) {
     return content;
@@ -362,7 +360,7 @@ export function wrapWithAlertFrame(
     .showIcon=${options.showIcon ?? false}
     .showAlertCategoryIcon=${options.showAlertCategoryIcon ?? true}
     .wrapContent=${true}
-    .fullWidth=${options.fullWidth ?? false}
+    .fullWidth=${fullWidth}
     >${content}</obc-alert-frame
   >`;
 }

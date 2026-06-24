@@ -373,14 +373,8 @@ export class ObcReadoutListItem extends LitElement {
   }
 
   override render() {
-    // The readout list item is a full-width row, so the alert frame should
-    // stretch to fill the container instead of hugging its content.
-    const alert =
-      typeof this.alert === 'object' && this.alert !== null
-        ? {...this.alert, fullWidth: true}
-        : this.alert;
     return wrapWithAlertFrame(
-      alert,
+      this.alert,
       html`
         <div
           class=${classMap({
@@ -423,7 +417,8 @@ export class ObcReadoutListItem extends LitElement {
                 `}
           </div>
         </div>
-      `
+      `,
+      true
     );
   }
 
