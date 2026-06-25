@@ -92,8 +92,8 @@ export interface TabData {
  *
  * | Slot Name                | Renders When...                   | Purpose                                              |
  * |--------------------------|------------------------------------|------------------------------------------------------|
- * | `tab-<id>-icon`          | If `hasLeadingIcon` is true        | Leading icon for a specific tab (replaceable)        |
- * | `tab-<id>-badge-icon`    | If `showLeadingBadgeIcon` is true  | Badge icon for a specific tab (replaceable)          |
+ * | `tab-<id>-icon`              | If `hasLeadingIcon` is true                          | Leading icon for a specific tab (replaceable)        |
+ * | `tab-<id>-<iconSlotName>`    | For each badge that declares an `iconSlotName`       | Custom icon for a specific tab's badge (replaceable). The deprecated single-badge path uses `tab-<id>-badge-icon`. |
  *
  * ---
  *
@@ -112,7 +112,7 @@ export interface TabData {
  * - If using custom icons, provide them via the appropriate named slot for each tab.
  *
  * @slot tab-<id>-icon - Leading icon slot for each tab (shown when `hasLeadingIcon` is true for that tab)
- * @slot tab-<id>-badge-icon - Badge icon slot for each tab (shown when `showLeadingBadgeIcon` is true for that tab)
+ * @slot tab-<id>-<iconSlotName> - Custom badge icon slot for each tab, one per badge that declares an `iconSlotName`. The deprecated single-badge path uses `tab-<id>-badge-icon`.
  * @fires tab-selected {CustomEvent<{tab: TabData, id: string, index: number}>} Fired when a tab is selected.
  * @fires tab-closed {CustomEvent<{tab: TabData, id: string, index: number}>} Fired when a tab's close button is clicked.
  * @fires add-new-tab {CustomEvent<void>} Fired when the "add new tab" button is clicked.
@@ -221,7 +221,24 @@ export class ObcTabRow extends LitElement {
     const previousTabSelected = this.selectedTabId === this.tabs[index - 1]?.id;
     const isChecked = tab.id === this.selectedTabId;
     const showSubtitle = tab.showSubtitle ?? this.showSubtitle;
-    const hasBadgeIcon = tab.showLeadingBadgeIcon ?? false;
+    // Forward a light-DOM slot for every distinct `iconSlotName` declared by the
+    // tab's badges (new `badges` array), plus the deprecated single badge-icon
+    // slot. obc-tab-item renders `<slot name=${iconSlotName} slot="badge-icon">`
+    // inside each badge, so obc-tab-row must project matching content into that
+    // slot. Slots are namespaced by tab id to stay unique across the row.
+    const badgeIconSlots = [
+      ...new Set(
+        (tab.badges ?? [])
+          .map((badge) => badge.iconSlotName)
+          .filter((slotName): slotName is string => slotName !== undefined)
+      ),
+    ];
+    if (
+      (tab.showLeadingBadgeIcon ?? false) &&
+      !badgeIconSlots.includes('badge-icon')
+    ) {
+      badgeIconSlots.push('badge-icon');
+    }
     return html`
       <obc-tab-item
         .title=${tab.title}
@@ -253,13 +270,13 @@ export class ObcTabRow extends LitElement {
             `
           : ''}
         <span slot="title">${tab.title}</span>
-        ${hasBadgeIcon
-          ? html`
-              <slot name="tab-${tab.id}-badge-icon" slot="badge-icon">
-                <obi-placeholder></obi-placeholder>
-              </slot>
-            `
-          : ''}
+        ${badgeIconSlots.map(
+          (slotName) => html`
+            <slot name="tab-${tab.id}-${slotName}" slot=${slotName}>
+              <obi-placeholder></obi-placeholder>
+            </slot>
+          `
+        )}
       </obc-tab-item>
     `;
   }
