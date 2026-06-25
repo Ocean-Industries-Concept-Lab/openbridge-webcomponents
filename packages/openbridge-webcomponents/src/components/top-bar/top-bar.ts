@@ -436,7 +436,6 @@ export class ObcTopBar extends LitElement {
           </obc-icon-button>
         </div>`
       );
-      leftGroup.push(html`<div class="divider"></div>`);
       leftGroup.push(
         html`<obc-icon-button
           variant="flat"
