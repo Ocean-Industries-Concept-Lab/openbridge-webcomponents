@@ -220,6 +220,15 @@ export class Vessel extends LitElement {
 
     const dimTopY = vesselTypeData.sideTopY;
     const dimBottomY = vesselTypeData.sideBottomY;
+    //vessel height dim line side view
+    const vesselHeightDim = {
+      vesselHeight: this.vesselHeight,
+      ...this.buildVerticalDimensionLine(
+        18, // X position (left side)
+        dimTopY, // dynamic top from vessel type
+        dimBottomY // dynamic bottom from vessel type
+      ),
+    };
 
     //stern dimensions
     const sternLine = this.getSternLine();
@@ -350,7 +359,8 @@ export class Vessel extends LitElement {
         dim,
         textOffset,
         sideTopDownViewToggle: this.sideTopDownViewToggle,
-      }
+      },
+      vesselHeightDim
     );
 
     const TOP_DOWN_VIEW = getTopDownView(

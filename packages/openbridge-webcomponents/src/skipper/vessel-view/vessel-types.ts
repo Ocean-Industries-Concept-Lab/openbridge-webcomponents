@@ -6,6 +6,17 @@ type VesselTypeData = {
   topDown: TemplateResult;
   sideTopY: number;
   sideBottomY: number;
+
+  //   topLeftX: number;
+  //   topRightX: number;
+};
+
+type DimHeightVesselParams = {
+  vesselHeight: number;
+  textY: number;
+  arrowPath: string;
+  lineStart: number;
+  lineEnd: number;
 };
 
 type getSideViewParams = {
@@ -170,7 +181,6 @@ function sensorPositioning(
 ): TemplateResult {
   return svg`
         <text id="Sensor" transform="translate(${sensorPosParams.sensorX - 30} ${sensorPosParams.sensorY - 10})" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" font-weight="bold" letter-spacing="0em"><tspan>Sensor</tspan></text>
-        
         ${
           sensorPosParams.sensorToCCRP !== 0
             ? svg`
@@ -213,11 +223,32 @@ function dimLengthLineSideView(totalLength: number): TemplateResult {
                 </g>`;
 }
 
-function dimHeightVesselSide(totalHeight: number): TemplateResult {
+function dimHeightVesselSide(params: DimHeightVesselParams): TemplateResult {
   return svg`<g id="height">
-                    <text id="37" transform="translate(0 180.5)" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="0" y="12.656">${totalHeight}</tspan></text>
-                    <path id="line_5" d="M18 260L20.8868 255H15.1132L18 260ZM18 117L15.1132 122H20.8868L18 117ZM18 255.5H18.5L18.5 121.5H18H17.5L17.5 255.5H18Z" fill="${Colors.instrumentRegularSecondaryDif}" fill-opacity="0.97"/>
-                </g>`;
+                <text
+                  x="0"
+                  y="${params.textY}"
+                  fill="${Colors.elementActiveColor}"
+                  font-family="Noto Sans"
+                  font-size="12"
+                >
+                  ${params.vesselHeight}
+                </text>
+
+                <path
+                  d="${params.arrowPath}"
+                  fill="${Colors.instrumentRegularSecondaryDif}"
+                />
+
+                <line
+                  x1="18"
+                  y1="${params.lineStart}"
+                  x2="18"
+                  y2="${params.lineEnd}"
+                  stroke="${Colors.instrumentRegularSecondaryDif}"
+                />
+             </g>
+`;
 }
 
 function dimSternToCCRPSide(sideViewParams: getSideViewParams): TemplateResult {
@@ -288,7 +319,8 @@ function getSensorCone(sideViewParams: getSideViewParams): TemplateResult {
 export function getSideView(
   vesselType: string,
   sideViewParams: getSideViewParams,
-  sensorPos: sensorPositionParams
+  sensorPos: sensorPositionParams,
+  dimHeightVesselParams: DimHeightVesselParams
 ): TemplateResult {
   const VESSEL_TYPE = getVesselType(vesselType);
   return svg` <svg xmlns="http://www.w3.org/2000/svg" width="480" height="480" viewBox="0 0 480 480" fill="none">
@@ -324,7 +356,7 @@ export function getSideView(
     </g>
     </g>
     </g>
-    ${dimHeightVesselSide(sideViewParams.vesselHeight)}
+    ${dimHeightVesselSide(dimHeightVesselParams)}
     ${sensorPositioning(sensorPos)}
     ${
       sideViewParams.toggleSLAndDLSensor
@@ -630,12 +662,14 @@ export function getVesselIcon(
   starboardToCCRPParams: dimStarboardToCCRPParams,
   horizontalCCRPParams: horizontalCCRPParams,
   verticalCCRPParams: verticalCCRPParams,
-  sensorPosTopDownParams: sensorPosTopDownParams
+  sensorPosTopDownParams: sensorPosTopDownParams,
+  dimHeightVesselParams: DimHeightVesselParams
 ) {
   const SIDE_VIEW = getSideView(
     vesselType,
     sideViewParams,
-    sensorPositionParams
+    sensorPositionParams,
+    dimHeightVesselParams
   );
   const TOP_DOWN_VIEW = getTopDownView(
     vesselType,
@@ -728,6 +762,9 @@ function getVesselCarFerry(): {
   return {CAR_FERRY_SIDE_VIEW, CAR_FERRY_TOP_DOWN_VIEW};
 }
 /*
-    <!-- left line -->
+    <g id="height">
+                    <text id="37" transform="translate(0 180.5)" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="0" y="12.656">${params.totalHeight}</tspan></text>
+                    <path id="line_5" d="M18 260L20.8868 255H15.1132L18 260ZM18 117L15.1132 122H20.8868L18 117ZM18 255.5H18.5L18.5 121.5H18H17.5L17.5 255.5H18Z" fill="${Colors.instrumentRegularSecondaryDif}" fill-opacity="0.97"/>
+                </g>`
       
 */
