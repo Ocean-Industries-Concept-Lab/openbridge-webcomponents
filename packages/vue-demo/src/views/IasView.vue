@@ -29,8 +29,10 @@
       :trend="tank1Trend"
       :show-trend-symbol="true"
       :type="TankType.atmospheric"
+      :positioning="TankPositioning.point"
       style="top: 72px; left: calc(24px * 6)"
-    ></ObcAutomationTank>
+    >
+    </ObcAutomationTank>
 
     <!-- From pump to three-way valve -->
     <ObcHorizontalLine
@@ -140,8 +142,10 @@
       :type="TankType.pressurized"
       :chart-mode="TankChartMode.graphAndBar"
       :chart-data="tank2History"
+      :positioning="TankPositioning.point"
       style="top: calc(24px * 21.5); left: calc(24px * 19)"
-    ></ObcAutomationTank>
+    >
+    </ObcAutomationTank>
     <ObcAutomationTank
       tag="#003"
       :value="tank3"
@@ -152,6 +156,7 @@
       :type="TankType.generic"
       :chart-mode="TankChartMode.graph"
       :chart-data="tank3History"
+      :positioning="TankPositioning.point"
       style="top: calc(24px * 21.5); left: calc(24px * 31)"
     ></ObcAutomationTank>
   </div>
@@ -161,6 +166,7 @@
 import ObcAutomationTank from '@oicl/openbridge-webcomponents-vue/automation/automation-tank/ObcAutomationTank.vue'
 import {
   TankChartMode,
+  TankPositioning,
   TankTrend,
   TankType
 } from '@oicl/openbridge-webcomponents/dist/automation/automation-tank/automation-tank'
