@@ -3,8 +3,8 @@ import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 
 import {vesselStyles} from './vessel-styles.js';
-// import {Colors} from '../interfaces.js';
-import {getVesselIcon} from './vessel-types.js';
+import {getSideView} from './vessel-types.js';
+import {getTopDownView} from './vessel-types.js';
 
 @customElement('ob-vessel')
 export class Vessel extends LitElement {
@@ -16,9 +16,7 @@ export class Vessel extends LitElement {
   @property({type: Number}) portToCCRP: number = 15;
   @property({type: Number}) sensorHeightOverKeel: number = 50;
   @property({type: Number}) sensorToCCRP: number = 0;
-  @property({type: Boolean}) displaySideView: boolean = false;
-  @property({type: Boolean}) displayTopDownView: boolean = false;
-  @property({type: Boolean}) displayAllView: boolean = false;
+  // @property({type: Boolean}) displayAllView: boolean = false;
   @property({type: Boolean}) sideTopDownViewToggle: boolean = false;
   @property({type: Number}) sensorPortStarboardOffset: number = 0;
   @property({type: Boolean}) toggleSLAndDLSensor: boolean = false;
@@ -267,6 +265,7 @@ export class Vessel extends LitElement {
     //positioning vertical arch dimensions for dynamic usage
     const ARCH_X = this.MAX_X; // tweak spacing
     const ARCH_Y = sensorY - this.ARCH_HEIGHT; // keep same vertical alignment
+
     //positioning static keel arch dimension
     const keelY = this.VESSEL_BOTTOM_Y;
     const ARCH_BOTTOM_Y = keelY - 40;
@@ -288,7 +287,7 @@ export class Vessel extends LitElement {
 
     const sensorYRaw = this.yAxisCCRPPos + sensorYOffset;
 
-    const sensorYTop = Math.max(
+    const sensorYTopView = Math.max(
       this.TOP_Y,
       Math.min(this.BOTTOM_Y, sensorYRaw)
     );
@@ -297,8 +296,8 @@ export class Vessel extends LitElement {
     const showSensorDim = this.sensorPortStarboardOffset !== 0;
     const DIM_X = sensorX + 15;
 
-    const dimStartY = Math.min(sensorYTop, this.yAxisCCRPPos);
-    const dimEndY = Math.max(sensorYTop, this.yAxisCCRPPos);
+    const dimStartY = Math.min(sensorYTopView, this.yAxisCCRPPos);
+    const dimEndY = Math.max(sensorYTopView, this.yAxisCCRPPos);
 
     const sensorDim = this.buildVerticalDimensionLine(
       DIM_X,
@@ -306,53 +305,100 @@ export class Vessel extends LitElement {
       dimEndY
     );
 
-    const {SIDE_VIEW, TOP_DOWN_VIEW} = getVesselIcon('ssdd', {
-      sensorX,
-      sensorY,
-      mastEndY,
-      verticalGuideStartY,
-      verticalGuideEndY,
-      ARCH_X,
-      ARCH_Y,
-      sensorHeightOverKeel: this.sensorHeightOverKeel,
-      sternTextX,
-      sternLine,
-      ARCH_BOTTOM_Y,
-      bowTextX,
-      bowLine,
-      sensorToCCRP: this.sensorToCCRP,
-      dim,
-      coneLeftX,
-      coneRightX,
-      coneBottomY,
-      toggleSLAndDLSensor: this.toggleSLAndDLSensor,
-      textOffset,
-      ccrpX,
-      vesselLengthComputed: this.vesselLengthComputed,
-      sternToCCRP: this.sternToCCRP,
-      bowToCCRP: this.bowToCCRP,
-      vesselHeight: this.vesselHeight,
-      //Top down view params
-      sensorYTop,
-      sensorPortStarboardOffset: this.sensorPortStarboardOffset,
-      sensorDim,
-      DIM_X,
-      showSensorDim,
-      yAxisCCRPPos: this.yAxisCCRPPos,
-      starboardDimensionLine: this.starboardDimensionLine,
-      getArrowHalfHeight: this.getArrowHalfHeight.bind(this),
-      ARROW_SIZE: this.ARROW_SIZE,
-      getMidY: this.getMidY,
-      starboardToCCRP: this.starboardToCCRP,
-      portDimensionLine: this.portDimensionLine,
-      portToCCRP: this.portToCCRP,
-      vesselWidthComputed: this.vesselWidthComputed,
-    });
+    const SIDE_VIEW = getSideView(
+      'TANKER',
+      {
+        sensorX,
+        sensorY,
+        mastEndY,
+        verticalGuideStartY,
+        verticalGuideEndY,
+        ARCH_X,
+        ARCH_Y,
+        sensorHeightOverKeel: this.sensorHeightOverKeel,
+        sternTextX,
+        sternLine,
+        ARCH_BOTTOM_Y,
+        bowTextX,
+        bowLine,
+        sensorToCCRP: this.sensorToCCRP,
+        dim,
+        coneLeftX,
+        coneRightX,
+        coneBottomY,
+        toggleSLAndDLSensor: this.toggleSLAndDLSensor,
+        textOffset,
+        ccrpX,
+        vesselLengthComputed: this.vesselLengthComputed,
+        sternToCCRP: this.sternToCCRP,
+        bowToCCRP: this.bowToCCRP,
+        vesselHeight: this.vesselHeight,
+      },
+      {
+        sensorX,
+        sensorY,
+        sensorHeightOverKeel: this.sensorHeightOverKeel,
+        toggleSLAndDLSensor: this.toggleSLAndDLSensor,
+        sensorToCCRP: this.sensorToCCRP,
+        dim,
+        textOffset,
+        sideTopDownViewToggle: this.sideTopDownViewToggle,
+      }
+    );
+
+    const TOP_DOWN_VIEW = getTopDownView(
+      'TANKER',
+      {
+        sensorX,
+        ccrpX,
+        sensorHeightOverKeel: this.sensorHeightOverKeel,
+        toggleSLAndDLSensor: this.toggleSLAndDLSensor,
+        vesselLengthComputed: this.vesselLengthComputed,
+        sensorYTopView,
+        sensorPortStarboardOffset: this.sensorPortStarboardOffset,
+        sensorDim,
+        DIM_X,
+        showSensorDim,
+        yAxisCCRPPos: this.yAxisCCRPPos,
+        starboardDimensionLine: this.starboardDimensionLine,
+        getArrowHalfHeight: this.getArrowHalfHeight.bind(this),
+        ARROW_SIZE: this.ARROW_SIZE,
+        getMidY: this.getMidY,
+        starboardToCCRP: this.starboardToCCRP,
+        portDimensionLine: this.portDimensionLine,
+        portToCCRP: this.portToCCRP,
+        vesselWidthComputed: this.vesselWidthComputed,
+      },
+      {
+        portDimensionLine: this.portDimensionLine,
+        getMidY: this.getMidY,
+        portToCCRP: this.portToCCRP,
+        ARROW_SIZE: this.ARROW_SIZE,
+        getArrowHalfHeight: this.getArrowHalfHeight,
+      },
+      {
+        starboardDimensionLine: this.starboardDimensionLine,
+        getMidY: this.getMidY,
+        starboardToCCRP: this.starboardToCCRP,
+        ARROW_SIZE: this.ARROW_SIZE,
+        getArrowHalfHeight: this.getArrowHalfHeight,
+      },
+      {
+        yAxisCCRPPos: this.yAxisCCRPPos,
+      },
+      {
+        xAxisCCRPPos: ccrpX,
+      },
+      {
+        sensorX,
+        sensorYTopView,
+      }
+    );
 
     if (this.sideTopDownViewToggle) {
-      return TOP_DOWN_VIEW;
-    } else {
       return SIDE_VIEW;
+    } else {
+      return TOP_DOWN_VIEW;
     }
   }
 }
