@@ -5,6 +5,7 @@ import {customElement} from '../../decorator.js';
 import {vesselStyles} from './vessel-styles.js';
 import {getSideView} from './vessel-types.js';
 import {getTopDownView} from './vessel-types.js';
+import {getVesselType} from './vessel-types.js';
 
 @customElement('ob-vessel')
 export class Vessel extends LitElement {
@@ -16,6 +17,7 @@ export class Vessel extends LitElement {
   @property({type: Number}) portToCCRP: number = 15;
   @property({type: Number}) sensorHeightOverKeel: number = 50;
   @property({type: Number}) sensorToCCRP: number = 0;
+  @property({type: String}) vesselType: string = 'CAR_FERRY';
   // @property({type: Boolean}) displayAllView: boolean = false;
   @property({type: Boolean}) sideTopDownViewToggle: boolean = false;
   @property({type: Number}) sensorPortStarboardOffset: number = 0;
@@ -214,6 +216,11 @@ export class Vessel extends LitElement {
   }
 
   getVessel() {
+    const vesselTypeData = getVesselType(this.vesselType);
+
+    const dimTopY = vesselTypeData.sideTopY;
+    const dimBottomY = vesselTypeData.sideBottomY;
+
     //stern dimensions
     const sternLine = this.getSternLine();
     const sternTextX = (sternLine.startX + sternLine.endX) / 2;
@@ -229,8 +236,8 @@ export class Vessel extends LitElement {
     );
     const mastEndY = this.getVesselTopY(sensorX);
     //Sensor Y position
-    const dimTopY = this.DIM_TOP_Y;
-    const dimBottomY = this.VESSEL_BOTTOM_Y;
+    // const dimTopY = this.DIM_TOP_Y;
+    // const dimBottomY = this.VESSEL_BOTTOM_Y;
 
     const dimHeightPx = dimBottomY - dimTopY;
 
@@ -306,7 +313,7 @@ export class Vessel extends LitElement {
     );
 
     const SIDE_VIEW = getSideView(
-      'TANKER',
+      this.vesselType,
       {
         sensorX,
         sensorY,
@@ -347,7 +354,7 @@ export class Vessel extends LitElement {
     );
 
     const TOP_DOWN_VIEW = getTopDownView(
-      'TANKER',
+      this.vesselType,
       {
         sensorX,
         ccrpX,
