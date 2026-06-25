@@ -68,13 +68,13 @@ export enum TankOrientation {
 /**
  * Host positioning model.
  *
- * - `point` (default): the host has fixed default dimensions (per
+ * - `point`: the host has fixed default dimensions (per
  *   orientation and compact / static variant) and a P&ID anchor — the
  *   visual content is shifted with `translateX(-50%)` and (in non-compact)
  *   `top: -20px` so the tank's top-center aligns with the host's top-left
  *   placement coordinate. Use this when dropping the tank onto a P&ID
  *   canvas at a pipe-grid coordinate.
- * - `button`: the host fills its parent container (100% × 100%) with no
+ * - `button` (default): the host fills its parent container (100% × 100%) with no
  *   anchor offset. Use this when embedding the tank inside a sized layout
  *   slot — the parent controls the footprint and the tank renders
  *   responsively inside it, just like a regular button. Compact / static
