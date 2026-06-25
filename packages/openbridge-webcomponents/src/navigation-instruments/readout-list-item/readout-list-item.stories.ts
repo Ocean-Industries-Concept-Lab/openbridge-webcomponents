@@ -9,7 +9,7 @@ import {
   ReadoutListItemDataQuality,
   ReadoutListItemBorder,
   ReadoutListItemSetpointInteraction,
-  ReadoutValueWeight,
+  ObcTextboxFontWeight,
   type ReadoutListItemClickable,
   type ReadoutValueOptions,
   type ReadoutSetpointOptions,
@@ -54,7 +54,7 @@ type ReadoutListItemStoryArgs = {
   'options.fractionDigits': number;
   'options.maxDigits': number;
   'options.dataQuality': ReadoutListItemDataQuality | typeof NONE;
-  'options.value.weight': ReadoutValueWeight;
+  'options.value.weight': ObcTextboxFontWeight;
   'options.value.hasIcon': boolean;
   'options.value.hintedZeros': boolean;
   'options.setpoint.interaction': ReadoutListItemSetpointInteraction;
@@ -259,7 +259,7 @@ const defaultArgs: ReadoutListItemStoryArgs = {
   'options.fractionDigits': 0,
   'options.maxDigits': 0,
   'options.dataQuality': NONE,
-  'options.value.weight': ReadoutValueWeight.regular,
+  'options.value.weight': ObcTextboxFontWeight.regular,
   'options.value.hasIcon': false,
   'options.value.hintedZeros': false,
   'options.setpoint.interaction':
@@ -401,7 +401,7 @@ const meta = {
     'options.value.weight': {
       name: 'Value Weight',
       control: {type: 'select'},
-      options: Object.values(ReadoutValueWeight),
+      options: Object.values(ObcTextboxFontWeight),
       table: {category: 'Value'},
     },
     'options.value.hasIcon': {
@@ -1474,7 +1474,7 @@ export const MissingParts: Story = {
  * column: degree / no-degree, short and long units (`C`, `Pa`, `m/s`, `miles`),
  * large/small/negative numbers, fractional values, a `null` (dash) value,
  * hinted zeros, `low-integrity` and `invalid` data quality, an `enhanced`
- * priority and an `active` weight, and a "kitchen-sink" row (Depth) with a
+ * priority and a `bold` value weight, and a "kitchen-sink" row (Depth) with a
  * setpoint, advice and both leading + value icons.
  *
  * Each `obc-readout-list-item` is its own custom element, so cross-row column
@@ -1510,7 +1510,7 @@ type AlignmentRow = {
   hasDegree?: boolean;
   fractionDigits?: number;
   priority?: ReadoutListItemPriority;
-  weight?: ReadoutValueWeight;
+  weight?: ObcTextboxFontWeight;
   hintedZeros?: boolean;
   dataQuality?: ReadoutListItemDataQuality;
   hasSetpoint?: boolean;
@@ -1579,13 +1579,13 @@ const ALIGNMENT_ROWS: AlignmentRow[] = [
     hasLeadingIcon: true,
     hasValueIcon: true,
   },
-  // active value weight (accent without enhanced priority)
+  // bold value weight — heavier weight only, no colour change (stays neutral)
   {
     label: 'Speed',
     value: 18,
     unit: 'kn',
     fractionDigits: 1,
-    weight: ReadoutValueWeight.active,
+    weight: ObcTextboxFontWeight.bold,
   },
   // null (dash) + invalid data quality
   {

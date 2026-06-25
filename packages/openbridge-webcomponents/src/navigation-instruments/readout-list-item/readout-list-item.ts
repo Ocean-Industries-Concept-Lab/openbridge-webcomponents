@@ -20,6 +20,11 @@ import {
   wrapWithAlertFrame,
 } from '../../components/alert-frame/alert-frame.js';
 
+// The value weight maps straight to obc-textbox's font weights (regular /
+// semibold / bold). Re-exported so consumers can set `valueOptions.weight`
+// without a second import path.
+export {ObcTextboxFontWeight} from '../../components/textbox/textbox.js';
+
 /**
  * Density/size scale of the readout row.
  * - `small`: regular value typography (smallest, densest).
@@ -80,16 +85,6 @@ export interface ReadoutListItemClickable {
 }
 
 /**
- * Value weight emphasis.
- * - `regular`: normal weight.
- * - `active`: accented colour + heavier weight.
- */
-export enum ReadoutValueWeight {
-  regular = 'regular',
-  active = 'active',
-}
-
-/**
  * Per-block state shared by value / setpoint / advice / src. Each is independent
  * of (and nests inside) the row-level `dataQuality` / `alert` props. All
  * combinations are allowed.
@@ -104,8 +99,12 @@ export interface ReadoutBlockState {
 export interface ReadoutValueOptions extends ReadoutBlockState {
   /** Render the unfilled leading positions as muted zeroes (requires `maxDigits`). */
   hintedZeros?: boolean;
-  /** `active` bumps the value to accented colour + weight. */
-  weight?: ReadoutValueWeight;
+  /**
+   * Value font weight — `regular` (default), `semibold`, or `bold` (the
+   * obc-textbox weights). Affects weight only; it does NOT change the colour
+   * (colour is driven by `priority`).
+   */
+  weight?: ObcTextboxFontWeight;
   /** Show the `value-icon` slot before the value. */
   hasIcon?: boolean;
   /**
@@ -186,7 +185,8 @@ enum BlockRole {
  *   each cap-height-aligned and able to reserve a stable width.
  * - **Sizes:** `small`, `medium`, `large` density scales.
  * - **Stacking:** `trailing-unit`, `leading-unit`, `leading-src` placement.
- * - **Priority:** `regular`/`enhanced` colour emphasis; per-value `active` weight.
+ * - **Priority:** `regular`/`enhanced` colour emphasis; per-value `weight`
+ *   (`regular`/`semibold`/`bold`) is independent of colour.
  * - **Setpoint flip-flop:** swaps emphasis between value and setpoint as the
  *   value reaches the setpoint.
  * - **Data quality:** `low-integrity`/`invalid` styling, combinable with `alert`.
@@ -359,14 +359,11 @@ export class ObcReadoutListItem extends LitElement {
   /**
    * The row's enhanced (in-command) colour state, applied uniformly to BOTH the
    * value and the setpoint — they are always either both neutral or both enhanced
-   * (never a blue setpoint next to a grey value). Enhanced when the priority is
-   * enhanced or the value carries the `active` weight.
+   * (never a blue setpoint next to a grey value). Driven by `priority` only;
+   * `valueOptions.weight` changes weight, not colour.
    */
   private get rowEnhanced(): boolean {
-    return (
-      this.resolvedPriority === ReadoutListItemPriority.enhanced ||
-      this.valueOptions?.weight === ReadoutValueWeight.active
-    );
+    return this.resolvedPriority === ReadoutListItemPriority.enhanced;
   }
 
   /** Primary value-typography size for the current density tier. */
@@ -409,11 +406,9 @@ export class ObcReadoutListItem extends LitElement {
     return this.isSetpointEmphasized ? this.primarySize : this.secondarySize;
   }
 
-  /** Value weight follows the `active` option only; the enhanced colour is separate. */
+  /** Value font weight passes straight to obc-textbox; regular when unset. Colour is separate. */
   private get valueWeight(): ObcTextboxFontWeight {
-    return this.valueOptions?.weight === ReadoutValueWeight.active
-      ? ObcTextboxFontWeight.semibold
-      : ObcTextboxFontWeight.regular;
+    return this.valueOptions?.weight ?? ObcTextboxFontWeight.regular;
   }
 
   /** Setpoint is SemiBold only while emphasised, otherwise regular weight. */
