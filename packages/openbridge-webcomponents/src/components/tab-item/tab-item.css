@@ -61,11 +61,18 @@
     color: var(--on-flat-disabled-color);
   }
 
+  .badges {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    position: relative;
+  }
+
   .badge {
     position: relative;
   }
 
-  &:not(.hug) .badge {
+  &:not(.hug) .badges {
     right: 0;
   }
 
