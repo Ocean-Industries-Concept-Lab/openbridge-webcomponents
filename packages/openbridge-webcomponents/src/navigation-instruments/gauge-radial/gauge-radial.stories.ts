@@ -269,8 +269,6 @@ export const ShortWideContainer180: Story = {
   },
 };
 
-// Short, wide container leaves horizontal slack — `horizontalAlignment` places
-// the shrunk dial at the left / center / right of that slack.
 export const ShortWideAlignedLeft: Story = {
   args: {
     ...sectorStoryArgs,
@@ -291,8 +289,6 @@ export const ShortWideAlignedRight: Story = {
   },
 };
 
-// Tall, narrow container leaves vertical slack — `verticalAlignment` places the
-// shrunk dial at the top / center / bottom of that slack.
 export const TallNarrowAlignedTop: Story = {
   args: {
     ...sectorStoryArgs,
