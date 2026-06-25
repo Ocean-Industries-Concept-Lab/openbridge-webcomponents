@@ -9,6 +9,25 @@ import '../badge/badge.js';
 import {BadgeSize, BadgeType} from '../badge/badge.js';
 
 /**
+ * Configuration for a single badge rendered by `<obc-tab-item>` via the `badges` property.
+ */
+export interface TabItemBadge {
+  /** Visual style/type of the badge. See `BadgeType` for available options. */
+  type: BadgeType;
+  /** Size of the badge. See `BadgeSize` for available options. */
+  size: BadgeSize;
+  /** The numeric value to display in the badge. */
+  count?: number;
+  /** Whether to show an icon inside the badge. Default: false. */
+  showIcon?: boolean;
+  /**
+   * When set, a `<slot>` with this name is rendered inside the badge so a custom
+   * icon can be projected (used for badge types without a built-in icon).
+   */
+  iconSlotName?: string;
+}
+
+/**
  * `<obc-tab-item>` – A selectable tab component for navigation menus and tabbed interfaces.
  *
  * Represents a single tab within a tab bar or navigation group, supporting optional icons, subtitles, badges, close actions, and various layout modes. Designed for use in horizontal or vertical tab sets, allowing users to switch between different views or content panels.
@@ -150,6 +169,20 @@ export class ObcTabItem extends LitElement {
   @property({type: Boolean, attribute: 'has-divider'}) hasDivider = false;
 
   /**
+   * One or more badges (count/status) to display on the tab.
+   *
+   * When this array is non-empty it takes precedence over the deprecated
+   * single-badge props (`hasBadge`, `badgeType`, `badgeSize`, `badgeCount`,
+   * `badgeShowNumber`, `showLeadingBadgeIcon`). When empty, the deprecated
+   * props are used instead (gated by `hasBadge`).
+   *
+   * Default: []
+   */
+  @property({type: Array, attribute: false}) badges: TabItemBadge[] = [];
+
+  /**
+   * @deprecated Use the `badges` array instead.
+   *
    * Displays a badge (count/status) on the tab.
    * Configure badge appearance via `badgeCount`, `badgeType`, `badgeSize`, etc.
    *
@@ -195,6 +228,8 @@ export class ObcTabItem extends LitElement {
   @property({type: Boolean}) disabled = false;
 
   /**
+   * @deprecated Use the `badges` array instead.
+   *
    * Type of badge to display (e.g., 'regular', 'alarm', 'warning', etc.).
    * See `BadgeType` enum for available options.
    *
@@ -204,6 +239,8 @@ export class ObcTabItem extends LitElement {
   @property({type: String}) badgeType: string = BadgeType.regular;
 
   /**
+   * @deprecated Use the `badges` array instead.
+   *
    * Size of the badge ('regular' or 'large').
    * See `BadgeSize` enum for available options.
    *
@@ -213,6 +250,8 @@ export class ObcTabItem extends LitElement {
   @property({type: String}) badgeSize: string = BadgeSize.regular;
 
   /**
+   * @deprecated Use the `badges` array instead.
+   *
    * Shows the badge's numeric value. When false, only the badge background is rendered (for status-only badges).
    *
    * Default: true
@@ -221,6 +260,8 @@ export class ObcTabItem extends LitElement {
   @property({type: Boolean, attribute: false}) badgeShowNumber: boolean = true;
 
   /**
+   * @deprecated Use the `badges` array instead.
+   *
    * The numeric value to display in the badge (e.g., count of notifications).
    *
    * Default: 0
@@ -229,6 +270,8 @@ export class ObcTabItem extends LitElement {
   @property({type: Number}) badgeCount = 0;
 
   /**
+   * @deprecated Use the `badges` array instead.
+   *
    * Shows an icon inside the badge.
    * Supply icon content via the `badge-icon` slot.
    *
@@ -267,7 +310,44 @@ export class ObcTabItem extends LitElement {
     }
   }
 
+  private get effectiveBadges(): TabItemBadge[] {
+    if (this.badges.length > 0) {
+      return this.badges;
+    }
+    if (!this.hasBadge) {
+      return [];
+    }
+    return [
+      {
+        type: (this.badgeType as BadgeType) || BadgeType.regular,
+        size: (this.badgeSize as BadgeSize) || BadgeSize.regular,
+        count: this.badgeShowNumber ? this.badgeCount : undefined,
+        showIcon: this.showLeadingBadgeIcon,
+        iconSlotName: this.showLeadingBadgeIcon ? 'badge-icon' : undefined,
+      },
+    ];
+  }
+
+  private renderBadge(badge: TabItemBadge) {
+    return html`
+      <obc-badge
+        class="badge"
+        .number=${badge.count ?? 0}
+        .type=${badge.type || BadgeType.regular}
+        .size=${badge.size || BadgeSize.regular}
+        .showNumber=${badge.count !== undefined}
+        .showIcon=${badge.showIcon ?? false}
+      >
+        ${badge.iconSlotName
+          ? html`<slot name=${badge.iconSlotName} slot="badge-icon"></slot>`
+          : nothing}
+      </obc-badge>
+    `;
+  }
+
   override render() {
+    const badges = this.effectiveBadges;
+    const hasBadge = badges.length > 0;
     const wrapperClasses = {
       wrapper: true,
       hug: this.hug,
@@ -275,7 +355,7 @@ export class ObcTabItem extends LitElement {
       'has-leading-icon': this.hasLeadingIcon,
       'has-title': this.hasTitle,
       'has-divider': this.hasDivider && !this.checked,
-      'has-badge': this.hasBadge,
+      'has-badge': hasBadge,
       'has-subtitle': this.showSubtitle,
       disabled: this.disabled,
       'center-content': this.centerContent,
@@ -309,38 +389,16 @@ export class ObcTabItem extends LitElement {
                 </div>
               `
             : nothing}
-          ${this.centerContent && this.hasBadge
-            ? html`
-                <obc-badge
-                  class="badge"
-                  .number=${this.badgeCount}
-                  .type=${this.badgeType || BadgeType.regular}
-                  .size=${this.badgeSize || BadgeSize.regular}
-                  .showNumber=${this.badgeShowNumber}
-                  .showIcon=${this.showLeadingBadgeIcon}
-                >
-                  ${this.showLeadingBadgeIcon
-                    ? html`<slot name="badge-icon" slot="badge-icon"></slot>`
-                    : nothing}
-                </obc-badge>
-              `
+          ${this.centerContent && hasBadge
+            ? html`<div class="badges">
+                ${badges.map((badge) => this.renderBadge(badge))}
+              </div>`
             : nothing}
         </div>
-        ${!this.centerContent && this.hasBadge
-          ? html`
-              <obc-badge
-                class="badge"
-                .number=${this.badgeCount}
-                .type=${this.badgeType || BadgeType.regular}
-                .size=${this.badgeSize || BadgeSize.regular}
-                .showNumber=${this.badgeShowNumber}
-                .showIcon=${this.showLeadingBadgeIcon}
-              >
-                ${this.showLeadingBadgeIcon
-                  ? html`<slot name="badge-icon" slot="badge-icon"></slot>`
-                  : nothing}
-              </obc-badge>
-            `
+        ${!this.centerContent && hasBadge
+          ? html`<div class="badges">
+              ${badges.map((badge) => this.renderBadge(badge))}
+            </div>`
           : nothing}
         ${this.hasClose
           ? html`

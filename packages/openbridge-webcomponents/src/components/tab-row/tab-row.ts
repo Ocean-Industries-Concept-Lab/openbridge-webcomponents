@@ -3,6 +3,7 @@ import {property} from 'lit/decorators.js';
 import {repeat} from 'lit/directives/repeat.js';
 import compentStyle from './tab-row.css?inline';
 import '../tab-item/tab-item.js';
+import type {TabItemBadge} from '../tab-item/tab-item.js';
 import '../icon-button/icon-button.js';
 import '../../icons/icon-placeholder.js';
 import {customElement} from '../../decorator.js';
@@ -15,11 +16,22 @@ export interface TabData {
   subtitle?: string;
   showSubtitle?: boolean;
   hasLeadingIcon?: boolean;
+  /**
+   * One or more badges to display on the tab. When non-empty this takes
+   * precedence over the deprecated single-badge fields below.
+   */
+  badges?: TabItemBadge[];
+  /** @deprecated Use `badges` instead. */
   hasBadge?: boolean;
+  /** @deprecated Use `badges` instead. */
   badgeCount?: number;
+  /** @deprecated Use `badges` instead. */
   badgeType?: BadgeType;
+  /** @deprecated Use `badges` instead. */
   badgeSize?: BadgeSize;
+  /** @deprecated Use `badges` instead. */
   badgeShowNumber?: boolean;
+  /** @deprecated Use `badges` instead. */
   showLeadingBadgeIcon?: boolean;
   disabled?: boolean;
 }
@@ -115,12 +127,13 @@ export class ObcTabRow extends LitElement {
    * - `subtitle` (string): Contextual text shown below the title when subtitle display is enabled.
    * - `showSubtitle` (boolean): Optional per-tab override for displaying the subtitle.
    * - `hasLeadingIcon` (boolean): Whether to show a leading icon (default: true).
-   * - `hasBadge` (boolean): Whether to show a badge on the tab.
-   * - `badgeCount` (number): Number to display in the badge.
-   * - `badgeType` (BadgeType): Visual style of the badge (e.g., notification, alarm, enhance).
-   * - `badgeSize` (BadgeSize): Size of the badge (e.g., regular, large).
-   * - `badgeShowNumber` (boolean): If true, shows the badge number.
-   * - `showLeadingBadgeIcon` (boolean): If true, shows a badge icon.
+   * - `badges` (TabItemBadge[]): One or more badges to display on the tab. Takes precedence over the deprecated single-badge fields below.
+   * - `hasBadge` (boolean, deprecated): Whether to show a badge on the tab.
+   * - `badgeCount` (number, deprecated): Number to display in the badge.
+   * - `badgeType` (BadgeType, deprecated): Visual style of the badge (e.g., notification, alarm, enhance).
+   * - `badgeSize` (BadgeSize, deprecated): Size of the badge (e.g., regular, large).
+   * - `badgeShowNumber` (boolean, deprecated): If true, shows the badge number.
+   * - `showLeadingBadgeIcon` (boolean, deprecated): If true, shows a badge icon.
    * - `disabled` (boolean): If true, disables the tab.
    */
   @property({type: Array}) tabs: TabData[] = [];
@@ -138,6 +151,8 @@ export class ObcTabRow extends LitElement {
    * Default: `false`.
    */
   @property({type: Boolean, attribute: 'has-close'}) hasClose = false;
+
+  @property({type: Boolean}) centerContent = false;
 
   /**
    * Enables "hug" mode for a more compact tab layout with reduced padding.
@@ -203,8 +218,10 @@ export class ObcTabRow extends LitElement {
 
   private renderTab(tab: TabData, index: number) {
     const isFirst = index === 0;
+    const previousTabSelected = this.selectedTabId === this.tabs[index - 1]?.id;
     const isChecked = tab.id === this.selectedTabId;
     const showSubtitle = tab.showSubtitle ?? this.showSubtitle;
+    const hasBadgeIcon = tab.showLeadingBadgeIcon ?? false;
     return html`
       <obc-tab-item
         .title=${tab.title}
@@ -214,11 +231,12 @@ export class ObcTabRow extends LitElement {
         .hasClose=${this.hasClose}
         .hasLeadingIcon=${tab.hasLeadingIcon ?? true}
         .hasTitle=${true}
-        .hasDivider=${!isFirst}
+        .hasDivider=${!isFirst && !previousTabSelected}
         .hug=${this.hug}
+        .centerContent=${this.centerContent}
         .disabled=${tab.disabled || false}
-        .hasBadge=${tab.hasBadge ||
-        (tab.badgeCount !== undefined && tab.badgeCount > 0)}
+        .badges=${tab.badges ?? []}
+        .hasBadge=${tab.hasBadge || false}
         .badgeCount=${tab.badgeCount || 0}
         .badgeType=${tab.badgeType ?? BadgeType.regular}
         .badgeSize=${tab.badgeSize ?? BadgeSize.regular}
@@ -235,7 +253,7 @@ export class ObcTabRow extends LitElement {
             `
           : ''}
         <span slot="title">${tab.title}</span>
-        ${tab.showLeadingBadgeIcon
+        ${hasBadgeIcon
           ? html`
               <slot name="tab-${tab.id}-badge-icon" slot="badge-icon">
                 <obi-placeholder></obi-placeholder>
