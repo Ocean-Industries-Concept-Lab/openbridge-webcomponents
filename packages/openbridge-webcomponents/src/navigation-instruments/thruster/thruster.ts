@@ -756,12 +756,23 @@ export function thruster(
     let viewBox = '-80 -160 160 320';
     let y = -160;
     if (options.singleDirection) {
-      viewBox = '-80 -300 160 320';
-      y = -320;
+      if (options.bottomPropeller !== PropellerType.none) {
+        // Make room below the zero line for the bottom propeller while keeping
+        // the doubled-height bar and the top propeller in view.
+        viewBox = '-80 -268 160 320';
+        y = -288;
+      } else {
+        viewBox = '-80 -300 160 320';
+        y = -320;
+      }
     }
     const top = topPropeller(height, tc.arrowColor, options.topPropeller);
+    // For single direction thrusters the bar only extends upwards and its base
+    // sits on the zero line, so the bottom propeller must be attached there
+    // (like the half size variant) instead of at the bottom of a (missing)
+    // downward bar.
     const bottom = bottomPropeller(
-      options.singleDirectionHalfSize ? 0.5 : height,
+      options.singleDirectionHalfSize || options.singleDirection ? 0.5 : height,
       options.bottomPropeller
     );
     return svg`
