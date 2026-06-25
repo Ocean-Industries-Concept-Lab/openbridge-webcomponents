@@ -757,8 +757,8 @@ export function thruster(
     let y = -160;
     if (options.singleDirection) {
       if (options.bottomPropeller !== PropellerType.none) {
-        viewBox = '-80 -268 160 320';
-        y = -288;
+        viewBox = '-80 -300 160 356';
+        y = -320;
       } else {
         viewBox = '-80 -300 160 320';
         y = -320;
