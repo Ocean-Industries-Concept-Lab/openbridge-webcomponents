@@ -7,6 +7,13 @@ import {getSideView} from './vessel-types.js';
 import {getTopDownView} from './vessel-types.js';
 import {getVesselType} from './vessel-types.js';
 
+export enum VesselTypes {
+  FISHING = 'FISHING',
+  TANKER = 'TANKER',
+  CARGO = 'CARGO',
+  CAR_FERRY = 'CAR_FERRY',
+}
+
 @customElement('ob-vessel')
 export class Vessel extends LitElement {
   @property({type: Number}) vesselWidth: number = 30;
@@ -17,7 +24,7 @@ export class Vessel extends LitElement {
   @property({type: Number}) portToCCRP: number = 15;
   @property({type: Number}) sensorHeightOverKeel: number = 50;
   @property({type: Number}) sensorToCCRP: number = 0;
-  @property({type: String}) vesselType: string = 'CAR_FERRY';
+  @property({type: String}) vesselType: VesselTypes = VesselTypes.CARGO;
   // @property({type: Boolean}) displayAllView: boolean = false;
   @property({type: Boolean}) sideTopDownViewToggle: boolean = false;
   @property({type: Number}) sensorPortStarboardOffset: number = 0;
