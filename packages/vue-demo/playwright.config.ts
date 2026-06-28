@@ -21,8 +21,17 @@ const config: PlaywrightTestConfig = {
      * Maximum time expect() should wait for the condition to be met.
      * For example in `await expect(locator).toHaveText();`
      */
-    timeout: 5000
+    timeout: 5000,
+    toHaveScreenshot: {
+      maxDiffPixels: 100,
+      animations: 'disabled'
+    }
   },
+  /**
+   * Visual baselines are split per platform (font/AA rendering differs by OS),
+   * mirroring the core package's __vis__/<platform> layout.
+   */
+  snapshotPathTemplate: 'e2e/visual/__screenshots__/{platform}/{arg}{ext}',
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
@@ -49,8 +58,22 @@ const config: PlaywrightTestConfig = {
   projects: [
     {
       name: 'chromium',
+      // Keep the functional e2e suite separate from the visual suite so it
+      // needs no committed baselines.
+      testIgnore: /visual\//,
       use: {
         ...devices['Desktop Chrome']
+      }
+    },
+    {
+      name: 'visual',
+      testMatch: /visual\/.*\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        // Screenshots require headless; the default headless flag is CI-only and
+        // a headed browser has no display in containers/CI runners.
+        headless: true,
+        viewport: { width: 1280, height: 800 }
       }
     },
     // {
