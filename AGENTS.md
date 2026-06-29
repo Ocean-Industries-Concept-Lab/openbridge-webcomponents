@@ -245,6 +245,36 @@ npm run download:icons
 
 Snapshot baselines: `__vis__/linux/__baselines__/` (CI) and `__vis__/darwin/__baselines__/` (macOS).
 
+### vue-demo visual smoke tests
+
+Run from `packages/vue-demo/`. A Playwright suite snapshots the demo screens to
+catch visual regressions in OpenBridge components during updates. It reuses the
+package's existing `@playwright/test` (no new dependency).
+
+```bash
+npm run test:visual          # compare screens against committed baselines
+npm run test:visual:update   # regenerate baselines after an intended change
+npm run test:visual          # ALWAYS re-run after updating to confirm stability
+```
+
+- Tests live in `e2e/visual/`; baselines are committed under
+  `e2e/visual/__screenshots__/<platform>/` (per-platform, like the core suite).
+- The suite is its own Playwright project (`--project=visual`); the functional
+  e2e suite (`npm run test:e2e`) ignores it and needs no baselines.
+- **Determinism** (see `e2e/visual/helpers.ts`): each test freezes `Date` via
+  `page.clock`, neutralizes repeating animation sources (`setInterval` and
+  `requestAnimationFrame`) so simulations render a fixed initial state, stubs
+  external data (weather, logos, QR) and blocks other external origins, waits
+  for network idle, and captures with `page.screenshot({ animations: 'disabled' })`
+  so CSS transitions inside web-component shadow DOM settle.
+- **Coverage:** 11 routes plus 3 interactive overlays (command menu, alert menu,
+  depth dialog) opened via Playwright locators.
+- **Skipped:** `/ecdis` (live WebGL map + AIS network stream) and `/ar` (CDN HLS
+  video) cannot be frozen into a deterministic frame.
+- Pixel baselines are environment-sensitive; regenerate them in the CI image
+  (the repo already uses Docker for the core package's snapshot tests) to keep
+  CI stable.
+
 ### Pre-commit Hooks
 
 Husky runs `lint-staged` on every commit:
