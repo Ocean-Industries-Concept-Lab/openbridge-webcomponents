@@ -5,7 +5,7 @@ import { MeasurementPosition, SensorPosition, SpeedType } from '../interfaces.js
 
 const meta: Meta<typeof LongLatEnvironmental> = {
   title: 'INSTRUMENT/LongLatEnvironmental',
-  tags: ['autodocs', '6.0'],
+  tags: ['alpha'],
   component: 'ob-long-lat-environmental',
   parameters: {
     actions: {

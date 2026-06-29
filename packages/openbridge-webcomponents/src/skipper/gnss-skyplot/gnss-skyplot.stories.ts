@@ -5,7 +5,7 @@ import './gnss-skyplot.js';
 
 const meta: Meta<typeof GnssSkyplot> = {
   title: 'INSTRUMENT/Gnss-Skyplot',
-  tags: ['autodocs', '6.0'],
+  tags: ['alpha'],
   component: 'ob-gnss-skyplot',
   parameters: {
     actions: {

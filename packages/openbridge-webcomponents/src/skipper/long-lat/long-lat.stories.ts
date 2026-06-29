@@ -5,7 +5,7 @@ import { MeasurementPosition, SpeedType } from '../interfaces.js';
 
 const meta: Meta<typeof LongLat> = {
   title: 'INSTRUMENT/LongLat',
-  tags: ['autodocs', '6.0'],
+  tags: ['alpha'],
   component: 'ob-long-lat',
   parameters: {
     actions: {

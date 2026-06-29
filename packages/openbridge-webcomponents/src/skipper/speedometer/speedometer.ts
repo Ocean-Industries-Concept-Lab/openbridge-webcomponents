@@ -425,7 +425,7 @@ export class Speedometer extends LitElement {
         if (this.mainSpeedType == SpeedType.SOG) {
           return svg`
             <foreignObject x="300" y="550" width="350" height="200">
-              <div class="ob-main-value" xmlns="http://www.w3.org/1999/xhtml" style="transform: scale(2.25); transform-origin: top;">
+              <div class="ob-main-value" xmlns="http://www.w3.org/1999/xhtml">
                 ${this.getSpeedField({size: InstrumentFieldSize.enhanced, neutralColor: false, horizontal: true, value: this.sogSpeed, fractionDigits: this.fractionDigits, unit: 'kn', tag: 'SOG-R'})}
               </div>
             </foreignObject>
@@ -433,7 +433,7 @@ export class Speedometer extends LitElement {
             <path d="M382.094 653.393H587.189" stroke="${Colors.colorBorderDivider}" stroke-width="2.08333"/>
 
             <foreignObject x="380" y="660" width="200" height="100">
-              <div class="ob-secondary-value" xmlns="http://www.w3.org/1999/xhtml" style="transform: scale(1.5); transform-origin: top;">
+              <div class="ob-secondary-value" xmlns="http://www.w3.org/1999/xhtml">
                 ${this.getSpeedField({size: InstrumentFieldSize.enhanced, neutralColor: true, horizontal: true, value: this.stwSpeed, fractionDigits: this.fractionDigits, unit: 'kn', tag: 'STW-R'})}            
               </div>
             </foreignObject>
@@ -442,7 +442,7 @@ export class Speedometer extends LitElement {
         else {
           return svg`
             <foreignObject x="300" y="550" width="350" height="200">
-              <div class="ob-main-value" xmlns="http://www.w3.org/1999/xhtml" style="transform: scale(2.25); transform-origin: top;">
+              <div class="ob-main-value" xmlns="http://www.w3.org/1999/xhtml">
                 ${this.getSpeedField({size: InstrumentFieldSize.enhanced, neutralColor: false, horizontal: true, value: this.stwSpeed, fractionDigits: this.fractionDigits, unit: 'kn', tag: 'STW-R'})}
               </div>
             </foreignObject>
@@ -450,7 +450,7 @@ export class Speedometer extends LitElement {
             <path d="M382.094 653.393H587.189" stroke="${Colors.colorBorderDivider}" stroke-width="2.08333"/>
 
             <foreignObject x="380" y="660" width="200" height="100">
-              <div class="ob-secondary-value" xmlns="http://www.w3.org/1999/xhtml" style="transform: scale(1.5); transform-origin: top;">
+              <div class="ob-secondary-value" xmlns="http://www.w3.org/1999/xhtml">
                 ${this.getSpeedField({size: InstrumentFieldSize.enhanced, neutralColor: true, horizontal: true, value: this.sogSpeed, fractionDigits: this.fractionDigits, unit: 'kn', tag: 'SOG-R'})}            
               </div>
             </foreignObject>
@@ -460,8 +460,8 @@ export class Speedometer extends LitElement {
       else if (this.showSog && !this.showStw) {
         return svg`
           <foreignObject x="300" y="580" width="350" height="200">
-            <div class="ob-main-value" xmlns="http://www.w3.org/1999/xhtml" style="transform: scale(2.25); transform-origin: top;">
-              ${this.getSpeedField({size: InstrumentFieldSize.enhanced, neutralColor: false, horizontal: true, value: this.sogSpeed, fractionDigits: this.fractionDigits, unit: 'kn', tag: 'SOG-R'})}
+            <div class="ob-main-value" xmlns="http://www.w3.org/1999/xhtml">
+              ${this.getSpeedField({size: InstrumentFieldSize.enhanced, neutralColor: false, horizontal: false, value: this.sogSpeed, fractionDigits: this.fractionDigits, unit: 'kn', tag: 'SOG-R'})}
             </div>
           </foreignObject>
         `
@@ -469,8 +469,8 @@ export class Speedometer extends LitElement {
       else if (this.showStw && !this.showSog) {
         return svg`
           <foreignObject x="300" y="580" width="350" height="200">
-            <div class="ob-main-value" xmlns="http://www.w3.org/1999/xhtml" style="transform: scale(2.25); transform-origin: top;">
-              ${this.getSpeedField({size: InstrumentFieldSize.enhanced, neutralColor: false, horizontal: true, value: this.stwSpeed, fractionDigits: this.fractionDigits, unit: 'kn', tag: 'STW-R'})}            
+            <div class="ob-main-value" xmlns="http://www.w3.org/1999/xhtml">
+              ${this.getSpeedField({size: InstrumentFieldSize.enhanced, neutralColor: false, horizontal: false, value: this.stwSpeed, fractionDigits: this.fractionDigits, unit: 'kn', tag: 'STW-R'})}            
             </div>
           </foreignObject>
         `

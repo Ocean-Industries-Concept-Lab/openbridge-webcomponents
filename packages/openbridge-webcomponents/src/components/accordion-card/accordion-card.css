@@ -117,7 +117,7 @@
       flex: 1 0 0;
       align-self: stretch;
       height: 100%;
-      padding: 0 16px 16px 16px;
+      padding: 0 8px 8px 8px;
     }
 
     & .card-container {

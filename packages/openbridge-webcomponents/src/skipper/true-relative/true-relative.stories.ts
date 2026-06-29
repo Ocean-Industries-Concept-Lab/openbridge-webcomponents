@@ -6,7 +6,7 @@ import { TrueRelativeDirection } from './true-relative.js';
 
 const meta: Meta<typeof TrueRelative> = {
   title: 'INSTRUMENT/TrueRelative',
-  tags: ['autodocs', '6.0'],
+  tags: ['alpha'],
   component: 'ob-true-relative',
   parameters: {
     actions: {
