@@ -168,7 +168,9 @@ export class ObcIndicatorGraph extends LitElement {
     const series = this.uplot.series[1];
     series.stroke = () => this._getStrokeColor();
     series.width = this._getStrokeWidth();
-    series.fill = this._effectiveFill ? () => this._getFillColor() : undefined;
+    if (this._effectiveFill) {
+      series.fill = () => this._getFillColor();
+    }
     this.uplot.redraw();
   }
 

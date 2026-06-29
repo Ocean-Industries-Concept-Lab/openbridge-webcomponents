@@ -6,6 +6,8 @@ import {TransmitterOrientation, TransmitterType} from './transmitter.js';
 import {TransmitterButtonSize} from '../transmitter-button/transmitter-button.js';
 import {crossDecorator} from '../../storybook-util.js';
 import '../../icons/icon-temperature-air.js';
+import '../horizontal-line/horizontal-line.js';
+import {LineMedium, LineType} from '../index.js';
 
 const sineData: [number[], number[]] = [
   Array.from({length: 30}, (_, i) => i),
@@ -21,6 +23,7 @@ const meta: Meta<typeof ObcTransmitter> = {
     orientation: TransmitterOrientation.bottom,
     type: TransmitterType.value,
     size: TransmitterButtonSize.regular,
+    lineType: LineType.fluid,
     value: 12.3,
     unit: '°C',
     fractionDigits: 1,
@@ -58,6 +61,15 @@ const meta: Meta<typeof ObcTransmitter> = {
       ],
       control: {type: 'radio'},
     },
+    lineType: {
+      options: [
+        LineType.air,
+        LineType.connector,
+        LineType.electric,
+        LineType.fluid,
+      ],
+      control: {type: 'radio'},
+    },
     value: {control: {type: 'range', min: -99, max: 999, step: 0.1}},
   },
 } satisfies Meta<ObcTransmitter>;
@@ -70,6 +82,7 @@ function renderComponent(args: ObcTransmitter) {
     <obc-transmitter
       .orientation=${args.orientation}
       .type=${args.type}
+      .lineType=${args.lineType}
       .size=${args.size}
       .value=${args.value}
       .unit=${args.unit}
@@ -104,4 +117,32 @@ export const HorizontalGraph: Story = {
 export const VerticalGraph: Story = {
   args: {type: TransmitterType.verticalGraph},
   render: (args) => renderComponent(args as ObcTransmitter),
+};
+
+export const UsageWithPipe: Story = {
+  args: {orientation: TransmitterOrientation.bottom},
+  render: (args) => html`
+    <style>
+      .canvas {
+        position: relative;
+        width: 400px;
+        height: 400px;
+      }
+
+      #line-bottom {
+        position: absolute;
+        top: 0;
+        left: calc(-2.5 * 24px);
+      }
+    </style>
+    <div class="canvas">
+      ${renderComponent(args as ObcTransmitter)}
+      <obc-horizontal-line
+        .medium=${LineMedium.water}
+        .lineType=${args.lineType || LineType.fluid}
+        length="5"
+        id="line-bottom"
+      ></obc-horizontal-line>
+    </div>
+  `,
 };

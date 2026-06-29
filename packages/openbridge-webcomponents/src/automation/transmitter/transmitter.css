@@ -14,21 +14,25 @@
   width: fit-content;
 
   &.orientation-bottom {
-    top: calc(1px + var(--offset));
+    top: var(--offset);
+    padding-top: 8px;
     transform: translateX(-50%);
   }
 
   &.orientation-top {
-    transform: translate(-50%, calc(-100% - 1px - var(--offset)));
+    padding-bottom: 8px;
+    transform: translate(-50%, calc(-100% - var(--offset)));
   }
 
   &.orientation-left {
-    transform: translate(calc(-100% - 4px - var(--offset)), -50%);
+    padding-right: 8px;
+    transform: translate(calc(-100% - var(--offset)), -50%);
   }
 
   &.orientation-right {
+    left: var(--offset);
+    padding-left: 8px;
     transform: translateY(-50%);
-    right: calc(-4px - var(--offset));
   }
 
   &::before {
@@ -46,11 +50,11 @@
   }
 
   &.orientation-bottom::before {
-    top: -1px;
+    top: 0;
   }
 
   &.orientation-top::before {
-    bottom: -1px;
+    bottom: 0;
   }
 
   &.orientation-left::before,
@@ -61,11 +65,11 @@
   }
 
   &.orientation-left::before {
-    right: -4px;
+    right: 0;
   }
 
   &.orientation-right::before {
-    left: -4px;
+    left: 0;
   }
 }
 
