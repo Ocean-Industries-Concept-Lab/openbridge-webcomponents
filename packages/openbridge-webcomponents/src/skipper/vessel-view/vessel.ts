@@ -14,6 +14,12 @@ export enum VesselTypes {
   CAR_FERRY = 'CAR_FERRY',
 }
 
+export enum ViewType {
+  SIDE = 'SIDE',
+  TOP = 'TOP',
+  BOTH = 'BOTH',
+}
+
 @customElement('ob-vessel')
 export class Vessel extends LitElement {
   @property({type: Number}) vesselWidth: number = 30;
@@ -25,8 +31,7 @@ export class Vessel extends LitElement {
   @property({type: Number}) sensorHeightOverKeel: number = 50;
   @property({type: Number}) sensorToCCRP: number = 0;
   @property({type: String}) vesselType: VesselTypes = VesselTypes.CARGO;
-  // @property({type: Boolean}) displayAllView: boolean = false;
-  @property({type: Boolean}) sideTopDownViewToggle: boolean = false;
+  @property({type: String}) viewMode: ViewType = ViewType.TOP;
   @property({type: Number}) sensorPortStarboardOffset: number = 0;
   @property({type: Boolean}) toggleSLAndDLSensor: boolean = false;
   //values for SIDE_VIEW
@@ -219,7 +224,7 @@ export class Vessel extends LitElement {
   }
 
   toggleVesselViewer(): void {
-    this.sideTopDownViewToggle = !this.sideTopDownViewToggle;
+    // this.sideTopDownViewToggle = !this.sideTopDownViewToggle;
   }
 
   getVessel() {
@@ -365,7 +370,7 @@ export class Vessel extends LitElement {
         sensorToCCRP: this.sensorToCCRP,
         dim,
         textOffset,
-        sideTopDownViewToggle: this.sideTopDownViewToggle,
+        viewMode: this.viewMode,
       },
       vesselHeightDim
     );
@@ -419,11 +424,17 @@ export class Vessel extends LitElement {
       }
     );
 
-    if (this.sideTopDownViewToggle) {
+    if (this.viewMode === ViewType.SIDE) {
       return SIDE_VIEW;
-    } else {
+    }
+    if (this.viewMode === ViewType.TOP) {
       return TOP_DOWN_VIEW;
     }
+
+    return html`<div class="both-views wrapper">
+      <div class="side-view wrapper">${SIDE_VIEW}</div>
+      <div class="top-down-view wrapper">${TOP_DOWN_VIEW}</div>
+    </div>`;
   }
 }
 

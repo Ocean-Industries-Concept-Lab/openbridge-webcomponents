@@ -60,4 +60,18 @@ export const vesselStyles = css`
     text-anchor: middle;
     dominant-baseline: middle;
   }
+
+  .both-views {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: red;
+  }
+
+  .side-view,
+  .top-down-view {
+    width: 100%;
+    flex: 0 0 auto;
+  }
 `;

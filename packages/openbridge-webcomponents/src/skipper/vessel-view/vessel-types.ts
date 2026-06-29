@@ -1,6 +1,6 @@
 import {nothing, svg, type TemplateResult} from 'lit';
 import {Colors} from '../interfaces.js';
-import {VesselTypes} from './vessel.js';
+import {VesselTypes, ViewType} from './vessel.js';
 
 type VesselTypeData = {
   side: TemplateResult;
@@ -108,7 +108,7 @@ type sensorPositionParams = {
     textX: number;
   };
   textOffset: number;
-  sideTopDownViewToggle: boolean;
+  viewMode: ViewType;
 };
 
 type dimPortToCCRPParams = {
@@ -804,22 +804,3 @@ function getVesselFishing(): {
 
   return {FISHING_SIDE_VIEW, FISHING_TOP_DOWN_VIEW};
 }
-/*
-    <g id="Vessel">
-                                      <g id="Vessel_2">
-                                      <path id="Vector 488" d="M34.6328 193.266L371.592 193.266C431.578 193.266 438.117 232.5 438.117 232.5C438.117 232.5 431.578 271.734 371.592 271.734L34.6328 271.734C33.5628 271.734 32.6953 270.867 32.6953 269.797L32.6953 261.926L32.6953 203.074L32.6953 195.203C32.6953 194.133 33.5627 193.266 34.6328 193.266Z" fill="${Colors.instrumentRegularSecondaryDif}" stroke="${Colors.instrumentRegularSecondary}" stroke-width="0.96875"/>
-                                      <path id="Vector 489" d="M110.438 215.062L110.438 186L122.062 186L122.063 209.25L133.688 217.969L133.688 247.031L122.062 255.75L122.063 279L110.438 279L110.437 249.937L61.7578 249.938L61.7578 215.062L110.438 215.062Z" fill="${Colors.instrumentRegularSecondaryDif}" stroke="${Colors.instrumentRegularSecondary}" stroke-width="0.96875"/>
-                                      </g>
-                                  </g>
-
-
-car ferry
-<g xmlns="http://www.w3.org/2000/svg" id="Vessel">
-                                      <g id="Vector">
-                                      <path d="M24.0007 215.626C24.0003 209.205 29.2051 204 35.6257 204L91.4933 204L161.634 204L300.802 204L430.875 204C437.295 204 442.5 209.205 442.5 215.625L442.5 240L442.5 264.375C442.5 270.795 437.295 276 430.875 276L398.59 276L300.802 276L151.606 276L66.5569 276L35.6284 276C29.2084 276 24.0038 270.796 24.0034 264.376L24.0007 215.626Z" fill="${Colors.instrumentFramePrimary}"/>
-                                      <path d="M215.979 257.516L215.979 221.903L249.71 221.903L249.71 257.516L215.979 257.516Z" fill="${Colors.instrumentFramePrimary}"/>
-                                      <path d="M151.606 276L151.606 258.726M151.606 276L300.802 276M151.606 276L66.5569 276M151.606 258.726L161.634 253.355L161.634 218.806L161.634 204M151.606 258.726L66.5569 258.726L66.5569 276M300.802 204L161.634 204L91.4933 204L35.6257 204C29.2051 204 24.0003 209.205 24.0007 215.626L24.0034 264.376C24.0038 270.796 29.2084 276 35.6284 276L66.5569 276M300.802 204L430.875 204C437.295 204 442.5 209.205 442.5 215.625L442.5 240L442.5 264.375C442.5 270.795 437.295 276 430.875 276L398.59 276M300.802 204L300.802 258.726M300.802 276L300.802 258.726M300.802 276L398.59 276M300.802 258.726L398.59 258.726L398.59 276M249.71 257.516L215.979 257.516L215.979 221.903L249.71 221.903L249.71 257.516ZM215.979 221.903L223.298 229.742M215.979 257.516L223.298 249.677M249.71 257.516L242.392 249.677M249.71 221.903L242.392 229.742M223.298 229.742L223.298 249.677M223.298 229.742L242.392 229.742M223.298 249.677L242.392 249.677M242.392 249.677L242.392 229.742" stroke="${Colors.instrumentRegularSecondaryDif}" stroke-width="0.96875"/>
-                                      </g>
-                                      </g>
-      
-*/

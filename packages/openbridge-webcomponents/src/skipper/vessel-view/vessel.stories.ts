@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {widthDecorator} from '../../storybook-util.js';
-import {Vessel, VesselTypes} from './vessel.js';
+import {Vessel, VesselTypes, ViewType} from './vessel.js';
 import './vessel.js';
 
 const meta: Meta<typeof Vessel> = {
@@ -27,6 +27,10 @@ const meta: Meta<typeof Vessel> = {
       ],
       control: {type: 'select'},
     },
+    viewMode: {
+      options: [ViewType.SIDE, ViewType.TOP, ViewType.BOTH],
+      control: {type: 'select'},
+    },
   },
   decorators: [widthDecorator],
 } satisfies Meta<Vessel>;
@@ -38,6 +42,7 @@ export const Vessel_tanker: Story = {
   args: {
     // width: 512,
     vesselHeight: 40,
+
     bowToCCRP: 50,
     sternToCCRP: 50,
     sensorToCCRP: 0,
@@ -46,7 +51,7 @@ export const Vessel_tanker: Story = {
     starboardToCCRP: 15,
     sensorPortStarboardOffset: 0,
     vesselType: VesselTypes.CARGO,
-    sideTopDownViewToggle: false,
+    viewMode: ViewType.SIDE,
     toggleSLAndDLSensor: true,
   },
 };
