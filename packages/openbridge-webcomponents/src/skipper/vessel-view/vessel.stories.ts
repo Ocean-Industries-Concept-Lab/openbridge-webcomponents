@@ -6,7 +6,7 @@ import './vessel.js';
 const meta: Meta<typeof Vessel> = {
   title: 'INSTRUMENT/Vessel',
   tags: ['autodocs', '6.0'],
-  component: 'ob-vessel',
+  component: 'ob-vessel-view',
 
   parameters: {
     actions: {
