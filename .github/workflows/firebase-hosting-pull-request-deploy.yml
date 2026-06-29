@@ -83,6 +83,14 @@ jobs:
       - name: "Unzip artifact"
         run: cd packages/openbridge-webcomponents/ && mkdir -p storybook-static && unzip storybook.zip -d storybook-static
 
+      # Node 24.17.0 has an HTTP keep-alive socket-reuse bug that causes
+      # firebase-tools to hit "premature close" errors against googleapis.com,
+      # leading to false-negative deploy failures. Pin to the patched 24.18.0.
+      - name: Pin Node for Firebase deploy
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24.18.0"
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         id: firebase
         with:
@@ -197,6 +205,14 @@ jobs:
 
       - name: "Unzip artifact"
         run: cd packages/vue-demo/ && mkdir -p dist && unzip vue-demo.zip -d dist
+
+      # Node 24.17.0 has an HTTP keep-alive socket-reuse bug that causes
+      # firebase-tools to hit "premature close" errors against googleapis.com,
+      # leading to false-negative deploy failures. Pin to the patched 24.18.0.
+      - name: Pin Node for Firebase deploy
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24.18.0"
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         id: firebase
