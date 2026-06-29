@@ -1,6 +1,8 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
+  GaugeRadialHorizontalAlignment,
   GaugeRadialSector,
+  GaugeRadialVerticalAlignment,
   ObcGaugeRadial,
   ObcGaugeRadialType,
 } from './gauge-radial.js';
@@ -28,6 +30,14 @@ const meta = {
     height: {control: {type: 'range', min: 100, max: 1000, step: 1}},
     type: {control: 'select', options: Object.values(ObcGaugeRadialType)},
     sector: {control: 'select', options: Object.values(GaugeRadialSector)},
+    horizontalAlignment: {
+      control: 'select',
+      options: Object.values(GaugeRadialHorizontalAlignment),
+    },
+    verticalAlignment: {
+      control: 'select',
+      options: Object.values(GaugeRadialVerticalAlignment),
+    },
     priority: {control: 'select', options: Object.values(Priority)},
     state: {control: 'select', options: Object.values(InstrumentState)},
     tickmarkStyle: {
@@ -256,6 +266,46 @@ export const ShortWideContainer180: Story = {
     sector: GaugeRadialSector.deg180,
     width: 600,
     height: 120,
+  },
+};
+
+export const ShortWideAlignedLeft: Story = {
+  args: {
+    ...sectorStoryArgs,
+    sector: GaugeRadialSector.deg270,
+    width: 600,
+    height: 160,
+    horizontalAlignment: GaugeRadialHorizontalAlignment.left,
+  },
+};
+
+export const ShortWideAlignedRight: Story = {
+  args: {
+    ...sectorStoryArgs,
+    sector: GaugeRadialSector.deg270,
+    width: 600,
+    height: 160,
+    horizontalAlignment: GaugeRadialHorizontalAlignment.right,
+  },
+};
+
+export const TallNarrowAlignedTop: Story = {
+  args: {
+    ...sectorStoryArgs,
+    sector: GaugeRadialSector.deg270,
+    width: 200,
+    height: 500,
+    verticalAlignment: GaugeRadialVerticalAlignment.top,
+  },
+};
+
+export const TallNarrowAlignedBottom: Story = {
+  args: {
+    ...sectorStoryArgs,
+    sector: GaugeRadialSector.deg270,
+    width: 200,
+    height: 500,
+    verticalAlignment: GaugeRadialVerticalAlignment.bottom,
   },
 };
 

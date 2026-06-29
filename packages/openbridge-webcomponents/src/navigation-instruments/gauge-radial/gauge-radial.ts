@@ -27,6 +27,18 @@ export enum GaugeRadialSector {
   deg90Right = '90-right',
 }
 
+export enum GaugeRadialHorizontalAlignment {
+  left = 'left',
+  center = 'center',
+  right = 'right',
+}
+
+export enum GaugeRadialVerticalAlignment {
+  top = 'top',
+  center = 'center',
+  bottom = 'bottom',
+}
+
 export interface GaugeRadialAdvice {
   minValue: number;
   maxValue: number;
@@ -59,6 +71,12 @@ export interface GaugeRadialAdvice {
  * - **Advice zones**: Pass an array of {@link GaugeRadialAdvice} objects to
  *   render caution/alert arcs on the gauge. Not shown on the `90-left` /
  *   `90-right` sectors.
+ * - **Alignment**: The host always fills its container and the dial shrinks to
+ *   fit the smaller of the available width/height, so a short, wide (or tall,
+ *   narrow) container leaves slack on one axis. `horizontalAlignment`
+ *   (`left` | `center` | `right`) and `verticalAlignment`
+ *   (`top` | `center` | `bottom`) position the dial within that slack; both
+ *   default to `center`.
  *
  * ## Usage Guidelines
  *
@@ -125,6 +143,21 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
   @property({type: String, reflect: true}) sector: GaugeRadialSector =
     GaugeRadialSector.deg270;
+  /**
+   * Horizontal placement of the dial when the host is wider than the dial
+   * (e.g. a short, wide container shrinks the dial to fit the height, leaving
+   * horizontal slack). Default `center`.
+   */
+  @property({type: String})
+  horizontalAlignment: GaugeRadialHorizontalAlignment =
+    GaugeRadialHorizontalAlignment.center;
+  /**
+   * Vertical placement of the dial when the host is taller than the dial
+   * (e.g. a tall, narrow container shrinks the dial to fit the width, leaving
+   * vertical slack). Default `center`.
+   */
+  @property({type: String}) verticalAlignment: GaugeRadialVerticalAlignment =
+    GaugeRadialVerticalAlignment.center;
   /**
    * When `true`, shows the centre `<obc-readout>`(s) with the current value
    * (and optional `label`/`unit`). Layout depends on `sector` and `type`.
@@ -281,6 +314,8 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
           'sector-180': this.sector === GaugeRadialSector.deg180,
           'sector-90-left': this.sector === GaugeRadialSector.deg90Left,
           'sector-90-right': this.sector === GaugeRadialSector.deg90Right,
+          [`halign-${this.horizontalAlignment}`]: true,
+          [`valign-${this.verticalAlignment}`]: true,
         })}
       >
         <obc-instrument-radial

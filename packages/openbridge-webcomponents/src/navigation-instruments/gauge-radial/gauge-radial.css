@@ -4,36 +4,8 @@
   height: 100%;
 }
 
-/* Host takes each sector's crop aspect (see `sectorClips`): 270/90 square, 180
-   wide — so the dial is the same size at any width.
-
-   `width`/`height: auto` + `max-width`/`max-height: 100%` makes the host the
-   largest box of the sector's aspect ratio that fits inside *both* the
-   available width and height. Using `height: auto` alone only honours the
-   width, so in a short, wide (e.g. flex) container the square would grow as
-   tall as it is wide and overflow — see issue #992. */
-:host([sector="270"]),
-:host([sector="90-left"]),
-:host([sector="90-right"]) {
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: 100%;
-  aspect-ratio: 1;
-}
-
-/* 448 / 251 = the 180° crop's aspect (448 wide × 448·(1 − 44%) tall); keep in
-   sync with `sectorClips` bottom=44 in gauge-radial.ts. */
-:host([sector="180"]) {
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: 100%;
-  aspect-ratio: 448 / 251;
-}
-
 .gauge-radial-root {
-  /* Readout vertical placement per layout (% of the cropped host), tuned to the
+  /* Readout vertical placement per layout (% of the cropped box), tuned to the
      watch geometry — re-check if the ring radii or the 448 box change. Which
      layout uses which is in renderReadouts(). */
   --readout-meta-top: 72%;
@@ -41,8 +13,59 @@
   --readout-meta-top-180: 60%;
 
   position: relative;
-  width: 100%;
-  height: 100%;
+
+  /* The dial is the largest box of its sector's aspect ratio that fits inside
+     *both* the available width and height of the (full-size) host. `width: auto`
+     stretches the block to the host width, then `aspect-ratio` + `max-height`
+     transfer the constraint back, shrinking it to fit a short host too — see
+     issue #992. The host always fills its container, so the gauge can be
+     positioned within the leftover space via the alignment classes below. */
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  aspect-ratio: 1;
+
+  /* Defaults (centered both ways); overridden by the halign-* / valign-*
+     classes. Horizontal alignment uses auto margins (which reference the host
+     width); vertical alignment uses a relative `top` offset (which references
+     the definite host height) plus a self-sized `translateY`. */
+  margin-left: auto;
+  margin-right: auto;
+  top: 50%;
+  transform: translateY(-50%);
+
+  /* 448 / 251 = the 180° crop's aspect (448 wide × 448·(1 − 44%) tall); keep in
+     sync with `sectorClips` bottom=44 in gauge-radial.ts. */
+  &.sector-180 {
+    aspect-ratio: 448 / 251;
+  }
+
+  &.halign-left {
+    margin-left: 0;
+    margin-right: auto;
+  }
+  &.halign-center {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  &.halign-right {
+    margin-left: auto;
+    margin-right: 0;
+  }
+
+  &.valign-top {
+    top: 0;
+    transform: translateY(0);
+  }
+  &.valign-center {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  &.valign-bottom {
+    top: 100%;
+    transform: translateY(-100%);
+  }
 
   .gauge-readout-value {
     position: absolute;
