@@ -66,12 +66,16 @@ export const vesselStyles = css`
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: red;
   }
 
   .side-view,
   .top-down-view {
     width: 100%;
     flex: 0 0 auto;
+  }
+
+  .side-view {
+    margin-top: -40px;
+    margin-bottom: -290px;
   }
 `;
