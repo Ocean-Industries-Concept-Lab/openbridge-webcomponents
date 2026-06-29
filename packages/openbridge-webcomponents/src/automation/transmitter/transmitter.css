@@ -1,0 +1,135 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: block;
+}
+
+.transmitter {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+
+  &.orientation-bottom {
+    top: calc(1px + var(--offset));
+    transform: translateX(-50%);
+  }
+
+  &.orientation-top {
+    transform: translate(-50%, calc(-100% - 1px - var(--offset)));
+  }
+
+  &.orientation-left {
+    transform: translate(calc(-100% - 4px - var(--offset)), -50%);
+  }
+
+  &.orientation-right {
+    transform: translateY(-50%);
+    right: calc(-4px - var(--offset));
+  }
+
+  &::before {
+    content: "";
+    display: block;
+    position: absolute;
+    border: var(--normal-enabled-border-color) solid 1px;
+  }
+
+  &.orientation-bottom::before,
+  &.orientation-top::before {
+    left: 50%;
+    width: 0;
+    height: 8px;
+  }
+
+  &.orientation-bottom::before {
+    top: -1px;
+  }
+
+  &.orientation-top::before {
+    bottom: -1px;
+  }
+
+  &.orientation-left::before,
+  &.orientation-right::before {
+    top: 50%;
+    height: 0;
+    width: 8px;
+  }
+
+  &.orientation-left::before {
+    right: -4px;
+  }
+
+  &.orientation-right::before {
+    left: -4px;
+  }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+/* Top orientation places the id-tag above the chip (leader line below). */
+.orientation-top .content {
+  flex-direction: column-reverse;
+}
+
+.body {
+  display: flex;
+}
+
+.type-horizontal-graph .body {
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.type-vertical-graph .body {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.graph-box {
+  overflow: hidden;
+  border: 1px solid var(--instrument-regular-tertiary-color);
+}
+
+.type-horizontal-graph .graph-box {
+  width: 64px;
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+}
+
+.type-vertical-graph .graph-box {
+  height: 48px;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+}
+
+/* Flatten the chip corners and drop the shared border where the graph joins. */
+.type-horizontal-graph .chip::part(button) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: none;
+}
+
+.type-vertical-graph .chip::part(button) {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom: none;
+}
+
+.type-vertical-graph .chip {
+  width: 100%;
+}
+
+.id-tag {
+  @mixin font-instrument-label;
+  color: var(--element-neutral-color);
+}

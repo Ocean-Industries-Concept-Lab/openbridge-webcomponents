@@ -93,6 +93,7 @@ export class ObcTransmitterButton extends LitElement {
     return html`
       <button class="button ${this.variant} size-${this.size}">
         <div
+          part="button"
           class=${classMap({
             'visible-wrapper': true,
             tag: this.isTag,

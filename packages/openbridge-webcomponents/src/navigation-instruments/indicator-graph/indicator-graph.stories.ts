@@ -81,6 +81,15 @@ export const Large: Story = {
   },
 };
 
+export const WithFill: Story = {
+  args: {
+    layout: {
+      size: ObcIndicatorGraphSize.medium,
+      fill: true,
+    },
+  },
+};
+
 export const Realtime: Story = {
   tags: ['skip-test'],
   args: {
