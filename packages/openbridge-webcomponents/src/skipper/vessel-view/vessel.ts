@@ -20,7 +20,7 @@ export enum ViewType {
   BOTH = 'BOTH',
 }
 
-@customElement('ob-vessel')
+@customElement('ob-vessel-view')
 export class Vessel extends LitElement {
   @property({type: Number}) vesselWidth: number = 30;
   @property({type: Number}) vesselHeight: number = 50;
