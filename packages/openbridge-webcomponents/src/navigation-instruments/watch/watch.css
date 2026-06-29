@@ -6,6 +6,10 @@
   overflow: hidden;
 }
 
+svg {
+  display: block;
+}
+
 .label {
   @mixin font-body;
   font-size: calc(12px / var(--scale, 1));
