@@ -143,6 +143,7 @@ const meta = {
     dataQuality: NONE,
   },
   argTypes: {
+    value: {control: {type: 'number'}},
     variant: {
       control: {type: 'select'},
       options: Object.values(ReadoutBlockVariant),
@@ -335,7 +336,7 @@ export const Alert: Story = {
             .value=${123}
             .alert=${{
               status: AlertType.Warning,
-              mode: ObcAlertFrameMode.unackedActive,
+              mode: ObcAlertFrameMode.ackedActive,
               type: ObcAlertFrameType.Regular,
             }}
           ></obc-readout-block>

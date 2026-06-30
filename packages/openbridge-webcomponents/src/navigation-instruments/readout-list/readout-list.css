@@ -3,11 +3,13 @@
   width: 100%;
 }
 
-/* Vertical stack of rows. The 4px row gap matches the rich detail rows in
-   `obc-automation-tank`; override via `--obc-readout-list-row-gap`. */
+/* Vertical stack of rows. The 8px default row gap leaves room for a value alert
+   frame, which overhangs ~3px above and below each row — so two stacked rows that
+   both carry an alarm frame never collide. Override via
+   `--obc-readout-list-row-gap`. */
 .list {
   display: flex;
   flex-direction: column;
-  gap: var(--obc-readout-list-row-gap, 4px);
+  gap: var(--obc-readout-list-row-gap, 8px);
   width: 100%;
 }
