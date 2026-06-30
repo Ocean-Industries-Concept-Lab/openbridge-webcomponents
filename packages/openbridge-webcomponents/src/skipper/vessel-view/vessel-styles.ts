@@ -75,7 +75,18 @@ export const vesselStyles = css`
   }
 
   .side-view {
-    margin-top: -40px;
-    margin-bottom: -290px;
+    height: 290px;
+  }
+
+  .side-view div {
+    transform: translateY(-40px);
+  }
+
+  .top-down-view {
+    height: 220px;
+  }
+
+  .top-down-view div {
+    transform: translateY(-115px);
   }
 `;

@@ -15,6 +15,7 @@ const meta: Meta<typeof Vessel> = {
   },
   args: {
     width: 512,
+    height: 264,
   },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
