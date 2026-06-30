@@ -49,6 +49,15 @@
   text-align: right;
 }
 
+.hinted-zero {
+  color: var(--border-outline-color);
+  pointer-events: none;
+
+  &.is-hidden {
+    opacity: 0;
+  }
+}
+
 .unit {
   @mixin font-instrument-unit;
   color: var(--element-neutral-color);

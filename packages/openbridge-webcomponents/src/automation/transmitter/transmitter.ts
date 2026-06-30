@@ -43,6 +43,9 @@ export enum TransmitterType {
  *   paired with a `horizontal-graph` (beside) or `vertical-graph` (below).
  * - **`orientation`** – `top`, `right`, `bottom`, `left`; controls which edge
  *   the leader line attaches to.
+ * - **Formatting** – `fractionDigits`, `minValueLength`, `hasHintedZeros` and
+ *   `showZeroPadding` are forwarded to the value chip to control decimal
+ *   precision and muted leading-zero padding (e.g. `0012.3`).
  *
  * ### Slots
  * | Slot Name | Conditions                | Purpose                                |
@@ -60,6 +63,9 @@ export class ObcTransmitter extends LitElement {
   @property({type: Number}) value?: number;
   @property({type: String}) unit = '';
   @property({type: Number}) fractionDigits = 1;
+  @property({type: Number}) minValueLength = 0;
+  @property({type: Boolean}) hasHintedZeros = false;
+  @property({type: Boolean}) showZeroPadding = false;
   @property({type: String}) size: TransmitterButtonSize =
     TransmitterButtonSize.regular;
   @property({type: Boolean}) hasIcon = false;
@@ -97,6 +103,9 @@ export class ObcTransmitter extends LitElement {
         .value=${this.value}
         .unit=${this.unit}
         .fractionDigits=${this.fractionDigits}
+        .minValueLength=${this.minValueLength}
+        .hasHintedZeros=${this.hasHintedZeros}
+        .showZeroPadding=${this.showZeroPadding}
         .hasIcon=${this.hasIcon}
         .hasAdvice=${this.hasAdvice}
         .label=${this.tag}

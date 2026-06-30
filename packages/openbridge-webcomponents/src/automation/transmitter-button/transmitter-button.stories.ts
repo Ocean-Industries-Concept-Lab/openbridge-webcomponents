@@ -19,6 +19,9 @@ const meta: Meta<typeof ObcTransmitterButton> = {
     value: 12.3,
     unit: '°C',
     fractionDigits: 1,
+    minValueLength: 0,
+    hasHintedZeros: false,
+    showZeroPadding: false,
     hasIcon: false,
     hasAdvice: false,
     label: 'TT',
@@ -52,6 +55,9 @@ function renderComponent(args: ObcTransmitterButton) {
       .value=${args.value}
       .unit=${args.unit}
       .fractionDigits=${args.fractionDigits}
+      .minValueLength=${args.minValueLength}
+      .hasHintedZeros=${args.hasHintedZeros}
+      .showZeroPadding=${args.showZeroPadding}
       .hasIcon=${args.hasIcon}
       .hasAdvice=${args.hasAdvice}
       .label=${args.label}
@@ -102,5 +108,16 @@ export const Large: Story = {
 
 export const Tag: Story = {
   args: {variant: TransmitterButtonVariant.tag, label: 'TT'},
+  render: (args) => renderComponent(args as ObcTransmitterButton),
+};
+
+export const ZeroPadded: Story = {
+  args: {
+    value: 12.3,
+    fractionDigits: 1,
+    minValueLength: 5,
+    hasHintedZeros: true,
+    hasIcon: true,
+  },
   render: (args) => renderComponent(args as ObcTransmitterButton),
 };

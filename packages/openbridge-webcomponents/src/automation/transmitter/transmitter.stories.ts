@@ -27,6 +27,9 @@ const meta: Meta<typeof ObcTransmitter> = {
     value: 12.3,
     unit: '°C',
     fractionDigits: 1,
+    minValueLength: 0,
+    hasHintedZeros: false,
+    showZeroPadding: false,
     hasIcon: true,
     hasAdvice: false,
     tag: 'TT',
@@ -87,6 +90,9 @@ function renderComponent(args: ObcTransmitter) {
       .value=${args.value}
       .unit=${args.unit}
       .fractionDigits=${args.fractionDigits}
+      .minValueLength=${args.minValueLength}
+      .hasHintedZeros=${args.hasHintedZeros}
+      .showZeroPadding=${args.showZeroPadding}
       .hasIcon=${args.hasIcon}
       .hasAdvice=${args.hasAdvice}
       .tag=${args.tag}
@@ -116,6 +122,17 @@ export const HorizontalGraph: Story = {
 
 export const VerticalGraph: Story = {
   args: {type: TransmitterType.verticalGraph},
+  render: (args) => renderComponent(args as ObcTransmitter),
+};
+
+export const ZeroPadded: Story = {
+  args: {
+    type: TransmitterType.value,
+    value: 12.3,
+    fractionDigits: 1,
+    minValueLength: 5,
+    hasHintedZeros: true,
+  },
   render: (args) => renderComponent(args as ObcTransmitter),
 };
 
