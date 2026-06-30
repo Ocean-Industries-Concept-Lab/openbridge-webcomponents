@@ -99,6 +99,7 @@ type ReadoutItemConfig = {
   options?: StoryOptions;
   hasLeadingIcon?: boolean;
   hasValueIcon?: boolean;
+  showDebugOverlay?: boolean;
 };
 
 type ShowcaseCase = {label: string; config: ReadoutItemConfig};
@@ -179,6 +180,7 @@ function renderItem(config: ReadoutItemConfig) {
       .adviceOptions=${o.advice}
       .unitOptions=${o.unit}
       .srcOptions=${o.src}
+      .showDebugOverlay=${config.showDebugOverlay ?? false}
     >
       ${config.hasLeadingIcon
         ? html`<obi-placeholder slot="leading-icon"></obi-placeholder>`
@@ -1652,21 +1654,9 @@ const alignmentStyle = `
     display: flex; flex-direction: column; gap: 2px; width: 480px;
     padding: 8px; border: 1px dashed var(--border-divider-color, #ccc); border-radius: 8px;
   }
-  /* Debug aid (temporary): outline each readout building block (red) and the
-     degree column (blue) so reserver widths / alignment are visible. Scoped to
-     this story only via .rli-align-wrap — safe to delete when no longer needed. */
-  .rli-align-wrap obc-readout-list-item::part(block) {
-    outline: 1px solid rgba(220, 0, 0, 0.7); outline-offset: -1px;
-  }
-  .rli-align-wrap obc-readout-list-item::part(degree) {
-    outline: 1px solid rgba(0, 0, 220, 0.7); outline-offset: -1px;
-  }
-  .rli-align-wrap obc-readout-list-item::part(degree-spacer) {
-    outline: 1px solid rgba(0, 160, 0, 0.8); outline-offset: -1px;
-  }
 `;
 
-function renderAlignmentColumn(aligned: boolean) {
+function renderAlignmentColumn(aligned: boolean, showDebugOverlay: boolean) {
   return html`
     <div class="rli-align-col">
       ${ALIGNMENT_ROWS.map((row) =>
@@ -1681,6 +1671,7 @@ function renderAlignmentColumn(aligned: boolean) {
           advice: row.advice,
           hasLeadingIcon: row.hasLeadingIcon,
           hasValueIcon: row.hasValueIcon,
+          showDebugOverlay,
           options: {
             size: row.size ?? ReadoutListItemSize.small,
             hasDegree: row.hasDegree ?? false,
@@ -1716,8 +1707,18 @@ function renderAlignmentColumn(aligned: boolean) {
   `;
 }
 
-export const ColumnAlignment: Story = {
-  render: () => html`
+export const ColumnAlignment: StoryObj<
+  ReadoutListItemStoryArgs & {showDebugOverlay: boolean}
+> = {
+  args: {showDebugOverlay: true},
+  argTypes: {
+    showDebugOverlay: {
+      name: 'Show Debug Overlay',
+      control: {type: 'boolean'},
+      table: {category: 'Debug'},
+    },
+  },
+  render: (args) => html`
     <style>
       ${alignmentStyle}
     </style>
@@ -1726,13 +1727,13 @@ export const ColumnAlignment: Story = {
         <h3 class="rli-align-section-title">
           Without reservers — columns drift
         </h3>
-        ${renderAlignmentColumn(false)}
+        ${renderAlignmentColumn(false, args.showDebugOverlay)}
       </section>
       <section class="rli-align-section">
         <h3 class="rli-align-section-title">
           With shared reservers — unit column &amp; value right edge aligned
         </h3>
-        ${renderAlignmentColumn(true)}
+        ${renderAlignmentColumn(true, args.showDebugOverlay)}
       </section>
     </div>
   `,

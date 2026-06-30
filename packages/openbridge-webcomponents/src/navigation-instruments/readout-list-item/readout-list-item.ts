@@ -8,11 +8,15 @@ import {
   ObcTextboxSize,
   ObcTextboxFontWeight,
 } from '../../components/textbox/textbox.js';
-import '../../icons/icon-input-right.js';
-import '../../icons/icon-notification-advice.js';
+import '../../building-blocks/readout-block/readout-block.js';
+import {
+  ReadoutBlockVariant,
+  ReadoutBlockSize,
+  ReadoutBlockDataQuality,
+  ReadoutBlockHidePhase,
+} from '../../building-blocks/readout-block/readout-block.js';
 import {
   formatNumericValue,
-  getHintZeros,
   type ReadoutNumericFormatOptions,
 } from '../readout/readout-formatters.js';
 import {
@@ -26,16 +30,13 @@ import {
 export {ObcTextboxFontWeight} from '../../components/textbox/textbox.js';
 
 /**
- * Density/size scale of the readout row.
+ * Density/size scale of the readout row (an alias of `ReadoutBlockSize`).
  * - `small`: regular value typography (smallest, densest).
  * - `medium`: medium value typography.
  * - `large`: large value typography.
  */
-export enum ReadoutListItemSize {
-  small = 'small',
-  medium = 'medium',
-  large = 'large',
-}
+export const ReadoutListItemSize = ReadoutBlockSize;
+export type ReadoutListItemSize = ReadoutBlockSize;
 
 /**
  * Placement of the unit/source relative to the label and value.
@@ -60,13 +61,12 @@ export enum ReadoutListItemPriority {
 }
 
 /**
- * Measurement quality of the value. Orthogonal to the row-level `alert`
- * – a low-integrity or invalid value can also sit inside an alert frame.
+ * Measurement quality of the value (an alias of `ReadoutBlockDataQuality`).
+ * Orthogonal to the row-level `alert` – a low-integrity or invalid value can
+ * also sit inside an alert frame.
  */
-export enum ReadoutListItemDataQuality {
-  lowIntegrity = 'low-integrity',
-  invalid = 'invalid',
-}
+export const ReadoutListItemDataQuality = ReadoutBlockDataQuality;
+export type ReadoutListItemDataQuality = ReadoutBlockDataQuality;
 
 /**
  * Corner style of the interactive (clickable) surface.
@@ -162,12 +162,6 @@ export interface ReadoutSrcOptions extends ReadoutBlockState {
   spaceReserver?: string;
 }
 
-enum BlockRole {
-  value = 'value',
-  setpoint = 'setpoint',
-  advice = 'advice',
-}
-
 /**
  * `<obc-readout-list-item>` – A compact, dense readout row for lists and tables.
  *
@@ -225,8 +219,10 @@ export class ObcReadoutListItem extends LitElement {
 
   @property({type: Boolean, attribute: false}) hasValue = true;
   @property({type: Number}) value: number | null = null;
-  /** Render the value as the literal "OFF" (e.g. equipment powered down). Affects the value only. */
+  /** Render the value as `offText` (e.g. equipment powered down). Affects the value only. */
   @property({type: Boolean}) off = false;
+  /** Text shown in place of the value when `off` is true. @availableWhen off==true */
+  @property({type: String}) offText = 'OFF';
 
   @property({type: Boolean}) hasSetpoint = false;
   /** @availableWhen hasSetpoint==true */
@@ -260,6 +256,13 @@ export class ObcReadoutListItem extends LitElement {
   @property({type: Object}) adviceOptions?: ReadoutAdviceOptions;
   @property({type: Object}) unitOptions?: ReadoutReserverOptions;
   @property({type: Object}) srcOptions?: ReadoutSrcOptions;
+
+  /**
+   * Development aid: outline the readout building blocks (red), the degree
+   * columns (blue) and the degree spacer (green) so reserver widths / alignment
+   * are visible. Off by default.
+   */
+  @property({type: Boolean, reflect: true}) showDebugOverlay = false;
 
   /** Pop-up deferred-hide phase for the setpoint (see {@link updated}). */
   @state() private deferredSetpointHidePhase: 'none' | 'hiding' | 'hidden' =
@@ -426,36 +429,6 @@ export class ObcReadoutListItem extends LitElement {
     };
   }
 
-  /** Widest possible value string for width reservation (e.g. `"000.0"`). */
-  private get reserverText(): string {
-    const maxDigits = this.resolvedMaxDigits;
-    if (maxDigits <= 0) {
-      return '';
-    }
-    const fractionDigits = this.resolvedFractionDigits;
-    const integer = '0'.repeat(Math.max(maxDigits, 1));
-    return fractionDigits > 0
-      ? `${integer}.${'0'.repeat(fractionDigits)}`
-      : integer;
-  }
-
-  /**
-   * Effective width reserver for a numeric block: the wider of the explicit
-   * `spaceReserver` and the `maxDigits`/`fractionDigits`-derived reserve, so an
-   * explicit reserver can never reserve *less* than the formatted value needs.
-   * Under tabular-nums the rendered width is proportional to character count, so
-   * "wider" compares string length.
-   */
-  private widerReserver(explicit: string | undefined, derived: string): string {
-    if (!explicit) {
-      return derived;
-    }
-    if (!derived) {
-      return explicit;
-    }
-    return explicit.length >= derived.length ? explicit : derived;
-  }
-
   /** classMap fragment for a block / source carrying per-block data quality. */
   private dataQualityClasses(
     dataQuality: ReadoutListItemDataQuality | undefined
@@ -467,96 +440,65 @@ export class ObcReadoutListItem extends LitElement {
     };
   }
 
-  private renderIcon(role: BlockRole): TemplateResult | typeof nothing {
-    if (role === BlockRole.value) {
-      if (!this.valueOptions?.hasIcon) {
-        return nothing;
-      }
-      return html`<span class="block-icon" aria-hidden="true"
-        ><slot name="value-icon"></slot
-      ></span>`;
+  /**
+   * Forward the matching list-item icon slot into the block's single `icon`
+   * slot. The variant's default marker lives in `obc-readout-block` and shows
+   * when nothing is assigned here (an empty forwarded slot flattens to nothing).
+   */
+  private renderForwardedIcon(variant: ReadoutBlockVariant): TemplateResult {
+    if (variant === ReadoutBlockVariant.setpoint) {
+      return html`<slot name="setpoint-icon" slot="icon"></slot>`;
     }
-    if (role === BlockRole.setpoint) {
-      return html`<span class="block-icon" aria-hidden="true">
-        <slot name="setpoint-icon"><obi-input-right></obi-input-right></slot>
-      </span>`;
+    if (variant === ReadoutBlockVariant.advice) {
+      return html`<slot name="advice-icon" slot="icon"></slot>`;
     }
-    return html`<span class="block-icon" aria-hidden="true">
-      <slot name="advice-icon"
-        ><obi-notification-advice></obi-notification-advice
-      ></slot>
-    </span>`;
+    return html`<slot name="value-icon" slot="icon"></slot>`;
   }
 
   private renderBlock(config: {
-    role: BlockRole;
+    variant: ReadoutBlockVariant;
     value: number | null | undefined;
-    size: ObcTextboxSize;
+    valueSize: ObcTextboxSize;
     enhanced: boolean;
     weight: ObcTextboxFontWeight;
     hintedZeros: boolean;
     spaceReserver?: string;
     off?: boolean;
     hasDegree?: boolean;
-    extraClasses?: Record<string, boolean>;
-    dataQuality?: ReadoutListItemDataQuality;
+    hasIcon?: boolean;
+    touching?: boolean;
+    hidePhase?: ReadoutBlockHidePhase;
+    dataQuality?: ReadoutBlockDataQuality;
     alert?: false | AlertFrameConfig;
   }): TemplateResult {
-    const formatOptions = this.numericFormatOptions(this.resolvedMaxDigits);
-    const valueForFormat = config.value ?? undefined;
-    const text = config.off
-      ? 'OFF'
-      : formatNumericValue(valueForFormat, formatOptions);
-    // `maxDigits` reserves INTEGER digits only (see `reserverText`), but
-    // getHintZeros measures total digits (it subtracts just the decimal point),
-    // so pad its target by `fractionDigits` to hint the right number of integer
-    // zeros (e.g. value 1.2, maxDigits 3, fractionDigits 1 → "001.2", not "01.2").
-    const hinted =
-      config.off || !config.hintedZeros
-        ? ''
-        : getHintZeros(valueForFormat, {
-            ...formatOptions,
-            minValueLength:
-              formatOptions.minValueLength + formatOptions.fractionDigits,
-          });
-    const reserver = this.widerReserver(
-      config.spaceReserver,
-      this.reserverText
-    );
-
-    const block = html`
-      <div
-        class=${classMap({
-          block: true,
-          [`block-${config.role}`]: true,
-          'tone-enhanced': config.enhanced,
-          ...this.dataQualityClasses(config.dataQuality),
-          ...(config.extraClasses ?? {}),
-        })}
-        part="block block-${config.role}"
+    // The block owns the formatting, hinted zeros, reserver, degree and icon; the
+    // row keeps the density tier (`size`) and the resolved per-block number size
+    // (`valueSize`) so flip-flop/pop-up emphasis stays a row decision.
+    return html`
+      <obc-readout-block
+        exportparts="block, block-content, block-text, block-icon, degree"
+        .variant=${config.variant}
+        .value=${config.value ?? null}
+        .size=${this.resolvedSize}
+        .valueSize=${config.valueSize}
+        .enhanced=${config.enhanced}
+        .weight=${config.weight}
+        .hasDegree=${config.hasDegree ?? false}
+        .hasIcon=${config.hasIcon ?? false}
+        .fractionDigits=${this.resolvedFractionDigits}
+        .maxDigits=${this.resolvedMaxDigits}
+        .hintedZeros=${config.hintedZeros}
+        .spaceReserver=${config.spaceReserver}
+        .off=${config.off ?? false}
+        .offText=${this.offText}
+        .touching=${config.touching ?? false}
+        .hidePhase=${config.hidePhase ?? ReadoutBlockHidePhase.none}
+        .dataQuality=${config.dataQuality}
+        .alert=${config.alert ?? false}
       >
-        ${this.renderIcon(config.role)}
-        <span class="block-content">
-          <obc-textbox
-            class="block-text"
-            .size=${config.size}
-            .fontWeight=${config.weight}
-            .tabularNums=${true}
-          >
-            ${hinted
-              ? html`<span class="hinted-zero" aria-hidden="true"
-                  >${hinted}</span
-                >`
-              : nothing}${text}
-            ${reserver ? html`<span slot="length">${reserver}</span>` : nothing}
-          </obc-textbox>
-          ${config.hasDegree
-            ? this.renderDegreeGlyph(config.size, {inherit: true})
-            : nothing}
-        </span>
-      </div>
+        ${this.renderForwardedIcon(config.variant)}
+      </obc-readout-block>
     `;
-    return wrapWithAlertFrame(config.alert ?? false, block);
   }
 
   /**
@@ -678,20 +620,20 @@ export class ObcReadoutListItem extends LitElement {
   private renderValueCluster(): TemplateResult {
     const popUpAtSetpoint =
       this.isPopUp && this.isAtSetpoint && !this.setpointTouching;
-    const setpointExtraClasses = {
-      'is-hiding':
-        popUpAtSetpoint && this.deferredSetpointHidePhase === 'hiding',
-      'is-hidden':
-        popUpAtSetpoint && this.deferredSetpointHidePhase === 'hidden',
-      touching: this.setpointTouching,
-    };
+    const setpointHidePhase = !popUpAtSetpoint
+      ? ReadoutBlockHidePhase.none
+      : this.deferredSetpointHidePhase === 'hiding'
+        ? ReadoutBlockHidePhase.hiding
+        : this.deferredSetpointHidePhase === 'hidden'
+          ? ReadoutBlockHidePhase.hidden
+          : ReadoutBlockHidePhase.none;
     return html`
       <div class="value-cluster" part="value-cluster">
         ${this.hasAdvice
           ? this.renderBlock({
-              role: BlockRole.advice,
+              variant: ReadoutBlockVariant.advice,
               value: this.advice,
-              size: this.secondarySize,
+              valueSize: this.secondarySize,
               enhanced: false,
               weight: ObcTextboxFontWeight.regular,
               hintedZeros: this.adviceOptions?.hintedZeros ?? false,
@@ -703,9 +645,9 @@ export class ObcReadoutListItem extends LitElement {
           : nothing}
         ${this.hasSetpoint
           ? this.renderBlock({
-              role: BlockRole.setpoint,
+              variant: ReadoutBlockVariant.setpoint,
               value: this.setpoint,
-              size: this.setpointSize,
+              valueSize: this.setpointSize,
               // Value and setpoint share the enhanced colour state (both neutral
               // or both enhanced); the setpoint is bold only while emphasised.
               enhanced: this.rowEnhanced,
@@ -713,21 +655,23 @@ export class ObcReadoutListItem extends LitElement {
               hintedZeros: this.setpointOptions?.hintedZeros ?? false,
               spaceReserver: this.setpointOptions?.spaceReserver,
               hasDegree: this.hasDegree ?? false,
-              extraClasses: setpointExtraClasses,
+              touching: this.setpointTouching,
+              hidePhase: setpointHidePhase,
               dataQuality: this.setpointOptions?.dataQuality,
               alert: this.setpointOptions?.alert,
             })
           : nothing}
         ${this.hasValue
           ? this.renderBlock({
-              role: BlockRole.value,
+              variant: ReadoutBlockVariant.value,
               value: this.value,
-              size: this.valueSize,
+              valueSize: this.valueSize,
               enhanced: this.rowEnhanced,
               weight: this.valueWeight,
               hintedZeros: this.valueOptions?.hintedZeros ?? false,
               spaceReserver: this.valueOptions?.spaceReserver,
               off: this.off,
+              hasIcon: this.valueOptions?.hasIcon ?? false,
               dataQuality: this.valueOptions?.dataQuality,
               alert: this.valueOptions?.alert,
             })
