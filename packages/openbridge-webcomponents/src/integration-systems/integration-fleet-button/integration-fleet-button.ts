@@ -12,6 +12,9 @@ export interface IntegrationFleetButtonReadout {
   unit: string;
 }
 
+/**
+ * @experimental
+ */
 @customElement('obc-integration-fleet-button')
 export class ObcIntegrationFleetButton extends LitElement {
   @property({type: Boolean}) selected: boolean = false;

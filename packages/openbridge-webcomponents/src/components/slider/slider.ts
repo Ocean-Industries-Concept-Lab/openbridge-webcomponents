@@ -129,6 +129,7 @@ export type ObcSliderChangeEvent = CustomEvent<number>;
  * @attr hugcontainer - If set, the slider will not have any spacing between the slider icons and the container
  * @fires value {ObcSliderValueEvent} - Fired when the value is changed
  * @fires change {ObcSliderChangeEvent} - Fired when user interaction completes and value has changed
+ * @stable
  */
 @customElement('obc-slider')
 export class ObcSlider extends LitElement {

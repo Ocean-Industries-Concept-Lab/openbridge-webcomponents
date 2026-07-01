@@ -3,6 +3,9 @@ import {property} from 'lit/decorators.js';
 import compentStyle from './valve-analog-three-way-icon.css?inline';
 import {customElement} from '../../decorator.js';
 
+/**
+ * @stable
+ */
 @customElement('obc-valve-analog-three-way-icon')
 export class ObcValveAnalogThreeWayIcon extends LitElement {
   @property({type: Number}) value: number = 0;

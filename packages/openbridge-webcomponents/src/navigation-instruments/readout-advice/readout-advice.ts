@@ -56,6 +56,7 @@ export enum ReadoutAdviceState {
  * - `icon`: Replaces the default advice marker icon.
  *
  * @slot icon - Replaces the default advice marker icon.
+ * @deprecated
  */
 @customElement('obc-readout-advice')
 export class ObcReadoutAdvice extends LitElement {

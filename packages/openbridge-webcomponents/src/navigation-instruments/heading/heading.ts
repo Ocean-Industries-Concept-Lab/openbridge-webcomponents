@@ -21,6 +21,9 @@ export enum HeadingPriorityElement {
   cog = 'cog',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-heading')
 export class ObcHeading extends LitElement {
   @property({type: Number}) heading = 0;

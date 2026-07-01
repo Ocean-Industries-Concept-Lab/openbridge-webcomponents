@@ -116,6 +116,7 @@ export interface TabData {
  * @fires tab-selected {CustomEvent<{tab: TabData, id: string, index: number}>} Fired when a tab is selected.
  * @fires tab-closed {CustomEvent<{tab: TabData, id: string, index: number}>} Fired when a tab's close button is clicked.
  * @fires add-new-tab {CustomEvent<void>} Fired when the "add new tab" button is clicked.
+ * @stable
  */
 @customElement('obc-tab-row')
 export class ObcTabRow extends LitElement {

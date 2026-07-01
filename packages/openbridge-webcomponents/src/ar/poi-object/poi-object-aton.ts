@@ -28,6 +28,9 @@ export enum ObcPoiObjectAtonStyle {
 
 export {ObcPoiObjectState as ObcPoiObjectAtonState};
 
+/**
+ * @experimental
+ */
 @customElement('obc-poi-object-aton')
 export class ObcPoiObjectAton extends AbstractPoiObject {
   @property({type: String}) type: ObcPoiObjectAtonType =

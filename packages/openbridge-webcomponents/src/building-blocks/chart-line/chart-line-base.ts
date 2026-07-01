@@ -290,6 +290,7 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
  * @property {boolean} showDebugOverlay - Development mode: show visual debug overlay with dimension guides. Shows blue border around canvas (axis area) and red border around chart grid (data area). Default: `false`.
  *
  * @ignore This is an abstract base class. Use concrete implementations like ObcLineGraph or ObcAreaGraph instead.
+ * @experimental
  */
 export class ObcChartLineBase extends LitElement {
   /** Simple single-series data (array of {label, value}). */

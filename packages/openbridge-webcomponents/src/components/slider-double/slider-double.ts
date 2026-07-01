@@ -132,6 +132,7 @@ export type ObcSliderDoubleChangeEvent = CustomEvent<{
  * @slot right-readout - Custom content for the right (high) readout label (rendered when `showRightReadout` is true)
  * @fires value {ObcSliderDoubleValueEvent} - Fires when the value is changed
  * @fires change {ObcSliderDoubleChangeEvent} - Fires when user interaction completes
+ * @stable
  */
 @customElement('obc-slider-double')
 export class ObcSliderDouble extends LitElement {

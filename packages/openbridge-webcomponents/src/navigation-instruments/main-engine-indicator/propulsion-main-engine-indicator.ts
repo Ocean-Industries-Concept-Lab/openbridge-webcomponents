@@ -85,6 +85,7 @@ let nextFrameClipId = 0;
  * ## Usage Guidelines
  *
  * Use when the larger `obc-main-engine` is too dense and only a compact visual summary of speed and thrust is needed. Use `obc-main-engine` when setpoints or the larger scale treatment are required.
+ * @stable
  */
 @customElement('obc-main-engine-indicator')
 export class ObcMainEngineIndicator extends LitElement {

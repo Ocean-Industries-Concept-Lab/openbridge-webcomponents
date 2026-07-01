@@ -47,6 +47,7 @@ export enum IntegrationButtonType {
  * @property {boolean} dividerRight - Shows a right divider to separate from adjacent buttons.
  * @property {IntegrationButtonVariant} variant - Visual variant (`normal` or `flat`).
  * @property {IntegrationButtonType} type - Layout type (`hug`, `regular`, or `rich`).
+ * @experimental
  */
 @customElement('obc-integration-button')
 export class ObcIntegrationButton extends LitElement {

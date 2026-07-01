@@ -1,3 +1,7 @@
+/**
+ * @module External Scale
+ * @experimental
+ */
 import {SVGTemplateResult, nothing, svg} from 'lit';
 import {
   InstrumentState,

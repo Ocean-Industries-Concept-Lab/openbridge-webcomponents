@@ -134,6 +134,7 @@ export enum PoiFitMode {
  *
  * @slot media - Video or image element. Sets the projection source dimensions.
  * @slot stack - `obc-poi-layer-stack` containing the layers for target placement.
+ * @experimental
  */
 @customElement('obc-poi-controller')
 export class ObcPoiController extends LitElement {

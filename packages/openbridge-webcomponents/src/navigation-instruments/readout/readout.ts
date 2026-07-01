@@ -111,6 +111,7 @@ export {ReadoutSourceType};
  * @slot unit - Replaces the unit content.
  * @slot source - Replaces the source row content.
  * @slot src-picker-content - Provides the source picker context menu content.
+ * @experimental
  */
 @customElement('obc-readout')
 export class ObcReadout extends LitElement {

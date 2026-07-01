@@ -86,6 +86,7 @@ import {
  * @fires action-click {CustomEvent<void>} When the primary action button is clicked.
  * @fires action2-click {CustomEvent<void>} When the secondary action button is clicked.
  * @fires dismiss-click {CustomEvent<void>} When the advice message is dismissed.
+ * @beta
  */
 @customElement('obc-advice-floating-item')
 export class ObcAdviceFloatingItem extends LitElement {

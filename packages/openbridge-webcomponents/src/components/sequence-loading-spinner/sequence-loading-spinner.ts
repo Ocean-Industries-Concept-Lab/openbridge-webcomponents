@@ -62,6 +62,7 @@ export enum SequenceLoadingSpinnerProgressionType {
  *   progress-percent="25"
  * ></obc-sequence-loading-spinner>
  * ```
+ * @experimental
  */
 @customElement('obc-sequence-loading-spinner')
 export class ObcSequenceLoadingSpinner extends LitElement {

@@ -3,6 +3,9 @@ import {customElement} from '../../decorator.js';
 import compentStyle from './integration-tabs.css?inline';
 import {property} from 'lit/decorators.js';
 
+/**
+ * @experimental
+ */
 @customElement('obc-integration-tabs')
 export class ObcIntegrationTabs extends LitElement {
   @property({type: Boolean}) selected = false;

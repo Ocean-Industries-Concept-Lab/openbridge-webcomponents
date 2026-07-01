@@ -59,6 +59,7 @@ export enum WindPropulsionPriorityElement {
  * - For a full-circle compass, use `<obc-compass>` instead.
  *
  * @fires None
+ * @beta
  */
 @customElement('obc-wind-propulsion')
 export class ObcWindPropulsion extends LitElement {

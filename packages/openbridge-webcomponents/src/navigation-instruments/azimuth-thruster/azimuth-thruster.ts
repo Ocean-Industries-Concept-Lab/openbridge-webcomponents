@@ -22,6 +22,9 @@ function mapAngle0to360(angle: number): number {
   }
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-azimuth-thruster')
 export class ObcAzimuthThruster extends LitElement {
   private _thrustSetpointId = `azimuth-thrust-sp-${Math.random().toString(36).slice(2, 9)}`;

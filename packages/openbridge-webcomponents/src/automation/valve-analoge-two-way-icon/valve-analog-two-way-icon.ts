@@ -4,6 +4,9 @@ import compentStyle from './valve-analog-two-way-icon.css?inline';
 import {customElement} from '../../decorator.js';
 import '../../icons/icon-twoway-analog-closed.js';
 
+/**
+ * @stable
+ */
 @customElement('obc-valve-analog-two-way-icon')
 export class ObcValveAnalogTwoWayIcon extends LitElement {
   /** @availableWhen closed==false */

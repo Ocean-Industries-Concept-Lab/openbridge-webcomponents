@@ -97,6 +97,7 @@ function normalizeAngle(a: number): number {
  * - For a full‑circle compass, use `<obc-compass>` instead.
  *
  * @fires None
+ * @stable
  */
 @customElement('obc-compass-sector')
 export class ObcCompassSector extends LitElement {

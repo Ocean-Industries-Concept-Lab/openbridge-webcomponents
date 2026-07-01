@@ -80,6 +80,7 @@ export enum CircularProgressState {
  * ```
  *
  * @slot icon - Centered icon for the circular `indeterminate` and `icon` states.
+ * @stable
  */
 @customElement('obc-progress-bar')
 export class ObcProgressBar extends LitElement {

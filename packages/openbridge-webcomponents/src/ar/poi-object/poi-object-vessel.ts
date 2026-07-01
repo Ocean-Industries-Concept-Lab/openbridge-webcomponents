@@ -86,6 +86,7 @@ export enum ObcPoiObjectVesselState {
  * @slot - Main vessel icon/content.
  * @slot turn-indicator - Optional turn indicator content used by `speed-rot`.
  * @slot speed-indicator - Optional speed indicator content used by `speed-rot`.
+ * @experimental
  */
 @customElement('obc-poi-object-vessel')
 export class ObcPoiObjectVessel extends AbstractPoiObject {

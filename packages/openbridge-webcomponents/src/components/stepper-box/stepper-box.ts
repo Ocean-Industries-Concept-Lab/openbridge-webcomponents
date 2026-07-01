@@ -63,6 +63,7 @@ export enum ObcStepperBoxType {
  * @fires up {CustomEvent<{value: number}>} Fired when the increment (right or up) button is clicked
  * @fires input {CustomEvent<{value: string}>} Fired when the user types in the number input field
  * @fires change {CustomEvent<{value: number | null}>} Fired when the numeric value changes from any source
+ * @stable
  */
 @customElement('obc-stepper-box')
 export class ObcStepperBox extends LitElement {

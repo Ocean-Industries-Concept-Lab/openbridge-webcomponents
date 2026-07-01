@@ -30,6 +30,9 @@ export enum MosfetAlternativeIcon {
   mosfetPtype4 = 'mosfetPtype4',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-mosfet')
 export class ObcMosfet extends ObcAbstractAutomationButtonSquared {
   @property({type: String}) alternativeIcon: MosfetAlternativeIcon =

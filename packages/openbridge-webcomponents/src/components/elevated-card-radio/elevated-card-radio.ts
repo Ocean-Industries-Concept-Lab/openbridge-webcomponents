@@ -85,6 +85,7 @@ import {ObcRadio} from '../radio/radio.js';
  * @slot leading-icon - Contains the radio button input.
  * @slot label - Displays the label text for the radio option.
  * @fires change - Fired when the radio is changed.
+ * @stable
  */
 @customElement('obc-elevated-card-radio')
 export class ObcElevatedCardRadio extends LitElement {

@@ -99,6 +99,7 @@ const mapping = {
  * <obc-alert-icon .alarmType=${alarm.type} .alarmStatus=${alarm.status}></obc-alert-icon>
  * ```
  *
+ * @stable
  */
 @customElement('obc-alert-icon')
 export class ObcAlertIcon extends LitElement {

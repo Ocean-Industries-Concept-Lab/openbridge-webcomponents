@@ -6,6 +6,9 @@ import '../../components/scrollbar/scrollbar.js';
 import {ObcScrollbar} from '../../components/scrollbar/scrollbar.js';
 import {ObcAlertMenuItem} from '../../components/alert-menu-item/alert-menu-item.js';
 
+/**
+ * @stable
+ */
 @customElement('obc-alert-list')
 export class ObcAlertList extends LitElement {
   @property({attribute: false}) filter: (item: HTMLElement) => boolean = () =>

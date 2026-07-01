@@ -12,6 +12,9 @@ export enum TransformerAlternativeIcon {
   transformer02 = 'transformer02',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-transformer')
 export class ObcTransformer extends ObcAbstractAutomationButtonSquared {
   @property({type: String}) alternativeIcon: TransformerAlternativeIcon =

@@ -111,6 +111,7 @@ export enum ObcAlertButtonType {
  * @slot - No content slots. All content is provided via properties.
  * @fires click-alert {CustomEvent<void>} Fired when the main alert button is clicked.
  * @fires click-silence {CustomEvent<void>} Fired when the silence button is clicked.
+ * @stable
  */
 @customElement('obc-alert-button')
 export class ObcAlertButton extends LitElement {

@@ -47,6 +47,9 @@ export enum SequenceVariant {
   toolbarPrev = 'toolbar-prev',
 }
 
+/**
+ * @beta
+ */
 @customElement('obc-sequence-step')
 /**
  * `<obc-sequence-step>` renders the visual node of a sequence diagram.

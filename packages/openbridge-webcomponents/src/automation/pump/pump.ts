@@ -7,6 +7,9 @@ import '../../icons/icon-pump-on-vertical.js';
 import {ObcAbstractAutomationButtonMotorized} from '../automation-button/abstract-automation-button-motorized.js';
 import {customElement} from '../../decorator.js';
 
+/**
+ * @stable
+ */
 @customElement('obc-pump')
 export class ObcPump extends ObcAbstractAutomationButtonMotorized {
   @property({type: Boolean}) vertical: boolean = false;

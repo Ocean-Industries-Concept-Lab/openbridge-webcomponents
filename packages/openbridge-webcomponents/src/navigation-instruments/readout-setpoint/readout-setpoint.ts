@@ -86,6 +86,7 @@ type ReadoutValueRenderModel = {
  *
  * @slot icon - Replaces the default leading marker icon.
  * @slot value - Replaces the formatted value content for `variant="value"`.
+ * @deprecated
  */
 @customElement('obc-readout-setpoint')
 export class ObcReadoutSetpoint extends LitElement {

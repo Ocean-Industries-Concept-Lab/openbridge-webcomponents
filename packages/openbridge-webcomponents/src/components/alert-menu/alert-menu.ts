@@ -107,6 +107,9 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
  * @fires go-to-alert-list-click {CustomEvent} - Fired when the go to alert list button is clicked
  */
 @localized()
+/**
+ * @stable
+ */
 @customElement('obc-alert-menu')
 export class ObcAlertMenu extends LitElement {
   /**

@@ -11,6 +11,9 @@ export enum ObcChatMessagePosition {
   Single = 'single',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-chat-message')
 export class ObcChatMessage extends LitElement {
   /** @availableWhen showName==true */

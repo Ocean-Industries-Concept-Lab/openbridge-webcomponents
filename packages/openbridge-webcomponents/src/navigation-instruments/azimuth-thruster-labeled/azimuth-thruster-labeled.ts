@@ -19,6 +19,9 @@ export enum AzimuthThrusterLabeledSize {
   large = 'large',
 }
 
+/**
+ * @deprecated
+ */
 @customElement('obc-azimuth-thruster-labeled')
 export class ObcAzimuthThrusterLabeled extends LitElement {
   @property({type: String}) label = '';

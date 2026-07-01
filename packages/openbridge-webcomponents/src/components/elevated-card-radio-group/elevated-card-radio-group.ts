@@ -87,6 +87,7 @@ export type ElevatedCardRadioGroupOption = {
  *
  * @slot - No named slots. All content is provided via the `options` property.
  * @fires change {ObcElevatedCardRadioGroupChangeEvent} - Dispatched when the value changes
+ * @stable
  */
 @customElement('obc-elevated-card-radio-group')
 export class ObcElevatedCardRadioGroup extends LitElement {

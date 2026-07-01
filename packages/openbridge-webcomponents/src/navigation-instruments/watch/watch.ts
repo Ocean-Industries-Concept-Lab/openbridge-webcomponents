@@ -177,6 +177,7 @@ const RADIAL_SETPOINT_INWARD_ADJUST = 4;
  * @property {number} rotDotAnimationFactor - Visual amplification factor applied only to the spinning-dot animation (not to bar extent). Default `18` keeps the legacy visual feel (≈1 rpm at 20°/min).
  * @property {number} rotationsPerMinute - **Deprecated.** Spin speed of the ROT dot ring in rotations per minute. Sign controls direction (positive = clockwise). Use `rateOfTurnDegreesPerMinute` instead.
  * @property {ZoomToFitArcFrame|undefined} arcFrame - Pre-computed zoom-to-fit arc frame. When set, the watch skips its own `computeZoomToFitArcFrame()` call and uses these values directly. Consumer instruments (e.g. rudder, instrument-radial) should compute the frame once and pass it here to avoid redundant computation. If you pass `arcFrame`, you own keeping it in sync with `areas` / `watchCircleType` — obc-watch will NOT recompute it, so a stale frame renders stale geometry.
+ * @experimental
  */
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {

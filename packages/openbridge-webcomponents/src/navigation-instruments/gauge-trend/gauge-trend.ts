@@ -113,6 +113,7 @@ export {FillMode, ScaleType};
  * `setpoint`, `newSetpoint`, `touching`, `atSetpoint`, `autoAtSetpoint`,
  * `autoAtSetpointDeadband`, `setpointAtZeroDeadband`, `setpointOverride`.
  * See {@link SetpointMixinInterface} for full documentation.
+ * @stable
  */
 @customElement('obc-gauge-trend')
 export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {

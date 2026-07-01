@@ -10,6 +10,9 @@ export enum ThreeWayLineDirection {
   left = 'left',
 }
 
+/**
+ * @deprecated
+ */
 @customElement('obc-three-way-line')
 export class ObcThreeWayLine extends LitElement {
   @property({type: String}) medium: LineMedium = LineMedium.normal;

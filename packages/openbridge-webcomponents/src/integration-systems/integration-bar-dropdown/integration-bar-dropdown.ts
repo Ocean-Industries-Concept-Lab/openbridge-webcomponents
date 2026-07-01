@@ -28,6 +28,7 @@ import {property} from 'lit/decorators.js';
  * @slot status-label-3
  * @slot status-icon-3
  * @slot clock
+ * @experimental
  */
 @customElement('obc-integration-bar-dropdown')
 export class ObcIntegrationBarDropdown extends LitElement {

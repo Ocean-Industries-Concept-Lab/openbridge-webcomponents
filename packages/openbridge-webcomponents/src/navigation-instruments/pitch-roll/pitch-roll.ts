@@ -45,6 +45,9 @@ const CORNER_GAP_PX = 32;
 /** Numerical safety floor when an axis arc has to collapse for clearance. */
 const MIN_ARC_HALF_DEG = 2;
 
+/**
+ * @stable
+ */
 @customElement('obc-pitch-roll')
 export class ObcPitchRoll extends LitElement {
   @property({type: Number}) pitch = 0;

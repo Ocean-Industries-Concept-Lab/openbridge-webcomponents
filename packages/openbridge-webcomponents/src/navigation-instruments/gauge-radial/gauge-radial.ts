@@ -117,6 +117,7 @@ export interface GaugeRadialAdvice {
  *
  * @element obc-gauge-radial
  * @typedef {import('./gauge-radial.js').GaugeRadialAdvice} GaugeRadialAdvice
+ * @stable
  */
 @customElement('obc-gauge-radial')
 export class ObcGaugeRadial extends SetpointMixin(LitElement) {

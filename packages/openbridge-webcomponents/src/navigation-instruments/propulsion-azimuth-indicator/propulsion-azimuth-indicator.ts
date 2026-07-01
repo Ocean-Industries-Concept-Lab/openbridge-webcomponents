@@ -100,6 +100,7 @@ function topCircleSideIntersection(
  * ## Usage Guidelines
  *
  * Use for a small combined direction and magnitude cue next to numeric readouts. For a full azimuth instrument with scales and setpoints, use **`obc-azimuth-thruster`** instead.
+ * @stable
  */
 @customElement('obc-propulsion-azimuth-indicator')
 export class ObcPropulsionAzimuthIndicator extends LitElement {

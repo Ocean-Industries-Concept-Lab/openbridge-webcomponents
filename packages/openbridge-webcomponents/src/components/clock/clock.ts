@@ -44,6 +44,7 @@ import {classMap} from 'lit/directives/class-map.js';
  * ---
  *
  * @slot - (No named slots) – All content is rendered by the component; no slots are used.
+ * @stable
  */
 @customElement('obc-clock')
 export class ObcClock extends LitElement {

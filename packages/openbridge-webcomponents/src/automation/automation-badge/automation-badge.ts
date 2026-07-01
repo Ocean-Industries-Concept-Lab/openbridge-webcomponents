@@ -50,6 +50,9 @@ const ALERT_BADGE_TYPES: ObcAutomationBadgeType[] = [
   ObcAutomationBadgeType.LevelDiagnostic,
 ];
 
+/**
+ * @stable
+ */
 @customElement('obc-automation-badge')
 export class ObcAutomationBadge extends LitElement {
   @property({type: String}) mode: ObcAutomationBadgeMode =

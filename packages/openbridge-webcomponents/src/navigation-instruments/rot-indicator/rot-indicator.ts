@@ -9,6 +9,9 @@ export enum RotIndicatorType {
   linear = 'linear',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-rot-indicator')
 export class ObcRotIndicator extends LitElement {
   @property({type: String})

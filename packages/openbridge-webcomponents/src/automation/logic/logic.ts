@@ -24,6 +24,9 @@ export enum LogicAlternativeIcon {
   logic06 = 'logic06',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-logic')
 export class ObcLogic extends ObcAbstractAutomationButtonSquared {
   @property({type: String}) alternativeIcon: LogicAlternativeIcon =

@@ -73,6 +73,7 @@ export enum ObcPoiCardHeaderVariant {
  * @slot leading-icon - Optional icon for the regular variant.
  * @slot poi-icon - Optional icon for the detailed variant POI target.
  * @fires close-click {CustomEvent<void>} Fired when the close button is pressed.
+ * @experimental
  */
 @customElement('obc-poi-card-header')
 export class ObcPoiCardHeader extends LitElement {

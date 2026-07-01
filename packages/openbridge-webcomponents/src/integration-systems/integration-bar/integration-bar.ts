@@ -63,6 +63,7 @@ import {classMap} from 'lit/directives/class-map.js';
  * @fires system-button-clicked - Fired when the system button is clicked
  * @fires dimming-button-clicked - Fired when the dimming button is clicked
  * @fires user-button-clicked - Fired when the user button is clicked
+ * @experimental
  */
 @customElement('obc-integration-bar')
 export class ObcIntegrationBar extends LitElement {

@@ -96,6 +96,9 @@ export enum AutomationButtonPositioning {
   button = 'button',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-automation-button')
 export class ObcAutomationButton extends LitElement {
   @property({type: String}) variant: AutomationButtonVariant =

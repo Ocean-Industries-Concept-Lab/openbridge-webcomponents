@@ -133,6 +133,7 @@ export interface TreeNavigationItemAlerts {
  * @slot icon - Leading icon slot (shown when `hasLeadingIcon` is true).
  * @fires expand-toggle {CustomEvent<boolean>} Fired when an expandable row is activated; detail is the next `expanded` value.
  * @fires click {CustomEvent<void>} Fired when the row is activated.
+ * @beta
  */
 @customElement('obc-tree-navigation-item')
 export class ObcTreeNavigationItem extends LitElement {

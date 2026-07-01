@@ -53,6 +53,7 @@ import '../../icons/icon-chevron-down-google.js';
  *
  * @slot expanded-content - Content displayed when the item is expanded and `showContent` is true.
  * @fires accordion-item-toggle {CustomEvent<{open: boolean, title: string}>} Fired when the item is toggled open or closed.
+ * @stable
  */
 @customElement('obc-accordion-item')
 export class ObcAccordionItem extends LitElement {

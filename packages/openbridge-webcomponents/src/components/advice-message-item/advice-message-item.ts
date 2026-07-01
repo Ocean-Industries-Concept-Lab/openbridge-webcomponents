@@ -115,6 +115,7 @@ export enum ObcAdviceMessageItemSize {
  * @slot empty - Text to display in the empty/inactive state (when `type="inactive"` or `empty` is true)
  * @fires message-click {CustomEvent<void>} When the main message area is clicked
  * @fires action-click {CustomEvent<void>} When the action button (text or icon) is clicked
+ * @beta
  */
 @customElement('obc-advice-message-item')
 export class ObcAdviceMessageItem extends LitElement {

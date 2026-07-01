@@ -37,6 +37,7 @@ import {customElement} from '../../decorator.js';
  *
  * /**
  * @slot - (none) – This component does not use slots; all content is rendered internally.
+ * @beta
  */
 @customElement('obc-audio-output')
 export class ObcAudioOutput extends LitElement {

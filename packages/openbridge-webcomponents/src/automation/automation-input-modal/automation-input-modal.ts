@@ -2,6 +2,9 @@ import {customElement} from '../../decorator.js';
 import {LitElement, html, unsafeCSS} from 'lit';
 import compentStyle from './automation-input-modal.css?inline';
 
+/**
+ * @experimental
+ */
 @customElement('obc-automation-input-modal')
 export class ObcAutomationInputModal extends LitElement {
   override render() {
