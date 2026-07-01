@@ -5,9 +5,16 @@ import './readout-list.js';
 import {
   ReadoutListItemSize,
   ReadoutListItemPriority,
+  ReadoutListItemDataQuality,
   type ReadoutValueOptions,
 } from '../readout-list-item/readout-list-item.js';
 import '../readout-list-item/readout-list-item.js';
+import type {AlertFrameConfig} from '../../components/alert-frame/alert-frame.js';
+import {
+  ObcAlertFrameMode,
+  ObcAlertFrameType,
+} from '../../components/alert-frame/alert-frame.js';
+import {AlertType} from '../../types.js';
 
 type ListArgs = {
   showDebugOverlay: boolean;
@@ -23,9 +30,26 @@ type Row = {
   priority?: ReadoutListItemPriority;
   hasSetpoint?: boolean;
   setpoint?: number;
+  hasAdvice?: boolean;
+  advice?: number;
+  off?: boolean;
+  // Row-level and per-block state, so the list stories can smoke-test data
+  // quality + alert frames alongside the auto-alignment.
+  dataQuality?: ReadoutListItemDataQuality;
+  alert?: AlertFrameConfig;
+  valueDataQuality?: ReadoutListItemDataQuality;
+  valueAlert?: AlertFrameConfig;
+  setpointDataQuality?: ReadoutListItemDataQuality;
 };
 
 function renderRow(row: Row) {
+  const valueOptions =
+    row.valueDataQuality || row.valueAlert
+      ? {dataQuality: row.valueDataQuality, alert: row.valueAlert}
+      : undefined;
+  const setpointOptions = row.setpointDataQuality
+    ? {dataQuality: row.setpointDataQuality}
+    : undefined;
   return html`
     <obc-readout-list-item
       .label=${row.label}
@@ -35,8 +59,15 @@ function renderRow(row: Row) {
       .hasDegree=${row.hasDegree ?? false}
       .fractionDigits=${row.fractionDigits ?? 0}
       .priority=${row.priority}
+      .off=${row.off ?? false}
       .hasSetpoint=${row.hasSetpoint ?? false}
       .setpoint=${row.setpoint}
+      .hasAdvice=${row.hasAdvice ?? false}
+      .advice=${row.advice}
+      .dataQuality=${row.dataQuality}
+      .alert=${row.alert ?? false}
+      .valueOptions=${valueOptions}
+      .setpointOptions=${setpointOptions}
     ></obc-readout-list-item>
   `;
 }
@@ -92,6 +123,18 @@ export const Degrees: Story = {
   render: (args) => renderList(DEGREE_ROWS, args.showDebugOverlay),
 };
 
+const WARNING_FRAME: AlertFrameConfig = {
+  status: AlertType.Warning,
+  mode: ObcAlertFrameMode.ackedActive,
+  type: ObcAlertFrameType.Regular,
+};
+const ALARM_FRAME_ICON: AlertFrameConfig = {
+  status: AlertType.Alarm,
+  mode: ObcAlertFrameMode.ackedActive,
+  type: ObcAlertFrameType.SmallSideFlip,
+  showAlertCategoryIcon: true,
+};
+
 export const WithSetpoints: Story = {
   render: (args) =>
     renderList(
@@ -104,6 +147,7 @@ export const WithSetpoints: Story = {
           hasSetpoint: true,
           setpoint: 290,
         },
+        // invalid setpoint chip — auto-aligned alongside the others
         {
           label: 'Speed',
           value: 8,
@@ -111,8 +155,28 @@ export const WithSetpoints: Story = {
           fractionDigits: 1,
           hasSetpoint: true,
           setpoint: 12,
+          setpointDataQuality: ReadoutListItemDataQuality.invalid,
         },
-        {label: 'Depth', value: 1013, unit: 'm'},
+        // advice reference
+        {label: 'Depth', value: 1013, unit: 'm', hasAdvice: true, advice: 1010},
+        // per-value alert frame — wraps value + unit
+        {label: 'Fuel', value: 42, unit: '%', valueAlert: WARNING_FRAME},
+        // whole row invalid + null value (dash)
+        {
+          label: 'Wind',
+          value: null,
+          unit: 'kn',
+          dataQuality: ReadoutListItemDataQuality.invalid,
+        },
+        // whole row low-integrity + row-level alert frame with a badge-icon flap
+        {
+          label: 'Course',
+          value: 120,
+          unit: 'T',
+          hasDegree: true,
+          dataQuality: ReadoutListItemDataQuality.lowIntegrity,
+          alert: ALARM_FRAME_ICON,
+        },
       ],
       args.showDebugOverlay
     ),
@@ -140,13 +204,47 @@ export const TestDynamicRow: Story = {
   },
 };
 
+// Richer starting set for the interactive demo: a plain degree row, an invalid
+// setpoint, an advice reference, a per-value alert frame, a null/invalid row and
+// a low-integrity row with a row-level alert frame — so the manual add/remove /
+// re-align flow is exercised against the full range of state.
+const MANUAL_ROWS: Row[] = [
+  {label: 'Heading', value: 287, unit: 'T', hasDegree: true},
+  {
+    label: 'Speed',
+    value: 8,
+    unit: 'kn',
+    fractionDigits: 1,
+    hasSetpoint: true,
+    setpoint: 12,
+    setpointDataQuality: ReadoutListItemDataQuality.invalid,
+  },
+  {label: 'Depth', value: 1013, unit: 'm', hasAdvice: true, advice: 1010},
+  {label: 'Fuel', value: 42, unit: '%', valueAlert: WARNING_FRAME},
+  {
+    label: 'Wind',
+    value: null,
+    unit: 'kn',
+    dataQuality: ReadoutListItemDataQuality.invalid,
+  },
+  {
+    label: 'Course',
+    value: 120,
+    unit: 'T',
+    hasDegree: true,
+    dataQuality: ReadoutListItemDataQuality.lowIntegrity,
+    alert: ALARM_FRAME_ICON,
+  },
+];
+
 /**
  * **Manual (Interactive)** — the rows are slotted children, so they cannot be
  * driven by Storybook controls. Use the buttons to add / remove rows (a
  * structural change the list re-aligns automatically) and to change the first
  * row's value / unit (a property-only change, so it calls the public
  * {@link ObcReadoutList.align} method). The debug overlay shows the reserved
- * column widths reacting to each change.
+ * column widths reacting to each change. The starting rows include data-quality
+ * and alert-frame variations for a quick visual smoke test.
  */
 export const Manual: Story = {
   name: 'Manual (Interactive)',
@@ -168,22 +266,7 @@ export const Manual: Story = {
         id="manual-list"
         .showDebugOverlay=${args.showDebugOverlay}
       >
-        <obc-readout-list-item
-          .label=${'Heading'}
-          .unit=${'T'}
-          .value=${287}
-          .hasDegree=${true}
-        ></obc-readout-list-item>
-        <obc-readout-list-item
-          .label=${'Speed'}
-          .unit=${'kn'}
-          .value=${18}
-        ></obc-readout-list-item>
-        <obc-readout-list-item
-          .label=${'Depth'}
-          .unit=${'m'}
-          .value=${124}
-        ></obc-readout-list-item>
+        ${MANUAL_ROWS.map(renderRow)}
       </obc-readout-list>
       <div style="display: flex; gap: 8px; flex-wrap: wrap;">
         <button id="m-add" style="padding: 6px 12px; cursor: pointer;">
@@ -203,7 +286,7 @@ export const Manual: Story = {
         id="m-status"
         style="font: 12px/1.4 monospace; color: var(--element-neutral-color, #666);"
       >
-        3 rows
+        ${MANUAL_ROWS.length} rows
       </div>
     </div>
   `,

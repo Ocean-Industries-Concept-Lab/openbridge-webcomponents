@@ -22,7 +22,11 @@ import {
 import {
   type AlertFrameConfig,
   wrapWithAlertFrame,
+  ObcAlertFrameType,
+  ObcAlertFrameThickness,
+  ObcAlertFrameMode,
 } from '../../components/alert-frame/alert-frame.js';
+import {AlertType} from '../../types.js';
 
 // The value weight maps straight to obc-textbox's font weights (regular /
 // semibold / bold). Re-exported so consumers can set `valueOptions.weight`
@@ -96,6 +100,14 @@ export interface ReadoutBlockState {
   alert?: false | AlertFrameConfig;
 }
 
+/**
+ * Per-value options. Unlike setpoint/advice, the value's `alert` frame AND
+ * `dataQuality` chip wrap the whole reading — value (+ value-icon) + degree +
+ * trailing unit — rather than the value alone. The alert frame is a pure overlay
+ * (4px/2px padding, stroke centred on that line); the data-quality chip reuses
+ * the block chip's `outline` styling with no extra padding. Neither shifts
+ * content or changes the row height / column alignment (Figma 58:10120).
+ */
 export interface ReadoutValueOptions extends ReadoutBlockState {
   /** Render the unfilled leading positions as muted zeroes (requires `maxDigits`). */
   hintedZeros?: boolean;
@@ -661,6 +673,34 @@ export class ObcReadoutListItem extends LitElement {
               alert: this.setpointOptions?.alert,
             })
           : nothing}
+        ${this.renderValueReading()}
+      </div>
+    `;
+  }
+
+  /**
+   * The value reading: the value block, its degree column and the trailing unit
+   * grouped in one relatively-positioned wrapper so the value alert frame AND the
+   * value data-quality chip can wrap value + degree + unit together (Figma
+   * 58:10120).
+   *
+   * Moving the degree / unit into this wrapper (the new last child of
+   * `.value-cluster`) preserves every existing gap, so the underlying content
+   * stays column-aligned with or without the frame / chip. Both the value alert
+   * (overlay) and the value data-quality chip are applied here — NOT inside
+   * `obc-readout-block` — so they extend over the unit; setpoint/advice keep their
+   * own block-level frame and chip. The chip uses `outline` (not `border`), so it
+   * never shifts the value's width / column alignment.
+   */
+  private renderValueReading(): TemplateResult {
+    return html`
+      <div
+        class=${classMap({
+          'value-reading': true,
+          ...this.dataQualityClasses(this.valueOptions?.dataQuality),
+        })}
+        part="value-reading"
+      >
         ${this.hasValue
           ? this.renderBlock({
               variant: ReadoutBlockVariant.value,
@@ -672,10 +712,52 @@ export class ObcReadoutListItem extends LitElement {
               spaceReserver: this.valueOptions?.spaceReserver,
               off: this.off,
               hasIcon: this.valueOptions?.hasIcon ?? false,
-              dataQuality: this.valueOptions?.dataQuality,
-              alert: this.valueOptions?.alert,
             })
           : nothing}
+        ${this.renderValueUnitGap()}
+        <div class="unit-area" part="unit-area">
+          ${this.renderTrailingUnit()} ${this.renderDegreeSpacer()}
+        </div>
+        ${this.renderValueAlertOverlay()}
+      </div>
+    `;
+  }
+
+  /**
+   * The value alert frame, drawn as a pure overlay around the value reading
+   * (value + degree + unit). It reserves no space — the `obc-alert-frame` sits in
+   * an absolutely-positioned box offset outward (see `.value-alert-overlay` in
+   * the CSS) so its stroke is centred on the 4px/2px padding line and toggling it
+   * never shifts content or row height. Renders only when `valueOptions.alert` is
+   * a config object.
+   */
+  private renderValueAlertOverlay(): TemplateResult | typeof nothing {
+    const alert = this.valueOptions?.alert;
+    if (typeof alert !== 'object' || alert === null) {
+      return nothing;
+    }
+    const thickness = alert.thickness ?? ObcAlertFrameThickness.Small;
+    return html`
+      <div
+        class=${classMap({
+          'value-alert-overlay': true,
+          // The outward offset is thickness-dependent (see the CSS): large frames
+          // draw a wider outline, so the box must sit further out to stay centred.
+          'thickness-large': thickness === ObcAlertFrameThickness.Large,
+        })}
+        aria-hidden="true"
+      >
+        <obc-alert-frame
+          part="value-alert-frame"
+          .type=${alert.type ?? ObcAlertFrameType.Regular}
+          .thickness=${thickness}
+          .status=${alert.status ?? AlertType.Alarm}
+          .mode=${alert.mode ?? ObcAlertFrameMode.ackedActive}
+          .showIcon=${alert.showIcon ?? false}
+          .showAlertCategoryIcon=${alert.showAlertCategoryIcon ?? true}
+          .wrapContent=${false}
+          .fullWidth=${false}
+        ></obc-alert-frame>
       </div>
     `;
   }
@@ -753,10 +835,7 @@ export class ObcReadoutListItem extends LitElement {
       <div class="content" part="content">
         ${this.renderLabelContainer()}
         <div class="value-area" part="value-area">
-          ${this.renderValueCluster()} ${this.renderValueUnitGap()}
-          <div class="unit-area" part="unit-area">
-            ${this.renderTrailingUnit()} ${this.renderDegreeSpacer()}
-          </div>
+          ${this.renderValueCluster()}
         </div>
         ${this.renderTrailingSource()}
       </div>

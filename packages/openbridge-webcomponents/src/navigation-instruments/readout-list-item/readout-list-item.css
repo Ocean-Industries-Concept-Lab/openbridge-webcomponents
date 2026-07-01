@@ -189,6 +189,80 @@ obc-readout-block {
   align-items: flex-end;
 }
 
+/* ---------- Value reading (value + degree + unit) ----------
+ * Groups the value block, its degree column and the trailing unit so the value
+ * alert frame can wrap all three. Layout-neutral: it adds no gap, so the content
+ * sits exactly where it did when these were siblings of `.value-area`. */
+.value-reading {
+  position: relative;
+  display: inline-flex;
+  align-items: flex-end;
+}
+
+/* ---------- Value data quality (low-integrity / invalid) ----------
+ * The value's per-block data-quality chip, applied to the whole reading (value +
+ * degree + unit) rather than hugging the value alone — the same logic as the
+ * value alert frame, minus its custom padding. Same look as the block/source
+ * chip (1px outline, check radius, alert-quality colours). Uses `outline` (not
+ * `border`) so it never shifts the value's width / cross-row column alignment.
+ * Setpoint/advice keep their own in-block chip; the row-level data quality on
+ * `.surface` is unchanged. */
+.value-reading.data-low-integrity,
+.value-reading.data-invalid {
+  outline: 1px solid;
+  border-radius: var(--global-border-radius-border-radius-check);
+}
+.value-reading.data-low-integrity {
+  background: var(--alert-low-integrity-background-color);
+  outline-color: var(--alert-low-integrity-border-color);
+}
+.value-reading.data-invalid {
+  background: var(--alert-invalid-background-color);
+  outline-color: var(--alert-invalid-border-color);
+}
+
+/* ---------- Value alert overlay ----------
+ * A pure overlay around the value reading: it reserves no space, so toggling the
+ * frame never changes the row height or breaks cross-row column alignment. The
+ * box is offset outward by (padding − stroke/2) on each axis so the alert-frame's
+ * outline (drawn outside its box) lands CENTRED on the 4px/2px padding line
+ * (half inside / half outside), matching Figma 58:10120. */
+.value-alert-overlay {
+  --_obc-readout-value-frame-padding-horizontal: 4px;
+  --_obc-readout-value-frame-padding-vertical: 2px;
+  /* Must match obc-alert-frame's ACTUAL outline width so the stroke stays centred
+     on the 4px/2px line. `thickness-small` is hard-coded to 2px in
+     alert-frame.css (it does NOT use the themed stroke-width token), so use a
+     literal 2px here; `thickness-large` is handled below. */
+  --_obc-readout-value-frame-stroke: 2px;
+  position: absolute;
+  inset-inline: calc(
+    -1 *
+      (
+        var(--_obc-readout-value-frame-padding-horizontal) -
+          var(--_obc-readout-value-frame-stroke) / 2
+      )
+  );
+  inset-block: calc(
+    -1 *
+      (
+        var(--_obc-readout-value-frame-padding-vertical) -
+          var(--_obc-readout-value-frame-stroke) / 2
+      )
+  );
+  /* Display-only: never intercept clicks on a clickable row. */
+  pointer-events: none;
+}
+
+/* thickness=large: obc-alert-frame's large outline uses the alert-frame border
+   weight token, so the overlay's outward offset must use the same width to keep
+   the stroke centred on the padding line. */
+.value-alert-overlay.thickness-large {
+  --_obc-readout-value-frame-stroke: var(
+    --global-size-spacing-border-weight-alertframe
+  );
+}
+
 /* The readout building blocks (advice / setpoint / value) now render inside
    `obc-readout-block`; their layout / colour / hinted-zero / data-quality CSS
    lives there. The list-item only bridges the public colour vars (see top) and
