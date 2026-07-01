@@ -62,31 +62,17 @@ export const vesselStyles = css`
   }
 
   .both-views {
+    transform: scale(0.69);
+    transform-origin: center;
+
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
-  .side-view,
   .top-down-view {
-    width: 100%;
-    flex: 0 0 auto;
-  }
-
-  .side-view {
-    height: 290px;
-  }
-
-  .side-view div {
-    transform: translateY(-40px);
-  }
-
-  .top-down-view {
-    height: 220px;
-  }
-
-  .top-down-view div {
-    transform: translateY(-115px);
+    margin-left: 60px;
+    background-color: violet;
   }
 `;

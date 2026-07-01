@@ -431,13 +431,9 @@ export class Vessel extends LitElement {
       return TOP_DOWN_VIEW;
     }
 
-    return html`<div class="both-views wrapper">
-      <div class="side-view">
-        <div>${SIDE_VIEW}</div>
-      </div>
-      <div class="top-down-view">
-        <div>${TOP_DOWN_VIEW}</div>
-      </div>
+    return html`<div class="both-views">
+      <div class="side-view">${SIDE_VIEW}</div>
+      <div class="top-down-view">${TOP_DOWN_VIEW}</div>
     </div>`;
   }
 }
