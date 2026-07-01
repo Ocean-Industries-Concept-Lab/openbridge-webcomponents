@@ -86,6 +86,7 @@ export type ObcToggleSwitchInputEvent = CustomEvent<{
  * @slot icon - Leading icon slot (shown when `hasIcon` is true)
  * @fires input - {ObcToggleSwitchInputEvent} Dispatched when the value of the input changes
  * @fires change - Dispatched when the value of the input changes by user interaction
+ * @stable
  */
 @customElement('obc-toggle-switch')
 export class ObcToggleSwitch extends LitElement {

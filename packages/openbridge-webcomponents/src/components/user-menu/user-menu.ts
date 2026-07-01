@@ -108,6 +108,7 @@ export type ObcUserMenuSignedInAction = {
  * @fires sign-out-click
  * @fires signed-in-action-click {CustomEvent<{id: string, label: string}>}
  * @fires recent-user-click {CustomEvent<{initials: string, label: string}>}
+ * @stable
  */
 @customElement('obc-user-menu')
 @localized()

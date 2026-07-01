@@ -102,6 +102,7 @@ export enum ObcFloatingItemLineType {
  * @fires action-click {CustomEvent<void>} Fired when the first action button is clicked.
  * @fires action2-click {CustomEvent<void>} Fired when the second action button is clicked.
  * @fires dismiss-click {CustomEvent<void>} Fired when the close icon is clicked.
+ * @stable
  */
 @customElement('obc-floating-item')
 export class ObcFloatingItem extends LitElement {

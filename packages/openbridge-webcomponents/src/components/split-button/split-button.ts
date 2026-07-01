@@ -97,6 +97,7 @@ export type ObcSplitButtonChangeEvent = CustomEvent<{
  * @slot icon - Leading icon for the primary button (shown when `hasIcon` is true)
  * @fires click {ObcSplitButtonClickEvent} Fired when the primary or dropdown button is clicked.
  * @fires change {ObcSplitButtonChangeEvent} Fired when the dropdown menu selection changes.
+ * @beta
  */
 @customElement('obc-split-button')
 export class ObcSplitButton extends LitElement {

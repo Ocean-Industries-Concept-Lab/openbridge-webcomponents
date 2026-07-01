@@ -172,6 +172,7 @@ export type PolarChartDataItem = {
  * @property {boolean} showDebugOverlay - Show debug overlay for development, default: false
  * @property {number} fixedHeight - Fixed height of the chart in pixels (mandatory, determines chart circumference), default: 320. The chart's circumference is always based on this fixed height to match other radial instruments.
  * @property {boolean} legend - Whether to display the legend below the chart, default: false
+ * @beta
  */
 @customElement('obc-polar-chart')
 export class ObcPolarChart extends LitElement {

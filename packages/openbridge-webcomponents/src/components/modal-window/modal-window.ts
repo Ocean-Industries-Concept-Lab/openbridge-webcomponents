@@ -78,6 +78,7 @@ export enum ObcModalWindowSize {
  * @slot option-label - Slot for the label of the optional action button (shown when `hasOptionalAction` is true)
  * @slot cancel-label - Slot for the label of the cancel button (shown when `hasCancelAction` is true)
  * @slot done-label - Slot for the label of the done button
+ * @stable
  */
 @customElement('obc-modal-window')
 export class ObcModalWindow extends LitElement {

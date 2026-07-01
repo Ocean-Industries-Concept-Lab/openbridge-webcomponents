@@ -149,6 +149,7 @@ export enum ObcTopBarMenuButtonIcon {
  * @fires emergency-brightness-start - Fired when the menu button is held for 500ms. This should increase the brightness of the screen slowly. Used when the screen is too dark.
  * @fires emergency-brightness-stop - Fired when the menu button is released.
  * @fires breadcrumb-click {BreadcrumbClickEvent} - Fired when a breadcrumb item is clicked.
+ * @stable
  */
 @customElement('obc-top-bar')
 export class ObcTopBar extends LitElement {

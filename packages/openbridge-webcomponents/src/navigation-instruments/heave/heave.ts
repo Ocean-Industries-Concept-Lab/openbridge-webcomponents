@@ -11,6 +11,9 @@ import {
 import {AdviceState} from '../watch/advice.js';
 import {Priority} from '../types.js';
 
+/**
+ * @stable
+ */
 @customElement('obc-heave')
 export class ObcHeave extends LitElement {
   @property({type: Number}) heave = 0;

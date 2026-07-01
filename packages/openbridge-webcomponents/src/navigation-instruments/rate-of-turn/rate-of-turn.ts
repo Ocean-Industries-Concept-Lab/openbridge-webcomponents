@@ -41,6 +41,7 @@ export {RotType, RotPosition};
  *   (e.g. `triple` for compass contexts).
  *
  * @element obc-rate-of-turn
+ * @stable
  */
 @customElement('obc-rate-of-turn')
 export class ObcRateOfTurn extends LitElement {

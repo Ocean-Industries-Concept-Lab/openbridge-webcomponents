@@ -1,3 +1,7 @@
+/**
+ * @module Instrument Linear
+ * @experimental
+ */
 import {svg, SVGTemplateResult, nothing} from 'lit';
 import {InstrumentState, Priority} from '../../navigation-instruments/types.js';
 

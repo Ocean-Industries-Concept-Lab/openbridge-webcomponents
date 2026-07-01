@@ -19,6 +19,9 @@ export interface VelocityProjectionDatapoint {
   ratioTotalEnergy: number;
 }
 
+/**
+ * @experimental
+ */
 @customElement('obc-velocity-projection-plot')
 export class ObcVelocityProjectionPlot extends LitElement {
   @property({type: Array, attribute: false})

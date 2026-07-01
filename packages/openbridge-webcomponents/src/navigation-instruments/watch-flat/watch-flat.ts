@@ -32,6 +32,9 @@ import {
 
 export {RotType, LinearRotPosition};
 
+/**
+ * @experimental
+ */
 @customElement('obc-watch-flat')
 export class ObcWatchFlat extends LitElement {
   @property({type: Number}) width = 352;

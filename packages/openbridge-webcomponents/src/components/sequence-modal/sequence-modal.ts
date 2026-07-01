@@ -59,6 +59,7 @@ export enum ObcSequenceModalType {
  * ```
  *
  * Keywords: modal, sequence, step, dialog, progress, actions.
+ * @experimental
  */
 @customElement('obc-sequence-modal')
 export class ObcSequenceModal extends LitElement {

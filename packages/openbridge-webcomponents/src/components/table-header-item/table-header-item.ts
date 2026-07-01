@@ -19,6 +19,9 @@ export enum ObcTableHeaderItemSortDirection {
   Desc = 'desc',
 }
 
+/**
+ * @beta
+ */
 @customElement('obc-table-header-item')
 export class ObcTableHeaderItem extends LitElement {
   @property({type: String}) type: ObcTableHeaderItemType =

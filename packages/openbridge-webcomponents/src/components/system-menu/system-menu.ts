@@ -107,6 +107,7 @@ export type VolumeChangeEvent = CustomEvent<number>;
  * @fires to-sub-menu-click - When the sub menu is clicked
  * @fires wifi-options-click - When the Wi-Fi options are clicked
  * @fires wifi-disconnect-click - When the Wi-Fi disconnect is clicked
+ * @stable
  */
 @customElement('obc-system-menu')
 @localized()

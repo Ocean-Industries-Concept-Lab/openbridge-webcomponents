@@ -11,6 +11,9 @@ import {
   ObcFloatingItemLineType,
 } from '../floating-item/floating-item.js';
 
+/**
+ * @stable
+ */
 @customElement('obc-alert-floating-item')
 export class ObcAlertFloatingItem extends LitElement {
   @property({type: String}) type = ObcFloatingItemType.Regular;

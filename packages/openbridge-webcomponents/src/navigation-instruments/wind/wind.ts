@@ -30,6 +30,9 @@ const WIND_SMALL_MAX_PX_DEFAULT = 96;
 const WIND_MEDIUM_MAX_PX_DEFAULT = 200;
 const WIND_HISTOGRAM_MIN_RADIUS = 50;
 
+/**
+ * @stable
+ */
 @customElement('obc-wind')
 export class ObcWind extends LitElement {
   @property({type: Number}) currentWindFromDirection: number = 0;

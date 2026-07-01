@@ -30,6 +30,9 @@ export enum AlertDetailPageType {
 }
 
 @localized()
+/**
+ * @beta
+ */
 @customElement('obc-alert-detail-page')
 export class ObcAlertDetailPage extends LitElement {
   @property({type: String}) type: AlertDetailPageType =

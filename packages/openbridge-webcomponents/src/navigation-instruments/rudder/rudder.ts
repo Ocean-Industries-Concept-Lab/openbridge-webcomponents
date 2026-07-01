@@ -79,6 +79,7 @@ export enum ObcRudderVariant {
  * ```
  *
  * @element obc-rudder
+ * @stable
  */
 @customElement('obc-rudder')
 export class ObcRudder extends SetpointMixin(LitElement) {

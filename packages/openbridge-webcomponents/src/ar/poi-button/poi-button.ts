@@ -134,6 +134,7 @@ export interface ObcPoiButtonDataItem {
  * @slot - Icon/content rendered inside `obc-poi-object`.
  * @slot header - Optional header content rendered above the marker body.
  * @slot relation - Optional relation icon/content in data mode when `hasRelation` is true.
+ * @experimental
  */
 @customElement('obc-poi-button')
 export class ObcPoiButton extends LitElement {

@@ -32,6 +32,7 @@ export enum SequenceItemState {
  * composing `<obc-sequence-step>` for the visual indicator. Consumers can either
  * configure the built-in step via `step*` props or supply a custom step through
  * the `step` slot.
+ * @beta
  */
 @customElement('obc-sequence-item')
 export class ObcSequenceItem extends LitElement {

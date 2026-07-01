@@ -65,6 +65,7 @@ export enum RichButtonDirection {
  * @slot leading-icon - Icon displayed before the label (shown when `hasLeadingIcon` is true)
  * @slot trailing-icon - Icon displayed after the description (shown when `hasTrailingIcon` is true)
  * @fires rich-button-click {CustomEvent<{label: string, description: string}>} When the button is clicked and not disabled
+ * @beta
  */
 @customElement('obc-rich-button')
 export class ObcRichButton extends LitElement {

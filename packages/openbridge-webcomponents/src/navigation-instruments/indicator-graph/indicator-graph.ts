@@ -27,6 +27,7 @@ export interface ObcIndicatorGraphLayout {
  * @description A mini graph component
  *
  * @property {Array} data - The data to display in the graph, first array is the x values, second array is the y values
+ * @beta
  */
 @customElement('obc-indicator-graph')
 export class ObcIndicatorGraph extends LitElement {

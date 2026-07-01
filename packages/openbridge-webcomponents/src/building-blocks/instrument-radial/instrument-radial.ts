@@ -114,6 +114,9 @@ function defaultGaugeAngle(
   return ((value - minValue) / span) * 270 - 135;
 }
 
+/**
+ * @experimental
+ */
 @customElement('obc-instrument-radial')
 export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   // setpoint, newSetpoint, atSetpoint, touching, autoAtSetpoint,

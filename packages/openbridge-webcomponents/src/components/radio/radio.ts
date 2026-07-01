@@ -50,6 +50,7 @@ import {classMap} from 'lit/directives/class-map.js';
  * In this example, only one radio can be selected at a time within the "group1" group.
  * @fires change - Fired when the radio is changed.
  * @slot - No named slots; content is provided via properties.
+ * @stable
  */
 @customElement('obc-radio')
 export class ObcRadio extends LitElement {

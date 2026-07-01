@@ -83,6 +83,9 @@ const ALLOWED_CHARS_PATTERN = `^[${ALLOWED_CHARS.map((c) =>
   c.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&')
 ).join('')}]*$`;
 
+/**
+ * @beta
+ */
 @customElement('obc-keyboard-numeric')
 export class ObcKeyboardNumeric extends LitElement {
   @property({type: String}) type: ObcKeyboardNumericType =

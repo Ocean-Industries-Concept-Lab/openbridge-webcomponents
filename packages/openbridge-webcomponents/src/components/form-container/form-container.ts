@@ -28,6 +28,7 @@ export enum ObcFormContainerType {
  * @slot content-title - Optional content title shown above the main content.
  * @slot - Main content.
  * @slot footer - Footer content (e.g., <obc-form-footer-container>).
+ * @beta
  */
 @customElement('obc-form-container')
 export class ObcFormContainer extends LitElement {

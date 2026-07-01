@@ -81,6 +81,7 @@ export interface SpeedAdvice {
  *
  * @element obc-speed-gauge
  * @typedef {import('./speed-gauge.js').SpeedAdvice} SpeedAdvice
+ * @stable
  */
 @customElement('obc-speed-gauge')
 export class ObcSpeedGauge extends SetpointMixin(LitElement) {

@@ -186,6 +186,7 @@ const POINT_POINTER_OFFSET_PX = 12;
  *
  * @slot - Default POI button content.
  * @slot header - Optional custom header content.
+ * @experimental
  */
 @customElement('obc-poi')
 export class ObcPoi extends LitElement {

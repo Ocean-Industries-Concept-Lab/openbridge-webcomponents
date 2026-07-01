@@ -69,6 +69,7 @@ export interface Label {
  *
  * @ignition-base-height: 170px
  * @ignition-base-width: 512px
+ * @stable
  */
 @customElement('obc-compass-flat')
 export class ObcCompassFlat extends LitElement {

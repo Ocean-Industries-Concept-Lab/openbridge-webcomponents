@@ -22,6 +22,9 @@ export enum BipolarTransistorAlternativeIcon {
   bipolarTransistor04Flat = 'bipolarTransistor04Flat',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-bipolar-transistor')
 export class ObcBipolarTransistor extends ObcAbstractAutomationButtonSquared {
   @property({type: String}) alternativeIcon: BipolarTransistorAlternativeIcon =

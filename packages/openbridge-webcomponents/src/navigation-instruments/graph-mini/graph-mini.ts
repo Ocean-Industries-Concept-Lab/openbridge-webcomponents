@@ -9,6 +9,7 @@ import {customElement} from '../../decorator.js';
  * @description A mini graph component
  *
  * @property {Array} data - The data to display in the graph, first array is the x values, second array is the y values
+ * @beta
  */
 @customElement('obc-graph-mini')
 export class ObcGraphMini extends LitElement {

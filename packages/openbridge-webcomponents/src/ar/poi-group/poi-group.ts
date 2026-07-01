@@ -72,6 +72,7 @@ export type ExpandEvent = CustomEvent<{expand: boolean}>;
  * @slot - Default slot for grouped `obc-poi-data` targets.
  * @fires expand {CustomEvent<{expand:boolean}>} Fired when the group expand state changes.
  * @fires collapse-finished {CustomEvent<void>} Fired after collapse animation completes.
+ * @experimental
  */
 @customElement('obc-poi-group')
 export class ObcPoiGroup extends LitElement {

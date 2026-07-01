@@ -22,6 +22,9 @@ export enum TagSize {
   large = 'large',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-tag')
 export class ObcTag extends LitElement {
   @property({type: String}) label = 'Label';

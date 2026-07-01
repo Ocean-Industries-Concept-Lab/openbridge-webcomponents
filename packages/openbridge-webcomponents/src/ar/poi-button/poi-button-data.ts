@@ -24,6 +24,7 @@ export {ObcPoiObjectState as ObcPoiObjectDataState};
  * @slot - Icon content forwarded to the inner POI object.
  * @slot header - Optional header content.
  * @slot relation - Optional relation icon/content in data mode.
+ * @experimental
  */
 @customElement('obc-poi-button-data')
 export class ObcPoiButtonData extends ObcPoiButton {

@@ -126,6 +126,7 @@ export type ObcMenuButtonItemClickEvent = CustomEvent<{
  * @fires item-click {ObcMenuButtonItemClickEvent} Fired when a menu item is clicked.
  * @fires open {CustomEvent<void>} Fired when the menu is opened.
  * @fires close {CustomEvent<void>} Fired when the menu is closed.
+ * @beta
  */
 @customElement('obc-menu-button')
 export class ObcMenuButton extends LitElement {

@@ -129,6 +129,7 @@ export enum ToggletipVariant {
  *
  * @fires {CustomEvent} primary-action - Fired when the primary action button is clicked
  * @fires {CustomEvent} secondary-action - Fired when the secondary action button is clicked
+ * @beta
  */
 @customElement('obc-toggletip')
 export class ObcToggletip extends LitElement {

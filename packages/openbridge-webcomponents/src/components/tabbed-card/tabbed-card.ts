@@ -115,6 +115,7 @@ export type ObcTabbedCardChangeEvent = CustomEvent<{
  * @slot tab-icon-3 - Icon for the fourth tab
  * @slot tab-icon-4 - Icon for the fifth tab
  * @fires tab-change {CustomEvent<{tab:number}>} Fired when the selected tab changes
+ * @stable
  */
 @customElement('obc-tabbed-card')
 export class ObcTabbedCard extends LitElement {

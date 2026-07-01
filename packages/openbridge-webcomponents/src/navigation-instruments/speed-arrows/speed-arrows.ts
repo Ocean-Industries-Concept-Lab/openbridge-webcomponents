@@ -19,6 +19,9 @@ export enum ActiveColor {
   Enhanced = 'Enhanced',
 }
 
+/**
+ * @beta
+ */
 @customElement('obc-speed-arrows')
 export class ObcSpeedArrows extends LitElement {
   /** @availableWhen readout==true */

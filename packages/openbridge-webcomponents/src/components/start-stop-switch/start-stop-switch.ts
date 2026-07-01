@@ -102,6 +102,7 @@ const DRAG_COMPLETE_THRESHOLD = 0.9;
  * @slot to-checked-action-label - Action label on thumb when unchecked (e.g., "Start", "Enable").
  * @slot to-unchecked-action-label - Action label on thumb when checked (e.g., "Stop", "Disable").
  * @fires change {ObcStartStopSwitchChangeEvent} - Emitted when the switch is toggled via drag interaction.
+ * @stable
  */
 @customElement('obc-start-stop-switch')
 export class ObcStartStopSwitch extends LitElement {

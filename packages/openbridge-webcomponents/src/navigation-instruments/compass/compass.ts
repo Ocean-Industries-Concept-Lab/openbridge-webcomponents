@@ -116,6 +116,7 @@ export enum CompassPriorityElement {
  *
  * @ignition-base-height: 512px
  * @ignition-base-width: 512px
+ * @stable
  */
 @customElement('obc-compass')
 export class ObcCompass extends LitElement {

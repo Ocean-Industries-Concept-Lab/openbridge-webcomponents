@@ -97,6 +97,7 @@ export enum ObcSequenceCardState {
  * ```
  *
  * Keywords: timeline, step, progress, sequence, card, event, status.
+ * @experimental
  */
 @customElement('obc-sequence-card')
 export class ObcSequenceCard extends LitElement {

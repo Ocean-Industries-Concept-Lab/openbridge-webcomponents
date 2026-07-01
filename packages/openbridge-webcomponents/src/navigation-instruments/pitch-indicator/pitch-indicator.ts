@@ -65,6 +65,7 @@ const TRACK_D =
  * ## Usage Guidelines
  *
  * Use for compact layouts where you need a small pitch cue next to other compact indicators.
+ * @stable
  */
 @customElement('obc-pitch-indicator')
 export class ObcPitchIndicator extends LitElement {

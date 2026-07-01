@@ -30,6 +30,7 @@ export enum ObcRollType {
  * individual properties for details.
  *
  * @element obc-roll
+ * @stable
  */
 @customElement('obc-roll')
 export class ObcRoll extends SingleAxisInclinometer {

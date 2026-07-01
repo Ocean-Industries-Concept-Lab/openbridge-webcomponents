@@ -43,6 +43,7 @@ export type BreadcrumbClickEvent = CustomEvent<BreadcrumbItem>;
  *
  * @fires breadcrumb-click {BreadcrumbClickEvent} - Fired when a breadcrumb item is clicked.
  * @slot - (none) This component does not use slots; all content is provided via the `items` property.
+ * @stable
  */
 @customElement('obc-breadcrumb')
 export class ObcBreadcrumb extends LitElement {

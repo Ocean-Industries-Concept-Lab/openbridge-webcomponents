@@ -79,6 +79,7 @@ export type DropdownButtonOption = {
  * @slot icon - Icon displayed at the start of the button when `type` is `icon` or `label-icon`.
  * @fires dropdown-change {ObcDropdownButtonChangeEvent} - Fires when the value of the select changes
  * @fires change {ObcDropdownButtonChangeEvent} - Fires when the value of the select changes
+ * @stable
  */
 @customElement('obc-dropdown-button')
 export class ObcDropdownButton extends LitElement {

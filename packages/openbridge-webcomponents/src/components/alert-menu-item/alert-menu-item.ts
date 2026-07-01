@@ -99,6 +99,7 @@ export enum ObcAlertMenuItemActionState {
  * @fires ack-click {CustomEvent<void>} Fired when the ACK action button is clicked.
  * @fires ack-secondary-click {CustomEvent<void>} Fired when the secondary action button is clicked.
  * @fires item-click {CustomEvent<void>} Fired when the alert menu item is clicked.
+ * @stable
  */
 @customElement('obc-alert-menu-item')
 export class ObcAlertMenuItem extends LitElement {
