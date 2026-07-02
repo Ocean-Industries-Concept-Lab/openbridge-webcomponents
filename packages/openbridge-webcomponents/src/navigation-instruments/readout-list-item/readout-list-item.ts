@@ -15,10 +15,16 @@ import {
   ReadoutBlockDataQuality,
   ReadoutBlockHidePhase,
 } from '../../building-blocks/readout-block/readout-block.js';
+import {type ReadoutNumericFormatOptions} from '../readout/readout-formatters.js';
 import {
-  formatNumericValue,
-  type ReadoutNumericFormatOptions,
-} from '../readout/readout-formatters.js';
+  isDisplayedAtSetpoint,
+  readoutNumericFormatOptions,
+  readoutPrimarySize,
+  readoutSecondarySize,
+  readoutSetpointWeight,
+  readoutDataQualityClasses,
+  resolveSetpointHidePhase,
+} from '../readout/readout-shared.js';
 import {
   type AlertFrameConfig,
   wrapWithAlertFrame,
@@ -229,6 +235,12 @@ export class ObcReadoutListItem extends LitElement {
   @property({type: String}) unit?: string;
   @property({type: String}) src?: string;
 
+  /**
+   * Layout switch: `false` renders a deliberately value-less (label-only)
+   * row that hugs its remaining parts. For a temporarily missing value keep
+   * `hasValue` and set `value` to `null` instead — the dash keeps the value
+   * block at full size, so the row does not shift when data arrives.
+   */
   @property({type: Boolean, attribute: false}) hasValue = true;
   @property({type: Number}) value: number | null = null;
   /** Render the value as `offText` (e.g. equipment powered down). Affects the value only. */
@@ -277,8 +289,8 @@ export class ObcReadoutListItem extends LitElement {
   @property({type: Boolean, reflect: true}) showDebugOverlay = false;
 
   /** Pop-up deferred-hide phase for the setpoint (see {@link updated}). */
-  @state() private deferredSetpointHidePhase: 'none' | 'hiding' | 'hidden' =
-    'none';
+  @state() private deferredSetpointHidePhase: ReadoutBlockHidePhase =
+    ReadoutBlockHidePhase.none;
   private deferredSetpointHideTimer?: number;
   private hasCompletedFirstUpdate = false;
 
@@ -314,19 +326,13 @@ export class ObcReadoutListItem extends LitElement {
   }
 
   private get isAtSetpoint(): boolean {
-    if (
-      !this.hasSetpoint ||
-      this.value === null ||
-      this.setpoint === undefined
-    ) {
+    if (!this.hasSetpoint) {
       return false;
     }
-    // Compare what is DISPLAYED (rounded to fractionDigits), not the raw values,
-    // so e.g. 29.999 and 30 at fractionDigits=0 both read "30" → at setpoint.
-    const formatOptions = this.numericFormatOptions(this.resolvedMaxDigits);
-    return (
-      formatNumericValue(this.value, formatOptions) ===
-      formatNumericValue(this.setpoint, formatOptions)
+    return isDisplayedAtSetpoint(
+      this.value,
+      this.setpoint,
+      this.numericFormatOptions(this.resolvedMaxDigits)
     );
   }
 
@@ -383,26 +389,12 @@ export class ObcReadoutListItem extends LitElement {
 
   /** Primary value-typography size for the current density tier. */
   private get primarySize(): ObcTextboxSize {
-    switch (this.resolvedSize) {
-      case ReadoutListItemSize.large:
-        return ObcTextboxSize.l;
-      case ReadoutListItemSize.medium:
-        return ObcTextboxSize.m;
-      default:
-        return ObcTextboxSize.s;
-    }
+    return readoutPrimarySize(this.resolvedSize);
   }
 
   /** Secondary (de-emphasised) value-typography size for the current density tier. */
   private get secondarySize(): ObcTextboxSize {
-    switch (this.resolvedSize) {
-      case ReadoutListItemSize.large:
-        return ObcTextboxSize.s;
-      case ReadoutListItemSize.medium:
-        return ObcTextboxSize.s;
-      default:
-        return ObcTextboxSize.xs;
-    }
+    return readoutSecondarySize(this.resolvedSize);
   }
 
   private get valueSize(): ObcTextboxSize {
@@ -428,28 +420,18 @@ export class ObcReadoutListItem extends LitElement {
 
   /** Setpoint is SemiBold only while emphasised, otherwise regular weight. */
   private get setpointWeight(): ObcTextboxFontWeight {
-    return this.isSetpointEmphasized
-      ? ObcTextboxFontWeight.semibold
-      : ObcTextboxFontWeight.regular;
+    return readoutSetpointWeight(this.isSetpointEmphasized);
   }
 
   private numericFormatOptions(maxDigits: number): ReadoutNumericFormatOptions {
-    return {
-      showZeroPadding: false,
-      minValueLength: maxDigits,
-      fractionDigits: this.resolvedFractionDigits,
-    };
+    return readoutNumericFormatOptions(maxDigits, this.resolvedFractionDigits);
   }
 
   /** classMap fragment for a block / source carrying per-block data quality. */
   private dataQualityClasses(
     dataQuality: ReadoutListItemDataQuality | undefined
   ): Record<string, boolean> {
-    return {
-      'data-low-integrity':
-        dataQuality === ReadoutListItemDataQuality.lowIntegrity,
-      'data-invalid': dataQuality === ReadoutListItemDataQuality.invalid,
-    };
+    return readoutDataQualityClasses(dataQuality);
   }
 
   /**
@@ -632,13 +614,10 @@ export class ObcReadoutListItem extends LitElement {
   private renderValueCluster(): TemplateResult {
     const popUpAtSetpoint =
       this.isPopUp && this.isAtSetpoint && !this.setpointTouching;
-    const setpointHidePhase = !popUpAtSetpoint
-      ? ReadoutBlockHidePhase.none
-      : this.deferredSetpointHidePhase === 'hiding'
-        ? ReadoutBlockHidePhase.hiding
-        : this.deferredSetpointHidePhase === 'hidden'
-          ? ReadoutBlockHidePhase.hidden
-          : ReadoutBlockHidePhase.none;
+    const setpointHidePhase = resolveSetpointHidePhase(
+      popUpAtSetpoint,
+      this.deferredSetpointHidePhase
+    );
     return html`
       <div class="value-cluster" part="value-cluster">
         ${this.hasAdvice
@@ -859,7 +838,9 @@ export class ObcReadoutListItem extends LitElement {
 
     if (firstUpdate) {
       // Settle to the resting state on mount without animating.
-      this.deferredSetpointHidePhase = shouldHide ? 'hidden' : 'none';
+      this.deferredSetpointHidePhase = shouldHide
+        ? ReadoutBlockHidePhase.hidden
+        : ReadoutBlockHidePhase.none;
       return;
     }
 
@@ -868,21 +849,21 @@ export class ObcReadoutListItem extends LitElement {
       return;
     }
 
-    if (this.deferredSetpointHidePhase !== 'none') {
+    if (this.deferredSetpointHidePhase !== ReadoutBlockHidePhase.none) {
       return;
     }
 
-    this.deferredSetpointHidePhase = 'hiding';
+    this.deferredSetpointHidePhase = ReadoutBlockHidePhase.hiding;
     window.clearTimeout(this.deferredSetpointHideTimer);
     this.deferredSetpointHideTimer = window.setTimeout(() => {
-      this.deferredSetpointHidePhase = 'hidden';
+      this.deferredSetpointHidePhase = ReadoutBlockHidePhase.hidden;
       this.deferredSetpointHideTimer = undefined;
     }, 100);
   }
 
   private clearDeferredSetpointHide(): void {
-    if (this.deferredSetpointHidePhase !== 'none') {
-      this.deferredSetpointHidePhase = 'none';
+    if (this.deferredSetpointHidePhase !== ReadoutBlockHidePhase.none) {
+      this.deferredSetpointHidePhase = ReadoutBlockHidePhase.none;
     }
     window.clearTimeout(this.deferredSetpointHideTimer);
     this.deferredSetpointHideTimer = undefined;
@@ -894,8 +875,8 @@ export class ObcReadoutListItem extends LitElement {
     // Settle a mid-flight hide to its end state. Without this, disconnecting
     // during the 100ms window leaves the phase stuck at 'hiding' (the timer that
     // would advance it to 'hidden' is gone), so a later reconnect never resolves.
-    if (this.deferredSetpointHidePhase === 'hiding') {
-      this.deferredSetpointHidePhase = 'hidden';
+    if (this.deferredSetpointHidePhase === ReadoutBlockHidePhase.hiding) {
+      this.deferredSetpointHidePhase = ReadoutBlockHidePhase.hidden;
     }
     super.disconnectedCallback();
   }

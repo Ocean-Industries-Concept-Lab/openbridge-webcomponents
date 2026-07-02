@@ -6,7 +6,7 @@ import {AdviceType, AngleAdviceRaw, AdviceState} from '../watch/advice.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {Priority} from '../types.js';
 import {renderInstrumentReadout} from '../readout/instrument-readout.js';
-import {ReadoutDirection, ReadoutVariant} from '../readout/readout.js';
+import {ReadoutDirection} from '../readout/readout.js';
 import {customElement} from '../../decorator.js';
 
 export enum ObcSpeedGaugeNeedleType {
@@ -173,14 +173,13 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
           ? html`
               ${renderInstrumentReadout({
                 className: 'speed-gauge-value',
-                variant: ReadoutVariant.stack,
                 direction: ReadoutDirection.horizontal,
                 value: this.speed,
                 label: this.label,
                 unit: this.unit,
                 fractionDigits: this.fractionDigits,
-                minValueLength: maxDigits,
-                valuePriority: this.priority,
+                maxDigits,
+                priority: this.priority,
               })}
             `
           : nothing}

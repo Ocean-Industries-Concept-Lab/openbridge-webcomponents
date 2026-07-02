@@ -38,13 +38,13 @@ obc-readout {
   justify-self: end;
 }
 
-.instrument-field-angle {
+.readout-angle {
   grid-area: angle;
   padding-top: 11px;
   padding-bottom: 4px;
 }
 
-.instrument-field-power {
+.readout-power {
   grid-area: power;
   align-self: start;
   padding-top: 4px;

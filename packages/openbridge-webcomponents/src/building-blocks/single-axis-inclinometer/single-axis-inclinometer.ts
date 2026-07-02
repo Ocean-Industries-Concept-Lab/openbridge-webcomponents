@@ -217,7 +217,7 @@ export class SingleAxisInclinometer extends LitElement {
           ? html`<div class="readout">
               ${renderInstrumentReadout({
                 value: this.value,
-                valuePriority: this.priority,
+                priority: this.priority,
                 label: this.label,
                 unit: this.unit,
                 fractionDigits: this.fractionDigits,

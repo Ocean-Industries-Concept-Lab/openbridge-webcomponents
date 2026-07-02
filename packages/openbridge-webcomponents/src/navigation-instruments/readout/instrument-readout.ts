@@ -1,35 +1,40 @@
 import {html, type TemplateResult} from 'lit';
 import {classMap} from 'lit/directives/class-map.js';
+import './readout.js';
 import {
+  ReadoutAlignment,
   ReadoutDirection,
-  ReadoutStackVerticalAlignment,
-  ReadoutVariant,
+  ReadoutPriority,
+  ReadoutSize,
+  ReadoutStacking,
 } from './readout.js';
-import {type Priority} from '../types.js';
 
 /**
  * Options for {@link renderInstrumentReadout}.
  *
  * Defaults mirror the `<obc-readout>` property defaults so omitted options never
- * override them with `undefined`. `centerValue`/`centerMeta` opt in to the
- * shared part-centering classes defined in `instrument-readout.css`.
+ * override them with `undefined` (except `size`, which defaults to `large` —
+ * the instrument-embedded readout is the primary reading of its instrument).
+ * `centerValue`/`centerMeta` opt in to the shared part-centering classes
+ * defined in `instrument-readout.css`.
  */
 export interface InstrumentReadoutOptions {
   value?: number;
   label?: string;
   unit?: string;
   fractionDigits?: number;
-  valuePriority?: Priority;
-  variant?: ReadoutVariant;
+  priority?: ReadoutPriority;
+  size?: ReadoutSize;
   direction?: ReadoutDirection;
-  alignment?: ReadoutStackVerticalAlignment;
-  labelOnly?: boolean;
+  stacking?: ReadoutStacking;
+  alignment?: ReadoutAlignment;
+  /** Render only the label/unit meta zone when false (no value). */
+  hasValue?: boolean;
   centerValue?: boolean;
   centerMeta?: boolean;
   className?: string;
-  showZeroPadding?: boolean;
-  valueHasHintedZeros?: boolean;
-  minValueLength?: number;
+  hintedZeros?: boolean;
+  maxDigits?: number;
 }
 
 /**
@@ -37,7 +42,7 @@ export interface InstrumentReadoutOptions {
  * instrument (rate-of-turn, pitch, roll, compass sector, gauge, speed, …).
  *
  * Centralises the otherwise-duplicated readout markup (`hasSetpoint=false`,
- * `hasAdvice=false`, vertical/enhanced defaults). Positioning is left to the
+ * `hasAdvice=false`, vertical/large defaults). Positioning is left to the
  * caller: pass a `className` for the absolute-position wrapper class, and
  * `centerValue`/`centerMeta` to apply the shared part-centering overrides.
  */
@@ -49,17 +54,17 @@ export function renderInstrumentReadout(
     label = '',
     unit = '',
     fractionDigits = 0,
-    valuePriority,
-    variant = ReadoutVariant.enhanced,
+    priority,
+    size = ReadoutSize.large,
     direction = ReadoutDirection.vertical,
-    alignment = ReadoutStackVerticalAlignment.vertical,
-    labelOnly = false,
+    stacking = ReadoutStacking.inline,
+    alignment = ReadoutAlignment.vertical,
+    hasValue = true,
     centerValue = false,
     centerMeta = false,
     className,
-    showZeroPadding = false,
-    valueHasHintedZeros = false,
-    minValueLength = 0,
+    hintedZeros = false,
+    maxDigits = 0,
   } = options;
 
   const classes = classMap({
@@ -71,20 +76,20 @@ export function renderInstrumentReadout(
   return html`
     <obc-readout
       class=${classes}
-      .variant=${variant}
+      .size=${size}
+      .priority=${priority}
       .direction=${direction}
+      .stacking=${stacking}
       .alignment=${alignment}
-      ?labelOnly=${labelOnly}
+      .hasValue=${hasValue}
       .hasSetpoint=${false}
       .hasAdvice=${false}
-      .value=${value}
+      .value=${value ?? null}
       .fractionDigits=${fractionDigits}
-      .valuePriority=${valuePriority}
       .label=${label}
       .unit=${unit}
-      .showZeroPadding=${showZeroPadding}
-      .valueHasHintedZeros=${valueHasHintedZeros}
-      .minValueLength=${minValueLength}
+      .valueOptions=${hintedZeros ? {hintedZeros} : undefined}
+      .maxDigits=${maxDigits}
     ></obc-readout>
   `;
 }
