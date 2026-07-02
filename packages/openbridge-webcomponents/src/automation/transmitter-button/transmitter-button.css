@@ -37,11 +37,16 @@
   padding: 0 2px;
 }
 
-.icon,
-.advice {
+.icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+.advice,
+.setpoint {
+  display: inline-flex;
+  align-items: center;
 }
 
 .value {
@@ -60,29 +65,26 @@
 
 .unit {
   @mixin font-instrument-unit;
+  align-self: flex-end;
   color: var(--element-neutral-color);
 }
 
-.size-small .icon ::slotted(*),
-.size-small .advice ::slotted(*) {
+.size-small .icon ::slotted(*) {
   width: 12px;
   height: 12px;
 }
 
-.size-regular .icon ::slotted(*),
-.size-regular .advice ::slotted(*) {
+.size-regular .icon ::slotted(*) {
   width: 16px;
   height: 16px;
 }
 
-.size-medium .icon ::slotted(*),
-.size-medium .advice ::slotted(*) {
+.size-medium .icon ::slotted(*) {
   width: 20px;
   height: 20px;
 }
 
-.size-large .icon ::slotted(*),
-.size-large .advice ::slotted(*) {
+.size-large .icon ::slotted(*) {
   width: 24px;
   height: 24px;
 }

@@ -7,7 +7,6 @@ import {
   TransmitterButtonVariant,
 } from './transmitter-button.js';
 import '../../icons/icon-temperature-air.js';
-import '../../icons/icon-placeholder.js';
 
 const meta: Meta<typeof ObcTransmitterButton> = {
   title: 'Automation/Transmitter/Transmitter Button',
@@ -24,6 +23,9 @@ const meta: Meta<typeof ObcTransmitterButton> = {
     showZeroPadding: false,
     hasIcon: false,
     hasAdvice: false,
+    adviceValue: 123,
+    hasSetPoint: false,
+    setpointValue: 123,
     label: 'TT',
   },
   argTypes: {
@@ -60,13 +62,13 @@ function renderComponent(args: ObcTransmitterButton) {
       .showZeroPadding=${args.showZeroPadding}
       .hasIcon=${args.hasIcon}
       .hasAdvice=${args.hasAdvice}
+      .adviceValue=${args.adviceValue}
+      .hasSetPoint=${args.hasSetPoint}
+      .setpointValue=${args.setpointValue}
       .label=${args.label}
     >
       ${args.hasIcon
         ? html`<obi-temperature-air slot="icon"></obi-temperature-air>`
-        : ''}
-      ${args.hasAdvice
-        ? html`<obi-placeholder slot="advice"></obi-placeholder>`
         : ''}
     </obc-transmitter-button>
   `;
@@ -83,6 +85,16 @@ export const WithIcon: Story = {
 
 export const WithAdvice: Story = {
   args: {hasIcon: true, hasAdvice: true},
+  render: (args) => renderComponent(args as ObcTransmitterButton),
+};
+
+export const WithSetpoint: Story = {
+  args: {hasIcon: true, hasSetPoint: true},
+  render: (args) => renderComponent(args as ObcTransmitterButton),
+};
+
+export const WithAdviceAndSetpoint: Story = {
+  args: {hasIcon: true, hasAdvice: true, hasSetPoint: true},
   render: (args) => renderComponent(args as ObcTransmitterButton),
 };
 

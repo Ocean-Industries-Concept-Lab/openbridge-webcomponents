@@ -43,15 +43,18 @@ export enum TransmitterType {
  *   paired with a `horizontal-graph` (beside) or `vertical-graph` (below).
  * - **`orientation`** – `top`, `right`, `bottom`, `left`; controls which edge
  *   the leader line attaches to.
+ * - **Segments** – opt into a leading advice segment with `hasAdvice`/
+ *   `adviceValue` and a setpoint segment with `hasSetPoint`/`setpointValue`;
+ *   both are read-only and shown in the value chip for non-`indicator` types.
  * - **Formatting** – `fractionDigits`, `minValueLength`, `hasHintedZeros` and
  *   `showZeroPadding` are forwarded to the value chip to control decimal
- *   precision and muted leading-zero padding (e.g. `0012.3`).
+ *   precision and muted leading-zero padding (e.g. `0012.3`). The advice and
+ *   setpoint segments reuse the same formatting.
  *
  * ### Slots
- * | Slot Name | Conditions                | Purpose                                |
- * |-----------|---------------------------|----------------------------------------|
- * | icon      | value/graph + `hasIcon`   | Leading icon in the value chip.        |
- * | advice    | value/graph + `hasAdvice` | Advice segment in the value chip.      |
+ * | Slot Name | Conditions              | Purpose                         |
+ * |-----------|-------------------------|---------------------------------|
+ * | icon      | value/graph + `hasIcon` | Leading icon in the value chip. |
  */
 @customElement('obc-transmitter')
 export class ObcTransmitter extends LitElement {
@@ -70,6 +73,14 @@ export class ObcTransmitter extends LitElement {
     TransmitterButtonSize.regular;
   @property({type: Boolean}) hasIcon = false;
   @property({type: Boolean}) hasAdvice = false;
+
+  /** Advisory value shown in the leading advice segment when `hasAdvice`. */
+  @property({type: Number}) adviceValue?: number;
+
+  @property({type: Boolean}) hasSetPoint = false;
+
+  /** Target value shown in the setpoint segment when `hasSetPoint`. */
+  @property({type: Number}) setpointValue?: number;
 
   /** Tag identifier shown when `type` is `indicator` (e.g. `TT`). */
   @property({type: String}) tag = '';
@@ -108,10 +119,12 @@ export class ObcTransmitter extends LitElement {
         .showZeroPadding=${this.showZeroPadding}
         .hasIcon=${this.hasIcon}
         .hasAdvice=${this.hasAdvice}
+        .adviceValue=${this.adviceValue}
+        .hasSetPoint=${this.hasSetPoint}
+        .setpointValue=${this.setpointValue}
         .label=${this.tag}
       >
         <slot name="icon" slot="icon"></slot>
-        <slot name="advice" slot="advice"></slot>
       </obc-transmitter-button>
     `;
   }

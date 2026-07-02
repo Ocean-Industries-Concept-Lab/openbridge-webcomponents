@@ -32,6 +32,9 @@ const meta: Meta<typeof ObcTransmitter> = {
     showZeroPadding: false,
     hasIcon: true,
     hasAdvice: false,
+    adviceValue: 123,
+    hasSetPoint: false,
+    setpointValue: 123,
     tag: 'TT',
     idTag: '#0000',
     data: sineData,
@@ -95,6 +98,9 @@ function renderComponent(args: ObcTransmitter) {
       .showZeroPadding=${args.showZeroPadding}
       .hasIcon=${args.hasIcon}
       .hasAdvice=${args.hasAdvice}
+      .adviceValue=${args.adviceValue}
+      .hasSetPoint=${args.hasSetPoint}
+      .setpointValue=${args.setpointValue}
       .tag=${args.tag}
       .idTag=${args.idTag}
       .data=${args.data}
@@ -122,6 +128,11 @@ export const HorizontalGraph: Story = {
 
 export const VerticalGraph: Story = {
   args: {type: TransmitterType.verticalGraph},
+  render: (args) => renderComponent(args as ObcTransmitter),
+};
+
+export const WithAdviceAndSetpoint: Story = {
+  args: {type: TransmitterType.value, hasAdvice: true, hasSetPoint: true},
   render: (args) => renderComponent(args as ObcTransmitter),
 };
 
