@@ -106,6 +106,8 @@ export class ObcAutomationButton extends LitElement {
   @property({type: String}) state: AutomationButtonState =
     AutomationButtonState.open;
   @property({type: Boolean}) static: boolean = false;
+  /** Enables the activated background color, used to indicate that the button is activated/selected. */
+  @property({type: Boolean}) activated: boolean = false;
   @property({type: Boolean, attribute: false}) showReadoutStack: boolean = true;
   /** @availableWhen showReadoutStack==true */
   @property({type: Array, attribute: false})
@@ -171,6 +173,7 @@ export class ObcAutomationButton extends LitElement {
           alert: this.alert,
           progress: this.progress,
           static: this.static,
+          activated: this.activated,
         })}
       >
         <div class="icon-touch-target">
