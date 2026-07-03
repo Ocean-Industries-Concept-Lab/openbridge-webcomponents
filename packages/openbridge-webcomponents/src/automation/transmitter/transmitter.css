@@ -14,25 +14,25 @@
   width: fit-content;
 
   &.orientation-bottom {
-    top: var(--offset);
     padding-top: 8px;
+    top: calc(1px + var(--offset));
     transform: translateX(-50%);
   }
 
   &.orientation-top {
     padding-bottom: 8px;
-    transform: translate(-50%, calc(-100% - var(--offset)));
+    transform: translate(-50%, calc(-100% - 1px - var(--offset)));
   }
 
   &.orientation-left {
     padding-right: 8px;
-    transform: translate(calc(-100% - var(--offset)), -50%);
+    transform: translate(calc(-100% - 4px - var(--offset)), -50%);
   }
 
   &.orientation-right {
-    left: var(--offset);
     padding-left: 8px;
     transform: translateY(-50%);
+    right: calc(-4px - var(--offset));
   }
 
   &::before {
@@ -44,32 +44,30 @@
 
   &.orientation-bottom::before,
   &.orientation-top::before {
-    left: 50%;
     width: 0;
     height: 8px;
   }
 
   &.orientation-bottom::before {
-    top: 0;
+    top: -1px;
   }
 
   &.orientation-top::before {
-    bottom: 0;
+    bottom: -1px;
   }
 
   &.orientation-left::before,
   &.orientation-right::before {
-    top: 50%;
     height: 0;
     width: 8px;
   }
 
   &.orientation-left::before {
-    right: 0;
+    right: -4px;
   }
 
   &.orientation-right::before {
-    left: 0;
+    left: -4px;
   }
 }
 
@@ -78,6 +76,10 @@
   flex-direction: column;
   align-items: center;
   gap: 2px;
+}
+
+.alert-frame .content {
+  padding: 4px;
 }
 
 /* Top orientation places the id-tag above the chip (leader line below). */
