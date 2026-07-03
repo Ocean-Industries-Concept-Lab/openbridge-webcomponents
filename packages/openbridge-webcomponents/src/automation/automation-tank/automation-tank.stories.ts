@@ -73,6 +73,7 @@ const renderTank = (args: StoryArgs) => html`
     .orientation=${args.orientation}
     .compact=${args.compact}
     .static=${args.static}
+    ?activated=${args.activated}
     .positioning=${args.positioning}
     .chartMode=${args.chartMode}
     .chartData=${args.chartData}
@@ -110,6 +111,7 @@ const meta: Meta<StoryArgs> = {
     orientation: TankOrientation.vertical,
     compact: false,
     static: false,
+    activated: false,
     positioning: TankPositioning.point,
     chartMode: TankChartMode.bar,
     chartData: SAMPLE_DATA,
@@ -162,6 +164,11 @@ const meta: Meta<StoryArgs> = {
     },
     static: {
       control: {type: 'boolean'},
+    },
+    activated: {
+      control: {type: 'boolean'},
+      description:
+        'Enables the activated background color, used to indicate that the tank is activated/selected.',
     },
     hasAdvice: {
       control: {type: 'boolean'},
@@ -254,6 +261,31 @@ export const Pressurized: Story = {
 
 export const Battery: Story = {
   args: {type: TankType.battery},
+};
+
+/**
+ * Activated tank — the `activated` background color is painted on the halo
+ * surround to indicate the tank is activated/selected. Mirrors the
+ * `activated` state of `obc-automation-button`.
+ */
+export const Activated: Story = {
+  args: {
+    type: TankType.atmospheric,
+    activated: true,
+  },
+};
+
+/**
+ * Compact activated tank — the activated background color also applies in the
+ * compact layout, where the halo wraps the badges, tank-frame, readout and
+ * tag cells.
+ */
+export const CompactActivated: Story = {
+  args: {
+    compact: true,
+    type: TankType.atmospheric,
+    activated: true,
+  },
 };
 
 export const CompactAtmospheric: Story = {

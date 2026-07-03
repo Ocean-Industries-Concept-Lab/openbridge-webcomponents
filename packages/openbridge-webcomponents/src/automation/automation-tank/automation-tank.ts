@@ -159,6 +159,8 @@ export class ObcAutomationTank extends LitElement {
    * activatable controls.
    */
   @property({type: Boolean, reflect: true}) static: boolean = false;
+  /** Enables the activated background color, used to indicate that the tank is activated/selected. */
+  @property({type: Boolean}) activated: boolean = false;
   @property({type: String}) tag: string = '';
 
   /**
@@ -991,7 +993,9 @@ export class ObcAutomationTank extends LitElement {
       haloContents = tankFrame;
     }
     const halo = html`
-      <div class="halo">${haloContents}${alertFrameOverlay}</div>
+      <div class=${classMap({halo: true, activated: this.activated})}>
+        ${haloContents}${alertFrameOverlay}
+      </div>
     `;
 
     // `aria-live="polite"` + `aria-atomic="true"` on the root so the

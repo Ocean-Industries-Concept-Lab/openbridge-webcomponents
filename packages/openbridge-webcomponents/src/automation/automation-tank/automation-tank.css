@@ -171,6 +171,13 @@
   position: relative;
 }
 
+/* Activated: paint the activated background/border on the halo surround,
+ * mirroring the `activated` state of `obc-automation-button`. */
+.halo.activated {
+  border-color: var(--normal-activated-border-color);
+  background: var(--normal-activated-background-color);
+}
+
 /* Alert-frame overlay mirrors `obc-automation-button`: -1px inset so the
  * ring sits on the halo's outer edge without clipping. */
 .alert-frame {
