@@ -15,8 +15,6 @@ export enum ObcIndicatorGraphPriority {
   enhanced = 'enhanced',
 }
 
-// showZeroLine is defaulted to true
-// fill is defaulted to false
 export interface ObcIndicatorGraphLayout {
   size?: ObcIndicatorGraphSize;
   priority?: ObcIndicatorGraphPriority;
