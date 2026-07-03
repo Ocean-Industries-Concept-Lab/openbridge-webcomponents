@@ -62,10 +62,18 @@ export const vesselStyles = css`
   }
 
   .both-views {
+    width: 400px;
+    overflow-x: hidden;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .both-views-inner {
     transform: scale(0.69);
     transform-origin: center;
 
-    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -73,6 +81,5 @@ export const vesselStyles = css`
 
   .top-down-view {
     margin-left: 60px;
-    background-color: violet;
   }
 `;
