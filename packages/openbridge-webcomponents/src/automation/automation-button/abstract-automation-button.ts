@@ -66,6 +66,8 @@ export class ObcAbstractAutomationButton extends LitElement {
     AutomationButtonReadoutStackSize.regular;
   @property({type: String}) positioning: AutomationButtonPositioning =
     AutomationButtonPositioning.point;
+  /** Enables the activated background color, used to indicate that the button is activated/selected. */
+  @property({type: Boolean}) activated: boolean = false;
   @property({type: Boolean}) alert: boolean = false;
   /** @availableWhen alert==true */
   @property({type: String}) alertFrameType: ObcAlertFrameType =
@@ -260,6 +262,7 @@ export class ObcAbstractAutomationButton extends LitElement {
       .orientation=${this._orientation}
       .hasBadgeSpacer=${this.getBadgeSpacer()}
       .positioning=${this.positioning}
+      ?activated=${this.activated}
     >
       ${this.icon}
       <slot
