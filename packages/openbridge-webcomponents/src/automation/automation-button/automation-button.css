@@ -247,11 +247,6 @@
   background: var(--automation-button-static-background-color);
 }
 
-.activated .icon-holder {
-  border-color: var(--normal-activated-border-color);
-  background: var(--normal-activated-background-color);
-}
-
 .alert-frame {
   position: absolute;
   top: 0;
