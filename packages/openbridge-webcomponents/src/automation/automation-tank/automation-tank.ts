@@ -159,6 +159,8 @@ export class ObcAutomationTank extends LitElement {
    * activatable controls.
    */
   @property({type: Boolean, reflect: true}) static: boolean = false;
+  /** Enables the activated background color, used to indicate that the tank is activated/selected. */
+  @property({type: Boolean}) activated: boolean = false;
   @property({type: String}) tag: string = '';
 
   /**
@@ -994,6 +996,11 @@ export class ObcAutomationTank extends LitElement {
       <div class="halo">${haloContents}${alertFrameOverlay}</div>
     `;
 
+    // The `activated` class goes on the interactive `.root` so the shared
+    // `flat` style mixin paints the activated background/border on `.halo`
+    // (its `visibleWrapperClass`), same as the mixin's hover/pressed states.
+    const rootClasses = classMap({root: true, activated: this.activated});
+
     // `aria-live="polite"` + `aria-atomic="true"` on the root so the
     // slotted alert label (and any state change of the alert frame) is
     // announced once when `alert` flips on. Always present — an empty live
@@ -1004,7 +1011,7 @@ export class ObcAutomationTank extends LitElement {
     return html`
       ${this.static
         ? html`<div
-            class="root"
+            class=${rootClasses}
             role="img"
             aria-label=${this.tag || 'Tank'}
             aria-live="polite"
@@ -1013,7 +1020,7 @@ export class ObcAutomationTank extends LitElement {
             ${halo}
           </div>`
         : html`<button
-            class="root"
+            class=${rootClasses}
             type="button"
             aria-label=${this.tag || 'Tank'}
             aria-live="polite"
