@@ -993,10 +993,13 @@ export class ObcAutomationTank extends LitElement {
       haloContents = tankFrame;
     }
     const halo = html`
-      <div class=${classMap({halo: true, activated: this.activated})}>
-        ${haloContents}${alertFrameOverlay}
-      </div>
+      <div class="halo">${haloContents}${alertFrameOverlay}</div>
     `;
+
+    // The `activated` class goes on the interactive `.root` so the shared
+    // `flat` style mixin paints the activated background/border on `.halo`
+    // (its `visibleWrapperClass`), same as the mixin's hover/pressed states.
+    const rootClasses = classMap({root: true, activated: this.activated});
 
     // `aria-live="polite"` + `aria-atomic="true"` on the root so the
     // slotted alert label (and any state change of the alert frame) is
@@ -1008,7 +1011,7 @@ export class ObcAutomationTank extends LitElement {
     return html`
       ${this.static
         ? html`<div
-            class="root"
+            class=${rootClasses}
             role="img"
             aria-label=${this.tag || 'Tank'}
             aria-live="polite"
@@ -1017,7 +1020,7 @@ export class ObcAutomationTank extends LitElement {
             ${halo}
           </div>`
         : html`<button
-            class="root"
+            class=${rootClasses}
             type="button"
             aria-label=${this.tag || 'Tank'}
             aria-live="polite"
