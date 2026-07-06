@@ -99,9 +99,10 @@ When adding new features or fixing bugs:
    ```
 
 3. **Data Input Patterns**:
-   - **Single-series**: `data = [{label: 'Jan', value: 10}, ...]`
+   - **Single-series (category)**: `data = [{label: 'Jan', value: 10}, ...]` — evenly spaced
+   - **Single-series (time/number)**: `data = [{x: <epoch ms | ISO string | Date | Temporal>, value: 10}, ...]` with `xAxisType='time'` or `'number'` — positioned proportionally (uneven intervals render unevenly)
    - **Multi-series**: `datasets = [{label: 'Series A', data: [...]}, ...]`
-   - **Time axis**: `xAxisType = 'time'` with ISO date strings or timestamps
+   - **Time axis**: `xAxisType = 'time'`; every x-input is normalized to epoch ms by `charthelpers/x-value.ts` (`normalizeXValue()`), which also duck-types Temporal objects (`Instant`/`ZonedDateTime` via `epochMilliseconds`, Plain\* via year/month/day in the system time zone). The x-scale stays a Chart.js `linear` scale — there is NO date adapter; tick/tooltip text comes from `formatXValue()` + `timeDisplay`
 
 4. **External Scale Integration**:
    - Slots: `left-scale`, `right-scale`, `top-scale`, `bottom-scale`
@@ -172,6 +173,7 @@ When adding new features or fixing bugs:
    - `fixedAspectRatioScaling`: Always true
    - `borderRadiusPosition`: Optimized for chart+scale composition
    - Fill mode: Always 'semitransparent'
+   - X-axis: auto-detected — `category` for `{label, value}` data, `time` for `{x, value}` data (uneven intervals position proportionally). An explicit `xAxisType` assignment disables auto-detection and always wins.
 
 4. **Property Sync**:
    - On property changes, sync to `bar-vertical` (or perhaps `bar-horizontal`) element via `_updateBarVerticalProperties()`

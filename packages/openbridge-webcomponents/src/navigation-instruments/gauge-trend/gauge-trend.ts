@@ -40,7 +40,9 @@ export {FillMode, ScaleType};
  * ## Locked Configuration (not user-configurable)
  * - Fixed aspect ratio scaling: always enabled
  * - Instrument mode: always enabled (8px border radius)
- * - X-axis type: always 'category'
+ * - X-axis type: auto-detected — 'category' for `{label, value}` data,
+ *   'time' for `{x, value}` data (uneven intervals position proportionally).
+ *   Assigning `xAxisType` explicitly disables auto-detection.
  * - Line mode: always 'smooth'
  * - Grid, tick marks, points, legend: always hidden
  * - Scale advice position: always 'inner'
@@ -102,6 +104,17 @@ export {FillMode, ScaleType};
  * ></obc-gauge-trend>
  * ```
  *
+ * ### Time-based data with uneven intervals
+ * ```html
+ * <obc-gauge-trend
+ *   .data=${[
+ *     {x: '2026-07-06T10:00:00Z', value: 3.5},
+ *     {x: '2026-07-06T10:03:00Z', value: 4.2},
+ *     {x: '2026-07-06T10:15:00Z', value: 5.0}
+ *   ]}
+ * ></obc-gauge-trend>
+ * ```
+ *
  * @property {number} width - Chart width in pixels (defines aspect ratio)
  * @property {number} height - Chart height in pixels (defines aspect ratio)
  * @property {boolean} enhanced - Use enhanced color palette for chart and scales
@@ -119,6 +132,8 @@ export {FillMode, ScaleType};
 export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
   private _barVerticalElement?: HTMLElement;
   private _isFirstUpdate = false;
+  private _explicitXAxisType = false;
+  private _autoAppliedXAxisType?: XAxisType;
 
   constructor() {
     super();
@@ -456,6 +471,28 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
   }
 
   override willUpdate(changed: Map<PropertyKey, unknown>) {
+    // Auto axis detection: {x, value} data switches to time spacing, {label,
+    // value} stays category. An explicit xAxisType assignment (anything we
+    // did not auto-apply) permanently disables auto-detection. The
+    // constructor's 'category' default lands in the first changed-map but is
+    // not treated as explicit (hasUpdated is false and it equals the default).
+    if (
+      changed.has('xAxisType') &&
+      this.xAxisType !== this._autoAppliedXAxisType &&
+      (this.hasUpdated || this.xAxisType !== XAxisType.category)
+    ) {
+      this._explicitXAxisType = true;
+    }
+    if (!this._explicitXAxisType && changed.has('data')) {
+      const allHaveX =
+        (this.data?.length ?? 0) > 0 && this.data.every((d) => d.x != null);
+      const target = allHaveX ? XAxisType.time : XAxisType.category;
+      if (this.xAxisType !== target) {
+        this._autoAppliedXAxisType = target;
+        this.xAxisType = target;
+      }
+    }
+
     super.willUpdate(changed);
 
     // Update y-axis range when chart or scale min/max changes
