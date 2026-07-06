@@ -13,12 +13,17 @@ export class ObcAbstractAutomationButtonSquared extends ObcAbstractAutomationBut
   @property({type: String}) variant: SquaredVariant = SquaredVariant.square;
   @property({type: String}) orientation: AutomationButtonOrientation =
     AutomationButtonOrientation.horizontal;
+  @property({type: Boolean, attribute: false}) showReadoutOnOffState: boolean =
+    true;
 
   override get _orientation(): AutomationButtonOrientation {
     return this.orientation;
   }
 
   override get extraReadouts(): AutomationButtonReadoutStack[] {
+    if (!this.showReadoutOnOffState) {
+      return [];
+    }
     if (this.on) {
       return [
         {
