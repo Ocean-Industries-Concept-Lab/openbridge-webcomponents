@@ -38,7 +38,10 @@ import {
   getChartTooltipOptions,
   generateLegendHTML,
   applyAlphaToColor,
+  normalizeXValue,
+  XValueMode,
 } from '../../charthelpers/index.js';
+import type {ChartXValue} from '../../charthelpers/x-value.js';
 import {
   EXTERNAL_SCALE_BORDER_RADIUS_CSS_VAR,
   readExternalScaleBorderRadiusPx,
@@ -94,9 +97,12 @@ interface ExternalScaleElement extends HTMLElement {
   borderRadiusPosition?: BorderRadiusPosition;
 }
 
+export type {ChartXValue, TemporalLike} from '../../charthelpers/x-value.js';
+
 export enum XAxisType {
   category = 'category',
   time = 'time',
+  number = 'number',
 }
 
 export enum YAxisPosition {
@@ -115,8 +121,17 @@ export enum TimeDisplay {
   date = 'date',
 }
 
+export type ChartLinePoint = number | {x: ChartXValue; y: number};
+
 export type ChartLineDataItem = {
-  label: string;
+  /** Category label. Used when `xAxisType='category'` (the default). */
+  label?: string;
+  /**
+   * X-coordinate for `xAxisType='time'` (epoch ms, ISO string, Date, or
+   * Temporal object) or `xAxisType='number'` (plain number). When absent,
+   * `label` is parsed as a fallback.
+   */
+  x?: ChartXValue;
   value: number;
 };
 
@@ -299,10 +314,7 @@ export class ObcChartLineBase extends LitElement {
 
   /** Chart.js-style datasets for multi-series use. If provided, takes precedence over `data`. */
   @property({type: Array, attribute: false})
-  datasets?: ChartDataset<
-    'line',
-    (number | {x: string | number | Date; y: number})[]
-  >[] = undefined;
+  datasets?: ChartDataset<'line', ChartLinePoint[]>[] = undefined;
 
   /** Optional explicit labels for the x-axis (category mode). If omitted labels are derived from `data` */
   @property({type: Array, attribute: false})
@@ -399,6 +411,33 @@ export class ObcChartLineBase extends LitElement {
    */
   @property({type: Boolean, attribute: false})
   hasLabelPadding = true;
+
+  /** @internal - True when the x-axis positions points by numeric value. */
+  protected get isNumericXAxis(): boolean {
+    return (
+      this.xAxisType === XAxisType.time || this.xAxisType === XAxisType.number
+    );
+  }
+
+  /** @internal - Normalization mode for the current x-axis type. */
+  protected get xValueMode(): XValueMode {
+    return this.xAxisType === XAxisType.number
+      ? XValueMode.number
+      : XValueMode.time;
+  }
+
+  /** @internal - Last data/datasets reference already warned about. */
+  private lastWarnedXSource?: unknown;
+
+  /** @internal - Warn once per data assignment about unparseable x-values. */
+  private warnOnInvalidX(xValues: number[], sourceRef: unknown) {
+    const invalid = xValues.filter((x) => !Number.isFinite(x)).length;
+    if (invalid === 0 || this.lastWarnedXSource === sourceRef) return;
+    this.lastWarnedXSource = sourceRef;
+    console.warn(
+      `[obc-chart] ${invalid} x value(s) could not be parsed for xAxisType='${this.xAxisType}'; the points render as gaps.`
+    );
+  }
 
   // Internal default tension used when `lineMode` is 'smooth'. Not exposed as a property.
   private readonly DEFAULT_TENSION = 0.4;
@@ -1825,28 +1864,21 @@ export class ObcChartLineBase extends LitElement {
   protected buildDataset(
     data:
       | number[]
-      | ChartDataset<
-          'line',
-          (number | {x: string | number | Date; y: number})[]
-        >,
+      | {x: number; y: number}[]
+      | ChartDataset<'line', ChartLinePoint[]>,
     index: number,
     chartColors: string[],
     totalCount = 1
-  ): ChartDataset<
-    'line',
-    number[] | (number | {x: string | number | Date; y: number})[]
-  > {
+  ): ChartDataset<'line', ChartLinePoint[]> {
     const currentColor = chartColors[index % chartColors.length];
 
-    // Check if input is existing dataset (has 'data' property) or raw values array
-    const existingDataset =
-      'data' in (data as object)
-        ? (data as ChartDataset<
-            'line',
-            (number | {x: string | number | Date; y: number})[]
-          >)
-        : null;
-    const values = existingDataset ? null : (data as number[]);
+    // Raw input is an array (values or points); anything else is an existing dataset
+    const existingDataset = Array.isArray(data)
+      ? null
+      : (data as ChartDataset<'line', ChartLinePoint[]>);
+    const values = Array.isArray(data)
+      ? (data as number[] | {x: number; y: number}[])
+      : null;
 
     const borderColor = existingDataset?.borderColor ?? currentColor;
     const fillFlag = existingDataset?.fill ?? this.shouldApplyFill();
@@ -1905,33 +1937,34 @@ export class ObcChartLineBase extends LitElement {
       }),
     };
 
-    return result as ChartDataset<
-      'line',
-      number[] | (number | {x: string | number | Date; y: number})[]
-    >;
+    return result as ChartDataset<'line', ChartLinePoint[]>;
   }
 
   /**
-   * Create threshold mode datasets: invisible baseline + main dataset with above/below fills
+   * Create threshold mode datasets: invisible baseline + main dataset with
+   * above/below fills. Accepts plain values (category mode) or {x, y} points
+   * (time/number mode); the baseline mirrors the input x-positions.
    */
   protected createThresholdDatasets(
-    values: number[],
+    values: number[] | {x: number; y: number}[],
     chartColors: string[]
-  ): ChartDataset<'line', number[]>[] {
-    const numericValues = values
-      .map((v) => Number(v))
+  ): ChartDataset<'line', ChartLinePoint[]>[] {
+    const yValues = values
+      .map((v) => (typeof v === 'number' ? v : v.y))
       .filter((n) => Number.isFinite(n));
-    const minV = numericValues.length ? Math.min(...numericValues) : 0;
-    const maxV = numericValues.length ? Math.max(...numericValues) : 100;
+    const minV = yValues.length ? Math.min(...yValues) : 0;
+    const maxV = yValues.length ? Math.max(...yValues) : 100;
     const threshold = (minV + maxV) / 2;
-    const baselineData = numericValues.map(() => threshold);
+    const baselineData: ChartLinePoint[] = values.map((v) =>
+      typeof v === 'number' ? threshold : {x: v.x, y: threshold}
+    );
 
     const lowRaw = LINE_GRAPH_GRID_CONFIG.thresholdLowColorVar;
     const highRaw = LINE_GRAPH_GRID_CONFIG.thresholdHighColorVar;
     const highFill = applyAlphaToColor(this, highRaw, 0.35);
     const lowFill = applyAlphaToColor(this, lowRaw, 0.35);
 
-    const baselineDataset: ChartDataset<'line', number[]> = {
+    const baselineDataset: ChartDataset<'line', ChartLinePoint[]> = {
       label: 'threshold-baseline',
       data: baselineData,
       borderColor: 'transparent',
@@ -1943,10 +1976,7 @@ export class ObcChartLineBase extends LitElement {
       spanGaps: true,
     };
 
-    const main = this.buildDataset(values, 0, chartColors) as ChartDataset<
-      'line',
-      number[]
-    >;
+    const main = this.buildDataset(values, 0, chartColors);
     (main as unknown as Record<string, unknown>).fill = {
       target: 0,
       above: highFill,
@@ -1959,7 +1989,9 @@ export class ObcChartLineBase extends LitElement {
   }
 
   /**
-   * Prepare normalized datasets for multi-series charts
+   * Prepare normalized datasets for multi-series charts.
+   * In time/number mode every point's x is normalized (epoch ms / number)
+   * so strings, Dates and Temporal objects position correctly.
    */
   protected prepareMultiSeriesDatasets() {
     const defaultPalette =
@@ -1974,17 +2006,34 @@ export class ObcChartLineBase extends LitElement {
 
     const totalCount = this.datasets!.length;
     return this.datasets!.map((ds, i) =>
-      this.buildDataset(ds, i, chartColors, totalCount)
+      this.buildDataset(this.normalizeDatasetX(ds), i, chartColors, totalCount)
     );
   }
 
+  /** @internal - Return a copy of the dataset with normalized point x-values. */
+  private normalizeDatasetX(
+    ds: ChartDataset<'line', ChartLinePoint[]>
+  ): ChartDataset<'line', ChartLinePoint[]> {
+    if (!this.isNumericXAxis || !ds.data) return ds;
+    const data = ds.data.map((pt) =>
+      pt && typeof pt === 'object' && 'x' in pt
+        ? {...pt, x: normalizeXValue(pt.x, this.xValueMode)}
+        : pt
+    );
+    this.warnOnInvalidX(
+      data.map((pt) => (typeof pt === 'object' ? (pt.x as number) : 0)),
+      this.datasets
+    );
+    return {...ds, data};
+  }
+
   /**
-   * Prepare datasets for single-series charts
-   * Handles both regular and threshold fill modes
+   * Prepare datasets for single-series charts.
+   * Category mode: labels + numeric values (unchanged legacy path).
+   * Time/number mode: normalized {x, y} points on a linear scale.
+   * Handles both regular and threshold fill modes.
    */
   protected prepareSingleSeriesDatasets() {
-    const values = this.data.map((d) => d.value);
-    const labels = this.data.map((d) => d.label);
     const defaultPalette =
       this.priority === Priority.enhanced
         ? CHART_SECTOR_ENHANCED_COLORS
@@ -1996,6 +2045,25 @@ export class ObcChartLineBase extends LitElement {
     );
     const fill = this.shouldApplyFill();
     const fillMode = this.getFillMode();
+
+    if (this.isNumericXAxis) {
+      const points = this.data.map((d) => ({
+        x: normalizeXValue(d.x ?? d.label ?? NaN, this.xValueMode),
+        y: d.value,
+      }));
+      this.warnOnInvalidX(
+        points.map((p) => p.x),
+        this.data
+      );
+      const datasets =
+        fill && fillMode === 'threshold'
+          ? this.createThresholdDatasets(points, chartColors)
+          : [this.buildDataset(points, 0, chartColors)];
+      return {datasets, labels: [] as (string | number)[]};
+    }
+
+    const values = this.data.map((d) => d.value);
+    const labels = this.data.map((d) => d.label ?? String(d.x ?? ''));
 
     const datasets =
       fill && fillMode === 'threshold'
@@ -2140,22 +2208,26 @@ export class ObcChartLineBase extends LitElement {
    * Returns earliest timestamp for 'date' mode, latest for 'minutes' mode.
    */
   private computeTimeReference(): number | undefined {
+    if (this.xAxisType !== XAxisType.time) return undefined;
+
     const timestamps: number[] = [];
 
     // Collect timestamps from datasets
     if (this.datasets?.length) {
       this.datasets.forEach((ds) => {
         if (!ds.data) return;
-        (ds.data as (number | {x: unknown; y: number})[]).forEach((pt) => {
+        ds.data.forEach((pt) => {
           if (pt && typeof pt === 'object' && 'x' in pt) {
-            const xVal = (pt as {x: unknown}).x;
-            const ts =
-              typeof xVal === 'string'
-                ? new Date(String(xVal)).getTime()
-                : Number(xVal);
+            const ts = normalizeXValue(pt.x, XValueMode.time);
             if (Number.isFinite(ts)) timestamps.push(ts);
           }
         });
+      });
+    } else if (this.data?.length) {
+      // Collect timestamps from single-series data items
+      this.data.forEach((d) => {
+        const ts = normalizeXValue(d.x ?? d.label ?? NaN, XValueMode.time);
+        if (Number.isFinite(ts)) timestamps.push(ts);
       });
     }
 
