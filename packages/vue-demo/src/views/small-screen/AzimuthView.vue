@@ -16,6 +16,10 @@ import { PropellerType } from '@oicl/openbridge-webcomponents/dist/navigation-in
 const sim = useSim()
 const demoConfig = useDemoConfigStore()
 
+// Stable reference: obc-readout uses identity-based change detection, so a
+// shared constant avoids re-triggering updates on every render.
+const popUpSetpointOptions = { interaction: 'pop-up' }
+
 const props = defineProps<{
   details: boolean
 }>()
@@ -67,24 +71,22 @@ const angleAdvice = computed<AngleAdvice[]>(() => {
         label="Angle"
         unit="deg"
         :value.prop="Math.round(angle)"
-        :setpointValue.prop="Math.round(angleSet)"
-        :hasInput.prop="true"
-        :hug.prop="false"
-        variant="enhanced"
-        :valuePriority.prop="'enhanced'"
-        :inputInteraction.prop="'pop-up'"
+        :setpoint.prop="Math.round(angleSet)"
+        :hasSetpoint.prop="true"
+        size="large"
+        :priority.prop="'enhanced'"
+        :setpointOptions.prop="popUpSetpointOptions"
         :maxDigits.prop="2"
       />
       <obc-readout
         label="Thrust"
         unit="%"
         :value.prop="Math.round(thrust)"
-        :setpointValue.prop="Math.round(thrustSet)"
-        :hasInput.prop="true"
-        :hug.prop="false"
-        variant="enhanced"
-        :valuePriority.prop="'enhanced'"
-        :inputInteraction.prop="'pop-up'"
+        :setpoint.prop="Math.round(thrustSet)"
+        :hasSetpoint.prop="true"
+        size="large"
+        :priority.prop="'enhanced'"
+        :setpointOptions.prop="popUpSetpointOptions"
         :maxDigits.prop="2"
       />
     </div>

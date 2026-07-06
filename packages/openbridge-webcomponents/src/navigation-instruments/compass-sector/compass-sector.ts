@@ -548,9 +548,7 @@ export class ObcCompassSector extends LitElement {
           ? html`<div class="readout" style="top: ${this._readoutTopPercent}%">
               ${renderInstrumentReadout({
                 value: this.heading,
-                valuePriority: this.priorityFor(
-                  CompassSectorPriorityElement.hdg
-                ),
+                priority: this.priorityFor(CompassSectorPriorityElement.hdg),
                 label: this.label,
                 unit: this.unit,
                 fractionDigits: this.fractionDigits,

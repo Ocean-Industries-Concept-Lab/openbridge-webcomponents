@@ -9,10 +9,7 @@ import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/instrument-radial/instrument-radial.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {renderInstrumentReadout} from '../readout/instrument-readout.js';
-import {
-  ReadoutStackVerticalAlignment,
-  ReadoutVariant,
-} from '../readout/readout.js';
+import {ReadoutAlignment, ReadoutStacking} from '../readout/readout.js';
 
 export enum ObcGaugeRadialType {
   filled = 'filled',
@@ -227,29 +224,27 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
     return ((v - this.minValue) / span) * sweep + start;
   };
 
-  /** Renders one gauge readout; `withMeta`/`labelOnly` pick parts. */
+  /** Renders one gauge readout; `withMeta`/`withValue` pick parts. */
   private renderReadout({
     className,
-    variant,
-    alignment = ReadoutStackVerticalAlignment.vertical,
+    stacking,
+    alignment = ReadoutAlignment.vertical,
     withMeta = true,
-    labelOnly = false,
+    withValue = true,
   }: {
     className: string;
-    variant: ReadoutVariant;
-    alignment?: ReadoutStackVerticalAlignment;
+    stacking?: ReadoutStacking;
+    alignment?: ReadoutAlignment;
     withMeta?: boolean;
-    labelOnly?: boolean;
+    withValue?: boolean;
   }): TemplateResult {
-    // `labelOnly` already means "no value", so derive it instead of passing both.
-    const withValue = !labelOnly;
     return renderInstrumentReadout({
       className,
-      variant,
+      stacking,
       alignment,
-      labelOnly,
+      hasValue: withValue,
       value: withValue ? this.value : undefined,
-      valuePriority: withValue ? this.priority : undefined,
+      priority: withValue ? this.priority : undefined,
       fractionDigits: this.fractionDigits,
       label: withMeta ? this.label : '',
       unit: withMeta ? this.unit : '',
@@ -273,7 +268,6 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
     if (is90) {
       return this.renderReadout({
         className: 'gauge-readout-meta',
-        variant: ReadoutVariant.enhanced,
       });
     }
 
@@ -281,8 +275,8 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
     if (isNeedle || is180) {
       return this.renderReadout({
         className: 'gauge-readout-meta',
-        variant: ReadoutVariant.stack,
-        alignment: ReadoutStackVerticalAlignment.center,
+        stacking: ReadoutStacking.stacked,
+        alignment: ReadoutAlignment.center,
       });
     }
 
@@ -291,15 +285,14 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
     return html`
       ${this.renderReadout({
         className: 'gauge-readout-value',
-        variant: ReadoutVariant.enhanced,
         withMeta: false,
       })}
       ${this.label || this.unit
         ? this.renderReadout({
             className: 'gauge-readout-meta',
-            variant: ReadoutVariant.stack,
-            alignment: ReadoutStackVerticalAlignment.center,
-            labelOnly: true,
+            stacking: ReadoutStacking.stacked,
+            alignment: ReadoutAlignment.center,
+            withValue: false,
           })
         : nothing}
     `;

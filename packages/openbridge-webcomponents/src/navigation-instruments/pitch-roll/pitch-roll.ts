@@ -241,7 +241,7 @@ export class ObcPitchRoll extends LitElement {
     return html`
       ${renderInstrumentReadout({
         value,
-        valuePriority: this.priorityFor(element),
+        priority: this.priorityFor(element),
         label,
         unit: this.unit,
         fractionDigits: this.fractionDigits,

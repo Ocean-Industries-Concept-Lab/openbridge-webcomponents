@@ -2,7 +2,7 @@ import {LitElement, html, nothing, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import compentStyle from './speed-arrows.css?inline';
 import '../readout/readout.js';
-import {ReadoutDirection, ReadoutVariant} from '../readout/readout.js';
+import {ReadoutDirection, ReadoutSize} from '../readout/readout.js';
 import {Priority} from '../types.js';
 import {customElement} from '../../decorator.js';
 
@@ -142,11 +142,11 @@ export class ObcSpeedArrows extends LitElement {
               .value=${this.speedKnots}
               unit="KN"
               label="Speed"
-              .variant=${ReadoutVariant.enhanced}
+              .size=${ReadoutSize.large}
               .direction=${ReadoutDirection.vertical}
               .fractionDigits=${this.fractionDigits}
-              .minValueLength=${this.maxDigits}
-              .valuePriority=${this.activeColor === ActiveColor.Regular
+              .maxDigits=${this.maxDigits}
+              .priority=${this.activeColor === ActiveColor.Regular
                 ? Priority.regular
                 : Priority.enhanced}
             ></obc-readout>`
