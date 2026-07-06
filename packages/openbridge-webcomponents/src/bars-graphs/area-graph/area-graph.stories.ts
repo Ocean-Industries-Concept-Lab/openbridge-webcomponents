@@ -112,7 +112,10 @@ const meta: Meta = {
     labels: {control: 'object'},
 
     // Axis and layout
-    xAxisType: {control: {type: 'radio'}, options: ['category', 'time']},
+    xAxisType: {
+      control: {type: 'radio'},
+      options: ['category', 'time', 'number'],
+    },
     yAxisPosition: {control: {type: 'radio'}, options: ['left', 'right']},
     showGrid: {control: 'boolean'},
     showGridX: {control: 'boolean'},
@@ -175,6 +178,40 @@ type Story = StoryObj;
 
 export const Semitransparent: Story = {
   name: 'Semitransparent Area Graph (default)',
+};
+
+const UNEVEN_TIME_DATA = [
+  {x: '2026-07-06T10:00:00Z', value: 10},
+  {x: '2026-07-06T10:02:00Z', value: 14},
+  {x: '2026-07-06T10:03:00Z', value: 12},
+  {x: '2026-07-06T10:10:00Z', value: 18},
+  {x: '2026-07-06T10:30:00Z', value: 8},
+  {x: '2026-07-06T11:00:00Z', value: 15},
+];
+
+export const UnevenTimeIntervals: Story = {
+  name: 'Uneven Time Intervals (Time Axis)',
+  args: {
+    xAxisType: 'time',
+    timeDisplay: 'minutes',
+  },
+  render: (_args) => html`
+    <obc-area-graph
+      .data=${UNEVEN_TIME_DATA}
+      .lineMode=${_args.lineMode}
+      .xAxisType=${_args.xAxisType}
+      .timeDisplay=${_args.timeDisplay}
+      .showGrid=${_args.showGrid}
+      .showGridX=${_args.showGridX}
+      .showGridY=${_args.showGridY}
+      .showTickMarks=${_args.showTickMarks}
+      .showPoints=${_args.showPoints}
+      .fillMode=${_args.fillMode}
+      .priority=${_args.priority}
+      .width=${_args.width}
+      .height=${_args.height}
+    ></obc-area-graph>
+  `,
 };
 
 export const SemitransparentExternalScales: Story = {
