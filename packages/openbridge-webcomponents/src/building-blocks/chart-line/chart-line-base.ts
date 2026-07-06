@@ -186,7 +186,9 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
  *
  * ## Features
  * - **Single or multi-series**: Use `data` for simple single-series or `datasets` for multi-series charts
- * - **Time and category axes**: Supports `category` x-axis (labels) and `time` x-axis (ISO dates or timestamps)
+ * - **Category, time and number axes**: `category` (labels, evenly spaced), `time` (epoch ms,
+ *   ISO strings, `Date` or Temporal objects — positioned proportionally, so uneven intervals
+ *   render unevenly) and `number` (plain numeric x-values on a linear scale)
  * - **Line styles**: Choose `smooth` (curved), `straight`, or `stepped` line rendering
  * - **Fill modes**: Area fills with `semitransparent`, `solid`, or `threshold` (red/blue above/below midpoint)
  * - **Stacked charts**: Enable `stacked` for multi-series datasets to stack values on y-axis
@@ -235,6 +237,36 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
  * </script>
  * ```
  *
+ * Single-series with time axis (uneven intervals position proportionally;
+ * x accepts epoch ms, ISO strings, Date or Temporal objects):
+ * ```html
+ * <obc-line-graph></obc-line-graph>
+ * <script>
+ *   const chart = document.querySelector('obc-line-graph');
+ *   chart.xAxisType = 'time';
+ *   chart.timeDisplay = 'minutes';
+ *   chart.data = [
+ *     {x: '2026-07-06T10:00:00Z', value: 10},
+ *     {x: new Date('2026-07-06T10:03:00Z'), value: 14},
+ *     {x: Temporal.Instant.from('2026-07-06T10:15:00Z'), value: 12}
+ *   ];
+ * </script>
+ * ```
+ *
+ * Single-series with numeric x-axis:
+ * ```html
+ * <obc-line-graph></obc-line-graph>
+ * <script>
+ *   const chart = document.querySelector('obc-line-graph');
+ *   chart.xAxisType = 'number';
+ *   chart.data = [
+ *     {x: 0, value: 2},
+ *     {x: 2.5, value: 3},
+ *     {x: 10, value: 6}
+ *   ];
+ * </script>
+ * ```
+ *
  * Stacked area chart with solid fill:
  * ```html
  * <obc-line-graph></obc-line-graph>
@@ -279,12 +311,12 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
  * </script>
  * ```
  *
- * @property {Array<{label: string, value: number}>} data - Single-series data array. Each object must have `label` (string) and `value` (number). Used when `datasets` is not provided.
- * @property {ChartDataset<'line', (number | {x: string|number|Date; y: number})[]>[]} datasets - Multi-series Chart.js datasets. Takes precedence over `data`. Each dataset can have `label`, `data` (numeric array or `{x, y}` points), and visual properties like `borderColor`, `backgroundColor`, `fill`, etc.
+ * @property {Array<{label?: string, x?: number|string|Date|TemporalLike, value: number}>} data - Single-series data array. In `category` mode each item needs `label`; in `time`/`number` mode each item needs `x` (epoch ms, ISO string, Date, or Temporal object — `label` is parsed as a fallback). Used when `datasets` is not provided. Points are drawn in array order (no sorting); Temporal Plain* values are interpreted in the system time zone.
+ * @property {ChartDataset<'line', (number | {x: number|string|Date|TemporalLike; y: number})[]>[]} datasets - Multi-series Chart.js datasets. Takes precedence over `data`. Each dataset can have `label`, `data` (numeric array or `{x, y}` points), and visual properties like `borderColor`, `backgroundColor`, `fill`, etc. In `time`/`number` mode point x-values are normalized like single-series `x`.
  * @property {(string|number)[]} labels - Explicit labels for category x-axis. If omitted, labels are derived from `data` property or dataset x-values.
  * @property {string[]} colors - Custom color palette (CSS variable names or color strings). Falls back to theme default colors if not provided.
- * @property {'category'|'time'} xAxisType - X-axis mode. `'category'` for labeled data points, `'time'` for time-based data (ISO strings or timestamps). Default: `'category'`.
- * @property {'minutes'|'date'} timeDisplay - Time axis label format when `xAxisType='time'`. `'date'` shows full date/time, `'minutes'` shows minutes relative to first data point. Default: `'date'`.
+ * @property {'category'|'time'|'number'} xAxisType - X-axis mode. `'category'` for labeled, evenly spaced data points; `'time'` for time-based data positioned proportionally (numbers are always epoch ms — `xStepSize`/`xTicksLimit` operate in ms); `'number'` for plain numeric x-values. Default: `'category'`.
+ * @property {'minutes'|'date'} timeDisplay - Time axis label format when `xAxisType='time'`. `'date'` shows a locale date, `'minutes'` shows minutes relative to the latest data point. Default: `'date'`.
  * @property {'left'|'right'} yAxisPosition - Single y-axis position. Use this for simple charts with one y-axis. For multiple y-axes, use `yAxes` property instead. Default: `'left'`.
  * @property {Array<{id?: string; position?: 'left'|'right'; min?: number; max?: number; grid?: boolean}>} yAxes - Multiple y-axis definitions for complex charts. Each axis can specify `id` (referenced by dataset `yAxisID`), `position`, `min`/`max` range, and `grid` visibility.
  * @property {boolean} showGrid - Show vertical grid lines (x-axis). When combined with `showGridX` and `showGridY`, controls full grid visibility. Default: `false`.
@@ -309,7 +341,11 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
  * @experimental
  */
 export class ObcChartLineBase extends LitElement {
-  /** Simple single-series data (array of {label, value}). */
+  /**
+   * Simple single-series data. `{label, value}` items for the category axis;
+   * `{x, value}` items for time/number axes (x: epoch ms, ISO string, Date,
+   * or Temporal object). Points are drawn in array order (no sorting).
+   */
   @property({type: Array, attribute: false})
   data: ChartLineDataItem[] = [];
 
@@ -359,7 +395,11 @@ export class ObcChartLineBase extends LitElement {
   @property({type: Number})
   scaleReferenceSize = 384;
 
-  /** X-axis mode: 'category' for labeled data points, 'time' for time-based data. */
+  /**
+   * X-axis mode: 'category' for labeled, evenly spaced data points; 'time'
+   * for time-based data positioned proportionally; 'number' for plain
+   * numeric x-values.
+   */
   @property({type: String})
   xAxisType: XAxisType = XAxisType.category;
 
