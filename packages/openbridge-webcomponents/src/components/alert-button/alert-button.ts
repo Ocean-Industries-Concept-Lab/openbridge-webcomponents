@@ -288,7 +288,7 @@ export class ObcAlertButton extends LitElement {
       this.blinking &&
       hasAlerts &&
       this.alertType !== undefined &&
-      supportsBlinking(this.alertType);
+      supportsBlinking(this.alertType, false);
     return html`
       <div
         class=${classMap({

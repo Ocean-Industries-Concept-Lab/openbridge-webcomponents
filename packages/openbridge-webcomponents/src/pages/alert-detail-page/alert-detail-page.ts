@@ -17,7 +17,6 @@ import {
   formatTimeSince,
   isAcknowledged,
   isActive,
-  isBlocked,
   TimeSinceFn,
 } from '../../types.js';
 import {classMap} from 'lit/directives/class-map.js';
@@ -158,7 +157,6 @@ export class ObcAlertDetailPage extends LitElement {
               .type=${this.alert.type}
               .acknowledged=${isAcknowledged(this.alert)}
               .active=${isActive(this.alert)}
-              .outline=${isBlocked(this.alert)}
             ></obc-alert-icon>
           </div>
           <div class="title">
