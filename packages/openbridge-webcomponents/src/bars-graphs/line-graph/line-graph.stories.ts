@@ -228,6 +228,44 @@ export const UnevenTimeIntervals: Story = {
   `,
 };
 
+const DATE_OBJECT_TIME_DATA = [
+  {x: new Date('2026-07-06T10:00:00Z'), value: 10},
+  {x: new Date('2026-07-06T10:04:00Z'), value: 14},
+  {x: '2026-07-06T10:12:00Z', value: 12},
+  {x: Date.parse('2026-07-06T10:30:00Z'), value: 18},
+];
+
+export const DateObjectsTimeAxis: Story = {
+  name: 'Date Objects (Time Axis)',
+  play: async ({canvasElement}) => {
+    await document.fonts.ready;
+    const chart = canvasElement.querySelector('obc-line-graph') as
+      | (HTMLElement & {chart?: {update(): void}})
+      | null;
+    chart?.chart?.update();
+  },
+  args: {
+    xAxisType: XAxisType.time,
+    timeDisplay: TimeDisplay.minutes,
+  },
+  render: (_args) => html`
+    <obc-line-graph
+      .data=${DATE_OBJECT_TIME_DATA}
+      .lineMode=${_args.lineMode}
+      .xAxisType=${_args.xAxisType}
+      .timeDisplay=${_args.timeDisplay}
+      .showGrid=${_args.showGrid}
+      .showGridX=${_args.showGridX}
+      .showGridY=${_args.showGridY}
+      .showTickMarks=${_args.showTickMarks}
+      .showPoints=${_args.showPoints}
+      .priority=${_args.priority}
+      .width=${_args.width}
+      .height=${_args.height}
+    ></obc-line-graph>
+  `,
+};
+
 const NUMBER_AXIS_DATA = [
   {x: 0, value: 2},
   {x: 1, value: 5},
