@@ -74,7 +74,14 @@ export function requiresAcknowledgement(type: AlertType): boolean {
   ].includes(type);
 }
 
-export function supportsBlinking(type: AlertType): boolean {
+export function supportsBlinking(
+  type: AlertType,
+  acknowledged: boolean
+): boolean {
+  if (acknowledged) {
+    return false;
+  }
+
   return [
     AlertType.Alarm,
     AlertType.Warning,
