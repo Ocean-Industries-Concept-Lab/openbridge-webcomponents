@@ -400,6 +400,7 @@ Required modifications after pasting:
 | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | [IMPLEMENTATION_GUIDELINES.md](IMPLEMENTATION_GUIDELINES.md)                                         | Detailed architecture, PostCSS mixins, SVG practices, component creation |
 | [CONTRIBUTING.md](CONTRIBUTING.md)                                                                   | Contribution workflow, commit conventions, PR guidelines                 |
+| [.devcontainer/README.md](.devcontainer/README.md)                                                   | Dev container persistent-home volume: per-developer tooling setup & rebuild guide |
 | [packages/openbridge-webcomponents/README.md](packages/openbridge-webcomponents/README.md)           | Installation, setup, bundle usage                                        |
 | [.cursor/rules/comments.mdc](.cursor/rules/comments.mdc)                                             | Full JSDoc template and structured-tag rules                             |
 | [.github/instructions/](.github/instructions/)                                                       | Path-scoped instruction files for component families                     |
