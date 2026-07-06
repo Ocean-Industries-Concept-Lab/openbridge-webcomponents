@@ -2045,9 +2045,25 @@ export class ObcChartLineBase extends LitElement {
       defaultPalette
     );
 
+    // Normalize first, then warn once per assignment with the aggregate
+    // count across ALL series — warning inside the per-dataset loop would
+    // either flood the console or (with ref-based dedup) silently swallow
+    // failures in every series after the first.
+    const normalized = this.datasets!.map((ds) => this.normalizeDatasetX(ds));
+    if (this.isNumericXAxis) {
+      this.warnOnInvalidX(
+        normalized.flatMap((ds) =>
+          (ds.data ?? []).map((pt) =>
+            pt && typeof pt === 'object' ? (pt.x as number) : 0
+          )
+        ),
+        this.datasets
+      );
+    }
+
     const totalCount = this.datasets!.length;
-    return this.datasets!.map((ds, i) =>
-      this.buildDataset(this.normalizeDatasetX(ds), i, chartColors, totalCount)
+    return normalized.map((ds, i) =>
+      this.buildDataset(ds, i, chartColors, totalCount)
     );
   }
 
@@ -2060,10 +2076,6 @@ export class ObcChartLineBase extends LitElement {
       pt && typeof pt === 'object' && 'x' in pt
         ? {...pt, x: normalizeXValue(pt.x, this.xValueMode)}
         : pt
-    );
-    this.warnOnInvalidX(
-      data.map((pt) => (typeof pt === 'object' ? (pt.x as number) : 0)),
-      this.datasets
     );
     return {...ds, data};
   }

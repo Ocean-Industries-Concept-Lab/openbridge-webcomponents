@@ -11,6 +11,18 @@
  * Temporal API or a polyfill, and cross-realm/polyfilled objects work.
  * Plain* types (which carry no time zone) are interpreted in the system
  * time zone.
+ *
+ * @example
+ * ```ts
+ * normalizeXValue('2026-07-06T10:00:00Z', XValueMode.time); // epoch ms
+ * normalizeXValue(new Date(0), XValueMode.time); // 0
+ * normalizeXValue({epochMilliseconds: 42}, XValueMode.time); // 42 (Temporal)
+ * normalizeXValue('2.5', XValueMode.number); // 2.5
+ *
+ * formatXValue(ms, XValueMode.time, referenceMs); // '5min' (relative)
+ * formatXValue(ms, XValueMode.time); // locale date string
+ * formatXValue(2.5, XValueMode.number); // '2.5'
+ * ```
  */
 
 type TemporalEpochLike = {
