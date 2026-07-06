@@ -39,6 +39,7 @@ import {
   generateLegendHTML,
   applyAlphaToColor,
   normalizeXValue,
+  formatXValue,
   XValueMode,
 } from '../../charthelpers/index.js';
 import type {ChartXValue} from '../../charthelpers/x-value.js';
@@ -2186,13 +2187,22 @@ export class ObcChartLineBase extends LitElement {
           callbacks: {
             title: () => '',
             label: (context) => {
-              const label = context.label ?? '';
               const value =
                 typeof context.parsed === 'object' && context.parsed !== null
                   ? (context.parsed as {y: number}).y
                   : (context.parsed as number);
               const numericValue = formatNumericValue(value, 1, false, 0);
               const unit = this.unit ? `${this.unit}` : '';
+              let label = context.label ?? '';
+              if (this.isNumericXAxis) {
+                const x =
+                  typeof context.parsed === 'object' && context.parsed !== null
+                    ? (context.parsed as {x: number}).x
+                    : NaN;
+                const relativeTo =
+                  this.timeDisplay === TimeDisplay.minutes ? refTs : undefined;
+                label = formatXValue(x, this.xValueMode, relativeTo);
+              }
               return `${label} ${numericValue}${unit}`;
             },
           },
@@ -2300,7 +2310,7 @@ export class ObcChartLineBase extends LitElement {
     const fontConfig = {family: fontFamily, size: fontSize, weight: fontWeight};
 
     const x = {
-      type: this.xAxisType === 'time' ? 'linear' : 'category',
+      type: this.xAxisType === XAxisType.category ? 'category' : 'linear',
       offset: false, // Always edge-to-edge (no padding on x-axis)
       grace: 0, // No extra margin
       bounds: 'data', // Use data bounds for edge-to-edge rendering
@@ -2319,18 +2329,12 @@ export class ObcChartLineBase extends LitElement {
         maxTicksLimit: this.xTicksLimit,
         stepSize: this.xStepSize,
         callback: (value: unknown) => {
-          if (this.xAxisType !== 'time') return String(value);
+          if (!this.isNumericXAxis) return String(value);
           const n = Number(value);
           if (!Number.isFinite(n)) return String(value);
-          if (
-            this.timeDisplay === 'minutes' &&
-            minX !== undefined &&
-            Number.isFinite(minX)
-          ) {
-            const minutes = Math.round((n - minX) / 60000);
-            return `${minutes}min`;
-          }
-          return new Date(n).toLocaleDateString();
+          const relativeTo =
+            this.timeDisplay === TimeDisplay.minutes ? minX : undefined;
+          return formatXValue(n, this.xValueMode, relativeTo);
         },
       },
       border: {
