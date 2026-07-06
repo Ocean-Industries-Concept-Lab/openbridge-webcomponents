@@ -17,7 +17,6 @@ import {
   formatTimeSince,
   isAcknowledged,
   isActive,
-  isBlocked,
   TimeSinceFn,
 } from '../../types.js';
 import {classMap} from 'lit/directives/class-map.js';
