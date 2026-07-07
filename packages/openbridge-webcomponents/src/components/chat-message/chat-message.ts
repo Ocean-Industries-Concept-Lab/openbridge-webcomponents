@@ -12,6 +12,9 @@ export enum ObcChatMessagePosition {
 }
 
 /**
+ * `<obc-chat-message>` – A single chat message bubble with optional name and date header.
+ *
+ * @slot - The message content (body of the chat bubble).
  * @stable
  */
 @customElement('obc-chat-message')

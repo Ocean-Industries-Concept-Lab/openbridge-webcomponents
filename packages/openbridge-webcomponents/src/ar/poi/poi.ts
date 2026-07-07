@@ -164,7 +164,8 @@ const POINT_POINTER_OFFSET_PX = 12;
  * ## Slots/Content
  *
  * - Default slot: Main icon/content rendered inside `obc-poi-button`.
- * - `header`: Optional custom header content rendered above the POI object.
+ * - `button`: Optional custom button element replacing the default `obc-poi-button`.
+ * - `header`: Optional header content. Relocated into the inner `obc-poi-button` at runtime by a `MutationObserver` (there is no `<slot name="header">` element).
  *
  * ## Events
  *
@@ -185,7 +186,8 @@ const POINT_POINTER_OFFSET_PX = 12;
  * ```
  *
  * @slot - Default POI button content.
- * @slot header - Optional custom header content.
+ * @slot button - Optional custom button element replacing the default `obc-poi-button`.
+ * @slot header - Optional header content, relocated into the inner `obc-poi-button` at runtime.
  * @experimental
  */
 @customElement('obc-poi')

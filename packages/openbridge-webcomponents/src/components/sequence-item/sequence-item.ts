@@ -32,6 +32,11 @@ export enum SequenceItemState {
  * composing `<obc-sequence-step>` for the visual indicator. Consumers can either
  * configure the built-in step via `step*` props or supply a custom step through
  * the `step` slot.
+ *
+ * @slot title - Title/subtitle block (falls back to the built-in `title`/`subtitle`/inline description).
+ * @slot description - Description text (rendered when `hasDescription` is true and not inlined).
+ * @slot meta - Meta row with timestamp/distance stamps (rendered when `hasStamp` and a stamp value is enabled).
+ * @slot step - Custom step indicator (falls back to the built-in `<obc-sequence-step>`).
  * @beta
  */
 @customElement('obc-sequence-item')

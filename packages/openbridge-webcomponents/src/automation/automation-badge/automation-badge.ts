@@ -51,6 +51,8 @@ const ALERT_BADGE_TYPES: ObcAutomationBadgeType[] = [
 ];
 
 /**
+ * @slot icon-silhouette - Custom silhouette/outline icon, rendered behind the default slot content when no built-in badge type matches.
+ * @slot - Default slot for custom badge content, rendered when no built-in badge type matches.
  * @stable
  */
 @customElement('obc-automation-badge')

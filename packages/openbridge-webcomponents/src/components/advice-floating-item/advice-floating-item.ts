@@ -43,8 +43,7 @@ import {
  * ## Slots
  * | Slot Name      | Renders When...                      | Purpose                                                      |
  * | -------------- | ------------------------------------ | ------------------------------------------------------------ |
- * | primary-icon   | Always (unless overridden)           | Main advice icon (default: `<obi-notification-advice-active>`) or custom icon. |
- * | secondary-icon | Only when `type="application"`       | Additional icon for application-type advice messages.         |
+ * | primary-icon   | Only when `type="application"`       | Custom main icon (the built-in advice icon is used otherwise). |
  * | title          | Always                               | Title or heading of the advice message.                      |
  * | description    | Always                               | Detailed advice or message text.                             |
  * | time           | If `hasTimestamp` is true            | Timestamp label (e.g., "09:12:46").                          |
@@ -75,8 +74,7 @@ import {
  * </obc-advice-floating-item>
  * ```
  *
- * @slot primary-icon - Main advice icon (default: `<obi-notification-advice-active>`), or custom icon.
- * @slot secondary-icon - Additional icon for application-type advice messages.
+ * @slot primary-icon - Custom main icon, projected into the child only when `type="application"` (the built-in advice icon is used otherwise).
  * @slot title - Title or heading of the advice message.
  * @slot description - Detailed advice or message text.
  * @slot time - Timestamp label (e.g., "09:12:46").

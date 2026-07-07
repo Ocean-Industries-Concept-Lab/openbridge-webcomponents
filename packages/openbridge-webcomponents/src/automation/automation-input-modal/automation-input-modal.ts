@@ -3,6 +3,10 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import compentStyle from './automation-input-modal.css?inline';
 
 /**
+ * @slot header - Header content shown at the top of the modal.
+ * @slot preview - Preview content shown in the body of the modal.
+ * @slot action-primary - Primary action control shown in the actions row.
+ * @slot action-secondary - Secondary action control shown in the actions row.
  * @experimental
  */
 @customElement('obc-automation-input-modal')

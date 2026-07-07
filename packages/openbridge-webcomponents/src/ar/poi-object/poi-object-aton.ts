@@ -29,6 +29,7 @@ export enum ObcPoiObjectAtonStyle {
 export {ObcPoiObjectState as ObcPoiObjectAtonState};
 
 /**
+ * @slot - Icon content rendered inside the POI object.
  * @experimental
  */
 @customElement('obc-poi-object-aton')

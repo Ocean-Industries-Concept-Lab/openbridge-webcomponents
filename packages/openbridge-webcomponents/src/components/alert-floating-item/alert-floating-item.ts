@@ -12,6 +12,18 @@ import {
 } from '../floating-item/floating-item.js';
 
 /**
+ * `<obc-alert-floating-item>` – A floating alert message that overlays the interface with a built-in alert icon.
+ *
+ * @slot primary-icon - Custom main icon, projected into the child only when `type="application"` (the built-in alert icon is used otherwise).
+ * @slot title - Title or heading of the alert message.
+ * @slot description - Detailed message text.
+ * @slot time - Timestamp label (e.g., "09:12:46").
+ * @slot day - Day label (e.g., "Yesterday").
+ * @slot action - Primary action button label/content.
+ * @slot action2 - Secondary action button label/content.
+ * @fires action-click {CustomEvent} When the primary action button is clicked.
+ * @fires action2-click {CustomEvent} When the secondary action button is clicked.
+ * @fires dismiss-click {CustomEvent} When the alert message is dismissed.
  * @stable
  */
 @customElement('obc-alert-floating-item')

@@ -16,18 +16,18 @@ import {property} from 'lit/decorators.js';
  *
  * @fires home-button-clicked - Fired when the home button is clicked
  * @fires dimming-button-clicked - Fired when the dimming button is clicked
- * @fires notification-button-clicked - Firaed when the notification button is clicked
+ * @fires notification-button-clicked - Fired when the notification button is clicked
  * @fires user-button-clicked - Fired when the user button is clicked
  * @fires system-button-clicked - Fired when the system button is clicked
  *
- * @slot vessel-selector
- * @slot status-label-1
- * @slot status-icon-1
- * @slot status-label-2
- * @slot status-icon-2
- * @slot status-label-3
- * @slot status-icon-3
- * @slot clock
+ * @slot vessel-selector - Vessel selector content
+ * @slot status-label-1 - Label for the first status field
+ * @slot status-icon-1 - Icon for the first status field
+ * @slot status-label-2 - Label for the second status field
+ * @slot status-icon-2 - Icon for the second status field
+ * @slot status-label-3 - Label for the third status field
+ * @slot status-icon-3 - Icon for the third status field
+ * @slot clock - Custom clock content, rendered when `showClock` is true
  * @experimental
  */
 @customElement('obc-integration-bar-dropdown')
