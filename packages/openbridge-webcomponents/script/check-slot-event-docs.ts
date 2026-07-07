@@ -24,7 +24,10 @@
  * - **Phantom slot (error):** a `@slot name` tag with no matching static
  *   `<slot name="name">` element — only evaluated for files that `extends
  *   LitElement` directly and contain no dynamic `<slot name="${…}">`, so
- *   inheritance- and dynamic-name-based false positives are skipped.
+ *   inheritance- and dynamic-name-based false positives are skipped. A
+ *   `slot="name"` *projection attribute* in the template does NOT suppress this
+ *   (it exposes nothing); only a genuine imperative read of the consumer's
+ *   children (e.g. `getAttribute('slot') === 'name'`) counts as a real slot.
  * - **Empty description (warning):** a `@slot`/`@fires` tag with only a name and
  *   no descriptive text. These become blank cells in the manifest / Storybook
  *   controls; warnings do not fail CI.
@@ -263,14 +266,19 @@ async function run(): Promise<void> {
     // Phantom @slot — only for direct LitElement subclasses without dynamic
     // slot names, so inherited/dynamic slots never produce false positives.
     if (extendsLitElementDirectly(source) && !dynamicSlot) {
+      // A `slot="name"` attribute in the template is a *projection into a child*
+      // — it exposes nothing and must NOT suppress the phantom warning. Strip
+      // those before the string-literal check so only genuine imperative reads
+      // (e.g. `getAttribute('slot') === 'header'`, which relocate the consumer's
+      // `slot="name"` children) count as a real, if non-declarative, slot.
+      const codeNoProjections = code.replace(
+        /\bslot\s*=\s*["'][^"']*["']/g,
+        ' '
+      );
       for (const name of docSlots.names) {
         if (name.includes('<') || name.includes('${')) continue; // placeholder
         if (staticSlots.has(name)) continue; // rendered as a real <slot>
-        // Slots forwarded imperatively (a MutationObserver / querySelector that
-        // relocates `slot="name"` children) have no <slot> element but are still
-        // a real API. Detect them by the slot name appearing as a code string
-        // literal (e.g. `getAttribute('slot') === 'header'`), and skip.
-        if (referencesNameAsString(code, name)) continue;
+        if (referencesNameAsString(codeNoProjections, name)) continue;
         errors.push({
           file: rel,
           message: `documents @slot ${name} but renders no <slot name="${name}"> (phantom — likely a slot="${name}" projection into a child)`,
