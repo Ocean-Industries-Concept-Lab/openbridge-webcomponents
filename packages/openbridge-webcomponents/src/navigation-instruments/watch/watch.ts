@@ -690,8 +690,13 @@ export class ObcWatch extends LitElement {
       }
     }
     const scale = Math.min(clientWidth / width, clientHeight / height);
-    if (scale === Infinity || scale < 0) {
-      throw new Error('Watch scale is not valid');
+    // On first paint the element and its parent can both still be zero-sized, so
+    // the scale is 0 (or non-finite). That value flows into `px / scale` label
+    // math and yields ±Infinity coordinates the browser rejects. Fall back to a
+    // 1:1 scale until a real size is available; the ResizeController re-renders
+    // with the true scale once the element is laid out (issue #1032).
+    if (!Number.isFinite(scale) || scale <= 0) {
+      return 1;
     }
     return scale;
   }
