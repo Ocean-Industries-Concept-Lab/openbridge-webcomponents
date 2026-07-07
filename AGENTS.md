@@ -98,7 +98,7 @@ Key points:
 3. **Usage Guidelines** — when and how to use the component; contrast with similar components.
 4. **Slots** — table of slot names, conditions, and purposes.
 5. **Events** — `@fires` tags for every custom event.
-6. **No `@property` tags** in the JSDoc block — properties are documented inline above their field declarations.
+6. **No `@property` tags** in the class JSDoc block — properties are documented inline above their field declarations. A class-level `@property` tag **overrides** the inline doc in `custom-elements.json` and can inject a **ghost member** for a property that does not exist (issue #1043). Enforced by `npm run lint:slots`. (Documenting a CSS-only attribute that has no backing `@property` field via `@attr`/`@attribute` in the class block is allowed — there is no field to annotate.)
 7. **Tone:** Do NOT mention "maritime", "industrial", "bridge", or domain qualifiers; keep text domain-agnostic.
 8. If purpose is unclear, insert `**TODO(designer)**` instead of guessing.
 9. **`@availableWhen` for conditional properties** — see below.

@@ -31,6 +31,11 @@
  * - **Empty description (warning):** a `@slot`/`@fires` tag with only a name and
  *   no descriptive text. These become blank cells in the manifest / Storybook
  *   controls; warnings do not fail CI.
+ * - **Class-level `@property`/`@attr` tag (error):** properties must be documented
+ *   inline above their field declarations (AGENTS.md §3.6). A tag in the class
+ *   JSDoc block overrides the inline doc and can inject a ghost member for a
+ *   non-existent property (issue #1043). A short allowlist covers documented
+ *   exceptions (property-injecting mixins, one legacy chart-base tag).
  *
  * There is deliberately no phantom-`@fires` *error*: unlike slots (which must be
  * a `<slot>` element in the component's own shadow DOM), a documented event may
@@ -301,6 +306,32 @@ async function run(): Promise<void> {
           message: `@fires ${tag.name} has no description`,
         });
       }
+    }
+  }
+
+  // Class-level @property / @attr JSDoc tags (AGENTS.md §3.6): properties must be
+  // documented inline above their field declarations. A class-level tag overrides
+  // the inline doc and can inject a ghost member for a property that does not
+  // exist (issue #1043). Allowlisted files are documented exceptions: mixins that
+  // inject properties into consumers, and one legacy `fill` tag on the chart base.
+  const PROPERTY_TAG_ALLOWLIST = [
+    'svghelpers/setpoint-mixin.ts',
+    'svghelpers/setpoint-bundle.ts',
+    'building-blocks/chart-line/chart-line-base.ts',
+  ];
+  // Only `@property` is flagged. `@attr`/`@attribute` in a class block is the
+  // legitimate way to document a CSS-only attribute that has no backing
+  // `@property` field (e.g. slider's `hugcontainer`), so it is not an error.
+  const propTagRe = /^[ \t]*\*[ \t]*@property\b/gm;
+  for (const rel of files.sort()) {
+    if (PROPERTY_TAG_ALLOWLIST.some((a) => rel.endsWith(a))) continue;
+    const source = fs.readFileSync(path.join(cwd, rel), 'utf8');
+    const matches = source.match(propTagRe);
+    if (matches && matches.length > 0) {
+      errors.push({
+        file: rel,
+        message: `has ${matches.length} class-level @property JSDoc tag(s) — document each property inline above its field declaration instead (AGENTS.md §3.6; these override inline docs and can create ghost manifest members)`,
+      });
     }
   }
 

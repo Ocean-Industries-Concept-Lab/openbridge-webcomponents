@@ -35,36 +35,38 @@ export enum IntegrationButtonType {
  *
  * @fires click - Fired when the internal button is activated.
  *
- * @property {boolean} hasTrailingIcon - Shows the `trailing-icon` slot.
- * @property {boolean} hasTrailingIcon2 - Shows the `trailing-icon2` slot.
- * @property {boolean} hasLeadingIcon - Shows the `leading-icon` slot.
- * @property {boolean} hasstatus - Shows the `status` slot.
- * @property {IntegrationButtonReadout[]} readouts - List of readout items shown in the rich type.
- * @property {boolean} disabled - Disables the internal button.
- * @property {boolean} activated - Applies active state styling while a selection is pending.
- * @property {boolean} selected - Applies selected state styling.
- * @property {boolean} dividerBottom - Shows a bottom divider under the button.
- * @property {boolean} dividerRight - Shows a right divider to separate from adjacent buttons.
- * @property {IntegrationButtonVariant} variant - Visual variant (`normal` or `flat`).
- * @property {IntegrationButtonType} type - Layout type (`hug`, `regular`, or `rich`).
  * @experimental
  */
 @customElement('obc-integration-button')
 export class ObcIntegrationButton extends LitElement {
+  /** Shows the `trailing-icon` slot. */
   @property({type: Boolean}) hasTrailingIcon = false;
-  /** @availableWhen hasTrailingIcon==true */
+  /**
+   * Shows the `trailing-icon2` slot.
+   * @availableWhen hasTrailingIcon==true
+   */
   @property({type: Boolean}) hasTrailingIcon2 = false;
+  /** Shows the `leading-icon` slot. */
   @property({type: Boolean}) hasLeadingIcon = false;
+  /** Shows the `status` slot. */
   @property({type: Boolean}) hasStatus = false;
+  /** List of readout items shown in the rich type. */
   @property({type: Array, attribute: false})
   readouts: IntegrationButtonReadout[] = [];
+  /** Disables the internal button. */
   @property({type: Boolean}) disabled = false;
+  /** Applies active state styling while a selection is pending. */
   @property({type: Boolean}) activated = false;
+  /** Applies selected state styling. */
   @property({type: Boolean}) selected = false;
+  /** Shows a bottom divider under the button. */
   @property({type: Boolean}) dividerBottom = false;
+  /** Shows a right divider to separate from adjacent buttons. */
   @property({type: Boolean}) dividerRight = false;
+  /** Visual variant (`normal` or `flat`). */
   @property({type: String}) variant: IntegrationButtonVariant =
     IntegrationButtonVariant.normal;
+  /** Layout type (`hug`, `regular`, or `rich`). */
   @property({type: String}) type: IntegrationButtonType =
     IntegrationButtonType.regular;
 

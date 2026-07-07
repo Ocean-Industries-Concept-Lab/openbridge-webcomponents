@@ -94,25 +94,6 @@ export enum CompassPriorityElement {
  * ></obc-compass>
  * ```
  *
- * @property {number} heading - The current heading of the vessel in degrees.
- * @property {number} courseOverGround - The current course over ground in degrees.
- * @property {number | null} headingSetpoint - The set point for the heading in degrees.
- * @property {boolean} atHeadingSetpoint - Indicates if the vessel is at the heading set point.
- * @property {boolean} autoAtHeadingSetpoint - Enables automatic at heading set point calculation.
- * @property {number} autoAtHeadingSetpointDeadband - The deadband for the heading set point in degrees.
- * @property {boolean} touching - Indicates if the compass is being touched.
- * @property {Array<AngleAdvice>} headingAdvices - An array of angle advices for the compass.
- * @property {number | null} currentWindSpeedKnots - The wind speed in knots.
- * @property {number | null} windFromDirection - The direction the wind is coming from in degrees.
- * @property {number | null} currentSpeed - The current speed, number of arrows.
- * @property {number | null} currentFromDirection - The direction the current is coming from in degrees.
- * @property {VesselImage} vesselImage - The image of the vessel.
- * @property {number|undefined} rateOfTurnDegreesPerMinute - Measured rate of turn in degrees per minute (the AIS / ITU-R M.1371 convention). Sign controls direction (positive = starboard / clockwise). Drives both the bar extent and the dot animation.
- * @property {number} rotDotAnimationFactor - Visual amplification for the dot animation only. Default `18` (≈1 rpm at 20°/min).
- * @property {number} rotationsPerMinute - **Deprecated.** Use `rateOfTurnDegreesPerMinute` instead. Kept as a backward-compatible fallback when `rateOfTurnDegreesPerMinute` is `undefined`.
- * @property {RotType} rotType - ROT display mode: `'dots'` (spinning dots, default) or `'bar'` (arc bar from HDG to COG).
- * @property {RotPosition} rotPosition - ROT track position: `'innerCircle'` (default) or `'scale'` (on the outer ring).
- * @property {Priority} priority - Color priority: `Priority.enhanced` uses the blue/enhanced color palette, `Priority.regular` (default) uses the standard palette.
  *
  * @ignition-base-height: 512px
  * @ignition-base-width: 512px
@@ -120,36 +101,65 @@ export enum CompassPriorityElement {
  */
 @customElement('obc-compass')
 export class ObcCompass extends LitElement {
+  /** The current heading of the vessel in degrees. */
   @property({type: Number}) heading = 0;
+  /** The current course over ground in degrees. */
   @property({type: Number}) courseOverGround = 0;
 
+  /** The set point for the heading in degrees. */
   @property({type: Number}) headingSetpoint: number | null = null;
   /** @availableWhen headingSetpoint!=null */
   @property({type: Number}) newHeadingSetpoint: number | undefined;
-  /** @availableWhen headingSetpoint!=null && autoAtHeadingSetpoint==false */
+  /**
+   * Indicates if the vessel is at the heading set point.
+   * @availableWhen headingSetpoint!=null && autoAtHeadingSetpoint==false
+   */
   @property({type: Boolean}) atHeadingSetpoint: boolean = false;
   /** @availableWhen headingSetpoint!=null */
   @property({type: Number}) headingSetpointAtZeroDeadband: number = 0.5;
   /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean}) headingSetpointOverride: boolean = false;
-  /** @availableWhen headingSetpoint!=null */
+  /**
+   * Enables automatic at heading set point calculation.
+   * @availableWhen headingSetpoint!=null
+   */
   @property({type: Boolean, attribute: false}) autoAtHeadingSetpoint: boolean =
     true;
-  /** @availableWhen headingSetpoint!=null && autoAtHeadingSetpoint==true */
+  /**
+   * The deadband for the heading set point in degrees.
+   * @availableWhen headingSetpoint!=null && autoAtHeadingSetpoint==true
+   */
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
   /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean}) animateSetpoint: boolean = false;
-  /** @availableWhen headingSetpoint!=null */
+  /**
+   * Indicates if the compass is being touched.
+   * @availableWhen headingSetpoint!=null
+   */
   @property({type: Boolean}) touching: boolean = false;
+  /** An array of angle advices for the compass. */
   @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
-  /** @availableWhen windFromDirection!=null */
+  /**
+   * The wind speed in knots.
+   * @availableWhen windFromDirection!=null
+   */
   @property({type: Number}) currentWindSpeedKnots: number | null = null;
-  /** @availableWhen currentWindSpeedKnots!=null */
+  /**
+   * The direction the wind is coming from in degrees.
+   * @availableWhen currentWindSpeedKnots!=null
+   */
   @property({type: Number}) windFromDirection: number | null = null;
-  /** @availableWhen currentFromDirection!=null */
+  /**
+   * The current speed, number of arrows.
+   * @availableWhen currentFromDirection!=null
+   */
   @property({type: Number}) currentSpeed: number | null = null;
-  /** @availableWhen currentSpeed!=null */
+  /**
+   * The direction the current is coming from in degrees.
+   * @availableWhen currentSpeed!=null
+   */
   @property({type: Number}) currentFromDirection: number | null = null;
+  /** The image of the vessel. */
   @property({type: String}) vesselImage: VesselImage = VesselImage.genericTop;
   /**
    * Measured rate of turn in degrees per minute (positive = starboard).
@@ -166,12 +176,15 @@ export class ObcCompass extends LitElement {
    */
   @property({type: Number}) rotDotAnimationFactor: number = 18;
   /**
+   * Legacy spin speed of the ROT dot ring, in rotations per minute.
    * @deprecated Use `rateOfTurnDegreesPerMinute` (and optionally
    * `rotDotAnimationFactor`) instead. Takes effect only when
    * `rateOfTurnDegreesPerMinute` is `undefined`.
    */
   @property({type: Number}) rotationsPerMinute: number = 1;
+  /** ROT display mode: `'dots'` (spinning dots, default) or `'bar'` (arc bar from HDG to COG). */
   @property({type: String}) rotType: RotType = RotType.dots;
+  /** ROT track position: `'innerCircle'` (default) or `'scale'` (on the outer ring). */
   @property({type: String}) rotPosition: RotPosition = RotPosition.innerCircle;
   /**
    * Bar-extent reference value in **degrees per minute**. The bar fills the
@@ -192,6 +205,7 @@ export class ObcCompass extends LitElement {
   @property({type: String}) direction: CompassDirection =
     CompassDirection.NorthUp;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
+  /** Color priority: `Priority.enhanced` uses the blue/enhanced color palette, `Priority.regular` (default) uses the standard palette. */
   @property({type: String}) priority: Priority = Priority.regular;
   /** @availableWhen priority==enhanced */
   @property({type: Array, attribute: false})
