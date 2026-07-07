@@ -208,7 +208,7 @@ export class ObcDonutChart extends LitElement {
   @property({type: Boolean, reflect: true})
   showDebugOverlay = false;
 
-  /** Fixed height of the chart in pixels (mandatory, determines chart circumference), default: 320. The chart's circumference is always based on this fixed height to match other radial instruments. */
+  /** Fixed height of the chart in pixels (determines chart circumference), default: 320. The chart's circumference is always based on this fixed height to match other radial instruments. */
   @property({type: Number, reflect: true})
   fixedHeight = 320;
 
