@@ -96,7 +96,6 @@ function normalizeAngle(a: number): number {
  * - Enable `zoomToFitArc` to enlarge the arc to fill the viewport.
  * - For a full‑circle compass, use `<obc-compass>` instead.
  *
- * @fires None
  * @stable
  */
 @customElement('obc-compass-sector')

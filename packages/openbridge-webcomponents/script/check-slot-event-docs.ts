@@ -25,6 +25,15 @@
  *   `<slot name="name">` element — only evaluated for files that `extends
  *   LitElement` directly and contain no dynamic `<slot name="${…}">`, so
  *   inheritance- and dynamic-name-based false positives are skipped.
+ * - **Empty description (warning):** a `@slot`/`@fires` tag with only a name and
+ *   no descriptive text. These become blank cells in the manifest / Storybook
+ *   controls; warnings do not fail CI.
+ *
+ * There is deliberately no phantom-`@fires` *error*: unlike slots (which must be
+ * a `<slot>` element in the component's own shadow DOM), a documented event may
+ * legitimately originate elsewhere — a native event bubbling from an inner
+ * element (`click`, `blur`), or an event re-fired by a child — so "documented
+ * but not locally dispatched" is not, on its own, a defect.
  *
  * Dynamic slot names (`<slot name="${expr}">` or `<slot name="pre-${id}-post">`)
  * are skipped for the missing-slot check because their concrete names cannot be
@@ -141,6 +150,52 @@ function findDocumentedEvents(source: string): Set<string> {
   return names;
 }
 
+interface TagDoc {
+  name: string;
+  hasDescription: boolean;
+}
+
+/** A plausible slot/event name (identifier or kebab-case), or `-` for default. */
+function isValidTagName(name: string): boolean {
+  return name === '-' || /^[A-Za-z][\w-]*$/.test(name);
+}
+
+/** Parse `@slot` tags into name + whether descriptive text follows. */
+function parseSlotTags(source: string): TagDoc[] {
+  const out: TagDoc[] = [];
+  const re = /@slot[ \t]+(\S+)([^\n]*)/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(source)) !== null) {
+    if (!isValidTagName(m[1])) continue;
+    const rest = m[2].replace(/^\s*-\s*/, '').trim();
+    out.push({name: m[1], hasDescription: rest.length > 0});
+  }
+  return out;
+}
+
+/**
+ * Parse `@fires` / `@event` tags into name + whether descriptive text follows,
+ * tolerating a leading or trailing `{Type}` (with one level of nested braces).
+ */
+function parseEventTags(source: string): TagDoc[] {
+  const out: TagDoc[] = [];
+  const type = '\\{(?:[^{}]|\\{[^{}]*\\})*\\}';
+  const re = new RegExp(
+    `@(?:fires|event)[ \\t]+(?:${type}[ \\t]+)?(\\S+)([^\\n]*)`,
+    'g'
+  );
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(source)) !== null) {
+    if (!isValidTagName(m[1])) continue;
+    const rest = m[2]
+      .replace(new RegExp(`^\\s*${type}\\s*`), '')
+      .replace(/^\s*-\s*/, '')
+      .trim();
+    out.push({name: m[1], hasDescription: rest.length > 0});
+  }
+  return out;
+}
+
 /** Whether the class extends `LitElement` directly (not a base class or mixin). */
 function extendsLitElementDirectly(source: string): boolean {
   return /class\s+\w+\s+extends\s+LitElement\b/.test(source);
@@ -160,6 +215,7 @@ async function run(): Promise<void> {
   });
 
   const errors: Finding[] = [];
+  const warnings: Finding[] = [];
   let componentCount = 0;
 
   for (const rel of files.sort()) {
@@ -221,22 +277,54 @@ async function run(): Promise<void> {
         });
       }
     }
+
+    // Empty description (warning) — a @slot/@fires tag with only a name produces
+    // a blank cell in the manifest / Storybook controls.
+    for (const tag of parseSlotTags(source)) {
+      if (!tag.hasDescription) {
+        const label = tag.name === '-' ? 'default slot' : `@slot ${tag.name}`;
+        warnings.push({file: rel, message: `${label} has no description`});
+      }
+    }
+    for (const tag of parseEventTags(source)) {
+      if (!tag.hasDescription) {
+        warnings.push({
+          file: rel,
+          message: `@fires ${tag.name} has no description`,
+        });
+      }
+    }
   }
 
   console.log('Slot & event documentation audit');
   console.log(`Scanned ${componentCount} registered components under src/`);
 
-  if (errors.length > 0) {
-    console.error(`\nFound ${errors.length} issue(s):`);
+  const printByFile = (
+    findings: Finding[],
+    log: (msg: string) => void,
+    indent = '    '
+  ) => {
     const byFile = new Map<string, string[]>();
-    for (const e of errors) {
-      if (!byFile.has(e.file)) byFile.set(e.file, []);
-      byFile.get(e.file)!.push(e.message);
+    for (const f of findings) {
+      if (!byFile.has(f.file)) byFile.set(f.file, []);
+      byFile.get(f.file)!.push(f.message);
     }
     for (const [file, messages] of [...byFile.entries()].sort()) {
-      console.error(`\n  ${file}`);
-      for (const msg of messages) console.error(`    - ${msg}`);
+      log(`\n  ${file}`);
+      for (const msg of messages) log(`${indent}- ${msg}`);
     }
+  };
+
+  if (warnings.length > 0) {
+    console.warn(
+      `\n⚠️  ${warnings.length} empty-description warning(s) (non-blocking):`
+    );
+    printByFile(warnings, (m) => console.warn(m));
+  }
+
+  if (errors.length > 0) {
+    console.error(`\nFound ${errors.length} issue(s):`);
+    printByFile(errors, (m) => console.error(m));
     console.error(
       `\n❌ Slot & event documentation audit failed. Add the missing @slot/@fires ` +
         `tags (or remove the phantom ones). See .cursor/rules/comments.mdc.`
@@ -245,7 +333,9 @@ async function run(): Promise<void> {
     return;
   }
 
-  console.log('\n✅ Slot & event documentation audit passed.');
+  const suffix =
+    warnings.length > 0 ? ` (${warnings.length} non-blocking warning(s))` : '';
+  console.log(`\n✅ Slot & event documentation audit passed.${suffix}`);
 }
 
 run().catch((error: unknown) => {
