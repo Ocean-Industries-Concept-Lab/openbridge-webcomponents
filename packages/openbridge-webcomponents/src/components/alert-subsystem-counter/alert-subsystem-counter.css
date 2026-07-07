@@ -1,0 +1,73 @@
+:host {
+  display: block;
+}
+
+.frame {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 6px;
+  background: var(--container-section-color);
+  border: 1px solid var(--border-outline-color);
+}
+
+.frame.orientation-vertical {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.leading-container {
+  display: flex;
+  flex: 1 0 0;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  color: var(--on-indent-neutral-color);
+}
+
+.icon.no-icon {
+  display: none;
+}
+
+.label {
+  @mixin font-body;
+  flex: 1 0 0;
+  min-width: 0;
+  padding-left: 4px;
+  color: var(--element-inactive-color);
+  font-feature-settings: "ss04" 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.frame.has-alert .label {
+  @mixin font-body-active;
+  color: var(--on-indent-active-color);
+}
+
+.trailing-container {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 4px;
+}
+
+.frame.orientation-horizontal .trailing-container {
+  justify-content: flex-end;
+}
+
+.empty {
+  @mixin font-label;
+  color: var(--element-inactive-color);
+  white-space: nowrap;
+  font-feature-settings: "ss04" 1;
+}
