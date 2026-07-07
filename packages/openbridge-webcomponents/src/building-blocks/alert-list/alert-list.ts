@@ -7,6 +7,10 @@ import {ObcScrollbar} from '../../components/scrollbar/scrollbar.js';
 import {ObcAlertMenuItem} from '../../components/alert-menu-item/alert-menu-item.js';
 
 /**
+ * @slot - Default slot for the alert list items.
+ * @slot empty-icon - Icon shown when the list is empty.
+ * @slot empty-title - Title shown when the list is empty.
+ * @slot empty-description - Description shown when the list is empty.
  * @stable
  */
 @customElement('obc-alert-list')

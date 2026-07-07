@@ -20,6 +20,8 @@ export enum ObcTableHeaderItemSortDirection {
 }
 
 /**
+ * @slot leading-icon - Leading icon (shown when `hasLeadingIcon` is true).
+ * @slot - Header label content (hidden when `type` is `IconOnly`).
  * @beta
  */
 @customElement('obc-table-header-item')

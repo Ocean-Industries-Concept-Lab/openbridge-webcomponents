@@ -30,6 +30,13 @@ export enum AlertDetailPageType {
 
 @localized()
 /**
+ * @slot note-label - Label for the note section, rendered when `hasNote` is true
+ * @slot note - Note content, rendered when `hasNote` is true
+ * @slot readout-graph-title - Title for the readout graph, rendered when `hasReadoutGraph` is true
+ * @slot readout-graph - Readout graph content, rendered when `hasReadoutGraph` is true
+ * @slot action - Action controls, rendered when `hasActions` is true
+ * @slot <detail>-label - Overrides the label of the `<detail>` field (e.g. `tagId-label`, `category-label`, `time-label`)
+ * @slot <detail>-value - Overrides the value of the `<detail>` field (e.g. `tagId-value`, `category-value`, `time-value`)
  * @beta
  */
 @customElement('obc-alert-detail-page')

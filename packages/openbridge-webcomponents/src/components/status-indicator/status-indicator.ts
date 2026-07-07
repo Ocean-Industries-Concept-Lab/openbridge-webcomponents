@@ -14,6 +14,7 @@ export enum StatusIndicatorStatus {
 }
 
 /**
+ * @slot - Label content shown next to the status indicator.
  * @beta
  */
 @customElement('obc-status-indicator')

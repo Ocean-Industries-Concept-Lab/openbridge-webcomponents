@@ -53,8 +53,7 @@ import {
  *
  * | Slot Name       | Renders When...               | Purpose                                                      |
  * |-----------------|------------------------------|--------------------------------------------------------------|
- * | primary-icon    | Always (all types)           | Main icon representing the notification category.            |
- * | secondary-icon  | type="application" only      | Additional icon for application-type notifications.          |
+ * | primary-icon    | type="application" only      | Custom main icon (the built-in notification icon is used otherwise). |
  * | title           | Always                       | Title or heading of the notification.                        |
  * | description     | Always                       | Detailed message text.                                       |
  * | time            | hasTimestamp is true         | Timestamp label (e.g., "09:12:46").                          |
@@ -83,8 +82,7 @@ import {
  * </obc-notification-floating-item>
  * ```
  *
- * @slot primary-icon - Main icon representing the notification category.
- * @slot secondary-icon - Additional icon for application-type notifications.
+ * @slot primary-icon - Custom main icon, projected into the child only when `type="application"` (the built-in notification icon is used otherwise).
  * @slot title - Title or heading of the notification.
  * @slot description - Detailed message text.
  * @slot time - Timestamp label (e.g., "09:12:46").

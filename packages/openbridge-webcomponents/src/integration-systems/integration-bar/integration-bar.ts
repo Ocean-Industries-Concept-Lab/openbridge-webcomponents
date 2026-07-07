@@ -30,7 +30,6 @@ import {classMap} from 'lit/directives/class-map.js';
  * @slot clock - Custom clock content, rendered when `showClock` is true
  * @slot integration-buttons - Regular vessel integration buttons
  * @slot hug-buttons - Compact vessel integration buttons; slotted integration buttons are forced to hug type
- * @slot vessel-integration-menu - Modal that will appear achored below the fleet/vessel button. Typically an obc-integration-vessel-menu
  * @property {IntegrationBarType} type - Integration bar mode for fleet/vessel presentation
  * @property {boolean} hideHomeButton - Hides the home button when true
  * @property {boolean} showClock - Toggles rendering of the clock slot

@@ -104,6 +104,7 @@ export type ObcUserMenuSignedInAction = {
  * ></obc-user-menu>
  * ```
  *
+ * @slot signed-in-action-icon-<id> - Optional icon for a signed-in action, one per action; `<id>` is the normalized action id (shown in the `signed-in` type).
  * @fires sign-in-click {CustomEvent<{username: string, password: string}>}
  * @fires sign-out-click
  * @fires signed-in-action-click {CustomEvent<{id: string, label: string}>}
