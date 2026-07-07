@@ -95,25 +95,6 @@ export enum TankChartMode {
 }
 
 /**
- * A single detail row rendered in the tank's `readout` rich list (below the
- * main percent / value block, separated by a divider). Each row is rendered
- * as `<label>` on the left and `<value><degree?><percent?><unit>` on the
- * right, all on a single line.
- */
-export interface TankReadoutItem {
-  /** Left-aligned label text (e.g. `Temperature`). */
-  label: string;
-  /** Numeric value, formatted with the tank's `percentFractionDigits`. */
-  value: number;
-  /** Append a `°` glyph directly after the value with no gap. */
-  hasDegree?: boolean;
-  /** Append a `%` glyph directly after the value with no gap. */
-  hasPercentage?: boolean;
-  /** Unit text (e.g. `C`, `Pa`, `m/s`). Rendered after the value/glyph. */
-  unit: string;
-}
-
-/**
  *
  *
  * @slot badges - Custom badges to be displayed in the badge area.
@@ -122,7 +103,11 @@ export interface TankReadoutItem {
  * @slot max-value - Content for the capacity value.
  * @slot unit - Content for the unit of measurement.
  * @slot current-value - Content for the current level value.
- * @slot rich - Content for additional detail rows.
+ * @slot rich - Detail rows below the main readout, shown in the regular
+ *   (non-compact, non-static) layout. Slot an `<obc-readout-list>` of
+ *   `<obc-readout-list-item>` rows — it owns the row typography and cross-row
+ *   column alignment; the tank renders a divider above it automatically when
+ *   the slot is filled.
  * @slot alert-icon - Custom icon for the alert frame.
  * @slot alert-label - Label for the alert frame.
  * @slot alert-timer - Timer for the alert frame.
@@ -250,21 +235,6 @@ export class ObcAutomationTank extends LitElement {
   @property({type: Number}) percentFractionDigits: number = 0;
 
   /**
-   * Rich detail rows shown below the main percent/value block in the regular
-   * (non-compact, non-static) layout, separated by a divider. When empty (the
-   * default), nothing is rendered — neither the divider nor the list. In
-   * vertical orientation the chart cell shrinks to make room; in horizontal
-   * orientation the readout column already has reserved whitespace so the
-   * chart is unaffected.
-   *
-   * Values are formatted using `percentFractionDigits`. Consumers that need
-   * full control over the markup can replace the entire fallback by slotting
-   * arbitrary content into `slot="rich"` (note: this is a different name from
-   * the existing `slot="readout"` which replaces the whole readout block).
-   */
-  @property({type: Array, attribute: false}) readout: TankReadoutItem[] = [];
-
-  /**
    * Enum-driven badges rendered inside the `badges` cell. Mirrors the API
    * introduced for `ObcAbstractAutomationButton` in PR #839 (#829). When set
    * to a non-`None` value, an `<obc-automation-badge>` of the corresponding
@@ -297,6 +267,13 @@ export class ObcAutomationTank extends LitElement {
    */
   @state() private _hasBadges = false;
   @state() private _hasTagSlot = false;
+  /**
+   * Tracks whether the `rich` slot has assigned content, so the regular
+   * (non-compact) layout only draws the rich divider when a consumer has
+   * slotted detail rows (canonically an `<obc-readout-list>`). Mirrors
+   * `_hasBadges` / `_hasTagSlot`.
+   */
+  @state() private _hasRichSlot = false;
   private _chartResizeObserver?: ResizeObserver;
   private _observedCell?: Element;
 
@@ -388,6 +365,17 @@ export class ObcAutomationTank extends LitElement {
   private _onTagSlotChange(e: Event): void {
     const slot = e.target as HTMLSlotElement;
     this._hasTagSlot = slot
+      .assignedNodes({flatten: true})
+      .some(
+        (n) =>
+          n.nodeType === Node.ELEMENT_NODE ||
+          (n.nodeType === Node.TEXT_NODE && !!n.textContent?.trim())
+      );
+  }
+
+  private _onRichSlotChange(e: Event): void {
+    const slot = e.target as HTMLSlotElement;
+    this._hasRichSlot = slot
       .assignedNodes({flatten: true})
       .some(
         (n) =>
@@ -756,36 +744,8 @@ export class ObcAutomationTank extends LitElement {
                     <slot class="unit" name="unit">m<sup>3</sup></slot>
                   </div>
                 </div>
-                <slot name="rich">
-                  ${this.readout.length > 0
-                    ? html`
-                        <div class="rich-divider"></div>
-                        <div class="rich">
-                          ${this.readout.map(
-                            (row) => html`
-                              <div class="rich-row">
-                                <span class="rich-label">${row.label}</span>
-                                <span class="rich-value"
-                                  >${row.value.toFixed(
-                                    this.percentFractionDigits
-                                  )}</span
-                                >
-                                <span class="rich-suffix"
-                                  >${row.hasDegree
-                                    ? html`<span class="rich-glyph">°</span>`
-                                    : nothing}${row.hasPercentage
-                                    ? html`<span class="rich-glyph">%</span>`
-                                    : nothing}<span class="rich-unit"
-                                    >${row.unit}</span
-                                  ></span
-                                >
-                              </div>
-                            `
-                          )}
-                        </div>
-                      `
-                    : nothing}
-                </slot>
+                <div class="rich-divider" ?hidden=${!this._hasRichSlot}></div>
+                <slot name="rich" @slotchange=${this._onRichSlotChange}></slot>
               </slot>
             </div>
           `;
