@@ -54,9 +54,12 @@ import {renderCurrent, renderWind} from './environment.js';
 import {customElement} from '../../decorator.js';
 import {type ZoomToFitArcFrame} from '../../svghelpers/arc-frame.js';
 import {
+  applyPinnedHostSize,
   computeRadialFrame,
   estimateLabelWidthPx,
+  measureContainerPx,
   NSWE_LABEL_WIDTH_PX,
+  type RadialFrame,
 } from '../../svghelpers/radial-frame.js';
 export {VesselImage, VesselImageSize, vesselImages};
 
@@ -349,7 +352,11 @@ export class ObcWatch extends LitElement {
 
   override updated(changed: PropertyValues): void {
     super.updated(changed);
-    this.syncPinnedHostSize();
+    this._hostSizePinned = applyPinnedHostSize(
+      this,
+      this.arcFrame ? undefined : this._ownFrame,
+      this._hostSizePinned
+    );
     const el = this.rotType
       ? this.renderRoot.querySelector('#rot-spinner')
       : null;
@@ -379,30 +386,11 @@ export class ObcWatch extends LitElement {
    */
   private _labelsHidden = false;
 
-  /** Fixed host size while `faceDiameter` pins the ring scale. */
-  private _pinnedHostPx: {width: number; height: number} | undefined;
+  /** The frame of the last render, when computed internally (no arcFrame). */
+  private _ownFrame: RadialFrame | undefined;
 
-  /** Whether the host size styles were set by syncPinnedHostSize. */
+  /** Whether the host size styles were set by applyPinnedHostSize. */
   private _hostSizePinned = false;
-
-  /**
-   * Apply/remove the fixed intrinsic host size derived from `faceDiameter`.
-   * The host renders inline by default, so a pinned size also needs
-   * `display: block` for width/height to apply.
-   */
-  private syncPinnedHostSize(): void {
-    if (this._pinnedHostPx && !this.arcFrame) {
-      this.style.width = `${this._pinnedHostPx.width}px`;
-      this.style.height = `${this._pinnedHostPx.height}px`;
-      this.style.display = 'block';
-      this._hostSizePinned = true;
-    } else if (this._hostSizePinned) {
-      this.style.removeProperty('width');
-      this.style.removeProperty('height');
-      this.style.removeProperty('display');
-      this._hostSizePinned = false;
-    }
-  }
 
   /**
    * Radius for a dial-band edge under zoom: additive (`base + _rOff`), keeping
@@ -727,21 +715,8 @@ export class ObcWatch extends LitElement {
     });
   }
 
-  private getContainerPx(): {width: number; height: number} {
-    let clientWidth = this.clientWidth;
-    let clientHeight = this.clientHeight;
-    if (clientWidth === 0 || clientHeight === 0) {
-      const box = this.parentElement?.getBoundingClientRect();
-      if (box) {
-        clientWidth = box.width;
-        clientHeight = box.height;
-      }
-    }
-    return {width: clientWidth, height: clientHeight};
-  }
-
   private getScale({width, height}: {width: number; height: number}): number {
-    const container = this.getContainerPx();
+    const container = measureContainerPx(this);
     const scale = Math.min(container.width / width, container.height / height);
     // On first paint the element and its parent can both still be zero-sized, so
     // the scale is 0 (or non-finite). That value flows into `px / scale` label
@@ -777,6 +752,7 @@ export class ObcWatch extends LitElement {
     if (this.arcFrame) {
       this._rOff = this.arcFrame.radiusOffset;
       this._labelsHidden = false;
+      this._ownFrame = undefined;
       width = this.arcFrame.width;
       height = this.arcFrame.height;
       viewBox = this.arcFrame.viewBox;
@@ -790,7 +766,7 @@ export class ObcWatch extends LitElement {
           left: this.clipLeft,
           right: this.clipRight,
         },
-        containerPx: this.getContainerPx(),
+        containerPx: measureContainerPx(this),
         faceDiameter: this.faceDiameter,
         zoomToFitArc: this.zoomToFitArc,
         areas: this.areas,
@@ -798,10 +774,7 @@ export class ObcWatch extends LitElement {
       });
       this._rOff = frame.radiusOffset;
       this._labelsHidden = frame.labelsHidden;
-      this._pinnedHostPx =
-        frame.hostWidthPx !== undefined && frame.hostHeightPx !== undefined
-          ? {width: frame.hostWidthPx, height: frame.hostHeightPx}
-          : undefined;
+      this._ownFrame = frame;
       width = frame.width;
       height = frame.height;
       viewBox = frame.viewBox;

@@ -15,8 +15,10 @@ import {InstrumentState, Priority} from '../../navigation-instruments/types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {innerRingRadiusFor} from '../../navigation-instruments/watch/watch.js';
 import {
+  applyPinnedHostSize,
   computeRadialFrame,
   estimateLabelWidthPx,
+  measureContainerPx,
   type RadialFrame,
 } from '../../svghelpers/radial-frame.js';
 
@@ -196,47 +198,16 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
     return this._frame;
   }
 
-  // The host renders inline, so clientWidth/Height are 0 — fall back to the
-  // parent box, exactly like obc-watch's getScale() does (issue #1032).
-  private getContainerPx(): {width: number; height: number} {
-    let width = this.clientWidth;
-    let height = this.clientHeight;
-    if (width === 0 || height === 0) {
-      const box = this.parentElement?.getBoundingClientRect();
-      if (box) {
-        width = box.width;
-        height = box.height;
-      }
-    }
-    return {width, height};
-  }
-
-  /** Whether the host size styles were set by syncPinnedHostSize. */
+  /** Whether the host size styles were set by applyPinnedHostSize. */
   private _hostSizePinned = false;
-
-  /**
-   * Apply/remove the fixed intrinsic host size derived from `faceDiameter`.
-   * The host renders inline by default, so a pinned size also needs
-   * `display: block` for width/height to apply.
-   */
-  private syncPinnedHostSize(): void {
-    const frame = this._frame;
-    if (frame?.hostWidthPx !== undefined && frame.hostHeightPx !== undefined) {
-      this.style.width = `${frame.hostWidthPx}px`;
-      this.style.height = `${frame.hostHeightPx}px`;
-      this.style.display = 'block';
-      this._hostSizePinned = true;
-    } else if (this._hostSizePinned) {
-      this.style.removeProperty('width');
-      this.style.removeProperty('height');
-      this.style.removeProperty('display');
-      this._hostSizePinned = false;
-    }
-  }
 
   override updated(changed: PropertyValues): void {
     super.updated(changed);
-    this.syncPinnedHostSize();
+    this._hostSizePinned = applyPinnedHostSize(
+      this,
+      this._frame,
+      this._hostSizePinned
+    );
     const frame = this._frame;
     if (!frame) {
       return;
@@ -358,7 +329,7 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
         ? 0
         : estimateLabelWidthPx(tickmarks.map((t) => t.text)),
       clips: this.zoomToFitArc ? undefined : this.safeClips,
-      containerPx: this.getContainerPx(),
+      containerPx: measureContainerPx(this),
       faceDiameter: this.faceDiameter,
       zoomToFitArc: this.zoomToFitArc,
       areas,

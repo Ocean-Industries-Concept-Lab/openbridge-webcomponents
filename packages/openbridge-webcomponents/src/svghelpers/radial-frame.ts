@@ -113,6 +113,53 @@ export interface RadialFrame extends ZoomToFitArcFrame {
 }
 
 /**
+ * Measure the host's available box in px. Radial instrument hosts render
+ * inline by default, so clientWidth/Height are often 0 — fall back to the
+ * parent box, like obc-watch's getScale() has always done (issue #1032).
+ */
+export function measureContainerPx(host: HTMLElement): {
+  width: number;
+  height: number;
+} {
+  let width = host.clientWidth;
+  let height = host.clientHeight;
+  if (width === 0 || height === 0) {
+    const box = host.parentElement?.getBoundingClientRect();
+    if (box) {
+      width = box.width;
+      height = box.height;
+    }
+  }
+  return {width, height};
+}
+
+/**
+ * Apply/remove the fixed intrinsic host size a `faceDiameter` frame pins.
+ * The hosts render inline by default, so a pinned size also needs
+ * `display: block` for width/height to apply. Returns whether the size is
+ * currently pinned; pass that back as `wasPinned` on the next call so an
+ * unpinned host's own inline styles are never clobbered.
+ */
+export function applyPinnedHostSize(
+  host: HTMLElement,
+  frame: RadialFrame | undefined,
+  wasPinned: boolean
+): boolean {
+  if (frame?.hostWidthPx !== undefined && frame.hostHeightPx !== undefined) {
+    host.style.width = `${frame.hostWidthPx}px`;
+    host.style.height = `${frame.hostHeightPx}px`;
+    host.style.display = 'block';
+    return true;
+  }
+  if (wasPinned) {
+    host.style.removeProperty('width');
+    host.style.removeProperty('height');
+    host.style.removeProperty('display');
+  }
+  return false;
+}
+
+/**
  * Estimate the widest label's pixel width at the 12px instrument label font.
  */
 export function estimateLabelWidthPx(

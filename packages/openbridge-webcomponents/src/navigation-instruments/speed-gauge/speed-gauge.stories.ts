@@ -73,3 +73,17 @@ export const Readout: Story = {
     hasReadout: true,
   },
 };
+
+export const LabelRoomHighSpeed: Story = {
+  name: 'Label Room — 4-Digit Scale in A Short Cell (#1021)',
+  args: {
+    minSpeed: 0,
+    maxSpeed: 3600,
+    speed: 2400,
+    tickmarkInterval: 900,
+    showLabels: true,
+    hasReadout: true,
+    width: 600,
+    height: 220,
+  } as never,
+};
