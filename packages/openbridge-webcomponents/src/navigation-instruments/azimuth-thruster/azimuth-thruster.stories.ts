@@ -3,7 +3,12 @@ import {ObcAzimuthThruster} from './azimuth-thruster.js';
 import './azimuth-thruster.js';
 import {InstrumentState, Priority, Size} from '../types.js';
 import {html} from 'lit';
-import {resizableStoryBox, widthDecorator} from '../../storybook-util.js';
+import {
+  playgroundColumn,
+  resizableStoryBox,
+  storyHint,
+  widthDecorator,
+} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {PropellerType} from '../thruster/propeller.js';
@@ -263,34 +268,68 @@ export const OffWithAngleSetpointOverride: Story = {
   },
 };
 
+type SizingPlaygroundArgs = Partial<ObcAzimuthThruster> & {
+  lockFaceDiameter?: boolean;
+};
+
 /**
- * Interactive sizing playground: drag the container's bottom-right corner and
- * tweak the `faceDiameter` control. With `faceDiameter` set the thruster
- * keeps a fixed intrinsic size (equal circumference with any other radial
- * instrument sharing the value); clear it and it fills the container,
- * reserving room for the degree labels adaptively (issue #1021). Related:
+ * Interactive sizing playground: drag the dashed box's bottom-right corner to
+ * resize it. The first thruster is pinned to a fixed intrinsic size by the
+ * `faceDiameter` control, while the second adapts to the remaining flex
+ * space, reserving room for its degree labels adaptively (issue #1021).
+ * Enable `lockFaceDiameter` to pin both to the same circumference. Related:
  * *Sizing Playground* stories under Building Blocks/Watch, Building
  * Blocks/Instrument Radial and Instruments/Gauge Radial.
  */
-export const SizingPlayground: Story = {
+export const SizingPlayground: StoryObj<SizingPlaygroundArgs> = {
   name: 'Sizing Playground — FaceDiameter + Resizable (Manual)',
   tags: ['skip-test'],
   parameters: {widthDecorator: false},
   args: {
-    faceDiameter: 260,
+    faceDiameter: 240,
+    lockFaceDiameter: false,
   },
-  render: (args) =>
-    resizableStoryBox(
-      html`
-        <div style="flex: 1; min-width: 0; height: 100%;">
-          <obc-azimuth-thruster
-            .angle=${45}
-            .thrust=${60}
-            .showLabels=${true}
-            .faceDiameter=${args.faceDiameter}
-          ></obc-azimuth-thruster>
-        </div>
-      `,
-      {width: 480, height: 400}
-    ),
+  argTypes: {
+    lockFaceDiameter: {
+      control: 'boolean',
+      description:
+        'Apply faceDiameter to every instance (equal circumference) instead of only the first.',
+    },
+  },
+  render: (args) => {
+    const instances = [
+      {label: 'thruster A', angle: 45, thrust: 60},
+      {label: 'thruster B', angle: -120, thrust: 35},
+    ];
+    const fd = (index: number) =>
+      index === 0 || args.lockFaceDiameter ? args.faceDiameter : undefined;
+    const caption = (index: number, label: string) =>
+      fd(index) !== undefined
+        ? `${label} — pinned ${fd(index)}px`
+        : `${label} — adaptive (flex)`;
+    return html`
+      ${storyHint(
+        'Drag the bottom-right corner of the dashed box to resize it. The first thruster is pinned by the faceDiameter control; the second adapts to the remaining flex space. Enable lockFaceDiameter to pin both to the same circumference.'
+      )}
+      ${resizableStoryBox(
+        html`
+          ${instances.map((g, index) =>
+            playgroundColumn(
+              caption(index, g.label),
+              html`
+                <obc-azimuth-thruster
+                  .angle=${g.angle}
+                  .thrust=${g.thrust}
+                  .showLabels=${true}
+                  .faceDiameter=${fd(index)}
+                ></obc-azimuth-thruster>
+              `,
+              {pinned: fd(index) !== undefined}
+            )
+          )}
+        `,
+        {width: 680, height: 400}
+      )}
+    `;
+  },
 };

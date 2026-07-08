@@ -2,13 +2,20 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import {ObcInstrumentRadial, ObcGaugeRadialType} from './instrument-radial.js';
 import './instrument-radial.js';
-import {resizableStoryBox, widthDecorator} from '../../storybook-util.js';
+import {
+  playgroundColumn,
+  resizableStoryBox,
+  storyHint,
+  widthDecorator,
+} from '../../storybook-util.js';
 import {AdviceType} from '../../navigation-instruments/watch/advice.js';
 import {InstrumentState, Priority} from '../../navigation-instruments/types.js';
 
 type InstrumentRadialStoryArgs = Partial<ObcInstrumentRadial> & {
   width?: number;
   height?: number;
+  /** Story-only: apply faceDiameter to every playground instance. */
+  lockFaceDiameter?: boolean;
   // Manifest-derived entries that only exist to be hidden from the panel.
   minAngle?: unknown;
   maxAngle?: unknown;
@@ -222,41 +229,90 @@ export const EqualCircumferenceMixedDigits: Story = {
 };
 
 /**
- * Interactive sizing playground for the building block: drag the container's
- * bottom-right corner and tweak the `faceDiameter` control. With
- * `faceDiameter` set the dials keep a fixed intrinsic size; clear it and they
- * fill the container, reserving label room adaptively (and hiding labels past
- * the reserve cap). Related: Instruments/Gauge Radial → *Sizing Playground*,
- * Building Blocks/Watch → *Sizing Playground*.
+ * Interactive sizing playground for the building block: drag the dashed box's
+ * bottom-right corner to resize it. The first dial is pinned to a fixed
+ * intrinsic size by the `faceDiameter` control, while the 4-digit dial and
+ * the 180° sector adapt to the remaining flex space, reserving room for their
+ * labels adaptively (issue #1021). Enable `lockFaceDiameter` to pin all three
+ * to the same circumference — full circle and partial arcs alike. Related:
+ * *Sizing Playground* stories under Building Blocks/Watch and
+ * Instruments/Gauge Radial.
  */
 export const SizingPlayground: Story = {
   name: 'Sizing Playground — FaceDiameter + Resizable (Manual)',
   tags: ['skip-test'],
   parameters: {widthDecorator: false},
   args: {
-    faceDiameter: 180,
+    faceDiameter: 200,
+    lockFaceDiameter: false,
   },
-  render: (args) =>
-    resizableStoryBox(
-      html`
-        ${[
-          {max: 99, interval: 33},
-          {max: 3600, interval: 900},
-        ].map(
-          (g) => html`
-            <div style="flex: 1; min-width: 0; height: 100%;">
-              <obc-instrument-radial
-                .value=${g.max * 0.6}
-                .maxValue=${g.max}
-                .getAngle=${(v: number) => (v / g.max) * 270 - 135}
-                .faceDiameter=${args.faceDiameter}
-                .showLabels=${true}
-                .primaryTickmarkInterval=${g.interval}
-              ></obc-instrument-radial>
-            </div>
-          `
-        )}
-      `,
-      {width: 560, height: 280}
-    ),
+  argTypes: {
+    lockFaceDiameter: {
+      control: 'boolean',
+      description:
+        'Apply faceDiameter to every instance (equal circumference) instead of only the first.',
+    },
+  },
+  render: (args) => {
+    const instances = [
+      {
+        label: '2-digit, 270°',
+        max: 99,
+        interval: 33,
+        getAngle: (v: number) => (v / 99) * 270 - 135,
+        clipBottom: 0,
+        endLabelsMaxMin: false,
+      },
+      {
+        label: '4-digit, 270°',
+        max: 3600,
+        interval: 900,
+        getAngle: (v: number) => (v / 3600) * 270 - 135,
+        clipBottom: 0,
+        endLabelsMaxMin: false,
+      },
+      {
+        label: '2-digit, 180° sector',
+        max: 99,
+        interval: 33,
+        getAngle: (v: number) => (v / 99) * 180 - 90,
+        clipBottom: 44,
+        endLabelsMaxMin: true,
+      },
+    ];
+    const fd = (index: number) =>
+      index === 0 || args.lockFaceDiameter ? args.faceDiameter : undefined;
+    const caption = (index: number, label: string) =>
+      fd(index) !== undefined
+        ? `${label} — pinned ${fd(index)}px`
+        : `${label} — adaptive (flex)`;
+    return html`
+      ${storyHint(
+        'Drag the bottom-right corner of the dashed box to resize it. The first dial is pinned by the faceDiameter control; the 4-digit dial and the 180° sector adapt to the remaining flex space. Enable lockFaceDiameter to pin all three to the same circumference.'
+      )}
+      ${resizableStoryBox(
+        html`
+          ${instances.map((g, index) =>
+            playgroundColumn(
+              caption(index, g.label),
+              html`
+                <obc-instrument-radial
+                  .value=${g.max * 0.6}
+                  .maxValue=${g.max}
+                  .getAngle=${g.getAngle}
+                  .clipBottom=${g.clipBottom}
+                  .endLabelsMaxMin=${g.endLabelsMaxMin}
+                  .showLabels=${true}
+                  .primaryTickmarkInterval=${g.interval}
+                  .faceDiameter=${fd(index)}
+                ></obc-instrument-radial>
+              `,
+              {pinned: fd(index) !== undefined}
+            )
+          )}
+        `,
+        {width: 760, height: 300}
+      )}
+    `;
+  },
 };

@@ -7,7 +7,12 @@ import {
 } from './compass.js';
 import './compass.js';
 import {html} from 'lit';
-import {resizableStoryBox, widthDecorator} from '../../storybook-util.js';
+import {
+  playgroundColumn,
+  resizableStoryBox,
+  storyHint,
+  widthDecorator,
+} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
 import {VesselImage} from '../watch/watch.js';
 import {topVessels} from '../watch/vessels/storybook-helper.js';
@@ -185,37 +190,71 @@ export const SmallContainer: Story = {
   },
 };
 
+type SizingPlaygroundArgs = Partial<ObcCompass> & {
+  lockFaceDiameter?: boolean;
+};
+
 /**
- * Interactive sizing playground: drag the container's bottom-right corner and
- * tweak the `faceDiameter` control. With `faceDiameter` set the compass keeps
- * a fixed intrinsic size (equal circumference with any other radial
- * instrument sharing the value); clear it and it fills the container while
- * reserving room for the NSWE labels, north arrow and wind/current symbols
- * adaptively (issue #1021). Related: *Sizing Playground* stories under
- * Building Blocks/Watch, Building Blocks/Instrument Radial and
- * Instruments/Gauge Radial.
+ * Interactive sizing playground: drag the dashed box's bottom-right corner to
+ * resize it. The first compass is pinned to a fixed intrinsic size by the
+ * `faceDiameter` control, while the second adapts to the remaining flex
+ * space, reserving room for the NSWE labels, north arrow and wind symbols
+ * adaptively (issue #1021). Enable `lockFaceDiameter` to pin both to the same
+ * circumference. Related: *Sizing Playground* stories under Building
+ * Blocks/Watch, Building Blocks/Instrument Radial and Instruments/Gauge
+ * Radial.
  */
-export const SizingPlayground: Story = {
+export const SizingPlayground: StoryObj<SizingPlaygroundArgs> = {
   name: 'Sizing Playground — FaceDiameter + Resizable (Manual)',
   tags: ['skip-test'],
   parameters: {widthDecorator: false},
   args: {
-    faceDiameter: 260,
+    faceDiameter: 240,
+    lockFaceDiameter: false,
   },
-  render: (args) =>
-    resizableStoryBox(
-      html`
-        <div style="flex: 1; min-width: 0; height: 100%;">
-          <obc-compass
-            .heading=${311}
-            .courseOverGround=${338}
-            .currentWindSpeedKnots=${20}
-            .windFromDirection=${45}
-            .showLabels=${true}
-            .faceDiameter=${args.faceDiameter}
-          ></obc-compass>
-        </div>
-      `,
-      {width: 480, height: 400}
-    ),
+  argTypes: {
+    lockFaceDiameter: {
+      control: 'boolean',
+      description:
+        'Apply faceDiameter to every instance (equal circumference) instead of only the first.',
+    },
+  },
+  render: (args) => {
+    const instances = [
+      {label: 'compass A', heading: 311},
+      {label: 'compass B', heading: 45},
+    ];
+    const fd = (index: number) =>
+      index === 0 || args.lockFaceDiameter ? args.faceDiameter : undefined;
+    const caption = (index: number, label: string) =>
+      fd(index) !== undefined
+        ? `${label} — pinned ${fd(index)}px`
+        : `${label} — adaptive (flex)`;
+    return html`
+      ${storyHint(
+        'Drag the bottom-right corner of the dashed box to resize it. The first compass is pinned by the faceDiameter control; the second adapts to the remaining flex space. Enable lockFaceDiameter to pin both to the same circumference.'
+      )}
+      ${resizableStoryBox(
+        html`
+          ${instances.map((g, index) =>
+            playgroundColumn(
+              caption(index, g.label),
+              html`
+                <obc-compass
+                  .heading=${g.heading}
+                  .courseOverGround=${g.heading + 27}
+                  .currentWindSpeedKnots=${20}
+                  .windFromDirection=${45}
+                  .showLabels=${true}
+                  .faceDiameter=${fd(index)}
+                ></obc-compass>
+              `,
+              {pinned: fd(index) !== undefined}
+            )
+          )}
+        `,
+        {width: 680, height: 400}
+      )}
+    `;
+  },
 };

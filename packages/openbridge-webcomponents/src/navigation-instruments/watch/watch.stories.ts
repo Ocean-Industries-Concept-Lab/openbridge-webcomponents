@@ -6,7 +6,12 @@ import {
   WatchCircleType,
 } from './watch.js';
 import './watch.js';
-import {resizableStoryBox, widthDecorator} from '../../storybook-util.js';
+import {
+  playgroundColumn,
+  resizableStoryBox,
+  storyHint,
+  widthDecorator,
+} from '../../storybook-util.js';
 import {AdviceState, AdviceType} from './advice.js';
 import {InstrumentState, Priority} from '../types.js';
 import {TickmarkType} from './tickmark.js';
@@ -734,43 +739,96 @@ export const TickmarksTestInsideRotation: Story = {
   },
 };
 
+type SizingPlaygroundArgs = Partial<ObcWatch> & {
+  lockFaceDiameter?: boolean;
+};
+
 /**
- * Interactive sizing playground for the core renderer: drag the container's
- * bottom-right corner and tweak the `faceDiameter` control. The left watch
- * has 2-digit tick labels, the right one 4-digit — with `faceDiameter` set
- * both rings stay pixel-identical while the boxes differ per label width;
- * clear it and each watch fills its cell, reserving label room adaptively
- * (and hiding labels past the reserve cap in `svghelpers/radial-frame.ts`,
- * issue #1021). Related: *Sizing Playground* stories under Building
- * Blocks/Instrument Radial and Instruments/Gauge Radial.
+ * Interactive sizing playground for the core renderer: drag the dashed box's
+ * bottom-right corner to resize it. The first watch (2-digit tick labels) is
+ * pinned to a fixed intrinsic size by the `faceDiameter` control, while the
+ * 4-digit watch and the 180° arc adapt to the remaining flex space, reserving
+ * label room adaptively (and hiding labels past the reserve cap in
+ * `svghelpers/radial-frame.ts`, issue #1021). Enable `lockFaceDiameter` to
+ * pin all three to the same circumference. Related: *Sizing Playground*
+ * stories under Building Blocks/Instrument Radial and Instruments/Gauge
+ * Radial.
  */
-export const SizingPlayground: Story = {
+export const SizingPlayground: StoryObj<SizingPlaygroundArgs> = {
   name: 'Sizing Playground — FaceDiameter + Resizable (Manual)',
   tags: ['skip-test'],
   parameters: {widthDecorator: false},
   args: {
     faceDiameter: 200,
+    lockFaceDiameter: false,
   },
-  render: (args) =>
-    resizableStoryBox(
-      html`
-        ${[2, 4].map(
-          (digits) => html`
-            <div style="flex: 1; min-width: 0; height: 100%;">
-              <obc-watch
-                .faceDiameter=${args.faceDiameter}
-                .tickmarks=${Array.from({length: 12}, (_, i) => ({
-                  angle: i * 30,
-                  type: TickmarkType.secondary,
-                  text: `${(i * 30 * (digits === 4 ? 10 : 1)) % (digits === 4 ? 3600 : 360)}`,
-                }))}
-              ></obc-watch>
-            </div>
-          `
-        )}
-      `,
-      {width: 640, height: 320}
-    ),
+  argTypes: {
+    lockFaceDiameter: {
+      control: 'boolean',
+      description:
+        'Apply faceDiameter to every instance (equal circumference) instead of only the first.',
+    },
+  },
+  render: (args) => {
+    const fullCircleTicks = (factor: number) =>
+      Array.from({length: 12}, (_, i) => ({
+        angle: i * 30,
+        type: TickmarkType.secondary,
+        text: `${i * 30 * factor}`,
+      }));
+    const instances = [
+      {label: '2-digit ticks', ticks: fullCircleTicks(1), areas: undefined},
+      {label: '4-digit ticks', ticks: fullCircleTicks(10), areas: undefined},
+      {
+        label: '180° arc',
+        ticks: Array.from({length: 7}, (_, i) => ({
+          angle: i * 30 - 90,
+          type: TickmarkType.secondary,
+          text: `${i * 30}`,
+        })),
+        areas: [
+          {
+            startAngle: -90,
+            endAngle: 90,
+            roundInsideCut: true,
+            roundOutsideCut: true,
+          },
+        ],
+      },
+    ];
+    const fd = (index: number) =>
+      index === 0 || args.lockFaceDiameter ? args.faceDiameter : undefined;
+    const caption = (index: number, label: string) =>
+      fd(index) !== undefined
+        ? `${label} — pinned ${fd(index)}px`
+        : `${label} — adaptive (flex)`;
+    return html`
+      ${storyHint(
+        'Drag the bottom-right corner of the dashed box to resize it. The first watch is pinned by the faceDiameter control; the 4-digit watch and the 180° arc adapt to the remaining flex space. Enable lockFaceDiameter to pin all three to the same circumference.'
+      )}
+      ${resizableStoryBox(
+        html`
+          ${instances.map((g, index) =>
+            playgroundColumn(
+              caption(index, g.label),
+              html`
+                <obc-watch
+                  .faceDiameter=${fd(index)}
+                  .tickmarks=${g.ticks}
+                  .areas=${g.areas ?? []}
+                  .watchCircleType=${g.areas
+                    ? WatchCircleType.double
+                    : WatchCircleType.single}
+                ></obc-watch>
+              `,
+              {pinned: fd(index) !== undefined}
+            )
+          )}
+        `,
+        {width: 760, height: 320}
+      )}
+    `;
+  },
 };
 
 /**

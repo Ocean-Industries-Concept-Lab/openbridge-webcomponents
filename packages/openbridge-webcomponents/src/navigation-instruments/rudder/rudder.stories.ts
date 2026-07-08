@@ -2,7 +2,12 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcRudder, ObcRudderVariant} from './rudder.js';
 import './rudder.js';
 import {html} from 'lit';
-import {resizableStoryBox, widthDecorator} from '../../storybook-util.js';
+import {
+  playgroundColumn,
+  resizableStoryBox,
+  storyHint,
+  widthDecorator,
+} from '../../storybook-util.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {InstrumentState, Priority} from '../types.js';
 const meta: Meta<typeof ObcRudder> = {
@@ -79,36 +84,73 @@ export const ZoomedInNarrow: Story = {
   },
 };
 
+type SizingPlaygroundArgs = Partial<ObcRudder> & {
+  lockFaceDiameter?: boolean;
+};
+
 /**
- * Interactive sizing playground: drag the container's bottom-right corner and
- * tweak the `faceDiameter` control. With `faceDiameter` set the half-circle
- * gauge keeps a fixed intrinsic size — its box is wider than tall, matching
- * the 40% top clip — and shares ring circumference with any other radial
- * instrument using the same value; clear it and it fills the container,
- * reserving room for the angle labels adaptively (issue #1021). Related:
- * *Sizing Playground* stories under Building Blocks/Watch, Building
- * Blocks/Instrument Radial and Instruments/Gauge Radial.
+ * Interactive sizing playground: drag the dashed box's bottom-right corner to
+ * resize it. The first rudder is pinned to a fixed intrinsic size by the
+ * `faceDiameter` control (its box is wider than tall, matching the 40% top
+ * clip), the second adapts to the remaining flex space, and the third is a
+ * zoomed narrow arc (`zoomToFitArc`) showing that the reserve composes with
+ * zoom (issue #1021). Enable `lockFaceDiameter` to pin all three to the same
+ * circumference. Related: *Sizing Playground* stories under Building
+ * Blocks/Watch, Building Blocks/Instrument Radial and Instruments/Gauge
+ * Radial.
  */
-export const SizingPlayground: Story = {
+export const SizingPlayground: StoryObj<SizingPlaygroundArgs> = {
   name: 'Sizing Playground — FaceDiameter + Resizable (Manual)',
   tags: ['skip-test'],
   parameters: {widthDecorator: false},
   args: {
-    faceDiameter: 300,
+    faceDiameter: 260,
+    lockFaceDiameter: false,
   },
-  render: (args) =>
-    resizableStoryBox(
-      html`
-        <div style="flex: 1; min-width: 0; height: 100%;">
-          <obc-rudder
-            .angle=${15}
-            .setpoint=${30}
-            .maxAngle=${45}
-            .showLabels=${true}
-            .faceDiameter=${args.faceDiameter}
-          ></obc-rudder>
-        </div>
-      `,
-      {width: 560, height: 280}
-    ),
+  argTypes: {
+    lockFaceDiameter: {
+      control: 'boolean',
+      description:
+        'Apply faceDiameter to every instance (equal circumference) instead of only the first.',
+    },
+  },
+  render: (args) => {
+    const instances = [
+      {label: 'half circle', maxAngle: 45, zoom: false},
+      {label: 'half circle', maxAngle: 45, zoom: false},
+      {label: 'zoomed ±20°', maxAngle: 20, zoom: true},
+    ];
+    const fd = (index: number) =>
+      index === 0 || args.lockFaceDiameter ? args.faceDiameter : undefined;
+    const caption = (index: number, label: string) =>
+      fd(index) !== undefined
+        ? `${label} — pinned ${fd(index)}px`
+        : `${label} — adaptive (flex)`;
+    return html`
+      ${storyHint(
+        'Drag the bottom-right corner of the dashed box to resize it. The first rudder is pinned by the faceDiameter control; the second and the zoomed narrow arc adapt to the remaining flex space. Enable lockFaceDiameter to pin all three to the same circumference.'
+      )}
+      ${resizableStoryBox(
+        html`
+          ${instances.map((g, index) =>
+            playgroundColumn(
+              caption(index, g.label),
+              html`
+                <obc-rudder
+                  .angle=${15}
+                  .setpoint=${30}
+                  .maxAngle=${g.maxAngle}
+                  .zoomToFitArc=${g.zoom}
+                  .showLabels=${true}
+                  .faceDiameter=${fd(index)}
+                ></obc-rudder>
+              `,
+              {pinned: fd(index) !== undefined}
+            )
+          )}
+        `,
+        {width: 760, height: 280}
+      )}
+    `;
+  },
 };

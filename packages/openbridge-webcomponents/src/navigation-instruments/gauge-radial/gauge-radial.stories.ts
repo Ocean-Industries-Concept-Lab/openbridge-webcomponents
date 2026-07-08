@@ -8,7 +8,12 @@ import {
   ObcGaugeRadialType,
 } from './gauge-radial.js';
 import './gauge-radial.js';
-import {resizableStoryBox, widthDecorator} from '../../storybook-util.js';
+import {
+  playgroundColumn,
+  resizableStoryBox,
+  storyHint,
+  widthDecorator,
+} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {InstrumentState, Priority} from '../types.js';
@@ -16,6 +21,8 @@ import {InstrumentState, Priority} from '../types.js';
 type GaugeRadialStoryArgs = Partial<ObcGaugeRadial> & {
   width?: number;
   height?: number;
+  /** Story-only: apply faceDiameter to every playground instance. */
+  lockFaceDiameter?: boolean;
 };
 
 const meta = {
@@ -496,11 +503,13 @@ export const EqualCircumferenceMixedDigits: Story = {
 };
 
 /**
- * Interactive sizing playground: drag the container's bottom-right corner and
- * tweak the `faceDiameter` control. With `faceDiameter` set the dials keep a
- * fixed intrinsic size regardless of the container (donut-chart
- * `fixedHeight` behavior); clear it to watch them fill the container and
- * reserve label room adaptively instead (the *Label Room* stories). The same
+ * Interactive sizing playground: drag the dashed box's bottom-right corner to
+ * resize it. The first gauge is pinned to a fixed intrinsic size by the
+ * `faceDiameter` control (donut-chart `fixedHeight` behavior), while the
+ * 4-digit gauge and the 180° sector adapt to the remaining flex space,
+ * reserving label room adaptively (the *Label Room* stories). Enable
+ * `lockFaceDiameter` to pin all three to the same circumference — full circle
+ * and partial arcs alike (the *Equal Circumference* stories). The same
  * behavior is available on every radial instrument — see the *Sizing
  * Playground* stories under Building Blocks/Watch, Building Blocks/Instrument
  * Radial, Instruments/Speed Gauge, Instruments/Compass, etc.
@@ -511,28 +520,69 @@ export const SizingPlayground: Story = {
   parameters: {widthDecorator: false},
   args: {
     faceDiameter: 180,
+    lockFaceDiameter: false,
   },
-  render: (args) =>
-    resizableStoryBox(
-      html`
-        ${[
-          {sector: GaugeRadialSector.deg270, max: 100, interval: 25},
-          {sector: GaugeRadialSector.deg180, max: 3600, interval: 900},
-        ].map(
-          (g) => html`
-            <obc-gauge-radial
-              .sector=${g.sector}
-              .value=${g.max * 0.6}
-              .maxValue=${g.max}
-              .faceDiameter=${args.faceDiameter}
-              .showLabels=${true}
-              .primaryTickmarkInterval=${g.interval}
-            ></obc-gauge-radial>
-          `
-        )}
-      `,
-      {width: 560, height: 280}
-    ),
+  argTypes: {
+    lockFaceDiameter: {
+      control: 'boolean',
+      description:
+        'Apply faceDiameter to every instance (equal circumference) instead of only the first.',
+    },
+  },
+  render: (args) => {
+    const instances = [
+      {
+        label: '2-digit, 270°',
+        sector: GaugeRadialSector.deg270,
+        max: 100,
+        interval: 25,
+      },
+      {
+        label: '4-digit, 270°',
+        sector: GaugeRadialSector.deg270,
+        max: 3600,
+        interval: 900,
+      },
+      {
+        label: '2-digit, 180° sector',
+        sector: GaugeRadialSector.deg180,
+        max: 100,
+        interval: 25,
+      },
+    ];
+    const fd = (index: number) =>
+      index === 0 || args.lockFaceDiameter ? args.faceDiameter : undefined;
+    const caption = (index: number, label: string) =>
+      fd(index) !== undefined
+        ? `${label} — pinned ${fd(index)}px`
+        : `${label} — adaptive (flex)`;
+    return html`
+      ${storyHint(
+        'Drag the bottom-right corner of the dashed box to resize it. The first gauge is pinned by the faceDiameter control; the 4-digit gauge and the 180° sector adapt to the remaining flex space. Enable lockFaceDiameter to pin all three to the same circumference.'
+      )}
+      ${resizableStoryBox(
+        html`
+          ${instances.map((g, index) =>
+            playgroundColumn(
+              caption(index, g.label),
+              html`
+                <obc-gauge-radial
+                  .sector=${g.sector}
+                  .value=${g.max * 0.6}
+                  .maxValue=${g.max}
+                  .faceDiameter=${fd(index)}
+                  .showLabels=${true}
+                  .primaryTickmarkInterval=${g.interval}
+                ></obc-gauge-radial>
+              `,
+              {pinned: fd(index) !== undefined}
+            )
+          )}
+        `,
+        {width: 760, height: 300}
+      )}
+    `;
+  },
 };
 
 /**

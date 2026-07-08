@@ -2,7 +2,12 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcSpeedGauge, ObcSpeedGaugeNeedleType} from './speed-gauge.js';
 import './speed-gauge.js';
 import {html} from 'lit';
-import {resizableStoryBox, widthDecorator} from '../../storybook-util.js';
+import {
+  playgroundColumn,
+  resizableStoryBox,
+  storyHint,
+  widthDecorator,
+} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {Priority} from '../types.js';
@@ -94,41 +99,70 @@ export const LabelRoomHighSpeed: Story = {
   } as never,
 };
 
+type SizingPlaygroundArgs = Partial<ObcSpeedGauge> & {
+  lockFaceDiameter?: boolean;
+};
+
 /**
- * Interactive sizing playground: drag the container's bottom-right corner and
- * tweak the `faceDiameter` control. With `faceDiameter` set both gauges keep
- * identical ring circumference despite their 2- vs 4-digit scales; clear it
- * and each fills its cell, reserving label room adaptively (issue #1021).
- * Related: *Sizing Playground* stories under Building Blocks/Watch, Building
- * Blocks/Instrument Radial and Instruments/Gauge Radial.
+ * Interactive sizing playground: drag the dashed box's bottom-right corner to
+ * resize it. The first gauge is pinned to a fixed intrinsic size by the
+ * `faceDiameter` control, while the second adapts to the remaining flex
+ * space, reserving room for its 4-digit labels adaptively (issue #1021).
+ * Enable `lockFaceDiameter` to pin both to the same circumference regardless
+ * of their label widths. Related: *Sizing Playground* stories under Building
+ * Blocks/Watch, Building Blocks/Instrument Radial and Instruments/Gauge
+ * Radial.
  */
-export const SizingPlayground: Story = {
+export const SizingPlayground: StoryObj<SizingPlaygroundArgs> = {
   name: 'Sizing Playground — FaceDiameter + Resizable (Manual)',
   tags: ['skip-test'],
   parameters: {widthDecorator: false},
   args: {
     faceDiameter: 220,
+    lockFaceDiameter: false,
   },
-  render: (args) =>
-    resizableStoryBox(
-      html`
-        ${[
-          {max: 40, interval: 10},
-          {max: 3600, interval: 900},
-        ].map(
-          (g) => html`
-            <div style="flex: 1; min-width: 0; height: 100%;">
-              <obc-speed-gauge
-                .speed=${g.max * 0.6}
-                .maxSpeed=${g.max}
-                .tickmarkInterval=${g.interval}
-                .showLabels=${true}
-                .faceDiameter=${args.faceDiameter}
-              ></obc-speed-gauge>
-            </div>
-          `
-        )}
-      `,
-      {width: 640, height: 320}
-    ),
+  argTypes: {
+    lockFaceDiameter: {
+      control: 'boolean',
+      description:
+        'Apply faceDiameter to every instance (equal circumference) instead of only the first.',
+    },
+  },
+  render: (args) => {
+    const instances = [
+      {label: '2-digit scale', max: 40, interval: 10},
+      {label: '4-digit scale', max: 3600, interval: 900},
+    ];
+    const fd = (index: number) =>
+      index === 0 || args.lockFaceDiameter ? args.faceDiameter : undefined;
+    const caption = (index: number, label: string) =>
+      fd(index) !== undefined
+        ? `${label} — pinned ${fd(index)}px`
+        : `${label} — adaptive (flex)`;
+    return html`
+      ${storyHint(
+        'Drag the bottom-right corner of the dashed box to resize it. The first gauge is pinned by the faceDiameter control; the second adapts to the remaining flex space. Enable lockFaceDiameter to pin both to the same circumference.'
+      )}
+      ${resizableStoryBox(
+        html`
+          ${instances.map((g, index) =>
+            playgroundColumn(
+              caption(index, g.label),
+              html`
+                <obc-speed-gauge
+                  .speed=${g.max * 0.6}
+                  .maxSpeed=${g.max}
+                  .tickmarkInterval=${g.interval}
+                  .showLabels=${true}
+                  .faceDiameter=${fd(index)}
+                ></obc-speed-gauge>
+              `,
+              {pinned: fd(index) !== undefined}
+            )
+          )}
+        `,
+        {width: 680, height: 340}
+      )}
+    `;
+  },
 };
