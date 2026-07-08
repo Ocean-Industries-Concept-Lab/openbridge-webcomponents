@@ -171,3 +171,10 @@ export const WithRateOfTurnDegreesPerMinute: Story = {
     priorityElements: [CompassPriorityElement.hdg, CompassPriorityElement.rot],
   },
 };
+
+export const SmallContainer: Story = {
+  name: 'Small Container (250px, Labels + Decor Reserve)',
+  args: {
+    width: 250,
+  },
+};
