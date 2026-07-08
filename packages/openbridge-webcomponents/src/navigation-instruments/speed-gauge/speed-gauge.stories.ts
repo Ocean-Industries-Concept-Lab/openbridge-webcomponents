@@ -1,7 +1,8 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcSpeedGauge, ObcSpeedGaugeNeedleType} from './speed-gauge.js';
 import './speed-gauge.js';
-import {widthDecorator} from '../../storybook-util.js';
+import {html} from 'lit';
+import {resizableStoryBox, widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {Priority} from '../types.js';
@@ -33,6 +34,11 @@ const meta: Meta<typeof ObcSpeedGauge> = {
       options: Object.values(TickmarkStyle),
     },
     hasReadout: {control: 'boolean'},
+    faceDiameter: {
+      control: {type: 'range', min: 100, max: 600, step: 10},
+      description:
+        'Pins the outer-ring diameter in px (fixed intrinsic size, equal circumference across instruments). Clear to return to fill-the-container sizing.',
+    },
     label: {control: 'text'},
     unit: {control: 'text'},
     fractionDigits: {control: 'number'},
@@ -86,4 +92,43 @@ export const LabelRoomHighSpeed: Story = {
     width: 600,
     height: 220,
   } as never,
+};
+
+/**
+ * Interactive sizing playground: drag the container's bottom-right corner and
+ * tweak the `faceDiameter` control. With `faceDiameter` set both gauges keep
+ * identical ring circumference despite their 2- vs 4-digit scales; clear it
+ * and each fills its cell, reserving label room adaptively (issue #1021).
+ * Related: *Sizing Playground* stories under Building Blocks/Watch, Building
+ * Blocks/Instrument Radial and Instruments/Gauge Radial.
+ */
+export const SizingPlayground: Story = {
+  name: 'Sizing Playground — FaceDiameter + Resizable (Manual)',
+  tags: ['skip-test'],
+  parameters: {widthDecorator: false},
+  args: {
+    faceDiameter: 220,
+  },
+  render: (args) =>
+    resizableStoryBox(
+      html`
+        ${[
+          {max: 40, interval: 10},
+          {max: 3600, interval: 900},
+        ].map(
+          (g) => html`
+            <div style="flex: 1; min-width: 0; height: 100%;">
+              <obc-speed-gauge
+                .speed=${g.max * 0.6}
+                .maxSpeed=${g.max}
+                .tickmarkInterval=${g.interval}
+                .showLabels=${true}
+                .faceDiameter=${args.faceDiameter}
+              ></obc-speed-gauge>
+            </div>
+          `
+        )}
+      `,
+      {width: 640, height: 320}
+    ),
 };

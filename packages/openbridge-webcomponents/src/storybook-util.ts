@@ -98,6 +98,16 @@ export function widthDecorator(
   story: () => unknown,
   context: {args: {width?: number; height?: number}}
 ): HTMLTemplateResult {
+  // Stories that manage their own container (e.g. user-resizable sizing
+  // playgrounds) opt out with `parameters: {widthDecorator: false}` — the
+  // fixed-size overflow:auto wrapper would fence in their resize handle.
+  // (Read via a cast so the signature stays assignable to Storybook's
+  // DecoratorFunction for every Meta typing in the repo.)
+  const parameters = (context as {parameters?: {widthDecorator?: boolean}})
+    .parameters;
+  if (parameters?.widthDecorator === false) {
+    return html`${story()}`;
+  }
   const width = context.args.width ?? 300;
   const height = context.args.height ?? width;
   return html` <div
@@ -105,5 +115,21 @@ export function widthDecorator(
     style="width: ${width}px; height: ${height}px; overflow: auto;"
   >
     ${story()}
+  </div>`;
+}
+
+/**
+ * User-resizable container for sizing-playground stories: drag the
+ * bottom-right corner and watch the content adapt. CSS `resize` only works
+ * with a non-visible `overflow`, hence `overflow: auto` on the box itself.
+ */
+export function resizableStoryBox(
+  content: unknown,
+  {width = 560, height = 320}: {width?: number; height?: number} = {}
+): HTMLTemplateResult {
+  return html`<div
+    style="resize: both; overflow: auto; border: 1px dashed var(--instrument-frame-tertiary-color, gray); width: ${width}px; height: ${height}px; display: flex; gap: 8px; align-items: flex-start;"
+  >
+    ${content}
   </div>`;
 }

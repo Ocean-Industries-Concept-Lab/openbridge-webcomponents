@@ -8,7 +8,7 @@ import {
   ObcGaugeRadialType,
 } from './gauge-radial.js';
 import './gauge-radial.js';
-import {widthDecorator} from '../../storybook-util.js';
+import {resizableStoryBox, widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {InstrumentState, Priority} from '../types.js';
@@ -48,6 +48,11 @@ const meta = {
     showLabels: {control: 'boolean'},
     tickmarksInside: {control: 'boolean'},
     hasReadout: {control: 'boolean'},
+    faceDiameter: {
+      control: {type: 'range', min: 100, max: 600, step: 10},
+      description:
+        'Pins the outer-ring diameter in px (fixed intrinsic size, equal circumference across instruments). Clear to return to fill-the-container sizing.',
+    },
     value: {control: 'number'},
     minValue: {control: 'number'},
     maxValue: {control: 'number'},
@@ -384,6 +389,14 @@ const labelRoomRow = html`
   </div>
 `;
 
+/**
+ * The issue #1021 repro: four gauges squeezed in a flex dashboard row. Each
+ * dial automatically reserves room for its own labels, so the 4-digit RPM
+ * scale gets a wider margin (and a slightly smaller ring) than its 2-digit
+ * siblings — nothing is clipped. To keep the rings the same size instead,
+ * give every gauge the same `faceDiameter` — see the *Equal Circumference*
+ * stories. Try the *Sizing Playground* story to explore interactively.
+ */
 export const LabelRoomFourDigitRow: Story = {
   name: 'Label Room — Mixed 2/4-Digit Flex Row (#1021)',
   args: {
@@ -393,6 +406,13 @@ export const LabelRoomFourDigitRow: Story = {
   render: () => labelRoomRow,
 };
 
+/**
+ * The same row squeezed below the label-reserve cap
+ * (`LABEL_RESERVE_MAX_FRACTION` in `svghelpers/radial-frame.ts`): when labels
+ * would eat more than ~45% of the box, they are hidden entirely instead of
+ * clipped — matching the canvas charts' graceful degradation. The threshold
+ * is content-aware: 2-digit labels survive smaller cells than 4-digit ones.
+ */
 export const LabelRoomDegradationRow: Story = {
   name: 'Label Room — Hide Past Reserve Cap (#1021)',
   args: {
@@ -402,13 +422,21 @@ export const LabelRoomDegradationRow: Story = {
   render: () => labelRoomRow,
 };
 
+/**
+ * `faceDiameter` pins the outer-ring diameter in px, so all four sectors
+ * (270°, 180°, 90°-left, 90°-right) render with identical ring circumference
+ * while their boxes differ per arc shape — the radial counterpart of
+ * `obc-donut-chart`'s fixed-height ⇒ fixed-circumference contract. Use the
+ * `faceDiameter` control to scale all of them together.
+ */
 export const EqualCircumferenceMixedArcs: Story = {
   name: 'Equal Circumference — Same FaceDiameter Across Sectors',
   args: {
     width: 900,
     height: 320,
+    faceDiameter: 180,
   },
-  render: () => html`
+  render: (args) => html`
     <div style="display: flex; gap: 8px; align-items: flex-start;">
       ${[
         GaugeRadialSector.deg270,
@@ -421,7 +449,7 @@ export const EqualCircumferenceMixedArcs: Story = {
             .sector=${sector}
             .value=${60}
             .maxValue=${100}
-            .faceDiameter=${180}
+            .faceDiameter=${args.faceDiameter ?? 180}
             .showLabels=${true}
             .primaryTickmarkInterval=${25}
             .secondaryTickmarkInterval=${5}
@@ -432,13 +460,20 @@ export const EqualCircumferenceMixedArcs: Story = {
   `,
 };
 
+/**
+ * Two gauges with the same `faceDiameter` but different label widths: the
+ * rings are pixel-identical while the 4-digit gauge's box grows wider to hold
+ * its labels — the "equal circumference" answer to the unequal rings visible
+ * in the *Label Room* stories. Use the `faceDiameter` control to resize both.
+ */
 export const EqualCircumferenceMixedDigits: Story = {
   name: 'Equal Circumference — 2-Digit Vs 4-Digit, Same FaceDiameter',
   args: {
     width: 700,
     height: 300,
+    faceDiameter: 200,
   },
-  render: () => html`
+  render: (args) => html`
     <div style="display: flex; gap: 8px; align-items: center;">
       ${[
         {label: 'Load', max: 99, interval: 33},
@@ -448,7 +483,7 @@ export const EqualCircumferenceMixedDigits: Story = {
           <obc-gauge-radial
             .value=${g.max * 0.6}
             .maxValue=${g.max}
-            .faceDiameter=${200}
+            .faceDiameter=${args.faceDiameter ?? 200}
             .showLabels=${true}
             .primaryTickmarkInterval=${g.interval}
             .hasReadout=${true}
@@ -460,32 +495,50 @@ export const EqualCircumferenceMixedDigits: Story = {
   `,
 };
 
-export const EqualCircumferenceResizable: Story = {
-  name: 'Equal Circumference — Fixed Intrinsic Size (Resizable)',
+/**
+ * Interactive sizing playground: drag the container's bottom-right corner and
+ * tweak the `faceDiameter` control. With `faceDiameter` set the dials keep a
+ * fixed intrinsic size regardless of the container (donut-chart
+ * `fixedHeight` behavior); clear it to watch them fill the container and
+ * reserve label room adaptively instead (the *Label Room* stories). The same
+ * behavior is available on every radial instrument — see the *Sizing
+ * Playground* stories under Building Blocks/Watch, Building Blocks/Instrument
+ * Radial, Instruments/Speed Gauge, Instruments/Compass, etc.
+ */
+export const SizingPlayground: Story = {
+  name: 'Sizing Playground — FaceDiameter + Resizable (Manual)',
   tags: ['skip-test'],
-  render: () => html`
-    <div
-      style="resize: both; overflow: auto; border: 1px dashed var(--instrument-frame-tertiary-color, gray); width: 560px; height: 280px; display: flex; gap: 8px; align-items: flex-start;"
-    >
-      ${[
-        {sector: GaugeRadialSector.deg270, max: 100, interval: 25},
-        {sector: GaugeRadialSector.deg180, max: 3600, interval: 900},
-      ].map(
-        (g) => html`
-          <obc-gauge-radial
-            .sector=${g.sector}
-            .value=${g.max * 0.6}
-            .maxValue=${g.max}
-            .faceDiameter=${180}
-            .showLabels=${true}
-            .primaryTickmarkInterval=${g.interval}
-          ></obc-gauge-radial>
-        `
-      )}
-    </div>
-  `,
+  parameters: {widthDecorator: false},
+  args: {
+    faceDiameter: 180,
+  },
+  render: (args) =>
+    resizableStoryBox(
+      html`
+        ${[
+          {sector: GaugeRadialSector.deg270, max: 100, interval: 25},
+          {sector: GaugeRadialSector.deg180, max: 3600, interval: 900},
+        ].map(
+          (g) => html`
+            <obc-gauge-radial
+              .sector=${g.sector}
+              .value=${g.max * 0.6}
+              .maxValue=${g.max}
+              .faceDiameter=${args.faceDiameter}
+              .showLabels=${true}
+              .primaryTickmarkInterval=${g.interval}
+            ></obc-gauge-radial>
+          `
+        )}
+      `,
+      {width: 560, height: 280}
+    ),
 };
 
+/**
+ * A 4-digit scale in a narrow column: the reserve is driven by the binding
+ * axis (here the width), so the labels stay readable while the ring shrinks.
+ */
 export const LabelRoomTallNarrow: Story = {
   name: 'Label Room — Tall Narrow 4-Digit (#1021)',
   args: {
@@ -500,6 +553,10 @@ export const LabelRoomTallNarrow: Story = {
   },
 };
 
+/**
+ * With `tickmarksInside` the labels live inside the ring, so no outside
+ * reserve is needed — the dial keeps the full legacy box at any label width.
+ */
 export const LabelRoomInsideLabels: Story = {
   name: 'Label Room — Inside Labels Keep The Base Box (#1021)',
   args: {

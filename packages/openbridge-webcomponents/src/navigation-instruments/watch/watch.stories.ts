@@ -6,7 +6,7 @@ import {
   WatchCircleType,
 } from './watch.js';
 import './watch.js';
-import {widthDecorator} from '../../storybook-util.js';
+import {resizableStoryBox, widthDecorator} from '../../storybook-util.js';
 import {AdviceState, AdviceType} from './advice.js';
 import {InstrumentState, Priority} from '../types.js';
 import {TickmarkType} from './tickmark.js';
@@ -70,6 +70,11 @@ Source of truth: \`packages/openbridge-webcomponents/src/navigation-instruments/
     },
     areas: {control: {type: 'object'}},
     padding: {control: {type: 'range', min: 0, max: 100, step: 1}},
+    faceDiameter: {
+      control: {type: 'range', min: 100, max: 600, step: 10},
+      description:
+        'Pins the outer-ring diameter in px (fixed intrinsic size, equal circumference across instruments). Clear to return to fill-the-container sizing.',
+    },
     vessels: {control: {type: 'object'}},
     windKnots: {control: {type: 'range', min: 0, max: 100, step: 1}},
     windFromDirectionDeg: {control: {type: 'range', min: 0, max: 360, step: 1}},
@@ -727,6 +732,45 @@ export const TickmarksTestInsideRotation: Story = {
       </div>
     `;
   },
+};
+
+/**
+ * Interactive sizing playground for the core renderer: drag the container's
+ * bottom-right corner and tweak the `faceDiameter` control. The left watch
+ * has 2-digit tick labels, the right one 4-digit — with `faceDiameter` set
+ * both rings stay pixel-identical while the boxes differ per label width;
+ * clear it and each watch fills its cell, reserving label room adaptively
+ * (and hiding labels past the reserve cap in `svghelpers/radial-frame.ts`,
+ * issue #1021). Related: *Sizing Playground* stories under Building
+ * Blocks/Instrument Radial and Instruments/Gauge Radial.
+ */
+export const SizingPlayground: Story = {
+  name: 'Sizing Playground — FaceDiameter + Resizable (Manual)',
+  tags: ['skip-test'],
+  parameters: {widthDecorator: false},
+  args: {
+    faceDiameter: 200,
+  },
+  render: (args) =>
+    resizableStoryBox(
+      html`
+        ${[2, 4].map(
+          (digits) => html`
+            <div style="flex: 1; min-width: 0; height: 100%;">
+              <obc-watch
+                .faceDiameter=${args.faceDiameter}
+                .tickmarks=${Array.from({length: 12}, (_, i) => ({
+                  angle: i * 30,
+                  type: TickmarkType.secondary,
+                  text: `${(i * 30 * (digits === 4 ? 10 : 1)) % (digits === 4 ? 3600 : 360)}`,
+                }))}
+              ></obc-watch>
+            </div>
+          `
+        )}
+      `,
+      {width: 640, height: 320}
+    ),
 };
 
 /**

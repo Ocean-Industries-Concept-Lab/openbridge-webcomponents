@@ -2,7 +2,8 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcAzimuthThruster} from './azimuth-thruster.js';
 import './azimuth-thruster.js';
 import {InstrumentState, Priority, Size} from '../types.js';
-import {widthDecorator} from '../../storybook-util.js';
+import {html} from 'lit';
+import {resizableStoryBox, widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {PropellerType} from '../thruster/propeller.js';
@@ -12,6 +13,11 @@ const meta: Meta<typeof ObcAzimuthThruster> = {
   tags: ['autodocs', '6.0'],
   component: 'obc-azimuth-thruster',
   argTypes: {
+    faceDiameter: {
+      control: {type: 'range', min: 100, max: 600, step: 10},
+      description:
+        'Pins the outer-ring diameter in px (fixed intrinsic size, equal circumference across instruments). Clear to return to fill-the-container sizing.',
+    },
     thrust: {control: {type: 'range', min: -100, max: 100, step: 1}},
     thrustSetpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
     angle: {control: {type: 'range', min: -180, max: 180, step: 1}},
@@ -255,4 +261,36 @@ export const OffWithAngleSetpointOverride: Story = {
     thrustSetpointOverride: false,
     priority: Priority.enhanced,
   },
+};
+
+/**
+ * Interactive sizing playground: drag the container's bottom-right corner and
+ * tweak the `faceDiameter` control. With `faceDiameter` set the thruster
+ * keeps a fixed intrinsic size (equal circumference with any other radial
+ * instrument sharing the value); clear it and it fills the container,
+ * reserving room for the degree labels adaptively (issue #1021). Related:
+ * *Sizing Playground* stories under Building Blocks/Watch, Building
+ * Blocks/Instrument Radial and Instruments/Gauge Radial.
+ */
+export const SizingPlayground: Story = {
+  name: 'Sizing Playground — FaceDiameter + Resizable (Manual)',
+  tags: ['skip-test'],
+  parameters: {widthDecorator: false},
+  args: {
+    faceDiameter: 260,
+  },
+  render: (args) =>
+    resizableStoryBox(
+      html`
+        <div style="flex: 1; min-width: 0; height: 100%;">
+          <obc-azimuth-thruster
+            .angle=${45}
+            .thrust=${60}
+            .showLabels=${true}
+            .faceDiameter=${args.faceDiameter}
+          ></obc-azimuth-thruster>
+        </div>
+      `,
+      {width: 480, height: 400}
+    ),
 };
