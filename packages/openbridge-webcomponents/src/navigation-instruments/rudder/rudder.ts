@@ -1,20 +1,20 @@
-import {LitElement, css, html, nothing, svg} from 'lit';
+import {LitElement, PropertyValues, css, html, nothing, svg} from 'lit';
 import {property} from 'lit/decorators.js';
+import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import '../watch/watch.js';
 import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
-import {
-  OUTER_RING_RADIUS,
-  WatchCircleType,
-  innerRingRadiusFor,
-} from '../watch/watch.js';
+import {WatchCircleType, innerRingRadiusFor} from '../watch/watch.js';
 import {InstrumentState, Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {customElement} from '../../decorator.js';
 import {
-  computeZoomToFitArcFrame,
-  type ZoomToFitArcFrame,
-} from '../../svghelpers/arc-frame.js';
+  applyPinnedHostSize,
+  computeRadialFrame,
+  estimateLabelWidthPx,
+  measureContainerPx,
+  type RadialFrame,
+} from '../../svghelpers/radial-frame.js';
 
 export enum ObcRudderVariant {
   Bar = 'bar',
@@ -95,9 +95,35 @@ export class ObcRudder extends SetpointMixin(LitElement) {
     TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: AngleAdvice[] = [];
   @property({type: Boolean}) zoomToFitArc: boolean = false;
+  /**
+   * Outer-ring diameter in CSS pixels. When set, the instrument renders at a
+   * fixed intrinsic size derived from the ring, arc shape and label reserve —
+   * so instruments sharing the same value have identical ring circumference
+   * regardless of label width or arc extent (like obc-donut-chart's
+   * fixedHeight). When unset (default), the instrument fills its container.
+   */
+  @property({type: Number, attribute: 'face-diameter'})
+  faceDiameter: number | undefined;
 
   private _radiusOffset = 0;
-  private _arcFrame: ZoomToFitArcFrame | undefined;
+  private _frame: RadialFrame | undefined;
+
+  /** Whether the host size styles were set by applyPinnedHostSize. */
+  private _hostSizePinned = false;
+
+  // @ts-expect-error TS6133: The controller ensures that the render
+  // function is called on resize of the element (the label reserve
+  // depends on the container size).
+  private _resizeController = new ResizeController(this, {});
+
+  override updated(changed: PropertyValues): void {
+    super.updated(changed);
+    this._hostSizePinned = applyPinnedHostSize(
+      this,
+      this._frame,
+      this._hostSizePinned
+    );
+  }
 
   private get _needleTransform(): string {
     const rOff = this._radiusOffset;
@@ -243,33 +269,32 @@ export class ObcRudder extends SetpointMixin(LitElement) {
       };
     });
 
-    let overlayViewBox: string;
-    if (this.zoomToFitArc) {
-      const ext = 48;
-      const targetSize = (176 + ext) * 2;
-      const frame = computeZoomToFitArcFrame({
-        areas,
-        outerRadius: OUTER_RING_RADIUS,
-        innerRadius: innerRingRadiusFor(WatchCircleType.double),
-        extension: ext,
-        targetSize,
-      });
-      overlayViewBox = frame.viewBox;
-      this._radiusOffset = frame.radiusOffset;
-      this._arcFrame = frame;
-    } else {
-      overlayViewBox = '-224 -44.8 448 268.8';
-      this._radiusOffset = 0;
-      this._arcFrame = undefined;
-    }
+    const frame = computeRadialFrame({
+      basePadding: 48,
+      labelWidthPx: this.tickmarksInside
+        ? 0
+        : estimateLabelWidthPx(tickmarks.map((t) => t.text)),
+      clips: this.zoomToFitArc
+        ? undefined
+        : {top: 40, bottom: 0, left: 0, right: 0},
+      containerPx: measureContainerPx(this),
+      faceDiameter: this.faceDiameter,
+      zoomToFitArc: this.zoomToFitArc,
+      areas,
+      innerRadius: innerRingRadiusFor(WatchCircleType.double),
+    });
+    this._radiusOffset = frame.radiusOffset;
+    this._frame = frame;
+    const shownTickmarks = frame.labelsHidden
+      ? tickmarks.map((t) => ({...t, text: undefined}))
+      : tickmarks;
+    const overlayViewBox = frame.viewBox;
 
     return html`
       <div class="container">
         <obc-watch
           .touching=${this.touching}
-          .clipTop=${this.zoomToFitArc ? 0 : 40}
-          .zoomToFitArc=${this.zoomToFitArc}
-          .arcFrame=${this._arcFrame}
+          .arcFrame=${frame}
           .areas=${areas}
           .angleSetpoint=${setpointAngle}
           .newAngleSetpoint=${this.newSetpoint !== undefined
@@ -279,8 +304,7 @@ export class ObcRudder extends SetpointMixin(LitElement) {
           .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
           .setpointOverride=${this.setpointOverride}
           .animateSetpoint=${this.animateSetpoint}
-          .padding=${48}
-          .tickmarks=${tickmarks}
+          .tickmarks=${shownTickmarks}
           .tickmarksInside=${this.tickmarksInside}
           .tickmarkStyle=${this.tickmarkStyle}
           .watchCircleType=${WatchCircleType.double}
