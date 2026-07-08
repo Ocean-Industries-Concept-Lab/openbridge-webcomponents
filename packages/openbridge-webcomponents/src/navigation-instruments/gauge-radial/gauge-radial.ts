@@ -177,6 +177,15 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   @property({type: String}) label = '';
   @property({type: String}) unit = '';
   @property({type: Number}) fractionDigits = 0;
+  /**
+   * Outer-ring diameter in CSS pixels. When set, the instrument renders at a
+   * fixed intrinsic size derived from the ring, arc shape and label reserve —
+   * so instruments sharing the same value have identical ring circumference
+   * regardless of label width or arc extent (like obc-donut-chart's
+   * fixedHeight). When unset (default), the instrument fills its container.
+   */
+  @property({type: Number, attribute: 'face-diameter', reflect: true})
+  faceDiameter: number | undefined;
 
   private get sectorAngles(): {sweep: number; start: number} {
     switch (this.sector) {
@@ -339,6 +348,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
       <div
         class=${classMap({
           'gauge-radial-root': true,
+          'face-pinned': this.faceDiameter !== undefined,
           'type-needle': this.type === ObcGaugeRadialType.needle,
           'sector-180': this.sector === GaugeRadialSector.deg180,
           'sector-90-left': this.sector === GaugeRadialSector.deg90Left,
@@ -376,6 +386,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
           .clipLeft=${clips.left}
           .clipRight=${clips.right}
           .endLabelsMaxMin=${this.sector === GaugeRadialSector.deg180}
+          .faceDiameter=${this.faceDiameter}
           @frame-changed=${this._onFrameChanged}
         >
         </obc-instrument-radial>

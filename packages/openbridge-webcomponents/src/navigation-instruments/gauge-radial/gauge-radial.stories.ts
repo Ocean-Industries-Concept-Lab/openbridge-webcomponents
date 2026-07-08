@@ -402,6 +402,90 @@ export const LabelRoomDegradationRow: Story = {
   render: () => labelRoomRow,
 };
 
+export const EqualCircumferenceMixedArcs: Story = {
+  name: 'Equal Circumference — Same FaceDiameter Across Sectors',
+  args: {
+    width: 900,
+    height: 320,
+  },
+  render: () => html`
+    <div style="display: flex; gap: 8px; align-items: flex-start;">
+      ${[
+        GaugeRadialSector.deg270,
+        GaugeRadialSector.deg180,
+        GaugeRadialSector.deg90Left,
+        GaugeRadialSector.deg90Right,
+      ].map(
+        (sector) => html`
+          <obc-gauge-radial
+            .sector=${sector}
+            .value=${60}
+            .maxValue=${100}
+            .faceDiameter=${180}
+            .showLabels=${true}
+            .primaryTickmarkInterval=${25}
+            .secondaryTickmarkInterval=${5}
+          ></obc-gauge-radial>
+        `
+      )}
+    </div>
+  `,
+};
+
+export const EqualCircumferenceMixedDigits: Story = {
+  name: 'Equal Circumference — 2-Digit Vs 4-Digit, Same FaceDiameter',
+  args: {
+    width: 700,
+    height: 300,
+  },
+  render: () => html`
+    <div style="display: flex; gap: 8px; align-items: center;">
+      ${[
+        {label: 'Load', max: 99, interval: 33},
+        {label: 'RPM', max: 3600, interval: 900},
+      ].map(
+        (g) => html`
+          <obc-gauge-radial
+            .value=${g.max * 0.6}
+            .maxValue=${g.max}
+            .faceDiameter=${200}
+            .showLabels=${true}
+            .primaryTickmarkInterval=${g.interval}
+            .hasReadout=${true}
+            .label=${g.label}
+          ></obc-gauge-radial>
+        `
+      )}
+    </div>
+  `,
+};
+
+export const EqualCircumferenceResizable: Story = {
+  name: 'Equal Circumference — Fixed Intrinsic Size (Resizable)',
+  tags: ['skip-test'],
+  render: () => html`
+    <div
+      style="resize: both; overflow: auto; border: 1px dashed var(--instrument-frame-tertiary-color, gray); width: 560px; height: 280px; display: flex; gap: 8px; align-items: flex-start;"
+    >
+      ${[
+        {sector: GaugeRadialSector.deg270, max: 100, interval: 25},
+        {sector: GaugeRadialSector.deg180, max: 3600, interval: 900},
+      ].map(
+        (g) => html`
+          <obc-gauge-radial
+            .sector=${g.sector}
+            .value=${g.max * 0.6}
+            .maxValue=${g.max}
+            .faceDiameter=${180}
+            .showLabels=${true}
+            .primaryTickmarkInterval=${g.interval}
+          ></obc-gauge-radial>
+        `
+      )}
+    </div>
+  `,
+};
+
 export const LabelRoomTallNarrow: Story = {
   name: 'Label Room — Tall Narrow 4-Digit (#1021)',
   args: {

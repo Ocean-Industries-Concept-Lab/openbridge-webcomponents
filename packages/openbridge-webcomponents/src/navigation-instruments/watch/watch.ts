@@ -210,6 +210,15 @@ export class ObcWatch extends LitElement {
    * width-aware label reserve (issue #1021) — the caller owns label room.
    */
   @property({type: Number}) padding: number | undefined;
+  /**
+   * Outer-ring diameter in CSS pixels. When set, the instrument renders at a
+   * fixed intrinsic size derived from the ring, arc shape and label reserve —
+   * so instruments sharing the same value have identical ring circumference
+   * regardless of label width or arc extent (like obc-donut-chart's
+   * fixedHeight). When unset (default), the instrument fills its container.
+   */
+  @property({type: Number, attribute: 'face-diameter'})
+  faceDiameter: number | undefined;
   @property({type: Array, attribute: false}) areas: WatchArea[] = [];
   @property({type: Array, attribute: false}) barAreas: WatchBarArea[] = [];
   @property({type: Array, attribute: false}) needles: WatchNeedle[] = [];
@@ -340,6 +349,7 @@ export class ObcWatch extends LitElement {
 
   override updated(changed: PropertyValues): void {
     super.updated(changed);
+    this.syncPinnedHostSize();
     const el = this.rotType
       ? this.renderRoot.querySelector('#rot-spinner')
       : null;
@@ -368,6 +378,31 @@ export class ObcWatch extends LitElement {
    * texts are dropped instead of clipped (see radial-frame.ts).
    */
   private _labelsHidden = false;
+
+  /** Fixed host size while `faceDiameter` pins the ring scale. */
+  private _pinnedHostPx: {width: number; height: number} | undefined;
+
+  /** Whether the host size styles were set by syncPinnedHostSize. */
+  private _hostSizePinned = false;
+
+  /**
+   * Apply/remove the fixed intrinsic host size derived from `faceDiameter`.
+   * The host renders inline by default, so a pinned size also needs
+   * `display: block` for width/height to apply.
+   */
+  private syncPinnedHostSize(): void {
+    if (this._pinnedHostPx && !this.arcFrame) {
+      this.style.width = `${this._pinnedHostPx.width}px`;
+      this.style.height = `${this._pinnedHostPx.height}px`;
+      this.style.display = 'block';
+      this._hostSizePinned = true;
+    } else if (this._hostSizePinned) {
+      this.style.removeProperty('width');
+      this.style.removeProperty('height');
+      this.style.removeProperty('display');
+      this._hostSizePinned = false;
+    }
+  }
 
   /**
    * Radius for a dial-band edge under zoom: additive (`base + _rOff`), keeping
@@ -756,12 +791,17 @@ export class ObcWatch extends LitElement {
           right: this.clipRight,
         },
         containerPx: this.getContainerPx(),
+        faceDiameter: this.faceDiameter,
         zoomToFitArc: this.zoomToFitArc,
         areas: this.areas,
         innerRadius: this.innerRingRadius,
       });
       this._rOff = frame.radiusOffset;
       this._labelsHidden = frame.labelsHidden;
+      this._pinnedHostPx =
+        frame.hostWidthPx !== undefined && frame.hostHeightPx !== undefined
+          ? {width: frame.hostWidthPx, height: frame.hostHeightPx}
+          : undefined;
       width = frame.width;
       height = frame.height;
       viewBox = frame.viewBox;

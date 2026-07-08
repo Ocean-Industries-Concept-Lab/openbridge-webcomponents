@@ -172,6 +172,15 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
    */
   @property({type: Boolean}) endLabelsMaxMin: boolean = false;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
+  /**
+   * Outer-ring diameter in CSS pixels. When set, the instrument renders at a
+   * fixed intrinsic size derived from the ring, arc shape and label reserve —
+   * so instruments sharing the same value have identical ring circumference
+   * regardless of label width or arc extent (like obc-donut-chart's
+   * fixedHeight). When unset (default), the instrument fills its container.
+   */
+  @property({type: Number, attribute: 'face-diameter'})
+  faceDiameter: number | undefined;
 
   private _radiusOffset = 0;
   private _frame: RadialFrame | undefined;
@@ -202,8 +211,32 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
     return {width, height};
   }
 
+  /** Whether the host size styles were set by syncPinnedHostSize. */
+  private _hostSizePinned = false;
+
+  /**
+   * Apply/remove the fixed intrinsic host size derived from `faceDiameter`.
+   * The host renders inline by default, so a pinned size also needs
+   * `display: block` for width/height to apply.
+   */
+  private syncPinnedHostSize(): void {
+    const frame = this._frame;
+    if (frame?.hostWidthPx !== undefined && frame.hostHeightPx !== undefined) {
+      this.style.width = `${frame.hostWidthPx}px`;
+      this.style.height = `${frame.hostHeightPx}px`;
+      this.style.display = 'block';
+      this._hostSizePinned = true;
+    } else if (this._hostSizePinned) {
+      this.style.removeProperty('width');
+      this.style.removeProperty('height');
+      this.style.removeProperty('display');
+      this._hostSizePinned = false;
+    }
+  }
+
   override updated(changed: PropertyValues): void {
     super.updated(changed);
+    this.syncPinnedHostSize();
     const frame = this._frame;
     if (!frame) {
       return;
@@ -326,6 +359,7 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
         : estimateLabelWidthPx(tickmarks.map((t) => t.text)),
       clips: this.zoomToFitArc ? undefined : this.safeClips,
       containerPx: this.getContainerPx(),
+      faceDiameter: this.faceDiameter,
       zoomToFitArc: this.zoomToFitArc,
       areas,
       innerRadius: innerRingRadiusFor(watchCircleType),
