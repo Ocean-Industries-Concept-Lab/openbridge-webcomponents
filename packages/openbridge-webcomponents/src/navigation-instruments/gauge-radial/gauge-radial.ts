@@ -2,7 +2,8 @@ import {LitElement, html, nothing, unsafeCSS, type TemplateResult} from 'lit';
 import {classMap} from 'lit/directives/class-map.js';
 import componentStyle from './gauge-radial.css?inline';
 import {customElement} from '../../decorator.js';
-import {property} from 'lit/decorators.js';
+import {property, query} from 'lit/decorators.js';
+import type {RadialFrame} from '../../svghelpers/radial-frame.js';
 import {AdviceType} from '../watch/advice.js';
 import {InstrumentState, Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
@@ -42,6 +43,17 @@ export interface GaugeRadialAdvice {
   type: AdviceType;
   hinted: boolean;
 }
+
+/**
+ * Readout meta-row anchors in SVG units, derived from the legacy CSS
+ * percentages against the default 448 box (72% → 98.56, 63% → 58.24; the 180°
+ * sector's 60% of its 250.88-high crop → −73.472). Converted back to
+ * percentages against the actual frame so readouts stay put when the box
+ * grows for the label reserve (issue #1021).
+ */
+const READOUT_META_Y = 98.56;
+const READOUT_META_Y_NEEDLE = 58.24;
+const READOUT_META_Y_180 = -73.472;
 
 /**
  * `<obc-gauge-radial>` — Configurable radial gauge for generic numeric values.
@@ -212,6 +224,29 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
     );
   }
 
+  /** @internal */
+  @query('.gauge-radial-root') private _rootEl?: HTMLElement;
+
+  /**
+   * Re-anchor the %-positioned readouts against the frame the inner
+   * instrument actually rendered (the box grows when labels need room).
+   */
+  private _onFrameChanged = (e: Event): void => {
+    const frame = (e as CustomEvent<RadialFrame>).detail;
+    const root = this._rootEl;
+    if (!root || !(frame.height > 0)) {
+      return;
+    }
+    const pct = (anchorY: number) =>
+      `${(((anchorY - frame.y) / frame.height) * 100).toFixed(4)}%`;
+    root.style.setProperty('--readout-meta-top', pct(READOUT_META_Y));
+    root.style.setProperty(
+      '--readout-meta-top-needle',
+      pct(READOUT_META_Y_NEEDLE)
+    );
+    root.style.setProperty('--readout-meta-top-180', pct(READOUT_META_Y_180));
+  };
+
   // Arrow form so `this` binds when passed as `.getAngle=${this.getAngle}`
   // to <obc-instrument-radial>. Do not convert to a method.
   getAngle = (v: number): number => {
@@ -341,6 +376,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
           .clipLeft=${clips.left}
           .clipRight=${clips.right}
           .endLabelsMaxMin=${this.sector === GaugeRadialSector.deg180}
+          @frame-changed=${this._onFrameChanged}
         >
         </obc-instrument-radial>
         ${this.renderReadouts()}

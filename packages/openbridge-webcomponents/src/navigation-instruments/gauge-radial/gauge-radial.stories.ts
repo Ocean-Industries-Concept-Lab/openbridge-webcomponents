@@ -1,4 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import {html} from 'lit';
 import {
   GaugeRadialHorizontalAlignment,
   GaugeRadialSector,
@@ -355,5 +356,77 @@ export const WideAdviceSpan: Story = {
         hinted: true,
       },
     ],
+  },
+};
+
+const labelRoomRow = html`
+  <div style="display: flex; gap: 8px; width: 100%; height: 100%;">
+    ${[
+      {label: 'Load', max: 100},
+      {label: 'Torque', max: 100},
+      {label: 'Throttle', max: 100},
+      {label: 'RPM', max: 3600},
+    ].map(
+      (g) => html`
+        <div style="flex: 1; min-width: 0;">
+          <obc-gauge-radial
+            .value=${g.max * 0.6}
+            .maxValue=${g.max}
+            .showLabels=${true}
+            .primaryTickmarkInterval=${g.max / 4}
+            .secondaryTickmarkInterval=${g.max / 20}
+            .hasReadout=${true}
+            .label=${g.label}
+          ></obc-gauge-radial>
+        </div>
+      `
+    )}
+  </div>
+`;
+
+export const LabelRoomFourDigitRow: Story = {
+  name: 'Label Room — Mixed 2/4-Digit Flex Row (#1021)',
+  args: {
+    width: 800,
+    height: 200,
+  },
+  render: () => labelRoomRow,
+};
+
+export const LabelRoomDegradationRow: Story = {
+  name: 'Label Room — Hide Past Reserve Cap (#1021)',
+  args: {
+    width: 800,
+    height: 140,
+  },
+  render: () => labelRoomRow,
+};
+
+export const LabelRoomTallNarrow: Story = {
+  name: 'Label Room — Tall Narrow 4-Digit (#1021)',
+  args: {
+    value: 2400,
+    minValue: 0,
+    maxValue: 3600,
+    showLabels: true,
+    primaryTickmarkInterval: 900,
+    secondaryTickmarkInterval: 300,
+    width: 160,
+    height: 400,
+  },
+};
+
+export const LabelRoomInsideLabels: Story = {
+  name: 'Label Room — Inside Labels Keep The Base Box (#1021)',
+  args: {
+    value: 2400,
+    minValue: 0,
+    maxValue: 3600,
+    showLabels: true,
+    tickmarksInside: true,
+    primaryTickmarkInterval: 900,
+    secondaryTickmarkInterval: 300,
+    width: 200,
+    height: 200,
   },
 };
