@@ -742,6 +742,8 @@ export class ObcReadout extends LitElement {
           meta: true,
           'meta-inline': !stacked,
           'meta-stacked': stacked,
+          'label-only': !!this.label && !this.unit,
+          'unit-only': !!this.unit && !this.label,
         })}
         part="meta-wrapper"
       >
