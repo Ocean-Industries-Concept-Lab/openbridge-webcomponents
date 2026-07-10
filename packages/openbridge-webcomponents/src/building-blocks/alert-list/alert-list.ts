@@ -126,11 +126,11 @@ export class ObcAlertList extends LitElement {
   private handleElementsChange() {
     // Take records to ensure the observer is not triggered again
     this.mutationObserver?.takeRecords();
+    this.updateEmpty();
     if (!this.checkVisibility()) {
       return;
     }
 
-    this.updateEmpty();
     const elements = this.getAlertItems();
     // Animate the elements to their new positions
     const oldElementTop: Map<HTMLElement, number> = new Map(this.oldElementTop);
