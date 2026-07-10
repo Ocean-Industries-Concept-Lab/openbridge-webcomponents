@@ -1152,3 +1152,26 @@ export const DebugOverlay: StoryObj<
     </div>
   `,
 };
+
+export const TestCases: Story = {
+  render: () => {
+    return html`
+    <style>
+      .test-case-container {
+        display: grid;
+        grid-template-columns: repeat(3, max-content);
+        gap: 20px;
+        padding: 24px;
+      }
+
+      .test-case-container > obc-readout {
+        border: 1px solid var(--border-divider-color, #ccc);
+      }
+    </style>
+    <div class="test-case-container">
+      <obc-readout .size=${ReadoutSize.small} .direction=${ReadoutDirection.horizontal}
+        .value=${123} .unit=${'kn'}></obc-readout>
+      </obc-readout>
+    </div>`;
+  },
+};

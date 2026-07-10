@@ -634,6 +634,7 @@ obc-readout-block {
   --_readout-trim: var(
     --instrument-components-readout-new-group-horizontal-regular-horizontal-trim-padding
   );
+  /* TODO: verify this with designers */
   --_readout-value-gap: 0;
   --_readout-value-pad-v: var(
     --instrument-components-readout-new-group-horizontal-regular-value-container-padding-vertical
@@ -641,9 +642,8 @@ obc-readout-block {
   --_readout-divider-pad: var(
     --instrument-components-readout-new-group-horizontal-regular-divider-padding
   );
-  --_readout-min-height: var(
-    --instrument-components-readout-new-group-horizontal-regular-container-min-height
-  );
+  /* TODO: verify this with designers, this needs to work also when only a unit is present*/
+  --_readout-min-height: auto;
 }
 
 .readout.direction-horizontal.size-medium {
@@ -656,6 +656,7 @@ obc-readout-block {
   --_readout-trim: var(
     --instrument-components-readout-new-group-horizontal-medium-horizontal-trim-padding
   );
+  /* TODO: verify this with designers */
   --_readout-value-gap: 0;
   --_readout-value-pad-v: var(
     --instrument-components-readout-new-group-horizontal-medium-value-container-padding-vertical
@@ -675,6 +676,7 @@ obc-readout-block {
   --_readout-trim: var(
     --instrument-components-readout-new-group-horizontal-enhanced-horizontal-trim-padding
   );
+  /* TODO: verify this with designers */
   --_readout-value-gap: 4px;
   --_readout-value-pad-v: var(
     --instrument-components-readout-new-group-horizontal-enhanced-value-container-padding
