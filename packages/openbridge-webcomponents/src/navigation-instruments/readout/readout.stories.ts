@@ -1169,9 +1169,12 @@ export const TestCases: Story = {
       }
     </style>
     <div class="test-case-container">
-      <obc-readout .size=${ReadoutSize.small} .direction=${ReadoutDirection.horizontal}
-        .value=${123} .unit=${'kn'}></obc-readout>
-      </obc-readout>
+      <obc-readout
+        .size=${ReadoutSize.small}
+        .direction=${ReadoutDirection.horizontal}
+        .value=${123}
+        .unit=${'kn'}
+      ></obc-readout>
     </div>`;
   },
 };
