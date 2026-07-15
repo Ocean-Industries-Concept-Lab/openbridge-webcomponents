@@ -9,6 +9,7 @@ import {
   applyPinnedHostSize,
   computeRadialFrame,
   measureContainerPx,
+  NORTH_ARROW_WIDTH_PX,
   NSWE_LABEL_WIDTH_PX,
   type RadialFrame,
 } from '../../svghelpers/radial-frame.js';
@@ -274,14 +275,18 @@ export class ObcCompass extends LitElement {
   }
 
   /**
-   * Pixel cost of the outside decor: NSWE labels plus the north-arrow glyph
-   * (both keep a constant on-screen size via `1/scale` terms). Feeds the
-   * frame's width-aware reserve, replacing the former empirical
-   * `72 + delta(clientSize)` padding. Wind/current symbols at their default
-   * radius are covered by the base padding of 72.
+   * Pixel cost of the outside decor: the always-rendered north-arrow glyph
+   * plus, only while shown, the NSWE labels (both keep a constant on-screen
+   * size via `1/scale` terms). Feeds the frame's width-aware reserve,
+   * replacing the former empirical `72 + delta(clientSize)` padding.
+   * Wind/current symbols at their default radius are covered by the base
+   * padding of 72.
    */
   private getOutsideDecorPx(): number {
-    return this.tickmarksInside ? 0 : NSWE_LABEL_WIDTH_PX * 2;
+    if (this.tickmarksInside) {
+      return 0;
+    }
+    return NORTH_ARROW_WIDTH_PX + (this.showLabels ? NSWE_LABEL_WIDTH_PX : 0);
   }
 
   /** Whether the host size styles were set by applyPinnedHostSize. */
@@ -359,10 +364,10 @@ export class ObcCompass extends LitElement {
           .tickmarks=${tickmarks}
           .state=${this.state}
           .watchCircleType=${WatchCircleType.triple}
-          .showLabels=${this.showLabels}
+          .showLabels=${this.showLabels && !frame.labelsHidden}
           .tickmarksInside=${this.tickmarksInside}
           .crosshairEnabled=${true}
-          .northArrow=${true}
+          .northArrow=${!frame.labelsHidden}
           .angleSetpoint=${this.headingSetpoint ?? undefined}
           .newAngleSetpoint=${this.newHeadingSetpoint}
           .atAngleSetpoint=${this._headingSp.computeAtSetpoint(this.heading)}

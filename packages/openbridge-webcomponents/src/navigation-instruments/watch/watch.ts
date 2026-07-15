@@ -810,10 +810,14 @@ export class ObcWatch extends LitElement {
       ? this.advices.map((a) => renderAdvice(a, rOff))
       : nothing;
 
-    // Compute label positions once – used for both rendering and crosshair knockout.
-    const insideLabels = this.tickmarksInside && this.showLabels;
+    // Compute label positions once – used for both rendering and crosshair
+    // knockout. NSWE labels and the north arrow are px-fixed outside decor,
+    // so they follow the same labelsHidden degradation as tick label texts.
+    const showNsweLabels = this.showLabels && !this._labelsHidden;
+    const showNorthArrow = this.northArrow && !this._labelsHidden;
+    const insideLabels = this.tickmarksInside && showNsweLabels;
     const includeNorth = !this.northArrow;
-    const labelPositions = this.showLabels
+    const labelPositions = showNsweLabels
       ? getLabelPositions({
           scale,
           inside: this.tickmarksInside,
@@ -831,7 +835,7 @@ export class ObcWatch extends LitElement {
           includeNorth,
         })
       : nothing;
-    const northArrowEl = this.northArrow
+    const northArrowEl = showNorthArrow
       ? renderNorthArrow({
           scale,
           rotation: this.rotation,

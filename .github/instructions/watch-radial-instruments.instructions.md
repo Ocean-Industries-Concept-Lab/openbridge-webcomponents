@@ -529,7 +529,9 @@ All frame/viewBox geometry is centralized in `computeRadialFrame()`:
   wind-propulsion and velocity-projection-plot (explicit `padding`
   override path, unchanged by design).
 - Compass/heading's old empirical `72 + delta(clientSize)` padding was
-  replaced by the analytic reserve (NSWE labels + north arrow ≈ 32px).
+  replaced by the analytic reserve (north arrow 16px always +
+  NSWE labels 16px while `showLabels`); past the reserve cap both the
+  labels and the arrow are hidden, like tick-label degradation.
 
 ### Radial label model (design language)
 

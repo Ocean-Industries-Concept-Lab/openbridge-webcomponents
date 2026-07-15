@@ -65,6 +65,12 @@ export const DIGIT_WIDTH_PX = 7;
 /** Compass NSWE label width assumed by label.ts (`labelWidth = 16`). */
 export const NSWE_LABEL_WIDTH_PX = 16;
 /**
+ * North-arrow glyph allowance for outside-decor reserves (px). The arrow
+ * renders regardless of `showLabels`, so consumers charge this portion
+ * whenever the arrow sits outside the ring.
+ */
+export const NORTH_ARROW_WIDTH_PX = 16;
+/**
  * Labels are dropped (not clipped) when their reserve would exceed this share
  * of the box. 0.45 makes a 4-digit gauge hide labels below a ~182px container
  * — near the canvas charts' fixed MIN_HEIGHT_WITH_LABELS = 192px threshold —

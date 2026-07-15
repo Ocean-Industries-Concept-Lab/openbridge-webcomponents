@@ -79,6 +79,19 @@ export const Enhanced: Story = {
   },
 };
 
+/**
+ * Below the label-reserve cap (~200px for the NSWE + north-arrow decor) the
+ * frame reports `labelsHidden` and the instrument drops the labels and the
+ * north arrow instead of letting them clip — the same graceful degradation
+ * the tick-label instruments use (issue #1021).
+ */
+export const SmallContainerDegraded: Story = {
+  name: 'Small Container (160px, Labels + Arrow Hidden Past Cap)',
+  args: {
+    width: 160,
+  },
+};
+
 type SizingPlaygroundArgs = Partial<ObcHeading> & {
   lockFaceDiameter?: boolean;
 };
