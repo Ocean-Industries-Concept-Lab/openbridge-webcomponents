@@ -59,6 +59,7 @@ import {
   estimateLabelWidthPx,
   measureContainerPx,
   NSWE_LABEL_WIDTH_PX,
+  observeInnerBox,
   type RadialFrame,
 } from '../../svghelpers/radial-frame.js';
 export {VesselImage, VesselImageSize, vesselImages};
@@ -312,9 +313,12 @@ export class ObcWatch extends LitElement {
     return this._legacyRotationsPerMinute;
   }
 
-  // @ts-expect-error TS6133: The controller ensures that the render
-  // function is called on resize of the element
   private _resizeController = new ResizeController(this, {});
+
+  override firstUpdated(changed: PropertyValues): void {
+    super.firstUpdated(changed);
+    observeInnerBox(this._resizeController, this.renderRoot);
+  }
 
   override willUpdate(changed: PropertyValues): void {
     super.willUpdate(changed);

@@ -532,6 +532,15 @@ All frame/viewBox geometry is centralized in `computeRadialFrame()`:
   replaced by the analytic reserve (north arrow 16px always +
   NSWE labels 16px while `showLabels`); past the reserve cap both the
   labels and the arrow are hidden, like tick-label degradation.
+- **ResizeObserver on inline hosts never fires** (permanent 0×0 box) —
+  several radial hosts have no `:host {display}` rule, so their
+  `ResizeController` must additionally observe an internal element that
+  generates a box (`observeInnerBox()` in radial-frame.ts observes the
+  shadow `<svg>` / `.container`). Without it, the frame and the `--scale`
+  font counter-scaling freeze at first paint whenever the host is not
+  blockified by a parent (watch standalone was the visible case; inside
+  `.container > * {position: absolute}` the host is blockified and the
+  host observation works).
 
 ### Radial label model (design language)
 

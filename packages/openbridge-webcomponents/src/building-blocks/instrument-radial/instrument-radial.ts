@@ -19,6 +19,7 @@ import {
   computeRadialFrame,
   estimateLabelWidthPx,
   measureContainerPx,
+  observeInnerBox,
   type RadialFrame,
 } from '../../svghelpers/radial-frame.js';
 
@@ -188,10 +189,12 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   private _frame: RadialFrame | undefined;
   private _lastFrameKey = '';
 
-  // @ts-expect-error TS6133: The controller ensures that the render
-  // function is called on resize of the element (the label reserve
-  // depends on the container size).
   private _resizeController = new ResizeController(this, {});
+
+  override firstUpdated(changed: PropertyValues): void {
+    super.firstUpdated(changed);
+    observeInnerBox(this._resizeController, this.renderRoot);
+  }
 
   /** The frame computed for the current render (viewBox, label reserve …). */
   get frame(): RadialFrame | undefined {

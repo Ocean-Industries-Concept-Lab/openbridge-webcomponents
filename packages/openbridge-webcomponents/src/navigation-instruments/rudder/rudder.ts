@@ -13,6 +13,7 @@ import {
   computeRadialFrame,
   estimateLabelWidthPx,
   measureContainerPx,
+  observeInnerBox,
   type RadialFrame,
 } from '../../svghelpers/radial-frame.js';
 
@@ -111,10 +112,12 @@ export class ObcRudder extends SetpointMixin(LitElement) {
   /** Whether the host size styles were set by applyPinnedHostSize. */
   private _hostSizePinned = false;
 
-  // @ts-expect-error TS6133: The controller ensures that the render
-  // function is called on resize of the element (the label reserve
-  // depends on the container size).
   private _resizeController = new ResizeController(this, {});
+
+  override firstUpdated(changed: PropertyValues): void {
+    super.firstUpdated(changed);
+    observeInnerBox(this._resizeController, this.renderRoot);
+  }
 
   override updated(changed: PropertyValues): void {
     super.updated(changed);

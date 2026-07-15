@@ -166,6 +166,24 @@ export function applyPinnedHostSize(
 }
 
 /**
+ * Additionally observe an internal element that always generates a box (the
+ * shadow `<svg>` or `.container`). Several radial hosts render inline (no
+ * `:host {display}` rule), and ResizeObserver never fires for inline boxes —
+ * the host reports a permanent 0×0 size, so a controller observing only the
+ * host misses every resize. That freezes the container-dependent frame and
+ * the `--scale` font counter-scaling at their first-paint values.
+ */
+export function observeInnerBox(
+  controller: {observe(target: Element): void},
+  renderRoot: ParentNode
+): void {
+  const box = renderRoot.querySelector('svg, .container');
+  if (box) {
+    controller.observe(box);
+  }
+}
+
+/**
  * Estimate the widest label's pixel width at the 12px instrument label font.
  */
 export function estimateLabelWidthPx(

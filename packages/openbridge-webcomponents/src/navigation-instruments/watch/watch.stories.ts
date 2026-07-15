@@ -739,6 +739,43 @@ export const TickmarksTestInsideRotation: Story = {
   },
 };
 
+/**
+ * Regression test for label counter-scaling after a container resize: the
+ * wrapper starts at 400px and `play` shrinks it to 240px BEFORE the snapshot.
+ * The standalone watch host renders inline (no box), so its ResizeObserver
+ * only fires via the internal `<svg>` (`observeInnerBox`) — if that
+ * observation is lost, `--scale` stays at the 400px value and the labels
+ * shrink with the box (~7px on screen) instead of holding ~12px.
+ */
+export const CounterScaleAfterResize: Story = {
+  args: {
+    tickmarks: [
+      ...Array.from({length: 24}, (_, i) => ({
+        angle: i * 15,
+        type: TickmarkType.secondary,
+        text: `${i * 15}`,
+      })),
+    ],
+  },
+  parameters: {widthDecorator: false},
+  render: (args) => html`
+    <div id="counter-scale-wrap" style="width: 400px; height: 400px;">
+      <obc-watch .tickmarks=${args.tickmarks}></obc-watch>
+    </div>
+  `,
+  play: async ({canvasElement}) => {
+    const wrap = canvasElement.querySelector(
+      '#counter-scale-wrap'
+    ) as HTMLElement;
+    wrap.style.width = '240px';
+    wrap.style.height = '240px';
+    await new Promise((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(resolve))
+    );
+    await wrap.querySelector('obc-watch')?.updateComplete;
+  },
+};
+
 type SizingPlaygroundArgs = Partial<ObcWatch> & {
   lockFaceDiameter?: boolean;
 };
