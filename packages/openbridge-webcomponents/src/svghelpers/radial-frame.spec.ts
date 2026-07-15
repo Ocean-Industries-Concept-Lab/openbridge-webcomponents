@@ -108,6 +108,87 @@ describe('computeRadialFrame — mode (a) label reserve', () => {
   });
 });
 
+describe('computeRadialFrame — labelDropPx clip adjustment', () => {
+  const SECTOR_180 = {top: 0, bottom: 44, left: 0, right: 0};
+
+  it('leaves the requested clips untouched when the drop already fits', () => {
+    const plain = computeRadialFrame({
+      basePadding: 48,
+      labelWidthPx: 21,
+      clips: SECTOR_180,
+      containerPx: {width: 400, height: 224},
+    });
+    const withDrop = computeRadialFrame({
+      basePadding: 48,
+      labelWidthPx: 21,
+      clips: SECTOR_180,
+      labelDropPx: 21,
+      containerPx: {width: 400, height: 224},
+    });
+    expect(withDrop.viewBox).toBe(plain.viewBox);
+    expect(withDrop.clipsAdjusted).toBe(false);
+    expect(plain.clipsAdjusted).toBe(false);
+  });
+
+  it('lowers the bottom clip when a pinned face would cut the end labels', () => {
+    const plain = computeRadialFrame({
+      basePadding: 48,
+      labelWidthPx: 21,
+      clips: SECTOR_180,
+      faceDiameter: 180,
+    });
+    const f = computeRadialFrame({
+      basePadding: 48,
+      labelWidthPx: 21,
+      clips: SECTOR_180,
+      labelDropPx: 21,
+      faceDiameter: 180,
+    });
+    expect(f.clipsAdjusted).toBe(true);
+    expect(f.height).toBeGreaterThan(plain.height);
+    // The box bottom must sit at least labelDropPx/scale below the center.
+    const bottomExtentUnits = f.y + f.height;
+    expect(bottomExtentUnits).toBeGreaterThanOrEqual(21 / f.scale - 1e-6);
+    // The width (and thus the ring scale) is not affected.
+    expect(f.width).toBeCloseTo(plain.width, 6);
+    expect(f.scale).toBeCloseTo(plain.scale, 6);
+  });
+
+  it('adjusts symmetrically for a top clip (rudder-style windows)', () => {
+    const f = computeRadialFrame({
+      basePadding: 48,
+      labelWidthPx: 21,
+      clips: {top: 47, bottom: 0, left: 0, right: 0},
+      labelDropPx: 21,
+      faceDiameter: 180,
+    });
+    expect(f.clipsAdjusted).toBe(true);
+    // The box top must sit at least labelDropPx/scale above the center.
+    expect(-f.y).toBeGreaterThanOrEqual(21 / f.scale - 1e-6);
+  });
+
+  it('does nothing without clips or when labels are hidden', () => {
+    const noClips = computeRadialFrame({
+      basePadding: 48,
+      labelWidthPx: 21,
+      labelDropPx: 21,
+      containerPx: {width: 400, height: 400},
+    });
+    expect(noClips.clipsAdjusted).toBe(false);
+
+    const hidden = computeRadialFrame({
+      basePadding: 48,
+      labelWidthPx: 28,
+      clips: SECTOR_180,
+      labelDropPx: 21,
+      containerPx: {width: 100, height: 56},
+    });
+    expect(hidden.labelsHidden).toBe(true);
+    expect(hidden.clipsAdjusted).toBe(false);
+    expect(hidden.height).toBeCloseTo(hidden.width * 0.56, 6);
+  });
+});
+
 describe('computeRadialFrame — mode (b) faceDiameter', () => {
   it('pins the scale and emits fixed host px', () => {
     const f = computeRadialFrame({basePadding: 48, faceDiameter: 368});

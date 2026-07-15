@@ -17,9 +17,11 @@ import {innerRingRadiusFor} from '../../navigation-instruments/watch/watch.js';
 import {
   applyPinnedHostSize,
   computeRadialFrame,
+  END_MAXMIN_LABEL_DROP_PX,
   estimateLabelWidthPx,
   measureContainerPx,
   observeInnerBox,
+  SIDE_LABEL_DROP_PX,
   type RadialFrame,
 } from '../../svghelpers/radial-frame.js';
 
@@ -326,11 +328,27 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
         : WatchCircleType.double;
 
     const tickmarks = this.tickmarks;
+    // Labels hang past the ±90° line only when a labeled tick actually sits
+    // there (e.g. the 180°/90° sector ends) — a ±60° sector like rot-sector
+    // must not reserve a drop it never uses.
+    const hasHorizontalEndLabels = tickmarks.some((t) => {
+      if (t.text === undefined) {
+        return false;
+      }
+      const angle = ((t.angle % 360) + 360) % 360;
+      return Math.abs(angle - 90) < 1 || Math.abs(angle - 270) < 1;
+    });
     const frame = computeRadialFrame({
       basePadding: 48,
       labelWidthPx: this.tickmarksInside
         ? 0
         : estimateLabelWidthPx(tickmarks.map((t) => t.text)),
+      labelDropPx:
+        this.tickmarksInside || !hasHorizontalEndLabels
+          ? 0
+          : this.endLabelsMaxMin
+            ? END_MAXMIN_LABEL_DROP_PX
+            : SIDE_LABEL_DROP_PX,
       clips: this.zoomToFitArc ? undefined : this.safeClips,
       containerPx: measureContainerPx(this),
       faceDiameter: this.faceDiameter,

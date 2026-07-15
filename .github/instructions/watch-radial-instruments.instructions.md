@@ -532,6 +532,16 @@ All frame/viewBox geometry is centralized in `computeRadialFrame()`:
   replaced by the analytic reserve (north arrow 16px always +
   NSWE labels 16px while `showLabels`); past the reserve cap both the
   labels and the arrow are hidden, like tick-label degradation.
+- **Label-drop-aware sector crops:** arc end labels hang past the ±90°
+  line (`endLabelsMaxMin` ~20px, side labels ~8px), so a fixed top/bottom
+  crop (gauge-radial's 44/45% `sectorClips`) would cut them at small
+  scales. Consumers pass `labelDropPx` (`END_MAXMIN_LABEL_DROP_PX` /
+  `SIDE_LABEL_DROP_PX`) and the frame lowers the crop just enough —
+  reported via `frame.clipsAdjusted`, which gauge-radial uses to switch
+  its static sector `aspect-ratio` to the frame's (`--gauge-radial-aspect`).
+  Only pass the drop when a **labeled tick actually sits at ±90°**
+  (instrument-radial checks the tick angles — a ±60° sector like
+  rot-sector must stay byte-identical).
 - **ResizeObserver on inline hosts never fires** (permanent 0×0 box) —
   several radial hosts have no `:host {display}` rule, so their
   `ResizeController` must additionally observe an internal element that

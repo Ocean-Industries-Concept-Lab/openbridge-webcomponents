@@ -78,6 +78,17 @@ export const NORTH_ARROW_WIDTH_PX = 16;
  * fixed pixel threshold instead (see charthelpers/constants.ts).
  */
 export const LABEL_RESERVE_MAX_FRACTION = 0.45;
+/**
+ * Pixel drop of "Max-min" end labels (`endLabelsMaxMin`) below the ±90° line:
+ * anchored at `12px/scale` with `dominant-baseline: central` (tickmark.ts),
+ * so the glyph bottom reaches ~12 + 6 + descender ≈ 20px — plus 1px pad.
+ */
+export const END_MAXMIN_LABEL_DROP_PX = 21;
+/**
+ * Pixel drop of regular side labels at the ±90° ends: glyph centered on the
+ * line (half-height ~6px + descender), plus pad.
+ */
+export const SIDE_LABEL_DROP_PX = 13;
 
 /** Per-edge viewBox crops in percent (0–100), matching obc-watch `clip*`. */
 export interface RadialClips {
@@ -94,6 +105,14 @@ export interface RadialFrameOptions {
   labelWidthPx?: number;
   /** Un-zoomed viewBox crops; ignored when `zoomToFitArc` is set. */
   clips?: RadialClips;
+  /**
+   * Pixel extent the outside labels need past the ±90° horizontal line
+   * toward a top/bottom crop edge (see END_MAXMIN_LABEL_DROP_PX /
+   * SIDE_LABEL_DROP_PX). When a `clips.top`/`clips.bottom` crop would cut
+   * into that drop, the clip is lowered so the labels stay inside the box.
+   * Absent/0 keeps the requested clips untouched (legacy geometry).
+   */
+  labelDropPx?: number;
   /** Host client box in px; absent or zero ⇒ scale-1 fallback (first paint). */
   containerPx?: {width: number; height: number};
   /** Outer-ring diameter in px; pins scale for equal circumference (mode b). */
@@ -112,6 +131,12 @@ export interface RadialFrame extends ZoomToFitArcFrame {
   labelReserve: number;
   /** True when the label reserve exceeded the cap; callers strip tick texts. */
   labelsHidden: boolean;
+  /**
+   * True when `labelDropPx` lowered a top/bottom clip: the box's aspect no
+   * longer matches the requested clip fractions, so hosts with an
+   * aspect-ratio derived from those fractions must follow the frame instead.
+   */
+  clipsAdjusted: boolean;
   /** Fixed host size in px; defined only when `faceDiameter` is set. */
   hostWidthPx?: number;
   /** Fixed host size in px; defined only when `faceDiameter` is set. */
@@ -263,13 +288,15 @@ function withHostPx(
   opts: RadialFrameOptions,
   scale: number,
   labelReserve: number,
-  labelsHidden: boolean
+  labelsHidden: boolean,
+  clipsAdjusted = false
 ): RadialFrame {
   const result: RadialFrame = {
     ...frame,
     scale,
     labelReserve,
     labelsHidden,
+    clipsAdjusted,
   };
   if (opts.faceDiameter !== undefined) {
     result.hostWidthPx = frame.width * scale;
@@ -279,22 +306,15 @@ function withHostPx(
 }
 
 /**
- * Compute the viewBox frame for a radial instrument, reserving width-aware
- * room for outside tick labels. See the module documentation for the model.
+ * Solve the un-zoomed box side and label visibility for a given clip window.
  */
-export function computeRadialFrame(opts: RadialFrameOptions): RadialFrame {
-  const labelWidthPx = opts.labelWidthPx ?? 0;
-  const labelCostPx =
-    labelWidthPx > 0
-      ? LABEL_ANCHOR_OFFSET_PX + labelWidthPx + LABEL_EDGE_PAD_PX
-      : 0;
-
-  if (opts.zoomToFitArc && opts.areas && opts.areas.length > 0) {
-    return computeZoomedFrame(opts, labelCostPx);
-  }
-
+function solveSide(
+  opts: RadialFrameOptions,
+  labelCostPx: number,
+  clips: RadialClips | undefined
+): {side: number; labelsHidden: boolean} {
   const baseSide = (RADIAL_VIEWBOX_BASE + opts.basePadding) * 2;
-  const {fx, fy} = clipFractions(opts.clips);
+  const {fx, fy} = clipFractions(clips);
   const labelSideAt = (scale: number): number =>
     2 * (OUTER_RING_RADIUS + LABEL_RADIAL_PAD_UNITS + labelCostPx / scale);
 
@@ -324,9 +344,94 @@ export function computeRadialFrame(opts: RadialFrameOptions): RadialFrame {
     }
   }
 
-  const frame = buildViewBox(side, opts.clips);
+  return {side, labelsHidden};
+}
+
+/**
+ * Lower a top/bottom clip so the crop edge keeps `labelDropPx / scale` SVG
+ * units past the ±90° horizontal line (where the arc end labels hang).
+ * Returns the input object unchanged when the requested clips already fit.
+ */
+function adjustClipsForLabelDrop(
+  clips: RadialClips,
+  side: number,
+  scale: number,
+  labelDropPx: number
+): RadialClips {
+  const requiredUnits = labelDropPx / scale;
+  const requiredClipPct = Math.max(0, (0.5 - requiredUnits / side) * 100);
+  const bottom =
+    clips.bottom > requiredClipPct ? requiredClipPct : clips.bottom;
+  const top = clips.top > requiredClipPct ? requiredClipPct : clips.top;
+  if (bottom === clips.bottom && top === clips.top) {
+    return clips;
+  }
+  return {...clips, top, bottom};
+}
+
+/**
+ * Compute the viewBox frame for a radial instrument, reserving width-aware
+ * room for outside tick labels. See the module documentation for the model.
+ */
+export function computeRadialFrame(opts: RadialFrameOptions): RadialFrame {
+  const labelWidthPx = opts.labelWidthPx ?? 0;
+  const labelCostPx =
+    labelWidthPx > 0
+      ? LABEL_ANCHOR_OFFSET_PX + labelWidthPx + LABEL_EDGE_PAD_PX
+      : 0;
+
+  if (opts.zoomToFitArc && opts.areas && opts.areas.length > 0) {
+    return computeZoomedFrame(opts, labelCostPx);
+  }
+
+  const baseSide = (RADIAL_VIEWBOX_BASE + opts.basePadding) * 2;
+  let clips = opts.clips;
+  let {side, labelsHidden} = solveSide(opts, labelCostPx, clips);
+
+  // Label drop past the ±90° line: lower a top/bottom crop that would cut
+  // into it. The clip change alters the container fit (fy grows), so run a
+  // second pass; visually exact after two.
+  const labelDropPx = opts.labelDropPx ?? 0;
+  if (labelDropPx > 0 && labelCostPx > 0 && !labelsHidden && clips) {
+    for (let i = 0; i < 2; i++) {
+      const scale =
+        pinnedScale(opts) ??
+        containerScale(opts, buildViewBox(side, clips)) ??
+        1;
+      const adjusted = adjustClipsForLabelDrop(
+        clips!,
+        side,
+        scale,
+        labelDropPx
+      );
+      if (adjusted === clips) {
+        break;
+      }
+      clips = adjusted;
+      const solved = solveSide(opts, labelCostPx, clips);
+      side = solved.side;
+      labelsHidden = solved.labelsHidden;
+    }
+    if (labelsHidden) {
+      // The taller window pushed the reserve past the cap: labels are
+      // stripped, so the drop is moot — restore the requested clips.
+      clips = opts.clips;
+      const solved = solveSide(opts, labelCostPx, clips);
+      side = solved.side;
+      labelsHidden = solved.labelsHidden;
+    }
+  }
+
+  const frame = buildViewBox(side, clips);
   const scale = pinnedScale(opts) ?? containerScale(opts, frame) ?? 1;
-  return withHostPx(frame, opts, scale, (side - baseSide) / 2, labelsHidden);
+  return withHostPx(
+    frame,
+    opts,
+    scale,
+    (side - baseSide) / 2,
+    labelsHidden,
+    clips !== opts.clips
+  );
 }
 
 function computeZoomedFrame(

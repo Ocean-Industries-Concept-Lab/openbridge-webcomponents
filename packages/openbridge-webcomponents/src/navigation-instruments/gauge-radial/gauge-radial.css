@@ -31,7 +31,10 @@
   height: auto;
   max-width: 100%;
   max-height: 100%;
-  aspect-ratio: 1;
+  /* --gauge-radial-aspect is set from TS only when the frame lowered a crop
+     for the label drop (frame.clipsAdjusted); otherwise the static sector
+     aspect below applies. */
+  aspect-ratio: var(--gauge-radial-aspect, 1);
 
   /* Defaults (centered both ways); overridden by the halign-* / valign-*
      classes. Horizontal alignment uses auto margins (which reference the host
@@ -45,7 +48,7 @@
   /* 448 / 251 = the 180° crop's aspect (448 wide × 448·(1 − 44%) tall); keep in
      sync with `sectorClips` bottom=44 in gauge-radial.ts. */
   &.sector-180 {
-    aspect-ratio: 448 / 251;
+    aspect-ratio: var(--gauge-radial-aspect, 448 / 251);
   }
 
   &.halign-left {

@@ -254,6 +254,17 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
       pct(READOUT_META_Y_NEEDLE)
     );
     root.style.setProperty('--readout-meta-top-180', pct(READOUT_META_Y_180));
+    // When the frame lowered a crop for the label drop, the sector's static
+    // aspect-ratio no longer matches the viewBox — follow the frame so the
+    // dial keeps hugging the root box (contain behavior, issue #992).
+    if (frame.clipsAdjusted) {
+      root.style.setProperty(
+        '--gauge-radial-aspect',
+        `${frame.width} / ${frame.height}`
+      );
+    } else {
+      root.style.removeProperty('--gauge-radial-aspect');
+    }
   };
 
   // Arrow form so `this` binds when passed as `.getAngle=${this.getAngle}`
