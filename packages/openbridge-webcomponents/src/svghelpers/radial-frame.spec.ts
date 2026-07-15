@@ -212,6 +212,32 @@ describe('computeRadialFrame — mode (b) faceDiameter', () => {
     expect(b.hostWidthPx!).toBeGreaterThan(a.hostWidthPx!);
   });
 
+  it('treats zero/negative/non-finite faceDiameter as unset (no host pin)', () => {
+    for (const bad of [0, -100, NaN, Infinity]) {
+      const f = computeRadialFrame({
+        basePadding: 48,
+        faceDiameter: bad,
+        containerPx: {width: 300, height: 300},
+      });
+      expect(f.hostWidthPx).toBeUndefined();
+      expect(f.hostHeightPx).toBeUndefined();
+      expect(f.viewBox).toBe('-224 -224 448 448');
+    }
+  });
+
+  it('treats an unusable faceDiameter as unset on the zoom path too', () => {
+    const f = computeRadialFrame({
+      basePadding: 48,
+      faceDiameter: NaN,
+      zoomToFitArc: true,
+      areas: ZOOM_AREAS,
+      innerRadius: 112,
+      containerPx: {width: 300, height: 300},
+    });
+    expect(f.hostWidthPx).toBeUndefined();
+    expect(f.hostHeightPx).toBeUndefined();
+  });
+
   it('faceDiameter + 180° clips yields a shorter host box at the same scale', () => {
     const full = computeRadialFrame({basePadding: 48, faceDiameter: 200});
     const half = computeRadialFrame({

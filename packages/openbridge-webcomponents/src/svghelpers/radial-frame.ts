@@ -285,7 +285,7 @@ function containerScale(
 
 function withHostPx(
   frame: ZoomToFitArcFrame,
-  opts: RadialFrameOptions,
+  pinned: boolean,
   scale: number,
   labelReserve: number,
   labelsHidden: boolean,
@@ -298,7 +298,7 @@ function withHostPx(
     labelsHidden,
     clipsAdjusted,
   };
-  if (opts.faceDiameter !== undefined) {
+  if (pinned) {
     result.hostWidthPx = frame.width * scale;
     result.hostHeightPx = frame.height * scale;
   }
@@ -423,10 +423,11 @@ export function computeRadialFrame(opts: RadialFrameOptions): RadialFrame {
   }
 
   const frame = buildViewBox(side, clips);
-  const scale = pinnedScale(opts) ?? containerScale(opts, frame) ?? 1;
+  const pinned = pinnedScale(opts);
+  const scale = pinned ?? containerScale(opts, frame) ?? 1;
   return withHostPx(
     frame,
-    opts,
+    pinned !== undefined,
     scale,
     (side - baseSide) / 2,
     labelsHidden,
@@ -462,10 +463,11 @@ function computeZoomedFrame(
     }
   }
 
-  const scale = zoomedScale(opts, frame);
+  const pinned = pinnedZoomedScale(opts, frame);
+  const scale = pinned ?? containerScale(opts, frame) ?? 1;
   return withHostPx(
     frame,
-    opts,
+    pinned !== undefined,
     scale,
     labelsHidden ? 0 : reserve,
     labelsHidden
@@ -485,16 +487,22 @@ function zoomFrameAt(
   });
 }
 
+/** Pin scale for a zoomed frame, or undefined when `faceDiameter` is unusable. */
+function pinnedZoomedScale(
+  opts: RadialFrameOptions,
+  frame: ZoomToFitArcFrame
+): number | undefined {
+  if (opts.faceDiameter === undefined) {
+    return undefined;
+  }
+  const scale =
+    opts.faceDiameter / (2 * (OUTER_RING_RADIUS + frame.radiusOffset));
+  return Number.isFinite(scale) && scale > 0 ? scale : undefined;
+}
+
 function zoomedScale(
   opts: RadialFrameOptions,
   frame: ZoomToFitArcFrame
 ): number {
-  if (opts.faceDiameter !== undefined) {
-    const scale =
-      opts.faceDiameter / (2 * (OUTER_RING_RADIUS + frame.radiusOffset));
-    if (Number.isFinite(scale) && scale > 0) {
-      return scale;
-    }
-  }
-  return containerScale(opts, frame) ?? 1;
+  return pinnedZoomedScale(opts, frame) ?? containerScale(opts, frame) ?? 1;
 }
