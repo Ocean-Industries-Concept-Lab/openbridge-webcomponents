@@ -58,14 +58,6 @@ export interface Label {
  * - **Color priority**: Per-element priority for HDG, COG, and ROT via
  *   `priorityElements`.
  *
- * @property {number} heading - Current heading in degrees.
- * @property {number} courseOverGround - Current COG in degrees.
- * @property {RotType|undefined} rotType - ROT display mode: `'dots'`, `'bar'`, or `undefined` (hidden).
- * @property {number|undefined} rateOfTurnDegreesPerMinute - Measured rate of turn in degrees per minute (positive = starboard). Drives the bar extent and (after `× rotDotAnimationFactor`) the dot animation.
- * @property {number} rotDotAnimationFactor - Visual amplification for the dot animation only. Default `18` (≈1 rpm at 20°/min).
- * @property {number} rotationsPerMinute - **Deprecated.** Use `rateOfTurnDegreesPerMinute` instead.
- * @property {number} rotMaxValue - Bar-extent reference value in **degrees per minute**. Default `60` per ES-TRIN 2025/1 Art. 3.02.
- * @property {number} rotArcExtent - Degrees of bar arc per max-value ROT (default 60).
  *
  * @ignition-base-height: 170px
  * @ignition-base-width: 512px
@@ -74,7 +66,9 @@ export interface Label {
 @customElement('obc-compass-flat')
 export class ObcCompassFlat extends LitElement {
   @property({type: Boolean}) FOVIndicator: boolean = false;
+  /** Current heading in degrees. */
   @property({type: Number}) heading = 0;
+  /** Current COG in degrees. */
   @property({type: Number}) courseOverGround = 0;
   @property({type: Number}) tickInterval = 5;
   @property({type: Number}) FOV = 45;
@@ -85,6 +79,7 @@ export class ObcCompassFlat extends LitElement {
   priorityElements: CompassFlatPriorityElement[] = [
     CompassFlatPriorityElement.hdg,
   ];
+  /** ROT display mode: `'dots'`, `'bar'`, or `undefined` (hidden). */
   @property({type: String}) rotType: RotType | undefined;
   /**
    * Measured rate of turn in degrees per minute (positive = starboard).
@@ -98,6 +93,7 @@ export class ObcCompassFlat extends LitElement {
    */
   @property({type: Number}) rotDotAnimationFactor: number = 18;
   /**
+   * **Deprecated.** Use `rateOfTurnDegreesPerMinute` instead.
    * @deprecated Use `rateOfTurnDegreesPerMinute` instead.
    * @availableWhen rotType!=undefined
    */
@@ -108,7 +104,10 @@ export class ObcCompassFlat extends LitElement {
    * @availableWhen rotType!=undefined
    */
   @property({type: Number}) rotMaxValue: number = 60;
-  /** @availableWhen rotType!=undefined */
+  /**
+   * Degrees of bar arc per max-value ROT (default 60).
+   * @availableWhen rotType!=undefined
+   */
   @property({type: Number}) rotArcExtent: number = 60;
   /** @availableWhen rotType!=undefined */
   @property({type: Boolean}) rotPortStarboard: boolean = false;

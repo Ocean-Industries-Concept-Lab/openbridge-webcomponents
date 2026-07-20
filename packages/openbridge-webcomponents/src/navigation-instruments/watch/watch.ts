@@ -161,22 +161,6 @@ const RADIAL_SETPOINT_INWARD_ADJUST = 4;
  * `_setpointCssAngle` tracks the accumulated CSS angle to avoid long-way-around
  * transitions across the 0°/360° boundary.
  *
- * @property {InstrumentState} state - Instrument state (active, loading, off)
- * @property {Priority} priority - Color priority (enhanced = blue palette, regular = gray palette)
- * @property {number|undefined} angleSetpoint - Setpoint angle in degrees (0° = 12 o'clock)
- * @property {number|undefined} newAngleSetpoint - New setpoint being adjusted (focus mode)
- * @property {boolean} atAngleSetpoint - Whether value matches setpoint (within deadband)
- * @property {number} angleSetpointAtZeroDeadband - Deadband for zero detection (default 0.5°)
- * @property {boolean} setpointOverride - Override to derive setpoint color from priority regardless of state
- * @property {RotType|undefined} rotType - ROT visualization type: `'dots'` (spinning dots) or `'bar'` (arc bar with clipped dots). Undefined hides the ROT layer.
- * @property {RotPosition} rotPosition - Track on which ROT elements are placed: `'scale'` (on the outer ring) or `'innerCircle'` (default, inside the inner ring)
- * @property {number} rotStartAngle - Start angle of the ROT bar arc in degrees (0° = 12 o'clock, clockwise). Only used when `rotType` is `'bar'`.
- * @property {number} rotEndAngle - End angle of the ROT bar arc in degrees. The bar is hidden when the difference from `rotStartAngle` is less than 0.1°.
- * @property {Priority|undefined} rotPriority - Override priority for ROT color derivation. When set, ROT colors use this instead of the main `priority`. Useful when the ROT element has independent priority (e.g. compass per-element priority).
- * @property {number|undefined} rateOfTurnDegreesPerMinute - Measured rate of turn in degrees per minute (the maritime/AIS convention, see ES-TRIN 2025/1 Art. 3.02 and ITU-R M.1371). Sign controls direction (positive = starboard/clockwise). When defined, this drives both the dot animation (multiplied by `rotDotAnimationFactor`) and the port/starboard direction sign.
- * @property {number} rotDotAnimationFactor - Visual amplification factor applied only to the spinning-dot animation (not to bar extent). Default `18` keeps the legacy visual feel (≈1 rpm at 20°/min).
- * @property {number} rotationsPerMinute - **Deprecated.** Spin speed of the ROT dot ring in rotations per minute. Sign controls direction (positive = clockwise). Use `rateOfTurnDegreesPerMinute` instead.
- * @property {ZoomToFitArcFrame|undefined} arcFrame - Pre-computed zoom-to-fit arc frame. When set, the watch skips its own `computeZoomToFitArcFrame()` call and uses these values directly. Consumer instruments (e.g. rudder, instrument-radial) should compute the frame once and pass it here to avoid redundant computation. If you pass `arcFrame`, you own keeping it in sync with `areas` / `watchCircleType` — obc-watch will NOT recompute it, so a stale frame renders stale geometry.
  * @experimental
  */
 @customElement('obc-watch')
@@ -184,16 +168,23 @@ export class ObcWatch extends LitElement {
   private _setpointId = `watch-setpoint-${Math.random().toString(36).slice(2, 9)}`;
   private _newSetpointId = `watch-new-setpoint-${Math.random().toString(36).slice(2, 9)}`;
 
+  /** Instrument state (active, loading, off) */
   @property({type: String}) state: InstrumentState = InstrumentState.active;
+  /** Color priority (enhanced = blue palette, regular = gray palette) */
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) watchCircleType: WatchCircleType =
     WatchCircleType.single;
   @property({type: Boolean}) northArrow: boolean = false;
   @property({type: Boolean}) northArrowInside: boolean | undefined;
+  /** Setpoint angle in degrees (0° = 12 o'clock) */
   @property({type: Number}) angleSetpoint: number | undefined;
+  /** New setpoint being adjusted (focus mode) */
   @property({type: Number}) newAngleSetpoint: number | undefined;
+  /** Whether value matches setpoint (within deadband) */
   @property({type: Boolean}) atAngleSetpoint: boolean = false;
+  /** Deadband for zero detection (default 0.5°) */
   @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
+  /** Override to derive setpoint color from priority regardless of state */
   @property({type: Boolean}) setpointOverride: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
 
@@ -250,17 +241,25 @@ export class ObcWatch extends LitElement {
   @property({type: Number}) scaleWindIcon: number = 1;
   @property({type: Number}) rotation: number | undefined;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
+  /** Pre-computed zoom-to-fit arc frame. When set, the watch skips its own `computeZoomToFitArcFrame()` call and uses these values directly. Consumer instruments (e.g. rudder, instrument-radial) should compute the frame once and pass it here to avoid redundant computation. If you pass `arcFrame`, you own keeping it in sync with `areas` / `watchCircleType` — obc-watch will NOT recompute it, so a stale frame renders stale geometry. */
   @property({attribute: false}) arcFrame: ZoomToFitArcFrame | undefined;
   @property({type: Number}) tickFadeAngle: number = 0;
 
+  /** ROT visualization type: `'dots'` (spinning dots) or `'bar'` (arc bar with clipped dots). Undefined hides the ROT layer. */
   @property({type: String}) rotType: RotType | undefined;
+  /** Track on which ROT elements are placed: `'scale'` (on the outer ring) or `'innerCircle'` (default, inside the inner ring) */
   @property({type: String}) rotPosition: RotPosition = RotPosition.innerCircle;
+  /** Start angle of the ROT bar arc in degrees (0° = 12 o'clock, clockwise). Only used when `rotType` is `'bar'`. */
   @property({type: Number}) rotStartAngle: number = 0;
+  /** End angle of the ROT bar arc in degrees. The bar is hidden when the difference from `rotStartAngle` is less than 0.1°. */
   @property({type: Number}) rotEndAngle: number = 0;
+  /** Override priority for ROT color derivation. When set, ROT colors use this instead of the main `priority`. Useful when the ROT element has independent priority (e.g. compass per-element priority). */
   @property({type: String}) rotPriority: Priority | undefined;
   @property({type: Boolean}) rotPortStarboard: boolean = false;
   @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_DEG;
+  /** Measured rate of turn in degrees per minute (the maritime/AIS convention, see ES-TRIN 2025/1 Art. 3.02 and ITU-R M.1371). Sign controls direction (positive = starboard/clockwise). When defined, this drives both the dot animation (multiplied by `rotDotAnimationFactor`) and the port/starboard direction sign. */
   @property({type: Number}) rateOfTurnDegreesPerMinute: number | undefined;
+  /** Visual amplification factor applied only to the spinning-dot animation (not to bar extent). Default `18` keeps the legacy visual feel (≈1 rpm at 20°/min). */
   @property({type: Number}) rotDotAnimationFactor: number = 18;
   /**
    * @deprecated Use `rateOfTurnDegreesPerMinute` (and optionally `rotDotAnimationFactor`) instead.
@@ -271,6 +270,7 @@ export class ObcWatch extends LitElement {
   set rotationsPerMinute(value: number) {
     this._legacyRotationsPerMinute = value;
   }
+  /** Legacy spin speed of the ROT dot ring, in rotations per minute (sign controls direction; positive = clockwise). */
   get rotationsPerMinute() {
     return this._legacyRotationsPerMinute;
   }

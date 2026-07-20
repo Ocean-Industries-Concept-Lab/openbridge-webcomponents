@@ -138,75 +138,77 @@ export type DonutChartDataItem = {
  * </script>
  * ```
  *
- * @property {Array<{label: string, value: number}>} data - Chart data segments (set via JavaScript)
- * @property {string[]} colors - Custom segment colors (set via JavaScript) with fallback to theme palette
- * @property {boolean} half - Whether to display as half-circle (180°) or full circle (360°), default: false
- * @property {boolean} showOuterLabels - Show outer labels, default: false
- * @property {boolean} showUnit - Whether to show unit in labels, default: false
- * @property {string} outerLabelUnit - Unit string to append to outer labels, default: "%"
- * @property {number} outerLabelMaxLength - Maximum character length for labels before trim (0 = no limit), default: 0
- * @property {number} outerLabelDecimalPlaces - Number of decimal places in labels, default: 0
- * @property {string} centerReadoutLabel - Text label shown below the center total value, default: "Total"
- * @property {string} centerReadoutUnit - Unit string shown inline after the label in the center readout, default: "%"
- * @property {number} max - Maximum value for calculating remaining empty sector, default: 100
- * @property {number} thickness - Donut ring thickness in pixels, default: 24
- * @property {boolean} showDebugOverlay - Show debug overlay for development, default: false
- * @property {number} fixedHeight - Fixed height of the chart in pixels (mandatory, determines chart circumference), default: 320. The chart's circumference is always based on this fixed height to match other radial instruments.
- * @property {boolean} legend - Whether to display the legend below the chart, default: false
  * @beta
  */
 @customElement('obc-donut-chart')
 export class ObcDonutChart extends LitElement {
+  /** Chart data segments (set via JavaScript) */
   @property({type: Array, attribute: false})
   data: DonutChartDataItem[] = [];
 
+  /** Custom segment colors (set via JavaScript) with fallback to theme palette */
   @property({type: Array, attribute: false})
   colors: string[] = [];
 
   @property({type: String})
   priority: Priority = Priority.regular;
 
+  /** Whether to display as half-circle (180°) or full circle (360°), default: false */
   @property({type: Boolean, reflect: true})
   half = false;
 
+  /** Show outer labels, default: false */
   @property({type: Boolean})
   showOuterLabels = false;
 
+  /** Whether to show unit in labels, default: false */
   @property({type: Boolean})
   showUnit = false;
 
+  /** Unit string to append to outer labels, default: "%" */
   @property({type: String})
   outerLabelUnit = '%';
 
-  /** @availableWhen showOuterLabels==true */
+  /**
+   * Maximum character length for labels before trim (0 = no limit), default: 0
+   * @availableWhen showOuterLabels==true
+   */
   @property({
     type: Number,
   })
   outerLabelMaxLength = 0;
 
+  /** Number of decimal places in labels, default: 0 */
   @property({
     type: Number,
   })
   outerLabelDecimalPlaces = 0;
 
+  /** Text label shown below the center total value, default: "Total" */
   @property({type: String})
   centerReadoutLabel = 'Total';
 
+  /** Unit string shown inline after the label in the center readout, default: "%" */
   @property({type: String})
   centerReadoutUnit = '%';
 
+  /** Maximum value for calculating remaining empty sector, default: 100 */
   @property({type: Number})
   max = 100;
 
+  /** Donut ring thickness in pixels, default: 24 */
   @property({type: Number})
   thickness = 24;
 
+  /** Whether to display the legend below the chart, default: false */
   @property({type: Boolean, reflect: true})
   legend = false;
 
+  /** Show debug overlay for development, default: false */
   @property({type: Boolean, reflect: true})
   showDebugOverlay = false;
 
+  /** Fixed height of the chart in pixels (determines chart circumference), default: 320. The chart's circumference is always based on this fixed height to match other radial instruments. */
   @property({type: Number, reflect: true})
   fixedHeight = 320;
 
