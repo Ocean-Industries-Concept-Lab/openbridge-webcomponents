@@ -56,7 +56,11 @@ export enum SpecialtyTankSplitMode {
  * ### Usage Guidelines
  * Not a custom element — extend it and register the subclass with
  * `@customElement`. The subclass carries the user-facing JSDoc consumed by
- * Storybook autodocs.
+ * Storybook autodocs. The override points throw at runtime instead of being
+ * declared `abstract` because the framework wrapper generators instantiate
+ * every manifest class through a concrete `Constructor<T>` type — an
+ * abstract class breaks the generated React wrapper build (same reason
+ * `ObcAbstractAutomationButton` is concrete).
  *
  * @slot badges - Custom badges rendered in the top-right badge row,
  *   overriding the enum-driven defaults. The row collapses when both the
@@ -69,7 +73,7 @@ export enum SpecialtyTankSplitMode {
  *
  * @ignore
  */
-export abstract class ObcAbstractSpecialtyTank extends LitElement {
+export class ObcAbstractSpecialtyTank extends LitElement {
   /** Show the hot/cold medium colors instead of the empty grey fill. */
   @property({type: Boolean}) medium: boolean = false;
   /** Show the flame (top-left) and snowflake (bottom-right) corner glyphs. */
@@ -107,12 +111,18 @@ export abstract class ObcAbstractSpecialtyTank extends LitElement {
   @state() private _hasBadges = false;
   @state() private _hasTagSlot = false;
 
-  abstract get equipmentIcon(): TemplateResult;
+  get equipmentIcon(): TemplateResult {
+    throw new Error('Method "equipmentIcon" must be implemented in subclass');
+  }
 
-  abstract get splitMode(): SpecialtyTankSplitMode;
+  get splitMode(): SpecialtyTankSplitMode {
+    throw new Error('Method "splitMode" must be implemented in subclass');
+  }
 
   /** Accessible-name fallback used when `tag` is empty. */
-  protected abstract get equipmentName(): string;
+  protected get equipmentName(): string {
+    throw new Error('Method "equipmentName" must be implemented in subclass');
+  }
 
   private _badgeControlType(): ObcAutomationBadgeType | null {
     switch (this.badgeControl) {
