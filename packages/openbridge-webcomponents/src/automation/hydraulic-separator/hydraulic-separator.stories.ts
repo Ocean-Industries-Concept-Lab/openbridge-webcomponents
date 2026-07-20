@@ -101,7 +101,7 @@ export const WithBadges: Story = {
     badgeControl: AutomationButtonBadgeControl.Auto,
     badgeInterlock: AutomationButtonBadgeInterlock.Interlock,
     badgeCommandLocked: AutomationButtonBadgeCommandLocked.CommandLocked,
-    badgeAlert: AutomationButtonBadgeAlert.Alarm,
+    badgeAlert: AutomationButtonBadgeAlert.Silence,
   },
 };
 
