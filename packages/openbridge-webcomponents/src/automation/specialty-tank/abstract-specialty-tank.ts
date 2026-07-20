@@ -34,19 +34,42 @@ export enum SpecialtyTankSplitMode {
 }
 
 /**
+ * ## Abstract Specialty Tank
+ *
  * Abstract base for the specialty-tank tiles (`obc-heat-pump`,
  * `obc-hydraulic-separator`, `obc-heat-exchanger`). Owns the shared frame,
  * badge row, hot/cold medium fill, corner glyphs, centered equipment-icon
- * frame, tag readout, and alert-frame overlay. Subclasses override two
- * getters: `equipmentIcon` (the centered `obi-*` icon) and `splitMode`
- * (the hot/cold fill geometry).
+ * frame, tag readout, and alert-frame overlay. Subclasses provide three
+ * members: `equipmentIcon` (the centered `obi-*` icon), `splitMode` (the
+ * hot/cold fill geometry), and `equipmentName` (the accessible-name
+ * fallback used when `tag` is empty).
  *
- * Not a custom element — subclasses register themselves with
- * `@customElement`.
+ * ### Features / Variants
+ * - `medium` toggles between the empty grey fill and the hot/cold colors.
+ * - `showMediumIcons` toggles the flame (top-left) and snowflake
+ *   (bottom-right) corner glyphs.
+ * - `showTag` / `tag` control the identifier readout below the frame.
+ * - Enum-driven badges (`badgeControl`, `badgeInterlock`,
+ *   `badgeCommandLocked`, `badgeAlert`) render in the top-right badge row.
+ * - Alert-frame overlay mirroring `obc-automation-tank`.
+ *
+ * ### Usage Guidelines
+ * Not a custom element — extend it and register the subclass with
+ * `@customElement`. The subclass carries the user-facing JSDoc consumed by
+ * Storybook autodocs.
+ *
+ * @slot badges - Custom badges rendered in the top-right badge row,
+ *   overriding the enum-driven defaults. The row collapses when both the
+ *   slot and the badge enums are empty.
+ * @slot tag - Text or element replacing the `tag` property readout below
+ *   the frame. Hidden when `showTag` is `false`.
+ * @slot alert-icon - Custom icon for the alert frame (alert only).
+ * @slot alert-label - Label for the alert frame (alert only).
+ * @slot alert-timer - Timer for the alert frame (alert only).
  *
  * @ignore
  */
-export class ObcAbstractSpecialtyTank extends LitElement {
+export abstract class ObcAbstractSpecialtyTank extends LitElement {
   /** Show the hot/cold medium colors instead of the empty grey fill. */
   @property({type: Boolean}) medium: boolean = false;
   /** Show the flame (top-left) and snowflake (bottom-right) corner glyphs. */
@@ -84,13 +107,12 @@ export class ObcAbstractSpecialtyTank extends LitElement {
   @state() private _hasBadges = false;
   @state() private _hasTagSlot = false;
 
-  get equipmentIcon(): TemplateResult {
-    throw new Error('Method "equipmentIcon" must be implemented in subclass');
-  }
+  abstract get equipmentIcon(): TemplateResult;
 
-  get splitMode(): SpecialtyTankSplitMode {
-    throw new Error('Method "splitMode" must be implemented in subclass');
-  }
+  abstract get splitMode(): SpecialtyTankSplitMode;
+
+  /** Accessible-name fallback used when `tag` is empty. */
+  protected abstract get equipmentName(): string;
 
   private _badgeControlType(): ObcAutomationBadgeType | null {
     switch (this.badgeControl) {
@@ -155,9 +177,9 @@ export class ObcAbstractSpecialtyTank extends LitElement {
     }
   }
 
-  private _onBadgesSlotChange(e: Event): void {
+  private _slotHasContent(e: Event): boolean {
     const slot = e.target as HTMLSlotElement;
-    this._hasBadges = slot
+    return slot
       .assignedNodes({flatten: true})
       .some(
         (n) =>
@@ -166,15 +188,12 @@ export class ObcAbstractSpecialtyTank extends LitElement {
       );
   }
 
+  private _onBadgesSlotChange(e: Event): void {
+    this._hasBadges = this._slotHasContent(e);
+  }
+
   private _onTagSlotChange(e: Event): void {
-    const slot = e.target as HTMLSlotElement;
-    this._hasTagSlot = slot
-      .assignedNodes({flatten: true})
-      .some(
-        (n) =>
-          n.nodeType === Node.ELEMENT_NODE ||
-          (n.nodeType === Node.TEXT_NODE && !!n.textContent?.trim())
-      );
+    this._hasTagSlot = this._slotHasContent(e);
   }
 
   override render() {
@@ -298,7 +317,7 @@ export class ObcAbstractSpecialtyTank extends LitElement {
       <button
         class="root"
         type="button"
-        aria-label=${this.tag || 'Tank'}
+        aria-label=${this.tag || this.equipmentName}
         aria-live="polite"
         aria-atomic="true"
       >

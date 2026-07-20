@@ -33,16 +33,16 @@ import {customElement} from '../../decorator.js';
  * `obc-hydraulic-separator` (horizontal split); the three tiles differ only
  * in center icon and fill geometry.
  *
+ * @ignition-base-width: 90px
+ * @ignition-base-height: 163px
+ * @ignition-center-horizontal
+ * @beta
+ *
  * @slot badges - Custom badges, overriding the enum-driven defaults.
  * @slot tag - Text or element replacing the `tag` property readout.
  * @slot alert-icon - Custom icon for the alert frame.
  * @slot alert-label - Label for the alert frame.
  * @slot alert-timer - Timer for the alert frame.
- *
- * @ignition-base-width: 90px
- * @ignition-base-height: 163px
- * @ignition-center-horizontal
- * @beta
  */
 @customElement('obc-heat-exchanger')
 export class ObcHeatExchanger extends ObcAbstractSpecialtyTank {
@@ -52,6 +52,10 @@ export class ObcHeatExchanger extends ObcAbstractSpecialtyTank {
 
   override get splitMode(): SpecialtyTankSplitMode {
     return SpecialtyTankSplitMode.diagonal;
+  }
+
+  protected override get equipmentName(): string {
+    return 'Heat exchanger';
   }
 }
 
