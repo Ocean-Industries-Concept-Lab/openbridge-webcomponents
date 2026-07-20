@@ -1,0 +1,251 @@
+* {
+  box-sizing: border-box;
+}
+
+/* Fixed 90×163 tile mirroring the Figma structure: a 4px-padded state
+ * container (halo) holding a column of [badge row + tank frame] and the
+ * tag readout, separated by a 2px value-padding gap. The badge row
+ * collapses via the `hidden` attribute so the tank frame absorbs the
+ * freed space, matching the Figma variants where badges are hidden by
+ * default. */
+:host {
+  display: inline-block;
+  width: 90px;
+  height: 163px;
+}
+
+/* The root <button> is the touch target; its visual styling is transparent.
+ * The visible interactive surround (border/bg on hover/pressed/focus-visible)
+ * is painted on `.halo` via the flat mixin's `visibleWrapperClass`. */
+.root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  appearance: none;
+  display: block;
+  cursor: pointer;
+  /* prettier-ignore */
+  @mixin style style=flat visibleWrapperClass=.halo;
+}
+.root:focus {
+  outline: none;
+}
+
+.halo {
+  width: 100%;
+  height: 100%;
+  padding: var(--automation-components-tanks-state-container-padding);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--automation-components-tanks-regular-value-padding);
+  /* Positioned ancestor for the alert-frame overlay. */
+  position: relative;
+}
+
+/* Alert-frame overlay mirrors `obc-automation-tank`: -1px inset so the
+ * ring sits on the halo's outer edge without clipping. */
+.alert-frame {
+  position: absolute;
+  inset: -1px;
+}
+
+.body {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.badges {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 2px;
+  padding: var(--automation-components-tanks-regular-badge-padding-vertical)
+    var(--automation-components-tanks-regular-badge-padding-horizontal);
+}
+.badges[hidden],
+.tag[hidden] {
+  display: none !important;
+}
+
+.tank-container {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: var(--automation-components-tanks-specialty-tanks-content-padding);
+  border: 1px solid var(--instrument-frame-tertiary-color);
+  border-radius: var(--automation-components-tanks-border-radius);
+  background: var(--instrument-frame-primary-color);
+  overflow: hidden;
+}
+
+.content-container {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hot/cold fills. Both halves and the divider are always rendered; the
+ * `has-medium` class only switches the fill colors from the empty grey
+ * to the hot/cold pair, matching the Figma variants. */
+.fill {
+  position: absolute;
+  background: var(--instrument-frame-secondary-color);
+}
+.split-vertical .fill-hot {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+}
+.split-vertical .fill-cold {
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 50%;
+}
+.split-horizontal .fill-hot {
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 50%;
+}
+.split-horizontal .fill-cold {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 50%;
+}
+.has-medium .fill-hot {
+  background: var(--base-red-100);
+}
+.has-medium .fill-cold {
+  background: var(--base-blue-100);
+}
+.fill-diagonal {
+  inset: 0;
+}
+/* Corner-to-corner split: with `to bottom right` the 50% stop line runs
+ * exactly through the top-right and bottom-left corners, giving a hot
+ * top-left triangle and a cold bottom-right triangle at any aspect ratio. */
+.has-medium .fill-diagonal {
+  background: linear-gradient(
+    to bottom right,
+    var(--base-red-100) 50%,
+    var(--base-blue-100) 50%
+  );
+}
+
+/* Divider bar: total width equals the divider token, with a 1px frame
+ * border on each long edge (2px primary core at the default 4px width). */
+.divider {
+  position: absolute;
+  background: var(--instrument-frame-primary-color);
+}
+.split-vertical .divider {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: var(--automation-components-tanks-specialty-tanks-divider-width);
+  border-left: 1px solid var(--instrument-frame-tertiary-color);
+  border-right: 1px solid var(--instrument-frame-tertiary-color);
+}
+.split-horizontal .divider {
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: var(--automation-components-tanks-specialty-tanks-divider-width);
+  border-top: 1px solid var(--instrument-frame-tertiary-color);
+  border-bottom: 1px solid var(--instrument-frame-tertiary-color);
+}
+/* Diagonal divider: the same bordered bar drawn as two overlaid SVG lines
+ * from the bottom-left to the top-right corner. `preserveAspectRatio: none`
+ * stretches the line corner-to-corner while `non-scaling-stroke` keeps the
+ * stroke widths in pixels: the tertiary line is the divider width, the
+ * primary line on top is 2px narrower, leaving a 1px border per edge. */
+.divider-diagonal {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.divider-diagonal-border {
+  stroke: var(--instrument-frame-tertiary-color);
+  stroke-width: var(
+    --automation-components-tanks-specialty-tanks-divider-width
+  );
+}
+.divider-diagonal-fill {
+  stroke: var(--instrument-frame-primary-color);
+  stroke-width: calc(
+    var(--automation-components-tanks-specialty-tanks-divider-width) - 2px
+  );
+}
+
+/* Corner glyphs sit 2px inside the fill area: flame in the hot corner
+ * (top-left), snowflake in the cold corner (bottom-right). The obi icons
+ * fill with `currentColor`, so `color` drives the state-dependent tint. */
+.corner-icon {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  color: var(--element-inactive-color);
+}
+.corner-icon-hot {
+  top: 2px;
+  left: 2px;
+}
+.corner-icon-cold {
+  bottom: 2px;
+  right: 2px;
+}
+.has-medium .corner-icon-hot {
+  color: var(--base-red-500);
+}
+.has-medium .corner-icon-cold {
+  color: var(--base-blue-500);
+}
+
+.icon-frame {
+  position: relative;
+  flex: 0 0 auto;
+  padding: 4px;
+  border: 1px solid var(--instrument-frame-tertiary-color);
+  border-radius: 4px;
+  background: var(--instrument-frame-primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.icon-frame > * {
+  display: block;
+  width: var(--automation-components-tanks-specialty-tanks-icon-size);
+  height: var(--automation-components-tanks-specialty-tanks-icon-size);
+}
+
+.tag {
+  flex: 0 0 auto;
+  padding: 0 2px;
+  @mixin font-instrument-label;
+  color: var(--element-neutral-color);
+  /* Tag text is a fixed identifier (e.g. `#0000`) — never wrap it. */
+  white-space: nowrap;
+}
