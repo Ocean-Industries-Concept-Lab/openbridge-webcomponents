@@ -84,6 +84,13 @@ committing them to the repo, add them to the **user-level** VS Code setting
   volume or re-run your one-off setup afterwards.
 - The volume is **shared by all clones** of this repo on the same machine.
   Avoid running two dev containers from it at the same time.
+- **Credentials & single-user assumption:** the persisted `$HOME` holds *your
+  own* auth tokens (Claude/MCP, `gh`, etc.) — exactly as they would live in
+  `$HOME` on your laptop. The volume never leaves your machine, so this adds no
+  new exposure over a normal local checkout. It does assume a **single-user
+  machine**: anyone with access to the same Docker daemon can read the volume.
+  Don't use this mechanism on a shared multi-user host — delete the volume or
+  exclude credential paths there.
 - Home-directory files baked into the base image are copied into the volume
   the first time it is created; later base-image changes to `$HOME` won't
   propagate to existing volumes (factory reset if ever needed).
