@@ -31,11 +31,13 @@
  * - **Empty description (warning):** a `@slot`/`@fires` tag with only a name and
  *   no descriptive text. These become blank cells in the manifest / Storybook
  *   controls; warnings do not fail CI.
- * - **Class-level `@property`/`@attr` tag (error):** properties must be documented
+ * - **Class-level `@property` tag (error):** properties must be documented
  *   inline above their field declarations (AGENTS.md §3.6). A tag in the class
  *   JSDoc block overrides the inline doc and can inject a ghost member for a
  *   non-existent property (issue #1043). A short allowlist covers documented
- *   exceptions (property-injecting mixins, one legacy chart-base tag).
+ *   exceptions (property-injecting mixins, one legacy chart-base tag). A
+ *   class-level `@attr`/`@attribute` that documents a CSS-only attribute with
+ *   no backing `@property` field is allowed and is not flagged.
  *
  * There is deliberately no phantom-`@fires` *error*: unlike slots (which must be
  * a `<slot>` element in the component's own shadow DOM), a documented event may
@@ -322,7 +324,9 @@ async function run(): Promise<void> {
   // Only `@property` is flagged. `@attr`/`@attribute` in a class block is the
   // legitimate way to document a CSS-only attribute that has no backing
   // `@property` field (e.g. slider's `hugcontainer`), so it is not an error.
-  const propTagRe = /^[ \t]*\*[ \t]*@property\b/gm;
+  // Matches both the multi-line (` * @property`) and single-line
+  // (`/** @property`) JSDoc block-comment forms.
+  const propTagRe = /^[ \t]*(?:\/\*\*|\*)[ \t]*@property\b/gm;
   for (const rel of files.sort()) {
     if (PROPERTY_TAG_ALLOWLIST.some((a) => rel.endsWith(a))) continue;
     const source = fs.readFileSync(path.join(cwd, rel), 'utf8');

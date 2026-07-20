@@ -59,9 +59,9 @@ export enum CompassPriorityElement {
  *   Supports spinning dots (`rotType="dots"`) — the dot animation is
  *   amplified by `rotDotAnimationFactor` so small physical values still
  *   read at a glance — and a banana-shaped arc bar (`rotType="bar"`)
- *   showing the HDG→COG span. Bar extent is driven by the physical value
- *   only (gain is not applied). Position on the outer scale ring or inner
- *   circle via `rotPosition`.
+ *   showing the rate of turn as an arc anchored at the current heading.
+ *   Bar extent is driven by the physical value only (gain is not applied).
+ *   Position on the outer scale ring or inner circle via `rotPosition`.
  * - **Environmental overlays**: Wind speed/direction and current
  *   speed/direction indicators on the watch face.
  * - **Vessel image**: Configurable vessel silhouette centered on the
@@ -176,13 +176,16 @@ export class ObcCompass extends LitElement {
    */
   @property({type: Number}) rotDotAnimationFactor: number = 18;
   /**
-   * Legacy spin speed of the ROT dot ring, in rotations per minute.
+   * Legacy rate-of-turn input, in rotations per minute. When
+   * `rateOfTurnDegreesPerMinute` is `undefined`, this value is used
+   * (unconverted) as the fallback ROT, driving both the spinning dot ring
+   * and the bar extent.
    * @deprecated Use `rateOfTurnDegreesPerMinute` (and optionally
    * `rotDotAnimationFactor`) instead. Takes effect only when
    * `rateOfTurnDegreesPerMinute` is `undefined`.
    */
   @property({type: Number}) rotationsPerMinute: number = 1;
-  /** ROT display mode: `'dots'` (spinning dots, default) or `'bar'` (arc bar from HDG to COG). */
+  /** ROT display mode: `'dots'` (spinning dots, default) or `'bar'` (a rate-of-turn arc anchored at the current heading, its length proportional to the rate of turn). */
   @property({type: String}) rotType: RotType = RotType.dots;
   /** ROT track position: `'innerCircle'` (default) or `'scale'` (on the outer ring). */
   @property({type: String}) rotPosition: RotPosition = RotPosition.innerCircle;
