@@ -16,24 +16,35 @@ export enum BusVariant {
 }
 
 /**
- * ## Bus
+ * `<obc-bus>` – A bus bar (busbar, power rail) for electrical schematic views.
  *
- * Horizontal bus bar for electrical schematic views. Renders a rounded
- * rectangle with an optional centered label, filling the width of the host
- * element.
+ * Renders a horizontal rounded rectangle with an optional centered label,
+ * representing the node that circuit branches connect to in a distribution
+ * schematic.
  *
  * ### Features / Variants
- * - `size` sets the bar height and typography: `small` (16px, instrument
- *   label font) or `medium` (24px, button font).
- * - `variant` selects the color family: `regular` (gray), `enhanced` (blue)
- *   or `medium` (teal).
- * - `tint` switches to the light (tinted) color pairing of the variant.
- * - `label` is the centered text; leave it empty for a plain bar.
+ * - **Sizes** (`size`): `small` (16px tall, instrument label font, 4px corner
+ *   radius, default) or `medium` (24px tall, button font, 6px corner radius).
+ * - **Color variants** (`variant`): `regular` (gray, default), `enhanced`
+ *   (blue) or `medium` (teal).
+ * - **Tint** (`tint`): switches to the light (tinted) color pairing of the
+ *   selected variant. **TODO(designer):** document when the tinted style
+ *   should be used instead of the solid one.
+ * - **Label** (`label`): centered text that clips without wrapping when the
+ *   bar is too narrow; leave it empty for a plain bar. Content is provided
+ *   via this property — the component has no slots.
+ * - **Length**: the bar fills the host element's width (default 200px), so
+ *   set the length by styling the host.
  *
  * ### Usage Guidelines
  * Use to represent a power distribution bus that circuit branches connect
- * to. Set the length by styling the host element's width; the default width
- * is 200px.
+ * to. For the conductors that run between the bus and devices, use the line
+ * components (e.g. `obc-horizontal-line` with the `electric` line type)
+ * instead — the bus is the labeled connection node, not a conductor run.
+ *
+ * The bus is display-only: it has no button behavior, readouts or badges.
+ * For an operable or stateful device symbol, use one of the
+ * `obc-automation-button`-based device components.
  *
  * @ignition-base-width: 200px
  * @ignition-base-height: 16px
@@ -41,9 +52,16 @@ export enum BusVariant {
  */
 @customElement('obc-bus')
 export class ObcBus extends LitElement {
+  /** Centered label text; the bar renders empty when omitted. */
   @property({type: String}) label = '';
+
+  /** Bar height and typography preset. */
   @property({type: String}) size: BusSize = BusSize.Small;
+
+  /** Color family of the bar. */
   @property({type: String}) variant: BusVariant = BusVariant.Regular;
+
+  /** Use the light (tinted) color pairing of the selected variant. */
   @property({type: Boolean}) tint = false;
 
   override render() {
