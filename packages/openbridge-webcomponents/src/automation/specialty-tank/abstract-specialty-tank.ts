@@ -80,19 +80,24 @@ export class ObcAbstractSpecialtyTank extends LitElement {
   @property({type: Boolean, attribute: false}) showMediumIcons: boolean = true;
   /** Show the tag readout below the tank frame. */
   @property({type: Boolean, attribute: false}) showTag: boolean = true;
+  /** Identifier text rendered in the tag readout (e.g. `#0000`). Also used as the accessible name. */
   @property({type: String}) tag: string = '';
 
+  /** Mode badge (auto / manual / local variants), leftmost in the badge row. */
   @property({type: String}) badgeControl: AutomationButtonBadgeControl =
     AutomationButtonBadgeControl.None;
   /** Duty badge — reuses the interlock badge enum, whose `interlock` value renders the duty icon. */
   @property({type: String}) badgeInterlock: AutomationButtonBadgeInterlock =
     AutomationButtonBadgeInterlock.None;
+  /** Command badge, third in the badge row. */
   @property({type: String})
   badgeCommandLocked: AutomationButtonBadgeCommandLocked =
     AutomationButtonBadgeCommandLocked.None;
+  /** Alert badge, rightmost in the badge row. */
   @property({type: String}) badgeAlert: AutomationButtonBadgeAlert =
     AutomationButtonBadgeAlert.None;
 
+  /** Show an alert-frame overlay around the tile, mirroring `obc-automation-tank`. */
   @property({type: Boolean}) alert: boolean = false;
   /** @availableWhen alert==true */
   @property({type: String}) alertFrameType: ObcAlertFrameType =
