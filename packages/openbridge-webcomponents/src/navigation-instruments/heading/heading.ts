@@ -5,6 +5,14 @@ import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {arrow, ArrowStyle} from './arrow.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
+import {
+  applyPinnedHostSize,
+  computeRadialFrame,
+  measureContainerPx,
+  NORTH_ARROW_WIDTH_PX,
+  NSWE_LABEL_WIDTH_PX,
+  type RadialFrame,
+} from '../../svghelpers/radial-frame.js';
 import {WatchCircleType} from '../watch/watch.js';
 import {SetpointBundle} from '../../svghelpers/setpoint-bundle.js';
 import {Priority} from '../types.js';
@@ -58,6 +66,15 @@ export class ObcHeading extends LitElement {
   @property({type: Boolean}) showLabels: boolean = false;
   /** When true, labels and north arrow are placed inside the outer ring. */
   @property({type: Boolean}) tickmarksInside: boolean = false;
+  /**
+   * Outer-ring diameter in CSS pixels. When set, the instrument renders at a
+   * fixed intrinsic size derived from the ring, arc shape and label reserve —
+   * so instruments sharing the same value have identical ring circumference
+   * regardless of label width or arc extent (like obc-donut-chart's
+   * fixedHeight). When unset (default), the instrument fills its container.
+   */
+  @property({type: Number, attribute: 'face-diameter'})
+  faceDiameter: number | undefined;
 
   private _headingSp = new SetpointBundle({
     angularWraparound: true,
@@ -88,18 +105,30 @@ export class ObcHeading extends LitElement {
   // function is called on resize of the element
   private _resizeController = new ResizeController(this, {});
 
-  private getPadding() {
-    const size = Math.min(this.clientHeight, this.clientWidth);
-    const deltaWidth = 512 - size;
-    const steps = deltaWidth / 128;
-    let deltaPadding;
-    if (deltaWidth > 0) {
-      deltaPadding = steps * 48;
-    } else {
-      deltaPadding = steps * 6;
+  /**
+   * Pixel cost of the outside decor: the always-rendered north-arrow glyph
+   * plus, only while shown, the NSWE labels (both keep a constant on-screen
+   * size via `1/scale` terms). Feeds the frame's width-aware reserve,
+   * replacing the former empirical `72 + delta(clientSize)` padding.
+   */
+  private getOutsideDecorPx(): number {
+    if (this.tickmarksInside) {
+      return 0;
     }
+    return NORTH_ARROW_WIDTH_PX + (this.showLabels ? NSWE_LABEL_WIDTH_PX : 0);
+  }
 
-    return 72 + deltaPadding;
+  /** Whether the host size styles were set by applyPinnedHostSize. */
+  private _hostSizePinned = false;
+  private _frame: RadialFrame | undefined;
+
+  override updated(changed: PropertyValues): void {
+    super.updated(changed);
+    this._hostSizePinned = applyPinnedHostSize(
+      this,
+      this._frame,
+      this._hostSizePinned
+    );
   }
 
   private get angleAdviceRaw(): AngleAdviceRaw[] {
@@ -140,22 +169,27 @@ export class ObcHeading extends LitElement {
       {angle: 270, type: TickmarkType.main},
     ];
 
-    const padding = this.getPadding();
-    const width = (176 + padding) * 2;
-    const viewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
+    const frame = computeRadialFrame({
+      basePadding: 72,
+      labelWidthPx: this.getOutsideDecorPx(),
+      containerPx: measureContainerPx(this),
+      faceDiameter: this.faceDiameter,
+    });
+    this._frame = frame;
+    const viewBox = frame.viewBox;
 
     return html`
       <div class="container">
         <obc-watch
           .touching=${this.touching}
-          .padding=${padding}
+          .arcFrame=${frame}
           .advices=${this.angleAdviceRaw}
           .tickmarks=${tickmarks}
           .watchCircleType=${WatchCircleType.single}
-          .showLabels=${this.showLabels}
+          .showLabels=${this.showLabels && !frame.labelsHidden}
           .tickmarksInside=${this.tickmarksInside}
           .crosshairEnabled=${true}
-          .northArrow=${true}
+          .northArrow=${!frame.labelsHidden}
           .angleSetpoint=${this.headingSetpoint ?? undefined}
           .newAngleSetpoint=${this.newHeadingSetpoint}
           .atAngleSetpoint=${this._headingSp.computeAtSetpoint(this.heading)}
