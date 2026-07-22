@@ -27,5 +27,14 @@
   display: block;
   width: 100%;
   height: 100%;
+  /* Clips the rotated overlay <svg transform="rotate(...)">, whose corners
+     swing outside the host and leak arc pixels in wide layouts (same
+     protection obc-watch has had since #994). Known trade-off: the HDG/COG
+     arrow apexes previously painted 1-2px past the host's top edge and are
+     now shaved flat at the box edge — imperceptible at normal viewing.
+     TODO(designer): if the shave is unwanted, the frame needs headroom so
+     the arrow tips fit inside the box — see "Host clipping & the arrow-apex
+     shave" in watch-radial-instruments.instructions.md before changing
+     (interacts with the #1021/#1049 label-reserve geometry). */
   overflow: hidden;
 }

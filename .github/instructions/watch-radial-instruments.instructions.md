@@ -486,16 +486,16 @@ The offset flows through the rendering pipeline:
 quick reference for which knob does what. Combinations not listed under "validated"
 below are undefined — verify them before relying on a specific pairing.
 
-| Property                                            | Affects                                                                                                                                                                                |
-| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `padding`                                           | **Explicit override**: un-zoomed viewBox becomes exactly `(176 + padding) * 2` and the automatic label reserve (see "Shared frame computation") is disabled — the caller owns label room. Unset, `basePadding` is 24 plus the width-aware reserve. |
-| `faceDiameter`                                      | Pins the outer-ring diameter in CSS px (`scale = faceDiameter / 368`); the host gets a fixed intrinsic size, so instruments sharing the value have equal circumference (mode b of #1021; the donut-chart `fixedHeight` counterpart). |
-| `clipTop` / `clipBottom` / `clipLeft` / `clipRight` | viewBox window in the **un-zoomed** path. Ignored under zoom (when `zoomToFitArc` is on or an `arcFrame` is supplied).                                                                                                          |
-| `zoomToFitArc`                                      | Swaps to the `computeZoomToFitArcFrame()` path (unless an `arcFrame` is already supplied); every band radius gets the additive `_rOff` (see the `_bandRadius` INVARIANT in `watch.ts`).                                           |
+| Property                                            | Affects                                                                                                                                                                                                                                                                |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `padding`                                           | **Explicit override**: un-zoomed viewBox becomes exactly `(176 + padding) * 2` and the automatic label reserve (see "Shared frame computation") is disabled — the caller owns label room. Unset, `basePadding` is 24 plus the width-aware reserve.                     |
+| `faceDiameter`                                      | Pins the outer-ring diameter in CSS px (`scale = faceDiameter / 368`); the host gets a fixed intrinsic size, so instruments sharing the value have equal circumference (mode b of #1021; the donut-chart `fixedHeight` counterpart).                                   |
+| `clipTop` / `clipBottom` / `clipLeft` / `clipRight` | viewBox window in the **un-zoomed** path. Ignored under zoom (when `zoomToFitArc` is on or an `arcFrame` is supplied).                                                                                                                                                 |
+| `zoomToFitArc`                                      | Swaps to the `computeZoomToFitArcFrame()` path (unless an `arcFrame` is already supplied); every band radius gets the additive `_rOff` (see the `_bandRadius` INVARIANT in `watch.ts`).                                                                                |
 | `arcFrame`                                          | Externally pre-computed zoom frame. Takes precedence when set (the `if (this.arcFrame)` branch runs first) — used directly even when `zoomToFitArc` is false, and `obc-watch` does not recompute it. If you pass it, keep it in sync with `areas` / `watchCircleType`. |
-| `endLabelsMaxMin`                                   | "Max-min" label placement: horizontal end labels (±90°) sit off the dead-center tick instead of beside it.                                                                            |
-| `tickmarksInside`                                   | Moves labels inside the ring; their `textRadius` is routed through `_bandRadius`.                                                                                                      |
-| `tickFadeAngle`                                     | (pre-existing) Tickmark fade-out near arc edges.                                                                                                                                        |
+| `endLabelsMaxMin`                                   | "Max-min" label placement: horizontal end labels (±90°) sit off the dead-center tick instead of beside it.                                                                                                                                                             |
+| `tickmarksInside`                                   | Moves labels inside the ring; their `textRadius` is routed through `_bandRadius`.                                                                                                                                                                                      |
+| `tickFadeAngle`                                     | (pre-existing) Tickmark fade-out near arc edges.                                                                                                                                                                                                                       |
 
 ### Shared frame computation (`svghelpers/radial-frame.ts`, issue #1021)
 
@@ -551,6 +551,42 @@ All frame/viewBox geometry is centralized in `computeRadialFrame()`:
   blockified by a parent (watch standalone was the visible case; inside
   `.container > * {position: absolute}` the host is blockified and the
   host observation works).
+
+### Host clipping & the arrow-apex shave (PR #1016)
+
+`obc-watch` (since #994) and `obc-compass-sector` (since #1016) set
+`:host { overflow: hidden }` because both rotate their `<svg>` **element box**
+(`transform="rotate(...)"` on the element, not an inner `<g>`): a rotated
+100%-sized box swings its corners outside the host and leaks visible arc
+pixels over neighboring UI in wide layouts. The clip is the fix; the sibling
+`svg { display: block }` rules (watch, watch-flat, thruster) fix a different
+issue — the inline-SVG line-box gap that added ~3–5px of phantom height below
+the graphic (mystery scrollbars in `overflow: auto` cells).
+
+**Known, deliberate trade-off:** in compass-sector's current framing the
+HDG/COG **arrow apexes extend 1–2px past the host's top edge**. Before #1016
+those pixels painted _outside_ the component (`overflow: visible` default) and
+the arrow looked complete; with the clip they are shaved flat at the box edge.
+This is imperceptible at normal viewing (an anti-aliased point) and was
+accepted because the same "allowed to escape" mechanism is what leaked whole
+arc chunks in wide containers.
+
+**TODO(designer):** if the shaved tips are ever unacceptable, the zero-cut fix
+is giving the frame headroom so the arrow tips fit _inside_ the box — do NOT
+simply remove the `overflow: hidden` (that re-opens the wide-layout leak).
+Cautions for whoever picks this up:
+
+- Headroom re-frames the arc: **all** compass-sector baselines move (the
+  shave-only change moved 8), and the readout `_readoutTopPercent` anchors
+  must be re-derived.
+- compass-sector is **not** on `computeRadialFrame()` (bespoke `PADDING = 72`
+  - per-FOV cached viewBox). Adding headroom by touching `PADDING` — or by
+    migrating it onto the helper — interacts with the #1021/#1049 label-reserve
+    geometry: `basePadding` feeds the closed-form reserve, so re-validate label
+    padding at small sizes after any change.
+- The same decision applies family-wide: `obc-watch` has clipped since #994,
+  so any "tips must never be cut" ruling should audit watch-based instruments
+  (setpoint markers and arrows near the box edge), not just compass-sector.
 
 ### Radial label model (design language)
 
