@@ -43,7 +43,8 @@ release on every image build, and any new Feature release invalidates the
 Docker layer that installs them — turning the next container create into a
 multi-minute rebuild (several `apt` rounds plus the node toolchain install).
 With the lockfile committed, image builds keep hitting the cached layer until
-the pins are deliberately updated:
+the pins are deliberately updated (run from the repository root, so
+`--workspace-folder .` resolves to the folder containing `.devcontainer/`):
 
 ```bash
 npx @devcontainers/cli upgrade --workspace-folder .
