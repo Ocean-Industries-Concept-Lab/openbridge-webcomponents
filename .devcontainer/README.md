@@ -33,6 +33,25 @@ once, and the volume keeps it.
 3. Reinstall any apt packages you use (see the example below) — their auth and
    config are already on the volume.
 
+## Feature versions are pinned (lockfile)
+
+[devcontainer-lock.json](devcontainer-lock.json) pins the exact versions of the
+Dev Container Features (`node`, `git`) referenced by
+[devcontainer.json](devcontainer.json), the same way `package-lock.json` pins
+npm dependencies. Without it, `node:1` / `git:1` resolve to the newest upstream
+release on every image build, and any new Feature release invalidates the
+Docker layer that installs them — turning the next container create into a
+multi-minute rebuild (several `apt` rounds plus the node toolchain install).
+With the lockfile committed, image builds keep hitting the cached layer until
+the pins are deliberately updated:
+
+```bash
+npx @devcontainers/cli upgrade --workspace-folder .
+```
+
+Commit the updated lockfile afterwards. (Deleting the lockfile and rebuilding
+has the same effect, minus the reproducibility.)
+
 ## Example: one developer's loadout (Claude Code + GitHub CLI)
 
 An example of setting up personal tooling so that it persists. Substitute your
