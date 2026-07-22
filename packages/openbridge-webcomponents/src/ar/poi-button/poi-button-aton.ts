@@ -22,6 +22,7 @@ export {ObcPoiObjectState as ObcPoiObjectAtonState};
  * @slot - Icon content forwarded to the inner aton diamond.
  * @slot header - Optional header content.
  * @slot relation - Optional relation icon/content in data mode.
+ * @experimental
  */
 @customElement('obc-poi-button-aton')
 export class ObcPoiButtonAton extends ObcPoiButton {

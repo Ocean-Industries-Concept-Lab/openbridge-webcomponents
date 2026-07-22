@@ -12,16 +12,12 @@
         class="field"
         :value.prop="mapTo360Degrees(sim.vessel.headingDeg.value)"
         :maxDigits.prop="3"
-        :hasInput.prop="false"
-        :hasSrc.prop="true"
-        :hasSrcPicker.prop="false"
         :src.prop="headingSrc"
-        variant="stack"
-        :valuePriority.prop="'enhanced'"
+        size="large"
+        :priority.prop="'enhanced'"
         unit="DEG"
         label="HDG"
         direction="horizontal"
-        :hasSourceDivider.prop="true"
       />
       <ObcCompassIndicator
         class="indicator"
@@ -33,16 +29,12 @@
         class="field"
         :value.prop="mapTo360Degrees(sim.vessel.courseOverGroundDeg.value)"
         :maxDigits.prop="3"
-        :hasInput.prop="false"
-        :hasSrc.prop="true"
-        :hasSrcPicker.prop="false"
         :src.prop="courseOverGroundSrc"
-        variant="stack"
-        :valuePriority.prop="'enhanced'"
+        size="large"
+        :priority.prop="'enhanced'"
         unit="DEG"
         label="COG"
         direction="horizontal"
-        :hasSourceDivider.prop="true"
       />
       <ObcRotIndicator
         class="indicator"
@@ -52,16 +44,12 @@
         class="field"
         :value.prop="sim.vessel.rotationDegPerMinute.value"
         :maxDigits.prop="3"
-        :hasInput.prop="false"
-        :hasSrc.prop="true"
-        :hasSrcPicker.prop="false"
         :src.prop="rotationSrc"
-        variant="stack"
-        :valuePriority.prop="'enhanced'"
+        size="large"
+        :priority.prop="'enhanced'"
         unit="DEG/min"
         label="ROT"
         direction="horizontal"
-        :hasSourceDivider.prop="true"
       />
       <div class="divider"></div>
       <ObcSpeedIndicator
@@ -73,32 +61,24 @@
         class="field"
         :value.prop="sim.vessel.speedForwardThroughWaterKnots.value"
         :maxDigits.prop="3"
-        :hasInput.prop="false"
-        :hasSrc.prop="true"
-        :hasSrcPicker.prop="false"
         :src.prop="speedSrc"
-        variant="stack"
-        :valuePriority.prop="'enhanced'"
+        size="large"
+        :priority.prop="'enhanced'"
         unit="KN"
         label="STW"
         direction="horizontal"
-        :hasSourceDivider.prop="true"
       />
       <ObcGraphMini :data="depthDataLast30" class="indicator" :max-y="0" />
       <obc-readout
         class="field"
         :value.prop="sim.depth.value"
         :maxDigits.prop="3"
-        :hasInput.prop="false"
-        :hasSrc.prop="true"
-        :hasSrcPicker.prop="false"
         :src.prop="depthSrc"
-        variant="stack"
-        :valuePriority.prop="'enhanced'"
+        size="large"
+        :priority.prop="'enhanced'"
         unit="m"
         label="Depth"
         direction="horizontal"
-        :hasSourceDivider.prop="true"
       />
 
       <div class="divider"></div>
@@ -272,8 +252,6 @@ const depthDataLast30 = computed(() => {
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  --obc-instrument-field-source-width: 70px;
-  --obc-instrument-field-tag-width: 50px;
 }
 
 .field {
@@ -329,7 +307,7 @@ const depthDataLast30 = computed(() => {
     grid-column: 3 / 4;
     grid-row: 1 / -1;
     align-self: center;
-    width: var(--obc-instrument-field-source-width);
+    width: 70px;
     color: var(--element-neutral-color);
     font-feature-settings:
       'liga' off,

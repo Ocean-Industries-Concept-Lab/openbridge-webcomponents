@@ -22,6 +22,10 @@ export enum TagSize {
   large = 'large',
 }
 
+/**
+ * @slot - Leading icon content (shown when `hasIcon` is true).
+ * @stable
+ */
 @customElement('obc-tag')
 export class ObcTag extends LitElement {
   @property({type: String}) label = 'Label';

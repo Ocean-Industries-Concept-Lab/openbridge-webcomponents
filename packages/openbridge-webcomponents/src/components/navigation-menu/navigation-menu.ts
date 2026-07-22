@@ -153,6 +153,7 @@ export enum ObcNavigationMenuFlyoutVariant {
  * @slot main - Slot for primary navigation items and groups.
  * @slot footer - Slot for secondary navigation items (e.g., settings, help).
  * @slot logo - Slot for branding/logo area.
+ * @stable
  */
 @customElement('obc-navigation-menu')
 export class ObcNavigationMenu extends LitElement {

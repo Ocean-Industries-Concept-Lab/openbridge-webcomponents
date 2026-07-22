@@ -27,6 +27,7 @@ export {
  * @slot speed-indicator - Optional speed indicator content for speed-rot type.
  * @slot header - Optional header content forwarded to the poi button.
  * @fires obc-poi-data-layout-change {CustomEvent<void>} Fired when layout-driving properties change.
+ * @experimental
  */
 @customElement('obc-poi-vessel')
 export class ObcPoiVessel extends PoiBase {

@@ -47,6 +47,7 @@ export const INCLINOMETER_CENTRE_HALF = 200;
  * rejects abstract constructors. This mirrors `ObcChartLineBase`.
  *
  * @ignore This is an abstract base class. Use `obc-pitch` or `obc-roll` instead.
+ * @experimental
  */
 export class SingleAxisInclinometer extends LitElement {
   @property({type: Boolean}) zoomToFitArc: boolean = false;
@@ -216,7 +217,7 @@ export class SingleAxisInclinometer extends LitElement {
           ? html`<div class="readout">
               ${renderInstrumentReadout({
                 value: this.value,
-                valuePriority: this.priority,
+                priority: this.priority,
                 label: this.label,
                 unit: this.unit,
                 fractionDigits: this.fractionDigits,

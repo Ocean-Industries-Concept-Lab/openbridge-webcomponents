@@ -21,6 +21,9 @@ export enum SourceAlternativeIcon {
   sources05 = 'sources05',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-source')
 export class ObcSource extends ObcAbstractAutomationButtonSquared {
   @property({type: String}) alternativeIcon: SourceAlternativeIcon =

@@ -42,6 +42,7 @@ export enum HeadingIndicatorType {
  *
  * - Use `type="HDG"` for the compass-style heading cue.
  * - Use `type="XTD"` for the split-frame cross-track cue.
+ * @stable
  */
 @customElement('obc-heading-indicator')
 export class ObcHeadingIndicator extends LitElement {

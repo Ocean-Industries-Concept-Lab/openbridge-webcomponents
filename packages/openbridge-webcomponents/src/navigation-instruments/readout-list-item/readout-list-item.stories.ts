@@ -99,6 +99,7 @@ type ReadoutItemConfig = {
   options?: StoryOptions;
   hasLeadingIcon?: boolean;
   hasValueIcon?: boolean;
+  showDebugOverlay?: boolean;
 };
 
 type ShowcaseCase = {label: string; config: ReadoutItemConfig};
@@ -179,6 +180,7 @@ function renderItem(config: ReadoutItemConfig) {
       .adviceOptions=${o.advice}
       .unitOptions=${o.unit}
       .srcOptions=${o.src}
+      .showDebugOverlay=${config.showDebugOverlay ?? false}
     >
       ${config.hasLeadingIcon
         ? html`<obi-placeholder slot="leading-icon"></obi-placeholder>`
@@ -1260,7 +1262,7 @@ export const PerBlockState: Story = {
                 value: {
                   alert: {
                     status: AlertType.Warning,
-                    mode: ObcAlertFrameMode.unackedActive,
+                    mode: ObcAlertFrameMode.ackedActive,
                     type: ObcAlertFrameType.Regular,
                   },
                 },
@@ -1294,7 +1296,7 @@ export const PerBlockState: Story = {
                 value: {
                   alert: {
                     status: AlertType.Warning,
-                    mode: ObcAlertFrameMode.unackedActive,
+                    mode: ObcAlertFrameMode.ackedActive,
                     type: ObcAlertFrameType.Regular,
                   },
                 },
@@ -1320,7 +1322,7 @@ export const PerBlockState: Story = {
                 dataQuality: ReadoutListItemDataQuality.lowIntegrity,
                 alert: {
                   status: AlertType.Warning,
-                  mode: ObcAlertFrameMode.unackedActive,
+                  mode: ObcAlertFrameMode.ackedActive,
                   type: ObcAlertFrameType.SmallSideFlip,
                   showAlertCategoryIcon: true,
                 },
@@ -1335,7 +1337,7 @@ export const PerBlockState: Story = {
                 dataQuality: ReadoutListItemDataQuality.invalid,
                 alert: {
                   status: AlertType.Alarm,
-                  mode: ObcAlertFrameMode.unackedActive,
+                  mode: ObcAlertFrameMode.ackedActive,
                   type: ObcAlertFrameType.LargeSideFlip,
                   showAlertCategoryIcon: true,
                 },
@@ -1392,6 +1394,94 @@ export const Alarm: Story = {
         type: ObcAlertFrameType.Regular,
       }),
     }),
+};
+
+// The value alert frame now wraps the whole reading — value + degree + unit — and
+// is drawn as a pure overlay (4px/2px padding, stroke centred on that line), so
+// toggling it changes neither the row height nor the value/unit column positions.
+// Each combo is shown unframed then framed so the constant geometry is obvious;
+// the per-item outline marks the layout box (which the frame never grows).
+const VALUE_FRAME: AlertFrameConfig = {
+  status: AlertType.Warning,
+  mode: ObcAlertFrameMode.ackedActive,
+  type: ObcAlertFrameType.Regular,
+};
+
+const VALUE_FRAME_COMBOS: {label: string; config: ReadoutItemConfig}[] = [
+  {label: 'value + unit', config: {value: 123, unit: 'kn'}},
+  {
+    label: 'value + degree + unit',
+    config: {value: 287, unit: 'T', options: {hasDegree: true}},
+  },
+  {
+    label: 'value + unit + setpoint',
+    config: {value: 123, unit: 'kn', hasSetpoint: true, setpoint: 120},
+  },
+  {
+    label: 'value + unit + advice + setpoint',
+    config: {
+      value: 123,
+      unit: 'kn',
+      hasSetpoint: true,
+      setpoint: 120,
+      hasAdvice: true,
+      advice: 118,
+    },
+  },
+];
+
+export const ValueAlertFrame: Story = {
+  render: () => html`
+    <style>
+      .rli-vf {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        width: 380px;
+      }
+      .rli-vf-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .rli-vf-tag {
+        width: 180px;
+        flex: none;
+        font: 10px/1.2 var(--global-typography-ui-label-font-family, sans-serif);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--element-neutral-color, #777);
+      }
+      .rli-vf-item {
+        flex: 1;
+        outline: 1px solid rgba(0, 0, 0, 0.12);
+      }
+    </style>
+    <div class="rli-vf">
+      ${VALUE_FRAME_COMBOS.flatMap((combo) =>
+        [false, true].map(
+          (framed) => html`
+            <div class="rli-vf-row">
+              <div class="rli-vf-tag">
+                ${combo.label} ${framed ? '· framed' : '· plain'}
+              </div>
+              <div class="rli-vf-item">
+                ${renderItem({
+                  ...combo.config,
+                  label: 'Heading',
+                  options: {
+                    ...combo.config.options,
+                    size: ReadoutListItemSize.medium,
+                    value: framed ? {alert: VALUE_FRAME} : undefined,
+                  },
+                })}
+              </div>
+            </div>
+          `
+        )
+      )}
+    </div>
+  `,
 };
 
 // Each row drops a different part; the per-row outline makes it obvious that the
@@ -1498,9 +1588,11 @@ export const MissingParts: Story = {
  * value digit edges, not both. Aligning the value edges would need either a
  * constant degree reserve (which widens the smaller rows' `°` — visually
  * undesirable) or pinning the value edge and letting the unit column stagger;
- * left for the designer. Two rows also carry per-block (nested) state — a value
- * `invalid` chip and a value alert frame — to confirm per-block state does not
- * shift the value edge.
+ * left for the designer. Several rows also carry per-block / row state — a value
+ * `invalid` chip (Battery), a value alert frame (Fuel), a `low-integrity` advice
+ * chip (Pressure), and a whole-row `low-integrity` + `invalid` setpoint + a
+ * row-level alert frame with a badge-icon flap (Distance) — to confirm none of
+ * them shift the aligned columns.
  */
 type AlignmentRow = {
   label: string;
@@ -1521,6 +1613,9 @@ type AlignmentRow = {
   hasValueIcon?: boolean;
   valueDataQuality?: ReadoutListItemDataQuality;
   valueAlert?: AlertFrameConfig;
+  setpointDataQuality?: ReadoutListItemDataQuality;
+  adviceDataQuality?: ReadoutListItemDataQuality;
+  alert?: AlertFrameConfig;
 };
 
 const ALIGNMENT_ROWS: AlignmentRow[] = [
@@ -1546,6 +1641,8 @@ const ALIGNMENT_ROWS: AlignmentRow[] = [
     setpoint: 1015,
     hasAdvice: true,
     advice: 1008,
+    // per-block advice low-integrity — the advice chip must not shift the columns
+    adviceDataQuality: ReadoutListItemDataQuality.lowIntegrity,
   },
   // negative value + fraction + low-integrity data quality
   {
@@ -1555,7 +1652,10 @@ const ALIGNMENT_ROWS: AlignmentRow[] = [
     fractionDigits: 1,
     dataQuality: ReadoutListItemDataQuality.lowIntegrity,
   },
-  // long unit + advice + setpoint (the "miles" row)
+  // long unit + advice + setpoint (the "miles" row) — also a "kitchen sink of
+  // state": whole row low-integrity, an invalid setpoint chip, and a row-level
+  // alert frame with a badge-icon flap, all at once, to prove none of them shift
+  // the aligned columns.
   {
     label: 'Distance',
     value: 4.2,
@@ -1565,6 +1665,14 @@ const ALIGNMENT_ROWS: AlignmentRow[] = [
     setpoint: 4.5,
     hasAdvice: true,
     advice: 4,
+    dataQuality: ReadoutListItemDataQuality.lowIntegrity,
+    setpointDataQuality: ReadoutListItemDataQuality.invalid,
+    alert: {
+      status: AlertType.Warning,
+      mode: ObcAlertFrameMode.ackedActive,
+      type: ObcAlertFrameType.SmallSideFlip,
+      showAlertCategoryIcon: true,
+    },
   },
   // kitchen sink: value + setpoint + advice + leading icon + value icon
   {
@@ -1610,7 +1718,7 @@ const ALIGNMENT_ROWS: AlignmentRow[] = [
     unit: '%',
     valueAlert: {
       status: AlertType.Warning,
-      mode: ObcAlertFrameMode.unackedActive,
+      mode: ObcAlertFrameMode.ackedActive,
       type: ObcAlertFrameType.Regular,
     },
   },
@@ -1649,24 +1757,12 @@ const alignmentStyle = `
     text-transform: uppercase; letter-spacing: 0.06em; color: var(--element-neutral-color, #777);
   }
   .rli-align-col {
-    display: flex; flex-direction: column; gap: 2px; width: 480px;
+    display: flex; flex-direction: column; gap: 8px; width: 480px;
     padding: 8px; border: 1px dashed var(--border-divider-color, #ccc); border-radius: 8px;
-  }
-  /* Debug aid (temporary): outline each readout building block (red) and the
-     degree column (blue) so reserver widths / alignment are visible. Scoped to
-     this story only via .rli-align-wrap — safe to delete when no longer needed. */
-  .rli-align-wrap obc-readout-list-item::part(block) {
-    outline: 1px solid rgba(220, 0, 0, 0.7); outline-offset: -1px;
-  }
-  .rli-align-wrap obc-readout-list-item::part(degree) {
-    outline: 1px solid rgba(0, 0, 220, 0.7); outline-offset: -1px;
-  }
-  .rli-align-wrap obc-readout-list-item::part(degree-spacer) {
-    outline: 1px solid rgba(0, 160, 0, 0.8); outline-offset: -1px;
   }
 `;
 
-function renderAlignmentColumn(aligned: boolean) {
+function renderAlignmentColumn(aligned: boolean, showDebugOverlay: boolean) {
   return html`
     <div class="rli-align-col">
       ${ALIGNMENT_ROWS.map((row) =>
@@ -1681,12 +1777,14 @@ function renderAlignmentColumn(aligned: boolean) {
           advice: row.advice,
           hasLeadingIcon: row.hasLeadingIcon,
           hasValueIcon: row.hasValueIcon,
+          showDebugOverlay,
           options: {
             size: row.size ?? ReadoutListItemSize.small,
             hasDegree: row.hasDegree ?? false,
             fractionDigits: row.fractionDigits ?? 0,
             priority: row.priority,
             dataQuality: row.dataQuality,
+            alert: row.alert,
             hasLeadingIcon: row.hasLeadingIcon,
             value: {
               hasIcon: row.hasValueIcon,
@@ -1698,6 +1796,16 @@ function renderAlignmentColumn(aligned: boolean) {
               // independent of each row's own fractionDigits.
               ...(aligned ? {spaceReserver: VALUE_RESERVER} : {}),
             },
+            // Setpoint / advice carry their per-block data quality in both
+            // columns; the shared reserver is added only in the aligned column.
+            setpoint: {
+              dataQuality: row.setpointDataQuality,
+              ...(aligned ? {spaceReserver: VALUE_RESERVER} : {}),
+            },
+            advice: {
+              dataQuality: row.adviceDataQuality,
+              ...(aligned ? {spaceReserver: VALUE_RESERVER} : {}),
+            },
             ...(aligned
               ? {
                   // Non-degree rows reserve the degree column so their digits
@@ -1705,8 +1813,6 @@ function renderAlignmentColumn(aligned: boolean) {
                   hasDegreeSpacer: !(row.hasDegree ?? false),
                   maxDigits: MAX_INTEGER_DIGITS,
                   unit: {spaceReserver: LONGEST_UNIT},
-                  setpoint: {spaceReserver: VALUE_RESERVER},
-                  advice: {spaceReserver: VALUE_RESERVER},
                 }
               : {}),
           },
@@ -1716,8 +1822,18 @@ function renderAlignmentColumn(aligned: boolean) {
   `;
 }
 
-export const ColumnAlignment: Story = {
-  render: () => html`
+export const ColumnAlignment: StoryObj<
+  ReadoutListItemStoryArgs & {showDebugOverlay: boolean}
+> = {
+  args: {showDebugOverlay: true},
+  argTypes: {
+    showDebugOverlay: {
+      name: 'Show Debug Overlay',
+      control: {type: 'boolean'},
+      table: {category: 'Debug'},
+    },
+  },
+  render: (args) => html`
     <style>
       ${alignmentStyle}
     </style>
@@ -1726,13 +1842,13 @@ export const ColumnAlignment: Story = {
         <h3 class="rli-align-section-title">
           Without reservers — columns drift
         </h3>
-        ${renderAlignmentColumn(false)}
+        ${renderAlignmentColumn(false, args.showDebugOverlay)}
       </section>
       <section class="rli-align-section">
         <h3 class="rli-align-section-title">
           With shared reservers — unit column &amp; value right edge aligned
         </h3>
-        ${renderAlignmentColumn(true)}
+        ${renderAlignmentColumn(true, args.showDebugOverlay)}
       </section>
     </div>
   `,

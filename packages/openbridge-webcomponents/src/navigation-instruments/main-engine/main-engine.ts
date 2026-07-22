@@ -12,6 +12,9 @@ import {
 import {LinearAdvice} from '../thruster/advice.js';
 import {customElement} from '../../decorator.js';
 
+/**
+ * @stable
+ */
 @customElement('obc-main-engine')
 export class ObcMainEngine extends LitElement {
   private _thrustSetpointId = `me-thrust-sp-${Math.random().toString(36).slice(2, 9)}`;

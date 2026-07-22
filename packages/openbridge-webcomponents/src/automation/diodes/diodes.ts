@@ -24,6 +24,9 @@ export enum DiodesAlternativeIcon {
   diodes06 = 'diodes06',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-diodes')
 export class ObcDiodes extends ObcAbstractAutomationButtonSquared {
   @property({type: String}) alternativeIcon: DiodesAlternativeIcon =

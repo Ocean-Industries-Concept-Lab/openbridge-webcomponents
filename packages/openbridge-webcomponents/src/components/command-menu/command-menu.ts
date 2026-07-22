@@ -92,6 +92,7 @@ export type ObcCommandMenuChangeEvent = CustomEvent<{inCommand: boolean}>;
  * @slot toogle-state-no-command-label - Status label when in "no command" state.
  * @slot toogle-state-in-command-icon - Icon for the "in command" state (defaults to `<obi-command-in>`).
  * @fires change {CustomEvent<{inCommand: boolean}>} Fired when the command state is toggled.
+ * @beta
  */
 @customElement('obc-command-menu')
 export class ObcCommandMenu extends LitElement {

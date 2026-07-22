@@ -65,6 +65,8 @@ export enum ObcAlertMenuItemActionState {
  * | Slot Name     | Renders When...                | Purpose                                              |
  * |---------------|-------------------------------|------------------------------------------------------|
  * | alert-icon    | Always                        | Main alert icon representing the alert type.         |
+ * | title         | Always                        | Title content; falls back to the `title` property.   |
+ * | description   | Always                        | Description content; falls back to the `description` property. |
  * | icon          | If `hasIcon` is true          | Secondary icon (e.g., system/source of alert).       |
  *
  * ### Events
@@ -94,11 +96,14 @@ export enum ObcAlertMenuItemActionState {
  * ```
  *
  * @slot alert-icon - The main alert icon representing the alert type.
+ * @slot title - Title content; falls back to the `title` property when empty.
+ * @slot description - Description content; falls back to the `description` property when empty.
  * @slot icon - Optional secondary icon (e.g., source/system).
  *
  * @fires ack-click {CustomEvent<void>} Fired when the ACK action button is clicked.
  * @fires ack-secondary-click {CustomEvent<void>} Fired when the secondary action button is clicked.
  * @fires item-click {CustomEvent<void>} Fired when the alert menu item is clicked.
+ * @stable
  */
 @customElement('obc-alert-menu-item')
 export class ObcAlertMenuItem extends LitElement {

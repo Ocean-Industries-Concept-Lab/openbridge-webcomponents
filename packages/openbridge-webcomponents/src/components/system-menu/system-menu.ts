@@ -97,6 +97,7 @@ export type VolumeChangeEvent = CustomEvent<number>;
  * @fires audio-click - When the Audio button is clicked
  * @fires audio-volume-change - {VolumeChangeEvent} - When the Audio volume is changed
  * @fires microphone-click - When the Microphone button is clicked
+ * @fires push-to-talk-change - When the push-to-talk toggle is changed
  * @fires battery-usage-click - When the Battery usage button is clicked
  * @fires battery-saving-mode-change - When the Battery saving mode is changed
  * @fires battery-mode-change - When the Battery mode is changed
@@ -107,6 +108,8 @@ export type VolumeChangeEvent = CustomEvent<number>;
  * @fires to-sub-menu-click - When the sub menu is clicked
  * @fires wifi-options-click - When the Wi-Fi options are clicked
  * @fires wifi-disconnect-click - When the Wi-Fi disconnect is clicked
+ * @slot battery-status - Custom battery status text (falls back to the built-in charging/battery label).
+ * @stable
  */
 @customElement('obc-system-menu')
 @localized()

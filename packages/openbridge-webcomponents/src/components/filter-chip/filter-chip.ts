@@ -76,6 +76,7 @@ export type ObcFilterChipChangeEvent = CustomEvent<{
  *
  * @slot - Default leading-icon slot (shown when `showIcon` is true)
  * @fires chip-toggle {ObcFilterChipChangeEvent} - Fired when the chip is toggled.
+ * @stable
  */
 @customElement('obc-filter-chip')
 export class ObcFilterChip extends LitElement {

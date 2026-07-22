@@ -77,6 +77,7 @@ export interface DateItemEvent {
  *
  * @fires {CustomEvent<{title: string, startTime: string, endTime: string}>} event-click - Fired when the event item is clicked. Contains event title, start time, and end time.
  * @slot - No slots. All content is provided via properties.
+ * @beta
  */
 @customElement('obc-event-item')
 export class ObcEventItem extends LitElement {

@@ -150,6 +150,7 @@ export enum BadgeVariant {
  * In this example, the badge displays an alarm icon and the number 3.
  *
  * @slot badge-icon - Custom icon slot for badge types that do not have a built-in icon (e.g., notification, enhance, automation, outline, or custom types).
+ * @beta
  */
 @customElement('obc-badge')
 export class ObcBadge extends LitElement {

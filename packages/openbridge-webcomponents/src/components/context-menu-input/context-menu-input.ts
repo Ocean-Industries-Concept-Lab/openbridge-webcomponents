@@ -205,6 +205,7 @@ export enum ContextMenuType {
  * @fires change {ObcContextMenuInputChangeEvent} Fired when the selection changes.
  * @fires item-click {ObcContextMenuInputItemClickEvent} Fired when a menu item is clicked.
  * @fires close {CustomEvent<void>} Fired when the close button is clicked.
+ * @beta
  */
 @customElement('obc-context-menu-input')
 export class ObcContextMenuInput extends LitElement {

@@ -17,6 +17,10 @@ const sim = useSim()
 
 const configStore = useDemoConfigStore()
 
+// Stable reference: obc-readout uses identity-based change detection, so a
+// shared constant avoids re-triggering updates on every render.
+const popUpSetpointOptions = { interaction: 'pop-up' }
+
 const angle = computed(() => {
   return (sim.propulsion.rudder.value * 180) / 30
 })
@@ -117,32 +121,23 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
           class="value-readout"
           :value="0"
           :maxDigits.prop="3"
-          :hasInput.prop="false"
-          variant="stack"
+          size="large"
           direction="horizontal"
         />
         <obc-readout
           class="label-readout"
           label="Angle"
           unit="DEG"
-          :labelOnly.prop="true"
-          variant="stack"
-          direction="horizontal"
+          :hasValue.prop="false"
+          stacking="stacked"
         />
-        <obc-readout
-          class="value-readout"
-          value="OFF"
-          :hasInput.prop="false"
-          variant="stack"
-          direction="horizontal"
-        />
+        <obc-readout class="value-readout" :off.prop="true" size="large" direction="horizontal" />
         <obc-readout
           class="label-readout"
           label="Power"
           unit="%"
-          :labelOnly.prop="true"
-          variant="stack"
-          direction="horizontal"
+          :hasValue.prop="false"
+          stacking="stacked"
         />
       </div>
       <div class="aft-index readout-container single">
@@ -154,36 +149,34 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
           class="value-readout"
           :value="Math.round(angle)"
           :maxDigits.prop="3"
-          :hasInput.prop="true"
-          :setpointValue.prop="Math.round(angleSetpoint)"
-          :inputInteraction.prop="'pop-up'"
-          variant="stack"
-          direction="vertical"
+          :hasSetpoint.prop="true"
+          :setpoint.prop="Math.round(angleSetpoint)"
+          :setpointOptions.prop="popUpSetpointOptions"
+          size="large"
+          stacking="stacked"
         />
         <obc-readout
           class="label-readout"
           label="Angle"
           unit="DEG"
-          :labelOnly.prop="true"
-          variant="stack"
-          direction="horizontal"
+          :hasValue.prop="false"
+          stacking="stacked"
         />
         <obc-readout
           class="value-readout"
           :value="Math.round(sim.propulsion.propeller.value)"
-          :hasInput.prop="true"
-          :setpointValue.prop="Math.round(sim.propulsion.propellerSet.value)"
-          :inputInteraction.prop="'pop-up'"
-          variant="stack"
-          direction="vertical"
+          :hasSetpoint.prop="true"
+          :setpoint.prop="Math.round(sim.propulsion.propellerSet.value)"
+          :setpointOptions.prop="popUpSetpointOptions"
+          size="large"
+          stacking="stacked"
         />
         <obc-readout
           class="label-readout"
           label="Power"
           unit="%"
-          :labelOnly.prop="true"
-          variant="stack"
-          direction="horizontal"
+          :hasValue.prop="false"
+          stacking="stacked"
         />
       </div>
     </div>

@@ -42,6 +42,7 @@ const SHIP_PATH_D = 'M0.5 15.5V5Q0.5 2.95 3 0.5Q5.5 2.95 5.5 5V15.5H0.5Z';
  *   of per-slot levels (0–3), where `0` hides the chevrons for that slot.
  *
  * This component is display-only; callers are expected to derive the LongLat slot values from upstream data.
+ * @stable
  */
 @customElement('obc-speed-indicator')
 export class ObcSpeedIndicator extends LitElement {

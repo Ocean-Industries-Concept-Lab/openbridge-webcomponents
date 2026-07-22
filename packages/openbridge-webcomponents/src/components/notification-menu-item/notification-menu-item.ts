@@ -58,6 +58,7 @@ import {customElement} from '../../decorator.js';
  * @fires primary-action-click {CustomEvent<void>} Fired when the primary action button is clicked.
  * @fires secondary-action-click {CustomEvent<void>} Fired when the secondary action button is clicked.
  * @fires item-click {CustomEvent<{open: boolean}>} Fired when the item is clicked.
+ * @beta
  */
 @customElement('obc-notification-menu-item')
 export class ObcNotificationMenuItem extends LitElement {

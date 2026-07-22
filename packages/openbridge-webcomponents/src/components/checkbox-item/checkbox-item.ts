@@ -73,6 +73,7 @@ export enum ObcCheckboxItemHoverStyle {
  *
  * @slot - No named slots.
  * @fires change {ObcCheckboxChangeEvent} - Emitted when status changes.
+ * @stable
  */
 @customElement('obc-checkbox-item')
 export class ObcCheckboxItem extends LitElement {

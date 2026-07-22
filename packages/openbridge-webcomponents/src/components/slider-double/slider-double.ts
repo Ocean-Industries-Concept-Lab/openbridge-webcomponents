@@ -43,7 +43,7 @@ export type ObcSliderDoubleChangeEvent = CustomEvent<{
  *
  * This component allows users to select a minimum and maximum value by dragging two thumbs along a horizontal track. It is commonly used for filtering or specifying ranges (such as price, speed, or time intervals) in forms and dashboards. The slider supports both interactive and read-only display modes, as well as visual variants for different UI needs.
  *
- * Appears with two draggable handles (thumbs) and labels showing the current low and high values. Optionally, icons can be placed at each end of the slider via slots.
+ * Appears with two draggable handles (thumbs) and labels showing the current low and high values. The low and high readout labels can be customized via slots.
  *
  * ## Features
  * - **Dual-thumb range selection:** Users can adjust both the lower and upper bounds of a numeric interval.
@@ -56,7 +56,7 @@ export type ObcSliderDoubleChangeEvent = CustomEvent<{
  * - **Seeking mode:** Enable `allowSeeking` to let users jump to a value by clicking on the track, with smooth animated transitions controlled by `seekingSpeed`.
  * - **Custom labels:** Display formatted value labels with unit (`labelUnit`), decimal precision (`labelDecimals`), and adjustable label width (`labelWidth`).
  * - **Hug container option:** Remove spacing between slider and container edges with the `hugcontainer` attribute for seamless layout integration.
- * - **Icon slots:** Add icons to the left and right ends of the slider using `icon-left` and `icon-right` slots.
+ * - **Custom readouts:** Replace the low/high value labels with custom content using the `left-readout` and `right-readout` slots.
  *
  * ## Usage Guidelines
  * Use `obc-slider-double` when you need users to specify a numeric range, such as filtering results by minimum and maximum values. Ideal for scenarios like:
@@ -72,8 +72,6 @@ export type ObcSliderDoubleChangeEvent = CustomEvent<{
  *
  * | Slot Name     | Renders When...               | Purpose                                                                                                          |
  * |---------------|-------------------------------|------------------------------------------------------------------------------------------------------------------|
- * | icon-left     | Always                        | Icon or content at the left end of the slider. Example: `<obi-placeholder slot="icon-left"></obi-placeholder>`   |
- * | icon-right    | Always                        | Icon or content at the right end of the slider. Example: `<obi-placeholder slot="icon-right"></obi-placeholder>` |
  * | left-readout  | `showLeftReadout` is true     | Custom content for the left (low) readout label. Falls back to the formatted `low` value.                        |
  * | right-readout | `showRightReadout` is true    | Custom content for the right (high) readout label. Falls back to the formatted `high` value.                     |
  *
@@ -119,19 +117,18 @@ export type ObcSliderDoubleChangeEvent = CustomEvent<{
  *   variant="enhanced"
  *   allowSeeking
  * >
- *   <obi-placeholder slot="icon-left"></obi-placeholder>
- *   <obi-placeholder slot="icon-right"></obi-placeholder>
+ *   <span slot="left-readout">Min</span>
+ *   <span slot="right-readout">Max</span>
  * </obc-slider-double>
  * ```
  *
  * In this example, the slider allows selection of a percentage range from 0 to 100, with 5% increments, enhanced styling, and seeking enabled.
  *
- * @slot icon-left - Slot for the left icon
- * @slot icon-right - Slot for the right icon
  * @slot left-readout - Custom content for the left (low) readout label (rendered when `showLeftReadout` is true)
  * @slot right-readout - Custom content for the right (high) readout label (rendered when `showRightReadout` is true)
  * @fires value {ObcSliderDoubleValueEvent} - Fires when the value is changed
  * @fires change {ObcSliderDoubleChangeEvent} - Fires when user interaction completes
+ * @stable
  */
 @customElement('obc-slider-double')
 export class ObcSliderDouble extends LitElement {

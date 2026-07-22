@@ -18,6 +18,9 @@ export enum FilterAlternativeIcon {
   filter4 = 'filter4',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-filter')
 export class ObcFilter extends ObcAbstractAutomationButtonSquared {
   @property({type: String}) alternativeIcon: FilterAlternativeIcon =

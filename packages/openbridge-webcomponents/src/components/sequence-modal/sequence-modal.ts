@@ -59,6 +59,11 @@ export enum ObcSequenceModalType {
  * ```
  *
  * Keywords: modal, sequence, step, dialog, progress, actions.
+ *
+ * @slot actions - Actions row content (shown when `hasActions` is true).
+ * @slot - Main content area.
+ * @fires close-click - Fired when the close icon is clicked.
+ * @experimental
  */
 @customElement('obc-sequence-modal')
 export class ObcSequenceModal extends LitElement {

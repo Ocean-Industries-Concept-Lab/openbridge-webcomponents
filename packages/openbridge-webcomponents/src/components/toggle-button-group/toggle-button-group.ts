@@ -127,6 +127,7 @@ export type ObcToggleButtonGroupChangeEvent = CustomEvent<{
  * @slot - Place one or more `<obc-toggle-button-option>` elements here to define the selectable options.
  * @fires value {CustomEvent<{value: string, previousValue: string}>} Fired when the selected value changes.
  * @fires change {CustomEvent<{value: string}>} Fired when the selected value changes by user interaction.
+ * @stable
  */
 @customElement('obc-toggle-button-group')
 export class ObcToggleButtonGroup extends LitElement {

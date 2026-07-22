@@ -62,6 +62,7 @@ function isRow(el: Element): el is TreeRow {
  * | (default) | Always          | Top-level rows (`obc-tree-navigation-group`/`-item`). |
  *
  * @slot - Top-level tree rows (groups and items).
+ * @beta
  */
 @customElement('obc-tree-navigation')
 export class ObcTreeNavigation extends LitElement {

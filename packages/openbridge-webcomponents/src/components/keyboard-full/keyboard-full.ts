@@ -173,6 +173,7 @@ export enum ObcKeyboardFullMode {
  *   indicating the user has completed text entry. The `detail.value` contains the final text string.
  * @fires close-click {CustomEvent<void>} Dispatched when the close button (in top bar) is clicked,
  *   allowing the application to dismiss the keyboard without submitting the value.
+ * @beta
  */
 @customElement('obc-keyboard-full')
 export class ObcKeyboardFull extends LitElement {

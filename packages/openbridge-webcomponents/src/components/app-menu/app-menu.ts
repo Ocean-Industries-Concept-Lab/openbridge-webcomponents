@@ -48,6 +48,7 @@ import '../../icons/icon-search.js';
  *
  * @slot - Default slot for app buttons or custom menu items
  * @fires search {CustomEvent<string>} Fired when the search input value changes, with the current value in `detail`.
+ * @stable
  */
 @customElement('obc-app-menu')
 export class ObcAppMenu extends LitElement {

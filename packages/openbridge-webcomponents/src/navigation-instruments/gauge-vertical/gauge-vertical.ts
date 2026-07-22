@@ -126,6 +126,7 @@ export {
  * ```
  *
  * @fires scale-dimensions-changed {CustomEvent} Fired when layout-affecting properties change, providing dimension info for parent chart integration.
+ * @stable
  */
 @customElement('obc-gauge-vertical')
 export class ObcGaugeVertical extends SetpointMixin(LitElement, {

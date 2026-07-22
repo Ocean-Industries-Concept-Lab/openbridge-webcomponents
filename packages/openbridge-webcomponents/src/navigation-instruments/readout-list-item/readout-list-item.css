@@ -7,6 +7,55 @@
   width: 100%;
 }
 
+/* Bridge the list-item's public colour custom properties onto the block's, so
+   consumers keep theming the value / setpoint / advice / hinted-zero colours via
+   `--obc-readout-list-item-*` even though they now render inside obc-readout-block. */
+obc-readout-block {
+  --obc-readout-block-value-color: var(
+    --obc-readout-list-item-value-color,
+    var(--element-neutral-color)
+  );
+  --obc-readout-block-value-enhanced-color: var(
+    --obc-readout-list-item-value-enhanced-color,
+    var(--element-neutral-enhanced-color)
+  );
+  --obc-readout-block-setpoint-color: var(
+    --obc-readout-list-item-setpoint-color,
+    var(--element-neutral-color)
+  );
+  --obc-readout-block-setpoint-enhanced-color: var(
+    --obc-readout-list-item-setpoint-enhanced-color,
+    var(--instrument-enhanced-secondary-color)
+  );
+  --obc-readout-block-setpoint-touching-outline-color: var(
+    --obc-readout-list-item-setpoint-touching-outline-color,
+    var(--element-neutral-enhanced-color)
+  );
+  --obc-readout-block-setpoint-touching-color: var(
+    --obc-readout-list-item-setpoint-touching-color,
+    var(--base-blue-100)
+  );
+  --obc-readout-block-advice-color: var(
+    --obc-readout-list-item-advice-color,
+    var(--element-neutral-color)
+  );
+  --obc-readout-block-hinted-color: var(
+    --obc-readout-list-item-hinted-color,
+    var(--element-inactive-color)
+  );
+}
+
+/* Size the consumer-provided block icons forwarded into obc-readout-block's
+   `icon` slot (the block sizes the forwarded slot element; this sizes the
+   consumer's icon to fill it). */
+::slotted([slot="value-icon"]),
+::slotted([slot="setpoint-icon"]),
+::slotted([slot="advice-icon"]) {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
 /* ---------- Root / surface ----------
  * `.root` is the touch target (a <button> when clickable, otherwise a <div>).
  * `.surface` is the visible box that carries padding, corner radius, the
@@ -140,115 +189,84 @@
   align-items: flex-end;
 }
 
-/* ---------- Readout building block (advice / setpoint / value) ---------- */
-.block {
+/* ---------- Value reading (value + degree + unit) ----------
+ * Groups the value block, its degree column and the trailing unit so the value
+ * alert frame can wrap all three. Layout-neutral: it adds no gap, so the content
+ * sits exactly where it did when these were siblings of `.value-area`. */
+.value-reading {
+  position: relative;
   display: inline-flex;
   align-items: flex-end;
 }
 
-/* Number + its (setpoint/advice) degree glyph, hugging with no gap — the
-   `.block` gap only separates the icon from this group. */
-.block-content {
-  display: inline-flex;
-  align-items: flex-end;
+/* ---------- Value data quality (low-integrity / invalid) ----------
+ * The value's per-block data-quality chip, applied to the whole reading (value +
+ * degree + unit) rather than hugging the value alone — the same logic as the
+ * value alert frame, minus its custom padding. Same look as the block/source
+ * chip (1px outline, check radius, alert-quality colours). Uses `outline` (not
+ * `border`) so it never shifts the value's width / cross-row column alignment.
+ * Setpoint/advice keep their own in-block chip; the row-level data quality on
+ * `.surface` is unchanged. */
+.value-reading.data-low-integrity,
+.value-reading.data-invalid {
+  outline: 1px solid;
+  border-radius: var(--global-border-radius-border-radius-check);
+}
+.value-reading.data-low-integrity {
+  background: var(--alert-low-integrity-background-color);
+  outline-color: var(--alert-low-integrity-border-color);
+}
+.value-reading.data-invalid {
+  background: var(--alert-invalid-background-color);
+  outline-color: var(--alert-invalid-border-color);
 }
 
-.block-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: none;
-  color: inherit;
-  /* Centre the icon against the block's text rather than bottom-aligning it (the
-     block is flex-end). Matters for the value block, whose text is taller than
-     the icon, so the value icon lines up with the number like the smaller
-     setpoint/advice icons do. */
-  align-self: center;
+/* ---------- Value alert overlay ----------
+ * A pure overlay around the value reading: it reserves no space, so toggling the
+ * frame never changes the row height or breaks cross-row column alignment. The
+ * box is offset outward by (padding − stroke/2) on each axis so the alert-frame's
+ * outline (drawn outside its box) lands CENTRED on the 4px/2px padding line
+ * (half inside / half outside), matching Figma 58:10120. */
+.value-alert-overlay {
+  --_obc-readout-value-frame-padding-horizontal: 4px;
+  --_obc-readout-value-frame-padding-vertical: 2px;
+  /* Must match obc-alert-frame's ACTUAL outline width so the stroke stays centred
+     on the 4px/2px line. `thickness-small` is hard-coded to 2px in
+     alert-frame.css (it does NOT use the themed stroke-width token), so use a
+     literal 2px here; `thickness-large` is handled below. */
+  --_obc-readout-value-frame-stroke: 2px;
+  position: absolute;
+  inset-inline: calc(
+    -1 *
+      (
+        var(--_obc-readout-value-frame-padding-horizontal) -
+          var(--_obc-readout-value-frame-stroke) / 2
+      )
+  );
+  inset-block: calc(
+    -1 *
+      (
+        var(--_obc-readout-value-frame-padding-vertical) -
+          var(--_obc-readout-value-frame-stroke) / 2
+      )
+  );
+  /* Display-only: never intercept clicks on a clickable row. */
+  pointer-events: none;
 }
 
-.block-icon obi-input-right,
-.block-icon obi-notification-advice,
-.block-icon ::slotted(*) {
-  display: block;
-  inline-size: 100%;
-  block-size: 100%;
-}
-
-.hinted-zero {
-  color: var(
-    --obc-readout-list-item-hinted-color,
-    var(--element-inactive-color)
+/* thickness=large: obc-alert-frame's large outline uses the alert-frame border
+   weight token, so the overlay's outward offset must use the same width to keep
+   the stroke centred on the padding line. */
+.value-alert-overlay.thickness-large {
+  --_obc-readout-value-frame-stroke: var(
+    --global-size-spacing-border-weight-alertframe
   );
 }
 
-/* ---------- Text colours (overridable via custom properties) ----------
- * obc-textbox does not set its own colour, so it inherits these. */
-.block-value {
-  color: var(--obc-readout-list-item-value-color, var(--element-neutral-color));
-}
-.block-value.tone-enhanced {
-  color: var(
-    --obc-readout-list-item-value-enhanced-color,
-    var(--element-neutral-enhanced-color)
-  );
-}
-/* The setpoint shares the value's colour state: neutral by default, enhanced
-   (blue) only when the row is enhanced — never a blue setpoint next to a grey
-   value. `--instrument-enhanced-secondary-color` is the same #2d548b as the
-   value's `--element-neutral-enhanced-color`. */
-.block-setpoint {
-  color: var(
-    --obc-readout-list-item-setpoint-color,
-    var(--element-neutral-color)
-  );
-  /* Flip-flop emphasis + pop-up fade animate at 100ms. */
-  transition:
-    opacity 100ms ease,
-    color 100ms ease;
-}
-.block-setpoint.tone-enhanced {
-  color: var(
-    --obc-readout-list-item-setpoint-enhanced-color,
-    var(--instrument-enhanced-secondary-color)
-  );
-}
-/* Pop-up: fade the setpoint out once value === setpoint, keeping its space so
-   the value stays column-aligned. */
-.block-setpoint.is-hiding {
-  opacity: 0;
-}
-.block-setpoint.is-hidden {
-  opacity: 0;
-  visibility: hidden;
-}
-/* Touching / focus state: the setpoint triangle takes the marker's focus look — a
-   pale fill (--base-blue-100) with a dark 1px edge (--element-neutral-enhanced),
-   mirroring `svghelpers/setpoint.ts` focus (fill base-blue-100 + 2px stroke).
-   The glyph icon is `fill: currentColor` and can't take a CSS `stroke`, so the
-   edge is layered drop-shadows. The setpoint number keeps its normal, readable
-   colour. */
-.block-setpoint.touching {
-  --_touching-outline: var(
-    --obc-readout-list-item-setpoint-touching-outline-color,
-    var(--element-neutral-enhanced-color)
-  );
-}
-.block-setpoint.touching .block-icon {
-  color: var(
-    --obc-readout-list-item-setpoint-touching-color,
-    var(--base-blue-100)
-  );
-  filter: drop-shadow(1px 0 0 var(--_touching-outline))
-    drop-shadow(-1px 0 0 var(--_touching-outline))
-    drop-shadow(0 1px 0 var(--_touching-outline))
-    drop-shadow(0 -1px 0 var(--_touching-outline));
-}
-.block-advice {
-  color: var(
-    --obc-readout-list-item-advice-color,
-    var(--element-neutral-color)
-  );
-}
+/* The readout building blocks (advice / setpoint / value) now render inside
+   `obc-readout-block`; their layout / colour / hinted-zero / data-quality CSS
+   lives there. The list-item only bridges the public colour vars (see top) and
+   keeps the surrounding row layout below. */
 
 .label {
   color: var(
@@ -266,23 +284,19 @@
   );
 }
 
-/* ---------- Per-block data quality ----------
+/* ---------- Source data quality ----------
  * Independent of (and nests inside) the row-level data-quality frame. Uses
- * `outline` (not `border`) so the chip never shifts the block's width — the
- * value stays column-aligned across rows. */
-.block.data-low-integrity,
-.block.data-invalid,
+ * `outline` (not `border`) so the chip never shifts the source's width. (The
+ * per-block value/setpoint/advice chips live in `obc-readout-block`.) */
 .source.data-low-integrity,
 .source.data-invalid {
   outline: 1px solid;
   border-radius: var(--global-border-radius-border-radius-check);
 }
-.block.data-low-integrity,
 .source.data-low-integrity {
   background: var(--alert-low-integrity-background-color);
   outline-color: var(--alert-low-integrity-border-color);
 }
-.block.data-invalid,
 .source.data-invalid {
   background: var(--alert-invalid-background-color);
   outline-color: var(--alert-invalid-border-color);
@@ -407,10 +421,6 @@
     --instrument-components-readout-new-list-item-regular-value-container-gap
   );
 }
-.size-small .block {
-  gap: var(--instrument-components-readout-new-general-regular-icon-gap);
-}
-.size-small .block-icon,
 .size-small .leading-icon {
   inline-size: var(
     --instrument-components-readout-new-general-regular-icon-size
@@ -443,10 +453,6 @@
     --instrument-components-readout-new-list-item-medium-value-container-gap
   );
 }
-.size-medium .block {
-  gap: var(--instrument-components-readout-new-general-medium-icon-gap);
-}
-.size-medium .block-icon,
 .size-medium .leading-icon {
   inline-size: var(
     --instrument-components-readout-new-general-medium-icon-size
@@ -474,10 +480,6 @@
 .size-large .value-cluster {
   gap: var(--instrument-components-readout-new-list-item-large-value-gap);
 }
-.size-large .block {
-  gap: var(--instrument-components-readout-new-general-large-icon-gap);
-}
-.size-large .block-icon,
 .size-large .leading-icon {
   inline-size: var(--instrument-components-readout-new-general-large-icon-size);
   block-size: var(--instrument-components-readout-new-general-large-icon-size);
@@ -516,4 +518,23 @@
     --alert-invalid-background-color
   );
   --_obc-readout-list-item-data-border: var(--alert-invalid-border-color);
+}
+
+/* ---------- Debug overlay ----------
+ * `showDebugOverlay` outlines each readout building block (red), the degree
+ * columns (blue) and the degree spacer (green) so reserver widths / alignment
+ * are visible. A development aid (mirrors the donut chart's `showDebugOverlay`);
+ * off by default. */
+:host([showDebugOverlay]) obc-readout-block::part(block) {
+  outline: 1px solid rgba(220, 0, 0, 0.7);
+  outline-offset: -1px;
+}
+:host([showDebugOverlay]) obc-readout-block::part(degree),
+:host([showDebugOverlay]) .degree-column {
+  outline: 1px solid rgba(0, 0, 220, 0.7);
+  outline-offset: -1px;
+}
+:host([showDebugOverlay]) .degree-spacer {
+  outline: 1px solid rgba(0, 160, 0, 0.8);
+  outline-offset: -1px;
 }

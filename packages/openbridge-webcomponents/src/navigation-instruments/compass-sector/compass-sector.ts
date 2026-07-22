@@ -31,6 +31,13 @@ export enum CompassSectorPriorityElement {
   rot = 'rot',
 }
 
+// Fixed frame padding for both the zoomed and un-zoomed paths. This component
+// deliberately keeps its bespoke FOV-compression geometry and does NOT use
+// svghelpers/radial-frame.ts: the viewBox is cached per FOV (a
+// container-size-dependent label reserve would invalidate that), and the
+// 72-unit padding covers the 3-char degree labels at typical sizes.
+// TODO(#1021): adopt computeRadialFrame if degree labels ever clip when the
+// component is shrunk far below its design size.
 const PADDING = 72;
 const WATCH_TYPE = WatchCircleType.triple;
 const INNER_RADIUS = innerRingRadiusFor(WATCH_TYPE);
@@ -96,7 +103,7 @@ function normalizeAngle(a: number): number {
  * - Enable `zoomToFitArc` to enlarge the arc to fill the viewport.
  * - For a full‑circle compass, use `<obc-compass>` instead.
  *
- * @fires None
+ * @stable
  */
 @customElement('obc-compass-sector')
 export class ObcCompassSector extends LitElement {
@@ -547,9 +554,7 @@ export class ObcCompassSector extends LitElement {
           ? html`<div class="readout" style="top: ${this._readoutTopPercent}%">
               ${renderInstrumentReadout({
                 value: this.heading,
-                valuePriority: this.priorityFor(
-                  CompassSectorPriorityElement.hdg
-                ),
+                priority: this.priorityFor(CompassSectorPriorityElement.hdg),
                 label: this.label,
                 unit: this.unit,
                 fractionDigits: this.fractionDigits,

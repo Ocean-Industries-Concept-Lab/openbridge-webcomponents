@@ -47,11 +47,17 @@ export enum SequenceVariant {
   toolbarPrev = 'toolbar-prev',
 }
 
+/**
+ * @beta
+ */
 @customElement('obc-sequence-step')
 /**
  * `<obc-sequence-step>` renders the visual node of a sequence diagram.
  * Supports three sizes, multiple styles (regular/point/connector), and can show
  * leading/trailing connectors as well as state-specific icons.
+ *
+ * @slot leading-icon - Custom leading state icon (shown for medium/large regular steps with `hasIcon`, when the value has no built-in icon).
+ * @slot - Step label content (shown for non-small steps).
  */
 export class ObcSequenceStep extends LitElement {
   @property({type: String}) orientation: SequenceOrientation =

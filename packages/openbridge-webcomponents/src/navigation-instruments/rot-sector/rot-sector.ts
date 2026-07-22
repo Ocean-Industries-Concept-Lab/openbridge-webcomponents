@@ -84,6 +84,7 @@ export interface GaugeRadialAdvice {
  *
  * @element obc-rot-sector
  * @typedef {import('./rot-sector.js').GaugeRadialAdvice} GaugeRadialAdvice
+ * @stable
  */
 @customElement('obc-rot-sector')
 export class ObcRotSector extends SetpointMixin(LitElement) {
@@ -232,7 +233,7 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
         ? html`<div class="readout" style="top: ${this._readoutTopPercent}%">
             ${renderInstrumentReadout({
               value: this.value,
-              valuePriority: this.priority,
+              priority: this.priority,
               label: this.label,
               unit: this.unit,
               fractionDigits: this.fractionDigits,

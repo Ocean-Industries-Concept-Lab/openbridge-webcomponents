@@ -38,10 +38,8 @@ import {ObcRadio} from '../radio/radio.js';
  * ---
  *
  * ### Slots
- * | Slot Name     | Renders When... | Purpose                                 |
- * |-------------- |-----------------|-----------------------------------------|
- * | leading-icon  | Always          | Contains the radio button itself.       |
- * | label         | Always          | Displays the label text for the option. |
+ * This component exposes no slots. The radio input and its label are rendered
+ * internally from the `label`, `value`, `checked`, and related properties.
  *
  * ---
  *
@@ -82,9 +80,8 @@ import {ObcRadio} from '../radio/radio.js';
  * ```
  * In this example, two card radios form a group; only one can be selected at a time.
  *
- * @slot leading-icon - Contains the radio button input.
- * @slot label - Displays the label text for the radio option.
  * @fires change - Fired when the radio is changed.
+ * @stable
  */
 @customElement('obc-elevated-card-radio')
 export class ObcElevatedCardRadio extends LitElement {

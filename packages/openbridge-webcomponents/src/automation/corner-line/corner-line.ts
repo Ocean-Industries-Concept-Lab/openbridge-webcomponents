@@ -10,6 +10,9 @@ export enum CornerLineDirection {
   bottomLeft = 'bottom-left',
 }
 
+/**
+ * @deprecated
+ */
 @customElement('obc-corner-line')
 export class ObcCornerLine extends LitElement {
   @property({type: String}) medium: LineMedium = LineMedium.normal;
