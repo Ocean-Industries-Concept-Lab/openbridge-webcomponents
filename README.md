@@ -103,7 +103,7 @@ To get started with developing the components:
 1. Clone the repository.
 2. Install Node.js (v20+).
 3. Run `npm install` in the root folder.
-4. Run `npm run build:lib` to build all libraries.
+4. Run `npm run build -w packages/openbridge-webcomponents` to build the core library.
 
 For more detailed development instructions, see [IMPLEMENTATION_GUIDELINES.md](IMPLEMENTATION_GUIDELINES.md), [AGENTS.md](AGENTS.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
 
