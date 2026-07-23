@@ -39,6 +39,7 @@ function stripWhitespaceTextNodes(el: Element): void {
 }
 
 const X_FILTER_CUTOFF_HZ = 16;
+const Y_FILTER_CUTOFF_HZ = 16;
 const X_FILTER_DEADBAND_PX = 0.1;
 const X_MOVING_HINT_MS = 120;
 const VALID_POI_TYPES = new Set(Object.values(ObcPoiType));
@@ -60,8 +61,8 @@ const VALID_POI_STATES = new Set(Object.values(ObcPoiState));
  *   renders at the top of the connector, inside the layer.
  * - `buttonY` positions the button; its interaction with `fixedTarget` is
  *   described in the `obc-poi` documentation.
- * - `x` updates pass through a built-in low-pass filter (see
- *   `xFilterCutoffHz`).
+ * - `x` and `y` updates pass through built-in low-pass filters (see
+ *   `xFilterCutoffHz` and `yFilterCutoffHz`).
  */
 export class PoiBase extends LitElement implements Poi {
   private headerObserver?: MutationObserver;
@@ -108,6 +109,13 @@ export class PoiBase extends LitElement implements Poi {
    */
   @property({type: Number, attribute: 'x-filter-cutoff-hz'})
   xFilterCutoffHz = X_FILTER_CUTOFF_HZ;
+  /**
+   * Cutoff frequency (Hz) of the built-in low-pass filter applied to `y`.
+   * Lower values smooth noisy input more aggressively; `0` or a negative
+   * value disables filtering so `y` is applied directly.
+   */
+  @property({type: Number, attribute: 'y-filter-cutoff-hz'})
+  yFilterCutoffHz = Y_FILTER_CUTOFF_HZ;
   @property({type: Boolean, attribute: 'fixed-target'}) fixedTarget = false;
   @property({type: Number, attribute: 'box-width'}) boxWidth: number | null =
     null;
@@ -162,6 +170,20 @@ export class PoiBase extends LitElement implements Poi {
     return Number.isFinite(this.xFilterCutoffHz)
       ? this.xFilterCutoffHz
       : X_FILTER_CUTOFF_HZ;
+  }
+
+  /* ---------- Y-filter state ---------- */
+
+  private filteredY = 0;
+  private yFilterTarget = 0;
+  private yFilterInitialized = false;
+  private lastYFilterTimestampMs = 0;
+  private yFilterRaf = 0;
+
+  private get resolvedYFilterCutoffHz(): number {
+    return Number.isFinite(this.yFilterCutoffHz)
+      ? this.yFilterCutoffHz
+      : Y_FILTER_CUTOFF_HZ;
   }
 
   /* ---------- Layout change ---------- */
@@ -255,6 +277,85 @@ export class PoiBase extends LitElement implements Poi {
     }
   }
 
+  /* ---------- Y filter (low-pass) ---------- */
+
+  private stepYFilter = (nowMs: number) => {
+    this.yFilterRaf = 0;
+    if (!this.isConnected || !this.yFilterInitialized) {
+      return;
+    }
+
+    const dtSeconds =
+      this.lastYFilterTimestampMs > 0
+        ? Math.min(
+            0.25,
+            Math.max(1 / 120, (nowMs - this.lastYFilterTimestampMs) / 1000)
+          )
+        : 1 / 60;
+    this.lastYFilterTimestampMs = nowMs;
+
+    const cutoffHz = this.resolvedYFilterCutoffHz;
+    const alpha =
+      cutoffHz <= 0 ? 1 : 1 - Math.exp(-2 * Math.PI * cutoffHz * dtSeconds);
+    const delta = this.yFilterTarget - this.filteredY;
+    const nextY =
+      Math.abs(delta) <= X_FILTER_DEADBAND_PX
+        ? this.yFilterTarget
+        : this.filteredY + delta * alpha;
+    const changed = Math.abs(nextY - this.filteredY) > 1e-6;
+    this.filteredY = nextY;
+    if (changed) {
+      this.applyFilteredY();
+    }
+
+    const settled =
+      Math.abs(this.yFilterTarget - this.filteredY) <= X_FILTER_DEADBAND_PX;
+
+    if (settled) {
+      this.filteredY = this.yFilterTarget;
+      this.applyFilteredY();
+      this.lastYFilterTimestampMs = 0;
+      return;
+    }
+
+    this.yFilterRaf = requestAnimationFrame(this.stepYFilter);
+  };
+
+  private applyFilteredY() {
+    this.requestUpdate();
+    this.updatePosition();
+    this.dispatchLayoutChange();
+  }
+
+  private syncYFilterTarget(nextY: number) {
+    this.yFilterTarget = nextY;
+
+    if (!this.yFilterInitialized) {
+      this.yFilterInitialized = true;
+      this.filteredY = nextY;
+      return;
+    }
+
+    if (
+      this.resolvedYFilterCutoffHz <= 0 ||
+      Math.abs(nextY - this.filteredY) <= X_FILTER_DEADBAND_PX
+    ) {
+      this.filteredY = this.yFilterTarget;
+      this.applyFilteredY();
+      if (this.yFilterRaf) {
+        cancelAnimationFrame(this.yFilterRaf);
+        this.yFilterRaf = 0;
+      }
+      this.lastYFilterTimestampMs = 0;
+      return;
+    }
+
+    if (!this.yFilterRaf) {
+      this.lastYFilterTimestampMs = 0;
+      this.yFilterRaf = requestAnimationFrame(this.stepYFilter);
+    }
+  }
+
   private markXMoving() {
     this.setAttribute('data-x-moving', 'true');
     if (this.xMovingHintTimeout !== null) {
@@ -277,6 +378,11 @@ export class PoiBase extends LitElement implements Poi {
       this.xFilterRaf = 0;
     }
     this.lastXFilterTimestampMs = 0;
+    if (this.yFilterRaf) {
+      cancelAnimationFrame(this.yFilterRaf);
+      this.yFilterRaf = 0;
+    }
+    this.lastYFilterTimestampMs = 0;
     if (this.xMovingHintTimeout !== null) {
       window.clearTimeout(this.xMovingHintTimeout);
       this.xMovingHintTimeout = null;
@@ -313,6 +419,9 @@ export class PoiBase extends LitElement implements Poi {
   override updated(changedProperties: Map<string, unknown>) {
     if (changedProperties.has('x')) {
       this.syncXFilterTarget(Number.isFinite(this.x) ? this.x : 0);
+    }
+    if (changedProperties.has('y')) {
+      this.syncYFilterTarget(Number.isFinite(this.y) ? this.y : 0);
     }
     if (
       changedProperties.has('buttonY') ||
@@ -568,8 +677,11 @@ export class PoiBase extends LitElement implements Poi {
 
   /* ---------- Render helpers ---------- */
 
-  /** Public `y` normalized as the target Y input. */
+  /** Public `y` normalized as the target Y input, after the y filter. */
   protected get resolvedTargetY(): number {
+    if (this.yFilterInitialized) {
+      return this.filteredY;
+    }
     return Number.isFinite(this.y) ? this.y : 0;
   }
 
