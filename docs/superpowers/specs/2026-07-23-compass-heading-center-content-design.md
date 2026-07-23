@@ -45,9 +45,11 @@ so the existing radial snapshot family stays green.
 - No changes to `watch.ts`, `instrument-radial.ts`, `radial-frame.ts`,
   `arc-frame.ts`, `advice.ts`, or the setpoint layer. The only
   building-block-adjacent edit is an **additive** vessel image (§ 8).
-- No refactor of `pitch-roll` or `compass-sector` onto the new readout helper —
-  they keep their existing implementations (snapshot safety); optional
-  follow-up.
+- `pitch-roll` and `compass-sector` **are migrated** onto the shared readout
+  helper in this pass (user-approved scope change): their public APIs
+  (`hasReadout`, labels, units) stay unchanged, only the internal cluster
+  markup/CSS consolidates. Small intentional snapshot diffs are acceptable
+  there and their baselines are updated and re-verified.
 - No compass/heading base-class merge (decided with the user).
 
 ## 4. Shared arrow module
@@ -148,11 +150,17 @@ only**, choosing the closest match per element:
   512 px reference size.
 - The markup/CSS lives in a small shared helper module next to
   `readout/instrument-readout.ts` (`renderCenterReadouts()` + an exported
-  style fragment) consumed by compass and heading only. The
-  `CompassCenterReadout` interface and `CompassReadoutSource` enum are
-  exported from this helper module, so heading does not import them from
-  compass (both components re-export them for consumers, mirroring the
+  style fragment). The helper takes **resolved** entries
+  (`{value, label, unit, size, priority, fractionDigits, …}`) so it is
+  source-agnostic: compass/heading map `CompassReadoutSource` → entries,
+  `pitch-roll` maps pitch/roll → two entries, `compass-sector` maps heading →
+  one entry. The `CompassCenterReadout` interface and `CompassReadoutSource`
+  enum are exported from this helper module, so heading does not import them
+  from compass (both components re-export them for consumers, mirroring the
   existing `export {RotType}` pattern in compass).
+- `compass-sector` keeps its computed top-% anchor (its readout sits under
+  the arc, not dead-center) — it adopts the helper for the readout markup
+  inside its positioned container, not the flex-center wrapper.
 
 ## 6. `obc-compass` changes
 
@@ -202,11 +210,16 @@ only**, choosing the closest match per element:
   (`compass-sector.ts:540-551`). Mitigation: legacy shim modules keep the
   exact signature and output (§ 4), so compass-sector is untouched and its
   zoom rendering cannot drift.
-- `pitch-roll` (zoom user) and `compass-sector` keep their own readout
-  implementations; the new helper is consumed by compass/heading only.
-- Gate before adding new stories: run the targeted visual suites for
-  `compass`, `heading`, `compass-sector`, `pitch-roll`, `rudder`,
-  `gauge-radial`, `rot-sector` and require **zero** baseline diffs.
+- `pitch-roll` (zoom user) and `compass-sector` migrate onto the shared
+  helper (§ 3): their zoom logic and readout *positioning* are untouched —
+  only the cluster markup inside the positioned container changes. Small
+  snapshot diffs are expected at that step, reviewed intentionally, and
+  their baselines updated.
+- Gate after the arrow-module refactor (before any behavior change): run the
+  targeted visual suites for `compass`, `heading`, `compass-sector`,
+  `pitch-roll`, `rudder`, `gauge-radial`, `rot-sector` and require **zero**
+  baseline diffs. Diffs are permitted only at the explicit
+  pitch-roll/compass-sector migration step.
 
 ## 10. Stories
 
@@ -228,16 +241,17 @@ Conventions: `With<Feature>` naming, Title Case, `['autodocs','6.0']`
 
 1. Pre-change baseline run of the § 9 component set (must be green).
 2. Implement in order: shared arrow module + shims (pure refactor, zero
-   visual change — verified by the same suite) → heading → compass →
-   stories/docs.
+   visual change — verified by the same suite) → shared readout helper +
+   pitch-roll/compass-sector migration (small diffs, baselines updated) →
+   heading → compass → stories/docs.
 3. `npm run analyze`, `npm run lint`, `npm run typecheck`.
 4. New-story baselines added via targeted `--update` runs, then re-run
    without `--update` to confirm stability (AGENTS.md §§ 11–13).
+5. PR: Conventional Commit title; the PR body is a condensed version of this
+   spec (summary, API, migration/snapshot notes, Figma sources).
 
 ## 12. Deferred / follow-ups
 
-- Optional: migrate `pitch-roll`/`compass-sector` readouts onto the shared
-  helper (separate PR, snapshot-sensitive).
 - Optional: SOG-proportional velocity-vector length (needs designer input).
 - Optional: adopt refreshed Figma arrow-head art as new defaults (visual
   change PR with regenerated baselines).
