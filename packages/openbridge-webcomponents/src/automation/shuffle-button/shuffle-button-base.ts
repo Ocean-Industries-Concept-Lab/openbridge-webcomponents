@@ -10,10 +10,18 @@ import {
 } from './shuffle-layout.js';
 
 /**
- * Payload for the `position-selected` event dispatched by shuffle-button
- * components. `position` is the zero-based position the user requested.
+ * Detail payload for the `position-selected` event dispatched by
+ * shuffle-button components. `position` is the zero-based position the user
+ * requested.
  */
-export type PositionSelectedEvent = CustomEvent<{position: number}>;
+export interface PositionSelectedDetail {
+  position: number;
+}
+
+/**
+ * The `position-selected` event dispatched by shuffle-button components.
+ */
+export type PositionSelectedEvent = CustomEvent<PositionSelectedDetail>;
 
 /**
  * Base class for "shuffle button" selectors: a horizontal control whose

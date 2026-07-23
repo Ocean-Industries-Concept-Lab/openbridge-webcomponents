@@ -3,6 +3,14 @@ import type {TemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {ObcShuffleButtonBase} from '../shuffle-button/shuffle-button-base.js';
+
+/**
+ * Detail payload for the `position-selected` event:
+ * the zero-based position the user requested (0 = first, 1 = second).
+ */
+export interface PositionSelectedDetail {
+  position: number;
+}
 import '../../icons/icon-hydraulic-01.js';
 import '../../icons/icon-hydraulic-02.js';
 import '../../icons/icon-hydraulic-07.js';
@@ -45,7 +53,7 @@ export enum HydraulicValveX2Type {
  *   arrow key). Detail: `{position: number}` (0 = first, 1 = second).
  *
  * @alpha
- * @fires position-selected {PositionSelectedEvent} Position requested by the user.
+ * @fires position-selected {CustomEvent<PositionSelectedDetail>} Position requested by the user.
  */
 @customElement('obc-hydraulic-valve-x-2')
 export class ObcHydraulicValveX2 extends ObcShuffleButtonBase {
