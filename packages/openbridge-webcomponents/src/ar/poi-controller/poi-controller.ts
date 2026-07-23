@@ -4,13 +4,32 @@ import {customElement} from '../../decorator.js';
 import componentStyle from './poi-controller.css?inline';
 import '../poi-layer-stack/poi-layer-stack.js';
 import {ObcPoiLayer} from '../poi-layer/poi-layer.js';
-import {ObcPoiData} from '../poi/poi-data.js';
-import {resolvePoiButtonTypeFromBoxSize} from '../poi-button/poi-button.js';
+import '../poi/poi-data.js';
+import '../poi/poi-vessel.js';
+import '../poi/poi-aton.js';
+import {PoiBase} from '../poi/poi-base.js';
+import {ObcPoiState} from '../poi/poi.js';
+import {
+  ObcPoiButtonDataItem,
+  resolvePoiButtonTypeFromBoxSize,
+} from '../poi-button/poi-button.js';
 import {
   MediaFit,
   computeMediaProjection,
   projectPoint,
 } from '../poi-projection/poi-projection.js';
+
+export enum PoiDetectionVariant {
+  Data = 'data',
+  Vessel = 'vessel',
+  Aton = 'aton',
+}
+
+const DETECTION_VARIANT_TAGS: Record<PoiDetectionVariant, string> = {
+  [PoiDetectionVariant.Data]: 'obc-poi-data',
+  [PoiDetectionVariant.Vessel]: 'obc-poi-vessel',
+  [PoiDetectionVariant.Aton]: 'obc-poi-aton',
+};
 
 export type PoiDetection = {
   x: number;
@@ -23,6 +42,14 @@ export type PoiDetection = {
   class_id?: number;
   heading?: number;
   direction?: number;
+  /** POI variant rendered for this detection (default `data`). */
+  variant?: PoiDetectionVariant;
+  /** Custom-element tag rendered as the POI's icon child (e.g. an `obi-*` icon). */
+  icon?: string;
+  /** Alert state applied to the target. */
+  state?: ObcPoiState;
+  /** Data rows shown in the target's expanded button. */
+  data?: ObcPoiButtonDataItem[];
 };
 
 export type PoiKeyFn = (det: PoiDetection, index: number) => string;
@@ -52,7 +79,9 @@ export const POI_CONTROLLER_BACKGROUND_LAYER = 'background';
  *
  * Takes detection coordinates in media pixel space (e.g. x,y in a 1920x1080 frame),
  * projects them to screen space using the media's rendered size and fit mode, and
- * creates/updates `obc-poi-data` targets inside a layer stack.
+ * creates/updates POI targets inside a layer stack (`obc-poi-data` by default;
+ * `obc-poi-vessel`/`obc-poi-aton` via each detection's `variant`, with optional
+ * per-detection `icon`, `state`, and `data`).
  *
  * ## Quick Start
  *
@@ -171,6 +200,12 @@ export class ObcPoiController extends LitElement {
   @property({type: Array}) classFilter: string[] | null = null;
   @property({attribute: false})
   keyFn: PoiKeyFn | null = null;
+  /** Forwarded to every controller-owned target's `xFilterCutoffHz` when set. */
+  @property({type: Number, attribute: 'x-filter-cutoff-hz'})
+  xFilterCutoffHz: number | null = null;
+  /** Forwarded to every controller-owned target's `yFilterCutoffHz` when set. */
+  @property({type: Number, attribute: 'y-filter-cutoff-hz'})
+  yFilterCutoffHz: number | null = null;
 
   @state() private mediaWidth = 0;
   @state() private mediaHeight = 0;
@@ -191,7 +226,7 @@ export class ObcPoiController extends LitElement {
     this.setupLayerObserver();
     this.scheduleSync();
   };
-  private controllerTargets = new Map<string, ObcPoiData>();
+  private controllerTargets = new Map<string, PoiBase>();
   private currentMedia: HTMLVideoElement | HTMLImageElement | null = null;
   private currentLayer: ObcPoiLayer | null = null;
   private mediaHandlers = {
@@ -479,13 +514,32 @@ export class ObcPoiController extends LitElement {
         det.id ?? (this.keyFn ? this.keyFn(det, index) : `index:${index}`);
       activeKeys.add(key);
 
+      const variant = det.variant ?? PoiDetectionVariant.Data;
+      const tag = DETECTION_VARIANT_TAGS[variant];
+
       let target = this.controllerTargets.get(key);
+      if (target && target.tagName.toLowerCase() !== tag) {
+        target.remove();
+        this.controllerTargets.delete(key);
+        target = undefined;
+      }
       if (!target) {
-        target = document.createElement('obc-poi-data') as ObcPoiData;
+        target = document.createElement(tag) as PoiBase;
         target.dataset.controller = '1';
         target.dataset.detectionIndex = String(index);
         target.fixedTarget = false;
         this.controllerTargets.set(key, target);
+      }
+
+      const iconTag = det.icon?.toLowerCase() ?? null;
+      const currentIcon = target.firstElementChild;
+      if (iconTag) {
+        if (currentIcon?.tagName.toLowerCase() !== iconTag) {
+          currentIcon?.remove();
+          target.appendChild(document.createElement(iconTag));
+        }
+      } else if (currentIcon) {
+        currentIcon.remove();
       }
 
       // Append to background layer unless layer-stack moved it elsewhere
@@ -512,6 +566,19 @@ export class ObcPoiController extends LitElement {
       const heading = det.heading ?? det.direction;
       if (typeof heading === 'number' && Number.isFinite(heading)) {
         target.relativeDirection = heading;
+      }
+
+      if (det.state !== undefined) {
+        target.state = det.state;
+      }
+      if (det.data !== undefined) {
+        target.data = det.data;
+      }
+      if (this.xFilterCutoffHz !== null) {
+        target.xFilterCutoffHz = this.xFilterCutoffHz;
+      }
+      if (this.yFilterCutoffHz !== null) {
+        target.yFilterCutoffHz = this.yFilterCutoffHz;
       }
     });
 
