@@ -85,6 +85,13 @@ export class PoiBase extends LitElement implements Poi {
   @property({type: Number}) x = 0;
   @property({type: Number}) y = 192;
   @property({type: Number, attribute: 'button-y'}) buttonY: number | null = 0;
+  /**
+   * Cutoff frequency (Hz) of the built-in low-pass filter applied to `x`.
+   * Lower values smooth noisy input more aggressively; `0` or a negative
+   * value disables filtering so `x` is applied directly.
+   */
+  @property({type: Number, attribute: 'x-filter-cutoff-hz'})
+  xFilterCutoffHz = X_FILTER_CUTOFF_HZ;
   @property({type: Boolean, attribute: 'fixed-target'}) fixedTarget = false;
   @property({type: Number, attribute: 'box-width'}) boxWidth: number | null =
     null;
@@ -135,6 +142,12 @@ export class PoiBase extends LitElement implements Poi {
   private xFilterRaf = 0;
   private xMovingHintTimeout: number | null = null;
 
+  private get resolvedXFilterCutoffHz(): number {
+    return Number.isFinite(this.xFilterCutoffHz)
+      ? this.xFilterCutoffHz
+      : X_FILTER_CUTOFF_HZ;
+  }
+
   /* ---------- Layout change ---------- */
 
   private dispatchLayoutChange() {
@@ -163,7 +176,9 @@ export class PoiBase extends LitElement implements Poi {
         : 1 / 60;
     this.lastXFilterTimestampMs = nowMs;
 
-    const alpha = 1 - Math.exp(-2 * Math.PI * X_FILTER_CUTOFF_HZ * dtSeconds);
+    const cutoffHz = this.resolvedXFilterCutoffHz;
+    const alpha =
+      cutoffHz <= 0 ? 1 : 1 - Math.exp(-2 * Math.PI * cutoffHz * dtSeconds);
     const delta = this.xFilterTarget - this.filteredX;
     const nextX =
       Math.abs(delta) <= X_FILTER_DEADBAND_PX
@@ -202,7 +217,10 @@ export class PoiBase extends LitElement implements Poi {
       return;
     }
 
-    if (Math.abs(nextX - this.filteredX) <= X_FILTER_DEADBAND_PX) {
+    if (
+      this.resolvedXFilterCutoffHz <= 0 ||
+      Math.abs(nextX - this.filteredX) <= X_FILTER_DEADBAND_PX
+    ) {
       this.filteredX = this.xFilterTarget;
       this.style.setProperty('--obc-poi-data-x', `${this.filteredX}px`);
       if (this.xFilterRaf) {
